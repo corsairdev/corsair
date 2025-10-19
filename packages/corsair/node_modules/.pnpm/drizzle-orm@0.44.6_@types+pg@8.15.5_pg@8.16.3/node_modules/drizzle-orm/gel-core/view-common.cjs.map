@@ -1,0 +1,1 @@
+{"version":3,"sources":["../../src/gel-core/view-common.ts"],"sourcesContent":["export const GelViewConfig = Symbol.for('drizzle:GelViewConfig');\n"],"mappings":";;;;;;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAO,MAAM,gBAAgB,OAAO,IAAI,uBAAuB;","names":[]}

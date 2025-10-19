@@ -1,0 +1,22 @@
+import type { ColumnBuilderBaseConfig } from "../../column-builder.js";
+import type { ColumnBaseConfig } from "../../column.js";
+import { entityKind } from "../../entity.js";
+import { GelColumn, GelColumnBuilder } from "./common.js";
+export type GelBooleanBuilderInitial<TName extends string> = GelBooleanBuilder<{
+    name: TName;
+    dataType: 'boolean';
+    columnType: 'GelBoolean';
+    data: boolean;
+    driverParam: boolean;
+    enumValues: undefined;
+}>;
+export declare class GelBooleanBuilder<T extends ColumnBuilderBaseConfig<'boolean', 'GelBoolean'>> extends GelColumnBuilder<T> {
+    static readonly [entityKind]: string;
+    constructor(name: T['name']);
+}
+export declare class GelBoolean<T extends ColumnBaseConfig<'boolean', 'GelBoolean'>> extends GelColumn<T> {
+    static readonly [entityKind]: string;
+    getSQLType(): string;
+}
+export declare function boolean(): GelBooleanBuilderInitial<''>;
+export declare function boolean<TName extends string>(name: TName): GelBooleanBuilderInitial<TName>;

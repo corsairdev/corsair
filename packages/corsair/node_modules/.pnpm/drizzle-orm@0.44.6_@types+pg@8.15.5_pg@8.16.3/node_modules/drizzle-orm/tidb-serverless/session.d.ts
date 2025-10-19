@@ -1,0 +1,60 @@
+import type { Connection, FullResult, Tx } from '@tidbcloud/serverless';
+import { type Cache } from "../cache/core/index.js";
+import type { WithCacheConfig } from "../cache/core/types.js";
+import { entityKind } from "../entity.js";
+import type { Logger } from "../logger.js";
+import type { MySqlDialect } from "../mysql-core/dialect.js";
+import type { SelectedFieldsOrdered } from "../mysql-core/query-builders/select.types.js";
+import { MySqlPreparedQuery, type MySqlPreparedQueryConfig, type MySqlPreparedQueryHKT, type MySqlQueryResultHKT, MySqlSession, MySqlTransaction } from "../mysql-core/session.js";
+import type { RelationalSchemaConfig, TablesRelationalConfig } from "../relations.js";
+import { type Query, type SQL } from "../sql/sql.js";
+import { type Assume } from "../utils.js";
+export declare class TiDBServerlessPreparedQuery<T extends MySqlPreparedQueryConfig> extends MySqlPreparedQuery<T> {
+    private client;
+    private queryString;
+    private params;
+    private logger;
+    private fields;
+    private customResultMapper?;
+    private generatedIds?;
+    private returningIds?;
+    static readonly [entityKind]: string;
+    constructor(client: Tx | Connection, queryString: string, params: unknown[], logger: Logger, cache: Cache, queryMetadata: {
+        type: 'select' | 'update' | 'delete' | 'insert';
+        tables: string[];
+    } | undefined, cacheConfig: WithCacheConfig | undefined, fields: SelectedFieldsOrdered | undefined, customResultMapper?: ((rows: unknown[][]) => T["execute"]) | undefined, generatedIds?: Record<string, unknown>[] | undefined, returningIds?: SelectedFieldsOrdered | undefined);
+    execute(placeholderValues?: Record<string, unknown> | undefined): Promise<T['execute']>;
+    iterator(_placeholderValues?: Record<string, unknown>): AsyncGenerator<T['iterator']>;
+}
+export interface TiDBServerlessSessionOptions {
+    logger?: Logger;
+    cache?: Cache;
+}
+export declare class TiDBServerlessSession<TFullSchema extends Record<string, unknown>, TSchema extends TablesRelationalConfig> extends MySqlSession<TiDBServerlessQueryResultHKT, TiDBServerlessPreparedQueryHKT, TFullSchema, TSchema> {
+    private baseClient;
+    private schema;
+    private options;
+    static readonly [entityKind]: string;
+    private logger;
+    private client;
+    private cache;
+    constructor(baseClient: Connection, dialect: MySqlDialect, tx: Tx | undefined, schema: RelationalSchemaConfig<TSchema> | undefined, options?: TiDBServerlessSessionOptions);
+    prepareQuery<T extends MySqlPreparedQueryConfig = MySqlPreparedQueryConfig>(query: Query, fields: SelectedFieldsOrdered | undefined, customResultMapper?: (rows: unknown[][]) => T['execute'], generatedIds?: Record<string, unknown>[], returningIds?: SelectedFieldsOrdered, queryMetadata?: {
+        type: 'select' | 'update' | 'delete' | 'insert';
+        tables: string[];
+    }, cacheConfig?: WithCacheConfig): MySqlPreparedQuery<T>;
+    all<T = unknown>(query: SQL): Promise<T[]>;
+    count(sql: SQL): Promise<number>;
+    transaction<T>(transaction: (tx: TiDBServerlessTransaction<TFullSchema, TSchema>) => Promise<T>): Promise<T>;
+}
+export declare class TiDBServerlessTransaction<TFullSchema extends Record<string, unknown>, TSchema extends TablesRelationalConfig> extends MySqlTransaction<TiDBServerlessQueryResultHKT, TiDBServerlessPreparedQueryHKT, TFullSchema, TSchema> {
+    static readonly [entityKind]: string;
+    constructor(dialect: MySqlDialect, session: MySqlSession, schema: RelationalSchemaConfig<TSchema> | undefined, nestedIndex?: number);
+    transaction<T>(transaction: (tx: TiDBServerlessTransaction<TFullSchema, TSchema>) => Promise<T>): Promise<T>;
+}
+export interface TiDBServerlessQueryResultHKT extends MySqlQueryResultHKT {
+    type: FullResult;
+}
+export interface TiDBServerlessPreparedQueryHKT extends MySqlPreparedQueryHKT {
+    type: TiDBServerlessPreparedQuery<Assume<this['config'], MySqlPreparedQueryConfig>>;
+}

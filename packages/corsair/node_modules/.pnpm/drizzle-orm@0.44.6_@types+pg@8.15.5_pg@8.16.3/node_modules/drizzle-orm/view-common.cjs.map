@@ -1,0 +1,1 @@
+{"version":3,"sources":["../src/view-common.ts"],"sourcesContent":["export const ViewBaseConfig = Symbol.for('drizzle:ViewBaseConfig');\n"],"mappings":";;;;;;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAO,MAAM,iBAAiB,OAAO,IAAI,wBAAwB;","names":[]}
