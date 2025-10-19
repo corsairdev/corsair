@@ -1,1 +1,0 @@
-{"version":3,"sources":["../src/tracing-utils.ts"],"sourcesContent":["export function iife<T extends unknown[], U>(fn: (...args: T) => U, ...args: T): U {\n\treturn fn(...args);\n}\n"],"mappings":"AAAO,SAAS,KAA6B,OAA0B,MAAY;AAClF,SAAO,GAAG,GAAG,IAAI;AAClB;","names":[]}

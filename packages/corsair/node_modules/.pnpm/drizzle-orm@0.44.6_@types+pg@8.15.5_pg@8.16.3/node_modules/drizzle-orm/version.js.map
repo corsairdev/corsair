@@ -1,1 +1,0 @@
-{"version":3,"sources":["../src/version.ts"],"sourcesContent":["// @ts-ignore - imported using Rollup json plugin\nexport { version as npmVersion } from '../package.json';\n// In version 7, we changed the PostgreSQL indexes API\nexport const compatibilityVersion = 10;\n"],"mappings":"AACA,SAAoB,eAAkB;AAE/B,MAAM,uBAAuB;","names":[]}

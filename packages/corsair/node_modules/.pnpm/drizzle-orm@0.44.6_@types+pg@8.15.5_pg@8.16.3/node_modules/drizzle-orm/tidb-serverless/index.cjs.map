@@ -1,1 +1,0 @@
-{"version":3,"sources":["../../src/tidb-serverless/index.ts"],"sourcesContent":["export * from './driver.ts';\nexport * from './session.ts';\n"],"mappings":";;;;;;;;;;;;;;;AAAA;AAAA;AAAA,oCAAc,wBAAd;AACA,oCAAc,yBADd;","names":[]}
