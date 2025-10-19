@@ -1,1 +1,0 @@
-{"version":3,"sources":["../../src/neon/index.ts"],"sourcesContent":["export * from './neon-auth.ts';\nexport * from './rls.ts';\n"],"mappings":"AAAA,cAAc;AACd,cAAc;","names":[]}

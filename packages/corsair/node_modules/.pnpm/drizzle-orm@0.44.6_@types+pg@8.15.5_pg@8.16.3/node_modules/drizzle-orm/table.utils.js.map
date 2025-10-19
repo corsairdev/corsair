@@ -1,1 +1,0 @@
-{"version":3,"sources":["../src/table.utils.ts"],"sourcesContent":["/** @internal */\nexport const TableName = Symbol.for('drizzle:Name');\n"],"mappings":"AACO,MAAM,YAAY,OAAO,IAAI,cAAc;","names":[]}

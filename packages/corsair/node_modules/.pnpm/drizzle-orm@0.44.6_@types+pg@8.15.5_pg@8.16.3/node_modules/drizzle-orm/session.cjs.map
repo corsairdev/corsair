@@ -1,1 +1,0 @@
-{"version":3,"sources":["../src/session.ts"],"sourcesContent":["import type { Query } from './index.ts';\n\nexport interface PreparedQuery {\n\tgetQuery(): Query;\n\tmapResult(response: unknown, isFromBatch?: boolean): unknown;\n\t/** @internal */\n\tisResponseInArrayMode(): boolean;\n}\n"],"mappings":";;;;;;;;;;;;;;AAAA;AAAA;","names":[]}

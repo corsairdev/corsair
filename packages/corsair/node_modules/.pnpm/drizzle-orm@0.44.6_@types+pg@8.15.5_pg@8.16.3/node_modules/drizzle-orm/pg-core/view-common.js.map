@@ -1,1 +1,0 @@
-{"version":3,"sources":["../../src/pg-core/view-common.ts"],"sourcesContent":["export const PgViewConfig = Symbol.for('drizzle:PgViewConfig');\n"],"mappings":"AAAO,MAAM,eAAe,OAAO,IAAI,sBAAsB;","names":[]}
