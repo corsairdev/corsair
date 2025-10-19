@@ -1,0 +1,1 @@
+{"version":3,"sources":["../../src/singlestore-core/view-common.ts"],"sourcesContent":["export const SingleStoreViewConfig = Symbol.for('drizzle:SingleStoreViewConfig');\n"],"mappings":"AAAO,MAAM,wBAAwB,OAAO,IAAI,+BAA+B;","names":[]}

@@ -1,0 +1,1 @@
+{"version":3,"sources":["../../src/mysql-core/view-common.ts"],"sourcesContent":["export const MySqlViewConfig = Symbol.for('drizzle:MySqlViewConfig');\n"],"mappings":"AAAO,MAAM,kBAAkB,OAAO,IAAI,yBAAyB;","names":[]}

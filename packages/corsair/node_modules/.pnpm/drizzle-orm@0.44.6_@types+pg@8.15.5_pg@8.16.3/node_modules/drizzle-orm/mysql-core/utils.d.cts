@@ -1,0 +1,37 @@
+import { SQL } from "../index.cjs";
+import { Subquery } from "../subquery.cjs";
+import type { Check } from "./checks.cjs";
+import type { ForeignKey } from "./foreign-keys.cjs";
+import type { Index } from "./indexes.cjs";
+import type { PrimaryKey } from "./primary-keys.cjs";
+import type { IndexForHint } from "./query-builders/select.cjs";
+import { MySqlTable } from "./table.cjs";
+import { type UniqueConstraint } from "./unique-constraint.cjs";
+import type { MySqlViewBase } from "./view-base.cjs";
+import type { MySqlView } from "./view.cjs";
+export declare function extractUsedTable(table: MySqlTable | Subquery | MySqlViewBase | SQL): string[];
+export declare function getTableConfig(table: MySqlTable): {
+    columns: import("./index.ts").MySqlColumn<import("../index.ts").ColumnBaseConfig<import("../index.ts").ColumnDataType, string>, {}, {}>[];
+    indexes: Index[];
+    foreignKeys: ForeignKey[];
+    checks: Check[];
+    primaryKeys: PrimaryKey[];
+    uniqueConstraints: UniqueConstraint[];
+    name: string;
+    schema: string | undefined;
+    baseName: string;
+};
+export declare function getViewConfig<TName extends string = string, TExisting extends boolean = boolean>(view: MySqlView<TName, TExisting>): {
+    algorithm?: "undefined" | "merge" | "temptable";
+    sqlSecurity?: "definer" | "invoker";
+    withCheckOption?: "cascaded" | "local";
+    name: TName;
+    originalName: TName;
+    schema: string | undefined;
+    selectedFields: import("../index.ts").ColumnsSelection;
+    isExisting: TExisting;
+    query: TExisting extends true ? undefined : SQL<unknown>;
+    isAlias: boolean;
+};
+export declare function convertIndexToString(indexes: IndexForHint[]): string[];
+export declare function toArray<T>(value: T | T[]): T[];

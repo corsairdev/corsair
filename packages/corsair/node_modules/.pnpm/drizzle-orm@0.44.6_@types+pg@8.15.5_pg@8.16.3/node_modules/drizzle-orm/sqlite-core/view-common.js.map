@@ -1,0 +1,1 @@
+{"version":3,"sources":["../../src/sqlite-core/view-common.ts"],"sourcesContent":["export const SQLiteViewConfig = Symbol.for('drizzle:SQLiteViewConfig');\n"],"mappings":"AAAO,MAAM,mBAAmB,OAAO,IAAI,0BAA0B;","names":[]}

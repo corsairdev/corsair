@@ -1,0 +1,39 @@
+{
+  "name": "corsair",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "db:test": "tsx db/index.ts",
+    "api:test": "tsx api/index.ts",
+    "docker:up": "docker compose up -d",
+    "docker:down": "docker compose down",
+    "postgrest:reload": "docker kill -s SIGUSR1 corsair-postgrest",
+    "postgrest:restart": "docker restart corsair-postgrest",
+    "state:test": "tsx state/state.ts",
+    "drizzle": "tsx state/drizzle.ts",
+    "generate": "./scripts/generate.sh",
+    "check": "./scripts/check.sh",
+    "migrate": "./scripts/migrate.sh"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.11.1",
+  "dependencies": {
+    "@supabase/postgrest-js": "^2.75.1",
+    "dotenv": "^17.2.3",
+    "drizzle-kit": "^0.31.5",
+    "drizzle-orm": "^0.44.6",
+    "drizzle-zod": "^0.8.3",
+    "pg": "^8.16.3",
+    "postgrest-js": "2.0.0-rc1",
+    "tsx": "^4.20.6"
+  },
+  "devDependencies": {
+    "@types/node": "^24.8.1",
+    "@types/pg": "^8.15.5",
+    "typescript": "^5.9.3"
+  }
+}
