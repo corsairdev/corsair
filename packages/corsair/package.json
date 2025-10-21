@@ -15,7 +15,56 @@
     "drizzle": "tsx state/drizzle.ts",
     "generate": "./scripts/generate.sh",
     "check": "./scripts/check.sh",
-    "migrate": "./scripts/migrate.sh"
+    "migrate": "./scripts/migrate.sh",
+    "watch": "tsx watch/index.ts",
+    "test-watch": "tsx watch/test.ts"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./nextjs": {
+      "types": "./dist/adapters/nextjs.d.ts",
+      "default": "./dist/adapters/nextjs.js"
+    },
+    "./express": {
+      "types": "./dist/adapters/express.d.ts",
+      "default": "./dist/adapters/express.js"
+    },
+    "./fastify": {
+      "types": "./dist/adapters/fastify.d.ts",
+      "default": "./dist/adapters/fastify.js"
+    },
+    "./hono": {
+      "types": "./dist/adapters/hono.d.ts",
+      "default": "./dist/adapters/hono.js"
+    },
+    "./cloudflare": {
+      "types": "./dist/adapters/cloudflare.d.ts",
+      "default": "./dist/adapters/cloudflare.js"
+    }
+  },
+  "peerDependencies": {
+    "@tanstack/react-query": "^5.0.0",
+    "zod": "^3.0.0"
+  },
+  "peerDependenciesMeta": {
+    "next": {
+      "optional": true
+    },
+    "express": {
+      "optional": true
+    },
+    "fastify": {
+      "optional": true
+    },
+    "hono": {
+      "optional": true
+    },
+    "@cloudflare/workers-types": {
+      "optional": true
+    }
   },
   "keywords": [],
   "author": "",
@@ -23,17 +72,31 @@
   "packageManager": "pnpm@10.11.1",
   "dependencies": {
     "@supabase/postgrest-js": "^2.75.1",
+    "@tanstack/react-query": "^5.90.5",
+    "chokidar": "^4.0.3",
     "dotenv": "^17.2.3",
     "drizzle-kit": "^0.31.5",
     "drizzle-orm": "^0.44.6",
     "drizzle-zod": "^0.8.3",
+    "madge": "^8.0.0",
     "pg": "^8.16.3",
     "postgrest-js": "2.0.0-rc1",
-    "tsx": "^4.20.6"
+    "ts-morph": "^27.0.2",
+    "tsx": "^4.20.6",
+    "zod": "^4.1.12"
   },
   "devDependencies": {
-    "@types/node": "^24.8.1",
+    "@types/madge": "^5.0.3",
+    "@types/node": "^22.18.11",
     "@types/pg": "^8.15.5",
-    "typescript": "^5.9.3"
+    "@types/react": "^19.2.2",
+    "react": "^19.2.0",
+    "typescript": "^5.9.3",
+    "next": "^14.0.0",
+    "express": "^4.0.0",
+    "fastify": "^4.0.0",
+    "hono": "^3.0.0",
+    "@cloudflare/workers-types": "^4.0.0",
+    "@types/express": "^4.0.0"
   }
 }

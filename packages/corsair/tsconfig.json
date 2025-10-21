@@ -2,10 +2,13 @@
   "compilerOptions": {
     "target": "ES2020",
     "module": "ESNext",
-    "lib": ["ES2020"],
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "jsx": "react-jsx",
     "types": ["node"],
-    "moduleResolution": "node",
+    "typeRoots": ["./node_modules/@types"],
+    "moduleResolution": "bundler",
     "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
     "skipLibCheck": true,
     "strict": true,
     "downlevelIteration": true,
@@ -17,6 +20,12 @@
     "outDir": "./dist",
     "rootDir": "."
   },
-  "include": ["client-old/**/*", "db/**/*", "api/**/*"],
+  "include": [
+    "db/**/*",
+    "api/**/*",
+    "scripts/**/*",
+    "client/**/*",
+    "watch/**/*"
+  ],
   "exclude": ["node_modules", "dist"]
 }

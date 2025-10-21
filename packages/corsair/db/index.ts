@@ -1,5 +1,7 @@
 import "dotenv/config";
-import { drizzle } from "drizzle-orm/node-postgres";
+import { drizzle as drizzleOrm } from "drizzle-orm/node-postgres";
+import * as drizzle from "drizzle-orm";
+import * as drizzleZod from "drizzle-zod";
 import {
   pgTable as pgTableDrizzle,
   text,
@@ -11,7 +13,8 @@ import {
   timestamp,
 } from "drizzle-orm/pg-core";
 
-export const db = drizzle(process.env.DATABASE_URL!);
+const db = (schema: Record<string, unknown>) =>
+  drizzleOrm(process.env.DATABASE_URL!, { schema });
 
 type AccessRule = string;
 
@@ -28,10 +31,7 @@ type ConstraintControl = ConstraintRule[];
 type Meta = { constraints?: ConstraintControl; access?: AccessControl };
 
 // Wrapper that adds optional third argument for metadata
-export const table = <
-  TTableName extends string,
-  TColumns extends Record<string, any>
->(
+const table = <TTableName extends string, TColumns extends Record<string, any>>(
   name: TTableName,
   columns: TColumns,
   meta?: Meta
@@ -39,7 +39,8 @@ export const table = <
   return pgTableDrizzle(name, columns);
 };
 
-export const t = {
+const CorsairDB = {
+  table,
   text,
   uuid,
   integer,
@@ -47,4 +48,23 @@ export const t = {
   timestamp,
   date,
   json,
+  db,
+  drizzle,
+  drizzleZod,
 };
+
+export {
+  table,
+  text,
+  uuid,
+  integer,
+  boolean,
+  timestamp,
+  date,
+  json,
+  db,
+  drizzle,
+  drizzleZod,
+};
+
+export default CorsairDB;
