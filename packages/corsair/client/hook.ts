@@ -93,10 +93,6 @@ type OutputForPrompt<
   P extends keyof TOperations
 > = InferZodOutput<TOperations[P]["response_type"]>;
 
-// ============================================
-// CLIENT: QUERY HOOK
-// ============================================
-
 export function createCorsairQueryClient<TQueries extends CorsairQueries>(
   queries: TQueries
 ) {
@@ -158,10 +154,6 @@ export function createCorsairQueryClient<TQueries extends CorsairQueries>(
     },
   };
 }
-
-// ============================================
-// CLIENT: MUTATION HOOK
-// ============================================
 
 export function createCorsairMutationClient<
   TMutations extends CorsairMutations
@@ -226,6 +218,98 @@ export function createCorsairMutationClient<
           return data;
         },
       });
+    },
+  };
+}
+
+export function createCorsairServerQueryClient<TQueries extends CorsairQueries>(
+  queries: TQueries,
+  contextFactory: () => TQueries[keyof TQueries] extends CorsairQuery<
+    any,
+    any,
+    infer C
+  >
+    ? C
+    : never
+) {
+  type TContext = TQueries[keyof TQueries] extends CorsairQuery<
+    any,
+    any,
+    infer C
+  >
+    ? C
+    : never;
+
+  return {
+    query: async <P extends keyof TQueries>(
+      prompt: P,
+      input: InputForPrompt<TQueries, P>,
+      options?: {
+        validate?: boolean;
+      }
+    ): Promise<OutputForPrompt<TQueries, P>> => {
+      const { validate = true } = options || {};
+      const query = queries[prompt];
+      const context = contextFactory() as TContext;
+
+      if (validate) {
+        query.input_type.parse(input);
+      }
+
+      const result = await query.handler(input, context);
+
+      if (validate) {
+        return query.response_type.parse(result);
+      }
+
+      return result;
+    },
+  };
+}
+
+export function createCorsairServerMutationClient<
+  TMutations extends CorsairMutations
+>(
+  mutations: TMutations,
+  contextFactory: () => TMutations[keyof TMutations] extends CorsairMutation<
+    any,
+    any,
+    infer C
+  >
+    ? C
+    : never
+) {
+  type TContext = TMutations[keyof TMutations] extends CorsairMutation<
+    any,
+    any,
+    infer C
+  >
+    ? C
+    : never;
+
+  return {
+    mutate: async <P extends keyof TMutations>(
+      prompt: P,
+      input: InputForPrompt<TMutations, P>,
+      options?: {
+        validate?: boolean;
+      }
+    ): Promise<OutputForPrompt<TMutations, P>> => {
+      const { validate = true } = options || {};
+      const mutation = mutations[prompt];
+      const context = contextFactory() as TContext;
+
+      if (validate) {
+        mutation.input_type.parse(input);
+      }
+
+      const result = await mutation.handler(input, context);
+
+      if (validate) {
+        return mutation.response_type.parse(result);
+      }
+
+      return result;
     },
   };
 }

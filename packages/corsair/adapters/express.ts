@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { CorsairMutations, CorsairQueries } from "../client";
-import { ContextFactory, executeCorsairOperation } from "../api/mutation";
+import { ContextFactory, executeCorsairOperation } from "../api";
 
 export function createExpressHandler<
   TQueries extends CorsairQueries<TContext>,
