@@ -1,5 +1,6 @@
-import "dotenv/config";
-import { drizzle as drizzleOrm } from "drizzle-orm/node-postgres";
+// Schema builder utilities (safe for client-side imports)
+// No Node.js runtime dependencies
+
 import * as drizzle from "drizzle-orm";
 import * as drizzleZod from "drizzle-zod";
 import {
@@ -12,14 +13,8 @@ import {
   json,
   timestamp,
 } from "drizzle-orm/pg-core";
-import { Pool } from "pg";
 
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-});
-
-const db = (schema: Record<string, unknown>) =>
-  drizzleOrm(pool, { schema });
+import { sql } from "drizzle-orm";
 
 type AccessRule = string;
 
@@ -44,8 +39,9 @@ const table = <TTableName extends string, TColumns extends Record<string, any>>(
   return pgTableDrizzle(name, columns);
 };
 
-const CorsairDB = {
+const CorsairSchema = {
   table,
+  sql,
   text,
   uuid,
   integer,
@@ -53,13 +49,13 @@ const CorsairDB = {
   timestamp,
   date,
   json,
-  db,
   drizzle,
   drizzleZod,
 };
 
 export {
   table,
+  sql,
   text,
   uuid,
   integer,
@@ -67,9 +63,8 @@ export {
   timestamp,
   date,
   json,
-  db,
   drizzle,
   drizzleZod,
 };
 
-export default CorsairDB;
+export default CorsairSchema;

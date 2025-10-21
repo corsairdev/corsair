@@ -25,25 +25,21 @@ export type CorsairMutations<TContext = any> = {
 
 export const createMutation =
   <TContext>() =>
-  <TInputSchema extends z.ZodType, TOutputSchema extends z.ZodType>(mutation: {
-    prompt: string;
-    input_type: TInputSchema;
-    dependencies?: Dependencies;
-    response_type: TOutputSchema;
-    handler: (
-      input: z.infer<TInputSchema>,
-      context: TContext
-    ) => Promise<z.infer<TOutputSchema>>;
-  }): CorsairMutation<
+  <TInputSchema extends z.ZodType, TOutputSchema extends z.ZodType>(
+    mutation: CorsairMutation<
+      z.infer<TInputSchema>,
+      z.infer<TOutputSchema>,
+      TContext
+    > & {
+      input_type: TInputSchema;
+      response_type: TOutputSchema;
+    }
+  ): CorsairMutation<
     z.infer<TInputSchema>,
     z.infer<TOutputSchema>,
     TContext
   > => {
-    return mutation as CorsairMutation<
-      z.infer<TInputSchema>,
-      z.infer<TOutputSchema>,
-      TContext
-    >;
+    return mutation;
   };
 
 // QUERY TYPES
@@ -62,21 +58,17 @@ export type CorsairQueries<TContext = any> = Record<
 
 export const createQuery =
   <TContext>() =>
-  <TInputSchema extends z.ZodType, TOutputSchema extends z.ZodType>(query: {
-    prompt: string;
-    input_type: TInputSchema;
-    response_type: TOutputSchema;
-    dependencies?: Dependencies;
-    handler: (
-      input: z.infer<TInputSchema>,
-      context: TContext
-    ) => Promise<z.infer<TOutputSchema>>;
-  }): CorsairQuery<z.infer<TInputSchema>, z.infer<TOutputSchema>, TContext> => {
-    return query as CorsairQuery<
+  <TInputSchema extends z.ZodType, TOutputSchema extends z.ZodType>(
+    query: CorsairQuery<
       z.infer<TInputSchema>,
       z.infer<TOutputSchema>,
       TContext
-    >;
+    > & {
+      input_type: TInputSchema;
+      response_type: TOutputSchema;
+    }
+  ): CorsairQuery<z.infer<TInputSchema>, z.infer<TOutputSchema>, TContext> => {
+    return query;
   };
 
 // Type utilities

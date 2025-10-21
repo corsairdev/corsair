@@ -1,10 +1,12 @@
+import "server-only";
 import { NextRequest } from "next/server";
-import { db, DatabaseContext } from "./db";
+import { db, type DatabaseContext } from "./db";
 import * as schema from "./schema";
-import { cookies } from "next/headers";
 
 // Helper function to extract userId from request (for API routes)
-async function getUserIdFromRequest(request: NextRequest): Promise<string | undefined> {
+async function getUserIdFromRequest(
+  request: NextRequest
+): Promise<string | undefined> {
   // TODO: Implement your auth logic here
   // Examples:
   // - const session = await getServerSession(authOptions);

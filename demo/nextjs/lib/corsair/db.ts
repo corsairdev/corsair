@@ -1,4 +1,5 @@
-import CorsairDB from "../../../../packages/corsair/db";
+import "server-only";
+import CorsairDB from "corsair/db";
 import * as schema from "./schema";
 
 export const db = CorsairDB.db(schema);

@@ -1,7 +1,8 @@
-import { createMutation } from "../../../../packages/corsair/client";
-import { z } from "../../../../packages/corsair/client";
-import { DatabaseContext, schema } from "./db";
-import { drizzle, drizzleZod } from "../../../../packages/corsair/db";
+import { createMutation } from "corsair/core";
+import { z } from "corsair/core";
+import type { DatabaseContext } from "./db";
+import * as schema from "./schema";
+import { drizzle, drizzleZod } from "corsair/db/types";
 
 const mutation = createMutation<DatabaseContext>();
 

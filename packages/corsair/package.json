@@ -2,8 +2,10 @@
   "name": "corsair",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "scripts": {
+    "build": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1",
     "db:test": "tsx db/index.ts",
     "api:test": "tsx api/index.ts",
@@ -24,6 +26,26 @@
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
     },
+    "./core": {
+      "types": "./dist/core/index.d.ts",
+      "default": "./dist/core/index.js"
+    },
+    "./client": {
+      "types": "./dist/client/index.d.ts",
+      "default": "./dist/client/index.js"
+    },
+    "./db": {
+      "types": "./dist/db/index.d.ts",
+      "default": "./dist/db/index.js"
+    },
+    "./db/types": {
+      "types": "./dist/db/types.d.ts",
+      "default": "./dist/db/types.js"
+    },
+    "./db/schema-builder": {
+      "types": "./dist/db/schema-builder.d.ts",
+      "default": "./dist/db/schema-builder.js"
+    },
     "./nextjs": {
       "types": "./dist/adapters/nextjs.d.ts",
       "default": "./dist/adapters/nextjs.js"
@@ -32,17 +54,9 @@
       "types": "./dist/adapters/express.d.ts",
       "default": "./dist/adapters/express.js"
     },
-    "./fastify": {
-      "types": "./dist/adapters/fastify.d.ts",
-      "default": "./dist/adapters/fastify.js"
-    },
-    "./hono": {
-      "types": "./dist/adapters/hono.d.ts",
-      "default": "./dist/adapters/hono.js"
-    },
-    "./cloudflare": {
-      "types": "./dist/adapters/cloudflare.d.ts",
-      "default": "./dist/adapters/cloudflare.js"
+    "./schema": {
+      "types": "./dist/schema/index.d.ts",
+      "default": "./dist/schema/index.js"
     }
   },
   "peerDependencies": {
@@ -85,18 +99,19 @@
     "zod": "^4.1.12"
   },
   "devDependencies": {
-    "drizzle-kit": "^0.31.5",
+    "@cloudflare/workers-types": "^4.0.0",
+    "@types/express": "^4.0.0",
     "@types/madge": "^5.0.3",
     "@types/node": "^22.18.11",
     "@types/pg": "^8.15.5",
     "@types/react": "^19.2.2",
-    "react": "^19.2.0",
-    "typescript": "^5.9.3",
-    "next": "^14.0.0",
+    "drizzle-kit": "^0.31.5",
     "express": "^4.0.0",
     "fastify": "^4.0.0",
     "hono": "^3.0.0",
-    "@cloudflare/workers-types": "^4.0.0",
-    "@types/express": "^4.0.0"
+    "next": "15.5.6",
+    "react": "^19.1.0",
+    "react-dom": "19.1.0",
+    "typescript": "^5.9.3"
   }
 }
