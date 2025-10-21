@@ -12,6 +12,6 @@ rm -rf drizzle/
 
 echo "Done! Migration applied and SQL saved."
 
-echo "Check now to see if there will be any conflicts."
+echo "Checking for conflicts..."
 
 pnpm run check

@@ -1,4 +1,4 @@
-import { CorsairMutations, CorsairQueries, z } from "../client";
+import { CorsairMutations, CorsairQueries, z } from ".";
 
 export type ContextFactory<TContext> = (
   request: any

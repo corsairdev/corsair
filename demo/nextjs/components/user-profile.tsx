@@ -10,21 +10,21 @@ export function UserProfile({ userId }: { userId: string }) {
     error,
   } = useCorsairQuery("get user by id", { id: userId });
 
-  // QUERY: Get user's posts
-  const { data: posts } = useCorsairQuery(
-    "get user posts",
-    { userId },
-    { enabled: !!user } // Only fetch if user exists
-  );
+  // // QUERY: Get user's posts
+  // const { data: posts } = useCorsairQuery(
+  //   "get user posts",
+  //   { userId },
+  //   { enabled: !!user } // Only fetch if user exists
+  // );
 
-  // MUTATION: Update user
-  const updateUserMutation = useCorsairMutation("update user");
+  // // MUTATION: Update user
+  // const updateUserMutation = useCorsairMutation("update user");
 
-  // MUTATION: Create post
-  const createPostMutation = useCorsairMutation("create post");
+  // // MUTATION: Create post
+  // const createPostMutation = useCorsairMutation("create post");
 
-  if (isLoading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error.message}</div>;
+  // if (isLoading) return <div>Loading...</div>;
+  // if (error) return <div>Error: {error.message}</div>;
   if (!user) return <div>User not found</div>;
 
   return (
@@ -32,7 +32,7 @@ export function UserProfile({ userId }: { userId: string }) {
       <h1>{user.name}</h1>
       <p>{user.id}</p>
 
-      <button
+      {/* <button
         onClick={() =>
           updateUserMutation.mutateAsync({
             id: userId,
@@ -41,9 +41,9 @@ export function UserProfile({ userId }: { userId: string }) {
         }
       >
         Update Name
-      </button>
+      </button> */}
 
-      <h2>Posts</h2>
+      {/* <h2>Posts</h2>
       {posts?.map((post) => (
         <div key={post.id}>
           <h3>{post.title}</h3>
@@ -60,7 +60,7 @@ export function UserProfile({ userId }: { userId: string }) {
         }}
       >
         Create Post
-      </button>
+      </button> */}
     </div>
   );
 }

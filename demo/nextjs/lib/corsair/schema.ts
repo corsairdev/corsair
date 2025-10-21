@@ -1,9 +1,11 @@
-import CorsairDB from "../../../../packages/corsair/db";
+import CorsairDB from "corsair/db/schema-builder";
 
 export const users = CorsairDB.table(
   "users",
   {
-    id: CorsairDB.uuid().primaryKey(),
+    id: CorsairDB.uuid()
+      .primaryKey()
+      .default(CorsairDB.sql`uuid_generate_v4()`),
     name: CorsairDB.text(),
   },
   {

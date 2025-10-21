@@ -21,11 +21,16 @@
     "rootDir": "."
   },
   "include": [
+    "index.ts",
     "db/**/*",
     "api/**/*",
     "scripts/**/*",
+    "core/**/*",
+    "watch/**/*",
     "client/**/*",
-    "watch/**/*"
+    "adapters/nextjs.ts",
+    "adapters/express.ts",
+    "schema/**/*"
   ],
   "exclude": ["node_modules", "dist"]
 }
