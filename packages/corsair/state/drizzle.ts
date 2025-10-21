@@ -1,10 +1,10 @@
-import { table, t } from "../db";
+import CorsairDB from "../db";
 
-export const users = table(
+export const users = CorsairDB.table(
   "users",
   {
-    id: t.uuid().primaryKey(),
-    name: t.text(),
+    id: CorsairDB.uuid().primaryKey(),
+    name: CorsairDB.text(),
   },
   {
     access: {
@@ -16,13 +16,13 @@ export const users = table(
   }
 );
 
-export const posts = table(
+export const posts = CorsairDB.table(
   "posts",
   {
-    id: t.uuid().primaryKey(),
-    title: t.text(),
-    content: t.text(),
-    author_id: t.uuid().references(() => users.id),
+    id: CorsairDB.uuid().primaryKey(),
+    title: CorsairDB.text(),
+    content: CorsairDB.text(),
+    author_id: CorsairDB.uuid().references(() => users.id),
   },
   {
     access: {
