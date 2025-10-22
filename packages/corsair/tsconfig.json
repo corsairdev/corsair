@@ -28,6 +28,7 @@
     "core/**/*",
     "watch/**/*",
     "client/**/*",
+    "cli/**/*",
     "adapters/nextjs.ts",
     "adapters/express.ts",
     "schema/**/*"

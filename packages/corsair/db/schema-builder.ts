@@ -12,6 +12,7 @@ import {
   date,
   json,
   timestamp,
+  jsonb as jsonbDrizzle,
 } from "drizzle-orm/pg-core";
 
 import { sql } from "drizzle-orm";
@@ -39,6 +40,9 @@ const table = <TTableName extends string, TColumns extends Record<string, any>>(
   return pgTableDrizzle(name, columns);
 };
 
+const jsonb = (columnName: string) => () =>
+  jsonbDrizzle(columnName).$type<JSON | string[]>();
+
 const CorsairSchema = {
   table,
   sql,
@@ -49,6 +53,7 @@ const CorsairSchema = {
   timestamp,
   date,
   json,
+  jsonb,
   drizzle,
   drizzleZod,
 };
@@ -63,6 +68,7 @@ export {
   timestamp,
   date,
   json,
+  jsonb,
   drizzle,
   drizzleZod,
 };
