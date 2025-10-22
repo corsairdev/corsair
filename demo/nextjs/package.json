@@ -6,7 +6,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "corsair:generate": "corsair generate",
+    "corsair:check": "corsair check",
+    "corsair:migrate": "corsair migrate"
   },
   "dependencies": {
     "@radix-ui/react-avatar": "^1.1.10",

@@ -39,3 +39,8 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# corsair
+.drizzle.config.tmp.js
+lib/corsair/sql
+lib/corsair/drizzle
