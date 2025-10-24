@@ -14,7 +14,7 @@ type Dependencies = {
 export type CorsairMutation<TInput = any, TOutput = any, TContext = any> = {
   prompt: string;
   input_type: z.ZodType<TInput>;
-  response_type: z.ZodType<TOutput>;
+  response_type?: z.ZodType<TOutput>;
   dependencies?: Dependencies;
   handler: (input: TInput, context: TContext) => Promise<TOutput>;
 };
@@ -23,30 +23,69 @@ export type CorsairMutations<TContext = any> = {
   [K: string]: CorsairMutation<any, any, TContext>;
 };
 
-export const createMutation =
-  <TContext>() =>
-  <TInputSchema extends z.ZodType, TOutputSchema extends z.ZodType>(
-    mutation: CorsairMutation<
-      z.infer<TInputSchema>,
-      z.infer<TOutputSchema>,
-      TContext
-    > & {
+export const createMutation = <TContext>() => {
+  return <TInputSchema extends z.ZodType, TOutput = any>(
+    mutation: {
+      prompt: string;
       input_type: TInputSchema;
-      response_type: TOutputSchema;
-    }
-  ): CorsairMutation<
-    z.infer<TInputSchema>,
-    z.infer<TOutputSchema>,
-    TContext
-  > => {
-    return mutation;
+      dependencies?: Dependencies;
+    } & (
+      | {
+          response_type: z.ZodType<TOutput>;
+          handler: (
+            input: z.infer<TInputSchema>,
+            context: TContext
+          ) => Promise<TOutput>;
+        }
+      | {
+          response_type?: never;
+          handler: (
+            input: z.infer<TInputSchema>,
+            context: TContext
+          ) => Promise<TOutput>;
+        }
+    )
+  ): CorsairMutation<z.infer<TInputSchema>, TOutput, TContext> => {
+    // Wrap handler with runtime validation if response_type is provided
+    const originalHandler = mutation.handler;
+    const wrappedHandler = async (
+      input: z.infer<TInputSchema>,
+      context: TContext
+    ): Promise<TOutput> => {
+      const result = await originalHandler(input, context);
+
+      // Runtime validation if schema is provided
+      if (mutation.response_type) {
+        try {
+          return mutation.response_type.parse(result) as TOutput;
+        } catch (error) {
+          if (error instanceof z.ZodError) {
+            throw new Error(
+              `Mutation "${mutation.prompt}" handler returned invalid data: ${error.message}`
+            );
+          }
+          throw error;
+        }
+      }
+
+      return result;
+    };
+
+    return {
+      prompt: mutation.prompt,
+      input_type: mutation.input_type,
+      response_type: mutation.response_type,
+      dependencies: mutation.dependencies,
+      handler: wrappedHandler,
+    } as CorsairMutation<z.infer<TInputSchema>, TOutput, TContext>;
   };
+};
 
 // QUERY TYPES
 export type CorsairQuery<TInput = any, TOutput = any, TContext = any> = {
   prompt: string;
   input_type: z.ZodType<TInput>;
-  response_type: z.ZodType<TOutput>;
+  response_type?: z.ZodType<TOutput>;
   dependencies?: Dependencies;
   handler: (input: TInput, context: TContext) => Promise<TOutput>;
 };
@@ -56,20 +95,63 @@ export type CorsairQueries<TContext = any> = Record<
   CorsairQuery<any, any, TContext>
 >;
 
-export const createQuery =
-  <TContext>() =>
-  <TInputSchema extends z.ZodType, TOutputSchema extends z.ZodType>(
-    query: CorsairQuery<
-      z.infer<TInputSchema>,
-      z.infer<TOutputSchema>,
-      TContext
-    > & {
+export const createQuery = <TContext>() => {
+  return <TInputSchema extends z.ZodType, TOutput = any>(
+    query: {
+      prompt: string;
       input_type: TInputSchema;
-      response_type: TOutputSchema;
-    }
-  ): CorsairQuery<z.infer<TInputSchema>, z.infer<TOutputSchema>, TContext> => {
-    return query;
+      dependencies?: Dependencies;
+    } & (
+      | {
+          response_type: z.ZodType<TOutput>;
+          handler: (
+            input: z.infer<TInputSchema>,
+            context: TContext
+          ) => Promise<TOutput>;
+        }
+      | {
+          response_type?: never;
+          handler: (
+            input: z.infer<TInputSchema>,
+            context: TContext
+          ) => Promise<TOutput>;
+        }
+    )
+  ): CorsairQuery<z.infer<TInputSchema>, TOutput, TContext> => {
+    // Wrap handler with runtime validation if response_type is provided
+    const originalHandler = query.handler;
+    const wrappedHandler = async (
+      input: z.infer<TInputSchema>,
+      context: TContext
+    ): Promise<TOutput> => {
+      const result = await originalHandler(input, context);
+
+      // Runtime validation if schema is provided
+      if (query.response_type) {
+        try {
+          return query.response_type.parse(result) as TOutput;
+        } catch (error) {
+          if (error instanceof z.ZodError) {
+            throw new Error(
+              `Query "${query.prompt}" handler returned invalid data: ${error.message}`
+            );
+          }
+          throw error;
+        }
+      }
+
+      return result;
+    };
+
+    return {
+      prompt: query.prompt,
+      input_type: query.input_type,
+      response_type: query.response_type,
+      dependencies: query.dependencies,
+      handler: wrappedHandler,
+    } as CorsairQuery<z.infer<TInputSchema>, TOutput, TContext>;
   };
+};
 
 // Type utilities
 type InferZodInput<T> = T extends z.ZodType<infer U> ? U : never;
@@ -83,7 +165,52 @@ type InputForPrompt<
 type OutputForPrompt<
   TOperations extends CorsairMutations | CorsairQueries,
   P extends keyof TOperations
-> = InferZodOutput<TOperations[P]["response_type"]>;
+> = TOperations[P] extends CorsairQuery<any, infer TOutput, any>
+  ? TOutput
+  : TOperations[P] extends CorsairMutation<any, infer TOutput, any>
+  ? TOutput
+  : never;
+
+// Public type inference utilities (similar to tRPC's inferRouterOutputs)
+export type InferQueryOutput<T> = T extends CorsairQuery<any, infer TOutput, any>
+  ? TOutput
+  : never;
+
+export type InferQueryInput<T> = T extends CorsairQuery<infer TInput, any, any>
+  ? TInput
+  : never;
+
+export type InferMutationOutput<T> = T extends CorsairMutation<
+  any,
+  infer TOutput,
+  any
+>
+  ? TOutput
+  : never;
+
+export type InferMutationInput<T> = T extends CorsairMutation<
+  infer TInput,
+  any,
+  any
+>
+  ? TInput
+  : never;
+
+export type InferQueriesOutputs<T extends CorsairQueries> = {
+  [K in keyof T]: InferQueryOutput<T[K]>;
+};
+
+export type InferQueriesInputs<T extends CorsairQueries> = {
+  [K in keyof T]: InferQueryInput<T[K]>;
+};
+
+export type InferMutationsOutputs<T extends CorsairMutations> = {
+  [K in keyof T]: InferMutationOutput<T[K]>;
+};
+
+export type InferMutationsInputs<T extends CorsairMutations> = {
+  [K in keyof T]: InferMutationInput<T[K]>;
+};
 
 export function createCorsairQueryClient<TQueries extends CorsairQueries>(
   queries: TQueries
@@ -135,7 +262,7 @@ export function createCorsairQueryClient<TQueries extends CorsairQueries>(
 
           const data = await res.json();
 
-          if (validate) {
+          if (validate && query.response_type) {
             return query.response_type.parse(data);
           }
 
@@ -203,7 +330,7 @@ export function createCorsairMutationClient<
 
           const data = await res.json();
 
-          if (validate) {
+          if (validate && mutation.response_type) {
             return mutation.response_type.parse(data);
           }
 
@@ -250,7 +377,7 @@ export function createCorsairServerQueryClient<TQueries extends CorsairQueries>(
 
       const result = await query.handler(input, context);
 
-      if (validate) {
+      if (validate && query.response_type) {
         return query.response_type.parse(result);
       }
 
@@ -297,7 +424,7 @@ export function createCorsairServerMutationClient<
 
       const result = await mutation.handler(input, context);
 
-      if (validate) {
+      if (validate && mutation.response_type) {
         return mutation.response_type.parse(result);
       }
 

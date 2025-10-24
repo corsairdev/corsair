@@ -1,5 +1,5 @@
 import "dotenv/config";
-import { drizzle as drizzleOrm } from "drizzle-orm/node-postgres";
+import { drizzle as db } from "drizzle-orm/node-postgres";
 import * as drizzle from "drizzle-orm";
 import * as drizzleZod from "drizzle-zod";
 import {
@@ -14,12 +14,9 @@ import {
 } from "drizzle-orm/pg-core";
 import { Pool } from "pg";
 
-const pool = new Pool({
+export const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
 });
-
-const db = (schema: Record<string, unknown>) =>
-  drizzleOrm(pool, { schema });
 
 type AccessRule = string;
 

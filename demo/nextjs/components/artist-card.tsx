@@ -2,10 +2,11 @@ import { SpotifyArtist } from "@/lib/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
+import { QueryOutputs } from "@/lib/corsair/client";
 
 interface ArtistCardProps {
-  artist: SpotifyArtist;
-  onClick?: (artist: SpotifyArtist) => void;
+  artist: QueryOutputs["get all artists"][number];
+  onClick?: (artist: QueryOutputs["get all artists"][number]) => void;
 }
 
 export function ArtistCard({ artist, onClick }: ArtistCardProps) {
@@ -26,14 +27,17 @@ export function ArtistCard({ artist, onClick }: ArtistCardProps) {
     >
       <CardHeader className="flex flex-row items-center gap-4">
         <Avatar className="h-16 w-16">
-          <AvatarImage src={artist.images?.[0]?.url} alt={artist.name} />
-          <AvatarFallback>{artist.name.charAt(0)}</AvatarFallback>
+          <AvatarImage
+            src={(artist.images as unknown as { url: string }[])?.[0]?.url}
+            alt={artist.name ?? undefined}
+          />
+          <AvatarFallback>{artist.name?.charAt(0) ?? ""}</AvatarFallback>
         </Avatar>
         <div className="flex-1">
           <CardTitle>{artist.name}</CardTitle>
           {artist.followers && (
             <p className="text-sm text-muted-foreground">
-              {formatFollowers(artist.followers.total)} followers
+              {formatFollowers(artist.followers)} followers
             </p>
           )}
         </div>
@@ -43,9 +47,9 @@ export function ArtistCard({ artist, onClick }: ArtistCardProps) {
           {artist.popularity !== undefined && (
             <Badge variant="secondary">Popularity: {artist.popularity}</Badge>
           )}
-          {artist.genres && artist.genres.length > 0 && (
+          {artist.genres && (artist.genres as string[]).length > 0 && (
             <div className="flex gap-1 flex-wrap">
-              {artist.genres.slice(0, 3).map((genre) => (
+              {(artist.genres as string[]).slice(0, 3).map((genre) => (
                 <Badge key={genre} variant="outline">
                   {genre}
                 </Badge>

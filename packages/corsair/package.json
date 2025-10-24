@@ -5,9 +5,10 @@
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "bin": {
-    "corsair": "./dist/cli/index.js"
+    "corsair": "./dist/watch/index.js"
   },
   "scripts": {
+    "build-watch": "tsc --watch",
     "build": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1",
     "db:test": "tsx db/index.ts",
@@ -90,13 +91,22 @@
   "dependencies": {
     "@supabase/postgrest-js": "^2.75.1",
     "@tanstack/react-query": "^5.90.5",
+    "@trpc/client": "^11.6.0",
+    "@trpc/server": "^11.6.0",
+    "@trpc/tanstack-react-query": "^11.6.0",
+    "boxen": "^8.0.1",
+    "chalk": "^5.6.2",
     "chokidar": "^4.0.3",
     "dotenv": "^17.2.3",
     "drizzle-orm": "^0.44.6",
     "drizzle-zod": "^0.8.3",
+    "ink": "^6.3.1",
+    "ink-spinner": "^5.0.0",
+    "ink-text-input": "^6.0.0",
     "madge": "^8.0.0",
     "pg": "^8.16.3",
     "postgrest-js": "2.0.0-rc1",
+    "superjson": "^2.2.3",
     "ts-morph": "^27.0.2",
     "tsx": "^4.20.6",
     "zod": "^4.1.12"

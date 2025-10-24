@@ -31,7 +31,8 @@
     "cli/**/*",
     "adapters/nextjs.ts",
     "adapters/express.ts",
-    "schema/**/*"
+    "schema/**/*",
+    "trpc/**/*"
   ],
   "exclude": ["node_modules", "dist"]
 }

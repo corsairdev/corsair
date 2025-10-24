@@ -1,8 +1,9 @@
 import "server-only";
 import CorsairDB from "corsair/db";
 import * as schema from "./schema";
+import { pool } from "corsair/db";
 
-export const db = CorsairDB.db(schema);
+export const db = CorsairDB.db(pool, { schema });
 
 // Export the DB type for use in mutations
 export type DatabaseContext = {
