@@ -20,9 +20,10 @@ import {
 import { useUpdateArtistPopularity } from "@/lib/api/mutations.client";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
+import { QueryOutputs } from "@/lib/corsair/client";
 
 interface ArtistDetailsSheetProps {
-  artist: SpotifyArtist | null;
+  artist: QueryOutputs["get artist by id"];
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
@@ -106,18 +107,21 @@ export function ArtistDetailsSheet({
           <div className="flex items-center gap-4 mb-4">
             <Avatar className="h-24 w-24">
               <AvatarImage
-                src={localArtist.images?.[0]?.url}
-                alt={localArtist.name}
+                src={
+                  (localArtist.images as unknown as { url: string }[])?.[0]
+                    ?.url || ""
+                }
+                alt={localArtist.name || ""}
               />
               <AvatarFallback className="text-2xl">
-                {localArtist.name.charAt(0)}
+                {localArtist.name?.charAt(0) || ""}
               </AvatarFallback>
             </Avatar>
             <div className="flex-1">
               <SheetTitle className="text-3xl">{localArtist.name}</SheetTitle>
               {localArtist.followers && (
                 <SheetDescription className="text-base mt-1">
-                  {formatFollowers(localArtist.followers.total)} followers
+                  {formatFollowers(localArtist.followers)} followers
                 </SheetDescription>
               )}
             </div>
@@ -147,15 +151,16 @@ export function ArtistDetailsSheet({
                 </Button>
               </div>
             )}
-            {localArtist.genres && localArtist.genres.length > 0 && (
-              <>
-                {localArtist.genres.map((genre) => (
-                  <Badge key={genre} variant="outline">
-                    {genre}
-                  </Badge>
-                ))}
-              </>
-            )}
+            {localArtist.genres &&
+              (localArtist.genres as string[]).length > 0 && (
+                <>
+                  {(localArtist.genres as string[]).map((genre) => (
+                    <Badge key={genre} variant="outline">
+                      {genre}
+                    </Badge>
+                  ))}
+                </>
+              )}
           </div>
         </SheetHeader>
 
@@ -173,8 +178,11 @@ export function ArtistDetailsSheet({
                   <Card key={album.id} className="overflow-hidden">
                     <div className="relative aspect-square w-full">
                       <Image
-                        src={album.images[0]?.url || "/placeholder.png"}
-                        alt={album.name}
+                        src={
+                          (album.images as unknown as { url: string }[])?.[0]
+                            ?.url || "/placeholder.png"
+                        }
+                        alt={album.name || ""}
                         fill
                         className="object-cover"
                         sizes="(max-width: 768px) 50vw, 25vw"
@@ -185,7 +193,7 @@ export function ArtistDetailsSheet({
                         {album.name}
                       </CardTitle>
                       <p className="text-xs text-muted-foreground">
-                        {new Date(album.release_date).getFullYear()}
+                        {new Date(album.release_date).getFullYear() || ""}
                       </p>
                     </CardHeader>
                   </Card>

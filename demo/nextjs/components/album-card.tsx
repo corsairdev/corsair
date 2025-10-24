@@ -1,11 +1,11 @@
-import { SpotifyAlbum } from "@/lib/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
+import { QueryOutputs } from "@/lib/corsair/client";
 
 interface AlbumCardProps {
-  album: SpotifyAlbum;
-  onClick?: (album: SpotifyAlbum) => void;
+  album: QueryOutputs["get album by id with artists"];
+  onClick?: (album: QueryOutputs["get album by id with artists"]) => void;
 }
 
 export function AlbumCard({ album, onClick }: AlbumCardProps) {
@@ -26,28 +26,33 @@ export function AlbumCard({ album, onClick }: AlbumCardProps) {
       <CardHeader>
         <div className="relative aspect-square w-full mb-4">
           <Image
-            src={album.images[0]?.url || "/placeholder.png"}
-            alt={album.name}
+            src={
+              (album?.images as unknown as { url: string }[])?.[0]?.url ||
+              "/placeholder.png"
+            }
+            alt={album?.name ?? ""}
             fill
             className="object-cover rounded-md"
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           />
         </div>
-        <CardTitle className="line-clamp-2">{album.name}</CardTitle>
+        <CardTitle className="line-clamp-2">{album?.name ?? ""}</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="space-y-2">
           <p className="text-sm text-muted-foreground">
-            {album.artists.map((artist) => artist.name).join(", ")}
+            {(album?.artists as unknown as { name: string }[])
+              .map((artist) => artist.name)
+              .join(", ")}
           </p>
           <div className="flex items-center justify-between">
-            <Badge variant="secondary">{album.album_type}</Badge>
+            <Badge variant="secondary">{album?.album_type ?? ""}</Badge>
             <span className="text-xs text-muted-foreground">
-              {formatDate(album.release_date)}
+              {formatDate(album?.release_date as string)}
             </span>
           </div>
           <p className="text-xs text-muted-foreground">
-            {album.total_tracks} track{album.total_tracks !== 1 ? "s" : ""}
+            {album?.total_tracks} track{album?.total_tracks !== 1 ? "s" : ""}
           </p>
         </div>
       </CardContent>

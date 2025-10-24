@@ -12,9 +12,10 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { useState } from "react";
 import { ArrowUpDown } from "lucide-react";
+import { QueryOutputs } from "@/lib/corsair/client";
 
 interface TracksTableProps {
-  tracks: SpotifyTrack[];
+  tracks: QueryOutputs["get tracks by album id"];
 }
 
 type SortField = "track_number" | "name" | "duration_ms" | "artists";
@@ -44,16 +45,20 @@ export function TracksTable({ tracks }: TracksTableProps) {
 
     switch (sortField) {
       case "track_number":
-        comparison = a.track_number - b.track_number;
+        comparison = (a.track_number || 0) - (b.track_number || 0);
         break;
       case "name":
-        comparison = a.name.localeCompare(b.name);
+        comparison = (a.name || "").localeCompare(b.name || "");
         break;
       case "duration_ms":
-        comparison = a.duration_ms - b.duration_ms;
+        comparison = (a.duration_ms || 0) - (b.duration_ms || 0);
         break;
       case "artists":
-        comparison = a.artists[0].name.localeCompare(b.artists[0].name);
+        comparison = (
+          a.artists as unknown as { name: string }[]
+        )[0].name.localeCompare(
+          (b.artists as unknown as { name: string }[])[0].name
+        );
         break;
     }
 

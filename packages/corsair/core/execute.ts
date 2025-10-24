@@ -50,17 +50,22 @@ export async function executeCorsairOperation<
     // Execute handler with context
     const result = await operation.handler(input, context);
 
-    // Validate output
-    try {
-      const validatedResult = operation.response_type.parse(result);
-      return { success: true, data: validatedResult };
-    } catch (error) {
-      console.error("Response validation failed:", error);
-      return {
-        success: false,
-        error: "Internal server error: invalid response format",
-      };
+    // Validate output if response_type is provided
+    if (operation.response_type) {
+      try {
+        const validatedResult = operation.response_type.parse(result);
+        return { success: true, data: validatedResult };
+      } catch (error) {
+        console.error("Response validation failed:", error);
+        return {
+          success: false,
+          error: "Internal server error: invalid response format",
+        };
+      }
     }
+
+    // No response_type - return result as-is
+    return { success: true, data: result };
   } catch (error) {
     console.error("Corsair execution error:", error);
     return {

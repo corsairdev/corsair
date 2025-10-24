@@ -1,6 +1,5 @@
 "use client";
 
-import { SpotifyAlbum } from "@/lib/types";
 import {
   Sheet,
   SheetContent,
@@ -12,9 +11,10 @@ import { Badge } from "@/components/ui/badge";
 import { TracksTable } from "@/components/tracks-table";
 import Image from "next/image";
 import { useTracksByAlbumId } from "@/lib/api/queries.client";
+import { QueryOutputs } from "@/lib/corsair/client";
 
 interface AlbumDetailsSheetProps {
-  album: SpotifyAlbum | null;
+  album: QueryOutputs["get album by id with artists"] | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
@@ -46,8 +46,11 @@ export function AlbumDetailsSheet({
         <SheetHeader className="space-y-3">
           <div className="relative aspect-square w-48 mx-auto mb-4">
             <Image
-              src={album.images[0]?.url || "/placeholder.png"}
-              alt={album.name}
+              src={
+                (album?.images as unknown as { url: string }[])?.[0]?.url ||
+                "/placeholder.png"
+              }
+              alt={album.name || ""}
               fill
               className="object-cover rounded-md"
               sizes="192px"
@@ -63,7 +66,7 @@ export function AlbumDetailsSheet({
           <div className="flex items-center gap-4 flex-wrap">
             <Badge variant="secondary">{album.album_type}</Badge>
             <span className="text-sm text-muted-foreground">
-              Released: {formatDate(album.release_date)}
+              Released: {formatDate(album.release_date || "")}
             </span>
             <span className="text-sm text-muted-foreground">
               {album.total_tracks} track{album.total_tracks !== 1 ? "s" : ""}

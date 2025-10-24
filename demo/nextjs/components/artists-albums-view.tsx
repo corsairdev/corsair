@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { SpotifyArtist, SpotifyAlbum } from "@/lib/types";
 import { ArtistCard } from "@/components/artist-card";
 import { AlbumCard } from "@/components/album-card";
 import { ArtistDetailsSheet } from "@/components/artist-details-sheet";
@@ -13,10 +12,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { type QueryOutputs } from "@/lib/corsair/client";
 
 interface ArtistsAlbumsViewProps {
-  initialArtists: SpotifyArtist[];
-  initialAlbums: SpotifyAlbum[];
+  initialArtists: QueryOutputs["get all artists"];
+  initialAlbums: QueryOutputs["get all albums"];
 }
 
 export function ArtistsAlbumsView({
@@ -24,20 +24,24 @@ export function ArtistsAlbumsView({
   initialAlbums,
 }: ArtistsAlbumsViewProps) {
   const [view, setView] = useState<"all" | "artists" | "albums">("all");
-  const [selectedArtist, setSelectedArtist] = useState<SpotifyArtist | null>(
-    null
-  );
-  const [selectedAlbum, setSelectedAlbum] = useState<SpotifyAlbum | null>(null);
+  const [selectedArtist, setSelectedArtist] = useState<
+    QueryOutputs["get all artists"][number] | null
+  >(null);
+  const [selectedAlbum, setSelectedAlbum] = useState<
+    QueryOutputs["get all albums"][number] | null
+  >(null);
   const [artistSheetOpen, setArtistSheetOpen] = useState(false);
   const [albumSheetOpen, setAlbumSheetOpen] = useState(false);
 
-  const handleArtistClick = (artist: SpotifyArtist) => {
-    setSelectedArtist(artist);
+  const handleArtistClick = (
+    artist: QueryOutputs["get all artists"][number]
+  ) => {
+    setSelectedArtist(artist as QueryOutputs["get all artists"][number]);
     setArtistSheetOpen(true);
   };
 
-  const handleAlbumClick = (album: SpotifyAlbum) => {
-    setSelectedAlbum(album);
+  const handleAlbumClick = (album: QueryOutputs["get all albums"][number]) => {
+    setSelectedAlbum(album as QueryOutputs["get all albums"][number]);
     setAlbumSheetOpen(true);
   };
 

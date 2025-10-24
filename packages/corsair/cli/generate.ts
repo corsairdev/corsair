@@ -7,7 +7,6 @@ import {
   readdirSync,
   copyFileSync,
   rmSync,
-  writeFileSync,
 } from "fs";
 import { resolve, join, dirname } from "path";
 import { fileURLToPath } from "url";
@@ -28,19 +27,22 @@ function getCorsairDrizzleKitPath(): string {
 
 async function runDrizzleCommand(
   command: "pull" | "generate",
-  config: { schema?: string; out?: string; configPath?: string }
+  config: { schema: string; out: string; dialect: string; url: string }
 ): Promise<boolean> {
   return new Promise((resolve) => {
     const drizzleKitPath = getCorsairDrizzleKitPath();
     const args: string[] = [command];
 
-    if (config.configPath) {
-      args.push("--config", config.configPath);
+    if (command === "pull") {
+      // pull command needs database URL and output directory
+      args.push("--dialect", config.dialect);
+      args.push("--out", config.out);
+      args.push("--url", config.url);
     } else {
-      if (command === "generate" && config.schema && config.out) {
-        args.push("--schema", config.schema);
-        args.push("--out", config.out);
-      }
+      // generate command needs schema, output, and dialect
+      args.push("--schema", config.schema);
+      args.push("--out", config.out);
+      args.push("--dialect", config.dialect);
     }
 
     const child = spawn(drizzleKitPath, args, {
@@ -66,50 +68,34 @@ export async function generate() {
   const schemaPath = getSchemaPath(cfg);
   const outPath = resolve(process.cwd(), cfg.out);
 
-  // Create temporary drizzle config for the user's project
-  const tempConfigPath = resolve(process.cwd(), ".drizzle.config.tmp.js");
-  const drizzleConfig = `
-export default {
-  out: "${outPath.replace(/\\/g, "/")}",
-  schema: "${schemaPath.replace(/\\/g, "/")}",
-  dialect: "postgresql",
-  dbCredentials: {
-    url: process.env.DATABASE_URL,
-  },
-  casing: "snake_case",
-};
-`;
-
-  writeFileSync(tempConfigPath, drizzleConfig);
-
   // Create drizzle output directory for snapshot.json
   if (!existsSync(outPath)) {
     mkdirSync(outPath, { recursive: true });
   }
 
+  const drizzleConfig = {
+    schema: cfg.schema,
+    out: cfg.out,
+    dialect: "postgresql" as const,
+    url: process.env.DATABASE_URL!,
+  };
+
   try {
     // Pull current schema from database
     console.log("📥 Pulling current schema from database...\n");
-    const pullSuccess = await runDrizzleCommand("pull", {
-      configPath: tempConfigPath,
-    });
+    const pullSuccess = await runDrizzleCommand("pull", drizzleConfig);
 
     if (!pullSuccess) {
       console.error("❌ Failed to pull schema from database");
-      rmSync(tempConfigPath, { force: true });
-      rmSync(outPath, { recursive: true, force: true });
       process.exit(1);
     }
 
     // Generate migration
     console.log("\n📝 Generating migration files...\n");
-    const generateSuccess = await runDrizzleCommand("generate", {
-      configPath: tempConfigPath,
-    });
+    const generateSuccess = await runDrizzleCommand("generate", drizzleConfig);
 
     if (!generateSuccess) {
       console.error("❌ Failed to generate migrations");
-      rmSync(tempConfigPath, { force: true });
       rmSync(outPath, { recursive: true, force: true });
       process.exit(1);
     }
@@ -135,14 +121,9 @@ export default {
     }
 
     // Clean up drizzle folder (including snapshot.json and meta)
-    // TEMPORARILY DISABLED FOR DEBUGGING
-    // if (existsSync(outPath)) {
-    //   rmSync(outPath, { recursive: true, force: true });
-    // }
-
-    // Clean up temp config
-    // TEMPORARILY DISABLED FOR DEBUGGING
-    // rmSync(tempConfigPath, { force: true });
+    if (existsSync(outPath)) {
+      rmSync(outPath, { recursive: true, force: true });
+    }
 
     console.log("\n🔍 Checking for conflicts...\n");
 
@@ -150,10 +131,7 @@ export default {
     const { check } = await import("./check.js");
     await check();
   } catch (error) {
-    // Clean up temp config and drizzle folder on error
-    if (existsSync(tempConfigPath)) {
-      rmSync(tempConfigPath, { force: true });
-    }
+    // Clean up drizzle folder on error
     if (existsSync(outPath)) {
       rmSync(outPath, { recursive: true, force: true });
     }

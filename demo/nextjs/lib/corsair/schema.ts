@@ -1,5 +1,7 @@
 import CorsairDB from "corsair/db/schema-builder";
 
+export * from "./relations";
+
 export const artists = CorsairDB.table(
   "artists",
   {
