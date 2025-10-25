@@ -11,6 +11,8 @@ type Dependencies = {
   columns?: string[];
 };
 
+type CorsairPrompt<T> = T | (string & {});
+
 export type CorsairMutation<TInput = any, TOutput = any, TContext = any> = {
   prompt: string;
   input_type: z.ZodType<TInput>;
@@ -172,7 +174,11 @@ type OutputForPrompt<
   : never;
 
 // Public type inference utilities (similar to tRPC's inferRouterOutputs)
-export type InferQueryOutput<T> = T extends CorsairQuery<any, infer TOutput, any>
+export type InferQueryOutput<T> = T extends CorsairQuery<
+  any,
+  infer TOutput,
+  any
+>
   ? TOutput
   : never;
 
@@ -217,7 +223,7 @@ export function createCorsairQueryClient<TQueries extends CorsairQueries>(
 ) {
   return {
     useQuery: <P extends keyof TQueries>(
-      prompt: P,
+      prompt: CorsairPrompt<P>,
       input: InputForPrompt<TQueries, P>,
       options?: Omit<
         UseQueryOptions<OutputForPrompt<TQueries, P>>,
@@ -279,7 +285,7 @@ export function createCorsairMutationClient<
 >(mutations: TMutations) {
   return {
     useMutation: <P extends keyof TMutations>(
-      prompt: P,
+      prompt: CorsairPrompt<P>,
       options?: Omit<
         UseMutationOptions<
           OutputForPrompt<TMutations, P>,
@@ -361,7 +367,7 @@ export function createCorsairServerQueryClient<TQueries extends CorsairQueries>(
 
   return {
     query: async <P extends keyof TQueries>(
-      prompt: P,
+      prompt: CorsairPrompt<P>,
       input: InputForPrompt<TQueries, P>,
       options?: {
         validate?: boolean;
@@ -408,7 +414,7 @@ export function createCorsairServerMutationClient<
 
   return {
     mutate: async <P extends keyof TMutations>(
-      prompt: P,
+      prompt: CorsairPrompt<P>,
       input: InputForPrompt<TMutations, P>,
       options?: {
         validate?: boolean;

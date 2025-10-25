@@ -1,7 +1,7 @@
 import "server-only";
 import { NextRequest } from "next/server";
-import { db, type DatabaseContext } from "./db";
-import { schema } from "./db";
+import { db } from "./db";
+import { type DatabaseContext, schema } from "./types";
 
 // Helper function to extract userId from request (for API routes)
 async function getUserIdFromRequest(

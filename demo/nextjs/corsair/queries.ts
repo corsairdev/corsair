@@ -1,5 +1,5 @@
 import { createQuery, z } from "corsair/core";
-import { type DatabaseContext, schema } from "./db";
+import { type DatabaseContext, schema } from "./types";
 import { drizzle, drizzleZod } from "corsair/db/types";
 
 const query = createQuery<DatabaseContext>();

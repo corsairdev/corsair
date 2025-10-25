@@ -1,7 +1,7 @@
 import { createNextJsHandler } from "corsair/nextjs";
-import { queries } from "@/lib/corsair/queries";
-import { mutations } from "@/lib/corsair/mutations";
-import { createContext } from "@/lib/corsair/context";
+import { queries } from "@/corsair/queries";
+import { mutations } from "@/corsair/mutations";
+import { createContext } from "@/corsair/context";
 
 // Pass BOTH queries and mutations to the handler
 const handler = createNextJsHandler(queries, mutations, createContext);

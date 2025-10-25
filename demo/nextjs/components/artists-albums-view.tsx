@@ -12,7 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { type QueryOutputs } from "@/lib/corsair/client";
+import { useCorsairMutation, type QueryOutputs } from "@/corsair/client";
 
 interface ArtistsAlbumsViewProps {
   initialArtists: QueryOutputs["get all artists"];
@@ -23,6 +23,7 @@ export function ArtistsAlbumsView({
   initialArtists,
   initialAlbums,
 }: ArtistsAlbumsViewProps) {
+  const res = useCorsairMutation("link album to artist", {});
   const [view, setView] = useState<"all" | "artists" | "albums">("all");
   const [selectedArtist, setSelectedArtist] = useState<
     QueryOutputs["get all artists"][number] | null

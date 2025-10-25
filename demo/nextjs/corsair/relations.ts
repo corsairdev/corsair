@@ -1,5 +1,5 @@
 import { drizzle } from "corsair/db/types";
-import { schema } from "./db";
+import * as schema from "./schema";
 
 export const artistsRelations = drizzle.relations(
   schema.artists,
