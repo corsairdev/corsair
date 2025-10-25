@@ -2,7 +2,7 @@ import { SpotifyArtist } from "@/lib/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { QueryOutputs } from "@/lib/corsair/client";
+import { QueryOutputs, useCorsairQuery } from "@/corsair/client";
 
 interface ArtistCardProps {
   artist: QueryOutputs["get all artists"][number];
@@ -19,6 +19,10 @@ export function ArtistCard({ artist, onClick }: ArtistCardProps) {
     }
     return count.toString();
   };
+
+  const res = useCorsairQuery("get album by id", { id: artist.id });
+
+  console.log(res);
 
   return (
     <Card

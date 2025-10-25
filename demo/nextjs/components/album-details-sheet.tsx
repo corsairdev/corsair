@@ -11,7 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { TracksTable } from "@/components/tracks-table";
 import Image from "next/image";
 import { useTracksByAlbumId } from "@/lib/api/queries.client";
-import { QueryOutputs } from "@/lib/corsair/client";
+import { QueryOutputs } from "@/corsair/client";
 
 interface AlbumDetailsSheetProps {
   album: QueryOutputs["get album by id with artists"] | null;

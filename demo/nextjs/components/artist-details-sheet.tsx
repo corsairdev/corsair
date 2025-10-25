@@ -20,7 +20,7 @@ import {
 import { useUpdateArtistPopularity } from "@/lib/api/mutations.client";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
-import { QueryOutputs } from "@/lib/corsair/client";
+import { QueryOutputs, useCorsairQuery } from "@/corsair/client";
 
 interface ArtistDetailsSheetProps {
   artist: QueryOutputs["get artist by id"];
@@ -33,6 +33,17 @@ export function ArtistDetailsSheet({
   open,
   onOpenChange,
 }: ArtistDetailsSheetProps) {
+  const res = useCorsairQuery(
+    "get albums by artist id",
+    {
+      artistId: artist?.id || "",
+    },
+    {
+      enabled: !!artist?.id,
+    }
+  );
+
+  console.log(res);
   // Client-side query hooks
   const {
     data: albums,

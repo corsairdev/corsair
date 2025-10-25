@@ -1,8 +1,6 @@
 // Server Component - fetches data on the server
 import { ArtistsAlbumsView } from "@/components/artists-albums-view";
-import { corsairQuery } from "@/lib/corsair/server";
-import { trpc } from "corsair/trpc/client";
-import type { CorsairRouter } from "@/lib/corsair/trpc";
+import { corsairQuery } from "@/corsair/server";
 
 export default async function Home() {
   // Server-side data fetching using our query layer
@@ -17,5 +15,3 @@ export default async function Home() {
     </div>
   );
 }
-
-export const corsair = trpc<CorsairRouter>("http://localhost:3002");

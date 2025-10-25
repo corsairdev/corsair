@@ -1,7 +1,7 @@
 import { createMutation } from "corsair/core";
 import { z } from "corsair/core";
-import type { DatabaseContext } from "./db";
-import { schema } from "./db";
+import type { DatabaseContext } from "./types";
+import { schema } from "./types";
 import { drizzle, drizzleZod } from "corsair/db/types";
 
 const mutation = createMutation<DatabaseContext>();
@@ -135,18 +135,7 @@ export const mutations = {
 
   "create album": mutation({
     prompt: "create album",
-    input_type: z.object({
-      id: z.string(),
-      name: z.string(),
-      album_type: z.string(),
-      release_date: z.string(),
-      release_date_precision: z.string().optional(),
-      total_tracks: z.number(),
-      images: z.any().optional(),
-      external_urls: z.any().optional(),
-      uri: z.string().optional(),
-      href: z.string().optional(),
-    }),
+    input_type: drizzleZod.createInsertSchema(schema.albums),
     response_type: drizzleZod.createSelectSchema(schema.albums),
     dependencies: {
       tables: ["albums"],
@@ -161,18 +150,7 @@ export const mutations = {
     handler: async (input, ctx) => {
       const [album] = await ctx.db
         .insert(ctx.schema.albums)
-        .values({
-          id: input.id,
-          name: input.name,
-          album_type: input.album_type,
-          release_date: input.release_date,
-          release_date_precision: input.release_date_precision || "day",
-          total_tracks: input.total_tracks,
-          images: input.images || [],
-          external_urls: input.external_urls || {},
-          uri: input.uri || "",
-          href: input.href || "",
-        })
+        .values({ ...input })
         .returning();
 
       return album;
@@ -181,19 +159,7 @@ export const mutations = {
 
   "create track": mutation({
     prompt: "create track",
-    input_type: z.object({
-      id: z.string(),
-      name: z.string(),
-      disc_number: z.number(),
-      duration_ms: z.number(),
-      explicit: z.boolean(),
-      track_number: z.number(),
-      preview_url: z.string().nullable().optional(),
-      is_local: z.boolean().optional(),
-      external_urls: z.any().optional(),
-      uri: z.string().optional(),
-      href: z.string().optional(),
-    }),
+    input_type: drizzleZod.createInsertSchema(schema.tracks),
     response_type: drizzleZod.createSelectSchema(schema.tracks),
     dependencies: {
       tables: ["tracks"],
@@ -208,19 +174,7 @@ export const mutations = {
     handler: async (input, ctx) => {
       const [track] = await ctx.db
         .insert(ctx.schema.tracks)
-        .values({
-          id: input.id,
-          name: input.name,
-          disc_number: input.disc_number,
-          duration_ms: input.duration_ms,
-          explicit: input.explicit,
-          track_number: input.track_number,
-          preview_url: input.preview_url || null,
-          is_local: input.is_local || false,
-          external_urls: input.external_urls || {},
-          uri: input.uri || "",
-          href: input.href || "",
-        })
+        .values({ ...input })
         .returning();
 
       return track;
@@ -275,3 +229,5 @@ export const mutations = {
     },
   }),
 };
+
+const test = drizzleZod.createInsertSchema(schema.albums).def.shape;

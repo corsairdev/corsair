@@ -3,7 +3,7 @@
  * On a bigger app, you will probably want to split this file up into multiple files.
  */
 import createNextApiHandler from "corsair/trpc/server";
-import { corsairRouter } from "@/lib/corsair/trpc";
+import { corsairRouter } from "@/corsair/trpc";
 
 // export API handler
 export default createNextApiHandler({

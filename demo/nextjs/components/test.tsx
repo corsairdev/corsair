@@ -1,4 +1,4 @@
-import { useCorsairMutation } from "@/lib/corsair/client";
+import { useCorsairMutation } from "@/corsair/client";
 
 export function MyComponent() {
   // Fully typed based on their mutations!
@@ -6,9 +6,9 @@ export function MyComponent() {
     "give me the name and email based on this id"
   );
 
-  const summarizeMutation = useCorsairMutation("summarize this text");
+  const summarizeMutation = useCorsairMutation("create album", {});
 
-  const sentimentMutation = useCorsairMutation("analyze sentiment");
+  const sentimentMutation = useCorsairMutation("create album", {});
 
   const handleLookup = () => {
     lookupMutation.mutate(

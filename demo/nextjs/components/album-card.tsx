@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
-import { QueryOutputs } from "@/lib/corsair/client";
+import { QueryOutputs } from "@/corsair/client";
 
 interface AlbumCardProps {
   album: QueryOutputs["get album by id with artists"];

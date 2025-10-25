@@ -12,7 +12,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { useState } from "react";
 import { ArrowUpDown } from "lucide-react";
-import { QueryOutputs } from "@/lib/corsair/client";
+import { QueryOutputs } from "@/corsair/client";
 
 interface TracksTableProps {
   tracks: QueryOutputs["get tracks by album id"];
