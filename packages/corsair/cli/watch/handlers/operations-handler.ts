@@ -1,6 +1,6 @@
 import { eventBus } from "../core/event-bus.js";
 import { CorsairEvent } from "../types/events.js";
-import type { OperationsLoadedEvent, OperationUpdatedEvent } from "../types/events.js";
+import type { OperationsLoadedEvent } from "../types/events.js";
 import { Project, SyntaxKind } from "ts-morph";
 
 /**
@@ -107,11 +107,11 @@ abstract class Operations {
   public async update(): Promise<void> {
     await this.parse();
 
-    // Emit update event
-    eventBus.emit(CorsairEvent.OPERATION_UPDATED, {
+    // Emit update event - reuse the operations loaded event
+    eventBus.emit(CorsairEvent.OPERATIONS_LOADED, {
       type: this.operationType,
       operations: this.operations,
-    } as OperationUpdatedEvent);
+    } as OperationsLoadedEvent);
   }
 }
 

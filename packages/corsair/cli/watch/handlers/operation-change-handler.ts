@@ -91,13 +91,8 @@ class OperationChangeHandler {
   /**
    * Determines operation type from function name
    */
-  private getOperationType(
-    functionName: string
-  ): "query" | "mutation" {
-    if (
-      functionName === "corsairQuery" ||
-      functionName === "useCorsairQuery"
-    ) {
+  private getOperationType(functionName: string): "query" | "mutation" {
+    if (functionName === "corsairQuery" || functionName === "useCorsairQuery") {
       return "query";
     }
     return "mutation";
@@ -115,22 +110,13 @@ class OperationChangeHandler {
     // Remove quotes and clean the prompt
     const cleanPrompt = prompt.replace(/['"]/g, "").trim();
 
-    // Try to extract a meaningful name from the prompt
-    // For example: "get all users" -> "getAllUsers"
-    if (cleanPrompt.length > 0 && cleanPrompt.length < 100) {
-      // Use first few words as the name
-      const words = cleanPrompt.split(" ").slice(0, 4);
-      const camelCase = words
-        .map((word, index) => {
-          const cleaned = word.replace(/[^a-zA-Z0-9]/g, "");
-          if (index === 0) return cleaned.toLowerCase();
-          return cleaned.charAt(0).toUpperCase() + cleaned.slice(1).toLowerCase();
-        })
-        .join("");
-
-      if (camelCase.length > 0) {
-        return camelCase;
+    // If we have a clean prompt, use it directly with truncation
+    if (cleanPrompt.length > 0) {
+      // Truncate if over 100 characters and add ellipsis
+      if (cleanPrompt.length > 100) {
+        return cleanPrompt.substring(0, 97) + "...";
       }
+      return cleanPrompt;
     }
 
     // Fallback to a generic name

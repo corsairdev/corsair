@@ -12,7 +12,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useCorsairMutation, type QueryOutputs } from "@/corsair/client";
+import {
+  useCorsairMutation,
+  useCorsairQuery,
+  type QueryOutputs,
+} from "@/corsair/client";
 
 interface ArtistsAlbumsViewProps {
   initialArtists: QueryOutputs["get all artists"];
@@ -24,6 +28,13 @@ export function ArtistsAlbumsView({
   initialAlbums,
 }: ArtistsAlbumsViewProps) {
   const res = useCorsairMutation("link album to artist", {});
+  const res2 = useCorsairMutation("link artist to album", {});
+
+  const grids = useCorsairQuery(
+    "get grids by id. give me the top 50 grids sort by most recently used",
+    { id: "123" }
+  );
+
   const [view, setView] = useState<"all" | "artists" | "albums">("all");
   const [selectedArtist, setSelectedArtist] = useState<
     QueryOutputs["get all artists"][number] | null

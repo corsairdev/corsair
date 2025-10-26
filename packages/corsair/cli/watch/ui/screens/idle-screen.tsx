@@ -44,6 +44,22 @@ const getActivityIcon = (action: string): { icon: string; color: string } => {
   return { icon: '•', color: 'blue' };
 };
 
+const parseOperationDetails = (details: string): { operationName: string; context: string } => {
+  // Match patterns like "operationName in fileName" or "operationName from fileName"
+  const match = details.match(/^(.+?)\s+(in|from)\s+(.+)$/);
+  if (match) {
+    return {
+      operationName: match[1],
+      context: `${match[2]} ${match[3]}`
+    };
+  }
+  // Fallback if pattern doesn't match
+  return {
+    operationName: details,
+    context: ''
+  };
+};
+
 const ActivityEntry: React.FC<{ entry: HistoryEntry }> = ({ entry }) => {
   const { icon, color } = getActivityIcon(entry.action);
   const timeAgo = formatTimeAgo(entry.timestamp);
@@ -59,7 +75,15 @@ const ActivityEntry: React.FC<{ entry: HistoryEntry }> = ({ entry }) => {
         {entry.details && (
           <>
             {' - '}
-            <Text bold>{entry.details}</Text>
+            {(() => {
+              const { operationName, context } = parseOperationDetails(entry.details);
+              return (
+                <>
+                  <Text color="cyan" bold>{operationName}</Text>
+                  {context && <Text> {context}</Text>}
+                </>
+              );
+            })()}
           </>
         )}
       </Text>

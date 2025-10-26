@@ -31,7 +31,7 @@ export const queries = {
     input_type: z.object({
       id: z.string(),
     }),
-    response_type: drizzleZod.createSelectSchema(schema.artists).nullable(),
+    // response_type: drizzleZod.createSelectSchema(schema.artists).nullable(),
     dependencies: {
       tables: ["artists"],
       columns: [
@@ -44,7 +44,7 @@ export const queries = {
       ],
     },
     handler: async (input, ctx) => {
-      const [artist] = await ctx.db
+      let [artist] = await ctx.db
         .select()
         .from(ctx.schema.artists)
         .where(drizzle.eq(ctx.schema.artists.id, input.id))
