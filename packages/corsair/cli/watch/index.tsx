@@ -14,9 +14,11 @@ import "./handlers/file-change-handler.js";
 import "./handlers/query-generator.js";
 import "./handlers/user-input-handler.js";
 import "./handlers/error-handler.js";
+import "./handlers/schema-change-handler.js";
 
 // Import operations handlers
 import { Queries, Mutations } from "./handlers/operations-handler.js";
+import { Schema } from "./handlers/schema-handler.js";
 
 // Also import state machine to initialize it
 import "./core/state-machine.js";
@@ -51,11 +53,13 @@ export async function watch(): Promise<void> {
   // Initialize operations handlers
   const queriesHandler = new Queries();
   const mutationsHandler = new Mutations();
+  const schemaHandler = new Schema();
 
   watcher.on("ready", async () => {
-    // Parse queries and mutations files on startup
+    // Parse queries, mutations, and schema files on startup
     await queriesHandler.parse();
     await mutationsHandler.parse();
+    await schemaHandler.parse();
 
     console.log("✓ File watcher ready. Watching for changes...\n");
 
@@ -76,6 +80,11 @@ export async function watch(): Promise<void> {
 
     if (path.includes("corsair/mutations.ts")) {
       await mutationsHandler.update();
+      return;
+    }
+
+    if (path.includes("corsair/schema.ts")) {
+      await schemaHandler.update();
       return;
     }
 

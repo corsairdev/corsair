@@ -13,6 +13,7 @@ import type { Query, SchemaDefinition } from "../types/state.js";
 import { stateMachine } from "../core/state-machine.js";
 import { llm } from "../../../llm/index.js";
 import { z } from "zod";
+import { operationGeneratorPrompt } from "../../../llm/prompts/operation-generator.js";
 
 /**
  * Query Generator Handler
@@ -21,41 +22,25 @@ import { z } from "zod";
  * Emits: GENERATION_STARTED, GENERATION_PROGRESS, GENERATION_COMPLETE, GENERATION_FAILED
  */
 class QueryGenerator {
-  private schema: SchemaDefinition = { tables: [], relations: [] };
+  private schema: SchemaDefinition = { tables: [] };
 
   // Define the schema for LLM response
-  private llmResponseSchema = z.object({
-    suggestions: z
-      .array(z.string())
-      .describe("List of configuration suggestions for the operation"),
-    recommendations: z.object({
-      dependencies: z
-        .string()
-        .nullable()
-        .optional()
-        .describe("Recommended dependencies for this operation"),
-      handler: z
-        .string()
-        .nullable()
-        .optional()
-        .describe("Recommended handler pattern"),
-      optimizations: z
-        .array(z.string())
-        .describe("Performance or code optimization suggestions"),
-    }),
-    analysis: z.object({
-      complexity: z
-        .enum(["low", "medium", "high"])
-        .describe("Estimated complexity of the operation"),
-      confidence: z
-        .number()
-        .min(0)
-        .max(1)
-        .describe("Confidence score for the analysis"),
-      reasoning: z
-        .string()
-        .describe("Explanation of the analysis and recommendations"),
-    }),
+  public llmResponseSchema = z.object({
+    input_type: z
+      .string()
+      .describe(
+        "The input type of the function. This will be added to the input_type of the operation. This input type is what your function will receive as input."
+      ),
+    function: z
+      .string()
+      .describe(
+        "The actual logic of the function. This will be added to the handler of the operation. The response type will be inferred from the function."
+      ),
+    notes: z
+      .string()
+      .describe(
+        "Any additional notes or instructions for the function that you will receive later as configuration rules."
+      ),
   });
 
   constructor() {
@@ -68,15 +53,15 @@ class QueryGenerator {
       this.handleQueryDetected.bind(this)
     );
 
-    eventBus.on(
-      CorsairEvent.NEW_QUERY_ADDED,
-      this.handleNewQueryAdded.bind(this)
-    );
+    // eventBus.on(
+    //   CorsairEvent.NEW_QUERY_ADDED,
+    //   this.handleNewQueryAdded.bind(this)
+    // );
 
-    eventBus.on(
-      CorsairEvent.NEW_MUTATION_ADDED,
-      this.handleNewMutationAdded.bind(this)
-    );
+    // eventBus.on(
+    //   CorsairEvent.NEW_MUTATION_ADDED,
+    //   this.handleNewMutationAdded.bind(this)
+    // );
 
     eventBus.on(
       CorsairEvent.LLM_ANALYSIS_STARTED,
@@ -174,37 +159,37 @@ export default ${generatedQuery.functionName};
     this.schema = schema;
   }
 
-  private async handleNewQueryAdded(data: NewQueryAddedEvent) {
-    // Only process LLM for initial detection (no configurationRules)
-    // User-submitted operations will be handled through LLM_ANALYSIS_STARTED event
-    if (data.configurationRules === undefined) {
-      await this.processWithLLM({
-        operationType: "query",
-        operationName: data.operationName,
-        functionName: data.functionName,
-        prompt: data.prompt,
-        file: data.file,
-        lineNumber: data.lineNumber,
-        configurationRules: data.configurationRules,
-      });
-    }
-  }
+  // private async handleNewQueryAdded(data: NewQueryAddedEvent) {
+  //   // Only process LLM for initial detection (no configurationRules)
+  //   // User-submitted operations will be handled through LLM_ANALYSIS_STARTED event
+  //   if (data.configurationRules === undefined) {
+  //     await this.processWithLLM({
+  //       operationType: "query",
+  //       operationName: data.operationName,
+  //       functionName: data.functionName,
+  //       prompt: data.prompt,
+  //       file: data.file,
+  //       lineNumber: data.lineNumber,
+  //       configurationRules: data.configurationRules,
+  //     });
+  //   }
+  // }
 
-  private async handleNewMutationAdded(data: NewMutationAddedEvent) {
-    // Only process LLM for initial detection (no configurationRules)
-    // User-submitted operations will be handled through LLM_ANALYSIS_STARTED event
-    if (data.configurationRules === undefined) {
-      await this.processWithLLM({
-        operationType: "mutation",
-        operationName: data.operationName,
-        functionName: data.functionName,
-        prompt: data.prompt,
-        file: data.file,
-        lineNumber: data.lineNumber,
-        configurationRules: data.configurationRules,
-      });
-    }
-  }
+  // private async handleNewMutationAdded(data: NewMutationAddedEvent) {
+  //   // Only process LLM for initial detection (no configurationRules)
+  //   // User-submitted operations will be handled through LLM_ANALYSIS_STARTED event
+  //   if (data.configurationRules === undefined) {
+  //     await this.processWithLLM({
+  //       operationType: "mutation",
+  //       operationName: data.operationName,
+  //       functionName: data.functionName,
+  //       prompt: data.prompt,
+  //       file: data.file,
+  //       lineNumber: data.lineNumber,
+  //       configurationRules: data.configurationRules,
+  //     });
+  //   }
+  // }
 
   private async processWithLLM(operation: {
     operationType: "query" | "mutation";
@@ -215,31 +200,17 @@ export default ${generatedQuery.functionName};
     lineNumber: number;
     configurationRules?: string;
   }) {
-    // Note: LLM_ANALYSIS_STARTED should be emitted by the caller, not here
-    // to avoid infinite loops
-
+    const schema = stateMachine.getSchema();
+    if (!schema) {
+      throw new Error("Schema not found");
+    }
     try {
       // Create a detailed prompt for the LLM
-      const message = `
-  Analyze this Corsair ${
-    operation.operationType
-  } operation and provide configuration suggestions:
-
-  Operation Details:
-  - Type: ${operation.operationType}
-  - Name: ${operation.operationName}
-  - Function: ${operation.functionName}
-  - Prompt: "${operation.prompt}"
-  - Configuration Rules: ${operation.configurationRules || "None provided"}
-
-  Please analyze this operation and provide:
-  1. Configuration suggestions to optimize the operation
-  2. Recommended dependencies and handler patterns
-  3. Performance optimizations
-  4. An assessment of complexity and confidence in your recommendations
-
-  Consider the context of a database query/mutation system where operations are used to interact with data.
-        `.trim();
+      const message = operationGeneratorPrompt({
+        schema,
+        type: operation.operationType,
+        name: operation.operationName,
+      });
 
       // Get the provider from environment variable or default to "openai"
       const provider = "openai";
@@ -293,7 +264,10 @@ export default ${generatedQuery.functionName};
     }
 
     // Only process if this is a user-submitted operation (has configurationRules or from state machine)
-    if (newOperation.configurationRules !== undefined || currentState.state === "LLM_PROCESSING") {
+    if (
+      newOperation.configurationRules !== undefined ||
+      currentState.state === "LLM_PROCESSING"
+    ) {
       await this.processWithLLM({
         operationType: newOperation.operationType,
         operationName: newOperation.operationName,

@@ -51,8 +51,8 @@ export interface PromptInfo {
 export interface LLMResponse {
   suggestions: string[];
   recommendations: {
-    dependencies?: string;
-    handler?: string;
+    dependencies?: string | null;
+    handler?: string | null;
     optimizations: string[];
   };
   analysis: {
@@ -73,6 +73,7 @@ export interface StateContext {
   watchedPaths?: string[];
   queries?: Map<string, OperationDefinition>;
   mutations?: Map<string, OperationDefinition>;
+  schema?: SchemaDefinition;
   operationsView?: OperationsViewContext;
   newOperation?: NewOperationContext;
   llmResponse?: LLMResponse;

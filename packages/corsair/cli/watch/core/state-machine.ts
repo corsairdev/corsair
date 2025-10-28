@@ -15,12 +15,15 @@ import type {
   LLMAnalysisStartedEvent,
   LLMAnalysisCompleteEvent,
   LLMAnalysisFailedEvent,
+  SchemaLoadedEvent,
+  SchemaUpdatedEvent,
 } from "../types/events.js";
 import { CorsairState } from "../types/state.js";
 import type {
   ApplicationState,
   StateContext,
   OperationDefinition,
+  SchemaDefinition,
 } from "../types/state.js";
 
 class StateMachine {
@@ -310,6 +313,31 @@ class StateMachine {
       }
     );
 
+    // Schema loaded
+    eventBus.on(CorsairEvent.SCHEMA_LOADED, (data: SchemaLoadedEvent) => {
+      this.updateContext({ schema: data.schema });
+      this.addHistoryEntry(
+        "Schema loaded",
+        undefined,
+        `Loaded ${data.schema.tables.length} tables`
+      );
+    });
+
+    // Schema updated
+    eventBus.on(CorsairEvent.SCHEMA_UPDATED, (data: SchemaUpdatedEvent) => {
+      this.updateContext({ schema: data.newSchema });
+
+      const changeDetails = data.changes.length > 0
+        ? data.changes.join(', ')
+        : 'Schema modified';
+
+      this.addHistoryEntry(
+        "Schema updated",
+        undefined,
+        changeDetails
+      );
+    });
+
     // User commands
     eventBus.on(CorsairEvent.USER_COMMAND, (data) => {
       if (
@@ -519,6 +547,23 @@ class StateMachine {
 
   public mutationExists(name: string): boolean {
     return this.state.context.mutations?.has(name) || false;
+  }
+
+  // Schema retrieval methods
+  public getSchema(): SchemaDefinition | undefined {
+    return this.state.context.schema;
+  }
+
+  public getTable(tableName: string) {
+    return this.state.context.schema?.tables.find(table => table.name === tableName);
+  }
+
+  public getAllTables() {
+    return this.state.context.schema?.tables || [];
+  }
+
+  public hasSchema(): boolean {
+    return !!this.state.context.schema;
   }
 
   // Operations navigation handlers

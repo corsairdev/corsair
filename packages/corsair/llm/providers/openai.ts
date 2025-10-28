@@ -36,9 +36,6 @@ export const openai = async <T>({
 
     const parsedResponse = response.output_parsed;
 
-    console.log("parsedResponse");
-    console.log(JSON.stringify(parsedResponse, null, 2));
-
     return parsedResponse;
   } catch (error) {
     console.error(error);

@@ -20,8 +20,7 @@ export function generateTypes(
 function generateTableType(table: TableDefinition): string {
   const fields = table.columns
     .map((col) => {
-      const optional = col.nullable ? '?' : '';
-      return `  ${col.name}${optional}: ${mapSqlTypeToTs(col.type)};`;
+      return `  ${col.name}: ${mapSqlTypeToTs(col.type)};`;
     })
     .join('\n');
 

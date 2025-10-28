@@ -13,6 +13,7 @@ export const OperationConfigurationScreen: React.FC<
 > = ({ context }) => {
   const [inputValue, setInputValue] = useState("");
   const [isInputActive, setIsInputActive] = useState(true);
+  const [showEmptyWarning, setShowEmptyWarning] = useState(false);
 
   const newOperation = context.newOperation;
 
@@ -35,6 +36,14 @@ export const OperationConfigurationScreen: React.FC<
     if (!isInputActive) return;
 
     if (key.return) {
+      // Require at least some input before submitting (or allow empty with Ctrl+Enter)
+      if (inputValue.trim() === "" && !key.ctrl) {
+        // Show warning and don't submit if empty and not forced with Ctrl+Enter
+        setShowEmptyWarning(true);
+        setTimeout(() => setShowEmptyWarning(false), 2000);
+        return;
+      }
+
       // Submit the configuration rules
       eventBus.emit(CorsairEvent.USER_COMMAND, {
         command: "submit_operation_config",
@@ -106,7 +115,12 @@ export const OperationConfigurationScreen: React.FC<
           minHeight={8}
         >
           <Text>
-            {inputValue || (isInputActive && <Text dimColor>input / output types, authorization, etc...</Text>)}
+            {inputValue ||
+              (isInputActive && (
+                <Text dimColor>
+                  input / output types, authorization, etc...
+                </Text>
+              ))}
             {isInputActive && inputValue && <Text color="cyan">█</Text>}
             {isInputActive && !inputValue && <Text color="cyan">█</Text>}
           </Text>
@@ -114,25 +128,47 @@ export const OperationConfigurationScreen: React.FC<
 
         <Text> </Text>
 
+        {/* Warning message */}
+        {showEmptyWarning && (
+          <Box
+            borderStyle="single"
+            borderColor="red"
+            padding={1}
+            marginBottom={1}
+          >
+            <Text color="red">
+              ⚠️ Please enter configuration rules or use Ctrl+Enter for empty
+              config
+            </Text>
+          </Box>
+        )}
+
         {/* Instructions */}
         <Box
           borderStyle="single"
           borderColor="gray"
           padding={1}
-          flexDirection="row"
-          justifyContent="space-between"
+          flexDirection="column"
         >
+          <Box flexDirection="row" justifyContent="space-between">
+            <Text dimColor>
+              <Text color="green" bold>
+                [Enter]
+              </Text>{" "}
+              Submit configuration
+            </Text>
+            <Text dimColor>
+              <Text color="red" bold>
+                [Esc]
+              </Text>{" "}
+              Cancel
+            </Text>
+          </Box>
           <Text dimColor>
-            <Text color="green" bold>
-              [Enter]
+            <Text color="cyan" bold>
+              [Ctrl+Enter]
             </Text>{" "}
-            Submit configuration
-          </Text>
-          <Text dimColor>
-            <Text color="red" bold>
-              [Esc]
-            </Text>{" "}
-            Cancel
+            Submit empty configuration
           </Text>
         </Box>
       </Box>

@@ -25,8 +25,8 @@
     "generate": "./scripts/generate.sh",
     "check": "./scripts/check.sh",
     "migrate": "./scripts/migrate.sh",
-    "watch": "tsx watch/index.ts",
-    "test-watch": "tsx watch/test.ts"
+    "watch": "tsx cli/watch/index.tsx",
+    "test-watch": "tsx cli/watch/test.ts"
   },
   "exports": {
     ".": {

@@ -8,7 +8,7 @@ export const queries = {
   "get all artists": query({
     prompt: "get all artists",
     input_type: z.object({}),
-    response_type: z.array(drizzleZod.createSelectSchema(schema.artists)),
+    // response_type: z.array(drizzleZod.createSelectSchema(schema.artists)),
     dependencies: {
       tables: ["artists"],
       columns: [
@@ -57,7 +57,7 @@ export const queries = {
   "get all albums": query({
     prompt: "get all albums",
     input_type: z.object({}),
-    response_type: z.array(drizzleZod.createSelectSchema(schema.albums)),
+    // response_type: z.array(drizzleZod.createSelectSchema(schema.albums)),
     dependencies: {
       tables: ["albums"],
       columns: [
@@ -80,7 +80,7 @@ export const queries = {
     input_type: z.object({
       id: z.string(),
     }),
-    response_type: drizzleZod.createSelectSchema(schema.albums).nullable(),
+    // response_type: drizzleZod.createSelectSchema(schema.albums).nullable(),
     dependencies: {
       tables: ["albums"],
       columns: [
@@ -108,12 +108,12 @@ export const queries = {
     input_type: z.object({
       id: z.string(),
     }),
-    response_type: drizzleZod
-      .createSelectSchema(schema.albums)
-      .extend({
-        artists: z.array(drizzleZod.createSelectSchema(schema.artists)),
-      })
-      .nullable(),
+    // response_type: drizzleZod
+    // .createSelectSchema(schema.albums)
+    // .extend({
+    //   artists: z.array(drizzleZod.createSelectSchema(schema.artists)),
+    // })
+    // .nullable(),
     dependencies: {
       tables: ["albums", "album_artists", "artists"],
       columns: [
@@ -198,7 +198,7 @@ export const queries = {
     input_type: z.object({
       artistId: z.string(),
     }),
-    response_type: z.array(drizzleZod.createSelectSchema(schema.albums)),
+    // response_type: z.array(drizzleZod.createSelectSchema(schema.albums)),
     dependencies: {
       tables: ["albums", "album_artists"],
       columns: [
@@ -240,7 +240,7 @@ export const queries = {
   "get all tracks": query({
     prompt: "get all tracks",
     input_type: z.object({}),
-    response_type: z.array(drizzleZod.createSelectSchema(schema.tracks)),
+    // response_type: z.array(drizzleZod.createSelectSchema(schema.tracks)),
     dependencies: {
       tables: ["tracks"],
       columns: [
@@ -262,7 +262,7 @@ export const queries = {
     input_type: z.object({
       artistId: z.string(),
     }),
-    response_type: z.array(drizzleZod.createSelectSchema(schema.tracks)),
+    // response_type: z.array(drizzleZod.createSelectSchema(schema.tracks)),
     dependencies: {
       tables: ["tracks", "track_artists"],
       columns: [
@@ -306,7 +306,7 @@ export const queries = {
     input_type: z.object({
       albumId: z.string(),
     }),
-    response_type: z.array(drizzleZod.createSelectSchema(schema.tracks)),
+    // response_type: z.array(drizzleZod.createSelectSchema(schema.tracks)),
     dependencies: {
       tables: ["tracks"],
       columns: [
@@ -331,7 +331,7 @@ export const queries = {
     input_type: z.object({
       query: z.string(),
     }),
-    response_type: z.array(drizzleZod.createSelectSchema(schema.artists)),
+    // response_type: z.array(drizzleZod.createSelectSchema(schema.artists)),
     dependencies: {
       tables: ["artists"],
       columns: [
@@ -358,7 +358,7 @@ export const queries = {
     input_type: z.object({
       query: z.string(),
     }),
-    response_type: z.array(drizzleZod.createSelectSchema(schema.albums)),
+    // response_type: z.array(drizzleZod.createSelectSchema(schema.albums)),
     dependencies: {
       tables: ["albums"],
       columns: [

@@ -1,4 +1,7 @@
 import { Project } from "ts-morph";
+import type { SchemaDefinition } from "./state.js";
+import type { queryGenerator } from "../handlers/query-generator.js";
+import type { z } from "zod";
 
 export enum CorsairEvent {
   // File System Events
@@ -8,6 +11,8 @@ export enum CorsairEvent {
   // Detection Events
   QUERY_DETECTED = "query:detected",
   SCHEMA_CHANGED = "schema:changed",
+  SCHEMA_LOADED = "schema:loaded",
+  SCHEMA_UPDATED = "schema:updated",
 
   // Operations Events
   OPERATIONS_LOADED = "operations:loaded",
@@ -110,12 +115,15 @@ export interface SchemaChangedEvent {
 
 export interface OperationsLoadedEvent {
   type: "queries" | "mutations";
-  operations: Map<string, {
-    name: string;
-    prompt: string;
-    dependencies?: string;
-    handler: string;
-  }>;
+  operations: Map<
+    string,
+    {
+      name: string;
+      prompt: string;
+      dependencies?: string;
+      handler: string;
+    }
+  >;
 }
 
 export interface OperationAddedEvent {
@@ -171,19 +179,7 @@ export interface LLMAnalysisStartedEvent {
 export interface LLMAnalysisCompleteEvent {
   operationName: string;
   operationType: "query" | "mutation";
-  response: {
-    suggestions: string[];
-    recommendations: {
-      dependencies?: string;
-      handler?: string;
-      optimizations: string[];
-    };
-    analysis: {
-      complexity: "low" | "medium" | "high";
-      confidence: number;
-      reasoning: string;
-    };
-  };
+  response: z.infer<typeof queryGenerator.llmResponseSchema>;
   operation: {
     operationType: "query" | "mutation";
     operationName: string;
@@ -199,6 +195,17 @@ export interface LLMAnalysisFailedEvent {
   operationName: string;
   operationType: "query" | "mutation";
   error: string;
+}
+
+export interface SchemaLoadedEvent {
+  schema: SchemaDefinition;
+}
+
+export interface SchemaUpdatedEvent {
+  oldSchema: SchemaDefinition;
+  newSchema: SchemaDefinition;
+  schemaPath: string;
+  changes: string[];
 }
 
 export type EventDataMap = {
@@ -223,4 +230,6 @@ export type EventDataMap = {
   [CorsairEvent.LLM_ANALYSIS_STARTED]: LLMAnalysisStartedEvent;
   [CorsairEvent.LLM_ANALYSIS_COMPLETE]: LLMAnalysisCompleteEvent;
   [CorsairEvent.LLM_ANALYSIS_FAILED]: LLMAnalysisFailedEvent;
+  [CorsairEvent.SCHEMA_LOADED]: SchemaLoadedEvent;
+  [CorsairEvent.SCHEMA_UPDATED]: SchemaUpdatedEvent;
 };

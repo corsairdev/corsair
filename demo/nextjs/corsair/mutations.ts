@@ -13,7 +13,7 @@ export const mutations = {
       artistId: z.string(),
       popularity: z.number().min(0).max(100),
     }),
-    response_type: drizzleZod.createSelectSchema(schema.artists).nullable(),
+    // response_type: drizzleZod.createSelectSchema(schema.artists).nullable(),
     dependencies: {
       tables: ["artists"],
       columns: ["artists.id", "artists.popularity"],
@@ -37,7 +37,7 @@ export const mutations = {
       albumId: z.string(),
       albumType: z.string(),
     }),
-    response_type: drizzleZod.createSelectSchema(schema.albums).nullable(),
+    // response_type: drizzleZod.createSelectSchema(schema.albums).nullable(),
     dependencies: {
       tables: ["albums"],
       columns: ["albums.id", "albums.album_type"],
@@ -60,7 +60,7 @@ export const mutations = {
     input_type: z.object({
       trackId: z.string(),
     }),
-    response_type: drizzleZod.createSelectSchema(schema.tracks).nullable(),
+    // response_type: drizzleZod.createSelectSchema(schema.tracks).nullable(),
     dependencies: {
       tables: ["tracks"],
       columns: ["tracks.id", "tracks.explicit"],
@@ -102,7 +102,7 @@ export const mutations = {
       uri: z.string().optional(),
       href: z.string().optional(),
     }),
-    response_type: drizzleZod.createSelectSchema(schema.artists),
+    // response_type: drizzleZod.createSelectSchema(schema.artists),
     dependencies: {
       tables: ["artists"],
       columns: [
@@ -136,7 +136,7 @@ export const mutations = {
   "create album": mutation({
     prompt: "create album",
     input_type: drizzleZod.createInsertSchema(schema.albums),
-    response_type: drizzleZod.createSelectSchema(schema.albums),
+    // response_type: drizzleZod.createSelectSchema(schema.albums),
     dependencies: {
       tables: ["albums"],
       columns: [
@@ -160,7 +160,7 @@ export const mutations = {
   "create track": mutation({
     prompt: "create track",
     input_type: drizzleZod.createInsertSchema(schema.tracks),
-    response_type: drizzleZod.createSelectSchema(schema.tracks),
+    // response_type: drizzleZod.createSelectSchema(schema.tracks),
     dependencies: {
       tables: ["tracks"],
       columns: [
@@ -187,7 +187,7 @@ export const mutations = {
       albumId: z.string(),
       artistId: z.string(),
     }),
-    response_type: drizzleZod.createSelectSchema(schema.album_artists),
+    // response_type: drizzleZod.createSelectSchema(schema.album_artists),
     dependencies: {
       tables: ["album_artists"],
       columns: ["album_artists.album_id", "album_artists.artist_id"],
@@ -211,7 +211,7 @@ export const mutations = {
       trackId: z.string(),
       artistId: z.string(),
     }),
-    response_type: drizzleZod.createSelectSchema(schema.track_artists),
+    // response_type: drizzleZod.createSelectSchema(schema.track_artists),
     dependencies: {
       tables: ["track_artists"],
       columns: ["track_artists.track_id", "track_artists.artist_id"],
