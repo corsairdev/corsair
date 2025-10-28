@@ -112,7 +112,8 @@
     "superjson": "^2.2.3",
     "ts-morph": "^27.0.2",
     "tsx": "^4.20.6",
-    "zod": "^4.1.12"
+    "zod": "^3.23.8",
+    "openai": "^4.103.0"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.0.0",

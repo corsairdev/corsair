@@ -4,7 +4,10 @@ import type {
   OperationAddedEvent,
   OperationRemovedEvent,
   OperationUpdatedEvent,
+  NewQueryAddedEvent,
+  NewMutationAddedEvent,
 } from "../types/events.js";
+import { stateMachine } from "../core/state-machine.js";
 import * as path from "path";
 
 interface CorsairOperation {
@@ -20,6 +23,21 @@ interface CorsairOperation {
  * and emits appropriate events for added, removed, or updated operations
  */
 class OperationChangeHandler {
+  /**
+   * Checks if an operation with the given prompt exists in the global registry
+   */
+  private isOperationInRegistry(prompt: string, operationType: "query" | "mutation"): boolean {
+    const cleanPrompt = prompt.replace(/['"]/g, "").trim();
+
+    if (operationType === "query") {
+      const queries = stateMachine.getAllQueries();
+      return queries.some(query => query.prompt === cleanPrompt);
+    } else {
+      const mutations = stateMachine.getAllMutations();
+      return mutations.some(mutation => mutation.prompt === cleanPrompt);
+    }
+  }
+
   /**
    * Analyzes changes between before and after operation states
    */
@@ -38,11 +56,26 @@ class OperationChangeHandler {
       );
 
       if (!beforeOp) {
-        this.emitOperationAdded({
-          operation: afterOp,
-          file,
-          fileName,
-        });
+        // Operation was added to this file
+        const operationType = this.getOperationType(afterOp.name);
+
+        // Check if this operation already exists in the global registry
+        if (this.isOperationInRegistry(afterOp.prompt, operationType)) {
+          // Operation exists in registry - emit standard OPERATION_ADDED
+          this.emitOperationAdded({
+            operation: afterOp,
+            file,
+            fileName,
+          });
+        } else {
+          // Operation is completely new to the project - emit NEW_*_ADDED
+          this.emitNewOperationAdded({
+            operation: afterOp,
+            operationType,
+            file,
+            fileName,
+          });
+        }
       } else if (beforeOp.prompt !== afterOp.prompt) {
         // Detect updated operations (same function name and line but different prompt)
         this.emitOperationUpdated({
@@ -189,6 +222,37 @@ class OperationChangeHandler {
     };
 
     eventBus.emit(CorsairEvent.OPERATION_UPDATED, event);
+  }
+
+  /**
+   * Emits NEW_QUERY_ADDED or NEW_MUTATION_ADDED event
+   */
+  private emitNewOperationAdded(data: {
+    operation: CorsairOperation;
+    operationType: "query" | "mutation";
+    file: string;
+    fileName: string;
+  }) {
+    const { operation, operationType, file, fileName } = data;
+    const operationName = this.extractOperationName(
+      operation.prompt,
+      operation.name,
+      operation.line
+    );
+
+    const eventData = {
+      operationName,
+      functionName: operation.name,
+      prompt: operation.prompt,
+      file,
+      lineNumber: operation.line,
+    };
+
+    if (operationType === "query") {
+      eventBus.emit(CorsairEvent.NEW_QUERY_ADDED, eventData as NewQueryAddedEvent);
+    } else {
+      eventBus.emit(CorsairEvent.NEW_MUTATION_ADDED, eventData as NewMutationAddedEvent);
+    }
   }
 }
 

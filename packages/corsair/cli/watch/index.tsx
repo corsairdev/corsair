@@ -7,6 +7,7 @@ import { eventBus } from "./core/event-bus.js";
 import { CorsairEvent } from "./types/events.js";
 import { CorsairUI } from "./ui/renderer.js";
 import { Project } from "ts-morph";
+import { loadConfig, loadEnv } from "../config.js";
 
 // Import handlers to initialize them
 import "./handlers/file-change-handler.js";
@@ -29,6 +30,10 @@ import "./core/state-machine.js";
 export async function watch(): Promise<void> {
   console.clear();
   console.log("Starting Corsair Watch...\n");
+
+  // Load environment variables first
+  const cfg = loadConfig();
+  loadEnv(cfg.envFile);
 
   // Start file watcher - watch entire directory but filter in the change handler
   const watcher = chokidar.watch(".", {

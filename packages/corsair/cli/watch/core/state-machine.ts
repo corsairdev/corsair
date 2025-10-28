@@ -10,9 +10,18 @@ import type {
   OperationAddedEvent,
   OperationRemovedEvent,
   OperationUpdatedEvent,
+  NewQueryAddedEvent,
+  NewMutationAddedEvent,
+  LLMAnalysisStartedEvent,
+  LLMAnalysisCompleteEvent,
+  LLMAnalysisFailedEvent,
 } from "../types/events.js";
 import { CorsairState } from "../types/state.js";
-import type { ApplicationState, StateContext, OperationDefinition } from "../types/state.js";
+import type {
+  ApplicationState,
+  StateContext,
+  OperationDefinition,
+} from "../types/state.js";
 
 class StateMachine {
   private state: ApplicationState = {
@@ -26,20 +35,28 @@ class StateMachine {
     },
   };
 
+
   constructor() {
     this.setupEventListeners();
   }
 
   private setupEventListeners() {
     // Operations loaded
-    eventBus.on(CorsairEvent.OPERATIONS_LOADED, (data: OperationsLoadedEvent) => {
-      if (data.type === "queries") {
-        this.updateContext({ queries: data.operations });
-      } else if (data.type === "mutations") {
-        this.updateContext({ mutations: data.operations });
+    eventBus.on(
+      CorsairEvent.OPERATIONS_LOADED,
+      (data: OperationsLoadedEvent) => {
+        if (data.type === "queries") {
+          this.updateContext({ queries: data.operations });
+        } else if (data.type === "mutations") {
+          this.updateContext({ mutations: data.operations });
+        }
+        this.addHistoryEntry(
+          `${data.type} loaded`,
+          undefined,
+          `Loaded ${data.operations.size} ${data.type}`
+        );
       }
-      this.addHistoryEntry(`${data.type} loaded`, undefined, `Loaded ${data.operations.size} ${data.type}`);
-    });
+    );
 
     // Operation added
     eventBus.on(CorsairEvent.OPERATION_ADDED, (data: OperationAddedEvent) => {
@@ -53,26 +70,87 @@ class StateMachine {
     });
 
     // Operation removed
-    eventBus.on(CorsairEvent.OPERATION_REMOVED, (data: OperationRemovedEvent) => {
-      const fileName = this.getShortFilePath(data.file);
-      const typeLabel = data.operationType === "query" ? "query" : "mutation";
-      this.addHistoryEntry(
-        `Removed ${typeLabel}`,
-        undefined,
-        `${data.operationName} from ${fileName}`
-      );
-    });
+    eventBus.on(
+      CorsairEvent.OPERATION_REMOVED,
+      (data: OperationRemovedEvent) => {
+        const fileName = this.getShortFilePath(data.file);
+        const typeLabel = data.operationType === "query" ? "query" : "mutation";
+        this.addHistoryEntry(
+          `Removed ${typeLabel}`,
+          undefined,
+          `${data.operationName} from ${fileName}`
+        );
+      }
+    );
 
     // Operation updated
-    eventBus.on(CorsairEvent.OPERATION_UPDATED, (data: OperationUpdatedEvent) => {
+    eventBus.on(
+      CorsairEvent.OPERATION_UPDATED,
+      (data: OperationUpdatedEvent) => {
+        const fileName = this.getShortFilePath(data.file);
+        const typeLabel = data.operationType === "query" ? "query" : "mutation";
+        this.addHistoryEntry(
+          `Updated ${typeLabel}`,
+          undefined,
+          `${data.operationName} in ${fileName}`
+        );
+      }
+    );
+
+    // New query added (not in registry)
+    eventBus.on(CorsairEvent.NEW_QUERY_ADDED, (data: NewQueryAddedEvent) => {
       const fileName = this.getShortFilePath(data.file);
-      const typeLabel = data.operationType === "query" ? "query" : "mutation";
       this.addHistoryEntry(
-        `Updated ${typeLabel}`,
+        "New query detected",
         undefined,
         `${data.operationName} in ${fileName}`
       );
+
+      // Transition to configuration state
+      this.transition(CorsairState.CONFIGURING_NEW_OPERATION, {
+        newOperation: {
+          operationType: "query",
+          operationName: data.operationName,
+          functionName: data.functionName,
+          prompt: data.prompt,
+          file: data.file,
+          lineNumber: data.lineNumber,
+        },
+        availableActions: [
+          "submit_operation_config",
+          "cancel_operation_config",
+        ],
+      });
     });
+
+    // New mutation added (not in registry)
+    eventBus.on(
+      CorsairEvent.NEW_MUTATION_ADDED,
+      (data: NewMutationAddedEvent) => {
+        const fileName = this.getShortFilePath(data.file);
+        this.addHistoryEntry(
+          "New mutation detected",
+          undefined,
+          `${data.operationName} in ${fileName}`
+        );
+
+        // Transition to configuration state
+        this.transition(CorsairState.CONFIGURING_NEW_OPERATION, {
+          newOperation: {
+            operationType: "mutation",
+            operationName: data.operationName,
+            functionName: data.functionName,
+            prompt: data.prompt,
+            file: data.file,
+            lineNumber: data.lineNumber,
+          },
+          availableActions: [
+            "submit_operation_config",
+            "cancel_operation_config",
+          ],
+        });
+      }
+    );
 
     // Query detection
     eventBus.on(CorsairEvent.QUERY_DETECTED, (data: QueryDetectedEvent) => {
@@ -174,6 +252,64 @@ class StateMachine {
       this.addHistoryEntry("Error occurred", undefined, data.message);
     });
 
+    // LLM Analysis started
+    eventBus.on(
+      CorsairEvent.LLM_ANALYSIS_STARTED,
+      (data: LLMAnalysisStartedEvent) => {
+        this.addHistoryEntry(
+          "LLM analysis started",
+          undefined,
+          `Analyzing ${data.operationName} (${data.operationType})`
+        );
+      }
+    );
+
+    // LLM Analysis complete
+    eventBus.on(
+      CorsairEvent.LLM_ANALYSIS_COMPLETE,
+      (data: LLMAnalysisCompleteEvent) => {
+        this.addHistoryEntry(
+          "LLM analysis completed",
+          undefined,
+          `Analysis for ${data.operationName} completed with ${
+            data.response.analysis.confidence * 100
+          }% confidence`
+        );
+
+        // Transition to feedback state with LLM response
+        this.transition(CorsairState.AWAITING_FEEDBACK, {
+          llmResponse: data.response,
+          newOperation: data.operation,
+          availableActions: ["accept", "regenerate", "modify", "cancel"],
+        });
+      }
+    );
+
+    // LLM Analysis failed
+    eventBus.on(
+      CorsairEvent.LLM_ANALYSIS_FAILED,
+      (data: LLMAnalysisFailedEvent) => {
+        this.addHistoryEntry(
+          "LLM analysis failed",
+          undefined,
+          `Failed to analyze ${data.operationName}: ${data.error}`
+        );
+
+        this.transition(CorsairState.ERROR, {
+          error: {
+            message: `LLM analysis failed: ${data.error}`,
+            suggestions: [
+              "Check your API key configuration",
+              "Verify network connectivity",
+              "Try a different provider",
+              "Retry the operation",
+            ],
+          },
+          availableActions: ["retry", "cancel", "help"],
+        });
+      }
+    );
+
     // User commands
     eventBus.on(CorsairEvent.USER_COMMAND, (data) => {
       if (
@@ -230,6 +366,47 @@ class StateMachine {
 
       if (data.command === "update_search") {
         this.handleUpdateSearch(data.args?.query);
+      }
+
+      if (data.command === "submit_operation_config") {
+        this.handleSubmitOperationConfig(data.args?.configurationRules);
+      }
+
+      if (data.command === "cancel_operation_config") {
+        this.handleCancelOperationConfig();
+      }
+
+      // LLM feedback commands
+      if (
+        data.command === "modify" &&
+        this.state.state === CorsairState.AWAITING_FEEDBACK &&
+        this.state.context.llmResponse
+      ) {
+        this.handleModifyLLMResponse();
+      }
+
+      if (
+        data.command === "cancel" &&
+        this.state.state === CorsairState.AWAITING_FEEDBACK &&
+        this.state.context.llmResponse
+      ) {
+        this.handleCancelLLMResponse();
+      }
+
+      if (
+        data.command === "regenerate" &&
+        this.state.state === CorsairState.AWAITING_FEEDBACK &&
+        this.state.context.llmResponse
+      ) {
+        this.handleRegenerateLLMResponse();
+      }
+
+      if (
+        data.command === "accept" &&
+        this.state.state === CorsairState.AWAITING_FEEDBACK &&
+        this.state.context.llmResponse
+      ) {
+        this.handleAcceptLLMResponse();
       }
     });
   }
@@ -416,7 +593,9 @@ class StateMachine {
         ...operationsView,
         isSearching: !operationsView.isSearching,
         // Clear search when toggling off
-        searchQuery: operationsView.isSearching ? "" : operationsView.searchQuery,
+        searchQuery: operationsView.isSearching
+          ? ""
+          : operationsView.searchQuery,
         currentPage: 0, // Reset to first page when toggling
       },
     });
@@ -434,6 +613,141 @@ class StateMachine {
       },
     });
   }
+
+  private handleSubmitOperationConfig(configurationRules?: string) {
+    if (this.state.state !== CorsairState.CONFIGURING_NEW_OPERATION) return;
+
+    const newOperation = this.state.context.newOperation;
+    if (!newOperation) return;
+
+    // Update the new operation with configuration rules
+    const updatedOperation = {
+      ...newOperation,
+      configurationRules: configurationRules || "",
+    };
+
+    this.updateContext({
+      newOperation: updatedOperation,
+    });
+
+    this.addHistoryEntry(
+      "Operation configuration submitted",
+      undefined,
+      `${newOperation.operationName} ready for LLM processing`
+    );
+
+    // Transition to LLM processing state
+    this.transition(CorsairState.LLM_PROCESSING, {
+      availableActions: [],
+    });
+
+    // Emit a specific event for user-submitted configuration
+    eventBus.emit(CorsairEvent.LLM_ANALYSIS_STARTED, {
+      operationName: updatedOperation.operationName,
+      operationType: updatedOperation.operationType,
+    });
+  }
+
+  private handleCancelOperationConfig() {
+    if (this.state.state !== CorsairState.CONFIGURING_NEW_OPERATION) return;
+
+    const newOperation = this.state.context.newOperation;
+    if (newOperation) {
+      this.addHistoryEntry(
+        "Operation configuration cancelled",
+        undefined,
+        `${newOperation.operationName} configuration discarded`
+      );
+    }
+
+    this.transition(CorsairState.IDLE, {
+      newOperation: undefined,
+      availableActions: ["help", "quit"],
+    });
+  }
+
+  // LLM feedback command handlers
+  private handleModifyLLMResponse() {
+    // For now, go back to configuration to allow user to modify
+    const newOperation = this.state.context.newOperation;
+    if (newOperation) {
+      this.transition(CorsairState.CONFIGURING_NEW_OPERATION, {
+        newOperation,
+        llmResponse: undefined,
+        availableActions: [
+          "submit_operation_config",
+          "cancel_operation_config",
+        ],
+      });
+      this.addHistoryEntry(
+        "LLM suggestions modification requested",
+        undefined,
+        `Modifying configuration for ${newOperation.operationName}`
+      );
+    }
+  }
+
+  private handleCancelLLMResponse() {
+    const newOperation = this.state.context.newOperation;
+    if (newOperation) {
+      this.addHistoryEntry(
+        "LLM suggestions cancelled",
+        undefined,
+        `Cancelled ${newOperation.operationName} configuration`
+      );
+    }
+
+    this.transition(CorsairState.IDLE, {
+      newOperation: undefined,
+      llmResponse: undefined,
+      availableActions: ["help", "quit"],
+    });
+  }
+
+  private handleRegenerateLLMResponse() {
+    const newOperation = this.state.context.newOperation;
+    if (newOperation) {
+      this.addHistoryEntry(
+        "LLM analysis regeneration requested",
+        undefined,
+        `Regenerating analysis for ${newOperation.operationName}`
+      );
+
+      // Go back to LLM processing state
+      this.transition(CorsairState.LLM_PROCESSING, {
+        llmResponse: undefined,
+        availableActions: [],
+      });
+
+      // Emit LLM analysis started event for regeneration
+      eventBus.emit(CorsairEvent.LLM_ANALYSIS_STARTED, {
+        operationName: newOperation.operationName,
+        operationType: newOperation.operationType,
+      });
+    }
+  }
+
+  private handleAcceptLLMResponse() {
+    const newOperation = this.state.context.newOperation;
+    const llmResponse = this.state.context.llmResponse;
+
+    if (newOperation && llmResponse) {
+      this.addHistoryEntry(
+        "LLM suggestions accepted",
+        undefined,
+        `Accepted configuration for ${newOperation.operationName}`
+      );
+
+      // Here you could save the configuration or trigger generation
+      // For now, just return to idle
+      this.transition(CorsairState.IDLE, {
+        newOperation: undefined,
+        llmResponse: undefined,
+        availableActions: ["help", "quit"],
+      });
+    }
+  }
+
 }
 
 export const stateMachine = new StateMachine();

@@ -23,6 +23,12 @@ const formatTimeAgo = (timestamp: number): string => {
 };
 
 const getActivityIcon = (action: string): { icon: string; color: string } => {
+  if (action.includes('New query detected')) {
+    return { icon: '✨Q', color: 'cyan' };
+  }
+  if (action.includes('New mutation detected')) {
+    return { icon: '✨M', color: 'cyan' };
+  }
   if (action.includes('Added query')) {
     return { icon: '+ Q', color: 'green' };
   }
@@ -40,6 +46,9 @@ const getActivityIcon = (action: string): { icon: string; color: string } => {
   }
   if (action.includes('Updated mutation')) {
     return { icon: '~ M', color: 'yellow' };
+  }
+  if (action.includes('Operation configuration')) {
+    return { icon: '🔧', color: 'magenta' };
   }
   return { icon: '•', color: 'blue' };
 };

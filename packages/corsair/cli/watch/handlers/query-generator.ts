@@ -1,19 +1,62 @@
 import { eventBus } from "../core/event-bus.js";
 import { CorsairEvent } from "../types/events.js";
-import type { QueryDetectedEvent } from "../types/events.js";
+import type {
+  QueryDetectedEvent,
+  NewQueryAddedEvent,
+  NewMutationAddedEvent,
+  LLMAnalysisStartedEvent,
+} from "../types/events.js";
 import { generateStub } from "../generators/stub-generator.js";
 import { generateQueryWithLLM } from "../generators/llm-generator.js";
 import { writeFile, getQueryOutputPath } from "../writers/file-writer.js";
 import type { Query, SchemaDefinition } from "../types/state.js";
+import { stateMachine } from "../core/state-machine.js";
+import { llm } from "../../../llm/index.js";
+import { z } from "zod";
 
 /**
  * Query Generator Handler
  *
- * Listens to: QUERY_DETECTED
+ * Listens to: QUERY_DETECTED, NEW_QUERY_ADDED, NEW_MUTATION_ADDED
  * Emits: GENERATION_STARTED, GENERATION_PROGRESS, GENERATION_COMPLETE, GENERATION_FAILED
  */
 class QueryGenerator {
   private schema: SchemaDefinition = { tables: [], relations: [] };
+
+  // Define the schema for LLM response
+  private llmResponseSchema = z.object({
+    suggestions: z
+      .array(z.string())
+      .describe("List of configuration suggestions for the operation"),
+    recommendations: z.object({
+      dependencies: z
+        .string()
+        .nullable()
+        .optional()
+        .describe("Recommended dependencies for this operation"),
+      handler: z
+        .string()
+        .nullable()
+        .optional()
+        .describe("Recommended handler pattern"),
+      optimizations: z
+        .array(z.string())
+        .describe("Performance or code optimization suggestions"),
+    }),
+    analysis: z.object({
+      complexity: z
+        .enum(["low", "medium", "high"])
+        .describe("Estimated complexity of the operation"),
+      confidence: z
+        .number()
+        .min(0)
+        .max(1)
+        .describe("Confidence score for the analysis"),
+      reasoning: z
+        .string()
+        .describe("Explanation of the analysis and recommendations"),
+    }),
+  });
 
   constructor() {
     this.setupListeners();
@@ -23,6 +66,21 @@ class QueryGenerator {
     eventBus.on(
       CorsairEvent.QUERY_DETECTED,
       this.handleQueryDetected.bind(this)
+    );
+
+    eventBus.on(
+      CorsairEvent.NEW_QUERY_ADDED,
+      this.handleNewQueryAdded.bind(this)
+    );
+
+    eventBus.on(
+      CorsairEvent.NEW_MUTATION_ADDED,
+      this.handleNewMutationAdded.bind(this)
+    );
+
+    eventBus.on(
+      CorsairEvent.LLM_ANALYSIS_STARTED,
+      this.handleLLMAnalysisStarted.bind(this)
     );
   }
 
@@ -114,6 +172,138 @@ export default ${generatedQuery.functionName};
 
   public updateSchema(schema: SchemaDefinition) {
     this.schema = schema;
+  }
+
+  private async handleNewQueryAdded(data: NewQueryAddedEvent) {
+    // Only process LLM for initial detection (no configurationRules)
+    // User-submitted operations will be handled through LLM_ANALYSIS_STARTED event
+    if (data.configurationRules === undefined) {
+      await this.processWithLLM({
+        operationType: "query",
+        operationName: data.operationName,
+        functionName: data.functionName,
+        prompt: data.prompt,
+        file: data.file,
+        lineNumber: data.lineNumber,
+        configurationRules: data.configurationRules,
+      });
+    }
+  }
+
+  private async handleNewMutationAdded(data: NewMutationAddedEvent) {
+    // Only process LLM for initial detection (no configurationRules)
+    // User-submitted operations will be handled through LLM_ANALYSIS_STARTED event
+    if (data.configurationRules === undefined) {
+      await this.processWithLLM({
+        operationType: "mutation",
+        operationName: data.operationName,
+        functionName: data.functionName,
+        prompt: data.prompt,
+        file: data.file,
+        lineNumber: data.lineNumber,
+        configurationRules: data.configurationRules,
+      });
+    }
+  }
+
+  private async processWithLLM(operation: {
+    operationType: "query" | "mutation";
+    operationName: string;
+    functionName: string;
+    prompt: string;
+    file: string;
+    lineNumber: number;
+    configurationRules?: string;
+  }) {
+    // Note: LLM_ANALYSIS_STARTED should be emitted by the caller, not here
+    // to avoid infinite loops
+
+    try {
+      // Create a detailed prompt for the LLM
+      const message = `
+  Analyze this Corsair ${
+    operation.operationType
+  } operation and provide configuration suggestions:
+
+  Operation Details:
+  - Type: ${operation.operationType}
+  - Name: ${operation.operationName}
+  - Function: ${operation.functionName}
+  - Prompt: "${operation.prompt}"
+  - Configuration Rules: ${operation.configurationRules || "None provided"}
+
+  Please analyze this operation and provide:
+  1. Configuration suggestions to optimize the operation
+  2. Recommended dependencies and handler patterns
+  3. Performance optimizations
+  4. An assessment of complexity and confidence in your recommendations
+
+  Consider the context of a database query/mutation system where operations are used to interact with data.
+        `.trim();
+
+      // Get the provider from environment variable or default to "openai"
+      const provider = "openai";
+
+      // Call the LLM
+      const response = await llm({
+        provider,
+        prompt: `You are a helpful assistant that analyzes Corsair operations and provides configuration suggestions.`,
+        schema: this.llmResponseSchema,
+        message,
+      });
+
+      if (response) {
+        // Process successful LLM response
+        eventBus.emit(CorsairEvent.LLM_ANALYSIS_COMPLETE, {
+          operationName: operation.operationName,
+          operationType: operation.operationType,
+          response,
+          operation,
+        });
+      } else {
+        // Handle LLM failure
+        eventBus.emit(CorsairEvent.LLM_ANALYSIS_FAILED, {
+          operationName: operation.operationName,
+          operationType: operation.operationType,
+          error: "LLM analysis failed - no response received",
+        });
+      }
+    } catch (error) {
+      console.error("LLM processing error:", error);
+
+      eventBus.emit(CorsairEvent.LLM_ANALYSIS_FAILED, {
+        operationName: operation.operationName,
+        operationType: operation.operationType,
+        error: error instanceof Error ? error.message : "Unknown error",
+      });
+    }
+  }
+
+  private async handleLLMAnalysisStarted(data: LLMAnalysisStartedEvent) {
+    // This handler should only process user-initiated LLM analysis from the state machine
+    // Auto-detected operations are handled directly by handleNewQueryAdded/handleNewMutationAdded
+
+    // Get the current operation from state machine when LLM analysis is requested
+    const currentState = stateMachine.getCurrentState();
+    const newOperation = currentState.context.newOperation;
+
+    if (!newOperation) {
+      console.warn("LLM analysis started but no operation found in state");
+      return;
+    }
+
+    // Only process if this is a user-submitted operation (has configurationRules or from state machine)
+    if (newOperation.configurationRules !== undefined || currentState.state === "LLM_PROCESSING") {
+      await this.processWithLLM({
+        operationType: newOperation.operationType,
+        operationName: newOperation.operationName,
+        functionName: newOperation.functionName,
+        prompt: newOperation.prompt,
+        file: newOperation.file,
+        lineNumber: newOperation.lineNumber,
+        configurationRules: newOperation.configurationRules,
+      });
+    }
   }
 }
 

@@ -14,6 +14,8 @@ export enum CorsairEvent {
   OPERATION_ADDED = "operation:added",
   OPERATION_REMOVED = "operation:removed",
   OPERATION_UPDATED = "operation:updated",
+  NEW_QUERY_ADDED = "new:query:added",
+  NEW_MUTATION_ADDED = "new:mutation:added",
 
   // Generation Events
   GENERATION_STARTED = "generation:started",
@@ -30,6 +32,11 @@ export enum CorsairEvent {
 
   // Error Events
   ERROR_OCCURRED = "error:occurred",
+
+  // LLM Events
+  LLM_ANALYSIS_STARTED = "llm:analysis:started",
+  LLM_ANALYSIS_COMPLETE = "llm:analysis:complete",
+  LLM_ANALYSIS_FAILED = "llm:analysis:failed",
 }
 
 export interface FileChangedEvent {
@@ -78,7 +85,11 @@ export type UserCommands =
   | "select_operation"
   | "toggle_search"
   | "update_search"
-  | "go_back";
+  | "go_back"
+  | "submit_operation_config"
+  | "cancel_operation_config"
+  | "modify"
+  | "cancel";
 
 export interface UserCommandEvent {
   command: UserCommands;
@@ -134,6 +145,62 @@ export interface OperationUpdatedEvent {
   lineNumber: number;
 }
 
+export interface NewQueryAddedEvent {
+  operationName: string;
+  functionName: string;
+  prompt: string;
+  file: string;
+  lineNumber: number;
+  configurationRules?: string;
+}
+
+export interface NewMutationAddedEvent {
+  operationName: string;
+  functionName: string;
+  prompt: string;
+  file: string;
+  lineNumber: number;
+  configurationRules?: string;
+}
+
+export interface LLMAnalysisStartedEvent {
+  operationName: string;
+  operationType: "query" | "mutation";
+}
+
+export interface LLMAnalysisCompleteEvent {
+  operationName: string;
+  operationType: "query" | "mutation";
+  response: {
+    suggestions: string[];
+    recommendations: {
+      dependencies?: string;
+      handler?: string;
+      optimizations: string[];
+    };
+    analysis: {
+      complexity: "low" | "medium" | "high";
+      confidence: number;
+      reasoning: string;
+    };
+  };
+  operation: {
+    operationType: "query" | "mutation";
+    operationName: string;
+    functionName: string;
+    prompt: string;
+    file: string;
+    lineNumber: number;
+    configurationRules?: string;
+  };
+}
+
+export interface LLMAnalysisFailedEvent {
+  operationName: string;
+  operationType: "query" | "mutation";
+  error: string;
+}
+
 export type EventDataMap = {
   [CorsairEvent.FILE_CHANGED]: FileChangedEvent;
   [CorsairEvent.FILE_CREATED]: FileChangedEvent;
@@ -143,6 +210,8 @@ export type EventDataMap = {
   [CorsairEvent.OPERATION_ADDED]: OperationAddedEvent;
   [CorsairEvent.OPERATION_REMOVED]: OperationRemovedEvent;
   [CorsairEvent.OPERATION_UPDATED]: OperationUpdatedEvent;
+  [CorsairEvent.NEW_QUERY_ADDED]: NewQueryAddedEvent;
+  [CorsairEvent.NEW_MUTATION_ADDED]: NewMutationAddedEvent;
   [CorsairEvent.GENERATION_STARTED]: { queryId: string };
   [CorsairEvent.GENERATION_PROGRESS]: GenerationProgressEvent;
   [CorsairEvent.GENERATION_COMPLETE]: GenerationCompleteEvent;
@@ -151,4 +220,7 @@ export type EventDataMap = {
   [CorsairEvent.USER_COMMAND]: UserCommandEvent;
   [CorsairEvent.STATE_CHANGED]: any;
   [CorsairEvent.ERROR_OCCURRED]: ErrorOccurredEvent;
+  [CorsairEvent.LLM_ANALYSIS_STARTED]: LLMAnalysisStartedEvent;
+  [CorsairEvent.LLM_ANALYSIS_COMPLETE]: LLMAnalysisCompleteEvent;
+  [CorsairEvent.LLM_ANALYSIS_FAILED]: LLMAnalysisFailedEvent;
 };

@@ -10,6 +10,8 @@ import { AwaitingFeedbackScreen } from './screens/awaiting-feedback-screen.js';
 import { ErrorScreen } from './screens/error-screen.js';
 import { OperationsScreen } from './screens/operations-screen.js';
 import { OperationDetailScreen } from './screens/operation-detail-screen.js';
+import { OperationConfigurationScreen } from './screens/operation-configuration-screen.js';
+import { LLMScreen } from './screens/llm-screen.js';
 
 // Global keyboard shortcuts available across all screens
 const GLOBAL_SHORTCUTS = [
@@ -84,6 +86,10 @@ export const CorsairUI: React.FC = () => {
         eventBus.emit(CorsairEvent.USER_COMMAND, { command: 'undo' });
       } else if (inputLower === 'a') {
         eventBus.emit(CorsairEvent.USER_COMMAND, { command: 'accept' });
+      } else if (inputLower === 'm') {
+        eventBus.emit(CorsairEvent.USER_COMMAND, { command: 'modify' });
+      } else if (inputLower === 'c') {
+        eventBus.emit(CorsairEvent.USER_COMMAND, { command: 'cancel' });
       }
     }
   });
@@ -127,6 +133,14 @@ export const CorsairUI: React.FC = () => {
       currentScreen = <OperationDetailScreen context={state.context} />;
       break;
 
+    case CorsairState.CONFIGURING_NEW_OPERATION:
+      currentScreen = <OperationConfigurationScreen context={state.context} />;
+      break;
+
+    case CorsairState.LLM_PROCESSING:
+      currentScreen = <LLMScreen context={state.context} />;
+      break;
+
     default:
       currentScreen = <IdleScreen context={state.context} />;
   }
@@ -135,7 +149,9 @@ export const CorsairUI: React.FC = () => {
   const showBottomBar =
     state.state !== CorsairState.VIEWING_QUERIES &&
     state.state !== CorsairState.VIEWING_MUTATIONS &&
-    state.state !== CorsairState.VIEWING_OPERATION_DETAIL;
+    state.state !== CorsairState.VIEWING_OPERATION_DETAIL &&
+    state.state !== CorsairState.CONFIGURING_NEW_OPERATION &&
+    state.state !== CorsairState.LLM_PROCESSING;
 
   // Wrap screen with layout that includes bottom bar
   return (

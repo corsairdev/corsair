@@ -9,6 +9,8 @@ export enum CorsairState {
   VIEWING_QUERIES = "VIEWING_QUERIES",
   VIEWING_MUTATIONS = "VIEWING_MUTATIONS",
   VIEWING_OPERATION_DETAIL = "VIEWING_OPERATION_DETAIL",
+  CONFIGURING_NEW_OPERATION = "CONFIGURING_NEW_OPERATION",
+  LLM_PROCESSING = "LLM_PROCESSING",
 }
 
 export interface Query {
@@ -46,6 +48,20 @@ export interface PromptInfo {
   type: "select" | "input";
 }
 
+export interface LLMResponse {
+  suggestions: string[];
+  recommendations: {
+    dependencies?: string;
+    handler?: string;
+    optimizations: string[];
+  };
+  analysis: {
+    complexity: "low" | "medium" | "high";
+    confidence: number;
+    reasoning: string;
+  };
+}
+
 export interface StateContext {
   currentQuery?: Query;
   generationProgress?: GenerationProgress;
@@ -58,6 +74,8 @@ export interface StateContext {
   queries?: Map<string, OperationDefinition>;
   mutations?: Map<string, OperationDefinition>;
   operationsView?: OperationsViewContext;
+  newOperation?: NewOperationContext;
+  llmResponse?: LLMResponse;
 }
 
 export interface OperationsViewContext {
@@ -66,6 +84,16 @@ export interface OperationsViewContext {
   searchQuery: string;
   isSearching: boolean;
   selectedOperation?: string;
+}
+
+export interface NewOperationContext {
+  operationType: "query" | "mutation";
+  operationName: string;
+  functionName: string;
+  prompt: string;
+  file: string;
+  lineNumber: number;
+  configurationRules?: string;
 }
 
 export interface ApplicationState {
@@ -88,7 +116,6 @@ export interface OperationDefinition {
 
 export interface SchemaDefinition {
   tables: TableDefinition[];
-  relations: RelationDefinition[];
 }
 
 export interface TableDefinition {
@@ -99,17 +126,8 @@ export interface TableDefinition {
 export interface ColumnDefinition {
   name: string;
   type: string;
-  nullable: boolean;
-  primaryKey: boolean;
   references?: {
     table: string;
     column: string;
   };
-}
-
-export interface RelationDefinition {
-  from: string;
-  to: string;
-  type: "one-to-one" | "one-to-many" | "many-to-many";
-  foreignKey?: string;
 }
