@@ -10,7 +10,10 @@
   "scripts": {
     "build-watch": "tsc --watch",
     "build": "tsc",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:ui": "vitest --ui",
+    "test:coverage": "vitest run --coverage",
     "db:test": "tsx db/index.ts",
     "api:test": "tsx api/index.ts",
     "docker:up": "docker compose up -d",
@@ -118,6 +121,8 @@
     "@types/node": "^22.18.11",
     "@types/pg": "^8.15.5",
     "@types/react": "^19.2.2",
+    "@vitest/coverage-v8": "^2.1.8",
+    "@vitest/ui": "^2.1.8",
     "drizzle-kit": "^0.31.5",
     "express": "^4.0.0",
     "fastify": "^4.0.0",
@@ -125,6 +130,7 @@
     "next": "15.5.6",
     "react": "^19.1.0",
     "react-dom": "19.1.0",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "vitest": "^2.1.8"
   }
 }

@@ -31,46 +31,20 @@ class OperationChangeHandler {
     const { file, before, after } = data;
     const fileName = path.basename(file);
 
-    // Create maps for easier comparison
-    const beforeMap = new Map<string, CorsairOperation>();
-    const afterMap = new Map<string, CorsairOperation>();
-
-    before.forEach((op) => {
-      const key = this.createOperationKey(op);
-      beforeMap.set(key, op);
-    });
-
-    after.forEach((op) => {
-      const key = this.createOperationKey(op);
-      afterMap.set(key, op);
-    });
-
     // Detect added operations
-    for (const [key, operation] of afterMap) {
-      if (!beforeMap.has(key)) {
+    for (const afterOp of after) {
+      const beforeOp = before.find(
+        (op) => op.name === afterOp.name && op.line === afterOp.line
+      );
+
+      if (!beforeOp) {
         this.emitOperationAdded({
-          operation,
+          operation: afterOp,
           file,
           fileName,
         });
-      }
-    }
-
-    // Detect removed operations
-    for (const [key, operation] of beforeMap) {
-      if (!afterMap.has(key)) {
-        this.emitOperationRemoved({
-          operation,
-          file,
-          fileName,
-        });
-      }
-    }
-
-    // Detect updated operations (same function name but different prompt)
-    for (const [key, afterOp] of afterMap) {
-      const beforeOp = beforeMap.get(key);
-      if (beforeOp && beforeOp.prompt !== afterOp.prompt) {
+      } else if (beforeOp.prompt !== afterOp.prompt) {
+        // Detect updated operations (same function name and line but different prompt)
         this.emitOperationUpdated({
           operation: afterOp,
           oldPrompt: beforeOp.prompt,
@@ -79,13 +53,21 @@ class OperationChangeHandler {
         });
       }
     }
-  }
 
-  /**
-   * Creates a unique key for an operation based on its function name
-   */
-  private createOperationKey(operation: CorsairOperation): string {
-    return operation.name;
+    // Detect removed operations
+    for (const beforeOp of before) {
+      const afterOp = after.find(
+        (op) => op.name === beforeOp.name && op.line === beforeOp.line
+      );
+
+      if (!afterOp) {
+        this.emitOperationRemoved({
+          operation: beforeOp,
+          file,
+          fileName,
+        });
+      }
+    }
   }
 
   /**
