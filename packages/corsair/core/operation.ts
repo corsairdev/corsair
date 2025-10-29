@@ -3,32 +3,54 @@ import type {
   CorsairQuery,
   CorsairMutation,
   Dependencies,
-  BaseOperation
+  BaseOperation,
 } from "./types";
 
-type OperationInput<TContext, TInputSchema extends z.ZodType, TOutput> = {
+type OperationInput<TContext, TInputSchema extends z.ZodType | any, TOutput> = {
   prompt: string;
   input_type: TInputSchema;
   dependencies?: Dependencies;
 } & (
   | {
       response_type: z.ZodType<TOutput>;
-      handler: (input: z.infer<TInputSchema>, context: TContext) => Promise<TOutput>;
+      handler: (
+        input: TInputSchema extends z.ZodType ? z.infer<TInputSchema> : TInputSchema,
+        context: TContext
+      ) => Promise<TOutput>;
     }
   | {
       response_type?: never;
-      handler: (input: z.infer<TInputSchema>, context: TContext) => Promise<TOutput>;
+      handler: (
+        input: TInputSchema extends z.ZodType ? z.infer<TInputSchema> : TInputSchema,
+        context: TContext
+      ) => Promise<TOutput>;
     }
 );
 
 function createValidatedHandler<TInput, TOutput, TContext>(
   originalHandler: (input: TInput, context: TContext) => Promise<TOutput>,
   responseType: z.ZodType<TOutput> | undefined,
+  inputType: any,
   operationType: string,
   prompt: string
 ) {
   return async (input: TInput, context: TContext): Promise<TOutput> => {
-    const result = await originalHandler(input, context);
+    // Validate input if it's a Zod schema
+    let validatedInput = input;
+    if (inputType && typeof inputType === 'object' && 'parse' in inputType) {
+      try {
+        validatedInput = (inputType as z.ZodType<TInput>).parse(input);
+      } catch (error) {
+        if (error instanceof z.ZodError) {
+          throw new Error(
+            `${operationType} "${prompt}" received invalid input: ${error.message}`
+          );
+        }
+        throw error;
+      }
+    }
+
+    const result = await originalHandler(validatedInput, context);
 
     if (responseType) {
       try {
@@ -47,13 +69,14 @@ function createValidatedHandler<TInput, TOutput, TContext>(
   };
 }
 
-function createOperation<TContext, TInputSchema extends z.ZodType, TOutput>(
+function createOperation<TContext, TInputSchema extends z.ZodType | any, TOutput>(
   input: OperationInput<TContext, TInputSchema, TOutput>,
   operationType: string
-): BaseOperation<z.infer<TInputSchema>, TOutput, TContext> {
+): BaseOperation<TInputSchema extends z.ZodType ? z.infer<TInputSchema> : TInputSchema, TOutput, TContext> {
   const wrappedHandler = createValidatedHandler(
     input.handler,
     input.response_type,
+    input.input_type,
     operationType,
     input.prompt
   );
@@ -64,21 +87,24 @@ function createOperation<TContext, TInputSchema extends z.ZodType, TOutput>(
     response_type: input.response_type,
     dependencies: input.dependencies,
     handler: wrappedHandler,
-  } as BaseOperation<z.infer<TInputSchema>, TOutput, TContext>;
+  } as BaseOperation<TInputSchema extends z.ZodType ? z.infer<TInputSchema> : TInputSchema, TOutput, TContext>;
 }
 
 export function createQuery<TContext>() {
-  return <TInputSchema extends z.ZodType, TOutput = any>(
+  return <TInputSchema extends z.ZodType | any, TOutput = any>(
     query: OperationInput<TContext, TInputSchema, TOutput>
-  ): CorsairQuery<z.infer<TInputSchema>, TOutput, TContext> => {
+  ): CorsairQuery<TInputSchema extends z.ZodType ? z.infer<TInputSchema> : TInputSchema, TOutput, TContext> => {
     return createOperation<TContext, TInputSchema, TOutput>(query, "Query");
   };
 }
 
 export function createMutation<TContext>() {
-  return <TInputSchema extends z.ZodType, TOutput = any>(
+  return <TInputSchema extends z.ZodType | any, TOutput = any>(
     mutation: OperationInput<TContext, TInputSchema, TOutput>
-  ): CorsairMutation<z.infer<TInputSchema>, TOutput, TContext> => {
-    return createOperation<TContext, TInputSchema, TOutput>(mutation, "Mutation");
+  ): CorsairMutation<TInputSchema extends z.ZodType ? z.infer<TInputSchema> : TInputSchema, TOutput, TContext> => {
+    return createOperation<TContext, TInputSchema, TOutput>(
+      mutation,
+      "Mutation"
+    );
   };
 }

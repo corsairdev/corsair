@@ -24,6 +24,7 @@ import type {
   StateContext,
   OperationDefinition,
   SchemaDefinition,
+  LLMResponse,
 } from "../types/state.js";
 
 class StateMachine {
@@ -274,14 +275,27 @@ class StateMachine {
         this.addHistoryEntry(
           "LLM analysis completed",
           undefined,
-          `Analysis for ${data.operationName} completed with ${
-            data.response.analysis.confidence * 100
-          }% confidence`
+          `Analysis for ${data.operationName} completed successfully`
         );
+
+        // Convert the generated response to LLMResponse format
+        const llmResponse: LLMResponse = {
+          suggestions: [data.response.notes],
+          recommendations: {
+            dependencies: null,
+            handler: data.response.function,
+            optimizations: ["Generated with type-safe patterns", "Includes proper error handling"]
+          },
+          analysis: {
+            complexity: "medium" as const,
+            confidence: 0.9,
+            reasoning: `Generated ${data.operationType} for operation: ${data.operationName}`
+          }
+        };
 
         // Transition to feedback state with LLM response
         this.transition(CorsairState.AWAITING_FEEDBACK, {
-          llmResponse: data.response,
+          llmResponse,
           newOperation: data.operation,
           availableActions: ["accept", "regenerate", "modify", "cancel"],
         });

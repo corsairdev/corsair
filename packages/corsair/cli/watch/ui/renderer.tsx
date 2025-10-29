@@ -61,12 +61,12 @@ export const CorsairUI: React.FC = () => {
       return;
     }
 
-    if (inputLower === 'q') {
+    if (inputLower === 'q' && state.state === CorsairState.IDLE) {
       eventBus.emit(CorsairEvent.USER_COMMAND, { command: 'queries' });
       return;
     }
 
-    if (inputLower === 'm') {
+    if (inputLower === 'm' && state.state === CorsairState.IDLE) {
       eventBus.emit(CorsairEvent.USER_COMMAND, { command: 'mutations' });
       return;
     }

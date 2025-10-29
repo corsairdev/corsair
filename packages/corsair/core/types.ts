@@ -11,27 +11,43 @@ export type OperationType = "query" | "mutation";
 
 export interface BaseOperation<TInput, TOutput, TContext> {
   prompt: string;
-  input_type: z.ZodType<TInput>;
+  input_type: z.ZodType<TInput> | TInput;
   response_type?: z.ZodType<TOutput>;
   dependencies?: Dependencies;
   handler: (input: TInput, context: TContext) => Promise<TOutput>;
 }
 
-export interface CorsairQuery<TInput, TOutput, TContext> extends BaseOperation<TInput, TOutput, TContext> {}
+export interface CorsairQuery<TInput, TOutput, TContext>
+  extends BaseOperation<TInput, TOutput, TContext> {}
 
-export interface CorsairMutation<TInput, TOutput, TContext> extends BaseOperation<TInput, TOutput, TContext> {}
+export interface CorsairMutation<TInput, TOutput, TContext>
+  extends BaseOperation<TInput, TOutput, TContext> {}
 
-export type CorsairQueries<TContext = unknown> = Record<string, CorsairQuery<any, any, TContext>>;
+export type CorsairQueries<TContext = unknown> = Record<
+  string,
+  CorsairQuery<any, any, TContext>
+>;
 
-export type CorsairMutations<TContext = unknown> = Record<string, CorsairMutation<any, any, TContext>>;
+export type CorsairMutations<TContext = unknown> = Record<
+  string,
+  CorsairMutation<any, any, TContext>
+>;
 
-export type CorsairOperations<TContext = unknown> = CorsairQueries<TContext> | CorsairMutations<TContext>;
+export type CorsairOperations<TContext = unknown> =
+  | CorsairQueries<TContext>
+  | CorsairMutations<TContext>;
 
-export type InferInput<T> = T extends BaseOperation<infer TInput, any, any> ? TInput : never;
+export type InferInput<T> = T extends BaseOperation<infer TInput, any, any>
+  ? TInput
+  : never;
 
-export type InferOutput<T> = T extends BaseOperation<any, infer TOutput, any> ? TOutput : never;
+export type InferOutput<T> = T extends BaseOperation<any, infer TOutput, any>
+  ? TOutput
+  : never;
 
-export type InferContext<T> = T extends BaseOperation<any, any, infer TContext> ? TContext : never;
+export type InferContext<T> = T extends BaseOperation<any, any, infer TContext>
+  ? TContext
+  : never;
 
 export type InferOperationInput<
   TOperations extends CorsairOperations<any>,

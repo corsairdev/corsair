@@ -1,7 +1,5 @@
-import { createMutation } from "corsair/core";
-import { z } from "corsair/core";
-import type { DatabaseContext } from "./types";
-import { schema } from "./types";
+import { createMutation, z } from "corsair/core";
+import { schema, type DatabaseContext } from "./types";
 import { drizzle, drizzleZod } from "corsair/db/types";
 
 const mutation = createMutation<DatabaseContext>();
@@ -135,7 +133,7 @@ export const mutations = {
 
   "create album": mutation({
     prompt: "create album",
-    input_type: drizzleZod.createInsertSchema(schema.albums),
+    input_type: schema.albums._.inferInsert,
     // response_type: drizzleZod.createSelectSchema(schema.albums),
     dependencies: {
       tables: ["albums"],
@@ -159,7 +157,7 @@ export const mutations = {
 
   "create track": mutation({
     prompt: "create track",
-    input_type: drizzleZod.createInsertSchema(schema.tracks),
+    input_type: schema.tracks._.inferInsert,
     // response_type: drizzleZod.createSelectSchema(schema.tracks),
     dependencies: {
       tables: ["tracks"],
@@ -228,6 +226,145 @@ export const mutations = {
       return link;
     },
   }),
+  "create albums": mutation({
+    prompt: "create albums",
+    input_type: schema.albums._.inferInsert,
+    handler: async (input, ctx) => {
+      // Validate that all referenced artist_ids exist
+      const allArtistIds = [
+        ...new Set(input.albums.flatMap((a) => a.artist_ids)),
+      ];
+      if (allArtistIds.length > 0) {
+        const existingArtists = await ctx.db
+          .select({ id: ctx.schema.artists.id })
+          .from(ctx.schema.artists)
+          .where(drizzle.inArray(ctx.schema.artists.id, allArtistIds));
+        const foundArtistIds = new Set(existingArtists.map((a) => a.id));
+        const missingIds = allArtistIds.filter((id) => !foundArtistIds.has(id));
+        if (missingIds.length > 0) {
+          throw new Error(
+            `Some artist_ids do not exist: ${missingIds.join(", ")}`
+          );
+        }
+      }
+
+      // Insert albums and create album_artists relationships
+      const createdAlbums = [];
+      for (const album of input.albums) {
+        // Insert album
+        const [insertedAlbum] = await ctx.db
+          .insert(ctx.schema.albums)
+          .values({
+            id: album.id,
+            name: album.name,
+            album_type: album.album_type,
+            release_date: album.release_date,
+            release_date_precision: album.release_date_precision,
+            total_tracks: album.total_tracks,
+            images: album.images,
+            external_urls: album.external_urls,
+            uri: album.uri,
+            href: album.href,
+          })
+          .onConflictDoNothing()
+          .returning();
+        if (!insertedAlbum) {
+          // Album with this id already exists: safe to continue or throw?
+          throw new Error(`Album with id '${album.id}' already exists.`);
+        }
+
+        // Insert into album_artists
+        for (const artist_id of album.artist_ids) {
+          await ctx.db
+            .insert(ctx.schema.album_artists)
+            .values({
+              album_id: album.id,
+              artist_id: artist_id,
+            })
+            .onConflictDoNothing();
+        }
+        createdAlbums.push(insertedAlbum);
+      }
+      return createdAlbums;
+    },
+  }),
+  "link album to artists": mutation({
+    prompt: "link album to artists",
+    input_type: z.object({
+      albumId: z.string(),
+      artistIds: z.array(z.string()),
+    }),
+    handler: async (input, ctx) => {
+      const { albumId, artistIds } = input;
+
+      // Validate that the album exists
+      const [album] = await ctx.db
+        .select({ id: ctx.schema.albums.id })
+        .from(ctx.schema.albums)
+        .where(drizzle.eq(ctx.schema.albums.id, albumId))
+        .limit(1);
+      if (!album) {
+        throw new Error(`Album with id '${albumId}' does not exist.`);
+      }
+
+      // Validate that all artistIds exist and collect the missing ones
+      const existingArtistRows = await ctx.db
+        .select({ id: ctx.schema.artists.id })
+        .from(ctx.schema.artists)
+        .where(drizzle.inArray(ctx.schema.artists.id, artistIds));
+      const foundArtistIds = new Set(existingArtistRows.map((a) => a.id));
+      const missingArtistIds = artistIds.filter(
+        (id) => !foundArtistIds.has(id)
+      );
+      if (missingArtistIds.length > 0) {
+        throw new Error(
+          `These artistIds do not exist: ${missingArtistIds.join(", ")}`
+        );
+      }
+
+      // Prepare insert data for new pairs that don't already exist
+      // First, select existing links to avoid duplicates
+      const existingLinks = await ctx.db
+        .select({ artist_id: ctx.schema.album_artists.artist_id })
+        .from(ctx.schema.album_artists)
+        .where(
+          drizzle.and(
+            drizzle.eq(ctx.schema.album_artists.album_id, albumId),
+            drizzle.inArray(ctx.schema.album_artists.artist_id, artistIds)
+          )
+        );
+      const alreadyLinkedSet = new Set(existingLinks.map((l) => l.artist_id));
+
+      const newLinks = artistIds.filter((id) => !alreadyLinkedSet.has(id));
+      if (newLinks.length === 0) {
+        // All links already exist, return the existing links
+        const allLinks = await ctx.db
+          .select()
+          .from(ctx.schema.album_artists)
+          .where(drizzle.eq(ctx.schema.album_artists.album_id, albumId));
+        return allLinks;
+      }
+
+      // Create new album_artist links
+      const insertRows = newLinks.map((artist_id) => ({
+        album_id: albumId,
+        artist_id,
+      }));
+
+      const inserted = await ctx.db
+        .insert(ctx.schema.album_artists)
+        .values(insertRows)
+        .returning();
+
+      // Return all links for the album (including previous and new)
+      const allLinks = await ctx.db
+        .select()
+        .from(ctx.schema.album_artists)
+        .where(drizzle.eq(ctx.schema.album_artists.album_id, albumId));
+
+      return allLinks;
+    },
+  }),
 };
 
-const test = drizzleZod.createInsertSchema(schema.albums).def.shape;
+// const test = schema.albums._.inferInsert;

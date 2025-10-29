@@ -40,7 +40,7 @@ export function AlbumDetailsSheet({
 
   const albumTracks = tracks || [];
 
-  const res = useCorsairMutation("create albums", { name: "test", id: "test" });
+  const res = useCorsairMutation("create albums", {});
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
