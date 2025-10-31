@@ -42,5 +42,5 @@ next-env.d.ts
 
 # corsair
 .drizzle.config.tmp.js
-lib/corsair/sql
-lib/corsair/drizzle
+corsair/sql
+corsair/drizzle
