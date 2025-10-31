@@ -1,6 +1,6 @@
-import { NextRequest, NextResponse } from "next/server";
-import { CorsairMutations, CorsairQueries } from "../core";
-import { ContextFactory, executeCorsairOperation } from "../core/execute";
+import { NextRequest, NextResponse } from 'next/server'
+import { CorsairMutations, CorsairQueries } from '../core'
+import { ContextFactory, executeCorsairOperation } from '../core/execute'
 
 export function createNextJsHandler<
   TQueries extends CorsairQueries<TContext>,
@@ -12,22 +12,26 @@ export function createNextJsHandler<
   contextFactory: ContextFactory<TContext>
 ) {
   return async (request: NextRequest, _context: { params: Promise<any> }) => {
-    const body = await request.json();
+    const body = await request.json()
 
-    const corsairContext = await contextFactory(request);
+    const corsairContext = await contextFactory(request)
 
     // Route to correct operation based on type
-    const operations = body.operation === "query" ? queries : mutations;
-    const result = await executeCorsairOperation(operations, body, corsairContext);
+    const operations = body.operation === 'query' ? queries : mutations
+    const result = await executeCorsairOperation(
+      operations,
+      body,
+      corsairContext
+    )
 
     if (result.success) {
-      return NextResponse.json(result.data);
+      return NextResponse.json(result.data)
     } else {
-      const status = result.error.includes("validation") ? 400 : 500;
+      const status = result.error.includes('validation') ? 400 : 500
       return NextResponse.json(
         { message: result.error, errors: result.errors },
         { status }
-      );
+      )
     }
-  };
+  }
 }
