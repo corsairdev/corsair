@@ -87,6 +87,22 @@ abstract class Operations {
                       SyntaxKind.CallExpression
                     )
                   }
+                } else if (declaration) {
+                  callExpr = declaration.getFirstDescendantByKind(
+                    SyntaxKind.CallExpression
+                  )
+                }
+              } else if (
+                initializer?.isKind(SyntaxKind.PropertyAccessExpression)
+              ) {
+                const symbol = initializer.getSymbol()
+                const decl =
+                  symbol?.getAliasedSymbol()?.getDeclarations()?.[0] ||
+                  symbol?.getDeclarations()?.[0]
+                if (decl) {
+                  callExpr = decl.getFirstDescendantByKind(
+                    SyntaxKind.CallExpression
+                  )
                 }
               } else {
                 callExpr = prop.getFirstDescendantByKind(

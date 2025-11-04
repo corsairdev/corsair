@@ -1,7 +1,5 @@
-import { createMutation } from 'corsair/core'
-import { schema, type DatabaseContext } from '../types'
-
-const mutation = createMutation<DatabaseContext>()
+import { mutation } from '../instances'
+import { schema } from '../types'
 
 export const createAlbum = mutation({
   prompt: 'create album',

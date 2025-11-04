@@ -1,8 +1,6 @@
-import { createMutation, z } from 'corsair/core'
-import { type DatabaseContext } from '../types'
+import { z } from 'corsair/core'
+import { mutation } from '../instances'
 import { drizzle } from 'corsair/db/types'
-
-const mutation = createMutation<DatabaseContext>()
 
 export const toggleTrackExplicit = mutation({
   prompt: 'toggle track explicit',

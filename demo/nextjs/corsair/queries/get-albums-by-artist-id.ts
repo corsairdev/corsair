@@ -1,8 +1,6 @@
-import { createQuery, z } from 'corsair/core'
-import { type DatabaseContext } from '../types'
+import { z } from 'corsair/core'
+import { query } from '../instances'
 import { drizzle } from 'corsair/db/types'
-
-const query = createQuery<DatabaseContext>()
 
 export const getAlbumsByArtistId = query({
   prompt: 'get albums by artist id',

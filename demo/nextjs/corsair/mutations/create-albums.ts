@@ -1,15 +1,30 @@
-import { createMutation } from 'corsair/core'
-import { schema, type DatabaseContext } from '../types'
+import { mutation } from '../instances'
+import { z } from 'corsair/core'
 import { drizzle } from 'corsair/db/types'
-
-const mutation = createMutation<DatabaseContext>()
 
 export const createAlbums = mutation({
   prompt: 'create albums',
-  input_type: schema.albums._.inferInsert,
+  input_type: z.object({
+    albums: z.array(
+      z.object({
+        id: z.string(),
+        name: z.string(),
+        album_type: z.string(),
+        release_date: z.string().optional(),
+        release_date_precision: z.string().optional(),
+        total_tracks: z.number().optional(),
+        images: z.any().optional(),
+        external_urls: z.any().optional(),
+        uri: z.string().optional(),
+        href: z.string().optional(),
+        artist_ids: z.array(z.string()),
+      })
+    ),
+  }),
   handler: async (input, ctx) => {
-    // Validate that all referenced artist_ids exist
-    const allArtistIds = [...new Set(input.albums.flatMap(a => a.artist_ids))]
+    const allArtistIds: string[] = [
+      ...new Set(input.albums.flatMap(a => a.artist_ids)),
+    ]
     if (allArtistIds.length > 0) {
       const existingArtists = await ctx.db
         .select({ id: ctx.schema.artists.id })
