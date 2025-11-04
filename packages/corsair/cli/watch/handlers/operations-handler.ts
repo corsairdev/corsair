@@ -67,33 +67,57 @@ abstract class Operations {
       if (initializer?.isKind(SyntaxKind.ObjectLiteralExpression)) {
         initializer.getProperties().forEach(prop => {
           if (prop.isKind(SyntaxKind.PropertyAssignment)) {
-            const operationName = prop.getName()
+            try {
+              const operationName = prop.getName()
+              const initializer = prop.getInitializer()
+              let callExpr: import('ts-morph').CallExpression | undefined
 
-            const callExpr = prop.getFirstDescendantByKind(
-              SyntaxKind.CallExpression
-            )
-            const configObj = callExpr?.getArguments()[0]
+              if (initializer?.isKind(SyntaxKind.Identifier)) {
+                const symbol = initializer.getSymbol()
+                const declaration = symbol?.getDeclarations()[0]
 
-            if (configObj?.isKind(SyntaxKind.ObjectLiteralExpression)) {
-              const prompt = configObj
-                .getProperty('prompt')
-                ?.getChildAtIndex(2)
-                .getText()
-              const dependencies = configObj
-                .getProperty('dependencies')
-                ?.getChildAtIndex(2)
-                .getText()
+                if (declaration?.isKind(SyntaxKind.ImportSpecifier)) {
+                  const importedSymbol =
+                    declaration.getSymbol()?.getAliasedSymbol() ??
+                    declaration.getSymbol()
+                  const sourceDeclaration = importedSymbol?.getDeclarations()[0]
 
-              // Get the handler function code as a string
-              const handlerProp = configObj.getProperty('handler')
-              const handler = handlerProp?.getChildAtIndex(2).getText() || ''
+                  if (sourceDeclaration) {
+                    callExpr = sourceDeclaration.getFirstDescendantByKind(
+                      SyntaxKind.CallExpression
+                    )
+                  }
+                }
+              } else {
+                callExpr = prop.getFirstDescendantByKind(
+                  SyntaxKind.CallExpression
+                )
+              }
 
-              operations.set(operationName, {
-                name: operationName,
-                prompt: prompt?.replace(/['"`]/g, '') || '',
-                dependencies: dependencies,
-                handler: handler,
-              })
+              const configObj = callExpr?.getArguments()[0]
+
+              if (configObj?.isKind(SyntaxKind.ObjectLiteralExpression)) {
+                const prompt = configObj
+                  .getProperty('prompt')
+                  ?.getChildAtIndex(2)
+                  .getText()
+                const dependencies = configObj
+                  .getProperty('dependencies')
+                  ?.getChildAtIndex(2)
+                  .getText()
+
+                const handlerProp = configObj.getProperty('handler')
+                const handler = handlerProp?.getChildAtIndex(2).getText() || ''
+
+                operations.set(operationName, {
+                  name: operationName,
+                  prompt: prompt?.replace(/['"`]/g, '') || '',
+                  dependencies: dependencies,
+                  handler: handler,
+                })
+              }
+            } catch (err) {
+              // Could be a spread operator, skip for now
             }
           }
         })
@@ -134,7 +158,7 @@ abstract class Operations {
  */
 export class Queries extends Operations {
   constructor() {
-    super(process.cwd() + '/corsair/queries.ts', 'queries', 'queries')
+    super(process.cwd() + '/corsair/operations.ts', 'queries', 'queries')
   }
 }
 
@@ -144,6 +168,6 @@ export class Queries extends Operations {
  */
 export class Mutations extends Operations {
   constructor() {
-    super(process.cwd() + '/corsair/mutations.ts', 'mutations', 'mutations')
+    super(process.cwd() + '/corsair/operations.ts', 'mutations', 'mutations')
   }
 }

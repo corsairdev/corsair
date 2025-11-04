@@ -4,8 +4,8 @@ import {
   createCorsairServerQueryClient,
   createCorsairServerMutationClient,
 } from 'corsair/core'
-import { mutations } from './mutations'
-import { queries } from './queries'
+import { mutations } from './operations'
+import { queries } from './operations'
 import { cache } from 'react'
 import { createServerContext } from './context'
 

@@ -1,5 +1,7 @@
 import { Project, SyntaxKind, VariableDeclarationKind } from 'ts-morph'
 import * as path from 'path'
+import { promises as fs } from 'fs'
+import { format } from 'prettier'
 
 export interface OperationToWrite {
   operationName: string
@@ -16,101 +18,103 @@ export interface OperationToWrite {
   targetFilePath?: string
 }
 
-export function writeOperationToFile(operation: OperationToWrite): void {
+function kebabCase(str: string) {
+  return str
+    .replace(/([a-z])([A-Z])/g, '$1-$2')
+    .replace(/[\s_]+/g, '-')
+    .toLowerCase()
+}
+
+export async function writeOperationToFile(
+  operation: OperationToWrite
+): Promise<void> {
   const projectRoot = process.cwd()
-  const fileName = operation.operationType === 'query' ? 'queries' : 'mutations'
-  const defaultFilePath = path.join(projectRoot, 'corsair', `${fileName}.ts`)
+  const operationTypePlural =
+    operation.operationType === 'query' ? 'queries' : 'mutations'
 
-  const candidatePaths = operation.targetFilePath
-    ? [operation.targetFilePath, defaultFilePath]
-    : [defaultFilePath]
+  // 1. Create the new operation file
+  const newOperationFileName = `${kebabCase(operation.operationName)}.ts`
+  const newOperationFilePath = path.join(
+    projectRoot,
+    'corsair',
+    operationTypePlural,
+    newOperationFileName
+  )
 
-  const project = new Project()
-  let sourceFile = undefined as
-    | ReturnType<Project['addSourceFileAtPath']>
-    | undefined
-  let operationsVar = undefined as
-    | ReturnType<NonNullable<typeof sourceFile>['getVariableDeclaration']>
-    | undefined
-  let chosenPath: string | undefined
-
-  for (const candidate of candidatePaths) {
-    try {
-      const sf = project.addSourceFileAtPath(candidate)
-      const ov = sf.getVariableDeclaration(fileName)
-      if (ov) {
-        sourceFile = sf
-        operationsVar = ov
-        chosenPath = candidate
-        break
-      }
-    } catch (_) {
-      continue
-    }
-  }
-
-  if (!sourceFile || !operationsVar) {
-    const first = candidatePaths[0]
-    throw new Error(`Could not find ${fileName} variable in ${first}`)
-  }
-
-  const initializer = operationsVar.getInitializer()
-
-  if (!initializer?.isKind(SyntaxKind.ObjectLiteralExpression)) {
-    throw new Error(`${fileName} variable is not an object literal expression`)
-  }
-
-  const cleanPrompt = operation.prompt.replace(/['"]/g, '')
   const functionType =
-    operation.operationType === 'query' ? 'query' : 'mutation'
+    operation.operationType === 'query' ? 'createQuery' : 'createMutation'
+  const variableName = operation.operationName
+    .split(' ')
+    .map((word, i) =>
+      i === 0 ? word : word.charAt(0).toUpperCase() + word.slice(1)
+    )
+    .join('')
 
-  let newOperationCode = `  "${operation.operationName}": ${functionType}({\n`
-  newOperationCode += `    prompt: "${cleanPrompt}",\n`
-  newOperationCode += `    input_type: ${operation.inputType},\n`
+  let newOperationCode = `
+    import { ${functionType}, z } from 'corsair/core'
+    import { type DatabaseContext } from '../types'
+    import { drizzle } from 'corsair/db/types'
+
+    const ${operation.operationType} = ${functionType}<DatabaseContext>()
+
+    export const ${variableName} = ${operation.operationType}({
+      prompt: "${operation.prompt.replace(/['"]/g, '')}",
+      input_type: ${operation.inputType},
+      `
 
   if (operation.pseudocode) {
-    const pseudo = JSON.stringify(operation.pseudocode)
-    newOperationCode += `    pseudocode: ${pseudo},\n`
+    newOperationCode += `pseudocode: ${JSON.stringify(operation.pseudocode)},\n`
   }
-
   if (operation.functionNameSuggestion) {
-    newOperationCode += `    function_name: "${operation.functionNameSuggestion}",\n`
+    newOperationCode += `function_name: "${operation.functionNameSuggestion}",\n`
   }
-
   if (operation.dependencies) {
-    newOperationCode += `    dependencies: {\n`
-    if (operation.dependencies.tables) {
-      newOperationCode += `      tables: [${operation.dependencies.tables
-        .map(t => `"${t}"`)
-        .join(', ')}],\n`
-    }
-    if (operation.dependencies.columns) {
-      newOperationCode += `      columns: [${operation.dependencies.columns
-        .map(c => `"${c}"`)
-        .join(', ')}],\n`
-    }
-    newOperationCode += `    },\n`
+    newOperationCode += `dependencies: ${JSON.stringify(
+      operation.dependencies,
+      null,
+      2
+    )},\n`
   }
 
-  newOperationCode += `    handler: ${operation.handler},\n`
-  newOperationCode += `  })`
+  newOperationCode += `
+      handler: ${operation.handler},
+    })
+  `
 
-  const existingProperties = initializer.getProperties()
-  const lastProperty = existingProperties[existingProperties.length - 1]
+  const formattedContent = await format(newOperationCode, {
+    parser: 'typescript',
+  })
+  await fs.writeFile(newOperationFilePath, formattedContent)
 
-  if (lastProperty) {
-    lastProperty.replaceWithText(
-      lastProperty.getText() + ',\n\n' + newOperationCode
-    )
-  } else {
+  // 2. Update operations.ts
+  const operationsFilePath = path.join(projectRoot, 'corsair', 'operations.ts')
+  const project = new Project()
+  const operationsFile = project.addSourceFileAtPath(operationsFilePath)
+
+  // Add import
+  operationsFile.addImportDeclaration({
+    moduleSpecifier: `./${operationTypePlural}/${newOperationFileName.replace(
+      '.ts',
+      ''
+    )}`,
+    namedImports: [variableName],
+  })
+
+  const operationsVar =
+    operationsFile.getVariableDeclaration(operationTypePlural)
+  const initializer = operationsVar?.getInitializerIfKind(
+    SyntaxKind.ObjectLiteralExpression
+  )
+
+  if (initializer) {
     initializer.addPropertyAssignment({
       name: `"${operation.operationName}"`,
-      initializer: newOperationCode.trim(),
+      initializer: variableName,
     })
   }
 
-  sourceFile.formatText()
-  sourceFile.saveSync()
+  operationsFile.formatText()
+  await operationsFile.save()
 }
 
 export function parseInputTypeFromLLM(inputTypeString: string): string {
