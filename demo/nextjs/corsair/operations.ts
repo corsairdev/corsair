@@ -23,33 +23,32 @@ import { linkTrackToArtist } from './mutations/link-track-to-artist'
 import { toggleTrackExplicit } from './mutations/toggle-track-explicit'
 import { updateAlbumType } from './mutations/update-album-type'
 import { updateArtistPopularity } from './mutations/update-artist-popularity'
-import { linkAlbumToArtistss } from "./mutations/link-album-to-artistss";
 
 export const queries = {
-    'get all artists': getAllArtists,
-    'get artist by id': getArtistById,
+  'get all artists': getAllArtists,
+  'get artist by id': getArtistById,
 
-    'get all albums': getAllAlbums,
-    'get album by id': getAlbumById,
-    'get album by id with artists': getAlbumByIdWithArtists,
-    'get albums by artist id': getAlbumsByArtistId,
-    'get all tracks': getAllTracks,
-    'get tracks by artist id': getTracksByArtistId,
-    'get tracks by album id': getTracksByAlbumId,
-    'search artists': searchArtists,
-    'search albums': searchAlbums,
-    'get all albums by artist id': getAllAlbumsByArtistId,
+  'get all albums': getAllAlbums,
+  'get album by id': getAlbumById,
+  'get album by id with artists': getAlbumByIdWithArtists,
+  'get albums by artist id': getAlbumsByArtistId,
+  'get all tracks': getAllTracks,
+  'get tracks by artist id': getTracksByArtistId,
+  'get tracks by album id': getTracksByAlbumId,
+  'search artists': searchArtists,
+  'search albums': searchAlbums,
+  'get all albums by artist id': getAllAlbumsByArtistId,
 } as const
 
 export const mutations = {
-    'update artist popularity': updateArtistPopularity,
-    'update album type': updateAlbumType,
-    'toggle track explicit': toggleTrackExplicit,
-    'create artist': createArtist,
-    'create album': createAlbum,
-    'create track': createTrack,
-    'link album to artist': linkAlbumToArtist,
-    'link track to artist': linkTrackToArtist,
-    'create albums': createAlbums,
-    'link album to artists': linkAlbumToArtists,
+  'update artist popularity': updateArtistPopularity,
+  'update album type': updateAlbumType,
+  'toggle track explicit': toggleTrackExplicit,
+  'create artist': createArtist,
+  'create album': createAlbum,
+  'create track': createTrack,
+  'link album to artist': linkAlbumToArtist,
+  'link track to artist': linkTrackToArtist,
+  'create albums': createAlbums,
+  'link album to artists': linkAlbumToArtists,
 } as const
