@@ -96,6 +96,8 @@ export type UserCommands =
   | 'modify'
   | 'cancel'
   | 'write_operation_to_file'
+  | 'defer_operation_config'
+  | 'resume_unfinished'
 
 export interface UserCommandEvent {
   command: UserCommands

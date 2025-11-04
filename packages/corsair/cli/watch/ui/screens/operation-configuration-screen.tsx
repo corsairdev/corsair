@@ -1,21 +1,21 @@
-import React, { useState } from "react";
-import { Box, Text, useInput } from "ink";
-import type { StateContext } from "../../types/state.js";
-import { eventBus } from "../../core/event-bus.js";
-import { CorsairEvent } from "../../types/events.js";
+import React, { useState } from 'react'
+import { Box, Text, useInput } from 'ink'
+import type { StateContext } from '../../types/state.js'
+import { eventBus } from '../../core/event-bus.js'
+import { CorsairEvent } from '../../types/events.js'
 
 interface OperationConfigurationScreenProps {
-  context: StateContext;
+  context: StateContext
 }
 
 export const OperationConfigurationScreen: React.FC<
   OperationConfigurationScreenProps
 > = ({ context }) => {
-  const [inputValue, setInputValue] = useState("");
-  const [isInputActive, setIsInputActive] = useState(true);
-  const [showEmptyWarning, setShowEmptyWarning] = useState(false);
+  const [inputValue, setInputValue] = useState('')
+  const [isInputActive, setIsInputActive] = useState(true)
+  const [showEmptyWarning, setShowEmptyWarning] = useState(false)
 
-  const newOperation = context.newOperation;
+  const newOperation = context.newOperation
 
   if (!newOperation) {
     return (
@@ -29,51 +29,49 @@ export const OperationConfigurationScreen: React.FC<
           Error: No operation configuration data found
         </Text>
       </Box>
-    );
+    )
   }
 
   useInput((input, key) => {
-    if (!isInputActive) return;
+    if (!isInputActive) return
 
     if (key.return) {
-      // Require at least some input before submitting (or allow empty with Ctrl+Enter)
-      if (inputValue.trim() === "" && !key.ctrl) {
-        // Show warning and don't submit if empty and not forced with Ctrl+Enter
-        setShowEmptyWarning(true);
-        setTimeout(() => setShowEmptyWarning(false), 2000);
-        return;
+      if (inputValue.trim() === '' && !key.ctrl) {
+        eventBus.emit(CorsairEvent.USER_COMMAND, {
+          command: 'defer_operation_config',
+        })
+        setIsInputActive(false)
+        return
       }
-
-      // Submit the configuration rules
       eventBus.emit(CorsairEvent.USER_COMMAND, {
-        command: "submit_operation_config",
+        command: 'submit_operation_config',
         args: { configurationRules: inputValue },
-      });
-      setIsInputActive(false);
-      return;
+      })
+      setIsInputActive(false)
+      return
     }
 
     if (key.escape) {
       // Cancel and go back to idle
       eventBus.emit(CorsairEvent.USER_COMMAND, {
-        command: "cancel_operation_config",
-      });
-      return;
+        command: 'cancel_operation_config',
+      })
+      return
     }
 
     if (key.backspace || key.delete) {
-      setInputValue((prev) => prev.slice(0, -1));
-      return;
+      setInputValue(prev => prev.slice(0, -1))
+      return
     }
 
     if (input && !key.ctrl && !key.meta) {
-      setInputValue((prev) => prev + input);
+      setInputValue(prev => prev + input)
     }
-  });
+  })
 
   const operationTypeDisplay =
-    newOperation.operationType === "query" ? "Query" : "Mutation";
-  const fileName = newOperation.file.split("/").pop() || newOperation.file;
+    newOperation.operationType === 'query' ? 'Query' : 'Mutation'
+  const fileName = newOperation.file.split('/').pop() || newOperation.file
 
   return (
     <Box
@@ -90,14 +88,14 @@ export const OperationConfigurationScreen: React.FC<
         marginBottom={1}
       >
         <Text color="yellow" bold>
-          🔧 Configure {operationTypeDisplay}:{" "}
-          <Text color="cyan">{newOperation.operationName}</Text>{" "}
+          🔧 Configure {operationTypeDisplay}:{' '}
+          <Text color="cyan">{newOperation.operationName}</Text>{' '}
           <Text dimColor>
             ({fileName}:{newOperation.lineNumber})
-          </Text>{" "}
-          -{" "}
+          </Text>{' '}
+          -{' '}
           <Text color="green">
-            "{newOperation.prompt.replace(/['"]/g, "")}"
+            "{newOperation.prompt.replace(/['"]/g, '')}"
           </Text>
         </Text>
       </Box>
@@ -110,7 +108,7 @@ export const OperationConfigurationScreen: React.FC<
         {/* Input box */}
         <Box
           borderStyle="single"
-          borderColor={isInputActive ? "cyan" : "gray"}
+          borderColor={isInputActive ? 'cyan' : 'gray'}
           padding={1}
           minHeight={8}
         >
@@ -154,24 +152,24 @@ export const OperationConfigurationScreen: React.FC<
             <Text dimColor>
               <Text color="green" bold>
                 [Enter]
-              </Text>{" "}
+              </Text>{' '}
               Submit configuration
             </Text>
             <Text dimColor>
               <Text color="red" bold>
                 [Esc]
-              </Text>{" "}
+              </Text>{' '}
               Cancel
             </Text>
           </Box>
           <Text dimColor>
             <Text color="cyan" bold>
               [Ctrl+Enter]
-            </Text>{" "}
+            </Text>{' '}
             Submit empty configuration
           </Text>
         </Box>
       </Box>
     </Box>
-  );
-};
+  )
+}
