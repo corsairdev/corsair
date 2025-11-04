@@ -11,20 +11,47 @@ export interface OperationToWrite {
     tables?: string[]
     columns?: string[]
   }
+  pseudocode?: string
+  functionNameSuggestion?: string
+  targetFilePath?: string
 }
 
 export function writeOperationToFile(operation: OperationToWrite): void {
   const projectRoot = process.cwd()
   const fileName = operation.operationType === 'query' ? 'queries' : 'mutations'
-  const filePath = path.join(projectRoot, 'corsair', `${fileName}.ts`)
+  const defaultFilePath = path.join(projectRoot, 'corsair', `${fileName}.ts`)
+
+  const candidatePaths = operation.targetFilePath
+    ? [operation.targetFilePath, defaultFilePath]
+    : [defaultFilePath]
 
   const project = new Project()
-  const sourceFile = project.addSourceFileAtPath(filePath)
+  let sourceFile = undefined as
+    | ReturnType<Project['addSourceFileAtPath']>
+    | undefined
+  let operationsVar = undefined as
+    | ReturnType<NonNullable<typeof sourceFile>['getVariableDeclaration']>
+    | undefined
+  let chosenPath: string | undefined
 
-  const operationsVar = sourceFile.getVariableDeclaration(fileName)
+  for (const candidate of candidatePaths) {
+    try {
+      const sf = project.addSourceFileAtPath(candidate)
+      const ov = sf.getVariableDeclaration(fileName)
+      if (ov) {
+        sourceFile = sf
+        operationsVar = ov
+        chosenPath = candidate
+        break
+      }
+    } catch (_) {
+      continue
+    }
+  }
 
-  if (!operationsVar) {
-    throw new Error(`Could not find ${fileName} variable in ${filePath}`)
+  if (!sourceFile || !operationsVar) {
+    const first = candidatePaths[0]
+    throw new Error(`Could not find ${fileName} variable in ${first}`)
   }
 
   const initializer = operationsVar.getInitializer()
@@ -40,6 +67,15 @@ export function writeOperationToFile(operation: OperationToWrite): void {
   let newOperationCode = `  "${operation.operationName}": ${functionType}({\n`
   newOperationCode += `    prompt: "${cleanPrompt}",\n`
   newOperationCode += `    input_type: ${operation.inputType},\n`
+
+  if (operation.pseudocode) {
+    const pseudo = JSON.stringify(operation.pseudocode)
+    newOperationCode += `    pseudocode: ${pseudo},\n`
+  }
+
+  if (operation.functionNameSuggestion) {
+    newOperationCode += `    function_name: "${operation.functionNameSuggestion}",\n`
+  }
 
   if (operation.dependencies) {
     newOperationCode += `    dependencies: {\n`
@@ -100,4 +136,3 @@ export function parseHandlerFromLLM(handlerString: string): string {
 
   return cleaned
 }
-

@@ -64,6 +64,8 @@ export interface LLMResponse {
     input_type: string
     function: string
     notes: string
+    pseudocode?: string
+    function_name?: string
   }
 }
 
