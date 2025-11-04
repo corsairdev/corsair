@@ -84,6 +84,7 @@ export interface StateContext {
   operationsView?: OperationsViewContext
   newOperation?: NewOperationContext
   llmResponse?: LLMResponse
+  unfinishedOperations?: UnfinishedOperation[]
 }
 
 export interface OperationsViewContext {
@@ -102,6 +103,12 @@ export interface NewOperationContext {
   file: string
   lineNumber: number
   configurationRules?: string
+}
+
+export interface UnfinishedOperation {
+  id: string
+  operation: NewOperationContext
+  createdAt: number
 }
 
 export interface ApplicationState {

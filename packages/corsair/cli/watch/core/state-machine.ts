@@ -36,6 +36,7 @@ class StateMachine {
       watchedPaths: ['src/**/*.{ts,tsx}'],
       queries: new Map(),
       mutations: new Map(),
+      unfinishedOperations: [],
     },
   }
 
@@ -109,6 +110,28 @@ class StateMachine {
         `${data.operationName} in ${fileName}`
       )
 
+      const id = `query:${data.operationName}`
+      const list = this.state.context.unfinishedOperations || []
+      if (!list.find(i => i.id === id)) {
+        this.updateContext({
+          unfinishedOperations: [
+            ...list,
+            {
+              id,
+              operation: {
+                operationType: 'query',
+                operationName: data.operationName,
+                functionName: data.functionName,
+                prompt: data.prompt,
+                file: data.file,
+                lineNumber: data.lineNumber,
+              },
+              createdAt: Date.now(),
+            },
+          ],
+        })
+      }
+
       // Transition to configuration state
       this.transition(CorsairState.CONFIGURING_NEW_OPERATION, {
         newOperation: {
@@ -136,6 +159,28 @@ class StateMachine {
           undefined,
           `${data.operationName} in ${fileName}`
         )
+
+        const id = `mutation:${data.operationName}`
+        const list = this.state.context.unfinishedOperations || []
+        if (!list.find(i => i.id === id)) {
+          this.updateContext({
+            unfinishedOperations: [
+              ...list,
+              {
+                id,
+                operation: {
+                  operationType: 'mutation',
+                  operationName: data.operationName,
+                  functionName: data.functionName,
+                  prompt: data.prompt,
+                  file: data.file,
+                  lineNumber: data.lineNumber,
+                },
+                createdAt: Date.now(),
+              },
+            ],
+          })
+        }
 
         // Transition to configuration state
         this.transition(CorsairState.CONFIGURING_NEW_OPERATION, {
@@ -427,6 +472,14 @@ class StateMachine {
 
       if (data.command === 'cancel_operation_config') {
         this.handleCancelOperationConfig()
+      }
+
+      if (data.command === 'defer_operation_config') {
+        this.handleDeferOperationConfig()
+      }
+
+      if (data.command === 'resume_unfinished') {
+        this.handleResumeUnfinished(data.args?.id)
       }
 
       // LLM feedback commands
@@ -725,6 +778,16 @@ class StateMachine {
 
     const newOperation = this.state.context.newOperation
     if (newOperation) {
+      const id = `${newOperation.operationType}:${newOperation.operationName}`
+      const list = this.state.context.unfinishedOperations || []
+      if (!list.find(i => i.id === id)) {
+        this.updateContext({
+          unfinishedOperations: [
+            ...list,
+            { id, operation: newOperation, createdAt: Date.now() },
+          ],
+        })
+      }
       this.addHistoryEntry(
         'Operation configuration cancelled',
         undefined,
@@ -736,6 +799,46 @@ class StateMachine {
       newOperation: undefined,
       availableActions: ['help', 'quit'],
     })
+  }
+
+  private handleDeferOperationConfig() {
+    if (this.state.state !== CorsairState.CONFIGURING_NEW_OPERATION) return
+    const op = this.state.context.newOperation
+    if (!op) return
+    const id = `${op.operationType}:${op.operationName}`
+    const list = this.state.context.unfinishedOperations || []
+    if (!list.find(i => i.id === id)) {
+      this.updateContext({
+        unfinishedOperations: [
+          ...list,
+          { id, operation: op, createdAt: Date.now() },
+        ],
+      })
+    }
+    this.addHistoryEntry('Operation deferred', undefined, `${op.operationName}`)
+    this.transition(CorsairState.IDLE, {
+      newOperation: undefined,
+      availableActions: ['help', 'quit'],
+    })
+  }
+
+  private handleResumeUnfinished(id?: string) {
+    if (!id) return
+    const list = this.state.context.unfinishedOperations || []
+    const idx = list.findIndex(i => i.id === id)
+    if (idx === -1) return
+    const item = list[idx]
+    const next = [...list.slice(0, idx), ...list.slice(idx + 1)]
+    this.updateContext({ unfinishedOperations: next })
+    this.transition(CorsairState.CONFIGURING_NEW_OPERATION, {
+      newOperation: item.operation,
+      availableActions: ['submit_operation_config', 'cancel_operation_config'],
+    })
+    this.addHistoryEntry(
+      'Resumed operation configuration',
+      undefined,
+      `${item.operation.operationName}`
+    )
   }
 
   // LLM feedback command handlers
@@ -808,6 +911,13 @@ class StateMachine {
     console.log('llmResponse:', llmResponse)
 
     if (newOperation && llmResponse) {
+      const id = `${newOperation.operationType}:${newOperation.operationName}`
+      const list = this.state.context.unfinishedOperations || []
+      if (list.find(i => i.id === id)) {
+        this.updateContext({
+          unfinishedOperations: list.filter(i => i.id !== id),
+        })
+      }
       this.addHistoryEntry(
         'LLM suggestions accepted',
         undefined,
