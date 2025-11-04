@@ -1,7 +1,5 @@
-import { createQuery, z } from 'corsair/core'
-import { type DatabaseContext } from '../types'
-
-const query = createQuery<DatabaseContext>()
+import { z } from 'corsair/core'
+import { query } from '../instances'
 
 export const getAllTracks = query({
   prompt: 'get all tracks',

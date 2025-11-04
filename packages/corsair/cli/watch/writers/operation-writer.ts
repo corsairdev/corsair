@@ -41,8 +41,7 @@ export async function writeOperationToFile(
     newOperationFileName
   )
 
-  const functionType =
-    operation.operationType === 'query' ? 'createQuery' : 'createMutation'
+  const isQuery = operation.operationType === 'query'
   const variableName = operation.operationName
     .split(' ')
     .map((word, i) =>
@@ -51,13 +50,11 @@ export async function writeOperationToFile(
     .join('')
 
   let newOperationCode = `
-    import { ${functionType}, z } from 'corsair/core'
-    import { type DatabaseContext } from '../types'
+    import { z } from 'corsair/core'
+    import { ${isQuery ? 'query' : 'mutation'} } from '../instances'
     import { drizzle } from 'corsair/db/types'
 
-    const ${operation.operationType} = ${functionType}<DatabaseContext>()
-
-    export const ${variableName} = ${operation.operationType}({
+    export const ${variableName} = ${isQuery ? 'query' : 'mutation'}({
       prompt: "${operation.prompt.replace(/['"]/g, '')}",
       input_type: ${operation.inputType},
       `
@@ -86,19 +83,46 @@ export async function writeOperationToFile(
   })
   await fs.writeFile(newOperationFilePath, formattedContent)
 
-  // 2. Update operations.ts
+  // 2. Ensure barrel export exists
+  const barrelPath = path.join(
+    projectRoot,
+    'corsair',
+    operationTypePlural,
+    'index.ts'
+  )
+
+  try {
+    const existingBarrel = await fs.readFile(barrelPath, 'utf8')
+    const exportLine = `export * from './${newOperationFileName.replace('.ts', '')}'\n`
+    if (!existingBarrel.includes(exportLine)) {
+      await fs.appendFile(barrelPath, exportLine)
+    }
+  } catch {
+    const exportLine = `export * from './${newOperationFileName.replace('.ts', '')}'\n`
+    await fs.writeFile(barrelPath, exportLine)
+  }
+
+  // 3. Update operations.ts
   const operationsFilePath = path.join(projectRoot, 'corsair', 'operations.ts')
   const project = new Project()
   const operationsFile = project.addSourceFileAtPath(operationsFilePath)
 
-  // Add import
-  operationsFile.addImportDeclaration({
-    moduleSpecifier: `./${operationTypePlural}/${newOperationFileName.replace(
-      '.ts',
-      ''
-    )}`,
-    namedImports: [variableName],
-  })
+  // Ensure namespace imports exist
+  const moduleSpecifier = `./${operationTypePlural}`
+  const desiredNs = isQuery ? 'queriesModule' : 'mutationsModule'
+  const existingNsImport = operationsFile
+    .getImportDeclarations()
+    .find(
+      d =>
+        d.getModuleSpecifierValue() === moduleSpecifier &&
+        d.getNamespaceImport()
+    )
+  if (!existingNsImport) {
+    operationsFile.addImportDeclaration({
+      moduleSpecifier,
+      namespaceImport: desiredNs,
+    })
+  }
 
   const operationsVar =
     operationsFile.getVariableDeclaration(operationTypePlural)
@@ -107,10 +131,22 @@ export async function writeOperationToFile(
   )
 
   if (initializer) {
-    initializer.addPropertyAssignment({
-      name: `"${operation.operationName}"`,
-      initializer: variableName,
-    })
+    const propName = `"${operation.operationName}"`
+    const moduleRef = `${desiredNs}.${variableName}`
+    // Avoid duplicates
+    const exists = initializer
+      .getProperties()
+      .some(p =>
+        p.isKind(SyntaxKind.PropertyAssignment)
+          ? p.getNameNode().getText() === propName
+          : false
+      )
+    if (!exists) {
+      initializer.addPropertyAssignment({
+        name: propName,
+        initializer: moduleRef,
+      })
+    }
   }
 
   operationsFile.formatText()

@@ -1,7 +1,5 @@
-import { createMutation, z } from 'corsair/core'
-import { type DatabaseContext } from '../types'
-
-const mutation = createMutation<DatabaseContext>()
+import { z } from 'corsair/core'
+import { mutation } from '../instances'
 
 export const linkTrackToArtist = mutation({
   prompt: 'link track to artist',
