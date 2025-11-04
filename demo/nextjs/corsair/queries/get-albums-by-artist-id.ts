@@ -4,6 +4,39 @@ import { drizzle } from 'corsair/db/types'
 
 const query = createQuery<DatabaseContext>()
 
+/**
+ * @description Retrieves all albums by a specific artist
+ *
+ * @input
+ * ```typescript
+ * {
+ *   artistId: string
+ * }
+ * ```
+ *
+ * @output
+ * ```typescript
+ * Array<{
+ *   id: string
+ *   name: string | null
+ *   album_type: string | null
+ *   release_date: string | null
+ *   release_date_precision: string | null
+ *   total_tracks: number | null
+ *   images: unknown | null
+ *   external_urls: unknown | null
+ *   uri: string | null
+ *   href: string | null
+ * }>
+ * ```
+ *
+ * @example
+ * ```typescript
+ * useCorsairQuery('get albums by artist id', {
+ *   artistId: 'artist123'
+ * })
+ * ```
+ */
 export const getAlbumsByArtistId = query({
   prompt: 'get albums by artist id',
   input_type: z.object({

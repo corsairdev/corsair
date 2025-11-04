@@ -4,6 +4,41 @@ import { drizzle } from 'corsair/db/types'
 
 const mutation = createMutation<DatabaseContext>()
 
+/**
+ * @description Updates the album type (e.g., album, single, compilation)
+ *
+ * @input
+ * ```typescript
+ * {
+ *   albumId: string
+ *   albumType: string
+ * }
+ * ```
+ *
+ * @output
+ * ```typescript
+ * {
+ *   id: string
+ *   name: string | null
+ *   album_type: string | null
+ *   release_date: string | null
+ *   release_date_precision: string | null
+ *   total_tracks: number | null
+ *   images: unknown | null
+ *   external_urls: unknown | null
+ *   uri: string | null
+ *   href: string | null
+ * } | null
+ * ```
+ *
+ * @example
+ * ```typescript
+ * useCorsairMutation('update album type', {
+ *   albumId: '123',
+ *   albumType: 'compilation'
+ * })
+ * ```
+ */
 export const updateAlbumType = mutation({
   prompt: 'update album type',
   input_type: z.object({

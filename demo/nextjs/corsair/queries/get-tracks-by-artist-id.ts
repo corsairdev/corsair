@@ -4,6 +4,40 @@ import { drizzle } from 'corsair/db/types'
 
 const query = createQuery<DatabaseContext>()
 
+/**
+ * @description Retrieves all tracks by a specific artist
+ *
+ * @input
+ * ```typescript
+ * {
+ *   artistId: string
+ * }
+ * ```
+ *
+ * @output
+ * ```typescript
+ * Array<{
+ *   id: string
+ *   name: string | null
+ *   disc_number: number | null
+ *   duration_ms: number | null
+ *   explicit: boolean | null
+ *   track_number: number | null
+ *   preview_url: string | null
+ *   is_local: boolean | null
+ *   external_urls: unknown | null
+ *   uri: string | null
+ *   href: string | null
+ * }>
+ * ```
+ *
+ * @example
+ * ```typescript
+ * useCorsairQuery('get tracks by artist id', {
+ *   artistId: 'artist123'
+ * })
+ * ```
+ */
 export const getTracksByArtistId = query({
   prompt: 'get tracks by artist id',
   input_type: z.object({

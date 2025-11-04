@@ -4,6 +4,49 @@ import { drizzle } from 'corsair/db/types'
 
 const mutation = createMutation<DatabaseContext>()
 
+/**
+ * @description Creates multiple albums and links them to artists
+ *
+ * @input
+ * ```typescript
+ * {
+ *   albums: Array<{
+ *     id: string
+ *     name: string
+ *     album_type: string
+ *     release_date: string
+ *     total_tracks: number
+ *     artist_ids: string[]
+ *   }>
+ * }
+ * ```
+ *
+ * @output
+ * ```typescript
+ * Array<{
+ *   id: string
+ *   name: string | null
+ *   album_type: string | null
+ *   release_date: string | null
+ *   total_tracks: number | null
+ *   images: unknown | null
+ * }>
+ * ```
+ *
+ * @example
+ * ```typescript
+ * useCorsairMutation('create albums', {
+ *   albums: [{
+ *     id: 'album1',
+ *     name: 'Album 1',
+ *     album_type: 'album',
+ *     release_date: '2023-01-01',
+ *     total_tracks: 10,
+ *     artist_ids: ['artist1', 'artist2']
+ *   }]
+ * })
+ * ```
+ */
 export const createAlbums = mutation({
   prompt: 'create albums',
   input_type: schema.albums._.inferInsert,

@@ -4,6 +4,40 @@ import { drizzle } from 'corsair/db/types'
 
 const mutation = createMutation<DatabaseContext>()
 
+/**
+ * @description Updates the popularity score of an artist (0-100)
+ *
+ * @input
+ * ```typescript
+ * {
+ *   artistId: string
+ *   popularity: number
+ * }
+ * ```
+ *
+ * @output
+ * ```typescript
+ * {
+ *   id: string
+ *   name: string | null
+ *   popularity: number | null
+ *   followers: number | null
+ *   genres: unknown | null
+ *   images: unknown | null
+ *   external_urls: unknown | null
+ *   uri: string | null
+ *   href: string | null
+ * } | null
+ * ```
+ *
+ * @example
+ * ```typescript
+ * useCorsairMutation('update artist popularity', {
+ *   artistId: '123',
+ *   popularity: 85
+ * })
+ * ```
+ */
 export const updateArtistPopularity = mutation({
   prompt: 'update artist popularity',
   input_type: z.object({

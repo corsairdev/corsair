@@ -4,6 +4,38 @@ import { drizzle } from 'corsair/db/types'
 
 const query = createQuery<DatabaseContext>()
 
+/**
+ * @description Searches for artists by name (case-insensitive)
+ *
+ * @input
+ * ```typescript
+ * {
+ *   query: string
+ * }
+ * ```
+ *
+ * @output
+ * ```typescript
+ * Array<{
+ *   id: string
+ *   name: string | null
+ *   popularity: number | null
+ *   followers: number | null
+ *   genres: unknown | null
+ *   images: unknown | null
+ *   external_urls: unknown | null
+ *   uri: string | null
+ *   href: string | null
+ * }>
+ * ```
+ *
+ * @example
+ * ```typescript
+ * useCorsairQuery('search artists', {
+ *   query: 'Beatles'
+ * })
+ * ```
+ */
 export const searchArtists = query({
   prompt: 'search artists',
   input_type: z.object({

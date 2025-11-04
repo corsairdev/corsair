@@ -3,6 +3,36 @@ import { type DatabaseContext } from '../types'
 
 const query = createQuery<DatabaseContext>()
 
+/**
+ * @description Retrieves all tracks for a specific album
+ *
+ * @input
+ * ```typescript
+ * {
+ *   albumId: string
+ * }
+ * ```
+ *
+ * @output
+ * ```typescript
+ * Array<{
+ *   id: string
+ *   name: string | null
+ *   duration_ms: number | null
+ *   explicit: boolean | null
+ *   album_id: string | null
+ *   track_number: number | null
+ *   disc_number: number | null
+ * }>
+ * ```
+ *
+ * @example
+ * ```typescript
+ * useCorsairQuery('get tracks by album id', {
+ *   albumId: 'album123'
+ * })
+ * ```
+ */
 export const getTracksByAlbumId = query({
   prompt: 'get tracks by album id',
   input_type: z.object({

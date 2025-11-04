@@ -4,6 +4,33 @@ import { drizzle } from 'corsair/db/types'
 
 const mutation = createMutation<DatabaseContext>()
 
+/**
+ * @description Links an album to multiple artists
+ *
+ * @input
+ * ```typescript
+ * {
+ *   albumId: string
+ *   artistIds: string[]
+ * }
+ * ```
+ *
+ * @output
+ * ```typescript
+ * Array<{
+ *   album_id: string
+ *   artist_id: string
+ * }>
+ * ```
+ *
+ * @example
+ * ```typescript
+ * useCorsairMutation('link album to artists', {
+ *   albumId: '123',
+ *   artistIds: ['artist1', 'artist2']
+ * })
+ * ```
+ */
 export const linkAlbumToArtists = mutation({
   prompt: 'link album to artists',
   input_type: z.object({

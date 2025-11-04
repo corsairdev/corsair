@@ -4,6 +4,43 @@ import { drizzle } from 'corsair/db/types'
 
 const query = createQuery<DatabaseContext>()
 
+/**
+ * @description Retrieves an album by ID with all associated artists
+ *
+ * @input
+ * ```typescript
+ * {
+ *   id: string
+ * }
+ * ```
+ *
+ * @output
+ * ```typescript
+ * {
+ *   id: string
+ *   name: string | null
+ *   album_type: string | null
+ *   release_date: string | null
+ *   total_tracks: number | null
+ *   images: unknown | null
+ *   artists: Array<{
+ *     id: string
+ *     name: string | null
+ *     popularity: number | null
+ *     followers: number | null
+ *     genres: unknown | null
+ *     images: unknown | null
+ *   }>
+ * } | null
+ * ```
+ *
+ * @example
+ * ```typescript
+ * useCorsairQuery('get album by id with artists', {
+ *   id: 'album123'
+ * })
+ * ```
+ */
 export const getAlbumByIdWithArtists = query({
   prompt: 'get album by id with artists',
   input_type: z.object({

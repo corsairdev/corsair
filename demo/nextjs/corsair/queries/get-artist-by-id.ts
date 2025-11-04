@@ -4,6 +4,38 @@ import { drizzle } from 'corsair/db/types'
 
 const query = createQuery<DatabaseContext>()
 
+/**
+ * @description Retrieves a single artist by ID
+ *
+ * @input
+ * ```typescript
+ * {
+ *   id: string
+ * }
+ * ```
+ *
+ * @output
+ * ```typescript
+ * {
+ *   id: string
+ *   name: string | null
+ *   popularity: number | null
+ *   followers: number | null
+ *   genres: unknown | null
+ *   images: unknown | null
+ *   external_urls: unknown | null
+ *   uri: string | null
+ *   href: string | null
+ * } | null
+ * ```
+ *
+ * @example
+ * ```typescript
+ * useCorsairQuery('get artist by id', {
+ *   id: 'artist123'
+ * })
+ * ```
+ */
 export const getArtistById = query({
   prompt: 'get artist by id',
   input_type: z.object({

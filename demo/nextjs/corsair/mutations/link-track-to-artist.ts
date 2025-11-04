@@ -3,6 +3,33 @@ import { type DatabaseContext } from '../types'
 
 const mutation = createMutation<DatabaseContext>()
 
+/**
+ * @description Links a track to an artist
+ *
+ * @input
+ * ```typescript
+ * {
+ *   trackId: string
+ *   artistId: string
+ * }
+ * ```
+ *
+ * @output
+ * ```typescript
+ * {
+ *   track_id: string
+ *   artist_id: string
+ * }
+ * ```
+ *
+ * @example
+ * ```typescript
+ * useCorsairMutation('link track to artist', {
+ *   trackId: '123',
+ *   artistId: 'artist1'
+ * })
+ * ```
+ */
 export const linkTrackToArtist = mutation({
   prompt: 'link track to artist',
   input_type: z.object({

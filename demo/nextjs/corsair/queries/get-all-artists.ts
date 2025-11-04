@@ -3,6 +3,34 @@ import { type DatabaseContext } from '../types'
 
 const query = createQuery<DatabaseContext>()
 
+/**
+ * @description Retrieves all artists from the database
+ *
+ * @input
+ * ```typescript
+ * {}
+ * ```
+ *
+ * @output
+ * ```typescript
+ * Array<{
+ *   id: string
+ *   name: string | null
+ *   popularity: number | null
+ *   followers: number | null
+ *   genres: unknown | null
+ *   images: unknown | null
+ *   external_urls: unknown | null
+ *   uri: string | null
+ *   href: string | null
+ * }>
+ * ```
+ *
+ * @example
+ * ```typescript
+ * useCorsairQuery('get all artists', {})
+ * ```
+ */
 export const getAllArtists = query({
   prompt: 'get all artists',
   input_type: z.object({}),
