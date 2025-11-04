@@ -1,17 +1,17 @@
-import type { SchemaDefinition } from "../../cli/watch/types/state.js";
+import type { SchemaDefinition } from '../../cli/watch/types/state.js'
 
 export const operationGeneratorPrompt = ({
   type,
   name,
   schema,
 }: {
-  type: "query" | "mutation";
-  name: string;
-  schema: SchemaDefinition;
+  type: 'query' | 'mutation'
+  name: string
+  schema: SchemaDefinition
 }): string => {
-  const schemaDescription = generateSchemaDescription(schema);
+  const schemaDescription = generateSchemaDescription(schema)
 
-  return `# ${type === "query" ? "Query" : "Mutation"} Generation Request
+  return `# ${type === 'query' ? 'Query' : 'Mutation'} Generation Request
 
 ## Operation Details
 - **Type**: ${type}
@@ -45,55 +45,64 @@ Based on the operation name "${name}", determine:
 - Include proper TypeScript types and error handling
 - Optimize for performance and security
 
-Generate the input_type Zod schema and handler function for this ${type} operation.`;
-};
+Additionally, include:
+- A brief but thorough pseudocode section (inputs, steps, outputs)
+- A unique, concise function name suggestion for naming a file
+
+Generate the input_type Zod schema and handler function for this ${type} operation.`
+}
 
 function generateSchemaDescription(schema: SchemaDefinition): string {
   if (!schema || !schema.tables || schema.tables.length === 0) {
-    return "No schema information available.";
+    return 'No schema information available.'
   }
 
-  let description = "### Database Tables and Schema\n\n";
+  let description = '### Database Tables and Schema\n\n'
 
   schema.tables.forEach(table => {
-    description += `#### Table: \`${table.name}\`\n`;
+    description += `#### Table: \`${table.name}\`\n`
 
     if (table.columns && table.columns.length > 0) {
-      description += "**Columns:**\n";
+      description += '**Columns:**\n'
       table.columns.forEach(column => {
-        const references = column.references ? ` [REFERENCES ${column.references.table}.${column.references.column}]` : "";
-        description += `- \`${column.name}\`: ${column.type}${references}\n`;
-      });
+        const references = column.references
+          ? ` [REFERENCES ${column.references.table}.${column.references.column}]`
+          : ''
+        description += `- \`${column.name}\`: ${column.type}${references}\n`
+      })
     }
 
-    description += "\n";
-  });
+    description += '\n'
+  })
 
   // Add relationship information based on references
-  const relationships: string[] = [];
+  const relationships: string[] = []
   schema.tables.forEach(table => {
     table.columns.forEach(column => {
       if (column.references) {
-        relationships.push(`- \`${table.name}\` belongs to \`${column.references.table}\` (via \`${column.name}\` → \`${column.references.column}\`)`);
+        relationships.push(
+          `- \`${table.name}\` belongs to \`${column.references.table}\` (via \`${column.name}\` → \`${column.references.column}\`)`
+        )
       }
-    });
-  });
+    })
+  })
 
   if (relationships.length > 0) {
-    description += "### Relationships\n\n";
-    description += "Based on the foreign key references, these tables are related:\n";
+    description += '### Relationships\n\n'
+    description +=
+      'Based on the foreign key references, these tables are related:\n'
     relationships.forEach(rel => {
-      description += rel + "\n";
-    });
-    description += "\n";
+      description += rel + '\n'
+    })
+    description += '\n'
   }
 
   // Add usage examples for common patterns
-  description += "### Common Usage Patterns\n\n";
-  description += "Use these table references in your handler:\n";
+  description += '### Common Usage Patterns\n\n'
+  description += 'Use these table references in your handler:\n'
   schema.tables.forEach(table => {
-    description += `- \`ctx.schema.${table.name}\` for the ${table.name} table\n`;
-  });
+    description += `- \`ctx.schema.${table.name}\` for the ${table.name} table\n`
+  })
 
-  return description;
+  return description
 }

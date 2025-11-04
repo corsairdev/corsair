@@ -115,6 +115,9 @@ class UserInputHandler {
         prompt: operation.prompt,
         inputType: inputType,
         handler: handler,
+        pseudocode: llmResponse.rawResponse.pseudocode,
+        functionNameSuggestion: llmResponse.rawResponse.function_name,
+        targetFilePath: operation.file,
       }
 
       console.log('\n📝 Writing operation to file...')

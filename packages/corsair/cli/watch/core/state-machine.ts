@@ -278,7 +278,12 @@ class StateMachine {
         )
 
         const llmResponse: LLMResponse = {
-          suggestions: [data.response.notes],
+          suggestions: [
+            data.response.notes,
+            ...(data.response.function_name
+              ? [`Suggested name: ${data.response.function_name}`]
+              : []),
+          ],
           recommendations: {
             dependencies: null,
             handler: data.response.function,
@@ -290,12 +295,16 @@ class StateMachine {
           analysis: {
             complexity: 'medium' as const,
             confidence: 0.9,
-            reasoning: `Generated ${data.operationType} for operation: ${data.operationName}`,
+            reasoning: data.response.pseudocode
+              ? data.response.pseudocode
+              : `Generated ${data.operationType} for operation: ${data.operationName}`,
           },
           rawResponse: {
             input_type: data.response.input_type,
             function: data.response.function,
             notes: data.response.notes,
+            pseudocode: (data.response as any).pseudocode,
+            function_name: (data.response as any).function_name,
           },
         }
 
