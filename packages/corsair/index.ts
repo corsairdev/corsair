@@ -1,2 +1,2 @@
-// Main entry point for Corsair
-export * from "./core";
+export * from './legacy-core'
+export * from './core'

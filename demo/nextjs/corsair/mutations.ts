@@ -1,20 +1,20 @@
-import { createMutation, z } from "corsair/core";
-import { schema, type DatabaseContext } from "./types";
-import { drizzle, drizzleZod } from "corsair/db/types";
+import { createMutation, z } from 'corsair/dist/legacy-core'
+import { schema, type DatabaseContext } from './types'
+import { drizzle, drizzleZod } from 'corsair/db/types'
 
-const mutation = createMutation<DatabaseContext>();
+const mutation = createMutation<DatabaseContext>()
 
 export const mutations = {
-  "update artist popularity": mutation({
-    prompt: "update artist popularity",
+  'update artist popularity': mutation({
+    prompt: 'update artist popularity',
     input_type: z.object({
       artistId: z.string(),
       popularity: z.number().min(0).max(100),
     }),
     // response_type: drizzleZod.createSelectSchema(schema.artists).nullable(),
     dependencies: {
-      tables: ["artists"],
-      columns: ["artists.id", "artists.popularity"],
+      tables: ['artists'],
+      columns: ['artists.id', 'artists.popularity'],
     },
     handler: async (input, ctx) => {
       const [artist] = await ctx.db
@@ -23,22 +23,22 @@ export const mutations = {
           popularity: Math.max(0, Math.min(100, input.popularity)),
         })
         .where(drizzle.eq(ctx.schema.artists.id, input.artistId))
-        .returning();
+        .returning()
 
-      return artist || null;
+      return artist || null
     },
   }),
 
-  "update album type": mutation({
-    prompt: "update album type",
+  'update album type': mutation({
+    prompt: 'update album type',
     input_type: z.object({
       albumId: z.string(),
       albumType: z.string(),
     }),
     // response_type: drizzleZod.createSelectSchema(schema.albums).nullable(),
     dependencies: {
-      tables: ["albums"],
-      columns: ["albums.id", "albums.album_type"],
+      tables: ['albums'],
+      columns: ['albums.id', 'albums.album_type'],
     },
     handler: async (input, ctx) => {
       const [album] = await ctx.db
@@ -47,21 +47,21 @@ export const mutations = {
           album_type: input.albumType,
         })
         .where(drizzle.eq(ctx.schema.albums.id, input.albumId))
-        .returning();
+        .returning()
 
-      return album || null;
+      return album || null
     },
   }),
 
-  "toggle track explicit": mutation({
-    prompt: "toggle track explicit",
+  'toggle track explicit': mutation({
+    prompt: 'toggle track explicit',
     input_type: z.object({
       trackId: z.string(),
     }),
     // response_type: drizzleZod.createSelectSchema(schema.tracks).nullable(),
     dependencies: {
-      tables: ["tracks"],
-      columns: ["tracks.id", "tracks.explicit"],
+      tables: ['tracks'],
+      columns: ['tracks.id', 'tracks.explicit'],
     },
     handler: async (input, ctx) => {
       // First get the current track to toggle its explicit value
@@ -69,10 +69,10 @@ export const mutations = {
         .select()
         .from(ctx.schema.tracks)
         .where(drizzle.eq(ctx.schema.tracks.id, input.trackId))
-        .limit(1);
+        .limit(1)
 
       if (!currentTrack) {
-        return null;
+        return null
       }
 
       const [track] = await ctx.db
@@ -81,14 +81,14 @@ export const mutations = {
           explicit: !currentTrack.explicit,
         })
         .where(drizzle.eq(ctx.schema.tracks.id, input.trackId))
-        .returning();
+        .returning()
 
-      return track || null;
+      return track || null
     },
   }),
 
-  "create artist": mutation({
-    prompt: "create artist",
+  'create artist': mutation({
+    prompt: 'create artist',
     input_type: z.object({
       id: z.string(),
       name: z.string(),
@@ -102,13 +102,13 @@ export const mutations = {
     }),
     // response_type: drizzleZod.createSelectSchema(schema.artists),
     dependencies: {
-      tables: ["artists"],
+      tables: ['artists'],
       columns: [
-        "artists.id",
-        "artists.name",
-        "artists.popularity",
-        "artists.followers",
-        "artists.genres",
+        'artists.id',
+        'artists.name',
+        'artists.popularity',
+        'artists.followers',
+        'artists.genres',
       ],
     },
     handler: async (input, ctx) => {
@@ -122,73 +122,73 @@ export const mutations = {
           genres: input.genres,
           images: input.images,
           external_urls: input.external_urls,
-          uri: input.uri || "",
-          href: input.href || "",
+          uri: input.uri || '',
+          href: input.href || '',
         })
-        .returning();
+        .returning()
 
-      return artist;
+      return artist
     },
   }),
 
-  "create album": mutation({
-    prompt: "create album",
+  'create album': mutation({
+    prompt: 'create album',
     input_type: schema.albums._.inferInsert,
     // response_type: drizzleZod.createSelectSchema(schema.albums),
     dependencies: {
-      tables: ["albums"],
+      tables: ['albums'],
       columns: [
-        "albums.id",
-        "albums.name",
-        "albums.album_type",
-        "albums.release_date",
-        "albums.total_tracks",
+        'albums.id',
+        'albums.name',
+        'albums.album_type',
+        'albums.release_date',
+        'albums.total_tracks',
       ],
     },
     handler: async (input, ctx) => {
       const [album] = await ctx.db
         .insert(ctx.schema.albums)
         .values({ ...input })
-        .returning();
+        .returning()
 
-      return album;
+      return album
     },
   }),
 
-  "create track": mutation({
-    prompt: "create track",
+  'create track': mutation({
+    prompt: 'create track',
     input_type: schema.tracks._.inferInsert,
     // response_type: drizzleZod.createSelectSchema(schema.tracks),
     dependencies: {
-      tables: ["tracks"],
+      tables: ['tracks'],
       columns: [
-        "tracks.id",
-        "tracks.name",
-        "tracks.duration_ms",
-        "tracks.explicit",
-        "tracks.track_number",
+        'tracks.id',
+        'tracks.name',
+        'tracks.duration_ms',
+        'tracks.explicit',
+        'tracks.track_number',
       ],
     },
     handler: async (input, ctx) => {
       const [track] = await ctx.db
         .insert(ctx.schema.tracks)
         .values({ ...input })
-        .returning();
+        .returning()
 
-      return track;
+      return track
     },
   }),
 
-  "link album to artist": mutation({
-    prompt: "link album to artist",
+  'link album to artist': mutation({
+    prompt: 'link album to artist',
     input_type: z.object({
       albumId: z.string(),
       artistId: z.string(),
     }),
     // response_type: drizzleZod.createSelectSchema(schema.album_artists),
     dependencies: {
-      tables: ["album_artists"],
-      columns: ["album_artists.album_id", "album_artists.artist_id"],
+      tables: ['album_artists'],
+      columns: ['album_artists.album_id', 'album_artists.artist_id'],
     },
     handler: async (input, ctx) => {
       const [link] = await ctx.db
@@ -197,22 +197,22 @@ export const mutations = {
           album_id: input.albumId,
           artist_id: input.artistId,
         })
-        .returning();
+        .returning()
 
-      return link;
+      return link
     },
   }),
 
-  "link track to artist": mutation({
-    prompt: "link track to artist",
+  'link track to artist': mutation({
+    prompt: 'link track to artist',
     input_type: z.object({
       trackId: z.string(),
       artistId: z.string(),
     }),
     // response_type: drizzleZod.createSelectSchema(schema.track_artists),
     dependencies: {
-      tables: ["track_artists"],
-      columns: ["track_artists.track_id", "track_artists.artist_id"],
+      tables: ['track_artists'],
+      columns: ['track_artists.track_id', 'track_artists.artist_id'],
     },
     handler: async (input, ctx) => {
       const [link] = await ctx.db
@@ -221,35 +221,33 @@ export const mutations = {
           track_id: input.trackId,
           artist_id: input.artistId,
         })
-        .returning();
+        .returning()
 
-      return link;
+      return link
     },
   }),
-  "create albums": mutation({
-    prompt: "create albums",
+  'create albums': mutation({
+    prompt: 'create albums',
     input_type: schema.albums._.inferInsert,
     handler: async (input, ctx) => {
       // Validate that all referenced artist_ids exist
-      const allArtistIds = [
-        ...new Set(input.albums.flatMap((a) => a.artist_ids)),
-      ];
+      const allArtistIds = [...new Set(input.albums.flatMap(a => a.artist_ids))]
       if (allArtistIds.length > 0) {
         const existingArtists = await ctx.db
           .select({ id: ctx.schema.artists.id })
           .from(ctx.schema.artists)
-          .where(drizzle.inArray(ctx.schema.artists.id, allArtistIds));
-        const foundArtistIds = new Set(existingArtists.map((a) => a.id));
-        const missingIds = allArtistIds.filter((id) => !foundArtistIds.has(id));
+          .where(drizzle.inArray(ctx.schema.artists.id, allArtistIds))
+        const foundArtistIds = new Set(existingArtists.map(a => a.id))
+        const missingIds = allArtistIds.filter(id => !foundArtistIds.has(id))
         if (missingIds.length > 0) {
           throw new Error(
-            `Some artist_ids do not exist: ${missingIds.join(", ")}`
-          );
+            `Some artist_ids do not exist: ${missingIds.join(', ')}`
+          )
         }
       }
 
       // Insert albums and create album_artists relationships
-      const createdAlbums = [];
+      const createdAlbums = []
       for (const album of input.albums) {
         // Insert album
         const [insertedAlbum] = await ctx.db
@@ -267,10 +265,10 @@ export const mutations = {
             href: album.href,
           })
           .onConflictDoNothing()
-          .returning();
+          .returning()
         if (!insertedAlbum) {
           // Album with this id already exists: safe to continue or throw?
-          throw new Error(`Album with id '${album.id}' already exists.`);
+          throw new Error(`Album with id '${album.id}' already exists.`)
         }
 
         // Insert into album_artists
@@ -281,45 +279,43 @@ export const mutations = {
               album_id: album.id,
               artist_id: artist_id,
             })
-            .onConflictDoNothing();
+            .onConflictDoNothing()
         }
-        createdAlbums.push(insertedAlbum);
+        createdAlbums.push(insertedAlbum)
       }
-      return createdAlbums;
+      return createdAlbums
     },
   }),
-  "link album to artists": mutation({
-    prompt: "link album to artists",
+  'link album to artists': mutation({
+    prompt: 'link album to artists',
     input_type: z.object({
       albumId: z.string(),
       artistIds: z.array(z.string()),
     }),
     handler: async (input, ctx) => {
-      const { albumId, artistIds } = input;
+      const { albumId, artistIds } = input
 
       // Validate that the album exists
       const [album] = await ctx.db
         .select({ id: ctx.schema.albums.id })
         .from(ctx.schema.albums)
         .where(drizzle.eq(ctx.schema.albums.id, albumId))
-        .limit(1);
+        .limit(1)
       if (!album) {
-        throw new Error(`Album with id '${albumId}' does not exist.`);
+        throw new Error(`Album with id '${albumId}' does not exist.`)
       }
 
       // Validate that all artistIds exist and collect the missing ones
       const existingArtistRows = await ctx.db
         .select({ id: ctx.schema.artists.id })
         .from(ctx.schema.artists)
-        .where(drizzle.inArray(ctx.schema.artists.id, artistIds));
-      const foundArtistIds = new Set(existingArtistRows.map((a) => a.id));
-      const missingArtistIds = artistIds.filter(
-        (id) => !foundArtistIds.has(id)
-      );
+        .where(drizzle.inArray(ctx.schema.artists.id, artistIds))
+      const foundArtistIds = new Set(existingArtistRows.map(a => a.id))
+      const missingArtistIds = artistIds.filter(id => !foundArtistIds.has(id))
       if (missingArtistIds.length > 0) {
         throw new Error(
-          `These artistIds do not exist: ${missingArtistIds.join(", ")}`
-        );
+          `These artistIds do not exist: ${missingArtistIds.join(', ')}`
+        )
       }
 
       // Prepare insert data for new pairs that don't already exist
@@ -332,39 +328,39 @@ export const mutations = {
             drizzle.eq(ctx.schema.album_artists.album_id, albumId),
             drizzle.inArray(ctx.schema.album_artists.artist_id, artistIds)
           )
-        );
-      const alreadyLinkedSet = new Set(existingLinks.map((l) => l.artist_id));
+        )
+      const alreadyLinkedSet = new Set(existingLinks.map(l => l.artist_id))
 
-      const newLinks = artistIds.filter((id) => !alreadyLinkedSet.has(id));
+      const newLinks = artistIds.filter(id => !alreadyLinkedSet.has(id))
       if (newLinks.length === 0) {
         // All links already exist, return the existing links
         const allLinks = await ctx.db
           .select()
           .from(ctx.schema.album_artists)
-          .where(drizzle.eq(ctx.schema.album_artists.album_id, albumId));
-        return allLinks;
+          .where(drizzle.eq(ctx.schema.album_artists.album_id, albumId))
+        return allLinks
       }
 
       // Create new album_artist links
-      const insertRows = newLinks.map((artist_id) => ({
+      const insertRows = newLinks.map(artist_id => ({
         album_id: albumId,
         artist_id,
-      }));
+      }))
 
       const inserted = await ctx.db
         .insert(ctx.schema.album_artists)
         .values(insertRows)
-        .returning();
+        .returning()
 
       // Return all links for the album (including previous and new)
       const allLinks = await ctx.db
         .select()
         .from(ctx.schema.album_artists)
-        .where(drizzle.eq(ctx.schema.album_artists.album_id, albumId));
+        .where(drizzle.eq(ctx.schema.album_artists.album_id, albumId))
 
-      return allLinks;
+      return allLinks
     },
   }),
-};
+}
 
 // const test = schema.albums._.inferInsert;
