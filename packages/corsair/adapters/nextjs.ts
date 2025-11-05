@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { CorsairMutations, CorsairQueries } from '../core'
-import { ContextFactory, executeCorsairOperation } from '../core/execute'
+import { CorsairMutations, CorsairQueries } from '../legacy-core'
+import { ContextFactory, executeCorsairOperation } from '../legacy-core/execute'
 
 export function createNextJsHandler<
   TQueries extends CorsairQueries<TContext>,

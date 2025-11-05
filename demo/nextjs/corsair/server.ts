@@ -3,9 +3,9 @@ import 'server-only'
 import {
   createCorsairServerQueryClient,
   createCorsairServerMutationClient,
-} from 'corsair/core'
-import { mutations } from './operations'
-import { queries } from './operations'
+} from 'corsair/dist/legacy-core'
+import { mutations } from './mutations'
+import { queries } from './queries'
 import { cache } from 'react'
 import { createServerContext } from './context'
 

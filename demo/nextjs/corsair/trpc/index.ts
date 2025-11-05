@@ -1,15 +1,5 @@
-import { router, action } from "corsair/trpc/server";
-import { z } from "corsair/core";
+import { corsairProcedureRouter } from './procedures'
 
-export const corsairRouter = router({
-  "hello there": action
-    .input(z.object({ name: z.string() }))
-    .query(async ({ input }) => {
-      return "Hello, world!";
-    }),
-  "test mutation": action.mutation(async () => {
-    return "Test";
-  }),
-});
+export const corsairRouter = corsairProcedureRouter
 
-export type CorsairRouter = typeof corsairRouter;
+export type CorsairRouter = typeof corsairRouter

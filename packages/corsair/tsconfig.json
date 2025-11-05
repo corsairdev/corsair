@@ -25,14 +25,15 @@
     "db/**/*",
     "api/**/*",
     "scripts/**/*",
-    "core/**/*",
-    "watch/**/*",
+    "legacy-core/**/*",
+    // "watch/**/*",
     "client/**/*",
     "cli/**/*",
     "adapters/nextjs.ts",
     "adapters/express.ts",
     "schema/**/*",
-    "trpc/**/*"
+    "trpc/**/*",
+    "core"
   ],
   "exclude": ["node_modules", "dist"]
 }
