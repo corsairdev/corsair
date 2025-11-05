@@ -7,7 +7,13 @@ import { eventBus } from './core/event-bus.js'
 import { CorsairEvent } from './types/events.js'
 import { CorsairUI } from './ui/renderer.js'
 import { Project } from 'ts-morph'
-import { loadConfig, loadEnv } from '../config.js'
+import * as path from 'path'
+import {
+  loadConfig,
+  loadEnv,
+  getResolvedPaths,
+  validatePaths,
+} from '../config.js'
 
 // Import handlers to initialize them
 import './handlers/file-change-handler.js'
@@ -35,7 +41,7 @@ export async function watch(): Promise<void> {
 
   // Load environment variables first
   const cfg = loadConfig()
-  loadEnv(cfg.envFile)
+  loadEnv(cfg.envFile ?? '.env.local')
 
   // Start file watcher - watch entire directory but filter in the change handler
   const watcher = chokidar.watch('.', {
@@ -51,9 +57,61 @@ export async function watch(): Promise<void> {
   })
 
   // Initialize operations handlers
-  const queriesHandler = new Queries()
-  const mutationsHandler = new Mutations()
-  const schemaHandler = new Schema()
+  const paths = getResolvedPaths(cfg)
+  const warnings = validatePaths(cfg)
+
+  const queriesHandler = new Queries(paths.operationsFile)
+  const mutationsHandler = new Mutations(paths.operationsFile)
+  const schemaHandler = new Schema(paths.schemaFile)
+
+  try {
+    const operationsFile = project.addSourceFileAtPath(paths.operationsFile)
+    const imports = operationsFile.getImportDeclarations()
+    const desiredQueries = path
+      .relative(path.dirname(paths.operationsFile), paths.queriesDir)
+      .replace(/\\/g, '/')
+    const desiredMutations = path
+      .relative(path.dirname(paths.operationsFile), paths.mutationsDir)
+      .replace(/\\/g, '/')
+    const normalizedQueries = desiredQueries.startsWith('.')
+      ? desiredQueries
+      : `./${desiredQueries}`
+    const normalizedMutations = desiredMutations.startsWith('.')
+      ? desiredMutations
+      : `./${desiredMutations}`
+
+    const queriesImport = imports.find(
+      d => d.getNamespaceImport()?.getText() === 'queriesModule'
+    )
+    const mutationsImport = imports.find(
+      d => d.getNamespaceImport()?.getText() === 'mutationsModule'
+    )
+
+    if (queriesImport) {
+      if (queriesImport.getModuleSpecifierValue() !== normalizedQueries) {
+        queriesImport.setModuleSpecifier(normalizedQueries)
+      }
+    } else {
+      operationsFile.addImportDeclaration({
+        moduleSpecifier: normalizedQueries,
+        namespaceImport: 'queriesModule',
+      })
+    }
+
+    if (mutationsImport) {
+      if (mutationsImport.getModuleSpecifierValue() !== normalizedMutations) {
+        mutationsImport.setModuleSpecifier(normalizedMutations)
+      }
+    } else {
+      operationsFile.addImportDeclaration({
+        moduleSpecifier: normalizedMutations,
+        namespaceImport: 'mutationsModule',
+      })
+    }
+
+    operationsFile.formatText()
+    await operationsFile.save()
+  } catch {}
 
   watcher.on('ready', async () => {
     // Parse queries, mutations, and schema files on startup
@@ -62,8 +120,6 @@ export async function watch(): Promise<void> {
     await schemaHandler.parse()
 
     console.log('✓ File watcher ready. Watching for changes...\n')
-
-    console.clear()
   })
 
   watcher.on('change', async path => {
@@ -73,17 +129,22 @@ export async function watch(): Promise<void> {
     }
 
     // Handle queries/mutations file changes
-    if (path.includes('corsair/queries.ts')) {
+    const isInQueries = path.includes(paths.queriesDir)
+    const isInMutations = path.includes(paths.mutationsDir)
+    const isOperations = path === paths.operationsFile
+    const isSchema = path === paths.schemaFile
+
+    if (isInQueries || isOperations) {
       await queriesHandler.update()
       return
     }
 
-    if (path.includes('corsair/mutations.ts')) {
+    if (isInMutations || isOperations) {
       await mutationsHandler.update()
       return
     }
 
-    if (path.includes('corsair/schema.ts')) {
+    if (isSchema) {
       await schemaHandler.update()
       return
     }
@@ -130,7 +191,7 @@ export async function watch(): Promise<void> {
   // });
 
   // Render UI
-  const { unmount, waitUntilExit } = render(<CorsairUI />)
+  const { unmount, waitUntilExit } = render(<CorsairUI warnings={warnings} />)
 
   // Handle graceful shutdown
   process.on('SIGINT', () => {

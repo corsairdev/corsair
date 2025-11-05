@@ -173,8 +173,12 @@ abstract class Operations {
  * Manages query operations from corsair/queries.ts
  */
 export class Queries extends Operations {
-  constructor() {
-    super(process.cwd() + '/corsair/operations.ts', 'queries', 'queries')
+  constructor(operationsFilePath?: string) {
+    super(
+      operationsFilePath ?? process.cwd() + '/corsair/operations.ts',
+      'queries',
+      'queries'
+    )
   }
 }
 
@@ -183,7 +187,11 @@ export class Queries extends Operations {
  * Manages mutation operations from corsair/mutations.ts
  */
 export class Mutations extends Operations {
-  constructor() {
-    super(process.cwd() + '/corsair/operations.ts', 'mutations', 'mutations')
+  constructor(operationsFilePath?: string) {
+    super(
+      operationsFilePath ?? process.cwd() + '/corsair/operations.ts',
+      'mutations',
+      'mutations'
+    )
   }
 }

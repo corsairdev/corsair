@@ -2,6 +2,7 @@ import { Project, SyntaxKind, VariableDeclarationKind } from 'ts-morph'
 import * as path from 'path'
 import { promises as fs } from 'fs'
 import { format } from 'prettier'
+import { loadConfig, getResolvedPaths } from '../../config.js'
 
 export interface OperationToWrite {
   operationName: string
@@ -34,12 +35,13 @@ export async function writeOperationToFile(
 
   // 1. Create the new operation file
   const newOperationFileName = `${kebabCase(operation.operationName)}.ts`
-  const newOperationFilePath = path.join(
-    projectRoot,
-    'corsair',
-    operationTypePlural,
-    newOperationFileName
-  )
+  const cfg = loadConfig()
+  const pathsResolved = getResolvedPaths(cfg)
+  const baseDir =
+    operation.operationType === 'query'
+      ? pathsResolved.queriesDir
+      : pathsResolved.mutationsDir
+  const newOperationFilePath = path.join(baseDir, newOperationFileName)
 
   const isQuery = operation.operationType === 'query'
   const variableName = operation.operationName
@@ -92,12 +94,7 @@ export async function writeOperationToFile(
   await fs.writeFile(newOperationFilePath, formattedContent)
 
   // 2. Ensure barrel export exists
-  const barrelPath = path.join(
-    projectRoot,
-    'corsair',
-    operationTypePlural,
-    'index.ts'
-  )
+  const barrelPath = path.join(baseDir, 'index.ts')
 
   try {
     const existingBarrel = await fs.readFile(barrelPath, 'utf8')
@@ -111,12 +108,19 @@ export async function writeOperationToFile(
   }
 
   // 3. Update operations.ts
-  const operationsFilePath = path.join(projectRoot, 'corsair', 'operations.ts')
+  const operationsFilePath = pathsResolved.operationsFile
   const project = new Project()
   const operationsFile = project.addSourceFileAtPath(operationsFilePath)
 
   // Ensure namespace imports exist
-  const moduleSpecifier = `./${operationTypePlural}`
+  const moduleSpecifierRaw = path.relative(
+    path.dirname(operationsFilePath),
+    baseDir
+  )
+  let moduleSpecifier = moduleSpecifierRaw.replace(/\\/g, '/')
+  if (!moduleSpecifier.startsWith('.')) {
+    moduleSpecifier = './' + moduleSpecifier
+  }
   const desiredNs = isQuery ? 'queriesModule' : 'mutationsModule'
   const existingNsImport = operationsFile
     .getImportDeclarations()
