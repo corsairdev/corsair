@@ -1,136 +1,159 @@
-import {
-  useQuery,
-  UseQueryOptions,
-  useMutation,
-  UseMutationOptions,
-} from "@tanstack/react-query";
+import superjson from 'superjson'
+import type { TRPCClientError, CreateTRPCClientOptions } from '@trpc/client'
+import { createTRPCClient, httpBatchStreamLink } from '@trpc/client'
+import type { UseQueryOptions, UseMutationOptions } from '@tanstack/react-query'
+import { useQuery, useMutation } from '@tanstack/react-query'
 import type {
-  CorsairQueries,
-  CorsairMutations,
-  CorsairPrompt,
-  InferOperationInput,
-  InferOperationOutput,
-} from "./types";
+  inferRouterInputs,
+  inferRouterOutputs,
+  AnyTRPCRouter,
+} from '@trpc/server'
 
-type ClientOptions = {
-  endpoint?: string;
-  validate?: boolean;
-};
+// Generic client factory function
+export function createCorsairClient<TRouter extends AnyTRPCRouter>(options: {
+  url: string
+  transformer?: any // tRPC's transformer type is complex and requires 'any' for compatibility
+  clientOptions?: Partial<CreateTRPCClientOptions<TRouter>>
+  linkOptions?: any // tRPC's link options type is complex and requires 'any' for compatibility
+}) {
+  const baseClient = createTRPCClient<TRouter>({
+    links: [
+      httpBatchStreamLink({
+        url: options.url,
+        transformer: options.transformer || superjson,
+        ...(options.linkOptions || {}),
+      }),
+    ],
+    ...(options.clientOptions || {}),
+  })
 
-type QueryClientOptions<TQueries extends CorsairQueries<any>, P extends keyof TQueries> =
-  Omit<UseQueryOptions<InferOperationOutput<TQueries, P>>, "queryKey" | "queryFn"> & ClientOptions;
+  type RouterInputs = inferRouterInputs<TRouter>
+  type RouterOutputs = inferRouterOutputs<TRouter>
 
-type MutationClientOptions<TMutations extends CorsairMutations<any>, P extends keyof TMutations> =
-  Omit<
-    UseMutationOptions<
-      InferOperationOutput<TMutations, P>,
-      Error,
-      void
-    >,
-    "mutationFn"
-  > & ClientOptions;
+  const typedClient = baseClient as unknown as StronglyTypedClient<TRouter>
 
-async function fetchOperation(
-  endpoint: string,
-  operationType: "query" | "mutation",
-  prompt: string,
-  input: any
-): Promise<any> {
-  const response = await fetch(endpoint, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      prompt,
-      input,
-      operation: operationType,
-    }),
-  });
+  type RouterDef = TRouter['_def']
+  type RouterProcedures = RouterDef['procedures']
 
-  if (!response.ok) {
-    const error = await response
-      .json()
-      .catch(() => ({ message: "Unknown error" }));
-    throw new Error(error.message || `API error: ${response.status}`);
+  // Helper to check if a procedure is a mutation
+  type IsMutation<T> = T extends { _def: { type: 'mutation' } } ? true : false
+
+  // Extract mutation routes automatically
+  type MutationRoutes = {
+    [K in keyof RouterProcedures]: IsMutation<RouterProcedures[K]> extends true
+      ? K
+      : never
+  }[keyof RouterProcedures]
+
+  // Extract query routes automatically
+  type QueryRoutes = Exclude<keyof RouterInputs, MutationRoutes>
+
+  return {
+    baseClient,
+    typedClient,
+    types: {} as {
+      RouterInputs: RouterInputs
+      RouterOutputs: RouterOutputs
+      QueryRoutes: QueryRoutes
+      MutationRoutes: MutationRoutes
+    },
+  }
+}
+
+type StronglyTypedClient<TRouter extends AnyTRPCRouter> = {
+  [K in keyof inferRouterInputs<TRouter>]: {
+    query: (
+      input: inferRouterInputs<TRouter>[K]
+    ) => Promise<inferRouterOutputs<TRouter>[K]>
+    mutate: (
+      input: inferRouterInputs<TRouter>[K]
+    ) => Promise<inferRouterOutputs<TRouter>[K]>
+  }
+}
+
+export function createCorsairHooks<TRouter extends AnyTRPCRouter>(
+  typedClient: StronglyTypedClient<TRouter>
+) {
+  type RouterInputs = inferRouterInputs<TRouter>
+  type RouterOutputs = inferRouterOutputs<TRouter>
+
+  type RouterDef = TRouter['_def']
+  type RouterProcedures = RouterDef['procedures']
+
+  type IsMutation<T> = T extends { _def: { type: 'mutation' } } ? true : false
+
+  type MutationRoutes = {
+    [K in keyof RouterProcedures]: IsMutation<RouterProcedures[K]> extends true
+      ? K
+      : never
+  }[keyof RouterProcedures]
+
+  type QueryRoutes = Exclude<keyof RouterInputs, MutationRoutes>
+
+  function useCorsairQuery<TRoute extends QueryRoutes>(
+    route: TRoute,
+    input: RouterInputs[TRoute],
+    options?: Omit<
+      UseQueryOptions<RouterOutputs[TRoute], TRPCClientError<TRouter>>,
+      'queryKey' | 'queryFn'
+    >
+  ) {
+    return useQuery<RouterOutputs[TRoute], TRPCClientError<TRouter>>({
+      queryKey: [route, input],
+      queryFn: async () => {
+        return typedClient[route].query(input)
+      },
+      ...options,
+    })
   }
 
-  return response.json();
-}
+  function useCorsairMutation<TRoute extends MutationRoutes>(
+    route: TRoute,
+    options?: Omit<
+      UseMutationOptions<
+        RouterOutputs[TRoute],
+        TRPCClientError<TRouter>,
+        RouterInputs[TRoute]
+      >,
+      'mutationFn'
+    >
+  ) {
+    return useMutation<
+      RouterOutputs[TRoute],
+      TRPCClientError<TRouter>,
+      RouterInputs[TRoute]
+    >({
+      mutationFn: async (input: RouterInputs[TRoute]) => {
+        return typedClient[route].mutate(input)
+      },
+      ...options,
+    })
+  }
 
-export function createCorsairQueryClient<TQueries extends CorsairQueries<any>>(
-  queries: TQueries
-) {
+  async function corsairQuery<TRoute extends QueryRoutes>(
+    route: TRoute,
+    input: RouterInputs[TRoute]
+  ): Promise<RouterOutputs[TRoute]> {
+    return typedClient[route].query(input)
+  }
+
+  async function corsairMutation<TRoute extends MutationRoutes>(
+    route: TRoute,
+    input: RouterInputs[TRoute]
+  ): Promise<RouterOutputs[TRoute]> {
+    return typedClient[route].mutate(input)
+  }
+
   return {
-    useQuery: <P extends keyof TQueries>(
-      prompt: CorsairPrompt<P>,
-      input: InferOperationInput<TQueries, P>,
-      options?: QueryClientOptions<TQueries, P>
-    ) => {
-      const {
-        endpoint = "/api/corsair",
-        validate = true,
-        ...queryOptions
-      } = options || {};
-
-      const query = queries[prompt];
-
-      return useQuery<InferOperationOutput<TQueries, P>>({
-        queryKey: [prompt, input],
-        queryFn: async () => {
-          if (validate) {
-            query.input_type.parse(input);
-          }
-
-          const data = await fetchOperation(endpoint, "query", query.prompt, input);
-
-          if (validate && query.response_type) {
-            return query.response_type.parse(data);
-          }
-
-          return data;
-        },
-        ...queryOptions,
-      });
+    useCorsairQuery,
+    useCorsairMutation,
+    corsairQuery,
+    corsairMutation,
+    types: {} as {
+      QueryInputs: { [K in QueryRoutes]: RouterInputs[K] }
+      QueryOutputs: { [K in QueryRoutes]: RouterOutputs[K] }
+      MutationInputs: { [K in MutationRoutes]: RouterInputs[K] }
+      MutationOutputs: { [K in MutationRoutes]: RouterOutputs[K] }
     },
-  };
-}
-
-export function createCorsairMutationClient<TMutations extends CorsairMutations<any>>(
-  mutations: TMutations
-) {
-  return {
-    useMutation: <P extends keyof TMutations>(
-      prompt: CorsairPrompt<P>,
-      input: InferOperationInput<TMutations, P>,
-      options?: MutationClientOptions<TMutations, P>
-    ) => {
-      const {
-        endpoint = "/api/corsair",
-        validate = true,
-        ...mutationOptions
-      } = options || {};
-
-      const mutation = mutations[prompt];
-
-      return useMutation<
-        InferOperationOutput<TMutations, P>,
-        Error,
-        void
-      >({
-        ...mutationOptions,
-        mutationFn: async () => {
-          if (validate) {
-            mutation.input_type.parse(input);
-          }
-
-          const data = await fetchOperation(endpoint, "mutation", mutation.prompt, input);
-
-          if (validate && mutation.response_type) {
-            return mutation.response_type.parse(data);
-          }
-
-          return data;
-        },
-      });
-    },
-  };
+  }
 }

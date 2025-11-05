@@ -1,6 +1,6 @@
-import { Request, Response } from "express";
-import { CorsairMutations, CorsairQueries } from "../core";
-import { ContextFactory, executeCorsairOperation } from "../core/execute";
+import { Request, Response } from 'express'
+import { CorsairMutations, CorsairQueries } from '../legacy-core'
+import { ContextFactory, executeCorsairOperation } from '../legacy-core/execute'
 
 export function createExpressHandler<
   TQueries extends CorsairQueries<TContext>,
@@ -12,18 +12,18 @@ export function createExpressHandler<
   contextFactory: ContextFactory<TContext>
 ) {
   return async (req: Request, res: Response) => {
-    const context = await contextFactory(req);
-    const operations = req.body.operation === "query" ? queries : mutations;
-    const result = await executeCorsairOperation(operations, req.body, context);
+    const context = await contextFactory(req)
+    const operations = req.body.operation === 'query' ? queries : mutations
+    const result = await executeCorsairOperation(operations, req.body, context)
 
     if (result.success) {
-      res.json(result.data);
+      res.json(result.data)
     } else {
-      const status = result.error.includes("validation") ? 400 : 500;
+      const status = result.error.includes('validation') ? 400 : 500
       res.status(status).json({
         message: result.error,
         errors: result.errors,
-      });
+      })
     }
-  };
+  }
 }
