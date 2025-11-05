@@ -6,8 +6,7 @@ import {
   InferMutationsOutputs,
   InferMutationsInputs,
 } from 'corsair/dist/legacy-core'
-import { mutations } from './mutations'
-import { queries } from './queries'
+import { mutations, queries } from './operations'
 
 // Client-side hooks (for use in client components)
 const queryClient = createCorsairQueryClient(queries)

@@ -24,9 +24,12 @@ export function ArtistCard({ artist, onClick }: ArtistCardProps) {
     return count.toString()
   }
 
-  const res = useCorsairMutation('toggle track explicitssssssssssesssssss', {
-    trackId: '123',
-  })
+  const res = useCorsairMutation(
+    'toggle track explicitssssssssssessssssseses',
+    {
+      trackId: '123',
+    }
+  )
 
   const testMutation = useCorsairMutation('link album to artistss', {
     albumId: '123',
