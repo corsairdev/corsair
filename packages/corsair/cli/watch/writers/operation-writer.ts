@@ -49,7 +49,15 @@ export async function writeOperationToFile(
     )
     .join('')
 
+  const sanitizedPseudocode = (operation.pseudocode ?? 'N/A').replace(
+    /\*\//g,
+    '* /'
+  )
   let newOperationCode = `
+    /**
+     * @presudo ${sanitizedPseudocode}
+     * @input_type ${operation.inputType}
+     */
     import { z } from 'corsair/core'
     import { ${isQuery ? 'query' : 'mutation'} } from '../instances'
     import { drizzle } from 'corsair/db/types'
