@@ -40,7 +40,11 @@ const BottomBar: React.FC = () => {
   )
 }
 
-export const CorsairUI: React.FC = () => {
+type CorsairUIProps = {
+  warnings?: string[]
+}
+
+export const CorsairUI: React.FC<CorsairUIProps> = ({ warnings }) => {
   const [state, setState] = useState<ApplicationState>(
     stateMachine.getCurrentState()
   )
@@ -177,6 +181,24 @@ export const CorsairUI: React.FC = () => {
   // Wrap screen with layout that includes bottom bar
   return (
     <Box flexDirection="column">
+      {!!warnings?.length && (
+        <Box
+          borderStyle="single"
+          borderColor="yellow"
+          flexDirection="column"
+          paddingX={1}
+          marginBottom={1}
+        >
+          <Text color="yellow">
+            Warning: Some configured Corsair paths are missing
+          </Text>
+          {warnings.map((w, i) => (
+            <Text key={i} dimColor>
+              {w}
+            </Text>
+          ))}
+        </Box>
+      )}
       {currentScreen}
       {showBottomBar && <BottomBar />}
     </Box>

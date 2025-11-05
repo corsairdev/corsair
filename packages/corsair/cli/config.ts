@@ -1,31 +1,93 @@
-import { existsSync } from 'fs'
+import { existsSync, readFileSync } from 'fs'
 import { resolve } from 'path'
 import { config } from 'dotenv'
+import { pathToFileURL } from 'url'
+import { Project, SyntaxKind } from 'ts-morph'
+
+export interface CorsairPaths {
+  queries: string
+  mutations: string
+  schema: string
+  api: string
+}
 
 export interface CorsairConfig {
-  schema: string
-  out: string
-  envFile: string
+  paths: CorsairPaths
+  envFile?: string
+  out?: string
 }
 
 export function loadConfig(): CorsairConfig {
-  const configPath = resolve(process.cwd(), 'corsair.config.ts')
-  const configJsPath = resolve(process.cwd(), 'corsair.config.js')
+  const tsConfigPath = resolve(process.cwd(), 'corsair.config.ts')
+  const jsConfigPath = resolve(process.cwd(), 'corsair.config.js')
 
-  // Default config for Next.js projects
   const defaultConfig: CorsairConfig = {
-    schema: './corsair/schema.ts',
-    out: './corsair/drizzle',
+    paths: {
+      queries: 'corsair/queries',
+      mutations: 'corsair/mutations',
+      schema: 'corsair/schema.ts',
+      api: 'api/corsair',
+    },
     envFile: '.env.local',
+    out: './corsair/drizzle',
   }
 
-  // TODO: Add support for loading custom config files
-  if (existsSync(configPath) || existsSync(configJsPath)) {
-    console.log('📋 Custom corsair.config found (not yet implemented)')
-    console.log('   Using default config for now\n')
+  let userConfig: any = null
+
+  if (existsSync(jsConfigPath)) {
+    try {
+      const mod = require(jsConfigPath)
+      userConfig = mod?.default ?? mod
+    } catch {}
+  } else if (existsSync(tsConfigPath)) {
+    try {
+      const project = new Project()
+      const sf = project.addSourceFileAtPath(tsConfigPath)
+      const exportAssignment = sf.getExportAssignment(() => true)
+      const expr = exportAssignment?.getExpression()
+      if (expr?.isKind(SyntaxKind.ObjectLiteralExpression)) {
+        const obj: Record<string, string> = {}
+        for (const prop of expr.getProperties()) {
+          if (prop.isKind(SyntaxKind.PropertyAssignment)) {
+            const name = prop.getName().replace(/['"`]/g, '')
+            const valueNode = prop.getInitializer()
+            const value = valueNode?.getText().replace(/['"`]/g, '')
+            if (name && typeof value === 'string') {
+              obj[name] = value
+            }
+          }
+        }
+        userConfig = obj
+      }
+    } catch {}
   }
 
-  return defaultConfig
+  if (!userConfig) {
+    return defaultConfig
+  }
+
+  const flatToPaths = (cfg: any): CorsairPaths => {
+    if (cfg.paths) {
+      return {
+        queries: cfg.paths.queries ?? defaultConfig.paths.queries,
+        mutations: cfg.paths.mutations ?? defaultConfig.paths.mutations,
+        schema: cfg.paths.schema ?? defaultConfig.paths.schema,
+        api: cfg.paths.api ?? defaultConfig.paths.api,
+      }
+    }
+    return {
+      queries: cfg.queries ?? defaultConfig.paths.queries,
+      mutations: cfg.mutations ?? defaultConfig.paths.mutations,
+      schema: cfg.schema ?? defaultConfig.paths.schema,
+      api: cfg.api ?? defaultConfig.paths.api,
+    }
+  }
+
+  return {
+    paths: flatToPaths(userConfig),
+    envFile: userConfig.envFile ?? defaultConfig.envFile,
+    out: userConfig.out ?? defaultConfig.out,
+  }
 }
 
 export function loadEnv(envFile: string): void {
@@ -51,16 +113,27 @@ export function checkDatabaseUrl(): void {
   }
 }
 
-export function getSchemaPath(cfg: CorsairConfig): string {
-  const schemaPath = resolve(process.cwd(), cfg.schema)
+export function getResolvedPaths(cfg: CorsairConfig): {
+  queriesDir: string
+  mutationsDir: string
+  schemaFile: string
+  apiDir: string
+  operationsFile: string
+} {
+  const queriesDir = resolve(process.cwd(), cfg.paths.queries)
+  const mutationsDir = resolve(process.cwd(), cfg.paths.mutations)
+  const schemaFile = resolve(process.cwd(), cfg.paths.schema)
+  const apiDir = resolve(process.cwd(), cfg.paths.api)
+  const operationsFile = resolve(queriesDir, '..', 'operations.ts')
+  return { queriesDir, mutationsDir, schemaFile, apiDir, operationsFile }
+}
 
-  if (!existsSync(schemaPath)) {
-    console.error(`❌ Schema file not found at: ${schemaPath}`)
-    console.error(
-      `   Please create a schema file or configure it in corsair.config.ts\n`
-    )
-    process.exit(1)
-  }
-
-  return schemaPath
+export function validatePaths(cfg: CorsairConfig): string[] {
+  const warnings: string[] = []
+  const { queriesDir, mutationsDir, schemaFile, apiDir } = getResolvedPaths(cfg)
+  if (!existsSync(queriesDir)) warnings.push(`queries: ${queriesDir}`)
+  if (!existsSync(mutationsDir)) warnings.push(`mutations: ${mutationsDir}`)
+  if (!existsSync(schemaFile)) warnings.push(`schema: ${schemaFile}`)
+  if (!existsSync(apiDir)) warnings.push(`api: ${apiDir}`)
+  return warnings
 }

@@ -5,7 +5,7 @@ import { loadConfig, loadEnv, checkDatabaseUrl } from './config.js'
 
 export async function check() {
   const cfg = loadConfig()
-  loadEnv(cfg.envFile)
+  loadEnv(cfg.envFile ?? '.env.local')
   checkDatabaseUrl()
 
   console.log('🔍 Testing migration in a transaction (will rollback)...\n')
