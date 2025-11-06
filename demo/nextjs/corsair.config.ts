@@ -1,6 +1,6 @@
 export default {
-  queries: 'corsair/queriess',
+  queries: 'corsair/queries',
   mutations: 'corsair/mutations',
   schema: 'corsair/schema.ts',
-  apiEndpoint: 'api/corsair',
+  api: 'app/api/corsair',
 }
