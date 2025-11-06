@@ -25,12 +25,8 @@
     "db/**/*",
     "api/**/*",
     "scripts/**/*",
-    "legacy-core/**/*",
-    // "watch/**/*",
     "client/**/*",
     "cli/**/*",
-    "adapters/nextjs.ts",
-    "adapters/express.ts",
     "schema/**/*",
     "trpc/**/*",
     "core"

@@ -1,7 +1,4 @@
-// Queries
-import * as queriesModule from './queriess'
-
-// Mutations
+import * as queriesModule from './queries'
 import * as mutationsModule from './mutations'
 
 export const queries = {
@@ -35,7 +32,10 @@ export const mutations = {
     'toggle track explicitssssssssssessssssses':
         mutationsModule.toggleTrackExplicitssssssssssessssssses,
     'link album to artistss': mutationsModule.linkAlbumToArtistss,
-    "toggle track explicitssssssssssessssssseseses": mutationsModule.toggleTrackExplicitssssssssssessssssseseses,
-    "toggle track explicitssssssssssesssssssesesesess": mutationsModule.toggleTrackExplicitssssssssssesssssssesesesess,
-    "toggle track explicitssssssssssesssssssesesesesss": mutationsModule.toggleTrackExplicitssssssssssesssssssesesesesss
+    'toggle track explicitssssssssssessssssseseses':
+        mutationsModule.toggleTrackExplicitssssssssssessssssseseses,
+    'toggle track explicitssssssssssesssssssesesesess':
+        mutationsModule.toggleTrackExplicitssssssssssesssssssesesesess,
+    'toggle track explicitssssssssssesssssssesesesesss':
+        mutationsModule.toggleTrackExplicitssssssssssesssssssesesesesss,
 }
