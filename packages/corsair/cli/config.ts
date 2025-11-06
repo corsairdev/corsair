@@ -8,7 +8,7 @@ export interface CorsairPaths {
   queries: string
   mutations: string
   schema: string
-  api: string
+  apiEndpoint: string
 }
 
 export interface CorsairConfig {
@@ -26,7 +26,7 @@ export function loadConfig(): CorsairConfig {
       queries: 'corsair/queries',
       mutations: 'corsair/mutations',
       schema: 'corsair/schema.ts',
-      api: 'api/corsair',
+      apiEndpoint: 'api/corsair',
     },
     envFile: '.env.local',
     out: './corsair/drizzle',
@@ -72,14 +72,18 @@ export function loadConfig(): CorsairConfig {
         queries: cfg.paths.queries ?? defaultConfig.paths.queries,
         mutations: cfg.paths.mutations ?? defaultConfig.paths.mutations,
         schema: cfg.paths.schema ?? defaultConfig.paths.schema,
-        api: cfg.paths.api ?? defaultConfig.paths.api,
+        apiEndpoint:
+          cfg.paths.apiEndpoint ??
+          cfg.paths.api ??
+          defaultConfig.paths.apiEndpoint,
       }
     }
     return {
       queries: cfg.queries ?? defaultConfig.paths.queries,
       mutations: cfg.mutations ?? defaultConfig.paths.mutations,
       schema: cfg.schema ?? defaultConfig.paths.schema,
-      api: cfg.api ?? defaultConfig.paths.api,
+      apiEndpoint:
+        cfg.apiEndpoint ?? cfg.api ?? defaultConfig.paths.apiEndpoint,
     }
   }
 
@@ -117,23 +121,20 @@ export function getResolvedPaths(cfg: CorsairConfig): {
   queriesDir: string
   mutationsDir: string
   schemaFile: string
-  apiDir: string
   operationsFile: string
 } {
   const queriesDir = resolve(process.cwd(), cfg.paths.queries)
   const mutationsDir = resolve(process.cwd(), cfg.paths.mutations)
   const schemaFile = resolve(process.cwd(), cfg.paths.schema)
-  const apiDir = resolve(process.cwd(), cfg.paths.api)
   const operationsFile = resolve(queriesDir, '..', 'operations.ts')
-  return { queriesDir, mutationsDir, schemaFile, apiDir, operationsFile }
+  return { queriesDir, mutationsDir, schemaFile, operationsFile }
 }
 
 export function validatePaths(cfg: CorsairConfig): string[] {
   const warnings: string[] = []
-  const { queriesDir, mutationsDir, schemaFile, apiDir } = getResolvedPaths(cfg)
+  const { queriesDir, mutationsDir, schemaFile } = getResolvedPaths(cfg)
   if (!existsSync(queriesDir)) warnings.push(`queries: ${queriesDir}`)
   if (!existsSync(mutationsDir)) warnings.push(`mutations: ${mutationsDir}`)
   if (!existsSync(schemaFile)) warnings.push(`schema: ${schemaFile}`)
-  if (!existsSync(apiDir)) warnings.push(`api: ${apiDir}`)
   return warnings
 }

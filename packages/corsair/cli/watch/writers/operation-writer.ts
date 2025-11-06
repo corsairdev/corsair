@@ -1,6 +1,7 @@
 import { Project, SyntaxKind, VariableDeclarationKind } from 'ts-morph'
 import * as path from 'path'
 import { promises as fs } from 'fs'
+import { spawn } from 'child_process'
 import { format } from 'prettier'
 import { loadConfig, getResolvedPaths } from '../../config.js'
 
@@ -163,6 +164,16 @@ export async function writeOperationToFile(
 
   operationsFile.formatText()
   await operationsFile.save()
+
+  await new Promise<void>(resolve => {
+    const child = spawn('npx', ['--yes', 'tsc', '--noEmit'], {
+      stdio: 'inherit',
+      shell: true,
+      cwd: projectRoot,
+      env: process.env,
+    })
+    child.on('close', () => resolve())
+  })
 }
 
 export function parseInputTypeFromLLM(inputTypeString: string): string {

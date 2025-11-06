@@ -25,7 +25,7 @@ export function ArtistCard({ artist, onClick }: ArtistCardProps) {
   }
 
   const res = useCorsairMutation(
-    'toggle track explicitssssssssssesssssssesesesessss',
+    'toggle track explicitssssssssssesssssssesesesesssss',
     {
       trackId: '123',
     }
