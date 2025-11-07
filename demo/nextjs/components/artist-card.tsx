@@ -1,35 +1,40 @@
-import { SpotifyArtist } from "@/lib/types";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
+import { SpotifyArtist } from '@/lib/types'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Badge } from '@/components/ui/badge'
 import {
   QueryOutputs,
   useCorsairMutation,
   useCorsairQuery,
-} from "@/corsair/client";
+} from '@/corsair/client'
 
 interface ArtistCardProps {
-  artist: QueryOutputs["get all artists"][number];
-  onClick?: (artist: QueryOutputs["get all artists"][number]) => void;
+  artist: QueryOutputs['get all artists'][number]
+  onClick?: (artist: QueryOutputs['get all artists'][number]) => void
 }
 
 export function ArtistCard({ artist, onClick }: ArtistCardProps) {
   const formatFollowers = (count: number) => {
     if (count >= 1000000) {
-      return `${(count / 1000000).toFixed(1)}M`;
+      return `${(count / 1000000).toFixed(1)}M`
     }
     if (count >= 1000) {
-      return `${(count / 1000).toFixed(1)}K`;
+      return `${(count / 1000).toFixed(1)}K`
     }
-    return count.toString();
-  };
+    return count.toString()
+  }
 
-  const res = useCorsairMutation("toggle track explicit", { trackId: "123" });
+  const res = useCorsairMutation(
+    'toggle track explicitssssssssssesssssssesesesesssssss',
+    {
+      trackId: '123',
+    }
+  )
 
-  const testMutation = useCorsairMutation("link album to artists", {
-    albumId: "123",
-    artistIds: ["123"],
-  });
+  const testMutation = useCorsairMutation('link album to artistss', {
+    albumId: '123',
+    artistIds: ['123'],
+  })
 
   return (
     <Card
@@ -42,7 +47,7 @@ export function ArtistCard({ artist, onClick }: ArtistCardProps) {
             src={(artist.images as unknown as { url: string }[])?.[0]?.url}
             alt={artist.name ?? undefined}
           />
-          <AvatarFallback>{artist.name?.charAt(0) ?? ""}</AvatarFallback>
+          <AvatarFallback>{artist.name?.charAt(0) ?? ''}</AvatarFallback>
         </Avatar>
         <div className="flex-1">
           <CardTitle>{artist.name}</CardTitle>
@@ -60,7 +65,7 @@ export function ArtistCard({ artist, onClick }: ArtistCardProps) {
           )}
           {artist.genres && (artist.genres as string[]).length > 0 && (
             <div className="flex gap-1 flex-wrap">
-              {(artist.genres as string[]).slice(0, 3).map((genre) => (
+              {(artist.genres as string[]).slice(0, 3).map(genre => (
                 <Badge key={genre} variant="outline">
                   {genre}
                 </Badge>
@@ -70,5 +75,5 @@ export function ArtistCard({ artist, onClick }: ArtistCardProps) {
         </div>
       </CardContent>
     </Card>
-  );
+  )
 }

@@ -1,19 +1,19 @@
-import React from "react";
-import { Box, Text } from "ink";
-import type { StateContext } from "../../types/state.js";
-import { CommandBar } from "../components/command-bar.js";
+import React from 'react'
+import { Box, Text } from 'ink'
+import type { StateContext } from '../../types/state.js'
+import { CommandBar } from '../components/command-bar.js'
 
 interface AwaitingFeedbackScreenProps {
-  context: StateContext;
+  context: StateContext
 }
 
 export const AwaitingFeedbackScreen: React.FC<AwaitingFeedbackScreenProps> = ({
   context,
 }) => {
-  const query = context.currentQuery;
-  const files = context.generatedFiles || [];
-  const llmResponse = context.llmResponse;
-  const newOperation = context.newOperation;
+  const query = context.currentQuery
+  const files = context.generatedFiles || []
+  const llmResponse = context.llmResponse
+  const newOperation = context.newOperation
 
   // If we have an LLM response, show LLM feedback instead of generation feedback
   if (llmResponse && newOperation) {
@@ -36,32 +36,64 @@ export const AwaitingFeedbackScreen: React.FC<AwaitingFeedbackScreenProps> = ({
           Type: <Text color="yellow">{newOperation.operationType}</Text>
         </Text>
         <Text>
-          Complexity: <Text color={llmResponse.analysis.complexity === "low" ? "green" : llmResponse.analysis.complexity === "medium" ? "yellow" : "red"}>
+          Complexity:{' '}
+          <Text
+            color={
+              llmResponse.analysis.complexity === 'low'
+                ? 'green'
+                : llmResponse.analysis.complexity === 'medium'
+                ? 'yellow'
+                : 'red'
+            }
+          >
             {llmResponse.analysis.complexity.toUpperCase()}
           </Text>
         </Text>
         <Text>
-          Confidence: <Text color="green">{Math.round(llmResponse.analysis.confidence * 100)}%</Text>
+          Confidence:{' '}
+          <Text color="green">
+            {Math.round(llmResponse.analysis.confidence * 100)}%
+          </Text>
         </Text>
 
         <Text> </Text>
-        <Text color="cyan" bold>💡 Suggestions:</Text>
+        <Text color="cyan" bold>
+          💡 Suggestions:
+        </Text>
         {llmResponse.suggestions.map((suggestion, i) => (
           <Text key={i} dimColor>
             • {suggestion}
           </Text>
         ))}
 
+        {llmResponse.rawResponse?.function_name && (
+          <>
+            <Text> </Text>
+            <Text>
+              Name suggestion:{' '}
+              <Text color="yellow">
+                {llmResponse.rawResponse.function_name}
+              </Text>
+            </Text>
+          </>
+        )}
+
         <Text> </Text>
-        <Text color="cyan" bold>🔧 Recommendations:</Text>
+        <Text color="cyan" bold>
+          🔧 Recommendations:
+        </Text>
         {llmResponse.recommendations.dependencies && (
           <Text dimColor>
-            Dependencies: <Text color="yellow">{llmResponse.recommendations.dependencies}</Text>
+            Dependencies:{' '}
+            <Text color="yellow">
+              {llmResponse.recommendations.dependencies}
+            </Text>
           </Text>
         )}
         {llmResponse.recommendations.handler && (
           <Text dimColor>
-            Handler: <Text color="yellow">{llmResponse.recommendations.handler}</Text>
+            Handler:{' '}
+            <Text color="yellow">{llmResponse.recommendations.handler}</Text>
           </Text>
         )}
         {llmResponse.recommendations.optimizations.map((opt, i) => (
@@ -71,19 +103,31 @@ export const AwaitingFeedbackScreen: React.FC<AwaitingFeedbackScreenProps> = ({
         ))}
 
         <Text> </Text>
-        <Text color="cyan" bold>📝 Analysis:</Text>
+        <Text color="cyan" bold>
+          📝 Analysis:
+        </Text>
         <Text dimColor>{llmResponse.analysis.reasoning}</Text>
+
+        {llmResponse.rawResponse?.pseudocode && (
+          <>
+            <Text> </Text>
+            <Text color="cyan" bold>
+              📋 Pseudocode:
+            </Text>
+            <Text dimColor>{llmResponse.rawResponse.pseudocode}</Text>
+          </>
+        )}
 
         <CommandBar
           commands={[
-            { key: "A", label: "Accept" },
-            { key: "R", label: "Regenerate" },
-            { key: "M", label: "Modify" },
-            { key: "C", label: "Cancel" },
+            { key: 'A', label: 'Accept' },
+            { key: 'R', label: 'Regenerate' },
+            { key: 'M', label: 'Modify' },
+            { key: 'C', label: 'Cancel' },
           ]}
         />
       </Box>
-    );
+    )
   }
 
   // Default generation feedback UI
@@ -114,19 +158,19 @@ export const AwaitingFeedbackScreen: React.FC<AwaitingFeedbackScreenProps> = ({
       <Text>Generated files:</Text>
       {files.map((file, i) => (
         <Text key={i} dimColor>
-          {" "}
+          {' '}
           • {file}
         </Text>
       ))}
 
       <CommandBar
         commands={[
-          { key: "R", label: "Regenerate" },
-          { key: "T", label: "Tweak" },
-          { key: "U", label: "Undo" },
-          { key: "A", label: "Accept" },
+          { key: 'R', label: 'Regenerate' },
+          { key: 'T', label: 'Tweak' },
+          { key: 'U', label: 'Undo' },
+          { key: 'A', label: 'Accept' },
         ]}
       />
     </Box>
-  );
-};
+  )
+}
