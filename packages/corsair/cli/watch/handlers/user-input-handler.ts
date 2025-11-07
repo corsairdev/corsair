@@ -6,7 +6,7 @@ import {
   parseInputTypeFromLLM,
   parseHandlerFromLLM,
   type OperationToWrite,
-} from '../writers/operation-writer.js'
+} from '../handlers/file-change-handler.js'
 import type { LLMResponse, NewOperationContext } from '../types/state.js'
 
 /**

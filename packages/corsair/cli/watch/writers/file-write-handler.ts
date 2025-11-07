@@ -1,6 +1,7 @@
-import { Project, SyntaxKind, VariableDeclarationKind } from 'ts-morph'
+import { Project, SyntaxKind } from 'ts-morph'
 import * as path from 'path'
-import { promises as fs } from 'fs'
+import * as fs from 'fs'
+import { promises as fsp } from 'fs'
 import { spawn } from 'child_process'
 import { format } from 'prettier'
 import { loadConfig, getResolvedPaths } from '../../config.js'
@@ -34,7 +35,6 @@ export async function writeOperationToFile(
   const operationTypePlural =
     operation.operationType === 'query' ? 'queries' : 'mutations'
 
-  // 1. Create the new operation file
   const newOperationFileName = `${kebabCase(operation.operationName)}.ts`
   const cfg = loadConfig()
   const pathsResolved = getResolvedPaths(cfg)
@@ -92,28 +92,25 @@ export async function writeOperationToFile(
   const formattedContent = await format(newOperationCode, {
     parser: 'typescript',
   })
-  await fs.writeFile(newOperationFilePath, formattedContent)
+  await fsp.writeFile(newOperationFilePath, formattedContent)
 
-  // 2. Ensure barrel export exists
   const barrelPath = path.join(baseDir, 'index.ts')
 
   try {
-    const existingBarrel = await fs.readFile(barrelPath, 'utf8')
+    const existingBarrel = await fsp.readFile(barrelPath, 'utf8')
     const exportLine = `export * from './${newOperationFileName.replace('.ts', '')}'\n`
     if (!existingBarrel.includes(exportLine)) {
-      await fs.appendFile(barrelPath, exportLine)
+      await fsp.appendFile(barrelPath, exportLine)
     }
   } catch {
     const exportLine = `export * from './${newOperationFileName.replace('.ts', '')}'\n`
-    await fs.writeFile(barrelPath, exportLine)
+    await fsp.writeFile(barrelPath, exportLine)
   }
 
-  // 3. Update operations.ts
   const operationsFilePath = pathsResolved.operationsFile
   const project = new Project()
   const operationsFile = project.addSourceFileAtPath(operationsFilePath)
 
-  // Ensure namespace imports exist
   const moduleSpecifierRaw = path.relative(
     path.dirname(operationsFilePath),
     baseDir
@@ -146,7 +143,6 @@ export async function writeOperationToFile(
   if (initializer) {
     const propName = `"${operation.operationName}"`
     const moduleRef = `${desiredNs}.${variableName}`
-    // Avoid duplicates
     const exists = initializer
       .getProperties()
       .some(p =>
@@ -198,4 +194,46 @@ export function parseHandlerFromLLM(handlerString: string): string {
   }
 
   return cleaned
+}
+
+export interface WriteFileOptions {
+  createDirectories?: boolean
+  overwrite?: boolean
+}
+
+export function writeFile(
+  filePath: string,
+  content: string,
+  options: WriteFileOptions = {}
+): void {
+  const { createDirectories = true, overwrite = true } = options
+
+  if (!overwrite && fs.existsSync(filePath)) {
+    throw new Error(`File already exists: ${filePath}`)
+  }
+
+  if (createDirectories) {
+    const dir = path.dirname(filePath)
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true })
+    }
+  }
+
+  fs.writeFileSync(filePath, content, 'utf-8')
+}
+
+export function getQueryOutputPath(
+  queryId: string,
+  projectRoot?: string
+): string {
+  const root = projectRoot || process.cwd()
+  const queriesDir = path.join(root, 'lib', 'corsair', 'queries')
+
+  return path.join(queriesDir, `${queryId}.ts`)
+}
+
+export function ensureDirectoryExists(dirPath: string): void {
+  if (!fs.existsSync(dirPath)) {
+    fs.mkdirSync(dirPath, { recursive: true })
+  }
 }

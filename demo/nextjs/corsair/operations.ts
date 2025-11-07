@@ -38,5 +38,6 @@ export const mutations = {
         mutationsModule.toggleTrackExplicitssssssssssesssssssesesesess,
     'toggle track explicitssssssssssesssssssesesesesss':
         mutationsModule.toggleTrackExplicitssssssssssesssssssesesesesss,
-    "toggle track explicitssssssssssesssssssesesesesssss": mutationsModule.toggleTrackExplicitssssssssssesssssssesesesesssss
+    "toggle track explicitssssssssssesssssssesesesesssss": mutationsModule.toggleTrackExplicitssssssssssesssssssesesesesssss,
+    "toggle track explicitssssssssssesssssssesesesessssss": mutationsModule.toggleTrackExplicitssssssssssesssssssesesesessssss
 }

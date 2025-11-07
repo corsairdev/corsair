@@ -8,7 +8,10 @@ import type {
 } from '../types/events.js'
 import { generateStub } from '../generators/stub-generator.js'
 import { generateQueryWithLLM } from '../generators/llm-generator.js'
-import { writeFile, getQueryOutputPath } from '../writers/file-writer.js'
+import {
+  writeFile,
+  getQueryOutputPath,
+} from '../handlers/file-change-handler.js'
 import type { Query, SchemaDefinition } from '../types/state.js'
 import { stateMachine } from '../core/state-machine.js'
 import { llm } from '../../../llm/index.js'
