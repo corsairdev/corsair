@@ -52,42 +52,27 @@ export async function writeOperationToFile(
     )
     .join('')
 
-  const sanitizedPseudocode = (operation.pseudocode ?? 'N/A').replace(
-    /\*\//g,
-    '* /'
-  )
+  const inputTypeCode = parseInputTypeFromLLM(operation.inputType)
+  const handlerCode = parseHandlerFromLLM(operation.handler)
   let newOperationCode = `
-    /**
-     * @presudo ${sanitizedPseudocode}
-     * @input_type ${operation.inputType}
-     */
-    import { z } from 'corsair/core'
-    import { ${isQuery ? 'query' : 'mutation'} } from '../instances'
+    import { z } from 'corsair'
+    import { procedure } from '../trpc/procedures'
     import { drizzle } from 'corsair/db/types'
 
-    export const ${variableName} = ${isQuery ? 'query' : 'mutation'}({
-      prompt: "${operation.prompt.replace(/['"]/g, '')}",
-      input_type: ${operation.inputType},
-      `
+    export const ${variableName} = procedure
+      .input(${inputTypeCode})
+      .${isQuery ? 'query' : 'mutation'}(${handlerCode})
+  `
 
   if (operation.pseudocode) {
-    newOperationCode += `pseudocode: ${JSON.stringify(operation.pseudocode)},\n`
+    newOperationCode += ``
   }
   if (operation.functionNameSuggestion) {
-    newOperationCode += `function_name: "${operation.functionNameSuggestion}",\n`
+    newOperationCode += ``
   }
   if (operation.dependencies) {
-    newOperationCode += `dependencies: ${JSON.stringify(
-      operation.dependencies,
-      null,
-      2
-    )},\n`
+    newOperationCode += ``
   }
-
-  newOperationCode += `
-      handler: ${operation.handler},
-    })
-  `
 
   const formattedContent = await format(newOperationCode, {
     parser: 'typescript',
