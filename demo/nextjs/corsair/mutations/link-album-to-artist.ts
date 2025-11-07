@@ -1,18 +1,14 @@
-import { z } from 'corsair/core'
-import { mutation } from '../instances'
+import { z } from 'corsair'
+import { procedure } from '../trpc/procedures'
 
-export const linkAlbumToArtist = mutation({
-  prompt: 'link album to artist',
-  input_type: z.object({
-    albumId: z.string(),
-    artistId: z.string(),
-  }),
-  // response_type: drizzleZod.createSelectSchema(schema.album_artists),
-  dependencies: {
-    tables: ['album_artists'],
-    columns: ['album_artists.album_id', 'album_artists.artist_id'],
-  },
-  handler: async (input, ctx) => {
+export const linkAlbumToArtist = procedure
+  .input(
+    z.object({
+      albumId: z.string(),
+      artistId: z.string(),
+    })
+  )
+  .mutation(async ({ input, ctx }) => {
     const [link] = await ctx.db
       .insert(ctx.schema.album_artists)
       .values({
@@ -22,5 +18,4 @@ export const linkAlbumToArtist = mutation({
       .returning()
 
     return link
-  },
-})
+  })

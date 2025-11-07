@@ -1,26 +1,14 @@
-import { z } from 'corsair/core'
-import { query } from '../instances'
+import { z } from 'corsair'
+import { procedure } from '../trpc/procedures'
 import { drizzle } from 'corsair/db/types'
 
-export const getTracksByArtistId = query({
-  prompt: 'get tracks by artist id',
-  input_type: z.object({
-    artistId: z.string(),
-  }),
-  // response_type: z.array(drizzleZod.createSelectSchema(schema.tracks)),
-  dependencies: {
-    tables: ['tracks', 'track_artists'],
-    columns: [
-      'tracks.id',
-      'tracks.name',
-      'tracks.duration_ms',
-      'tracks.explicit',
-      'tracks.track_number',
-      'track_artists.artist_id',
-      'track_artists.track_id',
-    ],
-  },
-  handler: async (input, ctx) => {
+export const getTracksByArtistId = procedure
+  .input(
+    z.object({
+      artistId: z.string(),
+    })
+  )
+  .query(async ({ input, ctx }) => {
     const tracks = await ctx.db
       .select({
         id: ctx.schema.tracks.id,
@@ -43,5 +31,4 @@ export const getTracksByArtistId = query({
       .where(drizzle.eq(ctx.schema.track_artists.artist_id, input.artistId))
 
     return tracks
-  },
-})
+  })

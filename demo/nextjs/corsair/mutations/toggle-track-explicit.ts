@@ -1,19 +1,14 @@
-import { z } from 'corsair/core'
-import { mutation } from '../instances'
+import { z } from 'corsair'
+import { procedure } from '../trpc/procedures'
 import { drizzle } from 'corsair/db/types'
 
-export const toggleTrackExplicit = mutation({
-  prompt: 'toggle track explicit',
-  input_type: z.object({
-    trackId: z.string(),
-  }),
-  // response_type: drizzleZod.createSelectSchema(schema.tracks).nullable(),
-  dependencies: {
-    tables: ['tracks'],
-    columns: ['tracks.id', 'tracks.explicit'],
-  },
-  handler: async (input, ctx) => {
-    // First get the current track to toggle its explicit value
+export const toggleTrackExplicit = procedure
+  .input(
+    z.object({
+      trackId: z.string(),
+    })
+  )
+  .mutation(async ({ input, ctx }) => {
     const [currentTrack] = await ctx.db
       .select()
       .from(ctx.schema.tracks)
@@ -33,5 +28,4 @@ export const toggleTrackExplicit = mutation({
       .returning()
 
     return track || null
-  },
-})
+  })

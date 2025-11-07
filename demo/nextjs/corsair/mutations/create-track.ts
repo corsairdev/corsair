@@ -1,26 +1,27 @@
-import { mutation } from '../instances'
-import { schema } from '../types'
+import { procedure } from '../trpc/procedures'
+import { z } from 'corsair'
 
-export const createTrack = mutation({
-  prompt: 'create track',
-  input_type: schema.tracks._.inferInsert,
-  // response_type: drizzleZod.createSelectSchema(schema.tracks),
-  dependencies: {
-    tables: ['tracks'],
-    columns: [
-      'tracks.id',
-      'tracks.name',
-      'tracks.duration_ms',
-      'tracks.explicit',
-      'tracks.track_number',
-    ],
-  },
-  handler: async (input, ctx) => {
+export const createTrack = procedure
+  .input(
+    z.object({
+      id: z.string(),
+      name: z.string(),
+      disc_number: z.number().optional(),
+      duration_ms: z.number().optional(),
+      explicit: z.boolean().optional(),
+      track_number: z.number().optional(),
+      preview_url: z.string().optional(),
+      is_local: z.boolean().optional(),
+      external_urls: z.any().optional(),
+      uri: z.string().optional(),
+      href: z.string().optional(),
+    })
+  )
+  .mutation(async ({ input, ctx }) => {
     const [track] = await ctx.db
       .insert(ctx.schema.tracks)
       .values({ ...input })
       .returning()
 
     return track
-  },
-})
+  })

@@ -1,38 +1,14 @@
-import { z } from 'corsair/core'
-import { query } from '../instances'
+import { z } from 'corsair'
+import { procedure } from '../trpc/procedures'
 import { drizzle } from 'corsair/db/types'
 
-export const getAlbumByIdWithArtists = query({
-  prompt: 'get album by id with artists',
-  input_type: z.object({
-    id: z.string(),
-  }),
-  // response_type: drizzleZod
-  // .createSelectSchema(schema.albums)
-  // .extend({
-  //   artists: z.array(drizzleZod.createSelectSchema(schema.artists)),
-  // })
-  // .nullable(),
-  dependencies: {
-    tables: ['albums', 'album_artists', 'artists'],
-    columns: [
-      'albums.id',
-      'albums.name',
-      'albums.album_type',
-      'albums.release_date',
-      'albums.total_tracks',
-      'albums.images',
-      'album_artists.artist_id',
-      'album_artists.album_id',
-      'artists.id',
-      'artists.name',
-      'artists.popularity',
-      'artists.followers',
-      'artists.genres',
-      'artists.images',
-    ],
-  },
-  handler: async (input, ctx) => {
+export const getAlbumByIdWithArtists = procedure
+  .input(
+    z.object({
+      id: z.string(),
+    })
+  )
+  .query(async ({ input, ctx }) => {
     const albumWithArtists = await ctx.db
       .select({
         albumId: ctx.schema.albums.id,
@@ -72,7 +48,6 @@ export const getAlbumByIdWithArtists = query({
       return null
     }
 
-    // Group artists for the album
     const firstRow = albumWithArtists[0]
     const album = {
       id: firstRow.albumId,
@@ -89,5 +64,4 @@ export const getAlbumByIdWithArtists = query({
     }
 
     return album
-  },
-})
+  })
