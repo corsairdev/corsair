@@ -20,13 +20,13 @@ const users = useCorsairQuery("all active users");
 
 // Complex relationships
 const trending = useCorsairQuery(
-  "published posts from last week with more than 100 likes, " +
-  "including author and comment count, sorted by likes"
+  "published posts by author from last week with more than 100 likes",
+  { authorId: params.author_id }
 );
 
 // Mutations
 const createPost = useCorsairMutation("create a new post");
-createPost({ title: "Hello World", content: "..." });
+createPost.mutate({ title: "Hello World", content: "..." });
 ```
 
 ## Key Features
