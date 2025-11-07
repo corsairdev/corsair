@@ -2,11 +2,9 @@ import { eventBus } from '../core/event-bus.js'
 import { CorsairEvent } from '../types/events.js'
 import type { UserCommandEvent } from '../types/events.js'
 import {
-  writeOperationToFile,
-  parseInputTypeFromLLM,
-  parseHandlerFromLLM,
+  fileWriteHandler,
   type OperationToWrite,
-} from '../handlers/file-change-handler.js'
+} from './file-write-handler.js'
 import type { LLMResponse, NewOperationContext } from '../types/state.js'
 
 /**
@@ -100,13 +98,15 @@ class UserInputHandler {
 
     try {
       console.log('\n🔄 Parsing input type...')
-      const inputType = parseInputTypeFromLLM(
+      const inputType = fileWriteHandler.parseInputTypeFromLLM(
         llmResponse.rawResponse.input_type
       )
       console.log('✅ Input type:', inputType)
 
       console.log('\n🔄 Parsing handler...')
-      const handler = parseHandlerFromLLM(llmResponse.rawResponse.function)
+      const handler = fileWriteHandler.parseHandlerFromLLM(
+        llmResponse.rawResponse.function
+      )
       console.log('✅ Handler:', handler)
 
       const operationToWrite: OperationToWrite = {
@@ -123,7 +123,7 @@ class UserInputHandler {
       console.log('\n📝 Writing operation to file...')
       console.log('Operation to write:', operationToWrite)
 
-      writeOperationToFile(operationToWrite)
+      fileWriteHandler.writeOperationToFile(operationToWrite)
 
       console.log(
         `\n✅ Successfully added ${operation.operationType} "${
