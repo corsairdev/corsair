@@ -131,6 +131,13 @@ abstract class Operations {
                   dependencies: dependencies,
                   handler: handler,
                 })
+              } else {
+                operations.set(operationName, {
+                  name: operationName,
+                  prompt: operationName,
+                  dependencies: undefined,
+                  handler: '',
+                })
               }
             } catch (err) {
               // Could be a spread operator, skip for now
