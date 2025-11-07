@@ -1,27 +1,28 @@
-import { mutation } from '../instances'
-import { z } from 'corsair/core'
+import { procedure } from '../trpc/procedures'
+import { z } from 'corsair'
 import { drizzle } from 'corsair/db/types'
 
-export const createAlbums = mutation({
-  prompt: 'create albums',
-  input_type: z.object({
-    albums: z.array(
-      z.object({
-        id: z.string(),
-        name: z.string(),
-        album_type: z.string(),
-        release_date: z.string().optional(),
-        release_date_precision: z.string().optional(),
-        total_tracks: z.number().optional(),
-        images: z.any().optional(),
-        external_urls: z.any().optional(),
-        uri: z.string().optional(),
-        href: z.string().optional(),
-        artist_ids: z.array(z.string()),
-      })
-    ),
-  }),
-  handler: async (input, ctx) => {
+export const createAlbums = procedure
+  .input(
+    z.object({
+      albums: z.array(
+        z.object({
+          id: z.string(),
+          name: z.string(),
+          album_type: z.string(),
+          release_date: z.string().optional(),
+          release_date_precision: z.string().optional(),
+          total_tracks: z.number().optional(),
+          images: z.any().optional(),
+          external_urls: z.any().optional(),
+          uri: z.string().optional(),
+          href: z.string().optional(),
+          artist_ids: z.array(z.string()),
+        })
+      ),
+    })
+  )
+  .mutation(async ({ input, ctx }) => {
     const allArtistIds: string[] = [
       ...new Set(input.albums.flatMap(a => a.artist_ids)),
     ]
@@ -39,10 +40,8 @@ export const createAlbums = mutation({
       }
     }
 
-    // Insert albums and create album_artists relationships
     const createdAlbums = []
     for (const album of input.albums) {
-      // Insert album
       const [insertedAlbum] = await ctx.db
         .insert(ctx.schema.albums)
         .values({
@@ -60,11 +59,9 @@ export const createAlbums = mutation({
         .onConflictDoNothing()
         .returning()
       if (!insertedAlbum) {
-        // Album with this id already exists: safe to continue or throw?
         throw new Error(`Album with id '${album.id}' already exists.`)
       }
 
-      // Insert into album_artists
       for (const artist_id of album.artist_ids) {
         await ctx.db
           .insert(ctx.schema.album_artists)
@@ -77,5 +74,4 @@ export const createAlbums = mutation({
       createdAlbums.push(insertedAlbum)
     }
     return createdAlbums
-  },
-})
+  })

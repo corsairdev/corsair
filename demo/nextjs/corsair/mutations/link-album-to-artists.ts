@@ -1,17 +1,17 @@
-import { z } from 'corsair/core'
-import { mutation } from '../instances'
+import { z } from 'corsair'
+import { procedure } from '../trpc/procedures'
 import { drizzle } from 'corsair/db/types'
 
-export const linkAlbumToArtists = mutation({
-  prompt: 'link album to artists',
-  input_type: z.object({
-    albumId: z.string(),
-    artistIds: z.array(z.string()),
-  }),
-  handler: async (input, ctx) => {
+export const linkAlbumToArtists = procedure
+  .input(
+    z.object({
+      albumId: z.string(),
+      artistIds: z.array(z.string()),
+    })
+  )
+  .mutation(async ({ input, ctx }) => {
     const { albumId, artistIds } = input
 
-    // Validate that the album exists
     const [album] = await ctx.db
       .select({ id: ctx.schema.albums.id })
       .from(ctx.schema.albums)
@@ -21,7 +21,6 @@ export const linkAlbumToArtists = mutation({
       throw new Error(`Album with id '${albumId}' does not exist.`)
     }
 
-    // Validate that all artistIds exist and collect the missing ones
     const existingArtistRows = await ctx.db
       .select({ id: ctx.schema.artists.id })
       .from(ctx.schema.artists)
@@ -34,8 +33,6 @@ export const linkAlbumToArtists = mutation({
       )
     }
 
-    // Prepare insert data for new pairs that don't already exist
-    // First, select existing links to avoid duplicates
     const existingLinks = await ctx.db
       .select({ artist_id: ctx.schema.album_artists.artist_id })
       .from(ctx.schema.album_artists)
@@ -49,7 +46,6 @@ export const linkAlbumToArtists = mutation({
 
     const newLinks = artistIds.filter(id => !alreadyLinkedSet.has(id))
     if (newLinks.length === 0) {
-      // All links already exist, return the existing links
       const allLinks = await ctx.db
         .select()
         .from(ctx.schema.album_artists)
@@ -57,7 +53,6 @@ export const linkAlbumToArtists = mutation({
       return allLinks
     }
 
-    // Create new album_artist links
     const insertRows = newLinks.map(artist_id => ({
       album_id: albumId,
       artist_id,
@@ -68,12 +63,10 @@ export const linkAlbumToArtists = mutation({
       .values(insertRows)
       .returning()
 
-    // Return all links for the album (including previous and new)
     const allLinks = await ctx.db
       .select()
       .from(ctx.schema.album_artists)
       .where(drizzle.eq(ctx.schema.album_artists.album_id, albumId))
 
     return allLinks
-  },
-})
+  })
