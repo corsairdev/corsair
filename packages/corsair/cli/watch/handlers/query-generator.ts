@@ -1,19 +1,22 @@
-import { eventBus } from "../core/event-bus.js";
-import { CorsairEvent } from "../types/events.js";
+import { eventBus } from '../core/event-bus.js'
+import { CorsairEvent } from '../types/events.js'
 import type {
   QueryDetectedEvent,
   NewQueryAddedEvent,
   NewMutationAddedEvent,
   LLMAnalysisStartedEvent,
-} from "../types/events.js";
-import { generateStub } from "../generators/stub-generator.js";
-import { generateQueryWithLLM } from "../generators/llm-generator.js";
-import { writeFile, getQueryOutputPath } from "../writers/file-writer.js";
-import type { Query, SchemaDefinition } from "../types/state.js";
-import { stateMachine } from "../core/state-machine.js";
-import { llm } from "../../../llm/index.js";
-import { z } from "zod";
-import { operationGeneratorPrompt } from "../../../llm/prompts/operation-generator.js";
+} from '../types/events.js'
+import { generateStub } from '../generators/stub-generator.js'
+import { generateQueryWithLLM } from '../generators/llm-generator.js'
+import {
+  writeFile,
+  getQueryOutputPath,
+} from '../handlers/file-change-handler.js'
+import type { Query, SchemaDefinition } from '../types/state.js'
+import { stateMachine } from '../core/state-machine.js'
+import { llm } from '../../../llm/index.js'
+import { z } from 'zod'
+import { operationGeneratorPrompt } from '../../../llm/prompts/operation-generator.js'
 
 /**
  * Query Generator Handler
@@ -22,36 +25,46 @@ import { operationGeneratorPrompt } from "../../../llm/prompts/operation-generat
  * Emits: GENERATION_STARTED, GENERATION_PROGRESS, GENERATION_COMPLETE, GENERATION_FAILED
  */
 class QueryGenerator {
-  private schema: SchemaDefinition = { tables: [] };
+  private schema: SchemaDefinition = { tables: [] }
 
   // Define the schema for LLM response
   public llmResponseSchema = z.object({
     input_type: z
       .string()
       .describe(
-        "The input type of the function. This will be added to the input_type of the operation. This input type is what your function will receive as input."
+        'The input type of the function. This will be added to the input_type of the operation. This input type is what your function will receive as input.'
       ),
     function: z
       .string()
       .describe(
-        "The actual logic of the function. This will be added to the handler of the operation. The response type will be inferred from the function."
+        'The actual logic of the function. This will be added to the handler of the operation. The response type will be inferred from the function.'
       ),
     notes: z
       .string()
       .describe(
-        "Any additional notes or instructions for the function that you will receive later as configuration rules."
+        'Any additional notes or instructions for the function that you will receive later as configuration rules.'
       ),
-  });
+    pseudocode: z
+      .string()
+      .describe(
+        'High-level pseudocode describing what the function does, its inputs, outputs, and main steps.'
+      ),
+    function_name: z
+      .string()
+      .describe(
+        'A concise, unique, kebab-case or camelCase function name suggestion suitable for naming a file.'
+      ),
+  })
 
   constructor() {
-    this.setupListeners();
+    this.setupListeners()
   }
 
   private setupListeners() {
     eventBus.on(
       CorsairEvent.QUERY_DETECTED,
       this.handleQueryDetected.bind(this)
-    );
+    )
 
     // eventBus.on(
     //   CorsairEvent.NEW_QUERY_ADDED,
@@ -66,7 +79,7 @@ class QueryGenerator {
     eventBus.on(
       CorsairEvent.LLM_ANALYSIS_STARTED,
       this.handleLLMAnalysisStarted.bind(this)
-    );
+    )
   }
 
   private async handleQueryDetected(data: QueryDetectedEvent) {
@@ -77,49 +90,49 @@ class QueryGenerator {
       params: data.params,
       lineNumber: data.lineNumber,
       timestamp: Date.now(),
-    };
+    }
 
     try {
       // Emit generation started
-      eventBus.emit(CorsairEvent.GENERATION_STARTED, { queryId: query.id });
+      eventBus.emit(CorsairEvent.GENERATION_STARTED, { queryId: query.id })
 
       // Step 1: Generate and write stub immediately
       eventBus.emit(CorsairEvent.GENERATION_PROGRESS, {
         queryId: query.id,
-        stage: "Creating stub",
+        stage: 'Creating stub',
         percentage: 10,
-      });
+      })
 
-      const stubContent = generateStub(query);
-      const outputPath = getQueryOutputPath(query.id);
+      const stubContent = generateStub(query)
+      const outputPath = getQueryOutputPath(query.id)
 
-      writeFile(outputPath, stubContent, { createDirectories: true });
+      writeFile(outputPath, stubContent, { createDirectories: true })
 
       // Step 2: Generate actual query with LLM (stub for now)
       eventBus.emit(CorsairEvent.GENERATION_PROGRESS, {
         queryId: query.id,
-        stage: "Generating query logic",
+        stage: 'Generating query logic',
         percentage: 40,
-        message: "Analyzing schema...",
-      });
+        message: 'Analyzing schema...',
+      })
 
-      await new Promise((resolve) => setTimeout(resolve, 300));
+      await new Promise(resolve => setTimeout(resolve, 300))
 
       eventBus.emit(CorsairEvent.GENERATION_PROGRESS, {
         queryId: query.id,
-        stage: "Generating query logic",
+        stage: 'Generating query logic',
         percentage: 60,
-        message: "Creating Drizzle query...",
-      });
+        message: 'Creating Drizzle query...',
+      })
 
-      const generatedQuery = await generateQueryWithLLM(query, this.schema);
+      const generatedQuery = await generateQueryWithLLM(query, this.schema)
 
       // Step 3: Write final query
       eventBus.emit(CorsairEvent.GENERATION_PROGRESS, {
         queryId: query.id,
-        stage: "Writing files",
+        stage: 'Writing files',
         percentage: 80,
-      });
+      })
 
       const finalContent = `// Auto-generated by Corsair
 // Query: "${query.nlQuery}"
@@ -130,33 +143,33 @@ ${generatedQuery.types}
 ${generatedQuery.queryCode}
 
 export default ${generatedQuery.functionName};
-`;
+`
 
-      writeFile(outputPath, finalContent, { overwrite: true });
+      writeFile(outputPath, finalContent, { overwrite: true })
 
       // Step 4: Complete
       eventBus.emit(CorsairEvent.GENERATION_PROGRESS, {
         queryId: query.id,
-        stage: "Complete",
+        stage: 'Complete',
         percentage: 100,
-      });
+      })
 
       eventBus.emit(CorsairEvent.GENERATION_COMPLETE, {
         queryId: query.id,
         outputPath,
         generatedFiles: [outputPath],
-      });
+      })
     } catch (error) {
       eventBus.emit(CorsairEvent.GENERATION_FAILED, {
         queryId: query.id,
-        error: error instanceof Error ? error.message : "Unknown error",
-        code: "GENERATION_ERROR",
-      });
+        error: error instanceof Error ? error.message : 'Unknown error',
+        code: 'GENERATION_ERROR',
+      })
     }
   }
 
   public updateSchema(schema: SchemaDefinition) {
-    this.schema = schema;
+    this.schema = schema
   }
 
   // private async handleNewQueryAdded(data: NewQueryAddedEvent) {
@@ -192,17 +205,17 @@ export default ${generatedQuery.functionName};
   // }
 
   private async processWithLLM(operation: {
-    operationType: "query" | "mutation";
-    operationName: string;
-    functionName: string;
-    prompt: string;
-    file: string;
-    lineNumber: number;
-    configurationRules?: string;
+    operationType: 'query' | 'mutation'
+    operationName: string
+    functionName: string
+    prompt: string
+    file: string
+    lineNumber: number
+    configurationRules?: string
   }) {
-    const schema = stateMachine.getSchema();
+    const schema = stateMachine.getSchema()
     if (!schema) {
-      throw new Error("Schema not found");
+      throw new Error('Schema not found')
     }
     try {
       // Create a detailed prompt for the LLM
@@ -210,10 +223,10 @@ export default ${generatedQuery.functionName};
         schema,
         type: operation.operationType,
         name: operation.operationName,
-      });
+      })
 
       // Get the provider from environment variable or default to "openai"
-      const provider = "openai";
+      const provider = 'openai'
 
       // Call the LLM
       const response = await llm({
@@ -356,15 +369,19 @@ Return exactly this JSON structure:
 {
   "input_type": "z.object({ id: z.string(), ... })",
   "function": "async (input, ctx) => { /* complete handler code */ }",
-  "notes": "Additional implementation details or considerations"
+  "notes": "Additional implementation details or considerations",
+  "pseudocode": "Step-by-step pseudocode of the handler: inputs, process, outputs",
+  "function_name": "conciseUniqueFunctionName or concise-unique-function-name"
 }
 
 The \`input_type\` should be a valid Zod schema string.
 The \`function\` should be a complete async handler implementation.
-The \`notes\` should explain any complex logic or important considerations.`,
+The \`notes\` should explain any complex logic or important considerations.
+Provide clear \`pseudocode\` covering parameters, validation, database interactions, and the returned shape.
+Ensure \`function_name\` is unique, descriptive, and suitable for a filename.`,
         schema: this.llmResponseSchema,
         message,
-      });
+      })
 
       if (response) {
         // Process successful LLM response
@@ -373,23 +390,23 @@ The \`notes\` should explain any complex logic or important considerations.`,
           operationType: operation.operationType,
           response,
           operation,
-        });
+        })
       } else {
         // Handle LLM failure
         eventBus.emit(CorsairEvent.LLM_ANALYSIS_FAILED, {
           operationName: operation.operationName,
           operationType: operation.operationType,
-          error: "LLM analysis failed - no response received",
-        });
+          error: 'LLM analysis failed - no response received',
+        })
       }
     } catch (error) {
-      console.error("LLM processing error:", error);
+      console.error('LLM processing error:', error)
 
       eventBus.emit(CorsairEvent.LLM_ANALYSIS_FAILED, {
         operationName: operation.operationName,
         operationType: operation.operationType,
-        error: error instanceof Error ? error.message : "Unknown error",
-      });
+        error: error instanceof Error ? error.message : 'Unknown error',
+      })
     }
   }
 
@@ -398,18 +415,18 @@ The \`notes\` should explain any complex logic or important considerations.`,
     // Auto-detected operations are handled directly by handleNewQueryAdded/handleNewMutationAdded
 
     // Get the current operation from state machine when LLM analysis is requested
-    const currentState = stateMachine.getCurrentState();
-    const newOperation = currentState.context.newOperation;
+    const currentState = stateMachine.getCurrentState()
+    const newOperation = currentState.context.newOperation
 
     if (!newOperation) {
-      console.warn("LLM analysis started but no operation found in state");
-      return;
+      console.warn('LLM analysis started but no operation found in state')
+      return
     }
 
     // Only process if this is a user-submitted operation (has configurationRules or from state machine)
     if (
       newOperation.configurationRules !== undefined ||
-      currentState.state === "LLM_PROCESSING"
+      currentState.state === 'LLM_PROCESSING'
     ) {
       await this.processWithLLM({
         operationType: newOperation.operationType,
@@ -419,10 +436,10 @@ The \`notes\` should explain any complex logic or important considerations.`,
         file: newOperation.file,
         lineNumber: newOperation.lineNumber,
         configurationRules: newOperation.configurationRules,
-      });
+      })
     }
   }
 }
 
 // Initialize handler
-export const queryGenerator = new QueryGenerator();
+export const queryGenerator = new QueryGenerator()

@@ -8,7 +8,7 @@ import {
   loadConfig,
   loadEnv,
   checkDatabaseUrl,
-  getSchemaPath,
+  getResolvedPaths,
 } from './config.js'
 
 // Get the path to corsair's drizzle-kit
@@ -56,11 +56,11 @@ export async function generate() {
   console.log('🔧 Generating migrations...\n')
 
   const cfg = loadConfig()
-  loadEnv(cfg.envFile)
+  loadEnv(cfg.envFile ?? '.env.local')
   checkDatabaseUrl()
 
-  const schemaPath = getSchemaPath(cfg)
-  const outPath = resolve(process.cwd(), cfg.out)
+  const { schemaFile } = getResolvedPaths(cfg)
+  const outPath = resolve(process.cwd(), cfg.out!)
 
   // Create drizzle output directory for snapshot.json
   if (!existsSync(outPath)) {
@@ -68,8 +68,8 @@ export async function generate() {
   }
 
   const drizzleConfig = {
-    schema: cfg.schema,
-    out: cfg.out,
+    schema: cfg.paths.schema,
+    out: cfg.out!,
     dialect: 'postgresql' as const,
     url: process.env.DATABASE_URL!,
   }

@@ -1,27 +1,22 @@
-import {
-  createCorsairQueryClient,
-  createCorsairMutationClient,
-  InferQueriesOutputs,
-  InferQueriesInputs,
-  InferMutationsOutputs,
-  InferMutationsInputs,
-} from 'corsair/dist/legacy-core'
-import { mutations } from './mutations'
-import { queries } from './queries'
+import { createCorsairClient, createCorsairHooks } from 'corsair'
+import type { CorsairRouter } from './trpc'
+import config from '../corsair.config'
 
-// Client-side hooks (for use in client components)
-const queryClient = createCorsairQueryClient(queries)
-const mutationClient = createCorsairMutationClient(mutations)
+const { typedClient } = createCorsairClient<CorsairRouter>({
+  url: `/${(config.apiEndpoint ?? 'api/corsair').replace(/^\//, '')}`,
+})
 
-export const useCorsairQuery = queryClient.useQuery
-export const useCorsairMutation = mutationClient.useMutation
+const {
+  useCorsairQuery,
+  useCorsairMutation,
+  corsairQuery,
+  corsairMutation,
+  types,
+} = createCorsairHooks<CorsairRouter>(typedClient)
 
-// Type exports for inferred outputs and inputs
-export type QueryOutputs = InferQueriesOutputs<typeof queries>
-export type QueryInputs = InferQueriesInputs<typeof queries>
-export type MutationOutputs = InferMutationsOutputs<typeof mutations>
-export type MutationInputs = InferMutationsInputs<typeof mutations>
+export { useCorsairQuery, useCorsairMutation, corsairQuery, corsairMutation }
 
-// Keep original types for backward compatibility
-export type Mutations = typeof mutations
-export type Queries = typeof queries
+export type QueryInputs = typeof types.QueryInputs
+export type QueryOutputs = typeof types.QueryOutputs
+export type MutationInputs = typeof types.MutationInputs
+export type MutationOutputs = typeof types.MutationOutputs

@@ -1,8 +1,9 @@
 import { createCorsairClient, createCorsairHooks } from 'corsair'
 import type { CorsairRouter } from './index'
+import config from '../../corsair.config'
 
 const { typedClient } = createCorsairClient<CorsairRouter>({
-  url: '/api/corsair',
+  url: `/${(config.apiEndpoint ?? 'api/corsair').replace(/^\//, '')}`,
 })
 
 const {

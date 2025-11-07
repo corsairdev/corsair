@@ -1,7 +1,7 @@
-import { eventBus } from "../core/event-bus.js";
-import { CorsairEvent } from "../types/events.js";
-import type { OperationsLoadedEvent } from "../types/events.js";
-import { Project, SyntaxKind } from "ts-morph";
+import { eventBus } from '../core/event-bus.js'
+import { CorsairEvent } from '../types/events.js'
+import type { OperationsLoadedEvent } from '../types/events.js'
+import { Project, SyntaxKind } from 'ts-morph'
 
 /**
  * Operations Handler
@@ -10,21 +10,28 @@ import { Project, SyntaxKind } from "ts-morph";
  * Parses operation files, extracts definitions, and emits events to update state machine.
  */
 abstract class Operations {
-  protected operations: Map<string, {
-    name: string;
-    prompt: string;
-    dependencies?: string;
-    handler: string;
-  }> = new Map();
+  protected operations: Map<
+    string,
+    {
+      name: string
+      prompt: string
+      dependencies?: string
+      handler: string
+    }
+  > = new Map()
 
-  protected filePath: string;
-  protected variableName: string;
-  protected operationType: "queries" | "mutations";
+  protected filePath: string
+  protected variableName: string
+  protected operationType: 'queries' | 'mutations'
 
-  constructor(filePath: string, variableName: string, operationType: "queries" | "mutations") {
-    this.filePath = filePath;
-    this.variableName = variableName;
-    this.operationType = operationType;
+  constructor(
+    filePath: string,
+    variableName: string,
+    operationType: 'queries' | 'mutations'
+  ) {
+    this.filePath = filePath
+    this.variableName = variableName
+    this.operationType = operationType
   }
 
   /**
@@ -32,72 +39,125 @@ abstract class Operations {
    */
   public async parse(): Promise<void> {
     try {
-      const project = new Project();
-      const operations = new Map<string, {
-        name: string;
-        prompt: string;
-        dependencies?: string;
-        handler: string;
-      }>();
+      const project = new Project()
+      const operations = new Map<
+        string,
+        {
+          name: string
+          prompt: string
+          dependencies?: string
+          handler: string
+        }
+      >()
 
-      const operationsFile = project.addSourceFileAtPath(this.filePath);
-      const operationsVar = operationsFile.getVariableDeclaration(this.variableName);
+      const operationsFile = project.addSourceFileAtPath(this.filePath)
+      const operationsVar = operationsFile.getVariableDeclaration(
+        this.variableName
+      )
 
       if (!operationsVar) {
-        console.error(`Can't find the ${this.variableName} variable in ${this.filePath}`);
-        return;
+        console.error(
+          `Can't find the ${this.variableName} variable in ${this.filePath}`
+        )
+        return
       }
 
-      const initializer = operationsVar.getInitializer();
+      const initializer = operationsVar.getInitializer()
 
       if (initializer?.isKind(SyntaxKind.ObjectLiteralExpression)) {
-        initializer.getProperties().forEach((prop) => {
+        initializer.getProperties().forEach(prop => {
           if (prop.isKind(SyntaxKind.PropertyAssignment)) {
-            const operationName = prop.getName();
+            try {
+              const operationName = prop.getName()
+              const initializer = prop.getInitializer()
+              let callExpr: import('ts-morph').CallExpression | undefined
 
-            const callExpr = prop.getFirstDescendantByKind(
-              SyntaxKind.CallExpression
-            );
-            const configObj = callExpr?.getArguments()[0];
+              if (initializer?.isKind(SyntaxKind.Identifier)) {
+                const symbol = initializer.getSymbol()
+                const declaration = symbol?.getDeclarations()[0]
 
-            if (configObj?.isKind(SyntaxKind.ObjectLiteralExpression)) {
-              const prompt = configObj
-                .getProperty("prompt")
-                ?.getChildAtIndex(2)
-                .getText();
-              const dependencies = configObj
-                .getProperty("dependencies")
-                ?.getChildAtIndex(2)
-                .getText();
+                if (declaration?.isKind(SyntaxKind.ImportSpecifier)) {
+                  const importedSymbol =
+                    declaration.getSymbol()?.getAliasedSymbol() ??
+                    declaration.getSymbol()
+                  const sourceDeclaration = importedSymbol?.getDeclarations()[0]
 
-              // Get the handler function code as a string
-              const handlerProp = configObj.getProperty("handler");
-              const handler = handlerProp?.getChildAtIndex(2).getText() || "";
+                  if (sourceDeclaration) {
+                    callExpr = sourceDeclaration.getFirstDescendantByKind(
+                      SyntaxKind.CallExpression
+                    )
+                  }
+                } else if (declaration) {
+                  callExpr = declaration.getFirstDescendantByKind(
+                    SyntaxKind.CallExpression
+                  )
+                }
+              } else if (
+                initializer?.isKind(SyntaxKind.PropertyAccessExpression)
+              ) {
+                const symbol = initializer.getSymbol()
+                const decl =
+                  symbol?.getAliasedSymbol()?.getDeclarations()?.[0] ||
+                  symbol?.getDeclarations()?.[0]
+                if (decl) {
+                  callExpr = decl.getFirstDescendantByKind(
+                    SyntaxKind.CallExpression
+                  )
+                }
+              } else {
+                callExpr = prop.getFirstDescendantByKind(
+                  SyntaxKind.CallExpression
+                )
+              }
 
-              operations.set(operationName, {
-                name: operationName,
-                prompt: prompt?.replace(/['"`]/g, "") || "",
-                dependencies: dependencies,
-                handler: handler,
-              });
+              const configObj = callExpr?.getArguments()[0]
+
+              if (configObj?.isKind(SyntaxKind.ObjectLiteralExpression)) {
+                const prompt = configObj
+                  .getProperty('prompt')
+                  ?.getChildAtIndex(2)
+                  .getText()
+                const dependencies = configObj
+                  .getProperty('dependencies')
+                  ?.getChildAtIndex(2)
+                  .getText()
+
+                const handlerProp = configObj.getProperty('handler')
+                const handler = handlerProp?.getChildAtIndex(2).getText() || ''
+
+                operations.set(operationName, {
+                  name: operationName,
+                  prompt: prompt?.replace(/['"`]/g, '') || '',
+                  dependencies: dependencies,
+                  handler: handler,
+                })
+              } else {
+                operations.set(operationName, {
+                  name: operationName,
+                  prompt: operationName,
+                  dependencies: undefined,
+                  handler: '',
+                })
+              }
+            } catch (err) {
+              // Could be a spread operator, skip for now
             }
           }
-        });
+        })
       }
 
-      this.operations = operations;
+      this.operations = operations
 
       // Emit event to notify state machine
       eventBus.emit(CorsairEvent.OPERATIONS_LOADED, {
         type: this.operationType,
         operations: this.operations,
-      } as OperationsLoadedEvent);
-
+      } as OperationsLoadedEvent)
     } catch (error) {
       console.error(
         `Can't find the ${this.variableName} file. Does it exist at ${this.filePath}?`
-      );
-      console.error(error);
+      )
+      console.error(error)
     }
   }
 
@@ -105,13 +165,13 @@ abstract class Operations {
    * Re-parse the operations file (called on file change)
    */
   public async update(): Promise<void> {
-    await this.parse();
+    await this.parse()
 
     // Emit update event - reuse the operations loaded event
     eventBus.emit(CorsairEvent.OPERATIONS_LOADED, {
       type: this.operationType,
       operations: this.operations,
-    } as OperationsLoadedEvent);
+    } as OperationsLoadedEvent)
   }
 }
 
@@ -120,12 +180,12 @@ abstract class Operations {
  * Manages query operations from corsair/queries.ts
  */
 export class Queries extends Operations {
-  constructor() {
+  constructor(operationsFilePath?: string) {
     super(
-      process.cwd() + "/corsair/queries.ts",
-      "queries",
-      "queries"
-    );
+      operationsFilePath ?? process.cwd() + '/corsair/operations.ts',
+      'queries',
+      'queries'
+    )
   }
 }
 
@@ -134,11 +194,11 @@ export class Queries extends Operations {
  * Manages mutation operations from corsair/mutations.ts
  */
 export class Mutations extends Operations {
-  constructor() {
+  constructor(operationsFilePath?: string) {
     super(
-      process.cwd() + "/corsair/mutations.ts",
-      "mutations",
-      "mutations"
-    );
+      operationsFilePath ?? process.cwd() + '/corsair/operations.ts',
+      'mutations',
+      'mutations'
+    )
   }
 }
