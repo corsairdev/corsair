@@ -8,10 +8,7 @@ import type {
 } from '../types/events.js'
 import { generateStub } from '../generators/stub-generator.js'
 import { generateQueryWithLLM } from '../generators/llm-generator.js'
-import {
-  writeFile,
-  getQueryOutputPath,
-} from '../handlers/file-change-handler.js'
+import { fileWriteHandler } from './file-write-handler.js'
 import type { Query, SchemaDefinition } from '../types/state.js'
 import { stateMachine } from '../core/state-machine.js'
 import { llm } from '../../../llm/index.js'
@@ -83,6 +80,7 @@ class QueryGenerator {
   }
 
   private async handleQueryDetected(data: QueryDetectedEvent) {
+    const writer = fileWriteHandler
     const query: Query = {
       id: data.id,
       nlQuery: data.nlQuery,
@@ -104,9 +102,9 @@ class QueryGenerator {
       })
 
       const stubContent = generateStub(query)
-      const outputPath = getQueryOutputPath(query.id)
+      const outputPath = writer.getQueryOutputPath(query.id)
 
-      writeFile(outputPath, stubContent, { createDirectories: true })
+      writer.writeFile(outputPath, stubContent, { createDirectories: true })
 
       // Step 2: Generate actual query with LLM (stub for now)
       eventBus.emit(CorsairEvent.GENERATION_PROGRESS, {
@@ -145,7 +143,7 @@ ${generatedQuery.queryCode}
 export default ${generatedQuery.functionName};
 `
 
-      writeFile(outputPath, finalContent, { overwrite: true })
+      writer.writeFile(outputPath, finalContent, { overwrite: true })
 
       // Step 4: Complete
       eventBus.emit(CorsairEvent.GENERATION_PROGRESS, {
