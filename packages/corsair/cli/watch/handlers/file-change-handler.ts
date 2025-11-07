@@ -116,19 +116,3 @@ class FileChangeHandler {
 
 // Initialize handler
 export const fileChangeHandler = new FileChangeHandler()
-
-export {
-  writeOperationToFile,
-  parseInputTypeFromLLM,
-  parseHandlerFromLLM,
-} from '../writers/file-write-handler.js'
-
-export type { OperationToWrite } from '../writers/file-write-handler.js'
-
-export {
-  writeFile,
-  getQueryOutputPath,
-  ensureDirectoryExists,
-} from '../writers/file-write-handler.js'
-
-export type { WriteFileOptions } from '../writers/file-write-handler.js'
