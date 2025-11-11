@@ -1,5 +1,5 @@
 import { z } from 'corsair'
-import { procedure } from '../trpc'
+import { procedure } from '../'
 import { eq } from 'drizzle-orm'
 
 export const getTracksByArtistId = procedure

@@ -1,5 +1,5 @@
 import { z } from 'corsair'
-import { procedure } from '../trpc'
+import { procedure } from '../'
 
 export const createArtist = procedure
   .input(

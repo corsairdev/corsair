@@ -1,4 +1,4 @@
-import { procedure } from '../trpc'
+import { procedure } from '../'
 import { z } from 'corsair'
 import { inArray } from 'drizzle-orm'
 
