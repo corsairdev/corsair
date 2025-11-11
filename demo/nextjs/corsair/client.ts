@@ -3,7 +3,7 @@ import type { CorsairRouter } from '.'
 import config from '../corsair.config'
 
 const { typedClient } = createCorsairClient<CorsairRouter>({
-  url: `/${(config.apiEndpoint ?? 'api/corsair').replace(/^\//, '')}`,
+  url: `http://localhost:3000/${(config.apiEndpoint ?? 'api/corsair').replace(/^\//, '')}`,
 })
 
 const {

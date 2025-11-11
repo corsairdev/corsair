@@ -27,6 +27,8 @@ export function AlbumDetailsSheet({
   // Client-side query hook to fetch tracks when album is selected
   const { data: tracks, isLoading } = useTracksByAlbumId(album?.id || null)
 
+  const res = useCorsairMutation('create albums', {})
+
   if (!album) return null
 
   const formatDate = (dateString: string) => {
@@ -39,8 +41,6 @@ export function AlbumDetailsSheet({
   }
 
   const albumTracks = tracks || []
-
-  const res = useCorsairMutation('create albums', {})
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>

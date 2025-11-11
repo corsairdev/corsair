@@ -1,5 +1,5 @@
 import { z } from 'corsair'
-import { procedure } from '../'
+import { procedure } from '../procedure'
 
 export const getTracksByAlbumId = procedure
   .input(
