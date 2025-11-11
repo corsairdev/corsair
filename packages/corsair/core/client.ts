@@ -8,7 +8,7 @@ import type {
   inferRouterOutputs,
   AnyTRPCRouter,
 } from '@trpc/server'
-import { routeKeyMapping } from './utils'
+import { toCamelCase } from './utils'
 
 // Generic client factory function
 export function createCorsairClient<TRouter extends AnyTRPCRouter>(options: {
@@ -102,12 +102,7 @@ export function createCorsairHooks<TRouter extends AnyTRPCRouter>(
     return useQuery<RouterOutputs[TRoute], TRPCClientError<TRouter>>({
       queryKey: [route, input],
       queryFn: async () => {
-        // Convert natural language route to camelCase for HTTP request
-        const camelCaseRoute = (route as string)
-          .replace(/\s+(.)/g, (_, char) => char.toUpperCase())
-          .replace(/^\w/, c => c.toLowerCase())
-
-        return typedClient[camelCaseRoute as TRoute].query(input)
+        return typedClient[toCamelCase(route as string) as TRoute].query(input)
       },
       ...options,
     })
@@ -130,12 +125,7 @@ export function createCorsairHooks<TRouter extends AnyTRPCRouter>(
       RouterInputs[TRoute]
     >({
       mutationFn: async (input: RouterInputs[TRoute]) => {
-        // Convert natural language route to camelCase for HTTP request
-        const camelCaseRoute = (route as string)
-          .replace(/\s+(.)/g, (_, char) => char.toUpperCase())
-          .replace(/^\w/, c => c.toLowerCase())
-
-        return typedClient[camelCaseRoute as TRoute].mutate(input)
+        return typedClient[toCamelCase(route as string) as TRoute].mutate(input)
       },
       ...options,
     })
@@ -145,24 +135,14 @@ export function createCorsairHooks<TRouter extends AnyTRPCRouter>(
     route: TRoute,
     input: RouterInputs[TRoute]
   ): Promise<RouterOutputs[TRoute]> {
-    // Convert natural language route to camelCase for HTTP request
-    const camelCaseRoute = (route as string)
-      .replace(/\s+(.)/g, (_, char) => char.toUpperCase())
-      .replace(/^\w/, c => c.toLowerCase())
-
-    return typedClient[camelCaseRoute as TRoute].query(input)
+    return typedClient[toCamelCase(route as string) as TRoute].query(input)
   }
 
   async function corsairMutation<TRoute extends MutationRoutes>(
     route: TRoute,
     input: RouterInputs[TRoute]
   ): Promise<RouterOutputs[TRoute]> {
-    // Convert natural language route to camelCase for HTTP request
-    const camelCaseRoute = (route as string)
-      .replace(/\s+(.)/g, (_, char) => char.toUpperCase())
-      .replace(/^\w/, c => c.toLowerCase())
-
-    return typedClient[camelCaseRoute as TRoute].mutate(input)
+    return typedClient[toCamelCase(route as string) as TRoute].mutate(input)
   }
 
   return {

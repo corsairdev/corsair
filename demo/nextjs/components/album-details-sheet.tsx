@@ -11,7 +11,11 @@ import { Badge } from '@/components/ui/badge'
 import { TracksTable } from '@/components/tracks-table'
 import Image from 'next/image'
 import { useTracksByAlbumId } from '@/lib/api/queries.client'
-import { QueryOutputs, useCorsairMutation } from '@/corsair/client'
+import {
+  QueryOutputs,
+  useCorsairMutation,
+  useCorsairQuery,
+} from '@/corsair/client'
 
 interface AlbumDetailsSheetProps {
   album: QueryOutputs['get album by id with artists'] | null
@@ -26,8 +30,6 @@ export function AlbumDetailsSheet({
 }: AlbumDetailsSheetProps) {
   // Client-side query hook to fetch tracks when album is selected
   const { data: tracks, isLoading } = useTracksByAlbumId(album?.id || null)
-
-  const res = useCorsairMutation('create albums', {})
 
   if (!album) return null
 
