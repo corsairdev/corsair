@@ -1,5 +1,5 @@
 import { z } from 'corsair'
-import { procedure } from '../'
+import { procedure } from '../procedure'
 import { eq } from 'drizzle-orm'
 
 export const toggleTrackExplicit = procedure

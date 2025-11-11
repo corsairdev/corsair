@@ -1,4 +1,4 @@
-import { procedure } from '../'
+import { procedure } from '../procedure'
 import { z } from 'corsair'
 
 export const createTrack = procedure
