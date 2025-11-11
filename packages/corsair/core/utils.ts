@@ -16,85 +16,17 @@ type FunctionMap<T> = {
 }
 
 // Global mapping between natural language and camelCase keys
-export const routeKeyMapping = new Map<string, string>()
+const routeKeyMapping = new Map<string, string>()
 
-export function operationsMap<T extends Record<string, any>>(
-  module: T
-): FunctionMap<T> {
-  const result = {} as any
-
-  for (const key in module) {
-    if (typeof module[key] === 'function') {
-      // camelCase to spaced lowercase
-      const spacedKey = key
-        .replace(/([A-Z])/g, ' $1')
-        .trim()
-        .toLowerCase()
-
-      // Store the mapping for natural language -> camelCase lookup
-      routeKeyMapping.set(spacedKey, key)
-
-      result[spacedKey] = module[key]
-    }
-  }
-
-  return result as FunctionMap<T>
-}
-
-// Create the router with camelCase keys but populate mapping
-export function createRouterWithMapping<T extends Record<string, any>>(
-  module: T
-): T {
-  const result = {} as any
-
-  for (const key in module) {
-    if (typeof module[key] === 'function') {
-      // camelCase to spaced lowercase for mapping
-      const spacedKey = key
-        .replace(/([A-Z])/g, ' $1')
-        .trim()
-        .toLowerCase()
-
-      // Store the mapping for natural language -> camelCase lookup
-      routeKeyMapping.set(spacedKey, key)
-
-      // Keep the original camelCase key for the router
-      result[key] = module[key]
-    }
-  }
-
-  return result as T
-}
-
-// Create a camelCase operations map for URL-safe tRPC routes
-export function camelCaseOperationsMap<T extends Record<string, any>>(
-  module: T
-): T {
-  const result = {} as any
-
-  for (const key in module) {
-    if (typeof module[key] === 'function') {
-      // camelCase to spaced lowercase for mapping
-      const spacedKey = key
-        .replace(/([A-Z])/g, ' $1')
-        .trim()
-        .toLowerCase()
-
-      // Store the mapping for natural language -> camelCase lookup
-      routeKeyMapping.set(spacedKey, key)
-
-      // Keep the original camelCase key for the router
-      result[key] = module[key]
-    }
-  }
-
-  return result as T
-}
+export const toCamelCase = (str: string) =>
+  str
+    .replace(/\s+(.)/g, (_, char) => char.toUpperCase())
+    .replace(/^\w/, c => c.toLowerCase())
 
 // Create operations map with BOTH natural language AND camelCase keys
 export function dualKeyOperationsMap<T extends Record<string, any>>(
   module: T
-): FunctionMap<T> & T {
+): FunctionMap<T> {
   const result = {} as any
 
   for (const key in module) {
@@ -115,5 +47,5 @@ export function dualKeyOperationsMap<T extends Record<string, any>>(
     }
   }
 
-  return result as FunctionMap<T> & T
+  return result as FunctionMap<T>
 }

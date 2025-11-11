@@ -31,9 +31,4 @@ export { fetchRequestHandler } from '@trpc/server/adapters/fetch'
 export { z } from 'zod'
 export { default as superjson } from 'superjson'
 
-export {
-  operationsMap,
-  dualKeyOperationsMap,
-  createRouterWithMapping,
-  routeKeyMapping,
-} from './utils'
+export { dualKeyOperationsMap } from './utils'
