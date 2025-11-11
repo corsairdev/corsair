@@ -25,7 +25,7 @@
     "db/**/*",
     "api/**/*",
     "scripts/**/*",
-    "client/**/*",
+    // "client/**/*",
     "cli/**/*",
     "schema/**/*",
     "trpc/**/*",

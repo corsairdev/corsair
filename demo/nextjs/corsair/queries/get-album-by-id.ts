@@ -1,6 +1,6 @@
 import { z } from 'corsair'
-import { procedure } from '../trpc/procedures'
-import { drizzle } from 'corsair/db/types'
+import { procedure } from '../trpc'
+import { eq } from 'drizzle-orm'
 
 export const getAlbumById = procedure
   .input(
@@ -11,8 +11,8 @@ export const getAlbumById = procedure
   .query(async ({ input, ctx }) => {
     const [album] = await ctx.db
       .select()
-      .from(ctx.schema.albums)
-      .where(drizzle.eq(ctx.schema.albums.id, input.id))
+      .from(ctx.db._.fullSchema.albums)
+      .where(eq(ctx.schema.albums.columns.id, input.id))
       .limit(1)
 
     return album || null

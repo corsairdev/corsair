@@ -1,6 +1,6 @@
 import { z } from 'corsair'
-import { procedure } from '../trpc/procedures'
-import { drizzle } from 'corsair/db/types'
+import { procedure } from '../trpc'
+import { eq } from 'drizzle-orm'
 
 export const toggleTrackExplicit = procedure
   .input(
@@ -11,8 +11,8 @@ export const toggleTrackExplicit = procedure
   .mutation(async ({ input, ctx }) => {
     const [currentTrack] = await ctx.db
       .select()
-      .from(ctx.schema.tracks)
-      .where(drizzle.eq(ctx.schema.tracks.id, input.trackId))
+      .from(ctx.db._.fullSchema.tracks)
+      .where(eq(ctx.schema.tracks.columns.id, input.trackId))
       .limit(1)
 
     if (!currentTrack) {
@@ -20,11 +20,11 @@ export const toggleTrackExplicit = procedure
     }
 
     const [track] = await ctx.db
-      .update(ctx.schema.tracks)
+      .update(ctx.db._.fullSchema.tracks)
       .set({
         explicit: !currentTrack.explicit,
       })
-      .where(drizzle.eq(ctx.schema.tracks.id, input.trackId))
+      .where(eq(ctx.schema.tracks.columns.id, input.trackId))
       .returning()
 
     return track || null

@@ -1,6 +1,6 @@
 import { z } from 'corsair'
-import { procedure } from '../trpc/procedures'
-import { drizzle } from 'corsair/db/types'
+import { procedure } from '../trpc'
+import { eq } from 'drizzle-orm'
 
 export const getAlbumByIdWithArtists = procedure
   .input(
@@ -11,38 +11,45 @@ export const getAlbumByIdWithArtists = procedure
   .query(async ({ input, ctx }) => {
     const albumWithArtists = await ctx.db
       .select({
-        albumId: ctx.schema.albums.id,
-        albumName: ctx.schema.albums.name,
-        album_type: ctx.schema.albums.album_type,
-        release_date: ctx.schema.albums.release_date,
-        release_date_precision: ctx.schema.albums.release_date_precision,
-        total_tracks: ctx.schema.albums.total_tracks,
-        albumImages: ctx.schema.albums.images,
-        external_urls: ctx.schema.albums.external_urls,
-        uri: ctx.schema.albums.uri,
-        href: ctx.schema.albums.href,
+        albumId: ctx.schema.albums.columns.id,
+        albumName: ctx.schema.albums.columns.name,
+        album_type: ctx.schema.albums.columns.album_type,
+        release_date: ctx.schema.albums.columns.release_date,
+        release_date_precision:
+          ctx.schema.albums.columns.release_date_precision,
+        total_tracks: ctx.schema.albums.columns.total_tracks,
+        albumImages: ctx.schema.albums.columns.images,
+        external_urls: ctx.schema.albums.columns.external_urls,
+        uri: ctx.schema.albums.columns.uri,
+        href: ctx.schema.albums.columns.href,
         artist: {
-          id: ctx.schema.artists.id,
-          name: ctx.schema.artists.name,
-          popularity: ctx.schema.artists.popularity,
-          followers: ctx.schema.artists.followers,
-          genres: ctx.schema.artists.genres,
-          images: ctx.schema.artists.images,
-          external_urls: ctx.schema.artists.external_urls,
-          uri: ctx.schema.artists.uri,
-          href: ctx.schema.artists.href,
+          id: ctx.schema.artists.columns.id,
+          name: ctx.schema.artists.columns.name,
+          popularity: ctx.schema.artists.columns.popularity,
+          followers: ctx.schema.artists.columns.followers,
+          genres: ctx.schema.artists.columns.genres,
+          images: ctx.schema.artists.columns.images,
+          external_urls: ctx.schema.artists.columns.external_urls,
+          uri: ctx.schema.artists.columns.uri,
+          href: ctx.schema.artists.columns.href,
         },
       })
-      .from(ctx.schema.albums)
+      .from(ctx.db._.fullSchema.albums)
       .innerJoin(
-        ctx.schema.album_artists,
-        drizzle.eq(ctx.schema.albums.id, ctx.schema.album_artists.album_id)
+        ctx.db._.fullSchema.album_artists,
+        eq(
+          ctx.schema.albums.columns.id,
+          ctx.schema.album_artists.columns.album_id
+        )
       )
       .innerJoin(
-        ctx.schema.artists,
-        drizzle.eq(ctx.schema.album_artists.artist_id, ctx.schema.artists.id)
+        ctx.db._.fullSchema.artists,
+        eq(
+          ctx.db._.fullSchema.album_artists.artist_id,
+          ctx.schema.artists.columns.id
+        )
       )
-      .where(drizzle.eq(ctx.schema.albums.id, input.id))
+      .where(eq(ctx.db._.fullSchema.albums.id, input.id))
 
     if (albumWithArtists.length === 0) {
       return null

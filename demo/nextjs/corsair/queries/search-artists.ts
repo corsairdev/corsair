@@ -1,6 +1,6 @@
 import { z } from 'corsair'
-import { procedure } from '../trpc/procedures'
-import { drizzle } from 'corsair/db/types'
+import { procedure } from '../trpc'
+import { ilike } from 'drizzle-orm'
 
 export const searchArtists = procedure
   .input(
@@ -11,8 +11,8 @@ export const searchArtists = procedure
   .query(async ({ input, ctx }) => {
     const artists = await ctx.db
       .select()
-      .from(ctx.schema.artists)
-      .where(drizzle.ilike(ctx.schema.artists.name, `%${input.query}%`))
+      .from(ctx.db._.fullSchema.artists)
+      .where(ilike(ctx.schema.artists.columns.name, `%${input.query}%`))
 
     return artists
   })

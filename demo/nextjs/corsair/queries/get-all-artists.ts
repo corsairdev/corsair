@@ -1,9 +1,9 @@
 import { z } from 'corsair'
-import { procedure } from '../trpc/procedures'
+import { procedure } from '../trpc'
 
 export const getAllArtists = procedure
   .input(z.object({}))
   .query(async ({ input, ctx }) => {
-    const artists = await ctx.db.select().from(ctx.schema.artists)
+    const artists = await ctx.db.select().from(ctx.db._.fullSchema.artists)
     return artists
   })

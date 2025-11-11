@@ -1,6 +1,6 @@
 import { z } from 'corsair'
-import { procedure } from '../trpc/procedures'
-import { drizzle } from 'corsair/db/types'
+import { procedure } from '../trpc'
+import { and, eq, inArray } from 'drizzle-orm'
 
 export const linkAlbumToArtists = procedure
   .input(
@@ -13,18 +13,18 @@ export const linkAlbumToArtists = procedure
     const { albumId, artistIds } = input
 
     const [album] = await ctx.db
-      .select({ id: ctx.schema.albums.id })
-      .from(ctx.schema.albums)
-      .where(drizzle.eq(ctx.schema.albums.id, albumId))
+      .select({ id: ctx.schema.albums.columns.id })
+      .from(ctx.db._.fullSchema.albums)
+      .where(eq(ctx.schema.albums.columns.id, albumId))
       .limit(1)
     if (!album) {
       throw new Error(`Album with id '${albumId}' does not exist.`)
     }
 
     const existingArtistRows = await ctx.db
-      .select({ id: ctx.schema.artists.id })
-      .from(ctx.schema.artists)
-      .where(drizzle.inArray(ctx.schema.artists.id, artistIds))
+      .select({ id: ctx.schema.artists.columns.id })
+      .from(ctx.db._.fullSchema.artists)
+      .where(inArray(ctx.db._.fullSchema.artists.id, artistIds))
     const foundArtistIds = new Set(existingArtistRows.map(a => a.id))
     const missingArtistIds = artistIds.filter(id => !foundArtistIds.has(id))
     if (missingArtistIds.length > 0) {
@@ -34,12 +34,12 @@ export const linkAlbumToArtists = procedure
     }
 
     const existingLinks = await ctx.db
-      .select({ artist_id: ctx.schema.album_artists.artist_id })
-      .from(ctx.schema.album_artists)
+      .select({ artist_id: ctx.schema.album_artists.columns.artist_id })
+      .from(ctx.db._.fullSchema.album_artists)
       .where(
-        drizzle.and(
-          drizzle.eq(ctx.schema.album_artists.album_id, albumId),
-          drizzle.inArray(ctx.schema.album_artists.artist_id, artistIds)
+        and(
+          eq(ctx.db._.fullSchema.album_artists.album_id, albumId),
+          inArray(ctx.db._.fullSchema.album_artists.artist_id, artistIds)
         )
       )
     const alreadyLinkedSet = new Set(existingLinks.map(l => l.artist_id))
@@ -48,8 +48,8 @@ export const linkAlbumToArtists = procedure
     if (newLinks.length === 0) {
       const allLinks = await ctx.db
         .select()
-        .from(ctx.schema.album_artists)
-        .where(drizzle.eq(ctx.schema.album_artists.album_id, albumId))
+        .from(ctx.db._.fullSchema.album_artists)
+        .where(eq(ctx.schema.album_artists.columns.album_id, albumId))
       return allLinks
     }
 
@@ -59,14 +59,14 @@ export const linkAlbumToArtists = procedure
     }))
 
     const inserted = await ctx.db
-      .insert(ctx.schema.album_artists)
+      .insert(ctx.db._.fullSchema.album_artists)
       .values(insertRows)
       .returning()
 
     const allLinks = await ctx.db
       .select()
-      .from(ctx.schema.album_artists)
-      .where(drizzle.eq(ctx.schema.album_artists.album_id, albumId))
+      .from(ctx.db._.fullSchema.album_artists)
+      .where(eq(ctx.schema.album_artists.columns.album_id, albumId))
 
     return allLinks
   })

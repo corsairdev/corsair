@@ -1,6 +1,6 @@
 import { z } from 'corsair'
-import { procedure } from '../trpc/procedures'
-import { drizzle } from 'corsair/db/types'
+import { procedure } from '../trpc'
+import { eq } from 'drizzle-orm'
 
 export const updateAlbumType = procedure
   .input(
@@ -11,11 +11,11 @@ export const updateAlbumType = procedure
   )
   .mutation(async ({ input, ctx }) => {
     const [album] = await ctx.db
-      .update(ctx.schema.albums)
+      .update(ctx.db._.fullSchema.albums)
       .set({
         album_type: input.albumType,
       })
-      .where(drizzle.eq(ctx.schema.albums.id, input.albumId))
+      .where(eq(ctx.schema.albums.columns.id, input.albumId))
       .returning()
 
     return album || null

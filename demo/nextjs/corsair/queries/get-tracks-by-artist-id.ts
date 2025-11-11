@@ -1,6 +1,6 @@
 import { z } from 'corsair'
-import { procedure } from '../trpc/procedures'
-import { drizzle } from 'corsair/db/types'
+import { procedure } from '../trpc'
+import { eq } from 'drizzle-orm'
 
 export const getTracksByArtistId = procedure
   .input(
@@ -11,24 +11,27 @@ export const getTracksByArtistId = procedure
   .query(async ({ input, ctx }) => {
     const tracks = await ctx.db
       .select({
-        id: ctx.schema.tracks.id,
-        name: ctx.schema.tracks.name,
-        disc_number: ctx.schema.tracks.disc_number,
-        duration_ms: ctx.schema.tracks.duration_ms,
-        explicit: ctx.schema.tracks.explicit,
-        track_number: ctx.schema.tracks.track_number,
-        preview_url: ctx.schema.tracks.preview_url,
-        is_local: ctx.schema.tracks.is_local,
-        external_urls: ctx.schema.tracks.external_urls,
-        uri: ctx.schema.tracks.uri,
-        href: ctx.schema.tracks.href,
+        id: ctx.schema.tracks.columns.id,
+        name: ctx.schema.tracks.columns.name,
+        disc_number: ctx.schema.tracks.columns.disc_number,
+        duration_ms: ctx.schema.tracks.columns.duration_ms,
+        explicit: ctx.schema.tracks.columns.explicit,
+        track_number: ctx.schema.tracks.columns.track_number,
+        preview_url: ctx.schema.tracks.columns.preview_url,
+        is_local: ctx.schema.tracks.columns.is_local,
+        external_urls: ctx.schema.tracks.columns.external_urls,
+        uri: ctx.schema.tracks.columns.uri,
+        href: ctx.schema.tracks.columns.href,
       })
-      .from(ctx.schema.tracks)
+      .from(ctx.db._.fullSchema.tracks)
       .innerJoin(
-        ctx.schema.track_artists,
-        drizzle.eq(ctx.schema.tracks.id, ctx.schema.track_artists.track_id)
+        ctx.db._.fullSchema.track_artists,
+        eq(
+          ctx.schema.tracks.columns.id,
+          ctx.schema.track_artists.columns.track_id
+        )
       )
-      .where(drizzle.eq(ctx.schema.track_artists.artist_id, input.artistId))
+      .where(eq(ctx.schema.track_artists.columns.artist_id, input.artistId))
 
     return tracks
   })

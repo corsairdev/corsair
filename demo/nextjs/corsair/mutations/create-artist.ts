@@ -1,5 +1,5 @@
 import { z } from 'corsair'
-import { procedure } from '../trpc/procedures'
+import { procedure } from '../trpc'
 
 export const createArtist = procedure
   .input(
@@ -17,7 +17,7 @@ export const createArtist = procedure
   )
   .mutation(async ({ input, ctx }) => {
     const [artist] = await ctx.db
-      .insert(ctx.schema.artists)
+      .insert(ctx.db._.fullSchema.artists)
       .values({
         id: input.id,
         name: input.name,

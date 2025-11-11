@@ -1,6 +1,6 @@
-import { procedure } from '../trpc/procedures'
+import { procedure } from '../trpc'
 import { z } from 'corsair'
-import { drizzle } from 'corsair/db/types'
+import { inArray } from 'drizzle-orm'
 
 export const createAlbums = procedure
   .input(
@@ -28,9 +28,9 @@ export const createAlbums = procedure
     ]
     if (allArtistIds.length > 0) {
       const existingArtists = await ctx.db
-        .select({ id: ctx.schema.artists.id })
-        .from(ctx.schema.artists)
-        .where(drizzle.inArray(ctx.schema.artists.id, allArtistIds))
+        .select({ id: ctx.schema.artists.columns.id })
+        .from(ctx.db._.fullSchema.artists)
+        .where(inArray(ctx.db._.fullSchema.artists.id, allArtistIds))
       const foundArtistIds = new Set(existingArtists.map(a => a.id))
       const missingIds = allArtistIds.filter(id => !foundArtistIds.has(id))
       if (missingIds.length > 0) {
@@ -43,7 +43,7 @@ export const createAlbums = procedure
     const createdAlbums = []
     for (const album of input.albums) {
       const [insertedAlbum] = await ctx.db
-        .insert(ctx.schema.albums)
+        .insert(ctx.db._.fullSchema.albums)
         .values({
           id: album.id,
           name: album.name,
@@ -64,7 +64,7 @@ export const createAlbums = procedure
 
       for (const artist_id of album.artist_ids) {
         await ctx.db
-          .insert(ctx.schema.album_artists)
+          .insert(ctx.db._.fullSchema.album_artists)
           .values({
             album_id: album.id,
             artist_id: artist_id,

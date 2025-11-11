@@ -1,5 +1,5 @@
 import { createCorsairClient, createCorsairHooks } from 'corsair'
-import type { CorsairRouter } from './trpc'
+import type { CorsairRouter } from '.'
 import config from '../corsair.config'
 
 const { typedClient } = createCorsairClient<CorsairRouter>({

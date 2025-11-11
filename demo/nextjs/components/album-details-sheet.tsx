@@ -1,4 +1,4 @@
-"use client";
+'use client'
 
 import {
   Sheet,
@@ -6,17 +6,17 @@ import {
   SheetDescription,
   SheetHeader,
   SheetTitle,
-} from "@/components/ui/sheet";
-import { Badge } from "@/components/ui/badge";
-import { TracksTable } from "@/components/tracks-table";
-import Image from "next/image";
-import { useTracksByAlbumId } from "@/lib/api/queries.client";
-import { QueryOutputs, useCorsairMutation } from "@/corsair/client";
+} from '@/components/ui/sheet'
+import { Badge } from '@/components/ui/badge'
+import { TracksTable } from '@/components/tracks-table'
+import Image from 'next/image'
+import { useTracksByAlbumId } from '@/lib/api/queries.client'
+import { QueryOutputs, useCorsairMutation } from '@/corsair/client'
 
 interface AlbumDetailsSheetProps {
-  album: QueryOutputs["get album by id with artists"] | null;
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
+  album: QueryOutputs['get album by id with artists'] | null
+  open: boolean
+  onOpenChange: (open: boolean) => void
 }
 
 export function AlbumDetailsSheet({
@@ -25,22 +25,22 @@ export function AlbumDetailsSheet({
   onOpenChange,
 }: AlbumDetailsSheetProps) {
   // Client-side query hook to fetch tracks when album is selected
-  const { data: tracks, isLoading } = useTracksByAlbumId(album?.id || null);
+  const { data: tracks, isLoading } = useTracksByAlbumId(album?.id || null)
 
-  if (!album) return null;
+  if (!album) return null
 
   const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
-  };
+    const date = new Date(dateString)
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    })
+  }
 
-  const albumTracks = tracks || [];
+  const albumTracks = tracks || []
 
-  const res = useCorsairMutation("create albums", {});
+  const res = useCorsairMutation('create albums', {})
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
@@ -50,9 +50,9 @@ export function AlbumDetailsSheet({
             <Image
               src={
                 (album?.images as unknown as { url: string }[])?.[0]?.url ||
-                "/placeholder.png"
+                '/placeholder.png'
               }
-              alt={album.name || ""}
+              alt={album.name || ''}
               fill
               className="object-cover rounded-md"
               sizes="192px"
@@ -60,7 +60,7 @@ export function AlbumDetailsSheet({
           </div>
           <SheetTitle className="text-2xl">{album.name}</SheetTitle>
           <SheetDescription>
-            {album.artists.map((artist) => artist.name).join(", ")}
+            {album.artists.map(artist => artist.name).join(', ')}
           </SheetDescription>
         </SheetHeader>
 
@@ -68,10 +68,10 @@ export function AlbumDetailsSheet({
           <div className="flex items-center gap-4 flex-wrap">
             <Badge variant="secondary">{album.album_type}</Badge>
             <span className="text-sm text-muted-foreground">
-              Released: {formatDate(album.release_date || "")}
+              Released: {formatDate(album.release_date || '')}
             </span>
             <span className="text-sm text-muted-foreground">
-              {album.total_tracks} track{album.total_tracks !== 1 ? "s" : ""}
+              {album.total_tracks} track{album.total_tracks !== 1 ? 's' : ''}
             </span>
           </div>
 
@@ -90,5 +90,5 @@ export function AlbumDetailsSheet({
         </div>
       </SheetContent>
     </Sheet>
-  );
+  )
 }
