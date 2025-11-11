@@ -1,5 +1,5 @@
 import { z } from 'corsair'
-import { procedure } from '../trpc/procedures'
+import { procedure } from '../trpc'
 
 export const getTracksByAlbumId = procedure
   .input(
@@ -8,6 +8,6 @@ export const getTracksByAlbumId = procedure
     })
   )
   .query(async ({ input, ctx }) => {
-    const tracks = await ctx.db.select().from(ctx.schema.tracks)
+    const tracks = await ctx.db.select().from(ctx.db._.fullSchema.tracks)
     return tracks
   })

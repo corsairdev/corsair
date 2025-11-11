@@ -1,4 +1,3 @@
-import { SpotifyArtist } from '@/lib/types'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
@@ -24,16 +23,11 @@ export function ArtistCard({ artist, onClick }: ArtistCardProps) {
     return count.toString()
   }
 
-  const res = useCorsairMutation(
-    'toggle track explicitssssssssssesssssssesesesesssssss',
-    {
-      trackId: '123',
-    }
-  )
+  const testMutation = useCorsairMutation('link album to artists')
 
-  const testMutation = useCorsairMutation('link album to artistss', {
+  testMutation.mutate({
     albumId: '123',
-    artistIds: ['123'],
+    artistIds: ['456'],
   })
 
   return (
@@ -63,7 +57,7 @@ export function ArtistCard({ artist, onClick }: ArtistCardProps) {
           {artist.popularity !== undefined && (
             <Badge variant="secondary">Popularity: {artist.popularity}</Badge>
           )}
-          {artist.genres && (artist.genres as string[]).length > 0 && (
+          {!!artist.genres && (artist.genres as string[]).length > 0 && (
             <div className="flex gap-1 flex-wrap">
               {(artist.genres as string[]).slice(0, 3).map(genre => (
                 <Badge key={genre} variant="outline">

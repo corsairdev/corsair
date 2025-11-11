@@ -1,7 +1,7 @@
-import "server-only";
-import { NextRequest } from "next/server";
-import { db } from "./db";
-import { type DatabaseContext, schema } from "./types";
+import 'server-only'
+import { NextRequest } from 'next/server'
+import { db } from '../db'
+import { type DatabaseContext } from '.'
 
 // Helper function to extract userId from request (for API routes)
 async function getUserIdFromRequest(
@@ -13,7 +13,7 @@ async function getUserIdFromRequest(
   // - const { userId } = auth(); // Clerk
   // - const token = request.headers.get("authorization");
 
-  return undefined;
+  return undefined
 }
 
 // Helper function to get userId in server components (using cookies/headers)
@@ -25,29 +25,29 @@ function getUserIdFromServerContext(): string | undefined {
   // - const cookieStore = cookies();
   // - const userId = cookieStore.get("userId")?.value;
 
-  return undefined;
+  return undefined
 }
 
 // Context factory for API routes (receives NextRequest)
 export async function createContext(
   request: NextRequest
 ): Promise<DatabaseContext> {
-  const userId = await getUserIdFromRequest(request);
+  const userId = await getUserIdFromRequest(request)
 
   return {
     db,
-    schema,
+    schema: db._.schema!,
     userId,
-  };
+  }
 }
 
 // Context factory for server components (no request available)
 export function createServerContext(): DatabaseContext {
-  const userId = getUserIdFromServerContext();
+  const userId = getUserIdFromServerContext()
 
   return {
     db,
-    schema,
+    schema: db._.schema!,
     userId,
-  };
+  }
 }

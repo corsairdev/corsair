@@ -1,31 +1,31 @@
-"use client";
+'use client'
 
-import { SpotifyArtist } from "@/lib/types";
+import { SpotifyArtist } from '@/lib/types'
 import {
   Sheet,
   SheetContent,
   SheetDescription,
   SheetHeader,
   SheetTitle,
-} from "@/components/ui/sheet";
-import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { TracksTable } from "@/components/tracks-table";
-import { Card, CardHeader, CardTitle } from "@/components/ui/card";
-import Image from "next/image";
+} from '@/components/ui/sheet'
+import { Badge } from '@/components/ui/badge'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { TracksTable } from '@/components/tracks-table'
+import { Card, CardHeader, CardTitle } from '@/components/ui/card'
+import Image from 'next/image'
 import {
   useAlbumsByArtistId,
   useTracksByArtistId,
-} from "@/lib/api/queries.client";
-import { useUpdateArtistPopularity } from "@/lib/api/mutations.client";
-import { Button } from "@/components/ui/button";
-import { useEffect, useState } from "react";
-import { QueryOutputs, useCorsairQuery } from "@/corsair/client";
+} from '@/lib/api/queries.client'
+import { useUpdateArtistPopularity } from '@/lib/api/mutations.client'
+import { Button } from '@/components/ui/button'
+import { useEffect, useState } from 'react'
+import { QueryOutputs, useCorsairQuery } from '@/corsair/client'
 
 interface ArtistDetailsSheetProps {
-  artist: QueryOutputs["get artist by id"];
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
+  artist: QueryOutputs['get artist by id']
+  open: boolean
+  onOpenChange: (open: boolean) => void
 }
 
 export function ArtistDetailsSheet({
@@ -34,82 +34,82 @@ export function ArtistDetailsSheet({
   onOpenChange,
 }: ArtistDetailsSheetProps) {
   const res = useCorsairQuery(
-    "get albums by artist id",
+    'get albums by artist id',
     {
-      artistId: artist?.id || "",
+      artistId: artist?.id || '',
     },
     {
       enabled: !!artist?.id,
     }
-  );
+  )
 
-  console.log(res);
+  console.log(res)
   // Client-side query hooks
   const {
     data: albums,
     isLoading: albumsLoading,
     refetch: refetchAlbums,
-  } = useAlbumsByArtistId(artist?.id || null);
+  } = useAlbumsByArtistId(artist?.id || null)
   const {
     data: tracks,
     isLoading: tracksLoading,
     refetch: refetchTracks,
-  } = useTracksByArtistId(artist?.id || null);
+  } = useTracksByArtistId(artist?.id || null)
 
   // Client-side mutation hook
-  const updatePopularity = useUpdateArtistPopularity();
+  const updatePopularity = useUpdateArtistPopularity()
 
   // Local state for optimistic updates
-  const [localArtist, setLocalArtist] = useState(artist);
+  const [localArtist, setLocalArtist] = useState(artist)
 
   useEffect(() => {
-    setLocalArtist(artist);
-  }, [artist]);
+    setLocalArtist(artist)
+  }, [artist])
 
-  if (!localArtist) return null;
+  if (!localArtist) return null
 
   const handleIncreasePopularity = async () => {
-    const newPopularity = Math.min(100, (localArtist.popularity || 0) + 5);
+    const newPopularity = Math.min(100, (localArtist.popularity || 0) + 5)
     // Optimistic update
-    setLocalArtist({ ...localArtist, popularity: newPopularity });
+    setLocalArtist({ ...localArtist, popularity: newPopularity })
 
     await updatePopularity.mutate({
       artistId: localArtist.id,
       popularity: newPopularity,
-    });
+    })
 
     // Refetch to ensure data consistency
-    refetchAlbums();
-    refetchTracks();
-  };
+    refetchAlbums()
+    refetchTracks()
+  }
 
   const handleDecreasePopularity = async () => {
-    const newPopularity = Math.max(0, (localArtist.popularity || 0) - 5);
+    const newPopularity = Math.max(0, (localArtist.popularity || 0) - 5)
     // Optimistic update
-    setLocalArtist({ ...localArtist, popularity: newPopularity });
+    setLocalArtist({ ...localArtist, popularity: newPopularity })
 
     await updatePopularity.mutate({
       artistId: localArtist.id,
       popularity: newPopularity,
-    });
+    })
 
     // Refetch to ensure data consistency
-    refetchAlbums();
-    refetchTracks();
-  };
+    refetchAlbums()
+    refetchTracks()
+  }
 
   const formatFollowers = (count: number) => {
     if (count >= 1000000) {
-      return `${(count / 1000000).toFixed(1)}M`;
+      return `${(count / 1000000).toFixed(1)}M`
     }
     if (count >= 1000) {
-      return `${(count / 1000).toFixed(1)}K`;
+      return `${(count / 1000).toFixed(1)}K`
     }
-    return count.toString();
-  };
+    return count.toString()
+  }
 
-  const artistAlbums = albums || [];
-  const artistTracks = tracks || [];
+  const artistAlbums = albums || []
+  const artistTracks = tracks || []
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
@@ -120,12 +120,12 @@ export function ArtistDetailsSheet({
               <AvatarImage
                 src={
                   (localArtist.images as unknown as { url: string }[])?.[0]
-                    ?.url || ""
+                    ?.url || ''
                 }
-                alt={localArtist.name || ""}
+                alt={localArtist.name || ''}
               />
               <AvatarFallback className="text-2xl">
-                {localArtist.name?.charAt(0) || ""}
+                {localArtist.name?.charAt(0) || ''}
               </AvatarFallback>
             </Avatar>
             <div className="flex-1">
@@ -162,10 +162,10 @@ export function ArtistDetailsSheet({
                 </Button>
               </div>
             )}
-            {localArtist.genres &&
+            {!!localArtist.genres &&
               (localArtist.genres as string[]).length > 0 && (
                 <>
-                  {(localArtist.genres as string[]).map((genre) => (
+                  {(localArtist.genres as string[]).map(genre => (
                     <Badge key={genre} variant="outline">
                       {genre}
                     </Badge>
@@ -185,15 +185,15 @@ export function ArtistDetailsSheet({
               <p className="text-sm text-muted-foreground">Loading albums...</p>
             ) : artistAlbums.length > 0 ? (
               <div className="grid grid-cols-2 gap-4">
-                {artistAlbums.map((album) => (
+                {artistAlbums.map(album => (
                   <Card key={album.id} className="overflow-hidden">
                     <div className="relative aspect-square w-full">
                       <Image
                         src={
                           (album.images as unknown as { url: string }[])?.[0]
-                            ?.url || "/placeholder.png"
+                            ?.url || '/placeholder.png'
                         }
-                        alt={album.name || ""}
+                        alt={album.name || ''}
                         fill
                         className="object-cover"
                         sizes="(max-width: 768px) 50vw, 25vw"
@@ -204,7 +204,7 @@ export function ArtistDetailsSheet({
                         {album.name}
                       </CardTitle>
                       <p className="text-xs text-muted-foreground">
-                        {new Date(album.release_date).getFullYear() || ""}
+                        {new Date(album.release_date).getFullYear() || ''}
                       </p>
                     </CardHeader>
                   </Card>
@@ -235,5 +235,5 @@ export function ArtistDetailsSheet({
         </div>
       </SheetContent>
     </Sheet>
-  );
+  )
 }
