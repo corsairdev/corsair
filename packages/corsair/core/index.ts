@@ -28,3 +28,5 @@ export { createNextApiHandler } from '@trpc/server/adapters/next'
 
 export { z } from 'zod'
 export { default as superjson } from 'superjson'
+
+export { operationsMap } from './utils'

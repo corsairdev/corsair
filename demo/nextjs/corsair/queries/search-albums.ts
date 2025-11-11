@@ -1,5 +1,5 @@
 import { z } from 'corsair'
-import { procedure } from '../trpc'
+import { procedure } from '../'
 import { ilike } from 'drizzle-orm'
 
 export const searchAlbums = procedure

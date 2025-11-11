@@ -1,5 +1,5 @@
 import { z } from 'corsair'
-import { procedure } from '../trpc'
+import { procedure } from '../'
 import { and, eq, inArray } from 'drizzle-orm'
 
 export const linkAlbumToArtists = procedure
