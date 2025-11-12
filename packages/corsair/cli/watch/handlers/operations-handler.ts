@@ -50,100 +50,135 @@ abstract class Operations {
         }
       >()
 
-      const operationsFile = project.addSourceFileAtPath(this.filePath)
-      const operationsVar = operationsFile.getVariableDeclaration(
-        this.variableName
+      const dirSourceFiles = project.addSourceFilesAtPaths(
+        `${this.filePath.replace(/\\/g, '/')}/**/*.ts`
       )
+      const isDirectory = dirSourceFiles.length > 0
 
-      if (!operationsVar) {
-        console.error(
-          `Can't find the ${this.variableName} variable in ${this.filePath}`
-        )
-        return
-      }
+      if (isDirectory) {
+        const sourceFiles = dirSourceFiles
 
-      const initializer = operationsVar.getInitializer()
-
-      if (initializer?.isKind(SyntaxKind.ObjectLiteralExpression)) {
-        initializer.getProperties().forEach(prop => {
-          if (prop.isKind(SyntaxKind.PropertyAssignment)) {
-            try {
-              const operationName = prop.getName()
-              const initializer = prop.getInitializer()
-              let callExpr: import('ts-morph').CallExpression | undefined
-
-              if (initializer?.isKind(SyntaxKind.Identifier)) {
-                const symbol = initializer.getSymbol()
-                const declaration = symbol?.getDeclarations()[0]
-
-                if (declaration?.isKind(SyntaxKind.ImportSpecifier)) {
-                  const importedSymbol =
-                    declaration.getSymbol()?.getAliasedSymbol() ??
-                    declaration.getSymbol()
-                  const sourceDeclaration = importedSymbol?.getDeclarations()[0]
-
-                  if (sourceDeclaration) {
-                    callExpr = sourceDeclaration.getFirstDescendantByKind(
-                      SyntaxKind.CallExpression
-                    )
-                  }
-                } else if (declaration) {
-                  callExpr = declaration.getFirstDescendantByKind(
-                    SyntaxKind.CallExpression
-                  )
-                }
-              } else if (
-                initializer?.isKind(SyntaxKind.PropertyAccessExpression)
+        for (const sf of sourceFiles) {
+          const varStmts = sf
+            .getVariableStatements()
+            .filter(vs => vs.isExported())
+          for (const vs of varStmts) {
+            for (const vd of vs.getDeclarations()) {
+              const name = vd.getName()
+              const init = vd.getInitializer()
+              const initText = init?.getText() ?? ''
+              const isQuery = initText.includes('.query(')
+              const isMutation = initText.includes('.mutation(')
+              if (
+                (this.operationType === 'queries' && isQuery) ||
+                (this.operationType === 'mutations' && isMutation)
               ) {
-                const symbol = initializer.getSymbol()
-                const decl =
-                  symbol?.getAliasedSymbol()?.getDeclarations()?.[0] ||
-                  symbol?.getDeclarations()?.[0]
-                if (decl) {
-                  callExpr = decl.getFirstDescendantByKind(
-                    SyntaxKind.CallExpression
-                  )
-                }
-              } else {
-                callExpr = prop.getFirstDescendantByKind(
-                  SyntaxKind.CallExpression
-                )
-              }
-
-              const configObj = callExpr?.getArguments()[0]
-
-              if (configObj?.isKind(SyntaxKind.ObjectLiteralExpression)) {
-                const prompt = configObj
-                  .getProperty('prompt')
-                  ?.getChildAtIndex(2)
-                  .getText()
-                const dependencies = configObj
-                  .getProperty('dependencies')
-                  ?.getChildAtIndex(2)
-                  .getText()
-
-                const handlerProp = configObj.getProperty('handler')
-                const handler = handlerProp?.getChildAtIndex(2).getText() || ''
-
-                operations.set(operationName, {
-                  name: operationName,
-                  prompt: prompt?.replace(/['"`]/g, '') || '',
-                  dependencies: dependencies,
-                  handler: handler,
-                })
-              } else {
-                operations.set(operationName, {
-                  name: operationName,
-                  prompt: operationName,
+                operations.set(name, {
+                  name,
+                  prompt: name,
                   dependencies: undefined,
                   handler: '',
                 })
               }
-            } catch (err) {
-              // Could be a spread operator, skip for now
             }
           }
-        })
+        }
+      } else {
+        const operationsFile = project.addSourceFileAtPath(this.filePath)
+        const operationsVar = operationsFile.getVariableDeclaration(
+          this.variableName
+        )
+
+        if (!operationsVar) {
+          console.error(
+            `Can't find the ${this.variableName} variable in ${this.filePath}`
+          )
+          return
+        }
+
+        const initializer = operationsVar.getInitializer()
+
+        if (initializer?.isKind(SyntaxKind.ObjectLiteralExpression)) {
+          initializer.getProperties().forEach(prop => {
+            if (prop.isKind(SyntaxKind.PropertyAssignment)) {
+              try {
+                const operationName = prop.getName()
+                const initializer = prop.getInitializer()
+                let callExpr: import('ts-morph').CallExpression | undefined
+
+                if (initializer?.isKind(SyntaxKind.Identifier)) {
+                  const symbol = initializer.getSymbol()
+                  const declaration = symbol?.getDeclarations()[0]
+
+                  if (declaration?.isKind(SyntaxKind.ImportSpecifier)) {
+                    const importedSymbol =
+                      declaration.getSymbol()?.getAliasedSymbol() ??
+                      declaration.getSymbol()
+                    const sourceDeclaration =
+                      importedSymbol?.getDeclarations()[0]
+
+                    if (sourceDeclaration) {
+                      callExpr = sourceDeclaration.getFirstDescendantByKind(
+                        SyntaxKind.CallExpression
+                      )
+                    }
+                  } else if (declaration) {
+                    callExpr = declaration.getFirstDescendantByKind(
+                      SyntaxKind.CallExpression
+                    )
+                  }
+                } else if (
+                  initializer?.isKind(SyntaxKind.PropertyAccessExpression)
+                ) {
+                  const symbol = initializer.getSymbol()
+                  const decl =
+                    symbol?.getAliasedSymbol()?.getDeclarations()?.[0] ||
+                    symbol?.getDeclarations()?.[0]
+                  if (decl) {
+                    callExpr = decl.getFirstDescendantByKind(
+                      SyntaxKind.CallExpression
+                    )
+                  }
+                } else {
+                  callExpr = prop.getFirstDescendantByKind(
+                    SyntaxKind.CallExpression
+                  )
+                }
+
+                const configObj = callExpr?.getArguments()[0]
+
+                if (configObj?.isKind(SyntaxKind.ObjectLiteralExpression)) {
+                  const prompt = configObj
+                    .getProperty('prompt')
+                    ?.getChildAtIndex(2)
+                    .getText()
+                  const dependencies = configObj
+                    .getProperty('dependencies')
+                    ?.getChildAtIndex(2)
+                    .getText()
+
+                  const handlerProp = configObj.getProperty('handler')
+                  const handler =
+                    handlerProp?.getChildAtIndex(2).getText() || ''
+
+                  operations.set(operationName, {
+                    name: operationName,
+                    prompt: prompt?.replace(/['"`]/g, '') || '',
+                    dependencies: dependencies,
+                    handler: handler,
+                  })
+                } else {
+                  operations.set(operationName, {
+                    name: operationName,
+                    prompt: operationName,
+                    dependencies: undefined,
+                    handler: '',
+                  })
+                }
+              } catch {}
+            }
+          })
+        }
       }
 
       this.operations = operations
@@ -154,9 +189,7 @@ abstract class Operations {
         operations: this.operations,
       } as OperationsLoadedEvent)
     } catch (error) {
-      console.error(
-        `Can't find the ${this.variableName} file. Does it exist at ${this.filePath}?`
-      )
+      console.error(`Can't find ${this.variableName} at ${this.filePath}`)
       console.error(error)
     }
   }

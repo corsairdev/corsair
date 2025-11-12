@@ -7,7 +7,6 @@ import { eventBus } from './core/event-bus.js'
 import { CorsairEvent } from './types/events.js'
 import { CorsairUI } from './ui/renderer.js'
 import { Project } from 'ts-morph'
-import * as path from 'path'
 import {
   loadConfig,
   loadEnv,
@@ -20,11 +19,9 @@ import './handlers/file-change-handler.js'
 import './handlers/query-generator.js'
 import './handlers/user-input-handler.js'
 import './handlers/error-handler.js'
-import './handlers/schema-change-handler.js'
 
 // Import operations handlers
 import { Queries, Mutations } from './handlers/operations-handler.js'
-import { Schema } from './handlers/schema-handler.js'
 
 // Also import state machine to initialize it
 import './core/state-machine.js'
@@ -60,64 +57,13 @@ export async function watch(): Promise<void> {
   const paths = getResolvedPaths(cfg)
   const warnings = validatePaths(cfg)
 
-  const queriesHandler = new Queries(paths.operationsFile)
-  const mutationsHandler = new Mutations(paths.operationsFile)
-  const schemaHandler = new Schema(paths.schemaFile)
-
-  try {
-    const operationsFile = project.addSourceFileAtPath(paths.operationsFile)
-    const imports = operationsFile.getImportDeclarations()
-    const desiredQueries = path
-      .relative(path.dirname(paths.operationsFile), paths.queriesDir)
-      .replace(/\\/g, '/')
-    const desiredMutations = path
-      .relative(path.dirname(paths.operationsFile), paths.mutationsDir)
-      .replace(/\\/g, '/')
-    const normalizedQueries = desiredQueries.startsWith('.')
-      ? desiredQueries
-      : `./${desiredQueries}`
-    const normalizedMutations = desiredMutations.startsWith('.')
-      ? desiredMutations
-      : `./${desiredMutations}`
-
-    const queriesImport = imports.find(
-      d => d.getNamespaceImport()?.getText() === 'queriesModule'
-    )
-    const mutationsImport = imports.find(
-      d => d.getNamespaceImport()?.getText() === 'mutationsModule'
-    )
-
-    if (queriesImport) {
-      if (queriesImport.getModuleSpecifierValue() !== normalizedQueries) {
-        queriesImport.setModuleSpecifier(normalizedQueries)
-      }
-    } else {
-      operationsFile.addImportDeclaration({
-        moduleSpecifier: normalizedQueries,
-        namespaceImport: 'queriesModule',
-      })
-    }
-
-    if (mutationsImport) {
-      if (mutationsImport.getModuleSpecifierValue() !== normalizedMutations) {
-        mutationsImport.setModuleSpecifier(normalizedMutations)
-      }
-    } else {
-      operationsFile.addImportDeclaration({
-        moduleSpecifier: normalizedMutations,
-        namespaceImport: 'mutationsModule',
-      })
-    }
-
-    operationsFile.formatText()
-    await operationsFile.save()
-  } catch {}
+  const queriesHandler = new Queries(paths.queriesDir)
+  const mutationsHandler = new Mutations(paths.mutationsDir)
 
   watcher.on('ready', async () => {
     // Parse queries, mutations, and schema files on startup
     await queriesHandler.parse()
     await mutationsHandler.parse()
-    await schemaHandler.parse()
 
     console.log('✓ File watcher ready. Watching for changes...\n')
   })
@@ -131,21 +77,14 @@ export async function watch(): Promise<void> {
     // Handle queries/mutations file changes
     const isInQueries = path.includes(paths.queriesDir)
     const isInMutations = path.includes(paths.mutationsDir)
-    const isOperations = path === paths.operationsFile
-    const isSchema = path === paths.schemaFile
 
-    if (isInQueries || isOperations) {
+    if (isInQueries) {
       await queriesHandler.update()
       return
     }
 
-    if (isInMutations || isOperations) {
+    if (isInMutations) {
       await mutationsHandler.update()
-      return
-    }
-
-    if (isSchema) {
-      await schemaHandler.update()
       return
     }
 
