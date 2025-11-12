@@ -1,9 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
-import {
-  QueryOutputs,
-} from '@/corsair/client'
+import { QueryOutputs, useCorsairMutation } from '@/corsair/client'
 
 interface ArtistCardProps {
   artist: QueryOutputs['get all artists'][number]
