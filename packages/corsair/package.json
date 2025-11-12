@@ -15,19 +15,8 @@
     "test:watch": "vitest",
     "test:ui": "vitest --ui",
     "test:coverage": "vitest run --coverage",
-    "db:test": "tsx db/index.ts",
     "api:test": "tsx api/index.ts",
-    "docker:up": "docker compose up -d",
-    "docker:down": "docker compose down",
-    "postgrest:reload": "docker kill -s SIGUSR1 corsair-postgrest",
-    "postgrest:restart": "docker restart corsair-postgrest",
-    "state:test": "tsx state/state.ts",
-    "drizzle": "tsx state/drizzle.ts",
-    "generate": "./scripts/generate.sh",
-    "check": "./scripts/check.sh",
-    "migrate": "./scripts/migrate.sh",
-    "watch": "tsx cli/watch/index.tsx",
-    "test-watch": "tsx cli/watch/test.ts"
+    "watch": "tsx cli/watch/index.tsx"
   },
   "exports": {
     ".": {
@@ -42,25 +31,9 @@
       "types": "./dist/client/index.d.ts",
       "default": "./dist/client/index.js"
     },
-    "./db": {
-      "types": "./dist/db/index.d.ts",
-      "default": "./dist/db/index.js"
-    },
-    "./db/types": {
-      "types": "./dist/db/types.d.ts",
-      "default": "./dist/db/types.js"
-    },
-    "./db/schema-builder": {
-      "types": "./dist/db/schema-builder.d.ts",
-      "default": "./dist/db/schema-builder.js"
-    },
     "./nextjs": {
       "types": "./dist/adapters/nextjs.d.ts",
       "default": "./dist/adapters/nextjs.js"
-    },
-    "./express": {
-      "types": "./dist/adapters/express.d.ts",
-      "default": "./dist/adapters/express.js"
     },
     "./schema": {
       "types": "./dist/schema/index.d.ts",
@@ -102,15 +75,11 @@
     "chalk": "^5.6.2",
     "chokidar": "^4.0.3",
     "dotenv": "^16.4.5",
-    "drizzle-orm": "^0.31.2",
-    "drizzle-zod": "^0.5.1",
     "prettier": "^3.3.2",
     "ink": "^6.3.1",
     "ink-spinner": "^5.0.0",
     "ink-text-input": "^6.0.0",
     "madge": "^8.0.0",
-    "pg": "^8.16.3",
-    "postgrest-js": "2.0.0-rc1",
     "superjson": "^2.2.3",
     "ts-morph": "^27.0.2",
     "tsx": "^4.20.6",
@@ -128,7 +97,6 @@
     "@vitest/ui": "^2.1.8",
     "@types/prettier": "^3.0.0",
     "bun-types": "latest",
-    "drizzle-kit": "^0.22.7",
     "eslint": "^8.57.0",
     "express": "^4.19.2",
     "fastify": "^4.28.0",

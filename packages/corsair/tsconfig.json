@@ -22,14 +22,11 @@
   },
   "include": [
     "index.ts",
-    "db/**/*",
     "api/**/*",
     "scripts/**/*",
-    // "client/**/*",
     "cli/**/*",
-    "schema/**/*",
     "trpc/**/*",
-    "core"
+    "core/**/*"
   ],
   "exclude": ["node_modules", "dist"]
 }
