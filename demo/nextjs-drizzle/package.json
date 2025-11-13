@@ -15,7 +15,7 @@
     "corsair:generate": "corsair generate",
     "corsair:check": "corsair check",
     "corsair:migrate": "corsair migrate",
-    "log": "tsx corsair/operations.ts"
+    "config": "tsx corsair.config.ts"
   },
   "dependencies": {
     "@radix-ui/react-avatar": "^1.1.10",

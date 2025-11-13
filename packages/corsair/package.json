@@ -27,38 +27,13 @@
       "types": "./dist/core/index.d.ts",
       "default": "./dist/core/index.js"
     },
-    "./client": {
-      "types": "./dist/client/index.d.ts",
-      "default": "./dist/client/index.js"
+    "./config": {
+      "types": "./dist/config/index.d.ts",
+      "default": "./dist/config/index.js"
     },
-    "./nextjs": {
-      "types": "./dist/adapters/nextjs.d.ts",
-      "default": "./dist/adapters/nextjs.js"
-    },
-    "./schema": {
-      "types": "./dist/schema/index.d.ts",
-      "default": "./dist/schema/index.js"
-    }
-  },
-  "peerDependencies": {
-    "@tanstack/react-query": "^5.0.0",
-    "zod": "^3.0.0"
-  },
-  "peerDependenciesMeta": {
-    "next": {
-      "optional": true
-    },
-    "express": {
-      "optional": true
-    },
-    "fastify": {
-      "optional": true
-    },
-    "hono": {
-      "optional": true
-    },
-    "@cloudflare/workers-types": {
-      "optional": true
+    "./config/drizzle-postgres": {
+      "types": "./dist/config/drizzle-postgres.d.ts",
+      "default": "./dist/config/drizzle-postgres.js"
     }
   },
   "keywords": [],
@@ -85,6 +60,14 @@
     "tsx": "^4.20.6",
     "zod": "^3.23.8",
     "openai": "^4.103.0"
+  },
+  "peerDependencies": {
+    "drizzle-orm": ">=0.28.0",
+    "drizzle-zod": ">=0.5.0"
+  },
+  "peerDependenciesMeta": {
+    "drizzle-orm": { "optional": true },
+    "drizzle-zod": { "optional": true }
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.0.0",
