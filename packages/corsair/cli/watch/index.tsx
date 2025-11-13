@@ -8,8 +8,9 @@ import { CorsairEvent } from './types/events.js'
 import { CorsairUI } from './ui/renderer.js'
 import { Project } from 'ts-morph'
 import * as path from 'path'
-import { existsSync } from 'fs'
+import { existsSync, writeFileSync, unlinkSync } from 'fs'
 import { pathToFileURL } from 'url'
+import { spawn } from 'child_process'
 import {
   loadConfig,
   loadEnv,
@@ -58,14 +59,84 @@ export async function watch(): Promise<void> {
       if (!existsSync(full)) continue
       try {
         let mod: any
-        mod = await import(pathToFileURL(full).href)
-        const cfg = mod?.config ?? mod?.default ?? mod
-        const unified = cfg?.unifiedSchema ?? cfg?.config?.unifiedSchema
-        if (unified && typeof unified === 'object') {
-          const schema = unified as SchemaDefinition
-          return { schema, configPath: full }
+        if (file.endsWith('.ts')) {
+          const loaderScript = `
+            import { pathToFileURL } from 'url';
+            import { createRequire } from 'module';
+            const require = createRequire(import.meta.url);
+            
+            const Module = require('module');
+            const originalRequire = Module.prototype.require;
+            Module.prototype.require = function(id) {
+              if (id === 'server-only' || id.endsWith('/server-only')) {
+                return {};
+              }
+              return originalRequire.apply(this, arguments);
+            };
+            
+            const mod = await import(pathToFileURL('${full.replace(/\\/g, '\\\\')}').href);
+            const cfg = mod?.config ?? mod?.default ?? mod;
+            const unified = cfg?.unifiedSchema ?? cfg?.config?.unifiedSchema;
+            if (unified && typeof unified === 'object') {
+              console.log(JSON.stringify(unified));
+            }
+          `
+          const tempFile = path.join(cwd, '.corsair-temp-loader.mjs')
+          writeFileSync(tempFile, loaderScript)
+
+          const result = await new Promise<string>((resolve, reject) => {
+            const child = spawn('npx', ['tsx', tempFile], {
+              cwd,
+              stdio: ['ignore', 'pipe', 'pipe'],
+              env: {
+                ...process.env,
+                NEXT_RUNTIME: 'nodejs',
+                NODE_ENV: process.env.NODE_ENV || 'development',
+              },
+            })
+
+            let stdout = ''
+            let stderr = ''
+
+            child.stdout.on('data', data => {
+              stdout += data.toString()
+            })
+
+            child.stderr.on('data', data => {
+              stderr += data.toString()
+            })
+
+            child.on('close', code => {
+              try {
+                unlinkSync(tempFile)
+              } catch {}
+
+              if (code === 0) {
+                resolve(stdout)
+              } else {
+                reject(new Error(stderr || `Process exited with code ${code}`))
+              }
+            })
+          })
+
+          const lines = result.split('\n').filter(line => line.trim())
+          const jsonLine = lines.find(line => line.startsWith('{'))
+          if (jsonLine) {
+            const schema = JSON.parse(jsonLine) as SchemaDefinition
+            return { schema, configPath: full }
+          }
+        } else {
+          mod = await import(pathToFileURL(full).href)
+          const cfg = mod?.config ?? mod?.default ?? mod
+          const unified = cfg?.unifiedSchema ?? cfg?.config?.unifiedSchema
+          if (unified && typeof unified === 'object') {
+            const schema = unified as SchemaDefinition
+            return { schema, configPath: full }
+          }
         }
-      } catch {}
+      } catch (err) {
+        console.error('Error loading config:', err)
+      }
     }
     return {}
   }
@@ -74,15 +145,6 @@ export async function watch(): Promise<void> {
   const cfg = loadConfig()
   loadEnv(cfg.envFile ?? '.env.local')
 
-  // Start file watcher - watch entire directory but filter in the change handler
-  const watcher = chokidar.watch('.', {
-    ignored:
-      /(node_modules|\.next|dist|\.git|\.turbo|coverage|__tests__|\.test\.|\.spec\.)/,
-    persistent: true,
-    ignoreInitial: true,
-    usePolling: true,
-  })
-
   const project = new Project({
     tsConfigFilePath: 'tsconfig.json',
   })
@@ -90,6 +152,12 @@ export async function watch(): Promise<void> {
   // Initialize operations handlers
   const paths = getResolvedPaths(cfg)
   const warnings = validatePaths(cfg)
+
+  console.log('Resolved paths:', {
+    queriesDir: paths.queriesDir,
+    mutationsDir: paths.mutationsDir,
+    schemaFile: paths.schemaFile,
+  })
 
   const queriesHandler = new Queries(paths.queriesDir)
   const mutationsHandler = new Mutations(paths.mutationsDir)
@@ -104,65 +172,81 @@ export async function watch(): Promise<void> {
       schemaConfigPath = configPath
       eventBus.emit(CorsairEvent.SCHEMA_LOADED, { schema })
     }
-  } catch {}
+  } catch (err) {
+    console.error('Error loading unified schema:', err)
+  }
 
-  try {
-    const operationsFile = project.addSourceFileAtPath(paths.operationsFile)
-    const imports = operationsFile.getImportDeclarations()
-    const desiredQueries = path
-      .relative(path.dirname(paths.operationsFile), paths.queriesDir)
-      .replace(/\\/g, '/')
-    const desiredMutations = path
-      .relative(path.dirname(paths.operationsFile), paths.mutationsDir)
-      .replace(/\\/g, '/')
-    const normalizedQueries = desiredQueries.startsWith('.')
-      ? desiredQueries
-      : `./${desiredQueries}`
-    const normalizedMutations = desiredMutations.startsWith('.')
-      ? desiredMutations
-      : `./${desiredMutations}`
+  // Parse operations immediately, don't wait for watcher ready
+  console.log('Parsing operations...')
+  await queriesHandler.parse()
+  await mutationsHandler.parse()
+  if (!loadedSchema && existsSync(paths.schemaFile)) {
+    await schemaHandler.parse()
+  }
 
-    const queriesImport = imports.find(
-      d => d.getNamespaceImport()?.getText() === 'queriesModule'
-    )
-    const mutationsImport = imports.find(
-      d => d.getNamespaceImport()?.getText() === 'mutationsModule'
-    )
+  // Start file watcher - watch entire directory but filter in the change handler
+  const watcher = chokidar.watch('.', {
+    ignored:
+      /(node_modules|\.next|dist|\.git|\.turbo|coverage|__tests__|\.test\.|\.spec\.)/,
+    persistent: true,
+    ignoreInitial: true,
+    usePolling: true,
+  })
 
-    if (queriesImport) {
-      if (queriesImport.getModuleSpecifierValue() !== normalizedQueries) {
-        queriesImport.setModuleSpecifier(normalizedQueries)
+  if (existsSync(paths.operationsFile)) {
+    try {
+      const operationsFile = project.addSourceFileAtPath(paths.operationsFile)
+      const imports = operationsFile.getImportDeclarations()
+      const desiredQueries = path
+        .relative(path.dirname(paths.operationsFile), paths.queriesDir)
+        .replace(/\\/g, '/')
+      const desiredMutations = path
+        .relative(path.dirname(paths.operationsFile), paths.mutationsDir)
+        .replace(/\\/g, '/')
+      const normalizedQueries = desiredQueries.startsWith('.')
+        ? desiredQueries
+        : `./${desiredQueries}`
+      const normalizedMutations = desiredMutations.startsWith('.')
+        ? desiredMutations
+        : `./${desiredMutations}`
+
+      const queriesImport = imports.find(
+        d => d.getNamespaceImport()?.getText() === 'queriesModule'
+      )
+      const mutationsImport = imports.find(
+        d => d.getNamespaceImport()?.getText() === 'mutationsModule'
+      )
+
+      if (queriesImport) {
+        if (queriesImport.getModuleSpecifierValue() !== normalizedQueries) {
+          queriesImport.setModuleSpecifier(normalizedQueries)
+        }
+      } else {
+        operationsFile.addImportDeclaration({
+          moduleSpecifier: normalizedQueries,
+          namespaceImport: 'queriesModule',
+        })
       }
-    } else {
-      operationsFile.addImportDeclaration({
-        moduleSpecifier: normalizedQueries,
-        namespaceImport: 'queriesModule',
-      })
-    }
 
-    if (mutationsImport) {
-      if (mutationsImport.getModuleSpecifierValue() !== normalizedMutations) {
-        mutationsImport.setModuleSpecifier(normalizedMutations)
+      if (mutationsImport) {
+        if (mutationsImport.getModuleSpecifierValue() !== normalizedMutations) {
+          mutationsImport.setModuleSpecifier(normalizedMutations)
+        }
+      } else {
+        operationsFile.addImportDeclaration({
+          moduleSpecifier: normalizedMutations,
+          namespaceImport: 'mutationsModule',
+        })
       }
-    } else {
-      operationsFile.addImportDeclaration({
-        moduleSpecifier: normalizedMutations,
-        namespaceImport: 'mutationsModule',
-      })
-    }
 
-    operationsFile.formatText()
-    await operationsFile.save()
-  } catch {}
+      operationsFile.formatText()
+      await operationsFile.save()
+    } catch (err) {
+      console.error('Error loading operations file:', err)
+    }
+  }
 
   watcher.on('ready', async () => {
-    // Parse queries, mutations, and schema files on startup
-    await queriesHandler.parse()
-    await mutationsHandler.parse()
-    if (!loadedSchema && existsSync(paths.schemaFile)) {
-      await schemaHandler.parse()
-    }
-
     console.log('✓ File watcher ready. Watching for changes...\n')
   })
 

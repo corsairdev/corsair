@@ -390,10 +390,13 @@ class StateMachine {
     // Schema loaded
     eventBus.on(CorsairEvent.SCHEMA_LOADED, (data: SchemaLoadedEvent) => {
       this.updateContext({ schema: data.schema })
+      const tableCount = data.schema.tables
+        ? data.schema.tables.length
+        : Object.keys(data.schema).length
       this.addHistoryEntry(
         'Schema loaded',
         undefined,
-        `Loaded ${data.schema.tables.length} tables`
+        `Loaded ${tableCount} tables`
       )
     })
 
@@ -633,13 +636,21 @@ class StateMachine {
   }
 
   public getTable(tableName: string) {
-    return this.state.context.schema?.tables.find(
-      table => table.name === tableName
-    )
+    if (this.state.context.schema?.tables) {
+      return this.state.context.schema.tables.find(
+        table => table.name === tableName
+      )
+    }
+    return this.state.context.schema?.[tableName]
   }
 
   public getAllTables() {
-    return this.state.context.schema?.tables || []
+    if (this.state.context.schema?.tables) {
+      return this.state.context.schema.tables
+    }
+    const schema = this.state.context.schema
+    if (!schema) return []
+    return Object.keys(schema).filter(key => key !== 'tables')
   }
 
   public hasSchema(): boolean {

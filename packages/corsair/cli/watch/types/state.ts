@@ -130,7 +130,8 @@ export interface OperationDefinition {
 }
 
 export interface SchemaDefinition {
-  tables: TableDefinition[]
+  tables?: TableDefinition[]
+  [tableName: string]: any
 }
 
 export interface TableDefinition {
