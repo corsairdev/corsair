@@ -153,12 +153,6 @@ export async function watch(): Promise<void> {
   const paths = getResolvedPaths(cfg)
   const warnings = validatePaths(cfg)
 
-  console.log('Resolved paths:', {
-    queriesDir: paths.queriesDir,
-    mutationsDir: paths.mutationsDir,
-    schemaFile: paths.schemaFile,
-  })
-
   const queriesHandler = new Queries(paths.queriesDir)
   const mutationsHandler = new Mutations(paths.mutationsDir)
   const schemaHandler = new Schema(paths.schemaFile)
