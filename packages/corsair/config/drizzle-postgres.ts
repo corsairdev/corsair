@@ -10,15 +10,18 @@ export type BaseDrizzlePostgresDatabase = {
       string,
       {
         columns: Record<string, any>
-        relations?: Record<string, {
-          config?: {
-            fields?: Array<{ name?: string; [key: string]: any }>
-            references?: Array<{ name?: string; [key: string]: any }>
+        relations?: Record<
+          string,
+          {
+            config?: {
+              fields?: Array<{ name?: string; [key: string]: any }>
+              references?: Array<{ name?: string; [key: string]: any }>
+              [key: string]: any
+            }
+            referencedTableName?: string
             [key: string]: any
           }
-          referencedTableName?: string
-          [key: string]: any
-        }>
+        >
         [key: string]: any
       }
     >

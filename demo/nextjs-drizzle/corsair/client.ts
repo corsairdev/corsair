@@ -1,9 +1,8 @@
 import { createCorsairClient, createCorsairHooks } from 'corsair'
 import type { CorsairRouter } from '.'
-import 'dotenv/config'
 
 const { typedClient } = createCorsairClient<CorsairRouter>({
-  url: `http://localhost:3000${process.env.CORSAIR_API_ROUTE!}`,
+  url: `http://localhost:3000${process.env.NEXT_PUBLIC_CORSAIR_API_ROUTE!}`,
 })
 
 const {

@@ -9,6 +9,8 @@ interface ArtistCardProps {
 }
 
 export function ArtistCard({ artist, onClick }: ArtistCardProps) {
+  const sendMessage = useCorsairMutation('send slack message')
+
   const formatFollowers = (count: number) => {
     if (count >= 1000000) {
       return `${(count / 1000000).toFixed(1)}M`
@@ -22,7 +24,13 @@ export function ArtistCard({ artist, onClick }: ArtistCardProps) {
   return (
     <Card
       className="hover:shadow-lg transition-shadow cursor-pointer"
-      onClick={() => onClick?.(artist)}
+      onClick={() => {
+        onClick?.(artist)
+        console.log('here')
+        sendMessage.mutateAsync({
+          slackChannel: ['general'],
+        })
+      }}
     >
       <CardHeader className="flex flex-row items-center gap-4">
         <Avatar className="h-16 w-16">
