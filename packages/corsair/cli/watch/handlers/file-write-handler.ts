@@ -59,16 +59,28 @@ export class FileWriteHandler {
       .join('')
 
     const inputTypeCode = this.parseInputTypeFromLLM(operation.inputType)
-    const handlerCode = this.parseHandlerFromLLM(operation.handler)
-    let newOperationCode = `
-    import { z } from 'corsair'
-    import { procedure } from '../trpc/procedures'
-    import { drizzle } from 'corsair/db/types'
+    const handlerCodeRaw = this.parseHandlerFromLLM(operation.handler)
+    const drizzleFns = this.getDrizzleFunctionsUsed(handlerCodeRaw)
 
-    export const ${variableName} = procedure
-      .input(${inputTypeCode})
-      .${isQuery ? 'query' : 'mutation'}(${handlerCode})
-  `
+    const imports: string[] = []
+    imports.push(`import { z } from 'corsair'`)
+    imports.push(`import { procedure } from '../procedure'`)
+    if (drizzleFns.size > 0) {
+      imports.push(
+        `import { ${Array.from(drizzleFns).join(', ')} } from 'drizzle-orm'`
+      )
+    }
+
+    const header = imports.join('\n')
+    const handlerCode = handlerCodeRaw
+
+    let newOperationCode = `
+${header}
+
+export const ${variableName} = procedure
+  .input(${inputTypeCode})
+  .${isQuery ? 'query' : 'mutation'}(${handlerCode})
+`
 
     if (operation.pseudocode) {
       newOperationCode += ``
@@ -100,57 +112,65 @@ export class FileWriteHandler {
 
     const operationsFilePath = pathsResolved.operationsFile
     const project = new Project()
-    const operationsFile = project.addSourceFileAtPath(operationsFilePath)
+    let operationsFile
 
-    const moduleSpecifierRaw = path.relative(
-      path.dirname(operationsFilePath),
-      baseDir
-    )
-    let moduleSpecifier = moduleSpecifierRaw.replace(/\\/g, '/')
-    if (!moduleSpecifier.startsWith('.')) {
-      moduleSpecifier = './' + moduleSpecifier
-    }
-    const desiredNs = isQuery ? 'queriesModule' : 'mutationsModule'
-    const existingNsImport = operationsFile
-      .getImportDeclarations()
-      .find(
-        d =>
-          d.getModuleSpecifierValue() === moduleSpecifier &&
-          d.getNamespaceImport()
-      )
-    if (!existingNsImport) {
-      operationsFile.addImportDeclaration({
-        moduleSpecifier,
-        namespaceImport: desiredNs,
-      })
-    }
+    if (fs.existsSync(operationsFilePath)) {
+      try {
+        operationsFile = project.addSourceFileAtPath(operationsFilePath)
+      } catch {}
 
-    const operationsVar =
-      operationsFile.getVariableDeclaration(operationTypePlural)
-    const initializer = operationsVar?.getInitializerIfKind(
-      SyntaxKind.ObjectLiteralExpression
-    )
-
-    if (initializer) {
-      const propName = `"${operation.operationName}"`
-      const moduleRef = `${desiredNs}.${variableName}`
-      const exists = initializer
-        .getProperties()
-        .some(p =>
-          p.isKind(SyntaxKind.PropertyAssignment)
-            ? p.getNameNode().getText() === propName
-            : false
+      if (operationsFile) {
+        const moduleSpecifierRaw = path.relative(
+          path.dirname(operationsFilePath),
+          baseDir
         )
-      if (!exists) {
-        initializer.addPropertyAssignment({
-          name: propName,
-          initializer: moduleRef,
-        })
+        let moduleSpecifier = moduleSpecifierRaw.replace(/\\/g, '/')
+        if (!moduleSpecifier.startsWith('.')) {
+          moduleSpecifier = './' + moduleSpecifier
+        }
+        const desiredNs = isQuery ? 'queriesModule' : 'mutationsModule'
+        const existingNsImport = operationsFile
+          .getImportDeclarations()
+          .find(
+            d =>
+              d.getModuleSpecifierValue() === moduleSpecifier &&
+              d.getNamespaceImport()
+          )
+        if (!existingNsImport) {
+          operationsFile.addImportDeclaration({
+            moduleSpecifier,
+            namespaceImport: desiredNs,
+          })
+        }
+
+        const operationsVar =
+          operationsFile.getVariableDeclaration(operationTypePlural)
+        const initializer = operationsVar?.getInitializerIfKind(
+          SyntaxKind.ObjectLiteralExpression
+        )
+
+        if (initializer) {
+          const propName = `"${operation.operationName}"`
+          const moduleRef = `${desiredNs}.${variableName}`
+          const exists = initializer
+            .getProperties()
+            .some(p =>
+              p.isKind(SyntaxKind.PropertyAssignment)
+                ? p.getNameNode().getText() === propName
+                : false
+            )
+          if (!exists) {
+            initializer.addPropertyAssignment({
+              name: propName,
+              initializer: moduleRef,
+            })
+          }
+        }
+
+        operationsFile.formatText()
+        await operationsFile.save()
       }
     }
-
-    operationsFile.formatText()
-    await operationsFile.save()
 
     await new Promise<void>(resolve => {
       const child = spawn('npx', ['--yes', 'tsc', '--noEmit'], {
@@ -173,6 +193,20 @@ export class FileWriteHandler {
 
   public parseHandlerFromLLM(handlerString: string): string {
     const cleaned = handlerString.trim()
+    if (cleaned.startsWith('async ({') || cleaned.startsWith('({')) {
+      return cleaned
+    }
+    const arrowIdx = cleaned.indexOf('=>')
+    if (arrowIdx !== -1) {
+      const paramsPart = cleaned.slice(0, arrowIdx).trim()
+      const bodyPart = cleaned.slice(arrowIdx + 2).trim()
+      if (/^async\s*\(\s*input\s*,\s*ctx\s*\)$/.test(paramsPart)) {
+        return `async ({ input, ctx }) => ${bodyPart}`
+      }
+      if (/^\(\s*input\s*,\s*ctx\s*\)$/.test(paramsPart)) {
+        return `async ({ input, ctx }) => ${bodyPart}`
+      }
+    }
     if (cleaned.startsWith('async (')) {
       return cleaned
     }
@@ -210,6 +244,31 @@ export class FileWriteHandler {
     if (!fs.existsSync(dirPath)) {
       fs.mkdirSync(dirPath, { recursive: true })
     }
+  }
+
+  private getDrizzleFunctionsUsed(handlerCode: string): Set<string> {
+    const fns = new Set<string>()
+    const candidates = [
+      'eq',
+      'and',
+      'or',
+      'ilike',
+      'like',
+      'gt',
+      'gte',
+      'lt',
+      'lte',
+      'ne',
+      'inArray',
+      'between',
+    ]
+    for (const fn of candidates) {
+      const regex = new RegExp(`\\b${fn}\\s*\\(`)
+      if (regex.test(handlerCode)) {
+        fns.add(fn)
+      }
+    }
+    return fns
   }
 }
 
