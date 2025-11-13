@@ -45,6 +45,81 @@ Based on the operation name "${name}", determine:
 - Include proper TypeScript types and error handling
 - Optimize for performance and security
 
+## Few-Shot Examples (adapt names to your schema)
+
+### Query: get-posts-by-user-id
+Input:
+\`\`\`typescript
+z.object({ userId: z.string() })
+\`\`\`
+Handler outline:
+\`\`\`typescript
+const results = await ctx.db
+  .select({
+    postId: ctx.schema.posts.columns.id,
+    title: ctx.schema.posts.columns.title,
+    authorId: ctx.schema.users.columns.id,
+    authorName: ctx.schema.users.columns.name,
+  })
+  .from(ctx.db._.fullSchema.posts)
+  .innerJoin(
+    ctx.db._.fullSchema.users,
+    eq(ctx.schema.posts.columns.user_id, ctx.schema.users.columns.id)
+  )
+  .where(eq(ctx.schema.posts.columns.user_id, input.userId));
+return results;
+\`\`\`
+
+### Query: get-comments-for-post-id
+Input:
+\`\`\`typescript
+z.object({ postId: z.string() })
+\`\`\`
+Handler outline:
+\`\`\`typescript
+const comments = await ctx.db
+  .select({
+    commentId: ctx.schema.comments.columns.id,
+    body: ctx.schema.comments.columns.body,
+    postId: ctx.schema.comments.columns.post_id,
+    author: {
+      id: ctx.schema.users.columns.id,
+      name: ctx.schema.users.columns.name,
+    },
+  })
+  .from(ctx.db._.fullSchema.comments)
+  .innerJoin(
+    ctx.db._.fullSchema.users,
+    eq(ctx.schema.comments.columns.user_id, ctx.schema.users.columns.id)
+  )
+  .where(eq(ctx.schema.comments.columns.post_id, input.postId));
+return comments;
+\`\`\`
+
+### Mutation: create-post
+Input:
+\`\`\`typescript
+z.object({
+  userId: z.string(),
+  title: z.string().min(1),
+  body: z.string().min(1),
+})
+\`\`\`
+Handler outline:
+\`\`\`typescript
+const [post] = await ctx.db
+  .insert(ctx.db._.fullSchema.posts)
+  .values({
+    user_id: input.userId,
+    title: input.title,
+    body: input.body,
+  })
+  .returning();
+return post;
+\`\`\`
+
+Guidance: Use your actual table and column names from the schema above.
+
 Additionally, include:
 - A brief but thorough pseudocode section (inputs, steps, outputs)
 - A unique, concise function name suggestion for naming a file
