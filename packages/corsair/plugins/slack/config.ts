@@ -1,14 +1,5 @@
-// {
-// /**
-//  * ID of Slack channel.
-//  */
-// id: string
-// /**
-//  * Exact name of Slack channel (e.g. general).
-//  * This is what Corsair will use when you instruct something like "send a message to the general channel about the new signup"
-//  */
-// name: string
-// }[]
+import { BaseConfig } from '../../config'
+
 export interface SlackPlugin {
   /**
    * All channels.
@@ -19,17 +10,18 @@ export interface SlackPlugin {
   channels?: Record<string, string>
 
   /**
-   * Specific people. Useful for mentions.
+   * People
+   * `[{
+   *   'name-of-person': 'id-of-person'
+   * }]`
    */
-  people?: {
-    /**
-     * ID of Person.
-     */
-    id: string
-    /**
-     * Name of Person.
-     * This is what Corsair will use when you instruct something like "tag John Smith on the message to #general"
-     */
-    name: string
-  }[]
+  members?: Record<string, string>
 }
+
+export type SlackChannels<T extends BaseConfig> = keyof NonNullable<
+  T['plugins']
+>['slack']['channels']
+
+export type SlackMembers<T extends BaseConfig> = keyof NonNullable<
+  T['plugins']
+>['slack']['members']

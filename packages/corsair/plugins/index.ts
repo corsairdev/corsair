@@ -1,1 +1,1 @@
-export { SlackPlugin } from './slack/config'
+export { SlackPlugin, SlackChannels } from './slack/config'
