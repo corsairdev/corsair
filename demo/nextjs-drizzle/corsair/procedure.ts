@@ -1,9 +1,9 @@
 import { createCorsairTRPC } from 'corsair'
-import type { db } from '../db'
+import { config } from '@/corsair.config'
 
 export type DatabaseContext = {
-  db: typeof db
-  schema: Exclude<typeof db._.schema, undefined>
+  db: typeof config.db
+  schema: Exclude<typeof config.schema, undefined>
   userId?: string
 }
 

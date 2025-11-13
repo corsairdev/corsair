@@ -9731,23 +9731,7 @@
     },
     "href": "https://api.spotify.com/v1/albums/4EYRBdtOIR0fkTzVXN6bvI",
     "id": "4EYRBdtOIR0fkTzVXN6bvI",
-    "images": [
-      {
-        "height": 300,
-        "url": "https://i.scdn.co/image/ab67616d00001e02ee0f556a03e3b3ebea155054",
-        "width": 300
-      },
-      {
-        "height": 64,
-        "url": "https://i.scdn.co/image/ab67616d00004851ee0f556a03e3b3ebea155054",
-        "width": 64
-      },
-      {
-        "height": 640,
-        "url": "https://i.scdn.co/image/ab67616d0000b273ee0f556a03e3b3ebea155054",
-        "width": 640
-      }
-    ],
+    "images": [],
     "name": "L o s e M y M i n d",
     "release_date": "2024-04-11",
     "release_date_precision": "day",
