@@ -636,13 +636,13 @@ class StateMachine {
   }
 
   public getTable(tableName: string) {
-    return this.state.context.schema?.tables?.find(
+    return this.state.context.schema?.tables.find(
       table => table.name === tableName
     )
   }
 
   public getAllTables() {
-    return this.state.context.schema?.tables ?? []
+    return this.state.context.schema?.tables || []
   }
 
   public hasSchema(): boolean {
