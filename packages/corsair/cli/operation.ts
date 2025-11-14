@@ -10,9 +10,7 @@ import './watch/core/state-machine.js'
 import './watch/handlers/query-generator.js'
 import './watch/handlers/user-input-handler.js'
 import './watch/handlers/error-handler.js'
-import type { SchemaDefinition } from './watch/types/state.js'
-import { pathToFileURL } from 'url'
-import { existsSync } from 'fs'
+import { tryLoadUnifiedSchema } from './schema-loader.js'
 
 type OpKind = 'query' | 'mutation'
 
@@ -35,29 +33,6 @@ function parseArgs(argv: string[]): { name?: string; instructions?: string } {
   return { name, instructions }
 }
 
-async function tryLoadUnifiedSchema(): Promise<SchemaDefinition | undefined> {
-  const cwd = process.cwd()
-  const candidates = [
-    'corsair.config.js',
-    'corsair.config.mjs',
-    'corsair.config.cjs',
-    'corsair.config.ts',
-  ]
-  for (const file of candidates) {
-    const full = path.resolve(cwd, file)
-    if (!existsSync(full)) continue
-    try {
-      const mod: any = await import(pathToFileURL(full).href)
-      const cfg = mod?.config ?? mod?.default ?? mod
-      const unified = cfg?.unifiedSchema ?? cfg?.config?.unifiedSchema
-      if (unified && typeof unified === 'object') {
-        return unified as SchemaDefinition
-      }
-    } catch {}
-  }
-  return undefined
-}
-
 export async function runOperation(kind: OpKind) {
   const argv = processRef.argv.slice(3)
   const { name, instructions } = parseArgs(argv)
@@ -71,7 +46,7 @@ export async function runOperation(kind: OpKind) {
   loadEnv(cfg.envFile ?? '.env.local')
   const paths = getResolvedPaths(cfg)
 
-  const schema = await tryLoadUnifiedSchema()
+  const { schema } = await tryLoadUnifiedSchema()
   if (schema) {
     eventBus.emit(CorsairEvent.SCHEMA_LOADED, { schema })
   }
