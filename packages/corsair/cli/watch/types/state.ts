@@ -131,7 +131,6 @@ export interface OperationDefinition {
 
 export interface SchemaDefinition {
   tables?: TableDefinition[]
-  [tableName: string]: any
 }
 
 export interface TableDefinition {
