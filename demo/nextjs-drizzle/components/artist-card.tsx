@@ -28,7 +28,8 @@ export function ArtistCard({ artist, onClick }: ArtistCardProps) {
         onClick?.(artist)
         console.log('here')
         sendMessage.mutateAsync({
-          slackChannel: ['general'],
+          channel: 'general',
+          message: 'test',
         })
       }}
     >
