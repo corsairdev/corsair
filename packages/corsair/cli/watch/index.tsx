@@ -40,7 +40,7 @@ import './core/state-machine.js'
  */
 export async function watch(): Promise<void> {
   console.clear()
-  console.log('Starting Corsair Watch...\n')
+  // console.log('Starting Corsair Watch...\n')
 
   // Load environment variables first
   const cfg = loadConfig()
@@ -72,7 +72,6 @@ export async function watch(): Promise<void> {
   }
 
   // Parse operations immediately, don't wait for watcher ready
-  console.log('Parsing operations...')
   await queriesHandler.parse()
   await mutationsHandler.parse()
   if (!loadedSchema && existsSync(paths.schemaFile)) {
@@ -140,10 +139,6 @@ export async function watch(): Promise<void> {
       console.error('Error loading operations file:', err)
     }
   }
-
-  watcher.on('ready', async () => {
-    console.log('✓ File watcher ready. Watching for changes...\n')
-  })
 
   watcher.on('change', async (pathChanged: string) => {
     // Only process .ts and .tsx files
