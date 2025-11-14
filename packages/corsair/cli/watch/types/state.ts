@@ -62,6 +62,7 @@ export interface LLMResponse {
   }
   rawResponse?: {
     input_type: string
+    output_type: string
     function: string
     notes: string
     pseudocode?: string

@@ -105,8 +105,6 @@ export function loadEnv(envFile: string): void {
       return
     }
   }
-
-  console.log('⚠️  No .env file found, using existing environment variables\n')
 }
 
 export function checkDatabaseUrl(): void {

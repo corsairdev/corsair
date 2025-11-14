@@ -32,6 +32,11 @@ class QueryGenerator {
       .describe(
         'The input type of the function. This will be added to the input_type of the operation. This input type is what your function will receive as input.'
       ),
+    output_type: z
+      .string()
+      .describe(
+        'The expected TypeScript output type of the handler function, expressed as a type-level description (for example, an object or array shape).'
+      ),
     function: z
       .string()
       .describe(
