@@ -636,21 +636,13 @@ class StateMachine {
   }
 
   public getTable(tableName: string) {
-    if (this.state.context.schema?.tables) {
-      return this.state.context.schema.tables.find(
-        table => table.name === tableName
-      )
-    }
-    return this.state.context.schema?.[tableName]
+    return this.state.context.schema?.tables?.find(
+      table => table.name === tableName
+    )
   }
 
   public getAllTables() {
-    if (this.state.context.schema?.tables) {
-      return this.state.context.schema.tables
-    }
-    const schema = this.state.context.schema
-    if (!schema) return []
-    return Object.keys(schema).filter(key => key !== 'tables')
+    return this.state.context.schema?.tables ?? []
   }
 
   public hasSchema(): boolean {
