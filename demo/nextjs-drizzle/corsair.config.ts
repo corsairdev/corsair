@@ -1,6 +1,5 @@
 import 'dotenv/config'
-import { z, type CorsairConfig } from 'corsair'
-import { type SlackChannels } from 'corsair/plugins'
+import { type CorsairConfig } from 'corsair'
 import { db } from './db'
 import { schemaToJson } from 'corsair/adapters/db/postgres/drizzle'
 
@@ -14,6 +13,7 @@ export const config = {
   unifiedSchema: schemaToJson(db),
   plugins: {
     slack: {
+      token: '',
       channels: {
         'general': '123',
         'technology': '456',

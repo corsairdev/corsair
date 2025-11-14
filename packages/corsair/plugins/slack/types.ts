@@ -2,6 +2,10 @@ import { BaseConfig } from '../../config'
 
 export interface SlackPlugin {
   /**
+   * Slack API token
+   */
+  token: string
+  /**
    * All channels.
    * `[{
    *   'name-of-channel': 'id-of-channel'
@@ -20,8 +24,10 @@ export interface SlackPlugin {
 
 export type SlackChannels<T extends BaseConfig> = keyof NonNullable<
   T['plugins']
->['slack']['channels']
+>['slack']['channels'] &
+  string
 
 export type SlackMembers<T extends BaseConfig> = keyof NonNullable<
   T['plugins']
->['slack']['members']
+>['slack']['members'] &
+  string

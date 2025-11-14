@@ -1,6 +1,7 @@
 import { fetchRequestHandler } from 'corsair'
 import { corsairRouter } from '@/corsair'
 import { db } from '@/db'
+import { plugins } from '@/corsair/procedure'
 
 const handler = async (req: Request) => {
   return fetchRequestHandler({
@@ -12,6 +13,7 @@ const handler = async (req: Request) => {
         userId: '123',
         db,
         schema: db._.schema!,
+        plugins,
       }
     },
   })
