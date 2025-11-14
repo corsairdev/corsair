@@ -1,5 +1,5 @@
 import type { DrizzlePostgresConfig } from './drizzle-postgres'
-import type { SlackPlugin } from '../plugins'
+import type { SlackPlugin } from '../plugins/types'
 
 export type ColumnInfo = {
   dataType: string
