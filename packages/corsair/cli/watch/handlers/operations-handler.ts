@@ -2,6 +2,8 @@ import { eventBus } from '../core/event-bus.js'
 import { CorsairEvent } from '../types/events.js'
 import type { OperationsLoadedEvent } from '../types/events.js'
 import { Project, SyntaxKind } from 'ts-morph'
+import * as fs from 'fs'
+import * as path from 'path'
 
 /**
  * Operations Handler
@@ -39,116 +41,17 @@ abstract class Operations {
    */
   public async parse(): Promise<void> {
     try {
-      const project = new Project()
-      const operations = new Map<
-        string,
-        {
-          name: string
-          prompt: string
-          dependencies?: string
-          handler: string
+      if (fs.existsSync(this.filePath)) {
+        const stat = fs.statSync(this.filePath)
+        if (stat.isFile()) {
+          await this.parseFromFile(this.filePath)
+        } else if (stat.isDirectory()) {
+          await this.parseFromDirectory(this.filePath)
         }
-      >()
-
-      const operationsFile = project.addSourceFileAtPath(this.filePath)
-      const operationsVar = operationsFile.getVariableDeclaration(
-        this.variableName
-      )
-
-      if (!operationsVar) {
-        console.error(
-          `Can't find the ${this.variableName} variable in ${this.filePath}`
-        )
-        return
+      } else {
+        await this.tryParseAsDirectoryFallback()
       }
 
-      const initializer = operationsVar.getInitializer()
-
-      if (initializer?.isKind(SyntaxKind.ObjectLiteralExpression)) {
-        initializer.getProperties().forEach(prop => {
-          if (prop.isKind(SyntaxKind.PropertyAssignment)) {
-            try {
-              const operationName = prop.getName()
-              const initializer = prop.getInitializer()
-              let callExpr: import('ts-morph').CallExpression | undefined
-
-              if (initializer?.isKind(SyntaxKind.Identifier)) {
-                const symbol = initializer.getSymbol()
-                const declaration = symbol?.getDeclarations()[0]
-
-                if (declaration?.isKind(SyntaxKind.ImportSpecifier)) {
-                  const importedSymbol =
-                    declaration.getSymbol()?.getAliasedSymbol() ??
-                    declaration.getSymbol()
-                  const sourceDeclaration = importedSymbol?.getDeclarations()[0]
-
-                  if (sourceDeclaration) {
-                    callExpr = sourceDeclaration.getFirstDescendantByKind(
-                      SyntaxKind.CallExpression
-                    )
-                  }
-                } else if (declaration) {
-                  callExpr = declaration.getFirstDescendantByKind(
-                    SyntaxKind.CallExpression
-                  )
-                }
-              } else if (
-                initializer?.isKind(SyntaxKind.PropertyAccessExpression)
-              ) {
-                const symbol = initializer.getSymbol()
-                const decl =
-                  symbol?.getAliasedSymbol()?.getDeclarations()?.[0] ||
-                  symbol?.getDeclarations()?.[0]
-                if (decl) {
-                  callExpr = decl.getFirstDescendantByKind(
-                    SyntaxKind.CallExpression
-                  )
-                }
-              } else {
-                callExpr = prop.getFirstDescendantByKind(
-                  SyntaxKind.CallExpression
-                )
-              }
-
-              const configObj = callExpr?.getArguments()[0]
-
-              if (configObj?.isKind(SyntaxKind.ObjectLiteralExpression)) {
-                const prompt = configObj
-                  .getProperty('prompt')
-                  ?.getChildAtIndex(2)
-                  .getText()
-                const dependencies = configObj
-                  .getProperty('dependencies')
-                  ?.getChildAtIndex(2)
-                  .getText()
-
-                const handlerProp = configObj.getProperty('handler')
-                const handler = handlerProp?.getChildAtIndex(2).getText() || ''
-
-                operations.set(operationName, {
-                  name: operationName,
-                  prompt: prompt?.replace(/['"`]/g, '') || '',
-                  dependencies: dependencies,
-                  handler: handler,
-                })
-              } else {
-                operations.set(operationName, {
-                  name: operationName,
-                  prompt: operationName,
-                  dependencies: undefined,
-                  handler: '',
-                })
-              }
-            } catch (err) {
-              // Could be a spread operator, skip for now
-            }
-          }
-        })
-      }
-
-      this.operations = operations
-
-      // Emit event to notify state machine
       eventBus.emit(CorsairEvent.OPERATIONS_LOADED, {
         type: this.operationType,
         operations: this.operations,
@@ -172,6 +75,155 @@ abstract class Operations {
       type: this.operationType,
       operations: this.operations,
     } as OperationsLoadedEvent)
+  }
+
+  private async parseFromFile(filePath: string) {
+    const project = new Project()
+    const operations = new Map<
+      string,
+      {
+        name: string
+        prompt: string
+        dependencies?: string
+        handler: string
+      }
+    >()
+
+    const operationsFile = project.addSourceFileAtPath(filePath)
+    const operationsVar = operationsFile.getVariableDeclaration(
+      this.variableName
+    )
+
+    if (!operationsVar) {
+      return
+    }
+
+    const initializer = operationsVar.getInitializer()
+
+    if (initializer?.isKind(SyntaxKind.ObjectLiteralExpression)) {
+      initializer.getProperties().forEach(prop => {
+        if (prop.isKind(SyntaxKind.PropertyAssignment)) {
+          try {
+            const operationName = prop.getName()
+            const initializer = prop.getInitializer()
+            let callExpr: import('ts-morph').CallExpression | undefined
+
+            if (initializer?.isKind(SyntaxKind.Identifier)) {
+              const symbol = initializer.getSymbol()
+              const declaration = symbol?.getDeclarations()[0]
+
+              if (declaration?.isKind(SyntaxKind.ImportSpecifier)) {
+                const importedSymbol =
+                  declaration.getSymbol()?.getAliasedSymbol() ??
+                  declaration.getSymbol()
+                const sourceDeclaration = importedSymbol?.getDeclarations()[0]
+
+                if (sourceDeclaration) {
+                  callExpr = sourceDeclaration.getFirstDescendantByKind(
+                    SyntaxKind.CallExpression
+                  )
+                }
+              } else if (declaration) {
+                callExpr = declaration.getFirstDescendantByKind(
+                  SyntaxKind.CallExpression
+                )
+              }
+            } else if (
+              initializer?.isKind(SyntaxKind.PropertyAccessExpression)
+            ) {
+              const symbol = initializer.getSymbol()
+              const decl =
+                symbol?.getAliasedSymbol()?.getDeclarations()?.[0] ||
+                symbol?.getDeclarations()?.[0]
+              if (decl) {
+                callExpr = decl.getFirstDescendantByKind(
+                  SyntaxKind.CallExpression
+                )
+              }
+            } else {
+              callExpr = prop.getFirstDescendantByKind(
+                SyntaxKind.CallExpression
+              )
+            }
+
+            const configObj = callExpr?.getArguments()[0]
+
+            if (configObj?.isKind(SyntaxKind.ObjectLiteralExpression)) {
+              const prompt = configObj
+                .getProperty('prompt')
+                ?.getChildAtIndex(2)
+                .getText()
+              const dependencies = configObj
+                .getProperty('dependencies')
+                ?.getChildAtIndex(2)
+                .getText()
+
+              const handlerProp = configObj.getProperty('handler')
+              const handler = handlerProp?.getChildAtIndex(2).getText() || ''
+
+              operations.set(operationName, {
+                name: operationName,
+                prompt: prompt?.replace(/['"`]/g, '') || '',
+                dependencies: dependencies,
+                handler: handler,
+              })
+            } else {
+              operations.set(operationName, {
+                name: operationName,
+                prompt: operationName,
+                dependencies: undefined,
+                handler: '',
+              })
+            }
+          } catch {}
+        }
+      })
+    }
+
+    this.operations = operations
+  }
+
+  private async parseFromDirectory(dirPath: string) {
+    const project = new Project()
+    const operations = new Map<
+      string,
+      {
+        name: string
+        prompt: string
+        dependencies?: string
+        handler: string
+      }
+    >()
+
+    const files = fs
+      .readdirSync(dirPath)
+      .filter(f => f.endsWith('.ts') && f !== 'index.ts')
+      .map(f => path.join(dirPath, f))
+
+    for (const file of files) {
+      try {
+        const sf = project.addSourceFileAtPath(file)
+        const exports = sf.getVariableDeclarations().filter(v => v.isExported())
+        for (const v of exports) {
+          const name = v.getName()
+          operations.set(name, {
+            name,
+            prompt: name,
+            dependencies: undefined,
+            handler: '',
+          })
+        }
+      } catch {}
+    }
+
+    this.operations = operations
+  }
+
+  private async tryParseAsDirectoryFallback() {
+    const maybeDir = this.filePath
+    if (fs.existsSync(maybeDir) && fs.statSync(maybeDir).isDirectory()) {
+      await this.parseFromDirectory(maybeDir)
+    }
   }
 }
 

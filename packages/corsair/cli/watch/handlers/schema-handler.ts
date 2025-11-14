@@ -237,6 +237,10 @@ export class Schema {
   ): string[] {
     const changes: string[] = []
 
+    if (!before.tables || !after.tables) {
+      return changes
+    }
+
     // Check for added tables
     for (const afterTable of after.tables) {
       const beforeTable = before.tables.find(t => t.name === afterTable.name)
