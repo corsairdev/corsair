@@ -34,6 +34,17 @@ function kebabCase(str: string) {
 }
 
 export class FileWriteHandler {
+  public getOperationFilePath(operation: OperationToWrite): string {
+    const cfg = loadConfig()
+    const pathsResolved = getResolvedPaths(cfg)
+    const baseDir =
+      operation.operationType === 'query'
+        ? pathsResolved.queriesDir
+        : pathsResolved.mutationsDir
+    const newOperationFileName = `${kebabCase(operation.operationName)}.ts`
+    return path.join(baseDir, newOperationFileName)
+  }
+
   public async writeOperationToFile(
     operation: OperationToWrite
   ): Promise<void> {
@@ -41,14 +52,13 @@ export class FileWriteHandler {
     const operationTypePlural =
       operation.operationType === 'query' ? 'queries' : 'mutations'
 
-    const newOperationFileName = `${kebabCase(operation.operationName)}.ts`
     const cfg = loadConfig()
     const pathsResolved = getResolvedPaths(cfg)
     const baseDir =
       operation.operationType === 'query'
         ? pathsResolved.queriesDir
         : pathsResolved.mutationsDir
-    const newOperationFilePath = path.join(baseDir, newOperationFileName)
+    const newOperationFilePath = this.getOperationFilePath(operation)
 
     const isQuery = operation.operationType === 'query'
     const variableName = operation.operationName
@@ -101,12 +111,16 @@ export const ${variableName} = procedure
 
     try {
       const existingBarrel = await fsp.readFile(barrelPath, 'utf8')
-      const exportLine = `export * from './${newOperationFileName.replace('.ts', '')}'\n`
+      const exportLine = `export * from './${path
+        .basename(newOperationFilePath)
+        .replace('.ts', '')}'\n`
       if (!existingBarrel.includes(exportLine)) {
         await fsp.appendFile(barrelPath, exportLine)
       }
     } catch {
-      const exportLine = `export * from './${newOperationFileName.replace('.ts', '')}'\n`
+      const exportLine = `export * from './${path
+        .basename(newOperationFilePath)
+        .replace('.ts', '')}'\n`
       await fsp.writeFile(barrelPath, exportLine)
     }
 
