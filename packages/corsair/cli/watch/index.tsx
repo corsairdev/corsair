@@ -8,12 +8,15 @@ import { CorsairEvent } from './types/events.js'
 import { CorsairUI } from './ui/renderer.js'
 import { Project } from 'ts-morph'
 import * as path from 'path'
+import { existsSync } from 'fs'
 import {
   loadConfig,
   loadEnv,
   getResolvedPaths,
   validatePaths,
 } from '../config.js'
+import type { SchemaDefinition } from './types/state.js'
+import { tryLoadUnifiedSchema } from '../schema-loader.js'
 
 // Import handlers to initialize them
 import './handlers/file-change-handler.js'
@@ -37,11 +40,43 @@ import './core/state-machine.js'
  */
 export async function watch(): Promise<void> {
   console.clear()
-  console.log('Starting Corsair Watch...\n')
+  // console.log('Starting Corsair Watch...\n')
 
   // Load environment variables first
   const cfg = loadConfig()
   loadEnv(cfg.envFile ?? '.env.local')
+
+  const project = new Project({
+    tsConfigFilePath: 'tsconfig.json',
+  })
+
+  // Initialize operations handlers
+  const paths = getResolvedPaths(cfg)
+  const warnings = validatePaths(cfg)
+
+  const queriesHandler = new Queries(paths.queriesDir)
+  const mutationsHandler = new Mutations(paths.mutationsDir)
+  const schemaHandler = new Schema(paths.schemaFile)
+
+  let loadedSchema: SchemaDefinition | undefined
+  let schemaConfigPath: string | undefined
+  try {
+    const { schema, configPath } = await tryLoadUnifiedSchema()
+    if (schema) {
+      loadedSchema = schema
+      schemaConfigPath = configPath
+      eventBus.emit(CorsairEvent.SCHEMA_LOADED, { schema })
+    }
+  } catch (err) {
+    console.error('Error loading unified schema:', err)
+  }
+
+  // Parse operations immediately, don't wait for watcher ready
+  await queriesHandler.parse()
+  await mutationsHandler.parse()
+  if (!loadedSchema && existsSync(paths.schemaFile)) {
+    await schemaHandler.parse()
+  }
 
   // Start file watcher - watch entire directory but filter in the change handler
   const watcher = chokidar.watch('.', {
@@ -52,87 +87,71 @@ export async function watch(): Promise<void> {
     usePolling: true,
   })
 
-  const project = new Project({
-    tsConfigFilePath: 'tsconfig.json',
-  })
+  if (existsSync(paths.operationsFile)) {
+    try {
+      const operationsFile = project.addSourceFileAtPath(paths.operationsFile)
+      const imports = operationsFile.getImportDeclarations()
+      const desiredQueries = path
+        .relative(path.dirname(paths.operationsFile), paths.queriesDir)
+        .replace(/\\/g, '/')
+      const desiredMutations = path
+        .relative(path.dirname(paths.operationsFile), paths.mutationsDir)
+        .replace(/\\/g, '/')
+      const normalizedQueries = desiredQueries.startsWith('.')
+        ? desiredQueries
+        : `./${desiredQueries}`
+      const normalizedMutations = desiredMutations.startsWith('.')
+        ? desiredMutations
+        : `./${desiredMutations}`
 
-  // Initialize operations handlers
-  const paths = getResolvedPaths(cfg)
-  const warnings = validatePaths(cfg)
+      const queriesImport = imports.find(
+        d => d.getNamespaceImport()?.getText() === 'queriesModule'
+      )
+      const mutationsImport = imports.find(
+        d => d.getNamespaceImport()?.getText() === 'mutationsModule'
+      )
 
-  const queriesHandler = new Queries(paths.operationsFile)
-  const mutationsHandler = new Mutations(paths.operationsFile)
-  const schemaHandler = new Schema(paths.schemaFile)
-
-  try {
-    const operationsFile = project.addSourceFileAtPath(paths.operationsFile)
-    const imports = operationsFile.getImportDeclarations()
-    const desiredQueries = path
-      .relative(path.dirname(paths.operationsFile), paths.queriesDir)
-      .replace(/\\/g, '/')
-    const desiredMutations = path
-      .relative(path.dirname(paths.operationsFile), paths.mutationsDir)
-      .replace(/\\/g, '/')
-    const normalizedQueries = desiredQueries.startsWith('.')
-      ? desiredQueries
-      : `./${desiredQueries}`
-    const normalizedMutations = desiredMutations.startsWith('.')
-      ? desiredMutations
-      : `./${desiredMutations}`
-
-    const queriesImport = imports.find(
-      d => d.getNamespaceImport()?.getText() === 'queriesModule'
-    )
-    const mutationsImport = imports.find(
-      d => d.getNamespaceImport()?.getText() === 'mutationsModule'
-    )
-
-    if (queriesImport) {
-      if (queriesImport.getModuleSpecifierValue() !== normalizedQueries) {
-        queriesImport.setModuleSpecifier(normalizedQueries)
+      if (queriesImport) {
+        if (queriesImport.getModuleSpecifierValue() !== normalizedQueries) {
+          queriesImport.setModuleSpecifier(normalizedQueries)
+        }
+      } else {
+        operationsFile.addImportDeclaration({
+          moduleSpecifier: normalizedQueries,
+          namespaceImport: 'queriesModule',
+        })
       }
-    } else {
-      operationsFile.addImportDeclaration({
-        moduleSpecifier: normalizedQueries,
-        namespaceImport: 'queriesModule',
-      })
-    }
 
-    if (mutationsImport) {
-      if (mutationsImport.getModuleSpecifierValue() !== normalizedMutations) {
-        mutationsImport.setModuleSpecifier(normalizedMutations)
+      if (mutationsImport) {
+        if (mutationsImport.getModuleSpecifierValue() !== normalizedMutations) {
+          mutationsImport.setModuleSpecifier(normalizedMutations)
+        }
+      } else {
+        operationsFile.addImportDeclaration({
+          moduleSpecifier: normalizedMutations,
+          namespaceImport: 'mutationsModule',
+        })
       }
-    } else {
-      operationsFile.addImportDeclaration({
-        moduleSpecifier: normalizedMutations,
-        namespaceImport: 'mutationsModule',
-      })
+
+      operationsFile.formatText()
+      await operationsFile.save()
+    } catch (err) {
+      console.error('Error loading operations file:', err)
     }
+  }
 
-    operationsFile.formatText()
-    await operationsFile.save()
-  } catch {}
-
-  watcher.on('ready', async () => {
-    // Parse queries, mutations, and schema files on startup
-    await queriesHandler.parse()
-    await mutationsHandler.parse()
-    await schemaHandler.parse()
-
-    console.log('✓ File watcher ready. Watching for changes...\n')
-  })
-
-  watcher.on('change', async path => {
+  watcher.on('change', async (pathChanged: string) => {
     // Only process .ts and .tsx files
-    if (!path.endsWith('.ts') && !path.endsWith('.tsx')) {
+    if (!pathChanged.endsWith('.ts') && !pathChanged.endsWith('.tsx')) {
       return
     }
 
     // Handle queries/mutations file changes
-    const isInQueries = path.includes(paths.queriesDir)
-    const isInMutations = path.includes(paths.mutationsDir)
-    const isOperations = path === paths.operationsFile
-    const isSchema = path === paths.schemaFile
+    const isInQueries = pathChanged.includes(paths.queriesDir)
+    const isInMutations = pathChanged.includes(paths.mutationsDir)
+    const isOperations = pathChanged === paths.operationsFile
+    const isSchema = pathChanged === paths.schemaFile
+    const isConfigSchema = schemaConfigPath && pathChanged === schemaConfigPath
 
     if (isInQueries || isOperations) {
       await queriesHandler.update()
@@ -144,31 +163,55 @@ export async function watch(): Promise<void> {
       return
     }
 
-    if (isSchema) {
+    if (isConfigSchema) {
+      try {
+        const prev = loadedSchema
+        const { schema } = await tryLoadUnifiedSchema()
+        if (schema) {
+          loadedSchema = schema
+          if (prev) {
+            eventBus.emit(CorsairEvent.SCHEMA_UPDATED, {
+              oldSchema: prev,
+              newSchema: schema,
+              schemaPath: schemaConfigPath!,
+              changes: [],
+            })
+          } else {
+            eventBus.emit(CorsairEvent.SCHEMA_LOADED, { schema })
+          }
+        }
+      } catch {}
+      return
+    }
+
+    if (isSchema && !loadedSchema) {
       await schemaHandler.update()
       return
     }
 
     // Skip other generated corsair files
-    if (path.includes('/corsair/') || path.includes('\\corsair\\')) {
+    if (
+      pathChanged.includes('/corsair/') ||
+      pathChanged.includes('\\corsair\\')
+    ) {
       return
     }
 
     // Refresh the entire project from filesystem to pick up latest changes
-    const sourceFile = project.getSourceFile(path)
+    const sourceFile = project.getSourceFile(pathChanged)
 
     if (!sourceFile) {
       return
     }
 
     eventBus.emit(CorsairEvent.FILE_CHANGED, {
-      file: path,
+      file: pathChanged,
       timestamp: Date.now(),
       project,
     })
   })
 
-  watcher.on('error', error => {
+  watcher.on('error', (error: unknown) => {
     console.error('Watcher error:', error)
   })
 

@@ -1,7 +1,7 @@
-import { z } from "zod";
-import { openai } from "./providers/openai.js";
+import { z } from 'zod'
+import { openai } from './providers/openai.js'
 
-export type Providers = "openai";
+export type Providers = 'openai'
 
 export const llm = async <T>({
   provider,
@@ -9,15 +9,14 @@ export const llm = async <T>({
   schema,
   message,
 }: {
-  provider: Providers;
-  prompt: string;
-  schema: z.ZodSchema<T>;
-  message: string;
+  provider: Providers
+  prompt: string
+  schema: z.ZodSchema<T>
+  message: string
 }): Promise<T | null> => {
-  if (provider === "openai") {
-    console.log("Prompting OpenAI");
-    return openai({ prompt, schema, message });
+  if (provider === 'openai') {
+    return openai({ prompt, schema, message })
   }
 
-  throw new Error(`Provider ${provider} not supported`);
-};
+  throw new Error(`Provider ${provider} not supported`)
+}

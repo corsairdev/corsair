@@ -105,8 +105,6 @@ export function loadEnv(envFile: string): void {
       return
     }
   }
-
-  console.log('⚠️  No .env file found, using existing environment variables\n')
 }
 
 export function checkDatabaseUrl(): void {
@@ -132,9 +130,8 @@ export function getResolvedPaths(cfg: CorsairConfig): {
 
 export function validatePaths(cfg: CorsairConfig): string[] {
   const warnings: string[] = []
-  const { queriesDir, mutationsDir, schemaFile } = getResolvedPaths(cfg)
+  const { queriesDir, mutationsDir } = getResolvedPaths(cfg)
   if (!existsSync(queriesDir)) warnings.push(`queries: ${queriesDir}`)
   if (!existsSync(mutationsDir)) warnings.push(`mutations: ${mutationsDir}`)
-  if (!existsSync(schemaFile)) warnings.push(`schema: ${schemaFile}`)
   return warnings
 }

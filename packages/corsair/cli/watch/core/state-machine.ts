@@ -346,10 +346,11 @@ class StateMachine {
           },
           rawResponse: {
             input_type: data.response.input_type,
+            output_type: data.response.output_type,
             function: data.response.function,
             notes: data.response.notes,
-            pseudocode: (data.response as any).pseudocode,
-            function_name: (data.response as any).function_name,
+            pseudocode: data.response.pseudocode,
+            function_name: data.response.function_name,
           },
         }
 
@@ -390,10 +391,13 @@ class StateMachine {
     // Schema loaded
     eventBus.on(CorsairEvent.SCHEMA_LOADED, (data: SchemaLoadedEvent) => {
       this.updateContext({ schema: data.schema })
+      const tableCount = data.schema.tables
+        ? data.schema.tables.length
+        : Object.keys(data.schema).length
       this.addHistoryEntry(
         'Schema loaded',
         undefined,
-        `Loaded ${data.schema.tables.length} tables`
+        `Loaded ${tableCount} tables`
       )
     })
 
@@ -633,9 +637,9 @@ class StateMachine {
   }
 
   public getTable(tableName: string) {
-    return this.state.context.schema?.tables.find(
-      table => table.name === tableName
-    )
+    const schema = this.state.context.schema
+    if (!schema || !schema.tables) return undefined
+    return schema.tables.find(table => table.name === tableName)
   }
 
   public getAllTables() {

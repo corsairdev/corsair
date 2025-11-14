@@ -14,6 +14,7 @@ import { stateMachine } from '../core/state-machine.js'
 import { llm } from '../../../llm/index.js'
 import { z } from 'zod'
 import { operationGeneratorPrompt } from '../../../llm/prompts/operation-generator.js'
+import type { SchemaLoadedEvent, SchemaUpdatedEvent } from '../types/events.js'
 
 /**
  * Query Generator Handler
@@ -30,6 +31,11 @@ class QueryGenerator {
       .string()
       .describe(
         'The input type of the function. This will be added to the input_type of the operation. This input type is what your function will receive as input.'
+      ),
+    output_type: z
+      .string()
+      .describe(
+        'The expected TypeScript output type of the handler function, expressed as a type-level description (for example, an object or array shape).'
       ),
     function: z
       .string()
@@ -58,6 +64,14 @@ class QueryGenerator {
   }
 
   private setupListeners() {
+    eventBus.on(CorsairEvent.SCHEMA_LOADED, (data: SchemaLoadedEvent) => {
+      this.schema = data.schema
+    })
+
+    eventBus.on(CorsairEvent.SCHEMA_UPDATED, (data: SchemaUpdatedEvent) => {
+      this.schema = data.newSchema
+    })
+
     eventBus.on(
       CorsairEvent.QUERY_DETECTED,
       this.handleQueryDetected.bind(this)
@@ -211,9 +225,9 @@ export default ${generatedQuery.functionName};
     lineNumber: number
     configurationRules?: string
   }) {
-    const schema = stateMachine.getSchema()
+    let schema = stateMachine.getSchema() || this.schema
     if (!schema) {
-      throw new Error('Schema not found')
+      schema = { tables: [] }
     }
     try {
       // Create a detailed prompt for the LLM
@@ -246,7 +260,7 @@ const operation = createQuery<DatabaseContext>()({
   prompt: "natural language description",
   input_type: z.object({ /* Zod schema */ }),
   dependencies: { tables: [...], columns: [...] },
-  handler: async (input, ctx) => {
+  handler: async ({ input, ctx }) => {
     // Your generated code here
     return result;
   }
@@ -258,26 +272,26 @@ const operation = createQuery<DatabaseContext>()({
 ### Basic Operations
 \`\`\`typescript
 // Select all
-const items = await ctx.db.select().from(ctx.schema.tableName);
+const items = await ctx.db.select().from(ctx.db._.fullSchema.tableName);
 
 // Select with where
 const item = await ctx.db
   .select()
-  .from(ctx.schema.tableName)
-  .where(drizzle.eq(ctx.schema.tableName.id, input.id))
+  .from(ctx.db._.fullSchema.tableName)
+  .where(eq(ctx.schema.tableName.columns.id, input.id))
   .limit(1);
 
 // Insert
 const [newItem] = await ctx.db
-  .insert(ctx.schema.tableName)
+  .insert(ctx.db._.fullSchema.tableName)
   .values(input)
   .returning();
 
 // Update
 const [updatedItem] = await ctx.db
-  .update(ctx.schema.tableName)
+  .update(ctx.db._.fullSchema.tableName)
   .set(input)
-  .where(drizzle.eq(ctx.schema.tableName.id, input.id))
+  .where(eq(ctx.schema.tableName.columns.id, input.id))
   .returning();
 \`\`\`
 
@@ -287,31 +301,31 @@ const [updatedItem] = await ctx.db
 const results = await ctx.db
   .select({
     // Select specific fields
-    itemId: ctx.schema.items.id,
-    itemName: ctx.schema.items.name,
-    relatedData: ctx.schema.related.data
+    itemId: ctx.schema.items.columns.id,
+    itemName: ctx.schema.items.columns.name,
+    relatedData: ctx.schema.related.columns.data
   })
-  .from(ctx.schema.items)
+  .from(ctx.db._.fullSchema.items)
   .innerJoin(
-    ctx.schema.related,
-    drizzle.eq(ctx.schema.items.id, ctx.schema.related.item_id)
+    ctx.db._.fullSchema.related,
+    eq(ctx.schema.items.columns.id, ctx.schema.related.columns.item_id)
   )
-  .where(drizzle.eq(ctx.schema.items.id, input.id));
+  .where(eq(ctx.schema.items.columns.id, input.id));
 
 // Complex joins with grouping
 const albumWithArtists = await ctx.db
   .select({
-    albumId: ctx.schema.albums.id,
-    albumName: ctx.schema.albums.name,
+    albumId: ctx.schema.albums.columns.id,
+    albumName: ctx.schema.albums.columns.name,
     artist: {
-      id: ctx.schema.artists.id,
-      name: ctx.schema.artists.name,
+      id: ctx.schema.artists.columns.id,
+      name: ctx.schema.artists.columns.name,
     }
   })
-  .from(ctx.schema.albums)
-  .innerJoin(ctx.schema.album_artists, drizzle.eq(ctx.schema.albums.id, ctx.schema.album_artists.album_id))
-  .innerJoin(ctx.schema.artists, drizzle.eq(ctx.schema.album_artists.artist_id, ctx.schema.artists.id))
-  .where(drizzle.eq(ctx.schema.albums.id, input.id));
+  .from(ctx.db._.fullSchema.albums)
+  .innerJoin(ctx.db._.fullSchema.album_artists, eq(ctx.schema.albums.columns.id, ctx.schema.album_artists.columns.album_id))
+  .innerJoin(ctx.db._.fullSchema.artists, eq(ctx.schema.album_artists.columns.artist_id, ctx.schema.artists.columns.id))
+  .where(eq(ctx.schema.albums.columns.id, input.id));
 \`\`\`
 
 ### Search and Filtering
@@ -319,17 +333,17 @@ const albumWithArtists = await ctx.db
 // Text search
 const results = await ctx.db
   .select()
-  .from(ctx.schema.tableName)
-  .where(drizzle.ilike(ctx.schema.tableName.name, \`%\${input.query}%\`));
+  .from(ctx.db._.fullSchema.tableName)
+  .where(ilike(ctx.schema.tableName.columns.name, \`%\${input.query}%\`));
 
 // Multiple conditions
 const results = await ctx.db
   .select()
-  .from(ctx.schema.tableName)
+  .from(ctx.db._.fullSchema.tableName)
   .where(
-    drizzle.and(
-      drizzle.eq(ctx.schema.tableName.status, 'active'),
-      drizzle.gte(ctx.schema.tableName.created_at, input.since)
+    and(
+      eq(ctx.schema.tableName.columns.status, 'active'),
+      gte(ctx.schema.tableName.columns.created_at, input.since)
     )
   );
 \`\`\`
@@ -366,7 +380,7 @@ if (results.length === 0) {
 Return exactly this JSON structure:
 {
   "input_type": "z.object({ id: z.string(), ... })",
-  "function": "async (input, ctx) => { /* complete handler code */ }",
+  "function": "async ({ input, ctx }) => { /* complete handler code */ }",
   "notes": "Additional implementation details or considerations",
   "pseudocode": "Step-by-step pseudocode of the handler: inputs, process, outputs",
   "function_name": "conciseUniqueFunctionName or concise-unique-function-name"
