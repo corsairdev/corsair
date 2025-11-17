@@ -5,7 +5,7 @@ export const promptAgent = (pwd: string) =>
   new Agent({
     model: 'openai/gpt-4o',
     tools: {
-      readFile,
+      readFile: readFile(pwd),
       writeFile: writeFile(pwd),
     },
     stopWhen: stepCountIs(20),

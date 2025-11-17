@@ -11,7 +11,8 @@ type Config = {
 export const agentPrompt = (
   request: string,
   incomingSchema: SchemaOutput,
-  config: Config
+  config: Config,
+  instructions?: string
 ): string => {
   const schema = formattedSchema(incomingSchema)
   return `
@@ -25,11 +26,16 @@ You have access to two tools:
   - write_file: This tool accepts TypeScript code (with imports at the top of the file). The code you give this tool is all of the code that is in the file. This tool will return any build errors found with your code.
   - read_file: This tool will return the current code in the file. You can use it at your discretion if you want to read the most recent state of a file. 
 
+Here is the schema of the database:
+<schema>
+${schema}
+</schema
+
 Here is an example of the code you would generate. You are provided with one query and one mutation:
 
 <query>
-import { z } from 'corsair'
-import { procedure } from '../procedure'
+import { z } from 'zod'
+import { procedure } from '@/corsair/procedure'
 import { eq } from 'drizzle-orm'
 
 export const getAllPostsByAuthorId = procedure
@@ -50,8 +56,8 @@ export const getAllPostsByAuthorId = procedure
 
 
 <mutation>
-import { z } from 'corsair'
-import { procedure } from '../procedure'
+import { z } from 'zod'
+import { procedure } from '@/corsair/procedure'
 import { eq, and } from 'drizzle-orm'
 
 export const likePost = procedure
