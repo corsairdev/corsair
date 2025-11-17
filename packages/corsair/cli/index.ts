@@ -1,5 +1,12 @@
 #!/usr/bin/env node
 
+// developer prompts with something like "pnpm corsair query -n 'get all albums by artist id' -i 'make sure to return in descending order alphabetically'"
+// create the file in `@/corsair/queries/get-all-albums-by-artist-id`
+// update index.ts in /queries or /mutations with reference to file
+// start agent
+// when agent is done, let the developer know
+// if agent runs X (set X to 5 maybe for now) amount of times and still can't get it right, let the developer know
+
 async function main() {
   const command = process.argv[2]
 

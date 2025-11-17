@@ -12,6 +12,7 @@ export const writeFile = (pwd: string) =>
       // you just have to pass in the directory to the file that we're building. that's the "pwd"
       // notice that "pwd" is not known to the agent at all. we're passing it outside the agent's context. it's not important to the agent at all
       // npx tsc --noEmit --pretty false 2>&1 | grep "corsair/mutations/create-track.ts" || true
+      // npx tsc --noEmit --pretty false 2>&1 | grep pwd || true
       return { plugins: [] }
     },
   })
