@@ -1,5 +1,14 @@
 import type { DrizzlePostgresConfig } from './drizzle-postgres'
+import type { PrismaPostgresConfig } from './prisma-postgres'
 import type { SlackPlugin } from '../plugins/types'
+
+export type ExtractStrict<T, U extends T> = U
+
+export type ORMs = 'drizzle' | 'prisma'
+
+export type DBTypes = 'postgres'
+
+export type Framework = 'nextjs'
 
 export type ColumnInfo = {
   dataType: string
@@ -35,4 +44,5 @@ export type BaseConfig = {
 /**
  * Base Corsair config setup. Currently only compatible with Next.js + Drizzle + Postgres
  */
-export type CorsairConfig<T> = BaseConfig & DrizzlePostgresConfig<T>
+export type CorsairConfig<T> = BaseConfig &
+  (DrizzlePostgresConfig<T> | PrismaPostgresConfig<T>)

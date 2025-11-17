@@ -16,7 +16,8 @@
     "test:ui": "vitest --ui",
     "test:coverage": "vitest run --coverage",
     "api:test": "tsx api/index.ts",
-    "watch": "tsx cli/watch/index.tsx"
+    "watch": "tsx cli/watch/index.tsx",
+    "agent-test": "tsx llm/agent/tests/agent-prompt.ts"
   },
   "exports": {
     ".": {
@@ -66,10 +67,15 @@
     "drizzle-zod": ">=0.5.0"
   },
   "peerDependenciesMeta": {
-    "drizzle-orm": { "optional": true },
-    "drizzle-zod": { "optional": true }
+    "drizzle-orm": {
+      "optional": true
+    },
+    "drizzle-zod": {
+      "optional": true
+    }
   },
   "devDependencies": {
+    "ai": "^5.0.93",
     "@cloudflare/workers-types": "^4.0.0",
     "@types/express": "^4.17.21",
     "@types/madge": "^5.0.3",

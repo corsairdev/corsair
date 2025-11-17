@@ -6,6 +6,7 @@ import { schemaToJson } from 'corsair/adapters/db/postgres/drizzle'
 export const config = {
   dbType: 'postgres',
   orm: 'drizzle',
+  framework: 'nextjs',
   pathToCorsairFolder: './corsair',
   apiEndpoint: process.env.NEXT_PUBLIC_CORSAIR_API_ROUTE!,
   db: db,

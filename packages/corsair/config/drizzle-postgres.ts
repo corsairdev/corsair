@@ -1,3 +1,5 @@
+import { ORMs, DBTypes, Framework, ExtractStrict } from '.'
+
 /**
  * This is the basic schema we are expecting.
  * We don't want to compare deeply nested types since that is inevitably going to throw errors
@@ -36,11 +38,15 @@ export type DrizzlePostgresConfig<T = any> = {
   /**
    * The ORM to use for the Postgres database.
    */
-  orm: 'drizzle'
+  orm: ExtractStrict<ORMs, 'drizzle'>
   /**
    * The database being used. In this case, Postgres.
    */
-  dbType: 'postgres'
+  dbType: ExtractStrict<DBTypes, 'postgres'>
+  /**
+   * The framework being used to build this project. In this case, Nextjs.
+   */
+  framework: ExtractStrict<Framework, 'nextjs'>
   /**
    * The database client that Corsair will use to interact with the database.
    */
