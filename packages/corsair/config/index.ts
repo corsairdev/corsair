@@ -19,6 +19,17 @@ export type TableSchema = Record<string, ColumnInfo>
 
 export type SchemaOutput = Record<string, TableSchema>
 
+export type ConnectionConfig =
+  | string
+  | {
+      host: string
+      port?: number
+      username: string
+      password: string
+      database: string
+      ssl?: boolean
+    }
+
 type BasePlugin = Record<'slack', SlackPlugin>
 
 export type BaseConfig = {
@@ -30,11 +41,6 @@ export type BaseConfig = {
    * The path to the Corsair folder. Defaults to `./corsair`.
    */
   pathToCorsairFolder: string
-  /**
-   * Base schema transformed from any db to a unified version an LLM can reference.
-   * If this can't compile, CLI will throw an error.
-   */
-  unifiedSchema?: SchemaOutput
   /**
    * Any plugins for Corsair to use
    */

@@ -1,103 +1,130 @@
-import * as path from 'path'
-import { existsSync, writeFileSync, unlinkSync } from 'fs'
-import { pathToFileURL } from 'url'
-import { spawn } from 'child_process'
-import type { SchemaDefinition } from './watch/types/state.js'
+import { SchemaOutput, ColumnInfo, ConnectionConfig } from '../config'
+import { loadConfig, loadEnv } from './config.js'
+import { Client, ClientConfig } from 'pg'
+import { resolve } from 'path'
+import { existsSync } from 'fs'
 
-export async function tryLoadUnifiedSchema(): Promise<{
-  schema?: SchemaDefinition
-  configPath?: string
-}> {
-  const cwd = process.cwd()
-  const candidates = [
-    'corsair.config.js',
-    'corsair.config.mjs',
-    'corsair.config.cjs',
-    'corsair.config.ts',
-  ]
-  for (const file of candidates) {
-    const full = path.resolve(cwd, file)
-    if (!existsSync(full)) continue
-    try {
-      let mod: any
-      if (file.endsWith('.ts')) {
-        const loaderScript = `
-            import { pathToFileURL } from 'url';
-            import { createRequire } from 'module';
-            const require = createRequire(import.meta.url);
-            
-            const Module = require('module');
-            const originalRequire = Module.prototype.require;
-            Module.prototype.require = function(id) {
-              if (id === 'server-only' || id.endsWith('/server-only')) {
-                return {};
-              }
-              return originalRequire.apply(this, arguments);
-            };
-            
-            const mod = await import(pathToFileURL('${full.replace(/\\/g, '\\\\')}').href);
-            const cfg = mod?.config ?? mod?.default ?? mod;
-            const unified = cfg?.unifiedSchema ?? cfg?.config?.unifiedSchema;
-            if (unified && typeof unified === 'object') {
-              console.log(JSON.stringify(unified));
-            }
-          `
-        const tempFile = path.join(cwd, '.corsair-temp-loader.mjs')
-        writeFileSync(tempFile, loaderScript)
+async function loadRuntimeConfig(): Promise<{
+  connection?: ConnectionConfig
+} | null> {
+  const tsConfigPath = resolve(process.cwd(), 'corsair.config.ts')
+  const jsConfigPath = resolve(process.cwd(), 'corsair.config.js')
 
-        const result = await new Promise<string>((resolve, reject) => {
-          const child = spawn('npx', ['tsx', tempFile], {
-            cwd,
-            stdio: ['ignore', 'pipe', 'pipe'],
-            env: {
-              ...process.env,
-              NEXT_RUNTIME: 'nodejs',
-              NODE_ENV: process.env.NODE_ENV || 'development',
-            },
-          })
-
-          let stdout = ''
-          let stderr = ''
-
-          child.stdout.on('data', data => {
-            stdout += data.toString()
-          })
-
-          child.stderr.on('data', data => {
-            stderr += data.toString()
-          })
-
-          child.on('close', code => {
-            try {
-              unlinkSync(tempFile)
-            } catch {}
-
-            if (code === 0) {
-              resolve(stdout)
-            } else {
-              reject(new Error(stderr || `Process exited with code ${code}`))
-            }
-          })
-        })
-
-        const lines = result.split('\n').filter(line => line.trim())
-        const jsonLine = lines.find(line => line.startsWith('{'))
-        if (jsonLine) {
-          const schema = JSON.parse(jsonLine) as SchemaDefinition
-          return { schema, configPath: full }
-        }
-      } else {
-        mod = await import(pathToFileURL(full).href)
-        const cfg = mod?.config ?? mod?.default ?? mod
-        const unified = cfg?.unifiedSchema ?? cfg?.config?.unifiedSchema
-        if (unified && typeof unified === 'object') {
-          const schema = unified as SchemaDefinition
-          return { schema, configPath: full }
-        }
-      }
-    } catch (err) {
-      console.error('Error loading config:', err)
+  try {
+    if (existsSync(jsConfigPath)) {
+      const mod = require(jsConfigPath)
+      const config = mod?.config ?? mod?.default ?? mod
+      return config
+    } else if (existsSync(tsConfigPath)) {
+      const mod = require(tsConfigPath)
+      const config = mod?.config ?? mod?.default ?? mod
+      return config
     }
+  } catch (error) {
+    return null
   }
-  return {}
+
+  return null
+}
+
+function buildClientConfig(connection: ConnectionConfig): ClientConfig {
+  if (typeof connection === 'string') {
+    return { connectionString: connection }
+  }
+
+  return {
+    host: connection.host,
+    port: connection.port ?? 5432,
+    user: connection.username,
+    password: connection.password,
+    database: connection.database,
+    ssl: connection.ssl ? { rejectUnauthorized: false } : false,
+  }
+}
+
+export const loadSchema = async (): Promise<SchemaOutput> => {
+  const cfg = loadConfig()
+  loadEnv(cfg.envFile ?? '.env.local')
+
+  const runtimeConfig = await loadRuntimeConfig()
+  let clientConfig: ClientConfig
+
+  if (runtimeConfig?.connection) {
+    clientConfig = buildClientConfig(runtimeConfig.connection)
+  } else {
+    const dbUrl = process.env.DATABASE_URL
+    if (!dbUrl) {
+      throw new Error(
+        'DATABASE_URL environment variable is required when connection is not specified in corsair.config'
+      )
+    }
+    clientConfig = { connectionString: dbUrl }
+  }
+  const client = new Client(clientConfig)
+
+  try {
+    await client.connect()
+
+    const query = `
+      SELECT
+        c.table_name,
+        c.column_name,
+        c.data_type,
+        c.is_nullable,
+        c.column_default,
+        tc.constraint_type,
+        ccu.table_name AS foreign_table_name,
+        ccu.column_name AS foreign_column_name
+      FROM
+        information_schema.columns c
+      LEFT JOIN
+        information_schema.key_column_usage kcu
+        ON c.table_name = kcu.table_name
+        AND c.column_name = kcu.column_name
+        AND c.table_schema = kcu.table_schema
+      LEFT JOIN
+        information_schema.table_constraints tc
+        ON kcu.constraint_name = tc.constraint_name
+        AND kcu.table_schema = tc.table_schema
+      LEFT JOIN
+        information_schema.constraint_column_usage ccu
+        ON tc.constraint_name = ccu.constraint_name
+        AND tc.table_schema = ccu.table_schema
+      WHERE
+        c.table_schema = 'public'
+      ORDER BY
+        c.table_name, c.ordinal_position;
+    `
+
+    const result = await client.query(query)
+    const schema: SchemaOutput = {}
+
+    for (const row of result.rows) {
+      const tableName = row.table_name
+      const columnName = row.column_name
+      const dataType = row.data_type
+
+      if (!schema[tableName]) {
+        schema[tableName] = {}
+      }
+
+      const columnInfo: ColumnInfo = {
+        dataType: dataType,
+      }
+
+      if (
+        row.constraint_type === 'FOREIGN KEY' &&
+        row.foreign_table_name &&
+        row.foreign_column_name
+      ) {
+        columnInfo.references = `${row.foreign_table_name}.${row.foreign_column_name}`
+      }
+
+      schema[tableName][columnName] = columnInfo
+    }
+
+    return schema
+  } finally {
+    await client.end()
+  }
 }
