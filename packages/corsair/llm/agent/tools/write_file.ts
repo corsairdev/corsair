@@ -7,6 +7,37 @@ import z from 'zod'
 
 const execAsync = promisify(exec)
 
+async function updateBarrelFile(targetPath: string) {
+  if (!targetPath.endsWith('.ts')) return
+
+  const dir = path.dirname(targetPath)
+  const fileName = path.basename(targetPath, '.ts')
+
+  if (fileName === 'index' || fileName === '@index') return
+
+  const exportLine = `export * from './${fileName}'\n`
+  const barrelCandidates = ['index.ts', '@index.ts']
+
+  let updatedExisting = false
+
+  for (const barrelName of barrelCandidates) {
+    const barrelPath = path.join(dir, barrelName)
+
+    try {
+      const existing = await fs.readFile(barrelPath, 'utf8')
+      if (!existing.includes(exportLine)) {
+        await fs.appendFile(barrelPath, exportLine)
+      }
+      updatedExisting = true
+    } catch {}
+  }
+
+  if (!updatedExisting) {
+    const barrelPath = path.join(dir, 'index.ts')
+    await fs.writeFile(barrelPath, exportLine)
+  }
+}
+
 async function validateTypeScriptFile(pwd: string) {
   const cwd = process.cwd()
   const normalizedPwd = pwd.split(path.sep).join(path.posix.sep)
@@ -44,6 +75,8 @@ export const writeFile = (pwd: string) =>
 
       await fs.mkdir(path.dirname(targetPath), { recursive: true })
       await fs.writeFile(targetPath, code, 'utf8')
+
+      await updateBarrelFile(targetPath)
 
       const validation = await validateTypeScriptFile(pwd)
 
