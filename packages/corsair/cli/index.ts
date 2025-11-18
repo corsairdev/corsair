@@ -33,9 +33,12 @@ async function runAgentOperation(
 
   const baseDir = kind === 'query' ? cfg.paths.queries : cfg.paths.mutations
   const pwd = `${baseDir}/${kebabCaseName}.ts`
+
+  const schema = await loadSchema()
+
   const prompt = promptBuilder(
     camelCaseName,
-    await loadSchema(),
+    schema,
     {
       dbType: 'postgres',
       framework: 'nextjs',
@@ -45,7 +48,7 @@ async function runAgentOperation(
     instructions
   )
 
-  await promptAgent(pwd).generate({ prompt })
+  const result = await promptAgent(pwd).generate({ prompt })
 
   console.log(
     `✅ Agent finished generating ${kind} "${camelCaseName}" at ${pwd}.`
