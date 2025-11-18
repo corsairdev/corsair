@@ -1,4 +1,2 @@
-export * from './get_plugins'
-export * from './read_file'
-export * from './write_file'
-export * from './validate_file'
+export * from './read_file.js'
+export * from './write_file.js'

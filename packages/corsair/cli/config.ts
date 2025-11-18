@@ -101,7 +101,6 @@ export function loadEnv(envFile: string): void {
     const envPath = resolve(process.cwd(), file)
     if (existsSync(envPath)) {
       config({ path: envPath })
-      console.log(`📄 Loaded environment from ${file}\n`)
       return
     }
   }

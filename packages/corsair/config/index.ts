@@ -31,11 +31,6 @@ export type BaseConfig = {
    */
   pathToCorsairFolder: string
   /**
-   * Base schema transformed from any db to a unified version an LLM can reference.
-   * If this can't compile, CLI will throw an error.
-   */
-  unifiedSchema?: SchemaOutput
-  /**
    * Any plugins for Corsair to use
    */
   plugins?: BasePlugin
