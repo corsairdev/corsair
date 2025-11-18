@@ -1,4 +1,4 @@
-import { ORMs, DBTypes, Framework, ExtractStrict } from '.'
+import { ORMs, DBTypes, Framework, ExtractStrict, ConnectionConfig } from '.'
 
 export type PrismaPostgresConfig<T = any> = {
   /**
@@ -21,4 +21,8 @@ export type PrismaPostgresConfig<T = any> = {
    * The schema that Corsair will use to prompt the LLM and build API endpoints.
    */
   schema: T extends { _: { schema: infer S } } ? S : never
+  /**
+   * The database connection configuration.
+   */
+  connection: ConnectionConfig
 }

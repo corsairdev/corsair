@@ -1,4 +1,4 @@
-import { ORMs, DBTypes, Framework, ExtractStrict } from '.'
+import { ORMs, DBTypes, Framework, ExtractStrict, ConnectionConfig } from '.'
 
 /**
  * This is the basic schema we are expecting.
@@ -58,12 +58,5 @@ export type DrizzlePostgresConfig<T = any> = {
   /**
    * The database connection configuration.
    */
-  connection: string | {
-    host: string
-    port?: number
-    username: string
-    password: string
-    database: string
-    ssl?: boolean
-  }
+  connection: ConnectionConfig
 }

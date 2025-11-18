@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import { Command } from 'commander'
-import { loadSchema } from './schema-loader.js'
+import { kebabToCamelCase, toKebabCase } from './utils.js'
 
 // developer prompts with something like "pnpm corsair query -n 'get all albums by artist id' -i 'make sure to return in descending order alphabetically'"
 // create the file in `@/corsair/queries/get-all-albums-by-artist-id`
@@ -12,19 +12,6 @@ import { loadSchema } from './schema-loader.js'
 // if there are any error while building the generated file, give the errors back to llm to correct them
 
 type OpKind = 'query' | 'mutation'
-
-function toKebabCase(str: string): string {
-  return str
-    .trim()
-    .replace(/([a-z])([A-Z])/g, '$1-$2')
-    .replace(/[\s_]+/g, '-')
-    .toLowerCase()
-    .replace(/[^a-z0-9-]/g, '')
-}
-
-function kebabToCamelCase(str: string): string {
-  return str.replace(/-([a-z])/g, (_, letter) => letter.toUpperCase())
-}
 
 async function runAgentOperation(
   kind: OpKind,
@@ -46,7 +33,6 @@ async function runAgentOperation(
 
   const baseDir = kind === 'query' ? cfg.paths.queries : cfg.paths.mutations
   const pwd = `${baseDir}/${kebabCaseName}.ts`
-
   const prompt = promptBuilder(
     camelCaseName,
     await loadSchema(),
