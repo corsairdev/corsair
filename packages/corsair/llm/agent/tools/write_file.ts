@@ -87,8 +87,7 @@ export const writeFile = (pwd: string) =>
 
       if (!validation.success) {
         const errorMessage = `BUILD FAILED - TypeScript compilation errors found:\n\n${validation.errors}\n\nPlease fix these errors and call write_file again with corrected code.`
-        console.log('[WRITE_FILE] Error message length:', errorMessage.length)
-        console.log('[WRITE_FILE] ============= END WRITE FILE =============\n')
+        console.log('[WRITE_FILE] Error message:', errorMessage)
         return errorMessage
       }
 
