@@ -1,5 +1,10 @@
-import { DBTypes, Framework, ORMs, SchemaOutput } from '../../../config'
-import { formattedSchema } from './utils'
+import {
+  DBTypes,
+  Framework,
+  ORMs,
+  SchemaOutput,
+} from '../../../config/index.js'
+import { formattedSchema } from './utils.js'
 
 type Config = {
   orm: ORMs
@@ -8,8 +13,8 @@ type Config = {
   operation: 'query' | 'mutation'
 }
 
-export const agentPrompt = (
-  request: string,
+export const promptBuilder = (
+  functionName: string,
   incomingSchema: SchemaOutput,
   config: Config,
   instructions?: string
@@ -18,15 +23,32 @@ export const agentPrompt = (
   return `
 You are a TypeScript developer building out a ${config.operation}.
 
-Your job is to generate the TypeScript file for this ${config.operation}.
-
 You will be using a ${config.dbType} database, ${config.orm} as the ORM, and this is in a ${config.framework} project. This API is written with tRPC and is used on the client with TanStack query.
 
-You have access to two tools:
-  - write_file: This tool accepts TypeScript code (with imports at the top of the file). The code you give this tool is all of the code that is in the file. This tool will return any build errors found with your code.
-  - read_file: This tool will return the current code in the file. You can use it at your discretion if you want to read the most recent state of a file. 
+Your job is to generate a working TypeScript file for this ${config.operation} that passes TypeScript compilation with zero errors.
 
-Here is the schema of the database:
+You will export a function with the exact name "${functionName}" - this is the camel case version of the function name.
+
+${instructions ? `These are additional instructions provided by the developer: ${instructions}` : ''}
+
+You have access to two tools:
+  - write_file: Accepts full TypeScript code. Returns either 'SUCCESS' or 'BUILD FAILED' with TypeScript compilation errors ONLY for this file.
+  - read_file: Returns the current file contents. Use if you want the current version of the code.
+
+This will be your process:
+1. Understand what the intent of the function is based on the name and the additional instructions provided by the developer
+2. Call write_file with your generated code
+3. The write_file tool will either return:
+   - 'SUCCESS' - Your code compiled without errors. You are done.
+   - 'BUILD FAILED' - TypeScript compilation errors were found. You MUST fix these errors.
+4. If you receive 'BUILD FAILED', you MUST:
+   - Carefully analyze the error messages
+   - Fix ALL compilation errors and ensure there are no runtime errors
+   - Call write_file again with the corrected code
+   - Continue this process until you receive 'SUCCESS'
+5. Do NOT give up. Keep retrying until the code compiles successfully.
+
+This is the schema of the database. You can access these tables using the ORM.
 <schema>
 ${schema}
 </schema
@@ -97,7 +119,5 @@ export const likePost = procedure
     return { success: true, alreadyLiked: false, like: newLike }
   })
 </mutation>
-
-
 `
 }

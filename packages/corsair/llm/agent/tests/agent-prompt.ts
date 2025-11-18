@@ -1,6 +1,6 @@
 import { promptAgent } from '..'
 import { SchemaOutput } from '../../../config'
-import { agentPrompt } from '../prompts/agent-prompt'
+import { promptBuilder } from '../prompts/prompt-builder'
 
 export const testSchema: SchemaOutput = {
   users: {
@@ -41,7 +41,7 @@ export const testSchema: SchemaOutput = {
 // console.log('Generated Schema Description:')
 // console.log('='.repeat(50))
 // console.log(
-//   agentPrompt('', testSchema, {
+//   promptBuilder('', testSchema, {
 //     dbType: 'postgres',
 //     orm: 'drizzle',
 //     framework: 'nextjs',
@@ -55,7 +55,7 @@ const request = 'give me all tracks by artist id'
 const pwd = ''
 
 const result = await promptAgent(pwd).generate({
-  prompt: agentPrompt(request, testSchema, {
+  prompt: promptBuilder(request, testSchema, {
     dbType: 'postgres',
     framework: 'nextjs',
     operation: 'mutation',

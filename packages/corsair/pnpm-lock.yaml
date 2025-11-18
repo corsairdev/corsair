@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@ai-sdk/openai':
+        specifier: ^2.0.68
+        version: 2.0.68(zod@3.25.76)
       '@supabase/postgrest-js':
         specifier: ^2.75.1
         version: 2.75.1
@@ -23,15 +26,6 @@ importers:
       '@trpc/tanstack-react-query':
         specifier: ^11.6.0
         version: 11.6.0(@tanstack/react-query@5.90.5(react@19.1.0))(@trpc/client@11.6.0(@trpc/server@11.6.0(typescript@5.9.3))(typescript@5.9.3))(@trpc/server@11.6.0(typescript@5.9.3))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(typescript@5.9.3)
-      boxen:
-        specifier: ^8.0.1
-        version: 8.0.1
-      chalk:
-        specifier: ^5.6.2
-        version: 5.6.2
-      chokidar:
-        specifier: ^4.0.3
-        version: 4.0.3
       dotenv:
         specifier: ^16.4.5
         version: 16.6.1
@@ -41,30 +35,15 @@ importers:
       drizzle-zod:
         specifier: '>=0.5.0'
         version: 0.8.3(drizzle-orm@0.44.7(@cloudflare/workers-types@4.20251014.0)(@libsql/client@0.15.15)(@opentelemetry/api@1.9.0)(@types/pg@8.15.5)(@upstash/redis@1.35.6)(bun-types@1.3.1(@types/react@19.2.2))(pg@8.16.3)(postgres@3.4.7))(zod@3.25.76)
-      ink:
-        specifier: ^6.3.1
-        version: 6.3.1(@types/react@19.2.2)(react@19.1.0)
-      ink-spinner:
-        specifier: ^5.0.0
-        version: 5.0.0(ink@6.3.1(@types/react@19.2.2)(react@19.1.0))(react@19.1.0)
-      ink-text-input:
-        specifier: ^6.0.0
-        version: 6.0.0(ink@6.3.1(@types/react@19.2.2)(react@19.1.0))(react@19.1.0)
-      madge:
-        specifier: ^8.0.0
-        version: 8.0.0(typescript@5.9.3)
       openai:
         specifier: ^4.103.0
         version: 4.104.0(ws@8.18.3)(zod@3.25.76)
-      prettier:
-        specifier: ^3.3.2
-        version: 3.6.2
+      pg:
+        specifier: ^8.16.3
+        version: 8.16.3
       superjson:
         specifier: ^2.2.3
         version: 2.2.3
-      ts-morph:
-        specifier: ^27.0.2
-        version: 27.0.2
       tsx:
         specifier: ^4.20.6
         version: 4.20.6
@@ -102,9 +81,21 @@ importers:
       ai:
         specifier: ^5.0.93
         version: 5.0.93(zod@3.25.76)
+      boxen:
+        specifier: ^8.0.1
+        version: 8.0.1
       bun-types:
         specifier: latest
         version: 1.3.1(@types/react@19.2.2)
+      chalk:
+        specifier: ^5.6.2
+        version: 5.6.2
+      chokidar:
+        specifier: ^4.0.3
+        version: 4.0.3
+      commander:
+        specifier: ^12.1.0
+        version: 12.1.0
       eslint:
         specifier: ^8.57.0
         version: 8.57.1
@@ -117,15 +108,33 @@ importers:
       hono:
         specifier: ^4.4.7
         version: 4.10.4
+      ink:
+        specifier: ^6.3.1
+        version: 6.3.1(@types/react@19.2.2)(react@19.1.0)
+      ink-spinner:
+        specifier: ^5.0.0
+        version: 5.0.0(ink@6.3.1(@types/react@19.2.2)(react@19.1.0))(react@19.1.0)
+      ink-text-input:
+        specifier: ^6.0.0
+        version: 6.0.0(ink@6.3.1(@types/react@19.2.2)(react@19.1.0))(react@19.1.0)
+      madge:
+        specifier: ^8.0.0
+        version: 8.0.0(typescript@5.9.3)
       next:
         specifier: 15.5.6
         version: 15.5.6(@opentelemetry/api@1.9.0)(@playwright/test@1.56.1)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      prettier:
+        specifier: ^3.3.2
+        version: 3.6.2
       react:
         specifier: ^19.1.0
         version: 19.1.0
       react-dom:
         specifier: 19.1.0
         version: 19.1.0(react@19.1.0)
+      ts-morph:
+        specifier: ^27.0.2
+        version: 27.0.2
       typescript:
         specifier: ^5.9.3
         version: 5.9.3
@@ -137,6 +146,12 @@ packages:
 
   '@ai-sdk/gateway@2.0.9':
     resolution: {integrity: sha512-E6x4h5CPPPJ0za1r5HsLtHbeI+Tp3H+YFtcH8G3dSSPFE6w+PZINzB4NxLZmg1QqSeA5HTP3ZEzzsohp0o2GEw==}
+    engines: {node: '>=18'}
+    peerDependencies:
+      zod: ^3.25.76 || ^4.1.8
+
+  '@ai-sdk/openai@2.0.68':
+    resolution: {integrity: sha512-qUSLFkqgUoFArzBwttu0KWVAZYjbsdZGOklSJXpfZ2nDC61yseHxtcnuG8u6tqKnGXDh4eakEgREDWU2sRht7A==}
     engines: {node: '>=18'}
     peerDependencies:
       zod: ^3.25.76 || ^4.1.8
@@ -3204,6 +3219,12 @@ snapshots:
       '@vercel/oidc': 3.0.3
       zod: 3.25.76
 
+  '@ai-sdk/openai@2.0.68(zod@3.25.76)':
+    dependencies:
+      '@ai-sdk/provider': 2.0.0
+      '@ai-sdk/provider-utils': 3.0.17(zod@3.25.76)
+      zod: 3.25.76
+
   '@ai-sdk/provider-utils@3.0.17(zod@3.25.76)':
     dependencies:
       '@ai-sdk/provider': 2.0.0
@@ -5379,15 +5400,13 @@ snapshots:
   pg-cloudflare@1.2.7:
     optional: true
 
-  pg-connection-string@2.9.1:
-    optional: true
+  pg-connection-string@2.9.1: {}
 
   pg-int8@1.0.1: {}
 
   pg-pool@3.10.1(pg@8.16.3):
     dependencies:
       pg: 8.16.3
-    optional: true
 
   pg-protocol@1.10.3: {}
 
@@ -5408,12 +5427,10 @@ snapshots:
       pgpass: 1.0.5
     optionalDependencies:
       pg-cloudflare: 1.2.7
-    optional: true
 
   pgpass@1.0.5:
     dependencies:
       split2: 4.2.0
-    optional: true
 
   picocolors@1.1.1: {}
 
