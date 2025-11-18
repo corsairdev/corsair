@@ -16,7 +16,7 @@ import {
   validatePaths,
 } from '../config.js'
 import type { SchemaDefinition } from './types/state.js'
-import { tryLoadUnifiedSchema } from '../schema-loader.js'
+import { loadSchema } from '../schema-loader.js'
 
 // Import handlers to initialize them
 import './handlers/file-change-handler.js'
@@ -61,10 +61,9 @@ export async function watch(): Promise<void> {
   let loadedSchema: SchemaDefinition | undefined
   let schemaConfigPath: string | undefined
   try {
-    const { schema, configPath } = await tryLoadUnifiedSchema()
+    const schema = await loadSchema()
     if (schema) {
       loadedSchema = schema
-      schemaConfigPath = configPath
       eventBus.emit(CorsairEvent.SCHEMA_LOADED, { schema })
     }
   } catch (err) {
@@ -166,7 +165,7 @@ export async function watch(): Promise<void> {
     if (isConfigSchema) {
       try {
         const prev = loadedSchema
-        const { schema } = await tryLoadUnifiedSchema()
+        const { schema } = await loadSchema()
         if (schema) {
           loadedSchema = schema
           if (prev) {

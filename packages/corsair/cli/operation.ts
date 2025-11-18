@@ -6,7 +6,7 @@ import { CorsairEvent } from './watch/types/events.js'
 import './watch/core/state-machine.js'
 import './watch/handlers/query-generator.js'
 import './watch/handlers/error-handler.js'
-import { tryLoadUnifiedSchema } from './schema-loader.js'
+import { loadSchema } from './schema-loader.js'
 import {
   fileWriteHandler,
   type OperationToWrite,
@@ -46,7 +46,7 @@ export async function runOperation(kind: OpKind) {
   loadEnv(cfg.envFile ?? '.env.local')
   const paths = getResolvedPaths(cfg)
 
-  const { schema } = await tryLoadUnifiedSchema()
+  const { schema } = await loadSchema()
   if (schema) {
     eventBus.emit(CorsairEvent.SCHEMA_LOADED, { schema })
   }

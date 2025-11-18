@@ -55,4 +55,15 @@ export type DrizzlePostgresConfig<T = any> = {
    * The schema that Corsair will use to prompt the LLM and build API endpoints.
    */
   schema: T extends { _: { schema: infer S } } ? S : never
+  /**
+   * The database connection configuration.
+   */
+  connection: string | {
+    host: string
+    port?: number
+    username: string
+    password: string
+    database: string
+    ssl?: boolean
+  }
 }

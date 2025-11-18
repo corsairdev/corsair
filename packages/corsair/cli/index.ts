@@ -1,101 +1,131 @@
 #!/usr/bin/env node
 
+import { Command } from 'commander'
+import { loadSchema } from './schema-loader.js'
+
 // developer prompts with something like "pnpm corsair query -n 'get all albums by artist id' -i 'make sure to return in descending order alphabetically'"
 // create the file in `@/corsair/queries/get-all-albums-by-artist-id`
 // update index.ts in /queries or /mutations with reference to file
 // start agent
 // when agent is done, let the developer know
 // if agent runs X (set X to 5 maybe for now) amount of times and still can't get it right, let the developer know
+// if there are any error while building the generated file, give the errors back to llm to correct them
 
-async function main() {
-  const command = process.argv[2]
+type OpKind = 'query' | 'mutation'
 
-  if (
-    !command ||
-    !['generate', 'check', 'migrate', 'watch', 'query', 'mutation'].includes(
-      command
-    )
-  ) {
-    console.log('Corsair CLI\n')
-    console.log('Usage:')
-    console.log(
-      '  corsair generate             - Generate migrations from schema'
-    )
-    console.log(
-      '  corsair check                - Test migrations in a transaction'
-    )
-    console.log('  corsair migrate              - Apply migrations to database')
-    console.log(
-      '  corsair watch                - Watch for changes and generate API routes'
-    )
-    console.log('')
-    console.log(
-      '  corsair query    -n <name> [-i <instructions>]     Create a new query'
-    )
-    console.log(
-      '  corsair mutation -n <name> [-i <instructions>]     Create a new mutation\n'
-    )
-    process.exit(1)
-  }
-
-  switch (command) {
-    case 'generate': {
-      const { generate } = await import('./generate.js')
-      await generate()
-      break
-    }
-    case 'check': {
-      const { check } = await import('./check.js')
-      await check()
-      break
-    }
-    case 'migrate': {
-      const { migrate } = await import('./migrate.js')
-      await migrate()
-      break
-    }
-    case 'watch': {
-      const { watch } = await import('./watch/index.js')
-      await watch()
-      break
-    }
-    case 'query': {
-      const { runOperation } = await import('./operation.js')
-      await runOperation('query')
-      break
-    }
-    case 'mutation': {
-      const { runOperation } = await import('./operation.js')
-      await runOperation('mutation')
-      break
-    }
-    case 'test': {
-      const { promptAgent } = await import('.././llm/agent/index.js')
-      const { agentPrompt } = await import(
-        '../llm/agent/prompts/agent-prompt.js'
-      )
-      // convert schema to testSchema (get the schema from the CLI)
-      const testSchema = {}
-      // get request from cli (that's the prompt name and any other commands - like "get all artists by album id")
-      const request = ''
-      // you'll need to move this from the "test" to "query" / "mutation"
-
-      const pwd = 'corsair/mutations/create-track.ts'
-      const result = await promptAgent(pwd).generate({
-        prompt: agentPrompt(request, testSchema, {
-          dbType: 'postgres',
-          framework: 'nextjs',
-          operation: 'mutation',
-          orm: 'drizzle',
-        }),
-      })
-
-      break
-    }
-  }
+function toKebabCase(str: string): string {
+  return str
+    .trim()
+    .replace(/([a-z])([A-Z])/g, '$1-$2')
+    .replace(/[\s_]+/g, '-')
+    .toLowerCase()
+    .replace(/[^a-z0-9-]/g, '')
 }
 
-main().catch(error => {
+function kebabToCamelCase(str: string): string {
+  return str.replace(/-([a-z])/g, (_, letter) => letter.toUpperCase())
+}
+
+async function runAgentOperation(
+  kind: OpKind,
+  name: string,
+  instructions?: string
+) {
+  const { loadConfig, loadEnv } = await import('./config.js')
+  const { loadSchema } = await import('./schema-loader.js')
+  const { promptAgent } = await import('../llm/agent/index.js')
+  const { promptBuilder } = await import(
+    '../llm/agent/prompts/prompt-builder.js'
+  )
+
+  const cfg = loadConfig()
+  loadEnv(cfg.envFile ?? '.env.local')
+
+  const kebabCaseName = toKebabCase(name.trim())
+  const camelCaseName = kebabToCamelCase(kebabCaseName)
+
+  const baseDir = kind === 'query' ? cfg.paths.queries : cfg.paths.mutations
+  const pwd = `${baseDir}/${kebabCaseName}.ts`
+
+  const prompt = promptBuilder(
+    camelCaseName,
+    await loadSchema(),
+    {
+      dbType: 'postgres',
+      framework: 'nextjs',
+      operation: kind,
+      orm: 'drizzle',
+    },
+    instructions
+  )
+
+  await promptAgent(pwd).generate({ prompt })
+
+  console.log(
+    `✅ Agent finished generating ${kind} "${camelCaseName}" at ${pwd}.`
+  )
+}
+
+const program = new Command()
+
+program
+  .name('corsair')
+  .description('Corsair CLI - Type-safe database operations with AI assistance')
+  .version('1.0.0')
+
+program
+  .command('generate')
+  .description('Generate migrations from schema')
+  .action(async () => {
+    const { generate } = await import('./generate.js')
+    await generate()
+  })
+
+program
+  .command('check')
+  .description('Test migrations in a transaction')
+  .action(async () => {
+    const { check } = await import('./check.js')
+    await check()
+  })
+
+program
+  .command('migrate')
+  .description('Apply migrations to database')
+  .action(async () => {
+    const { migrate } = await import('./migrate.js')
+    await migrate()
+  })
+
+program
+  .command('watch')
+  .description('Watch for changes and generate API routes')
+  .action(async () => {
+    const { watch } = await import('./watch/index.js')
+    await watch()
+  })
+
+program
+  .command('query')
+  .description('Create a new query')
+  .requiredOption('-n, --name <name>', 'Operation name')
+  .option('-i, --instructions <instructions>', 'Additional instructions')
+  .action(async options => {
+    await runAgentOperation('query', options.name, options.instructions)
+  })
+
+program
+  .command('mutation')
+  .description('Create a new mutation')
+  .requiredOption('-n, --name <name>', 'Operation name')
+  .option('-i, --instructions <instructions>', 'Additional instructions')
+  .action(async options => {
+    await runAgentOperation('mutation', options.name, options.instructions)
+  })
+
+program.parse()
+
+process.on('unhandledRejection', error => {
   console.error('❌ Fatal error:', error)
   process.exit(1)
 })
