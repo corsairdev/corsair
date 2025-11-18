@@ -8,12 +8,16 @@ import z from 'zod'
 const execAsync = promisify(exec)
 
 async function updateBarrelFile(targetPath: string) {
-  if (!targetPath.endsWith('.ts')) return
+  if (!targetPath.endsWith('.ts')) {
+    return
+  }
 
   const dir = path.dirname(targetPath)
   const fileName = path.basename(targetPath, '.ts')
 
-  if (fileName === 'index' || fileName === '@index') return
+  if (fileName === 'index' || fileName === '@index') {
+    return
+  }
 
   const exportLine = `export * from './${fileName}'\n`
   const barrelCandidates = ['index.ts', '@index.ts']
@@ -56,6 +60,7 @@ async function validateTypeScriptFile(pwd: string) {
   })
 
   const output = `${result.stdout ?? ''}${result.stderr ?? ''}`.trim()
+
   if (!output) {
     return { success: true, errors: '' }
   }
@@ -66,7 +71,7 @@ async function validateTypeScriptFile(pwd: string) {
 export const writeFile = (pwd: string) =>
   tool({
     description:
-      'Write the full contents of the target TypeScript file. Returns build errors for that file.',
+      'Write the full contents of the target TypeScript file. Returns build errors for that file or success message. If there are errors, you MUST call this tool again with corrected code.',
     inputSchema: z.object({
       code: z.string().describe('The exact code to insert into the file.'),
     }),
@@ -81,9 +86,12 @@ export const writeFile = (pwd: string) =>
       const validation = await validateTypeScriptFile(pwd)
 
       if (!validation.success) {
-        return validation.errors
+        const errorMessage = `BUILD FAILED - TypeScript compilation errors found:\n\n${validation.errors}\n\nPlease fix these errors and call write_file again with corrected code.`
+        console.log('[WRITE_FILE] Error message length:', errorMessage.length)
+        console.log('[WRITE_FILE] ============= END WRITE FILE =============\n')
+        return errorMessage
       }
 
-      return 'success'
+      return 'SUCCESS - File written and TypeScript compilation passed with zero errors.'
     },
   })

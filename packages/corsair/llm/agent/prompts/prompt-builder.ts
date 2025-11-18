@@ -32,14 +32,21 @@ You will export a function with the exact name "${functionName}" - this is the c
 ${instructions ? `These are additional instructions provided by the developer: ${instructions}` : ''}
 
 You have access to two tools:
-  - write_file: Accepts full TypeScript code. Returns build errors for this file or 'success'. The errors field contains TypeScript compilation errors ONLY for this file.
+  - write_file: Accepts full TypeScript code. Returns either 'SUCCESS' or 'BUILD FAILED' with TypeScript compilation errors ONLY for this file.
   - read_file: Returns the current file contents. Use if you want the current version of the code.
 
 This will be your process:
 1. Understand what the intent of the function is based on the name and the additional instructions provided by the developer
 2. Call write_file with your generated code
-3. The write_file tool with either return errors with the code or 'success'
-4. If there are errors, you must call write_file again with the corrected code until you receive 'success' and the code executes what the developer intends
+3. The write_file tool will either return:
+   - 'SUCCESS' - Your code compiled without errors. You are done.
+   - 'BUILD FAILED' - TypeScript compilation errors were found. You MUST fix these errors.
+4. If you receive 'BUILD FAILED', you MUST:
+   - Carefully analyze the error messages
+   - Fix ALL compilation errors and ensure there are no runtime errors
+   - Call write_file again with the corrected code
+   - Continue this process until you receive 'SUCCESS'
+5. Do NOT give up. Keep retrying until the code compiles successfully.
 
 This is the schema of the database. You can access these tables using the ORM.
 <schema>
