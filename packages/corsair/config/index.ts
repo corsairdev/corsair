@@ -19,6 +19,17 @@ export type TableSchema = Record<string, ColumnInfo>
 
 export type SchemaOutput = Record<string, TableSchema>
 
+export type ConnectionConfig =
+  | string
+  | {
+      host: string
+      port?: number
+      username: string
+      password: string
+      database: string
+      ssl?: boolean
+    }
+
 type BasePlugin = Record<'slack', SlackPlugin>
 
 export type BaseConfig = {
