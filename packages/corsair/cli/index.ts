@@ -27,8 +27,8 @@ async function runAgentOperation(
   )
   const { promises: fs } = await import('fs')
 
+  loadEnv('.env.local')
   const cfg = loadConfig()
-  loadEnv(cfg.envFile ?? '.env.local')
 
   const kebabCaseName = toKebabCase(name.trim())
   const camelCaseName = kebabToCamelCase(kebabCaseName)
