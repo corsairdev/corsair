@@ -16,7 +16,8 @@ type OpKind = 'query' | 'mutation'
 async function runAgentOperation(
   kind: OpKind,
   name: string,
-  instructions?: string
+  instructions?: string,
+  update?: boolean
 ) {
   const { loadConfig, loadEnv } = await import('./config.js')
   const { loadSchema } = await import('./schema-loader.js')
@@ -24,6 +25,7 @@ async function runAgentOperation(
   const { promptBuilder } = await import(
     '../llm/agent/prompts/prompt-builder.js'
   )
+  const { promises: fs } = await import('fs')
 
   const cfg = loadConfig()
   loadEnv(cfg.envFile ?? '.env.local')
@@ -36,6 +38,38 @@ async function runAgentOperation(
 
   const schema = await loadSchema()
 
+  let existingCode: string | undefined
+
+  if (update) {
+    try {
+      existingCode = await fs.readFile(pwd, 'utf8')
+      console.log(
+        `\n🔄 Updating existing ${kind} "${camelCaseName}" at ${pwd}...\n`
+      )
+    } catch (error: any) {
+      if (error.code === 'ENOENT') {
+        console.error(
+          `\n❌ Error: ${kind} "${camelCaseName}" does not exist at ${pwd}\n`
+        )
+        process.exit(1)
+      } else {
+        throw error
+      }
+    }
+  } else {
+    try {
+      await fs.access(pwd)
+      console.log(
+        `\n✅ ${kind.charAt(0).toUpperCase() + kind.slice(1)} "${camelCaseName}" already exists at ${pwd}\n`
+      )
+      return
+    } catch (error: any) {
+      if (error.code !== 'ENOENT') {
+        throw error
+      }
+    }
+  }
+
   const prompt = promptBuilder(
     camelCaseName,
     schema,
@@ -45,14 +79,22 @@ async function runAgentOperation(
       operation: kind,
       orm: 'drizzle',
     },
-    instructions
+    instructions,
+    existingCode
   )
 
   const result = await promptAgent(pwd).generate({ prompt })
 
   console.log(
-    `✅ Agent finished generating ${kind} "${camelCaseName}" at ${pwd}.`
+    `\n✅ Agent finished ${update && existingCode ? 'updating' : 'generating'} ${kind} "${camelCaseName}" at ${pwd}.\n`
   )
+
+  if (result.text) {
+    console.log('📋 Agent Report:')
+    console.log('─'.repeat(80))
+    console.log(result.text)
+    console.log('─'.repeat(80))
+  }
 }
 
 const program = new Command()
@@ -99,8 +141,14 @@ program
   .description('Create a new query')
   .requiredOption('-n, --name <name>', 'Operation name')
   .option('-i, --instructions <instructions>', 'Additional instructions')
+  .option('-u, --update', 'Update/regenerate existing query file')
   .action(async options => {
-    await runAgentOperation('query', options.name, options.instructions)
+    await runAgentOperation(
+      'query',
+      options.name,
+      options.instructions,
+      options.update
+    )
   })
 
 program
@@ -108,8 +156,14 @@ program
   .description('Create a new mutation')
   .requiredOption('-n, --name <name>', 'Operation name')
   .option('-i, --instructions <instructions>', 'Additional instructions')
+  .option('-u, --update', 'Update/regenerate existing mutation file')
   .action(async options => {
-    await runAgentOperation('mutation', options.name, options.instructions)
+    await runAgentOperation(
+      'mutation',
+      options.name,
+      options.instructions,
+      options.update
+    )
   })
 
 program.parse()
