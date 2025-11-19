@@ -17,19 +17,48 @@ export const promptBuilder = (
   functionName: string,
   incomingSchema: SchemaOutput,
   config: Config,
-  instructions?: string
+  instructions?: string,
+  existingCode?: string
 ): string => {
   const schema = formattedSchema(incomingSchema)
+  const isUpdate = !!existingCode
+
   return `
-You are a TypeScript developer building out a ${config.operation}.
+You are a TypeScript developer ${isUpdate ? 'updating/regenerating' : 'building out'} a ${config.operation}.
 
 You will be using a ${config.dbType} database, ${config.orm} as the ORM, and this is in a ${config.framework} project. This API is written with tRPC and is used on the client with TanStack query.
 
-Your job is to generate a working TypeScript file for this ${config.operation} that passes TypeScript compilation with zero errors.
+${
+  isUpdate
+    ? `IMPORTANT: You are UPDATING an existing file. The current code is provided below. Your job is to regenerate/update this file based on the new instructions while maintaining the core functionality.
+
+<existing_code>
+${existingCode}
+</existing_code>
+
+${instructions ? `Apply these updates to the existing code: ${instructions}` : 'Regenerate the code with improvements, better types, or bug fixes while maintaining the same functionality.'}
+`
+    : ''
+}
 
 You will export a function with the exact name "${functionName}" - this is the camel case version of the function name.
 
-${instructions ? `These are additional instructions provided by the developer: ${instructions}` : ''}
+Do not use explicit 'any' types. Properly type all variables, parameters, and return values.
+
+${!isUpdate && instructions ? `These are additional instructions provided by the developer: ${instructions}` : ''}
+
+IMPORTANT: At the top of your generated function (before the export), you MUST include a block comment with:
+1. PSEUDO CODE: A step-by-step pseudo code explanation of what the function does
+2. USER INSTRUCTIONS: The raw user instructions if provided${instructions ? ` - in this case: "${instructions}"` : ' (none provided)'}
+
+Format the comment exactly like this:
+/**
+ * PSEUDO CODE:
+ * 1. [step by step logic]
+ * 2. [what the function does]
+ * 
+ * USER INSTRUCTIONS: ${instructions || 'None'}
+ */
 
 You have access to two tools:
   - write_file: Accepts full TypeScript code. Returns either 'SUCCESS' or 'BUILD FAILED' with TypeScript compilation errors ONLY for this file.
@@ -47,6 +76,15 @@ This will be your process:
    - Call write_file again with the corrected code
    - Continue this process until you receive 'SUCCESS'
 5. Do NOT give up. Keep retrying until the code compiles successfully.
+6. After receiving 'SUCCESS', provide a brief summary in this format:
+
+ASSUMPTIONS:
+- [2-3 key assumptions made, be concise]
+
+POTENTIAL ISSUES:
+- [2-3 main concerns or edge cases, be concise]
+
+Keep each point to one line. If there are none, state "None".
 
 This is the schema of the database. You can access these tables using the ORM.
 <schema>
@@ -60,6 +98,14 @@ import { z } from 'zod'
 import { procedure } from '@/corsair/procedure'
 import { eq } from 'drizzle-orm'
 
+/**
+ * PSEUDO CODE:
+ * 1. Accept authorId as input parameter
+ * 2. Query the posts table filtering by author_id
+ * 3. Return all posts that match the authorId
+ * 
+ * USER INSTRUCTIONS: None
+ */
 export const getAllPostsByAuthorId = procedure
   .input(
     z.object({
@@ -82,6 +128,16 @@ import { z } from 'zod'
 import { procedure } from '@/corsair/procedure'
 import { eq, and } from 'drizzle-orm'
 
+/**
+ * PSEUDO CODE:
+ * 1. Accept postId and userId as input parameters
+ * 2. Check if a like already exists for this post and user combination
+ * 3. If like exists, return success with alreadyLiked flag
+ * 4. If like doesn't exist, insert new like record into database
+ * 5. Return success with the newly created like
+ * 
+ * USER INSTRUCTIONS: None
+ */
 export const likePost = procedure
   .input(
     z.object({
