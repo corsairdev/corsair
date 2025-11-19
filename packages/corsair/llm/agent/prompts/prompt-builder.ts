@@ -29,16 +29,15 @@ You are a TypeScript developer ${isUpdate ? 'updating/regenerating' : 'building 
 You will be using a ${config.dbType} database, ${config.orm} as the ORM, and this is in a ${config.framework} project. This API is written with tRPC and is used on the client with TanStack query.
 
 ${
-  isUpdate
-    ? `IMPORTANT: You are UPDATING an existing file. The current code is provided below. Your job is to regenerate/update this file based on the new instructions while maintaining the core functionality.
+  isUpdate &&
+  `IMPORTANT: You are UPDATING an existing file. The current code is provided below. Your job is to regenerate/update this file based on the new instructions while maintaining the core functionality.
 
 <existing_code>
 ${existingCode}
 </existing_code>
 
-${instructions ? `Apply these updates to the existing code: ${instructions}` : 'Regenerate the code with improvements, better types, or bug fixes while maintaining the same functionality.'}
+${instructions ? `Apply these updates to the existing code: "${instructions}". If these contradicts previous instructions, prioritize the new instructions.` : 'Regenerate the code with improvements, better types, or bug fixes while maintaining the same functionality.'}
 `
-    : ''
 }
 
 You will export a function with the exact name "${functionName}" - this is the camel case version of the function name.
@@ -104,7 +103,7 @@ import { eq } from 'drizzle-orm'
  * 2. Query the posts table filtering by author_id
  * 3. Return all posts that match the authorId
  * 
- * USER INSTRUCTIONS: None
+ * USER INSTRUCTIONS: Only return posts where the author matches the authorId
  */
 export const getAllPostsByAuthorId = procedure
   .input(
@@ -136,7 +135,7 @@ import { eq, and } from 'drizzle-orm'
  * 4. If like doesn't exist, insert new like record into database
  * 5. Return success with the newly created like
  * 
- * USER INSTRUCTIONS: None
+ * USER INSTRUCTIONS: Check for existing likes to prevent duplicate entries and return a flag indicating if already liked
  */
 export const likePost = procedure
   .input(
