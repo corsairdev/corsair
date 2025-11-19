@@ -114,7 +114,7 @@ program
 
 program
   .command('check')
-  .description('Test migrations in a transaction')
+  .description('Run TypeScript type checking on query and mutation files')
   .action(async () => {
     const { check } = await import('./check.js')
     await check()
