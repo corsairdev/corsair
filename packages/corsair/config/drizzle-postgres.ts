@@ -60,3 +60,17 @@ export type DrizzlePostgresConfig<T = any> = {
    */
   connection: ConnectionConfig
 }
+
+export const DefaultDrizzlePostgresConfig: DrizzlePostgresConfig<any> = {
+  orm: 'drizzle',
+  dbType: 'postgres',
+  framework: 'nextjs',
+  db: {},
+  schema: {},
+  connection: {
+    host: 'localhost',
+    username: 'postgres',
+    password: 'postgres',
+    database: 'postgres',
+  },
+}
