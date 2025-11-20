@@ -38,25 +38,7 @@ async function runAgentOperation(
 
   const schema = await loadSchema()
 
-  let existingCode: string | undefined
-
-  if (update) {
-    try {
-      existingCode = await fs.readFile(pwd, 'utf8')
-      console.log(
-        `\n🔄 Updating existing ${kind} "${camelCaseName}" at ${pwd}...\n`
-      )
-    } catch (error: any) {
-      if (error.code === 'ENOENT') {
-        console.error(
-          `\n❌ Error: ${kind} "${camelCaseName}" does not exist at ${pwd}\n`
-        )
-        process.exit(1)
-      } else {
-        throw error
-      }
-    }
-  } else {
+  if (!update) {
     try {
       await fs.access(pwd)
       console.log(
@@ -70,23 +52,22 @@ async function runAgentOperation(
     }
   }
 
-  const prompt = promptBuilder(
-    camelCaseName,
-    schema,
-    {
+  const prompt = promptBuilder({
+    functionName: camelCaseName,
+    incomingSchema: schema,
+    config: {
       dbType: 'postgres',
       framework: 'nextjs',
       operation: kind,
       orm: 'drizzle',
     },
     instructions,
-    existingCode
-  )
+  })
 
   const result = await promptAgent(pwd).generate({ prompt })
 
   console.log(
-    `\n✅ Agent finished ${update && existingCode ? 'updating' : 'generating'} ${kind} "${camelCaseName}" at ${pwd}.\n`
+    `\n✅ Agent finished ${update ? 'updating' : 'generating'} ${kind} "${camelCaseName}" at ${pwd}.\n`
   )
 
   if (result.text) {
