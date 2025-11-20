@@ -9,8 +9,12 @@ const execAsync = promisify(exec)
 export async function check() {
   const cfg = loadConfig()
 
-  const queriesPath = resolve(process.cwd(), cfg.paths.queries)
-  const mutationsPath = resolve(process.cwd(), cfg.paths.mutations)
+  const queriesPath = resolve(process.cwd(), cfg.pathToCorsairFolder, 'queries')
+  const mutationsPath = resolve(
+    process.cwd(),
+    cfg.pathToCorsairFolder,
+    'mutations'
+  )
 
   const allFiles: string[] = []
 

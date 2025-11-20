@@ -44,7 +44,7 @@ export async function watch(): Promise<void> {
 
   // Load environment variables first
   const cfg = loadConfig()
-  loadEnv(cfg.envFile ?? '.env.local')
+  loadEnv('.env.local')
 
   const project = new Project({
     tsConfigFilePath: 'tsconfig.json',

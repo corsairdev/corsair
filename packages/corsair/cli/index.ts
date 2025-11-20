@@ -68,11 +68,13 @@ async function runAgentOperation(
 
   loadEnv('.env.local')
   const cfg = loadConfig()
-
   const kebabCaseName = toKebabCase(name.trim())
   const camelCaseName = kebabToCamelCase(kebabCaseName)
 
-  const baseDir = kind === 'query' ? cfg.paths.queries : cfg.paths.mutations
+  const baseDir =
+    kind === 'query'
+      ? cfg.pathToCorsairFolder + '/queries'
+      : cfg.pathToCorsairFolder + '/mutations'
   const pwd = `${baseDir}/${kebabCaseName}.ts`
 
   const schema = await loadSchema()
@@ -96,10 +98,10 @@ async function runAgentOperation(
     functionName: camelCaseName,
     incomingSchema: schema,
     config: {
-      dbType: 'postgres',
-      framework: 'nextjs',
+      dbType: cfg.dbType,
+      framework: cfg.framework,
       operation: kind,
-      orm: 'drizzle',
+      orm: cfg.orm,
     },
     instructions,
   })
