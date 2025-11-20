@@ -1,82 +1,83 @@
-import { Pool } from 'pg'
-import { existsSync, readdirSync, readFileSync } from 'fs'
+import { existsSync, readdirSync } from 'fs'
 import { resolve, join } from 'path'
-import { loadConfig, loadEnv, checkDatabaseUrl } from './config.js'
+import { loadConfig } from './config.js'
+import { exec } from 'child_process'
+import { promisify } from 'util'
+
+const execAsync = promisify(exec)
 
 export async function check() {
   const cfg = loadConfig()
-  loadEnv(cfg.envFile ?? '.env.local')
-  checkDatabaseUrl()
 
-  console.log('🔍 Testing migration in a transaction (will rollback)...\n')
+  const queriesPath = resolve(process.cwd(), cfg.paths.queries)
+  const mutationsPath = resolve(process.cwd(), cfg.paths.mutations)
 
-  const pool = new Pool({
-    connectionString: process.env.DATABASE_URL,
-  })
+  const allFiles: string[] = []
 
-  const client = await pool.connect()
+  if (existsSync(queriesPath)) {
+    const queryFiles = readdirSync(queriesPath)
+      .filter(file => file.endsWith('.ts') && file !== 'index.ts')
+      .map(file => join(queriesPath, file))
+    allFiles.push(...queryFiles)
+  }
+
+  if (existsSync(mutationsPath)) {
+    const mutationFiles = readdirSync(mutationsPath)
+      .filter(file => file.endsWith('.ts') && file !== 'index.ts')
+      .map(file => join(mutationsPath, file))
+    allFiles.push(...mutationFiles)
+  }
+
+  if (allFiles.length === 0) {
+    console.log('❌ No query or mutation files found to check')
+    process.exit(1)
+  }
+
+  console.log(`🔍 Checking TypeScript types for ${allFiles.length} files...\n`)
+
+  let output = ''
 
   try {
-    await client.query('BEGIN')
-
-    const sqlPath = resolve(process.cwd(), 'corsair/sql')
-
-    if (!existsSync(sqlPath)) {
-      console.log(`❌ No migration files found in ${sqlPath}`)
-      await client.query('ROLLBACK')
-      client.release()
-      await pool.end()
-      process.exit(1)
-    }
-
-    const files = readdirSync(sqlPath)
-    const sqlFiles = files
-      .filter(file => file.endsWith('.sql'))
-      .sort()
-      .map(file => join(sqlPath, file))
-
-    if (sqlFiles.length === 0) {
-      console.log(`❌ No migration files found in ${sqlPath}`)
-      await client.query('ROLLBACK')
-      client.release()
-      await pool.end()
-      process.exit(1)
-    }
-
-    for (const file of sqlFiles) {
-      const migrationSQL = readFileSync(file, 'utf-8')
-      const fileName = file.split('/').pop()
-
-      try {
-        await client.query(migrationSQL)
-        console.log(`✅ ${fileName} - No errors detected\n`)
-      } catch (error: any) {
-        console.log(`❌ ${fileName} - ERROR DETECTED:\n`)
-        console.error(`   ${error.message}\n`)
-        await client.query('ROLLBACK')
-        console.log('🚨 Migration test failed!')
-        console.log('   Fix the errors above before running the migration.\n')
-        client.release()
-        await pool.end()
-        process.exit(1)
-      }
-    }
-
-    await client.query('ROLLBACK')
-    console.log('✨ Migration test passed!')
-    console.log('   No errors detected. Safe to apply.\n')
-
-    client.release()
-    await pool.end()
+    const result = await execAsync('npx tsc --noEmit --pretty false 2>&1', {
+      cwd: process.cwd(),
+    })
+    output = result.stdout || ''
   } catch (error: any) {
-    console.error('❌ Unexpected error:', error.message)
-    try {
-      await client.query('ROLLBACK')
-    } catch (rollbackError) {
-      // Ignore rollback errors
+    output = (error.stdout || '') + (error.stderr || '')
+  }
+
+  const errors: { file: string; errors: string[] }[] = []
+
+  for (const file of allFiles) {
+    const normalizedPath = file.replace(resolve(process.cwd()) + '/', '')
+    const fileName = file.split('/').pop()!
+
+    const fileErrors = output
+      .split('\n')
+      .filter(
+        line =>
+          line.trim() &&
+          (line.includes(normalizedPath) || line.includes(fileName))
+      )
+      .filter(line => line.includes('error TS'))
+
+    if (fileErrors.length > 0) {
+      errors.push({ file, errors: fileErrors })
     }
-    client.release()
-    await pool.end()
+  }
+
+  if (errors.length > 0) {
+    console.log('❌ Type errors found:\n')
+    errors.forEach(result => {
+      const fileName = result.file.split('/').pop()
+      console.log(`📄 ${fileName}:`)
+      result.errors.forEach(error => {
+        console.log(`   ${error}`)
+      })
+      console.log()
+    })
     process.exit(1)
+  } else {
+    console.log('✅ All files passed type checking!')
   }
 }
