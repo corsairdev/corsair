@@ -13,6 +13,45 @@ import { kebabToCamelCase, toKebabCase } from './utils.js'
 
 type OpKind = 'query' | 'mutation'
 
+class Spinner {
+  private frames = ['⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏']
+  private interval: NodeJS.Timeout | null = null
+  private currentFrame = 0
+  private text = ''
+
+  start(text: string) {
+    this.text = text
+    this.currentFrame = 0
+
+    process.stdout.write('\x1B[?25l')
+
+    this.interval = setInterval(() => {
+      const frame = this.frames[this.currentFrame]
+      process.stdout.write(`\r${frame} ${this.text}`)
+      this.currentFrame = (this.currentFrame + 1) % this.frames.length
+    }, 80)
+  }
+
+  succeed(text: string) {
+    this.stop()
+    console.log(`\r✅ ${text}`)
+  }
+
+  fail(text: string) {
+    this.stop()
+    console.log(`\r❌ ${text}`)
+  }
+
+  stop() {
+    if (this.interval) {
+      clearInterval(this.interval)
+      this.interval = null
+    }
+    process.stdout.write('\r\x1B[K')
+    process.stdout.write('\x1B[?25h')
+  }
+}
+
 async function runAgentOperation(
   kind: OpKind,
   name: string,
@@ -42,8 +81,9 @@ async function runAgentOperation(
     try {
       await fs.access(pwd)
       console.log(
-        `\n✅ ${kind.charAt(0).toUpperCase() + kind.slice(1)} "${camelCaseName}" already exists at ${pwd}\n`
+        `\n❌ ${kind.charAt(0).toUpperCase() + kind.slice(1)} "${camelCaseName}" already exists at ${pwd}`
       )
+      console.log(`💡 Use -u flag to update the existing ${kind}\n`)
       return
     } catch (error: any) {
       if (error.code !== 'ENOENT') {
@@ -64,17 +104,38 @@ async function runAgentOperation(
     instructions,
   })
 
-  const result = await promptAgent(pwd).generate({ prompt })
+  const spinner = new Spinner()
+  const startTime = Date.now()
 
-  console.log(
-    `\n✅ Agent finished ${update ? 'updating' : 'generating'} ${kind} "${camelCaseName}" at ${pwd}.\n`
-  )
+  try {
+    spinner.start(
+      `🤖 AI Agent is ${update ? 'updating' : 'generating'} ${kind} "${camelCaseName}"...`
+    )
 
-  if (result.text) {
-    console.log('📋 Agent Report:')
-    console.log('─'.repeat(80))
-    console.log(result.text)
-    console.log('─'.repeat(80))
+    const result = await promptAgent(pwd).generate({ prompt })
+
+    const elapsedSeconds = Math.round((Date.now() - startTime) / 1000)
+    const timeStr =
+      elapsedSeconds < 60
+        ? `${elapsedSeconds}s`
+        : `${Math.floor(elapsedSeconds / 60)}m ${elapsedSeconds % 60}s`
+
+    spinner.succeed(
+      `Agent finished ${update ? 'updating' : 'generating'} ${kind} "${camelCaseName}" at ${pwd} (${timeStr})`
+    )
+
+    if (result.text) {
+      console.log('\n📋 Agent Report:')
+      console.log('─'.repeat(80))
+      console.log(result.text)
+      console.log('─'.repeat(80))
+      console.log()
+    }
+  } catch (error) {
+    spinner.fail(
+      `Failed to ${update ? 'update' : 'generate'} ${kind} "${camelCaseName}"`
+    )
+    throw error
   }
 }
 
