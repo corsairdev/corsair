@@ -40,11 +40,16 @@ Do not use explicit 'any' types. Properly type all variables, parameters, and re
 ${instructions ? `These are additional instructions provided by the developer: ${instructions}` : ''}
 
 IMPORTANT: At the top of your generated function (before the export), you MUST include a block comment with:
-1. PSEUDO CODE: A step-by-step pseudo code explanation of what the function does
-2. USER INSTRUCTIONS: The raw user instructions if provided${instructions ? ` - in this case: "${instructions}"` : ' (none provided)'}
+1. INPUT: The input parameters and their types
+2. OUTPUT: The return type and structure
+3. PSEUDO CODE: A step-by-step pseudo code explanation of what the function does
+4. USER INSTRUCTIONS: The raw user instructions if provided${instructions ? ` - in this case: "${instructions}"` : ' (none provided)'}
 
 Format the comment exactly like this:
 /**
+ * INPUT: { param1: type, param2: type }
+ * OUTPUT: { field1: type, field2: type } or Type
+ * 
  * PSEUDO CODE:
  * 1. [step by step logic]
  * 2. [what the function does]
@@ -73,6 +78,12 @@ This will be your process:
 6. Do NOT give up. Keep retrying until the code compiles successfully.
 7. After receiving 'SUCCESS', provide a brief summary in this format:
 
+INPUT TYPES:
+- [list input parameters and their types]
+
+OUTPUT TYPES:
+- [describe return type and structure]
+
 ASSUMPTIONS:
 - [2-3 key assumptions made, be concise]
 
@@ -94,6 +105,9 @@ import { procedure } from '@/corsair/procedure'
 import { eq } from 'drizzle-orm'
 
 /**
+ * INPUT: { authorId: string }
+ * OUTPUT: Array<Post>
+ * 
  * PSEUDO CODE:
  * 1. Accept authorId as input parameter
  * 2. Query the posts table filtering by author_id
@@ -124,6 +138,9 @@ import { procedure } from '@/corsair/procedure'
 import { eq, and } from 'drizzle-orm'
 
 /**
+ * INPUT: { postId: string, userId: string }
+ * OUTPUT: { success: boolean, alreadyLiked: boolean, like?: Like }
+ * 
  * PSEUDO CODE:
  * 1. Accept postId and userId as input parameters
  * 2. Check if a like already exists for this post and user combination
