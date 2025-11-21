@@ -910,10 +910,6 @@ class StateMachine {
     const newOperation = this.state.context.newOperation
     const llmResponse = this.state.context.llmResponse
 
-    console.log('\n🎯 [DEBUG] handleAcceptLLMResponse called')
-    console.log('newOperation:', newOperation)
-    console.log('llmResponse:', llmResponse)
-
     if (newOperation && llmResponse) {
       const id = `${newOperation.operationType}:${newOperation.operationName}`
       const list = this.state.context.unfinishedOperations || []
@@ -923,36 +919,16 @@ class StateMachine {
         })
       }
       this.addHistoryEntry(
-        'LLM suggestions accepted',
+        'Operation accepted',
         undefined,
-        `Accepted configuration for ${newOperation.operationName}`
+        `Accepted ${newOperation.operationName} (file already written by agent)`
       )
-
-      console.log('\n📤 [DEBUG] Emitting write_operation_to_file event')
-      console.log('Event args:', {
-        operation: newOperation,
-        llmResponse: llmResponse,
-      })
-
-      eventBus.emit(CorsairEvent.USER_COMMAND, {
-        command: 'write_operation_to_file',
-        args: {
-          operation: newOperation,
-          llmResponse: llmResponse,
-        },
-      })
-
-      console.log('✅ [DEBUG] Event emitted successfully')
 
       this.transition(CorsairState.IDLE, {
         newOperation: undefined,
         llmResponse: undefined,
         availableActions: ['help', 'quit'],
       })
-    } else {
-      console.log('❌ [DEBUG] Missing newOperation or llmResponse')
-      console.log('newOperation exists:', !!newOperation)
-      console.log('llmResponse exists:', !!llmResponse)
     }
   }
 }

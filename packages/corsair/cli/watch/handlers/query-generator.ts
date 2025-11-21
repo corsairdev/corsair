@@ -11,10 +11,12 @@ import { generateQueryWithLLM } from '../generators/llm-generator.js'
 import { fileWriteHandler } from './file-write-handler.js'
 import type { Query, SchemaDefinition } from '../types/state.js'
 import { stateMachine } from '../core/state-machine.js'
-import { llm } from '../../../llm/index.js'
 import { z } from 'zod'
-import { operationGeneratorPrompt } from '../../../llm/prompts/operation-generator.js'
 import type { SchemaLoadedEvent, SchemaUpdatedEvent } from '../types/events.js'
+import { promptAgent } from '../../../llm/agent/index.js'
+import { promptBuilder } from '../../../llm/agent/prompts/prompt-builder.js'
+import { kebabToCamelCase, toKebabCase } from '../../utils.js'
+import { loadConfig, getResolvedPaths } from '../../config.js'
 
 /**
  * Query Generator Handler
@@ -225,194 +227,49 @@ export default ${generatedQuery.functionName};
     lineNumber: number
     configurationRules?: string
   }) {
-    let schema = stateMachine.getSchema() || this.schema
-    if (!schema) {
-      schema = { tables: [] }
-    }
+    const schema = stateMachine.getSchema() || this.schema
+    const cfg = loadConfig()
+    const paths = getResolvedPaths(cfg)
+
+    const kebabName = toKebabCase(operation.operationName)
+    const camelName = kebabToCamelCase(kebabName)
+    const baseDir =
+      operation.operationType === 'query'
+        ? paths.queriesDir
+        : paths.mutationsDir
+    const rawPwd = `${baseDir}/${kebabName}.ts`
+    const pwd = rawPwd.startsWith('./') ? rawPwd.slice(2) : rawPwd
+
     try {
-      // Create a detailed prompt for the LLM
-      const message = operationGeneratorPrompt({
-        schema,
-        type: operation.operationType,
-        name: operation.operationName,
+      const prompt = promptBuilder({
+        functionName: camelName,
+        incomingSchema: schema as any,
+        config: {
+          dbType: cfg.dbType,
+          framework: cfg.framework,
+          operation: operation.operationType,
+          orm: cfg.orm,
+        },
+        instructions: operation.configurationRules || operation.prompt,
       })
 
-      // Get the provider from environment variable or default to "openai"
-      const provider = 'openai'
+      const result = await promptAgent(pwd).generate({ prompt })
 
-      // Call the LLM
-      const response = await llm({
-        provider,
-        prompt: `You are an expert TypeScript developer specializing in Corsair framework operations and Drizzle ORM. Your task is to generate high-quality, type-safe database operation handlers.
-
-## Core Responsibilities
-Generate the \`input_type\` Zod schema and \`handler\` function for Corsair queries and mutations that:
-- Use Drizzle ORM patterns correctly
-- Handle database relationships and joins properly
-- Follow TypeScript and Corsair best practices
-- Include proper error handling and validation
-- Are performant and secure
-
-## Corsair Operation Structure
-Each operation has this structure:
-\`\`\`typescript
-const operation = createQuery<DatabaseContext>()({
-  prompt: "natural language description",
-  input_type: z.object({ /* Zod schema */ }),
-  dependencies: { tables: [...], columns: [...] },
-  handler: async ({ input, ctx }) => {
-    // Your generated code here
-    return result;
-  }
-});
-\`\`\`
-
-## Drizzle ORM Patterns
-
-### Basic Operations
-\`\`\`typescript
-// Select all
-const items = await ctx.db.select().from(ctx.db._.fullSchema.tableName);
-
-// Select with where
-const item = await ctx.db
-  .select()
-  .from(ctx.db._.fullSchema.tableName)
-  .where(eq(ctx.schema.tableName.columns.id, input.id))
-  .limit(1);
-
-// Insert
-const [newItem] = await ctx.db
-  .insert(ctx.db._.fullSchema.tableName)
-  .values(input)
-  .returning();
-
-// Update
-const [updatedItem] = await ctx.db
-  .update(ctx.db._.fullSchema.tableName)
-  .set(input)
-  .where(eq(ctx.schema.tableName.columns.id, input.id))
-  .returning();
-\`\`\`
-
-### Joins and Relationships
-\`\`\`typescript
-// Inner join
-const results = await ctx.db
-  .select({
-    // Select specific fields
-    itemId: ctx.schema.items.columns.id,
-    itemName: ctx.schema.items.columns.name,
-    relatedData: ctx.schema.related.columns.data
-  })
-  .from(ctx.db._.fullSchema.items)
-  .innerJoin(
-    ctx.db._.fullSchema.related,
-    eq(ctx.schema.items.columns.id, ctx.schema.related.columns.item_id)
-  )
-  .where(eq(ctx.schema.items.columns.id, input.id));
-
-// Complex joins with grouping
-const albumWithArtists = await ctx.db
-  .select({
-    albumId: ctx.schema.albums.columns.id,
-    albumName: ctx.schema.albums.columns.name,
-    artist: {
-      id: ctx.schema.artists.columns.id,
-      name: ctx.schema.artists.columns.name,
-    }
-  })
-  .from(ctx.db._.fullSchema.albums)
-  .innerJoin(ctx.db._.fullSchema.album_artists, eq(ctx.schema.albums.columns.id, ctx.schema.album_artists.columns.album_id))
-  .innerJoin(ctx.db._.fullSchema.artists, eq(ctx.schema.album_artists.columns.artist_id, ctx.schema.artists.columns.id))
-  .where(eq(ctx.schema.albums.columns.id, input.id));
-\`\`\`
-
-### Search and Filtering
-\`\`\`typescript
-// Text search
-const results = await ctx.db
-  .select()
-  .from(ctx.db._.fullSchema.tableName)
-  .where(ilike(ctx.schema.tableName.columns.name, \`%\${input.query}%\`));
-
-// Multiple conditions
-const results = await ctx.db
-  .select()
-  .from(ctx.db._.fullSchema.tableName)
-  .where(
-    and(
-      eq(ctx.schema.tableName.columns.status, 'active'),
-      gte(ctx.schema.tableName.columns.created_at, input.since)
-    )
-  );
-\`\`\`
-
-## Input Type Guidelines
-- Use descriptive property names
-- Include proper validation (min, max, optional, etc.)
-- For IDs: \`z.string()\` or \`z.string().uuid()\`
-- For search: \`z.string().min(1)\`
-- For numbers: \`z.number().min(0)\` etc.
-- For optional fields: \`z.string().optional()\`
-
-## Error Handling Patterns
-\`\`\`typescript
-// Handle missing records
-const [item] = await ctx.db.select()...;
-if (!item) {
-  return null; // or throw error depending on use case
-}
-
-// Handle array results
-if (results.length === 0) {
-  return []; // return empty array for lists
-}
-\`\`\`
-
-## Performance Tips
-- Use \`.limit(1)\` for single record queries
-- Select only needed columns in joins
-- Use appropriate indexes in where clauses
-- Avoid N+1 queries by using joins
-
-## Response Format
-Return exactly this JSON structure:
-{
-  "input_type": "z.object({ id: z.string(), ... })",
-  "function": "async ({ input, ctx }) => { /* complete handler code */ }",
-  "notes": "Additional implementation details or considerations",
-  "pseudocode": "Step-by-step pseudocode of the handler: inputs, process, outputs",
-  "function_name": "conciseUniqueFunctionName or concise-unique-function-name"
-}
-
-The \`input_type\` should be a valid Zod schema string.
-The \`function\` should be a complete async handler implementation.
-The \`notes\` should explain any complex logic or important considerations.
-Provide clear \`pseudocode\` covering parameters, validation, database interactions, and the returned shape.
-Ensure \`function_name\` is unique, descriptive, and suitable for a filename.`,
-        schema: this.llmResponseSchema,
-        message,
+      eventBus.emit(CorsairEvent.LLM_ANALYSIS_COMPLETE, {
+        operationName: operation.operationName,
+        operationType: operation.operationType,
+        response: {
+          input_type: 'Generated by agent',
+          output_type: 'Generated by agent',
+          function: 'Generated by agent',
+          notes: result.text || 'Agent completed generation',
+          pseudocode: '',
+          function_name: camelName,
+        },
+        operation,
       })
-
-      if (response) {
-        // Process successful LLM response
-        eventBus.emit(CorsairEvent.LLM_ANALYSIS_COMPLETE, {
-          operationName: operation.operationName,
-          operationType: operation.operationType,
-          response,
-          operation,
-        })
-      } else {
-        // Handle LLM failure
-        eventBus.emit(CorsairEvent.LLM_ANALYSIS_FAILED, {
-          operationName: operation.operationName,
-          operationType: operation.operationType,
-          error: 'LLM analysis failed - no response received',
-        })
-      }
     } catch (error) {
-      console.error('LLM processing error:', error)
+      console.error('Agent processing error:', error)
 
       eventBus.emit(CorsairEvent.LLM_ANALYSIS_FAILED, {
         operationName: operation.operationName,
