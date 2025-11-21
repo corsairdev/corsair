@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 
 import { Command } from 'commander'
+import { promises as fs } from 'fs'
+import { join } from 'path'
 import { kebabToCamelCase, toKebabCase } from './utils.js'
 
 // developer prompts with something like "pnpm corsair query -n 'get all albums by artist id' -i 'make sure to return in descending order alphabetically'"
@@ -12,6 +14,19 @@ import { kebabToCamelCase, toKebabCase } from './utils.js'
 // if there are any error while building the generated file, give the errors back to llm to correct them
 
 type OpKind = 'query' | 'mutation'
+
+async function sortIndexFile(indexPath: string) {
+  try {
+    const content = await fs.readFile(indexPath, 'utf8')
+    const lines = content.split('\n').filter(line => line.trim())
+    const sortedLines = lines.sort((a, b) => a.localeCompare(b))
+    await fs.writeFile(indexPath, sortedLines.join('\n') + '\n')
+  } catch (error: any) {
+    if (error?.code !== 'ENOENT') {
+      throw error
+    }
+  }
+}
 
 class Spinner {
   private frames = ['⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏']
@@ -115,6 +130,9 @@ async function runAgentOperation(
     )
 
     const result = await promptAgent(pwd).generate({ prompt })
+
+    const indexPath = join(baseDir, 'index.ts')
+    await sortIndexFile(indexPath)
 
     const elapsedSeconds = Math.round((Date.now() - startTime) / 1000)
     const timeStr =
