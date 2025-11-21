@@ -57,7 +57,7 @@ export async function generate() {
 
   const cfg = loadConfig()
   loadEnv(cfg.envFile ?? '.env.local')
-  checkDatabaseUrl()
+  checkDatabaseUrl(cfg.connection)
 
   const { schemaFile } = getResolvedPaths(cfg)
   const outPath = resolve(process.cwd(), cfg.out!)

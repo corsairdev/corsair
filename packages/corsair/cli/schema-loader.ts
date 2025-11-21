@@ -1,4 +1,4 @@
-import { SchemaOutput, ColumnInfo, ConnectionConfig } from '../config'
+import { SchemaOutput, ColumnInfo, ConnectionConfig } from '../config/index.js'
 import { loadConfig, loadEnv } from './config.js'
 import { Client, ClientConfig } from 'pg'
 import { resolve } from 'path'
@@ -44,7 +44,7 @@ function buildClientConfig(connection: ConnectionConfig): ClientConfig {
 
 export const loadSchema = async (): Promise<SchemaOutput> => {
   const cfg = loadConfig()
-  loadEnv(cfg.envFile ?? '.env.local')
+  loadEnv('.env.local')
 
   const runtimeConfig = await loadRuntimeConfig()
   let clientConfig: ClientConfig

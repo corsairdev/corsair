@@ -5,8 +5,8 @@ import { loadConfig, loadEnv, checkDatabaseUrl } from './config.js'
 
 export async function migrate() {
   const cfg = loadConfig()
-  loadEnv(cfg.envFile ?? '.env.local')
-  checkDatabaseUrl()
+  loadEnv('.env.local')
+  checkDatabaseUrl(cfg.connection)
 
   console.log(
     '🔍 Running migration in a transaction (will rollback on error)...\n'

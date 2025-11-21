@@ -52,3 +52,8 @@ export type BaseConfig = {
  */
 export type CorsairConfig<T> = BaseConfig &
   (DrizzlePostgresConfig<T> | PrismaPostgresConfig<T>)
+
+export const DefaultBaseConfig: BaseConfig = {
+  apiEndpoint: 'api/corsair',
+  pathToCorsairFolder: './corsair',
+}

@@ -13,45 +13,43 @@ type Config = {
   operation: 'query' | 'mutation'
 }
 
-export const promptBuilder = (
-  functionName: string,
-  incomingSchema: SchemaOutput,
-  config: Config,
-  instructions?: string,
-  existingCode?: string
-): string => {
+type PromptBuilderParams = {
+  functionName: string
+  incomingSchema: SchemaOutput
+  config: Config
+  instructions?: string
+}
+
+export const promptBuilder = ({
+  functionName,
+  incomingSchema,
+  config,
+  instructions,
+}: PromptBuilderParams): string => {
   const schema = formattedSchema(incomingSchema)
-  const isUpdate = !!existingCode
 
   return `
-You are a TypeScript developer ${isUpdate ? 'updating/regenerating' : 'building out'} a ${config.operation}.
+You are a TypeScript developer building out or updating a ${config.operation}.
 
 You will be using a ${config.dbType} database, ${config.orm} as the ORM, and this is in a ${config.framework} project. This API is written with tRPC and is used on the client with TanStack query.
-
-${
-  isUpdate &&
-  `IMPORTANT: You are UPDATING an existing file. The current code is provided below. Your job is to regenerate/update this file based on the new instructions while maintaining the core functionality.
-
-<existing_code>
-${existingCode}
-</existing_code>
-
-${instructions ? `Apply these updates to the existing code: "${instructions}". If these contradicts previous instructions, prioritize the new instructions.` : 'Regenerate the code with improvements, better types, or bug fixes while maintaining the same functionality.'}
-`
-}
 
 You will export a function with the exact name "${functionName}" - this is the camel case version of the function name.
 
 Do not use explicit 'any' types. Properly type all variables, parameters, and return values.
 
-${!isUpdate && instructions ? `These are additional instructions provided by the developer: ${instructions}` : ''}
+${instructions ? `These are additional instructions provided by the developer: ${instructions}` : ''}
 
 IMPORTANT: At the top of your generated function (before the export), you MUST include a block comment with:
-1. PSEUDO CODE: A step-by-step pseudo code explanation of what the function does
-2. USER INSTRUCTIONS: The raw user instructions if provided${instructions ? ` - in this case: "${instructions}"` : ' (none provided)'}
+1. INPUT: The input parameters and their types
+2. OUTPUT: The return type and structure
+3. PSEUDO CODE: A step-by-step pseudo code explanation of what the function does
+4. USER INSTRUCTIONS: The raw user instructions if provided${instructions ? ` - in this case: "${instructions}"` : ' (none provided)'}
 
 Format the comment exactly like this:
 /**
+ * INPUT: { param1: type, param2: type }
+ * OUTPUT: { field1: type, field2: type } or Type
+ * 
  * PSEUDO CODE:
  * 1. [step by step logic]
  * 2. [what the function does]
@@ -60,22 +58,31 @@ Format the comment exactly like this:
  */
 
 You have access to two tools:
+  - read_file: Returns the current file contents. Use this FIRST to check if the file already exists.
   - write_file: Accepts full TypeScript code. Returns either 'SUCCESS' or 'BUILD FAILED' with TypeScript compilation errors ONLY for this file.
-  - read_file: Returns the current file contents. Use if you want the current version of the code.
 
 This will be your process:
-1. Understand what the intent of the function is based on the name and the additional instructions provided by the developer
-2. Call write_file with your generated code
-3. The write_file tool will either return:
+1. FIRST, call read_file to check if the file already exists
+   - If the file exists and has code, you are UPDATING it. Maintain the core functionality while applying any new instructions.
+   - If the file doesn't exist or is empty, you are CREATING new code from scratch.
+2. Understand what the intent of the function is based on the name and the additional instructions provided by the developer
+3. Call write_file with your generated code
+4. The write_file tool will either return:
    - 'SUCCESS' - Your code compiled without errors. You are done.
    - 'BUILD FAILED' - TypeScript compilation errors were found. You MUST fix these errors.
-4. If you receive 'BUILD FAILED', you MUST:
+5. If you receive 'BUILD FAILED', you MUST:
    - Carefully analyze the error messages
    - Fix ALL compilation errors and ensure there are no runtime errors
    - Call write_file again with the corrected code
    - Continue this process until you receive 'SUCCESS'
-5. Do NOT give up. Keep retrying until the code compiles successfully.
-6. After receiving 'SUCCESS', provide a brief summary in this format:
+6. Do NOT give up. Keep retrying until the code compiles successfully.
+7. After receiving 'SUCCESS', provide a brief summary in this format:
+
+INPUT TYPES:
+- [list input parameters and their types]
+
+OUTPUT TYPES:
+- [describe return type and structure]
 
 ASSUMPTIONS:
 - [2-3 key assumptions made, be concise]
@@ -98,6 +105,9 @@ import { procedure } from '@/corsair/procedure'
 import { eq } from 'drizzle-orm'
 
 /**
+ * INPUT: { authorId: string }
+ * OUTPUT: Array<Post>
+ * 
  * PSEUDO CODE:
  * 1. Accept authorId as input parameter
  * 2. Query the posts table filtering by author_id
@@ -128,6 +138,9 @@ import { procedure } from '@/corsair/procedure'
 import { eq, and } from 'drizzle-orm'
 
 /**
+ * INPUT: { postId: string, userId: string }
+ * OUTPUT: { success: boolean, alreadyLiked: boolean, like?: Like }
+ * 
  * PSEUDO CODE:
  * 1. Accept postId and userId as input parameters
  * 2. Check if a like already exists for this post and user combination

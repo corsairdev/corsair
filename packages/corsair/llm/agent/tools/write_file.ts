@@ -19,7 +19,7 @@ async function updateBarrelFile(targetPath: string) {
     return
   }
 
-  const exportLine = `export * from './${fileName}'\n`
+  const exportLine = `export * from './${fileName}'`
   const barrelCandidates = ['index.ts', '@index.ts']
 
   let updatedExisting = false
@@ -29,16 +29,22 @@ async function updateBarrelFile(targetPath: string) {
 
     try {
       const existing = await fs.readFile(barrelPath, 'utf8')
-      if (!existing.includes(exportLine)) {
-        await fs.appendFile(barrelPath, exportLine)
+      const lines = existing.split('\n').filter(line => line.trim())
+
+      if (!lines.includes(exportLine)) {
+        lines.push(exportLine)
       }
+
+      const sortedLines = lines.sort((a, b) => a.localeCompare(b))
+      await fs.writeFile(barrelPath, sortedLines.join('\n') + '\n')
+
       updatedExisting = true
     } catch {}
   }
 
   if (!updatedExisting) {
     const barrelPath = path.join(dir, 'index.ts')
-    await fs.writeFile(barrelPath, exportLine)
+    await fs.writeFile(barrelPath, exportLine + '\n')
   }
 }
 

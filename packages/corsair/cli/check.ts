@@ -9,8 +9,12 @@ const execAsync = promisify(exec)
 export async function check() {
   const cfg = loadConfig()
 
-  const queriesPath = resolve(process.cwd(), cfg.paths.queries)
-  const mutationsPath = resolve(process.cwd(), cfg.paths.mutations)
+  const queriesPath = resolve(process.cwd(), cfg.pathToCorsairFolder, 'queries')
+  const mutationsPath = resolve(
+    process.cwd(),
+    cfg.pathToCorsairFolder,
+    'mutations'
+  )
 
   const allFiles: string[] = []
 
@@ -68,14 +72,25 @@ export async function check() {
 
   if (errors.length > 0) {
     console.log('❌ Type errors found:\n')
+
+    const totalErrors = errors.reduce(
+      (sum, result) => sum + result.errors.length,
+      0
+    )
+
     errors.forEach(result => {
       const fileName = result.file.split('/').pop()
-      console.log(`📄 ${fileName}:`)
-      result.errors.forEach(error => {
-        console.log(`   ${error}`)
-      })
-      console.log()
+      const errorCount = result.errors.length
+      console.log(
+        `📄 ${fileName}: ${errorCount} error${errorCount > 1 ? 's' : ''}`
+      )
     })
+
+    console.log(
+      `\n📊 Total: ${totalErrors} error${totalErrors > 1 ? 's' : ''} in ${errors.length} file${errors.length > 1 ? 's' : ''}`
+    )
+    console.log('\n💡 Run "corsair fix" to automatically fix these errors\n')
+
     process.exit(1)
   } else {
     console.log('✅ All files passed type checking!')
