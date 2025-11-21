@@ -2,7 +2,11 @@ import { existsSync } from 'fs'
 import { resolve } from 'path'
 import { config } from 'dotenv'
 import { Project, SyntaxKind, Node } from 'ts-morph'
-import { CorsairConfig, DefaultBaseConfig } from '../config/index.js'
+import {
+  CorsairConfig,
+  DefaultBaseConfig,
+  ConnectionConfig,
+} from '../config/index.js'
 
 type GenericCorsairConfig = CorsairConfig<any>
 
@@ -144,11 +148,33 @@ export function loadEnv(envFile: string): void {
   }
 }
 
-export function checkDatabaseUrl(): void {
-  if (!process.env.DATABASE_URL) {
-    console.error('❌ DATABASE_URL not found in environment')
-    console.error('   Please set DATABASE_URL in your .env file\n')
-    process.exit(1)
+export function checkDatabaseUrl(connection: ConnectionConfig): void {
+  if (typeof connection === 'string') {
+    if (!connection) {
+      console.error('❌ DATABASE_URL is empty')
+      console.error('   Please set DATABASE_URL in your .env file\n')
+      process.exit(1)
+    }
+  } else {
+    const requiredFields: (keyof Exclude<ConnectionConfig, string>)[] = [
+      'host',
+      'username',
+      'password',
+      'database',
+    ]
+
+    const missingFields = requiredFields.filter(field => !connection[field])
+
+    if (missingFields.length > 0) {
+      console.error(
+        '❌ Missing required connection fields:',
+        missingFields.join(', ')
+      )
+      console.error(
+        '   Please provide all required connection details in your config\n'
+      )
+      process.exit(1)
+    }
   }
 }
 
