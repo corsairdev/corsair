@@ -67,7 +67,7 @@ class Spinner {
   }
 }
 
-async function runAgentOperation(
+export async function runAgentOperation(
   kind: OpKind,
   name: string,
   instructions?: string,
@@ -180,6 +180,14 @@ program
   .action(async () => {
     const { check } = await import('./check.js')
     await check()
+  })
+
+program
+  .command('fix')
+  .description('Fix type errors by regenerating files with errors')
+  .action(async () => {
+    const { fix } = await import('./fix.js')
+    await fix()
   })
 
 program
