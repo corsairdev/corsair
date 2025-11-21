@@ -1,7 +1,6 @@
-import { existsSync, readFileSync } from 'fs'
+import { existsSync } from 'fs'
 import { resolve } from 'path'
 import { config } from 'dotenv'
-import { pathToFileURL } from 'url'
 import { Project, SyntaxKind } from 'ts-morph'
 
 export interface CorsairPaths {
@@ -34,93 +33,14 @@ export function loadConfig(): CorsairConfig {
 
   let userConfig: any = null
 
-  const getNodeValue = (node: any): any => {
-    if (!node) return undefined
-
-    if (
-      node.isKind(SyntaxKind.StringLiteral) ||
-      node.isKind(SyntaxKind.NoSubstitutionTemplateLiteral)
-    ) {
-      return node.getLiteralText()
-    }
-
-    if (node.isKind(SyntaxKind.NumericLiteral)) {
-      const num = Number(node.getText())
-      return Number.isNaN(num) ? node.getText() : num
-    }
-
-    if (node.isKind(SyntaxKind.TrueKeyword)) return true
-    if (node.isKind(SyntaxKind.FalseKeyword)) return false
-
-    if (node.isKind(SyntaxKind.NonNullExpression)) {
-      return getNodeValue(node.getExpression())
-    }
-
-    if (node.isKind(SyntaxKind.PropertyAccessExpression)) {
-      const exprText = node.getExpression().getText()
-      const name = node.getName()
-      if (exprText === 'process.env') {
-        return process.env[name]
-      }
-    }
-
-    if (node.isKind(SyntaxKind.ObjectLiteralExpression)) {
-      const result: Record<string, any> = {}
-      for (const prop of node.getProperties()) {
-        if (prop.isKind(SyntaxKind.PropertyAssignment)) {
-          const name = prop.getName().replace(/['"`]/g, '')
-          const valueNode = prop.getInitializer()
-          result[name] = getNodeValue(valueNode)
-        }
-      }
-      return result
-    }
-
-    if (node.isKind(SyntaxKind.ArrayLiteralExpression)) {
-      return node.getElements().map((el: any) => getNodeValue(el))
-    }
-
-    const text = node.getText()
-    return typeof text === 'string' ? text.replace(/['"`]/g, '') : text
-  }
 
   if (existsSync(jsConfigPath)) {
     try {
-      const mod = require(jsConfigPath)
-      userConfig = mod?.config ?? mod?.default ?? mod
+      userConfig = parseJavaScriptConfig(jsConfigPath)
     } catch {}
   } else if (existsSync(tsConfigPath)) {
     try {
-      const project = new Project()
-      const sf = project.addSourceFileAtPath(tsConfigPath)
-      const exportAssignment = sf.getExportAssignment(() => true)
-      let expr = exportAssignment?.getExpression()
-
-      if (!expr) {
-        const configVar = sf.getVariableDeclaration('config')
-        const init = configVar?.getInitializer()
-        if (init) {
-          const objLiteral = init.getFirstDescendantByKind(
-            SyntaxKind.ObjectLiteralExpression
-          )
-          if (objLiteral) {
-            expr = objLiteral
-          }
-        }
-      }
-
-      if (expr?.isKind(SyntaxKind.ObjectLiteralExpression)) {
-        const obj: Record<string, any> = {}
-        for (const prop of expr.getProperties()) {
-          if (prop.isKind(SyntaxKind.PropertyAssignment)) {
-            const name = prop.getName().replace(/['"`]/g, '')
-            const valueNode = prop.getInitializer()
-            const value = getNodeValue(valueNode)
-            if (name) obj[name] = value
-          }
-        }
-        userConfig = obj
-      }
+      userConfig = parseTypeScriptConfig(tsConfigPath)
     } catch {}
   }
 
@@ -128,30 +48,143 @@ export function loadConfig(): CorsairConfig {
     return defaultConfig
   }
 
-  const flatToPaths = (cfg: any): CorsairPaths => {
-    if (cfg.paths) {
+  return mergeWithDefaults(userConfig, defaultConfig)
+}
+
+function parseStringLiteral(node: any): string {
+  return node.getLiteralText()
+}
+
+function parseNumericLiteral(node: any): number | string {
+  const num = Number(node.getText())
+  return Number.isNaN(num) ? node.getText() : num
+}
+
+function parseBooleanLiteral(node: any): boolean {
+  return node.isKind(SyntaxKind.TrueKeyword)
+}
+
+function parseProcessEnv(node: any): string | undefined {
+  const exprText = node.getExpression().getText()
+  const name = node.getName()
+  if (exprText === 'process.env') {
+    return process.env[name]
+  }
+  return undefined
+}
+
+function parseObjectLiteral(node: any): Record<string, any> {
+  const result: Record<string, any> = {}
+  for (const prop of node.getProperties()) {
+    if (prop.isKind(SyntaxKind.PropertyAssignment)) {
+      const name = prop.getName().replace(/['"`]/g, '')
+      const valueNode = prop.getInitializer()
+      result[name] = parseAstNode(valueNode)
+    }
+  }
+  return result
+}
+
+function parseArrayLiteral(node: any): any[] {
+  return node.getElements().map((el: any) => parseAstNode(el))
+}
+
+function parseAstNode(node: any): any {
+  if (!node) return undefined
+
+  if (node.isKind(SyntaxKind.StringLiteral) || node.isKind(SyntaxKind.NoSubstitutionTemplateLiteral)) {
+    return parseStringLiteral(node)
+  }
+
+  if (node.isKind(SyntaxKind.NumericLiteral)) {
+    return parseNumericLiteral(node)
+  }
+
+  if (node.isKind(SyntaxKind.TrueKeyword) || node.isKind(SyntaxKind.FalseKeyword)) {
+    return parseBooleanLiteral(node)
+  }
+
+  if (node.isKind(SyntaxKind.NonNullExpression)) {
+    return parseAstNode(node.getExpression())
+  }
+
+  if (node.isKind(SyntaxKind.PropertyAccessExpression)) {
+    const envValue = parseProcessEnv(node)
+    if (envValue !== undefined) return envValue
+  }
+
+  if (node.isKind(SyntaxKind.ObjectLiteralExpression)) {
+    return parseObjectLiteral(node)
+  }
+
+  if (node.isKind(SyntaxKind.ArrayLiteralExpression)) {
+    return parseArrayLiteral(node)
+  }
+
+  const text = node.getText()
+  return typeof text === 'string' ? text.replace(/['"`]/g, '') : text
+}
+
+function parseTypeScriptConfig(configPath: string): any {
+  const project = new Project()
+  const sourceFile = project.addSourceFileAtPath(configPath)
+
+  const exportAssignment = sourceFile.getExportAssignment(() => true)
+  let configExpression = exportAssignment?.getExpression()
+
+  if (!configExpression) {
+    const configVariable = sourceFile.getVariableDeclaration('config')
+    const initializer = configVariable?.getInitializer()
+    if (initializer) {
+      const objectLiteral = initializer.getFirstDescendantByKind(SyntaxKind.ObjectLiteralExpression)
+      if (objectLiteral) {
+        configExpression = objectLiteral
+      }
+    }
+  }
+
+  if (configExpression?.isKind(SyntaxKind.ObjectLiteralExpression)) {
+    const configObject: Record<string, any> = {}
+    for (const property of configExpression.getProperties()) {
+      if (property.isKind(SyntaxKind.PropertyAssignment)) {
+        const propertyName = property.getName().replace(/['"`]/g, '')
+        const valueNode = property.getInitializer()
+        const value = parseAstNode(valueNode)
+        if (propertyName) configObject[propertyName] = value
+      }
+    }
+    return configObject
+  }
+
+  return null
+}
+
+function parseJavaScriptConfig(configPath: string): any {
+  const module = require(configPath)
+  return module?.config ?? module?.default ?? module
+}
+
+function mergeWithDefaults(userConfig: any, defaultConfig: CorsairConfig): CorsairConfig {
+  const convertToPaths = (config: any): CorsairPaths => {
+    if (config.paths) {
       return {
-        queries: cfg.paths.queries ?? defaultConfig.paths.queries,
-        mutations: cfg.paths.mutations ?? defaultConfig.paths.mutations,
-        schema: cfg.paths.schema ?? defaultConfig.paths.schema,
-        apiEndpoint:
-          cfg.paths.apiEndpoint ??
-          cfg.paths.api ??
-          defaultConfig.paths.apiEndpoint,
+        queries: config.paths.queries ?? defaultConfig.paths.queries,
+        mutations: config.paths.mutations ?? defaultConfig.paths.mutations,
+        schema: config.paths.schema ?? defaultConfig.paths.schema,
+        apiEndpoint: config.paths.apiEndpoint ?? config.paths.api ?? defaultConfig.paths.apiEndpoint,
       }
     }
     return {
-      queries: cfg.queries ?? defaultConfig.paths.queries,
-      mutations: cfg.mutations ?? defaultConfig.paths.mutations,
-      schema: cfg.schema ?? defaultConfig.paths.schema,
-      apiEndpoint:
-        cfg.apiEndpoint ?? cfg.api ?? defaultConfig.paths.apiEndpoint,
+      queries: config.queries ?? defaultConfig.paths.queries,
+      mutations: config.mutations ?? defaultConfig.paths.mutations,
+      schema: config.schema ?? defaultConfig.paths.schema,
+      apiEndpoint: config.apiEndpoint ?? config.api ?? defaultConfig.paths.apiEndpoint,
     }
   }
 
   return {
     ...userConfig,
-    paths: flatToPaths(userConfig),
+    paths: convertToPaths(userConfig),
     envFile: userConfig.envFile ?? defaultConfig.envFile,
     out: userConfig.out ?? defaultConfig.out,
   }
