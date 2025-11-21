@@ -90,7 +90,8 @@ export async function runAgentOperation(
     kind === 'query'
       ? cfg.pathToCorsairFolder + '/queries'
       : cfg.pathToCorsairFolder + '/mutations'
-  const pwd = `${baseDir}/${kebabCaseName}.ts`
+  const rawPwd = `${baseDir}/${kebabCaseName}.ts`
+  const pwd = rawPwd.startsWith('./') ? rawPwd.slice(2) : rawPwd
 
   const schema = await loadSchema()
 
