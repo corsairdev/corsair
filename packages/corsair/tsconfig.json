@@ -3,7 +3,22 @@
   "compilerOptions": {
     "lib": ["esnext", "dom", "dom.iterable"],
     "types": ["node"],
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "outDir": "./dist",
+    "rootDir": "./",
+    "emitDeclarationOnly": false,
+    "declaration": true,
+    "declarationMap": true,
+    "skipLibCheck": true
   },
+  "include": [
+    "./**/*"
+  ],
+  "exclude": [
+    "dist",
+    "node_modules",
+    "**/*.test.*",
+    "**/*.spec.*"
+  ],
   "references": []
 }

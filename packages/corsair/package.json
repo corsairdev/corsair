@@ -37,134 +37,134 @@
     "watch": "tsx cli/watch/index.tsx",
     "agent-test": "tsx llm/agent/tests/agent-prompt.ts"
   },
-  "main": "./dist/index.mjs",
-  "module": "./dist/index.mjs",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
   "bin": {
     "corsair": "./dist/cli/index.js"
   },
   "exports": {
     ".": {
       "dev-source": "./index.ts",
-      "types": "./dist/index.d.mts",
-      "default": "./dist/index.mjs"
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
     },
     "./core": {
       "dev-source": "./core/index.ts",
-      "types": "./dist/core/index.d.mts",
-      "default": "./dist/core/index.mjs"
+      "types": "./dist/core/index.d.ts",
+      "default": "./dist/core/index.js"
     },
     "./client": {
       "dev-source": "./client/index.ts",
-      "types": "./dist/client/index.d.mts",
-      "default": "./dist/client/index.mjs"
+      "types": "./dist/client/index.d.ts",
+      "default": "./dist/client/index.js"
     },
     "./config": {
       "dev-source": "./config/index.ts",
-      "types": "./dist/config/index.d.mts",
-      "default": "./dist/config/index.mjs"
+      "types": "./dist/config/index.d.ts",
+      "default": "./dist/config/index.js"
     },
     "./config/drizzle-postgres": {
       "dev-source": "./config/drizzle-postgres.ts",
-      "types": "./dist/config/drizzle-postgres.d.mts",
-      "default": "./dist/config/drizzle-postgres.mjs"
+      "types": "./dist/config/drizzle-postgres.d.ts",
+      "default": "./dist/config/drizzle-postgres.js"
     },
     "./config/prisma-postgres": {
       "dev-source": "./config/prisma-postgres.ts",
-      "types": "./dist/config/prisma-postgres.d.mts",
-      "default": "./dist/config/prisma-postgres.mjs"
+      "types": "./dist/config/prisma-postgres.d.ts",
+      "default": "./dist/config/prisma-postgres.js"
     },
     "./llm": {
       "dev-source": "./llm/index.ts",
-      "types": "./dist/llm/index.d.mts",
-      "default": "./dist/llm/index.mjs"
+      "types": "./dist/llm/index.d.ts",
+      "default": "./dist/llm/index.js"
     },
     "./llm/agent": {
       "dev-source": "./llm/agent/index.ts",
-      "types": "./dist/llm/agent/index.d.mts",
-      "default": "./dist/llm/agent/index.mjs"
+      "types": "./dist/llm/agent/index.d.ts",
+      "default": "./dist/llm/agent/index.js"
     },
     "./adapters": {
       "dev-source": "./adapters/index.ts",
-      "types": "./dist/adapters/index.d.mts",
-      "default": "./dist/adapters/index.mjs"
+      "types": "./dist/adapters/index.d.ts",
+      "default": "./dist/adapters/index.js"
     },
     "./adapters/client": {
       "dev-source": "./adapters/client/index.ts",
-      "types": "./dist/adapters/client/index.d.mts",
-      "default": "./dist/adapters/client/index.mjs"
+      "types": "./dist/adapters/client/index.d.ts",
+      "default": "./dist/adapters/client/index.js"
     },
     "./adapters/db/postgres/drizzle": {
       "dev-source": "./adapters/db/postgres/drizzle/index.ts",
-      "types": "./dist/adapters/db/postgres/drizzle/index.d.mts",
-      "default": "./dist/adapters/db/postgres/drizzle/index.mjs"
+      "types": "./dist/adapters/db/postgres/drizzle/index.d.ts",
+      "default": "./dist/adapters/db/postgres/drizzle/index.js"
     },
     "./adapters/db/postgres/prisma": {
       "dev-source": "./adapters/db/postgres/prisma/index.ts",
-      "types": "./dist/adapters/db/postgres/prisma/index.d.mts",
-      "default": "./dist/adapters/db/postgres/prisma/index.mjs"
+      "types": "./dist/adapters/db/postgres/prisma/index.d.ts",
+      "default": "./dist/adapters/db/postgres/prisma/index.js"
     },
     "./plugins": {
       "dev-source": "./plugins/index.ts",
-      "types": "./dist/plugins/index.d.mts",
-      "default": "./dist/plugins/index.mjs"
+      "types": "./dist/plugins/index.d.ts",
+      "default": "./dist/plugins/index.js"
     },
     "./plugins/slack": {
       "dev-source": "./plugins/slack/index.ts",
-      "types": "./dist/plugins/slack/index.d.mts",
-      "default": "./dist/plugins/slack/index.mjs"
+      "types": "./dist/plugins/slack/index.d.ts",
+      "default": "./dist/plugins/slack/index.js"
     },
     "./cli": {
       "dev-source": "./cli/index.ts",
-      "types": "./dist/cli/index.d.mts",
-      "default": "./dist/cli/index.mjs"
+      "types": "./dist/cli/index.d.ts",
+      "default": "./dist/cli/index.js"
     }
   },
   "typesVersions": {
     "*": {
       "*": [
-        "./dist/index.d.mts"
+        "./dist/index.d.ts"
       ],
       "core": [
-        "./dist/core/index.d.mts"
+        "./dist/core/index.d.ts"
       ],
       "client": [
-        "./dist/client/index.d.mts"
+        "./dist/client/index.d.ts"
       ],
       "config": [
-        "./dist/config/index.d.mts"
+        "./dist/config/index.d.ts"
       ],
       "config/drizzle-postgres": [
-        "./dist/config/drizzle-postgres.d.mts"
+        "./dist/config/drizzle-postgres.d.ts"
       ],
       "config/prisma-postgres": [
-        "./dist/config/prisma-postgres.d.mts"
+        "./dist/config/prisma-postgres.d.ts"
       ],
       "llm": [
-        "./dist/llm/index.d.mts"
+        "./dist/llm/index.d.ts"
       ],
       "llm/agent": [
-        "./dist/llm/agent/index.d.mts"
+        "./dist/llm/agent/index.d.ts"
       ],
       "adapters": [
-        "./dist/adapters/index.d.mts"
+        "./dist/adapters/index.d.ts"
       ],
       "adapters/client": [
-        "./dist/adapters/client/index.d.mts"
+        "./dist/adapters/client/index.d.ts"
       ],
       "adapters/db/postgres/drizzle": [
-        "./dist/adapters/db/postgres/drizzle/index.d.mts"
+        "./dist/adapters/db/postgres/drizzle/index.d.ts"
       ],
       "adapters/db/postgres/prisma": [
-        "./dist/adapters/db/postgres/prisma/index.d.mts"
+        "./dist/adapters/db/postgres/prisma/index.d.ts"
       ],
       "plugins": [
-        "./dist/plugins/index.d.mts"
+        "./dist/plugins/index.d.ts"
       ],
       "plugins/slack": [
-        "./dist/plugins/slack/index.d.mts"
+        "./dist/plugins/slack/index.d.ts"
       ],
       "cli": [
-        "./dist/cli/index.d.mts"
+        "./dist/cli/index.d.ts"
       ]
     }
   },
