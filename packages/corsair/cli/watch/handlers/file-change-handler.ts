@@ -73,7 +73,7 @@ class FileChangeHandler {
     corsairCalls.forEach(call => {
       calls.push({
         name: call.getExpression().getText(),
-        prompt: call.getArguments()[0].getText(),
+        prompt: call.getArguments()[0]?.getText() || '',
         line: call.getStartLineNumber(),
       })
     })

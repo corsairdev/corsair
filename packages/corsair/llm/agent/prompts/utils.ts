@@ -1,4 +1,4 @@
-import { SchemaOutput } from '../../../config'
+import type { SchemaOutput } from '../../../config'
 
 export function formattedSchema(schema: SchemaOutput): string {
   if (!schema || Object.keys(schema).length === 0) {

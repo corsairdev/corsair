@@ -1,0 +1,98 @@
+{
+  "root": true,
+  "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+  "formatter": {
+    "enabled": true,
+    "indentStyle": "tab"
+  },
+  "css": {
+    "parser": {
+      "tailwindDirectives": true
+    }
+  },
+  "assist": { "actions": { "source": { "organizeImports": "on" } } },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "style": {
+        "noRestrictedImports": {
+          "options": {
+            "paths": {
+              "zod": {
+                "importNames": ["z"],
+                "message": "Use `import * as z from \"zod\"` instead of `import { z }`."
+              }
+            }
+          },
+          "level": "error"
+        },
+        "useImportType": {
+          "level": "error",
+          "options": {
+            "style": "separatedType"
+          }
+        }
+      },
+      "recommended": false,
+      "suspicious": {
+        "noImplicitAnyLet": "warn",
+        "noDuplicateObjectKeys": "warn",
+        "noTsIgnore": "error",
+        "noDebugger": "error"
+      },
+      "performance": {
+        "noDelete": "error"
+      },
+      "complexity": {
+        "useDateNow": "error",
+        "noUselessSwitchCase": "warn",
+        "noUselessTypeConstraint": "warn"
+      },
+      "correctness": {
+        "noUnusedImports": "warn"
+      },
+      "nursery": {
+        "noMisusedPromises": "error",
+        "noFloatingPromises": "error"
+      }
+    }
+  },
+  "overrides": [
+    {
+      "includes": ["**/examples/svelte-kit-example/**"],
+      "linter": {
+        "rules": {
+          "correctness": {
+            "noUnusedImports": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["**/*.json"],
+      "formatter": {
+        "indentStyle": "space",
+        "indentWidth": 2
+      }
+    }
+  ],
+  "files": {
+    "includes": [
+      "**",
+      "!**/dist",
+      "!**/build",
+      "!**/.next",
+      "!**/.svelte-kit",
+      "!**/.contentlayer",
+      "!**/.turbo",
+      "!**/.nuxt",
+      "!**/.source",
+      "!**/.expo",
+      "!**/.cache",
+      "!**/dev/cloudflare/drizzle",
+      "!**/playwright-report",
+      "!**/.output",
+      "!**/.tmp"
+    ]
+  }
+}

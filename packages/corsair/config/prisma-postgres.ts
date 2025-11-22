@@ -1,4 +1,10 @@
-import { ORMs, DBTypes, Framework, ExtractStrict, ConnectionConfig } from '.'
+import type {
+  ORMs,
+  DBTypes,
+  Framework,
+  ExtractStrict,
+  ConnectionConfig,
+} from '.'
 
 export type PrismaPostgresConfig<T = any> = {
   /**

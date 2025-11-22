@@ -1,5 +1,5 @@
-import { BaseConfig } from '../../../config'
-import { SlackChannels } from '../types'
+import type { BaseConfig } from '../../../config'
+import type { SlackChannels } from '../types'
 
 export const sendMessage = <T extends BaseConfig = any>({
   config,

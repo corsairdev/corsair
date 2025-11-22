@@ -1,0 +1,13 @@
+{
+  "extends": "./tsconfig.base.json",
+  "include": [
+    // Only include files that are in the root directory. All other files are included by the references.
+    "./*.ts",
+    "./*.js"
+  ],
+  "references": [
+    {
+      "path": "./packages/corsair/tsconfig.json"
+    }
+  ]
+}

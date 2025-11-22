@@ -1,0 +1,35 @@
+{
+  "$schema": "./node_modules/turbo/schema.json",
+  "globalDependencies": [
+    "package.json",
+    "tsconfig.json",
+    "pnpm-lock.yaml",
+    "pnpm-workspace.yaml"
+  ],
+  "tasks": {
+    "dev": {
+      "cache": false,
+      "persistent": true
+    },
+    "build": {
+      "dependsOn": ["^build"],
+      "inputs": ["$TURBO_DEFAULT$", ".env*"],
+      "outputs": [".next/**", "!.next/cache/**", "dist/**"]
+    },
+    "clean": {},
+    "format": {
+      "dependsOn": ["//#format"]
+    },
+    "//#format": {},
+    "lint": {},
+    "deploy": {
+      "cache": false
+    },
+    "migrate": {
+      "cache": false
+    },
+    "generate": {
+      "cache": false
+    }
+  }
+}

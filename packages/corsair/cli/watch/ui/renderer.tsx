@@ -89,7 +89,7 @@ export const CorsairUI: React.FC<CorsairUIProps> = ({ warnings }) => {
           const item = list[idx - 1]
           eventBus.emit(CorsairEvent.USER_COMMAND, {
             command: 'resume_unfinished',
-            args: { id: item.id },
+            args: { id: item!.id },
           })
           return
         }
