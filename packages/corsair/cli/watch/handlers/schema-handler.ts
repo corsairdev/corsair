@@ -42,7 +42,7 @@ export class Schema {
               if (expression.getText() === 'CorsairDB.table') {
                 const args = initializer.getArguments()
 
-                if (args.length >= 2) {
+                if (args.length >= 2 && args[0] && args[1]) {
                   // First argument is the table name
                   const tableName = args[0].getText().replace(/['"`]/g, '')
 
@@ -289,6 +289,9 @@ export class Schema {
     // Compare each column
     for (let i = 0; i < before.columns.length; i++) {
       const beforeColumn = before.columns[i]
+
+      if (!beforeColumn) continue
+
       const afterColumn = after.columns.find(c => c.name === beforeColumn.name)
 
       if (!afterColumn) {

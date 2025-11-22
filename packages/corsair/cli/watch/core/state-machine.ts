@@ -833,6 +833,7 @@ class StateMachine {
     if (idx === -1) return
     const item = list[idx]
     const next = [...list.slice(0, idx), ...list.slice(idx + 1)]
+    if (!item) return
     this.updateContext({ unfinishedOperations: next })
     this.transition(CorsairState.CONFIGURING_NEW_OPERATION, {
       newOperation: item.operation,

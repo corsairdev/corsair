@@ -16,6 +16,7 @@ import {
   useCorsairMutation,
   useCorsairQuery,
 } from '@/corsair/client'
+import { Button } from './ui/button'
 
 interface AlbumDetailsSheetProps {
   album: QueryOutputs['get album by id with artists'] | null
@@ -91,6 +92,8 @@ export function AlbumDetailsSheet({
           </div>
         </div>
       </SheetContent>
+
+      <Button>h</Button>
     </Sheet>
   )
 }

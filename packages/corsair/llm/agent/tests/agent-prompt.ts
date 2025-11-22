@@ -1,5 +1,5 @@
 import { promptAgent } from '..'
-import { SchemaOutput } from '../../../config'
+import type { SchemaOutput } from '../../../config'
 import { promptBuilder } from '../prompts/prompt-builder'
 
 export const testSchema: SchemaOutput = {
