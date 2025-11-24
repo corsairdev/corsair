@@ -46,6 +46,24 @@ export const AwaitingFeedbackScreen: React.FC<AwaitingFeedbackScreenProps> = ({
           </Text>
         ))}
 
+        {llmResponse.usage && (
+          <>
+            <Text> </Text>
+            <Text color="yellow" bold>
+              🔢 Token Usage:
+            </Text>
+            <Text dimColor>
+              Input:  {llmResponse.usage.inputTokens.toLocaleString()}
+            </Text>
+            <Text dimColor>
+              Output: {llmResponse.usage.outputTokens.toLocaleString()}
+            </Text>
+            <Text dimColor>
+              Total:  {llmResponse.usage.totalTokens.toLocaleString()}
+            </Text>
+          </>
+        )}
+
         <CommandBar
           commands={[
             { key: 'U', label: 'Update' },

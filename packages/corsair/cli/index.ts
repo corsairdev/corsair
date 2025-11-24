@@ -145,6 +145,13 @@ export async function runAgentOperation(
       `Agent finished ${update ? 'updating' : 'generating'} ${kind} "${camelCaseName}" at ${pwd} (${timeStr})`
     )
 
+    if (result.usage) {
+      console.log('\n🔢 Token Usage:')
+      console.log(`   Input tokens:  ${result.usage.inputTokens?.toLocaleString() ?? 'N/A'}`)
+      console.log(`   Output tokens: ${result.usage.outputTokens?.toLocaleString() ?? 'N/A'}`)
+      console.log(`   Total tokens:  ${result.usage.totalTokens?.toLocaleString() ?? 'N/A'}`)
+    }
+
     if (result.text) {
       console.log('\n📋 Agent Report:')
       console.log('─'.repeat(80))

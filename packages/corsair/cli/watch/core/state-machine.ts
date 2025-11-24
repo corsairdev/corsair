@@ -352,6 +352,7 @@ class StateMachine {
             pseudocode: data.response.pseudocode,
             function_name: data.response.function_name,
           },
+          usage: data.usage,
         }
 
         const id = `${data.operation.operationType}:${data.operation.operationName}`
