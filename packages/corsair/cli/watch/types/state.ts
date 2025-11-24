@@ -104,6 +104,7 @@ export interface NewOperationContext {
   file: string
   lineNumber: number
   configurationRules?: string
+  isUpdate?: boolean
 }
 
 export interface UnfinishedOperation {

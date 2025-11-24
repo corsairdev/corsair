@@ -354,11 +354,24 @@ class StateMachine {
           },
         }
 
-        // Transition to feedback state with LLM response
+        const id = `${data.operation.operationType}:${data.operation.operationName}`
+        const list = this.state.context.unfinishedOperations || []
+        if (list.find(i => i.id === id)) {
+          this.updateContext({
+            unfinishedOperations: list.filter(i => i.id !== id),
+          })
+        }
+
+        this.addHistoryEntry(
+          'Operation accepted',
+          undefined,
+          `Auto-accepted ${data.operation.operationName} (file written by agent)`
+        )
+
         this.transition(CorsairState.AWAITING_FEEDBACK, {
           llmResponse,
           newOperation: data.operation,
-          availableActions: ['accept', 'regenerate', 'modify', 'cancel'],
+          availableActions: ['update', 'help'],
         })
       }
     )
@@ -503,6 +516,10 @@ class StateMachine {
         this.handleCancelLLMResponse()
       }
 
+      if (data.command === 'help') {
+        this.addHistoryEntry('Help requested')
+      }
+
       if (
         data.command === 'regenerate' &&
         this.state.state === CorsairState.AWAITING_FEEDBACK &&
@@ -517,6 +534,21 @@ class StateMachine {
         this.state.context.llmResponse
       ) {
         this.handleAcceptLLMResponse()
+      }
+
+      if (
+        data.command === 'update' &&
+        this.state.state === CorsairState.AWAITING_FEEDBACK &&
+        this.state.context.llmResponse
+      ) {
+        this.handleUpdateOperation()
+      }
+
+      if (data.command === 'update_operation') {
+        this.handleUpdateExistingOperation(
+          data.args?.operationName,
+          data.args?.operationType
+        )
       }
     })
   }
@@ -782,20 +814,22 @@ class StateMachine {
 
     const newOperation = this.state.context.newOperation
     if (newOperation) {
-      const id = `${newOperation.operationType}:${newOperation.operationName}`
-      const list = this.state.context.unfinishedOperations || []
-      if (!list.find(i => i.id === id)) {
-        this.updateContext({
-          unfinishedOperations: [
-            ...list,
-            { id, operation: newOperation, createdAt: Date.now() },
-          ],
-        })
+      if (!newOperation.isUpdate) {
+        const id = `${newOperation.operationType}:${newOperation.operationName}`
+        const list = this.state.context.unfinishedOperations || []
+        if (!list.find(i => i.id === id)) {
+          this.updateContext({
+            unfinishedOperations: [
+              ...list,
+              { id, operation: newOperation, createdAt: Date.now() },
+            ],
+          })
+        }
       }
       this.addHistoryEntry(
         'Operation configuration cancelled',
         undefined,
-        `${newOperation.operationName} configuration discarded`
+        `${newOperation.operationName} ${newOperation.isUpdate ? 'update' : 'configuration'} discarded`
       )
     }
 
@@ -809,17 +843,25 @@ class StateMachine {
     if (this.state.state !== CorsairState.CONFIGURING_NEW_OPERATION) return
     const op = this.state.context.newOperation
     if (!op) return
-    const id = `${op.operationType}:${op.operationName}`
-    const list = this.state.context.unfinishedOperations || []
-    if (!list.find(i => i.id === id)) {
-      this.updateContext({
-        unfinishedOperations: [
-          ...list,
-          { id, operation: op, createdAt: Date.now() },
-        ],
-      })
+
+    if (!op.isUpdate) {
+      const id = `${op.operationType}:${op.operationName}`
+      const list = this.state.context.unfinishedOperations || []
+      if (!list.find(i => i.id === id)) {
+        this.updateContext({
+          unfinishedOperations: [
+            ...list,
+            { id, operation: op, createdAt: Date.now() },
+          ],
+        })
+      }
     }
-    this.addHistoryEntry('Operation deferred', undefined, `${op.operationName}`)
+
+    this.addHistoryEntry(
+      'Operation deferred',
+      undefined,
+      `${op.operationName} ${op.isUpdate ? 'update' : 'configuration'} deferred`
+    )
     this.transition(CorsairState.IDLE, {
       newOperation: undefined,
       availableActions: ['help', 'quit'],
@@ -931,6 +973,77 @@ class StateMachine {
         availableActions: ['help', 'quit'],
       })
     }
+  }
+
+  private handleUpdateOperation() {
+    const newOperation = this.state.context.newOperation
+    if (newOperation) {
+      this.addHistoryEntry(
+        'Operation update requested',
+        undefined,
+        `Updating ${newOperation.operationName}`
+      )
+
+      const updateOperation = {
+        ...newOperation,
+        isUpdate: true,
+        configurationRules: '',
+      }
+
+      this.transition(CorsairState.CONFIGURING_NEW_OPERATION, {
+        newOperation: updateOperation,
+        llmResponse: undefined,
+        availableActions: [
+          'submit_operation_config',
+          'cancel_operation_config',
+        ],
+      })
+    }
+  }
+
+  private handleUpdateExistingOperation(
+    operationName?: string,
+    operationType?: 'query' | 'mutation'
+  ) {
+    if (!operationName || !operationType) return
+
+    const operations =
+      operationType === 'query'
+        ? this.state.context.queries
+        : this.state.context.mutations
+    const operation = operations?.get(operationName)
+
+    if (!operation) {
+      this.addHistoryEntry(
+        'Operation not found',
+        undefined,
+        `Could not find ${operationType} ${operationName}`
+      )
+      return
+    }
+
+    const newOperation = {
+      operationType,
+      operationName,
+      functionName: operationName,
+      prompt: `Update instructions: (Previous prompt: "${operation.prompt}")`,
+      file: '',
+      lineNumber: 0,
+      configurationRules: '',
+      isUpdate: true,
+    }
+
+    this.addHistoryEntry(
+      'Operation update requested',
+      undefined,
+      `Updating ${operationName}`
+    )
+
+    this.transition(CorsairState.CONFIGURING_NEW_OPERATION, {
+      newOperation,
+      llmResponse: undefined,
+      availableActions: ['submit_operation_config', 'cancel_operation_config'],
+    })
   }
 }
 

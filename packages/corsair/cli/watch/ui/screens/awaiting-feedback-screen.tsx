@@ -42,8 +42,8 @@ export const AwaitingFeedbackScreen: React.FC<AwaitingFeedbackScreenProps> = ({
               llmResponse.analysis.complexity === 'low'
                 ? 'green'
                 : llmResponse.analysis.complexity === 'medium'
-                ? 'yellow'
-                : 'red'
+                  ? 'yellow'
+                  : 'red'
             }
           >
             {llmResponse.analysis.complexity.toUpperCase()}
@@ -118,12 +118,22 @@ export const AwaitingFeedbackScreen: React.FC<AwaitingFeedbackScreenProps> = ({
           </>
         )}
 
+        <Text> </Text>
+        <Box
+          borderStyle="single"
+          borderColor="green"
+          paddingX={1}
+          marginTop={1}
+        >
+          <Text color="green" bold>
+            ✓ Operation file has been automatically accepted and written
+          </Text>
+        </Box>
+
         <CommandBar
           commands={[
-            { key: 'A', label: 'Accept' },
-            { key: 'R', label: 'Regenerate' },
-            { key: 'M', label: 'Modify' },
-            { key: 'C', label: 'Cancel' },
+            { key: 'U', label: 'Update' },
+            { key: 'ESC/Q', label: 'Back to Idle' },
           ]}
         />
       </Box>
