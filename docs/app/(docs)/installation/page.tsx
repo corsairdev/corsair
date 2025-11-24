@@ -12,34 +12,64 @@ export default function Page() {
     <DocsPage>
       <DocsTitle>Installation</DocsTitle>
       <DocsDescription>
-        Install core packages, then add adapters as needed.
+        Install Corsair in your Next.js + Drizzle + Postgres project
       </DocsDescription>
       <DocsBody>
-        <h2>Packages</h2>
-        <CodeBlock
-          title="Shell"
-          data-line-numbers
-          viewportProps={{ style: { paddingLeft: 16 } }}
-        >
-          <Pre>
-            <code className="language-bash">{`pnpm add corsair zod superjson @tanstack/react-query
-pnpm add -D drizzle-kit typescript`}</code>
-          </Pre>
-        </CodeBlock>
-        <h3>Optional</h3>
-        <Callout type="info" title="Add per framework">
-          Install only the adapters and framework deps you use.
+        <Callout type="info" title="Prerequisites">
+          You'll need a Next.js project with Drizzle ORM and Postgres already set up.
         </Callout>
+
+        <h2>Install Corsair</h2>
         <CodeBlock
           title="Shell"
           data-line-numbers
           viewportProps={{ style: { paddingLeft: 16 } }}
         >
           <Pre>
-            <code className="language-bash">{`pnpm add next @trpc/server @trpc/client @trpc/tanstack-react-query
-pnpm add express fastify hono @cloudflare/workers-types`}</code>
+            <code className="language-bash">{`npm install corsair`}</code>
           </Pre>
         </CodeBlock>
+
+        <h2>Install Required Dependencies</h2>
+        <p>Corsair requires several peer dependencies for full functionality:</p>
+        <CodeBlock
+          title="Shell"
+          data-line-numbers
+          viewportProps={{ style: { paddingLeft: 16 } }}
+        >
+          <Pre>
+            <code className="language-bash">{`npm install @tanstack/react-query @trpc/server @trpc/client @trpc/tanstack-react-query
+npm install drizzle-orm drizzle-zod zod superjson dotenv`}</code>
+          </Pre>
+        </CodeBlock>
+
+        <h2>Install Dev Dependencies</h2>
+        <CodeBlock
+          title="Shell"
+          data-line-numbers
+          viewportProps={{ style: { paddingLeft: 16 } }}
+        >
+          <Pre>
+            <code className="language-bash">{`npm install -D drizzle-kit typescript tsx`}</code>
+          </Pre>
+        </CodeBlock>
+
+        <h2>Database Setup</h2>
+        <p>Make sure you have a Postgres database running and configured. Install the Postgres client:</p>
+        <CodeBlock
+          title="Shell"
+          data-line-numbers
+          viewportProps={{ style: { paddingLeft: 16 } }}
+        >
+          <Pre>
+            <code className="language-bash">{`npm install pg
+npm install -D @types/pg`}</code>
+          </Pre>
+        </CodeBlock>
+
+        <Callout type="warn" title="Next Steps">
+          After installation, continue to the Quickstart guide to configure Corsair and create your first queries.
+        </Callout>
       </DocsBody>
     </DocsPage>
   )
