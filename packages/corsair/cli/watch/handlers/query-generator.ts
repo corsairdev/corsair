@@ -266,6 +266,11 @@ export default ${generatedQuery.functionName};
           function_name: camelName,
         },
         operation,
+        usage: result.usage ? {
+          inputTokens: result.usage.inputTokens ?? 0,
+          outputTokens: result.usage.outputTokens ?? 0,
+          totalTokens: result.usage.totalTokens ?? 0,
+        } : undefined,
       })
     } catch (error) {
       console.error('Agent processing error:', error)

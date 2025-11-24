@@ -194,6 +194,11 @@ export interface LLMAnalysisCompleteEvent {
     lineNumber: number
     configurationRules?: string
   }
+  usage?: {
+    inputTokens: number
+    outputTokens: number
+    totalTokens: number
+  }
 }
 
 export interface LLMAnalysisFailedEvent {
