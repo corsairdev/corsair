@@ -1,4 +1,4 @@
-import { ColumnInfo, SchemaOutput, TableSchema } from '../../../../config'
+import type { ColumnInfo, SchemaOutput, TableSchema } from '../../../../config'
 import { type BaseDrizzlePostgresDatabase } from '../../../../config/drizzle-postgres'
 
 export const schemaToJson = (

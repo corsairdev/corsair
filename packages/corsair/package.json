@@ -1,53 +1,175 @@
 {
-  "type": "module",
   "name": "corsair",
   "version": "1.0.0",
-  "description": "",
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
-  "bin": {
-    "corsair": "./dist/cli/index.js"
+  "description": "The TypeScript Vibe Coding SDK",
+  "type": "module",
+  "license": "MIT",
+  "homepage": "https://corsair.dev",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/corsairdev/corsair",
+    "directory": "packages/corsair"
+  },
+  "keywords": [
+    "typescript",
+    "nextjs",
+    "drizzle-orm",
+    "postgres",
+    "trpc",
+    "tanstack-query",
+    "sdk",
+    "full-stack",
+    "type-safe",
+    "ai",
+    "llm"
+  ],
+  "publishConfig": {
+    "access": "public"
   },
   "scripts": {
-    "build-watch": "tsc --watch",
     "build": "tsc",
+    "build:watch": "tsc --watch",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:ui": "vitest --ui",
     "test:coverage": "vitest run --coverage",
-    "api:test": "tsx api/index.ts",
+    "typecheck": "tsc --noEmit",
     "watch": "tsx cli/watch/index.tsx",
     "agent-test": "tsx llm/agent/tests/agent-prompt.ts"
   },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "bin": {
+    "corsair": "./dist/cli/index.js"
+  },
   "exports": {
     ".": {
+      "dev-source": "./index.ts",
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
     },
     "./core": {
+      "dev-source": "./core/index.ts",
       "types": "./dist/core/index.d.ts",
       "default": "./dist/core/index.js"
     },
+    "./client": {
+      "dev-source": "./client/index.ts",
+      "types": "./dist/client/index.d.ts",
+      "default": "./dist/client/index.js"
+    },
     "./config": {
+      "dev-source": "./config/index.ts",
       "types": "./dist/config/index.d.ts",
       "default": "./dist/config/index.js"
     },
     "./config/drizzle-postgres": {
+      "dev-source": "./config/drizzle-postgres.ts",
       "types": "./dist/config/drizzle-postgres.d.ts",
       "default": "./dist/config/drizzle-postgres.js"
+    },
+    "./config/prisma-postgres": {
+      "dev-source": "./config/prisma-postgres.ts",
+      "types": "./dist/config/prisma-postgres.d.ts",
+      "default": "./dist/config/prisma-postgres.js"
+    },
+    "./llm": {
+      "dev-source": "./llm/index.ts",
+      "types": "./dist/llm/index.d.ts",
+      "default": "./dist/llm/index.js"
+    },
+    "./llm/agent": {
+      "dev-source": "./llm/agent/index.ts",
+      "types": "./dist/llm/agent/index.d.ts",
+      "default": "./dist/llm/agent/index.js"
+    },
+    "./adapters": {
+      "dev-source": "./adapters/index.ts",
+      "types": "./dist/adapters/index.d.ts",
+      "default": "./dist/adapters/index.js"
+    },
+    "./adapters/client": {
+      "dev-source": "./adapters/client/index.ts",
+      "types": "./dist/adapters/client/index.d.ts",
+      "default": "./dist/adapters/client/index.js"
+    },
+    "./adapters/db/postgres/drizzle": {
+      "dev-source": "./adapters/db/postgres/drizzle/index.ts",
+      "types": "./dist/adapters/db/postgres/drizzle/index.d.ts",
+      "default": "./dist/adapters/db/postgres/drizzle/index.js"
+    },
+    "./adapters/db/postgres/prisma": {
+      "dev-source": "./adapters/db/postgres/prisma/index.ts",
+      "types": "./dist/adapters/db/postgres/prisma/index.d.ts",
+      "default": "./dist/adapters/db/postgres/prisma/index.js"
+    },
+    "./plugins": {
+      "dev-source": "./plugins/index.ts",
+      "types": "./dist/plugins/index.d.ts",
+      "default": "./dist/plugins/index.js"
+    },
+    "./plugins/slack": {
+      "dev-source": "./plugins/slack/index.ts",
+      "types": "./dist/plugins/slack/index.d.ts",
+      "default": "./dist/plugins/slack/index.js"
+    },
+    "./cli": {
+      "dev-source": "./cli/index.ts",
+      "types": "./dist/cli/index.d.ts",
+      "default": "./dist/cli/index.js"
     }
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "packageManager": "pnpm@10.11.1",
+  "typesVersions": {
+    "*": {
+      "*": [
+        "./dist/index.d.ts"
+      ],
+      "core": [
+        "./dist/core/index.d.ts"
+      ],
+      "client": [
+        "./dist/client/index.d.ts"
+      ],
+      "config": [
+        "./dist/config/index.d.ts"
+      ],
+      "config/drizzle-postgres": [
+        "./dist/config/drizzle-postgres.d.ts"
+      ],
+      "config/prisma-postgres": [
+        "./dist/config/prisma-postgres.d.ts"
+      ],
+      "llm": [
+        "./dist/llm/index.d.ts"
+      ],
+      "llm/agent": [
+        "./dist/llm/agent/index.d.ts"
+      ],
+      "adapters": [
+        "./dist/adapters/index.d.ts"
+      ],
+      "adapters/client": [
+        "./dist/adapters/client/index.d.ts"
+      ],
+      "adapters/db/postgres/drizzle": [
+        "./dist/adapters/db/postgres/drizzle/index.d.ts"
+      ],
+      "adapters/db/postgres/prisma": [
+        "./dist/adapters/db/postgres/prisma/index.d.ts"
+      ],
+      "plugins": [
+        "./dist/plugins/index.d.ts"
+      ],
+      "plugins/slack": [
+        "./dist/plugins/slack/index.d.ts"
+      ],
+      "cli": [
+        "./dist/cli/index.d.ts"
+      ]
+    }
+  },
   "dependencies": {
     "@ai-sdk/openai": "^2.0.68",
-    "@supabase/postgrest-js": "^2.75.1",
-    "@tanstack/react-query": "^5.90.5",
-    "@trpc/client": "^11.6.0",
-    "@trpc/server": "^11.6.0",
-    "@trpc/tanstack-react-query": "^11.6.0",
     "dotenv": "^16.4.5",
     "openai": "^4.103.0",
     "pg": "^8.16.3",
@@ -56,19 +178,62 @@
     "zod": "^3.23.8"
   },
   "peerDependencies": {
+    "@tanstack/react-query": "^5.0.0",
+    "@trpc/client": "^11.0.0",
+    "@trpc/server": "^11.0.0",
+    "@trpc/tanstack-react-query": "^11.0.0",
     "drizzle-orm": ">=0.28.0",
-    "drizzle-zod": ">=0.5.0"
+    "drizzle-zod": ">=0.5.0",
+    "next": "^14.0.0 || ^15.0.0",
+    "react": "^18.0.0 || ^19.0.0",
+    "react-dom": "^18.0.0 || ^19.0.0"
+  },
+  "peerDependenciesOptional": {
+    "@tanstack/react-query": "*",
+    "@trpc/client": "*",
+    "@trpc/server": "*",
+    "@trpc/tanstack-react-query": "*",
+    "drizzle-orm": "*",
+    "drizzle-zod": "*",
+    "next": "*",
+    "react": "*",
+    "react-dom": "*"
   },
   "peerDependenciesMeta": {
+    "@tanstack/react-query": {
+      "optional": true
+    },
+    "@trpc/client": {
+      "optional": true
+    },
+    "@trpc/server": {
+      "optional": true
+    },
+    "@trpc/tanstack-react-query": {
+      "optional": true
+    },
     "drizzle-orm": {
       "optional": true
     },
     "drizzle-zod": {
       "optional": true
+    },
+    "next": {
+      "optional": true
+    },
+    "react": {
+      "optional": true
+    },
+    "react-dom": {
+      "optional": true
     }
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.0.0",
+    "@tanstack/react-query": "^5.90.5",
+    "@trpc/client": "^11.6.0",
+    "@trpc/server": "^11.6.0",
+    "@trpc/tanstack-react-query": "^11.6.0",
     "@types/express": "^4.17.21",
     "@types/madge": "^5.0.3",
     "@types/node": "^20.14.2",
@@ -79,7 +244,6 @@
     "@vitest/ui": "^2.1.8",
     "ai": "^5.0.93",
     "boxen": "^8.0.1",
-    "bun-types": "latest",
     "chalk": "^5.6.2",
     "chokidar": "^4.0.3",
     "commander": "^12.1.0",
@@ -99,5 +263,9 @@
     "tsx": "^4.20.6",
     "typescript": "^5.9.3",
     "vitest": "^2.1.8"
-  }
+  },
+  "packageManager": "pnpm@10.11.1",
+  "files": [
+    "dist"
+  ]
 }

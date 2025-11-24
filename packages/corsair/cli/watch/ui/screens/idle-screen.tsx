@@ -58,7 +58,7 @@ const parseOperationDetails = (
 ): { operationName: string; context: string } => {
   // Match patterns like "operationName in fileName" or "operationName from fileName"
   const match = details.match(/^(.+?)\s+(in|from)\s+(.+)$/)
-  if (match) {
+  if (match && match[1]) {
     return {
       operationName: match[1],
       context: `${match[2]} ${match[3]}`,

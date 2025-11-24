@@ -1,4 +1,4 @@
-import { BaseConfig } from '../../config'
+import type { BaseConfig } from '../../config'
 
 export interface SlackPlugin {
   /**
