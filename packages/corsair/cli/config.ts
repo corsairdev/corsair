@@ -2,11 +2,8 @@ import { existsSync } from 'fs'
 import { resolve } from 'path'
 import { config } from 'dotenv'
 import { Project, SyntaxKind, Node } from 'ts-morph'
-import {
-  CorsairConfig,
-  DefaultBaseConfig,
-  ConnectionConfig,
-} from '../config/index.js'
+import type { CorsairConfig, ConnectionConfig } from '../config/index.js'
+import { DefaultBaseConfig } from '../config/index.js'
 
 type GenericCorsairConfig = CorsairConfig<any>
 

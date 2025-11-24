@@ -1,1 +1,1 @@
-export * from './Tanstack'
+export * from './tanstack'
