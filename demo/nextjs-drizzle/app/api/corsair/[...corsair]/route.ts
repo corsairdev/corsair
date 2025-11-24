@@ -1,5 +1,5 @@
 import { fetchRequestHandler } from 'corsair'
-import { corsairRouter } from '@/corsair'
+import { corsairRouter } from '@/corsair/index'
 import { db } from '@/db'
 import { plugins } from '@/corsair/procedure'
 

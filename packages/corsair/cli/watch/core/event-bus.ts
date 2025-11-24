@@ -1,36 +1,36 @@
-import EventEmitter from "events";
-import { CorsairEvent, EventDataMap } from "../types/events.js";
+import EventEmitter from 'events'
+import { CorsairEvent, type EventDataMap } from '../types/events.js'
 
 class CorsairEventBus extends EventEmitter {
-  private logEvents = process.env.DEBUG === "true";
+  private logEvents = process.env.DEBUG === 'true'
 
   emit<E extends CorsairEvent>(event: E, data: EventDataMap[E]): boolean {
     if (this.logEvents) {
-      console.log(`[EVENT] ${event}`, JSON.stringify(data, null, 2));
+      console.log(`[EVENT] ${event}`, JSON.stringify(data, null, 2))
     }
-    return super.emit(event, data);
+    return super.emit(event, data)
   }
 
   on<E extends CorsairEvent>(
     event: E,
     handler: (data: EventDataMap[E]) => void
   ): this {
-    return super.on(event, handler);
+    return super.on(event, handler)
   }
 
   once<E extends CorsairEvent>(
     event: E,
     handler: (data: EventDataMap[E]) => void
   ): this {
-    return super.once(event, handler);
+    return super.once(event, handler)
   }
 
   off<E extends CorsairEvent>(
     event: E,
     handler: (data: EventDataMap[E]) => void
   ): this {
-    return super.off(event, handler);
+    return super.off(event, handler)
   }
 }
 
-export const eventBus = new CorsairEventBus();
+export const eventBus = new CorsairEventBus()

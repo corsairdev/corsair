@@ -1,32 +1,24 @@
 {
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "target": "ES2020",
-    "module": "ESNext",
-    "lib": ["ES2020", "DOM", "DOM.Iterable"],
-    "jsx": "react-jsx",
+    "lib": ["esnext", "dom", "dom.iterable"],
     "types": ["node"],
-    "typeRoots": ["./node_modules/@types"],
-    "moduleResolution": "bundler",
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "skipLibCheck": true,
-    "strict": true,
-    "downlevelIteration": true,
-    "forceConsistentCasingInFileNames": true,
-    "resolveJsonModule": true,
+    "jsx": "react-jsx",
+    "outDir": "./dist",
+    "rootDir": "./",
+    "emitDeclarationOnly": false,
     "declaration": true,
     "declarationMap": true,
-    "sourceMap": true,
-    "outDir": "./dist",
-    "rootDir": "."
+    "skipLibCheck": true
   },
   "include": [
-    "index.ts",
-    "api/**/*",
-    "scripts/**/*",
-    "cli/**/*",
-    "trpc/**/*",
-    "core/**/*"
+    "./**/*"
   ],
-  "exclude": ["node_modules", "dist"]
+  "exclude": [
+    "dist",
+    "node_modules",
+    "**/*.test.*",
+    "**/*.spec.*"
+  ],
+  "references": []
 }
