@@ -88,21 +88,44 @@ export const OperationConfigurationScreen: React.FC<
         marginBottom={1}
       >
         <Text color="yellow" bold>
-          🔧 Configure {operationTypeDisplay}:{' '}
-          <Text color="cyan">{newOperation.operationName}</Text>{' '}
-          <Text dimColor>
-            ({fileName}:{newOperation.lineNumber})
-          </Text>{' '}
-          -{' '}
-          <Text color="green">
-            "{newOperation.prompt.replace(/['"]/g, '')}"
-          </Text>
+          {newOperation.isUpdate ? '♻️  Update' : '🔧 Configure'}{' '}
+          {operationTypeDisplay}:{' '}
+          <Text color="cyan">{newOperation.operationName}</Text>
+          {!newOperation.isUpdate && newOperation.file && (
+            <>
+              {' '}
+              <Text dimColor>
+                ({fileName}:{newOperation.lineNumber})
+              </Text>
+            </>
+          )}
         </Text>
       </Box>
 
+      {newOperation.isUpdate && (
+        <Box marginBottom={1}>
+          <Text dimColor>{newOperation.prompt}</Text>
+        </Box>
+      )}
+
+      {!newOperation.isUpdate && (
+        <Box marginBottom={1}>
+          <Text>
+            Prompt:{' '}
+            <Text color="green">
+              "{newOperation.prompt.replace(/['"]/g, '')}"
+            </Text>
+          </Text>
+        </Box>
+      )}
+
       {/* Input Section */}
       <Box flexDirection="column">
-        <Text bold>Configuration Rules:</Text>
+        <Text bold>
+          {newOperation.isUpdate
+            ? 'Update Instructions:'
+            : 'Configuration Rules:'}
+        </Text>
         <Text> </Text>
 
         {/* Input box */}
