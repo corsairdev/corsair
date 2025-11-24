@@ -229,14 +229,13 @@ export default ${generatedQuery.functionName};
   }) {
     const schema = stateMachine.getSchema() || this.schema
     const cfg = loadConfig()
-    const paths = getResolvedPaths(cfg)
 
     const kebabName = toKebabCase(operation.operationName)
     const camelName = kebabToCamelCase(kebabName)
     const baseDir =
       operation.operationType === 'query'
-        ? paths.queriesDir
-        : paths.mutationsDir
+        ? cfg.pathToCorsairFolder + '/queries'
+        : cfg.pathToCorsairFolder + '/mutations'
     const rawPwd = `${baseDir}/${kebabName}.ts`
     const pwd = rawPwd.startsWith('./') ? rawPwd.slice(2) : rawPwd
 
