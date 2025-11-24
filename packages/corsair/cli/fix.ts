@@ -114,7 +114,9 @@ export async function fix() {
   )
 
   for (let i = 0; i < filesWithErrors.length; i++) {
-    const { file } = filesWithErrors[i]
+    const fileWithError = filesWithErrors[i]
+    if (!fileWithError) continue
+    const { file } = fileWithError
     const fileName = file.split('/').pop()!.replace('.ts', '')
 
     const isQuery = file.includes(queriesPath)

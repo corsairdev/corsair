@@ -2,6 +2,9 @@ import type { DrizzlePostgresConfig } from './drizzle-postgres'
 import type { PrismaPostgresConfig } from './prisma-postgres'
 import type { SlackPlugin } from '../plugins/types'
 
+export type { DrizzlePostgresConfig } from './drizzle-postgres'
+export type { PrismaPostgresConfig } from './prisma-postgres'
+
 export type ExtractStrict<T, U extends T> = U
 
 export type ORMs = 'drizzle' | 'prisma'

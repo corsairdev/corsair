@@ -56,11 +56,11 @@ export async function generate() {
   console.log('🔧 Generating migrations...\n')
 
   const cfg = loadConfig()
-  loadEnv(cfg.envFile ?? '.env.local')
+  loadEnv('.env.local')
   checkDatabaseUrl(cfg.connection)
 
   const { schemaFile } = getResolvedPaths(cfg)
-  const outPath = resolve(process.cwd(), cfg.out!)
+  const outPath = resolve(process.cwd(), 'drizzle')
 
   // Create drizzle output directory for snapshot.json
   if (!existsSync(outPath)) {
@@ -68,8 +68,8 @@ export async function generate() {
   }
 
   const drizzleConfig = {
-    schema: cfg.paths.schema,
-    out: cfg.out!,
+    schema: schemaFile,
+    out: outPath,
     dialect: 'postgresql' as const,
     url: process.env.DATABASE_URL!,
   }
