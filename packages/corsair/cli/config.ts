@@ -22,7 +22,6 @@ const REQUIRED_CONFIG_FIELDS = [
 
 export function loadConfig(): CorsairConfig<any> {
   const tsConfigPath = resolve(process.cwd(), 'corsair.config.ts')
-
   let userConfig: Partial<GenericCorsairConfig> | null = null
 
   const getNodeValue = (node: Node | undefined): ConfigValue => {
@@ -110,6 +109,7 @@ export function loadConfig(): CorsairConfig<any> {
     } catch {}
   }
 
+  console.log('userConfig', userConfig)
   const missingFields = REQUIRED_CONFIG_FIELDS.filter(
     field => !userConfig?.[field]
   )

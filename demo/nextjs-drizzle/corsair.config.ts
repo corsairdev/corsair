@@ -12,13 +12,13 @@ export const config = {
   apiEndpoint: process.env.NEXT_PUBLIC_CORSAIR_API_ROUTE!,
   db: db,
   schema: db._.schema,
-  connection: {
-    host: process.env.DATABASE_HOST!,
-    username: process.env.DATABASE_USERNAME!,
-    password: process.env.DATABASE_PASSWORD!,
-    database: process.env.DATABASE_NAME!,
-  },
-  // connection: process.env.DATABASE_URL!,
+  // connection: {
+  //   host: process.env.DATABASE_HOST!,
+  //   username: process.env.DATABASE_USERNAME!,
+  //   password: process.env.DATABASE_PASSWORD!,
+  //   database: process.env.DATABASE_NAME!,
+  // },
+  connection: process.env.DATABASE_URL!,
   plugins: {
     slack: {
       token: '',
