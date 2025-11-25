@@ -7,26 +7,18 @@ Corsair generates type-safe TypeScript API routes from natural language. You mai
 **Key Points:**
 
 - Type-safe end-to-end
-- Schema-aware with auto-detection
 - Natural language to TypeScript via CLI commands
 - Standard code you own
 
 **Stack:** Next.js + Drizzle + Postgres
 
-## 🚨 CRITICAL RULE FOR AI ASSISTANTS
+## Rule for AI Assistants
 
-**For ANY task that requires creating or modifying a query or mutation:**
+For tasks that require creating or modifying a query or mutation:
 
-1. **ALWAYS use `pnpm corsair query` or `pnpm corsair mutation` commands**
-2. **NEVER write the query/mutation code manually**
-3. **Let the CLI's AI generate the type-safe code for you**
-
-This applies to ALL requests like:
-
-- "Create a query to..."
-- "Add a mutation for..."
-- "I need to fetch/update/delete..."
-- "Get data from..."
+1. Use `pnpm corsair query` or `pnpm corsair mutation` commands
+2. Do not write the query/mutation code manually
+3. Let the CLI's AI generate the type-safe code for you
 
 ## Project Structure
 
@@ -322,15 +314,15 @@ pnpm corsair check
 pnpm corsair fix
 ```
 
-## 🚨 CRITICAL: Code Generation Rules
+## Code Generation Rules
 
-**YOU MUST ALWAYS USE CLI COMMANDS TO GENERATE QUERIES/MUTATIONS. NEVER WRITE THEM MANUALLY.**
+Use CLI commands to generate queries and mutations rather than writing them manually.
 
-For ANY task that requires a query or mutation, you MUST:
+For tasks that require a query or mutation:
 
-1. **Use the appropriate CLI command** - DO NOT attempt to write the code yourself
-2. **Let the CLI generate the code** - The AI code generation handles all type safety and best practices
-3. **Only then make manual adjustments** - If needed, after generation
+1. Use the appropriate CLI command
+2. Let the CLI generate the code - The AI code generation handles all type safety and best practices
+3. Make manual adjustments if needed, after generation
 
 ### Generate Query
 
@@ -344,13 +336,7 @@ pnpm corsair query -n "get albums by artist id" -i "return all albums for a give
 pnpm corsair mutation -n "update artist popularity" -i "update the popularity field of an artist by id"
 ```
 
-**Mandatory Steps After Generation:**
-
-1. Review the generated file
-2. Add exports to `corsair/queries/index.ts` or `corsair/mutations/index.ts`
-3. Run `pnpm corsair check` to validate
-
-**Example tasks that require CLI generation:**
+Example tasks that benefit from CLI generation:
 
 - "Create a query to fetch users by email" → Use `pnpm corsair query`
 - "Add a mutation to delete an artist" → Use `pnpm corsair mutation`
@@ -426,20 +412,20 @@ type AlbumsData = QueryOutputs['get albums by artist id']
 
 ## Best Practices
 
-1. **🚨 ALWAYS use CLI commands (`pnpm corsair query/mutation`) to generate queries/mutations - NEVER write them manually**
-2. **Always use `ctx.db._.fullSchema` for table references**
-3. **Always use `ctx.schema` for column references**
-4. **Run `pnpm corsair check` after schema changes**
-5. **Export all operations in index.ts files**
-6. **Provide detailed descriptions with table names, relationships, and fields when using CLI generation**
+1. Use CLI commands (`pnpm corsair query/mutation`) to generate queries/mutations
+2. Use `ctx.db._.fullSchema` for table references
+3. Use `ctx.schema` for column references
+4. Run `pnpm corsair check` after schema changes
+5. Export all operations in index.ts files
+6. Provide detailed descriptions with table names, relationships, and fields when using CLI generation
 
 ## AI Assistant Instructions
 
-### 🚨 MANDATORY: When User Requests ANY Query/Mutation:
+### When User Requests a Query or Mutation:
 
-**YOU MUST FOLLOW THIS EXACT WORKFLOW - NO EXCEPTIONS:**
+Follow this workflow:
 
-1. **ALWAYS Generate Using CLI First:**
+1. Generate Using CLI First:
 
    ```bash
    pnpm corsair query -n "query name" -i "detailed description of what it should do, including table names, relationships, filters, etc."
@@ -451,23 +437,9 @@ type AlbumsData = QueryOutputs['get albums by artist id']
    pnpm corsair mutation -n "mutation name" -i "detailed description of what data to modify, which table, what fields to update/insert/delete"
    ```
 
-2. **Add Export to Index:**
-
-   ```typescript
-   export * from './query-name'
-   ```
-
-3. **Validate:**
-
-   ```bash
-   pnpm corsair check
-   ```
-
-4. **Review Generated Code with User**
-
 ### Example Workflows:
 
-**Example 1:**
+Example 1:
 User: "I need a query to get all tracks for an album"
 
 Your response:
@@ -476,19 +448,7 @@ Your response:
 pnpm corsair query -n "get tracks by album id" -i "return all tracks for a given album id from the tracks table filtered by album_id"
 ```
 
-Then add to `corsair/queries/index.ts`:
-
-```typescript
-export * from './get-tracks-by-album-id'
-```
-
-Then validate:
-
-```bash
-pnpm corsair check
-```
-
-**Example 2:**
+Example 2:
 User: "Create a mutation to delete an artist"
 
 Your response:
@@ -497,19 +457,7 @@ Your response:
 pnpm corsair mutation -n "delete artist" -i "delete an artist from the artists table by id"
 ```
 
-Then add to `corsair/mutations/index.ts`:
-
-```typescript
-export * from './delete-artist'
-```
-
-Then validate:
-
-```bash
-pnpm corsair check
-```
-
-**Example 3:**
+Example 3:
 User: "Get albums with their artists"
 
 Your response:
@@ -518,21 +466,9 @@ Your response:
 pnpm corsair query -n "get albums with artists" -i "return all albums with their associated artists by joining albums, album_artists, and artists tables"
 ```
 
-Then add to `corsair/queries/index.ts`:
+### What NOT to Do:
 
-```typescript
-export * from './get-albums-with-artists'
-```
-
-Then validate:
-
-```bash
-pnpm corsair check
-```
-
-### 🚨 What NOT to Do:
-
-❌ **NEVER write query/mutation code manually like this:**
+Avoid writing query/mutation code manually like this:
 
 ```typescript
 export const getAlbums = procedure
@@ -540,7 +476,7 @@ export const getAlbums = procedure
   .query(async ({ input, ctx }) => { ... })
 ```
 
-✅ **ALWAYS use the CLI command:**
+Instead, use the CLI command:
 
 ```bash
 pnpm corsair query -n "get albums" -i "description"
@@ -548,25 +484,23 @@ pnpm corsair query -n "get albums" -i "description"
 
 ## Troubleshooting
 
-**Type errors?** Check you're using `ctx.db._.fullSchema` and `ctx.schema` correctly
+Type errors? Check you're using `ctx.db._.fullSchema` and `ctx.schema` correctly
 
-**Missing operations?** Verify exports in index.ts files and run `pnpm corsair generate`
+Missing operations? Verify exports in index.ts files and run `pnpm corsair generate`
 
-**Schema changes?** Run `pnpm corsair check` to see affected operations
-
----
-
-## 🚨 FINAL REMINDER FOR AI ASSISTANTS
-
-**MANDATORY RULE: For ANY task involving queries or mutations:**
-
-1. ✅ **DO:** Use `pnpm corsair query -n "name" -i "description"` or `pnpm corsair mutation -n "name" -i "description"`
-2. ❌ **DON'T:** Write procedure code manually
-3. ✅ **DO:** Provide detailed descriptions including table names, relationships, filters, fields
-4. ❌ **DON'T:** Skip the CLI generation step
-
-**The CLI has AI-powered code generation that ensures type safety and best practices. Your job is to use it, not replace it.**
+Schema changes? Run `pnpm corsair check` to see affected operations
 
 ---
 
-**Remember: ALWAYS use CLI commands for code generation. NEVER write queries/mutations manually.**
+## Final Reminder for AI Assistants
+
+For tasks involving queries or mutations:
+
+1. Use `pnpm corsair query -n "name" -i "description"` or `pnpm corsair mutation -n "name" -i "description"`
+2. Avoid writing procedure code manually
+3. Provide detailed descriptions including table names, relationships, filters, fields
+4. Use the CLI generation step
+
+The CLI has AI-powered code generation that ensures type safety and best practices.
+
+---
