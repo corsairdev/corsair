@@ -17,10 +17,13 @@ import {
   useAlbumsByArtistId,
   useTracksByArtistId,
 } from '@/lib/api/queries.client'
-import { useUpdateArtistPopularity } from '@/lib/api/mutations.client'
 import { Button } from '@/components/ui/button'
 import { useEffect, useState } from 'react'
-import { QueryOutputs, useCorsairQuery } from '@/corsair/client'
+import {
+  QueryOutputs,
+  useCorsairQuery,
+  useCorsairMutation,
+} from '@/corsair/client'
 
 interface ArtistDetailsSheetProps {
   artist: QueryOutputs['get artist by id'] | undefined
@@ -55,8 +58,7 @@ export function ArtistDetailsSheet({
     refetch: refetchTracks,
   } = useTracksByArtistId(artist?.id || null)
 
-  // Client-side mutation hook
-  const updatePopularity = useUpdateArtistPopularity()
+  const updatePopularity = useCorsairMutation('update artist popularity')
 
   // Local state for optimistic updates
   const [localArtist, setLocalArtist] = useState(artist)
@@ -69,30 +71,26 @@ export function ArtistDetailsSheet({
 
   const handleIncreasePopularity = async () => {
     const newPopularity = Math.min(100, (localArtist.popularity || 0) + 5)
-    // Optimistic update
     setLocalArtist({ ...localArtist, popularity: newPopularity })
 
-    await updatePopularity.mutate({
+    await updatePopularity.mutateAsync({
       artistId: localArtist.id,
       popularity: newPopularity,
     })
 
-    // Refetch to ensure data consistency
     refetchAlbums()
     refetchTracks()
   }
 
   const handleDecreasePopularity = async () => {
     const newPopularity = Math.max(0, (localArtist.popularity || 0) - 5)
-    // Optimistic update
     setLocalArtist({ ...localArtist, popularity: newPopularity })
 
-    await updatePopularity.mutate({
+    await updatePopularity.mutateAsync({
       artistId: localArtist.id,
       popularity: newPopularity,
     })
 
-    // Refetch to ensure data consistency
     refetchAlbums()
     refetchTracks()
   }
@@ -147,7 +145,7 @@ export function ArtistDetailsSheet({
                   size="sm"
                   variant="outline"
                   onClick={handleIncreasePopularity}
-                  disabled={updatePopularity.isLoading}
+                  disabled={updatePopularity.isPending}
                 >
                   +5
                 </Button>
@@ -155,7 +153,7 @@ export function ArtistDetailsSheet({
                   size="sm"
                   variant="outline"
                   onClick={handleDecreasePopularity}
-                  disabled={updatePopularity.isLoading}
+                  disabled={updatePopularity.isPending}
                 >
                   -5
                 </Button>
