@@ -40,11 +40,9 @@ import './core/state-machine.js'
  */
 export async function watch(): Promise<void> {
   console.clear()
-  // console.log('Starting Corsair Watch...\n')
 
-  // Load environment variables first
+  loadEnv('.env.local')
   const cfg = loadConfig()
-  loadEnv(cfg.envFile ?? '.env.local')
 
   const project = new Project({
     tsConfigFilePath: 'tsconfig.json',

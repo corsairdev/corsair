@@ -1,42 +1,59 @@
-import React from 'react';
-import { Box, Text, useInput } from 'ink';
-import type { StateContext } from '../../types/state.js';
-import { eventBus } from '../../core/event-bus.js';
-import { CorsairEvent } from '../../types/events.js';
+import React from 'react'
+import { Box, Text, useInput } from 'ink'
+import type { StateContext } from '../../types/state.js'
+import { eventBus } from '../../core/event-bus.js'
+import { CorsairEvent } from '../../types/events.js'
 
 interface OperationDetailScreenProps {
-  context: StateContext;
+  context: StateContext
 }
 
-export const OperationDetailScreen: React.FC<OperationDetailScreenProps> = ({ context }) => {
-  const operationsView = context.operationsView;
+export const OperationDetailScreen: React.FC<OperationDetailScreenProps> = ({
+  context,
+}) => {
+  const operationsView = context.operationsView
 
   if (!operationsView || !operationsView.selectedOperation) {
-    return null;
+    return null
   }
 
-  const { type, selectedOperation } = operationsView;
+  const { type, selectedOperation } = operationsView
 
   // Get the operation details
-  const operationsMap = type === 'queries' ? context.queries : context.mutations;
-  const operation = operationsMap?.get(selectedOperation);
+  const operationsMap = type === 'queries' ? context.queries : context.mutations
+  const operation = operationsMap?.get(selectedOperation)
 
   if (!operation) {
-    return null;
+    return null
   }
 
-  const displayColor = type === 'queries' ? 'cyan' : 'yellow';
-  const operationType = type === 'queries' ? 'Query' : 'Mutation';
+  const displayColor = type === 'queries' ? 'cyan' : 'yellow'
+  const operationType = type === 'queries' ? 'Query' : 'Mutation'
 
   // Handle keyboard input
   useInput((input, key) => {
+    const inputLower = input.toLowerCase()
+
     if (key.escape) {
-      eventBus.emit(CorsairEvent.USER_COMMAND, { command: 'go_back' });
+      eventBus.emit(CorsairEvent.USER_COMMAND, { command: 'go_back' })
+    } else if (inputLower === 'u') {
+      eventBus.emit(CorsairEvent.USER_COMMAND, {
+        command: 'update_operation',
+        args: {
+          operationName: selectedOperation,
+          operationType: type === 'queries' ? 'query' : 'mutation',
+        },
+      })
     }
-  });
+  })
 
   return (
-    <Box flexDirection="column" borderStyle="round" borderColor={displayColor} padding={1}>
+    <Box
+      flexDirection="column"
+      borderStyle="round"
+      borderColor={displayColor}
+      padding={1}
+    >
       {/* Header with type badge */}
       <Box justifyContent="space-between">
         <Text color={displayColor} bold>
@@ -44,7 +61,8 @@ export const OperationDetailScreen: React.FC<OperationDetailScreenProps> = ({ co
         </Text>
         <Box>
           <Text backgroundColor={displayColor} color="black" bold>
-            {' '}{operationType}{' '}
+            {' '}
+            {operationType}{' '}
           </Text>
         </Box>
       </Box>
@@ -78,9 +96,19 @@ export const OperationDetailScreen: React.FC<OperationDetailScreenProps> = ({ co
       )}
 
       {/* Navigation hint */}
-      <Box marginTop={1} borderTop borderStyle="single" borderColor="gray" paddingTop={1}>
-        <Text dimColor>[ESC] Back to operations list</Text>
+      <Box
+        marginTop={1}
+        borderTop
+        borderStyle="single"
+        borderColor="gray"
+        paddingTop={1}
+        flexDirection="column"
+      >
+        <Box gap={2}>
+          <Text dimColor>[U] Update operation</Text>
+          <Text dimColor>[ESC] Back to operations list</Text>
+        </Box>
       </Box>
     </Box>
-  );
-};
+  )
+}

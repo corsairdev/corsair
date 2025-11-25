@@ -55,13 +55,17 @@ const request = 'give me all tracks by artist id'
 const pwd = ''
 
 const result = await promptAgent(pwd).generate({
-  prompt: promptBuilder(request, testSchema, {
-    dbType: 'postgres',
-    framework: 'nextjs',
-    operation: 'mutation',
-    orm: 'drizzle',
+  prompt: promptBuilder({
+    functionName: request,
+    incomingSchema: testSchema,
+    config: {
+      dbType: 'postgres',
+      framework: 'nextjs',
+      operation: 'mutation',
+      orm: 'drizzle',
+    },
   }),
 })
 
-console.log(result.text) // agent's final answer
-console.log(result.steps) // steps taken by the agent
+console.log(result.text)
+console.log(result.steps)

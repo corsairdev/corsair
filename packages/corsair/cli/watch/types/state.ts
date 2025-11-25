@@ -68,6 +68,11 @@ export interface LLMResponse {
     pseudocode?: string
     function_name?: string
   }
+  usage?: {
+    inputTokens: number
+    outputTokens: number
+    totalTokens: number
+  }
 }
 
 export interface StateContext {
@@ -104,6 +109,7 @@ export interface NewOperationContext {
   file: string
   lineNumber: number
   configurationRules?: string
+  isUpdate?: boolean
 }
 
 export interface UnfinishedOperation {
