@@ -2,29 +2,17 @@
 
 ## Code Generation Commands
 
-### Generate Query
+### Generate Query/Mutation
 
 ```bash
-pnpm corsair query -n "queryName" -i "fetch posts with author details from posts and users tables"
+pnpm corsair query/mutation -n "query/mutationName" -i "fetch posts with author details from posts and users tables"
 ```
 
 **Agent must use this to generate queries.** DO NOT write query code manually.
 
-- Returns path where query was generated (e.g., `corsair/queries/get-posts-with-authors.ts`)
-- To modify generated code, use: `-u` flag to update existing query
-- AI agent analyzes schema and generates type-safe query code automatically
-
-### Generate Mutation
-
-```bash
-pnpm corsair mutation -n "mutationName" -i "create post with title, content in posts table"
-```
-
-**Agent must use this to generate mutations.** DO NOT write mutation code manually.
-
-- Returns path where mutation was generated (e.g., `corsair/mutations/create-post.ts`)
-- To modify generated code, use: `-u` flag to update existing mutation
-- AI agent analyzes schema and generates type-safe mutation code automatically
+- Adds the query/mutation file in the appropriate folder (queries/mutations) and also exports it in the index.ts file.
+- Returns path where query/mutation was generated (e.g., `corsair/queries/get-posts-with-authors.ts`)
+- To modify generated code, use: `-u` flag to update existing query/mutation
 
 ## Development Commands
 
@@ -75,17 +63,93 @@ project-root/
 │   ├── index.ts                # Exports all procedures
 │   ├── procedure.ts            # Base procedure config
 │   ├── client.ts               # Client-side setup
-│   ├── queries/                # Generated queries
-│   └── mutations/              # Generated mutations
+│   ├── queries/
+│   │   └── index.ts            # (managed by Corsair - don't change)
+│   └── mutations/
+│       └── index.ts            # (managed by Corsair - don't change)
 ├── app/api/corsair/[...corsair]/route.ts  # API endpoint
 └── db/
     ├── index.ts                # Database client
     └── schema.ts               # Database schema
 ```
 
-## Workflow
+## React Component Example
 
-1. **Generate**: Use `query`/`mutation` commands to generate code (never write manually)
-2. **Validate**: Run `check` to verify against schema
-3. **Fix**: Use `fix` or regenerate with `-u` flag if issues found
-4. **Develop**: Keep `watch` running for live schema sync
+### Using Queries and Mutations in Components
+
+```tsx
+'use client'
+
+import { useState, useEffect } from 'react'
+import {
+  useCorsairQuery,
+  useCorsairMutation,
+  QueryOutputs,
+} from '@/corsair/client'
+
+interface PostDetailsProps {
+  post: QueryOutputs['get post by id'] | undefined
+  open: boolean
+  onOpenChange: (open: boolean) => void
+}
+
+export function PostDetails({ post, open, onOpenChange }: PostDetailsProps) {
+  const { data: comments, isLoading } = useCorsairQuery(
+    'get comments by post id',
+    { postId: post?.id || '' },
+    { enabled: !!post?.id }
+  )
+
+  const updatePost = useCorsairMutation('update post')
+  const deleteComment = useCorsairMutation('delete comment')
+
+  const [localPost, setLocalPost] = useState(post)
+
+  useEffect(() => {
+    setLocalPost(post)
+  }, [post])
+
+  const handleUpdateTitle = async (newTitle: string) => {
+    if (!localPost) return
+
+    setLocalPost({ ...localPost, title: newTitle })
+
+    await updatePost.mutateAsync({
+      postId: localPost.id,
+      title: newTitle,
+    })
+  }
+
+  const handleDeleteComment = async (commentId: string) => {
+    await deleteComment.mutateAsync({ commentId })
+  }
+
+  if (!localPost) return null
+
+  return (
+    <div>
+      <h1>{localPost.title}</h1>
+      <p>{localPost.content}</p>
+
+      <div>
+        <h2>Comments ({comments?.length || 0})</h2>
+        {isLoading ? (
+          <p>Loading comments...</p>
+        ) : (
+          comments?.map(comment => (
+            <div key={comment.id}>
+              <p>{comment.content}</p>
+              <button
+                onClick={() => handleDeleteComment(comment.id)}
+                disabled={deleteComment.isPending}
+              >
+                Delete
+              </button>
+            </div>
+          ))
+        )}
+      </div>
+    </div>
+  )
+}
+```
