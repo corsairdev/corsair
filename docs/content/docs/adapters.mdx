@@ -1,0 +1,152 @@
+---
+title: Adapters
+description: Framework adapters for Next.js and other platforms
+---
+
+import { Callout } from 'fumadocs-ui/components/callout'
+
+## Next.js App Router
+
+Corsair provides a tRPC-based adapter for Next.js App Router with support for 
+HTTP streaming and batch requests.
+
+### Setup
+
+Create an API route handler at `app/api/corsair/[...corsair]/route.ts`:
+
+```ts title="app/api/corsair/[...corsair]/route.ts"
+import { fetchRequestHandler } from 'corsair'
+import { corsairRouter } from '@/corsair/index'
+import { db } from '@/db'
+
+const handler = async (req: Request) => {
+  return fetchRequestHandler({
+    endpoint: '/api/corsair',
+    req,
+    router: corsairRouter,
+    createContext: () => {
+      return {
+        userId: '123',
+        db,
+        schema: db._.schema!,
+      }
+    },
+  })
+}
+
+export const GET = handler
+export const POST = handler
+export const PUT = handler
+export const DELETE = handler
+export const PATCH = handler
+export const HEAD = handler
+export const OPTIONS = handler
+```
+
+### Client Configuration
+
+Configure the client to connect to your API route:
+
+```ts title="corsair/client.ts"
+import { createCorsairClient, createCorsairHooks } from 'corsair'
+import type { CorsairRouter } from '.'
+
+const getBaseUrl = () => {
+  if (typeof window !== 'undefined') {
+    return window.location.origin
+  }
+  if (process.env.VERCEL_URL) {
+    return `https://${process.env.VERCEL_URL}`
+  }
+  return `http://localhost:${process.env.PORT || 3000}`
+}
+
+const { typedClient } = createCorsairClient<CorsairRouter>({
+  url: `${getBaseUrl()}${process.env.NEXT_PUBLIC_CORSAIR_API_ROUTE!}`,
+})
+
+const {
+  useCorsairQuery,
+  useCorsairMutation,
+  corsairQuery,
+  corsairMutation,
+} = createCorsairHooks<CorsairRouter>(typedClient)
+
+export { useCorsairQuery, useCorsairMutation, corsairQuery, corsairMutation }
+```
+
+### Context Function
+
+The `createContext` function is called for every request and provides 
+context to your procedures:
+
+```ts
+createContext: async () => {
+  return {
+    userId: '123',
+    db,
+    schema: db._.schema!,
+    plugins,
+  }
+}
+```
+
+<Callout type="info" title="Authentication">
+  Add authentication logic in the `createContext` function. 
+  Access user information from headers or cookies and include it in the context.
+</Callout>
+
+### Example with Authentication
+
+```ts title="app/api/corsair/[...corsair]/route.ts"
+import { fetchRequestHandler } from 'corsair'
+import { corsairRouter } from '@/corsair/index'
+import { db } from '@/db'
+import { cookies } from 'next/headers'
+
+const handler = async (req: Request) => {
+  return fetchRequestHandler({
+    endpoint: '/api/corsair',
+    req,
+    router: corsairRouter,
+    createContext: async () => {
+      const cookieStore = await cookies()
+      const token = cookieStore.get('auth-token')?.value
+      
+      const userId = token ? await validateToken(token) : undefined
+      
+      return {
+        userId,
+        db,
+        schema: db._.schema!,
+      }
+    },
+  })
+}
+
+export const GET = handler
+export const POST = handler
+```
+
+## Database Adapters
+
+Corsair currently supports Drizzle ORM with Postgres:
+
+### Drizzle + Postgres
+
+```ts title="db/index.ts"
+import { drizzle } from 'drizzle-orm/node-postgres'
+import { Pool } from 'pg'
+import * as schema from './schema'
+
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+})
+
+export const db = drizzle(pool, { schema })
+```
+
+<Callout type="warn" title="Coming Soon">
+  Support for Prisma, Express, Fastify, Hono, and other frameworks is in development.
+</Callout>
+

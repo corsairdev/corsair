@@ -1,35 +1,21 @@
-import {
-  DocsBody,
-  DocsDescription,
-  DocsPage,
-  DocsTitle,
-} from 'fumadocs-ui/page'
-import { CodeBlock, Pre } from 'fumadocs-ui/components/codeblock'
+---
+title: Examples
+description: Real-world examples and patterns for building with Corsair
+---
+
 import { Callout } from 'fumadocs-ui/components/callout'
 
-export default function Page() {
-  return (
-    <DocsPage>
-      <DocsTitle>Examples</DocsTitle>
-      <DocsDescription>
-        Real-world examples and patterns for building with Corsair
-      </DocsDescription>
-      <DocsBody>
-        <Callout type="info" title="Complete Demo">
-          Check out the <code>demo/nextjs-drizzle</code> folder in the Corsair repository 
-          for a complete working example with a music database.
-        </Callout>
+<Callout type="info" title="Complete Demo">
+  Check out the `demo/nextjs-drizzle` folder in the Corsair repository 
+  for a complete working example with a music database.
+</Callout>
 
-        <h2>Basic CRUD Operations</h2>
+## Basic CRUD Operations
 
-        <h3>Query: Fetch All Records</h3>
-        <CodeBlock
-          title="corsair/queries/get-all-albums.ts"
-          data-line-numbers
-          viewportProps={{ style: { paddingLeft: 16 } }}
-        >
-          <Pre>
-            <code className="language-ts">{`import { z } from 'corsair'
+### Query: Fetch All Records
+
+```ts title="corsair/queries/get-all-albums.ts"
+import { z } from 'corsair'
 import { procedure } from '../procedure'
 
 export const getAllAlbums = procedure
@@ -37,18 +23,13 @@ export const getAllAlbums = procedure
   .query(async ({ input, ctx }) => {
     const albums = await ctx.db.select().from(ctx.db._.fullSchema.albums)
     return albums
-  })`}</code>
-          </Pre>
-        </CodeBlock>
+  })
+```
 
-        <h3>Query: Fetch by ID</h3>
-        <CodeBlock
-          title="corsair/queries/get-album-by-id.ts"
-          data-line-numbers
-          viewportProps={{ style: { paddingLeft: 16 } }}
-        >
-          <Pre>
-            <code className="language-ts">{`import { z } from 'corsair'
+### Query: Fetch by ID
+
+```ts title="corsair/queries/get-album-by-id.ts"
+import { z } from 'corsair'
 import { procedure } from '../procedure'
 import { eq } from 'drizzle-orm'
 
@@ -61,18 +42,13 @@ export const getAlbumById = procedure
       .where(eq(ctx.db._.fullSchema.albums.id, input.id))
     
     return album
-  })`}</code>
-          </Pre>
-        </CodeBlock>
+  })
+```
 
-        <h3>Mutation: Create Record</h3>
-        <CodeBlock
-          title="corsair/mutations/create-album.ts"
-          data-line-numbers
-          viewportProps={{ style: { paddingLeft: 16 } }}
-        >
-          <Pre>
-            <code className="language-ts">{`import { procedure } from '../procedure'
+### Mutation: Create Record
+
+```ts title="corsair/mutations/create-album.ts"
+import { procedure } from '../procedure'
 import { z } from 'corsair'
 
 export const createAlbum = procedure
@@ -92,18 +68,13 @@ export const createAlbum = procedure
       .returning()
 
     return album
-  })`}</code>
-          </Pre>
-        </CodeBlock>
+  })
+```
 
-        <h3>Mutation: Update Record</h3>
-        <CodeBlock
-          title="corsair/mutations/update-album-type.ts"
-          data-line-numbers
-          viewportProps={{ style: { paddingLeft: 16 } }}
-        >
-          <Pre>
-            <code className="language-ts">{`import { procedure } from '../procedure'
+### Mutation: Update Record
+
+```ts title="corsair/mutations/update-album-type.ts"
+import { procedure } from '../procedure'
 import { z } from 'corsair'
 import { eq } from 'drizzle-orm'
 
@@ -122,20 +93,15 @@ export const updateAlbumType = procedure
       .returning()
 
     return album
-  })`}</code>
-          </Pre>
-        </CodeBlock>
+  })
+```
 
-        <h2>Relations and Joins</h2>
+## Relations and Joins
 
-        <h3>Query with Join</h3>
-        <CodeBlock
-          title="corsair/queries/get-album-by-id-with-artists.ts"
-          data-line-numbers
-          viewportProps={{ style: { paddingLeft: 16 } }}
-        >
-          <Pre>
-            <code className="language-ts">{`import { z } from 'corsair'
+### Query with Join
+
+```ts title="corsair/queries/get-album-by-id-with-artists.ts"
+import { z } from 'corsair'
 import { procedure } from '../procedure'
 import { eq } from 'drizzle-orm'
 
@@ -152,18 +118,13 @@ export const getAlbumByIdWithArtists = procedure
       .leftJoin(schema.artists, eq(schema.album_artists.artist_id, schema.artists.id))
     
     return album
-  })`}</code>
-          </Pre>
-        </CodeBlock>
+  })
+```
 
-        <h3>Query Multiple Relations</h3>
-        <CodeBlock
-          title="corsair/queries/get-albums-by-artist-id.ts"
-          data-line-numbers
-          viewportProps={{ style: { paddingLeft: 16 } }}
-        >
-          <Pre>
-            <code className="language-ts">{`import { z } from 'corsair'
+### Query Multiple Relations
+
+```ts title="corsair/queries/get-albums-by-artist-id.ts"
+import { z } from 'corsair'
 import { procedure } from '../procedure'
 import { eq } from 'drizzle-orm'
 
@@ -184,20 +145,15 @@ export const getAlbumsByArtistId = procedure
       .where(eq(schema.album_artists.artist_id, input.artistId))
     
     return albums
-  })`}</code>
-          </Pre>
-        </CodeBlock>
+  })
+```
 
-        <h2>Batch Operations</h2>
+## Batch Operations
 
-        <h3>Create Multiple Records</h3>
-        <CodeBlock
-          title="corsair/mutations/create-albums.ts"
-          data-line-numbers
-          viewportProps={{ style: { paddingLeft: 16 } }}
-        >
-          <Pre>
-            <code className="language-ts">{`import { procedure } from '../procedure'
+### Create Multiple Records
+
+```ts title="corsair/mutations/create-albums.ts"
+import { procedure } from '../procedure'
 import { z } from 'corsair'
 
 export const createAlbums = procedure
@@ -219,18 +175,13 @@ export const createAlbums = procedure
       .returning()
 
     return albums
-  })`}</code>
-          </Pre>
-        </CodeBlock>
+  })
+```
 
-        <h3>Link Records (Many-to-Many)</h3>
-        <CodeBlock
-          title="corsair/mutations/link-album-to-artists.ts"
-          data-line-numbers
-          viewportProps={{ style: { paddingLeft: 16 } }}
-        >
-          <Pre>
-            <code className="language-ts">{`import { procedure } from '../procedure'
+### Link Records (Many-to-Many)
+
+```ts title="corsair/mutations/link-album-to-artists.ts"
+import { procedure } from '../procedure'
 import { z } from 'corsair'
 
 export const linkAlbumToArtists = procedure
@@ -252,20 +203,15 @@ export const linkAlbumToArtists = procedure
       .returning()
 
     return result
-  })`}</code>
-          </Pre>
-        </CodeBlock>
+  })
+```
 
-        <h2>Client Usage</h2>
+## Client Usage
 
-        <h3>Server Component</h3>
-        <CodeBlock
-          title="app/page.tsx"
-          data-line-numbers
-          viewportProps={{ style: { paddingLeft: 16 } }}
-        >
-          <Pre>
-            <code className="language-tsx">{`import { corsairQuery } from '@/corsair/client'
+### Server Component
+
+```tsx title="app/page.tsx"
+import { corsairQuery } from '@/corsair/client'
 import { ArtistsAlbumsView } from '@/components/artists-albums-view'
 
 export default async function Home() {
@@ -277,18 +223,13 @@ export default async function Home() {
       <ArtistsAlbumsView initialArtists={artists} initialAlbums={albums} />
     </div>
   )
-}`}</code>
-          </Pre>
-        </CodeBlock>
+}
+```
 
-        <h3>Client Component with Query</h3>
-        <CodeBlock
-          title="components/artist-details.tsx"
-          data-line-numbers
-          viewportProps={{ style: { paddingLeft: 16 } }}
-        >
-          <Pre>
-            <code className="language-tsx">{`'use client'
+### Client Component with Query
+
+```tsx title="components/artist-details.tsx"
+'use client'
 
 import { useCorsairQuery } from '@/corsair/client'
 
@@ -311,18 +252,13 @@ export function ArtistDetails({ artistId }: { artistId: string }) {
       ))}
     </div>
   )
-}`}</code>
-          </Pre>
-        </CodeBlock>
+}
+```
 
-        <h3>Client Component with Mutation</h3>
-        <CodeBlock
-          title="components/create-album-form.tsx"
-          data-line-numbers
-          viewportProps={{ style: { paddingLeft: 16 } }}
-        >
-          <Pre>
-            <code className="language-tsx">{`'use client'
+### Client Component with Mutation
+
+```tsx title="components/create-album-form.tsx"
+'use client'
 
 import { useCorsairMutation } from '@/corsair/client'
 import { useState } from 'react'
@@ -358,20 +294,15 @@ export function CreateAlbumForm() {
       </button>
     </form>
   )
-}`}</code>
-          </Pre>
-        </CodeBlock>
+}
+```
 
-        <h2>Advanced Patterns</h2>
+## Advanced Patterns
 
-        <h3>Conditional Logic</h3>
-        <CodeBlock
-          title="corsair/mutations/toggle-track-explicit.ts"
-          data-line-numbers
-          viewportProps={{ style: { paddingLeft: 16 } }}
-        >
-          <Pre>
-            <code className="language-ts">{`import { procedure } from '../procedure'
+### Conditional Logic
+
+```ts title="corsair/mutations/toggle-track-explicit.ts"
+import { procedure } from '../procedure'
 import { z } from 'corsair'
 import { eq } from 'drizzle-orm'
 
@@ -394,18 +325,13 @@ export const toggleTrackExplicit = procedure
       .returning()
 
     return updated
-  })`}</code>
-          </Pre>
-        </CodeBlock>
+  })
+```
 
-        <h3>Optimistic Updates</h3>
-        <CodeBlock
-          title="components/artist-popularity.tsx"
-          data-line-numbers
-          viewportProps={{ style: { paddingLeft: 16 } }}
-        >
-          <Pre>
-            <code className="language-tsx">{`'use client'
+### Optimistic Updates
+
+```tsx title="components/artist-popularity.tsx"
+'use client'
 
 import { useCorsairMutation } from '@/corsair/client'
 import { useState, useEffect } from 'react'
@@ -435,16 +361,11 @@ export function ArtistPopularity({ artist }: { artist: any }) {
       <button onClick={handleIncrease}>+5</button>
     </div>
   )
-}`}</code>
-          </Pre>
-        </CodeBlock>
-
-        <Callout type="info" title="More Examples">
-          Explore the complete demo application in the repository for more patterns and 
-          real-world usage examples.
-        </Callout>
-      </DocsBody>
-    </DocsPage>
-  )
 }
+```
+
+<Callout type="info" title="More Examples">
+  Explore the complete demo application in the repository for more patterns and 
+  real-world usage examples.
+</Callout>
 

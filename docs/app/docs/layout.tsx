@@ -1,4 +1,7 @@
-export const tree = {
+import { DocsLayout } from 'fumadocs-ui/layouts/docs'
+import type { ReactNode } from 'react'
+
+const tree = {
   name: 'Documentation',
   children: [
     {
@@ -60,4 +63,12 @@ export const tree = {
       url: '/docs/examples',
     },
   ],
+}
+
+export default function Layout(props: { children: ReactNode }) {
+  return (
+    <DocsLayout tree={tree} nav={{ title: 'Corsair' }}>
+      {props.children}
+    </DocsLayout>
+  )
 }

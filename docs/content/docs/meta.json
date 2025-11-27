@@ -1,0 +1,18 @@
+{
+  "title": "Documentation",
+  "pages": [
+    "index",
+    "---Getting Started---",
+    "overview",
+    "installation",
+    "quickstart",
+    "---Guides---",
+    "core-concepts",
+    "type-safety",
+    "cli",
+    "adapters",
+    "plugins",
+    "examples"
+  ]
+}
+
