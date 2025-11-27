@@ -6,6 +6,27 @@ import type {
   ConnectionConfig,
 } from '.'
 
+export type BasePrismaPostgresClient = {
+  [key: string]: any
+}
+
+export type PrismaDMMFDatamodel = {
+  models: Array<{
+    name: string
+    fields: Array<{
+      name: string
+      kind: string
+      type: string
+      relationName?: string
+      relationToFields?: string[]
+      relationOnDelete?: string
+      [key: string]: any
+    }>
+    [key: string]: any
+  }>
+  [key: string]: any
+}
+
 export type PrismaPostgresConfig<T = any> = {
   /**
    * The ORM to use for the Postgres database.
@@ -22,13 +43,29 @@ export type PrismaPostgresConfig<T = any> = {
   /**
    * The database client that Corsair will use to interact with the database.
    */
-  db: never
+  db: T extends BasePrismaPostgresClient ? T : never
   /**
    * The schema that Corsair will use to prompt the LLM and build API endpoints.
    */
-  schema: T extends { _: { schema: infer S } } ? S : never
+  schema: PrismaDMMFDatamodel
   /**
    * The database connection configuration.
    */
   connection: ConnectionConfig
+}
+
+export const DefaultPrismaPostgresConfig: PrismaPostgresConfig<any> = {
+  orm: 'prisma',
+  dbType: 'postgres',
+  framework: 'nextjs',
+  db: {},
+  schema: {
+    models: [],
+  },
+  connection: {
+    host: 'localhost',
+    username: 'postgres',
+    password: 'postgres',
+    database: 'postgres',
+  },
 }
