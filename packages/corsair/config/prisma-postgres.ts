@@ -59,7 +59,9 @@ export const DefaultPrismaPostgresConfig: PrismaPostgresConfig<any> = {
   dbType: 'postgres',
   framework: 'nextjs',
   db: {},
-  schema: {},
+  schema: {
+    models: [],
+  },
   connection: {
     host: 'localhost',
     username: 'postgres',
