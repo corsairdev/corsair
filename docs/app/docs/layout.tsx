@@ -67,7 +67,13 @@ const tree = {
 
 export default function Layout(props: { children: ReactNode }) {
   return (
-    <DocsLayout tree={tree} nav={{ title: 'Corsair' }}>
+    <DocsLayout 
+      tree={tree} 
+      nav={{ title: 'Corsair' }}
+      sidebar={{
+        defaultOpenLevel: 0,
+      }}
+    >
       {props.children}
     </DocsLayout>
   )
