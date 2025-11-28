@@ -6,8 +6,8 @@ description: Real-world examples and patterns for building with Corsair
 import { Callout } from 'fumadocs-ui/components/callout'
 
 <Callout type="info" title="Complete Demo">
-  Check out the `demo/nextjs-drizzle` folder in the Corsair repository 
-  for a complete working example with a music database.
+  Check out the `demo/nextjs-drizzle` folder in the Corsair repository for a
+  complete working example with a music database.
 </Callout>
 
 ## Basic CRUD Operations
@@ -40,7 +40,7 @@ export const getAlbumById = procedure
       .select()
       .from(ctx.db._.fullSchema.albums)
       .where(eq(ctx.db._.fullSchema.albums.id, input.id))
-    
+
     return album
   })
 ```
@@ -109,14 +109,20 @@ export const getAlbumByIdWithArtists = procedure
   .input(z.object({ id: z.string() }))
   .query(async ({ input, ctx }) => {
     const schema = ctx.db._.fullSchema
-    
+
     const album = await ctx.db
       .select()
       .from(schema.albums)
       .where(eq(schema.albums.id, input.id))
-      .leftJoin(schema.album_artists, eq(schema.albums.id, schema.album_artists.album_id))
-      .leftJoin(schema.artists, eq(schema.album_artists.artist_id, schema.artists.id))
-    
+      .leftJoin(
+        schema.album_artists,
+        eq(schema.albums.id, schema.album_artists.album_id)
+      )
+      .leftJoin(
+        schema.artists,
+        eq(schema.album_artists.artist_id, schema.artists.id)
+      )
+
     return album
   })
 ```
@@ -132,7 +138,7 @@ export const getAlbumsByArtistId = procedure
   .input(z.object({ artistId: z.string() }))
   .query(async ({ input, ctx }) => {
     const schema = ctx.db._.fullSchema
-    
+
     const albums = await ctx.db
       .select({
         id: schema.albums.id,
@@ -141,9 +147,12 @@ export const getAlbumsByArtistId = procedure
         release_date: schema.albums.release_date,
       })
       .from(schema.albums)
-      .innerJoin(schema.album_artists, eq(schema.albums.id, schema.album_artists.album_id))
+      .innerJoin(
+        schema.album_artists,
+        eq(schema.albums.id, schema.album_artists.album_id)
+      )
       .where(eq(schema.album_artists.artist_id, input.artistId))
-    
+
     return albums
   })
 ```
@@ -192,7 +201,7 @@ export const linkAlbumToArtists = procedure
     })
   )
   .mutation(async ({ input, ctx }) => {
-    const links = input.artistIds.map((artistId) => ({
+    const links = input.artistIds.map(artistId => ({
       album_id: input.albumId,
       artist_id: artistId,
     }))
@@ -244,7 +253,7 @@ export function ArtistDetails({ artistId }: { artistId: string }) {
 
   return (
     <div>
-      {albums?.map((album) => (
+      {albums?.map(album => (
         <div key={album.id}>
           <h3>{album.name}</h3>
           <p>{album.album_type}</p>
@@ -266,7 +275,7 @@ import { useState } from 'react'
 export function CreateAlbumForm() {
   const [name, setName] = useState('')
   const mutation = useCorsairMutation('create album', {
-    onSuccess: (data) => {
+    onSuccess: data => {
       console.log('Album created:', data)
       setName('')
     },
@@ -286,13 +295,250 @@ export function CreateAlbumForm() {
       <input
         type="text"
         value={name}
-        onChange={(e) => setName(e.target.value)}
+        onChange={e => setName(e.target.value)}
         placeholder="Album name"
       />
       <button type="submit" disabled={mutation.isPending}>
         {mutation.isPending ? 'Creating...' : 'Create Album'}
       </button>
     </form>
+  )
+}
+```
+
+## Type Extraction Patterns
+
+### Using QueryOutputs and MutationInputs
+
+Extract types from your queries and mutations for use in components:
+
+```tsx title="components/post-list.tsx"
+'use client'
+
+import {
+  useCorsairQuery,
+  type QueryOutputs,
+  type MutationInputs,
+} from '@/corsair/client'
+
+type Post = QueryOutputs['get all posts'][number]
+type CreatePostInput = MutationInputs['create post']
+
+interface PostListProps {
+  initialPosts: Post[]
+}
+
+export function PostList({ initialPosts }: PostListProps) {
+  const { data: posts } = useCorsairQuery(
+    'get all posts',
+    {},
+    {
+      initialData: initialPosts,
+    }
+  )
+
+  return (
+    <div>
+      {posts?.map(post => (
+        <div key={post.id}>
+          <h2>{post.title}</h2>
+          <p>{post.content}</p>
+        </div>
+      ))}
+    </div>
+  )
+}
+```
+
+### Complete Component with Queries and Mutations
+
+Here's a practical example combining queries, mutations, and optimistic updates:
+
+```tsx title="components/post-details.tsx"
+'use client'
+
+import { useState, useEffect } from 'react'
+import {
+  useCorsairQuery,
+  useCorsairMutation,
+  type QueryOutputs,
+} from '@/corsair/client'
+
+interface PostDetailsProps {
+  postId: string
+  open: boolean
+  onOpenChange: (open: boolean) => void
+}
+
+export function PostDetails({ postId, open, onOpenChange }: PostDetailsProps) {
+  const { data: post, isLoading: postLoading } = useCorsairQuery(
+    'get post by id',
+    { postId },
+    { enabled: !!postId && open }
+  )
+
+  const { data: comments, isLoading: commentsLoading } = useCorsairQuery(
+    'get comments by post id',
+    { postId },
+    { enabled: !!postId && open }
+  )
+
+  const updatePost = useCorsairMutation('update post', {
+    onSuccess: updatedPost => {
+      console.log('Post updated:', updatedPost.id)
+      setLocalPost(updatedPost)
+    },
+    onError: error => {
+      console.error('Failed to update post:', error)
+      setLocalPost(post)
+    },
+  })
+
+  const deleteComment = useCorsairMutation('delete comment', {
+    onSuccess: () => {
+      console.log('Comment deleted')
+    },
+  })
+
+  const [localPost, setLocalPost] = useState(post)
+
+  useEffect(() => {
+    setLocalPost(post)
+  }, [post])
+
+  const handleUpdateTitle = async (newTitle: string) => {
+    if (!localPost) return
+
+    setLocalPost({ ...localPost, title: newTitle })
+
+    await updatePost.mutateAsync({
+      postId: localPost.id,
+      title: newTitle,
+    })
+  }
+
+  const handleDeleteComment = async (commentId: string) => {
+    await deleteComment.mutateAsync({ commentId })
+  }
+
+  if (postLoading) return <div>Loading post...</div>
+  if (!localPost) return <div>Post not found</div>
+
+  return (
+    <div>
+      <h1>{localPost.title}</h1>
+      <p>{localPost.content}</p>
+
+      <button
+        onClick={() => handleUpdateTitle('Updated Title')}
+        disabled={updatePost.isPending}
+      >
+        {updatePost.isPending ? 'Updating...' : 'Update Title'}
+      </button>
+
+      <div>
+        <h2>Comments ({comments?.length || 0})</h2>
+        {commentsLoading ? (
+          <p>Loading comments...</p>
+        ) : (
+          comments?.map(comment => (
+            <div key={comment.id}>
+              <p>{comment.content}</p>
+              <button
+                onClick={() => handleDeleteComment(comment.id)}
+                disabled={deleteComment.isPending}
+              >
+                Delete
+              </button>
+            </div>
+          ))
+        )}
+      </div>
+    </div>
+  )
+}
+```
+
+### Error Handling
+
+Handle errors gracefully with proper type safety:
+
+```tsx title="components/safe-query.tsx"
+'use client'
+
+import { useCorsairQuery } from '@/corsair/client'
+
+export function SafeQuery() {
+  const { data, isLoading, error } = useCorsairQuery('get all posts', {})
+
+  if (isLoading) {
+    return <div>Loading...</div>
+  }
+
+  if (error) {
+    return (
+      <div className="error">
+        <h2>Error loading posts</h2>
+        <p>{error.message}</p>
+      </div>
+    )
+  }
+
+  if (!data || data.length === 0) {
+    return <div>No posts found</div>
+  }
+
+  return (
+    <div>
+      {data.map(post => (
+        <div key={post.id}>{post.title}</div>
+      ))}
+    </div>
+  )
+}
+```
+
+### Using the Enabled Flag
+
+Control when queries execute using the `enabled` option:
+
+```tsx title="components/conditional-query.tsx"
+'use client'
+
+import { useCorsairQuery } from '@/corsair/client'
+import { useState } from 'react'
+
+export function ConditionalQuery() {
+  const [userId, setUserId] = useState<string | null>(null)
+
+  const { data: userPosts, isLoading } = useCorsairQuery(
+    'get posts by user id',
+    { userId: userId! },
+    {
+      enabled: !!userId,
+      refetchOnWindowFocus: false,
+    }
+  )
+
+  return (
+    <div>
+      <input
+        type="text"
+        placeholder="Enter user ID"
+        onChange={e => setUserId(e.target.value || null)}
+      />
+
+      {isLoading && <div>Loading posts...</div>}
+
+      {userPosts && (
+        <div>
+          <h2>User Posts ({userPosts.length})</h2>
+          {userPosts.map(post => (
+            <div key={post.id}>{post.title}</div>
+          ))}
+        </div>
+      )}
+    </div>
   )
 }
 ```
@@ -365,7 +611,6 @@ export function ArtistPopularity({ artist }: { artist: any }) {
 ```
 
 <Callout type="info" title="More Examples">
-  Explore the complete demo application in the repository for more patterns and 
+  Explore the complete demo application in the repository for more patterns and
   real-world usage examples.
 </Callout>
-

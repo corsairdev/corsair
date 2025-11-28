@@ -6,6 +6,7 @@
     "overview",
     "installation",
     "quickstart",
+    "project-structure",
     "---Guides---",
     "core-concepts",
     "type-safety",
@@ -15,4 +16,3 @@
     "examples"
   ]
 }
-
