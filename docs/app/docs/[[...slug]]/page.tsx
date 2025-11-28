@@ -10,6 +10,7 @@ import PluginsDoc from '@/content/docs/plugins.mdx'
 import ExamplesDoc from '@/content/docs/examples.mdx'
 import { DocsPage, DocsBody } from 'fumadocs-ui/page'
 import { notFound } from 'next/navigation'
+import { extractTOC } from '@/lib/toc'
 
 interface PageProps {
   params: Promise<{ slug?: string[] }>
@@ -82,9 +83,17 @@ export default async function Page(props: PageProps) {
   }
 
   const MDX = page.Component
+  const toc = extractTOC(slugKey)
 
   return (
-    <DocsPage>
+    <DocsPage
+      toc={toc}
+      tableOfContent={{
+        enabled: true,
+        style: 'clerk',
+        single: false,
+      }}
+    >
       <h1 className="text-3xl font-bold mb-2">{page.title}</h1>
       {page.description && (
         <p className="text-lg text-muted-foreground mb-8">{page.description}</p>
