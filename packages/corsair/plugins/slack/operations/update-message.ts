@@ -1,15 +1,17 @@
 import { WebClient } from '@slack/web-api'
 import { BaseConfig } from '../../../config'
-import { SlackChannels, MessageResponse } from '../types'
+import { SlackChannels, MessageTs, MessageResponse } from '../types'
 
-export const sendMessage = async <T extends BaseConfig = any>({
+export const updateMessage = async <T extends BaseConfig = any>({
   config,
   channelId,
-  content,
+  messageTs,
+  newContent,
 }: {
   config?: T
   channelId: SlackChannels<T>
-  content: string
+  messageTs: MessageTs
+  newContent: string
 }): Promise<MessageResponse> => {
   // Validate that Slack token is configured
   if (!config?.plugins?.slack?.token) {
@@ -36,13 +38,14 @@ export const sendMessage = async <T extends BaseConfig = any>({
   const client = new WebClient(config.plugins.slack.token)
 
   try {
-    // Call Slack API to send message
-    const result = await client.chat.postMessage({
+    // Call Slack API to update message
+    const result = await client.chat.update({
       channel: actualChannelId,
-      text: content,
+      ts: messageTs,
+      text: newContent,
     })
 
-    // Return success response with message details
+    // Return success response with updated message details
     return {
       success: true,
       data: {
