@@ -1,0 +1,216 @@
+---
+title: Adapters
+description: Framework adapters for Next.js and other platforms
+---
+
+import { Callout } from 'fumadocs-ui/components/callout'
+
+## Next.js App Router
+
+Corsair provides a tRPC-based adapter for Next.js App Router with support for 
+HTTP streaming and batch requests.
+
+### Setup
+
+Create an API route handler at `app/api/corsair/[...corsair]/route.ts`:
+
+```ts title="app/api/corsair/[...corsair]/route.ts"
+import { fetchRequestHandler } from 'corsair'
+import { corsairRouter } from '@/corsair/index'
+import { db } from '@/db'
+
+const handler = async (req: Request) => {
+  return fetchRequestHandler({
+    endpoint: '/api/corsair',
+    req,
+    router: corsairRouter,
+    createContext: () => {
+      return {
+        userId: '123',
+        db,
+        schema: db._.schema!,
+      }
+    },
+  })
+}
+
+export const GET = handler
+export const POST = handler
+export const PUT = handler
+export const DELETE = handler
+export const PATCH = handler
+export const HEAD = handler
+export const OPTIONS = handler
+```
+
+### Client Configuration
+
+Configure the client to connect to your API route:
+
+```ts title="corsair/client.ts"
+import { createCorsairClient, createCorsairHooks } from 'corsair'
+import type { CorsairRouter } from '.'
+
+const getBaseUrl = () => {
+  if (typeof window !== 'undefined') {
+    return window.location.origin
+  }
+  if (process.env.VERCEL_URL) {
+    return `https://${process.env.VERCEL_URL}`
+  }
+  return `http://localhost:${process.env.PORT || 3000}`
+}
+
+const { typedClient } = createCorsairClient<CorsairRouter>({
+  url: `${getBaseUrl()}${process.env.NEXT_PUBLIC_CORSAIR_API_ROUTE!}`,
+})
+
+const {
+  useCorsairQuery,
+  useCorsairMutation,
+  corsairQuery,
+  corsairMutation,
+} = createCorsairHooks<CorsairRouter>(typedClient)
+
+export { useCorsairQuery, useCorsairMutation, corsairQuery, corsairMutation }
+```
+
+### Context Function
+
+The `createContext` function is called for every request and provides 
+context to your procedures:
+
+```ts
+createContext: async () => {
+  return {
+    userId: '123',
+    db,
+    schema: db._.schema!,
+    plugins,
+  }
+}
+```
+
+<Callout type="info" title="Authentication">
+  Add authentication logic in the `createContext` function. 
+  Access user information from headers or cookies and include it in the context.
+</Callout>
+
+### Example with Authentication
+
+```ts title="app/api/corsair/[...corsair]/route.ts"
+import { fetchRequestHandler } from 'corsair'
+import { corsairRouter } from '@/corsair/index'
+import { db } from '@/db'
+import { cookies } from 'next/headers'
+
+const handler = async (req: Request) => {
+  return fetchRequestHandler({
+    endpoint: '/api/corsair',
+    req,
+    router: corsairRouter,
+    createContext: async () => {
+      const cookieStore = await cookies()
+      const token = cookieStore.get('auth-token')?.value
+      
+      const userId = token ? await validateToken(token) : undefined
+      
+      return {
+        userId,
+        db,
+        schema: db._.schema!,
+      }
+    },
+  })
+}
+
+export const GET = handler
+export const POST = handler
+```
+
+## Database Adapters
+
+Corsair supports both Drizzle ORM and Prisma with Postgres:
+
+### Drizzle + Postgres
+
+Set up your Drizzle database client:
+
+```ts title="db/index.ts"
+import { drizzle } from 'drizzle-orm/node-postgres'
+import { Pool } from 'pg'
+import * as schema from './schema'
+
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+})
+
+export const db = drizzle(pool, { schema })
+```
+
+Configure Corsair to use Drizzle:
+
+```ts title="corsair.config.ts"
+import { type CorsairConfig } from 'corsair'
+import { db } from './db'
+
+export const config = {
+  dbType: 'postgres',
+  orm: 'drizzle',
+  framework: 'nextjs',
+  pathToCorsairFolder: './corsair',
+  apiEndpoint: process.env.NEXT_PUBLIC_CORSAIR_API_ROUTE!,
+  db: db,
+  schema: db._.schema!,
+  connection: process.env.DATABASE_URL!,
+} satisfies CorsairConfig<typeof db>
+```
+
+### Prisma + Postgres
+
+Set up your Prisma database client:
+
+```ts title="db/index.ts"
+import 'server-only'
+import { PrismaClient } from '@prisma/client'
+
+const globalForPrisma = globalThis as unknown as {
+  prisma: PrismaClient | undefined
+}
+
+export const db = globalForPrisma.prisma ?? new PrismaClient()
+
+if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = db
+
+export type DB = typeof db
+```
+
+Configure Corsair to use Prisma:
+
+```ts title="corsair.config.ts"
+import { type CorsairConfig } from 'corsair'
+import { db } from './db'
+import { Prisma } from '@prisma/client'
+
+export const config = {
+  dbType: 'postgres',
+  orm: 'prisma',
+  framework: 'nextjs',
+  pathToCorsairFolder: './corsair',
+  apiEndpoint: process.env.NEXT_PUBLIC_CORSAIR_API_ROUTE!,
+  db: db,
+  schema: Prisma.dmmf.datamodel,
+  connection: process.env.DATABASE_URL!,
+} satisfies CorsairConfig<typeof db>
+```
+
+<Callout type="info" title="Key Configuration Differences">
+  **Drizzle:** Use `orm: 'drizzle'` and `schema: db._.schema!`
+  
+  **Prisma:** Import Prisma, use `orm: 'prisma'` and `schema: Prisma.dmmf.datamodel`
+</Callout>
+
+<Callout type="warn" title="Coming Soon">
+  Support for Express, Fastify, Hono, and other frameworks is in development.
+</Callout>
+
