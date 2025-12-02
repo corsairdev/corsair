@@ -6,13 +6,14 @@ description: The Vibe Coding SDK - Natural language queries and mutations for yo
 import { Callout } from 'fumadocs-ui/components/callout'
 
 <Callout title="What is Corsair?" type="info">
-  Corsair lets you write database queries and business logic in plain English. 
-  It generates real TypeScript API routes using your existing ORM—no magic, no vendor lock-in, no runtime overhead.
+  Corsair lets you write database queries and business logic in plain English.
+  It generates real TypeScript API routes using your existing ORM—no magic, no
+  vendor lock-in, no runtime overhead.
 </Callout>
 
 ## Why Corsair?
 
-We have great AI coding tools for building UIs. But what about the other two tiers of your app: 
+We have great AI coding tools for building UIs. But what about the other two tiers of your app:
 business logic and databases? Corsair fills that gap.
 
 ### You stay in control
@@ -20,7 +21,6 @@ business logic and databases? Corsair fills that gap.
 - **Real code, not abstraction** - Corsair generates standard TypeScript API routes. View them, edit them, own them.
 - **Zero runtime overhead** - Code generation happens at build time. Your queries run at normal API speeds.
 - **Fully type-safe** - Your prompts map to input/output types. TypeScript knows exactly what you're sending and receiving.
-- **Schema-aware** - Change your Drizzle schema? Corsair detects affected routes and rewrites them automatically.
 - **Incremental adoption** - Use Corsair alongside your existing API routes. No need to rewrite your app.
 - **No vendor lock-in** - Your queries are stored as normal TypeScript. Want to eject? Just move the generated routes.
 
@@ -30,7 +30,7 @@ business logic and databases? Corsair fills that gap.
 - TanStack Query integration for client-side data fetching
 - Next.js App Router adapter with streaming support
 - CLI for code generation, validation, and migrations
-- Drizzle ORM + Postgres support
+- Drizzle ORM + Postgres and Prisma + Postgres support
 - Plugin system (Slack, Stripe, Posthog, Resend)
 - Built for AI coding agents (Claude, Cursor)
 
@@ -39,9 +39,8 @@ business logic and databases? Corsair fills that gap.
 1. **You write:** `useCorsairQuery("get all albums by artist id", {artistId})`
 2. **Corsair generates:** A complete TypeScript API route using your Drizzle ORM
 3. **You get:** Type-safe queries with intellisense, no SQL required
-4. **Schema changes?** Corsair sees the diff and updates affected routes
 
 <Callout type="warn" title="Early Development">
-  Currently supports Next.js, Drizzle, and Postgres. More ORMs and frameworks coming soon.
+  Currently supports Next.js with Drizzle or Prisma and Postgres. More ORMs and
+  frameworks coming soon.
 </Callout>
-
