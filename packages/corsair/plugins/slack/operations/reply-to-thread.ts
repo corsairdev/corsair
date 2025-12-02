@@ -1,14 +1,16 @@
 import { WebClient } from '@slack/web-api'
 import { BaseConfig } from '../../../config'
-import { SlackChannels, MessageResponse } from '../types'
+import { SlackChannels, MessageTs, MessageResponse } from '../types'
 
-export const sendMessage = async <T extends BaseConfig = any>({
+export const replyToThread = async <T extends BaseConfig = any>({
   config,
   channelId,
+  threadTs,
   content,
 }: {
   config?: T
   channelId: SlackChannels<T>
+  threadTs: MessageTs
   content: string
 }): Promise<MessageResponse> => {
   // Validate that Slack token is configured
@@ -36,10 +38,11 @@ export const sendMessage = async <T extends BaseConfig = any>({
   const client = new WebClient(config.plugins.slack.token)
 
   try {
-    // Call Slack API to send message
+    // Call Slack API to reply to thread
     const result = await client.chat.postMessage({
       channel: actualChannelId,
       text: content,
+      thread_ts: threadTs, // This makes it a thread reply
     })
 
     // Return success response with message details
