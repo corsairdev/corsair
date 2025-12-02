@@ -1,0 +1,112 @@
+---
+title: Corsair Documentation
+description: The Vibe Coding SDK - Build type-safe full-stack TypeScript apps with natural language
+---
+
+import { Callout } from 'fumadocs-ui/components/callout'
+
+<Callout title="Welcome to Corsair" type="info">
+  Corsair is a TypeScript SDK that lets you write database queries and
+  business logic in plain English while maintaining full type safety and
+  control over your code.
+</Callout>
+
+## Quick Example
+
+```tsx
+const albums = await corsairQuery('get all albums by artist id', {
+  artistId: params.artist_id,
+})
+
+const addUser = useCorsairMutation('create album', {
+  onSuccess: () => {
+    console.log('Album created!')
+  }
+})
+```
+
+## Getting Started
+
+<div className="grid grid-cols-1 md:grid-cols-2 gap-4 my-6">
+  <div className="border rounded-lg p-4">
+    <h3 className="text-lg font-semibold mb-2">
+      <a href="/overview" className="hover:underline">
+        Overview
+      </a>
+    </h3>
+    <div className="text-sm text-muted-foreground">
+      Learn about Corsair's features and how it works
+    </div>
+  </div>
+  <div className="border rounded-lg p-4">
+    <h3 className="text-lg font-semibold mb-2">
+      <a href="/installation" className="hover:underline">
+        Installation
+      </a>
+    </h3>
+    <div className="text-sm text-muted-foreground">
+      Install Corsair and its dependencies
+    </div>
+  </div>
+  <div className="border rounded-lg p-4">
+    <h3 className="text-lg font-semibold mb-2">
+      <a href="/quickstart" className="hover:underline">
+        Quickstart
+      </a>
+    </h3>
+    <div className="text-sm text-muted-foreground">
+      Get up and running in 5 steps
+    </div>
+  </div>
+  <div className="border rounded-lg p-4">
+    <h3 className="text-lg font-semibold mb-2">
+      <a href="/core-concepts" className="hover:underline">
+        Core Concepts
+      </a>
+    </h3>
+    <div className="text-sm text-muted-foreground">
+      Understand queries, mutations, and client setup
+    </div>
+  </div>
+  <div className="border rounded-lg p-4">
+    <h3 className="text-lg font-semibold mb-2">
+      <a href="/cli" className="hover:underline">
+        CLI
+      </a>
+    </h3>
+    <div className="text-sm text-muted-foreground">
+      Use CLI tools for generation and validation
+    </div>
+  </div>
+  <div className="border rounded-lg p-4">
+    <h3 className="text-lg font-semibold mb-2">
+      <a href="/adapters" className="hover:underline">
+        Adapters
+      </a>
+    </h3>
+    <div className="text-sm text-muted-foreground">
+      Framework and database adapter configuration
+    </div>
+  </div>
+</div>
+
+## Key Features
+
+- **Type-Safe:** Full TypeScript support with inference
+- **Zero Runtime Overhead:** Code generation at build time
+- **Framework Agnostic:** Works with Next.js (more coming)
+- **ORM Support:** Currently Drizzle + Postgres
+- **AI-Friendly:** Built for coding agents
+
+<Callout type="warn" title="Status: Early Development">
+  Corsair is in active development. Currently supports Next.js + Drizzle
+  + Postgres. More frameworks and ORMs are coming soon.
+</Callout>
+
+## Community
+
+Join our community to get help, share ideas, and stay updated:
+
+- [GitHub](https://github.com/corsairdev/corsair)
+- [Website](https://corsair.dev)
+
