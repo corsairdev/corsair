@@ -170,6 +170,7 @@
   },
   "dependencies": {
     "@ai-sdk/openai": "^2.0.68",
+    "@inquirer/prompts": "^7.0.1",
     "dotenv": "^16.4.5",
     "openai": "^4.103.0",
     "pg": "^8.16.3",
