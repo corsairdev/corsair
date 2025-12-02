@@ -12,6 +12,59 @@ import { Callout } from 'fumadocs-ui/components/callout'
 
 ## Available Commands
 
+### Initialize Project
+
+Initialize a new Corsair project with all necessary files:
+
+```bash
+pnpm corsair init
+```
+
+This command guides you through an interactive setup that asks all questions upfront, then handles the rest automatically.
+
+**Interactive Setup (all questions asked at the beginning):**
+
+1. Which ORM are you using? (Drizzle / Prisma)
+2. Which database are you using? (PostgreSQL / MySQL / SQLite)
+3. Path to your database instance (default: `./db`)
+4. Path for API route (default: `app/api/corsair/[...corsair]/route.ts`)
+5. Path for Corsair folder (default: `corsair`)
+6. Create `db/` folder with `db/index.ts`? (only if folder doesn't exist)
+7. Create `db/schema.ts`? (only for Drizzle, if creating db folder)
+8. Overwrite `corsair.config.ts`? (only if file already exists)
+9. Install required dependencies?
+
+After answering these questions, the setup runs automatically without further intervention.
+
+**What gets created:**
+
+- `db/index.ts` - Database connection setup (if db folder doesn't exist)
+- `db/schema.ts` - Empty schema file (Drizzle only, if requested)
+- `corsair.config.ts` - Main configuration file
+- `corsair/` folder structure with all necessary files
+- `app/api/corsair/[...corsair]/route.ts` - API endpoint
+
+This is the first command you should run when setting up Corsair in your project.
+
+**What gets installed:**
+
+- Core: `corsair`, `@trpc/*`, `@tanstack/react-query`, `zod`, `superjson`, `dotenv`, `server-only`
+- Drizzle: `drizzle-orm`, `drizzle-zod`, `drizzle-kit` (dev)
+- Prisma: `@prisma/client`
+- Database: `pg` and `@types/pg` (for PostgreSQL)
+
+<Callout type="info" title="Minimal User Intervention">
+  All questions are asked upfront at the beginning. After you answer the initial
+  questions, the setup runs automatically without requiring further input. This
+  allows you to step away while dependencies are installed and files are
+  created.
+</Callout>
+
+<Callout type="info" title="Smart Defaults">
+  If your `db/` folder already exists, the init command will skip creating
+  database files to avoid overwriting your existing setup.
+</Callout>
+
 ### Watch Mode
 
 Start the interactive development UI with watch mode:
