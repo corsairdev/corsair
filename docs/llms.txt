@@ -1,0 +1,32 @@
+# Corsair
+
+> The Vibe Coding SDK - Natural language queries and mutations for your full-stack TypeScript app
+
+## Table of Contents
+
+### Getting Started
+
+- [Introduction](/llms.txt/docs/index.md): Introduction to Corsair and its key features.
+
+- [Overview](/llms.txt/docs/overview.md): Learn about Corsair's features, why it exists, and how it works.
+
+- [Installation](/llms.txt/docs/installation.md): Install Corsair and its dependencies in your Next.js + Drizzle + Postgres project.
+
+- [Quickstart](/llms.txt/docs/quickstart.md): Get up and running with Corsair in 5 steps.
+
+- [Project Structure](/llms.txt/docs/project-structure.md): Understanding the Corsair project structure, file organization, and which files are managed by Corsair.
+
+### Guides
+
+- [Core Concepts](/llms.txt/docs/core-concepts.md): Understanding queries, mutations, client setup, and provider configuration.
+
+- [Type Safety](/llms.txt/docs/type-safety.md): Full end-to-end type safety from database schema to UI components.
+
+- [CLI](/llms.txt/docs/cli.md): Command-line tools for code generation, validation, migrations, and AI agent integration.
+
+- [Adapters](/llms.txt/docs/adapters.md): Framework and database adapters for Next.js and Drizzle ORM.
+
+- [Plugins](/llms.txt/docs/plugins.md): Extend Corsair with third-party integrations like Slack, Stripe, and more.
+
+- [Examples](/llms.txt/docs/examples.md): Real-world examples and patterns for CRUD operations, relations, joins, and batch operations.
+
