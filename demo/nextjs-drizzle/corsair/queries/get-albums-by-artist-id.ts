@@ -11,24 +11,24 @@ export const getAlbumsByArtistId = procedure
   .query(async ({ input, ctx }) => {
     const albums = await ctx.db
       .select({
-        id: ctx.schema.albums.columns.id,
-        name: ctx.schema.albums.columns.name,
-        album_type: ctx.schema.albums.columns.album_type,
-        release_date: ctx.schema.albums.columns.release_date,
+        id: ctx.db._.fullSchema.albums.id,
+        name: ctx.db._.fullSchema.albums.name,
+        album_type: ctx.db._.fullSchema.albums.album_type,
+        release_date: ctx.db._.fullSchema.albums.release_date,
         release_date_precision:
-          ctx.schema.albums.columns.release_date_precision,
-        total_tracks: ctx.schema.albums.columns.total_tracks,
-        images: ctx.schema.albums.columns.images,
-        external_urls: ctx.schema.albums.columns.external_urls,
-        uri: ctx.schema.albums.columns.uri,
-        href: ctx.schema.albums.columns.href,
+          ctx.db._.fullSchema.albums.release_date_precision,
+        total_tracks: ctx.db._.fullSchema.albums.total_tracks,
+        images: ctx.db._.fullSchema.albums.images,
+        external_urls: ctx.db._.fullSchema.albums.external_urls,
+        uri: ctx.db._.fullSchema.albums.uri,
+        href: ctx.db._.fullSchema.albums.href,
       })
       .from(ctx.db._.fullSchema.albums)
       .innerJoin(
         ctx.db._.fullSchema.album_artists,
         eq(
           ctx.db._.fullSchema.albums.id,
-          ctx.schema.album_artists.columns.album_id
+          ctx.db._.fullSchema.album_artists.album_id
         )
       )
       .where(eq(ctx.db._.fullSchema.album_artists.artist_id, input.artistId))

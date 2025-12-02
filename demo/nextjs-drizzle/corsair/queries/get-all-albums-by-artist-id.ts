@@ -16,7 +16,7 @@ export const getAllAlbumsByArtistId = procedure
         ctx.db._.fullSchema.album_artists,
         eq(
           ctx.db._.fullSchema.albums.id,
-          ctx.schema.album_artists.columns.album_id
+          ctx.db._.fullSchema.album_artists.album_id
         )
       )
       .where(eq(ctx.db._.fullSchema.album_artists.artist_id, input.artistId))

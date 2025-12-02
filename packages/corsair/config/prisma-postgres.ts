@@ -45,10 +45,6 @@ export type PrismaPostgresConfig<T = any> = {
    */
   db: T extends BasePrismaPostgresClient ? T : never
   /**
-   * The schema that Corsair will use to prompt the LLM and build API endpoints.
-   */
-  schema: PrismaDMMFDatamodel
-  /**
    * The database connection configuration.
    */
   connection: ConnectionConfig
@@ -59,9 +55,6 @@ export const DefaultPrismaPostgresConfig: PrismaPostgresConfig<any> = {
   dbType: 'postgres',
   framework: 'nextjs',
   db: {},
-  schema: {
-    models: [],
-  },
   connection: {
     host: 'localhost',
     username: 'postgres',

@@ -12,7 +12,7 @@ export const getAlbumById = procedure
     const [album] = await ctx.db
       .select()
       .from(ctx.db._.fullSchema.albums)
-      .where(eq(ctx.schema.albums.columns.id, input.id))
+      .where(eq(ctx.db._.fullSchema.albums.id, input.id))
       .limit(1)
 
     return album || null

@@ -11,42 +11,42 @@ export const getAlbumByIdWithArtists = procedure
   .query(async ({ input, ctx }) => {
     const albumWithArtists = await ctx.db
       .select({
-        albumId: ctx.schema.albums.columns.id,
-        albumName: ctx.schema.albums.columns.name,
-        album_type: ctx.schema.albums.columns.album_type,
-        release_date: ctx.schema.albums.columns.release_date,
+        albumId: ctx.db._.fullSchema.albums.id,
+        albumName: ctx.db._.fullSchema.albums.name,
+        album_type: ctx.db._.fullSchema.albums.album_type,
+        release_date: ctx.db._.fullSchema.albums.release_date,
         release_date_precision:
-          ctx.schema.albums.columns.release_date_precision,
-        total_tracks: ctx.schema.albums.columns.total_tracks,
-        albumImages: ctx.schema.albums.columns.images,
-        external_urls: ctx.schema.albums.columns.external_urls,
-        uri: ctx.schema.albums.columns.uri,
-        href: ctx.schema.albums.columns.href,
+          ctx.db._.fullSchema.albums.release_date_precision,
+        total_tracks: ctx.db._.fullSchema.albums.total_tracks,
+        albumImages: ctx.db._.fullSchema.albums.images,
+        external_urls: ctx.db._.fullSchema.albums.external_urls,
+        uri: ctx.db._.fullSchema.albums.uri,
+        href: ctx.db._.fullSchema.albums.href,
         artist: {
-          id: ctx.schema.artists.columns.id,
-          name: ctx.schema.artists.columns.name,
-          popularity: ctx.schema.artists.columns.popularity,
-          followers: ctx.schema.artists.columns.followers,
-          genres: ctx.schema.artists.columns.genres,
-          images: ctx.schema.artists.columns.images,
-          external_urls: ctx.schema.artists.columns.external_urls,
-          uri: ctx.schema.artists.columns.uri,
-          href: ctx.schema.artists.columns.href,
+          id: ctx.db._.fullSchema.artists.id,
+          name: ctx.db._.fullSchema.artists.name,
+          popularity: ctx.db._.fullSchema.artists.popularity,
+          followers: ctx.db._.fullSchema.artists.followers,
+          genres: ctx.db._.fullSchema.artists.genres,
+          images: ctx.db._.fullSchema.artists.images,
+          external_urls: ctx.db._.fullSchema.artists.external_urls,
+          uri: ctx.db._.fullSchema.artists.uri,
+          href: ctx.db._.fullSchema.artists.href,
         },
       })
       .from(ctx.db._.fullSchema.albums)
       .innerJoin(
         ctx.db._.fullSchema.album_artists,
         eq(
-          ctx.schema.albums.columns.id,
-          ctx.schema.album_artists.columns.album_id
+          ctx.db._.fullSchema.albums.id,
+          ctx.db._.fullSchema.album_artists.album_id
         )
       )
       .innerJoin(
         ctx.db._.fullSchema.artists,
         eq(
           ctx.db._.fullSchema.album_artists.artist_id,
-          ctx.schema.artists.columns.id
+          ctx.db._.fullSchema.artists.id
         )
       )
       .where(eq(ctx.db._.fullSchema.albums.id, input.id))

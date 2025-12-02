@@ -11,27 +11,27 @@ export const getTracksByArtistId = procedure
   .query(async ({ input, ctx }) => {
     const tracks = await ctx.db
       .select({
-        id: ctx.schema.tracks.columns.id,
-        name: ctx.schema.tracks.columns.name,
-        disc_number: ctx.schema.tracks.columns.disc_number,
-        duration_ms: ctx.schema.tracks.columns.duration_ms,
-        explicit: ctx.schema.tracks.columns.explicit,
-        track_number: ctx.schema.tracks.columns.track_number,
-        preview_url: ctx.schema.tracks.columns.preview_url,
-        is_local: ctx.schema.tracks.columns.is_local,
-        external_urls: ctx.schema.tracks.columns.external_urls,
-        uri: ctx.schema.tracks.columns.uri,
-        href: ctx.schema.tracks.columns.href,
+        id: ctx.db._.fullSchema.tracks.id,
+        name: ctx.db._.fullSchema.tracks.name,
+        disc_number: ctx.db._.fullSchema.tracks.disc_number,
+        duration_ms: ctx.db._.fullSchema.tracks.duration_ms,
+        explicit: ctx.db._.fullSchema.tracks.explicit,
+        track_number: ctx.db._.fullSchema.tracks.track_number,
+        preview_url: ctx.db._.fullSchema.tracks.preview_url,
+        is_local: ctx.db._.fullSchema.tracks.is_local,
+        external_urls: ctx.db._.fullSchema.tracks.external_urls,
+        uri: ctx.db._.fullSchema.tracks.uri,
+        href: ctx.db._.fullSchema.tracks.href,
       })
       .from(ctx.db._.fullSchema.tracks)
       .innerJoin(
         ctx.db._.fullSchema.track_artists,
         eq(
-          ctx.schema.tracks.columns.id,
-          ctx.schema.track_artists.columns.track_id
+          ctx.db._.fullSchema.tracks.id,
+          ctx.db._.fullSchema.track_artists.track_id
         )
       )
-      .where(eq(ctx.schema.track_artists.columns.artist_id, input.artistId))
+      .where(eq(ctx.db._.fullSchema.track_artists.artist_id, input.artistId))
 
     return tracks
   })

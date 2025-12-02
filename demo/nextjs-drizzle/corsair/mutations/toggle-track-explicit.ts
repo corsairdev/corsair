@@ -12,7 +12,7 @@ export const toggleTrackExplicit = procedure
     const [currentTrack] = await ctx.db
       .select()
       .from(ctx.db._.fullSchema.tracks)
-      .where(eq(ctx.schema.tracks.columns.id, input.trackId))
+      .where(eq(ctx.db._.fullSchema.tracks.id, input.trackId))
       .limit(1)
 
     if (!currentTrack) {
@@ -24,7 +24,7 @@ export const toggleTrackExplicit = procedure
       .set({
         explicit: !currentTrack.explicit,
       })
-      .where(eq(ctx.schema.tracks.columns.id, input.trackId))
+      .where(eq(ctx.db._.fullSchema.tracks.id, input.trackId))
       .returning()
 
     return track || null

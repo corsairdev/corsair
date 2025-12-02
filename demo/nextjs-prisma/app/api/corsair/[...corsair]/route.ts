@@ -2,7 +2,6 @@ import { fetchRequestHandler } from 'corsair'
 import { corsairRouter } from '@/corsair/index'
 import { db } from '@/db'
 import { plugins } from '@/corsair/procedure'
-import { Prisma } from '@prisma/client'
 
 const handler = async (req: Request) => {
   return fetchRequestHandler({
@@ -13,7 +12,6 @@ const handler = async (req: Request) => {
       return {
         userId: '123',
         db,
-        schema: Prisma.dmmf.datamodel,
         plugins,
       }
     },

@@ -6,6 +6,26 @@ import type {
   ConnectionConfig,
 } from '.'
 
+type Schema = Record<
+  string,
+  {
+    columns: Record<string, any>
+    relations?: Record<
+      string,
+      {
+        config?: {
+          fields?: Array<{ name?: string; [key: string]: any }>
+          references?: Array<{ name?: string; [key: string]: any }>
+          [key: string]: any
+        }
+        referencedTableName?: string
+        [key: string]: any
+      }
+    >
+    [key: string]: any
+  }
+>
+
 /**
  * This is the basic schema we are expecting.
  * We don't want to compare deeply nested types since that is inevitably going to throw errors
@@ -33,6 +53,7 @@ export type BaseDrizzlePostgresDatabase = {
         [key: string]: any
       }
     >
+    fullSchema?: Record<string, any>
   }
   query: any
   select: any
@@ -58,10 +79,6 @@ export type DrizzlePostgresConfig<T = any> = {
    */
   db: T extends BaseDrizzlePostgresDatabase ? T : never
   /**
-   * The schema that Corsair will use to prompt the LLM and build API endpoints.
-   */
-  schema: T extends { _: { schema: infer S } } ? S : never
-  /**
    * The database connection configuration.
    */
   connection: ConnectionConfig
@@ -72,7 +89,6 @@ export const DefaultDrizzlePostgresConfig: DrizzlePostgresConfig<any> = {
   dbType: 'postgres',
   framework: 'nextjs',
   db: {},
-  schema: {},
   connection: {
     host: 'localhost',
     username: 'postgres',
