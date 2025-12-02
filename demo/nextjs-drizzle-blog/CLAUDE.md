@@ -14,6 +14,42 @@ pnpm corsair query/mutation -n "query/mutationName" -i "fetch posts with author 
 - Returns path where query/mutation was generated (e.g., `corsair/queries/get-posts-with-authors.ts`)
 - To modify generated code, use: `-u` flag to update existing query/mutation
 
+### Examples
+
+**Query Examples:**
+
+```bash
+pnpm corsair query -n "getPostsWithAuthors" -i "fetch all posts with author details from posts and users tables"
+```
+
+```bash
+pnpm corsair query -n "getCommentsByPostId" -i "get all comments for a specific post ID including author information"
+```
+
+```bash
+pnpm corsair query -n "getUserProfile" -i "fetch user profile with their posts count and recent activity"
+```
+
+**Mutation Examples:**
+
+```bash
+pnpm corsair mutation -n "createPost" -i "create a new post with title, content, and author ID"
+```
+
+```bash
+pnpm corsair mutation -n "updateComment" -i "update an existing comment's content by comment ID"
+```
+
+```bash
+pnpm corsair mutation -n "deletePost" -i "delete a post and all its associated comments by post ID"
+```
+
+**Update Existing Query/Mutation:**
+
+```bash
+pnpm corsair query -n "getPostsWithAuthors" -i "fetch all published posts with author details, sorted by created date" -u
+```
+
 ## Development Commands
 
 ### Watch Mode
