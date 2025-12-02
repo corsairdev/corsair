@@ -98,6 +98,8 @@ export type UserCommands =
   | 'write_operation_to_file'
   | 'defer_operation_config'
   | 'resume_unfinished'
+  | 'update'
+  | 'update_operation'
 
 export interface UserCommandEvent {
   command: UserCommands
@@ -191,6 +193,11 @@ export interface LLMAnalysisCompleteEvent {
     file: string
     lineNumber: number
     configurationRules?: string
+  }
+  usage?: {
+    inputTokens: number
+    outputTokens: number
+    totalTokens: number
   }
 }
 

@@ -103,18 +103,28 @@ export const CorsairUI: React.FC<CorsairUIProps> = ({ warnings }) => {
 
     // Commands available in AWAITING_FEEDBACK state
     if (state.state === CorsairState.AWAITING_FEEDBACK) {
-      if (inputLower === 'r') {
-        eventBus.emit(CorsairEvent.USER_COMMAND, { command: 'regenerate' })
-      } else if (inputLower === 't') {
-        eventBus.emit(CorsairEvent.USER_COMMAND, { command: 'tweak' })
-      } else if (inputLower === 'u') {
-        eventBus.emit(CorsairEvent.USER_COMMAND, { command: 'undo' })
-      } else if (inputLower === 'a') {
-        eventBus.emit(CorsairEvent.USER_COMMAND, { command: 'accept' })
-      } else if (inputLower === 'm') {
-        eventBus.emit(CorsairEvent.USER_COMMAND, { command: 'modify' })
-      } else if (inputLower === 'c') {
-        eventBus.emit(CorsairEvent.USER_COMMAND, { command: 'cancel' })
+      if (state.context.llmResponse) {
+        if (inputLower === 'u') {
+          eventBus.emit(CorsairEvent.USER_COMMAND, { command: 'update' })
+        } else if (inputLower === 'h') {
+          eventBus.emit(CorsairEvent.USER_COMMAND, { command: 'help' })
+        } else if (key.escape || inputLower === 'q' || inputLower === 'c') {
+          eventBus.emit(CorsairEvent.USER_COMMAND, { command: 'cancel' })
+        }
+      } else {
+        if (inputLower === 'r') {
+          eventBus.emit(CorsairEvent.USER_COMMAND, { command: 'regenerate' })
+        } else if (inputLower === 't') {
+          eventBus.emit(CorsairEvent.USER_COMMAND, { command: 'tweak' })
+        } else if (inputLower === 'u') {
+          eventBus.emit(CorsairEvent.USER_COMMAND, { command: 'undo' })
+        } else if (inputLower === 'a') {
+          eventBus.emit(CorsairEvent.USER_COMMAND, { command: 'accept' })
+        } else if (inputLower === 'm') {
+          eventBus.emit(CorsairEvent.USER_COMMAND, { command: 'modify' })
+        } else if (inputLower === 'c') {
+          eventBus.emit(CorsairEvent.USER_COMMAND, { command: 'cancel' })
+        }
       }
     }
   })

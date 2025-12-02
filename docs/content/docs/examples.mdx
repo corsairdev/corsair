@@ -1,0 +1,616 @@
+---
+title: Examples
+description: Real-world examples and patterns for building with Corsair
+---
+
+import { Callout } from 'fumadocs-ui/components/callout'
+
+<Callout type="info" title="Complete Demo">
+  Check out the `demo/nextjs-drizzle` folder in the Corsair repository for a
+  complete working example with a music database.
+</Callout>
+
+## Basic CRUD Operations
+
+### Query: Fetch All Records
+
+```ts title="corsair/queries/get-all-albums.ts"
+import { z } from 'corsair'
+import { procedure } from '../procedure'
+
+export const getAllAlbums = procedure
+  .input(z.object({}))
+  .query(async ({ input, ctx }) => {
+    const albums = await ctx.db.select().from(ctx.db._.fullSchema.albums)
+    return albums
+  })
+```
+
+### Query: Fetch by ID
+
+```ts title="corsair/queries/get-album-by-id.ts"
+import { z } from 'corsair'
+import { procedure } from '../procedure'
+import { eq } from 'drizzle-orm'
+
+export const getAlbumById = procedure
+  .input(z.object({ id: z.string() }))
+  .query(async ({ input, ctx }) => {
+    const [album] = await ctx.db
+      .select()
+      .from(ctx.db._.fullSchema.albums)
+      .where(eq(ctx.db._.fullSchema.albums.id, input.id))
+
+    return album
+  })
+```
+
+### Mutation: Create Record
+
+```ts title="corsair/mutations/create-album.ts"
+import { procedure } from '../procedure'
+import { z } from 'corsair'
+
+export const createAlbum = procedure
+  .input(
+    z.object({
+      id: z.string(),
+      name: z.string(),
+      album_type: z.string(),
+      release_date: z.string().optional(),
+      total_tracks: z.number().optional(),
+    })
+  )
+  .mutation(async ({ input, ctx }) => {
+    const [album] = await ctx.db
+      .insert(ctx.db._.fullSchema.albums)
+      .values(input)
+      .returning()
+
+    return album
+  })
+```
+
+### Mutation: Update Record
+
+```ts title="corsair/mutations/update-album-type.ts"
+import { procedure } from '../procedure'
+import { z } from 'corsair'
+import { eq } from 'drizzle-orm'
+
+export const updateAlbumType = procedure
+  .input(
+    z.object({
+      id: z.string(),
+      album_type: z.string(),
+    })
+  )
+  .mutation(async ({ input, ctx }) => {
+    const [album] = await ctx.db
+      .update(ctx.db._.fullSchema.albums)
+      .set({ album_type: input.album_type })
+      .where(eq(ctx.db._.fullSchema.albums.id, input.id))
+      .returning()
+
+    return album
+  })
+```
+
+## Relations and Joins
+
+### Query with Join
+
+```ts title="corsair/queries/get-album-by-id-with-artists.ts"
+import { z } from 'corsair'
+import { procedure } from '../procedure'
+import { eq } from 'drizzle-orm'
+
+export const getAlbumByIdWithArtists = procedure
+  .input(z.object({ id: z.string() }))
+  .query(async ({ input, ctx }) => {
+    const schema = ctx.db._.fullSchema
+
+    const album = await ctx.db
+      .select()
+      .from(schema.albums)
+      .where(eq(schema.albums.id, input.id))
+      .leftJoin(
+        schema.album_artists,
+        eq(schema.albums.id, schema.album_artists.album_id)
+      )
+      .leftJoin(
+        schema.artists,
+        eq(schema.album_artists.artist_id, schema.artists.id)
+      )
+
+    return album
+  })
+```
+
+### Query Multiple Relations
+
+```ts title="corsair/queries/get-albums-by-artist-id.ts"
+import { z } from 'corsair'
+import { procedure } from '../procedure'
+import { eq } from 'drizzle-orm'
+
+export const getAlbumsByArtistId = procedure
+  .input(z.object({ artistId: z.string() }))
+  .query(async ({ input, ctx }) => {
+    const schema = ctx.db._.fullSchema
+
+    const albums = await ctx.db
+      .select({
+        id: schema.albums.id,
+        name: schema.albums.name,
+        album_type: schema.albums.album_type,
+        release_date: schema.albums.release_date,
+      })
+      .from(schema.albums)
+      .innerJoin(
+        schema.album_artists,
+        eq(schema.albums.id, schema.album_artists.album_id)
+      )
+      .where(eq(schema.album_artists.artist_id, input.artistId))
+
+    return albums
+  })
+```
+
+## Batch Operations
+
+### Create Multiple Records
+
+```ts title="corsair/mutations/create-albums.ts"
+import { procedure } from '../procedure'
+import { z } from 'corsair'
+
+export const createAlbums = procedure
+  .input(
+    z.object({
+      albums: z.array(
+        z.object({
+          id: z.string(),
+          name: z.string(),
+          album_type: z.string(),
+        })
+      ),
+    })
+  )
+  .mutation(async ({ input, ctx }) => {
+    const albums = await ctx.db
+      .insert(ctx.db._.fullSchema.albums)
+      .values(input.albums)
+      .returning()
+
+    return albums
+  })
+```
+
+### Link Records (Many-to-Many)
+
+```ts title="corsair/mutations/link-album-to-artists.ts"
+import { procedure } from '../procedure'
+import { z } from 'corsair'
+
+export const linkAlbumToArtists = procedure
+  .input(
+    z.object({
+      albumId: z.string(),
+      artistIds: z.array(z.string()),
+    })
+  )
+  .mutation(async ({ input, ctx }) => {
+    const links = input.artistIds.map(artistId => ({
+      album_id: input.albumId,
+      artist_id: artistId,
+    }))
+
+    const result = await ctx.db
+      .insert(ctx.db._.fullSchema.album_artists)
+      .values(links)
+      .returning()
+
+    return result
+  })
+```
+
+## Client Usage
+
+### Server Component
+
+```tsx title="app/page.tsx"
+import { corsairQuery } from '@/corsair/client'
+import { ArtistsAlbumsView } from '@/components/artists-albums-view'
+
+export default async function Home() {
+  const artists = await corsairQuery('get all artists', {})
+  const albums = await corsairQuery('get all albums', {})
+
+  return (
+    <div className="min-h-screen p-8">
+      <ArtistsAlbumsView initialArtists={artists} initialAlbums={albums} />
+    </div>
+  )
+}
+```
+
+### Client Component with Query
+
+```tsx title="components/artist-details.tsx"
+'use client'
+
+import { useCorsairQuery } from '@/corsair/client'
+
+export function ArtistDetails({ artistId }: { artistId: string }) {
+  const { data: albums, isLoading } = useCorsairQuery(
+    'get albums by artist id',
+    { artistId },
+    { enabled: !!artistId }
+  )
+
+  if (isLoading) return <div>Loading...</div>
+
+  return (
+    <div>
+      {albums?.map(album => (
+        <div key={album.id}>
+          <h3>{album.name}</h3>
+          <p>{album.album_type}</p>
+        </div>
+      ))}
+    </div>
+  )
+}
+```
+
+### Client Component with Mutation
+
+```tsx title="components/create-album-form.tsx"
+'use client'
+
+import { useCorsairMutation } from '@/corsair/client'
+import { useState } from 'react'
+
+export function CreateAlbumForm() {
+  const [name, setName] = useState('')
+  const mutation = useCorsairMutation('create album', {
+    onSuccess: data => {
+      console.log('Album created:', data)
+      setName('')
+    },
+  })
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    mutation.mutate({
+      id: crypto.randomUUID(),
+      name,
+      album_type: 'album',
+    })
+  }
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <input
+        type="text"
+        value={name}
+        onChange={e => setName(e.target.value)}
+        placeholder="Album name"
+      />
+      <button type="submit" disabled={mutation.isPending}>
+        {mutation.isPending ? 'Creating...' : 'Create Album'}
+      </button>
+    </form>
+  )
+}
+```
+
+## Type Extraction Patterns
+
+### Using QueryOutputs and MutationInputs
+
+Extract types from your queries and mutations for use in components:
+
+```tsx title="components/post-list.tsx"
+'use client'
+
+import {
+  useCorsairQuery,
+  type QueryOutputs,
+  type MutationInputs,
+} from '@/corsair/client'
+
+type Post = QueryOutputs['get all posts'][number]
+type CreatePostInput = MutationInputs['create post']
+
+interface PostListProps {
+  initialPosts: Post[]
+}
+
+export function PostList({ initialPosts }: PostListProps) {
+  const { data: posts } = useCorsairQuery(
+    'get all posts',
+    {},
+    {
+      initialData: initialPosts,
+    }
+  )
+
+  return (
+    <div>
+      {posts?.map(post => (
+        <div key={post.id}>
+          <h2>{post.title}</h2>
+          <p>{post.content}</p>
+        </div>
+      ))}
+    </div>
+  )
+}
+```
+
+### Complete Component with Queries and Mutations
+
+Here's a practical example combining queries, mutations, and optimistic updates:
+
+```tsx title="components/post-details.tsx"
+'use client'
+
+import { useState, useEffect } from 'react'
+import {
+  useCorsairQuery,
+  useCorsairMutation,
+  type QueryOutputs,
+} from '@/corsair/client'
+
+interface PostDetailsProps {
+  postId: string
+  open: boolean
+  onOpenChange: (open: boolean) => void
+}
+
+export function PostDetails({ postId, open, onOpenChange }: PostDetailsProps) {
+  const { data: post, isLoading: postLoading } = useCorsairQuery(
+    'get post by id',
+    { postId },
+    { enabled: !!postId && open }
+  )
+
+  const { data: comments, isLoading: commentsLoading } = useCorsairQuery(
+    'get comments by post id',
+    { postId },
+    { enabled: !!postId && open }
+  )
+
+  const updatePost = useCorsairMutation('update post', {
+    onSuccess: updatedPost => {
+      console.log('Post updated:', updatedPost.id)
+      setLocalPost(updatedPost)
+    },
+    onError: error => {
+      console.error('Failed to update post:', error)
+      setLocalPost(post)
+    },
+  })
+
+  const deleteComment = useCorsairMutation('delete comment', {
+    onSuccess: () => {
+      console.log('Comment deleted')
+    },
+  })
+
+  const [localPost, setLocalPost] = useState(post)
+
+  useEffect(() => {
+    setLocalPost(post)
+  }, [post])
+
+  const handleUpdateTitle = async (newTitle: string) => {
+    if (!localPost) return
+
+    setLocalPost({ ...localPost, title: newTitle })
+
+    await updatePost.mutateAsync({
+      postId: localPost.id,
+      title: newTitle,
+    })
+  }
+
+  const handleDeleteComment = async (commentId: string) => {
+    await deleteComment.mutateAsync({ commentId })
+  }
+
+  if (postLoading) return <div>Loading post...</div>
+  if (!localPost) return <div>Post not found</div>
+
+  return (
+    <div>
+      <h1>{localPost.title}</h1>
+      <p>{localPost.content}</p>
+
+      <button
+        onClick={() => handleUpdateTitle('Updated Title')}
+        disabled={updatePost.isPending}
+      >
+        {updatePost.isPending ? 'Updating...' : 'Update Title'}
+      </button>
+
+      <div>
+        <h2>Comments ({comments?.length || 0})</h2>
+        {commentsLoading ? (
+          <p>Loading comments...</p>
+        ) : (
+          comments?.map(comment => (
+            <div key={comment.id}>
+              <p>{comment.content}</p>
+              <button
+                onClick={() => handleDeleteComment(comment.id)}
+                disabled={deleteComment.isPending}
+              >
+                Delete
+              </button>
+            </div>
+          ))
+        )}
+      </div>
+    </div>
+  )
+}
+```
+
+### Error Handling
+
+Handle errors gracefully with proper type safety:
+
+```tsx title="components/safe-query.tsx"
+'use client'
+
+import { useCorsairQuery } from '@/corsair/client'
+
+export function SafeQuery() {
+  const { data, isLoading, error } = useCorsairQuery('get all posts', {})
+
+  if (isLoading) {
+    return <div>Loading...</div>
+  }
+
+  if (error) {
+    return (
+      <div className="error">
+        <h2>Error loading posts</h2>
+        <p>{error.message}</p>
+      </div>
+    )
+  }
+
+  if (!data || data.length === 0) {
+    return <div>No posts found</div>
+  }
+
+  return (
+    <div>
+      {data.map(post => (
+        <div key={post.id}>{post.title}</div>
+      ))}
+    </div>
+  )
+}
+```
+
+### Using the Enabled Flag
+
+Control when queries execute using the `enabled` option:
+
+```tsx title="components/conditional-query.tsx"
+'use client'
+
+import { useCorsairQuery } from '@/corsair/client'
+import { useState } from 'react'
+
+export function ConditionalQuery() {
+  const [userId, setUserId] = useState<string | null>(null)
+
+  const { data: userPosts, isLoading } = useCorsairQuery(
+    'get posts by user id',
+    { userId: userId! },
+    {
+      enabled: !!userId,
+      refetchOnWindowFocus: false,
+    }
+  )
+
+  return (
+    <div>
+      <input
+        type="text"
+        placeholder="Enter user ID"
+        onChange={e => setUserId(e.target.value || null)}
+      />
+
+      {isLoading && <div>Loading posts...</div>}
+
+      {userPosts && (
+        <div>
+          <h2>User Posts ({userPosts.length})</h2>
+          {userPosts.map(post => (
+            <div key={post.id}>{post.title}</div>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+```
+
+## Advanced Patterns
+
+### Conditional Logic
+
+```ts title="corsair/mutations/toggle-track-explicit.ts"
+import { procedure } from '../procedure'
+import { z } from 'corsair'
+import { eq } from 'drizzle-orm'
+
+export const toggleTrackExplicit = procedure
+  .input(z.object({ trackId: z.string() }))
+  .mutation(async ({ input, ctx }) => {
+    const [track] = await ctx.db
+      .select()
+      .from(ctx.db._.fullSchema.tracks)
+      .where(eq(ctx.db._.fullSchema.tracks.id, input.trackId))
+
+    if (!track) {
+      throw new Error('Track not found')
+    }
+
+    const [updated] = await ctx.db
+      .update(ctx.db._.fullSchema.tracks)
+      .set({ explicit: !track.explicit })
+      .where(eq(ctx.db._.fullSchema.tracks.id, input.trackId))
+      .returning()
+
+    return updated
+  })
+```
+
+### Optimistic Updates
+
+```tsx title="components/artist-popularity.tsx"
+'use client'
+
+import { useCorsairMutation } from '@/corsair/client'
+import { useState, useEffect } from 'react'
+
+export function ArtistPopularity({ artist }: { artist: any }) {
+  const [localPopularity, setLocalPopularity] = useState(artist.popularity)
+
+  useEffect(() => {
+    setLocalPopularity(artist.popularity)
+  }, [artist.popularity])
+
+  const mutation = useCorsairMutation('update artist popularity')
+
+  const handleIncrease = async () => {
+    const newPopularity = Math.min(100, localPopularity + 5)
+    setLocalPopularity(newPopularity)
+
+    await mutation.mutate({
+      artistId: artist.id,
+      popularity: newPopularity,
+    })
+  }
+
+  return (
+    <div>
+      <span>Popularity: {localPopularity}</span>
+      <button onClick={handleIncrease}>+5</button>
+    </div>
+  )
+}
+```
+
+<Callout type="info" title="More Examples">
+  Explore the complete demo application in the repository for more patterns and
+  real-world usage examples.
+</Callout>

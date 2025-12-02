@@ -1,14 +1,63 @@
-import type { Root } from 'fumadocs-core/page-tree'
-
-export const tree: Root = {
-  name: 'Docs',
+export const tree = {
+  name: 'Documentation',
   children: [
-    { type: 'page', name: 'Introduction', url: '/' },
-    { type: 'page', name: 'Overview', url: '/overview' },
-    { type: 'page', name: 'Installation', url: '/installation' },
-    { type: 'page', name: 'Quickstart', url: '/quickstart' },
-    { type: 'page', name: 'Core Concepts', url: '/core-concepts' },
-    { type: 'page', name: 'CLI', url: '/cli' },
-    { type: 'page', name: 'Adapters', url: '/adapters' },
+    {
+      type: 'page' as const,
+      name: 'Introduction',
+      url: '/docs',
+    },
+    {
+      type: 'separator' as const,
+      name: 'Getting Started',
+    },
+    {
+      type: 'page' as const,
+      name: 'Overview',
+      url: '/docs/overview',
+    },
+    {
+      type: 'page' as const,
+      name: 'Installation',
+      url: '/docs/installation',
+    },
+    {
+      type: 'page' as const,
+      name: 'Quickstart',
+      url: '/docs/quickstart',
+    },
+    {
+      type: 'separator' as const,
+      name: 'Guides',
+    },
+    {
+      type: 'page' as const,
+      name: 'Core Concepts',
+      url: '/docs/core-concepts',
+    },
+    {
+      type: 'page' as const,
+      name: 'Type Safety',
+      url: '/docs/type-safety',
+    },
+    {
+      type: 'page' as const,
+      name: 'CLI',
+      url: '/docs/cli',
+    },
+    {
+      type: 'page' as const,
+      name: 'Adapters',
+      url: '/docs/adapters',
+    },
+    {
+      type: 'page' as const,
+      name: 'Plugins',
+      url: '/docs/plugins',
+    },
+    {
+      type: 'page' as const,
+      name: 'Examples',
+      url: '/docs/examples',
+    },
   ],
 }

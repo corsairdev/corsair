@@ -1,0 +1,212 @@
+---
+title: Type Safety
+description: Full end-to-end type safety from database to UI
+---
+
+import { Callout } from 'fumadocs-ui/components/callout'
+
+<Callout type="info" title="TypeScript All the Way">
+  Corsair provides complete type safety from your database schema to your client
+  components, with no manual type definitions required.
+</Callout>
+
+## How It Works
+
+Corsair leverages TypeScript's type inference and tRPC to automatically generate
+types for your queries and mutations based on your database schema.
+
+## Input Validation
+
+Define input schemas using Zod for runtime validation and type inference:
+
+```ts title="corsair/queries/get-albums-by-artist-id.ts"
+import { z } from 'corsair'
+import { procedure } from '../procedure'
+
+export const getAlbumsByArtistId = procedure
+  .input(
+    z.object({
+      artistId: z.string().min(1, 'Artist ID is required'),
+      limit: z.number().int().positive().optional(),
+      offset: z.number().int().nonnegative().optional(),
+    })
+  )
+  .query(async ({ input, ctx }) => {
+    const albums = await ctx.db
+      .select()
+      .from(ctx.db._.fullSchema.albums)
+      .where(eq(ctx.db._.fullSchema.albums.artistId, input.artistId))
+      .limit(input.limit || 10)
+      .offset(input.offset || 0)
+    
+    return albums
+  })
+```
+
+## Output Types
+
+Output types are automatically inferred from your procedure's return value:
+
+```ts
+import type { QueryOutputs } from '@/corsair/client'
+
+type Albums = QueryOutputs['get albums by artist id']
+
+const albums: Albums = await corsairQuery('get albums by artist id', {
+  artistId: '123',
+})
+```
+
+## Type Extraction
+
+Extract types for use in your components:
+
+```tsx title="components/album-list.tsx"
+import type { QueryOutputs } from '@/corsair/client'
+
+type Album = QueryOutputs['get all albums'][number]
+
+interface AlbumListProps {
+  albums: Album[]
+}
+
+export function AlbumList({ albums }: AlbumListProps) {
+  return (
+    <div>
+      {albums.map((album) => (
+        <div key={album.id}>
+          <h3>{album.name}</h3>
+          <p>{album.album_type}</p>
+        </div>
+      ))}
+    </div>
+  )
+}
+```
+
+## Client Hooks with Types
+
+All hooks are fully typed with autocomplete:
+
+```tsx title="components/artist-details.tsx"
+'use client'
+
+import { useCorsairQuery, type QueryOutputs } from '@/corsair/client'
+
+export function ArtistDetails({ artistId }: { artistId: string }) {
+  const { data, isLoading, error } = useCorsairQuery(
+    'get albums by artist id',
+    { artistId },
+    { enabled: !!artistId }
+  )
+
+  if (isLoading) return <div>Loading...</div>
+  if (error) return <div>Error: {error.message}</div>
+
+  return (
+    <div>
+      {data?.map((album) => (
+        <div key={album.id}>{album.name}</div>
+      ))}
+    </div>
+  )
+}
+```
+
+## Mutation Types
+
+Mutations are also fully typed:
+
+```tsx title="components/create-album-form.tsx"
+'use client'
+
+import { useCorsairMutation, type MutationInputs } from '@/corsair/client'
+
+export function CreateAlbumForm() {
+  const mutation = useCorsairMutation('create album', {
+    onSuccess: (data) => {
+      console.log('Created album:', data.id)
+    },
+  })
+
+  const handleSubmit = (data: MutationInputs['create album']) => {
+    mutation.mutate(data)
+  }
+
+  return <form>{/* Form implementation */}</form>
+}
+```
+
+## Schema-Driven Types
+
+Your Drizzle schema is the source of truth. Types are derived directly from your
+database schema:
+
+```ts title="db/schema.ts"
+import { pgTable, text, integer } from 'drizzle-orm/pg-core'
+
+export const albums = pgTable('albums', {
+  id: text('id').primaryKey(),
+  name: text('name'),
+  album_type: text('album_type'),
+  total_tracks: integer('total_tracks'),
+})
+```
+
+This schema automatically provides types for:
+
+- Query results
+- Insert operations
+- Update operations
+- Select projections
+
+## Type Safety Benefits
+
+- **Autocomplete:** Full IDE support with IntelliSense
+- **Compile-time errors:** Catch mistakes before runtime
+- **Refactoring:** Safe schema changes with TypeScript errors guiding you
+- **No manual types:** Types are automatically generated and kept in sync
+- **Runtime validation:** Zod validates inputs at runtime
+
+## Error Handling
+
+Errors are typed as well:
+
+```tsx
+import type { TRPCClientError } from '@trpc/client'
+import type { CorsairRouter } from '@/corsair'
+
+const { error } = useCorsairQuery('get all albums', {})
+
+if (error) {
+  const trpcError = error as TRPCClientError<CorsairRouter>
+  console.log('Error code:', trpcError.data?.code)
+  console.log('Error message:', trpcError.message)
+}
+```
+
+<Callout type="info" title="Zero Manual Work">
+  You never need to manually write type definitions. Types are automatically
+  generated from your schema and procedures.
+</Callout>
+
+## Type Checking in CI
+
+Run TypeScript checks in your CI pipeline:
+
+```json title="package.json"
+{
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "corsair:check": "corsair check",
+    "ci": "npm run typecheck && npm run corsair:check"
+  }
+}
+```
+
+<Callout type="warn" title="Schema Changes">
+  When you change your database schema, TypeScript will immediately show errors in
+  any affected queries. The Corsair CLI will also detect these issues during
+  validation.
+</Callout>
+
