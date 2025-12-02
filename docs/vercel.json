@@ -1,7 +1,0 @@
-{
-  "functions": {
-    "app/docs/[[...slug]]/page.tsx": {
-      "includeFiles": "content/**"
-    }
-  }
-}
