@@ -90,15 +90,15 @@ pnpm corsair query -n "get all albums by artist id" -i "return all albums in des
 **More Query Examples:**
 
 ```bash
-pnpm corsair query -n "getPostsWithAuthors" -i "fetch all posts with author details from posts and users tables"
+pnpm corsair query -n "get posts with authors" -i "fetch all posts with author details from posts and users tables"
 ```
 
 ```bash
-pnpm corsair query -n "getCommentsByPostId" -i "get all comments for a specific post ID including author information"
+pnpm corsair query -n "get comments by post id" -i "get all comments for a specific post ID including author information"
 ```
 
 ```bash
-pnpm corsair query -n "getUserProfile" -i "fetch user profile with their posts count and recent activity"
+pnpm corsair query -n "get user profile" -i "fetch user profile with their posts count and recent activity"
 ```
 
 ### Mutation Generation
@@ -112,15 +112,15 @@ pnpm corsair mutation -n "create album" -i "create a new album with validation"
 **More Mutation Examples:**
 
 ```bash
-pnpm corsair mutation -n "createPost" -i "create a new post with title, content, and author ID"
+pnpm corsair mutation -n "create post" -i "create a new post with title, content, and author ID"
 ```
 
 ```bash
-pnpm corsair mutation -n "updateComment" -i "update an existing comment's content by comment ID"
+pnpm corsair mutation -n "update comment" -i "update an existing comment's content by comment ID"
 ```
 
 ```bash
-pnpm corsair mutation -n "deletePost" -i "delete a post and all its associated comments by post ID"
+pnpm corsair mutation -n "delete post" -i "delete a post and all its associated comments by post ID"
 ```
 
 ### Updating Existing Queries/Mutations
@@ -128,11 +128,11 @@ pnpm corsair mutation -n "deletePost" -i "delete a post and all its associated c
 Use the `-u` flag to update an existing query or mutation:
 
 ```bash
-pnpm corsair query -n "getPostsWithAuthors" -i "fetch all published posts with author details, sorted by created date" -u
+pnpm corsair query -n "get posts with authors" -i "fetch all published posts with author details, sorted by created date" -u
 ```
 
 ```bash
-pnpm corsair mutation -n "createAlbum" -i "create a new album with validation and send Slack notification" -u
+pnpm corsair mutation -n "create album" -i "create a new album with validation and send Slack notification" -u
 ```
 
 ### How It Works
