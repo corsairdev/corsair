@@ -5,7 +5,7 @@
 ### Generate Query/Mutation
 
 ```bash
-pnpm corsair query/mutation -n "query/mutationName" -i "fetch posts with author details from posts and users tables"
+pnpm corsair query/mutation -n "query/mutationName" -i "instructions"
 ```
 
 **Agent must use this to generate queries.** DO NOT write query code manually.
@@ -19,35 +19,35 @@ pnpm corsair query/mutation -n "query/mutationName" -i "fetch posts with author 
 **Query Examples:**
 
 ```bash
-pnpm corsair query -n "getPostsWithAuthors" -i "fetch all posts with author details from posts and users tables"
+pnpm corsair query -n "get posts with authors" -i "fetch all posts with author details from posts and users tables"
 ```
 
 ```bash
-pnpm corsair query -n "getCommentsByPostId" -i "get all comments for a specific post ID including author information"
+pnpm corsair query -n "get comments by post id" -i "get all comments for a specific post ID including author information"
 ```
 
 ```bash
-pnpm corsair query -n "getUserProfile" -i "fetch user profile with their posts count and recent activity"
+pnpm corsair query -n "get user profile" -i "fetch user profile with their posts count and recent activity"
 ```
 
 **Mutation Examples:**
 
 ```bash
-pnpm corsair mutation -n "createPost" -i "create a new post with title, content, and author ID"
+pnpm corsair mutation -n "create post" -i "create a new post with title, content, and author ID"
 ```
 
 ```bash
-pnpm corsair mutation -n "updateComment" -i "update an existing comment's content by comment ID"
+pnpm corsair mutation -n "update comment" -i "update an existing comment's content by comment ID"
 ```
 
 ```bash
-pnpm corsair mutation -n "deletePost" -i "delete a post and all its associated comments by post ID"
+pnpm corsair mutation -n "delete post" -i "delete a post and all its associated comments by post ID"
 ```
 
 **Update Existing Query/Mutation:**
 
 ```bash
-pnpm corsair query -n "getPostsWithAuthors" -i "fetch all published posts with author details, sorted by created date" -u
+pnpm corsair query -n "get posts with authors" -i "fetch all published posts with author details, sorted by created date" -u
 ```
 
 ## Development Commands
