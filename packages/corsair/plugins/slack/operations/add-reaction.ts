@@ -1,16 +1,18 @@
 import { WebClient } from '@slack/web-api'
 import { BaseConfig } from '../../../config'
-import { SlackChannels, MessageResponse } from '../types'
+import { SlackChannels, MessageTs, EmojiName, ReactionResponse } from '../types'
 
-export const sendMessage = async <T extends BaseConfig = any>({
+export const addReaction = async <T extends BaseConfig = any>({
   config,
   channelId,
-  content,
+  messageTs,
+  emoji,
 }: {
   config?: T
   channelId: SlackChannels<T>
-  content: string
-}): Promise<MessageResponse> => {
+  messageTs: MessageTs
+  emoji: EmojiName
+}): Promise<ReactionResponse> => {
   // Validate that Slack token is configured
   if (!config?.plugins?.slack?.token) {
     return {
@@ -36,19 +38,21 @@ export const sendMessage = async <T extends BaseConfig = any>({
   const client = new WebClient(config.plugins.slack.token)
 
   try {
-    // Call Slack API to send message
-    const result = await client.chat.postMessage({
+    // Remove colons from emoji name if present (accepts both 'thumbsup' and ':thumbsup:')
+    const emojiName = emoji.replace(/:/g, '')
+
+    // Call Slack API to add reaction
+    const result = await client.reactions.add({
       channel: actualChannelId,
-      text: content,
+      timestamp: messageTs,
+      name: emojiName,
     })
 
-    // Return success response with message details
+    // Return success response
     return {
       success: true,
       data: {
-        messageId: result.ts as string,
-        channel: result.channel as string,
-        timestamp: result.ts as string,
+        ok: result.ok || false,
       },
     }
   } catch (error) {
