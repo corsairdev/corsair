@@ -12,7 +12,7 @@ export const searchAlbums = procedure
     const albums = await ctx.db
       .select()
       .from(ctx.db._.fullSchema.albums)
-      .where(ilike(ctx.schema.albums.columns.name, `%${input.query}%`))
+      .where(ilike(ctx.db._.fullSchema.albums.name, `%${input.query}%`))
 
     return albums
   })

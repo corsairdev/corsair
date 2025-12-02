@@ -24,7 +24,7 @@ ${schemaDescription}
 ## Requirements
 1. **Input Type**: Create a Zod schema that validates the input parameters needed for this ${type}
 2. **Handler Function**: Implement the complete async handler that:
-   - Uses the provided database context (ctx.db, ctx.schema)
+   - Uses the provided database context (ctx.db)
    - Follows Drizzle ORM patterns
    - Handles the specific requirements implied by the operation name "${name}"
    - Includes proper error handling and validation
@@ -56,17 +56,17 @@ Handler outline:
 \`\`\`typescript
 const results = await ctx.db
   .select({
-    postId: ctx.schema.posts.columns.id,
-    title: ctx.schema.posts.columns.title,
-    authorId: ctx.schema.users.columns.id,
-    authorName: ctx.schema.users.columns.name,
+    postId: ctx.db._.fullSchema.posts.id,
+    title: ctx.db._.fullSchema.posts.title,
+    authorId: ctx.db._.fullSchema.users.id,
+    authorName: ctx.db._.fullSchema.users.name,
   })
   .from(ctx.db._.fullSchema.posts)
   .innerJoin(
     ctx.db._.fullSchema.users,
-    eq(ctx.schema.posts.columns.user_id, ctx.schema.users.columns.id)
+    eq(ctx.db._.fullSchema.posts.user_id, ctx.db._.fullSchema.users.id)
   )
-  .where(eq(ctx.schema.posts.columns.user_id, input.userId));
+  .where(eq(ctx.db._.fullSchema.posts.user_id, input.userId));
 return results;
 \`\`\`
 
@@ -79,20 +79,20 @@ Handler outline:
 \`\`\`typescript
 const comments = await ctx.db
   .select({
-    commentId: ctx.schema.comments.columns.id,
-    body: ctx.schema.comments.columns.body,
-    postId: ctx.schema.comments.columns.post_id,
+    commentId: ctx.db._.fullSchema.comments.id,
+    body: ctx.db._.fullSchema.comments.body,
+    postId: ctx.db._.fullSchema.comments.post_id,
     author: {
-      id: ctx.schema.users.columns.id,
-      name: ctx.schema.users.columns.name,
+      id: ctx.db._.fullSchema.users.id,
+      name: ctx.db._.fullSchema.users.name,
     },
   })
   .from(ctx.db._.fullSchema.comments)
   .innerJoin(
     ctx.db._.fullSchema.users,
-    eq(ctx.schema.comments.columns.user_id, ctx.schema.users.columns.id)
+    eq(ctx.db._.fullSchema.comments.user_id, ctx.db._.fullSchema.users.id)
   )
-  .where(eq(ctx.schema.comments.columns.post_id, input.postId));
+  .where(eq(ctx.db._.fullSchema.comments.post_id, input.postId));
 return comments;
 \`\`\`
 
@@ -176,7 +176,7 @@ function generateSchemaDescription(schema: SchemaDefinition): string {
   description += '### Common Usage Patterns\n\n'
   description += 'Use these table references in your handler:\n'
   schema.tables.forEach(table => {
-    description += `- \`ctx.schema.${table.name}\` for the ${table.name} table\n`
+    description += `- \`ctx.db._.fullSchema.${table.name}\` for the ${table.name} table\n`
   })
 
   return description

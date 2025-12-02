@@ -13,16 +13,16 @@ export const linkAlbumToArtists = procedure
     const { albumId, artistIds } = input
 
     const [album] = await ctx.db
-      .select({ id: ctx.schema.albums.columns.id })
+      .select({ id: ctx.db._.fullSchema.albums.id })
       .from(ctx.db._.fullSchema.albums)
-      .where(eq(ctx.schema.albums.columns.id, albumId))
+      .where(eq(ctx.db._.fullSchema.albums.id, albumId))
       .limit(1)
     if (!album) {
       throw new Error(`Album with id '${albumId}' does not exist.`)
     }
 
     const existingArtistRows = await ctx.db
-      .select({ id: ctx.schema.artists.columns.id })
+      .select({ id: ctx.db._.fullSchema.artists.id })
       .from(ctx.db._.fullSchema.artists)
       .where(inArray(ctx.db._.fullSchema.artists.id, artistIds))
     const foundArtistIds = new Set(existingArtistRows.map(a => a.id))
@@ -34,7 +34,9 @@ export const linkAlbumToArtists = procedure
     }
 
     const existingLinks = await ctx.db
-      .select({ artist_id: ctx.schema.album_artists.columns.artist_id })
+      .select({
+        artist_id: ctx.db._.fullSchema.album_artists.artist_id,
+      })
       .from(ctx.db._.fullSchema.album_artists)
       .where(
         and(
@@ -49,7 +51,7 @@ export const linkAlbumToArtists = procedure
       const allLinks = await ctx.db
         .select()
         .from(ctx.db._.fullSchema.album_artists)
-        .where(eq(ctx.schema.album_artists.columns.album_id, albumId))
+        .where(eq(ctx.db._.fullSchema.album_artists.album_id, albumId))
       return allLinks
     }
 
@@ -66,7 +68,7 @@ export const linkAlbumToArtists = procedure
     const allLinks = await ctx.db
       .select()
       .from(ctx.db._.fullSchema.album_artists)
-      .where(eq(ctx.schema.album_artists.columns.album_id, albumId))
+      .where(eq(ctx.db._.fullSchema.album_artists.album_id, albumId))
 
     return allLinks
   })

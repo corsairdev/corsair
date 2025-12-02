@@ -12,7 +12,6 @@ const handler = async (req: Request) => {
       return {
         userId: '123',
         db,
-        schema: db._.schema!,
         plugins,
       }
     },

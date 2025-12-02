@@ -6,7 +6,6 @@ export const plugins = createPlugins(config)
 
 export type DatabaseContext = {
   db: typeof config.db
-  schema: Exclude<typeof config.schema, undefined>
   userId?: string
   plugins: typeof plugins
 }

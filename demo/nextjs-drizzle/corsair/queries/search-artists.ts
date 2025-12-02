@@ -12,7 +12,7 @@ export const searchArtists = procedure
     const artists = await ctx.db
       .select()
       .from(ctx.db._.fullSchema.artists)
-      .where(ilike(ctx.schema.artists.columns.name, `%${input.query}%`))
+      .where(ilike(ctx.db._.fullSchema.artists.name, `%${input.query}%`))
 
     return artists
   })

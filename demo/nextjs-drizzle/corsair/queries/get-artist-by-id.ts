@@ -12,7 +12,7 @@ export const getArtistById = procedure
     let [artist] = await ctx.db
       .select()
       .from(ctx.db._.fullSchema.artists)
-      .where(eq(ctx.schema.artists.columns.id, input.id))
+      .where(eq(ctx.db._.fullSchema.artists.id, input.id))
       .limit(1)
 
     return artist || null

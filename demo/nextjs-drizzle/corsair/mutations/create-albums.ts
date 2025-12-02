@@ -28,7 +28,7 @@ export const createAlbums = procedure
     ]
     if (allArtistIds.length > 0) {
       const existingArtists = await ctx.db
-        .select({ id: ctx.schema.artists.columns.id })
+        .select({ id: ctx.db._.fullSchema.artists.id })
         .from(ctx.db._.fullSchema.artists)
         .where(inArray(ctx.db._.fullSchema.artists.id, allArtistIds))
       const foundArtistIds = new Set(existingArtists.map(a => a.id))

@@ -15,7 +15,7 @@ export const updateAlbumType = procedure
       .set({
         album_type: input.albumType,
       })
-      .where(eq(ctx.schema.albums.columns.id, input.albumId))
+      .where(eq(ctx.db._.fullSchema.albums.id, input.albumId))
       .returning()
 
     return album || null
