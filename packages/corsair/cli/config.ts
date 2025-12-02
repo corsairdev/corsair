@@ -1,41 +1,31 @@
-import { existsSync, readFileSync } from 'fs'
+import { existsSync } from 'fs'
 import { resolve } from 'path'
 import { config } from 'dotenv'
-import { pathToFileURL } from 'url'
-import { Project, SyntaxKind } from 'ts-morph'
+import { Project, SyntaxKind, Node } from 'ts-morph'
+import type { CorsairConfig, ConnectionConfig } from '../config/index.js'
+import { DefaultBaseConfig } from '../config/index.js'
 
-export interface CorsairPaths {
-  queries: string
-  mutations: string
-  schema: string
-  apiEndpoint: string
-}
+type GenericCorsairConfig = CorsairConfig<any>
 
-export interface CorsairConfig {
-  paths: CorsairPaths
-  envFile?: string
-  out?: string
-}
+type ConfigValue = string | number | boolean | ConfigObject | ConfigArray | null
+type ConfigObject = { [key: string]: ConfigValue }
+type ConfigArray = ConfigValue[]
 
-export function loadConfig(): CorsairConfig {
+const REQUIRED_CONFIG_FIELDS = [
+  'framework',
+  'schema',
+  'dbType',
+  'orm',
+  'db',
+  'connection',
+] as const
+
+export function loadConfig(): CorsairConfig<any> {
   const tsConfigPath = resolve(process.cwd(), 'corsair.config.ts')
-  const jsConfigPath = resolve(process.cwd(), 'corsair.config.js')
+  let userConfig: Partial<GenericCorsairConfig> | null = null
 
-  const defaultConfig: CorsairConfig = {
-    paths: {
-      queries: 'corsair/queries',
-      mutations: 'corsair/mutations',
-      schema: 'corsair/schema.ts',
-      apiEndpoint: 'api/corsair',
-    },
-    envFile: '.env.local',
-    out: './corsair/drizzle',
-  }
-
-  let userConfig: any = null
-
-  const getNodeValue = (node: any): any => {
-    if (!node) return undefined
+  const getNodeValue = (node: Node | undefined): ConfigValue => {
+    if (!node) return null
 
     if (
       node.isKind(SyntaxKind.StringLiteral) ||
@@ -60,12 +50,12 @@ export function loadConfig(): CorsairConfig {
       const exprText = node.getExpression().getText()
       const name = node.getName()
       if (exprText === 'process.env') {
-        return process.env[name]
+        return process.env[name] ?? null
       }
     }
 
     if (node.isKind(SyntaxKind.ObjectLiteralExpression)) {
-      const result: Record<string, any> = {}
+      const result: ConfigObject = {}
       for (const prop of node.getProperties()) {
         if (prop.isKind(SyntaxKind.PropertyAssignment)) {
           const name = prop.getName().replace(/['"`]/g, '')
@@ -77,19 +67,14 @@ export function loadConfig(): CorsairConfig {
     }
 
     if (node.isKind(SyntaxKind.ArrayLiteralExpression)) {
-      return node.getElements().map((el: any) => getNodeValue(el))
+      return node.getElements().map((el: Node) => getNodeValue(el))
     }
 
     const text = node.getText()
     return typeof text === 'string' ? text.replace(/['"`]/g, '') : text
   }
 
-  if (existsSync(jsConfigPath)) {
-    try {
-      const mod = require(jsConfigPath)
-      userConfig = mod?.config ?? mod?.default ?? mod
-    } catch {}
-  } else if (existsSync(tsConfigPath)) {
+  if (existsSync(tsConfigPath)) {
     try {
       const project = new Project()
       const sf = project.addSourceFileAtPath(tsConfigPath)
@@ -110,7 +95,7 @@ export function loadConfig(): CorsairConfig {
       }
 
       if (expr?.isKind(SyntaxKind.ObjectLiteralExpression)) {
-        const obj: Record<string, any> = {}
+        const obj: ConfigObject = {}
         for (const prop of expr.getProperties()) {
           if (prop.isKind(SyntaxKind.PropertyAssignment)) {
             const name = prop.getName().replace(/['"`]/g, '')
@@ -119,42 +104,33 @@ export function loadConfig(): CorsairConfig {
             if (name) obj[name] = value
           }
         }
-        userConfig = obj
+        userConfig = obj as Partial<CorsairConfig<any>>
       }
     } catch {}
   }
 
-  if (!userConfig) {
-    return defaultConfig
-  }
+  console.log('userConfig', userConfig)
+  const missingFields = REQUIRED_CONFIG_FIELDS.filter(
+    field => !userConfig?.[field]
+  )
 
-  const flatToPaths = (cfg: any): CorsairPaths => {
-    if (cfg.paths) {
-      return {
-        queries: cfg.paths.queries ?? defaultConfig.paths.queries,
-        mutations: cfg.paths.mutations ?? defaultConfig.paths.mutations,
-        schema: cfg.paths.schema ?? defaultConfig.paths.schema,
-        apiEndpoint:
-          cfg.paths.apiEndpoint ??
-          cfg.paths.api ??
-          defaultConfig.paths.apiEndpoint,
-      }
-    }
-    return {
-      queries: cfg.queries ?? defaultConfig.paths.queries,
-      mutations: cfg.mutations ?? defaultConfig.paths.mutations,
-      schema: cfg.schema ?? defaultConfig.paths.schema,
-      apiEndpoint:
-        cfg.apiEndpoint ?? cfg.api ?? defaultConfig.paths.apiEndpoint,
-    }
+  if (missingFields.length > 0) {
+    throw new Error(
+      `Missing required fields in corsair.config.ts: ${missingFields.join(', ')}`
+    )
   }
 
   return {
-    ...userConfig,
-    paths: flatToPaths(userConfig),
-    envFile: userConfig.envFile ?? defaultConfig.envFile,
-    out: userConfig.out ?? defaultConfig.out,
-  }
+    apiEndpoint: userConfig?.apiEndpoint ?? DefaultBaseConfig.apiEndpoint,
+    framework: userConfig?.framework,
+    schema: userConfig?.schema,
+    dbType: userConfig?.dbType,
+    orm: userConfig?.orm,
+    db: userConfig?.db,
+    connection: userConfig?.connection,
+    pathToCorsairFolder:
+      userConfig?.pathToCorsairFolder ?? DefaultBaseConfig.pathToCorsairFolder,
+  } as CorsairConfig<any>
 }
 
 export function loadEnv(envFile: string): void {
@@ -169,28 +145,50 @@ export function loadEnv(envFile: string): void {
   }
 }
 
-export function checkDatabaseUrl(): void {
-  if (!process.env.DATABASE_URL) {
-    console.error('❌ DATABASE_URL not found in environment')
-    console.error('   Please set DATABASE_URL in your .env file\n')
-    process.exit(1)
+export function checkDatabaseUrl(connection: ConnectionConfig): void {
+  if (typeof connection === 'string') {
+    if (!connection) {
+      console.error('❌ DATABASE_URL is empty')
+      console.error('   Please set DATABASE_URL in your .env file\n')
+      process.exit(1)
+    }
+  } else {
+    const requiredFields: (keyof Exclude<ConnectionConfig, string>)[] = [
+      'host',
+      'username',
+      'password',
+      'database',
+    ]
+
+    const missingFields = requiredFields.filter(field => !connection[field])
+
+    if (missingFields.length > 0) {
+      console.error(
+        '❌ Missing required connection fields:',
+        missingFields.join(', ')
+      )
+      console.error(
+        '   Please provide all required connection details in your config\n'
+      )
+      process.exit(1)
+    }
   }
 }
 
-export function getResolvedPaths(cfg: CorsairConfig): {
+export function getResolvedPaths(cfg: CorsairConfig<any>): {
   queriesDir: string
   mutationsDir: string
   schemaFile: string
   operationsFile: string
 } {
-  const queriesDir = resolve(process.cwd(), cfg.paths.queries)
-  const mutationsDir = resolve(process.cwd(), cfg.paths.mutations)
-  const schemaFile = resolve(process.cwd(), cfg.paths.schema)
+  const queriesDir = resolve(process.cwd(), 'corsair/queries')
+  const mutationsDir = resolve(process.cwd(), 'corsair/mutations')
+  const schemaFile = resolve(process.cwd(), 'corsair/schema.ts')
   const operationsFile = resolve(queriesDir, '..', 'operations.ts')
   return { queriesDir, mutationsDir, schemaFile, operationsFile }
 }
 
-export function validatePaths(cfg: CorsairConfig): string[] {
+export function validatePaths(cfg: CorsairConfig<any>): string[] {
   const warnings: string[] = []
   const { queriesDir, mutationsDir } = getResolvedPaths(cfg)
   if (!existsSync(queriesDir)) warnings.push(`queries: ${queriesDir}`)

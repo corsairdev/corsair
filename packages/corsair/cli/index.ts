@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 
 import { Command } from 'commander'
+import { promises as fs } from 'fs'
+import { join } from 'path'
 import { kebabToCamelCase, toKebabCase } from './utils.js'
 
 // developer prompts with something like "pnpm corsair query -n 'get all albums by artist id' -i 'make sure to return in descending order alphabetically'"
@@ -13,7 +15,59 @@ import { kebabToCamelCase, toKebabCase } from './utils.js'
 
 type OpKind = 'query' | 'mutation'
 
-async function runAgentOperation(
+async function sortIndexFile(indexPath: string) {
+  try {
+    const content = await fs.readFile(indexPath, 'utf8')
+    const lines = content.split('\n').filter(line => line.trim())
+    const sortedLines = lines.sort((a, b) => a.localeCompare(b))
+    await fs.writeFile(indexPath, sortedLines.join('\n') + '\n')
+  } catch (error: any) {
+    if (error?.code !== 'ENOENT') {
+      throw error
+    }
+  }
+}
+
+class Spinner {
+  private frames = ['⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏']
+  private interval: NodeJS.Timeout | null = null
+  private currentFrame = 0
+  private text = ''
+
+  start(text: string) {
+    this.text = text
+    this.currentFrame = 0
+
+    process.stdout.write('\x1B[?25l')
+
+    this.interval = setInterval(() => {
+      const frame = this.frames[this.currentFrame]
+      process.stdout.write(`\r${frame} ${this.text}`)
+      this.currentFrame = (this.currentFrame + 1) % this.frames.length
+    }, 80)
+  }
+
+  succeed(text: string) {
+    this.stop()
+    console.log(`\r✅ ${text}`)
+  }
+
+  fail(text: string) {
+    this.stop()
+    console.log(`\r❌ ${text}`)
+  }
+
+  stop() {
+    if (this.interval) {
+      clearInterval(this.interval)
+      this.interval = null
+    }
+    process.stdout.write('\r\x1B[K')
+    process.stdout.write('\x1B[?25h')
+  }
+}
+
+export async function runAgentOperation(
   kind: OpKind,
   name: string,
   instructions?: string,
@@ -29,39 +83,25 @@ async function runAgentOperation(
 
   loadEnv('.env.local')
   const cfg = loadConfig()
-
   const kebabCaseName = toKebabCase(name.trim())
   const camelCaseName = kebabToCamelCase(kebabCaseName)
 
-  const baseDir = kind === 'query' ? cfg.paths.queries : cfg.paths.mutations
-  const pwd = `${baseDir}/${kebabCaseName}.ts`
+  const baseDir =
+    kind === 'query'
+      ? cfg.pathToCorsairFolder + '/queries'
+      : cfg.pathToCorsairFolder + '/mutations'
+  const rawPwd = `${baseDir}/${kebabCaseName}.ts`
+  const pwd = rawPwd.startsWith('./') ? rawPwd.slice(2) : rawPwd
 
   const schema = await loadSchema()
 
-  let existingCode: string | undefined
-
-  if (update) {
-    try {
-      existingCode = await fs.readFile(pwd, 'utf8')
-      console.log(
-        `\n🔄 Updating existing ${kind} "${camelCaseName}" at ${pwd}...\n`
-      )
-    } catch (error: any) {
-      if (error.code === 'ENOENT') {
-        console.error(
-          `\n❌ Error: ${kind} "${camelCaseName}" does not exist at ${pwd}\n`
-        )
-        process.exit(1)
-      } else {
-        throw error
-      }
-    }
-  } else {
+  if (!update) {
     try {
       await fs.access(pwd)
       console.log(
-        `\n✅ ${kind.charAt(0).toUpperCase() + kind.slice(1)} "${camelCaseName}" already exists at ${pwd}\n`
+        `\n❌ ${kind.charAt(0).toUpperCase() + kind.slice(1)} "${camelCaseName}" already exists at ${pwd}`
       )
+      console.log(`💡 Use -u flag to update the existing ${kind}\n`)
       return
     } catch (error: any) {
       if (error.code !== 'ENOENT') {
@@ -70,30 +110,60 @@ async function runAgentOperation(
     }
   }
 
-  const prompt = promptBuilder(
-    camelCaseName,
-    schema,
-    {
-      dbType: 'postgres',
-      framework: 'nextjs',
+  const prompt = promptBuilder({
+    functionName: camelCaseName,
+    incomingSchema: schema,
+    config: {
+      dbType: cfg.dbType,
+      framework: cfg.framework,
       operation: kind,
-      orm: 'drizzle',
+      orm: cfg.orm,
     },
     instructions,
-    existingCode
-  )
+  })
 
-  const result = await promptAgent(pwd).generate({ prompt })
+  const spinner = new Spinner()
+  const startTime = Date.now()
 
-  console.log(
-    `\n✅ Agent finished ${update && existingCode ? 'updating' : 'generating'} ${kind} "${camelCaseName}" at ${pwd}.\n`
-  )
+  try {
+    spinner.start(
+      `🤖 AI Agent is ${update ? 'updating' : 'generating'} ${kind} "${camelCaseName}"...`
+    )
 
-  if (result.text) {
-    console.log('📋 Agent Report:')
-    console.log('─'.repeat(80))
-    console.log(result.text)
-    console.log('─'.repeat(80))
+    const result = await promptAgent(pwd).generate({ prompt })
+
+    const indexPath = join(baseDir, 'index.ts')
+    await sortIndexFile(indexPath)
+
+    const elapsedSeconds = Math.round((Date.now() - startTime) / 1000)
+    const timeStr =
+      elapsedSeconds < 60
+        ? `${elapsedSeconds}s`
+        : `${Math.floor(elapsedSeconds / 60)}m ${elapsedSeconds % 60}s`
+
+    spinner.succeed(
+      `Agent finished ${update ? 'updating' : 'generating'} ${kind} "${camelCaseName}" at ${pwd} (${timeStr})`
+    )
+
+    if (result.usage) {
+      console.log('\n🔢 Token Usage:')
+      console.log(`   Input tokens:  ${result.usage.inputTokens?.toLocaleString() ?? 'N/A'}`)
+      console.log(`   Output tokens: ${result.usage.outputTokens?.toLocaleString() ?? 'N/A'}`)
+      console.log(`   Total tokens:  ${result.usage.totalTokens?.toLocaleString() ?? 'N/A'}`)
+    }
+
+    if (result.text) {
+      console.log('\n📋 Agent Report:')
+      console.log('─'.repeat(80))
+      console.log(result.text)
+      console.log('─'.repeat(80))
+      console.log()
+    }
+  } catch (error) {
+    spinner.fail(
+      `Failed to ${update ? 'update' : 'generate'} ${kind} "${camelCaseName}"`
+    )
+    throw error
   }
 }
 
@@ -118,6 +188,14 @@ program
   .action(async () => {
     const { check } = await import('./check.js')
     await check()
+  })
+
+program
+  .command('fix')
+  .description('Fix type errors by regenerating files with errors')
+  .action(async () => {
+    const { fix } = await import('./fix.js')
+    await fix()
   })
 
 program

@@ -21,11 +21,11 @@ export const AwaitingFeedbackScreen: React.FC<AwaitingFeedbackScreenProps> = ({
       <Box
         flexDirection="column"
         borderStyle="round"
-        borderColor="magenta"
+        borderColor="green"
         padding={1}
       >
-        <Text color="magenta" bold>
-          🤖 AI Analysis Complete
+        <Text color="green" bold>
+          ✓ Operation Generated Successfully
         </Text>
         <Text> </Text>
 
@@ -35,95 +35,39 @@ export const AwaitingFeedbackScreen: React.FC<AwaitingFeedbackScreenProps> = ({
         <Text>
           Type: <Text color="yellow">{newOperation.operationType}</Text>
         </Text>
-        <Text>
-          Complexity:{' '}
-          <Text
-            color={
-              llmResponse.analysis.complexity === 'low'
-                ? 'green'
-                : llmResponse.analysis.complexity === 'medium'
-                ? 'yellow'
-                : 'red'
-            }
-          >
-            {llmResponse.analysis.complexity.toUpperCase()}
-          </Text>
-        </Text>
-        <Text>
-          Confidence:{' '}
-          <Text color="green">
-            {Math.round(llmResponse.analysis.confidence * 100)}%
-          </Text>
-        </Text>
 
         <Text> </Text>
         <Text color="cyan" bold>
-          💡 Suggestions:
+          📋 Agent Report:
         </Text>
         {llmResponse.suggestions.map((suggestion, i) => (
           <Text key={i} dimColor>
-            • {suggestion}
+            {suggestion}
           </Text>
         ))}
 
-        {llmResponse.rawResponse?.function_name && (
+        {llmResponse.usage && (
           <>
             <Text> </Text>
-            <Text>
-              Name suggestion:{' '}
-              <Text color="yellow">
-                {llmResponse.rawResponse.function_name}
-              </Text>
+            <Text color="yellow" bold>
+              🔢 Token Usage:
             </Text>
-          </>
-        )}
-
-        <Text> </Text>
-        <Text color="cyan" bold>
-          🔧 Recommendations:
-        </Text>
-        {llmResponse.recommendations.dependencies && (
-          <Text dimColor>
-            Dependencies:{' '}
-            <Text color="yellow">
-              {llmResponse.recommendations.dependencies}
+            <Text dimColor>
+              Input:  {llmResponse.usage.inputTokens.toLocaleString()}
             </Text>
-          </Text>
-        )}
-        {llmResponse.recommendations.handler && (
-          <Text dimColor>
-            Handler:{' '}
-            <Text color="yellow">{llmResponse.recommendations.handler}</Text>
-          </Text>
-        )}
-        {llmResponse.recommendations.optimizations.map((opt, i) => (
-          <Text key={i} dimColor>
-            • {opt}
-          </Text>
-        ))}
-
-        <Text> </Text>
-        <Text color="cyan" bold>
-          📝 Analysis:
-        </Text>
-        <Text dimColor>{llmResponse.analysis.reasoning}</Text>
-
-        {llmResponse.rawResponse?.pseudocode && (
-          <>
-            <Text> </Text>
-            <Text color="cyan" bold>
-              📋 Pseudocode:
+            <Text dimColor>
+              Output: {llmResponse.usage.outputTokens.toLocaleString()}
             </Text>
-            <Text dimColor>{llmResponse.rawResponse.pseudocode}</Text>
+            <Text dimColor>
+              Total:  {llmResponse.usage.totalTokens.toLocaleString()}
+            </Text>
           </>
         )}
 
         <CommandBar
           commands={[
-            { key: 'A', label: 'Accept' },
-            { key: 'R', label: 'Regenerate' },
-            { key: 'M', label: 'Modify' },
-            { key: 'C', label: 'Cancel' },
+            { key: 'U', label: 'Update' },
+            { key: 'ESC/Q', label: 'Back to Idle' },
           ]}
         />
       </Box>
