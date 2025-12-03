@@ -22,9 +22,16 @@ interface CommentSectionProps {
 export function CommentSection({ postId }: CommentSectionProps) {
   const [newComment, setNewComment] = useState('')
   const [selectedUserId, setSelectedUserId] = useState<string>('')
-  
-  const { data: comments, isLoading, refetch } = useCorsairQuery('get comments by post', { postId })
-  const { data: users, isLoading: usersLoading } = useCorsairQuery('get all users', {})
+
+  const {
+    data: comments,
+    isLoading,
+    refetch,
+  } = useCorsairQuery('get comments by post', { postId })
+  const { data: users, isLoading: usersLoading } = useCorsairQuery(
+    'get all users',
+    undefined
+  )
   const createComment = useCorsairMutation('create comment')
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -46,9 +53,7 @@ export function CommentSection({ postId }: CommentSectionProps) {
 
   return (
     <div className="space-y-6">
-      <h2 className="text-2xl font-bold">
-        Comments ({comments?.length || 0})
-      </h2>
+      <h2 className="text-2xl font-bold">Comments ({comments?.length || 0})</h2>
 
       <Card>
         <CardHeader>
@@ -62,11 +67,18 @@ export function CommentSection({ postId }: CommentSectionProps) {
                 Comment as
               </label>
               <Select value={selectedUserId} onValueChange={setSelectedUserId}>
-                <SelectTrigger className="w-full" disabled={usersLoading || createComment.isPending}>
-                  <SelectValue placeholder={usersLoading ? "Loading users..." : "Select a user"} />
+                <SelectTrigger
+                  className="w-full"
+                  disabled={usersLoading || createComment.isPending}
+                >
+                  <SelectValue
+                    placeholder={
+                      usersLoading ? 'Loading users...' : 'Select a user'
+                    }
+                  />
                 </SelectTrigger>
                 <SelectContent>
-                  {users?.map((user) => (
+                  {users?.map(user => (
                     <SelectItem key={user.id} value={user.id}>
                       <div className="flex items-center gap-2">
                         <span>{user.name || user.email}</span>
@@ -82,14 +94,18 @@ export function CommentSection({ postId }: CommentSectionProps) {
             <Textarea
               placeholder="Share your thoughts..."
               value={newComment}
-              onChange={(e) => setNewComment(e.target.value)}
+              onChange={e => setNewComment(e.target.value)}
               rows={4}
               disabled={createComment.isPending || !selectedUserId}
             />
             <div className="flex justify-end">
-              <Button 
-                type="submit" 
-                disabled={createComment.isPending || !newComment.trim() || !selectedUserId}
+              <Button
+                type="submit"
+                disabled={
+                  createComment.isPending ||
+                  !newComment.trim() ||
+                  !selectedUserId
+                }
               >
                 {createComment.isPending ? (
                   <>
@@ -114,25 +130,31 @@ export function CommentSection({ postId }: CommentSectionProps) {
         </div>
       ) : comments && comments.length > 0 ? (
         <div className="space-y-4">
-          {comments.map((comment) => (
+          {comments.map(comment => (
             <Card key={comment.id}>
               <CardContent className="pt-6">
                 <div className="flex gap-4">
                   <Avatar className="h-10 w-10">
                     <AvatarImage src={comment.author.avatar_url || undefined} />
                     <AvatarFallback>
-                      {comment.author.name?.charAt(0).toUpperCase() || comment.author.email.charAt(0).toUpperCase()}
+                      {comment.author.name?.charAt(0).toUpperCase() ||
+                        comment.author.email.charAt(0).toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
                   <div className="flex-1 space-y-2">
                     <div className="flex items-center gap-2">
-                      <p className="font-semibold">{comment.author.name || comment.author.email}</p>
+                      <p className="font-semibold">
+                        {comment.author.name || comment.author.email}
+                      </p>
                       <span className="text-xs text-muted-foreground">
-                        {new Date(comment.created_at).toLocaleDateString('en-US', {
-                          month: 'short',
-                          day: 'numeric',
-                          year: 'numeric',
-                        })}
+                        {new Date(comment.created_at).toLocaleDateString(
+                          'en-US',
+                          {
+                            month: 'short',
+                            day: 'numeric',
+                            year: 'numeric',
+                          }
+                        )}
                       </span>
                     </div>
                     <p className="text-foreground">{comment.content}</p>
@@ -145,11 +167,12 @@ export function CommentSection({ postId }: CommentSectionProps) {
       ) : (
         <Card>
           <CardContent className="py-12 text-center">
-            <p className="text-muted-foreground">No comments yet. Be the first to comment!</p>
+            <p className="text-muted-foreground">
+              No comments yet. Be the first to comment!
+            </p>
           </CardContent>
         </Card>
       )}
     </div>
   )
 }
-
