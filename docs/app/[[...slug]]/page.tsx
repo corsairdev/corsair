@@ -1,18 +1,18 @@
-import IndexDoc from '@/content/docs/index.mdx'
-import OverviewDoc from '@/content/docs/overview.mdx'
-import InstallationDoc from '@/content/docs/installation.mdx'
-import QuickstartDoc from '@/content/docs/quickstart.mdx'
-import CoreConceptsDoc from '@/content/docs/core-concepts.mdx'
-import TypeSafetyDoc from '@/content/docs/type-safety.mdx'
-import CliDoc from '@/content/docs/cli.mdx'
-import PluginsDoc from '@/content/docs/plugins.mdx'
-import ExamplesDoc from '@/content/docs/examples.mdx'
-import NextDoc from '@/content/docs/integrations/next.mdx'
-import ViteDoc from '@/content/docs/integrations/vite.mdx'
-import HonoDoc from '@/content/docs/integrations/hono.mdx'
-import DrizzleDoc from '@/content/docs/integrations/drizzle.mdx'
-import PrismaDoc from '@/content/docs/integrations/prisma.mdx'
-import SlackDoc from '@/content/docs/plugins/slack.mdx'
+import IntroductionDoc from '@/content/0-getting-started/0-introduction.mdx'
+import InstallationDoc from '@/content/0-getting-started/1-installation.mdx'
+import BasicUsageDoc from '@/content/0-getting-started/2-basic-usage.mdx'
+import ApiDoc from '@/content/1-concepts/0-api.mdx'
+import ClientDoc from '@/content/1-concepts/1-client.mdx'
+import CliDoc from '@/content/1-concepts/2-cli.mdx'
+import PluginsDoc from '@/content/1-concepts/3-plugins.mdx'
+import DatabaseDoc from '@/content/1-concepts/4-database.mdx'
+import TypescriptDoc from '@/content/1-concepts/5-typescript.mdx'
+import NextDoc from '@/content/2-integrations/0-next.mdx'
+import ViteDoc from '@/content/2-integrations/1-vite.mdx'
+import HonoDoc from '@/content/2-integrations/2-hono.mdx'
+import PrismaDoc from '@/content/2-integrations/3-prisma.mdx'
+import DrizzleDoc from '@/content/2-integrations/4-drizzle.mdx'
+import SlackDoc from '@/content/3-plugins/slack.mdx'
 import { DocsPage, DocsBody } from 'fumadocs-ui/page'
 import { notFound } from 'next/navigation'
 import { extractTOC } from '@/lib/toc'
@@ -24,53 +24,51 @@ interface PageProps {
 
 const pages = {
   'index': {
-    Component: IndexDoc,
-    title: 'Corsair Documentation',
+    Component: IntroductionDoc,
+    title: 'Introduction',
     description:
       'The Vibe Coding SDK - Build type-safe full-stack TypeScript apps with natural language',
-  },
-  'overview': {
-    Component: OverviewDoc,
-    title: 'Overview',
-    description:
-      'The Vibe Coding SDK - Natural language queries and mutations for your full-stack TypeScript app',
   },
   'installation': {
     Component: InstallationDoc,
     title: 'Installation',
     description: 'Install Corsair in your Next.js + Drizzle + Postgres project',
   },
-  'quickstart': {
-    Component: QuickstartDoc,
-    title: 'Quickstart',
-    description: 'Get up and running with Corsair in 5 steps',
+  'basic-usage': {
+    Component: BasicUsageDoc,
+    title: 'Basic Usage',
+    description: 'Setting up the client, queries, mutations, and callbacks',
   },
-  'core-concepts': {
-    Component: CoreConceptsDoc,
-    title: 'Core Concepts',
-    description: 'Understanding queries, mutations, and client setup',
+  'api': {
+    Component: ApiDoc,
+    title: 'API Concepts',
+    description: 'Understanding the Corsair approach to natural language APIs',
   },
-  'type-safety': {
-    Component: TypeSafetyDoc,
-    title: 'Type Safety',
-    description: 'Full end-to-end type safety from database to UI',
+  'client': {
+    Component: ClientDoc,
+    title: 'Client Concepts',
+    description: 'Fully typed React hooks powered by TanStack Query',
   },
   'cli': {
     Component: CliDoc,
-    title: 'CLI',
-    description:
-      'Command-line tools for code generation, validation, and migrations',
+    title: 'CLI Concepts',
+    description: 'Agent-first development with Corsair CLI',
   },
   'plugins': {
     Component: PluginsDoc,
-    title: 'Plugins',
+    title: 'Plugin Concepts',
     description:
-      'Extend Corsair with third-party integrations and business logic',
+      'Extend Corsair beyond the database with third-party integrations',
   },
-  'examples': {
-    Component: ExamplesDoc,
-    title: 'Examples',
-    description: 'Real-world examples and patterns for building with Corsair',
+  'database': {
+    Component: DatabaseDoc,
+    title: 'Database Concepts',
+    description: 'Supported databases, ORMs, and schema detection',
+  },
+  'typescript': {
+    Component: TypescriptDoc,
+    title: 'TypeScript Concepts',
+    description: 'Full end-to-end type safety from database to UI',
   },
   'integrations/next': {
     Component: NextDoc,
@@ -80,27 +78,32 @@ const pages = {
   'integrations/vite': {
     Component: ViteDoc,
     title: 'Vite',
-    description: 'Use Corsair with Vite for fast development and optimized builds',
+    description:
+      'Use Corsair with Vite for fast development and optimized builds',
   },
   'integrations/hono': {
     Component: HonoDoc,
     title: 'Hono',
-    description: 'Integrate Corsair with Hono for lightweight, edge-compatible APIs',
-  },
-  'integrations/drizzle': {
-    Component: DrizzleDoc,
-    title: 'Drizzle',
-    description: 'Use Corsair with Drizzle ORM for type-safe database operations',
+    description:
+      'Integrate Corsair with Hono for lightweight, edge-compatible APIs',
   },
   'integrations/prisma': {
     Component: PrismaDoc,
     title: 'Prisma',
-    description: 'Integrate Corsair with Prisma for type-safe database operations',
+    description:
+      'Integrate Corsair with Prisma for type-safe database operations',
+  },
+  'integrations/drizzle': {
+    Component: DrizzleDoc,
+    title: 'Drizzle',
+    description:
+      'Use Corsair with Drizzle ORM for type-safe database operations',
   },
   'plugins/slack': {
     Component: SlackDoc,
     title: 'Slack',
-    description: 'Enable natural language queries and mutations for Slack operations',
+    description:
+      'Enable natural language queries and mutations for Slack operations',
   },
 } as const
 
