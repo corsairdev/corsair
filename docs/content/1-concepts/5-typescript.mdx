@@ -1,170 +1,634 @@
-# TypeScript
+# TypeScript Concepts
 
-Corsair is built with TypeScript and provides complete type safety across your entire stack.
+## Why TypeScript Matters for Corsair
 
-## Type Inference
+Corsair is built on a fundamental principle: **if there are type errors, something is guaranteed to be wrong.**
 
-Corsair automatically infers types from your database schema:
+Type errors don't guarantee everything is _right_, but they're incredibly effective at catching what's _wrong_ before it reaches production.
 
-```tsx
-const { data: posts } = useCorsairQuery('all posts with authors')
-//    ^? Array<{
-//         id: string
-//         title: string
-//         content: string
-//         author: {
-//           id: string
-//           name: string
-//           email: string
-//         }
-//       }>
+**The goal:** Find and minimize errors as early as possible, ideally at compile time rather than runtime.
+
+---
+
+## The Developer Experience Advantage
+
+TypeScript intellisense is what makes Corsair feel **magical to use**.
+
+Instead of memorizing APIs, guessing field names, or constantly checking documentation, you get:
+
+- **Autocomplete** for every query, mutation, and plugin
+- **Inline documentation** showing what each field does
+- **Real-time error detection** as you type
+- **Refactoring confidence** when changing schemas or configurations
+
+This is what separates a good tool from a great one.
+
+---
+
+## Configuration Type Safety
+
+### Defining Your Slack Channels
+
+```typescript
+import { type CorsairConfig } from 'corsair'
+
+export const config = {
+  dbType: 'postgres',
+  orm: 'prisma',
+  framework: 'nextjs',
+  pathToCorsairFolder: './corsair',
+  apiEndpoint: process.env.NEXT_PUBLIC_CORSAIR_API_ROUTE!,
+  db,
+  connection: process.env.DATABASE_URL!,
+  plugins: {
+    slack: {
+      token: process.env.SLACK_TOKEN!,
+      channels: {
+        'general': 'C01ABC123',
+        'technology': 'C02DEF456',
+        'notifications-error': 'C03GHI789',
+      },
+    },
+  },
+} satisfies CorsairConfig<typeof db>
+
+export type Config = typeof config
 ```
 
-## Query Type Safety
+### Using Slack Channels with Intellisense
 
-TypeScript validates your queries at compile time:
+Now when you create a mutation that sends a Slack message:
 
-```tsx
-// ✅ Valid - references existing table
-useCorsairQuery('all posts')
+```typescript
+const sendMessage = useCorsairMutation('send slack message to channel')
 
-// ❌ Type error - table doesn't exist
-useCorsairQuery('all articles')
-//              ~~~~~~~~~~~~~~
-// Error: Table 'articles' not found in schema
-```
-
-## Mutation Type Safety
-
-Mutations enforce correct data shapes:
-
-```tsx
-const { mutate: createUser } = useCorsairMutation('create user')
-
-// ✅ Valid
-createUser({
-  email: 'user@example.com',
-  name: 'John Doe',
+await sendMessage.mutateAsync({
+  channel: '|', // <- Autocomplete shows: 'general', 'technology', 'notifications-error'
+  message: 'Deployment successful!',
 })
+```
 
-// ❌ Type error
-createUser({
-  email: 'user@example.com',
-  age: 25, // 'age' doesn't exist on User
+**What you get:**
+
+- Autocomplete shows **only the channels you've configured**
+- TypeScript errors if you try to use a non-existent channel
+- No typos like `'generl'` or `'#general'` make it to production
+
+### The Ripple Effect of Configuration Changes
+
+**Scenario:** You decide to remove the `'technology'` channel from your config.
+
+**Before removal:**
+
+```typescript
+plugins: {
+  slack: {
+    channels: {
+      'general': 'C01ABC123',
+      'technology': 'C02DEF456',  // <- Remove this
+      'notifications-error': 'C03GHI789',
+    },
+  },
+}
+```
+
+**After removal:**
+
+```typescript
+plugins: {
+  slack: {
+    channels: {
+      'general': 'C01ABC123',
+      'notifications-error': 'C03GHI789',
+    },
+  },
+}
+```
+
+**Immediately**, TypeScript shows errors everywhere that channel is used:
+
+```typescript
+// ❌ Type error: '"technology"' is not assignable to type '"general" | "notifications-error"'
+await sendMessage.mutateAsync({
+  channel: 'technology',
+  message: 'New feature deployed!',
 })
 ```
 
-## Parameter Types
+**Benefits:**
 
-Query parameters are fully typed:
+- **Find every usage instantly** — no grep needed
+- **Fix errors at compile time** — not when users complain
+- **Prevent silent failures** — messages don't disappear into the void
 
-```tsx
-// Parameters inferred from query
-const { data } = useCorsairQuery(
-  'posts by author',
-  { authorId: '123' }
-  //^? { authorId: string }
+### Updating Channel IDs
+
+**Scenario:** Slack admin recreates the `'general'` channel, giving it a new ID.
+
+**Update in one place:**
+
+```typescript
+plugins: {
+  slack: {
+    channels: {
+      'general': 'C04NEW123',  // <- Changed from 'C01ABC123'
+      'notifications-error': 'C03GHI789',
+    },
+  },
+}
+```
+
+**Every mutation automatically uses the new ID.** No code changes needed anywhere else.
+
+---
+
+## Query and Mutation Type Safety
+
+### Fully Typed Query Results
+
+```typescript
+const posts = useCorsairQuery(
+  'all published posts with authors and comment count'
 )
 
-// ❌ Type error
-const { data } = useCorsairQuery(
-  'posts by author',
-  { userId: '123' } // Should be 'authorId'
-)
+// posts is typed as:
+// Array<{
+//   id: string;
+//   title: string;
+//   content: string;
+//   published: boolean;
+//   createdAt: Date;
+//   author: {
+//     id: string;
+//     name: string;
+//     email: string;
+//   };
+//   commentCount: number;
+// }>
 ```
 
-## Custom Types
+### What This Enables
 
-Extend Corsair types for your domain:
+**Autocomplete when accessing fields:**
 
-```ts title="types/corsair.ts"
-import type { InferQueryResult } from 'corsair'
+```typescript
+posts.forEach(post => {
+  console.log(post.t|)  // <- Autocomplete shows: title, createdAt
+  console.log(post.author.n|)  // <- Autocomplete shows: name
+});
+```
 
-// Extract specific query types
-export type Post = InferQueryResult<'post with author'>
-export type User = InferQueryResult<'user with posts'>
+**Type errors for invalid access:**
 
-// Use in your components
-export function PostCard({ post }: { post: Post }) {
+```typescript
+// ❌ Type error: Property 'views' does not exist
+console.log(post.views)
+
+// ❌ Type error: Property 'username' does not exist
+console.log(post.author.username)
+```
+
+**Refactoring safety:**
+
+```typescript
+// If you change the query to remove 'commentCount'
+const posts = useCorsairQuery(
+  'all published posts with authors' // <- No longer includes comment count
+)
+
+// TypeScript immediately shows errors everywhere commentCount was used
+// ❌ Type error: Property 'commentCount' does not exist
+console.log(post.commentCount)
+```
+
+---
+
+## Mutation Input Type Safety
+
+### Typed Mutation Parameters
+
+```typescript
+const createPost = useCorsairMutation(
+  'create post with title, content, and author id'
+)
+
+// TypeScript knows exactly what fields are required
+await createPost.mutate({
+  title: 'My Post',
+  content: 'Post content',
+  authorId: 'user_123',
+})
+```
+
+### What TypeScript Catches
+
+**Missing required fields:**
+
+```typescript
+// ❌ Type error: Property 'content' is missing
+await createPost.mutate({
+  title: 'My Post',
+  authorId: 'user_123',
+})
+```
+
+**Wrong field types:**
+
+```typescript
+// ❌ Type error: Type 'number' is not assignable to type 'string'
+await createPost.mutate({
+  title: 'My Post',
+  content: 'Post content',
+  authorId: 12345, // <- Should be string
+})
+```
+
+**Extra fields that don't exist:**
+
+```typescript
+// ❌ Type error: Object literal may only specify known properties
+await createPost.mutate({
+  title: 'My Post',
+  content: 'Post content',
+  authorId: 'user_123',
+  published: true, // <- This field doesn't exist in the mutation
+})
+```
+
+---
+
+## Schema Change Propagation
+
+### The Scenario
+
+Your `User` model changes from a single `fullName` field to separate `firstName` and `lastName` fields.
+
+**Before:**
+
+```prisma
+model User {
+  id       String @id
+  email    String @unique
+  fullName String
+}
+```
+
+**After:**
+
+```prisma
+model User {
+  id        String @id
+  email     String @unique
+  firstName String
+  lastName  String
+}
+```
+
+### What Happens
+
+**Corsair regenerates queries automatically:**
+
+```typescript
+const users = useCorsairQuery('all users with names')
+
+// Before regeneration - Type error!
+// Array<{ id: string; email: string; fullName: string }>
+
+// After regeneration - Types updated!
+// Array<{ id: string; email: string; firstName: string; lastName: string }>
+```
+
+**TypeScript shows errors everywhere the old field was used:**
+
+```typescript
+// ❌ Type error: Property 'fullName' does not exist
+<div>{user.fullName}</div>
+
+// ✅ Fix it
+<div>{user.firstName} {user.lastName}</div>
+```
+
+**Benefits:**
+
+- **Every breaking change is caught at compile time**
+- **No silent runtime failures**
+- **Refactor with confidence** — TypeScript guides you to every place that needs updating
+
+---
+
+## Type Exports for Component Props
+
+### The `QueryOutputs` Type
+
+Corsair exports types for every query, making it trivial to build type-safe component interfaces.
+
+```typescript
+import { QueryOutputs } from '@/corsair/types'
+
+interface UserCardProps {
+  user: QueryOutputs['get all users'][number]
+}
+
+export function UserCard({ user }: UserCardProps) {
   return (
     <div>
-      <h2>{post.title}</h2>
-      <p>By {post.author.name}</p>
+      <h3>
+        {user.firstName} {user.lastName}
+      </h3>
+      <p>{user.email}</p>
     </div>
   )
 }
 ```
 
-## Type Generation
+### What This Gives You
 
-Generate types from your schema:
+**Autocomplete in components:**
 
-```bash
-npx corsair generate
+```typescript
+export function UserCard({ user }: UserCardProps) {
+  return <div>{user.|}</div>  // <- Shows: id, email, firstName, lastName
+}
 ```
 
-This creates `corsair.d.ts` with all available queries and mutations:
+**Automatic updates when queries change:**
 
-```ts title="node_modules/.corsair/types.d.ts"
-declare module 'corsair/client' {
-  interface CorsairQueries {
-    'all posts': Post[]
-    'post with author': Post & { author: User }
-    'user with posts': User & { posts: Post[] }
-  }
+```typescript
+// You update the query to include 'avatar'
+const users = useCorsairQuery('all users with names and avatar')
 
-  interface CorsairMutations {
-    'create post': (data: CreatePostInput) => Post
-    'update post': (data: UpdatePostInput) => Post
-    'delete post': (id: string) => void
+// TypeScript immediately knows about the new field
+export function UserCard({ user }: UserCardProps) {
+  return (
+    <div>
+      <img src={user.avatar} /> // ✅ TypeScript knows this exists now
+      <h3>
+        {user.firstName} {user.lastName}
+      </h3>
+    </div>
+  )
+}
+```
+
+**Type safety across your component tree:**
+
+```typescript
+interface UserListProps {
+  users: QueryOutputs['get all users']
+  onUserClick: (user: QueryOutputs['get all users'][number]) => void
+}
+
+export function UserList({ users, onUserClick }: UserListProps) {
+  return (
+    <div>
+      {users.map(user => (
+        <UserCard
+          key={user.id}
+          user={user} // ✅ Types match perfectly
+          onClick={() => onUserClick(user)} // ✅ Types match perfectly
+        />
+      ))}
+    </div>
+  )
+}
+```
+
+---
+
+## Plugin Type Safety
+
+### Typed Plugin Parameters
+
+```typescript
+const sendEmail = useCorsairMutation(
+  'send email via Resend with subject and HTML content'
+)
+
+// TypeScript knows the exact shape of Resend parameters
+await sendEmail.mutate({
+  to: 'user@example.com',
+  subject: 'Welcome!',
+  html: '<h1>Welcome to our app</h1>',
+})
+```
+
+### What Gets Caught
+
+**Invalid email format:**
+
+```typescript
+// ❌ Type error: Type 'string' does not match pattern for email
+await sendEmail.mutate({
+  to: 'not-an-email',
+  subject: 'Welcome!',
+  html: '<h1>Welcome</h1>',
+})
+```
+
+**Missing required plugin configuration:**
+
+```typescript
+// If you haven't configured Resend in your config
+const sendEmail = useCorsairMutation('send email via Resend')
+
+// ❌ Type error: Plugin 'resend' is not configured
+```
+
+**Using unavailable plugin features:**
+
+```typescript
+// If your Resend config doesn't include attachment support
+await sendEmail.mutate({
+  to: 'user@example.com',
+  subject: 'Welcome!',
+  html: '<h1>Welcome</h1>',
+  attachments: [...]  // ❌ Type error: Attachments not enabled in config
+});
+```
+
+---
+
+## Multi-Service Type Safety
+
+### Typed Multi-Step Mutations
+
+```typescript
+const onboardUser = useCorsairMutation(
+  'create user, send welcome email via Resend, track signup in PostHog, and notify #general Slack channel'
+)
+
+await onboardUser.mutate({
+  email: 'user@example.com',
+  name: 'John Doe',
+  plan: 'pro',
+})
+```
+
+### What TypeScript Ensures
+
+**All services receive correct types:**
+
+```typescript
+// ❌ Type error if Slack channel doesn't exist
+// ❌ Type error if PostHog event properties are wrong
+// ❌ Type error if Resend email fields are missing
+// ✅ All services properly typed and validated
+```
+
+**Partial failures are typed:**
+
+```typescript
+try {
+  await onboardUser.mutate({ email, name, plan })
+} catch (error) {
+  // error is typed as:
+  // {
+  //   service: 'resend' | 'posthog' | 'slack' | 'database';
+  //   message: string;
+  //   originalError: unknown;
+  // }
+
+  if (error.service === 'resend') {
+    // Handle email failure specifically
   }
 }
 ```
 
-## Strict Mode
+---
 
-Corsair requires TypeScript strict mode:
+## The Type-Driven Development Flow
 
-```json title="tsconfig.json"
-{
-  "compilerOptions": {
-    "strict": true,
-    "strictNullChecks": true
-  }
+### 1. Define Your Intent
+
+```typescript
+const users = useCorsairQuery(
+  'active users who logged in within last 30 days with their order count'
+)
+```
+
+### 2. Corsair Generates Types
+
+```typescript
+// Type generated automatically:
+// Array<{
+//   id: string;
+//   email: string;
+//   firstName: string;
+//   lastName: string;
+//   lastLogin: Date;
+//   orderCount: number;
+// }>
+```
+
+### 3. Build UI with Full Type Safety
+
+```typescript
+export function ActiveUsers() {
+  const { data: users } = useCorsairQuery(
+    'active users who logged in within last 30 days with their order count'
+  )
+
+  return (
+    <div>
+      {users?.map(user => (
+        <div key={user.id}>
+          <h3>
+            {user.firstName} {user.lastName}
+          </h3>
+          <p>Last login: {user.lastLogin.toLocaleDateString()}</p>
+          <p>Orders: {user.orderCount}</p>
+        </div>
+      ))}
+    </div>
+  )
 }
 ```
 
-## Type Utilities
+### 4. Refactor with Confidence
 
-Corsair provides helper types:
+Change the query:
 
-```ts
-import type {
-  InferQueryResult,
-  InferMutationInput,
-  InferMutationResult,
-} from 'corsair'
-
-// Extract query return type
-type Posts = InferQueryResult<'all posts'>
-
-// Extract mutation input type
-type CreatePostData = InferMutationInput<'create post'>
-
-// Extract mutation result type
-type CreatedPost = InferMutationResult<'create post'>
+```typescript
+const users = useCorsairQuery(
+  'active users who logged in within last 30 days with their order count and total spent'
+)
 ```
 
-## Plugin Types
+TypeScript immediately guides you:
 
-Plugins extend available queries and mutations:
+```typescript
+export function ActiveUsers() {
+  const { data: users } = useCorsairQuery(
+    'active users who logged in within last 30 days with their order count and total spent'
+  )
 
-```tsx
-// After adding Slack plugin
-const { data } = useCorsairQuery('all slack channels')
-//    ^? Array<{ id: string, name: string, ... }>
-
-// TypeScript knows plugin endpoints
-const { mutate } = useCorsairMutation('send email')
-//    ^? (data: { to: string, subject: string, html: string }) => void
+  return (
+    <div>
+      {users?.map(user => (
+        <div key={user.id}>
+          <h3>
+            {user.firstName} {user.lastName}
+          </h3>
+          <p>Last login: {user.lastLogin.toLocaleDateString()}</p>
+          <p>Orders: {user.orderCount}</p>
+          <p>Total spent: ${user.totalSpent}</p> {/* ✅ New field available */}
+        </div>
+      ))}
+    </div>
+  )
+}
 ```
+
+---
+
+## Preventing Runtime Errors
+
+### The Traditional Problem
+
+**Vibe coded or manually written code:**
+
+```typescript
+// No type safety
+const channel = '#genral' // ⚠️ Typo - will fail at runtime
+await slack.postMessage({ channel, text: 'Hello' })
+
+// No validation
+const user = await db.user.findUnique({
+  where: { id: userId },
+  select: { fullName: true }, // ⚠️ Field doesn't exist - will fail at runtime
+})
+```
+
+### The Corsair Solution
+
+**Everything typed at compile time:**
+
+```typescript
+// ❌ Type error: '"genral"' is not assignable to '"general" | "technology" | "notifications-error"'
+const sendMessage = useCorsairMutation('send slack message')
+await sendMessage.mutate({
+  channel: 'genral', // <- Caught before running
+  message: 'Hello',
+})
+
+// ❌ Type error: Property 'fullName' does not exist
+const user = useCorsairQuery('user full name by id', { userId })
+console.log(user.fullName) // <- Caught before running
+```
+
+---
+
+## The Goal
+
+Corsair's TypeScript integration provides:
+
+1. **Compile-time error detection** — catch bugs before they reach production
+2. **Best-in-class developer experience** — autocomplete and intellisense everywhere
+3. **Configuration type safety** — changes ripple through your entire codebase
+4. **Schema-driven types** — automatically updated when your database changes
+5. **Plugin type safety** — validated parameters for every third-party service
+6. **Refactoring confidence** — TypeScript guides you through every change
+
+**The principle:** If TypeScript is happy, you can be confident your code will work. If TypeScript shows errors, something is guaranteed to be wrong—and you caught it early.
+
+**You get production reliability with an exceptional developer experience.**
