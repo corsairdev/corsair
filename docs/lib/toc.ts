@@ -7,8 +7,31 @@ export interface TOCItem {
   depth: number
 }
 
+const slugToFilePath: Record<string, string> = {
+  'index': '0-getting-started/0-introduction.mdx',
+  'installation': '0-getting-started/1-installation.mdx',
+  'basic-usage': '0-getting-started/2-basic-usage.mdx',
+  'api': '1-concepts/0-api.mdx',
+  'client': '1-concepts/1-client.mdx',
+  'cli': '1-concepts/2-cli.mdx',
+  'plugins': '1-concepts/3-plugins.mdx',
+  'database': '1-concepts/4-database.mdx',
+  'typescript': '1-concepts/5-typescript.mdx',
+  'integrations/next': '2-integrations/0-next.mdx',
+  'integrations/vite': '2-integrations/1-vite.mdx',
+  'integrations/hono': '2-integrations/2-hono.mdx',
+  'integrations/prisma': '2-integrations/3-prisma.mdx',
+  'integrations/drizzle': '2-integrations/4-drizzle.mdx',
+  'plugins/slack': '3-plugins/slack.mdx',
+}
+
 export function extractTOC(mdxPath: string): TOCItem[] {
-  const fullPath = path.join(process.cwd(), 'content', 'docs', `${mdxPath}.mdx`)
+  const filePath = slugToFilePath[mdxPath]
+  if (!filePath) {
+    return []
+  }
+  
+  const fullPath = path.join(process.cwd(), 'content', filePath)
   const content = fs.readFileSync(fullPath, 'utf-8')
   
   const lines = content.split('\n')
@@ -48,4 +71,3 @@ export function extractTOC(mdxPath: string): TOCItem[] {
   
   return toc
 }
-
