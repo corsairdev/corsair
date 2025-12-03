@@ -2,106 +2,96 @@
 
 **The Vibe Coding SDK.**
 
-Natural language queries and mutations for your full-stack TypeScript app. Fully type-safe, schema-aware, and built for developers who want to move fast without losing control. Compatible with your favorite coding agents.
-
-**Status:** Early development. Currently supports Next.js + Drizzle + Postgres.
-
-## What is Corsair?
-
-Corsair lets you write database queries and business logic in plain English. It generates real TypeScript API routes using your existing ORM—no magic, no vendor lock-in, no runtime overhead.
+_Type-safe natural language queries and mutations for your database and third-party APIs._
 
 ```typescript
-// Query your database
-const albums = useCorsairQuery('get all albums by artist id', {
-  artistId: params.artist_id,
-})
+const onboardUser = useCorsairMutation(
+  'create user account, send welcome email via Resend, and notify #team Slack channel'
+)
 
-// Chain business logic with integrations
-const addUser = useCorsairMutation('add user and send slack notification', {
-  ...form.user_details,
-  channel: 'general',
+await onboardUser.mutateAsync({
+  email: 'john.doe@corsair.dev',
+  name: 'John Doe',
+  plan: 'pro',
 })
+// Fully typed. Zero `any` types. Complete intellisense.
 ```
-
-Your natural language prompt becomes a typed template literal. The input and output types are known at compile time, so your IDE catches errors immediately.
 
 ## Why Corsair?
 
-We have great AI coding tools for building UIs. But what about the other two tiers of your app: **business logic and databases**?
+**The problem:** LLMs are great at generating code, but the output is usually untyped, unreliable, and becomes technical debt. You either spend time reviewing and fixing AI-generated code, or you write everything by hand.
 
-Corsair fills that gap. It's designed for the spectrum between "move fast and break things" and "I don't trust AI anywhere near my codebase."
+**The solution:** Corsair gives you the speed of AI code generation with production-grade type safety. Write natural language, get fully-typed implementations at **compile time** (not runtime), with complete control to view and edit the generated code.
 
-**You stay in control:**
+## Perfect for Coding Agents
 
-- **Real code, not abstraction** - Corsair generates standard TypeScript API routes. View them, edit them, own them.
-- **Zero runtime overhead** - Code generation happens at build time. Your queries run at normal API speeds.
-- **Fully type-safe** - Your prompts map to input/output types. TypeScript knows exactly what you're sending and receiving.
-- **Schema-aware** - Change your Drizzle schema? Corsair detects affected routes and rewrites them automatically.
-- **Incremental adoption** - Use Corsair alongside your existing API routes. No need to rewrite your app.
-- **No vendor lock-in** - Your queries are stored as normal TypeScript. Want to eject? Just move the generated routes to your new framework.
+Corsair reduces token usage and increases reliability when working with AI coding assistants:
 
-## How it works
+**Without Corsair:**
 
-1. **You write:** `useCorsairQuery("get all albums by artist id", { artistId })`
-2. **Corsair generates:** A complete TypeScript API route using your Drizzle ORM
-3. **You get:** Type-safe queries with intellisense, no SQL required
-4. **Schema changes?** Corsair sees the diff and updates affected routes
-
-The generated code is yours. Read it, modify it, debug it. If Corsair gets something wrong, either edit the code directly or tell Corsair what to change.
-
-**Complex queries work.** Joins across multiple tables, aggregations, relations—Corsair handles production-grade queries, not just CRUD.
-
-## Built for coding agents
-
-Corsair has CLI commands designed for Claude Code, Cursor, and other AI coding tools:
-
-```bash
-pnpm corsair query -n "get all albums by artist id" -i "return all albums in descending order (recent ones first)"
+```typescript
+// Agent generates 50+ lines of Prisma code inline
+const posts = await prisma.post.findMany({
+  where: { published: true },
+  include: { author: true, comments: { include: { author: true } } },
+  // ... bloats context, might type as 'any', no guarantee it's correct
+})
 ```
 
-This means your coding agent can build queries and mutations directly—without making architectural decisions for you or scattering `any` types throughout your codebase.
+**With Corsair:**
 
-**The problem with raw coding agents:** They'll happily set types to `any` in random places, giving you a false sense of security. Type errors slip through to runtime.
+```bash
+pnpm corsair query -n "published posts with comments" -i "fetch all published posts with authors and approved comments"
+```
 
-**The Corsair approach:** Your agent uses a structured SDK that enforces type safety. You get the speed of AI coding with the guarantees of a well-architected system. No architectural compromises, no hidden type holes.
+The agent delegates to Corsair instead of generating code. You get type safety, minimal token usage, and zero technical debt.
 
-## Plugins
+## Features
 
-Chain business logic with integrations:
+- **Type-safe natural language** — Write queries and mutations in plain English, get full TypeScript types
+- **Agent-first CLI** — Let coding agents create queries via CLI without bloating their context
+- **Automatic schema updates** — When your DB schema changes, Corsair regenerates affected code in seconds
+- **Vetted plugin integrations** — Use Slack, Resend, Stripe, PostHog without writing integration code
+- **Edit anything** — Click any query to see and modify the generated code. No magic, just TypeScript
+- **Full intellisense** — Autocomplete for every field, parameter, and plugin configuration
+- **Intent preservation** — Your natural language stays inline, so you always know what the code was meant to do
 
-- Slack
-- Stripe
-- Posthog
-- Resend
-- More actively being built
+## Common Questions
 
-_Note: Plugin ecosystem is in early development. Basic implementations are available._
+**"Is this just black-box AI code generation?"**  
+No. The generated code is committed to your repo. You can view it, edit it, and review it in PRs like any other code.
 
-## For teams
+**"What if the LLM generates bad code?"**  
+Corsair regenerates queries using your schema as ground truth. If TypeScript compiles, the query works. Plus, you can edit any generated code you don't like.
 
-- **Non-technical folks** can write queries without SQL knowledge
-- **Developers** maintain full type safety and control over generated code
-- **AI coding agents** can build backend logic without architectural trade-offs
-- **Everyone** works in the same codebase without stepping on each other
+**"What happens when third-party APIs change?"**  
+Corsair maintains plugins for services like Slack and Stripe. When they update their APIs, Corsair updates the plugin—your code stays safe.
 
-No more context-switching between natural language prototypes and production code. Your vibe-coded queries _are_ production code.
+**"Can I use this with my existing codebase?"**  
+Yes. Corsair works with Prisma or Drizzle on PostgreSQL. Use it for new features while keeping existing code unchanged. Incremental adoption.
 
-## Get started
-
-Install Corsair in your Next.js + Drizzle + Postgres project in under 5 minutes:
+## Quick Start
 
 ```bash
 npm install corsair
+npx corsair init
 ```
 
-[Documentation](link) | [Examples](link) | [Discord](link)
+Create your first query:
 
-## What "early development" means
+```bash
+npx corsair query -n "get users" -i "all active users with their recent orders"
+```
 
-- **Stable:** API routes and business logic work in development and production
-- **In progress:** Fine-tuning developer experience across TypeScript versions and refining our code generation agent for 100% accuracy
-- **Currently supports:** Next.js, Drizzle, Postgres (more ORMs and frameworks coming)
+Use it in your app:
+
+```typescript
+const { data: users } = useCorsairQuery('get users')
+// users is fully typed with intellisense
+```
 
 ---
 
-**Built by YC developers who got tired of the gap between AI coding tools and production-grade backends.**
+**The Vibe Coding SDK** — Built for developers who want the speed of AI coding with the reliability of hand-written TypeScript.
+
+[Documentation](https://docs.corsair.dev) • [Discord](https://discord.gg/corsair) • [Twitter](https://twitter.com/corsairdev)
