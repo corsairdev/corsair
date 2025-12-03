@@ -1,6 +1,11 @@
 import { WebClient } from '@slack/web-api'
-import { BaseConfig } from '../../../config'
-import { SlackChannels, MessageTs, EmojiName, ReactionResponse } from '../types'
+import { type BaseConfig } from '../../../config'
+import {
+  type SlackChannels,
+  type MessageTs,
+  type EmojiName,
+  type ReactionResponse,
+} from '../types'
 
 export const addReaction = async <T extends BaseConfig = any>({
   config,

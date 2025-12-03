@@ -1,0 +1,210 @@
+# Authentication
+
+Corsair provides built-in authentication patterns and integrates with popular auth libraries.
+
+## Row-Level Security
+
+Implement row-level security in your queries:
+
+```tsx
+// Automatically filter by current user
+const { data: myPosts } = useCorsairQuery('my posts', {
+  userId: currentUser.id,
+})
+
+// Query respects user permissions
+const { data: visiblePosts } = useCorsairQuery('posts I can see', {
+  userId: currentUser.id,
+})
+```
+
+## Authentication Context
+
+Provide auth context to Corsair:
+
+```tsx title="lib/corsair.ts"
+import { createCorsairClient } from 'corsair'
+import { useAuth } from '@/lib/auth'
+
+export function useCorsair() {
+  const { user } = useAuth()
+
+  return createCorsairClient({
+    apiUrl: '/api/corsair',
+    context: {
+      userId: user?.id,
+      role: user?.role,
+    },
+  })
+}
+```
+
+Server-side authentication:
+
+```ts title="app/api/corsair/route.ts"
+import { corsair } from '@/lib/corsair'
+import { auth } from '@/lib/auth'
+
+export async function POST(req: Request) {
+  const session = await auth(req)
+
+  if (!session) {
+    return new Response('Unauthorized', { status: 401 })
+  }
+
+  return corsair.handle(req, {
+    context: {
+      userId: session.userId,
+      role: session.role,
+    },
+  })
+}
+```
+
+## Authorization Rules
+
+Define authorization rules in your config:
+
+```ts title="corsair.config.ts"
+export default defineConfig({
+  database: {
+    type: 'postgresql',
+    url: process.env.DATABASE_URL,
+  },
+
+  authorization: {
+    // Only post authors can update posts
+    'update post': ({ context, input }) => {
+      return context.userId === input.authorId
+    },
+
+    // Only admins can delete users
+    'delete user': ({ context }) => {
+      return context.role === 'admin'
+    },
+
+    // Users can only query their own data
+    'my posts': ({ context, params }) => {
+      return context.userId === params.userId
+    },
+  },
+})
+```
+
+## Integration with Auth Libraries
+
+### Next-Auth
+
+```tsx title="lib/corsair.ts"
+import { createCorsairClient } from 'corsair'
+import { useSession } from 'next-auth/react'
+
+export function CorsairProvider({ children }) {
+  const { data: session } = useSession()
+
+  const client = createCorsairClient({
+    apiUrl: '/api/corsair',
+    context: {
+      userId: session?.user?.id,
+      email: session?.user?.email,
+    },
+  })
+
+  return <CorsairProvider client={client}>{children}</CorsairProvider>
+}
+```
+
+### Clerk
+
+```tsx title="lib/corsair.ts"
+import { createCorsairClient } from 'corsair'
+import { useAuth } from '@clerk/nextjs'
+
+export function CorsairProvider({ children }) {
+  const { userId, sessionId } = useAuth()
+
+  const client = createCorsairClient({
+    apiUrl: '/api/corsair',
+    context: { userId, sessionId },
+  })
+
+  return <CorsairProvider client={client}>{children}</CorsairProvider>
+}
+```
+
+### Better Auth
+
+```tsx title="lib/corsair.ts"
+import { createCorsairClient } from 'corsair'
+import { useSession } from 'better-auth/client'
+
+export function CorsairProvider({ children }) {
+  const { data: session } = useSession()
+
+  const client = createCorsairClient({
+    apiUrl: '/api/corsair',
+    context: {
+      userId: session?.user?.id,
+      role: session?.user?.role,
+    },
+  })
+
+  return <CorsairProvider client={client}>{children}</CorsairProvider>
+}
+```
+
+## Protecting Mutations
+
+Require authentication for mutations:
+
+```ts title="corsair.config.ts"
+export default defineConfig({
+  authorization: {
+    // All mutations require auth by default
+    '*': ({ context }) => {
+      if (!context.userId) {
+        throw new Error('Authentication required')
+      }
+      return true
+    },
+
+    // Override for specific mutations
+    'create post': ({ context, input }) => {
+      if (!context.userId) {
+        throw new Error('Must be logged in to create posts')
+      }
+      // Auto-set author to current user
+      input.authorId = context.userId
+      return true
+    },
+  },
+})
+```
+
+## Multi-Tenancy
+
+Implement tenant isolation:
+
+```ts title="corsair.config.ts"
+export default defineConfig({
+  authorization: {
+    // Scope all queries to current tenant
+    '*': ({ context, params }) => {
+      if (!context.tenantId) {
+        throw new Error('Tenant context required')
+      }
+      // Inject tenant filter
+      params.tenantId = context.tenantId
+      return true
+    },
+  },
+})
+```
+
+Usage:
+
+```tsx
+// Automatically filtered by tenant
+const { data: posts } = useCorsairQuery('all posts')
+// Only returns posts for current tenant
+```

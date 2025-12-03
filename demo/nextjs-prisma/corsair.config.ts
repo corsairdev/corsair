@@ -10,7 +10,7 @@ export const config = {
   framework: 'nextjs',
   pathToCorsairFolder: './corsair',
   apiEndpoint: process.env.NEXT_PUBLIC_CORSAIR_API_ROUTE!,
-  db: db,
+  db,
   connection: process.env.DATABASE_URL!,
   plugins: {
     slack: {
