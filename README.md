@@ -30,7 +30,7 @@ Corsair reduces token usage and increases reliability when working with AI codin
 **Without Corsair:**
 
 ```typescript
-// Agent generates 50+ lines of Prisma code inline
+// Agent generates 50+ lines of Prisma code and business logic inline
 const posts = await prisma.post.findMany({
   where: { published: true },
   include: { author: true, comments: { include: { author: true } } },
@@ -68,27 +68,7 @@ Corsair regenerates queries using your schema as ground truth. If TypeScript com
 Corsair maintains plugins for services like Slack and Stripe. When they update their APIs, Corsair updates the plugin—your code stays safe.
 
 **"Can I use this with my existing codebase?"**  
-Yes. Corsair works with Prisma or Drizzle on PostgreSQL. Use it for new features while keeping existing code unchanged. Incremental adoption.
-
-## Quick Start
-
-```bash
-npm install corsair
-npx corsair init
-```
-
-Create your first query:
-
-```bash
-npx corsair query -n "get users" -i "all active users with their recent orders"
-```
-
-Use it in your app:
-
-```typescript
-const { data: users } = useCorsairQuery('get users')
-// users is fully typed with intellisense
-```
+Yes. Corsair works with Prisma or Drizzle on PostgreSQL (more ORM and DB support coming soon). Use it for new features while keeping existing code unchanged. Incremental adoption.
 
 ---
 
