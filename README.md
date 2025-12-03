@@ -37,4 +37,4 @@ The agent delegates to Corsair using normal bash commands. You get type safety, 
 
 **The Vibe Coding SDK** — Built for developers who want the speed of AI coding with the reliability of hand-written TypeScript.
 
-[Documentation](https://docs.corsair.dev) • [Discord](https://discord.gg/corsair) • [Twitter](https://twitter.com/corsairdev)
+[Documentation](https://docs.corsair.dev) • [Website](https://www.corsair.dev)
