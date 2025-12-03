@@ -175,6 +175,14 @@ program
   .version('1.0.0')
 
 program
+  .command('init')
+  .description('Initialize a new Corsair project with necessary files')
+  .action(async () => {
+    const { init } = await import('./init.js')
+    await init()
+  })
+
+program
   .command('generate')
   .description('Generate migrations from schema')
   .action(async () => {

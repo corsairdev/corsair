@@ -1,0 +1,33 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --fd-sidebar-separator-font-size: 0.65rem;
+  --fd-sidebar-separator-font-weight: 600;
+}
+
+aside[data-sidebar] div[data-collapsed] + div > p,
+aside div > div > div > div > div > p {
+  font-size: 0.65rem !important;
+  font-weight: 600 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.08em !important;
+  color: hsl(var(--muted-foreground) / 0.6) !important;
+  padding: 0.625rem 0.75rem 0.25rem !important;
+  margin: 0 !important;
+}
+
+aside[data-sidebar] div[data-collapsed] + div > p:first-child,
+aside div > div > div > div > div > p:first-child {
+  padding-top: 0.25rem !important;
+}
+
+aside[data-sidebar] button[aria-expanded] svg:first-child {
+  opacity: 0.7;
+  transition: opacity 0.15s ease;
+}
+
+aside[data-sidebar] button[aria-expanded]:hover svg:first-child {
+  opacity: 1;
+}
