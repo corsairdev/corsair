@@ -1,1 +1,0 @@
-export { nextjsAdapter } from './nextjs'

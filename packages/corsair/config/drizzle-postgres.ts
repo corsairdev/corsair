@@ -6,26 +6,6 @@ import type {
   ConnectionConfig,
 } from '.'
 
-type Schema = Record<
-  string,
-  {
-    columns: Record<string, any>
-    relations?: Record<
-      string,
-      {
-        config?: {
-          fields?: Array<{ name?: string; [key: string]: any }>
-          references?: Array<{ name?: string; [key: string]: any }>
-          [key: string]: any
-        }
-        referencedTableName?: string
-        [key: string]: any
-      }
-    >
-    [key: string]: any
-  }
->
-
 /**
  * This is the basic schema we are expecting.
  * We don't want to compare deeply nested types since that is inevitably going to throw errors

@@ -1,0 +1,382 @@
+# Plugin Concepts
+
+## Beyond the Database
+
+Corsair plugins extend your natural language API **beyond your database** to interact with third-party services.
+
+Instead of writing integration code or letting an agent vibe code API calls, you use **type-safe, vetted plugin implementations** that are maintained and updated automatically.
+
+```typescript
+const onboardUser = useCorsairMutation(
+  'create user account and send welcome email via Resend'
+)
+
+await onboardUser.mutate({
+  email: 'user@example.com',
+  name: 'John Doe',
+})
+```
+
+---
+
+## The Problem with Manual Integration
+
+### Writing Integration Code Manually
+
+```typescript
+// You have to write this for every service
+import { Resend } from 'resend'
+
+const resend = new Resend(process.env.RESEND_API_KEY)
+
+export async function sendWelcomeEmail(email: string, name: string) {
+  try {
+    const { data, error } = await resend.emails.send({
+      from: 'onboarding@acme.com',
+      to: email,
+      subject: 'Welcome to Acme',
+      html: `<h1>Welcome ${name}!</h1>`,
+    })
+
+    if (error) {
+      throw new Error(error.message)
+    }
+
+    return data
+  } catch (err) {
+    // Handle error...
+  }
+}
+```
+
+**Problems:**
+
+- Repetitive boilerplate for every service
+- Manual error handling
+- API key management
+- Authentication setup
+- Rate limiting considerations
+- SDK version updates
+
+---
+
+## The Problem with Vibe Coding Integrations
+
+### Letting Agents Generate Integration Code
+
+You ask your coding agent:
+
+```
+"Write me a Slack message that goes to the #orders channel when a new order is created"
+```
+
+The agent generates:
+
+```typescript
+// ❌ Vibe coded integration - unreliable
+async function notifySlack(orderData: any) {
+  // ⚠️ Typed as 'any'
+  const response = await fetch('https://slack.com/api/chat.postMessage', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${process.env.SLACK_TOKEN}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      channel: '#orders',
+      text: `New order: ${orderData.id}`, // ⚠️ Might fail at runtime
+    }),
+  })
+
+  return response.json() // ⚠️ No type safety
+}
+```
+
+**Problems:**
+
+- Types as `any` — no compile-time safety
+- Might use deprecated API endpoints
+- No proper error handling
+- Authentication might be wrong
+- Could break when Slack updates their API
+- You don't know it's broken until runtime
+
+---
+
+## The Corsair Plugin Approach
+
+Corsair exposes **third-party SDK endpoints** within the Corsair SDK as type-safe, maintained plugins.
+
+### How It Works
+
+```typescript
+const notifyOrder = useCorsairMutation(
+  'create order and send slack notification to #orders channel'
+)
+
+await notifyOrder.mutate({
+  productId: '123',
+  quantity: 5,
+  customerId: 'abc',
+})
+```
+
+**What Corsair does:**
+
+1. Parses your natural language description
+2. Uses the **vetted Slack plugin** with proper authentication
+3. Generates **fully typed** implementation
+4. Handles errors according to best practices
+5. Updates automatically when Slack changes their API
+
+**Why this is reliable:**
+
+- The Slack integration code has been **generated and run by thousands of developers**
+- Issues are **caught early and often** through real-world usage
+- When Slack updates their API, **Corsair updates the plugin**
+- You automatically receive the update—**no manual migration needed**
+
+---
+
+## Available Plugins
+
+Corsair provides maintained plugins for popular services:
+
+### Email — Resend
+
+```typescript
+const sendEmail = useCorsairMutation(
+  "send welcome email via Resend with user's name and confirmation link"
+)
+
+await sendEmail.mutate({
+  to: 'user@example.com',
+  name: 'John Doe',
+  confirmationLink: 'https://app.com/confirm/abc123',
+})
+```
+
+### Messaging — Slack
+
+```typescript
+const postToSlack = useCorsairMutation(
+  'post message to #engineering slack channel with deployment status'
+)
+
+await postToSlack.mutate({
+  status: 'success',
+  version: 'v2.1.0',
+  deployedBy: 'jane@acme.com',
+})
+```
+
+### Analytics — PostHog
+
+```typescript
+const trackEvent = useCorsairMutation(
+  'track user signup event in PostHog with user properties'
+)
+
+await trackEvent.mutate({
+  userId: 'user_123',
+  email: 'user@example.com',
+  plan: 'pro',
+})
+```
+
+### Payments — Stripe
+
+```typescript
+const createSubscription = useCorsairMutation(
+  'create Stripe subscription for customer with price ID and trial period'
+)
+
+await createSubscription.mutate({
+  customerId: 'cus_abc123',
+  priceId: 'price_xyz789',
+  trialDays: 14,
+})
+```
+
+### Multi-Service Workflows
+
+Combine multiple plugins in one mutation:
+
+```typescript
+const completeCheckout = useCorsairMutation(
+  'create Stripe payment, send receipt via Resend, track conversion in PostHog, and notify #sales Slack channel'
+)
+
+await completeCheckout.mutate({
+  customerId: 'cus_123',
+  amount: 9900,
+  customerEmail: 'customer@example.com',
+  productName: 'Pro Plan',
+})
+```
+
+---
+
+## Type Safety Across Services
+
+Plugins expose **fully typed interfaces** for every operation.
+
+### Without Plugins (Vibe Coded)
+
+```typescript
+// ❌ No type safety
+const result = await sendSlackMessage({
+  channle: '#orders', // ⚠️ Typo - will fail at runtime
+  mesage: 'New order', // ⚠️ Another typo - will fail at runtime
+})
+```
+
+### With Corsair Plugins
+
+```typescript
+// ✅ Fully typed - catches errors at compile time
+const postMessage = useCorsairMutation('post message to slack channel')
+
+await postMessage.mutate({
+  channel: '#orders', // ✅ TypeScript knows this is required
+  message: 'New order', // ✅ TypeScript validates the shape
+})
+```
+
+TypeScript will error if:
+
+- Required fields are missing
+- Field types are wrong
+- Invalid enum values are used
+- Authentication is not configured
+
+---
+
+## Automatic Updates
+
+When third-party services change their APIs, Corsair handles it for you.
+
+### The Scenario
+
+Slack releases a new API version that changes how you post messages:
+
+**Old API:**
+
+```typescript
+{ channel: "#orders", text: "message" }
+```
+
+**New API:**
+
+```typescript
+{ channel: "#orders", blocks: [{ type: "section", text: "message" }] }
+```
+
+### Without Corsair
+
+1. Your code breaks in production
+2. You search Slack's docs to find what changed
+3. You update every Slack integration manually
+4. You test everything again
+5. You deploy the fix
+
+### With Corsair
+
+1. Corsair updates the Slack plugin
+2. You run `pnpm install` to get the update
+3. Corsair regenerates affected mutations automatically
+4. Your code works with the new API
+
+**Your natural language stays the same.** The implementation adapts.
+
+---
+
+## Plugin Configuration
+
+Plugins require minimal setup—just add your API keys.
+
+### Environment Variables
+
+```bash
+# .env
+SLACK_BOT_TOKEN=xoxb-your-token
+RESEND_API_KEY=re_your-key
+STRIPE_SECRET_KEY=sk_test_your-key
+POSTHOG_API_KEY=phc_your-key
+```
+
+### Corsair Config
+
+```typescript
+// corsair.config.ts
+export default {
+  plugins: {
+    slack: {
+      enabled: true,
+      defaultChannel: '#notifications',
+    },
+    resend: {
+      enabled: true,
+      from: 'notifications@acme.com',
+    },
+    stripe: {
+      enabled: true,
+      webhookSecret: process.env.STRIPE_WEBHOOK_SECRET,
+    },
+    posthog: {
+      enabled: true,
+      projectId: '12345',
+    },
+  },
+}
+```
+
+---
+
+## Error Handling
+
+Plugins include built-in error handling following each service's best practices.
+
+```typescript
+const sendNotification = useCorsairMutation(
+  'send email via Resend and post to Slack'
+)
+
+try {
+  await sendNotification.mutate({
+    email: 'user@example.com',
+    message: 'Important update',
+  })
+} catch (error) {
+  // Corsair provides structured error information
+  if (error.service === 'resend') {
+    console.error('Email failed:', error.message)
+  }
+  if (error.service === 'slack') {
+    console.error('Slack notification failed:', error.message)
+  }
+}
+```
+
+**What Corsair handles:**
+
+- Rate limiting and retries
+- Authentication errors
+- Network failures
+- API-specific error codes
+- Partial failures in multi-service mutations
+
+---
+
+## The Goal
+
+Corsair plugins provide:
+
+1. **Type-safe integrations** — no `any` types, no runtime surprises
+2. **Vetted implementations** — tested by thousands of developers
+3. **Automatic updates** — when services change, Corsair updates
+4. **Minimal boilerplate** — no manual SDK setup or error handling
+5. **Multi-service workflows** — combine plugins in a single mutation
+6. **Reliable code** — issues caught early through real-world usage
+
+**You get production-ready integrations without writing or maintaining integration code.**

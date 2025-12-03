@@ -1,0 +1,181 @@
+# Vite
+
+Corsair works with Vite for fast development and optimized builds.
+
+## Installation
+
+```bash
+npm install corsair
+npx corsair init
+```
+
+## Development Server
+
+Set up a backend API for development:
+
+```ts title="server/index.ts"
+import express from 'express'
+import { corsair } from './lib/corsair'
+
+const app = express()
+
+app.post('/api/corsair', express.json(), async (req, res) => {
+  const response = await corsair.handle(req)
+  res.json(response)
+})
+
+app.listen(3001, () => {
+  console.log('API server running on http://localhost:3001')
+})
+```
+
+## Vite Configuration
+
+Configure proxy for development:
+
+```ts title="vite.config.ts"
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+
+export default defineConfig({
+  plugins: [react()],
+  server: {
+    proxy: {
+      '/api': {
+        target: 'http://localhost:3001',
+        changeOrigin: true,
+      },
+    },
+  },
+})
+```
+
+## Client Setup
+
+```tsx title="src/main.tsx"
+import React from 'react'
+import ReactDOM from 'react-dom/client'
+import { CorsairProvider, createCorsairClient } from 'corsair/client'
+import App from './App'
+
+const corsairClient = createCorsairClient({
+  apiUrl: '/api/corsair',
+})
+
+ReactDOM.createRoot(document.getElementById('root')!).render(
+  <React.StrictMode>
+    <CorsairProvider client={corsairClient}>
+      <App />
+    </CorsairProvider>
+  </React.StrictMode>
+)
+```
+
+## Usage in Components
+
+```tsx title="src/components/Posts.tsx"
+import { useCorsairQuery } from 'corsair/client'
+
+export function Posts() {
+  const { data: posts, isLoading } = useCorsairQuery('all posts with authors')
+
+  if (isLoading) return <div>Loading...</div>
+
+  return (
+    <div>
+      {posts.map(post => (
+        <article key={post.id}>
+          <h2>{post.title}</h2>
+          <p>By {post.author.name}</p>
+        </article>
+      ))}
+    </div>
+  )
+}
+```
+
+## Environment Variables
+
+```bash title=".env"
+VITE_API_URL=http://localhost:3001/api/corsair
+DATABASE_URL=postgresql://...
+```
+
+Access in code:
+
+```ts title="src/lib/corsair.ts"
+import { createCorsairClient } from 'corsair/client'
+
+export const corsairClient = createCorsairClient({
+  apiUrl: import.meta.env.VITE_API_URL,
+})
+```
+
+## Production Build
+
+Build for production:
+
+```bash
+npm run build
+```
+
+Serve the API and static files:
+
+```ts title="server/production.ts"
+import express from 'express'
+import { corsair } from './lib/corsair'
+
+const app = express()
+
+// Serve static files
+app.use(express.static('dist'))
+
+// API endpoint
+app.post('/api/corsair', express.json(), async (req, res) => {
+  const response = await corsair.handle(req)
+  res.json(response)
+})
+
+// SPA fallback
+app.get('*', (req, res) => {
+  res.sendFile('dist/index.html', { root: '.' })
+})
+
+app.listen(3000)
+```
+
+## With Vue
+
+Corsair works with Vue:
+
+```ts title="src/main.ts"
+import { createApp } from 'vue'
+import { createCorsairClient, CorsairPlugin } from 'corsair/vue'
+import App from './App.vue'
+
+const corsairClient = createCorsairClient({
+  apiUrl: '/api/corsair',
+})
+
+const app = createApp(App)
+app.use(CorsairPlugin, { client: corsairClient })
+app.mount('#app')
+```
+
+```vue title="src/components/Posts.vue"
+<script setup lang="ts">
+import { useCorsairQuery } from 'corsair/vue'
+
+const { data: posts, isLoading } = useCorsairQuery('all posts with authors')
+</script>
+
+<template>
+  <div v-if="isLoading">Loading...</div>
+  <div v-else>
+    <article v-for="post in posts" :key="post.id">
+      <h2>{{ post.title }}</h2>
+      <p>By {{ post.author.name }}</p>
+    </article>
+  </div>
+</template>
+```

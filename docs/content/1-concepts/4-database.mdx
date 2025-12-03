@@ -1,0 +1,233 @@
+# Database Concepts
+
+## Supported Databases
+
+Corsair currently works with **PostgreSQL**.
+
+All queries and mutations are generated with PostgreSQL-specific optimizations and best practices in mind.
+
+### Future Support
+
+We're actively working on expanding database support to include:
+
+- **SQL databases:** MySQL, SQLite, MariaDB
+- **NoSQL databases:** MongoDB, DynamoDB
+- **Other datastores:** Redis, Cassandra
+
+---
+
+## Supported ORMs
+
+Corsair integrates with two ORMs:
+
+### Prisma
+
+```typescript
+// Corsair generates Prisma queries
+const users = useCorsairQuery('all active users with their recent orders')
+
+// Generated implementation uses Prisma client
+// prisma.user.findMany({ where: { status: 'active' }, include: { orders: ... } })
+```
+
+### Drizzle
+
+```typescript
+// Corsair generates Drizzle queries
+const posts = useCorsairQuery('published posts with authors and comment count')
+
+// Generated implementation uses Drizzle query builder
+// db.select().from(posts).where(eq(posts.published, true))...
+```
+
+### Future Support
+
+We're planning to add support for:
+
+- **Kysely** — Type-safe SQL query builder
+- **TypeORM** — Mature TypeScript ORM
+- **Raw SQL** — Direct SQL query generation
+
+---
+
+## Schema Detection
+
+Corsair automatically detects your database schema from your ORM configuration.
+
+### With Prisma
+
+```prisma
+// schema.prisma
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String
+  posts     Post[]
+  createdAt DateTime @default(now())
+}
+
+model Post {
+  id        String   @id @default(cuid())
+  title     String
+  content   String
+  published Boolean  @default(false)
+  author    User     @relation(fields: [authorId], references: [id])
+  authorId  String
+}
+```
+
+Corsair reads this schema and generates queries that:
+
+- Use the correct field names
+- Respect relationships
+- Handle types properly
+- Follow Prisma conventions
+
+### With Drizzle
+
+```typescript
+// schema.ts
+export const users = pgTable('users', {
+  id: text('id').primaryKey(),
+  email: text('email').notNull().unique(),
+  name: text('name').notNull(),
+  createdAt: timestamp('created_at').defaultNow(),
+})
+
+export const posts = pgTable('posts', {
+  id: text('id').primaryKey(),
+  title: text('title').notNull(),
+  content: text('content').notNull(),
+  published: boolean('published').default(false),
+  authorId: text('author_id').references(() => users.id),
+})
+```
+
+Corsair reads this schema and generates queries that:
+
+- Use the correct table and column names
+- Handle relations properly
+- Respect Drizzle's query builder patterns
+- Maintain type safety throughout
+
+---
+
+## Schema Migrations
+
+When your schema changes, Corsair updates your queries automatically.
+
+### Example: Renaming a Field
+
+**Before:**
+
+```prisma
+model User {
+  id       String @id
+  fullName String
+}
+```
+
+**Query:**
+
+```typescript
+const user = useCorsairQuery("user's full name by id", { userId: string })
+// Implementation: SELECT full_name FROM users WHERE id = ?
+```
+
+**After schema change:**
+
+```prisma
+model User {
+  id        String @id
+  firstName String
+  lastName  String
+}
+```
+
+**Corsair automatically updates:**
+
+```typescript
+const user = useCorsairQuery("user's full name by id", { userId: string })
+// Implementation: SELECT first_name, last_name FROM users WHERE id = ?
+// Returns: { firstName: string, lastName: string }
+```
+
+Your natural language stays the same. The implementation adapts to your new schema.
+
+---
+
+## Type Safety from Schema
+
+Corsair generates TypeScript types directly from your database schema.
+
+```typescript
+const posts = useCorsairQuery('published posts with author details')
+
+// posts is typed as:
+// Array<{
+//   id: string;
+//   title: string;
+//   content: string;
+//   published: boolean;
+//   author: {
+//     id: string;
+//     name: string;
+//     email: string;
+//   }
+// }>
+```
+
+**Benefits:**
+
+- Autocomplete for all fields
+- Type errors if you access non-existent fields
+- Refactoring support when schema changes
+- No manual type definitions needed
+
+---
+
+## Database Configuration
+
+Configure your database connection through your ORM—Corsair uses your existing setup.
+
+### Prisma Configuration
+
+```typescript
+// prisma/schema.prisma
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+```
+
+### Drizzle Configuration
+
+```typescript
+// drizzle.config.ts
+import { defineConfig } from 'drizzle-kit'
+
+export default defineConfig({
+  schema: './src/db/schema.ts',
+  out: './drizzle',
+  dialect: 'postgresql',
+  dbCredentials: {
+    url: process.env.DATABASE_URL!,
+  },
+})
+```
+
+Corsair reads your ORM configuration and uses the same database connection.
+
+---
+
+## The Goal
+
+Corsair's database integration:
+
+1. **Works with PostgreSQL** — optimized for Postgres-specific features
+2. **Supports Prisma and Drizzle** — use your preferred ORM
+3. **Detects schema automatically** — no manual configuration needed
+4. **Updates with schema changes** — queries adapt to new schemas
+5. **Generates complete types** — full TypeScript safety from database to UI
+
+**More databases and ORMs coming soon.**

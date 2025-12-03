@@ -1,0 +1,189 @@
+# Drizzle
+
+Corsair integrates with Drizzle ORM for lightweight, type-safe database operations.
+
+## Installation
+
+```bash
+npm install corsair drizzle-orm
+npx corsair init --orm drizzle
+```
+
+## Setup
+
+Define your schema with Drizzle:
+
+```ts title="src/db/schema.ts"
+import { pgTable, text, timestamp, boolean } from 'drizzle-orm/pg-core'
+import { relations } from 'drizzle-orm'
+
+export const users = pgTable('users', {
+  id: text('id').primaryKey(),
+  email: text('email').notNull().unique(),
+  name: text('name'),
+  createdAt: timestamp('created_at').defaultNow(),
+  updatedAt: timestamp('updated_at').defaultNow(),
+})
+
+export const posts = pgTable('posts', {
+  id: text('id').primaryKey(),
+  title: text('title').notNull(),
+  content: text('content').notNull(),
+  published: boolean('published').default(false),
+  authorId: text('author_id').references(() => users.id),
+  createdAt: timestamp('created_at').defaultNow(),
+  updatedAt: timestamp('updated_at').defaultNow(),
+})
+
+export const usersRelations = relations(users, ({ many }) => ({
+  posts: many(posts),
+}))
+
+export const postsRelations = relations(posts, ({ one }) => ({
+  author: one(users, {
+    fields: [posts.authorId],
+    references: [users.id],
+  }),
+}))
+```
+
+## Configuration
+
+```ts title="corsair.config.ts"
+import { defineConfig } from 'corsair'
+
+export default defineConfig({
+  orm: 'drizzle',
+  database: {
+    type: 'postgresql',
+    url: process.env.DATABASE_URL,
+  },
+  schema: './src/db/schema.ts',
+})
+```
+
+## Type Generation
+
+Generate types from Drizzle schema:
+
+```bash
+npx corsair generate
+```
+
+## Natural Language to Drizzle
+
+Corsair translates natural language to Drizzle queries:
+
+```tsx
+// Natural language
+useCorsairQuery('all published posts with authors')
+
+// Generates Drizzle query
+db.query.posts.findMany({
+  where: eq(posts.published, true),
+  with: { author: true },
+})
+```
+
+## Relationships
+
+```tsx
+// One-to-many
+useCorsairQuery('user with all their posts')
+
+// Drizzle equivalent
+db.query.users.findFirst({
+  where: eq(users.id, userId),
+  with: { posts: true },
+})
+```
+
+## Filtering
+
+```tsx
+// Date filtering
+useCorsairQuery('posts created after January 1st 2024')
+
+// Drizzle equivalent
+db.select()
+  .from(posts)
+  .where(gte(posts.createdAt, new Date('2024-01-01')))
+```
+
+## Mutations
+
+```tsx
+// Create
+const { mutate } = useCorsairMutation('create post')
+mutate({
+  title: 'Hello World',
+  content: 'My first post',
+  authorId: userId,
+})
+
+// Drizzle equivalent
+db.insert(posts).values({
+  title: 'Hello World',
+  content: 'My first post',
+  authorId: userId,
+})
+```
+
+## Transactions
+
+```tsx
+// Transaction
+const { mutate } = useCorsairMutation('create user with first post')
+
+mutate({
+  email: 'user@example.com',
+  name: 'John Doe',
+  post: {
+    title: 'My First Post',
+    content: 'Hello world',
+  },
+})
+
+// Drizzle equivalent
+db.transaction(async tx => {
+  const [user] = await tx
+    .insert(users)
+    .values({
+      email,
+      name,
+    })
+    .returning()
+
+  await tx.insert(posts).values({
+    ...post,
+    authorId: user.id,
+  })
+})
+```
+
+## Migrations
+
+Run migrations through Corsair:
+
+```bash
+# Generate migration
+npx drizzle-kit generate
+
+# Apply migrations
+npx corsair migrate apply
+```
+
+## Migration Configuration
+
+```ts title="drizzle.config.ts"
+import type { Config } from 'drizzle-kit'
+
+export default {
+  schema: './src/db/schema.ts',
+  out: './drizzle',
+  driver: 'pg',
+  dbCredentials: {
+    connectionString: process.env.DATABASE_URL!,
+  },
+} satisfies Config
+```

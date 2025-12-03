@@ -1,0 +1,170 @@
+# TypeScript
+
+Corsair is built with TypeScript and provides complete type safety across your entire stack.
+
+## Type Inference
+
+Corsair automatically infers types from your database schema:
+
+```tsx
+const { data: posts } = useCorsairQuery('all posts with authors')
+//    ^? Array<{
+//         id: string
+//         title: string
+//         content: string
+//         author: {
+//           id: string
+//           name: string
+//           email: string
+//         }
+//       }>
+```
+
+## Query Type Safety
+
+TypeScript validates your queries at compile time:
+
+```tsx
+// ✅ Valid - references existing table
+useCorsairQuery('all posts')
+
+// ❌ Type error - table doesn't exist
+useCorsairQuery('all articles')
+//              ~~~~~~~~~~~~~~
+// Error: Table 'articles' not found in schema
+```
+
+## Mutation Type Safety
+
+Mutations enforce correct data shapes:
+
+```tsx
+const { mutate: createUser } = useCorsairMutation('create user')
+
+// ✅ Valid
+createUser({
+  email: 'user@example.com',
+  name: 'John Doe',
+})
+
+// ❌ Type error
+createUser({
+  email: 'user@example.com',
+  age: 25, // 'age' doesn't exist on User
+})
+```
+
+## Parameter Types
+
+Query parameters are fully typed:
+
+```tsx
+// Parameters inferred from query
+const { data } = useCorsairQuery(
+  'posts by author',
+  { authorId: '123' }
+  //^? { authorId: string }
+)
+
+// ❌ Type error
+const { data } = useCorsairQuery(
+  'posts by author',
+  { userId: '123' } // Should be 'authorId'
+)
+```
+
+## Custom Types
+
+Extend Corsair types for your domain:
+
+```ts title="types/corsair.ts"
+import type { InferQueryResult } from 'corsair'
+
+// Extract specific query types
+export type Post = InferQueryResult<'post with author'>
+export type User = InferQueryResult<'user with posts'>
+
+// Use in your components
+export function PostCard({ post }: { post: Post }) {
+  return (
+    <div>
+      <h2>{post.title}</h2>
+      <p>By {post.author.name}</p>
+    </div>
+  )
+}
+```
+
+## Type Generation
+
+Generate types from your schema:
+
+```bash
+npx corsair generate
+```
+
+This creates `corsair.d.ts` with all available queries and mutations:
+
+```ts title="node_modules/.corsair/types.d.ts"
+declare module 'corsair/client' {
+  interface CorsairQueries {
+    'all posts': Post[]
+    'post with author': Post & { author: User }
+    'user with posts': User & { posts: Post[] }
+  }
+
+  interface CorsairMutations {
+    'create post': (data: CreatePostInput) => Post
+    'update post': (data: UpdatePostInput) => Post
+    'delete post': (id: string) => void
+  }
+}
+```
+
+## Strict Mode
+
+Corsair requires TypeScript strict mode:
+
+```json title="tsconfig.json"
+{
+  "compilerOptions": {
+    "strict": true,
+    "strictNullChecks": true
+  }
+}
+```
+
+## Type Utilities
+
+Corsair provides helper types:
+
+```ts
+import type {
+  InferQueryResult,
+  InferMutationInput,
+  InferMutationResult,
+} from 'corsair'
+
+// Extract query return type
+type Posts = InferQueryResult<'all posts'>
+
+// Extract mutation input type
+type CreatePostData = InferMutationInput<'create post'>
+
+// Extract mutation result type
+type CreatedPost = InferMutationResult<'create post'>
+```
+
+## Plugin Types
+
+Plugins extend available queries and mutations:
+
+```tsx
+// After adding Slack plugin
+const { data } = useCorsairQuery('all slack channels')
+//    ^? Array<{ id: string, name: string, ... }>
+
+// TypeScript knows plugin endpoints
+const { mutate } = useCorsairMutation('send email')
+//    ^? (data: { to: string, subject: string, html: string }) => void
+```

@@ -1,0 +1,111 @@
+# Basic Usage
+
+## Setting Up the Client
+
+Import the Corsair client in your application:
+
+```ts title="lib/corsair.ts"
+import { createCorsairClient } from 'corsair'
+
+export const corsair = createCorsairClient({
+  apiUrl: '/api/corsair',
+})
+```
+
+Wrap your app with the Corsair provider:
+
+```tsx title="app/layout.tsx"
+import { CorsairProvider } from 'corsair/client'
+import { corsair } from '@/lib/corsair'
+
+export default function RootLayout({ children }) {
+  return <CorsairProvider client={corsair}>{children}</CorsairProvider>
+}
+```
+
+## Queries
+
+Use `useCorsairQuery` to fetch data with natural language:
+
+```tsx title="components/posts.tsx"
+import { useCorsairQuery } from 'corsair/client'
+
+export function Posts() {
+  const { data, isLoading, error } = useCorsairQuery(
+    'all posts published in the last 30 days with author names'
+  )
+
+  if (isLoading) return <div>Loading...</div>
+  if (error) return <div>Error: {error.message}</div>
+
+  return (
+    <div>
+      {data.map(post => (
+        <article key={post.id}>
+          <h2>{post.title}</h2>
+          <p>By {post.author.name}</p>
+        </article>
+      ))}
+    </div>
+  )
+}
+```
+
+Corsair automatically infers the return type based on your database schema and the query string.
+
+## Mutations
+
+Use `useCorsairMutation` to create, update, or delete data:
+
+```tsx title="components/create-post.tsx"
+import { useCorsairMutation } from 'corsair/client'
+
+export function CreatePost() {
+  const { mutate: createPost, isPending } =
+    useCorsairMutation('create a new post')
+
+  const handleSubmit = (e: FormEvent) => {
+    e.preventDefault()
+    const formData = new FormData(e.target)
+
+    createPost({
+      title: formData.get('title'),
+      content: formData.get('content'),
+      authorId: currentUserId,
+    })
+  }
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <input name="title" placeholder="Post title" />
+      <textarea name="content" placeholder="Content" />
+      <button disabled={isPending}>Create Post</button>
+    </form>
+  )
+}
+```
+
+## Query Parameters
+
+Pass parameters to your queries for dynamic filtering:
+
+```tsx
+const { data: userPosts } = useCorsairQuery('all posts by user with id', {
+  userId: '123',
+})
+```
+
+## Callbacks
+
+Handle success and error cases with callbacks:
+
+```tsx
+const { mutate: updatePost } = useCorsairMutation('update post', {
+  onSuccess: data => {
+    console.log('Post updated:', data)
+  },
+  onError: error => {
+    console.error('Failed to update:', error)
+  },
+})
+```

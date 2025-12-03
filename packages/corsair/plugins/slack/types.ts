@@ -1,6 +1,6 @@
-import { BaseConfig } from '../../config'
+import { type BaseConfig } from '../../config'
 
-export interface SlackPlugin {
+export type SlackPlugin = {
   /**
    * Slack API token
    */
@@ -24,9 +24,8 @@ export interface SlackPlugin {
 
 export type BaseSlackPluginResponse<T extends Record<string, any>> = {
   success: boolean
-  data?: T 
+  data?: T
   error?: string
-  
 }
 
 export type SlackChannels<T extends BaseConfig> = keyof NonNullable<
@@ -45,16 +44,15 @@ export type MessageTs = string
 // Emoji name type
 export type EmojiName = string
 
-
 // Response type for sendMessage, replyToThread, and updateMessage operations
 export type MessageResponse = BaseSlackPluginResponse<{
   messageId: MessageTs
   channel: string
   timestamp: MessageTs
-  }>
-  
+}>
+
 // Message type for individual Slack messages
-export interface SlackMessage {
+export type SlackMessage = {
   type: string
   user?: string
   text: string
@@ -75,7 +73,7 @@ export type ReactionResponse = BaseSlackPluginResponse<{
 }>
 
 // Channel type for Slack channels
-export interface SlackChannel {
+export type SlackChannel = {
   id: string
   name: string
   is_private: boolean

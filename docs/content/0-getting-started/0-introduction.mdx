@@ -1,0 +1,45 @@
+# Introduction
+
+Corsair is the Vibe Coding SDK that lets you write natural language API operations that work seamlessly with your existing stack.
+
+## Features
+
+- **Natural Language Queries and Mutations**: Write `useCorsairQuery("all published posts with authors")` instead of complex SQL
+- **Full Type Safety**: Complete TypeScript inference across your entire stack
+- **Framework Agnostic**: Works with Next.js, Hono, Vite, Express, and more (even more coming soon)
+- **ORM Integration**: Supports Prisma and Drizzle (more coming soon)
+- **Plugin Ecosystem**: Extend with Slack, Resend, Stripe, and custom integrations (way more coming soon)
+
+## What It Looks Like
+
+```tsx
+// What your queries look like
+const { data: posts } = useCorsairQuery(
+  'all published posts with their authors and comments'
+)
+
+// What your mutations look like
+const { mutate: createPost } = useCorsairMutation('create a new post')
+```
+
+Corsair translates your natural language into type-safe database operations, integrating with TanStack Query for seamless data fetching and mutations.
+
+## Traditional vs Corsair
+
+```tsx
+// Traditional approach
+const posts = await db.post.findMany({
+  where: { published: true },
+  include: {
+    author: true,
+    comments: true,
+  },
+})
+
+// Corsair approach
+const { data: posts } = useCorsairQuery(
+  'all published posts with authors and comments'
+)
+```
+
+Get started in minutes with your existing database schema and ORM.

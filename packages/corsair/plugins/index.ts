@@ -6,25 +6,50 @@ import { addReaction } from './slack/operations/add-reaction'
 import { getChannels } from './slack/operations/get-channels'
 import type { BaseConfig } from '../config'
 
+const slackDependencyCheck = <T extends any[], R>(fn: (...args: T) => R) => {
+  return (...args: T): R => {
+    try {
+      require('@slack/web-api')
+    } catch (error) {
+      throw new Error(
+        'Slack functionality requires @slack/web-api. Install it with: npm install @slack/web-api'
+      )
+    }
+    return fn(...args)
+  }
+}
+
 export const createPlugins = <T extends BaseConfig>(config: T) => ({
   slack: {
-    sendMessage: (params: Omit<Parameters<typeof sendMessage<T>>[0], 'config'>) =>
-      sendMessage<T>({ config, ...params }),
+    sendMessage: slackDependencyCheck(
+      (params: Omit<Parameters<typeof sendMessage<T>>[0], 'config'>) =>
+        sendMessage<T>({ config, ...params })
+    ),
 
-    replyToThread: (params: Omit<Parameters<typeof replyToThread<T>>[0], 'config'>) =>
-      replyToThread<T>({ config, ...params }),
+    replyToThread: slackDependencyCheck(
+      (params: Omit<Parameters<typeof replyToThread<T>>[0], 'config'>) =>
+        replyToThread<T>({ config, ...params })
+    ),
 
-    getMessages: (params: Omit<Parameters<typeof getMessages<T>>[0], 'config'>) =>
-      getMessages<T>({ config, ...params }),
+    getMessages: slackDependencyCheck(
+      (params: Omit<Parameters<typeof getMessages<T>>[0], 'config'>) =>
+        getMessages<T>({ config, ...params })
+    ),
 
-    updateMessage: (params: Omit<Parameters<typeof updateMessage<T>>[0], 'config'>) =>
-      updateMessage<T>({ config, ...params }),
+    updateMessage: slackDependencyCheck(
+      (params: Omit<Parameters<typeof updateMessage<T>>[0], 'config'>) =>
+        updateMessage<T>({ config, ...params })
+    ),
 
-    addReaction: (params: Omit<Parameters<typeof addReaction<T>>[0], 'config'>) =>
-      addReaction<T>({ config, ...params }),
+    addReaction: slackDependencyCheck(
+      (params: Omit<Parameters<typeof addReaction<T>>[0], 'config'>) =>
+        addReaction<T>({ config, ...params })
+    ),
 
-    getChannels: (params: Omit<Parameters<typeof getChannels<T>>[0], 'config'>) =>
-      getChannels<T>({ config, ...params }),
+    getChannels: slackDependencyCheck(
+      (params: Omit<Parameters<typeof getChannels<T>>[0], 'config'>) =>
+        getChannels<T>({ config, ...params })
+    ),
   },
   discord: {
     test: () => {},

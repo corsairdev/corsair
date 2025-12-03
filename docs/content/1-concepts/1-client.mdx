@@ -1,0 +1,288 @@
+# Client Concepts
+
+## Fully Typed React Hooks
+
+Corsair integrates with **TanStack Query** to provide fully typed React hooks for every query and mutation you define.
+
+```typescript
+const { data, isLoading, error } = useCorsairQuery(
+  'all published posts with comments by author id',
+  { authorId: 'abc123' }
+)
+
+// data is fully typed:
+// Array<{
+//   id: string;
+//   title: string;
+//   content: string;
+//   publishedAt: Date;
+//   comments: Array<{ id: string; content: string; createdAt: Date; }>
+// }>
+```
+
+**What you get from TanStack:**
+
+- Automatic caching
+- Background refetching
+- Query invalidation
+- Loading and error states
+- Optimistic updates
+
+All with **complete type safety**.
+
+---
+
+## Client and Server Components
+
+Corsair works seamlessly with both client and server components.
+
+### Server Components
+
+```typescript
+// app/posts/page.tsx
+export default async function PostsPage() {
+  const posts = await useCorsairQuery('all published posts with authors')
+
+  return (
+    <div>
+      {posts.map(post => (
+        <PostCard key={post.id} post={post} />
+      ))}
+    </div>
+  )
+}
+```
+
+### Client Components
+
+```typescript
+'use client'
+
+// app/posts/interactive.tsx
+export function InteractivePosts() {
+  const { data: posts, isLoading } = useCorsairQuery(
+    'all published posts with authors'
+  )
+
+  if (isLoading) return <Spinner />
+
+  return (
+    <div>
+      {posts?.map(post => (
+        <PostCard key={post.id} post={post} />
+      ))}
+    </div>
+  )
+}
+```
+
+---
+
+## Mutations with Optimistic Updates
+
+```typescript
+'use client'
+
+export function CreatePostButton() {
+  const createPost = useCorsairMutation('create post with title and content')
+
+  const handleCreate = async () => {
+    await createPost.mutate({
+      title: 'New Post',
+      content: 'Hello world',
+    })
+  }
+
+  return (
+    <button onClick={handleCreate} disabled={createPost.isPending}>
+      {createPost.isPending ? 'Creating...' : 'Create Post'}
+    </button>
+  )
+}
+```
+
+---
+
+## Query Invalidation
+
+When you mutate data, Corsair integrates with TanStack's invalidation system to keep your UI in sync.
+
+```typescript
+'use client'
+
+export function DeletePostButton({ postId }: { postId: string }) {
+  const queryClient = useQueryClient()
+
+  const deletePost = useCorsairMutation('delete post by id')
+
+  const handleDelete = async () => {
+    await deletePost.mutate({ postId })
+
+    // Invalidate and refetch posts
+    queryClient.invalidateQueries({
+      queryKey: ['corsair', 'all published posts with authors'],
+    })
+  }
+
+  return <button onClick={handleDelete}>Delete</button>
+}
+```
+
+**Automatic cache management:**
+
+- Invalidate specific queries after mutations
+- Refetch data in the background
+- Update UI automatically when data changes
+
+---
+
+## Type Exports for Component Props
+
+Corsair exports types for every query and mutation, making it easy to build type-safe component interfaces.
+
+### The `QueryOutputs` Type
+
+```typescript
+import { QueryOutputs } from '@/corsair/types'
+
+interface ArtistCardProps {
+  artist: QueryOutputs['get all artists'][number]
+  onClick?: (artist: QueryOutputs['get all artists'][number]) => void
+}
+
+export function ArtistCard({ artist, onClick }: ArtistCardProps) {
+  return (
+    <div onClick={() => onClick?.(artist)}>
+      <h3>{artist.name}</h3>
+      <p>{artist.genre}</p>
+    </div>
+  )
+}
+```
+
+### The `MutationInputs` Type
+
+```typescript
+import { MutationInputs } from '@/corsair/types'
+
+interface CreateUserFormProps {
+  onSubmit: (
+    data: MutationInputs['create user with email and password']
+  ) => void
+}
+
+export function CreateUserForm({ onSubmit }: CreateUserFormProps) {
+  // Form implementation with properly typed inputs
+}
+```
+
+**Why this matters:**
+
+- Build components with **exact types** from your queries
+- No manual type definitions needed
+- Changes to queries automatically update component props
+- Works with arrays using `[number]` indexing
+
+---
+
+## Full-Stack Type Safety
+
+In the event you're using a **separate backend and frontend**, Corsair passes types from the API to the client—just like tRPC does.
+
+### How It Works
+
+1. You define a query on your backend
+2. Corsair generates the implementation and types
+3. The **types are automatically available** on your frontend
+4. A small change in one place ripples through your entire stack
+
+### Example: Separate Backend and Frontend
+
+**Backend (`api/src/queries.ts`):**
+
+```typescript
+export const getUser = useCorsairQuery(
+  'user with profile and recent orders by id',
+  { userId: string }
+)
+```
+
+**Frontend (`web/src/components/UserProfile.tsx`):**
+
+```typescript
+import { QueryOutputs } from '@/corsair/types'
+
+interface UserProfileProps {
+  user: QueryOutputs['user with profile and recent orders by id']
+}
+
+export function UserProfile({ user }: UserProfileProps) {
+  return (
+    <div>
+      <h1>{user.profile.name}</h1>
+      <p>Recent orders: {user.recentOrders.length}</p>
+    </div>
+  )
+}
+```
+
+**What happens when you change the query:**
+
+- Update the backend query to include `user.email`
+- TypeScript immediately shows errors in the frontend
+- Fix the type errors—your app stays in sync
+- No manual type syncing required
+
+---
+
+## Caching Strategies
+
+Corsair leverages TanStack Query's powerful caching system.
+
+### Stale-While-Revalidate
+
+```typescript
+const { data } = useCorsairQuery(
+  'user dashboard stats',
+  { userId },
+  {
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    cacheTime: 10 * 60 * 1000, // 10 minutes
+  }
+)
+```
+
+### Polling for Real-Time Data
+
+```typescript
+const { data } = useCorsairQuery(
+  'active orders pending fulfillment',
+  {},
+  {
+    refetchInterval: 10000, // Poll every 10 seconds
+  }
+)
+```
+
+### Manual Refetching
+
+```typescript
+const { data, refetch } = useCorsairQuery('current inventory levels')
+
+return <button onClick={() => refetch()}>Refresh Inventory</button>
+```
+
+---
+
+## The Goal
+
+Corsair's client integration provides:
+
+1. **Fully typed React hooks** powered by TanStack Query
+2. **Works with both** client and server components
+3. **Automatic caching** and background refetching
+4. **Type exports** for building type-safe component props
+5. **Full-stack type safety** that syncs backend and frontend
+6. **Query invalidation** to keep your UI in sync with data changes
+
+**You get the developer experience of tRPC with the flexibility of natural language queries.**

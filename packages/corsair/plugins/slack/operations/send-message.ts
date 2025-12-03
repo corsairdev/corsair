@@ -1,6 +1,6 @@
 import { WebClient } from '@slack/web-api'
-import { BaseConfig } from '../../../config'
-import { SlackChannels, MessageResponse } from '../types'
+import { type BaseConfig } from '../../../config'
+import { type SlackChannels, type MessageResponse } from '../types'
 
 export const sendMessage = async <T extends BaseConfig = any>({
   config,
