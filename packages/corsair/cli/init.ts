@@ -1,17 +1,12 @@
 import { promises as fs } from 'fs'
 import { join, dirname } from 'path'
 import { input, select, confirm } from '@inquirer/prompts'
-import { execSync } from 'child_process'
-
-type OrmType = 'drizzle' | 'prisma'
-type DatabaseType = 'postgres' | 'mysql' | 'sqlite'
-type FrameworkType = 'nextjs'
-type PackageManager = 'npm' | 'pnpm' | 'yarn'
+import type { ORMs, DBTypes, Framework } from '../config/index'
 
 interface InitConfig {
-  orm: OrmType
-  dbType: DatabaseType
-  framework: FrameworkType
+  orm: ORMs
+  dbType: DBTypes
+  framework: Framework
   dbPath: string
   apiRoute: string
   corsairPath: string
@@ -33,101 +28,6 @@ async function fileExists(filePath: string): Promise<boolean> {
     return true
   } catch {
     return false
-  }
-}
-
-function detectPackageManager(): PackageManager {
-  try {
-    execSync('pnpm --version', { stdio: 'ignore' })
-    return 'pnpm'
-  } catch {
-    try {
-      execSync('yarn --version', { stdio: 'ignore' })
-      return 'yarn'
-    } catch {
-      return 'npm'
-    }
-  }
-}
-
-function getInstallCommand(pm: PackageManager): string {
-  switch (pm) {
-    case 'pnpm':
-      return 'pnpm add'
-    case 'yarn':
-      return 'yarn add'
-    default:
-      return 'npm install'
-  }
-}
-
-async function installPackages(config: InitConfig) {
-  const pm = detectPackageManager()
-  const installCmd = getInstallCommand(pm)
-
-  console.log(`\n📦 Installing dependencies using ${pm}...\n`)
-
-  const coreDeps = [
-    'corsair',
-    '@tanstack/react-query',
-    '@trpc/server',
-    '@trpc/client',
-    '@trpc/tanstack-react-query',
-    'zod',
-    'superjson',
-    'dotenv',
-    'server-only',
-  ]
-
-  const ormDeps =
-    config.orm === 'drizzle'
-      ? ['drizzle-orm', 'drizzle-zod']
-      : ['@prisma/client']
-
-  const dbDeps = config.dbType === 'postgres' ? ['pg'] : []
-
-  const allDeps = [...coreDeps, ...ormDeps, ...dbDeps]
-
-  try {
-    console.log(`   Installing: ${allDeps.join(', ')}\n`)
-    execSync(`${installCmd} ${allDeps.join(' ')}`, { stdio: 'inherit' })
-    console.log('\n   ✅ Dependencies installed successfully')
-  } catch (error) {
-    console.error('\n   ⚠️  Warning: Failed to install some dependencies')
-    console.error('   Please run the following command manually:')
-    console.error(`   ${installCmd} ${allDeps.join(' ')}`)
-  }
-
-  if (config.orm === 'drizzle') {
-    const devDeps = ['drizzle-kit']
-    try {
-      const devInstallCmd =
-        pm === 'npm'
-          ? 'npm install -D'
-          : pm === 'pnpm'
-            ? 'pnpm add -D'
-            : 'yarn add -D'
-      console.log(`\n   Installing dev dependencies: ${devDeps.join(', ')}\n`)
-      execSync(`${devInstallCmd} ${devDeps.join(' ')}`, { stdio: 'inherit' })
-      console.log('\n   ✅ Dev dependencies installed successfully')
-    } catch (error) {
-      console.error('\n   ⚠️  Warning: Failed to install dev dependencies')
-    }
-  }
-
-  if (config.dbType === 'postgres') {
-    try {
-      const devInstallCmd =
-        pm === 'npm'
-          ? 'npm install -D'
-          : pm === 'pnpm'
-            ? 'pnpm add -D'
-            : 'yarn add -D'
-      console.log(`\n   Installing @types/pg\n`)
-      execSync(`${devInstallCmd} @types/pg`, { stdio: 'inherit' })
-    } catch (error) {
-      console.error('\n   ⚠️  Warning: Failed to install @types/pg')
-    }
   }
 }
 
@@ -434,7 +334,7 @@ export async function init() {
   console.log("\n🚀 Welcome to Corsair! Let's set up your project.\n")
   console.log('📋 Please answer the following questions:\n')
 
-  const orm = await select<OrmType>({
+  const orm = await select<ORMs>({
     message: 'Which ORM are you using?',
     choices: [
       { name: 'Drizzle', value: 'drizzle' },
@@ -442,13 +342,9 @@ export async function init() {
     ],
   })
 
-  const dbType = await select<DatabaseType>({
+  const dbType = await select<DBTypes>({
     message: 'Which database are you using?',
-    choices: [
-      { name: 'PostgreSQL', value: 'postgres' },
-      { name: 'MySQL', value: 'mysql' },
-      { name: 'SQLite', value: 'sqlite' },
-    ],
+    choices: [{ name: 'PostgreSQL', value: 'postgres' }],
   })
 
   const dbPath = await input({
@@ -495,11 +391,6 @@ export async function init() {
     })
   }
 
-  const shouldInstall = await confirm({
-    message: 'Install required dependencies?',
-    default: true,
-  })
-
   console.log('\n✨ Starting setup...\n')
 
   const config: InitConfig = {
@@ -512,10 +403,6 @@ export async function init() {
   }
 
   try {
-    if (shouldInstall) {
-      await installPackages(config)
-    }
-
     await createCorsairFiles(
       config,
       createDbFiles,
