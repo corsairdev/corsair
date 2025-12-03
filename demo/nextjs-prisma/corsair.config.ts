@@ -16,9 +16,9 @@ export const config = {
     slack: {
       token: '',
       channels: {
-        'general': 'G-34839139',
-        'technology': '456',
-        'notifications-error': '789',
+        'general': 'id-1',
+        'technology': 'id-2',
+        'notifications-error': 'id-2',
       },
     },
   },
