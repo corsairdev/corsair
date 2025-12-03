@@ -123,3 +123,4 @@ export async function generateMetadata(props: PageProps) {
     description: page.description,
   }
 }
+
