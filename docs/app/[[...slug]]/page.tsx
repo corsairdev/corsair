@@ -5,9 +5,14 @@ import QuickstartDoc from '@/content/docs/quickstart.mdx'
 import CoreConceptsDoc from '@/content/docs/core-concepts.mdx'
 import TypeSafetyDoc from '@/content/docs/type-safety.mdx'
 import CliDoc from '@/content/docs/cli.mdx'
-import AdaptersDoc from '@/content/docs/adapters.mdx'
 import PluginsDoc from '@/content/docs/plugins.mdx'
 import ExamplesDoc from '@/content/docs/examples.mdx'
+import NextDoc from '@/content/docs/integrations/next.mdx'
+import ViteDoc from '@/content/docs/integrations/vite.mdx'
+import HonoDoc from '@/content/docs/integrations/hono.mdx'
+import DrizzleDoc from '@/content/docs/integrations/drizzle.mdx'
+import PrismaDoc from '@/content/docs/integrations/prisma.mdx'
+import SlackDoc from '@/content/docs/plugins/slack.mdx'
 import { DocsPage, DocsBody } from 'fumadocs-ui/page'
 import { notFound } from 'next/navigation'
 import { extractTOC } from '@/lib/toc'
@@ -26,7 +31,7 @@ const pages = {
   },
   'overview': {
     Component: OverviewDoc,
-    title: 'Corsair Overview',
+    title: 'Overview',
     description:
       'The Vibe Coding SDK - Natural language queries and mutations for your full-stack TypeScript app',
   },
@@ -56,11 +61,6 @@ const pages = {
     description:
       'Command-line tools for code generation, validation, and migrations',
   },
-  'adapters': {
-    Component: AdaptersDoc,
-    title: 'Adapters',
-    description: 'Framework adapters for Next.js and other platforms',
-  },
   'plugins': {
     Component: PluginsDoc,
     title: 'Plugins',
@@ -71,6 +71,36 @@ const pages = {
     Component: ExamplesDoc,
     title: 'Examples',
     description: 'Real-world examples and patterns for building with Corsair',
+  },
+  'integrations/next': {
+    Component: NextDoc,
+    title: 'Next.js',
+    description: 'Integrate Corsair with Next.js App Router and Pages Router',
+  },
+  'integrations/vite': {
+    Component: ViteDoc,
+    title: 'Vite',
+    description: 'Use Corsair with Vite for fast development and optimized builds',
+  },
+  'integrations/hono': {
+    Component: HonoDoc,
+    title: 'Hono',
+    description: 'Integrate Corsair with Hono for lightweight, edge-compatible APIs',
+  },
+  'integrations/drizzle': {
+    Component: DrizzleDoc,
+    title: 'Drizzle',
+    description: 'Use Corsair with Drizzle ORM for type-safe database operations',
+  },
+  'integrations/prisma': {
+    Component: PrismaDoc,
+    title: 'Prisma',
+    description: 'Integrate Corsair with Prisma for type-safe database operations',
+  },
+  'plugins/slack': {
+    Component: SlackDoc,
+    title: 'Slack',
+    description: 'Enable natural language queries and mutations for Slack operations',
   },
 } as const
 
@@ -110,7 +140,7 @@ export default async function Page(props: PageProps) {
 
 export async function generateStaticParams() {
   return Object.keys(pages).map(slug => ({
-    slug: slug === 'index' ? undefined : [slug],
+    slug: slug === 'index' ? undefined : slug.split('/'),
   }))
 }
 
