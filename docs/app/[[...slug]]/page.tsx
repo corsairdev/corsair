@@ -11,6 +11,7 @@ import ExamplesDoc from '@/content/docs/examples.mdx'
 import { DocsPage, DocsBody } from 'fumadocs-ui/page'
 import { notFound } from 'next/navigation'
 import { extractTOC } from '@/lib/toc'
+import { useMDXComponents } from '@/mdx-components'
 
 interface PageProps {
   params: Promise<{ slug?: string[] }>
@@ -73,6 +74,8 @@ const pages = {
   },
 } as const
 
+const mdxComponents = useMDXComponents()
+
 export default async function Page(props: PageProps) {
   const params = await props.params
   const slugKey = (params.slug?.join('/') || 'index') as keyof typeof pages
@@ -99,7 +102,7 @@ export default async function Page(props: PageProps) {
         <p className="text-lg text-muted-foreground mb-8">{page.description}</p>
       )}
       <DocsBody>
-        <MDX />
+        <MDX components={mdxComponents} />
       </DocsBody>
     </DocsPage>
   )
@@ -123,4 +126,3 @@ export async function generateMetadata(props: PageProps) {
     description: page.description,
   }
 }
-
