@@ -22,3 +22,12 @@ aside[data-sidebar] div[data-collapsed] + div > p:first-child,
 aside div > div > div > div > div > p:first-child {
   padding-top: 0.25rem !important;
 }
+
+aside[data-sidebar] button[aria-expanded] svg:first-child {
+  opacity: 0.7;
+  transition: opacity 0.15s ease;
+}
+
+aside[data-sidebar] button[aria-expanded]:hover svg:first-child {
+  opacity: 1;
+}
