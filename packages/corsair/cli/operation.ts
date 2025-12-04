@@ -22,7 +22,6 @@ export async function runAgentOperation(
   )
   const { promises: fs } = await import('fs')
 
-  loadEnv('.env.local')
   const cfg = loadConfig()
   const kebabCaseName = toKebabCase(name.trim())
   const camelCaseName = kebabToCamelCase(kebabCaseName)
@@ -88,9 +87,15 @@ export async function runAgentOperation(
 
     if (result.usage) {
       console.log('\n🔢 Token Usage:')
-      console.log(`   Input tokens:  ${result.usage.inputTokens?.toLocaleString() ?? 'N/A'}`)
-      console.log(`   Output tokens: ${result.usage.outputTokens?.toLocaleString() ?? 'N/A'}`)
-      console.log(`   Total tokens:  ${result.usage.totalTokens?.toLocaleString() ?? 'N/A'}`)
+      console.log(
+        `   Input tokens:  ${result.usage.inputTokens?.toLocaleString() ?? 'N/A'}`
+      )
+      console.log(
+        `   Output tokens: ${result.usage.outputTokens?.toLocaleString() ?? 'N/A'}`
+      )
+      console.log(
+        `   Total tokens:  ${result.usage.totalTokens?.toLocaleString() ?? 'N/A'}`
+      )
     }
 
     if (result.text) {
@@ -107,4 +112,3 @@ export async function runAgentOperation(
     throw error
   }
 }
-

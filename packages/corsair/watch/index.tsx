@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 
-import React from 'react'
 import { render } from 'ink'
 import chokidar from 'chokidar'
 import { eventBus } from './core/event-bus.js'
@@ -9,12 +8,7 @@ import { CorsairUI } from './ui/renderer.js'
 import { Project } from 'ts-morph'
 import * as path from 'path'
 import { existsSync } from 'fs'
-import {
-  loadConfig,
-  loadEnv,
-  getResolvedPaths,
-  validatePaths,
-} from '../cli/config.js'
+import { loadConfig, getResolvedPaths, validatePaths } from '../cli/config.js'
 import type { SchemaDefinition } from './types/state.js'
 import { loadSchema } from '../cli/utils/schema-loader.js'
 
@@ -32,7 +26,6 @@ import './core/state-machine.js'
 export async function watch(): Promise<void> {
   console.clear()
 
-  loadEnv('.env.local')
   const cfg = loadConfig()
 
   const project = new Project({
@@ -216,4 +209,3 @@ export async function watch(): Promise<void> {
 
   watcher.close()
 }
-
