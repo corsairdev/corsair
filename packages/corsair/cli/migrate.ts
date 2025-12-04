@@ -5,7 +5,6 @@ import { loadConfig, loadEnv, checkDatabaseUrl } from './config.js'
 
 export async function migrate() {
   const cfg = loadConfig()
-  loadEnv('.env.local')
   checkDatabaseUrl(cfg.connection)
 
   console.log(
