@@ -13,7 +13,6 @@ type ConfigArray = ConfigValue[]
 
 const REQUIRED_CONFIG_FIELDS = [
   'framework',
-  'schema',
   'dbType',
   'orm',
   'db',
@@ -109,7 +108,6 @@ export function loadConfig(): CorsairConfig<any> {
     } catch {}
   }
 
-  console.log('userConfig', userConfig)
   const missingFields = REQUIRED_CONFIG_FIELDS.filter(
     field => !userConfig?.[field]
   )
@@ -123,7 +121,6 @@ export function loadConfig(): CorsairConfig<any> {
   return {
     apiEndpoint: userConfig?.apiEndpoint ?? DefaultBaseConfig.apiEndpoint,
     framework: userConfig?.framework,
-    schema: userConfig?.schema,
     dbType: userConfig?.dbType,
     orm: userConfig?.orm,
     db: userConfig?.db,
