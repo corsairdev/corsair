@@ -153,7 +153,6 @@ export async function list(options: {
   mutations?: boolean
   filter?: string
 }) {
-  loadEnv('.env.local')
   const cfg = loadConfig()
 
   const queriesPath = resolve(process.cwd(), cfg.pathToCorsairFolder, 'queries')

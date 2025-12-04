@@ -20,6 +20,7 @@ const REQUIRED_CONFIG_FIELDS = [
 ] as const
 
 export function loadConfig(): CorsairConfig<any> {
+  loadEnv('.env.local')
   const tsConfigPath = resolve(process.cwd(), 'corsair.config.ts')
   let userConfig: Partial<GenericCorsairConfig> | null = null
 
