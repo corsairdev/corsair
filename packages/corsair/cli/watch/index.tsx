@@ -41,7 +41,6 @@ import './core/state-machine.js'
 export async function watch(): Promise<void> {
   console.clear()
 
-  loadEnv('.env.local')
   const cfg = loadConfig()
 
   const project = new Project({
