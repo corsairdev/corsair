@@ -13,10 +13,10 @@ import type { Query, SchemaDefinition } from '../types/state.js'
 import { stateMachine } from '../core/state-machine.js'
 import { z } from 'zod'
 import type { SchemaLoadedEvent, SchemaUpdatedEvent } from '../types/events.js'
-import { promptAgent } from '../../../llm/agent/index.js'
-import { promptBuilder } from '../../../llm/agent/prompts/prompt-builder.js'
-import { kebabToCamelCase, toKebabCase } from '../../utils.js'
-import { loadConfig, getResolvedPaths } from '../../config.js'
+import { promptAgent } from '../../llm/agent/index.js'
+import { promptBuilder } from '../../llm/agent/prompts/prompt-builder.js'
+import { kebabToCamelCase, toKebabCase } from '../../cli/utils/utils.js'
+import { loadConfig, getResolvedPaths } from '../../cli/config.js'
 
 /**
  * Query Generator Handler

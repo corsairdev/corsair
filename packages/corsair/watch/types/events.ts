@@ -4,17 +4,14 @@ import type { queryGenerator } from '../handlers/query-generator.js'
 import type { z } from 'zod'
 
 export enum CorsairEvent {
-  // File System Events
   FILE_CHANGED = 'file:changed',
   FILE_CREATED = 'file:created',
 
-  // Detection Events
   QUERY_DETECTED = 'query:detected',
   SCHEMA_CHANGED = 'schema:changed',
   SCHEMA_LOADED = 'schema:loaded',
   SCHEMA_UPDATED = 'schema:updated',
 
-  // Operations Events
   OPERATIONS_LOADED = 'operations:loaded',
   OPERATION_ADDED = 'operation:added',
   OPERATION_REMOVED = 'operation:removed',
@@ -22,23 +19,18 @@ export enum CorsairEvent {
   NEW_QUERY_ADDED = 'new:query:added',
   NEW_MUTATION_ADDED = 'new:mutation:added',
 
-  // Generation Events
   GENERATION_STARTED = 'generation:started',
   GENERATION_PROGRESS = 'generation:progress',
   GENERATION_COMPLETE = 'generation:complete',
   GENERATION_FAILED = 'generation:failed',
 
-  // User Input Events
   USER_INPUT = 'user:input',
   USER_COMMAND = 'user:command',
 
-  // State Events
   STATE_CHANGED = 'state:changed',
 
-  // Error Events
   ERROR_OCCURRED = 'error:occurred',
 
-  // LLM Events
   LLM_ANALYSIS_STARTED = 'llm:analysis:started',
   LLM_ANALYSIS_COMPLETE = 'llm:analysis:complete',
   LLM_ANALYSIS_FAILED = 'llm:analysis:failed',
@@ -243,3 +235,4 @@ export type EventDataMap = {
   [CorsairEvent.SCHEMA_LOADED]: SchemaLoadedEvent
   [CorsairEvent.SCHEMA_UPDATED]: SchemaUpdatedEvent
 }
+

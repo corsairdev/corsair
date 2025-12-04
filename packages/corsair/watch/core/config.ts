@@ -30,7 +30,6 @@ export function getDefaultConfig(): CorsairConfig {
 }
 
 export function loadConfig(): CorsairConfig {
-  // TODO: Load from corsair.config.js if it exists
-  // For now, return defaults
   return getDefaultConfig()
 }
+

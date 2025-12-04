@@ -1,4 +1,4 @@
-import type { SchemaDefinition } from '../../cli/watch/types/state.js'
+import type { SchemaDefinition } from '../../watch/types/state.js'
 
 export const operationGeneratorPrompt = ({
   type,

@@ -34,7 +34,7 @@
     "test:ui": "vitest --ui",
     "test:coverage": "vitest run --coverage",
     "typecheck": "tsc --noEmit",
-    "watch": "tsx cli/watch/index.tsx",
+    "watch": "tsx watch/index.tsx",
     "agent-test": "tsx llm/agent/tests/agent-prompt.ts"
   },
   "main": "./dist/index.js",
