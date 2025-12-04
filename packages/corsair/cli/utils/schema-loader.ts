@@ -43,7 +43,6 @@ function buildClientConfig(connection: ConnectionConfig): ClientConfig {
 }
 
 export const loadSchema = async (): Promise<SchemaOutput> => {
-  const cfg = loadConfig()
   loadEnv('.env.local')
 
   const runtimeConfig = await loadRuntimeConfig()
