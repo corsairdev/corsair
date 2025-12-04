@@ -72,6 +72,21 @@ program
     )
   })
 
+program
+  .command('list')
+  .description('List all queries and mutations with their details')
+  .option('-q, --queries', 'List only queries')
+  .option('-m, --mutations', 'List only mutations')
+  .option('-f, --filter <filter>', 'Filter operations by search string')
+  .action(async options => {
+    const { list } = await import('./list.js')
+    await list({
+      queries: options.queries,
+      mutations: options.mutations,
+      filter: options.filter,
+    })
+  })
+
 program.parse()
 
 process.on('unhandledRejection', error => {
