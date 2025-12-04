@@ -127,7 +127,7 @@ export async function fix() {
     )
 
     try {
-      const { runAgentOperation } = await import('./index.js')
+      const { runAgentOperation } = await import('./operation.js')
       await runAgentOperation(kind, fileName, undefined, true)
     } catch (error) {
       console.error(`\n❌ Failed to regenerate ${kind} "${fileName}":`, error)
