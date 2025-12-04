@@ -14,7 +14,13 @@ pnpm corsair query \
 
 Corsair turns natural language bash commands into fully-typed, production-ready queries and mutations. Your agents write what they want in plain English, and Corsair handles the ORM complexity, validates everything against your schema, and generates TypeScript API endpoints automatically.
 
-When your agent writes the bash command, it can immediately use this on the client: `useCorsairQuery("published posts with engagement")`
+When your agent writes the bash command, it can immediately use this on the client:
+
+```typescript
+const posts = useCorsairQuery('published posts with engagement by author id', {
+  author_id: params.author_id,
+})
+```
 
 With Corsair, you get:
 
