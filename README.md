@@ -1,18 +1,20 @@
 # Corsair
 
-**The Vibe Coding SDK**
+**Power your coding agents with the Vibe Coding SDK.**
 
-Help your AI agents build full-stack apps faster with natural language queries and mutations.
+Equip your coding agents to build faster with natural language queries and mutations.
 
 ```bash
-pnpm corsair query \
-  -n "published posts with engagement" \
+pnpm corsair query
+  -n "published posts with engagement"
   -i "this should return published posts with author details and comment count"
 ```
 
 ## What Corsair Does
 
-Corsair turns natural language bash commands into fully-typed, production-ready queries and mutations. Your agents write what they want in plain English, and Corsair handles the ORM complexity, validates everything against your schema, and generates TypeScript API endpoints automatically.
+Corsair turns natural language commands into fully-typed, production-ready queries and mutations. Your agents write what they want in plain English, and Corsair generates TypeScript API endpoints automatically.
+
+Corsair handles ORM complexity, third-party API integrations, and validates everything against your schema and codebase.
 
 When your agent writes the bash command, it can immediately use this on the client:
 
@@ -25,7 +27,7 @@ const posts = useCorsairQuery('published posts with engagement by author id', {
 With Corsair, you get:
 
 - ✅ Full type safety - TypeScript knows exactly what shape the data is
-- ✅ Validated queries - Can't hallucinate invalid database operations
+- ✅ Validated API routes - Can't hallucinate invalid database operations or third-party integrations
 - ✅ Readable code - Developers instantly understand intent during code review
 - ✅ Auto-fixing - When your schema changes, Corsair rewrites queries to match
 
@@ -36,41 +38,41 @@ Works with any stack (Next, Vite, Hono, Svelte, etc) and any ORM (Drizzle, Prism
 **Create queries:**
 
 ```bash
-pnpm corsair query \
-  -n "get all posts by author" \
+pnpm corsair query
+  -n "get all posts by author"
   -i "return posts in descending order (newest first)"
 ```
 
 **Create mutations:**
 
 ```bash
-pnpm corsair mutation \
-  -n "create post and email author" \
+pnpm corsair mutation
+  -n "create post and email author"
   -i "create the post then email the author confirming it was created"
 ```
 
 **Update existing:**
 
 ```bash
-pnpm corsair -u \
-  -n "create post and email author" \
+pnpm corsair -u
+  -n "create post and email author"
   -i "also auto-like the post by the author"
 ```
 
 **List everything:**
 
 ```bash
-pnpm corsair list           # all queries and mutations
-pnpm corsair list -q        # queries only
-pnpm corsair list -m        # mutations only
-pnpm corsair list -f "user" # filter by string
+pnpm corsair list                  # all queries and mutations
+pnpm corsair list -q               # queries only
+pnpm corsair list -m               # mutations only
+pnpm corsair list -f "author id"   # filter by string
 ```
 
 **Validate & fix:**
 
 ```bash
-pnpm corsair check  # validate all queries/mutations still work (to be used after DB schema updates)
-pnpm corsair fix    # auto-fix after schema changes
+pnpm corsair check  # validate all queries / mutations still work (like after DB schema updates)
+pnpm corsair fix    # auto-fix all queries / mutations
 ```
 
 ## Why Use This With Your Agent?
