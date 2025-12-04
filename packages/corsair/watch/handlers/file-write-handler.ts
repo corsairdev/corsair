@@ -4,7 +4,7 @@ import * as fs from 'fs'
 import { promises as fsp } from 'fs'
 import { spawn } from 'child_process'
 import { format } from 'prettier'
-import { loadConfig, getResolvedPaths } from '../../config.js'
+import { loadConfig, getResolvedPaths } from '../../cli/config.js'
 
 export interface OperationToWrite {
   operationName: string
