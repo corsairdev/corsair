@@ -14,30 +14,21 @@ import {
   loadEnv,
   getResolvedPaths,
   validatePaths,
-} from '../config.js'
+} from '../cli/config.js'
 import type { SchemaDefinition } from './types/state.js'
-import { loadSchema } from '../schema-loader.js'
+import { loadSchema } from '../cli/utils/schema-loader.js'
 
-// Import handlers to initialize them
 import './handlers/file-change-handler.js'
 import './handlers/query-generator.js'
 import './handlers/user-input-handler.js'
 import './handlers/error-handler.js'
 import './handlers/schema-change-handler.js'
 
-// Import operations handlers
 import { Queries, Mutations } from './handlers/operations-handler.js'
 import { Schema } from './handlers/schema-handler.js'
 
-// Also import state machine to initialize it
 import './core/state-machine.js'
 
-/**
- * Corsair Watch - Main Entry Point
- *
- * Event-driven CLI that watches for database query definitions
- * and auto-generates query logic and TypeScript types.
- */
 export async function watch(): Promise<void> {
   console.clear()
 
@@ -48,7 +39,6 @@ export async function watch(): Promise<void> {
     tsConfigFilePath: 'tsconfig.json',
   })
 
-  // Initialize operations handlers
   const paths = getResolvedPaths(cfg)
   const warnings = validatePaths(cfg)
 
@@ -68,14 +58,12 @@ export async function watch(): Promise<void> {
     console.error('Error loading unified schema:', err)
   }
 
-  // Parse operations immediately, don't wait for watcher ready
   await queriesHandler.parse()
   await mutationsHandler.parse()
   if (!loadedSchema && existsSync(paths.schemaFile)) {
     await schemaHandler.parse()
   }
 
-  // Start file watcher - watch entire directory but filter in the change handler
   const watcher = chokidar.watch('.', {
     ignored:
       /(node_modules|\.next|dist|\.git|\.turbo|coverage|__tests__|\.test\.|\.spec\.)/,
@@ -138,12 +126,10 @@ export async function watch(): Promise<void> {
   }
 
   watcher.on('change', async (pathChanged: string) => {
-    // Only process .ts and .tsx files
     if (!pathChanged.endsWith('.ts') && !pathChanged.endsWith('.tsx')) {
       return
     }
 
-    // Handle queries/mutations file changes
     const isInQueries = pathChanged.includes(paths.queriesDir)
     const isInMutations = pathChanged.includes(paths.mutationsDir)
     const isOperations = pathChanged === paths.operationsFile
@@ -186,7 +172,6 @@ export async function watch(): Promise<void> {
       return
     }
 
-    // Skip other generated corsair files
     if (
       pathChanged.includes('/corsair/') ||
       pathChanged.includes('\\corsair\\')
@@ -194,7 +179,6 @@ export async function watch(): Promise<void> {
       return
     }
 
-    // Refresh the entire project from filesystem to pick up latest changes
     const sourceFile = project.getSourceFile(pathChanged)
 
     if (!sourceFile) {
@@ -212,28 +196,8 @@ export async function watch(): Promise<void> {
     console.error('Watcher error:', error)
   })
 
-  // watcher.on("add", (path) => {
-  //   // Treat new files as changes
-  //   eventBus.emit(CorsairEvent.FILE_CHANGED, {
-  //     file: path,
-  //     timestamp: Date.now(),
-  //   });
-  // });
-
-  // watcher.on("error", (error) => {
-  //   if (error instanceof Error) {
-  //     eventBus.emit(CorsairEvent.ERROR_OCCURRED, {
-  //       message: `File watcher error: ${error.message}`,
-  //       code: "WATCHER_ERROR",
-  //       stack: error.stack,
-  //     });
-  //   }
-  // });
-
-  // Render UI
   const { unmount, waitUntilExit } = render(<CorsairUI warnings={warnings} />)
 
-  // Handle graceful shutdown
   process.on('SIGINT', () => {
     console.log('\nShutting down...')
     watcher.close()
@@ -248,9 +212,8 @@ export async function watch(): Promise<void> {
     process.exit(0)
   })
 
-  // Wait for exit
   await waitUntilExit()
 
-  // Cleanup
   watcher.close()
 }
+

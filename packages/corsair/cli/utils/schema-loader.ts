@@ -1,5 +1,5 @@
-import type { SchemaOutput, ColumnInfo, ConnectionConfig } from '../config'
-import { loadConfig, loadEnv } from './config.js'
+import type { SchemaOutput, ColumnInfo, ConnectionConfig } from '../../config/index.js'
+import { loadConfig, loadEnv } from '../config.js'
 import { Client, type ClientConfig } from 'pg'
 import { resolve } from 'path'
 import { existsSync } from 'fs'

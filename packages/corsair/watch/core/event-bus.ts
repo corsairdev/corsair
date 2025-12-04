@@ -34,3 +34,4 @@ class CorsairEventBus extends EventEmitter {
 }
 
 export const eventBus = new CorsairEventBus()
+
