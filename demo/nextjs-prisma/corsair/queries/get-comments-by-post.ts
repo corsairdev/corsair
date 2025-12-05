@@ -1,5 +1,5 @@
-import { z } from 'zod'
-import { procedure } from '@/corsair/procedure'
+import { z } from "zod";
+import { procedure } from "@/corsair/procedure";
 
 /**
  * INPUT: { postId: string }
@@ -15,36 +15,36 @@ import { procedure } from '@/corsair/procedure'
  * USER INSTRUCTIONS: fetch all comments for a post by postId with author details, ordered by created_at ascending
  */
 export const getCommentsByPost = procedure
-  .input(z.object({ postId: z.string() }))
-  .query(async ({ input, ctx }) => {
-    const comments = await ctx.db.comment.findMany({
-      where: {
-        postId: input.postId,
-      },
-      include: {
-        author: true,
-      },
-      orderBy: {
-        createdAt: 'asc',
-      },
-    })
+	.input(z.object({ postId: z.string() }))
+	.query(async ({ input, ctx }) => {
+		const comments = await ctx.db.comment.findMany({
+			where: {
+				postId: input.postId,
+			},
+			include: {
+				author: true,
+			},
+			orderBy: {
+				createdAt: "asc",
+			},
+		});
 
-    return comments.map(comment => ({
-      id: comment.id,
-      content: comment.content,
-      post_id: comment.postId,
-      author_id: comment.authorId,
-      parent_id: comment.parentId,
-      created_at: comment.createdAt.toISOString(),
-      updated_at: comment.updatedAt.toISOString(),
-      author: {
-        id: comment.author.id,
-        email: comment.author.email,
-        name: comment.author.name,
-        avatar_url: comment.author.avatarUrl,
-        bio: comment.author.bio,
-        created_at: comment.author.createdAt.toISOString(),
-        updated_at: comment.author.updatedAt.toISOString(),
-      },
-    }))
-  })
+		return comments.map((comment) => ({
+			id: comment.id,
+			content: comment.content,
+			post_id: comment.postId,
+			author_id: comment.authorId,
+			parent_id: comment.parentId,
+			created_at: comment.createdAt.toISOString(),
+			updated_at: comment.updatedAt.toISOString(),
+			author: {
+				id: comment.author.id,
+				email: comment.author.email,
+				name: comment.author.name,
+				avatar_url: comment.author.avatarUrl,
+				bio: comment.author.bio,
+				created_at: comment.author.createdAt.toISOString(),
+				updated_at: comment.author.updatedAt.toISOString(),
+			},
+		}));
+	});

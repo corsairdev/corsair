@@ -1,5 +1,5 @@
-import { procedure } from '@/corsair/procedure'
-import { desc, eq } from 'drizzle-orm'
+import { desc, eq } from "drizzle-orm";
+import { procedure } from "@/corsair/procedure";
 
 /**
  * INPUT: {}
@@ -14,34 +14,34 @@ import { desc, eq } from 'drizzle-orm'
  * USER INSTRUCTIONS: fetch all published posts with author details, ordered by published_at descending
  */
 export const getAllPosts = procedure.query(async ({ ctx }) => {
-  const result = await ctx.db
-    .select()
-    .from(ctx.db._.fullSchema.posts)
-    .innerJoin(
-      ctx.db._.fullSchema.users,
-      eq(ctx.db._.fullSchema.posts.author_id, ctx.db._.fullSchema.users.id)
-    )
-    .where(eq(ctx.db._.fullSchema.posts.published, true))
-    .orderBy(desc(ctx.db._.fullSchema.posts.published_at))
+	const result = await ctx.db
+		.select()
+		.from(ctx.db._.fullSchema.posts)
+		.innerJoin(
+			ctx.db._.fullSchema.users,
+			eq(ctx.db._.fullSchema.posts.author_id, ctx.db._.fullSchema.users.id),
+		)
+		.where(eq(ctx.db._.fullSchema.posts.published, true))
+		.orderBy(desc(ctx.db._.fullSchema.posts.published_at));
 
-  // result: Array<{ posts: Post; users: User }>
-  return result.map(({ posts, users }) => ({
-    id: posts.id,
-    title: posts.title,
-    slug: posts.slug,
-    content: posts.content,
-    excerpt: posts.excerpt,
-    cover_image_url: posts.cover_image_url,
-    view_count: posts.view_count,
-    published_at: posts.published_at,
-    author: {
-      id: users.id,
-      name: users.name,
-      email: users.email,
-      avatar_url: users.avatar_url,
-      bio: users.bio,
-      created_at: users.created_at,
-      updated_at: users.updated_at,
-    },
-  }))
-})
+	// result: Array<{ posts: Post; users: User }>
+	return result.map(({ posts, users }) => ({
+		id: posts.id,
+		title: posts.title,
+		slug: posts.slug,
+		content: posts.content,
+		excerpt: posts.excerpt,
+		cover_image_url: posts.cover_image_url,
+		view_count: posts.view_count,
+		published_at: posts.published_at,
+		author: {
+			id: users.id,
+			name: users.name,
+			email: users.email,
+			avatar_url: users.avatar_url,
+			bio: users.bio,
+			created_at: users.created_at,
+			updated_at: users.updated_at,
+		},
+	}));
+});

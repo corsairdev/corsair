@@ -1,4 +1,4 @@
-import { procedure } from '@/corsair/procedure'
+import { procedure } from "@/corsair/procedure";
 
 /**
  * INPUT: {}
@@ -13,35 +13,35 @@ import { procedure } from '@/corsair/procedure'
  * USER INSTRUCTIONS: fetch all published posts with author details, ordered by published_at descending
  */
 export const getAllPosts = procedure.query(async ({ ctx }) => {
-  const result = await ctx.db.post.findMany({
-    where: {
-      published: true,
-    },
-    include: {
-      author: true,
-    },
-    orderBy: {
-      publishedAt: 'desc',
-    },
-  })
+	const result = await ctx.db.post.findMany({
+		where: {
+			published: true,
+		},
+		include: {
+			author: true,
+		},
+		orderBy: {
+			publishedAt: "desc",
+		},
+	});
 
-  return result.map(post => ({
-    id: post.id,
-    title: post.title,
-    slug: post.slug,
-    content: post.content,
-    excerpt: post.excerpt,
-    cover_image_url: post.coverImageUrl,
-    view_count: post.viewCount,
-    published_at: post.publishedAt,
-    author: {
-      id: post.author.id,
-      name: post.author.name,
-      email: post.author.email,
-      avatar_url: post.author.avatarUrl,
-      bio: post.author.bio,
-      created_at: post.author.createdAt,
-      updated_at: post.author.updatedAt,
-    },
-  }))
-})
+	return result.map((post) => ({
+		id: post.id,
+		title: post.title,
+		slug: post.slug,
+		content: post.content,
+		excerpt: post.excerpt,
+		cover_image_url: post.coverImageUrl,
+		view_count: post.viewCount,
+		published_at: post.publishedAt,
+		author: {
+			id: post.author.id,
+			name: post.author.name,
+			email: post.author.email,
+			avatar_url: post.author.avatarUrl,
+			bio: post.author.bio,
+			created_at: post.author.createdAt,
+			updated_at: post.author.updatedAt,
+		},
+	}));
+});

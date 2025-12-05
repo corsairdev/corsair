@@ -1,4 +1,4 @@
-import { procedure } from '@/corsair/procedure'
+import { procedure } from "@/corsair/procedure";
 
 /**
  * INPUT: {}
@@ -13,19 +13,19 @@ import { procedure } from '@/corsair/procedure'
  * USER INSTRUCTIONS: fetch all users for comment author selection
  */
 export const getAllUsers = procedure.query(async ({ ctx }) => {
-  const users = await ctx.db.user.findMany({
-    select: {
-      id: true,
-      name: true,
-      email: true,
-      avatarUrl: true,
-    },
-  })
+	const users = await ctx.db.user.findMany({
+		select: {
+			id: true,
+			name: true,
+			email: true,
+			avatarUrl: true,
+		},
+	});
 
-  return users.map(user => ({
-    id: user.id,
-    name: user.name,
-    email: user.email,
-    avatar_url: user.avatarUrl,
-  }))
-})
+	return users.map((user) => ({
+		id: user.id,
+		name: user.name,
+		email: user.email,
+		avatar_url: user.avatarUrl,
+	}));
+});

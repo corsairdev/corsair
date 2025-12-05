@@ -1,7 +1,7 @@
-import { z } from 'zod'
-import { procedure } from '@/corsair/procedure'
-import { SlackChannels } from 'corsair/plugins/types'
-import { type Config } from '@/corsair.config'
+import type { SlackChannels } from "corsair/plugins/types";
+import { z } from "zod";
+import { procedure } from "@/corsair/procedure";
+import type { Config } from "@/corsair.config";
 
 /**
  * INPUT: { channel: SlackChannels<Config>, message: string }
@@ -16,22 +16,22 @@ import { type Config } from '@/corsair.config'
  * USER INSTRUCTIONS: None
  */
 export const sendSlackMessage = procedure
-  .input(
-    z.object({
-      channel: z.string() as z.ZodType<SlackChannels<Config>>,
-      message: z.string(),
-    })
-  )
-  .mutation(async ({ input, ctx }) => {
-    const slack = ctx.plugins.slack.sendMessage({
-      channelId: 'general',
-      content: '',
-    })
+	.input(
+		z.object({
+			channel: z.string() as z.ZodType<SlackChannels<Config>>,
+			message: z.string(),
+		}),
+	)
+	.mutation(async ({ input, ctx }) => {
+		const slack = ctx.plugins.slack.sendMessage({
+			channelId: "general",
+			content: "",
+		});
 
-    // return slack.sendMessage({
-    //   channelId: input.channel,
-    //   message: input.message,
-    // })
+		// return slack.sendMessage({
+		//   channelId: input.channel,
+		//   message: input.message,
+		// })
 
-    return true
-  })
+		return true;
+	});

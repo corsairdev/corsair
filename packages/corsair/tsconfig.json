@@ -11,14 +11,7 @@
     "declarationMap": true,
     "skipLibCheck": true
   },
-  "include": [
-    "./**/*"
-  ],
-  "exclude": [
-    "dist",
-    "node_modules",
-    "**/*.test.*",
-    "**/*.spec.*"
-  ],
+  "include": ["./**/*"],
+  "exclude": ["dist", "node_modules", "**/*.test.*", "**/*.spec.*"],
   "references": []
 }
