@@ -1,6 +1,6 @@
 import { existsSync, readdirSync, readFileSync } from 'fs'
 import { resolve, join, basename } from 'path'
-import { kebabToCamelCase } from './utils/utils.js'
+import { kebabToCamelCase, camelCaseToWords } from './utils/utils.js'
 import { loadConfig, loadEnv } from './config.js'
 
 interface OperationInfo {
@@ -100,31 +100,37 @@ function parseOperationFile(
   }
 }
 
-function formatOperation(op: OperationInfo): string {
+function formatOperation(op: OperationInfo, verbose: boolean): string {
   const lines: string[] = []
   const typeLabel = op.type === 'query' ? '🔍' : '✏️'
-  const typeText = op.type.toUpperCase()
+  const displayName = camelCaseToWords(op.name)
 
-  lines.push(`${typeLabel} ${op.name} [${typeText}]`)
-  lines.push(`   File: ${op.fileName}.ts`)
+  if (verbose) {
+    const typeText = op.type.toUpperCase()
+    lines.push(`${typeLabel} ${displayName} [${typeText}]`)
+    lines.push(`   File: ${op.fileName}.ts`)
 
-  if (op.input) {
-    lines.push(`   Input: ${op.input}`)
-  }
+    if (op.input) {
+      lines.push(`   Input: ${op.input}`)
+    }
 
-  if (op.output) {
-    lines.push(`   Output: ${op.output}`)
-  }
+    if (op.output) {
+      lines.push(`   Output: ${op.output}`)
+    }
 
-  if (op.userInstructions) {
-    lines.push(`   Description: ${op.userInstructions}`)
-  }
+    if (op.userInstructions) {
+      lines.push(`   Description: ${op.userInstructions}`)
+    }
 
-  if (op.pseudoCode && op.pseudoCode.length > 0) {
-    lines.push(`   Pseudo Code:`)
-    op.pseudoCode.forEach(step => {
-      lines.push(`      ${step}`)
-    })
+    if (op.pseudoCode && op.pseudoCode.length > 0) {
+      lines.push(`   Pseudo Code:`)
+      op.pseudoCode.forEach(step => {
+        lines.push(`      ${step}`)
+      })
+    }
+  } else {
+    lines.push(`${typeLabel} ${displayName}`)
+    lines.push(`   ${op.fileName}.ts`)
   }
 
   return lines.join('\n')
@@ -152,6 +158,7 @@ export async function list(options: {
   queries?: boolean
   mutations?: boolean
   filter?: string
+  verbose?: boolean
 }) {
   const cfg = loadConfig()
 
@@ -215,7 +222,7 @@ export async function list(options: {
   if (queries.length > 0) {
     console.log(`═══ Queries (${queries.length}) ═══\n`)
     queries.forEach((op, i) => {
-      console.log(formatOperation(op))
+      console.log(formatOperation(op, options.verbose || false))
       if (i < queries.length - 1) console.log('')
     })
     console.log('')
@@ -224,7 +231,7 @@ export async function list(options: {
   if (mutations.length > 0) {
     console.log(`═══ Mutations (${mutations.length}) ═══\n`)
     mutations.forEach((op, i) => {
-      console.log(formatOperation(op))
+      console.log(formatOperation(op, options.verbose || false))
       if (i < mutations.length - 1) console.log('')
     })
     console.log('')

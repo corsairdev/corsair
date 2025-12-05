@@ -13,6 +13,13 @@ export function kebabToCamelCase(str: string): string {
   return str.replace(/-([a-z])/g, (_, letter) => letter.toUpperCase())
 }
 
+export function camelCaseToWords(str: string): string {
+  return str
+    .replace(/([a-z])([A-Z])/g, '$1 $2')
+    .replace(/([A-Z])([A-Z][a-z])/g, '$1 $2')
+    .toLowerCase()
+}
+
 export async function sortIndexFile(indexPath: string) {
   try {
     const content = await fs.readFile(indexPath, 'utf8')
