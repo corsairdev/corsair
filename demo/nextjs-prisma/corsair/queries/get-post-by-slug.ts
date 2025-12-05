@@ -1,5 +1,5 @@
-import { z } from 'zod'
-import { procedure } from '@/corsair/procedure'
+import { z } from "zod";
+import { procedure } from "@/corsair/procedure";
 
 /**
  * INPUT: { slug: string }
@@ -36,60 +36,60 @@ import { procedure } from '@/corsair/procedure'
  * USER INSTRUCTIONS: fetch a single post by slug with author details, categories, and tags
  */
 export const getPostBySlug = procedure
-  .input(z.object({ slug: z.string() }))
-  .query(async ({ input, ctx }) => {
-    const post = await ctx.db.post.findUnique({
-      where: {
-        slug: input.slug,
-      },
-      include: {
-        author: true,
-        postCategories: {
-          include: {
-            category: true,
-          },
-        },
-        postTags: {
-          include: {
-            tag: true,
-          },
-        },
-      },
-    })
+	.input(z.object({ slug: z.string() }))
+	.query(async ({ input, ctx }) => {
+		const post = await ctx.db.post.findUnique({
+			where: {
+				slug: input.slug,
+			},
+			include: {
+				author: true,
+				postCategories: {
+					include: {
+						category: true,
+					},
+				},
+				postTags: {
+					include: {
+						tag: true,
+					},
+				},
+			},
+		});
 
-    if (!post) {
-      return null
-    }
+		if (!post) {
+			return null;
+		}
 
-    return {
-      id: post.id,
-      title: post.title,
-      slug: post.slug,
-      content: post.content,
-      excerpt: post.excerpt,
-      cover_image_url: post.coverImageUrl,
-      published: post.published,
-      view_count: post.viewCount,
-      author: {
-        id: post.author.id,
-        name: post.author.name,
-        email: post.author.email,
-        avatar_url: post.author.avatarUrl,
-        bio: post.author.bio,
-      },
-      categories: post.postCategories.map(pc => ({
-        id: pc.category.id,
-        name: pc.category.name,
-        slug: pc.category.slug,
-        description: pc.category.description,
-      })),
-      tags: post.postTags.map(pt => ({
-        id: pt.tag.id,
-        name: pt.tag.name,
-        slug: pt.tag.slug,
-      })),
-      created_at: post.createdAt,
-      updated_at: post.updatedAt,
-      published_at: post.publishedAt,
-    }
-  })
+		return {
+			id: post.id,
+			title: post.title,
+			slug: post.slug,
+			content: post.content,
+			excerpt: post.excerpt,
+			cover_image_url: post.coverImageUrl,
+			published: post.published,
+			view_count: post.viewCount,
+			author: {
+				id: post.author.id,
+				name: post.author.name,
+				email: post.author.email,
+				avatar_url: post.author.avatarUrl,
+				bio: post.author.bio,
+			},
+			categories: post.postCategories.map((pc) => ({
+				id: pc.category.id,
+				name: pc.category.name,
+				slug: pc.category.slug,
+				description: pc.category.description,
+			})),
+			tags: post.postTags.map((pt) => ({
+				id: pt.tag.id,
+				name: pt.tag.name,
+				slug: pt.tag.slug,
+			})),
+			created_at: post.createdAt,
+			updated_at: post.updatedAt,
+			published_at: post.publishedAt,
+		};
+	});

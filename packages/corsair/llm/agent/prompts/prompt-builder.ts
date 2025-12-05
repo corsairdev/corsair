@@ -1,34 +1,34 @@
 import type {
-  DBTypes,
-  Framework,
-  ORMs,
-  SchemaOutput,
-} from '../../../config/index.js'
-import { formattedSchema } from './utils.js'
+	DBTypes,
+	Framework,
+	ORMs,
+	SchemaOutput,
+} from "../../../config/index.js";
+import { formattedSchema } from "./utils.js";
 
 type Config = {
-  orm: ORMs
-  dbType: DBTypes
-  framework: Framework
-  operation: 'query' | 'mutation'
-}
+	orm: ORMs;
+	dbType: DBTypes;
+	framework: Framework;
+	operation: "query" | "mutation";
+};
 
 type PromptBuilderParams = {
-  functionName: string
-  incomingSchema: SchemaOutput
-  config: Config
-  instructions?: string
-}
+	functionName: string;
+	incomingSchema: SchemaOutput;
+	config: Config;
+	instructions?: string;
+};
 
 export const promptBuilder = ({
-  functionName,
-  incomingSchema,
-  config,
-  instructions,
+	functionName,
+	incomingSchema,
+	config,
+	instructions,
 }: PromptBuilderParams): string => {
-  const schema = formattedSchema(incomingSchema)
+	const schema = formattedSchema(incomingSchema);
 
-  return `
+	return `
 You are a TypeScript developer building out or updating a ${config.operation}.
 
 You will be using a ${config.dbType} database, ${config.orm} as the ORM, and this is in a ${config.framework} project. This API is written with tRPC and is used on the client with TanStack query.
@@ -37,13 +37,13 @@ You will export a function with the exact name "${functionName}" - this is the c
 
 Do not use explicit 'any' types. Properly type all variables, parameters, and return values.
 
-${instructions ? `These are additional instructions provided by the developer: ${instructions}` : ''}
+${instructions ? `These are additional instructions provided by the developer: ${instructions}` : ""}
 
 IMPORTANT: At the top of your generated function (before the export), you MUST include a block comment with:
 1. INPUT: The input parameters and their types
 2. OUTPUT: The return type and structure
 3. PSEUDO CODE: A step-by-step pseudo code explanation of what the function does
-4. USER INSTRUCTIONS: The raw user instructions if provided${instructions ? ` - in this case: "${instructions}"` : ' (none provided)'}
+4. USER INSTRUCTIONS: The raw user instructions if provided${instructions ? ` - in this case: "${instructions}"` : " (none provided)"}
 
 Format the comment exactly like this:
 /**
@@ -54,7 +54,7 @@ Format the comment exactly like this:
  * 1. [step by step logic]
  * 2. [what the function does]
  * 
- * USER INSTRUCTIONS: ${instructions || 'None'}
+ * USER INSTRUCTIONS: ${instructions || "None"}
  */
 
 You have access to two tools:
@@ -187,5 +187,5 @@ export const likePost = procedure
     return { success: true, alreadyLiked: false, like: newLike }
   })
 </mutation>
-`
-}
+`;
+};

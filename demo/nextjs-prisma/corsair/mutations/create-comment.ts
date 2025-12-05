@@ -1,5 +1,5 @@
-import { z } from 'zod'
-import { procedure } from '@/corsair/procedure'
+import { z } from "zod";
+import { procedure } from "@/corsair/procedure";
 
 /**
  * INPUT: { content: string, postId: string, authorId: string }
@@ -13,21 +13,21 @@ import { procedure } from '@/corsair/procedure'
  * USER INSTRUCTIONS: create a new comment with content, postId, and authorId
  */
 export const createComment = procedure
-  .input(
-    z.object({
-      content: z.string(),
-      postId: z.string(),
-      authorId: z.string(),
-    })
-  )
-  .mutation(async ({ input, ctx }) => {
-    const newComment = await ctx.db.comment.create({
-      data: {
-        content: input.content,
-        postId: input.postId,
-        authorId: input.authorId,
-      },
-    })
+	.input(
+		z.object({
+			content: z.string(),
+			postId: z.string(),
+			authorId: z.string(),
+		}),
+	)
+	.mutation(async ({ input, ctx }) => {
+		const newComment = await ctx.db.comment.create({
+			data: {
+				content: input.content,
+				postId: input.postId,
+				authorId: input.authorId,
+			},
+		});
 
-    return { success: true, comment: newComment }
-  })
+		return { success: true, comment: newComment };
+	});

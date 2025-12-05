@@ -1,6 +1,6 @@
-import { eventBus } from '../core/event-bus.js'
-import { CorsairEvent } from '../types/events.js'
-import type { UserCommandEvent } from '../types/events.js'
+import { eventBus } from "../core/event-bus.js";
+import type { UserCommandEvent } from "../types/events.js";
+import { CorsairEvent } from "../types/events.js";
 
 /**
  * User Input Handler
@@ -9,78 +9,78 @@ import type { UserCommandEvent } from '../types/events.js'
  * Emits: Various events based on commands
  */
 class UserInputHandler {
-  constructor() {
-    this.setupListeners()
-  }
+	constructor() {
+		this.setupListeners();
+	}
 
-  private setupListeners() {
-    eventBus.on(CorsairEvent.USER_COMMAND, this.handleCommand.bind(this))
-  }
+	private setupListeners() {
+		eventBus.on(CorsairEvent.USER_COMMAND, this.handleCommand.bind(this));
+	}
 
-  private handleCommand(data: UserCommandEvent) {
-    const { command, args } = data
+	private handleCommand(data: UserCommandEvent) {
+		const { command, args } = data;
 
-    switch (command) {
-      case 'regenerate':
-        this.handleRegenerate()
-        break
+		switch (command) {
+			case "regenerate":
+				this.handleRegenerate();
+				break;
 
-      case 'tweak':
-        this.handleTweak()
-        break
+			case "tweak":
+				this.handleTweak();
+				break;
 
-      case 'undo':
-        this.handleUndo()
-        break
+			case "undo":
+				this.handleUndo();
+				break;
 
-      case 'accept':
-        break
+			case "accept":
+				break;
 
-      case 'write_operation_to_file':
-        console.log('✅ Operation already written by agent')
-        break
+			case "write_operation_to_file":
+				console.log("✅ Operation already written by agent");
+				break;
 
-      case 'help':
-        this.handleHelp()
-        break
+			case "help":
+				this.handleHelp();
+				break;
 
-      case 'quit':
-        this.handleQuit()
-        break
+			case "quit":
+				this.handleQuit();
+				break;
 
-      default:
-    }
-  }
+			default:
+		}
+	}
 
-  private handleRegenerate() {
-    console.log('Regenerate requested (not implemented yet)')
-  }
+	private handleRegenerate() {
+		console.log("Regenerate requested (not implemented yet)");
+	}
 
-  private handleTweak() {
-    console.log('Tweak mode requested (not implemented yet)')
-  }
+	private handleTweak() {
+		console.log("Tweak mode requested (not implemented yet)");
+	}
 
-  private handleUndo() {
-    console.log('Undo requested (not implemented yet)')
-  }
+	private handleUndo() {
+		console.log("Undo requested (not implemented yet)");
+	}
 
-  private handleHelp() {
-    console.log('\nCorsair Watch - Help')
-    console.log('===================\n')
-    console.log('Available commands:')
-    console.log('  [R] Regenerate - Generate the query again')
-    console.log('  [T] Tweak - Modify the generated query')
-    console.log('  [U] Undo - Revert to previous version')
-    console.log('  [A] Accept - Accept the generated query')
-    console.log('  [H] Help - Show this help message')
-    console.log('  [Q] Quit - Exit Corsair Watch\n')
-  }
+	private handleHelp() {
+		console.log("\nCorsair Watch - Help");
+		console.log("===================\n");
+		console.log("Available commands:");
+		console.log("  [R] Regenerate - Generate the query again");
+		console.log("  [T] Tweak - Modify the generated query");
+		console.log("  [U] Undo - Revert to previous version");
+		console.log("  [A] Accept - Accept the generated query");
+		console.log("  [H] Help - Show this help message");
+		console.log("  [Q] Quit - Exit Corsair Watch\n");
+	}
 
-  private handleQuit() {
-    console.log('\nShutting down Corsair Watch...')
-    process.exit(0)
-  }
+	private handleQuit() {
+		console.log("\nShutting down Corsair Watch...");
+		process.exit(0);
+	}
 }
 
 // Initialize handler
-export const userInputHandler = new UserInputHandler()
+export const userInputHandler = new UserInputHandler();
