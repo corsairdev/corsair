@@ -78,12 +78,14 @@ program
   .option('-q, --queries', 'List only queries')
   .option('-m, --mutations', 'List only mutations')
   .option('-f, --filter <filter>', 'Filter operations by search string')
+  .option('-v, --verbose', 'Show verbose details')
   .action(async options => {
     const { list } = await import('./list.js')
     await list({
       queries: options.queries,
       mutations: options.mutations,
       filter: options.filter,
+      verbose: options.verbose,
     })
   })
 
