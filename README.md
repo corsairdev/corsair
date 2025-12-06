@@ -127,6 +127,6 @@ const { data } = useCorsairQuery('published posts with engagement')
 ## Get Started
 
 ```bash
-npm install corsair
+npm install @corsair-ai/core
 npx corsair init
 ```

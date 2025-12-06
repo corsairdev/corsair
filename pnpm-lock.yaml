@@ -232,6 +232,9 @@ importers:
 
   demo/nextjs-prisma:
     dependencies:
+      '@corsair-ai/core':
+        specifier: workspace:^
+        version: link:../../packages/corsair
       '@prisma/client':
         specifier: ^5.22.0
         version: 5.22.0(prisma@5.22.0)
@@ -499,6 +502,25 @@ importers:
       vitest:
         specifier: ^2.1.8
         version: 2.1.9(@types/node@20.19.25)(@vitest/ui@2.1.9)(lightningcss@1.30.2)
+
+  packages/create:
+    dependencies:
+      '@corsair-ai/core':
+        specifier: ^0.1.0
+        version: link:../corsair
+    devDependencies:
+      '@types/node':
+        specifier: ^20.14.2
+        version: 20.19.25
+      commander:
+        specifier: ^12.1.0
+        version: 12.1.0
+      tsx:
+        specifier: ^4.20.6
+        version: 4.20.6
+      typescript:
+        specifier: ^5.9.3
+        version: 5.9.3
 
 packages:
 

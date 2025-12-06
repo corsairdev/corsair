@@ -1,0 +1,44 @@
+{
+  "name": "@corsair-ai/create",
+  "version": "0.1.0",
+  "description": "Initialize Corsair projects",
+  "type": "module",
+  "license": "MIT",
+  "homepage": "https://corsair.dev",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/corsairdev/corsair",
+    "directory": "packages/create"
+  },
+  "keywords": [
+    "typescript",
+    "corsair",
+    "initialize",
+    "project"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsc",
+    "build:watch": "tsc --watch"
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "bin": {
+    "corsair": "./dist/cli/index.js"
+  },
+  "dependencies": {
+    "@corsair-ai/core": "^0.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.2",
+    "commander": "^12.1.0",
+    "tsx": "^4.20.6",
+    "typescript": "^5.9.3"
+  },
+  "packageManager": "pnpm@10.11.1",
+  "files": [
+    "dist"
+  ]
+}
