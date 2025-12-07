@@ -14,8 +14,7 @@
     "db:seed": "tsx db/seed.ts",
     "corsair:generate": "corsair generate",
     "corsair:check": "corsair check",
-    "corsair:migrate": "corsair migrate",
-    "config": "tsx corsair.config.ts"
+    "corsair:migrate": "corsair migrate"
   },
   "dependencies": {
     "@radix-ui/react-avatar": "^1.1.10",

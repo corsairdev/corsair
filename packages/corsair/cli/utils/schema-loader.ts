@@ -1,75 +1,75 @@
-import { existsSync } from "fs";
-import { resolve } from "path";
-import type { ClientConfig } from "pg";
-import { Client } from "pg";
+import { existsSync } from 'fs'
+import { resolve } from 'path'
+import type { ClientConfig } from 'pg'
+import { Client } from 'pg'
 import type {
-	ColumnInfo,
-	ConnectionConfig,
-	SchemaOutput,
-} from "../../config/index.js";
-import { loadEnv } from "../config.js";
+  ColumnInfo,
+  ConnectionConfig,
+  SchemaOutput,
+} from '../../config/index.js'
+import { loadEnv } from '../config.js'
 
 async function loadRuntimeConfig(): Promise<{
-	connection?: ConnectionConfig;
+  connection?: ConnectionConfig
 } | null> {
-	const tsConfigPath = resolve(process.cwd(), "corsair.config.ts");
-	const jsConfigPath = resolve(process.cwd(), "corsair.config.js");
+  const tsConfigPath = resolve(process.cwd(), 'corsair.config.ts')
+  const jsConfigPath = resolve(process.cwd(), 'corsair.config.js')
 
-	try {
-		if (existsSync(jsConfigPath)) {
-			const mod = require(jsConfigPath);
-			const config = mod?.config ?? mod?.default ?? mod;
-			return config;
-		} else if (existsSync(tsConfigPath)) {
-			const mod = require(tsConfigPath);
-			const config = mod?.config ?? mod?.default ?? mod;
-			return config;
-		}
-	} catch (error) {
-		return null;
-	}
+  try {
+    if (existsSync(jsConfigPath)) {
+      const mod = require(jsConfigPath)
+      const config = mod?.config ?? mod?.default ?? mod
+      return config
+    } else if (existsSync(tsConfigPath)) {
+      const mod = require(tsConfigPath)
+      const config = mod?.config ?? mod?.default ?? mod
+      return config
+    }
+  } catch (error) {
+    return null
+  }
 
-	return null;
+  return null
 }
 
 function buildClientConfig(connection: ConnectionConfig): ClientConfig {
-	if (typeof connection === "string") {
-		return { connectionString: connection };
-	}
+  if (typeof connection === 'string') {
+    return { connectionString: connection }
+  }
 
-	return {
-		host: connection.host,
-		port: connection.port ?? 5432,
-		user: connection.username,
-		password: connection.password,
-		database: connection.database,
-		ssl: connection.ssl ? { rejectUnauthorized: false } : false,
-	};
+  return {
+    host: connection.host,
+    port: connection.port ?? 5432,
+    user: connection.username,
+    password: connection.password,
+    database: connection.database,
+    ssl: connection.ssl ? { rejectUnauthorized: false } : false,
+  }
 }
 
 export const loadSchema = async (): Promise<SchemaOutput> => {
-	loadEnv(".env.local");
+  loadEnv('.env.local')
 
-	const runtimeConfig = await loadRuntimeConfig();
-	let clientConfig: ClientConfig;
+  const runtimeConfig = await loadRuntimeConfig()
+  let clientConfig: ClientConfig
 
-	if (runtimeConfig?.connection) {
-		clientConfig = buildClientConfig(runtimeConfig.connection);
-	} else {
-		const dbUrl = process.env.DATABASE_URL;
-		if (!dbUrl) {
-			throw new Error(
-				"DATABASE_URL environment variable is required when connection is not specified in corsair.config",
-			);
-		}
-		clientConfig = { connectionString: dbUrl };
-	}
-	const client = new Client(clientConfig);
+  if (runtimeConfig?.connection) {
+    clientConfig = buildClientConfig(runtimeConfig.connection)
+  } else {
+    const dbUrl = process.env.DATABASE_URL
+    if (!dbUrl) {
+      throw new Error(
+        'DATABASE_URL environment variable is required when connection is not specified in corsair.config'
+      )
+    }
+    clientConfig = { connectionString: dbUrl }
+  }
+  const client = new Client(clientConfig)
 
-	try {
-		await client.connect();
+  try {
+    await client.connect()
 
-		const query = `
+    const query = `
       SELECT
         c.table_name,
         c.column_name,
@@ -98,37 +98,37 @@ export const loadSchema = async (): Promise<SchemaOutput> => {
         c.table_schema = 'public'
       ORDER BY
         c.table_name, c.ordinal_position;
-    `;
+    `
 
-		const result = await client.query(query);
-		const schema: SchemaOutput = {};
+    const result = await client.query(query)
+    const schema: SchemaOutput = {}
 
-		for (const row of result.rows) {
-			const tableName = row.table_name;
-			const columnName = row.column_name;
-			const dataType = row.data_type;
+    for (const row of result.rows) {
+      const tableName = row.table_name
+      const columnName = row.column_name
+      const dataType = row.data_type
 
-			if (!schema[tableName]) {
-				schema[tableName] = {};
-			}
+      if (!schema[tableName]) {
+        schema[tableName] = {}
+      }
 
-			const columnInfo: ColumnInfo = {
-				dataType: dataType,
-			};
+      const columnInfo: ColumnInfo = {
+        type: dataType,
+      }
 
-			if (
-				row.constraint_type === "FOREIGN KEY" &&
-				row.foreign_table_name &&
-				row.foreign_column_name
-			) {
-				columnInfo.references = `${row.foreign_table_name}.${row.foreign_column_name}`;
-			}
+      if (
+        row.constraint_type === 'FOREIGN KEY' &&
+        row.foreign_table_name &&
+        row.foreign_column_name
+      ) {
+        // columnInfo.references = `${row.foreign_table_name}.${row.foreign_column_name}`;
+      }
 
-			schema[tableName][columnName] = columnInfo;
-		}
+      schema[tableName][columnName] = columnInfo
+    }
 
-		return schema;
-	} finally {
-		await client.end();
-	}
-};
+    return schema
+  } finally {
+    await client.end()
+  }
+}

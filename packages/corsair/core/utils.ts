@@ -49,3 +49,7 @@ export function dualKeyOperationsMap<T extends Record<string, any>>(
 
 	return result as FunctionMap<T>;
 }
+
+export const extractSchema = (config: any) => {
+	console.log(config.db._);
+};
