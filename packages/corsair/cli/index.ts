@@ -87,14 +87,6 @@ program
     })
   })
 
-program
-  .command('schema')
-  .description('Get schema')
-  .action(async () => {
-    const { schema } = await import('./schema.js')
-    await schema()
-  })
-
 program.parse()
 
 process.on('unhandledRejection', error => {
