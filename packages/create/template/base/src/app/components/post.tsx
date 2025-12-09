@@ -1,20 +1,33 @@
 "use client";
 
 import { useState } from "react";
+import { useCorsairQuery, useCorsairMutation } from "@/corsair/client";
+import { useQueryClient } from "@tanstack/react-query";
 
-import { api } from "@/trpc/react";
+interface LatestPostProps {
+  userId: string;
+}
 
-export function LatestPost() {
-  const [latestPost] = api.post.getLatest.useSuspenseQuery();
+export function LatestPost({ userId }: LatestPostProps) {
+  const queryClient = useQueryClient();
+  const { data: latestPost } = useCorsairQuery(
+    "get latest post",
+    { userId },
+    { enabled: !!userId },
+  );
 
-  const utils = api.useUtils();
   const [name, setName] = useState("");
-  const createPost = api.post.create.useMutation({
-    onSuccess: async () => {
-      await utils.post.invalidate();
-      setName("");
-    },
-  });
+  const createPost = useCorsairMutation("create post");
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    await createPost.mutateAsync({
+      name,
+      createdById: userId,
+    });
+    await queryClient.invalidateQueries({ queryKey: ["get latest post"] });
+    setName("");
+  };
 
   return (
     <div className="w-full max-w-xs">
@@ -23,13 +36,7 @@ export function LatestPost() {
       ) : (
         <p>You have no posts yet.</p>
       )}
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          createPost.mutate({ name });
-        }}
-        className="flex flex-col gap-2"
-      >
+      <form onSubmit={handleSubmit} className="flex flex-col gap-2">
         <input
           type="text"
           placeholder="Title"

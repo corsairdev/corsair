@@ -52,6 +52,9 @@ BETTER_AUTH_GITHUB_CLIENT_SECRET=""
   content += `
 # Drizzle
 DATABASE_URL="postgresql://postgres:password@localhost:5432/${scopedAppName}"
+
+# Corsair
+NEXT_PUBLIC_CORSAIR_API_ROUTE="/api/corsair"
 `
 
   return content
