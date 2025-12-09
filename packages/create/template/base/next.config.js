@@ -17,6 +17,8 @@ const config = {
     locales: ["en"],
     defaultLocale: "en",
   },
+
+  transpilePackages: ["@corsair-ai/core"],
 };
 
 export default config;

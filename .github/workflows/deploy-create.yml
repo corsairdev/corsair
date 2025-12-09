@@ -35,6 +35,9 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
+      - name: Sync corsair package versions
+        run: pnpm --filter @corsair-ai/create sync:versions
+
       - name: Build packages
         run: pnpm run build
 

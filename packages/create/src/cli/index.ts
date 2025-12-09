@@ -21,8 +21,6 @@ interface CliFlags {
   /** @internal Used in CI. */
   tailwind: boolean
   /** @internal Used in CI. */
-  trpc: boolean
-  /** @internal Used in CI. */
   drizzle: boolean
   /** @internal Used in CI */
   eslint: boolean
@@ -41,7 +39,6 @@ const defaultOptions: CliResults = {
     default: false,
     CI: false,
     tailwind: false,
-    trpc: false,
     drizzle: false,
     importAlias: '@/',
     eslint: false,
@@ -89,12 +86,6 @@ export const runCli = async (): Promise<CliResults> => {
     .option(
       '--drizzle [boolean]',
       'Experimental: Boolean value if we should install Drizzle. Must be used in conjunction with `--CI`.',
-      value => !!value && value !== 'false'
-    )
-    /** @experimental - Used for CI E2E tests. Used in conjunction with `--CI` to skip prompting. */
-    .option(
-      '--trpc [boolean]',
-      'Experimental: Boolean value if we should install tRPC. Must be used in conjunction with `--CI`.',
       value => !!value && value !== 'false'
     )
     /** @experimental - Used for CI E2E tests. Used in conjunction with `--CI` to skip prompting. */
@@ -166,11 +157,6 @@ export const runCli = async (): Promise<CliResults> => {
               validate: validateAppName,
             }),
         }),
-        trpc: () => {
-          return p.confirm({
-            message: 'Would you like to use tRPC?',
-          })
-        },
         ...(!cliResults.flags.noGit && {
           git: () => {
             return p.confirm({

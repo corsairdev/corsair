@@ -10,6 +10,7 @@ export const dependencyVersionMap = {
   // Drizzle
   'drizzle-kit': '^0.30.5',
   'drizzle-orm': '^0.41.0',
+  'drizzle-zod': '^0.5.1',
   'mysql2': '^3.11.0',
   '@planetscale/database': '^1.19.0',
   'postgres': '^3.4.4',
@@ -22,13 +23,11 @@ export const dependencyVersionMap = {
   'clsx': '^2.1.1',
   'tailwind-merge': '^2.5.5',
 
-  // tRPC
+  // React Query (used by Corsair)
+  '@tanstack/react-query': '^5.69.0',
   '@trpc/client': '^11.0.0',
   '@trpc/server': '^11.0.0',
-  '@trpc/react-query': '^11.0.0',
-  '@trpc/next': '^11.0.0',
-  '@tanstack/react-query': '^5.69.0',
-  'superjson': '^2.2.1',
+  '@trpc/tanstack-react-query': '^11.0.0',
   'server-only': '^0.0.1',
 
   // biome
@@ -42,5 +41,10 @@ export const dependencyVersionMap = {
   'eslint-config-next': '^15.2.3',
   'eslint-plugin-drizzle': '^0.2.3',
   'typescript-eslint': '^8.27.0',
+
+  // Corsair
+  '@corsair-ai/core': '^0.1.0',
+  '@corsair-ai/cli': '^0.1.0',
+  'dotenv': '^17.2.3',
 } as const
 export type AvailableDependencies = keyof typeof dependencyVersionMap
