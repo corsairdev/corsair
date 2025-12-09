@@ -1,0 +1,63 @@
+name: Deploy Core to NPM
+
+on:
+  workflow_dispatch:
+    inputs:
+      version_type:
+        description: 'Version type to publish'
+        required: true
+        default: 'latest'
+        type: choice
+        options:
+          - latest
+          - next
+          - canary
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup PNPM
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.20.0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22.x'
+          cache: 'pnpm'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build packages
+        run: pnpm run build
+
+      - name: Run type check
+        run: pnpm run typecheck
+
+      - name: Run linting
+        run: pnpm run lint
+
+      - name: Publish core package to NPM (latest)
+        if: ${{ inputs.version_type == 'latest' }}
+        run: pnpm --filter @corsair-ai/core publish --access public --no-git-checks
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Publish core package to NPM (next)
+        if: ${{ inputs.version_type == 'next' }}
+        run: pnpm --filter @corsair-ai/core publish --access public --tag next --no-git-checks
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Publish core package to NPM (canary)
+        if: ${{ inputs.version_type == 'canary' }}
+        run: pnpm --filter @corsair-ai/core publish --access public --tag canary --no-git-checks
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

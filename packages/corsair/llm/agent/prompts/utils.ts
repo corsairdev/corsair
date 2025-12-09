@@ -11,10 +11,7 @@ export function formattedSchema(schema: SchemaOutput): string {
 		description += `${tableName}:\n`;
 
 		Object.entries(tableSchema).forEach(([columnName, columnInfo]) => {
-			const references = columnInfo.references
-				? ` references ${columnInfo.references}`
-				: "";
-			description += `${columnName}: ${columnInfo.dataType}${references}\n`;
+			description += `${columnName}: ${columnInfo.type}\n`;
 		});
 
 		if (index < Object.keys(schema).length - 1) {
