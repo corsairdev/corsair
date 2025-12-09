@@ -1,14 +1,14 @@
 {
-  "name": "@corsair-ai/create",
+  "name": "@corsair-ai/createlegacy",
   "version": "0.1.1",
-  "description": "The Project Generator for Corsair",
+  "description": "The Legacy Project Generator for Corsair",
   "type": "module",
   "license": "MIT",
   "homepage": "https://corsair.dev",
   "repository": {
     "type": "git",
     "url": "https://github.com/corsairdev/corsair",
-    "directory": "packages/create"
+    "directory": "packages/createlegacy"
   },
   "keywords": [
     "typescript",
