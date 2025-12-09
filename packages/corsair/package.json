@@ -33,15 +33,10 @@
     "test:watch": "vitest",
     "test:ui": "vitest --ui",
     "test:coverage": "vitest run --coverage",
-    "typecheck": "tsc --noEmit",
-    "watch": "tsx watch/index.tsx",
-    "agent-test": "tsx llm/agent/tests/agent-prompt.ts"
+    "typecheck": "tsc --noEmit"
   },
   "main": "./dist/index.js",
   "module": "./dist/index.js",
-  "bin": {
-    "corsair": "./dist/cli/index.js"
-  },
   "exports": {
     ".": {
       "dev-source": "./index.ts",
@@ -73,36 +68,6 @@
       "types": "./dist/config/prisma-postgres.d.ts",
       "default": "./dist/config/prisma-postgres.js"
     },
-    "./llm": {
-      "dev-source": "./llm/index.ts",
-      "types": "./dist/llm/index.d.ts",
-      "default": "./dist/llm/index.js"
-    },
-    "./llm/agent": {
-      "dev-source": "./llm/agent/index.ts",
-      "types": "./dist/llm/agent/index.d.ts",
-      "default": "./dist/llm/agent/index.js"
-    },
-    "./adapters": {
-      "dev-source": "./adapters/index.ts",
-      "types": "./dist/adapters/index.d.ts",
-      "default": "./dist/adapters/index.js"
-    },
-    "./adapters/client": {
-      "dev-source": "./adapters/client/index.ts",
-      "types": "./dist/adapters/client/index.d.ts",
-      "default": "./dist/adapters/client/index.js"
-    },
-    "./adapters/db/postgres/drizzle": {
-      "dev-source": "./adapters/db/postgres/drizzle/index.ts",
-      "types": "./dist/adapters/db/postgres/drizzle/index.d.ts",
-      "default": "./dist/adapters/db/postgres/drizzle/index.js"
-    },
-    "./adapters/db/postgres/prisma": {
-      "dev-source": "./adapters/db/postgres/prisma/index.ts",
-      "types": "./dist/adapters/db/postgres/prisma/index.d.ts",
-      "default": "./dist/adapters/db/postgres/prisma/index.js"
-    },
     "./plugins": {
       "dev-source": "./plugins/index.ts",
       "types": "./dist/plugins/index.d.ts",
@@ -112,11 +77,6 @@
       "dev-source": "./plugins/slack/index.ts",
       "types": "./dist/plugins/slack/index.d.ts",
       "default": "./dist/plugins/slack/index.js"
-    },
-    "./cli": {
-      "dev-source": "./cli/index.ts",
-      "types": "./dist/cli/index.d.ts",
-      "default": "./dist/cli/index.js"
     }
   },
   "typesVersions": {
@@ -139,41 +99,15 @@
       "config/prisma-postgres": [
         "./dist/config/prisma-postgres.d.ts"
       ],
-      "llm": [
-        "./dist/llm/index.d.ts"
-      ],
-      "llm/agent": [
-        "./dist/llm/agent/index.d.ts"
-      ],
-      "adapters": [
-        "./dist/adapters/index.d.ts"
-      ],
-      "adapters/client": [
-        "./dist/adapters/client/index.d.ts"
-      ],
-      "adapters/db/postgres/drizzle": [
-        "./dist/adapters/db/postgres/drizzle/index.d.ts"
-      ],
-      "adapters/db/postgres/prisma": [
-        "./dist/adapters/db/postgres/prisma/index.d.ts"
-      ],
       "plugins": [
         "./dist/plugins/index.d.ts"
       ],
       "plugins/slack": [
         "./dist/plugins/slack/index.d.ts"
-      ],
-      "cli": [
-        "./dist/cli/index.d.ts"
       ]
     }
   },
   "dependencies": {
-    "@ai-sdk/openai": "^2.0.68",
-    "@inquirer/prompts": "^7.0.1",
-    "dotenv": "^16.4.5",
-    "openai": "^4.103.0",
-    "pg": "^8.16.3",
     "superjson": "^2.2.3",
     "tsx": "^4.20.6",
     "zod": "^3.23.8"
@@ -240,32 +174,17 @@
     "@trpc/client": "^11.6.0",
     "@trpc/server": "^11.6.0",
     "@trpc/tanstack-react-query": "^11.6.0",
-    "@types/express": "^4.17.21",
-    "@types/madge": "^5.0.3",
     "@types/node": "^20.14.2",
     "@types/pg": "^8.15.5",
     "@types/prettier": "^3.0.0",
     "@types/react": "^19.2.2",
     "@vitest/coverage-v8": "^2.1.8",
     "@vitest/ui": "^2.1.8",
-    "ai": "^5.0.93",
-    "boxen": "^8.0.1",
-    "chalk": "^5.6.2",
-    "chokidar": "^4.0.3",
-    "commander": "^12.1.0",
     "eslint": "^8.57.0",
-    "express": "^4.19.2",
-    "fastify": "^4.28.0",
-    "hono": "^4.4.7",
-    "ink": "^6.3.1",
-    "ink-spinner": "^5.0.0",
-    "ink-text-input": "^6.0.0",
-    "madge": "^8.0.0",
     "next": "15.5.6",
     "prettier": "^3.3.2",
     "react": "^19.1.0",
     "react-dom": "19.1.0",
-    "ts-morph": "^27.0.2",
     "tsx": "^4.20.6",
     "typescript": "^5.9.3",
     "vitest": "^2.1.8"

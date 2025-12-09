@@ -1,0 +1,1 @@
+export { generateTemplate } from './templates/index.js'

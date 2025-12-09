@@ -11,7 +11,14 @@
     "declarationMap": true,
     "skipLibCheck": true
   },
-  "include": ["./**/*"],
+  "include": [
+    "./index.ts",
+    "./client/**/*",
+    "./config/**/*",
+    "./core/**/*",
+    "./plugins/**/*",
+    "./vitest.config.ts"
+  ],
   "exclude": ["dist", "node_modules", "**/*.test.*", "**/*.spec.*"],
   "references": []
 }
