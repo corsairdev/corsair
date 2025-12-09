@@ -1,44 +1,23 @@
 {
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    /* LANGUAGE COMPILATION OPTIONS */
-    "target": "ES2020",
     "lib": ["DOM", "DOM.Iterable", "ES2021"],
+    "types": ["node"],
     "module": "Node16",
     "moduleResolution": "nodenext",
     "resolveJsonModule": true,
     "allowJs": true,
     "checkJs": true,
-
-    /* EMIT RULES */
     "outDir": "./dist",
-    "noEmit": true,
+    "rootDir": "./",
+    "emitDeclarationOnly": false,
     "declaration": true,
     "declarationMap": true,
-    "sourceMap": true,
-    "removeComments": true,
-
-    /* TYPE CHECKING RULES */
-    "strict": true,
-    "noFallthroughCasesInSwitch": true,
-    "noImplicitOverride": true,
-    "noImplicitReturns": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "useUnknownInCatchVariables": true,
-    "noUncheckedIndexedAccess": true,
-
-    /* OTHER OPTIONS */
-    "allowSyntheticDefaultImports": true,
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
-    "skipLibCheck": true,
-    "useDefineForClassFields": true,
-
-    /* CLI-SPECIFIC OPTIONS */
     "baseUrl": "./",
     "paths": {
-      "~/*": ["./src/*"]
+      "@/*": ["./src/*"]
     }
   },
-  "include": ["src", "tsup.config.ts", "reset.d.ts", "prettier.config.mjs"]
+  "include": ["src", "tsup.config.ts", "reset.d.ts"],
+  "exclude": ["dist", "node_modules", "template"]
 }

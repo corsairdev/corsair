@@ -1,13 +1,13 @@
-import { headers } from "next/headers";
-import Link from "next/link";
-import { redirect } from "next/navigation";
+import { headers } from 'next/headers'
+import Link from 'next/link'
+import { redirect } from 'next/navigation'
 
-import { auth } from "~/server/better-auth";
-import { getSession } from "~/server/better-auth/server";
-import styles from "./index.module.css";
+import { auth } from '@/server/better-auth'
+import { getSession } from '@/server/better-auth/server'
+import styles from './index.module.css'
 
 export default async function Home() {
-  const session = await getSession();
+  const session = await getSession()
 
   return (
     <main className={styles.main}>
@@ -50,16 +50,16 @@ export default async function Home() {
                   type="submit"
                   className={styles.loginButton}
                   formAction={async () => {
-                    "use server";
+                    'use server'
                     const res = await auth.api.signInSocial({
                       body: {
-                        provider: "github",
-                        callbackURL: "/",
+                        provider: 'github',
+                        callbackURL: '/',
                       },
-                    });
+                    })
                     if (!res.url)
-                      throw new Error("No URL returned from signInSocial");
-                    redirect(res.url);
+                      throw new Error('No URL returned from signInSocial')
+                    redirect(res.url)
                   }}
                 >
                   Sign in with Github
@@ -71,9 +71,9 @@ export default async function Home() {
                   type="submit"
                   className={styles.loginButton}
                   formAction={async () => {
-                    "use server";
-                    await auth.api.signOut({ headers: await headers() });
-                    redirect("/");
+                    'use server'
+                    await auth.api.signOut({ headers: await headers() })
+                    redirect('/')
                   }}
                 >
                   Sign out
@@ -84,5 +84,5 @@ export default async function Home() {
         </div>
       </div>
     </main>
-  );
+  )
 }

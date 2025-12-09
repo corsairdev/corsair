@@ -1,12 +1,12 @@
-import { headers } from "next/headers";
-import Link from "next/link";
-import { redirect } from "next/navigation";
+import { headers } from 'next/headers'
+import Link from 'next/link'
+import { redirect } from 'next/navigation'
 
-import { auth } from "~/server/better-auth";
-import { getSession } from "~/server/better-auth/server";
+import { auth } from '@/server/better-auth'
+import { getSession } from '@/server/better-auth/server'
 
 export default async function Home() {
-  const session = await getSession();
+  const session = await getSession()
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c] text-white">
@@ -49,17 +49,17 @@ export default async function Home() {
                   type="submit"
                   className="rounded-full bg-white/10 px-10 py-3 font-semibold no-underline transition hover:bg-white/20"
                   formAction={async () => {
-                    "use server";
+                    'use server'
                     const res = await auth.api.signInSocial({
                       body: {
-                        provider: "github",
-                        callbackURL: "/",
+                        provider: 'github',
+                        callbackURL: '/',
                       },
-                    });
+                    })
                     if (!res.url) {
-                      throw new Error("No URL returned from signInSocial");
+                      throw new Error('No URL returned from signInSocial')
                     }
-                    redirect(res.url);
+                    redirect(res.url)
                   }}
                 >
                   Sign in with Github
@@ -71,11 +71,11 @@ export default async function Home() {
                   type="submit"
                   className="rounded-full bg-white/10 px-10 py-3 font-semibold no-underline transition hover:bg-white/20"
                   formAction={async () => {
-                    "use server";
+                    'use server'
                     await auth.api.signOut({
                       headers: await headers(),
-                    });
-                    redirect("/");
+                    })
+                    redirect('/')
                   }}
                 >
                   Sign out
@@ -86,5 +86,5 @@ export default async function Home() {
         </div>
       </div>
     </main>
-  );
+  )
 }

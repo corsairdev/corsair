@@ -1,45 +1,45 @@
-import fs from 'fs-extra'
-import path from 'path'
-import type { ProjectConfig } from '../../cli/create-project.js'
+import fs from "fs-extra";
+import path from "path";
+import type { ProjectConfig } from "../../cli/create-project.js";
 
 export async function generateCorsairSetup(
-  projectPath: string,
-  config: ProjectConfig
+	projectPath: string,
+	config: ProjectConfig,
 ): Promise<void> {
-  const templates = getCorsairTemplates(config)
+	const templates = getCorsairTemplates(config);
 
-  await fs.writeFile(
-    path.join(projectPath, 'corsair.config.ts'),
-    templates.config
-  )
-  await fs.writeFile(
-    path.join(projectPath, 'corsair', 'procedure.ts'),
-    templates.procedure
-  )
-  await fs.writeFile(
-    path.join(projectPath, 'corsair', 'client.ts'),
-    templates.client
-  )
-  await fs.writeFile(
-    path.join(projectPath, 'corsair', 'index.ts'),
-    templates.index
-  )
+	await fs.writeFile(
+		path.join(projectPath, "corsair.config.ts"),
+		templates.config,
+	);
+	await fs.writeFile(
+		path.join(projectPath, "corsair", "procedure.ts"),
+		templates.procedure,
+	);
+	await fs.writeFile(
+		path.join(projectPath, "corsair", "client.ts"),
+		templates.client,
+	);
+	await fs.writeFile(
+		path.join(projectPath, "corsair", "index.ts"),
+		templates.index,
+	);
 
-  await fs.ensureDir(path.join(projectPath, 'corsair', 'queries'))
-  await fs.ensureDir(path.join(projectPath, 'corsair', 'mutations'))
-  await fs.writeFile(
-    path.join(projectPath, 'corsair', 'queries', 'index.ts'),
-    templates.queriesIndex
-  )
-  await fs.writeFile(
-    path.join(projectPath, 'corsair', 'mutations', 'index.ts'),
-    templates.mutationsIndex
-  )
+	await fs.ensureDir(path.join(projectPath, "corsair", "queries"));
+	await fs.ensureDir(path.join(projectPath, "corsair", "mutations"));
+	await fs.writeFile(
+		path.join(projectPath, "corsair", "queries", "index.ts"),
+		templates.queriesIndex,
+	);
+	await fs.writeFile(
+		path.join(projectPath, "corsair", "mutations", "index.ts"),
+		templates.mutationsIndex,
+	);
 }
 
 function getCorsairTemplates(config: ProjectConfig) {
-  return {
-    config: `import type { CorsairConfig } from "@corsair-ai/core";
+	return {
+		config: `import type { CorsairConfig } from "@corsair-ai/core";
 import { config as dotenvConfig } from "dotenv";
 import { db } from "./db";
 
@@ -67,7 +67,7 @@ export const config = {
 
 export type Config = typeof config;
 `,
-    procedure: `import { createCorsairTRPC } from "@corsair-ai/core";
+		procedure: `import { createCorsairTRPC } from "@corsair-ai/core";
 import { createPlugins } from "@corsair-ai/core/plugins";
 import { config } from "@/corsair.config";
 
@@ -82,7 +82,7 @@ export type DatabaseContext = {
 const t = createCorsairTRPC<DatabaseContext>();
 export const { router, procedure } = t;
 `,
-    client: `import { createCorsairClient, createCorsairHooks } from "@corsair-ai/core";
+		client: `import { createCorsairClient, createCorsairHooks } from "@corsair-ai/core";
 import type { CorsairRouter } from "@/corsair";
 
 const getBaseUrl = () => {
@@ -114,7 +114,7 @@ export type QueryOutputs = typeof types.QueryOutputs;
 export type MutationInputs = typeof types.MutationInputs;
 export type MutationOutputs = typeof types.MutationOutputs;
 `,
-    index: `import { dualKeyOperationsMap } from "@corsair-ai/core";
+		index: `import { dualKeyOperationsMap } from "@corsair-ai/core";
 import { router } from "@/corsair/procedure";
 import * as mutations from "@/corsair/mutations";
 import * as queries from "@/corsair/queries";
@@ -126,15 +126,15 @@ export const corsairRouter = router({
 
 export type CorsairRouter = typeof corsairRouter;
 `,
-    queriesIndex: `// This file is managed by Corsair CLI
+		queriesIndex: `// This file is managed by Corsair CLI
 // Do not edit manually - use 'corsair query' command instead
 
 export {};
 `,
-    mutationsIndex: `// This file is managed by Corsair CLI
+		mutationsIndex: `// This file is managed by Corsair CLI
 // Do not edit manually - use 'corsair mutation' command instead
 
 export {};
 `,
-  }
+	};
 }

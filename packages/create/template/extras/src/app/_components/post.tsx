@@ -1,21 +1,21 @@
-"use client";
+'use client'
 
-import { useState } from "react";
+import { useState } from 'react'
 
-import { api } from "~/trpc/react";
-import styles from "../index.module.css";
+import { api } from '@/trpc/react'
+import styles from '../index.module.css'
 
 export function LatestPost() {
-  const [latestPost] = api.post.getLatest.useSuspenseQuery();
+  const [latestPost] = api.post.getLatest.useSuspenseQuery()
 
-  const utils = api.useUtils();
-  const [name, setName] = useState("");
+  const utils = api.useUtils()
+  const [name, setName] = useState('')
   const createPost = api.post.create.useMutation({
     onSuccess: async () => {
-      await utils.post.invalidate();
-      setName("");
+      await utils.post.invalidate()
+      setName('')
     },
-  });
+  })
 
   return (
     <div className={styles.showcaseContainer}>
@@ -28,9 +28,9 @@ export function LatestPost() {
       )}
 
       <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          createPost.mutate({ name });
+        onSubmit={e => {
+          e.preventDefault()
+          createPost.mutate({ name })
         }}
         className={styles.form}
       >
@@ -38,7 +38,7 @@ export function LatestPost() {
           type="text"
           placeholder="Title"
           value={name}
-          onChange={(e) => setName(e.target.value)}
+          onChange={e => setName(e.target.value)}
           className={styles.input}
         />
         <button
@@ -46,9 +46,9 @@ export function LatestPost() {
           className={styles.submitButton}
           disabled={createPost.isPending}
         >
-          {createPost.isPending ? "Submitting..." : "Submit"}
+          {createPost.isPending ? 'Submitting...' : 'Submit'}
         </button>
       </form>
     </div>
-  );
+  )
 }

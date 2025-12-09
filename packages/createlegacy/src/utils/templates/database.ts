@@ -1,49 +1,49 @@
-import fs from 'fs-extra'
-import path from 'path'
-import type { ProjectConfig } from '../../cli/create-project.js'
+import fs from "fs-extra";
+import path from "path";
+import type { ProjectConfig } from "../../cli/create-project.js";
 
 export async function generateDatabaseFiles(
-  projectPath: string,
-  config: ProjectConfig
+	projectPath: string,
+	config: ProjectConfig,
 ): Promise<void> {
-  if (config.orm === 'prisma') {
-    await generatePrismaFiles(projectPath)
-  } else {
-    await generateDrizzleFiles(projectPath)
-  }
+	if (config.orm === "prisma") {
+		await generatePrismaFiles(projectPath);
+	} else {
+		await generateDrizzleFiles(projectPath);
+	}
 }
 
 async function generatePrismaFiles(projectPath: string): Promise<void> {
-  const templates = getPrismaTemplates()
-  await fs.writeFile(
-    path.join(projectPath, 'prisma', 'schema.prisma'),
-    templates.schema
-  )
-  await fs.writeFile(
-    path.join(projectPath, 'db', 'index.ts'),
-    templates.dbIndex
-  )
+	const templates = getPrismaTemplates();
+	await fs.writeFile(
+		path.join(projectPath, "prisma", "schema.prisma"),
+		templates.schema,
+	);
+	await fs.writeFile(
+		path.join(projectPath, "db", "index.ts"),
+		templates.dbIndex,
+	);
 }
 
 async function generateDrizzleFiles(projectPath: string): Promise<void> {
-  const templates = getDrizzleTemplates()
-  await fs.writeFile(
-    path.join(projectPath, 'db', 'schema.ts'),
-    templates.schema
-  )
-  await fs.writeFile(
-    path.join(projectPath, 'db', 'index.ts'),
-    templates.dbIndex
-  )
-  await fs.writeFile(
-    path.join(projectPath, 'drizzle.config.ts'),
-    templates.config
-  )
+	const templates = getDrizzleTemplates();
+	await fs.writeFile(
+		path.join(projectPath, "db", "schema.ts"),
+		templates.schema,
+	);
+	await fs.writeFile(
+		path.join(projectPath, "db", "index.ts"),
+		templates.dbIndex,
+	);
+	await fs.writeFile(
+		path.join(projectPath, "drizzle.config.ts"),
+		templates.config,
+	);
 }
 
 function getPrismaTemplates() {
-  return {
-    schema: `// This is your Prisma schema file,
+	return {
+		schema: `// This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
@@ -98,7 +98,7 @@ model Comment {
   @@map("comments")
 }
 `,
-    dbIndex: `import { PrismaClient } from "@prisma/client";
+		dbIndex: `import { PrismaClient } from "@prisma/client";
 
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;
@@ -110,12 +110,12 @@ if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = db;
 
 export type DB = typeof db;
 `,
-  }
+	};
 }
 
 function getDrizzleTemplates() {
-  return {
-    schema: `import { relations } from "drizzle-orm";
+	return {
+		schema: `import { relations } from "drizzle-orm";
 import {
   boolean,
   pgTable,
@@ -176,7 +176,7 @@ export const commentsRelations = relations(comments, ({ one }) => ({
   }),
 }));
 `,
-    dbIndex: `import { drizzle } from "drizzle-orm/node-postgres";
+		dbIndex: `import { drizzle } from "drizzle-orm/node-postgres";
 import { Pool } from "pg";
 import * as schema from "./schema";
 
@@ -188,7 +188,7 @@ export const db = drizzle(pool, { schema });
 
 export type DB = typeof db;
 `,
-    config: `import type { Config } from "drizzle-kit";
+		config: `import type { Config } from "drizzle-kit";
 import { config } from 'dotenv'
 config({ path: ".env.local" });
 
@@ -202,5 +202,5 @@ export default {
   },
 } satisfies Config;
 `,
-  }
+	};
 }

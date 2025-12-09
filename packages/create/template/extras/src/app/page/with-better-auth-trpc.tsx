@@ -1,19 +1,19 @@
-import { headers } from "next/headers";
-import Link from "next/link";
-import { redirect } from "next/navigation";
+import { headers } from 'next/headers'
+import Link from 'next/link'
+import { redirect } from 'next/navigation'
 
-import { LatestPost } from "~/app/_components/post";
-import { auth } from "~/server/better-auth";
-import { getSession } from "~/server/better-auth/server";
-import { api, HydrateClient } from "~/trpc/server";
-import styles from "./index.module.css";
+import { LatestPost } from '@/app/_components/post'
+import { auth } from '@/server/better-auth'
+import { getSession } from '@/server/better-auth/server'
+import { api, HydrateClient } from '@/trpc/server'
+import styles from './index.module.css'
 
 export default async function Home() {
-  const hello = await api.post.hello({ text: "from tRPC" });
-  const session = await getSession();
+  const hello = await api.post.hello({ text: 'from tRPC' })
+  const session = await getSession()
 
   if (session?.user) {
-    void api.post.getLatest.prefetch();
+    void api.post.getLatest.prefetch()
   }
 
   return (
@@ -49,7 +49,7 @@ export default async function Home() {
           </div>
           <div className={styles.showcaseContainer}>
             <p className={styles.showcaseText}>
-              {hello ? hello.greeting : "Loading tRPC query..."}
+              {hello ? hello.greeting : 'Loading tRPC query...'}
             </p>
 
             <div className={styles.authContainer}>
@@ -62,16 +62,16 @@ export default async function Home() {
                     type="submit"
                     className={styles.loginButton}
                     formAction={async () => {
-                      "use server";
+                      'use server'
                       const res = await auth.api.signInSocial({
                         body: {
-                          provider: "github",
-                          callbackURL: "/",
+                          provider: 'github',
+                          callbackURL: '/',
                         },
-                      });
+                      })
                       if (!res.url)
-                        throw new Error("No URL returned from signInSocial");
-                      redirect(res.url);
+                        throw new Error('No URL returned from signInSocial')
+                      redirect(res.url)
                     }}
                   >
                     Sign in with Github
@@ -83,9 +83,9 @@ export default async function Home() {
                     type="submit"
                     className={styles.loginButton}
                     formAction={async () => {
-                      "use server";
-                      await auth.api.signOut({ headers: await headers() });
-                      redirect("/");
+                      'use server'
+                      await auth.api.signOut({ headers: await headers() })
+                      redirect('/')
                     }}
                   >
                     Sign out
@@ -99,5 +99,5 @@ export default async function Home() {
         </div>
       </main>
     </HydrateClient>
-  );
+  )
 }

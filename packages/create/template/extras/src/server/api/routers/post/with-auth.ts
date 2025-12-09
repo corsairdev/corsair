@@ -1,18 +1,18 @@
-import { z } from "zod";
+import { z } from 'zod'
 
 import {
   createTRPCRouter,
   protectedProcedure,
   publicProcedure,
-} from "~/server/api/trpc";
+} from '@/server/api/trpc'
 
 // This is a simple router without database integration
 // In production, you would connect this to your database
 
 let post = {
   id: 1,
-  name: "Hello World",
-};
+  name: 'Hello World',
+}
 
 export const postRouter = createTRPCRouter({
   hello: publicProcedure
@@ -20,21 +20,21 @@ export const postRouter = createTRPCRouter({
     .query(({ input }) => {
       return {
         greeting: `Hello ${input.text}`,
-      };
+      }
     }),
 
   create: protectedProcedure
     .input(z.object({ name: z.string().min(1) }))
     .mutation(async ({ input }) => {
-      post = { id: post.id + 1, name: input.name };
-      return post;
+      post = { id: post.id + 1, name: input.name }
+      return post
     }),
 
   getLatest: protectedProcedure.query(() => {
-    return post;
+    return post
   }),
 
   getSecretMessage: protectedProcedure.query(() => {
-    return "you can now see this secret message!";
+    return 'you can now see this secret message!'
   }),
-});
+})

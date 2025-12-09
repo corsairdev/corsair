@@ -1,18 +1,18 @@
-import { headers } from "next/headers";
-import Link from "next/link";
-import { redirect } from "next/navigation";
+import { headers } from 'next/headers'
+import Link from 'next/link'
+import { redirect } from 'next/navigation'
 
-import { LatestPost } from "~/app/_components/post";
-import { auth } from "~/server/better-auth";
-import { getSession } from "~/server/better-auth/server";
-import { api, HydrateClient } from "~/trpc/server";
+import { LatestPost } from '@/app/_components/post'
+import { auth } from '@/server/better-auth'
+import { getSession } from '@/server/better-auth/server'
+import { api, HydrateClient } from '@/trpc/server'
 
 export default async function Home() {
-  const hello = await api.post.hello({ text: "from tRPC" });
-  const session = await getSession();
+  const hello = await api.post.hello({ text: 'from tRPC' })
+  const session = await getSession()
 
   if (session) {
-    void api.post.getLatest.prefetch();
+    void api.post.getLatest.prefetch()
   }
 
   return (
@@ -48,7 +48,7 @@ export default async function Home() {
           </div>
           <div className="flex flex-col items-center gap-2">
             <p className="text-2xl text-white">
-              {hello ? hello.greeting : "Loading tRPC query..."}
+              {hello ? hello.greeting : 'Loading tRPC query...'}
             </p>
 
             <div className="flex flex-col items-center justify-center gap-4">
@@ -61,17 +61,17 @@ export default async function Home() {
                     type="submit"
                     className="rounded-full bg-white/10 px-10 py-3 font-semibold no-underline transition hover:bg-white/20"
                     formAction={async () => {
-                      "use server";
+                      'use server'
                       const res = await auth.api.signInSocial({
                         body: {
-                          provider: "github",
-                          callbackURL: "/",
+                          provider: 'github',
+                          callbackURL: '/',
                         },
-                      });
+                      })
                       if (!res.url) {
-                        throw new Error("No URL returned from signInSocial");
+                        throw new Error('No URL returned from signInSocial')
                       }
-                      redirect(res.url);
+                      redirect(res.url)
                     }}
                   >
                     Sign in with Github
@@ -83,11 +83,11 @@ export default async function Home() {
                     type="submit"
                     className="rounded-full bg-white/10 px-10 py-3 font-semibold no-underline transition hover:bg-white/20"
                     formAction={async () => {
-                      "use server";
+                      'use server'
                       await auth.api.signOut({
                         headers: await headers(),
-                      });
-                      redirect("/");
+                      })
+                      redirect('/')
                     }}
                   >
                     Sign out
@@ -101,5 +101,5 @@ export default async function Home() {
         </div>
       </main>
     </HydrateClient>
-  );
+  )
 }
