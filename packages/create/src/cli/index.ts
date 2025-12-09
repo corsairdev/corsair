@@ -3,7 +3,6 @@ import chalk from 'chalk'
 import { Command } from 'commander'
 
 import { CREATE_T3_APP, DEFAULT_APP_NAME } from '@/consts.js'
-import type { AvailablePackages } from '@/installers/index.js'
 import { getVersion } from '@/utils/getT3Version.js'
 import { getUserPkgManager } from '@/utils/getUserPkgManager.js'
 import { IsTTYError } from '@/utils/isTTYError.js'
@@ -24,24 +23,18 @@ interface CliFlags {
   /** @internal Used in CI. */
   trpc: boolean
   /** @internal Used in CI. */
-  prisma: boolean
-  /** @internal Used in CI. */
   drizzle: boolean
   /** @internal Used in CI */
   eslint: boolean
-  /** @internal Used in CI */
-  biome: boolean
 }
 
 interface CliResults {
   appName: string
-  packages: AvailablePackages[]
   flags: CliFlags
 }
 
 const defaultOptions: CliResults = {
   appName: DEFAULT_APP_NAME,
-  packages: ['betterAuth', 'prisma', 'tailwind', 'trpc', 'eslint'],
   flags: {
     noGit: false,
     noInstall: false,
@@ -49,11 +42,9 @@ const defaultOptions: CliResults = {
     CI: false,
     tailwind: false,
     trpc: false,
-    prisma: false,
     drizzle: false,
     importAlias: '@/',
     eslint: false,
-    biome: false,
   },
 }
 
@@ -96,12 +87,6 @@ export const runCli = async (): Promise<CliResults> => {
     )
     /** @experimental - Used for CI E2E tests. Used in conjunction with `--CI` to skip prompting. */
     .option(
-      '--prisma [boolean]',
-      'Experimental: Boolean value if we should install Prisma. Must be used in conjunction with `--CI`.',
-      value => !!value && value !== 'false'
-    )
-    /** @experimental - Used for CI E2E tests. Used in conjunction with `--CI` to skip prompting. */
-    .option(
       '--drizzle [boolean]',
       'Experimental: Boolean value if we should install Drizzle. Must be used in conjunction with `--CI`.',
       value => !!value && value !== 'false'
@@ -121,11 +106,6 @@ export const runCli = async (): Promise<CliResults> => {
     .option(
       '--eslint [boolean]',
       'Experimental: Boolean value if we should install eslint and prettier. Must be used in conjunction with `--CI`.',
-      value => !!value && value !== 'false'
-    )
-    .option(
-      '--biome [boolean]',
-      'Experimental: Boolean value if we should install biome. Must be used in conjunction with `--CI`.',
       value => !!value && value !== 'false'
     )
     /** END CI-FLAGS */
@@ -158,30 +138,6 @@ export const runCli = async (): Promise<CliResults> => {
 
   cliResults.flags = program.opts()
 
-  /** @internal Used for CI E2E tests. */
-  if (cliResults.flags.CI) {
-    cliResults.packages = ['betterAuth'] // Always include betterAuth
-    if (cliResults.flags.trpc) cliResults.packages.push('trpc')
-    if (cliResults.flags.tailwind) cliResults.packages.push('tailwind')
-    if (cliResults.flags.prisma) cliResults.packages.push('prisma')
-    if (cliResults.flags.drizzle) cliResults.packages.push('drizzle')
-    if (cliResults.flags.eslint) cliResults.packages.push('eslint')
-    if (cliResults.flags.biome) cliResults.packages.push('biome')
-    if (cliResults.flags.prisma && cliResults.flags.drizzle) {
-      // We test a matrix of all possible combination of packages in CI. Checking for impossible
-      // combinations here and exiting gracefully is easier than changing the CI matrix to exclude
-      // invalid combinations. We are using an "OK" exit code so CI continues with the next combination.
-      logger.warn('Incompatible combination Prisma + Drizzle. Exiting.')
-      process.exit(0)
-    }
-    if (cliResults.flags.biome && cliResults.flags.eslint) {
-      logger.warn('Incompatible combination Biome + ESLint. Exiting.')
-      process.exit(0)
-    }
-
-    return cliResults
-  }
-
   if (cliResults.flags.default) {
     return cliResults
   }
@@ -210,35 +166,9 @@ export const runCli = async (): Promise<CliResults> => {
               validate: validateAppName,
             }),
         }),
-        styling: () => {
-          return p.confirm({
-            message: 'Will you be using Tailwind CSS for styling?',
-          })
-        },
         trpc: () => {
           return p.confirm({
             message: 'Would you like to use tRPC?',
-          })
-        },
-        database: () => {
-          return p.select({
-            message: 'What database ORM would you like to use?',
-            options: [
-              { value: 'prisma', label: 'Prisma' },
-              { value: 'drizzle', label: 'Drizzle' },
-            ],
-            initialValue: 'drizzle',
-          })
-        },
-        linter: () => {
-          return p.select({
-            message:
-              'Would you like to use ESLint and Prettier or Biome for linting and formatting?',
-            options: [
-              { value: 'eslint', label: 'ESLint/Prettier' },
-              { value: 'biome', label: 'Biome' },
-            ],
-            initialValue: 'eslint',
           })
         },
         ...(!cliResults.flags.noGit && {
@@ -276,18 +206,8 @@ export const runCli = async (): Promise<CliResults> => {
       }
     )
 
-    // Always include betterAuth since it's required
-    const packages: AvailablePackages[] = ['betterAuth']
-    if (project.styling) packages.push('tailwind')
-    if (project.trpc) packages.push('trpc')
-    if (project.database === 'prisma') packages.push('prisma')
-    if (project.database === 'drizzle') packages.push('drizzle')
-    if (project.linter === 'eslint') packages.push('eslint')
-    if (project.linter === 'biome') packages.push('biome')
-
     return {
       appName: project.name ?? cliResults.appName,
-      packages,
       flags: {
         ...cliResults.flags,
         noGit: !project.git || cliResults.flags.noGit,
