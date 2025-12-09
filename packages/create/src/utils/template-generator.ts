@@ -1,143 +1,160 @@
-import path from 'path';
-import fs from 'fs-extra';
-import type { ProjectConfig } from '../cli/create-project.js';
+import fs from "fs-extra";
+import path from "path";
+import type { ProjectConfig } from "../cli/create-project.js";
 
-export async function generateTemplate(projectPath: string, config: ProjectConfig): Promise<void> {
-  // Ensure project directory exists
-  await fs.ensureDir(projectPath);
+export async function generateTemplate(
+	projectPath: string,
+	config: ProjectConfig,
+): Promise<void> {
+	// Ensure project directory exists
+	await fs.ensureDir(projectPath);
 
-  // Generate package.json
-  await generatePackageJson(projectPath, config);
+	// Generate package.json
+	await generatePackageJson(projectPath, config);
 
-  // Generate basic project structure
-  await generateProjectStructure(projectPath, config);
+	// Generate basic project structure
+	await generateProjectStructure(projectPath, config);
 
-  // Generate environment files
-  await generateEnvironmentFiles(projectPath);
+	// Generate environment files
+	await generateEnvironmentFiles(projectPath);
 
-  // Generate configuration files
-  await generateConfigFiles(projectPath, config);
+	// Generate configuration files
+	await generateConfigFiles(projectPath, config);
 
-  // Generate database files
-  await generateDatabaseFiles(projectPath, config);
+	// Generate database files
+	await generateDatabaseFiles(projectPath, config);
 
-  // Generate Corsair setup
-  await generateCorsairSetup(projectPath, config);
+	// Generate Corsair setup
+	await generateCorsairSetup(projectPath, config);
 
-  // Generate Next.js app structure
-  await generateNextjsStructure(projectPath, config);
+	// Generate Next.js app structure
+	await generateNextjsStructure(projectPath, config);
 
-  // Generate UI components
-  await generateUIComponents(projectPath);
+	// Generate UI components
+	await generateUIComponents(projectPath);
 
-  // Generate seed data
-  await generateSeedData(projectPath, config);
+	// Generate seed data
+	await generateSeedData(projectPath, config);
 
-  // Generate README and documentation
-  await generateDocumentation(projectPath, config);
+	// Generate README and documentation
+	await generateDocumentation(projectPath, config);
 }
 
-async function generatePackageJson(projectPath: string, config: ProjectConfig): Promise<void> {
-  const packageJson = {
-    name: config.projectName,
-    version: "0.1.0",
-    private: true,
-    scripts: {
-      dev: "next dev",
-      build: "next build",
-      start: "next start",
-      lint: "eslint",
-      ...(config.orm === 'prisma' ? {
-        "db:generate": "prisma generate",
-        "db:push": "prisma db push",
-        "db:migrate": "prisma migrate dev",
-        "db:studio": "prisma studio",
-        "db:seed": "tsx db/seed.ts",
-      } : {
-        "db:generate": "drizzle-kit generate",
-        "db:push": "drizzle-kit push",
-        "db:migrate": "drizzle-kit migrate",
-        "db:studio": "drizzle-kit studio",
-        "db:seed": "tsx db/seed.ts",
-      }),
-      "corsair:generate": "corsair generate",
-      "corsair:check": "corsair check",
-      "corsair:migrate": "corsair migrate",
-      "config": "tsx corsair.config.ts"
-    },
-    dependencies: {
-      "@corsair-ai/core": "workspace:^",
-      ...(config.orm === 'prisma' ? {
-        "@prisma/client": "^5.22.0",
-      } : {
-        "drizzle-orm": "^0.31.2",
-        "drizzle-zod": "^0.5.1",
-        "pg": "^8.11.0",
-      }),
-      "@radix-ui/react-avatar": "^1.1.10",
-      "@radix-ui/react-dialog": "^1.1.15",
-      "@radix-ui/react-select": "^2.2.6",
-      "@radix-ui/react-slot": "^1.2.3",
-      "class-variance-authority": "^0.7.1",
-      "clsx": "^2.1.1",
-      "corsair": "link:../../packages/corsair",
-      "dotenv": "^17.2.3",
-      "lucide-react": "^0.546.0",
-      "next": "15.5.6",
-      "react": "19.1.0",
-      "react-dom": "19.1.0",
-      "server-only": "^0.0.1",
-      "tailwind-merge": "^3.3.1",
-      "tsx": "^4.20.6",
-      "zod": "^3.23.8"
-    },
-    devDependencies: {
-      "@eslint/eslintrc": "^3",
-      "@tailwindcss/postcss": "^4",
-      "@types/node": "^20",
-      "@types/react": "^19",
-      "@types/react-dom": "^19",
-      ...(config.orm === 'prisma' ? {
-        "prisma": "^5.22.0",
-      } : {
-        "@types/pg": "^8.11.0",
-        "drizzle-kit": "^0.22.7",
-      }),
-      "eslint": "^9",
-      "eslint-config-next": "15.5.6",
-      "tailwindcss": "^4",
-      "tw-animate-css": "^1.4.0",
-      "typescript": "^5"
-    }
-  };
+async function generatePackageJson(
+	projectPath: string,
+	config: ProjectConfig,
+): Promise<void> {
+	const packageJson = {
+		name: config.projectName,
+		version: "0.1.0",
+		private: true,
+		scripts: {
+			dev: "next dev",
+			build: "next build",
+			start: "next start",
+			lint: "eslint",
+			...(config.orm === "prisma"
+				? {
+						"db:generate": "prisma generate",
+						"db:push": "prisma db push",
+						"db:migrate": "prisma migrate dev",
+						"db:studio": "prisma studio",
+						"db:seed": "tsx db/seed.ts",
+					}
+				: {
+						"db:generate": "drizzle-kit generate",
+						"db:push": "drizzle-kit push",
+						"db:migrate": "drizzle-kit migrate",
+						"db:studio": "drizzle-kit studio",
+						"db:seed": "tsx db/seed.ts",
+					}),
+			"corsair:generate": "corsair generate",
+			"corsair:check": "corsair check",
+			"corsair:migrate": "corsair migrate",
+			config: "tsx corsair.config.ts",
+		},
+		dependencies: {
+			"@corsair-ai/core": "workspace:^",
+			...(config.orm === "prisma"
+				? {
+						"@prisma/client": "^5.22.0",
+					}
+				: {
+						"drizzle-orm": "^0.31.2",
+						"drizzle-zod": "^0.5.1",
+						pg: "^8.11.0",
+					}),
+			"@radix-ui/react-avatar": "^1.1.10",
+			"@radix-ui/react-dialog": "^1.1.15",
+			"@radix-ui/react-select": "^2.2.6",
+			"@radix-ui/react-slot": "^1.2.3",
+			"class-variance-authority": "^0.7.1",
+			clsx: "^2.1.1",
+			corsair: "link:../../packages/corsair",
+			dotenv: "^17.2.3",
+			"lucide-react": "^0.546.0",
+			next: "15.5.6",
+			react: "19.1.0",
+			"react-dom": "19.1.0",
+			"server-only": "^0.0.1",
+			"tailwind-merge": "^3.3.1",
+			tsx: "^4.20.6",
+			zod: "^3.23.8",
+		},
+		devDependencies: {
+			"@eslint/eslintrc": "^3",
+			"@tailwindcss/postcss": "^4",
+			"@types/node": "^20",
+			"@types/react": "^19",
+			"@types/react-dom": "^19",
+			...(config.orm === "prisma"
+				? {
+						prisma: "^5.22.0",
+					}
+				: {
+						"@types/pg": "^8.11.0",
+						"drizzle-kit": "^0.22.7",
+					}),
+			eslint: "^9",
+			"eslint-config-next": "15.5.6",
+			tailwindcss: "^4",
+			"tw-animate-css": "^1.4.0",
+			typescript: "^5",
+		},
+	};
 
-  await fs.writeJson(path.join(projectPath, 'package.json'), packageJson, { spaces: 2 });
+	await fs.writeJson(path.join(projectPath, "package.json"), packageJson, {
+		spaces: 2,
+	});
 }
 
-async function generateProjectStructure(projectPath: string, config: ProjectConfig): Promise<void> {
-  const directories = [
-    'app',
-    'components',
-    'corsair',
-    'db',
-    'lib',
-    'public',
-    'data'
-  ];
+async function generateProjectStructure(
+	projectPath: string,
+	config: ProjectConfig,
+): Promise<void> {
+	const directories = [
+		"app",
+		"components",
+		"corsair",
+		"db",
+		"lib",
+		"public",
+		"data",
+	];
 
-  if (config.orm === 'prisma') {
-    directories.push('prisma');
-  } else {
-    directories.push('drizzle');
-  }
+	if (config.orm === "prisma") {
+		directories.push("prisma");
+	} else {
+		directories.push("drizzle");
+	}
 
-  for (const dir of directories) {
-    await fs.ensureDir(path.join(projectPath, dir));
-  }
+	for (const dir of directories) {
+		await fs.ensureDir(path.join(projectPath, dir));
+	}
 }
 
 async function generateEnvironmentFiles(projectPath: string): Promise<void> {
-  const envExample = `# Database
+	const envExample = `# Database
 DATABASE_URL="postgresql://username:password@localhost:5432/mydb"
 
 # Next.js
@@ -148,173 +165,268 @@ NEXT_PUBLIC_CORSAIR_API_ROUTE="/api/corsair"
 # NEXTAUTH_URL=""
 `;
 
-  const envLocal = `# Database (copy from .env.example and update)
+	const envLocal = `# Database (copy from .env.example and update)
 DATABASE_URL="postgresql://username:password@localhost:5432/mydb"
 
 # Next.js
 NEXT_PUBLIC_CORSAIR_API_ROUTE="/api/corsair"
 `;
 
-  await fs.writeFile(path.join(projectPath, '.env.example'), envExample);
-  await fs.writeFile(path.join(projectPath, '.env.local'), envLocal);
+	await fs.writeFile(path.join(projectPath, ".env.example"), envExample);
+	await fs.writeFile(path.join(projectPath, ".env.local"), envLocal);
 }
 
-async function generateConfigFiles(projectPath: string, config: ProjectConfig): Promise<void> {
-  // Next.js config
-  const nextConfig = `import type { NextConfig } from 'next'
+async function generateConfigFiles(
+	projectPath: string,
+	config: ProjectConfig,
+): Promise<void> {
+	// Next.js config
+	const nextConfig = `import type { NextConfig } from 'next'
 
 const nextConfig: NextConfig = {
   experimental: {
-    serverComponentsExternalPackages: [${config.orm === 'prisma' ? '"@prisma/client"' : '"drizzle-orm"'}, "corsair"]
+    serverComponentsExternalPackages: [${config.orm === "prisma" ? '"@prisma/client"' : '"drizzle-orm"'}, "corsair"]
   }
 }
 
 export default nextConfig
 `;
 
-  await fs.writeFile(path.join(projectPath, 'next.config.ts'), nextConfig);
+	await fs.writeFile(path.join(projectPath, "next.config.ts"), nextConfig);
 
-  // TypeScript config
-  const tsConfig = {
-    compilerOptions: {
-      lib: ["dom", "dom.iterable", "ES6"],
-      allowJs: true,
-      skipLibCheck: true,
-      strict: true,
-      noEmit: true,
-      esModuleInterop: true,
-      module: "esnext",
-      moduleResolution: "bundler",
-      resolveJsonModule: true,
-      isolatedModules: true,
-      jsx: "preserve",
-      incremental: true,
-      plugins: [
-        {
-          name: "next"
-        }
-      ],
-      baseUrl: ".",
-      paths: {
-        "@/*": ["./*"]
-      }
-    },
-    include: ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
-    exclude: ["node_modules"]
-  };
+	// TypeScript config
+	const tsConfig = {
+		compilerOptions: {
+			lib: ["dom", "dom.iterable", "ES6"],
+			allowJs: true,
+			skipLibCheck: true,
+			strict: true,
+			noEmit: true,
+			esModuleInterop: true,
+			module: "esnext",
+			moduleResolution: "bundler",
+			resolveJsonModule: true,
+			isolatedModules: true,
+			jsx: "preserve",
+			incremental: true,
+			plugins: [
+				{
+					name: "next",
+				},
+			],
+			baseUrl: ".",
+			paths: {
+				"@/*": ["./*"],
+			},
+		},
+		include: ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+		exclude: ["node_modules"],
+	};
 
-  await fs.writeJson(path.join(projectPath, 'tsconfig.json'), tsConfig, { spaces: 2 });
+	await fs.writeJson(path.join(projectPath, "tsconfig.json"), tsConfig, {
+		spaces: 2,
+	});
 
-  // Other config files
-  const configs = getConfigTemplates();
+	// Other config files
+	const configs = getConfigTemplates();
 
-  await fs.writeFile(path.join(projectPath, 'tailwind.config.ts'), configs.tailwind);
-  await fs.writeFile(path.join(projectPath, 'postcss.config.mjs'), configs.postcss);
-  await fs.writeFile(path.join(projectPath, 'eslint.config.mjs'), configs.eslint);
+	await fs.writeFile(
+		path.join(projectPath, "tailwind.config.ts"),
+		configs.tailwind,
+	);
+	await fs.writeFile(
+		path.join(projectPath, "postcss.config.mjs"),
+		configs.postcss,
+	);
+	await fs.writeFile(
+		path.join(projectPath, "eslint.config.mjs"),
+		configs.eslint,
+	);
 
-  // components.json for shadcn
-  const componentsJson = {
-    "$schema": "https://ui.shadcn.com/schema.json",
-    "style": "default",
-    "rsc": true,
-    "tsx": true,
-    "tailwind": {
-      "config": "tailwind.config.ts",
-      "css": "app/globals.css",
-      "baseColor": "slate",
-      "cssVariables": true,
-      "prefix": ""
-    },
-    "aliases": {
-      "components": "@/components",
-      "utils": "@/lib/utils"
-    }
-  };
+	// components.json for shadcn
+	const componentsJson = {
+		$schema: "https://ui.shadcn.com/schema.json",
+		style: "default",
+		rsc: true,
+		tsx: true,
+		tailwind: {
+			config: "tailwind.config.ts",
+			css: "app/globals.css",
+			baseColor: "slate",
+			cssVariables: true,
+			prefix: "",
+		},
+		aliases: {
+			components: "@/components",
+			utils: "@/lib/utils",
+		},
+	};
 
-  await fs.writeJson(path.join(projectPath, 'components.json'), componentsJson, { spaces: 2 });
+	await fs.writeJson(
+		path.join(projectPath, "components.json"),
+		componentsJson,
+		{ spaces: 2 },
+	);
 }
 
-async function generateDatabaseFiles(projectPath: string, config: ProjectConfig): Promise<void> {
-  if (config.orm === 'prisma') {
-    await generatePrismaFiles(projectPath);
-  } else {
-    await generateDrizzleFiles(projectPath);
-  }
+async function generateDatabaseFiles(
+	projectPath: string,
+	config: ProjectConfig,
+): Promise<void> {
+	if (config.orm === "prisma") {
+		await generatePrismaFiles(projectPath);
+	} else {
+		await generateDrizzleFiles(projectPath);
+	}
 }
 
 async function generatePrismaFiles(projectPath: string): Promise<void> {
-  const templates = getPrismaTemplates();
-  await fs.writeFile(path.join(projectPath, 'prisma', 'schema.prisma'), templates.schema);
-  await fs.writeFile(path.join(projectPath, 'db', 'index.ts'), templates.dbIndex);
+	const templates = getPrismaTemplates();
+	await fs.writeFile(
+		path.join(projectPath, "prisma", "schema.prisma"),
+		templates.schema,
+	);
+	await fs.writeFile(
+		path.join(projectPath, "db", "index.ts"),
+		templates.dbIndex,
+	);
 }
 
 async function generateDrizzleFiles(projectPath: string): Promise<void> {
-  const templates = getDrizzleTemplates();
-  await fs.writeFile(path.join(projectPath, 'db', 'schema.ts'), templates.schema);
-  await fs.writeFile(path.join(projectPath, 'db', 'index.ts'), templates.dbIndex);
-  await fs.writeFile(path.join(projectPath, 'drizzle.config.ts'), templates.config);
+	const templates = getDrizzleTemplates();
+	await fs.writeFile(
+		path.join(projectPath, "db", "schema.ts"),
+		templates.schema,
+	);
+	await fs.writeFile(
+		path.join(projectPath, "db", "index.ts"),
+		templates.dbIndex,
+	);
+	await fs.writeFile(
+		path.join(projectPath, "drizzle.config.ts"),
+		templates.config,
+	);
 }
 
-async function generateCorsairSetup(projectPath: string, config: ProjectConfig): Promise<void> {
-  const templates = getCorsairTemplates(config);
+async function generateCorsairSetup(
+	projectPath: string,
+	config: ProjectConfig,
+): Promise<void> {
+	const templates = getCorsairTemplates(config);
 
-  await fs.writeFile(path.join(projectPath, 'corsair.config.ts'), templates.config);
-  await fs.writeFile(path.join(projectPath, 'corsair', 'procedure.ts'), templates.procedure);
-  await fs.writeFile(path.join(projectPath, 'corsair', 'client.ts'), templates.client);
-  await fs.writeFile(path.join(projectPath, 'corsair', 'index.ts'), templates.index);
+	await fs.writeFile(
+		path.join(projectPath, "corsair.config.ts"),
+		templates.config,
+	);
+	await fs.writeFile(
+		path.join(projectPath, "corsair", "procedure.ts"),
+		templates.procedure,
+	);
+	await fs.writeFile(
+		path.join(projectPath, "corsair", "client.ts"),
+		templates.client,
+	);
+	await fs.writeFile(
+		path.join(projectPath, "corsair", "index.ts"),
+		templates.index,
+	);
 
-  await fs.ensureDir(path.join(projectPath, 'corsair', 'queries'));
-  await fs.ensureDir(path.join(projectPath, 'corsair', 'mutations'));
-  await fs.writeFile(path.join(projectPath, 'corsair', 'queries', 'index.ts'), templates.queriesIndex);
-  await fs.writeFile(path.join(projectPath, 'corsair', 'mutations', 'index.ts'), templates.mutationsIndex);
+	await fs.ensureDir(path.join(projectPath, "corsair", "queries"));
+	await fs.ensureDir(path.join(projectPath, "corsair", "mutations"));
+	await fs.writeFile(
+		path.join(projectPath, "corsair", "queries", "index.ts"),
+		templates.queriesIndex,
+	);
+	await fs.writeFile(
+		path.join(projectPath, "corsair", "mutations", "index.ts"),
+		templates.mutationsIndex,
+	);
 }
 
-async function generateNextjsStructure(projectPath: string, config: ProjectConfig): Promise<void> {
-  await fs.ensureDir(path.join(projectPath, 'app', 'api', 'corsair', '[...corsair]'));
+async function generateNextjsStructure(
+	projectPath: string,
+	config: ProjectConfig,
+): Promise<void> {
+	await fs.ensureDir(
+		path.join(projectPath, "app", "api", "corsair", "[...corsair]"),
+	);
 
-  const templates = getNextjsTemplates(config);
+	const templates = getNextjsTemplates(config);
 
-  await fs.writeFile(path.join(projectPath, 'app', 'api', 'corsair', '[...corsair]', 'route.ts'), templates.apiRoute);
-  await fs.writeFile(path.join(projectPath, 'app', 'layout.tsx'), templates.layout);
-  await fs.writeFile(path.join(projectPath, 'app', 'page.tsx'), templates.homepage);
-  await fs.ensureDir(path.join(projectPath, 'app', 'dashboard'));
-  await fs.writeFile(path.join(projectPath, 'app', 'dashboard', 'page.tsx'), templates.dashboard);
-  await fs.writeFile(path.join(projectPath, 'app', 'globals.css'), templates.globalCss);
-  await fs.writeFile(path.join(projectPath, 'next-env.d.ts'), templates.nextEnv);
+	await fs.writeFile(
+		path.join(projectPath, "app", "api", "corsair", "[...corsair]", "route.ts"),
+		templates.apiRoute,
+	);
+	await fs.writeFile(
+		path.join(projectPath, "app", "layout.tsx"),
+		templates.layout,
+	);
+	await fs.writeFile(
+		path.join(projectPath, "app", "page.tsx"),
+		templates.homepage,
+	);
+	await fs.ensureDir(path.join(projectPath, "app", "dashboard"));
+	await fs.writeFile(
+		path.join(projectPath, "app", "dashboard", "page.tsx"),
+		templates.dashboard,
+	);
+	await fs.writeFile(
+		path.join(projectPath, "app", "globals.css"),
+		templates.globalCss,
+	);
+	await fs.writeFile(
+		path.join(projectPath, "next-env.d.ts"),
+		templates.nextEnv,
+	);
 }
 
 async function generateUIComponents(projectPath: string): Promise<void> {
-  await fs.ensureDir(path.join(projectPath, 'components', 'ui'));
+	await fs.ensureDir(path.join(projectPath, "components", "ui"));
 
-  const templates = getUITemplates();
+	const templates = getUITemplates();
 
-  await fs.writeFile(path.join(projectPath, 'lib', 'utils.ts'), templates.utils);
-  await fs.writeFile(path.join(projectPath, 'components', 'ui', 'button.tsx'), templates.button);
-  await fs.writeFile(path.join(projectPath, 'components', 'ui', 'card.tsx'), templates.card);
+	await fs.writeFile(
+		path.join(projectPath, "lib", "utils.ts"),
+		templates.utils,
+	);
+	await fs.writeFile(
+		path.join(projectPath, "components", "ui", "button.tsx"),
+		templates.button,
+	);
+	await fs.writeFile(
+		path.join(projectPath, "components", "ui", "card.tsx"),
+		templates.card,
+	);
 }
 
-async function generateSeedData(projectPath: string, config: ProjectConfig): Promise<void> {
-  if (config.orm === 'prisma') {
-    const template = getPrismaSeedTemplate();
-    await fs.writeFile(path.join(projectPath, 'db', 'seed.ts'), template);
-  } else {
-    const template = getDrizzleSeedTemplate();
-    await fs.writeFile(path.join(projectPath, 'db', 'seed.ts'), template);
-  }
+async function generateSeedData(
+	projectPath: string,
+	config: ProjectConfig,
+): Promise<void> {
+	if (config.orm === "prisma") {
+		const template = getPrismaSeedTemplate();
+		await fs.writeFile(path.join(projectPath, "db", "seed.ts"), template);
+	} else {
+		const template = getDrizzleSeedTemplate();
+		await fs.writeFile(path.join(projectPath, "db", "seed.ts"), template);
+	}
 }
 
-async function generateDocumentation(projectPath: string, config: ProjectConfig): Promise<void> {
-  const templates = getDocumentationTemplates(config);
+async function generateDocumentation(
+	projectPath: string,
+	config: ProjectConfig,
+): Promise<void> {
+	const templates = getDocumentationTemplates(config);
 
-  await fs.writeFile(path.join(projectPath, 'README.md'), templates.readme);
-  await fs.writeFile(path.join(projectPath, 'CLAUDE.md'), templates.claude);
-  await fs.writeFile(path.join(projectPath, '.gitignore'), templates.gitignore);
+	await fs.writeFile(path.join(projectPath, "README.md"), templates.readme);
+	await fs.writeFile(path.join(projectPath, "CLAUDE.md"), templates.claude);
+	await fs.writeFile(path.join(projectPath, ".gitignore"), templates.gitignore);
 }
 
 // Template functions to avoid inline templates
 function getConfigTemplates() {
-  return {
-    tailwind: `import type { Config } from "tailwindcss";
+	return {
+		tailwind: `import type { Config } from "tailwindcss";
 
 const config: Config = {
   content: [
@@ -377,7 +489,7 @@ const config: Config = {
 };
 export default config;
 `,
-    postcss: `/** @type {import('postcss-load-config').Config} */
+		postcss: `/** @type {import('postcss-load-config').Config} */
 const config = {
   plugins: {
     tailwindcss: {},
@@ -386,7 +498,7 @@ const config = {
 
 export default config
 `,
-    eslint: `import { dirname } from "path";
+		eslint: `import { dirname } from "path";
 import { fileURLToPath } from "url";
 import { FlatCompat } from "@eslint/eslintrc";
 
@@ -402,13 +514,13 @@ const eslintConfig = [
 ];
 
 export default eslintConfig;
-`
-  };
+`,
+	};
 }
 
 function getPrismaTemplates() {
-  return {
-    schema: `// This is your Prisma schema file,
+	return {
+		schema: `// This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
@@ -463,7 +575,7 @@ model Comment {
   @@map("comments")
 }
 `,
-    dbIndex: `import "server-only";
+		dbIndex: `import "server-only";
 import { PrismaClient } from "@prisma/client";
 
 const globalForPrisma = globalThis as unknown as {
@@ -475,13 +587,13 @@ export const db = globalForPrisma.prisma ?? new PrismaClient();
 if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = db;
 
 export type DB = typeof db;
-`
-  };
+`,
+	};
 }
 
 function getDrizzleTemplates() {
-  return {
-    schema: `import { relations } from "drizzle-orm";
+	return {
+		schema: `import { relations } from "drizzle-orm";
 import {
   boolean,
   pgTable,
@@ -542,7 +654,7 @@ export const commentsRelations = relations(comments, ({ one }) => ({
   }),
 }));
 `,
-    dbIndex: `import "server-only";
+		dbIndex: `import "server-only";
 import { drizzle } from "drizzle-orm/node-postgres";
 import { Pool } from "pg";
 import * as schema from "./schema";
@@ -555,7 +667,7 @@ export const db = drizzle(pool, { schema });
 
 export type DB = typeof db;
 `,
-    config: `import type { Config } from "drizzle-kit";
+		config: `import type { Config } from "drizzle-kit";
 
 export default {
   schema: "./db/schema.ts",
@@ -565,13 +677,13 @@ export default {
     url: process.env.DATABASE_URL!,
   },
 } satisfies Config;
-`
-  };
+`,
+	};
 }
 
 function getCorsairTemplates(config: ProjectConfig) {
-  return {
-    config: `import type { CorsairConfig } from "corsair";
+	return {
+		config: `import type { CorsairConfig } from "corsair";
 import { config as dotenvConfig } from "dotenv";
 import { db } from "./db";
 
@@ -599,12 +711,12 @@ export const config = {
 
 export type Config = typeof config;
 `,
-    procedure: `import { createCorsairProcedure } from "corsair";
+		procedure: `import { createCorsairProcedure } from "corsair";
 import { config } from "../corsair.config";
 
 export const { procedure, plugins } = createCorsairProcedure(config);
 `,
-    client: `"use client";
+		client: `"use client";
 
 import { createCorsairClient } from "corsair/react";
 import type { CorsairRouter } from "./index";
@@ -618,7 +730,7 @@ export const {
 
 export type { QueryInputs, QueryOutputs, MutationInputs } from "./index";
 `,
-    index: `import { createCorsairRouter } from "corsair";
+		index: `import { createCorsairRouter } from "corsair";
 import { procedure } from "./procedure";
 
 export const corsairRouter = createCorsairRouter({});
@@ -628,22 +740,22 @@ export type QueryInputs = any;
 export type QueryOutputs = any;
 export type MutationInputs = any;
 `,
-    queriesIndex: `// This file is managed by Corsair CLI
+		queriesIndex: `// This file is managed by Corsair CLI
 // Do not edit manually - use 'corsair query' command instead
 
 export {};
 `,
-    mutationsIndex: `// This file is managed by Corsair CLI
+		mutationsIndex: `// This file is managed by Corsair CLI
 // Do not edit manually - use 'corsair mutation' command instead
 
 export {};
-`
-  };
+`,
+	};
 }
 
 function getNextjsTemplates(config: ProjectConfig) {
-  return {
-    apiRoute: `import { fetchRequestHandler } from "corsair";
+	return {
+		apiRoute: `import { fetchRequestHandler } from "corsair";
 import { corsairRouter } from "@/corsair/index";
 import { plugins } from "@/corsair/procedure";
 import { db } from "@/db";
@@ -672,7 +784,7 @@ export const PATCH = handler;
 export const HEAD = handler;
 export const OPTIONS = handler;
 `,
-    layout: `import type { Metadata } from "next";
+		layout: `import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { CorsairProvider } from "@/corsair/client";
@@ -700,7 +812,7 @@ export default function RootLayout({
   );
 }
 `,
-    homepage: `import Link from "next/link";
+		homepage: `import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
@@ -714,7 +826,7 @@ export default function Home() {
           </h1>
           <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
             Your full-stack Next.js application with type-safe database operations,
-            powered by Corsair and ${config.orm === 'prisma' ? 'Prisma' : 'Drizzle'}.
+            powered by Corsair and ${config.orm === "prisma" ? "Prisma" : "Drizzle"}.
           </p>
           <div className="flex gap-4 justify-center">
             <Button size="lg" asChild>
@@ -792,7 +904,7 @@ export default function Home() {
   );
 }
 `,
-    dashboard: `"use client";
+		dashboard: `"use client";
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
@@ -850,7 +962,7 @@ export default function Dashboard() {
   );
 }
 `,
-    globalCss: `@tailwind base;
+		globalCss: `@tailwind base;
 @tailwind components;
 @tailwind utilities;
 
@@ -893,25 +1005,25 @@ export default function Dashboard() {
   }
 }
 `,
-    nextEnv: `/// <reference types="next" />
+		nextEnv: `/// <reference types="next" />
 /// <reference types="next/image-types/global" />
 
 // NOTE: This file should not be edited
 // see https://nextjs.org/docs/basic-features/typescript for more information.
-`
-  };
+`,
+	};
 }
 
 function getUITemplates() {
-  return {
-    utils: `import { type ClassValue, clsx } from "clsx"
+	return {
+		utils: `import { type ClassValue, clsx } from "clsx"
 import { twMerge } from "tailwind-merge"
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 `,
-    button: `import * as React from "react"
+		button: `import * as React from "react"
 import { Slot } from "@radix-ui/react-slot"
 import { cva, type VariantProps } from "class-variance-authority"
 
@@ -968,7 +1080,7 @@ Button.displayName = "Button"
 
 export { Button, buttonVariants }
 `,
-    card: `import * as React from "react"
+		card: `import * as React from "react"
 
 import { cn } from "@/lib/utils"
 
@@ -1039,12 +1151,12 @@ const CardFooter = React.forwardRef<
 CardFooter.displayName = "CardFooter"
 
 export { Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent }
-`
-  };
+`,
+	};
 }
 
 function getPrismaSeedTemplate() {
-  return `import { PrismaClient } from "@prisma/client";
+	return `import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
@@ -1117,7 +1229,7 @@ main()
 }
 
 function getDrizzleSeedTemplate() {
-  return `import { db } from "./index";
+	return `import { db } from "./index";
 import { users, posts, comments } from "./schema";
 
 async function main() {
@@ -1181,16 +1293,16 @@ main()
 }
 
 function getDocumentationTemplates(config: ProjectConfig) {
-  return {
-    readme: `# ${config.projectName}
+	return {
+		readme: `# ${config.projectName}
 
-A modern, full-stack Next.js application built with Corsair, ${config.orm === 'prisma' ? 'Prisma' : 'Drizzle'}, and PostgreSQL.
+A modern, full-stack Next.js application built with Corsair, ${config.orm === "prisma" ? "Prisma" : "Drizzle"}, and PostgreSQL.
 
 ## 🏴‍☠️ What's Included
 
 - **[Next.js 15](https://nextjs.org/)** - React framework with App Router
 - **[Corsair](https://corsair.dev/)** - Type-safe database operations and API generation
-- **[${config.orm === 'prisma' ? 'Prisma' : 'Drizzle'}](${config.orm === 'prisma' ? 'https://prisma.io/' : 'https://orm.drizzle.team/'})** - Database ORM
+- **[${config.orm === "prisma" ? "Prisma" : "Drizzle"}](${config.orm === "prisma" ? "https://prisma.io/" : "https://orm.drizzle.team/"})** - Database ORM
 - **[PostgreSQL](https://postgresql.org/)** - Production-ready database
 - **[TailwindCSS](https://tailwindcss.com/)** - Utility-first CSS framework
 - **[shadcn/ui](https://ui.shadcn.com/)** - Beautifully designed components
@@ -1220,7 +1332,9 @@ A modern, full-stack Next.js application built with Corsair, ${config.orm === 'p
    DATABASE_URL="postgresql://username:password@localhost:5432/mydb"
    \`\`\`
 
-3. **Set up the database:**${config.orm === 'prisma' ? `
+3. **Set up the database:**${
+			config.orm === "prisma"
+				? `
    \`\`\`bash
    # Generate Prisma client
    pnpm db:generate
@@ -1230,14 +1344,16 @@ A modern, full-stack Next.js application built with Corsair, ${config.orm === 'p
 
    # (Optional) Seed the database
    pnpm db:seed
-   \`\`\`` : `
+   \`\`\``
+				: `
    \`\`\`bash
    # Push schema to database
    pnpm db:push
 
    # (Optional) Seed the database
    pnpm db:seed
-   \`\`\``}
+   \`\`\``
+		}
 
 4. **Start the development server:**
    \`\`\`bash
@@ -1303,13 +1419,13 @@ export function PostList() {
 
 - [Corsair Documentation](https://corsair.dev)
 - [Next.js Documentation](https://nextjs.org/docs)
-- [${config.orm === 'prisma' ? 'Prisma' : 'Drizzle'} Documentation](${config.orm === 'prisma' ? 'https://prisma.io/docs' : 'https://orm.drizzle.team/'})
+- [${config.orm === "prisma" ? "Prisma" : "Drizzle"} Documentation](${config.orm === "prisma" ? "https://prisma.io/docs" : "https://orm.drizzle.team/"})
 
 ---
 
 Built with ❤️ using Corsair and Next.js
 `,
-    claude: `# Corsair Agent Guide
+		claude: `# Corsair Agent Guide
 
 ## Code Generation Commands
 
@@ -1354,7 +1470,7 @@ project-root/
     └── schema.ts               # Database schema
 \`\`\`
 `,
-    gitignore: `# Dependencies
+		gitignore: `# Dependencies
 /node_modules
 /.pnp
 .pnp.js
@@ -1389,7 +1505,7 @@ yarn-error.log*
 next-env.d.ts
 
 # Database
-${config.orm === 'prisma' ? 'prisma/migrations' : '/drizzle/migrations'}
-`
-  };
+${config.orm === "prisma" ? "prisma/migrations" : "/drizzle/migrations"}
+`,
+	};
 }
