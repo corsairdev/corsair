@@ -75,7 +75,6 @@ async function generatePackageJson(
     },
     dependencies: {
       '@corsair-ai/core': 'latest',
-      'corsair': 'npm:@corsair-ai/core@latest',
       '@tanstack/react-query': '^5.90.5',
       '@trpc/client': '^11.6.0',
       '@trpc/server': '^11.6.0',
@@ -190,7 +189,7 @@ async function generateConfigFiles(
 const nextConfig: NextConfig = {
   serverExternalPackages: [${
     config.orm === 'prisma' ? '"@prisma/client"' : '"drizzle-orm"'
-  }, "corsair"]
+  }, "@corsair-ai/core"]
 }
 
 export default nextConfig
@@ -224,8 +223,6 @@ export default nextConfig
         '@/*': ['./*'],
         '@/corsair': ['./corsair/index'],
         '@/corsair/*': ['./corsair/*'],
-        'corsair': ['./node_modules/@corsair-ai/core'],
-        'corsair/*': ['./node_modules/@corsair-ai/core/*'],
       },
     },
     include: ['next-env.d.ts', '**/*.ts', '**/*.tsx', '.next/types/**/*.ts'],
@@ -589,8 +586,7 @@ model Comment {
   @@map("comments")
 }
 `,
-    dbIndex: `import "server-only";
-import { PrismaClient } from "@prisma/client";
+    dbIndex: `import { PrismaClient } from "@prisma/client";
 
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;
@@ -668,8 +664,7 @@ export const commentsRelations = relations(comments, ({ one }) => ({
   }),
 }));
 `,
-    dbIndex: `import "server-only";
-import { drizzle } from "drizzle-orm/node-postgres";
+    dbIndex: `import { drizzle } from "drizzle-orm/node-postgres";
 import { Pool } from "pg";
 import * as schema from "./schema";
 
@@ -682,6 +677,9 @@ export const db = drizzle(pool, { schema });
 export type DB = typeof db;
 `,
     config: `import type { Config } from "drizzle-kit";
+import { config } from 'dotenv'
+config({ path: ".env.local" });
+
 
 export default {
   schema: "./db/schema.ts",
@@ -697,7 +695,7 @@ export default {
 
 function getCorsairTemplates(config: ProjectConfig) {
   return {
-    config: `import type { CorsairConfig } from "corsair";
+    config: `import type { CorsairConfig } from "@corsair-ai/core";
 import { config as dotenvConfig } from "dotenv";
 import { db } from "./db";
 
@@ -725,8 +723,8 @@ export const config = {
 
 export type Config = typeof config;
 `,
-    procedure: `import { createCorsairTRPC } from "corsair";
-import { createPlugins } from "corsair/plugins";
+    procedure: `import { createCorsairTRPC } from "@corsair-ai/core";
+import { createPlugins } from "@corsair-ai/core/plugins";
 import { config } from "@/corsair.config";
 
 export const plugins = createPlugins(config);
@@ -740,7 +738,7 @@ export type DatabaseContext = {
 const t = createCorsairTRPC<DatabaseContext>();
 export const { router, procedure } = t;
 `,
-    client: `import { createCorsairClient, createCorsairHooks } from "corsair";
+    client: `import { createCorsairClient, createCorsairHooks } from "@corsair-ai/core";
 import type { CorsairRouter } from "@/corsair";
 
 const getBaseUrl = () => {
@@ -772,7 +770,7 @@ export type QueryOutputs = typeof types.QueryOutputs;
 export type MutationInputs = typeof types.MutationInputs;
 export type MutationOutputs = typeof types.MutationOutputs;
 `,
-    index: `import { dualKeyOperationsMap } from "corsair";
+    index: `import { dualKeyOperationsMap } from "@corsair-ai/core";
 import { router } from "@/corsair/procedure";
 import * as mutations from "@/corsair/mutations";
 import * as queries from "@/corsair/queries";
@@ -799,7 +797,7 @@ export {};
 
 function getNextjsTemplates(config: ProjectConfig) {
   return {
-    apiRoute: `import { fetchRequestHandler } from "corsair";
+    apiRoute: `import { fetchRequestHandler } from "@corsair-ai/core";
 import { corsairRouter } from "@/corsair/index";
 import { plugins } from "@/corsair/procedure";
 import { db } from "@/db";
@@ -830,7 +828,7 @@ export const OPTIONS = handler;
     layout: `import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import { CorsairProvider } from "corsair/client";
+import { CorsairProvider } from "@corsair-ai/core/client";
 
 const inter = Inter({ subsets: ["latin"] });
 
