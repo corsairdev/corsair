@@ -1,4 +1,4 @@
-name: Deploy to NPM
+name: Deploy Create to NPM
 
 on:
   workflow_dispatch:
@@ -44,20 +44,20 @@ jobs:
       - name: Run linting
         run: pnpm run lint
 
-      - name: Publish to NPM (latest)
+      - name: Publish create package to NPM (latest)
         if: ${{ inputs.version_type == 'latest' }}
-        run: pnpm -r publish --access public --no-git-checks
+        run: pnpm --filter @corsair-ai/create publish --access public --no-git-checks
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      - name: Publish to NPM (next)
+      - name: Publish create package to NPM (next)
         if: ${{ inputs.version_type == 'next' }}
-        run: pnpm -r publish --access public --tag next --no-git-checks
+        run: pnpm --filter @corsair-ai/create publish --access public --tag next --no-git-checks
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      - name: Publish to NPM (canary)
+      - name: Publish create package to NPM (canary)
         if: ${{ inputs.version_type == 'canary' }}
-        run: pnpm -r publish --access public --tag canary --no-git-checks
+        run: pnpm --filter @corsair-ai/create publish --access public --tag canary --no-git-checks
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
