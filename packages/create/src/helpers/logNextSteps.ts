@@ -7,13 +7,9 @@ import { isInsideGitRepo, isRootGitRepo } from './git.js'
 // This logs the next steps that the user should take in order to advance the project
 export const logNextSteps = async ({
   projectName = DEFAULT_APP_NAME,
-  packages,
   noInstall,
   projectDir,
-}: Pick<
-  InstallerOptions,
-  'projectName' | 'packages' | 'noInstall' | 'projectDir'
->) => {
+}: Pick<InstallerOptions, 'projectName' | 'noInstall' | 'projectDir'>) => {
   const pkgManager = getUserPkgManager()
 
   logger.info('Next steps:')
@@ -32,12 +28,11 @@ export const logNextSteps = async ({
   // Always use PostgreSQL
   logger.info("  Start up a database, if needed using './start-database.sh'")
 
-  if (packages?.prisma.inUse || packages?.drizzle.inUse) {
-    if (['npm', 'bun'].includes(pkgManager)) {
-      logger.info(`  ${pkgManager} run db:push`)
-    } else {
-      logger.info(`  ${pkgManager} db:push`)
-    }
+  // Always use Drizzle (always included)
+  if (['npm', 'bun'].includes(pkgManager)) {
+    logger.info(`  ${pkgManager} run db:push`)
+  } else {
+    logger.info(`  ${pkgManager} db:push`)
   }
 
   // BetterAuth setup info

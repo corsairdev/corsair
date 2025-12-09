@@ -10,22 +10,16 @@ export const formatProject = async ({
   pkgManager,
   projectDir,
   eslint,
-  biome,
 }: {
   pkgManager: PackageManager
   projectDir: string
   eslint: boolean
-  biome: boolean
 }) => {
-  logger.info(`Formatting project with ${eslint ? 'prettier' : 'biome'}...`)
+  logger.info(`Formatting project with prettier...`)
   const spinner = ora('Running format command\n').start()
 
   if (eslint) {
     await execa(pkgManager, ['run', 'format:write'], {
-      cwd: projectDir,
-    })
-  } else if (biome) {
-    await execa(pkgManager, ['run', 'check:unsafe'], {
       cwd: projectDir,
     })
   }

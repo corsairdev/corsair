@@ -9,7 +9,6 @@ import { createProject } from '@/helpers/createProject.js'
 import { initializeGit } from '@/helpers/git.js'
 import { logNextSteps } from '@/helpers/logNextSteps.js'
 import { setImportAlias } from '@/helpers/setImportAlias.js'
-import { buildPkgInstallerMap } from '@/installers/index.js'
 import { getUserPkgManager } from '@/utils/getUserPkgManager.js'
 import { logger } from '@/utils/logger.js'
 import { parseNameAndPath } from '@/utils/parseNameAndPath.js'
@@ -38,19 +37,14 @@ const main = async () => {
 
   const {
     appName,
-    packages,
     flags: { noGit, noInstall, importAlias },
   } = await runCli()
-
-  const usePackages = buildPkgInstallerMap(packages)
-
   // e.g. dir/@mono/app returns ["@mono/app", "dir/app"]
   const [scopedAppName, appDir] = parseNameAndPath(appName)
 
   const projectDir = await createProject({
     projectName: appDir,
     scopedAppName,
-    packages: usePackages,
     importAlias,
     noInstall,
   })
@@ -82,17 +76,10 @@ const main = async () => {
   if (!noInstall) {
     await installDependencies({ projectDir })
 
-    if (usePackages.prisma.inUse) {
-      logger.info('Generating Prisma client...')
-      await execa('npx', ['prisma', 'generate'], { cwd: projectDir })
-      logger.info('Successfully generated Prisma client!')
-    }
-
     await formatProject({
       pkgManager,
       projectDir,
-      eslint: packages.includes('eslint'),
-      biome: packages.includes('biome'),
+      eslint: true,
     })
   }
 
@@ -102,7 +89,6 @@ const main = async () => {
 
   await logNextSteps({
     projectName: appDir,
-    packages: usePackages,
     noInstall,
     projectDir,
   })

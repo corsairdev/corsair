@@ -2,26 +2,14 @@ import crypto from 'node:crypto'
 import fs from 'fs-extra'
 import path from 'path'
 
-import { PKG_ROOT } from '@/consts.js'
 import type { Installer } from '@/installers/index.js'
 
 export const envVariablesInstaller: Installer = ({
   projectDir,
-  packages,
   scopedAppName,
 }) => {
-  const usingPrisma = packages?.prisma.inUse
-  const usingDrizzle = packages?.drizzle.inUse
-  const usingDb = usingPrisma === true || usingDrizzle === true
-
-  const envContent = getEnvContent(!!usingPrisma, !!usingDrizzle, scopedAppName)
-
-  // Always use with-better-auth-db.js since we always have betterAuth and always have a db
-  const envFile = usingDb ? 'with-better-auth-db.js' : 'with-better-auth.js'
-
-  const envSchemaSrc = path.join(PKG_ROOT, 'template/extras/src/env', envFile)
-  const envSchemaDest = path.join(projectDir, 'src/env.js')
-  fs.copyFileSync(envSchemaSrc, envSchemaDest)
+  // Always use Drizzle since it's always included
+  const envContent = getEnvContent(scopedAppName)
 
   const envDest = path.join(projectDir, '.env')
   const envExampleDest = path.join(projectDir, '.env.example')
@@ -41,11 +29,7 @@ export const envVariablesInstaller: Installer = ({
   fs.writeFileSync(envExampleDest, _exampleEnvContent, 'utf-8')
 }
 
-const getEnvContent = (
-  usingPrisma: boolean,
-  usingDrizzle: boolean,
-  scopedAppName: string
-) => {
+const getEnvContent = (scopedAppName: string) => {
   let content = `
 # When adding additional environment variables, the schema in "/src/env.js"
 # should be updated accordingly.
@@ -64,19 +48,11 @@ BETTER_AUTH_GITHUB_CLIENT_ID=""
 BETTER_AUTH_GITHUB_CLIENT_SECRET=""
 `
 
-  if (usingPrisma)
-    content += `
-# Prisma
-# https://www.prisma.io/docs/reference/database-reference/connection-urls#env
+  // Always use Drizzle with PostgreSQL
+  content += `
+# Drizzle
+DATABASE_URL="postgresql://postgres:password@localhost:5432/${scopedAppName}"
 `
-
-  if (usingDrizzle) content += '\n# Drizzle\n'
-
-  if (usingPrisma || usingDrizzle) {
-    // Always use PostgreSQL
-    content += `DATABASE_URL="postgresql://postgres:password@localhost:5432/${scopedAppName}"`
-    content += '\n'
-  }
 
   return content
 }
