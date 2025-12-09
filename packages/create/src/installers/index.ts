@@ -1,69 +1,69 @@
-import { envVariablesInstaller } from "~/installers/envVars.js";
-import { prismaInstaller } from "~/installers/prisma.js";
-import { tailwindInstaller } from "~/installers/tailwind.js";
-import { trpcInstaller } from "~/installers/trpc.js";
-import { type PackageManager } from "~/utils/getUserPkgManager.js";
-import { betterAuthInstaller } from "./betterAuth.js";
-import { biomeInstaller } from "./biome.js";
-import { dbContainerInstaller } from "./dbContainer.js";
-import { drizzleInstaller } from "./drizzle.js";
-import { dynamicEslintInstaller } from "./eslint.js";
+import { envVariablesInstaller } from '@/installers/envVars.js'
+import { prismaInstaller } from '@/installers/prisma.js'
+import { tailwindInstaller } from '@/installers/tailwind.js'
+import { trpcInstaller } from '@/installers/trpc.js'
+import type { PackageManager } from '@/utils/getUserPkgManager.js'
+import { betterAuthInstaller } from './betterAuth.js'
+import { biomeInstaller } from './biome.js'
+import { dbContainerInstaller } from './dbContainer.js'
+import { drizzleInstaller } from './drizzle.js'
+import { dynamicEslintInstaller } from './eslint.js'
 
 // Turning this into a const allows the list to be iterated over for programmatically creating prompt options
 // Should increase extensibility in the future
 export const availablePackages = [
-  "betterAuth",
-  "prisma",
-  "drizzle",
-  "tailwind",
-  "trpc",
-  "envVariables",
-  "eslint",
-  "biome",
-  "dbContainer",
-] as const;
-export type AvailablePackages = (typeof availablePackages)[number];
+  'betterAuth',
+  'prisma',
+  'drizzle',
+  'tailwind',
+  'trpc',
+  'envVariables',
+  'eslint',
+  'biome',
+  'dbContainer',
+] as const
+export type AvailablePackages = (typeof availablePackages)[number]
 
 export interface InstallerOptions {
-  projectDir: string;
-  pkgManager: PackageManager;
-  noInstall: boolean;
-  packages?: PkgInstallerMap;
-  projectName: string;
-  scopedAppName: string;
+  projectDir: string
+  pkgManager: PackageManager
+  noInstall: boolean
+  packages?: PkgInstallerMap
+  projectName: string
+  scopedAppName: string
 }
 
-export type Installer = (opts: InstallerOptions) => void;
+export type Installer = (opts: InstallerOptions) => void
 
 export type PkgInstallerMap = Record<
   AvailablePackages,
   {
-    inUse: boolean;
-    installer: Installer;
+    inUse: boolean
+    installer: Installer
   }
->;
+>
 
 export const buildPkgInstallerMap = (
   packages: AvailablePackages[]
 ): PkgInstallerMap => ({
   betterAuth: {
-    inUse: packages.includes("betterAuth"),
+    inUse: packages.includes('betterAuth'),
     installer: betterAuthInstaller,
   },
   prisma: {
-    inUse: packages.includes("prisma"),
+    inUse: packages.includes('prisma'),
     installer: prismaInstaller,
   },
   drizzle: {
-    inUse: packages.includes("drizzle"),
+    inUse: packages.includes('drizzle'),
     installer: drizzleInstaller,
   },
   tailwind: {
-    inUse: packages.includes("tailwind"),
+    inUse: packages.includes('tailwind'),
     installer: tailwindInstaller,
   },
   trpc: {
-    inUse: packages.includes("trpc"),
+    inUse: packages.includes('trpc'),
     installer: trpcInstaller,
   },
   dbContainer: {
@@ -75,11 +75,11 @@ export const buildPkgInstallerMap = (
     installer: envVariablesInstaller,
   },
   eslint: {
-    inUse: packages.includes("eslint"),
+    inUse: packages.includes('eslint'),
     installer: dynamicEslintInstaller,
   },
   biome: {
-    inUse: packages.includes("biome"),
+    inUse: packages.includes('biome'),
     installer: biomeInstaller,
   },
-});
+})

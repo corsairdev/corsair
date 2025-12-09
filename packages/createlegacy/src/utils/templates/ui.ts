@@ -1,32 +1,35 @@
-import fs from 'fs-extra'
-import path from 'path'
+import fs from "fs-extra";
+import path from "path";
 
 export async function generateUIComponents(projectPath: string): Promise<void> {
-  await fs.ensureDir(path.join(projectPath, 'components', 'ui'))
+	await fs.ensureDir(path.join(projectPath, "components", "ui"));
 
-  const templates = getUITemplates()
+	const templates = getUITemplates();
 
-  await fs.writeFile(path.join(projectPath, 'lib', 'utils.ts'), templates.utils)
-  await fs.writeFile(
-    path.join(projectPath, 'components', 'ui', 'button.tsx'),
-    templates.button
-  )
-  await fs.writeFile(
-    path.join(projectPath, 'components', 'ui', 'card.tsx'),
-    templates.card
-  )
+	await fs.writeFile(
+		path.join(projectPath, "lib", "utils.ts"),
+		templates.utils,
+	);
+	await fs.writeFile(
+		path.join(projectPath, "components", "ui", "button.tsx"),
+		templates.button,
+	);
+	await fs.writeFile(
+		path.join(projectPath, "components", "ui", "card.tsx"),
+		templates.card,
+	);
 }
 
 function getUITemplates() {
-  return {
-    utils: `import { type ClassValue, clsx } from "clsx"
+	return {
+		utils: `import { type ClassValue, clsx } from "clsx"
 import { twMerge } from "tailwind-merge"
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 `,
-    button: `import * as React from "react"
+		button: `import * as React from "react"
 import { Slot } from "@radix-ui/react-slot"
 import { cva, type VariantProps } from "class-variance-authority"
 
@@ -83,7 +86,7 @@ Button.displayName = "Button"
 
 export { Button, buttonVariants }
 `,
-    card: `import * as React from "react"
+		card: `import * as React from "react"
 
 import { cn } from "@/lib/utils"
 
@@ -155,5 +158,5 @@ CardFooter.displayName = "CardFooter"
 
 export { Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent }
 `,
-  }
+	};
 }

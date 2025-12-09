@@ -1,22 +1,22 @@
-import fs from 'fs-extra'
-import path from 'path'
-import type { ProjectConfig } from '../../cli/create-project.js'
+import fs from "fs-extra";
+import path from "path";
+import type { ProjectConfig } from "../../cli/create-project.js";
 
 export async function generateSeedData(
-  projectPath: string,
-  config: ProjectConfig
+	projectPath: string,
+	config: ProjectConfig,
 ): Promise<void> {
-  if (config.orm === 'prisma') {
-    const template = getPrismaSeedTemplate()
-    await fs.writeFile(path.join(projectPath, 'db', 'seed.ts'), template)
-  } else {
-    const template = getDrizzleSeedTemplate()
-    await fs.writeFile(path.join(projectPath, 'db', 'seed.ts'), template)
-  }
+	if (config.orm === "prisma") {
+		const template = getPrismaSeedTemplate();
+		await fs.writeFile(path.join(projectPath, "db", "seed.ts"), template);
+	} else {
+		const template = getDrizzleSeedTemplate();
+		await fs.writeFile(path.join(projectPath, "db", "seed.ts"), template);
+	}
 }
 
 function getPrismaSeedTemplate() {
-  return `import { PrismaClient } from "@prisma/client";
+	return `import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
@@ -85,11 +85,11 @@ main()
   .finally(async () => {
     await prisma.$disconnect();
   });
-`
+`;
 }
 
 function getDrizzleSeedTemplate() {
-  return `import { db } from "./index";
+	return `import { db } from "./index";
 import { users, posts, comments } from "./schema";
 
 async function main() {
@@ -149,5 +149,5 @@ main()
     console.error(e);
     process.exit(1);
   });
-`
+`;
 }

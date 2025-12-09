@@ -1,44 +1,47 @@
-import fs from 'fs-extra'
-import path from 'path'
-import type { ProjectConfig } from '../../cli/create-project.js'
+import fs from "fs-extra";
+import path from "path";
+import type { ProjectConfig } from "../../cli/create-project.js";
 
 export async function generateNextjsStructure(
-  projectPath: string,
-  config: ProjectConfig
+	projectPath: string,
+	config: ProjectConfig,
 ): Promise<void> {
-  await fs.ensureDir(
-    path.join(projectPath, 'app', 'api', 'corsair', '[...corsair]')
-  )
+	await fs.ensureDir(
+		path.join(projectPath, "app", "api", "corsair", "[...corsair]"),
+	);
 
-  const templates = getNextjsTemplates(config)
+	const templates = getNextjsTemplates(config);
 
-  await fs.writeFile(
-    path.join(projectPath, 'app', 'api', 'corsair', '[...corsair]', 'route.ts'),
-    templates.apiRoute
-  )
-  await fs.writeFile(
-    path.join(projectPath, 'app', 'layout.tsx'),
-    templates.layout
-  )
-  await fs.writeFile(
-    path.join(projectPath, 'app', 'page.tsx'),
-    templates.homepage
-  )
-  await fs.ensureDir(path.join(projectPath, 'app', 'dashboard'))
-  await fs.writeFile(
-    path.join(projectPath, 'app', 'dashboard', 'page.tsx'),
-    templates.dashboard
-  )
-  await fs.writeFile(
-    path.join(projectPath, 'app', 'globals.css'),
-    templates.globalCss
-  )
-  await fs.writeFile(path.join(projectPath, 'next-env.d.ts'), templates.nextEnv)
+	await fs.writeFile(
+		path.join(projectPath, "app", "api", "corsair", "[...corsair]", "route.ts"),
+		templates.apiRoute,
+	);
+	await fs.writeFile(
+		path.join(projectPath, "app", "layout.tsx"),
+		templates.layout,
+	);
+	await fs.writeFile(
+		path.join(projectPath, "app", "page.tsx"),
+		templates.homepage,
+	);
+	await fs.ensureDir(path.join(projectPath, "app", "dashboard"));
+	await fs.writeFile(
+		path.join(projectPath, "app", "dashboard", "page.tsx"),
+		templates.dashboard,
+	);
+	await fs.writeFile(
+		path.join(projectPath, "app", "globals.css"),
+		templates.globalCss,
+	);
+	await fs.writeFile(
+		path.join(projectPath, "next-env.d.ts"),
+		templates.nextEnv,
+	);
 }
 
 function getNextjsTemplates(config: ProjectConfig) {
-  return {
-    apiRoute: `import { fetchRequestHandler } from "@corsair-ai/core";
+	return {
+		apiRoute: `import { fetchRequestHandler } from "@corsair-ai/core";
 import { corsairRouter } from "@/corsair/index";
 import { plugins } from "@/corsair/procedure";
 import { db } from "@/db";
@@ -66,7 +69,7 @@ export const PATCH = handler;
 export const HEAD = handler;
 export const OPTIONS = handler;
 `,
-    layout: `import type { Metadata } from "next";
+		layout: `import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { CorsairProvider } from "@corsair-ai/core/client";
@@ -94,7 +97,7 @@ export default function RootLayout({
   );
 }
 `,
-    homepage: `import Link from "next/link";
+		homepage: `import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
@@ -109,8 +112,8 @@ export default function Home() {
           <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
             Your full-stack Next.js application with type-safe database operations,
             powered by Corsair and ${
-              config.orm === 'prisma' ? 'Prisma' : 'Drizzle'
-            }.
+							config.orm === "prisma" ? "Prisma" : "Drizzle"
+						}.
           </p>
           <div className="flex gap-4 justify-center">
             <Button size="lg" asChild>
@@ -188,7 +191,7 @@ export default function Home() {
   );
 }
 `,
-    dashboard: `"use client";
+		dashboard: `"use client";
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
@@ -246,7 +249,7 @@ export default function Dashboard() {
   );
 }
 `,
-    globalCss: `@import "tailwindcss";
+		globalCss: `@import "tailwindcss";
 @import "tw-animate-css";
 
 @custom-variant dark (&:is(.dark *));
@@ -343,11 +346,11 @@ export default function Dashboard() {
   }
 }
 `,
-    nextEnv: `/// <reference types="next" />
+		nextEnv: `/// <reference types="next" />
 /// <reference types="next/image-types/global" />
 
 // NOTE: This file should not be edited
 // see https://nextjs.org/docs/basic-features/typescript for more information.
 `,
-  }
+	};
 }

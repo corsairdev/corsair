@@ -1,46 +1,46 @@
-import fs from 'fs-extra'
-import path from 'path'
-import type { ProjectConfig } from '../../cli/create-project.js'
+import fs from "fs-extra";
+import path from "path";
+import type { ProjectConfig } from "../../cli/create-project.js";
 
 export async function generateDocumentation(
-  projectPath: string,
-  config: ProjectConfig
+	projectPath: string,
+	config: ProjectConfig,
 ): Promise<void> {
-  const templates = getDocumentationTemplates(config)
+	const templates = getDocumentationTemplates(config);
 
-  await fs.writeFile(path.join(projectPath, 'README.md'), templates.readme)
+	await fs.writeFile(path.join(projectPath, "README.md"), templates.readme);
 
-  if (config.ide === 'claude') {
-    await fs.writeFile(path.join(projectPath, 'CLAUDE.md'), templates.claude)
-  }
+	if (config.ide === "claude") {
+		await fs.writeFile(path.join(projectPath, "CLAUDE.md"), templates.claude);
+	}
 
-  if (config.ide === 'cursor') {
-    await fs.writeFile(
-      path.join(projectPath, '.cursorrules'),
-      templates.cursorrules
-    )
-  }
+	if (config.ide === "cursor") {
+		await fs.writeFile(
+			path.join(projectPath, ".cursorrules"),
+			templates.cursorrules,
+		);
+	}
 
-  await fs.writeFile(path.join(projectPath, '.gitignore'), templates.gitignore)
+	await fs.writeFile(path.join(projectPath, ".gitignore"), templates.gitignore);
 }
 
 function getDocumentationTemplates(config: ProjectConfig) {
-  return {
-    readme: `# ${config.projectName}
+	return {
+		readme: `# ${config.projectName}
 
 A modern, full-stack Next.js application built with Corsair, ${
-      config.orm === 'prisma' ? 'Prisma' : 'Drizzle'
-    }, and PostgreSQL.
+			config.orm === "prisma" ? "Prisma" : "Drizzle"
+		}, and PostgreSQL.
 
 ## 🏴‍☠️ What's Included
 
 - **[Next.js 15](https://nextjs.org/)** - React framework with App Router
 - **[Corsair](https://corsair.dev/)** - Type-safe database operations and API generation
-- **[${config.orm === 'prisma' ? 'Prisma' : 'Drizzle'}](${
-      config.orm === 'prisma'
-        ? 'https://prisma.io/'
-        : 'https://orm.drizzle.team/'
-    })** - Database ORM
+- **[${config.orm === "prisma" ? "Prisma" : "Drizzle"}](${
+			config.orm === "prisma"
+				? "https://prisma.io/"
+				: "https://orm.drizzle.team/"
+		})** - Database ORM
 - **[PostgreSQL](https://postgresql.org/)** - Production-ready database
 - **[TailwindCSS](https://tailwindcss.com/)** - Utility-first CSS framework
 - **[shadcn/ui](https://ui.shadcn.com/)** - Beautifully designed components
@@ -71,8 +71,8 @@ A modern, full-stack Next.js application built with Corsair, ${
    \`\`\`
 
 3. **Set up the database:**${
-      config.orm === 'prisma'
-        ? `
+			config.orm === "prisma"
+				? `
    \`\`\`bash
    # Generate Prisma client
    pnpm db:generate
@@ -83,7 +83,7 @@ A modern, full-stack Next.js application built with Corsair, ${
    # (Optional) Seed the database
    pnpm db:seed
    \`\`\``
-        : `
+				: `
    \`\`\`bash
    # Push schema to database
    pnpm db:push
@@ -91,7 +91,7 @@ A modern, full-stack Next.js application built with Corsair, ${
    # (Optional) Seed the database
    pnpm db:seed
    \`\`\``
-    }
+		}
 
 4. **Start the development server:**
    \`\`\`bash
@@ -157,17 +157,17 @@ export function PostList() {
 
 - [Corsair Documentation](https://corsair.dev)
 - [Next.js Documentation](https://nextjs.org/docs)
-- [${config.orm === 'prisma' ? 'Prisma' : 'Drizzle'} Documentation](${
-      config.orm === 'prisma'
-        ? 'https://prisma.io/docs'
-        : 'https://orm.drizzle.team/'
-    })
+- [${config.orm === "prisma" ? "Prisma" : "Drizzle"} Documentation](${
+			config.orm === "prisma"
+				? "https://prisma.io/docs"
+				: "https://orm.drizzle.team/"
+		})
 
 ---
 
 Built with ❤️ using Corsair and Next.js
 `,
-    claude: `# Corsair Agent Guide
+		claude: `# Corsair Agent Guide
 
 ## Code Generation Commands
 
@@ -276,8 +276,8 @@ project-root/
 └── db/
     ├── index.ts                # Database client
     └── schema.ts               # Database schema${
-      config.orm === 'prisma' ? ' (Prisma)' : ' (Drizzle)'
-    }
+			config.orm === "prisma" ? " (Prisma)" : " (Drizzle)"
+		}
 \`\`\`
 
 ## React Component Example
@@ -361,7 +361,7 @@ export function PostDetails({ post, open, onOpenChange }: PostDetailsProps) {
 }
 \`\`\`
 `,
-    cursorrules: `# Corsair Project - Cursor Rules
+		cursorrules: `# Corsair Project - Cursor Rules
 
 ## Code Generation Commands
 
@@ -414,8 +414,8 @@ pnpm corsair watch
 \`\`\`
 
 ### Database Commands${
-      config.orm === 'prisma'
-        ? `
+			config.orm === "prisma"
+				? `
 
 \`\`\`bash
 pnpm db:generate      # Generate Prisma client
@@ -424,7 +424,7 @@ pnpm db:migrate       # Create and run migrations
 pnpm db:studio        # Open Prisma Studio
 pnpm db:seed          # Seed the database
 \`\`\``
-        : `
+				: `
 
 \`\`\`bash
 pnpm db:push          # Push schema to database
@@ -432,7 +432,7 @@ pnpm db:generate      # Generate migrations
 pnpm db:studio        # Open Drizzle Studio
 pnpm db:seed          # Seed the database
 \`\`\``
-    }
+		}
 
 ## Project Structure
 
@@ -451,8 +451,8 @@ project-root/
 ├── db/
 │   ├── index.ts                # Database client
 │   └── schema.ts               # Database schema${
-      config.orm === 'prisma' ? ' (Prisma)' : ' (Drizzle)'
-    }
+			config.orm === "prisma" ? " (Prisma)" : " (Drizzle)"
+		}
 └── components/                 # React components
 \`\`\`
 
@@ -463,8 +463,8 @@ project-root/
 3. **Use \`useCorsairQuery\` and \`useCorsairMutation\`** hooks in client components
 4. **Follow Next.js 15 App Router** conventions (use 'use client' directive when needed)
 5. **Keep database schema** in \`db/schema.ts\`${
-      config.orm === 'prisma' ? '' : ' (or `prisma/schema.prisma`)'
-    }
+			config.orm === "prisma" ? "" : " (or `prisma/schema.prisma`)"
+		}
 6. **Run \`pnpm db:push\`** after schema changes
 7. **Use TypeScript** for all files
 8. **Run \`pnpm corsair check\`** to validate queries/mutations after schema changes
@@ -531,8 +531,8 @@ export function PostComponent() {
 ## Schema Changes Workflow
 
 1. Update your database schema in \`db/schema.ts\`${
-      config.orm === 'prisma' ? ' or `prisma/schema.prisma`' : ''
-    }
+			config.orm === "prisma" ? " or `prisma/schema.prisma`" : ""
+		}
 2. Run \`pnpm db:push\` to apply changes to database
 3. Run \`pnpm corsair check\` to validate existing queries/mutations
 4. Run \`pnpm corsair fix\` to auto-fix any issues
@@ -547,7 +547,7 @@ export function PostComponent() {
 - Run \`pnpm corsair watch\` during development for instant feedback
 - Check the \`CLAUDE.md\` file for more detailed examples
 `,
-    gitignore: `# Dependencies
+		gitignore: `# Dependencies
 /node_modules
 /.pnp
 .pnp.js
@@ -582,7 +582,7 @@ yarn-error.log*
 next-env.d.ts
 
 # Database
-${config.orm === 'prisma' ? 'prisma/migrations' : '/drizzle/migrations'}
+${config.orm === "prisma" ? "prisma/migrations" : "/drizzle/migrations"}
 `,
-  }
+	};
 }

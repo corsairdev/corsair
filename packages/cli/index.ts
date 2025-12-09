@@ -11,14 +11,6 @@ program
 	.version("1.0.0");
 
 program
-	.command("init")
-	.description("Initialize a new Corsair project with necessary files")
-	.action(async () => {
-		const { init } = await import("./commands/init.js");
-		await init();
-	});
-
-program
 	.command("check")
 	.description("Run TypeScript type checking on query and mutation files")
 	.action(async () => {
