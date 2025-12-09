@@ -10,6 +10,7 @@ import { validateProjectName } from '../utils/validate.js';
 export interface ProjectConfig {
   projectName: string;
   orm: 'prisma' | 'drizzle';
+  ide: 'cursor' | 'claude' | 'other';
   installDependencies: boolean;
   initGit: boolean;
   typescript: boolean;
@@ -124,10 +125,25 @@ async function promptForConfig(projectName?: string, options?: any): Promise<Pro
       name: 'orm',
       message: 'Which ORM would you like to use?',
       choices: [
-        { name: '🟢 Prisma (Recommended)', value: 'prisma' },
-        { name: '🔷 Drizzle', value: 'drizzle' },
+        { name: '🟢 Drizzle (Recommended)', value: 'drizzle' },
+        { name: '🔷 Prisma', value: 'prisma' },
       ],
-      default: 'prisma',
+      default: 'drizzle',
+    });
+  }
+
+  // IDE choice (if not specified via options)
+  if (!options?.ide) {
+    questions.push({
+      type: 'list',
+      name: 'ide',
+      message: 'Which AI IDE/assistant are you using?',
+      choices: [
+        { name: '🖱️  Cursor', value: 'cursor' },
+        { name: '🤖 Claude', value: 'claude' },
+        { name: '📝 Other', value: 'other' },
+      ],
+      default: 'cursor',
     });
   }
 
@@ -155,6 +171,7 @@ async function promptForConfig(projectName?: string, options?: any): Promise<Pro
   return {
     projectName: projectName || answers.projectName,
     orm: options?.prisma ? 'prisma' : options?.drizzle ? 'drizzle' : answers.orm,
+    ide: options?.ide || answers.ide || 'cursor',
     installDependencies: options?.skipInstall ? false : (answers.installDependencies ?? true),
     initGit: options?.skipGit ? false : (answers.initGit ?? true),
     typescript: true, // Always use TypeScript
