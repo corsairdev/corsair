@@ -26,5 +26,6 @@
     // jump-to-definition feature in IDEs to function properly.
     "customConditions": ["dev-source"]
   },
-  "exclude": ["**/dist/**", "**/node_modules/**"]
+  "exclude": ["**/dist/**", "**/node_modules/**"],
+  "include": ["./types.d.ts"]
 }
