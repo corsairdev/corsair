@@ -74,7 +74,11 @@ async function generatePackageJson(
 			config: "tsx corsair.config.ts",
 		},
 		dependencies: {
-			"@corsair-ai/core": "workspace:^",
+			"@corsair-ai/core": "latest",
+			"@tanstack/react-query": "^5.90.5",
+			"@trpc/client": "^11.6.0",
+			"@trpc/server": "^11.6.0",
+			"@trpc/tanstack-react-query": "^11.6.0",
 			...(config.orm === "prisma"
 				? {
 						"@prisma/client": "^5.22.0",
@@ -90,7 +94,6 @@ async function generatePackageJson(
 			"@radix-ui/react-slot": "^1.2.3",
 			"class-variance-authority": "^0.7.1",
 			clsx: "^2.1.1",
-			corsair: "link:../../packages/corsair",
 			dotenv: "^17.2.3",
 			"lucide-react": "^0.546.0",
 			next: "15.5.6",
@@ -184,9 +187,9 @@ async function generateConfigFiles(
 	const nextConfig = `import type { NextConfig } from 'next'
 
 const nextConfig: NextConfig = {
-  experimental: {
-    serverComponentsExternalPackages: [${config.orm === "prisma" ? '"@prisma/client"' : '"drizzle-orm"'}, "corsair"]
-  }
+  serverExternalPackages: [${
+		config.orm === "prisma" ? '"@prisma/client"' : '"drizzle-orm"'
+	}, "@corsair-ai/core"]
 }
 
 export default nextConfig
@@ -197,7 +200,8 @@ export default nextConfig
 	// TypeScript config
 	const tsConfig = {
 		compilerOptions: {
-			lib: ["dom", "dom.iterable", "ES6"],
+			target: "ES2017",
+			lib: ["dom", "dom.iterable", "esnext"],
 			allowJs: true,
 			skipLibCheck: true,
 			strict: true,
@@ -217,6 +221,8 @@ export default nextConfig
 			baseUrl: ".",
 			paths: {
 				"@/*": ["./*"],
+				"@/corsair": ["./corsair/index"],
+				"@/corsair/*": ["./corsair/*"],
 			},
 		},
 		include: ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
@@ -419,7 +425,18 @@ async function generateDocumentation(
 	const templates = getDocumentationTemplates(config);
 
 	await fs.writeFile(path.join(projectPath, "README.md"), templates.readme);
-	await fs.writeFile(path.join(projectPath, "CLAUDE.md"), templates.claude);
+
+	if (config.ide === "claude") {
+		await fs.writeFile(path.join(projectPath, "CLAUDE.md"), templates.claude);
+	}
+
+	if (config.ide === "cursor") {
+		await fs.writeFile(
+			path.join(projectPath, ".cursorrules"),
+			templates.cursorrules,
+		);
+	}
+
 	await fs.writeFile(path.join(projectPath, ".gitignore"), templates.gitignore);
 }
 
@@ -492,7 +509,7 @@ export default config;
 		postcss: `/** @type {import('postcss-load-config').Config} */
 const config = {
   plugins: {
-    tailwindcss: {},
+    '@tailwindcss/postcss': {},
   },
 }
 
@@ -575,8 +592,7 @@ model Comment {
   @@map("comments")
 }
 `,
-		dbIndex: `import "server-only";
-import { PrismaClient } from "@prisma/client";
+		dbIndex: `import { PrismaClient } from "@prisma/client";
 
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;
@@ -654,8 +670,7 @@ export const commentsRelations = relations(comments, ({ one }) => ({
   }),
 }));
 `,
-		dbIndex: `import "server-only";
-import { drizzle } from "drizzle-orm/node-postgres";
+		dbIndex: `import { drizzle } from "drizzle-orm/node-postgres";
 import { Pool } from "pg";
 import * as schema from "./schema";
 
@@ -668,6 +683,9 @@ export const db = drizzle(pool, { schema });
 export type DB = typeof db;
 `,
 		config: `import type { Config } from "drizzle-kit";
+import { config } from 'dotenv'
+config({ path: ".env.local" });
+
 
 export default {
   schema: "./db/schema.ts",
@@ -683,7 +701,7 @@ export default {
 
 function getCorsairTemplates(config: ProjectConfig) {
 	return {
-		config: `import type { CorsairConfig } from "corsair";
+		config: `import type { CorsairConfig } from "@corsair-ai/core";
 import { config as dotenvConfig } from "dotenv";
 import { db } from "./db";
 
@@ -711,34 +729,64 @@ export const config = {
 
 export type Config = typeof config;
 `,
-		procedure: `import { createCorsairProcedure } from "corsair";
-import { config } from "../corsair.config";
+		procedure: `import { createCorsairTRPC } from "@corsair-ai/core";
+import { createPlugins } from "@corsair-ai/core/plugins";
+import { config } from "@/corsair.config";
 
-export const { procedure, plugins } = createCorsairProcedure(config);
+export const plugins = createPlugins(config);
+
+export type DatabaseContext = {
+  db: typeof config.db;
+  userId?: string;
+  plugins: typeof plugins;
+};
+
+const t = createCorsairTRPC<DatabaseContext>();
+export const { router, procedure } = t;
 `,
-		client: `"use client";
+		client: `import { createCorsairClient, createCorsairHooks } from "@corsair-ai/core";
+import type { CorsairRouter } from "@/corsair";
 
-import { createCorsairClient } from "corsair/react";
-import type { CorsairRouter } from "./index";
+const getBaseUrl = () => {
+  if (typeof window !== "undefined") {
+    return window.location.origin;
+  }
+  if (process.env.VERCEL_URL) {
+    return \`https://\${process.env.VERCEL_URL}\`;
+  }
+  return \`http://localhost:\${process.env.PORT || 3000}\`;
+};
 
-export const {
-  CorsairProvider,
+const { typedClient } = createCorsairClient<CorsairRouter>({
+  url: \`\${getBaseUrl()}\${process.env.NEXT_PUBLIC_CORSAIR_API_ROUTE!}\`,
+});
+
+const {
   useCorsairQuery,
   useCorsairMutation,
-  useCorsairUtils,
-} = createCorsairClient<CorsairRouter>();
+  corsairQuery,
+  corsairMutation,
+  types,
+} = createCorsairHooks<CorsairRouter>(typedClient);
 
-export type { QueryInputs, QueryOutputs, MutationInputs } from "./index";
+export { useCorsairQuery, useCorsairMutation, corsairQuery, corsairMutation };
+
+export type QueryInputs = typeof types.QueryInputs;
+export type QueryOutputs = typeof types.QueryOutputs;
+export type MutationInputs = typeof types.MutationInputs;
+export type MutationOutputs = typeof types.MutationOutputs;
 `,
-		index: `import { createCorsairRouter } from "corsair";
-import { procedure } from "./procedure";
+		index: `import { dualKeyOperationsMap } from "@corsair-ai/core";
+import { router } from "@/corsair/procedure";
+import * as mutations from "@/corsair/mutations";
+import * as queries from "@/corsair/queries";
 
-export const corsairRouter = createCorsairRouter({});
+export const corsairRouter = router({
+  ...dualKeyOperationsMap(queries),
+  ...dualKeyOperationsMap(mutations),
+});
 
 export type CorsairRouter = typeof corsairRouter;
-export type QueryInputs = any;
-export type QueryOutputs = any;
-export type MutationInputs = any;
 `,
 		queriesIndex: `// This file is managed by Corsair CLI
 // Do not edit manually - use 'corsair query' command instead
@@ -755,7 +803,7 @@ export {};
 
 function getNextjsTemplates(config: ProjectConfig) {
 	return {
-		apiRoute: `import { fetchRequestHandler } from "corsair";
+		apiRoute: `import { fetchRequestHandler } from "@corsair-ai/core";
 import { corsairRouter } from "@/corsair/index";
 import { plugins } from "@/corsair/procedure";
 import { db } from "@/db";
@@ -767,7 +815,7 @@ const handler = async (req: Request) => {
     router: corsairRouter,
     createContext: () => {
       return {
-        userId: "123", // Replace with actual user ID logic
+        userId: "123",
         db,
         plugins,
       };
@@ -775,7 +823,6 @@ const handler = async (req: Request) => {
   });
 };
 
-// Export named methods for App Router
 export const GET = handler;
 export const POST = handler;
 export const PUT = handler;
@@ -787,7 +834,7 @@ export const OPTIONS = handler;
 		layout: `import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import { CorsairProvider } from "@/corsair/client";
+import { CorsairProvider } from "@corsair-ai/core/client";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -826,7 +873,9 @@ export default function Home() {
           </h1>
           <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
             Your full-stack Next.js application with type-safe database operations,
-            powered by Corsair and ${config.orm === "prisma" ? "Prisma" : "Drizzle"}.
+            powered by Corsair and ${
+							config.orm === "prisma" ? "Prisma" : "Drizzle"
+						}.
           </p>
           <div className="flex gap-4 justify-center">
             <Button size="lg" asChild>
@@ -962,43 +1011,97 @@ export default function Dashboard() {
   );
 }
 `,
-		globalCss: `@tailwind base;
-@tailwind components;
-@tailwind utilities;
+		globalCss: `@import "tailwindcss";
+@import "tw-animate-css";
 
-@layer base {
-  :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96%;
-    --secondary-foreground: 222.2 84% 4.9%;
-    --muted: 210 40% 96%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96%;
-    --accent-foreground: 222.2 84% 4.9%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
-    --radius: 0.5rem;
-    --chart-1: 12 76% 61%;
-    --chart-2: 173 58% 39%;
-    --chart-3: 197 37% 24%;
-    --chart-4: 43 74% 66%;
-    --chart-5: 27 87% 67%;
-  }
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+:root {
+  --radius: 0.625rem;
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  --primary: oklch(0.205 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.97 0 0);
+  --secondary-foreground: oklch(0.205 0 0);
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.556 0 0);
+  --accent: oklch(0.97 0 0);
+  --accent-foreground: oklch(0.205 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: oklch(0.922 0 0);
+  --input: oklch(0.922 0 0);
+  --ring: oklch(0.708 0 0);
+  --chart-1: oklch(0.646 0.222 41.116);
+  --chart-2: oklch(0.6 0.118 184.704);
+  --chart-3: oklch(0.398 0.07 227.392);
+  --chart-4: oklch(0.828 0.189 84.429);
+  --chart-5: oklch(0.769 0.188 70.08);
+}
+
+.dark {
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.205 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.205 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.922 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+  --secondary: oklch(0.269 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+  --accent: oklch(0.269 0 0);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.556 0 0);
+  --chart-1: oklch(0.488 0.243 264.376);
+  --chart-2: oklch(0.696 0.17 162.48);
+  --chart-3: oklch(0.769 0.188 70.08);
+  --chart-4: oklch(0.627 0.265 303.9);
+  --chart-5: oklch(0.645 0.246 16.439);
 }
 
 @layer base {
   * {
-    @apply border-border;
+    @apply border-border outline-ring/50;
   }
   body {
     @apply bg-background text-foreground;
@@ -1296,13 +1399,19 @@ function getDocumentationTemplates(config: ProjectConfig) {
 	return {
 		readme: `# ${config.projectName}
 
-A modern, full-stack Next.js application built with Corsair, ${config.orm === "prisma" ? "Prisma" : "Drizzle"}, and PostgreSQL.
+A modern, full-stack Next.js application built with Corsair, ${
+			config.orm === "prisma" ? "Prisma" : "Drizzle"
+		}, and PostgreSQL.
 
 ## 🏴‍☠️ What's Included
 
 - **[Next.js 15](https://nextjs.org/)** - React framework with App Router
 - **[Corsair](https://corsair.dev/)** - Type-safe database operations and API generation
-- **[${config.orm === "prisma" ? "Prisma" : "Drizzle"}](${config.orm === "prisma" ? "https://prisma.io/" : "https://orm.drizzle.team/"})** - Database ORM
+- **[${config.orm === "prisma" ? "Prisma" : "Drizzle"}](${
+			config.orm === "prisma"
+				? "https://prisma.io/"
+				: "https://orm.drizzle.team/"
+		})** - Database ORM
 - **[PostgreSQL](https://postgresql.org/)** - Production-ready database
 - **[TailwindCSS](https://tailwindcss.com/)** - Utility-first CSS framework
 - **[shadcn/ui](https://ui.shadcn.com/)** - Beautifully designed components
@@ -1419,7 +1528,11 @@ export function PostList() {
 
 - [Corsair Documentation](https://corsair.dev)
 - [Next.js Documentation](https://nextjs.org/docs)
-- [${config.orm === "prisma" ? "Prisma" : "Drizzle"} Documentation](${config.orm === "prisma" ? "https://prisma.io/docs" : "https://orm.drizzle.team/"})
+- [${config.orm === "prisma" ? "Prisma" : "Drizzle"} Documentation](${
+			config.orm === "prisma"
+				? "https://prisma.io/docs"
+				: "https://orm.drizzle.team/"
+		})
 
 ---
 
@@ -1437,6 +1550,10 @@ pnpm corsair query/mutation -n "query/mutationName" -i "instructions"
 
 **Agent must use this to generate queries.** DO NOT write query code manually.
 
+- Adds the query/mutation file in the appropriate folder (queries/mutations) and also exports it in the index.ts file.
+- Returns path where query/mutation was generated (e.g., \`corsair/queries/get-posts-with-authors.ts\`)
+- To modify generated code, use: \`-u\` flag to update existing query/mutation
+
 ### Examples
 
 **Query Examples:**
@@ -1445,11 +1562,73 @@ pnpm corsair query/mutation -n "query/mutationName" -i "instructions"
 pnpm corsair query -n "get posts with authors" -i "fetch all posts with author details from posts and users tables"
 \`\`\`
 
+\`\`\`bash
+pnpm corsair query -n "get comments by post id" -i "get all comments for a specific post ID including author information"
+\`\`\`
+
+\`\`\`bash
+pnpm corsair query -n "get user profile" -i "fetch user profile with their posts count and recent activity"
+\`\`\`
+
 **Mutation Examples:**
 
 \`\`\`bash
 pnpm corsair mutation -n "create post" -i "create a new post with title, content, and author ID"
 \`\`\`
+
+\`\`\`bash
+pnpm corsair mutation -n "update comment" -i "update an existing comment's content by comment ID"
+\`\`\`
+
+\`\`\`bash
+pnpm corsair mutation -n "delete post" -i "delete a post and all its associated comments by post ID"
+\`\`\`
+
+**Update Existing Query/Mutation:**
+
+\`\`\`bash
+pnpm corsair query -n "get posts with authors" -i "fetch all published posts with author details, sorted by created date" -u
+\`\`\`
+
+## Development Commands
+
+### Watch Mode
+
+\`\`\`bash
+pnpm corsair watch
+\`\`\`
+
+Continuously monitors schema changes and auto-regenerates type definitions.
+Use during active development for instant feedback.
+
+### Generate Types
+
+\`\`\`bash
+pnpm corsair generate
+\`\`\`
+
+One-time generation of all Corsair types and configurations.
+Run after schema changes if not using watch mode.
+
+## Validation Commands
+
+### Check
+
+\`\`\`bash
+pnpm corsair check
+\`\`\`
+
+Validates all queries/mutations against current schema without making changes.
+Reports type mismatches and breaking changes.
+
+### Fix
+
+\`\`\`bash
+pnpm corsair fix
+\`\`\`
+
+Auto-fixes validation issues found by \`check\` command.
+Updates queries/mutations to match current schema.
 
 ## Key Paths
 
@@ -1467,8 +1646,277 @@ project-root/
 ├── app/api/corsair/[...corsair]/route.ts  # API endpoint
 └── db/
     ├── index.ts                # Database client
-    └── schema.ts               # Database schema
+    └── schema.ts               # Database schema${
+			config.orm === "prisma" ? " (Prisma)" : " (Drizzle)"
+		}
 \`\`\`
+
+## React Component Example
+
+### Using Queries and Mutations in Components
+
+\`\`\`tsx
+'use client'
+
+import { useState, useEffect } from 'react'
+import {
+  useCorsairQuery,
+  useCorsairMutation,
+  QueryOutputs,
+} from '@/corsair/client'
+
+interface PostDetailsProps {
+  post: QueryOutputs['get post by id'] | undefined
+  open: boolean
+  onOpenChange: (open: boolean) => void
+}
+
+export function PostDetails({ post, open, onOpenChange }: PostDetailsProps) {
+  const { data: comments, isLoading } = useCorsairQuery(
+    'get comments by post id',
+    { postId: post?.id || '' },
+    { enabled: !!post?.id }
+  )
+
+  const updatePost = useCorsairMutation('update post')
+  const deleteComment = useCorsairMutation('delete comment')
+
+  const [localPost, setLocalPost] = useState(post)
+
+  useEffect(() => {
+    setLocalPost(post)
+  }, [post])
+
+  const handleUpdateTitle = async (newTitle: string) => {
+    if (!localPost) return
+
+    setLocalPost({ ...localPost, title: newTitle })
+
+    await updatePost.mutateAsync({
+      postId: localPost.id,
+      title: newTitle,
+    })
+  }
+
+  const handleDeleteComment = async (commentId: string) => {
+    await deleteComment.mutateAsync({ commentId })
+  }
+
+  if (!localPost) return null
+
+  return (
+    <div>
+      <h1>{localPost.title}</h1>
+      <p>{localPost.content}</p>
+
+      <div>
+        <h2>Comments ({comments?.length || 0})</h2>
+        {isLoading ? (
+          <p>Loading comments...</p>
+        ) : (
+          comments?.map(comment => (
+            <div key={comment.id}>
+              <p>{comment.content}</p>
+              <button
+                onClick={() => handleDeleteComment(comment.id)}
+                disabled={deleteComment.isPending}
+              >
+                Delete
+              </button>
+            </div>
+          ))
+        )}
+      </div>
+    </div>
+  )
+}
+\`\`\`
+`,
+		cursorrules: `# Corsair Project - Cursor Rules
+
+## Code Generation Commands
+
+### Generate Queries and Mutations
+
+To generate queries and mutations, you MUST use the Corsair CLI commands. DO NOT write query/mutation code manually.
+
+\`\`\`bash
+pnpm corsair query -n "query-name" -i "detailed instructions"
+pnpm corsair mutation -n "mutation-name" -i "detailed instructions"
+\`\`\`
+
+The CLI will:
+- Generate the query/mutation file in the appropriate folder
+- Export it in the index.ts file automatically
+- Ensure type-safety with your database schema
+- Return the path where the file was generated
+
+### Update Existing Queries/Mutations
+
+\`\`\`bash
+pnpm corsair query -n "query-name" -i "updated instructions" -u
+pnpm corsair mutation -n "mutation-name" -i "updated instructions" -u
+\`\`\`
+
+### Query Examples
+
+\`\`\`bash
+pnpm corsair query -n "get posts with authors" -i "fetch all posts with author details from posts and users tables"
+pnpm corsair query -n "get user profile" -i "get user by ID with their posts count"
+pnpm corsair query -n "get comments by post" -i "fetch all comments for a specific post ID with author info"
+\`\`\`
+
+### Mutation Examples
+
+\`\`\`bash
+pnpm corsair mutation -n "create post" -i "create a new post with title, content, and author ID"
+pnpm corsair mutation -n "update user profile" -i "update user name and email by user ID"
+pnpm corsair mutation -n "delete post" -i "delete a post by ID"
+\`\`\`
+
+## Development Workflow
+
+### Watch Mode
+
+Start watch mode during development to auto-regenerate types on schema changes:
+
+\`\`\`bash
+pnpm corsair watch
+\`\`\`
+
+### Database Commands${
+			config.orm === "prisma"
+				? `
+
+\`\`\`bash
+pnpm db:generate      # Generate Prisma client
+pnpm db:push          # Push schema to database
+pnpm db:migrate       # Create and run migrations
+pnpm db:studio        # Open Prisma Studio
+pnpm db:seed          # Seed the database
+\`\`\``
+				: `
+
+\`\`\`bash
+pnpm db:push          # Push schema to database
+pnpm db:generate      # Generate migrations
+pnpm db:studio        # Open Drizzle Studio
+pnpm db:seed          # Seed the database
+\`\`\``
+		}
+
+## Project Structure
+
+\`\`\`
+project-root/
+├── corsair.config.ts           # Main Corsair configuration
+├── corsair/
+│   ├── index.ts                # Exports all procedures
+│   ├── procedure.ts            # Base procedure configuration
+│   ├── client.ts               # Client-side React hooks setup
+│   ├── queries/                # Auto-generated queries (don't edit manually)
+│   │   └── index.ts            # Managed by Corsair CLI
+│   └── mutations/              # Auto-generated mutations (don't edit manually)
+│       └── index.ts            # Managed by Corsair CLI
+├── app/api/corsair/[...corsair]/route.ts  # API route handler
+├── db/
+│   ├── index.ts                # Database client
+│   └── schema.ts               # Database schema${
+			config.orm === "prisma" ? " (Prisma)" : " (Drizzle)"
+		}
+└── components/                 # React components
+\`\`\`
+
+## Important Rules
+
+1. **Always use the Corsair CLI** to generate queries and mutations
+2. **Do not manually edit** files in \`corsair/queries/\` or \`corsair/mutations/\`
+3. **Use \`useCorsairQuery\` and \`useCorsairMutation\`** hooks in client components
+4. **Follow Next.js 15 App Router** conventions (use 'use client' directive when needed)
+5. **Keep database schema** in \`db/schema.ts\`${
+			config.orm === "prisma" ? "" : " (or `prisma/schema.prisma`)"
+		}
+6. **Run \`pnpm db:push\`** after schema changes
+7. **Use TypeScript** for all files
+8. **Run \`pnpm corsair check\`** to validate queries/mutations after schema changes
+9. **Run \`pnpm corsair fix\`** to auto-fix validation issues
+
+## Using Corsair in Components
+
+### Basic Usage
+
+\`\`\`tsx
+'use client'
+
+import { useCorsairQuery, useCorsairMutation } from '@/corsair/client'
+
+export function MyComponent() {
+  const { data, isLoading, error } = useCorsairQuery('query-name')
+  const mutation = useCorsairMutation('mutation-name')
+  
+  const handleAction = async () => {
+    await mutation.mutateAsync({ /* params */ })
+  }
+
+  if (isLoading) return <div>Loading...</div>
+  if (error) return <div>Error: {error.message}</div>
+  
+  return <div>{/* Use data */}</div>
+}
+\`\`\`
+
+### With Parameters
+
+\`\`\`tsx
+'use client'
+
+import { useCorsairQuery } from '@/corsair/client'
+
+export function PostDetail({ postId }: { postId: string }) {
+  const { data: post } = useCorsairQuery(
+    'get post by id',
+    { postId },
+    { enabled: !!postId }
+  )
+  
+  return <div>{post?.title}</div>
+}
+\`\`\`
+
+### With TypeScript Types
+
+\`\`\`tsx
+'use client'
+
+import { useCorsairQuery, QueryOutputs } from '@/corsair/client'
+
+type Post = QueryOutputs['get post by id']
+
+export function PostComponent() {
+  const { data: post } = useCorsairQuery('get post by id', { postId: '1' })
+  
+  return <div>{post?.title}</div>
+}
+\`\`\`
+
+## Schema Changes Workflow
+
+1. Update your database schema in \`db/schema.ts\`${
+			config.orm === "prisma" ? " or `prisma/schema.prisma`" : ""
+		}
+2. Run \`pnpm db:push\` to apply changes to database
+3. Run \`pnpm corsair check\` to validate existing queries/mutations
+4. Run \`pnpm corsair fix\` to auto-fix any issues
+5. Update component code if type signatures changed
+
+## Tips
+
+- Use descriptive names for queries and mutations
+- Provide detailed instructions to the CLI for better code generation
+- Review generated code to understand what was created
+- Use \`-u\` flag to update existing queries/mutations instead of creating new ones
+- Run \`pnpm corsair watch\` during development for instant feedback
+- Check the \`CLAUDE.md\` file for more detailed examples
 `,
 		gitignore: `# Dependencies
 /node_modules

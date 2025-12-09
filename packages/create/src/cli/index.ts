@@ -13,6 +13,7 @@ program
 	.argument("[project-name]", "name of the project to create")
 	.option("-p, --prisma", "use Prisma as the ORM")
 	.option("-d, --drizzle", "use Drizzle as the ORM")
+	.option("--ide <ide>", "AI IDE/assistant (cursor, claude, other)")
 	.option("--skip-install", "skip package installation")
 	.option("--skip-git", "skip git initialization")
 	.action(async (projectName, options) => {
