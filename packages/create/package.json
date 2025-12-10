@@ -1,6 +1,6 @@
 {
   "name": "@corsair-ai/create",
-  "version": "0.1.0",
+  "version": "0.1.01",
   "description": "The Project Generator for Corsair",
   "type": "module",
   "license": "MIT",
