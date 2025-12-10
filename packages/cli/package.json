@@ -1,6 +1,6 @@
 {
   "name": "@corsair-ai/cli",
-  "version": "0.1.2-beta.1",
+  "version": "0.1.2-beta.2",
   "description": "The CLI for Corsair",
   "type": "module",
   "license": "MIT",

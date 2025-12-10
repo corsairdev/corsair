@@ -99,14 +99,6 @@ program
 		},
 	);
 
-program
-	.command('schema')
-	.description('Get schema')
-	.action(async () => {
-		const { getSchema } = await import('./utils/schema.js');
-		await getSchema();
-	});
-
 program.parse();
 
 process.on('unhandledRejection', (error) => {
