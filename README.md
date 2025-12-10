@@ -12,7 +12,7 @@ pnpm corsair query
   -i "this should return published posts with author details and comment count. it should accept an author id"
 ```
 
-It immediately gets this on the client:
+Corsair writes a client-ready query:
 
 ```typescript
 const posts = useCorsairQuery('published posts with engagement', {
@@ -45,19 +45,7 @@ With Corsair, you get:
 - ✅ Overwrite as needed - All generated code is normal TypeScript and is completely editable.
 - ✅ Auto-fixing - When your schema changes, Corsair adapts and rewrites your API routes in seconds.
 
-Works with any stack (Next, Vite, Hono, Svelte, etc) and any ORM (Drizzle, Prisma, Kysely, Supabase, etc)
-
-## Why Use This With Your Agent?
-
-**Agents work faster** - No fumbling with ORM syntax or debugging type mismatches
-
-**Agents make fewer mistakes** - CLI validates everything before generating code, preventing hallucinated queries
-
-**Agents write readable code** - Natural language intent stays inline, so humans instantly understand what the agent built
-
-**Agents build predictable file structure** - Code is easily traceable back to where it was written and can be edited. 
-
-**Bash-native** - Agents can do everything from terminal without navigating files
+Works with any stack *(Next, Vite, Hono, Svelte, etc)* and any ORM *(Drizzle, Prisma, Kysely, Supabase, etc)*
 
 ## Iterate Faster
 
@@ -72,6 +60,18 @@ pnpm corsair fix
 ```
 
 Corsair will immediately detect all broken API routes and rewrite them to adapt to your new schema. 
+
+## Why Use This With Your Agent?
+
+**Agents work faster** - No fumbling with ORM syntax or debugging type mismatches
+
+**Agents make fewer mistakes** - CLI validates everything before generating code, preventing hallucinated queries
+
+**Agents write readable code** - Natural language intent stays inline, so humans instantly understand what the agent built
+
+**Agents build predictable file structure** - Code is easily traceable back to where it was written and can be edited. 
+
+**Bash-native** - Agents can do everything from terminal without navigating files
 
 ## What It Looks Like In Code
 
@@ -112,7 +112,9 @@ const { data } = useQuery(['posts'], async () => {
 const { data } = useCorsairQuery('published posts with engagement')
 ```
 
-## Get Started With a New Project (or read the docs to see how to add it to your existing project!)
+## Get Started With a New Project
+
+*Or add to an existing one*
 
 ```bash
 npx @corsair-ai/create@latest
