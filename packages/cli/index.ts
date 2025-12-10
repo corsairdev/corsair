@@ -30,10 +30,20 @@ program
 	.command('schema')
 	.description('Get the schema')
 	.action(async () => {
-		const { getSchema } = await import('./utils/schema.js');
-		const response = await getSchema();
+		const { loadConfig } = await import('./commands/config.js');
+		const config = await loadConfig();
 
-		console.log(response?.db);
+		console.log(config?.db);
+	});
+
+program
+	.command('config')
+	.description('Get the config')
+	.action(async () => {
+		const { loadConfig } = await import('./commands/config.js');
+		const config = await loadConfig();
+
+		console.log(config);
 	});
 
 program

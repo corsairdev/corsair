@@ -14,17 +14,21 @@ export async function runAgentOperation(
 	instructions?: string,
 	update?: boolean,
 ) {
-	const { loadConfig, loadEnv } = await import('./config.js');
-	const { getSchema } = await import('../utils/schema.js');
+	const { loadConfig } = await import('./config.js');
 	const { promptAgent } = await import('../llm/agent/index.js');
 	const { promptBuilder } = await import(
 		'../llm/agent/prompts/prompt-builder.js'
 	);
 	const { promises: fs } = await import('fs');
 
-	const cfg = loadConfig();
+	const cfg = await loadConfig();
 	const kebabCaseName = toKebabCase(name.trim());
 	const camelCaseName = kebabToCamelCase(kebabCaseName);
+
+	if (!cfg) {
+		console.error('No config found');
+		return;
+	}
 
 	const baseDir =
 		kind === 'query'
@@ -33,7 +37,7 @@ export async function runAgentOperation(
 	const rawPwd = `${baseDir}/${kebabCaseName}.ts`;
 	const pwd = rawPwd.startsWith('./') ? rawPwd.slice(2) : rawPwd;
 
-	const schema = await getSchema();
+	const schema = cfg.db;
 
 	if (!schema) {
 		console.error('No schema found');
@@ -57,7 +61,7 @@ export async function runAgentOperation(
 
 	const prompt = promptBuilder({
 		functionName: camelCaseName,
-		incomingSchema: schema.db,
+		incomingSchema: schema,
 		config: {
 			dbType: cfg.dbType,
 			framework: cfg.framework,
