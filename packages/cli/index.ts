@@ -1,7 +1,14 @@
 #!/usr/bin/env node
 
 import { Command } from 'commander';
+import { config as dotenvConfig } from 'dotenv';
+import path from 'path';
 import { runAgentOperation } from './commands/operation.js';
+
+// Load env immediately at startup, before any command runs
+const cwd = process.cwd();
+dotenvConfig({ path: path.resolve(cwd, '.env') });
+dotenvConfig({ path: path.resolve(cwd, '.env.local') });
 
 const program = new Command();
 
@@ -15,6 +22,7 @@ program
 	.description('Run TypeScript type checking on query and mutation files')
 	.action(async () => {
 		const { check } = await import('./commands/check.js');
+
 		await check();
 	});
 
@@ -23,6 +31,7 @@ program
 	.description('Fix type errors by regenerating files with errors')
 	.action(async () => {
 		const { fix } = await import('./commands/fix.js');
+
 		await fix();
 	});
 
@@ -31,6 +40,7 @@ program
 	.description('Get the schema')
 	.action(async () => {
 		const { loadConfig } = await import('./commands/config.js');
+
 		const config = await loadConfig();
 
 		console.log(config?.db);
@@ -41,6 +51,7 @@ program
 	.description('Get the config')
 	.action(async () => {
 		const { loadConfig } = await import('./commands/config.js');
+
 		const config = await loadConfig();
 
 		console.log(config);
@@ -101,6 +112,7 @@ program
 			filter: string;
 		}) => {
 			const { list } = await import('./commands/list.js');
+
 			await list({
 				queries: options.queries,
 				mutations: options.mutations,
