@@ -153,7 +153,12 @@ export async function list(options: {
 	mutations?: boolean;
 	filter?: string;
 }) {
-	const cfg = loadConfig();
+	const cfg = await loadConfig();
+
+	if (!cfg) {
+		console.error('No config found');
+		return;
+	}
 
 	const queriesPath = resolve(
 		process.cwd(),

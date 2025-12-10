@@ -35,7 +35,10 @@ You will be using a ${config.dbType} database, ${config.orm} as the ORM, and thi
 
 You will export a function with the exact name "${functionName}" - this is the camel case version of the function name.
 
-Do not use explicit 'any' types. Properly type all variables, parameters, and return values.
+IMPORTANT: This is a list of coding conventions you must follow. This ensures clean, maintainable, type safe code.
+- Do not use explicit 'any' types. Properly type all variables, parameters, and return values.
+- When typing a variable, prefer using implicit types. If you cannot use an implicit type, prefer using Omit<> or Pick<> over a random object type.
+
 
 ${instructions ? `These are additional instructions provided by the developer: ${instructions}` : ''}
 
@@ -75,7 +78,7 @@ This will be your process:
    - Fix ALL compilation errors and ensure there are no runtime errors
    - Call write_file again with the corrected code
    - Continue this process until you receive 'SUCCESS'
-6. Do NOT give up. Keep retrying until the code compiles successfully.
+6. If you are unable to fix the errors (after >5 attempts), write a summary of the errors you were unable to fix and provide a brief explanation of why you were unable to fix them.
 7. After receiving 'SUCCESS', provide a brief summary in this format:
 
 INPUT TYPES:

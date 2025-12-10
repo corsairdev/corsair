@@ -4,9 +4,9 @@
       "mode": "auto"
     }
   ],
-  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.defaultFormatter": "biomejs.biome",
   "[typescript]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
+    "editor.defaultFormatter": "biomejs.biome"
   },
   "[markdown]": {
     "editor.suggestOnTriggerCharacters": false,
@@ -23,6 +23,6 @@
   "editor.formatOnSaveMode": "file", // required to format on save
   "files.autoSave": "off",
   "[typescriptreact]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  } // optional but recommended
+    "editor.defaultFormatter": "biomejs.biome"
+  }
 }

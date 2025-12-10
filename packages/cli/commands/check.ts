@@ -7,7 +7,12 @@ import { loadConfig } from './config.js';
 const execAsync = promisify(exec);
 
 export async function check() {
-	const cfg = loadConfig();
+	const cfg = await loadConfig();
+
+	if (!cfg) {
+		console.error('No config found');
+		return;
+	}
 
 	const queriesPath = resolve(
 		process.cwd(),

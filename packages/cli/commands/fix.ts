@@ -2,7 +2,7 @@ import { exec } from 'child_process';
 import { existsSync, readdirSync } from 'fs';
 import { join, resolve } from 'path';
 import { promisify } from 'util';
-import { loadConfig } from './config.js';
+import type { Config } from './config.js';
 
 const execAsync = promisify(exec);
 
@@ -11,9 +11,7 @@ interface FileWithErrors {
 	errors: string[];
 }
 
-async function getFilesWithErrors(): Promise<FileWithErrors[]> {
-	const cfg = loadConfig();
-
+async function getFilesWithErrors(cfg: Config): Promise<FileWithErrors[]> {
 	const queriesPath = resolve(
 		process.cwd(),
 		cfg.pathToCorsairFolder,
@@ -82,7 +80,20 @@ async function getFilesWithErrors(): Promise<FileWithErrors[]> {
 export async function fix() {
 	console.log('🔍 Checking for files with errors...\n');
 
-	const filesWithErrors = await getFilesWithErrors();
+	const { loadConfig } = await import('./config.js');
+	const cfg = await loadConfig();
+
+	if (!cfg) {
+		console.error('No config found');
+		return;
+	}
+
+	const filesWithErrors = await getFilesWithErrors(cfg);
+
+	if (!filesWithErrors) {
+		console.error('Files could not be checked. Please check your config.');
+		return;
+	}
 
 	if (filesWithErrors.length === 0) {
 		console.log('✅ No files with errors found!\n');
@@ -107,19 +118,16 @@ export async function fix() {
 		`\n📊 Total: ${totalErrors} error${totalErrors > 1 ? 's' : ''} in ${filesWithErrors.length} file${filesWithErrors.length > 1 ? 's' : ''}\n`,
 	);
 
-	const { loadConfig } = await import('./config.js');
-	const cfg = loadConfig();
-
 	const queriesPath = resolve(
 		process.cwd(),
 		cfg.pathToCorsairFolder,
 		'queries',
 	);
-	const mutationsPath = resolve(
-		process.cwd(),
-		cfg.pathToCorsairFolder,
-		'mutations',
-	);
+	// const mutationsPath = resolve(
+	// 	process.cwd(),
+	// 	cfg.pathToCorsairFolder,
+	// 	'mutations',
+	// );
 
 	for (let i = 0; i < filesWithErrors.length; i++) {
 		const fileWithError = filesWithErrors[i];
@@ -134,9 +142,13 @@ export async function fix() {
 			`\n🔧 [${i + 1}/${filesWithErrors.length}] Regenerating ${kind} "${fileName}"...\n`,
 		);
 
+		const updateInstructions = `
+		Address the errors in the file ${fileWithError.errors.join('\n')}.
+		`;
+
 		try {
 			const { runAgentOperation } = await import('./operation.js');
-			await runAgentOperation(kind, fileName, undefined, true);
+			await runAgentOperation(kind, fileName, updateInstructions, true);
 		} catch (error) {
 			console.error(`\n❌ Failed to regenerate ${kind} "${fileName}":`, error);
 			console.log(`\n⏭️  Continuing to next file...\n`);
@@ -146,7 +158,7 @@ export async function fix() {
 
 	console.log('\n🔄 Running final type check...\n');
 
-	const remainingErrors = await getFilesWithErrors();
+	const remainingErrors = await getFilesWithErrors(cfg);
 
 	if (remainingErrors.length === 0) {
 		console.log('✅ All errors have been fixed!\n');
