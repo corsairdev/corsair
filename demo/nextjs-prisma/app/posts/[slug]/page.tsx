@@ -1,5 +1,5 @@
-import { Header } from "@/components/header";
-import { PostDetail } from "@/components/post-detail";
+import { Header } from '@/components/header';
+import { PostDetail } from '@/components/post-detail';
 
 interface PostPageProps {
 	params: Promise<{

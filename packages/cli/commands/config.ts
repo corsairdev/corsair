@@ -1,10 +1,10 @@
-import type { ConnectionConfig, CorsairConfig } from "@corsair-ai/core/config";
-import { DefaultBaseConfig } from "@corsair-ai/core/config";
-import { config } from "dotenv";
-import { existsSync } from "fs";
-import { resolve } from "path";
-import type { Node } from "ts-morph";
-import { Project, SyntaxKind } from "ts-morph";
+import type { ConnectionConfig, CorsairConfig } from '@corsair-ai/core/config';
+import { DefaultBaseConfig } from '@corsair-ai/core/config';
+import { config } from 'dotenv';
+import { existsSync } from 'fs';
+import { resolve } from 'path';
+import type { Node } from 'ts-morph';
+import { Project, SyntaxKind } from 'ts-morph';
 
 type GenericCorsairConfig = CorsairConfig<any>;
 
@@ -19,16 +19,16 @@ type ConfigObject = { [key: string]: ConfigValue };
 type ConfigArray = ConfigValue[];
 
 const REQUIRED_CONFIG_FIELDS = [
-	"framework",
-	"dbType",
-	"orm",
-	"db",
-	"connection",
+	'framework',
+	'dbType',
+	'orm',
+	'db',
+	'connection',
 ] as const;
 
 export function loadConfig(): CorsairConfig<any> {
-	loadEnv(".env.local");
-	const tsConfigPath = resolve(process.cwd(), "corsair.config.ts");
+	loadEnv('.env.local');
+	const tsConfigPath = resolve(process.cwd(), 'corsair.config.ts');
 	let userConfig: Partial<GenericCorsairConfig> | null = null;
 
 	const getNodeValue = (node: Node | undefined): ConfigValue => {
@@ -56,7 +56,7 @@ export function loadConfig(): CorsairConfig<any> {
 		if (node.isKind(SyntaxKind.PropertyAccessExpression)) {
 			const exprText = node.getExpression().getText();
 			const name = node.getName();
-			if (exprText === "process.env") {
+			if (exprText === 'process.env') {
 				return process.env[name] ?? null;
 			}
 		}
@@ -65,7 +65,7 @@ export function loadConfig(): CorsairConfig<any> {
 			const result: ConfigObject = {};
 			for (const prop of node.getProperties()) {
 				if (prop.isKind(SyntaxKind.PropertyAssignment)) {
-					const name = prop.getName().replace(/['"`]/g, "");
+					const name = prop.getName().replace(/['"`]/g, '');
 					const valueNode = prop.getInitializer();
 					result[name] = getNodeValue(valueNode);
 				}
@@ -78,7 +78,7 @@ export function loadConfig(): CorsairConfig<any> {
 		}
 
 		const text = node.getText();
-		return typeof text === "string" ? text.replace(/['"`]/g, "") : text;
+		return typeof text === 'string' ? text.replace(/['"`]/g, '') : text;
 	};
 
 	if (existsSync(tsConfigPath)) {
@@ -89,7 +89,7 @@ export function loadConfig(): CorsairConfig<any> {
 			let expr = exportAssignment?.getExpression();
 
 			if (!expr) {
-				const configVar = sf.getVariableDeclaration("config");
+				const configVar = sf.getVariableDeclaration('config');
 				const init = configVar?.getInitializer();
 				if (init) {
 					const objLiteral = init.getFirstDescendantByKind(
@@ -105,7 +105,7 @@ export function loadConfig(): CorsairConfig<any> {
 				const obj: ConfigObject = {};
 				for (const prop of expr.getProperties()) {
 					if (prop.isKind(SyntaxKind.PropertyAssignment)) {
-						const name = prop.getName().replace(/['"`]/g, "");
+						const name = prop.getName().replace(/['"`]/g, '');
 						const valueNode = prop.getInitializer();
 						const value = getNodeValue(valueNode);
 						if (name) obj[name] = value;
@@ -122,7 +122,7 @@ export function loadConfig(): CorsairConfig<any> {
 
 	if (missingFields.length > 0) {
 		throw new Error(
-			`Missing required fields in corsair.config.ts: ${missingFields.join(", ")}`,
+			`Missing required fields in corsair.config.ts: ${missingFields.join(', ')}`,
 		);
 	}
 
@@ -139,7 +139,7 @@ export function loadConfig(): CorsairConfig<any> {
 }
 
 export function loadEnv(envFile: string): void {
-	const possibleEnvFiles = [envFile, ".env.local", ".env"];
+	const possibleEnvFiles = [envFile, '.env.local', '.env'];
 
 	for (const file of possibleEnvFiles) {
 		const envPath = resolve(process.cwd(), file);
@@ -151,29 +151,29 @@ export function loadEnv(envFile: string): void {
 }
 
 export function checkDatabaseUrl(connection: ConnectionConfig): void {
-	if (typeof connection === "string") {
+	if (typeof connection === 'string') {
 		if (!connection) {
-			console.error("❌ DATABASE_URL is empty");
-			console.error("   Please set DATABASE_URL in your .env file\n");
+			console.error('❌ DATABASE_URL is empty');
+			console.error('   Please set DATABASE_URL in your .env file\n');
 			process.exit(1);
 		}
 	} else {
 		const requiredFields: (keyof Exclude<ConnectionConfig, string>)[] = [
-			"host",
-			"username",
-			"password",
-			"database",
+			'host',
+			'username',
+			'password',
+			'database',
 		];
 
 		const missingFields = requiredFields.filter((field) => !connection[field]);
 
 		if (missingFields.length > 0) {
 			console.error(
-				"❌ Missing required connection fields:",
-				missingFields.join(", "),
+				'❌ Missing required connection fields:',
+				missingFields.join(', '),
 			);
 			console.error(
-				"   Please provide all required connection details in your config\n",
+				'   Please provide all required connection details in your config\n',
 			);
 			process.exit(1);
 		}
@@ -186,10 +186,10 @@ export function getResolvedPaths(cfg: CorsairConfig<any>): {
 	schemaFile: string;
 	operationsFile: string;
 } {
-	const queriesDir = resolve(process.cwd(), "corsair/queries");
-	const mutationsDir = resolve(process.cwd(), "corsair/mutations");
-	const schemaFile = resolve(process.cwd(), "corsair/schema.ts");
-	const operationsFile = resolve(queriesDir, "..", "operations.ts");
+	const queriesDir = resolve(process.cwd(), 'corsair/queries');
+	const mutationsDir = resolve(process.cwd(), 'corsair/mutations');
+	const schemaFile = resolve(process.cwd(), 'corsair/schema.ts');
+	const operationsFile = resolve(queriesDir, '..', 'operations.ts');
 	return { queriesDir, mutationsDir, schemaFile, operationsFile };
 }
 

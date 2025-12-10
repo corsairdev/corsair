@@ -4,7 +4,7 @@ import type {
 	ExtractStrict,
 	Framework,
 	ORMs,
-} from ".";
+} from '.';
 
 export type BasePrismaPostgresClient = {
 	[key: string]: any;
@@ -31,15 +31,15 @@ export type PrismaPostgresConfig<T = any> = {
 	/**
 	 * The ORM to use for the Postgres database.
 	 */
-	orm: ExtractStrict<ORMs, "prisma">;
+	orm: ExtractStrict<ORMs, 'prisma'>;
 	/**
 	 * The database being used. In this case, Postgres.
 	 */
-	dbType: ExtractStrict<DBTypes, "postgres">;
+	dbType: ExtractStrict<DBTypes, 'postgres'>;
 	/**
 	 * The framework being used to build this project. In this case, Nextjs.
 	 */
-	framework: ExtractStrict<Framework, "nextjs">;
+	framework: ExtractStrict<Framework, 'nextjs'>;
 	/**
 	 * The database client that Corsair will use to interact with the database.
 	 */
@@ -51,14 +51,14 @@ export type PrismaPostgresConfig<T = any> = {
 };
 
 export const DefaultPrismaPostgresConfig: PrismaPostgresConfig<any> = {
-	orm: "prisma",
-	dbType: "postgres",
-	framework: "nextjs",
+	orm: 'prisma',
+	dbType: 'postgres',
+	framework: 'nextjs',
 	db: {},
 	connection: {
-		host: "localhost",
-		username: "postgres",
-		password: "postgres",
-		database: "postgres",
+		host: 'localhost',
+		username: 'postgres',
+		password: 'postgres',
+		database: 'postgres',
 	},
 };

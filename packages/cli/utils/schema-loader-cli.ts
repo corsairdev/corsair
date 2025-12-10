@@ -3,17 +3,17 @@ import type {
 	CorsairConfig,
 	SchemaOutput,
 	TableSchema,
-} from "@corsair-ai/core/config";
+} from '@corsair-ai/core/config';
 
 export const schemaLoaderCLI = (config: CorsairConfig<any>) => {
 	const dbSchema: SchemaOutput = {};
-	if (config.orm === "drizzle") {
+	if (config.orm === 'drizzle') {
 		const drizzleConfig = config satisfies CorsairConfig<any>;
 
 		const schema = drizzleConfig.db._.schema;
 
 		if (!schema) {
-			throw new Error("No schema found in drizzle instance");
+			throw new Error('No schema found in drizzle instance');
 		}
 
 		for (const [tableName, table] of Object.entries(schema)) {

@@ -13,7 +13,7 @@ export interface SpotifyArtist {
 	href: string;
 	id: string;
 	name: string;
-	type: "artist";
+	type: 'artist';
 	uri: string;
 	followers?: {
 		href: null;
@@ -35,7 +35,7 @@ export interface SpotifyAlbum {
 	release_date: string;
 	release_date_precision: string;
 	total_tracks: number;
-	type: "album";
+	type: 'album';
 	uri: string;
 }
 
@@ -51,7 +51,7 @@ export interface SpotifyTrack {
 	name: string;
 	preview_url: string | null;
 	track_number: number;
-	type: "track";
+	type: 'track';
 	uri: string;
 	is_local: boolean;
 }

@@ -1,8 +1,8 @@
-import { Box, Text, useInput } from "ink";
-import type React from "react";
-import { eventBus } from "../../core/event-bus.js";
-import { CorsairEvent } from "../../types/events.js";
-import type { StateContext } from "../../types/state.js";
+import { Box, Text, useInput } from 'ink';
+import type React from 'react';
+import { eventBus } from '../../core/event-bus.js';
+import { CorsairEvent } from '../../types/events.js';
+import type { StateContext } from '../../types/state.js';
 
 interface OperationDetailScreenProps {
 	context: StateContext;
@@ -21,28 +21,28 @@ export const OperationDetailScreen: React.FC<OperationDetailScreenProps> = ({
 
 	// Get the operation details
 	const operationsMap =
-		type === "queries" ? context.queries : context.mutations;
+		type === 'queries' ? context.queries : context.mutations;
 	const operation = operationsMap?.get(selectedOperation);
 
 	if (!operation) {
 		return null;
 	}
 
-	const displayColor = type === "queries" ? "cyan" : "yellow";
-	const operationType = type === "queries" ? "Query" : "Mutation";
+	const displayColor = type === 'queries' ? 'cyan' : 'yellow';
+	const operationType = type === 'queries' ? 'Query' : 'Mutation';
 
 	// Handle keyboard input
 	useInput((input, key) => {
 		const inputLower = input.toLowerCase();
 
 		if (key.escape) {
-			eventBus.emit(CorsairEvent.USER_COMMAND, { command: "go_back" });
-		} else if (inputLower === "u") {
+			eventBus.emit(CorsairEvent.USER_COMMAND, { command: 'go_back' });
+		} else if (inputLower === 'u') {
 			eventBus.emit(CorsairEvent.USER_COMMAND, {
-				command: "update_operation",
+				command: 'update_operation',
 				args: {
 					operationName: selectedOperation,
-					operationType: type === "queries" ? "query" : "mutation",
+					operationType: type === 'queries' ? 'query' : 'mutation',
 				},
 			});
 		}
@@ -62,8 +62,8 @@ export const OperationDetailScreen: React.FC<OperationDetailScreenProps> = ({
 				</Text>
 				<Box>
 					<Text backgroundColor={displayColor} color="black" bold>
-						{" "}
-						{operationType}{" "}
+						{' '}
+						{operationType}{' '}
 					</Text>
 				</Box>
 			</Box>

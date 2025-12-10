@@ -1,1 +1,1 @@
-export type { SlackChannels, SlackMembers, SlackPlugin } from "./slack/types";
+export type { SlackChannels, SlackMembers, SlackPlugin } from './slack/types';

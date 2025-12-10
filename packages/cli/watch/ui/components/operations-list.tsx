@@ -1,12 +1,12 @@
-import { Box, Text } from "ink";
-import type React from "react";
-import type { OperationDefinition } from "../../types/state.js";
+import { Box, Text } from 'ink';
+import type React from 'react';
+import type { OperationDefinition } from '../../types/state.js';
 
 interface OperationsListProps {
 	operations: OperationDefinition[];
 	startIndex: number;
 	highlightFirst?: boolean;
-	type: "queries" | "mutations";
+	type: 'queries' | 'mutations';
 }
 
 export const OperationsList: React.FC<OperationsListProps> = ({
@@ -15,7 +15,7 @@ export const OperationsList: React.FC<OperationsListProps> = ({
 	highlightFirst = false,
 	type,
 }) => {
-	const displayColor = type === "queries" ? "cyan" : "yellow";
+	const displayColor = type === 'queries' ? 'cyan' : 'yellow';
 
 	if (operations.length === 0) {
 		return (
@@ -41,7 +41,7 @@ export const OperationsList: React.FC<OperationsListProps> = ({
 						<Text> </Text>
 						<Box flexDirection="column">
 							<Text
-								color={isHighlighted ? displayColor : "white"}
+								color={isHighlighted ? displayColor : 'white'}
 								bold={isHighlighted}
 							>
 								{operation.name}

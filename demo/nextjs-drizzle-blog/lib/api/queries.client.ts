@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
 // Client-side query hooks (for Client Components)
 // These simulate React Query / tRPC-style hooks
 
-import { useCallback, useState } from "react";
-import type { SpotifyAlbum, SpotifyArtist, SpotifyTrack } from "@/lib/types";
+import { useCallback, useState } from 'react';
+import type { SpotifyAlbum, SpotifyArtist, SpotifyTrack } from '@/lib/types';
 import {
 	getAlbumById,
 	getAllAlbums,
@@ -14,7 +14,7 @@ import {
 	getArtistById,
 	getTracksByAlbumId,
 	getTracksByArtistId,
-} from "./data";
+} from './data';
 
 // Generic hook type
 interface UseQueryResult<T> {
@@ -27,7 +27,7 @@ interface UseQueryResult<T> {
 // Generic query hook
 function useQuery<T>(
 	queryFn: () => Promise<T>,
-	key: string = "default",
+	key: string = 'default',
 ): UseQueryResult<T> {
 	const [data, setData] = useState<T | null>(null);
 	const [isLoading, setIsLoading] = useState(true);
@@ -40,7 +40,7 @@ function useQuery<T>(
 			const result = await queryFn();
 			setData(result);
 		} catch (err) {
-			setError(err instanceof Error ? err : new Error("An error occurred"));
+			setError(err instanceof Error ? err : new Error('An error occurred'));
 		} finally {
 			setIsLoading(false);
 		}
@@ -58,15 +58,15 @@ function useQuery<T>(
 // ============================================
 
 export function useAllArtists(): UseQueryResult<SpotifyArtist[]> {
-	return useQuery(getAllArtists, "all-artists");
+	return useQuery(getAllArtists, 'all-artists');
 }
 
 export function useAllAlbums(): UseQueryResult<SpotifyAlbum[]> {
-	return useQuery(getAllAlbums, "all-albums");
+	return useQuery(getAllAlbums, 'all-albums');
 }
 
 export function useAllTracks(): UseQueryResult<SpotifyTrack[]> {
-	return useQuery(getAllTracks, "all-tracks");
+	return useQuery(getAllTracks, 'all-tracks');
 }
 
 export function useArtistById(

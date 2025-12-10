@@ -1,4 +1,4 @@
-import type { BaseConfig } from "../../config";
+import type { BaseConfig } from '../../config';
 
 export type SlackPlugin = {
 	/**
@@ -29,13 +29,13 @@ export type BaseSlackPluginResponse<T extends Record<string, any>> = {
 };
 
 export type SlackChannels<T extends BaseConfig> = keyof NonNullable<
-	T["plugins"]
->["slack"]["channels"] &
+	T['plugins']
+>['slack']['channels'] &
 	string;
 
 export type SlackMembers<T extends BaseConfig> = keyof NonNullable<
-	T["plugins"]
->["slack"]["members"] &
+	T['plugins']
+>['slack']['members'] &
 	string;
 
 // Message timestamp type (Slack uses this for message IDs)

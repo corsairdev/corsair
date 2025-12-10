@@ -1,21 +1,21 @@
-import { z } from "zod";
-import { loadConfig } from "../../cli/config.js";
-import { kebabToCamelCase, toKebabCase } from "../../cli/utils/utils.js";
-import { promptAgent } from "../../llm/agent/index.js";
-import { promptBuilder } from "../../llm/agent/prompts/prompt-builder.js";
-import { eventBus } from "../core/event-bus.js";
-import { stateMachine } from "../core/state-machine.js";
-import { generateQueryWithLLM } from "../generators/llm-generator.js";
-import { generateStub } from "../generators/stub-generator.js";
+import { z } from 'zod';
+import { loadConfig } from '../../cli/config.js';
+import { kebabToCamelCase, toKebabCase } from '../../cli/utils/utils.js';
+import { promptAgent } from '../../llm/agent/index.js';
+import { promptBuilder } from '../../llm/agent/prompts/prompt-builder.js';
+import { eventBus } from '../core/event-bus.js';
+import { stateMachine } from '../core/state-machine.js';
+import { generateQueryWithLLM } from '../generators/llm-generator.js';
+import { generateStub } from '../generators/stub-generator.js';
 import type {
 	LLMAnalysisStartedEvent,
 	QueryDetectedEvent,
 	SchemaLoadedEvent,
 	SchemaUpdatedEvent,
-} from "../types/events.js";
-import { CorsairEvent } from "../types/events.js";
-import type { Query, SchemaDefinition } from "../types/state.js";
-import { fileWriteHandler } from "./file-write-handler.js";
+} from '../types/events.js';
+import { CorsairEvent } from '../types/events.js';
+import type { Query, SchemaDefinition } from '../types/state.js';
+import { fileWriteHandler } from './file-write-handler.js';
 
 /**
  * Query Generator Handler
@@ -31,32 +31,32 @@ class QueryGenerator {
 		input_type: z
 			.string()
 			.describe(
-				"The input type of the function. This will be added to the input_type of the operation. This input type is what your function will receive as input.",
+				'The input type of the function. This will be added to the input_type of the operation. This input type is what your function will receive as input.',
 			),
 		output_type: z
 			.string()
 			.describe(
-				"The expected TypeScript output type of the handler function, expressed as a type-level description (for example, an object or array shape).",
+				'The expected TypeScript output type of the handler function, expressed as a type-level description (for example, an object or array shape).',
 			),
 		function: z
 			.string()
 			.describe(
-				"The actual logic of the function. This will be added to the handler of the operation. The response type will be inferred from the function.",
+				'The actual logic of the function. This will be added to the handler of the operation. The response type will be inferred from the function.',
 			),
 		notes: z
 			.string()
 			.describe(
-				"Any additional notes or instructions for the function that you will receive later as configuration rules.",
+				'Any additional notes or instructions for the function that you will receive later as configuration rules.',
 			),
 		pseudocode: z
 			.string()
 			.describe(
-				"High-level pseudocode describing what the function does, its inputs, outputs, and main steps.",
+				'High-level pseudocode describing what the function does, its inputs, outputs, and main steps.',
 			),
 		function_name: z
 			.string()
 			.describe(
-				"A concise, unique, kebab-case or camelCase function name suggestion suitable for naming a file.",
+				'A concise, unique, kebab-case or camelCase function name suggestion suitable for naming a file.',
 			),
 	});
 
@@ -112,7 +112,7 @@ class QueryGenerator {
 			// Step 1: Generate and write stub immediately
 			eventBus.emit(CorsairEvent.GENERATION_PROGRESS, {
 				queryId: query.id,
-				stage: "Creating stub",
+				stage: 'Creating stub',
 				percentage: 10,
 			});
 
@@ -124,18 +124,18 @@ class QueryGenerator {
 			// Step 2: Generate actual query with LLM (stub for now)
 			eventBus.emit(CorsairEvent.GENERATION_PROGRESS, {
 				queryId: query.id,
-				stage: "Generating query logic",
+				stage: 'Generating query logic',
 				percentage: 40,
-				message: "Analyzing schema...",
+				message: 'Analyzing schema...',
 			});
 
 			await new Promise((resolve) => setTimeout(resolve, 300));
 
 			eventBus.emit(CorsairEvent.GENERATION_PROGRESS, {
 				queryId: query.id,
-				stage: "Generating query logic",
+				stage: 'Generating query logic',
 				percentage: 60,
-				message: "Creating Drizzle query...",
+				message: 'Creating Drizzle query...',
 			});
 
 			const generatedQuery = await generateQueryWithLLM(query, this.schema);
@@ -143,7 +143,7 @@ class QueryGenerator {
 			// Step 3: Write final query
 			eventBus.emit(CorsairEvent.GENERATION_PROGRESS, {
 				queryId: query.id,
-				stage: "Writing files",
+				stage: 'Writing files',
 				percentage: 80,
 			});
 
@@ -163,7 +163,7 @@ export default ${generatedQuery.functionName};
 			// Step 4: Complete
 			eventBus.emit(CorsairEvent.GENERATION_PROGRESS, {
 				queryId: query.id,
-				stage: "Complete",
+				stage: 'Complete',
 				percentage: 100,
 			});
 
@@ -175,8 +175,8 @@ export default ${generatedQuery.functionName};
 		} catch (error) {
 			eventBus.emit(CorsairEvent.GENERATION_FAILED, {
 				queryId: query.id,
-				error: error instanceof Error ? error.message : "Unknown error",
-				code: "GENERATION_ERROR",
+				error: error instanceof Error ? error.message : 'Unknown error',
+				code: 'GENERATION_ERROR',
 			});
 		}
 	}
@@ -218,7 +218,7 @@ export default ${generatedQuery.functionName};
 	// }
 
 	private async processWithLLM(operation: {
-		operationType: "query" | "mutation";
+		operationType: 'query' | 'mutation';
 		operationName: string;
 		functionName: string;
 		prompt: string;
@@ -232,11 +232,11 @@ export default ${generatedQuery.functionName};
 		const kebabName = toKebabCase(operation.operationName);
 		const camelName = kebabToCamelCase(kebabName);
 		const baseDir =
-			operation.operationType === "query"
-				? cfg.pathToCorsairFolder + "/queries"
-				: cfg.pathToCorsairFolder + "/mutations";
+			operation.operationType === 'query'
+				? cfg.pathToCorsairFolder + '/queries'
+				: cfg.pathToCorsairFolder + '/mutations';
 		const rawPwd = `${baseDir}/${kebabName}.ts`;
-		const pwd = rawPwd.startsWith("./") ? rawPwd.slice(2) : rawPwd;
+		const pwd = rawPwd.startsWith('./') ? rawPwd.slice(2) : rawPwd;
 
 		try {
 			const prompt = promptBuilder({
@@ -257,11 +257,11 @@ export default ${generatedQuery.functionName};
 				operationName: operation.operationName,
 				operationType: operation.operationType,
 				response: {
-					input_type: "Generated by agent",
-					output_type: "Generated by agent",
-					function: "Generated by agent",
-					notes: result.text || "Agent completed generation",
-					pseudocode: "",
+					input_type: 'Generated by agent',
+					output_type: 'Generated by agent',
+					function: 'Generated by agent',
+					notes: result.text || 'Agent completed generation',
+					pseudocode: '',
 					function_name: camelName,
 				},
 				operation,
@@ -274,12 +274,12 @@ export default ${generatedQuery.functionName};
 					: undefined,
 			});
 		} catch (error) {
-			console.error("Agent processing error:", error);
+			console.error('Agent processing error:', error);
 
 			eventBus.emit(CorsairEvent.LLM_ANALYSIS_FAILED, {
 				operationName: operation.operationName,
 				operationType: operation.operationType,
-				error: error instanceof Error ? error.message : "Unknown error",
+				error: error instanceof Error ? error.message : 'Unknown error',
 			});
 		}
 	}
@@ -293,14 +293,14 @@ export default ${generatedQuery.functionName};
 		const newOperation = currentState.context.newOperation;
 
 		if (!newOperation) {
-			console.warn("LLM analysis started but no operation found in state");
+			console.warn('LLM analysis started but no operation found in state');
 			return;
 		}
 
 		// Only process if this is a user-submitted operation (has configurationRules or from state machine)
 		if (
 			newOperation.configurationRules !== undefined ||
-			currentState.state === "LLM_PROCESSING"
+			currentState.state === 'LLM_PROCESSING'
 		) {
 			await this.processWithLLM({
 				operationType: newOperation.operationType,

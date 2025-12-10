@@ -1,1 +1,1 @@
-export { generateTemplate } from "./templates/index.js";
+export { generateTemplate } from './templates/index.js';

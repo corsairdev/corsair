@@ -1,6 +1,6 @@
-import { z } from "corsair";
-import { and, eq, inArray } from "drizzle-orm";
-import { procedure } from "../procedure";
+import { z } from 'corsair';
+import { and, eq, inArray } from 'drizzle-orm';
+import { procedure } from '../procedure';
 
 export const linkAlbumToArtists = procedure
 	.input(
@@ -29,7 +29,7 @@ export const linkAlbumToArtists = procedure
 		const missingArtistIds = artistIds.filter((id) => !foundArtistIds.has(id));
 		if (missingArtistIds.length > 0) {
 			throw new Error(
-				`These artistIds do not exist: ${missingArtistIds.join(", ")}`,
+				`These artistIds do not exist: ${missingArtistIds.join(', ')}`,
 			);
 		}
 

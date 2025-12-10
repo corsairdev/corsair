@@ -1,5 +1,5 @@
-import { z } from "corsair";
-import { procedure } from "../procedure";
+import { z } from 'corsair';
+import { procedure } from '../procedure';
 
 export const createArtist = procedure
 	.input(
@@ -26,8 +26,8 @@ export const createArtist = procedure
 				genres: input.genres,
 				images: input.images,
 				external_urls: input.external_urls,
-				uri: input.uri || "",
-				href: input.href || "",
+				uri: input.uri || '',
+				href: input.href || '',
 			})
 			.returning();
 

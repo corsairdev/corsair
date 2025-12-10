@@ -1,14 +1,14 @@
 // This file simulates a database or external API
 // In production, this would be replaced with actual API calls
 
-import albumsData from "@/data/albums.json";
-import artistsData from "@/data/artists.json";
-import tracksData from "@/data/tracks.json";
+import albumsData from '@/data/albums.json';
+import artistsData from '@/data/artists.json';
+import tracksData from '@/data/tracks.json';
 import type {
 	SpotifyAlbum,
 	SpotifyArtist,
 	SpotifyTracksResponse,
-} from "@/lib/types";
+} from '@/lib/types';
 
 // Simulated data store with mutable state for mutations
 const artists = artistsData as SpotifyArtist[];

@@ -1,17 +1,17 @@
-"use client";
+'use client';
 
 // Client-side mutation hooks (for Client Components)
 // These simulate React Query / tRPC-style mutation hooks
 
-import { useCallback, useState } from "react";
-import type { SpotifyAlbum, SpotifyArtist, SpotifyTrack } from "@/lib/types";
+import { useCallback, useState } from 'react';
+import type { SpotifyAlbum, SpotifyArtist, SpotifyTrack } from '@/lib/types';
 import {
 	addArtistGenre,
 	removeArtistGenre,
 	toggleTrackExplicit,
 	updateAlbumType,
 	updateArtistPopularity,
-} from "./data";
+} from './data';
 
 // Generic mutation hook type
 interface UseMutationResult<TData, TVariables> {
@@ -38,7 +38,7 @@ function useMutation<TData, TVariables>(
 				const result = await mutationFn(variables);
 				setData(result);
 			} catch (err) {
-				setError(err instanceof Error ? err : new Error("An error occurred"));
+				setError(err instanceof Error ? err : new Error('An error occurred'));
 			} finally {
 				setIsLoading(false);
 			}

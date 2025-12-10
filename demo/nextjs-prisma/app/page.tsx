@@ -1,7 +1,7 @@
 // Server Component - fetches data on the server
 
-import { Header } from "@/components/header";
-import { PostList } from "@/components/post-list";
+import { Header } from '@/components/header';
+import { PostList } from '@/components/post-list';
 
 export default async function Home() {
 	return (

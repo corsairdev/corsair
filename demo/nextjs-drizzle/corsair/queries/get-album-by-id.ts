@@ -1,6 +1,6 @@
-import { z } from "corsair";
-import { eq } from "drizzle-orm";
-import { procedure } from "../procedure";
+import { z } from 'corsair';
+import { eq } from 'drizzle-orm';
+import { procedure } from '../procedure';
 
 export const getAlbumById = procedure
 	.input(

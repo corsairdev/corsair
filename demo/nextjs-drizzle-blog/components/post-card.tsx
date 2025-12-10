@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import { Calendar, Eye } from "lucide-react";
-import Image from "next/image";
-import Link from "next/link";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Calendar, Eye } from 'lucide-react';
+import Image from 'next/image';
+import Link from 'next/link';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 
 interface PostCardProps {
 	post: {
@@ -63,12 +63,12 @@ export function PostCard({ post }: PostCardProps) {
 								<span className="flex items-center gap-1">
 									<Calendar className="h-3 w-3" />
 									{post.published_at
-										? new Date(post.published_at).toLocaleDateString("en-US", {
-												month: "short",
-												day: "numeric",
-												year: "numeric",
+										? new Date(post.published_at).toLocaleDateString('en-US', {
+												month: 'short',
+												day: 'numeric',
+												year: 'numeric',
 											})
-										: "Draft"}
+										: 'Draft'}
 								</span>
 								<span className="flex items-center gap-1">
 									<Eye className="h-3 w-3" />

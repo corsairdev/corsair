@@ -1,12 +1,12 @@
-import fs from "fs-extra";
-import path from "path";
-import type { ProjectConfig } from "../../cli/create-project.js";
+import fs from 'fs-extra';
+import path from 'path';
+import type { ProjectConfig } from '../../cli/create-project.js';
 
 export async function generateDatabaseFiles(
 	projectPath: string,
 	config: ProjectConfig,
 ): Promise<void> {
-	if (config.orm === "prisma") {
+	if (config.orm === 'prisma') {
 		await generatePrismaFiles(projectPath);
 	} else {
 		await generateDrizzleFiles(projectPath);
@@ -16,11 +16,11 @@ export async function generateDatabaseFiles(
 async function generatePrismaFiles(projectPath: string): Promise<void> {
 	const templates = getPrismaTemplates();
 	await fs.writeFile(
-		path.join(projectPath, "prisma", "schema.prisma"),
+		path.join(projectPath, 'prisma', 'schema.prisma'),
 		templates.schema,
 	);
 	await fs.writeFile(
-		path.join(projectPath, "db", "index.ts"),
+		path.join(projectPath, 'db', 'index.ts'),
 		templates.dbIndex,
 	);
 }
@@ -28,15 +28,15 @@ async function generatePrismaFiles(projectPath: string): Promise<void> {
 async function generateDrizzleFiles(projectPath: string): Promise<void> {
 	const templates = getDrizzleTemplates();
 	await fs.writeFile(
-		path.join(projectPath, "db", "schema.ts"),
+		path.join(projectPath, 'db', 'schema.ts'),
 		templates.schema,
 	);
 	await fs.writeFile(
-		path.join(projectPath, "db", "index.ts"),
+		path.join(projectPath, 'db', 'index.ts'),
 		templates.dbIndex,
 	);
 	await fs.writeFile(
-		path.join(projectPath, "drizzle.config.ts"),
+		path.join(projectPath, 'drizzle.config.ts'),
 		templates.config,
 	);
 }

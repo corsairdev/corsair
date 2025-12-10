@@ -1,7 +1,7 @@
-import { Box, Text } from "ink";
-import type React from "react";
-import type { StateContext } from "../../types/state.js";
-import { CommandBar } from "../components/command-bar.js";
+import { Box, Text } from 'ink';
+import type React from 'react';
+import type { StateContext } from '../../types/state.js';
+import { CommandBar } from '../components/command-bar.js';
 
 interface ErrorScreenProps {
 	context: StateContext;
@@ -34,7 +34,7 @@ export const ErrorScreen: React.FC<ErrorScreenProps> = ({ context }) => {
 					<Text>Suggestions:</Text>
 					{error.suggestions.map((suggestion, i) => (
 						<Text key={i} dimColor>
-							{" "}
+							{' '}
 							• {suggestion}
 						</Text>
 					))}
@@ -43,8 +43,8 @@ export const ErrorScreen: React.FC<ErrorScreenProps> = ({ context }) => {
 
 			<CommandBar
 				commands={[
-					{ key: "H", label: "Help" },
-					{ key: "Q", label: "Quit" },
+					{ key: 'H', label: 'Help' },
+					{ key: 'Q', label: 'Quit' },
 				]}
 			/>
 		</Box>

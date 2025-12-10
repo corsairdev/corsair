@@ -1,8 +1,8 @@
-import { Project, SyntaxKind } from "ts-morph";
-import { eventBus } from "../core/event-bus.js";
-import type { SchemaLoadedEvent, SchemaUpdatedEvent } from "../types/events.js";
-import { CorsairEvent } from "../types/events.js";
-import type { SchemaDefinition, TableDefinition } from "../types/state.js";
+import { Project, SyntaxKind } from 'ts-morph';
+import { eventBus } from '../core/event-bus.js';
+import type { SchemaLoadedEvent, SchemaUpdatedEvent } from '../types/events.js';
+import { CorsairEvent } from '../types/events.js';
+import type { SchemaDefinition, TableDefinition } from '../types/state.js';
 
 /**
  * Schema Handler
@@ -15,7 +15,7 @@ export class Schema {
 	private filePath: string;
 
 	constructor(filePath?: string) {
-		this.filePath = filePath ?? process.cwd() + "/corsair/schema.ts";
+		this.filePath = filePath ?? process.cwd() + '/corsair/schema.ts';
 	}
 
 	/**
@@ -39,12 +39,12 @@ export class Schema {
 						if (initializer?.isKind(SyntaxKind.CallExpression)) {
 							const expression = initializer.getExpression();
 
-							if (expression.getText() === "CorsairDB.table") {
+							if (expression.getText() === 'CorsairDB.table') {
 								const args = initializer.getArguments();
 
 								if (args.length >= 2 && args[0] && args[1]) {
 									// First argument is the table name
-									const tableName = args[0].getText().replace(/['"`]/g, "");
+									const tableName = args[0].getText().replace(/['"`]/g, '');
 
 									// Second argument is the columns object
 									const columnsArg = args[1];
@@ -124,7 +124,7 @@ export class Schema {
 					const objectExpression = memberExpression.getExpression();
 
 					// Check if this is CorsairDB.type()
-					if (objectExpression.getText() === "CorsairDB") {
+					if (objectExpression.getText() === 'CorsairDB') {
 						corsairDBCall = current;
 						break;
 					}
@@ -155,7 +155,7 @@ export class Schema {
 
 				// Check for references by looking for .references() in the chain
 				let references: { table: string; column: string } | null = null;
-				if (expression.getText().includes(".references(")) {
+				if (expression.getText().includes('.references(')) {
 					// For now, we'll extract basic reference info
 					// This is a simplified approach - a full parser would be more complex
 					const fullText = expression.getText();
@@ -186,19 +186,19 @@ export class Schema {
 	 */
 	private mapCorsairDBTypeToSQL(corsairType: string): string {
 		const typeMap: Record<string, string> = {
-			text: "text",
-			integer: "integer",
-			boolean: "boolean",
-			uuid: "uuid",
-			jsonb: "jsonb",
-			json: "json",
-			timestamp: "timestamp",
-			date: "date",
-			decimal: "decimal",
-			serial: "serial",
+			text: 'text',
+			integer: 'integer',
+			boolean: 'boolean',
+			uuid: 'uuid',
+			jsonb: 'jsonb',
+			json: 'json',
+			timestamp: 'timestamp',
+			date: 'date',
+			decimal: 'decimal',
+			serial: 'serial',
 		};
 
-		return typeMap[corsairType] || "text";
+		return typeMap[corsairType] || 'text';
 	}
 
 	/**

@@ -1,5 +1,5 @@
-import { z } from "zod";
-import { procedure } from "@/corsair/procedure";
+import { z } from 'zod';
+import { procedure } from '@/corsair/procedure';
 
 /**
  * INPUT: { content: string, postId: string, authorId: string }

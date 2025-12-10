@@ -1,4 +1,4 @@
-import { procedure } from "@/corsair/procedure";
+import { procedure } from '@/corsair/procedure';
 
 /**
  * INPUT: {}
@@ -21,7 +21,7 @@ export const getAllPosts = procedure.query(async ({ ctx }) => {
 			author: true,
 		},
 		orderBy: {
-			publishedAt: "desc",
+			publishedAt: 'desc',
 		},
 	});
 

@@ -1,7 +1,7 @@
-import type { CorsairConfig, SchemaOutput } from "@corsair-ai/core/config";
-import { exec } from "child_process";
-import { promisify } from "util";
-import { schemaLoaderCLI } from "./schema-loader-cli.js";
+import type { CorsairConfig, SchemaOutput } from '@corsair-ai/core/config';
+import { exec } from 'child_process';
+import { promisify } from 'util';
+import { schemaLoaderCLI } from './schema-loader-cli.js';
 
 // i can't figure out if this is the smartest or dumbest code i've ever written
 
@@ -10,8 +10,8 @@ const execAsync = promisify(exec);
 const body = schemaLoaderCLI
 	.toString()
 	.slice(
-		schemaLoaderCLI.toString().indexOf("{") + 1,
-		schemaLoaderCLI.toString().lastIndexOf("}"),
+		schemaLoaderCLI.toString().indexOf('{') + 1,
+		schemaLoaderCLI.toString().lastIndexOf('}'),
 	)
 	.trim();
 
@@ -40,14 +40,14 @@ console.log('</output>')
 		);
 
 		const response =
-			result.stdout.match(/<output>(.*?)<\/output>/s)?.[1]?.trim() || "";
+			result.stdout.match(/<output>(.*?)<\/output>/s)?.[1]?.trim() || '';
 
-		const object = JSON.parse(response) as Omit<CorsairConfig<any>, "db"> & {
+		const object = JSON.parse(response) as Omit<CorsairConfig<any>, 'db'> & {
 			db: SchemaOutput;
 		};
 
 		return object;
 	} catch (error) {
-		console.error("Error extracting schema:", error);
+		console.error('Error extracting schema:', error);
 	}
 };

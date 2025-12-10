@@ -1,15 +1,15 @@
-"use client";
+'use client';
 
-import { Loader2 } from "lucide-react";
-import { useCorsairQuery } from "@/corsair/client";
-import { PostCard } from "./post-card";
+import { Loader2 } from 'lucide-react';
+import { useCorsairQuery } from '@/corsair/client';
+import { PostCard } from './post-card';
 
 export function PostList() {
 	const {
 		data: posts,
 		isLoading,
 		error,
-	} = useCorsairQuery("get all posts", {});
+	} = useCorsairQuery('get all posts', {});
 
 	if (isLoading) {
 		return (

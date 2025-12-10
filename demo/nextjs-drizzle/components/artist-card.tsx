@@ -1,16 +1,16 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import type { QueryOutputs } from "@/corsair/client";
-import { useCorsairMutation } from "@/corsair/client";
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import type { QueryOutputs } from '@/corsair/client';
+import { useCorsairMutation } from '@/corsair/client';
 
 interface ArtistCardProps {
-	artist: QueryOutputs["get all artists"][number];
-	onClick?: (artist: QueryOutputs["get all artists"][number]) => void;
+	artist: QueryOutputs['get all artists'][number];
+	onClick?: (artist: QueryOutputs['get all artists'][number]) => void;
 }
 
 export function ArtistCard({ artist, onClick }: ArtistCardProps) {
-	const sendMessage = useCorsairMutation("send slack message");
+	const sendMessage = useCorsairMutation('send slack message');
 
 	const formatFollowers = (count: number) => {
 		if (count >= 1000000) {
@@ -27,10 +27,10 @@ export function ArtistCard({ artist, onClick }: ArtistCardProps) {
 			className="hover:shadow-lg transition-shadow cursor-pointer"
 			onClick={() => {
 				onClick?.(artist);
-				console.log("here");
+				console.log('here');
 				sendMessage.mutateAsync({
-					channel: "general",
-					message: "test",
+					channel: 'general',
+					message: 'test',
 				});
 			}}
 		>
@@ -40,7 +40,7 @@ export function ArtistCard({ artist, onClick }: ArtistCardProps) {
 						src={(artist.images as unknown as { url: string }[])?.[0]?.url}
 						alt={artist.name ?? undefined}
 					/>
-					<AvatarFallback>{artist.name?.charAt(0) ?? ""}</AvatarFallback>
+					<AvatarFallback>{artist.name?.charAt(0) ?? ''}</AvatarFallback>
 				</Avatar>
 				<div className="flex-1">
 					<CardTitle>{artist.name}</CardTitle>

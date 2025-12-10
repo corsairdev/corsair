@@ -1,9 +1,9 @@
-import type { Project } from "ts-morph";
-import { SyntaxKind } from "ts-morph";
-import { eventBus } from "../core/event-bus.js";
-import type { FileChangedEvent } from "../types/events.js";
-import { CorsairEvent } from "../types/events.js";
-import { operationChangeHandler } from "./operation-change-handler.js";
+import type { Project } from 'ts-morph';
+import { SyntaxKind } from 'ts-morph';
+import { eventBus } from '../core/event-bus.js';
+import type { FileChangedEvent } from '../types/events.js';
+import { CorsairEvent } from '../types/events.js';
+import { operationChangeHandler } from './operation-change-handler.js';
 
 /**
  * File Change Handler
@@ -45,10 +45,10 @@ class FileChangeHandler {
 
 		// All the Corsair functions we want to detect
 		const corsairFunctions = [
-			"corsairQuery",
-			"corsairMutation",
-			"useCorsairQuery",
-			"useCorsairMutation",
+			'corsairQuery',
+			'corsairMutation',
+			'useCorsairQuery',
+			'useCorsairMutation',
 		];
 
 		// Find all call expressions in the file
@@ -72,7 +72,7 @@ class FileChangeHandler {
 		corsairCalls.forEach((call) => {
 			calls.push({
 				name: call.getExpression().getText(),
-				prompt: call.getArguments()[0]?.getText() || "",
+				prompt: call.getArguments()[0]?.getText() || '',
 				line: call.getStartLineNumber(),
 			});
 		});

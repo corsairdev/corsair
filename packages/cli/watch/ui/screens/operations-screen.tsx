@@ -1,12 +1,12 @@
-import { Box, Text, useInput } from "ink";
-import type React from "react";
-import { useMemo } from "react";
-import { eventBus } from "../../core/event-bus.js";
-import { CorsairEvent } from "../../types/events.js";
-import type { StateContext } from "../../types/state.js";
-import { OperationsList } from "../components/operations-list.js";
-import { PaginationIndicator } from "../components/pagination-indicator.js";
-import { SearchInput } from "../components/search-input.js";
+import { Box, Text, useInput } from 'ink';
+import type React from 'react';
+import { useMemo } from 'react';
+import { eventBus } from '../../core/event-bus.js';
+import { CorsairEvent } from '../../types/events.js';
+import type { StateContext } from '../../types/state.js';
+import { OperationsList } from '../components/operations-list.js';
+import { PaginationIndicator } from '../components/pagination-indicator.js';
+import { SearchInput } from '../components/search-input.js';
 
 interface OperationsScreenProps {
 	context: StateContext;
@@ -25,7 +25,7 @@ export const OperationsScreen: React.FC<OperationsScreenProps> = ({
 
 	// Get operations based on type
 	const allOperations = useMemo(() => {
-		const opsMap = type === "queries" ? context.queries : context.mutations;
+		const opsMap = type === 'queries' ? context.queries : context.mutations;
 		return Array.from(opsMap?.values() || []);
 	}, [type, context.queries, context.mutations]);
 
@@ -51,14 +51,14 @@ export const OperationsScreen: React.FC<OperationsScreenProps> = ({
 		startIndex + 5,
 	);
 
-	const displayColor = type === "queries" ? "cyan" : "yellow";
-	const displayTitle = type === "queries" ? "Queries" : "Mutations";
+	const displayColor = type === 'queries' ? 'cyan' : 'yellow';
+	const displayTitle = type === 'queries' ? 'Queries' : 'Mutations';
 
 	// Handle keyboard input
 	useInput((input, key) => {
 		// ESC to exit
 		if (key.escape) {
-			eventBus.emit(CorsairEvent.USER_COMMAND, { command: "go_back" });
+			eventBus.emit(CorsairEvent.USER_COMMAND, { command: 'go_back' });
 			return;
 		}
 
@@ -68,13 +68,13 @@ export const OperationsScreen: React.FC<OperationsScreenProps> = ({
 				// If there are filtered results and Enter is pressed, select first one
 				if (filteredOperations.length > 0 && paginatedOperations[0]) {
 					eventBus.emit(CorsairEvent.USER_COMMAND, {
-						command: "select_operation",
+						command: 'select_operation',
 						args: { operationName: paginatedOperations[0].name },
 					});
 				} else {
 					// Otherwise, toggle search off
 					eventBus.emit(CorsairEvent.USER_COMMAND, {
-						command: "toggle_search",
+						command: 'toggle_search',
 					});
 				}
 				return;
@@ -82,7 +82,7 @@ export const OperationsScreen: React.FC<OperationsScreenProps> = ({
 
 			if (key.backspace || key.delete) {
 				eventBus.emit(CorsairEvent.USER_COMMAND, {
-					command: "update_search",
+					command: 'update_search',
 					args: { query: searchQuery.slice(0, -1) },
 				});
 				return;
@@ -91,7 +91,7 @@ export const OperationsScreen: React.FC<OperationsScreenProps> = ({
 			// Regular character input
 			if (input && !key.ctrl && !key.meta) {
 				eventBus.emit(CorsairEvent.USER_COMMAND, {
-					command: "update_search",
+					command: 'update_search',
 					args: { query: searchQuery + input },
 				});
 			}
@@ -100,22 +100,22 @@ export const OperationsScreen: React.FC<OperationsScreenProps> = ({
 
 		// Not searching - handle navigation
 		if (key.return) {
-			eventBus.emit(CorsairEvent.USER_COMMAND, { command: "toggle_search" });
+			eventBus.emit(CorsairEvent.USER_COMMAND, { command: 'toggle_search' });
 			return;
 		}
 
 		if (key.leftArrow && currentPage > 0) {
 			eventBus.emit(CorsairEvent.USER_COMMAND, {
-				command: "navigate_page",
-				args: { direction: "prev" },
+				command: 'navigate_page',
+				args: { direction: 'prev' },
 			});
 			return;
 		}
 
 		if (key.rightArrow && currentPage < totalPages - 1) {
 			eventBus.emit(CorsairEvent.USER_COMMAND, {
-				command: "navigate_page",
-				args: { direction: "next" },
+				command: 'navigate_page',
+				args: { direction: 'next' },
 			});
 			return;
 		}
@@ -124,7 +124,7 @@ export const OperationsScreen: React.FC<OperationsScreenProps> = ({
 		const num = parseInt(input);
 		if (num >= 1 && num <= 5 && paginatedOperations?.[num - 1]) {
 			eventBus.emit(CorsairEvent.USER_COMMAND, {
-				command: "select_operation",
+				command: 'select_operation',
 				args: { operationName: paginatedOperations[num - 1]!.name },
 			});
 		}
@@ -155,16 +155,16 @@ export const OperationsScreen: React.FC<OperationsScreenProps> = ({
 					<Text dimColor>Example:</Text>
 					<Box flexDirection="column" paddingLeft={2}>
 						<Text dimColor>
-							export const {type} = {"{"}
+							export const {type} = {'{'}
 						</Text>
-						<Text dimColor> exampleQuery: query({"{"}</Text>
+						<Text dimColor> exampleQuery: query({'{'}</Text>
 						<Text dimColor> prompt: "Get user by id",</Text>
 						<Text dimColor>
-							{" "}
-							handler: async ({"{"} id {"}"}) ={">"} {"{"} ... {"}"},
+							{' '}
+							handler: async ({'{'} id {'}'}) ={'>'} {'{'} ... {'}'},
 						</Text>
-						<Text dimColor> {"}"}),</Text>
-						<Text dimColor>{"}"}</Text>
+						<Text dimColor> {'}'}),</Text>
+						<Text dimColor>{'}'}</Text>
 					</Box>
 				</Box>
 			</Box>

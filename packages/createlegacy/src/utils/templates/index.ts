@@ -1,14 +1,14 @@
-import fs from "fs-extra";
-import path from "path";
-import type { ProjectConfig } from "../../cli/create-project.js";
-import { generateConfigFiles } from "./config.js";
-import { generateCorsairSetup } from "./corsair.js";
-import { generateDatabaseFiles } from "./database.js";
-import { generateDocumentation } from "./documentation.js";
-import { generateNextjsStructure } from "./nextjs.js";
-import { generatePackageJson } from "./package.js";
-import { generateSeedData } from "./seed.js";
-import { generateUIComponents } from "./ui.js";
+import fs from 'fs-extra';
+import path from 'path';
+import type { ProjectConfig } from '../../cli/create-project.js';
+import { generateConfigFiles } from './config.js';
+import { generateCorsairSetup } from './corsair.js';
+import { generateDatabaseFiles } from './database.js';
+import { generateDocumentation } from './documentation.js';
+import { generateNextjsStructure } from './nextjs.js';
+import { generatePackageJson } from './package.js';
+import { generateSeedData } from './seed.js';
+import { generateUIComponents } from './ui.js';
 
 export async function generateTemplate(
 	projectPath: string,
@@ -53,19 +53,19 @@ async function generateProjectStructure(
 	config: ProjectConfig,
 ): Promise<void> {
 	const directories = [
-		"app",
-		"components",
-		"corsair",
-		"db",
-		"lib",
-		"public",
-		"data",
+		'app',
+		'components',
+		'corsair',
+		'db',
+		'lib',
+		'public',
+		'data',
 	];
 
-	if (config.orm === "prisma") {
-		directories.push("prisma");
+	if (config.orm === 'prisma') {
+		directories.push('prisma');
 	} else {
-		directories.push("drizzle");
+		directories.push('drizzle');
 	}
 
 	for (const dir of directories) {
@@ -92,6 +92,6 @@ DATABASE_URL="postgresql://username:password@localhost:5432/mydb"
 NEXT_PUBLIC_CORSAIR_API_ROUTE="/api/corsair"
 `;
 
-	await fs.writeFile(path.join(projectPath, ".env.example"), envExample);
-	await fs.writeFile(path.join(projectPath, ".env.local"), envLocal);
+	await fs.writeFile(path.join(projectPath, '.env.example'), envExample);
+	await fs.writeFile(path.join(projectPath, '.env.local'), envLocal);
 }

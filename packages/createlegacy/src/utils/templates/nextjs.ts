@@ -1,40 +1,40 @@
-import fs from "fs-extra";
-import path from "path";
-import type { ProjectConfig } from "../../cli/create-project.js";
+import fs from 'fs-extra';
+import path from 'path';
+import type { ProjectConfig } from '../../cli/create-project.js';
 
 export async function generateNextjsStructure(
 	projectPath: string,
 	config: ProjectConfig,
 ): Promise<void> {
 	await fs.ensureDir(
-		path.join(projectPath, "app", "api", "corsair", "[...corsair]"),
+		path.join(projectPath, 'app', 'api', 'corsair', '[...corsair]'),
 	);
 
 	const templates = getNextjsTemplates(config);
 
 	await fs.writeFile(
-		path.join(projectPath, "app", "api", "corsair", "[...corsair]", "route.ts"),
+		path.join(projectPath, 'app', 'api', 'corsair', '[...corsair]', 'route.ts'),
 		templates.apiRoute,
 	);
 	await fs.writeFile(
-		path.join(projectPath, "app", "layout.tsx"),
+		path.join(projectPath, 'app', 'layout.tsx'),
 		templates.layout,
 	);
 	await fs.writeFile(
-		path.join(projectPath, "app", "page.tsx"),
+		path.join(projectPath, 'app', 'page.tsx'),
 		templates.homepage,
 	);
-	await fs.ensureDir(path.join(projectPath, "app", "dashboard"));
+	await fs.ensureDir(path.join(projectPath, 'app', 'dashboard'));
 	await fs.writeFile(
-		path.join(projectPath, "app", "dashboard", "page.tsx"),
+		path.join(projectPath, 'app', 'dashboard', 'page.tsx'),
 		templates.dashboard,
 	);
 	await fs.writeFile(
-		path.join(projectPath, "app", "globals.css"),
+		path.join(projectPath, 'app', 'globals.css'),
 		templates.globalCss,
 	);
 	await fs.writeFile(
-		path.join(projectPath, "next-env.d.ts"),
+		path.join(projectPath, 'next-env.d.ts'),
 		templates.nextEnv,
 	);
 }
@@ -112,7 +112,7 @@ export default function Home() {
           <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
             Your full-stack Next.js application with type-safe database operations,
             powered by Corsair and ${
-							config.orm === "prisma" ? "Prisma" : "Drizzle"
+							config.orm === 'prisma' ? 'Prisma' : 'Drizzle'
 						}.
           </p>
           <div className="flex gap-4 justify-center">

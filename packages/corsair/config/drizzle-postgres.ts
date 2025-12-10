@@ -4,7 +4,7 @@ import type {
 	ExtractStrict,
 	Framework,
 	ORMs,
-} from ".";
+} from '.';
 
 /**
  * This is the basic schema we are expecting.
@@ -45,15 +45,15 @@ export type DrizzlePostgresConfig<T = any> = {
 	/**
 	 * The ORM to use for the Postgres database.
 	 */
-	orm: ExtractStrict<ORMs, "drizzle">;
+	orm: ExtractStrict<ORMs, 'drizzle'>;
 	/**
 	 * The database being used. In this case, Postgres.
 	 */
-	dbType: ExtractStrict<DBTypes, "postgres">;
+	dbType: ExtractStrict<DBTypes, 'postgres'>;
 	/**
 	 * The framework being used to build this project. In this case, Nextjs.
 	 */
-	framework: ExtractStrict<Framework, "nextjs">;
+	framework: ExtractStrict<Framework, 'nextjs'>;
 	/**
 	 * The database client that Corsair will use to interact with the database.
 	 */
@@ -65,14 +65,14 @@ export type DrizzlePostgresConfig<T = any> = {
 };
 
 export const DefaultDrizzlePostgresConfig: DrizzlePostgresConfig<any> = {
-	orm: "drizzle",
-	dbType: "postgres",
-	framework: "nextjs",
+	orm: 'drizzle',
+	dbType: 'postgres',
+	framework: 'nextjs',
 	db: {},
 	connection: {
-		host: "localhost",
-		username: "postgres",
-		password: "postgres",
-		database: "postgres",
+		host: 'localhost',
+		username: 'postgres',
+		password: 'postgres',
+		database: 'postgres',
 	},
 };

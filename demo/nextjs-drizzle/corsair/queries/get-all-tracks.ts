@@ -1,5 +1,5 @@
-import { z } from "corsair";
-import { procedure } from "../procedure";
+import { z } from 'corsair';
+import { procedure } from '../procedure';
 
 export const getAllTracks = procedure
 	.input(z.object({}))

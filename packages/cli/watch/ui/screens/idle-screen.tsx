@@ -1,7 +1,7 @@
-import { Box, Text } from "ink";
-import type React from "react";
-import type { HistoryEntry, StateContext } from "../../types/state.js";
-import { CommandBar } from "../components/command-bar.js";
+import { Box, Text } from 'ink';
+import type React from 'react';
+import type { HistoryEntry, StateContext } from '../../types/state.js';
+import { CommandBar } from '../components/command-bar.js';
 
 interface IdleScreenProps {
 	context: StateContext;
@@ -10,7 +10,7 @@ interface IdleScreenProps {
 const formatTimeAgo = (timestamp: number): string => {
 	const seconds = Math.floor((Date.now() - timestamp) / 1000);
 
-	if (seconds < 10) return "just now";
+	if (seconds < 10) return 'just now';
 	if (seconds < 60) return `${seconds}s ago`;
 
 	const minutes = Math.floor(seconds / 60);
@@ -23,34 +23,34 @@ const formatTimeAgo = (timestamp: number): string => {
 };
 
 const getActivityIcon = (action: string): { icon: string; color: string } => {
-	if (action.includes("New query detected")) {
-		return { icon: "✨Q", color: "cyan" };
+	if (action.includes('New query detected')) {
+		return { icon: '✨Q', color: 'cyan' };
 	}
-	if (action.includes("New mutation detected")) {
-		return { icon: "✨M", color: "cyan" };
+	if (action.includes('New mutation detected')) {
+		return { icon: '✨M', color: 'cyan' };
 	}
-	if (action.includes("Added query")) {
-		return { icon: "+ Q", color: "green" };
+	if (action.includes('Added query')) {
+		return { icon: '+ Q', color: 'green' };
 	}
-	if (action.includes("Added mutation")) {
-		return { icon: "+ M", color: "green" };
+	if (action.includes('Added mutation')) {
+		return { icon: '+ M', color: 'green' };
 	}
-	if (action.includes("Removed query")) {
-		return { icon: "- Q", color: "red" };
+	if (action.includes('Removed query')) {
+		return { icon: '- Q', color: 'red' };
 	}
-	if (action.includes("Removed mutation")) {
-		return { icon: "- M", color: "red" };
+	if (action.includes('Removed mutation')) {
+		return { icon: '- M', color: 'red' };
 	}
-	if (action.includes("Updated query")) {
-		return { icon: "~ Q", color: "yellow" };
+	if (action.includes('Updated query')) {
+		return { icon: '~ Q', color: 'yellow' };
 	}
-	if (action.includes("Updated mutation")) {
-		return { icon: "~ M", color: "yellow" };
+	if (action.includes('Updated mutation')) {
+		return { icon: '~ M', color: 'yellow' };
 	}
-	if (action.includes("Operation configuration")) {
-		return { icon: "🔧", color: "magenta" };
+	if (action.includes('Operation configuration')) {
+		return { icon: '🔧', color: 'magenta' };
 	}
-	return { icon: "•", color: "blue" };
+	return { icon: '•', color: 'blue' };
 };
 
 const parseOperationDetails = (
@@ -67,7 +67,7 @@ const parseOperationDetails = (
 	// Fallback if pattern doesn't match
 	return {
 		operationName: details,
-		context: "",
+		context: '',
 	};
 };
 
@@ -85,7 +85,7 @@ const ActivityEntry: React.FC<{ entry: HistoryEntry }> = ({ entry }) => {
 				{entry.action}
 				{entry.details && (
 					<>
-						{" - "}
+						{' - '}
 						{(() => {
 							const { operationName, context } = parseOperationDetails(
 								entry.details,
@@ -108,7 +108,7 @@ const ActivityEntry: React.FC<{ entry: HistoryEntry }> = ({ entry }) => {
 };
 
 export const IdleScreen: React.FC<IdleScreenProps> = ({ context }) => {
-	const watchPaths = context.watchedPaths?.join(", ") || "src/**/*.{ts,tsx}";
+	const watchPaths = context.watchedPaths?.join(', ') || 'src/**/*.{ts,tsx}';
 	const recentActivity = context.history.slice(-5).reverse();
 	const unfinished = context.unfinishedOperations || [];
 
@@ -147,15 +147,15 @@ export const IdleScreen: React.FC<IdleScreenProps> = ({ context }) => {
 								<Text color="yellow" bold>
 									{i + 1}
 								</Text>
-								]{" "}
-								{item.operation.operationType === "query"
-									? "Query"
-									: "Mutation"}{" "}
+								]{' '}
+								{item.operation.operationType === 'query'
+									? 'Query'
+									: 'Mutation'}{' '}
 								<Text color="cyan" bold>
 									{item.operation.operationName}
-								</Text>{" "}
+								</Text>{' '}
 								<Text dimColor>
-									({item.operation.file.split("/").pop()}:
+									({item.operation.file.split('/').pop()}:
 									{item.operation.lineNumber})
 								</Text>
 							</Text>
@@ -177,8 +177,8 @@ export const IdleScreen: React.FC<IdleScreenProps> = ({ context }) => {
 
 			<CommandBar
 				commands={[
-					{ key: "H", label: "Help" },
-					{ key: "Q", label: "Quit" },
+					{ key: 'H', label: 'Help' },
+					{ key: 'Q', label: 'Quit' },
 				]}
 			/>
 		</Box>

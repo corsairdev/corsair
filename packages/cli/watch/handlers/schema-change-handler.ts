@@ -1,10 +1,10 @@
 // @ts-nocheck
 
-import * as path from "path";
-import { eventBus } from "../core/event-bus.js";
-import type { SchemaUpdatedEvent } from "../types/events.js";
-import { CorsairEvent } from "../types/events.js";
-import type { SchemaDefinition, TableDefinition } from "../types/state.js";
+import * as path from 'path';
+import { eventBus } from '../core/event-bus.js';
+import type { SchemaUpdatedEvent } from '../types/events.js';
+import { CorsairEvent } from '../types/events.js';
+import type { SchemaDefinition, TableDefinition } from '../types/state.js';
 
 /**
  * Schema Change Handler
@@ -201,11 +201,11 @@ class SchemaChangeHandler {
 
 		eventBus.emit(CorsairEvent.ERROR_OCCURRED, {
 			message: `Schema file removed or corrupted: ${fileName}`,
-			code: "SCHEMA_REMOVED",
+			code: 'SCHEMA_REMOVED',
 			suggestions: [
-				"Check if the schema file exists",
-				"Verify schema file syntax",
-				"Restore from backup if needed",
+				'Check if the schema file exists',
+				'Verify schema file syntax',
+				'Restore from backup if needed',
 			],
 		});
 	}
@@ -244,7 +244,7 @@ class SchemaChangeHandler {
 					afterTable,
 				);
 				changes.push(
-					`Modified table ${beforeTable.name}: ${tableChanges.join(", ")}`,
+					`Modified table ${beforeTable.name}: ${tableChanges.join(', ')}`,
 				);
 			}
 		}

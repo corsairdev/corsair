@@ -1,11 +1,11 @@
-import type { SchemaOutput } from "@corsair-ai/core/config";
+import type { SchemaOutput } from '@corsair-ai/core/config';
 
 export function formattedSchema(schema: SchemaOutput): string {
 	if (!schema || Object.keys(schema).length === 0) {
-		return "No schema information available.";
+		return 'No schema information available.';
 	}
 
-	let description = "";
+	let description = '';
 
 	Object.entries(schema).forEach(([tableName, tableSchema], index) => {
 		description += `${tableName}:\n`;
@@ -15,7 +15,7 @@ export function formattedSchema(schema: SchemaOutput): string {
 		});
 
 		if (index < Object.keys(schema).length - 1) {
-			description += "\n";
+			description += '\n';
 		}
 	});
 

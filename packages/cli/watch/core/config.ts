@@ -1,4 +1,4 @@
-import * as path from "path";
+import * as path from 'path';
 
 export interface CorsairConfig {
 	projectRoot: string;
@@ -14,18 +14,18 @@ export function getDefaultConfig(): CorsairConfig {
 	return {
 		projectRoot,
 		watchPaths: [
-			"src/**/*.{ts,tsx}",
-			"app/**/*.{ts,tsx}",
-			"components/**/*.{ts,tsx}",
-			"lib/**/*.{ts,tsx}",
+			'src/**/*.{ts,tsx}',
+			'app/**/*.{ts,tsx}',
+			'components/**/*.{ts,tsx}',
+			'lib/**/*.{ts,tsx}',
 		],
 		ignorePaths: [
-			"**/node_modules/**",
-			"**/dist/**",
-			"**/.next/**",
-			"**/corsair/queries/**",
+			'**/node_modules/**',
+			'**/dist/**',
+			'**/.next/**',
+			'**/corsair/queries/**',
 		],
-		outputDir: path.join(projectRoot, "lib", "corsair", "queries"),
+		outputDir: path.join(projectRoot, 'lib', 'corsair', 'queries'),
 	};
 }
 

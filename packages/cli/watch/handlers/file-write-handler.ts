@@ -1,15 +1,15 @@
-import { spawn } from "child_process";
-import * as fs from "fs";
-import { promises as fsp } from "fs";
-import * as path from "path";
-import { format } from "prettier";
-import type { SourceFile } from "ts-morph";
-import { Project, SyntaxKind } from "ts-morph";
-import { getResolvedPaths, loadConfig } from "../../cli/config.js";
+import { spawn } from 'child_process';
+import * as fs from 'fs';
+import { promises as fsp } from 'fs';
+import * as path from 'path';
+import { format } from 'prettier';
+import type { SourceFile } from 'ts-morph';
+import { Project, SyntaxKind } from 'ts-morph';
+import { getResolvedPaths, loadConfig } from '../../cli/config.js';
 
 export interface OperationToWrite {
 	operationName: string;
-	operationType: "query" | "mutation";
+	operationType: 'query' | 'mutation';
 	prompt: string;
 	inputType: string;
 	handler: string;
@@ -29,8 +29,8 @@ export interface WriteFileOptions {
 
 function kebabCase(str: string) {
 	return str
-		.replace(/([a-z])([A-Z])/g, "$1-$2")
-		.replace(/[\s_]+/g, "-")
+		.replace(/([a-z])([A-Z])/g, '$1-$2')
+		.replace(/[\s_]+/g, '-')
 		.toLowerCase();
 }
 
@@ -39,7 +39,7 @@ export class FileWriteHandler {
 		const cfg = loadConfig();
 		const pathsResolved = getResolvedPaths(cfg);
 		const baseDir =
-			operation.operationType === "query"
+			operation.operationType === 'query'
 				? pathsResolved.queriesDir
 				: pathsResolved.mutationsDir;
 		const newOperationFileName = `${kebabCase(operation.operationName)}.ts`;
@@ -51,23 +51,23 @@ export class FileWriteHandler {
 	): Promise<void> {
 		const projectRoot = process.cwd();
 		const operationTypePlural =
-			operation.operationType === "query" ? "queries" : "mutations";
+			operation.operationType === 'query' ? 'queries' : 'mutations';
 
 		const cfg = loadConfig();
 		const pathsResolved = getResolvedPaths(cfg);
 		const baseDir =
-			operation.operationType === "query"
+			operation.operationType === 'query'
 				? pathsResolved.queriesDir
 				: pathsResolved.mutationsDir;
 		const newOperationFilePath = this.getOperationFilePath(operation);
 
-		const isQuery = operation.operationType === "query";
+		const isQuery = operation.operationType === 'query';
 		const variableName = operation.operationName
-			.split(" ")
+			.split(' ')
 			.map((word, i) =>
 				i === 0 ? word : word.charAt(0).toUpperCase() + word.slice(1),
 			)
-			.join("");
+			.join('');
 
 		const inputTypeCode = this.parseInputTypeFromLLM(operation.inputType);
 		const handlerCodeRaw = this.parseHandlerFromLLM(operation.handler);
@@ -78,11 +78,11 @@ export class FileWriteHandler {
 		imports.push(`import { procedure } from '../procedure'`);
 		if (drizzleFns.size > 0) {
 			imports.push(
-				`import { ${Array.from(drizzleFns).join(", ")} } from 'drizzle-orm'`,
+				`import { ${Array.from(drizzleFns).join(', ')} } from 'drizzle-orm'`,
 			);
 		}
 
-		const header = imports.join("\n");
+		const header = imports.join('\n');
 		const handlerCode = handlerCodeRaw;
 
 		let newOperationCode = `
@@ -90,7 +90,7 @@ ${header}
 
 export const ${variableName} = procedure
   .input(${inputTypeCode})
-  .${isQuery ? "query" : "mutation"}(${handlerCode})
+  .${isQuery ? 'query' : 'mutation'}(${handlerCode})
 `;
 
 		if (operation.pseudocode) {
@@ -104,24 +104,24 @@ export const ${variableName} = procedure
 		}
 
 		const formattedContent = await format(newOperationCode, {
-			parser: "typescript",
+			parser: 'typescript',
 		});
 		await fsp.writeFile(newOperationFilePath, formattedContent);
 
-		const barrelPath = path.join(baseDir, "index.ts");
+		const barrelPath = path.join(baseDir, 'index.ts');
 
 		try {
-			const existingBarrel = await fsp.readFile(barrelPath, "utf8");
+			const existingBarrel = await fsp.readFile(barrelPath, 'utf8');
 			const exportLine = `export * from './${path
 				.basename(newOperationFilePath)
-				.replace(".ts", "")}'\n`;
+				.replace('.ts', '')}'\n`;
 			if (!existingBarrel.includes(exportLine)) {
 				await fsp.appendFile(barrelPath, exportLine);
 			}
 		} catch {
 			const exportLine = `export * from './${path
 				.basename(newOperationFilePath)
-				.replace(".ts", "")}'\n`;
+				.replace('.ts', '')}'\n`;
 			await fsp.writeFile(barrelPath, exportLine);
 		}
 
@@ -139,11 +139,11 @@ export const ${variableName} = procedure
 					path.dirname(operationsFilePath),
 					baseDir,
 				);
-				let moduleSpecifier = moduleSpecifierRaw.replace(/\\/g, "/");
-				if (!moduleSpecifier.startsWith(".")) {
-					moduleSpecifier = "./" + moduleSpecifier;
+				let moduleSpecifier = moduleSpecifierRaw.replace(/\\/g, '/');
+				if (!moduleSpecifier.startsWith('.')) {
+					moduleSpecifier = './' + moduleSpecifier;
 				}
-				const desiredNs = isQuery ? "queriesModule" : "mutationsModule";
+				const desiredNs = isQuery ? 'queriesModule' : 'mutationsModule';
 				const existingNsImport = operationsFile
 					.getImportDeclarations()
 					.find(
@@ -188,19 +188,19 @@ export const ${variableName} = procedure
 		}
 
 		await new Promise<void>((resolve) => {
-			const child = spawn("npx", ["--yes", "tsc", "--noEmit"], {
-				stdio: "inherit",
+			const child = spawn('npx', ['--yes', 'tsc', '--noEmit'], {
+				stdio: 'inherit',
 				shell: true,
 				cwd: projectRoot,
 				env: process.env,
 			});
-			child.on("close", () => resolve());
+			child.on('close', () => resolve());
 		});
 	}
 
 	public parseInputTypeFromLLM(inputTypeString: string): string {
 		const cleaned = inputTypeString.trim();
-		if (cleaned.startsWith("z.object(") || cleaned.startsWith("z.")) {
+		if (cleaned.startsWith('z.object(') || cleaned.startsWith('z.')) {
 			return cleaned;
 		}
 		return `z.object(${cleaned})`;
@@ -208,10 +208,10 @@ export const ${variableName} = procedure
 
 	public parseHandlerFromLLM(handlerString: string): string {
 		const cleaned = handlerString.trim();
-		if (cleaned.startsWith("async ({") || cleaned.startsWith("({")) {
+		if (cleaned.startsWith('async ({') || cleaned.startsWith('({')) {
 			return cleaned;
 		}
-		const arrowIdx = cleaned.indexOf("=>");
+		const arrowIdx = cleaned.indexOf('=>');
 		if (arrowIdx !== -1) {
 			const paramsPart = cleaned.slice(0, arrowIdx).trim();
 			const bodyPart = cleaned.slice(arrowIdx + 2).trim();
@@ -222,10 +222,10 @@ export const ${variableName} = procedure
 				return `async ({ input, ctx }) => ${bodyPart}`;
 			}
 		}
-		if (cleaned.startsWith("async (")) {
+		if (cleaned.startsWith('async (')) {
 			return cleaned;
 		}
-		if (cleaned.startsWith("(")) {
+		if (cleaned.startsWith('(')) {
 			return `async ${cleaned}`;
 		}
 		return cleaned;
@@ -246,12 +246,12 @@ export const ${variableName} = procedure
 				fs.mkdirSync(dir, { recursive: true });
 			}
 		}
-		fs.writeFileSync(filePath, content, "utf-8");
+		fs.writeFileSync(filePath, content, 'utf-8');
 	}
 
 	public getQueryOutputPath(queryId: string, projectRoot?: string): string {
 		const root = projectRoot || process.cwd();
-		const queriesDir = path.join(root, "lib", "corsair", "queries");
+		const queriesDir = path.join(root, 'lib', 'corsair', 'queries');
 		return path.join(queriesDir, `${queryId}.ts`);
 	}
 
@@ -264,18 +264,18 @@ export const ${variableName} = procedure
 	private getDrizzleFunctionsUsed(handlerCode: string): Set<string> {
 		const fns = new Set<string>();
 		const candidates = [
-			"eq",
-			"and",
-			"or",
-			"ilike",
-			"like",
-			"gt",
-			"gte",
-			"lt",
-			"lte",
-			"ne",
-			"inArray",
-			"between",
+			'eq',
+			'and',
+			'or',
+			'ilike',
+			'like',
+			'gt',
+			'gte',
+			'lt',
+			'lte',
+			'ne',
+			'inArray',
+			'between',
 		];
 		for (const fn of candidates) {
 			const regex = new RegExp(`\\b${fn}\\s*\\(`);

@@ -1,9 +1,9 @@
-import * as fs from "fs";
-import * as path from "path";
-import { Project, SyntaxKind } from "ts-morph";
-import { eventBus } from "../core/event-bus.js";
-import type { OperationsLoadedEvent } from "../types/events.js";
-import { CorsairEvent } from "../types/events.js";
+import * as fs from 'fs';
+import * as path from 'path';
+import { Project, SyntaxKind } from 'ts-morph';
+import { eventBus } from '../core/event-bus.js';
+import type { OperationsLoadedEvent } from '../types/events.js';
+import { CorsairEvent } from '../types/events.js';
 
 /**
  * Operations Handler
@@ -24,12 +24,12 @@ abstract class Operations {
 
 	protected filePath: string;
 	protected variableName: string;
-	protected operationType: "queries" | "mutations";
+	protected operationType: 'queries' | 'mutations';
 
 	constructor(
 		filePath: string,
 		variableName: string,
-		operationType: "queries" | "mutations",
+		operationType: 'queries' | 'mutations',
 	) {
 		this.filePath = filePath;
 		this.variableName = variableName;
@@ -106,7 +106,7 @@ abstract class Operations {
 					try {
 						const operationName = prop.getName();
 						const initializer = prop.getInitializer();
-						let callExpr: import("ts-morph").CallExpression | undefined;
+						let callExpr: import('ts-morph').CallExpression | undefined;
 
 						if (initializer?.isKind(SyntaxKind.Identifier)) {
 							const symbol = initializer.getSymbol();
@@ -150,20 +150,20 @@ abstract class Operations {
 
 						if (configObj?.isKind(SyntaxKind.ObjectLiteralExpression)) {
 							const prompt = configObj
-								.getProperty("prompt")
+								.getProperty('prompt')
 								?.getChildAtIndex(2)
 								.getText();
 							const dependencies = configObj
-								.getProperty("dependencies")
+								.getProperty('dependencies')
 								?.getChildAtIndex(2)
 								.getText();
 
-							const handlerProp = configObj.getProperty("handler");
-							const handler = handlerProp?.getChildAtIndex(2).getText() || "";
+							const handlerProp = configObj.getProperty('handler');
+							const handler = handlerProp?.getChildAtIndex(2).getText() || '';
 
 							operations.set(operationName, {
 								name: operationName,
-								prompt: prompt?.replace(/['"`]/g, "") || "",
+								prompt: prompt?.replace(/['"`]/g, '') || '',
 								dependencies: dependencies,
 								handler: handler,
 							});
@@ -172,7 +172,7 @@ abstract class Operations {
 								name: operationName,
 								prompt: operationName,
 								dependencies: undefined,
-								handler: "",
+								handler: '',
 							});
 						}
 					} catch {}
@@ -197,7 +197,7 @@ abstract class Operations {
 
 		const files = fs
 			.readdirSync(dirPath)
-			.filter((f) => f.endsWith(".ts") && f !== "index.ts")
+			.filter((f) => f.endsWith('.ts') && f !== 'index.ts')
 			.map((f) => path.join(dirPath, f));
 
 		for (const file of files) {
@@ -212,7 +212,7 @@ abstract class Operations {
 						name,
 						prompt: name,
 						dependencies: undefined,
-						handler: "",
+						handler: '',
 					});
 				}
 			} catch {}
@@ -236,9 +236,9 @@ abstract class Operations {
 export class Queries extends Operations {
 	constructor(operationsFilePath?: string) {
 		super(
-			operationsFilePath ?? process.cwd() + "/corsair/operations.ts",
-			"queries",
-			"queries",
+			operationsFilePath ?? process.cwd() + '/corsair/operations.ts',
+			'queries',
+			'queries',
 		);
 	}
 }
@@ -250,9 +250,9 @@ export class Queries extends Operations {
 export class Mutations extends Operations {
 	constructor(operationsFilePath?: string) {
 		super(
-			operationsFilePath ?? process.cwd() + "/corsair/operations.ts",
-			"mutations",
-			"mutations",
+			operationsFilePath ?? process.cwd() + '/corsair/operations.ts',
+			'mutations',
+			'mutations',
 		);
 	}
 }

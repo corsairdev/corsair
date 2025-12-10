@@ -1,11 +1,11 @@
-import { WebClient } from "@slack/web-api";
-import type { BaseConfig } from "../../../config";
+import { WebClient } from '@slack/web-api';
+import type { BaseConfig } from '../../../config';
 import type {
 	EmojiName,
 	MessageTs,
 	ReactionResponse,
 	SlackChannels,
-} from "../types";
+} from '../types';
 
 export const addReaction = async <T extends BaseConfig = any>({
 	config,
@@ -23,7 +23,7 @@ export const addReaction = async <T extends BaseConfig = any>({
 		return {
 			success: false,
 			error:
-				"Slack token not configured. Please add token to corsair.config.ts plugins.slack.token",
+				'Slack token not configured. Please add token to corsair.config.ts plugins.slack.token',
 		};
 	}
 
@@ -32,7 +32,7 @@ export const addReaction = async <T extends BaseConfig = any>({
 	if (!actualChannelId) {
 		const availableChannels = Object.keys(
 			config.plugins.slack.channels || {},
-		).join(", ");
+		).join(', ');
 		return {
 			success: false,
 			error: `Channel '${channelId}' not found in config. Available channels: ${availableChannels}`,
@@ -44,7 +44,7 @@ export const addReaction = async <T extends BaseConfig = any>({
 
 	try {
 		// Remove colons from emoji name if present (accepts both 'thumbsup' and ':thumbsup:')
-		const emojiName = emoji.replace(/:/g, "");
+		const emojiName = emoji.replace(/:/g, '');
 
 		// Call Slack API to add reaction
 		const result = await client.reactions.add({
@@ -64,7 +64,7 @@ export const addReaction = async <T extends BaseConfig = any>({
 		// Handle any Slack API errors
 		return {
 			success: false,
-			error: error instanceof Error ? error.message : "Unknown error occurred",
+			error: error instanceof Error ? error.message : 'Unknown error occurred',
 		};
 	}
 };
