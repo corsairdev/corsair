@@ -3,7 +3,12 @@ import type { SlackChannels } from './types';
 
 const checkSlackDependency = async () => {
 	try {
-		await import('@slack/web-api');
+		const slackModule = '@slack/web-api';
+		await import(
+			/* @vite-ignore */
+			/* webpackIgnore: true */
+			slackModule
+		);
 	} catch (error) {
 		throw new Error(
 			'Slack functionality requires @slack/web-api. Install it with: npm install @slack/web-api',
