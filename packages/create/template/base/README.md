@@ -14,6 +14,41 @@ If you are not familiar with the different technologies used in this project, pl
 - [Tailwind CSS](https://tailwindcss.com)
 - [Corsair](https://corsair.dev)
 
+## Corsair CLI
+
+The Corsair CLI is included in this project. After installing dependencies, you can use it with any package manager:
+
+**Using npm scripts (works with all package managers):**
+
+```bash
+npm run corsair:generate
+npm run corsair:check
+npm run corsair:migrate
+```
+
+**Direct commands:**
+
+```bash
+# pnpm
+pnpm corsair list
+pnpm corsair generate
+
+# npm
+npx corsair list
+npx corsair generate
+
+# yarn
+yarn corsair list
+yarn corsair generate
+```
+
+**Available commands:**
+
+- `corsair list` - List all queries and mutations (use `--queries` or `--mutations` to filter)
+- `corsair generate` - Generate new operations
+- `corsair check` - Type check your operations
+- `corsair migrate` - Run migrations
+
 ## Learn More
 
 To learn more about the [T3 Stack](https://create.t3.gg/), take a look at the following resources:
