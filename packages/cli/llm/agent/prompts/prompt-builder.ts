@@ -38,6 +38,7 @@ You will export a function with the exact name "${functionName}" - this is the c
 IMPORTANT: This is a list of coding conventions you must follow. This ensures clean, maintainable, type safe code.
 - Do not use explicit 'any' types. Properly type all variables, parameters, and return values.
 - When typing a variable, prefer using implicit types. If you cannot use an implicit type, prefer using Omit<> or Pick<> over a random object type.
+- Minimize comments within the code. Use comments sparingly and only when necessary to document un-obvious code.
 
 
 ${instructions ? `These are additional instructions provided by the developer: ${instructions}` : ''}
