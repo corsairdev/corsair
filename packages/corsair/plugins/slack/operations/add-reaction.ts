@@ -1,4 +1,3 @@
-import { WebClient } from '@slack/web-api';
 import type { BaseConfig } from '../../../config';
 import type {
 	EmojiName,
@@ -39,7 +38,8 @@ export const addReaction = async <T extends BaseConfig = any>({
 		};
 	}
 
-	// Initialize Slack WebClient
+	// Dynamically import Slack WebClient
+	const { WebClient } = await import('@slack/web-api');
 	const client = new WebClient(config.plugins.slack.token);
 
 	try {
