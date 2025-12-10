@@ -1,79 +1,51 @@
-# Corsair
+# Corsair: The TypeScript Vibe Coding SDK
 
-**Power your coding agents with the Vibe Coding SDK.**
+**Build at the speed of vibe coding without sacrificing control and reliability.**
 
-Equip your coding agents to build faster with natural language queries and mutations.
+Your coding agents instruct Corsair to build fully-typed, production-ready API routes. Corsair automatically generates API endpoints.
+
+Your agent writes the bash command:
 
 ```bash
 pnpm corsair query
   -n "published posts with engagement"
-  -i "this should return published posts with author details and comment count"
+  -i "this should return published posts with author details and comment count. it should accept an author id"
 ```
 
-## What Corsair Does
-
-Corsair turns natural language commands into fully-typed, production-ready queries and mutations. Your agents write what they want in plain English, and Corsair generates TypeScript API endpoints automatically.
-
-Corsair handles ORM complexity, third-party API integrations, and validates everything against your schema and codebase.
-
-When your agent writes the bash command, it can immediately use this on the client:
+It immediately gets this on the client:
 
 ```typescript
-const posts = useCorsairQuery('published posts with engagement by author id', {
+const posts = useCorsairQuery('published posts with engagement', {
   author_id: params.author_id,
 })
 ```
 
-With Corsair, you get:
-
-- ✅ Full type safety - TypeScript knows exactly what shape the data is
-- ✅ Validated API routes - Can't hallucinate invalid database operations or third-party integrations
-- ✅ Readable code - Developers instantly understand intent during code review
-- ✅ Auto-fixing - When your schema changes, Corsair rewrites queries to match
-
-Works with any stack (Next, Vite, Hono, Svelte, etc) and any ORM (Drizzle, Prisma, Kysely, Supabase, etc)
-
-## CLI Commands
-
-**Create queries:**
-
-```bash
-pnpm corsair query
-  -n "get all posts by author"
-  -i "return posts in descending order (newest first)"
-```
-
-**Create mutations:**
+Corsair even integrates with third-party APIs.
 
 ```bash
 pnpm corsair mutation
-  -n "create post and email author"
-  -i "create the post then email the author confirming it was created"
+  -n "publish post"
+  -i "publish this post and then send a slack notification that a new post has been created"
 ```
 
-**Update existing:**
-
-```bash
-pnpm corsair -u
-  -n "create post and email author"
-  -i "also auto-like the post by the author"
+```typescript
+const post = useCorsairMutation('publish post', {
+  post,
+  channel: "#new-posts",
+})
 ```
 
-**List everything:**
+*Integrate with Slack, Resend, Stripe, Posthog, Spotify, and more!*
 
-```bash
-pnpm corsair list                  # all queries and mutations
-pnpm corsair list -q               # queries only
-pnpm corsair list -m               # mutations only
-pnpm corsair list -f "author id"   # filter by string
-```
+With Corsair, you get:
 
-**Validate & fix:**
+- ✅ Full type safety - TypeScript knows all types from your back-end to your front-end.
+- ✅ Validated API routes - Can't hallucinate invalid database operations or third-party integrations
+- ✅ Readable code - Developers instantly understand intent during code review
+- ✅ Overwrite as needed - All generated code is normal TypeScript and is completely editable.
+- ✅ Auto-fixing - When your schema changes, Corsair adapts and rewrites your API routes in seconds.
 
-```bash
-pnpm corsair check  # validate all queries / mutations still work (like after DB schema updates)
-pnpm corsair fix    # auto-fix all queries / mutations
-```
+Works with any stack (Next, Vite, Hono, Svelte, etc) and any ORM (Drizzle, Prisma, Kysely, Supabase, etc)
 
 ## Why Use This With Your Agent?
 
@@ -83,9 +55,23 @@ pnpm corsair fix    # auto-fix all queries / mutations
 
 **Agents write readable code** - Natural language intent stays inline, so humans instantly understand what the agent built
 
-**Agents use less tokens** - Agents start with fresh context on each Corsair command, using less tokens on full agent runs
+**Agents build predictable file structure** - Code is easily traceable back to where it was written and can be edited. 
 
 **Bash-native** - Agents can do everything from terminal without navigating files
+
+## Iterate Faster
+
+**You will change your database schema as you build your project. Corsair will adapt.**
+
+You decided to go from `users.full_name` to `users.first_name` and `users.last_name`. 
+
+Dozens of API routes are broken because `users.full_name` doesn't exist. 
+
+```bash
+pnpm corsair fix
+```
+
+Corsair will immediately detect all broken API routes and rewrite them to adapt to your new schema. 
 
 ## What It Looks Like In Code
 
@@ -97,11 +83,13 @@ const { data: posts } = useCorsairQuery('published posts with engagement')
 //    ^? { id: number; title: string; author: { name: string }; commentCount: number }[]
 
 // Mutations
-const createPost = useCorsairMutation('create post and email author')
+const createPost = useCorsairMutation('create post and send slack notification')
 await createPost.mutateAsync({
   title: 'Hello World',
   authorId: 123,
   //  ^ fully typed mutation arguments
+  channel: "#new-posts" // "#new-posts" | "#general" | "#sign-ups"
+  //  ^ even your plug-ins are strongly typed and defined by you 
 })
 ```
 
@@ -124,9 +112,8 @@ const { data } = useQuery(['posts'], async () => {
 const { data } = useCorsairQuery('published posts with engagement')
 ```
 
-## Get Started
+## Get Started With a New Project (or read the docs to see how to add it to your existing project!)
 
 ```bash
-npm install @corsair-ai/core
-npx corsair init
+npx @corsair-ai/create@latest
 ```
