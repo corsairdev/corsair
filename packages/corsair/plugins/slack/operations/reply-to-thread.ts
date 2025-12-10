@@ -34,7 +34,12 @@ export const replyToThread = async <T extends BaseConfig = any>({
 	}
 
 	// Dynamically import Slack WebClient
-	const { WebClient } = await import('@slack/web-api');
+	const slackModule = '@slack/web-api';
+	const { WebClient } = await import(
+		/* @vite-ignore */
+		/* webpackIgnore: true */
+		slackModule
+	);
 	const client = new WebClient(config.plugins.slack.token);
 
 	try {
