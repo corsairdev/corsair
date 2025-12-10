@@ -1,6 +1,6 @@
-import fs from "fs-extra";
-import path from "path";
-import type { ProjectConfig } from "../../cli/create-project.js";
+import fs from 'fs-extra';
+import path from 'path';
+import type { ProjectConfig } from '../../cli/create-project.js';
 
 export async function generateConfigFiles(
 	projectPath: string,
@@ -11,48 +11,48 @@ export async function generateConfigFiles(
 
 const nextConfig: NextConfig = {
   serverExternalPackages: [${
-		config.orm === "prisma" ? '"@prisma/client"' : '"drizzle-orm"'
+		config.orm === 'prisma' ? '"@prisma/client"' : '"drizzle-orm"'
 	}, "@corsair-ai/core"]
 }
 
 export default nextConfig
 `;
 
-	await fs.writeFile(path.join(projectPath, "next.config.ts"), nextConfig);
+	await fs.writeFile(path.join(projectPath, 'next.config.ts'), nextConfig);
 
 	// TypeScript config
 	const tsConfig = {
 		compilerOptions: {
-			target: "ES2017",
-			lib: ["dom", "dom.iterable", "esnext"],
+			target: 'ES2017',
+			lib: ['dom', 'dom.iterable', 'esnext'],
 			allowJs: true,
 			skipLibCheck: true,
 			strict: true,
 			noEmit: true,
 			esModuleInterop: true,
-			module: "esnext",
-			moduleResolution: "bundler",
+			module: 'esnext',
+			moduleResolution: 'bundler',
 			resolveJsonModule: true,
 			isolatedModules: true,
-			jsx: "preserve",
+			jsx: 'preserve',
 			incremental: true,
 			plugins: [
 				{
-					name: "next",
+					name: 'next',
 				},
 			],
-			baseUrl: ".",
+			baseUrl: '.',
 			paths: {
-				"@/*": ["./*"],
-				"@/corsair": ["./corsair/index"],
-				"@/corsair/*": ["./corsair/*"],
+				'@/*': ['./*'],
+				'@/corsair': ['./corsair/index'],
+				'@/corsair/*': ['./corsair/*'],
 			},
 		},
-		include: ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
-		exclude: ["node_modules"],
+		include: ['next-env.d.ts', '**/*.ts', '**/*.tsx', '.next/types/**/*.ts'],
+		exclude: ['node_modules'],
 	};
 
-	await fs.writeJson(path.join(projectPath, "tsconfig.json"), tsConfig, {
+	await fs.writeJson(path.join(projectPath, 'tsconfig.json'), tsConfig, {
 		spaces: 2,
 	});
 
@@ -60,39 +60,39 @@ export default nextConfig
 	const configs = getConfigTemplates();
 
 	await fs.writeFile(
-		path.join(projectPath, "tailwind.config.ts"),
+		path.join(projectPath, 'tailwind.config.ts'),
 		configs.tailwind,
 	);
 	await fs.writeFile(
-		path.join(projectPath, "postcss.config.mjs"),
+		path.join(projectPath, 'postcss.config.mjs'),
 		configs.postcss,
 	);
 	await fs.writeFile(
-		path.join(projectPath, "eslint.config.mjs"),
+		path.join(projectPath, 'eslint.config.mjs'),
 		configs.eslint,
 	);
 
 	// components.json for shadcn
 	const componentsJson = {
-		$schema: "https://ui.shadcn.com/schema.json",
-		style: "default",
+		$schema: 'https://ui.shadcn.com/schema.json',
+		style: 'default',
 		rsc: true,
 		tsx: true,
 		tailwind: {
-			config: "tailwind.config.ts",
-			css: "app/globals.css",
-			baseColor: "slate",
+			config: 'tailwind.config.ts',
+			css: 'app/globals.css',
+			baseColor: 'slate',
 			cssVariables: true,
-			prefix: "",
+			prefix: '',
 		},
 		aliases: {
-			components: "@/components",
-			utils: "@/lib/utils",
+			components: '@/components',
+			utils: '@/lib/utils',
 		},
 	};
 
 	await fs.writeJson(
-		path.join(projectPath, "components.json"),
+		path.join(projectPath, 'components.json'),
 		componentsJson,
 		{ spaces: 2 },
 	);

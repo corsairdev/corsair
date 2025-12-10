@@ -1,4 +1,4 @@
-import { procedure } from "@/corsair/procedure";
+import { procedure } from '@/corsair/procedure';
 
 /**
  * INPUT: {}

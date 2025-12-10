@@ -1,14 +1,14 @@
-import * as p from "@clack/prompts";
-import chalk from "chalk";
-import { Command } from "commander";
+import * as p from '@clack/prompts';
+import chalk from 'chalk';
+import { Command } from 'commander';
 
-import { CREATE_T3_APP, DEFAULT_APP_NAME } from "@/consts.js";
-import { getVersion } from "@/utils/getT3Version.js";
-import { getUserPkgManager } from "@/utils/getUserPkgManager.js";
-import { IsTTYError } from "@/utils/isTTYError.js";
-import { logger } from "@/utils/logger.js";
-import { validateAppName } from "@/utils/validateAppName.js";
-import { validateImportAlias } from "@/utils/validateImportAlias.js";
+import { CREATE_T3_APP, DEFAULT_APP_NAME } from '@/consts.js';
+import { getVersion } from '@/utils/getT3Version.js';
+import { getUserPkgManager } from '@/utils/getUserPkgManager.js';
+import { IsTTYError } from '@/utils/isTTYError.js';
+import { logger } from '@/utils/logger.js';
+import { validateAppName } from '@/utils/validateAppName.js';
+import { validateImportAlias } from '@/utils/validateImportAlias.js';
 
 interface CliFlags {
 	noGit: boolean;
@@ -40,7 +40,7 @@ const defaultOptions: CliResults = {
 		CI: false,
 		tailwind: false,
 		drizzle: false,
-		importAlias: "@/",
+		importAlias: '@/',
 		eslint: false,
 	},
 };
@@ -50,24 +50,24 @@ export const runCli = async (): Promise<CliResults> => {
 
 	const program = new Command()
 		.name(CREATE_T3_APP)
-		.description("A CLI for creating web applications with the t3 stack")
+		.description('A CLI for creating web applications with the t3 stack')
 		.argument(
-			"[dir]",
-			"The name of the application, as well as the name of the directory to create",
+			'[dir]',
+			'The name of the application, as well as the name of the directory to create',
 		)
 		.option(
-			"--noGit",
-			"Explicitly tell the CLI to not initialize a new git repo in the project",
+			'--noGit',
+			'Explicitly tell the CLI to not initialize a new git repo in the project',
 			false,
 		)
 		.option(
-			"--noInstall",
+			'--noInstall',
 			"Explicitly tell the CLI to not run the package manager's install command",
 			false,
 		)
 		.option(
-			"-y, --default",
-			"Bypass the CLI and use all default options to bootstrap a new t3-app",
+			'-y, --default',
+			'Bypass the CLI and use all default options to bootstrap a new t3-app',
 			false,
 		)
 		/** START CI-FLAGS */
@@ -75,46 +75,46 @@ export const runCli = async (): Promise<CliResults> => {
 		 * @experimental Used for CI E2E tests. If any of the following option-flags are provided, we
 		 *               skip prompting.
 		 */
-		.option("--CI", "Boolean value if we're running in CI", false)
+		.option('--CI', "Boolean value if we're running in CI", false)
 		/** @experimental - Used for CI E2E tests. Used in conjunction with `--CI` to skip prompting. */
 		.option(
-			"--tailwind [boolean]",
-			"Experimental: Boolean value if we should install Tailwind CSS. Must be used in conjunction with `--CI`.",
-			(value) => !!value && value !== "false",
+			'--tailwind [boolean]',
+			'Experimental: Boolean value if we should install Tailwind CSS. Must be used in conjunction with `--CI`.',
+			(value) => !!value && value !== 'false',
 		)
 		/** @experimental - Used for CI E2E tests. Used in conjunction with `--CI` to skip prompting. */
 		.option(
-			"--drizzle [boolean]",
-			"Experimental: Boolean value if we should install Drizzle. Must be used in conjunction with `--CI`.",
-			(value) => !!value && value !== "false",
+			'--drizzle [boolean]',
+			'Experimental: Boolean value if we should install Drizzle. Must be used in conjunction with `--CI`.',
+			(value) => !!value && value !== 'false',
 		)
 		/** @experimental - Used for CI E2E tests. Used in conjunction with `--CI` to skip prompting. */
 		.option(
-			"-i, --import-alias [alias]",
-			"Explicitly tell the CLI to use a custom import alias",
+			'-i, --import-alias [alias]',
+			'Explicitly tell the CLI to use a custom import alias',
 			defaultOptions.flags.importAlias,
 		)
 		.option(
-			"--eslint [boolean]",
-			"Experimental: Boolean value if we should install eslint and prettier. Must be used in conjunction with `--CI`.",
-			(value) => !!value && value !== "false",
+			'--eslint [boolean]',
+			'Experimental: Boolean value if we should install eslint and prettier. Must be used in conjunction with `--CI`.',
+			(value) => !!value && value !== 'false',
 		)
 		/** END CI-FLAGS */
-		.version(getVersion(), "-v, --version", "Display the version number")
+		.version(getVersion(), '-v, --version', 'Display the version number')
 		.addHelpText(
-			"afterAll",
+			'afterAll',
 			`\n The t3 stack was inspired by ${chalk
-				.hex("#E8DCFF")
+				.hex('#E8DCFF')
 				.bold(
-					"@t3dotgg",
+					'@t3dotgg',
 				)} and has been used to build awesome fullstack applications like ${chalk
-				.hex("#E24A8D")
-				.underline("https://ping.gg")} \n`,
+				.hex('#E24A8D')
+				.underline('https://ping.gg')} \n`,
 		)
 		.parse(process.argv);
 
 	// FIXME: TEMPORARY WARNING WHEN USING YARN 3. SEE ISSUE #57
-	if (process.env.npm_config_user_agent?.startsWith("yarn/3")) {
+	if (process.env.npm_config_user_agent?.startsWith('yarn/3')) {
 		logger.warn(`  WARNING: It looks like you are using Yarn 3. This is currently not supported,
   and likely to result in a crash. Please run create-t3-app with another
   package manager such as pnpm, npm, or Yarn Classic.
@@ -135,12 +135,12 @@ export const runCli = async (): Promise<CliResults> => {
 
 	// Explained below why this is in a try/catch block
 	try {
-		if (process.env.TERM_PROGRAM?.toLowerCase().includes("mintty")) {
+		if (process.env.TERM_PROGRAM?.toLowerCase().includes('mintty')) {
 			logger.warn(`  WARNING: It looks like you are using MinTTY, which is non-interactive. This is most likely because you are
   using Git Bash. If that's that case, please use Git Bash from another terminal, such as Windows Terminal. Alternatively, you
   can provide the arguments from the CLI directly: https://create.t3.gg/en/installation#experimental-usage to skip the prompts.`);
 
-			throw new IsTTYError("Non-interactive environment");
+			throw new IsTTYError('Non-interactive environment');
 		}
 
 		// if --CI flag is set, we are running in CI mode and should not prompt the user
@@ -152,7 +152,7 @@ export const runCli = async (): Promise<CliResults> => {
 				...(!cliProvidedName && {
 					name: () =>
 						p.text({
-							message: "What will your project be called?",
+							message: 'What will your project be called?',
 							defaultValue: cliProvidedName,
 							validate: validateAppName,
 						}),
@@ -161,7 +161,7 @@ export const runCli = async (): Promise<CliResults> => {
 					git: () => {
 						return p.confirm({
 							message:
-								"Should we initialize a Git repository and stage the changes?",
+								'Should we initialize a Git repository and stage the changes?',
 							initialValue: !defaultOptions.flags.noGit,
 						});
 					},
@@ -171,14 +171,14 @@ export const runCli = async (): Promise<CliResults> => {
 						return p.confirm({
 							message:
 								`Should we run '${pkgManager}` +
-								(pkgManager === "yarn" ? `'?` : ` install' for you?`),
+								(pkgManager === 'yarn' ? `'?` : ` install' for you?`),
 							initialValue: !defaultOptions.flags.noInstall,
 						});
 					},
 				}),
 				importAlias: () => {
 					return p.text({
-						message: "What import alias would you like to use?",
+						message: 'What import alias would you like to use?',
 						defaultValue: defaultOptions.flags.importAlias,
 						placeholder: defaultOptions.flags.importAlias,
 						validate: validateImportAlias,
@@ -214,7 +214,7 @@ export const runCli = async (): Promise<CliResults> => {
 			});
 
 			if (!shouldContinue) {
-				logger.info("Exiting...");
+				logger.info('Exiting...');
 				process.exit(0);
 			}
 

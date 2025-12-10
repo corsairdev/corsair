@@ -1,7 +1,7 @@
-import { Box, Text } from "ink";
-import type React from "react";
-import type { StateContext } from "../../types/state.js";
-import { ProgressBar } from "../components/progress-bar.js";
+import { Box, Text } from 'ink';
+import type React from 'react';
+import type { StateContext } from '../../types/state.js';
+import { ProgressBar } from '../components/progress-bar.js';
 
 interface GeneratingScreenProps {
 	context: StateContext;
@@ -34,7 +34,7 @@ export const GeneratingScreen: React.FC<GeneratingScreenProps> = ({
 						Function: <Text dimColor>{query.id}</Text>
 					</Text>
 					<Text>
-						Source:{" "}
+						Source:{' '}
 						<Text dimColor>
 							{query.sourceFile}:{query.lineNumber}
 						</Text>

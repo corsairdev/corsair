@@ -1,8 +1,8 @@
-import "fumadocs-ui/style.css";
-import "./globals.css";
-import { NextProvider } from "fumadocs-core/framework/next";
-import { DocsLayout } from "fumadocs-ui/layouts/docs";
-import { RootProvider } from "fumadocs-ui/provider";
+import 'fumadocs-ui/style.css';
+import './globals.css';
+import { NextProvider } from 'fumadocs-core/framework/next';
+import { DocsLayout } from 'fumadocs-ui/layouts/docs';
+import { RootProvider } from 'fumadocs-ui/provider';
 import {
 	Blocks,
 	BookOpen,
@@ -19,96 +19,96 @@ import {
 	Rocket,
 	Terminal,
 	Zap,
-} from "lucide-react";
-import type { ReactNode } from "react";
+} from 'lucide-react';
+import type { ReactNode } from 'react';
 
 const tree = {
-	name: "Documentation",
+	name: 'Documentation',
 	children: [
 		{
-			type: "folder" as const,
-			name: "Getting Started",
+			type: 'folder' as const,
+			name: 'Getting Started',
 			icon: <Rocket className="size-4" />,
 			defaultOpen: true,
 			children: [
 				{
-					type: "page" as const,
-					name: "Introduction",
-					url: "/",
+					type: 'page' as const,
+					name: 'Introduction',
+					url: '/',
 					icon: <BookOpen className="size-4" />,
 				},
 				{
-					type: "page" as const,
-					name: "Installation",
-					url: "/installation",
+					type: 'page' as const,
+					name: 'Installation',
+					url: '/installation',
 					icon: <Download className="size-4" />,
 				},
 				{
-					type: "page" as const,
-					name: "Basic Usage",
-					url: "/basic-usage",
+					type: 'page' as const,
+					name: 'Basic Usage',
+					url: '/basic-usage',
 					icon: <Zap className="size-4" />,
 				},
 			],
 		},
 		{
-			type: "folder" as const,
-			name: "Concepts",
+			type: 'folder' as const,
+			name: 'Concepts',
 			icon: <Layers className="size-4" />,
 			defaultOpen: false,
 			children: [
 				{
-					type: "page" as const,
-					name: "API",
-					url: "/api",
+					type: 'page' as const,
+					name: 'API',
+					url: '/api',
 					icon: <Code2 className="size-4" />,
 				},
 				{
-					type: "page" as const,
-					name: "Client",
-					url: "/client",
+					type: 'page' as const,
+					name: 'Client',
+					url: '/client',
 					icon: <Blocks className="size-4" />,
 				},
 				{
-					type: "page" as const,
-					name: "CLI",
-					url: "/cli",
+					type: 'page' as const,
+					name: 'CLI',
+					url: '/cli',
 					icon: <Terminal className="size-4" />,
 				},
 				{
-					type: "page" as const,
-					name: "Plugins",
-					url: "/plugins",
+					type: 'page' as const,
+					name: 'Plugins',
+					url: '/plugins',
 					icon: <Puzzle className="size-4" />,
 				},
 				{
-					type: "page" as const,
-					name: "Database",
-					url: "/database",
+					type: 'page' as const,
+					name: 'Database',
+					url: '/database',
 					icon: <Database className="size-4" />,
 				},
 				{
-					type: "page" as const,
-					name: "TypeScript",
-					url: "/typescript",
+					type: 'page' as const,
+					name: 'TypeScript',
+					url: '/typescript',
 					icon: <FileCode className="size-4" />,
 				},
 			],
 		},
 		{
-			type: "folder" as const,
-			name: "Integrations",
+			type: 'folder' as const,
+			name: 'Integrations',
 			icon: <Blocks className="size-4" />,
 			defaultOpen: false,
 			children: [
 				{
-					type: "separator" as const,
-					name: "Fullstack",
+					type: 'separator' as const,
+					name: 'Fullstack',
 				},
 				{
-					type: "page" as const,
-					name: "Next.js",
-					url: "/integrations/next",
+					type: 'page' as const,
+					name: 'Next.js',
+					url: '/integrations/next',
 					icon: (
 						<svg className="size-4" viewBox="0 0 180 180" fill="none">
 							<mask
@@ -118,7 +118,7 @@ const tree = {
 								x="0"
 								y="0"
 								maskUnits="userSpaceOnUse"
-								style={{ maskType: "alpha" }}
+								style={{ maskType: 'alpha' }}
 							>
 								<circle cx="90" cy="90" r="90" fill="#000" />
 							</mask>
@@ -165,13 +165,13 @@ const tree = {
 					),
 				},
 				{
-					type: "separator" as const,
-					name: "Frontend",
+					type: 'separator' as const,
+					name: 'Frontend',
 				},
 				{
-					type: "page" as const,
-					name: "Vite",
-					url: "/integrations/vite",
+					type: 'page' as const,
+					name: 'Vite',
+					url: '/integrations/vite',
 					icon: (
 						<svg className="size-4" viewBox="0 0 410 404" fill="none">
 							<path
@@ -210,43 +210,43 @@ const tree = {
 					),
 				},
 				{
-					type: "separator" as const,
-					name: "Backend",
+					type: 'separator' as const,
+					name: 'Backend',
 				},
 				{
-					type: "page" as const,
-					name: "Hono",
-					url: "/integrations/hono",
+					type: 'page' as const,
+					name: 'Hono',
+					url: '/integrations/hono',
 					icon: <Flame className="size-4" />,
 				},
 				{
-					type: "separator" as const,
-					name: "ORM",
+					type: 'separator' as const,
+					name: 'ORM',
 				},
 				{
-					type: "page" as const,
-					name: "Prisma",
-					url: "/integrations/prisma",
+					type: 'page' as const,
+					name: 'Prisma',
+					url: '/integrations/prisma',
 					icon: <Hexagon className="size-4" />,
 				},
 				{
-					type: "page" as const,
-					name: "Drizzle",
-					url: "/integrations/drizzle",
+					type: 'page' as const,
+					name: 'Drizzle',
+					url: '/integrations/drizzle',
 					icon: <Droplets className="size-4" />,
 				},
 			],
 		},
 		{
-			type: "folder" as const,
-			name: "Plugins",
+			type: 'folder' as const,
+			name: 'Plugins',
 			icon: <Puzzle className="size-4" />,
 			defaultOpen: false,
 			children: [
 				{
-					type: "page" as const,
-					name: "Slack",
-					url: "/plugins/slack",
+					type: 'page' as const,
+					name: 'Slack',
+					url: '/plugins/slack',
 					icon: <MessageSquare className="size-4" />,
 				},
 			],
@@ -259,10 +259,10 @@ export default function RootLayout(props: { children: ReactNode }) {
 		<html lang="en" suppressHydrationWarning>
 			<body>
 				<NextProvider>
-					<RootProvider theme={{ defaultTheme: "dark", enableSystem: false }}>
+					<RootProvider theme={{ defaultTheme: 'dark', enableSystem: false }}>
 						<DocsLayout
 							tree={tree}
-							nav={{ title: "Corsair" }}
+							nav={{ title: 'Corsair' }}
 							sidebar={{
 								defaultOpenLevel: 0,
 							}}

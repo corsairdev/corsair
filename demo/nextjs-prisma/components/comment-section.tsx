@@ -1,38 +1,38 @@
-"use client";
+'use client';
 
-import { Loader2, Send, User } from "lucide-react";
-import { useState } from "react";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Loader2, Send, User } from 'lucide-react';
+import { useState } from 'react';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
 	Select,
 	SelectContent,
 	SelectItem,
 	SelectTrigger,
 	SelectValue,
-} from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
-import { useCorsairMutation, useCorsairQuery } from "@/corsair/client";
+} from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
+import { useCorsairMutation, useCorsairQuery } from '@/corsair/client';
 
 interface CommentSectionProps {
 	postId: string;
 }
 
 export function CommentSection({ postId }: CommentSectionProps) {
-	const [newComment, setNewComment] = useState("");
-	const [selectedUserId, setSelectedUserId] = useState<string>("");
+	const [newComment, setNewComment] = useState('');
+	const [selectedUserId, setSelectedUserId] = useState<string>('');
 
 	const {
 		data: comments,
 		isLoading,
 		refetch,
-	} = useCorsairQuery("get comments by post", { postId });
+	} = useCorsairQuery('get comments by post', { postId });
 	const { data: users, isLoading: usersLoading } = useCorsairQuery(
-		"get all users",
+		'get all users',
 		{},
 	);
-	const createComment = useCorsairMutation("create comment");
+	const createComment = useCorsairMutation('create comment');
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
@@ -44,10 +44,10 @@ export function CommentSection({ postId }: CommentSectionProps) {
 				postId: postId,
 				authorId: selectedUserId,
 			});
-			setNewComment("");
+			setNewComment('');
 			refetch();
 		} catch (error) {
-			console.error("Failed to create comment:", error);
+			console.error('Failed to create comment:', error);
 		}
 	};
 
@@ -73,7 +73,7 @@ export function CommentSection({ postId }: CommentSectionProps) {
 								>
 									<SelectValue
 										placeholder={
-											usersLoading ? "Loading users..." : "Select a user"
+											usersLoading ? 'Loading users...' : 'Select a user'
 										}
 									/>
 								</SelectTrigger>
@@ -148,11 +148,11 @@ export function CommentSection({ postId }: CommentSectionProps) {
 											</p>
 											<span className="text-xs text-muted-foreground">
 												{new Date(comment.created_at).toLocaleDateString(
-													"en-US",
+													'en-US',
 													{
-														month: "short",
-														day: "numeric",
-														year: "numeric",
+														month: 'short',
+														day: 'numeric',
+														year: 'numeric',
 													},
 												)}
 											</span>

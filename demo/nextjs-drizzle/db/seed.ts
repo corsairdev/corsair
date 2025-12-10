@@ -1,17 +1,17 @@
-import dotenv from "dotenv";
-import { drizzle } from "drizzle-orm/node-postgres";
-import * as fs from "fs";
-import * as path from "path";
-import { Pool } from "pg";
+import dotenv from 'dotenv';
+import { drizzle } from 'drizzle-orm/node-postgres';
+import * as fs from 'fs';
+import * as path from 'path';
+import { Pool } from 'pg';
 import {
 	album_artists,
 	albums,
 	artists,
 	track_artists,
 	tracks,
-} from "./schema";
+} from './schema';
 
-dotenv.config({ path: ".env.local" });
+dotenv.config({ path: '.env.local' });
 
 const pool = new Pool({
 	connectionString: process.env.DATABASE_URL,
@@ -66,19 +66,19 @@ interface SpotifyTrack {
 
 async function seedDatabase() {
 	try {
-		console.log("Starting database seeding...");
+		console.log('Starting database seeding...');
 
 		// Read JSON files
 		const artistsData: SpotifyArtist[] = JSON.parse(
-			fs.readFileSync(path.join(__dirname, "../data/artists.json"), "utf-8"),
+			fs.readFileSync(path.join(__dirname, '../data/artists.json'), 'utf-8'),
 		);
 
 		const albumsData: SpotifyAlbum[] = JSON.parse(
-			fs.readFileSync(path.join(__dirname, "../data/albums.json"), "utf-8"),
+			fs.readFileSync(path.join(__dirname, '../data/albums.json'), 'utf-8'),
 		);
 
 		const tracksResponseData: SpotifyTrackResponse[] = JSON.parse(
-			fs.readFileSync(path.join(__dirname, "../data/tracks.json"), "utf-8"),
+			fs.readFileSync(path.join(__dirname, '../data/tracks.json'), 'utf-8'),
 		);
 
 		// Extract tracks from the response format
@@ -91,7 +91,7 @@ async function seedDatabase() {
 		);
 
 		// Step 1: Collect ALL unique artists from all sources
-		console.log("Collecting all unique artists...");
+		console.log('Collecting all unique artists...');
 		const allArtistsMap = new Map<string, any>();
 
 		// Add artists from artists.json (full data)
@@ -146,13 +146,13 @@ async function seedDatabase() {
 		console.log(`Total unique artists: ${allArtistsMap.size}`);
 
 		// Step 2: Seed all artists first
-		console.log("Seeding all artists...");
+		console.log('Seeding all artists...');
 		for (const artistData of allArtistsMap.values()) {
 			await db.insert(artists).values(artistData).onConflictDoNothing();
 		}
 
 		// Step 3: Seed albums
-		console.log("Seeding albums...");
+		console.log('Seeding albums...');
 		for (const album of albumsData) {
 			await db
 				.insert(albums)
@@ -183,7 +183,7 @@ async function seedDatabase() {
 		}
 
 		// Step 4: Seed tracks
-		console.log("Seeding tracks...");
+		console.log('Seeding tracks...');
 		for (const track of tracksData) {
 			await db
 				.insert(tracks)
@@ -214,9 +214,9 @@ async function seedDatabase() {
 			}
 		}
 
-		console.log("Database seeding completed successfully!");
+		console.log('Database seeding completed successfully!');
 	} catch (error) {
-		console.error("Error seeding database:", error);
+		console.error('Error seeding database:', error);
 		process.exit(1);
 	} finally {
 		await pool.end();

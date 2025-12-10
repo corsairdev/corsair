@@ -1,12 +1,12 @@
-import { existsSync, readdirSync, readFileSync } from "fs";
-import { basename, join, resolve } from "path";
-import { kebabToCamelCase } from "../utils/utils.js";
-import { loadConfig } from "./config.js";
+import { existsSync, readdirSync, readFileSync } from 'fs';
+import { basename, join, resolve } from 'path';
+import { kebabToCamelCase } from '../utils/utils.js';
+import { loadConfig } from './config.js';
 
 interface OperationInfo {
 	name: string;
 	fileName: string;
-	type: "query" | "mutation";
+	type: 'query' | 'mutation';
 	input: string | null;
 	output: string | null;
 	pseudoCode: string[] | null;
@@ -37,7 +37,7 @@ function extractCommentMetadata(content: string): {
 	const input = inputMatch?.[1]
 		? inputMatch[1]
 				.trim()
-				.replace(/\s*\*\s*/g, " ")
+				.replace(/\s*\*\s*/g, ' ')
 				.trim()
 		: null;
 
@@ -47,7 +47,7 @@ function extractCommentMetadata(content: string): {
 	const output = outputMatch?.[1]
 		? outputMatch[1]
 				.trim()
-				.replace(/\s*\*\s*/g, " ")
+				.replace(/\s*\*\s*/g, ' ')
 				.trim()
 		: null;
 
@@ -57,8 +57,8 @@ function extractCommentMetadata(content: string): {
 	let pseudoCode: string[] | null = null;
 	if (pseudoCodeMatch?.[1]) {
 		pseudoCode = pseudoCodeMatch[1]
-			.split("\n")
-			.map((line) => line.replace(/^\s*\*\s*/, "").trim())
+			.split('\n')
+			.map((line) => line.replace(/^\s*\*\s*/, '').trim())
 			.filter((line) => line.length > 0 && /^\d+\./.test(line));
 	}
 
@@ -68,7 +68,7 @@ function extractCommentMetadata(content: string): {
 	const userInstructions = userInstructionsMatch?.[1]
 		? userInstructionsMatch[1]
 				.trim()
-				.replace(/\s*\*\s*/g, " ")
+				.replace(/\s*\*\s*/g, ' ')
 				.trim()
 		: null;
 
@@ -77,11 +77,11 @@ function extractCommentMetadata(content: string): {
 
 function parseOperationFile(
 	filePath: string,
-	type: "query" | "mutation",
+	type: 'query' | 'mutation',
 ): OperationInfo | null {
 	try {
-		const content = readFileSync(filePath, "utf-8");
-		const fileName = basename(filePath, ".ts");
+		const content = readFileSync(filePath, 'utf-8');
+		const fileName = basename(filePath, '.ts');
 		const name = kebabToCamelCase(fileName);
 
 		const metadata = extractCommentMetadata(content);
@@ -102,7 +102,7 @@ function parseOperationFile(
 
 function formatOperation(op: OperationInfo): string {
 	const lines: string[] = [];
-	const typeLabel = op.type === "query" ? "🔍" : "✏️";
+	const typeLabel = op.type === 'query' ? '🔍' : '✏️';
 	const typeText = op.type.toUpperCase();
 
 	lines.push(`${typeLabel} ${op.name} [${typeText}]`);
@@ -127,11 +127,11 @@ function formatOperation(op: OperationInfo): string {
 		});
 	}
 
-	return lines.join("\n");
+	return lines.join('\n');
 }
 
 function matchesFilter(op: OperationInfo, filter: string): boolean {
-	const normalizedFilter = filter.toLowerCase().replace(/\s+/g, " ");
+	const normalizedFilter = filter.toLowerCase().replace(/\s+/g, ' ');
 	const searchableText = [
 		op.name,
 		op.fileName,
@@ -141,10 +141,10 @@ function matchesFilter(op: OperationInfo, filter: string): boolean {
 		...(op.pseudoCode || []),
 	]
 		.filter(Boolean)
-		.join(" ")
+		.join(' ')
 		.toLowerCase();
 
-	const filterWords = normalizedFilter.split(" ");
+	const filterWords = normalizedFilter.split(' ');
 	return filterWords.every((word) => searchableText.includes(word));
 }
 
@@ -158,12 +158,12 @@ export async function list(options: {
 	const queriesPath = resolve(
 		process.cwd(),
 		cfg.pathToCorsairFolder,
-		"queries",
+		'queries',
 	);
 	const mutationsPath = resolve(
 		process.cwd(),
 		cfg.pathToCorsairFolder,
-		"mutations",
+		'mutations',
 	);
 
 	const operations: OperationInfo[] = [];
@@ -175,22 +175,22 @@ export async function list(options: {
 
 	if (showQueries && existsSync(queriesPath)) {
 		const queryFiles = readdirSync(queriesPath)
-			.filter((file) => file.endsWith(".ts") && file !== "index.ts")
+			.filter((file) => file.endsWith('.ts') && file !== 'index.ts')
 			.map((file) => join(queriesPath, file));
 
 		for (const filePath of queryFiles) {
-			const op = parseOperationFile(filePath, "query");
+			const op = parseOperationFile(filePath, 'query');
 			if (op) operations.push(op);
 		}
 	}
 
 	if (showMutations && existsSync(mutationsPath)) {
 		const mutationFiles = readdirSync(mutationsPath)
-			.filter((file) => file.endsWith(".ts") && file !== "index.ts")
+			.filter((file) => file.endsWith('.ts') && file !== 'index.ts')
 			.map((file) => join(mutationsPath, file));
 
 		for (const filePath of mutationFiles) {
-			const op = parseOperationFile(filePath, "mutation");
+			const op = parseOperationFile(filePath, 'mutation');
 			if (op) operations.push(op);
 		}
 	}
@@ -206,37 +206,37 @@ export async function list(options: {
 		if (options.filter) {
 			console.log(`\n❌ No operations found matching "${options.filter}"`);
 		} else {
-			console.log("\n❌ No operations found");
+			console.log('\n❌ No operations found');
 		}
 		return;
 	}
 
-	const queries = filteredOperations.filter((op) => op.type === "query");
-	const mutations = filteredOperations.filter((op) => op.type === "mutation");
+	const queries = filteredOperations.filter((op) => op.type === 'query');
+	const mutations = filteredOperations.filter((op) => op.type === 'mutation');
 
-	console.log("\n📋 Corsair Operations\n");
+	console.log('\n📋 Corsair Operations\n');
 
 	if (queries.length > 0) {
 		console.log(`═══ Queries (${queries.length}) ═══\n`);
 		queries.forEach((op, i) => {
 			console.log(formatOperation(op));
-			if (i < queries.length - 1) console.log("");
+			if (i < queries.length - 1) console.log('');
 		});
-		console.log("");
+		console.log('');
 	}
 
 	if (mutations.length > 0) {
 		console.log(`═══ Mutations (${mutations.length}) ═══\n`);
 		mutations.forEach((op, i) => {
 			console.log(formatOperation(op));
-			if (i < mutations.length - 1) console.log("");
+			if (i < mutations.length - 1) console.log('');
 		});
-		console.log("");
+		console.log('');
 	}
 
 	console.log(`📊 Total: ${filteredOperations.length} operation(s)`);
 	if (options.filter) {
 		console.log(`🔎 Filter: "${options.filter}"`);
 	}
-	console.log("");
+	console.log('');
 }

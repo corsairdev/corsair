@@ -1,17 +1,17 @@
 import type {
 	UseMutationOptions,
 	UseQueryOptions,
-} from "@tanstack/react-query";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import type { CreateTRPCClientOptions, TRPCClientError } from "@trpc/client";
-import { createTRPCClient, httpBatchStreamLink } from "@trpc/client";
+} from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import type { CreateTRPCClientOptions, TRPCClientError } from '@trpc/client';
+import { createTRPCClient, httpBatchStreamLink } from '@trpc/client';
 import type {
 	AnyTRPCRouter,
 	inferRouterInputs,
 	inferRouterOutputs,
-} from "@trpc/server";
-import superjson from "superjson";
-import { toCamelCase } from "./utils";
+} from '@trpc/server';
+import superjson from 'superjson';
+import { toCamelCase } from './utils';
 
 // Generic client factory function
 export function createCorsairClient<TRouter extends AnyTRPCRouter>(options: {
@@ -36,11 +36,11 @@ export function createCorsairClient<TRouter extends AnyTRPCRouter>(options: {
 
 	const typedClient = baseClient as unknown as StronglyTypedClient<TRouter>;
 
-	type RouterDef = TRouter["_def"];
-	type RouterProcedures = RouterDef["procedures"];
+	type RouterDef = TRouter['_def'];
+	type RouterProcedures = RouterDef['procedures'];
 
 	// Helper to check if a procedure is a mutation
-	type IsMutation<T> = T extends { _def: { type: "mutation" } } ? true : false;
+	type IsMutation<T> = T extends { _def: { type: 'mutation' } } ? true : false;
 
 	// Extract mutation routes automatically
 	type MutationRoutes = {
@@ -81,10 +81,10 @@ export function createCorsairHooks<TRouter extends AnyTRPCRouter>(
 	type RouterInputs = inferRouterInputs<TRouter>;
 	type RouterOutputs = inferRouterOutputs<TRouter>;
 
-	type RouterDef = TRouter["_def"];
-	type RouterProcedures = RouterDef["procedures"];
+	type RouterDef = TRouter['_def'];
+	type RouterProcedures = RouterDef['procedures'];
 
-	type IsMutation<T> = T extends { _def: { type: "mutation" } } ? true : false;
+	type IsMutation<T> = T extends { _def: { type: 'mutation' } } ? true : false;
 
 	type MutationRoutes = {
 		[K in keyof RouterProcedures]: IsMutation<RouterProcedures[K]> extends true
@@ -99,7 +99,7 @@ export function createCorsairHooks<TRouter extends AnyTRPCRouter>(
 		input: RouterInputs[TRoute],
 		options?: Omit<
 			UseQueryOptions<RouterOutputs[TRoute], TRPCClientError<TRouter>>,
-			"queryKey" | "queryFn"
+			'queryKey' | 'queryFn'
 		>,
 	) {
 		return useQuery<RouterOutputs[TRoute], TRPCClientError<TRouter>>({
@@ -119,7 +119,7 @@ export function createCorsairHooks<TRouter extends AnyTRPCRouter>(
 				TRPCClientError<TRouter>,
 				RouterInputs[TRoute]
 			>,
-			"mutationFn"
+			'mutationFn'
 		>,
 	) {
 		return useMutation<

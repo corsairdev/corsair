@@ -1,17 +1,17 @@
-import fs from "fs-extra";
-import path from "path";
-import type { ProjectConfig } from "../../cli/create-project.js";
+import fs from 'fs-extra';
+import path from 'path';
+import type { ProjectConfig } from '../../cli/create-project.js';
 
 export async function generateSeedData(
 	projectPath: string,
 	config: ProjectConfig,
 ): Promise<void> {
-	if (config.orm === "prisma") {
+	if (config.orm === 'prisma') {
 		const template = getPrismaSeedTemplate();
-		await fs.writeFile(path.join(projectPath, "db", "seed.ts"), template);
+		await fs.writeFile(path.join(projectPath, 'db', 'seed.ts'), template);
 	} else {
 		const template = getDrizzleSeedTemplate();
-		await fs.writeFile(path.join(projectPath, "db", "seed.ts"), template);
+		await fs.writeFile(path.join(projectPath, 'db', 'seed.ts'), template);
 	}
 }
 

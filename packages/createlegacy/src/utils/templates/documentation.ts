@@ -1,6 +1,6 @@
-import fs from "fs-extra";
-import path from "path";
-import type { ProjectConfig } from "../../cli/create-project.js";
+import fs from 'fs-extra';
+import path from 'path';
+import type { ProjectConfig } from '../../cli/create-project.js';
 
 export async function generateDocumentation(
 	projectPath: string,
@@ -8,20 +8,20 @@ export async function generateDocumentation(
 ): Promise<void> {
 	const templates = getDocumentationTemplates(config);
 
-	await fs.writeFile(path.join(projectPath, "README.md"), templates.readme);
+	await fs.writeFile(path.join(projectPath, 'README.md'), templates.readme);
 
-	if (config.ide === "claude") {
-		await fs.writeFile(path.join(projectPath, "CLAUDE.md"), templates.claude);
+	if (config.ide === 'claude') {
+		await fs.writeFile(path.join(projectPath, 'CLAUDE.md'), templates.claude);
 	}
 
-	if (config.ide === "cursor") {
+	if (config.ide === 'cursor') {
 		await fs.writeFile(
-			path.join(projectPath, ".cursorrules"),
+			path.join(projectPath, '.cursorrules'),
 			templates.cursorrules,
 		);
 	}
 
-	await fs.writeFile(path.join(projectPath, ".gitignore"), templates.gitignore);
+	await fs.writeFile(path.join(projectPath, '.gitignore'), templates.gitignore);
 }
 
 function getDocumentationTemplates(config: ProjectConfig) {
@@ -29,17 +29,17 @@ function getDocumentationTemplates(config: ProjectConfig) {
 		readme: `# ${config.projectName}
 
 A modern, full-stack Next.js application built with Corsair, ${
-			config.orm === "prisma" ? "Prisma" : "Drizzle"
+			config.orm === 'prisma' ? 'Prisma' : 'Drizzle'
 		}, and PostgreSQL.
 
 ## 🏴‍☠️ What's Included
 
 - **[Next.js 15](https://nextjs.org/)** - React framework with App Router
 - **[Corsair](https://corsair.dev/)** - Type-safe database operations and API generation
-- **[${config.orm === "prisma" ? "Prisma" : "Drizzle"}](${
-			config.orm === "prisma"
-				? "https://prisma.io/"
-				: "https://orm.drizzle.team/"
+- **[${config.orm === 'prisma' ? 'Prisma' : 'Drizzle'}](${
+			config.orm === 'prisma'
+				? 'https://prisma.io/'
+				: 'https://orm.drizzle.team/'
 		})** - Database ORM
 - **[PostgreSQL](https://postgresql.org/)** - Production-ready database
 - **[TailwindCSS](https://tailwindcss.com/)** - Utility-first CSS framework
@@ -71,7 +71,7 @@ A modern, full-stack Next.js application built with Corsair, ${
    \`\`\`
 
 3. **Set up the database:**${
-			config.orm === "prisma"
+			config.orm === 'prisma'
 				? `
    \`\`\`bash
    # Generate Prisma client
@@ -157,10 +157,10 @@ export function PostList() {
 
 - [Corsair Documentation](https://corsair.dev)
 - [Next.js Documentation](https://nextjs.org/docs)
-- [${config.orm === "prisma" ? "Prisma" : "Drizzle"} Documentation](${
-			config.orm === "prisma"
-				? "https://prisma.io/docs"
-				: "https://orm.drizzle.team/"
+- [${config.orm === 'prisma' ? 'Prisma' : 'Drizzle'} Documentation](${
+			config.orm === 'prisma'
+				? 'https://prisma.io/docs'
+				: 'https://orm.drizzle.team/'
 		})
 
 ---
@@ -276,7 +276,7 @@ project-root/
 └── db/
     ├── index.ts                # Database client
     └── schema.ts               # Database schema${
-			config.orm === "prisma" ? " (Prisma)" : " (Drizzle)"
+			config.orm === 'prisma' ? ' (Prisma)' : ' (Drizzle)'
 		}
 \`\`\`
 
@@ -414,7 +414,7 @@ pnpm corsair watch
 \`\`\`
 
 ### Database Commands${
-			config.orm === "prisma"
+			config.orm === 'prisma'
 				? `
 
 \`\`\`bash
@@ -451,7 +451,7 @@ project-root/
 ├── db/
 │   ├── index.ts                # Database client
 │   └── schema.ts               # Database schema${
-			config.orm === "prisma" ? " (Prisma)" : " (Drizzle)"
+			config.orm === 'prisma' ? ' (Prisma)' : ' (Drizzle)'
 		}
 └── components/                 # React components
 \`\`\`
@@ -463,7 +463,7 @@ project-root/
 3. **Use \`useCorsairQuery\` and \`useCorsairMutation\`** hooks in client components
 4. **Follow Next.js 15 App Router** conventions (use 'use client' directive when needed)
 5. **Keep database schema** in \`db/schema.ts\`${
-			config.orm === "prisma" ? "" : " (or `prisma/schema.prisma`)"
+			config.orm === 'prisma' ? '' : ' (or `prisma/schema.prisma`)'
 		}
 6. **Run \`pnpm db:push\`** after schema changes
 7. **Use TypeScript** for all files
@@ -531,7 +531,7 @@ export function PostComponent() {
 ## Schema Changes Workflow
 
 1. Update your database schema in \`db/schema.ts\`${
-			config.orm === "prisma" ? " or `prisma/schema.prisma`" : ""
+			config.orm === 'prisma' ? ' or `prisma/schema.prisma`' : ''
 		}
 2. Run \`pnpm db:push\` to apply changes to database
 3. Run \`pnpm corsair check\` to validate existing queries/mutations
@@ -582,7 +582,7 @@ yarn-error.log*
 next-env.d.ts
 
 # Database
-${config.orm === "prisma" ? "prisma/migrations" : "/drizzle/migrations"}
+${config.orm === 'prisma' ? 'prisma/migrations' : '/drizzle/migrations'}
 `,
 	};
 }

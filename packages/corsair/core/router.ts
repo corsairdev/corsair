@@ -1,5 +1,5 @@
-import { initTRPC } from "@trpc/server";
-import superjson from "superjson";
+import { initTRPC } from '@trpc/server';
+import superjson from 'superjson';
 
 export function createCorsairTRPC<
 	TContext extends Record<string, unknown> = Record<string, unknown>,

@@ -4,7 +4,7 @@ import type {
 	GeneratedQuery,
 	Query,
 	SchemaDefinition,
-} from "../types/state.js";
+} from '../types/state.js';
 
 /**
  * LLM-based query generator (STUB)
@@ -20,8 +20,8 @@ export async function generateQueryWithLLM(
 	await new Promise((resolve) => setTimeout(resolve, 500));
 
 	const functionName = query.id;
-	const typeNameResult = capitalize(functionName) + "Result";
-	const typeNameParams = capitalize(functionName) + "Params";
+	const typeNameResult = capitalize(functionName) + 'Result';
+	const typeNameParams = capitalize(functionName) + 'Params';
 
 	// For now, generate a simple query based on the natural language
 	const queryCode = generateBasicQuery(
@@ -55,7 +55,7 @@ function generateBasicQuery(
 		return nlLower.includes(table.name.toLowerCase());
 	});
 
-	const tableName = tableGuess?.name || schema.tables[0]?.name || "table";
+	const tableName = tableGuess?.name || schema.tables[0]?.name || 'table';
 
 	return `import { db } from '../db';
 import { ${tableName} } from '../schema';
@@ -76,7 +76,7 @@ function generateTypes(
 ): string {
 	const paramsFields = Object.entries(query.params)
 		.map(([key, type]) => `  ${key}: ${type};`)
-		.join("\n");
+		.join('\n');
 
 	const params = paramsFields
 		? `export type ${paramsType} = {\n${paramsFields}\n};`

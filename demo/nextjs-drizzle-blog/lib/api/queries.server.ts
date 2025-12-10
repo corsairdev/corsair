@@ -11,7 +11,7 @@ import {
 	getTracksByArtistId,
 	searchAlbums,
 	searchArtists,
-} from "./data";
+} from './data';
 
 // Re-export with "server" naming convention to make it clear these are server queries
 export const serverQueries = {

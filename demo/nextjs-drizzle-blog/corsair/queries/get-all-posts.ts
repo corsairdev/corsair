@@ -1,5 +1,5 @@
-import { desc, eq } from "drizzle-orm";
-import { procedure } from "@/corsair/procedure";
+import { desc, eq } from 'drizzle-orm';
+import { procedure } from '@/corsair/procedure';
 
 /**
  * INPUT: {}

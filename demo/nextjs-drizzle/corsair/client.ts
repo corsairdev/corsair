@@ -1,8 +1,8 @@
-import { createCorsairClient, createCorsairHooks } from "corsair";
-import type { CorsairRouter } from ".";
+import { createCorsairClient, createCorsairHooks } from 'corsair';
+import type { CorsairRouter } from '.';
 
 const getBaseUrl = () => {
-	if (typeof window !== "undefined") {
+	if (typeof window !== 'undefined') {
 		return window.location.origin;
 	}
 	if (process.env.VERCEL_URL) {

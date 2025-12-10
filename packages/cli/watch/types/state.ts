@@ -1,16 +1,16 @@
 export enum CorsairState {
-	IDLE = "IDLE",
-	DETECTING = "DETECTING",
-	GENERATING = "GENERATING",
-	AWAITING_FEEDBACK = "AWAITING_FEEDBACK",
-	MODIFYING = "MODIFYING",
-	ERROR = "ERROR",
-	PROMPTING = "PROMPTING",
-	VIEWING_QUERIES = "VIEWING_QUERIES",
-	VIEWING_MUTATIONS = "VIEWING_MUTATIONS",
-	VIEWING_OPERATION_DETAIL = "VIEWING_OPERATION_DETAIL",
-	CONFIGURING_NEW_OPERATION = "CONFIGURING_NEW_OPERATION",
-	LLM_PROCESSING = "LLM_PROCESSING",
+	IDLE = 'IDLE',
+	DETECTING = 'DETECTING',
+	GENERATING = 'GENERATING',
+	AWAITING_FEEDBACK = 'AWAITING_FEEDBACK',
+	MODIFYING = 'MODIFYING',
+	ERROR = 'ERROR',
+	PROMPTING = 'PROMPTING',
+	VIEWING_QUERIES = 'VIEWING_QUERIES',
+	VIEWING_MUTATIONS = 'VIEWING_MUTATIONS',
+	VIEWING_OPERATION_DETAIL = 'VIEWING_OPERATION_DETAIL',
+	CONFIGURING_NEW_OPERATION = 'CONFIGURING_NEW_OPERATION',
+	LLM_PROCESSING = 'LLM_PROCESSING',
 }
 
 export interface Query {
@@ -45,7 +45,7 @@ export interface ErrorInfo {
 export interface PromptInfo {
 	question: string;
 	options: string[];
-	type: "select" | "input";
+	type: 'select' | 'input';
 }
 
 export interface LLMResponse {
@@ -56,7 +56,7 @@ export interface LLMResponse {
 		optimizations: string[];
 	};
 	analysis: {
-		complexity: "low" | "medium" | "high";
+		complexity: 'low' | 'medium' | 'high';
 		confidence: number;
 		reasoning: string;
 	};
@@ -94,7 +94,7 @@ export interface StateContext {
 }
 
 export interface OperationsViewContext {
-	type: "queries" | "mutations";
+	type: 'queries' | 'mutations';
 	currentPage: number;
 	searchQuery: string;
 	isSearching: boolean;
@@ -102,7 +102,7 @@ export interface OperationsViewContext {
 }
 
 export interface NewOperationContext {
-	operationType: "query" | "mutation";
+	operationType: 'query' | 'mutation';
 	operationName: string;
 	functionName: string;
 	prompt: string;

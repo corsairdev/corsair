@@ -1,31 +1,31 @@
 #!/usr/bin/env node
 
-import chokidar from "chokidar";
-import { existsSync } from "fs";
-import { render } from "ink";
-import * as path from "path";
-import { Project } from "ts-morph";
+import chokidar from 'chokidar';
+import { existsSync } from 'fs';
+import { render } from 'ink';
+import * as path from 'path';
+import { Project } from 'ts-morph';
 import {
 	getResolvedPaths,
 	loadConfig,
 	validatePaths,
-} from "../commands/config.js";
-import { loadSchema } from "../utils/schema-loader-cli.js";
-import { eventBus } from "./core/event-bus.js";
-import { CorsairEvent } from "./types/events.js";
-import type { SchemaDefinition } from "./types/state.js";
-import { CorsairUI } from "./ui/renderer.js";
+} from '../commands/config.js';
+import { loadSchema } from '../utils/schema-loader-cli.js';
+import { eventBus } from './core/event-bus.js';
+import { CorsairEvent } from './types/events.js';
+import type { SchemaDefinition } from './types/state.js';
+import { CorsairUI } from './ui/renderer.js';
 
-import "./handlers/file-change-handler.js";
-import "./handlers/query-generator.js";
-import "./handlers/user-input-handler.js";
-import "./handlers/error-handler.js";
-import "./handlers/schema-change-handler.js";
+import './handlers/file-change-handler.js';
+import './handlers/query-generator.js';
+import './handlers/user-input-handler.js';
+import './handlers/error-handler.js';
+import './handlers/schema-change-handler.js';
 
-import { Mutations, Queries } from "./handlers/operations-handler.js";
-import { Schema } from "./handlers/schema-handler.js";
+import { Mutations, Queries } from './handlers/operations-handler.js';
+import { Schema } from './handlers/schema-handler.js';
 
-import "./core/state-machine.js";
+import './core/state-machine.js';
 
 export async function watch(): Promise<void> {
 	console.clear();
@@ -33,7 +33,7 @@ export async function watch(): Promise<void> {
 	const cfg = loadConfig();
 
 	const project = new Project({
-		tsConfigFilePath: "tsconfig.json",
+		tsConfigFilePath: 'tsconfig.json',
 	});
 
 	const paths = getResolvedPaths(cfg);
@@ -52,7 +52,7 @@ export async function watch(): Promise<void> {
 			eventBus.emit(CorsairEvent.SCHEMA_LOADED, { schema });
 		}
 	} catch (err) {
-		console.error("Error loading unified schema:", err);
+		console.error('Error loading unified schema:', err);
 	}
 
 	await queriesHandler.parse();
@@ -61,7 +61,7 @@ export async function watch(): Promise<void> {
 		await schemaHandler.parse();
 	}
 
-	const watcher = chokidar.watch(".", {
+	const watcher = chokidar.watch('.', {
 		ignored:
 			/(node_modules|\.next|dist|\.git|\.turbo|coverage|__tests__|\.test\.|\.spec\.)/,
 		persistent: true,
@@ -75,22 +75,22 @@ export async function watch(): Promise<void> {
 			const imports = operationsFile.getImportDeclarations();
 			const desiredQueries = path
 				.relative(path.dirname(paths.operationsFile), paths.queriesDir)
-				.replace(/\\/g, "/");
+				.replace(/\\/g, '/');
 			const desiredMutations = path
 				.relative(path.dirname(paths.operationsFile), paths.mutationsDir)
-				.replace(/\\/g, "/");
-			const normalizedQueries = desiredQueries.startsWith(".")
+				.replace(/\\/g, '/');
+			const normalizedQueries = desiredQueries.startsWith('.')
 				? desiredQueries
 				: `./${desiredQueries}`;
-			const normalizedMutations = desiredMutations.startsWith(".")
+			const normalizedMutations = desiredMutations.startsWith('.')
 				? desiredMutations
 				: `./${desiredMutations}`;
 
 			const queriesImport = imports.find(
-				(d) => d.getNamespaceImport()?.getText() === "queriesModule",
+				(d) => d.getNamespaceImport()?.getText() === 'queriesModule',
 			);
 			const mutationsImport = imports.find(
-				(d) => d.getNamespaceImport()?.getText() === "mutationsModule",
+				(d) => d.getNamespaceImport()?.getText() === 'mutationsModule',
 			);
 
 			if (queriesImport) {
@@ -100,7 +100,7 @@ export async function watch(): Promise<void> {
 			} else {
 				operationsFile.addImportDeclaration({
 					moduleSpecifier: normalizedQueries,
-					namespaceImport: "queriesModule",
+					namespaceImport: 'queriesModule',
 				});
 			}
 
@@ -111,19 +111,19 @@ export async function watch(): Promise<void> {
 			} else {
 				operationsFile.addImportDeclaration({
 					moduleSpecifier: normalizedMutations,
-					namespaceImport: "mutationsModule",
+					namespaceImport: 'mutationsModule',
 				});
 			}
 
 			operationsFile.formatText();
 			await operationsFile.save();
 		} catch (err) {
-			console.error("Error loading operations file:", err);
+			console.error('Error loading operations file:', err);
 		}
 	}
 
-	watcher.on("change", async (pathChanged: string) => {
-		if (!pathChanged.endsWith(".ts") && !pathChanged.endsWith(".tsx")) {
+	watcher.on('change', async (pathChanged: string) => {
+		if (!pathChanged.endsWith('.ts') && !pathChanged.endsWith('.tsx')) {
 			return;
 		}
 
@@ -170,8 +170,8 @@ export async function watch(): Promise<void> {
 		}
 
 		if (
-			pathChanged.includes("/corsair/") ||
-			pathChanged.includes("\\corsair\\")
+			pathChanged.includes('/corsair/') ||
+			pathChanged.includes('\\corsair\\')
 		) {
 			return;
 		}
@@ -189,21 +189,21 @@ export async function watch(): Promise<void> {
 		});
 	});
 
-	watcher.on("error", (error: unknown) => {
-		console.error("Watcher error:", error);
+	watcher.on('error', (error: unknown) => {
+		console.error('Watcher error:', error);
 	});
 
 	const { unmount, waitUntilExit } = render(<CorsairUI warnings={warnings} />);
 
-	process.on("SIGINT", () => {
-		console.log("\nShutting down...");
+	process.on('SIGINT', () => {
+		console.log('\nShutting down...');
 		watcher.close();
 		unmount();
 		process.exit(0);
 	});
 
-	process.on("SIGTERM", () => {
-		console.log("\nShutting down...");
+	process.on('SIGTERM', () => {
+		console.log('\nShutting down...');
 		watcher.close();
 		unmount();
 		process.exit(0);

@@ -1,26 +1,26 @@
-import { tool } from "ai";
-import { exec } from "child_process";
-import { promises as fs } from "fs";
-import path from "path";
-import { promisify } from "util";
-import z from "zod";
+import { tool } from 'ai';
+import { exec } from 'child_process';
+import { promises as fs } from 'fs';
+import path from 'path';
+import { promisify } from 'util';
+import z from 'zod';
 
 const execAsync = promisify(exec);
 
 async function updateBarrelFile(targetPath: string) {
-	if (!targetPath.endsWith(".ts")) {
+	if (!targetPath.endsWith('.ts')) {
 		return;
 	}
 
 	const dir = path.dirname(targetPath);
-	const fileName = path.basename(targetPath, ".ts");
+	const fileName = path.basename(targetPath, '.ts');
 
-	if (fileName === "index" || fileName === "@index") {
+	if (fileName === 'index' || fileName === '@index') {
 		return;
 	}
 
 	const exportLine = `export * from './${fileName}'`;
-	const barrelCandidates = ["index.ts", "@index.ts"];
+	const barrelCandidates = ['index.ts', '@index.ts'];
 
 	let updatedExisting = false;
 
@@ -28,23 +28,23 @@ async function updateBarrelFile(targetPath: string) {
 		const barrelPath = path.join(dir, barrelName);
 
 		try {
-			const existing = await fs.readFile(barrelPath, "utf8");
-			const lines = existing.split("\n").filter((line) => line.trim());
+			const existing = await fs.readFile(barrelPath, 'utf8');
+			const lines = existing.split('\n').filter((line) => line.trim());
 
 			if (!lines.includes(exportLine)) {
 				lines.push(exportLine);
 			}
 
 			const sortedLines = lines.sort((a, b) => a.localeCompare(b));
-			await fs.writeFile(barrelPath, sortedLines.join("\n") + "\n");
+			await fs.writeFile(barrelPath, sortedLines.join('\n') + '\n');
 
 			updatedExisting = true;
 		} catch {}
 	}
 
 	if (!updatedExisting) {
-		const barrelPath = path.join(dir, "index.ts");
-		await fs.writeFile(barrelPath, exportLine + "\n");
+		const barrelPath = path.join(dir, 'index.ts');
+		await fs.writeFile(barrelPath, exportLine + '\n');
 	}
 }
 
@@ -60,15 +60,15 @@ async function validateTypeScriptFile(pwd: string) {
 	}).catch((error) => {
 		const execError = error as { stdout?: string; stderr?: string };
 		return {
-			stdout: execError.stdout ?? "",
-			stderr: execError.stderr ?? "",
+			stdout: execError.stdout ?? '',
+			stderr: execError.stderr ?? '',
 		};
 	});
 
-	const output = `${result.stdout ?? ""}${result.stderr ?? ""}`.trim();
+	const output = `${result.stdout ?? ''}${result.stderr ?? ''}`.trim();
 
 	if (!output) {
-		return { success: true, errors: "" };
+		return { success: true, errors: '' };
 	}
 
 	return { success: false, errors: output };
@@ -77,15 +77,15 @@ async function validateTypeScriptFile(pwd: string) {
 export const writeFile = (pwd: string) =>
 	tool({
 		description:
-			"Write the full contents of the target TypeScript file. Returns build errors for that file or success message. If there are errors, you MUST call this tool again with corrected code.",
+			'Write the full contents of the target TypeScript file. Returns build errors for that file or success message. If there are errors, you MUST call this tool again with corrected code.',
 		inputSchema: z.object({
-			code: z.string().describe("The exact code to insert into the file."),
+			code: z.string().describe('The exact code to insert into the file.'),
 		}),
 		execute: async ({ code }) => {
 			const targetPath = path.resolve(process.cwd(), pwd);
 
 			await fs.mkdir(path.dirname(targetPath), { recursive: true });
-			await fs.writeFile(targetPath, code, "utf8");
+			await fs.writeFile(targetPath, code, 'utf8');
 
 			await updateBarrelFile(targetPath);
 
@@ -96,6 +96,6 @@ export const writeFile = (pwd: string) =>
 				return errorMessage;
 			}
 
-			return "SUCCESS - File written and TypeScript compilation passed with zero errors.";
+			return 'SUCCESS - File written and TypeScript compilation passed with zero errors.';
 		},
 	});

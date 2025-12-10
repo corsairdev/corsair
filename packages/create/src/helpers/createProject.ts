@@ -1,6 +1,6 @@
-import path from "path";
-import { scaffoldProject } from "@/helpers/scaffoldProject.js";
-import { getUserPkgManager } from "@/utils/getUserPkgManager.js";
+import path from 'path';
+import { scaffoldProject } from '@/helpers/scaffoldProject.js';
+import { getUserPkgManager } from '@/utils/getUserPkgManager.js';
 
 interface CreateProjectOptions {
 	projectName: string;

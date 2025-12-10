@@ -1,9 +1,9 @@
-import { Box, Text, useInput } from "ink";
-import type React from "react";
-import { useState } from "react";
-import { eventBus } from "../../core/event-bus.js";
-import { CorsairEvent } from "../../types/events.js";
-import type { StateContext } from "../../types/state.js";
+import { Box, Text, useInput } from 'ink';
+import type React from 'react';
+import { useState } from 'react';
+import { eventBus } from '../../core/event-bus.js';
+import { CorsairEvent } from '../../types/events.js';
+import type { StateContext } from '../../types/state.js';
 
 interface OperationConfigurationScreenProps {
 	context: StateContext;
@@ -12,7 +12,7 @@ interface OperationConfigurationScreenProps {
 export const OperationConfigurationScreen: React.FC<
 	OperationConfigurationScreenProps
 > = ({ context }) => {
-	const [inputValue, setInputValue] = useState("");
+	const [inputValue, setInputValue] = useState('');
 	const [isInputActive, setIsInputActive] = useState(true);
 	const [showEmptyWarning, setShowEmptyWarning] = useState(false);
 
@@ -37,15 +37,15 @@ export const OperationConfigurationScreen: React.FC<
 		if (!isInputActive) return;
 
 		if (key.return) {
-			if (inputValue.trim() === "" && !key.ctrl) {
+			if (inputValue.trim() === '' && !key.ctrl) {
 				eventBus.emit(CorsairEvent.USER_COMMAND, {
-					command: "defer_operation_config",
+					command: 'defer_operation_config',
 				});
 				setIsInputActive(false);
 				return;
 			}
 			eventBus.emit(CorsairEvent.USER_COMMAND, {
-				command: "submit_operation_config",
+				command: 'submit_operation_config',
 				args: { configurationRules: inputValue },
 			});
 			setIsInputActive(false);
@@ -55,7 +55,7 @@ export const OperationConfigurationScreen: React.FC<
 		if (key.escape) {
 			// Cancel and go back to idle
 			eventBus.emit(CorsairEvent.USER_COMMAND, {
-				command: "cancel_operation_config",
+				command: 'cancel_operation_config',
 			});
 			return;
 		}
@@ -71,8 +71,8 @@ export const OperationConfigurationScreen: React.FC<
 	});
 
 	const operationTypeDisplay =
-		newOperation.operationType === "query" ? "Query" : "Mutation";
-	const fileName = newOperation.file.split("/").pop() || newOperation.file;
+		newOperation.operationType === 'query' ? 'Query' : 'Mutation';
+	const fileName = newOperation.file.split('/').pop() || newOperation.file;
 
 	return (
 		<Box
@@ -89,12 +89,12 @@ export const OperationConfigurationScreen: React.FC<
 				marginBottom={1}
 			>
 				<Text color="yellow" bold>
-					{newOperation.isUpdate ? "♻️  Update" : "🔧 Configure"}{" "}
-					{operationTypeDisplay}:{" "}
+					{newOperation.isUpdate ? '♻️  Update' : '🔧 Configure'}{' '}
+					{operationTypeDisplay}:{' '}
 					<Text color="cyan">{newOperation.operationName}</Text>
 					{!newOperation.isUpdate && newOperation.file && (
 						<>
-							{" "}
+							{' '}
 							<Text dimColor>
 								({fileName}:{newOperation.lineNumber})
 							</Text>
@@ -112,9 +112,9 @@ export const OperationConfigurationScreen: React.FC<
 			{!newOperation.isUpdate && (
 				<Box marginBottom={1}>
 					<Text>
-						Prompt:{" "}
+						Prompt:{' '}
 						<Text color="green">
-							"{newOperation.prompt.replace(/['"]/g, "")}"
+							"{newOperation.prompt.replace(/['"]/g, '')}"
 						</Text>
 					</Text>
 				</Box>
@@ -124,15 +124,15 @@ export const OperationConfigurationScreen: React.FC<
 			<Box flexDirection="column">
 				<Text bold>
 					{newOperation.isUpdate
-						? "Update Instructions:"
-						: "Configuration Rules:"}
+						? 'Update Instructions:'
+						: 'Configuration Rules:'}
 				</Text>
 				<Text> </Text>
 
 				{/* Input box */}
 				<Box
 					borderStyle="single"
-					borderColor={isInputActive ? "cyan" : "gray"}
+					borderColor={isInputActive ? 'cyan' : 'gray'}
 					padding={1}
 					minHeight={8}
 				>
@@ -176,20 +176,20 @@ export const OperationConfigurationScreen: React.FC<
 						<Text dimColor>
 							<Text color="green" bold>
 								[Enter]
-							</Text>{" "}
+							</Text>{' '}
 							Submit configuration
 						</Text>
 						<Text dimColor>
 							<Text color="red" bold>
 								[Esc]
-							</Text>{" "}
+							</Text>{' '}
 							Cancel
 						</Text>
 					</Box>
 					<Text dimColor>
 						<Text color="cyan" bold>
 							[Ctrl+Enter]
-						</Text>{" "}
+						</Text>{' '}
 						Submit empty configuration
 					</Text>
 				</Box>

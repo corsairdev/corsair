@@ -1,21 +1,21 @@
-import fs from "fs-extra";
-import path from "path";
+import fs from 'fs-extra';
+import path from 'path';
 
 export async function generateUIComponents(projectPath: string): Promise<void> {
-	await fs.ensureDir(path.join(projectPath, "components", "ui"));
+	await fs.ensureDir(path.join(projectPath, 'components', 'ui'));
 
 	const templates = getUITemplates();
 
 	await fs.writeFile(
-		path.join(projectPath, "lib", "utils.ts"),
+		path.join(projectPath, 'lib', 'utils.ts'),
 		templates.utils,
 	);
 	await fs.writeFile(
-		path.join(projectPath, "components", "ui", "button.tsx"),
+		path.join(projectPath, 'components', 'ui', 'button.tsx'),
 		templates.button,
 	);
 	await fs.writeFile(
-		path.join(projectPath, "components", "ui", "card.tsx"),
+		path.join(projectPath, 'components', 'ui', 'card.tsx'),
 		templates.card,
 	);
 }

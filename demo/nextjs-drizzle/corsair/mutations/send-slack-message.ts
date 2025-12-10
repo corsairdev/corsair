@@ -1,7 +1,7 @@
-import type { SlackChannels } from "corsair/plugins/types";
-import { z } from "zod";
-import { procedure } from "@/corsair/procedure";
-import type { Config } from "@/corsair.config";
+import type { SlackChannels } from 'corsair/plugins/types';
+import { z } from 'zod';
+import { procedure } from '@/corsair/procedure';
+import type { Config } from '@/corsair.config';
 
 /**
  * INPUT: { channel: SlackChannels<Config>, message: string }
@@ -24,8 +24,8 @@ export const sendSlackMessage = procedure
 	)
 	.mutation(async ({ input, ctx }) => {
 		const slack = ctx.plugins.slack.sendMessage({
-			channelId: "general",
-			content: "",
+			channelId: 'general',
+			content: '',
 		});
 
 		// return slack.sendMessage({

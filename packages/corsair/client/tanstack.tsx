@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { useState } from "react";
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { useState } from 'react';
 
 export function CorsairProvider({ children }: { children: React.ReactNode }) {
 	const [queryClient] = useState(() => new QueryClient());

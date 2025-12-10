@@ -1,12 +1,12 @@
-import { promises as fs } from "fs";
+import { promises as fs } from 'fs';
 
 export function toKebabCase(str: string): string {
 	return str
 		.trim()
-		.replace(/([a-z])([A-Z])/g, "$1-$2")
-		.replace(/[\s_]+/g, "-")
+		.replace(/([a-z])([A-Z])/g, '$1-$2')
+		.replace(/[\s_]+/g, '-')
 		.toLowerCase()
-		.replace(/[^a-z0-9-]/g, "");
+		.replace(/[^a-z0-9-]/g, '');
 }
 
 export function kebabToCamelCase(str: string): string {
@@ -15,28 +15,28 @@ export function kebabToCamelCase(str: string): string {
 
 export async function sortIndexFile(indexPath: string) {
 	try {
-		const content = await fs.readFile(indexPath, "utf8");
-		const lines = content.split("\n").filter((line) => line.trim());
+		const content = await fs.readFile(indexPath, 'utf8');
+		const lines = content.split('\n').filter((line) => line.trim());
 		const sortedLines = lines.sort((a, b) => a.localeCompare(b));
-		await fs.writeFile(indexPath, sortedLines.join("\n") + "\n");
+		await fs.writeFile(indexPath, sortedLines.join('\n') + '\n');
 	} catch (error: any) {
-		if (error?.code !== "ENOENT") {
+		if (error?.code !== 'ENOENT') {
 			throw error;
 		}
 	}
 }
 
 export class Spinner {
-	private frames = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"];
+	private frames = ['⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏'];
 	private interval: NodeJS.Timeout | null = null;
 	private currentFrame = 0;
-	private text = "";
+	private text = '';
 
 	start(text: string) {
 		this.text = text;
 		this.currentFrame = 0;
 
-		process.stdout.write("\x1B[?25l");
+		process.stdout.write('\x1B[?25l');
 
 		this.interval = setInterval(() => {
 			const frame = this.frames[this.currentFrame];
@@ -60,7 +60,7 @@ export class Spinner {
 			clearInterval(this.interval);
 			this.interval = null;
 		}
-		process.stdout.write("\r\x1B[K");
-		process.stdout.write("\x1B[?25h");
+		process.stdout.write('\r\x1B[K');
+		process.stdout.write('\x1B[?25h');
 	}
 }

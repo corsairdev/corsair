@@ -1,14 +1,14 @@
-"use client";
+'use client';
 
-import { ArrowLeft, Calendar, Eye } from "lucide-react";
-import Image from "next/image";
-import Link from "next/link";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { useCorsairQuery } from "@/corsair/client";
-import { CommentSection } from "./comment-section";
+import { ArrowLeft, Calendar, Eye } from 'lucide-react';
+import Image from 'next/image';
+import Link from 'next/link';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { useCorsairQuery } from '@/corsair/client';
+import { CommentSection } from './comment-section';
 
 interface PostDetailProps {
 	slug: string;
@@ -19,7 +19,7 @@ export function PostDetail({ slug }: PostDetailProps) {
 		data: post,
 		isLoading,
 		error,
-	} = useCorsairQuery("get post by slug", { slug });
+	} = useCorsairQuery('get post by slug', { slug });
 
 	if (isLoading) {
 		return (
@@ -90,12 +90,12 @@ export function PostDetail({ slug }: PostDetailProps) {
 						<span className="flex items-center gap-1">
 							<Calendar className="h-4 w-4" />
 							{post.published_at
-								? new Date(post.published_at).toLocaleDateString("en-US", {
-										month: "long",
-										day: "numeric",
-										year: "numeric",
+								? new Date(post.published_at).toLocaleDateString('en-US', {
+										month: 'long',
+										day: 'numeric',
+										year: 'numeric',
 									})
-								: "Draft"}
+								: 'Draft'}
 						</span>
 						<span className="flex items-center gap-1">
 							<Eye className="h-4 w-4" />
@@ -126,7 +126,7 @@ export function PostDetail({ slug }: PostDetailProps) {
 
 				<div className="border-t border-border pt-8">
 					<div className="prose prose-lg dark:prose-invert max-w-none">
-						{post.content.split("\n\n").map((paragraph, index) => (
+						{post.content.split('\n\n').map((paragraph, index) => (
 							<p key={index} className="mb-4 text-foreground leading-relaxed">
 								{paragraph}
 							</p>

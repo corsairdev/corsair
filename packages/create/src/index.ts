@@ -1,25 +1,25 @@
 #!/usr/bin/env node
-import { execa } from "execa";
-import fs from "fs-extra";
-import path from "path";
-import type { PackageJson } from "type-fest";
+import { execa } from 'execa';
+import fs from 'fs-extra';
+import path from 'path';
+import type { PackageJson } from 'type-fest';
 
-import { runCli } from "@/cli/index.js";
-import { createProject } from "@/helpers/createProject.js";
-import { initializeGit } from "@/helpers/git.js";
-import { logNextSteps } from "@/helpers/logNextSteps.js";
-import { setImportAlias } from "@/helpers/setImportAlias.js";
-import { getUserPkgManager } from "@/utils/getUserPkgManager.js";
-import { logger } from "@/utils/logger.js";
-import { parseNameAndPath } from "@/utils/parseNameAndPath.js";
-import { renderTitle } from "@/utils/renderTitle.js";
-import { formatProject } from "./helpers/format.js";
-import { installDependencies } from "./helpers/installDependencies.js";
-import { getVersion } from "./utils/getT3Version.js";
+import { runCli } from '@/cli/index.js';
+import { createProject } from '@/helpers/createProject.js';
+import { initializeGit } from '@/helpers/git.js';
+import { logNextSteps } from '@/helpers/logNextSteps.js';
+import { setImportAlias } from '@/helpers/setImportAlias.js';
+import { getUserPkgManager } from '@/utils/getUserPkgManager.js';
+import { logger } from '@/utils/logger.js';
+import { parseNameAndPath } from '@/utils/parseNameAndPath.js';
+import { renderTitle } from '@/utils/renderTitle.js';
+import { formatProject } from './helpers/format.js';
+import { installDependencies } from './helpers/installDependencies.js';
+import { getVersion } from './utils/getT3Version.js';
 import {
 	getNpmVersion,
 	renderVersionWarning,
-} from "./utils/renderVersionWarning.js";
+} from './utils/renderVersionWarning.js';
 
 type CT3APackageJSON = PackageJson & {
 	ct3aMetadata?: {
@@ -51,25 +51,25 @@ const main = async () => {
 
 	// Write name to package.json
 	const pkgJson = fs.readJSONSync(
-		path.join(projectDir, "package.json"),
+		path.join(projectDir, 'package.json'),
 	) as CT3APackageJSON;
 	pkgJson.name = scopedAppName;
 	pkgJson.ct3aMetadata = { initVersion: getVersion() };
 
 	// ? Bun doesn't support this field (yet)
-	if (pkgManager !== "bun") {
-		const { stdout } = await execa(pkgManager, ["-v"], {
+	if (pkgManager !== 'bun') {
+		const { stdout } = await execa(pkgManager, ['-v'], {
 			cwd: projectDir,
 		});
 		pkgJson.packageManager = `${pkgManager}@${stdout.trim()}`;
 	}
 
-	fs.writeJSONSync(path.join(projectDir, "package.json"), pkgJson, {
+	fs.writeJSONSync(path.join(projectDir, 'package.json'), pkgJson, {
 		spaces: 2,
 	});
 
 	// update import alias in any generated files if not using the default
-	if (importAlias !== "@/") {
+	if (importAlias !== '@/') {
 		setImportAlias(projectDir, importAlias);
 	}
 
@@ -97,12 +97,12 @@ const main = async () => {
 };
 
 main().catch((err) => {
-	logger.error("Aborting installation...");
+	logger.error('Aborting installation...');
 	if (err instanceof Error) {
 		logger.error(err);
 	} else {
 		logger.error(
-			"An unknown error has occurred. Please open an issue on github with the below:",
+			'An unknown error has occurred. Please open an issue on github with the below:',
 		);
 		console.log(err);
 	}

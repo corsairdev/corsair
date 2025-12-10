@@ -1,6 +1,6 @@
-import { eventBus } from "../core/event-bus.js";
-import type { UserCommandEvent } from "../types/events.js";
-import { CorsairEvent } from "../types/events.js";
+import { eventBus } from '../core/event-bus.js';
+import type { UserCommandEvent } from '../types/events.js';
+import { CorsairEvent } from '../types/events.js';
 
 /**
  * User Input Handler
@@ -21,30 +21,30 @@ class UserInputHandler {
 		const { command, args } = data;
 
 		switch (command) {
-			case "regenerate":
+			case 'regenerate':
 				this.handleRegenerate();
 				break;
 
-			case "tweak":
+			case 'tweak':
 				this.handleTweak();
 				break;
 
-			case "undo":
+			case 'undo':
 				this.handleUndo();
 				break;
 
-			case "accept":
+			case 'accept':
 				break;
 
-			case "write_operation_to_file":
-				console.log("✅ Operation already written by agent");
+			case 'write_operation_to_file':
+				console.log('✅ Operation already written by agent');
 				break;
 
-			case "help":
+			case 'help':
 				this.handleHelp();
 				break;
 
-			case "quit":
+			case 'quit':
 				this.handleQuit();
 				break;
 
@@ -53,31 +53,31 @@ class UserInputHandler {
 	}
 
 	private handleRegenerate() {
-		console.log("Regenerate requested (not implemented yet)");
+		console.log('Regenerate requested (not implemented yet)');
 	}
 
 	private handleTweak() {
-		console.log("Tweak mode requested (not implemented yet)");
+		console.log('Tweak mode requested (not implemented yet)');
 	}
 
 	private handleUndo() {
-		console.log("Undo requested (not implemented yet)");
+		console.log('Undo requested (not implemented yet)');
 	}
 
 	private handleHelp() {
-		console.log("\nCorsair Watch - Help");
-		console.log("===================\n");
-		console.log("Available commands:");
-		console.log("  [R] Regenerate - Generate the query again");
-		console.log("  [T] Tweak - Modify the generated query");
-		console.log("  [U] Undo - Revert to previous version");
-		console.log("  [A] Accept - Accept the generated query");
-		console.log("  [H] Help - Show this help message");
-		console.log("  [Q] Quit - Exit Corsair Watch\n");
+		console.log('\nCorsair Watch - Help');
+		console.log('===================\n');
+		console.log('Available commands:');
+		console.log('  [R] Regenerate - Generate the query again');
+		console.log('  [T] Tweak - Modify the generated query');
+		console.log('  [U] Undo - Revert to previous version');
+		console.log('  [A] Accept - Accept the generated query');
+		console.log('  [H] Help - Show this help message');
+		console.log('  [Q] Quit - Exit Corsair Watch\n');
 	}
 
 	private handleQuit() {
-		console.log("\nShutting down Corsair Watch...");
+		console.log('\nShutting down Corsair Watch...');
 		process.exit(0);
 	}
 }

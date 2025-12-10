@@ -1,21 +1,21 @@
-"use client";
+'use client';
 
-import Image from "next/image";
-import { TracksTable } from "@/components/tracks-table";
-import { Badge } from "@/components/ui/badge";
+import Image from 'next/image';
+import { TracksTable } from '@/components/tracks-table';
+import { Badge } from '@/components/ui/badge';
 import {
 	Sheet,
 	SheetContent,
 	SheetDescription,
 	SheetHeader,
 	SheetTitle,
-} from "@/components/ui/sheet";
-import type { QueryOutputs } from "@/corsair/client";
-import { useTracksByAlbumId } from "@/lib/api/queries.client";
-import { Button } from "./ui/button";
+} from '@/components/ui/sheet';
+import type { QueryOutputs } from '@/corsair/client';
+import { useTracksByAlbumId } from '@/lib/api/queries.client';
+import { Button } from './ui/button';
 
 interface AlbumDetailsSheetProps {
-	album: QueryOutputs["get album by id with artists"] | null;
+	album: QueryOutputs['get album by id with artists'] | null;
 	open: boolean;
 	onOpenChange: (open: boolean) => void;
 }
@@ -32,10 +32,10 @@ export function AlbumDetailsSheet({
 
 	const formatDate = (dateString: string) => {
 		const date = new Date(dateString);
-		return date.toLocaleDateString("en-US", {
-			year: "numeric",
-			month: "long",
-			day: "numeric",
+		return date.toLocaleDateString('en-US', {
+			year: 'numeric',
+			month: 'long',
+			day: 'numeric',
 		});
 	};
 
@@ -49,9 +49,9 @@ export function AlbumDetailsSheet({
 						<Image
 							src={
 								(album?.images as unknown as { url: string }[])?.[0]?.url ||
-								"/placeholder.png"
+								'/placeholder.png'
 							}
-							alt={album.name || ""}
+							alt={album.name || ''}
 							fill
 							className="object-cover rounded-md"
 							sizes="192px"
@@ -59,7 +59,7 @@ export function AlbumDetailsSheet({
 					</div>
 					<SheetTitle className="text-2xl">{album.name}</SheetTitle>
 					<SheetDescription>
-						{album.artists.map((artist) => artist.name).join(", ")}
+						{album.artists.map((artist) => artist.name).join(', ')}
 					</SheetDescription>
 				</SheetHeader>
 
@@ -67,10 +67,10 @@ export function AlbumDetailsSheet({
 					<div className="flex items-center gap-4 flex-wrap">
 						<Badge variant="secondary">{album.album_type}</Badge>
 						<span className="text-sm text-muted-foreground">
-							Released: {formatDate(album.release_date || "")}
+							Released: {formatDate(album.release_date || '')}
 						</span>
 						<span className="text-sm text-muted-foreground">
-							{album.total_tracks} track{album.total_tracks !== 1 ? "s" : ""}
+							{album.total_tracks} track{album.total_tracks !== 1 ? 's' : ''}
 						</span>
 					</div>
 

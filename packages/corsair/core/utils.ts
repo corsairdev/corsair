@@ -30,10 +30,10 @@ export function dualKeyOperationsMap<T extends Record<string, any>>(
 	const result = {} as any;
 
 	for (const key in module) {
-		if (typeof module[key] === "function") {
+		if (typeof module[key] === 'function') {
 			// camelCase to spaced lowercase
 			const spacedKey = key
-				.replace(/([A-Z])/g, " $1")
+				.replace(/([A-Z])/g, ' $1')
 				.trim()
 				.toLowerCase();
 

@@ -1,5 +1,5 @@
-import { Box, Text } from "ink";
-import type React from "react";
+import { Box, Text } from 'ink';
+import type React from 'react';
 
 interface PaginationIndicatorProps {
 	currentPage: number;
@@ -22,9 +22,9 @@ export const PaginationIndicator: React.FC<PaginationIndicatorProps> = ({
 	return (
 		<Box justifyContent="space-between" paddingY={1}>
 			<Text dimColor>
-				{currentPage > 0 && "← "}
+				{currentPage > 0 && '← '}
 				Page {currentPage + 1} of {totalPages}
-				{currentPage < totalPages - 1 && " →"}
+				{currentPage < totalPages - 1 && ' →'}
 			</Text>
 			<Text dimColor>
 				Showing {startItem}-{endItem} of {totalItems}

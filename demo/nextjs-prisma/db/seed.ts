@@ -1,9 +1,9 @@
-import { PrismaClient } from "@prisma/client";
-import dotenv from "dotenv";
-import * as fs from "fs";
-import * as path from "path";
+import { PrismaClient } from '@prisma/client';
+import dotenv from 'dotenv';
+import * as fs from 'fs';
+import * as path from 'path';
 
-dotenv.config({ path: ".env.local" });
+dotenv.config({ path: '.env.local' });
 
 const prisma = new PrismaClient();
 
@@ -47,33 +47,33 @@ interface Comment {
 
 async function seedDatabase() {
 	try {
-		console.log("Starting database seeding...");
+		console.log('Starting database seeding...');
 
 		const usersData: User[] = JSON.parse(
-			fs.readFileSync(path.join(__dirname, "../data/users.json"), "utf-8"),
+			fs.readFileSync(path.join(__dirname, '../data/users.json'), 'utf-8'),
 		);
 
 		const categoriesData: Category[] = JSON.parse(
-			fs.readFileSync(path.join(__dirname, "../data/categories.json"), "utf-8"),
+			fs.readFileSync(path.join(__dirname, '../data/categories.json'), 'utf-8'),
 		);
 
 		const tagsData: Tag[] = JSON.parse(
-			fs.readFileSync(path.join(__dirname, "../data/tags.json"), "utf-8"),
+			fs.readFileSync(path.join(__dirname, '../data/tags.json'), 'utf-8'),
 		);
 
 		const postsData: Post[] = JSON.parse(
-			fs.readFileSync(path.join(__dirname, "../data/posts.json"), "utf-8"),
+			fs.readFileSync(path.join(__dirname, '../data/posts.json'), 'utf-8'),
 		);
 
 		const commentsData: Comment[] = JSON.parse(
-			fs.readFileSync(path.join(__dirname, "../data/comments.json"), "utf-8"),
+			fs.readFileSync(path.join(__dirname, '../data/comments.json'), 'utf-8'),
 		);
 
 		console.log(
 			`Found ${usersData.length} users, ${categoriesData.length} categories, ${tagsData.length} tags, ${postsData.length} posts, ${commentsData.length} comments`,
 		);
 
-		console.log("Seeding users...");
+		console.log('Seeding users...');
 		const userIdMap = new Map<string, string>();
 		for (const userData of usersData) {
 			const user = await prisma.user.upsert({
@@ -89,7 +89,7 @@ async function seedDatabase() {
 			userIdMap.set(userData.email, user.id);
 		}
 
-		console.log("Seeding categories...");
+		console.log('Seeding categories...');
 		const categoryIdMap = new Map<string, string>();
 		for (const categoryData of categoriesData) {
 			const category = await prisma.category.upsert({
@@ -104,7 +104,7 @@ async function seedDatabase() {
 			categoryIdMap.set(categoryData.slug, category.id);
 		}
 
-		console.log("Seeding tags...");
+		console.log('Seeding tags...');
 		const tagIdMap = new Map<string, string>();
 		for (const tagData of tagsData) {
 			const tag = await prisma.tag.upsert({
@@ -118,7 +118,7 @@ async function seedDatabase() {
 			tagIdMap.set(tagData.slug, tag.id);
 		}
 
-		console.log("Seeding posts...");
+		console.log('Seeding posts...');
 		const postIdMap = new Map<string, string>();
 		for (const postData of postsData) {
 			const authorId = userIdMap.get(postData.author_email);
@@ -189,7 +189,7 @@ async function seedDatabase() {
 			}
 		}
 
-		console.log("Seeding comments...");
+		console.log('Seeding comments...');
 		for (const commentData of commentsData) {
 			const postId = postIdMap.get(commentData.post_slug);
 			const authorId = userIdMap.get(commentData.author_email);
@@ -211,9 +211,9 @@ async function seedDatabase() {
 				.catch(() => {});
 		}
 
-		console.log("Database seeding completed successfully!");
+		console.log('Database seeding completed successfully!');
 	} catch (error) {
-		console.error("Error seeding database:", error);
+		console.error('Error seeding database:', error);
 		process.exit(1);
 	} finally {
 		await prisma.$disconnect();

@@ -1,5 +1,5 @@
-import { Box, Text } from "ink";
-import type React from "react";
+import { Box, Text } from 'ink';
+import type React from 'react';
 
 interface SearchInputProps {
 	value: string;
@@ -10,16 +10,16 @@ interface SearchInputProps {
 export const SearchInput: React.FC<SearchInputProps> = ({
 	value,
 	isActive,
-	placeholder = "Search...",
+	placeholder = 'Search...',
 }) => {
 	return (
 		<Box
 			borderStyle="single"
-			borderColor={isActive ? "cyan" : "gray"}
+			borderColor={isActive ? 'cyan' : 'gray'}
 			paddingX={1}
 		>
-			<Text color={isActive ? "cyan" : "gray"}>
-				{isActive ? "🔍 " : ""}
+			<Text color={isActive ? 'cyan' : 'gray'}>
+				{isActive ? '🔍 ' : ''}
 				{value || <Text dimColor>{placeholder}</Text>}
 				{isActive && <Text>|</Text>}
 			</Text>

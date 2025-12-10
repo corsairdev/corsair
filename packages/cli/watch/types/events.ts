@@ -1,39 +1,39 @@
-import type { Project } from "ts-morph";
-import type { z } from "zod";
-import type { queryGenerator } from "../handlers/query-generator.js";
-import type { SchemaDefinition } from "./state.js";
+import type { Project } from 'ts-morph';
+import type { z } from 'zod';
+import type { queryGenerator } from '../handlers/query-generator.js';
+import type { SchemaDefinition } from './state.js';
 
 export enum CorsairEvent {
-	FILE_CHANGED = "file:changed",
-	FILE_CREATED = "file:created",
+	FILE_CHANGED = 'file:changed',
+	FILE_CREATED = 'file:created',
 
-	QUERY_DETECTED = "query:detected",
-	SCHEMA_CHANGED = "schema:changed",
-	SCHEMA_LOADED = "schema:loaded",
-	SCHEMA_UPDATED = "schema:updated",
+	QUERY_DETECTED = 'query:detected',
+	SCHEMA_CHANGED = 'schema:changed',
+	SCHEMA_LOADED = 'schema:loaded',
+	SCHEMA_UPDATED = 'schema:updated',
 
-	OPERATIONS_LOADED = "operations:loaded",
-	OPERATION_ADDED = "operation:added",
-	OPERATION_REMOVED = "operation:removed",
-	OPERATION_UPDATED = "operation:updated",
-	NEW_QUERY_ADDED = "new:query:added",
-	NEW_MUTATION_ADDED = "new:mutation:added",
+	OPERATIONS_LOADED = 'operations:loaded',
+	OPERATION_ADDED = 'operation:added',
+	OPERATION_REMOVED = 'operation:removed',
+	OPERATION_UPDATED = 'operation:updated',
+	NEW_QUERY_ADDED = 'new:query:added',
+	NEW_MUTATION_ADDED = 'new:mutation:added',
 
-	GENERATION_STARTED = "generation:started",
-	GENERATION_PROGRESS = "generation:progress",
-	GENERATION_COMPLETE = "generation:complete",
-	GENERATION_FAILED = "generation:failed",
+	GENERATION_STARTED = 'generation:started',
+	GENERATION_PROGRESS = 'generation:progress',
+	GENERATION_COMPLETE = 'generation:complete',
+	GENERATION_FAILED = 'generation:failed',
 
-	USER_INPUT = "user:input",
-	USER_COMMAND = "user:command",
+	USER_INPUT = 'user:input',
+	USER_COMMAND = 'user:command',
 
-	STATE_CHANGED = "state:changed",
+	STATE_CHANGED = 'state:changed',
 
-	ERROR_OCCURRED = "error:occurred",
+	ERROR_OCCURRED = 'error:occurred',
 
-	LLM_ANALYSIS_STARTED = "llm:analysis:started",
-	LLM_ANALYSIS_COMPLETE = "llm:analysis:complete",
-	LLM_ANALYSIS_FAILED = "llm:analysis:failed",
+	LLM_ANALYSIS_STARTED = 'llm:analysis:started',
+	LLM_ANALYSIS_COMPLETE = 'llm:analysis:complete',
+	LLM_ANALYSIS_FAILED = 'llm:analysis:failed',
 }
 
 export interface FileChangedEvent {
@@ -70,28 +70,28 @@ export interface GenerationFailedEvent {
 }
 
 export type UserCommands =
-	| "regenerate"
-	| "tweak"
-	| "undo"
-	| "accept"
-	| "help"
-	| "quit"
-	| "queries"
-	| "mutations"
-	| "navigate_page"
-	| "select_operation"
-	| "toggle_search"
-	| "update_search"
-	| "go_back"
-	| "submit_operation_config"
-	| "cancel_operation_config"
-	| "modify"
-	| "cancel"
-	| "write_operation_to_file"
-	| "defer_operation_config"
-	| "resume_unfinished"
-	| "update"
-	| "update_operation";
+	| 'regenerate'
+	| 'tweak'
+	| 'undo'
+	| 'accept'
+	| 'help'
+	| 'quit'
+	| 'queries'
+	| 'mutations'
+	| 'navigate_page'
+	| 'select_operation'
+	| 'toggle_search'
+	| 'update_search'
+	| 'go_back'
+	| 'submit_operation_config'
+	| 'cancel_operation_config'
+	| 'modify'
+	| 'cancel'
+	| 'write_operation_to_file'
+	| 'defer_operation_config'
+	| 'resume_unfinished'
+	| 'update'
+	| 'update_operation';
 
 export interface UserCommandEvent {
 	command: UserCommands;
@@ -111,7 +111,7 @@ export interface SchemaChangedEvent {
 }
 
 export interface OperationsLoadedEvent {
-	type: "queries" | "mutations";
+	type: 'queries' | 'mutations';
 	operations: Map<
 		string,
 		{
@@ -124,7 +124,7 @@ export interface OperationsLoadedEvent {
 }
 
 export interface OperationAddedEvent {
-	operationType: "query" | "mutation";
+	operationType: 'query' | 'mutation';
 	operationName: string;
 	functionName: string;
 	prompt: string;
@@ -133,7 +133,7 @@ export interface OperationAddedEvent {
 }
 
 export interface OperationRemovedEvent {
-	operationType: "query" | "mutation";
+	operationType: 'query' | 'mutation';
 	operationName: string;
 	functionName: string;
 	prompt: string;
@@ -141,7 +141,7 @@ export interface OperationRemovedEvent {
 }
 
 export interface OperationUpdatedEvent {
-	operationType: "query" | "mutation";
+	operationType: 'query' | 'mutation';
 	operationName: string;
 	functionName: string;
 	oldPrompt: string;
@@ -170,15 +170,15 @@ export interface NewMutationAddedEvent {
 
 export interface LLMAnalysisStartedEvent {
 	operationName: string;
-	operationType: "query" | "mutation";
+	operationType: 'query' | 'mutation';
 }
 
 export interface LLMAnalysisCompleteEvent {
 	operationName: string;
-	operationType: "query" | "mutation";
+	operationType: 'query' | 'mutation';
 	response: z.infer<typeof queryGenerator.llmResponseSchema>;
 	operation: {
-		operationType: "query" | "mutation";
+		operationType: 'query' | 'mutation';
 		operationName: string;
 		functionName: string;
 		prompt: string;
@@ -195,7 +195,7 @@ export interface LLMAnalysisCompleteEvent {
 
 export interface LLMAnalysisFailedEvent {
 	operationName: string;
-	operationType: "query" | "mutation";
+	operationType: 'query' | 'mutation';
 	error: string;
 }
 

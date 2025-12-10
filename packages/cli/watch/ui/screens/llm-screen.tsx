@@ -1,8 +1,8 @@
-import { Box, Text } from "ink";
-import Spinner from "ink-spinner";
-import type React from "react";
-import { useEffect, useState } from "react";
-import type { StateContext } from "../../types/state.js";
+import { Box, Text } from 'ink';
+import Spinner from 'ink-spinner';
+import type React from 'react';
+import { useEffect, useState } from 'react';
+import type { StateContext } from '../../types/state.js';
 
 interface LLMScreenProps {
 	context: StateContext;
@@ -40,11 +40,11 @@ export const LLMScreen: React.FC<LLMScreenProps> = ({ context }) => {
 		>
 			<Box>
 				<Text color="magenta" bold>
-					🤖 AI Assistant{" "}
+					🤖 AI Assistant{' '}
 				</Text>
 				<Spinner type="dots" />
 				<Text color="magenta" bold>
-					{" "}
+					{' '}
 					Processing...
 				</Text>
 			</Box>
@@ -62,7 +62,7 @@ export const LLMScreen: React.FC<LLMScreenProps> = ({ context }) => {
 						Function: <Text dimColor>{newOperation.functionName}</Text>
 					</Text>
 					<Text>
-						Source:{" "}
+						Source:{' '}
 						<Text dimColor>
 							{newOperation.file}:{newOperation.lineNumber}
 						</Text>

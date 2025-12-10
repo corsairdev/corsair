@@ -1,4 +1,4 @@
-import type { Query } from "../types/state.js";
+import type { Query } from '../types/state.js';
 
 export function generateStub(query: Query): string {
 	const functionName = query.id;
@@ -37,7 +37,7 @@ function generateParamsType(
 
 	const fields = Object.entries(params)
 		.map(([key, type]) => `  ${key}: ${type};`)
-		.join("\n");
+		.join('\n');
 
 	return `export type ${typeName} = {\n${fields}\n};`;
 }

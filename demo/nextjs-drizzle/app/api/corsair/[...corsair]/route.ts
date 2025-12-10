@@ -1,16 +1,16 @@
-import { fetchRequestHandler } from "corsair";
-import { corsairRouter } from "@/corsair/index";
-import { plugins } from "@/corsair/procedure";
-import { db } from "@/db";
+import { fetchRequestHandler } from 'corsair';
+import { corsairRouter } from '@/corsair/index';
+import { plugins } from '@/corsair/procedure';
+import { db } from '@/db';
 
 const handler = async (req: Request) => {
 	return fetchRequestHandler({
-		endpoint: "/api/corsair",
+		endpoint: '/api/corsair',
 		req,
 		router: corsairRouter,
 		createContext: () => {
 			return {
-				userId: "123",
+				userId: '123',
 				db,
 				plugins,
 			};

@@ -1,7 +1,7 @@
-import { Box, Text } from "ink";
-import type React from "react";
-import type { StateContext } from "../../types/state.js";
-import { CommandBar } from "../components/command-bar.js";
+import { Box, Text } from 'ink';
+import type React from 'react';
+import type { StateContext } from '../../types/state.js';
+import { CommandBar } from '../components/command-bar.js';
 
 interface AwaitingFeedbackScreenProps {
 	context: StateContext;
@@ -66,8 +66,8 @@ export const AwaitingFeedbackScreen: React.FC<AwaitingFeedbackScreenProps> = ({
 
 				<CommandBar
 					commands={[
-						{ key: "U", label: "Update" },
-						{ key: "ESC/Q", label: "Back to Idle" },
+						{ key: 'U', label: 'Update' },
+						{ key: 'ESC/Q', label: 'Back to Idle' },
 					]}
 				/>
 			</Box>
@@ -102,17 +102,17 @@ export const AwaitingFeedbackScreen: React.FC<AwaitingFeedbackScreenProps> = ({
 			<Text>Generated files:</Text>
 			{files.map((file, i) => (
 				<Text key={i} dimColor>
-					{" "}
+					{' '}
 					• {file}
 				</Text>
 			))}
 
 			<CommandBar
 				commands={[
-					{ key: "R", label: "Regenerate" },
-					{ key: "T", label: "Tweak" },
-					{ key: "U", label: "Undo" },
-					{ key: "A", label: "Accept" },
+					{ key: 'R', label: 'Regenerate' },
+					{ key: 'T', label: 'Tweak' },
+					{ key: 'U', label: 'Undo' },
+					{ key: 'A', label: 'Accept' },
 				]}
 			/>
 		</Box>

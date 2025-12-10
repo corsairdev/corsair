@@ -1,5 +1,5 @@
-import { Box, Text } from "ink";
-import type React from "react";
+import { Box, Text } from 'ink';
+import type React from 'react';
 
 interface ProgressBarProps {
 	percentage: number;
@@ -13,7 +13,7 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
 	const filled = Math.floor((percentage / 100) * width);
 	const empty = width - filled;
 
-	const bar = "█".repeat(filled) + "░".repeat(empty);
+	const bar = '█'.repeat(filled) + '░'.repeat(empty);
 
 	return (
 		<Box>

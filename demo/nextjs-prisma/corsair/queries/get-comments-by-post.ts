@@ -1,5 +1,5 @@
-import { z } from "zod";
-import { procedure } from "@/corsair/procedure";
+import { z } from 'zod';
+import { procedure } from '@/corsair/procedure';
 
 /**
  * INPUT: { postId: string }
@@ -25,7 +25,7 @@ export const getCommentsByPost = procedure
 				author: true,
 			},
 			orderBy: {
-				createdAt: "asc",
+				createdAt: 'asc',
 			},
 		});
 

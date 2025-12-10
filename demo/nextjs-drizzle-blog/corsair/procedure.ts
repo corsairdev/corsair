@@ -1,6 +1,6 @@
-import { createCorsairTRPC } from "corsair";
-import { createPlugins } from "corsair/plugins";
-import { config } from "@/corsair.config";
+import { createCorsairTRPC } from 'corsair';
+import { createPlugins } from 'corsair/plugins';
+import { config } from '@/corsair.config';
 
 export const plugins = createPlugins(config);
 

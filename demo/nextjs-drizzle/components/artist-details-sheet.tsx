@@ -1,28 +1,28 @@
-"use client";
+'use client';
 
-import Image from "next/image";
-import { useEffect, useState } from "react";
-import { TracksTable } from "@/components/tracks-table";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardHeader, CardTitle } from "@/components/ui/card";
+import Image from 'next/image';
+import { useEffect, useState } from 'react';
+import { TracksTable } from '@/components/tracks-table';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardHeader, CardTitle } from '@/components/ui/card';
 import {
 	Sheet,
 	SheetContent,
 	SheetDescription,
 	SheetHeader,
 	SheetTitle,
-} from "@/components/ui/sheet";
-import type { QueryOutputs } from "@/corsair/client";
-import { useCorsairMutation, useCorsairQuery } from "@/corsair/client";
+} from '@/components/ui/sheet';
+import type { QueryOutputs } from '@/corsair/client';
+import { useCorsairMutation, useCorsairQuery } from '@/corsair/client';
 import {
 	useAlbumsByArtistId,
 	useTracksByArtistId,
-} from "@/lib/api/queries.client";
+} from '@/lib/api/queries.client';
 
 interface ArtistDetailsSheetProps {
-	artist: QueryOutputs["get artist by id"] | undefined;
+	artist: QueryOutputs['get artist by id'] | undefined;
 	open: boolean;
 	onOpenChange: (open: boolean) => void;
 }
@@ -33,9 +33,9 @@ export function ArtistDetailsSheet({
 	onOpenChange,
 }: ArtistDetailsSheetProps) {
 	const res = useCorsairQuery(
-		"get albums by artist id",
+		'get albums by artist id',
 		{
-			artistId: artist?.id || "",
+			artistId: artist?.id || '',
 		},
 		{
 			enabled: !!artist?.id,
@@ -54,7 +54,7 @@ export function ArtistDetailsSheet({
 		refetch: refetchTracks,
 	} = useTracksByArtistId(artist?.id || null);
 
-	const updatePopularity = useCorsairMutation("update artist popularity");
+	const updatePopularity = useCorsairMutation('update artist popularity');
 
 	// Local state for optimistic updates
 	const [localArtist, setLocalArtist] = useState(artist);
@@ -113,12 +113,12 @@ export function ArtistDetailsSheet({
 							<AvatarImage
 								src={
 									(localArtist.images as unknown as { url: string }[])?.[0]
-										?.url || ""
+										?.url || ''
 								}
-								alt={localArtist.name || ""}
+								alt={localArtist.name || ''}
 							/>
 							<AvatarFallback className="text-2xl">
-								{localArtist.name?.charAt(0) || ""}
+								{localArtist.name?.charAt(0) || ''}
 							</AvatarFallback>
 						</Avatar>
 						<div className="flex-1">
@@ -184,9 +184,9 @@ export function ArtistDetailsSheet({
 											<Image
 												src={
 													(album.images as unknown as { url: string }[])?.[0]
-														?.url || "/placeholder.png"
+														?.url || '/placeholder.png'
 												}
-												alt={album.name || ""}
+												alt={album.name || ''}
 												fill
 												className="object-cover"
 												sizes="(max-width: 768px) 50vw, 25vw"
@@ -197,7 +197,7 @@ export function ArtistDetailsSheet({
 												{album.name}
 											</CardTitle>
 											<p className="text-xs text-muted-foreground">
-												{new Date(album.release_date).getFullYear() || ""}
+												{new Date(album.release_date).getFullYear() || ''}
 											</p>
 										</CardHeader>
 									</Card>

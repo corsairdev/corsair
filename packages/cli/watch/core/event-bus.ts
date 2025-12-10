@@ -1,8 +1,8 @@
-import EventEmitter from "events";
-import type { CorsairEvent, EventDataMap } from "../types/events.js";
+import EventEmitter from 'events';
+import type { CorsairEvent, EventDataMap } from '../types/events.js';
 
 class CorsairEventBus extends EventEmitter {
-	private logEvents = process.env.DEBUG === "true";
+	private logEvents = process.env.DEBUG === 'true';
 
 	emit<E extends CorsairEvent>(event: E, data: EventDataMap[E]): boolean {
 		if (this.logEvents) {

@@ -1,14 +1,14 @@
-import * as path from "path";
-import { eventBus } from "../core/event-bus.js";
-import { stateMachine } from "../core/state-machine.js";
+import * as path from 'path';
+import { eventBus } from '../core/event-bus.js';
+import { stateMachine } from '../core/state-machine.js';
 import type {
 	NewMutationAddedEvent,
 	NewQueryAddedEvent,
 	OperationAddedEvent,
 	OperationRemovedEvent,
 	OperationUpdatedEvent,
-} from "../types/events.js";
-import { CorsairEvent } from "../types/events.js";
+} from '../types/events.js';
+import { CorsairEvent } from '../types/events.js';
 
 interface CorsairOperation {
 	name: string;
@@ -28,11 +28,11 @@ class OperationChangeHandler {
 	 */
 	private isOperationInRegistry(
 		prompt: string,
-		operationType: "query" | "mutation",
+		operationType: 'query' | 'mutation',
 	): boolean {
-		const cleanPrompt = prompt.replace(/['"]/g, "").trim();
+		const cleanPrompt = prompt.replace(/['"]/g, '').trim();
 
-		if (operationType === "query") {
+		if (operationType === 'query') {
 			const queries = stateMachine.getAllQueries();
 			return queries.some((query) => query.prompt === cleanPrompt);
 		} else {
@@ -119,11 +119,11 @@ class OperationChangeHandler {
 	/**
 	 * Determines operation type from function name
 	 */
-	private getOperationType(functionName: string): "query" | "mutation" {
-		if (functionName === "corsairQuery" || functionName === "useCorsairQuery") {
-			return "query";
+	private getOperationType(functionName: string): 'query' | 'mutation' {
+		if (functionName === 'corsairQuery' || functionName === 'useCorsairQuery') {
+			return 'query';
 		}
-		return "mutation";
+		return 'mutation';
 	}
 
 	/**
@@ -136,13 +136,13 @@ class OperationChangeHandler {
 		lineNumber: number,
 	): string {
 		// Remove quotes and clean the prompt
-		const cleanPrompt = prompt.replace(/['"]/g, "").trim();
+		const cleanPrompt = prompt.replace(/['"]/g, '').trim();
 
 		// If we have a clean prompt, use it directly with truncation
 		if (cleanPrompt.length > 0) {
 			// Truncate if over 100 characters and add ellipsis
 			if (cleanPrompt.length > 100) {
-				return cleanPrompt.substring(0, 97) + "...";
+				return cleanPrompt.substring(0, 97) + '...';
 			}
 			return cleanPrompt;
 		}
@@ -242,7 +242,7 @@ class OperationChangeHandler {
 	 */
 	private emitNewOperationAdded(data: {
 		operation: CorsairOperation;
-		operationType: "query" | "mutation";
+		operationType: 'query' | 'mutation';
 		file: string;
 		fileName: string;
 	}) {
@@ -261,7 +261,7 @@ class OperationChangeHandler {
 			lineNumber: operation.line,
 		};
 
-		if (operationType === "query") {
+		if (operationType === 'query') {
 			eventBus.emit(
 				CorsairEvent.NEW_QUERY_ADDED,
 				eventData as NewQueryAddedEvent,

@@ -1,6 +1,6 @@
-import { z } from "corsair";
-import { ilike } from "drizzle-orm";
-import { procedure } from "../procedure";
+import { z } from 'corsair';
+import { ilike } from 'drizzle-orm';
+import { procedure } from '../procedure';
 
 export const searchArtists = procedure
 	.input(

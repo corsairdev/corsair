@@ -1,6 +1,6 @@
-import fs from "fs-extra";
-import path from "path";
-import type { ProjectConfig } from "../../cli/create-project.js";
+import fs from 'fs-extra';
+import path from 'path';
+import type { ProjectConfig } from '../../cli/create-project.js';
 
 export async function generateCorsairSetup(
 	projectPath: string,
@@ -9,30 +9,30 @@ export async function generateCorsairSetup(
 	const templates = getCorsairTemplates(config);
 
 	await fs.writeFile(
-		path.join(projectPath, "corsair.config.ts"),
+		path.join(projectPath, 'corsair.config.ts'),
 		templates.config,
 	);
 	await fs.writeFile(
-		path.join(projectPath, "corsair", "procedure.ts"),
+		path.join(projectPath, 'corsair', 'procedure.ts'),
 		templates.procedure,
 	);
 	await fs.writeFile(
-		path.join(projectPath, "corsair", "client.ts"),
+		path.join(projectPath, 'corsair', 'client.ts'),
 		templates.client,
 	);
 	await fs.writeFile(
-		path.join(projectPath, "corsair", "index.ts"),
+		path.join(projectPath, 'corsair', 'index.ts'),
 		templates.index,
 	);
 
-	await fs.ensureDir(path.join(projectPath, "corsair", "queries"));
-	await fs.ensureDir(path.join(projectPath, "corsair", "mutations"));
+	await fs.ensureDir(path.join(projectPath, 'corsair', 'queries'));
+	await fs.ensureDir(path.join(projectPath, 'corsair', 'mutations'));
 	await fs.writeFile(
-		path.join(projectPath, "corsair", "queries", "index.ts"),
+		path.join(projectPath, 'corsair', 'queries', 'index.ts'),
 		templates.queriesIndex,
 	);
 	await fs.writeFile(
-		path.join(projectPath, "corsair", "mutations", "index.ts"),
+		path.join(projectPath, 'corsair', 'mutations', 'index.ts'),
 		templates.mutationsIndex,
 	);
 }
