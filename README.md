@@ -1,5 +1,9 @@
 # Corsair: The TypeScript Vibe Coding SDK
 
+Corsair is a TypeScript SDK that gives AI coding agents a validated interface to your backend. Agents describe what they want in natural language and Corsair generates fully-typed API routes connected to your database and third-party services. It works with any stack, enforcing types from database to frontend. When your schema changes, Corsair auto-fixes all affected routes in seconds. And since it's just TypeScript, you can edit the generated code anytime. Corsair handles the backend plumbing so you can focus on building your product instead of debugging AI-generated queries.
+
+Existing solutions make you choose between speed and control. Vibe coding platforms can't securely connect to real data. Automation tools lack frontend support and require manual workflow assembly. Letting AI write backend code directly works once, then becomes unmaintainable when requirements change. You're left digging through generated code trying to fix what broke. Corsair gives AI the right level of abstraction: agents describe intent, Corsair ensures type-safe, maintainable implementation.
+
 **Build at the speed of vibe coding without sacrificing control and reliability.**
 
 Your coding agents instruct Corsair to build fully-typed, production-ready API routes. Corsair automatically generates API endpoints.
@@ -39,19 +43,20 @@ const post = useCorsairMutation('publish post', {
 
 With Corsair, you get:
 
+- ✅ Integrate with your favorite agent - Claude Code, Corsair, Antigravity, whatever's coming out next week. All agents work with Corsair.
+- ✅ Overwrite as needed - All generated code is normal TypeScript and lives in your codebase. It is completely editable.
 - ✅ Full type safety - TypeScript knows all types from your back-end to your front-end.
 - ✅ Validated API routes - Can't hallucinate invalid database operations or third-party integrations
 - ✅ Readable code - Developers instantly understand intent during code review
-- ✅ Overwrite as needed - All generated code is normal TypeScript and is completely editable.
 - ✅ Auto-fixing - When your schema changes, Corsair adapts and rewrites your API routes in seconds.
 
 Works with any stack *(Next, Vite, Hono, Svelte, etc)* and any ORM *(Drizzle, Prisma, Kysely, Supabase, etc)*
 
 ## Iterate Faster
 
-**You will change your database schema as you build your project. Corsair will adapt.**
+**You'll change your database schema as you build your project. Corsair will adapt.**
 
-You decided to go from `users.full_name` to `users.first_name` and `users.last_name`. 
+You decide to change your users table from `users.full_name` to `users.first_name` and `users.last_name`. 
 
 Dozens of API routes are broken because `users.full_name` doesn't exist. 
 
