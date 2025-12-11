@@ -4,9 +4,7 @@ Corsair is a TypeScript SDK that gives AI coding agents a validated interface to
 
 Existing solutions make you choose between speed and control. Vibe coding platforms can't securely connect to real data. Automation tools lack frontend support and require manual workflow assembly. Letting AI write backend code directly works once, then becomes unmaintainable when requirements change. You're left digging through generated code trying to fix what broke. Corsair gives AI the right level of abstraction: agents describe intent, Corsair ensures type-safe, maintainable implementation.
 
-**Build at the speed of vibe coding without sacrificing control and reliability.**
-
-Your coding agents instruct Corsair to build fully-typed, production-ready API routes. Corsair automatically generates API endpoints.
+**It's about speed + control, not speed versus control.**
 
 Your agent writes the bash command:
 
