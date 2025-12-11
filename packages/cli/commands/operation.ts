@@ -19,6 +19,9 @@ export async function runAgentOperation(
 	const { promptBuilder } = await import(
 		'../llm/agent/prompts/prompt-builder.js'
 	);
+	const { validatePluginConfig } = await import(
+		'../llm/agent/prompts/plugin-extractor.js'
+	);
 	const { promises: fs } = await import('fs');
 
 	const cfg = await loadConfig();
@@ -28,6 +31,15 @@ export async function runAgentOperation(
 	if (!cfg) {
 		console.error('No config found');
 		return;
+	}
+
+	const pluginValidation = validatePluginConfig(cfg);
+	if (!pluginValidation.valid && pluginValidation.warnings.length > 0) {
+		console.log('\n⚠️  Plugin Configuration Warnings:');
+		for (const warning of pluginValidation.warnings) {
+			console.log(`   ${warning}`);
+		}
+		console.log();
 	}
 
 	const baseDir =
@@ -69,6 +81,7 @@ export async function runAgentOperation(
 			orm: cfg.orm,
 		},
 		instructions,
+		corsairConfig: cfg,
 	});
 
 	const spinner = new Spinner();

@@ -4,7 +4,9 @@ import type {
 	ORMs,
 	SchemaOutput,
 } from '@corsair-ai/core/config';
+import type { Config as CorsairConfig } from '../../../commands/config.js';
 import { formattedSchema } from './utils.js';
+import { extractPluginInfo, formatPluginDocs } from './plugin-extractor.js';
 
 type Config = {
 	orm: ORMs;
@@ -18,6 +20,7 @@ type PromptBuilderParams = {
 	incomingSchema: SchemaOutput;
 	config: Config;
 	instructions?: string;
+	corsairConfig?: CorsairConfig;
 };
 
 export const promptBuilder = ({
@@ -25,8 +28,13 @@ export const promptBuilder = ({
 	incomingSchema,
 	config,
 	instructions,
+	corsairConfig,
 }: PromptBuilderParams): string => {
 	const schema = formattedSchema(incomingSchema);
+	
+	const pluginDocs = corsairConfig
+		? formatPluginDocs(extractPluginInfo(corsairConfig))
+		: '';
 
 	return `
 You are a TypeScript developer building out or updating a ${config.operation}.
@@ -99,7 +107,8 @@ Keep each point to one line. If there are none, state "None".
 This is the schema of the database. You can access these tables using the ORM.
 <schema>
 ${schema}
-</schema
+</schema>
+${pluginDocs ? `\n${pluginDocs}` : ''}
 
 Here is an example of the code you would generate. You are provided with one query and one mutation:
 
@@ -191,5 +200,61 @@ export const likePost = procedure
     return { success: true, alreadyLiked: false, like: newLike }
   })
 </mutation>
+
+${pluginDocs ? `
+IMPORTANT: Plugin Usage Guidelines
+- Only use plugins that are marked as "✓ Configured and ready to use"
+- If a plugin is marked as "✗ Not configured", DO NOT attempt to use it
+- For Slack plugin, only use channel names that are listed in "Available channels"
+- Always handle plugin responses properly (check success field, handle errors)
+- Plugin calls are asynchronous - use await when calling them
+
+Example with plugin usage:
+<mutation-with-plugin>
+import { z } from 'zod'
+import { procedure } from '@/corsair/procedure'
+
+/**
+ * INPUT: { userId: string, email: string, name: string }
+ * OUTPUT: { success: boolean, user: User, notificationSent: boolean }
+ * 
+ * PSEUDO CODE:
+ * 1. Create a new user in the database
+ * 2. Send a Slack notification to the general channel
+ * 3. Return success with user data and notification status
+ * 
+ * USER INSTRUCTIONS: Create user and notify team via Slack
+ */
+export const createUserWithNotification = procedure
+  .input(
+    z.object({
+      userId: z.string(),
+      email: z.string().email(),
+      name: z.string(),
+    })
+  )
+  .mutation(async ({ input, ctx }) => {
+    const [newUser] = await ctx.db
+      .insert(ctx.db._.fullSchema.users)
+      .values({
+        id: input.userId,
+        email: input.email,
+        name: input.name,
+      })
+      .returning()
+
+    const slackResult = await ctx.plugins.slack.sendMessage({
+      channelId: 'general',
+      content: \`New user registered: \${input.name} (\${input.email})\`
+    })
+
+    return { 
+      success: true, 
+      user: newUser,
+      notificationSent: slackResult.success 
+    }
+  })
+</mutation-with-plugin>
+` : ''}
 `;
 };
