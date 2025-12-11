@@ -3,7 +3,7 @@ import { basename, join, resolve } from 'path';
 import { kebabToCamelCase } from '../utils/utils.js';
 import { loadConfig } from './config.js';
 
-interface OperationInfo {
+export interface OperationInfo {
 	name: string;
 	fileName: string;
 	type: 'query' | 'mutation';
@@ -13,7 +13,7 @@ interface OperationInfo {
 	userInstructions: string | null;
 }
 
-function extractCommentMetadata(content: string): {
+export function extractCommentMetadata(content: string): {
 	input: string | null;
 	output: string | null;
 	pseudoCode: string[] | null;
@@ -75,7 +75,7 @@ function extractCommentMetadata(content: string): {
 	return { input, output, pseudoCode, userInstructions };
 }
 
-function parseOperationFile(
+export function parseOperationFile(
 	filePath: string,
 	type: 'query' | 'mutation',
 ): OperationInfo | null {

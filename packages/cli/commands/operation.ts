@@ -13,6 +13,7 @@ export async function runAgentOperation(
 	name: string,
 	instructions?: string,
 	update?: boolean,
+	force?: boolean,
 ) {
 	const { loadConfig } = await import('./config.js');
 	const { promptAgent } = await import('../llm/agent/index.js');
@@ -44,11 +45,117 @@ export async function runAgentOperation(
 		return;
 	}
 
+	if (!update && !force) {
+		const { existsSync, readdirSync } = await import('fs');
+		const { parseOperationFile } = await import('./list.js');
+		const { checkSimilarity } = await import(
+			'../llm/check-similarity.js'
+		);
+		const {
+			displaySimilarOperations,
+			promptUserChoice,
+		} = await import('../utils/user-prompt.js');
+
+		const operationsDir = baseDir;
+		if (existsSync(operationsDir)) {
+			const operationFiles = readdirSync(operationsDir)
+				.filter((file) => file.endsWith('.ts') && file !== 'index.ts')
+				.map((file) => join(operationsDir, file));
+
+			const existingOperations = operationFiles
+				.map((filePath) => parseOperationFile(filePath, kind))
+				.filter((op) => op !== null);
+
+			if (existingOperations.length > 0) {
+				const similarityResult = await checkSimilarity(
+					name,
+					instructions || '',
+					existingOperations,
+					kind,
+				);
+
+				if (
+					similarityResult &&
+					similarityResult.hasSimilar &&
+					similarityResult.similarOperations.length > 0
+				) {
+					displaySimilarOperations(similarityResult, kind);
+					const userAction = await promptUserChoice(similarityResult);
+
+					if (userAction.type === 'override') {
+						const targetPath = join(
+							baseDir,
+							`${userAction.targetFileName}.ts`,
+						);
+						try {
+							await fs.unlink(targetPath);
+							console.log(
+								`\n🗑️  Deleted ${userAction.targetOperation} (${userAction.targetFileName}.ts)\n`,
+							);
+						} catch (error) {
+							console.error(
+								`\n❌ Failed to delete ${targetPath}:`,
+								error,
+							);
+							return;
+						}
+					} else if (userAction.type === 'update') {
+						const targetPath = join(
+							baseDir,
+							`${userAction.targetFileName}.ts`,
+						);
+						const { extractCommentMetadata } = await import(
+							'./list.js'
+						);
+
+						try {
+							const existingContent = await fs.readFile(
+								targetPath,
+								'utf-8',
+							);
+							const metadata =
+								extractCommentMetadata(existingContent);
+							const existingInstructions =
+								metadata.userInstructions || '';
+
+							const mergedInstructions = existingInstructions
+								? `${existingInstructions}. Additionally: ${instructions}`
+								: instructions;
+
+							update = true;
+							name = userAction.targetFileName;
+							instructions = mergedInstructions;
+
+							console.log(
+								`\n✏️  Updating ${userAction.targetOperation} with merged instructions\n`,
+							);
+						} catch (error) {
+							console.error(
+								`\n❌ Failed to read ${targetPath}:`,
+								error,
+							);
+							return;
+						}
+					} else {
+						console.log(
+							`\n✅ Proceeding to create new ${kind}\n`,
+						);
+					}
+				}
+			}
+		}
+	}
+
+	const finalKebabName = toKebabCase(name.trim());
+	const finalCamelName = kebabToCamelCase(finalKebabName);
+	const finalPwd = `${baseDir}/${finalKebabName}.ts`;
+	const finalPath = finalPwd.startsWith('./') ? finalPwd.slice(2) : finalPwd;
+
 	if (!update) {
 		try {
-			await fs.access(pwd);
+			await fs.access(finalPath);
 			console.log(
-				`\n❌ ${kind.charAt(0).toUpperCase() + kind.slice(1)} "${camelCaseName}" already exists at ${pwd}`,
+				`\n❌ ${kind.charAt(0).toUpperCase() + kind.slice(1)} "${finalCamelName}" already exists at ${finalPath}`,
 			);
 			console.log(`💡 Use -u flag to update the existing ${kind}\n`);
 			return;
@@ -60,7 +167,7 @@ export async function runAgentOperation(
 	}
 
 	const prompt = promptBuilder({
-		functionName: camelCaseName,
+		functionName: finalCamelName,
 		incomingSchema: schema,
 		config: {
 			dbType: cfg.dbType,
@@ -76,10 +183,10 @@ export async function runAgentOperation(
 
 	try {
 		spinner.start(
-			`🤖 AI Agent is ${update ? 'updating' : 'generating'} ${kind} "${camelCaseName}"...`,
+			`🤖 AI Agent is ${update ? 'updating' : 'generating'} ${kind} "${finalCamelName}"...`,
 		);
 
-		const result = await promptAgent(pwd).generate({ prompt });
+		const result = await promptAgent(finalPath).generate({ prompt });
 
 		const indexPath = join(baseDir, 'index.ts');
 		await sortIndexFile(indexPath);
@@ -91,7 +198,7 @@ export async function runAgentOperation(
 				: `${Math.floor(elapsedSeconds / 60)}m ${elapsedSeconds % 60}s`;
 
 		spinner.succeed(
-			`Agent finished ${update ? 'updating' : 'generating'} ${kind} "${camelCaseName}" at ${pwd} (${timeStr})`,
+			`Agent finished ${update ? 'updating' : 'generating'} ${kind} "${finalCamelName}" at ${finalPath} (${timeStr})`,
 		);
 
 		if (result.usage) {
@@ -116,7 +223,7 @@ export async function runAgentOperation(
 		}
 	} catch (error) {
 		spinner.fail(
-			`Failed to ${update ? 'update' : 'generate'} ${kind} "${camelCaseName}"`,
+			`Failed to ${update ? 'update' : 'generate'} ${kind} "${finalCamelName}"`,
 		);
 		throw error;
 	}

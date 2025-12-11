@@ -63,17 +63,20 @@ program
 	.requiredOption('-n, --name <name>', 'Operation name')
 	.option('-i, --instructions <instructions>', 'Additional instructions')
 	.option('-u, --update', 'Update/regenerate existing query file')
+	.option('-f, --force', 'Skip similarity check and create operation')
 	.action(
 		async (options: {
 			name: string;
 			instructions: string;
 			update: boolean;
+			force: boolean;
 		}) => {
 			await runAgentOperation(
 				'query',
 				options.name,
 				options.instructions,
 				options.update,
+				options.force,
 			);
 		},
 	);
@@ -84,17 +87,20 @@ program
 	.requiredOption('-n, --name <name>', 'Operation name')
 	.option('-i, --instructions <instructions>', 'Additional instructions')
 	.option('-u, --update', 'Update/regenerate existing mutation file')
+	.option('-f, --force', 'Skip similarity check and create operation')
 	.action(
 		async (options: {
 			name: string;
 			instructions: string;
 			update: boolean;
+			force: boolean;
 		}) => {
 			await runAgentOperation(
 				'mutation',
 				options.name,
 				options.instructions,
 				options.update,
+				options.force,
 			);
 		},
 	);
