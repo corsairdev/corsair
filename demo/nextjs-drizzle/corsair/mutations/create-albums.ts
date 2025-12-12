@@ -1,7 +1,7 @@
 import { z } from 'corsair';
 import { inArray } from 'drizzle-orm';
-import { procedure } from '../procedure';
 import { confirmUserPortfolio } from '../fragments/confirm-user-portfolio';
+import { procedure } from '../procedure';
 
 /**
  * firms
