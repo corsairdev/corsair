@@ -1,6 +1,6 @@
 {
   "name": "@corsair-ai/core",
-  "version": "0.1.0-beta.2",
+  "version": "0.1.0-beta.3",
   "description": "The TypeScript Vibe Coding SDK",
   "type": "module",
   "license": "MIT",

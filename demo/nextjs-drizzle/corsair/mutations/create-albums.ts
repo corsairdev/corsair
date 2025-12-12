@@ -1,6 +1,20 @@
 import { z } from 'corsair';
 import { inArray } from 'drizzle-orm';
 import { procedure } from '../procedure';
+import { confirmUserPortfolio } from '../fragments/confirm-user-portfolio';
+
+/**
+ * firms
+ * 	  portfolios
+ * 		investments
+ *
+ * get-investments
+ *
+ * investments in the portfolio
+ * 	verify user is a part of the portfolio
+ * 	verify firm is part of portfolio
+ * 	verify user is part of firm
+ */
 
 export const createAlbums = procedure
 	.input(
@@ -23,6 +37,10 @@ export const createAlbums = procedure
 		}),
 	)
 	.mutation(async ({ input, ctx }) => {
+		const res = await confirmUserPortfolio({ ctx, targetPortfolioId: 1 });
+		if (!res) {
+			throw new Error('unauthorized');
+		}
 		const allArtistIds: string[] = [
 			...new Set(input.albums.flatMap((a) => a.artist_ids)),
 		];

@@ -29,21 +29,20 @@ export const promptBuilder = ({
 	const schema = formattedSchema(incomingSchema);
 
 	return `
-You are a TypeScript developer building out or updating a ${config.operation}.
+You are a TypeScript developer creating or updating a ${config.operation}.
 
-You will be using a ${config.dbType} database, ${config.orm} as the ORM, and this is in a ${config.framework} project. This API is written with tRPC and is used on the client with TanStack query.
+You will use a ${config.dbType} database and ${config.orm} ORM in a ${config.framework} project. The API operation you're working in is written with tRPC and is used on the client with TanStack query.
 
 You will export a function with the exact name "${functionName}" - this is the camel case version of the function name.
 
-IMPORTANT: This is a list of coding conventions you must follow. This ensures clean, maintainable, type safe code.
+This is a list of coding conventions you must follow. This ensures clean, maintainable, type safe code.
 - Do not use explicit 'any' types. Properly type all variables, parameters, and return values.
 - When typing a variable, prefer using implicit types. If you cannot use an implicit type, prefer using Omit<> or Pick<> over a random object type.
 - Minimize comments within the code. Use comments sparingly and only when necessary to document un-obvious code.
 
-
 ${instructions ? `These are additional instructions provided by the developer: ${instructions}` : ''}
 
-IMPORTANT: At the top of your generated function (before the export), you MUST include a block comment with:
+At the top of your generated function (before the export), you MUST include a block comment with:
 1. INPUT: The input parameters and their types
 2. OUTPUT: The return type and structure
 3. PSEUDO CODE: A step-by-step pseudo code explanation of what the function does
