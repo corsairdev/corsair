@@ -35,11 +35,6 @@ export const logNextSteps = async ({
 		logger.info(`  ${pkgManager} db:push`);
 	}
 
-	// BetterAuth setup info
-	logger.info(
-		`  Fill in your .env with BetterAuth secrets (GitHub OAuth credentials).`,
-	);
-
 	if (['npm', 'bun'].includes(pkgManager)) {
 		logger.info(`  ${pkgManager} run dev`);
 	} else {

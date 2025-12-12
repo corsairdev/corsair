@@ -3,8 +3,6 @@
  * This improves performance significantly over fetching it from the npm registry.
  */
 export const dependencyVersionMap = {
-	// Better-Auth
-	'better-auth': '^1.3',
 	'@auth/drizzle-adapter': '^1.7.2',
 
 	// Drizzle

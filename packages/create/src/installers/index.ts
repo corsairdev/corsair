@@ -1,4 +1,3 @@
-import { envVariablesInstaller } from '@/installers/envVars.js';
 import type { PackageManager } from '@/utils/getUserPkgManager.js';
 
 // Turning this into a const allows the list to be iterated over for programmatically creating prompt options
@@ -23,10 +22,3 @@ export type PkgInstallerMap = Record<
 		installer: Installer;
 	}
 >;
-
-export const buildPkgInstallerMap = (): PkgInstallerMap => ({
-	envVariables: {
-		inUse: true,
-		installer: envVariablesInstaller,
-	},
-});
