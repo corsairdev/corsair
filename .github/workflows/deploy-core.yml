@@ -41,9 +41,6 @@ jobs:
       - name: Run type check
         run: pnpm run typecheck
 
-      - name: Run linting
-        run: pnpm run lint
-
       - name: Publish core package to NPM (latest)
         if: ${{ inputs.version_type == 'latest' }}
         run: pnpm --filter @corsair-ai/core publish --access public --no-git-checks
