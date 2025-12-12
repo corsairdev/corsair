@@ -1,5 +1,2 @@
-BETTER_AUTH_SECRET="temp"
-BETTER_AUTH_GITHUB_CLIENT_ID="temp"
-BETTER_AUTH_GITHUB_CLIENT_SECRET="temp"
 DATABASE_URL="postgresql://postgres:password@localhost:5432/corsair-project"
 NEXT_PUBLIC_CORSAIR_API_ROUTE="/api/corsair"
