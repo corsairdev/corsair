@@ -13,6 +13,7 @@ export async function runAgentOperation(
 	name: string,
 	instructions?: string,
 	update?: boolean,
+	force?: boolean,
 ) {
 	const { loadConfig } = await import('./config.js');
 	const { promptAgent } = await import('../llm/agent/index.js');
@@ -30,10 +31,10 @@ export async function runAgentOperation(
 		return;
 	}
 
-	const baseDir =
-		kind === 'query'
-			? cfg.pathToCorsairFolder + '/queries'
-			: cfg.pathToCorsairFolder + '/mutations';
+	const queriesDir = cfg.pathToCorsairFolder + '/queries';
+	const mutationsDir = cfg.pathToCorsairFolder + '/mutations';
+
+	const baseDir = kind === 'query' ? queriesDir : mutationsDir;
 	const rawPwd = `${baseDir}/${kebabCaseName}.ts`;
 	const pwd = rawPwd.startsWith('./') ? rawPwd.slice(2) : rawPwd;
 
@@ -69,17 +70,26 @@ export async function runAgentOperation(
 			orm: cfg.orm,
 		},
 		instructions,
+		requestedOperationName: kebabCaseName,
+		force,
+		skipReuseCheck: Boolean(force) || Boolean(update),
+		operationBaseDir: baseDir,
 	});
 
-	const spinner = new Spinner();
 	const startTime = Date.now();
 
 	try {
-		spinner.start(
-			`🤖 AI Agent is ${update ? 'updating' : 'generating'} ${kind} "${camelCaseName}"...`,
-		);
+		// Use a static message to avoid spinner interference with agent output
+		const message = `🤖 AI Agent is ${update ? 'updating' : 'generating'} ${kind} "${camelCaseName}"...`;
+		process.stdout.write(message);
 
-		const result = await promptAgent(pwd).generate({ prompt });
+		const result = await promptAgent(pwd, {
+			queriesDir,
+			mutationsDir,
+		}).generate({ prompt });
+
+		// Clear the line and show success
+		process.stdout.write('\r\x1B[K');
 
 		const indexPath = join(baseDir, 'index.ts');
 		await sortIndexFile(indexPath);
@@ -90,8 +100,8 @@ export async function runAgentOperation(
 				? `${elapsedSeconds}s`
 				: `${Math.floor(elapsedSeconds / 60)}m ${elapsedSeconds % 60}s`;
 
-		spinner.succeed(
-			`Agent finished ${update ? 'updating' : 'generating'} ${kind} "${camelCaseName}" at ${pwd} (${timeStr})`,
+		console.log(
+			`✅ Agent finished ${update ? 'updating' : 'generating'} ${kind} "${camelCaseName}" at ${pwd} (${timeStr})`,
 		);
 
 		if (result.usage) {
@@ -115,8 +125,9 @@ export async function runAgentOperation(
 			console.log();
 		}
 	} catch (error) {
-		spinner.fail(
-			`Failed to ${update ? 'update' : 'generate'} ${kind} "${camelCaseName}"`,
+		process.stdout.write('\r\x1B[K');
+		console.error(
+			`❌ Failed to ${update ? 'update' : 'generate'} ${kind} "${camelCaseName}"`,
 		);
 		throw error;
 	}

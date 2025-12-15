@@ -40,7 +40,7 @@ export class Spinner {
 
 		this.interval = setInterval(() => {
 			const frame = this.frames[this.currentFrame];
-			process.stdout.write(`\r${frame} ${this.text}`);
+			process.stdout.write(`\r\x1B[K${frame} ${this.text}`);
 			this.currentFrame = (this.currentFrame + 1) % this.frames.length;
 		}, 80);
 	}

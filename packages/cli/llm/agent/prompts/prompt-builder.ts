@@ -18,6 +18,10 @@ type PromptBuilderParams = {
 	incomingSchema: SchemaOutput;
 	config: Config;
 	instructions?: string;
+	requestedOperationName?: string;
+	force?: boolean;
+	skipReuseCheck?: boolean;
+	operationBaseDir?: string;
 };
 
 export const promptBuilder = ({
@@ -25,8 +29,17 @@ export const promptBuilder = ({
 	incomingSchema,
 	config,
 	instructions,
+	requestedOperationName,
+	force,
+	skipReuseCheck,
+	operationBaseDir,
 }: PromptBuilderParams): string => {
 	const schema = formattedSchema(incomingSchema);
+	const normalizedRequestedName = requestedOperationName || functionName;
+	const reuseCheckSkipped = Boolean(skipReuseCheck);
+	const baseDirHint =
+		operationBaseDir ||
+		(config.operation === 'query' ? './queries' : './mutations');
 
 	return `
 You are a TypeScript developer building out or updating a ${config.operation}.
@@ -61,26 +74,35 @@ Format the comment exactly like this:
  * USER INSTRUCTIONS: ${instructions || 'None'}
  */
 
-You have access to two tools:
+You have access to three tools:
   - read_file: Returns the current file contents. Use this FIRST to check if the file already exists.
   - write_file: Accepts full TypeScript code. Returns either 'SUCCESS' or 'BUILD FAILED' with TypeScript compilation errors ONLY for this file.
+  - get_existing_operations: Provide { operationType: "query" | "mutation", filter?: string } and receive an array of operation filenames (no extension) for that type. Use this to discover reusable operations before creating new files.
+
 
 This will be your process:
-1. FIRST, call read_file to check if the file already exists
+
+1. Reuse check (skip if force flag is enabled)
+   - IMPORTANT: The idea is to avoid creating a new operation if possible for better code quality.
+   - Use get_existing_operations to list candidate operations
+   - If at least one candidate is returned, reply with two options (return here, don't continue):
+      1. Force-create a new operation with the -f flag
+      2. Update an existing operation: pnpm corsair query/mutation -n "<existing operation name>" -i "<concise instructions to update the file>"
+2. Call read_file on the target path to check if the file already exists
    - If the file exists and has code, you are UPDATING it. Maintain the core functionality while applying any new instructions.
    - If the file doesn't exist or is empty, you are CREATING new code from scratch.
-2. Understand what the intent of the function is based on the name and the additional instructions provided by the developer
-3. Call write_file with your generated code
-4. The write_file tool will either return:
+3. Understand what the intent of the function is based on the name and the additional instructions provided by the developer
+4. Call write_file with your generated code
+5. The write_file tool will either return:
    - 'SUCCESS' - Your code compiled without errors. You are done.
    - 'BUILD FAILED' - TypeScript compilation errors were found. You MUST fix these errors.
-5. If you receive 'BUILD FAILED', you MUST:
+6. If you receive 'BUILD FAILED', you MUST:
    - Carefully analyze the error messages
    - Fix ALL compilation errors and ensure there are no runtime errors
    - Call write_file again with the corrected code
    - Continue this process until you receive 'SUCCESS'
-6. If you are unable to fix the errors (after >5 attempts), write a summary of the errors you were unable to fix and provide a brief explanation of why you were unable to fix them.
-7. After receiving 'SUCCESS', provide a brief summary in this format:
+7. If you are unable to fix the errors (after >5 attempts), write a summary of the errors you were unable to fix and provide a brief explanation of why you were unable to fix them.
+8. After receiving 'SUCCESS', provide a brief summary in this format:
 
 INPUT TYPES:
 - [list input parameters and their types]
@@ -193,3 +215,15 @@ export const likePost = procedure
 </mutation>
 `;
 };
+
+
+// 1. Reuse check (skip if force flag is enabled)
+//    - IMPORTANT: The idea is to avoid creating a new operation if possible for better code quality.
+//    - Use get_existing_operations to list candidate operations that could be reused
+//    - For each candidate, 
+//       1. Use read_file to extract the function, pseudo code, input and output types
+//       2. Logically assess if by making some change in the existing operation, it can be updated to meet the user's request. For example - adding an optional prop to the function and based on that adding the condition in db operation.
+//    - If at least one candidate works, reply with two options (return here):
+//       1. Force-create a new operation with the -f flag
+//       2. Update an existing operation: pnpm corsair query/mutation -n "<existing operation name>" -i "<concise instructions to update the file>"
+//    - If no candidates fit, continue to the next step

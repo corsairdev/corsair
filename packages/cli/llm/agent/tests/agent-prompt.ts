@@ -54,7 +54,10 @@ const request = 'give me all tracks by artist id';
 
 const pwd = '';
 
-const result = await promptAgent(pwd).generate({
+const result = await promptAgent(pwd, {
+	queriesDir: '',
+	mutationsDir: '',
+}).generate({
 	prompt: promptBuilder({
 		functionName: request,
 		incomingSchema: testSchema,
