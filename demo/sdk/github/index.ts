@@ -10,8 +10,6 @@ export type { OpenAPIConfig } from './core/OpenAPI';
 
 // Services
 export { ActionsService } from './services/ActionsService';
-export { ActivityService } from './services/ActivityService';
-export { GistsService } from './services/GistsService';
 export { IssuesService } from './services/IssuesService';
 export { MetaService } from './services/MetaService';
 export { OrgsService } from './services/OrgsService';
