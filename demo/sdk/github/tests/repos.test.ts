@@ -1,4 +1,4 @@
-import { ReposService } from '../services/ReposService';
+import { ReposService } from '../services';
 import { getTestOwner, getTestRepo, handleRateLimit, requireToken } from './setup';
 
 describe('ReposService - Repository API', () => {

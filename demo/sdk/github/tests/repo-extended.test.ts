@@ -1,5 +1,4 @@
-import { ReposService } from '../services/ReposService';
-import { PullsService } from '../services/PullsService';
+import { ReposService, PullsService } from '../services';
 import { getTestOwner, getTestRepo, handleRateLimit } from './setup';
 
 describe('ReposService - Extended Repository Operations', () => {

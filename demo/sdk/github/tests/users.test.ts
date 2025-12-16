@@ -1,4 +1,4 @@
-import { UsersService } from '../services/UsersService';
+import { UsersService } from '../services';
 import { requireToken, getTestUsername, handleRateLimit } from './setup';
 
 describe('UsersService - GitHub Users API', () => {

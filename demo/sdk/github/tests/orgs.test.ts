@@ -1,5 +1,4 @@
-import { OrgsService } from '../services/OrgsService';
-import { ReposService } from '../services/ReposService';
+import { OrgsService, ReposService } from '../services';
 import { handleRateLimit } from './setup';
 
 describe('OrgsService - Organization Operations', () => {
