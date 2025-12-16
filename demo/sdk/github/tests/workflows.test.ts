@@ -1,4 +1,4 @@
-import { ActionsService } from '../services/ActionsService';
+import { ActionsService } from '../services';
 import { getTestOwner, getTestRepo, handleRateLimit, sleep } from './setup';
 
 describe('ActionsService - Workflow Operations', () => {

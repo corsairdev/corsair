@@ -1,4 +1,4 @@
-import { PullsService } from '../services/PullsService';
+import { PullsService } from '../services';
 import { getTestOwner, getTestRepo, handleRateLimit, sleep } from './setup';
 
 describe('PullsService - Review Operations', () => {

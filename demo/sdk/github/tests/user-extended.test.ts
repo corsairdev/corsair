@@ -1,6 +1,4 @@
-import { ReposService } from '../services/ReposService';
-import { IssuesService } from '../services/IssuesService';
-import { UsersService } from '../services/UsersService';
+import { ReposService, IssuesService, UsersService } from '../services';
 import { getTestOwner, handleRateLimit } from './setup';
 
 describe('User Operations - Extended', () => {

@@ -1,4 +1,4 @@
-import { MetaService } from '../services/MetaService';
+import { MetaService } from '../services';
 import { handleRateLimit } from './setup';
 
 describe('MetaService - GitHub API Meta Information', () => {

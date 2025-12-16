@@ -1,4 +1,4 @@
-import { IssuesService } from '../services/IssuesService';
+import { IssuesService } from '../services';
 import { getTestOwner, getTestRepo, handleRateLimit, generateTestId, sleep } from './setup';
 
 describe('IssuesService - GitHub Issues API', () => {
