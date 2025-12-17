@@ -1,14 +1,14 @@
-import { ReposService, PullsService } from '../services';
+import { Github } from '../api';
 import { getTestOwner, getTestRepo, handleRateLimit } from './setup';
 
-describe('ReposService - Extended Repository Operations', () => {
+describe('Github.Repos - Extended Repository Operations', () => {
   const owner = getTestOwner();
   const repo = getTestRepo();
 
   describe('get', () => {
     it('should get repository information', async () => {
       try {
-        const repoInfo = await ReposService.reposGet(owner, repo);
+        const repoInfo = await Github.Repos.get(owner, repo);
 
         expect(repoInfo).toBeDefined();
         expect(repoInfo).toHaveProperty('id');
@@ -23,7 +23,6 @@ describe('ReposService - Extended Repository Operations', () => {
         console.log('Language:', repoInfo.language || 'N/A');
         console.log('Default branch:', repoInfo.default_branch);
         
-        // License info is included in repo response
         if (repoInfo.license) {
           console.log('License:', repoInfo.license.name);
           console.log('License key:', repoInfo.license.key);
@@ -39,8 +38,7 @@ describe('ReposService - Extended Repository Operations', () => {
   describe('listCommits', () => {
     it('should list commits for the repository', async () => {
       try {
-        // reposListCommits(owner, repo, sha?, path?, author?, committer?, since?, until?, perPage, page)
-        const commits = await ReposService.reposListCommits(
+        const commits = await Github.Repos.listCommits(
           owner,
           repo,
           undefined,
@@ -72,7 +70,7 @@ describe('ReposService - Extended Repository Operations', () => {
   describe('listBranches', () => {
     it('should list branches for the repository', async () => {
       try {
-        const branches = await ReposService.reposListBranches(owner, repo, undefined, 10, 1);
+        const branches = await Github.Repos.listBranches(owner, repo, undefined, 10, 1);
 
         expect(Array.isArray(branches)).toBe(true);
         expect(branches.length).toBeGreaterThan(0);
@@ -91,7 +89,7 @@ describe('ReposService - Extended Repository Operations', () => {
   describe('getTopPaths', () => {
     it('should get popular paths', async () => {
       try {
-        const paths = await ReposService.reposGetTopPaths(owner, repo);
+        const paths = await Github.Repos.getTopPaths(owner, repo);
 
         expect(Array.isArray(paths)).toBe(true);
 
@@ -113,7 +111,7 @@ describe('ReposService - Extended Repository Operations', () => {
   describe('getTopReferrers', () => {
     it('should get top referrers', async () => {
       try {
-        const referrers = await ReposService.reposGetTopReferrers(owner, repo);
+        const referrers = await Github.Repos.getTopReferrers(owner, repo);
 
         expect(Array.isArray(referrers)).toBe(true);
 
@@ -135,7 +133,7 @@ describe('ReposService - Extended Repository Operations', () => {
   describe('getCodeFrequencyStats', () => {
     it('should get code frequency statistics', async () => {
       try {
-        const stats = await ReposService.reposGetCodeFrequencyStats(owner, repo);
+        const stats = await Github.Repos.getCodeFrequencyStats(owner, repo);
 
         expect(stats).toBeDefined();
 
@@ -159,8 +157,7 @@ describe('ReposService - Extended Repository Operations', () => {
   describe('getPullRequest', () => {
     it('should get a specific pull request', async () => {
       try {
-        // Use PullsService to get a specific PR
-        const pr = await PullsService.pullsGet(owner, repo, 1);
+        const pr = await Github.PullRequests.get(owner, repo, 1);
 
         expect(pr).toBeDefined();
         console.log('PR #1:', pr.title);
@@ -179,7 +176,7 @@ describe('ReposService - Extended Repository Operations', () => {
   describe('listPullRequests', () => {
     it('should list pull requests for the repository', async () => {
       try {
-        const pulls = await PullsService.pullsList(owner, repo, 'all', undefined, undefined, 'updated', 'desc', 10, 1);
+        const pulls = await Github.PullRequests.list(owner, repo, 'all', undefined, undefined, 'updated', 'desc', 10, 1);
 
         expect(Array.isArray(pulls)).toBe(true);
 

@@ -5,3 +5,4 @@ export type { OpenAPIConfig } from './core/OpenAPI';
 
 export * from './models';
 export * from './services';
+export { Github } from './api';

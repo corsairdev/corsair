@@ -1,7 +1,7 @@
-import { UsersService } from '../services';
+import { Github } from '../api';
 import { requireToken, getTestUsername, handleRateLimit } from './setup';
 
-describe('UsersService - GitHub Users API', () => {
+describe('Github.Users - GitHub Users API', () => {
   describe('getAuthenticated', () => {
     it('should fetch the authenticated user', async () => {
       if (requireToken()) {
@@ -10,22 +10,19 @@ describe('UsersService - GitHub Users API', () => {
       }
 
       try {
-        const user = await UsersService.usersGetAuthenticated();
+        const user = await Github.Users.getAuthenticated();
         
-        // Verify response structure
         expect(user).toBeDefined();
         expect(user).toHaveProperty('login');
         expect(user).toHaveProperty('id');
         expect(user).toHaveProperty('type');
         expect(user).toHaveProperty('created_at');
         
-        // Log user info
         console.log('Authenticated user:', user.login);
         console.log('User type:', user.type);
         console.log('User ID:', user.id);
         console.log('Account created:', user.created_at);
         
-        // Verify required fields are not empty
         expect(user.login).toBeTruthy();
         expect(user.id).toBeGreaterThan(0);
         expect(user.type).toBeTruthy();
@@ -40,26 +37,22 @@ describe('UsersService - GitHub Users API', () => {
       const username = getTestUsername();
       
       try {
-        const user = await UsersService.usersGetByUsername(username);
+        const user = await Github.Users.getByUsername(username);
         
-        // Verify response structure
         expect(user).toBeDefined();
         expect(user).toHaveProperty('login');
         expect(user).toHaveProperty('id');
         expect(user).toHaveProperty('type');
         expect(user).toHaveProperty('public_repos');
         
-        // Verify username matches
         expect(user.login).toBe(username);
         
-        // Log user info
         console.log('User:', user.login);
         console.log('User type:', user.type);
         console.log('Public repos:', user.public_repos);
         console.log('Followers:', user.followers);
         console.log('Following:', user.following);
         
-        // Verify data types
         expect(typeof user.public_repos).toBe('number');
         expect(typeof user.followers).toBe('number');
         expect(typeof user.following).toBe('number');
@@ -72,11 +65,9 @@ describe('UsersService - GitHub Users API', () => {
       const nonExistentUser = 'this-user-definitely-does-not-exist-12345';
       
       try {
-        await UsersService.usersGetByUsername(nonExistentUser);
-        // If we get here, the user exists (unlikely)
+        await Github.Users.getByUsername(nonExistentUser);
         fail('Expected request to fail for non-existent user');
       } catch (error: any) {
-        // Verify it's a 404 error
         expect(error.status).toBe(404);
         console.log('Correctly received 404 for non-existent user');
       }
@@ -86,15 +77,12 @@ describe('UsersService - GitHub Users API', () => {
   describe('list', () => {
     it('should list public users', async () => {
       try {
-        // usersList(since?: number, perPage: number = 30)
-        const users = await UsersService.usersList(undefined, 5);
+        const users = await Github.Users.list(undefined, 5);
         
-        // Verify response is an array
         expect(Array.isArray(users)).toBe(true);
         expect(users.length).toBeGreaterThan(0);
         expect(users.length).toBeLessThanOrEqual(5);
         
-        // Verify first user structure
         const firstUser = users[0];
         expect(firstUser).toHaveProperty('login');
         expect(firstUser).toHaveProperty('id');
@@ -110,18 +98,15 @@ describe('UsersService - GitHub Users API', () => {
 
     it('should paginate through users', async () => {
       try {
-        // Fetch first page
-        const firstPage = await UsersService.usersList(0, 3);
+        const firstPage = await Github.Users.list(0, 3);
         
         expect(firstPage.length).toBe(3);
         
-        // Fetch second page using last user's ID from first page
         const lastUserId = firstPage[firstPage.length - 1].id;
-        const secondPage = await UsersService.usersList(lastUserId, 3);
+        const secondPage = await Github.Users.list(lastUserId, 3);
         
         expect(secondPage.length).toBeGreaterThan(0);
         
-        // Verify no overlap between pages
         const firstPageIds = firstPage.map(u => u.id);
         const secondPageIds = secondPage.map(u => u.id);
         const overlap = firstPageIds.filter(id => secondPageIds.includes(id));
@@ -136,4 +121,3 @@ describe('UsersService - GitHub Users API', () => {
     });
   });
 });
-

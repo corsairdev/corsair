@@ -1,17 +1,16 @@
-import { ActionsService } from '../services';
+import { Github } from '../api';
 import { getTestOwner, getTestRepo, handleRateLimit, sleep } from './setup';
 
-describe('ActionsService - Workflow Operations', () => {
+describe('Github.Workflows - Workflow Operations', () => {
   const owner = getTestOwner();
   const repo = getTestRepo();
   
-  // Track workflow info for tests
   let workflowId: number | undefined;
 
-  describe('listRepoWorkflows', () => {
+  describe('list', () => {
     it('should list workflows for the repository', async () => {
       try {
-        const result = await ActionsService.actionsListRepoWorkflows(owner, repo, 10, 1);
+        const result = await Github.Workflows.list(owner, repo, 10, 1);
 
         expect(result).toBeDefined();
         expect(result).toHaveProperty('total_count');
@@ -21,7 +20,6 @@ describe('ActionsService - Workflow Operations', () => {
         console.log('Total workflows:', result.total_count);
         
         if (result.workflows.length > 0) {
-          // Store first workflow for other tests
           workflowId = result.workflows[0].id;
           
           result.workflows.forEach(workflow => {
@@ -39,7 +37,7 @@ describe('ActionsService - Workflow Operations', () => {
     });
   });
 
-  describe('getWorkflow', () => {
+  describe('get', () => {
     it('should get a specific workflow by ID', async () => {
       if (!workflowId) {
         console.warn('Skipping - no workflow available');
@@ -47,7 +45,7 @@ describe('ActionsService - Workflow Operations', () => {
       }
 
       try {
-        const workflow = await ActionsService.actionsGetWorkflow(owner, repo, workflowId);
+        const workflow = await Github.Workflows.get(owner, repo, workflowId);
 
         expect(workflow).toBeDefined();
         expect(workflow.id).toBe(workflowId);
@@ -66,7 +64,7 @@ describe('ActionsService - Workflow Operations', () => {
     });
   });
 
-  describe('getWorkflowUsage', () => {
+  describe('getUsage', () => {
     it('should get workflow usage', async () => {
       if (!workflowId) {
         console.warn('Skipping - no workflow available');
@@ -74,7 +72,7 @@ describe('ActionsService - Workflow Operations', () => {
       }
 
       try {
-        const usage = await ActionsService.actionsGetWorkflowUsage(owner, repo, workflowId);
+        const usage = await Github.Workflows.getUsage(owner, repo, workflowId);
 
         expect(usage).toBeDefined();
         expect(usage).toHaveProperty('billable');
@@ -86,11 +84,10 @@ describe('ActionsService - Workflow Operations', () => {
     });
   });
 
-  describe('listWorkflowRuns', () => {
+  describe('listRuns', () => {
     it('should list workflow runs for the repository', async () => {
       try {
-        // actionsListWorkflowRunsForRepo(owner, repo, actor?, branch?, event?, status?, perPage, page, created?, excludePullRequests?, checkSuiteId?, headSha?)
-        const result = await ActionsService.actionsListWorkflowRunsForRepo(
+        const result = await Github.Workflows.listRuns(
           owner,
           repo,
           undefined,
@@ -124,7 +121,7 @@ describe('ActionsService - Workflow Operations', () => {
     });
   });
 
-  describe('disableWorkflow', () => {
+  describe('disable', () => {
     it('should disable a workflow', async () => {
       if (!workflowId) {
         console.warn('Skipping - no workflow available');
@@ -132,13 +129,12 @@ describe('ActionsService - Workflow Operations', () => {
       }
 
       try {
-        await sleep(1000); // Rate limit protection
+        await sleep(1000);
         
-        await ActionsService.actionsDisableWorkflow(owner, repo, workflowId);
+        await Github.Workflows.disable(owner, repo, workflowId);
         console.log('Disabled workflow ID:', workflowId);
         
-        // Verify it's disabled
-        const workflow = await ActionsService.actionsGetWorkflow(owner, repo, workflowId);
+        const workflow = await Github.Workflows.get(owner, repo, workflowId);
         expect(workflow.state).toBe('disabled_manually');
         console.log('Verified: Workflow state is', workflow.state);
       } catch (error) {
@@ -147,7 +143,7 @@ describe('ActionsService - Workflow Operations', () => {
     });
   });
 
-  describe('enableWorkflow', () => {
+  describe('enable', () => {
     it('should enable a workflow', async () => {
       if (!workflowId) {
         console.warn('Skipping - no workflow available');
@@ -155,13 +151,12 @@ describe('ActionsService - Workflow Operations', () => {
       }
 
       try {
-        await sleep(1000); // Rate limit protection
+        await sleep(1000);
         
-        await ActionsService.actionsEnableWorkflow(owner, repo, workflowId);
+        await Github.Workflows.enable(owner, repo, workflowId);
         console.log('Enabled workflow ID:', workflowId);
         
-        // Verify it's enabled
-        const workflow = await ActionsService.actionsGetWorkflow(owner, repo, workflowId);
+        const workflow = await Github.Workflows.get(owner, repo, workflowId);
         expect(workflow.state).toBe('active');
         console.log('Verified: Workflow state is', workflow.state);
       } catch (error) {
@@ -170,7 +165,7 @@ describe('ActionsService - Workflow Operations', () => {
     });
   });
 
-  describe('createWorkflowDispatch', () => {
+  describe('dispatch', () => {
     it('should dispatch a workflow event', async () => {
       if (!workflowId) {
         console.warn('Skipping - no workflow available');
@@ -178,10 +173,9 @@ describe('ActionsService - Workflow Operations', () => {
       }
 
       try {
-        await sleep(1000); // Rate limit protection
+        await sleep(1000);
         
-        // Note: This requires a workflow that has workflow_dispatch trigger
-        await ActionsService.actionsCreateWorkflowDispatch(owner, repo, workflowId, {
+        await Github.Workflows.dispatch(owner, repo, workflowId, {
           ref: 'main',
           inputs: {},
         });

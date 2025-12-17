@@ -1,18 +1,16 @@
-import { PullsService } from '../services';
+import { Github } from '../api';
 import { getTestOwner, getTestRepo, handleRateLimit, sleep } from './setup';
 
-describe('PullsService - Review Operations', () => {
+describe('Github.PullRequests - Review Operations', () => {
   const owner = getTestOwner();
   const repo = getTestRepo();
   
-  // Track PR info for tests
   let pullNumber: number | undefined;
   let reviewId: number | undefined;
 
   beforeAll(async () => {
-    // Find an existing PR to use for tests
     try {
-      const pulls = await PullsService.pullsList(owner, repo, 'all', undefined, undefined, 'updated', 'desc', 10, 1);
+      const pulls = await Github.PullRequests.list(owner, repo, 'all', undefined, undefined, 'updated', 'desc', 10, 1);
       
       if (pulls.length > 0) {
         pullNumber = pulls[0].number;
@@ -34,8 +32,7 @@ describe('PullsService - Review Operations', () => {
       }
 
       try {
-        // pullsListReviews(owner, repo, pullNumber, perPage, page)
-        const reviews = await PullsService.pullsListReviews(owner, repo, pullNumber, 10, 1);
+        const reviews = await Github.PullRequests.listReviews(owner, repo, pullNumber, 10, 1);
 
         expect(Array.isArray(reviews)).toBe(true);
         
@@ -65,7 +62,7 @@ describe('PullsService - Review Operations', () => {
       }
 
       try {
-        const review = await PullsService.pullsGetReview(owner, repo, pullNumber, reviewId);
+        const review = await Github.PullRequests.getReview(owner, repo, pullNumber, reviewId);
 
         expect(review).toBeDefined();
         expect(review.id).toBe(reviewId);
@@ -90,11 +87,11 @@ describe('PullsService - Review Operations', () => {
       }
 
       try {
-        await sleep(1000); // Rate limit protection
+        await sleep(1000);
         
-        const review = await PullsService.pullsCreateReview(owner, repo, pullNumber, {
+        const review = await Github.PullRequests.createReview(owner, repo, pullNumber, {
           body: 'Test review created by automated tests',
-          event: 'COMMENT', // COMMENT, APPROVE, or REQUEST_CHANGES
+          event: 'COMMENT',
         });
 
         expect(review).toBeDefined();
@@ -124,9 +121,9 @@ describe('PullsService - Review Operations', () => {
       }
 
       try {
-        await sleep(1000); // Rate limit protection
+        await sleep(1000);
         
-        const updated = await PullsService.pullsUpdateReview(owner, repo, pullNumber, reviewId, {
+        const updated = await Github.PullRequests.updateReview(owner, repo, pullNumber, reviewId, {
           body: 'Updated test review',
         });
 
@@ -146,10 +143,10 @@ describe('PullsService - Review Operations', () => {
     });
   });
 
-  describe('listPulls', () => {
+  describe('list', () => {
     it('should list pull requests', async () => {
       try {
-        const pulls = await PullsService.pullsList(owner, repo, 'all', undefined, undefined, 'updated', 'desc', 10, 1);
+        const pulls = await Github.PullRequests.list(owner, repo, 'all', undefined, undefined, 'updated', 'desc', 10, 1);
 
         expect(Array.isArray(pulls)).toBe(true);
         

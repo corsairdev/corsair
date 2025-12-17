@@ -1,14 +1,14 @@
-import { ReposService } from '../services';
+import { Github } from '../api';
 import { getTestOwner, getTestRepo, handleRateLimit, requireToken } from './setup';
 
-describe('ReposService - Repository API', () => {
+describe('Github.Repos - Repository API', () => {
   const owner = getTestOwner();
   const repo = getTestRepo();
 
-  describe('reposGet', () => {
+  describe('get', () => {
     it('should get repository information', async () => {
       try {
-        const repoInfo = await ReposService.reposGet(owner, repo);
+        const repoInfo = await Github.Repos.get(owner, repo);
 
         expect(repoInfo).toBeDefined();
         expect(repoInfo).toHaveProperty('id');
@@ -31,11 +31,10 @@ describe('ReposService - Repository API', () => {
     });
   });
 
-  describe('reposListForUser', () => {
+  describe('listForUser', () => {
     it('should list repositories for a user', async () => {
       try {
-        // reposListForUser(username, type, sort, direction, perPage, page)
-        const repos = await ReposService.reposListForUser(owner, 'owner', 'updated', 'desc', 10, 1);
+        const repos = await Github.Repos.listForUser(owner, 'owner', 'updated', 'desc', 10, 1);
 
         expect(Array.isArray(repos)).toBe(true);
         expect(repos.length).toBeGreaterThan(0);
@@ -50,22 +49,21 @@ describe('ReposService - Repository API', () => {
     });
   });
 
-  describe('reposListForAuthenticatedUser', () => {
+  describe('listForAuthenticatedUser', () => {
     it('should list repositories for authenticated user', async () => {
       if (requireToken()) {
         return;
       }
 
       try {
-        // reposListForAuthenticatedUser(visibility, affiliation, type, sort, direction, perPage, page, since, before)
-        const repos = await ReposService.reposListForAuthenticatedUser(
-          'all',         // visibility
-          undefined,     // affiliation (default)
-          'all',         // type
-          'updated',     // sort
-          'desc',        // direction
-          10,            // perPage
-          1              // page
+        const repos = await Github.Repos.listForAuthenticatedUser(
+          'all',
+          undefined,
+          'all',
+          'updated',
+          'desc',
+          10,
+          1
         );
 
         expect(Array.isArray(repos)).toBe(true);
@@ -75,12 +73,11 @@ describe('ReposService - Repository API', () => {
           console.log(`  ${r.full_name} (★ ${r.stargazers_count})`);
         });
       } catch (error: any) {
-        // This endpoint sometimes returns 422 Validation error
         if (error.status === 422) {
           console.log('Note: reposListForAuthenticatedUser returned validation error (known issue)');
           console.log('Using reposListForUser as fallback...');
           
-          const repos = await ReposService.reposListForUser(getTestOwner(), 'owner', 'updated', 'desc', 10, 1);
+          const repos = await Github.Repos.listForUser(getTestOwner(), 'owner', 'updated', 'desc', 10, 1);
           expect(Array.isArray(repos)).toBe(true);
           console.log(`Found ${repos.length} repos for user`);
         } else {
@@ -90,10 +87,10 @@ describe('ReposService - Repository API', () => {
     });
   });
 
-  describe('reposListBranches', () => {
+  describe('listBranches', () => {
     it('should list branches for a repository', async () => {
       try {
-        const branches = await ReposService.reposListBranches(owner, repo, undefined, 10, 1);
+        const branches = await Github.Repos.listBranches(owner, repo, undefined, 10, 1);
 
         expect(Array.isArray(branches)).toBe(true);
         expect(branches.length).toBeGreaterThan(0);
@@ -108,11 +105,10 @@ describe('ReposService - Repository API', () => {
     });
   });
 
-  describe('reposGetContent', () => {
+  describe('getContent', () => {
     it('should get repository content', async () => {
       try {
-        // Get root directory content
-        const content = await ReposService.reposGetContent(owner, repo, '');
+        const content = await Github.Repos.getContent(owner, repo, '');
 
         expect(content).toBeDefined();
         expect(Array.isArray(content)).toBe(true);
@@ -129,10 +125,10 @@ describe('ReposService - Repository API', () => {
     });
   });
 
-  describe('reposListCommits', () => {
+  describe('listCommits', () => {
     it('should list commits for a repository', async () => {
       try {
-        const commits = await ReposService.reposListCommits(
+        const commits = await Github.Repos.listCommits(
           owner,
           repo,
           undefined,
