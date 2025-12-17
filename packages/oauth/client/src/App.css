@@ -1,0 +1,316 @@
+.App {
+	width: 100%;
+	min-height: 100vh;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 2rem;
+	box-sizing: border-box;
+}
+
+.container {
+	max-width: 1400px;
+	width: 100%;
+	background: rgba(255, 255, 255, 0.05);
+	border-radius: 12px;
+	padding: 2rem;
+	box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+	backdrop-filter: blur(10px);
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 3rem;
+	align-items: start;
+}
+
+.header {
+	grid-column: 1 / -1;
+	text-align: center;
+	margin-bottom: 1rem;
+}
+
+h1 {
+	margin: 0 0 0.5rem 0;
+	color: #fff;
+	text-align: center;
+}
+
+.subtitle {
+	text-align: center;
+	color: rgba(255, 255, 255, 0.7);
+	margin-bottom: 0;
+}
+
+.form-section {
+	margin-bottom: 0;
+}
+
+.form-group {
+	margin-bottom: 1rem;
+}
+
+.form-group label {
+	display: block;
+	margin-bottom: 0.3rem;
+	color: #fff;
+	font-weight: 500;
+	font-size: 0.9rem;
+}
+
+.form-group input,
+.form-group select {
+	width: 100%;
+	padding: 0.5rem;
+	border: 1px solid rgba(255, 255, 255, 0.2);
+	border-radius: 6px;
+	background: rgba(255, 255, 255, 0.1);
+	color: #fff;
+	font-size: 0.9rem;
+	transition: all 0.2s ease;
+	box-sizing: border-box;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+	outline: none;
+	border-color: #646cff;
+	background: rgba(255, 255, 255, 0.15);
+	box-shadow: 0 0 0 3px rgba(100, 108, 255, 0.1);
+}
+
+.form-group input::placeholder {
+	color: rgba(255, 255, 255, 0.5);
+}
+
+.auth-button {
+	width: 100%;
+	padding: 1rem;
+	background: linear-gradient(135deg, #646cff 0%, #535bf2 100%);
+	color: white;
+	border: none;
+	border-radius: 8px;
+	font-size: 1.1rem;
+	font-weight: 600;
+	cursor: pointer;
+	transition: all 0.2s ease;
+	margin-top: 1rem;
+}
+
+.auth-button:hover:not(:disabled) {
+	transform: translateY(-2px);
+	box-shadow: 0 8px 25px rgba(100, 108, 255, 0.3);
+}
+
+.auth-button:disabled {
+	opacity: 0.6;
+	cursor: not-allowed;
+	transform: none;
+}
+
+.error {
+	background: rgba(220, 53, 69, 0.1);
+	border: 1px solid rgba(220, 53, 69, 0.3);
+	color: #ff6b6b;
+	padding: 1rem;
+	border-radius: 8px;
+	margin-bottom: 1rem;
+	text-align: center;
+}
+
+.instructions-section {
+	background: rgba(255, 255, 255, 0.05);
+	border-radius: 8px;
+	padding: 1.5rem;
+	border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.instructions-section h3 {
+	margin: 0 0 1rem 0;
+	color: #fff;
+	font-size: 1.2rem;
+}
+
+.instructions-content {
+	color: rgba(255, 255, 255, 0.9);
+	line-height: 1.6;
+	white-space: pre-wrap;
+	font-family:
+		-apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", sans-serif;
+}
+
+.instructions-content strong {
+	color: #fff;
+	font-weight: 600;
+}
+
+.scope-controls {
+	display: flex;
+	align-items: center;
+	gap: 0.75rem;
+	margin-bottom: 0.75rem;
+}
+
+.scope-control-button {
+	padding: 0.3rem 0.75rem;
+	background: rgba(255, 255, 255, 0.1);
+	color: #fff;
+	border: 1px solid rgba(255, 255, 255, 0.2);
+	border-radius: 4px;
+	cursor: pointer;
+	font-size: 0.8rem;
+	transition: all 0.2s ease;
+}
+
+.scope-control-button:hover {
+	background: rgba(255, 255, 255, 0.2);
+	border-color: rgba(255, 255, 255, 0.3);
+}
+
+.scope-count {
+	color: rgba(255, 255, 255, 0.7);
+	font-size: 0.8rem;
+	margin-left: auto;
+}
+
+.scope-checklist {
+	max-height: 300px;
+	overflow-y: auto;
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 0.25rem;
+	border: 1px solid rgba(255, 255, 255, 0.2);
+	border-radius: 6px;
+	padding: 0.5rem;
+	background: rgba(255, 255, 255, 0.05);
+}
+
+.scope-checkbox {
+	display: flex;
+	align-items: center;
+	gap: 0.4rem;
+	padding: 0.15rem 0;
+	cursor: pointer;
+	color: #fff;
+	transition: color 0.2s ease;
+}
+
+.scope-checkbox:hover {
+	color: rgba(255, 255, 255, 0.8);
+}
+
+.scope-checkbox input[type="checkbox"] {
+	width: auto;
+	margin: 0;
+	cursor: pointer;
+}
+
+.scope-name {
+	font-family: monospace;
+	font-size: 0.75rem;
+}
+
+@media (prefers-color-scheme: light) {
+	.container {
+		max-width: 1400px;
+		background: rgba(255, 255, 255, 0.9);
+		box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+		border: 1px solid rgba(0, 0, 0, 0.1);
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 3rem;
+		align-items: start;
+	}
+
+	h1 {
+		color: #1a1a1a;
+	}
+
+	.subtitle {
+		color: rgba(0, 0, 0, 0.7);
+	}
+
+	.form-group label {
+		color: #1a1a1a;
+	}
+
+	.form-group input,
+	.form-group select {
+		border: 1px solid rgba(0, 0, 0, 0.2);
+		background: rgba(0, 0, 0, 0.05);
+		color: #1a1a1a;
+	}
+
+	.form-group input:focus,
+	.form-group select:focus {
+		background: rgba(0, 0, 0, 0.1);
+		border-color: #646cff;
+	}
+
+	.form-group input::placeholder {
+		color: rgba(0, 0, 0, 0.5);
+	}
+
+	.error {
+		background: rgba(220, 53, 69, 0.1);
+		color: #dc3545;
+	}
+
+	.instructions-section {
+		background: rgba(0, 0, 0, 0.05);
+		border: 1px solid rgba(0, 0, 0, 0.1);
+	}
+
+	.instructions-section h3 {
+		color: #1a1a1a;
+	}
+
+	.instructions-content {
+		color: rgba(0, 0, 0, 0.8);
+	}
+
+	.instructions-content strong {
+		color: #1a1a1a;
+	}
+
+	.scope-control-button {
+		background: rgba(0, 0, 0, 0.05);
+		color: #1a1a1a;
+		border: 1px solid rgba(0, 0, 0, 0.2);
+	}
+
+	.scope-control-button:hover {
+		background: rgba(0, 0, 0, 0.1);
+		border-color: rgba(0, 0, 0, 0.3);
+	}
+
+	.scope-count {
+		color: rgba(0, 0, 0, 0.7);
+	}
+
+	.scope-checklist {
+		max-height: 300px;
+		overflow-y: auto;
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 0.25rem;
+		border: 1px solid rgba(0, 0, 0, 0.2);
+		background: rgba(0, 0, 0, 0.02);
+	}
+
+	.scope-checkbox {
+		color: #1a1a1a;
+	}
+
+	.scope-checkbox:hover {
+		color: rgba(0, 0, 0, 0.8);
+	}
+}
+
+/* Responsive design */
+@media (max-width: 1000px) {
+	.container {
+		grid-template-columns: 1fr;
+		gap: 2rem;
+		max-width: 600px;
+	}
+}

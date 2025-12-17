@@ -5,7 +5,8 @@
 ### Generate Query/Mutation
 
 ```bash
-pnpm corsair query/mutation -n "query/mutationName" -i "instructions"
+pnpm corsair query -n "query name" -i "instructions"
+pnpm corsair mutation -n "mutation name" -i "instructions"
 ```
 
 **Agent must use this to generate queries.** DO NOT write query code manually.
