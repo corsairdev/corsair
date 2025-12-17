@@ -1,19 +1,16 @@
-import { IssuesService } from '../services';
+import { Github } from '../api';
 import { getTestOwner, getTestRepo, handleRateLimit, generateTestId, sleep } from './setup';
 
-describe('IssuesService - GitHub Issues API', () => {
+describe('Github.Issues - GitHub Issues API', () => {
   const owner = getTestOwner();
   const repo = getTestRepo();
   
-  // Track created resources for cleanup
   let createdIssueNumber: number | undefined;
 
-  // Cleanup after all tests
   afterAll(async () => {
-    // Close any created issues
     if (createdIssueNumber) {
       try {
-        await IssuesService.issuesUpdate(owner, repo, createdIssueNumber, {
+        await Github.Issues.update(owner, repo, createdIssueNumber, {
           state: 'closed',
         });
         console.log(`Cleanup: Closed issue #${createdIssueNumber}`);
@@ -27,7 +24,7 @@ describe('IssuesService - GitHub Issues API', () => {
     it('should create an issue', async () => {
       try {
         const testId = generateTestId();
-        const issue = await IssuesService.issuesCreate(owner, repo, {
+        const issue = await Github.Issues.create(owner, repo, {
           title: `Test Issue - ${testId}`,
           body: 'This is a test issue created by automated tests. It will be cleaned up automatically.',
           labels: ['test'],
@@ -57,7 +54,7 @@ describe('IssuesService - GitHub Issues API', () => {
       }
 
       try {
-        const issue = await IssuesService.issuesGet(owner, repo, createdIssueNumber);
+        const issue = await Github.Issues.get(owner, repo, createdIssueNumber);
 
         expect(issue).toBeDefined();
         expect(issue.number).toBe(createdIssueNumber);
@@ -73,11 +70,10 @@ describe('IssuesService - GitHub Issues API', () => {
     });
   });
 
-  describe('listForRepo', () => {
+  describe('list', () => {
     it('should list issues for the repository', async () => {
       try {
-        // issuesListForRepo(owner, repo, milestone?, state, assignee?, type?, creator?, mentioned?, labels?, sort, direction, since?, perPage, page)
-        const issues = await IssuesService.issuesListForRepo(
+        const issues = await Github.Issues.list(
           owner,
           repo,
           undefined,
@@ -114,9 +110,9 @@ describe('IssuesService - GitHub Issues API', () => {
       }
 
       try {
-        await sleep(1000); // Rate limit protection
+        await sleep(1000);
         
-        const comment = await IssuesService.issuesCreateComment(
+        const comment = await Github.Issues.createComment(
           owner,
           repo,
           createdIssueNumber,
@@ -145,9 +141,9 @@ describe('IssuesService - GitHub Issues API', () => {
       }
 
       try {
-        await sleep(1000); // Rate limit protection
+        await sleep(1000);
         
-        const updatedIssue = await IssuesService.issuesUpdate(
+        const updatedIssue = await Github.Issues.update(
           owner,
           repo,
           createdIssueNumber,
@@ -176,9 +172,9 @@ describe('IssuesService - GitHub Issues API', () => {
       }
 
       try {
-        await sleep(1000); // Rate limit protection
+        await sleep(1000);
         
-        await IssuesService.issuesLock(
+        await Github.Issues.lock(
           owner,
           repo,
           createdIssueNumber,
@@ -189,8 +185,7 @@ describe('IssuesService - GitHub Issues API', () => {
 
         console.log('Locked issue #', createdIssueNumber);
         
-        // Verify it's locked by fetching it
-        const issue = await IssuesService.issuesGet(owner, repo, createdIssueNumber);
+        const issue = await Github.Issues.get(owner, repo, createdIssueNumber);
         expect(issue.locked).toBe(true);
         console.log('Verified: Issue is locked');
       } catch (error) {
@@ -199,11 +194,10 @@ describe('IssuesService - GitHub Issues API', () => {
     });
   });
 
-  describe('listForAuthenticatedUser', () => {
+  describe('listForUser', () => {
     it('should list issues for authenticated user', async () => {
       try {
-        // issuesListForAuthenticatedUser(filter, state, labels?, sort, direction, since?, perPage, page)
-        const issues = await IssuesService.issuesListForAuthenticatedUser(
+        const issues = await Github.Issues.listForUser(
           'all',
           'all',
           undefined,

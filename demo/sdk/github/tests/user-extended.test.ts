@@ -1,14 +1,13 @@
-import { ReposService, IssuesService, UsersService } from '../services';
+import { Github } from '../api';
 import { getTestOwner, handleRateLimit } from './setup';
 
-describe('User Operations - Extended', () => {
+describe('Github.Users - Extended Operations', () => {
   const username = getTestOwner();
 
   describe('getUserRepos', () => {
     it('should get repositories for a user', async () => {
       try {
-        // reposListForUser(username, type, sort, direction, perPage, page)
-        const repos = await ReposService.reposListForUser(username, 'owner', 'updated', 'desc', 10, 1);
+        const repos = await Github.Repos.listForUser(username, 'owner', 'updated', 'desc', 10, 1);
 
         expect(Array.isArray(repos)).toBe(true);
 
@@ -29,8 +28,7 @@ describe('User Operations - Extended', () => {
   describe('getUserIssues', () => {
     it('should get issues assigned to the authenticated user', async () => {
       try {
-        // issuesListForAuthenticatedUser(filter, state, labels?, sort, direction, since?, perPage, page)
-        const issues = await IssuesService.issuesListForAuthenticatedUser(
+        const issues = await Github.Issues.listForUser(
           'all',
           'open',
           undefined,
@@ -59,7 +57,7 @@ describe('User Operations - Extended', () => {
   describe('getUser', () => {
     it('should get user profile', async () => {
       try {
-        const user = await UsersService.usersGetByUsername(username);
+        const user = await Github.Users.getByUsername(username);
 
         expect(user).toBeDefined();
         expect(user).toHaveProperty('login');
@@ -81,7 +79,7 @@ describe('User Operations - Extended', () => {
   describe('getAuthenticatedUser', () => {
     it('should get authenticated user profile', async () => {
       try {
-        const user = await UsersService.usersGetAuthenticated();
+        const user = await Github.Users.getAuthenticated();
 
         expect(user).toBeDefined();
         expect(user).toHaveProperty('login');
@@ -99,7 +97,7 @@ describe('User Operations - Extended', () => {
   describe('listFollowers', () => {
     it('should list followers for a user', async () => {
       try {
-        const followers = await UsersService.usersListFollowersForUser(username, 10, 1);
+        const followers = await Github.Users.listFollowers(username, 10, 1);
 
         expect(Array.isArray(followers)).toBe(true);
 
@@ -117,7 +115,7 @@ describe('User Operations - Extended', () => {
   describe('listFollowing', () => {
     it('should list users followed by a user', async () => {
       try {
-        const following = await UsersService.usersListFollowingForUser(username, 10, 1);
+        const following = await Github.Users.listFollowing(username, 10, 1);
 
         expect(Array.isArray(following)).toBe(true);
 

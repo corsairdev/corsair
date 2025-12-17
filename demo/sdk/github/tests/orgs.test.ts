@@ -1,15 +1,13 @@
-import { OrgsService, ReposService } from '../services';
+import { Github } from '../api';
 import { handleRateLimit } from './setup';
 
-describe('OrgsService - Organization Operations', () => {
-  // Use a well-known public org for testing
+describe('Github.Orgs - Organization Operations', () => {
   const org = 'facebook';
 
   describe('listReposForOrg', () => {
     it('should get repositories for an organization', async () => {
       try {
-        // reposListForOrg(org, type?, sort, direction, perPage, page)
-        const repos = await ReposService.reposListForOrg(org, 'all', 'updated', 'desc', 10, 1);
+        const repos = await Github.Repos.listForOrg(org, 'all', 'updated', 'desc', 10, 1);
 
         expect(Array.isArray(repos)).toBe(true);
         expect(repos.length).toBeGreaterThan(0);
@@ -30,7 +28,7 @@ describe('OrgsService - Organization Operations', () => {
   describe('get', () => {
     it('should get organization info', async () => {
       try {
-        const orgInfo = await OrgsService.orgsGet(org);
+        const orgInfo = await Github.Orgs.get(org);
 
         expect(orgInfo).toBeDefined();
         expect(orgInfo).toHaveProperty('login');
@@ -49,11 +47,10 @@ describe('OrgsService - Organization Operations', () => {
     });
   });
 
-  describe('listMembers', () => {
+  describe('listPublicMembers', () => {
     it('should list public members of an organization', async () => {
       try {
-        // orgsListPublicMembers(org, perPage, page)
-        const members = await OrgsService.orgsListPublicMembers(org, 10, 1);
+        const members = await Github.Orgs.listPublicMembers(org, 10, 1);
 
         expect(Array.isArray(members)).toBe(true);
 

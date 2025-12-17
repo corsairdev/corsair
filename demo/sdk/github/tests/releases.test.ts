@@ -1,39 +1,35 @@
-import { ReposService } from '../services';
+import { Github } from '../api';
 import { getTestOwner, getTestRepo, handleRateLimit, generateTestId, sleep } from './setup';
 
-describe('ReposService - Release Actions', () => {
+describe('Github.Releases - Release Actions', () => {
   const owner = getTestOwner();
   const repo = getTestRepo();
   
-  // Track created resources for cleanup
   let createdReleaseId: number | undefined;
   let createdTagName: string | undefined;
 
-  // Cleanup after all tests
   afterAll(async () => {
     if (createdReleaseId) {
       try {
-        await ReposService.reposDeleteRelease(owner, repo, createdReleaseId);
+        await Github.Releases.delete(owner, repo, createdReleaseId);
         console.log(`Cleanup: Deleted release ID ${createdReleaseId}`);
       } catch (e) {
         console.warn(`Cleanup failed for release ID ${createdReleaseId}`);
       }
     }
-    
-    // Note: The tag itself remains (can't easily delete tags via API without git refs)
   });
 
-  describe('createRelease', () => {
+  describe('create', () => {
     it('should create a release', async () => {
       try {
         const testId = generateTestId();
         createdTagName = `v0.0.0-${testId}`;
         
-        const release = await ReposService.reposCreateRelease(owner, repo, {
+        const release = await Github.Releases.create(owner, repo, {
           tag_name: createdTagName,
           name: `Test Release ${testId}`,
           body: 'This is a test release created by automated tests. It will be cleaned up automatically.',
-          draft: true, // Create as draft so it doesn't show publicly
+          draft: true,
           prerelease: true,
         });
 
@@ -54,10 +50,10 @@ describe('ReposService - Release Actions', () => {
     });
   });
 
-  describe('listReleases', () => {
+  describe('list', () => {
     it('should list releases for the repository', async () => {
       try {
-        const releases = await ReposService.reposListReleases(owner, repo, 10, 1);
+        const releases = await Github.Releases.list(owner, repo, 10, 1);
 
         expect(Array.isArray(releases)).toBe(true);
 
@@ -72,7 +68,7 @@ describe('ReposService - Release Actions', () => {
     });
   });
 
-  describe('getRelease', () => {
+  describe('get', () => {
     it('should get the created release by ID', async () => {
       if (!createdReleaseId) {
         console.warn('Skipping - no release was created');
@@ -80,7 +76,7 @@ describe('ReposService - Release Actions', () => {
       }
 
       try {
-        const release = await ReposService.reposGetRelease(owner, repo, createdReleaseId);
+        const release = await Github.Releases.get(owner, repo, createdReleaseId);
 
         expect(release).toBeDefined();
         expect(release.id).toBe(createdReleaseId);
@@ -96,13 +92,10 @@ describe('ReposService - Release Actions', () => {
     });
 
     it('should get release by tag (non-draft only)', async () => {
-      // Note: Draft releases don't have a published tag, so this only works for non-draft releases
-      // We'll try to get any existing release by tag from the repo
       try {
-        await sleep(1000); // Rate limit protection
+        await sleep(1000);
         
-        // First get list of releases to find a published (non-draft) one
-        const releases = await ReposService.reposListReleases(owner, repo, 10, 1);
+        const releases = await Github.Releases.list(owner, repo, 10, 1);
         const publishedRelease = releases.find(r => !r.draft);
         
         if (!publishedRelease) {
@@ -110,7 +103,7 @@ describe('ReposService - Release Actions', () => {
           return;
         }
 
-        const release = await ReposService.reposGetReleaseByTag(owner, repo, publishedRelease.tag_name);
+        const release = await Github.Releases.getByTag(owner, repo, publishedRelease.tag_name);
 
         expect(release).toBeDefined();
         expect(release.tag_name).toBe(publishedRelease.tag_name);
@@ -123,7 +116,7 @@ describe('ReposService - Release Actions', () => {
     });
   });
 
-  describe('updateRelease', () => {
+  describe('update', () => {
     it('should update the release', async () => {
       if (!createdReleaseId) {
         console.warn('Skipping - no release was created');
@@ -131,9 +124,9 @@ describe('ReposService - Release Actions', () => {
       }
 
       try {
-        await sleep(1000); // Rate limit protection
+        await sleep(1000);
         
-        const updated = await ReposService.reposUpdateRelease(owner, repo, createdReleaseId, {
+        const updated = await Github.Releases.update(owner, repo, createdReleaseId, {
           name: 'Updated Test Release',
           body: 'This release has been updated by automated tests.',
         });
@@ -149,7 +142,7 @@ describe('ReposService - Release Actions', () => {
     });
   });
 
-  describe('deleteRelease', () => {
+  describe('delete', () => {
     it('should delete the release', async () => {
       if (!createdReleaseId) {
         console.warn('Skipping - no release was created');
@@ -157,22 +150,20 @@ describe('ReposService - Release Actions', () => {
       }
 
       try {
-        await sleep(1000); // Rate limit protection
+        await sleep(1000);
         
-        await ReposService.reposDeleteRelease(owner, repo, createdReleaseId);
+        await Github.Releases.delete(owner, repo, createdReleaseId);
 
         console.log('Deleted release ID:', createdReleaseId);
         
-        // Verify deletion by trying to fetch it (should fail)
         try {
-          await ReposService.reposGetRelease(owner, repo, createdReleaseId);
+          await Github.Releases.get(owner, repo, createdReleaseId);
           throw new Error('Release should have been deleted');
         } catch (error: any) {
           expect(error.status).toBe(404);
           console.log('Verified: Release no longer exists');
         }
         
-        // Clear the ID so cleanup doesn't try to delete again
         createdReleaseId = undefined;
       } catch (error) {
         await handleRateLimit(error);

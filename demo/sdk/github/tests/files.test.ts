@@ -1,19 +1,17 @@
-import { ReposService } from '../services';
+import { Github } from '../api';
 import { getTestOwner, getTestRepo, handleRateLimit, generateTestId, sleep } from './setup';
 
-describe('ReposService - File Operations', () => {
+describe('Github.Repos - File Operations', () => {
   const owner = getTestOwner();
   const repo = getTestRepo();
   
-  // Track created files for cleanup
   let createdFilePath: string | undefined;
   let createdFileSha: string | undefined;
 
-  // Cleanup after all tests
   afterAll(async () => {
     if (createdFilePath && createdFileSha) {
       try {
-        await ReposService.reposDeleteFile(owner, repo, createdFilePath, {
+        await Github.Repos.deleteFile(owner, repo, createdFilePath, {
           message: 'Cleanup: Delete test file',
           sha: createdFileSha,
         });
@@ -27,8 +25,7 @@ describe('ReposService - File Operations', () => {
   describe('getContent', () => {
     it('should get file content from the repository', async () => {
       try {
-        // Try to get README or any common file
-        const content = await ReposService.reposGetContent(owner, repo, 'README.md');
+        const content = await Github.Repos.getContent(owner, repo, 'README.md');
 
         expect(content).toBeDefined();
         
@@ -47,7 +44,7 @@ describe('ReposService - File Operations', () => {
         if (error.status === 404) {
           console.log('README.md not found, trying package.json...');
           try {
-            const content = await ReposService.reposGetContent(owner, repo, 'package.json');
+            const content = await Github.Repos.getContent(owner, repo, 'package.json');
             expect(content).toBeDefined();
             console.log('Found package.json');
           } catch {
@@ -61,7 +58,7 @@ describe('ReposService - File Operations', () => {
 
     it('should list files in root directory', async () => {
       try {
-        const contents = await ReposService.reposGetContent(owner, repo, '');
+        const contents = await Github.Repos.getContent(owner, repo, '');
 
         expect(contents).toBeDefined();
         expect(Array.isArray(contents)).toBe(true);
@@ -78,14 +75,14 @@ describe('ReposService - File Operations', () => {
     });
   });
 
-  describe('createOrUpdateFileContents', () => {
+  describe('createOrUpdateFile', () => {
     it('should create a new file', async () => {
       try {
         const testId = generateTestId();
         createdFilePath = `test-files/${testId}.txt`;
         const content = `This is a test file created at ${new Date().toISOString()}\nTest ID: ${testId}`;
         
-        const result = await ReposService.reposCreateOrUpdateFileContents(
+        const result = await Github.Repos.createOrUpdateFile(
           owner,
           repo,
           createdFilePath,
@@ -115,11 +112,11 @@ describe('ReposService - File Operations', () => {
       }
 
       try {
-        await sleep(1000); // Rate limit protection
+        await sleep(1000);
         
         const newContent = `Updated content at ${new Date().toISOString()}`;
         
-        const result = await ReposService.reposCreateOrUpdateFileContents(
+        const result = await Github.Repos.createOrUpdateFile(
           owner,
           repo,
           createdFilePath,
@@ -133,7 +130,6 @@ describe('ReposService - File Operations', () => {
         expect(result).toBeDefined();
         expect(result.content).toHaveProperty('sha');
         
-        // Update the SHA for cleanup
         createdFileSha = result.content?.sha;
         
         console.log('Updated file:', createdFilePath);
@@ -152,9 +148,9 @@ describe('ReposService - File Operations', () => {
       }
 
       try {
-        await sleep(1000); // Rate limit protection
+        await sleep(1000);
         
-        const result = await ReposService.reposDeleteFile(
+        const result = await Github.Repos.deleteFile(
           owner,
           repo,
           createdFilePath,
@@ -170,7 +166,6 @@ describe('ReposService - File Operations', () => {
         console.log('Deleted file:', createdFilePath);
         console.log('Commit SHA:', result.commit.sha?.substring(0, 7));
         
-        // Clear references so cleanup doesn't try again
         createdFilePath = undefined;
         createdFileSha = undefined;
       } catch (error) {
@@ -182,7 +177,7 @@ describe('ReposService - File Operations', () => {
   describe('getReadme', () => {
     it('should get repository README', async () => {
       try {
-        const readme = await ReposService.reposGetReadme(owner, repo);
+        const readme = await Github.Repos.getReadme(owner, repo);
 
         expect(readme).toBeDefined();
         expect(readme).toHaveProperty('name');
