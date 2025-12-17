@@ -1,3 +1,10 @@
+/* generated using openapi-typescript-codegen -- do not edit */
+/* istanbul ignore file */
+/* tslint:disable */
+/* eslint-disable */
+/**
+ * Api Overview
+ */
 export type api_overview = {
     verifiable_password_authentication: boolean;
     ssh_key_fingerprints?: {
@@ -353,6 +360,9 @@ export type nullable_simple_commit = {
     } | null;
 };
 
+/**
+ * Organization Full
+ */
 export type organization_full = {
     login: string;
     id: number;
@@ -630,6 +640,9 @@ export type root = {
     user_search_url: string;
 };
 
+/**
+ * A GitHub user.
+ */
 export type simple_user = {
     name?: string | null;
     email?: string | null;
@@ -669,6 +682,9 @@ export type verification = {
     verified_at: string | null;
 };
 
+/**
+ * A GitHub Actions workflow
+ */
 export type workflow = {
     id: number;
     node_id: string;
@@ -891,6 +907,9 @@ export namespace team {
     }
 }
 
+/**
+ * Commit
+ */
 export type commit = {
     url: string;
     sha: string;
@@ -924,6 +943,9 @@ export type commit = {
     files?: Array<diff_entry>;
 };
 
+/**
+ * A repository on GitHub.
+ */
 export type repository = {
     id: number;
     node_id: string;
@@ -1275,6 +1297,9 @@ export type protected_branch_pull_request_review = {
     require_last_push_approval?: boolean;
 };
 
+/**
+ * Minimal Repository
+ */
 export type minimal_repository = {
     id: number;
     node_id: string;
@@ -1378,6 +1403,9 @@ export type minimal_repository = {
     custom_properties?: Record<string, any>;
 };
 
+/**
+ * Full Repository
+ */
 export type full_repository = {
     id: number;
     node_id: string;
@@ -1510,6 +1538,9 @@ export namespace full_repository {
     }
 }
 
+/**
+ * Issues are a great way to keep track of tasks, enhancements, and bugs for your projects.
+ */
 export type issue = {
     id: number;
     node_id: string;
@@ -1574,6 +1605,9 @@ export namespace issue {
     }
 }
 
+/**
+ * Comments provide a way for people to collaborate on an issue.
+ */
 export type issue_comment = {
     id: number;
     node_id: string;
@@ -1591,6 +1625,9 @@ export type issue_comment = {
     reactions?: reaction_rollup;
 };
 
+/**
+ * Pull Request Review
+ */
 export type pull_request_review = {
     id: number;
     node_id: string;
@@ -1637,6 +1674,9 @@ export namespace release_asset {
     }
 }
 
+/**
+ * A release.
+ */
 export type release = {
     url: string;
     html_url: string;
@@ -1701,6 +1741,9 @@ export type branch_protection = {
     };
 };
 
+/**
+ * An invocation of a workflow
+ */
 export type workflow_run = {
     id: number;
     name?: string | null;
@@ -1740,6 +1783,9 @@ export type workflow_run = {
     display_title: string;
 };
 
+/**
+ * Pull requests let you tell others about changes you've pushed to a repository on GitHub.
+ */
 export type pull_request = {
     url: string;
     id: number;
