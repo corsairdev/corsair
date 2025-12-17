@@ -47,6 +47,15 @@ program
 	});
 
 program
+	.command('db:schema')
+	.description('Generate ORM schema file from dbPlugins')
+	.option('-o, --out <path>', 'Output path for generated schema file')
+	.action(async (options: { out?: string }) => {
+		const { generateDbSchema } = await import('./commands/db-schema.js');
+		await generateDbSchema({ out: options.out });
+	});
+
+program
 	.command('config')
 	.description('Get the config')
 	.action(async () => {

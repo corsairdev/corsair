@@ -166,10 +166,15 @@ describe('Github.Repos - Extended Repository Operations', () => {
 				if (Array.isArray(stats)) {
 					console.log('Code frequency stats (last 5 weeks):');
 					stats.slice(-5).forEach((week: number[]) => {
-						if (Array.isArray(week) && week.length >= 3) {
-							const date = new Date(week[0] * 1000);
+						const [unixTime, additions, deletions] = week;
+						if (
+							typeof unixTime === 'number' &&
+							typeof additions === 'number' &&
+							typeof deletions === 'number'
+						) {
+							const date = new Date(unixTime * 1000);
 							console.log(
-								`  Week of ${date.toLocaleDateString()}: +${week[1]} / ${week[2]}`,
+								`  Week of ${date.toLocaleDateString()}: +${additions} / ${deletions}`,
 							);
 						}
 					});

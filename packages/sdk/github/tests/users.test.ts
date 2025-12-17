@@ -84,13 +84,19 @@ describe('Github.Users - GitHub Users API', () => {
 				expect(users.length).toBeLessThanOrEqual(5);
 
 				const firstUser = users[0];
+				if (!firstUser) {
+					throw new Error('Expected at least one user');
+				}
 				expect(firstUser).toHaveProperty('login');
 				expect(firstUser).toHaveProperty('id');
 				expect(firstUser).toHaveProperty('type');
 
 				console.log('Fetched users count:', users.length);
 				console.log('First user:', firstUser.login);
-				console.log('Last user:', users[users.length - 1].login);
+				const lastUser = users[users.length - 1];
+				if (lastUser) {
+					console.log('Last user:', lastUser.login);
+				}
 			} catch (error) {
 				await handleRateLimit(error);
 			}
@@ -102,7 +108,11 @@ describe('Github.Users - GitHub Users API', () => {
 
 				expect(firstPage.length).toBe(3);
 
-				const lastUserId = firstPage[firstPage.length - 1].id;
+				const lastUser = firstPage[firstPage.length - 1];
+				if (!lastUser) {
+					throw new Error('Expected last user');
+				}
+				const lastUserId = lastUser.id;
 				const secondPage = await Github.Users.list(lastUserId, 3);
 
 				expect(secondPage.length).toBeGreaterThan(0);

@@ -87,7 +87,8 @@
       "!**/playwright-report",
       "!**/.output",
       "!**/.tmp",
-      "!**/packages/create/template/**"
+      "!**/packages/create/template/**",
+      "!**/pnpm-store/**"
     ]
   }
 }

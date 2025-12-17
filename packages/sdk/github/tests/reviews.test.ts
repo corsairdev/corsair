@@ -22,9 +22,10 @@ describe('Github.PullRequests - Review Operations', () => {
 				1,
 			);
 
-			if (pulls.length > 0) {
-				pullNumber = pulls[0].number;
-				console.log(`Using PR #${pullNumber}: ${pulls[0].title}`);
+			const firstPull = pulls[0];
+			if (firstPull) {
+				pullNumber = firstPull.number;
+				console.log(`Using PR #${pullNumber}: ${firstPull.title}`);
 			} else {
 				console.log('No pull requests found in repository');
 				console.log('Note: Review tests require at least one pull request');
@@ -55,7 +56,10 @@ describe('Github.PullRequests - Review Operations', () => {
 				console.log(`Found ${reviews.length} reviews for PR #${pullNumber}`);
 
 				if (reviews.length > 0) {
-					reviewId = reviews[0].id;
+					const firstReview = reviews[0];
+					if (firstReview) {
+						reviewId = firstReview.id;
+					}
 
 					reviews.forEach((review) => {
 						console.log(`  Review ID ${review.id}:`);

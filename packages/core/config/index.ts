@@ -1,3 +1,4 @@
+import type { CorsairDBPlugin } from '../db';
 import type { SlackPlugin } from '../plugins/types';
 import type { DrizzlePostgresConfig } from './drizzle-postgres';
 import type { PrismaPostgresConfig } from './prisma-postgres';
@@ -47,6 +48,15 @@ export type BaseConfig = {
 	 * Any plugins for Corsair to use
 	 */
 	plugins?: BasePlugin;
+	/**
+	 * Database schema plugins (Better-Auth-style).
+	 *
+	 * These plugins contribute additional tables/fields which can be used to:
+	 * - generate ORM schema files
+	 * - generate migrations
+	 * - power Corsair's query/mutation generation with a single source of truth
+	 */
+	dbPlugins?: CorsairDBPlugin[] | undefined;
 };
 
 /**

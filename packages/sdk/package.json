@@ -24,9 +24,11 @@
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
     "test:ci": "jest --ci --coverage",
-    "send": "tsx test.ts"
+    "send": "tsx test.ts",
+    "sandbox:db:schema": "cd sandbox && tsx ../../cli/index.ts db:schema --out db/schema.ts"
   },
   "dependencies": {
+    "@corsair-ai/core": "workspace:*",
     "zod": "^3.25.76"
   },
   "devDependencies": {

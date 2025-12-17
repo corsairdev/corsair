@@ -13,4 +13,4 @@ const main = async () => {
 	console.log(JSON.stringify(generalChannel, null, 2));
 };
 
-main();
+await main();

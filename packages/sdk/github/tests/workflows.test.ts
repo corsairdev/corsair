@@ -20,7 +20,10 @@ describe('Github.Workflows - Workflow Operations', () => {
 				console.log('Total workflows:', result.total_count);
 
 				if (result.workflows.length > 0) {
-					workflowId = result.workflows[0].id;
+					const firstWorkflow = result.workflows[0];
+					if (firstWorkflow) {
+						workflowId = firstWorkflow.id;
+					}
 
 					result.workflows.forEach((workflow) => {
 						console.log(`  ID ${workflow.id}: ${workflow.name}`);
