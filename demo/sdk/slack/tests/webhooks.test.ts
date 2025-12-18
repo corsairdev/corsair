@@ -103,7 +103,7 @@ describe('Real Slack Webhook Events - Dynamic Tests', () => {
           const callback = jest.fn();
           handler.on('message', callback);
 
-          const result = await handler.handleWebhook({}, fixture.payload);
+          const result = await handler.handleWebhook({}, fixture.payload as any);
 
           expect(result.success).toBe(true);
           expect(callback).toHaveBeenCalled();
@@ -133,7 +133,7 @@ describe('Real Slack Webhook Events - Dynamic Tests', () => {
           const callback = jest.fn();
           handler.on('app_mention', callback);
 
-          const result = await handler.handleWebhook({}, fixture.payload);
+          const result = await handler.handleWebhook({}, fixture.payload as any);
 
           expect(result.success).toBe(true);
           expect(callback).toHaveBeenCalled();
@@ -162,7 +162,7 @@ describe('Real Slack Webhook Events - Dynamic Tests', () => {
           const callback = jest.fn();
           handler.on('file_shared', callback);
 
-          const result = await handler.handleWebhook({}, fixture.payload);
+          const result = await handler.handleWebhook({}, fixture.payload as any);
 
           expect(result.success).toBe(true);
           expect(callback).toHaveBeenCalled();
@@ -191,7 +191,7 @@ describe('Real Slack Webhook Events - Dynamic Tests', () => {
           const callback = jest.fn();
           handler.on('file_public', callback);
 
-          const result = await handler.handleWebhook({}, fixture.payload);
+          const result = await handler.handleWebhook({}, fixture.payload as any);
 
           expect(result.success).toBe(true);
           expect(callback).toHaveBeenCalled();
@@ -218,7 +218,7 @@ describe('Real Slack Webhook Events - Dynamic Tests', () => {
           const callback = jest.fn();
           handler.on('channel_created', callback);
 
-          const result = await handler.handleWebhook({}, fixture.payload);
+          const result = await handler.handleWebhook({}, fixture.payload as any);
 
           expect(result.success).toBe(true);
           expect(callback).toHaveBeenCalled();
@@ -246,7 +246,7 @@ describe('Real Slack Webhook Events - Dynamic Tests', () => {
           const callback = jest.fn();
           handler.on('reaction_added', callback);
 
-          const result = await handler.handleWebhook({}, fixture.payload);
+          const result = await handler.handleWebhook({}, fixture.payload as any);
 
           expect(result.success).toBe(true);
           expect(callback).toHaveBeenCalled();
@@ -274,7 +274,7 @@ describe('Real Slack Webhook Events - Dynamic Tests', () => {
           const callback = jest.fn();
           handler.on('reaction_removed', callback);
 
-          const result = await handler.handleWebhook({}, fixture.payload);
+          const result = await handler.handleWebhook({}, fixture.payload as any);
 
           expect(result.success).toBe(true);
           expect(callback).toHaveBeenCalled();
@@ -302,7 +302,7 @@ describe('Real Slack Webhook Events - Dynamic Tests', () => {
           const callback = jest.fn();
           handler.on('team_join', callback);
 
-          const result = await handler.handleWebhook({}, fixture.payload);
+          const result = await handler.handleWebhook({}, fixture.payload as any);
 
           expect(result.success).toBe(true);
           expect(callback).toHaveBeenCalled();
@@ -317,7 +317,7 @@ describe('Real Slack Webhook Events - Dynamic Tests', () => {
       });
     }
   });
-
+});
 
 describe('Fixture Statistics', () => {
   it('should report available fixtures', () => {
