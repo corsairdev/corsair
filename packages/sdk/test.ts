@@ -14,3 +14,9 @@ const main = async () => {
 };
 
 await main();
+
+const corsair = ({ database: {} }) => {};
+
+export const api = corsair({
+	database: {},
+});
