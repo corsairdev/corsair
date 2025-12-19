@@ -20,7 +20,9 @@
     "test:coverage": "jest --coverage",
     "test:verbose": "jest --verbose",
     "test:ci": "jest --ci --coverage",
-    "webhook-server": "ts-node tests/webhook-server.ts"
+    "webhook-server": "ts-node tests/webhook-server.ts",
+    "start-watch": "ts-node start-watch.ts",
+    "trigger-events": "ts-node trigger-events.ts"
   },
   "dependencies": {
     "express": "^4.18.2",

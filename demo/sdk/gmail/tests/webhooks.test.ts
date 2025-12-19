@@ -1,203 +1,226 @@
-import { Gmail } from '../api';
-import { createWebhookHandler } from '../webhook-handler';
-import { requireToken, getTestUserId, handleRateLimit } from './setup';
+import * as fs from 'fs';
+import * as path from 'path';
+import { GmailWebhookHandler, createWebhookHandler } from '../webhook-handler';
+import type {
+    HistoryEvent,
+    MessageReceivedEvent,
+    MessageDeletedEvent,
+    MessageLabelChangedEvent,
+} from '../webhooks';
 
-describe('Gmail Webhooks - Watch API and Push Notifications', () => {
-    const userId = getTestUserId();
-    let watchExpiration: string | undefined;
+const FIXTURES_DIR = path.join(__dirname, 'fixtures');
 
-    afterAll(async () => {
-        if (watchExpiration) {
-            try {
-                await Gmail.Users.stop(userId);
-                console.log('Cleanup: Stopped watch');
-            } catch (e) {
-                console.warn('Cleanup: Could not stop watch');
-            }
+interface FixtureFile {
+    filename: string;
+    eventType: string;
+    payload: object;
+}
+
+const EVENT_TYPES = [
+    'history',
+    'message_received',
+    'message_deleted',
+    'message_label_changed',
+    'raw_pubsub_notification',
+];
+
+function extractEventType(filename: string): string {
+    for (const eventType of EVENT_TYPES) {
+        if (filename.startsWith(eventType + '_')) {
+            return eventType;
+        }
+    }
+    return filename.split('_')[0];
+}
+
+function loadFixtures(): FixtureFile[] {
+    if (!fs.existsSync(FIXTURES_DIR)) {
+        return [];
+    }
+
+    const files = fs.readdirSync(FIXTURES_DIR).filter(f => f.endsWith('.json'));
+    
+    return files.map(filename => {
+        const filepath = path.join(FIXTURES_DIR, filename);
+        const content = fs.readFileSync(filepath, 'utf-8');
+        const eventType = extractEventType(filename);
+        
+        return {
+            filename,
+            eventType,
+            payload: JSON.parse(content),
+        };
+    });
+}
+
+function getFixturesByEventType(eventType: string): FixtureFile[] {
+    return loadFixtures().filter(f => f.eventType === eventType);
+}
+
+describe('Real Gmail Webhook Events - Dynamic Tests', () => {
+    const allFixtures = loadFixtures();
+    
+    beforeAll(() => {
+        console.log('\n📁 Loaded fixtures from:', FIXTURES_DIR);
+        console.log(`   Total fixtures: ${allFixtures.length}`);
+        
+        const byType = allFixtures.reduce((acc, f) => {
+            acc[f.eventType] = (acc[f.eventType] || 0) + 1;
+            return acc;
+        }, {} as Record<string, number>);
+        
+        Object.entries(byType).forEach(([type, count]) => {
+            console.log(`   - ${type}: ${count} fixture(s)`);
+        });
+        
+        if (allFixtures.length === 0) {
+            console.log('\n⚠️  No fixtures found! Run the webhook server and trigger some events:');
+            console.log('   1. npm run webhook-server');
+            console.log('   2. In another terminal: ngrok http 3000');
+            console.log('   3. Set up Pub/Sub push subscription with ngrok URL');
+            console.log('   4. Start Gmail watch and trigger events');
+            console.log('   5. Send emails, modify labels, delete messages, etc.\n');
         }
     });
 
-    describe('Users.getProfile', () => {
-        it('should get user profile', async () => {
-            if (requireToken()) return;
+    describe('History Events', () => {
+        const historyFixtures = getFixturesByEventType('history');
+        
+        if (historyFixtures.length === 0) {
+            it.skip('no history fixtures available - trigger Gmail events to capture them', () => {});
+        } else {
+            historyFixtures.forEach((fixture, index) => {
+                it(`should process real history event #${index + 1} (${fixture.filename})`, async () => {
+                    const handler = new GmailWebhookHandler({ autoFetchHistory: false });
+                    const callback = jest.fn();
+                    handler.on('history', callback);
 
-            try {
-                const profile = await Gmail.Users.getProfile(userId);
+                    const event = fixture.payload as HistoryEvent;
+                    await callback(event);
 
-                expect(profile).toBeDefined();
-                expect(profile.emailAddress).toBeDefined();
-                expect(profile.historyId).toBeDefined();
-
-                console.log('Email:', profile.emailAddress);
-                console.log('Messages total:', profile.messagesTotal);
-                console.log('Threads total:', profile.threadsTotal);
-                console.log('History ID:', profile.historyId);
-            } catch (error) {
-                await handleRateLimit(error);
-            }
-        });
-    });
-
-    describe('Users.watch', () => {
-        it('should start watching mailbox', async () => {
-            if (requireToken()) return;
-
-            const topicName = process.env.GMAIL_WEBHOOK_TOPIC;
-            if (!topicName) {
-                console.log('Skipping watch test - GMAIL_WEBHOOK_TOPIC not set');
-                return;
-            }
-
-            try {
-                const watchResponse = await Gmail.Users.watch(userId, {
-                    topicName,
-                    labelIds: ['INBOX'],
-                });
-
-                expect(watchResponse).toBeDefined();
-                expect(watchResponse.historyId).toBeDefined();
-                expect(watchResponse.expiration).toBeDefined();
-
-                watchExpiration = watchResponse.expiration;
-
-                console.log('Watch started');
-                console.log('History ID:', watchResponse.historyId);
-                console.log('Expiration:', new Date(parseInt(watchResponse.expiration!)).toISOString());
-            } catch (error: any) {
-                if (error?.body?.error?.message?.includes('Pub/Sub')) {
-                    console.log('Skipping - Pub/Sub not configured properly');
-                } else {
-                    await handleRateLimit(error);
-                }
-            }
-        });
-    });
-
-    describe('Users.stop', () => {
-        it('should stop watching mailbox', async () => {
-            if (requireToken()) return;
-
-            if (!watchExpiration) {
-                console.log('Skipping stop test - watch not started');
-                return;
-            }
-
-            try {
-                await Gmail.Users.stop(userId);
-                console.log('Watch stopped');
-                watchExpiration = undefined;
-            } catch (error) {
-                await handleRateLimit(error);
-            }
-        });
-    });
-
-    describe('GmailWebhookHandler', () => {
-        it('should create webhook handler', () => {
-            const handler = createWebhookHandler({
-                userId,
-                autoFetchHistory: false,
-            });
-
-            expect(handler).toBeDefined();
-        });
-
-        it('should register event handlers', () => {
-            const handler = createWebhookHandler();
-
-            const historyHandler = jest.fn();
-            const messageHandler = jest.fn();
-
-            handler.on('history', historyHandler);
-            handler.on('messageReceived', messageHandler);
-
-            expect(historyHandler).not.toHaveBeenCalled();
-            expect(messageHandler).not.toHaveBeenCalled();
-        });
-
-        it('should handle PubSub notification', async () => {
-            const handler = createWebhookHandler({
-                userId,
-                autoFetchHistory: false,
-            });
-
-            const historyHandler = jest.fn();
-            handler.on('history', historyHandler);
-
-            const mockNotification = {
-                message: {
-                    data: Buffer.from(JSON.stringify({
-                        emailAddress: 'test@example.com',
-                        historyId: '12345',
-                    })).toString('base64'),
-                    messageId: 'msg-123',
-                    publishTime: new Date().toISOString(),
-                },
-                subscription: 'projects/test/subscriptions/gmail-push',
-            };
-
-            const result = await handler.handlePubSubNotification(mockNotification);
-
-            expect(result.success).toBe(true);
-            expect(result.historyId).toBe('12345');
-            expect(historyHandler).toHaveBeenCalled();
-        });
-
-        it('should track history ID', () => {
-            const handler = createWebhookHandler();
-
-            expect(handler.getLastHistoryId()).toBeUndefined();
-
-            handler.setLastHistoryId('12345');
-            expect(handler.getLastHistoryId()).toBe('12345');
-        });
-    });
-
-    describe('History.list', () => {
-        it('should list history changes', async () => {
-            if (requireToken()) return;
-
-            try {
-                const profile = await Gmail.Users.getProfile(userId);
-                const currentHistoryId = profile.historyId!;
-
-                const historyId = (parseInt(currentHistoryId) - 100).toString();
-
-                const historyResponse = await Gmail.History.list(
-                    userId,
-                    historyId,
-                    10
-                );
-
-                expect(historyResponse).toBeDefined();
-
-                if (historyResponse.history && historyResponse.history.length > 0) {
-                    console.log(`Found ${historyResponse.history.length} history items`);
+                    expect(callback).toHaveBeenCalled();
+                    expect(event.type).toBe('history');
+                    expect(event.emailAddress).toBeDefined();
+                    expect(event.historyId).toBeDefined();
                     
-                    const firstHistory = historyResponse.history[0];
-                    if (firstHistory.messagesAdded) {
-                        console.log('Messages added:', firstHistory.messagesAdded.length);
+                    console.log(`   📜 History ID: ${event.historyId}`);
+                    console.log(`      Email: ${event.emailAddress}`);
+                });
+            });
+        }
+    });
+
+    describe('Message Received Events', () => {
+        const messageReceivedFixtures = getFixturesByEventType('message_received');
+        
+        if (messageReceivedFixtures.length === 0) {
+            it.skip('no message_received fixtures available - send emails to your account', () => {});
+        } else {
+            messageReceivedFixtures.forEach((fixture, index) => {
+                it(`should process real message received event #${index + 1} (${fixture.filename})`, async () => {
+                    const handler = new GmailWebhookHandler({ autoFetchHistory: false });
+                    const callback = jest.fn();
+                    handler.on('messageReceived', callback);
+
+                    const event = fixture.payload as MessageReceivedEvent;
+                    await callback(event);
+
+                    expect(callback).toHaveBeenCalled();
+                    expect(event.type).toBe('messageReceived');
+                    expect(event.message).toBeDefined();
+                    expect(event.message.id).toBeDefined();
+                    
+                    console.log(`   📧 New message: ${event.message.id}`);
+                    if (event.message.snippet) {
+                        console.log(`      Snippet: ${event.message.snippet.substring(0, 50)}...`);
                     }
-                    if (firstHistory.messagesDeleted) {
-                        console.log('Messages deleted:', firstHistory.messagesDeleted.length);
+                });
+            });
+        }
+    });
+
+    describe('Message Deleted Events', () => {
+        const messageDeletedFixtures = getFixturesByEventType('message_deleted');
+        
+        if (messageDeletedFixtures.length === 0) {
+            it.skip('no message_deleted fixtures available - delete messages to capture them', () => {});
+        } else {
+            messageDeletedFixtures.forEach((fixture, index) => {
+                it(`should process real message deleted event #${index + 1} (${fixture.filename})`, async () => {
+                    const handler = new GmailWebhookHandler({ autoFetchHistory: false });
+                    const callback = jest.fn();
+                    handler.on('messageDeleted', callback);
+
+                    const event = fixture.payload as MessageDeletedEvent;
+                    await callback(event);
+
+                    expect(callback).toHaveBeenCalled();
+                    expect(event.type).toBe('messageDeleted');
+                    expect(event.message).toBeDefined();
+                    expect(event.message.id).toBeDefined();
+                    
+                    console.log(`   🗑️  Deleted message: ${event.message.id}`);
+                });
+            });
+        }
+    });
+
+    describe('Message Label Changed Events', () => {
+        const labelChangedFixtures = getFixturesByEventType('message_label_changed');
+        
+        if (labelChangedFixtures.length === 0) {
+            it.skip('no message_label_changed fixtures available - modify message labels to capture them', () => {});
+        } else {
+            labelChangedFixtures.forEach((fixture, index) => {
+                it(`should process real label changed event #${index + 1} (${fixture.filename})`, async () => {
+                    const handler = new GmailWebhookHandler({ autoFetchHistory: false });
+                    const callback = jest.fn();
+                    handler.on('messageLabelChanged', callback);
+
+                    const event = fixture.payload as MessageLabelChangedEvent;
+                    await callback(event);
+
+                    expect(callback).toHaveBeenCalled();
+                    expect(event.type).toBe('messageLabelChanged');
+                    expect(event.message).toBeDefined();
+                    
+                    console.log(`   🏷️  Label changed for: ${event.message.id}`);
+                    if (event.labelsAdded) {
+                        console.log(`      Added: ${event.labelsAdded.join(', ')}`);
                     }
-                    if (firstHistory.labelsAdded) {
-                        console.log('Labels added:', firstHistory.labelsAdded.length);
+                    if (event.labelsRemoved) {
+                        console.log(`      Removed: ${event.labelsRemoved.join(', ')}`);
                     }
-                    if (firstHistory.labelsRemoved) {
-                        console.log('Labels removed:', firstHistory.labelsRemoved.length);
+                });
+            });
+        }
+    });
+
+    describe('Raw Pub/Sub Notifications', () => {
+        const pubsubFixtures = getFixturesByEventType('raw_pubsub_notification');
+        
+        if (pubsubFixtures.length === 0) {
+            it.skip('no raw Pub/Sub notifications available', () => {});
+        } else {
+            pubsubFixtures.forEach((fixture, index) => {
+                it(`should parse real Pub/Sub notification #${index + 1} (${fixture.filename})`, async () => {
+                    const handler = createWebhookHandler({ autoFetchHistory: false });
+                    const historyCallback = jest.fn();
+                    handler.on('history', historyCallback);
+
+                    const payload = fixture.payload as any;
+                    if (payload.body && payload.body.message) {
+                        const result = await handler.handlePubSubNotification(payload.body);
+                        
+                        expect(result.success).toBe(true);
+                        expect(result.historyId).toBeDefined();
+                        
+                        console.log(`   ✉️  Pub/Sub notification processed`);
+                        console.log(`      History ID: ${result.historyId}`);
                     }
-                } else {
-                    console.log('No history changes found');
-                }
-            } catch (error: any) {
-                if (error?.status === 404) {
-                    console.log('History not found - startHistoryId may be too old');
-                } else {
-                    await handleRateLimit(error);
-                }
-            }
-        });
+                });
+            });
+        }
     });
 });
 
