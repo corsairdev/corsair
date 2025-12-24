@@ -39,6 +39,1114 @@ importers:
         specifier: 'catalog:'
         version: 5.9.3
 
+  demo/my-app:
+    dependencies:
+      '@corsair-ai/core':
+        specifier: latest
+        version: link:../../packages/corsair
+      '@radix-ui/react-avatar':
+        specifier: ^1.1.10
+        version: 1.1.11(@types/react-dom@19.1.11(@types/react@19.2.6))(@types/react@19.2.6)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@radix-ui/react-dialog':
+        specifier: ^1.1.15
+        version: 1.1.15(@types/react-dom@19.1.11(@types/react@19.2.6))(@types/react@19.2.6)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@radix-ui/react-select':
+        specifier: ^2.2.6
+        version: 2.2.6(@types/react-dom@19.1.11(@types/react@19.2.6))(@types/react@19.2.6)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@radix-ui/react-slot':
+        specifier: ^1.2.3
+        version: 1.2.4(@types/react@19.2.6)(react@19.1.0)
+      '@tanstack/react-query':
+        specifier: ^5.90.5
+        version: 5.90.10(react@19.1.0)
+      '@trpc/client':
+        specifier: ^11.6.0
+        version: 11.7.1(@trpc/server@11.7.1(typescript@5.9.3))(typescript@5.9.3)
+      '@trpc/server':
+        specifier: ^11.6.0
+        version: 11.7.1(typescript@5.9.3)
+      '@trpc/tanstack-react-query':
+        specifier: ^11.6.0
+        version: 11.7.1(@tanstack/react-query@5.90.10(react@19.1.0))(@trpc/client@11.7.1(@trpc/server@11.7.1(typescript@5.9.3))(typescript@5.9.3))(@trpc/server@11.7.1(typescript@5.9.3))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(typescript@5.9.3)
+      class-variance-authority:
+        specifier: ^0.7.1
+        version: 0.7.1
+      clsx:
+        specifier: ^2.1.1
+        version: 2.1.1
+      corsair:
+        specifier: npm:@corsair-ai/core@latest
+        version: link:../../packages/corsair
+      dotenv:
+        specifier: ^17.2.3
+        version: 17.2.3
+      drizzle-orm:
+        specifier: ^0.31.2
+        version: 0.31.4(@cloudflare/workers-types@4.20251121.0)(@libsql/client@0.14.0)(@opentelemetry/api@1.9.0)(@planetscale/database@1.19.0)(@prisma/client@6.19.0(prisma@6.19.0(magicast@0.3.5)(typescript@5.9.3))(typescript@5.9.3))(@types/pg@8.15.6)(@types/react@19.2.6)(bun-types@1.3.3)(kysely@0.28.8)(mysql2@3.15.3)(pg@8.16.3)(postgres@3.4.7)(prisma@6.19.0(magicast@0.3.5)(typescript@5.9.3))(react@19.1.0)
+      drizzle-zod:
+        specifier: ^0.5.1
+        version: 0.5.1(drizzle-orm@0.31.4(@cloudflare/workers-types@4.20251121.0)(@libsql/client@0.14.0)(@opentelemetry/api@1.9.0)(@planetscale/database@1.19.0)(@prisma/client@6.19.0(prisma@6.19.0(magicast@0.3.5)(typescript@5.9.3))(typescript@5.9.3))(@types/pg@8.15.6)(@types/react@19.2.6)(bun-types@1.3.3)(kysely@0.28.8)(mysql2@3.15.3)(pg@8.16.3)(postgres@3.4.7)(prisma@6.19.0(magicast@0.3.5)(typescript@5.9.3))(react@19.1.0))(zod@3.25.76)
+      lucide-react:
+        specifier: ^0.546.0
+        version: 0.546.0(react@19.1.0)
+      next:
+        specifier: 15.5.6
+        version: 15.5.6(@opentelemetry/api@1.9.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      pg:
+        specifier: ^8.11.0
+        version: 8.16.3
+      react:
+        specifier: 19.1.0
+        version: 19.1.0
+      react-dom:
+        specifier: 19.1.0
+        version: 19.1.0(react@19.1.0)
+      server-only:
+        specifier: ^0.0.1
+        version: 0.0.1
+      tailwind-merge:
+        specifier: ^3.3.1
+        version: 3.4.0
+      tsx:
+        specifier: ^4.20.6
+        version: 4.20.6
+      zod:
+        specifier: ^3.23.8
+        version: 3.25.76
+    devDependencies:
+      '@eslint/eslintrc':
+        specifier: ^3
+        version: 3.3.1
+      '@tailwindcss/postcss':
+        specifier: ^4
+        version: 4.1.17
+      '@types/node':
+        specifier: ^20
+        version: 20.19.25
+      '@types/pg':
+        specifier: ^8.11.0
+        version: 8.15.6
+      '@types/react':
+        specifier: ^19
+        version: 19.2.6
+      '@types/react-dom':
+        specifier: ^19
+        version: 19.1.11(@types/react@19.2.6)
+      drizzle-kit:
+        specifier: ^0.22.7
+        version: 0.22.8
+      eslint:
+        specifier: ^9
+        version: 9.39.1(jiti@2.6.1)
+      eslint-config-next:
+        specifier: 15.5.6
+        version: 15.5.6(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3)
+      tailwindcss:
+        specifier: ^4
+        version: 4.1.17
+      tw-animate-css:
+        specifier: ^1.4.0
+        version: 1.4.0
+      typescript:
+        specifier: ^5
+        version: 5.9.3
+
+  demo/my-app1:
+    dependencies:
+      '@corsair-ai/core':
+        specifier: latest
+        version: link:../../packages/corsair
+      '@radix-ui/react-avatar':
+        specifier: ^1.1.10
+        version: 1.1.11(@types/react-dom@19.1.11(@types/react@19.2.6))(@types/react@19.2.6)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@radix-ui/react-dialog':
+        specifier: ^1.1.15
+        version: 1.1.15(@types/react-dom@19.1.11(@types/react@19.2.6))(@types/react@19.2.6)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@radix-ui/react-select':
+        specifier: ^2.2.6
+        version: 2.2.6(@types/react-dom@19.1.11(@types/react@19.2.6))(@types/react@19.2.6)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@radix-ui/react-slot':
+        specifier: ^1.2.3
+        version: 1.2.4(@types/react@19.2.6)(react@19.1.0)
+      '@tanstack/react-query':
+        specifier: ^5.90.5
+        version: 5.90.10(react@19.1.0)
+      '@trpc/client':
+        specifier: ^11.6.0
+        version: 11.7.1(@trpc/server@11.7.1(typescript@5.9.3))(typescript@5.9.3)
+      '@trpc/server':
+        specifier: ^11.6.0
+        version: 11.7.1(typescript@5.9.3)
+      '@trpc/tanstack-react-query':
+        specifier: ^11.6.0
+        version: 11.7.1(@tanstack/react-query@5.90.10(react@19.1.0))(@trpc/client@11.7.1(@trpc/server@11.7.1(typescript@5.9.3))(typescript@5.9.3))(@trpc/server@11.7.1(typescript@5.9.3))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(typescript@5.9.3)
+      class-variance-authority:
+        specifier: ^0.7.1
+        version: 0.7.1
+      clsx:
+        specifier: ^2.1.1
+        version: 2.1.1
+      corsair:
+        specifier: npm:@corsair-ai/core@latest
+        version: link:../../packages/corsair
+      dotenv:
+        specifier: ^17.2.3
+        version: 17.2.3
+      drizzle-orm:
+        specifier: ^0.31.2
+        version: 0.31.4(@cloudflare/workers-types@4.20251121.0)(@libsql/client@0.14.0)(@opentelemetry/api@1.9.0)(@planetscale/database@1.19.0)(@prisma/client@6.19.0(prisma@6.19.0(magicast@0.3.5)(typescript@5.9.3))(typescript@5.9.3))(@types/pg@8.15.6)(@types/react@19.2.6)(bun-types@1.3.3)(kysely@0.28.8)(mysql2@3.15.3)(pg@8.16.3)(postgres@3.4.7)(prisma@6.19.0(magicast@0.3.5)(typescript@5.9.3))(react@19.1.0)
+      drizzle-zod:
+        specifier: ^0.5.1
+        version: 0.5.1(drizzle-orm@0.31.4(@cloudflare/workers-types@4.20251121.0)(@libsql/client@0.14.0)(@opentelemetry/api@1.9.0)(@planetscale/database@1.19.0)(@prisma/client@6.19.0(prisma@6.19.0(magicast@0.3.5)(typescript@5.9.3))(typescript@5.9.3))(@types/pg@8.15.6)(@types/react@19.2.6)(bun-types@1.3.3)(kysely@0.28.8)(mysql2@3.15.3)(pg@8.16.3)(postgres@3.4.7)(prisma@6.19.0(magicast@0.3.5)(typescript@5.9.3))(react@19.1.0))(zod@3.25.76)
+      lucide-react:
+        specifier: ^0.546.0
+        version: 0.546.0(react@19.1.0)
+      next:
+        specifier: 15.5.6
+        version: 15.5.6(@opentelemetry/api@1.9.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      pg:
+        specifier: ^8.11.0
+        version: 8.16.3
+      react:
+        specifier: 19.1.0
+        version: 19.1.0
+      react-dom:
+        specifier: 19.1.0
+        version: 19.1.0(react@19.1.0)
+      server-only:
+        specifier: ^0.0.1
+        version: 0.0.1
+      tailwind-merge:
+        specifier: ^3.3.1
+        version: 3.4.0
+      tsx:
+        specifier: ^4.20.6
+        version: 4.20.6
+      zod:
+        specifier: ^3.23.8
+        version: 3.25.76
+    devDependencies:
+      '@eslint/eslintrc':
+        specifier: ^3
+        version: 3.3.1
+      '@tailwindcss/postcss':
+        specifier: ^4
+        version: 4.1.17
+      '@types/node':
+        specifier: ^20
+        version: 20.19.25
+      '@types/pg':
+        specifier: ^8.11.0
+        version: 8.15.6
+      '@types/react':
+        specifier: ^19
+        version: 19.2.6
+      '@types/react-dom':
+        specifier: ^19
+        version: 19.1.11(@types/react@19.2.6)
+      drizzle-kit:
+        specifier: ^0.22.7
+        version: 0.22.8
+      eslint:
+        specifier: ^9
+        version: 9.39.1(jiti@2.6.1)
+      eslint-config-next:
+        specifier: 15.5.6
+        version: 15.5.6(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3)
+      tailwindcss:
+        specifier: ^4
+        version: 4.1.17
+      tw-animate-css:
+        specifier: ^1.4.0
+        version: 1.4.0
+      typescript:
+        specifier: ^5
+        version: 5.9.3
+
+  demo/my-app2:
+    dependencies:
+      '@corsair-ai/core':
+        specifier: latest
+        version: link:../../packages/corsair
+      '@radix-ui/react-avatar':
+        specifier: ^1.1.10
+        version: 1.1.11(@types/react-dom@19.1.11(@types/react@19.2.6))(@types/react@19.2.6)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@radix-ui/react-dialog':
+        specifier: ^1.1.15
+        version: 1.1.15(@types/react-dom@19.1.11(@types/react@19.2.6))(@types/react@19.2.6)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@radix-ui/react-select':
+        specifier: ^2.2.6
+        version: 2.2.6(@types/react-dom@19.1.11(@types/react@19.2.6))(@types/react@19.2.6)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@radix-ui/react-slot':
+        specifier: ^1.2.3
+        version: 1.2.4(@types/react@19.2.6)(react@19.1.0)
+      '@tanstack/react-query':
+        specifier: ^5.90.5
+        version: 5.90.10(react@19.1.0)
+      '@trpc/client':
+        specifier: ^11.6.0
+        version: 11.7.1(@trpc/server@11.7.1(typescript@5.9.3))(typescript@5.9.3)
+      '@trpc/server':
+        specifier: ^11.6.0
+        version: 11.7.1(typescript@5.9.3)
+      '@trpc/tanstack-react-query':
+        specifier: ^11.6.0
+        version: 11.7.1(@tanstack/react-query@5.90.10(react@19.1.0))(@trpc/client@11.7.1(@trpc/server@11.7.1(typescript@5.9.3))(typescript@5.9.3))(@trpc/server@11.7.1(typescript@5.9.3))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(typescript@5.9.3)
+      class-variance-authority:
+        specifier: ^0.7.1
+        version: 0.7.1
+      clsx:
+        specifier: ^2.1.1
+        version: 2.1.1
+      corsair:
+        specifier: npm:@corsair-ai/core@latest
+        version: link:../../packages/corsair
+      dotenv:
+        specifier: ^17.2.3
+        version: 17.2.3
+      drizzle-orm:
+        specifier: ^0.31.2
+        version: 0.31.4(@cloudflare/workers-types@4.20251121.0)(@libsql/client@0.14.0)(@opentelemetry/api@1.9.0)(@planetscale/database@1.19.0)(@prisma/client@6.19.0(prisma@6.19.0(magicast@0.3.5)(typescript@5.9.3))(typescript@5.9.3))(@types/pg@8.15.6)(@types/react@19.2.6)(bun-types@1.3.3)(kysely@0.28.8)(mysql2@3.15.3)(pg@8.16.3)(postgres@3.4.7)(prisma@6.19.0(magicast@0.3.5)(typescript@5.9.3))(react@19.1.0)
+      drizzle-zod:
+        specifier: ^0.5.1
+        version: 0.5.1(drizzle-orm@0.31.4(@cloudflare/workers-types@4.20251121.0)(@libsql/client@0.14.0)(@opentelemetry/api@1.9.0)(@planetscale/database@1.19.0)(@prisma/client@6.19.0(prisma@6.19.0(magicast@0.3.5)(typescript@5.9.3))(typescript@5.9.3))(@types/pg@8.15.6)(@types/react@19.2.6)(bun-types@1.3.3)(kysely@0.28.8)(mysql2@3.15.3)(pg@8.16.3)(postgres@3.4.7)(prisma@6.19.0(magicast@0.3.5)(typescript@5.9.3))(react@19.1.0))(zod@3.25.76)
+      lucide-react:
+        specifier: ^0.546.0
+        version: 0.546.0(react@19.1.0)
+      next:
+        specifier: 15.5.6
+        version: 15.5.6(@opentelemetry/api@1.9.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      pg:
+        specifier: ^8.11.0
+        version: 8.16.3
+      react:
+        specifier: 19.1.0
+        version: 19.1.0
+      react-dom:
+        specifier: 19.1.0
+        version: 19.1.0(react@19.1.0)
+      server-only:
+        specifier: ^0.0.1
+        version: 0.0.1
+      tailwind-merge:
+        specifier: ^3.3.1
+        version: 3.4.0
+      tsx:
+        specifier: ^4.20.6
+        version: 4.20.6
+      zod:
+        specifier: ^3.23.8
+        version: 3.25.76
+    devDependencies:
+      '@eslint/eslintrc':
+        specifier: ^3
+        version: 3.3.1
+      '@tailwindcss/postcss':
+        specifier: ^4
+        version: 4.1.17
+      '@types/node':
+        specifier: ^20
+        version: 20.19.25
+      '@types/pg':
+        specifier: ^8.11.0
+        version: 8.15.6
+      '@types/react':
+        specifier: ^19
+        version: 19.2.6
+      '@types/react-dom':
+        specifier: ^19
+        version: 19.1.11(@types/react@19.2.6)
+      drizzle-kit:
+        specifier: ^0.22.7
+        version: 0.22.8
+      eslint:
+        specifier: ^9
+        version: 9.39.1(jiti@2.6.1)
+      eslint-config-next:
+        specifier: 15.5.6
+        version: 15.5.6(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3)
+      tailwindcss:
+        specifier: ^4
+        version: 4.1.17
+      tw-animate-css:
+        specifier: ^1.4.0
+        version: 1.4.0
+      typescript:
+        specifier: ^5
+        version: 5.9.3
+
+  demo/my-app3:
+    dependencies:
+      '@corsair-ai/core':
+        specifier: latest
+        version: link:../../packages/corsair
+      '@radix-ui/react-avatar':
+        specifier: ^1.1.10
+        version: 1.1.11(@types/react-dom@19.1.11(@types/react@19.2.6))(@types/react@19.2.6)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@radix-ui/react-dialog':
+        specifier: ^1.1.15
+        version: 1.1.15(@types/react-dom@19.1.11(@types/react@19.2.6))(@types/react@19.2.6)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@radix-ui/react-select':
+        specifier: ^2.2.6
+        version: 2.2.6(@types/react-dom@19.1.11(@types/react@19.2.6))(@types/react@19.2.6)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@radix-ui/react-slot':
+        specifier: ^1.2.3
+        version: 1.2.4(@types/react@19.2.6)(react@19.1.0)
+      '@tanstack/react-query':
+        specifier: ^5.90.5
+        version: 5.90.10(react@19.1.0)
+      '@trpc/client':
+        specifier: ^11.6.0
+        version: 11.7.1(@trpc/server@11.7.1(typescript@5.9.3))(typescript@5.9.3)
+      '@trpc/server':
+        specifier: ^11.6.0
+        version: 11.7.1(typescript@5.9.3)
+      '@trpc/tanstack-react-query':
+        specifier: ^11.6.0
+        version: 11.7.1(@tanstack/react-query@5.90.10(react@19.1.0))(@trpc/client@11.7.1(@trpc/server@11.7.1(typescript@5.9.3))(typescript@5.9.3))(@trpc/server@11.7.1(typescript@5.9.3))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(typescript@5.9.3)
+      class-variance-authority:
+        specifier: ^0.7.1
+        version: 0.7.1
+      clsx:
+        specifier: ^2.1.1
+        version: 2.1.1
+      corsair:
+        specifier: npm:@corsair-ai/core@latest
+        version: link:../../packages/corsair
+      dotenv:
+        specifier: ^17.2.3
+        version: 17.2.3
+      drizzle-orm:
+        specifier: ^0.31.2
+        version: 0.31.4(@cloudflare/workers-types@4.20251121.0)(@libsql/client@0.14.0)(@opentelemetry/api@1.9.0)(@planetscale/database@1.19.0)(@prisma/client@6.19.0(prisma@6.19.0(magicast@0.3.5)(typescript@5.9.3))(typescript@5.9.3))(@types/pg@8.15.6)(@types/react@19.2.6)(bun-types@1.3.3)(kysely@0.28.8)(mysql2@3.15.3)(pg@8.16.3)(postgres@3.4.7)(prisma@6.19.0(magicast@0.3.5)(typescript@5.9.3))(react@19.1.0)
+      drizzle-zod:
+        specifier: ^0.5.1
+        version: 0.5.1(drizzle-orm@0.31.4(@cloudflare/workers-types@4.20251121.0)(@libsql/client@0.14.0)(@opentelemetry/api@1.9.0)(@planetscale/database@1.19.0)(@prisma/client@6.19.0(prisma@6.19.0(magicast@0.3.5)(typescript@5.9.3))(typescript@5.9.3))(@types/pg@8.15.6)(@types/react@19.2.6)(bun-types@1.3.3)(kysely@0.28.8)(mysql2@3.15.3)(pg@8.16.3)(postgres@3.4.7)(prisma@6.19.0(magicast@0.3.5)(typescript@5.9.3))(react@19.1.0))(zod@3.25.76)
+      lucide-react:
+        specifier: ^0.546.0
+        version: 0.546.0(react@19.1.0)
+      next:
+        specifier: 15.5.6
+        version: 15.5.6(@opentelemetry/api@1.9.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      pg:
+        specifier: ^8.11.0
+        version: 8.16.3
+      react:
+        specifier: 19.1.0
+        version: 19.1.0
+      react-dom:
+        specifier: 19.1.0
+        version: 19.1.0(react@19.1.0)
+      server-only:
+        specifier: ^0.0.1
+        version: 0.0.1
+      tailwind-merge:
+        specifier: ^3.3.1
+        version: 3.4.0
+      tsx:
+        specifier: ^4.20.6
+        version: 4.20.6
+      zod:
+        specifier: ^3.23.8
+        version: 3.25.76
+    devDependencies:
+      '@eslint/eslintrc':
+        specifier: ^3
+        version: 3.3.1
+      '@tailwindcss/postcss':
+        specifier: ^4
+        version: 4.1.17
+      '@types/node':
+        specifier: ^20
+        version: 20.19.25
+      '@types/pg':
+        specifier: ^8.11.0
+        version: 8.15.6
+      '@types/react':
+        specifier: ^19
+        version: 19.2.6
+      '@types/react-dom':
+        specifier: ^19
+        version: 19.1.11(@types/react@19.2.6)
+      drizzle-kit:
+        specifier: ^0.22.7
+        version: 0.22.8
+      eslint:
+        specifier: ^9
+        version: 9.39.1(jiti@2.6.1)
+      eslint-config-next:
+        specifier: 15.5.6
+        version: 15.5.6(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3)
+      tailwindcss:
+        specifier: ^4
+        version: 4.1.17
+      tw-animate-css:
+        specifier: ^1.4.0
+        version: 1.4.0
+      typescript:
+        specifier: ^5
+        version: 5.9.3
+
+  demo/my-app4:
+    dependencies:
+      '@corsair-ai/core':
+        specifier: latest
+        version: link:../../packages/corsair
+      '@radix-ui/react-avatar':
+        specifier: ^1.1.10
+        version: 1.1.11(@types/react-dom@19.1.11(@types/react@19.2.6))(@types/react@19.2.6)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@radix-ui/react-dialog':
+        specifier: ^1.1.15
+        version: 1.1.15(@types/react-dom@19.1.11(@types/react@19.2.6))(@types/react@19.2.6)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@radix-ui/react-select':
+        specifier: ^2.2.6
+        version: 2.2.6(@types/react-dom@19.1.11(@types/react@19.2.6))(@types/react@19.2.6)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@radix-ui/react-slot':
+        specifier: ^1.2.3
+        version: 1.2.4(@types/react@19.2.6)(react@19.1.0)
+      '@tanstack/react-query':
+        specifier: ^5.90.5
+        version: 5.90.10(react@19.1.0)
+      '@trpc/client':
+        specifier: ^11.6.0
+        version: 11.7.1(@trpc/server@11.7.1(typescript@5.9.3))(typescript@5.9.3)
+      '@trpc/server':
+        specifier: ^11.6.0
+        version: 11.7.1(typescript@5.9.3)
+      '@trpc/tanstack-react-query':
+        specifier: ^11.6.0
+        version: 11.7.1(@tanstack/react-query@5.90.10(react@19.1.0))(@trpc/client@11.7.1(@trpc/server@11.7.1(typescript@5.9.3))(typescript@5.9.3))(@trpc/server@11.7.1(typescript@5.9.3))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(typescript@5.9.3)
+      class-variance-authority:
+        specifier: ^0.7.1
+        version: 0.7.1
+      clsx:
+        specifier: ^2.1.1
+        version: 2.1.1
+      corsair:
+        specifier: npm:@corsair-ai/core@latest
+        version: link:../../packages/corsair
+      dotenv:
+        specifier: ^17.2.3
+        version: 17.2.3
+      drizzle-orm:
+        specifier: ^0.31.2
+        version: 0.31.4(@cloudflare/workers-types@4.20251121.0)(@libsql/client@0.14.0)(@opentelemetry/api@1.9.0)(@planetscale/database@1.19.0)(@prisma/client@6.19.0(prisma@6.19.0(magicast@0.3.5)(typescript@5.9.3))(typescript@5.9.3))(@types/pg@8.15.6)(@types/react@19.2.6)(bun-types@1.3.3)(kysely@0.28.8)(mysql2@3.15.3)(pg@8.16.3)(postgres@3.4.7)(prisma@6.19.0(magicast@0.3.5)(typescript@5.9.3))(react@19.1.0)
+      drizzle-zod:
+        specifier: ^0.5.1
+        version: 0.5.1(drizzle-orm@0.31.4(@cloudflare/workers-types@4.20251121.0)(@libsql/client@0.14.0)(@opentelemetry/api@1.9.0)(@planetscale/database@1.19.0)(@prisma/client@6.19.0(prisma@6.19.0(magicast@0.3.5)(typescript@5.9.3))(typescript@5.9.3))(@types/pg@8.15.6)(@types/react@19.2.6)(bun-types@1.3.3)(kysely@0.28.8)(mysql2@3.15.3)(pg@8.16.3)(postgres@3.4.7)(prisma@6.19.0(magicast@0.3.5)(typescript@5.9.3))(react@19.1.0))(zod@3.25.76)
+      lucide-react:
+        specifier: ^0.546.0
+        version: 0.546.0(react@19.1.0)
+      next:
+        specifier: 15.5.6
+        version: 15.5.6(@opentelemetry/api@1.9.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      pg:
+        specifier: ^8.11.0
+        version: 8.16.3
+      react:
+        specifier: 19.1.0
+        version: 19.1.0
+      react-dom:
+        specifier: 19.1.0
+        version: 19.1.0(react@19.1.0)
+      server-only:
+        specifier: ^0.0.1
+        version: 0.0.1
+      tailwind-merge:
+        specifier: ^3.3.1
+        version: 3.4.0
+      tsx:
+        specifier: ^4.20.6
+        version: 4.20.6
+      zod:
+        specifier: ^3.23.8
+        version: 3.25.76
+    devDependencies:
+      '@eslint/eslintrc':
+        specifier: ^3
+        version: 3.3.1
+      '@tailwindcss/postcss':
+        specifier: ^4
+        version: 4.1.17
+      '@types/node':
+        specifier: ^20
+        version: 20.19.25
+      '@types/pg':
+        specifier: ^8.11.0
+        version: 8.15.6
+      '@types/react':
+        specifier: ^19
+        version: 19.2.6
+      '@types/react-dom':
+        specifier: ^19
+        version: 19.1.11(@types/react@19.2.6)
+      drizzle-kit:
+        specifier: ^0.22.7
+        version: 0.22.8
+      eslint:
+        specifier: ^9
+        version: 9.39.1(jiti@2.6.1)
+      eslint-config-next:
+        specifier: 15.5.6
+        version: 15.5.6(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3)
+      tailwindcss:
+        specifier: ^4
+        version: 4.1.17
+      tw-animate-css:
+        specifier: ^1.4.0
+        version: 1.4.0
+      typescript:
+        specifier: ^5
+        version: 5.9.3
+
+  demo/my-app5:
+    dependencies:
+      '@corsair-ai/core':
+        specifier: latest
+        version: link:../../packages/corsair
+      '@radix-ui/react-avatar':
+        specifier: ^1.1.10
+        version: 1.1.11(@types/react-dom@19.1.11(@types/react@19.2.6))(@types/react@19.2.6)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@radix-ui/react-dialog':
+        specifier: ^1.1.15
+        version: 1.1.15(@types/react-dom@19.1.11(@types/react@19.2.6))(@types/react@19.2.6)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@radix-ui/react-select':
+        specifier: ^2.2.6
+        version: 2.2.6(@types/react-dom@19.1.11(@types/react@19.2.6))(@types/react@19.2.6)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@radix-ui/react-slot':
+        specifier: ^1.2.3
+        version: 1.2.4(@types/react@19.2.6)(react@19.1.0)
+      '@tanstack/react-query':
+        specifier: ^5.90.5
+        version: 5.90.10(react@19.1.0)
+      '@trpc/client':
+        specifier: ^11.6.0
+        version: 11.7.1(@trpc/server@11.7.1(typescript@5.9.3))(typescript@5.9.3)
+      '@trpc/server':
+        specifier: ^11.6.0
+        version: 11.7.1(typescript@5.9.3)
+      '@trpc/tanstack-react-query':
+        specifier: ^11.6.0
+        version: 11.7.1(@tanstack/react-query@5.90.10(react@19.1.0))(@trpc/client@11.7.1(@trpc/server@11.7.1(typescript@5.9.3))(typescript@5.9.3))(@trpc/server@11.7.1(typescript@5.9.3))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(typescript@5.9.3)
+      class-variance-authority:
+        specifier: ^0.7.1
+        version: 0.7.1
+      clsx:
+        specifier: ^2.1.1
+        version: 2.1.1
+      corsair:
+        specifier: npm:@corsair-ai/core@latest
+        version: link:../../packages/corsair
+      dotenv:
+        specifier: ^17.2.3
+        version: 17.2.3
+      drizzle-orm:
+        specifier: ^0.31.2
+        version: 0.31.4(@cloudflare/workers-types@4.20251121.0)(@libsql/client@0.14.0)(@opentelemetry/api@1.9.0)(@planetscale/database@1.19.0)(@prisma/client@6.19.0(prisma@6.19.0(magicast@0.3.5)(typescript@5.9.3))(typescript@5.9.3))(@types/pg@8.15.6)(@types/react@19.2.6)(bun-types@1.3.3)(kysely@0.28.8)(mysql2@3.15.3)(pg@8.16.3)(postgres@3.4.7)(prisma@6.19.0(magicast@0.3.5)(typescript@5.9.3))(react@19.1.0)
+      drizzle-zod:
+        specifier: ^0.5.1
+        version: 0.5.1(drizzle-orm@0.31.4(@cloudflare/workers-types@4.20251121.0)(@libsql/client@0.14.0)(@opentelemetry/api@1.9.0)(@planetscale/database@1.19.0)(@prisma/client@6.19.0(prisma@6.19.0(magicast@0.3.5)(typescript@5.9.3))(typescript@5.9.3))(@types/pg@8.15.6)(@types/react@19.2.6)(bun-types@1.3.3)(kysely@0.28.8)(mysql2@3.15.3)(pg@8.16.3)(postgres@3.4.7)(prisma@6.19.0(magicast@0.3.5)(typescript@5.9.3))(react@19.1.0))(zod@3.25.76)
+      lucide-react:
+        specifier: ^0.546.0
+        version: 0.546.0(react@19.1.0)
+      next:
+        specifier: 15.5.6
+        version: 15.5.6(@opentelemetry/api@1.9.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      pg:
+        specifier: ^8.11.0
+        version: 8.16.3
+      react:
+        specifier: 19.1.0
+        version: 19.1.0
+      react-dom:
+        specifier: 19.1.0
+        version: 19.1.0(react@19.1.0)
+      server-only:
+        specifier: ^0.0.1
+        version: 0.0.1
+      tailwind-merge:
+        specifier: ^3.3.1
+        version: 3.4.0
+      tsx:
+        specifier: ^4.20.6
+        version: 4.20.6
+      zod:
+        specifier: ^3.23.8
+        version: 3.25.76
+    devDependencies:
+      '@eslint/eslintrc':
+        specifier: ^3
+        version: 3.3.1
+      '@tailwindcss/postcss':
+        specifier: ^4
+        version: 4.1.17
+      '@types/node':
+        specifier: ^20
+        version: 20.19.25
+      '@types/pg':
+        specifier: ^8.11.0
+        version: 8.15.6
+      '@types/react':
+        specifier: ^19
+        version: 19.2.6
+      '@types/react-dom':
+        specifier: ^19
+        version: 19.1.11(@types/react@19.2.6)
+      drizzle-kit:
+        specifier: ^0.22.7
+        version: 0.22.8
+      eslint:
+        specifier: ^9
+        version: 9.39.1(jiti@2.6.1)
+      eslint-config-next:
+        specifier: 15.5.6
+        version: 15.5.6(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3)
+      tailwindcss:
+        specifier: ^4
+        version: 4.1.17
+      tw-animate-css:
+        specifier: ^1.4.0
+        version: 1.4.0
+      typescript:
+        specifier: ^5
+        version: 5.9.3
+
+  demo/my-app6:
+    dependencies:
+      '@corsair-ai/core':
+        specifier: latest
+        version: link:../../packages/corsair
+      '@radix-ui/react-avatar':
+        specifier: ^1.1.10
+        version: 1.1.11(@types/react-dom@19.1.11(@types/react@19.2.6))(@types/react@19.2.6)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@radix-ui/react-dialog':
+        specifier: ^1.1.15
+        version: 1.1.15(@types/react-dom@19.1.11(@types/react@19.2.6))(@types/react@19.2.6)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@radix-ui/react-select':
+        specifier: ^2.2.6
+        version: 2.2.6(@types/react-dom@19.1.11(@types/react@19.2.6))(@types/react@19.2.6)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@radix-ui/react-slot':
+        specifier: ^1.2.3
+        version: 1.2.4(@types/react@19.2.6)(react@19.1.0)
+      '@tanstack/react-query':
+        specifier: ^5.90.5
+        version: 5.90.10(react@19.1.0)
+      '@trpc/client':
+        specifier: ^11.6.0
+        version: 11.7.1(@trpc/server@11.7.1(typescript@5.9.3))(typescript@5.9.3)
+      '@trpc/server':
+        specifier: ^11.6.0
+        version: 11.7.1(typescript@5.9.3)
+      '@trpc/tanstack-react-query':
+        specifier: ^11.6.0
+        version: 11.7.1(@tanstack/react-query@5.90.10(react@19.1.0))(@trpc/client@11.7.1(@trpc/server@11.7.1(typescript@5.9.3))(typescript@5.9.3))(@trpc/server@11.7.1(typescript@5.9.3))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(typescript@5.9.3)
+      class-variance-authority:
+        specifier: ^0.7.1
+        version: 0.7.1
+      clsx:
+        specifier: ^2.1.1
+        version: 2.1.1
+      corsair:
+        specifier: npm:@corsair-ai/core@latest
+        version: link:../../packages/corsair
+      dotenv:
+        specifier: ^17.2.3
+        version: 17.2.3
+      drizzle-orm:
+        specifier: ^0.31.2
+        version: 0.31.4(@cloudflare/workers-types@4.20251121.0)(@libsql/client@0.14.0)(@opentelemetry/api@1.9.0)(@planetscale/database@1.19.0)(@prisma/client@6.19.0(prisma@6.19.0(magicast@0.3.5)(typescript@5.9.3))(typescript@5.9.3))(@types/pg@8.15.6)(@types/react@19.2.6)(bun-types@1.3.3)(kysely@0.28.8)(mysql2@3.15.3)(pg@8.16.3)(postgres@3.4.7)(prisma@6.19.0(magicast@0.3.5)(typescript@5.9.3))(react@19.1.0)
+      drizzle-zod:
+        specifier: ^0.5.1
+        version: 0.5.1(drizzle-orm@0.31.4(@cloudflare/workers-types@4.20251121.0)(@libsql/client@0.14.0)(@opentelemetry/api@1.9.0)(@planetscale/database@1.19.0)(@prisma/client@6.19.0(prisma@6.19.0(magicast@0.3.5)(typescript@5.9.3))(typescript@5.9.3))(@types/pg@8.15.6)(@types/react@19.2.6)(bun-types@1.3.3)(kysely@0.28.8)(mysql2@3.15.3)(pg@8.16.3)(postgres@3.4.7)(prisma@6.19.0(magicast@0.3.5)(typescript@5.9.3))(react@19.1.0))(zod@3.25.76)
+      lucide-react:
+        specifier: ^0.546.0
+        version: 0.546.0(react@19.1.0)
+      next:
+        specifier: 15.5.6
+        version: 15.5.6(@opentelemetry/api@1.9.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      pg:
+        specifier: ^8.11.0
+        version: 8.16.3
+      react:
+        specifier: 19.1.0
+        version: 19.1.0
+      react-dom:
+        specifier: 19.1.0
+        version: 19.1.0(react@19.1.0)
+      server-only:
+        specifier: ^0.0.1
+        version: 0.0.1
+      tailwind-merge:
+        specifier: ^3.3.1
+        version: 3.4.0
+      tsx:
+        specifier: ^4.20.6
+        version: 4.20.6
+      zod:
+        specifier: ^3.23.8
+        version: 3.25.76
+    devDependencies:
+      '@eslint/eslintrc':
+        specifier: ^3
+        version: 3.3.1
+      '@tailwindcss/postcss':
+        specifier: ^4
+        version: 4.1.17
+      '@types/node':
+        specifier: ^20
+        version: 20.19.25
+      '@types/pg':
+        specifier: ^8.11.0
+        version: 8.15.6
+      '@types/react':
+        specifier: ^19
+        version: 19.2.6
+      '@types/react-dom':
+        specifier: ^19
+        version: 19.1.11(@types/react@19.2.6)
+      drizzle-kit:
+        specifier: ^0.22.7
+        version: 0.22.8
+      eslint:
+        specifier: ^9
+        version: 9.39.1(jiti@2.6.1)
+      eslint-config-next:
+        specifier: 15.5.6
+        version: 15.5.6(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3)
+      tailwindcss:
+        specifier: ^4
+        version: 4.1.17
+      tw-animate-css:
+        specifier: ^1.4.0
+        version: 1.4.0
+      typescript:
+        specifier: ^5
+        version: 5.9.3
+
+  demo/my-app7:
+    dependencies:
+      '@corsair-ai/core':
+        specifier: latest
+        version: link:../../packages/corsair
+      '@radix-ui/react-avatar':
+        specifier: ^1.1.10
+        version: 1.1.11(@types/react-dom@19.1.11(@types/react@19.2.6))(@types/react@19.2.6)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@radix-ui/react-dialog':
+        specifier: ^1.1.15
+        version: 1.1.15(@types/react-dom@19.1.11(@types/react@19.2.6))(@types/react@19.2.6)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@radix-ui/react-select':
+        specifier: ^2.2.6
+        version: 2.2.6(@types/react-dom@19.1.11(@types/react@19.2.6))(@types/react@19.2.6)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@radix-ui/react-slot':
+        specifier: ^1.2.3
+        version: 1.2.4(@types/react@19.2.6)(react@19.1.0)
+      '@tanstack/react-query':
+        specifier: ^5.90.5
+        version: 5.90.10(react@19.1.0)
+      '@trpc/client':
+        specifier: ^11.6.0
+        version: 11.7.1(@trpc/server@11.7.1(typescript@5.9.3))(typescript@5.9.3)
+      '@trpc/server':
+        specifier: ^11.6.0
+        version: 11.7.1(typescript@5.9.3)
+      '@trpc/tanstack-react-query':
+        specifier: ^11.6.0
+        version: 11.7.1(@tanstack/react-query@5.90.10(react@19.1.0))(@trpc/client@11.7.1(@trpc/server@11.7.1(typescript@5.9.3))(typescript@5.9.3))(@trpc/server@11.7.1(typescript@5.9.3))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(typescript@5.9.3)
+      class-variance-authority:
+        specifier: ^0.7.1
+        version: 0.7.1
+      clsx:
+        specifier: ^2.1.1
+        version: 2.1.1
+      dotenv:
+        specifier: ^17.2.3
+        version: 17.2.3
+      drizzle-orm:
+        specifier: ^0.31.2
+        version: 0.31.4(@cloudflare/workers-types@4.20251121.0)(@libsql/client@0.14.0)(@opentelemetry/api@1.9.0)(@planetscale/database@1.19.0)(@prisma/client@6.19.0(prisma@6.19.0(magicast@0.3.5)(typescript@5.9.3))(typescript@5.9.3))(@types/pg@8.15.6)(@types/react@19.2.6)(bun-types@1.3.3)(kysely@0.28.8)(mysql2@3.15.3)(pg@8.16.3)(postgres@3.4.7)(prisma@6.19.0(magicast@0.3.5)(typescript@5.9.3))(react@19.1.0)
+      drizzle-zod:
+        specifier: ^0.5.1
+        version: 0.5.1(drizzle-orm@0.31.4(@cloudflare/workers-types@4.20251121.0)(@libsql/client@0.14.0)(@opentelemetry/api@1.9.0)(@planetscale/database@1.19.0)(@prisma/client@6.19.0(prisma@6.19.0(magicast@0.3.5)(typescript@5.9.3))(typescript@5.9.3))(@types/pg@8.15.6)(@types/react@19.2.6)(bun-types@1.3.3)(kysely@0.28.8)(mysql2@3.15.3)(pg@8.16.3)(postgres@3.4.7)(prisma@6.19.0(magicast@0.3.5)(typescript@5.9.3))(react@19.1.0))(zod@3.25.76)
+      lucide-react:
+        specifier: ^0.546.0
+        version: 0.546.0(react@19.1.0)
+      next:
+        specifier: 15.5.6
+        version: 15.5.6(@opentelemetry/api@1.9.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      pg:
+        specifier: ^8.11.0
+        version: 8.16.3
+      react:
+        specifier: 19.1.0
+        version: 19.1.0
+      react-dom:
+        specifier: 19.1.0
+        version: 19.1.0(react@19.1.0)
+      server-only:
+        specifier: ^0.0.1
+        version: 0.0.1
+      tailwind-merge:
+        specifier: ^3.3.1
+        version: 3.4.0
+      tsx:
+        specifier: ^4.20.6
+        version: 4.20.6
+      zod:
+        specifier: ^3.23.8
+        version: 3.25.76
+    devDependencies:
+      '@eslint/eslintrc':
+        specifier: ^3
+        version: 3.3.1
+      '@tailwindcss/postcss':
+        specifier: ^4
+        version: 4.1.17
+      '@types/node':
+        specifier: ^20
+        version: 20.19.25
+      '@types/pg':
+        specifier: ^8.11.0
+        version: 8.15.6
+      '@types/react':
+        specifier: ^19
+        version: 19.2.6
+      '@types/react-dom':
+        specifier: ^19
+        version: 19.1.11(@types/react@19.2.6)
+      drizzle-kit:
+        specifier: ^0.22.7
+        version: 0.22.8
+      eslint:
+        specifier: ^9
+        version: 9.39.1(jiti@2.6.1)
+      eslint-config-next:
+        specifier: 15.5.6
+        version: 15.5.6(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3)
+      tailwindcss:
+        specifier: ^4
+        version: 4.1.17
+      tw-animate-css:
+        specifier: ^1.4.0
+        version: 1.4.0
+      typescript:
+        specifier: ^5
+        version: 5.9.3
+
+  demo/my-app8:
+    dependencies:
+      '@corsair-ai/core':
+        specifier: latest
+        version: link:../../packages/corsair
+      '@radix-ui/react-avatar':
+        specifier: ^1.1.10
+        version: 1.1.11(@types/react-dom@19.1.11(@types/react@19.2.6))(@types/react@19.2.6)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@radix-ui/react-dialog':
+        specifier: ^1.1.15
+        version: 1.1.15(@types/react-dom@19.1.11(@types/react@19.2.6))(@types/react@19.2.6)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@radix-ui/react-select':
+        specifier: ^2.2.6
+        version: 2.2.6(@types/react-dom@19.1.11(@types/react@19.2.6))(@types/react@19.2.6)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@radix-ui/react-slot':
+        specifier: ^1.2.3
+        version: 1.2.4(@types/react@19.2.6)(react@19.1.0)
+      '@tanstack/react-query':
+        specifier: ^5.90.5
+        version: 5.90.10(react@19.1.0)
+      '@trpc/client':
+        specifier: ^11.6.0
+        version: 11.7.1(@trpc/server@11.7.1(typescript@5.9.3))(typescript@5.9.3)
+      '@trpc/server':
+        specifier: ^11.6.0
+        version: 11.7.1(typescript@5.9.3)
+      '@trpc/tanstack-react-query':
+        specifier: ^11.6.0
+        version: 11.7.1(@tanstack/react-query@5.90.10(react@19.1.0))(@trpc/client@11.7.1(@trpc/server@11.7.1(typescript@5.9.3))(typescript@5.9.3))(@trpc/server@11.7.1(typescript@5.9.3))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(typescript@5.9.3)
+      class-variance-authority:
+        specifier: ^0.7.1
+        version: 0.7.1
+      clsx:
+        specifier: ^2.1.1
+        version: 2.1.1
+      dotenv:
+        specifier: ^17.2.3
+        version: 17.2.3
+      drizzle-orm:
+        specifier: ^0.31.2
+        version: 0.31.4(@cloudflare/workers-types@4.20251121.0)(@libsql/client@0.14.0)(@opentelemetry/api@1.9.0)(@planetscale/database@1.19.0)(@prisma/client@6.19.0(prisma@6.19.0(magicast@0.3.5)(typescript@5.9.3))(typescript@5.9.3))(@types/pg@8.15.6)(@types/react@19.2.6)(bun-types@1.3.3)(kysely@0.28.8)(mysql2@3.15.3)(pg@8.16.3)(postgres@3.4.7)(prisma@6.19.0(magicast@0.3.5)(typescript@5.9.3))(react@19.1.0)
+      drizzle-zod:
+        specifier: ^0.5.1
+        version: 0.5.1(drizzle-orm@0.31.4(@cloudflare/workers-types@4.20251121.0)(@libsql/client@0.14.0)(@opentelemetry/api@1.9.0)(@planetscale/database@1.19.0)(@prisma/client@6.19.0(prisma@6.19.0(magicast@0.3.5)(typescript@5.9.3))(typescript@5.9.3))(@types/pg@8.15.6)(@types/react@19.2.6)(bun-types@1.3.3)(kysely@0.28.8)(mysql2@3.15.3)(pg@8.16.3)(postgres@3.4.7)(prisma@6.19.0(magicast@0.3.5)(typescript@5.9.3))(react@19.1.0))(zod@3.25.76)
+      lucide-react:
+        specifier: ^0.546.0
+        version: 0.546.0(react@19.1.0)
+      next:
+        specifier: 15.5.6
+        version: 15.5.6(@opentelemetry/api@1.9.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      pg:
+        specifier: ^8.11.0
+        version: 8.16.3
+      react:
+        specifier: 19.1.0
+        version: 19.1.0
+      react-dom:
+        specifier: 19.1.0
+        version: 19.1.0(react@19.1.0)
+      server-only:
+        specifier: ^0.0.1
+        version: 0.0.1
+      tailwind-merge:
+        specifier: ^3.3.1
+        version: 3.4.0
+      tsx:
+        specifier: ^4.20.6
+        version: 4.20.6
+      zod:
+        specifier: ^3.23.8
+        version: 3.25.76
+    devDependencies:
+      '@eslint/eslintrc':
+        specifier: ^3
+        version: 3.3.1
+      '@tailwindcss/postcss':
+        specifier: ^4
+        version: 4.1.17
+      '@types/node':
+        specifier: ^20
+        version: 20.19.25
+      '@types/pg':
+        specifier: ^8.11.0
+        version: 8.15.6
+      '@types/react':
+        specifier: ^19
+        version: 19.2.6
+      '@types/react-dom':
+        specifier: ^19
+        version: 19.1.11(@types/react@19.2.6)
+      drizzle-kit:
+        specifier: ^0.22.7
+        version: 0.22.8
+      eslint:
+        specifier: ^9
+        version: 9.39.1(jiti@2.6.1)
+      eslint-config-next:
+        specifier: 15.5.6
+        version: 15.5.6(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3)
+      tailwindcss:
+        specifier: ^4
+        version: 4.1.17
+      tw-animate-css:
+        specifier: ^1.4.0
+        version: 1.4.0
+      typescript:
+        specifier: ^5
+        version: 5.9.3
+
+  demo/my-app9:
+    dependencies:
+      '@corsair-ai/core':
+        specifier: latest
+        version: link:../../packages/corsair
+      '@radix-ui/react-avatar':
+        specifier: ^1.1.10
+        version: 1.1.11(@types/react-dom@19.1.11(@types/react@19.2.6))(@types/react@19.2.6)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@radix-ui/react-dialog':
+        specifier: ^1.1.15
+        version: 1.1.15(@types/react-dom@19.1.11(@types/react@19.2.6))(@types/react@19.2.6)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@radix-ui/react-select':
+        specifier: ^2.2.6
+        version: 2.2.6(@types/react-dom@19.1.11(@types/react@19.2.6))(@types/react@19.2.6)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@radix-ui/react-slot':
+        specifier: ^1.2.3
+        version: 1.2.4(@types/react@19.2.6)(react@19.1.0)
+      '@tanstack/react-query':
+        specifier: ^5.90.5
+        version: 5.90.10(react@19.1.0)
+      '@trpc/client':
+        specifier: ^11.6.0
+        version: 11.7.1(@trpc/server@11.7.1(typescript@5.9.3))(typescript@5.9.3)
+      '@trpc/server':
+        specifier: ^11.6.0
+        version: 11.7.1(typescript@5.9.3)
+      '@trpc/tanstack-react-query':
+        specifier: ^11.6.0
+        version: 11.7.1(@tanstack/react-query@5.90.10(react@19.1.0))(@trpc/client@11.7.1(@trpc/server@11.7.1(typescript@5.9.3))(typescript@5.9.3))(@trpc/server@11.7.1(typescript@5.9.3))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(typescript@5.9.3)
+      class-variance-authority:
+        specifier: ^0.7.1
+        version: 0.7.1
+      clsx:
+        specifier: ^2.1.1
+        version: 2.1.1
+      dotenv:
+        specifier: ^17.2.3
+        version: 17.2.3
+      drizzle-orm:
+        specifier: ^0.31.2
+        version: 0.31.4(@cloudflare/workers-types@4.20251121.0)(@libsql/client@0.14.0)(@opentelemetry/api@1.9.0)(@planetscale/database@1.19.0)(@prisma/client@6.19.0(prisma@6.19.0(magicast@0.3.5)(typescript@5.9.3))(typescript@5.9.3))(@types/pg@8.15.6)(@types/react@19.2.6)(bun-types@1.3.3)(kysely@0.28.8)(mysql2@3.15.3)(pg@8.16.3)(postgres@3.4.7)(prisma@6.19.0(magicast@0.3.5)(typescript@5.9.3))(react@19.1.0)
+      drizzle-zod:
+        specifier: ^0.5.1
+        version: 0.5.1(drizzle-orm@0.31.4(@cloudflare/workers-types@4.20251121.0)(@libsql/client@0.14.0)(@opentelemetry/api@1.9.0)(@planetscale/database@1.19.0)(@prisma/client@6.19.0(prisma@6.19.0(magicast@0.3.5)(typescript@5.9.3))(typescript@5.9.3))(@types/pg@8.15.6)(@types/react@19.2.6)(bun-types@1.3.3)(kysely@0.28.8)(mysql2@3.15.3)(pg@8.16.3)(postgres@3.4.7)(prisma@6.19.0(magicast@0.3.5)(typescript@5.9.3))(react@19.1.0))(zod@3.25.76)
+      lucide-react:
+        specifier: ^0.546.0
+        version: 0.546.0(react@19.1.0)
+      next:
+        specifier: 15.5.6
+        version: 15.5.6(@opentelemetry/api@1.9.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      pg:
+        specifier: ^8.11.0
+        version: 8.16.3
+      react:
+        specifier: 19.1.0
+        version: 19.1.0
+      react-dom:
+        specifier: 19.1.0
+        version: 19.1.0(react@19.1.0)
+      tailwind-merge:
+        specifier: ^3.3.1
+        version: 3.4.0
+      tsx:
+        specifier: ^4.20.6
+        version: 4.20.6
+      zod:
+        specifier: ^3.23.8
+        version: 3.25.76
+    devDependencies:
+      '@eslint/eslintrc':
+        specifier: ^3
+        version: 3.3.1
+      '@tailwindcss/postcss':
+        specifier: ^4
+        version: 4.1.17
+      '@types/node':
+        specifier: ^20
+        version: 20.19.25
+      '@types/pg':
+        specifier: ^8.11.0
+        version: 8.15.6
+      '@types/react':
+        specifier: ^19
+        version: 19.2.6
+      '@types/react-dom':
+        specifier: ^19
+        version: 19.1.11(@types/react@19.2.6)
+      drizzle-kit:
+        specifier: ^0.22.7
+        version: 0.22.8
+      eslint:
+        specifier: ^9
+        version: 9.39.1(jiti@2.6.1)
+      eslint-config-next:
+        specifier: 15.5.6
+        version: 15.5.6(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3)
+      tailwindcss:
+        specifier: ^4
+        version: 4.1.17
+      tw-animate-css:
+        specifier: ^1.4.0
+        version: 1.4.0
+      typescript:
+        specifier: ^5
+        version: 5.9.3
+
   demo/nextjs-drizzle:
     dependencies:
       '@radix-ui/react-avatar':
@@ -8858,6 +9966,15 @@ snapshots:
       '@types/react': 19.2.6
       '@types/react-dom': 19.2.3(@types/react@19.2.6)
 
+  '@radix-ui/react-arrow@1.1.7(@types/react-dom@19.1.11(@types/react@19.2.6))(@types/react@19.2.6)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)':
+    dependencies:
+      '@radix-ui/react-primitive': 2.1.3(@types/react-dom@19.1.11(@types/react@19.2.6))(@types/react@19.2.6)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
+    optionalDependencies:
+      '@types/react': 19.2.6
+      '@types/react-dom': 19.1.11(@types/react@19.2.6)
+
   '@radix-ui/react-arrow@1.1.7(@types/react-dom@19.2.3(@types/react@19.2.6))(@types/react@19.2.6)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)':
     dependencies:
       '@radix-ui/react-primitive': 2.1.3(@types/react-dom@19.2.3(@types/react@19.2.6))(@types/react@19.2.6)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -8866,6 +9983,19 @@ snapshots:
     optionalDependencies:
       '@types/react': 19.2.6
       '@types/react-dom': 19.2.3(@types/react@19.2.6)
+
+  '@radix-ui/react-avatar@1.1.11(@types/react-dom@19.1.11(@types/react@19.2.6))(@types/react@19.2.6)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)':
+    dependencies:
+      '@radix-ui/react-context': 1.1.3(@types/react@19.2.6)(react@19.1.0)
+      '@radix-ui/react-primitive': 2.1.4(@types/react-dom@19.1.11(@types/react@19.2.6))(@types/react@19.2.6)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@radix-ui/react-use-callback-ref': 1.1.1(@types/react@19.2.6)(react@19.1.0)
+      '@radix-ui/react-use-is-hydrated': 0.1.0(@types/react@19.2.6)(react@19.1.0)
+      '@radix-ui/react-use-layout-effect': 1.1.1(@types/react@19.2.6)(react@19.1.0)
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
+    optionalDependencies:
+      '@types/react': 19.2.6
+      '@types/react-dom': 19.1.11(@types/react@19.2.6)
 
   '@radix-ui/react-avatar@1.1.11(@types/react-dom@19.2.3(@types/react@19.2.6))(@types/react@19.2.6)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)':
     dependencies:
@@ -8895,6 +10025,18 @@ snapshots:
     optionalDependencies:
       '@types/react': 19.2.6
       '@types/react-dom': 19.2.3(@types/react@19.2.6)
+
+  '@radix-ui/react-collection@1.1.7(@types/react-dom@19.1.11(@types/react@19.2.6))(@types/react@19.2.6)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)':
+    dependencies:
+      '@radix-ui/react-compose-refs': 1.1.2(@types/react@19.2.6)(react@19.1.0)
+      '@radix-ui/react-context': 1.1.2(@types/react@19.2.6)(react@19.1.0)
+      '@radix-ui/react-primitive': 2.1.3(@types/react-dom@19.1.11(@types/react@19.2.6))(@types/react@19.2.6)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@radix-ui/react-slot': 1.2.3(@types/react@19.2.6)(react@19.1.0)
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
+    optionalDependencies:
+      '@types/react': 19.2.6
+      '@types/react-dom': 19.1.11(@types/react@19.2.6)
 
   '@radix-ui/react-collection@1.1.7(@types/react-dom@19.2.3(@types/react@19.2.6))(@types/react@19.2.6)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)':
     dependencies:
@@ -8926,6 +10068,28 @@ snapshots:
     optionalDependencies:
       '@types/react': 19.2.6
 
+  '@radix-ui/react-dialog@1.1.15(@types/react-dom@19.1.11(@types/react@19.2.6))(@types/react@19.2.6)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)':
+    dependencies:
+      '@radix-ui/primitive': 1.1.3
+      '@radix-ui/react-compose-refs': 1.1.2(@types/react@19.2.6)(react@19.1.0)
+      '@radix-ui/react-context': 1.1.2(@types/react@19.2.6)(react@19.1.0)
+      '@radix-ui/react-dismissable-layer': 1.1.11(@types/react-dom@19.1.11(@types/react@19.2.6))(@types/react@19.2.6)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@radix-ui/react-focus-guards': 1.1.3(@types/react@19.2.6)(react@19.1.0)
+      '@radix-ui/react-focus-scope': 1.1.7(@types/react-dom@19.1.11(@types/react@19.2.6))(@types/react@19.2.6)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@radix-ui/react-id': 1.1.1(@types/react@19.2.6)(react@19.1.0)
+      '@radix-ui/react-portal': 1.1.9(@types/react-dom@19.1.11(@types/react@19.2.6))(@types/react@19.2.6)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@radix-ui/react-presence': 1.1.5(@types/react-dom@19.1.11(@types/react@19.2.6))(@types/react@19.2.6)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@radix-ui/react-primitive': 2.1.3(@types/react-dom@19.1.11(@types/react@19.2.6))(@types/react@19.2.6)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@radix-ui/react-slot': 1.2.3(@types/react@19.2.6)(react@19.1.0)
+      '@radix-ui/react-use-controllable-state': 1.2.2(@types/react@19.2.6)(react@19.1.0)
+      aria-hidden: 1.2.6
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
+      react-remove-scroll: 2.7.1(@types/react@19.2.6)(react@19.1.0)
+    optionalDependencies:
+      '@types/react': 19.2.6
+      '@types/react-dom': 19.1.11(@types/react@19.2.6)
+
   '@radix-ui/react-dialog@1.1.15(@types/react-dom@19.2.3(@types/react@19.2.6))(@types/react@19.2.6)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)':
     dependencies:
       '@radix-ui/primitive': 1.1.3
@@ -8954,6 +10118,19 @@ snapshots:
     optionalDependencies:
       '@types/react': 19.2.6
 
+  '@radix-ui/react-dismissable-layer@1.1.11(@types/react-dom@19.1.11(@types/react@19.2.6))(@types/react@19.2.6)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)':
+    dependencies:
+      '@radix-ui/primitive': 1.1.3
+      '@radix-ui/react-compose-refs': 1.1.2(@types/react@19.2.6)(react@19.1.0)
+      '@radix-ui/react-primitive': 2.1.3(@types/react-dom@19.1.11(@types/react@19.2.6))(@types/react@19.2.6)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@radix-ui/react-use-callback-ref': 1.1.1(@types/react@19.2.6)(react@19.1.0)
+      '@radix-ui/react-use-escape-keydown': 1.1.1(@types/react@19.2.6)(react@19.1.0)
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
+    optionalDependencies:
+      '@types/react': 19.2.6
+      '@types/react-dom': 19.1.11(@types/react@19.2.6)
+
   '@radix-ui/react-dismissable-layer@1.1.11(@types/react-dom@19.2.3(@types/react@19.2.6))(@types/react@19.2.6)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)':
     dependencies:
       '@radix-ui/primitive': 1.1.3
@@ -8972,6 +10149,17 @@ snapshots:
       react: 19.1.0
     optionalDependencies:
       '@types/react': 19.2.6
+
+  '@radix-ui/react-focus-scope@1.1.7(@types/react-dom@19.1.11(@types/react@19.2.6))(@types/react@19.2.6)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)':
+    dependencies:
+      '@radix-ui/react-compose-refs': 1.1.2(@types/react@19.2.6)(react@19.1.0)
+      '@radix-ui/react-primitive': 2.1.3(@types/react-dom@19.1.11(@types/react@19.2.6))(@types/react@19.2.6)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@radix-ui/react-use-callback-ref': 1.1.1(@types/react@19.2.6)(react@19.1.0)
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
+    optionalDependencies:
+      '@types/react': 19.2.6
+      '@types/react-dom': 19.1.11(@types/react@19.2.6)
 
   '@radix-ui/react-focus-scope@1.1.7(@types/react-dom@19.2.3(@types/react@19.2.6))(@types/react@19.2.6)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)':
     dependencies:
@@ -9036,6 +10224,24 @@ snapshots:
       '@types/react': 19.2.6
       '@types/react-dom': 19.2.3(@types/react@19.2.6)
 
+  '@radix-ui/react-popper@1.2.8(@types/react-dom@19.1.11(@types/react@19.2.6))(@types/react@19.2.6)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)':
+    dependencies:
+      '@floating-ui/react-dom': 2.1.6(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@radix-ui/react-arrow': 1.1.7(@types/react-dom@19.1.11(@types/react@19.2.6))(@types/react@19.2.6)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@radix-ui/react-compose-refs': 1.1.2(@types/react@19.2.6)(react@19.1.0)
+      '@radix-ui/react-context': 1.1.2(@types/react@19.2.6)(react@19.1.0)
+      '@radix-ui/react-primitive': 2.1.3(@types/react-dom@19.1.11(@types/react@19.2.6))(@types/react@19.2.6)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@radix-ui/react-use-callback-ref': 1.1.1(@types/react@19.2.6)(react@19.1.0)
+      '@radix-ui/react-use-layout-effect': 1.1.1(@types/react@19.2.6)(react@19.1.0)
+      '@radix-ui/react-use-rect': 1.1.1(@types/react@19.2.6)(react@19.1.0)
+      '@radix-ui/react-use-size': 1.1.1(@types/react@19.2.6)(react@19.1.0)
+      '@radix-ui/rect': 1.1.1
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
+    optionalDependencies:
+      '@types/react': 19.2.6
+      '@types/react-dom': 19.1.11(@types/react@19.2.6)
+
   '@radix-ui/react-popper@1.2.8(@types/react-dom@19.2.3(@types/react@19.2.6))(@types/react@19.2.6)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)':
     dependencies:
       '@floating-ui/react-dom': 2.1.6(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -9054,6 +10260,16 @@ snapshots:
       '@types/react': 19.2.6
       '@types/react-dom': 19.2.3(@types/react@19.2.6)
 
+  '@radix-ui/react-portal@1.1.9(@types/react-dom@19.1.11(@types/react@19.2.6))(@types/react@19.2.6)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)':
+    dependencies:
+      '@radix-ui/react-primitive': 2.1.3(@types/react-dom@19.1.11(@types/react@19.2.6))(@types/react@19.2.6)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@radix-ui/react-use-layout-effect': 1.1.1(@types/react@19.2.6)(react@19.1.0)
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
+    optionalDependencies:
+      '@types/react': 19.2.6
+      '@types/react-dom': 19.1.11(@types/react@19.2.6)
+
   '@radix-ui/react-portal@1.1.9(@types/react-dom@19.2.3(@types/react@19.2.6))(@types/react@19.2.6)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)':
     dependencies:
       '@radix-ui/react-primitive': 2.1.3(@types/react-dom@19.2.3(@types/react@19.2.6))(@types/react@19.2.6)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -9063,6 +10279,16 @@ snapshots:
     optionalDependencies:
       '@types/react': 19.2.6
       '@types/react-dom': 19.2.3(@types/react@19.2.6)
+
+  '@radix-ui/react-presence@1.1.5(@types/react-dom@19.1.11(@types/react@19.2.6))(@types/react@19.2.6)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)':
+    dependencies:
+      '@radix-ui/react-compose-refs': 1.1.2(@types/react@19.2.6)(react@19.1.0)
+      '@radix-ui/react-use-layout-effect': 1.1.1(@types/react@19.2.6)(react@19.1.0)
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
+    optionalDependencies:
+      '@types/react': 19.2.6
+      '@types/react-dom': 19.1.11(@types/react@19.2.6)
 
   '@radix-ui/react-presence@1.1.5(@types/react-dom@19.2.3(@types/react@19.2.6))(@types/react@19.2.6)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)':
     dependencies:
@@ -9074,6 +10300,15 @@ snapshots:
       '@types/react': 19.2.6
       '@types/react-dom': 19.2.3(@types/react@19.2.6)
 
+  '@radix-ui/react-primitive@2.1.3(@types/react-dom@19.1.11(@types/react@19.2.6))(@types/react@19.2.6)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)':
+    dependencies:
+      '@radix-ui/react-slot': 1.2.3(@types/react@19.2.6)(react@19.1.0)
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
+    optionalDependencies:
+      '@types/react': 19.2.6
+      '@types/react-dom': 19.1.11(@types/react@19.2.6)
+
   '@radix-ui/react-primitive@2.1.3(@types/react-dom@19.2.3(@types/react@19.2.6))(@types/react@19.2.6)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)':
     dependencies:
       '@radix-ui/react-slot': 1.2.3(@types/react@19.2.6)(react@19.1.0)
@@ -9082,6 +10317,15 @@ snapshots:
     optionalDependencies:
       '@types/react': 19.2.6
       '@types/react-dom': 19.2.3(@types/react@19.2.6)
+
+  '@radix-ui/react-primitive@2.1.4(@types/react-dom@19.1.11(@types/react@19.2.6))(@types/react@19.2.6)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)':
+    dependencies:
+      '@radix-ui/react-slot': 1.2.4(@types/react@19.2.6)(react@19.1.0)
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
+    optionalDependencies:
+      '@types/react': 19.2.6
+      '@types/react-dom': 19.1.11(@types/react@19.2.6)
 
   '@radix-ui/react-primitive@2.1.4(@types/react-dom@19.2.3(@types/react@19.2.6))(@types/react@19.2.6)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)':
     dependencies:
@@ -9125,6 +10369,35 @@ snapshots:
     optionalDependencies:
       '@types/react': 19.2.6
       '@types/react-dom': 19.2.3(@types/react@19.2.6)
+
+  '@radix-ui/react-select@2.2.6(@types/react-dom@19.1.11(@types/react@19.2.6))(@types/react@19.2.6)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)':
+    dependencies:
+      '@radix-ui/number': 1.1.1
+      '@radix-ui/primitive': 1.1.3
+      '@radix-ui/react-collection': 1.1.7(@types/react-dom@19.1.11(@types/react@19.2.6))(@types/react@19.2.6)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@radix-ui/react-compose-refs': 1.1.2(@types/react@19.2.6)(react@19.1.0)
+      '@radix-ui/react-context': 1.1.2(@types/react@19.2.6)(react@19.1.0)
+      '@radix-ui/react-direction': 1.1.1(@types/react@19.2.6)(react@19.1.0)
+      '@radix-ui/react-dismissable-layer': 1.1.11(@types/react-dom@19.1.11(@types/react@19.2.6))(@types/react@19.2.6)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@radix-ui/react-focus-guards': 1.1.3(@types/react@19.2.6)(react@19.1.0)
+      '@radix-ui/react-focus-scope': 1.1.7(@types/react-dom@19.1.11(@types/react@19.2.6))(@types/react@19.2.6)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@radix-ui/react-id': 1.1.1(@types/react@19.2.6)(react@19.1.0)
+      '@radix-ui/react-popper': 1.2.8(@types/react-dom@19.1.11(@types/react@19.2.6))(@types/react@19.2.6)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@radix-ui/react-portal': 1.1.9(@types/react-dom@19.1.11(@types/react@19.2.6))(@types/react@19.2.6)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@radix-ui/react-primitive': 2.1.3(@types/react-dom@19.1.11(@types/react@19.2.6))(@types/react@19.2.6)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@radix-ui/react-slot': 1.2.3(@types/react@19.2.6)(react@19.1.0)
+      '@radix-ui/react-use-callback-ref': 1.1.1(@types/react@19.2.6)(react@19.1.0)
+      '@radix-ui/react-use-controllable-state': 1.2.2(@types/react@19.2.6)(react@19.1.0)
+      '@radix-ui/react-use-layout-effect': 1.1.1(@types/react@19.2.6)(react@19.1.0)
+      '@radix-ui/react-use-previous': 1.1.1(@types/react@19.2.6)(react@19.1.0)
+      '@radix-ui/react-visually-hidden': 1.2.3(@types/react-dom@19.1.11(@types/react@19.2.6))(@types/react@19.2.6)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      aria-hidden: 1.2.6
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
+      react-remove-scroll: 2.7.1(@types/react@19.2.6)(react@19.1.0)
+    optionalDependencies:
+      '@types/react': 19.2.6
+      '@types/react-dom': 19.1.11(@types/react@19.2.6)
 
   '@radix-ui/react-select@2.2.6(@types/react-dom@19.2.3(@types/react@19.2.6))(@types/react@19.2.6)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)':
     dependencies:
@@ -9245,6 +10518,15 @@ snapshots:
       react: 19.1.0
     optionalDependencies:
       '@types/react': 19.2.6
+
+  '@radix-ui/react-visually-hidden@1.2.3(@types/react-dom@19.1.11(@types/react@19.2.6))(@types/react@19.2.6)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)':
+    dependencies:
+      '@radix-ui/react-primitive': 2.1.3(@types/react-dom@19.1.11(@types/react@19.2.6))(@types/react@19.2.6)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
+    optionalDependencies:
+      '@types/react': 19.2.6
+      '@types/react-dom': 19.1.11(@types/react@19.2.6)
 
   '@radix-ui/react-visually-hidden@1.2.3(@types/react-dom@19.2.3(@types/react@19.2.6))(@types/react@19.2.6)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)':
     dependencies:
@@ -9386,7 +10668,7 @@ snapshots:
     dependencies:
       '@slack/logger': 4.0.0
       '@slack/types': 2.19.0
-      '@types/node': 24.10.1
+      '@types/node': 20.19.25
       '@types/retry': 0.12.0
       axios: 1.13.2
       eventemitter3: 5.0.1
@@ -9637,7 +10919,7 @@ snapshots:
   '@types/fs-extra@11.0.4':
     dependencies:
       '@types/jsonfile': 6.1.4
-      '@types/node': 24.10.1
+      '@types/node': 20.19.25
 
   '@types/gradient-string@1.1.6':
     dependencies:
@@ -9686,7 +10968,7 @@ snapshots:
 
   '@types/pg@8.15.6':
     dependencies:
-      '@types/node': 24.10.1
+      '@types/node': 20.19.25
       pg-protocol: 1.10.3
       pg-types: 2.2.0
 
@@ -9707,6 +10989,10 @@ snapshots:
   '@types/react-dom@19.1.11(@types/react@19.1.17)':
     dependencies:
       '@types/react': 19.1.17
+
+  '@types/react-dom@19.1.11(@types/react@19.2.6)':
+    dependencies:
+      '@types/react': 19.2.6
 
   '@types/react-dom@19.2.3(@types/react@19.2.6)':
     dependencies:
