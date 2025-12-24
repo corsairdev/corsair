@@ -2,6 +2,213 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
+import { z } from 'zod';
+
+// Zod Schemas for commonly used types
+export const AuthorAssociationSchema = z.nativeEnum({
+    COLLABORATOR: 'COLLABORATOR',
+    CONTRIBUTOR: 'CONTRIBUTOR',
+    FIRST_TIMER: 'FIRST_TIMER',
+    FIRST_TIME_CONTRIBUTOR: 'FIRST_TIME_CONTRIBUTOR',
+    MANNEQUIN: 'MANNEQUIN',
+    MEMBER: 'MEMBER',
+    NONE: 'NONE',
+    OWNER: 'OWNER',
+});
+
+export const SimpleUserSchema = z.object({
+    name: z.string().nullable().optional(),
+    email: z.string().nullable().optional(),
+    login: z.string(),
+    id: z.number(),
+    node_id: z.string(),
+    avatar_url: z.string(),
+    gravatar_id: z.string().nullable(),
+    url: z.string(),
+    html_url: z.string(),
+    followers_url: z.string(),
+    following_url: z.string(),
+    gists_url: z.string(),
+    starred_url: z.string(),
+    subscriptions_url: z.string(),
+    organizations_url: z.string(),
+    repos_url: z.string(),
+    events_url: z.string(),
+    received_events_url: z.string(),
+    type: z.string(),
+    site_admin: z.boolean(),
+    starred_at: z.string().optional(),
+    user_view_type: z.string().optional(),
+});
+export type SimpleUser = z.infer<typeof SimpleUserSchema>;
+
+export const RepositorySchema = z.object({
+    id: z.number(),
+    node_id: z.string(),
+    name: z.string(),
+    full_name: z.string(),
+    private: z.boolean(),
+    html_url: z.string(),
+    description: z.string().nullable(),
+    fork: z.boolean(),
+    url: z.string(),
+    owner: SimpleUserSchema,
+    created_at: z.string().nullable(),
+    updated_at: z.string().nullable(),
+    pushed_at: z.string().nullable(),
+    default_branch: z.string(),
+    language: z.string().nullable(),
+    stargazers_count: z.number(),
+    watchers_count: z.number(),
+    forks_count: z.number(),
+    open_issues_count: z.number(),
+    archived: z.boolean(),
+    disabled: z.boolean(),
+}).passthrough();
+export type Repository = z.infer<typeof RepositorySchema>;
+
+export const IssueSchema = z.object({
+    id: z.number(),
+    node_id: z.string(),
+    url: z.string(),
+    repository_url: z.string(),
+    labels_url: z.string(),
+    comments_url: z.string(),
+    events_url: z.string(),
+    html_url: z.string(),
+    number: z.number(),
+    state: z.string(),
+    state_reason: z.enum(['completed', 'reopened', 'not_planned', 'duplicate']).nullable().optional(),
+    title: z.string(),
+    body: z.string().nullable().optional(),
+    user: SimpleUserSchema.nullable(),
+    labels: z.array(z.union([z.string(), z.object({
+        id: z.number().optional(),
+        node_id: z.string().optional(),
+        url: z.string().optional(),
+        name: z.string().optional(),
+        description: z.string().nullable().optional(),
+        color: z.string().nullable().optional(),
+        default: z.boolean().optional(),
+    })])),
+    assignee: SimpleUserSchema.nullable(),
+    assignees: z.array(SimpleUserSchema).nullable().optional(),
+    locked: z.boolean(),
+    comments: z.number(),
+    created_at: z.string(),
+    updated_at: z.string(),
+    closed_at: z.string().nullable(),
+    author_association: AuthorAssociationSchema.optional(),
+}).passthrough();
+export type Issue = z.infer<typeof IssueSchema>;
+
+export const PullRequestSchema = z.object({
+    url: z.string(),
+    id: z.number(),
+    node_id: z.string(),
+    html_url: z.string(),
+    diff_url: z.string(),
+    patch_url: z.string(),
+    issue_url: z.string(),
+    number: z.number(),
+    state: z.enum(['open', 'closed']),
+    locked: z.boolean(),
+    title: z.string(),
+    user: SimpleUserSchema,
+    body: z.string().nullable(),
+    created_at: z.string(),
+    updated_at: z.string(),
+    closed_at: z.string().nullable(),
+    merged_at: z.string().nullable(),
+    merge_commit_sha: z.string().nullable(),
+    assignee: SimpleUserSchema.nullable(),
+    assignees: z.array(SimpleUserSchema).nullable().optional(),
+    requested_reviewers: z.array(SimpleUserSchema).nullable().optional(),
+    author_association: AuthorAssociationSchema,
+    draft: z.boolean().optional(),
+    merged: z.boolean(),
+    mergeable: z.boolean().nullable(),
+    comments: z.number(),
+    review_comments: z.number(),
+    maintainer_can_modify: z.boolean(),
+    commits: z.number(),
+    additions: z.number(),
+    deletions: z.number(),
+    changed_files: z.number(),
+}).passthrough();
+export type PullRequest = z.infer<typeof PullRequestSchema>;
+
+export const WorkflowSchema = z.object({
+    id: z.number(),
+    node_id: z.string(),
+    name: z.string(),
+    path: z.string(),
+    state: z.enum(['active', 'deleted', 'disabled_fork', 'disabled_inactivity', 'disabled_manually']),
+    created_at: z.string(),
+    updated_at: z.string(),
+    url: z.string(),
+    html_url: z.string(),
+    badge_url: z.string(),
+    deleted_at: z.string().optional(),
+});
+export type Workflow = z.infer<typeof WorkflowSchema>;
+
+export const WorkflowRunSchema = z.object({
+    id: z.number(),
+    node_id: z.string(),
+    name: z.string().nullable().optional(),
+    head_branch: z.string().nullable(),
+    head_sha: z.string(),
+    path: z.string(),
+    run_number: z.number(),
+    run_attempt: z.number().optional(),
+    event: z.string(),
+    status: z.string().nullable(),
+    conclusion: z.string().nullable(),
+    workflow_id: z.number(),
+    url: z.string(),
+    html_url: z.string(),
+    created_at: z.string(),
+    updated_at: z.string(),
+    display_title: z.string(),
+}).passthrough();
+export type WorkflowRun = z.infer<typeof WorkflowRunSchema>;
+
+export const ReleaseSchema = z.object({
+    url: z.string(),
+    html_url: z.string(),
+    assets_url: z.string(),
+    upload_url: z.string(),
+    tarball_url: z.string().nullable(),
+    zipball_url: z.string().nullable(),
+    id: z.number(),
+    node_id: z.string(),
+    tag_name: z.string(),
+    target_commitish: z.string(),
+    name: z.string().nullable(),
+    body: z.string().nullable().optional(),
+    draft: z.boolean(),
+    prerelease: z.boolean(),
+    created_at: z.string(),
+    published_at: z.string().nullable(),
+    author: SimpleUserSchema,
+    assets: z.array(z.object({
+        url: z.string(),
+        browser_download_url: z.string(),
+        id: z.number(),
+        node_id: z.string(),
+        name: z.string(),
+        label: z.string().nullable(),
+        state: z.enum(['uploaded', 'open']),
+        content_type: z.string(),
+        size: z.number(),
+        download_count: z.number(),
+        created_at: z.string(),
+        updated_at: z.string(),
+    })),
+}).passthrough();
+export type Release = z.infer<typeof ReleaseSchema>;
+
 /**
  * Api Overview
  */
