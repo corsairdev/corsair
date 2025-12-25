@@ -1,10 +1,11 @@
-import type { CorsairConfig } from 'corsair';
+import { corsair } from 'corsair';
+import type { SlackDefaultSchema } from 'corsair/plugins';
 import { config as dotenvConfig } from 'dotenv';
 import { db } from './db';
 
 dotenvConfig({ path: '.env.local' });
 
-export const config = {
+export const config = corsair({
 	dbType: 'postgres',
 	orm: 'drizzle',
 	framework: 'nextjs',
@@ -22,7 +23,7 @@ export const config = {
 			schema: {
 				messages: true,        // Use default
 				channels: false,       // Skip
-				channel_members: (dbSchema) => ({  // Custom
+				channel_members: (dbSchema: SlackDefaultSchema) => ({  // Custom
 					id: dbSchema.channels.id,
 					member_id: dbSchema.members.id,
 				}),
@@ -57,6 +58,6 @@ export const config = {
 			},
 		},
 	],
-} satisfies CorsairConfig<typeof db>;
+});
 
 export type Config = typeof config;
