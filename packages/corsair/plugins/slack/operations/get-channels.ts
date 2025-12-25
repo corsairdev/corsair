@@ -1,20 +1,24 @@
-import type { BaseConfig } from '../../../config';
+import type { SlackClient, SlackPlugin, SlackPluginContext } from '../types';
 import type { ChannelsResponse } from '../types';
 
-export const getChannels = async <T extends BaseConfig = any>({
+export const getChannels = async ({
 	config,
+	client,
 	options = {},
+	ctx,
 }: {
-	config?: T;
+	config: SlackPlugin;
+	client: SlackClient;
 	options?: {
 		types?: string; // e.g., 'public_channel,private_channel'
 		exclude_archived?: boolean;
 		limit?: number;
 		cursor?: string; // for pagination
 	};
+	ctx: SlackPluginContext;
 }): Promise<ChannelsResponse> => {
 	// Validate that Slack token is configured
-	if (!config?.plugins?.slack?.token) {
+	if (!config.token) {
 		return {
 			success: false,
 			error:
@@ -22,33 +26,42 @@ export const getChannels = async <T extends BaseConfig = any>({
 		};
 	}
 
-	// Dynamically import Slack WebClient
-	const slackModule = '@slack/web-api';
-	const { WebClient } = await import(
-		/* @vite-ignore */
-		/* webpackIgnore: true */
-		slackModule
-	);
-	const client = new WebClient(config.plugins.slack.token);
-
 	try {
 		// Call Slack API to list channels
-		const result = await client.conversations.list({
+		const result = await client.getChannels({
 			types: options.types,
 			exclude_archived: options.exclude_archived,
 			limit: options.limit,
 			cursor: options.cursor,
 		});
 
+		// Database hook: Save channels to database if channels table exists
+		if (ctx.db.channels && typeof ctx.db.channels.insert === 'function') {
+			try {
+				// Insert or update channels
+				for (const channel of result.channels) {
+					await ctx.db.channels.insert({
+						id: channel.id,
+						name: channel.name,
+						is_private: channel.is_private,
+						is_archived: channel.is_archived,
+					});
+				}
+			} catch (dbError: unknown) {
+				// Log but don't fail the operation if DB insert fails
+				console.warn('Failed to save channels to database:', dbError);
+			}
+		}
+
 		// Return success response with channels
 		return {
 			success: true,
 			data: {
-				channels: (result.channels || []).map((channel: any) => ({
+				channels: result.channels.map((channel) => ({
 					id: channel.id,
 					name: channel.name,
-					is_private: channel.is_private || false,
-					is_archived: channel.is_archived || false,
+					is_private: channel.is_private,
+					is_archived: channel.is_archived,
 				})),
 				hasMore: result.response_metadata?.next_cursor ? true : false,
 				nextCursor: result.response_metadata?.next_cursor,

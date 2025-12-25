@@ -1,19 +1,23 @@
-import type { BaseConfig } from '../../../config';
-import type { MessageResponse, MessageTs, SlackChannels } from '../types';
+import type { SlackClient, SlackPlugin, SlackPluginContext } from '../types';
+import type { MessageResponse } from '../types';
 
-export const replyToThread = async <T extends BaseConfig = any>({
+export const replyToThread = async ({
 	config,
+	client,
 	channelId,
 	threadTs,
 	content,
+	ctx,
 }: {
-	config?: T;
-	channelId: SlackChannels<T>;
-	threadTs: MessageTs;
+	config: SlackPlugin;
+	client: SlackClient;
+	channelId: string;
+	threadTs: string;
 	content: string;
+	ctx: SlackPluginContext;
 }): Promise<MessageResponse> => {
 	// Validate that Slack token is configured
-	if (!config?.plugins?.slack?.token) {
+	if (!config.token) {
 		return {
 			success: false,
 			error:
@@ -22,41 +26,47 @@ export const replyToThread = async <T extends BaseConfig = any>({
 	}
 
 	// Look up actual channel ID from config using the friendly name
-	const actualChannelId = config.plugins.slack.channels?.[channelId];
+	const actualChannelId = config.channels?.[channelId];
 	if (!actualChannelId) {
-		const availableChannels = Object.keys(
-			config.plugins.slack.channels || {},
-		).join(', ');
+		const availableChannels = Object.keys(config.channels || {}).join(', ');
 		return {
 			success: false,
 			error: `Channel '${channelId}' not found in config. Available channels: ${availableChannels}`,
 		};
 	}
 
-	// Dynamically import Slack WebClient
-	const slackModule = '@slack/web-api';
-	const { WebClient } = await import(
-		/* @vite-ignore */
-		/* webpackIgnore: true */
-		slackModule
-	);
-	const client = new WebClient(config.plugins.slack.token);
-
 	try {
 		// Call Slack API to reply to thread
-		const result = await client.chat.postMessage({
+		const result = await client.postMessage({
 			channel: actualChannelId,
 			text: content,
 			thread_ts: threadTs, // This makes it a thread reply
 		});
 
+		// Database hook: Save message to database if messages table exists
+		if (ctx.db.messages && typeof ctx.db.messages.insert === 'function') {
+			try {
+				await ctx.db.messages.insert({
+					id: result.ts,
+					content,
+					channel_id: actualChannelId,
+					user_id: ctx.userId || '',
+					timestamp: result.ts,
+					thread_ts: threadTs,
+				});
+			} catch (dbError) {
+				// Log but don't fail the operation if DB insert fails
+				console.warn('Failed to save message to database:', dbError);
+			}
+		}
+
 		// Return success response with message details
 		return {
 			success: true,
 			data: {
-				messageId: result.ts as string,
-				channel: result.channel as string,
-				timestamp: result.ts as string,
+				messageId: result.ts,
+				channel: result.channel,
+				timestamp: result.ts,
 			},
 		};
 	} catch (error) {

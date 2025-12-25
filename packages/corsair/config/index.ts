@@ -1,4 +1,7 @@
-import type { SlackPlugin } from '../plugins/types';
+import type { SlackSchemaOverride } from '../plugins/slack/schema';
+import type { GmailSchemaOverride } from '../plugins/gmail/schema';
+import type { LinearSchemaOverride } from '../plugins/linear/schema';
+import type { GitHubSchemaOverride } from '../plugins/github/schema';
 import type { DrizzlePostgresConfig } from './drizzle-postgres';
 import type { PrismaPostgresConfig } from './prisma-postgres';
 
@@ -32,8 +35,59 @@ export type ConnectionConfig =
 			ssl?: boolean;
 	  };
 
-type BasePlugin = Record<'slack', SlackPlugin>;
+/**
+ * Plugin configuration for Slack
+ */
+export type SlackPluginConfig = {
+	name: 'slack';
+	token: string;
+	channels?: Record<string, string>;
+	members?: Record<string, string>;
+	schema?: SlackSchemaOverride;
+};
 
+/**
+ * Plugin configuration for Gmail
+ */
+export type GmailPluginConfig = {
+	name: 'gmail';
+	accessToken: string;
+	refreshToken?: string;
+	userId?: string;
+	schema?: GmailSchemaOverride;
+};
+
+/**
+ * Plugin configuration for Linear
+ */
+export type LinearPluginConfig = {
+	name: 'linear';
+	apiKey: string;
+	teamId?: string;
+	schema?: LinearSchemaOverride;
+};
+
+/**
+ * Plugin configuration for GitHub
+ */
+export type GitHubPluginConfig = {
+	name: 'github';
+	token: string;
+	schema?: GitHubSchemaOverride;
+};
+
+/**
+ * Union of all plugin config types
+ */
+export type PluginConfig =
+	| SlackPluginConfig
+	| GmailPluginConfig
+	| LinearPluginConfig
+	| GitHubPluginConfig;
+
+/**
+ * Base configuration for Corsair
+ */
 export type BaseConfig = {
 	/**
 	 * The API endpoint to use for the Corsair client. Defaults to `/api/corsair`.
@@ -45,8 +99,9 @@ export type BaseConfig = {
 	pathToCorsairFolder: string;
 	/**
 	 * Any plugins for Corsair to use
+	 * Now supports array format with schema overrides
 	 */
-	plugins?: BasePlugin;
+	plugins?: PluginConfig[];
 };
 
 /**
