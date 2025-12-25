@@ -1,19 +1,23 @@
-import type { BaseConfig } from '../../../config';
-import type { MessageResponse, MessageTs, SlackChannels } from '../types';
+import type { SlackClient, SlackPlugin, SlackPluginContext } from '../types';
+import type { MessageResponse } from '../types';
 
-export const updateMessage = async <T extends BaseConfig = any>({
+export const updateMessage = async ({
 	config,
+	client,
 	channelId,
 	messageTs,
-	newContent,
+	content,
+	ctx,
 }: {
-	config?: T;
-	channelId: SlackChannels<T>;
-	messageTs: MessageTs;
-	newContent: string;
+	config: SlackPlugin;
+	client: SlackClient;
+	channelId: string;
+	messageTs: string;
+	content: string;
+	ctx: SlackPluginContext;
 }): Promise<MessageResponse> => {
 	// Validate that Slack token is configured
-	if (!config?.plugins?.slack?.token) {
+	if (!config.token) {
 		return {
 			success: false,
 			error:
@@ -22,41 +26,43 @@ export const updateMessage = async <T extends BaseConfig = any>({
 	}
 
 	// Look up actual channel ID from config using the friendly name
-	const actualChannelId = config.plugins.slack.channels?.[channelId];
+	const actualChannelId = config.channels?.[channelId];
 	if (!actualChannelId) {
-		const availableChannels = Object.keys(
-			config.plugins.slack.channels || {},
-		).join(', ');
+		const availableChannels = Object.keys(config.channels || {}).join(', ');
 		return {
 			success: false,
 			error: `Channel '${channelId}' not found in config. Available channels: ${availableChannels}`,
 		};
 	}
 
-	// Dynamically import Slack WebClient
-	const slackModule = '@slack/web-api';
-	const { WebClient } = await import(
-		/* @vite-ignore */
-		/* webpackIgnore: true */
-		slackModule
-	);
-	const client = new WebClient(config.plugins.slack.token);
-
 	try {
 		// Call Slack API to update message
-		const result = await client.chat.update({
+		const result = await client.updateMessage({
 			channel: actualChannelId,
 			ts: messageTs,
-			text: newContent,
+			text: content,
 		});
+
+		// Database hook: Update message in database if messages table exists
+		if (ctx.db.messages && typeof ctx.db.messages.update === 'function') {
+			try {
+				await ctx.db.messages.update({
+					id: messageTs,
+					content,
+				});
+			} catch (dbError) {
+				// Log but don't fail the operation if DB update fails
+				console.warn('Failed to update message in database:', dbError);
+			}
+		}
 
 		// Return success response with updated message details
 		return {
 			success: true,
 			data: {
-				messageId: result.ts as string,
-				channel: result.channel as string,
-				timestamp: result.ts as string,
+				messageId: result.ts,
+				channel: result.channel,
+				timestamp: result.ts,
 			},
 		};
 	} catch (error) {

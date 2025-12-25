@@ -23,10 +23,17 @@ export const sendSlackMessage = procedure
 		}),
 	)
 	.mutation(async ({ input, ctx }) => {
-		const slack = ctx.plugins.slack.sendMessage({
-			channelId: 'general',
-			content: '',
+		const linear = ctx.plugins.linear?.createIssue({
+			title: '1',
+			description: '2',
+			teamId: '2bf0f1b7-001a-4dcd-9cd5-2a16fe044c43',
 		});
+		
+		const slack = ctx.plugins.slack?.sendMessage({
+			channelId: input.channel,
+			content: input.message,
+		});
+		
 
 		// return slack.sendMessage({
 		//   channelId: input.channel,
