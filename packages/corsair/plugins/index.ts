@@ -301,7 +301,7 @@ export const createPlugins = <T extends BaseConfig>(config: T) => {
 };
 
 export type { SlackPlugin } from './slack/types';
-export type { SlackSchemaOverride } from './slack/schema';
+export type { SlackSchemaOverride, SlackDefaultSchema } from './slack/schema';
 export type { GmailPlugin } from './gmail/types';
 export type { GmailSchemaOverride } from './gmail/schema';
 export type { LinearPlugin } from './linear/types';
