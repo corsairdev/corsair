@@ -1,22 +1,26 @@
-import type { BaseConfig } from '../../../config';
-import type { MessagesResponse, MessageTs, SlackChannels } from '../types';
+import type { SlackClient, SlackPlugin, SlackPluginContext } from '../types';
+import type { MessagesResponse } from '../types';
 
-export const getMessages = async <T extends BaseConfig = any>({
+export const getMessages = async ({
 	config,
+	client,
 	channelId,
 	options = {},
+	ctx,
 }: {
-	config?: T;
-	channelId: SlackChannels<T>;
+	config: SlackPlugin;
+	client: SlackClient;
+	channelId: string;
 	options?: {
 		limit?: number; // default 100, max 1000
-		oldest?: MessageTs; // only messages after this timestamp
-		latest?: MessageTs; // only messages before this timestamp
+		oldest?: string; // only messages after this timestamp
+		latest?: string; // only messages before this timestamp
 		cursor?: string; // for pagination
 	};
+	ctx: SlackPluginContext;
 }): Promise<MessagesResponse> => {
 	// Validate that Slack token is configured
-	if (!config?.plugins?.slack?.token) {
+	if (!config.token) {
 		return {
 			success: false,
 			error:
@@ -25,32 +29,21 @@ export const getMessages = async <T extends BaseConfig = any>({
 	}
 
 	// Look up actual channel ID from config using the friendly name
-	const actualChannelId = config.plugins.slack.channels?.[channelId];
+	const actualChannelId = config.channels?.[channelId];
 	if (!actualChannelId) {
-		const availableChannels = Object.keys(
-			config.plugins.slack.channels || {},
-		).join(', ');
+		const availableChannels = Object.keys(config.channels || {}).join(', ');
 		return {
 			success: false,
 			error: `Channel '${channelId}' not found in config. Available channels: ${availableChannels}`,
 		};
 	}
 
-	// Dynamically import Slack WebClient
-	const slackModule = '@slack/web-api';
-	const { WebClient } = await import(
-		/* @vite-ignore */
-		/* webpackIgnore: true */
-		slackModule
-	);
-	const client = new WebClient(config.plugins.slack.token);
-
 	try {
 		// Default limit to 100, max 1000
 		const limit = Math.min(options.limit || 100, 1000);
 
 		// Call Slack API to get messages
-		const result = await client.conversations.history({
+		const result = await client.getMessages({
 			channel: actualChannelId,
 			limit,
 			oldest: options.oldest,
@@ -62,13 +55,13 @@ export const getMessages = async <T extends BaseConfig = any>({
 		return {
 			success: true,
 			data: {
-				messages: (result.messages || []) as Array<{
-					type: string;
-					user?: string;
-					text: string;
-					ts: MessageTs;
-					thread_ts?: MessageTs;
-				}>,
+				messages: result.messages.map((msg) => ({
+					type: msg.type,
+					user: msg.user,
+					text: msg.text,
+					ts: msg.ts,
+					thread_ts: msg.thread_ts,
+				})),
 				hasMore: result.has_more || false,
 				nextCursor: result.response_metadata?.next_cursor,
 			},

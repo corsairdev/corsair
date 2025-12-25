@@ -1,24 +1,23 @@
-import type { BaseConfig } from '../../../config';
-import type {
-	EmojiName,
-	MessageTs,
-	ReactionResponse,
-	SlackChannels,
-} from '../types';
+import type { SlackClient, SlackPlugin, SlackPluginContext } from '../types';
+import type { ReactionResponse } from '../types';
 
-export const addReaction = async <T extends BaseConfig = any>({
+export const addReaction = async ({
 	config,
+	client,
 	channelId,
 	messageTs,
 	emoji,
+	ctx,
 }: {
-	config?: T;
-	channelId: SlackChannels<T>;
-	messageTs: MessageTs;
-	emoji: EmojiName;
+	config: SlackPlugin;
+	client: SlackClient;
+	channelId: string;
+	messageTs: string;
+	emoji: string;
+	ctx: SlackPluginContext;
 }): Promise<ReactionResponse> => {
 	// Validate that Slack token is configured
-	if (!config?.plugins?.slack?.token) {
+	if (!config.token) {
 		return {
 			success: false,
 			error:
@@ -27,35 +26,21 @@ export const addReaction = async <T extends BaseConfig = any>({
 	}
 
 	// Look up actual channel ID from config using the friendly name
-	const actualChannelId = config.plugins.slack.channels?.[channelId];
+	const actualChannelId = config.channels?.[channelId];
 	if (!actualChannelId) {
-		const availableChannels = Object.keys(
-			config.plugins.slack.channels || {},
-		).join(', ');
+		const availableChannels = Object.keys(config.channels || {}).join(', ');
 		return {
 			success: false,
 			error: `Channel '${channelId}' not found in config. Available channels: ${availableChannels}`,
 		};
 	}
 
-	// Dynamically import Slack WebClient
-	const slackModule = '@slack/web-api';
-	const { WebClient } = await import(
-		/* @vite-ignore */
-		/* webpackIgnore: true */
-		slackModule
-	);
-	const client = new WebClient(config.plugins.slack.token);
-
 	try {
-		// Remove colons from emoji name if present (accepts both 'thumbsup' and ':thumbsup:')
-		const emojiName = emoji.replace(/:/g, '');
-
 		// Call Slack API to add reaction
-		const result = await client.reactions.add({
+		const result = await client.addReaction({
 			channel: actualChannelId,
 			timestamp: messageTs,
-			name: emojiName,
+			name: emoji,
 		});
 
 		// Return success response

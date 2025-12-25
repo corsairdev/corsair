@@ -1,4 +1,10 @@
-import type { BaseConfig } from '../../config';
+import type {
+	ResolvedSlackSchema,
+	SlackDefaultSchema,
+	SlackSchemaOverride,
+} from './schema';
+
+export type { SlackSchemaOverride } from './schema';
 
 export type SlackPlugin = {
 	/**
@@ -20,23 +26,18 @@ export type SlackPlugin = {
 	 * }]`
 	 */
 	members?: Record<string, string>;
+
+	/**
+	 * Schema override configuration
+	 */
+	schema?: SlackSchemaOverride;
 };
 
-export type BaseSlackPluginResponse<T extends Record<string, any>> = {
+export type BaseSlackPluginResponse<T extends Record<string, unknown>> = {
 	success: boolean;
 	data?: T;
 	error?: string;
 };
-
-export type SlackChannels<T extends BaseConfig> = keyof NonNullable<
-	T['plugins']
->['slack']['channels'] &
-	string;
-
-export type SlackMembers<T extends BaseConfig> = keyof NonNullable<
-	T['plugins']
->['slack']['members'] &
-	string;
 
 // Message timestamp type (Slack uses this for message IDs)
 export type MessageTs = string;
@@ -86,3 +87,50 @@ export type ChannelsResponse = BaseSlackPluginResponse<{
 	hasMore: boolean;
 	nextCursor?: string;
 }>;
+
+/**
+ * Database context type for plugin operations
+ * This provides typed database access based on the resolved schema
+ */
+export type SlackDatabaseContext<
+	TSchemaOverride extends SlackSchemaOverride = SlackSchemaOverride,
+> = {
+	[K in keyof ResolvedSlackSchema<TSchemaOverride>]: ResolvedSlackSchema<TSchemaOverride>[K] extends never
+		? never
+		: {
+				insert: (data: Record<string, unknown>) => Promise<unknown>;
+				select: () => Promise<Array<Record<string, unknown>>>;
+				update: (
+					data: Record<string, unknown>,
+				) => Promise<unknown>;
+				delete: () => Promise<unknown>;
+			};
+};
+
+/**
+ * Plugin operation context
+ * Includes database access and other context
+ */
+export type SlackPluginContext<
+	TSchemaOverride extends SlackSchemaOverride = SlackSchemaOverride,
+> = {
+	db: SlackDatabaseContext<TSchemaOverride>;
+	userId?: string;
+};
+
+/**
+ * Extract channel names from plugin config
+ */
+export type SlackChannels<T extends { channels?: Record<string, string> }> =
+	keyof NonNullable<T['channels']> & string;
+
+/**
+ * Extract member names from plugin config
+ */
+export type SlackMembers<T extends { members?: Record<string, string> }> =
+	keyof NonNullable<T['members']> & string;
+
+/**
+ * SlackClient type for operations
+ */
+export type { SlackClient } from './client';
