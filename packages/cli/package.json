@@ -20,7 +20,8 @@
     "access": "public"
   },
   "scripts": {
-    "build": "tsc"
+    "build": "tsc",
+    "build:watch": "tsc --watch"
   },
   "main": "./dist/index.js",
   "module": "./dist/index.js",

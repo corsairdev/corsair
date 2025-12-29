@@ -1,0 +1,50 @@
+{
+  "name": "@corsair/linear-sdk",
+  "version": "1.0.0",
+  "description": "Linear SDK with TypeScript and real API integration",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsup src/index.ts --format cjs,esm --dts",
+    "typecheck": "tsc --noEmit",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "test:verbose": "jest --verbose",
+    "test:ci": "jest --ci --coverage",
+    "webhook-server": "ts-node tests/webhook-server.ts"
+  },
+  "dependencies": {
+    "@linear/sdk": "^24.0.0",
+    "express": "^4.18.2",
+    "node-fetch": "^2.7.0",
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/jest": "^29.5.14",
+    "@types/node": "^20.10.0",
+    "dotenv": "^16.6.1",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.1.1",
+    "ts-node": "^10.9.2",
+    "tsup": "^8.0.1",
+    "typescript": "^5.3.0"
+  },
+  "keywords": [
+    "linear",
+    "api",
+    "sdk",
+    "typescript",
+    "webhooks"
+  ],
+  "license": "MIT"
+}
