@@ -10,11 +10,13 @@
     "url": "https://github.com/corsairdev/corsair",
     "directory": "packages/corsair"
   },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
   "exports": {
     ".": {
+      "types": "./dist/index.d.ts",
       "import": "./dist/index.mjs",
-      "require": "./dist/index.js",
-      "types": "./dist/index.d.ts"
+      "require": "./dist/index.js"
     }
   },
   "scripts": {
@@ -50,8 +52,6 @@
   "publishConfig": {
     "access": "public"
   },
-  "main": "./dist/index.js",
-  "module": "./dist/index.js",
   "packageManager": "pnpm@10.11.1",
   "files": [
     "dist"

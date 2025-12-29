@@ -47,6 +47,8 @@ program
 	});
 
 program
+<<<<<<< HEAD
+=======
 	.command('db:schema')
 	.description('Generate ORM schema file from dbPlugins')
 	.option('-o, --out <path>', 'Output path for generated schema file')
@@ -56,6 +58,7 @@ program
 	});
 
 program
+>>>>>>> 33bf9966433faae8ddad38429e736a996a04c6cd
 	.command('config')
 	.description('Get the config')
 	.action(async () => {
