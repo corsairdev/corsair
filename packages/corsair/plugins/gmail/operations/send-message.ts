@@ -1,5 +1,9 @@
-import type { GmailClient, GmailPlugin, GmailPluginContext } from '../types';
-import type { SendMessageResponse } from '../types';
+import type {
+	GmailClient,
+	GmailPlugin,
+	GmailPluginContext,
+	SendMessageResponse,
+} from '../types';
 
 export const sendMessage = async ({
 	config,
@@ -67,4 +71,3 @@ export const sendMessage = async ({
 		};
 	}
 };
-

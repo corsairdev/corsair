@@ -39,13 +39,9 @@ export type SlackDefaultSchema = typeof slackDefaultSchema;
  * - `false`: Skip creating this table
  * - Function: Customize the schema based on the default schema
  */
-export type SchemaOverrideValue<
-	TTableName extends keyof SlackDefaultSchema,
-> =
+export type SchemaOverrideValue<TTableName extends keyof SlackDefaultSchema> =
 	| boolean
-	| ((
-			dbSchema: SlackDefaultSchema,
-	  ) => Record<string, string | boolean>);
+	| ((dbSchema: SlackDefaultSchema) => Record<string, string | boolean>);
 
 /**
  * Schema override configuration
@@ -58,9 +54,7 @@ export type SlackSchemaOverride = {
 /**
  * Resolved schema after applying overrides
  */
-export type ResolvedSlackSchema<
-	TOverride extends SlackSchemaOverride,
-> = {
+export type ResolvedSlackSchema<TOverride extends SlackSchemaOverride> = {
 	[K in keyof SlackDefaultSchema]: TOverride[K] extends false
 		? never
 		: TOverride[K] extends true
@@ -71,4 +65,3 @@ export type ResolvedSlackSchema<
 					: SlackDefaultSchema[K]
 				: SlackDefaultSchema[K];
 };
-

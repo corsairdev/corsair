@@ -22,14 +22,6 @@
       "module": "commonjs"
     }
   },
-  "include": [
-    "*.ts",
-    "core/*.ts",
-    "tests/*.ts"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist"
-  ]
+  "include": ["*.ts", "core/*.ts", "tests/*.ts"],
+  "exclude": ["node_modules", "dist"]
 }
-

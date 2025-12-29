@@ -1,31 +1,33 @@
-import { request as __request } from './core/request';
 import { OpenAPI } from './core/OpenAPI';
+import { request as __request } from './core/request';
 import type {
-  Issue,
-  IssueConnection,
-  Team,
-  TeamConnection,
-  Project,
-  ProjectConnection,
-  Comment,
-  CommentConnection,
-  CreateIssueInput,
-  UpdateIssueInput,
-  CreateProjectInput,
-  UpdateProjectInput,
-  CreateCommentInput,
-  UpdateCommentInput,
+	Comment,
+	CommentConnection,
+	CreateCommentInput,
+	CreateIssueInput,
+	CreateProjectInput,
+	Issue,
+	IssueConnection,
+	Project,
+	ProjectConnection,
+	Team,
+	TeamConnection,
+	UpdateCommentInput,
+	UpdateIssueInput,
+	UpdateProjectInput,
 } from './models';
 
 export class IssuesService {
-  public static async list(
-    teamId?: string,
-    first: number = 50,
-    after?: string
-  ): Promise<IssueConnection> {
-    const query = teamId ? `
+	public static async list(
+		teamId?: string,
+		first: number = 50,
+		after?: string,
+	): Promise<IssueConnection> {
+		const query = teamId
+			? `
       query Issues($teamId: String!, $first: Int!, $after: String) {
-        issues(filter: { team: { id: { eq: $teamId } } }, first: $first, after: $after) {` : `
+        issues(filter: { team: { id: { eq: $teamId } } }, first: $first, after: $after) {`
+			: `
       query Issues($first: Int!, $after: String) {
         issues(first: $first, after: $after) {
           nodes {
@@ -84,21 +86,21 @@ export class IssuesService {
       }
     `;
 
-    const variables: any = { first };
-    if (teamId) variables.teamId = teamId;
-    if (after) variables.after = after;
+		const variables: any = { first };
+		if (teamId) variables.teamId = teamId;
+		if (after) variables.after = after;
 
-    const result = await __request<any>(OpenAPI, {
-      method: 'POST',
-      url: '',
-      body: { query, variables },
-    });
+		const result = await __request<any>(OpenAPI, {
+			method: 'POST',
+			url: '',
+			body: { query, variables },
+		});
 
-    return result.data.issues;
-  }
+		return result.data.issues;
+	}
 
-  public static async get(id: string): Promise<Issue> {
-    const query = `
+	public static async get(id: string): Promise<Issue> {
+		const query = `
       query Issue($id: String!) {
         issue(id: $id) {
           id
@@ -170,17 +172,17 @@ export class IssuesService {
       }
     `;
 
-    const result = await __request<any>(OpenAPI, {
-      method: 'POST',
-      url: '',
-      body: { query, variables: { id } },
-    });
+		const result = await __request<any>(OpenAPI, {
+			method: 'POST',
+			url: '',
+			body: { query, variables: { id } },
+		});
 
-    return result.data.issue;
-  }
+		return result.data.issue;
+	}
 
-  public static async create(input: CreateIssueInput): Promise<Issue> {
-    const mutation = `
+	public static async create(input: CreateIssueInput): Promise<Issue> {
+		const mutation = `
       mutation CreateIssue($input: IssueCreateInput!) {
         issueCreate(input: $input) {
           success
@@ -220,17 +222,20 @@ export class IssuesService {
       }
     `;
 
-    const result = await __request<any>(OpenAPI, {
-      method: 'POST',
-      url: '',
-      body: { query: mutation, variables: { input } },
-    });
+		const result = await __request<any>(OpenAPI, {
+			method: 'POST',
+			url: '',
+			body: { query: mutation, variables: { input } },
+		});
 
-    return result.data.issueCreate.issue;
-  }
+		return result.data.issueCreate.issue;
+	}
 
-  public static async update(id: string, input: UpdateIssueInput): Promise<Issue> {
-    const mutation = `
+	public static async update(
+		id: string,
+		input: UpdateIssueInput,
+	): Promise<Issue> {
+		const mutation = `
       mutation UpdateIssue($id: String!, $input: IssueUpdateInput!) {
         issueUpdate(id: $id, input: $input) {
           success
@@ -264,17 +269,17 @@ export class IssuesService {
       }
     `;
 
-    const result = await __request<any>(OpenAPI, {
-      method: 'POST',
-      url: '',
-      body: { query: mutation, variables: { id, input } },
-    });
+		const result = await __request<any>(OpenAPI, {
+			method: 'POST',
+			url: '',
+			body: { query: mutation, variables: { id, input } },
+		});
 
-    return result.data.issueUpdate.issue;
-  }
+		return result.data.issueUpdate.issue;
+	}
 
-  public static async delete(id: string): Promise<boolean> {
-    const mutation = `
+	public static async delete(id: string): Promise<boolean> {
+		const mutation = `
       mutation DeleteIssue($id: String!) {
         issueDelete(id: $id) {
           success
@@ -282,19 +287,22 @@ export class IssuesService {
       }
     `;
 
-    const result = await __request<any>(OpenAPI, {
-      method: 'POST',
-      url: '',
-      body: { query: mutation, variables: { id } },
-    });
+		const result = await __request<any>(OpenAPI, {
+			method: 'POST',
+			url: '',
+			body: { query: mutation, variables: { id } },
+		});
 
-    return result.data.issueDelete.success;
-  }
+		return result.data.issueDelete.success;
+	}
 }
 
 export class TeamsService {
-  public static async list(first: number = 50, after?: string): Promise<TeamConnection> {
-    const query = `
+	public static async list(
+		first: number = 50,
+		after?: string,
+	): Promise<TeamConnection> {
+		const query = `
       query Teams($first: Int!, $after: String) {
         teams(first: $first, after: $after) {
           nodes {
@@ -318,20 +326,20 @@ export class TeamsService {
       }
     `;
 
-    const variables: any = { first };
-    if (after) variables.after = after;
+		const variables: any = { first };
+		if (after) variables.after = after;
 
-    const result = await __request<any>(OpenAPI, {
-      method: 'POST',
-      url: '',
-      body: { query, variables },
-    });
+		const result = await __request<any>(OpenAPI, {
+			method: 'POST',
+			url: '',
+			body: { query, variables },
+		});
 
-    return result.data.teams;
-  }
+		return result.data.teams;
+	}
 
-  public static async get(id: string): Promise<Team> {
-    const query = `
+	public static async get(id: string): Promise<Team> {
+		const query = `
       query Team($id: String!) {
         team(id: $id) {
           id
@@ -347,19 +355,22 @@ export class TeamsService {
       }
     `;
 
-    const result = await __request<any>(OpenAPI, {
-      method: 'POST',
-      url: '',
-      body: { query, variables: { id } },
-    });
+		const result = await __request<any>(OpenAPI, {
+			method: 'POST',
+			url: '',
+			body: { query, variables: { id } },
+		});
 
-    return result.data.team;
-  }
+		return result.data.team;
+	}
 }
 
 export class ProjectsService {
-  public static async list(first: number = 50, after?: string): Promise<ProjectConnection> {
-    const query = `
+	public static async list(
+		first: number = 50,
+		after?: string,
+	): Promise<ProjectConnection> {
+		const query = `
       query Projects($first: Int!, $after: String) {
         projects(first: $first, after: $after) {
           nodes {
@@ -400,20 +411,20 @@ export class ProjectsService {
       }
     `;
 
-    const variables: any = { first };
-    if (after) variables.after = after;
+		const variables: any = { first };
+		if (after) variables.after = after;
 
-    const result = await __request<any>(OpenAPI, {
-      method: 'POST',
-      url: '',
-      body: { query, variables },
-    });
+		const result = await __request<any>(OpenAPI, {
+			method: 'POST',
+			url: '',
+			body: { query, variables },
+		});
 
-    return result.data.projects;
-  }
+		return result.data.projects;
+	}
 
-  public static async get(id: string): Promise<Project> {
-    const query = `
+	public static async get(id: string): Promise<Project> {
+		const query = `
       query Project($id: String!) {
         project(id: $id) {
           id
@@ -447,17 +458,17 @@ export class ProjectsService {
       }
     `;
 
-    const result = await __request<any>(OpenAPI, {
-      method: 'POST',
-      url: '',
-      body: { query, variables: { id } },
-    });
+		const result = await __request<any>(OpenAPI, {
+			method: 'POST',
+			url: '',
+			body: { query, variables: { id } },
+		});
 
-    return result.data.project;
-  }
+		return result.data.project;
+	}
 
-  public static async create(input: CreateProjectInput): Promise<Project> {
-    const mutation = `
+	public static async create(input: CreateProjectInput): Promise<Project> {
+		const mutation = `
       mutation CreateProject($input: ProjectCreateInput!) {
         projectCreate(input: $input) {
           success
@@ -490,17 +501,20 @@ export class ProjectsService {
       }
     `;
 
-    const result = await __request<any>(OpenAPI, {
-      method: 'POST',
-      url: '',
-      body: { query: mutation, variables: { input } },
-    });
+		const result = await __request<any>(OpenAPI, {
+			method: 'POST',
+			url: '',
+			body: { query: mutation, variables: { input } },
+		});
 
-    return result.data.projectCreate.project;
-  }
+		return result.data.projectCreate.project;
+	}
 
-  public static async update(id: string, input: UpdateProjectInput): Promise<Project> {
-    const mutation = `
+	public static async update(
+		id: string,
+		input: UpdateProjectInput,
+	): Promise<Project> {
+		const mutation = `
       mutation UpdateProject($id: String!, $input: ProjectUpdateInput!) {
         projectUpdate(id: $id, input: $input) {
           success
@@ -520,17 +534,17 @@ export class ProjectsService {
       }
     `;
 
-    const result = await __request<any>(OpenAPI, {
-      method: 'POST',
-      url: '',
-      body: { query: mutation, variables: { id, input } },
-    });
+		const result = await __request<any>(OpenAPI, {
+			method: 'POST',
+			url: '',
+			body: { query: mutation, variables: { id, input } },
+		});
 
-    return result.data.projectUpdate.project;
-  }
+		return result.data.projectUpdate.project;
+	}
 
-  public static async delete(id: string): Promise<boolean> {
-    const mutation = `
+	public static async delete(id: string): Promise<boolean> {
+		const mutation = `
       mutation DeleteProject($id: String!) {
         projectDelete(id: $id) {
           success
@@ -538,19 +552,23 @@ export class ProjectsService {
       }
     `;
 
-    const result = await __request<any>(OpenAPI, {
-      method: 'POST',
-      url: '',
-      body: { query: mutation, variables: { id } },
-    });
+		const result = await __request<any>(OpenAPI, {
+			method: 'POST',
+			url: '',
+			body: { query: mutation, variables: { id } },
+		});
 
-    return result.data.projectDelete.success;
-  }
+		return result.data.projectDelete.success;
+	}
 }
 
 export class CommentsService {
-  public static async list(issueId: string, first: number = 50, after?: string): Promise<CommentConnection> {
-    const query = `
+	public static async list(
+		issueId: string,
+		first: number = 50,
+		after?: string,
+	): Promise<CommentConnection> {
+		const query = `
       query Comments($issueId: String!, $first: Int!, $after: String) {
         issue(id: $issueId) {
           comments(first: $first, after: $after) {
@@ -577,20 +595,20 @@ export class CommentsService {
       }
     `;
 
-    const variables: any = { issueId, first };
-    if (after) variables.after = after;
+		const variables: any = { issueId, first };
+		if (after) variables.after = after;
 
-    const result = await __request<any>(OpenAPI, {
-      method: 'POST',
-      url: '',
-      body: { query, variables },
-    });
+		const result = await __request<any>(OpenAPI, {
+			method: 'POST',
+			url: '',
+			body: { query, variables },
+		});
 
-    return result.data.issue.comments;
-  }
+		return result.data.issue.comments;
+	}
 
-  public static async create(input: CreateCommentInput): Promise<Comment> {
-    const mutation = `
+	public static async create(input: CreateCommentInput): Promise<Comment> {
+		const mutation = `
       mutation CreateComment($input: CommentCreateInput!) {
         commentCreate(input: $input) {
           success
@@ -609,17 +627,20 @@ export class CommentsService {
       }
     `;
 
-    const result = await __request<any>(OpenAPI, {
-      method: 'POST',
-      url: '',
-      body: { query: mutation, variables: { input } },
-    });
+		const result = await __request<any>(OpenAPI, {
+			method: 'POST',
+			url: '',
+			body: { query: mutation, variables: { input } },
+		});
 
-    return result.data.commentCreate.comment;
-  }
+		return result.data.commentCreate.comment;
+	}
 
-  public static async update(id: string, input: UpdateCommentInput): Promise<Comment> {
-    const mutation = `
+	public static async update(
+		id: string,
+		input: UpdateCommentInput,
+	): Promise<Comment> {
+		const mutation = `
       mutation UpdateComment($id: String!, $input: CommentUpdateInput!) {
         commentUpdate(id: $id, input: $input) {
           success
@@ -633,17 +654,17 @@ export class CommentsService {
       }
     `;
 
-    const result = await __request<any>(OpenAPI, {
-      method: 'POST',
-      url: '',
-      body: { query: mutation, variables: { id, input } },
-    });
+		const result = await __request<any>(OpenAPI, {
+			method: 'POST',
+			url: '',
+			body: { query: mutation, variables: { id, input } },
+		});
 
-    return result.data.commentUpdate.comment;
-  }
+		return result.data.commentUpdate.comment;
+	}
 
-  public static async delete(id: string): Promise<boolean> {
-    const mutation = `
+	public static async delete(id: string): Promise<boolean> {
+		const mutation = `
       mutation DeleteComment($id: String!) {
         commentDelete(id: $id) {
           success
@@ -651,13 +672,12 @@ export class CommentsService {
       }
     `;
 
-    const result = await __request<any>(OpenAPI, {
-      method: 'POST',
-      url: '',
-      body: { query: mutation, variables: { id } },
-    });
+		const result = await __request<any>(OpenAPI, {
+			method: 'POST',
+			url: '',
+			body: { query: mutation, variables: { id } },
+		});
 
-    return result.data.commentDelete.success;
-  }
+		return result.data.commentDelete.success;
+	}
 }
-

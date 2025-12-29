@@ -1,5 +1,9 @@
-import type { GmailClient, GmailPlugin, GmailPluginContext } from '../types';
-import type { ListLabelsResponse } from '../types';
+import type {
+	GmailClient,
+	GmailPlugin,
+	GmailPluginContext,
+	ListLabelsResponse,
+} from '../types';
 
 export const listLabels = async ({
 	config,
@@ -55,4 +59,3 @@ export const listLabels = async ({
 		};
 	}
 };
-

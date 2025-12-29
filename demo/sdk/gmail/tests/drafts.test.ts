@@ -1,189 +1,195 @@
 import { Gmail } from '../api';
-import { requireToken, getTestUserId, handleRateLimit, generateTestId, createTestEmail, getTestEmail } from './setup';
+import {
+	createTestEmail,
+	generateTestId,
+	getTestEmail,
+	getTestUserId,
+	handleRateLimit,
+	requireToken,
+} from './setup';
 
 describe('Gmail.Drafts - Drafts API', () => {
-    const userId = getTestUserId();
-    let createdDraftId: string | undefined;
+	const userId = getTestUserId();
+	let createdDraftId: string | undefined;
 
-    afterAll(async () => {
-        if (createdDraftId) {
-            try {
-                await Gmail.Drafts.delete(userId, createdDraftId);
-                console.log(`Cleanup: Deleted draft ${createdDraftId}`);
-            } catch (e) {
-                console.warn(`Cleanup failed for draft ${createdDraftId}`);
-            }
-        }
-    });
+	afterAll(async () => {
+		if (createdDraftId) {
+			try {
+				await Gmail.Drafts.delete(userId, createdDraftId);
+				console.log(`Cleanup: Deleted draft ${createdDraftId}`);
+			} catch (e) {
+				console.warn(`Cleanup failed for draft ${createdDraftId}`);
+			}
+		}
+	});
 
-    describe('list', () => {
-        it('should list drafts', async () => {
-            if (requireToken()) return;
+	describe('list', () => {
+		it('should list drafts', async () => {
+			if (requireToken()) return;
 
-            try {
-                const response = await Gmail.Drafts.list(userId, 10);
+			try {
+				const response = await Gmail.Drafts.list(userId, 10);
 
-                expect(response).toBeDefined();
-                
-                if (response.drafts && response.drafts.length > 0) {
-                    console.log(`Found ${response.drafts.length} drafts`);
-                    console.log('First draft ID:', response.drafts[0].id);
-                } else {
-                    console.log('No drafts found');
-                }
-            } catch (error) {
-                await handleRateLimit(error);
-            }
-        });
-    });
+				expect(response).toBeDefined();
 
-    describe('create', () => {
-        it('should create a draft', async () => {
-            if (requireToken()) return;
+				if (response.drafts && response.drafts.length > 0) {
+					console.log(`Found ${response.drafts.length} drafts`);
+					console.log('First draft ID:', response.drafts[0].id);
+				} else {
+					console.log('No drafts found');
+				}
+			} catch (error) {
+				await handleRateLimit(error);
+			}
+		});
+	});
 
-            try {
-                const testId = generateTestId();
-                const subject = `Draft Test - ${testId}`;
-                const body = `This is a draft created at ${new Date().toISOString()}`;
-                const raw = createTestEmail(getTestEmail(), subject, body);
+	describe('create', () => {
+		it('should create a draft', async () => {
+			if (requireToken()) return;
 
-                const draft = await Gmail.Drafts.create(userId, {
-                    message: { raw },
-                });
+			try {
+				const testId = generateTestId();
+				const subject = `Draft Test - ${testId}`;
+				const body = `This is a draft created at ${new Date().toISOString()}`;
+				const raw = createTestEmail(getTestEmail(), subject, body);
 
-                expect(draft).toBeDefined();
-                expect(draft.id).toBeDefined();
-                expect(draft.message).toBeDefined();
+				const draft = await Gmail.Drafts.create(userId, {
+					message: { raw },
+				});
 
-                createdDraftId = draft.id;
+				expect(draft).toBeDefined();
+				expect(draft.id).toBeDefined();
+				expect(draft.message).toBeDefined();
 
-                console.log('Created draft ID:', draft.id);
-                console.log('Message ID:', draft.message?.id);
-            } catch (error) {
-                await handleRateLimit(error);
-            }
-        });
-    });
+				createdDraftId = draft.id;
 
-    describe('get', () => {
-        it('should get a draft by ID', async () => {
-            if (requireToken()) return;
+				console.log('Created draft ID:', draft.id);
+				console.log('Message ID:', draft.message?.id);
+			} catch (error) {
+				await handleRateLimit(error);
+			}
+		});
+	});
 
-            if (!createdDraftId) {
-                console.log('Skipping get test - no draft created');
-                return;
-            }
+	describe('get', () => {
+		it('should get a draft by ID', async () => {
+			if (requireToken()) return;
 
-            try {
-                const draft = await Gmail.Drafts.get(userId, createdDraftId, 'full');
+			if (!createdDraftId) {
+				console.log('Skipping get test - no draft created');
+				return;
+			}
 
-                expect(draft).toBeDefined();
-                expect(draft.id).toBe(createdDraftId);
-                expect(draft.message).toBeDefined();
+			try {
+				const draft = await Gmail.Drafts.get(userId, createdDraftId, 'full');
 
-                console.log('Draft ID:', draft.id);
-                console.log('Message snippet:', draft.message?.snippet);
-            } catch (error) {
-                await handleRateLimit(error);
-            }
-        });
-    });
+				expect(draft).toBeDefined();
+				expect(draft.id).toBe(createdDraftId);
+				expect(draft.message).toBeDefined();
 
-    describe('update', () => {
-        it('should update a draft', async () => {
-            if (requireToken()) return;
+				console.log('Draft ID:', draft.id);
+				console.log('Message snippet:', draft.message?.snippet);
+			} catch (error) {
+				await handleRateLimit(error);
+			}
+		});
+	});
 
-            if (!createdDraftId) {
-                console.log('Skipping update test - no draft created');
-                return;
-            }
+	describe('update', () => {
+		it('should update a draft', async () => {
+			if (requireToken()) return;
 
-            try {
-                const testId = generateTestId();
-                const subject = `Updated Draft - ${testId}`;
-                const body = `This draft was updated at ${new Date().toISOString()}`;
-                const raw = createTestEmail(getTestEmail(), subject, body);
+			if (!createdDraftId) {
+				console.log('Skipping update test - no draft created');
+				return;
+			}
 
-                const updatedDraft = await Gmail.Drafts.update(userId, createdDraftId, {
-                    id: createdDraftId,
-                    message: { raw },
-                });
+			try {
+				const testId = generateTestId();
+				const subject = `Updated Draft - ${testId}`;
+				const body = `This draft was updated at ${new Date().toISOString()}`;
+				const raw = createTestEmail(getTestEmail(), subject, body);
 
-                expect(updatedDraft).toBeDefined();
-                expect(updatedDraft.id).toBe(createdDraftId);
+				const updatedDraft = await Gmail.Drafts.update(userId, createdDraftId, {
+					id: createdDraftId,
+					message: { raw },
+				});
 
-                console.log('Updated draft ID:', updatedDraft.id);
-            } catch (error) {
-                await handleRateLimit(error);
-            }
-        });
-    });
+				expect(updatedDraft).toBeDefined();
+				expect(updatedDraft.id).toBe(createdDraftId);
 
-    describe('delete', () => {
-        it('should delete a draft', async () => {
-            if (requireToken()) return;
+				console.log('Updated draft ID:', updatedDraft.id);
+			} catch (error) {
+				await handleRateLimit(error);
+			}
+		});
+	});
 
-            try {
-                const testId = generateTestId();
-                const subject = `Temp Draft - ${testId}`;
-                const body = 'This draft will be deleted';
-                const raw = createTestEmail(getTestEmail(), subject, body);
+	describe('delete', () => {
+		it('should delete a draft', async () => {
+			if (requireToken()) return;
 
-                const draft = await Gmail.Drafts.create(userId, {
-                    message: { raw },
-                });
+			try {
+				const testId = generateTestId();
+				const subject = `Temp Draft - ${testId}`;
+				const body = 'This draft will be deleted';
+				const raw = createTestEmail(getTestEmail(), subject, body);
 
-                expect(draft.id).toBeDefined();
+				const draft = await Gmail.Drafts.create(userId, {
+					message: { raw },
+				});
 
-                await Gmail.Drafts.delete(userId, draft.id!);
+				expect(draft.id).toBeDefined();
 
-                console.log('Deleted draft:', draft.id);
+				await Gmail.Drafts.delete(userId, draft.id!);
 
-                try {
-                    await Gmail.Drafts.get(userId, draft.id!);
-                    fail('Draft should have been deleted');
-                } catch (error: any) {
-                    expect(error.status).toBe(404);
-                }
-            } catch (error) {
-                await handleRateLimit(error);
-            }
-        });
-    });
+				console.log('Deleted draft:', draft.id);
 
-    describe('send', () => {
-        it('should send a draft', async () => {
-            if (requireToken()) return;
+				try {
+					await Gmail.Drafts.get(userId, draft.id!);
+					fail('Draft should have been deleted');
+				} catch (error: any) {
+					expect(error.status).toBe(404);
+				}
+			} catch (error) {
+				await handleRateLimit(error);
+			}
+		});
+	});
 
-            try {
-                const testId = generateTestId();
-                const subject = `Draft to Send - ${testId}`;
-                const body = `This draft will be sent at ${new Date().toISOString()}`;
-                const raw = createTestEmail(getTestEmail(), subject, body);
+	describe('send', () => {
+		it('should send a draft', async () => {
+			if (requireToken()) return;
 
-                const draft = await Gmail.Drafts.create(userId, {
-                    message: { raw },
-                });
+			try {
+				const testId = generateTestId();
+				const subject = `Draft to Send - ${testId}`;
+				const body = `This draft will be sent at ${new Date().toISOString()}`;
+				const raw = createTestEmail(getTestEmail(), subject, body);
 
-                expect(draft.id).toBeDefined();
+				const draft = await Gmail.Drafts.create(userId, {
+					message: { raw },
+				});
 
-                const sentMessage = await Gmail.Drafts.send(userId, {
-                    id: draft.id,
-                });
+				expect(draft.id).toBeDefined();
 
-                expect(sentMessage).toBeDefined();
-                expect(sentMessage.id).toBeDefined();
-                expect(sentMessage.threadId).toBeDefined();
+				const sentMessage = await Gmail.Drafts.send(userId, {
+					id: draft.id,
+				});
 
-                console.log('Sent draft as message ID:', sentMessage.id);
+				expect(sentMessage).toBeDefined();
+				expect(sentMessage.id).toBeDefined();
+				expect(sentMessage.threadId).toBeDefined();
 
-                if (sentMessage.id) {
-                    await Gmail.Messages.delete(userId, sentMessage.id);
-                }
-            } catch (error) {
-                await handleRateLimit(error);
-            }
-        });
-    });
+				console.log('Sent draft as message ID:', sentMessage.id);
+
+				if (sentMessage.id) {
+					await Gmail.Messages.delete(userId, sentMessage.id);
+				}
+			} catch (error) {
+				await handleRateLimit(error);
+			}
+		});
+	});
 });
-

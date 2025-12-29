@@ -1,22 +1,23 @@
 import { createLinearClient } from './client';
+import { createIssue } from './operations/create-issue';
+import { getIssue } from './operations/get-issue';
+import { listIssues } from './operations/list-issues';
+import { listTeams } from './operations/list-teams';
+import { updateIssue } from './operations/update-issue';
 import type {
 	LinearDatabaseContext,
 	LinearPlugin,
 	LinearPluginContext,
 	LinearSchemaOverride,
 } from './types';
-import { listIssues } from './operations/list-issues';
-import { getIssue } from './operations/get-issue';
-import { createIssue } from './operations/create-issue';
-import { updateIssue } from './operations/update-issue';
-import { listTeams } from './operations/list-teams';
 
 /**
  * Creates a Linear plugin instance with database access
  */
 export function createLinearPlugin<
 	TSchemaOverride extends LinearSchemaOverride = LinearSchemaOverride,
-	TDatabase extends LinearDatabaseContext<TSchemaOverride> = LinearDatabaseContext<TSchemaOverride>,
+	TDatabase extends
+		LinearDatabaseContext<TSchemaOverride> = LinearDatabaseContext<TSchemaOverride>,
 >(config: LinearPlugin, db: TDatabase) {
 	const client = createLinearClient(config.apiKey);
 
@@ -98,4 +99,3 @@ export function createLinearPlugin<
 }
 
 export type { LinearPlugin, LinearSchemaOverride, LinearPluginContext };
-

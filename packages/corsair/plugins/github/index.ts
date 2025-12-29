@@ -1,22 +1,23 @@
 import { createGitHubClient } from './client';
+import { createIssue } from './operations/create-issue';
+import { getIssue } from './operations/get-issue';
+import { listIssues } from './operations/list-issues';
+import { listPullRequests } from './operations/list-pull-requests';
+import { listRepositories } from './operations/list-repositories';
 import type {
 	GitHubDatabaseContext,
 	GitHubPlugin,
 	GitHubPluginContext,
 	GitHubSchemaOverride,
 } from './types';
-import { createIssue } from './operations/create-issue';
-import { getIssue } from './operations/get-issue';
-import { listIssues } from './operations/list-issues';
-import { listPullRequests } from './operations/list-pull-requests';
-import { listRepositories } from './operations/list-repositories';
 
 /**
  * Creates a GitHub plugin instance with database access
  */
 export function createGitHubPlugin<
 	TSchemaOverride extends GitHubSchemaOverride = GitHubSchemaOverride,
-	TDatabase extends GitHubDatabaseContext<TSchemaOverride> = GitHubDatabaseContext<TSchemaOverride>,
+	TDatabase extends
+		GitHubDatabaseContext<TSchemaOverride> = GitHubDatabaseContext<TSchemaOverride>,
 >(config: GitHubPlugin, db: TDatabase) {
 	const client = createGitHubClient(config.token);
 
@@ -113,4 +114,3 @@ export function createGitHubPlugin<
 }
 
 export type { GitHubPlugin, GitHubSchemaOverride, GitHubPluginContext };
-

@@ -1,8 +1,4 @@
-import type {
-	ResolvedLinearSchema,
-	LinearDefaultSchema,
-	LinearSchemaOverride,
-} from './schema';
+import type { LinearSchemaOverride, ResolvedLinearSchema } from './schema';
 
 export type LinearPlugin = {
 	/**
@@ -103,9 +99,7 @@ export type LinearDatabaseContext<
 		: {
 				insert: (data: Record<string, unknown>) => Promise<unknown>;
 				select: () => Promise<Array<Record<string, unknown>>>;
-				update: (
-					data: Record<string, unknown>,
-				) => Promise<unknown>;
+				update: (data: Record<string, unknown>) => Promise<unknown>;
 				delete: () => Promise<unknown>;
 			};
 };
@@ -126,4 +120,3 @@ export type LinearPluginContext<
 export type { LinearClient } from './client';
 
 export type { LinearSchemaOverride } from './schema';
-

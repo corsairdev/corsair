@@ -1,68 +1,67 @@
-import type { Message, History } from './models';
+import type { History, Message } from './models';
 
 export type PubSubMessage = {
-    data?: string;
-    attributes?: Record<string, string>;
-    messageId?: string;
-    publishTime?: string;
+	data?: string;
+	attributes?: Record<string, string>;
+	messageId?: string;
+	publishTime?: string;
 };
 
 export type PubSubNotification = {
-    message?: PubSubMessage;
-    subscription?: string;
+	message?: PubSubMessage;
+	subscription?: string;
 };
 
 export type GmailPushNotification = {
-    emailAddress?: string;
-    historyId?: string;
+	emailAddress?: string;
+	historyId?: string;
 };
 
 export type HistoryEvent = {
-    type: 'history';
-    emailAddress: string;
-    historyId: string;
-    history?: History[];
+	type: 'history';
+	emailAddress: string;
+	historyId: string;
+	history?: History[];
 };
 
 export type MessageReceivedEvent = {
-    type: 'messageReceived';
-    emailAddress: string;
-    historyId: string;
-    message: Message;
+	type: 'messageReceived';
+	emailAddress: string;
+	historyId: string;
+	message: Message;
 };
 
 export type MessageDeletedEvent = {
-    type: 'messageDeleted';
-    emailAddress: string;
-    historyId: string;
-    message: Message;
+	type: 'messageDeleted';
+	emailAddress: string;
+	historyId: string;
+	message: Message;
 };
 
 export type MessageLabelChangedEvent = {
-    type: 'messageLabelChanged';
-    emailAddress: string;
-    historyId: string;
-    message: Message;
-    labelsAdded?: string[];
-    labelsRemoved?: string[];
+	type: 'messageLabelChanged';
+	emailAddress: string;
+	historyId: string;
+	message: Message;
+	labelsAdded?: string[];
+	labelsRemoved?: string[];
 };
 
 export type GmailWebhookEvent =
-    | HistoryEvent
-    | MessageReceivedEvent
-    | MessageDeletedEvent
-    | MessageLabelChangedEvent;
+	| HistoryEvent
+	| MessageReceivedEvent
+	| MessageDeletedEvent
+	| MessageLabelChangedEvent;
 
-export type GmailEventName = 
-    | 'history'
-    | 'messageReceived'
-    | 'messageDeleted'
-    | 'messageLabelChanged';
+export type GmailEventName =
+	| 'history'
+	| 'messageReceived'
+	| 'messageDeleted'
+	| 'messageLabelChanged';
 
 export interface GmailEventMap {
-    history: HistoryEvent;
-    messageReceived: MessageReceivedEvent;
-    messageDeleted: MessageDeletedEvent;
-    messageLabelChanged: MessageLabelChangedEvent;
+	history: HistoryEvent;
+	messageReceived: MessageReceivedEvent;
+	messageDeleted: MessageDeletedEvent;
+	messageLabelChanged: MessageLabelChangedEvent;
 }
-
