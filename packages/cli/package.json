@@ -20,8 +20,12 @@
     "access": "public"
   },
   "scripts": {
+<<<<<<< HEAD
     "build": "tsc",
     "build:watch": "tsc --watch"
+=======
+    "build": "tsc"
+>>>>>>> 33bf9966433faae8ddad38429e736a996a04c6cd
   },
   "main": "./dist/index.js",
   "module": "./dist/index.js",
@@ -31,10 +35,21 @@
   "dependencies": {
     "@corsair-ai/core": "workspace:*",
     "@ai-sdk/openai": "^2.0.68",
+<<<<<<< HEAD
     "@inquirer/prompts": "^7.0.1",
     "ai": "^5.0.93",
     "commander": "^12.1.0",
     "dotenv": "^16.4.5",
+=======
+    "@babel/preset-react": "^7.27.1",
+    "@babel/preset-typescript": "^7.27.1",
+    "@inquirer/prompts": "^7.0.1",
+    "ai": "^5.0.93",
+    "c12": "^3.2.0",
+    "commander": "^12.1.0",
+    "dotenv": "^16.4.5",
+    "jiti": "^2.6.0",
+>>>>>>> 33bf9966433faae8ddad38429e736a996a04c6cd
     "openai": "^4.103.0",
     "prettier": "^3.3.2",
     "ts-morph": "^27.0.2",

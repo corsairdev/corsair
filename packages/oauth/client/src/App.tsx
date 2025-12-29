@@ -233,7 +233,8 @@ function App() {
 										<React.Fragment key={index}>
 											{line}
 											{index <
-												selectedServiceInfo.setupInstructions.split('\n').length -
+												selectedServiceInfo.setupInstructions.split('\n')
+													.length -
 													1 && <br />}
 										</React.Fragment>
 									))}

@@ -1,6 +1,6 @@
 // Server Component - fetches data on the server
 import { ArtistsAlbumsView } from '@/components/artists-albums-view';
-import { corsairQuery,  } from '@/corsair/client';
+import { corsairQuery } from '@/corsair/client';
 
 export default async function Home() {
 	// Server-side data fetching using our query layer
@@ -11,7 +11,6 @@ export default async function Home() {
 
 	return (
 		<div className="min-h-screen p-8">
-			
 			<ArtistsAlbumsView initialArtists={artists} initialAlbums={albums} />
 		</div>
 	);
