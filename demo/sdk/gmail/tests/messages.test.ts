@@ -1,160 +1,173 @@
 import { Gmail } from '../api';
-import { requireToken, getTestUserId, handleRateLimit, generateTestId, createTestEmail, getTestEmail } from './setup';
+import {
+	createTestEmail,
+	generateTestId,
+	getTestEmail,
+	getTestUserId,
+	handleRateLimit,
+	requireToken,
+} from './setup';
 
 describe('Gmail.Messages - Messages API', () => {
-    const userId = getTestUserId();
-    let sentMessageId: string | undefined;
+	const userId = getTestUserId();
+	let sentMessageId: string | undefined;
 
-    afterAll(async () => {
-        if (sentMessageId) {
-            try {
-                await Gmail.Messages.delete(userId, sentMessageId);
-                console.log(`Cleanup: Deleted message ${sentMessageId}`);
-            } catch (e) {
-                console.warn(`Cleanup failed for message ${sentMessageId}`);
-            }
-        }
-    });
+	afterAll(async () => {
+		if (sentMessageId) {
+			try {
+				await Gmail.Messages.delete(userId, sentMessageId);
+				console.log(`Cleanup: Deleted message ${sentMessageId}`);
+			} catch (e) {
+				console.warn(`Cleanup failed for message ${sentMessageId}`);
+			}
+		}
+	});
 
-    describe('list', () => {
-        it('should list messages', async () => {
-            if (requireToken()) return;
+	describe('list', () => {
+		it('should list messages', async () => {
+			if (requireToken()) return;
 
-            try {
-                const response = await Gmail.Messages.list(userId, undefined, 10);
+			try {
+				const response = await Gmail.Messages.list(userId, undefined, 10);
 
-                expect(response).toBeDefined();
-                expect(response.messages).toBeDefined();
-                
-                if (response.messages && response.messages.length > 0) {
-                    console.log(`Found ${response.messages.length} messages`);
-                    console.log('First message ID:', response.messages[0].id);
-                }
-            } catch (error) {
-                await handleRateLimit(error);
-            }
-        });
+				expect(response).toBeDefined();
+				expect(response.messages).toBeDefined();
 
-        it('should list messages with query', async () => {
-            if (requireToken()) return;
+				if (response.messages && response.messages.length > 0) {
+					console.log(`Found ${response.messages.length} messages`);
+					console.log('First message ID:', response.messages[0].id);
+				}
+			} catch (error) {
+				await handleRateLimit(error);
+			}
+		});
 
-            try {
-                const response = await Gmail.Messages.list(userId, 'is:inbox', 5);
+		it('should list messages with query', async () => {
+			if (requireToken()) return;
 
-                expect(response).toBeDefined();
-                
-                if (response.messages) {
-                    console.log(`Found ${response.messages.length} inbox messages`);
-                }
-            } catch (error) {
-                await handleRateLimit(error);
-            }
-        });
-    });
+			try {
+				const response = await Gmail.Messages.list(userId, 'is:inbox', 5);
 
-    describe('send', () => {
-        it('should send a message', async () => {
-            if (requireToken()) return;
+				expect(response).toBeDefined();
 
-            try {
-                const testId = generateTestId();
-                const subject = `Test Email - ${testId}`;
-                const body = `This is a test email sent at ${new Date().toISOString()}`;
-                const raw = createTestEmail(getTestEmail(), subject, body);
+				if (response.messages) {
+					console.log(`Found ${response.messages.length} inbox messages`);
+				}
+			} catch (error) {
+				await handleRateLimit(error);
+			}
+		});
+	});
 
-                const response = await Gmail.Messages.send(userId, { raw });
+	describe('send', () => {
+		it('should send a message', async () => {
+			if (requireToken()) return;
 
-                expect(response).toBeDefined();
-                expect(response.id).toBeDefined();
-                expect(response.threadId).toBeDefined();
+			try {
+				const testId = generateTestId();
+				const subject = `Test Email - ${testId}`;
+				const body = `This is a test email sent at ${new Date().toISOString()}`;
+				const raw = createTestEmail(getTestEmail(), subject, body);
 
-                sentMessageId = response.id;
+				const response = await Gmail.Messages.send(userId, { raw });
 
-                console.log('Sent message ID:', response.id);
-                console.log('Thread ID:', response.threadId);
-            } catch (error) {
-                await handleRateLimit(error);
-            }
-        });
-    });
+				expect(response).toBeDefined();
+				expect(response.id).toBeDefined();
+				expect(response.threadId).toBeDefined();
 
-    describe('get', () => {
-        it('should get a message by ID', async () => {
-            if (requireToken()) return;
+				sentMessageId = response.id;
 
-            try {
-                const listResponse = await Gmail.Messages.list(userId, undefined, 1);
+				console.log('Sent message ID:', response.id);
+				console.log('Thread ID:', response.threadId);
+			} catch (error) {
+				await handleRateLimit(error);
+			}
+		});
+	});
 
-                if (listResponse.messages && listResponse.messages.length > 0) {
-                    const messageId = listResponse.messages[0].id!;
-                    const message = await Gmail.Messages.get(userId, messageId, 'full');
+	describe('get', () => {
+		it('should get a message by ID', async () => {
+			if (requireToken()) return;
 
-                    expect(message).toBeDefined();
-                    expect(message.id).toBe(messageId);
-                    expect(message.payload).toBeDefined();
+			try {
+				const listResponse = await Gmail.Messages.list(userId, undefined, 1);
 
-                    console.log('Message ID:', message.id);
-                    console.log('Snippet:', message.snippet);
-                    console.log('Labels:', message.labelIds?.join(', '));
-                }
-            } catch (error) {
-                await handleRateLimit(error);
-            }
-        });
-    });
+				if (listResponse.messages && listResponse.messages.length > 0) {
+					const messageId = listResponse.messages[0].id!;
+					const message = await Gmail.Messages.get(userId, messageId, 'full');
 
-    describe('modify', () => {
-        it('should modify message labels', async () => {
-            if (requireToken()) return;
+					expect(message).toBeDefined();
+					expect(message.id).toBe(messageId);
+					expect(message.payload).toBeDefined();
 
-            try {
-                const listResponse = await Gmail.Messages.list(userId, 'is:inbox', 1);
+					console.log('Message ID:', message.id);
+					console.log('Snippet:', message.snippet);
+					console.log('Labels:', message.labelIds?.join(', '));
+				}
+			} catch (error) {
+				await handleRateLimit(error);
+			}
+		});
+	});
 
-                if (listResponse.messages && listResponse.messages.length > 0) {
-                    const messageId = listResponse.messages[0].id!;
-                    
-                    const modifiedMessage = await Gmail.Messages.modify(userId, messageId, {
-                        addLabelIds: ['STARRED'],
-                    });
+	describe('modify', () => {
+		it('should modify message labels', async () => {
+			if (requireToken()) return;
 
-                    expect(modifiedMessage).toBeDefined();
-                    expect(modifiedMessage.labelIds).toContain('STARRED');
+			try {
+				const listResponse = await Gmail.Messages.list(userId, 'is:inbox', 1);
 
-                    console.log('Modified message:', messageId);
-                    console.log('Labels:', modifiedMessage.labelIds?.join(', '));
+				if (listResponse.messages && listResponse.messages.length > 0) {
+					const messageId = listResponse.messages[0].id!;
 
-                    await Gmail.Messages.modify(userId, messageId, {
-                        removeLabelIds: ['STARRED'],
-                    });
-                }
-            } catch (error) {
-                await handleRateLimit(error);
-            }
-        });
-    });
+					const modifiedMessage = await Gmail.Messages.modify(
+						userId,
+						messageId,
+						{
+							addLabelIds: ['STARRED'],
+						},
+					);
 
-    describe('trash and untrash', () => {
-        it('should trash and untrash a message', async () => {
-            if (requireToken()) return;
+					expect(modifiedMessage).toBeDefined();
+					expect(modifiedMessage.labelIds).toContain('STARRED');
 
-            try {
-                const listResponse = await Gmail.Messages.list(userId, 'is:inbox', 1);
+					console.log('Modified message:', messageId);
+					console.log('Labels:', modifiedMessage.labelIds?.join(', '));
 
-                if (listResponse.messages && listResponse.messages.length > 0) {
-                    const messageId = listResponse.messages[0].id!;
+					await Gmail.Messages.modify(userId, messageId, {
+						removeLabelIds: ['STARRED'],
+					});
+				}
+			} catch (error) {
+				await handleRateLimit(error);
+			}
+		});
+	});
 
-                    const trashedMessage = await Gmail.Messages.trash(userId, messageId);
-                    expect(trashedMessage.labelIds).toContain('TRASH');
-                    console.log('Trashed message:', messageId);
+	describe('trash and untrash', () => {
+		it('should trash and untrash a message', async () => {
+			if (requireToken()) return;
 
-                    const untrashedMessage = await Gmail.Messages.untrash(userId, messageId);
-                    expect(untrashedMessage.labelIds).not.toContain('TRASH');
-                    console.log('Untrashed message:', messageId);
-                }
-            } catch (error) {
-                await handleRateLimit(error);
-            }
-        });
-    });
+			try {
+				const listResponse = await Gmail.Messages.list(userId, 'is:inbox', 1);
+
+				if (listResponse.messages && listResponse.messages.length > 0) {
+					const messageId = listResponse.messages[0].id!;
+
+					const trashedMessage = await Gmail.Messages.trash(userId, messageId);
+					expect(trashedMessage.labelIds).toContain('TRASH');
+					console.log('Trashed message:', messageId);
+
+					const untrashedMessage = await Gmail.Messages.untrash(
+						userId,
+						messageId,
+					);
+					expect(untrashedMessage.labelIds).not.toContain('TRASH');
+					console.log('Untrashed message:', messageId);
+				}
+			} catch (error) {
+				await handleRateLimit(error);
+			}
+		});
+	});
 });
-

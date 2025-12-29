@@ -1,225 +1,228 @@
 import { Github } from '../api';
-import { getTestOwner, getTestRepo, handleRateLimit, generateTestId, sleep } from './setup';
+import {
+	generateTestId,
+	getTestOwner,
+	getTestRepo,
+	handleRateLimit,
+	sleep,
+} from './setup';
 
 describe('Github.Issues - GitHub Issues API', () => {
-  const owner = getTestOwner();
-  const repo = getTestRepo();
-  
-  let createdIssueNumber: number | undefined;
+	const owner = getTestOwner();
+	const repo = getTestRepo();
 
-  afterAll(async () => {
-    if (createdIssueNumber) {
-      try {
-        await Github.Issues.update(owner, repo, createdIssueNumber, {
-          state: 'closed',
-        });
-        console.log(`Cleanup: Closed issue #${createdIssueNumber}`);
-      } catch (e) {
-        console.warn(`Cleanup failed for issue #${createdIssueNumber}`);
-      }
-    }
-  });
+	let createdIssueNumber: number | undefined;
 
-  describe('create', () => {
-    it('should create an issue', async () => {
-      try {
-        const testId = generateTestId();
-        const issue = await Github.Issues.create(owner, repo, {
-          title: `Test Issue - ${testId}`,
-          body: 'This is a test issue created by automated tests. It will be cleaned up automatically.',
-          labels: ['test'],
-        });
+	afterAll(async () => {
+		if (createdIssueNumber) {
+			try {
+				await Github.Issues.update(owner, repo, createdIssueNumber, {
+					state: 'closed',
+				});
+				console.log(`Cleanup: Closed issue #${createdIssueNumber}`);
+			} catch (e) {
+				console.warn(`Cleanup failed for issue #${createdIssueNumber}`);
+			}
+		}
+	});
 
-        expect(issue).toBeDefined();
-        expect(issue).toHaveProperty('number');
-        expect(issue).toHaveProperty('title');
-        expect(issue).toHaveProperty('state');
-        expect(issue.state).toBe('open');
+	describe('create', () => {
+		it('should create an issue', async () => {
+			try {
+				const testId = generateTestId();
+				const issue = await Github.Issues.create(owner, repo, {
+					title: `Test Issue - ${testId}`,
+					body: 'This is a test issue created by automated tests. It will be cleaned up automatically.',
+					labels: ['test'],
+				});
 
-        createdIssueNumber = issue.number;
-        console.log('Created issue #', issue.number);
-        console.log('Issue title:', issue.title);
-        console.log('Issue URL:', issue.html_url);
-      } catch (error) {
-        await handleRateLimit(error);
-      }
-    });
-  });
+				expect(issue).toBeDefined();
+				expect(issue).toHaveProperty('number');
+				expect(issue).toHaveProperty('title');
+				expect(issue).toHaveProperty('state');
+				expect(issue.state).toBe('open');
 
-  describe('get', () => {
-    it('should fetch the created issue', async () => {
-      if (!createdIssueNumber) {
-        console.warn('Skipping - no issue was created');
-        return;
-      }
+				createdIssueNumber = issue.number;
+				console.log('Created issue #', issue.number);
+				console.log('Issue title:', issue.title);
+				console.log('Issue URL:', issue.html_url);
+			} catch (error) {
+				await handleRateLimit(error);
+			}
+		});
+	});
 
-      try {
-        const issue = await Github.Issues.get(owner, repo, createdIssueNumber);
+	describe('get', () => {
+		it('should fetch the created issue', async () => {
+			if (!createdIssueNumber) {
+				console.warn('Skipping - no issue was created');
+				return;
+			}
 
-        expect(issue).toBeDefined();
-        expect(issue.number).toBe(createdIssueNumber);
-        expect(issue).toHaveProperty('title');
-        expect(issue).toHaveProperty('state');
+			try {
+				const issue = await Github.Issues.get(owner, repo, createdIssueNumber);
 
-        console.log('Fetched issue #', issue.number);
-        console.log('Title:', issue.title);
-        console.log('State:', issue.state);
-      } catch (error) {
-        await handleRateLimit(error);
-      }
-    });
-  });
+				expect(issue).toBeDefined();
+				expect(issue.number).toBe(createdIssueNumber);
+				expect(issue).toHaveProperty('title');
+				expect(issue).toHaveProperty('state');
 
-  describe('list', () => {
-    it('should list issues for the repository', async () => {
-      try {
-        const issues = await Github.Issues.list(
-          owner,
-          repo,
-          undefined,
-          'all',
-          undefined,
-          undefined,
-          undefined,
-          undefined,
-          undefined,
-          'created',
-          'desc',
-          undefined,
-          10,
-          1
-        );
+				console.log('Fetched issue #', issue.number);
+				console.log('Title:', issue.title);
+				console.log('State:', issue.state);
+			} catch (error) {
+				await handleRateLimit(error);
+			}
+		});
+	});
 
-        expect(Array.isArray(issues)).toBe(true);
-        
-        console.log('Found', issues.length, 'issues');
-        issues.slice(0, 5).forEach(issue => {
-          console.log(`  #${issue.number}: ${issue.title} (${issue.state})`);
-        });
-      } catch (error) {
-        await handleRateLimit(error);
-      }
-    });
-  });
+	describe('list', () => {
+		it('should list issues for the repository', async () => {
+			try {
+				const issues = await Github.Issues.list(
+					owner,
+					repo,
+					undefined,
+					'all',
+					undefined,
+					undefined,
+					undefined,
+					undefined,
+					undefined,
+					'created',
+					'desc',
+					undefined,
+					10,
+					1,
+				);
 
-  describe('createComment', () => {
-    it('should create a comment on the issue', async () => {
-      if (!createdIssueNumber) {
-        console.warn('Skipping - no issue was created');
-        return;
-      }
+				expect(Array.isArray(issues)).toBe(true);
 
-      try {
-        await sleep(1000);
-        
-        const comment = await Github.Issues.createComment(
-          owner,
-          repo,
-          createdIssueNumber,
-          {
-            body: 'This is a test comment added by automated tests.',
-          }
-        );
+				console.log('Found', issues.length, 'issues');
+				issues.slice(0, 5).forEach((issue) => {
+					console.log(`  #${issue.number}: ${issue.title} (${issue.state})`);
+				});
+			} catch (error) {
+				await handleRateLimit(error);
+			}
+		});
+	});
 
-        expect(comment).toBeDefined();
-        expect(comment).toHaveProperty('id');
-        expect(comment).toHaveProperty('body');
+	describe('createComment', () => {
+		it('should create a comment on the issue', async () => {
+			if (!createdIssueNumber) {
+				console.warn('Skipping - no issue was created');
+				return;
+			}
 
-        console.log('Created comment ID:', comment.id);
-        console.log('Comment body:', comment.body);
-      } catch (error) {
-        await handleRateLimit(error);
-      }
-    });
-  });
+			try {
+				await sleep(1000);
 
-  describe('update', () => {
-    it('should update the issue', async () => {
-      if (!createdIssueNumber) {
-        console.warn('Skipping - no issue was created');
-        return;
-      }
+				const comment = await Github.Issues.createComment(
+					owner,
+					repo,
+					createdIssueNumber,
+					{
+						body: 'This is a test comment added by automated tests.',
+					},
+				);
 
-      try {
-        await sleep(1000);
-        
-        const updatedIssue = await Github.Issues.update(
-          owner,
-          repo,
-          createdIssueNumber,
-          {
-            title: `Updated Test Issue - ${generateTestId()}`,
-            body: 'This issue has been updated by automated tests.',
-          }
-        );
+				expect(comment).toBeDefined();
+				expect(comment).toHaveProperty('id');
+				expect(comment).toHaveProperty('body');
 
-        expect(updatedIssue).toBeDefined();
-        expect(updatedIssue.number).toBe(createdIssueNumber);
+				console.log('Created comment ID:', comment.id);
+				console.log('Comment body:', comment.body);
+			} catch (error) {
+				await handleRateLimit(error);
+			}
+		});
+	});
 
-        console.log('Updated issue #', updatedIssue.number);
-        console.log('New title:', updatedIssue.title);
-      } catch (error) {
-        await handleRateLimit(error);
-      }
-    });
-  });
+	describe('update', () => {
+		it('should update the issue', async () => {
+			if (!createdIssueNumber) {
+				console.warn('Skipping - no issue was created');
+				return;
+			}
 
-  describe('lock', () => {
-    it('should lock the issue', async () => {
-      if (!createdIssueNumber) {
-        console.warn('Skipping - no issue was created');
-        return;
-      }
+			try {
+				await sleep(1000);
 
-      try {
-        await sleep(1000);
-        
-        await Github.Issues.lock(
-          owner,
-          repo,
-          createdIssueNumber,
-          {
-            lock_reason: 'resolved',
-          }
-        );
+				const updatedIssue = await Github.Issues.update(
+					owner,
+					repo,
+					createdIssueNumber,
+					{
+						title: `Updated Test Issue - ${generateTestId()}`,
+						body: 'This issue has been updated by automated tests.',
+					},
+				);
 
-        console.log('Locked issue #', createdIssueNumber);
-        
-        const issue = await Github.Issues.get(owner, repo, createdIssueNumber);
-        expect(issue.locked).toBe(true);
-        console.log('Verified: Issue is locked');
-      } catch (error) {
-        await handleRateLimit(error);
-      }
-    });
-  });
+				expect(updatedIssue).toBeDefined();
+				expect(updatedIssue.number).toBe(createdIssueNumber);
 
-  describe('listForUser', () => {
-    it('should list issues for authenticated user', async () => {
-      try {
-        const issues = await Github.Issues.listForUser(
-          'all',
-          'all',
-          undefined,
-          'created',
-          'desc',
-          undefined,
-          5,
-          1
-        );
+				console.log('Updated issue #', updatedIssue.number);
+				console.log('New title:', updatedIssue.title);
+			} catch (error) {
+				await handleRateLimit(error);
+			}
+		});
+	});
 
-        expect(Array.isArray(issues)).toBe(true);
-        console.log('User issues count:', issues.length);
+	describe('lock', () => {
+		it('should lock the issue', async () => {
+			if (!createdIssueNumber) {
+				console.warn('Skipping - no issue was created');
+				return;
+			}
 
-        if (issues.length > 0) {
-          console.log('Recent issues:');
-          issues.forEach(issue => {
-            console.log(`  ${issue.repository?.full_name || 'unknown'}#${issue.number}: ${issue.title}`);
-          });
-        }
-      } catch (error) {
-        await handleRateLimit(error);
-      }
-    });
-  });
+			try {
+				await sleep(1000);
+
+				await Github.Issues.lock(owner, repo, createdIssueNumber, {
+					lock_reason: 'resolved',
+				});
+
+				console.log('Locked issue #', createdIssueNumber);
+
+				const issue = await Github.Issues.get(owner, repo, createdIssueNumber);
+				expect(issue.locked).toBe(true);
+				console.log('Verified: Issue is locked');
+			} catch (error) {
+				await handleRateLimit(error);
+			}
+		});
+	});
+
+	describe('listForUser', () => {
+		it('should list issues for authenticated user', async () => {
+			try {
+				const issues = await Github.Issues.listForUser(
+					'all',
+					'all',
+					undefined,
+					'created',
+					'desc',
+					undefined,
+					5,
+					1,
+				);
+
+				expect(Array.isArray(issues)).toBe(true);
+				console.log('User issues count:', issues.length);
+
+				if (issues.length > 0) {
+					console.log('Recent issues:');
+					issues.forEach((issue) => {
+						console.log(
+							`  ${issue.repository?.full_name || 'unknown'}#${issue.number}: ${issue.title}`,
+						);
+					});
+				}
+			} catch (error) {
+				await handleRateLimit(error);
+			}
+		});
+	});
 });

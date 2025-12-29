@@ -1,8 +1,8 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import type { CorsairOptions } from '../../../src/core/options';
-import { logger } from '../logger';
 import { generateSchema } from '../generators';
+import { logger } from '../logger';
 import { getConfig } from '../utils/get-config';
 
 export async function generateSchemaCommand(args: {

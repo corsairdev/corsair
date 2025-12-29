@@ -6,7 +6,10 @@
 const LINEAR_API_BASE = 'https://api.linear.app/graphql';
 
 class LinearAPIError extends Error {
-	constructor(message: string, public readonly code?: string) {
+	constructor(
+		message: string,
+		public readonly code?: string,
+	) {
 		super(message);
 		this.name = 'LinearAPIError';
 	}
@@ -200,10 +203,14 @@ export function createLinearClient(apiKey: string): LinearClient {
 				}
 			`;
 
-			return makeRequest<ReturnType<LinearClient['listIssues']>>(query, apiKey, {
-				first,
-				after: params?.after,
-			});
+			return makeRequest<ReturnType<LinearClient['listIssues']>>(
+				query,
+				apiKey,
+				{
+					first,
+					after: params?.after,
+				},
+			);
 		},
 
 		async getIssue(id) {
@@ -282,9 +289,13 @@ export function createLinearClient(apiKey: string): LinearClient {
 			if (params.stateId) input.stateId = params.stateId;
 			if (params.assigneeId) input.assigneeId = params.assigneeId;
 
-			return makeRequest<ReturnType<LinearClient['createIssue']>>(query, apiKey, {
-				input,
-			});
+			return makeRequest<ReturnType<LinearClient['createIssue']>>(
+				query,
+				apiKey,
+				{
+					input,
+				},
+			);
 		},
 
 		async updateIssue(params) {
@@ -304,15 +315,20 @@ export function createLinearClient(apiKey: string): LinearClient {
 
 			const input: Record<string, unknown> = {};
 			if (params.title) input.title = params.title;
-			if (params.description !== undefined) input.description = params.description;
+			if (params.description !== undefined)
+				input.description = params.description;
 			if (params.priority !== undefined) input.priority = params.priority;
 			if (params.stateId) input.stateId = params.stateId;
 			if (params.assigneeId) input.assigneeId = params.assigneeId;
 
-			return makeRequest<ReturnType<LinearClient['updateIssue']>>(query, apiKey, {
-				id: params.id,
-				input,
-			});
+			return makeRequest<ReturnType<LinearClient['updateIssue']>>(
+				query,
+				apiKey,
+				{
+					id: params.id,
+					input,
+				},
+			);
 		},
 
 		async listTeams() {
@@ -334,4 +350,3 @@ export function createLinearClient(apiKey: string): LinearClient {
 }
 
 export { LinearAPIError };
-

@@ -1,159 +1,162 @@
 import { Linear } from '../api';
-import { requireToken, getTestTeamId } from './setup';
+import { getTestTeamId, requireToken } from './setup';
 
 describe('Linear.Issues', () => {
-  beforeEach(() => {
-    if (requireToken()) {
-      return;
-    }
-  });
+	beforeEach(() => {
+		if (requireToken()) {
+			return;
+		}
+	});
 
-  describe('list', () => {
-    it('should list issues', async () => {
-      if (requireToken()) return;
+	describe('list', () => {
+		it('should list issues', async () => {
+			if (requireToken()) return;
 
-      const result = await Linear.issues.list(undefined, 10);
+			const result = await Linear.issues.list(undefined, 10);
 
-      expect(result).toBeDefined();
-      expect(Array.isArray(result.nodes)).toBe(true);
-      expect(result.pageInfo).toBeDefined();
-      expect(result.pageInfo.hasNextPage).toBeDefined();
+			expect(result).toBeDefined();
+			expect(Array.isArray(result.nodes)).toBe(true);
+			expect(result.pageInfo).toBeDefined();
+			expect(result.pageInfo.hasNextPage).toBeDefined();
 
-      if (result.nodes.length > 0) {
-        const issue = result.nodes[0];
-        expect(issue.id).toBeDefined();
-        expect(issue.title).toBeDefined();
-        expect(issue.identifier).toBeDefined();
-        expect(issue.team).toBeDefined();
-        expect(issue.state).toBeDefined();
+			if (result.nodes.length > 0) {
+				const issue = result.nodes[0];
+				expect(issue.id).toBeDefined();
+				expect(issue.title).toBeDefined();
+				expect(issue.identifier).toBeDefined();
+				expect(issue.team).toBeDefined();
+				expect(issue.state).toBeDefined();
 
-        console.log(`  ✓ Listed ${result.nodes.length} issue(s)`);
-        console.log(`    First issue: ${issue.identifier} - ${issue.title}`);
-      }
-    });
+				console.log(`  ✓ Listed ${result.nodes.length} issue(s)`);
+				console.log(`    First issue: ${issue.identifier} - ${issue.title}`);
+			}
+		});
 
-    it('should list issues for a specific team', async () => {
-      if (requireToken()) return;
+		it('should list issues for a specific team', async () => {
+			if (requireToken()) return;
 
-      const teamId = getTestTeamId();
-      if (!teamId || teamId.trim() === '') {
-        console.log('  ⊘ Skipping: LINEAR_TEST_TEAM_ID not set');
-        return;
-      }
+			const teamId = getTestTeamId();
+			if (!teamId || teamId.trim() === '') {
+				console.log('  ⊘ Skipping: LINEAR_TEST_TEAM_ID not set');
+				return;
+			}
 
-      try {
-        const result = await Linear.issues.list(teamId, 5);
+			try {
+				const result = await Linear.issues.list(teamId, 5);
 
-        expect(result).toBeDefined();
-        expect(Array.isArray(result.nodes)).toBe(true);
+				expect(result).toBeDefined();
+				expect(Array.isArray(result.nodes)).toBe(true);
 
-        console.log(`  ✓ Listed ${result.nodes.length} issue(s) for team ${teamId.substring(0, 8)}...`);
-      } catch (error: any) {
-        console.log(`  ⚠️  Team filter may not be supported or team ID invalid: ${error.message}`);
-        console.log(`  Skipping team-specific test`);
-      }
-    });
-  });
+				console.log(
+					`  ✓ Listed ${result.nodes.length} issue(s) for team ${teamId.substring(0, 8)}...`,
+				);
+			} catch (error: any) {
+				console.log(
+					`  ⚠️  Team filter may not be supported or team ID invalid: ${error.message}`,
+				);
+				console.log(`  Skipping team-specific test`);
+			}
+		});
+	});
 
-  describe('get', () => {
-    it('should get a single issue by id', async () => {
-      if (requireToken()) return;
+	describe('get', () => {
+		it('should get a single issue by id', async () => {
+			if (requireToken()) return;
 
-      const listResult = await Linear.issues.list(undefined, 1);
-      
-      if (listResult.nodes.length === 0) {
-        console.log('  ⊘ Skipping: No issues available');
-        return;
-      }
+			const listResult = await Linear.issues.list(undefined, 1);
 
-      const issueId = listResult.nodes[0].id;
-      const issue = await Linear.issues.get(issueId);
+			if (listResult.nodes.length === 0) {
+				console.log('  ⊘ Skipping: No issues available');
+				return;
+			}
 
-      expect(issue).toBeDefined();
-      expect(issue.id).toBe(issueId);
-      expect(issue.title).toBeDefined();
-      expect(issue.identifier).toBeDefined();
-      expect(issue.team).toBeDefined();
-      expect(issue.state).toBeDefined();
-      expect(issue.creator).toBeDefined();
+			const issueId = listResult.nodes[0].id;
+			const issue = await Linear.issues.get(issueId);
 
-      console.log(`  ✓ Retrieved issue: ${issue.identifier} - ${issue.title}`);
-      console.log(`    State: ${issue.state.name}`);
-      console.log(`    Priority: ${issue.priority}`);
-    });
-  });
+			expect(issue).toBeDefined();
+			expect(issue.id).toBe(issueId);
+			expect(issue.title).toBeDefined();
+			expect(issue.identifier).toBeDefined();
+			expect(issue.team).toBeDefined();
+			expect(issue.state).toBeDefined();
+			expect(issue.creator).toBeDefined();
 
-  describe('create', () => {
-    it('should create a new issue', async () => {
-      if (requireToken()) return;
+			console.log(`  ✓ Retrieved issue: ${issue.identifier} - ${issue.title}`);
+			console.log(`    State: ${issue.state.name}`);
+			console.log(`    Priority: ${issue.priority}`);
+		});
+	});
 
-      const teamId = getTestTeamId();
-      if (!teamId) {
-        console.log('  ⊘ Skipping: LINEAR_TEST_TEAM_ID not set');
-        return;
-      }
+	describe('create', () => {
+		it('should create a new issue', async () => {
+			if (requireToken()) return;
 
-      const issue = await Linear.issues.create({
-        title: 'Test Issue from SDK',
-        description: 'This is a test issue created by the Linear SDK',
-        teamId,
-        priority: 2,
-      });
+			const teamId = getTestTeamId();
+			if (!teamId) {
+				console.log('  ⊘ Skipping: LINEAR_TEST_TEAM_ID not set');
+				return;
+			}
 
-      expect(issue).toBeDefined();
-      expect(issue.id).toBeDefined();
-      expect(issue.title).toBe('Test Issue from SDK');
-      expect(issue.team.id).toBe(teamId);
+			const issue = await Linear.issues.create({
+				title: 'Test Issue from SDK',
+				description: 'This is a test issue created by the Linear SDK',
+				teamId,
+				priority: 2,
+			});
 
-      console.log(`  ✓ Created issue: ${issue.identifier} - ${issue.title}`);
-    });
-  });
+			expect(issue).toBeDefined();
+			expect(issue.id).toBeDefined();
+			expect(issue.title).toBe('Test Issue from SDK');
+			expect(issue.team.id).toBe(teamId);
 
-  describe('update', () => {
-    it('should update an issue', async () => {
-      if (requireToken()) return;
+			console.log(`  ✓ Created issue: ${issue.identifier} - ${issue.title}`);
+		});
+	});
 
-      const listResult = await Linear.issues.list(undefined, 1);
-      
-      if (listResult.nodes.length === 0) {
-        console.log('  ⊘ Skipping: No issues available');
-        return;
-      }
+	describe('update', () => {
+		it('should update an issue', async () => {
+			if (requireToken()) return;
 
-      const issueId = listResult.nodes[0].id;
-      const updatedIssue = await Linear.issues.update(issueId, {
-        priority: 3,
-      });
+			const listResult = await Linear.issues.list(undefined, 1);
 
-      expect(updatedIssue).toBeDefined();
-      expect(updatedIssue.id).toBe(issueId);
-      expect(updatedIssue.priority).toBe(3);
+			if (listResult.nodes.length === 0) {
+				console.log('  ⊘ Skipping: No issues available');
+				return;
+			}
 
-      console.log(`  ✓ Updated issue: ${updatedIssue.identifier}`);
-    });
-  });
+			const issueId = listResult.nodes[0].id;
+			const updatedIssue = await Linear.issues.update(issueId, {
+				priority: 3,
+			});
 
-  describe('delete', () => {
-    it('should delete an issue', async () => {
-      if (requireToken()) return;
+			expect(updatedIssue).toBeDefined();
+			expect(updatedIssue.id).toBe(issueId);
+			expect(updatedIssue.priority).toBe(3);
 
-      const teamId = getTestTeamId();
-      if (!teamId) {
-        console.log('  ⊘ Skipping: LINEAR_TEST_TEAM_ID not set');
-        return;
-      }
+			console.log(`  ✓ Updated issue: ${updatedIssue.identifier}`);
+		});
+	});
 
-      const issue = await Linear.issues.create({
-        title: 'Test Issue to Delete',
-        teamId,
-      });
+	describe('delete', () => {
+		it('should delete an issue', async () => {
+			if (requireToken()) return;
 
-      const success = await Linear.issues.delete(issue.id);
+			const teamId = getTestTeamId();
+			if (!teamId) {
+				console.log('  ⊘ Skipping: LINEAR_TEST_TEAM_ID not set');
+				return;
+			}
 
-      expect(success).toBe(true);
+			const issue = await Linear.issues.create({
+				title: 'Test Issue to Delete',
+				teamId,
+			});
 
-      console.log(`  ✓ Deleted issue: ${issue.identifier}`);
-    });
-  });
+			const success = await Linear.issues.delete(issue.id);
+
+			expect(success).toBe(true);
+
+			console.log(`  ✓ Deleted issue: ${issue.identifier}`);
+		});
+	});
 });
-

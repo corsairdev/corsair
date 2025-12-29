@@ -1,5 +1,9 @@
-import type { SlackClient, SlackPlugin, SlackPluginContext } from '../types';
-import type { ChannelsResponse } from '../types';
+import type {
+	ChannelsResponse,
+	SlackClient,
+	SlackPlugin,
+	SlackPluginContext,
+} from '../types';
 
 export const getChannels = async ({
 	config,

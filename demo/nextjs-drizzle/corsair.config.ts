@@ -21,9 +21,10 @@ export const config = corsair({
 				general: 'C0A3ZTB9X7X',
 			},
 			schema: {
-				messages: true,        // Use default
-				channels: false,       // Skip
-				channel_members: (dbSchema: SlackDefaultSchema) => ({  // Custom
+				messages: true, // Use default
+				channels: false, // Skip
+				channel_members: (dbSchema: SlackDefaultSchema) => ({
+					// Custom
 					id: dbSchema.channels.id,
 					member_id: dbSchema.members.id,
 				}),

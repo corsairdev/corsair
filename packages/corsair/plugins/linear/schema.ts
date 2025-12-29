@@ -63,9 +63,7 @@ export type LinearSchemaOverride = {
 /**
  * Resolved schema after applying overrides
  */
-export type ResolvedLinearSchema<
-	TOverride extends LinearSchemaOverride,
-> = {
+export type ResolvedLinearSchema<TOverride extends LinearSchemaOverride> = {
 	[K in keyof LinearDefaultSchema]: TOverride[K] extends false
 		? never
 		: TOverride[K] extends true
@@ -76,4 +74,3 @@ export type ResolvedLinearSchema<
 					: LinearDefaultSchema[K]
 				: LinearDefaultSchema[K];
 };
-

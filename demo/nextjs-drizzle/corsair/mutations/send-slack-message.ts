@@ -28,12 +28,11 @@ export const sendSlackMessage = procedure
 		// 	description: '2',
 		// 	teamId: '2bf0f1b7-001a-4dcd-9cd5-2a16fe044c43',
 		// });
-		
+
 		const slack = ctx.plugins.slack?.sendMessage({
 			channelId: input.channel,
 			content: input.message,
 		});
-		
 
 		// return slack.sendMessage({
 		//   channelId: input.channel,
