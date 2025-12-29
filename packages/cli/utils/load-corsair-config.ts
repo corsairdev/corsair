@@ -14,13 +14,7 @@ const __dirname = path.dirname(__filename);
 
 const possiblePaths = [
 	'corsair.config.ts',
-	'corsair.config.tsx',
 	'corsair.config.js',
-	'corsair.config.jsx',
-	'corsair.config.mjs',
-	'corsair.config.cjs',
-	'corsair.config.mts',
-	'corsair.config.cts',
 ];
 
 function getPathAliases(cwd: string): Record<string, string> {
