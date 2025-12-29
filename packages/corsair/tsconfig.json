@@ -6,19 +6,14 @@
     "jsx": "react-jsx",
     "outDir": "./dist",
     "rootDir": "./",
+    "composite": false,
+    "incremental": false,
     "emitDeclarationOnly": false,
     "declaration": true,
     "declarationMap": true,
     "skipLibCheck": true
   },
-  "include": [
-    "./index.ts",
-    "./client/**/*",
-    "./config/**/*",
-    "./core/**/*",
-    "./plugins/**/*",
-    "./vitest.config.ts"
-  ],
-  "exclude": ["dist", "node_modules", "**/*.test.*", "**/*.spec.*"],
+  "include": ["./**/*"],
+  "exclude": ["dist", "node_modules", "sandbox/**/*"],
   "references": []
 }

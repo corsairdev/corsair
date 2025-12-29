@@ -12,7 +12,7 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from '@/components/ui/select';
-import { useCorsairMutation, type QueryOutputs } from '@/corsair/client';
+import type { QueryOutputs } from '@/corsair/client';
 
 interface ArtistsAlbumsViewProps {
 	initialArtists: QueryOutputs['get all artists'];
@@ -42,18 +42,9 @@ export function ArtistsAlbumsView({
 	const handleAlbumClick = () => {
 		setAlbumSheetOpen(true);
 	};
-	const sendSlackMessage = useCorsairMutation('send slack message');
 
 	return (
 		<>
-			<button onClick={() => {
-				sendSlackMessage.mutate({
-					channel: 'general',
-					message: 'Hello, world!',
-				});
-			}}>
-				Send Slack Message
-			</button>
 			<div className="max-w-7xl mx-auto space-y-8">
 				<header className="space-y-4">
 					<h1 className="text-4xl font-bold">Spotify Music Database</h1>

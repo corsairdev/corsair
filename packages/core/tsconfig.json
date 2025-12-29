@@ -1,0 +1,25 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "lib": ["esnext", "dom", "dom.iterable"],
+    "types": ["node"],
+    "jsx": "react-jsx",
+    "outDir": "./dist",
+    "rootDir": "./",
+    "emitDeclarationOnly": false,
+    "declaration": true,
+    "declarationMap": true,
+    "skipLibCheck": true
+  },
+  "include": [
+    "./index.ts",
+    "./client/**/*",
+    "./config/**/*",
+    "./core/**/*",
+    "./db/**/*",
+    "./plugins/**/*",
+    "./vitest.config.ts"
+  ],
+  "exclude": ["dist", "node_modules", "**/*.test.*", "**/*.spec.*"],
+  "references": []
+}
