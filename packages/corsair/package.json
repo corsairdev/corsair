@@ -15,12 +15,18 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.js"
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./plugins": {
+      "types": "./dist/plugins/index.d.ts",
+      "import": "./dist/plugins/index.js",
+      "require": "./dist/plugins/index.cjs"
     }
   },
   "scripts": {
-    "build": "tsup src/index.ts --format cjs,esm --dts",
+    "build": "tsup src/index.ts plugins/index.ts --format cjs,esm --dts",
+    "build:watch": "tsup src/index.ts plugins/index.ts --format cjs,esm --dts --watch",
     "typecheck": "tsc --noEmit",
     "test": "jest",
     "test:watch": "jest --watch",
