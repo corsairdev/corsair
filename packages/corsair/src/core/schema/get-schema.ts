@@ -1,6 +1,6 @@
 import type { CorsairOptions } from '../options';
-import type { CorsairDBSchema, DBFieldAttribute } from './types';
 import { getCorsairTables } from './get-tables';
+import type { DBFieldAttribute } from './types';
 
 /**
  * Normalizes schema to actual model/field names, and resolves references

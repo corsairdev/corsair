@@ -74,9 +74,7 @@ export type GitHubSchemaOverride = {
 /**
  * Resolved schema after applying overrides
  */
-export type ResolvedGitHubSchema<
-	TOverride extends GitHubSchemaOverride,
-> = {
+export type ResolvedGitHubSchema<TOverride extends GitHubSchemaOverride> = {
 	[K in keyof GitHubDefaultSchema]: TOverride[K] extends false
 		? never
 		: TOverride[K] extends true
@@ -87,4 +85,3 @@ export type ResolvedGitHubSchema<
 					: GitHubDefaultSchema[K]
 				: GitHubDefaultSchema[K];
 };
-

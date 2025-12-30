@@ -1,6 +1,6 @@
-import { logger } from './logger';
 import { addCommand } from './commands/add';
 import { generateSchemaCommand } from './commands/generate-schema';
+import { logger } from './logger';
 
 function readFlag(argv: string[], name: string) {
 	const i = argv.indexOf(name);
@@ -51,4 +51,4 @@ async function main() {
 	process.exit(1);
 }
 
-main();
+// main();

@@ -46,9 +46,7 @@ export type GmailSchemaOverrideValue<
 	TTableName extends keyof GmailDefaultSchema,
 > =
 	| boolean
-	| ((
-			dbSchema: GmailDefaultSchema,
-	  ) => Record<string, string | boolean>);
+	| ((dbSchema: GmailDefaultSchema) => Record<string, string | boolean>);
 
 /**
  * Schema override configuration
@@ -61,9 +59,7 @@ export type GmailSchemaOverride = {
 /**
  * Resolved schema after applying overrides
  */
-export type ResolvedGmailSchema<
-	TOverride extends GmailSchemaOverride,
-> = {
+export type ResolvedGmailSchema<TOverride extends GmailSchemaOverride> = {
 	[K in keyof GmailDefaultSchema]: TOverride[K] extends false
 		? never
 		: TOverride[K] extends true
@@ -74,4 +70,3 @@ export type ResolvedGmailSchema<
 					: GmailDefaultSchema[K]
 				: GmailDefaultSchema[K];
 };
-

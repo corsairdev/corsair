@@ -6,7 +6,10 @@
 const GITHUB_API_BASE = 'https://api.github.com';
 
 class GitHubAPIError extends Error {
-	constructor(message: string, public readonly code?: string) {
+	constructor(
+		message: string,
+		public readonly code?: string,
+	) {
 		super(message);
 		this.name = 'GitHubAPIError';
 	}
@@ -63,17 +66,19 @@ export interface GitHubClient {
 		state?: 'open' | 'closed' | 'all';
 		page?: number;
 		perPage?: number;
-	}): Promise<Array<{
-		id: number;
-		number: number;
-		title: string;
-		body: string;
-		state: string;
-		user: { login: string };
-		created_at: string;
-		updated_at: string;
-		closed_at: string | null;
-	}>>;
+	}): Promise<
+		Array<{
+			id: number;
+			number: number;
+			title: string;
+			body: string;
+			state: string;
+			user: { login: string };
+			created_at: string;
+			updated_at: string;
+			closed_at: string | null;
+		}>
+	>;
 
 	getIssue(params: {
 		owner: string;
@@ -116,19 +121,21 @@ export interface GitHubClient {
 		state?: 'open' | 'closed' | 'all';
 		page?: number;
 		perPage?: number;
-	}): Promise<Array<{
-		id: number;
-		number: number;
-		title: string;
-		body: string;
-		state: string;
-		user: { login: string };
-		head: { ref: string };
-		base: { ref: string };
-		created_at: string;
-		updated_at: string;
-		merged_at: string | null;
-	}>>;
+	}): Promise<
+		Array<{
+			id: number;
+			number: number;
+			title: string;
+			body: string;
+			state: string;
+			user: { login: string };
+			head: { ref: string };
+			base: { ref: string };
+			created_at: string;
+			updated_at: string;
+			merged_at: string | null;
+		}>
+	>;
 
 	listRepositories(params?: {
 		type?: 'all' | 'owner' | 'member';
@@ -136,17 +143,19 @@ export interface GitHubClient {
 		direction?: 'asc' | 'desc';
 		page?: number;
 		perPage?: number;
-	}): Promise<Array<{
-		id: number;
-		name: string;
-		full_name: string;
-		description: string;
-		private: boolean;
-		owner: { login: string };
-		html_url: string;
-		created_at: string;
-		updated_at: string;
-	}>>;
+	}): Promise<
+		Array<{
+			id: number;
+			name: string;
+			full_name: string;
+			description: string;
+			private: boolean;
+			owner: { login: string };
+			html_url: string;
+			created_at: string;
+			updated_at: string;
+		}>
+	>;
 }
 
 export function createGitHubClient(token: string): GitHubClient {
@@ -220,4 +229,3 @@ export function createGitHubClient(token: string): GitHubClient {
 }
 
 export { GitHubAPIError };
-

@@ -1,16 +1,15 @@
+import type { CorsairDBAdapter } from './core/db/adapter';
 import type { CorsairOptions } from './core/options';
 import type { CorsairPlugin } from './core/plugin';
-import type { PrettifyDeep, UnionToIntersection } from './core/types';
-import type { CorsairDBAdapter } from './core/db/adapter';
 import { getSchema } from './core/schema/get-schema';
+import type { PrettifyDeep, UnionToIntersection } from './core/types';
 
-export type { CorsairOptions } from './core/options';
-export type { CorsairDBAdapter } from './core/db/adapter';
-export type { CorsairPlugin } from './core/plugin';
-
+export { drizzleAdapter } from './adapters/db/drizzle';
 export type * from './adapters/slack';
 export { slackAdapter } from './adapters/slack';
-export { drizzleAdapter } from './adapters/db/drizzle';
+export type { CorsairDBAdapter } from './core/db/adapter';
+export type { CorsairOptions } from './core/options';
+export type { CorsairPlugin } from './core/plugin';
 
 export * from './plugins';
 

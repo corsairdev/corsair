@@ -1,5 +1,9 @@
-import type { GitHubClient, GitHubPlugin, GitHubPluginContext } from '../types';
-import type { GetIssueResponse } from '../types';
+import type {
+	GetIssueResponse,
+	GitHubClient,
+	GitHubPlugin,
+	GitHubPluginContext,
+} from '../types';
 
 export const getIssue = async ({
 	config,
@@ -74,4 +78,3 @@ export const getIssue = async ({
 		};
 	}
 };
-

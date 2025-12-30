@@ -1,24 +1,25 @@
 import { createGmailClient } from './client';
+import { createDraft } from './operations/create-draft';
+import { getMessage } from './operations/get-message';
+import { getThread } from './operations/get-thread';
+import { listLabels } from './operations/list-labels';
+import { listMessages } from './operations/list-messages';
+import { listThreads } from './operations/list-threads';
+import { sendMessage } from './operations/send-message';
 import type {
 	GmailDatabaseContext,
 	GmailPlugin,
 	GmailPluginContext,
 	GmailSchemaOverride,
 } from './types';
-import { sendMessage } from './operations/send-message';
-import { listMessages } from './operations/list-messages';
-import { getMessage } from './operations/get-message';
-import { listThreads } from './operations/list-threads';
-import { getThread } from './operations/get-thread';
-import { listLabels } from './operations/list-labels';
-import { createDraft } from './operations/create-draft';
 
 /**
  * Creates a Gmail plugin instance with database access
  */
 export function createGmailPlugin<
 	TSchemaOverride extends GmailSchemaOverride = GmailSchemaOverride,
-	TDatabase extends GmailDatabaseContext<TSchemaOverride> = GmailDatabaseContext<TSchemaOverride>,
+	TDatabase extends
+		GmailDatabaseContext<TSchemaOverride> = GmailDatabaseContext<TSchemaOverride>,
 >(config: GmailPlugin, db: TDatabase) {
 	const client = createGmailClient(config.accessToken);
 
@@ -116,4 +117,3 @@ export function createGmailPlugin<
 }
 
 export type { GmailPlugin, GmailSchemaOverride, GmailPluginContext };
-

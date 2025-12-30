@@ -1,5 +1,9 @@
-import type { SlackClient, SlackPlugin, SlackPluginContext } from '../types';
-import type { ReactionResponse } from '../types';
+import type {
+	ReactionResponse,
+	SlackClient,
+	SlackPlugin,
+	SlackPluginContext,
+} from '../types';
 
 export const addReaction = async ({
 	config,

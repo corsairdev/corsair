@@ -6,7 +6,10 @@
 const GMAIL_API_BASE = 'https://gmail.googleapis.com/gmail/v1';
 
 class GmailAPIError extends Error {
-	constructor(message: string, public readonly code?: string) {
+	constructor(
+		message: string,
+		public readonly code?: string,
+	) {
 		super(message);
 		this.name = 'GmailAPIError';
 	}
@@ -22,7 +25,7 @@ async function makeRequest<T>(
 	} = {},
 ): Promise<T> {
 	const { method = 'GET', body, params } = options;
-	
+
 	let url = `${GMAIL_API_BASE}${endpoint}`;
 	if (params && Object.keys(params).length > 0) {
 		const searchParams = new URLSearchParams(params);
@@ -126,11 +129,7 @@ export interface GmailClient {
 		}>;
 	}>;
 
-	createDraft(params: {
-		to: string;
-		subject: string;
-		body: string;
-	}): Promise<{
+	createDraft(params: { to: string; subject: string; body: string }): Promise<{
 		id: string;
 		message: {
 			id: string;
@@ -272,4 +271,3 @@ export function createGmailClient(accessToken: string): GmailClient {
 }
 
 export { GmailAPIError };
-

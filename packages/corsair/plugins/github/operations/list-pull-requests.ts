@@ -1,5 +1,9 @@
-import type { GitHubClient, GitHubPlugin, GitHubPluginContext } from '../types';
-import type { ListPullRequestsResponse } from '../types';
+import type {
+	GitHubClient,
+	GitHubPlugin,
+	GitHubPluginContext,
+	ListPullRequestsResponse,
+} from '../types';
 
 export const listPullRequests = async ({
 	config,
@@ -38,7 +42,10 @@ export const listPullRequests = async ({
 		});
 
 		// Database hook: Save pull requests to database if pull_requests table exists
-		if (ctx.db.pull_requests && typeof ctx.db.pull_requests.insert === 'function') {
+		if (
+			ctx.db.pull_requests &&
+			typeof ctx.db.pull_requests.insert === 'function'
+		) {
 			try {
 				for (const pr of result) {
 					await ctx.db.pull_requests.insert({
@@ -86,4 +93,3 @@ export const listPullRequests = async ({
 		};
 	}
 };
-

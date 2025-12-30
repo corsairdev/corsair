@@ -1,8 +1,8 @@
+import type { SlackAdapterOptions, SlackClient } from '../../adapters/slack';
+import { slackAdapter } from '../../adapters/slack';
 import type { CorsairPlugin } from '../../core/plugin';
 import type { InferOptionSchema } from '../../core/schema/merge-schema';
 import { mergeSchema } from '../../core/schema/merge-schema';
-import { slackAdapter } from '../../adapters/slack';
-import type { SlackAdapterOptions, SlackClient } from '../../adapters/slack';
 import type { SlackSchema } from './schema';
 import { getSlackSchema } from './schema';
 

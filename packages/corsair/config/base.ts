@@ -6,4 +6,3 @@ export const createCorsair = <Options extends CorsairConfig<any>>(
 	// Validate and return the config with proper typing
 	return options;
 };
-
