@@ -15,7 +15,7 @@ export * from './plugins';
 // Re-export zod as z for convenience
 export { z } from 'zod';
 // Re-export utilities from core package
-export { dualKeyOperationsMap } from '@corsair-ai/core';
+export { dualKeyOperationsMap } from '../core/utils';
 
 export type InferPluginTypes<O extends CorsairOptions> =
 	O['plugins'] extends readonly (infer P)[]
