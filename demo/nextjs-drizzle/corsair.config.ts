@@ -62,3 +62,7 @@ export const config = corsair({
 });
 
 export type Config = typeof config;
+
+// access plugins like this
+console.log(config.options.plugins);
+

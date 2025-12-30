@@ -23,6 +23,7 @@
     "@radix-ui/react-slot": "^1.2.3",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "@corsair-ai/core": "^0.1.0",
     "corsair": "workspace:*",
     "dotenv": "^17.2.3",
     "drizzle-orm": "^0.31.2",
@@ -39,7 +40,6 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
-    "@corsair-ai/cli": "workspace:*",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/pg": "^8.11.0",
