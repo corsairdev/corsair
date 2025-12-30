@@ -61,14 +61,12 @@ program
 	.option('-c, --config <path>', 'Path to corsair config file')
 	.option('--push', 'Push schema to database using drizzle-kit')
 	.option('-o, --out <path>', 'Output path for generated schema file')
-	.action(async (options: {
-		config?: string;
-		push?: boolean;
-		out?: string;
-	}) => {
-		const { createDbTables } = await import('./commands/db-create-tables.js');
-		await createDbTables(options);
-	});
+	.action(
+		async (options: { config?: string; push?: boolean; out?: string }) => {
+			const { createDbTables } = await import('./commands/db-create-tables.js');
+			await createDbTables(options);
+		},
+	);
 
 program
 	.command('config')

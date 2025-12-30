@@ -1,9 +1,9 @@
 import type { CorsairConfig } from '@corsair-ai/core/config';
 import {
-	slackDefaultSchema,
+	githubDefaultSchema,
 	gmailDefaultSchema,
 	linearDefaultSchema,
-	githubDefaultSchema,
+	slackDefaultSchema,
 } from 'corsair/plugins';
 
 type ResolvedSchema = Record<string, Record<string, string | boolean | number>>;
@@ -11,7 +11,9 @@ type ResolvedSchema = Record<string, Record<string, string | boolean | number>>;
 type SchemaOverride = Record<
 	string,
 	| boolean
-	| ((dbSchema: Record<string, Record<string, string | boolean | number>>) => Record<string, string | boolean | number>)
+	| ((
+			dbSchema: Record<string, Record<string, string | boolean | number>>,
+	  ) => Record<string, string | boolean | number>)
 >;
 
 function resolveSlackSchema(
@@ -95,7 +97,9 @@ function resolveLinearSchema(
 		}
 	}
 
-	for (const [tableName, defaultSchema] of Object.entries(linearDefaultSchema)) {
+	for (const [tableName, defaultSchema] of Object.entries(
+		linearDefaultSchema,
+	)) {
 		if (!(tableName in resolved)) {
 			resolved[tableName] = defaultSchema as Record<
 				string,
@@ -128,7 +132,9 @@ function resolveGitHubSchema(
 		}
 	}
 
-	for (const [tableName, defaultSchema] of Object.entries(githubDefaultSchema)) {
+	for (const [tableName, defaultSchema] of Object.entries(
+		githubDefaultSchema,
+	)) {
 		if (!(tableName in resolved)) {
 			resolved[tableName] = defaultSchema as Record<
 				string,
@@ -163,4 +169,3 @@ export function resolvePluginSchemas(
 
 	return resolved;
 }
-

@@ -1,5 +1,4 @@
-import type { DBFieldAttribute } from '@corsair-ai/core/db';
-import type { CorsairDBSchema } from '@corsair-ai/core/db';
+import type { CorsairDBSchema, DBFieldAttribute } from '@corsair-ai/core/db';
 
 type ResolvedSchema = Record<string, Record<string, string | boolean | number>>;
 
@@ -57,4 +56,3 @@ export function convertPluginSchemasToDBSchema(
 
 	return dbSchema;
 }
-
