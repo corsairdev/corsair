@@ -1187,7 +1187,7 @@ importers:
         specifier: ^2.1.1
         version: 2.1.1
       corsair:
-        specifier: link:../../packages/corsair
+        specifier: workspace:*
         version: link:../../packages/corsair
       dotenv:
         specifier: ^17.2.3

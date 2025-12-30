@@ -23,7 +23,7 @@
     "@radix-ui/react-slot": "^1.2.3",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
-    "corsair": "link:../../packages/corsair",
+    "corsair": "workspace:*",
     "dotenv": "^17.2.3",
     "drizzle-orm": "^0.31.2",
     "drizzle-zod": "^0.5.1",

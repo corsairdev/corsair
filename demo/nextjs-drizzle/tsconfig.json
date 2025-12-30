@@ -21,7 +21,7 @@
     "paths": {
       "@/*": ["./*"],
       "@/corsair": ["./corsair/*"],
-      "corsair/*": ["../../packages/corsair/*"]
+      "corsair": ["../../packages/corsair/src/index.ts"],
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
