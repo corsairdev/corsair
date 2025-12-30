@@ -1,25 +1,31 @@
-import type { BaseConfig, PluginConfig } from '../config';
 import type {
+	BaseConfig,
+	GitHubPluginConfig,
 	GmailPluginConfig,
 	LinearPluginConfig,
-	GitHubPluginConfig,
 } from '../config';
-import { createSlackPlugin } from './slack';
-import type { SlackPlugin } from './slack/types';
-import { slackDefaultSchema } from './slack/schema';
-import type { ResolvedSlackSchema, SlackSchemaOverride } from './slack/schema';
-import { createGmailPlugin } from './gmail';
-import type { GmailPlugin } from './gmail/types';
-import { gmailDefaultSchema } from './gmail/schema';
-import type { ResolvedGmailSchema, GmailSchemaOverride } from './gmail/schema';
-import { createLinearPlugin } from './linear';
-import type { LinearPlugin } from './linear/types';
-import { linearDefaultSchema } from './linear/schema';
-import type { ResolvedLinearSchema, LinearSchemaOverride } from './linear/schema';
 import { createGitHubPlugin } from './github';
-import type { GitHubPlugin } from './github/types';
+import type {
+	GitHubSchemaOverride,
+	ResolvedGitHubSchema,
+} from './github/schema';
 import { githubDefaultSchema } from './github/schema';
-import type { ResolvedGitHubSchema, GitHubSchemaOverride } from './github/schema';
+import type { GitHubPlugin } from './github/types';
+import { createGmailPlugin } from './gmail';
+import type { GmailSchemaOverride, ResolvedGmailSchema } from './gmail/schema';
+import { gmailDefaultSchema } from './gmail/schema';
+import type { GmailPlugin } from './gmail/types';
+import { createLinearPlugin } from './linear';
+import type {
+	LinearSchemaOverride,
+	ResolvedLinearSchema,
+} from './linear/schema';
+import { linearDefaultSchema } from './linear/schema';
+import type { LinearPlugin } from './linear/types';
+import { createSlackPlugin } from './slack';
+import type { ResolvedSlackSchema, SlackSchemaOverride } from './slack/schema';
+import { slackDefaultSchema } from './slack/schema';
+import type { SlackPlugin } from './slack/types';
 
 /**
  * Resolves the schema override for Slack plugin
@@ -97,7 +103,10 @@ function resolveLinearSchema<T extends LinearSchemaOverride>(
 		return linearDefaultSchema as ResolvedLinearSchema<T>;
 	}
 
-	const resolved: Record<string, Record<string, string | boolean | number>> = {};
+	const resolved: Record<
+		string,
+		Record<string, string | boolean | number>
+	> = {};
 
 	for (const [tableName, tableOverride] of Object.entries(override)) {
 		if (tableOverride === false) {
@@ -111,9 +120,14 @@ function resolveLinearSchema<T extends LinearSchemaOverride>(
 		}
 	}
 
-	for (const [tableName, defaultSchema] of Object.entries(linearDefaultSchema)) {
+	for (const [tableName, defaultSchema] of Object.entries(
+		linearDefaultSchema,
+	)) {
 		if (!(tableName in resolved)) {
-			resolved[tableName] = defaultSchema as Record<string, string | boolean | number>;
+			resolved[tableName] = defaultSchema as Record<
+				string,
+				string | boolean | number
+			>;
 		}
 	}
 
@@ -130,7 +144,10 @@ function resolveGitHubSchema<T extends GitHubSchemaOverride>(
 		return githubDefaultSchema as ResolvedGitHubSchema<T>;
 	}
 
-	const resolved: Record<string, Record<string, string | boolean | number>> = {};
+	const resolved: Record<
+		string,
+		Record<string, string | boolean | number>
+	> = {};
 
 	for (const [tableName, tableOverride] of Object.entries(override)) {
 		if (tableOverride === false) {
@@ -144,9 +161,14 @@ function resolveGitHubSchema<T extends GitHubSchemaOverride>(
 		}
 	}
 
-	for (const [tableName, defaultSchema] of Object.entries(githubDefaultSchema)) {
+	for (const [tableName, defaultSchema] of Object.entries(
+		githubDefaultSchema,
+	)) {
 		if (!(tableName in resolved)) {
-			resolved[tableName] = defaultSchema as Record<string, string | boolean | number>;
+			resolved[tableName] = defaultSchema as Record<
+				string,
+				string | boolean | number
+			>;
 		}
 	}
 
@@ -157,7 +179,9 @@ function resolveGitHubSchema<T extends GitHubSchemaOverride>(
  * Creates a database context based on resolved schema
  * This provides typed access to database tables
  */
-function createDatabaseContext<T extends Record<string, Record<string, string | boolean | number>>>(
+function createDatabaseContext<
+	T extends Record<string, Record<string, string | boolean | number>>,
+>(
 	resolvedSchema: T,
 	db: unknown,
 ): {
@@ -181,9 +205,8 @@ function createDatabaseContext<T extends Record<string, Record<string, string | 
 	> = {};
 
 	for (const tableName of Object.keys(resolvedSchema)) {
-		const table = (db as { _?: { schema?: Record<string, unknown> } })._?.schema?.[
-			tableName
-		] as
+		const table = (db as { _?: { schema?: Record<string, unknown> } })._
+			?.schema?.[tableName] as
 			| {
 					insert: (data: Record<string, unknown>) => Promise<unknown>;
 					select: () => Promise<Array<Record<string, unknown>>>;

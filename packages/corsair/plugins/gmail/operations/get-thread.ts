@@ -1,5 +1,9 @@
-import type { GmailClient, GmailPlugin, GmailPluginContext } from '../types';
-import type { GetThreadResponse } from '../types';
+import type {
+	GetThreadResponse,
+	GmailClient,
+	GmailPlugin,
+	GmailPluginContext,
+} from '../types';
 
 export const getThread = async ({
 	config,
@@ -51,4 +55,3 @@ export const getThread = async ({
 		};
 	}
 };
-

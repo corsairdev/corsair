@@ -1,7 +1,7 @@
-import type { SlackSchemaOverride } from '../plugins/slack/schema';
+import type { GitHubSchemaOverride } from '../plugins/github/schema';
 import type { GmailSchemaOverride } from '../plugins/gmail/schema';
 import type { LinearSchemaOverride } from '../plugins/linear/schema';
-import type { GitHubSchemaOverride } from '../plugins/github/schema';
+import type { SlackSchemaOverride } from '../plugins/slack/schema';
 import type { DrizzlePostgresConfig } from './drizzle-postgres';
 import type { PrismaPostgresConfig } from './prisma-postgres';
 

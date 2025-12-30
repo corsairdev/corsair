@@ -1,5 +1,5 @@
-import type { CorsairOptions } from '../../../src/core/options';
 import type { CorsairDBAdapter } from '../../../src/core/db/adapter';
+import type { CorsairOptions } from '../../../src/core/options';
 import { logger } from '../logger';
 import { generateDrizzleSchema } from './drizzle';
 

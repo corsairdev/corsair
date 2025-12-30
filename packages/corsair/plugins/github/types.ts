@@ -1,8 +1,4 @@
-import type {
-	ResolvedGitHubSchema,
-	GitHubDefaultSchema,
-	GitHubSchemaOverride,
-} from './schema';
+import type { GitHubSchemaOverride, ResolvedGitHubSchema } from './schema';
 
 export type GitHubPlugin = {
 	/**
@@ -105,9 +101,7 @@ export type GitHubDatabaseContext<
 		: {
 				insert: (data: Record<string, unknown>) => Promise<unknown>;
 				select: () => Promise<Array<Record<string, unknown>>>;
-				update: (
-					data: Record<string, unknown>,
-				) => Promise<unknown>;
+				update: (data: Record<string, unknown>) => Promise<unknown>;
 				delete: () => Promise<unknown>;
 			};
 };
@@ -128,4 +122,3 @@ export type GitHubPluginContext<
 export type { GitHubClient } from './client';
 
 export type { GitHubSchemaOverride } from './schema';
-

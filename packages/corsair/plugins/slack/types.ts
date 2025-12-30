@@ -1,8 +1,4 @@
-import type {
-	ResolvedSlackSchema,
-	SlackDefaultSchema,
-	SlackSchemaOverride,
-} from './schema';
+import type { ResolvedSlackSchema, SlackSchemaOverride } from './schema';
 
 export type { SlackSchemaOverride } from './schema';
 
@@ -100,9 +96,7 @@ export type SlackDatabaseContext<
 		: {
 				insert: (data: Record<string, unknown>) => Promise<unknown>;
 				select: () => Promise<Array<Record<string, unknown>>>;
-				update: (
-					data: Record<string, unknown>,
-				) => Promise<unknown>;
+				update: (data: Record<string, unknown>) => Promise<unknown>;
 				delete: () => Promise<unknown>;
 			};
 };

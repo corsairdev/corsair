@@ -1,23 +1,24 @@
 import { createSlackClient } from './client';
+import { addReaction } from './operations/add-reaction';
+import { getChannels } from './operations/get-channels';
+import { getMessages } from './operations/get-messages';
+import { replyToThread } from './operations/reply-to-thread';
+import { sendMessage } from './operations/send-message';
+import { updateMessage } from './operations/update-message';
 import type {
 	SlackDatabaseContext,
 	SlackPlugin,
 	SlackPluginContext,
 	SlackSchemaOverride,
 } from './types';
-import { sendMessage } from './operations/send-message';
-import { replyToThread } from './operations/reply-to-thread';
-import { getMessages } from './operations/get-messages';
-import { updateMessage } from './operations/update-message';
-import { addReaction } from './operations/add-reaction';
-import { getChannels } from './operations/get-channels';
 
 /**
  * Creates a Slack plugin instance with database access
  */
 export function createSlackPlugin<
 	TSchemaOverride extends SlackSchemaOverride = SlackSchemaOverride,
-	TDatabase extends SlackDatabaseContext<TSchemaOverride> = SlackDatabaseContext<TSchemaOverride>,
+	TDatabase extends
+		SlackDatabaseContext<TSchemaOverride> = SlackDatabaseContext<TSchemaOverride>,
 >(config: SlackPlugin, db: TDatabase) {
 	const client = createSlackClient(config.token);
 

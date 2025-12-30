@@ -1,5 +1,9 @@
-import type { LinearClient, LinearPlugin, LinearPluginContext } from '../types';
-import type { CreateIssueResponse } from '../types';
+import type {
+	CreateIssueResponse,
+	LinearClient,
+	LinearPlugin,
+	LinearPluginContext,
+} from '../types';
 
 export const createIssue = async ({
 	config,
@@ -85,4 +89,3 @@ export const createIssue = async ({
 		};
 	}
 };
-

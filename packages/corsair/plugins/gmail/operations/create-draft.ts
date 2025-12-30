@@ -1,5 +1,9 @@
-import type { GmailClient, GmailPlugin, GmailPluginContext } from '../types';
-import type { CreateDraftResponse } from '../types';
+import type {
+	CreateDraftResponse,
+	GmailClient,
+	GmailPlugin,
+	GmailPluginContext,
+} from '../types';
 
 export const createDraft = async ({
 	config,
@@ -60,4 +64,3 @@ export const createDraft = async ({
 		};
 	}
 };
-

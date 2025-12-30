@@ -1,5 +1,5 @@
-import type { CorsairConfig } from './index';
 import { createCorsair } from './base';
+import type { CorsairConfig } from './index';
 
 /**
  * Corsair initializer for configuration
@@ -26,4 +26,3 @@ export const corsair = <Options extends CorsairConfig<any>>(
 ): Options => {
 	return createCorsair(options);
 };
-

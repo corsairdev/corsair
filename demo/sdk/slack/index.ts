@@ -1,21 +1,19 @@
+export { Slack } from './api';
 export { ApiError } from './core/ApiError';
 export { CancelablePromise, CancelError } from './core/CancelablePromise';
-export { OpenAPI } from './core/OpenAPI';
 export type { OpenAPIConfig } from './core/OpenAPI';
-
+export { OpenAPI } from './core/OpenAPI';
 export * from './models';
 export * from './services';
-export * from './webhooks';
-export { Slack } from './api';
 export {
-  SlackWebhookHandler,
-  createWebhookHandler,
-  type SlackEventName,
-  type SlackEventMap,
-  type SlackEventHandler,
-  type SlackWebhookHeaders,
-  type SlackWebhookHandlerOptions,
-  type SlackWebhookPayload,
-  type HandleWebhookResult,
+	createWebhookHandler,
+	type HandleWebhookResult,
+	type SlackEventHandler,
+	type SlackEventMap,
+	type SlackEventName,
+	SlackWebhookHandler,
+	type SlackWebhookHandlerOptions,
+	type SlackWebhookHeaders,
+	type SlackWebhookPayload,
 } from './webhook-handler';
-
+export * from './webhooks';

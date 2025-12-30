@@ -1,5 +1,9 @@
-import type { SlackClient, SlackPlugin, SlackPluginContext } from '../types';
-import type { MessagesResponse } from '../types';
+import type {
+	MessagesResponse,
+	SlackClient,
+	SlackPlugin,
+	SlackPluginContext,
+} from '../types';
 
 export const getMessages = async ({
 	config,

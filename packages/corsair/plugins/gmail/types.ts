@@ -1,8 +1,4 @@
-import type {
-	ResolvedGmailSchema,
-	GmailDefaultSchema,
-	GmailSchemaOverride,
-} from './schema';
+import type { GmailSchemaOverride, ResolvedGmailSchema } from './schema';
 
 export type GmailPlugin = {
 	/**
@@ -109,9 +105,7 @@ export type GmailDatabaseContext<
 		: {
 				insert: (data: Record<string, unknown>) => Promise<unknown>;
 				select: () => Promise<Array<Record<string, unknown>>>;
-				update: (
-					data: Record<string, unknown>,
-				) => Promise<unknown>;
+				update: (data: Record<string, unknown>) => Promise<unknown>;
 				delete: () => Promise<unknown>;
 			};
 };
@@ -133,4 +127,3 @@ export type GmailPluginContext<
 export type { GmailClient } from './client';
 
 export type { GmailSchemaOverride } from './schema';
-

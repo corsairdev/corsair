@@ -1,6 +1,6 @@
 import type { CorsairOptions } from '../options';
-import type { CorsairDBSchema, DBFieldAttribute } from './types';
 import { coreTables } from './core-tables';
+import type { CorsairDBSchema, DBFieldAttribute } from './types';
 
 export function getCorsairTables(options: CorsairOptions): CorsairDBSchema {
 	const pluginTables = (options.plugins ?? []).reduce(
