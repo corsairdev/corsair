@@ -30,6 +30,7 @@
   },
   "dependencies": {
     "@corsair-ai/core": "workspace:*",
+    "corsair": "workspace:*",
     "@ai-sdk/openai": "^2.0.68",
     "@babel/preset-react": "^7.27.1",
     "@babel/preset-typescript": "^7.27.1",
