@@ -1,8 +1,14 @@
+import type {
+	BasePluginConfig,
+	BasePluginContext,
+	BasePluginResponse,
+	BaseDatabaseContext,
+} from '../base';
 import type { ResolvedSlackSchema, SlackSchemaOverride } from './schema';
 
 export type { SlackSchemaOverride } from './schema';
 
-export type SlackPlugin = {
+export type SlackPlugin = BasePluginConfig<SlackSchemaOverride> & {
 	/**
 	 * Slack API token
 	 */
@@ -22,18 +28,10 @@ export type SlackPlugin = {
 	 * }]`
 	 */
 	members?: Record<string, string>;
-
-	/**
-	 * Schema override configuration
-	 */
-	schema?: SlackSchemaOverride;
 };
 
-export type BaseSlackPluginResponse<T extends Record<string, unknown>> = {
-	success: boolean;
-	data?: T;
-	error?: string;
-};
+export type BaseSlackPluginResponse<T extends Record<string, unknown>> =
+	BasePluginResponse<T>;
 
 // Message timestamp type (Slack uses this for message IDs)
 export type MessageTs = string;
@@ -90,16 +88,7 @@ export type ChannelsResponse = BaseSlackPluginResponse<{
  */
 export type SlackDatabaseContext<
 	TSchemaOverride extends SlackSchemaOverride = SlackSchemaOverride,
-> = {
-	[K in keyof ResolvedSlackSchema<TSchemaOverride>]: ResolvedSlackSchema<TSchemaOverride>[K] extends never
-		? never
-		: {
-				insert: (data: Record<string, unknown>) => Promise<unknown>;
-				select: () => Promise<Array<Record<string, unknown>>>;
-				update: (data: Record<string, unknown>) => Promise<unknown>;
-				delete: () => Promise<unknown>;
-			};
-};
+> = BaseDatabaseContext<ResolvedSlackSchema<TSchemaOverride>>;
 
 /**
  * Plugin operation context
@@ -107,10 +96,7 @@ export type SlackDatabaseContext<
  */
 export type SlackPluginContext<
 	TSchemaOverride extends SlackSchemaOverride = SlackSchemaOverride,
-> = {
-	db: SlackDatabaseContext<TSchemaOverride>;
-	userId?: string;
-};
+> = BasePluginContext<ResolvedSlackSchema<TSchemaOverride>>;
 
 /**
  * Extract channel names from plugin config

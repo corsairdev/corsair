@@ -12,6 +12,10 @@ export type { CorsairOptions } from './core/options';
 export type { CorsairPlugin } from './core/plugin';
 
 export * from './plugins';
+// Re-export zod as z for convenience
+export { z } from 'zod';
+// Re-export utilities from core package
+export { dualKeyOperationsMap } from '@corsair-ai/core';
 
 export type InferPluginTypes<O extends CorsairOptions> =
 	O['plugins'] extends readonly (infer P)[]

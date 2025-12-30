@@ -1,21 +1,20 @@
+import type {
+	BasePluginConfig,
+	BasePluginContext,
+	BasePluginResponse,
+	BaseDatabaseContext,
+} from '../base';
 import type { GitHubSchemaOverride, ResolvedGitHubSchema } from './schema';
 
-export type GitHubPlugin = {
+export type GitHubPlugin = BasePluginConfig<GitHubSchemaOverride> & {
 	/**
 	 * GitHub personal access token
 	 */
 	token: string;
-	/**
-	 * Schema override configuration
-	 */
-	schema?: GitHubSchemaOverride;
 };
 
-export type BaseGitHubPluginResponse<T extends Record<string, unknown>> = {
-	success: boolean;
-	data?: T;
-	error?: string;
-};
+export type BaseGitHubPluginResponse<T extends Record<string, unknown>> =
+	BasePluginResponse<T>;
 
 // Response type for listIssues operation
 export type ListIssuesResponse = BaseGitHubPluginResponse<{
@@ -95,26 +94,14 @@ export type ListRepositoriesResponse = BaseGitHubPluginResponse<{
  */
 export type GitHubDatabaseContext<
 	TSchemaOverride extends GitHubSchemaOverride = GitHubSchemaOverride,
-> = {
-	[K in keyof ResolvedGitHubSchema<TSchemaOverride>]: ResolvedGitHubSchema<TSchemaOverride>[K] extends never
-		? never
-		: {
-				insert: (data: Record<string, unknown>) => Promise<unknown>;
-				select: () => Promise<Array<Record<string, unknown>>>;
-				update: (data: Record<string, unknown>) => Promise<unknown>;
-				delete: () => Promise<unknown>;
-			};
-};
+> = BaseDatabaseContext<ResolvedGitHubSchema<TSchemaOverride>>;
 
 /**
  * Plugin operation context
  */
 export type GitHubPluginContext<
 	TSchemaOverride extends GitHubSchemaOverride = GitHubSchemaOverride,
-> = {
-	db: GitHubDatabaseContext<TSchemaOverride>;
-	userId?: string;
-};
+> = BasePluginContext<ResolvedGitHubSchema<TSchemaOverride>>;
 
 /**
  * GitHubClient type for operations

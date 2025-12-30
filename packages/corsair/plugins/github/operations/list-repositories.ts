@@ -1,3 +1,8 @@
+import {
+	createErrorResponse,
+	createSuccessResponse,
+	validateCredentials,
+} from '../../base';
 import type {
 	GitHubClient,
 	GitHubPlugin,
@@ -22,16 +27,31 @@ export const listRepositories = async ({
 	};
 	ctx: GitHubPluginContext;
 }): Promise<ListRepositoriesResponse> => {
-	if (!config.token) {
-		return {
-			success: false,
-			error:
-				'GitHub token not configured. Please add token to corsair.config.ts plugins.github.token',
-		};
+	// Validate credentials
+	const credentialCheck = validateCredentials(config, ['token'], 'github');
+	if (!credentialCheck.valid) {
+		return createErrorResponse(
+			new Error(credentialCheck.error),
+			credentialCheck.error,
+		) as ListRepositoriesResponse;
 	}
 
 	try {
 		const result = await client.listRepositories(options);
+
+		const responseData = {
+			repositories: result.map((repo) => ({
+				id: repo.id,
+				name: repo.name,
+				fullName: repo.full_name,
+				description: repo.description,
+				private: repo.private,
+				owner: repo.owner.login,
+				url: repo.html_url,
+				createdAt: repo.created_at,
+				updatedAt: repo.updated_at,
+			})),
+		};
 
 		// Database hook: Save repositories to database if repositories table exists
 		if (
@@ -57,26 +77,8 @@ export const listRepositories = async ({
 			}
 		}
 
-		return {
-			success: true,
-			data: {
-				repositories: result.map((repo) => ({
-					id: repo.id,
-					name: repo.name,
-					fullName: repo.full_name,
-					description: repo.description,
-					private: repo.private,
-					owner: repo.owner.login,
-					url: repo.html_url,
-					createdAt: repo.created_at,
-					updatedAt: repo.updated_at,
-				})),
-			},
-		};
+		return createSuccessResponse(responseData) as ListRepositoriesResponse;
 	} catch (error) {
-		return {
-			success: false,
-			error: error instanceof Error ? error.message : 'Unknown error occurred',
-		};
+		return createErrorResponse(error) as ListRepositoriesResponse;
 	}
 };

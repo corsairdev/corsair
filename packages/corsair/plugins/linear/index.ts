@@ -1,9 +1,11 @@
+import { initializePlugin } from '../base';
 import { createLinearClient } from './client';
 import { createIssue } from './operations/create-issue';
 import { getIssue } from './operations/get-issue';
 import { listIssues } from './operations/list-issues';
 import { listTeams } from './operations/list-teams';
 import { updateIssue } from './operations/update-issue';
+import { linearDefaultSchema } from './schema';
 import type {
 	LinearDatabaseContext,
 	LinearPlugin,
@@ -13,13 +15,31 @@ import type {
 
 /**
  * Creates a Linear plugin instance with database access
+ * Uses the unified initialization flow from base plugin system
  */
 export function createLinearPlugin<
 	TSchemaOverride extends LinearSchemaOverride = LinearSchemaOverride,
 	TDatabase extends
 		LinearDatabaseContext<TSchemaOverride> = LinearDatabaseContext<TSchemaOverride>,
->(config: LinearPlugin, db: TDatabase) {
-	const client = createLinearClient(config.apiKey);
+>(config: LinearPlugin, db: unknown) {
+	// Initialize plugin using unified flow
+	const initResult = initializePlugin(
+		config,
+		linearDefaultSchema,
+		db,
+		(config) => createLinearClient(config.apiKey),
+	);
+	const { config: pluginConfig, client, ctx } = {
+		...initResult,
+		ctx: {
+			...initResult.ctx,
+			db: initResult.db as LinearDatabaseContext<TSchemaOverride>,
+		},
+	} as {
+		config: LinearPlugin;
+		client: ReturnType<typeof createLinearClient>;
+		ctx: LinearPluginContext<TSchemaOverride>;
+	};
 
 	return {
 		listIssues: async (params?: {
@@ -28,10 +48,10 @@ export function createLinearPlugin<
 			after?: string;
 		}): Promise<ReturnType<typeof listIssues>> => {
 			return listIssues({
-				config,
+				config: pluginConfig,
 				client,
 				options: params,
-				ctx: { db, userId: undefined },
+				ctx,
 			});
 		},
 
@@ -39,10 +59,10 @@ export function createLinearPlugin<
 			issueId: string;
 		}): Promise<ReturnType<typeof getIssue>> => {
 			return getIssue({
-				config,
+				config: pluginConfig,
 				client,
 				issueId: params.issueId,
-				ctx: { db, userId: undefined },
+				ctx,
 			});
 		},
 
@@ -55,7 +75,7 @@ export function createLinearPlugin<
 			assigneeId?: string;
 		}): Promise<ReturnType<typeof createIssue>> => {
 			return createIssue({
-				config,
+				config: pluginConfig,
 				client,
 				title: params.title,
 				description: params.description,
@@ -63,7 +83,7 @@ export function createLinearPlugin<
 				priority: params.priority,
 				stateId: params.stateId,
 				assigneeId: params.assigneeId,
-				ctx: { db, userId: undefined },
+				ctx,
 			});
 		},
 
@@ -76,7 +96,7 @@ export function createLinearPlugin<
 			assigneeId?: string;
 		}): Promise<ReturnType<typeof updateIssue>> => {
 			return updateIssue({
-				config,
+				config: pluginConfig,
 				client,
 				issueId: params.issueId,
 				title: params.title,
@@ -84,15 +104,15 @@ export function createLinearPlugin<
 				priority: params.priority,
 				stateId: params.stateId,
 				assigneeId: params.assigneeId,
-				ctx: { db, userId: undefined },
+				ctx,
 			});
 		},
 
 		listTeams: async (): Promise<ReturnType<typeof listTeams>> => {
 			return listTeams({
-				config,
+				config: pluginConfig,
 				client,
-				ctx: { db, userId: undefined },
+				ctx,
 			});
 		},
 	};

@@ -1,6 +1,12 @@
+import type {
+	BasePluginConfig,
+	BasePluginContext,
+	BasePluginResponse,
+	BaseDatabaseContext,
+} from '../base';
 import type { LinearSchemaOverride, ResolvedLinearSchema } from './schema';
 
-export type LinearPlugin = {
+export type LinearPlugin = BasePluginConfig<LinearSchemaOverride> & {
 	/**
 	 * Linear API key
 	 */
@@ -9,17 +15,10 @@ export type LinearPlugin = {
 	 * Optional team ID to filter issues
 	 */
 	teamId?: string;
-	/**
-	 * Schema override configuration
-	 */
-	schema?: LinearSchemaOverride;
 };
 
-export type BaseLinearPluginResponse<T extends Record<string, unknown>> = {
-	success: boolean;
-	data?: T;
-	error?: string;
-};
+export type BaseLinearPluginResponse<T extends Record<string, unknown>> =
+	BasePluginResponse<T>;
 
 // Response type for listIssues operation
 export type ListIssuesResponse = BaseLinearPluginResponse<{
@@ -93,26 +92,14 @@ export type ListTeamsResponse = BaseLinearPluginResponse<{
  */
 export type LinearDatabaseContext<
 	TSchemaOverride extends LinearSchemaOverride = LinearSchemaOverride,
-> = {
-	[K in keyof ResolvedLinearSchema<TSchemaOverride>]: ResolvedLinearSchema<TSchemaOverride>[K] extends never
-		? never
-		: {
-				insert: (data: Record<string, unknown>) => Promise<unknown>;
-				select: () => Promise<Array<Record<string, unknown>>>;
-				update: (data: Record<string, unknown>) => Promise<unknown>;
-				delete: () => Promise<unknown>;
-			};
-};
+> = BaseDatabaseContext<ResolvedLinearSchema<TSchemaOverride>>;
 
 /**
  * Plugin operation context
  */
 export type LinearPluginContext<
 	TSchemaOverride extends LinearSchemaOverride = LinearSchemaOverride,
-> = {
-	db: LinearDatabaseContext<TSchemaOverride>;
-	userId?: string;
-};
+> = BasePluginContext<ResolvedLinearSchema<TSchemaOverride>>;
 
 /**
  * LinearClient type for operations

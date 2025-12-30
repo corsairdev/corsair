@@ -22,10 +22,15 @@
       "types": "./dist/plugins/index.d.ts",
       "import": "./dist/plugins/index.js",
       "require": "./dist/plugins/index.cjs"
+    },
+    "./client": {
+      "types": "./client/index.d.ts",
+      "import": "./client/index.ts",
+      "require": "./client/index.ts"
     }
   },
   "scripts": {
-    "build": "tsup src/index.ts plugins/index.ts --format cjs,esm --dts",
+    "build": "tsup index.ts plugins/index.ts client/index.ts --format cjs,esm --dts",
     "build:watch": "tsup src/index.ts plugins/index.ts --format cjs,esm --dts --watch",
     "typecheck": "tsc --noEmit",
     "test": "jest",

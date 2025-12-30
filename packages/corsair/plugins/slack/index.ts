@@ -1,3 +1,4 @@
+import { initializePlugin } from '../base';
 import { createSlackClient } from './client';
 import { addReaction } from './operations/add-reaction';
 import { getChannels } from './operations/get-channels';
@@ -5,6 +6,7 @@ import { getMessages } from './operations/get-messages';
 import { replyToThread } from './operations/reply-to-thread';
 import { sendMessage } from './operations/send-message';
 import { updateMessage } from './operations/update-message';
+import { slackDefaultSchema } from './schema';
 import type {
 	SlackDatabaseContext,
 	SlackPlugin,
@@ -14,13 +16,31 @@ import type {
 
 /**
  * Creates a Slack plugin instance with database access
+ * Uses the unified initialization flow from base plugin system
  */
 export function createSlackPlugin<
 	TSchemaOverride extends SlackSchemaOverride = SlackSchemaOverride,
 	TDatabase extends
 		SlackDatabaseContext<TSchemaOverride> = SlackDatabaseContext<TSchemaOverride>,
->(config: SlackPlugin, db: TDatabase) {
-	const client = createSlackClient(config.token);
+>(config: SlackPlugin, db: unknown) {
+	// Initialize plugin using unified flow
+	const initResult = initializePlugin(
+		config,
+		slackDefaultSchema,
+		db,
+		(config) => createSlackClient(config.token),
+	);
+	const { config: pluginConfig, client, ctx } = {
+		...initResult,
+		ctx: {
+			...initResult.ctx,
+			db: initResult.db as SlackDatabaseContext<TSchemaOverride>,
+		},
+	} as {
+		config: SlackPlugin;
+		client: ReturnType<typeof createSlackClient>;
+		ctx: SlackPluginContext<TSchemaOverride>;
+	};
 
 	return {
 		sendMessage: async (params: {
@@ -28,11 +48,11 @@ export function createSlackPlugin<
 			content: string;
 		}): Promise<ReturnType<typeof sendMessage>> => {
 			return sendMessage({
-				config,
+				config: pluginConfig,
 				client,
 				channelId: params.channelId,
 				content: params.content,
-				ctx: { db, userId: undefined },
+				ctx,
 			});
 		},
 
@@ -42,12 +62,12 @@ export function createSlackPlugin<
 			content: string;
 		}): Promise<ReturnType<typeof replyToThread>> => {
 			return replyToThread({
-				config,
+				config: pluginConfig,
 				client,
 				channelId: params.channelId,
 				threadTs: params.threadTs,
 				content: params.content,
-				ctx: { db, userId: undefined },
+				ctx,
 			});
 		},
 
@@ -61,11 +81,11 @@ export function createSlackPlugin<
 			};
 		}): Promise<ReturnType<typeof getMessages>> => {
 			return getMessages({
-				config,
+				config: pluginConfig,
 				client,
 				channelId: params.channelId,
 				options: params.options,
-				ctx: { db, userId: undefined },
+				ctx,
 			});
 		},
 
@@ -75,12 +95,12 @@ export function createSlackPlugin<
 			content: string;
 		}): Promise<ReturnType<typeof updateMessage>> => {
 			return updateMessage({
-				config,
+				config: pluginConfig,
 				client,
 				channelId: params.channelId,
 				messageTs: params.messageTs,
 				content: params.content,
-				ctx: { db, userId: undefined },
+				ctx,
 			});
 		},
 
@@ -90,12 +110,12 @@ export function createSlackPlugin<
 			emoji: string;
 		}): Promise<ReturnType<typeof addReaction>> => {
 			return addReaction({
-				config,
+				config: pluginConfig,
 				client,
 				channelId: params.channelId,
 				messageTs: params.messageTs,
 				emoji: params.emoji,
-				ctx: { db, userId: undefined },
+				ctx,
 			});
 		},
 
@@ -106,10 +126,10 @@ export function createSlackPlugin<
 			cursor?: string;
 		}): Promise<ReturnType<typeof getChannels>> => {
 			return getChannels({
-				config,
+				config: pluginConfig,
 				client,
 				options: params,
-				ctx: { db, userId: undefined },
+				ctx,
 			});
 		},
 	};

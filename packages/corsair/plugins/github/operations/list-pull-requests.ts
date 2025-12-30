@@ -1,3 +1,8 @@
+import {
+	createErrorResponse,
+	createSuccessResponse,
+	validateCredentials,
+} from '../../base';
 import type {
 	GitHubClient,
 	GitHubPlugin,
@@ -24,12 +29,13 @@ export const listPullRequests = async ({
 	perPage?: number;
 	ctx: GitHubPluginContext;
 }): Promise<ListPullRequestsResponse> => {
-	if (!config.token) {
-		return {
-			success: false,
-			error:
-				'GitHub token not configured. Please add token to corsair.config.ts plugins.github.token',
-		};
+	// Validate credentials
+	const credentialCheck = validateCredentials(config, ['token'], 'github');
+	if (!credentialCheck.valid) {
+		return createErrorResponse(
+			new Error(credentialCheck.error),
+			credentialCheck.error,
+		) as ListPullRequestsResponse;
 	}
 
 	try {
@@ -40,6 +46,22 @@ export const listPullRequests = async ({
 			page,
 			perPage,
 		});
+
+		const responseData = {
+			pullRequests: result.map((pr) => ({
+				id: pr.id,
+				number: pr.number,
+				title: pr.title,
+				body: pr.body,
+				state: pr.state,
+				author: pr.user.login,
+				head: pr.head.ref,
+				base: pr.base.ref,
+				createdAt: pr.created_at,
+				updatedAt: pr.updated_at,
+				mergedAt: pr.merged_at,
+			})),
+		};
 
 		// Database hook: Save pull requests to database if pull_requests table exists
 		if (
@@ -68,28 +90,8 @@ export const listPullRequests = async ({
 			}
 		}
 
-		return {
-			success: true,
-			data: {
-				pullRequests: result.map((pr) => ({
-					id: pr.id,
-					number: pr.number,
-					title: pr.title,
-					body: pr.body,
-					state: pr.state,
-					author: pr.user.login,
-					head: pr.head.ref,
-					base: pr.base.ref,
-					createdAt: pr.created_at,
-					updatedAt: pr.updated_at,
-					mergedAt: pr.merged_at,
-				})),
-			},
-		};
+		return createSuccessResponse(responseData) as ListPullRequestsResponse;
 	} catch (error) {
-		return {
-			success: false,
-			error: error instanceof Error ? error.message : 'Unknown error occurred',
-		};
+		return createErrorResponse(error) as ListPullRequestsResponse;
 	}
 };
