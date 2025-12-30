@@ -3,9 +3,9 @@ import { mkdir, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { promisify } from 'node:util';
 import { createDrizzlePostgresSchemaFile } from '@corsair-ai/core/db/adapters/drizzle-postgres';
+import { convertPluginSchemasToDBSchema } from '../utils/convert-plugin-schema.js';
 import { loadCorsairConfig } from '../utils/load-corsair-config.js';
 import { resolvePluginSchemas } from '../utils/resolve-plugin-schemas.js';
-import { convertPluginSchemasToDBSchema } from '../utils/convert-plugin-schema.js';
 
 const execAsync = promisify(exec);
 
@@ -35,10 +35,8 @@ export async function createDbTables(options: {
 		const resolvedSchemas = resolvePluginSchemas({ ...config, plugins } as any);
 		const dbSchema = convertPluginSchemasToDBSchema(resolvedSchemas);
 
-		const normalizedSchema: Record<
-			string,
-			{ fields: Record<string, any> }
-		> = {};
+		const normalizedSchema: Record<string, { fields: Record<string, any> }> =
+			{};
 
 		for (const [tableName, table] of Object.entries(dbSchema)) {
 			normalizedSchema[table.modelName] = {
@@ -91,4 +89,3 @@ export async function createDbTables(options: {
 		process.exit(1);
 	}
 }
-

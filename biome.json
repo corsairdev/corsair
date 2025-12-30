@@ -88,7 +88,8 @@
       "!**/.output",
       "!**/.tmp",
       "!**/packages/create/template/**",
-      "!**/pnpm-store/**"
+      "!**/.pnpm-store/**",
+      "!**/demo/sdk/**"
     ]
   }
 }

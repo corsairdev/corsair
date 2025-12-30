@@ -12,10 +12,7 @@ import type { JitiOptions } from 'jiti';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const possiblePaths = [
-	'corsair.config.ts',
-	'corsair.config.js',
-];
+const possiblePaths = ['corsair.config.ts', 'corsair.config.js'];
 
 function getPathAliases(cwd: string): Record<string, string> {
 	const tsConfigPath = path.join(cwd, 'tsconfig.json');
@@ -73,35 +70,43 @@ function isCorsairConfig(obj: any): obj is CorsairConfig<any> {
 
 function extractCorsairConfig(obj: any): CorsairConfig<any> | undefined {
 	if (!obj || typeof obj !== 'object') return undefined;
-	
+
 	if ('config' in obj && obj.config) {
 		const config = obj.config;
 		if (config && typeof config === 'object') {
 			if (isCorsairConfig(config)) {
 				return config;
 			}
-			if ('options' in config && config.options && isCorsairConfig(config.options)) {
+			if (
+				'options' in config &&
+				config.options &&
+				isCorsairConfig(config.options)
+			) {
 				return config.options;
 			}
 		}
 	}
-	
+
 	if ('default' in obj && obj.default) {
 		const defaultExport = obj.default;
 		if (defaultExport && typeof defaultExport === 'object') {
 			if (isCorsairConfig(defaultExport)) {
 				return defaultExport;
 			}
-			if ('options' in defaultExport && defaultExport.options && isCorsairConfig(defaultExport.options)) {
+			if (
+				'options' in defaultExport &&
+				defaultExport.options &&
+				isCorsairConfig(defaultExport.options)
+			) {
 				return defaultExport.options;
 			}
 		}
 	}
-	
+
 	if (isCorsairConfig(obj)) {
 		return obj;
 	}
-	
+
 	return undefined;
 }
 
@@ -114,39 +119,39 @@ export async function loadCorsairConfig({
 }): Promise<CorsairConfig<any>> {
 	const workingDir = cwd ?? process.cwd();
 
-		if (configPath) {
-			const resolvedPath = path.isAbsolute(configPath)
-				? configPath
-				: path.resolve(workingDir, configPath);
+	if (configPath) {
+		const resolvedPath = path.isAbsolute(configPath)
+			? configPath
+			: path.resolve(workingDir, configPath);
 
-			try {
-				const { config } = await loadConfigFile<Record<string, any>>({
-					cwd: workingDir,
-					configFile: resolvedPath,
-					dotenv: true,
-					jitiOptions: jitiOptions(workingDir),
-				});
+		try {
+			const { config } = await loadConfigFile<Record<string, any>>({
+				cwd: workingDir,
+				configFile: resolvedPath,
+				dotenv: true,
+				jitiOptions: jitiOptions(workingDir),
+			});
 
-				const extracted = extractCorsairConfig(config);
-				if (!extracted) {
-					throw new Error(
-						`Couldn't read your Corsair config in ${resolvedPath}. Export a CorsairConfig object (default export or named 'config' export).`,
-					);
-				}
-
-				return extracted;
-			} catch (error: any) {
-				if (
-					error?.message?.includes('server-only') ||
-					error?.message?.includes('Client Component')
-				) {
-					throw new Error(
-						`Please temporarily remove 'server-only' import from your corsair config file (${resolvedPath}) or any files it imports (like db/index.ts). The CLI cannot resolve the configuration with it included. You can re-add it after running the CLI.`,
-					);
-				}
-				throw error;
+			const extracted = extractCorsairConfig(config);
+			if (!extracted) {
+				throw new Error(
+					`Couldn't read your Corsair config in ${resolvedPath}. Export a CorsairConfig object (default export or named 'config' export).`,
+				);
 			}
+
+			return extracted;
+		} catch (error: any) {
+			if (
+				error?.message?.includes('server-only') ||
+				error?.message?.includes('Client Component')
+			) {
+				throw new Error(
+					`Please temporarily remove 'server-only' import from your corsair config file (${resolvedPath}) or any files it imports (like db/index.ts). The CLI cannot resolve the configuration with it included. You can re-add it after running the CLI.`,
+				);
+			}
+			throw error;
 		}
+	}
 
 	for (const p of possiblePaths) {
 		try {
@@ -172,7 +177,10 @@ export async function loadCorsairConfig({
 						`Please temporarily remove 'server-only' import from your corsair config file (${candidatePath}). The CLI cannot resolve the configuration with it included. You can re-add it after running the CLI.`,
 					);
 				}
-				console.error(`Failed to load config from ${candidatePath}:`, error.message);
+				console.error(
+					`Failed to load config from ${candidatePath}:`,
+					error.message,
+				);
 			}
 			continue;
 		}
@@ -184,4 +192,3 @@ export async function loadCorsairConfig({
 		)} exporting \`config\` (or default export).`,
 	);
 }
-
