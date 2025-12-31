@@ -5,7 +5,7 @@ import { useOAuth } from './useOAuth';
 import type { ComponentProps } from 'react';
 
 export interface OAuthConnectButtonProps
-	extends Omit<ComponentProps<'button'>, 'onClick'> {
+	extends Omit<ComponentProps<'button'>, 'onClick' | 'onError'> {
 	provider: OAuthProvider;
 	companyName: string;
 	scopes?: string[];
