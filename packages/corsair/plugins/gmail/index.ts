@@ -2,6 +2,7 @@ import { initializePlugin } from '../base';
 import { createGmailClient } from './client';
 import { createDraft } from './operations/create-draft';
 import { getMessage } from './operations/get-message';
+import { handleGmailWebhook } from './operations/handle-webhook';
 import { getThread } from './operations/get-thread';
 import { listLabels } from './operations/list-labels';
 import { listMessages } from './operations/list-messages';
@@ -137,6 +138,19 @@ export function createGmailPlugin<
 				subject: params.subject,
 				body: params.body,
 				ctx,
+			});
+		},
+
+		handleWebhook: async (params: {
+			payload: string | object;
+			userId?: string;
+		}): Promise<ReturnType<typeof handleGmailWebhook>> => {
+			return handleGmailWebhook({
+				config: pluginConfig,
+				client,
+				ctx,
+				payload: params.payload,
+				userId: params.userId,
 			});
 		},
 	};

@@ -2,7 +2,9 @@ import type {
 	BaseConfig,
 	GitHubPluginConfig,
 	GmailPluginConfig,
+	HubSpotPluginConfig,
 	LinearPluginConfig,
+	PostHogPluginConfig,
 } from '../config';
 import { createDatabaseContext, resolveSchema } from './base';
 import { createGitHubPlugin } from './github';
@@ -16,6 +18,13 @@ import { createGmailPlugin } from './gmail';
 import type { GmailSchemaOverride, ResolvedGmailSchema } from './gmail/schema';
 import { gmailDefaultSchema } from './gmail/schema';
 import type { GmailPlugin } from './gmail/types';
+import { createHubSpotPlugin } from './hubspot';
+import type {
+	HubSpotSchemaOverride,
+	ResolvedHubSpotSchema,
+} from './hubspot/schema';
+import { hubspotDefaultSchema } from './hubspot/schema';
+import type { HubSpotPlugin } from './hubspot/types';
 import { createLinearPlugin } from './linear';
 import type {
 	LinearSchemaOverride,
@@ -23,6 +32,13 @@ import type {
 } from './linear/schema';
 import { linearDefaultSchema } from './linear/schema';
 import type { LinearPlugin } from './linear/types';
+import { createPostHogPlugin } from './posthog';
+import type {
+	PostHogSchemaOverride,
+	ResolvedPostHogSchema,
+} from './posthog/schema';
+import { posthogDefaultSchema } from './posthog/schema';
+import type { PostHogPlugin } from './posthog/types';
 import { createSlackPlugin } from './slack';
 import type { ResolvedSlackSchema, SlackSchemaOverride } from './slack/schema';
 import { slackDefaultSchema } from './slack/schema';
@@ -66,6 +82,26 @@ function resolveGitHubSchema<T extends GitHubSchemaOverride>(
 	override: T | undefined,
 ): ResolvedGitHubSchema<T> {
 	return resolveSchema(githubDefaultSchema, override);
+}
+
+/**
+ * Resolves the schema override for PostHog plugin
+ * Uses the generic resolveSchema from base
+ */
+function resolvePostHogSchema<T extends PostHogSchemaOverride>(
+	override: T | undefined,
+): ResolvedPostHogSchema<T> {
+	return resolveSchema(posthogDefaultSchema, override) as ResolvedPostHogSchema<T>;
+}
+
+/**
+ * Resolves the schema override for HubSpot plugin
+ * Uses the generic resolveSchema from base
+ */
+function resolveHubSpotSchema<T extends HubSpotSchemaOverride>(
+	override: T | undefined,
+): ResolvedHubSpotSchema<T> {
+	return resolveSchema(hubspotDefaultSchema, override) as ResolvedHubSpotSchema<T>;
 }
 
 export const createPlugins = <T extends BaseConfig>(config: T) => {
@@ -133,6 +169,35 @@ export const createPlugins = <T extends BaseConfig>(config: T) => {
 			);
 
 			plugins.github = createGitHubPlugin(githubConfig, dbContext);
+		} else if (pluginConfig.name === 'posthog') {
+			const posthogPluginConfig = pluginConfig as PostHogPluginConfig;
+			const posthogConfig: PostHogPlugin = {
+				apiKey: posthogPluginConfig.apiKey,
+				apiHost: posthogPluginConfig.apiHost,
+				schema: posthogPluginConfig.schema,
+			};
+
+			const resolvedSchema = resolvePostHogSchema(posthogPluginConfig.schema);
+			const dbContext = createDatabaseContext(
+				resolvedSchema,
+				(config as unknown as { db: unknown }).db,
+			);
+
+			plugins.posthog = createPostHogPlugin(posthogConfig, dbContext);
+		} else if (pluginConfig.name === 'hubspot') {
+			const hubspotPluginConfig = pluginConfig as HubSpotPluginConfig;
+			const hubspotConfig: HubSpotPlugin = {
+				accessToken: hubspotPluginConfig.accessToken,
+				schema: hubspotPluginConfig.schema,
+			};
+
+			const resolvedSchema = resolveHubSpotSchema(hubspotPluginConfig.schema);
+			const dbContext = createDatabaseContext(
+				resolvedSchema,
+				(config as unknown as { db: unknown }).db,
+			);
+
+			plugins.hubspot = createHubSpotPlugin(hubspotConfig, dbContext);
 		}
 	}
 
@@ -141,6 +206,8 @@ export const createPlugins = <T extends BaseConfig>(config: T) => {
 		gmail?: ReturnType<typeof createGmailPlugin>;
 		linear?: ReturnType<typeof createLinearPlugin>;
 		github?: ReturnType<typeof createGitHubPlugin>;
+		posthog?: ReturnType<typeof createPostHogPlugin>;
+		hubspot?: ReturnType<typeof createHubSpotPlugin>;
 	};
 };
 
@@ -156,3 +223,9 @@ export type { LinearPlugin } from './linear/types';
 export type { SlackDefaultSchema, SlackSchemaOverride } from './slack/schema';
 export { slackDefaultSchema } from './slack/schema';
 export type { SlackPlugin } from './slack/types';
+export type { PostHogSchemaOverride } from './posthog/schema';
+export { posthogDefaultSchema } from './posthog/schema';
+export type { PostHogPlugin } from './posthog/types';
+export type { HubSpotSchemaOverride } from './hubspot/schema';
+export { hubspotDefaultSchema } from './hubspot/schema';
+export type { HubSpotPlugin } from './hubspot/types';

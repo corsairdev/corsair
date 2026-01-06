@@ -2,6 +2,7 @@ import { initializePlugin } from '../base';
 import { createLinearClient } from './client';
 import { createIssue } from './operations/create-issue';
 import { getIssue } from './operations/get-issue';
+import { handleLinearWebhook } from './operations/handle-webhook';
 import { listIssues } from './operations/list-issues';
 import { listTeams } from './operations/list-teams';
 import { updateIssue } from './operations/update-issue';
@@ -113,6 +114,21 @@ export function createLinearPlugin<
 				config: pluginConfig,
 				client,
 				ctx,
+			});
+		},
+
+		handleWebhook: async (params: {
+			headers: Record<string, string | undefined>;
+			payload: string | object;
+			webhookSecret?: string;
+		}): Promise<ReturnType<typeof handleLinearWebhook>> => {
+			return handleLinearWebhook({
+				config: pluginConfig,
+				client,
+				ctx,
+				headers: params.headers,
+				payload: params.payload,
+				webhookSecret: params.webhookSecret,
 			});
 		},
 	};

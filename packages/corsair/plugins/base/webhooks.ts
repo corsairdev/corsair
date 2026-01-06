@@ -304,12 +304,24 @@ export const SignatureVerifiers = {
 	 */
 	hmacSha256(secret: string): SignatureVerifier {
 		return (payload: string | Buffer, signature: string) => {
-			if (!signature.startsWith('sha256=')) {
-				return false;
-			}
+			if (typeof window === 'undefined' && typeof require !== 'undefined') {
+				// Node.js environment
+				const crypto = require('crypto');
+				if (!signature.startsWith('sha256=')) {
+					return false;
+				}
 
-			const expectedSignature = `sha256=${this.createHmacSha256(secret, payload)}`;
-			return this.timingSafeEqual(signature, expectedSignature);
+				const expectedSignature = `sha256=${crypto
+					.createHmac('sha256', secret)
+					.update(payload)
+					.digest('hex')}`;
+				return crypto.timingSafeEqual(
+					Buffer.from(signature),
+					Buffer.from(expectedSignature),
+				);
+			}
+			// Browser environment - would need Web Crypto API implementation
+			throw new Error('HMAC SHA256 not implemented for browser environment');
 		};
 	},
 
@@ -318,57 +330,23 @@ export const SignatureVerifiers = {
 	 */
 	hmacSha1(secret: string): SignatureVerifier {
 		return (payload: string | Buffer, signature: string) => {
-			if (!signature.startsWith('sha1=')) {
-				return false;
+			if (typeof window === 'undefined' && typeof require !== 'undefined') {
+				const crypto = require('crypto');
+				if (!signature.startsWith('sha1=')) {
+					return false;
+				}
+
+				const expectedSignature = `sha1=${crypto
+					.createHmac('sha1', secret)
+					.update(payload)
+					.digest('hex')}`;
+				return crypto.timingSafeEqual(
+					Buffer.from(signature),
+					Buffer.from(expectedSignature),
+				);
 			}
-
-			const expectedSignature = `sha1=${this.createHmacSha1(secret, payload)}`;
-			return this.timingSafeEqual(signature, expectedSignature);
+			throw new Error('HMAC SHA1 not implemented for browser environment');
 		};
-	},
-
-	/**
-	 * Create HMAC SHA256 hash
-	 */
-	createHmacSha256(secret: string, payload: string | Buffer): string {
-		// This is a placeholder - in Node.js, use crypto.createHmac
-		// In browser environments, use Web Crypto API or a library
-		// For now, we'll provide a type-safe interface
-		if (typeof window === 'undefined' && typeof require !== 'undefined') {
-			// Node.js environment
-			const crypto = require('crypto');
-			return crypto.createHmac('sha256', secret).update(payload).digest('hex');
-		}
-		// Browser environment - would need Web Crypto API implementation
-		throw new Error('HMAC SHA256 not implemented for browser environment');
-	},
-
-	/**
-	 * Create HMAC SHA1 hash
-	 */
-	createHmacSha1(secret: string, payload: string | Buffer): string {
-		if (typeof window === 'undefined' && typeof require !== 'undefined') {
-			const crypto = require('crypto');
-			return crypto.createHmac('sha1', secret).update(payload).digest('hex');
-		}
-		throw new Error('HMAC SHA1 not implemented for browser environment');
-	},
-
-	/**
-	 * Timing-safe string comparison
-	 */
-	timingSafeEqual(a: string, b: string): boolean {
-		if (a.length !== b.length) {
-			return false;
-		}
-
-		if (typeof window === 'undefined' && typeof require !== 'undefined') {
-			const crypto = require('crypto');
-			return crypto.timingSafeEqual(Buffer.from(a), Buffer.from(b));
-		}
-
-		// Fallback for browser (not timing-safe, but functional)
-		return a === b;
 	},
 };
 

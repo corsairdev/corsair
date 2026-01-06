@@ -2,6 +2,7 @@ import { initializePlugin } from '../base';
 import { createSlackClient } from './client';
 import { addReaction } from './operations/add-reaction';
 import { getChannels } from './operations/get-channels';
+import { handleSlackWebhook } from './operations/handle-webhook';
 import { getMessages } from './operations/get-messages';
 import { replyToThread } from './operations/reply-to-thread';
 import { sendMessage } from './operations/send-message';
@@ -130,6 +131,21 @@ export function createSlackPlugin<
 				client,
 				options: params,
 				ctx,
+			});
+		},
+
+		handleWebhook: async (params: {
+			headers: Record<string, string | undefined>;
+			payload: string | object;
+			signingSecret?: string;
+		}): Promise<ReturnType<typeof handleSlackWebhook>> => {
+			return handleSlackWebhook({
+				config: pluginConfig,
+				client,
+				ctx,
+				headers: params.headers,
+				payload: params.payload,
+				signingSecret: params.signingSecret,
 			});
 		},
 	};

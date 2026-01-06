@@ -2,6 +2,7 @@ import { initializePlugin } from '../base';
 import { createGitHubClient } from './client';
 import { createIssue } from './operations/create-issue';
 import { getIssue } from './operations/get-issue';
+import { handleGitHubWebhook } from './operations/handle-webhook';
 import { listIssues } from './operations/list-issues';
 import { listPullRequests } from './operations/list-pull-requests';
 import { listRepositories } from './operations/list-repositories';
@@ -128,6 +129,21 @@ export function createGitHubPlugin<
 				client,
 				options: params,
 				ctx,
+			});
+		},
+
+		handleWebhook: async (params: {
+			headers: Record<string, string | undefined>;
+			payload: string | object;
+			secret?: string;
+		}): Promise<ReturnType<typeof handleGitHubWebhook>> => {
+			return handleGitHubWebhook({
+				config: pluginConfig,
+				client,
+				ctx,
+				headers: params.headers,
+				payload: params.payload,
+				secret: params.secret,
 			});
 		},
 	};
