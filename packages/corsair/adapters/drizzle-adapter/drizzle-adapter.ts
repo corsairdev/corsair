@@ -1,15 +1,15 @@
-import type { BetterAuthOptions } from "@better-auth/core";
+import type { BetterAuthOptions } from '@better-auth/core';
 import type {
 	AdapterFactoryCustomizeAdapterCreator,
 	AdapterFactoryOptions,
 	DBAdapter,
 	DBAdapterDebugLogOption,
 	Where,
-} from "@better-auth/core/db/adapter";
-import { createAdapterFactory } from "@better-auth/core/db/adapter";
-import { logger } from "@better-auth/core/env";
-import { BetterAuthError } from "@better-auth/core/error";
-import type { SQL } from "drizzle-orm";
+} from '@better-auth/core/db/adapter';
+import { createAdapterFactory } from '@better-auth/core/db/adapter';
+import { logger } from '@better-auth/core/env';
+import { BetterAuthError } from '@better-auth/core/error';
+import type { SQL } from 'drizzle-orm';
 import {
 	and,
 	asc,
@@ -26,7 +26,7 @@ import {
 	notInArray,
 	or,
 	sql,
-} from "drizzle-orm";
+} from 'drizzle-orm';
 
 export interface DB {
 	[key: string]: any;
@@ -40,7 +40,7 @@ export interface DrizzleAdapterConfig {
 	/**
 	 * The database provider
 	 */
-	provider: "pg" | "mysql" | "sqlite";
+	provider: 'pg' | 'mysql' | 'sqlite';
 	/**
 	 * If the table names in the schema are plural
 	 * set this to true. For example, if the schema
@@ -79,7 +79,7 @@ export const drizzleAdapter = (db: DB, config: DrizzleAdapterConfig) => {
 				const schema = config.schema || db._.fullSchema;
 				if (!schema) {
 					throw new BetterAuthError(
-						"Drizzle adapter failed to initialize. Schema not found. Please provide a schema object in the adapter options object.",
+						'Drizzle adapter failed to initialize. Schema not found. Please provide a schema object in the adapter options object.',
 					);
 				}
 				const schemaModel = schema[model];
@@ -96,7 +96,7 @@ export const drizzleAdapter = (db: DB, config: DrizzleAdapterConfig) => {
 				data: Record<string, any>,
 				where?: Where[] | undefined,
 			) => {
-				if (config.provider !== "mysql") {
+				if (config.provider !== 'mysql') {
 					const c = await builder.returning();
 					return c[0];
 				}
@@ -148,7 +148,7 @@ export const drizzleAdapter = (db: DB, config: DrizzleAdapterConfig) => {
 				} else {
 					// If the user doesn't have `id` as a field, then this will fail.
 					// We expect that they defined `id` in all of their models.
-					if (!("id" in schemaModel)) {
+					if (!('id' in schemaModel)) {
 						throw new BetterAuthError(
 							`The model "${model}" does not have an "id" field. Please use the "id" field as your primary key.`,
 						);
@@ -176,7 +176,7 @@ export const drizzleAdapter = (db: DB, config: DrizzleAdapterConfig) => {
 							`The field "${w.field}" does not exist in the schema for the model "${model}". Please update your schema.`,
 						);
 					}
-					if (w.operator === "in") {
+					if (w.operator === 'in') {
 						if (!Array.isArray(w.value)) {
 							throw new BetterAuthError(
 								`The value for the field "${w.field}" must be an array when using the "in" operator.`,
@@ -185,7 +185,7 @@ export const drizzleAdapter = (db: DB, config: DrizzleAdapterConfig) => {
 						return [inArray(schemaModel[field], w.value)];
 					}
 
-					if (w.operator === "not_in") {
+					if (w.operator === 'not_in') {
 						if (!Array.isArray(w.value)) {
 							throw new BetterAuthError(
 								`The value for the field "${w.field}" must be an array when using the "not_in" operator.`,
@@ -194,49 +194,49 @@ export const drizzleAdapter = (db: DB, config: DrizzleAdapterConfig) => {
 						return [notInArray(schemaModel[field], w.value)];
 					}
 
-					if (w.operator === "contains") {
+					if (w.operator === 'contains') {
 						return [like(schemaModel[field], `%${w.value}%`)];
 					}
 
-					if (w.operator === "starts_with") {
+					if (w.operator === 'starts_with') {
 						return [like(schemaModel[field], `${w.value}%`)];
 					}
 
-					if (w.operator === "ends_with") {
+					if (w.operator === 'ends_with') {
 						return [like(schemaModel[field], `%${w.value}`)];
 					}
 
-					if (w.operator === "lt") {
+					if (w.operator === 'lt') {
 						return [lt(schemaModel[field], w.value)];
 					}
 
-					if (w.operator === "lte") {
+					if (w.operator === 'lte') {
 						return [lte(schemaModel[field], w.value)];
 					}
 
-					if (w.operator === "ne") {
+					if (w.operator === 'ne') {
 						return [ne(schemaModel[field], w.value)];
 					}
 
-					if (w.operator === "gt") {
+					if (w.operator === 'gt') {
 						return [gt(schemaModel[field], w.value)];
 					}
 
-					if (w.operator === "gte") {
+					if (w.operator === 'gte') {
 						return [gte(schemaModel[field], w.value)];
 					}
 
 					return [eq(schemaModel[field], w.value)];
 				}
 				const andGroup = where.filter(
-					(w) => w.connector === "AND" || !w.connector,
+					(w) => w.connector === 'AND' || !w.connector,
 				);
-				const orGroup = where.filter((w) => w.connector === "OR");
+				const orGroup = where.filter((w) => w.connector === 'OR');
 
 				const andClause = and(
 					...andGroup.map((w) => {
 						const field = getFieldName({ model, field: w.field });
-						if (w.operator === "in") {
+						if (w.operator === 'in') {
 							if (!Array.isArray(w.value)) {
 								throw new BetterAuthError(
 									`The value for the field "${w.field}" must be an array when using the "in" operator.`,
@@ -244,7 +244,7 @@ export const drizzleAdapter = (db: DB, config: DrizzleAdapterConfig) => {
 							}
 							return inArray(schemaModel[field], w.value);
 						}
-						if (w.operator === "not_in") {
+						if (w.operator === 'not_in') {
 							if (!Array.isArray(w.value)) {
 								throw new BetterAuthError(
 									`The value for the field "${w.field}" must be an array when using the "not_in" operator.`,
@@ -252,28 +252,28 @@ export const drizzleAdapter = (db: DB, config: DrizzleAdapterConfig) => {
 							}
 							return notInArray(schemaModel[field], w.value);
 						}
-						if (w.operator === "contains") {
+						if (w.operator === 'contains') {
 							return like(schemaModel[field], `%${w.value}%`);
 						}
-						if (w.operator === "starts_with") {
+						if (w.operator === 'starts_with') {
 							return like(schemaModel[field], `${w.value}%`);
 						}
-						if (w.operator === "ends_with") {
+						if (w.operator === 'ends_with') {
 							return like(schemaModel[field], `%${w.value}`);
 						}
-						if (w.operator === "lt") {
+						if (w.operator === 'lt') {
 							return lt(schemaModel[field], w.value);
 						}
-						if (w.operator === "lte") {
+						if (w.operator === 'lte') {
 							return lte(schemaModel[field], w.value);
 						}
-						if (w.operator === "gt") {
+						if (w.operator === 'gt') {
 							return gt(schemaModel[field], w.value);
 						}
-						if (w.operator === "gte") {
+						if (w.operator === 'gte') {
 							return gte(schemaModel[field], w.value);
 						}
-						if (w.operator === "ne") {
+						if (w.operator === 'ne') {
 							return ne(schemaModel[field], w.value);
 						}
 						return eq(schemaModel[field], w.value);
@@ -282,7 +282,7 @@ export const drizzleAdapter = (db: DB, config: DrizzleAdapterConfig) => {
 				const orClause = or(
 					...orGroup.map((w) => {
 						const field = getFieldName({ model, field: w.field });
-						if (w.operator === "in") {
+						if (w.operator === 'in') {
 							if (!Array.isArray(w.value)) {
 								throw new BetterAuthError(
 									`The value for the field "${w.field}" must be an array when using the "in" operator.`,
@@ -290,7 +290,7 @@ export const drizzleAdapter = (db: DB, config: DrizzleAdapterConfig) => {
 							}
 							return inArray(schemaModel[field], w.value);
 						}
-						if (w.operator === "not_in") {
+						if (w.operator === 'not_in') {
 							if (!Array.isArray(w.value)) {
 								throw new BetterAuthError(
 									`The value for the field "${w.field}" must be an array when using the "not_in" operator.`,
@@ -298,28 +298,28 @@ export const drizzleAdapter = (db: DB, config: DrizzleAdapterConfig) => {
 							}
 							return notInArray(schemaModel[field], w.value);
 						}
-						if (w.operator === "contains") {
+						if (w.operator === 'contains') {
 							return like(schemaModel[field], `%${w.value}%`);
 						}
-						if (w.operator === "starts_with") {
+						if (w.operator === 'starts_with') {
 							return like(schemaModel[field], `${w.value}%`);
 						}
-						if (w.operator === "ends_with") {
+						if (w.operator === 'ends_with') {
 							return like(schemaModel[field], `%${w.value}`);
 						}
-						if (w.operator === "lt") {
+						if (w.operator === 'lt') {
 							return lt(schemaModel[field], w.value);
 						}
-						if (w.operator === "lte") {
+						if (w.operator === 'lte') {
 							return lte(schemaModel[field], w.value);
 						}
-						if (w.operator === "gt") {
+						if (w.operator === 'gt') {
 							return gt(schemaModel[field], w.value);
 						}
-						if (w.operator === "gte") {
+						if (w.operator === 'gte') {
 							return gte(schemaModel[field], w.value);
 						}
-						if (w.operator === "ne") {
+						if (w.operator === 'ne') {
 							return ne(schemaModel[field], w.value);
 						}
 						return eq(schemaModel[field], w.value);
@@ -339,7 +339,7 @@ export const drizzleAdapter = (db: DB, config: DrizzleAdapterConfig) => {
 			) {
 				if (!schema) {
 					throw new BetterAuthError(
-						"Drizzle adapter failed to initialize. Drizzle Schema not found. Please provide a schema object in the adapter options object.",
+						'Drizzle adapter failed to initialize. Drizzle Schema not found. Please provide a schema object in the adapter options object.',
 					);
 				}
 				for (const key in values) {
@@ -368,7 +368,7 @@ export const drizzleAdapter = (db: DB, config: DrizzleAdapterConfig) => {
 							logger.error(
 								`[# Drizzle Adapter]: The model "${model}" was not found in the query object. Please update your Drizzle schema to include relations or re-generate using "npx @better-auth/cli@latest generate".`,
 							);
-							logger.info("Falling back to regular query");
+							logger.info('Falling back to regular query');
 						} else {
 							let includes:
 								| Record<string, { limit: number } | boolean>
@@ -383,8 +383,8 @@ export const drizzleAdapter = (db: DB, config: DrizzleAdapterConfig) => {
 										joinAttr.limit ??
 										options.advanced?.database?.defaultFindManyLimit ??
 										100;
-									const isUnique = joinAttr.relation === "one-to-one";
-									const pluralSuffix = isUnique || config.usePlural ? "" : "s";
+									const isUnique = joinAttr.relation === 'one-to-one';
+									const pluralSuffix = isUnique || config.usePlural ? '' : 's';
 									includes[`${model}${pluralSuffix}`] = isUnique
 										? true
 										: { limit };
@@ -427,14 +427,14 @@ export const drizzleAdapter = (db: DB, config: DrizzleAdapterConfig) => {
 				async findMany({ model, where, sortBy, limit, offset, join }) {
 					const schemaModel = getSchema(model);
 					const clause = where ? convertWhereClause(where, model) : [];
-					const sortFn = sortBy?.direction === "desc" ? desc : asc;
+					const sortFn = sortBy?.direction === 'desc' ? desc : asc;
 
 					if (options.experimental?.joins) {
 						if (!db.query[model]) {
 							logger.error(
 								`[# Drizzle Adapter]: The model "${model}" was not found in the query object. Please update your Drizzle schema to include relations or re-generate using "npx @better-auth/cli@latest generate".`,
 							);
-							logger.info("Falling back to regular query");
+							logger.info('Falling back to regular query');
 						} else {
 							let includes:
 								| Record<string, { limit: number } | boolean>
@@ -445,12 +445,12 @@ export const drizzleAdapter = (db: DB, config: DrizzleAdapterConfig) => {
 								includes = {};
 								const joinEntries = Object.entries(join);
 								for (const [model, joinAttr] of joinEntries) {
-									const isUnique = joinAttr.relation === "one-to-one";
+									const isUnique = joinAttr.relation === 'one-to-one';
 									const limit =
 										joinAttr.limit ??
 										options.advanced?.database?.defaultFindManyLimit ??
 										100;
-									let pluralSuffix = isUnique || config.usePlural ? "" : "s";
+									let pluralSuffix = isUnique || config.usePlural ? '' : 's';
 									includes[`${model}${pluralSuffix}`] = isUnique
 										? true
 										: { limit };
@@ -495,11 +495,11 @@ export const drizzleAdapter = (db: DB, config: DrizzleAdapterConfig) => {
 					const effectiveLimit = limit;
 					const effectiveOffset = offset;
 
-					if (typeof effectiveLimit !== "undefined") {
+					if (typeof effectiveLimit !== 'undefined') {
 						builder = builder.limit(effectiveLimit);
 					}
 
-					if (typeof effectiveOffset !== "undefined") {
+					if (typeof effectiveOffset !== 'undefined') {
 						builder = builder.offset(effectiveOffset);
 					}
 
@@ -553,16 +553,16 @@ export const drizzleAdapter = (db: DB, config: DrizzleAdapterConfig) => {
 					const builder = db.delete(schemaModel).where(...clause);
 					const res = await builder;
 					let count = 0;
-					if (res && "rowCount" in res) count = res.rowCount;
+					if (res && 'rowCount' in res) count = res.rowCount;
 					else if (Array.isArray(res)) count = res.length;
 					else if (
 						res &&
-						("affectedRows" in res || "rowsAffected" in res || "changes" in res)
+						('affectedRows' in res || 'rowsAffected' in res || 'changes' in res)
 					)
 						count = res.affectedRows ?? res.rowsAffected ?? res.changes;
-					if (typeof count !== "number") {
+					if (typeof count !== 'number') {
 						logger.error(
-							"[Drizzle Adapter] The result of the deleteMany operation is not a number. This is likely a bug in the adapter. Please report this issue to the Better Auth team.",
+							'[Drizzle Adapter] The result of the deleteMany operation is not a number. This is likely a bug in the adapter. Please report this issue to the Better Auth team.',
 							{ res, model, where },
 						);
 					}
@@ -574,16 +574,16 @@ export const drizzleAdapter = (db: DB, config: DrizzleAdapterConfig) => {
 	let adapterOptions: AdapterFactoryOptions | null = null;
 	adapterOptions = {
 		config: {
-			adapterId: "drizzle",
-			adapterName: "Drizzle Adapter",
+			adapterId: 'drizzle',
+			adapterName: 'Drizzle Adapter',
 			usePlural: config.usePlural ?? false,
 			debugLogs: config.debugLogs ?? false,
-			supportsUUIDs: config.provider === "pg" ? true : false,
+			supportsUUIDs: config.provider === 'pg' ? true : false,
 			supportsJSON:
-				config.provider === "pg" // even though mysql also supports it, mysql requires to pass stringified json anyway.
+				config.provider === 'pg' // even though mysql also supports it, mysql requires to pass stringified json anyway.
 					? true
 					: false,
-			supportsArrays: config.provider === "pg" ? true : false,
+			supportsArrays: config.provider === 'pg' ? true : false,
 			transaction:
 				(config.transaction ?? false)
 					? (cb) =>

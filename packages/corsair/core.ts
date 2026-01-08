@@ -13,7 +13,7 @@ export type Providers =
 	| 'linear'
 	| 'hubspot'
 	| 'gmail'
-	| string;
+	| (string & {});
 
 export type CorsairContext<P extends CorsairPlugin[] = []> = {};
 

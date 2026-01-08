@@ -1,14 +1,14 @@
-import type { BetterAuthOptions } from "@better-auth/core";
+import type { BetterAuthOptions } from '@better-auth/core';
 import type {
 	AdapterFactoryCustomizeAdapterCreator,
 	AdapterFactoryOptions,
 	DBAdapter,
 	DBAdapterDebugLogOption,
 	Where,
-} from "@better-auth/core/db/adapter";
-import { createAdapterFactory } from "@better-auth/core/db/adapter";
-import type { ClientSession, Db, MongoClient } from "mongodb";
-import { ObjectId } from "mongodb";
+} from '@better-auth/core/db/adapter';
+import { createAdapterFactory } from '@better-auth/core/db/adapter';
+import type { ClientSession, Db, MongoClient } from 'mongodb';
+import { ObjectId } from 'mongodb';
 
 export interface MongoDBAdapterConfig {
 	/**
@@ -46,7 +46,7 @@ export const mongodbAdapter = (
 
 	const getCustomIdGenerator = (options: BetterAuthOptions) => {
 		const generator = options.advanced?.database?.generateId;
-		if (typeof generator === "function") {
+		if (typeof generator === 'function') {
 			return generator;
 		}
 		return undefined;
@@ -80,14 +80,14 @@ export const mongodbAdapter = (
 				}
 				model = getDefaultModelName(model);
 				if (
-					field === "id" ||
-					field === "_id" ||
-					schema[model]!.fields[field]?.references?.field === "id"
+					field === 'id' ||
+					field === '_id' ||
+					schema[model]!.fields[field]?.references?.field === 'id'
 				) {
 					if (value === null || value === undefined) {
 						return value;
 					}
-					if (typeof value !== "string") {
+					if (typeof value !== 'string') {
 						if (value instanceof ObjectId) {
 							return value;
 						}
@@ -96,7 +96,7 @@ export const mongodbAdapter = (
 								if (v === null || v === undefined) {
 									return v;
 								}
-								if (typeof v === "string") {
+								if (typeof v === 'string') {
 									try {
 										return new ObjectId(v);
 									} catch {
@@ -107,12 +107,12 @@ export const mongodbAdapter = (
 									return v;
 								}
 								throw new Error(
-									"Invalid id value, received: " + JSON.stringify(v),
+									'Invalid id value, received: ' + JSON.stringify(v),
 								);
 							});
 						}
 						throw new Error(
-							"Invalid id value, received: " + JSON.stringify(value),
+							'Invalid id value, received: ' + JSON.stringify(value),
 						);
 					}
 					try {
@@ -136,14 +136,14 @@ export const mongodbAdapter = (
 					const {
 						field: field_,
 						value,
-						operator = "eq",
-						connector = "AND",
+						operator = 'eq',
+						connector = 'AND',
 					} = w;
 					let condition: any;
 					let field = getFieldName({ model, field: field_ });
-					if (field === "id") field = "_id";
+					if (field === 'id') field = '_id';
 					switch (operator.toLowerCase()) {
-						case "eq":
+						case 'eq':
 							condition = {
 								[field]: serializeID({
 									field,
@@ -152,7 +152,7 @@ export const mongodbAdapter = (
 								}),
 							};
 							break;
-						case "in":
+						case 'in':
 							condition = {
 								[field]: {
 									$in: Array.isArray(value)
@@ -161,7 +161,7 @@ export const mongodbAdapter = (
 								},
 							};
 							break;
-						case "not_in":
+						case 'not_in':
 							condition = {
 								[field]: {
 									$nin: Array.isArray(value)
@@ -170,7 +170,7 @@ export const mongodbAdapter = (
 								},
 							};
 							break;
-						case "gt":
+						case 'gt':
 							condition = {
 								[field]: {
 									$gt: serializeID({
@@ -181,7 +181,7 @@ export const mongodbAdapter = (
 								},
 							};
 							break;
-						case "gte":
+						case 'gte':
 							condition = {
 								[field]: {
 									$gte: serializeID({
@@ -192,7 +192,7 @@ export const mongodbAdapter = (
 								},
 							};
 							break;
-						case "lt":
+						case 'lt':
 							condition = {
 								[field]: {
 									$lt: serializeID({
@@ -203,7 +203,7 @@ export const mongodbAdapter = (
 								},
 							};
 							break;
-						case "lte":
+						case 'lte':
 							condition = {
 								[field]: {
 									$lte: serializeID({
@@ -214,7 +214,7 @@ export const mongodbAdapter = (
 								},
 							};
 							break;
-						case "ne":
+						case 'ne':
 							condition = {
 								[field]: {
 									$ne: serializeID({
@@ -225,19 +225,19 @@ export const mongodbAdapter = (
 								},
 							};
 							break;
-						case "contains":
+						case 'contains':
 							condition = {
 								[field]: {
 									$regex: `.*${escapeForMongoRegex(value as string)}.*`,
 								},
 							};
 							break;
-						case "starts_with":
+						case 'starts_with':
 							condition = {
 								[field]: { $regex: `^${escapeForMongoRegex(value as string)}` },
 							};
 							break;
-						case "ends_with":
+						case 'ends_with':
 							condition = {
 								[field]: { $regex: `${escapeForMongoRegex(value as string)}$` },
 							};
@@ -251,10 +251,10 @@ export const mongodbAdapter = (
 					return conditions[0]!.condition;
 				}
 				const andConditions = conditions
-					.filter((c) => c.connector === "AND")
+					.filter((c) => c.connector === 'AND')
 					.map((c) => c.condition);
 				const orConditions = conditions
-					.filter((c) => c.connector === "OR")
+					.filter((c) => c.connector === 'OR')
 					.map((c) => c.condition);
 
 				let clause = {};
@@ -290,9 +290,9 @@ export const mongodbAdapter = (
 								model: joinedModel,
 							});
 
-							const localFieldName = localField === "id" ? "_id" : localField;
+							const localFieldName = localField === 'id' ? '_id' : localField;
 							const foreignFieldName =
-								foreignField === "id" ? "_id" : foreignField;
+								foreignField === 'id' ? '_id' : foreignField;
 
 							// Only unwind if the foreign field has a unique constraint (one-to-one relationship)
 							const joinedModelSchema =
@@ -320,7 +320,7 @@ export const mongodbAdapter = (
 											{
 												$match: {
 													$expr: {
-														$eq: [foreignFieldRef, "$$localFieldValue"],
+														$eq: [foreignFieldRef, '$$localFieldValue'],
 													},
 												},
 											},
@@ -397,9 +397,9 @@ export const mongodbAdapter = (
 								model: joinedModel,
 							});
 
-							const localFieldName = localField === "id" ? "_id" : localField;
+							const localFieldName = localField === 'id' ? '_id' : localField;
 							const foreignFieldName =
-								foreignField === "id" ? "_id" : foreignField;
+								foreignField === 'id' ? '_id' : foreignField;
 
 							// Only unwind if the foreign field has a unique constraint (one-to-one relationship)
 							const foreignFieldAttribute = getFieldAttributes({
@@ -411,7 +411,7 @@ export const mongodbAdapter = (
 							// For unique relationships, limit is ignored (as per JoinConfig type)
 							// For non-unique relationships, apply limit if specified
 							const shouldLimit =
-								joinConfig.relation !== "one-to-one" &&
+								joinConfig.relation !== 'one-to-one' &&
 								joinConfig.limit !== undefined;
 
 							let limit =
@@ -430,7 +430,7 @@ export const mongodbAdapter = (
 											{
 												$match: {
 													$expr: {
-														$eq: [foreignFieldRef, "$$localFieldValue"],
+														$eq: [foreignFieldRef, '$$localFieldValue'],
 													},
 												},
 											},
@@ -468,7 +468,7 @@ export const mongodbAdapter = (
 						pipeline.push({
 							$sort: {
 								[getFieldName({ field: sortBy.field, model })]:
-									sortBy.direction === "desc" ? -1 : 1,
+									sortBy.direction === 'desc' ? -1 : 1,
 							},
 						});
 					}
@@ -492,7 +492,7 @@ export const mongodbAdapter = (
 					const matchStage = where
 						? { $match: convertWhereClause({ where, model }) }
 						: { $match: {} };
-					const pipeline: any[] = [matchStage, { $count: "total" }];
+					const pipeline: any[] = [matchStage, { $count: 'total' }];
 
 					const res = await db
 						.collection(model)
@@ -510,7 +510,7 @@ export const mongodbAdapter = (
 						{ $set: values as any },
 						{
 							session,
-							returnDocument: "after",
+							returnDocument: 'after',
 							includeResultMetadata: true,
 						},
 					);
@@ -550,15 +550,15 @@ export const mongodbAdapter = (
 	let adapterOptions: AdapterFactoryOptions | null = null;
 	adapterOptions = {
 		config: {
-			adapterId: "mongodb-adapter",
-			adapterName: "MongoDB Adapter",
+			adapterId: 'mongodb-adapter',
+			adapterName: 'MongoDB Adapter',
 			usePlural: config?.usePlural ?? false,
 			debugLogs: config?.debugLogs ?? false,
 			mapKeysTransformInput: {
-				id: "_id",
+				id: '_id',
 			},
 			mapKeysTransformOutput: {
-				_id: "id",
+				_id: 'id',
 			},
 			supportsArrays: true,
 			supportsNumericIds: false,
@@ -601,16 +601,16 @@ export const mongodbAdapter = (
 				options,
 			}) {
 				const customIdGen = getCustomIdGenerator(options);
-				if (field === "_id" || fieldAttributes.references?.field === "id") {
+				if (field === '_id' || fieldAttributes.references?.field === 'id') {
 					if (customIdGen) {
 						return data;
 					}
-					if (action !== "create") {
+					if (action !== 'create') {
 						return data;
 					}
 					if (Array.isArray(data)) {
 						return data.map((v) => {
-							if (typeof v === "string") {
+							if (typeof v === 'string') {
 								try {
 									const oid = new ObjectId(v);
 									return oid;
@@ -621,7 +621,7 @@ export const mongodbAdapter = (
 							return v;
 						});
 					}
-					if (typeof data === "string") {
+					if (typeof data === 'string') {
 						try {
 							const oid = new ObjectId(data);
 							return oid;
@@ -630,7 +630,7 @@ export const mongodbAdapter = (
 						}
 					}
 					if (
-						fieldAttributes?.references?.field === "id" &&
+						fieldAttributes?.references?.field === 'id' &&
 						!fieldAttributes?.required &&
 						data === null
 					) {
@@ -642,7 +642,7 @@ export const mongodbAdapter = (
 				return data;
 			},
 			customTransformOutput({ data, field, fieldAttributes }) {
-				if (field === "id" || fieldAttributes.references?.field === "id") {
+				if (field === 'id' || fieldAttributes.references?.field === 'id') {
 					if (data instanceof ObjectId) {
 						return data.toHexString();
 					}
@@ -682,9 +682,9 @@ export const mongodbAdapter = (
  * @returns The escaped string.
  */
 function escapeForMongoRegex(input: string, maxLength = 256): string {
-	if (typeof input !== "string") return "";
+	if (typeof input !== 'string') return '';
 
 	// Escape all PCRE special characters
 	// Source: PCRE docs — https://www.pcre.org/original/doc/html/pcrepattern.html
-	return input.slice(0, maxLength).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+	return input.slice(0, maxLength).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
