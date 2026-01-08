@@ -83,3 +83,64 @@ export const Github = {
 		listFollowing: UsersService.usersListFollowingForUser,
 	},
 };
+
+/**
+corsair -> corsair-legacy
+
+
+new:
+corsair: 
+	plugins/
+		- slack
+			- core/
+			- index.ts
+			- models.ts
+		- github
+			- core/
+			- index.ts
+			- models.ts
+		- linear
+		...
+
+new demo: 
+corsair-sdk
+	corsair.ts
+		-> 
+			const integrations = corsair({
+				plugins: [
+					{
+						name: "slack",
+						...
+					},
+					{
+						name: "github",
+						...
+					},
+				]
+			})
+
+			integrations.slack.postMessage
+
+export const basePlugin = () => {}
+
+export const slack = basePlugin({
+})
+
+slack()
+
+
+const res = await corsair.slack.sendMessage({
+	userId: '123'	
+})
+
+slack({
+	getTenantId: (id: string) => {
+		const userId = props.userId
+
+		const res = await db.users.orgId(userId)
+
+		return res.id
+	}
+})
+
+ */
