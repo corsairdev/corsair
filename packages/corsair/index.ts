@@ -5,13 +5,16 @@ export { slack } from './plugins/slack';
 
 import { createCorsair } from './core';
 import { slack } from './plugins/slack';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 export const corsair = createCorsair({
-	multiTenancy: true,
+	multiTenancy: false,
 	plugins: [
 		slack({
 			credentials: {
-				botToken: '',
+				botToken: process.env.SLACK_TOKEN!,
 			},
 			hooks: {
 				postMessage: {
@@ -28,3 +31,14 @@ export const corsair = createCorsair({
 		}),
 	],
 });
+
+// example usage
+
+(async () => {
+	const test = await corsair.slack.messagesDelete({
+		channel: 'C0A3ZTB9X7X',
+		ts: '1767855020.532059',
+	});
+
+	console.log(test);
+})();
