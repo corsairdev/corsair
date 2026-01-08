@@ -418,6 +418,9 @@ importers:
       commander:
         specifier: ^12.1.0
         version: 12.1.0
+      corsair:
+        specifier: workspace:*
+        version: link:../corsair
       dotenv:
         specifier: ^16.4.5
         version: 16.6.1

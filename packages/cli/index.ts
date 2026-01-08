@@ -47,6 +47,28 @@ program
 	});
 
 program
+	.command('db:schema')
+	.description('Generate ORM schema file from dbPlugins')
+	.option('-o, --out <path>', 'Output path for generated schema file')
+	.action(async (options: { out?: string }) => {
+		const { generateDbSchema } = await import('./commands/db-schema.js');
+		await generateDbSchema({ out: options.out });
+	});
+
+program
+	.command('db:create-tables')
+	.description('Create database tables from plugin configurations')
+	.option('-c, --config <path>', 'Path to corsair config file')
+	.option('--push', 'Push schema to database using drizzle-kit')
+	.option('-o, --out <path>', 'Output path for generated schema file')
+	.action(
+		async (options: { config?: string; push?: boolean; out?: string }) => {
+			const { createDbTables } = await import('./commands/db-create-tables.js');
+			await createDbTables(options);
+		},
+	);
+
+program
 	.command('config')
 	.description('Get the config')
 	.action(async () => {

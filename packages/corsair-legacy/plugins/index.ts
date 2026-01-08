@@ -324,10 +324,14 @@ export const createPlugins = <T extends BaseConfig>(config: T) => {
 };
 
 export type { GitHubSchemaOverride } from './github/schema';
+export { githubDefaultSchema } from './github/schema';
 export type { GitHubPlugin } from './github/types';
 export type { GmailSchemaOverride } from './gmail/schema';
+export { gmailDefaultSchema } from './gmail/schema';
 export type { GmailPlugin } from './gmail/types';
 export type { LinearSchemaOverride } from './linear/schema';
+export { linearDefaultSchema } from './linear/schema';
 export type { LinearPlugin } from './linear/types';
 export type { SlackDefaultSchema, SlackSchemaOverride } from './slack/schema';
+export { slackDefaultSchema } from './slack/schema';
 export type { SlackPlugin } from './slack/types';
