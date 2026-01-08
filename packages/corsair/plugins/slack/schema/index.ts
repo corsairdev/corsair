@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { SlackChannel, SlackMessage } from './database';
+import { SlackChannel, SlackMessage, SlackUser, SlackFile, SlackUsergroup } from './database';
 
 export const SlackCredentials = z.object({
 	botToken: z.string(),
@@ -12,5 +12,8 @@ export const SlackSchema = {
 	services: {
 		messages: SlackMessage,
 		channels: SlackChannel,
+		users: SlackUser,
+		files: SlackFile,
+		usergroups: SlackUsergroup,
 	},
 } as const;

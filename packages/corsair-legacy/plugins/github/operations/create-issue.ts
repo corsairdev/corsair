@@ -1,3 +1,9 @@
+import {
+	executeDatabaseHook,
+	validateCredentials,
+	wrapOperation,
+	type BaseOperationParams,
+} from '../../base';
 import type {
 	CreateIssueResponse,
 	GitHubClient,
@@ -26,49 +32,28 @@ export const createIssue = async ({
 	assignees?: string[];
 	ctx: GitHubPluginContext;
 }): Promise<CreateIssueResponse> => {
-	if (!config.token) {
+	// Validate credentials
+	const credentialCheck = validateCredentials(config, ['token'], 'github');
+	if (!credentialCheck.valid) {
 		return {
 			success: false,
-			error:
-				'GitHub token not configured. Please add token to corsair.config.ts plugins.github.token',
+			error: credentialCheck.error,
 		};
 	}
 
-	try {
-		const result = await client.createIssue({
-			owner,
-			repo,
-			title,
-			body,
-			labels,
-			assignees,
-		});
+	return wrapOperation(
+		{ config, client, ctx },
+		async (params: BaseOperationParams<GitHubPlugin, GitHubClient, GitHubPluginContext>) => {
+			const result = await params.client.createIssue({
+				owner,
+				repo,
+				title,
+				body,
+				labels,
+				assignees,
+			});
 
-		const issueData = {
-			id: result.id.toString(),
-			number: result.number,
-			title: result.title,
-			body: result.body,
-			state: result.state,
-			repo: `${owner}/${repo}`,
-			author: result.user.login,
-			created_at: result.created_at,
-			updated_at: result.updated_at,
-			closed_at: result.closed_at || '',
-		};
-
-		// Database hook: Save issue to database if issues table exists
-		if (ctx.db.issues && typeof ctx.db.issues.insert === 'function') {
-			try {
-				await ctx.db.issues.insert(issueData);
-			} catch (dbError: unknown) {
-				console.warn('Failed to save issue to database:', dbError);
-			}
-		}
-
-		return {
-			success: true,
-			data: {
+			return {
 				id: result.id,
 				number: result.number,
 				title: result.title,
@@ -78,12 +63,35 @@ export const createIssue = async ({
 				createdAt: result.created_at,
 				updatedAt: result.updated_at,
 				closedAt: result.closed_at,
+			};
+		},
+		{
+			tableName: 'issues',
+			transform: (data) => {
+				const issue = data as {
+					id: number;
+					number: number;
+					title: string;
+					body: string;
+					state: string;
+					author: string;
+					createdAt: string;
+					updatedAt: string;
+					closedAt: string | null;
+				};
+				return {
+					id: issue.id.toString(),
+					number: issue.number,
+					title: issue.title,
+					body: issue.body,
+					state: issue.state,
+					repo: `${owner}/${repo}`,
+					author: issue.author,
+					created_at: issue.createdAt,
+					updated_at: issue.updatedAt,
+					closed_at: issue.closedAt || '',
+				};
 			},
-		};
-	} catch (error) {
-		return {
-			success: false,
-			error: error instanceof Error ? error.message : 'Unknown error occurred',
-		};
-	}
+		},
+	) as Promise<CreateIssueResponse>;
 };

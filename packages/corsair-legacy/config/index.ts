@@ -1,6 +1,8 @@
 import type { GitHubSchemaOverride } from '../plugins/github/schema';
 import type { GmailSchemaOverride } from '../plugins/gmail/schema';
+import type { HubSpotSchemaOverride } from '../plugins/hubspot/schema';
 import type { LinearSchemaOverride } from '../plugins/linear/schema';
+import type { PostHogSchemaOverride } from '../plugins/posthog/schema';
 import type { SlackSchemaOverride } from '../plugins/slack/schema';
 import type { DrizzlePostgresConfig } from './drizzle-postgres';
 import type { PrismaPostgresConfig } from './prisma-postgres';
@@ -77,13 +79,34 @@ export type GitHubPluginConfig = {
 };
 
 /**
+ * Plugin configuration for PostHog
+ */
+export type PostHogPluginConfig = {
+	name: 'posthog';
+	apiKey: string;
+	apiHost?: string;
+	schema?: PostHogSchemaOverride;
+};
+
+/**
+ * Plugin configuration for HubSpot
+ */
+export type HubSpotPluginConfig = {
+	name: 'hubspot';
+	accessToken: string;
+	schema?: HubSpotSchemaOverride;
+};
+
+/**
  * Union of all plugin config types
  */
 export type PluginConfig =
 	| SlackPluginConfig
 	| GmailPluginConfig
 	| LinearPluginConfig
-	| GitHubPluginConfig;
+	| GitHubPluginConfig
+	| PostHogPluginConfig
+	| HubSpotPluginConfig;
 
 /**
  * Base configuration for Corsair

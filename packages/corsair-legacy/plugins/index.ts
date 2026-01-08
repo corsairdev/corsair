@@ -2,8 +2,11 @@ import type {
 	BaseConfig,
 	GitHubPluginConfig,
 	GmailPluginConfig,
+	HubSpotPluginConfig,
 	LinearPluginConfig,
+	PostHogPluginConfig,
 } from '../config';
+import { createDatabaseContext, resolveSchema } from './base';
 import { createGitHubPlugin } from './github';
 import type {
 	GitHubSchemaOverride,
@@ -15,6 +18,13 @@ import { createGmailPlugin } from './gmail';
 import type { GmailSchemaOverride, ResolvedGmailSchema } from './gmail/schema';
 import { gmailDefaultSchema } from './gmail/schema';
 import type { GmailPlugin } from './gmail/types';
+import { createHubSpotPlugin } from './hubspot';
+import type {
+	HubSpotSchemaOverride,
+	ResolvedHubSpotSchema,
+} from './hubspot/schema';
+import { hubspotDefaultSchema } from './hubspot/schema';
+import type { HubSpotPlugin } from './hubspot/types';
 import { createLinearPlugin } from './linear';
 import type {
 	LinearSchemaOverride,
@@ -22,6 +32,13 @@ import type {
 } from './linear/schema';
 import { linearDefaultSchema } from './linear/schema';
 import type { LinearPlugin } from './linear/types';
+import { createPostHogPlugin } from './posthog';
+import type {
+	PostHogSchemaOverride,
+	ResolvedPostHogSchema,
+} from './posthog/schema';
+import { posthogDefaultSchema } from './posthog/schema';
+import type { PostHogPlugin } from './posthog/types';
 import { createSlackPlugin } from './slack';
 import type { ResolvedSlackSchema, SlackSchemaOverride } from './slack/schema';
 import { slackDefaultSchema } from './slack/schema';
@@ -29,222 +46,62 @@ import type { SlackPlugin } from './slack/types';
 
 /**
  * Resolves the schema override for Slack plugin
+ * Uses the generic resolveSchema from base
  */
 function resolveSlackSchema<T extends SlackSchemaOverride>(
 	override: T | undefined,
 ): ResolvedSlackSchema<T> {
-	if (!override) {
-		return slackDefaultSchema as ResolvedSlackSchema<T>;
-	}
-
-	const resolved: Record<string, Record<string, string | boolean>> = {};
-
-	for (const [tableName, tableOverride] of Object.entries(override)) {
-		if (tableOverride === false) {
-			continue;
-		} else if (tableOverride === true) {
-			resolved[tableName] = slackDefaultSchema[
-				tableName as keyof typeof slackDefaultSchema
-			] as Record<string, string | boolean>;
-		} else if (typeof tableOverride === 'function') {
-			resolved[tableName] = tableOverride(slackDefaultSchema);
-		}
-	}
-
-	for (const [tableName, defaultSchema] of Object.entries(slackDefaultSchema)) {
-		if (!(tableName in resolved)) {
-			resolved[tableName] = defaultSchema as Record<string, string | boolean>;
-		}
-	}
-
-	return resolved as ResolvedSlackSchema<T>;
+	return resolveSchema(slackDefaultSchema, override) as ResolvedSlackSchema<T>;
 }
 
 /**
  * Resolves the schema override for Gmail plugin
+ * Uses the generic resolveSchema from base
  */
 function resolveGmailSchema<T extends GmailSchemaOverride>(
 	override: T | undefined,
 ): ResolvedGmailSchema<T> {
-	if (!override) {
-		return gmailDefaultSchema as ResolvedGmailSchema<T>;
-	}
-
-	const resolved: Record<string, Record<string, string | boolean>> = {};
-
-	for (const [tableName, tableOverride] of Object.entries(override)) {
-		if (tableOverride === false) {
-			continue;
-		} else if (tableOverride === true) {
-			resolved[tableName] = gmailDefaultSchema[
-				tableName as keyof typeof gmailDefaultSchema
-			] as Record<string, string | boolean>;
-		} else if (typeof tableOverride === 'function') {
-			resolved[tableName] = tableOverride(gmailDefaultSchema);
-		}
-	}
-
-	for (const [tableName, defaultSchema] of Object.entries(gmailDefaultSchema)) {
-		if (!(tableName in resolved)) {
-			resolved[tableName] = defaultSchema as Record<string, string | boolean>;
-		}
-	}
-
-	return resolved as ResolvedGmailSchema<T>;
+	return resolveSchema(gmailDefaultSchema, override) as ResolvedGmailSchema<T>;
 }
 
 /**
  * Resolves the schema override for Linear plugin
+ * Uses the generic resolveSchema from base
  */
 function resolveLinearSchema<T extends LinearSchemaOverride>(
 	override: T | undefined,
 ): ResolvedLinearSchema<T> {
-	if (!override) {
-		return linearDefaultSchema as ResolvedLinearSchema<T>;
-	}
-
-	const resolved: Record<
-		string,
-		Record<string, string | boolean | number>
-	> = {};
-
-	for (const [tableName, tableOverride] of Object.entries(override)) {
-		if (tableOverride === false) {
-			continue;
-		} else if (tableOverride === true) {
-			resolved[tableName] = linearDefaultSchema[
-				tableName as keyof typeof linearDefaultSchema
-			] as Record<string, string | boolean | number>;
-		} else if (typeof tableOverride === 'function') {
-			resolved[tableName] = tableOverride(linearDefaultSchema);
-		}
-	}
-
-	for (const [tableName, defaultSchema] of Object.entries(
-		linearDefaultSchema,
-	)) {
-		if (!(tableName in resolved)) {
-			resolved[tableName] = defaultSchema as Record<
-				string,
-				string | boolean | number
-			>;
-		}
-	}
-
-	return resolved as ResolvedLinearSchema<T>;
+	return resolveSchema(linearDefaultSchema, override);
 }
 
 /**
  * Resolves the schema override for GitHub plugin
+ * Uses the generic resolveSchema from base
  */
 function resolveGitHubSchema<T extends GitHubSchemaOverride>(
 	override: T | undefined,
 ): ResolvedGitHubSchema<T> {
-	if (!override) {
-		return githubDefaultSchema as ResolvedGitHubSchema<T>;
-	}
-
-	const resolved: Record<
-		string,
-		Record<string, string | boolean | number>
-	> = {};
-
-	for (const [tableName, tableOverride] of Object.entries(override)) {
-		if (tableOverride === false) {
-			continue;
-		} else if (tableOverride === true) {
-			resolved[tableName] = githubDefaultSchema[
-				tableName as keyof typeof githubDefaultSchema
-			] as Record<string, string | boolean | number>;
-		} else if (typeof tableOverride === 'function') {
-			resolved[tableName] = tableOverride(githubDefaultSchema);
-		}
-	}
-
-	for (const [tableName, defaultSchema] of Object.entries(
-		githubDefaultSchema,
-	)) {
-		if (!(tableName in resolved)) {
-			resolved[tableName] = defaultSchema as Record<
-				string,
-				string | boolean | number
-			>;
-		}
-	}
-
-	return resolved as ResolvedGitHubSchema<T>;
+	return resolveSchema(githubDefaultSchema, override);
 }
 
 /**
- * Creates a database context based on resolved schema
- * This provides typed access to database tables
+ * Resolves the schema override for PostHog plugin
+ * Uses the generic resolveSchema from base
  */
-function createDatabaseContext<
-	T extends Record<string, Record<string, string | boolean | number>>,
->(
-	resolvedSchema: T,
-	db: unknown,
-): {
-	[K in keyof T]: T[K] extends never
-		? never
-		: {
-				insert: (data: Record<string, unknown>) => Promise<unknown>;
-				select: () => Promise<Array<Record<string, unknown>>>;
-				update: (data: Record<string, unknown>) => Promise<unknown>;
-				delete: () => Promise<unknown>;
-			};
-} {
-	const context: Record<
-		string,
-		{
-			insert: (data: Record<string, unknown>) => Promise<unknown>;
-			select: () => Promise<Array<Record<string, unknown>>>;
-			update: (data: Record<string, unknown>) => Promise<unknown>;
-			delete: () => Promise<unknown>;
-		}
-	> = {};
+function resolvePostHogSchema<T extends PostHogSchemaOverride>(
+	override: T | undefined,
+): ResolvedPostHogSchema<T> {
+	return resolveSchema(posthogDefaultSchema, override) as ResolvedPostHogSchema<T>;
+}
 
-	for (const tableName of Object.keys(resolvedSchema)) {
-		const table = (db as { _?: { schema?: Record<string, unknown> } })._
-			?.schema?.[tableName] as
-			| {
-					insert: (data: Record<string, unknown>) => Promise<unknown>;
-					select: () => Promise<Array<Record<string, unknown>>>;
-					update: (data: Record<string, unknown>) => Promise<unknown>;
-					delete: () => Promise<unknown>;
-			  }
-			| undefined;
-
-		if (table) {
-			context[tableName] = table;
-		} else {
-			context[tableName] = {
-				async insert() {
-					return Promise.resolve(undefined);
-				},
-				async select() {
-					return Promise.resolve([]);
-				},
-				async update() {
-					return Promise.resolve(undefined);
-				},
-				async delete() {
-					return Promise.resolve(undefined);
-				},
-			};
-		}
-	}
-
-	return context as {
-		[K in keyof T]: T[K] extends never
-			? never
-			: {
-					insert: (data: Record<string, unknown>) => Promise<unknown>;
-					select: () => Promise<Array<Record<string, unknown>>>;
-					update: (data: Record<string, unknown>) => Promise<unknown>;
-					delete: () => Promise<unknown>;
-				};
-	};
+/**
+ * Resolves the schema override for HubSpot plugin
+ * Uses the generic resolveSchema from base
+ */
+function resolveHubSpotSchema<T extends HubSpotSchemaOverride>(
+	override: T | undefined,
+): ResolvedHubSpotSchema<T> {
+	return resolveSchema(hubspotDefaultSchema, override) as ResolvedHubSpotSchema<T>;
 }
 
 export const createPlugins = <T extends BaseConfig>(config: T) => {
@@ -312,6 +169,35 @@ export const createPlugins = <T extends BaseConfig>(config: T) => {
 			);
 
 			plugins.github = createGitHubPlugin(githubConfig, dbContext);
+		} else if (pluginConfig.name === 'posthog') {
+			const posthogPluginConfig = pluginConfig as PostHogPluginConfig;
+			const posthogConfig: PostHogPlugin = {
+				apiKey: posthogPluginConfig.apiKey,
+				apiHost: posthogPluginConfig.apiHost,
+				schema: posthogPluginConfig.schema,
+			};
+
+			const resolvedSchema = resolvePostHogSchema(posthogPluginConfig.schema);
+			const dbContext = createDatabaseContext(
+				resolvedSchema,
+				(config as unknown as { db: unknown }).db,
+			);
+
+			plugins.posthog = createPostHogPlugin(posthogConfig, dbContext);
+		} else if (pluginConfig.name === 'hubspot') {
+			const hubspotPluginConfig = pluginConfig as HubSpotPluginConfig;
+			const hubspotConfig: HubSpotPlugin = {
+				accessToken: hubspotPluginConfig.accessToken,
+				schema: hubspotPluginConfig.schema,
+			};
+
+			const resolvedSchema = resolveHubSpotSchema(hubspotPluginConfig.schema);
+			const dbContext = createDatabaseContext(
+				resolvedSchema,
+				(config as unknown as { db: unknown }).db,
+			);
+
+			plugins.hubspot = createHubSpotPlugin(hubspotConfig, dbContext);
 		}
 	}
 
@@ -320,6 +206,8 @@ export const createPlugins = <T extends BaseConfig>(config: T) => {
 		gmail?: ReturnType<typeof createGmailPlugin>;
 		linear?: ReturnType<typeof createLinearPlugin>;
 		github?: ReturnType<typeof createGitHubPlugin>;
+		posthog?: ReturnType<typeof createPostHogPlugin>;
+		hubspot?: ReturnType<typeof createHubSpotPlugin>;
 	};
 };
 
@@ -335,3 +223,9 @@ export type { LinearPlugin } from './linear/types';
 export type { SlackDefaultSchema, SlackSchemaOverride } from './slack/schema';
 export { slackDefaultSchema } from './slack/schema';
 export type { SlackPlugin } from './slack/types';
+export type { PostHogSchemaOverride } from './posthog/schema';
+export { posthogDefaultSchema } from './posthog/schema';
+export type { PostHogPlugin } from './posthog/types';
+export type { HubSpotSchemaOverride } from './hubspot/schema';
+export { hubspotDefaultSchema } from './hubspot/schema';
+export type { HubSpotPlugin } from './hubspot/types';

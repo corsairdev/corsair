@@ -1,4 +1,4 @@
-import { createCorsairClient, createCorsairHooks } from 'corsair';
+import { createCorsairClient, createCorsairHooks } from '@corsair-ai/core';
 import type { CorsairRouter } from '.';
 
 const getBaseUrl = () => {

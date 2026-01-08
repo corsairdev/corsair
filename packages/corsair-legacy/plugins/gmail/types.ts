@@ -1,6 +1,12 @@
+import type {
+	BasePluginConfig,
+	BasePluginContext,
+	BasePluginResponse,
+	BaseDatabaseContext,
+} from '../base';
 import type { GmailSchemaOverride, ResolvedGmailSchema } from './schema';
 
-export type GmailPlugin = {
+export type GmailPlugin = BasePluginConfig<GmailSchemaOverride> & {
 	/**
 	 * Gmail API access token
 	 */
@@ -13,17 +19,10 @@ export type GmailPlugin = {
 	 * Optional user ID (defaults to 'me')
 	 */
 	userId?: string;
-	/**
-	 * Schema override configuration
-	 */
-	schema?: GmailSchemaOverride;
 };
 
-export type BaseGmailPluginResponse<T extends Record<string, unknown>> = {
-	success: boolean;
-	data?: T;
-	error?: string;
-};
+export type BaseGmailPluginResponse<T extends Record<string, unknown>> =
+	BasePluginResponse<T>;
 
 // Response type for sendMessage operation
 export type SendMessageResponse = BaseGmailPluginResponse<{
@@ -99,16 +98,7 @@ export type CreateDraftResponse = BaseGmailPluginResponse<{
  */
 export type GmailDatabaseContext<
 	TSchemaOverride extends GmailSchemaOverride = GmailSchemaOverride,
-> = {
-	[K in keyof ResolvedGmailSchema<TSchemaOverride>]: ResolvedGmailSchema<TSchemaOverride>[K] extends never
-		? never
-		: {
-				insert: (data: Record<string, unknown>) => Promise<unknown>;
-				select: () => Promise<Array<Record<string, unknown>>>;
-				update: (data: Record<string, unknown>) => Promise<unknown>;
-				delete: () => Promise<unknown>;
-			};
-};
+> = BaseDatabaseContext<ResolvedGmailSchema<TSchemaOverride>>;
 
 /**
  * Plugin operation context
@@ -116,10 +106,7 @@ export type GmailDatabaseContext<
  */
 export type GmailPluginContext<
 	TSchemaOverride extends GmailSchemaOverride = GmailSchemaOverride,
-> = {
-	db: GmailDatabaseContext<TSchemaOverride>;
-	userId?: string;
-};
+> = BasePluginContext<ResolvedGmailSchema<TSchemaOverride>>;
 
 /**
  * GmailClient type for operations

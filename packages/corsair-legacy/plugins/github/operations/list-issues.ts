@@ -1,3 +1,8 @@
+import {
+	createErrorResponse,
+	createSuccessResponse,
+	validateCredentials,
+} from '../../base';
 import type {
 	GitHubClient,
 	GitHubPlugin,
@@ -24,12 +29,13 @@ export const listIssues = async ({
 	perPage?: number;
 	ctx: GitHubPluginContext;
 }): Promise<ListIssuesResponse> => {
-	if (!config.token) {
-		return {
-			success: false,
-			error:
-				'GitHub token not configured. Please add token to corsair.config.ts plugins.github.token',
-		};
+	// Validate credentials
+	const credentialCheck = validateCredentials(config, ['token'], 'github');
+	if (!credentialCheck.valid) {
+		return createErrorResponse(
+			new Error(credentialCheck.error),
+			credentialCheck.error,
+		) as ListIssuesResponse;
 	}
 
 	try {
@@ -40,6 +46,20 @@ export const listIssues = async ({
 			page,
 			perPage,
 		});
+
+		const responseData = {
+			issues: result.map((issue) => ({
+				id: issue.id,
+				number: issue.number,
+				title: issue.title,
+				body: issue.body,
+				state: issue.state,
+				author: issue.user.login,
+				createdAt: issue.created_at,
+				updatedAt: issue.updated_at,
+				closedAt: issue.closed_at,
+			})),
+		};
 
 		// Database hook: Save issues to database if issues table exists
 		if (ctx.db.issues && typeof ctx.db.issues.insert === 'function') {
@@ -63,26 +83,8 @@ export const listIssues = async ({
 			}
 		}
 
-		return {
-			success: true,
-			data: {
-				issues: result.map((issue) => ({
-					id: issue.id,
-					number: issue.number,
-					title: issue.title,
-					body: issue.body,
-					state: issue.state,
-					author: issue.user.login,
-					createdAt: issue.created_at,
-					updatedAt: issue.updated_at,
-					closedAt: issue.closed_at,
-				})),
-			},
-		};
+		return createSuccessResponse(responseData) as ListIssuesResponse;
 	} catch (error) {
-		return {
-			success: false,
-			error: error instanceof Error ? error.message : 'Unknown error occurred',
-		};
+		return createErrorResponse(error) as ListIssuesResponse;
 	}
 };

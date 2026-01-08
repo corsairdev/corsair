@@ -1,3 +1,10 @@
+import {
+	createErrorResponse,
+	createSuccessResponse,
+	executeDatabaseHook,
+	validateCredentials,
+	type BaseOperationParams,
+} from '../../base';
 import type {
 	GetIssueResponse,
 	GitHubClient,
@@ -20,12 +27,13 @@ export const getIssue = async ({
 	issueNumber: number;
 	ctx: GitHubPluginContext;
 }): Promise<GetIssueResponse> => {
-	if (!config.token) {
-		return {
-			success: false,
-			error:
-				'GitHub token not configured. Please add token to corsair.config.ts plugins.github.token',
-		};
+	// Validate credentials
+	const credentialCheck = validateCredentials(config, ['token'], 'github');
+	if (!credentialCheck.valid) {
+		return createErrorResponse(
+			new Error(credentialCheck.error),
+			credentialCheck.error,
+		) as GetIssueResponse;
 	}
 
 	try {
@@ -35,46 +43,41 @@ export const getIssue = async ({
 			issueNumber,
 		});
 
-		const issueData = {
-			id: result.id.toString(),
+		const responseData = {
+			id: result.id,
 			number: result.number,
 			title: result.title,
 			body: result.body,
 			state: result.state,
-			repo: `${owner}/${repo}`,
 			author: result.user.login,
-			created_at: result.created_at,
-			updated_at: result.updated_at,
-			closed_at: result.closed_at || '',
+			createdAt: result.created_at,
+			updatedAt: result.updated_at,
+			closedAt: result.closed_at,
 		};
 
 		// Database hook: Save issue to database if issues table exists
-		if (ctx.db.issues && typeof ctx.db.issues.insert === 'function') {
-			try {
-				await ctx.db.issues.insert(issueData);
-			} catch (dbError: unknown) {
-				console.warn('Failed to save issue to database:', dbError);
-			}
-		}
-
-		return {
-			success: true,
-			data: {
-				id: result.id,
-				number: result.number,
-				title: result.title,
-				body: result.body,
-				state: result.state,
-				author: result.user.login,
-				createdAt: result.created_at,
-				updatedAt: result.updated_at,
-				closedAt: result.closed_at,
+		await executeDatabaseHook(
+			ctx,
+			{
+				tableName: 'issues',
+				transform: () => ({
+					id: result.id.toString(),
+					number: result.number,
+					title: result.title,
+					body: result.body,
+					state: result.state,
+					repo: `${owner}/${repo}`,
+					author: result.user.login,
+					created_at: result.created_at,
+					updated_at: result.updated_at,
+					closed_at: result.closed_at || '',
+				}),
 			},
-		};
+			responseData,
+		);
+
+		return createSuccessResponse(responseData) as GetIssueResponse;
 	} catch (error) {
-		return {
-			success: false,
-			error: error instanceof Error ? error.message : 'Unknown error occurred',
-		};
+		return createErrorResponse(error) as GetIssueResponse;
 	}
 };

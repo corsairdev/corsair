@@ -1,3 +1,9 @@
+import {
+	createErrorResponse,
+	createSuccessResponse,
+	executeDatabaseHook,
+	validateCredentials,
+} from '../../base';
 import type {
 	MessageResponse,
 	SlackClient,
@@ -18,23 +24,24 @@ export const sendMessage = async ({
 	content: string;
 	ctx: SlackPluginContext;
 }): Promise<MessageResponse> => {
-	// Validate that Slack token is configured
-	if (!config.token) {
-		return {
-			success: false,
-			error:
-				'Slack token not configured. Please add token to corsair.config.ts plugins.slack.token',
-		};
+	// Validate credentials
+	const credentialCheck = validateCredentials(config, ['token'], 'slack');
+	if (!credentialCheck.valid) {
+		return createErrorResponse(
+			new Error(credentialCheck.error),
+			credentialCheck.error,
+		) as MessageResponse;
 	}
 
 	// Look up actual channel ID from config using the friendly name
 	const actualChannelId = config.channels?.[channelId];
 	if (!actualChannelId) {
 		const availableChannels = Object.keys(config.channels || {}).join(', ');
-		return {
-			success: false,
-			error: `Channel '${channelId}' not found in config. Available channels: ${availableChannels}`,
-		};
+		return createErrorResponse(
+			new Error(
+				`Channel '${channelId}' not found in config. Available channels: ${availableChannels}`,
+			),
+		) as MessageResponse;
 	}
 
 	try {
@@ -44,37 +51,31 @@ export const sendMessage = async ({
 			text: content,
 		});
 
+		const responseData = {
+			messageId: result.ts,
+			channel: result.channel,
+			timestamp: result.ts,
+		};
+
 		// Database hook: Save message to database if messages table exists
-		if (ctx.db.messages && typeof ctx.db.messages.insert === 'function') {
-			try {
-				await ctx.db.messages.insert({
+		await executeDatabaseHook(
+			ctx,
+			{
+				tableName: 'messages',
+				transform: () => ({
 					id: result.ts,
 					content,
 					channel_id: actualChannelId,
 					user_id: ctx.userId || '',
 					timestamp: result.ts,
 					thread_ts: '',
-				});
-			} catch (dbError) {
-				// Log but don't fail the operation if DB insert fails
-				console.warn('Failed to save message to database:', dbError);
-			}
-		}
-
-		// Return success response with message details
-		return {
-			success: true,
-			data: {
-				messageId: result.ts,
-				channel: result.channel,
-				timestamp: result.ts,
+				}),
 			},
-		};
+			responseData,
+		);
+
+		return createSuccessResponse(responseData) as MessageResponse;
 	} catch (error) {
-		// Handle any Slack API errors
-		return {
-			success: false,
-			error: error instanceof Error ? error.message : 'Unknown error occurred',
-		};
+		return createErrorResponse(error) as MessageResponse;
 	}
 };
