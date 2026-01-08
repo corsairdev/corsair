@@ -3,15 +3,15 @@ import type {
 	CorsairEndpoint,
 	CorsairPlugin,
 } from '../../core';
-import { slackSchema } from './schema';
-import type { SlackAuthenticationSchema } from './schema';
 import { postMessage } from './endpoints/post-message';
+import type { SlackCredentials } from './schema';
+import { SlackSchema } from './schema';
 
 export type SlackPluginOptions = {
 	/**
 	 * Example option. Not used in this barebones plugin yet.
 	 */
-	credentials: SlackAuthenticationSchema;
+	credentials: SlackCredentials;
 	/**
 	 * Optional per-endpoint hooks for this plugin instance.
 	 *
@@ -43,9 +43,9 @@ export type SlackEndpoints = {
 export function slack(_options: SlackPluginOptions) {
 	return {
 		id: 'slack',
-		schema: slackSchema,
+		schema: SlackSchema,
 		endpoints: {
 			postMessage,
 		},
-	} satisfies CorsairPlugin<'slack', SlackEndpoints, typeof slackSchema>;
+	} satisfies CorsairPlugin<'slack', SlackEndpoints, typeof SlackSchema>;
 }

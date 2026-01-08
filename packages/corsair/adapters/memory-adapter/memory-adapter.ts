@@ -1,11 +1,11 @@
-import type { BetterAuthOptions } from "@better-auth/core";
+import type { BetterAuthOptions } from '@better-auth/core';
 import type {
 	CleanedWhere,
 	DBAdapterDebugLogOption,
 	JoinConfig,
-} from "@better-auth/core/db/adapter";
-import { createAdapterFactory } from "@better-auth/core/db/adapter";
-import { logger } from "@better-auth/core/env";
+} from '@better-auth/core/db/adapter';
+import { createAdapterFactory } from '@better-auth/core/db/adapter';
+import { logger } from '@better-auth/core/env';
 
 export interface MemoryDB {
 	[key: string]: any[];
@@ -22,16 +22,16 @@ export const memoryAdapter = (
 	let lazyOptions: BetterAuthOptions | null = null;
 	let adapterCreator = createAdapterFactory({
 		config: {
-			adapterId: "memory",
-			adapterName: "Memory Adapter",
+			adapterId: 'memory',
+			adapterName: 'Memory Adapter',
 			usePlural: false,
 			debugLogs: config?.debugLogs || false,
 			supportsArrays: true,
 			customTransformInput(props) {
 				const useNumberId =
 					props.options.advanced?.database?.useNumberId ||
-					props.options.advanced?.database?.generateId === "serial";
-				if (useNumberId && props.field === "id" && props.action === "create") {
+					props.options.advanced?.database?.generateId === 'serial';
+				if (useNumberId && props.field === 'id' && props.action === 'create') {
 					return db[props.model]!.length + 1;
 				}
 				return props.data;
@@ -53,7 +53,7 @@ export const memoryAdapter = (
 		adapter: ({ getFieldName, options, getModelName }) => {
 			const applySortToRecords = (
 				records: any[],
-				sortBy: { field: string; direction: "asc" | "desc" } | undefined,
+				sortBy: { field: string; direction: 'asc' | 'desc' } | undefined,
 				model: string,
 			) => {
 				if (!sortBy) return records;
@@ -73,7 +73,7 @@ export const memoryAdapter = (
 						comparison = 1;
 					}
 					// Handle string comparison
-					else if (typeof aValue === "string" && typeof bValue === "string") {
+					else if (typeof aValue === 'string' && typeof bValue === 'string') {
 						comparison = aValue.localeCompare(bValue);
 					}
 					// Handle date comparison
@@ -81,11 +81,11 @@ export const memoryAdapter = (
 						comparison = aValue.getTime() - bValue.getTime();
 					}
 					// Handle numeric comparison
-					else if (typeof aValue === "number" && typeof bValue === "number") {
+					else if (typeof aValue === 'number' && typeof bValue === 'number') {
 						comparison = aValue - bValue;
 					}
 					// Handle boolean comparison
-					else if (typeof aValue === "boolean" && typeof bValue === "boolean") {
+					else if (typeof aValue === 'boolean' && typeof bValue === 'boolean') {
 						comparison = aValue === bValue ? 0 : aValue ? 1 : -1;
 					}
 					// Fallback to string comparison
@@ -93,7 +93,7 @@ export const memoryAdapter = (
 						comparison = String(aValue).localeCompare(String(bValue));
 					}
 
-					return sortBy.direction === "asc" ? comparison : -comparison;
+					return sortBy.direction === 'asc' ? comparison : -comparison;
 				});
 			};
 
@@ -115,33 +115,33 @@ export const memoryAdapter = (
 					const evalClause = (record: any, clause: CleanedWhere): boolean => {
 						const { field, value, operator } = clause;
 						switch (operator) {
-							case "in":
+							case 'in':
 								if (!Array.isArray(value)) {
-									throw new Error("Value must be an array");
+									throw new Error('Value must be an array');
 								}
 								// @ts-expect-error
 								return value.includes(record[field]);
-							case "not_in":
+							case 'not_in':
 								if (!Array.isArray(value)) {
-									throw new Error("Value must be an array");
+									throw new Error('Value must be an array');
 								}
 								// @ts-expect-error
 								return !value.includes(record[field]);
-							case "contains":
+							case 'contains':
 								return record[field].includes(value);
-							case "starts_with":
+							case 'starts_with':
 								return record[field].startsWith(value);
-							case "ends_with":
+							case 'ends_with':
 								return record[field].endsWith(value);
-							case "ne":
+							case 'ne':
 								return record[field] !== value;
-							case "gt":
+							case 'gt':
 								return value != null && Boolean(record[field] > value);
-							case "gte":
+							case 'gte':
 								return value != null && Boolean(record[field] >= value);
-							case "lt":
+							case 'lt':
 								return value != null && Boolean(record[field] < value);
-							case "lte":
+							case 'lte':
 								return value != null && Boolean(record[field] <= value);
 							default:
 								return record[field] === value;
@@ -157,7 +157,7 @@ export const memoryAdapter = (
 						for (const clause of where) {
 							const clauseResult = evalClause(record, clause);
 
-							if (clause.connector === "OR") {
+							if (clause.connector === 'OR') {
 								result = result || clauseResult;
 							} else {
 								result = result && clauseResult;
@@ -186,7 +186,7 @@ export const memoryAdapter = (
 						// Initialize joined data structures based on isUnique
 						for (const [joinModel, joinAttr] of Object.entries(join)) {
 							const joinModelName = getModelName(joinModel);
-							if (joinAttr.relation === "one-to-one") {
+							if (joinAttr.relation === 'one-to-one') {
 								nested[joinModelName] = null;
 							} else {
 								nested[joinModelName] = [];
@@ -216,7 +216,7 @@ export const memoryAdapter = (
 								joinRecord[joinAttr.on.to] === baseRecord[joinAttr.on.from],
 						);
 
-						if (joinAttr.relation === "one-to-one") {
+						if (joinAttr.relation === 'one-to-one') {
 							// For unique relationships, store a single object (or null)
 							nestedEntry[joinModelName] = matchingRecords[0] || null;
 						} else {
@@ -243,7 +243,7 @@ export const memoryAdapter = (
 				create: async ({ model, data }) => {
 					const useNumberId =
 						options.advanced?.database?.useNumberId ||
-						options.advanced?.database?.generateId === "serial";
+						options.advanced?.database?.generateId === 'serial';
 					if (useNumberId) {
 						// @ts-expect-error
 						data.id = db[getModelName(model)]!.length + 1;

@@ -5,7 +5,7 @@ import type {
 	AdapterFactoryOptions,
 	AdapterTestDebugLogs,
 	CustomAdapter,
-} from "@better-auth/core/db/adapter";
+} from '@better-auth/core/db/adapter';
 import {
 	createAdapterFactory,
 	initGetDefaultFieldName,
@@ -14,9 +14,9 @@ import {
 	initGetFieldName,
 	initGetIdField,
 	initGetModelName,
-} from "@better-auth/core/db/adapter";
+} from '@better-auth/core/db/adapter';
 
-export * from "@better-auth/core/db/adapter";
+export * from '@better-auth/core/db/adapter';
 
 export type {
 	AdapterFactoryOptions,

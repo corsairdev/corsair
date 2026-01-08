@@ -2,7 +2,7 @@
  * @see {@link https://nodejs.org/api/sqlite.html} - Node.js SQLite API documentation
  */
 
-import type { DatabaseSync } from "node:sqlite";
+import type { DatabaseSync } from 'node:sqlite';
 import type {
 	DatabaseConnection,
 	DatabaseIntrospector,
@@ -17,14 +17,14 @@ import type {
 	QueryResult,
 	SchemaMetadata,
 	TableMetadata,
-} from "kysely";
+} from 'kysely';
 import {
 	CompiledQuery,
 	DEFAULT_MIGRATION_LOCK_TABLE,
 	DEFAULT_MIGRATION_TABLE,
 	DefaultQueryCompiler,
 	sql,
-} from "kysely";
+} from 'kysely';
 
 class NodeSqliteAdapter implements DialectAdapterBase {
 	get supportsCreateIfNotExists(): boolean {
@@ -101,15 +101,15 @@ class NodeSqliteDriver implements Driver {
 	}
 
 	async beginTransaction(connection: DatabaseConnection): Promise<void> {
-		await connection.executeQuery(CompiledQuery.raw("begin"));
+		await connection.executeQuery(CompiledQuery.raw('begin'));
 	}
 
 	async commitTransaction(connection: DatabaseConnection): Promise<void> {
-		await connection.executeQuery(CompiledQuery.raw("commit"));
+		await connection.executeQuery(CompiledQuery.raw('commit'));
 	}
 
 	async rollbackTransaction(connection: DatabaseConnection): Promise<void> {
-		await connection.executeQuery(CompiledQuery.raw("rollback"));
+		await connection.executeQuery(CompiledQuery.raw('rollback'));
 	}
 
 	async releaseConnection(): Promise<void> {
@@ -140,7 +140,7 @@ class NodeSqliteConnection implements DatabaseConnection {
 	}
 
 	async *streamQuery() {
-		throw new Error("Streaming query is not supported by SQLite driver.");
+		throw new Error('Streaming query is not supported by SQLite driver.');
 	}
 }
 
@@ -185,20 +185,20 @@ class NodeSqliteIntrospector implements DatabaseIntrospector {
 	): Promise<TableMetadata[]> {
 		let query = this.#db
 			// @ts-expect-error
-			.selectFrom("sqlite_schema")
+			.selectFrom('sqlite_schema')
 			// @ts-expect-error
-			.where("type", "=", "table")
+			.where('type', '=', 'table')
 			// @ts-expect-error
-			.where("name", "not like", "sqlite_%")
-			.select("name")
+			.where('name', 'not like', 'sqlite_%')
+			.select('name')
 			.$castTo<{ name: string }>();
 
 		if (!options.withInternalKyselyTables) {
 			query = query
 				// @ts-expect-error
-				.where("name", "!=", DEFAULT_MIGRATION_TABLE)
+				.where('name', '!=', DEFAULT_MIGRATION_TABLE)
 				// @ts-expect-error
-				.where("name", "!=", DEFAULT_MIGRATION_LOCK_TABLE);
+				.where('name', '!=', DEFAULT_MIGRATION_LOCK_TABLE);
 		}
 
 		const tables = await query.execute();
@@ -219,19 +219,19 @@ class NodeSqliteIntrospector implements DatabaseIntrospector {
 		// Get the SQL that was used to create the table.
 		const createSql = await db
 			// @ts-expect-error
-			.selectFrom("sqlite_master")
+			.selectFrom('sqlite_master')
 			// @ts-expect-error
-			.where("name", "=", table)
-			.select("sql")
+			.where('name', '=', table)
+			.select('sql')
 			.$castTo<{ sql: string | undefined }>()
 			.execute();
 
 		// Try to find the name of the column that has `autoincrement` >&
 		const autoIncrementCol = createSql[0]?.sql
 			?.split(/[\(\),]/)
-			?.find((it) => it.toLowerCase().includes("autoincrement"))
+			?.find((it) => it.toLowerCase().includes('autoincrement'))
 			?.split(/\s+/)?.[0]
-			?.replace(/["`]/g, "");
+			?.replace(/["`]/g, '');
 
 		const columns = await db
 			.selectFrom(
@@ -240,9 +240,9 @@ class NodeSqliteIntrospector implements DatabaseIntrospector {
 					type: string;
 					notnull: 0 | 1;
 					dflt_value: any;
-				}>`pragma_table_info(${table})`.as("table_info"),
+				}>`pragma_table_info(${table})`.as('table_info'),
 			)
-			.select(["name", "type", "notnull", "dflt_value"])
+			.select(['name', 'type', 'notnull', 'dflt_value'])
 			.execute();
 
 		return {
@@ -261,7 +261,7 @@ class NodeSqliteIntrospector implements DatabaseIntrospector {
 
 class NodeSqliteQueryCompiler extends DefaultQueryCompiler {
 	protected override getCurrentParameterPlaceholder() {
-		return "?";
+		return '?';
 	}
 
 	protected override getLeftIdentifierWrapper(): string {
@@ -273,7 +273,7 @@ class NodeSqliteQueryCompiler extends DefaultQueryCompiler {
 	}
 
 	protected override getAutoIncrement() {
-		return "autoincrement";
+		return 'autoincrement';
 	}
 }
 

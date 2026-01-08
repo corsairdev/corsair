@@ -1,4 +1,4 @@
-import type { Awaitable, BetterAuthOptions } from "@better-auth/core";
+import type { Awaitable, BetterAuthOptions } from '@better-auth/core';
 import type {
 	AdapterFactoryCustomizeAdapterCreator,
 	AdapterFactoryOptions,
@@ -6,21 +6,21 @@ import type {
 	DBAdapterDebugLogOption,
 	JoinConfig,
 	Where,
-} from "@better-auth/core/db/adapter";
-import { createAdapterFactory } from "@better-auth/core/db/adapter";
-import { BetterAuthError } from "@better-auth/core/error";
+} from '@better-auth/core/db/adapter';
+import { createAdapterFactory } from '@better-auth/core/db/adapter';
+import { BetterAuthError } from '@better-auth/core/error';
 
 export interface PrismaConfig {
 	/**
 	 * Database provider.
 	 */
 	provider:
-		| "sqlite"
-		| "cockroachdb"
-		| "mysql"
-		| "postgresql"
-		| "sqlserver"
-		| "mongodb";
+		| 'sqlite'
+		| 'cockroachdb'
+		| 'mysql'
+		| 'postgresql'
+		| 'sqlserver'
+		| 'mongodb';
 
 	/**
 	 * Enable debug logs for the adapter
@@ -98,7 +98,7 @@ export const prismaAdapter = (prisma: PrismaClient, config: PrismaConfig) => {
 					// should check if `select` is not provided, because then we should select all base-model fields
 					if (!select) {
 						const fields = schema[getDefaultModelName(model)]?.fields || {};
-						fields.id = { type: "string" }; // make sure there is at least an id field
+						fields.id = { type: 'string' }; // make sure there is at least an id field
 						for (const field of Object.keys(fields)) {
 							result[getFieldName({ model, field })] = true;
 						}
@@ -106,7 +106,7 @@ export const prismaAdapter = (prisma: PrismaClient, config: PrismaConfig) => {
 
 					for (const [joinModel, joinAttr] of Object.entries(join)) {
 						const key = getJoinKeyName(model, getModelName(joinModel), schema);
-						if (joinAttr.relation === "one-to-one") {
+						if (joinAttr.relation === 'one-to-one') {
 							result[key] = true;
 						} else {
 							result[key] = { take: joinAttr.limit };
@@ -171,14 +171,14 @@ export const prismaAdapter = (prisma: PrismaClient, config: PrismaConfig) => {
 			};
 			function operatorToPrismaOperator(operator: string) {
 				switch (operator) {
-					case "starts_with":
-						return "startsWith";
-					case "ends_with":
-						return "endsWith";
-					case "ne":
-						return "not";
-					case "not_in":
-						return "notIn";
+					case 'starts_with':
+						return 'startsWith';
+					case 'ends_with':
+						return 'endsWith';
+					case 'ne':
+						return 'not';
+					case 'not_in':
+						return 'notIn';
 					default:
 						return operator;
 				}
@@ -191,33 +191,33 @@ export const prismaAdapter = (prisma: PrismaClient, config: PrismaConfig) => {
 				model: string;
 				where?: Where[] | undefined;
 				action:
-					| "create"
-					| "update"
-					| "delete"
-					| "findOne"
-					| "findMany"
-					| "count"
-					| "updateMany"
-					| "deleteMany";
+					| 'create'
+					| 'update'
+					| 'delete'
+					| 'findOne'
+					| 'findMany'
+					| 'count'
+					| 'updateMany'
+					| 'deleteMany';
 			}) => {
 				if (!where || !where.length) return {};
 				const buildSingleCondition = (w: Where) => {
 					const fieldName = getFieldName({ model, field: w.field });
 					// Special handling for Prisma null semantics, for non-nullable fields this is a tautology. Skip condition.
-					if (w.operator === "ne" && w.value === null) {
+					if (w.operator === 'ne' && w.value === null) {
 						return {};
 					}
 					if (
-						(w.operator === "in" || w.operator === "not_in") &&
+						(w.operator === 'in' || w.operator === 'not_in') &&
 						Array.isArray(w.value)
 					) {
 						const filtered = w.value.filter((v) => v != null);
 						if (filtered.length === 0) {
-							if (w.operator === "in") {
+							if (w.operator === 'in') {
 								return {
 									AND: [
-										{ [fieldName]: { equals: "__never__" } },
-										{ [fieldName]: { not: "__never__" } },
+										{ [fieldName]: { equals: '__never__' } },
+										{ [fieldName]: { not: '__never__' } },
 									],
 								};
 							} else {
@@ -227,7 +227,7 @@ export const prismaAdapter = (prisma: PrismaClient, config: PrismaConfig) => {
 						const prismaOp = operatorToPrismaOperator(w.operator);
 						return { [fieldName]: { [prismaOp]: filtered } };
 					}
-					if (w.operator === "eq" || !w.operator) {
+					if (w.operator === 'eq' || !w.operator) {
 						return { [fieldName]: w.value };
 					}
 					return {
@@ -238,21 +238,21 @@ export const prismaAdapter = (prisma: PrismaClient, config: PrismaConfig) => {
 				};
 
 				// Special handling for delete actions: extract id to root level
-				if (action === "delete") {
-					const idCondition = where.find((w) => w.field === "id");
+				if (action === 'delete') {
+					const idCondition = where.find((w) => w.field === 'id');
 					if (idCondition) {
-						const idFieldName = getFieldName({ model, field: "id" });
+						const idFieldName = getFieldName({ model, field: 'id' });
 						const idClause = buildSingleCondition(idCondition);
-						const remainingWhere = where.filter((w) => w.field !== "id");
+						const remainingWhere = where.filter((w) => w.field !== 'id');
 
 						if (remainingWhere.length === 0) {
 							return idClause;
 						}
 
 						const and = remainingWhere.filter(
-							(w) => w.connector === "AND" || !w.connector,
+							(w) => w.connector === 'AND' || !w.connector,
 						);
-						const or = remainingWhere.filter((w) => w.connector === "OR");
+						const or = remainingWhere.filter((w) => w.connector === 'OR');
 						const andClause = and.map((w) => buildSingleCondition(w));
 						const orClause = or.map((w) => buildSingleCondition(w));
 
@@ -283,8 +283,8 @@ export const prismaAdapter = (prisma: PrismaClient, config: PrismaConfig) => {
 					}
 					return buildSingleCondition(w);
 				}
-				const and = where.filter((w) => w.connector === "AND" || !w.connector);
-				const or = where.filter((w) => w.connector === "OR");
+				const and = where.filter((w) => w.connector === 'AND' || !w.connector);
+				const or = where.filter((w) => w.connector === 'OR');
 				const andClause = and.map((w) => buildSingleCondition(w));
 				const orClause = or.map((w) => buildSingleCondition(w));
 
@@ -312,7 +312,7 @@ export const prismaAdapter = (prisma: PrismaClient, config: PrismaConfig) => {
 					const whereClause = convertWhereClause({
 						model,
 						where,
-						action: "findOne",
+						action: 'findOne',
 					});
 					if (!db[model]) {
 						throw new BetterAuthError(
@@ -351,7 +351,7 @@ export const prismaAdapter = (prisma: PrismaClient, config: PrismaConfig) => {
 					const whereClause = convertWhereClause({
 						model,
 						where,
-						action: "findMany",
+						action: 'findMany',
 					});
 					if (!db[model]) {
 						throw new BetterAuthError(
@@ -377,7 +377,7 @@ export const prismaAdapter = (prisma: PrismaClient, config: PrismaConfig) => {
 							? {
 									orderBy: {
 										[getFieldName({ model, field: sortBy.field })]:
-											sortBy.direction === "desc" ? "desc" : "asc",
+											sortBy.direction === 'desc' ? 'desc' : 'asc',
 									},
 								}
 							: {}),
@@ -403,7 +403,7 @@ export const prismaAdapter = (prisma: PrismaClient, config: PrismaConfig) => {
 					const whereClause = convertWhereClause({
 						model,
 						where,
-						action: "count",
+						action: 'count',
 					});
 					if (!db[model]) {
 						throw new BetterAuthError(
@@ -423,7 +423,7 @@ export const prismaAdapter = (prisma: PrismaClient, config: PrismaConfig) => {
 					const whereClause = convertWhereClause({
 						model,
 						where,
-						action: "update",
+						action: 'update',
 					});
 					return await db[model]!.update({
 						where: whereClause,
@@ -439,7 +439,7 @@ export const prismaAdapter = (prisma: PrismaClient, config: PrismaConfig) => {
 					const whereClause = convertWhereClause({
 						model,
 						where,
-						action: "updateMany",
+						action: 'updateMany',
 					});
 					const result = await db[model]!.updateMany({
 						where: whereClause,
@@ -456,7 +456,7 @@ export const prismaAdapter = (prisma: PrismaClient, config: PrismaConfig) => {
 					const whereClause = convertWhereClause({
 						model,
 						where,
-						action: "delete",
+						action: 'delete',
 					});
 					try {
 						await db[model]!.delete({
@@ -464,7 +464,7 @@ export const prismaAdapter = (prisma: PrismaClient, config: PrismaConfig) => {
 						});
 					} catch (e: any) {
 						// If the record doesn't exist, we don't want to throw an error
-						if (e?.meta?.cause === "Record to delete does not exist.") return;
+						if (e?.meta?.cause === 'Record to delete does not exist.') return;
 						// otherwise if it's an unknown error, we want to just log it for debugging.
 						console.log(e);
 					}
@@ -473,7 +473,7 @@ export const prismaAdapter = (prisma: PrismaClient, config: PrismaConfig) => {
 					const whereClause = convertWhereClause({
 						model,
 						where,
-						action: "deleteMany",
+						action: 'deleteMany',
 					});
 					const result = await db[model]!.deleteMany({
 						where: whereClause,
@@ -487,13 +487,13 @@ export const prismaAdapter = (prisma: PrismaClient, config: PrismaConfig) => {
 	let adapterOptions: AdapterFactoryOptions | null = null;
 	adapterOptions = {
 		config: {
-			adapterId: "prisma",
-			adapterName: "Prisma Adapter",
+			adapterId: 'prisma',
+			adapterName: 'Prisma Adapter',
 			usePlural: config.usePlural ?? false,
 			debugLogs: config.debugLogs ?? false,
-			supportsUUIDs: config.provider === "postgresql" ? true : false,
+			supportsUUIDs: config.provider === 'postgresql' ? true : false,
 			supportsArrays:
-				config.provider === "postgresql" || config.provider === "mongodb"
+				config.provider === 'postgresql' || config.provider === 'mongodb'
 					? true
 					: false,
 			transaction:
