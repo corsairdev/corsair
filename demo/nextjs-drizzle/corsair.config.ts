@@ -8,8 +8,6 @@ dotenvConfig({ path: '.env.local' });
 export const config = corsair({
 	dbType: 'postgres',
 	orm: 'drizzle',
-	framework: 'nextjs',
-	pathToCorsairFolder: './corsair',
 	apiEndpoint: process.env.NEXT_PUBLIC_CORSAIR_API_ROUTE!,
 	db: db,
 	connection: process.env.DATABASE_URL!,
@@ -17,9 +15,6 @@ export const config = corsair({
 		{
 			name: 'slack',
 			token: process.env.SLACK_TOKEN!,
-			channels: {
-				general: 'C0A3ZTB9X7X',
-			},
 			schema: {
 				messages: true, // Use default
 				channels: false, // Skip
