@@ -3,7 +3,10 @@ export * from './core';
 export * from './orm';
 
 export { slack } from './plugins/slack';
+import { drizzleAdapter } from './adapters/drizzle';
 import { createCorsair } from './core';
+import { db } from './db';
+import * as schema from './db/schema';
 import { slack } from './plugins/slack';
 import dotenv from 'dotenv';
 
@@ -11,6 +14,7 @@ dotenv.config();
 
 const corsair = createCorsair({
 	multiTenancy: false,
+	database: drizzleAdapter(db, { provider: 'pg', schema }),
 	plugins: [
 		slack({
 			credentials: {
@@ -35,9 +39,9 @@ const corsair = createCorsair({
 // example usage
 
 (async () => {
-	const test = await corsair.slack.messagesDelete({
+	const test = await corsair.slack.postMessage({
 		channel: 'C0A3ZTB9X7X',
-		ts: '1767855020.532059',
+		text: 'Hello, world!',
 	});
 
 	console.log(test);

@@ -38,16 +38,7 @@ export class ApiError extends Error {
 	}
 
 	public isRateLimitError(): boolean {
-		return this.status === 429 || (this.status === 403 && this.isGitHubRateLimit());
-	}
-
-	private isGitHubRateLimit(): boolean {
-		return (
-			typeof this.body === 'object' &&
-			this.body !== null &&
-			typeof this.body.message === 'string' &&
-			this.body.message.toLowerCase().includes('rate limit')
-		);
+		return this.status === 429;
 	}
 }
 

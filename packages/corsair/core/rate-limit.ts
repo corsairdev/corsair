@@ -34,25 +34,6 @@ export const DEFAULT_RATE_LIMIT_CONFIG: RateLimitConfig = {
 	},
 };
 
-export const GITHUB_RATE_LIMIT_CONFIG: RateLimitConfig = {
-	...DEFAULT_RATE_LIMIT_CONFIG,
-	headerNames: {
-		retryAfter: 'retry-after',
-		resetTime: 'x-ratelimit-reset',
-		remaining: 'x-ratelimit-remaining',
-		limit: 'x-ratelimit-limit',
-	},
-	isRateLimitError: (status: number, body: any) => {
-		return (
-			status === 429 ||
-			(status === 403 &&
-				typeof body === 'object' &&
-				body !== null &&
-				typeof body.message === 'string' &&
-				body.message.toLowerCase().includes('rate limit'))
-		);
-	},
-};
 
 export function extractRateLimitInfo(
 	response: Response,
