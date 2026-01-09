@@ -5,4 +5,3 @@ export type ApiResult = {
 	readonly statusText: string;
 	readonly body: any;
 };
-

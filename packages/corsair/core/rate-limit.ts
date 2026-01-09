@@ -1,5 +1,3 @@
-import type { ApiResult } from './ApiResult';
-
 export interface RateLimitConfig {
 	enabled: boolean;
 	maxRetries: number;
@@ -34,7 +32,6 @@ export const DEFAULT_RATE_LIMIT_CONFIG: RateLimitConfig = {
 	},
 };
 
-
 export function extractRateLimitInfo(
 	response: Response,
 	config: RateLimitConfig,
@@ -57,7 +54,8 @@ export function extractRateLimitInfo(
 			const timestamp = parseInt(resetTime, 10);
 			if (!isNaN(timestamp)) {
 				const now = Date.now();
-				const resetMs = timestamp > 1000000000000 ? timestamp : timestamp * 1000;
+				const resetMs =
+					timestamp > 1000000000000 ? timestamp : timestamp * 1000;
 				info.rateLimitReset = resetMs;
 				if (resetMs > now) {
 					info.retryAfter = resetMs - now;
@@ -119,8 +117,7 @@ export function calculateRetryDelay(
 	}
 
 	const delay =
-		config.initialRetryDelay *
-		Math.pow(config.backoffMultiplier, attempt - 1);
+		config.initialRetryDelay * Math.pow(config.backoffMultiplier, attempt - 1);
 
 	return Math.min(delay, 60000);
 }
@@ -128,4 +125,3 @@ export function calculateRetryDelay(
 export async function sleep(ms: number): Promise<void> {
 	return new Promise((resolve) => setTimeout(resolve, ms));
 }
-

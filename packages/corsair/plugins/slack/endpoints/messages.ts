@@ -1,32 +1,48 @@
 import type { CorsairEndpoint, CorsairPluginContext } from '../../../core';
-import type { SlackSchema } from '../schema';
 import { makeSlackRequest } from '../client';
+import type { SlackSchema } from '../schema';
 
-export const postMessage = (token: string): CorsairEndpoint<
+export const postMessage = (
+	token: string,
+): CorsairEndpoint<
 	CorsairPluginContext<'slack', typeof SlackSchema>,
-	[{
-		channel: string;
-		text?: string;
-		blocks?: Array<{ type: string; [key: string]: unknown }>;
-		attachments?: Array<{ [key: string]: unknown }>;
-		thread_ts?: string;
-		reply_broadcast?: boolean;
-		parse?: 'full' | 'none';
-		link_names?: boolean;
-		unfurl_links?: boolean;
-		unfurl_media?: boolean;
-		mrkdwn?: boolean;
-		as_user?: boolean;
-		icon_emoji?: string;
-		icon_url?: string;
-		username?: string;
-		metadata?: { event_type: string; event_payload: Record<string, unknown> };
-		token?: string;
-	}],
-	Promise<{ ok: boolean; channel?: string; ts?: string; message?: { ts?: string; text?: string }; error?: string }>
+	[
+		{
+			channel: string;
+			text?: string;
+			blocks?: Array<{ type: string; [key: string]: unknown }>;
+			attachments?: Array<{ [key: string]: unknown }>;
+			thread_ts?: string;
+			reply_broadcast?: boolean;
+			parse?: 'full' | 'none';
+			link_names?: boolean;
+			unfurl_links?: boolean;
+			unfurl_media?: boolean;
+			mrkdwn?: boolean;
+			as_user?: boolean;
+			icon_emoji?: string;
+			icon_url?: string;
+			username?: string;
+			metadata?: { event_type: string; event_payload: Record<string, unknown> };
+			token?: string;
+		},
+	],
+	Promise<{
+		ok: boolean;
+		channel?: string;
+		ts?: string;
+		message?: { ts?: string; text?: string };
+		error?: string;
+	}>
 > => {
 	return async (ctx, input) => {
-		const result = await makeSlackRequest<{ ok: boolean; channel?: string; ts?: string; message?: { ts?: string; text?: string }; error?: string }>('chat.postMessage', token || input.token || '', {
+		const result = await makeSlackRequest<{
+			ok: boolean;
+			channel?: string;
+			ts?: string;
+			message?: { ts?: string; text?: string };
+			error?: string;
+		}>('chat.postMessage', token || input.token || '', {
 			method: 'POST',
 			body: {
 				channel: input.channel,
@@ -70,13 +86,20 @@ export const postMessage = (token: string): CorsairEndpoint<
 	};
 };
 
-export const deleteMessage = (token: string): CorsairEndpoint<
+export const deleteMessage = (
+	token: string,
+): CorsairEndpoint<
 	CorsairPluginContext<'slack', typeof SlackSchema>,
 	[{ channel: string; ts: string; as_user?: boolean; token?: string }],
 	Promise<{ ok: boolean; channel?: string; ts?: string; error?: string }>
 > => {
 	return async (ctx, input) => {
-		const result = await makeSlackRequest<{ ok: boolean; channel?: string; ts?: string; error?: string }>('chat.delete', token || input.token || '', {
+		const result = await makeSlackRequest<{
+			ok: boolean;
+			channel?: string;
+			ts?: string;
+			error?: string;
+		}>('chat.delete', token || input.token || '', {
 			method: 'POST',
 			body: {
 				channel: input.channel,
@@ -97,26 +120,44 @@ export const deleteMessage = (token: string): CorsairEndpoint<
 	};
 };
 
-export const update = (token: string): CorsairEndpoint<
+export const update = (
+	token: string,
+): CorsairEndpoint<
 	CorsairPluginContext<'slack', typeof SlackSchema>,
-	[{
-		channel: string;
-		ts: string;
+	[
+		{
+			channel: string;
+			ts: string;
+			text?: string;
+			blocks?: Array<{ type: string; [key: string]: unknown }>;
+			attachments?: Array<{ [key: string]: unknown }>;
+			parse?: 'full' | 'none';
+			link_names?: boolean;
+			as_user?: boolean;
+			file_ids?: string[];
+			reply_broadcast?: boolean;
+			metadata?: { event_type: string; event_payload: Record<string, unknown> };
+			token?: string;
+		},
+	],
+	Promise<{
+		ok: boolean;
+		channel?: string;
+		ts?: string;
 		text?: string;
-		blocks?: Array<{ type: string; [key: string]: unknown }>;
-		attachments?: Array<{ [key: string]: unknown }>;
-		parse?: 'full' | 'none';
-		link_names?: boolean;
-		as_user?: boolean;
-		file_ids?: string[];
-		reply_broadcast?: boolean;
-		metadata?: { event_type: string; event_payload: Record<string, unknown> };
-		token?: string;
-	}],
-	Promise<{ ok: boolean; channel?: string; ts?: string; text?: string; message?: { ts?: string; text?: string }; error?: string }>
+		message?: { ts?: string; text?: string };
+		error?: string;
+	}>
 > => {
 	return async (ctx, input) => {
-		const result = await makeSlackRequest<{ ok: boolean; channel?: string; ts?: string; text?: string; message?: { ts?: string; text?: string }; error?: string }>('chat.update', token || input.token || '', {
+		const result = await makeSlackRequest<{
+			ok: boolean;
+			channel?: string;
+			ts?: string;
+			text?: string;
+			message?: { ts?: string; text?: string };
+			error?: string;
+		}>('chat.update', token || input.token || '', {
 			method: 'POST',
 			body: {
 				channel: input.channel,
@@ -154,13 +195,20 @@ export const update = (token: string): CorsairEndpoint<
 	};
 };
 
-export const getPermalink = (token: string): CorsairEndpoint<
+export const getPermalink = (
+	token: string,
+): CorsairEndpoint<
 	CorsairPluginContext<'slack', typeof SlackSchema>,
 	[{ channel: string; message_ts: string; token?: string }],
 	Promise<{ ok: boolean; channel?: string; permalink?: string; error?: string }>
 > => {
 	return async (_ctx, input) => {
-		return makeSlackRequest<{ ok: boolean; channel?: string; permalink?: string; error?: string }>('chat.getPermalink', token || input.token || '', {
+		return makeSlackRequest<{
+			ok: boolean;
+			channel?: string;
+			permalink?: string;
+			error?: string;
+		}>('chat.getPermalink', token || input.token || '', {
 			method: 'GET',
 			query: {
 				channel: input.channel,
@@ -170,13 +218,38 @@ export const getPermalink = (token: string): CorsairEndpoint<
 	};
 };
 
-export const search = (token: string): CorsairEndpoint<
+export const search = (
+	token: string,
+): CorsairEndpoint<
 	CorsairPluginContext<'slack', typeof SlackSchema>,
-	[{ query: string; sort?: 'score' | 'timestamp'; sort_dir?: 'asc' | 'desc'; highlight?: boolean; team_id?: string; cursor?: string; limit?: number; page?: number; count?: number; token?: string }],
-	Promise<{ ok: boolean; query?: string; messages?: { matches?: Array<{ ts?: string; text?: string }> }; error?: string }>
+	[
+		{
+			query: string;
+			sort?: 'score' | 'timestamp';
+			sort_dir?: 'asc' | 'desc';
+			highlight?: boolean;
+			team_id?: string;
+			cursor?: string;
+			limit?: number;
+			page?: number;
+			count?: number;
+			token?: string;
+		},
+	],
+	Promise<{
+		ok: boolean;
+		query?: string;
+		messages?: { matches?: Array<{ ts?: string; text?: string }> };
+		error?: string;
+	}>
 > => {
 	return async (ctx, input) => {
-		const result = await makeSlackRequest<{ ok: boolean; query?: string; messages?: { matches?: Array<{ ts?: string; text?: string }> }; error?: string }>('search.messages', token || input.token || '', {
+		const result = await makeSlackRequest<{
+			ok: boolean;
+			query?: string;
+			messages?: { matches?: Array<{ ts?: string; text?: string }> };
+			error?: string;
+		}>('search.messages', token || input.token || '', {
 			method: 'GET',
 			query: {
 				query: input.query,
@@ -195,16 +268,16 @@ export const search = (token: string): CorsairEndpoint<
 			try {
 				for (const match of result.messages.matches) {
 					if (match.ts) {
-					await ctx.messages.upsertByResourceId({
-						resourceId: match.ts,
-						data: {
-							id: match.ts,
-							ts: match.ts,
-							text: match.text,
-							channel: '',
-							createdAt: new Date(),
-						},
-					});
+						await ctx.messages.upsertByResourceId({
+							resourceId: match.ts,
+							data: {
+								id: match.ts,
+								ts: match.ts,
+								text: match.text,
+								channel: '',
+								createdAt: new Date(),
+							},
+						});
 					}
 				}
 			} catch (error) {
@@ -215,4 +288,3 @@ export const search = (token: string): CorsairEndpoint<
 		return result;
 	};
 };
-

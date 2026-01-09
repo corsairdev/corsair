@@ -4,12 +4,12 @@ import type { ApiResult } from './ApiResult';
 import type { OnCancel } from './CancelablePromise';
 import { CancelablePromise } from './CancelablePromise';
 import type { OpenAPIConfig } from './OpenAPI';
+import type { RateLimitConfig } from './rate-limit';
 import {
-	type RateLimitConfig,
+	calculateRetryDelay,
 	DEFAULT_RATE_LIMIT_CONFIG,
 	extractRateLimitInfo,
 	isRateLimitError,
-	calculateRetryDelay,
 	sleep,
 } from './rate-limit';
 
@@ -98,7 +98,9 @@ const getUrl = (config: OpenAPIConfig, options: ApiRequestOptions): string => {
 			return substring;
 		});
 
-	const baseUrl = config.BASE.endsWith('/') ? config.BASE.slice(0, -1) : config.BASE;
+	const baseUrl = config.BASE.endsWith('/')
+		? config.BASE.slice(0, -1)
+		: config.BASE;
 	const pathWithoutLeadingSlash = path.startsWith('/') ? path.slice(1) : path;
 	const url = `${baseUrl}/${pathWithoutLeadingSlash}`;
 
@@ -108,9 +110,7 @@ const getUrl = (config: OpenAPIConfig, options: ApiRequestOptions): string => {
 	return url;
 };
 
-const getFormData = (
-	options: ApiRequestOptions,
-): FormData | undefined => {
+const getFormData = (options: ApiRequestOptions): FormData | undefined => {
 	if (options.formData) {
 		const formData = new FormData();
 
@@ -334,7 +334,8 @@ export const request = <T>(
 	options: ApiRequestOptions,
 	requestOptions?: RequestOptions,
 ): CancelablePromise<T> => {
-	const rateLimitConfig = requestOptions?.rateLimitConfig || DEFAULT_RATE_LIMIT_CONFIG;
+	const rateLimitConfig =
+		requestOptions?.rateLimitConfig || DEFAULT_RATE_LIMIT_CONFIG;
 
 	return new CancelablePromise(async (resolve, reject, onCancel) => {
 		let attempt = 0;
@@ -435,4 +436,3 @@ export const request = <T>(
 		}
 	});
 };
-

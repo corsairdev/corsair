@@ -14,4 +14,3 @@ export type OpenAPIConfig = {
 	HEADERS?: Headers | Resolver<Headers> | undefined;
 	ENCODE_PATH?: ((path: string) => string) | undefined;
 };
-

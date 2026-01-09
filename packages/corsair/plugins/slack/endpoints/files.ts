@@ -1,14 +1,29 @@
 import type { CorsairEndpoint, CorsairPluginContext } from '../../../core';
-import type { SlackSchema } from '../schema';
 import { makeSlackRequest } from '../client';
+import type { SlackSchema } from '../schema';
 
-export const get = (token: string): CorsairEndpoint<
+export const get = (
+	token: string,
+): CorsairEndpoint<
 	CorsairPluginContext<'slack', typeof SlackSchema>,
-	[{ file: string; cursor?: string; limit?: number; page?: number; count?: number; token?: string }],
+	[
+		{
+			file: string;
+			cursor?: string;
+			limit?: number;
+			page?: number;
+			count?: number;
+			token?: string;
+		},
+	],
 	Promise<{ ok: boolean; file?: { id: string; name?: string }; error?: string }>
 > => {
 	return async (ctx, input) => {
-		const result = await makeSlackRequest<{ ok: boolean; file?: { id: string; name?: string }; error?: string }>('files.info', token || input.token || '', {
+		const result = await makeSlackRequest<{
+			ok: boolean;
+			file?: { id: string; name?: string };
+			error?: string;
+		}>('files.info', token || input.token || '', {
 			method: 'GET',
 			query: {
 				file: input.file,
@@ -37,13 +52,36 @@ export const get = (token: string): CorsairEndpoint<
 	};
 };
 
-export const list = (token: string): CorsairEndpoint<
+export const list = (
+	token: string,
+): CorsairEndpoint<
 	CorsairPluginContext<'slack', typeof SlackSchema>,
-	[{ channel?: string; user?: string; types?: string; ts_from?: string; ts_to?: string; show_files_hidden_by_limit?: boolean; team_id?: string; page?: number; count?: number; token?: string }],
-	Promise<{ ok: boolean; files?: Array<{ id: string; name?: string }>; error?: string }>
+	[
+		{
+			channel?: string;
+			user?: string;
+			types?: string;
+			ts_from?: string;
+			ts_to?: string;
+			show_files_hidden_by_limit?: boolean;
+			team_id?: string;
+			page?: number;
+			count?: number;
+			token?: string;
+		},
+	],
+	Promise<{
+		ok: boolean;
+		files?: Array<{ id: string; name?: string }>;
+		error?: string;
+	}>
 > => {
 	return async (ctx, input) => {
-		const result = await makeSlackRequest<{ ok: boolean; files?: Array<{ id: string; name?: string }>; error?: string }>('files.list', token || input.token || '', {
+		const result = await makeSlackRequest<{
+			ok: boolean;
+			files?: Array<{ id: string; name?: string }>;
+			error?: string;
+		}>('files.list', token || input.token || '', {
 			method: 'GET',
 			query: {
 				channel: input.channel,
@@ -80,13 +118,31 @@ export const list = (token: string): CorsairEndpoint<
 	};
 };
 
-export const upload = (token: string): CorsairEndpoint<
+export const upload = (
+	token: string,
+): CorsairEndpoint<
 	CorsairPluginContext<'slack', typeof SlackSchema>,
-	[{ channels?: string; content?: string; file?: unknown; filename?: string; filetype?: string; initial_comment?: string; thread_ts?: string; title?: string; token?: string }],
+	[
+		{
+			channels?: string;
+			content?: string;
+			file?: unknown;
+			filename?: string;
+			filetype?: string;
+			initial_comment?: string;
+			thread_ts?: string;
+			title?: string;
+			token?: string;
+		},
+	],
 	Promise<{ ok: boolean; file?: { id: string; name?: string }; error?: string }>
 > => {
 	return async (ctx, input) => {
-		const result = await makeSlackRequest<{ ok: boolean; file?: { id: string; name?: string }; error?: string }>('files.upload', token || input.token || '', {
+		const result = await makeSlackRequest<{
+			ok: boolean;
+			file?: { id: string; name?: string };
+			error?: string;
+		}>('files.upload', token || input.token || '', {
 			method: 'POST',
 			body: {
 				channels: input.channels,
@@ -119,4 +175,3 @@ export const upload = (token: string): CorsairEndpoint<
 		return result;
 	};
 };
-

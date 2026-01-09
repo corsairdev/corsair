@@ -1,6 +1,6 @@
+import type { ApiRequestOptions } from '../../core/ApiRequestOptions';
 import type { OpenAPIConfig } from '../../core/OpenAPI';
 import { request } from '../../core/request';
-import type { ApiRequestOptions } from '../../core/ApiRequestOptions';
 
 export class SlackAPIError extends Error {
 	constructor(
@@ -42,18 +42,25 @@ export async function makeSlackRequest<T>(
 	const requestOptions: ApiRequestOptions = {
 		method,
 		url: endpoint,
-		body: method === 'POST' || method === 'PUT' || method === 'PATCH' ? bodyWithToken : undefined,
+		body:
+			method === 'POST' || method === 'PUT' || method === 'PATCH'
+				? bodyWithToken
+				: undefined,
 		mediaType: 'application/json; charset=utf-8',
 		query: method === 'GET' ? queryWithToken : undefined,
 	};
 
 	const response = await request<T>(config, requestOptions);
 
-	if (response && typeof response === 'object' && 'ok' in response && !response.ok) {
+	if (
+		response &&
+		typeof response === 'object' &&
+		'ok' in response &&
+		!response.ok
+	) {
 		const error = (response as { error?: string }).error || 'Unknown error';
 		throw new SlackAPIError(error, error);
 	}
 
 	return response;
 }
-

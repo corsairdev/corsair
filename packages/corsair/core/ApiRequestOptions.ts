@@ -18,4 +18,3 @@ export type ApiRequestOptions = {
 	readonly responseHeader?: string;
 	readonly errors?: Record<number, string>;
 };
-

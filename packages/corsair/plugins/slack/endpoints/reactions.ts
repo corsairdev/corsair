@@ -1,8 +1,10 @@
 import type { CorsairEndpoint, CorsairPluginContext } from '../../../core';
-import type { SlackSchema } from '../schema';
 import { makeSlackRequest } from '../client';
+import type { SlackSchema } from '../schema';
 
-export const add = (token: string): CorsairEndpoint<
+export const add = (
+	token: string,
+): CorsairEndpoint<
 	CorsairPluginContext<'slack', typeof SlackSchema>,
 	[{ channel: string; timestamp: string; name: string; token?: string }],
 	Promise<{ ok: boolean; error?: string }>
@@ -19,10 +21,26 @@ export const add = (token: string): CorsairEndpoint<
 	};
 };
 
-export const get = (token: string): CorsairEndpoint<
+export const get = (
+	token: string,
+): CorsairEndpoint<
 	CorsairPluginContext<'slack', typeof SlackSchema>,
-	[{ channel?: string; timestamp?: string; file?: string; file_comment?: string; full?: boolean; token?: string }],
-	Promise<{ ok: boolean; type?: string; message?: { ts?: string }; error?: string }>
+	[
+		{
+			channel?: string;
+			timestamp?: string;
+			file?: string;
+			file_comment?: string;
+			full?: boolean;
+			token?: string;
+		},
+	],
+	Promise<{
+		ok: boolean;
+		type?: string;
+		message?: { ts?: string };
+		error?: string;
+	}>
 > => {
 	return async (_ctx, input) => {
 		return makeSlackRequest('reactions.get', token || input.token || '', {
@@ -38,9 +56,20 @@ export const get = (token: string): CorsairEndpoint<
 	};
 };
 
-export const remove = (token: string): CorsairEndpoint<
+export const remove = (
+	token: string,
+): CorsairEndpoint<
 	CorsairPluginContext<'slack', typeof SlackSchema>,
-	[{ name: string; channel?: string; timestamp?: string; file?: string; file_comment?: string; token?: string }],
+	[
+		{
+			name: string;
+			channel?: string;
+			timestamp?: string;
+			file?: string;
+			file_comment?: string;
+			token?: string;
+		},
+	],
 	Promise<{ ok: boolean; error?: string }>
 > => {
 	return async (_ctx, input) => {
@@ -56,4 +85,3 @@ export const remove = (token: string): CorsairEndpoint<
 		});
 	};
 };
-

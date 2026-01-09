@@ -124,4 +124,3 @@ export class CancelablePromise<T> implements Promise<T> {
 		return this.#isCancelled;
 	}
 }
-
