@@ -1,10 +1,6 @@
-import type { BetterAuthOptions } from '@better-auth/core';
 import type { ZodTypeAny } from 'zod';
-import type {
-	CorsairOrmConfig,
-	CorsairOrmServiceClient,
-	CorsairPluginOrmSchema,
-} from './orm';
+import type { CorsairDbAdapter } from './adapters/types';
+import type { CorsairOrmServiceClient, CorsairPluginOrmSchema } from './orm';
 import { createCorsairServiceOrm } from './orm';
 
 export type Providers =
@@ -15,12 +11,22 @@ export type Providers =
 	| 'gmail'
 	| (string & {});
 
-export type CorsairContext<P extends CorsairPlugin[] = []> = {};
+/**
+ * The context object passed as the first argument to every plugin endpoint/hook.
+ *
+ * At runtime, each plugin endpoint receives a **plugin-scoped** context:
+ * - base context fields defined here
+ * - plus the plugin's ORM service clients (e.g. `ctx.messages.*`, `ctx.channels.*`)
+ *   generated from that plugin's `schema.services`
+ */
+export type CorsairContext = {
+	/**
+	 * The configured Corsair DB adapter (if provided to `createCorsair`).
+	 */
+	database?: CorsairDbAdapter | undefined;
+};
 
-export type CorsairTenantContext<P extends CorsairPlugin[] = []> =
-	CorsairContext<P> & {
-		tenantId: string;
-	};
+export type CorsairTenantContext = CorsairContext;
 
 type BivariantCallback<Args extends unknown[], R> = {
 	// NOTE: This “bivariance hack” is intentional.
@@ -103,6 +109,11 @@ type InferOrmServices<
 		}
 	: {};
 
+export type CorsairPluginContext<
+	Resource extends string,
+	Schema extends CorsairPluginOrmSchema<Record<string, ZodTypeAny>> | undefined,
+> = CorsairContext & InferOrmServices<Resource, Schema>;
+
 type InferPluginNamespaces<Plugins extends readonly CorsairPlugin[]> =
 	UnionToIntersection<
 		Plugins[number] extends infer P
@@ -123,12 +134,14 @@ type InferPluginNamespaces<Plugins extends readonly CorsairPlugin[]> =
 type Prettify<T> = { [K in keyof T]: T[K] } & {};
 
 export type CorsairIntegration<Plugins extends readonly CorsairPlugin[]> = {
-	database?: BetterAuthOptions['database'];
 	/**
-	 * Optional shared resource-table ORM config. If provided, each configured plugin can expose
+	 * Optional shared resource-table DB adapter. If provided, each configured plugin can expose
 	 * `plugin.<service>.*` methods (e.g. `slack.messages.findByResourceId(...)`).
 	 */
-	orm?: CorsairOrmConfig | undefined;
+	/**
+	 * Better-Auth-style database adapter entrypoint.
+	 */
+	database?: CorsairDbAdapter | undefined;
 	plugins: Plugins;
 	/**
 	 * If true, two plugins defining the same table name throws.
@@ -148,17 +161,48 @@ export type CorsairTenantWrapper<Plugins extends readonly CorsairPlugin[]> = {
 
 function buildCorsairClient<const Plugins extends readonly CorsairPlugin[]>(
 	plugins: Plugins,
-	ctx: CorsairContext,
-	orm: CorsairOrmConfig | undefined,
+	baseCtx: CorsairContext,
+	database: CorsairDbAdapter | undefined,
 	tenantId: string | undefined,
 ): CorsairClient<Plugins> {
 	// NOTE: This is constructed dynamically from runtime plugin ids + endpoint keys.
 	// TS can't model that perfectly during mutation, so we build an `unknown` map and
 	// assert it to the computed type at the end.
 	const apiUnsafe: Record<string, Record<string, unknown>> = {};
+	const pluginOrmUnsafe: Record<string, Record<string, unknown>> = {};
 
 	for (const plugin of plugins) {
 		apiUnsafe[plugin.id] = {};
+		pluginOrmUnsafe[plugin.id] = {};
+	}
+
+	for (const plugin of plugins) {
+		// Auto-generate ORM service namespaces from plugin schema, if present.
+		if (plugin.schema?.services) {
+			for (const [service, dataSchema] of Object.entries(
+				plugin.schema.services,
+			)) {
+				const serviceOrm = createCorsairServiceOrm({
+					database,
+					resource: plugin.id,
+					service,
+					tenantId,
+					version: plugin.schema.version,
+					dataSchema: dataSchema as ZodTypeAny,
+				});
+				pluginOrmUnsafe[plugin.id]![service] = serviceOrm;
+				apiUnsafe[plugin.id]![service] = serviceOrm;
+			}
+		}
+
+		// Each plugin endpoint gets a plugin-scoped context:
+		// `{ ...baseCtx, database, ...<that plugin's service orms> }`.
+		const ctxForPlugin = {
+			...(baseCtx as Record<string, unknown>),
+			database,
+			...(pluginOrmUnsafe[plugin.id] ?? {}),
+		} as CorsairContext;
+
 		const endpoints = plugin.endpoints ?? {};
 		for (const [key, fn] of Object.entries(endpoints)) {
 			// NOTE: `Object.entries()` returns `(string, unknown)`; we know `fn` is a `CorsairEndpoint`
@@ -166,25 +210,9 @@ function buildCorsairClient<const Plugins extends readonly CorsairPlugin[]>(
 			// because the specific tuple/return type depends on which plugin/method key is accessed.
 			apiUnsafe[plugin.id]![key] = (...args: unknown[]) =>
 				(fn as CorsairEndpoint<CorsairContext, unknown[], unknown>)(
-					ctx,
+					ctxForPlugin,
 					...args,
 				);
-		}
-
-		// Auto-generate ORM service namespaces from plugin schema, if present.
-		if (plugin.schema?.services) {
-			for (const [service, dataSchema] of Object.entries(
-				plugin.schema.services,
-			)) {
-				apiUnsafe[plugin.id]![service] = createCorsairServiceOrm({
-					orm,
-					resource: plugin.id,
-					service,
-					tenantId,
-					version: plugin.schema.version,
-					dataSchema: dataSchema as ZodTypeAny,
-				});
-			}
 		}
 	}
 
@@ -218,18 +246,13 @@ export function createCorsair<const Plugins extends readonly CorsairPlugin[]>(
 				}
 				return buildCorsairClient(
 					config.plugins,
-					{ tenantId } as CorsairContext,
-					config.orm,
+					{},
+					config.database,
 					tenantId,
 				);
 			},
 		};
 	}
 
-	return buildCorsairClient(
-		config.plugins,
-		{} as CorsairContext,
-		config.orm,
-		undefined,
-	);
+	return buildCorsairClient(config.plugins, {}, config.database, undefined);
 }

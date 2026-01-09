@@ -1,6 +1,10 @@
-import type { Insertable, Kysely, Selectable, Updateable } from 'kysely';
-
 import type { ZodTypeAny, z } from 'zod';
+
+import type {
+	CorsairDbAdapter,
+	CorsairTableName,
+	CorsairWhere,
+} from './adapters/types';
 
 export type CorsairResourcesTable = {
 	id: string;
@@ -25,9 +29,7 @@ export type CorsairOrmDatabase = {
 	corsair_resources: CorsairResourcesTable;
 };
 
-type CorsairResourceRow = Selectable<CorsairResourcesTable>;
-type CorsairResourceInsert = Insertable<CorsairResourcesTable>;
-type CorsairResourceUpdate = Updateable<CorsairResourcesTable>;
+type CorsairResourceRow = CorsairResourcesTable;
 
 export type CorsairOrmServiceClient<
 	Resource extends string,
@@ -104,38 +106,12 @@ export type CorsairPluginOrmSchema<
 	services: Services;
 };
 
-export type CorsairOrmConfig = {
-	/**
-	 * Kysely instance used to query the shared resource table.
-	 */
-	db: Kysely<CorsairOrmDatabase>;
-	/**
-	 * Shared table name.
-	 *
-	 * @default "corsair_resources"
-	 */
-	tableName?: keyof CorsairOrmDatabase | (string & {}) | undefined;
-	/**
-	 * Optional id generator for new rows.
-	 *
-	 * If not provided, Corsair falls back to `generateUuidV4()`.
-	 */
-	idGenerator?: (() => string) | undefined;
-	/**
-	 * Used when `multiTenancy: false` (so `withTenant()` isn't used) but the table still
-	 * requires a `tenant_id` value.
-	 *
-	 * @default "default"
-	 */
-	defaultTenantId?: string | undefined;
-};
-
 type CreateServiceOrmArgs<
 	Resource extends string,
 	Service extends string,
 	DataSchema extends ZodTypeAny,
 > = {
-	orm: CorsairOrmConfig | undefined;
+	database: CorsairDbAdapter | undefined;
 	resource: Resource;
 	service: Service;
 	tenantId: string | undefined;
@@ -154,18 +130,14 @@ function parseJsonLike(value: unknown): unknown {
 	return value;
 }
 
-function assertOrmConfigured(
-	orm: CorsairOrmConfig | undefined,
-): asserts orm is CorsairOrmConfig {
-	if (!orm?.db) {
+function assertDatabaseConfigured(
+	database: CorsairDbAdapter | undefined,
+): asserts database is CorsairDbAdapter {
+	if (!database) {
 		throw new Error(
-			'Corsair ORM is not configured. Pass `orm: { db }` to createCorsair(...) to enable plugin service ORM.',
+			'Corsair database is not configured. Pass `database` to createCorsair(...) to enable plugin service ORM.',
 		);
 	}
-}
-
-function defaultTenantId(orm: CorsairOrmConfig): string {
-	return orm.defaultTenantId ?? 'default';
 }
 
 function generateUuidV4(): string {
@@ -184,10 +156,6 @@ function generateUuidV4(): string {
 	});
 }
 
-function generateId(orm: CorsairOrmConfig): string {
-	return orm.idGenerator?.() ?? generateUuidV4();
-}
-
 export function createCorsairServiceOrm<
 	Resource extends string,
 	Service extends string,
@@ -195,32 +163,31 @@ export function createCorsairServiceOrm<
 >(
 	args: CreateServiceOrmArgs<Resource, Service, DataSchema>,
 ): CorsairOrmServiceClient<Resource, Service, DataSchema> {
-	const tableName = (args.orm?.tableName ?? 'corsair_resources') as any;
+	const tableName = 'corsair_resources' as CorsairTableName;
 
-	function baseQuery(orm: CorsairOrmConfig) {
-		let q = orm.db
-			.selectFrom(tableName)
-			.selectAll()
-			.where('resource', '=', args.resource as any)
-			.where('service', '=', args.service as any);
+	function baseWhere(): CorsairWhere[] {
+		const where: CorsairWhere[] = [
+			{ field: 'resource', value: args.resource },
+			{ field: 'service', value: args.service },
+		];
 		// IMPORTANT: only tenant-scope if a tenantId was provided (i.e. multiTenancy true + withTenant used).
 		if (args.tenantId) {
-			q = q.where('tenant_id', '=', args.tenantId as any);
+			where.push({ field: 'tenant_id', value: args.tenantId });
 		}
-		return q;
+		return where;
 	}
 
 	async function findRowBy(where: { id?: string; resource_id?: string }) {
-		assertOrmConfigured(args.orm);
-		let q = baseQuery(args.orm);
-		if (where.id) {
-			q = q.where('id', '=', where.id as any);
-		}
-		if (where.resource_id) {
-			q = q.where('resource_id', '=', where.resource_id as any);
-		}
+		assertDatabaseConfigured(args.database);
+		const fullWhere = baseWhere();
+		if (where.id) fullWhere.push({ field: 'id', value: where.id });
+		if (where.resource_id)
+			fullWhere.push({ field: 'resource_id', value: where.resource_id });
 
-		return (await q.executeTakeFirst()) as CorsairResourceRow | null;
+		return await args.database.findOne<CorsairResourceRow>({
+			table: tableName,
+			where: fullWhere,
+		});
 	}
 
 	function parseRowData(row: CorsairResourceRow): z.infer<DataSchema> {
@@ -239,64 +206,76 @@ export function createCorsairServiceOrm<
 			return row ? parseRowData(row) : null;
 		},
 		findManyByResourceIds: async (resourceIds: string[]) => {
-			assertOrmConfigured(args.orm);
+			assertDatabaseConfigured(args.database);
 			if (resourceIds.length === 0) return [];
-			const rows = (await baseQuery(args.orm)
-				.where('resource_id', 'in', resourceIds as any)
-				.execute()) as CorsairResourceRow[];
+			const rows = await args.database.findMany<CorsairResourceRow>({
+				table: tableName,
+				where: [
+					...baseWhere(),
+					{ field: 'resource_id', operator: 'in', value: resourceIds },
+				],
+			});
 			return rows.map(parseRowData);
 		},
 		list: async (options) => {
-			assertOrmConfigured(args.orm);
+			assertDatabaseConfigured(args.database);
 			const limit = options?.limit ?? 100;
 			const offset = options?.offset ?? 0;
-			const rows = (await baseQuery(args.orm)
-				.limit(limit as any)
-				.offset(offset as any)
-				.execute()) as CorsairResourceRow[];
+			const rows = await args.database.findMany<CorsairResourceRow>({
+				table: tableName,
+				where: baseWhere(),
+				limit,
+				offset,
+			});
 			return rows.map(parseRowData);
 		},
 		searchByResourceId: async (options) => {
-			assertOrmConfigured(args.orm);
+			assertDatabaseConfigured(args.database);
 			const limit = options.limit ?? 100;
 			const offset = options.offset ?? 0;
 			const query = options.query ?? '';
-			const rows = (await baseQuery(args.orm)
-				.where('resource_id', 'like', `%${query}%` as any)
-				.limit(limit as any)
-				.offset(offset as any)
-				.execute()) as CorsairResourceRow[];
+			const rows = await args.database.findMany<CorsairResourceRow>({
+				table: tableName,
+				where: [
+					...baseWhere(),
+					{ field: 'resource_id', operator: 'like', value: `%${query}%` },
+				],
+				limit,
+				offset,
+			});
 			return rows.map(parseRowData);
 		},
 		upsertByResourceId: async (input) => {
-			assertOrmConfigured(args.orm);
+			assertDatabaseConfigured(args.database);
 			const parsed = args.dataSchema.parse(input.data);
-			const tenant_id = args.tenantId ?? defaultTenantId(args.orm);
+			const tenant_id = args.tenantId ?? 'default';
 
-			const existing = (await args.orm.db
-				.selectFrom(tableName)
-				.select(['id'] as any)
-				.where('resource', '=', args.resource as any)
-				.where('service', '=', args.service as any)
-				.where('resource_id', '=', input.resourceId as any)
-				.where('tenant_id', '=', tenant_id as any)
-				.executeTakeFirst()) as { id: string } | undefined;
+			const existing = await args.database.findOne<{ id: string }>({
+				table: tableName,
+				select: ['id'],
+				where: [
+					{ field: 'resource', value: args.resource },
+					{ field: 'service', value: args.service },
+					{ field: 'resource_id', value: input.resourceId },
+					{ field: 'tenant_id', value: tenant_id },
+				],
+			});
 
 			if (existing?.id) {
-				const update: CorsairResourceUpdate = {
+				const update = {
 					version: args.version,
 					data: parsed as unknown,
 				};
-				await args.orm.db
-					.updateTable(tableName)
-					.set(update as any)
-					.where('id', '=', existing.id as any)
-					.execute();
+				await args.database.update({
+					table: tableName,
+					where: [{ field: 'id', value: existing.id }],
+					data: update,
+				});
 				return parsed;
 			}
 
-			const insert: CorsairResourceInsert = {
-				id: generateId(args.orm),
+			const insert = {
+				id: generateUuidV4(),
 				tenant_id,
 				resource_id: input.resourceId,
 				resource: args.resource,
@@ -304,42 +283,41 @@ export function createCorsairServiceOrm<
 				version: args.version,
 				data: parsed as unknown,
 			};
-			await args.orm.db
-				.insertInto(tableName)
-				.values(insert as any)
-				.execute();
+			await args.database.insert({
+				table: tableName,
+				data: insert,
+			});
 			return parsed;
 		},
 		deleteById: async (id: string) => {
-			assertOrmConfigured(args.orm);
-			const res = await args.orm.db
-				.deleteFrom(tableName)
-				.where('id', '=', id as any)
-				.executeTakeFirst();
-			return Number((res as any)?.numDeletedRows ?? 0) > 0;
+			assertDatabaseConfigured(args.database);
+			const deleted = await args.database.deleteMany({
+				table: tableName,
+				where: [{ field: 'id', value: id }],
+			});
+			return deleted > 0;
 		},
 		deleteByResourceId: async (resourceId: string) => {
-			assertOrmConfigured(args.orm);
-			let q = args.orm.db
-				.deleteFrom(tableName)
-				.where('resource', '=', args.resource as any)
-				.where('service', '=', args.service as any)
-				.where('resource_id', '=', resourceId as any);
-			if (args.tenantId) {
-				q = q.where('tenant_id', '=', args.tenantId as any);
-			}
-			const res = await q.executeTakeFirst();
-			return Number((res as any)?.numDeletedRows ?? 0);
+			assertDatabaseConfigured(args.database);
+			const deleted = await args.database.deleteMany({
+				table: tableName,
+				where: [
+					{ field: 'resource', value: args.resource },
+					{ field: 'service', value: args.service },
+					{ field: 'resource_id', value: resourceId },
+					...(args.tenantId
+						? [{ field: 'tenant_id', value: args.tenantId }]
+						: []),
+				],
+			});
+			return deleted;
 		},
 		count: async () => {
-			assertOrmConfigured(args.orm);
-			const res = await baseQuery(args.orm)
-				.select((eb: any) => eb.fn.count('id').as('count'))
-				.executeTakeFirst();
-			const countVal = (res as any)?.count;
-			if (typeof countVal === 'number') return countVal;
-			if (typeof countVal === 'bigint') return Number(countVal);
-			return Number.parseInt(String(countVal ?? 0), 10);
+			assertDatabaseConfigured(args.database);
+			return await args.database.count({
+				table: tableName,
+				where: baseWhere(),
+			});
 		},
 	};
 }
