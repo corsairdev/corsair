@@ -12,23 +12,22 @@ import {
 	calculateRetryDelay,
 	sleep,
 } from './rate-limit';
-import { getRateLimitConfig } from './rate-limit-config';
 
-export const isDefined = <T>(
+const isDefined = <T>(
 	value: T | null | undefined,
 ): value is Exclude<T, null | undefined> => {
 	return value !== undefined && value !== null;
 };
 
-export const isString = (value: any): value is string => {
+const isString = (value: any): value is string => {
 	return typeof value === 'string';
 };
 
-export const isStringWithValue = (value: any): value is string => {
+const isStringWithValue = (value: any): value is string => {
 	return isString(value) && value !== '';
 };
 
-export const isBlob = (value: any): value is Blob => {
+const isBlob = (value: any): value is Blob => {
 	return (
 		typeof value === 'object' &&
 		typeof value.type === 'string' &&
@@ -41,11 +40,11 @@ export const isBlob = (value: any): value is Blob => {
 	);
 };
 
-export const isFormData = (value: any): value is FormData => {
+const isFormData = (value: any): value is FormData => {
 	return value instanceof FormData;
 };
 
-export const base64 = (str: string): string => {
+const base64 = (str: string): string => {
 	try {
 		return btoa(str);
 	} catch (err) {
@@ -53,7 +52,7 @@ export const base64 = (str: string): string => {
 	}
 };
 
-export const getQueryString = (params: Record<string, any>): string => {
+const getQueryString = (params: Record<string, any>): string => {
 	const qs: string[] = [];
 
 	const append = (key: string, value: any) => {
@@ -109,7 +108,7 @@ const getUrl = (config: OpenAPIConfig, options: ApiRequestOptions): string => {
 	return url;
 };
 
-export const getFormData = (
+const getFormData = (
 	options: ApiRequestOptions,
 ): FormData | undefined => {
 	if (options.formData) {
@@ -140,7 +139,7 @@ export const getFormData = (
 
 type Resolver<T> = (options: ApiRequestOptions) => Promise<T>;
 
-export const resolve = async <T>(
+const resolve = async <T>(
 	options: ApiRequestOptions,
 	resolver?: T | Resolver<T>,
 ): Promise<T | undefined> => {
@@ -150,7 +149,7 @@ export const resolve = async <T>(
 	return resolver;
 };
 
-export const getHeaders = async (
+const getHeaders = async (
 	config: OpenAPIConfig,
 	options: ApiRequestOptions,
 ): Promise<Headers> => {
@@ -199,7 +198,7 @@ export const getHeaders = async (
 	return new Headers(headers);
 };
 
-export const getRequestBody = (options: ApiRequestOptions): any => {
+const getRequestBody = (options: ApiRequestOptions): any => {
 	if (options.body !== undefined) {
 		if (options.mediaType?.includes('/json')) {
 			return JSON.stringify(options.body);
@@ -216,7 +215,7 @@ export const getRequestBody = (options: ApiRequestOptions): any => {
 	return undefined;
 };
 
-export const sendRequest = async (
+const sendRequest = async (
 	config: OpenAPIConfig,
 	options: ApiRequestOptions,
 	url: string,
@@ -243,7 +242,7 @@ export const sendRequest = async (
 	return await fetch(url, request);
 };
 
-export const getResponseHeader = (
+const getResponseHeader = (
 	response: Response,
 	responseHeader?: string,
 ): string | undefined => {
@@ -256,7 +255,7 @@ export const getResponseHeader = (
 	return undefined;
 };
 
-export const getResponseBody = async (response: Response): Promise<any> => {
+const getResponseBody = async (response: Response): Promise<any> => {
 	if (response.status !== 204) {
 		try {
 			const contentType = response.headers.get('Content-Type');
@@ -278,7 +277,7 @@ export const getResponseBody = async (response: Response): Promise<any> => {
 	return undefined;
 };
 
-export const catchErrorCodes = (
+const catchErrorCodes = (
 	options: ApiRequestOptions,
 	result: ApiResult,
 	rateLimitInfo?: {
@@ -335,10 +334,7 @@ export const request = <T>(
 	options: ApiRequestOptions,
 	requestOptions?: RequestOptions,
 ): CancelablePromise<T> => {
-	const sdkName = (config as any).SDK_NAME as string | undefined;
-	const rateLimitConfig =
-		requestOptions?.rateLimitConfig ||
-		(sdkName ? getRateLimitConfig(sdkName) : DEFAULT_RATE_LIMIT_CONFIG);
+	const rateLimitConfig = requestOptions?.rateLimitConfig || DEFAULT_RATE_LIMIT_CONFIG;
 
 	return new CancelablePromise(async (resolve, reject, onCancel) => {
 		let attempt = 0;

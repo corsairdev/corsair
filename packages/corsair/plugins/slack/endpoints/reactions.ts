@@ -1,8 +1,9 @@
-import type { CorsairEndpoint, CorsairContext } from '../../../core';
+import type { CorsairEndpoint, CorsairPluginContext } from '../../../core';
+import type { SlackSchema } from '../schema';
 import { makeSlackRequest } from '../client';
 
 export const add = (token: string): CorsairEndpoint<
-	CorsairContext,
+	CorsairPluginContext<'slack', typeof SlackSchema>,
 	[{ channel: string; timestamp: string; name: string; token?: string }],
 	Promise<{ ok: boolean; error?: string }>
 > => {
@@ -19,7 +20,7 @@ export const add = (token: string): CorsairEndpoint<
 };
 
 export const get = (token: string): CorsairEndpoint<
-	CorsairContext,
+	CorsairPluginContext<'slack', typeof SlackSchema>,
 	[{ channel?: string; timestamp?: string; file?: string; file_comment?: string; full?: boolean; token?: string }],
 	Promise<{ ok: boolean; type?: string; message?: { ts?: string }; error?: string }>
 > => {
@@ -38,7 +39,7 @@ export const get = (token: string): CorsairEndpoint<
 };
 
 export const remove = (token: string): CorsairEndpoint<
-	CorsairContext,
+	CorsairPluginContext<'slack', typeof SlackSchema>,
 	[{ name: string; channel?: string; timestamp?: string; file?: string; file_comment?: string; token?: string }],
 	Promise<{ ok: boolean; error?: string }>
 > => {
