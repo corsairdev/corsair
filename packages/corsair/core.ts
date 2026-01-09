@@ -1,4 +1,5 @@
 import type { ZodTypeAny } from 'zod';
+import { withTenantAdapter } from './adapters/tenant';
 import type { CorsairDbAdapter } from './adapters/types';
 import type { CorsairOrmServiceClient, CorsairPluginOrmSchema } from './orm';
 import { createCorsairServiceOrm } from './orm';
@@ -165,6 +166,9 @@ function buildCorsairClient<const Plugins extends readonly CorsairPlugin[]>(
 	database: CorsairDbAdapter | undefined,
 	tenantId: string | undefined,
 ): CorsairClient<Plugins> {
+	const scopedDatabase =
+		database && tenantId ? withTenantAdapter(database, tenantId) : database;
+
 	// NOTE: This is constructed dynamically from runtime plugin ids + endpoint keys.
 	// TS can't model that perfectly during mutation, so we build an `unknown` map and
 	// assert it to the computed type at the end.
@@ -183,7 +187,7 @@ function buildCorsairClient<const Plugins extends readonly CorsairPlugin[]>(
 				plugin.schema.services,
 			)) {
 				const serviceOrm = createCorsairServiceOrm({
-					database,
+					database: scopedDatabase,
 					resource: plugin.id,
 					service,
 					tenantId,
@@ -199,7 +203,7 @@ function buildCorsairClient<const Plugins extends readonly CorsairPlugin[]>(
 		// `{ ...baseCtx, database, ...<that plugin's service orms> }`.
 		const ctxForPlugin = {
 			...(baseCtx as Record<string, unknown>),
-			database,
+			database: scopedDatabase,
 			...(pluginOrmUnsafe[plugin.id] ?? {}),
 		} as CorsairContext;
 
