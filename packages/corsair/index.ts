@@ -1,12 +1,12 @@
+export * from './adapters';
 export * from './core';
 export * from './orm';
 
 export { slack } from './plugins/slack';
-
 import { createCorsair } from './core';
 import { slack } from './plugins/slack';
 
-export const corsair = createCorsair({
+const corsair = createCorsair({
 	multiTenancy: true,
 	plugins: [
 		slack({
@@ -28,3 +28,5 @@ export const corsair = createCorsair({
 		}),
 	],
 });
+
+// const res = await corsair.withTenant('').slack.channels.count()

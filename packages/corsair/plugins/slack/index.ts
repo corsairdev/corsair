@@ -1,7 +1,7 @@
 import type {
-	CorsairContext,
 	CorsairEndpoint,
 	CorsairPlugin,
+	CorsairPluginContext,
 } from '../../core';
 import { postMessage } from './endpoints/post-message';
 import type { SlackCredentials } from './schema';
@@ -25,7 +25,7 @@ export type SlackPluginOptions = {
 
 export type SlackEndpoints = {
 	postMessage: CorsairEndpoint<
-		CorsairContext,
+		CorsairPluginContext<'slack', typeof SlackSchema>,
 		[
 			input: {
 				channel: string;

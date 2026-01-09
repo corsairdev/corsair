@@ -4,6 +4,8 @@
     "lib": ["esnext", "dom", "dom.iterable"],
     "types": ["node"],
     "jsx": "react-jsx",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
     "outDir": "./dist",
     "rootDir": "./",
     "composite": false,
