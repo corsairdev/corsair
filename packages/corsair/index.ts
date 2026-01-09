@@ -3,6 +3,7 @@ export * from './core';
 export * from './orm';
 
 export { slack } from './plugins/slack';
+
 import { createCorsair } from './core';
 import { slack } from './plugins/slack';
 
