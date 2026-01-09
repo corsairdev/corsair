@@ -2,14 +2,60 @@
   "name": "corsair",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "dev-source": "./index.ts",
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./core": {
+      "dev-source": "./core.ts",
+      "types": "./dist/core.d.ts",
+      "default": "./dist/core.js"
+    },
+    "./orm": {
+      "dev-source": "./orm.ts",
+      "types": "./dist/orm.d.ts",
+      "default": "./dist/orm.js"
+    },
+    "./adapters": {
+      "dev-source": "./adapters/index.ts",
+      "types": "./dist/adapters/index.d.ts",
+      "default": "./dist/adapters/index.js"
+    },
+    "./adapters/drizzle": {
+      "dev-source": "./adapters/drizzle/index.ts",
+      "types": "./dist/adapters/drizzle/index.d.ts",
+      "default": "./dist/adapters/drizzle/index.js"
+    },
+    "./adapters/kysely": {
+      "dev-source": "./adapters/kysely/index.ts",
+      "types": "./dist/adapters/kysely/index.d.ts",
+      "default": "./dist/adapters/kysely/index.js"
+    },
+    "./adapters/prisma": {
+      "dev-source": "./adapters/prisma/index.ts",
+      "types": "./dist/adapters/prisma/index.d.ts",
+      "default": "./dist/adapters/prisma/index.js"
+    },
+    "./plugins/slack": {
+      "dev-source": "./plugins/slack/index.ts",
+      "types": "./dist/plugins/slack/index.d.ts",
+      "default": "./dist/plugins/slack/index.js"
+    }
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsc -p tsconfig.json",
+    "build": "tsup && tsc -p tsconfig.build.json",
+    "build:watch": "tsup --watch",
+    "typecheck": "tsc --noEmit",
     "ind": "tsx index.ts"
   },
   "dependencies": {
-    "@better-auth/core": "latest",
     "c12": "^3.3.2",
     "jiti": "^2.6.1",
     "zod": "^3.25.76"
@@ -76,5 +122,8 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "packageManager": "pnpm@10.20.0"
+  "packageManager": "pnpm@10.20.0",
+  "files": [
+    "dist"
+  ]
 }
