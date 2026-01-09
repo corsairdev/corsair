@@ -1,0 +1,28 @@
+{
+  "name": "@corsair/demo-drizzle-pg-slack",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "db:up": "docker compose up -d",
+    "db:down": "docker compose down",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:push": "drizzle-kit push",
+    "db:studio": "drizzle-kit studio",
+    "start": "tsx src/index.ts",
+    "test": "tsx src/test.ts"
+  },
+  "dependencies": {
+    "corsair": "workspace:*",
+    "dotenv": "^17.2.3",
+    "drizzle-orm": "^0.44.5",
+    "pg": "^8.12.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.1",
+    "@types/pg": "^8.15.2",
+    "drizzle-kit": "^0.31.8",
+    "tsx": "^4.20.6",
+    "typescript": "^5.9.3"
+  }
+}

@@ -1,7 +1,7 @@
 import type { SlackEndpoints } from '../';
 
 export const postMessage: SlackEndpoints['postMessage'] = async (
-	_ctx,
+	ctx,
 	input,
 ) => {
 	return {
