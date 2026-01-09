@@ -4,6 +4,7 @@ export * from './orm';
 
 export { slack } from './plugins/slack';
 import { drizzleAdapter } from './adapters/drizzle';
+
 import { createCorsair } from './core';
 import { db } from './db';
 import * as schema from './db/schema';
@@ -38,12 +39,12 @@ const corsair = createCorsair({
 
 // example usage
 
-(async () => {
-	const test = await corsair.slack.postMessage({
-		channel: 'C0A3ZTB9X7X',
-		text: 'Hello, world!',
-	});
+// (async () => {
+// 	const test = await corsair.slack.postMessage({
+// 		channel: 'C0A3ZTB9X7X',
+// 		text: 'Hello, world!',
+// 	});
 
-	console.log(test);
-})();
+// 	console.log(test);
+// })();
 // const res = await corsair.withTenant('').slack.channels.count()
