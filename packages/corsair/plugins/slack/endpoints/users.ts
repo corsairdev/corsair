@@ -1,14 +1,20 @@
 import type { CorsairEndpoint, CorsairPluginContext } from '../../../core';
-import type { SlackSchema } from '../schema';
 import { makeSlackRequest } from '../client';
+import type { SlackSchema } from '../schema';
 
-export const get = (token: string): CorsairEndpoint<
+export const get = (
+	token: string,
+): CorsairEndpoint<
 	CorsairPluginContext<'slack', typeof SlackSchema>,
 	[{ user: string; include_locale?: boolean; token?: string }],
 	Promise<{ ok: boolean; user?: { id: string; name?: string }; error?: string }>
 > => {
 	return async (ctx, input) => {
-		const result = await makeSlackRequest<{ ok: boolean; user?: { id: string; name?: string }; error?: string }>('users.info', token || input.token || '', {
+		const result = await makeSlackRequest<{
+			ok: boolean;
+			user?: { id: string; name?: string };
+			error?: string;
+		}>('users.info', token || input.token || '', {
 			method: 'GET',
 			query: {
 				user: input.user,
@@ -34,13 +40,33 @@ export const get = (token: string): CorsairEndpoint<
 	};
 };
 
-export const list = (token: string): CorsairEndpoint<
+export const list = (
+	token: string,
+): CorsairEndpoint<
 	CorsairPluginContext<'slack', typeof SlackSchema>,
-	[{ include_locale?: boolean; team_id?: string; cursor?: string; limit?: number; token?: string }],
-	Promise<{ ok: boolean; members?: Array<{ id: string; name?: string }>; cache_ts?: number; error?: string }>
+	[
+		{
+			include_locale?: boolean;
+			team_id?: string;
+			cursor?: string;
+			limit?: number;
+			token?: string;
+		},
+	],
+	Promise<{
+		ok: boolean;
+		members?: Array<{ id: string; name?: string }>;
+		cache_ts?: number;
+		error?: string;
+	}>
 > => {
 	return async (ctx, input) => {
-		const result = await makeSlackRequest<{ ok: boolean; members?: Array<{ id: string; name?: string }>; cache_ts?: number; error?: string }>('users.list', token || input.token || '', {
+		const result = await makeSlackRequest<{
+			ok: boolean;
+			members?: Array<{ id: string; name?: string }>;
+			cache_ts?: number;
+			error?: string;
+		}>('users.list', token || input.token || '', {
 			method: 'GET',
 			query: {
 				include_locale: input.include_locale,
@@ -72,13 +98,23 @@ export const list = (token: string): CorsairEndpoint<
 	};
 };
 
-export const getProfile = (token: string): CorsairEndpoint<
+export const getProfile = (
+	token: string,
+): CorsairEndpoint<
 	CorsairPluginContext<'slack', typeof SlackSchema>,
 	[{ user?: string; include_labels?: boolean; token?: string }],
-	Promise<{ ok: boolean; profile?: { avatar_hash?: string; real_name?: string }; error?: string }>
+	Promise<{
+		ok: boolean;
+		profile?: { avatar_hash?: string; real_name?: string };
+		error?: string;
+	}>
 > => {
 	return async (ctx, input) => {
-		const result = await makeSlackRequest<{ ok: boolean; profile?: { avatar_hash?: string; real_name?: string }; error?: string }>('users.profile.get', token || input.token || '', {
+		const result = await makeSlackRequest<{
+			ok: boolean;
+			profile?: { avatar_hash?: string; real_name?: string };
+			error?: string;
+		}>('users.profile.get', token || input.token || '', {
 			method: 'GET',
 			query: {
 				user: input.user,
@@ -105,13 +141,20 @@ export const getProfile = (token: string): CorsairEndpoint<
 	};
 };
 
-export const getPresence = (token: string): CorsairEndpoint<
+export const getPresence = (
+	token: string,
+): CorsairEndpoint<
 	CorsairPluginContext<'slack', typeof SlackSchema>,
 	[{ user?: string; token?: string }],
 	Promise<{ ok: boolean; presence?: string; online?: boolean; error?: string }>
 > => {
 	return async (_ctx, input) => {
-		return makeSlackRequest<{ ok: boolean; presence?: string; online?: boolean; error?: string }>('users.getPresence', token || input.token || '', {
+		return makeSlackRequest<{
+			ok: boolean;
+			presence?: string;
+			online?: boolean;
+			error?: string;
+		}>('users.getPresence', token || input.token || '', {
 			method: 'GET',
 			query: {
 				user: input.user,
@@ -120,13 +163,31 @@ export const getPresence = (token: string): CorsairEndpoint<
 	};
 };
 
-export const updateProfile = (token: string): CorsairEndpoint<
+export const updateProfile = (
+	token: string,
+): CorsairEndpoint<
 	CorsairPluginContext<'slack', typeof SlackSchema>,
-	[{ profile?: Record<string, unknown>; user?: string; name?: string; value?: string; token?: string }],
-	Promise<{ ok: boolean; profile?: { avatar_hash?: string; real_name?: string }; error?: string }>
+	[
+		{
+			profile?: Record<string, unknown>;
+			user?: string;
+			name?: string;
+			value?: string;
+			token?: string;
+		},
+	],
+	Promise<{
+		ok: boolean;
+		profile?: { avatar_hash?: string; real_name?: string };
+		error?: string;
+	}>
 > => {
 	return async (ctx, input) => {
-		const result = await makeSlackRequest<{ ok: boolean; profile?: { avatar_hash?: string; real_name?: string }; error?: string }>('users.profile.set', token || input.token || '', {
+		const result = await makeSlackRequest<{
+			ok: boolean;
+			profile?: { avatar_hash?: string; real_name?: string };
+			error?: string;
+		}>('users.profile.set', token || input.token || '', {
 			method: 'POST',
 			body: {
 				profile: input.profile,
@@ -154,4 +215,3 @@ export const updateProfile = (token: string): CorsairEndpoint<
 		return result;
 	};
 };
-

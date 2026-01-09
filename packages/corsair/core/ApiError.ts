@@ -41,4 +41,3 @@ export class ApiError extends Error {
 		return this.status === 429;
 	}
 }
-

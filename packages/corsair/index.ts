@@ -3,13 +3,13 @@ export * from './core';
 export * from './orm';
 
 export { slack } from './plugins/slack';
-import { drizzleAdapter } from './adapters/drizzle';
 
+import dotenv from 'dotenv';
+import { drizzleAdapter } from './adapters/drizzle';
 import { createCorsair } from './core';
 import { db } from './db';
 import * as schema from './db/schema';
 import { slack } from './plugins/slack';
-import dotenv from 'dotenv';
 
 dotenv.config();
 

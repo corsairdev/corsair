@@ -36,16 +36,20 @@ export const SlackChannel = z.object({
 	creator: z.string().optional(),
 	is_member: z.boolean().optional(),
 	num_members: z.number().optional(),
-	topic: z.object({
-		value: z.string(),
-		creator: z.string(),
-		last_set: z.number(),
-	}).optional(),
-	purpose: z.object({
-		value: z.string(),
-		creator: z.string(),
-		last_set: z.number(),
-	}).optional(),
+	topic: z
+		.object({
+			value: z.string(),
+			creator: z.string(),
+			last_set: z.number(),
+		})
+		.optional(),
+	purpose: z
+		.object({
+			value: z.string(),
+			creator: z.string(),
+			last_set: z.number(),
+		})
+		.optional(),
 });
 
 export const SlackUser = z.object({
@@ -57,22 +61,24 @@ export const SlackUser = z.object({
 	is_bot: z.boolean().optional(),
 	is_admin: z.boolean().optional(),
 	deleted: z.boolean().optional(),
-	profile: z.object({
-		avatar_hash: z.string().optional(),
-		status_text: z.string().optional(),
-		status_emoji: z.string().optional(),
-		real_name: z.string().optional(),
-		display_name: z.string().optional(),
-		email: z.string().optional(),
-		image_24: z.string().optional(),
-		image_32: z.string().optional(),
-		image_48: z.string().optional(),
-		image_72: z.string().optional(),
-		image_192: z.string().optional(),
-		image_512: z.string().optional(),
-		phone: z.string().optional(),
-		title: z.string().optional(),
-	}).optional(),
+	profile: z
+		.object({
+			avatar_hash: z.string().optional(),
+			status_text: z.string().optional(),
+			status_emoji: z.string().optional(),
+			real_name: z.string().optional(),
+			display_name: z.string().optional(),
+			email: z.string().optional(),
+			image_24: z.string().optional(),
+			image_32: z.string().optional(),
+			image_48: z.string().optional(),
+			image_72: z.string().optional(),
+			image_192: z.string().optional(),
+			image_512: z.string().optional(),
+			phone: z.string().optional(),
+			title: z.string().optional(),
+		})
+		.optional(),
 });
 
 export const SlackFile = z.object({
