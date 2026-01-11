@@ -324,55 +324,55 @@ export class UsersService {
 }
 
 export class UsergroupsService {
-	public static usergroupsCreate(
+	public static userGroupsCreate(
 		args: UsergroupsCreateArgs,
 	): CancelablePromise<UsergroupsCreateResponse> {
 		return __request(OpenAPI, {
 			method: 'POST',
-			url: 'usergroups.create',
+			url: 'userGroups.create',
 			body: args,
 			mediaType: 'application/json; charset=utf-8',
 		});
 	}
 
-	public static usergroupsDisable(
+	public static userGroupsDisable(
 		args: UsergroupsDisableArgs,
 	): CancelablePromise<UsergroupsDisableResponse> {
 		return __request(OpenAPI, {
 			method: 'POST',
-			url: 'usergroups.disable',
+			url: 'userGroups.disable',
 			body: args,
 			mediaType: 'application/json; charset=utf-8',
 		});
 	}
 
-	public static usergroupsEnable(
+	public static userGroupsEnable(
 		args: UsergroupsEnableArgs,
 	): CancelablePromise<UsergroupsEnableResponse> {
 		return __request(OpenAPI, {
 			method: 'POST',
-			url: 'usergroups.enable',
+			url: 'userGroups.enable',
 			body: args,
 			mediaType: 'application/json; charset=utf-8',
 		});
 	}
 
-	public static usergroupsList(
+	public static userGroupsList(
 		args?: UsergroupsListArgs,
 	): CancelablePromise<UsergroupsListResponse> {
 		return __request(OpenAPI, {
 			method: 'GET',
-			url: 'usergroups.list',
+			url: 'userGroups.list',
 			query: args,
 		});
 	}
 
-	public static usergroupsUpdate(
+	public static userGroupsUpdate(
 		args: UsergroupsUpdateArgs,
 	): CancelablePromise<UsergroupsUpdateResponse> {
 		return __request(OpenAPI, {
 			method: 'POST',
-			url: 'usergroups.update',
+			url: 'userGroups.update',
 			body: args,
 			mediaType: 'application/json; charset=utf-8',
 		});

@@ -39,11 +39,11 @@ export const Slack = {
 	},
 
 	Usergroups: {
-		create: UsergroupsService.usergroupsCreate,
-		disable: UsergroupsService.usergroupsDisable,
-		enable: UsergroupsService.usergroupsEnable,
-		list: UsergroupsService.usergroupsList,
-		update: UsergroupsService.usergroupsUpdate,
+		create: UsergroupsService.userGroupsCreate,
+		disable: UsergroupsService.userGroupsDisable,
+		enable: UsergroupsService.userGroupsEnable,
+		list: UsergroupsService.userGroupsList,
+		update: UsergroupsService.userGroupsUpdate,
 	},
 
 	Files: {
