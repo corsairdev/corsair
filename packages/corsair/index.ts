@@ -2,7 +2,13 @@ export * from './adapters';
 export * from './core';
 export * from './orm';
 
-export { slack } from './plugins/slack';
+export {
+	type SlackBoundEndpoints,
+	type SlackContext,
+	type SlackEndpoints,
+	type SlackPluginOptions,
+	slack,
+} from './plugins/slack';
 
 import dotenv from 'dotenv';
 import { drizzleAdapter } from './adapters/drizzle';

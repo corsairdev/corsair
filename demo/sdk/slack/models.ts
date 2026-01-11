@@ -892,7 +892,7 @@ export type UsergroupsEnableResponse = z.infer<
 >;
 
 export const UsergroupsListResponseSchema = SlackResponseSchema.extend({
-	usergroups: z.array(UsergroupSchema).optional(),
+	userGroups: z.array(UsergroupSchema).optional(),
 });
 export type UsergroupsListResponse = z.infer<
 	typeof UsergroupsListResponseSchema

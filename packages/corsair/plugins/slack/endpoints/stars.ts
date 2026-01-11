@@ -1,93 +1,39 @@
-import type { CorsairEndpoint, CorsairPluginContext } from '../../../core';
+import type { SlackEndpoints } from '..';
 import { makeSlackRequest } from '../client';
-import type { SlackSchema } from '../schema';
 
-export const add = (
-	token: string,
-): CorsairEndpoint<
-	CorsairPluginContext<'slack', typeof SlackSchema>,
-	[
-		{
-			channel?: string;
-			timestamp?: string;
-			file?: string;
-			file_comment?: string;
-			token?: string;
+export const add: SlackEndpoints['starsAdd'] = async (ctx, input) => {
+	return makeSlackRequest('stars.add', ctx.options.botToken, {
+		method: 'POST',
+		body: {
+			channel: input.channel,
+			timestamp: input.timestamp,
+			file: input.file,
+			file_comment: input.file_comment,
 		},
-	],
-	Promise<{ ok: boolean; error?: string }>
-> => {
-	return async (_ctx, input) => {
-		return makeSlackRequest('stars.add', token || input.token || '', {
-			method: 'POST',
-			body: {
-				channel: input.channel,
-				timestamp: input.timestamp,
-				file: input.file,
-				file_comment: input.file_comment,
-			},
-		});
-	};
+	});
 };
 
-export const remove = (
-	token: string,
-): CorsairEndpoint<
-	CorsairPluginContext<'slack', typeof SlackSchema>,
-	[
-		{
-			channel?: string;
-			timestamp?: string;
-			file?: string;
-			file_comment?: string;
-			token?: string;
+export const remove: SlackEndpoints['starsRemove'] = async (ctx, input) => {
+	return makeSlackRequest('stars.remove', ctx.options.botToken, {
+		method: 'POST',
+		body: {
+			channel: input.channel,
+			timestamp: input.timestamp,
+			file: input.file,
+			file_comment: input.file_comment,
 		},
-	],
-	Promise<{ ok: boolean; error?: string }>
-> => {
-	return async (_ctx, input) => {
-		return makeSlackRequest('stars.remove', token || input.token || '', {
-			method: 'POST',
-			body: {
-				channel: input.channel,
-				timestamp: input.timestamp,
-				file: input.file,
-				file_comment: input.file_comment,
-			},
-		});
-	};
+	});
 };
 
-export const list = (
-	token: string,
-): CorsairEndpoint<
-	CorsairPluginContext<'slack', typeof SlackSchema>,
-	[
-		{
-			team_id?: string;
-			cursor?: string;
-			limit?: number;
-			page?: number;
-			count?: number;
-			token?: string;
+export const list: SlackEndpoints['starsList'] = async (ctx, input) => {
+	return makeSlackRequest('stars.list', ctx.options.botToken, {
+		method: 'GET',
+		query: {
+			team_id: input.team_id,
+			cursor: input.cursor,
+			limit: input.limit,
+			page: input.page,
+			count: input.count,
 		},
-	],
-	Promise<{
-		ok: boolean;
-		items?: Array<{ type?: string; date_create?: number }>;
-		error?: string;
-	}>
-> => {
-	return async (_ctx, input) => {
-		return makeSlackRequest('stars.list', token || input.token || '', {
-			method: 'GET',
-			query: {
-				team_id: input.team_id,
-				cursor: input.cursor,
-				limit: input.limit,
-				page: input.page,
-				count: input.count,
-			},
-		});
-	};
+	});
 };

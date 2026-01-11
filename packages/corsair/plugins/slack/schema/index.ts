@@ -20,6 +20,6 @@ export const SlackSchema = {
 		channels: SlackChannel,
 		users: SlackUser,
 		files: SlackFile,
-		usergroups: SlackUsergroup,
+		userGroups: SlackUsergroup,
 	},
 } as const;
