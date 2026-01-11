@@ -43,8 +43,8 @@ Follow these steps to obtain the necessary tokens and IDs from your Slack worksp
 | `mpim:read` | View group DMs | Listing group DMs |
 | `users:read` | View users | Getting user info |
 | `users:read.email` | View email addresses | Getting user emails |
-| `usergroups:read` | View user groups | Listing user groups |
-| `usergroups:write` | Manage user groups | Creating user groups |
+| `userGroups:read` | View user groups | Listing user groups |
+| `userGroups:write` | Manage user groups | Creating user groups |
 | `files:read` | View files | Getting file info |
 | `files:write` | Upload files | Uploading files |
 | `reactions:read` | View reactions | Getting reactions |
