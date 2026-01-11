@@ -18,11 +18,11 @@ describe('Slack.Usergroups - Usergroups API', () => {
 
 	describe('Service class methods', () => {
 		it('should have all usergroup methods defined', () => {
-			expect(typeof UsergroupsService.usergroupsCreate).toBe('function');
-			expect(typeof UsergroupsService.usergroupsDisable).toBe('function');
-			expect(typeof UsergroupsService.usergroupsEnable).toBe('function');
-			expect(typeof UsergroupsService.usergroupsList).toBe('function');
-			expect(typeof UsergroupsService.usergroupsUpdate).toBe('function');
+			expect(typeof UsergroupsService.userGroupsCreate).toBe('function');
+			expect(typeof UsergroupsService.userGroupsDisable).toBe('function');
+			expect(typeof UsergroupsService.userGroupsEnable).toBe('function');
+			expect(typeof UsergroupsService.userGroupsList).toBe('function');
+			expect(typeof UsergroupsService.userGroupsUpdate).toBe('function');
 		});
 	});
 
@@ -37,7 +37,7 @@ describe('Slack.Usergroups - Usergroups API', () => {
 	});
 
 	describe('list', () => {
-		it('should list usergroups (integration test)', async () => {
+		it('should list userGroups (integration test)', async () => {
 			if (requireToken()) return;
 
 			try {
@@ -49,10 +49,10 @@ describe('Slack.Usergroups - Usergroups API', () => {
 
 				expect(response).toBeDefined();
 				expect(response.ok).toBe(true);
-				expect(Array.isArray(response.usergroups)).toBe(true);
+				expect(Array.isArray(response.userGroups)).toBe(true);
 
-				console.log('Usergroups count:', response.usergroups?.length);
-				response.usergroups?.slice(0, 5).forEach((group) => {
+				console.log('Usergroups count:', response.userGroups?.length);
+				response.userGroups?.slice(0, 5).forEach((group) => {
 					console.log(`  @${group.handle} (${group.id}) - ${group.name}`);
 					console.log(`    Users: ${group.user_count || 0}`);
 				});
