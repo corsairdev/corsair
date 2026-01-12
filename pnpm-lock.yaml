@@ -264,6 +264,9 @@ importers:
       c12:
         specifier: ^3.3.2
         version: 3.3.2(magicast@0.3.5)
+      dotenv:
+        specifier: ^16.3.1
+        version: 16.6.1
       drizzle-kit:
         specifier: '>=0.31.4'
         version: 0.31.8
@@ -304,9 +307,6 @@ importers:
       '@types/node':
         specifier: ^24.10.1
         version: 24.10.1
-      dotenv:
-        specifier: ^16.3.1
-        version: 16.6.1
       jest:
         specifier: ^29.7.0
         version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))

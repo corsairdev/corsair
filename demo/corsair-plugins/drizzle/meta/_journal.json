@@ -8,6 +8,13 @@
       "when": 1767926856974,
       "tag": "0000_clean_next_avengers",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1768225617251,
+      "tag": "0001_chubby_carnage",
+      "breakpoints": true
     }
   ]
 }
