@@ -13,6 +13,7 @@ export {
 import dotenv from 'dotenv';
 import { createCorsair } from './core';
 import { slack } from './plugins/slack';
+import { linear } from './plugins/linear';
 
 dotenv.config();
 
@@ -37,6 +38,11 @@ const corsair = createCorsair({
 				},
 			},
 		}),
+		linear({
+			credentials: {
+				apiKey: process.env.LINEAR_API_KEY!,
+			},
+		}),
 	],
 });
 
@@ -47,7 +53,15 @@ const corsair = createCorsair({
 // 		channel: 'C0A3ZTB9X7X',
 // 		text: 'Hello, world!',
 // 	});
-
-// 	console.log(test);
 // })();
+
+
+// (async () => {
+// 	const test = await corsair.linear.issuesCreate({
+// 		title: 'Test issue',
+// 		description: 'This is a test issue',
+// 		teamId: '2bf0f1b7-001a-4dcd-9cd5-2a16fe044c43',
+// 	});
+// })();
+
 // const res = await corsair.withTenant('').slack.channels.count()
