@@ -57,6 +57,7 @@
   },
   "dependencies": {
     "c12": "^3.3.2",
+    "dotenv": "^16.3.1",
     "jiti": "^2.6.1",
     "zod": "^3.25.76"
   },
@@ -111,7 +112,6 @@
   "devDependencies": {
     "@types/jest": "^29.5.14",
     "@types/node": "^24.10.1",
-    "dotenv": "^16.3.1",
     "jest": "^29.7.0",
     "ts-jest": "^29.1.1",
     "ts-node": "^10.9.2",

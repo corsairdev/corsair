@@ -10,6 +10,14 @@ export {
 	slack,
 } from './plugins/slack';
 
+export {
+	type LinearBoundEndpoints,
+	type LinearContext,
+	type LinearEndpoints,
+	type LinearPluginOptions,
+	linear,
+} from './plugins/linear';
+
 import dotenv from 'dotenv';
 import { createCorsair } from './core';
 import { slack } from './plugins/slack';

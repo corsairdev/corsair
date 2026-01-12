@@ -15,6 +15,7 @@ export default defineConfig({
 	bundle: true,
 	splitting: false,
 	outDir: 'dist',
+	external: ['dotenv'],
 	entry: [
 		'index.ts',
 		'core.ts',
