@@ -6,7 +6,7 @@ export const get: SlackEndpoints['filesGet'] = async (ctx, input) => {
 		ok: boolean;
 		file?: { id: string; name?: string };
 		error?: string;
-	}>('files.info', input.token || ctx.options.botToken, {
+	}>('files.info', ctx.options.botToken, {
 		method: 'GET',
 		query: {
 			file: input.file,
@@ -19,12 +19,9 @@ export const get: SlackEndpoints['filesGet'] = async (ctx, input) => {
 
 	if (result.ok && result.file && ctx.files) {
 		try {
-			await ctx.files.upsertByResourceId({
-				resourceId: result.file.id,
-				data: {
-					id: result.file.id,
-					name: result.file.name,
-				},
+			await ctx.files.upsert(result.file.id, {
+				id: result.file.id,
+				name: result.file.name,
 			});
 		} catch (error) {
 			console.warn('Failed to save file to database:', error);
@@ -39,7 +36,7 @@ export const list: SlackEndpoints['filesList'] = async (ctx, input) => {
 		ok: boolean;
 		files?: Array<{ id: string; name?: string }>;
 		error?: string;
-	}>('files.list', input.token || ctx.options.botToken, {
+	}>('files.list', ctx.options.botToken, {
 		method: 'GET',
 		query: {
 			channel: input.channel,
@@ -58,12 +55,9 @@ export const list: SlackEndpoints['filesList'] = async (ctx, input) => {
 		try {
 			for (const file of result.files) {
 				if (file.id) {
-					await ctx.files.upsertByResourceId({
-						resourceId: file.id,
-						data: {
-							id: file.id,
-							name: file.name,
-						},
+					await ctx.files.upsert(file.id, {
+						id: file.id,
+						name: file.name,
 					});
 				}
 			}
@@ -80,7 +74,7 @@ export const upload: SlackEndpoints['filesUpload'] = async (ctx, input) => {
 		ok: boolean;
 		file?: { id: string; name?: string };
 		error?: string;
-	}>('files.upload', input.token || ctx.options.botToken, {
+	}>('files.upload', ctx.options.botToken, {
 		method: 'POST',
 		body: {
 			channels: input.channels,
@@ -96,14 +90,11 @@ export const upload: SlackEndpoints['filesUpload'] = async (ctx, input) => {
 
 	if (result.ok && result.file && ctx.files) {
 		try {
-			await ctx.files.upsertByResourceId({
-				resourceId: result.file.id,
-				data: {
-					id: result.file.id,
-					name: result.file.name,
-					title: input.title,
-					filetype: input.filetype,
-				},
+			await ctx.files.upsert(result.file.id, {
+				id: result.file.id,
+				name: result.file.name,
+				title: input.title,
+				filetype: input.filetype,
 			});
 		} catch (error) {
 			console.warn('Failed to save file to database:', error);

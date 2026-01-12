@@ -98,7 +98,7 @@ export const SlackFile = z.object({
 	timestamp: z.number().optional(),
 });
 
-export const SlackUsergroup = z.object({
+export const SlackUserGroup = z.object({
 	id: z.string(),
 	name: z.string().optional(),
 	description: z.string().optional(),
@@ -116,4 +116,4 @@ export type SlackMessage = z.infer<typeof SlackMessage>;
 export type SlackChannel = z.infer<typeof SlackChannel>;
 export type SlackUser = z.infer<typeof SlackUser>;
 export type SlackFile = z.infer<typeof SlackFile>;
-export type SlackUsergroup = z.infer<typeof SlackUsergroup>;
+export type SlackUserGroup = z.infer<typeof SlackUserGroup>;

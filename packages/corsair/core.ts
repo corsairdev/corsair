@@ -1,8 +1,11 @@
 import type { ZodTypeAny } from 'zod';
 import { withTenantAdapter } from './adapters/tenant';
 import type { CorsairDbAdapter } from './adapters/types';
-import type { CorsairOrmServiceClient, CorsairPluginOrmSchema } from './orm';
-import { createCorsairServiceOrm } from './orm';
+import type {
+	CorsairPluginSchema,
+	PluginServiceClient,
+	PluginServiceClients,
+} from './orm';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Utility Types
@@ -16,8 +19,6 @@ type UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends (
 
 /**
  * Bivariance hack for function types.
- * Allows plugin endpoints to retain precise argument tuples while being storable
- * in object maps without strict-function contravariance issues.
  */
 type Bivariant<Args extends unknown[], R> = {
 	bivarianceHack(...args: Args): R;
@@ -44,11 +45,6 @@ export type BoundEndpointFn<Args = unknown, Res = unknown> = (
 
 /**
  * The base context object passed to every plugin endpoint/hook.
- *
- * At runtime, each plugin endpoint receives a **plugin-scoped** context:
- * - `database`: optional DB adapter
- * - `endpoints`: bound endpoints for cross-calling
- * - plus ORM service clients from the plugin's schema (e.g. `ctx.messages.*`)
  */
 export type CorsairContext<
 	Endpoints extends Record<string, BoundEndpointFn> = Record<
@@ -75,17 +71,14 @@ export type CorsairEndpoint<
 // Hook Types
 // ─────────────────────────────────────────────────────────────────────────────
 
-/** Extracts the context type from an endpoint. */
 type EndpointContext<E> = E extends CorsairEndpoint<infer Ctx, any, any>
 	? Ctx
 	: never;
 
-/** Extracts the args type from an endpoint. */
 type EndpointArgs<E> = E extends CorsairEndpoint<any, infer Args, any>
 	? Args
 	: never;
 
-/** Extracts the result type from an endpoint. */
 type EndpointResult<E> = E extends CorsairEndpoint<any, any, infer Res>
 	? Res
 	: never;
@@ -114,10 +107,8 @@ export type CorsairPlugin<
 	Endpoints extends Record<string, CorsairEndpoint> | undefined =
 		| Record<string, CorsairEndpoint>
 		| undefined,
-	Schema extends
-		| CorsairPluginOrmSchema<Record<string, ZodTypeAny>>
-		| undefined =
-		| CorsairPluginOrmSchema<Record<string, ZodTypeAny>>
+	Schema extends CorsairPluginSchema<Record<string, ZodTypeAny>> | undefined =
+		| CorsairPluginSchema<Record<string, ZodTypeAny>>
 		| undefined,
 	Options extends Record<string, unknown> | undefined =
 		| Record<string, unknown>
@@ -140,30 +131,26 @@ export type BindEndpoints<T extends Record<string, CorsairEndpoint>> = {
 		: never;
 };
 
-/** Extracts ORM service clients from a plugin schema. */
-type InferOrmServices<
-	Resource extends string,
-	Schema extends CorsairPluginOrmSchema<Record<string, ZodTypeAny>> | undefined,
-> = Schema extends CorsairPluginOrmSchema<infer Services>
-	? {
-			[K in keyof Services & string]: CorsairOrmServiceClient<
-				Resource,
-				K,
-				Services[K]
-			>;
-		}
+/**
+ * Extracts typed service clients from a plugin schema.
+ * Each service becomes a `PluginServiceClient<DataSchema>`.
+ */
+type InferPluginServices<
+	Schema extends CorsairPluginSchema<Record<string, ZodTypeAny>> | undefined,
+> = Schema extends CorsairPluginSchema<infer Services>
+	? PluginServiceClients<Services>
 	: {};
 
 /**
  * The full context type for a plugin, combining:
  * - Base context with bound endpoints
- * - ORM services from the schema
+ * - Typed service clients from the schema
  * - Plugin options (if defined)
  */
 export type CorsairPluginContext<
 	Resource extends string,
 	Schema extends
-		| CorsairPluginOrmSchema<Record<string, ZodTypeAny>>
+		| CorsairPluginSchema<Record<string, ZodTypeAny>>
 		| undefined = undefined,
 	Options extends Record<string, unknown> | undefined = undefined,
 	Endpoints extends Record<string, CorsairEndpoint> | undefined = undefined,
@@ -172,14 +159,13 @@ export type CorsairPluginContext<
 		? BindEndpoints<Endpoints>
 		: Record<string, BoundEndpointFn>
 > &
-	InferOrmServices<Resource, Schema> &
+	InferPluginServices<Schema> &
 	(Options extends undefined ? {} : { options: Options });
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Client Types
 // ─────────────────────────────────────────────────────────────────────────────
 
-/** Infers the namespace object for a single plugin. */
 type InferPluginNamespace<P extends CorsairPlugin> = P extends CorsairPlugin<
 	infer Id,
 	infer Endpoints,
@@ -189,11 +175,10 @@ type InferPluginNamespace<P extends CorsairPlugin> = P extends CorsairPlugin<
 			[K in Id]: (Endpoints extends Record<string, CorsairEndpoint>
 				? BindEndpoints<Endpoints>
 				: {}) &
-				InferOrmServices<Id, Schema>;
+				InferPluginServices<Schema>;
 		}
 	: never;
 
-/** Infers all plugin namespaces and merges them into a single object. */
 type InferPluginNamespaces<Plugins extends readonly CorsairPlugin[]> =
 	UnionToIntersection<InferPluginNamespace<Plugins[number]>>;
 
@@ -212,6 +197,194 @@ export type CorsairTenantWrapper<Plugins extends readonly CorsairPlugin[]> = {
 	withTenant: (tenantId: string) => CorsairClient<Plugins>;
 };
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Service Client Factory (inline to avoid circular deps)
+// ─────────────────────────────────────────────────────────────────────────────
+
+function generateUuidV4(): string {
+	const cryptoAny = globalThis.crypto as unknown as
+		| { randomUUID?: () => string }
+		| undefined;
+	if (cryptoAny?.randomUUID) {
+		return cryptoAny.randomUUID();
+	}
+	return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+		const r = (Math.random() * 16) | 0;
+		const v = c === 'x' ? r : (r & 0x3) | 0x8;
+		return v.toString(16);
+	});
+}
+
+function parseJsonLike(value: unknown): unknown {
+	if (typeof value === 'string') {
+		try {
+			return JSON.parse(value);
+		} catch {
+			return value;
+		}
+	}
+	return value;
+}
+
+function createServiceClient(
+	database: CorsairDbAdapter | undefined,
+	pluginId: string,
+	serviceName: string,
+	tenantId: string,
+	version: string,
+	dataSchema: ZodTypeAny,
+): PluginServiceClient<ZodTypeAny> {
+	const tableName = 'corsair_resources';
+
+	function baseWhere() {
+		return [
+			{ field: 'tenant_id', value: tenantId },
+			{ field: 'resource', value: pluginId },
+			{ field: 'service', value: serviceName },
+		];
+	}
+
+	function parseRow(row: any) {
+		const data = parseJsonLike(row.data);
+		return { ...row, data: dataSchema.parse(data) };
+	}
+
+	return {
+		findByResourceId: async (resourceId) => {
+			if (!database) return null;
+			const row = await database.findOne<any>({
+				table: tableName,
+				where: [...baseWhere(), { field: 'resource_id', value: resourceId }],
+			});
+			return row ? parseRow(row) : null;
+		},
+
+		findById: async (id) => {
+			if (!database) return null;
+			const row = await database.findOne<any>({
+				table: tableName,
+				where: [...baseWhere(), { field: 'id', value: id }],
+			});
+			return row ? parseRow(row) : null;
+		},
+
+		findManyByResourceIds: async (resourceIds) => {
+			if (!database || resourceIds.length === 0) return [];
+			const rows = await database.findMany<any>({
+				table: tableName,
+				where: [
+					...baseWhere(),
+					{ field: 'resource_id', operator: 'in' as const, value: resourceIds },
+				],
+			});
+			return rows.map(parseRow);
+		},
+
+		list: async (options) => {
+			if (!database) return [];
+			const rows = await database.findMany<any>({
+				table: tableName,
+				where: baseWhere(),
+				limit: options?.limit ?? 100,
+				offset: options?.offset ?? 0,
+			});
+			return rows.map(parseRow);
+		},
+
+		search: async ({ query, limit, offset }) => {
+			if (!database) return [];
+			const rows = await database.findMany<any>({
+				table: tableName,
+				where: [
+					...baseWhere(),
+					{
+						field: 'resource_id',
+						operator: 'like' as const,
+						value: `%${query}%`,
+					},
+				],
+				limit: limit ?? 100,
+				offset: offset ?? 0,
+			});
+			return rows.map(parseRow);
+		},
+
+		upsert: async (resourceId, data) => {
+			if (!database) throw new Error('Database not configured');
+			const parsed = dataSchema.parse(data);
+			const now = new Date();
+
+			const existing = await database.findOne<{ id: string }>({
+				table: tableName,
+				select: ['id'],
+				where: [...baseWhere(), { field: 'resource_id', value: resourceId }],
+			});
+
+			if (existing?.id) {
+				await database.update({
+					table: tableName,
+					where: [{ field: 'id', value: existing.id }],
+					data: { version, data: parsed, updated_at: now },
+				});
+				const updated = await database.findOne<any>({
+					table: tableName,
+					where: [{ field: 'id', value: existing.id }],
+				});
+				return parseRow(updated);
+			}
+
+			const id = generateUuidV4();
+			await database.insert({
+				table: tableName,
+				data: {
+					id,
+					created_at: now,
+					updated_at: now,
+					tenant_id: tenantId,
+					resource_id: resourceId,
+					resource: pluginId,
+					service: serviceName,
+					version,
+					data: parsed,
+				},
+			});
+
+			const inserted = await database.findOne<any>({
+				table: tableName,
+				where: [{ field: 'id', value: id }],
+			});
+			return parseRow(inserted);
+		},
+
+		deleteById: async (id) => {
+			if (!database) return false;
+			const deleted = await database.deleteMany({
+				table: tableName,
+				where: [...baseWhere(), { field: 'id', value: id }],
+			});
+			return deleted > 0;
+		},
+
+		deleteByResourceId: async (resourceId) => {
+			if (!database) return false;
+			const deleted = await database.deleteMany({
+				table: tableName,
+				where: [...baseWhere(), { field: 'resource_id', value: resourceId }],
+			});
+			return deleted > 0;
+		},
+
+		count: async () => {
+			if (!database) return 0;
+			return database.count({ table: tableName, where: baseWhere() });
+		},
+	};
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Client Builder
+// ─────────────────────────────────────────────────────────────────────────────
+
 function buildCorsairClient<const Plugins extends readonly CorsairPlugin[]>(
 	plugins: Plugins,
 	database: CorsairDbAdapter | undefined,
@@ -220,45 +393,39 @@ function buildCorsairClient<const Plugins extends readonly CorsairPlugin[]>(
 	const scopedDatabase =
 		database && tenantId ? withTenantAdapter(database, tenantId) : database;
 
-	// NOTE: This is constructed dynamically from runtime plugin ids + endpoint keys.
-	// TS can't model that perfectly during mutation, so we build an `unknown` map and
-	// assert it to the computed type at the end.
 	const apiUnsafe: Record<string, Record<string, unknown>> = {};
-	const pluginOrmUnsafe: Record<string, Record<string, unknown>> = {};
+	const pluginServicesUnsafe: Record<string, Record<string, unknown>> = {};
 
 	for (const plugin of plugins) {
 		apiUnsafe[plugin.id] = {};
-		pluginOrmUnsafe[plugin.id] = {};
+		pluginServicesUnsafe[plugin.id] = {};
 	}
 
 	for (const plugin of plugins) {
-		// Auto-generate ORM service namespaces from plugin schema, if present.
-		// NOTE: Schema type is opaque at runtime; we access it dynamically.
 		const schema = plugin.schema as
-			| CorsairPluginOrmSchema<Record<string, ZodTypeAny>>
+			| CorsairPluginSchema<Record<string, ZodTypeAny>>
 			| undefined;
 
+		// Create typed service clients from plugin schema
 		if (schema?.services) {
-			for (const [service, dataSchema] of Object.entries(schema.services)) {
-				const serviceOrm = createCorsairServiceOrm({
-					database: scopedDatabase,
-					resource: plugin.id,
-					service,
-					tenantId,
-					version: schema.version,
+			for (const [serviceName, dataSchema] of Object.entries(schema.services)) {
+				const serviceClient = createServiceClient(
+					scopedDatabase,
+					plugin.id,
+					serviceName,
+					tenantId ?? 'default',
+					schema.version,
 					dataSchema,
-				});
-				pluginOrmUnsafe[plugin.id]![service] = serviceOrm;
-				apiUnsafe[plugin.id]![service] = serviceOrm;
+				);
+				pluginServicesUnsafe[plugin.id]![serviceName] = serviceClient;
+				apiUnsafe[plugin.id]![serviceName] = serviceClient;
 			}
 		}
 
-		// Each plugin endpoint gets a plugin-scoped context:
-		// `{ database, options, endpoints, ...<that plugin's service orms> }`.
-		// We create this as a mutable object so we can add bound endpoints later.
+		// Build plugin context with service clients
 		const ctxForPlugin: Record<string, unknown> = {
 			database: scopedDatabase,
-			...(pluginOrmUnsafe[plugin.id] ?? {}),
+			...(pluginServicesUnsafe[plugin.id] ?? {}),
 			...(plugin.options ? { options: plugin.options } : {}),
 		};
 
@@ -267,7 +434,7 @@ function buildCorsairClient<const Plugins extends readonly CorsairPlugin[]>(
 			| Record<string, { before?: Function; after?: Function }>
 			| undefined;
 
-		// First pass: create bound endpoints that reference the mutable context
+		// Create bound endpoints
 		const boundEndpoints: Record<string, Function> = {};
 		for (const [key, fn] of Object.entries(endpoints)) {
 			const endpointHooks = hooks?.[key];
@@ -291,17 +458,12 @@ function buildCorsairClient<const Plugins extends readonly CorsairPlugin[]>(
 			apiUnsafe[plugin.id]![key] = boundFn;
 		}
 
-		// Second pass: inject bound endpoints into the context so endpoints can call each other
 		ctxForPlugin.endpoints = boundEndpoints;
 	}
 
 	const api = apiUnsafe as InferPluginNamespaces<Plugins>;
 
-	// Expose `corsair.slack.*` (and other plugin namespaces).
 	return {
-		// NOTE: This spread is how we provide the ergonomic `corsair.slack.*` surface.
-		// Type-wise, it’s equivalent to `& InferPluginNamespaces<Plugins>` in the return type,
-		// but TS can’t see that relationship through the runtime spread without an assertion.
 		...(api as unknown as Record<string, unknown>),
 	} as CorsairClient<Plugins>;
 }

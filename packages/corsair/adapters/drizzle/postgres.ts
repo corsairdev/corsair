@@ -63,8 +63,10 @@ export type DrizzleAdapterConfig = {
 	 */
 	tableNames?:
 		| {
+				connections?: string | undefined;
 				resources?: string | undefined;
-				credentials?: string | undefined;
+				events?: string | undefined;
+				providers?: string | undefined;
 		  }
 		| undefined;
 	adapterId?: string | undefined;
@@ -172,23 +174,28 @@ function getCorsairTable(
 	table: CorsairTableName,
 	tableNames: DrizzleAdapterConfig['tableNames'] | undefined,
 ): DrizzleTableLike {
-	if (table === 'corsair_resources') {
-		return getTableFromSchema(
-			schema,
-			tableNames?.resources ?? 'corsair_resources',
-		);
+	switch (table) {
+		case 'corsair_connections':
+			return getTableFromSchema(
+				schema,
+				tableNames?.connections ?? 'corsair_connections',
+			);
+		case 'corsair_resources':
+			return getTableFromSchema(
+				schema,
+				tableNames?.resources ?? 'corsair_resources',
+			);
+		case 'corsair_events':
+			return getTableFromSchema(schema, tableNames?.events ?? 'corsair_events');
+		case 'corsair_providers':
+			return getTableFromSchema(
+				schema,
+				tableNames?.providers ?? 'corsair_providers',
+			);
+		default:
+			// Allow custom tables by looking them up directly in the schema
+			return getTableFromSchema(schema, table);
 	}
-	if (table === 'corsair_credentials') {
-		return getTableFromSchema(
-			schema,
-			tableNames?.credentials ?? 'corsair_credentials',
-		);
-	}
-	throw new Error(
-		`Drizzle adapter only supports "corsair_resources" and "corsair_credentials" (got "${String(
-			table,
-		)}").`,
-	);
 }
 
 /**

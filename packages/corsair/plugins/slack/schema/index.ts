@@ -4,7 +4,7 @@ import {
 	SlackFile,
 	SlackMessage,
 	SlackUser,
-	SlackUsergroup,
+	SlackUserGroup,
 } from './database';
 
 export const SlackCredentials = z.object({
@@ -20,6 +20,6 @@ export const SlackSchema = {
 		channels: SlackChannel,
 		users: SlackUser,
 		files: SlackFile,
-		userGroups: SlackUsergroup,
+		userGroups: SlackUserGroup,
 	},
 } as const;
