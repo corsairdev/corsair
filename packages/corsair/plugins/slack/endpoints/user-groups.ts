@@ -23,15 +23,12 @@ export const create: SlackEndpoints['userGroupsCreate'] = async (
 
 	if (result.ok && result.usergroup && ctx.userGroups) {
 		try {
-			await ctx.userGroups.upsertByResourceId({
-				resourceId: result.usergroup.id,
-				data: {
-					id: result.usergroup.id,
-					name: result.usergroup.name,
-					description: input.description,
-					handle: input.handle,
-					date_create: Date.now(),
-				},
+			await ctx.userGroups.upsert(result.usergroup.id, {
+				id: result.usergroup.id,
+				name: result.usergroup.name,
+				description: input.description,
+				handle: input.handle,
+				date_create: Date.now(),
 			});
 		} catch (error) {
 			console.warn('Failed to save usergroup to database:', error);
@@ -61,12 +58,9 @@ export const disable: SlackEndpoints['userGroupsDisable'] = async (
 	if (result.ok && result.usergroup && ctx.userGroups) {
 		try {
 			const existing = await ctx.userGroups.findByResourceId(input.usergroup);
-			await ctx.userGroups.upsertByResourceId({
-				resourceId: result.usergroup.id,
-				data: {
-					...(existing || { id: result.usergroup.id }),
-					date_update: Date.now(),
-				},
+			await ctx.userGroups.upsert(result.usergroup.id, {
+				...(existing?.data || { id: result.usergroup.id }),
+				date_update: Date.now(),
 			});
 		} catch (error) {
 			console.warn('Failed to update usergroup in database:', error);
@@ -96,12 +90,9 @@ export const enable: SlackEndpoints['userGroupsEnable'] = async (
 	if (result.ok && result.usergroup && ctx.userGroups) {
 		try {
 			const existing = await ctx.userGroups.findByResourceId(input.usergroup);
-			await ctx.userGroups.upsertByResourceId({
-				resourceId: result.usergroup.id,
-				data: {
-					...(existing || { id: result.usergroup.id }),
-					date_update: Date.now(),
-				},
+			await ctx.userGroups.upsert(result.usergroup.id, {
+				...(existing?.data || { id: result.usergroup.id }),
+				date_update: Date.now(),
 			});
 		} catch (error) {
 			console.warn('Failed to update usergroup in database:', error);
@@ -130,12 +121,9 @@ export const list: SlackEndpoints['userGroupsList'] = async (ctx, input) => {
 		try {
 			for (const usergroup of result.userGroups) {
 				if (usergroup.id) {
-					await ctx.userGroups.upsertByResourceId({
-						resourceId: usergroup.id,
-						data: {
-							id: usergroup.id,
-							name: usergroup.name,
-						},
+					await ctx.userGroups.upsert(usergroup.id, {
+						id: usergroup.id,
+						name: usergroup.name,
 					});
 				}
 			}
@@ -171,15 +159,12 @@ export const update: SlackEndpoints['userGroupsUpdate'] = async (
 	if (result.ok && result.usergroup && ctx.userGroups) {
 		try {
 			const existing = await ctx.userGroups.findByResourceId(input.usergroup);
-			await ctx.userGroups.upsertByResourceId({
-				resourceId: result.usergroup.id,
-				data: {
-					...(existing || { id: result.usergroup.id }),
-					name: result.usergroup.name || input.name,
-					description: input.description,
-					handle: input.handle,
-					date_update: Date.now(),
-				},
+			await ctx.userGroups.upsert(result.usergroup.id, {
+				...(existing?.data || { id: result.usergroup.id }),
+				name: result.usergroup.name || input.name,
+				description: input.description,
+				handle: input.handle,
+				date_update: Date.now(),
 			});
 		} catch (error) {
 			console.warn('Failed to update usergroup in database:', error);

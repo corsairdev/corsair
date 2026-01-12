@@ -16,12 +16,9 @@ export const get: SlackEndpoints['usersGet'] = async (ctx, input) => {
 
 	if (result.ok && result.user && ctx.users) {
 		try {
-			await ctx.users.upsertByResourceId({
-				resourceId: result.user.id,
-				data: {
-					id: result.user.id,
-					name: result.user.name,
-				},
+			await ctx.users.upsert(result.user.id, {
+				id: result.user.id,
+				name: result.user.name,
 			});
 		} catch (error) {
 			console.warn('Failed to save user to database:', error);
@@ -51,12 +48,9 @@ export const list: SlackEndpoints['usersList'] = async (ctx, input) => {
 		try {
 			for (const member of result.members) {
 				if (member.id) {
-					await ctx.users.upsertByResourceId({
-						resourceId: member.id,
-						data: {
-							id: member.id,
-							name: member.name,
-						},
+					await ctx.users.upsert(member.id, {
+						id: member.id,
+						name: member.name,
 					});
 				}
 			}
@@ -87,12 +81,9 @@ export const getProfile: SlackEndpoints['usersGetProfile'] = async (
 	if (result.ok && result.profile && input.user && ctx.users) {
 		try {
 			const existing = await ctx.users.findByResourceId(input.user);
-			await ctx.users.upsertByResourceId({
-				resourceId: input.user,
-				data: {
-					...(existing || { id: input.user }),
-					profile: result.profile,
-				},
+			await ctx.users.upsert(input.user, {
+				...(existing?.data || { id: input.user }),
+				profile: result.profile,
 			});
 		} catch (error) {
 			console.warn('Failed to update user profile in database:', error);
@@ -140,12 +131,9 @@ export const updateProfile: SlackEndpoints['usersUpdateProfile'] = async (
 	if (result.ok && result.profile && input.user && ctx.users) {
 		try {
 			const existing = await ctx.users.findByResourceId(input.user);
-			await ctx.users.upsertByResourceId({
-				resourceId: input.user,
-				data: {
-					...(existing || { id: input.user }),
-					profile: result.profile,
-				},
+			await ctx.users.upsert(input.user, {
+				...(existing?.data || { id: input.user }),
+				profile: result.profile,
 			});
 		} catch (error) {
 			console.warn('Failed to update user profile in database:', error);

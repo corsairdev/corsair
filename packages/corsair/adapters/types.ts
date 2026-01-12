@@ -1,6 +1,8 @@
 export type CorsairTableName =
+	| 'corsair_connections'
 	| 'corsair_resources'
-	| 'corsair_credentials'
+	| 'corsair_events'
+	| 'corsair_providers'
 	| (string & {});
 
 export type CorsairWhereOperator = '=' | 'in' | 'like';

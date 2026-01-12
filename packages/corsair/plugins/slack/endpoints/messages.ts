@@ -35,16 +35,13 @@ export const postMessage: SlackEndpoints['postMessage'] = async (
 
 	if (result.ok && result.message && result.ts && ctx.messages) {
 		try {
-			await ctx.messages.upsertByResourceId({
-				resourceId: result.ts,
-				data: {
-					id: result.ts,
-					ts: result.ts,
-					text: result.message.text,
-					channel: result.channel || input.channel,
-					thread_ts: input.thread_ts,
-					createdAt: new Date(),
-				},
+			await ctx.messages.upsert(result.ts, {
+				id: result.ts,
+				ts: result.ts,
+				text: result.message.text,
+				channel: result.channel || input.channel,
+				thread_ts: input.thread_ts,
+				createdAt: new Date(),
 			});
 		} catch (error) {
 			console.warn('Failed to save message to database:', error);
@@ -110,15 +107,12 @@ export const update: SlackEndpoints['messagesUpdate'] = async (ctx, input) => {
 
 	if (result.ok && result.message && result.ts && ctx.messages) {
 		try {
-			await ctx.messages.upsertByResourceId({
-				resourceId: result.ts,
-				data: {
-					id: result.ts,
-					ts: result.ts,
-					text: result.message.text || result.text,
-					channel: result.channel || input.channel,
-					createdAt: new Date(),
-				},
+			await ctx.messages.upsert(result.ts, {
+				id: result.ts,
+				ts: result.ts,
+				text: result.message.text || result.text,
+				channel: result.channel || input.channel,
+				createdAt: new Date(),
 			});
 		} catch (error) {
 			console.warn('Failed to update message in database:', error);
@@ -171,15 +165,12 @@ export const search: SlackEndpoints['messagesSearch'] = async (ctx, input) => {
 		try {
 			for (const match of result.messages.matches) {
 				if (match.ts) {
-					await ctx.messages.upsertByResourceId({
-						resourceId: match.ts,
-						data: {
-							id: match.ts,
-							ts: match.ts,
-							text: match.text,
-							channel: '',
-							createdAt: new Date(),
-						},
+					await ctx.messages.upsert(match.ts, {
+						id: match.ts,
+						ts: match.ts,
+						text: match.text,
+						channel: '',
+						createdAt: new Date(),
 					});
 				}
 			}
