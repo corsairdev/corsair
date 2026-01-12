@@ -1,18 +1,17 @@
 import type { SlackEndpoints } from '..';
+import type { SlackEndpointOutputs } from '../types';
 import { makeSlackRequest } from '../client';
 
 export const archive: SlackEndpoints['channelsArchive'] = async (
 	ctx,
 	input,
 ) => {
-	const result = await makeSlackRequest<{ ok: boolean; error?: string }>(
-		'conversations.archive',
-		ctx.options.botToken,
-		{
-			method: 'POST',
-			body: { channel: input.channel },
-		},
-	);
+	const result = await makeSlackRequest<
+		SlackEndpointOutputs['channelsArchive']
+	>('conversations.archive', ctx.options.botToken, {
+		method: 'POST',
+		body: { channel: input.channel },
+	});
 
 	if (result.ok && ctx.channels) {
 		try {
@@ -32,23 +31,19 @@ export const archive: SlackEndpoints['channelsArchive'] = async (
 };
 
 export const close: SlackEndpoints['channelsClose'] = async (ctx, input) => {
-	return makeSlackRequest<{
-		ok: boolean;
-		error?: string;
-		no_op?: boolean;
-		already_closed?: boolean;
-	}>('conversations.close', ctx.options.botToken, {
+	return makeSlackRequest<SlackEndpointOutputs['channelsClose']>(
+		'conversations.close',
+		ctx.options.botToken,
+	{
 		method: 'POST',
 		body: { channel: input.channel },
 	});
 };
 
 export const create: SlackEndpoints['channelsCreate'] = async (ctx, input) => {
-	const result = await makeSlackRequest<{
-		ok: boolean;
-		channel?: { id: string; name: string };
-		error?: string;
-	}>('conversations.create', ctx.options.botToken, {
+	const result = await makeSlackRequest<
+		SlackEndpointOutputs['channelsCreate']
+	>('conversations.create', ctx.options.botToken, {
 		method: 'POST',
 		body: {
 			name: input.name,
@@ -75,11 +70,10 @@ export const create: SlackEndpoints['channelsCreate'] = async (ctx, input) => {
 };
 
 export const get: SlackEndpoints['channelsGet'] = async (ctx, input) => {
-	const result = await makeSlackRequest<{
-		ok: boolean;
-		channel?: { id: string; name?: string };
-		error?: string;
-	}>('conversations.info', ctx.options.botToken, {
+	const result = await makeSlackRequest<SlackEndpointOutputs['channelsGet']>(
+		'conversations.info',
+		ctx.options.botToken,
+	{
 		method: 'GET',
 		query: {
 			channel: input.channel,
@@ -104,11 +98,9 @@ export const get: SlackEndpoints['channelsGet'] = async (ctx, input) => {
 };
 
 export const list: SlackEndpoints['channelsList'] = async (ctx, input) => {
-	const result = await makeSlackRequest<{
-		ok: boolean;
-		channels?: Array<{ id: string; name?: string }>;
-		error?: string;
-	}>('conversations.list', ctx.options.botToken, {
+	const result = await makeSlackRequest<
+		SlackEndpointOutputs['channelsList']
+	>('conversations.list', ctx.options.botToken, {
 		method: 'GET',
 		query: {
 			exclude_archived: input.exclude_archived,
@@ -142,12 +134,9 @@ export const getHistory: SlackEndpoints['channelsGetHistory'] = async (
 	ctx,
 	input,
 ) => {
-	const result = await makeSlackRequest<{
-		ok: boolean;
-		messages?: Array<{ ts?: string; text?: string }>;
-		has_more?: boolean;
-		error?: string;
-	}>('conversations.history', ctx.options.botToken, {
+	const result = await makeSlackRequest<
+		SlackEndpointOutputs['channelsGetHistory']
+	>('conversations.history', ctx.options.botToken, {
 		method: 'GET',
 		query: {
 			channel: input.channel,
@@ -182,11 +171,9 @@ export const getHistory: SlackEndpoints['channelsGetHistory'] = async (
 };
 
 export const invite: SlackEndpoints['channelsInvite'] = async (ctx, input) => {
-	const result = await makeSlackRequest<{
-		ok: boolean;
-		channel?: { id: string; name?: string };
-		error?: string;
-	}>('conversations.invite', ctx.options.botToken, {
+	const result = await makeSlackRequest<
+		SlackEndpointOutputs['channelsInvite']
+	>('conversations.invite', ctx.options.botToken, {
 		method: 'POST',
 		body: {
 			channel: input.channel,
@@ -211,12 +198,10 @@ export const invite: SlackEndpoints['channelsInvite'] = async (ctx, input) => {
 };
 
 export const join: SlackEndpoints['channelsJoin'] = async (ctx, input) => {
-	const result = await makeSlackRequest<{
-		ok: boolean;
-		channel?: { id: string; name?: string };
-		warning?: string;
-		error?: string;
-	}>('conversations.join', ctx.options.botToken, {
+	const result = await makeSlackRequest<SlackEndpointOutputs['channelsJoin']>(
+		'conversations.join',
+		ctx.options.botToken,
+	{
 		method: 'POST',
 		body: { channel: input.channel },
 	});
@@ -238,7 +223,7 @@ export const join: SlackEndpoints['channelsJoin'] = async (ctx, input) => {
 };
 
 export const kick: SlackEndpoints['channelsKick'] = async (ctx, input) => {
-	return makeSlackRequest<{ ok: boolean; error?: string }>(
+	return makeSlackRequest<SlackEndpointOutputs['channelsKick']>(
 		'conversations.kick',
 		ctx.options.botToken,
 		{
@@ -252,11 +237,9 @@ export const kick: SlackEndpoints['channelsKick'] = async (ctx, input) => {
 };
 
 export const leave: SlackEndpoints['channelsLeave'] = async (ctx, input) => {
-	const result = await makeSlackRequest<{
-		ok: boolean;
-		not_in_channel?: boolean;
-		error?: string;
-	}>('conversations.leave', ctx.options.botToken, {
+	const result = await makeSlackRequest<
+		SlackEndpointOutputs['channelsLeave']
+	>('conversations.leave', ctx.options.botToken, {
 		method: 'POST',
 		body: { channel: input.channel },
 	});
@@ -282,11 +265,9 @@ export const getMembers: SlackEndpoints['channelsGetMembers'] = async (
 	ctx,
 	input,
 ) => {
-	const result = await makeSlackRequest<{
-		ok: boolean;
-		members?: string[];
-		error?: string;
-	}>('conversations.members', ctx.options.botToken, {
+	const result = await makeSlackRequest<
+		SlackEndpointOutputs['channelsGetMembers']
+	>('conversations.members', ctx.options.botToken, {
 		method: 'GET',
 		query: {
 			channel: input.channel,
@@ -313,13 +294,10 @@ export const getMembers: SlackEndpoints['channelsGetMembers'] = async (
 };
 
 export const open: SlackEndpoints['channelsOpen'] = async (ctx, input) => {
-	const result = await makeSlackRequest<{
-		ok: boolean;
-		channel?: { id: string; name?: string };
-		no_op?: boolean;
-		already_open?: boolean;
-		error?: string;
-	}>('conversations.open', ctx.options.botToken, {
+	const result = await makeSlackRequest<SlackEndpointOutputs['channelsOpen']>(
+		'conversations.open',
+		ctx.options.botToken,
+	{
 		method: 'POST',
 		body: {
 			channel: input.channel,
@@ -345,11 +323,9 @@ export const open: SlackEndpoints['channelsOpen'] = async (ctx, input) => {
 };
 
 export const rename: SlackEndpoints['channelsRename'] = async (ctx, input) => {
-	const result = await makeSlackRequest<{
-		ok: boolean;
-		channel?: { id: string; name?: string };
-		error?: string;
-	}>('conversations.rename', ctx.options.botToken, {
+	const result = await makeSlackRequest<
+		SlackEndpointOutputs['channelsRename']
+	>('conversations.rename', ctx.options.botToken, {
 		method: 'POST',
 		body: {
 			channel: input.channel,
@@ -377,12 +353,9 @@ export const getReplies: SlackEndpoints['channelsGetReplies'] = async (
 	ctx,
 	input,
 ) => {
-	const result = await makeSlackRequest<{
-		ok: boolean;
-		messages?: Array<{ ts?: string; text?: string }>;
-		has_more?: boolean;
-		error?: string;
-	}>('conversations.replies', ctx.options.botToken, {
+	const result = await makeSlackRequest<
+		SlackEndpointOutputs['channelsGetReplies']
+	>('conversations.replies', ctx.options.botToken, {
 		method: 'GET',
 		query: {
 			channel: input.channel,
@@ -422,12 +395,9 @@ export const setPurpose: SlackEndpoints['channelsSetPurpose'] = async (
 	ctx,
 	input,
 ) => {
-	const result = await makeSlackRequest<{
-		ok: boolean;
-		channel?: { id: string; name?: string };
-		purpose?: string;
-		error?: string;
-	}>('conversations.setPurpose', ctx.options.botToken, {
+	const result = await makeSlackRequest<
+		SlackEndpointOutputs['channelsSetPurpose']
+	>('conversations.setPurpose', ctx.options.botToken, {
 		method: 'POST',
 		body: {
 			channel: input.channel,
@@ -460,12 +430,9 @@ export const setTopic: SlackEndpoints['channelsSetTopic'] = async (
 	ctx,
 	input,
 ) => {
-	const result = await makeSlackRequest<{
-		ok: boolean;
-		channel?: { id: string; name?: string };
-		topic?: string;
-		error?: string;
-	}>('conversations.setTopic', ctx.options.botToken, {
+	const result = await makeSlackRequest<
+		SlackEndpointOutputs['channelsSetTopic']
+	>('conversations.setTopic', ctx.options.botToken, {
 		method: 'POST',
 		body: {
 			channel: input.channel,
@@ -498,14 +465,12 @@ export const unarchive: SlackEndpoints['channelsUnarchive'] = async (
 	ctx,
 	input,
 ) => {
-	const result = await makeSlackRequest<{ ok: boolean; error?: string }>(
-		'conversations.unarchive',
-		ctx.options.botToken,
-		{
-			method: 'POST',
-			body: { channel: input.channel },
-		},
-	);
+	const result = await makeSlackRequest<
+		SlackEndpointOutputs['channelsUnarchive']
+	>('conversations.unarchive', ctx.options.botToken, {
+		method: 'POST',
+		body: { channel: input.channel },
+	});
 
 	if (result.ok && ctx.channels) {
 		try {

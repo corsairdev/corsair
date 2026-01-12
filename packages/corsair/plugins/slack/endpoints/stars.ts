@@ -1,8 +1,12 @@
 import type { SlackEndpoints } from '..';
+import type { SlackEndpointOutputs } from '../types';
 import { makeSlackRequest } from '../client';
 
 export const add: SlackEndpoints['starsAdd'] = async (ctx, input) => {
-	return makeSlackRequest('stars.add', ctx.options.botToken, {
+	return makeSlackRequest<SlackEndpointOutputs['starsAdd']>(
+		'stars.add',
+		ctx.options.botToken,
+	{
 		method: 'POST',
 		body: {
 			channel: input.channel,
@@ -14,7 +18,10 @@ export const add: SlackEndpoints['starsAdd'] = async (ctx, input) => {
 };
 
 export const remove: SlackEndpoints['starsRemove'] = async (ctx, input) => {
-	return makeSlackRequest('stars.remove', ctx.options.botToken, {
+	return makeSlackRequest<SlackEndpointOutputs['starsRemove']>(
+		'stars.remove',
+		ctx.options.botToken,
+	{
 		method: 'POST',
 		body: {
 			channel: input.channel,
@@ -26,7 +33,10 @@ export const remove: SlackEndpoints['starsRemove'] = async (ctx, input) => {
 };
 
 export const list: SlackEndpoints['starsList'] = async (ctx, input) => {
-	return makeSlackRequest('stars.list', ctx.options.botToken, {
+	return makeSlackRequest<SlackEndpointOutputs['starsList']>(
+		'stars.list',
+		ctx.options.botToken,
+	{
 		method: 'GET',
 		query: {
 			team_id: input.team_id,

@@ -1,17 +1,14 @@
 import type { SlackEndpoints } from '..';
+import type { SlackEndpointOutputs } from '../types';
 import { makeSlackRequest } from '../client';
 
 export const postMessage: SlackEndpoints['postMessage'] = async (
 	ctx,
 	input,
 ) => {
-	const result = await makeSlackRequest<{
-		ok: boolean;
-		channel?: string;
-		ts?: string;
-		message?: { ts?: string; text?: string };
-		error?: string;
-	}>('chat.postMessage', ctx.options.botToken, {
+	const result = await makeSlackRequest<
+		SlackEndpointOutputs['postMessage']
+	>('chat.postMessage', ctx.options.botToken, {
 		method: 'POST',
 		body: {
 			channel: input.channel,
@@ -55,12 +52,9 @@ export const deleteMessage: SlackEndpoints['messagesDelete'] = async (
 	ctx,
 	input,
 ) => {
-	const result = await makeSlackRequest<{
-		ok: boolean;
-		channel?: string;
-		ts?: string;
-		error?: string;
-	}>('chat.delete', ctx.options.botToken, {
+	const result = await makeSlackRequest<
+		SlackEndpointOutputs['messagesDelete']
+	>('chat.delete', ctx.options.botToken, {
 		method: 'POST',
 		body: {
 			channel: input.channel,
@@ -81,14 +75,9 @@ export const deleteMessage: SlackEndpoints['messagesDelete'] = async (
 };
 
 export const update: SlackEndpoints['messagesUpdate'] = async (ctx, input) => {
-	const result = await makeSlackRequest<{
-		ok: boolean;
-		channel?: string;
-		ts?: string;
-		text?: string;
-		message?: { ts?: string; text?: string };
-		error?: string;
-	}>('chat.update', ctx.options.botToken, {
+	const result = await makeSlackRequest<
+		SlackEndpointOutputs['messagesUpdate']
+	>('chat.update', ctx.options.botToken, {
 		method: 'POST',
 		body: {
 			channel: input.channel,
@@ -126,12 +115,10 @@ export const getPermalink: SlackEndpoints['messagesGetPermalink'] = async (
 	ctx,
 	input,
 ) => {
-	return makeSlackRequest<{
-		ok: boolean;
-		channel?: string;
-		permalink?: string;
-		error?: string;
-	}>('chat.getPermalink', ctx.options.botToken, {
+	return makeSlackRequest<SlackEndpointOutputs['messagesGetPermalink']>(
+		'chat.getPermalink',
+		ctx.options.botToken,
+	{
 		method: 'GET',
 		query: {
 			channel: input.channel,
@@ -141,12 +128,9 @@ export const getPermalink: SlackEndpoints['messagesGetPermalink'] = async (
 };
 
 export const search: SlackEndpoints['messagesSearch'] = async (ctx, input) => {
-	const result = await makeSlackRequest<{
-		ok: boolean;
-		query?: string;
-		messages?: { matches?: Array<{ ts?: string; text?: string }> };
-		error?: string;
-	}>('search.messages', ctx.options.botToken, {
+	const result = await makeSlackRequest<
+		SlackEndpointOutputs['messagesSearch']
+	>('search.messages', ctx.options.botToken, {
 		method: 'GET',
 		query: {
 			query: input.query,
