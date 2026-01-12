@@ -13,6 +13,7 @@ import * as userGroupsEndpoints from './endpoints/user-groups';
 import * as usersEndpoints from './endpoints/users';
 import type { SlackCredentials } from './schema';
 import { SlackSchema } from './schema';
+import type { SlackEndpointOutputs } from './types';
 
 export type SlackPluginOptions = {
 	/**
@@ -62,61 +63,39 @@ export type SlackContext = CorsairPluginContext<
  */
 export type SlackBoundEndpoints = BindEndpoints<SlackEndpoints>;
 
+type SlackEndpoint<K extends keyof SlackEndpointOutputs, Input> = CorsairEndpoint<
+	SlackContext,
+	Input,
+	SlackEndpointOutputs[K]
+>;
+
 export type SlackEndpoints = {
-	channelsArchive: CorsairEndpoint<
-		SlackContext,
-		{ channel: string },
-		{ ok: boolean; error?: string }
+	channelsArchive: SlackEndpoint<'channelsArchive', { channel: string }>;
+	channelsClose: SlackEndpoint<'channelsClose', { channel: string }>;
+	channelsCreate: SlackEndpoint<
+		'channelsCreate',
+		{ name: string; is_private?: boolean; team_id?: string }
 	>;
-	channelsClose: CorsairEndpoint<
-		SlackContext,
-		{ channel: string },
-		{
-			ok: boolean;
-			error?: string;
-			no_op?: boolean;
-			already_closed?: boolean;
-		}
-	>;
-	channelsCreate: CorsairEndpoint<
-		SlackContext,
-		{ name: string; is_private?: boolean; team_id?: string },
-		{
-			ok: boolean;
-			channel?: { id: string; name: string };
-			error?: string;
-		}
-	>;
-	channelsGet: CorsairEndpoint<
-		SlackContext,
+	channelsGet: SlackEndpoint<
+		'channelsGet',
 		{
 			channel: string;
 			include_locale?: boolean;
 			include_num_members?: boolean;
-		},
-		{
-			ok: boolean;
-			channel?: { id: string; name?: string };
-			error?: string;
 		}
 	>;
-	channelsList: CorsairEndpoint<
-		SlackContext,
+	channelsList: SlackEndpoint<
+		'channelsList',
 		{
 			exclude_archived?: boolean;
 			types?: string;
 			team_id?: string;
 			cursor?: string;
 			limit?: number;
-		},
-		{
-			ok: boolean;
-			channels?: Array<{ id: string; name?: string }>;
-			error?: string;
 		}
 	>;
-	channelsGetHistory: CorsairEndpoint<
-		SlackContext,
+	channelsGetHistory: SlackEndpoint<
+		'channelsGetHistory',
 		{
 			channel: string;
 			latest?: string;
@@ -125,75 +104,34 @@ export type SlackEndpoints = {
 			include_all_metadata?: boolean;
 			cursor?: string;
 			limit?: number;
-		},
-		{
-			ok: boolean;
-			messages?: Array<{ ts?: string; text?: string }>;
-			has_more?: boolean;
-			error?: string;
 		}
 	>;
-	channelsInvite: CorsairEndpoint<
-		SlackContext,
-		{ channel: string; users: string; force?: boolean },
-		{
-			ok: boolean;
-			channel?: { id: string; name?: string };
-			error?: string;
-		}
+	channelsInvite: SlackEndpoint<
+		'channelsInvite',
+		{ channel: string; users: string; force?: boolean }
 	>;
-	channelsJoin: CorsairEndpoint<
-		SlackContext,
-		{ channel: string },
-		{
-			ok: boolean;
-			channel?: { id: string; name?: string };
-			warning?: string;
-			error?: string;
-		}
+	channelsJoin: SlackEndpoint<'channelsJoin', { channel: string }>;
+	channelsKick: SlackEndpoint<'channelsKick', { channel: string; user: string }>;
+	channelsLeave: SlackEndpoint<'channelsLeave', { channel: string }>;
+	channelsGetMembers: SlackEndpoint<
+		'channelsGetMembers',
+		{ channel: string; cursor?: string; limit?: number }
 	>;
-	channelsKick: CorsairEndpoint<
-		SlackContext,
-		{ channel: string; user: string },
-		{ ok: boolean; error?: string }
-	>;
-	channelsLeave: CorsairEndpoint<
-		SlackContext,
-		{ channel: string },
-		{ ok: boolean; not_in_channel?: boolean; error?: string }
-	>;
-	channelsGetMembers: CorsairEndpoint<
-		SlackContext,
-		{ channel: string; cursor?: string; limit?: number },
-		{ ok: boolean; members?: string[]; error?: string }
-	>;
-	channelsOpen: CorsairEndpoint<
-		SlackContext,
+	channelsOpen: SlackEndpoint<
+		'channelsOpen',
 		{
 			channel?: string;
 			users?: string;
 			prevent_creation?: boolean;
 			return_im?: boolean;
-		},
-		{
-			ok: boolean;
-			channel?: { id: string; name?: string };
-			no_op?: boolean;
-			already_open?: boolean;
-			error?: string;
 		}
 	>;
-	channelsRename: CorsairEndpoint<
-		SlackContext,
-		{ channel: string; name: string },
-		{
-			ok: boolean;
-			channel?: { id: string; name?: string };
-			error?: string;
-		}
+	channelsRename: SlackEndpoint<
+		'channelsRename',
+		{ channel: string; name: string }
 	>;
-	channelsGetReplies: CorsairEndpoint<
-		SlackContext,
+	channelsGetReplies: SlackEndpoint<
+		'channelsGetReplies',
 		{
 			channel: string;
 			ts: string;
@@ -203,98 +141,46 @@ export type SlackEndpoints = {
 			include_all_metadata?: boolean;
 			cursor?: string;
 			limit?: number;
-		},
-		{
-			ok: boolean;
-			messages?: Array<{ ts?: string; text?: string }>;
-			has_more?: boolean;
-			error?: string;
 		}
 	>;
-	channelsSetPurpose: CorsairEndpoint<
-		SlackContext,
-		{ channel: string; purpose: string },
-		{
-			ok: boolean;
-			channel?: { id: string; name?: string };
-			purpose?: string;
-			error?: string;
-		}
+	channelsSetPurpose: SlackEndpoint<
+		'channelsSetPurpose',
+		{ channel: string; purpose: string }
 	>;
-	channelsSetTopic: CorsairEndpoint<
-		SlackContext,
-		{ channel: string; topic: string },
-		{
-			ok: boolean;
-			channel?: { id: string; name?: string };
-			topic?: string;
-			error?: string;
-		}
+	channelsSetTopic: SlackEndpoint<
+		'channelsSetTopic',
+		{ channel: string; topic: string }
 	>;
-	channelsUnarchive: CorsairEndpoint<
-		SlackContext,
-		{ channel: string },
-		{ ok: boolean; error?: string }
+	channelsUnarchive: SlackEndpoint<'channelsUnarchive', { channel: string }>;
+	usersGet: SlackEndpoint<
+		'usersGet',
+		{ user: string; include_locale?: boolean }
 	>;
-	usersGet: CorsairEndpoint<
-		SlackContext,
-		{ user: string; include_locale?: boolean },
-		{
-			ok: boolean;
-			user?: { id: string; name?: string };
-			error?: string;
-		}
-	>;
-	usersList: CorsairEndpoint<
-		SlackContext,
+	usersList: SlackEndpoint<
+		'usersList',
 		{
 			include_locale?: boolean;
 			team_id?: string;
 			cursor?: string;
 			limit?: number;
-		},
-		{
-			ok: boolean;
-			members?: Array<{ id: string; name?: string }>;
-			cache_ts?: number;
-			error?: string;
 		}
 	>;
-	usersGetProfile: CorsairEndpoint<
-		SlackContext,
-		{ user?: string; include_labels?: boolean },
-		{
-			ok: boolean;
-			profile?: { avatar_hash?: string; real_name?: string };
-			error?: string;
-		}
+	usersGetProfile: SlackEndpoint<
+		'usersGetProfile',
+		{ user?: string; include_labels?: boolean }
 	>;
-	usersGetPresence: CorsairEndpoint<
-		SlackContext,
-		{ user?: string },
-		{
-			ok: boolean;
-			presence?: string;
-			online?: boolean;
-			error?: string;
-		}
-	>;
-	usersUpdateProfile: CorsairEndpoint<
-		SlackContext,
+	usersGetPresence: SlackEndpoint<'usersGetPresence', { user?: string }>;
+	usersUpdateProfile: SlackEndpoint<
+		'usersUpdateProfile',
 		{
 			profile?: Record<string, unknown>;
 			user?: string;
 			name?: string;
 			value?: string;
-		},
-		{
-			ok: boolean;
-			profile?: { avatar_hash?: string; real_name?: string };
-			error?: string;
 		}
 	>;
-	userGroupsCreate: CorsairEndpoint<
-		SlackContext,
+	userGroupsCreate: SlackEndpoint<
+		'userGroupsCreate',
 		{
 			name: string;
 			channels?: string;
@@ -302,55 +188,35 @@ export type SlackEndpoints = {
 			handle?: string;
 			include_count?: boolean;
 			team_id?: string;
-		},
-		{
-			ok: boolean;
-			usergroup?: { id: string; name?: string };
-			error?: string;
 		}
 	>;
-	userGroupsDisable: CorsairEndpoint<
-		SlackContext,
+	userGroupsDisable: SlackEndpoint<
+		'userGroupsDisable',
 		{
 			usergroup: string;
 			include_count?: boolean;
 			team_id?: string;
-		},
-		{
-			ok: boolean;
-			usergroup?: { id: string; name?: string };
-			error?: string;
 		}
 	>;
-	userGroupsEnable: CorsairEndpoint<
-		SlackContext,
+	userGroupsEnable: SlackEndpoint<
+		'userGroupsEnable',
 		{
 			usergroup: string;
 			include_count?: boolean;
 			team_id?: string;
-		},
-		{
-			ok: boolean;
-			usergroup?: { id: string; name?: string };
-			error?: string;
 		}
 	>;
-	userGroupsList: CorsairEndpoint<
-		SlackContext,
+	userGroupsList: SlackEndpoint<
+		'userGroupsList',
 		{
 			include_count?: boolean;
 			include_disabled?: boolean;
 			include_users?: boolean;
 			team_id?: string;
-		},
-		{
-			ok: boolean;
-			userGroups?: Array<{ id: string; name?: string }>;
-			error?: string;
 		}
 	>;
-	userGroupsUpdate: CorsairEndpoint<
-		SlackContext,
+	userGroupsUpdate: SlackEndpoint<
+		'userGroupsUpdate',
 		{
 			usergroup: string;
 			name?: string;
@@ -359,30 +225,20 @@ export type SlackEndpoints = {
 			handle?: string;
 			include_count?: boolean;
 			team_id?: string;
-		},
-		{
-			ok: boolean;
-			usergroup?: { id: string; name?: string };
-			error?: string;
 		}
 	>;
-	filesGet: CorsairEndpoint<
-		SlackContext,
+	filesGet: SlackEndpoint<
+		'filesGet',
 		{
 			file: string;
 			cursor?: string;
 			limit?: number;
 			page?: number;
 			count?: number;
-		},
-		{
-			ok: boolean;
-			file?: { id: string; name?: string };
-			error?: string;
 		}
 	>;
-	filesList: CorsairEndpoint<
-		SlackContext,
+	filesList: SlackEndpoint<
+		'filesList',
 		{
 			channel?: string;
 			user?: string;
@@ -393,15 +249,10 @@ export type SlackEndpoints = {
 			team_id?: string;
 			page?: number;
 			count?: number;
-		},
-		{
-			ok: boolean;
-			files?: Array<{ id: string; name?: string }>;
-			error?: string;
 		}
 	>;
-	filesUpload: CorsairEndpoint<
-		SlackContext,
+	filesUpload: SlackEndpoint<
+		'filesUpload',
 		{
 			channels?: string;
 			content?: string;
@@ -411,30 +262,18 @@ export type SlackEndpoints = {
 			initial_comment?: string;
 			thread_ts?: string;
 			title?: string;
-		},
-		{
-			ok: boolean;
-			file?: { id: string; name?: string };
-			error?: string;
 		}
 	>;
-	messagesDelete: CorsairEndpoint<
-		SlackContext,
-		{ channel: string; ts: string; as_user?: boolean },
-		{ ok: boolean; channel?: string; ts?: string; error?: string }
+	messagesDelete: SlackEndpoint<
+		'messagesDelete',
+		{ channel: string; ts: string; as_user?: boolean }
 	>;
-	messagesGetPermalink: CorsairEndpoint<
-		SlackContext,
-		{ channel: string; message_ts: string },
-		{
-			ok: boolean;
-			channel?: string;
-			permalink?: string;
-			error?: string;
-		}
+	messagesGetPermalink: SlackEndpoint<
+		'messagesGetPermalink',
+		{ channel: string; message_ts: string }
 	>;
-	messagesSearch: CorsairEndpoint<
-		SlackContext,
+	messagesSearch: SlackEndpoint<
+		'messagesSearch',
 		{
 			query: string;
 			sort?: 'score' | 'timestamp';
@@ -445,16 +284,10 @@ export type SlackEndpoints = {
 			limit?: number;
 			page?: number;
 			count?: number;
-		},
-		{
-			ok: boolean;
-			query?: string;
-			messages?: { matches?: Array<{ ts?: string; text?: string }> };
-			error?: string;
 		}
 	>;
-	postMessage: CorsairEndpoint<
-		SlackContext,
+	postMessage: SlackEndpoint<
+		'postMessage',
 		{
 			channel: string;
 			text?: string;
@@ -475,17 +308,10 @@ export type SlackEndpoints = {
 				event_type: string;
 				event_payload: Record<string, unknown>;
 			};
-		},
-		{
-			ok: boolean;
-			channel?: string;
-			ts?: string;
-			message?: { ts?: string; text?: string };
-			error?: string;
 		}
 	>;
-	messagesUpdate: CorsairEndpoint<
-		SlackContext,
+	messagesUpdate: SlackEndpoint<
+		'messagesUpdate',
 		{
 			channel: string;
 			ts: string;
@@ -501,81 +327,58 @@ export type SlackEndpoints = {
 				event_type: string;
 				event_payload: Record<string, unknown>;
 			};
-		},
-		{
-			ok: boolean;
-			channel?: string;
-			ts?: string;
-			text?: string;
-			message?: { ts?: string; text?: string };
-			error?: string;
 		}
 	>;
-	reactionsAdd: CorsairEndpoint<
-		SlackContext,
-		{ channel: string; timestamp: string; name: string },
-		{ ok: boolean; error?: string }
+	reactionsAdd: SlackEndpoint<
+		'reactionsAdd',
+		{ channel: string; timestamp: string; name: string }
 	>;
-	reactionsGet: CorsairEndpoint<
-		SlackContext,
+	reactionsGet: SlackEndpoint<
+		'reactionsGet',
 		{
 			channel?: string;
 			timestamp?: string;
 			file?: string;
 			file_comment?: string;
 			full?: boolean;
-		},
-		{
-			ok: boolean;
-			type?: string;
-			message?: { ts?: string };
-			error?: string;
 		}
 	>;
-	reactionsRemove: CorsairEndpoint<
-		SlackContext,
+	reactionsRemove: SlackEndpoint<
+		'reactionsRemove',
 		{
 			name: string;
 			channel?: string;
 			timestamp?: string;
 			file?: string;
 			file_comment?: string;
-		},
-		{ ok: boolean; error?: string }
+		}
 	>;
-	starsAdd: CorsairEndpoint<
-		SlackContext,
+	starsAdd: SlackEndpoint<
+		'starsAdd',
 		{
 			channel?: string;
 			timestamp?: string;
 			file?: string;
 			file_comment?: string;
-		},
-		{ ok: boolean; error?: string }
+		}
 	>;
-	starsRemove: CorsairEndpoint<
-		SlackContext,
+	starsRemove: SlackEndpoint<
+		'starsRemove',
 		{
 			channel?: string;
 			timestamp?: string;
 			file?: string;
 			file_comment?: string;
-		},
-		{ ok: boolean; error?: string }
+		}
 	>;
-	starsList: CorsairEndpoint<
-		SlackContext,
+	starsList: SlackEndpoint<
+		'starsList',
 		{
 			team_id?: string;
 			cursor?: string;
 			limit?: number;
 			page?: number;
 			count?: number;
-		},
-		{
-			ok: boolean;
-			items?: Array<{ type?: string; date_create?: number }>;
-			error?: string;
 		}
 	>;
 };

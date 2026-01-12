@@ -1,15 +1,14 @@
 import type { SlackEndpoints } from '..';
+import type { SlackEndpointOutputs } from '../types';
 import { makeSlackRequest } from '../client';
 
 export const create: SlackEndpoints['userGroupsCreate'] = async (
 	ctx,
 	input,
 ) => {
-	const result = await makeSlackRequest<{
-		ok: boolean;
-		usergroup?: { id: string; name?: string };
-		error?: string;
-	}>('userGroups.create', ctx.options.botToken, {
+	const result = await makeSlackRequest<
+		SlackEndpointOutputs['userGroupsCreate']
+	>('userGroups.create', ctx.options.botToken, {
 		method: 'POST',
 		body: {
 			name: input.name,
@@ -42,11 +41,9 @@ export const disable: SlackEndpoints['userGroupsDisable'] = async (
 	ctx,
 	input,
 ) => {
-	const result = await makeSlackRequest<{
-		ok: boolean;
-		usergroup?: { id: string; name?: string };
-		error?: string;
-	}>('userGroups.disable', ctx.options.botToken, {
+	const result = await makeSlackRequest<
+		SlackEndpointOutputs['userGroupsDisable']
+	>('userGroups.disable', ctx.options.botToken, {
 		method: 'POST',
 		body: {
 			usergroup: input.usergroup,
@@ -74,11 +71,9 @@ export const enable: SlackEndpoints['userGroupsEnable'] = async (
 	ctx,
 	input,
 ) => {
-	const result = await makeSlackRequest<{
-		ok: boolean;
-		usergroup?: { id: string; name?: string };
-		error?: string;
-	}>('userGroups.enable', ctx.options.botToken, {
+	const result = await makeSlackRequest<
+		SlackEndpointOutputs['userGroupsEnable']
+	>('userGroups.enable', ctx.options.botToken, {
 		method: 'POST',
 		body: {
 			usergroup: input.usergroup,
@@ -103,11 +98,9 @@ export const enable: SlackEndpoints['userGroupsEnable'] = async (
 };
 
 export const list: SlackEndpoints['userGroupsList'] = async (ctx, input) => {
-	const result = await makeSlackRequest<{
-		ok: boolean;
-		userGroups?: Array<{ id: string; name?: string }>;
-		error?: string;
-	}>('userGroups.list', ctx.options.botToken, {
+	const result = await makeSlackRequest<
+		SlackEndpointOutputs['userGroupsList']
+	>('userGroups.list', ctx.options.botToken, {
 		method: 'GET',
 		query: {
 			include_count: input.include_count,
@@ -139,11 +132,9 @@ export const update: SlackEndpoints['userGroupsUpdate'] = async (
 	ctx,
 	input,
 ) => {
-	const result = await makeSlackRequest<{
-		ok: boolean;
-		usergroup?: { id: string; name?: string };
-		error?: string;
-	}>('userGroups.update', ctx.options.botToken, {
+	const result = await makeSlackRequest<
+		SlackEndpointOutputs['userGroupsUpdate']
+	>('userGroups.update', ctx.options.botToken, {
 		method: 'POST',
 		body: {
 			usergroup: input.usergroup,

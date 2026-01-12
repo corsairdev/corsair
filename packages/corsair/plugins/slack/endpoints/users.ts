@@ -1,12 +1,12 @@
 import type { SlackEndpoints } from '..';
+import type { SlackEndpointOutputs } from '../types';
 import { makeSlackRequest } from '../client';
 
 export const get: SlackEndpoints['usersGet'] = async (ctx, input) => {
-	const result = await makeSlackRequest<{
-		ok: boolean;
-		user?: { id: string; name?: string };
-		error?: string;
-	}>('users.info', ctx.options.botToken, {
+	const result = await makeSlackRequest<SlackEndpointOutputs['usersGet']>(
+		'users.info',
+		ctx.options.botToken,
+	{
 		method: 'GET',
 		query: {
 			user: input.user,
@@ -29,12 +29,10 @@ export const get: SlackEndpoints['usersGet'] = async (ctx, input) => {
 };
 
 export const list: SlackEndpoints['usersList'] = async (ctx, input) => {
-	const result = await makeSlackRequest<{
-		ok: boolean;
-		members?: Array<{ id: string; name?: string }>;
-		cache_ts?: number;
-		error?: string;
-	}>('users.list', ctx.options.botToken, {
+	const result = await makeSlackRequest<SlackEndpointOutputs['usersList']>(
+		'users.list',
+		ctx.options.botToken,
+	{
 		method: 'GET',
 		query: {
 			include_locale: input.include_locale,
@@ -66,11 +64,9 @@ export const getProfile: SlackEndpoints['usersGetProfile'] = async (
 	ctx,
 	input,
 ) => {
-	const result = await makeSlackRequest<{
-		ok: boolean;
-		profile?: { avatar_hash?: string; real_name?: string };
-		error?: string;
-	}>('users.profile.get', ctx.options.botToken, {
+	const result = await makeSlackRequest<
+		SlackEndpointOutputs['usersGetProfile']
+	>('users.profile.get', ctx.options.botToken, {
 		method: 'GET',
 		query: {
 			user: input.user,
@@ -97,12 +93,10 @@ export const getPresence: SlackEndpoints['usersGetPresence'] = async (
 	ctx,
 	input,
 ) => {
-	return makeSlackRequest<{
-		ok: boolean;
-		presence?: string;
-		online?: boolean;
-		error?: string;
-	}>('users.getPresence', ctx.options.botToken, {
+	return makeSlackRequest<SlackEndpointOutputs['usersGetPresence']>(
+		'users.getPresence',
+		ctx.options.botToken,
+	{
 		method: 'GET',
 		query: {
 			user: input.user,
@@ -114,11 +108,9 @@ export const updateProfile: SlackEndpoints['usersUpdateProfile'] = async (
 	ctx,
 	input,
 ) => {
-	const result = await makeSlackRequest<{
-		ok: boolean;
-		profile?: { avatar_hash?: string; real_name?: string };
-		error?: string;
-	}>('users.profile.set', ctx.options.botToken, {
+	const result = await makeSlackRequest<
+		SlackEndpointOutputs['usersUpdateProfile']
+	>('users.profile.set', ctx.options.botToken, {
 		method: 'POST',
 		body: {
 			profile: input.profile,
