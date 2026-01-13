@@ -32,8 +32,7 @@ const SLACK_REACTIONS = [
 ] as const;
 
 export type SlackReactionName =
-	| (typeof SLACK_REACTIONS)[number]
-	| string;
+	| (typeof SLACK_REACTIONS)[number] 
 
 export const add: SlackEndpoints['reactionsAdd'] = async (ctx, input) => {
 	try {
