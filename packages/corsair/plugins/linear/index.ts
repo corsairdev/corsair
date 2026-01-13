@@ -12,6 +12,8 @@ import type { LinearCredentials } from './schema';
 import { LinearSchema } from './schema';
 import type { LinearEndpointOutputs } from './types';
 
+export * from './webhooks';
+
 export type LinearPluginOptions = {
 	credentials: LinearCredentials;
 	hooks?: CorsairPlugin<'linear', LinearEndpoints>['hooks'] | undefined;

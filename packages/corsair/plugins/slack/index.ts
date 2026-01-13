@@ -16,6 +16,8 @@ import type { SlackCredentials } from './schema';
 import { SlackSchema } from './schema';
 import type { SlackEndpointOutputs } from './types';
 
+export * from './webhooks';
+
 // Re-export types needed for external type inference
 export type {
 	ChatDeleteResponse,
