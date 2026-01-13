@@ -1,7 +1,7 @@
+import { logEvent } from '../../utils/events';
 import type { SlackEndpoints } from '..';
 import { makeSlackRequest } from '../client';
 import type { SlackEndpointOutputs } from '../types';
-import { logEvent } from '../../utils/events';
 
 export const add: SlackEndpoints['starsAdd'] = async (ctx, input) => {
 	try {
@@ -41,7 +41,12 @@ export const remove: SlackEndpoints['starsRemove'] = async (ctx, input) => {
 				},
 			},
 		);
-		await logEvent(ctx.database, 'slack.stars.remove', { ...input }, 'completed');
+		await logEvent(
+			ctx.database,
+			'slack.stars.remove',
+			{ ...input },
+			'completed',
+		);
 		return result;
 	} catch (error) {
 		await logEvent(ctx.database, 'slack.stars.remove', { ...input }, 'failed');

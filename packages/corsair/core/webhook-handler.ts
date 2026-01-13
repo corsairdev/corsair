@@ -59,4 +59,3 @@ export abstract class BaseWebhookHandler<
 		}
 	}
 }
-

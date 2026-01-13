@@ -128,4 +128,3 @@ export function createWebhookHandler(
 ): LinearWebhookHandler {
 	return new LinearWebhookHandler(options);
 }
-

@@ -1,7 +1,7 @@
+import { logEvent } from '../../utils/events';
 import type { LinearEndpoints } from '..';
 import { makeLinearRequest } from '../client';
 import type { TeamGetResponse, TeamsListResponse } from '../types';
-import { logEvent } from '../../utils/events';
 
 const TEAMS_LIST_QUERY = `
   query Teams($first: Int!, $after: String) {
@@ -77,7 +77,12 @@ export const list: LinearEndpoints['teamsList'] = async (ctx, input) => {
 			}
 		}
 
-		await logEvent(ctx.database, 'linear.teams.list', { ...input }, 'completed');
+		await logEvent(
+			ctx.database,
+			'linear.teams.list',
+			{ ...input },
+			'completed',
+		);
 		return result;
 	} catch (error) {
 		await logEvent(ctx.database, 'linear.teams.list', { ...input }, 'failed');

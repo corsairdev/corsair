@@ -193,4 +193,3 @@ export interface LinearEventMap {
 	ProjectUpdate: ProjectUpdatedEvent;
 	ProjectRemove: ProjectDeletedEvent;
 }
-

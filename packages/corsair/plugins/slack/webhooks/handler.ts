@@ -1,9 +1,6 @@
 import { BaseWebhookHandler } from '../../../core/webhook-handler';
 import { verifySlackSignature } from '../../../core/webhook-utils';
-import type {
-	SlackEventMap,
-	SlackEventName,
-} from './types';
+import type { SlackEventMap, SlackEventName } from './types';
 
 export type SlackEventHandler<T extends SlackEventName> = (
 	event: SlackEventMap[T],
@@ -75,7 +72,12 @@ export class SlackWebhookHandler extends BaseWebhookHandler<
 			return true;
 		}
 
-		return verifySlackSignature(payload, this.signingSecret, timestamp, signature);
+		return verifySlackSignature(
+			payload,
+			this.signingSecret,
+			timestamp,
+			signature,
+		);
 	}
 
 	async handleWebhook(
@@ -148,4 +150,3 @@ export function createWebhookHandler(
 ): SlackWebhookHandler {
 	return new SlackWebhookHandler(options);
 }
-
