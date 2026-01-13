@@ -1,7 +1,7 @@
 import type { LinearEndpoints } from '..';
 import { makeLinearRequest } from '../client';
 import type { TeamGetResponse, TeamsListResponse } from '../types';
-import { logEvent, updateEventStatus } from '../../utils/events';
+import { logEvent } from '../../utils/events';
 
 const TEAMS_LIST_QUERY = `
   query Teams($first: Int!, $after: String) {
@@ -44,11 +44,6 @@ const TEAM_GET_QUERY = `
 `;
 
 export const list: LinearEndpoints['teamsList'] = async (ctx, input) => {
-	const eventId = await logEvent(ctx.database, 'linear.teams.list', {
-		first: input.first,
-		after: input.after,
-	});
-
 	try {
 		const response = await makeLinearRequest<TeamsListResponse>(
 			TEAMS_LIST_QUERY,
@@ -82,19 +77,15 @@ export const list: LinearEndpoints['teamsList'] = async (ctx, input) => {
 			}
 		}
 
-		await updateEventStatus(ctx.database, eventId, 'completed');
+		await logEvent(ctx.database, 'linear.teams.list', { ...input }, 'completed');
 		return result;
 	} catch (error) {
-		await updateEventStatus(ctx.database, eventId, 'failed');
+		await logEvent(ctx.database, 'linear.teams.list', { ...input }, 'failed');
 		throw error;
 	}
 };
 
 export const get: LinearEndpoints['teamsGet'] = async (ctx, input) => {
-	const eventId = await logEvent(ctx.database, 'linear.teams.get', {
-		id: input.id,
-	});
-
 	try {
 		const response = await makeLinearRequest<TeamGetResponse>(
 			TEAM_GET_QUERY,
@@ -123,10 +114,10 @@ export const get: LinearEndpoints['teamsGet'] = async (ctx, input) => {
 			}
 		}
 
-		await updateEventStatus(ctx.database, eventId, 'completed');
+		await logEvent(ctx.database, 'linear.teams.get', { ...input }, 'completed');
 		return result;
 	} catch (error) {
-		await updateEventStatus(ctx.database, eventId, 'failed');
+		await logEvent(ctx.database, 'linear.teams.get', { ...input }, 'failed');
 		throw error;
 	}
 };

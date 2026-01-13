@@ -1,21 +1,12 @@
 import type { SlackEndpoints } from '..';
 import { makeSlackRequest } from '../client';
 import type { SlackEndpointOutputs } from '../types';
-import { logEvent, updateEventStatus } from '../../utils/events';
+import { logEvent } from '../../utils/events';
 
 export const create: SlackEndpoints['userGroupsCreate'] = async (
 	ctx,
 	input,
 ) => {
-	const eventId = await logEvent(ctx.database, 'slack.userGroups.create', {
-		name: input.name,
-		channels: input.channels,
-		description: input.description,
-		handle: input.handle,
-		include_count: input.include_count,
-		team_id: input.team_id,
-	});
-
 	try {
 		const result = await makeSlackRequest<
 			SlackEndpointOutputs['userGroupsCreate']
@@ -45,10 +36,10 @@ export const create: SlackEndpoints['userGroupsCreate'] = async (
 			}
 		}
 
-		await updateEventStatus(ctx.database, eventId, 'completed');
+		await logEvent(ctx.database, 'slack.userGroups.create', { ...input }, 'completed');
 		return result;
 	} catch (error) {
-		await updateEventStatus(ctx.database, eventId, 'failed');
+		await logEvent(ctx.database, 'slack.userGroups.create', { ...input }, 'failed');
 		throw error;
 	}
 };
@@ -57,12 +48,6 @@ export const disable: SlackEndpoints['userGroupsDisable'] = async (
 	ctx,
 	input,
 ) => {
-	const eventId = await logEvent(ctx.database, 'slack.userGroups.disable', {
-		usergroup: input.usergroup,
-		include_count: input.include_count,
-		team_id: input.team_id,
-	});
-
 	try {
 		const result = await makeSlackRequest<
 			SlackEndpointOutputs['userGroupsDisable']
@@ -89,10 +74,10 @@ export const disable: SlackEndpoints['userGroupsDisable'] = async (
 			}
 		}
 
-		await updateEventStatus(ctx.database, eventId, 'completed');
+		await logEvent(ctx.database, 'slack.userGroups.disable', { ...input }, 'completed');
 		return result;
 	} catch (error) {
-		await updateEventStatus(ctx.database, eventId, 'failed');
+		await logEvent(ctx.database, 'slack.userGroups.disable', { ...input }, 'failed');
 		throw error;
 	}
 };
@@ -101,12 +86,6 @@ export const enable: SlackEndpoints['userGroupsEnable'] = async (
 	ctx,
 	input,
 ) => {
-	const eventId = await logEvent(ctx.database, 'slack.userGroups.enable', {
-		usergroup: input.usergroup,
-		include_count: input.include_count,
-		team_id: input.team_id,
-	});
-
 	try {
 		const result = await makeSlackRequest<
 			SlackEndpointOutputs['userGroupsEnable']
@@ -133,22 +112,15 @@ export const enable: SlackEndpoints['userGroupsEnable'] = async (
 			}
 		}
 
-		await updateEventStatus(ctx.database, eventId, 'completed');
+		await logEvent(ctx.database, 'slack.userGroups.enable', { ...input }, 'completed');
 		return result;
 	} catch (error) {
-		await updateEventStatus(ctx.database, eventId, 'failed');
+		await logEvent(ctx.database, 'slack.userGroups.enable', { ...input }, 'failed');
 		throw error;
 	}
 };
 
 export const list: SlackEndpoints['userGroupsList'] = async (ctx, input) => {
-	const eventId = await logEvent(ctx.database, 'slack.userGroups.list', {
-		include_count: input.include_count,
-		include_disabled: input.include_disabled,
-		include_users: input.include_users,
-		team_id: input.team_id,
-	});
-
 	try {
 		const result = await makeSlackRequest<SlackEndpointOutputs['userGroupsList']>(
 			'userGroups.list',
@@ -179,10 +151,10 @@ export const list: SlackEndpoints['userGroupsList'] = async (ctx, input) => {
 			}
 		}
 
-		await updateEventStatus(ctx.database, eventId, 'completed');
+		await logEvent(ctx.database, 'slack.userGroups.list', { ...input }, 'completed');
 		return result;
 	} catch (error) {
-		await updateEventStatus(ctx.database, eventId, 'failed');
+		await logEvent(ctx.database, 'slack.userGroups.list', { ...input }, 'failed');
 		throw error;
 	}
 };
@@ -191,16 +163,6 @@ export const update: SlackEndpoints['userGroupsUpdate'] = async (
 	ctx,
 	input,
 ) => {
-	const eventId = await logEvent(ctx.database, 'slack.userGroups.update', {
-		usergroup: input.usergroup,
-		name: input.name,
-		channels: input.channels,
-		description: input.description,
-		handle: input.handle,
-		include_count: input.include_count,
-		team_id: input.team_id,
-	});
-
 	try {
 		const result = await makeSlackRequest<
 			SlackEndpointOutputs['userGroupsUpdate']
@@ -234,10 +196,10 @@ export const update: SlackEndpoints['userGroupsUpdate'] = async (
 			}
 		}
 
-		await updateEventStatus(ctx.database, eventId, 'completed');
+		await logEvent(ctx.database, 'slack.userGroups.update', { ...input }, 'completed');
 		return result;
 	} catch (error) {
-		await updateEventStatus(ctx.database, eventId, 'failed');
+		await logEvent(ctx.database, 'slack.userGroups.update', { ...input }, 'failed');
 		throw error;
 	}
 };

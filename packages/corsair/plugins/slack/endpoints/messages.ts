@@ -1,31 +1,12 @@
 import type { SlackEndpoints } from '..';
 import { makeSlackRequest } from '../client';
 import type { SlackEndpointOutputs } from '../types';
-import { logEvent, updateEventStatus } from '../../utils/events';
+import { logEvent } from '../../utils/events';
 
 export const postMessage: SlackEndpoints['postMessage'] = async (
 	ctx,
 	input,
 ) => {
-	const eventId = await logEvent(ctx.database, 'slack.messages.postMessage', {
-		channel: input.channel,
-		text: input.text,
-		blocks: input.blocks,
-		attachments: input.attachments,
-		thread_ts: input.thread_ts,
-		reply_broadcast: input.reply_broadcast,
-		parse: input.parse,
-		link_names: input.link_names,
-		unfurl_links: input.unfurl_links,
-		unfurl_media: input.unfurl_media,
-		mrkdwn: input.mrkdwn,
-		as_user: input.as_user,
-		icon_emoji: input.icon_emoji,
-		icon_url: input.icon_url,
-		username: input.username,
-		metadata: input.metadata,
-	});
-
 	try {
 		const result = await makeSlackRequest<SlackEndpointOutputs['postMessage']>(
 			'chat.postMessage',
@@ -68,10 +49,10 @@ export const postMessage: SlackEndpoints['postMessage'] = async (
 			}
 		}
 
-		await updateEventStatus(ctx.database, eventId, 'completed');
+		await logEvent(ctx.database, 'slack.messages.postMessage', { ...input }, 'completed');
 		return result;
 	} catch (error) {
-		await updateEventStatus(ctx.database, eventId, 'failed');
+		await logEvent(ctx.database, 'slack.messages.postMessage', { ...input }, 'failed');
 		throw error;
 	}
 };
@@ -80,12 +61,6 @@ export const deleteMessage: SlackEndpoints['messagesDelete'] = async (
 	ctx,
 	input,
 ) => {
-	const eventId = await logEvent(ctx.database, 'slack.messages.delete', {
-		channel: input.channel,
-		ts: input.ts,
-		as_user: input.as_user,
-	});
-
 	try {
 		const result = await makeSlackRequest<SlackEndpointOutputs['messagesDelete']>(
 			'chat.delete',
@@ -108,29 +83,15 @@ export const deleteMessage: SlackEndpoints['messagesDelete'] = async (
 			}
 		}
 
-		await updateEventStatus(ctx.database, eventId, 'completed');
+		await logEvent(ctx.database, 'slack.messages.delete', { ...input }, 'completed');
 		return result;
 	} catch (error) {
-		await updateEventStatus(ctx.database, eventId, 'failed');
+		await logEvent(ctx.database, 'slack.messages.delete', { ...input }, 'failed');
 		throw error;
 	}
 };
 
 export const update: SlackEndpoints['messagesUpdate'] = async (ctx, input) => {
-	const eventId = await logEvent(ctx.database, 'slack.messages.update', {
-		channel: input.channel,
-		ts: input.ts,
-		text: input.text,
-		blocks: input.blocks,
-		attachments: input.attachments,
-		parse: input.parse,
-		link_names: input.link_names,
-		as_user: input.as_user,
-		file_ids: input.file_ids,
-		reply_broadcast: input.reply_broadcast,
-		metadata: input.metadata,
-	});
-
 	try {
 		const result = await makeSlackRequest<SlackEndpointOutputs['messagesUpdate']>(
 			'chat.update',
@@ -167,10 +128,10 @@ export const update: SlackEndpoints['messagesUpdate'] = async (ctx, input) => {
 			}
 		}
 
-		await updateEventStatus(ctx.database, eventId, 'completed');
+		await logEvent(ctx.database, 'slack.messages.update', { ...input }, 'completed');
 		return result;
 	} catch (error) {
-		await updateEventStatus(ctx.database, eventId, 'failed');
+		await logEvent(ctx.database, 'slack.messages.update', { ...input }, 'failed');
 		throw error;
 	}
 };
@@ -179,11 +140,6 @@ export const getPermalink: SlackEndpoints['messagesGetPermalink'] = async (
 	ctx,
 	input,
 ) => {
-	const eventId = await logEvent(ctx.database, 'slack.messages.getPermalink', {
-		channel: input.channel,
-		message_ts: input.message_ts,
-	});
-
 	try {
 		const result = await makeSlackRequest<SlackEndpointOutputs['messagesGetPermalink']>(
 			'chat.getPermalink',
@@ -196,27 +152,15 @@ export const getPermalink: SlackEndpoints['messagesGetPermalink'] = async (
 				},
 			},
 		);
-		await updateEventStatus(ctx.database, eventId, 'completed');
+		await logEvent(ctx.database, 'slack.messages.getPermalink', { ...input }, 'completed');
 		return result;
 	} catch (error) {
-		await updateEventStatus(ctx.database, eventId, 'failed');
+		await logEvent(ctx.database, 'slack.messages.getPermalink', { ...input }, 'failed');
 		throw error;
 	}
 };
 
 export const search: SlackEndpoints['messagesSearch'] = async (ctx, input) => {
-	const eventId = await logEvent(ctx.database, 'slack.messages.search', {
-		query: input.query,
-		sort: input.sort,
-		sort_dir: input.sort_dir,
-		highlight: input.highlight,
-		team_id: input.team_id,
-		cursor: input.cursor,
-		limit: input.limit,
-		page: input.page,
-		count: input.count,
-	});
-
 	try {
 		const result = await makeSlackRequest<SlackEndpointOutputs['messagesSearch']>(
 			'search.messages',
@@ -255,10 +199,10 @@ export const search: SlackEndpoints['messagesSearch'] = async (ctx, input) => {
 			}
 		}
 
-		await updateEventStatus(ctx.database, eventId, 'completed');
+		await logEvent(ctx.database, 'slack.messages.search', { ...input }, 'completed');
 		return result;
 	} catch (error) {
-		await updateEventStatus(ctx.database, eventId, 'failed');
+		await logEvent(ctx.database, 'slack.messages.search', { ...input }, 'failed');
 		throw error;
 	}
 };

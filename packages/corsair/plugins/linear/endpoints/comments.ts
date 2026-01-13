@@ -8,7 +8,7 @@ import type {
 	CreateCommentInput,
 	UpdateCommentInput,
 } from '../types';
-import { logEvent, updateEventStatus } from '../../utils/events';
+import { logEvent } from '../../utils/events';
 
 const COMMENTS_LIST_QUERY = `
   query Comments($issueId: String!, $first: Int!, $after: String) {
@@ -106,12 +106,6 @@ const COMMENT_DELETE_MUTATION = `
 `;
 
 export const list: LinearEndpoints['commentsList'] = async (ctx, input) => {
-	const eventId = await logEvent(ctx.database, 'linear.comments.list', {
-		issueId: input.issueId,
-		first: input.first,
-		after: input.after,
-	});
-
 	try {
 		const apiKey = ctx.options.apiKey;
 
@@ -147,21 +141,15 @@ export const list: LinearEndpoints['commentsList'] = async (ctx, input) => {
 			}
 		}
 
-		await updateEventStatus(ctx.database, eventId, 'completed');
+		await logEvent(ctx.database, 'linear.comments.list', { ...input }, 'completed');
 		return result;
 	} catch (error) {
-		await updateEventStatus(ctx.database, eventId, 'failed');
+		await logEvent(ctx.database, 'linear.comments.list', { ...input }, 'failed');
 		throw error;
 	}
 };
 
 export const create: LinearEndpoints['commentsCreate'] = async (ctx, input) => {
-	const eventId = await logEvent(ctx.database, 'linear.comments.create', {
-		body: input.body,
-		issueId: input.issueId,
-		parentId: input.parentId,
-	});
-
 	try {
 		const apiKey = ctx.options.apiKey;
 
@@ -192,20 +180,15 @@ export const create: LinearEndpoints['commentsCreate'] = async (ctx, input) => {
 			}
 		}
 
-		await updateEventStatus(ctx.database, eventId, 'completed');
+		await logEvent(ctx.database, 'linear.comments.create', { ...input }, 'completed');
 		return result;
 	} catch (error) {
-		await updateEventStatus(ctx.database, eventId, 'failed');
+		await logEvent(ctx.database, 'linear.comments.create', { ...input }, 'failed');
 		throw error;
 	}
 };
 
 export const update: LinearEndpoints['commentsUpdate'] = async (ctx, input) => {
-	const eventId = await logEvent(ctx.database, 'linear.comments.update', {
-		id: input.id,
-		input: input.input,
-	});
-
 	try {
 		const apiKey = ctx.options.apiKey;
 
@@ -239,10 +222,10 @@ export const update: LinearEndpoints['commentsUpdate'] = async (ctx, input) => {
 			}
 		}
 
-		await updateEventStatus(ctx.database, eventId, 'completed');
+		await logEvent(ctx.database, 'linear.comments.update', { ...input }, 'completed');
 		return result;
 	} catch (error) {
-		await updateEventStatus(ctx.database, eventId, 'failed');
+		await logEvent(ctx.database, 'linear.comments.update', { ...input }, 'failed');
 		throw error;
 	}
 };
@@ -251,10 +234,6 @@ export const deleteComment: LinearEndpoints['commentsDelete'] = async (
 	ctx,
 	input,
 ) => {
-	const eventId = await logEvent(ctx.database, 'linear.comments.delete', {
-		id: input.id,
-	});
-
 	try {
 		const apiKey = ctx.options.apiKey;
 
@@ -276,10 +255,10 @@ export const deleteComment: LinearEndpoints['commentsDelete'] = async (
 			}
 		}
 
-		await updateEventStatus(ctx.database, eventId, 'completed');
+		await logEvent(ctx.database, 'linear.comments.delete', { ...input }, 'completed');
 		return success;
 	} catch (error) {
-		await updateEventStatus(ctx.database, eventId, 'failed');
+		await logEvent(ctx.database, 'linear.comments.delete', { ...input }, 'failed');
 		throw error;
 	}
 };
