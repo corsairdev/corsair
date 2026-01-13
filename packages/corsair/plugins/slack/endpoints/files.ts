@@ -1,25 +1,27 @@
 import type { SlackEndpoints } from '..';
+import type { SlackEndpointOutputs } from '../types';
 import { makeSlackRequest } from '../client';
+import type { SlackEndpointOutputs } from '../types';
 
 export const get: SlackEndpoints['filesGet'] = async (ctx, input) => {
-	const result = await makeSlackRequest<{
-		ok: boolean;
-		file?: { id: string; name?: string };
-		error?: string;
-	}>('files.info', ctx.options.botToken, {
-		method: 'GET',
-		query: {
-			file: input.file,
-			cursor: input.cursor,
-			limit: input.limit,
-			page: input.page,
-			count: input.count,
+	const result = await makeSlackRequest<SlackEndpointOutputs['filesGet']>(
+		'files.info',
+		ctx.options.botToken,
+		{
+			method: 'GET',
+			query: {
+				file: input.file,
+				cursor: input.cursor,
+				limit: input.limit,
+				page: input.page,
+				count: input.count,
+			},
 		},
-	});
+	);
 
-	if (result.ok && result.file && ctx.files) {
+	if (result.ok && result.file && ctx.db.files) {
 		try {
-			await ctx.files.upsert(result.file.id, {
+			await ctx.db.files.upsert(result.file.id, {
 				id: result.file.id,
 				name: result.file.name,
 			});
@@ -32,30 +34,30 @@ export const get: SlackEndpoints['filesGet'] = async (ctx, input) => {
 };
 
 export const list: SlackEndpoints['filesList'] = async (ctx, input) => {
-	const result = await makeSlackRequest<{
-		ok: boolean;
-		files?: Array<{ id: string; name?: string }>;
-		error?: string;
-	}>('files.list', ctx.options.botToken, {
-		method: 'GET',
-		query: {
-			channel: input.channel,
-			user: input.user,
-			types: input.types,
-			ts_from: input.ts_from,
-			ts_to: input.ts_to,
-			show_files_hidden_by_limit: input.show_files_hidden_by_limit,
-			team_id: input.team_id,
-			page: input.page,
-			count: input.count,
+	const result = await makeSlackRequest<SlackEndpointOutputs['filesList']>(
+		'files.list',
+		ctx.options.botToken,
+		{
+			method: 'GET',
+			query: {
+				channel: input.channel,
+				user: input.user,
+				types: input.types,
+				ts_from: input.ts_from,
+				ts_to: input.ts_to,
+				show_files_hidden_by_limit: input.show_files_hidden_by_limit,
+				team_id: input.team_id,
+				page: input.page,
+				count: input.count,
+			},
 		},
-	});
+	);
 
-	if (result.ok && result.files && ctx.files) {
+	if (result.ok && result.files && ctx.db.files) {
 		try {
 			for (const file of result.files) {
 				if (file.id) {
-					await ctx.files.upsert(file.id, {
+					await ctx.db.files.upsert(file.id, {
 						id: file.id,
 						name: file.name,
 					});
@@ -70,27 +72,27 @@ export const list: SlackEndpoints['filesList'] = async (ctx, input) => {
 };
 
 export const upload: SlackEndpoints['filesUpload'] = async (ctx, input) => {
-	const result = await makeSlackRequest<{
-		ok: boolean;
-		file?: { id: string; name?: string };
-		error?: string;
-	}>('files.upload', ctx.options.botToken, {
-		method: 'POST',
-		body: {
-			channels: input.channels,
-			content: input.content,
-			file: input.file,
-			filename: input.filename,
-			filetype: input.filetype,
-			initial_comment: input.initial_comment,
-			thread_ts: input.thread_ts,
-			title: input.title,
+	const result = await makeSlackRequest<SlackEndpointOutputs['filesUpload']>(
+		'files.upload',
+		ctx.options.botToken,
+		{
+			method: 'POST',
+			body: {
+				channels: input.channels,
+				content: input.content,
+				file: input.file,
+				filename: input.filename,
+				filetype: input.filetype,
+				initial_comment: input.initial_comment,
+				thread_ts: input.thread_ts,
+				title: input.title,
+			},
 		},
-	});
+	);
 
-	if (result.ok && result.file && ctx.files) {
+	if (result.ok && result.file && ctx.db.files) {
 		try {
-			await ctx.files.upsert(result.file.id, {
+			await ctx.db.files.upsert(result.file.id, {
 				id: result.file.id,
 				name: result.file.name,
 				title: input.title,

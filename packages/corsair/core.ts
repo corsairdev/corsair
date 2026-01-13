@@ -47,10 +47,7 @@ export type BoundEndpointFn<Args = unknown, Res = unknown> = (
  * The base context object passed to every plugin endpoint/hook.
  */
 export type CorsairContext<
-	Endpoints extends Record<string, BoundEndpointFn> = Record<
-		string,
-		BoundEndpointFn
-	>,
+	Endpoints extends BoundEndpointTree = BoundEndpointTree,
 > = {
 	/** The configured Corsair DB adapter (if provided to `createCorsair`). */
 	database?: CorsairDbAdapter;
@@ -66,6 +63,41 @@ export type CorsairEndpoint<
 	Args = unknown,
 	Res = unknown,
 > = Bivariant<[ctx: Ctx, args: Args], Promise<Res>>;
+
+/**
+ * A tree of endpoints that can be nested arbitrarily deep.
+ * Supports both flat and nested organization like tRPC routers.
+ *
+ * @example
+ * ```ts
+ * // Flat structure
+ * endpoints: {
+ *   channelsGet: async (ctx, args) => { ... },
+ *   channelsList: async (ctx, args) => { ... },
+ * }
+ *
+ * // Nested structure (tRPC-style)
+ * endpoints: {
+ *   channels: {
+ *     get: async (ctx, args) => { ... },
+ *     list: async (ctx, args) => { ... },
+ *   },
+ *   users: {
+ *     get: async (ctx, args) => { ... },
+ *   },
+ * }
+ * ```
+ */
+export type EndpointTree = {
+	[key: string]: CorsairEndpoint<any, any, any> | EndpointTree;
+};
+
+/**
+ * A tree of bound endpoints (context already applied).
+ */
+export type BoundEndpointTree = {
+	[key: string]: BoundEndpointFn<any, any> | BoundEndpointTree;
+};
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Hook Types
@@ -83,19 +115,25 @@ type EndpointResult<E> = E extends CorsairEndpoint<any, any, infer Res>
 	? Res
 	: never;
 
-type CorsairEndpointHooksMap<
-	Endpoints extends Record<string, CorsairEndpoint>,
-> = {
-	[K in keyof Endpoints]?: {
-		before?: (
-			ctx: EndpointContext<Endpoints[K]>,
-			args: EndpointArgs<Endpoints[K]>,
-		) => void | Promise<void>;
-		after?: (
-			ctx: EndpointContext<Endpoints[K]>,
-			res: EndpointResult<Endpoints[K]>,
-		) => void | Promise<void>;
-	};
+/**
+ * Recursively maps an endpoint tree to a hooks map with the same structure.
+ * Each endpoint gets optional before/after hooks.
+ */
+type CorsairEndpointHooksMap<Endpoints extends EndpointTree> = {
+	[K in keyof Endpoints]?: Endpoints[K] extends CorsairEndpoint<any, any, any>
+		? {
+				before?: (
+					ctx: EndpointContext<Endpoints[K]>,
+					args: EndpointArgs<Endpoints[K]>,
+				) => void | Promise<void>;
+				after?: (
+					ctx: EndpointContext<Endpoints[K]>,
+					res: EndpointResult<Endpoints[K]>,
+				) => void | Promise<void>;
+			}
+		: Endpoints[K] extends EndpointTree
+			? CorsairEndpointHooksMap<Endpoints[K]>
+			: never;
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -104,9 +142,7 @@ type CorsairEndpointHooksMap<
 
 export type CorsairPlugin<
 	Id extends Providers = Providers,
-	Endpoints extends Record<string, CorsairEndpoint> | undefined =
-		| Record<string, CorsairEndpoint>
-		| undefined,
+	Endpoints extends EndpointTree | undefined = EndpointTree | undefined,
 	Schema extends CorsairPluginSchema<Record<string, ZodTypeAny>> | undefined =
 		| CorsairPluginSchema<Record<string, ZodTypeAny>>
 		| undefined,
@@ -119,26 +155,32 @@ export type CorsairPlugin<
 	schema?: Schema;
 	/** Plugin-specific options (e.g. credentials, API keys, tokens). */
 	options?: Options;
-	hooks?: Endpoints extends Record<string, CorsairEndpoint>
+	hooks?: Endpoints extends EndpointTree
 		? CorsairEndpointHooksMap<Endpoints>
 		: never;
 };
 
-/** Transforms endpoint definitions to their bound (context-free) signatures. */
-export type BindEndpoints<T extends Record<string, CorsairEndpoint>> = {
+/**
+ * Recursively transforms endpoint definitions to their bound (context-free) signatures.
+ * Handles both flat and nested endpoint structures.
+ */
+export type BindEndpoints<T extends EndpointTree> = {
 	[K in keyof T]: T[K] extends CorsairEndpoint<any, infer A, infer R>
 		? (args: A) => Promise<R>
-		: never;
+		: T[K] extends EndpointTree
+			? BindEndpoints<T[K]>
+			: never;
 };
 
 /**
  * Extracts typed service clients from a plugin schema.
  * Each service becomes a `PluginServiceClient<DataSchema>`.
+ * Services are nested under `db` to separate them from API endpoints.
  */
 type InferPluginServices<
 	Schema extends CorsairPluginSchema<Record<string, ZodTypeAny>> | undefined,
 > = Schema extends CorsairPluginSchema<infer Services>
-	? PluginServiceClients<Services>
+	? { db: PluginServiceClients<Services> }
 	: {};
 
 /**
@@ -153,11 +195,9 @@ export type CorsairPluginContext<
 		| CorsairPluginSchema<Record<string, ZodTypeAny>>
 		| undefined = undefined,
 	Options extends Record<string, unknown> | undefined = undefined,
-	Endpoints extends Record<string, CorsairEndpoint> | undefined = undefined,
+	Endpoints extends EndpointTree | undefined = undefined,
 > = CorsairContext<
-	Endpoints extends Record<string, CorsairEndpoint>
-		? BindEndpoints<Endpoints>
-		: Record<string, BoundEndpointFn>
+	Endpoints extends EndpointTree ? BindEndpoints<Endpoints> : BoundEndpointTree
 > &
 	InferPluginServices<Schema> &
 	(Options extends undefined ? {} : { options: Options });
@@ -172,8 +212,8 @@ type InferPluginNamespace<P extends CorsairPlugin> = P extends CorsairPlugin<
 	infer Schema
 >
 	? {
-			[K in Id]: (Endpoints extends Record<string, CorsairEndpoint>
-				? BindEndpoints<Endpoints>
+			[K in Id]: (Endpoints extends EndpointTree
+				? { api: BindEndpoints<Endpoints> }
 				: {}) &
 				InferPluginServices<Schema>;
 		}
@@ -183,7 +223,7 @@ type InferPluginNamespaces<Plugins extends readonly CorsairPlugin[]> =
 	UnionToIntersection<InferPluginNamespace<Plugins[number]>>;
 
 export type CorsairIntegration<Plugins extends readonly CorsairPlugin[]> = {
-	/** Database adapter for ORM services (e.g. `slack.messages.findByResourceId(...)`). */
+	/** Database adapter for ORM services (e.g. `slack.api.messages.post(...)` for API, `slack.db.messages.findByResourceId(...)` for DB). */
 	database?: CorsairDbAdapter;
 	plugins: Plugins;
 	/** If true, enables tenant-scoped access via `withTenant()`. */
@@ -385,6 +425,69 @@ function createServiceClient(
 // Client Builder
 // ─────────────────────────────────────────────────────────────────────────────
 
+/**
+ * Checks if a value is an endpoint function (has function signature).
+ */
+function isEndpoint(value: unknown): value is Function {
+	return typeof value === 'function';
+}
+
+/**
+ * Recursively binds endpoints in a tree structure.
+ * Handles both flat (key -> fn) and nested (key -> { key -> fn }) structures.
+ */
+function bindEndpointsRecursively(
+	endpoints: Record<string, unknown>,
+	hooks: Record<string, unknown> | undefined,
+	ctx: Record<string, unknown>,
+	boundTree: Record<string, unknown>,
+	apiTree: Record<string, unknown>,
+): void {
+	for (const [key, value] of Object.entries(endpoints)) {
+		const nodeHooks = hooks?.[key] as Record<string, unknown> | undefined;
+
+		if (isEndpoint(value)) {
+			// It's an endpoint function - bind it with context and hooks
+			const endpointHooks = nodeHooks as
+				| { before?: Function; after?: Function }
+				| undefined;
+
+			const boundFn = (...args: unknown[]) => {
+				const call = () => value(ctx, ...args);
+
+				if (!endpointHooks?.before && !endpointHooks?.after) {
+					return call();
+				}
+
+				return (async () => {
+					await endpointHooks.before?.(ctx, ...args);
+					const res = await call();
+					await endpointHooks.after?.(ctx, res);
+					return res;
+				})();
+			};
+
+			boundTree[key] = boundFn;
+			apiTree[key] = boundFn;
+		} else if (value && typeof value === 'object') {
+			// It's a nested object - recurse into it
+			const nestedBoundTree: Record<string, unknown> = {};
+			const nestedApiTree: Record<string, unknown> = {};
+
+			bindEndpointsRecursively(
+				value as Record<string, unknown>,
+				nodeHooks as Record<string, unknown> | undefined,
+				ctx,
+				nestedBoundTree,
+				nestedApiTree,
+			);
+
+			boundTree[key] = nestedBoundTree;
+			apiTree[key] = nestedApiTree;
+		}
+	}
+}
+
 function buildCorsairClient<const Plugins extends readonly CorsairPlugin[]>(
 	plugins: Plugins,
 	database: CorsairDbAdapter | undefined,
@@ -406,8 +509,9 @@ function buildCorsairClient<const Plugins extends readonly CorsairPlugin[]>(
 			| CorsairPluginSchema<Record<string, ZodTypeAny>>
 			| undefined;
 
-		// Create typed service clients from plugin schema
+		// Create typed service clients from plugin schema, nested under `db`
 		if (schema?.services) {
+			const dbClients: Record<string, unknown> = {};
 			for (const [serviceName, dataSchema] of Object.entries(schema.services)) {
 				const serviceClient = createServiceClient(
 					scopedDatabase,
@@ -417,45 +521,36 @@ function buildCorsairClient<const Plugins extends readonly CorsairPlugin[]>(
 					schema.version,
 					dataSchema,
 				);
-				pluginServicesUnsafe[plugin.id]![serviceName] = serviceClient;
-				apiUnsafe[plugin.id]![serviceName] = serviceClient;
+				dbClients[serviceName] = serviceClient;
 			}
+			pluginServicesUnsafe[plugin.id]!.db = dbClients;
+			apiUnsafe[plugin.id]!.db = dbClients;
 		}
 
-		// Build plugin context with service clients
+		// Build plugin context with service clients under `db`
 		const ctxForPlugin: Record<string, unknown> = {
 			database: scopedDatabase,
-			...(pluginServicesUnsafe[plugin.id] ?? {}),
+			db: pluginServicesUnsafe[plugin.id]?.db ?? {},
 			...(plugin.options ? { options: plugin.options } : {}),
 		};
 
-		const endpoints = plugin.endpoints ?? {};
-		const hooks = plugin.hooks as
-			| Record<string, { before?: Function; after?: Function }>
-			| undefined;
+		const endpoints = (plugin.endpoints ?? {}) as Record<string, unknown>;
+		const hooks = plugin.hooks as Record<string, unknown> | undefined;
 
-		// Create bound endpoints
-		const boundEndpoints: Record<string, Function> = {};
-		for (const [key, fn] of Object.entries(endpoints)) {
-			const endpointHooks = hooks?.[key];
+		// Create bound endpoints under `api` (supports nested structures)
+		const boundEndpoints: Record<string, unknown> = {};
+		const apiEndpoints: Record<string, unknown> = {};
+		bindEndpointsRecursively(
+			endpoints,
+			hooks,
+			ctxForPlugin,
+			boundEndpoints,
+			apiEndpoints,
+		);
 
-			const boundFn = (...args: unknown[]) => {
-				const call = () => (fn as Function)(ctxForPlugin, ...args);
-
-				if (!endpointHooks?.before && !endpointHooks?.after) {
-					return call();
-				}
-
-				return (async () => {
-					await endpointHooks.before?.(ctxForPlugin, ...args);
-					const res = await call();
-					await endpointHooks.after?.(ctxForPlugin, res);
-					return res;
-				})();
-			};
-
-			boundEndpoints[key] = boundFn;
-			apiUnsafe[plugin.id]![key] = boundFn;
+		// Put API endpoints under the `api` key
+		if (Object.keys(apiEndpoints).length > 0) {
+			apiUnsafe[plugin.id]!.api = apiEndpoints;
 		}
 
 		ctxForPlugin.endpoints = boundEndpoints;
