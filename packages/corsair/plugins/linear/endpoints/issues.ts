@@ -209,6 +209,7 @@ const ISSUE_CREATE_MUTATION = `
         description
         priority
         estimate
+        sortOrder
         number
         identifier
         url
@@ -249,6 +250,7 @@ const ISSUE_UPDATE_MUTATION = `
         description
         priority
         estimate
+        sortOrder
         number
         identifier
         url
@@ -316,7 +318,7 @@ export const list: LinearEndpoints['issuesList'] = async (ctx, input) => {
 						title: issue.title,
 						description: issue.description,
 						priority: issue.priority,
-						estimate: issue.estimate,
+						estimate: issue.estimate ?? undefined,
 						sortOrder: issue.sortOrder,
 						number: issue.number,
 						identifier: issue.identifier,
@@ -373,7 +375,7 @@ export const get: LinearEndpoints['issuesGet'] = async (ctx, input) => {
 					title: result.title,
 					description: result.description,
 					priority: result.priority,
-					estimate: result.estimate,
+					estimate: result.estimate ?? undefined,
 					sortOrder: result.sortOrder,
 					number: result.number,
 					identifier: result.identifier,
@@ -441,7 +443,7 @@ export const create: LinearEndpoints['issuesCreate'] = async (ctx, input) => {
 					title: result.title,
 					description: result.description,
 					priority: result.priority,
-					estimate: result.estimate,
+					estimate: result.estimate ?? undefined,
 					sortOrder: result.sortOrder,
 					number: result.number,
 					identifier: result.identifier,
@@ -489,7 +491,7 @@ export const update: LinearEndpoints['issuesUpdate'] = async (ctx, input) => {
 					title: result.title,
 					description: result.description,
 					priority: result.priority,
-					estimate: result.estimate,
+					estimate: result.estimate ?? undefined,
 					sortOrder: result.sortOrder,
 					number: result.number,
 					identifier: result.identifier,
