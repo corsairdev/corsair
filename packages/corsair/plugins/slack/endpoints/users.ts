@@ -1,4 +1,5 @@
 import type { SlackEndpoints } from '..';
+import type { SlackEndpointOutputs } from '../types';
 import { makeSlackRequest } from '../client';
 import type { SlackEndpointOutputs } from '../types';
 

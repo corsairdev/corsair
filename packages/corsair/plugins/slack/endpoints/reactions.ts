@@ -1,6 +1,6 @@
 import type { SlackEndpoints } from '..';
-import { makeSlackRequest } from '../client';
 import type { SlackEndpointOutputs } from '../types';
+import { makeSlackRequest } from '../client';
 
 export const add: SlackEndpoints['reactionsAdd'] = async (ctx, input) => {
 	return makeSlackRequest<SlackEndpointOutputs['reactionsAdd']>(
