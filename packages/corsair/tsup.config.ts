@@ -24,6 +24,8 @@ export default defineConfig({
 		'adapters/drizzle/index.ts',
 		'adapters/kysely/index.ts',
 		'adapters/prisma/index.ts',
+		'plugins/index.ts',
 		'plugins/slack/index.ts',
+		'plugins/linear/index.ts',
 	],
 });
