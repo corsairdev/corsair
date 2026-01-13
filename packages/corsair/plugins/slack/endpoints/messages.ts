@@ -1,3 +1,4 @@
+import { logEvent } from '../../utils/events';
 import type { SlackEndpoints } from '..';
 import { makeSlackRequest } from '../client';
 import type { SlackEndpointOutputs } from '../types';
@@ -6,83 +7,113 @@ export const postMessage: SlackEndpoints['postMessage'] = async (
 	ctx,
 	input,
 ) => {
-	const result = await makeSlackRequest<SlackEndpointOutputs['postMessage']>(
-		'chat.postMessage',
-		ctx.options.botToken,
-		{
-			method: 'POST',
-			body: {
-				channel: input.channel,
-				text: input.text,
-				blocks: input.blocks,
-				attachments: input.attachments,
-				thread_ts: input.thread_ts,
-				reply_broadcast: input.reply_broadcast,
-				parse: input.parse,
-				link_names: input.link_names,
-				unfurl_links: input.unfurl_links,
-				unfurl_media: input.unfurl_media,
-				mrkdwn: input.mrkdwn,
-				as_user: input.as_user,
-				icon_emoji: input.icon_emoji,
-				icon_url: input.icon_url,
-				username: input.username,
-				metadata: input.metadata,
+	try {
+		const result = await makeSlackRequest<SlackEndpointOutputs['postMessage']>(
+			'chat.postMessage',
+			ctx.options.botToken,
+			{
+				method: 'POST',
+				body: {
+					channel: input.channel,
+					text: input.text,
+					blocks: input.blocks,
+					attachments: input.attachments,
+					thread_ts: input.thread_ts,
+					reply_broadcast: input.reply_broadcast,
+					parse: input.parse,
+					link_names: input.link_names,
+					unfurl_links: input.unfurl_links,
+					unfurl_media: input.unfurl_media,
+					mrkdwn: input.mrkdwn,
+					as_user: input.as_user,
+					icon_emoji: input.icon_emoji,
+					icon_url: input.icon_url,
+					username: input.username,
+					metadata: input.metadata,
+				},
 			},
-		},
-	);
+		);
 
-	if (result.ok && result.message && result.ts && ctx.db.messages) {
-		try {
-			await ctx.db.messages.upsert(result.ts, {
-				id: result.ts,
-				ts: result.ts,
-				text: result.message.text,
-				channel: result.channel || input.channel,
-				thread_ts: input.thread_ts,
-				createdAt: new Date(),
-			});
-		} catch (error) {
-			console.warn('Failed to save message to database:', error);
+		if (result.ok && result.message && result.ts && ctx.db.messages) {
+			try {
+				await ctx.db.messages.upsert(result.ts, {
+					id: result.ts,
+					ts: result.ts,
+					text: result.message.text,
+					channel: result.channel || input.channel,
+					thread_ts: input.thread_ts,
+					createdAt: new Date(),
+				});
+			} catch (error) {
+				console.warn('Failed to save message to database:', error);
+			}
 		}
-	}
 
-	return result;
+		await logEvent(
+			ctx.database,
+			'slack.messages.postMessage',
+			{ ...input },
+			'completed',
+		);
+		return result;
+	} catch (error) {
+		await logEvent(
+			ctx.database,
+			'slack.messages.postMessage',
+			{ ...input },
+			'failed',
+		);
+		throw error;
+	}
 };
 
 export const deleteMessage: SlackEndpoints['messagesDelete'] = async (
 	ctx,
 	input,
 ) => {
-	const result = await makeSlackRequest<SlackEndpointOutputs['messagesDelete']>(
-		'chat.delete',
-		ctx.options.botToken,
-		{
+	try {
+		const result = await makeSlackRequest<
+			SlackEndpointOutputs['messagesDelete']
+		>('chat.delete', ctx.options.botToken, {
 			method: 'POST',
 			body: {
 				channel: input.channel,
 				ts: input.ts,
 				as_user: input.as_user,
 			},
-		},
-	);
+		});
 
-	if (result.ok && result.ts && ctx.db.messages) {
-		try {
-			await ctx.db.messages.deleteByResourceId(result.ts);
-		} catch (error) {
-			console.warn('Failed to delete message from database:', error);
+		if (result.ok && result.ts && ctx.db.messages) {
+			try {
+				await ctx.db.messages.deleteByResourceId(result.ts);
+			} catch (error) {
+				console.warn('Failed to delete message from database:', error);
+			}
 		}
-	}
 
-	return result;
+		await logEvent(
+			ctx.database,
+			'slack.messages.delete',
+			{ ...input },
+			'completed',
+		);
+		return result;
+	} catch (error) {
+		await logEvent(
+			ctx.database,
+			'slack.messages.delete',
+			{ ...input },
+			'failed',
+		);
+		throw error;
+	}
 };
 
 export const update: SlackEndpoints['messagesUpdate'] = async (ctx, input) => {
-	const result = await makeSlackRequest<SlackEndpointOutputs['messagesUpdate']>(
-		'chat.update',
-		ctx.options.botToken,
-		{
+	try {
+		const result = await makeSlackRequest<
+			SlackEndpointOutputs['messagesUpdate']
+		>('chat.update', ctx.options.botToken, {
 			method: 'POST',
 			body: {
 				channel: input.channel,
@@ -97,48 +128,77 @@ export const update: SlackEndpoints['messagesUpdate'] = async (ctx, input) => {
 				reply_broadcast: input.reply_broadcast,
 				metadata: input.metadata,
 			},
-		},
-	);
+		});
 
-	if (result.ok && result.message && result.ts && ctx.db.messages) {
-		try {
-			await ctx.db.messages.upsert(result.ts, {
-				id: result.ts,
-				ts: result.ts,
-				text: result.message.text || result.text,
-				channel: result.channel || input.channel,
-				createdAt: new Date(),
-			});
-		} catch (error) {
-			console.warn('Failed to update message in database:', error);
+		if (result.ok && result.message && result.ts && ctx.db.messages) {
+			try {
+				await ctx.db.messages.upsert(result.ts, {
+					id: result.ts,
+					ts: result.ts,
+					text: result.message.text || result.text,
+					channel: result.channel || input.channel,
+					createdAt: new Date(),
+				});
+			} catch (error) {
+				console.warn('Failed to update message in database:', error);
+			}
 		}
-	}
 
-	return result;
+		await logEvent(
+			ctx.database,
+			'slack.messages.update',
+			{ ...input },
+			'completed',
+		);
+		return result;
+	} catch (error) {
+		await logEvent(
+			ctx.database,
+			'slack.messages.update',
+			{ ...input },
+			'failed',
+		);
+		throw error;
+	}
 };
 
 export const getPermalink: SlackEndpoints['messagesGetPermalink'] = async (
 	ctx,
 	input,
 ) => {
-	return makeSlackRequest<SlackEndpointOutputs['messagesGetPermalink']>(
-		'chat.getPermalink',
-		ctx.options.botToken,
-		{
+	try {
+		const result = await makeSlackRequest<
+			SlackEndpointOutputs['messagesGetPermalink']
+		>('chat.getPermalink', ctx.options.botToken, {
 			method: 'GET',
 			query: {
 				channel: input.channel,
 				message_ts: input.message_ts,
 			},
-		},
-	);
+		});
+		await logEvent(
+			ctx.database,
+			'slack.messages.getPermalink',
+			{ ...input },
+			'completed',
+		);
+		return result;
+	} catch (error) {
+		await logEvent(
+			ctx.database,
+			'slack.messages.getPermalink',
+			{ ...input },
+			'failed',
+		);
+		throw error;
+	}
 };
 
 export const search: SlackEndpoints['messagesSearch'] = async (ctx, input) => {
-	const result = await makeSlackRequest<SlackEndpointOutputs['messagesSearch']>(
-		'search.messages',
-		ctx.options.botToken,
-		{
+	try {
+		const result = await makeSlackRequest<
+			SlackEndpointOutputs['messagesSearch']
+		>('search.messages', ctx.options.botToken, {
 			method: 'GET',
 			query: {
 				query: input.query,
@@ -151,26 +211,40 @@ export const search: SlackEndpoints['messagesSearch'] = async (ctx, input) => {
 				page: input.page,
 				count: input.count,
 			},
-		},
-	);
+		});
 
-	if (result.ok && result.messages?.matches && ctx.db.messages) {
-		try {
-			for (const match of result.messages.matches) {
-				if (match.ts) {
-					await ctx.db.messages.upsert(match.ts, {
-						id: match.ts,
-						ts: match.ts,
-						text: match.text,
-						channel: '',
-						createdAt: new Date(),
-					});
+		if (result.ok && result.messages?.matches && ctx.db.messages) {
+			try {
+				for (const match of result.messages.matches) {
+					if (match.ts) {
+						await ctx.db.messages.upsert(match.ts, {
+							id: match.ts,
+							ts: match.ts,
+							text: match.text,
+							channel: '',
+							createdAt: new Date(),
+						});
+					}
 				}
+			} catch (error) {
+				console.warn('Failed to save search results to database:', error);
 			}
-		} catch (error) {
-			console.warn('Failed to save search results to database:', error);
 		}
-	}
 
-	return result;
+		await logEvent(
+			ctx.database,
+			'slack.messages.search',
+			{ ...input },
+			'completed',
+		);
+		return result;
+	} catch (error) {
+		await logEvent(
+			ctx.database,
+			'slack.messages.search',
+			{ ...input },
+			'failed',
+		);
+		throw error;
+	}
 };
