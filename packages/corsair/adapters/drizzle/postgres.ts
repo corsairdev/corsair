@@ -12,7 +12,7 @@ import type {
 
 /**
  * Minimal structural typing for a Drizzle DB instance, without depending on the user's
- * schema generics. Drizzle's actual types are heavily generic; Corsair can't know them.
+ * schema generics. Drizzle's actual types are heavily generic; Corsair doesn't know them.
  */
 type DrizzleSelectBuilder = PromiseLike<unknown[]> & {
 	from: (table: unknown) => DrizzleSelectBuilder;

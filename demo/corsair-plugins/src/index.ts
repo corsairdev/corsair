@@ -5,7 +5,7 @@ import { db } from './db';
 import * as schema from './db/schema';
 
 export const corsair = createCorsair({
-	multiTenancy: false,
+	multiTenancy: true,
 	database: drizzleAdapter(db, { provider: 'pg', schema }),
 	plugins: [
 		slack({
