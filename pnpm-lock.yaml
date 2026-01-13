@@ -261,21 +261,12 @@ importers:
       better-sqlite3:
         specifier: ^12.0.0
         version: 12.5.0
-      c12:
-        specifier: ^3.3.2
-        version: 3.3.2(magicast@0.3.5)
-      dotenv:
-        specifier: ^16.3.1
-        version: 16.6.1
       drizzle-kit:
         specifier: '>=0.31.4'
         version: 0.31.8
       drizzle-orm:
         specifier: '>=0.41.0'
         version: 0.44.7(@cloudflare/workers-types@4.20251121.0)(@libsql/client@0.14.0)(@opentelemetry/api@1.9.0)(@planetscale/database@1.19.0)(@prisma/client@6.19.0(prisma@6.19.0(magicast@0.3.5)(typescript@5.9.3))(typescript@5.9.3))(@types/pg@8.15.6)(better-sqlite3@12.5.0)(bun-types@1.3.3)(gel@2.2.0)(kysely@0.28.9)(mysql2@3.15.3)(pg@8.16.3)(postgres@3.4.7)(prisma@6.19.0(magicast@0.3.5)(typescript@5.9.3))
-      jiti:
-        specifier: ^2.6.1
-        version: 2.6.1
       kysely:
         specifier: ^0.28.5
         version: 0.28.9

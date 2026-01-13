@@ -1,105 +1,45 @@
 import type {
 	BindEndpoints,
+	BindWebhooks,
 	CorsairEndpoint,
 	CorsairPlugin,
 	CorsairPluginContext,
+	CorsairWebhook,
 } from '../../core';
 import * as channelsEndpoints from './endpoints/channels';
 import * as filesEndpoints from './endpoints/files';
 import * as messagesEndpoints from './endpoints/messages';
 import * as reactionsEndpoints from './endpoints/reactions';
-import { type SlackReactionName } from './endpoints/reactions';
+import type { SlackReactionName } from './endpoints/reactions';
 import * as starsEndpoints from './endpoints/stars';
 import * as userGroupsEndpoints from './endpoints/user-groups';
 import * as usersEndpoints from './endpoints/users';
 import type { SlackCredentials } from './schema';
 import { SlackSchema } from './schema';
-import type { SlackEndpointOutputs } from './types';
 
-export * from './webhooks';
+// export * from './webhooks';
 
-// Re-export types needed for external type inference
-export type {
-	ChatDeleteResponse,
-	ChatGetPermalinkResponse,
-	ChatPostMessageResponse,
-	ChatUpdateResponse,
-	ConversationsArchiveResponse,
-	ConversationsCloseResponse,
-	ConversationsCreateResponse,
-	ConversationsHistoryResponse,
-	ConversationsInfoResponse,
-	ConversationsInviteResponse,
-	ConversationsJoinResponse,
-	ConversationsKickResponse,
-	ConversationsLeaveResponse,
-	ConversationsListResponse,
-	ConversationsMembersResponse,
-	ConversationsOpenResponse,
-	ConversationsRenameResponse,
-	ConversationsRepliesResponse,
-	ConversationsSetPurposeResponse,
-	ConversationsSetTopicResponse,
-	ConversationsUnarchiveResponse,
-	FilesInfoResponse,
-	FilesListResponse,
-	FilesUploadResponse,
-	ReactionsAddResponse,
-	ReactionsGetResponse,
-	ReactionsRemoveResponse,
-	SearchMessagesResponse,
+import type {
+	ReactionAddedEvent,
 	SlackEndpointOutputs,
-	StarsAddResponse,
-	StarsListResponse,
-	StarsRemoveResponse,
-	UsergroupsCreateResponse,
-	UsergroupsDisableResponse,
-	UsergroupsEnableResponse,
-	UsergroupsListResponse,
-	UsergroupsUpdateResponse,
-	UsersGetPresenceResponse,
-	UsersInfoResponse,
-	UsersListResponse,
-	UsersProfileGetResponse,
-	UsersProfileSetResponse,
+	SlackWebhookOutputs,
+	SlackWebhookPayload,
 } from './types';
+import * as reactionsWebhooks from './webhooks/reactions';
 
-/**
- * Slack context type with credentials, ORM services, and access to all endpoints.
- *
- * Every endpoint receives this context and can call other endpoints via `ctx.endpoints.*`:
- *
- * @example
- * ```ts
- * const postMessage: SlackEndpoints['postMessage'] = async (ctx, input) => {
- *   // Get channel info before posting
- *   const channel = await ctx.endpoints.channelsGet({ channel: input.channel });
- *   // ...
- * };
- * ```
- *
- * Note: `ctx.endpoints` is loosely typed as `Record<string, BoundEndpointFn>` to avoid
- * circular type references. The calls work at runtime; for full type safety on a specific
- * call, you can use `SlackBoundEndpoints` type assertions if needed.
- */
+export type * from './types';
+
 export type SlackContext = CorsairPluginContext<
 	'slack',
 	typeof SlackSchema,
 	SlackCredentials
 >;
 
-/**
- * Internal flat endpoint type helper. Used by endpoint implementations.
- */
 type SlackEndpoint<
 	K extends keyof SlackEndpointOutputs,
 	Input,
 > = CorsairEndpoint<SlackContext, Input, SlackEndpointOutputs[K]>;
 
-/**
- * Flat endpoint types for internal use by endpoint implementations.
- * Endpoint implementations use these types to define their signatures.
- */
 export type SlackEndpoints = {
 	channelsArchive: SlackEndpoint<'channelsArchive', { channel: string }>;
 	channelsClose: SlackEndpoint<'channelsClose', { channel: string }>;
@@ -422,17 +362,22 @@ export type SlackEndpoints = {
 };
 
 /**
- * Fully-typed bound endpoints for Slack. Use this for type assertions when you need
- * precise typing on endpoint calls within implementations.
- *
  * const endpoints = ctx.endpoints as SlackBoundEndpoints
  */
 export type SlackBoundEndpoints = BindEndpoints<SlackEndpoints>;
 
-/**
- * The nested structure for organizing Slack endpoints externally.
- * This is the shape exposed to consumers via `corsair.slack.*`.
- */
+type SlackWebhook<K extends keyof SlackWebhookOutputs, TEvent> = CorsairWebhook<
+	SlackContext,
+	SlackWebhookPayload<TEvent>,
+	SlackWebhookOutputs[K]
+>;
+
+export type SlackWebhooks = {
+	reactionAdded: SlackWebhook<'reactionAdded', ReactionAddedEvent>;
+};
+
+export type SlackBoundWebhooks = BindWebhooks<SlackWebhooks>;
+
 const slackEndpointsNested = {
 	channels: {
 		archive: channelsEndpoints.archive,
@@ -491,26 +436,30 @@ const slackEndpointsNested = {
 	},
 } as const;
 
+const slackWebhooksNested = {
+	reactions: {
+		added: reactionsWebhooks.added,
+	},
+} as const;
+
 export type SlackPluginOptions = {
 	/**
-	 * Example option. Not used in this barebones plugin yet.
+	 * Slack credentials including bot token and optionally signing secret for webhook verification.
 	 */
 	credentials: SlackCredentials;
-	/**
-	 * Optional per-endpoint hooks for this plugin instance.
-	 * Hooks follow the same nested structure as endpoints.
-	 *
-	 * Example:
-	 * hooks: {
-	 *   messages: {
-	 *     post: { before: async (ctx, input) => {}, after: async (ctx, res) => {} }
-	 *   }
-	 * }
-	 */
-	hooks?:
-		| CorsairPlugin<'slack', typeof slackEndpointsNested>['hooks']
-		| undefined;
+
+	hooks?: SlackPlugin['hooks'] | undefined;
+
+	webhookHooks?: SlackPlugin['webhookHooks'] | undefined;
 };
+
+export type SlackPlugin = CorsairPlugin<
+	'slack',
+	typeof slackEndpointsNested,
+	typeof SlackSchema,
+	SlackCredentials,
+	typeof slackWebhooksNested
+>;
 
 export function slack(options: SlackPluginOptions) {
 	return {
@@ -518,11 +467,8 @@ export function slack(options: SlackPluginOptions) {
 		schema: SlackSchema,
 		options: options.credentials,
 		hooks: options.hooks,
+		webhookHooks: options.webhookHooks,
 		endpoints: slackEndpointsNested,
-	} satisfies CorsairPlugin<
-		'slack',
-		typeof slackEndpointsNested,
-		typeof SlackSchema,
-		SlackCredentials
-	>;
+		webhooks: slackWebhooksNested,
+	} satisfies SlackPlugin;
 }
