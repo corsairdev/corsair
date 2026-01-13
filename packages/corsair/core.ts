@@ -92,6 +92,73 @@ export type EndpointTree = {
 	[key: string]: CorsairEndpoint<any, any, any> | EndpointTree;
 };
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Webhook Types
+// ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Raw incoming webhook request data.
+ * Contains the raw payload, headers, and optional raw body string.
+ */
+export type WebhookRequest<TPayload = unknown> = {
+	/** Parsed payload from the webhook request body */
+	payload: TPayload;
+	/** HTTP headers from the webhook request */
+	headers: Record<string, string | string[] | undefined>;
+	/** Raw request body string (for signature verification) */
+	rawBody?: string;
+};
+
+/**
+ * Response from a webhook handler.
+ * Can include acknowledgment data to send back to the sender.
+ */
+export type WebhookResponse<TData = unknown> = {
+	/** Whether the webhook was processed successfully */
+	success: boolean;
+	/** Optional data to return in the HTTP response */
+	data?: TData;
+	/** Optional error message if processing failed */
+	error?: string;
+	/** HTTP status code to return (defaults to 200 on success, 500 on error) */
+	statusCode?: number;
+};
+
+/**
+ * A webhook handler function definition.
+ * Takes context + webhook request, returns a webhook response.
+ */
+export type CorsairWebhook<
+	Ctx extends CorsairContext = CorsairContext,
+	TPayload = unknown,
+	TResponseData = unknown,
+> = Bivariant<
+	[ctx: Ctx, request: WebhookRequest<TPayload>],
+	Promise<WebhookResponse<TResponseData>>
+>;
+
+/**
+ * A tree of webhooks that can be nested arbitrarily deep.
+ * Similar to EndpointTree but for webhook handlers.
+ */
+export type WebhookTree = {
+	[key: string]: CorsairWebhook<any, any, any> | WebhookTree;
+};
+
+/**
+ * A bound webhook function - the user-facing API after context is applied.
+ */
+export type BoundWebhookFn<TPayload = unknown, TResponseData = unknown> = (
+	request: WebhookRequest<TPayload>,
+) => Promise<WebhookResponse<TResponseData>>;
+
+/**
+ * A tree of bound webhooks (context already applied).
+ */
+export type BoundWebhookTree = {
+	[key: string]: BoundWebhookFn<any, any> | BoundWebhookTree;
+};
+
 /**
  * A tree of bound endpoints (context already applied).
  */
@@ -137,6 +204,43 @@ type CorsairEndpointHooksMap<Endpoints extends EndpointTree> = {
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
+// Webhook Hook Types
+// ─────────────────────────────────────────────────────────────────────────────
+
+type WebhookContext<W> = W extends CorsairWebhook<infer Ctx, any, any>
+	? Ctx
+	: never;
+
+type WebhookPayload<W> = W extends CorsairWebhook<any, infer P, any>
+	? P
+	: never;
+
+type WebhookResponseData<W> = W extends CorsairWebhook<any, any, infer R>
+	? R
+	: never;
+
+/**
+ * Recursively maps a webhook tree to a hooks map with the same structure.
+ * Each webhook gets optional before/after hooks.
+ */
+type CorsairWebhookHooksMap<Webhooks extends WebhookTree> = {
+	[K in keyof Webhooks]?: Webhooks[K] extends CorsairWebhook<any, any, any>
+		? {
+				before?: (
+					ctx: WebhookContext<Webhooks[K]>,
+					request: WebhookRequest<WebhookPayload<Webhooks[K]>>,
+				) => void | Promise<void>;
+				after?: (
+					ctx: WebhookContext<Webhooks[K]>,
+					response: WebhookResponse<WebhookResponseData<Webhooks[K]>>,
+				) => void | Promise<void>;
+			}
+		: Webhooks[K] extends WebhookTree
+			? CorsairWebhookHooksMap<Webhooks[K]>
+			: never;
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
 // Plugin Types
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -149,14 +253,21 @@ export type CorsairPlugin<
 	Options extends Record<string, unknown> | undefined =
 		| Record<string, unknown>
 		| undefined,
+	Webhooks extends WebhookTree | undefined = WebhookTree | undefined,
 > = {
 	id: Id;
 	endpoints?: Endpoints;
 	schema?: Schema;
 	/** Plugin-specific options (e.g. credentials, API keys, tokens). */
 	options?: Options;
+	/** Webhook handlers for incoming webhook events from external services. */
+	webhooks?: Webhooks;
 	hooks?: Endpoints extends EndpointTree
 		? CorsairEndpointHooksMap<Endpoints>
+		: never;
+	/** Hooks for webhook handlers. */
+	webhookHooks?: Webhooks extends WebhookTree
+		? CorsairWebhookHooksMap<Webhooks>
 		: never;
 };
 
@@ -169,6 +280,18 @@ export type BindEndpoints<T extends EndpointTree> = {
 		? (args: A) => Promise<R>
 		: T[K] extends EndpointTree
 			? BindEndpoints<T[K]>
+			: never;
+};
+
+/**
+ * Recursively transforms webhook definitions to their bound (context-free) signatures.
+ * Handles both flat and nested webhook structures.
+ */
+export type BindWebhooks<T extends WebhookTree> = {
+	[K in keyof T]: T[K] extends CorsairWebhook<any, infer P, infer R>
+		? (request: WebhookRequest<P>) => Promise<WebhookResponse<R>>
+		: T[K] extends WebhookTree
+			? BindWebhooks<T[K]>
 			: never;
 };
 
@@ -209,13 +332,18 @@ export type CorsairPluginContext<
 type InferPluginNamespace<P extends CorsairPlugin> = P extends CorsairPlugin<
 	infer Id,
 	infer Endpoints,
-	infer Schema
+	infer Schema,
+	infer _Options,
+	infer Webhooks
 >
 	? {
 			[K in Id]: (Endpoints extends EndpointTree
 				? { api: BindEndpoints<Endpoints> }
 				: {}) &
-				InferPluginServices<Schema>;
+				InferPluginServices<Schema> &
+				(Webhooks extends WebhookTree
+					? { webhooks: BindWebhooks<Webhooks> }
+					: {});
 		}
 	: never;
 
@@ -426,9 +554,16 @@ function createServiceClient(
 // ─────────────────────────────────────────────────────────────────────────────
 
 /**
- * Checks if a value is an endpoint function (has function signature).
+ * Checks if a value is an endpoint/webhook function (has function signature).
  */
 function isEndpoint(value: unknown): value is Function {
+	return typeof value === 'function';
+}
+
+/**
+ * Checks if a value is a webhook function (same check as endpoint).
+ */
+function isWebhook(value: unknown): value is Function {
 	return typeof value === 'function';
 }
 
@@ -484,6 +619,57 @@ function bindEndpointsRecursively(
 
 			boundTree[key] = nestedBoundTree;
 			apiTree[key] = nestedApiTree;
+		}
+	}
+}
+
+/**
+ * Recursively binds webhooks in a tree structure.
+ * Handles both flat (key -> fn) and nested (key -> { key -> fn }) structures.
+ */
+function bindWebhooksRecursively(
+	webhooks: Record<string, unknown>,
+	hooks: Record<string, unknown> | undefined,
+	ctx: Record<string, unknown>,
+	webhooksTree: Record<string, unknown>,
+): void {
+	for (const [key, value] of Object.entries(webhooks)) {
+		const nodeHooks = hooks?.[key] as Record<string, unknown> | undefined;
+
+		if (isWebhook(value)) {
+			// It's a webhook function - bind it with context and hooks
+			const webhookHooks = nodeHooks as
+				| { before?: Function; after?: Function }
+				| undefined;
+
+			const boundFn = (...args: unknown[]) => {
+				const call = () => value(ctx, ...args);
+
+				if (!webhookHooks?.before && !webhookHooks?.after) {
+					return call();
+				}
+
+				return (async () => {
+					await webhookHooks.before?.(ctx, ...args);
+					const res = await call();
+					await webhookHooks.after?.(ctx, res);
+					return res;
+				})();
+			};
+
+			webhooksTree[key] = boundFn;
+		} else if (value && typeof value === 'object') {
+			// It's a nested object - recurse into it
+			const nestedWebhooksTree: Record<string, unknown> = {};
+
+			bindWebhooksRecursively(
+				value as Record<string, unknown>,
+				nodeHooks as Record<string, unknown> | undefined,
+				ctx,
+				nestedWebhooksTree,
+			);
+
+			webhooksTree[key] = nestedWebhooksTree;
 		}
 	}
 }
@@ -554,6 +740,23 @@ function buildCorsairClient<const Plugins extends readonly CorsairPlugin[]>(
 		}
 
 		ctxForPlugin.endpoints = boundEndpoints;
+
+		// Create bound webhooks under `webhooks` (supports nested structures)
+		const webhooks = (plugin.webhooks ?? {}) as Record<string, unknown>;
+		const webhookHooks = plugin.webhookHooks as
+			| Record<string, unknown>
+			| undefined;
+
+		if (Object.keys(webhooks).length > 0) {
+			const boundWebhooks: Record<string, unknown> = {};
+			bindWebhooksRecursively(
+				webhooks,
+				webhookHooks,
+				ctxForPlugin,
+				boundWebhooks,
+			);
+			apiUnsafe[plugin.id]!.webhooks = boundWebhooks;
+		}
 	}
 
 	const api = apiUnsafe as InferPluginNamespaces<Plugins>;

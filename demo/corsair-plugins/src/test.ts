@@ -1,20 +1,17 @@
 import { corsair } from './';
 
 const main = async () => {
-	const res = await corsair.slack.db.messages.findById(
-		'3bc35797-88db-43bd-8692-2392fb50e470',
-	);
-
-	const reaction = await corsair.slack.api.reactions.add({
-		channel: res?.data?.channel || '',
-		timestamp: res?.data?.ts || '',
-		name: ':thumbsup:',
-	});
-
-	console.log(res?.data);
-	// const message =
-	// 	await corsair.slack.db.messages.findByResourceId('1768233685.811009');
+	// const message = await corsair
+	// 	.withTenant('default-1')
+	// 	.slack.api.messages.post({ channel: 'C0A3ZTB9X7X', text: 'hello' });
 	// console.log(message);
+
+	const message = await corsair
+		.withTenant('default-1')
+		.slack.db.messages.findById('3bc35797-88db-43bd-8692-2392fb50e470');
+
+	console.log(message);
+
 	// // Now using the nested API: corsair.slack.api.reactions.add
 	// const res = await corsair.slack.api.reactions.add({
 	// 	channel: message?.data.channel || '',
@@ -23,4 +20,5 @@ const main = async () => {
 	// });
 };
 
+// biome-ignore lint/nursery/noFloatingPromises: this is just for cli testing right now
 main();
