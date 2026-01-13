@@ -8,6 +8,7 @@ import * as channelsEndpoints from './endpoints/channels';
 import * as filesEndpoints from './endpoints/files';
 import * as messagesEndpoints from './endpoints/messages';
 import * as reactionsEndpoints from './endpoints/reactions';
+import { type SlackReactionName } from './endpoints/reactions';
 import * as starsEndpoints from './endpoints/stars';
 import * as userGroupsEndpoints from './endpoints/user-groups';
 import * as usersEndpoints from './endpoints/users';
@@ -362,7 +363,11 @@ export type SlackEndpoints = {
 	>;
 	reactionsAdd: SlackEndpoint<
 		'reactionsAdd',
-		{ channel: string; timestamp: string; name: string }
+		{
+			channel: string;
+			timestamp: string;
+			name: SlackReactionName;
+		}
 	>;
 	reactionsGet: SlackEndpoint<
 		'reactionsGet',
@@ -377,7 +382,7 @@ export type SlackEndpoints = {
 	reactionsRemove: SlackEndpoint<
 		'reactionsRemove',
 		{
-			name: string;
+			name: SlackReactionName;
 			channel?: string;
 			timestamp?: string;
 			file?: string;

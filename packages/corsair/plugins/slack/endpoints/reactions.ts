@@ -2,6 +2,38 @@ import type { SlackEndpoints } from '..';
 import { makeSlackRequest } from '../client';
 import type { SlackEndpointOutputs } from '../types';
 
+const SLACK_REACTIONS = [
+	'thumbsup',
+	'thumbsdown',
+	'+1',
+	'-1',
+	'smile',
+	'joy',
+	'heart',
+	'heart_eyes',
+	'clap',
+	'tada',
+	'fire',
+	'100',
+	'eyes',
+	'thinking_face',
+	'rocket',
+	'white_check_mark',
+	'heavy_check_mark',
+	'x',
+	'red_circle',
+	'large_blue_circle',
+	'warning',
+	'rotating_light',
+	'ok',
+	'ok_hand',
+	'raised_hands',
+] as const;
+
+export type SlackReactionName =
+	| (typeof SLACK_REACTIONS)[number]
+	| string;
+
 export const add: SlackEndpoints['reactionsAdd'] = async (ctx, input) => {
 	return makeSlackRequest<SlackEndpointOutputs['reactionsAdd']>(
 		'reactions.add',
