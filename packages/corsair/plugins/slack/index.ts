@@ -9,8 +9,8 @@ import type {
 import * as channelsEndpoints from './endpoints/channels';
 import * as filesEndpoints from './endpoints/files';
 import * as messagesEndpoints from './endpoints/messages';
-import * as reactionsEndpoints from './endpoints/reactions';
 import type { SlackReactionName } from './endpoints/reactions';
+import * as reactionsEndpoints from './endpoints/reactions';
 import * as starsEndpoints from './endpoints/stars';
 import * as userGroupsEndpoints from './endpoints/user-groups';
 import * as usersEndpoints from './endpoints/users';

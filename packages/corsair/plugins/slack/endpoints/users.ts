@@ -1,7 +1,7 @@
+import { logEvent } from '../../utils/events';
 import type { SlackEndpoints } from '..';
 import { makeSlackRequest } from '../client';
 import type { SlackEndpointOutputs } from '../types';
-import { logEvent } from '../../utils/events';
 
 export const get: SlackEndpoints['usersGet'] = async (ctx, input) => {
 	try {
@@ -102,10 +102,20 @@ export const getProfile: SlackEndpoints['usersGetProfile'] = async (
 			}
 		}
 
-		await logEvent(ctx.database, 'slack.users.getProfile', { ...input }, 'completed');
+		await logEvent(
+			ctx.database,
+			'slack.users.getProfile',
+			{ ...input },
+			'completed',
+		);
 		return result;
 	} catch (error) {
-		await logEvent(ctx.database, 'slack.users.getProfile', { ...input }, 'failed');
+		await logEvent(
+			ctx.database,
+			'slack.users.getProfile',
+			{ ...input },
+			'failed',
+		);
 		throw error;
 	}
 };
@@ -115,20 +125,28 @@ export const getPresence: SlackEndpoints['usersGetPresence'] = async (
 	input,
 ) => {
 	try {
-		const result = await makeSlackRequest<SlackEndpointOutputs['usersGetPresence']>(
-			'users.getPresence',
-			ctx.options.botToken,
-			{
-				method: 'GET',
-				query: {
-					user: input.user,
-				},
+		const result = await makeSlackRequest<
+			SlackEndpointOutputs['usersGetPresence']
+		>('users.getPresence', ctx.options.botToken, {
+			method: 'GET',
+			query: {
+				user: input.user,
 			},
+		});
+		await logEvent(
+			ctx.database,
+			'slack.users.getPresence',
+			{ ...input },
+			'completed',
 		);
-		await logEvent(ctx.database, 'slack.users.getPresence', { ...input }, 'completed');
 		return result;
 	} catch (error) {
-		await logEvent(ctx.database, 'slack.users.getPresence', { ...input }, 'failed');
+		await logEvent(
+			ctx.database,
+			'slack.users.getPresence',
+			{ ...input },
+			'failed',
+		);
 		throw error;
 	}
 };
@@ -162,10 +180,20 @@ export const updateProfile: SlackEndpoints['usersUpdateProfile'] = async (
 			}
 		}
 
-		await logEvent(ctx.database, 'slack.users.updateProfile', { ...input }, 'completed');
+		await logEvent(
+			ctx.database,
+			'slack.users.updateProfile',
+			{ ...input },
+			'completed',
+		);
 		return result;
 	} catch (error) {
-		await logEvent(ctx.database, 'slack.users.updateProfile', { ...input }, 'failed');
+		await logEvent(
+			ctx.database,
+			'slack.users.updateProfile',
+			{ ...input },
+			'failed',
+		);
 		throw error;
 	}
 };

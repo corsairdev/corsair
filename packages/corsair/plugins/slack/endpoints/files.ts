@@ -1,7 +1,7 @@
+import { logEvent } from '../../utils/events';
 import type { SlackEndpoints } from '..';
 import { makeSlackRequest } from '../client';
 import type { SlackEndpointOutputs } from '../types';
-import { logEvent } from '../../utils/events';
 
 export const get: SlackEndpoints['filesGet'] = async (ctx, input) => {
 	try {
@@ -116,7 +116,12 @@ export const upload: SlackEndpoints['filesUpload'] = async (ctx, input) => {
 			}
 		}
 
-		await logEvent(ctx.database, 'slack.files.upload', { ...input }, 'completed');
+		await logEvent(
+			ctx.database,
+			'slack.files.upload',
+			{ ...input },
+			'completed',
+		);
 		return result;
 	} catch (error) {
 		await logEvent(ctx.database, 'slack.files.upload', { ...input }, 'failed');

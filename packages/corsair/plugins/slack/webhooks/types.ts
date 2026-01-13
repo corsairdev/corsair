@@ -689,4 +689,3 @@ export interface SlackEventMap {
 	team_join: TeamJoinEvent;
 	user_change: UserChangeEvent;
 }
-

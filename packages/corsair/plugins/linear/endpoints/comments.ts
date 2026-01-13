@@ -1,3 +1,4 @@
+import { logEvent } from '../../utils/events';
 import type { LinearEndpoints } from '..';
 import { makeLinearRequest } from '../client';
 import type {
@@ -8,7 +9,6 @@ import type {
 	CreateCommentInput,
 	UpdateCommentInput,
 } from '../types';
-import { logEvent } from '../../utils/events';
 
 const COMMENTS_LIST_QUERY = `
   query Comments($issueId: String!, $first: Int!, $after: String) {
@@ -141,10 +141,20 @@ export const list: LinearEndpoints['commentsList'] = async (ctx, input) => {
 			}
 		}
 
-		await logEvent(ctx.database, 'linear.comments.list', { ...input }, 'completed');
+		await logEvent(
+			ctx.database,
+			'linear.comments.list',
+			{ ...input },
+			'completed',
+		);
 		return result;
 	} catch (error) {
-		await logEvent(ctx.database, 'linear.comments.list', { ...input }, 'failed');
+		await logEvent(
+			ctx.database,
+			'linear.comments.list',
+			{ ...input },
+			'failed',
+		);
 		throw error;
 	}
 };
@@ -180,10 +190,20 @@ export const create: LinearEndpoints['commentsCreate'] = async (ctx, input) => {
 			}
 		}
 
-		await logEvent(ctx.database, 'linear.comments.create', { ...input }, 'completed');
+		await logEvent(
+			ctx.database,
+			'linear.comments.create',
+			{ ...input },
+			'completed',
+		);
 		return result;
 	} catch (error) {
-		await logEvent(ctx.database, 'linear.comments.create', { ...input }, 'failed');
+		await logEvent(
+			ctx.database,
+			'linear.comments.create',
+			{ ...input },
+			'failed',
+		);
 		throw error;
 	}
 };
@@ -222,10 +242,20 @@ export const update: LinearEndpoints['commentsUpdate'] = async (ctx, input) => {
 			}
 		}
 
-		await logEvent(ctx.database, 'linear.comments.update', { ...input }, 'completed');
+		await logEvent(
+			ctx.database,
+			'linear.comments.update',
+			{ ...input },
+			'completed',
+		);
 		return result;
 	} catch (error) {
-		await logEvent(ctx.database, 'linear.comments.update', { ...input }, 'failed');
+		await logEvent(
+			ctx.database,
+			'linear.comments.update',
+			{ ...input },
+			'failed',
+		);
 		throw error;
 	}
 };
@@ -255,10 +285,20 @@ export const deleteComment: LinearEndpoints['commentsDelete'] = async (
 			}
 		}
 
-		await logEvent(ctx.database, 'linear.comments.delete', { ...input }, 'completed');
+		await logEvent(
+			ctx.database,
+			'linear.comments.delete',
+			{ ...input },
+			'completed',
+		);
 		return success;
 	} catch (error) {
-		await logEvent(ctx.database, 'linear.comments.delete', { ...input }, 'failed');
+		await logEvent(
+			ctx.database,
+			'linear.comments.delete',
+			{ ...input },
+			'failed',
+		);
 		throw error;
 	}
 };

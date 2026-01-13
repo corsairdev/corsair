@@ -1,7 +1,7 @@
+import { logEvent } from '../../utils/events';
 import type { SlackEndpoints } from '..';
 import { makeSlackRequest } from '../client';
 import type { SlackEndpointOutputs } from '../types';
-import { logEvent } from '../../utils/events';
 
 export const archive: SlackEndpoints['channelsArchive'] = async (
 	ctx,
@@ -29,46 +29,62 @@ export const archive: SlackEndpoints['channelsArchive'] = async (
 			}
 		}
 
-		await logEvent(ctx.database, 'slack.channels.archive', { ...input }, 'completed');
+		await logEvent(
+			ctx.database,
+			'slack.channels.archive',
+			{ ...input },
+			'completed',
+		);
 		return result;
 	} catch (error) {
-		await logEvent(ctx.database, 'slack.channels.archive', { ...input }, 'failed');
+		await logEvent(
+			ctx.database,
+			'slack.channels.archive',
+			{ ...input },
+			'failed',
+		);
 		throw error;
 	}
 };
 
 export const close: SlackEndpoints['channelsClose'] = async (ctx, input) => {
 	try {
-		const result = await makeSlackRequest<SlackEndpointOutputs['channelsClose']>(
-			'conversations.close',
-			ctx.options.botToken,
-			{
-				method: 'POST',
-				body: { channel: input.channel },
-			},
+		const result = await makeSlackRequest<
+			SlackEndpointOutputs['channelsClose']
+		>('conversations.close', ctx.options.botToken, {
+			method: 'POST',
+			body: { channel: input.channel },
+		});
+		await logEvent(
+			ctx.database,
+			'slack.channels.close',
+			{ ...input },
+			'completed',
 		);
-		await logEvent(ctx.database, 'slack.channels.close', { ...input }, 'completed');
 		return result;
 	} catch (error) {
-		await logEvent(ctx.database, 'slack.channels.close', { ...input }, 'failed');
+		await logEvent(
+			ctx.database,
+			'slack.channels.close',
+			{ ...input },
+			'failed',
+		);
 		throw error;
 	}
 };
 
 export const create: SlackEndpoints['channelsCreate'] = async (ctx, input) => {
 	try {
-		const result = await makeSlackRequest<SlackEndpointOutputs['channelsCreate']>(
-			'conversations.create',
-			ctx.options.botToken,
-			{
-				method: 'POST',
-				body: {
-					name: input.name,
-					is_private: input.is_private,
-					team_id: input.team_id,
-				},
+		const result = await makeSlackRequest<
+			SlackEndpointOutputs['channelsCreate']
+		>('conversations.create', ctx.options.botToken, {
+			method: 'POST',
+			body: {
+				name: input.name,
+				is_private: input.is_private,
+				team_id: input.team_id,
 			},
-		);
+		});
 
 		if (result.ok && result.channel && ctx.db.channels) {
 			try {
@@ -84,10 +100,20 @@ export const create: SlackEndpoints['channelsCreate'] = async (ctx, input) => {
 			}
 		}
 
-		await logEvent(ctx.database, 'slack.channels.create', { ...input }, 'completed');
+		await logEvent(
+			ctx.database,
+			'slack.channels.create',
+			{ ...input },
+			'completed',
+		);
 		return result;
 	} catch (error) {
-		await logEvent(ctx.database, 'slack.channels.create', { ...input }, 'failed');
+		await logEvent(
+			ctx.database,
+			'slack.channels.create',
+			{ ...input },
+			'failed',
+		);
 		throw error;
 	}
 };
@@ -119,7 +145,12 @@ export const get: SlackEndpoints['channelsGet'] = async (ctx, input) => {
 			}
 		}
 
-		await logEvent(ctx.database, 'slack.channels.get', { ...input }, 'completed');
+		await logEvent(
+			ctx.database,
+			'slack.channels.get',
+			{ ...input },
+			'completed',
+		);
 		return result;
 	} catch (error) {
 		await logEvent(ctx.database, 'slack.channels.get', { ...input }, 'failed');
@@ -160,7 +191,12 @@ export const list: SlackEndpoints['channelsList'] = async (ctx, input) => {
 			}
 		}
 
-		await logEvent(ctx.database, 'slack.channels.list', { ...input }, 'completed');
+		await logEvent(
+			ctx.database,
+			'slack.channels.list',
+			{ ...input },
+			'completed',
+		);
 		return result;
 	} catch (error) {
 		await logEvent(ctx.database, 'slack.channels.list', { ...input }, 'failed');
@@ -206,28 +242,36 @@ export const getHistory: SlackEndpoints['channelsGetHistory'] = async (
 			}
 		}
 
-		await logEvent(ctx.database, 'slack.channels.getHistory', { ...input }, 'completed');
+		await logEvent(
+			ctx.database,
+			'slack.channels.getHistory',
+			{ ...input },
+			'completed',
+		);
 		return result;
 	} catch (error) {
-		await logEvent(ctx.database, 'slack.channels.getHistory', { ...input }, 'failed');
+		await logEvent(
+			ctx.database,
+			'slack.channels.getHistory',
+			{ ...input },
+			'failed',
+		);
 		throw error;
 	}
 };
 
 export const invite: SlackEndpoints['channelsInvite'] = async (ctx, input) => {
 	try {
-		const result = await makeSlackRequest<SlackEndpointOutputs['channelsInvite']>(
-			'conversations.invite',
-			ctx.options.botToken,
-			{
-				method: 'POST',
-				body: {
-					channel: input.channel,
-					users: input.users,
-					force: input.force,
-				},
+		const result = await makeSlackRequest<
+			SlackEndpointOutputs['channelsInvite']
+		>('conversations.invite', ctx.options.botToken, {
+			method: 'POST',
+			body: {
+				channel: input.channel,
+				users: input.users,
+				force: input.force,
 			},
-		);
+		});
 
 		if (result.ok && result.channel && ctx.db.channels) {
 			try {
@@ -241,10 +285,20 @@ export const invite: SlackEndpoints['channelsInvite'] = async (ctx, input) => {
 			}
 		}
 
-		await logEvent(ctx.database, 'slack.channels.invite', { ...input }, 'completed');
+		await logEvent(
+			ctx.database,
+			'slack.channels.invite',
+			{ ...input },
+			'completed',
+		);
 		return result;
 	} catch (error) {
-		await logEvent(ctx.database, 'slack.channels.invite', { ...input }, 'failed');
+		await logEvent(
+			ctx.database,
+			'slack.channels.invite',
+			{ ...input },
+			'failed',
+		);
 		throw error;
 	}
 };
@@ -273,7 +327,12 @@ export const join: SlackEndpoints['channelsJoin'] = async (ctx, input) => {
 			}
 		}
 
-		await logEvent(ctx.database, 'slack.channels.join', { ...input }, 'completed');
+		await logEvent(
+			ctx.database,
+			'slack.channels.join',
+			{ ...input },
+			'completed',
+		);
 		return result;
 	} catch (error) {
 		await logEvent(ctx.database, 'slack.channels.join', { ...input }, 'failed');
@@ -294,7 +353,12 @@ export const kick: SlackEndpoints['channelsKick'] = async (ctx, input) => {
 				},
 			},
 		);
-		await logEvent(ctx.database, 'slack.channels.kick', { ...input }, 'completed');
+		await logEvent(
+			ctx.database,
+			'slack.channels.kick',
+			{ ...input },
+			'completed',
+		);
 		return result;
 	} catch (error) {
 		await logEvent(ctx.database, 'slack.channels.kick', { ...input }, 'failed');
@@ -304,14 +368,12 @@ export const kick: SlackEndpoints['channelsKick'] = async (ctx, input) => {
 
 export const leave: SlackEndpoints['channelsLeave'] = async (ctx, input) => {
 	try {
-		const result = await makeSlackRequest<SlackEndpointOutputs['channelsLeave']>(
-			'conversations.leave',
-			ctx.options.botToken,
-			{
-				method: 'POST',
-				body: { channel: input.channel },
-			},
-		);
+		const result = await makeSlackRequest<
+			SlackEndpointOutputs['channelsLeave']
+		>('conversations.leave', ctx.options.botToken, {
+			method: 'POST',
+			body: { channel: input.channel },
+		});
 
 		if (result.ok && ctx.db.channels) {
 			try {
@@ -327,10 +389,20 @@ export const leave: SlackEndpoints['channelsLeave'] = async (ctx, input) => {
 			}
 		}
 
-		await logEvent(ctx.database, 'slack.channels.leave', { ...input }, 'completed');
+		await logEvent(
+			ctx.database,
+			'slack.channels.leave',
+			{ ...input },
+			'completed',
+		);
 		return result;
 	} catch (error) {
-		await logEvent(ctx.database, 'slack.channels.leave', { ...input }, 'failed');
+		await logEvent(
+			ctx.database,
+			'slack.channels.leave',
+			{ ...input },
+			'failed',
+		);
 		throw error;
 	}
 };
@@ -340,18 +412,16 @@ export const getMembers: SlackEndpoints['channelsGetMembers'] = async (
 	input,
 ) => {
 	try {
-		const result = await makeSlackRequest<SlackEndpointOutputs['channelsGetMembers']>(
-			'conversations.members',
-			ctx.options.botToken,
-			{
-				method: 'GET',
-				query: {
-					channel: input.channel,
-					cursor: input.cursor,
-					limit: input.limit,
-				},
+		const result = await makeSlackRequest<
+			SlackEndpointOutputs['channelsGetMembers']
+		>('conversations.members', ctx.options.botToken, {
+			method: 'GET',
+			query: {
+				channel: input.channel,
+				cursor: input.cursor,
+				limit: input.limit,
 			},
-		);
+		});
 
 		if (result.ok && result.members && ctx.db.channels) {
 			try {
@@ -367,10 +437,20 @@ export const getMembers: SlackEndpoints['channelsGetMembers'] = async (
 			}
 		}
 
-		await logEvent(ctx.database, 'slack.channels.getMembers', { ...input }, 'completed');
+		await logEvent(
+			ctx.database,
+			'slack.channels.getMembers',
+			{ ...input },
+			'completed',
+		);
 		return result;
 	} catch (error) {
-		await logEvent(ctx.database, 'slack.channels.getMembers', { ...input }, 'failed');
+		await logEvent(
+			ctx.database,
+			'slack.channels.getMembers',
+			{ ...input },
+			'failed',
+		);
 		throw error;
 	}
 };
@@ -403,7 +483,12 @@ export const open: SlackEndpoints['channelsOpen'] = async (ctx, input) => {
 			}
 		}
 
-		await logEvent(ctx.database, 'slack.channels.open', { ...input }, 'completed');
+		await logEvent(
+			ctx.database,
+			'slack.channels.open',
+			{ ...input },
+			'completed',
+		);
 		return result;
 	} catch (error) {
 		await logEvent(ctx.database, 'slack.channels.open', { ...input }, 'failed');
@@ -413,17 +498,15 @@ export const open: SlackEndpoints['channelsOpen'] = async (ctx, input) => {
 
 export const rename: SlackEndpoints['channelsRename'] = async (ctx, input) => {
 	try {
-		const result = await makeSlackRequest<SlackEndpointOutputs['channelsRename']>(
-			'conversations.rename',
-			ctx.options.botToken,
-			{
-				method: 'POST',
-				body: {
-					channel: input.channel,
-					name: input.name,
-				},
+		const result = await makeSlackRequest<
+			SlackEndpointOutputs['channelsRename']
+		>('conversations.rename', ctx.options.botToken, {
+			method: 'POST',
+			body: {
+				channel: input.channel,
+				name: input.name,
 			},
-		);
+		});
 
 		if (result.ok && result.channel && ctx.db.channels) {
 			try {
@@ -438,10 +521,20 @@ export const rename: SlackEndpoints['channelsRename'] = async (ctx, input) => {
 			}
 		}
 
-		await logEvent(ctx.database, 'slack.channels.rename', { ...input }, 'completed');
+		await logEvent(
+			ctx.database,
+			'slack.channels.rename',
+			{ ...input },
+			'completed',
+		);
 		return result;
 	} catch (error) {
-		await logEvent(ctx.database, 'slack.channels.rename', { ...input }, 'failed');
+		await logEvent(
+			ctx.database,
+			'slack.channels.rename',
+			{ ...input },
+			'failed',
+		);
 		throw error;
 	}
 };
@@ -451,23 +544,21 @@ export const getReplies: SlackEndpoints['channelsGetReplies'] = async (
 	input,
 ) => {
 	try {
-		const result = await makeSlackRequest<SlackEndpointOutputs['channelsGetReplies']>(
-			'conversations.replies',
-			ctx.options.botToken,
-			{
-				method: 'GET',
-				query: {
-					channel: input.channel,
-					ts: input.ts,
-					latest: input.latest,
-					oldest: input.oldest,
-					inclusive: input.inclusive,
-					include_all_metadata: input.include_all_metadata,
-					cursor: input.cursor,
-					limit: input.limit,
-				},
+		const result = await makeSlackRequest<
+			SlackEndpointOutputs['channelsGetReplies']
+		>('conversations.replies', ctx.options.botToken, {
+			method: 'GET',
+			query: {
+				channel: input.channel,
+				ts: input.ts,
+				latest: input.latest,
+				oldest: input.oldest,
+				inclusive: input.inclusive,
+				include_all_metadata: input.include_all_metadata,
+				cursor: input.cursor,
+				limit: input.limit,
 			},
-		);
+		});
 
 		if (result.ok && result.messages && ctx.db.messages) {
 			try {
@@ -488,10 +579,20 @@ export const getReplies: SlackEndpoints['channelsGetReplies'] = async (
 			}
 		}
 
-		await logEvent(ctx.database, 'slack.channels.getReplies', { ...input }, 'completed');
+		await logEvent(
+			ctx.database,
+			'slack.channels.getReplies',
+			{ ...input },
+			'completed',
+		);
 		return result;
 	} catch (error) {
-		await logEvent(ctx.database, 'slack.channels.getReplies', { ...input }, 'failed');
+		await logEvent(
+			ctx.database,
+			'slack.channels.getReplies',
+			{ ...input },
+			'failed',
+		);
 		throw error;
 	}
 };
@@ -529,10 +630,20 @@ export const setPurpose: SlackEndpoints['channelsSetPurpose'] = async (
 			}
 		}
 
-		await logEvent(ctx.database, 'slack.channels.setPurpose', { ...input }, 'completed');
+		await logEvent(
+			ctx.database,
+			'slack.channels.setPurpose',
+			{ ...input },
+			'completed',
+		);
 		return result;
 	} catch (error) {
-		await logEvent(ctx.database, 'slack.channels.setPurpose', { ...input }, 'failed');
+		await logEvent(
+			ctx.database,
+			'slack.channels.setPurpose',
+			{ ...input },
+			'failed',
+		);
 		throw error;
 	}
 };
@@ -570,10 +681,20 @@ export const setTopic: SlackEndpoints['channelsSetTopic'] = async (
 			}
 		}
 
-		await logEvent(ctx.database, 'slack.channels.setTopic', { ...input }, 'completed');
+		await logEvent(
+			ctx.database,
+			'slack.channels.setTopic',
+			{ ...input },
+			'completed',
+		);
 		return result;
 	} catch (error) {
-		await logEvent(ctx.database, 'slack.channels.setTopic', { ...input }, 'failed');
+		await logEvent(
+			ctx.database,
+			'slack.channels.setTopic',
+			{ ...input },
+			'failed',
+		);
 		throw error;
 	}
 };
@@ -604,10 +725,20 @@ export const unarchive: SlackEndpoints['channelsUnarchive'] = async (
 			}
 		}
 
-		await logEvent(ctx.database, 'slack.channels.unarchive', { ...input }, 'completed');
+		await logEvent(
+			ctx.database,
+			'slack.channels.unarchive',
+			{ ...input },
+			'completed',
+		);
 		return result;
 	} catch (error) {
-		await logEvent(ctx.database, 'slack.channels.unarchive', { ...input }, 'failed');
+		await logEvent(
+			ctx.database,
+			'slack.channels.unarchive',
+			{ ...input },
+			'failed',
+		);
 		throw error;
 	}
 };

@@ -1,3 +1,4 @@
+import { logEvent } from '../../utils/events';
 import type { LinearEndpoints } from '..';
 import { makeLinearRequest } from '../client';
 import type {
@@ -7,7 +8,6 @@ import type {
 	IssuesListResponse,
 	IssueUpdateResponse,
 } from '../types';
-import { logEvent } from '../../utils/events';
 
 const ISSUES_LIST_QUERY = `
   query Issues($teamId: String!, $first: Int!, $after: String) {
@@ -340,7 +340,12 @@ export const list: LinearEndpoints['issuesList'] = async (ctx, input) => {
 			}
 		}
 
-		await logEvent(ctx.database, 'linear.issues.list', { ...input }, 'completed');
+		await logEvent(
+			ctx.database,
+			'linear.issues.list',
+			{ ...input },
+			'completed',
+		);
 		return result;
 	} catch (error) {
 		await logEvent(ctx.database, 'linear.issues.list', { ...input }, 'failed');
@@ -392,7 +397,12 @@ export const get: LinearEndpoints['issuesGet'] = async (ctx, input) => {
 			}
 		}
 
-		await logEvent(ctx.database, 'linear.issues.get', { ...input }, 'completed');
+		await logEvent(
+			ctx.database,
+			'linear.issues.get',
+			{ ...input },
+			'completed',
+		);
 		return result;
 	} catch (error) {
 		await logEvent(ctx.database, 'linear.issues.get', { ...input }, 'failed');
@@ -434,10 +444,20 @@ export const create: LinearEndpoints['issuesCreate'] = async (ctx, input) => {
 			}
 		}
 
-		await logEvent(ctx.database, 'linear.issues.create', { ...input }, 'completed');
+		await logEvent(
+			ctx.database,
+			'linear.issues.create',
+			{ ...input },
+			'completed',
+		);
 		return result;
 	} catch (error) {
-		await logEvent(ctx.database, 'linear.issues.create', { ...input }, 'failed');
+		await logEvent(
+			ctx.database,
+			'linear.issues.create',
+			{ ...input },
+			'failed',
+		);
 		throw error;
 	}
 };
@@ -487,10 +507,20 @@ export const update: LinearEndpoints['issuesUpdate'] = async (ctx, input) => {
 			}
 		}
 
-		await logEvent(ctx.database, 'linear.issues.update', { ...input }, 'completed');
+		await logEvent(
+			ctx.database,
+			'linear.issues.update',
+			{ ...input },
+			'completed',
+		);
 		return result;
 	} catch (error) {
-		await logEvent(ctx.database, 'linear.issues.update', { ...input }, 'failed');
+		await logEvent(
+			ctx.database,
+			'linear.issues.update',
+			{ ...input },
+			'failed',
+		);
 		throw error;
 	}
 };
@@ -516,10 +546,20 @@ export const deleteIssue: LinearEndpoints['issuesDelete'] = async (
 			}
 		}
 
-		await logEvent(ctx.database, 'linear.issues.delete', { ...input }, 'completed');
+		await logEvent(
+			ctx.database,
+			'linear.issues.delete',
+			{ ...input },
+			'completed',
+		);
 		return result;
 	} catch (error) {
-		await logEvent(ctx.database, 'linear.issues.delete', { ...input }, 'failed');
+		await logEvent(
+			ctx.database,
+			'linear.issues.delete',
+			{ ...input },
+			'failed',
+		);
 		throw error;
 	}
 };
