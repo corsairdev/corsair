@@ -18,6 +18,7 @@ export async function logEvent(
 	database: any,
 	eventType: string,
 	payload: Record<string, unknown>,
+	status: 'pending' | 'processing' | 'completed' | 'failed' = 'pending',
 	tenantId: string = 'default',
 ): Promise<string | null> {
 	if (!database) return null;
@@ -29,7 +30,7 @@ export async function logEvent(
 			tenant_id: tenantId,
 			event_type: eventType,
 			payload,
-			status: 'pending',
+			status,
 			retry_count: 0,
 		});
 		return eventId;
@@ -38,18 +39,3 @@ export async function logEvent(
 		return null;
 	}
 }
-
-export async function updateEventStatus(
-	database: any,
-	eventId: string | null,
-	status: 'pending' | 'processing' | 'completed' | 'failed',
-): Promise<void> {
-	if (!database || !eventId) return;
-	try {
-		const orm = createCorsairOrm(database);
-		await orm.events.updateStatus(eventId, status);
-	} catch (error) {
-		console.warn('Failed to update event status:', error);
-	}
-}
-

@@ -1,7 +1,7 @@
 import type { SlackEndpoints } from '..';
 import { makeSlackRequest } from '../client';
 import type { SlackEndpointOutputs } from '../types';
-import { logEvent, updateEventStatus } from '../../utils/events';
+import { logEvent } from '../../utils/events';
 
 const SLACK_REACTIONS = [
 	'thumbsup',
@@ -36,12 +36,6 @@ export type SlackReactionName =
 	| string;
 
 export const add: SlackEndpoints['reactionsAdd'] = async (ctx, input) => {
-	const eventId = await logEvent(ctx.database, 'slack.reactions.add', {
-		channel: input.channel,
-		timestamp: input.timestamp,
-		name: input.name,
-	});
-
 	try {
 		const result = await makeSlackRequest<SlackEndpointOutputs['reactionsAdd']>(
 			'reactions.add',
@@ -55,23 +49,15 @@ export const add: SlackEndpoints['reactionsAdd'] = async (ctx, input) => {
 				},
 			},
 		);
-		await updateEventStatus(ctx.database, eventId, 'completed');
+		await logEvent(ctx.database, 'slack.reactions.add', { ...input }, 'completed');
 		return result;
 	} catch (error) {
-		await updateEventStatus(ctx.database, eventId, 'failed');
+		await logEvent(ctx.database, 'slack.reactions.add', { ...input }, 'failed');
 		throw error;
 	}
 };
 
 export const get: SlackEndpoints['reactionsGet'] = async (ctx, input) => {
-	const eventId = await logEvent(ctx.database, 'slack.reactions.get', {
-		channel: input.channel,
-		timestamp: input.timestamp,
-		file: input.file,
-		file_comment: input.file_comment,
-		full: input.full,
-	});
-
 	try {
 		const result = await makeSlackRequest<SlackEndpointOutputs['reactionsGet']>(
 			'reactions.get',
@@ -87,23 +73,15 @@ export const get: SlackEndpoints['reactionsGet'] = async (ctx, input) => {
 				},
 			},
 		);
-		await updateEventStatus(ctx.database, eventId, 'completed');
+		await logEvent(ctx.database, 'slack.reactions.get', { ...input }, 'completed');
 		return result;
 	} catch (error) {
-		await updateEventStatus(ctx.database, eventId, 'failed');
+		await logEvent(ctx.database, 'slack.reactions.get', { ...input }, 'failed');
 		throw error;
 	}
 };
 
 export const remove: SlackEndpoints['reactionsRemove'] = async (ctx, input) => {
-	const eventId = await logEvent(ctx.database, 'slack.reactions.remove', {
-		name: input.name,
-		channel: input.channel,
-		timestamp: input.timestamp,
-		file: input.file,
-		file_comment: input.file_comment,
-	});
-
 	try {
 		const result = await makeSlackRequest<SlackEndpointOutputs['reactionsRemove']>(
 			'reactions.remove',
@@ -119,10 +97,10 @@ export const remove: SlackEndpoints['reactionsRemove'] = async (ctx, input) => {
 				},
 			},
 		);
-		await updateEventStatus(ctx.database, eventId, 'completed');
+		await logEvent(ctx.database, 'slack.reactions.remove', { ...input }, 'completed');
 		return result;
 	} catch (error) {
-		await updateEventStatus(ctx.database, eventId, 'failed');
+		await logEvent(ctx.database, 'slack.reactions.remove', { ...input }, 'failed');
 		throw error;
 	}
 };
