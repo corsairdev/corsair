@@ -13,22 +13,53 @@ import * as userGroupsEndpoints from './endpoints/user-groups';
 import * as usersEndpoints from './endpoints/users';
 import type { SlackCredentials } from './schema';
 import { SlackSchema } from './schema';
+import type { SlackEndpointOutputs } from './types';
 
-export type SlackPluginOptions = {
-	/**
-	 * Example option. Not used in this barebones plugin yet.
-	 */
-	credentials: SlackCredentials;
-	/**
-	 * Optional per-endpoint hooks for this plugin instance.
-	 *
-	 * Example:
-	 * hooks: {
-	 *   postMessage: { before: async (ctx, input) => {}, after: async (ctx, res) => {} }
-	 * }
-	 */
-	hooks?: CorsairPlugin<'slack', SlackEndpoints>['hooks'] | undefined;
-};
+// Re-export types needed for external type inference
+export type {
+	ChatDeleteResponse,
+	ChatGetPermalinkResponse,
+	ChatPostMessageResponse,
+	ChatUpdateResponse,
+	ConversationsArchiveResponse,
+	ConversationsCloseResponse,
+	ConversationsCreateResponse,
+	ConversationsHistoryResponse,
+	ConversationsInfoResponse,
+	ConversationsInviteResponse,
+	ConversationsJoinResponse,
+	ConversationsKickResponse,
+	ConversationsLeaveResponse,
+	ConversationsListResponse,
+	ConversationsMembersResponse,
+	ConversationsOpenResponse,
+	ConversationsRenameResponse,
+	ConversationsRepliesResponse,
+	ConversationsSetPurposeResponse,
+	ConversationsSetTopicResponse,
+	ConversationsUnarchiveResponse,
+	FilesInfoResponse,
+	FilesListResponse,
+	FilesUploadResponse,
+	ReactionsAddResponse,
+	ReactionsGetResponse,
+	ReactionsRemoveResponse,
+	SearchMessagesResponse,
+	SlackEndpointOutputs,
+	StarsAddResponse,
+	StarsListResponse,
+	StarsRemoveResponse,
+	UsergroupsCreateResponse,
+	UsergroupsDisableResponse,
+	UsergroupsEnableResponse,
+	UsergroupsListResponse,
+	UsergroupsUpdateResponse,
+	UsersGetPresenceResponse,
+	UsersInfoResponse,
+	UsersListResponse,
+	UsersProfileGetResponse,
+	UsersProfileSetResponse,
+} from './types';
 
 /**
  * Slack context type with credentials, ORM services, and access to all endpoints.
@@ -55,68 +86,44 @@ export type SlackContext = CorsairPluginContext<
 >;
 
 /**
- * Fully-typed bound endpoints for Slack. Use this for type assertions when you need
- * precise typing on endpoint calls within implementations.
- *
- * const endpoints = ctx.endpoints as SlackBoundEndpoints
+ * Internal flat endpoint type helper. Used by endpoint implementations.
  */
-export type SlackBoundEndpoints = BindEndpoints<SlackEndpoints>;
+type SlackEndpoint<
+	K extends keyof SlackEndpointOutputs,
+	Input,
+> = CorsairEndpoint<SlackContext, Input, SlackEndpointOutputs[K]>;
 
+/**
+ * Flat endpoint types for internal use by endpoint implementations.
+ * Endpoint implementations use these types to define their signatures.
+ */
 export type SlackEndpoints = {
-	channelsArchive: CorsairEndpoint<
-		SlackContext,
-		{ channel: string },
-		{ ok: boolean; error?: string }
+	channelsArchive: SlackEndpoint<'channelsArchive', { channel: string }>;
+	channelsClose: SlackEndpoint<'channelsClose', { channel: string }>;
+	channelsCreate: SlackEndpoint<
+		'channelsCreate',
+		{ name: string; is_private?: boolean; team_id?: string }
 	>;
-	channelsClose: CorsairEndpoint<
-		SlackContext,
-		{ channel: string },
-		{
-			ok: boolean;
-			error?: string;
-			no_op?: boolean;
-			already_closed?: boolean;
-		}
-	>;
-	channelsCreate: CorsairEndpoint<
-		SlackContext,
-		{ name: string; is_private?: boolean; team_id?: string },
-		{
-			ok: boolean;
-			channel?: { id: string; name: string };
-			error?: string;
-		}
-	>;
-	channelsGet: CorsairEndpoint<
-		SlackContext,
+	channelsGet: SlackEndpoint<
+		'channelsGet',
 		{
 			channel: string;
 			include_locale?: boolean;
 			include_num_members?: boolean;
-		},
-		{
-			ok: boolean;
-			channel?: { id: string; name?: string };
-			error?: string;
 		}
 	>;
-	channelsList: CorsairEndpoint<
-		SlackContext,
+	channelsList: SlackEndpoint<
+		'channelsList',
 		{
 			exclude_archived?: boolean;
 			types?: string;
 			team_id?: string;
 			cursor?: string;
 			limit?: number;
-		},
-		{
-			ok: boolean;
-			channels?: Array<{ id: string; name?: string }>;
-			error?: string;
 		}
 	>;
-	channelsGetHistory: CorsairEndpoint<
-		SlackContext,
+	channelsGetHistory: SlackEndpoint<
+		'channelsGetHistory',
 		{
 			channel: string;
 			latest?: string;
@@ -125,75 +132,37 @@ export type SlackEndpoints = {
 			include_all_metadata?: boolean;
 			cursor?: string;
 			limit?: number;
-		},
-		{
-			ok: boolean;
-			messages?: Array<{ ts?: string; text?: string }>;
-			has_more?: boolean;
-			error?: string;
 		}
 	>;
-	channelsInvite: CorsairEndpoint<
-		SlackContext,
-		{ channel: string; users: string; force?: boolean },
-		{
-			ok: boolean;
-			channel?: { id: string; name?: string };
-			error?: string;
-		}
+	channelsInvite: SlackEndpoint<
+		'channelsInvite',
+		{ channel: string; users: string; force?: boolean }
 	>;
-	channelsJoin: CorsairEndpoint<
-		SlackContext,
-		{ channel: string },
-		{
-			ok: boolean;
-			channel?: { id: string; name?: string };
-			warning?: string;
-			error?: string;
-		}
+	channelsJoin: SlackEndpoint<'channelsJoin', { channel: string }>;
+	channelsKick: SlackEndpoint<
+		'channelsKick',
+		{ channel: string; user: string }
 	>;
-	channelsKick: CorsairEndpoint<
-		SlackContext,
-		{ channel: string; user: string },
-		{ ok: boolean; error?: string }
+	channelsLeave: SlackEndpoint<'channelsLeave', { channel: string }>;
+	channelsGetMembers: SlackEndpoint<
+		'channelsGetMembers',
+		{ channel: string; cursor?: string; limit?: number }
 	>;
-	channelsLeave: CorsairEndpoint<
-		SlackContext,
-		{ channel: string },
-		{ ok: boolean; not_in_channel?: boolean; error?: string }
-	>;
-	channelsGetMembers: CorsairEndpoint<
-		SlackContext,
-		{ channel: string; cursor?: string; limit?: number },
-		{ ok: boolean; members?: string[]; error?: string }
-	>;
-	channelsOpen: CorsairEndpoint<
-		SlackContext,
+	channelsOpen: SlackEndpoint<
+		'channelsOpen',
 		{
 			channel?: string;
 			users?: string;
 			prevent_creation?: boolean;
 			return_im?: boolean;
-		},
-		{
-			ok: boolean;
-			channel?: { id: string; name?: string };
-			no_op?: boolean;
-			already_open?: boolean;
-			error?: string;
 		}
 	>;
-	channelsRename: CorsairEndpoint<
-		SlackContext,
-		{ channel: string; name: string },
-		{
-			ok: boolean;
-			channel?: { id: string; name?: string };
-			error?: string;
-		}
+	channelsRename: SlackEndpoint<
+		'channelsRename',
+		{ channel: string; name: string }
 	>;
-	channelsGetReplies: CorsairEndpoint<
-		SlackContext,
+	channelsGetReplies: SlackEndpoint<
+		'channelsGetReplies',
 		{
 			channel: string;
 			ts: string;
@@ -203,98 +172,46 @@ export type SlackEndpoints = {
 			include_all_metadata?: boolean;
 			cursor?: string;
 			limit?: number;
-		},
-		{
-			ok: boolean;
-			messages?: Array<{ ts?: string; text?: string }>;
-			has_more?: boolean;
-			error?: string;
 		}
 	>;
-	channelsSetPurpose: CorsairEndpoint<
-		SlackContext,
-		{ channel: string; purpose: string },
-		{
-			ok: boolean;
-			channel?: { id: string; name?: string };
-			purpose?: string;
-			error?: string;
-		}
+	channelsSetPurpose: SlackEndpoint<
+		'channelsSetPurpose',
+		{ channel: string; purpose: string }
 	>;
-	channelsSetTopic: CorsairEndpoint<
-		SlackContext,
-		{ channel: string; topic: string },
-		{
-			ok: boolean;
-			channel?: { id: string; name?: string };
-			topic?: string;
-			error?: string;
-		}
+	channelsSetTopic: SlackEndpoint<
+		'channelsSetTopic',
+		{ channel: string; topic: string }
 	>;
-	channelsUnarchive: CorsairEndpoint<
-		SlackContext,
-		{ channel: string },
-		{ ok: boolean; error?: string }
+	channelsUnarchive: SlackEndpoint<'channelsUnarchive', { channel: string }>;
+	usersGet: SlackEndpoint<
+		'usersGet',
+		{ user: string; include_locale?: boolean }
 	>;
-	usersGet: CorsairEndpoint<
-		SlackContext,
-		{ user: string; include_locale?: boolean },
-		{
-			ok: boolean;
-			user?: { id: string; name?: string };
-			error?: string;
-		}
-	>;
-	usersList: CorsairEndpoint<
-		SlackContext,
+	usersList: SlackEndpoint<
+		'usersList',
 		{
 			include_locale?: boolean;
 			team_id?: string;
 			cursor?: string;
 			limit?: number;
-		},
-		{
-			ok: boolean;
-			members?: Array<{ id: string; name?: string }>;
-			cache_ts?: number;
-			error?: string;
 		}
 	>;
-	usersGetProfile: CorsairEndpoint<
-		SlackContext,
-		{ user?: string; include_labels?: boolean },
-		{
-			ok: boolean;
-			profile?: { avatar_hash?: string; real_name?: string };
-			error?: string;
-		}
+	usersGetProfile: SlackEndpoint<
+		'usersGetProfile',
+		{ user?: string; include_labels?: boolean }
 	>;
-	usersGetPresence: CorsairEndpoint<
-		SlackContext,
-		{ user?: string },
-		{
-			ok: boolean;
-			presence?: string;
-			online?: boolean;
-			error?: string;
-		}
-	>;
-	usersUpdateProfile: CorsairEndpoint<
-		SlackContext,
+	usersGetPresence: SlackEndpoint<'usersGetPresence', { user?: string }>;
+	usersUpdateProfile: SlackEndpoint<
+		'usersUpdateProfile',
 		{
 			profile?: Record<string, unknown>;
 			user?: string;
 			name?: string;
 			value?: string;
-		},
-		{
-			ok: boolean;
-			profile?: { avatar_hash?: string; real_name?: string };
-			error?: string;
 		}
 	>;
-	userGroupsCreate: CorsairEndpoint<
-		SlackContext,
+	userGroupsCreate: SlackEndpoint<
+		'userGroupsCreate',
 		{
 			name: string;
 			channels?: string;
@@ -302,55 +219,35 @@ export type SlackEndpoints = {
 			handle?: string;
 			include_count?: boolean;
 			team_id?: string;
-		},
-		{
-			ok: boolean;
-			usergroup?: { id: string; name?: string };
-			error?: string;
 		}
 	>;
-	userGroupsDisable: CorsairEndpoint<
-		SlackContext,
+	userGroupsDisable: SlackEndpoint<
+		'userGroupsDisable',
 		{
 			usergroup: string;
 			include_count?: boolean;
 			team_id?: string;
-		},
-		{
-			ok: boolean;
-			usergroup?: { id: string; name?: string };
-			error?: string;
 		}
 	>;
-	userGroupsEnable: CorsairEndpoint<
-		SlackContext,
+	userGroupsEnable: SlackEndpoint<
+		'userGroupsEnable',
 		{
 			usergroup: string;
 			include_count?: boolean;
 			team_id?: string;
-		},
-		{
-			ok: boolean;
-			usergroup?: { id: string; name?: string };
-			error?: string;
 		}
 	>;
-	userGroupsList: CorsairEndpoint<
-		SlackContext,
+	userGroupsList: SlackEndpoint<
+		'userGroupsList',
 		{
 			include_count?: boolean;
 			include_disabled?: boolean;
 			include_users?: boolean;
 			team_id?: string;
-		},
-		{
-			ok: boolean;
-			userGroups?: Array<{ id: string; name?: string }>;
-			error?: string;
 		}
 	>;
-	userGroupsUpdate: CorsairEndpoint<
-		SlackContext,
+	userGroupsUpdate: SlackEndpoint<
+		'userGroupsUpdate',
 		{
 			usergroup: string;
 			name?: string;
@@ -359,30 +256,20 @@ export type SlackEndpoints = {
 			handle?: string;
 			include_count?: boolean;
 			team_id?: string;
-		},
-		{
-			ok: boolean;
-			usergroup?: { id: string; name?: string };
-			error?: string;
 		}
 	>;
-	filesGet: CorsairEndpoint<
-		SlackContext,
+	filesGet: SlackEndpoint<
+		'filesGet',
 		{
 			file: string;
 			cursor?: string;
 			limit?: number;
 			page?: number;
 			count?: number;
-		},
-		{
-			ok: boolean;
-			file?: { id: string; name?: string };
-			error?: string;
 		}
 	>;
-	filesList: CorsairEndpoint<
-		SlackContext,
+	filesList: SlackEndpoint<
+		'filesList',
 		{
 			channel?: string;
 			user?: string;
@@ -393,15 +280,10 @@ export type SlackEndpoints = {
 			team_id?: string;
 			page?: number;
 			count?: number;
-		},
-		{
-			ok: boolean;
-			files?: Array<{ id: string; name?: string }>;
-			error?: string;
 		}
 	>;
-	filesUpload: CorsairEndpoint<
-		SlackContext,
+	filesUpload: SlackEndpoint<
+		'filesUpload',
 		{
 			channels?: string;
 			content?: string;
@@ -411,30 +293,18 @@ export type SlackEndpoints = {
 			initial_comment?: string;
 			thread_ts?: string;
 			title?: string;
-		},
-		{
-			ok: boolean;
-			file?: { id: string; name?: string };
-			error?: string;
 		}
 	>;
-	messagesDelete: CorsairEndpoint<
-		SlackContext,
-		{ channel: string; ts: string; as_user?: boolean },
-		{ ok: boolean; channel?: string; ts?: string; error?: string }
+	messagesDelete: SlackEndpoint<
+		'messagesDelete',
+		{ channel: string; ts: string; as_user?: boolean }
 	>;
-	messagesGetPermalink: CorsairEndpoint<
-		SlackContext,
-		{ channel: string; message_ts: string },
-		{
-			ok: boolean;
-			channel?: string;
-			permalink?: string;
-			error?: string;
-		}
+	messagesGetPermalink: SlackEndpoint<
+		'messagesGetPermalink',
+		{ channel: string; message_ts: string }
 	>;
-	messagesSearch: CorsairEndpoint<
-		SlackContext,
+	messagesSearch: SlackEndpoint<
+		'messagesSearch',
 		{
 			query: string;
 			sort?: 'score' | 'timestamp';
@@ -445,16 +315,10 @@ export type SlackEndpoints = {
 			limit?: number;
 			page?: number;
 			count?: number;
-		},
-		{
-			ok: boolean;
-			query?: string;
-			messages?: { matches?: Array<{ ts?: string; text?: string }> };
-			error?: string;
 		}
 	>;
-	postMessage: CorsairEndpoint<
-		SlackContext,
+	postMessage: SlackEndpoint<
+		'postMessage',
 		{
 			channel: string;
 			text?: string;
@@ -475,17 +339,10 @@ export type SlackEndpoints = {
 				event_type: string;
 				event_payload: Record<string, unknown>;
 			};
-		},
-		{
-			ok: boolean;
-			channel?: string;
-			ts?: string;
-			message?: { ts?: string; text?: string };
-			error?: string;
 		}
 	>;
-	messagesUpdate: CorsairEndpoint<
-		SlackContext,
+	messagesUpdate: SlackEndpoint<
+		'messagesUpdate',
 		{
 			channel: string;
 			ts: string;
@@ -501,83 +358,151 @@ export type SlackEndpoints = {
 				event_type: string;
 				event_payload: Record<string, unknown>;
 			};
-		},
-		{
-			ok: boolean;
-			channel?: string;
-			ts?: string;
-			text?: string;
-			message?: { ts?: string; text?: string };
-			error?: string;
 		}
 	>;
-	reactionsAdd: CorsairEndpoint<
-		SlackContext,
-		{ channel: string; timestamp: string; name: string },
-		{ ok: boolean; error?: string }
+	reactionsAdd: SlackEndpoint<
+		'reactionsAdd',
+		{ channel: string; timestamp: string; name: string }
 	>;
-	reactionsGet: CorsairEndpoint<
-		SlackContext,
+	reactionsGet: SlackEndpoint<
+		'reactionsGet',
 		{
 			channel?: string;
 			timestamp?: string;
 			file?: string;
 			file_comment?: string;
 			full?: boolean;
-		},
-		{
-			ok: boolean;
-			type?: string;
-			message?: { ts?: string };
-			error?: string;
 		}
 	>;
-	reactionsRemove: CorsairEndpoint<
-		SlackContext,
+	reactionsRemove: SlackEndpoint<
+		'reactionsRemove',
 		{
 			name: string;
 			channel?: string;
 			timestamp?: string;
 			file?: string;
 			file_comment?: string;
-		},
-		{ ok: boolean; error?: string }
+		}
 	>;
-	starsAdd: CorsairEndpoint<
-		SlackContext,
+	starsAdd: SlackEndpoint<
+		'starsAdd',
 		{
 			channel?: string;
 			timestamp?: string;
 			file?: string;
 			file_comment?: string;
-		},
-		{ ok: boolean; error?: string }
+		}
 	>;
-	starsRemove: CorsairEndpoint<
-		SlackContext,
+	starsRemove: SlackEndpoint<
+		'starsRemove',
 		{
 			channel?: string;
 			timestamp?: string;
 			file?: string;
 			file_comment?: string;
-		},
-		{ ok: boolean; error?: string }
+		}
 	>;
-	starsList: CorsairEndpoint<
-		SlackContext,
+	starsList: SlackEndpoint<
+		'starsList',
 		{
 			team_id?: string;
 			cursor?: string;
 			limit?: number;
 			page?: number;
 			count?: number;
-		},
-		{
-			ok: boolean;
-			items?: Array<{ type?: string; date_create?: number }>;
-			error?: string;
 		}
 	>;
+};
+
+/**
+ * Fully-typed bound endpoints for Slack. Use this for type assertions when you need
+ * precise typing on endpoint calls within implementations.
+ *
+ * const endpoints = ctx.endpoints as SlackBoundEndpoints
+ */
+export type SlackBoundEndpoints = BindEndpoints<SlackEndpoints>;
+
+/**
+ * The nested structure for organizing Slack endpoints externally.
+ * This is the shape exposed to consumers via `corsair.slack.*`.
+ */
+const slackEndpointsNested = {
+	channels: {
+		archive: channelsEndpoints.archive,
+		close: channelsEndpoints.close,
+		create: channelsEndpoints.create,
+		get: channelsEndpoints.get,
+		list: channelsEndpoints.list,
+		getHistory: channelsEndpoints.getHistory,
+		invite: channelsEndpoints.invite,
+		join: channelsEndpoints.join,
+		kick: channelsEndpoints.kick,
+		leave: channelsEndpoints.leave,
+		getMembers: channelsEndpoints.getMembers,
+		open: channelsEndpoints.open,
+		rename: channelsEndpoints.rename,
+		getReplies: channelsEndpoints.getReplies,
+		setPurpose: channelsEndpoints.setPurpose,
+		setTopic: channelsEndpoints.setTopic,
+		unarchive: channelsEndpoints.unarchive,
+	},
+	users: {
+		get: usersEndpoints.get,
+		list: usersEndpoints.list,
+		getProfile: usersEndpoints.getProfile,
+		getPresence: usersEndpoints.getPresence,
+		updateProfile: usersEndpoints.updateProfile,
+	},
+	userGroups: {
+		create: userGroupsEndpoints.create,
+		disable: userGroupsEndpoints.disable,
+		enable: userGroupsEndpoints.enable,
+		list: userGroupsEndpoints.list,
+		update: userGroupsEndpoints.update,
+	},
+	files: {
+		get: filesEndpoints.get,
+		list: filesEndpoints.list,
+		upload: filesEndpoints.upload,
+	},
+	messages: {
+		delete: messagesEndpoints.deleteMessage,
+		getPermalink: messagesEndpoints.getPermalink,
+		search: messagesEndpoints.search,
+		post: messagesEndpoints.postMessage,
+		update: messagesEndpoints.update,
+	},
+	reactions: {
+		add: reactionsEndpoints.add,
+		get: reactionsEndpoints.get,
+		remove: reactionsEndpoints.remove,
+	},
+	stars: {
+		add: starsEndpoints.add,
+		remove: starsEndpoints.remove,
+		list: starsEndpoints.list,
+	},
+} as const;
+
+export type SlackPluginOptions = {
+	/**
+	 * Example option. Not used in this barebones plugin yet.
+	 */
+	credentials: SlackCredentials;
+	/**
+	 * Optional per-endpoint hooks for this plugin instance.
+	 * Hooks follow the same nested structure as endpoints.
+	 *
+	 * Example:
+	 * hooks: {
+	 *   messages: {
+	 *     post: { before: async (ctx, input) => {}, after: async (ctx, res) => {} }
+	 *   }
+	 * }
+	 */
+	hooks?:
+		| CorsairPlugin<'slack', typeof slackEndpointsNested>['hooks']
+		| undefined;
 };
 
 export function slack(options: SlackPluginOptions) {
@@ -586,52 +511,10 @@ export function slack(options: SlackPluginOptions) {
 		schema: SlackSchema,
 		options: options.credentials,
 		hooks: options.hooks,
-		endpoints: {
-			channelsArchive: channelsEndpoints.archive,
-			channelsClose: channelsEndpoints.close,
-			channelsCreate: channelsEndpoints.create,
-			channelsGet: channelsEndpoints.get,
-			channelsList: channelsEndpoints.list,
-			channelsGetHistory: channelsEndpoints.getHistory,
-			channelsInvite: channelsEndpoints.invite,
-			channelsJoin: channelsEndpoints.join,
-			channelsKick: channelsEndpoints.kick,
-			channelsLeave: channelsEndpoints.leave,
-			channelsGetMembers: channelsEndpoints.getMembers,
-			channelsOpen: channelsEndpoints.open,
-			channelsRename: channelsEndpoints.rename,
-			channelsGetReplies: channelsEndpoints.getReplies,
-			channelsSetPurpose: channelsEndpoints.setPurpose,
-			channelsSetTopic: channelsEndpoints.setTopic,
-			channelsUnarchive: channelsEndpoints.unarchive,
-			usersGet: usersEndpoints.get,
-			usersList: usersEndpoints.list,
-			usersGetProfile: usersEndpoints.getProfile,
-			usersGetPresence: usersEndpoints.getPresence,
-			usersUpdateProfile: usersEndpoints.updateProfile,
-			userGroupsCreate: userGroupsEndpoints.create,
-			userGroupsDisable: userGroupsEndpoints.disable,
-			userGroupsEnable: userGroupsEndpoints.enable,
-			userGroupsList: userGroupsEndpoints.list,
-			userGroupsUpdate: userGroupsEndpoints.update,
-			filesGet: filesEndpoints.get,
-			filesList: filesEndpoints.list,
-			filesUpload: filesEndpoints.upload,
-			messagesDelete: messagesEndpoints.deleteMessage,
-			messagesGetPermalink: messagesEndpoints.getPermalink,
-			messagesSearch: messagesEndpoints.search,
-			postMessage: messagesEndpoints.postMessage,
-			messagesUpdate: messagesEndpoints.update,
-			reactionsAdd: reactionsEndpoints.add,
-			reactionsGet: reactionsEndpoints.get,
-			reactionsRemove: reactionsEndpoints.remove,
-			starsAdd: starsEndpoints.add,
-			starsRemove: starsEndpoints.remove,
-			starsList: starsEndpoints.list,
-		} as SlackEndpoints,
+		endpoints: slackEndpointsNested,
 	} satisfies CorsairPlugin<
 		'slack',
-		SlackEndpoints,
+		typeof slackEndpointsNested,
 		typeof SlackSchema,
 		SlackCredentials
 	>;

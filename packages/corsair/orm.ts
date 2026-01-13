@@ -8,16 +8,16 @@ import type {
 
 import type {
 	CorsairConnection,
-	CorsairResource,
 	CorsairEvent,
 	CorsairProvider,
+	CorsairResource,
 } from './db';
 
 import {
 	CorsairConnectionsSchema,
-	CorsairResourcesSchema,
 	CorsairEventsSchema,
 	CorsairProvidersSchema,
+	CorsairResourcesSchema,
 } from './db';
 
 // ─────────────────────────────────────────────────────────────────────────────

@@ -1,41 +1,41 @@
 import type { SlackEndpoints } from '..';
+import type { SlackEndpointOutputs } from '../types';
 import { makeSlackRequest } from '../client';
+import type { SlackEndpointOutputs } from '../types';
 
 export const postMessage: SlackEndpoints['postMessage'] = async (
 	ctx,
 	input,
 ) => {
-	const result = await makeSlackRequest<{
-		ok: boolean;
-		channel?: string;
-		ts?: string;
-		message?: { ts?: string; text?: string };
-		error?: string;
-	}>('chat.postMessage', ctx.options.botToken, {
-		method: 'POST',
-		body: {
-			channel: input.channel,
-			text: input.text,
-			blocks: input.blocks,
-			attachments: input.attachments,
-			thread_ts: input.thread_ts,
-			reply_broadcast: input.reply_broadcast,
-			parse: input.parse,
-			link_names: input.link_names,
-			unfurl_links: input.unfurl_links,
-			unfurl_media: input.unfurl_media,
-			mrkdwn: input.mrkdwn,
-			as_user: input.as_user,
-			icon_emoji: input.icon_emoji,
-			icon_url: input.icon_url,
-			username: input.username,
-			metadata: input.metadata,
+	const result = await makeSlackRequest<SlackEndpointOutputs['postMessage']>(
+		'chat.postMessage',
+		ctx.options.botToken,
+		{
+			method: 'POST',
+			body: {
+				channel: input.channel,
+				text: input.text,
+				blocks: input.blocks,
+				attachments: input.attachments,
+				thread_ts: input.thread_ts,
+				reply_broadcast: input.reply_broadcast,
+				parse: input.parse,
+				link_names: input.link_names,
+				unfurl_links: input.unfurl_links,
+				unfurl_media: input.unfurl_media,
+				mrkdwn: input.mrkdwn,
+				as_user: input.as_user,
+				icon_emoji: input.icon_emoji,
+				icon_url: input.icon_url,
+				username: input.username,
+				metadata: input.metadata,
+			},
 		},
-	});
+	);
 
-	if (result.ok && result.message && result.ts && ctx.messages) {
+	if (result.ok && result.message && result.ts && ctx.db.messages) {
 		try {
-			await ctx.messages.upsert(result.ts, {
+			await ctx.db.messages.upsert(result.ts, {
 				id: result.ts,
 				ts: result.ts,
 				text: result.message.text,
@@ -55,23 +55,22 @@ export const deleteMessage: SlackEndpoints['messagesDelete'] = async (
 	ctx,
 	input,
 ) => {
-	const result = await makeSlackRequest<{
-		ok: boolean;
-		channel?: string;
-		ts?: string;
-		error?: string;
-	}>('chat.delete', ctx.options.botToken, {
-		method: 'POST',
-		body: {
-			channel: input.channel,
-			ts: input.ts,
-			as_user: input.as_user,
+	const result = await makeSlackRequest<SlackEndpointOutputs['messagesDelete']>(
+		'chat.delete',
+		ctx.options.botToken,
+		{
+			method: 'POST',
+			body: {
+				channel: input.channel,
+				ts: input.ts,
+				as_user: input.as_user,
+			},
 		},
-	});
+	);
 
-	if (result.ok && result.ts && ctx.messages) {
+	if (result.ok && result.ts && ctx.db.messages) {
 		try {
-			await ctx.messages.deleteByResourceId(result.ts);
+			await ctx.db.messages.deleteByResourceId(result.ts);
 		} catch (error) {
 			console.warn('Failed to delete message from database:', error);
 		}
@@ -81,33 +80,30 @@ export const deleteMessage: SlackEndpoints['messagesDelete'] = async (
 };
 
 export const update: SlackEndpoints['messagesUpdate'] = async (ctx, input) => {
-	const result = await makeSlackRequest<{
-		ok: boolean;
-		channel?: string;
-		ts?: string;
-		text?: string;
-		message?: { ts?: string; text?: string };
-		error?: string;
-	}>('chat.update', ctx.options.botToken, {
-		method: 'POST',
-		body: {
-			channel: input.channel,
-			ts: input.ts,
-			text: input.text,
-			blocks: input.blocks,
-			attachments: input.attachments,
-			parse: input.parse,
-			link_names: input.link_names,
-			as_user: input.as_user,
-			file_ids: input.file_ids,
-			reply_broadcast: input.reply_broadcast,
-			metadata: input.metadata,
+	const result = await makeSlackRequest<SlackEndpointOutputs['messagesUpdate']>(
+		'chat.update',
+		ctx.options.botToken,
+		{
+			method: 'POST',
+			body: {
+				channel: input.channel,
+				ts: input.ts,
+				text: input.text,
+				blocks: input.blocks,
+				attachments: input.attachments,
+				parse: input.parse,
+				link_names: input.link_names,
+				as_user: input.as_user,
+				file_ids: input.file_ids,
+				reply_broadcast: input.reply_broadcast,
+				metadata: input.metadata,
+			},
 		},
-	});
+	);
 
-	if (result.ok && result.message && result.ts && ctx.messages) {
+	if (result.ok && result.message && result.ts && ctx.db.messages) {
 		try {
-			await ctx.messages.upsert(result.ts, {
+			await ctx.db.messages.upsert(result.ts, {
 				id: result.ts,
 				ts: result.ts,
 				text: result.message.text || result.text,
@@ -126,46 +122,44 @@ export const getPermalink: SlackEndpoints['messagesGetPermalink'] = async (
 	ctx,
 	input,
 ) => {
-	return makeSlackRequest<{
-		ok: boolean;
-		channel?: string;
-		permalink?: string;
-		error?: string;
-	}>('chat.getPermalink', ctx.options.botToken, {
-		method: 'GET',
-		query: {
-			channel: input.channel,
-			message_ts: input.message_ts,
+	return makeSlackRequest<SlackEndpointOutputs['messagesGetPermalink']>(
+		'chat.getPermalink',
+		ctx.options.botToken,
+		{
+			method: 'GET',
+			query: {
+				channel: input.channel,
+				message_ts: input.message_ts,
+			},
 		},
-	});
+	);
 };
 
 export const search: SlackEndpoints['messagesSearch'] = async (ctx, input) => {
-	const result = await makeSlackRequest<{
-		ok: boolean;
-		query?: string;
-		messages?: { matches?: Array<{ ts?: string; text?: string }> };
-		error?: string;
-	}>('search.messages', ctx.options.botToken, {
-		method: 'GET',
-		query: {
-			query: input.query,
-			sort: input.sort,
-			sort_dir: input.sort_dir,
-			highlight: input.highlight,
-			team_id: input.team_id,
-			cursor: input.cursor,
-			limit: input.limit,
-			page: input.page,
-			count: input.count,
+	const result = await makeSlackRequest<SlackEndpointOutputs['messagesSearch']>(
+		'search.messages',
+		ctx.options.botToken,
+		{
+			method: 'GET',
+			query: {
+				query: input.query,
+				sort: input.sort,
+				sort_dir: input.sort_dir,
+				highlight: input.highlight,
+				team_id: input.team_id,
+				cursor: input.cursor,
+				limit: input.limit,
+				page: input.page,
+				count: input.count,
+			},
 		},
-	});
+	);
 
-	if (result.ok && result.messages?.matches && ctx.messages) {
+	if (result.ok && result.messages?.matches && ctx.db.messages) {
 		try {
 			for (const match of result.messages.matches) {
 				if (match.ts) {
-					await ctx.messages.upsert(match.ts, {
+					await ctx.db.messages.upsert(match.ts, {
 						id: match.ts,
 						ts: match.ts,
 						text: match.text,
