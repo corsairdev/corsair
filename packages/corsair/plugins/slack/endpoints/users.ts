@@ -1,22 +1,23 @@
 import type { SlackEndpoints } from '..';
 import { makeSlackRequest } from '../client';
+import type { SlackEndpointOutputs } from '../types';
 
 export const get: SlackEndpoints['usersGet'] = async (ctx, input) => {
-	const result = await makeSlackRequest<{
-		ok: boolean;
-		user?: { id: string; name?: string };
-		error?: string;
-	}>('users.info', ctx.options.botToken, {
-		method: 'GET',
-		query: {
-			user: input.user,
-			include_locale: input.include_locale,
+	const result = await makeSlackRequest<SlackEndpointOutputs['usersGet']>(
+		'users.info',
+		ctx.options.botToken,
+		{
+			method: 'GET',
+			query: {
+				user: input.user,
+				include_locale: input.include_locale,
+			},
 		},
-	});
+	);
 
-	if (result.ok && result.user && ctx.users) {
+	if (result.ok && result.user && ctx.db.users) {
 		try {
-			await ctx.users.upsert(result.user.id, {
+			await ctx.db.users.upsert(result.user.id, {
 				id: result.user.id,
 				name: result.user.name,
 			});
@@ -29,26 +30,25 @@ export const get: SlackEndpoints['usersGet'] = async (ctx, input) => {
 };
 
 export const list: SlackEndpoints['usersList'] = async (ctx, input) => {
-	const result = await makeSlackRequest<{
-		ok: boolean;
-		members?: Array<{ id: string; name?: string }>;
-		cache_ts?: number;
-		error?: string;
-	}>('users.list', ctx.options.botToken, {
-		method: 'GET',
-		query: {
-			include_locale: input.include_locale,
-			team_id: input.team_id,
-			cursor: input.cursor,
-			limit: input.limit,
+	const result = await makeSlackRequest<SlackEndpointOutputs['usersList']>(
+		'users.list',
+		ctx.options.botToken,
+		{
+			method: 'GET',
+			query: {
+				include_locale: input.include_locale,
+				team_id: input.team_id,
+				cursor: input.cursor,
+				limit: input.limit,
+			},
 		},
-	});
+	);
 
-	if (result.ok && result.members && ctx.users) {
+	if (result.ok && result.members && ctx.db.users) {
 		try {
 			for (const member of result.members) {
 				if (member.id) {
-					await ctx.users.upsert(member.id, {
+					await ctx.db.users.upsert(member.id, {
 						id: member.id,
 						name: member.name,
 					});
@@ -66,11 +66,9 @@ export const getProfile: SlackEndpoints['usersGetProfile'] = async (
 	ctx,
 	input,
 ) => {
-	const result = await makeSlackRequest<{
-		ok: boolean;
-		profile?: { avatar_hash?: string; real_name?: string };
-		error?: string;
-	}>('users.profile.get', ctx.options.botToken, {
+	const result = await makeSlackRequest<
+		SlackEndpointOutputs['usersGetProfile']
+	>('users.profile.get', ctx.options.botToken, {
 		method: 'GET',
 		query: {
 			user: input.user,
@@ -78,10 +76,10 @@ export const getProfile: SlackEndpoints['usersGetProfile'] = async (
 		},
 	});
 
-	if (result.ok && result.profile && input.user && ctx.users) {
+	if (result.ok && result.profile && input.user && ctx.db.users) {
 		try {
-			const existing = await ctx.users.findByResourceId(input.user);
-			await ctx.users.upsert(input.user, {
+			const existing = await ctx.db.users.findByResourceId(input.user);
+			await ctx.db.users.upsert(input.user, {
 				...(existing?.data || { id: input.user }),
 				profile: result.profile,
 			});
@@ -97,28 +95,25 @@ export const getPresence: SlackEndpoints['usersGetPresence'] = async (
 	ctx,
 	input,
 ) => {
-	return makeSlackRequest<{
-		ok: boolean;
-		presence?: string;
-		online?: boolean;
-		error?: string;
-	}>('users.getPresence', ctx.options.botToken, {
-		method: 'GET',
-		query: {
-			user: input.user,
+	return makeSlackRequest<SlackEndpointOutputs['usersGetPresence']>(
+		'users.getPresence',
+		ctx.options.botToken,
+		{
+			method: 'GET',
+			query: {
+				user: input.user,
+			},
 		},
-	});
+	);
 };
 
 export const updateProfile: SlackEndpoints['usersUpdateProfile'] = async (
 	ctx,
 	input,
 ) => {
-	const result = await makeSlackRequest<{
-		ok: boolean;
-		profile?: { avatar_hash?: string; real_name?: string };
-		error?: string;
-	}>('users.profile.set', ctx.options.botToken, {
+	const result = await makeSlackRequest<
+		SlackEndpointOutputs['usersUpdateProfile']
+	>('users.profile.set', ctx.options.botToken, {
 		method: 'POST',
 		body: {
 			profile: input.profile,
@@ -128,10 +123,10 @@ export const updateProfile: SlackEndpoints['usersUpdateProfile'] = async (
 		},
 	});
 
-	if (result.ok && result.profile && input.user && ctx.users) {
+	if (result.ok && result.profile && input.user && ctx.db.users) {
 		try {
-			const existing = await ctx.users.findByResourceId(input.user);
-			await ctx.users.upsert(input.user, {
+			const existing = await ctx.db.users.findByResourceId(input.user);
+			await ctx.db.users.upsert(input.user, {
 				...(existing?.data || { id: input.user }),
 				profile: result.profile,
 			});
