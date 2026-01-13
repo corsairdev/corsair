@@ -5,6 +5,12 @@ const main = async () => {
 		'3bc35797-88db-43bd-8692-2392fb50e470',
 	);
 
+	const reaction = await corsair.slack.api.reactions.add({
+		channel: res?.data?.channel || '',
+		timestamp: res?.data?.ts || '',
+		name: ':thumbsup:',
+	});
+
 	console.log(res?.data);
 	// const message =
 	// 	await corsair.slack.db.messages.findByResourceId('1768233685.811009');
