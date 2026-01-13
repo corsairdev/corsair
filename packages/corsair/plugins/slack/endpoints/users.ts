@@ -1,139 +1,199 @@
 import type { SlackEndpoints } from '..';
 import { makeSlackRequest } from '../client';
 import type { SlackEndpointOutputs } from '../types';
+import { logEvent, updateEventStatus } from '../../utils/events';
 
 export const get: SlackEndpoints['usersGet'] = async (ctx, input) => {
-	const result = await makeSlackRequest<SlackEndpointOutputs['usersGet']>(
-		'users.info',
-		ctx.options.botToken,
-		{
-			method: 'GET',
-			query: {
-				user: input.user,
-				include_locale: input.include_locale,
+	const eventId = await logEvent(ctx.database, 'slack.users.get', {
+		user: input.user,
+		include_locale: input.include_locale,
+	});
+
+	try {
+		const result = await makeSlackRequest<SlackEndpointOutputs['usersGet']>(
+			'users.info',
+			ctx.options.botToken,
+			{
+				method: 'GET',
+				query: {
+					user: input.user,
+					include_locale: input.include_locale,
+				},
 			},
-		},
-	);
+		);
 
-	if (result.ok && result.user && ctx.db.users) {
-		try {
-			await ctx.db.users.upsert(result.user.id, {
-				id: result.user.id,
-				name: result.user.name,
-			});
-		} catch (error) {
-			console.warn('Failed to save user to database:', error);
+		if (result.ok && result.user && ctx.db.users) {
+			try {
+				await ctx.db.users.upsert(result.user.id, {
+					id: result.user.id,
+					name: result.user.name,
+				});
+			} catch (error) {
+				console.warn('Failed to save user to database:', error);
+			}
 		}
-	}
 
-	return result;
+		await updateEventStatus(ctx.database, eventId, 'completed');
+		return result;
+	} catch (error) {
+		await updateEventStatus(ctx.database, eventId, 'failed');
+		throw error;
+	}
 };
 
 export const list: SlackEndpoints['usersList'] = async (ctx, input) => {
-	const result = await makeSlackRequest<SlackEndpointOutputs['usersList']>(
-		'users.list',
-		ctx.options.botToken,
-		{
-			method: 'GET',
-			query: {
-				include_locale: input.include_locale,
-				team_id: input.team_id,
-				cursor: input.cursor,
-				limit: input.limit,
+	const eventId = await logEvent(ctx.database, 'slack.users.list', {
+		include_locale: input.include_locale,
+		team_id: input.team_id,
+		cursor: input.cursor,
+		limit: input.limit,
+	});
+
+	try {
+		const result = await makeSlackRequest<SlackEndpointOutputs['usersList']>(
+			'users.list',
+			ctx.options.botToken,
+			{
+				method: 'GET',
+				query: {
+					include_locale: input.include_locale,
+					team_id: input.team_id,
+					cursor: input.cursor,
+					limit: input.limit,
+				},
 			},
-		},
-	);
+		);
 
-	if (result.ok && result.members && ctx.db.users) {
-		try {
-			for (const member of result.members) {
-				if (member.id) {
-					await ctx.db.users.upsert(member.id, {
-						id: member.id,
-						name: member.name,
-					});
+		if (result.ok && result.members && ctx.db.users) {
+			try {
+				for (const member of result.members) {
+					if (member.id) {
+						await ctx.db.users.upsert(member.id, {
+							id: member.id,
+							name: member.name,
+						});
+					}
 				}
+			} catch (error) {
+				console.warn('Failed to save users to database:', error);
 			}
-		} catch (error) {
-			console.warn('Failed to save users to database:', error);
 		}
-	}
 
-	return result;
+		await updateEventStatus(ctx.database, eventId, 'completed');
+		return result;
+	} catch (error) {
+		await updateEventStatus(ctx.database, eventId, 'failed');
+		throw error;
+	}
 };
 
 export const getProfile: SlackEndpoints['usersGetProfile'] = async (
 	ctx,
 	input,
 ) => {
-	const result = await makeSlackRequest<
-		SlackEndpointOutputs['usersGetProfile']
-	>('users.profile.get', ctx.options.botToken, {
-		method: 'GET',
-		query: {
-			user: input.user,
-			include_labels: input.include_labels,
-		},
+	const eventId = await logEvent(ctx.database, 'slack.users.getProfile', {
+		user: input.user,
+		include_labels: input.include_labels,
 	});
 
-	if (result.ok && result.profile && input.user && ctx.db.users) {
-		try {
-			const existing = await ctx.db.users.findByResourceId(input.user);
-			await ctx.db.users.upsert(input.user, {
-				...(existing?.data || { id: input.user }),
-				profile: result.profile,
-			});
-		} catch (error) {
-			console.warn('Failed to update user profile in database:', error);
-		}
-	}
+	try {
+		const result = await makeSlackRequest<
+			SlackEndpointOutputs['usersGetProfile']
+		>('users.profile.get', ctx.options.botToken, {
+			method: 'GET',
+			query: {
+				user: input.user,
+				include_labels: input.include_labels,
+			},
+		});
 
-	return result;
+		if (result.ok && result.profile && input.user && ctx.db.users) {
+			try {
+				const existing = await ctx.db.users.findByResourceId(input.user);
+				await ctx.db.users.upsert(input.user, {
+					...(existing?.data || { id: input.user }),
+					profile: result.profile,
+				});
+			} catch (error) {
+				console.warn('Failed to update user profile in database:', error);
+			}
+		}
+
+		await updateEventStatus(ctx.database, eventId, 'completed');
+		return result;
+	} catch (error) {
+		await updateEventStatus(ctx.database, eventId, 'failed');
+		throw error;
+	}
 };
 
 export const getPresence: SlackEndpoints['usersGetPresence'] = async (
 	ctx,
 	input,
 ) => {
-	return makeSlackRequest<SlackEndpointOutputs['usersGetPresence']>(
-		'users.getPresence',
-		ctx.options.botToken,
-		{
-			method: 'GET',
-			query: {
-				user: input.user,
+	const eventId = await logEvent(ctx.database, 'slack.users.getPresence', {
+		user: input.user,
+	});
+
+	try {
+		const result = await makeSlackRequest<SlackEndpointOutputs['usersGetPresence']>(
+			'users.getPresence',
+			ctx.options.botToken,
+			{
+				method: 'GET',
+				query: {
+					user: input.user,
+				},
 			},
-		},
-	);
+		);
+		await updateEventStatus(ctx.database, eventId, 'completed');
+		return result;
+	} catch (error) {
+		await updateEventStatus(ctx.database, eventId, 'failed');
+		throw error;
+	}
 };
 
 export const updateProfile: SlackEndpoints['usersUpdateProfile'] = async (
 	ctx,
 	input,
 ) => {
-	const result = await makeSlackRequest<
-		SlackEndpointOutputs['usersUpdateProfile']
-	>('users.profile.set', ctx.options.botToken, {
-		method: 'POST',
-		body: {
-			profile: input.profile,
-			user: input.user,
-			name: input.name,
-			value: input.value,
-		},
+	const eventId = await logEvent(ctx.database, 'slack.users.updateProfile', {
+		profile: input.profile,
+		user: input.user,
+		name: input.name,
+		value: input.value,
 	});
 
-	if (result.ok && result.profile && input.user && ctx.db.users) {
-		try {
-			const existing = await ctx.db.users.findByResourceId(input.user);
-			await ctx.db.users.upsert(input.user, {
-				...(existing?.data || { id: input.user }),
-				profile: result.profile,
-			});
-		} catch (error) {
-			console.warn('Failed to update user profile in database:', error);
-		}
-	}
+	try {
+		const result = await makeSlackRequest<
+			SlackEndpointOutputs['usersUpdateProfile']
+		>('users.profile.set', ctx.options.botToken, {
+			method: 'POST',
+			body: {
+				profile: input.profile,
+				user: input.user,
+				name: input.name,
+				value: input.value,
+			},
+		});
 
-	return result;
+		if (result.ok && result.profile && input.user && ctx.db.users) {
+			try {
+				const existing = await ctx.db.users.findByResourceId(input.user);
+				await ctx.db.users.upsert(input.user, {
+					...(existing?.data || { id: input.user }),
+					profile: result.profile,
+				});
+			} catch (error) {
+				console.warn('Failed to update user profile in database:', error);
+			}
+		}
+
+		await updateEventStatus(ctx.database, eventId, 'completed');
+		return result;
+	} catch (error) {
+		await updateEventStatus(ctx.database, eventId, 'failed');
+		throw error;
+	}
 };

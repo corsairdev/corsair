@@ -7,6 +7,7 @@ import type {
 	IssuesListResponse,
 	IssueUpdateResponse,
 } from '../types';
+import { logEvent, updateEventStatus } from '../../utils/events';
 
 const ISSUES_LIST_QUERY = `
   query Issues($teamId: String!, $first: Int!, $after: String) {
@@ -292,201 +293,266 @@ export const list: LinearEndpoints['issuesList'] = async (ctx, input) => {
 		variables.after = input.after;
 	}
 
-	const response = await makeLinearRequest<IssuesListResponse>(
-		query,
-		ctx.options.apiKey,
-		variables,
-	);
+	const eventId = await logEvent(ctx.database, 'linear.issues.list', {
+		teamId: input.teamId,
+		first: input.first,
+		after: input.after,
+	});
 
-	const result = response.issues;
+	try {
+		const response = await makeLinearRequest<IssuesListResponse>(
+			query,
+			ctx.options.apiKey,
+			variables,
+		);
 
-	if (result.nodes && ctx.db.issues) {
-		try {
-			for (const issue of result.nodes) {
-				await ctx.db.issues.upsert(issue.id, {
-					id: issue.id,
-					title: issue.title,
-					description: issue.description,
-					priority: issue.priority,
-					estimate: issue.estimate,
-					sortOrder: issue.sortOrder,
-					number: issue.number,
-					identifier: issue.identifier,
-					url: issue.url,
-					stateId: issue.state.id,
-					teamId: issue.team.id,
-					assigneeId: issue.assignee?.id,
-					creatorId: issue.creator.id,
-					projectId: issue.project?.id,
-					cycleId: issue.cycle?.id,
-					parentId: issue.parent?.id,
-					dueDate: issue.dueDate,
-					startedAt: issue.startedAt,
-					completedAt: issue.completedAt,
-					canceledAt: issue.canceledAt,
-					triagedAt: issue.triagedAt,
-					snoozedUntilAt: issue.snoozedUntilAt,
-					createdAt: new Date(issue.createdAt),
-					updatedAt: new Date(issue.updatedAt),
-					archivedAt: issue.archivedAt,
-				});
+		const result = response.issues;
+
+		if (result.nodes && ctx.db.issues) {
+			try {
+				for (const issue of result.nodes) {
+					await ctx.db.issues.upsert(issue.id, {
+						id: issue.id,
+						title: issue.title,
+						description: issue.description,
+						priority: issue.priority,
+						estimate: issue.estimate,
+						sortOrder: issue.sortOrder,
+						number: issue.number,
+						identifier: issue.identifier,
+						url: issue.url,
+						stateId: issue.state.id,
+						teamId: issue.team.id,
+						assigneeId: issue.assignee?.id,
+						creatorId: issue.creator.id,
+						projectId: issue.project?.id,
+						cycleId: issue.cycle?.id,
+						parentId: issue.parent?.id,
+						dueDate: issue.dueDate,
+						startedAt: issue.startedAt,
+						completedAt: issue.completedAt,
+						canceledAt: issue.canceledAt,
+						triagedAt: issue.triagedAt,
+						snoozedUntilAt: issue.snoozedUntilAt,
+						createdAt: new Date(issue.createdAt),
+						updatedAt: new Date(issue.updatedAt),
+						archivedAt: issue.archivedAt,
+					});
+				}
+			} catch (error) {
+				console.warn('Failed to save issues to database:', error);
 			}
-		} catch (error) {
-			console.warn('Failed to save issues to database:', error);
 		}
-	}
 
-	return result;
+		await updateEventStatus(ctx.database, eventId, 'completed');
+		return result;
+	} catch (error) {
+		await updateEventStatus(ctx.database, eventId, 'failed');
+		throw error;
+	}
 };
 
 export const get: LinearEndpoints['issuesGet'] = async (ctx, input) => {
-	const response = await makeLinearRequest<IssueGetResponse>(
-		ISSUE_GET_QUERY,
-		ctx.options.apiKey,
-		{ id: input.id },
-	);
+	const eventId = await logEvent(ctx.database, 'linear.issues.get', {
+		id: input.id,
+	});
 
-	const result = response.issue;
+	try {
+		const response = await makeLinearRequest<IssueGetResponse>(
+			ISSUE_GET_QUERY,
+			ctx.options.apiKey,
+			{ id: input.id },
+		);
 
-	if (result && ctx.db.issues) {
-		try {
-			await ctx.db.issues.upsert(result.id, {
-				id: result.id,
-				title: result.title,
-				description: result.description,
-				priority: result.priority,
-				estimate: result.estimate,
-				sortOrder: result.sortOrder,
-				number: result.number,
-				identifier: result.identifier,
-				url: result.url,
-				stateId: result.state.id,
-				teamId: result.team.id,
-				assigneeId: result.assignee?.id,
-				creatorId: result.creator.id,
-				projectId: result.project?.id,
-				cycleId: result.cycle?.id,
-				parentId: result.parent?.id,
-				dueDate: result.dueDate,
-				startedAt: result.startedAt,
-				completedAt: result.completedAt,
-				canceledAt: result.canceledAt,
-				triagedAt: result.triagedAt,
-				snoozedUntilAt: result.snoozedUntilAt,
-				createdAt: new Date(result.createdAt),
-				updatedAt: new Date(result.updatedAt),
-				archivedAt: result.archivedAt,
-			});
-		} catch (error) {
-			console.warn('Failed to save issue to database:', error);
+		const result = response.issue;
+
+		if (result && ctx.db.issues) {
+			try {
+				await ctx.db.issues.upsert(result.id, {
+					id: result.id,
+					title: result.title,
+					description: result.description,
+					priority: result.priority,
+					estimate: result.estimate,
+					sortOrder: result.sortOrder,
+					number: result.number,
+					identifier: result.identifier,
+					url: result.url,
+					stateId: result.state.id,
+					teamId: result.team.id,
+					assigneeId: result.assignee?.id,
+					creatorId: result.creator.id,
+					projectId: result.project?.id,
+					cycleId: result.cycle?.id,
+					parentId: result.parent?.id,
+					dueDate: result.dueDate,
+					startedAt: result.startedAt,
+					completedAt: result.completedAt,
+					canceledAt: result.canceledAt,
+					triagedAt: result.triagedAt,
+					snoozedUntilAt: result.snoozedUntilAt,
+					createdAt: new Date(result.createdAt),
+					updatedAt: new Date(result.updatedAt),
+					archivedAt: result.archivedAt,
+				});
+			} catch (error) {
+				console.warn('Failed to save issue to database:', error);
+			}
 		}
-	}
 
-	return result;
+		await updateEventStatus(ctx.database, eventId, 'completed');
+		return result;
+	} catch (error) {
+		await updateEventStatus(ctx.database, eventId, 'failed');
+		throw error;
+	}
 };
 
 export const create: LinearEndpoints['issuesCreate'] = async (ctx, input) => {
-	const response = await makeLinearRequest<IssueCreateResponse>(
-		ISSUE_CREATE_MUTATION,
-		ctx.options.apiKey,
-		{ input },
-	);
+	const eventId = await logEvent(ctx.database, 'linear.issues.create', {
+		title: input.title,
+		description: input.description,
+		teamId: input.teamId,
+		assigneeId: input.assigneeId,
+		priority: input.priority,
+		estimate: input.estimate,
+		stateId: input.stateId,
+		projectId: input.projectId,
+		cycleId: input.cycleId,
+		parentId: input.parentId,
+		labelIds: input.labelIds,
+		subscriberIds: input.subscriberIds,
+		dueDate: input.dueDate,
+	});
 
-	const result = response.issueCreate.issue;
+	try {
+		const response = await makeLinearRequest<IssueCreateResponse>(
+			ISSUE_CREATE_MUTATION,
+			ctx.options.apiKey,
+			{ input },
+		);
 
-	if (result && ctx.db.issues) {
-		try {
-			await ctx.db.issues.upsert(result.id, {
-				id: result.id,
-				title: result.title,
-				description: result.description,
-				priority: result.priority,
-				estimate: result.estimate,
-				sortOrder: result.sortOrder,
-				number: result.number,
-				identifier: result.identifier,
-				url: result.url,
-				stateId: result.state.id,
-				teamId: result.team.id,
-				assigneeId: result.assignee?.id,
-				creatorId: result.creator.id,
-				createdAt: new Date(result.createdAt),
-				updatedAt: new Date(result.updatedAt),
-			});
-		} catch (error) {
-			console.warn('Failed to save issue to database:', error);
+		const result = response.issueCreate.issue;
+
+		if (result && ctx.db.issues) {
+			try {
+				await ctx.db.issues.upsert(result.id, {
+					id: result.id,
+					title: result.title,
+					description: result.description,
+					priority: result.priority,
+					estimate: result.estimate,
+					sortOrder: result.sortOrder,
+					number: result.number,
+					identifier: result.identifier,
+					url: result.url,
+					stateId: result.state.id,
+					teamId: result.team.id,
+					assigneeId: result.assignee?.id,
+					creatorId: result.creator.id,
+					createdAt: new Date(result.createdAt),
+					updatedAt: new Date(result.updatedAt),
+				});
+			} catch (error) {
+				console.warn('Failed to save issue to database:', error);
+			}
 		}
-	}
 
-	return result;
+		await updateEventStatus(ctx.database, eventId, 'completed');
+		return result;
+	} catch (error) {
+		await updateEventStatus(ctx.database, eventId, 'failed');
+		throw error;
+	}
 };
 
 export const update: LinearEndpoints['issuesUpdate'] = async (ctx, input) => {
-	const response = await makeLinearRequest<IssueUpdateResponse>(
-		ISSUE_UPDATE_MUTATION,
-		ctx.options.apiKey,
-		{ id: input.id, input: input.input },
-	);
+	const eventId = await logEvent(ctx.database, 'linear.issues.update', {
+		id: input.id,
+		input: input.input,
+	});
 
-	const result = response.issueUpdate.issue;
+	try {
+		const response = await makeLinearRequest<IssueUpdateResponse>(
+			ISSUE_UPDATE_MUTATION,
+			ctx.options.apiKey,
+			{ id: input.id, input: input.input },
+		);
 
-	if (result && ctx.db.issues) {
-		try {
-			const existing = await ctx.db.issues.findByResourceId(result.id);
-			await ctx.db.issues.upsert(result.id, {
-				id: result.id,
-				title: result.title,
-				description: result.description,
-				priority: result.priority,
-				estimate: result.estimate,
-				sortOrder: result.sortOrder,
-				number: result.number,
-				identifier: result.identifier,
-				url: result.url,
-				stateId: result.state.id,
-				teamId: result.team.id,
-				assigneeId: result.assignee?.id,
-				creatorId: existing?.data?.creatorId || '',
-				projectId: existing?.data?.projectId,
-				cycleId: existing?.data?.cycleId,
-				parentId: existing?.data?.parentId,
-				dueDate: existing?.data?.dueDate,
-				startedAt: existing?.data?.startedAt,
-				completedAt: existing?.data?.completedAt,
-				canceledAt: existing?.data?.canceledAt,
-				triagedAt: existing?.data?.triagedAt,
-				snoozedUntilAt: existing?.data?.snoozedUntilAt,
-				createdAt: existing?.data?.createdAt || new Date(),
-				updatedAt: new Date(result.updatedAt),
-				archivedAt: existing?.data?.archivedAt,
-			});
-		} catch (error) {
-			console.warn('Failed to update issue in database:', error);
+		const result = response.issueUpdate.issue;
+
+		if (result && ctx.db.issues) {
+			try {
+				const existing = await ctx.db.issues.findByResourceId(result.id);
+				await ctx.db.issues.upsert(result.id, {
+					id: result.id,
+					title: result.title,
+					description: result.description,
+					priority: result.priority,
+					estimate: result.estimate,
+					sortOrder: result.sortOrder,
+					number: result.number,
+					identifier: result.identifier,
+					url: result.url,
+					stateId: result.state.id,
+					teamId: result.team.id,
+					assigneeId: result.assignee?.id,
+					creatorId: existing?.data?.creatorId || '',
+					projectId: existing?.data?.projectId,
+					cycleId: existing?.data?.cycleId,
+					parentId: existing?.data?.parentId,
+					dueDate: existing?.data?.dueDate,
+					startedAt: existing?.data?.startedAt,
+					completedAt: existing?.data?.completedAt,
+					canceledAt: existing?.data?.canceledAt,
+					triagedAt: existing?.data?.triagedAt,
+					snoozedUntilAt: existing?.data?.snoozedUntilAt,
+					createdAt: existing?.data?.createdAt || new Date(),
+					updatedAt: new Date(result.updatedAt),
+					archivedAt: existing?.data?.archivedAt,
+				});
+			} catch (error) {
+				console.warn('Failed to update issue in database:', error);
+			}
 		}
-	}
 
-	return result;
+		await updateEventStatus(ctx.database, eventId, 'completed');
+		return result;
+	} catch (error) {
+		await updateEventStatus(ctx.database, eventId, 'failed');
+		throw error;
+	}
 };
 
 export const deleteIssue: LinearEndpoints['issuesDelete'] = async (
 	ctx,
 	input,
 ) => {
-	const response = await makeLinearRequest<IssueDeleteResponse>(
-		ISSUE_DELETE_MUTATION,
-		ctx.options.apiKey,
-		{ id: input.id },
-	);
+	const eventId = await logEvent(ctx.database, 'linear.issues.delete', {
+		id: input.id,
+	});
 
-	const result = response.issueDelete.success;
+	try {
+		const response = await makeLinearRequest<IssueDeleteResponse>(
+			ISSUE_DELETE_MUTATION,
+			ctx.options.apiKey,
+			{ id: input.id },
+		);
 
-	if (result && ctx.db.issues) {
-		try {
-			await ctx.db.issues.deleteByResourceId(input.id);
-		} catch (error) {
-			console.warn('Failed to delete issue from database:', error);
+		const result = response.issueDelete.success;
+
+		if (result && ctx.db.issues) {
+			try {
+				await ctx.db.issues.deleteByResourceId(input.id);
+			} catch (error) {
+				console.warn('Failed to delete issue from database:', error);
+			}
 		}
-	}
 
-	return result;
+		await updateEventStatus(ctx.database, eventId, 'completed');
+		return result;
+	} catch (error) {
+		await updateEventStatus(ctx.database, eventId, 'failed');
+		throw error;
+	}
 };
