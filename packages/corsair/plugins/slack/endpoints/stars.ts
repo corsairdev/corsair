@@ -1,6 +1,6 @@
 import type { SlackEndpoints } from '..';
-import type { SlackEndpointOutputs } from '../types';
 import { makeSlackRequest } from '../client';
+import type { SlackEndpointOutputs } from '../types';
 
 export const add: SlackEndpoints['starsAdd'] = async (ctx, input) => {
 	return makeSlackRequest<SlackEndpointOutputs['starsAdd']>(
