@@ -6,7 +6,6 @@ export const CorsairProvidersSchema = z.object({
 	updated_at: z.date(),
 
 	name: z.string(),
-	platform_credentials: z.record(z.unknown()).nullable(),
 	config: z.record(z.unknown()),
 });
 
@@ -16,20 +15,9 @@ export const CorsairConnectionsSchema = z.object({
 	updated_at: z.date(),
 
 	tenant_id: z.string(),
+	connection_id: z.string(),
 
-	resource: z.string(),
-	permissions: z.array(z.string()),
-	credentials: z.record(z.unknown()),
-
-	webhook_secret: z.string().optional(),
-	webhook_subscriptions: z.array(z.string()).optional(),
-
-	rate_limit_state: z
-		.object({
-			window_start: z.string().datetime(),
-			count: z.number(),
-		})
-		.optional(),
+	config: z.record(z.unknown()),
 });
 
 export const CorsairResourcesSchema = z.object({
@@ -59,7 +47,6 @@ export const CorsairEventsSchema = z.object({
 	payload: z.record(z.unknown()),
 
 	status: z.enum(['pending', 'processing', 'completed', 'failed']).optional(),
-	retry_count: z.number().default(0),
 });
 
 export type CorsairProvider = z.infer<typeof CorsairProvidersSchema>;

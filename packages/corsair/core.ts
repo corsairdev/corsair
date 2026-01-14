@@ -5,7 +5,7 @@ import type {
 	CorsairPluginSchema,
 	PluginServiceClient,
 	PluginServiceClients,
-} from './orm';
+} from './db/orm';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Utility Types
@@ -35,6 +35,8 @@ export type Providers =
 	| 'hubspot'
 	| 'gmail'
 	| (string & {});
+
+export type AuthType = 'oauth_2' | 'api_key' | 'bot_token';
 
 /**
  * A bound endpoint function - the user-facing API after context is applied.

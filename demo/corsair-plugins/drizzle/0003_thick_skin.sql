@@ -1,0 +1,1 @@
+ALTER TABLE "corsair_connections" RENAME COLUMN "credentials" TO "config";

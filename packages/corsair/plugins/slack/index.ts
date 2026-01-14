@@ -1,4 +1,5 @@
 import type {
+	AuthType,
 	BindEndpoints,
 	BindWebhooks,
 	CorsairEndpoint,
@@ -10,6 +11,9 @@ import * as channelsEndpoints from './endpoints/channels';
 import * as filesEndpoints from './endpoints/files';
 import * as messagesEndpoints from './endpoints/messages';
 import type { SlackReactionName } from './endpoints/reactions';
+
+export type { SlackReactionName } from './endpoints/reactions';
+
 import * as reactionsEndpoints from './endpoints/reactions';
 import * as starsEndpoints from './endpoints/stars';
 import * as userGroupsEndpoints from './endpoints/user-groups';
@@ -443,9 +447,8 @@ const slackWebhooksNested = {
 } as const;
 
 export type SlackPluginOptions = {
-	/**
-	 * Slack credentials including bot token and optionally signing secret for webhook verification.
-	 */
+	authType: AuthType;
+
 	credentials: SlackCredentials;
 
 	hooks?: SlackPlugin['hooks'] | undefined;
