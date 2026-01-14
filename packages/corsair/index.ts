@@ -2,6 +2,7 @@ export * from './adapters';
 export * from './core';
 export * from './db/orm';
 export * from './plugins';
+export * from './webhooks';
 
 export {
 	type LinearBoundEndpoints,
