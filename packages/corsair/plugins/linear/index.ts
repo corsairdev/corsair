@@ -1,4 +1,5 @@
 import type {
+	AuthType,
 	BindEndpoints,
 	CorsairEndpoint,
 	CorsairPlugin,
@@ -12,9 +13,11 @@ import type { LinearCredentials } from './schema';
 import { LinearSchema } from './schema';
 import type { LinearEndpointOutputs } from './types';
 
+export type * from './types';
 export * from './webhooks';
 
 export type LinearPluginOptions = {
+	authType: AuthType;
 	credentials: LinearCredentials;
 	hooks?: CorsairPlugin<'linear', LinearEndpoints>['hooks'] | undefined;
 };

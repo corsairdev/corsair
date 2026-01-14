@@ -1,4 +1,4 @@
-import { createCorsairOrm } from '../../orm';
+import { createCorsairOrm } from '../../db/orm';
 
 function generateUuidV4(): string {
 	const cryptoAny = globalThis.crypto as unknown as
@@ -31,7 +31,6 @@ export async function logEvent(
 			event_type: eventType,
 			payload,
 			status,
-			retry_count: 0,
 		});
 		return eventId;
 	} catch (error) {

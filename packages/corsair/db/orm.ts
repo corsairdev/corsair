@@ -4,21 +4,21 @@ import type {
 	CorsairDbAdapter,
 	CorsairTableName,
 	CorsairWhere,
-} from './adapters/types';
+} from '../adapters/types';
 
 import type {
 	CorsairConnection,
 	CorsairEvent,
 	CorsairProvider,
 	CorsairResource,
-} from './db';
+} from './';
 
 import {
 	CorsairConnectionsSchema,
 	CorsairEventsSchema,
 	CorsairProvidersSchema,
 	CorsairResourcesSchema,
-} from './db';
+} from './';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Core Table Types
@@ -205,7 +205,6 @@ export type CorsairEventsClient = CorsairTableClient<CorsairEvent> & {
 		id: string,
 		status: 'pending' | 'processing' | 'completed' | 'failed',
 	) => Promise<CorsairEvent | null>;
-	incrementRetry: (id: string) => Promise<CorsairEvent | null>;
 };
 
 export type CorsairProvidersClient = CorsairTableClient<CorsairProvider> & {
@@ -531,13 +530,6 @@ function createEventsClient(
 			return base.findMany({ where, limit: options?.limit ?? 100 });
 		},
 		updateStatus: (id, status) => base.update(id, { status } as any),
-		incrementRetry: async (id) => {
-			const event = await base.findById(id);
-			if (!event) return null;
-			return base.update(id, {
-				retry_count: (event.retry_count ?? 0) + 1,
-			} as any);
-		},
 	};
 }
 

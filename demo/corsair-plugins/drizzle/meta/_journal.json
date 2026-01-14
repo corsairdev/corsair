@@ -15,6 +15,20 @@
       "when": 1768225617251,
       "tag": "0001_chubby_carnage",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1768357754692,
+      "tag": "0002_zippy_moira_mactaggert",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1768361482396,
+      "tag": "0003_thick_skin",
+      "breakpoints": true
     }
   ]
 }
