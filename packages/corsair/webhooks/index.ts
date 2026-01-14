@@ -1,6 +1,14 @@
-import type { Providers } from '../core';
 import type { LinearWebhookEvent } from '../plugins/linear/webhooks/types';
 import type { SlackWebhookPayload } from '../plugins/slack/webhooks/types';
+import type { WebhookRequest } from '../core';
+import * as slackReactionsWebhooks from '../plugins/slack/webhooks/reactions';
+import * as slackMessagesWebhooks from '../plugins/slack/webhooks/messages';
+import * as slackChannelsWebhooks from '../plugins/slack/webhooks/channels';
+import * as slackUsersWebhooks from '../plugins/slack/webhooks/users';
+import * as slackFilesWebhooks from '../plugins/slack/webhooks/files';
+import * as linearIssuesWebhooks from '../plugins/linear/webhooks/issues';
+import * as linearCommentsWebhooks from '../plugins/linear/webhooks/comments';
+import * as linearProjectsWebhooks from '../plugins/linear/webhooks/projects';
 
 export interface WebhookFilterHeaders {
 	[key: string]: string | string[] | undefined;
@@ -27,10 +35,33 @@ export type WebhookFilterResult =
 			body: unknown;
 	  };
 
-export function filterWebhook(
+const slackHandlerMap: Record<string, (ctx: any, request: WebhookRequest<any>) => Promise<any>> = {
+	reaction_added: slackReactionsWebhooks.added,
+	message: slackMessagesWebhooks.message,
+	channel_created: slackChannelsWebhooks.created,
+	team_join: slackUsersWebhooks.teamJoin,
+	user_change: slackUsersWebhooks.userChange,
+	file_created: slackFilesWebhooks.created,
+	file_public: slackFilesWebhooks.publicFile,
+	file_shared: slackFilesWebhooks.shared,
+};
+
+const linearHandlerMap: Record<string, (ctx: any, request: WebhookRequest<any>) => Promise<any>> = {
+	IssueCreate: linearIssuesWebhooks.issueCreate,
+	IssueUpdate: linearIssuesWebhooks.issueUpdate,
+	IssueRemove: linearIssuesWebhooks.issueRemove,
+	CommentCreate: linearCommentsWebhooks.commentCreate,
+	CommentUpdate: linearCommentsWebhooks.commentUpdate,
+	CommentRemove: linearCommentsWebhooks.commentRemove,
+	ProjectCreate: linearProjectsWebhooks.projectCreate,
+	ProjectUpdate: linearProjectsWebhooks.projectUpdate,
+	ProjectRemove: linearProjectsWebhooks.projectRemove,
+};
+
+export async function filterWebhook(
 	headers: WebhookFilterHeaders,
 	body: WebhookFilterBody | string,
-): WebhookFilterResult {
+): Promise<WebhookFilterResult> {
 	const normalizedHeaders: Record<string, string | undefined> = {};
 	for (const [key, value] of Object.entries(headers)) {
 		normalizedHeaders[key.toLowerCase()] = Array.isArray(value)
@@ -52,11 +83,18 @@ export function filterWebhook(
 					? 'url_verification'
 					: null;
 
-		return {
+		const result: WebhookFilterResult = {
 			resource: 'slack',
 			action: eventType,
-			body: parsedBody  as SlackWebhookPayload,
+			body: parsedBody as SlackWebhookPayload,
 		};
+
+		if (eventType && eventType !== 'url_verification' && slackHandlerMap[eventType]) {
+			const handler = slackHandlerMap[eventType];
+			
+		}
+
+		return result;
 	}
 
 	if (normalizedHeaders['linear-signature'] || normalizedHeaders['linear-delivery']) {
@@ -68,14 +106,19 @@ export function filterWebhook(
 				? `${eventType}${action.charAt(0).toUpperCase() + action.slice(1)}`
 				: eventType || action || null;
 
-		return {
+		const result: WebhookFilterResult = {
 			resource: 'linear',
 			action: combinedAction,
 			body: parsedBody as unknown as LinearWebhookEvent,
 		};
+
+		if (combinedAction && linearHandlerMap[combinedAction]) {
+			const handler = linearHandlerMap[combinedAction];
+			
+		}
+
+		return result;
 	}
-
-
 
 	return {
 		resource: null,
