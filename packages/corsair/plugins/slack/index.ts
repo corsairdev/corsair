@@ -25,11 +25,22 @@ import { SlackSchema } from './schema';
 
 import type { SlackEndpointOutputs } from './endpoints/types';
 import type {
+	ChannelCreatedEvent,
+	FileCreatedEvent,
+	FilePublicEvent,
+	FileSharedEvent,
+	MessageEvent,
 	ReactionAddedEvent,
 	SlackWebhookOutputs,
 	SlackWebhookPayload,
+	TeamJoinEvent,
+	UserChangeEvent,
 } from './webhooks/types';
+import * as channelsWebhooks from './webhooks/channels';
+import * as filesWebhooks from './webhooks/files';
+import * as messagesWebhooks from './webhooks/messages';
 import * as reactionsWebhooks from './webhooks/reactions';
+import * as usersWebhooks from './webhooks/users';
 
 export type SlackContext = CorsairPluginContext<
 	'slack',
@@ -376,6 +387,13 @@ type SlackWebhook<K extends keyof SlackWebhookOutputs, TEvent> = CorsairWebhook<
 
 export type SlackWebhooks = {
 	reactionAdded: SlackWebhook<'reactionAdded', ReactionAddedEvent>;
+	message: SlackWebhook<'message', MessageEvent>;
+	channelCreated: SlackWebhook<'channelCreated', ChannelCreatedEvent>;
+	teamJoin: SlackWebhook<'teamJoin', TeamJoinEvent>;
+	userChange: SlackWebhook<'userChange', UserChangeEvent>;
+	fileCreated: SlackWebhook<'fileCreated', FileCreatedEvent>;
+	filePublic: SlackWebhook<'filePublic', FilePublicEvent>;
+	fileShared: SlackWebhook<'fileShared', FileSharedEvent>;
 };
 
 export type SlackBoundWebhooks = BindWebhooks<SlackWebhooks>;
@@ -439,8 +457,23 @@ const slackEndpointsNested = {
 } as const;
 
 const slackWebhooksNested = {
+	messages: {
+		message: messagesWebhooks.message,
+	},
+	channels: {
+		created: channelsWebhooks.created,
+	},
 	reactions: {
 		added: reactionsWebhooks.added,
+	},
+	users: {
+		teamJoin: usersWebhooks.teamJoin,
+		userChange: usersWebhooks.userChange,
+	},
+	files: {
+		created: filesWebhooks.created,
+		public: filesWebhooks.publicFile,
+		shared: filesWebhooks.shared,
 	},
 } as const;
 

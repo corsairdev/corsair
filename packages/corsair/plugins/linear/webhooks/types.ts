@@ -193,3 +193,19 @@ export interface LinearEventMap {
 	ProjectUpdate: ProjectUpdatedEvent;
 	ProjectRemove: ProjectDeletedEvent;
 }
+
+export type LinearWebhookAck = {
+	success?: boolean;
+};
+
+export type LinearWebhookOutputs = {
+	issueCreate: LinearWebhookAck;
+	issueUpdate: LinearWebhookAck;
+	issueRemove: LinearWebhookAck;
+	commentCreate: LinearWebhookAck;
+	commentUpdate: LinearWebhookAck;
+	commentRemove: LinearWebhookAck;
+	projectCreate: LinearWebhookAck;
+	projectUpdate: LinearWebhookAck;
+	projectRemove: LinearWebhookAck;
+};

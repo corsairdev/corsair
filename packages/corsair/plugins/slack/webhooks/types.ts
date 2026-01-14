@@ -736,4 +736,11 @@ export type SlackWebhookAck = {
 
 export type SlackWebhookOutputs = {
 	reactionAdded: SlackWebhookAck;
+	message: SlackWebhookAck;
+	channelCreated: SlackWebhookAck;
+	teamJoin: SlackWebhookAck;
+	userChange: SlackWebhookAck;
+	fileCreated: SlackWebhookAck;
+	filePublic: SlackWebhookAck;
+	fileShared: SlackWebhookAck;
 };

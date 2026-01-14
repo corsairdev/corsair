@@ -71,7 +71,7 @@ export function filterWebhook(
 		return {
 			resource: 'linear',
 			action: combinedAction,
-			body: parsedBody as LinearWebhookEvent,
+			body: parsedBody as unknown as LinearWebhookEvent,
 		};
 	}
 
