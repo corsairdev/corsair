@@ -20,7 +20,7 @@ app.post('/webhook', async (req, res) => {
 
 	console.log('\n🔍 Running filterWebhook function...\n');
 
-	const result = filterWebhook(headers, body);
+	const result = await filterWebhook(headers, body);
 
 	console.log('✅ Filter Result:');
 	console.log('   Resource:', result.resource || 'null (unknown provider)');
