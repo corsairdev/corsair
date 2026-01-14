@@ -11,10 +11,7 @@ import * as projectsEndpoints from './endpoints/projects';
 import * as teamsEndpoints from './endpoints/teams';
 import type { LinearCredentials } from './schema';
 import { LinearSchema } from './schema';
-import type { LinearEndpointOutputs } from './types';
-
-export type * from './types';
-export * from './webhooks';
+import type { LinearEndpointOutputs } from './endpoints/types';
 
 export type LinearPluginOptions = {
 	authType: AuthType;

@@ -23,15 +23,13 @@ import { SlackSchema } from './schema';
 
 // export * from './webhooks';
 
+import type { SlackEndpointOutputs } from './endpoints/types';
 import type {
 	ReactionAddedEvent,
-	SlackEndpointOutputs,
 	SlackWebhookOutputs,
 	SlackWebhookPayload,
-} from './types';
+} from './webhooks/types';
 import * as reactionsWebhooks from './webhooks/reactions';
-
-export type * from './types';
 
 export type SlackContext = CorsairPluginContext<
 	'slack',

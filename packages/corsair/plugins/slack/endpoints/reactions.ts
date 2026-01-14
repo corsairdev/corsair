@@ -1,7 +1,7 @@
 import { logEvent } from '../../utils/events';
 import type { SlackEndpoints } from '..';
 import { makeSlackRequest } from '../client';
-import type { SlackEndpointOutputs } from '../types';
+import type { SlackEndpointOutputs } from './types';
 
 const SLACK_REACTIONS = [
 	'thumbsup',
