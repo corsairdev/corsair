@@ -397,4 +397,3 @@ export type SlackEndpointOutputs = {
 	starsRemove: StarsRemoveResponse;
 	starsList: StarsListResponse;
 };
-

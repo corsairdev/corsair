@@ -2,8 +2,9 @@ import type { SlackWebhooks } from '..';
 import type { MessageEvent } from './types';
 
 export const message: SlackWebhooks['message'] = async (ctx, request) => {
-	const event = request.payload.type === 'event_callback' ? request.payload.event : null;
-	
+	const event =
+		request.payload.type === 'event_callback' ? request.payload.event : null;
+
 	if (!event || event.type !== 'message') {
 		return {
 			success: true,

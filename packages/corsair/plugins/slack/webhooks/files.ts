@@ -1,9 +1,14 @@
 import type { SlackWebhooks } from '..';
-import type { FileCreatedEvent, FilePublicEvent, FileSharedEvent } from './types';
+import type {
+	FileCreatedEvent,
+	FilePublicEvent,
+	FileSharedEvent,
+} from './types';
 
 export const created: SlackWebhooks['fileCreated'] = async (ctx, request) => {
-	const event = request.payload.type === 'event_callback' ? request.payload.event : null;
-	
+	const event =
+		request.payload.type === 'event_callback' ? request.payload.event : null;
+
 	if (!event || event.type !== 'file_created') {
 		return {
 			success: true,
@@ -38,8 +43,9 @@ export const created: SlackWebhooks['fileCreated'] = async (ctx, request) => {
 };
 
 export const publicFile: SlackWebhooks['filePublic'] = async (ctx, request) => {
-	const event = request.payload.type === 'event_callback' ? request.payload.event : null;
-	
+	const event =
+		request.payload.type === 'event_callback' ? request.payload.event : null;
+
 	if (!event || event.type !== 'file_public') {
 		return {
 			success: true,
@@ -72,8 +78,9 @@ export const publicFile: SlackWebhooks['filePublic'] = async (ctx, request) => {
 };
 
 export const shared: SlackWebhooks['fileShared'] = async (ctx, request) => {
-	const event = request.payload.type === 'event_callback' ? request.payload.event : null;
-	
+	const event =
+		request.payload.type === 'event_callback' ? request.payload.event : null;
+
 	if (!event || event.type !== 'file_shared') {
 		return {
 			success: true,

@@ -11,9 +11,12 @@ import * as commentsEndpoints from './endpoints/comments';
 import * as issuesEndpoints from './endpoints/issues';
 import * as projectsEndpoints from './endpoints/projects';
 import * as teamsEndpoints from './endpoints/teams';
+import type { LinearEndpointOutputs } from './endpoints/types';
 import type { LinearCredentials } from './schema';
 import { LinearSchema } from './schema';
-import type { LinearEndpointOutputs } from './endpoints/types';
+import * as commentsWebhooks from './webhooks/comments';
+import * as issuesWebhooks from './webhooks/issues';
+import * as projectsWebhooks from './webhooks/projects';
 import type {
 	CommentCreatedEvent,
 	CommentDeletedEvent,
@@ -27,9 +30,6 @@ import type {
 	ProjectDeletedEvent,
 	ProjectUpdatedEvent,
 } from './webhooks/types';
-import * as commentsWebhooks from './webhooks/comments';
-import * as issuesWebhooks from './webhooks/issues';
-import * as projectsWebhooks from './webhooks/projects';
 
 export type LinearPluginOptions = {
 	authType: AuthType;
@@ -158,11 +158,10 @@ export type LinearEndpoints = {
 	commentsDelete: LinearEndpoint<'commentsDelete', { id: string }>;
 };
 
-type LinearWebhook<K extends keyof LinearWebhookOutputs, TEvent> = CorsairWebhook<
-	LinearContext,
-	LinearWebhookEvent,
-	LinearWebhookOutputs[K]
->;
+type LinearWebhook<
+	K extends keyof LinearWebhookOutputs,
+	TEvent,
+> = CorsairWebhook<LinearContext, LinearWebhookEvent, LinearWebhookOutputs[K]>;
 
 export type LinearWebhooks = {
 	issueCreate: LinearWebhook<'issueCreate', IssueCreatedEvent>;

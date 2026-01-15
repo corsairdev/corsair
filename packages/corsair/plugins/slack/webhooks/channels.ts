@@ -1,9 +1,13 @@
 import type { SlackWebhooks } from '..';
 import type { ChannelCreatedEvent } from './types';
 
-export const created: SlackWebhooks['channelCreated'] = async (ctx, request) => {
-	const event = request.payload.type === 'event_callback' ? request.payload.event : null;
-	
+export const created: SlackWebhooks['channelCreated'] = async (
+	ctx,
+	request,
+) => {
+	const event =
+		request.payload.type === 'event_callback' ? request.payload.event : null;
+
 	if (!event || event.type !== 'channel_created') {
 		return {
 			success: true,

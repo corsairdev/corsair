@@ -2,8 +2,9 @@ import type { SlackWebhooks } from '..';
 import type { TeamJoinEvent, UserChangeEvent } from './types';
 
 export const teamJoin: SlackWebhooks['teamJoin'] = async (ctx, request) => {
-	const event = request.payload.type === 'event_callback' ? request.payload.event : null;
-	
+	const event =
+		request.payload.type === 'event_callback' ? request.payload.event : null;
+
 	if (!event || event.type !== 'team_join') {
 		return {
 			success: true,
@@ -38,8 +39,9 @@ export const teamJoin: SlackWebhooks['teamJoin'] = async (ctx, request) => {
 };
 
 export const userChange: SlackWebhooks['userChange'] = async (ctx, request) => {
-	const event = request.payload.type === 'event_callback' ? request.payload.event : null;
-	
+	const event =
+		request.payload.type === 'event_callback' ? request.payload.event : null;
+
 	if (!event || event.type !== 'user_change') {
 		return {
 			success: true,
