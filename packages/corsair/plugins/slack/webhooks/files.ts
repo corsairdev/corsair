@@ -4,6 +4,11 @@ import type {
 	FilePublicEvent,
 	FileSharedEvent,
 } from './types';
+import { createSlackEventMatch } from './types';
+
+export const createdMatch = createSlackEventMatch('file_created');
+export const publicMatch = createSlackEventMatch('file_public');
+export const sharedMatch = createSlackEventMatch('file_shared');
 
 export const created: SlackWebhooks['fileCreated'] = async (ctx, request) => {
 	const event =

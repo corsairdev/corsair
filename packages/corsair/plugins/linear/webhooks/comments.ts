@@ -4,6 +4,11 @@ import type {
 	CommentDeletedEvent,
 	CommentUpdatedEvent,
 } from './types';
+import { createLinearMatch } from './types';
+
+export const commentCreateMatch = createLinearMatch('Comment', 'create');
+export const commentUpdateMatch = createLinearMatch('Comment', 'update');
+export const commentRemoveMatch = createLinearMatch('Comment', 'remove');
 
 export const commentCreate: LinearWebhooks['commentCreate'] = async (
 	ctx,

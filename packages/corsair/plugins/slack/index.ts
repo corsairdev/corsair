@@ -42,6 +42,31 @@ import type {
 } from './webhooks/types';
 import * as usersWebhooks from './webhooks/users';
 
+const slackActionMatchMap: Record<
+	string,
+	(headers: Record<string, unknown>, body: any) => boolean
+> = {
+	reaction_added: reactionsWebhooks.addedMatch,
+	message: messagesWebhooks.messageMatch,
+	channel_created: channelsWebhooks.createdMatch,
+	team_join: usersWebhooks.teamJoinMatch,
+	user_change: usersWebhooks.userChangeMatch,
+	file_created: filesWebhooks.createdMatch,
+	file_public: filesWebhooks.publicMatch,
+	file_shared: filesWebhooks.sharedMatch,
+};
+
+const slackActionHandlerMap: Record<string, string[]> = {
+	reaction_added: ['reactions', 'added'],
+	message: ['messages', 'message'],
+	channel_created: ['channels', 'created'],
+	team_join: ['users', 'teamJoin'],
+	user_change: ['users', 'userChange'],
+	file_created: ['files', 'created'],
+	file_public: ['files', 'public'],
+	file_shared: ['files', 'shared'],
+};
+
 export type SlackContext = CorsairPluginContext<
 	'slack',
 	typeof SlackSchema,
@@ -505,7 +530,64 @@ export function slack(options: SlackPluginOptions) {
 		endpoints: slackEndpointsNested,
 		webhooks: slackWebhooksNested,
 		webhookMatch: (headers, body): boolean => {
-			return true;
+			const normalizedHeaders: Record<string, string | undefined> = {};
+			for (const [key, value] of Object.entries(headers)) {
+				normalizedHeaders[key.toLowerCase()] = Array.isArray(value)
+					? value[0]
+					: typeof value === 'string'
+						? value
+						: undefined;
+			}
+
+			return !!(
+				normalizedHeaders['x-slack-signature'] ||
+				normalizedHeaders['x-slack-request-timestamp']
+			);
+		},
+		webhookActionMatch: (headers, body): string | null => {
+			const parsedBody =
+				typeof body === 'string' ? JSON.parse(body) : body;
+
+			if (parsedBody.type === 'url_verification') {
+				return 'url_verification';
+			}
+
+			for (const [actionName, matchFn] of Object.entries(slackActionMatchMap)) {
+				if (matchFn(headers, body)) {
+					return actionName;
+				}
+			}
+
+			if (parsedBody.type === 'event_callback') {
+				const event = parsedBody.event;
+				if (
+					event &&
+					typeof event === 'object' &&
+					'type' in event &&
+					typeof event.type === 'string'
+				) {
+					return event.type;
+				}
+			}
+
+			return null;
+		},
+		webhookActionHandler: (action, webhooks) => {
+			if (!webhooks || !action) return null;
+
+			const path = slackActionHandlerMap[action];
+			if (!path) return null;
+
+			let handler: any = webhooks;
+			for (const key of path) {
+				if (handler && typeof handler === 'object' && key in handler) {
+					handler = handler[key];
+				} else {
+					return null;
+				}
+			}
+
+			return typeof handler === 'function' ? handler : null;
 		},
 	} satisfies SlackPlugin;
 }

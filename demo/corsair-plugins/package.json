@@ -11,7 +11,7 @@
     "db:studio": "drizzle-kit studio",
     "start": "tsx src/index.ts",
     "test": "tsx src/test.ts",
-    "webhook:server": "tsx src/webhook-server.ts"
+    "webhook:server": "tsx src/webhook-server.ts --watch"
   },
   "dependencies": {
     "corsair": "workspace:*",

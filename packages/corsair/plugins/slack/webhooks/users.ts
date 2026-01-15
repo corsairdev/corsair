@@ -1,5 +1,9 @@
 import type { SlackWebhooks } from '..';
 import type { TeamJoinEvent, UserChangeEvent } from './types';
+import { createSlackEventMatch } from './types';
+
+export const teamJoinMatch = createSlackEventMatch('team_join');
+export const userChangeMatch = createSlackEventMatch('user_change');
 
 export const teamJoin: SlackWebhooks['teamJoin'] = async (ctx, request) => {
 	const event =

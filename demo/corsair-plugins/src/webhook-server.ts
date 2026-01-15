@@ -1,6 +1,7 @@
 import 'dotenv/config';
-import { filterWebhook } from 'corsair';
+import { filterWebhook, type CorsairContext } from 'corsair';
 import express from 'express';
+import { corsair, plugins } from './index';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -8,19 +9,43 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json());
 app.use(express.text({ type: 'application/json' }));
 
+function getPluginContexts(
+	tenantId: string = 'default',
+): Record<string, CorsairContext> {
+	const client = corsair.withTenant(tenantId);
+	const contexts: Record<string, CorsairContext> = {};
+
+	for (const plugin of plugins) {
+		const pluginNamespace = client[plugin.id] as
+			| Record<string, unknown>
+
+		if (pluginNamespace) {
+			contexts[plugin.id] = {
+				db: pluginNamespace.db,
+				endpoints: pluginNamespace.api,
+			} as CorsairContext;
+		}
+	}
+
+	return contexts;
+}
+
 app.post('/webhook', async (req, res) => {
 	console.log('\n' + '═'.repeat(60));
 	console.log('📨 INCOMING WEBHOOK REQUEST');
 	console.log('═'.repeat(60));
 	console.log('Headers:', JSON.stringify(req.headers, null, 2));
-	console.log('Body type:', typeof req.body);
+	console.log('Body type:', req.body);
 
 	const headers = req.headers as Record<string, string | string[] | undefined>;
 	const body = req.body;
 
 	console.log('\n🔍 Running filterWebhook function...\n');
 
-	const result = await filterWebhook(headers, body);
+	const tenantId = (req.headers['x-tenant-id'] as string) || 'default';
+	const context = getPluginContexts(tenantId);
+
+	const result = await filterWebhook(headers, body, plugins, context);
 
 	console.log('✅ Filter Result:');
 	console.log('   Resource:', result.resource || 'null (unknown provider)');
@@ -28,40 +53,53 @@ app.post('/webhook', async (req, res) => {
 	console.log('═'.repeat(60));
 
 	if (result.resource === 'slack') {
-		if (result.body.type === 'url_verification') {
+		const slackBody = result.body as {
+			type?: string;
+			challenge?: string;
+			event?: { type?: string };
+			event_id?: string;
+			team_id?: string;
+			text?: string;
+		};
+
+		if (slackBody.type === 'url_verification') {
 			console.log('\n🔐 Slack URL Verification Challenge');
-			console.log('Challenge:', result.body.challenge);
-			return res.json({ challenge: result.body.challenge });
+			console.log('Challenge:', slackBody.challenge);
+			return res.json({ challenge: slackBody.challenge });
 		}
 
-		if (result.body.type === 'event_callback' && result.body.event) {
+		if (slackBody.type === 'event_callback' && slackBody.event) {
 			console.log('\n📬 Slack Event Details:');
-			console.log('   Event Type:', result.body.type);
-			console.log('   Event ID:', result.body.event_id);
-			console.log('   Team ID:', result.body.team_id);
-			if (result.body.type === 'event_callback' && 'text' in result.body) {
+			console.log('   Event Type:', slackBody.type);
+			console.log('   Event ID:', slackBody.event_id);
+			console.log('   Team ID:', slackBody.team_id);
+			if (slackBody.type === 'event_callback' && 'text' in slackBody) {
 				console.log(
 					'   Message Text:',
-					(result.body as { text?: string }).text?.substring(0, 100),
+					slackBody.text?.substring(0, 100),
 				);
 			}
 		}
 	}
 
 	if (result.resource === 'linear') {
+		const linearBody = result.body as {
+			type?: string;
+			action?: string;
+			data?: { id?: string; title?: string; body?: string };
+		};
+
 		console.log('\n📋 Linear Event Details:');
-		console.log('   Type:', result.body.type);
-		console.log('   Action:', result.body.action);
-		if (result.body.data) {
-			console.log('   Data ID:', result.body.data.id);
-			if (result.body.type === 'Issue' && result.body.data.title) {
-				console.log('   Issue Title:', result.body.data.title);
+		console.log('   Type:', linearBody.type);
+		console.log('   Action:', linearBody.action);
+		if (linearBody.data) {
+			const data = linearBody.data;
+			console.log('   Data ID:', data.id);
+			if (linearBody.type === 'Issue' && data.title) {
+				console.log('   Issue Title:', data.title);
 			}
-			if (result.body.type === 'Comment' && result.body.data.body) {
-				console.log(
-					'   Comment Preview:',
-					result.body.data.body.substring(0, 100),
-				);
+			if (linearBody.type === 'Comment' && data.body) {
+				console.log('   Comment Preview:', data.body.substring(0, 100));
 			}
 		}
 	}

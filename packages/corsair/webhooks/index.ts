@@ -1,14 +1,6 @@
-import type { WebhookRequest } from '../core';
-import * as linearCommentsWebhooks from '../plugins/linear/webhooks/comments';
-import * as linearIssuesWebhooks from '../plugins/linear/webhooks/issues';
-import * as linearProjectsWebhooks from '../plugins/linear/webhooks/projects';
-import type { LinearWebhookEvent } from '../plugins/linear/webhooks/types';
-import * as slackChannelsWebhooks from '../plugins/slack/webhooks/channels';
-import * as slackFilesWebhooks from '../plugins/slack/webhooks/files';
-import * as slackMessagesWebhooks from '../plugins/slack/webhooks/messages';
-import * as slackReactionsWebhooks from '../plugins/slack/webhooks/reactions';
+import type { CorsairPlugin, CorsairContext, WebhookRequest } from '../core';
 import type { SlackWebhookPayload } from '../plugins/slack/webhooks/types';
-import * as slackUsersWebhooks from '../plugins/slack/webhooks/users';
+import type { LinearWebhookEvent } from '../plugins/linear/webhooks/types';
 
 export interface WebhookFilterHeaders {
 	[key: string]: string | string[] | undefined;
@@ -35,38 +27,22 @@ export type WebhookFilterResult =
 			body: unknown;
 	  };
 
-const slackHandlerMap: Record<
-	string,
-	(ctx: any, request: WebhookRequest<any>) => Promise<any>
-> = {
-	reaction_added: slackReactionsWebhooks.added,
-	message: slackMessagesWebhooks.message,
-	channel_created: slackChannelsWebhooks.created,
-	team_join: slackUsersWebhooks.teamJoin,
-	user_change: slackUsersWebhooks.userChange,
-	file_created: slackFilesWebhooks.created,
-	file_public: slackFilesWebhooks.publicFile,
-	file_shared: slackFilesWebhooks.shared,
-};
+function getWebhookHandler(
+	plugin: CorsairPlugin,
+	action: string | null,
+): any {
+	if (!action || !plugin.webhookActionHandler || !plugin.webhooks) {
+		return null;
+	}
 
-const linearHandlerMap: Record<
-	string,
-	(ctx: any, request: WebhookRequest<any>) => Promise<any>
-> = {
-	IssueCreate: linearIssuesWebhooks.issueCreate,
-	IssueUpdate: linearIssuesWebhooks.issueUpdate,
-	IssueRemove: linearIssuesWebhooks.issueRemove,
-	CommentCreate: linearCommentsWebhooks.commentCreate,
-	CommentUpdate: linearCommentsWebhooks.commentUpdate,
-	CommentRemove: linearCommentsWebhooks.commentRemove,
-	ProjectCreate: linearProjectsWebhooks.projectCreate,
-	ProjectUpdate: linearProjectsWebhooks.projectUpdate,
-	ProjectRemove: linearProjectsWebhooks.projectRemove,
-};
+	return plugin.webhookActionHandler(action, plugin.webhooks);
+}
 
 export async function filterWebhook(
 	headers: WebhookFilterHeaders,
 	body: WebhookFilterBody | string,
+	plugins?: readonly CorsairPlugin[],
+	context?: Record<string, CorsairContext>,
 ): Promise<WebhookFilterResult> {
 	const normalizedHeaders: Record<string, string | undefined> = {};
 	for (const [key, value] of Object.entries(headers)) {
@@ -78,62 +54,51 @@ export async function filterWebhook(
 	const parsedBody: WebhookFilterBody =
 		typeof body === 'string' ? JSON.parse(body) : body;
 
-	if (
-		normalizedHeaders['x-slack-signature'] ||
-		normalizedHeaders['x-slack-request-timestamp']
-	) {
-		const eventType =
-			parsedBody.type === 'event_callback' &&
-			typeof parsedBody.event === 'object' &&
-			parsedBody.event !== null &&
-			'type' in parsedBody.event
-				? (parsedBody.event.type as string)
-				: parsedBody.type === 'url_verification'
-					? 'url_verification'
-					: null;
+	if (plugins && plugins.length > 0) {
+		for (const plugin of plugins) {
+			if (plugin.webhookMatch) {
+				const isMatch = plugin.webhookMatch(normalizedHeaders, parsedBody);
+				if (isMatch) {
+					const action = plugin.webhookActionMatch
+						? plugin.webhookActionMatch(normalizedHeaders, parsedBody)
+						: null;
 
-		const result: WebhookFilterResult = {
-			resource: 'slack',
-			action: eventType,
-			body: parsedBody as SlackWebhookPayload,
-		};
+					if (action) {
+						const handler = getWebhookHandler(plugin, action);
 
-		if (
-			eventType &&
-			eventType !== 'url_verification' &&
-			slackHandlerMap[eventType]
-		) {
-			const handler = slackHandlerMap[eventType];
+						if (handler && typeof handler === 'function') {
+							const pluginContext =
+								context?.[plugin.id]
+							
+							if(!pluginContext) {
+								continue;
+							}
+
+							const webhookRequest: WebhookRequest = {
+								payload: parsedBody,
+								headers: normalizedHeaders,
+								rawBody: typeof body === 'string' ? body : undefined,
+							};
+
+							try {
+								await handler(pluginContext, webhookRequest);
+							} catch (error) {
+								console.error(
+									`Error executing webhook handler for ${plugin.id}.${action}:`,
+									error,
+								);
+							}
+						}
+					}
+
+					return {
+						resource: plugin.id,
+						action,
+						body: parsedBody,
+					};
+				}
+			}
 		}
-
-		return result;
-	}
-
-	if (
-		normalizedHeaders['linear-signature'] ||
-		normalizedHeaders['linear-delivery']
-	) {
-		const eventType =
-			typeof parsedBody.type === 'string' ? parsedBody.type : null;
-		const action =
-			typeof parsedBody.action === 'string' ? parsedBody.action : null;
-
-		const combinedAction =
-			eventType && action
-				? `${eventType}${action.charAt(0).toUpperCase() + action.slice(1)}`
-				: eventType || action || null;
-
-		const result: WebhookFilterResult = {
-			resource: 'linear',
-			action: combinedAction,
-			body: parsedBody as unknown as LinearWebhookEvent,
-		};
-
-		if (combinedAction && linearHandlerMap[combinedAction]) {
-			const handler = linearHandlerMap[combinedAction];
-		}
-
-		return result;
 	}
 
 	return {

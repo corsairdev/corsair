@@ -1,9 +1,8 @@
 import type { SlackWebhooks } from '..';
-import type { ChannelCreatedEvent, WebhookMatch } from './types';
+import type { ChannelCreatedEvent } from './types';
+import { createSlackEventMatch } from './types';
 
-const createdMatch: WebhookMatch = () => {
-	return true;
-};
+export const createdMatch = createSlackEventMatch('channel_created');
 
 export const created: SlackWebhooks['channelCreated'] = async (
 	ctx,

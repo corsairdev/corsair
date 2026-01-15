@@ -275,6 +275,14 @@ export type CorsairPlugin<
 		headers: Record<string, unknown>,
 		body: Record<string, unknown>,
 	) => boolean;
+	webhookActionMatch?: (
+		headers: Record<string, unknown>,
+		body: Record<string, unknown>,
+	) => string | null;
+	webhookActionHandler?: (
+		action: string,
+		webhooks: WebhookTree | undefined,
+	) => CorsairWebhook<any, any, any> | null;
 };
 
 /**
