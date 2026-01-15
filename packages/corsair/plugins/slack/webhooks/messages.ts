@@ -1,5 +1,8 @@
 import type { SlackWebhooks } from '..';
 import type { MessageEvent } from './types';
+import { createSlackEventMatch } from './types';
+
+export const messageMatch = createSlackEventMatch('message');
 
 export const message: SlackWebhooks['message'] = async (ctx, request) => {
 	const event =

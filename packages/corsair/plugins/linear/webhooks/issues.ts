@@ -4,6 +4,11 @@ import type {
 	IssueDeletedEvent,
 	IssueUpdatedEvent,
 } from './types';
+import { createLinearMatch } from './types';
+
+export const issueCreateMatch = createLinearMatch('Issue', 'create');
+export const issueUpdateMatch = createLinearMatch('Issue', 'update');
+export const issueRemoveMatch = createLinearMatch('Issue', 'remove');
 
 export const issueCreate: LinearWebhooks['issueCreate'] = async (
 	ctx,
@@ -23,8 +28,9 @@ export const issueCreate: LinearWebhooks['issueCreate'] = async (
 	console.log('📋 Linear Issue Created Event:', {
 		id: issueEvent.data.id,
 		identifier: issueEvent.data.identifier,
-		title: issueEvent.data.title,
-	});
+        title: issueEvent.data.title,
+    });
+    
 
 	if (ctx.db.issues && issueEvent.data.id) {
 		try {

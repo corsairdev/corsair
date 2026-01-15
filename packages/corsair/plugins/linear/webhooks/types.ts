@@ -209,3 +209,27 @@ export type LinearWebhookOutputs = {
 	projectUpdate: LinearWebhookAck;
 	projectRemove: LinearWebhookAck;
 };
+
+export type WebhookMatch = (
+	headers: Record<string, unknown>,
+	body: any,
+) => boolean;
+
+function parseBody(body: any): any {
+	return typeof body === 'string' ? JSON.parse(body) : body;
+}
+
+export function createLinearMatch(
+	type: string,
+	action: string,
+): WebhookMatch {
+	return (headers, body) => {
+		const parsedBody = parseBody(body);
+		return (
+			typeof parsedBody.type === 'string' &&
+			parsedBody.type === type &&
+			typeof parsedBody.action === 'string' &&
+			parsedBody.action === action
+		);
+	};
+}

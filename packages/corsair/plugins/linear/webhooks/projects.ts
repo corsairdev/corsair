@@ -4,6 +4,11 @@ import type {
 	ProjectDeletedEvent,
 	ProjectUpdatedEvent,
 } from './types';
+import { createLinearMatch } from './types';
+
+export const projectCreateMatch = createLinearMatch('Project', 'create');
+export const projectUpdateMatch = createLinearMatch('Project', 'update');
+export const projectRemoveMatch = createLinearMatch('Project', 'remove');
 
 export const projectCreate: LinearWebhooks['projectCreate'] = async (
 	ctx,

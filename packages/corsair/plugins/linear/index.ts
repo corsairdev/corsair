@@ -31,6 +31,33 @@ import type {
 	ProjectUpdatedEvent,
 } from './webhooks/types';
 
+const linearActionMatchMap: Record<
+	string,
+	(headers: Record<string, unknown>, body: any) => boolean
+> = {
+	IssueCreate: issuesWebhooks.issueCreateMatch,
+	IssueUpdate: issuesWebhooks.issueUpdateMatch,
+	IssueRemove: issuesWebhooks.issueRemoveMatch,
+	CommentCreate: commentsWebhooks.commentCreateMatch,
+	CommentUpdate: commentsWebhooks.commentUpdateMatch,
+	CommentRemove: commentsWebhooks.commentRemoveMatch,
+	ProjectCreate: projectsWebhooks.projectCreateMatch,
+	ProjectUpdate: projectsWebhooks.projectUpdateMatch,
+	ProjectRemove: projectsWebhooks.projectRemoveMatch,
+};
+
+const linearActionHandlerMap: Record<string, string[]> = {
+	IssueCreate: ['issues', 'create'],
+	IssueUpdate: ['issues', 'update'],
+	IssueRemove: ['issues', 'remove'],
+	CommentCreate: ['comments', 'create'],
+	CommentUpdate: ['comments', 'update'],
+	CommentRemove: ['comments', 'remove'],
+	ProjectCreate: ['projects', 'create'],
+	ProjectUpdate: ['projects', 'update'],
+	ProjectRemove: ['projects', 'remove'],
+};
+
 export type LinearPluginOptions = {
 	authType: AuthType;
 	credentials: LinearCredentials;
@@ -221,6 +248,59 @@ export function linear(options: LinearPluginOptions) {
 			commentsDelete: commentsEndpoints.deleteComment,
 		} as LinearEndpoints,
 		webhooks: linearWebhooksNested,
+		webhookMatch: (headers, body): boolean => {
+			const normalizedHeaders: Record<string, string | undefined> = {};
+			for (const [key, value] of Object.entries(headers)) {
+				normalizedHeaders[key.toLowerCase()] = Array.isArray(value)
+					? value[0]
+					: typeof value === 'string'
+						? value
+						: undefined;
+			}
+
+			return !!(
+				normalizedHeaders['linear-signature'] ||
+				normalizedHeaders['linear-delivery']
+			);
+		},
+		webhookActionMatch: (headers, body): string | null => {
+			const parsedBody =
+				typeof body === 'string' ? JSON.parse(body) : body;
+
+			for (const [actionName, matchFn] of Object.entries(linearActionMatchMap)) {
+				if (matchFn(headers, body)) {
+					return actionName;
+				}
+			}
+
+			const eventType =
+				typeof parsedBody.type === 'string' ? parsedBody.type : null;
+			const actionValue =
+				typeof parsedBody.action === 'string' ? parsedBody.action : null;
+
+			if (eventType && actionValue) {
+				return `${eventType}${actionValue.charAt(0).toUpperCase() + actionValue.slice(1)}`;
+			}
+
+			return eventType || actionValue || null;
+		},
+		webhookActionHandler: (action, webhooks) => {
+			if (!webhooks || !action) return null;
+
+			const path = linearActionHandlerMap[action];
+			if (!path) return null;
+
+			let handler: any = webhooks;
+			for (const key of path) {
+				if (handler && typeof handler === 'object' && key in handler) {
+					handler = handler[key];
+				} else {
+					return null;
+				}
+			}
+
+			return typeof handler === 'function' ? handler : null;
+		},
 	} satisfies CorsairPlugin<
 		'linear',
 		LinearEndpoints,

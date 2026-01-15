@@ -747,3 +747,27 @@ export type WebhookMatch = (
 	headers: Record<string, unknown>,
 	body: any,
 ) => boolean;
+
+function parseBody(body: any): any {
+	return typeof body === 'string' ? JSON.parse(body) : body;
+}
+
+export function createSlackEventMatch(eventType: string): WebhookMatch {
+	return (headers, body) => {
+		const parsedBody = parseBody(body);
+
+		if (parsedBody.type === 'event_callback') {
+			const event = parsedBody.event;
+			if (
+				event &&
+				typeof event === 'object' &&
+				'type' in event &&
+				event.type === eventType
+			) {
+				return true;
+			}
+		}
+
+		return false;
+	};
+}
