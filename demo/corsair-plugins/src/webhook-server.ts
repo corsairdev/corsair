@@ -1,5 +1,6 @@
 import 'dotenv/config';
-import { filterWebhook, type CorsairContext } from 'corsair';
+import type { CorsairContext } from 'corsair';
+import { filterWebhook } from 'corsair';
 import express from 'express';
 import { corsair, plugins } from './index';
 
@@ -16,8 +17,7 @@ function getPluginContexts(
 	const contexts: Record<string, CorsairContext> = {};
 
 	for (const plugin of plugins) {
-		const pluginNamespace = client[plugin.id] as
-			| Record<string, unknown>
+		const pluginNamespace = client[plugin.id] as Record<string, unknown>;
 
 		if (pluginNamespace) {
 			contexts[plugin.id] = {
@@ -74,10 +74,7 @@ app.post('/webhook', async (req, res) => {
 			console.log('   Event ID:', slackBody.event_id);
 			console.log('   Team ID:', slackBody.team_id);
 			if (slackBody.type === 'event_callback' && 'text' in slackBody) {
-				console.log(
-					'   Message Text:',
-					slackBody.text?.substring(0, 100),
-				);
+				console.log('   Message Text:', slackBody.text?.substring(0, 100));
 			}
 		}
 	}

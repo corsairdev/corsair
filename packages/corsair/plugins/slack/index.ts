@@ -16,14 +16,11 @@ export type { SlackReactionName } from './endpoints/reactions';
 
 import * as reactionsEndpoints from './endpoints/reactions';
 import * as starsEndpoints from './endpoints/stars';
+import type { SlackEndpointOutputs } from './endpoints/types';
 import * as userGroupsEndpoints from './endpoints/user-groups';
 import * as usersEndpoints from './endpoints/users';
 import type { SlackCredentials } from './schema';
 import { SlackSchema } from './schema';
-
-// export * from './webhooks';
-
-import type { SlackEndpointOutputs } from './endpoints/types';
 import * as channelsWebhooks from './webhooks/channels';
 import * as filesWebhooks from './webhooks/files';
 import * as messagesWebhooks from './webhooks/messages';
@@ -205,7 +202,7 @@ export type SlackEndpoints = {
 	userGroupsDisable: SlackEndpoint<
 		'userGroupsDisable',
 		{
-			usergroup: string;
+			userGroup: string;
 			include_count?: boolean;
 			team_id?: string;
 		}
@@ -213,7 +210,7 @@ export type SlackEndpoints = {
 	userGroupsEnable: SlackEndpoint<
 		'userGroupsEnable',
 		{
-			usergroup: string;
+			userGroup: string;
 			include_count?: boolean;
 			team_id?: string;
 		}
@@ -230,7 +227,7 @@ export type SlackEndpoints = {
 	userGroupsUpdate: SlackEndpoint<
 		'userGroupsUpdate',
 		{
-			usergroup: string;
+			userGroup: string;
 			name?: string;
 			channels?: string;
 			description?: string;
@@ -545,8 +542,7 @@ export function slack(options: SlackPluginOptions) {
 			);
 		},
 		webhookActionMatch: (headers, body): string | null => {
-			const parsedBody =
-				typeof body === 'string' ? JSON.parse(body) : body;
+			const parsedBody = typeof body === 'string' ? JSON.parse(body) : body;
 
 			if (parsedBody.type === 'url_verification') {
 				return 'url_verification';

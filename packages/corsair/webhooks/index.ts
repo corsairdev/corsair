@@ -1,6 +1,6 @@
-import type { CorsairPlugin, CorsairContext, WebhookRequest } from '../core';
-import type { SlackWebhookPayload } from '../plugins/slack/webhooks/types';
+import type { CorsairContext, CorsairPlugin, WebhookRequest } from '../core';
 import type { LinearWebhookEvent } from '../plugins/linear/webhooks/types';
+import type { SlackWebhookPayload } from '../plugins/slack/webhooks/types';
 
 export interface WebhookFilterHeaders {
 	[key: string]: string | string[] | undefined;
@@ -27,10 +27,7 @@ export type WebhookFilterResult =
 			body: unknown;
 	  };
 
-function getWebhookHandler(
-	plugin: CorsairPlugin,
-	action: string | null,
-): any {
+function getWebhookHandler(plugin: CorsairPlugin, action: string | null): any {
 	if (!action || !plugin.webhookActionHandler || !plugin.webhooks) {
 		return null;
 	}
@@ -67,10 +64,9 @@ export async function filterWebhook(
 						const handler = getWebhookHandler(plugin, action);
 
 						if (handler && typeof handler === 'function') {
-							const pluginContext =
-								context?.[plugin.id]
-							
-							if(!pluginContext) {
+							const pluginContext = context?.[plugin.id];
+
+							if (!pluginContext) {
 								continue;
 							}
 
