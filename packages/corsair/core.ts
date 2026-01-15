@@ -271,6 +271,10 @@ export type CorsairPlugin<
 	webhookHooks?: Webhooks extends WebhookTree
 		? CorsairWebhookHooksMap<Webhooks>
 		: never;
+	webhookMatch?: (
+		headers: Record<string, unknown>,
+		body: Record<string, unknown>,
+	) => boolean;
 };
 
 /**
