@@ -1,14 +1,14 @@
-import type { LinearWebhookEvent } from '../plugins/linear/webhooks/types';
-import type { SlackWebhookPayload } from '../plugins/slack/webhooks/types';
 import type { WebhookRequest } from '../core';
-import * as slackReactionsWebhooks from '../plugins/slack/webhooks/reactions';
-import * as slackMessagesWebhooks from '../plugins/slack/webhooks/messages';
-import * as slackChannelsWebhooks from '../plugins/slack/webhooks/channels';
-import * as slackUsersWebhooks from '../plugins/slack/webhooks/users';
-import * as slackFilesWebhooks from '../plugins/slack/webhooks/files';
-import * as linearIssuesWebhooks from '../plugins/linear/webhooks/issues';
 import * as linearCommentsWebhooks from '../plugins/linear/webhooks/comments';
+import * as linearIssuesWebhooks from '../plugins/linear/webhooks/issues';
 import * as linearProjectsWebhooks from '../plugins/linear/webhooks/projects';
+import type { LinearWebhookEvent } from '../plugins/linear/webhooks/types';
+import * as slackChannelsWebhooks from '../plugins/slack/webhooks/channels';
+import * as slackFilesWebhooks from '../plugins/slack/webhooks/files';
+import * as slackMessagesWebhooks from '../plugins/slack/webhooks/messages';
+import * as slackReactionsWebhooks from '../plugins/slack/webhooks/reactions';
+import type { SlackWebhookPayload } from '../plugins/slack/webhooks/types';
+import * as slackUsersWebhooks from '../plugins/slack/webhooks/users';
 
 export interface WebhookFilterHeaders {
 	[key: string]: string | string[] | undefined;
@@ -35,7 +35,10 @@ export type WebhookFilterResult =
 			body: unknown;
 	  };
 
-const slackHandlerMap: Record<string, (ctx: any, request: WebhookRequest<any>) => Promise<any>> = {
+const slackHandlerMap: Record<
+	string,
+	(ctx: any, request: WebhookRequest<any>) => Promise<any>
+> = {
 	reaction_added: slackReactionsWebhooks.added,
 	message: slackMessagesWebhooks.message,
 	channel_created: slackChannelsWebhooks.created,
@@ -46,7 +49,10 @@ const slackHandlerMap: Record<string, (ctx: any, request: WebhookRequest<any>) =
 	file_shared: slackFilesWebhooks.shared,
 };
 
-const linearHandlerMap: Record<string, (ctx: any, request: WebhookRequest<any>) => Promise<any>> = {
+const linearHandlerMap: Record<
+	string,
+	(ctx: any, request: WebhookRequest<any>) => Promise<any>
+> = {
 	IssueCreate: linearIssuesWebhooks.issueCreate,
 	IssueUpdate: linearIssuesWebhooks.issueUpdate,
 	IssueRemove: linearIssuesWebhooks.issueRemove,
@@ -72,7 +78,10 @@ export async function filterWebhook(
 	const parsedBody: WebhookFilterBody =
 		typeof body === 'string' ? JSON.parse(body) : body;
 
-	if (normalizedHeaders['x-slack-signature'] || normalizedHeaders['x-slack-request-timestamp']) {
+	if (
+		normalizedHeaders['x-slack-signature'] ||
+		normalizedHeaders['x-slack-request-timestamp']
+	) {
 		const eventType =
 			parsedBody.type === 'event_callback' &&
 			typeof parsedBody.event === 'object' &&
@@ -89,17 +98,25 @@ export async function filterWebhook(
 			body: parsedBody as SlackWebhookPayload,
 		};
 
-		if (eventType && eventType !== 'url_verification' && slackHandlerMap[eventType]) {
+		if (
+			eventType &&
+			eventType !== 'url_verification' &&
+			slackHandlerMap[eventType]
+		) {
 			const handler = slackHandlerMap[eventType];
-			
 		}
 
 		return result;
 	}
 
-	if (normalizedHeaders['linear-signature'] || normalizedHeaders['linear-delivery']) {
-		const eventType = typeof parsedBody.type === 'string' ? parsedBody.type : null;
-		const action = typeof parsedBody.action === 'string' ? parsedBody.action : null;
+	if (
+		normalizedHeaders['linear-signature'] ||
+		normalizedHeaders['linear-delivery']
+	) {
+		const eventType =
+			typeof parsedBody.type === 'string' ? parsedBody.type : null;
+		const action =
+			typeof parsedBody.action === 'string' ? parsedBody.action : null;
 
 		const combinedAction =
 			eventType && action
@@ -114,7 +131,6 @@ export async function filterWebhook(
 
 		if (combinedAction && linearHandlerMap[combinedAction]) {
 			const handler = linearHandlerMap[combinedAction];
-			
 		}
 
 		return result;

@@ -1,6 +1,6 @@
 import 'dotenv/config';
-import express from 'express';
 import { filterWebhook } from 'corsair';
+import express from 'express';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -40,7 +40,10 @@ app.post('/webhook', async (req, res) => {
 			console.log('   Event ID:', result.body.event_id);
 			console.log('   Team ID:', result.body.team_id);
 			if (result.body.type === 'event_callback' && 'text' in result.body) {
-				console.log('   Message Text:', (result.body as { text?: string }).text?.substring(0, 100));
+				console.log(
+					'   Message Text:',
+					(result.body as { text?: string }).text?.substring(0, 100),
+				);
 			}
 		}
 	}
@@ -55,11 +58,13 @@ app.post('/webhook', async (req, res) => {
 				console.log('   Issue Title:', result.body.data.title);
 			}
 			if (result.body.type === 'Comment' && result.body.data.body) {
-				console.log('   Comment Preview:', result.body.data.body.substring(0, 100));
+				console.log(
+					'   Comment Preview:',
+					result.body.data.body.substring(0, 100),
+				);
 			}
 		}
 	}
-
 
 	res.status(200).json({
 		success: true,

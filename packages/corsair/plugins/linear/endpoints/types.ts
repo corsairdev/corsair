@@ -340,4 +340,3 @@ export type LinearEndpointOutputs = {
 	commentsUpdate: Comment;
 	commentsDelete: boolean;
 };
-

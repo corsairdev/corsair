@@ -690,13 +690,11 @@ export interface SlackEventMap {
 	user_change: UserChangeEvent;
 }
 
-
 export type ReactionItem = {
 	type: 'message';
 	channel: string;
 	ts: string;
 };
-
 
 export type SlackEventPayload<TEvent = unknown> = {
 	token?: string;

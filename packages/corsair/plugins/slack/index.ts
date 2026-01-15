@@ -24,6 +24,10 @@ import { SlackSchema } from './schema';
 // export * from './webhooks';
 
 import type { SlackEndpointOutputs } from './endpoints/types';
+import * as channelsWebhooks from './webhooks/channels';
+import * as filesWebhooks from './webhooks/files';
+import * as messagesWebhooks from './webhooks/messages';
+import * as reactionsWebhooks from './webhooks/reactions';
 import type {
 	ChannelCreatedEvent,
 	FileCreatedEvent,
@@ -36,10 +40,6 @@ import type {
 	TeamJoinEvent,
 	UserChangeEvent,
 } from './webhooks/types';
-import * as channelsWebhooks from './webhooks/channels';
-import * as filesWebhooks from './webhooks/files';
-import * as messagesWebhooks from './webhooks/messages';
-import * as reactionsWebhooks from './webhooks/reactions';
 import * as usersWebhooks from './webhooks/users';
 
 export type SlackContext = CorsairPluginContext<
