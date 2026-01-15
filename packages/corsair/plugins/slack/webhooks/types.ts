@@ -742,3 +742,8 @@ export type SlackWebhookOutputs = {
 	filePublic: SlackWebhookAck;
 	fileShared: SlackWebhookAck;
 };
+
+export type WebhookMatch = (
+	headers: Record<string, unknown>,
+	body: any,
+) => boolean;
