@@ -264,10 +264,11 @@ export function linear(options: LinearPluginOptions) {
 			);
 		},
 		webhookActionMatch: (headers, body): string | null => {
-			const parsedBody =
-				typeof body === 'string' ? JSON.parse(body) : body;
+			const parsedBody = typeof body === 'string' ? JSON.parse(body) : body;
 
-			for (const [actionName, matchFn] of Object.entries(linearActionMatchMap)) {
+			for (const [actionName, matchFn] of Object.entries(
+				linearActionMatchMap,
+			)) {
 				if (matchFn(headers, body)) {
 					return actionName;
 				}

@@ -1,9 +1,9 @@
-import { createCorsair, type CorsairPlugin } from 'corsair';
+import type { CorsairPlugin } from 'corsair';
+import { createCorsair } from 'corsair';
 import { drizzleAdapter } from 'corsair/adapters/drizzle';
+import { linear, slack } from 'corsair/plugins';
 import { db } from './db';
 import * as schema from './db/schema';
-
-import { linear, slack } from 'corsair/plugins';
 
 const plugins: readonly CorsairPlugin[] = [
 	slack({
@@ -21,7 +21,7 @@ const plugins: readonly CorsairPlugin[] = [
 ];
 
 export { plugins };
-	
+
 export const corsair = createCorsair({
 	multiTenancy: true,
 	database: drizzleAdapter(db, { provider: 'pg', schema }),

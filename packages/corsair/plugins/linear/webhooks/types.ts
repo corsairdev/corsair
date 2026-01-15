@@ -219,10 +219,7 @@ function parseBody(body: any): any {
 	return typeof body === 'string' ? JSON.parse(body) : body;
 }
 
-export function createLinearMatch(
-	type: string,
-	action: string,
-): WebhookMatch {
+export function createLinearMatch(type: string, action: string): WebhookMatch {
 	return (headers, body) => {
 		const parsedBody = parseBody(body);
 		return (
