@@ -35,12 +35,16 @@ export type WebhookFilterResult = {
  */
 type PluginWithWebhooks = {
 	webhooks?: BoundWebhookTree;
+	/** Plugin-level matcher to quickly check if a webhook is for this plugin */
+	webhookHandler?: (request: RawWebhookRequest) => boolean;
 };
 
 /**
  * The corsair instance type - a record of plugin namespaces.
  */
-type CorsairInstance = Record<string, PluginWithWebhooks | undefined>;
+type CorsairInstance = Record<string, PluginWithWebhooks | undefined> & {
+	withTenant?: (tenantId: string) => CorsairInstance;
+};
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Helpers
@@ -153,17 +157,34 @@ export async function filterWebhook(
 		body: parsedBody,
 	};
 
+	// TODO: Extract webhook credentials from headers/body and match against database
+	// to find the associated tenant ID. For now, using default tenant.
+	// This should:
+	// 1. Extract webhook credentials from the request (headers, body, or URL params)
+	// 2. Query the database to find matching webhook configuration
+	// 3. Get the tenant ID from the webhook configuration
+	// 4. Use corsair.withTenant(tenantId) to get tenant-scoped instance
+	const tenantScopedCorsair = corsair.withTenant ? corsair.withTenant('default') : corsair;
+
 	// Known plugin IDs to check
 	const pluginIds = BaseProviders;
 
 	for (const pluginId of pluginIds.options) {
-		const plugin = corsair[pluginId];
+		const plugin = tenantScopedCorsair[pluginId];
 
 		// Skip if plugin is not enabled or has no webhooks
 		if (!plugin || !plugin.webhooks) {
 			continue;
 		}
 
+		// First, check the plugin-level webhookHandler if it exists
+		// This is a quick check to see if the webhook is even for this plugin
+		if (plugin.webhookHandler && !plugin.webhookHandler(rawRequest)) {
+			// Plugin has a matcher but it didn't match - skip to next plugin
+			continue;
+		}
+
+		// If no webhookHandler defined, or if it matched, search individual webhooks
 		const matched = findMatchingWebhook(plugin.webhooks, rawRequest);
 
 		if (matched) {

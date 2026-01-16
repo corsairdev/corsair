@@ -1,3 +1,4 @@
+import type { AuthTypes } from '../../constants';
 import type {
 	BindEndpoints,
 	BindWebhooks,
@@ -6,7 +7,6 @@ import type {
 	CorsairPluginContext,
 	CorsairWebhook,
 } from '../../core';
-import type { AuthTypes } from '../../constants';
 import * as channelsEndpoints from './endpoints/channels';
 import * as filesEndpoints from './endpoints/files';
 import * as messagesEndpoints from './endpoints/messages';
@@ -529,5 +529,6 @@ export function slack(options: SlackPluginOptions) {
 		webhookHooks: options.webhookHooks,
 		endpoints: slackEndpointsNested,
 		webhooks: slackWebhooksNested,
+		webhookMatcher: (request) => false,
 	} satisfies SlackPlugin;
 }
