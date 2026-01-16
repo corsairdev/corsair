@@ -2,11 +2,16 @@ import type {
 	AuthType,
 	BindEndpoints,
 	BindWebhooks,
+	BoundWebhookTree,
 	CorsairEndpoint,
 	CorsairPlugin,
 	CorsairPluginContext,
 	CorsairWebhook,
+	RawWebhookRequest,
+	WebhookRequest,
+	WebhookResponse,
 } from '../../core';
+import { findMatchingWebhook } from '../../webhooks';
 import * as commentsEndpoints from './endpoints/comments';
 import * as issuesEndpoints from './endpoints/issues';
 import * as projectsEndpoints from './endpoints/projects';
@@ -221,6 +226,70 @@ export function linear(options: LinearPluginOptions) {
 			commentsDelete: commentsEndpoints.deleteComment,
 		} as LinearEndpoints,
 		webhooks: linearWebhooksNested,
+		pluginWebhookMatcher: async (
+			request: RawWebhookRequest,
+			webhooks: BoundWebhookTree,
+			body: unknown,
+			normalizedHeaders: Record<string, string | undefined>,
+			pluginId: string,
+		) => {
+			const parsedBody =
+				typeof body === 'string' ? JSON.parse(body) : body;
+
+			const hasLinearHeader =
+				normalizedHeaders['linear-signature'] !== undefined ||
+				normalizedHeaders['linear-delivery'] !== undefined;
+
+			const isLinearBody =
+				parsedBody &&
+				typeof parsedBody === 'object' &&
+				'type' in parsedBody &&
+				'action' in parsedBody &&
+				typeof parsedBody.type === 'string' &&
+				typeof parsedBody.action === 'string';
+
+			if (!hasLinearHeader && !isLinearBody) {
+				return null;
+			}
+
+			const matched = findMatchingWebhook(webhooks, request);
+
+			if (!matched) {
+				return null;
+			}
+
+			const action = matched.path.join('.');
+
+			const webhookRequest: WebhookRequest = {
+				payload: parsedBody,
+				headers: normalizedHeaders,
+				rawBody: typeof body === 'string' ? body : undefined,
+			};
+
+			try {
+				const response = await matched.webhook.handler(webhookRequest);
+				return {
+					plugin: pluginId,
+					action,
+					body: parsedBody,
+					response,
+				};
+			} catch (error) {
+				console.error(
+					`Error executing webhook handler for ${pluginId}.${action}:`,
+					error,
+				);
+				return {
+					plugin: pluginId,
+					action,
+					body: parsedBody,
+					response: {
+						success: false,
+						error: error instanceof Error ? error.message : 'Unknown error',
+					},
+				};
+			}
+		},
 	} satisfies CorsairPlugin<
 		'linear',
 		LinearEndpoints,

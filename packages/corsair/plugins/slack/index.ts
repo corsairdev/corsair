@@ -2,11 +2,16 @@ import type { AuthTypes } from '../../constants';
 import type {
 	BindEndpoints,
 	BindWebhooks,
+	BoundWebhookTree,
 	CorsairEndpoint,
 	CorsairPlugin,
 	CorsairPluginContext,
 	CorsairWebhook,
+	RawWebhookRequest,
+	WebhookRequest,
+	WebhookResponse,
 } from '../../core';
+import { findMatchingWebhook } from '../../webhooks';
 import * as channelsEndpoints from './endpoints/channels';
 import * as filesEndpoints from './endpoints/files';
 import * as messagesEndpoints from './endpoints/messages';
@@ -529,8 +534,68 @@ export function slack(options: SlackPluginOptions) {
 		webhookHooks: options.webhookHooks,
 		endpoints: slackEndpointsNested,
 		webhooks: slackWebhooksNested,
-		pluginWebhookMatcher: (request) => {
-			return false;
+		pluginWebhookMatcher: async (
+			request: RawWebhookRequest,
+			webhooks: BoundWebhookTree,
+			body: unknown,
+			normalizedHeaders: Record<string, string | undefined>,
+			pluginId: string,
+		) => {
+			const parsedBody =
+				typeof body === 'string' ? JSON.parse(body) : body;
+
+			const hasSlackHeader =
+				normalizedHeaders['x-slack-signature'] !== undefined ||
+				normalizedHeaders['x-slack-request-timestamp'] !== undefined;
+
+			const isSlackBody =
+				parsedBody &&
+				typeof parsedBody === 'object' &&
+				'type' in parsedBody &&
+				(parsedBody.type === 'event_callback' ||
+					parsedBody.type === 'url_verification');
+
+			if (!hasSlackHeader && !isSlackBody) {
+				return null;
+			}
+
+			const matched = findMatchingWebhook(webhooks, request);
+
+			if (!matched) {
+				return null;
+			}
+
+			const action = matched.path.join('.');
+
+			const webhookRequest: WebhookRequest = {
+				payload: parsedBody,
+				headers: normalizedHeaders,
+				rawBody: typeof body === 'string' ? body : undefined,
+			};
+
+			try {
+				const response = await matched.webhook.handler(webhookRequest);
+				return {
+					plugin: pluginId,
+					action,
+					body: parsedBody,
+					response,
+				};
+			} catch (error) {
+				console.error(
+					`Error executing webhook handler for ${pluginId}.${action}:`,
+					error,
+				);
+				return {
+					plugin: pluginId,
+					action,
+					body: parsedBody,
+					response: {
+						success: false,
+						error: error instanceof Error ? error.message : 'Unknown error',
+					},
+				};
+			}
 		},
 	} satisfies SlackPlugin;
 }

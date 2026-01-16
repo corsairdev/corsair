@@ -303,7 +303,13 @@ export type CorsairPlugin<
 	webhookHooks?: Webhooks extends WebhookTree
 		? CorsairWebhookHooksMap<Webhooks>
 		: never;
-	pluginWebhookMatcher?: CorsairWebhookMatcher;
+	pluginWebhookMatcher?: (
+		request: RawWebhookRequest,
+		webhooks: BoundWebhookTree,
+		body: unknown,
+		normalizedHeaders: Record<string, string | undefined>,
+		pluginId: string,
+	) => Promise<{ plugin: string | null; action: string | null; body: unknown; response?: WebhookResponse<unknown> } | null>;
 };
 
 /**
@@ -380,11 +386,20 @@ type InferPluginNamespace<P extends CorsairPlugin> = P extends CorsairPlugin<
 					? {
 							webhooks: BindWebhooks<Webhooks>;
 							/**
-							 * Synchronously checks if an incoming webhook request is intended for this plugin.
+							 * Handles the full webhook processing for this plugin:
+							 * - Checks if the webhook is for this plugin
+							 * - Finds the matching webhook handler
+							 * - Executes the handler
+							 * - Returns the result
 							 * Only present if the plugin defines a `pluginWebhookMatcher`.
-							 * Use this as a first-level filter before checking individual webhook matchers.
 							 */
-							pluginWebhookMatcher?: (request: RawWebhookRequest) => boolean;
+							pluginWebhookMatcher?: (
+								request: RawWebhookRequest,
+								webhooks: BoundWebhookTree,
+								body: unknown,
+								normalizedHeaders: Record<string, string | undefined>,
+								pluginId: string,
+							) => Promise<{ plugin: string | null; action: string | null; body: unknown; response?: WebhookResponse<unknown> } | null>;
 						}
 					: {});
 		}

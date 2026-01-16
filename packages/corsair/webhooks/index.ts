@@ -31,12 +31,27 @@ export type WebhookFilterResult = {
 };
 
 /**
+ * Plugin-level webhook matcher that handles the full webhook processing:
+ * - Checks if the webhook is for this plugin
+ * - Finds the matching webhook handler
+ * - Executes the handler
+ * - Returns the result
+ */
+export type PluginWebhookMatcher = (
+	request: RawWebhookRequest,
+	webhooks: BoundWebhookTree,
+	body: WebhookFilterBody | string,
+	normalizedHeaders: Record<string, string | undefined>,
+	pluginId: string,
+) => Promise<WebhookFilterResult | null>;
+
+/**
  * A plugin namespace on the corsair instance that may have webhooks.
  */
 type PluginWithWebhooks = {
 	webhooks?: BoundWebhookTree;
-	/** Plugin-level matcher to quickly check if a webhook is for this plugin */
-	pluginWebhookMatcher?: (request: RawWebhookRequest) => boolean;
+	/** Plugin-level matcher that handles full webhook processing */
+	pluginWebhookMatcher?: PluginWebhookMatcher;
 };
 
 /**
@@ -76,7 +91,7 @@ type MatchedWebhook = {
  * Recursively searches through a webhooks tree to find a matching webhook.
  * Returns the first webhook whose match function returns true.
  */
-function findMatchingWebhook(
+export function findMatchingWebhook(
 	webhooks: BoundWebhookTree,
 	rawRequest: RawWebhookRequest,
 	path: string[] = [],
@@ -179,47 +194,17 @@ export async function filterWebhook(
 			continue;
 		}
 
-		// First, check the plugin-level pluginWebhookMatcher if it exists
-		// This is a quick check to see if the webhook is even for this plugin
-		if (plugin.pluginWebhookMatcher && !plugin.pluginWebhookMatcher(rawRequest)) {
-			// Plugin has a matcher but it didn't match - skip to next plugin
-			continue;
-		}
-
-		// If no pluginWebhookMatcher defined, or if it matched, search individual webhooks
-		const matched = findMatchingWebhook(plugin.webhooks, rawRequest);
-
-		if (matched) {
-			const action = matched.path.join('.');
-
-			const webhookRequest: WebhookRequest = {
-				payload: parsedBody,
-				headers: normalizedHeaders,
-				rawBody: typeof body === 'string' ? body : undefined,
-			};
-
-			try {
-				const response = await matched.webhook.handler(webhookRequest);
-				return {
-					plugin: pluginId,
-					action,
-					body: parsedBody,
-					response,
-				};
-			} catch (error) {
-				console.error(
-					`Error executing webhook handler for ${pluginId}.${action}:`,
-					error,
-				);
-				return {
-					plugin: pluginId,
-					action,
-					body: parsedBody,
-					response: {
-						success: false,
-						error: error instanceof Error ? error.message : 'Unknown error',
-					},
-				};
+		if (plugin.pluginWebhookMatcher) {
+			const result = await plugin.pluginWebhookMatcher(
+				rawRequest,
+				plugin.webhooks,
+				body,
+				normalizedHeaders,
+				pluginId,
+			);
+			console.log('🔍 Plugin Webhook Matcher Result:', result);
+			if (result) {
+				return result;
 			}
 		}
 	}
