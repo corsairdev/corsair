@@ -1,34 +1,13 @@
 import 'dotenv/config';
-import type { CorsairContext } from 'corsair';
 import { filterWebhook } from 'corsair';
 import express from 'express';
-import { corsair, plugins } from './index';
+import { corsair } from './index';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
 app.use(express.text({ type: 'application/json' }));
-
-function getPluginContexts(
-	tenantId: string = 'default',
-): Record<string, CorsairContext> {
-	const client = corsair.withTenant(tenantId);
-	const contexts: Record<string, CorsairContext> = {};
-
-	for (const plugin of plugins) {
-		const pluginNamespace = client[plugin.id] as Record<string, unknown>;
-
-		if (pluginNamespace) {
-			contexts[plugin.id] = {
-				db: pluginNamespace.db,
-				endpoints: pluginNamespace.api,
-			} as CorsairContext;
-		}
-	}
-
-	return contexts;
-}
 
 app.post('/webhook', async (req, res) => {
 	console.log('\n' + '═'.repeat(60));
@@ -43,16 +22,16 @@ app.post('/webhook', async (req, res) => {
 	console.log('\n🔍 Running filterWebhook function...\n');
 
 	const tenantId = (req.headers['x-tenant-id'] as string) || 'default';
-	const context = getPluginContexts(tenantId);
+	const tenantScopedCorsair = corsair.withTenant(tenantId);
 
-	const result = await filterWebhook(headers, body, plugins, context);
+	const result = await filterWebhook(tenantScopedCorsair, headers, body);
 
 	console.log('✅ Filter Result:');
-	console.log('   Resource:', result.resource || 'null (unknown provider)');
+	console.log('   Plugin:', result.plugin || 'null (unknown provider)');
 	console.log('   Action:', result.action || 'null (unknown action)');
 	console.log('═'.repeat(60));
 
-	if (result.resource === 'slack') {
+	if (result.plugin === 'slack') {
 		const slackBody = result.body as {
 			type?: string;
 			challenge?: string;
@@ -79,7 +58,7 @@ app.post('/webhook', async (req, res) => {
 		}
 	}
 
-	if (result.resource === 'linear') {
+	if (result.plugin === 'linear') {
 		const linearBody = result.body as {
 			type?: string;
 			action?: string;
@@ -104,7 +83,7 @@ app.post('/webhook', async (req, res) => {
 	res.status(200).json({
 		success: true,
 		filtered: {
-			resource: result.resource,
+			plugin: result.plugin,
 			action: result.action,
 		},
 	});
