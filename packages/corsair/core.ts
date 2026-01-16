@@ -303,7 +303,7 @@ export type CorsairPlugin<
 	webhookHooks?: Webhooks extends WebhookTree
 		? CorsairWebhookHooksMap<Webhooks>
 		: never;
-	webhookMatcher?: CorsairWebhookMatcher;
+	pluginWebhookMatcher?: CorsairWebhookMatcher;
 };
 
 /**
@@ -381,10 +381,10 @@ type InferPluginNamespace<P extends CorsairPlugin> = P extends CorsairPlugin<
 							webhooks: BindWebhooks<Webhooks>;
 							/**
 							 * Synchronously checks if an incoming webhook request is intended for this plugin.
-							 * Only present if the plugin defines a `webhookMatcher`.
+							 * Only present if the plugin defines a `pluginWebhookMatcher`.
 							 * Use this as a first-level filter before checking individual webhook matchers.
 							 */
-							webhookMatcher?: (request: RawWebhookRequest) => boolean;
+							pluginWebhookMatcher?: (request: RawWebhookRequest) => boolean;
 						}
 					: {});
 		}
@@ -814,10 +814,10 @@ function buildCorsairClient<const Plugins extends readonly CorsairPlugin[]>(
 			);
 			apiUnsafe[plugin.id]!.webhooks = boundWebhooks;
 
-			// Only expose webhookMatcher if the plugin has a webhookMatcher defined
+			// Only expose pluginWebhookMatcher if the plugin has a pluginWebhookMatcher defined
 			// This is the first-level check to see if the webhook is for this plugin
-			if (plugin.webhookMatcher) {
-				apiUnsafe[plugin.id]!.webhookMatcher = plugin.webhookMatcher;
+			if (plugin.pluginWebhookMatcher) {
+				apiUnsafe[plugin.id]!.pluginWebhookMatcher = plugin.pluginWebhookMatcher;
 			}
 		}
 	}
