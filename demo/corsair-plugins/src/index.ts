@@ -5,25 +5,21 @@ import { linear, slack } from 'corsair/plugins';
 import { db } from './db';
 import * as schema from './db/schema';
 
-const plugins: readonly CorsairPlugin[] = [
-	slack({
-		authType: 'bot_token',
-		credentials: {
-			botToken: process.env.SLACK_BOT_TOKEN ?? 'dev-token',
-		},
-	}),
-	linear({
-		authType: 'api_key',
-		credentials: {
-			apiKey: process.env.LINEAR_API_KEY ?? 'dev-token',
-		},
-	}),
-];
-
-export { plugins };
-
 export const corsair = createCorsair({
 	multiTenancy: true,
 	database: drizzleAdapter(db, { provider: 'pg', schema }),
-	plugins,
+	plugins: [
+		slack({
+			authType: 'bot_token',
+			credentials: {
+				botToken: process.env.SLACK_BOT_TOKEN ?? 'dev-token',
+			},
+		}),
+		linear({
+			authType: 'api_key',
+			credentials: {
+				apiKey: process.env.LINEAR_API_KEY ?? 'dev-token',
+			},
+		}),
+	],
 });

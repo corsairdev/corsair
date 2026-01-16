@@ -1,6 +1,7 @@
 import type { ZodTypeAny } from 'zod';
 import { withTenantAdapter } from './adapters/tenant';
 import type { CorsairDbAdapter } from './adapters/types';
+import type { AllProviders } from './constants';
 import type {
 	CorsairPluginSchema,
 	PluginServiceClient,
@@ -23,20 +24,6 @@ type UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends (
 type Bivariant<Args extends unknown[], R> = {
 	bivarianceHack(...args: Args): R;
 }['bivarianceHack'];
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Core Types
-// ─────────────────────────────────────────────────────────────────────────────
-
-export type Providers =
-	| 'slack'
-	| 'github'
-	| 'linear'
-	| 'hubspot'
-	| 'gmail'
-	| (string & {});
-
-export type AuthType = 'oauth_2' | 'api_key' | 'bot_token';
 
 /**
  * A bound endpoint function - the user-facing API after context is applied.
@@ -99,6 +86,17 @@ export type EndpointTree = {
 // ─────────────────────────────────────────────────────────────────────────────
 
 /**
+ * Raw incoming webhook data for matching (before full parsing).
+ * Used by matcher functions to determine if a webhook should be handled.
+ */
+export type RawWebhookRequest = {
+	/** HTTP headers from the webhook request */
+	headers: Record<string, string | string[] | undefined>;
+	/** Raw request body (string or already parsed object) */
+	body: unknown;
+};
+
+/**
  * Raw incoming webhook request data.
  * Contains the raw payload, headers, and optional raw body string.
  */
@@ -127,10 +125,16 @@ export type WebhookResponse<TData = unknown> = {
 };
 
 /**
+ * A webhook matcher function.
+ * Synchronously determines if a raw webhook request should be handled by this webhook.
+ */
+export type CorsairWebhookMatcher = (request: RawWebhookRequest) => boolean;
+
+/**
  * A webhook handler function definition.
  * Takes context + webhook request, returns a webhook response.
  */
-export type CorsairWebhook<
+export type CorsairWebhookHandler<
 	Ctx extends CorsairContext = CorsairContext,
 	TPayload = unknown,
 	TResponseData = unknown,
@@ -138,6 +142,22 @@ export type CorsairWebhook<
 	[ctx: Ctx, request: WebhookRequest<TPayload>],
 	Promise<WebhookResponse<TResponseData>>
 >;
+
+/**
+ * A complete webhook definition with both matcher and handler.
+ * The matcher synchronously determines if this webhook handles the incoming request.
+ * The handler processes the webhook after matching.
+ */
+export type CorsairWebhook<
+	Ctx extends CorsairContext = CorsairContext,
+	TPayload = unknown,
+	TResponseData = unknown,
+> = {
+	/** Synchronously determines if this webhook handles the incoming request */
+	match: CorsairWebhookMatcher;
+	/** Handles the webhook request after matching */
+	handler: CorsairWebhookHandler<Ctx, TPayload, TResponseData>;
+};
 
 /**
  * A tree of webhooks that can be nested arbitrarily deep.
@@ -148,17 +168,23 @@ export type WebhookTree = {
 };
 
 /**
- * A bound webhook function - the user-facing API after context is applied.
+ * A bound webhook - the user-facing API after context is applied.
+ * Contains both the matcher (unchanged) and the bound handler.
  */
-export type BoundWebhookFn<TPayload = unknown, TResponseData = unknown> = (
-	request: WebhookRequest<TPayload>,
-) => Promise<WebhookResponse<TResponseData>>;
+export type BoundWebhook<TPayload = unknown, TResponseData = unknown> = {
+	/** Synchronously determines if this webhook handles the incoming request */
+	match: CorsairWebhookMatcher;
+	/** Handles the webhook request (context already applied) */
+	handler: (
+		request: WebhookRequest<TPayload>,
+	) => Promise<WebhookResponse<TResponseData>>;
+};
 
 /**
  * A tree of bound webhooks (context already applied).
  */
 export type BoundWebhookTree = {
-	[key: string]: BoundWebhookFn<any, any> | BoundWebhookTree;
+	[key: string]: BoundWebhook<any, any> | BoundWebhookTree;
 };
 
 /**
@@ -211,15 +237,21 @@ type CorsairEndpointHooksMap<Endpoints extends EndpointTree> = {
 
 type WebhookContext<W> = W extends CorsairWebhook<infer Ctx, any, any>
 	? Ctx
-	: never;
+	: W extends { handler: CorsairWebhookHandler<infer Ctx, any, any> }
+		? Ctx
+		: never;
 
 type WebhookPayload<W> = W extends CorsairWebhook<any, infer P, any>
 	? P
-	: never;
+	: W extends { handler: CorsairWebhookHandler<any, infer P, any> }
+		? P
+		: never;
 
 type WebhookResponseData<W> = W extends CorsairWebhook<any, any, infer R>
 	? R
-	: never;
+	: W extends { handler: CorsairWebhookHandler<any, any, infer R> }
+		? R
+		: never;
 
 /**
  * Recursively maps a webhook tree to a hooks map with the same structure.
@@ -247,7 +279,7 @@ type CorsairWebhookHooksMap<Webhooks extends WebhookTree> = {
 // ─────────────────────────────────────────────────────────────────────────────
 
 export type CorsairPlugin<
-	Id extends Providers = Providers,
+	Id extends AllProviders = AllProviders,
 	Endpoints extends EndpointTree | undefined = EndpointTree | undefined,
 	Schema extends CorsairPluginSchema<Record<string, ZodTypeAny>> | undefined =
 		| CorsairPluginSchema<Record<string, ZodTypeAny>>
@@ -271,18 +303,6 @@ export type CorsairPlugin<
 	webhookHooks?: Webhooks extends WebhookTree
 		? CorsairWebhookHooksMap<Webhooks>
 		: never;
-	webhookMatch?: (
-		headers: Record<string, unknown>,
-		body: Record<string, unknown>,
-	) => boolean;
-	webhookActionMatch?: (
-		headers: Record<string, unknown>,
-		body: Record<string, unknown>,
-	) => string | null;
-	webhookActionHandler?: (
-		action: string,
-		webhooks: WebhookTree | undefined,
-	) => CorsairWebhook<any, any, any> | null;
 };
 
 /**
@@ -303,7 +323,7 @@ export type BindEndpoints<T extends EndpointTree> = {
  */
 export type BindWebhooks<T extends WebhookTree> = {
 	[K in keyof T]: T[K] extends CorsairWebhook<any, infer P, infer R>
-		? (request: WebhookRequest<P>) => Promise<WebhookResponse<R>>
+		? BoundWebhook<P, R>
 		: T[K] extends WebhookTree
 			? BindWebhooks<T[K]>
 			: never;
@@ -575,10 +595,19 @@ function isEndpoint(value: unknown): value is Function {
 }
 
 /**
- * Checks if a value is a webhook function (same check as endpoint).
+ * Checks if a value is a webhook object with match and handler.
  */
-function isWebhook(value: unknown): value is Function {
-	return typeof value === 'function';
+function isWebhook(
+	value: unknown,
+): value is { match: Function; handler: Function } {
+	return (
+		value !== null &&
+		typeof value === 'object' &&
+		'match' in value &&
+		'handler' in value &&
+		typeof (value as Record<string, unknown>).match === 'function' &&
+		typeof (value as Record<string, unknown>).handler === 'function'
+	);
 }
 
 /**
@@ -639,7 +668,8 @@ function bindEndpointsRecursively(
 
 /**
  * Recursively binds webhooks in a tree structure.
- * Handles both flat (key -> fn) and nested (key -> { key -> fn }) structures.
+ * Handles both flat (key -> webhook) and nested (key -> { key -> webhook }) structures.
+ * Each webhook is an object with { match, handler }.
  */
 function bindWebhooksRecursively(
 	webhooks: Record<string, unknown>,
@@ -651,13 +681,13 @@ function bindWebhooksRecursively(
 		const nodeHooks = hooks?.[key] as Record<string, unknown> | undefined;
 
 		if (isWebhook(value)) {
-			// It's a webhook function - bind it with context and hooks
+			// It's a webhook object with match and handler - bind the handler with context
 			const webhookHooks = nodeHooks as
 				| { before?: Function; after?: Function }
 				| undefined;
 
-			const boundFn = (...args: unknown[]) => {
-				const call = () => value(ctx, ...args);
+			const boundHandler = (...args: unknown[]) => {
+				const call = () => value.handler(ctx, ...args);
 
 				if (!webhookHooks?.before && !webhookHooks?.after) {
 					return call();
@@ -671,7 +701,11 @@ function bindWebhooksRecursively(
 				})();
 			};
 
-			webhooksTree[key] = boundFn;
+			// Return the bound webhook with both match and bound handler
+			webhooksTree[key] = {
+				match: value.match,
+				handler: boundHandler,
+			};
 		} else if (value && typeof value === 'object') {
 			// It's a nested object - recurse into it
 			const nestedWebhooksTree: Record<string, unknown> = {};
