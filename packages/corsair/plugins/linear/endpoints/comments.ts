@@ -8,7 +8,7 @@ import type {
 	CommentUpdateResponse,
 	CreateCommentInput,
 	UpdateCommentInput,
-} from '../types';
+} from './types';
 
 const COMMENTS_LIST_QUERY = `
   query Comments($issueId: String!, $first: Int!, $after: String) {

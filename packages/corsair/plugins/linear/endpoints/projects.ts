@@ -9,7 +9,7 @@ import type {
 	ProjectsListResponse,
 	ProjectUpdateResponse,
 	UpdateProjectInput,
-} from '../types';
+} from './types';
 
 const PROJECTS_LIST_QUERY = `
   query Projects($first: Int!, $after: String) {
