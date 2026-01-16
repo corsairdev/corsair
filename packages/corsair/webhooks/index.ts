@@ -36,7 +36,7 @@ export type WebhookFilterResult = {
 type PluginWithWebhooks = {
 	webhooks?: BoundWebhookTree;
 	/** Plugin-level matcher to quickly check if a webhook is for this plugin */
-	webhookHandler?: (request: RawWebhookRequest) => boolean;
+	pluginWebhookMatcher?: (request: RawWebhookRequest) => boolean;
 };
 
 /**
@@ -179,14 +179,14 @@ export async function filterWebhook(
 			continue;
 		}
 
-		// First, check the plugin-level webhookHandler if it exists
+		// First, check the plugin-level pluginWebhookMatcher if it exists
 		// This is a quick check to see if the webhook is even for this plugin
-		if (plugin.webhookHandler && !plugin.webhookHandler(rawRequest)) {
+		if (plugin.pluginWebhookMatcher && !plugin.pluginWebhookMatcher(rawRequest)) {
 			// Plugin has a matcher but it didn't match - skip to next plugin
 			continue;
 		}
 
-		// If no webhookHandler defined, or if it matched, search individual webhooks
+		// If no pluginWebhookMatcher defined, or if it matched, search individual webhooks
 		const matched = findMatchingWebhook(plugin.webhooks, rawRequest);
 
 		if (matched) {
