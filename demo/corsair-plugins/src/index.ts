@@ -1,5 +1,4 @@
-import type { CorsairPlugin } from 'corsair';
-import { createCorsair } from 'corsair';
+import { createCorsair, filterWebhook } from 'corsair';
 import { drizzleAdapter } from 'corsair/adapters/drizzle';
 import { linear, slack } from 'corsair/plugins';
 import { db } from './db';
