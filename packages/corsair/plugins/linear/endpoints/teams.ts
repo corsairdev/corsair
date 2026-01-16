@@ -1,7 +1,7 @@
 import { logEvent } from '../../utils/events';
 import type { LinearEndpoints } from '..';
 import { makeLinearRequest } from '../client';
-import type { TeamGetResponse, TeamsListResponse } from '../types';
+import type { TeamGetResponse, TeamsListResponse } from './types';
 
 const TEAMS_LIST_QUERY = `
   query Teams($first: Int!, $after: String) {
