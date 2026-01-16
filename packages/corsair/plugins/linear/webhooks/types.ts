@@ -193,3 +193,44 @@ export interface LinearEventMap {
 	ProjectUpdate: ProjectUpdatedEvent;
 	ProjectRemove: ProjectDeletedEvent;
 }
+
+export type LinearWebhookAck = {
+	success?: boolean;
+};
+
+export type LinearWebhookOutputs = {
+	issueCreate: LinearWebhookAck;
+	issueUpdate: LinearWebhookAck;
+	issueRemove: LinearWebhookAck;
+	commentCreate: LinearWebhookAck;
+	commentUpdate: LinearWebhookAck;
+	commentRemove: LinearWebhookAck;
+	projectCreate: LinearWebhookAck;
+	projectUpdate: LinearWebhookAck;
+	projectRemove: LinearWebhookAck;
+};
+
+import type { CorsairWebhookMatcher, RawWebhookRequest } from '../../../core';
+
+function parseBody(body: unknown): unknown {
+	return typeof body === 'string' ? JSON.parse(body) : body;
+}
+
+/**
+ * Creates a webhook matcher for a specific Linear event type and action.
+ * Returns a matcher function that checks if the incoming webhook matches.
+ */
+export function createLinearMatch(
+	type: string,
+	action: string,
+): CorsairWebhookMatcher {
+	return (request: RawWebhookRequest) => {
+		const parsedBody = parseBody(request.body) as Record<string, unknown>;
+		return (
+			typeof parsedBody.type === 'string' &&
+			parsedBody.type === type &&
+			typeof parsedBody.action === 'string' &&
+			parsedBody.action === action
+		);
+	};
+}

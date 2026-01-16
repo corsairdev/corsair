@@ -1,5 +1,4 @@
 import type {
-	AuthType,
 	BindEndpoints,
 	BindWebhooks,
 	CorsairEndpoint,
@@ -7,31 +6,40 @@ import type {
 	CorsairPluginContext,
 	CorsairWebhook,
 } from '../../core';
-import * as channelsEndpoints from './endpoints/channels';
-import * as filesEndpoints from './endpoints/files';
-import * as messagesEndpoints from './endpoints/messages';
-import type { SlackReactionName } from './endpoints/reactions';
-
-export type { SlackReactionName } from './endpoints/reactions';
-
-import * as reactionsEndpoints from './endpoints/reactions';
-import * as starsEndpoints from './endpoints/stars';
-import * as userGroupsEndpoints from './endpoints/user-groups';
-import * as usersEndpoints from './endpoints/users';
+import type { AuthTypes } from '../../core/constants';
+import type { SlackEndpointOutputs, SlackReactionName } from './endpoints';
+import {
+	Channels,
+	Files,
+	Messages,
+	Reactions,
+	Stars,
+	UserGroups,
+	Users,
+} from './endpoints';
 import type { SlackCredentials } from './schema';
 import { SlackSchema } from './schema';
-
-// export * from './webhooks';
-
 import type {
+	ChannelCreatedEvent,
+	FileCreatedEvent,
+	FilePublicEvent,
+	FileSharedEvent,
+	MessageEvent,
 	ReactionAddedEvent,
-	SlackEndpointOutputs,
 	SlackWebhookOutputs,
 	SlackWebhookPayload,
-} from './types';
-import * as reactionsWebhooks from './webhooks/reactions';
+	TeamJoinEvent,
+	UserChangeEvent,
+} from './webhooks';
+import {
+	ChannelWebhooks,
+	FileWebhooks,
+	MessageWebhooks,
+	ReactionWebhooks,
+	UserWebhooks,
+} from './webhooks';
 
-export type * from './types';
+export type { SlackReactionName } from './endpoints';
 
 export type SlackContext = CorsairPluginContext<
 	'slack',
@@ -171,7 +179,7 @@ export type SlackEndpoints = {
 	userGroupsDisable: SlackEndpoint<
 		'userGroupsDisable',
 		{
-			usergroup: string;
+			userGroup: string;
 			include_count?: boolean;
 			team_id?: string;
 		}
@@ -179,7 +187,7 @@ export type SlackEndpoints = {
 	userGroupsEnable: SlackEndpoint<
 		'userGroupsEnable',
 		{
-			usergroup: string;
+			userGroup: string;
 			include_count?: boolean;
 			team_id?: string;
 		}
@@ -196,7 +204,7 @@ export type SlackEndpoints = {
 	userGroupsUpdate: SlackEndpoint<
 		'userGroupsUpdate',
 		{
-			usergroup: string;
+			userGroup: string;
 			name?: string;
 			channels?: string;
 			description?: string;
@@ -378,76 +386,98 @@ type SlackWebhook<K extends keyof SlackWebhookOutputs, TEvent> = CorsairWebhook<
 
 export type SlackWebhooks = {
 	reactionAdded: SlackWebhook<'reactionAdded', ReactionAddedEvent>;
+	message: SlackWebhook<'message', MessageEvent>;
+	channelCreated: SlackWebhook<'channelCreated', ChannelCreatedEvent>;
+	teamJoin: SlackWebhook<'teamJoin', TeamJoinEvent>;
+	userChange: SlackWebhook<'userChange', UserChangeEvent>;
+	fileCreated: SlackWebhook<'fileCreated', FileCreatedEvent>;
+	filePublic: SlackWebhook<'filePublic', FilePublicEvent>;
+	fileShared: SlackWebhook<'fileShared', FileSharedEvent>;
 };
 
 export type SlackBoundWebhooks = BindWebhooks<SlackWebhooks>;
 
 const slackEndpointsNested = {
 	channels: {
-		archive: channelsEndpoints.archive,
-		close: channelsEndpoints.close,
-		create: channelsEndpoints.create,
-		get: channelsEndpoints.get,
-		list: channelsEndpoints.list,
-		getHistory: channelsEndpoints.getHistory,
-		invite: channelsEndpoints.invite,
-		join: channelsEndpoints.join,
-		kick: channelsEndpoints.kick,
-		leave: channelsEndpoints.leave,
-		getMembers: channelsEndpoints.getMembers,
-		open: channelsEndpoints.open,
-		rename: channelsEndpoints.rename,
-		getReplies: channelsEndpoints.getReplies,
-		setPurpose: channelsEndpoints.setPurpose,
-		setTopic: channelsEndpoints.setTopic,
-		unarchive: channelsEndpoints.unarchive,
+		archive: Channels.archive,
+		close: Channels.close,
+		create: Channels.create,
+		get: Channels.get,
+		list: Channels.list,
+		getHistory: Channels.getHistory,
+		invite: Channels.invite,
+		join: Channels.join,
+		kick: Channels.kick,
+		leave: Channels.leave,
+		getMembers: Channels.getMembers,
+		open: Channels.open,
+		rename: Channels.rename,
+		getReplies: Channels.getReplies,
+		setPurpose: Channels.setPurpose,
+		setTopic: Channels.setTopic,
+		unarchive: Channels.unarchive,
 	},
 	users: {
-		get: usersEndpoints.get,
-		list: usersEndpoints.list,
-		getProfile: usersEndpoints.getProfile,
-		getPresence: usersEndpoints.getPresence,
-		updateProfile: usersEndpoints.updateProfile,
+		get: Users.get,
+		list: Users.list,
+		getProfile: Users.getProfile,
+		getPresence: Users.getPresence,
+		updateProfile: Users.updateProfile,
 	},
 	userGroups: {
-		create: userGroupsEndpoints.create,
-		disable: userGroupsEndpoints.disable,
-		enable: userGroupsEndpoints.enable,
-		list: userGroupsEndpoints.list,
-		update: userGroupsEndpoints.update,
+		create: UserGroups.create,
+		disable: UserGroups.disable,
+		enable: UserGroups.enable,
+		list: UserGroups.list,
+		update: UserGroups.update,
 	},
 	files: {
-		get: filesEndpoints.get,
-		list: filesEndpoints.list,
-		upload: filesEndpoints.upload,
+		get: Files.get,
+		list: Files.list,
+		upload: Files.upload,
 	},
 	messages: {
-		delete: messagesEndpoints.deleteMessage,
-		getPermalink: messagesEndpoints.getPermalink,
-		search: messagesEndpoints.search,
-		post: messagesEndpoints.postMessage,
-		update: messagesEndpoints.update,
+		delete: Messages.delete,
+		getPermalink: Messages.getPermalink,
+		search: Messages.search,
+		post: Messages.post,
+		update: Messages.update,
 	},
 	reactions: {
-		add: reactionsEndpoints.add,
-		get: reactionsEndpoints.get,
-		remove: reactionsEndpoints.remove,
+		add: Reactions.add,
+		get: Reactions.get,
+		remove: Reactions.remove,
 	},
 	stars: {
-		add: starsEndpoints.add,
-		remove: starsEndpoints.remove,
-		list: starsEndpoints.list,
+		add: Stars.add,
+		remove: Stars.remove,
+		list: Stars.list,
 	},
 } as const;
 
 const slackWebhooksNested = {
+	messages: {
+		message: MessageWebhooks.message,
+	},
+	channels: {
+		created: ChannelWebhooks.created,
+	},
 	reactions: {
-		added: reactionsWebhooks.added,
+		added: ReactionWebhooks.added,
+	},
+	users: {
+		teamJoin: UserWebhooks.teamJoin,
+		userChange: UserWebhooks.userChange,
+	},
+	files: {
+		created: FileWebhooks.created,
+		public: FileWebhooks.public,
+		shared: FileWebhooks.shared,
 	},
 } as const;
 
 export type SlackPluginOptions = {
-	authType: AuthType;
+	authType: AuthTypes;
 
 	credentials: SlackCredentials;
 
@@ -473,5 +503,8 @@ export function slack(options: SlackPluginOptions) {
 		webhookHooks: options.webhookHooks,
 		endpoints: slackEndpointsNested,
 		webhooks: slackWebhooksNested,
+		pluginWebhookMatcher: (request) => {
+			return false;
+		},
 	} satisfies SlackPlugin;
 }

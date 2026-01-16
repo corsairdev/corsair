@@ -689,3 +689,88 @@ export interface SlackEventMap {
 	team_join: TeamJoinEvent;
 	user_change: UserChangeEvent;
 }
+
+export type ReactionItem = {
+	type: 'message';
+	channel: string;
+	ts: string;
+};
+
+export type SlackEventPayload<TEvent = unknown> = {
+	token?: string;
+	team_id: string;
+	api_app_id: string;
+	event: TEvent;
+	type: 'event_callback';
+	event_id: string;
+	event_time: number;
+	event_context?: string;
+	authorizations?: Array<{
+		enterprise_id: string | null;
+		team_id: string;
+		user_id: string;
+		is_bot: boolean;
+		is_enterprise_install: boolean;
+	}>;
+};
+
+export type SlackUrlVerificationPayload = {
+	token: string;
+	challenge: string;
+	type: 'url_verification';
+};
+
+export type SlackWebhookPayload<TEvent = unknown> =
+	| SlackEventPayload<TEvent>
+	| SlackUrlVerificationPayload;
+
+// Webhook Response Types
+
+export type SlackWebhookAck = {
+	challenge?: string;
+};
+
+// Webhook Outputs (maps webhook names to response types)
+
+export type SlackWebhookOutputs = {
+	reactionAdded: SlackWebhookAck;
+	message: SlackWebhookAck;
+	channelCreated: SlackWebhookAck;
+	teamJoin: SlackWebhookAck;
+	userChange: SlackWebhookAck;
+	fileCreated: SlackWebhookAck;
+	filePublic: SlackWebhookAck;
+	fileShared: SlackWebhookAck;
+};
+
+import type { CorsairWebhookMatcher, RawWebhookRequest } from '../../../core';
+
+function parseBody(body: unknown): unknown {
+	return typeof body === 'string' ? JSON.parse(body) : body;
+}
+
+/**
+ * Creates a webhook matcher for a specific Slack event type.
+ * Returns a matcher function that checks if the incoming webhook is for the specified event.
+ */
+export function createSlackEventMatch(
+	eventType: string,
+): CorsairWebhookMatcher {
+	return (request: RawWebhookRequest) => {
+		const parsedBody = parseBody(request.body) as Record<string, unknown>;
+
+		if (parsedBody.type === 'event_callback') {
+			const event = parsedBody.event;
+			if (
+				event &&
+				typeof event === 'object' &&
+				'type' in event &&
+				(event as Record<string, unknown>).type === eventType
+			) {
+				return true;
+			}
+		}
+
+		return false;
+	};
+}

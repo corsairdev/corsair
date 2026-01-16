@@ -1,7 +1,7 @@
 import { logEvent } from '../../utils/events';
 import type { SlackEndpoints } from '..';
 import { makeSlackRequest } from '../client';
-import type { SlackEndpointOutputs } from '../types';
+import type { SlackEndpointOutputs } from './types';
 
 export const create: SlackEndpoints['userGroupsCreate'] = async (
 	ctx,
@@ -64,7 +64,7 @@ export const disable: SlackEndpoints['userGroupsDisable'] = async (
 		>('userGroups.disable', ctx.options.botToken, {
 			method: 'POST',
 			body: {
-				usergroup: input.usergroup,
+				usergroup: input.userGroup,
 				include_count: input.include_count,
 				team_id: input.team_id,
 			},
@@ -73,7 +73,7 @@ export const disable: SlackEndpoints['userGroupsDisable'] = async (
 		if (result.ok && result.usergroup && ctx.db.userGroups) {
 			try {
 				const existing = await ctx.db.userGroups.findByResourceId(
-					input.usergroup,
+					input.userGroup,
 				);
 				await ctx.db.userGroups.upsert(result.usergroup.id, {
 					...(existing?.data || { id: result.usergroup.id }),
@@ -112,7 +112,7 @@ export const enable: SlackEndpoints['userGroupsEnable'] = async (
 		>('userGroups.enable', ctx.options.botToken, {
 			method: 'POST',
 			body: {
-				usergroup: input.usergroup,
+				usergroup: input.userGroup,
 				include_count: input.include_count,
 				team_id: input.team_id,
 			},
@@ -121,7 +121,7 @@ export const enable: SlackEndpoints['userGroupsEnable'] = async (
 		if (result.ok && result.usergroup && ctx.db.userGroups) {
 			try {
 				const existing = await ctx.db.userGroups.findByResourceId(
-					input.usergroup,
+					input.userGroup,
 				);
 				await ctx.db.userGroups.upsert(result.usergroup.id, {
 					...(existing?.data || { id: result.usergroup.id }),
@@ -207,7 +207,7 @@ export const update: SlackEndpoints['userGroupsUpdate'] = async (
 		>('userGroups.update', ctx.options.botToken, {
 			method: 'POST',
 			body: {
-				usergroup: input.usergroup,
+				usergroup: input.userGroup,
 				name: input.name,
 				channels: input.channels,
 				description: input.description,
@@ -220,7 +220,7 @@ export const update: SlackEndpoints['userGroupsUpdate'] = async (
 		if (result.ok && result.usergroup && ctx.db.userGroups) {
 			try {
 				const existing = await ctx.db.userGroups.findByResourceId(
-					input.usergroup,
+					input.userGroup,
 				);
 				await ctx.db.userGroups.upsert(result.usergroup.id, {
 					...(existing?.data || { id: result.usergroup.id }),
