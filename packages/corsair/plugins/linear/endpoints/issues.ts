@@ -7,7 +7,7 @@ import type {
 	IssueGetResponse,
 	IssuesListResponse,
 	IssueUpdateResponse,
-} from '../types';
+} from './types';
 
 const ISSUES_LIST_QUERY = `
   query Issues($teamId: String!, $first: Int!, $after: String) {
