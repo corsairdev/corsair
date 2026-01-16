@@ -1,3 +1,4 @@
+import type { AuthTypes } from '../../constants';
 import type {
 	BindEndpoints,
 	BindWebhooks,
@@ -6,7 +7,6 @@ import type {
 	CorsairPluginContext,
 	CorsairWebhook,
 } from '../../core';
-import type { AuthTypes } from '../../core/constants';
 import type { SlackEndpointOutputs, SlackReactionName } from './endpoints';
 import {
 	Channels,
