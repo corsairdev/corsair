@@ -1,25 +1,47 @@
 import type {
 	AuthType,
 	BindEndpoints,
+	BindWebhooks,
 	CorsairEndpoint,
 	CorsairPlugin,
 	CorsairPluginContext,
+	CorsairWebhook,
 } from '../../core';
 import * as commentsEndpoints from './endpoints/comments';
 import * as issuesEndpoints from './endpoints/issues';
 import * as projectsEndpoints from './endpoints/projects';
 import * as teamsEndpoints from './endpoints/teams';
+import type { LinearEndpointOutputs } from './endpoints/types';
 import type { LinearCredentials } from './schema';
 import { LinearSchema } from './schema';
-import type { LinearEndpointOutputs } from './types';
-
-export type * from './types';
-export * from './webhooks';
+import * as commentsWebhooks from './webhooks/comments';
+import * as issuesWebhooks from './webhooks/issues';
+import * as projectsWebhooks from './webhooks/projects';
+import type {
+	CommentCreatedEvent,
+	CommentDeletedEvent,
+	CommentUpdatedEvent,
+	IssueCreatedEvent,
+	IssueDeletedEvent,
+	IssueUpdatedEvent,
+	LinearWebhookEvent,
+	LinearWebhookOutputs,
+	ProjectCreatedEvent,
+	ProjectDeletedEvent,
+	ProjectUpdatedEvent,
+} from './webhooks/types';
 
 export type LinearPluginOptions = {
 	authType: AuthType;
 	credentials: LinearCredentials;
 	hooks?: CorsairPlugin<'linear', LinearEndpoints>['hooks'] | undefined;
+	webhookHooks?: CorsairPlugin<
+		'linear',
+		LinearEndpoints,
+		typeof LinearSchema,
+		LinearCredentials,
+		typeof linearWebhooksNested
+	>['webhookHooks'];
 };
 
 export type LinearContext = CorsairPluginContext<
@@ -136,12 +158,50 @@ export type LinearEndpoints = {
 	commentsDelete: LinearEndpoint<'commentsDelete', { id: string }>;
 };
 
+type LinearWebhookDef<
+	K extends keyof LinearWebhookOutputs,
+	TEvent,
+> = CorsairWebhook<LinearContext, LinearWebhookEvent, LinearWebhookOutputs[K]>;
+
+export type LinearWebhooks = {
+	issueCreate: LinearWebhookDef<'issueCreate', IssueCreatedEvent>;
+	issueUpdate: LinearWebhookDef<'issueUpdate', IssueUpdatedEvent>;
+	issueRemove: LinearWebhookDef<'issueRemove', IssueDeletedEvent>;
+	commentCreate: LinearWebhookDef<'commentCreate', CommentCreatedEvent>;
+	commentUpdate: LinearWebhookDef<'commentUpdate', CommentUpdatedEvent>;
+	commentRemove: LinearWebhookDef<'commentRemove', CommentDeletedEvent>;
+	projectCreate: LinearWebhookDef<'projectCreate', ProjectCreatedEvent>;
+	projectUpdate: LinearWebhookDef<'projectUpdate', ProjectUpdatedEvent>;
+	projectRemove: LinearWebhookDef<'projectRemove', ProjectDeletedEvent>;
+};
+
+export type LinearBoundWebhooks = BindWebhooks<LinearWebhooks>;
+
+const linearWebhooksNested = {
+	issues: {
+		create: issuesWebhooks.issueCreate,
+		update: issuesWebhooks.issueUpdate,
+		remove: issuesWebhooks.issueRemove,
+	},
+	comments: {
+		create: commentsWebhooks.commentCreate,
+		update: commentsWebhooks.commentUpdate,
+		remove: commentsWebhooks.commentRemove,
+	},
+	projects: {
+		create: projectsWebhooks.projectCreate,
+		update: projectsWebhooks.projectUpdate,
+		remove: projectsWebhooks.projectRemove,
+	},
+} as const;
+
 export function linear(options: LinearPluginOptions) {
 	return {
 		id: 'linear',
 		schema: LinearSchema,
 		options: options.credentials,
 		hooks: options.hooks,
+		webhookHooks: options.webhookHooks,
 		endpoints: {
 			issuesList: issuesEndpoints.list,
 			issuesGet: issuesEndpoints.get,
@@ -160,10 +220,12 @@ export function linear(options: LinearPluginOptions) {
 			commentsUpdate: commentsEndpoints.update,
 			commentsDelete: commentsEndpoints.deleteComment,
 		} as LinearEndpoints,
+		webhooks: linearWebhooksNested,
 	} satisfies CorsairPlugin<
 		'linear',
 		LinearEndpoints,
 		typeof LinearSchema,
-		LinearCredentials
+		LinearCredentials,
+		typeof linearWebhooksNested
 	>;
 }

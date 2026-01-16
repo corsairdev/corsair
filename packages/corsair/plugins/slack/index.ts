@@ -1,5 +1,5 @@
+import type { AuthTypes } from '../../constants';
 import type {
-	AuthType,
 	BindEndpoints,
 	BindWebhooks,
 	CorsairEndpoint,
@@ -16,22 +16,28 @@ export type { SlackReactionName } from './endpoints/reactions';
 
 import * as reactionsEndpoints from './endpoints/reactions';
 import * as starsEndpoints from './endpoints/stars';
+import type { SlackEndpointOutputs } from './endpoints/types';
 import * as userGroupsEndpoints from './endpoints/user-groups';
 import * as usersEndpoints from './endpoints/users';
 import type { SlackCredentials } from './schema';
 import { SlackSchema } from './schema';
-
-// export * from './webhooks';
-
+import * as channelsWebhooks from './webhooks/channels';
+import * as filesWebhooks from './webhooks/files';
+import * as messagesWebhooks from './webhooks/messages';
+import * as reactionsWebhooks from './webhooks/reactions';
 import type {
+	ChannelCreatedEvent,
+	FileCreatedEvent,
+	FilePublicEvent,
+	FileSharedEvent,
+	MessageEvent,
 	ReactionAddedEvent,
-	SlackEndpointOutputs,
 	SlackWebhookOutputs,
 	SlackWebhookPayload,
-} from './types';
-import * as reactionsWebhooks from './webhooks/reactions';
-
-export type * from './types';
+	TeamJoinEvent,
+	UserChangeEvent,
+} from './webhooks/types';
+import * as usersWebhooks from './webhooks/users';
 
 export type SlackContext = CorsairPluginContext<
 	'slack',
@@ -171,7 +177,7 @@ export type SlackEndpoints = {
 	userGroupsDisable: SlackEndpoint<
 		'userGroupsDisable',
 		{
-			usergroup: string;
+			userGroup: string;
 			include_count?: boolean;
 			team_id?: string;
 		}
@@ -179,7 +185,7 @@ export type SlackEndpoints = {
 	userGroupsEnable: SlackEndpoint<
 		'userGroupsEnable',
 		{
-			usergroup: string;
+			userGroup: string;
 			include_count?: boolean;
 			team_id?: string;
 		}
@@ -196,7 +202,7 @@ export type SlackEndpoints = {
 	userGroupsUpdate: SlackEndpoint<
 		'userGroupsUpdate',
 		{
-			usergroup: string;
+			userGroup: string;
 			name?: string;
 			channels?: string;
 			description?: string;
@@ -378,6 +384,13 @@ type SlackWebhook<K extends keyof SlackWebhookOutputs, TEvent> = CorsairWebhook<
 
 export type SlackWebhooks = {
 	reactionAdded: SlackWebhook<'reactionAdded', ReactionAddedEvent>;
+	message: SlackWebhook<'message', MessageEvent>;
+	channelCreated: SlackWebhook<'channelCreated', ChannelCreatedEvent>;
+	teamJoin: SlackWebhook<'teamJoin', TeamJoinEvent>;
+	userChange: SlackWebhook<'userChange', UserChangeEvent>;
+	fileCreated: SlackWebhook<'fileCreated', FileCreatedEvent>;
+	filePublic: SlackWebhook<'filePublic', FilePublicEvent>;
+	fileShared: SlackWebhook<'fileShared', FileSharedEvent>;
 };
 
 export type SlackBoundWebhooks = BindWebhooks<SlackWebhooks>;
@@ -441,13 +454,28 @@ const slackEndpointsNested = {
 } as const;
 
 const slackWebhooksNested = {
+	messages: {
+		message: messagesWebhooks.message,
+	},
+	channels: {
+		created: channelsWebhooks.created,
+	},
 	reactions: {
 		added: reactionsWebhooks.added,
+	},
+	users: {
+		teamJoin: usersWebhooks.teamJoin,
+		userChange: usersWebhooks.userChange,
+	},
+	files: {
+		created: filesWebhooks.created,
+		public: filesWebhooks.publicFile,
+		shared: filesWebhooks.shared,
 	},
 } as const;
 
 export type SlackPluginOptions = {
-	authType: AuthType;
+	authType: AuthTypes;
 
 	credentials: SlackCredentials;
 
@@ -473,5 +501,8 @@ export function slack(options: SlackPluginOptions) {
 		webhookHooks: options.webhookHooks,
 		endpoints: slackEndpointsNested,
 		webhooks: slackWebhooksNested,
+		pluginWebhookMatcher: (request) => {
+			return false;
+		},
 	} satisfies SlackPlugin;
 }
