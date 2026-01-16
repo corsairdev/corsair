@@ -32,3 +32,4 @@ export const UserWebhooks = {
 };
 
 export * from './types';
+export * as usersWebhooks from './users';
