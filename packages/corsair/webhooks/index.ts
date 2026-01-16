@@ -164,7 +164,9 @@ export async function filterWebhook(
 	// 2. Query the database to find matching webhook configuration
 	// 3. Get the tenant ID from the webhook configuration
 	// 4. Use corsair.withTenant(tenantId) to get tenant-scoped instance
-	const tenantScopedCorsair = corsair.withTenant ? corsair.withTenant('default') : corsair;
+	const tenantScopedCorsair = corsair.withTenant
+		? corsair.withTenant('default')
+		: corsair;
 
 	// Known plugin IDs to check
 	const pluginIds = BaseProviders;
@@ -228,3 +230,52 @@ export async function filterWebhook(
 		body: parsedBody,
 	};
 }
+
+/**
+
+->demeter
+    -> using Corsair
+		-> customer a
+			-> sign in with slack 
+		-> customer b
+			-> sign in with slack 
+
+corsair db
+
+corsair_providers: 1 row
+	id: 123abc
+	name: slack
+	config: {}
+
+corsair_connections: 2 rows
+	id: 1
+	tenant_id: 60 demeter sets this; this lets demeter know who this tenant is in demeter's db
+	connection_id: 123abc
+	config: {
+		botToken: xxx-xxx-xxx
+		webhookCredentials: xxx-xxx-xxa
+	}
+
+	id: 2
+	tenant_id: 43 demeter sets this; this lets demeter know who this tenant is in demeter's db
+	connection_id: 123abc
+	config: {
+		botToken: xxy-xxy-yxx
+		webhookCredentials: xxx-xxx-xxb
+	}
+
+corsair_resources
+	id: 244
+	tenant_id: 60
+
+api.joindemeter.com/webhooks
+
+notification comes in:
+	slack message updated
+
+- is this for customer a or customer b? which tenant is this for?
+- which plugin is this for? this is for slack
+- which webhook is this for inside the plugin? this is for message updated
+
+
+ */
