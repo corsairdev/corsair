@@ -210,18 +210,22 @@ export type LinearWebhookOutputs = {
 	projectRemove: LinearWebhookAck;
 };
 
-export type WebhookMatch = (
-	headers: Record<string, unknown>,
-	body: any,
-) => boolean;
+import type { CorsairWebhookMatcher, RawWebhookRequest } from '../../../core';
 
-function parseBody(body: any): any {
+function parseBody(body: unknown): unknown {
 	return typeof body === 'string' ? JSON.parse(body) : body;
 }
 
-export function createLinearMatch(type: string, action: string): WebhookMatch {
-	return (headers, body) => {
-		const parsedBody = parseBody(body);
+/**
+ * Creates a webhook matcher for a specific Linear event type and action.
+ * Returns a matcher function that checks if the incoming webhook matches.
+ */
+export function createLinearMatch(
+	type: string,
+	action: string,
+): CorsairWebhookMatcher {
+	return (request: RawWebhookRequest) => {
+		const parsedBody = parseBody(request.body) as Record<string, unknown>;
 		return (
 			typeof parsedBody.type === 'string' &&
 			parsedBody.type === type &&

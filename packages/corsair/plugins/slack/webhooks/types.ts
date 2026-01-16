@@ -743,18 +743,21 @@ export type SlackWebhookOutputs = {
 	fileShared: SlackWebhookAck;
 };
 
-export type WebhookMatch = (
-	headers: Record<string, unknown>,
-	body: any,
-) => boolean;
+import type { CorsairWebhookMatcher, RawWebhookRequest } from '../../../core';
 
-function parseBody(body: any): any {
+function parseBody(body: unknown): unknown {
 	return typeof body === 'string' ? JSON.parse(body) : body;
 }
 
-export function createSlackEventMatch(eventType: string): WebhookMatch {
-	return (headers, body) => {
-		const parsedBody = parseBody(body);
+/**
+ * Creates a webhook matcher for a specific Slack event type.
+ * Returns a matcher function that checks if the incoming webhook is for the specified event.
+ */
+export function createSlackEventMatch(
+	eventType: string,
+): CorsairWebhookMatcher {
+	return (request: RawWebhookRequest) => {
+		const parsedBody = parseBody(request.body) as Record<string, unknown>;
 
 		if (parsedBody.type === 'event_callback') {
 			const event = parsedBody.event;
@@ -762,7 +765,7 @@ export function createSlackEventMatch(eventType: string): WebhookMatch {
 				event &&
 				typeof event === 'object' &&
 				'type' in event &&
-				event.type === eventType
+				(event as Record<string, unknown>).type === eventType
 			) {
 				return true;
 			}
