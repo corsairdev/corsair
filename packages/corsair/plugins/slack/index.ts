@@ -529,6 +529,8 @@ export function slack(options: SlackPluginOptions) {
 		webhookHooks: options.webhookHooks,
 		endpoints: slackEndpointsNested,
 		webhooks: slackWebhooksNested,
-		webhookMatcher: (request) => false,
+		webhookMatcher: (request) => {
+			return false;
+		},
 	} satisfies SlackPlugin;
 }

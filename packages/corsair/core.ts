@@ -384,7 +384,7 @@ type InferPluginNamespace<P extends CorsairPlugin> = P extends CorsairPlugin<
 							 * Only present if the plugin defines a `webhookMatcher`.
 							 * Use this as a first-level filter before checking individual webhook matchers.
 							 */
-							webhookHandler?: (request: RawWebhookRequest) => boolean;
+							webhookMatcher?: (request: RawWebhookRequest) => boolean;
 						}
 					: {});
 		}
@@ -814,10 +814,10 @@ function buildCorsairClient<const Plugins extends readonly CorsairPlugin[]>(
 			);
 			apiUnsafe[plugin.id]!.webhooks = boundWebhooks;
 
-			// Only expose webhookHandler if the plugin has a webhookMatcher defined
+			// Only expose webhookMatcher if the plugin has a webhookMatcher defined
 			// This is the first-level check to see if the webhook is for this plugin
 			if (plugin.webhookMatcher) {
-				apiUnsafe[plugin.id]!.webhookHandler = plugin.webhookMatcher;
+				apiUnsafe[plugin.id]!.webhookMatcher = plugin.webhookMatcher;
 			}
 		}
 	}
