@@ -1,23 +1,23 @@
 import type { ZodTypeAny } from 'zod';
-import type { AllProviders } from '../constants';
+import type { CorsairDbAdapter } from '../../adapters';
 import type { CorsairPluginSchema } from '../../db/orm';
+import type { InferPluginServices } from '../client';
+import type { AllProviders } from '../constants';
 import type {
-	CorsairContext,
-	EndpointTree,
-	CorsairEndpoint,
 	BindEndpoints,
 	BoundEndpointTree,
+	CorsairContext,
+	CorsairEndpoint,
+	EndpointTree,
 } from '../endpoints';
 import type {
-	WebhookTree,
-	CorsairWebhookMatcher,
 	CorsairWebhook,
 	CorsairWebhookHandler,
+	CorsairWebhookMatcher,
 	WebhookRequest,
 	WebhookResponse,
+	WebhookTree,
 } from '../webhooks';
-import type { InferPluginServices } from '../client';
-import type { CorsairDbAdapter } from '../../adapters';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Hook Types for Endpoints
