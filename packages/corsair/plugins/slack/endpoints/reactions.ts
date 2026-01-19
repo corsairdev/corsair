@@ -31,8 +31,6 @@ const SLACK_REACTIONS = [
 	'raised_hands',
 ] as const;
 
-export const SLACK_REACTION_NAMES = SLACK_REACTIONS;
-
 export type SlackReactionName =
 	| (typeof SLACK_REACTIONS)[number]
 	| (string & {});
