@@ -20,3 +20,14 @@ export {
 	type SlackWebhooks,
 	slack,
 } from './slack';
+
+// Gmail Plugin
+export {
+	type GmailBoundEndpoints,
+	type GmailBoundWebhooks,
+	type GmailContext,
+	type GmailEndpoints,
+	type GmailPluginOptions,
+	type GmailWebhooks,
+	gmail,
+} from './gmail';

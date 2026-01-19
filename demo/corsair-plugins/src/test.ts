@@ -2,9 +2,7 @@ import { corsair } from './';
 
 const main = async () => {
 	const message = await corsair
-		.withTenant('default-1')
-		.slack.db.messages.findById('3bc35797-88db-43bd-8692-2392fb50e470');
-
+		.withTenant('default-1').gmail.api.messages.get({id: '19b36e3921d45e23'});
 	console.log(message);
 };
 

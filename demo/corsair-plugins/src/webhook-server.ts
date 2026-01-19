@@ -18,13 +18,19 @@ app.post('/webhook', async (req, res) => {
 
 	const headers = req.headers as Record<string, string | string[] | undefined>;
 	const body = req.body;
+	const query = req.query as Record<string, string | string[] | undefined>;
 
 	console.log('\n🔍 Running filterWebhook function...\n');
 
-	const tenantId = (req.headers['x-tenant-id'] as string) || 'default';
+	const tenantId =
+		query?.tenant_id && typeof query.tenant_id === 'string'
+			? query.tenant_id
+			: Array.isArray(query?.tenant_id) && query.tenant_id[0]
+				? query.tenant_id[0]
+				: (req.headers['x-tenant-id'] as string) || 'default';
 	const tenantScopedCorsair = corsair.withTenant(tenantId);
 
-	const result = await filterWebhook(tenantScopedCorsair, headers, body);
+	const result = await filterWebhook(tenantScopedCorsair, headers, body, query);
 
 	console.log('✅ Filter Result:');
 	console.log('   Plugin:', result.plugin || 'null (unknown provider)');
@@ -76,6 +82,24 @@ app.post('/webhook', async (req, res) => {
 			}
 			if (linearBody.type === 'Comment' && data.body) {
 				console.log('   Comment Preview:', data.body.substring(0, 100));
+			}
+		}
+	}
+
+	if (result.plugin === 'gmail') {
+		const gmailBody = result.body as {
+			message?: {
+				data?: string;
+				messageId?: string;
+			};
+		};
+
+		console.log('\n📧 Gmail Event Details:');
+		console.log('   Action:', result.action);
+		if (gmailBody.message) {
+			console.log('   Message ID:', gmailBody.message.messageId);
+			if (gmailBody.message.data) {
+				console.log('   Has Data:', !!gmailBody.message.data);
 			}
 		}
 	}
