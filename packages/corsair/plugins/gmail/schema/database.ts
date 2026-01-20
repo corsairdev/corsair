@@ -1,5 +1,27 @@
 import { z } from 'zod';
 
+const MessagePartHeader = z.object({
+	name: z.string().optional(),
+	value: z.string().optional(),
+});
+
+const MessagePartBody = z.object({
+	attachmentId: z.string().optional(),
+	size: z.number().optional(),
+	data: z.string().optional(),
+});
+
+const MessagePart: z.ZodType<any> = z.lazy(() =>
+	z.object({
+		partId: z.string().optional(),
+		mimeType: z.string().optional(),
+		filename: z.string().optional(),
+		headers: z.array(MessagePartHeader).optional(),
+		body: MessagePartBody.optional(),
+		parts: z.array(MessagePart).optional(),
+	}),
+);
+
 export const GmailMessage = z.object({
 	id: z.string(),
 	threadId: z.string().optional(),
@@ -8,6 +30,10 @@ export const GmailMessage = z.object({
 	historyId: z.string().optional(),
 	internalDate: z.string().optional(),
 	sizeEstimate: z.number().optional(),
+	payload: MessagePart.optional(),
+	raw: z.string().optional(),
+	subject: z.string().optional(),
+	body: z.string().optional(),
 	createdAt: z.coerce.date().optional(),
 });
 
