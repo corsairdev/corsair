@@ -35,6 +35,12 @@ app.post('/webhook', async (req, res) => {
 	console.log('✅ Filter Result:');
 	console.log('   Plugin:', result.plugin || 'null (unknown provider)');
 	console.log('   Action:', result.action || 'null (unknown action)');
+	if (result.response) {
+		console.log('   Handler Response:', JSON.stringify(result.response, null, 2));
+		if (result.response.success === false) {
+			console.error('   ❌ Handler Error:', result.response.error);
+		}
+	}
 	console.log('═'.repeat(60));
 
 	if (result.plugin === 'slack') {
@@ -100,6 +106,13 @@ app.post('/webhook', async (req, res) => {
 			console.log('   Message ID:', gmailBody.message.messageId);
 			if (gmailBody.message.data) {
 				console.log('   Has Data:', !!gmailBody.message.data);
+				try {
+					const decoded = Buffer.from(gmailBody.message.data, 'base64').toString('utf-8');
+					const pushNotification = JSON.parse(decoded);
+					console.log('   Email Address:', pushNotification.emailAddress);
+					console.log('   History ID:', pushNotification.historyId);
+				} catch {
+				}
 			}
 		}
 	}

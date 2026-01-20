@@ -2,6 +2,65 @@ import { logEvent } from '../../utils/events';
 import type { GmailEndpoints } from '..';
 import { makeGmailRequest } from '../client';
 import type { GmailEndpointOutputs } from './types';
+import type { Message, MessagePart } from '../types';
+
+function getHeaderValue(part: MessagePart | undefined, headerName: string): string | undefined {
+	if (!part?.headers) {
+		return undefined;
+	}
+	const header = part.headers.find((h) => h.name?.toLowerCase() === headerName.toLowerCase());
+	return header?.value;
+}
+
+function extractSubject(message: Message): string | undefined {
+	if (!message.payload) {
+		return undefined;
+	}
+	return getHeaderValue(message.payload, 'Subject');
+}
+
+function extractBodyText(part: MessagePart | undefined): string | undefined {
+	if (!part) {
+		return undefined;
+	}
+
+	let plainText: string | undefined;
+	let htmlText: string | undefined;
+
+	if (part.body?.data) {
+		try {
+			const decoded = Buffer.from(part.body.data, 'base64').toString('utf-8');
+			if (part.mimeType === 'text/plain') {
+				plainText = decoded;
+			} else if (part.mimeType === 'text/html') {
+				htmlText = decoded;
+			}
+		} catch {
+		}
+	}
+
+	if (part.parts && part.parts.length > 0) {
+		for (const subPart of part.parts) {
+			const bodyText = extractBodyText(subPart);
+			if (bodyText) {
+				if (subPart.mimeType === 'text/plain') {
+					plainText = bodyText;
+				} else if (subPart.mimeType === 'text/html' && !plainText) {
+					htmlText = bodyText;
+				}
+			}
+		}
+	}
+
+	return plainText || htmlText;
+}
+
+function extractBody(message: Message): string | undefined {
+	if (!message.payload) {
+		return undefined;
+	}
+	return extractBodyText(message.payload);
+}
 
 export const list: GmailEndpoints['messagesList'] = async (ctx, input) => {
 	try {
@@ -85,6 +144,8 @@ export const get: GmailEndpoints['messagesGet'] = async (ctx, input) => {
 
 		if (result.id && ctx.db.messages) {
 			try {
+				const subject = extractSubject(result);
+				const body = extractBody(result);
 				await ctx.db.messages.upsert(result.id, {
 					id: result.id,
 					threadId: result.threadId,
@@ -93,6 +154,10 @@ export const get: GmailEndpoints['messagesGet'] = async (ctx, input) => {
 					historyId: result.historyId,
 					internalDate: result.internalDate,
 					sizeEstimate: result.sizeEstimate,
+					payload: result.payload,
+					raw: result.raw,
+					subject,
+					body,
 					createdAt: new Date(),
 				});
 			} catch (error) {
@@ -139,6 +204,8 @@ export const send: GmailEndpoints['messagesSend'] = async (ctx, input) => {
 
 		if (result.id && ctx.db.messages) {
 			try {
+				const subject = extractSubject(result);
+				const body = extractBody(result);
 				await ctx.db.messages.upsert(result.id, {
 					id: result.id,
 					threadId: result.threadId,
@@ -147,6 +214,10 @@ export const send: GmailEndpoints['messagesSend'] = async (ctx, input) => {
 					historyId: result.historyId,
 					internalDate: result.internalDate,
 					sizeEstimate: result.sizeEstimate,
+					payload: result.payload,
+					raw: result.raw,
+					subject,
+					body,
 					createdAt: new Date(),
 				});
 			} catch (error) {
@@ -236,6 +307,8 @@ export const modify: GmailEndpoints['messagesModify'] = async (ctx, input) => {
 
 		if (result.id && ctx.db.messages) {
 			try {
+				const subject = extractSubject(result);
+				const body = extractBody(result);
 				await ctx.db.messages.upsert(result.id, {
 					id: result.id,
 					threadId: result.threadId,
@@ -244,6 +317,10 @@ export const modify: GmailEndpoints['messagesModify'] = async (ctx, input) => {
 					historyId: result.historyId,
 					internalDate: result.internalDate,
 					sizeEstimate: result.sizeEstimate,
+					payload: result.payload,
+					raw: result.raw,
+					subject,
+					body,
 					createdAt: new Date(),
 				});
 			} catch (error) {
