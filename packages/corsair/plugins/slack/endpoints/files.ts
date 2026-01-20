@@ -7,7 +7,7 @@ export const get: SlackEndpoints['filesGet'] = async (ctx, input) => {
 	try {
 		const result = await makeSlackRequest<SlackEndpointOutputs['filesGet']>(
 			'files.info',
-			ctx.options.botToken,
+			ctx.options.credentials.botToken,
 			{
 				method: 'GET',
 				query: {
@@ -43,7 +43,7 @@ export const list: SlackEndpoints['filesList'] = async (ctx, input) => {
 	try {
 		const result = await makeSlackRequest<SlackEndpointOutputs['filesList']>(
 			'files.list',
-			ctx.options.botToken,
+			ctx.options.credentials.botToken,
 			{
 				method: 'GET',
 				query: {
@@ -87,7 +87,7 @@ export const upload: SlackEndpoints['filesUpload'] = async (ctx, input) => {
 	try {
 		const result = await makeSlackRequest<SlackEndpointOutputs['filesUpload']>(
 			'files.upload',
-			ctx.options.botToken,
+			ctx.options.credentials.botToken,
 			{
 				method: 'POST',
 				body: {

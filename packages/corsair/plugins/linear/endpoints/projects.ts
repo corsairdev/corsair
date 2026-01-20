@@ -151,7 +151,7 @@ export const list: LinearEndpoints['projectsList'] = async (ctx, input) => {
 	try {
 		const response = await makeLinearRequest<ProjectsListResponse>(
 			PROJECTS_LIST_QUERY,
-			ctx.options.apiKey,
+			ctx.options.credentials.apiKey,
 			{
 				first: input.first || 50,
 				after: input.after,
@@ -209,7 +209,7 @@ export const get: LinearEndpoints['projectsGet'] = async (ctx, input) => {
 	try {
 		const response = await makeLinearRequest<ProjectGetResponse>(
 			PROJECT_GET_QUERY,
-			ctx.options.apiKey,
+			ctx.options.credentials.apiKey,
 			{ id: input.id },
 		);
 
@@ -257,7 +257,7 @@ export const create: LinearEndpoints['projectsCreate'] = async (ctx, input) => {
 	try {
 		const response = await makeLinearRequest<ProjectCreateResponse>(
 			PROJECT_CREATE_MUTATION,
-			ctx.options.apiKey,
+			ctx.options.credentials.apiKey,
 			{ input: input as CreateProjectInput },
 		);
 
@@ -310,7 +310,7 @@ export const update: LinearEndpoints['projectsUpdate'] = async (ctx, input) => {
 	try {
 		const response = await makeLinearRequest<ProjectUpdateResponse>(
 			PROJECT_UPDATE_MUTATION,
-			ctx.options.apiKey,
+			ctx.options.credentials.apiKey,
 			{ id: input.id, input: input.input as UpdateProjectInput },
 		);
 
@@ -367,7 +367,7 @@ export const deleteProject: LinearEndpoints['projectsDelete'] = async (
 	try {
 		const response = await makeLinearRequest<ProjectDeleteResponse>(
 			PROJECT_DELETE_MUTATION,
-			ctx.options.apiKey,
+			ctx.options.credentials.apiKey,
 			{ id: input.id },
 		);
 

@@ -10,7 +10,7 @@ export const archive: SlackEndpoints['channelsArchive'] = async (
 	try {
 		const result = await makeSlackRequest<
 			SlackEndpointOutputs['channelsArchive']
-		>('conversations.archive', ctx.options.botToken, {
+		>('conversations.archive', ctx.options.credentials.botToken, {
 			method: 'POST',
 			body: { channel: input.channel },
 		});
@@ -51,7 +51,7 @@ export const close: SlackEndpoints['channelsClose'] = async (ctx, input) => {
 	try {
 		const result = await makeSlackRequest<
 			SlackEndpointOutputs['channelsClose']
-		>('conversations.close', ctx.options.botToken, {
+		>('conversations.close', ctx.options.credentials.botToken, {
 			method: 'POST',
 			body: { channel: input.channel },
 		});
@@ -77,7 +77,7 @@ export const create: SlackEndpoints['channelsCreate'] = async (ctx, input) => {
 	try {
 		const result = await makeSlackRequest<
 			SlackEndpointOutputs['channelsCreate']
-		>('conversations.create', ctx.options.botToken, {
+		>('conversations.create', ctx.options.credentials.botToken, {
 			method: 'POST',
 			body: {
 				name: input.name,
@@ -122,7 +122,7 @@ export const get: SlackEndpoints['channelsGet'] = async (ctx, input) => {
 	try {
 		const result = await makeSlackRequest<SlackEndpointOutputs['channelsGet']>(
 			'conversations.info',
-			ctx.options.botToken,
+			ctx.options.credentials.botToken,
 			{
 				method: 'GET',
 				query: {
@@ -162,7 +162,7 @@ export const list: SlackEndpoints['channelsList'] = async (ctx, input) => {
 	try {
 		const result = await makeSlackRequest<SlackEndpointOutputs['channelsList']>(
 			'conversations.list',
-			ctx.options.botToken,
+			ctx.options.credentials.botToken,
 			{
 				method: 'GET',
 				query: {
@@ -211,7 +211,7 @@ export const getHistory: SlackEndpoints['channelsGetHistory'] = async (
 	try {
 		const result = await makeSlackRequest<
 			SlackEndpointOutputs['channelsGetHistory']
-		>('conversations.history', ctx.options.botToken, {
+		>('conversations.history', ctx.options.credentials.botToken, {
 			method: 'GET',
 			query: {
 				channel: input.channel,
@@ -264,7 +264,7 @@ export const invite: SlackEndpoints['channelsInvite'] = async (ctx, input) => {
 	try {
 		const result = await makeSlackRequest<
 			SlackEndpointOutputs['channelsInvite']
-		>('conversations.invite', ctx.options.botToken, {
+		>('conversations.invite', ctx.options.credentials.botToken, {
 			method: 'POST',
 			body: {
 				channel: input.channel,
@@ -307,7 +307,7 @@ export const join: SlackEndpoints['channelsJoin'] = async (ctx, input) => {
 	try {
 		const result = await makeSlackRequest<SlackEndpointOutputs['channelsJoin']>(
 			'conversations.join',
-			ctx.options.botToken,
+			ctx.options.credentials.botToken,
 			{
 				method: 'POST',
 				body: { channel: input.channel },
@@ -344,7 +344,7 @@ export const kick: SlackEndpoints['channelsKick'] = async (ctx, input) => {
 	try {
 		const result = await makeSlackRequest<SlackEndpointOutputs['channelsKick']>(
 			'conversations.kick',
-			ctx.options.botToken,
+			ctx.options.credentials.botToken,
 			{
 				method: 'POST',
 				body: {
@@ -370,7 +370,7 @@ export const leave: SlackEndpoints['channelsLeave'] = async (ctx, input) => {
 	try {
 		const result = await makeSlackRequest<
 			SlackEndpointOutputs['channelsLeave']
-		>('conversations.leave', ctx.options.botToken, {
+		>('conversations.leave', ctx.options.credentials.botToken, {
 			method: 'POST',
 			body: { channel: input.channel },
 		});
@@ -414,7 +414,7 @@ export const getMembers: SlackEndpoints['channelsGetMembers'] = async (
 	try {
 		const result = await makeSlackRequest<
 			SlackEndpointOutputs['channelsGetMembers']
-		>('conversations.members', ctx.options.botToken, {
+		>('conversations.members', ctx.options.credentials.botToken, {
 			method: 'GET',
 			query: {
 				channel: input.channel,
@@ -459,7 +459,7 @@ export const open: SlackEndpoints['channelsOpen'] = async (ctx, input) => {
 	try {
 		const result = await makeSlackRequest<SlackEndpointOutputs['channelsOpen']>(
 			'conversations.open',
-			ctx.options.botToken,
+			ctx.options.credentials.botToken,
 			{
 				method: 'POST',
 				body: {
@@ -500,7 +500,7 @@ export const rename: SlackEndpoints['channelsRename'] = async (ctx, input) => {
 	try {
 		const result = await makeSlackRequest<
 			SlackEndpointOutputs['channelsRename']
-		>('conversations.rename', ctx.options.botToken, {
+		>('conversations.rename', ctx.options.credentials.botToken, {
 			method: 'POST',
 			body: {
 				channel: input.channel,
@@ -546,7 +546,7 @@ export const getReplies: SlackEndpoints['channelsGetReplies'] = async (
 	try {
 		const result = await makeSlackRequest<
 			SlackEndpointOutputs['channelsGetReplies']
-		>('conversations.replies', ctx.options.botToken, {
+		>('conversations.replies', ctx.options.credentials.botToken, {
 			method: 'GET',
 			query: {
 				channel: input.channel,
@@ -604,7 +604,7 @@ export const setPurpose: SlackEndpoints['channelsSetPurpose'] = async (
 	try {
 		const result = await makeSlackRequest<
 			SlackEndpointOutputs['channelsSetPurpose']
-		>('conversations.setPurpose', ctx.options.botToken, {
+		>('conversations.setPurpose', ctx.options.credentials.botToken, {
 			method: 'POST',
 			body: {
 				channel: input.channel,
@@ -612,7 +612,7 @@ export const setPurpose: SlackEndpoints['channelsSetPurpose'] = async (
 			},
 		});
 
-		if (result.ok && result.channel && ctx.db.channels) {
+		if (result.ok && result.channel) {
 			try {
 				const existing = await ctx.db.channels.findByResourceId(input.channel);
 				await ctx.db.channels.upsert(result.channel.id, {
@@ -655,7 +655,7 @@ export const setTopic: SlackEndpoints['channelsSetTopic'] = async (
 	try {
 		const result = await makeSlackRequest<
 			SlackEndpointOutputs['channelsSetTopic']
-		>('conversations.setTopic', ctx.options.botToken, {
+		>('conversations.setTopic', ctx.options.credentials.botToken, {
 			method: 'POST',
 			body: {
 				channel: input.channel,
@@ -706,12 +706,12 @@ export const unarchive: SlackEndpoints['channelsUnarchive'] = async (
 	try {
 		const result = await makeSlackRequest<
 			SlackEndpointOutputs['channelsUnarchive']
-		>('conversations.unarchive', ctx.options.botToken, {
+		>('conversations.unarchive', ctx.options.credentials.botToken, {
 			method: 'POST',
 			body: { channel: input.channel },
 		});
 
-		if (result.ok && ctx.db.channels) {
+		if (result.ok) {
 			try {
 				const existing = await ctx.db.channels.findByResourceId(input.channel);
 				if (existing) {

@@ -107,7 +107,7 @@ const COMMENT_DELETE_MUTATION = `
 
 export const list: LinearEndpoints['commentsList'] = async (ctx, input) => {
 	try {
-		const apiKey = ctx.options.apiKey;
+		const apiKey = ctx.options.credentials.apiKey;
 
 		const response = await makeLinearRequest<CommentsListResponse>(
 			COMMENTS_LIST_QUERY,
@@ -161,7 +161,7 @@ export const list: LinearEndpoints['commentsList'] = async (ctx, input) => {
 
 export const create: LinearEndpoints['commentsCreate'] = async (ctx, input) => {
 	try {
-		const apiKey = ctx.options.apiKey;
+		const apiKey = ctx.options.credentials.apiKey;
 
 		const response = await makeLinearRequest<CommentCreateResponse>(
 			COMMENT_CREATE_MUTATION,
@@ -210,7 +210,7 @@ export const create: LinearEndpoints['commentsCreate'] = async (ctx, input) => {
 
 export const update: LinearEndpoints['commentsUpdate'] = async (ctx, input) => {
 	try {
-		const apiKey = ctx.options.apiKey;
+		const apiKey = ctx.options.credentials.apiKey;
 
 		const response = await makeLinearRequest<CommentUpdateResponse>(
 			COMMENT_UPDATE_MUTATION,
@@ -265,7 +265,7 @@ export const deleteComment: LinearEndpoints['commentsDelete'] = async (
 	input,
 ) => {
 	try {
-		const apiKey = ctx.options.apiKey;
+		const apiKey = ctx.options.credentials.apiKey;
 
 		const response = await makeLinearRequest<CommentDeleteResponse>(
 			COMMENT_DELETE_MUTATION,
