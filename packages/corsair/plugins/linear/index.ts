@@ -36,7 +36,7 @@ export type LinearPluginOptions = {
 export type LinearContext = CorsairPluginContext<
 	'linear',
 	typeof LinearSchema,
-	LinearCredentials
+	LinearPluginOptions
 >;
 
 export type LinearBoundEndpoints = BindEndpoints<LinearEndpoints>;

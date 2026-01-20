@@ -7,7 +7,7 @@ export const add: SlackEndpoints['starsAdd'] = async (ctx, input) => {
 	try {
 		const result = await makeSlackRequest<SlackEndpointOutputs['starsAdd']>(
 			'stars.add',
-			ctx.options.botToken,
+			ctx.options.credentials.botToken,
 			{
 				method: 'POST',
 				body: {
@@ -30,7 +30,7 @@ export const remove: SlackEndpoints['starsRemove'] = async (ctx, input) => {
 	try {
 		const result = await makeSlackRequest<SlackEndpointOutputs['starsRemove']>(
 			'stars.remove',
-			ctx.options.botToken,
+			ctx.options.credentials.botToken,
 			{
 				method: 'POST',
 				body: {
@@ -58,7 +58,7 @@ export const list: SlackEndpoints['starsList'] = async (ctx, input) => {
 	try {
 		const result = await makeSlackRequest<SlackEndpointOutputs['starsList']>(
 			'stars.list',
-			ctx.options.botToken,
+			ctx.options.credentials.botToken,
 			{
 				method: 'GET',
 				query: {

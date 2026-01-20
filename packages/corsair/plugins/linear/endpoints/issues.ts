@@ -298,7 +298,7 @@ export const list: LinearEndpoints['issuesList'] = async (ctx, input) => {
 	try {
 		const response = await makeLinearRequest<IssuesListResponse>(
 			query,
-			ctx.options.apiKey,
+			ctx.options.credentials.apiKey,
 			variables,
 		);
 
@@ -357,7 +357,7 @@ export const get: LinearEndpoints['issuesGet'] = async (ctx, input) => {
 	try {
 		const response = await makeLinearRequest<IssueGetResponse>(
 			ISSUE_GET_QUERY,
-			ctx.options.apiKey,
+			ctx.options.credentials.apiKey,
 			{ id: input.id },
 		);
 
@@ -414,7 +414,7 @@ export const create: LinearEndpoints['issuesCreate'] = async (ctx, input) => {
 	try {
 		const response = await makeLinearRequest<IssueCreateResponse>(
 			ISSUE_CREATE_MUTATION,
-			ctx.options.apiKey,
+			ctx.options.credentials.apiKey,
 			{ input },
 		);
 
@@ -466,7 +466,7 @@ export const update: LinearEndpoints['issuesUpdate'] = async (ctx, input) => {
 	try {
 		const response = await makeLinearRequest<IssueUpdateResponse>(
 			ISSUE_UPDATE_MUTATION,
-			ctx.options.apiKey,
+			ctx.options.credentials.apiKey,
 			{ id: input.id, input: input.input },
 		);
 
@@ -532,7 +532,7 @@ export const deleteIssue: LinearEndpoints['issuesDelete'] = async (
 	try {
 		const response = await makeLinearRequest<IssueDeleteResponse>(
 			ISSUE_DELETE_MUTATION,
-			ctx.options.apiKey,
+			ctx.options.credentials.apiKey,
 			{ id: input.id },
 		);
 

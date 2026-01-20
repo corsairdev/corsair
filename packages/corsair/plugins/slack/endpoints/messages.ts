@@ -10,7 +10,7 @@ export const postMessage: SlackEndpoints['postMessage'] = async (
 	try {
 		const result = await makeSlackRequest<SlackEndpointOutputs['postMessage']>(
 			'chat.postMessage',
-			ctx.options.botToken,
+			ctx.options.credentials.botToken,
 			{
 				method: 'POST',
 				body: {
@@ -74,7 +74,7 @@ export const deleteMessage: SlackEndpoints['messagesDelete'] = async (
 	try {
 		const result = await makeSlackRequest<
 			SlackEndpointOutputs['messagesDelete']
-		>('chat.delete', ctx.options.botToken, {
+		>('chat.delete', ctx.options.credentials.botToken, {
 			method: 'POST',
 			body: {
 				channel: input.channel,
@@ -113,7 +113,7 @@ export const update: SlackEndpoints['messagesUpdate'] = async (ctx, input) => {
 	try {
 		const result = await makeSlackRequest<
 			SlackEndpointOutputs['messagesUpdate']
-		>('chat.update', ctx.options.botToken, {
+		>('chat.update', ctx.options.credentials.botToken, {
 			method: 'POST',
 			body: {
 				channel: input.channel,
@@ -169,7 +169,7 @@ export const getPermalink: SlackEndpoints['messagesGetPermalink'] = async (
 	try {
 		const result = await makeSlackRequest<
 			SlackEndpointOutputs['messagesGetPermalink']
-		>('chat.getPermalink', ctx.options.botToken, {
+		>('chat.getPermalink', ctx.options.credentials.botToken, {
 			method: 'GET',
 			query: {
 				channel: input.channel,
@@ -198,7 +198,7 @@ export const search: SlackEndpoints['messagesSearch'] = async (ctx, input) => {
 	try {
 		const result = await makeSlackRequest<
 			SlackEndpointOutputs['messagesSearch']
-		>('search.messages', ctx.options.botToken, {
+		>('search.messages', ctx.options.credentials.botToken, {
 			method: 'GET',
 			query: {
 				query: input.query,

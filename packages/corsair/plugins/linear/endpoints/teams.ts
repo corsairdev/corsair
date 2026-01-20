@@ -47,7 +47,7 @@ export const list: LinearEndpoints['teamsList'] = async (ctx, input) => {
 	try {
 		const response = await makeLinearRequest<TeamsListResponse>(
 			TEAMS_LIST_QUERY,
-			ctx.options.apiKey,
+			ctx.options.credentials.apiKey,
 			{
 				first: input.first || 50,
 				after: input.after,
@@ -94,7 +94,7 @@ export const get: LinearEndpoints['teamsGet'] = async (ctx, input) => {
 	try {
 		const response = await makeLinearRequest<TeamGetResponse>(
 			TEAM_GET_QUERY,
-			ctx.options.apiKey,
+			ctx.options.credentials.apiKey,
 			{ id: input.id },
 		);
 

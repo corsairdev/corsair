@@ -44,7 +44,7 @@ export type { SlackReactionName } from './endpoints';
 export type SlackContext = CorsairPluginContext<
 	'slack',
 	typeof SlackSchema,
-	SlackCredentials
+	SlackPluginOptions
 >;
 
 type SlackEndpoint<
@@ -484,13 +484,18 @@ export type SlackPluginOptions = {
 	hooks?: SlackPlugin['hooks'] | undefined;
 
 	webhookHooks?: SlackPlugin['webhookHooks'] | undefined;
+
+	errorHandler?: {
+		default: () => {};
+		429: () => {};
+	};
 };
 
 export type SlackPlugin = CorsairPlugin<
 	'slack',
 	typeof slackEndpointsNested,
 	typeof SlackSchema,
-	SlackCredentials,
+	SlackPluginOptions,
 	typeof slackWebhooksNested
 >;
 
@@ -498,7 +503,7 @@ export function slack(options: SlackPluginOptions) {
 	return {
 		id: 'slack',
 		schema: SlackSchema,
-		options: options.credentials,
+		options,
 		hooks: options.hooks,
 		webhookHooks: options.webhookHooks,
 		endpoints: slackEndpointsNested,

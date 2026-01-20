@@ -39,7 +39,7 @@ export const add: SlackEndpoints['reactionsAdd'] = async (ctx, input) => {
 	try {
 		const result = await makeSlackRequest<SlackEndpointOutputs['reactionsAdd']>(
 			'reactions.add',
-			ctx.options.botToken,
+			ctx.options.credentials.botToken,
 			{
 				method: 'POST',
 				body: {
@@ -66,7 +66,7 @@ export const get: SlackEndpoints['reactionsGet'] = async (ctx, input) => {
 	try {
 		const result = await makeSlackRequest<SlackEndpointOutputs['reactionsGet']>(
 			'reactions.get',
-			ctx.options.botToken,
+			ctx.options.credentials.botToken,
 			{
 				method: 'GET',
 				query: {
@@ -95,7 +95,7 @@ export const remove: SlackEndpoints['reactionsRemove'] = async (ctx, input) => {
 	try {
 		const result = await makeSlackRequest<
 			SlackEndpointOutputs['reactionsRemove']
-		>('reactions.remove', ctx.options.botToken, {
+		>('reactions.remove', ctx.options.credentials.botToken, {
 			method: 'POST',
 			body: {
 				name: input.name,
