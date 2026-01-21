@@ -12,7 +12,7 @@ import type {
 	PubSubNotification,
 } from './types';
 import { makeGmailRequest } from '../client';
-import type { HistoryListResponse, Message, MessagePart } from '../types';
+import type { HistoryListResponse, Message, MessagePart, History } from '../types';
 
 function getHeaderValue(part: MessagePart | undefined, headerName: string): string | undefined {
 	if (!part?.headers) {
@@ -27,6 +27,20 @@ function extractSubject(message: Message): string | undefined {
 		return undefined;
 	}
 	return getHeaderValue(message.payload, 'Subject');
+}
+
+function extractFrom(message: Message): string | undefined {
+	if (!message.payload) {
+		return undefined;
+	}
+	return getHeaderValue(message.payload, 'From');
+}
+
+function extractTo(message: Message): string | undefined {
+	if (!message.payload) {
+		return undefined;
+	}
+	return getHeaderValue(message.payload, 'To');
 }
 
 function extractBodyText(part: MessagePart | undefined): string | undefined {
@@ -77,27 +91,57 @@ function decodePubSubMessage(data: string): GmailPushNotification {
 	return JSON.parse(decodedData);
 }
 
-async function fetchHistory(
-	credentials: {
-		clientId: string;
-		clientSecret: string;
-		accessToken: string;
-		refreshToken: string;
-	},
-	userId: string,
-	startHistoryId: string,
-): Promise<HistoryListResponse> {
-	return await makeGmailRequest<HistoryListResponse>(
-		`/users/${userId}/history`,
-		credentials,
-		{
-			method: 'GET',
-			query: {
-				startHistoryId,
-				maxResults: 100,
-			},
-		},
-	);
+function extractMessageIds(history: HistoryListResponse['history']): {
+	added: string[];
+	deleted: string[];
+	modified: string[];
+} {
+	const added: string[] = [];
+	const deleted: string[] = [];
+	const modified: string[] = [];
+
+	if (!history) {
+		return { added, deleted, modified };
+	}
+
+	for (const historyItem of history) {
+		if (historyItem.messagesAdded) {
+			for (const msg of historyItem.messagesAdded) {
+				if (msg.message?.id) {
+					added.push(msg.message.id);
+				}
+			}
+		}
+		if (historyItem.messagesDeleted) {
+			for (const msg of historyItem.messagesDeleted) {
+				if (msg.message?.id) {
+					deleted.push(msg.message.id);
+				}
+			}
+		}
+		if (historyItem.labelsAdded || historyItem.labelsRemoved) {
+			if (historyItem.labelsAdded) {
+				for (const labelChange of historyItem.labelsAdded) {
+					if (labelChange.message?.id) {
+						modified.push(labelChange.message.id);
+					}
+				}
+			}
+			if (historyItem.labelsRemoved) {
+				for (const labelChange of historyItem.labelsRemoved) {
+					if (labelChange.message?.id) {
+						modified.push(labelChange.message.id);
+					}
+				}
+			}
+		}
+	}
+
+	return {
+		added: [...new Set(added)],
+		deleted: [...new Set(deleted)],
+		modified: [...new Set(modified)],
+	};
 }
 
 async function fetchFullMessage(
@@ -229,14 +273,9 @@ export const messageReceived = {
 	}) as CorsairWebhookMatcher,
 
 	handler: async (ctx: GmailContext, request: WebhookRequest<PubSubNotification>) => {
-		console.log('\n🔵 Gmail webhook handler called - messageReceived');
-		console.log('   Database available:', !!ctx.db);
-		console.log('   Messages service available:', !!ctx.db?.messages);
-		
 		const body = request.payload as PubSubNotification;
 
 		if (!body.message?.data) {
-			console.warn('   ⚠️ No message data in notification');
 			return {
 				success: false,
 				error: 'No message data in notification',
@@ -245,11 +284,8 @@ export const messageReceived = {
 		}
 
 		const pushNotification = decodePubSubMessage(body.message.data!);
-		console.log('   Email Address:', pushNotification.emailAddress);
-		console.log('   History ID:', pushNotification.historyId);
 
 		if (!pushNotification.historyId || !pushNotification.emailAddress) {
-			console.warn('   ⚠️ Invalid push notification format');
 			return {
 				success: false,
 				error: 'Invalid push notification format',
@@ -265,158 +301,121 @@ export const messageReceived = {
 		};
 
 		try {
-			console.log('   📥 Fetching history from Gmail API...');
-			const historyResponse = await fetchHistory(
+			const historyIdNum = Number(pushNotification.historyId);
+			const previousHistoryId = historyIdNum > 1 ? String(historyIdNum - 1) : pushNotification.historyId;
+
+			const historyResponse = await makeGmailRequest<HistoryListResponse>(
+				`/users/${pushNotification.emailAddress}/history`,
 				credentials,
-				pushNotification.emailAddress!,
-				pushNotification.historyId!,
+				{
+					method: 'GET',
+					query: {
+						startHistoryId: previousHistoryId,
+						maxResults: 100,
+					},
+				},
 			);
 
-			console.log('   📊 History response received');
-			console.log('   History items count:', historyResponse.history?.length || 0);
+			const { added } = extractMessageIds(historyResponse.history);
 
-			if (historyResponse.history) {
-				for (const historyItem of historyResponse.history) {
-					console.log('   🔍 Processing history item...');
-					if (historyItem.messagesAdded && historyItem.messagesAdded.length > 0) {
-						console.log(`   ✉️ Found ${historyItem.messagesAdded.length} message(s) added`);
-						for (const added of historyItem.messagesAdded) {
-							if (added.message?.id) {
-								console.log(`   📧 Processing message ID: ${added.message.id}`);
-								try {
-									console.log(`   🔄 Fetching full message for ${added.message.id}...`);
-									const fullMessage = await fetchFullMessage(
-										credentials,
-										pushNotification.emailAddress!,
-										added.message.id,
-									);
-									console.log(`   ✅ Full message fetched, enriching with attachments...`);
+			if (added.length === 0 && !ctx.db?.messages) {
+				console.warn('⚠️ No messages found in history and database not available');
+			}
 
-									const enrichedMessage = await enrichMessageWithAttachments(
-										credentials,
-										pushNotification.emailAddress!,
-										fullMessage,
-									);
-									console.log(`   ✅ Message enriched, storing in database...`);
+			if (added.length === 0) {
+				const messagesResponse = await makeGmailRequest<{ messages?: Array<{ id?: string }> }>(
+					`/users/${pushNotification.emailAddress}/messages`,
+					credentials,
+					{
+						method: 'GET',
+						query: {
+							maxResults: 10,
+						},
+					},
+				);
 
-									const event: MessageReceivedEvent = {
-										type: 'messageReceived',
-										emailAddress: pushNotification.emailAddress!,
-										historyId: pushNotification.historyId!,
-										message: enrichedMessage,
-									};
+				if (messagesResponse.messages && messagesResponse.messages.length > 0) {
+					const targetHistoryIdNum = Number(pushNotification.historyId);
+					for (const msg of messagesResponse.messages) {
+						if (msg.id) {
+							try {
+								const fullMessage = await fetchFullMessage(
+									credentials,
+									pushNotification.emailAddress!,
+									msg.id,
+								);
 
-									if (ctx.db.messages && enrichedMessage.id) {
-										try {
-											const subject = extractSubject(enrichedMessage);
-											const body = extractBody(enrichedMessage);
-											const dataToStore = {
-												id: enrichedMessage.id,
-												threadId: enrichedMessage.threadId,
-												labelIds: enrichedMessage.labelIds,
-												snippet: enrichedMessage.snippet,
-												historyId: enrichedMessage.historyId,
-												internalDate: enrichedMessage.internalDate,
-												sizeEstimate: enrichedMessage.sizeEstimate,
-												payload: enrichedMessage.payload,
-												raw: enrichedMessage.raw,
-												subject,
-												body,
-												createdAt: new Date(),
-											};
-											console.log(`   💾 Attempting to store message ${enrichedMessage.id}...`);
-											console.log(`   Data keys: ${Object.keys(dataToStore).join(', ')}`);
-											console.log(`   Has payload: ${!!dataToStore.payload}`);
-											console.log(`   Has raw: ${!!dataToStore.raw}`);
-											console.log(`   Payload type: ${typeof dataToStore.payload}`);
-											console.log(`   Raw length: ${dataToStore.raw?.length || 0}`);
-											
-											try {
-												const result = await ctx.db.messages.upsert(enrichedMessage.id, dataToStore);
-												
-												console.log(`   ✅ Upsert completed for message ${enrichedMessage.id}`);
-												console.log(`   Result ID: ${result?.id || 'no id'}`);
-												console.log(`   Result resource_id: ${result?.resource_id || 'no resource_id'}`);
-												console.log(`   Result tenant_id: ${result?.tenant_id || 'no tenant_id'}`);
-												console.log(`   Result resource: ${result?.resource || 'no resource'}`);
-												console.log(`   Result service: ${result?.service || 'no service'}`);
-												
-												if (result) {
-													console.log(`✅ Successfully stored message ${enrichedMessage.id} in resources table`);
-												} else {
-													console.error(`❌ Upsert returned null/undefined for message ${enrichedMessage.id}`);
-												}
-											} catch (validationError) {
-												console.error(`❌ Validation or database error for message ${enrichedMessage.id}:`, validationError);
-												if (validationError instanceof Error) {
-													console.error('   Error name:', validationError.name);
-													console.error('   Error message:', validationError.message);
-													if ('issues' in validationError && Array.isArray((validationError as any).issues)) {
-														console.error('   Validation issues:', JSON.stringify((validationError as any).issues, null, 2));
-													}
-												}
-												throw validationError;
-											}
-										} catch (error) {
-											console.error('❌ Failed to save message to database:', error);
-											if (error instanceof Error) {
-												console.error('Error message:', error.message);
-												console.error('Error stack:', error.stack);
-											}
-											if (error && typeof error === 'object' && 'cause' in error) {
-												console.error('Error cause:', error.cause);
-											}
-										}
-									} else {
-										console.warn('⚠️ ctx.db.messages is not available - database may not be configured');
-									}
-								} catch (error) {
-									console.warn(
-										`Failed to fetch full message ${added.message.id}:`,
-										error,
-									);
-									if (ctx.db.messages && added.message.id) {
-										try {
-											const subject = extractSubject(added.message);
-											const body = extractBody(added.message);
-											await ctx.db.messages.upsert(added.message.id, {
-												id: added.message.id,
-												threadId: added.message.threadId,
-												labelIds: added.message.labelIds,
-												snippet: added.message.snippet,
-												historyId: added.message.historyId,
-												internalDate: added.message.internalDate,
-												sizeEstimate: added.message.sizeEstimate,
-												payload: added.message.payload,
-												raw: added.message.raw,
-												subject,
-												body,
-												createdAt: new Date(),
-											});
-										} catch (dbError) {
-											console.warn('Failed to save message to database:', dbError);
-										}
-									}
+								const messageHistoryIdNum = fullMessage.historyId ? Number(fullMessage.historyId) : 0;
+								if (messageHistoryIdNum >= targetHistoryIdNum - 10) {
+									added.push(msg.id);
+									break;
 								}
+							} catch {
 							}
 						}
 					}
 				}
-			} else {
-				console.log('   ⚠️ No history items found in response');
 			}
 
-			console.log('   ✅ Handler completed successfully');
+			for (const messageId of added) {
+				try {
+					const fullMessage = await fetchFullMessage(
+						credentials,
+						pushNotification.emailAddress!,
+						messageId,
+					);
+
+					const enrichedMessage = await enrichMessageWithAttachments(
+						credentials,
+						pushNotification.emailAddress!,
+						fullMessage,
+					);
+
+					if (!ctx.db?.messages) {
+						console.warn('⚠️ ctx.db.messages is not available - database may not be configured');
+						continue;
+					}
+
+					if (!enrichedMessage.id) {
+						console.warn('⚠️ Message has no ID, skipping database save');
+						continue;
+					}
+
+					try {
+						const subject = extractSubject(enrichedMessage);
+						const bodyText = extractBody(enrichedMessage);
+						const from = extractFrom(enrichedMessage);
+						const to = extractTo(enrichedMessage);
+						await ctx.db.messages.upsert(enrichedMessage.id, {
+							id: enrichedMessage.id,
+							threadId: enrichedMessage.threadId,
+							labelIds: enrichedMessage.labelIds,
+							snippet: enrichedMessage.snippet,
+							historyId: enrichedMessage.historyId,
+							internalDate: enrichedMessage.internalDate,
+							sizeEstimate: enrichedMessage.sizeEstimate,
+							payload: enrichedMessage.payload,
+							raw: enrichedMessage.raw,
+							subject,
+							body: bodyText,
+							from,
+							to,
+							createdAt: new Date(),
+						});
+					} catch (dbError) {
+						console.error(`❌ Failed to save message ${enrichedMessage.id} to database:`, dbError);
+						throw dbError;
+					}
+				} catch (error) {
+					console.warn(`Failed to process message ${messageId}:`, error);
+				}
+			}
+
 			return {
 				success: true,
 				data: { success: true },
 			};
 		} catch (error) {
-			console.error('   ❌ Handler error:', error);
-			if (error instanceof Error) {
-				console.error('   Error message:', error.message);
-				console.error('   Error stack:', error.stack);
-			}
 			return {
 				success: false,
 				error: error instanceof Error ? error.message : 'Unknown error',
@@ -470,38 +469,53 @@ export const messageDeleted = {
 		};
 
 		try {
-			const historyResponse = await fetchHistory(
+			const historyIdNum = Number(pushNotification.historyId);
+			const previousHistoryId = historyIdNum > 1 ? String(historyIdNum - 1) : pushNotification.historyId;
+
+			const historyResponse = await makeGmailRequest<HistoryListResponse>(
+				`/users/${pushNotification.emailAddress}/history`,
 				credentials,
-				pushNotification.emailAddress!,
-				pushNotification.historyId!,
+				{
+					method: 'GET',
+					query: {
+						startHistoryId: previousHistoryId,
+						maxResults: 100,
+					},
+				},
 			);
 
-			if (historyResponse.history) {
-				for (const historyItem of historyResponse.history) {
-					if (
-						historyItem.messagesDeleted &&
-						historyItem.messagesDeleted.length > 0
-					) {
-						for (const deleted of historyItem.messagesDeleted) {
-							if (deleted.message) {
-								const event: MessageDeletedEvent = {
-									type: 'messageDeleted',
-									emailAddress: pushNotification.emailAddress!,
-									historyId: pushNotification.historyId!,
-									message: deleted.message!,
-								};
+			const { deleted } = extractMessageIds(historyResponse.history);
 
-								if (ctx.db.messages && deleted.message.id) {
-									try {
-										await ctx.db.messages.deleteByResourceId(deleted.message.id);
-									} catch (error) {
-										console.warn(
-											'Failed to delete message from database:',
-											error,
-										);
-									}
-								}
-							}
+			if (!ctx.db?.messages) {
+				console.warn('⚠️ ctx.db.messages is not available - database may not be configured');
+				return {
+					success: true,
+					data: { success: true },
+				};
+			}
+
+			for (const messageId of deleted) {
+				try {
+					await ctx.db.messages.deleteByResourceId(messageId);
+				} catch (deleteError) {
+					try {
+						await makeGmailRequest<Message>(
+							`/users/${pushNotification.emailAddress}/messages/${messageId}`,
+							credentials,
+							{
+								method: 'GET',
+								query: {
+									format: 'full',
+								},
+							},
+						);
+
+						await ctx.db.messages.deleteByResourceId(messageId);
+					} catch (fetchError: any) {
+						if (fetchError?.statusCode === 404) {
+							console.log(`Message ${messageId} not found in Gmail (already deleted), skipping DB delete`);
+						} else {
+							console.warn(`Failed to verify or delete message ${messageId}:`, fetchError);
 						}
 					}
 				}
@@ -565,192 +579,78 @@ export const messageLabelChanged = {
 		};
 
 		try {
-			const historyResponse = await fetchHistory(
+			const historyIdNum = Number(pushNotification.historyId);
+			const previousHistoryId = historyIdNum > 1 ? String(historyIdNum - 1) : pushNotification.historyId;
+
+			const historyResponse = await makeGmailRequest<HistoryListResponse>(
+				`/users/${pushNotification.emailAddress}/history`,
 				credentials,
-				pushNotification.emailAddress!,
-				pushNotification.historyId!,
+				{
+					method: 'GET',
+					query: {
+						startHistoryId: previousHistoryId,
+						maxResults: 100,
+					},
+				},
 			);
 
-			if (historyResponse.history) {
-				for (const historyItem of historyResponse.history) {
-					if (historyItem.labelsAdded && historyItem.labelsAdded.length > 0) {
-						for (const labelChange of historyItem.labelsAdded) {
-							if (labelChange.message?.id) {
-								try {
-									const fullMessage = await fetchFullMessage(
-										credentials,
-										pushNotification.emailAddress!,
-										labelChange.message.id,
-									);
+			const { modified } = extractMessageIds(historyResponse.history);
 
-									const enrichedMessage = await enrichMessageWithAttachments(
-										credentials,
-										pushNotification.emailAddress!,
-										fullMessage,
-									);
+			if (!ctx.db?.messages) {
+				console.warn('⚠️ ctx.db.messages is not available - database may not be configured');
+				return {
+					success: true,
+					data: { success: true },
+				};
+			}
 
-									const event: MessageLabelChangedEvent = {
-										type: 'messageLabelChanged',
-										emailAddress: pushNotification.emailAddress!,
-										historyId: pushNotification.historyId!,
-										message: enrichedMessage,
-										labelsAdded: labelChange.labelIds,
-									};
+			for (const messageId of modified) {
+				try {
+					const fullMessage = await fetchFullMessage(
+						credentials,
+						pushNotification.emailAddress!,
+						messageId,
+					);
 
-									if (ctx.db.messages && enrichedMessage.id) {
-										try {
-											const subject = extractSubject(enrichedMessage);
-											const body = extractBody(enrichedMessage);
-											const result = await ctx.db.messages.upsert(enrichedMessage.id, {
-												id: enrichedMessage.id,
-												threadId: enrichedMessage.threadId,
-												labelIds: enrichedMessage.labelIds,
-												snippet: enrichedMessage.snippet,
-												historyId: enrichedMessage.historyId,
-												internalDate: enrichedMessage.internalDate,
-												sizeEstimate: enrichedMessage.sizeEstimate,
-												payload: enrichedMessage.payload,
-												raw: enrichedMessage.raw,
-												subject,
-												body,
-												createdAt: new Date(),
-											});
-											console.log(`✅ Successfully stored message ${enrichedMessage.id} in resources table`);
-										} catch (error) {
-											console.error('❌ Failed to update message in database:', error);
-											if (error instanceof Error) {
-												console.error('Error message:', error.message);
-												console.error('Error stack:', error.stack);
-											}
-										}
-									} else {
-										console.warn('⚠️ ctx.db.messages is not available - database may not be configured');
-									}
-								} catch (error) {
-									console.warn(
-										`Failed to fetch full message ${labelChange.message.id}:`,
-										error,
-									);
-									if (ctx.db.messages && labelChange.message.id) {
-										try {
-											const subject = extractSubject(labelChange.message);
-											const body = extractBody(labelChange.message);
-											await ctx.db.messages.upsert(labelChange.message.id, {
-												id: labelChange.message.id,
-												threadId: labelChange.message.threadId,
-												labelIds: labelChange.message.labelIds,
-												snippet: labelChange.message.snippet,
-												historyId: labelChange.message.historyId,
-												internalDate: labelChange.message.internalDate,
-												sizeEstimate: labelChange.message.sizeEstimate,
-												payload: labelChange.message.payload,
-												raw: labelChange.message.raw,
-												subject,
-												body,
-												createdAt: new Date(),
-											});
-										} catch (dbError) {
-											console.warn(
-												'Failed to update message in database:',
-												dbError,
-											);
-										}
-									}
-								}
-							}
-						}
+					const enrichedMessage = await enrichMessageWithAttachments(
+						credentials,
+						pushNotification.emailAddress!,
+						fullMessage,
+					);
+
+					if (!enrichedMessage.id) {
+						console.warn('⚠️ Message has no ID, skipping database update');
+						continue;
 					}
 
-					if (
-						historyItem.labelsRemoved &&
-						historyItem.labelsRemoved.length > 0
-					) {
-						for (const labelChange of historyItem.labelsRemoved) {
-							if (labelChange.message?.id) {
-								try {
-									const fullMessage = await fetchFullMessage(
-										credentials,
-										pushNotification.emailAddress!,
-										labelChange.message.id,
-									);
+					const subject = extractSubject(enrichedMessage);
+					const bodyText = extractBody(enrichedMessage);
+					const from = extractFrom(enrichedMessage);
+					const to = extractTo(enrichedMessage);
 
-									const enrichedMessage = await enrichMessageWithAttachments(
-										credentials,
-										pushNotification.emailAddress!,
-										fullMessage,
-									);
-
-									const event: MessageLabelChangedEvent = {
-										type: 'messageLabelChanged',
-										emailAddress: pushNotification.emailAddress!,
-										historyId: pushNotification.historyId!,
-										message: enrichedMessage,
-										labelsRemoved: labelChange.labelIds,
-									};
-
-									if (ctx.db.messages && enrichedMessage.id) {
-										try {
-											const subject = extractSubject(enrichedMessage);
-											const body = extractBody(enrichedMessage);
-											const result = await ctx.db.messages.upsert(enrichedMessage.id, {
-												id: enrichedMessage.id,
-												threadId: enrichedMessage.threadId,
-												labelIds: enrichedMessage.labelIds,
-												snippet: enrichedMessage.snippet,
-												historyId: enrichedMessage.historyId,
-												internalDate: enrichedMessage.internalDate,
-												sizeEstimate: enrichedMessage.sizeEstimate,
-												payload: enrichedMessage.payload,
-												raw: enrichedMessage.raw,
-												subject,
-												body,
-												createdAt: new Date(),
-											});
-											console.log(`✅ Successfully stored message ${enrichedMessage.id} in resources table`);
-										} catch (error) {
-											console.error('❌ Failed to update message in database:', error);
-											if (error instanceof Error) {
-												console.error('Error message:', error.message);
-												console.error('Error stack:', error.stack);
-											}
-										}
-									} else {
-										console.warn('⚠️ ctx.db.messages is not available - database may not be configured');
-									}
-								} catch (error) {
-									console.warn(
-										`Failed to fetch full message ${labelChange.message.id}:`,
-										error,
-									);
-									if (ctx.db.messages && labelChange.message.id) {
-										try {
-											const subject = extractSubject(labelChange.message);
-											const body = extractBody(labelChange.message);
-											await ctx.db.messages.upsert(labelChange.message.id, {
-												id: labelChange.message.id,
-												threadId: labelChange.message.threadId,
-												labelIds: labelChange.message.labelIds,
-												snippet: labelChange.message.snippet,
-												historyId: labelChange.message.historyId,
-												internalDate: labelChange.message.internalDate,
-												sizeEstimate: labelChange.message.sizeEstimate,
-												payload: labelChange.message.payload,
-												raw: labelChange.message.raw,
-												subject,
-												body,
-												createdAt: new Date(),
-											});
-										} catch (dbError) {
-											console.warn(
-												'Failed to update message in database:',
-												dbError,
-											);
-										}
-									}
-								}
-							}
-						}
+					try {
+						await ctx.db.messages.upsert(enrichedMessage.id, {
+							id: enrichedMessage.id,
+							threadId: enrichedMessage.threadId,
+							labelIds: enrichedMessage.labelIds,
+							snippet: enrichedMessage.snippet,
+							historyId: enrichedMessage.historyId,
+							internalDate: enrichedMessage.internalDate,
+							sizeEstimate: enrichedMessage.sizeEstimate,
+							payload: enrichedMessage.payload,
+							raw: enrichedMessage.raw,
+							subject,
+							body: bodyText,
+							from,
+							to,
+							createdAt: new Date(),
+						});
+					} catch (dbError) {
+						console.error(`❌ Failed to update message ${enrichedMessage.id} in database:`, dbError);
+						throw dbError;
 					}
+				} catch (error) {
+					console.warn(`Failed to process message ${messageId}:`, error);
 				}
 			}
 
