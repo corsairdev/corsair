@@ -1,3 +1,5 @@
+import type { SlackReactionName } from './reactions';
+
 type ResponseMetadata = {
 	next_cursor?: string;
 	messages?: string[];
@@ -352,6 +354,222 @@ export type StarsListResponse = SlackResponse & {
 		date_create?: number;
 	}>;
 	paging?: Paging;
+};
+
+export type SlackEndpointInputs = {
+	channelsArchive: { channel: string };
+	channelsClose: { channel: string };
+	channelsCreate: { name: string; is_private?: boolean; team_id?: string };
+	channelsGet: {
+		channel: string;
+		include_locale?: boolean;
+		include_num_members?: boolean;
+	};
+	channelsList: {
+		exclude_archived?: boolean;
+		types?: string;
+		team_id?: string;
+		cursor?: string;
+		limit?: number;
+	};
+	channelsGetHistory: {
+		channel: string;
+		latest?: string;
+		oldest?: string;
+		inclusive?: boolean;
+		include_all_metadata?: boolean;
+		cursor?: string;
+		limit?: number;
+	};
+	channelsInvite: { channel: string; users: string; force?: boolean };
+	channelsJoin: { channel: string };
+	channelsKick: { channel: string; user: string };
+	channelsLeave: { channel: string };
+	channelsGetMembers: { channel: string; cursor?: string; limit?: number };
+	channelsOpen: {
+		channel?: string;
+		users?: string;
+		prevent_creation?: boolean;
+		return_im?: boolean;
+	};
+	channelsRename: { channel: string; name: string };
+	channelsGetReplies: {
+		channel: string;
+		ts: string;
+		latest?: string;
+		oldest?: string;
+		inclusive?: boolean;
+		include_all_metadata?: boolean;
+		cursor?: string;
+		limit?: number;
+	};
+	channelsSetPurpose: { channel: string; purpose: string };
+	channelsSetTopic: { channel: string; topic: string };
+	channelsUnarchive: { channel: string };
+	usersGet: { user: string; include_locale?: boolean };
+	usersList: {
+		include_locale?: boolean;
+		team_id?: string;
+		cursor?: string;
+		limit?: number;
+	};
+	usersGetProfile: { user?: string; include_labels?: boolean };
+	usersGetPresence: { user?: string };
+	usersUpdateProfile: {
+		profile?: Record<string, unknown>;
+		user?: string;
+		name?: string;
+		value?: string;
+	};
+	userGroupsCreate: {
+		name: string;
+		channels?: string;
+		description?: string;
+		handle?: string;
+		include_count?: boolean;
+		team_id?: string;
+	};
+	userGroupsDisable: {
+		userGroup: string;
+		include_count?: boolean;
+		team_id?: string;
+	};
+	userGroupsEnable: {
+		userGroup: string;
+		include_count?: boolean;
+		team_id?: string;
+	};
+	userGroupsList: {
+		include_count?: boolean;
+		include_disabled?: boolean;
+		include_users?: boolean;
+		team_id?: string;
+	};
+	userGroupsUpdate: {
+		userGroup: string;
+		name?: string;
+		channels?: string;
+		description?: string;
+		handle?: string;
+		include_count?: boolean;
+		team_id?: string;
+	};
+	filesGet: {
+		file: string;
+		cursor?: string;
+		limit?: number;
+		page?: number;
+		count?: number;
+	};
+	filesList: {
+		channel?: string;
+		user?: string;
+		types?: string;
+		ts_from?: string;
+		ts_to?: string;
+		show_files_hidden_by_limit?: boolean;
+		team_id?: string;
+		page?: number;
+		count?: number;
+	};
+	filesUpload: {
+		channels?: string;
+		content?: string;
+		file?: unknown;
+		filename?: string;
+		filetype?: string;
+		initial_comment?: string;
+		thread_ts?: string;
+		title?: string;
+	};
+	messagesDelete: { channel: string; ts: string; as_user?: boolean };
+	messagesGetPermalink: { channel: string; message_ts: string };
+	messagesSearch: {
+		query: string;
+		sort?: 'score' | 'timestamp';
+		sort_dir?: 'asc' | 'desc';
+		highlight?: boolean;
+		team_id?: string;
+		cursor?: string;
+		limit?: number;
+		page?: number;
+		count?: number;
+	};
+	postMessage: {
+		channel: string;
+		text?: string;
+		blocks?: Array<{ type: string; [key: string]: unknown }>;
+		attachments?: Array<{ [key: string]: unknown }>;
+		thread_ts?: string;
+		reply_broadcast?: boolean;
+		parse?: 'full' | 'none';
+		link_names?: boolean;
+		unfurl_links?: boolean;
+		unfurl_media?: boolean;
+		mrkdwn?: boolean;
+		as_user?: boolean;
+		icon_emoji?: string;
+		icon_url?: string;
+		username?: string;
+		metadata?: {
+			event_type: string;
+			event_payload: Record<string, unknown>;
+		};
+	};
+	messagesUpdate: {
+		channel: string;
+		ts: string;
+		text?: string;
+		blocks?: Array<{ type: string; [key: string]: unknown }>;
+		attachments?: Array<{ [key: string]: unknown }>;
+		parse?: 'full' | 'none';
+		link_names?: boolean;
+		as_user?: boolean;
+		file_ids?: string[];
+		reply_broadcast?: boolean;
+		metadata?: {
+			event_type: string;
+			event_payload: Record<string, unknown>;
+		};
+	};
+	reactionsAdd: {
+		channel: string;
+		timestamp: string;
+		name: SlackReactionName;
+	};
+	reactionsGet: {
+		channel?: string;
+		timestamp?: string;
+		file?: string;
+		file_comment?: string;
+		full?: boolean;
+	};
+	reactionsRemove: {
+		name: SlackReactionName;
+		channel?: string;
+		timestamp?: string;
+		file?: string;
+		file_comment?: string;
+	};
+	starsAdd: {
+		channel?: string;
+		timestamp?: string;
+		file?: string;
+		file_comment?: string;
+	};
+	starsRemove: {
+		channel?: string;
+		timestamp?: string;
+		file?: string;
+		file_comment?: string;
+	};
+	starsList: {
+		team_id?: string;
+		cursor?: string;
+		limit?: number;
+		page?: number;
+		count?: number;
+	};
 };
 
 export type SlackEndpointOutputs = {

@@ -1,4 +1,5 @@
 import type { CorsairErrorHandler } from '../../core/errors';
+import { ApiError } from '../../async-core/ApiError';
 
 export const errorHandlers = {
 	RATE_LIMIT_ERROR: {
@@ -13,11 +14,14 @@ export const errorHandlers = {
 		handler: async (error, context) => {
 			console.log(`[SLACK:${context.operation}] Rate limit exceeded`);
 
+			let retryAfterMs: number | undefined;
+			if (error instanceof ApiError && error.retryAfter) {
+				retryAfterMs = error.retryAfter;
+			}
+
 			return {
 				maxRetries: 5,
-				// slack sends a retryAfter in the headers if you get rate limited
-				// we need to get the milliseconds and then put them into this:
-				headersRetryAfterMs: 1000,
+				headersRetryAfterMs: retryAfterMs,
 			};
 		},
 	},

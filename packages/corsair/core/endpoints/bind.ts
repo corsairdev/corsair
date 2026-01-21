@@ -79,29 +79,34 @@ export function bindEndpointsRecursively({
 								);
 
 								let delayMs: number;
-								switch (retryStrategy.retryStrategy) {
-									case 'exponential_backoff':
-										delayMs = Math.pow(2, newAttempt - 1) * 1000;
-										break;
-									case 'exponential_backoff_jitter':
-										const baseDelay = Math.pow(2, newAttempt - 1) * 1000;
-										const jitter = (Math.random() - 0.5) * 1000; // ±0.5s
-										delayMs = Math.max(0, baseDelay + jitter);
-										break;
-									case 'linear_1s':
-										delayMs = 1000;
-										break;
-									case 'linear_2s':
-										delayMs = 2000;
-										break;
-									case 'linear_3s':
-										delayMs = 3000;
-										break;
-									case 'linear_4s':
-										delayMs = 4000;
-										break;
-									default:
-										break;
+								if (retryStrategy.headersRetryAfterMs) {
+									delayMs = retryStrategy.headersRetryAfterMs;
+								} else {
+									switch (retryStrategy.retryStrategy) {
+										case 'exponential_backoff':
+											delayMs = Math.pow(2, newAttempt - 1) * 1000;
+											break;
+										case 'exponential_backoff_jitter':
+											const baseDelay = Math.pow(2, newAttempt - 1) * 1000;
+											const jitter = (Math.random() - 0.5) * 1000;
+											delayMs = Math.max(0, baseDelay + jitter);
+											break;
+										case 'linear_1s':
+											delayMs = 1000;
+											break;
+										case 'linear_2s':
+											delayMs = 2000;
+											break;
+										case 'linear_3s':
+											delayMs = 3000;
+											break;
+										case 'linear_4s':
+											delayMs = 4000;
+											break;
+										default:
+											delayMs = 1000;
+											break;
+									}
 								}
 
 								await new Promise((resolve) => setTimeout(resolve, delayMs));
