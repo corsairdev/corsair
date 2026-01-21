@@ -10,6 +10,7 @@ import type {
 	CorsairEndpoint,
 	EndpointTree,
 } from '../endpoints';
+import type { CorsairErrorHandler } from '../errors';
 import type {
 	CorsairWebhook,
 	CorsairWebhookHandler,
@@ -183,6 +184,8 @@ export type CorsairPlugin<
 	 * should handle an incoming request. Acts as a first-level filter.
 	 */
 	pluginWebhookMatcher?: CorsairWebhookMatcher;
+	/** Plugin-specific error handlers */
+	errorHandlers?: CorsairErrorHandler;
 };
 
 /**
@@ -216,4 +219,6 @@ export type CorsairIntegration<Plugins extends readonly CorsairPlugin[]> = {
 	plugins: Plugins;
 	/** If true, enables tenant-scoped access via `withTenant()` */
 	multiTenancy?: boolean;
+	/** Root-level error handlers that apply when plugin-specific handlers are not defined */
+	errorHandlers?: CorsairErrorHandler;
 };

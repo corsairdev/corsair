@@ -13,63 +13,83 @@ export const corsair = createCorsair({
 			credentials: {
 				botToken: process.env.SLACK_BOT_TOKEN ?? 'dev-token',
 			},
+			errorHandlers: {
+				DEFAULT: {
+					match: () => true,
+					handler: async () => {
+						console.log('in default');
+
+						return {
+							maxRetries: 2,
+						};
+					},
+				},
+			},
 		}),
 		linear({
 			authType: 'api_key',
 			credentials: {
 				apiKey: process.env.LINEAR_API_KEY ?? 'dev-token',
 			},
-			// onError: {
-			// 	429: () => {},
-			// 	500: () => {},
-			// 	whatever rate limit error is
-			// 	whatever auth error is
-			// },
+			// No plugin-specific error handlers defined, so will fall back to root handlers
 		}),
 	],
-	// onError: {
-	// 	429: () => {},
-	// 	500: () => {},
-	// 	whatever rate limit error is
-	// 	whatever auth error is
-	// },
+	errorHandlers: {
+		// RATE_LIMIT_ERROR: {
+		// 	match: (error: Error, context) => {
+		// 		const errorMessage = error.message.toLowerCase();
+		// 		return (
+		// 			errorMessage.includes('rate_limited') ||
+		// 			errorMessage.includes('ratelimited') ||
+		// 			error.message.includes('429')
+		// 		);
+		// 	},
+		// 	handler: async (error: Error, context) => {
+		// 		console.log(
+		// 			`[SLACK:${context.operation}] Rate limit exceeded - ROOT LEVEL`,
+		// 		);
+		// 		return {
+		// 			maxRetries: 5,
+		// 		};
+		// 	},
+		// },
+	},
 });
 
 /**
-
-corsair is built with:
--> sensible default values
--> ergonomic function definitions
--> intuitive documentation
--> build it with 10 lines of code and trust the defaults or customize every detail 
-
-api handling order:
-
-1. before hook
-
-try {
-	-> 2. main action
-} catch (e) {
-	3. on error
-		-> split logic by error type
-			-> rate limit?
-			-> auth error?
-			-> default error handling?
-}
-
-4. log
-
-5. after hook
-
-
-
-main()
-
-onError({
-	rateLimit: () => {}
-
-})
-
-
-
+ * Corsair Error Handling Demo - Function-Based Approach
+ *
+ * This example shows the complete error handling flow using the match/handler pattern:
+ *
+ * 1. API calls are made through plugin endpoints
+ * 2. If an error occurs, each error handler's match function is checked in order:
+ *    - Plugin-specific error handlers (checked first)
+ *    - Root-level error handlers (fallback)
+ *    - System default handler (always matches)
+ * 3. The first matching error handler is executed
+ * 4. Error handlers return retry strategies
+ * 5. Based on the strategy, the system can retry the operation
+ *
+ * Benefits of the new approach:
+ * - No more repetitive try/catch blocks in endpoint code
+ * - Each error handler includes its own matching logic (like webhooks)
+ * - Plugin-specific handlers take priority over root handlers
+ * - Easy to add new error handlers without modifying core code
+ * - Strongly typed with minimal duplication
+ *
+ * Example usage:
+ * ```
+ * const client = corsair.withTenant('tenant-123');
+ *
+ * try {
+ *   // This will automatically use error handling if the call fails
+ *   const result = await client.slack.api.channels.create({
+ *     name: 'new-channel'
+ *   });
+ * } catch (error) {
+ *   // Error has been processed by the error handling system
+ *   // Retry strategies are logged automatically
+ *   console.log('Final error after handling:', error);
+ * }
+ * ```
  */
