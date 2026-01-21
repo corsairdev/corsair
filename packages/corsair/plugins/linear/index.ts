@@ -2,6 +2,7 @@ import type {
 	BindEndpoints,
 	BindWebhooks,
 	CorsairEndpoint,
+	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
 	CorsairWebhook,
@@ -31,6 +32,7 @@ export type LinearPluginOptions = {
 	credentials: LinearCredentials;
 	hooks?: LinearPlugin['hooks'] | undefined;
 	webhookHooks?: LinearPlugin['webhookHooks'];
+	errorHandlers?: CorsairErrorHandler;
 };
 
 export type LinearContext = CorsairPluginContext<
@@ -228,5 +230,6 @@ export function linear(options: LinearPluginOptions) {
 		webhookHooks: options.webhookHooks,
 		endpoints: linearEndpointsNested,
 		webhooks: linearWebhooksNested,
+		errorHandlers: options.errorHandlers,
 	} satisfies LinearPlugin;
 }

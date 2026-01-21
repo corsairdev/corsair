@@ -3,6 +3,7 @@ import type {
 	BindEndpoints,
 	BindWebhooks,
 	CorsairEndpoint,
+	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
 	CorsairWebhook,
@@ -40,6 +41,7 @@ import {
 } from './webhooks';
 
 export type { SlackReactionName } from './endpoints';
+import { errorHandlers } from './error-handlers';
 
 export type SlackContext = CorsairPluginContext<
 	'slack',
@@ -485,10 +487,7 @@ export type SlackPluginOptions = {
 
 	webhookHooks?: SlackPlugin['webhookHooks'] | undefined;
 
-	errorHandler?: {
-		default: () => {};
-		429: () => {};
-	};
+	errorHandlers?: CorsairErrorHandler;
 };
 
 export type SlackPlugin = CorsairPlugin<
@@ -510,6 +509,10 @@ export function slack(options: SlackPluginOptions) {
 		webhooks: slackWebhooksNested,
 		pluginWebhookMatcher: (request) => {
 			return false;
+		},
+		errorHandlers: {
+			...errorHandlers,
+			...options.errorHandlers,
 		},
 	} satisfies SlackPlugin;
 }
