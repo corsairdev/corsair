@@ -26,6 +26,7 @@ import type {
 	ProjectUpdatedEvent,
 } from './webhooks';
 import { CommentWebhooks, IssueWebhooks, ProjectWebhooks } from './webhooks';
+import { errorHandlers } from './error-handlers';
 
 export type LinearPluginOptions = {
 	authType: AuthTypes;
@@ -230,6 +231,9 @@ export function linear(options: LinearPluginOptions) {
 		webhookHooks: options.webhookHooks,
 		endpoints: linearEndpointsNested,
 		webhooks: linearWebhooksNested,
-		errorHandlers: options.errorHandlers,
+		errorHandlers: {
+			...errorHandlers,
+			...options.errorHandlers,
+		},
 	} satisfies LinearPlugin;
 }
