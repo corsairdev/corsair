@@ -84,9 +84,10 @@ export type {
 	CorsairErrorHandler,
 	ErrorContext,
 	ErrorHandler,
-	ErrorMatcher,
-	RetryStrategy,
 	ErrorHandlerAndMatchFunction,
+	ErrorMatcher,
+	RetryStrategies,
+	RetryStrategy,
 } from './errors';
 // Plugin types
 export type {
