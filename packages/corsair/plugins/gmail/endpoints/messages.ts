@@ -19,6 +19,20 @@ function extractSubject(message: Message): string | undefined {
 	return getHeaderValue(message.payload, 'Subject');
 }
 
+function extractFrom(message: Message): string | undefined {
+	if (!message.payload) {
+		return undefined;
+	}
+	return getHeaderValue(message.payload, 'From');
+}
+
+function extractTo(message: Message): string | undefined {
+	if (!message.payload) {
+		return undefined;
+	}
+	return getHeaderValue(message.payload, 'To');
+}
+
 function extractBodyText(part: MessagePart | undefined): string | undefined {
 	if (!part) {
 		return undefined;
@@ -146,6 +160,8 @@ export const get: GmailEndpoints['messagesGet'] = async (ctx, input) => {
 			try {
 				const subject = extractSubject(result);
 				const body = extractBody(result);
+				const from = extractFrom(result);
+				const to = extractTo(result);
 				await ctx.db.messages.upsert(result.id, {
 					id: result.id,
 					threadId: result.threadId,
@@ -158,6 +174,8 @@ export const get: GmailEndpoints['messagesGet'] = async (ctx, input) => {
 					raw: result.raw,
 					subject,
 					body,
+					from,
+					to,
 					createdAt: new Date(),
 				});
 			} catch (error) {
@@ -206,6 +224,8 @@ export const send: GmailEndpoints['messagesSend'] = async (ctx, input) => {
 			try {
 				const subject = extractSubject(result);
 				const body = extractBody(result);
+				const from = extractFrom(result);
+				const to = extractTo(result);
 				await ctx.db.messages.upsert(result.id, {
 					id: result.id,
 					threadId: result.threadId,
@@ -218,6 +238,8 @@ export const send: GmailEndpoints['messagesSend'] = async (ctx, input) => {
 					raw: result.raw,
 					subject,
 					body,
+					from,
+					to,
 					createdAt: new Date(),
 				});
 			} catch (error) {
@@ -309,6 +331,8 @@ export const modify: GmailEndpoints['messagesModify'] = async (ctx, input) => {
 			try {
 				const subject = extractSubject(result);
 				const body = extractBody(result);
+				const from = extractFrom(result);
+				const to = extractTo(result);
 				await ctx.db.messages.upsert(result.id, {
 					id: result.id,
 					threadId: result.threadId,
@@ -321,6 +345,8 @@ export const modify: GmailEndpoints['messagesModify'] = async (ctx, input) => {
 					raw: result.raw,
 					subject,
 					body,
+					from,
+					to,
 					createdAt: new Date(),
 				});
 			} catch (error) {

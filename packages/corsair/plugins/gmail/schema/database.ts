@@ -34,6 +34,8 @@ export const GmailMessage = z.object({
 	raw: z.string().optional(),
 	subject: z.string().optional(),
 	body: z.string().optional(),
+	from: z.string().optional(),
+	to: z.string().optional(),
 	createdAt: z.coerce.date().optional(),
 });
 
