@@ -35,24 +35,24 @@ export const corsair = createCorsair({
 		}),
 	],
 	errorHandlers: {
-		// RATE_LIMIT_ERROR: {
-		// 	match: (error: Error, context) => {
-		// 		const errorMessage = error.message.toLowerCase();
-		// 		return (
-		// 			errorMessage.includes('rate_limited') ||
-		// 			errorMessage.includes('ratelimited') ||
-		// 			error.message.includes('429')
-		// 		);
-		// 	},
-		// 	handler: async (error: Error, context) => {
-		// 		console.log(
-		// 			`[SLACK:${context.operation}] Rate limit exceeded - ROOT LEVEL`,
-		// 		);
-		// 		return {
-		// 			maxRetries: 5,
-		// 		};
-		// 	},
-		// },
+		RATE_LIMIT_ERROR: {
+			match: (error: Error, context) => {
+				const errorMessage = error.message.toLowerCase();
+				return (
+					errorMessage.includes('rate_limited') ||
+					errorMessage.includes('ratelimited') ||
+					error.message.includes('429')
+				);
+			},
+			handler: async (error: Error, context) => {
+				console.log(
+					`[SLACK:${context.operation}] Rate limit exceeded - ROOT LEVEL`,
+				);
+				return {
+					maxRetries: 5,
+				};
+			},
+		},
 	},
 });
 
