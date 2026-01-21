@@ -7,7 +7,7 @@ import type {
 	PluginServiceClients,
 } from '../../db/orm';
 import type { BindEndpoints, EndpointTree } from '../endpoints';
-import { bindEndpointsRecursively } from '../endpoints/utils';
+import { bindEndpointsRecursively } from '../endpoints/bind';
 import type { CorsairErrorHandler } from '../errors';
 import type { CorsairPlugin } from '../plugins';
 import type { BindWebhooks, RawWebhookRequest, WebhookTree } from '../webhooks';
