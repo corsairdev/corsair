@@ -59,7 +59,9 @@
     }
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
     "build": "tsup && tsc -p tsconfig.build.json",
     "build:watch": "tsup --watch",
     "typecheck": "tsc --noEmit",
