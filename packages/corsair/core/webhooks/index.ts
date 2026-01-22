@@ -129,7 +129,7 @@ export type CorsairWebhook<
  * ```
  */
 export type WebhookTree = {
-	[key: string]: CorsairWebhook<any, any, any> | WebhookTree;
+	[key: string]: CorsairWebhook | WebhookTree;
 };
 
 // ─────────────────────────────────────────────────────────────────────────────

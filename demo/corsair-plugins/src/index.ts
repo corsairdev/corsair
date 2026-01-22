@@ -9,9 +9,21 @@ export const corsair = createCorsair({
 	database: drizzleAdapter(db, { provider: 'pg', schema }),
 	plugins: [
 		slack({
-			authType: 'bot_token',
+			authType: 'api_key',
 			credentials: {
 				botToken: process.env.SLACK_BOT_TOKEN ?? 'dev-token',
+			},
+			hooks: {
+				messages: {
+					post: {
+						before(ctx, args) {
+							return {
+								ctx,
+								args,
+							};
+						},
+					},
+				},
 			},
 			errorHandlers: {
 				RATE_LIMIT_ERROR: {

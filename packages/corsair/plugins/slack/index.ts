@@ -1,4 +1,3 @@
-import type { AuthTypes } from '../../constants';
 import type {
 	BindEndpoints,
 	BindWebhooks,
@@ -42,6 +41,7 @@ import {
 
 export type { SlackReactionName } from './endpoints';
 
+import type { PickAuth } from '../../core/constants';
 import { errorHandlers } from './error-handlers';
 
 export type SlackContext = CorsairPluginContext<
@@ -480,7 +480,7 @@ const slackWebhooksNested = {
 } as const;
 
 export type SlackPluginOptions = {
-	authType: AuthTypes;
+	authType: PickAuth<'api_key' | 'oauth_2'>;
 
 	credentials: SlackCredentials;
 

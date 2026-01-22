@@ -1,5 +1,6 @@
 import type { CorsairErrorHandler } from '../errors';
 import { handleCorsairError } from '../errors/handler';
+import type { EndpointHooks } from '../plugins';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Endpoint Utilities
@@ -43,31 +44,32 @@ export function bindEndpointsRecursively({
 	currentPath: string[];
 }): void {
 	for (const [key, value] of Object.entries(endpoints)) {
+		// we have to retype this now because it's nested webhooks
 		const nodeHooks = hooks?.[key] as Record<string, unknown> | undefined;
 
 		if (isEndpoint(value)) {
-			// It's an endpoint function - bind it with context and hooks
-			const endpointHooks = nodeHooks as
-				| { before?: Function; after?: Function }
-				| undefined;
+			// it's an endpoint function - bind it with context and hooks
+			const endpointHooks = nodeHooks as EndpointHooks | undefined;
 
 			const operationPath = [...currentPath, key].join('.');
 
-			const boundFn = (...args: unknown[]) => {
-				const call = async (attemptNumber: number) => {
+			const boundFn = (args: unknown) => {
+				const call = async (
+					attemptNumber: number,
+					callCtx: Record<string, unknown>,
+					callArgs: unknown,
+				) => {
 					try {
-						return await value(ctx, ...args);
+						return await value(callCtx, callArgs);
 					} catch (error) {
 						if (error instanceof Error) {
 							const retryStrategy = await handleCorsairError(
 								error,
 								pluginId,
 								operationPath,
-								args.length > 0 &&
-									typeof args[0] === 'object' &&
-									args[0] !== null
-									? (args[0] as Record<string, unknown>)
-									: { args },
+								typeof callArgs === 'object' && callArgs !== null
+									? (callArgs as Record<string, unknown>)
+									: { args: callArgs },
 								errorHandlers,
 							);
 
@@ -105,7 +107,7 @@ export function bindEndpointsRecursively({
 								}
 
 								await new Promise((resolve) => setTimeout(resolve, delayMs));
-								await call(newAttempt);
+								await call(newAttempt, callCtx, callArgs);
 
 								console.log(
 									`[corsair:${pluginId}:${operationPath}] Retry strategy:`,
@@ -118,20 +120,22 @@ export function bindEndpointsRecursively({
 				};
 
 				if (!endpointHooks?.before && !endpointHooks?.after) {
-					return call(0);
+					return call(0, ctx, args);
 				}
 
 				return (async () => {
-					await endpointHooks.before?.(ctx, ...args);
-					const res = await call(0);
-					await endpointHooks.after?.(ctx, res);
+					const { ctx: updatedCtx, args: updatedArgs } = endpointHooks.before
+						? await endpointHooks.before(ctx, args)
+						: { ctx, args };
+					const res = await call(0, updatedCtx, updatedArgs);
+					await endpointHooks.after?.(updatedCtx, res);
 					return res;
 				})();
 			};
 
 			tree[key] = boundFn;
 		} else if (value && typeof value === 'object') {
-			// It's a nested object - recurse into it
+			// it's a nested object - recurse into it
 			const nestedTree: Record<string, unknown> = {};
 
 			bindEndpointsRecursively({
