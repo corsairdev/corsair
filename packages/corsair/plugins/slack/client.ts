@@ -1,6 +1,7 @@
 import type { ApiRequestOptions } from '../../async-core/ApiRequestOptions';
 import type { OpenAPIConfig } from '../../async-core/OpenAPI';
 import { request } from '../../async-core/request';
+import type { RateLimitConfig } from '../../async-core/rate-limit';
 import { BaseWebhookHandler } from '../../async-core/webhook-handler';
 import { verifySlackSignature } from '../../async-core/webhook-utils';
 import type { SlackEventMap, SlackEventName } from './webhooks/types';
@@ -16,6 +17,16 @@ export class SlackAPIError extends Error {
 }
 
 const SLACK_API_BASE = 'https://slack.com/api';
+
+const SLACK_RATE_LIMIT_CONFIG: RateLimitConfig = {
+	enabled: true,
+	maxRetries: 3,
+	initialRetryDelay: 1000,
+	backoffMultiplier: 2,
+	headerNames: {
+		retryAfter: 'Retry-After',
+	},
+};
 
 export async function makeSlackRequest<T>(
 	endpoint: string,
@@ -53,7 +64,9 @@ export async function makeSlackRequest<T>(
 		query: method === 'GET' ? queryWithToken : undefined,
 	};
 
-	const response = await request<T>(config, requestOptions);
+	const response = await request<T>(config, requestOptions, {
+		rateLimitConfig: SLACK_RATE_LIMIT_CONFIG,
+	});
 
 	if (
 		response &&

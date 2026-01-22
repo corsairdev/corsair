@@ -32,19 +32,128 @@ describe('Error Handlers', () => {
 	});
 
 	describe('Slack Plugin Error Handlers', () => {
-		it('should handle RATE_LIMIT_ERROR', async () => {
-			const error = createMockApiError(429, 'rate_limited', 60);
+		describe('RATE_LIMIT_ERROR with retry-after headers', () => {
+			it('should extract retryAfter from ApiError and set headersRetryAfterMs', async () => {
+				const error = createMockApiError(429, 'rate_limited', 60);
 
-			const result = await handleCorsairError(
-				error,
-				'slack',
-				'channels.list',
-				{},
-				slackErrorHandlers,
-			);
+				const result = await handleCorsairError(
+					error,
+					'slack',
+					'channels.list',
+					{},
+					slackErrorHandlers,
+				);
 
-			expect(result.maxRetries).toBe(5);
-			expect(result.headersRetryAfterMs).toBe(60);
+				expect(result.maxRetries).toBe(5);
+				expect(result.headersRetryAfterMs).toBe(60);
+			});
+
+			it('should handle different retryAfter values', async () => {
+				const error1 = createMockApiError(429, 'rate_limited', 30);
+				const result1 = await handleCorsairError(
+					error1,
+					'slack',
+					'channels.list',
+					{},
+					slackErrorHandlers,
+				);
+				expect(result1.headersRetryAfterMs).toBe(30);
+
+				const error2 = createMockApiError(429, 'rate_limited', 120);
+				const result2 = await handleCorsairError(
+					error2,
+					'slack',
+					'channels.list',
+					{},
+					slackErrorHandlers,
+				);
+				expect(result2.headersRetryAfterMs).toBe(120);
+
+				const error3 = createMockApiError(429, 'rate_limited', 1);
+				const result3 = await handleCorsairError(
+					error3,
+					'slack',
+					'channels.list',
+					{},
+					slackErrorHandlers,
+				);
+				expect(result3.headersRetryAfterMs).toBe(1);
+			});
+
+			it('should set headersRetryAfterMs to undefined when retryAfter is not provided', async () => {
+				const error = createMockApiError(429, 'rate_limited');
+
+				const result = await handleCorsairError(
+					error,
+					'slack',
+					'channels.list',
+					{},
+					slackErrorHandlers,
+				);
+
+				expect(result.maxRetries).toBe(5);
+				expect(result.headersRetryAfterMs).toBeUndefined();
+			});
+
+			it('should not set headersRetryAfterMs when error is not an ApiError instance', async () => {
+				const error = new Error('rate_limited');
+
+				const result = await handleCorsairError(
+					error,
+					'slack',
+					'channels.list',
+					{},
+					slackErrorHandlers,
+				);
+
+				expect(result.maxRetries).toBe(5);
+				expect(result.headersRetryAfterMs).toBeUndefined();
+			});
+
+			it('should handle rate limit error with "ratelimited" message', async () => {
+				const error = createMockApiError(429, 'ratelimited', 45);
+
+				const result = await handleCorsairError(
+					error,
+					'slack',
+					'channels.list',
+					{},
+					slackErrorHandlers,
+				);
+
+				expect(result.maxRetries).toBe(5);
+				expect(result.headersRetryAfterMs).toBe(45);
+			});
+
+			it('should handle rate limit error with "429" in message', async () => {
+				const error = createMockApiError(429, 'Error 429: Too many requests', 90);
+
+				const result = await handleCorsairError(
+					error,
+					'slack',
+					'channels.list',
+					{},
+					slackErrorHandlers,
+				);
+
+				expect(result.maxRetries).toBe(5);
+				expect(result.headersRetryAfterMs).toBe(90);
+			});
+
+			it('should handle rate limit error with zero retryAfter', async () => {
+				const error = createMockApiError(429, 'rate_limited', 0);
+
+				const result = await handleCorsairError(
+					error,
+					'slack',
+					'channels.list',
+					{},
+					slackErrorHandlers,
+				);
+
+				expect(result.maxRetries).toBe(5);
+				expect(result.headersRetryAfterMs).toBe(0);
+			});
 		});
 
 		it('should handle AUTH_ERROR', async () => {
