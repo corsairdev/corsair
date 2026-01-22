@@ -84,6 +84,54 @@ export const errorHandlers = {
 			};
 		},
 	},
+	PERMISSION_ERROR: {
+		match: (error, context) => {
+			if (error instanceof ApiError && error.status === 403) {
+				return true;
+			}
+			const errorMessage = error.message.toLowerCase();
+			return (
+				errorMessage.includes('permission denied') ||
+				errorMessage.includes('forbidden') ||
+				errorMessage.includes('access denied') ||
+				errorMessage.includes('insufficient permissions') ||
+				errorMessage.includes('unauthorized access') ||
+				errorMessage.includes('not authorized')
+			);
+		},
+		handler: async (error, context) => {
+			console.warn(
+				`[LINEAR:${context.operation}] Permission denied: ${error.message}`,
+			);
+
+			return {
+				maxRetries: 0,
+			};
+		},
+	},
+	NETWORK_ERROR: {
+		match: (error, context) => {
+			const errorMessage = error.message.toLowerCase();
+			return (
+				errorMessage.includes('network') ||
+				errorMessage.includes('connection') ||
+				errorMessage.includes('econnrefused') ||
+				errorMessage.includes('enotfound') ||
+				errorMessage.includes('etimedout') ||
+				errorMessage.includes('fetch failed') ||
+				errorMessage.includes('network error')
+			);
+		},
+		handler: async (error, context) => {
+			console.warn(
+				`[LINEAR:${context.operation}] Network error: ${error.message}`,
+			);
+
+			return {
+				maxRetries: 3,
+			};
+		},
+	},
 	VALIDATION_ERROR: {
 		match: (error, context) => {
 			if (error instanceof ApiError && error.status === 400) {
@@ -102,6 +150,20 @@ export const errorHandlers = {
 		handler: async (error, context) => {
 			console.warn(
 				`[LINEAR:${context.operation}] Validation error: ${error.message}`,
+			);
+
+			return {
+				maxRetries: 0,
+			};
+		},
+	},
+	DEFAULT: {
+		match: (error, context) => {
+			return true;
+		},
+		handler: async (error, context) => {
+			console.error(
+				`[LINEAR:${context.operation}] Unhandled error: ${error.message}`,
 			);
 
 			return {
