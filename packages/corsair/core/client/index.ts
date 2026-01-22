@@ -391,12 +391,12 @@ export function buildCorsairClient<
 
 		if (Object.keys(webhooks).length > 0) {
 			const boundWebhooks: Record<string, unknown> = {};
-			bindWebhooksRecursively(
+			bindWebhooksRecursively({
 				webhooks,
-				webhookHooks,
-				ctxForPlugin,
-				boundWebhooks,
-			);
+				hooks: webhookHooks,
+				ctx: ctxForPlugin,
+				webhooksTree: boundWebhooks,
+			});
 			apiUnsafe[plugin.id]!.webhooks = boundWebhooks;
 
 			// Only expose pluginWebhookMatcher if the plugin has a pluginWebhookMatcher defined

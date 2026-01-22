@@ -91,9 +91,12 @@ export type {
 } from './errors';
 // Plugin types
 export type {
+	BeforeHookResult,
 	CorsairIntegration,
 	CorsairPlugin,
 	CorsairPluginContext,
+	EndpointHooks,
+	WebhookHooks,
 } from './plugins';
 
 // Utility types

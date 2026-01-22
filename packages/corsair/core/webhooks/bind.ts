@@ -1,4 +1,4 @@
-import type { BoundWebhook } from './index';
+import type { WebhookHooks } from '../plugins';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Webhook Utilities
@@ -31,51 +31,58 @@ export function isWebhook(
  * @param ctx - The context to bind to webhook handlers
  * @param webhooksTree - The output tree to populate with bound webhooks
  */
-export function bindWebhooksRecursively(
-	webhooks: Record<string, unknown>,
-	hooks: Record<string, unknown> | undefined,
-	ctx: Record<string, unknown>,
-	webhooksTree: Record<string, unknown>,
-): void {
+export function bindWebhooksRecursively({
+	webhooks,
+	hooks,
+	ctx,
+	webhooksTree,
+}: {
+	webhooks: Record<string, unknown>;
+	hooks: Record<string, unknown> | undefined;
+	ctx: Record<string, unknown>;
+	webhooksTree: Record<string, unknown>;
+}): void {
 	for (const [key, value] of Object.entries(webhooks)) {
+		// we have to retype this now because it's nested webhooks
 		const nodeHooks = hooks?.[key] as Record<string, unknown> | undefined;
 
 		if (isWebhook(value)) {
-			// It's a webhook object with match and handler - bind the handler with context
-			const webhookHooks = nodeHooks as
-				| { before?: Function; after?: Function }
-				| undefined;
+			// it's a webhook object with match and handler - bind the handler with context
+			const webhookHooks = nodeHooks as WebhookHooks | undefined;
 
-			const boundHandler = (...args: unknown[]) => {
-				const call = () => value.handler(ctx, ...args);
+			const boundHandler = (request: unknown) => {
+				const call = (callCtx: Record<string, unknown>, callRequest: unknown) =>
+					value.handler(callCtx, callRequest);
 
 				if (!webhookHooks?.before && !webhookHooks?.after) {
-					return call();
+					return call(ctx, request);
 				}
 
 				return (async () => {
-					await webhookHooks.before?.(ctx, ...args);
-					const res = await call();
-					await webhookHooks.after?.(ctx, res);
+					const { ctx: updatedCtx, args: updatedRequest } = webhookHooks.before
+						? await webhookHooks.before(ctx, request)
+						: { ctx, args: request };
+					const res = await call(updatedCtx, updatedRequest);
+					await webhookHooks.after?.(updatedCtx, res);
 					return res;
 				})();
 			};
 
-			// Return the bound webhook with both match and bound handler
+			// return the bound webhook with both match and bound handler
 			webhooksTree[key] = {
 				match: value.match,
 				handler: boundHandler,
-			} as BoundWebhook;
+			};
 		} else if (value && typeof value === 'object') {
-			// It's a nested object - recurse into it
+			// it's a nested object - recurse into it
 			const nestedWebhooksTree: Record<string, unknown> = {};
 
-			bindWebhooksRecursively(
-				value as Record<string, unknown>,
-				nodeHooks as Record<string, unknown> | undefined,
+			bindWebhooksRecursively({
+				webhooks: value as Record<string, unknown>,
+				hooks: nodeHooks as Record<string, unknown> | undefined,
 				ctx,
-				nestedWebhooksTree,
-			);
+				webhooksTree: nestedWebhooksTree,
+			});
 
 			webhooksTree[key] = nestedWebhooksTree;
 		}
