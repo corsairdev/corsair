@@ -4,6 +4,9 @@ import { ApiError } from '../../async-core/ApiError';
 export const errorHandlers = {
 	RATE_LIMIT_ERROR: {
 		match: (error, context) => {
+			if (error instanceof ApiError && error.status === 429) {
+				return true;
+			}
 			const errorMessage = error.message.toLowerCase();
 			return (
 				errorMessage.includes('rate_limited') ||
@@ -12,10 +15,8 @@ export const errorHandlers = {
 			);
 		},
 		handler: async (error, context) => {
-			console.log(`[SLACK:${context.operation}] Rate limit exceeded`);
-
 			let retryAfterMs: number | undefined;
-			if (error instanceof ApiError && error.retryAfter) {
+			if (error instanceof ApiError && error.retryAfter !== undefined) {
 				retryAfterMs = error.retryAfter;
 			}
 
