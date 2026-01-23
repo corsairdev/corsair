@@ -304,6 +304,9 @@ importers:
       '@types/node':
         specifier: ^24.10.1
         version: 24.10.1
+      dotenv:
+        specifier: ^17.2.3
+        version: 17.2.3
       jest:
         specifier: ^29.7.0
         version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))

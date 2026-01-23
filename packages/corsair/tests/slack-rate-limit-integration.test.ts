@@ -1,3 +1,4 @@
+import * as dotenv from 'dotenv';
 import { ApiError } from '../async-core/ApiError';
 import type { ApiRequestOptions } from '../async-core/ApiRequestOptions';
 import type { ApiResult } from '../async-core/ApiResult';
@@ -7,6 +8,8 @@ import { makeSlackRequest } from '../plugins/slack/client';
 import { errorHandlers } from '../plugins/slack/error-handlers';
 import { handleCorsairError } from '../core/errors/handler';
 import { extractRateLimitInfo, DEFAULT_RATE_LIMIT_CONFIG } from '../async-core/rate-limit';
+
+dotenv.config();
 
 const originalFetch = global.fetch;
 
@@ -300,25 +303,131 @@ describe('Slack Rate Limit Integration Tests', () => {
 
 			expect(result.headersRetryAfterMs).toBe(45000);
 		});
+
+		it(
+			'should handle rate limit with retry-after header using intercepted fetch (simulated real API)',
+			async () => {
+				const mockRetryAfterSeconds = 2;
+				let requestCount = 0;
+
+				global.fetch = jest.fn().mockImplementation((url: string) => {
+					requestCount++;
+					if (requestCount <= 2) {
+						return Promise.resolve(
+							new Response(
+								JSON.stringify({
+									ok: false,
+									error: 'rate_limited',
+								}),
+								{
+									status: 429,
+									statusText: 'Too Many Requests',
+									headers: {
+										'retry-after': String(mockRetryAfterSeconds),
+										'content-type': 'application/json',
+									},
+								},
+							),
+						);
+					}
+					return Promise.resolve(
+						new Response(
+							JSON.stringify({
+								ok: true,
+								channels: [],
+							}),
+							{
+								status: 200,
+								headers: {
+									'content-type': 'application/json',
+								},
+							},
+						),
+					);
+				});
+
+				const config: OpenAPIConfig = {
+					BASE: 'https://slack.com/api',
+					VERSION: '1.0.0',
+					WITH_CREDENTIALS: false,
+					CREDENTIALS: 'omit',
+					TOKEN: 'xoxb-test-token',
+				};
+
+				const requestOptions: ApiRequestOptions = {
+					method: 'GET',
+					url: 'conversations.list',
+					query: { token: 'xoxb-test-token' },
+				};
+
+				let capturedError: ApiError | null = null;
+
+				try {
+					await request(config, requestOptions, {
+						rateLimitConfig: {
+							enabled: true,
+							maxRetries: 1,
+							initialRetryDelay: 100,
+							backoffMultiplier: 2,
+							headerNames: {
+								retryAfter: 'retry-after',
+							},
+						},
+					});
+				} catch (error) {
+					capturedError = error as ApiError;
+				}
+
+				expect(capturedError).toBeInstanceOf(ApiError);
+				expect(capturedError?.status).toBe(429);
+				expect(capturedError?.retryAfter).toBe(mockRetryAfterSeconds * 1000);
+
+				const result = await handleCorsairError(
+					capturedError!,
+					'slack',
+					'conversations.list',
+					{},
+					errorHandlers,
+				);
+
+				expect(result.maxRetries).toBe(5);
+				expect(result.headersRetryAfterMs).toBe(mockRetryAfterSeconds * 1000);
+
+				expect(global.fetch).toHaveBeenCalled();
+				expect(requestCount).toBeGreaterThan(1);
+			},
+			10000,
+		);
 	});
 
 	describe('Real Slack API integration (requires SLACK_BOT_TOKEN)', () => {
-        const SLACK_BOT_TOKEN = process.env.SLACK_BOT_TOKEN;
-        console.log('SLACK_BOT_TOKEN', SLACK_BOT_TOKEN);
+		const SLACK_BOT_TOKEN = process.env.SLACK_BOT_TOKEN;
 
 		beforeAll(() => {
 			if (!SLACK_BOT_TOKEN) {
 				console.warn(
 					'SLACK_BOT_TOKEN not set. Skipping real API integration tests.',
 				);
+			} else {
+				console.log('SLACK_BOT_TOKEN is configured');
 			}
 		});
 
-		const testFn = SLACK_BOT_TOKEN
-			? it
-			: it.skip;
+		const testFn = SLACK_BOT_TOKEN ? it : it.skip;
 
-		testFn('should handle actual Slack rate limit response', async () => {
+		testFn(
+			'should handle actual Slack rate limit response and verify retry-after header',
+			async () => {
+				if (!SLACK_BOT_TOKEN) {
+					throw new Error('SLACK_BOT_TOKEN is required for this test');
+				}
+
+				const TEST_SLACK_CHANNEL = process.env.TEST_SLACK_CHANNEL || 'C0A3ZTB9X7X';
+				
+				if (!TEST_SLACK_CHANNEL) {
+					throw new Error('TEST_SLACK_CHANNEL is required for this test');
+				}
+
 				const config: OpenAPIConfig = {
 					BASE: 'https://slack.com/api',
 					VERSION: '1.0.0',
@@ -327,27 +436,84 @@ describe('Slack Rate Limit Integration Tests', () => {
 					TOKEN: SLACK_BOT_TOKEN,
 				};
 
-				const requestOptions: ApiRequestOptions = {
-					method: 'GET',
-					url: 'conversations.list',
-					query: { token: SLACK_BOT_TOKEN },
-				};
+				console.log('100% REAL TEST - No mocking, attempting to trigger actual Slack rate limits');
+				console.log(`Using chat.postMessage to channel ${TEST_SLACK_CHANNEL}`);
+				console.log('chat.postMessage has stricter rate limits than read endpoints...');
 
-				const requests: Promise<any>[] = [];
+				const requestsPerSecond = 20;
+				const durationSeconds = 60;
+				const totalRequests = requestsPerSecond * durationSeconds;
 
-				for (let i = 0; i < 1000; i++) {
-					requests.push(
-						request(config, requestOptions).catch((error) => error),
-					);
+				console.log(`Sending ${totalRequests} messages over ${durationSeconds} seconds (${requestsPerSecond} msg/sec)...`);
+				console.log('This should trigger rate limits as chat.postMessage is rate-limited per channel...');
+
+				const allRequests: Promise<any>[] = [];
+				let requestCount = 0;
+				const startTime = Date.now();
+
+				for (let second = 0; second < durationSeconds; second++) {
+					const secondStart = Date.now();
+					
+					for (let i = 0; i < requestsPerSecond; i++) {
+						requestCount++;
+						const messageText = `Rate limit test #${requestCount}`;
+						
+						allRequests.push(
+							request(
+								config,
+								{
+									method: 'POST',
+									url: 'chat.postMessage',
+									body: {
+										token: SLACK_BOT_TOKEN,
+										channel: TEST_SLACK_CHANNEL,
+										text: messageText,
+									},
+									mediaType: 'application/json',
+								},
+								{
+									rateLimitConfig: {
+										enabled: true,
+										maxRetries: 0,
+										initialRetryDelay: 1000,
+										backoffMultiplier: 2,
+										headerNames: {
+											retryAfter: 'retry-after',
+										},
+									},
+								},
+							).catch((error) => error),
+						);
+					}
+
+					if ((second + 1) % 10 === 0) {
+						console.log(`Sent ${requestCount} messages over ${second + 1} seconds...`);
+					}
+
+					const secondElapsed = Date.now() - secondStart;
+					if (secondElapsed < 1000 && second < durationSeconds - 1) {
+						await new Promise((resolve) => setTimeout(resolve, 1000 - secondElapsed));
+					}
 				}
 
-				const results = await Promise.all(requests);
+				console.log(`All ${requestCount} requests fired, waiting for responses...`);
+				const results = await Promise.all(allRequests);
+				const endTime = Date.now();
+
+				console.log(`All requests completed in ${endTime - startTime}ms`);
 
 				const rateLimitErrors = results.filter(
 					(error) => error instanceof ApiError && error.status === 429,
-                ) as ApiError[];
-            
-                console.log('rateLimitErrors', rateLimitErrors);
+				) as ApiError[];
+
+				const successCount = results.filter(
+					(result) => !(result instanceof ApiError),
+				).length;
+				const otherErrors = results.filter(
+					(error) => error instanceof ApiError && error.status !== 429,
+				) as ApiError[];
+
+				console.log(`Results: ${successCount} successful, ${rateLimitErrors.length} rate limit errors, ${otherErrors} other errors`);
 
 				if (rateLimitErrors.length > 0) {
 					const firstRateLimitError = rateLimitErrors[0];
@@ -355,9 +521,15 @@ describe('Slack Rate Limit Integration Tests', () => {
 						throw new Error('Expected rate limit error but got undefined');
 					}
 
-					console.log('Rate limit triggered!');
+					console.log('🎉 REAL RATE LIMIT TRIGGERED!');
+					console.log('Error status:', firstRateLimitError.status);
 					console.log('Retry-After (ms):', firstRateLimitError.retryAfter);
-					console.log('Retry-After (seconds):', firstRateLimitError.retryAfter ? firstRateLimitError.retryAfter / 1000 : 'N/A');
+					console.log(
+						'Retry-After (seconds):',
+						firstRateLimitError.retryAfter
+							? firstRateLimitError.retryAfter / 1000
+							: 'N/A',
+					);
 
 					expect(firstRateLimitError).toBeInstanceOf(ApiError);
 					expect(firstRateLimitError.status).toBe(429);
@@ -369,7 +541,7 @@ describe('Slack Rate Limit Integration Tests', () => {
 						const result = await handleCorsairError(
 							firstRateLimitError,
 							'slack',
-							'conversations.list',
+							'chat.postMessage',
 							{},
 							errorHandlers,
 						);
@@ -378,13 +550,63 @@ describe('Slack Rate Limit Integration Tests', () => {
 						expect(result.headersRetryAfterMs).toBe(
 							firstRateLimitError.retryAfter,
 						);
+
+						console.log('✓ Retry-after header extraction verified');
+						console.log('✓ Error handling verified');
+						console.log('✓ All rate limit handling verified successfully!');
+					} else {
+						console.warn(
+							'Rate limit error occurred but retry-after header was not extracted',
+						);
+						console.warn(
+							'This might indicate an issue with header extraction',
+						);
 					}
 				} else {
-					console.log('Rate limit not triggered in this test run');
-					console.log('Note: This test requires triggering a rate limit to verify header extraction');
+					console.warn(
+						`Rate limit not triggered even with ${requestCount} requests over ${durationSeconds} seconds.`,
+					);
+					console.warn(
+						'Your Slack workspace has extremely high rate limits.',
+					);
+					console.warn(
+						'Slack rate limits are typically:',
+					);
+					console.warn(
+						'  - Tier 1: 1 request per minute',
+					);
+					console.warn(
+						'  - Tier 2: 20 requests per minute',
+					);
+					console.warn(
+						'  - Tier 3: 50+ requests per minute',
+					);
+					console.warn(
+						'Your workspace appears to be on a very high tier.',
+					);
+					console.warn(
+						'To test rate limits, you could:',
+					);
+					console.warn(
+						'1. Create a new Slack workspace (often starts with lower limits)',
+					);
+					console.warn(
+						'2. Use a workspace that has been rate-limited recently',
+					);
+					console.warn(
+						'3. Contact Slack support about rate limit testing',
+					);
+					console.warn(
+						'4. The simulated test above verifies retry-after header functionality',
+					);
+					
+					throw new Error(
+						'Could not trigger real rate limits. Your workspace rate limits are too high for testing. ' +
+						'Consider using the simulated test or a workspace with lower limits.',
+					);
 				}
 			},
-			60000,
+			300000,
 		);
 	});
 });
