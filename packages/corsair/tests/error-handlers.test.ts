@@ -2,6 +2,7 @@ import { ApiError } from '../async-core/ApiError';
 import type { ApiRequestOptions } from '../async-core/ApiRequestOptions';
 import type { ApiResult } from '../async-core/ApiResult';
 import { handleCorsairError } from '../core/errors/handler';
+import type { ErrorContext } from '../core/errors';
 import { errorHandlers as slackErrorHandlers } from '../plugins/slack/error-handlers';
 import { errorHandlers as linearErrorHandlers } from '../plugins/linear/error-handlers';
 
@@ -371,6 +372,416 @@ describe('Error Handlers', () => {
 			);
 
 			expect(result.maxRetries).toBe(3);
+		});
+	});
+
+	describe('Error Handler Hierarchy', () => {
+		describe('Plugin-specific handlers override root handlers', () => {
+			it('should use plugin-specific RATE_LIMIT_ERROR handler over root handler', async () => {
+				const packageDefaultHandlers = slackErrorHandlers;
+				const rootHandlers = {
+					RATE_LIMIT_ERROR: {
+						match: (error: Error) => {
+							if (error instanceof ApiError && error.status === 429) {
+								return true;
+							}
+							return error.message.includes('429') || error.message.includes('rate_limited');
+						},
+						handler: async () => ({ maxRetries: 10 }),
+					},
+				};
+				const pluginHandlers = {
+					RATE_LIMIT_ERROR: {
+						match: (error: Error) => {
+							if (error instanceof ApiError && error.status === 429) {
+								return true;
+							}
+							return error.message.includes('429') || error.message.includes('rate_limited');
+						},
+						handler: async () => ({ maxRetries: 3 }),
+					},
+				};
+
+				const mergedHandlers = {
+					...packageDefaultHandlers,
+					...rootHandlers,
+					...pluginHandlers,
+				};
+
+				const error = createMockApiError(429, 'rate_limited');
+				const result = await handleCorsairError(
+					error,
+					'slack',
+					'channels.list',
+					{},
+					mergedHandlers,
+				);
+
+				expect(result.maxRetries).toBe(3);
+			});
+
+			it('should use plugin-specific DEFAULT handler over root DEFAULT handler', async () => {
+				const packageDefaultHandlers = slackErrorHandlers;
+				const rootHandlers = {
+					DEFAULT: {
+						match: () => true,
+						handler: async () => ({ maxRetries: 1 }),
+					},
+				};
+				const pluginHandlers = {
+					DEFAULT: {
+						match: () => true,
+						handler: async () => ({ maxRetries: 2 }),
+					},
+				};
+
+				const mergedHandlers = {
+					...packageDefaultHandlers,
+					...rootHandlers,
+					...pluginHandlers,
+				};
+
+				const error = new Error('Unknown error');
+				const result = await handleCorsairError(
+					error,
+					'slack',
+					'channels.list',
+					{},
+					mergedHandlers,
+				);
+
+				expect(result.maxRetries).toBe(2);
+			});
+		});
+
+		describe('Root handlers override package default handlers', () => {
+			it('should use root RATE_LIMIT_ERROR handler over package default when no plugin handler exists', async () => {
+				const packageDefaultHandlers = slackErrorHandlers;
+				const rootHandlers = {
+					RATE_LIMIT_ERROR: {
+						match: (error: Error) => {
+							if (error instanceof ApiError && error.status === 429) {
+								return true;
+							}
+							return error.message.includes('429') || error.message.includes('rate_limited');
+						},
+						handler: async () => ({ maxRetries: 7 }),
+					},
+				};
+
+				const mergedHandlers = {
+					...packageDefaultHandlers,
+					...rootHandlers,
+				};
+
+				const error = createMockApiError(429, 'rate_limited');
+				const result = await handleCorsairError(
+					error,
+					'slack',
+					'channels.list',
+					{},
+					mergedHandlers,
+				);
+
+				expect(result.maxRetries).toBe(7);
+			});
+
+			it('should use root DEFAULT handler over package DEFAULT when no plugin handler exists', async () => {
+				const packageDefaultHandlers = slackErrorHandlers;
+				const rootHandlers = {
+					DEFAULT: {
+						match: () => true,
+						handler: async () => ({ maxRetries: 1 }),
+					},
+				};
+
+				const mergedHandlers = {
+					...packageDefaultHandlers,
+					...rootHandlers,
+				};
+
+				const error = new Error('Unknown error');
+				const result = await handleCorsairError(
+					error,
+					'slack',
+					'channels.list',
+					{},
+					mergedHandlers,
+				);
+
+				expect(result.maxRetries).toBe(1);
+			});
+		});
+
+		describe('Package default handlers are used as fallback', () => {
+			it('should use package default RATE_LIMIT_ERROR handler when no root or plugin handlers exist', async () => {
+				const packageDefaultHandlers = slackErrorHandlers;
+
+				const error = createMockApiError(429, 'rate_limited');
+				const result = await handleCorsairError(
+					error,
+					'slack',
+					'channels.list',
+					{},
+					packageDefaultHandlers,
+				);
+
+				expect(result.maxRetries).toBe(5);
+			});
+
+			it('should use package default DEFAULT handler when no root or plugin handlers exist', async () => {
+				const packageDefaultHandlers = slackErrorHandlers;
+
+				const error = new Error('Unknown error');
+				const result = await handleCorsairError(
+					error,
+					'slack',
+					'channels.list',
+					{},
+					packageDefaultHandlers,
+				);
+
+				expect(result.maxRetries).toBe(0);
+			});
+		});
+
+		describe('System default handler is used when no handlers match', () => {
+			it('should use system default handler when no handlers are provided', async () => {
+				const emptyHandlers = {};
+
+				const error = new Error('Any error');
+				const result = await handleCorsairError(
+					error,
+					'slack',
+					'channels.list',
+					{},
+					emptyHandlers,
+				);
+
+				expect(result.maxRetries).toBe(0);
+			});
+
+			it('should use system default handler when no handlers match the error', async () => {
+				const customHandlers = {
+					RATE_LIMIT_ERROR: {
+						match: () => false,
+						handler: async () => ({ maxRetries: 5 }),
+					},
+				};
+
+				const error = new Error('Some other error');
+				const result = await handleCorsairError(
+					error,
+					'slack',
+					'channels.list',
+					{},
+					customHandlers,
+				);
+
+				expect(result.maxRetries).toBe(0);
+			});
+		});
+
+		describe('Specific error handlers take priority over DEFAULT', () => {
+			it('should use specific RATE_LIMIT_ERROR handler over DEFAULT handler', async () => {
+				const handlers = {
+					RATE_LIMIT_ERROR: {
+						match: (error: Error) => {
+							if (error instanceof ApiError && error.status === 429) {
+								return true;
+							}
+							return error.message.includes('429') || error.message.includes('rate_limited');
+						},
+						handler: async () => ({ maxRetries: 5 }),
+					},
+					DEFAULT: {
+						match: () => true,
+						handler: async () => ({ maxRetries: 0 }),
+					},
+				};
+
+				const error = createMockApiError(429, 'rate_limited');
+				const result = await handleCorsairError(
+					error,
+					'slack',
+					'channels.list',
+					{},
+					handlers,
+				);
+
+				expect(result.maxRetries).toBe(5);
+			});
+
+			it('should use DEFAULT handler when specific handler does not match', async () => {
+				const handlers = {
+					RATE_LIMIT_ERROR: {
+						match: () => false,
+						handler: async () => ({ maxRetries: 5 }),
+					},
+					DEFAULT: {
+						match: () => true,
+						handler: async () => ({ maxRetries: 1 }),
+					},
+				};
+
+				const error = new Error('Some other error');
+				const result = await handleCorsairError(
+					error,
+					'slack',
+					'channels.list',
+					{},
+					handlers,
+				);
+
+				expect(result.maxRetries).toBe(1);
+			});
+		});
+
+		describe('Complete hierarchy: Plugin > Root > Package Default > System Default', () => {
+			it('should follow complete hierarchy for RATE_LIMIT_ERROR', async () => {
+				const packageDefaultHandlers = {
+					RATE_LIMIT_ERROR: {
+						match: (error: Error) => {
+							if (error instanceof ApiError && error.status === 429) {
+								return true;
+							}
+							return error.message.includes('429') || error.message.includes('rate_limited');
+						},
+						handler: async () => ({ maxRetries: 5 }),
+					},
+				};
+				const rootHandlers = {
+					RATE_LIMIT_ERROR: {
+						match: (error: Error) => {
+							if (error instanceof ApiError && error.status === 429) {
+								return true;
+							}
+							return error.message.includes('429') || error.message.includes('rate_limited');
+						},
+						handler: async () => ({ maxRetries: 7 }),
+					},
+				};
+				const pluginHandlers = {
+					RATE_LIMIT_ERROR: {
+						match: (error: Error) => {
+							if (error instanceof ApiError && error.status === 429) {
+								return true;
+							}
+							return error.message.includes('429') || error.message.includes('rate_limited');
+						},
+						handler: async () => ({ maxRetries: 3 }),
+					},
+				};
+
+				const mergedHandlers = {
+					...packageDefaultHandlers,
+					...rootHandlers,
+					...pluginHandlers,
+				};
+
+				const error = createMockApiError(429, 'rate_limited');
+				const result = await handleCorsairError(
+					error,
+					'slack',
+					'channels.list',
+					{},
+					mergedHandlers,
+				);
+
+				expect(result.maxRetries).toBe(3);
+			});
+
+			it('should fall back to DEFAULT when plugin handler does not match', async () => {
+				const packageDefaultHandlers = {
+					RATE_LIMIT_ERROR: {
+						match: (error: Error) => {
+							if (error instanceof ApiError && error.status === 429) {
+								return true;
+							}
+							return error.message.includes('429') || error.message.includes('rate_limited');
+						},
+						handler: async () => ({ maxRetries: 5 }),
+					},
+				};
+				const rootHandlers = {
+					RATE_LIMIT_ERROR: {
+						match: (error: Error) => {
+							if (error instanceof ApiError && error.status === 429) {
+								return true;
+							}
+							return error.message.includes('429') || error.message.includes('rate_limited');
+						},
+						handler: async () => ({ maxRetries: 7 }),
+					},
+					DEFAULT: {
+						match: () => true,
+						handler: async () => ({ maxRetries: 1 }),
+					},
+				};
+				const pluginHandlers = {
+					RATE_LIMIT_ERROR: {
+						match: () => false,
+						handler: async () => ({ maxRetries: 3 }),
+					},
+				};
+
+				const mergedHandlers = {
+					...packageDefaultHandlers,
+					...rootHandlers,
+					...pluginHandlers,
+				};
+
+				const error = createMockApiError(429, 'rate_limited');
+				const result = await handleCorsairError(
+					error,
+					'slack',
+					'channels.list',
+					{},
+					mergedHandlers,
+				);
+
+				expect(result.maxRetries).toBe(1);
+			});
+
+			it('should fall back to DEFAULT when root handler does not match', async () => {
+				const packageDefaultHandlers = {
+					RATE_LIMIT_ERROR: {
+						match: (error: Error) => {
+							if (error instanceof ApiError && error.status === 429) {
+								return true;
+							}
+							return error.message.includes('429') || error.message.includes('rate_limited');
+						},
+						handler: async () => ({ maxRetries: 5 }),
+					},
+					DEFAULT: {
+						match: () => true,
+						handler: async () => ({ maxRetries: 0 }),
+					},
+				};
+				const rootHandlers = {
+					RATE_LIMIT_ERROR: {
+						match: () => false,
+						handler: async () => ({ maxRetries: 7 }),
+					},
+				};
+
+				const mergedHandlers = {
+					...packageDefaultHandlers,
+					...rootHandlers,
+				};
+
+				const error = createMockApiError(429, 'rate_limited');
+				const result = await handleCorsairError(
+					error,
+					'slack',
+					'channels.list',
+					{},
+					mergedHandlers,
+				);
+
+				expect(result.maxRetries).toBe(0);
+			});
 		});
 	});
 });
