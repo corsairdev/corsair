@@ -1,5 +1,6 @@
 {
   "extends": "./tsconfig.base.json",
+  "composite": true,
   "include": [
     // Only include files that are in the root directory. All other files are included by the references.
     "./*.ts",
