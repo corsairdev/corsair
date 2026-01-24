@@ -1,11 +1,5 @@
 import { defineConfig } from 'tsup';
 
-/**
- * Build strategy (Better Auth-style):
- * - Keep TS source imports extensionless (`moduleResolution: "bundler"`)
- * - Use a bundler to emit Node-compatible ESM in `dist/`
- * - Drive runtime resolution via `package.json#exports`
- */
 export default defineConfig({
 	clean: true,
 	dts: false,

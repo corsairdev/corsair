@@ -47,10 +47,10 @@ type UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends (
  */
 type InferPluginNamespace<P extends CorsairPlugin> = P extends CorsairPlugin<
 	infer Id,
-	infer Endpoints,
 	infer Schema,
-	infer _Options,
-	infer Webhooks
+	infer Endpoints,
+	infer Webhooks,
+	infer _Options
 >
 	? {
 			[K in Id]: (Endpoints extends EndpointTree
@@ -326,9 +326,7 @@ export function buildCorsairClient<
 	}
 
 	for (const plugin of plugins) {
-		const schema = plugin.schema as
-			| CorsairPluginSchema<Record<string, ZodTypeAny>>
-			| undefined;
+		const schema = plugin.schema;
 
 		// Create typed service clients from plugin schema, nested under `db`
 		if (schema?.services) {
@@ -375,6 +373,7 @@ export function buildCorsairClient<
 			pluginId: plugin.id,
 			errorHandlers: allErrorHandlers,
 			currentPath: [],
+			keyBuilder: plugin.keyBuilder,
 		});
 
 		if (Object.keys(boundTree).length > 0) {

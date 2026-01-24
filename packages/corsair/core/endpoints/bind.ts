@@ -1,6 +1,6 @@
 import type { CorsairErrorHandler } from '../errors';
 import { handleCorsairError } from '../errors/handler';
-import type { EndpointHooks } from '../plugins';
+import type { CorsairKeyBuilderBase, EndpointHooks } from '../plugins';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Endpoint Utilities
@@ -25,6 +25,7 @@ export function isEndpoint(value: unknown): value is Function {
  * @param pluginId - The ID of the plugin for error context
  * @param errorHandler - The error handler for this plugin
  * @param currentPath - The current path for tracking nested endpoint operations
+ * @param keyBuilder - Optional async callback to generate a key from the plugin context
  */
 export function bindEndpointsRecursively({
 	endpoints,
@@ -34,6 +35,7 @@ export function bindEndpointsRecursively({
 	pluginId,
 	errorHandlers,
 	currentPath = [],
+	keyBuilder,
 }: {
 	endpoints: Record<string, unknown>;
 	hooks: Record<string, unknown> | undefined;
@@ -42,6 +44,7 @@ export function bindEndpointsRecursively({
 	pluginId: string;
 	errorHandlers: CorsairErrorHandler;
 	currentPath: string[];
+	keyBuilder?: CorsairKeyBuilderBase;
 }): void {
 	for (const [key, value] of Object.entries(endpoints)) {
 		// we have to retype this now because it's nested webhooks
@@ -53,7 +56,7 @@ export function bindEndpointsRecursively({
 
 			const operationPath = [...currentPath, key].join('.');
 
-			const boundFn = (args: unknown) => {
+			const boundFn = async (args: unknown) => {
 				const call = async (
 					attemptNumber: number,
 					callCtx: Record<string, unknown>,
@@ -119,14 +122,17 @@ export function bindEndpointsRecursively({
 					}
 				};
 
+				const key = keyBuilder ? await keyBuilder(ctx) : undefined;
+
 				if (!endpointHooks?.before && !endpointHooks?.after) {
-					return call(0, ctx, args);
+					return call(0, { ...ctx, key }, args);
 				}
 
 				return (async () => {
+					const ctxWithKey = { ...ctx, key };
 					const { ctx: updatedCtx, args: updatedArgs } = endpointHooks.before
-						? await endpointHooks.before(ctx, args)
-						: { ctx, args };
+						? await endpointHooks.before(ctxWithKey, args)
+						: { ctx: ctxWithKey, args };
 					const res = await call(0, updatedCtx, updatedArgs);
 					await endpointHooks.after?.(updatedCtx, res);
 					return res;
@@ -146,6 +152,7 @@ export function bindEndpointsRecursively({
 				pluginId,
 				errorHandlers,
 				currentPath: [...currentPath, key],
+				keyBuilder,
 			});
 
 			tree[key] = nestedTree;

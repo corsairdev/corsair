@@ -14,7 +14,7 @@ export type KyselyPostgresAdapterConfig = {
 
 export type KyselyAdapterConfig = KyselyPostgresAdapterConfig & {
 	/**
-	 * Kept for Better-Auth-like ergonomics. Corsair currently supports Postgres only.
+	 * Corsair currently supports Postgres only.
 	 */
 	provider: 'pg';
 };
@@ -193,7 +193,7 @@ export function kyselyPostgresAdapter(
 }
 
 /**
- * Better-Auth-style helper: `kyselyAdapter(db, { provider: "pg" })`.
+ * `kyselyAdapter(db, { provider: "pg" })`.
  *
  * Corsair currently supports Postgres only.
  */

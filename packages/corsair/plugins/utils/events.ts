@@ -1,18 +1,5 @@
 import type { CorsairDbAdapter } from '../../adapters';
-
-function generateUuidV4(): string {
-	const cryptoAny = globalThis.crypto as unknown as
-		| { randomUUID?: () => string }
-		| undefined;
-	if (cryptoAny?.randomUUID) {
-		return cryptoAny.randomUUID();
-	}
-	return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
-		const r = (Math.random() * 16) | 0;
-		const v = c === 'x' ? r : (r & 0x3) | 0x8;
-		return v.toString(16);
-	});
-}
+import { generateUuidV4 } from '../../core/utils';
 
 export async function logEvent(
 	database: CorsairDbAdapter,

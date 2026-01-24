@@ -171,7 +171,7 @@ export async function filterWebhook(
 	// Known plugin IDs to check
 	const pluginIds = BaseProviders;
 
-	for (const pluginId of pluginIds.options) {
+	for (const pluginId of pluginIds) {
 		const plugin = tenantScopedCorsair[pluginId];
 
 		// Skip if plugin is not enabled or has no webhooks

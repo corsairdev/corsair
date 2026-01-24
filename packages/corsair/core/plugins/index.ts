@@ -202,6 +202,20 @@ type CorsairWebhookHooksMap<Webhooks extends WebhookTree> = {
 // ─────────────────────────────────────────────────────────────────────────────
 
 /**
+ * Type for the keyBuilder callback function that generates a key from the plugin options.
+ * @template Options - The options type for the plugin
+ */
+export type CorsairKeyBuilder<Options extends Record<string, unknown>> = (
+	options: Options,
+) => string | Promise<string>;
+
+/**
+ * Base keyBuilder type used internally for type compatibility.
+ * Uses `any` to avoid contravariance issues when plugins are stored in arrays.
+ */
+export type CorsairKeyBuilderBase = (options: any) => string | Promise<string>;
+
+/**
  * Defines a Corsair plugin with endpoints, webhooks, schema, and configuration.
  * @template Id - The plugin identifier (must be one of AllProviders)
  * @template Endpoints - The endpoint tree structure
@@ -211,14 +225,12 @@ type CorsairWebhookHooksMap<Webhooks extends WebhookTree> = {
  */
 export type CorsairPlugin<
 	Id extends AllProviders = AllProviders,
-	Endpoints extends EndpointTree | undefined = EndpointTree | undefined,
-	Schema extends CorsairPluginSchema<Record<string, ZodTypeAny>> | undefined =
-		| CorsairPluginSchema<Record<string, ZodTypeAny>>
-		| undefined,
-	Options extends Record<string, unknown> | undefined =
-		| Record<string, unknown>
-		| undefined,
-	Webhooks extends WebhookTree | undefined = WebhookTree | undefined,
+	Schema extends CorsairPluginSchema<
+		Record<string, ZodTypeAny>
+	> = CorsairPluginSchema<Record<string, ZodTypeAny>>,
+	Endpoints extends EndpointTree = EndpointTree,
+	Webhooks extends WebhookTree = WebhookTree,
+	Options extends Record<string, unknown> = Record<string, unknown>,
 > = {
 	/** Unique identifier for the plugin */
 	id: Id;
@@ -245,17 +257,22 @@ export type CorsairPlugin<
 	pluginWebhookMatcher?: CorsairWebhookMatcher;
 	/** Plugin-specific error handlers */
 	errorHandlers?: CorsairErrorHandler;
+	/**
+	 * Async callback to generate a key from the plugin options.
+	 * This key is used to access data for API calls.
+	 * Note: Uses CorsairKeyBuilderBase for array compatibility, but type inference
+	 * works correctly when using `satisfies` on plugin definitions.
+	 */
+	keyBuilder?: CorsairKeyBuilderBase;
 };
 
 /**
  * The full context type for a plugin, combining base context with typed services and options.
- * @template Resource - The plugin resource identifier
  * @template Schema - The plugin schema for database services
  * @template Options - Plugin-specific options
  * @template Endpoints - The endpoint tree structure
  */
 export type CorsairPluginContext<
-	Resource extends string,
 	Schema extends
 		| CorsairPluginSchema<Record<string, ZodTypeAny>>
 		| undefined = undefined,

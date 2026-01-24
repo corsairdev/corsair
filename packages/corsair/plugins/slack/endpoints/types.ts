@@ -354,7 +354,12 @@ export type StarsListResponse = SlackResponse & {
 	paging?: Paging;
 };
 
+export type ChannelsRandomResponse = {
+	done: boolean;
+};
+
 export type SlackEndpointOutputs = {
+	channelsRandom: ChannelsRandomResponse;
 	channelsArchive: ConversationsArchiveResponse;
 	channelsClose: ConversationsCloseResponse;
 	channelsCreate: ConversationsCreateResponse;
