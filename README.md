@@ -22,37 +22,15 @@ export const corsair = createCorsair({
 			credentials: {
 				botToken: process.env.SLACK_BOT_TOKEN,
 			},
-      errorHandler: {
-        RATE_LIMIT: { ... }
-      }
 		}),
 		linear({
 			authType: 'api_key',
 			credentials: {
 				apiKey: process.env.LINEAR_API_KEY,
 			},
-      hooks: { ... },
 		}),
 	],
 });
-
-// Use with tenant context
-const tenant = corsair.withTenant('tenant_123');
-
-// Send a Slack message
-await tenant.slack.api.messages.post({
-	channel: 'C01234567',
-	text: 'Hello from Corsair!',
-});
-
-// Create a Linear issue
-await tenant.linear.api.issues.get({
-	title: 'New feature request',
-	teamId: 'TEAM_ABC',
-});
-
-// Everything is stored locally so you can create foreign keys to external data
-await tenant.linear.db.issues.findById('ABC_123');
 ```
 
 ## Key Features
@@ -100,6 +78,57 @@ Corsair supports multiple database adapters:
 - **Prisma** — Works with your existing Prisma setup
 - **Kysely** — Type-safe SQL query builder
 - **PostgreSQL** — Direct PostgreSQL adapter
+
+```ts
+export const corsair = createCorsair({
+	multiTenancy: true,
+	database: drizzleAdapter(...),
+	plugins: [
+		slack({
+			authType: 'api_key',
+			credentials: {
+				botToken: process.env.SLACK_BOT_TOKEN,
+			},
+      errorHandlers: {
+        RATE_LIMIT: { ... },
+        DEFAULT: { ... },
+      }
+		}),
+		linear({
+			authType: 'api_key',
+			credentials: {
+				apiKey: process.env.LINEAR_API_KEY,
+			},
+      hooks: {
+        issues: {
+          create: {
+            before: () => {},
+            after: () => {},
+          }
+        }
+      }
+		}),
+	],
+});
+
+// Use Corsair with tenant context
+const tenant = corsair.withTenant('tenant_123');
+
+// Send a Slack message
+await tenant.slack.api.messages.post({
+	channel: 'C01234567',
+	text: 'Hello from Corsair!',
+});
+
+// Create a Linear issue
+await tenant.linear.api.issues.create({
+	title: 'New feature request',
+	teamId: 'TEAM_ABC',
+});
+
+// Everything is stored locally so you can create foreign keys to external data
+const issue = await tenant.linear.db.issues.findById('ABC_123');
+```
 
 ## Documentation
 
