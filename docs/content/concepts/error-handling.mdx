@@ -1,0 +1,132 @@
+---
+title: Error Handling
+description: Graceful error handling with intelligent retry strategies.
+---
+
+Corsair catches all API errors and routes them through a hierarchical error handling system. You can define handlers at multiple levels, and Corsair will use the most specific one available.
+
+```ts title="corsair.ts"
+import { createCorsair } from "corsair";
+import { slack } from "corsair/plugins";
+
+export const corsair = createCorsair({
+    plugins: [
+        slack({
+            authType: "api_key",
+            credentials: { botToken: "xoxb-..." },
+            errorHandlers: {
+                RATE_LIMIT_ERROR: {
+                    match: (error) => error.message.includes("rate_limited"),
+                    handler: async (error, context) => ({
+                        maxRetries: 5,
+                        retryStrategy: "exponential_backoff_jitter",
+                    }),
+                },
+            },
+        }),
+    ],
+});
+```
+
+## Error Handler Hierarchy
+
+Corsair checks for error handlers in this order:
+
+1. **Plugin-specific error** — e.g., Slack rate limit handler
+2. **Root-level error** — e.g., global rate limit handler for all integrations
+3. **Plugin default** — e.g., default Slack error handler
+4. **Root default** — default handler for all integrations
+5. **Corsair fallback** — built-in handler that fails gracefully
+
+This means you only need to define handlers for the cases you care about.
+
+## Plugin-Level Handler
+
+Handle errors specific to a single integration.
+
+```ts title="corsair.ts"
+slack({
+    authType: "api_key",
+    credentials: { botToken: "xoxb-..." },
+    errorHandlers: {
+        RATE_LIMIT_ERROR: {
+            match: (error) => error.message.includes("rate_limited"),
+            handler: async (error, context) => {
+                console.log(`Slack rate limited on ${context.operation}`);
+                return {
+                    maxRetries: 3,
+                    retryStrategy: "exponential_backoff_jitter",
+                };
+            },
+        },
+    },
+})
+```
+
+## Root-Level Handler
+
+Handle errors across all integrations.
+
+```ts title="corsair.ts"
+export const corsair = createCorsair({
+    plugins: [slack({ ... }), linear({ ... })],
+    errorHandlers: {
+        RATE_LIMIT_ERROR: {
+            match: (error) => {
+                const msg = error.message.toLowerCase();
+                return msg.includes("rate_limited") || msg.includes("429");
+            },
+            handler: async (error, context) => {
+                console.log(`Rate limit on ${context.operation}`);
+                return { maxRetries: 5 };
+            },
+        },
+    },
+});
+```
+
+## Default Handler
+
+Catch any error that doesn't match a specific handler.
+
+```ts title="corsair.ts"
+slack({
+    authType: "api_key",
+    credentials: { botToken: "xoxb-..." },
+    errorHandlers: {
+        DEFAULT: {
+            match: () => true,
+            handler: async (error, context) => {
+                console.error(`Unhandled error: ${error.message}`);
+                return { maxRetries: 0 };
+            },
+        },
+    },
+})
+```
+
+## No Handler Needed
+
+You don't have to define any error handlers. Corsair provides sensible defaults that ensure your application fails gracefully. Start simple and add handlers as needed.
+
+```ts title="corsair.ts"
+// This works fine — Corsair handles errors gracefully by default
+export const corsair = createCorsair({
+    plugins: [slack({ authType: "api_key", credentials: { botToken: "xoxb-..." } })],
+});
+```
+
+## Retry Strategies
+
+When returning from an error handler, you can specify:
+
+- `maxRetries` — number of retry attempts
+- `retryStrategy` — `"exponential_backoff_jitter"` or other strategies
+
+```ts
+handler: async (error, context) => ({
+    maxRetries: 5,
+    retryStrategy: "exponential_backoff_jitter",
+})
+```
+

@@ -11,12 +11,13 @@ export const corsair = createCorsair({
 		slack({
 			authType: 'api_key',
 			credentials: {
-				botToken: process.env.SLACK_BOT_TOKEN ?? 'dev-token',
+				botToken: '',
 			},
 			hooks: {
-				messages: {
-					post: {
+				channels: {
+					random: {
 						before(ctx, args) {
+							console.log('before hook');
 							return {
 								ctx,
 								args,

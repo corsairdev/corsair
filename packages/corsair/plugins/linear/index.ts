@@ -36,7 +36,6 @@ export type LinearPluginOptions = {
 };
 
 export type LinearContext = CorsairPluginContext<
-	'linear',
 	typeof LinearSchema,
 	LinearPluginOptions
 >;
@@ -215,10 +214,10 @@ const linearEndpointsNested = {
 
 export type LinearPlugin = CorsairPlugin<
 	'linear',
-	typeof linearEndpointsNested,
 	typeof LinearSchema,
-	LinearCredentials,
-	typeof linearWebhooksNested
+	typeof linearEndpointsNested,
+	typeof linearWebhooksNested,
+	LinearCredentials
 >;
 
 export function linear(options: LinearPluginOptions) {

@@ -3,6 +3,12 @@ import type { SlackEndpoints } from '..';
 import { makeSlackRequest } from '../client';
 import type { SlackEndpointOutputs } from './types';
 
+export const random: SlackEndpoints['channelsRandom'] = async (ctx, input) => {
+	return {
+		done: true,
+	};
+};
+
 export const archive: SlackEndpoints['channelsArchive'] = async (
 	ctx,
 	input,

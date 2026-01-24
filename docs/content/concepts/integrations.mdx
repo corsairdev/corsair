@@ -1,0 +1,114 @@
+---
+title: Integrations
+description: Add as many as you want — same syntax, same patterns.
+---
+
+Corsair supports hundreds of integrations through its SDK. Add as many as you need and interact with them all using the same consistent syntax.
+
+```ts title="corsair.ts"
+import { createCorsair } from "corsair";
+import { slack, linear } from "corsair/plugins";
+
+export const corsair = createCorsair({
+    plugins: [
+        slack({
+            authType: "api_key",
+            credentials: { botToken: "xoxb-..." },
+        }),
+        linear({
+            authType: "api_key",
+            credentials: { apiKey: "lin_..." },
+        }),
+    ],
+});
+```
+
+## Consistent Syntax
+
+Every integration uses the exact same patterns. No need to learn each SDK's unique quirks.
+
+```ts title="example.ts"
+// Slack
+await corsair.slack.api.messages.post({
+    channel: "C01234567",
+    text: "Hello from Slack!",
+});
+
+// Linear
+await corsair.linear.api.issues.create({
+    title: "New feature request",
+    teamId: "TEAM_123",
+});
+
+// Same structure: corsair.[integration].api.[resource].[action]()
+```
+
+## Strong Typing Everywhere
+
+Every integration is fully typed. Your editor shows available methods, required parameters, and response shapes.
+
+```ts title="example.ts"
+// TypeScript knows all available endpoints
+corsair.slack.api.channels.create({ name: "engineering" });
+corsair.slack.api.channels.archive({ channel: "C01234567" });
+corsair.slack.api.messages.post({ channel: "C01", text: "Hi" });
+
+// And all response types
+const channel = await corsair.slack.api.channels.get({ channel: "C01" });
+console.log(channel.name, channel.is_member, channel.num_members);
+```
+
+## No Database Bloat
+
+Adding more integrations doesn't add more tables. Corsair always uses the same four tables, no matter how many integrations you have.
+
+```ts
+plugins: [
+    slack({ ... }),
+    linear({ ... }),
+    github({ ... }),
+    gmail({ ... }),
+    // 100 more integrations — still just 4 tables
+]
+```
+
+## Adding Integrations
+
+Just add plugins to the array. Each integration is configured independently.
+
+```ts title="corsair.ts"
+export const corsair = createCorsair({
+    plugins: [
+        slack({
+            authType: "api_key",
+            credentials: { botToken: process.env.SLACK_BOT_TOKEN },
+        }),
+        linear({
+            authType: "api_key",
+            credentials: { apiKey: process.env.LINEAR_API_KEY },
+        }),
+    ],
+});
+```
+
+## Custom Integrations
+
+Need an integration that doesn't exist? Creating a custom one takes less than 10 minutes.
+
+See the [Creating Custom Integrations](/docs/guides/custom-integrations) guide for a step-by-step walkthrough.
+
+## Missing an Endpoint?
+
+If an existing integration is missing an endpoint you need, [create an issue](https://github.com/corsair/corsair/issues) and we'll add it ASAP.
+
+## Available Integrations
+
+Corsair supports integrations including:
+
+- **Slack** — channels, messages, users, reactions, files
+- **Linear** — issues, projects, comments, teams
+- **GitHub** — repositories, issues, pull requests, actions
+- **Gmail** — messages, threads, labels, drafts
+
+And many more. Check the [Plugins](/docs/plugins) section for the full list.
+

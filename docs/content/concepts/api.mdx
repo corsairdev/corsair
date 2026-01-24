@@ -1,0 +1,118 @@
+---
+title: API
+description: Corsair API.
+---
+
+When you create a Corsair instance, every plugin exposes its API endpoints through a nested, intuitive structure. Each plugin's API is accessible directly on the Corsair instance.
+
+```ts title="corsair.ts"
+import { createCorsair } from "corsair";
+import { slack, linear } from "corsair/plugins";
+
+export const corsair = createCorsair({
+    plugins: [
+        slack({ authType: "api_key", credentials: { botToken: "xoxb-..." } }),
+        linear({ authType: "api_key", credentials: { apiKey: "lin_..." } }),
+    ],
+});
+
+// Send a message to Slack
+await corsair.slack.api.messages.post({
+    channel: "C01234567",
+    text: "Hello from Corsair!",
+});
+
+// Create a Linear issue
+await corsair.linear.api.issues.create({
+    title: "New feature request",
+    teamId: "TEAM_123",
+});
+```
+
+## API Structure
+
+All plugins follow the same pattern: `corsair.[plugin].api.[resource].[action]()`.
+
+```ts title="example.ts"
+// Slack examples
+corsair.slack.api.channels.create({ name: "engineering" });
+corsair.slack.api.channels.list({ limit: 50 });
+corsair.slack.api.messages.post({ channel: "C01", text: "Hello" });
+corsair.slack.api.messages.delete({ channel: "C01", ts: "123.456" });
+corsair.slack.api.users.get({ user: "U01234567" });
+
+// Linear examples
+corsair.linear.api.issues.create({ title: "Bug", teamId: "T1" });
+corsair.linear.api.issues.update({ id: "ISS-1", input: { title: "Fixed" } });
+corsair.linear.api.projects.list({ first: 10 });
+corsair.linear.api.comments.create({ issueId: "ISS-1", body: "Done!" });
+```
+
+## Strongly Typed
+
+Every API call is fully typed — both request parameters and responses. Your editor shows exactly what's required and what you'll get back.
+
+```ts title="example.ts"
+// TypeScript knows exactly what parameters are available
+const channel = await corsair.slack.api.channels.create({
+    name: "engineering",
+    is_private: true,  // optional — TypeScript tells you
+});
+
+// Response is also strongly typed
+console.log(channel.id, channel.name, channel.is_member);
+```
+
+## With Multi-Tenancy
+
+When multi-tenancy is enabled, use `withTenant()` to scope operations.
+
+```ts title="example.ts"
+const tenant = corsair.withTenant("tenant_abc123");
+
+await tenant.slack.api.messages.post({
+    channel: "C01234567",
+    text: "Scoped to tenant_abc123",
+});
+```
+
+See [Multi-Tenancy](/docs/getting-started/multi-tenancy) for details.
+
+## Automatic Persistence
+
+API responses are stored in your database automatically. Create foreign key relationships to Corsair resources — they stay in sync through API calls and webhooks.
+
+```ts title="example.ts"
+// Create a channel — Corsair stores it
+const channel = await corsair.slack.api.channels.create({ name: "support" });
+
+// Later, retrieve from the database
+const stored = await corsair.slack.db.channels.findByResourceId(channel.id);
+```
+
+See [Database](/docs/getting-started/database) for the full ORM API.
+
+## Hooks
+
+Add before/after hooks to customize API behavior.
+
+```ts title="corsair.ts"
+slack({
+    authType: "api_key",
+    credentials: { botToken: "xoxb-..." },
+    hooks: {
+        channels: {
+            create: {
+                before: (ctx, args) => {
+                    console.log("Creating channel:", args.name);
+                    return { ctx, args };
+                },
+                after: (ctx, result) => {
+                    console.log("Created:", result.id);
+                },
+            },
+        },
+    },
+})
+```
+

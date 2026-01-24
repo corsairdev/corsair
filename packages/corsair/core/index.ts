@@ -93,6 +93,8 @@ export type {
 export type {
 	BeforeHookResult,
 	CorsairIntegration,
+	CorsairKeyBuilder,
+	CorsairKeyBuilderBase,
 	CorsairPlugin,
 	CorsairPluginContext,
 	EndpointHooks,

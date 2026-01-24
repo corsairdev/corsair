@@ -1,0 +1,253 @@
+---
+title: Hooks
+description: Hook into API calls and webhooks to customize behavior.
+---
+
+Hooks let you "hook into" the lifecycle of API calls and webhook processing. Use them to add custom logic — logging, validation, transformations — without modifying your core application code.
+
+```ts title="corsair.ts"
+slack({
+    authType: "api_key",
+    credentials: { botToken: "xoxb-..." },
+    hooks: {
+        channels: {
+            create: {
+                before: (ctx, args) => {
+                    console.log("Creating channel:", args.name);
+                    return { ctx, args };
+                },
+            },
+        },
+    },
+})
+```
+
+## Before Hooks
+
+**Before hooks** run *before* an operation executes. Use them to:
+
+- Log or audit actions
+- Validate or modify input
+- Add default values
+- Short-circuit operations
+
+### Modify Arguments
+
+Transform the arguments before the API call is made.
+
+```ts title="corsair.ts"
+slack({
+    hooks: {
+        channels: {
+            create: {
+                before: (ctx, args) => {
+                    // Prefix all channel names
+                    return {
+                        ctx,
+                        args: {
+                            ...args,
+                            name: `team-${args.name}`,
+                        },
+                    };
+                },
+            },
+        },
+    },
+})
+```
+
+### Validate Input
+
+Check conditions before proceeding.
+
+```ts title="corsair.ts"
+slack({
+    hooks: {
+        messages: {
+            post: {
+                before: (ctx, args) => {
+                    if (args.text && args.text.length > 4000) {
+                        throw new Error("Message too long");
+                    }
+                    return { ctx, args };
+                },
+            },
+        },
+    },
+})
+```
+
+### Log Actions
+
+Track every API call for debugging or auditing.
+
+```ts title="corsair.ts"
+slack({
+    hooks: {
+        channels: {
+            create: {
+                before: (ctx, args) => {
+                    console.log(`[Slack] Creating channel: ${args.name}`);
+                    return { ctx, args };
+                },
+            },
+        },
+    },
+})
+```
+
+## After Hooks
+
+**After hooks** run *after* an operation completes. Use them to:
+
+- Log results
+- Trigger side effects
+- Transform responses
+- Send notifications
+
+### Send Notifications
+
+Notify your team when something happens.
+
+```ts title="corsair.ts"
+slack({
+    hooks: {
+        channels: {
+            create: {
+                after: async (ctx, result) => {
+                    await sendSlackNotification({
+                        channel: "#ops",
+                        text: `New channel created: #${result.name}`,
+                    });
+                },
+            },
+        },
+    },
+})
+```
+
+### Log Results
+
+Track successful operations.
+
+```ts title="corsair.ts"
+slack({
+    hooks: {
+        messages: {
+            post: {
+                after: (ctx, result) => {
+                    console.log(`Message sent: ${result.ts} in ${result.channel}`);
+                },
+            },
+        },
+    },
+})
+```
+
+## API Hooks
+
+API hooks are defined under `hooks` in your plugin configuration. They follow the structure: `hooks.[resource].[action].before/after`.
+
+```ts title="corsair.ts"
+slack({
+    authType: "api_key",
+    credentials: { botToken: "xoxb-..." },
+    hooks: {
+        // Resource: channels
+        channels: {
+            // Action: create
+            create: {
+                before: (ctx, args) => {
+                    return { ctx, args };
+                },
+                after: (ctx, result) => {
+                    console.log("Channel created:", result.id);
+                },
+            },
+            // Action: archive
+            archive: {
+                before: (ctx, args) => {
+                    console.log("Archiving:", args.channel);
+                    return { ctx, args };
+                },
+            },
+        },
+        // Resource: messages
+        messages: {
+            post: {
+                after: (ctx, result) => {
+                    console.log("Message posted:", result.ts);
+                },
+            },
+        },
+    },
+})
+```
+
+## Webhook Hooks
+
+Webhook hooks are defined under `webhookHooks`. They guarantee your logic runs every time a webhook is processed — even if Corsair handles the database update automatically.
+
+```ts title="corsair.ts"
+slack({
+    authType: "api_key",
+    credentials: { botToken: "xoxb-..." },
+    webhookHooks: {
+        messages: {
+            message: {
+                before: async (ctx, payload) => {
+                    console.log("Incoming message from:", payload.user);
+                    return { ctx, payload };
+                },
+                after: async (ctx, result) => {
+                    // Sync to your analytics
+                    await analytics.track("slack_message_received", {
+                        channel: result.channel,
+                        user: result.user,
+                    });
+                },
+            },
+        },
+        reactions: {
+            added: {
+                after: async (ctx, result) => {
+                    console.log(`Reaction ${result.reaction} added`);
+                },
+            },
+        },
+    },
+})
+```
+
+See [Webhooks](/docs/getting-started/webhooks) for more on webhook processing.
+
+## Context Object
+
+Both before and after hooks receive a `ctx` object with useful properties:
+
+- **`ctx.options`** — Plugin configuration options
+- **`ctx.db`** — Database service clients for this plugin
+- **`ctx.endpoints`** — Bound API endpoints (call other APIs within hooks)
+
+```ts title="example.ts"
+before: (ctx, args) => {
+    // Access plugin options
+    console.log(ctx.options.credentials);
+
+    // Query the database
+    const existing = await ctx.db.channels.findByResourceId(args.channel);
+
+    return { ctx, args };
+}
+```
+
+## Hook Order
+
+When both plugin-level and operation-level hooks exist:
+
+1. **Before hooks** run in order: plugin → operation
+2. The **operation** executes
+3. **After hooks** run in order: operation → plugin
+
+This lets you add global logging at the plugin level while keeping operation-specific logic separate.
+
