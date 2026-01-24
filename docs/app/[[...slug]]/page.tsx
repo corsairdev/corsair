@@ -1,20 +1,25 @@
 import { DocsBody, DocsPage } from 'fumadocs-ui/page';
 import { notFound } from 'next/navigation';
-import IntroductionDoc from '@/content/0-getting-started/0-introduction.mdx';
-import InstallationDoc from '@/content/0-getting-started/1-installation.mdx';
-import BasicUsageDoc from '@/content/0-getting-started/2-basic-usage.mdx';
-import ApiDoc from '@/content/1-concepts/0-api.mdx';
-import ClientDoc from '@/content/1-concepts/1-client.mdx';
-import CliDoc from '@/content/1-concepts/2-cli.mdx';
-import PluginsDoc from '@/content/1-concepts/3-plugins.mdx';
-import DatabaseDoc from '@/content/1-concepts/4-database.mdx';
-import TypescriptDoc from '@/content/1-concepts/5-typescript.mdx';
-import NextDoc from '@/content/2-integrations/0-next.mdx';
-import ViteDoc from '@/content/2-integrations/1-vite.mdx';
-import HonoDoc from '@/content/2-integrations/2-hono.mdx';
-import PrismaDoc from '@/content/2-integrations/3-prisma.mdx';
-import DrizzleDoc from '@/content/2-integrations/4-drizzle.mdx';
-import SlackDoc from '@/content/3-plugins/slack.mdx';
+// Adapters
+import DrizzleAdapterDoc from '@/content/adapters/drizzle.mdx';
+import KyselyAdapterDoc from '@/content/adapters/kysely.mdx';
+import PostgresqlAdapterDoc from '@/content/adapters/postgresql.mdx';
+import PrismaAdapterDoc from '@/content/adapters/prisma.mdx';
+// Concepts
+import ApiDoc from '@/content/concepts/api.mdx';
+import AuthDoc from '@/content/concepts/auth.mdx';
+import DatabaseDoc from '@/content/concepts/database.mdx';
+import ErrorHandlingDoc from '@/content/concepts/error-handling.mdx';
+import HooksDoc from '@/content/concepts/hooks.mdx';
+import IntegrationsDoc from '@/content/concepts/integrations.mdx';
+import MultiTenancyDoc from '@/content/concepts/multi-tenancy.mdx';
+import TypescriptDoc from '@/content/concepts/typescript.mdx';
+import WebhooksDoc from '@/content/concepts/webhooks.mdx';
+import ComparisonDoc from '@/content/getting-started/comparison.mdx';
+// Getting Started
+import IntroductionDoc from '@/content/getting-started/introduction.mdx';
+// Plugins
+import SlackDoc from '@/content/plugins/slack.mdx';
 import { extractTOC } from '@/lib/toc';
 import { useMDXComponents } from '@/mdx-components';
 
@@ -29,75 +34,76 @@ const pages = {
 		description:
 			'The Vibe Coding SDK - Build type-safe full-stack TypeScript apps with natural language',
 	},
-	installation: {
-		Component: InstallationDoc,
-		title: 'Installation',
-		description: 'Install Corsair in your Next.js + Drizzle + Postgres project',
-	},
-	'basic-usage': {
-		Component: BasicUsageDoc,
-		title: 'Basic Usage',
-		description: 'Setting up the client, queries, mutations, and callbacks',
+	comparison: {
+		Component: ComparisonDoc,
+		title: 'Comparison',
+		description: 'How Corsair compares to other solutions',
 	},
 	api: {
 		Component: ApiDoc,
 		title: 'API Concepts',
 		description: 'Understanding the Corsair approach to natural language APIs',
 	},
-	client: {
-		Component: ClientDoc,
-		title: 'Client Concepts',
-		description: 'Fully typed React hooks powered by TanStack Query',
-	},
-	cli: {
-		Component: CliDoc,
-		title: 'CLI Concepts',
-		description: 'Agent-first development with Corsair CLI',
-	},
-	plugins: {
-		Component: PluginsDoc,
-		title: 'Plugin Concepts',
-		description:
-			'Extend Corsair beyond the database with third-party integrations',
+	auth: {
+		Component: AuthDoc,
+		title: 'Authentication',
+		description: 'Authentication and authorization in Corsair',
 	},
 	database: {
 		Component: DatabaseDoc,
 		title: 'Database Concepts',
 		description: 'Supported databases, ORMs, and schema detection',
 	},
+	'error-handling': {
+		Component: ErrorHandlingDoc,
+		title: 'Error Handling',
+		description: 'Handling errors gracefully in Corsair',
+	},
+	hooks: {
+		Component: HooksDoc,
+		title: 'Hooks',
+		description: 'React hooks for Corsair',
+	},
+	integrations: {
+		Component: IntegrationsDoc,
+		title: 'Integrations',
+		description: 'Integrating Corsair with your stack',
+	},
+	'multi-tenancy': {
+		Component: MultiTenancyDoc,
+		title: 'Multi-Tenancy',
+		description: 'Building multi-tenant applications with Corsair',
+	},
 	typescript: {
 		Component: TypescriptDoc,
 		title: 'TypeScript Concepts',
 		description: 'Full end-to-end type safety from database to UI',
 	},
-	'integrations/next': {
-		Component: NextDoc,
-		title: 'Next.js',
-		description: 'Integrate Corsair with Next.js App Router and Pages Router',
+	webhooks: {
+		Component: WebhooksDoc,
+		title: 'Webhooks',
+		description: 'Handling webhooks in Corsair',
 	},
-	'integrations/vite': {
-		Component: ViteDoc,
-		title: 'Vite',
-		description:
-			'Use Corsair with Vite for fast development and optimized builds',
-	},
-	'integrations/hono': {
-		Component: HonoDoc,
-		title: 'Hono',
-		description:
-			'Integrate Corsair with Hono for lightweight, edge-compatible APIs',
-	},
-	'integrations/prisma': {
-		Component: PrismaDoc,
-		title: 'Prisma',
-		description:
-			'Integrate Corsair with Prisma for type-safe database operations',
-	},
-	'integrations/drizzle': {
-		Component: DrizzleDoc,
-		title: 'Drizzle',
+	'adapters/drizzle': {
+		Component: DrizzleAdapterDoc,
+		title: 'Drizzle Adapter',
 		description:
 			'Use Corsair with Drizzle ORM for type-safe database operations',
+	},
+	'adapters/kysely': {
+		Component: KyselyAdapterDoc,
+		title: 'Kysely Adapter',
+		description: 'Use Corsair with Kysely for type-safe database operations',
+	},
+	'adapters/postgresql': {
+		Component: PostgresqlAdapterDoc,
+		title: 'PostgreSQL Adapter',
+		description: 'Use Corsair with raw PostgreSQL',
+	},
+	'adapters/prisma': {
+		Component: PrismaAdapterDoc,
+		title: 'Prisma Adapter',
+		description: 'Use Corsair with Prisma for type-safe database operations',
 	},
 	'plugins/slack': {
 		Component: SlackDoc,
