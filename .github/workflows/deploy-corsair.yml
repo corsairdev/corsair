@@ -3,6 +3,10 @@ name: Deploy Corsair to NPM
 on:
   workflow_dispatch:
 
+permissions:
+  contents: read
+  id-token: write  # Required for npm provenance
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -32,6 +36,6 @@ jobs:
         run: pnpm run typecheck
 
       - name: Publish corsair to NPM
-        run: pnpm --filter corsair publish --no-git-checks
+        run: pnpm --filter corsair publish --provenance --no-git-checks
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
