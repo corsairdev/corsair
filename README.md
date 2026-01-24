@@ -1,124 +1,111 @@
-# Corsair: The TypeScript Vibe Coding SDK
+## About the Project
 
-Corsair is a TypeScript SDK that gives AI coding agents a validated interface to your backend. Agents describe what they want in natural language and Corsair generates fully-typed API routes connected to your database and third-party services. It works with any stack, enforcing types from database to frontend. When your schema changes, Corsair auto-fixes all affected routes in seconds. And since it's just TypeScript, you can edit the generated code anytime. Corsair handles the backend plumbing so you can focus on building your product instead of manipulating ORMs, reading API docs, or doing TypeScript gymnastics.
+Corsair is a unified SDK for integrating with third-party service. Add Slack, Linear, GitHub, Gmail, and hundreds of other integrations — all with the same syntax, same types, and the same four database tables.
 
-Existing solutions make you choose between speed and control. Vibe coding platforms can't securely connect to real data. Automation tools lack frontend support and require manual workflow assembly. Letting AI write backend code directly works once, then becomes unmaintainable when requirements change. You're left digging through generated code trying to fix what broke. Corsair gives AI the right level of abstraction: agents describe intent, Corsair ensures type-safe, maintainable implementation.
+### Why Corsair
 
-**It's about speed + control, not speed versus control.**
+Integration management in the TypeScript ecosystem is fragmented. Each service has its own SDK with different patterns, error handling, and authentication flows. Rather than juggling dozens of different libraries, Corsair provides a single, consistent interface for all your integrations.
 
-Your agent writes the bash command:
-
-```bash
-pnpm corsair query
-  -n "published posts with engagement"
-  -i "this should return published posts with author details and comment count. it should accept an author id"
-```
-
-Corsair writes a client-ready query:
-
-```typescript
-const posts = useCorsairQuery('published posts with engagement', {
-  author_id: params.author_id,
-})
-```
-
-Corsair even integrates with third-party APIs.
+## Quick Start
 
 ```bash
-pnpm corsair mutation
-  -n "publish post"
-  -i "publish this post and then send a slack notification that a new post has been created"
+npm install corsair
 ```
 
-```typescript
-const post = useCorsairMutation('publish post', {
-  post,
-  channel: "#new-posts",
-})
+```ts
+export const corsair = createCorsair({
+	multiTenancy: true,
+	database: drizzleAdapter(...),
+	plugins: [
+		slack({
+			authType: 'api_key',
+			credentials: {
+				botToken: process.env.SLACK_BOT_TOKEN,
+			},
+      errorHandler: {
+        RATE_LIMIT: { ... }
+      }
+		}),
+		linear({
+			authType: 'api_key',
+			credentials: {
+				apiKey: process.env.LINEAR_API_KEY,
+			},
+      hooks: { ... },
+		}),
+	],
+});
+
+// Use with tenant context
+const tenant = corsair.withTenant('tenant_123');
+
+// Send a Slack message
+await tenant.slack.api.messages.post({
+	channel: 'C01234567',
+	text: 'Hello from Corsair!',
+});
+
+// Create a Linear issue
+await tenant.linear.api.issues.get({
+	title: 'New feature request',
+	teamId: 'TEAM_ABC',
+});
+
+// Everything is stored locally so you can create foreign keys to external data
+await tenant.linear.db.issues.findById('ABC_123');
 ```
 
-*Integrate with Slack, Resend, Stripe, Posthog, Spotify, and more!*
+## Key Features
 
-With Corsair, you get:
+### One SDK, Many Integrations
 
-- ✅ Integrate with your favorite agent - Claude Code, Corsair, Antigravity, whatever's coming out next week. All agents work with Corsair.
-- ✅ Overwrite as needed - All generated code is normal TypeScript and lives in your codebase. It is completely editable.
-- ✅ Full type safety - TypeScript knows all types from your back-end to your front-end.
-- ✅ Validated API routes - Can't hallucinate invalid database operations or third-party integrations
-- ✅ Readable code - Developers instantly understand intent during code review
-- ✅ Auto-fixing - When your schema changes, Corsair adapts and rewrites your API routes in seconds.
+Learn one syntax, use it everywhere. No need to master each service's unique SDK quirks. Every integration follows the same pattern: `corsair.[integration].api.[resource].[action]()`.
 
-Works with any stack *(Next, Vite, Hono, Svelte, etc)* and any ORM *(Drizzle, Prisma, Kysely, Supabase, etc)*
+Everything is then stored in your database automatically and kept up to date. Every integration follows the same pattern: `corsair.[integration].db.[resource].findById()`.
 
-## Iterate Faster
+### Multi-Tenant by Default
 
-**You'll change your database schema as you build your project. Corsair will adapt.**
+Every operation is scoped to a tenant. Data isolation is automatic — no cross-contamination possible. Perfect for SaaS applications.
 
-You decide to change your users table from `users.full_name` to `users.first_name` and `users.last_name`. 
+### Always Fresh Data
 
-Dozens of API routes are broken because `users.full_name` doesn't exist. 
+API responses are stored and automatically updated through webhooks. Your data is never stale, and you get automatic sync for free.
 
-```bash
-pnpm corsair fix
-```
+### Four Tables Forever
 
-Corsair will immediately detect all broken API routes and rewrite them to adapt to your new schema. 
+Add 100 integrations — still just four database tables. No schema bloat, no migration headaches.
 
-## Why Use This With Your Agent?
+### Fully Typed
 
-**Agents work faster** - No fumbling with ORM syntax or debugging type mismatches
+Every API call, every response, every database query is fully typed. Your editor knows everything, and breaking changes are caught at compile time.
 
-**Agents make fewer mistakes** - CLI validates everything before generating code, preventing hallucinated queries
+### Production-Ready
 
-**Agents write readable code** - Natural language intent stays inline, so humans instantly understand what the agent built
+Built-in error handling, retry logic, rate limit management, and credential encryption. Focus on your product, not integration plumbing.
 
-**Agents build predictable file structure** - Code is easily traceable back to where it was written and can be edited. 
+## Supported Integrations
 
-**Bash-native** - Agents can do everything from terminal without navigating files
+- **Slack** — channels, messages, users, reactions, files
+- **Linear** — issues, projects, comments, teams
+- **GitHub** — repositories, issues, pull requests, actions
+- **Gmail** — messages, threads, labels, drafts
 
-## What It Looks Like In Code
+And many more. Check the [documentation](https://corsair.dev) for the full list.
 
-The natural language prompt becomes your query identifier:
+## Database Adapters
 
-```typescript
-// Queries
-const { data: posts } = useCorsairQuery('published posts with engagement')
-//    ^? { id: number; title: string; author: { name: string }; commentCount: number }[]
+Corsair supports multiple database adapters:
 
-// Mutations
-const createPost = useCorsairMutation('create post and send slack notification')
-await createPost.mutateAsync({
-  title: 'Hello World',
-  authorId: 123,
-  //  ^ fully typed mutation arguments
-  channel: "#new-posts" // "#new-posts" | "#general" | "#sign-ups"
-  //  ^ even your plug-ins are strongly typed and defined by you 
-})
-```
+- **Drizzle** — Full support for PostgreSQL, MySQL, SQLite
+- **Prisma** — Works with your existing Prisma setup
+- **Kysely** — Type-safe SQL query builder
+- **PostgreSQL** — Direct PostgreSQL adapter
 
-The intent is preserved right in the code. When you read `"published posts with engagement"` you know exactly what it does.
+## Documentation
 
-Compare to traditional ORM code where intent is buried in implementation:
-
-```typescript
-// ❌ What does this do?
-const { data } = useQuery(['posts'], async () => {
-  return db
-    .select()
-    .from(posts)
-    .where(eq(posts.published, true))
-    .leftJoin(authors, eq(posts.authorId, authors.id))
-    .groupBy(posts.id)
-})
-
-// ✅ Intent is obvious
-const { data } = useCorsairQuery('published posts with engagement')
-```
-
-## Get Started With a New Project
-
-*Or add to an existing one*
-
-```bash
-npx @corsair-ai/create@latest
-```
+- [Getting Started](https://corsair.dev/getting-started/introduction)
+- [Multi-Tenancy](https://corsair.dev/concepts/multi-tenancy)
+- [Error Handling](https://corsair.dev/concepts/error-handling)
+- [Webhooks](https://corsair.dev/concepts/webhooks)
+- [Database](https://corsair.dev/concepts/database)
+- [Hooks](https://corsair.dev/concepts/hooks)
