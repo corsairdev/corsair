@@ -1,140 +1,92 @@
-## About the Project
+# Corsair
 
-Corsair is a unified SDK for integrating with third-party service. Add Slack, Linear, GitHub, Gmail, and hundreds of other integrations — all with the same syntax, same types, and the same four database tables.
+A unified SDK for integrating with third-party services. Add Slack, Linear, GitHub, Gmail, and hundreds of other integrations with the same syntax, same types, and same four database tables.
 
-### Why Corsair
+## The Problem
 
-Integration management in the TypeScript ecosystem is fragmented. Each service has its own SDK with different patterns, error handling, and authentication flows. Rather than juggling dozens of different libraries, Corsair provides a single, consistent interface for all your integrations.
+Every codebase has integrations. If you look at how they're written, 90% of the code is identical whether you're connecting to Slack, GitHub, Hubspot, or some random API:
 
-## Quick Start
+- Make an API call with proper error handling
+- Handle authentication and rate limits
+- Store responses in your database with custom schemas
+- Map untyped API responses to your own types
+- Keep that data fresh with webhooks or polling
+- Write foreign keys to connect external data to your own
 
-```bash
-npm install corsair
-```
+Each integration requires rebuilding this infrastructure from scratch. The result? Fragmented code with different patterns, error handling, and auth flows for every service.
 
-```ts
+## The Solution
+
+Corsair provides a single interface for all your integrations. Configure once with sensible defaults:
+```typescript
 export const corsair = createCorsair({
-	multiTenancy: true,
-	database: drizzleAdapter(...),
-	plugins: [
-		slack({
-			authType: 'api_key',
-			credentials: {
-				botToken: process.env.SLACK_BOT_TOKEN,
-			},
-		}),
-		linear({
-			authType: 'api_key',
-			credentials: {
-				apiKey: process.env.LINEAR_API_KEY,
-			},
-		}),
-	],
+  multiTenancy: true,
+  database: drizzleAdapter(...),
+  plugins: [
+    slack({
+      authType: 'api_key',
+      credentials: { botToken: process.env.SLACK_BOT_TOKEN },
+    }),
+    linear({
+      authType: 'api_key',
+      credentials: { apiKey: process.env.LINEAR_API_KEY },
+    }),
+  ],
 });
 ```
 
-## Key Features
-
-### One SDK, Many Integrations
-
-Learn one syntax, use it everywhere. No need to master each service's unique SDK quirks. Every integration follows the same pattern: `corsair.[integration].api.[resource].[action]()`.
-
-Everything is then stored in your database automatically and kept up to date. Every integration follows the same pattern: `corsair.[integration].db.[resource].findById()`.
-
-### Multi-Tenant by Default
-
-Every operation is scoped to a tenant. Data isolation is automatic — no cross-contamination possible. Perfect for SaaS applications.
-
-### Always Fresh Data
-
-API responses are stored and automatically updated through webhooks. Your data is never stale, and you get automatic sync for free.
-
-### Four Tables Forever
-
-Add 100 integrations — still just four database tables. No schema bloat, no migration headaches.
-
-### Fully Typed
-
-Every API call, every response, every database query is fully typed. Your editor knows everything, and breaking changes are caught at compile time.
-
-### Production-Ready
-
-Built-in error handling, retry logic, rate limit management, and credential encryption. Focus on your product, not integration plumbing.
-
-## Supported Integrations
-
-- **Slack** — channels, messages, users, reactions, files
-- **Linear** — issues, projects, comments, teams
-- **GitHub** — repositories, issues, pull requests, actions
-- **Gmail** — messages, threads, labels, drafts
-
-And many more. Check the [documentation](https://corsair.dev) for the full list.
-
-## Database Adapters
-
-Corsair supports multiple database adapters:
-
-- **Drizzle** — Full support for PostgreSQL, MySQL, SQLite
-- **Prisma** — Works with your existing Prisma setup
-- **Kysely** — Type-safe SQL query builder
-- **PostgreSQL** — Direct PostgreSQL adapter
-
-```ts
-export const corsair = createCorsair({
-	multiTenancy: true,
-	database: drizzleAdapter(...),
-	plugins: [
-		slack({
-			authType: 'api_key',
-			credentials: {
-				botToken: process.env.SLACK_BOT_TOKEN,
-			},
-      errorHandlers: {
-        RATE_LIMIT: { ... },
-        DEFAULT: { ... },
-      }
-		}),
-		linear({
-			authType: 'api_key',
-			credentials: {
-				apiKey: process.env.LINEAR_API_KEY,
-			},
-      hooks: {
-        issues: {
-          create: {
-            before: () => {},
-            after: () => {},
-          }
-        }
-      }
-		}),
-	],
-});
-
-// Use Corsair with tenant context
+Use the same syntax across every integration, fully typed:
+```typescript
 const tenant = corsair.withTenant('tenant_123');
 
-// Send a Slack message
 await tenant.slack.api.messages.post({
-	channel: 'C01234567',
-	text: 'Hello from Corsair!',
+  channel: 'C01234567',
+  text: 'Hello from Corsair!',
 });
 
-// Create a Linear issue
 await tenant.linear.api.issues.create({
-	title: 'New feature request',
-	teamId: 'TEAM_ABC',
+  title: 'New feature request',
+  teamId: 'TEAM_ABC',
 });
-
-// Everything is stored locally so you can create foreign keys to external data
-const issue = await tenant.linear.db.issues.findById('ABC_123');
 ```
 
-## Documentation
+All data is automatically synced to your local database and fully typed. No manual schema mapping:
+```typescript
+// Strongly typed, no casting needed
+const issue = await tenant.linear.db.issues.findById('ABC_123');
+//    ^? LinearIssue
+```
 
-- [Getting Started](https://corsair.dev/getting-started/introduction)
-- [Multi-Tenancy](https://corsair.dev/concepts/multi-tenancy)
-- [Error Handling](https://corsair.dev/concepts/error-handling)
-- [Webhooks](https://corsair.dev/concepts/webhooks)
-- [Database](https://corsair.dev/concepts/database)
-- [Hooks](https://corsair.dev/concepts/hooks)
+Customize anywhere you need it:
+```typescript
+linear({
+  authType: 'api_key',
+  credentials: { apiKey: process.env.LINEAR_API_KEY },
+  errorHandlers: {
+    RATE_LIMIT: { retryAfter: 60, maxRetries: 3 },
+    DEFAULT: { logToSentry: true },
+  },
+  hooks: {
+    issues: {
+      create: {
+        before: (data) => validateIssue(data),
+        after: (issue) => notifyTeam(issue),
+      },
+    },
+  },
+})
+```
+
+**What you get:**
+
+- **Consistent API** — Same patterns across every integration
+- **Full type safety** — All responses are strongly typed, no manual type definitions needed
+- **Local database sync** — Four tables handle all external data. Write foreign keys directly to `corsair_resources`
+- **Built-in auth** — OAuth, API keys, and token refresh handled automatically
+- **Data freshness** — Webhooks and polling keep your local data up to date
+- **Error handling** — Rate limits, retries, and failures managed out of the box
+- **Sensible defaults** — Works out of the box, customize only what you need
+
+**When to use Corsair:**
+
+Best for teams building products with multiple third-party integrations. If you're building deep, custom functionality with a single API, you're better off using that service's SDK directly.
