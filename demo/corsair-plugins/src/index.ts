@@ -11,7 +11,7 @@ export const corsair = createCorsair({
 		slack({
 			authType: 'api_key',
 			credentials: {
-				botToken: '',
+				botToken: process.env.SLACK_BOT_TOKEN!,
 			},
 			hooks: {
 				channels: {
