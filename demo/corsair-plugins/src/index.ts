@@ -1,6 +1,6 @@
 import { createCorsair } from 'corsair';
 import { drizzleAdapter } from 'corsair/adapters/drizzle';
-import { linear, slack } from 'corsair/plugins';
+import { linear, resend, slack } from 'corsair/plugins';
 import { db } from './db';
 import * as schema from './db/schema';
 
@@ -55,6 +55,12 @@ export const corsair = createCorsair({
 			authType: 'api_key',
 			credentials: {
 				apiKey: process.env.LINEAR_API_KEY ?? 'dev-token',
+			},
+		}),
+		resend({
+			authType: 'api_key',
+			credentials: {
+				apiKey: process.env.RESEND_API_KEY ?? 'dev-token',
 			},
 		}),
 	],
