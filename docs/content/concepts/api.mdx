@@ -76,7 +76,7 @@ await tenant.slack.api.messages.post({
 });
 ```
 
-See [Multi-Tenancy](/docs/getting-started/multi-tenancy) for details.
+See [Multi-Tenancy](/docs/multi-tenancy) for details.
 
 ## Automatic Persistence
 
@@ -90,7 +90,7 @@ const channel = await corsair.slack.api.channels.create({ name: "support" });
 const stored = await corsair.slack.db.channels.findByResourceId(channel.id);
 ```
 
-See [Database](/docs/getting-started/database) for the full ORM API.
+See [Database](/docs/database) for the full ORM API.
 
 ## Hooks
 
