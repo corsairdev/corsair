@@ -72,7 +72,7 @@ const tree = {
 				},
 				{
 					type: 'page' as const,
-					name: 'TypeScript',
+					name: 'Database',
 					url: '/database',
 					icon: <Database className="size-4" />,
 				},
