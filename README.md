@@ -1,6 +1,6 @@
 # Corsair: The TypeScript Integration Framework
 
-A unified framework for integrating with third-party services. Add Slack, Linear, GitHub, Gmail, and hundreds of other integrations with the same syntax, same types, and same four database tables.
+A unified framework for integrating with third-party services. Add Slack, Linear, GitHub, Gmail, and hundreds of other integrations with the same syntax and same types, and same four database tables.
 
 ## The Problem
 
