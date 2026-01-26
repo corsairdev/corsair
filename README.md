@@ -79,13 +79,13 @@ linear({
 
 **What you get:**
 
-- **Consistent API** — Same patterns across every integration
-- **Full type safety** — All responses are strongly typed, no manual type definitions needed
-- **Local database sync** — Four tables handle all external data. Write foreign keys directly to `corsair_resources`
-- **Built-in auth** — OAuth, API keys, and token refresh handled automatically
-- **Data freshness** — Webhooks and polling keep your local data up to date
-- **Error handling** — Rate limits, retries, and failures managed out of the box
-- **Sensible defaults** — Works out of the box, customize only what you need
+- [**Consistent API**](https://docs.corsair.dev/api) — Same patterns across every integration
+- [**Full type safety**](https://docs.corsair.dev/typescript) — All responses are strongly typed, no manual type definitions needed
+- [**Multi Tenancy**](https://docs.corsair.dev/multi-tenancy) — Keep data, auth, and database records fully isolated with no cross-contamination
+- [**Local database sync**](https://docs.corsair.dev/database) — Four tables handle all external data. Write foreign keys directly to Corsair tables
+- [**Built-in auth**](https://docs.corsair.dev/auth) — OAuth, API keys, and token refresh handled automatically
+- [**Data freshness**](https://docs.corsair.dev/webhooks) — Webhooks and polling keep your local data up to date
+- [**Error handling**](https://docs.corsair.dev/error-handling) — Rate limits, retries, and failures managed out of the box
 
 **When to use Corsair:**
 
