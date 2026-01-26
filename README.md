@@ -1,19 +1,19 @@
-# Corsair
+# Corsair: The TypeScript Integration Framework
 
-A unified SDK for integrating with third-party services. Add Slack, Linear, GitHub, Gmail, and hundreds of other integrations with the same syntax, same types, and same four database tables.
+A unified framework for integrating with third-party services. Add Slack, Linear, GitHub, Gmail, and hundreds of other integrations with the same syntax, same types, and same four database tables.
 
 ## The Problem
 
-Every codebase has integrations. If you look at how they're written, 90% of the code is identical whether you're connecting to Slack, GitHub, Hubspot, or some random API:
+Every codebase has integrations. If you look at how they're written, 90% of the code is identical whether you're connecting to Slack, Gmail, Hubspot, or some random API:
 
 - Make an API call with proper error handling
-- Handle authentication and rate limits
+- Deal with authentication and rate limits
 - Store responses in your database with custom schemas
 - Map untyped API responses to your own types
 - Keep that data fresh with webhooks or polling
-- Write foreign keys to connect external data to your own
+- Write foreign keys to connect the external data to your own
 
-Each integration requires rebuilding this infrastructure from scratch. The result? Fragmented code with different patterns, error handling, and auth flows for every service.
+Each integration requires rebuilding this infrastructure from scratch. This results in fragmented code with different patterns, error handling, and auth flows for every service.
 
 ## The Solution
 
