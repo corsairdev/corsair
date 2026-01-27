@@ -1,0 +1,146 @@
+---
+title: Kysely
+description: Integrate Corsair with Kysely.
+---
+
+Kysely is a type-safe SQL query builder for TypeScript. Corsair's Kysely adapter provides direct database access for PostgreSQL.
+
+## Installation
+
+Make sure you have Kysely installed. For more information, see the [Kysely Documentation](https://kysely.dev/).
+
+```ts title="corsair.ts"
+import { createCorsair } from "corsair";
+import { kyselyAdapter } from "corsair/adapters/kysely";
+import { db } from "./database";
+
+export const corsair = createCorsair({
+    database: kyselyAdapter(db, {
+        provider: "pg",
+    }),
+    plugins: [...],
+});
+```
+
+## Configuration
+
+The Kysely adapter accepts the following options:
+
+| Option | Type | Description |
+|--------|------|-------------|
+| `provider` | `"pg"` | Database provider (PostgreSQL only) |
+| `adapterId` | `string` | Custom adapter identifier |
+
+## Database Setup
+
+Create a Kysely instance with PostgreSQL:
+
+```ts title="database.ts"
+import { Kysely, PostgresDialect } from "kysely";
+import { Pool } from "pg";
+
+const pool = new Pool({
+    connectionString: process.env.DATABASE_URL,
+});
+
+export const db = new Kysely({
+    dialect: new PostgresDialect({ pool }),
+});
+```
+
+## Schema
+
+Corsair expects these tables in your database:
+
+```sql
+CREATE TABLE corsair_providers (
+    id TEXT PRIMARY KEY,
+    config JSONB,
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE TABLE corsair_connections (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    tenant_id TEXT NOT NULL,
+    provider_id TEXT NOT NULL,
+    config JSONB,
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE TABLE corsair_resources (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    tenant_id TEXT NOT NULL,
+    resource_id TEXT NOT NULL,
+    resource TEXT NOT NULL,
+    service TEXT NOT NULL,
+    version TEXT,
+    data JSONB,
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE TABLE corsair_events (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    tenant_id TEXT NOT NULL,
+    resource_id TEXT,
+    event_type TEXT NOT NULL,
+    data JSONB,
+    created_at TIMESTAMP DEFAULT NOW()
+);
+```
+
+## Direct Adapter
+
+If you're already using PostgreSQL, you can use the direct Postgres adapter:
+
+```ts title="corsair.ts"
+import { kyselyPostgresAdapter } from "corsair/adapters/kysely";
+
+export const corsair = createCorsair({
+    database: kyselyPostgresAdapter(db),
+    plugins: [...],
+});
+```
+
+## Transactions
+
+The Kysely adapter supports transactions:
+
+```ts title="example.ts"
+await corsair.slack.db.messages.transaction(async (trx) => {
+    await trx.upsert("msg_1", { text: "Hello" });
+    await trx.upsert("msg_2", { text: "World" });
+});
+```
+
+## Full Example
+
+```ts title="corsair.ts"
+import { createCorsair } from "corsair";
+import { kyselyAdapter } from "corsair/adapters/kysely";
+import { slack } from "corsair/plugins";
+import { Kysely, PostgresDialect } from "kysely";
+import { Pool } from "pg";
+
+const pool = new Pool({
+    connectionString: process.env.DATABASE_URL,
+});
+
+const db = new Kysely({
+    dialect: new PostgresDialect({ pool }),
+});
+
+export const corsair = createCorsair({
+    multiTenancy: true,
+    database: kyselyAdapter(db, { provider: "pg" }),
+    plugins: [
+        slack({
+            authType: "api_key",
+            credentials: { botToken: process.env.SLACK_BOT_TOKEN },
+        }),
+    ],
+});
+```
+

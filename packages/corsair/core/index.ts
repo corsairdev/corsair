@@ -43,12 +43,22 @@ export function createCorsair<const Plugins extends readonly CorsairPlugin[]>(
 						'corsair.withTenant(tenantId): tenantId must be a non-empty string',
 					);
 				}
-				return buildCorsairClient(config.plugins, config.database, tenantId);
+				return buildCorsairClient(
+					config.plugins,
+					config.database,
+					tenantId,
+					config.errorHandlers,
+				);
 			},
 		};
 	}
 
-	return buildCorsairClient(config.plugins, config.database, undefined);
+	return buildCorsairClient(
+		config.plugins,
+		config.database,
+		undefined,
+		config.errorHandlers,
+	);
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -69,11 +79,26 @@ export type {
 	CorsairEndpoint,
 	EndpointTree,
 } from './endpoints';
+// Error handling types
+export type {
+	CorsairErrorHandler,
+	ErrorContext,
+	ErrorHandler,
+	ErrorHandlerAndMatchFunction,
+	ErrorMatcher,
+	RetryStrategies,
+	RetryStrategy,
+} from './errors';
 // Plugin types
 export type {
+	BeforeHookResult,
 	CorsairIntegration,
+	CorsairKeyBuilder,
+	CorsairKeyBuilderBase,
 	CorsairPlugin,
 	CorsairPluginContext,
+	EndpointHooks,
+	WebhookHooks,
 } from './plugins';
 
 // Utility types

@@ -1,0 +1,116 @@
+---
+title: Database
+description: Four tables, unlimited integrations, always fresh data.
+---
+
+No matter how many integrations you add, Corsair uses only four tables. This keeps your database clean and your queries fast.
+
+## Core Tables
+
+### `corsair_providers`
+
+All integrations you have enabled.
+
+```sql
+-- Example row
+id: "slack"
+config: { ... }
+```
+
+### `corsair_connections`
+
+The tenant connections for each integration. If multi-tenancy is off, this is 1:1 with providers.
+
+```sql
+-- Example rows
+id: 1, tenant_id: "tenant_abc", provider_id: "slack", config: { botToken: "..." }
+id: 2, tenant_id: "tenant_xyz", provider_id: "slack", config: { botToken: "..." }
+```
+
+### `corsair_resources`
+
+Every piece of data from your integrations, cleaned up and constantly updated.
+
+```sql
+-- Example row
+id: "uuid", tenant_id: "tenant_abc", resource: "slack", service: "messages"
+resource_id: "msg_123", data: { text: "Hello!", channel: "C01234567" }
+```
+
+When you send a Slack message, Corsair stores it here. When a webhook arrives saying the message was updated, Corsair updates this row. Your data is never stale.
+
+### `corsair_events`
+
+A log of all events for replay and auditing.
+
+```sql
+-- Example rows
+id: 1, resource_id: "msg_123", event_type: "created", ...
+id: 2, resource_id: "msg_123", event_type: "updated", ...
+```
+
+Want to see a message's history? Query this table to replay every change.
+
+## Querying Data
+
+Use the Corsair ORM to query data with full type safety.
+
+```ts title="example.ts"
+// Find a specific resource
+const message = await corsair.slack.db.messages.findByResourceId("msg_123");
+
+// List all messages for this tenant
+const messages = await corsair.slack.db.messages.list({ limit: 50 });
+
+// Search by resource ID pattern
+const results = await corsair.slack.db.messages.search({
+    query: "msg_",
+    limit: 20,
+});
+```
+
+## Foreign Keys
+
+You can create foreign keys from your own tables to `corsair_resources`. Since Corsair keeps this data fresh through API calls and webhooks, your references always point to up-to-date data.
+
+```sql
+-- Your table
+CREATE TABLE my_tickets (
+    id UUID PRIMARY KEY,
+    slack_message_id UUID REFERENCES corsair_resources(id),
+    ...
+);
+```
+
+## Database Adapters
+
+Corsair supports multiple database adapters. Choose the one that matches your stack.
+
+| Adapter | Description |
+|---------|-------------|
+| [Drizzle](/docs/adapters/drizzle) | Type-safe ORM with great DX |
+| [Kysely](/docs/adapters/kysely) | Lightweight type-safe query builder |
+| [Prisma](/docs/adapters/prisma) | Popular ORM with schema-first approach |
+
+All adapters require [PostgreSQL](/docs/adapters/postgresql).
+
+```ts title="corsair.ts"
+import { drizzleAdapter } from "corsair/adapters/drizzle";
+
+export const corsair = createCorsair({
+    database: drizzleAdapter(db, { provider: "pg", schema }),
+    plugins: [...],
+});
+```
+
+## No Table Bloat
+
+Adding more integrations doesn't add more tables. Slack, Linear, GitHub — they all use the same four tables. Your schema stays clean no matter how many integrations you add.
+
+## Next Steps
+
+- [PostgreSQL Setup](/docs/adapters/postgresql) — Schema, indexes, and performance tips
+- [Drizzle Adapter](/docs/adapters/drizzle) — Full Drizzle ORM integration
+- [Kysely Adapter](/docs/adapters/kysely) — Lightweight query builder
+- [Prisma Adapter](/docs/adapters/prisma) — Prisma ORM integration
+

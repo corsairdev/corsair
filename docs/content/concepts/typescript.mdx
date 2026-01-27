@@ -1,0 +1,106 @@
+---
+title: TypeScript
+description: End-to-end type safety with zero configuration.
+---
+
+Corsair is written in TypeScript and designed to be type-safe everywhere. Once you set up your Corsair instance, all API calls, database queries, and responses are fully typed.
+
+```ts title="example.ts"
+// TypeScript knows exactly what parameters are required
+await corsair.slack.api.channels.create({
+    name: "engineering",
+    is_private: true,
+});
+
+// And what the response looks like
+const channel = await corsair.slack.api.channels.get({
+    channel: "C01234567",
+});
+
+console.log(channel.id, channel.name, channel.is_member);
+```
+
+## Why This Matters
+
+Without Corsair, you'd write code like this:
+
+```ts title="without-corsair.ts"
+// Raw Slack API — no type safety
+const response = await fetch("https://slack.com/api/conversations.create", {
+    method: "POST",
+    headers: {
+        "Authorization": `Bearer ${token}`,
+        "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ name: "engineering" }),
+});
+
+const data = await response.json(); // data is 'any'
+```
+
+You don't know what fields are required. You don't know what the response looks like. You have to check the Slack docs every time.
+
+With Corsair:
+
+```ts title="with-corsair.ts"
+// Fully typed — your editor shows exactly what's available
+const channel = await corsair.slack.api.channels.create({
+    name: "engineering", // Required
+    is_private: true,    // Optional — TypeScript tells you
+});
+
+channel.id;        // ✓ TypeScript knows this exists
+channel.is_member; // ✓ TypeScript knows this exists
+channel.foo;       // ✗ TypeScript error — property doesn't exist
+```
+
+## Typed Database Queries
+
+Database operations are also fully typed based on your plugin schemas.
+
+```ts title="example.ts"
+// The message object is strongly typed
+const message = await corsair.slack.db.messages.findByResourceId("msg_123");
+
+if (message) {
+    console.log(message.data.text);    // ✓ Typed
+    console.log(message.data.channel); // ✓ Typed
+}
+```
+
+## Consistent Across Integrations
+
+Every integration uses the same patterns. Learn once, use everywhere.
+
+```ts title="example.ts"
+// Slack
+await corsair.slack.api.messages.post({ channel: "C01", text: "Hello" });
+
+// Linear
+await corsair.linear.api.issues.create({ title: "Bug", teamId: "TEAM_1" });
+
+// Same structure, same types, same patterns
+```
+
+## TypeScript Config
+
+We recommend enabling strict mode in your TypeScript configuration for the best experience.
+
+```json title="tsconfig.json"
+{
+    "compilerOptions": {
+        "strict": true
+    }
+}
+```
+
+If you can't use strict mode, at minimum enable `strictNullChecks`:
+
+```json title="tsconfig.json"
+{
+    "compilerOptions": {
+        "strictNullChecks": true
+    }
+}
+```
+
