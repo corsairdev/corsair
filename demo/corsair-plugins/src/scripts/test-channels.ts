@@ -6,7 +6,9 @@ const main = async () => {
 
 	// console.log(res);
 
-	const test = await corsair.withTenant('default').linear.api.projects.list({});
+	const test = await corsair
+		.withTenant('default')
+		.slack.db.channels.findByEntityId('C0123456789');
 
 	console.log(test);
 };

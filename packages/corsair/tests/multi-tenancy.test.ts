@@ -51,20 +51,12 @@ describe('Multi-Tenancy Data Isolation', () => {
 		const tenant1Adapter = withTenantAdapter(adapter, 'tenant-1');
 		const tenant2Adapter = withTenantAdapter(adapter, 'tenant-2');
 
-		const tenant1Resource = await tenant1Adapter.findOne<{
-			id: string;
-			tenant_id: string;
-			data: any;
-		}>({
+		const tenant1Resource = await tenant1Adapter.findOne({
 			table: 'corsair_resources',
 			where: [{ field: 'id', value: 'resource-1' }],
 		});
 
-		const tenant2Resource = await tenant2Adapter.findOne<{
-			id: string;
-			tenant_id: string;
-			data: any;
-		}>({
+		const tenant2Resource = await tenant2Adapter.findOne({
 			table: 'corsair_resources',
 			where: [{ field: 'id', value: 'resource-2' }],
 		});
@@ -160,18 +152,12 @@ describe('Multi-Tenancy Data Isolation', () => {
 			},
 		});
 
-		const tenant1Resource = await tenant1Adapter.findOne<{
-			id: string;
-			tenant_id: string;
-		}>({
+		const tenant1Resource = await tenant1Adapter.findOne({
 			table: 'corsair_resources',
 			where: [{ field: 'id', value: 'resource-1' }],
 		});
 
-		const tenant2Resource = await tenant2Adapter.findOne<{
-			id: string;
-			tenant_id: string;
-		}>({
+		const tenant2Resource = await tenant2Adapter.findOne({
 			table: 'corsair_resources',
 			where: [{ field: 'id', value: 'resource-2' }],
 		});
@@ -220,21 +206,13 @@ describe('Multi-Tenancy Data Isolation', () => {
 		const tenant1Adapter = withTenantAdapter(adapter, 'tenant-1');
 		const tenant2Adapter = withTenantAdapter(adapter, 'tenant-2');
 
-		const updated1 = await tenant1Adapter.update<{
-			id: string;
-			tenant_id: string;
-			data: string;
-		}>({
+		const updated1 = await tenant1Adapter.update({
 			table: 'corsair_resources',
 			where: [{ field: 'id', value: 'resource-1' }],
 			data: { data: JSON.stringify({ name: 'Updated by Tenant 1' }) },
 		});
 
-		const updated2 = await tenant2Adapter.update<{
-			id: string;
-			tenant_id: string;
-			data: string;
-		}>({
+		const updated2 = await tenant2Adapter.update({
 			table: 'corsair_resources',
 			where: [{ field: 'id', value: 'resource-2' }],
 			data: { data: JSON.stringify({ name: 'Updated by Tenant 2' }) },

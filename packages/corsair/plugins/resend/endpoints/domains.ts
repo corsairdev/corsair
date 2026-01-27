@@ -30,8 +30,8 @@ export const create: ResendEndpoints['domainsCreate'] = async (ctx, input) => {
 		}
 	}
 
-	await logEvent(
-		ctx.database,
+	await logEventFromContext(
+		ctx,
 		'resend.domains.create',
 		{ ...input },
 		'completed',
@@ -62,7 +62,12 @@ export const get: ResendEndpoints['domainsGet'] = async (ctx, input) => {
 		}
 	}
 
-	await logEventFromContext(ctx, 'resend.domains.get', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'resend.domains.get',
+		{ ...input },
+		'completed',
+	);
 	return response;
 };
 
@@ -94,8 +99,8 @@ export const list: ResendEndpoints['domainsList'] = async (ctx, input) => {
 		}
 	}
 
-	await logEvent(
-		ctx.database,
+	await logEventFromContext(
+		ctx,
 		'resend.domains.list',
 		{ ...input },
 		'completed',
@@ -121,8 +126,8 @@ export const deleteDomain: ResendEndpoints['domainsDelete'] = async (
 		}
 	}
 
-	await logEvent(
-		ctx.database,
+	await logEventFromContext(
+		ctx,
 		'resend.domains.delete',
 		{ ...input },
 		'completed',
@@ -151,8 +156,8 @@ export const verify: ResendEndpoints['domainsVerify'] = async (ctx, input) => {
 		}
 	}
 
-	await logEvent(
-		ctx.database,
+	await logEventFromContext(
+		ctx,
 		'resend.domains.verify',
 		{ ...input },
 		'completed',

@@ -24,8 +24,8 @@ export const aliasCreate: PostHogEndpoints['aliasCreate'] = async (
 		body: payload,
 	});
 
-	await logEvent(
-		ctx.database,
+	await logEventFromContext(
+		ctx,
 		'posthog.alias.create',
 		{ ...input },
 		'completed',
@@ -81,8 +81,8 @@ export const eventCreate: PostHogEndpoints['eventCreate'] = async (
 		}
 	}
 
-	await logEvent(
-		ctx.database,
+	await logEventFromContext(
+		ctx,
 		'posthog.event.create',
 		{ ...input },
 		'completed',
@@ -111,8 +111,8 @@ export const identityCreate: PostHogEndpoints['identityCreate'] = async (
 		body: payload,
 	});
 
-	await logEvent(
-		ctx.database,
+	await logEventFromContext(
+		ctx,
 		'posthog.identity.create',
 		{ ...input },
 		'completed',
@@ -147,7 +147,12 @@ export const trackPage: PostHogEndpoints['trackPage'] = async (ctx, input) => {
 		body: payload,
 	});
 
-	await logEventFromContext(ctx, 'posthog.track.page', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'posthog.track.page',
+		{ ...input },
+		'completed',
+	);
 	return response;
 };
 
@@ -181,8 +186,8 @@ export const trackScreen: PostHogEndpoints['trackScreen'] = async (
 		body: payload,
 	});
 
-	await logEvent(
-		ctx.database,
+	await logEventFromContext(
+		ctx,
 		'posthog.track.screen',
 		{ ...input },
 		'completed',
