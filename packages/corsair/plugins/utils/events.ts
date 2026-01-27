@@ -1,36 +1,24 @@
-import { createCorsairOrm } from '../../db/orm';
-
-function generateUuidV4(): string {
-	const cryptoAny = globalThis.crypto as unknown as
-		| { randomUUID?: () => string }
-		| undefined;
-	if (cryptoAny?.randomUUID) {
-		return cryptoAny.randomUUID();
-	}
-	return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
-		const r = (Math.random() * 16) | 0;
-		const v = c === 'x' ? r : (r & 0x3) | 0x8;
-		return v.toString(16);
-	});
-}
+import type { CorsairDbAdapter } from '../../adapters';
+import { generateUuidV4 } from '../../core/utils';
 
 export async function logEvent(
-	database: any,
+	database: CorsairDbAdapter,
 	eventType: string,
 	payload: Record<string, unknown>,
 	status: 'pending' | 'processing' | 'completed' | 'failed' = 'pending',
 	tenantId: string = 'default',
 ): Promise<string | null> {
-	if (!database) return null;
 	try {
-		const orm = createCorsairOrm(database);
 		const eventId = generateUuidV4();
-		await orm.events.create({
-			id: eventId,
-			tenant_id: tenantId,
-			event_type: eventType,
-			payload,
-			status,
+		await database.insert({
+			table: 'corsair_events',
+			data: {
+				id: eventId,
+				tenant_id: tenantId,
+				event_type: eventType,
+				payload,
+				status,
+			},
 		});
 		return eventId;
 	} catch (error) {

@@ -1,8 +1,8 @@
-import type { AuthTypes } from '../../constants';
 import type {
 	BindEndpoints,
 	BindWebhooks,
 	CorsairEndpoint,
+	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
 	CorsairWebhook,
@@ -41,11 +41,8 @@ import {
 
 export type { SlackReactionName } from './endpoints';
 
-export type SlackContext = CorsairPluginContext<
-	'slack',
-	typeof SlackSchema,
-	SlackCredentials
->;
+import type { PickAuth } from '../../core/constants';
+import { errorHandlers } from './error-handlers';
 
 type SlackEndpoint<
 	K extends keyof SlackEndpointOutputs,
@@ -53,6 +50,7 @@ type SlackEndpoint<
 > = CorsairEndpoint<SlackContext, Input, SlackEndpointOutputs[K]>;
 
 export type SlackEndpoints = {
+	channelsRandom: SlackEndpoint<'channelsRandom', {}>;
 	channelsArchive: SlackEndpoint<'channelsArchive', { channel: string }>;
 	channelsClose: SlackEndpoint<'channelsClose', { channel: string }>;
 	channelsCreate: SlackEndpoint<
@@ -399,6 +397,7 @@ export type SlackBoundWebhooks = BindWebhooks<SlackWebhooks>;
 
 const slackEndpointsNested = {
 	channels: {
+		random: Channels.random,
 		archive: Channels.archive,
 		close: Channels.close,
 		create: Channels.create,
@@ -476,35 +475,55 @@ const slackWebhooksNested = {
 	},
 } as const;
 
-export type SlackPluginOptions = {
-	authType: AuthTypes;
+export type SlackContext = CorsairPluginContext<
+	typeof SlackSchema,
+	SlackPluginOptions
+>;
 
+export type SlackPluginOptions = {
 	credentials: SlackCredentials;
 
-	hooks?: SlackPlugin['hooks'] | undefined;
+	authType: PickAuth<'api_key' | 'oauth_2'>;
 
-	webhookHooks?: SlackPlugin['webhookHooks'] | undefined;
+	hooks?: SlackPlugin['hooks'];
+
+	webhookHooks?: SlackPlugin['webhookHooks'];
+
+	errorHandlers?: CorsairErrorHandler;
 };
 
 export type SlackPlugin = CorsairPlugin<
 	'slack',
-	typeof slackEndpointsNested,
 	typeof SlackSchema,
-	SlackCredentials,
-	typeof slackWebhooksNested
+	typeof slackEndpointsNested,
+	typeof slackWebhooksNested,
+	SlackPluginOptions
 >;
 
 export function slack(options: SlackPluginOptions) {
 	return {
 		id: 'slack',
 		schema: SlackSchema,
-		options: options.credentials,
+		options: options,
 		hooks: options.hooks,
 		webhookHooks: options.webhookHooks,
 		endpoints: slackEndpointsNested,
 		webhooks: slackWebhooksNested,
 		pluginWebhookMatcher: (request) => {
 			return false;
+		},
+		errorHandlers: {
+			...errorHandlers,
+			...options.errorHandlers,
+		},
+		keyBuilder: async (ctx: SlackContext) => {
+			console.log(ctx.options.credentials);
+			if (options.authType === 'api_key') {
+				console.log('key builder - api_key');
+			} else if (options.authType === 'oauth_2') {
+				console.log('key builder - oauth_2');
+			}
+			return '';
 		},
 	} satisfies SlackPlugin;
 }

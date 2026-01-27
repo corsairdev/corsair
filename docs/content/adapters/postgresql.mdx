@@ -1,0 +1,187 @@
+---
+title: PostgreSQL
+description: Database requirements and setup for PostgreSQL.
+---
+
+PostgreSQL is the only database currently supported by Corsair. All adapters (Drizzle, Kysely, Prisma) require PostgreSQL.
+
+## Requirements
+
+- PostgreSQL 13 or higher
+- `uuid-ossp` or `pgcrypto` extension for UUID generation
+
+## Connection
+
+Connect using any of the supported adapters:
+
+```ts title="corsair.ts"
+import { createCorsair } from "corsair";
+import { drizzleAdapter } from "corsair/adapters/drizzle";
+
+export const corsair = createCorsair({
+    database: drizzleAdapter(db, { provider: "pg", schema }),
+    plugins: [...],
+});
+```
+
+## Schema
+
+Corsair requires four tables. Create them manually or use your ORM's migration tools.
+
+### SQL Schema
+
+```sql
+-- Enable UUID generation
+CREATE EXTENSION IF NOT EXISTS "pgcrypto";
+
+-- Providers table
+CREATE TABLE corsair_providers (
+    id TEXT PRIMARY KEY,
+    config JSONB,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Connections table (tenant credentials)
+CREATE TABLE corsair_connections (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    tenant_id TEXT NOT NULL,
+    provider_id TEXT NOT NULL,
+    config JSONB,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Resources table (integration data)
+CREATE TABLE corsair_resources (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    tenant_id TEXT NOT NULL,
+    resource_id TEXT NOT NULL,
+    resource TEXT NOT NULL,
+    service TEXT NOT NULL,
+    version TEXT,
+    data JSONB,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Events table (audit log)
+CREATE TABLE corsair_events (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    tenant_id TEXT NOT NULL,
+    resource_id TEXT,
+    event_type TEXT NOT NULL,
+    data JSONB,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Indexes for common queries
+CREATE INDEX idx_corsair_resources_tenant ON corsair_resources(tenant_id);
+CREATE INDEX idx_corsair_resources_resource_id ON corsair_resources(resource_id);
+CREATE INDEX idx_corsair_resources_lookup ON corsair_resources(tenant_id, resource, service);
+CREATE INDEX idx_corsair_events_tenant ON corsair_events(tenant_id);
+CREATE INDEX idx_corsair_events_resource ON corsair_events(resource_id);
+```
+
+## Using a Non-Default Schema
+
+To use a schema other than `public` (e.g., `corsair`):
+
+### Option 1: Connection String
+
+```ts
+const connectionString = "postgres://user:pass@localhost:5432/db?options=-c search_path=corsair";
+```
+
+### Option 2: Set Default Schema
+
+```sql
+-- Create schema
+CREATE SCHEMA IF NOT EXISTS corsair;
+
+-- Set default for user
+ALTER USER your_user SET search_path TO corsair;
+
+-- Grant permissions
+GRANT ALL PRIVILEGES ON SCHEMA corsair TO your_user;
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA corsair TO your_user;
+```
+
+## Connection Pooling
+
+For production, use connection pooling:
+
+```ts title="database.ts"
+import { Pool } from "pg";
+
+const pool = new Pool({
+    connectionString: process.env.DATABASE_URL,
+    max: 20,              // Maximum connections
+    idleTimeoutMillis: 30000,
+    connectionTimeoutMillis: 2000,
+});
+```
+
+## Recommended Extensions
+
+```sql
+-- UUID generation
+CREATE EXTENSION IF NOT EXISTS "pgcrypto";
+
+-- Full-text search (optional)
+CREATE EXTENSION IF NOT EXISTS "pg_trgm";
+```
+
+## Performance Tips
+
+### Indexes
+
+The default indexes cover common queries. Add more based on your access patterns:
+
+```sql
+-- If you frequently query by service
+CREATE INDEX idx_corsair_resources_service ON corsair_resources(service);
+
+-- If you query events by type
+CREATE INDEX idx_corsair_events_type ON corsair_events(event_type);
+```
+
+### JSONB Indexes
+
+For frequent queries on JSONB fields:
+
+```sql
+-- GIN index for JSONB containment queries
+CREATE INDEX idx_corsair_resources_data ON corsair_resources USING GIN (data);
+```
+
+### Partitioning
+
+For high-volume event logs, consider partitioning:
+
+```sql
+-- Partition events by month
+CREATE TABLE corsair_events (
+    id UUID DEFAULT gen_random_uuid(),
+    tenant_id TEXT NOT NULL,
+    resource_id TEXT,
+    event_type TEXT NOT NULL,
+    data JSONB,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+) PARTITION BY RANGE (created_at);
+
+-- Create monthly partitions
+CREATE TABLE corsair_events_2024_01 PARTITION OF corsair_events
+    FOR VALUES FROM ('2024-01-01') TO ('2024-02-01');
+```
+
+## Adapters
+
+Choose an adapter based on your stack:
+
+| Adapter | Use When |
+|---------|----------|
+| [Drizzle](/docs/adapters/drizzle) | Using Drizzle ORM in your project |
+| [Kysely](/docs/adapters/kysely) | Want a lightweight query builder |
+| [Prisma](/docs/adapters/prisma) | Using Prisma ORM in your project |
+

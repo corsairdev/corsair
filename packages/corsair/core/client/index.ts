@@ -7,10 +7,11 @@ import type {
 	PluginServiceClients,
 } from '../../db/orm';
 import type { BindEndpoints, EndpointTree } from '../endpoints';
-import { bindEndpointsRecursively } from '../endpoints/utils';
+import { bindEndpointsRecursively } from '../endpoints/bind';
+import type { CorsairErrorHandler } from '../errors';
 import type { CorsairPlugin } from '../plugins';
 import type { BindWebhooks, RawWebhookRequest, WebhookTree } from '../webhooks';
-import { bindWebhooksRecursively } from '../webhooks/utils';
+import { bindWebhooksRecursively } from '../webhooks/bind';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Service Client Types
@@ -46,10 +47,10 @@ type UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends (
  */
 type InferPluginNamespace<P extends CorsairPlugin> = P extends CorsairPlugin<
 	infer Id,
-	infer Endpoints,
 	infer Schema,
-	infer _Options,
-	infer Webhooks
+	infer Endpoints,
+	infer Webhooks,
+	infer _Options
 >
 	? {
 			[K in Id]: (Endpoints extends EndpointTree
@@ -302,6 +303,7 @@ function createServiceClient(
  * @param plugins - Array of plugin definitions to include in the client
  * @param database - Optional database adapter for ORM services
  * @param tenantId - Optional tenant ID for multi-tenant setups
+ * @param rootErrorHandlers - Optional root-level error handlers
  * @returns A fully configured Corsair client
  */
 export function buildCorsairClient<
@@ -310,6 +312,7 @@ export function buildCorsairClient<
 	plugins: Plugins,
 	database: CorsairDbAdapter | undefined,
 	tenantId: string | undefined,
+	rootErrorHandlers?: CorsairErrorHandler,
 ): CorsairClient<Plugins> {
 	const scopedDatabase =
 		database && tenantId ? withTenantAdapter(database, tenantId) : database;
@@ -323,9 +326,7 @@ export function buildCorsairClient<
 	}
 
 	for (const plugin of plugins) {
-		const schema = plugin.schema as
-			| CorsairPluginSchema<Record<string, ZodTypeAny>>
-			| undefined;
+		const schema = plugin.schema;
 
 		// Create typed service clients from plugin schema, nested under `db`
 		if (schema?.services) {
@@ -352,41 +353,49 @@ export function buildCorsairClient<
 			...(plugin.options ? { options: plugin.options } : {}),
 		};
 
-		const endpoints = (plugin.endpoints ?? {}) as Record<string, unknown>;
-		const hooks = plugin.hooks as Record<string, unknown> | undefined;
+		const endpoints = plugin.endpoints ?? {};
+		const hooks = plugin.hooks;
+
+		// Combine plugin and root error handlers, plugin handlers first for priority
+		const allErrorHandlers = {
+			...rootErrorHandlers,
+			...plugin.errorHandlers,
+		};
 
 		// Create bound endpoints under `api` (supports nested structures)
-		const boundEndpoints: Record<string, unknown> = {};
-		const apiEndpoints: Record<string, unknown> = {};
-		bindEndpointsRecursively(
+		const boundTree: Record<string, unknown> = {};
+
+		bindEndpointsRecursively({
 			endpoints,
 			hooks,
-			ctxForPlugin,
-			boundEndpoints,
-			apiEndpoints,
-		);
+			ctx: ctxForPlugin,
+			tree: boundTree,
+			pluginId: plugin.id,
+			errorHandlers: allErrorHandlers,
+			currentPath: [],
+			keyBuilder: plugin.keyBuilder,
+		});
 
-		// Put API endpoints under the `api` key
-		if (Object.keys(apiEndpoints).length > 0) {
-			apiUnsafe[plugin.id]!.api = apiEndpoints;
+		if (Object.keys(boundTree).length > 0) {
+			apiUnsafe[plugin.id]!.api = boundTree;
 		}
 
-		ctxForPlugin.endpoints = boundEndpoints;
+		ctxForPlugin.endpoints = boundTree;
 
 		// Create bound webhooks under `webhooks` (supports nested structures)
-		const webhooks = (plugin.webhooks ?? {}) as Record<string, unknown>;
-		const webhookHooks = plugin.webhookHooks as
+		const webhooks = (plugin.webhooks ?? {}) satisfies Record<string, unknown>;
+		const webhookHooks = plugin.webhookHooks satisfies
 			| Record<string, unknown>
 			| undefined;
 
 		if (Object.keys(webhooks).length > 0) {
 			const boundWebhooks: Record<string, unknown> = {};
-			bindWebhooksRecursively(
+			bindWebhooksRecursively({
 				webhooks,
-				webhookHooks,
-				ctxForPlugin,
-				boundWebhooks,
-			);
+				hooks: webhookHooks,
+				ctx: ctxForPlugin,
+				webhooksTree: boundWebhooks,
+			});
 			apiUnsafe[plugin.id]!.webhooks = boundWebhooks;
 
 			// Only expose pluginWebhookMatcher if the plugin has a pluginWebhookMatcher defined

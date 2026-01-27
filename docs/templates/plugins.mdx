@@ -1,0 +1,340 @@
+---
+title: {{PLUGIN_NAME}}
+description: {{PLUGIN_DESCRIPTION}}
+---
+
+{/* 
+TEMPLATE INSTRUCTIONS FOR LLM:
+- Replace all {{PLACEHOLDER}} values with actual content
+- Keep code examples concise — show the happy path, not every option
+- Every section MUST have a code example
+- Use the exact structure below for consistency
+- Services are like: slack.channels, linear.issues, slack.messages
+- Actions are like: channels.create, issues.delete, messages.post
+*/}
+
+{{PLUGIN_NAME}} integration for Corsair. {{ONE_SENTENCE_DESCRIPTION}}.
+
+## Installation
+
+Add the plugin to your Corsair instance:
+
+```ts title="corsair.ts"
+import { createCorsair } from "corsair";
+import { {{PLUGIN_ID}} } from "corsair/plugins";
+
+export const corsair = createCorsair({
+    plugins: [
+        {{PLUGIN_ID}}({
+            authType: "{{AUTH_TYPE}}", // "api_key" | "oauth_2"
+            credentials: {
+                {{CREDENTIALS_EXAMPLE}}
+            },
+        }),
+    ],
+});
+```
+
+## Authentication
+
+{{PLUGIN_NAME}} supports the following auth types:
+
+### API Key
+
+```ts title="corsair.ts"
+{{PLUGIN_ID}}({
+    authType: "api_key",
+    credentials: {
+        {{API_KEY_CREDENTIALS}}
+    },
+})
+```
+
+{/* Include OAuth section only if applicable */}
+### OAuth 2.0
+
+```ts title="corsair.ts"
+{{PLUGIN_ID}}({
+    authType: "oauth_2",
+    credentials: {
+        clientId: process.env.{{PLUGIN_NAME_UPPER}}_CLIENT_ID,
+        clientSecret: process.env.{{PLUGIN_NAME_UPPER}}_CLIENT_SECRET,
+    },
+})
+```
+
+---
+
+## Services
+
+{/* 
+List all services (resource groups) available in the plugin.
+Each service should have its own H3 section.
+*/}
+
+{{PLUGIN_NAME}} provides the following services:
+
+| Service | Description |
+|---------|-------------|
+{{#each SERVICES}}
+| `{{SERVICE_NAME}}` | {{SERVICE_DESCRIPTION}} |
+{{/each}}
+
+---
+
+{/* 
+For each service, create an H3 section with all its actions.
+Keep action documentation brief — just show the call and key parameters.
+*/}
+
+### {{SERVICE_NAME_1}}
+
+#### {{ACTION_NAME}} 
+
+{{ACTION_DESCRIPTION}}.
+
+```ts title="example.ts"
+const result = await corsair.{{PLUGIN_ID}}.api.{{SERVICE}}.{{ACTION}}({
+    {{REQUIRED_PARAMS}}
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+{{#each PARAMS}}
+| `{{PARAM_NAME}}` | `{{PARAM_TYPE}}` | {{REQUIRED}} | {{PARAM_DESCRIPTION}} |
+{{/each}}
+
+**Response:**
+
+```ts
+{
+    {{RESPONSE_SHAPE}}
+}
+```
+
+{/* Repeat the above pattern for each action in the service */}
+
+---
+
+### {{SERVICE_NAME_2}}
+
+{/* Continue with remaining services... */}
+
+---
+
+## Webhooks
+
+{{PLUGIN_NAME}} supports the following webhook events:
+
+| Event | Description |
+|-------|-------------|
+{{#each WEBHOOKS}}
+| `{{WEBHOOK_NAME}}` | {{WEBHOOK_DESCRIPTION}} |
+{{/each}}
+
+### Handling Webhooks
+
+```ts title="corsair.ts"
+{{PLUGIN_ID}}({
+    authType: "api_key",
+    credentials: { ... },
+    webhookHooks: {
+        {{SERVICE}}: {
+            {{WEBHOOK_EVENT}}: {
+                after: async (ctx, result) => {
+                    // Handle the webhook
+                    console.log("{{WEBHOOK_EVENT}}:", result);
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Hooks
+
+Add before/after hooks to customize behavior.
+
+### API Hooks
+
+```ts title="corsair.ts"
+{{PLUGIN_ID}}({
+    authType: "api_key",
+    credentials: { ... },
+    hooks: {
+        {{SERVICE}}: {
+            {{ACTION}}: {
+                before: (ctx, args) => {
+                    console.log("Before {{ACTION}}:", args);
+                    return { ctx, args };
+                },
+                after: (ctx, result) => {
+                    console.log("After {{ACTION}}:", result);
+                },
+            },
+        },
+    },
+})
+```
+
+### Webhook Hooks
+
+```ts title="corsair.ts"
+{{PLUGIN_ID}}({
+    authType: "api_key",
+    credentials: { ... },
+    webhookHooks: {
+        {{SERVICE}}: {
+            {{WEBHOOK_EVENT}}: {
+                before: async (ctx, payload) => {
+                    return { ctx, payload };
+                },
+                after: async (ctx, result) => {
+                    // Sync to external system, send notification, etc.
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Error Handling
+
+Add custom error handlers for {{PLUGIN_NAME}}.
+
+```ts title="corsair.ts"
+{{PLUGIN_ID}}({
+    authType: "api_key",
+    credentials: { ... },
+    errorHandlers: {
+        RATE_LIMIT_ERROR: {
+            match: (error) => error.message.includes("{{RATE_LIMIT_INDICATOR}}"),
+            handler: async (error, context) => ({
+                maxRetries: 5,
+                retryStrategy: "exponential_backoff_jitter",
+            }),
+        },
+        DEFAULT: {
+            match: () => true,
+            handler: async (error, context) => {
+                console.error(`{{PLUGIN_NAME}} error:`, error.message);
+                return { maxRetries: 0 };
+            },
+        },
+    },
+})
+```
+
+---
+
+## Database Schema
+
+Corsair stores {{PLUGIN_NAME}} data in the `corsair_resources` table. Each resource type has a strongly-typed schema.
+
+### Querying Data
+
+```ts title="example.ts"
+// Find by resource ID
+const {{RESOURCE}} = await corsair.{{PLUGIN_ID}}.db.{{SERVICE}}.findByResourceId("{{EXAMPLE_ID}}");
+
+// List all
+const {{RESOURCE_PLURAL}} = await corsair.{{PLUGIN_ID}}.db.{{SERVICE}}.list({ limit: 50 });
+
+// Search
+const results = await corsair.{{PLUGIN_ID}}.db.{{SERVICE}}.search({
+    query: "{{SEARCH_TERM}}",
+    limit: 20,
+});
+
+// Upsert
+await corsair.{{PLUGIN_ID}}.db.{{SERVICE}}.upsert("{{RESOURCE_ID}}", {
+    {{UPSERT_DATA}}
+});
+```
+
+{/* 
+For each resource type, document the schema fields.
+Reference the actual schema file: packages/corsair/plugins/{{PLUGIN_ID}}/schema/database.ts
+*/}
+
+### {{RESOURCE_TYPE_1}}
+
+| Field | Type | Description |
+|-------|------|-------------|
+{{#each SCHEMA_FIELDS}}
+| `{{FIELD_NAME}}` | `{{FIELD_TYPE}}` | {{FIELD_DESCRIPTION}} |
+{{/each}}
+
+{/* Repeat for each resource type... */}
+
+---
+
+## Options
+
+| Option | Type | Description |
+|--------|------|-------------|
+| `authType` | `"api_key"` \| `"oauth_2"` | Authentication method |
+| `credentials` | `object` | Authentication credentials |
+| `hooks` | `object` | API hooks for before/after actions |
+| `webhookHooks` | `object` | Webhook hooks for before/after events |
+| `errorHandlers` | `object` | Custom error handlers |
+
+---
+
+## Full Example
+
+```ts title="corsair.ts"
+import { createCorsair } from "corsair";
+import { drizzleAdapter } from "corsair/adapters/drizzle";
+import { {{PLUGIN_ID}} } from "corsair/plugins";
+
+export const corsair = createCorsair({
+    multiTenancy: true,
+    database: drizzleAdapter(db, { provider: "pg", schema }),
+    plugins: [
+        {{PLUGIN_ID}}({
+            authType: "api_key",
+            credentials: {
+                {{CREDENTIALS_EXAMPLE}}
+            },
+            hooks: {
+                {{SERVICE}}: {
+                    {{ACTION}}: {
+                        after: (ctx, result) => {
+                            console.log("{{ACTION}} completed:", result.id);
+                        },
+                    },
+                },
+            },
+            errorHandlers: {
+                RATE_LIMIT_ERROR: {
+                    match: (error) => error.message.includes("rate"),
+                    handler: async () => ({
+                        maxRetries: 3,
+                        retryStrategy: "exponential_backoff_jitter",
+                    }),
+                },
+            },
+        }),
+    ],
+});
+```
+
+```ts title="example.ts"
+const tenant = corsair.withTenant("tenant_123");
+
+// {{ACTION_DESCRIPTION}}
+const result = await tenant.{{PLUGIN_ID}}.api.{{SERVICE}}.{{ACTION}}({
+    {{EXAMPLE_PARAMS}}
+});
+
+console.log(result);
+```
+
