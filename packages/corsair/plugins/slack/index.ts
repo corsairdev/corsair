@@ -7,7 +7,11 @@ import type {
 	CorsairPluginContext,
 	CorsairWebhook,
 } from '../../core';
-import type { SlackEndpointOutputs, SlackReactionName } from './endpoints';
+import type {
+	SlackEndpointInputs,
+	SlackEndpointOutputs,
+	SlackReactionName,
+} from './endpoints';
 import {
 	Channels,
 	Files,
