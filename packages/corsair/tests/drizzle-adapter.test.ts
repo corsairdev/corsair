@@ -61,16 +61,30 @@ describe('Drizzle Adapter', () => {
 
 	beforeEach(() => {
 		mockSchema = {
-			corsair_connections: createMockTable([
+			corsair_accounts: createMockTable([
 				'id',
 				'tenant_id',
-				'provider',
-				'name',
-				'value',
+				'integration_id',
+				'config',
+				'created_at',
+				'updated_at',
 			]),
-			corsair_resources: createMockTable(['id', 'tenant_id', 'resource_id']),
-			corsair_events: createMockTable(['id', 'tenant_id', 'event_type']),
-			corsair_providers: createMockTable(['id', 'name', 'type']),
+			corsair_entities: createMockTable([
+				'id',
+				'account_id',
+				'entity_id',
+				'entity_type',
+				'version',
+				'data',
+			]),
+			corsair_events: createMockTable([
+				'id',
+				'account_id',
+				'event_type',
+				'payload',
+				'status',
+			]),
+			corsair_integrations: createMockTable(['id', 'name', 'config']),
 		};
 		mockDb = createMockDrizzleDB(mockSchema);
 		adapter = drizzleAdapter(mockDb, { provider: 'pg', schema: mockSchema });
@@ -92,7 +106,7 @@ describe('Drizzle Adapter', () => {
 
 		it('should use schema from config when provided', () => {
 			const customSchema = {
-				corsair_connections: createMockTable(),
+				corsair_accounts: createMockTable(),
 			};
 			const customAdapter = drizzleAdapter(mockDb, {
 				provider: 'pg',
@@ -133,7 +147,7 @@ describe('Drizzle Adapter', () => {
 			mockSelectBuilder.then = jest.fn((resolve) => resolve([mockResult]));
 
 			const result = await adapter.findOne({
-				table: 'corsair_connections',
+				table: 'corsair_accounts',
 				where: [{ field: 'id', value: '1' }],
 			});
 
@@ -149,7 +163,7 @@ describe('Drizzle Adapter', () => {
 			mockSelectBuilder.then = jest.fn((resolve) => resolve([]));
 
 			const result = await adapter.findOne({
-				table: 'corsair_connections',
+				table: 'corsair_accounts',
 				where: [{ field: 'id', value: '999' }],
 			});
 
@@ -162,12 +176,12 @@ describe('Drizzle Adapter', () => {
 			mockSelectBuilder.then = jest.fn((resolve) => resolve([mockResult]));
 
 			await adapter.findOne({
-				table: 'corsair_connections',
+				table: 'corsair_accounts',
 				where: [{ field: 'id', value: '1' }],
 				select: ['id', 'name'],
 			});
 
-			const table = mockSchema.corsair_connections as Record<string, unknown>;
+			const table = mockSchema.corsair_accounts as Record<string, unknown>;
 			expect(mockDb.select).toHaveBeenCalledWith({
 				id: table.id,
 				name: table.name,
@@ -176,13 +190,13 @@ describe('Drizzle Adapter', () => {
 
 		it('should handle custom table names', async () => {
 			const customSchema = {
-				custom_connections: createMockTable(),
+				custom_accounts: createMockTable(),
 			};
 			const customAdapter = drizzleAdapter(mockDb, {
 				provider: 'pg',
 				schema: customSchema,
 				tableNames: {
-					connections: 'custom_connections',
+					accounts: 'custom_accounts',
 				},
 			});
 
@@ -191,12 +205,12 @@ describe('Drizzle Adapter', () => {
 			mockSelectBuilder.then = jest.fn((resolve) => resolve([mockResult]));
 
 			await customAdapter.findOne({
-				table: 'corsair_connections',
+				table: 'corsair_accounts',
 				where: [{ field: 'id', value: '1' }],
 			});
 
 			expect(mockSelectBuilder.from).toHaveBeenCalledWith(
-				customSchema.custom_connections,
+				customSchema.custom_accounts,
 			);
 		});
 	});
@@ -211,7 +225,7 @@ describe('Drizzle Adapter', () => {
 			mockSelectBuilder.then = jest.fn((resolve) => resolve(mockResults));
 
 			const result = await adapter.findMany({
-				table: 'corsair_connections',
+				table: 'corsair_accounts',
 			});
 
 			expect(mockDb.select).toHaveBeenCalled();
@@ -224,7 +238,7 @@ describe('Drizzle Adapter', () => {
 			mockSelectBuilder.then = jest.fn((resolve) => resolve([]));
 
 			await adapter.findMany({
-				table: 'corsair_connections',
+				table: 'corsair_accounts',
 				where: [{ field: 'tenant_id', value: 'tenant1' }],
 			});
 
@@ -236,7 +250,7 @@ describe('Drizzle Adapter', () => {
 			mockSelectBuilder.then = jest.fn((resolve) => resolve([]));
 
 			await adapter.findMany({
-				table: 'corsair_connections',
+				table: 'corsair_accounts',
 				limit: 10,
 			});
 
@@ -248,7 +262,7 @@ describe('Drizzle Adapter', () => {
 			mockSelectBuilder.then = jest.fn((resolve) => resolve([]));
 
 			await adapter.findMany({
-				table: 'corsair_connections',
+				table: 'corsair_accounts',
 				offset: 5,
 			});
 
@@ -260,7 +274,7 @@ describe('Drizzle Adapter', () => {
 			mockSelectBuilder.then = jest.fn((resolve) => resolve([]));
 
 			await adapter.findMany({
-				table: 'corsair_connections',
+				table: 'corsair_accounts',
 				sortBy: { field: 'id', direction: 'desc' },
 			});
 
@@ -273,7 +287,7 @@ describe('Drizzle Adapter', () => {
 			mockSelectBuilder.then = jest.fn((resolve) => resolve(mockResults));
 
 			await adapter.findMany({
-				table: 'corsair_connections',
+				table: 'corsair_accounts',
 				where: [{ field: 'tenant_id', value: 'tenant1' }],
 				limit: 10,
 				offset: 5,
@@ -290,20 +304,20 @@ describe('Drizzle Adapter', () => {
 
 	describe('insert', () => {
 		it('should insert a record', async () => {
-			const mockResult = { id: '1', name: 'test', value: 'value1' };
+			const mockResult = { id: '1', name: 'test', config: {} };
 			const mockInsertBuilder = mockDb.insert() as any;
 			mockInsertBuilder.returning = jest.fn().mockResolvedValue([mockResult]);
 
 			const result = await adapter.insert({
-				table: 'corsair_connections',
-				data: { id: '1', name: 'test', value: 'value1' },
+				table: 'corsair_integrations',
+				data: { id: '1', name: 'test', config: {} },
 			});
 
 			expect(mockDb.insert).toHaveBeenCalled();
 			expect(mockInsertBuilder.values).toHaveBeenCalledWith({
 				id: '1',
 				name: 'test',
-				value: 'value1',
+				config: {},
 			});
 			expect(result).toEqual(mockResult);
 		});
@@ -312,9 +326,9 @@ describe('Drizzle Adapter', () => {
 			const mockInsertBuilder = mockDb.insert() as any;
 			mockInsertBuilder.returning = jest.fn().mockResolvedValue([]);
 
-			const data = { id: '1', name: 'test' };
+			const data = { id: '1', name: 'test', config: {} };
 			const result = await adapter.insert({
-				table: 'corsair_connections',
+				table: 'corsair_integrations',
 				data,
 			});
 
@@ -327,12 +341,12 @@ describe('Drizzle Adapter', () => {
 			mockInsertBuilder.returning = jest.fn().mockResolvedValue([mockResult]);
 
 			await adapter.insert({
-				table: 'corsair_connections',
-				data: { id: '1', name: 'test', value: 'value1' },
+				table: 'corsair_integrations',
+				data: { id: '1', name: 'test', config: {} },
 				select: ['id', 'name'],
 			});
 
-			const table = mockSchema.corsair_connections as Record<string, unknown>;
+			const table = mockSchema.corsair_integrations as Record<string, unknown>;
 			expect(mockInsertBuilder.returning).toHaveBeenCalledWith({
 				id: table.id,
 				name: table.name,
@@ -347,7 +361,7 @@ describe('Drizzle Adapter', () => {
 			mockUpdateBuilder.returning = jest.fn().mockResolvedValue([mockResult]);
 
 			const result = await adapter.update({
-				table: 'corsair_connections',
+				table: 'corsair_integrations',
 				where: [{ field: 'id', value: '1' }],
 				data: { name: 'updated' },
 			});
@@ -361,7 +375,7 @@ describe('Drizzle Adapter', () => {
 		it('should throw error when where clause is empty', async () => {
 			await expect(
 				adapter.update({
-					table: 'corsair_connections',
+					table: 'corsair_integrations',
 					where: [],
 					data: { name: 'updated' },
 				}),
@@ -375,7 +389,7 @@ describe('Drizzle Adapter', () => {
 			mockUpdateBuilder.returning = jest.fn().mockResolvedValue([]);
 
 			const result = await adapter.update({
-				table: 'corsair_connections',
+				table: 'corsair_integrations',
 				where: [{ field: 'id', value: '999' }],
 				data: { name: 'updated' },
 			});
@@ -389,13 +403,13 @@ describe('Drizzle Adapter', () => {
 			mockUpdateBuilder.returning = jest.fn().mockResolvedValue([mockResult]);
 
 			await adapter.update({
-				table: 'corsair_connections',
+				table: 'corsair_integrations',
 				where: [{ field: 'id', value: '1' }],
 				data: { name: 'updated' },
 				select: ['id', 'name'],
 			});
 
-			const table = mockSchema.corsair_connections as Record<string, unknown>;
+			const table = mockSchema.corsair_integrations as Record<string, unknown>;
 			expect(mockUpdateBuilder.returning).toHaveBeenCalledWith({
 				id: table.id,
 				name: table.name,
@@ -411,7 +425,7 @@ describe('Drizzle Adapter', () => {
 				.mockResolvedValue([{ id: '1' }, { id: '2' }]);
 
 			const result = await adapter.deleteMany({
-				table: 'corsair_connections',
+				table: 'corsair_accounts',
 				where: [{ field: 'tenant_id', value: 'tenant1' }],
 			});
 
@@ -422,7 +436,7 @@ describe('Drizzle Adapter', () => {
 
 		it('should return 0 when where clause is empty', async () => {
 			const result = await adapter.deleteMany({
-				table: 'corsair_connections',
+				table: 'corsair_accounts',
 				where: [],
 			});
 
@@ -435,7 +449,7 @@ describe('Drizzle Adapter', () => {
 			mockDeleteBuilder.returning = jest.fn().mockResolvedValue([]);
 
 			const result = await adapter.deleteMany({
-				table: 'corsair_connections',
+				table: 'corsair_accounts',
 				where: [{ field: 'id', value: '999' }],
 			});
 
@@ -449,7 +463,7 @@ describe('Drizzle Adapter', () => {
 			mockSelectBuilder.then = jest.fn((resolve) => resolve([{ count: 10 }]));
 
 			const result = await adapter.count({
-				table: 'corsair_connections',
+				table: 'corsair_accounts',
 			});
 
 			expect(mockDb.select).toHaveBeenCalled();
@@ -461,7 +475,7 @@ describe('Drizzle Adapter', () => {
 			mockSelectBuilder.then = jest.fn((resolve) => resolve([{ count: 5 }]));
 
 			const result = await adapter.count({
-				table: 'corsair_connections',
+				table: 'corsair_accounts',
 				where: [{ field: 'tenant_id', value: 'tenant1' }],
 			});
 
@@ -476,7 +490,7 @@ describe('Drizzle Adapter', () => {
 			);
 
 			const result = await adapter.count({
-				table: 'corsair_connections',
+				table: 'corsair_accounts',
 			});
 
 			expect(result).toBe(100);
@@ -487,7 +501,7 @@ describe('Drizzle Adapter', () => {
 			mockSelectBuilder.then = jest.fn((resolve) => resolve([{ count: '42' }]));
 
 			const result = await adapter.count({
-				table: 'corsair_connections',
+				table: 'corsair_accounts',
 			});
 
 			expect(result).toBe(42);
@@ -498,7 +512,7 @@ describe('Drizzle Adapter', () => {
 			mockSelectBuilder.then = jest.fn((resolve) => resolve([{ count: null }]));
 
 			const result = await adapter.count({
-				table: 'corsair_connections',
+				table: 'corsair_accounts',
 			});
 
 			expect(result).toBe(0);
@@ -571,7 +585,7 @@ describe('Drizzle Adapter', () => {
 			mockSelectBuilder.then = jest.fn((resolve) => resolve([]));
 
 			await adapter.findMany({
-				table: 'corsair_connections',
+				table: 'corsair_accounts',
 				where: [{ field: 'id', value: '1', operator: '=' }],
 			});
 
@@ -583,7 +597,7 @@ describe('Drizzle Adapter', () => {
 			mockSelectBuilder.then = jest.fn((resolve) => resolve([]));
 
 			await adapter.findMany({
-				table: 'corsair_connections',
+				table: 'corsair_accounts',
 				where: [{ field: 'id', value: ['1', '2', '3'], operator: 'in' }],
 			});
 
@@ -595,7 +609,7 @@ describe('Drizzle Adapter', () => {
 			mockSelectBuilder.then = jest.fn((resolve) => resolve([]));
 
 			await adapter.findMany({
-				table: 'corsair_connections',
+				table: 'corsair_accounts',
 				where: [{ field: 'name', value: 'test%', operator: 'like' }],
 			});
 
@@ -607,7 +621,7 @@ describe('Drizzle Adapter', () => {
 			mockSelectBuilder.then = jest.fn((resolve) => resolve([]));
 
 			await adapter.findMany({
-				table: 'corsair_connections',
+				table: 'corsair_accounts',
 				where: [
 					{ field: 'tenant_id', value: 'tenant1' },
 					{ field: 'provider', value: 'slack' },
@@ -622,7 +636,7 @@ describe('Drizzle Adapter', () => {
 			mockSelectBuilder.then = jest.fn((resolve) => resolve([]));
 
 			await adapter.findMany({
-				table: 'corsair_connections',
+				table: 'corsair_accounts',
 				where: [{ field: 'id', value: '1' }],
 			});
 
@@ -634,7 +648,7 @@ describe('Drizzle Adapter', () => {
 		it('should throw error when column not found', async () => {
 			await expect(
 				adapter.findOne({
-					table: 'corsair_connections',
+					table: 'corsair_accounts',
 					where: [{ field: 'nonexistent', value: '1' }],
 				}),
 			).rejects.toThrow('column "nonexistent" was not found');
@@ -642,7 +656,7 @@ describe('Drizzle Adapter', () => {
 
 		it('should throw error when table not found in schema', async () => {
 			const customSchema = {
-				corsair_connections: createMockTable(),
+				corsair_accounts: createMockTable(),
 			};
 			const customAdapter = drizzleAdapter(mockDb, {
 				provider: 'pg',

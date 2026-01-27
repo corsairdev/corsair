@@ -2,8 +2,9 @@ import type { ZodTypeAny, z } from 'zod';
 
 import type {
 	CorsairDbAdapter,
-	CorsairTableName,
 	CorsairWhere,
+	TableInsertType,
+	TableUpdateType,
 } from '../adapters/types';
 
 import type {
@@ -245,91 +246,99 @@ function buildWhere<T>(where: WhereClause<T> | undefined): CorsairWhere[] {
 	return result;
 }
 
-function createBaseTableClient<T>(
+/**
+ * Creates a base table client for a specific table.
+ * Uses the table name type to properly type adapter calls.
+ */
+function createBaseTableClient<
+	TName extends CorsairOrmTableName,
+	TRow extends CorsairOrmDatabase[TName] = CorsairOrmDatabase[TName],
+>(
 	database: CorsairDbAdapter | undefined,
-	tableName: CorsairOrmTableName,
-): CorsairTableClient<T> {
+	tableName: TName,
+): CorsairTableClient<TRow> {
 	const schema = TABLE_SCHEMAS[tableName];
 
-	function parseRow(row: unknown): T {
+	function parseRow(row: Record<string, unknown>): TRow {
 		if (!row) throw new Error('Row is null');
-		const parsed = { ...(row as Record<string, unknown>) };
+		const parsed = { ...row };
 		for (const key of Object.keys(parsed)) {
 			parsed[key] = parseJsonLike(parsed[key]);
 		}
-		return schema.parse(parsed) as T;
+		return schema.parse(parsed) as TRow;
 	}
 
 	return {
 		findById: async (id: string) => {
 			assertDatabaseConfigured(database);
-			const row = await database.findOne<T>({
-				table: tableName as CorsairTableName,
+			const row = await database.findOne({
+				table: tableName,
 				where: [{ field: 'id', value: id }],
 			});
-			return row ? parseRow(row) : null;
+			return row ? parseRow(row as Record<string, unknown>) : null;
 		},
 
-		findOne: async (where: WhereClause<T>) => {
+		findOne: async (where: WhereClause<TRow>) => {
 			assertDatabaseConfigured(database);
-			const row = await database.findOne<T>({
-				table: tableName as CorsairTableName,
+			const row = await database.findOne({
+				table: tableName,
 				where: buildWhere(where),
 			});
-			return row ? parseRow(row) : null;
+			return row ? parseRow(row as Record<string, unknown>) : null;
 		},
 
 		findMany: async (options) => {
 			assertDatabaseConfigured(database);
-			const rows = await database.findMany<T>({
-				table: tableName as CorsairTableName,
+			const rows = await database.findMany({
+				table: tableName,
 				where: buildWhere(options?.where),
 				limit: options?.limit ?? 100,
 				offset: options?.offset ?? 0,
 			});
-			return rows.map(parseRow);
+			return rows.map((row) => parseRow(row as Record<string, unknown>));
 		},
 
-		create: async (data: CreateInput<T>) => {
+		create: async (data: CreateInput<TRow>) => {
 			assertDatabaseConfigured(database);
 			const now = new Date();
 			const insert = {
-				id: (data as any).id ?? generateUuidV4(),
+				id: (data as Record<string, unknown>).id ?? generateUuidV4(),
 				created_at: now,
 				updated_at: now,
 				...data,
 			};
-			const row = await database.insert<typeof insert, T>({
-				table: tableName as CorsairTableName,
-				data: insert,
+			const row = await database.insert({
+				table: tableName,
+				data: insert as unknown as TableInsertType<TName>,
 			});
-			return parseRow(row);
+			return parseRow(row as Record<string, unknown>);
 		},
 
-		update: async (id: string, data: UpdateInput<T>) => {
+		update: async (id: string, data: UpdateInput<TRow>) => {
 			assertDatabaseConfigured(database);
 			const update = { ...data, updated_at: new Date() };
-			const row = await database.update<T>({
-				table: tableName as CorsairTableName,
+			const row = await database.update({
+				table: tableName,
 				where: [{ field: 'id', value: id }],
-				data: update,
+				data: update as unknown as TableUpdateType<TName>,
 			});
-			return row ? parseRow(row) : null;
+			return row ? parseRow(row as Record<string, unknown>) : null;
 		},
 
-		updateMany: async (where: WhereClause<T>, data: UpdateInput<T>) => {
+		updateMany: async (where: WhereClause<TRow>, data: UpdateInput<TRow>) => {
 			assertDatabaseConfigured(database);
 			const update = { ...data, updated_at: new Date() };
-			const rows = await database.findMany<{ id: string }>({
-				table: tableName as CorsairTableName,
+			const rows = await database.findMany({
+				table: tableName,
 				where: buildWhere(where),
 				select: ['id'],
 			});
 			for (const row of rows) {
+				const typedRow = row as { id: string };
 				await database.update({
-					table: tableName as CorsairTableName,
-					where: [{ field: 'id', value: row.id }],
-					data: update,
+					table: tableName,
+					where: [{ field: 'id', value: typedRow.id }],
+					data: update as unknown as TableUpdateType<TName>,
 				});
 			}
 			return rows.length;
@@ -338,16 +347,16 @@ function createBaseTableClient<T>(
 		delete: async (id: string) => {
 			assertDatabaseConfigured(database);
 			const deleted = await database.deleteMany({
-				table: tableName as CorsairTableName,
+				table: tableName,
 				where: [{ field: 'id', value: id }],
 			});
 			return deleted > 0;
 		},
 
-		deleteMany: async (where: WhereClause<T>) => {
+		deleteMany: async (where: WhereClause<TRow>) => {
 			assertDatabaseConfigured(database);
 			return await database.deleteMany({
-				table: tableName as CorsairTableName,
+				table: tableName,
 				where: buildWhere(where),
 			});
 		},
@@ -355,7 +364,7 @@ function createBaseTableClient<T>(
 		count: async (where) => {
 			assertDatabaseConfigured(database);
 			return await database.count({
-				table: tableName as CorsairTableName,
+				table: tableName,
 				where: buildWhere(where),
 			});
 		},
@@ -365,20 +374,17 @@ function createBaseTableClient<T>(
 function createIntegrationsClient(
 	database: CorsairDbAdapter | undefined,
 ): CorsairIntegrationsClient {
-	const base = createBaseTableClient<CorsairIntegration>(
-		database,
-		'corsair_integrations',
-	);
+	const base = createBaseTableClient(database, 'corsair_integrations');
 
 	return {
 		...base,
-		findByName: (name) => base.findOne({ name } as any),
+		findByName: (name) => base.findOne({ name }),
 		upsertByName: async (name, data) => {
-			const existing = await base.findOne({ name } as any);
+			const existing = await base.findOne({ name });
 			if (existing) {
-				return (await base.update(existing.id, data as any))!;
+				return (await base.update(existing.id, data))!;
 			}
-			return base.create({ ...data, name } as any);
+			return base.create({ ...data, name });
 		},
 	};
 }
@@ -386,29 +392,26 @@ function createIntegrationsClient(
 function createAccountsClient(
 	database: CorsairDbAdapter | undefined,
 ): CorsairAccountsClient {
-	const base = createBaseTableClient<CorsairAccount>(
-		database,
-		'corsair_accounts',
-	);
+	const base = createBaseTableClient(database, 'corsair_accounts');
 
 	return {
 		...base,
 		findByTenantAndIntegration: async (tenantId, integrationName) => {
 			assertDatabaseConfigured(database);
 			// First find the integration by name
-			const integration = await database.findOne<CorsairIntegration>({
-				table: 'corsair_integrations',
+			const integration = await database.findOne({
+				table: 'corsair_integrations' as const,
 				where: [{ field: 'name', value: integrationName }],
 			});
 			if (!integration) return null;
 			return base.findOne({
 				tenant_id: tenantId,
 				integration_id: integration.id,
-			} as any);
+			});
 		},
 		listByTenant: (tenantId, options) =>
 			base.findMany({
-				where: { tenant_id: tenantId } as any,
+				where: { tenant_id: tenantId },
 				limit: options?.limit,
 				offset: options?.offset,
 			}),
@@ -416,15 +419,15 @@ function createAccountsClient(
 			const existing = await base.findOne({
 				tenant_id: tenantId,
 				integration_id: integrationId,
-			} as any);
+			});
 			if (existing) {
-				return (await base.update(existing.id, data as any))!;
+				return (await base.update(existing.id, data))!;
 			}
 			return base.create({
 				...data,
 				tenant_id: tenantId,
 				integration_id: integrationId,
-			} as any);
+			});
 		},
 	};
 }
@@ -432,10 +435,7 @@ function createAccountsClient(
 function createEntitiesClient(
 	database: CorsairDbAdapter | undefined,
 ): CorsairEntitiesClient {
-	const base = createBaseTableClient<CorsairEntity>(
-		database,
-		'corsair_entities',
-	);
+	const base = createBaseTableClient(database, 'corsair_entities');
 
 	return {
 		...base,
@@ -444,22 +444,23 @@ function createEntitiesClient(
 				account_id: accountId,
 				entity_type: entityType,
 				entity_id: entityId,
-			} as any),
+			}),
 		findManyByEntityIds: async ({ accountId, entityType, entityIds }) => {
 			if (entityIds.length === 0) return [];
 			assertDatabaseConfigured(database);
-			return database.findMany<CorsairEntity>({
-				table: 'corsair_entities' as CorsairTableName,
+			const rows = await database.findMany({
+				table: 'corsair_entities' as const,
 				where: [
 					{ field: 'account_id', value: accountId },
 					{ field: 'entity_type', value: entityType },
 					{ field: 'entity_id', operator: 'in', value: entityIds },
 				],
 			});
+			return rows;
 		},
 		listByScope: ({ accountId, entityType, limit, offset }) =>
 			base.findMany({
-				where: { account_id: accountId, entity_type: entityType } as any,
+				where: { account_id: accountId, entity_type: entityType },
 				limit,
 				offset,
 			}),
@@ -471,8 +472,8 @@ function createEntitiesClient(
 			offset,
 		}) => {
 			assertDatabaseConfigured(database);
-			return database.findMany<CorsairEntity>({
-				table: 'corsair_entities' as CorsairTableName,
+			return database.findMany({
+				table: 'corsair_entities' as const,
 				where: [
 					{ field: 'account_id', value: accountId },
 					{ field: 'entity_type', value: entityType },
@@ -493,9 +494,9 @@ function createEntitiesClient(
 				account_id: accountId,
 				entity_type: entityType,
 				entity_id: entityId,
-			} as any);
+			});
 			if (existing) {
-				return (await base.update(existing.id, { version, data } as any))!;
+				return (await base.update(existing.id, { version, data }))!;
 			}
 			return base.create({
 				account_id: accountId,
@@ -503,12 +504,12 @@ function createEntitiesClient(
 				entity_id: entityId,
 				version,
 				data,
-			} as any);
+			});
 		},
 		deleteByEntityId: async ({ accountId, entityType, entityId }) => {
 			assertDatabaseConfigured(database);
 			const deleted = await database.deleteMany({
-				table: 'corsair_entities' as CorsairTableName,
+				table: 'corsair_entities',
 				where: [
 					{ field: 'account_id', value: accountId },
 					{ field: 'entity_type', value: entityType },
@@ -523,18 +524,18 @@ function createEntitiesClient(
 function createEventsClient(
 	database: CorsairDbAdapter | undefined,
 ): CorsairEventsClient {
-	const base = createBaseTableClient<CorsairEvent>(database, 'corsair_events');
+	const base = createBaseTableClient(database, 'corsair_events');
 
 	return {
 		...base,
 		listByAccount: (accountId, options) =>
 			base.findMany({
-				where: { account_id: accountId } as any,
+				where: { account_id: accountId },
 				limit: options?.limit,
 				offset: options?.offset,
 			}),
 		listByStatus: (status, options) => {
-			const where: any = { status };
+			const where: WhereClause<CorsairEvent> = { status };
 			if (options?.accountId) where.account_id = options.accountId;
 			return base.findMany({
 				where,
@@ -543,11 +544,11 @@ function createEventsClient(
 			});
 		},
 		listPending: (options) => {
-			const where: any = { status: 'pending' };
+			const where: WhereClause<CorsairEvent> = { status: 'pending' };
 			if (options?.accountId) where.account_id = options.accountId;
 			return base.findMany({ where, limit: options?.limit ?? 100 });
 		},
-		updateStatus: (id, status) => base.update(id, { status } as any),
+		updateStatus: (id, status) => base.update(id, { status }),
 	};
 }
 
@@ -723,19 +724,17 @@ function createPluginEntityClient<DataSchema extends ZodTypeAny>(
 	version: string,
 	dataSchema: DataSchema,
 ): PluginEntityClient<DataSchema> {
-	const tableName = 'corsair_entities' as CorsairTableName;
-
 	// Cache for account ID lookup
 	let cachedAccountId: string | null = null;
 
 	async function getAccountId(): Promise<string> {
-		if (cachedAccountId) return cachedAccountId;
+		if (cachedAccountId !== null) return cachedAccountId;
 
 		assertDatabaseConfigured(database);
 
 		// Find the integration by name
-		const integration = await database.findOne<CorsairIntegration>({
-			table: 'corsair_integrations',
+		const integration = await database.findOne({
+			table: 'corsair_integrations' as const,
 			where: [{ field: 'name', value: context.integrationName }],
 		});
 
@@ -746,8 +745,8 @@ function createPluginEntityClient<DataSchema extends ZodTypeAny>(
 		}
 
 		// Find the account for this tenant and integration
-		const account = await database.findOne<CorsairAccount>({
-			table: 'corsair_accounts',
+		const account = await database.findOne({
+			table: 'corsair_accounts' as const,
 			where: [
 				{ field: 'tenant_id', value: context.tenantId },
 				{ field: 'integration_id', value: integration.id },
@@ -783,8 +782,8 @@ function createPluginEntityClient<DataSchema extends ZodTypeAny>(
 		findByEntityId: async (entityId) => {
 			assertDatabaseConfigured(database);
 			const accountId = await getAccountId();
-			const row = await database.findOne<CorsairEntity>({
-				table: tableName,
+			const row = await database.findOne({
+				table: 'corsair_entities' as const,
 				where: [
 					...baseWhere(accountId),
 					{ field: 'entity_id', value: entityId },
@@ -796,8 +795,8 @@ function createPluginEntityClient<DataSchema extends ZodTypeAny>(
 		findById: async (id) => {
 			assertDatabaseConfigured(database);
 			const accountId = await getAccountId();
-			const row = await database.findOne<CorsairEntity>({
-				table: tableName,
+			const row = await database.findOne({
+				table: 'corsair_entities' as const,
 				where: [...baseWhere(accountId), { field: 'id', value: id }],
 			});
 			return row ? parseRow(row) : null;
@@ -807,8 +806,8 @@ function createPluginEntityClient<DataSchema extends ZodTypeAny>(
 			if (entityIds.length === 0) return [];
 			assertDatabaseConfigured(database);
 			const accountId = await getAccountId();
-			const rows = await database.findMany<CorsairEntity>({
-				table: tableName,
+			const rows = await database.findMany({
+				table: 'corsair_entities' as const,
 				where: [
 					...baseWhere(accountId),
 					{ field: 'entity_id', operator: 'in', value: entityIds },
@@ -820,8 +819,8 @@ function createPluginEntityClient<DataSchema extends ZodTypeAny>(
 		list: async (options) => {
 			assertDatabaseConfigured(database);
 			const accountId = await getAccountId();
-			const rows = await database.findMany<CorsairEntity>({
-				table: tableName,
+			const rows = await database.findMany({
+				table: 'corsair_entities' as const,
 				where: baseWhere(accountId),
 				limit: options?.limit ?? 100,
 				offset: options?.offset ?? 0,
@@ -832,8 +831,8 @@ function createPluginEntityClient<DataSchema extends ZodTypeAny>(
 		search: async ({ query, limit, offset }) => {
 			assertDatabaseConfigured(database);
 			const accountId = await getAccountId();
-			const rows = await database.findMany<CorsairEntity>({
-				table: tableName,
+			const rows = await database.findMany({
+				table: 'corsair_entities' as const,
 				where: [
 					...baseWhere(accountId),
 					{ field: 'entity_id', operator: 'like', value: `%${query}%` },
@@ -849,8 +848,8 @@ function createPluginEntityClient<DataSchema extends ZodTypeAny>(
 			const accountId = await getAccountId();
 			const parsed = dataSchema.parse(data);
 
-			const existing = await database.findOne<{ id: string }>({
-				table: tableName,
+			const existing = await database.findOne({
+				table: 'corsair_entities' as const,
 				select: ['id'],
 				where: [
 					...baseWhere(accountId),
@@ -862,12 +861,12 @@ function createPluginEntityClient<DataSchema extends ZodTypeAny>(
 
 			if (existing?.id) {
 				await database.update({
-					table: tableName,
+					table: 'corsair_entities' as const,
 					where: [{ field: 'id', value: existing.id }],
 					data: { version, data: parsed, updated_at: now },
 				});
-				const updated = await database.findOne<CorsairEntity>({
-					table: tableName,
+				const updated = await database.findOne({
+					table: 'corsair_entities' as const,
 					where: [{ field: 'id', value: existing.id }],
 				});
 				return parseRow(updated!);
@@ -875,7 +874,7 @@ function createPluginEntityClient<DataSchema extends ZodTypeAny>(
 
 			const id = generateUuidV4();
 			await database.insert({
-				table: tableName,
+				table: 'corsair_entities' as const,
 				data: {
 					id,
 					created_at: now,
@@ -888,8 +887,8 @@ function createPluginEntityClient<DataSchema extends ZodTypeAny>(
 				},
 			});
 
-			const inserted = await database.findOne<CorsairEntity>({
-				table: tableName,
+			const inserted = await database.findOne({
+				table: 'corsair_entities' as const,
 				where: [{ field: 'id', value: id }],
 			});
 			return parseRow(inserted!);
@@ -899,7 +898,7 @@ function createPluginEntityClient<DataSchema extends ZodTypeAny>(
 			assertDatabaseConfigured(database);
 			const accountId = await getAccountId();
 			const deleted = await database.deleteMany({
-				table: tableName,
+				table: 'corsair_entities',
 				where: [...baseWhere(accountId), { field: 'id', value: id }],
 			});
 			return deleted > 0;
@@ -909,7 +908,7 @@ function createPluginEntityClient<DataSchema extends ZodTypeAny>(
 			assertDatabaseConfigured(database);
 			const accountId = await getAccountId();
 			const deleted = await database.deleteMany({
-				table: tableName,
+				table: 'corsair_entities',
 				where: [
 					...baseWhere(accountId),
 					{ field: 'entity_id', value: entityId },
@@ -921,7 +920,10 @@ function createPluginEntityClient<DataSchema extends ZodTypeAny>(
 		count: async () => {
 			assertDatabaseConfigured(database);
 			const accountId = await getAccountId();
-			return database.count({ table: tableName, where: baseWhere(accountId) });
+			return database.count({
+				table: 'corsair_entities',
+				where: baseWhere(accountId),
+			});
 		},
 	};
 }
@@ -977,12 +979,12 @@ export function createPluginOrm<
 	let cachedAccountId: string | null = null;
 
 	async function getAccountId(): Promise<string> {
-		if (cachedAccountId) return cachedAccountId;
+		if (cachedAccountId !== null) return cachedAccountId;
 
 		assertDatabaseConfigured(database);
 
-		const integration = await database.findOne<CorsairIntegration>({
-			table: 'corsair_integrations',
+		const integration = await database.findOne({
+			table: 'corsair_integrations' as const,
 			where: [{ field: 'name', value: integrationName }],
 		});
 
@@ -992,8 +994,8 @@ export function createPluginOrm<
 			);
 		}
 
-		const account = await database.findOne<CorsairAccount>({
-			table: 'corsair_accounts',
+		const account = await database.findOne({
+			table: 'corsair_accounts' as const,
 			where: [
 				{ field: 'tenant_id', value: tenantId },
 				{ field: 'integration_id', value: integration.id },
@@ -1010,9 +1012,9 @@ export function createPluginOrm<
 		return cachedAccountId;
 	}
 
-	const entityClients = {} as PluginEntityClients<Entities>;
+	const entityClients: Record<string, PluginEntityClient<ZodTypeAny>> = {};
 	for (const [entityTypeName, dataSchema] of Object.entries(schema.entities)) {
-		(entityClients as any)[entityTypeName] = createPluginEntityClient(
+		entityClients[entityTypeName] = createPluginEntityClient(
 			database,
 			context,
 			entityTypeName,
@@ -1022,7 +1024,7 @@ export function createPluginOrm<
 	}
 
 	return {
-		...entityClients,
+		...(entityClients as unknown as PluginEntityClients<Entities>),
 		$orm: baseOrm,
 		$integrationName: integrationName,
 		$tenantId: tenantId,
@@ -1071,8 +1073,8 @@ export function createTenantScopedOrm(
 			assertDatabaseConfigured(database);
 
 			// Get all account IDs for this tenant
-			const accounts = await database.findMany<{ id: string }>({
-				table: 'corsair_accounts',
+			const accounts = await database.findMany({
+				table: 'corsair_accounts' as const,
 				where: [{ field: 'tenant_id', value: tenantId }],
 				select: ['id'],
 			});
@@ -1089,8 +1091,8 @@ export function createTenantScopedOrm(
 				where.push({ field: 'entity_type', value: options.entityType });
 			}
 
-			return database.findMany<CorsairEntity>({
-				table: 'corsair_entities',
+			return database.findMany({
+				table: 'corsair_entities' as const,
 				where,
 				limit: options?.limit ?? 100,
 				offset: options?.offset ?? 0,
@@ -1101,8 +1103,8 @@ export function createTenantScopedOrm(
 			assertDatabaseConfigured(database);
 
 			// Get all account IDs for this tenant
-			const accounts = await database.findMany<{ id: string }>({
-				table: 'corsair_accounts',
+			const accounts = await database.findMany({
+				table: 'corsair_accounts' as const,
 				where: [{ field: 'tenant_id', value: tenantId }],
 				select: ['id'],
 			});
@@ -1119,8 +1121,8 @@ export function createTenantScopedOrm(
 				where.push({ field: 'status', value: options.status });
 			}
 
-			return database.findMany<CorsairEvent>({
-				table: 'corsair_events',
+			return database.findMany({
+				table: 'corsair_events' as const,
 				where,
 				limit: options?.limit ?? 100,
 				offset: options?.offset ?? 0,

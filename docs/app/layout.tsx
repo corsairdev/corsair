@@ -121,10 +121,17 @@ const tree = {
 			defaultOpen: false,
 			children: [
 				{
-					type: 'page' as const,
+					type: 'folder' as const,
 					name: 'Slack',
-					url: '/plugins/slack',
 					icon: <MessageSquare className="size-4" />,
+					children: [
+						{
+							type: 'page' as const,
+							name: 'Webhooks',
+							url: '/webhooks',
+							icon: <PhoneIncoming className="size-4" />,
+						},
+					],
 				},
 			],
 		},
