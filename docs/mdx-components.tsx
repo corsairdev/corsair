@@ -7,6 +7,7 @@ import type { MDXComponents } from 'mdx/types';
 export function useMDXComponents(components?: MDXComponents): MDXComponents {
 	return {
 		...defaultComponents,
+		// @ts-expect-error react version mismatch causing errors
 		Callout,
 		Tabs,
 		Tab,

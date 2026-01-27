@@ -21,7 +21,6 @@ import {
 	Users,
 	Zap,
 } from 'lucide-react';
-import type { ReactNode } from 'react';
 
 const tree = {
 	name: 'Documentation',
@@ -138,7 +137,7 @@ const tree = {
 	],
 };
 
-export default function RootLayout(props: { children: ReactNode }) {
+export default function RootLayout({ children }) {
 	return (
 		<html lang="en" suppressHydrationWarning>
 			<body>
@@ -151,7 +150,7 @@ export default function RootLayout(props: { children: ReactNode }) {
 								defaultOpenLevel: 0,
 							}}
 						>
-							{props.children}
+							{children}
 						</DocsLayout>
 					</RootProvider>
 				</NextProvider>
