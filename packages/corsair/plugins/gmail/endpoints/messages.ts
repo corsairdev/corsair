@@ -1,14 +1,19 @@
 import { logEvent } from '../../utils/events';
 import type { GmailEndpoints } from '..';
 import { makeGmailRequest } from '../client';
-import type { GmailEndpointOutputs } from './types';
 import type { Message, MessagePart } from '../types';
+import type { GmailEndpointOutputs } from './types';
 
-function getHeaderValue(part: MessagePart | undefined, headerName: string): string | undefined {
+function getHeaderValue(
+	part: MessagePart | undefined,
+	headerName: string,
+): string | undefined {
 	if (!part?.headers) {
 		return undefined;
 	}
-	const header = part.headers.find((h) => h.name?.toLowerCase() === headerName.toLowerCase());
+	const header = part.headers.find(
+		(h) => h.name?.toLowerCase() === headerName.toLowerCase(),
+	);
 	return header?.value;
 }
 
@@ -49,8 +54,7 @@ function extractBodyText(part: MessagePart | undefined): string | undefined {
 			} else if (part.mimeType === 'text/html') {
 				htmlText = decoded;
 			}
-		} catch {
-		}
+		} catch {}
 	}
 
 	if (part.parts && part.parts.length > 0) {
@@ -127,12 +131,7 @@ export const list: GmailEndpoints['messagesList'] = async (ctx, input) => {
 		);
 		return result;
 	} catch (error) {
-		await logEvent(
-			ctx.database,
-			'gmail.messages.list',
-			{ ...input },
-			'failed',
-		);
+		await logEvent(ctx.database, 'gmail.messages.list', { ...input }, 'failed');
 		throw error;
 	}
 };
@@ -191,12 +190,7 @@ export const get: GmailEndpoints['messagesGet'] = async (ctx, input) => {
 		);
 		return result;
 	} catch (error) {
-		await logEvent(
-			ctx.database,
-			'gmail.messages.get',
-			{ ...input },
-			'failed',
-		);
+		await logEvent(ctx.database, 'gmail.messages.get', { ...input }, 'failed');
 		throw error;
 	}
 };
@@ -255,12 +249,7 @@ export const send: GmailEndpoints['messagesSend'] = async (ctx, input) => {
 		);
 		return result;
 	} catch (error) {
-		await logEvent(
-			ctx.database,
-			'gmail.messages.send',
-			{ ...input },
-			'failed',
-		);
+		await logEvent(ctx.database, 'gmail.messages.send', { ...input }, 'failed');
 		throw error;
 	}
 };
@@ -310,7 +299,9 @@ export const deleteMessage: GmailEndpoints['messagesDelete'] = async (
 
 export const modify: GmailEndpoints['messagesModify'] = async (ctx, input) => {
 	try {
-		const result = await makeGmailRequest<GmailEndpointOutputs['messagesModify']>(
+		const result = await makeGmailRequest<
+			GmailEndpointOutputs['messagesModify']
+		>(
 			`/users/${input.userId || 'me'}/messages/${input.id}/modify`,
 			{
 				clientId: ctx.options.clientId,
@@ -414,7 +405,9 @@ export const batchModify: GmailEndpoints['messagesBatchModify'] = async (
 
 export const trash: GmailEndpoints['messagesTrash'] = async (ctx, input) => {
 	try {
-		const result = await makeGmailRequest<GmailEndpointOutputs['messagesTrash']>(
+		const result = await makeGmailRequest<
+			GmailEndpointOutputs['messagesTrash']
+		>(
 			`/users/${input.userId || 'me'}/messages/${input.id}/trash`,
 			{
 				clientId: ctx.options.clientId,
@@ -445,7 +438,10 @@ export const trash: GmailEndpoints['messagesTrash'] = async (ctx, input) => {
 	}
 };
 
-export const untrash: GmailEndpoints['messagesUntrash'] = async (ctx, input) => {
+export const untrash: GmailEndpoints['messagesUntrash'] = async (
+	ctx,
+	input,
+) => {
 	try {
 		const result = await makeGmailRequest<
 			GmailEndpointOutputs['messagesUntrash']

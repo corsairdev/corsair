@@ -17,14 +17,12 @@ export const aliasCreate: PostHogEndpoints['aliasCreate'] = async (
 		distinct_id: input.distinct_id,
 	};
 
-	const response = await makePostHogRequest<PostHogEndpointOutputs['aliasCreate']>(
-		'/capture/',
-		ctx.options.credentials.apiKey,
-		{
-			method: 'POST',
-			body: payload,
-		},
-	);
+	const response = await makePostHogRequest<
+		PostHogEndpointOutputs['aliasCreate']
+	>('/capture/', ctx.options.credentials.apiKey, {
+		method: 'POST',
+		body: payload,
+	});
 
 	await logEvent(
 		ctx.database,
@@ -57,26 +55,27 @@ export const eventCreate: PostHogEndpoints['eventCreate'] = async (
 		payload.uuid = input.uuid;
 	}
 
-	const response = await makePostHogRequest<PostHogEndpointOutputs['eventCreate']>(
-		'/capture/',
-		ctx.options.credentials.apiKey,
-		{
-			method: 'POST',
-			body: payload,
-		},
-	);
+	const response = await makePostHogRequest<
+		PostHogEndpointOutputs['eventCreate']
+	>('/capture/', ctx.options.credentials.apiKey, {
+		method: 'POST',
+		body: payload,
+	});
 
 	if (ctx.db.events && response) {
 		try {
-			await ctx.db.events.upsert(input.uuid || `${Date.now()}-${Math.random()}`, {
-				id: input.uuid || `${Date.now()}-${Math.random()}`,
-				event: input.event,
-				distinct_id: input.distinct_id,
-				timestamp: input.timestamp,
-				uuid: input.uuid,
-				properties: input.properties,
-				createdAt: new Date(),
-			});
+			await ctx.db.events.upsert(
+				input.uuid || `${Date.now()}-${Math.random()}`,
+				{
+					id: input.uuid || `${Date.now()}-${Math.random()}`,
+					event: input.event,
+					distinct_id: input.distinct_id,
+					timestamp: input.timestamp,
+					uuid: input.uuid,
+					properties: input.properties,
+					createdAt: new Date(),
+				},
+			);
 		} catch (error) {
 			console.warn('Failed to save event to database:', error);
 		}
@@ -105,14 +104,12 @@ export const identityCreate: PostHogEndpoints['identityCreate'] = async (
 		distinct_id: input.distinct_id,
 	};
 
-	const response = await makePostHogRequest<PostHogEndpointOutputs['identityCreate']>(
-		'/capture/',
-		ctx.options.credentials.apiKey,
-		{
-			method: 'POST',
-			body: payload,
-		},
-	);
+	const response = await makePostHogRequest<
+		PostHogEndpointOutputs['identityCreate']
+	>('/capture/', ctx.options.credentials.apiKey, {
+		method: 'POST',
+		body: payload,
+	});
 
 	await logEvent(
 		ctx.database,
@@ -123,10 +120,7 @@ export const identityCreate: PostHogEndpoints['identityCreate'] = async (
 	return response;
 };
 
-export const trackPage: PostHogEndpoints['trackPage'] = async (
-	ctx,
-	input,
-) => {
+export const trackPage: PostHogEndpoints['trackPage'] = async (ctx, input) => {
 	const payload: any = {
 		api_key: ctx.options.credentials.apiKey,
 		event: '$pageview',
@@ -146,21 +140,14 @@ export const trackPage: PostHogEndpoints['trackPage'] = async (
 		payload.uuid = input.uuid;
 	}
 
-	const response = await makePostHogRequest<PostHogEndpointOutputs['trackPage']>(
-		'/capture/',
-		ctx.options.credentials.apiKey,
-		{
-			method: 'POST',
-			body: payload,
-		},
-	);
+	const response = await makePostHogRequest<
+		PostHogEndpointOutputs['trackPage']
+	>('/capture/', ctx.options.credentials.apiKey, {
+		method: 'POST',
+		body: payload,
+	});
 
-	await logEvent(
-		ctx.database,
-		'posthog.track.page',
-		{ ...input },
-		'completed',
-	);
+	await logEvent(ctx.database, 'posthog.track.page', { ...input }, 'completed');
 	return response;
 };
 
@@ -187,14 +174,12 @@ export const trackScreen: PostHogEndpoints['trackScreen'] = async (
 		payload.uuid = input.uuid;
 	}
 
-	const response = await makePostHogRequest<PostHogEndpointOutputs['trackScreen']>(
-		'/capture/',
-		ctx.options.credentials.apiKey,
-		{
-			method: 'POST',
-			body: payload,
-		},
-	);
+	const response = await makePostHogRequest<
+		PostHogEndpointOutputs['trackScreen']
+	>('/capture/', ctx.options.credentials.apiKey, {
+		method: 'POST',
+		body: payload,
+	});
 
 	await logEvent(
 		ctx.database,

@@ -1,11 +1,15 @@
 import {
-	create as domainsCreate,
 	deleteDomain,
+	create as domainsCreate,
 	get as domainsGet,
 	list as domainsList,
 	verify as domainsVerify,
 } from './domains';
-import { get as emailsGet, list as emailsList, send as emailsSend } from './emails';
+import {
+	get as emailsGet,
+	list as emailsList,
+	send as emailsSend,
+} from './emails';
 
 export const Emails = {
 	send: emailsSend,

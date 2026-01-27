@@ -1,10 +1,5 @@
 import { z } from 'zod';
-import {
-	GmailDraft,
-	GmailLabel,
-	GmailMessage,
-	GmailThread,
-} from './database';
+import { GmailDraft, GmailLabel, GmailMessage, GmailThread } from './database';
 
 export const GmailCredentials = z.object({
 	clientId: z.string(),

@@ -1,7 +1,7 @@
 import type { ApiRequestOptions } from '../../async-core/ApiRequestOptions';
 import type { OpenAPIConfig } from '../../async-core/OpenAPI';
-import { request } from '../../async-core/request';
 import type { RateLimitConfig } from '../../async-core/rate-limit';
+import { request } from '../../async-core/request';
 import { BaseWebhookHandler } from '../../async-core/webhook-handler';
 import { verifySlackSignature } from '../../async-core/webhook-utils';
 import type { SlackEventMap, SlackEventName } from './webhooks/types';

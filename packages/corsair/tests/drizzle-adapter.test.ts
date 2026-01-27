@@ -1,4 +1,4 @@
-import { drizzleAdapter, type DrizzleAdapterConfig } from '../adapters/drizzle';
+import { drizzleAdapter } from '../adapters/drizzle';
 import type { CorsairDbAdapter } from '../adapters/types';
 
 type MockDrizzleDB = {
@@ -61,7 +61,13 @@ describe('Drizzle Adapter', () => {
 
 	beforeEach(() => {
 		mockSchema = {
-			corsair_connections: createMockTable(['id', 'tenant_id', 'provider', 'name', 'value']),
+			corsair_connections: createMockTable([
+				'id',
+				'tenant_id',
+				'provider',
+				'name',
+				'value',
+			]),
 			corsair_resources: createMockTable(['id', 'tenant_id', 'resource_id']),
 			corsair_events: createMockTable(['id', 'tenant_id', 'event_type']),
 			corsair_providers: createMockTable(['id', 'name', 'type']),
@@ -105,7 +111,10 @@ describe('Drizzle Adapter', () => {
 
 		it('should throw error for unsupported provider', () => {
 			expect(() => {
-				drizzleAdapter(mockDb, { provider: 'mysql' as any, schema: mockSchema });
+				drizzleAdapter(mockDb, {
+					provider: 'mysql' as any,
+					schema: mockSchema,
+				});
 			}).toThrow('Corsair Drizzle adapter only supports provider "pg"');
 		});
 
@@ -356,7 +365,9 @@ describe('Drizzle Adapter', () => {
 					where: [],
 					data: { name: 'updated' },
 				}),
-			).rejects.toThrow('Drizzle adapter: update requires a non-empty where clause');
+			).rejects.toThrow(
+				'Drizzle adapter: update requires a non-empty where clause',
+			);
 		});
 
 		it('should return null when no record updated', async () => {
@@ -395,10 +406,9 @@ describe('Drizzle Adapter', () => {
 	describe('deleteMany', () => {
 		it('should delete records and return count', async () => {
 			const mockDeleteBuilder = mockDb.delete() as any;
-			mockDeleteBuilder.returning = jest.fn().mockResolvedValue([
-				{ id: '1' },
-				{ id: '2' },
-			]);
+			mockDeleteBuilder.returning = jest
+				.fn()
+				.mockResolvedValue([{ id: '1' }, { id: '2' }]);
 
 			const result = await adapter.deleteMany({
 				table: 'corsair_connections',
@@ -436,9 +446,7 @@ describe('Drizzle Adapter', () => {
 	describe('count', () => {
 		it('should count all records when no where clause', async () => {
 			const mockSelectBuilder = mockDb.select() as any;
-			mockSelectBuilder.then = jest.fn((resolve) =>
-				resolve([{ count: 10 }]),
-			);
+			mockSelectBuilder.then = jest.fn((resolve) => resolve([{ count: 10 }]));
 
 			const result = await adapter.count({
 				table: 'corsair_connections',
@@ -476,9 +484,7 @@ describe('Drizzle Adapter', () => {
 
 		it('should handle string count values', async () => {
 			const mockSelectBuilder = mockDb.select() as any;
-			mockSelectBuilder.then = jest.fn((resolve) =>
-				resolve([{ count: '42' }]),
-			);
+			mockSelectBuilder.then = jest.fn((resolve) => resolve([{ count: '42' }]));
 
 			const result = await adapter.count({
 				table: 'corsair_connections',
@@ -524,7 +530,7 @@ describe('Drizzle Adapter', () => {
 
 		it('should execute without transaction when db does not support it', async () => {
 			const dbWithoutTransaction = createMockDrizzleDB(mockSchema);
-			delete dbWithoutTransaction.transaction;
+			dbWithoutTransaction.transaction = undefined;
 			const adapterWithoutTx = drizzleAdapter(dbWithoutTransaction, {
 				provider: 'pg',
 				schema: mockSchema,
@@ -543,7 +549,9 @@ describe('Drizzle Adapter', () => {
 		});
 
 		it('should propagate transaction errors', async () => {
-			mockDb.transaction = jest.fn().mockRejectedValue(new Error('Transaction failed'));
+			mockDb.transaction = jest
+				.fn()
+				.mockRejectedValue(new Error('Transaction failed'));
 
 			if (!adapter.transaction) {
 				throw new Error('Transaction method should exist');
@@ -576,9 +584,7 @@ describe('Drizzle Adapter', () => {
 
 			await adapter.findMany({
 				table: 'corsair_connections',
-				where: [
-					{ field: 'id', value: ['1', '2', '3'], operator: 'in' },
-				],
+				where: [{ field: 'id', value: ['1', '2', '3'], operator: 'in' }],
 			});
 
 			expect(mockSelectBuilder.where).toHaveBeenCalled();

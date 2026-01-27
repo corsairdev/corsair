@@ -10,6 +10,7 @@ import type {
 import type { AuthTypes } from '../../core/constants';
 import type { LinearEndpointOutputs } from './endpoints';
 import { Comments, Issues, Projects, Teams } from './endpoints';
+import { errorHandlers } from './error-handlers';
 import type { LinearCredentials } from './schema';
 import { LinearSchema } from './schema';
 import type {
@@ -26,7 +27,6 @@ import type {
 	ProjectUpdatedEvent,
 } from './webhooks';
 import { CommentWebhooks, IssueWebhooks, ProjectWebhooks } from './webhooks';
-import { errorHandlers } from './error-handlers';
 
 export type LinearPluginOptions = {
 	authType: AuthTypes;

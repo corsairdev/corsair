@@ -8,8 +8,8 @@ import type {
 	CorsairWebhook,
 } from '../../core';
 import type { AuthTypes } from '../../core/constants';
-import type { ResendEndpointOutputs } from './endpoints/types';
 import { Domains, Emails } from './endpoints';
+import type { ResendEndpointOutputs } from './endpoints/types';
 import type { ResendCredentials } from './schema';
 import { ResendSchema } from './schema';
 import type {

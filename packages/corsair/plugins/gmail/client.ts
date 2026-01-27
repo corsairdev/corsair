@@ -70,7 +70,7 @@ async function getValidAccessToken(
 			refreshToken,
 		);
 		cachedAccessToken = tokenData.access_token;
-		tokenExpiryTime = now + (tokenData.expires_in * 1000);
+		tokenExpiryTime = now + tokenData.expires_in * 1000;
 		return cachedAccessToken;
 	} catch (error) {
 		if (error instanceof GmailAPIError) {
@@ -141,7 +141,7 @@ export async function makeGmailRequest<T>(
 				credentials.refreshToken,
 			);
 			cachedAccessToken = refreshedToken.access_token;
-			tokenExpiryTime = Date.now() + (refreshedToken.expires_in * 1000);
+			tokenExpiryTime = Date.now() + refreshedToken.expires_in * 1000;
 
 			const retryConfig: OpenAPIConfig = {
 				...config,

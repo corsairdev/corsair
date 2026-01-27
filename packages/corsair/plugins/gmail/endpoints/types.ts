@@ -1,13 +1,10 @@
 import type {
-	BatchModifyMessagesRequest,
 	Draft,
 	DraftListResponse,
 	Label,
 	LabelListResponse,
 	Message,
 	MessageListResponse,
-	ModifyMessageRequest,
-	ModifyThreadRequest,
 	Profile,
 	Thread,
 	ThreadListResponse,

@@ -1,4 +1,4 @@
-// @ts-ignore - better-sqlite3 types may not be available
+// @ts-expect-error - better-sqlite3 types may not be available
 import Database from 'better-sqlite3';
 import type { CorsairDbAdapter } from '../adapters/types';
 
@@ -138,9 +138,9 @@ export function createTestDatabase(): {
 
 			const findQuery = `SELECT * FROM ${table} WHERE ${whereClause.join(' AND ')} LIMIT 1`;
 			const whereValues = args.where.map((w) => w.value);
-			const result = sqlite
-				.prepare(findQuery)
-				.get(...whereValues) as T | undefined;
+			const result = sqlite.prepare(findQuery).get(...whereValues) as
+				| T
+				| undefined;
 			return result || null;
 		},
 		deleteMany: async (args: {
@@ -183,9 +183,7 @@ export function createTestDatabase(): {
 			const result = sqlite.prepare(query).get(...values) as { count: number };
 			return result.count;
 		},
-		transaction: async <R>(
-			fn: (trx: any) => Promise<R>,
-		): Promise<R> => {
+		transaction: async <R>(fn: (trx: any) => Promise<R>): Promise<R> => {
 			return sqlite.transaction(fn)();
 		},
 	};

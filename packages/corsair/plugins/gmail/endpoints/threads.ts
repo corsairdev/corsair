@@ -50,12 +50,7 @@ export const list: GmailEndpoints['threadsList'] = async (ctx, input) => {
 		);
 		return result;
 	} catch (error) {
-		await logEvent(
-			ctx.database,
-			'gmail.threads.list',
-			{ ...input },
-			'failed',
-		);
+		await logEvent(ctx.database, 'gmail.threads.list', { ...input }, 'failed');
 		throw error;
 	}
 };
@@ -100,19 +95,16 @@ export const get: GmailEndpoints['threadsGet'] = async (ctx, input) => {
 		);
 		return result;
 	} catch (error) {
-		await logEvent(
-			ctx.database,
-			'gmail.threads.get',
-			{ ...input },
-			'failed',
-		);
+		await logEvent(ctx.database, 'gmail.threads.get', { ...input }, 'failed');
 		throw error;
 	}
 };
 
 export const modify: GmailEndpoints['threadsModify'] = async (ctx, input) => {
 	try {
-		const result = await makeGmailRequest<GmailEndpointOutputs['threadsModify']>(
+		const result = await makeGmailRequest<
+			GmailEndpointOutputs['threadsModify']
+		>(
 			`/users/${input.userId || 'me'}/threads/${input.id}/modify`,
 			{
 				clientId: ctx.options.clientId,
@@ -226,12 +218,7 @@ export const trash: GmailEndpoints['threadsTrash'] = async (ctx, input) => {
 		);
 		return result;
 	} catch (error) {
-		await logEvent(
-			ctx.database,
-			'gmail.threads.trash',
-			{ ...input },
-			'failed',
-		);
+		await logEvent(ctx.database, 'gmail.threads.trash', { ...input }, 'failed');
 		throw error;
 	}
 };

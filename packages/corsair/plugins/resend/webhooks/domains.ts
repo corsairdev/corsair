@@ -19,7 +19,12 @@ export const domainCreated: ResendWebhooks['domainCreated'] = {
 				await ctx.db.domains.upsert(event.data.domain_id, {
 					id: event.data.domain_id,
 					name: event.data.name,
-					status: event.data.status as 'not_started' | 'validation' | 'scheduled' | 'ready' | 'error',
+					status: event.data.status as
+						| 'not_started'
+						| 'validation'
+						| 'scheduled'
+						| 'ready'
+						| 'error',
 					created_at: event.data.created_at,
 				});
 			} catch (error) {
@@ -51,7 +56,12 @@ export const domainUpdated: ResendWebhooks['domainUpdated'] = {
 				await ctx.db.domains.upsert(event.data.domain_id, {
 					id: event.data.domain_id,
 					name: event.data.name,
-					status: event.data.status as 'not_started' | 'validation' | 'scheduled' | 'ready' | 'error',
+					status: event.data.status as
+						| 'not_started'
+						| 'validation'
+						| 'scheduled'
+						| 'ready'
+						| 'error',
 					created_at: event.data.created_at,
 				});
 			} catch (error) {

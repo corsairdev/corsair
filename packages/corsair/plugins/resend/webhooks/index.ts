@@ -1,7 +1,4 @@
-import {
-	domainCreated,
-	domainUpdated,
-} from './domains';
+import { domainCreated, domainUpdated } from './domains';
 import {
 	emailBounced,
 	emailClicked,
