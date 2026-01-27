@@ -1,8 +1,8 @@
 import { createCorsair } from 'corsair';
 import { drizzleAdapter } from 'corsair/adapters/drizzle';
-import { linear, resend, slack } from 'corsair/plugins';
-import { db } from './db';
-import * as schema from './db/schema';
+import { linear, slack, resend } from 'corsair/plugins';
+import { db } from '../db';
+import * as schema from '../db/schema';
 
 export const corsair = createCorsair({
 	multiTenancy: true,
@@ -11,7 +11,7 @@ export const corsair = createCorsair({
 		slack({
 			authType: 'api_key',
 			credentials: {
-				botToken: '',
+				botToken: process.env.SLACK_BOT_TOKEN!,
 			},
 			hooks: {
 				channels: {
@@ -57,12 +57,12 @@ export const corsair = createCorsair({
 				apiKey: process.env.LINEAR_API_KEY ?? 'dev-token',
 			},
 		}),
-		resend({
-			authType: 'api_key',
-			credentials: {
-				apiKey: process.env.RESEND_API_KEY ?? 'dev-token',
-			},
-		}),
+		// resend({
+		// 	authType: 'api_key',
+		// 	credentials: {
+		// 		apiKey: process.env.RESEND_API_KEY ?? 'dev-token',
+		// 	},
+		// }),
 	],
 	errorHandlers: {
 		RATE_LIMIT_ERROR: {
