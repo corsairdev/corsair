@@ -1,0 +1,60 @@
+---
+title: Multi-Tenancy
+description: Isolate tenant data with zero cross-contamination.
+---
+
+Corsair is built for multi-tenant applications. When enabled, every database operation is automatically scoped to a specific tenant — no data can leak between tenants.
+
+```ts title="corsair.ts"
+import { createCorsair } from "corsair";
+import { slack } from "corsair/plugins";
+
+export const corsair = createCorsair({
+    multiTenancy: true,
+    database: drizzleAdapter(db, { provider: "pg", schema }),
+    plugins: [slack({ ... })],
+});
+```
+
+## Using `withTenant`
+
+With multi-tenancy enabled, use `withTenant()` to scope all operations to a specific tenant.
+
+```ts title="example.ts"
+const tenant = corsair.withTenant("tenant_abc123");
+
+// All operations are now scoped to tenant_abc123
+await tenant.slack.api.messages.post({
+    channel: "C01234567",
+    text: "Hello from tenant_abc123!",
+});
+
+// Database queries are automatically filtered
+const channels = await tenant.slack.db.channels.list();
+```
+
+## What Gets Scoped
+
+When you call `withTenant(tenantId)`:
+
+- **Database queries** automatically filter by `tenant_id`
+- **Created records** are tagged with the tenant ID
+- **API credentials** are retrieved only for that tenant
+- **Webhook data** is associated with the correct tenant
+
+This guarantees complete isolation between tenants — you're secure by default.
+
+## Opting Out
+
+If you don't need multi-tenancy, set it to `false` and access plugins directly on the Corsair instance.
+
+```ts title="corsair.ts"
+export const corsair = createCorsair({
+    multiTenancy: false,
+    plugins: [slack({ ... })],
+});
+
+// Access plugins directly
+await corsair.slack.api.channels.list();
+```
+

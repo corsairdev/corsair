@@ -8,21 +8,26 @@ export interface TOCItem {
 }
 
 const slugToFilePath: Record<string, string> = {
-	index: '0-getting-started/0-introduction.mdx',
-	installation: '0-getting-started/1-installation.mdx',
-	'basic-usage': '0-getting-started/2-basic-usage.mdx',
-	api: '1-concepts/0-api.mdx',
-	client: '1-concepts/1-client.mdx',
-	cli: '1-concepts/2-cli.mdx',
-	plugins: '1-concepts/3-plugins.mdx',
-	database: '1-concepts/4-database.mdx',
-	typescript: '1-concepts/5-typescript.mdx',
-	'integrations/next': '2-integrations/0-next.mdx',
-	'integrations/vite': '2-integrations/1-vite.mdx',
-	'integrations/hono': '2-integrations/2-hono.mdx',
-	'integrations/prisma': '2-integrations/3-prisma.mdx',
-	'integrations/drizzle': '2-integrations/4-drizzle.mdx',
-	'plugins/slack': '3-plugins/slack.mdx',
+	// getting-started
+	index: 'getting-started/introduction.mdx',
+	comparison: 'getting-started/comparison.mdx',
+	// concepts
+	api: 'concepts/api.mdx',
+	auth: 'concepts/auth.mdx',
+	database: 'concepts/database.mdx',
+	'error-handling': 'concepts/error-handling.mdx',
+	hooks: 'concepts/hooks.mdx',
+	integrations: 'concepts/integrations.mdx',
+	'multi-tenancy': 'concepts/multi-tenancy.mdx',
+	typescript: 'concepts/typescript.mdx',
+	webhooks: 'concepts/webhooks.mdx',
+	// adapters
+	'adapters/drizzle': 'adapters/drizzle.mdx',
+	'adapters/kysely': 'adapters/kysely.mdx',
+	'adapters/postgresql': 'adapters/postgresql.mdx',
+	'adapters/prisma': 'adapters/prisma.mdx',
+	// plugins
+	'plugins/slack': 'plugins/slack.mdx',
 };
 
 export function extractTOC(mdxPath: string): TOCItem[] {

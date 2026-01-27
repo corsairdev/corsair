@@ -1,7 +1,13 @@
 import { logEvent } from '../../utils/events';
-import type { SlackEndpoints } from '..';
+import type { SlackBoundEndpoints, SlackEndpoints } from '..';
 import { makeSlackRequest } from '../client';
 import type { SlackEndpointOutputs } from './types';
+
+export const random: SlackEndpoints['channelsRandom'] = async (ctx, input) => {
+	return {
+		done: true,
+	};
+};
 
 export const archive: SlackEndpoints['channelsArchive'] = async (
 	ctx,
@@ -15,17 +21,10 @@ export const archive: SlackEndpoints['channelsArchive'] = async (
 	});
 
 	if (result.ok) {
-		try {
-			const existing = await ctx.db.channels.findByResourceId(input.channel);
-			if (existing) {
-				await ctx.db.channels.upsert(input.channel, {
-					...existing.data,
-					is_archived: true,
-				});
-			}
-		} catch (error) {
-			console.warn('Failed to update channel in database:', error);
-		}
+		const endpoints = ctx.endpoints as SlackBoundEndpoints;
+		const newChannel = endpoints.channelsGet({ channel: input.channel });
+
+		// and then update the channel in the db
 	}
 
 	await logEvent(
@@ -137,7 +136,7 @@ export const list: SlackEndpoints['channelsList'] = async (ctx, input) => {
 		'conversations.list',
 		ctx.options.credentials.botToken,
 		{
-			method: 'GET',
+			method: 'POST',
 			query: {
 				exclude_archived: input.exclude_archived,
 				types: input.types,
@@ -153,9 +152,7 @@ export const list: SlackEndpoints['channelsList'] = async (ctx, input) => {
 			for (const channel of result.channels) {
 				if (channel.id) {
 					await ctx.db.channels.upsert(channel.id, {
-						id: channel.id,
-						name: channel.name,
-						createdAt: new Date(),
+						...channel,
 					});
 				}
 			}

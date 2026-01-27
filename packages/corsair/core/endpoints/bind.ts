@@ -1,5 +1,6 @@
 import type { CorsairErrorHandler } from '../errors';
 import { handleCorsairError } from '../errors/handler';
+import type { CorsairKeyBuilderBase, EndpointHooks } from '../plugins';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Endpoint Utilities
@@ -24,6 +25,7 @@ export function isEndpoint(value: unknown): value is Function {
  * @param pluginId - The ID of the plugin for error context
  * @param errorHandler - The error handler for this plugin
  * @param currentPath - The current path for tracking nested endpoint operations
+ * @param keyBuilder - Optional async callback to generate a key from the plugin context
  */
 export function bindEndpointsRecursively({
 	endpoints,
@@ -33,6 +35,7 @@ export function bindEndpointsRecursively({
 	pluginId,
 	errorHandlers,
 	currentPath = [],
+	keyBuilder,
 }: {
 	endpoints: Record<string, unknown>;
 	hooks: Record<string, unknown> | undefined;
@@ -41,33 +44,35 @@ export function bindEndpointsRecursively({
 	pluginId: string;
 	errorHandlers: CorsairErrorHandler;
 	currentPath: string[];
+	keyBuilder?: CorsairKeyBuilderBase;
 }): void {
 	for (const [key, value] of Object.entries(endpoints)) {
+		// we have to retype this now because it's nested webhooks
 		const nodeHooks = hooks?.[key] as Record<string, unknown> | undefined;
 
 		if (isEndpoint(value)) {
-			// It's an endpoint function - bind it with context and hooks
-			const endpointHooks = nodeHooks as
-				| { before?: Function; after?: Function }
-				| undefined;
+			// it's an endpoint function - bind it with context and hooks
+			const endpointHooks = nodeHooks as EndpointHooks | undefined;
 
 			const operationPath = [...currentPath, key].join('.');
 
-			const boundFn = (...args: unknown[]) => {
-				const call = async (attemptNumber: number) => {
+			const boundFn = async (args: unknown) => {
+				const call = async (
+					attemptNumber: number,
+					callCtx: Record<string, unknown>,
+					callArgs: unknown,
+				) => {
 					try {
-						return await value(ctx, ...args);
+						return await value(callCtx, callArgs);
 					} catch (error) {
 						if (error instanceof Error) {
 							const retryStrategy = await handleCorsairError(
 								error,
 								pluginId,
 								operationPath,
-								args.length > 0 &&
-									typeof args[0] === 'object' &&
-									args[0] !== null
-									? (args[0] as Record<string, unknown>)
-									: { args },
+								typeof callArgs === 'object' && callArgs !== null
+									? (callArgs as Record<string, unknown>)
+									: { args: callArgs },
 								errorHandlers,
 							);
 
@@ -110,7 +115,7 @@ export function bindEndpointsRecursively({
 								}
 
 								await new Promise((resolve) => setTimeout(resolve, delayMs));
-								await call(newAttempt);
+								await call(newAttempt, callCtx, callArgs);
 
 								console.log(
 									`[corsair:${pluginId}:${operationPath}] Retry strategy:`,
@@ -122,21 +127,26 @@ export function bindEndpointsRecursively({
 					}
 				};
 
+				const key = keyBuilder ? await keyBuilder(ctx) : undefined;
+
 				if (!endpointHooks?.before && !endpointHooks?.after) {
-					return call(0);
+					return call(0, { ...ctx, key }, args);
 				}
 
 				return (async () => {
-					await endpointHooks.before?.(ctx, ...args);
-					const res = await call(0);
-					await endpointHooks.after?.(ctx, res);
+					const ctxWithKey = { ...ctx, key };
+					const { ctx: updatedCtx, args: updatedArgs } = endpointHooks.before
+						? await endpointHooks.before(ctxWithKey, args)
+						: { ctx: ctxWithKey, args };
+					const res = await call(0, updatedCtx, updatedArgs);
+					await endpointHooks.after?.(updatedCtx, res);
 					return res;
 				})();
 			};
 
 			tree[key] = boundFn;
 		} else if (value && typeof value === 'object') {
-			// It's a nested object - recurse into it
+			// it's a nested object - recurse into it
 			const nestedTree: Record<string, unknown> = {};
 
 			bindEndpointsRecursively({
@@ -147,6 +157,7 @@ export function bindEndpointsRecursively({
 				pluginId,
 				errorHandlers,
 				currentPath: [...currentPath, key],
+				keyBuilder,
 			});
 
 			tree[key] = nestedTree;

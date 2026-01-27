@@ -1,0 +1,155 @@
+---
+title: Drizzle ORM
+description: Integrate Corsair with Drizzle ORM.
+---
+
+Drizzle ORM is a lightweight, type-safe ORM for Node.js and TypeScript. Corsair's Drizzle adapter provides full support for PostgreSQL.
+
+## Installation
+
+Make sure you have Drizzle installed and configured. For more information, see the [Drizzle Documentation](https://orm.drizzle.team/docs/overview/).
+
+```ts title="corsair.ts"
+import { createCorsair } from "corsair";
+import { drizzleAdapter } from "corsair/adapters/drizzle";
+import { db } from "./database";
+import * as schema from "./db/schema";
+
+export const corsair = createCorsair({
+    database: drizzleAdapter(db, {
+        provider: "pg",
+        schema,
+    }),
+    plugins: [...],
+});
+```
+
+## Configuration
+
+The Drizzle adapter accepts the following options:
+
+| Option | Type | Description |
+|--------|------|-------------|
+| `provider` | `"pg"` | Database provider (PostgreSQL only) |
+| `schema` | `object` | Your Drizzle schema object |
+| `tableNames` | `object` | Custom table name mappings |
+| `adapterId` | `string` | Custom adapter identifier |
+
+## Schema Setup
+
+Corsair requires four tables in your Drizzle schema. Here's an example setup:
+
+```ts title="db/schema.ts"
+import { pgTable, text, timestamp, jsonb, uuid } from "drizzle-orm/pg-core";
+
+export const corsair_providers = pgTable("corsair_providers", {
+    id: text("id").primaryKey(),
+    config: jsonb("config"),
+    created_at: timestamp("created_at").defaultNow(),
+    updated_at: timestamp("updated_at").defaultNow(),
+});
+
+export const corsair_connections = pgTable("corsair_connections", {
+    id: uuid("id").primaryKey().defaultRandom(),
+    tenant_id: text("tenant_id").notNull(),
+    provider_id: text("provider_id").notNull(),
+    config: jsonb("config"),
+    created_at: timestamp("created_at").defaultNow(),
+    updated_at: timestamp("updated_at").defaultNow(),
+});
+
+export const corsair_resources = pgTable("corsair_resources", {
+    id: uuid("id").primaryKey().defaultRandom(),
+    tenant_id: text("tenant_id").notNull(),
+    resource_id: text("resource_id").notNull(),
+    resource: text("resource").notNull(),
+    service: text("service").notNull(),
+    version: text("version"),
+    data: jsonb("data"),
+    created_at: timestamp("created_at").defaultNow(),
+    updated_at: timestamp("updated_at").defaultNow(),
+});
+
+export const corsair_events = pgTable("corsair_events", {
+    id: uuid("id").primaryKey().defaultRandom(),
+    tenant_id: text("tenant_id").notNull(),
+    resource_id: text("resource_id"),
+    event_type: text("event_type").notNull(),
+    data: jsonb("data"),
+    created_at: timestamp("created_at").defaultNow(),
+});
+```
+
+## Custom Table Names
+
+If your tables use different names, map them in the config:
+
+```ts title="corsair.ts"
+import { drizzleAdapter } from "corsair/adapters/drizzle";
+
+export const corsair = createCorsair({
+    database: drizzleAdapter(db, {
+        provider: "pg",
+        schema,
+        tableNames: {
+            connections: "my_corsair_connections",
+            resources: "my_corsair_resources",
+            events: "my_corsair_events",
+            providers: "my_corsair_providers",
+        },
+    }),
+    plugins: [...],
+});
+```
+
+## Migrations
+
+Use Drizzle Kit to generate and run migrations:
+
+```bash
+# Generate migration
+npx drizzle-kit generate
+
+# Apply migration
+npx drizzle-kit migrate
+```
+
+## Transactions
+
+The Drizzle adapter supports transactions:
+
+```ts title="example.ts"
+await corsair.slack.db.messages.transaction(async (trx) => {
+    await trx.upsert("msg_1", { text: "Hello" });
+    await trx.upsert("msg_2", { text: "World" });
+});
+```
+
+## Full Example
+
+```ts title="corsair.ts"
+import { createCorsair } from "corsair";
+import { drizzleAdapter } from "corsair/adapters/drizzle";
+import { slack, linear } from "corsair/plugins";
+import { db } from "./db";
+import * as schema from "./db/schema";
+
+export const corsair = createCorsair({
+    multiTenancy: true,
+    database: drizzleAdapter(db, {
+        provider: "pg",
+        schema,
+    }),
+    plugins: [
+        slack({
+            authType: "api_key",
+            credentials: { botToken: process.env.SLACK_BOT_TOKEN },
+        }),
+        linear({
+            authType: "api_key",
+            credentials: { apiKey: process.env.LINEAR_API_KEY },
+        }),
+    ],
+});
+```
+

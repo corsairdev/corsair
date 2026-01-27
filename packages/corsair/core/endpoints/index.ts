@@ -31,7 +31,7 @@ export type BoundEndpointFn<Args = unknown, Res = unknown> = (
  * This is what the end user interacts with after client initialization.
  */
 export type BoundEndpointTree = {
-	[key: string]: BoundEndpointFn<any, any> | BoundEndpointTree;
+	[key: string]: BoundEndpointFn | BoundEndpointTree;
 };
 
 /**
@@ -42,7 +42,7 @@ export type CorsairContext<
 	Endpoints extends BoundEndpointTree = BoundEndpointTree,
 > = {
 	/** The configured Corsair DB adapter (if provided to `createCorsair`) */
-	database?: CorsairDbAdapter;
+	database: CorsairDbAdapter;
 	/** All bound endpoints for this plugin, allowing endpoints to call each other */
 	endpoints: Endpoints;
 };

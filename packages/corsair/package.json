@@ -56,6 +56,16 @@
       "dev-source": "./plugins/linear/index.ts",
       "types": "./dist/plugins/linear/index.d.ts",
       "default": "./dist/plugins/linear/index.js"
+    },
+    "./plugins/resend": {
+      "dev-source": "./plugins/resend/index.ts",
+      "types": "./dist/plugins/resend/index.d.ts",
+      "default": "./dist/plugins/resend/index.js"
+    },
+    "./plugins/posthog": {
+      "dev-source": "./plugins/posthog/index.ts",
+      "types": "./dist/plugins/posthog/index.d.ts",
+      "default": "./dist/plugins/posthog/index.js"
     }
   },
   "scripts": {

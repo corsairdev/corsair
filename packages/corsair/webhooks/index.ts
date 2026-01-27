@@ -4,7 +4,7 @@ import type {
 	RawWebhookRequest,
 	WebhookRequest,
 	WebhookResponse,
-} from '../core';
+} from '../core/webhooks';
 import { BaseProviders } from '../core/constants';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -127,6 +127,7 @@ function normalizeHeaders(
  * @param corsair - The corsair instance (returned from createCorsair)
  * @param headers - The HTTP headers from the webhook request
  * @param body - The request body (string or parsed object)
+ * @param query - The query parameters from the webhook request (optional)
  * @returns The filter result with plugin, action, body, and optional response
  *
  * @example
@@ -136,7 +137,7 @@ function normalizeHeaders(
  * });
  *
  * // In your webhook endpoint handler:
- * const result = await filterWebhook(corsair, req.headers, req.body);
+ * const result = await filterWebhook(corsair, req.headers, req.body, req.query);
  *
  * if (result.plugin) {
  *   console.log(`Handled by ${result.plugin}.${result.action}`);
@@ -147,6 +148,7 @@ export async function filterWebhook(
 	corsair: CorsairInstance,
 	headers: WebhookFilterHeaders,
 	body: WebhookFilterBody | string,
+	query?: Record<string, string | string[] | undefined>,
 ): Promise<WebhookFilterResult> {
 	const normalizedHeaders = normalizeHeaders(headers);
 	const parsedBody: WebhookFilterBody =
@@ -157,21 +159,21 @@ export async function filterWebhook(
 		body: parsedBody,
 	};
 
-	// TODO: Extract webhook credentials from headers/body and match against database
-	// to find the associated tenant ID. For now, using default tenant.
-	// This should:
-	// 1. Extract webhook credentials from the request (headers, body, or URL params)
-	// 2. Query the database to find matching webhook configuration
-	// 3. Get the tenant ID from the webhook configuration
-	// 4. Use corsair.withTenant(tenantId) to get tenant-scoped instance
+	const tenantId =
+		query?.tenant_id && typeof query.tenant_id === 'string'
+			? query.tenant_id
+			: Array.isArray(query?.tenant_id) && query.tenant_id[0]
+				? query.tenant_id[0]
+				: 'default';
+
 	const tenantScopedCorsair = corsair.withTenant
-		? corsair.withTenant('default')
+		? corsair.withTenant(tenantId)
 		: corsair;
 
 	// Known plugin IDs to check
 	const pluginIds = BaseProviders;
 
-	for (const pluginId of pluginIds.options) {
+	for (const pluginId of pluginIds) {
 		const plugin = tenantScopedCorsair[pluginId];
 
 		// Skip if plugin is not enabled or has no webhooks
