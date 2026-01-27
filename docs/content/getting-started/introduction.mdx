@@ -1,0 +1,84 @@
+---
+title: Introduction
+description: The integration layer for your application.
+---
+
+Corsair is a unified SDK for integrating with third-party services. Add Slack, Linear, GitHub, and hundreds of other integrations — all with the same syntax, same types, and the same four database tables.
+
+```ts title="corsair.ts"
+import { createCorsair } from "corsair";
+import { drizzleAdapter } from "corsair/adapters/drizzle";
+import { slack, linear } from "corsair/plugins";
+
+export const corsair = createCorsair({
+    multiTenancy: true,
+    database: drizzleAdapter(db, { provider: "pg", schema }),
+    plugins: [
+        slack({
+            authType: "api_key",
+            credentials: { botToken: process.env.SLACK_BOT_TOKEN },
+        }),
+        linear({
+            authType: "api_key",
+            credentials: { apiKey: process.env.LINEAR_API_KEY },
+        }),
+    ],
+});
+```
+
+## Quick Example
+
+Once set up, calling APIs is straightforward:
+
+```ts title="example.ts"
+const tenant = corsair.withTenant("tenant_123");
+
+// Send a Slack message
+await tenant.slack.api.messages.post({
+    channel: "C01234567",
+    text: "Hello from Corsair!",
+});
+
+// Create a Linear issue
+await tenant.linear.api.issues.create({
+    title: "New feature request",
+    teamId: "TEAM_ABC",
+});
+```
+
+## Why Corsair?
+
+### One SDK, Many Integrations
+
+Learn one syntax, use it everywhere. No need to master each service's unique SDK quirks.
+
+### Multi-Tenant by Default
+
+Every operation is scoped to a tenant. Data isolation is automatic — no cross-contamination possible.
+
+### Always Fresh Data
+
+API responses are stored and automatically updated through webhooks. Your data is never stale.
+
+### Four Tables Forever
+
+Add 100 integrations — still just four database tables. No schema bloat.
+
+### Fully Typed
+
+Every API call, every response, every database query is fully typed. Your editor knows everything.
+
+## Installation
+
+```bash
+npm install corsair
+```
+
+## Next Steps
+
+- [Multi-Tenancy](/multi-tenancy) — Isolate tenant data automatically
+- [Error Handling](/error-handling) — Graceful failures and retries
+- [Webhooks](/webhooks) — One endpoint for all webhooks
+- [Database](/database) — Four tables, unlimited integrations
+- [Hooks](/hooks) — Customize API and webhook behavior
+

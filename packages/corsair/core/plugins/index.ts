@@ -46,6 +46,43 @@ type EndpointResult<E> = E extends CorsairEndpoint<any, any, infer Res>
 	: never;
 
 /**
+ * Return type for the before hook, containing optionally updated context and args.
+ */
+export type BeforeHookResult<Ctx, Args> = {
+	ctx: Ctx;
+	args: Args;
+};
+
+/**
+ * Type for endpoint hooks used internally by the bind function.
+ */
+export type EndpointHooks = {
+	before?: (
+		ctx: Record<string, unknown>,
+		args: unknown,
+	) =>
+		| BeforeHookResult<Record<string, unknown>, unknown>
+		| Promise<BeforeHookResult<Record<string, unknown>, unknown>>;
+	after?: (ctx: Record<string, unknown>, res: unknown) => void | Promise<void>;
+};
+
+/**
+ * Type for webhook hooks used internally by the bind function.
+ */
+export type WebhookHooks = {
+	before?: (
+		ctx: Record<string, unknown>,
+		request: unknown,
+	) =>
+		| BeforeHookResult<Record<string, unknown>, unknown>
+		| Promise<BeforeHookResult<Record<string, unknown>, unknown>>;
+	after?: (
+		ctx: Record<string, unknown>,
+		response: unknown,
+	) => void | Promise<void>;
+};
+
+/**
  * Recursively maps an endpoint tree to a hooks map with the same structure.
  * Each endpoint gets optional before/after hooks.
  */
@@ -56,11 +93,22 @@ type CorsairEndpointHooksMap<Endpoints extends EndpointTree> = {
 				 * Hook that runs before the endpoint is executed.
 				 * @param ctx - The endpoint context
 				 * @param args - The endpoint arguments
+				 * @returns An object containing the updated context and args to pass to the endpoint
 				 */
 				before?: (
 					ctx: EndpointContext<Endpoints[K]>,
 					args: EndpointArgs<Endpoints[K]>,
-				) => void | Promise<void>;
+				) =>
+					| BeforeHookResult<
+							EndpointContext<Endpoints[K]>,
+							EndpointArgs<Endpoints[K]>
+					  >
+					| Promise<
+							BeforeHookResult<
+								EndpointContext<Endpoints[K]>,
+								EndpointArgs<Endpoints[K]>
+							>
+					  >;
 				/**
 				 * Hook that runs after the endpoint is executed.
 				 * @param ctx - The endpoint context
@@ -118,11 +166,22 @@ type CorsairWebhookHooksMap<Webhooks extends WebhookTree> = {
 				 * Hook that runs before the webhook is processed.
 				 * @param ctx - The webhook context
 				 * @param request - The webhook request
+				 * @returns An object containing the updated context and request to pass to the webhook handler
 				 */
 				before?: (
 					ctx: WebhookContext<Webhooks[K]>,
 					request: WebhookRequest<WebhookPayload<Webhooks[K]>>,
-				) => void | Promise<void>;
+				) =>
+					| BeforeHookResult<
+							WebhookContext<Webhooks[K]>,
+							WebhookRequest<WebhookPayload<Webhooks[K]>>
+					  >
+					| Promise<
+							BeforeHookResult<
+								WebhookContext<Webhooks[K]>,
+								WebhookRequest<WebhookPayload<Webhooks[K]>>
+							>
+					  >;
 				/**
 				 * Hook that runs after the webhook is processed.
 				 * @param ctx - The webhook context
@@ -143,6 +202,20 @@ type CorsairWebhookHooksMap<Webhooks extends WebhookTree> = {
 // ─────────────────────────────────────────────────────────────────────────────
 
 /**
+ * Type for the keyBuilder callback function that generates a key from the plugin options.
+ * @template Options - The options type for the plugin
+ */
+export type CorsairKeyBuilder<Options extends Record<string, unknown>> = (
+	options: Options,
+) => string | Promise<string>;
+
+/**
+ * Base keyBuilder type used internally for type compatibility.
+ * Uses `any` to avoid contravariance issues when plugins are stored in arrays.
+ */
+export type CorsairKeyBuilderBase = (options: any) => string | Promise<string>;
+
+/**
  * Defines a Corsair plugin with endpoints, webhooks, schema, and configuration.
  * @template Id - The plugin identifier (must be one of AllProviders)
  * @template Endpoints - The endpoint tree structure
@@ -152,14 +225,12 @@ type CorsairWebhookHooksMap<Webhooks extends WebhookTree> = {
  */
 export type CorsairPlugin<
 	Id extends AllProviders = AllProviders,
-	Endpoints extends EndpointTree | undefined = EndpointTree | undefined,
-	Schema extends CorsairPluginSchema<Record<string, ZodTypeAny>> | undefined =
-		| CorsairPluginSchema<Record<string, ZodTypeAny>>
-		| undefined,
-	Options extends Record<string, unknown> | undefined =
-		| Record<string, unknown>
-		| undefined,
-	Webhooks extends WebhookTree | undefined = WebhookTree | undefined,
+	Schema extends CorsairPluginSchema<
+		Record<string, ZodTypeAny>
+	> = CorsairPluginSchema<Record<string, ZodTypeAny>>,
+	Endpoints extends EndpointTree = EndpointTree,
+	Webhooks extends WebhookTree = WebhookTree,
+	Options extends Record<string, unknown> = Record<string, unknown>,
 > = {
 	/** Unique identifier for the plugin */
 	id: Id;
@@ -186,17 +257,22 @@ export type CorsairPlugin<
 	pluginWebhookMatcher?: CorsairWebhookMatcher;
 	/** Plugin-specific error handlers */
 	errorHandlers?: CorsairErrorHandler;
+	/**
+	 * Async callback to generate a key from the plugin options.
+	 * This key is used to access data for API calls.
+	 * Note: Uses CorsairKeyBuilderBase for array compatibility, but type inference
+	 * works correctly when using `satisfies` on plugin definitions.
+	 */
+	keyBuilder?: CorsairKeyBuilderBase;
 };
 
 /**
  * The full context type for a plugin, combining base context with typed services and options.
- * @template Resource - The plugin resource identifier
  * @template Schema - The plugin schema for database services
  * @template Options - Plugin-specific options
  * @template Endpoints - The endpoint tree structure
  */
 export type CorsairPluginContext<
-	Resource extends string,
 	Schema extends
 		| CorsairPluginSchema<Record<string, ZodTypeAny>>
 		| undefined = undefined,

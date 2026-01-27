@@ -498,7 +498,7 @@ export type SlackEndpointInputs = {
 	postMessage: {
 		channel: string;
 		text?: string;
-		blocks?: Array<{ type: string; [key: string]: unknown }>;
+		blocks?: Array<{ type: string;[key: string]: unknown }>;
 		attachments?: Array<{ [key: string]: unknown }>;
 		thread_ts?: string;
 		reply_broadcast?: boolean;
@@ -520,7 +520,7 @@ export type SlackEndpointInputs = {
 		channel: string;
 		ts: string;
 		text?: string;
-		blocks?: Array<{ type: string; [key: string]: unknown }>;
+		blocks?: Array<{ type: string;[key: string]: unknown }>;
 		attachments?: Array<{ [key: string]: unknown }>;
 		parse?: 'full' | 'none';
 		link_names?: boolean;
@@ -570,9 +570,14 @@ export type SlackEndpointInputs = {
 		page?: number;
 		count?: number;
 	};
+	
+}
+export type ChannelsRandomResponse = {
+	done: boolean;
 };
 
 export type SlackEndpointOutputs = {
+	channelsRandom: ChannelsRandomResponse;
 	channelsArchive: ConversationsArchiveResponse;
 	channelsClose: ConversationsCloseResponse;
 	channelsCreate: ConversationsCreateResponse;

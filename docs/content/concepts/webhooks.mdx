@@ -1,0 +1,173 @@
+---
+title: Webhooks
+description: One endpoint for all webhooks, automatically routed and verified.
+---
+
+Corsair consolidates all incoming webhooks to a single URL. It identifies which integration and service each webhook belongs to, then processes and updates your data automatically.
+
+```ts title="webhook-handler.ts"
+import { filterWebhook } from "corsair";
+import { corsair } from "./corsair";
+
+export async function handleWebhook(req: Request) {
+    const result = await filterWebhook(
+        corsair,
+        Object.fromEntries(req.headers),
+        await req.json()
+    );
+
+    if (result.plugin) {
+        console.log(`Handled by ${result.plugin}.${result.action}`);
+    }
+
+    return result.response;
+}
+```
+
+## Automatic Routing
+
+Point all your webhooks to a single endpoint. Corsair inspects the headers and payload to determine:
+
+1. Which **integration** the webhook is from (Slack, Linear, etc.)
+2. Which **event type** it represents (message, issue created, etc.)
+3. Which **tenant** it belongs to (in multi-tenant setups)
+
+## Handling Out-of-Order Webhooks
+
+Webhooks don't guarantee delivery order. You might receive an "updated" event before you've processed the "created" event.
+
+Most applications fail here — they don't know about a record, so they can't process its update.
+
+Corsair solves this automatically:
+
+1. Detects when an update arrives for an unknown record
+2. Fetches the latest data from the API
+3. Creates the record in your database
+4. Processes both the create and update
+
+Your data stays fresh, and no webhooks are lost.
+
+## Multi-Tenancy with Webhooks
+
+If you have multi-tenancy enabled, we recommend adding a hashed tenant ID as a query parameter to your webhook URL.
+
+```
+https://api.yourapp.com/webhooks?tenant=hashed_tenant_id
+```
+
+This lets Corsair identify which tenant incoming webhook data belongs to, ensuring proper isolation.
+
+## Signature Verification
+
+Corsair automatically verifies webhook signatures using your stored webhook credentials. If a signature doesn't match, the webhook is rejected — protecting you from spoofed requests.
+
+## Webhook Hooks
+
+Hooks let you add custom logic that runs every time a webhook is processed. This guarantees your code executes — even when Corsair handles the database update automatically.
+
+```ts title="corsair.ts"
+slack({
+    authType: "api_key",
+    credentials: { botToken: "xoxb-..." },
+    webhookHooks: {
+        messages: {
+            message: {
+                before: async (ctx, payload) => {
+                    console.log("Incoming message from:", payload.user);
+                    return { ctx, payload };
+                },
+                after: async (ctx, result) => {
+                    // This always runs after the webhook is processed
+                    await analytics.track("message_received", {
+                        channel: result.channel,
+                    });
+                },
+            },
+        },
+    },
+})
+```
+
+### Before Hooks
+
+Before hooks run before the webhook is processed. Use them to:
+
+- Validate the payload
+- Log incoming webhooks
+- Modify the payload before processing
+- Skip processing by throwing an error
+
+```ts title="corsair.ts"
+webhookHooks: {
+    messages: {
+        message: {
+            before: async (ctx, payload) => {
+                // Skip bot messages
+                if (payload.bot_id) {
+                    throw new Error("Ignoring bot message");
+                }
+                return { ctx, payload };
+            },
+        },
+    },
+}
+```
+
+### After Hooks
+
+After hooks run after the webhook is processed and the database is updated. Use them to:
+
+- Trigger side effects (notifications, syncs)
+- Update related records in your application
+- Send data to external services
+- Log processed webhooks
+
+```ts title="corsair.ts"
+webhookHooks: {
+    channels: {
+        created: {
+            after: async (ctx, result) => {
+                // Notify your team when a new channel is created
+                await sendNotification({
+                    title: "New Slack channel",
+                    body: `#${result.name} was created`,
+                });
+            },
+        },
+    },
+    reactions: {
+        added: {
+            after: async (ctx, result) => {
+                // Track reactions for analytics
+                await analytics.track("reaction_added", {
+                    reaction: result.reaction,
+                    channel: result.channel,
+                });
+            },
+        },
+    },
+}
+```
+
+### Guaranteed Execution
+
+The key benefit of webhook hooks is they **always run** when that webhook type is processed. Unlike manually handling webhooks where you might forget to add logging or notifications, hooks ensure your logic is centralized and guaranteed to execute.
+
+```ts title="corsair.ts"
+webhookHooks: {
+    issues: {
+        update: {
+            after: async (ctx, result) => {
+                // This ALWAYS runs when a Linear issue is updated
+                // No matter where the webhook comes from
+                await syncToYourDatabase(result);
+                await notifyAssignee(result);
+                await updateProjectMetrics(result);
+            },
+        },
+    },
+}
+```
+
+See [Hooks](/docs/hooks) for the full hooks documentation.
+

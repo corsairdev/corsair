@@ -51,11 +51,11 @@ type DrizzleTableLike = Record<string, unknown>;
 
 export type DrizzleAdapterConfig = {
 	/**
-	 * Kept for Better-Auth-like ergonomics. Corsair currently supports Postgres only.
+	 * Corsair currently supports Postgres only.
 	 */
 	provider: 'pg';
 	/**
-	 * Optional Drizzle schema object (same idea as Better Auth). If omitted, we try `db._.fullSchema`.
+	 * Optional Drizzle schema object. If omitted, we try `db._.fullSchema`.
 	 */
 	schema?: Record<string, unknown> | undefined;
 	/**
@@ -199,7 +199,7 @@ function getCorsairTable(
 }
 
 /**
- * Better-Auth-style helper: `drizzleAdapter(db, { provider: "pg" })`.
+ * `drizzleAdapter(db, { provider: "pg" })`.
  *
  * Corsair currently supports Postgres only.
  *
