@@ -1,8 +1,8 @@
 import { createCorsair } from 'corsair';
 import { drizzleAdapter } from 'corsair/adapters/drizzle';
 import { linear, slack } from 'corsair/plugins';
-import { db } from './db';
-import * as schema from './db/schema';
+import { db } from '../db';
+import * as schema from '../db/schema';
 
 export const corsair = createCorsair({
 	multiTenancy: true,
