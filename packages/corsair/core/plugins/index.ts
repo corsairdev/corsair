@@ -1,7 +1,7 @@
 import type { ZodTypeAny } from 'zod';
 import type { CorsairDbAdapter } from '../../adapters';
 import type { CorsairPluginSchema } from '../../db/orm';
-import type { InferPluginServices } from '../client';
+import type { InferPluginEntities } from '../client';
 import type { AllProviders } from '../constants';
 import type {
 	BindEndpoints,
@@ -281,15 +281,20 @@ export type CorsairPluginContext<
 > = CorsairContext<
 	Endpoints extends EndpointTree ? BindEndpoints<Endpoints> : BoundEndpointTree
 > &
-	InferPluginServices<Schema> &
-	(Options extends undefined ? {} : { options: Options });
+	InferPluginEntities<Schema> & {
+		/**
+		 * Get the account ID for this plugin's tenant and integration.
+		 * The result is cached after the first call.
+		 */
+		$getAccountId: () => Promise<string>;
+	} & (Options extends undefined ? {} : { options: Options });
 
 /**
  * Configuration for creating a Corsair integration with plugins.
  * @template Plugins - Array of plugin definitions
  */
 export type CorsairIntegration<Plugins extends readonly CorsairPlugin[]> = {
-	/** Database adapter for ORM services (e.g. `slack.api.messages.post(...)` for API, `slack.db.messages.findByResourceId(...)` for DB) */
+	/** Database adapter for ORM entities (e.g. `slack.api.messages.post(...)` for API, `slack.db.messages.findByEntityId(...)` for DB) */
 	database?: CorsairDbAdapter;
 	/** Array of plugin definitions to include */
 	plugins: Plugins;

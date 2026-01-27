@@ -113,7 +113,7 @@ export const commentRemove: LinearWebhooks['commentRemove'] = {
 
 		if (ctx.db.comments && commentEvent.data.id) {
 			try {
-				await ctx.db.comments.deleteByResourceId(commentEvent.data.id);
+				await ctx.db.comments.deleteByEntityId(commentEvent.data.id);
 			} catch (error) {
 				console.warn('Failed to delete comment from database:', error);
 			}

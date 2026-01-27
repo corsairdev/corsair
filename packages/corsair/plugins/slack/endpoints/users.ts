@@ -1,4 +1,4 @@
-import { logEvent } from '../../utils/events';
+import { logEventFromContext } from '../../utils/events';
 import type { SlackEndpoints } from '..';
 import { makeSlackRequest } from '../client';
 import type { SlackEndpointOutputs } from './types';
@@ -27,7 +27,7 @@ export const get: SlackEndpoints['usersGet'] = async (ctx, input) => {
 		}
 	}
 
-	await logEvent(ctx.database, 'slack.users.get', { ...input }, 'completed');
+	await logEventFromContext(ctx, 'slack.users.get', { ...input }, 'completed');
 	return result;
 };
 
@@ -61,7 +61,7 @@ export const list: SlackEndpoints['usersList'] = async (ctx, input) => {
 		}
 	}
 
-	await logEvent(ctx.database, 'slack.users.list', { ...input }, 'completed');
+	await logEventFromContext(ctx, 'slack.users.list', { ...input }, 'completed');
 	return result;
 };
 
@@ -81,7 +81,7 @@ export const getProfile: SlackEndpoints['usersGetProfile'] = async (
 
 	if (result.ok && result.profile && input.user && ctx.db.users) {
 		try {
-			const existing = await ctx.db.users.findByResourceId(input.user);
+			const existing = await ctx.db.users.findByEntityId(input.user);
 			await ctx.db.users.upsert(input.user, {
 				...(existing?.data || { id: input.user }),
 				profile: result.profile,
@@ -91,8 +91,8 @@ export const getProfile: SlackEndpoints['usersGetProfile'] = async (
 		}
 	}
 
-	await logEvent(
-		ctx.database,
+	await logEventFromContext(
+		ctx,
 		'slack.users.getProfile',
 		{ ...input },
 		'completed',
@@ -112,8 +112,8 @@ export const getPresence: SlackEndpoints['usersGetPresence'] = async (
 			user: input.user,
 		},
 	});
-	await logEvent(
-		ctx.database,
+	await logEventFromContext(
+		ctx,
 		'slack.users.getPresence',
 		{ ...input },
 		'completed',
@@ -139,7 +139,7 @@ export const updateProfile: SlackEndpoints['usersUpdateProfile'] = async (
 
 	if (result.ok && result.profile && input.user && ctx.db.users) {
 		try {
-			const existing = await ctx.db.users.findByResourceId(input.user);
+			const existing = await ctx.db.users.findByEntityId(input.user);
 			await ctx.db.users.upsert(input.user, {
 				...(existing?.data || { id: input.user }),
 				profile: result.profile,
@@ -149,8 +149,8 @@ export const updateProfile: SlackEndpoints['usersUpdateProfile'] = async (
 		}
 	}
 
-	await logEvent(
-		ctx.database,
+	await logEventFromContext(
+		ctx,
 		'slack.users.updateProfile',
 		{ ...input },
 		'completed',

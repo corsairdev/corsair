@@ -10,7 +10,7 @@ export type PostHogCredentials = z.infer<typeof PostHogCredentials>;
 
 export const PostHogSchema = {
 	version: '1.0.0',
-	services: {
+	entities: {
 		events: PostHogEvent,
 	},
 } as const;

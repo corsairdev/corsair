@@ -524,7 +524,7 @@ export const messageDeleted = {
 
 			for (const messageId of deleted) {
 				try {
-					await ctx.db.messages.deleteByResourceId(messageId);
+					await ctx.db.messages.deleteByEntityId(messageId);
 				} catch (deleteError) {
 					try {
 						await makeGmailRequest<Message>(
@@ -538,7 +538,7 @@ export const messageDeleted = {
 							},
 						);
 
-						await ctx.db.messages.deleteByResourceId(messageId);
+						await ctx.db.messages.deleteByEntityId(messageId);
 					} catch (fetchError: any) {
 						if (fetchError?.statusCode === 404) {
 							console.log(

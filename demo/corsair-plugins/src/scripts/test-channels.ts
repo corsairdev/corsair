@@ -2,23 +2,13 @@ import 'dotenv/config';
 import { corsair } from '../server/corsair';
 
 const main = async () => {
-	console.log('Testing Slack channels API...\n');
+	// const res = await corsair.withTenant('default').linear.api.projects.list({});
 
-	// Example: Get channels from database
-	const channels = (
-		await corsair.withTenant('default').slack.db.channels.list({})
-	).map((channel) => channel.data);
+	// console.log(res);
 
-	const archivedChannels = channels.filter(
-		(channel) => channel.is_archived === true,
-	);
+	const test = await corsair.withTenant('default').linear.api.projects.list({});
 
-	console.log(`Total channels: ${channels.length}`);
-	console.log(`Archived channels: ${archivedChannels.length}`);
-	console.log('\nSample channels:');
-	channels.slice(0, 5).forEach((channel) => {
-		console.log(`  - ${channel.name} (${channel.id})`);
-	});
+	console.log(test);
 };
 
 main();

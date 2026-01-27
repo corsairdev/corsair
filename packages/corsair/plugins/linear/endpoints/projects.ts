@@ -1,4 +1,4 @@
-import { logEvent } from '../../utils/events';
+import { logEventFromContext } from '../../utils/events';
 import type { LinearEndpoints } from '..';
 import { makeLinearRequest } from '../client';
 import type {
@@ -186,8 +186,8 @@ export const list: LinearEndpoints['projectsList'] = async (ctx, input) => {
 		}
 	}
 
-	await logEvent(
-		ctx.database,
+	await logEventFromContext(
+		ctx,
 		'linear.projects.list',
 		{ ...input },
 		'completed',
@@ -229,8 +229,8 @@ export const get: LinearEndpoints['projectsGet'] = async (ctx, input) => {
 		}
 	}
 
-	await logEvent(
-		ctx.database,
+	await logEventFromContext(
+		ctx,
 		'linear.projects.get',
 		{ ...input },
 		'completed',
@@ -272,8 +272,8 @@ export const create: LinearEndpoints['projectsCreate'] = async (ctx, input) => {
 		}
 	}
 
-	await logEvent(
-		ctx.database,
+	await logEventFromContext(
+		ctx,
 		'linear.projects.create',
 		{ ...input },
 		'completed',
@@ -292,7 +292,7 @@ export const update: LinearEndpoints['projectsUpdate'] = async (ctx, input) => {
 
 	if (result && ctx.db.projects) {
 		try {
-			const existing = await ctx.db.projects.findByResourceId(result.id);
+			const existing = await ctx.db.projects.findByEntityId(result.id);
 			await ctx.db.projects.upsert(result.id, {
 				id: result.id,
 				name: result.name,
@@ -316,8 +316,8 @@ export const update: LinearEndpoints['projectsUpdate'] = async (ctx, input) => {
 		}
 	}
 
-	await logEvent(
-		ctx.database,
+	await logEventFromContext(
+		ctx,
 		'linear.projects.update',
 		{ ...input },
 		'completed',
@@ -339,14 +339,14 @@ export const deleteProject: LinearEndpoints['projectsDelete'] = async (
 
 	if (result && ctx.db.projects) {
 		try {
-			await ctx.db.projects.deleteByResourceId(input.id);
+			await ctx.db.projects.deleteByEntityId(input.id);
 		} catch (error) {
 			console.warn('Failed to delete project from database:', error);
 		}
 	}
 
-	await logEvent(
-		ctx.database,
+	await logEventFromContext(
+		ctx,
 		'linear.projects.delete',
 		{ ...input },
 		'completed',

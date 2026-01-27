@@ -1,4 +1,4 @@
-import { logEvent } from '../../utils/events';
+import { logEventFromContext } from '../../utils/events';
 import type { LinearEndpoints } from '..';
 import { makeLinearRequest } from '../client';
 import type {
@@ -339,7 +339,7 @@ export const list: LinearEndpoints['issuesList'] = async (ctx, input) => {
 		}
 	}
 
-	await logEvent(ctx.database, 'linear.issues.list', { ...input }, 'completed');
+	await logEventFromContext(ctx, 'linear.issues.list', { ...input }, 'completed');
 	return result;
 };
 
@@ -386,7 +386,7 @@ export const get: LinearEndpoints['issuesGet'] = async (ctx, input) => {
 		}
 	}
 
-	await logEvent(ctx.database, 'linear.issues.get', { ...input }, 'completed');
+	await logEventFromContext(ctx, 'linear.issues.get', { ...input }, 'completed');
 	return result;
 };
 
@@ -423,12 +423,7 @@ export const create: LinearEndpoints['issuesCreate'] = async (ctx, input) => {
 		}
 	}
 
-	await logEvent(
-		ctx.database,
-		'linear.issues.create',
-		{ ...input },
-		'completed',
-	);
+	await logEventFromContext(ctx, 'linear.issues.create', { ...input }, 'completed');
 	return result;
 };
 
@@ -443,7 +438,7 @@ export const update: LinearEndpoints['issuesUpdate'] = async (ctx, input) => {
 
 	if (result && ctx.db.issues) {
 		try {
-			const existing = await ctx.db.issues.findByResourceId(result.id);
+			const existing = await ctx.db.issues.findByEntityId(result.id);
 			await ctx.db.issues.upsert(result.id, {
 				id: result.id,
 				title: result.title,
@@ -476,12 +471,7 @@ export const update: LinearEndpoints['issuesUpdate'] = async (ctx, input) => {
 		}
 	}
 
-	await logEvent(
-		ctx.database,
-		'linear.issues.update',
-		{ ...input },
-		'completed',
-	);
+	await logEventFromContext(ctx, 'linear.issues.update', { ...input }, 'completed');
 	return result;
 };
 
@@ -499,17 +489,12 @@ export const deleteIssue: LinearEndpoints['issuesDelete'] = async (
 
 	if (result && ctx.db.issues) {
 		try {
-			await ctx.db.issues.deleteByResourceId(input.id);
+			await ctx.db.issues.deleteByEntityId(input.id);
 		} catch (error) {
 			console.warn('Failed to delete issue from database:', error);
 		}
 	}
 
-	await logEvent(
-		ctx.database,
-		'linear.issues.delete',
-		{ ...input },
-		'completed',
-	);
+	await logEventFromContext(ctx, 'linear.issues.delete', { ...input }, 'completed');
 	return result;
 };

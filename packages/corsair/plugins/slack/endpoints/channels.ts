@@ -1,4 +1,4 @@
-import { logEvent } from '../../utils/events';
+import { logEventFromContext } from '../../utils/events';
 import type { SlackBoundEndpoints, SlackEndpoints } from '..';
 import { makeSlackRequest } from '../client';
 import type { SlackEndpointOutputs } from './types';
@@ -27,8 +27,8 @@ export const archive: SlackEndpoints['channelsArchive'] = async (
 		// and then update the channel in the db
 	}
 
-	await logEvent(
-		ctx.database,
+	await logEventFromContext(
+		ctx,
 		'slack.channels.archive',
 		{ ...input },
 		'completed',
@@ -45,8 +45,8 @@ export const close: SlackEndpoints['channelsClose'] = async (ctx, input) => {
 			body: { channel: input.channel },
 		},
 	);
-	await logEvent(
-		ctx.database,
+	await logEventFromContext(
+		ctx,
 		'slack.channels.close',
 		{ ...input },
 		'completed',
@@ -82,8 +82,8 @@ export const create: SlackEndpoints['channelsCreate'] = async (ctx, input) => {
 		}
 	}
 
-	await logEvent(
-		ctx.database,
+	await logEventFromContext(
+		ctx,
 		'slack.channels.create',
 		{ ...input },
 		'completed',
@@ -118,20 +118,26 @@ export const get: SlackEndpoints['channelsGet'] = async (ctx, input) => {
 			}
 		}
 
-		await logEvent(
-			ctx.database,
+		await logEventFromContext(
+			ctx,
 			'slack.channels.get',
 			{ ...input },
 			'completed',
 		);
 		return result;
 	} catch (error) {
-		await logEvent(ctx.database, 'slack.channels.get', { ...input }, 'failed');
+		await logEventFromContext(
+			ctx,
+			'slack.channels.get',
+			{ ...input },
+			'failed',
+		);
 		throw error;
 	}
 };
 
 export const list: SlackEndpoints['channelsList'] = async (ctx, input) => {
+	console.log('here');
 	const result = await makeSlackRequest<SlackEndpointOutputs['channelsList']>(
 		'conversations.list',
 		ctx.options.credentials.botToken,
@@ -147,6 +153,8 @@ export const list: SlackEndpoints['channelsList'] = async (ctx, input) => {
 		},
 	);
 
+	console.log('result', result);
+
 	if (result.ok && result.channels && ctx.db.channels) {
 		try {
 			for (const channel of result.channels) {
@@ -161,8 +169,8 @@ export const list: SlackEndpoints['channelsList'] = async (ctx, input) => {
 		}
 	}
 
-	await logEvent(
-		ctx.database,
+	await logEventFromContext(
+		ctx,
 		'slack.channels.list',
 		{ ...input },
 		'completed',
@@ -207,8 +215,8 @@ export const getHistory: SlackEndpoints['channelsGetHistory'] = async (
 		}
 	}
 
-	await logEvent(
-		ctx.database,
+	await logEventFromContext(
+		ctx,
 		'slack.channels.getHistory',
 		{ ...input },
 		'completed',
@@ -242,8 +250,8 @@ export const invite: SlackEndpoints['channelsInvite'] = async (ctx, input) => {
 		}
 	}
 
-	await logEvent(
-		ctx.database,
+	await logEventFromContext(
+		ctx,
 		'slack.channels.invite',
 		{ ...input },
 		'completed',
@@ -263,7 +271,7 @@ export const join: SlackEndpoints['channelsJoin'] = async (ctx, input) => {
 
 	if (result.ok && result.channel && ctx.db.channels) {
 		try {
-			const existing = await ctx.db.channels.findByResourceId(input.channel);
+			const existing = await ctx.db.channels.findByEntityId(input.channel);
 			await ctx.db.channels.upsert(result.channel.id, {
 				...(existing?.data || { id: result.channel.id }),
 				name: result.channel.name,
@@ -274,8 +282,8 @@ export const join: SlackEndpoints['channelsJoin'] = async (ctx, input) => {
 		}
 	}
 
-	await logEvent(
-		ctx.database,
+	await logEventFromContext(
+		ctx,
 		'slack.channels.join',
 		{ ...input },
 		'completed',
@@ -295,8 +303,8 @@ export const kick: SlackEndpoints['channelsKick'] = async (ctx, input) => {
 			},
 		},
 	);
-	await logEvent(
-		ctx.database,
+	await logEventFromContext(
+		ctx,
 		'slack.channels.kick',
 		{ ...input },
 		'completed',
@@ -316,7 +324,7 @@ export const leave: SlackEndpoints['channelsLeave'] = async (ctx, input) => {
 
 	if (result.ok && ctx.db.channels) {
 		try {
-			const existing = await ctx.db.channels.findByResourceId(input.channel);
+			const existing = await ctx.db.channels.findByEntityId(input.channel);
 			if (existing) {
 				await ctx.db.channels.upsert(input.channel, {
 					...existing.data,
@@ -328,8 +336,8 @@ export const leave: SlackEndpoints['channelsLeave'] = async (ctx, input) => {
 		}
 	}
 
-	await logEvent(
-		ctx.database,
+	await logEventFromContext(
+		ctx,
 		'slack.channels.leave',
 		{ ...input },
 		'completed',
@@ -354,7 +362,7 @@ export const getMembers: SlackEndpoints['channelsGetMembers'] = async (
 
 	if (result.ok && result.members && ctx.db.channels) {
 		try {
-			const existing = await ctx.db.channels.findByResourceId(input.channel);
+			const existing = await ctx.db.channels.findByEntityId(input.channel);
 			if (existing) {
 				await ctx.db.channels.upsert(input.channel, {
 					...existing.data,
@@ -366,8 +374,8 @@ export const getMembers: SlackEndpoints['channelsGetMembers'] = async (
 		}
 	}
 
-	await logEvent(
-		ctx.database,
+	await logEventFromContext(
+		ctx,
 		'slack.channels.getMembers',
 		{ ...input },
 		'completed',
@@ -402,8 +410,8 @@ export const open: SlackEndpoints['channelsOpen'] = async (ctx, input) => {
 		}
 	}
 
-	await logEvent(
-		ctx.database,
+	await logEventFromContext(
+		ctx,
 		'slack.channels.open',
 		{ ...input },
 		'completed',
@@ -426,7 +434,7 @@ export const rename: SlackEndpoints['channelsRename'] = async (ctx, input) => {
 
 	if (result.ok && result.channel && ctx.db.channels) {
 		try {
-			const existing = await ctx.db.channels.findByResourceId(input.channel);
+			const existing = await ctx.db.channels.findByEntityId(input.channel);
 			await ctx.db.channels.upsert(result.channel.id, {
 				...(existing?.data || { id: result.channel.id }),
 				name: result.channel.name,
@@ -437,8 +445,8 @@ export const rename: SlackEndpoints['channelsRename'] = async (ctx, input) => {
 		}
 	}
 
-	await logEvent(
-		ctx.database,
+	await logEventFromContext(
+		ctx,
 		'slack.channels.rename',
 		{ ...input },
 		'completed',
@@ -485,8 +493,8 @@ export const getReplies: SlackEndpoints['channelsGetReplies'] = async (
 		}
 	}
 
-	await logEvent(
-		ctx.database,
+	await logEventFromContext(
+		ctx,
 		'slack.channels.getReplies',
 		{ ...input },
 		'completed',
@@ -510,7 +518,7 @@ export const setPurpose: SlackEndpoints['channelsSetPurpose'] = async (
 
 	if (result.ok && result.channel) {
 		try {
-			const existing = await ctx.db.channels.findByResourceId(input.channel);
+			const existing = await ctx.db.channels.findByEntityId(input.channel);
 			await ctx.db.channels.upsert(result.channel.id, {
 				...(existing?.data || { id: result.channel.id }),
 				purpose: result.purpose
@@ -526,8 +534,8 @@ export const setPurpose: SlackEndpoints['channelsSetPurpose'] = async (
 		}
 	}
 
-	await logEvent(
-		ctx.database,
+	await logEventFromContext(
+		ctx,
 		'slack.channels.setPurpose',
 		{ ...input },
 		'completed',
@@ -551,7 +559,7 @@ export const setTopic: SlackEndpoints['channelsSetTopic'] = async (
 
 	if (result.ok && result.channel && ctx.db.channels) {
 		try {
-			const existing = await ctx.db.channels.findByResourceId(input.channel);
+			const existing = await ctx.db.channels.findByEntityId(input.channel);
 			await ctx.db.channels.upsert(result.channel.id, {
 				...(existing?.data || { id: result.channel.id }),
 				topic: result.topic
@@ -567,8 +575,8 @@ export const setTopic: SlackEndpoints['channelsSetTopic'] = async (
 		}
 	}
 
-	await logEvent(
-		ctx.database,
+	await logEventFromContext(
+		ctx,
 		'slack.channels.setTopic',
 		{ ...input },
 		'completed',
@@ -589,7 +597,7 @@ export const unarchive: SlackEndpoints['channelsUnarchive'] = async (
 
 	if (result.ok) {
 		try {
-			const existing = await ctx.db.channels.findByResourceId(input.channel);
+			const existing = await ctx.db.channels.findByEntityId(input.channel);
 			if (existing) {
 				await ctx.db.channels.upsert(input.channel, {
 					...existing.data,
@@ -601,8 +609,8 @@ export const unarchive: SlackEndpoints['channelsUnarchive'] = async (
 		}
 	}
 
-	await logEvent(
-		ctx.database,
+	await logEventFromContext(
+		ctx,
 		'slack.channels.unarchive',
 		{ ...input },
 		'completed',

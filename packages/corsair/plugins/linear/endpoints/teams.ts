@@ -1,4 +1,4 @@
-import { logEvent } from '../../utils/events';
+import { logEventFromContext } from '../../utils/events';
 import type { LinearEndpoints } from '..';
 import { makeLinearRequest } from '../client';
 import type { TeamGetResponse, TeamsListResponse } from './types';
@@ -76,7 +76,7 @@ export const list: LinearEndpoints['teamsList'] = async (ctx, input) => {
 		}
 	}
 
-	await logEvent(ctx.database, 'linear.teams.list', { ...input }, 'completed');
+	await logEventFromContext(ctx, 'linear.teams.list', { ...input }, 'completed');
 	return result;
 };
 
@@ -108,6 +108,6 @@ export const get: LinearEndpoints['teamsGet'] = async (ctx, input) => {
 		}
 	}
 
-	await logEvent(ctx.database, 'linear.teams.get', { ...input }, 'completed');
+	await logEventFromContext(ctx, 'linear.teams.get', { ...input }, 'completed');
 	return result;
 };

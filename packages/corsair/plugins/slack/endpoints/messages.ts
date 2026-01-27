@@ -1,4 +1,4 @@
-import { logEvent } from '../../utils/events';
+import { logEventFromContext } from '../../utils/events';
 import type { SlackEndpoints } from '..';
 import { makeSlackRequest } from '../client';
 import type { SlackEndpointOutputs } from './types';
@@ -48,8 +48,8 @@ export const postMessage: SlackEndpoints['postMessage'] = async (
 		}
 	}
 
-	await logEvent(
-		ctx.database,
+	await logEventFromContext(
+		ctx,
 		'slack.messages.postMessage',
 		{ ...input },
 		'completed',
@@ -76,14 +76,14 @@ export const deleteMessage: SlackEndpoints['messagesDelete'] = async (
 
 	if (result.ok && result.ts && ctx.db.messages) {
 		try {
-			await ctx.db.messages.deleteByResourceId(result.ts);
+			await ctx.db.messages.deleteByEntityId(result.ts);
 		} catch (error) {
 			console.warn('Failed to delete message from database:', error);
 		}
 	}
 
-	await logEvent(
-		ctx.database,
+	await logEventFromContext(
+		ctx,
 		'slack.messages.delete',
 		{ ...input },
 		'completed',
@@ -127,8 +127,8 @@ export const update: SlackEndpoints['messagesUpdate'] = async (ctx, input) => {
 		}
 	}
 
-	await logEvent(
-		ctx.database,
+	await logEventFromContext(
+		ctx,
 		'slack.messages.update',
 		{ ...input },
 		'completed',
@@ -149,8 +149,8 @@ export const getPermalink: SlackEndpoints['messagesGetPermalink'] = async (
 			message_ts: input.message_ts,
 		},
 	});
-	await logEvent(
-		ctx.database,
+	await logEventFromContext(
+		ctx,
 		'slack.messages.getPermalink',
 		{ ...input },
 		'completed',
@@ -196,8 +196,8 @@ export const search: SlackEndpoints['messagesSearch'] = async (ctx, input) => {
 		}
 	}
 
-	await logEvent(
-		ctx.database,
+	await logEventFromContext(
+		ctx,
 		'slack.messages.search',
 		{ ...input },
 		'completed',

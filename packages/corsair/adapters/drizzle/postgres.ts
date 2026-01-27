@@ -63,10 +63,10 @@ export type DrizzleAdapterConfig = {
 	 */
 	tableNames?:
 		| {
-				connections?: string | undefined;
-				resources?: string | undefined;
+				integrations?: string | undefined;
+				accounts?: string | undefined;
+				entities?: string | undefined;
 				events?: string | undefined;
-				providers?: string | undefined;
 		  }
 		| undefined;
 	adapterId?: string | undefined;
@@ -175,23 +175,23 @@ function getCorsairTable(
 	tableNames: DrizzleAdapterConfig['tableNames'] | undefined,
 ): DrizzleTableLike {
 	switch (table) {
-		case 'corsair_connections':
+		case 'corsair_integrations':
 			return getTableFromSchema(
 				schema,
-				tableNames?.connections ?? 'corsair_connections',
+				tableNames?.integrations ?? 'corsair_integrations',
 			);
-		case 'corsair_resources':
+		case 'corsair_accounts':
 			return getTableFromSchema(
 				schema,
-				tableNames?.resources ?? 'corsair_resources',
+				tableNames?.accounts ?? 'corsair_accounts',
+			);
+		case 'corsair_entities':
+			return getTableFromSchema(
+				schema,
+				tableNames?.entities ?? 'corsair_entities',
 			);
 		case 'corsair_events':
 			return getTableFromSchema(schema, tableNames?.events ?? 'corsair_events');
-		case 'corsair_providers':
-			return getTableFromSchema(
-				schema,
-				tableNames?.providers ?? 'corsair_providers',
-			);
 		default:
 			// Allow custom tables by looking them up directly in the schema
 			return getTableFromSchema(schema, table);

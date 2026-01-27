@@ -1,4 +1,4 @@
-import { logEvent } from '../../utils/events';
+import { logEventFromContext } from '../../utils/events';
 import type { GmailEndpoints } from '..';
 import { makeGmailRequest } from '../client';
 import type { Message, MessagePart } from '../types';
@@ -131,7 +131,7 @@ export const list: GmailEndpoints['messagesList'] = async (ctx, input) => {
 		);
 		return result;
 	} catch (error) {
-		await logEvent(ctx.database, 'gmail.messages.list', { ...input }, 'failed');
+		await logEventFromContext(ctx, 'gmail.messages.list', { ...input }, 'failed');
 		throw error;
 	}
 };
@@ -190,7 +190,7 @@ export const get: GmailEndpoints['messagesGet'] = async (ctx, input) => {
 		);
 		return result;
 	} catch (error) {
-		await logEvent(ctx.database, 'gmail.messages.get', { ...input }, 'failed');
+		await logEventFromContext(ctx, 'gmail.messages.get', { ...input }, 'failed');
 		throw error;
 	}
 };
@@ -249,7 +249,7 @@ export const send: GmailEndpoints['messagesSend'] = async (ctx, input) => {
 		);
 		return result;
 	} catch (error) {
-		await logEvent(ctx.database, 'gmail.messages.send', { ...input }, 'failed');
+		await logEventFromContext(ctx, 'gmail.messages.send', { ...input }, 'failed');
 		throw error;
 	}
 };
@@ -274,7 +274,7 @@ export const deleteMessage: GmailEndpoints['messagesDelete'] = async (
 
 		if (ctx.db.messages) {
 			try {
-				await ctx.db.messages.deleteByResourceId(input.id);
+				await ctx.db.messages.deleteByEntityId(input.id);
 			} catch (error) {
 				console.warn('Failed to delete message from database:', error);
 			}

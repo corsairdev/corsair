@@ -10,7 +10,7 @@ export type ResendCredentials = z.infer<typeof ResendCredentials>;
 
 export const ResendSchema = {
 	version: '1.0.0',
-	services: {
+	entities: {
 		emails: ResendEmail,
 		domains: ResendDomain,
 	},

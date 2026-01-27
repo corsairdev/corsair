@@ -1,4 +1,4 @@
-import { logEvent } from '../../utils/events';
+import { logEventFromContext } from '../../utils/events';
 import type { SlackEndpoints } from '..';
 import { makeSlackRequest } from '../client';
 import type { SlackEndpointOutputs } from './types';
@@ -30,7 +30,7 @@ export const get: SlackEndpoints['filesGet'] = async (ctx, input) => {
 		}
 	}
 
-	await logEvent(ctx.database, 'slack.files.get', { ...input }, 'completed');
+	await logEventFromContext(ctx, 'slack.files.get', { ...input }, 'completed');
 	return result;
 };
 
@@ -69,7 +69,7 @@ export const list: SlackEndpoints['filesList'] = async (ctx, input) => {
 		}
 	}
 
-	await logEvent(ctx.database, 'slack.files.list', { ...input }, 'completed');
+	await logEventFromContext(ctx, 'slack.files.list', { ...input }, 'completed');
 	return result;
 };
 
@@ -105,6 +105,6 @@ export const upload: SlackEndpoints['filesUpload'] = async (ctx, input) => {
 		}
 	}
 
-	await logEvent(ctx.database, 'slack.files.upload', { ...input }, 'completed');
+	await logEventFromContext(ctx, 'slack.files.upload', { ...input }, 'completed');
 	return result;
 };
