@@ -9,22 +9,23 @@ export const random: SlackEndpoints['channelsRandom'] = async (ctx, input) => {
 	};
 };
 
-export const archive: SlackEndpoints['channelsArchive'] = async (
-	ctx,
-	input,
-) => {
-	const result = await makeSlackRequest<
-		SlackEndpointOutputs['channelsArchive']
-	>('conversations.archive', ctx.options.credentials.botToken, {
-		method: 'POST',
-		body: { channel: input.channel },
-	});
+export const archive: SlackEndpoints['channelsArchive'] = async (ctx, input) => {
+	const result = await makeSlackRequest<SlackEndpointOutputs['channelsArchive']>(
+		'conversations.archive',
+		ctx.options.credentials.botToken,
+		{
+			method: 'POST',
+			body: { channel: input.channel },
+		},
+	);
 
-	if (result.ok) {
-		const endpoints = ctx.endpoints as SlackBoundEndpoints;
-		const newChannel = endpoints.channelsGet({ channel: input.channel });
-
-		// and then update the channel in the db
+	if (result.ok && ctx.db.channels) {
+		try {
+			const endpoints = ctx.endpoints as SlackBoundEndpoints;
+			await endpoints.channelsGet({ channel: input.channel });
+		} catch (error) {
+			console.warn('Failed to update channel in database:', error);
+		}
 	}
 
 	await logEvent(
@@ -45,6 +46,16 @@ export const close: SlackEndpoints['channelsClose'] = async (ctx, input) => {
 			body: { channel: input.channel },
 		},
 	);
+
+	if (result.ok && ctx.db.channels) {
+		try {
+			const endpoints = ctx.endpoints as SlackBoundEndpoints;
+			await endpoints.channelsGet({ channel: input.channel });
+		} catch (error) {
+			console.warn('Failed to update channel in database:', error);
+		}
+	}
+
 	await logEvent(
 		ctx.database,
 		'slack.channels.close',
@@ -70,13 +81,8 @@ export const create: SlackEndpoints['channelsCreate'] = async (ctx, input) => {
 
 	if (result.ok && result.channel && ctx.db.channels) {
 		try {
-			await ctx.db.channels.upsert(result.channel.id, {
-				id: result.channel.id,
-				name: result.channel.name,
-				is_private: input.is_private,
-				is_archived: false,
-				createdAt: new Date(),
-			});
+			const endpoints = ctx.endpoints as SlackBoundEndpoints;
+			await endpoints.channelsGet({ channel: result.channel.id });
 		} catch (error) {
 			console.warn('Failed to save channel to database:', error);
 		}
@@ -109,9 +115,7 @@ export const get: SlackEndpoints['channelsGet'] = async (ctx, input) => {
 		if (result.ok && result.channel && ctx.db.channels) {
 			try {
 				await ctx.db.channels.upsert(result.channel.id, {
-					id: result.channel.id,
-					name: result.channel.name,
-					createdAt: new Date(),
+					...result.channel,
 				});
 			} catch (error) {
 				console.warn('Failed to save channel to database:', error);
@@ -149,11 +153,10 @@ export const list: SlackEndpoints['channelsList'] = async (ctx, input) => {
 
 	if (result.ok && result.channels && ctx.db.channels) {
 		try {
+			const endpoints = ctx.endpoints as SlackBoundEndpoints;
 			for (const channel of result.channels) {
 				if (channel.id) {
-					await ctx.db.channels.upsert(channel.id, {
-						...channel,
-					});
+					await endpoints.channelsGet({ channel: channel.id });
 				}
 			}
 		} catch (error) {
@@ -232,11 +235,8 @@ export const invite: SlackEndpoints['channelsInvite'] = async (ctx, input) => {
 
 	if (result.ok && result.channel && ctx.db.channels) {
 		try {
-			await ctx.db.channels.upsert(result.channel.id, {
-				id: result.channel.id,
-				name: result.channel.name,
-				createdAt: new Date(),
-			});
+			const endpoints = ctx.endpoints as SlackBoundEndpoints;
+			await endpoints.channelsGet({ channel: result.channel.id });
 		} catch (error) {
 			console.warn('Failed to update channel in database:', error);
 		}
@@ -263,12 +263,8 @@ export const join: SlackEndpoints['channelsJoin'] = async (ctx, input) => {
 
 	if (result.ok && result.channel && ctx.db.channels) {
 		try {
-			const existing = await ctx.db.channels.findByResourceId(input.channel);
-			await ctx.db.channels.upsert(result.channel.id, {
-				...(existing?.data || { id: result.channel.id }),
-				name: result.channel.name,
-				is_member: true,
-			});
+			const endpoints = ctx.endpoints as SlackBoundEndpoints;
+			await endpoints.channelsGet({ channel: result.channel.id });
 		} catch (error) {
 			console.warn('Failed to update channel in database:', error);
 		}
@@ -316,13 +312,8 @@ export const leave: SlackEndpoints['channelsLeave'] = async (ctx, input) => {
 
 	if (result.ok && ctx.db.channels) {
 		try {
-			const existing = await ctx.db.channels.findByResourceId(input.channel);
-			if (existing) {
-				await ctx.db.channels.upsert(input.channel, {
-					...existing.data,
-					is_member: false,
-				});
-			}
+			const endpoints = ctx.endpoints as SlackBoundEndpoints;
+			await endpoints.channelsGet({ channel: input.channel });
 		} catch (error) {
 			console.warn('Failed to update channel in database:', error);
 		}
@@ -354,13 +345,11 @@ export const getMembers: SlackEndpoints['channelsGetMembers'] = async (
 
 	if (result.ok && result.members && ctx.db.channels) {
 		try {
-			const existing = await ctx.db.channels.findByResourceId(input.channel);
-			if (existing) {
-				await ctx.db.channels.upsert(input.channel, {
-					...existing.data,
-					num_members: result.members.length,
-				});
-			}
+			const endpoints = ctx.endpoints as SlackBoundEndpoints;
+			await endpoints.channelsGet({ 
+				channel: input.channel,
+				include_num_members: true,
+			});
 		} catch (error) {
 			console.warn('Failed to update channel in database:', error);
 		}
@@ -392,11 +381,8 @@ export const open: SlackEndpoints['channelsOpen'] = async (ctx, input) => {
 
 	if (result.ok && result.channel && ctx.db.channels) {
 		try {
-			await ctx.db.channels.upsert(result.channel.id, {
-				id: result.channel.id,
-				name: result.channel.name,
-				createdAt: new Date(),
-			});
+			const endpoints = ctx.endpoints as SlackBoundEndpoints;
+			await endpoints.channelsGet({ channel: result.channel.id });
 		} catch (error) {
 			console.warn('Failed to save channel to database:', error);
 		}
@@ -426,12 +412,8 @@ export const rename: SlackEndpoints['channelsRename'] = async (ctx, input) => {
 
 	if (result.ok && result.channel && ctx.db.channels) {
 		try {
-			const existing = await ctx.db.channels.findByResourceId(input.channel);
-			await ctx.db.channels.upsert(result.channel.id, {
-				...(existing?.data || { id: result.channel.id }),
-				name: result.channel.name,
-				name_normalized: result.channel.name,
-			});
+			const endpoints = ctx.endpoints as SlackBoundEndpoints;
+			await endpoints.channelsGet({ channel: result.channel.id });
 		} catch (error) {
 			console.warn('Failed to update channel in database:', error);
 		}
@@ -508,19 +490,10 @@ export const setPurpose: SlackEndpoints['channelsSetPurpose'] = async (
 		},
 	});
 
-	if (result.ok && result.channel) {
+	if (result.ok && result.channel && ctx.db.channels) {
 		try {
-			const existing = await ctx.db.channels.findByResourceId(input.channel);
-			await ctx.db.channels.upsert(result.channel.id, {
-				...(existing?.data || { id: result.channel.id }),
-				purpose: result.purpose
-					? {
-							value: result.purpose,
-							creator: '',
-							last_set: Date.now(),
-						}
-					: undefined,
-			});
+			const endpoints = ctx.endpoints as SlackBoundEndpoints;
+			await endpoints.channelsGet({ channel: result.channel.id });
 		} catch (error) {
 			console.warn('Failed to update channel in database:', error);
 		}
@@ -551,17 +524,8 @@ export const setTopic: SlackEndpoints['channelsSetTopic'] = async (
 
 	if (result.ok && result.channel && ctx.db.channels) {
 		try {
-			const existing = await ctx.db.channels.findByResourceId(input.channel);
-			await ctx.db.channels.upsert(result.channel.id, {
-				...(existing?.data || { id: result.channel.id }),
-				topic: result.topic
-					? {
-							value: result.topic,
-							creator: '',
-							last_set: Date.now(),
-						}
-					: undefined,
-			});
+			const endpoints = ctx.endpoints as SlackBoundEndpoints;
+			await endpoints.channelsGet({ channel: result.channel.id });
 		} catch (error) {
 			console.warn('Failed to update channel in database:', error);
 		}
@@ -587,15 +551,10 @@ export const unarchive: SlackEndpoints['channelsUnarchive'] = async (
 		body: { channel: input.channel },
 	});
 
-	if (result.ok) {
+	if (result.ok && ctx.db.channels) {
 		try {
-			const existing = await ctx.db.channels.findByResourceId(input.channel);
-			if (existing) {
-				await ctx.db.channels.upsert(input.channel, {
-					...existing.data,
-					is_archived: false,
-				});
-			}
+			const endpoints = ctx.endpoints as SlackBoundEndpoints;
+			await endpoints.channelsGet({ channel: input.channel });
 		} catch (error) {
 			console.warn('Failed to update channel in database:', error);
 		}
