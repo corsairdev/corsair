@@ -4,7 +4,19 @@ import { makeResendRequest } from '../client';
 import type { ResendEndpointOutputs } from './types';
 
 export const send: ResendEndpoints['emailsSend'] = async (ctx, input) => {
-	const { from, to, subject, html, text, cc, bcc, reply_to, attachments, tags, headers } = input;
+	const {
+		from,
+		to,
+		subject,
+		html,
+		text,
+		cc,
+		bcc,
+		reply_to,
+		attachments,
+		tags,
+		headers,
+	} = input;
 
 	const body: Record<string, unknown> = {
 		from,
@@ -44,12 +56,7 @@ export const send: ResendEndpoints['emailsSend'] = async (ctx, input) => {
 		}
 	}
 
-	await logEvent(
-		ctx.database,
-		'resend.emails.send',
-		{ ...input },
-		'completed',
-	);
+	await logEvent(ctx.database, 'resend.emails.send', { ...input }, 'completed');
 	return response;
 };
 
@@ -76,12 +83,7 @@ export const get: ResendEndpoints['emailsGet'] = async (ctx, input) => {
 		}
 	}
 
-	await logEvent(
-		ctx.database,
-		'resend.emails.get',
-		{ ...input },
-		'completed',
-	);
+	await logEvent(ctx.database, 'resend.emails.get', { ...input }, 'completed');
 	return response;
 };
 
@@ -115,11 +117,6 @@ export const list: ResendEndpoints['emailsList'] = async (ctx, input) => {
 		}
 	}
 
-	await logEvent(
-		ctx.database,
-		'resend.emails.list',
-		{ ...input },
-		'completed',
-	);
+	await logEvent(ctx.database, 'resend.emails.list', { ...input }, 'completed');
 	return response;
 };

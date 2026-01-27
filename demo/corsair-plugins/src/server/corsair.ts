@@ -1,6 +1,6 @@
 import { createCorsair } from 'corsair';
 import { drizzleAdapter } from 'corsair/adapters/drizzle';
-import { linear, slack, resend } from 'corsair/plugins';
+import { linear, slack } from 'corsair/plugins';
 import { db } from '../db';
 import * as schema from '../db/schema';
 

@@ -6,7 +6,10 @@ export default function Home() {
 	const [title, setTitle] = useState('');
 	const [description, setDescription] = useState('');
 	const [loading, setLoading] = useState(false);
-	const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+	const [message, setMessage] = useState<{
+		type: 'success' | 'error';
+		text: string;
+	} | null>(null);
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
@@ -29,7 +32,10 @@ export default function Home() {
 				setTitle('');
 				setDescription('');
 			} else {
-				setMessage({ type: 'error', text: data.error || 'Failed to report issue' });
+				setMessage({
+					type: 'error',
+					text: data.error || 'Failed to report issue',
+				});
 			}
 		} catch (error) {
 			setMessage({ type: 'error', text: 'Failed to report issue' });
@@ -39,18 +45,39 @@ export default function Home() {
 	};
 
 	return (
-		<main style={{ padding: '2rem', fontFamily: 'system-ui, sans-serif', maxWidth: '800px', margin: '0 auto' }}>
+		<main
+			style={{
+				padding: '2rem',
+				fontFamily: 'system-ui, sans-serif',
+				maxWidth: '800px',
+				margin: '0 auto',
+			}}
+		>
 			<h1>Corsair Demo</h1>
 			<p>Next.js + tRPC + Inngest Integration Platform</p>
 
-			<div style={{ marginTop: '2rem', padding: '1.5rem', border: '1px solid #e0e0e0', borderRadius: '8px' }}>
+			<div
+				style={{
+					marginTop: '2rem',
+					padding: '1.5rem',
+					border: '1px solid #e0e0e0',
+					borderRadius: '8px',
+				}}
+			>
 				<h2>Report an Issue</h2>
 				<p style={{ color: '#666', marginBottom: '1rem' }}>
 					Submit an issue and it will be automatically created in Linear
 				</p>
 				<form onSubmit={handleSubmit}>
 					<div style={{ marginBottom: '1rem' }}>
-						<label htmlFor="title" style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500' }}>
+						<label
+							htmlFor="title"
+							style={{
+								display: 'block',
+								marginBottom: '0.5rem',
+								fontWeight: '500',
+							}}
+						>
 							Title *
 						</label>
 						<input
@@ -69,7 +96,14 @@ export default function Home() {
 						/>
 					</div>
 					<div style={{ marginBottom: '1rem' }}>
-						<label htmlFor="description" style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500' }}>
+						<label
+							htmlFor="description"
+							style={{
+								display: 'block',
+								marginBottom: '0.5rem',
+								fontWeight: '500',
+							}}
+						>
 							Description
 						</label>
 						<textarea
@@ -109,7 +143,8 @@ export default function Home() {
 						style={{
 							marginTop: '1rem',
 							padding: '0.75rem',
-							backgroundColor: message.type === 'success' ? '#d4edda' : '#f8d7da',
+							backgroundColor:
+								message.type === 'success' ? '#d4edda' : '#f8d7da',
 							color: message.type === 'success' ? '#155724' : '#721c24',
 							borderRadius: '4px',
 							border: `1px solid ${message.type === 'success' ? '#c3e6cb' : '#f5c6cb'}`,
@@ -124,7 +159,8 @@ export default function Home() {
 				<h2>API Endpoints</h2>
 				<ul>
 					<li>
-						<code>/api/webhook</code> - Webhook handler for Slack/Linear/GitHub/Resend events
+						<code>/api/webhook</code> - Webhook handler for
+						Slack/Linear/GitHub/Resend events
 					</li>
 					<li>
 						<code>/api/issues</code> - Report an issue (creates Linear issue)
@@ -153,12 +189,22 @@ export default function Home() {
 				</ul>
 			</div>
 
-			<div style={{ marginTop: '2rem', padding: '1rem', backgroundColor: '#f5f5f5', borderRadius: '8px' }}>
+			<div
+				style={{
+					marginTop: '2rem',
+					padding: '1rem',
+					backgroundColor: '#f5f5f5',
+					borderRadius: '8px',
+				}}
+			>
 				<h2>Workflows</h2>
 				<ul>
 					<li>⭐ GitHub star → Slack notification with email and name</li>
 					<li>📝 Issue reported → Linear issue creation</li>
-					<li>📋 Linear events (issue/comment created/updated) → Slack notifications</li>
+					<li>
+						📋 Linear events (issue/comment created/updated) → Slack
+						notifications
+					</li>
 					<li>📧 Resend email → Slack notification + Linear issue</li>
 				</ul>
 			</div>

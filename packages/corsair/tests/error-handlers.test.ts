@@ -2,9 +2,8 @@ import { ApiError } from '../async-core/ApiError';
 import type { ApiRequestOptions } from '../async-core/ApiRequestOptions';
 import type { ApiResult } from '../async-core/ApiResult';
 import { handleCorsairError } from '../core/errors/handler';
-import type { ErrorContext } from '../core/errors';
-import { errorHandlers as slackErrorHandlers } from '../plugins/slack/error-handlers';
 import { errorHandlers as linearErrorHandlers } from '../plugins/linear/error-handlers';
+import { errorHandlers as slackErrorHandlers } from '../plugins/slack/error-handlers';
 
 function createMockApiError(
 	status: number,
@@ -127,7 +126,11 @@ describe('Error Handlers', () => {
 			});
 
 			it('should handle rate limit error with "429" in message', async () => {
-				const error = createMockApiError(429, 'Error 429: Too many requests', 90);
+				const error = createMockApiError(
+					429,
+					'Error 429: Too many requests',
+					90,
+				);
 
 				const result = await handleCorsairError(
 					error,
@@ -385,7 +388,10 @@ describe('Error Handlers', () => {
 							if (error instanceof ApiError && error.status === 429) {
 								return true;
 							}
-							return error.message.includes('429') || error.message.includes('rate_limited');
+							return (
+								error.message.includes('429') ||
+								error.message.includes('rate_limited')
+							);
 						},
 						handler: async () => ({ maxRetries: 10 }),
 					},
@@ -396,7 +402,10 @@ describe('Error Handlers', () => {
 							if (error instanceof ApiError && error.status === 429) {
 								return true;
 							}
-							return error.message.includes('429') || error.message.includes('rate_limited');
+							return (
+								error.message.includes('429') ||
+								error.message.includes('rate_limited')
+							);
 						},
 						handler: async () => ({ maxRetries: 3 }),
 					},
@@ -463,7 +472,10 @@ describe('Error Handlers', () => {
 							if (error instanceof ApiError && error.status === 429) {
 								return true;
 							}
-							return error.message.includes('429') || error.message.includes('rate_limited');
+							return (
+								error.message.includes('429') ||
+								error.message.includes('rate_limited')
+							);
 						},
 						handler: async () => ({ maxRetries: 7 }),
 					},
@@ -590,7 +602,10 @@ describe('Error Handlers', () => {
 							if (error instanceof ApiError && error.status === 429) {
 								return true;
 							}
-							return error.message.includes('429') || error.message.includes('rate_limited');
+							return (
+								error.message.includes('429') ||
+								error.message.includes('rate_limited')
+							);
 						},
 						handler: async () => ({ maxRetries: 5 }),
 					},
@@ -645,7 +660,10 @@ describe('Error Handlers', () => {
 							if (error instanceof ApiError && error.status === 429) {
 								return true;
 							}
-							return error.message.includes('429') || error.message.includes('rate_limited');
+							return (
+								error.message.includes('429') ||
+								error.message.includes('rate_limited')
+							);
 						},
 						handler: async () => ({ maxRetries: 5 }),
 					},
@@ -656,7 +674,10 @@ describe('Error Handlers', () => {
 							if (error instanceof ApiError && error.status === 429) {
 								return true;
 							}
-							return error.message.includes('429') || error.message.includes('rate_limited');
+							return (
+								error.message.includes('429') ||
+								error.message.includes('rate_limited')
+							);
 						},
 						handler: async () => ({ maxRetries: 7 }),
 					},
@@ -667,7 +688,10 @@ describe('Error Handlers', () => {
 							if (error instanceof ApiError && error.status === 429) {
 								return true;
 							}
-							return error.message.includes('429') || error.message.includes('rate_limited');
+							return (
+								error.message.includes('429') ||
+								error.message.includes('rate_limited')
+							);
 						},
 						handler: async () => ({ maxRetries: 3 }),
 					},
@@ -698,7 +722,10 @@ describe('Error Handlers', () => {
 							if (error instanceof ApiError && error.status === 429) {
 								return true;
 							}
-							return error.message.includes('429') || error.message.includes('rate_limited');
+							return (
+								error.message.includes('429') ||
+								error.message.includes('rate_limited')
+							);
 						},
 						handler: async () => ({ maxRetries: 5 }),
 					},
@@ -709,7 +736,10 @@ describe('Error Handlers', () => {
 							if (error instanceof ApiError && error.status === 429) {
 								return true;
 							}
-							return error.message.includes('429') || error.message.includes('rate_limited');
+							return (
+								error.message.includes('429') ||
+								error.message.includes('rate_limited')
+							);
 						},
 						handler: async () => ({ maxRetries: 7 }),
 					},
@@ -750,7 +780,10 @@ describe('Error Handlers', () => {
 							if (error instanceof ApiError && error.status === 429) {
 								return true;
 							}
-							return error.message.includes('429') || error.message.includes('rate_limited');
+							return (
+								error.message.includes('429') ||
+								error.message.includes('rate_limited')
+							);
 						},
 						handler: async () => ({ maxRetries: 5 }),
 					},

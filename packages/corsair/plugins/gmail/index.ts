@@ -26,7 +26,6 @@ import type {
 import { MessageWebhooks } from './webhooks';
 
 export type GmailContext = CorsairPluginContext<
-	'gmail',
 	typeof GmailSchema,
 	GmailCredentials
 >;
@@ -275,10 +274,11 @@ export type GmailEndpoints = {
 
 export type GmailBoundEndpoints = BindEndpoints<GmailEndpoints>;
 
-type GmailWebhook<
-	K extends keyof GmailWebhookOutputs,
-	TEvent,
-> = CorsairWebhook<GmailContext, GmailWebhookPayload, GmailWebhookOutputs[K]>;
+type GmailWebhook<K extends keyof GmailWebhookOutputs, TEvent> = CorsairWebhook<
+	GmailContext,
+	GmailWebhookPayload,
+	GmailWebhookOutputs[K]
+>;
 
 export type GmailWebhooks = {
 	messageReceived: GmailWebhook<'messageReceived', MessageReceivedEvent>;
@@ -346,10 +346,10 @@ export type GmailPluginOptions = {
 
 export type GmailPlugin = CorsairPlugin<
 	'gmail',
-	typeof gmailEndpointsNested,
 	typeof GmailSchema,
-	GmailCredentials,
-	typeof gmailWebhooksNested
+	typeof gmailEndpointsNested,
+	typeof gmailWebhooksNested,
+	GmailCredentials
 >;
 
 export function gmail(options: GmailPluginOptions) {
@@ -361,7 +361,9 @@ export function gmail(options: GmailPluginOptions) {
 		webhookHooks: options.webhookHooks,
 		endpoints: gmailEndpointsNested,
 		webhooks: gmailWebhooksNested,
-		pluginWebhookMatcher: (request: import('../../core/webhooks').RawWebhookRequest) => {
+		pluginWebhookMatcher: (
+			request: import('../../core/webhooks').RawWebhookRequest,
+		) => {
 			const body = request.body as Record<string, unknown>;
 			return (body?.message as Record<string, unknown>)?.data !== undefined;
 		},

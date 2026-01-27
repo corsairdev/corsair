@@ -7,11 +7,7 @@ import type {
 	CorsairPluginContext,
 	CorsairWebhook,
 } from '../../core';
-import type {
-	SlackEndpointInputs,
-	SlackEndpointOutputs,
-	SlackReactionName,
-} from './endpoints';
+import type { SlackEndpointOutputs, SlackReactionName } from './endpoints';
 import {
 	Channels,
 	Files,
@@ -487,7 +483,7 @@ export type SlackContext = CorsairPluginContext<
 export type SlackPluginOptions = {
 	credentials: SlackCredentials;
 
-	authType: PickAuth<'api_key' | 'oauth_2'>;
+	authType: PickAuth<'api_key' | 'oauth_2' | 'bot_token'>;
 
 	hooks?: SlackPlugin['hooks'];
 

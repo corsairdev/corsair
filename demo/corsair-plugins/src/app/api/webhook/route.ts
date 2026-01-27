@@ -162,7 +162,7 @@ export async function POST(request: NextRequest) {
 			console.log('   From:', resendBody.data.from);
 			console.log('   To:', resendBody.data.to);
 
-			const toAddress = Array.isArray(resendBody.data.to) 
+			const toAddress = Array.isArray(resendBody.data.to)
 				? resendBody.data.to[0] || 'unknown'
 				: resendBody.data.to || 'unknown';
 

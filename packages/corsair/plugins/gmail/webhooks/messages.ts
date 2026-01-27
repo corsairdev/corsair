@@ -3,22 +3,21 @@ import type {
 	RawWebhookRequest,
 	WebhookRequest,
 } from '../../../core/webhooks';
-import type { GmailContext, GmailWebhooks } from '..';
-import type {
-	GmailPushNotification,
-	MessageDeletedEvent,
-	MessageLabelChangedEvent,
-	MessageReceivedEvent,
-	PubSubNotification,
-} from './types';
+import type { GmailContext } from '..';
 import { makeGmailRequest } from '../client';
-import type { HistoryListResponse, Message, MessagePart, History } from '../types';
+import type { HistoryListResponse, Message, MessagePart } from '../types';
+import type { GmailPushNotification, PubSubNotification } from './types';
 
-function getHeaderValue(part: MessagePart | undefined, headerName: string): string | undefined {
+function getHeaderValue(
+	part: MessagePart | undefined,
+	headerName: string,
+): string | undefined {
 	if (!part?.headers) {
 		return undefined;
 	}
-	const header = part.headers.find((h) => h.name?.toLowerCase() === headerName.toLowerCase());
+	const header = part.headers.find(
+		(h) => h.name?.toLowerCase() === headerName.toLowerCase(),
+	);
 	return header?.value;
 }
 
@@ -59,8 +58,7 @@ function extractBodyText(part: MessagePart | undefined): string | undefined {
 			} else if (part.mimeType === 'text/html') {
 				htmlText = decoded;
 			}
-		} catch {
-		}
+		} catch {}
 	}
 
 	if (part.parts && part.parts.length > 0) {
@@ -155,18 +153,26 @@ async function fetchFullMessage(
 	messageId: string,
 ): Promise<Message> {
 	const [fullMessage, rawMessage] = await Promise.all([
-		makeGmailRequest<Message>(`/users/${userId}/messages/${messageId}`, credentials, {
-			method: 'GET',
-			query: {
-				format: 'full',
+		makeGmailRequest<Message>(
+			`/users/${userId}/messages/${messageId}`,
+			credentials,
+			{
+				method: 'GET',
+				query: {
+					format: 'full',
+				},
 			},
-		}),
-		makeGmailRequest<Message>(`/users/${userId}/messages/${messageId}`, credentials, {
-			method: 'GET',
-			query: {
-				format: 'raw',
+		),
+		makeGmailRequest<Message>(
+			`/users/${userId}/messages/${messageId}`,
+			credentials,
+			{
+				method: 'GET',
+				query: {
+					format: 'raw',
+				},
 			},
-		}).catch(() => null),
+		).catch(() => null),
 	]);
 
 	return {
@@ -209,7 +215,9 @@ async function enrichMessageWithAttachments(
 		return message;
 	}
 
-	const enrichPart = async (part: MessagePart | undefined): Promise<MessagePart | undefined> => {
+	const enrichPart = async (
+		part: MessagePart | undefined,
+	): Promise<MessagePart | undefined> => {
 		if (!part) {
 			return part;
 		}
@@ -272,7 +280,10 @@ export const messageReceived = {
 		}
 	}) as CorsairWebhookMatcher,
 
-	handler: async (ctx: GmailContext, request: WebhookRequest<PubSubNotification>) => {
+	handler: async (
+		ctx: GmailContext,
+		request: WebhookRequest<PubSubNotification>,
+	) => {
 		const body = request.payload as PubSubNotification;
 
 		if (!body.message?.data) {
@@ -302,7 +313,10 @@ export const messageReceived = {
 
 		try {
 			const historyIdNum = Number(pushNotification.historyId);
-			const previousHistoryId = historyIdNum > 1 ? String(historyIdNum - 1) : pushNotification.historyId;
+			const previousHistoryId =
+				historyIdNum > 1
+					? String(historyIdNum - 1)
+					: pushNotification.historyId;
 
 			const historyResponse = await makeGmailRequest<HistoryListResponse>(
 				`/users/${pushNotification.emailAddress}/history`,
@@ -319,20 +333,20 @@ export const messageReceived = {
 			const { added } = extractMessageIds(historyResponse.history);
 
 			if (added.length === 0 && !ctx.db?.messages) {
-				console.warn('⚠️ No messages found in history and database not available');
+				console.warn(
+					'⚠️ No messages found in history and database not available',
+				);
 			}
 
 			if (added.length === 0) {
-				const messagesResponse = await makeGmailRequest<{ messages?: Array<{ id?: string }> }>(
-					`/users/${pushNotification.emailAddress}/messages`,
-					credentials,
-					{
-						method: 'GET',
-						query: {
-							maxResults: 10,
-						},
+				const messagesResponse = await makeGmailRequest<{
+					messages?: Array<{ id?: string }>;
+				}>(`/users/${pushNotification.emailAddress}/messages`, credentials, {
+					method: 'GET',
+					query: {
+						maxResults: 10,
 					},
-				);
+				});
 
 				if (messagesResponse.messages && messagesResponse.messages.length > 0) {
 					const targetHistoryIdNum = Number(pushNotification.historyId);
@@ -345,13 +359,14 @@ export const messageReceived = {
 									msg.id,
 								);
 
-								const messageHistoryIdNum = fullMessage.historyId ? Number(fullMessage.historyId) : 0;
+								const messageHistoryIdNum = fullMessage.historyId
+									? Number(fullMessage.historyId)
+									: 0;
 								if (messageHistoryIdNum >= targetHistoryIdNum - 10) {
 									added.push(msg.id);
 									break;
 								}
-							} catch {
-							}
+							} catch {}
 						}
 					}
 				}
@@ -372,7 +387,9 @@ export const messageReceived = {
 					);
 
 					if (!ctx.db?.messages) {
-						console.warn('⚠️ ctx.db.messages is not available - database may not be configured');
+						console.warn(
+							'⚠️ ctx.db.messages is not available - database may not be configured',
+						);
 						continue;
 					}
 
@@ -403,7 +420,10 @@ export const messageReceived = {
 							createdAt: new Date(),
 						});
 					} catch (dbError) {
-						console.error(`❌ Failed to save message ${enrichedMessage.id} to database:`, dbError);
+						console.error(
+							`❌ Failed to save message ${enrichedMessage.id} to database:`,
+							dbError,
+						);
 						throw dbError;
 					}
 				} catch (error) {
@@ -440,7 +460,10 @@ export const messageDeleted = {
 		}
 	}) as CorsairWebhookMatcher,
 
-	handler: async (ctx: GmailContext, request: WebhookRequest<PubSubNotification>) => {
+	handler: async (
+		ctx: GmailContext,
+		request: WebhookRequest<PubSubNotification>,
+	) => {
 		const body = request.payload as PubSubNotification;
 
 		if (!body.message?.data) {
@@ -470,7 +493,10 @@ export const messageDeleted = {
 
 		try {
 			const historyIdNum = Number(pushNotification.historyId);
-			const previousHistoryId = historyIdNum > 1 ? String(historyIdNum - 1) : pushNotification.historyId;
+			const previousHistoryId =
+				historyIdNum > 1
+					? String(historyIdNum - 1)
+					: pushNotification.historyId;
 
 			const historyResponse = await makeGmailRequest<HistoryListResponse>(
 				`/users/${pushNotification.emailAddress}/history`,
@@ -487,7 +513,9 @@ export const messageDeleted = {
 			const { deleted } = extractMessageIds(historyResponse.history);
 
 			if (!ctx.db?.messages) {
-				console.warn('⚠️ ctx.db.messages is not available - database may not be configured');
+				console.warn(
+					'⚠️ ctx.db.messages is not available - database may not be configured',
+				);
 				return {
 					success: true,
 					data: { success: true },
@@ -513,9 +541,14 @@ export const messageDeleted = {
 						await ctx.db.messages.deleteByResourceId(messageId);
 					} catch (fetchError: any) {
 						if (fetchError?.statusCode === 404) {
-							console.log(`Message ${messageId} not found in Gmail (already deleted), skipping DB delete`);
+							console.log(
+								`Message ${messageId} not found in Gmail (already deleted), skipping DB delete`,
+							);
 						} else {
-							console.warn(`Failed to verify or delete message ${messageId}:`, fetchError);
+							console.warn(
+								`Failed to verify or delete message ${messageId}:`,
+								fetchError,
+							);
 						}
 					}
 				}
@@ -550,7 +583,10 @@ export const messageLabelChanged = {
 		}
 	}) as CorsairWebhookMatcher,
 
-	handler: async (ctx: GmailContext, request: WebhookRequest<PubSubNotification>) => {
+	handler: async (
+		ctx: GmailContext,
+		request: WebhookRequest<PubSubNotification>,
+	) => {
 		const body = request.payload as PubSubNotification;
 
 		if (!body.message?.data) {
@@ -580,7 +616,10 @@ export const messageLabelChanged = {
 
 		try {
 			const historyIdNum = Number(pushNotification.historyId);
-			const previousHistoryId = historyIdNum > 1 ? String(historyIdNum - 1) : pushNotification.historyId;
+			const previousHistoryId =
+				historyIdNum > 1
+					? String(historyIdNum - 1)
+					: pushNotification.historyId;
 
 			const historyResponse = await makeGmailRequest<HistoryListResponse>(
 				`/users/${pushNotification.emailAddress}/history`,
@@ -597,7 +636,9 @@ export const messageLabelChanged = {
 			const { modified } = extractMessageIds(historyResponse.history);
 
 			if (!ctx.db?.messages) {
-				console.warn('⚠️ ctx.db.messages is not available - database may not be configured');
+				console.warn(
+					'⚠️ ctx.db.messages is not available - database may not be configured',
+				);
 				return {
 					success: true,
 					data: { success: true },
@@ -646,7 +687,10 @@ export const messageLabelChanged = {
 							createdAt: new Date(),
 						});
 					} catch (dbError) {
-						console.error(`❌ Failed to update message ${enrichedMessage.id} in database:`, dbError);
+						console.error(
+							`❌ Failed to update message ${enrichedMessage.id} in database:`,
+							dbError,
+						);
 						throw dbError;
 					}
 				} catch (error) {

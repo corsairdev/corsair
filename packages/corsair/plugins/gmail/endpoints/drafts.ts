@@ -47,12 +47,7 @@ export const list: GmailEndpoints['draftsList'] = async (ctx, input) => {
 		);
 		return result;
 	} catch (error) {
-		await logEvent(
-			ctx.database,
-			'gmail.drafts.list',
-			{ ...input },
-			'failed',
-		);
+		await logEvent(ctx.database, 'gmail.drafts.list', { ...input }, 'failed');
 		throw error;
 	}
 };
@@ -87,20 +82,10 @@ export const get: GmailEndpoints['draftsGet'] = async (ctx, input) => {
 			}
 		}
 
-		await logEvent(
-			ctx.database,
-			'gmail.drafts.get',
-			{ ...input },
-			'completed',
-		);
+		await logEvent(ctx.database, 'gmail.drafts.get', { ...input }, 'completed');
 		return result;
 	} catch (error) {
-		await logEvent(
-			ctx.database,
-			'gmail.drafts.get',
-			{ ...input },
-			'failed',
-		);
+		await logEvent(ctx.database, 'gmail.drafts.get', { ...input }, 'failed');
 		throw error;
 	}
 };
@@ -141,12 +126,7 @@ export const create: GmailEndpoints['draftsCreate'] = async (ctx, input) => {
 		);
 		return result;
 	} catch (error) {
-		await logEvent(
-			ctx.database,
-			'gmail.drafts.create',
-			{ ...input },
-			'failed',
-		);
+		await logEvent(ctx.database, 'gmail.drafts.create', { ...input }, 'failed');
 		throw error;
 	}
 };
@@ -187,12 +167,7 @@ export const update: GmailEndpoints['draftsUpdate'] = async (ctx, input) => {
 		);
 		return result;
 	} catch (error) {
-		await logEvent(
-			ctx.database,
-			'gmail.drafts.update',
-			{ ...input },
-			'failed',
-		);
+		await logEvent(ctx.database, 'gmail.drafts.update', { ...input }, 'failed');
 		throw error;
 	}
 };
@@ -230,12 +205,7 @@ export const deleteDraft: GmailEndpoints['draftsDelete'] = async (
 			'completed',
 		);
 	} catch (error) {
-		await logEvent(
-			ctx.database,
-			'gmail.drafts.delete',
-			{ ...input },
-			'failed',
-		);
+		await logEvent(ctx.database, 'gmail.drafts.delete', { ...input }, 'failed');
 		throw error;
 	}
 };
@@ -267,12 +237,7 @@ export const send: GmailEndpoints['draftsSend'] = async (ctx, input) => {
 		);
 		return result;
 	} catch (error) {
-		await logEvent(
-			ctx.database,
-			'gmail.drafts.send',
-			{ ...input },
-			'failed',
-		);
+		await logEvent(ctx.database, 'gmail.drafts.send', { ...input }, 'failed');
 		throw error;
 	}
 };

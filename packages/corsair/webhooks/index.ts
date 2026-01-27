@@ -1,3 +1,4 @@
+import { BaseProviders } from '../core/constants';
 import type {
 	BoundWebhook,
 	BoundWebhookTree,
@@ -5,7 +6,6 @@ import type {
 	WebhookRequest,
 	WebhookResponse,
 } from '../core/webhooks';
-import { BaseProviders } from '../core/constants';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Types

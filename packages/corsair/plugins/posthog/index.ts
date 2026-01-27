@@ -8,14 +8,11 @@ import type {
 	CorsairWebhook,
 } from '../../core';
 import type { AuthTypes } from '../../core/constants';
-import type { PostHogEndpointOutputs } from './endpoints/types';
 import { Events } from './endpoints';
+import type { PostHogEndpointOutputs } from './endpoints/types';
 import type { PostHogCredentials } from './schema';
 import { PostHogSchema } from './schema';
-import type {
-	EventCapturedEvent,
-	PostHogWebhookOutputs,
-} from './webhooks';
+import type { EventCapturedEvent, PostHogWebhookOutputs } from './webhooks';
 import { EventWebhooks } from './webhooks';
 
 export type PostHogPluginOptions = {

@@ -194,14 +194,9 @@ function parseBody(body: unknown): unknown {
 	return typeof body === 'string' ? JSON.parse(body) : body;
 }
 
-export function createResendMatch(
-	type: string,
-): CorsairWebhookMatcher {
+export function createResendMatch(type: string): CorsairWebhookMatcher {
 	return (request: RawWebhookRequest) => {
 		const parsedBody = parseBody(request.body) as Record<string, unknown>;
-		return (
-			typeof parsedBody.type === 'string' &&
-			parsedBody.type === type
-		);
+		return typeof parsedBody.type === 'string' && parsedBody.type === type;
 	};
 }

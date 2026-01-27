@@ -1,7 +1,7 @@
 import { createCorsair } from '../core';
 import { slack } from '../plugins/slack';
-import { createTestDatabase } from './setup-db';
 import { makeSlackRequest } from '../plugins/slack/client';
+import { createTestDatabase } from './setup-db';
 
 jest.mock('../plugins/slack/client', () => ({
 	makeSlackRequest: jest.fn(),
@@ -20,21 +20,23 @@ describe('Endpoint Hooks', () => {
 		capturedRequestBody = null;
 		jest.clearAllMocks();
 
-		mockedMakeSlackRequest.mockImplementation(async (endpoint, token, options) => {
-			if (options?.body) {
-				capturedRequestBody = { ...options.body };
-			}
-			return {
-				ok: true,
-				channel: 'C123456',
-				ts: '1234567890.123456',
-				message: {
-					text: (options?.body as any)?.text || '',
-					user: 'U123456',
-					type: 'message',
-				},
-			} as any;
-		});
+		mockedMakeSlackRequest.mockImplementation(
+			async (endpoint, token, options) => {
+				if (options?.body) {
+					capturedRequestBody = { ...options.body };
+				}
+				return {
+					ok: true,
+					channel: 'C123456',
+					ts: '1234567890.123456',
+					message: {
+						text: (options?.body as any)?.text || '',
+						user: 'U123456',
+						type: 'message',
+					},
+				} as any;
+			},
+		);
 	});
 
 	afterEach(() => {
@@ -60,6 +62,8 @@ describe('Endpoint Hooks', () => {
 										if (args && typeof args === 'object' && 'text' in args) {
 											(args as any).text = modifiedText;
 										}
+
+										return { ctx, args };
 									},
 								},
 							},
@@ -101,6 +105,8 @@ describe('Endpoint Hooks', () => {
 											(args as any).channel = modifiedChannel;
 											(args as any).text = modifiedText;
 										}
+
+										return { ctx, args };
 									},
 								},
 							},
@@ -139,6 +145,8 @@ describe('Endpoint Hooks', () => {
 											(args as any).username = 'custom-bot';
 											(args as any).icon_emoji = ':robot_face:';
 										}
+
+										return { args, ctx };
 									},
 								},
 							},
@@ -289,6 +297,8 @@ describe('Endpoint Hooks', () => {
 										if (args && typeof args === 'object') {
 											(args as any).text = 'Modified by before hook';
 										}
+
+										return { ctx, args };
 									},
 									after: async (ctx, res) => {
 										executionOrder.push('after');
@@ -304,22 +314,24 @@ describe('Endpoint Hooks', () => {
 				database: testDb.adapter,
 			});
 
-			mockedMakeSlackRequest.mockImplementation(async (endpoint, token, options) => {
-				executionOrder.push('endpoint');
-				if (options?.body) {
-					capturedRequestBody = { ...options.body };
-				}
-				return {
-					ok: true,
-					channel: 'C123456',
-					ts: '1234567890.123456',
-					message: {
-						text: 'Response',
-						user: 'U123456',
-						type: 'message',
-					},
-				} as any;
-			});
+			mockedMakeSlackRequest.mockImplementation(
+				async (endpoint, token, options) => {
+					executionOrder.push('endpoint');
+					if (options?.body) {
+						capturedRequestBody = { ...options.body };
+					}
+					return {
+						ok: true,
+						channel: 'C123456',
+						ts: '1234567890.123456',
+						message: {
+							text: 'Response',
+							user: 'U123456',
+							type: 'message',
+						},
+					} as any;
+				},
+			);
 
 			await corsair.slack.api.messages.post({
 				channel: 'C123456',
@@ -345,6 +357,8 @@ describe('Endpoint Hooks', () => {
 										if (args && typeof args === 'object') {
 											(args as any).text = 'Before hook modified';
 										}
+
+										return { ctx, args };
 									},
 									after: async (ctx, res) => {
 										if (res && typeof res === 'object' && 'message' in res) {
@@ -387,6 +401,8 @@ describe('Endpoint Hooks', () => {
 										if (args && typeof args === 'object') {
 											(args as any).text = 'Nested hook modified';
 										}
+
+										return { ctx, args };
 									},
 								},
 							},

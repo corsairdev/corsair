@@ -1,8 +1,7 @@
-import { createCorsair } from '../core';
-import { linear } from '../plugins/linear';
-import { slack } from '../plugins/slack';
-import type { CorsairDbAdapter } from '../adapters/types';
 import { withTenantAdapter } from '../adapters/tenant';
+import type { CorsairDbAdapter } from '../adapters/types';
+import { createCorsair } from '../core';
+import { slack } from '../plugins/slack';
 import { createTestDatabase } from './setup-db';
 
 function createResourceData(name: string) {
@@ -39,7 +38,7 @@ describe('Multi-Tenancy Data Isolation', () => {
 				...createResourceData('Tenant 1 Resource'),
 			},
 		});
-		
+
 		await adapter.insert({
 			table: 'corsair_resources',
 			data: {
@@ -52,12 +51,20 @@ describe('Multi-Tenancy Data Isolation', () => {
 		const tenant1Adapter = withTenantAdapter(adapter, 'tenant-1');
 		const tenant2Adapter = withTenantAdapter(adapter, 'tenant-2');
 
-		const tenant1Resource = await tenant1Adapter.findOne<{ id: string; tenant_id: string; data: any }>({
+		const tenant1Resource = await tenant1Adapter.findOne<{
+			id: string;
+			tenant_id: string;
+			data: any;
+		}>({
 			table: 'corsair_resources',
 			where: [{ field: 'id', value: 'resource-1' }],
 		});
 
-		const tenant2Resource = await tenant2Adapter.findOne<{ id: string; tenant_id: string; data: any }>({
+		const tenant2Resource = await tenant2Adapter.findOne<{
+			id: string;
+			tenant_id: string;
+			data: any;
+		}>({
 			table: 'corsair_resources',
 			where: [{ field: 'id', value: 'resource-2' }],
 		});
@@ -73,9 +80,13 @@ describe('Multi-Tenancy Data Isolation', () => {
 		});
 
 		expect(tenant1Resource).toBeTruthy();
-		expect(JSON.parse(tenant1Resource?.data as string)?.name).toBe('Tenant 1 Resource');
+		expect(JSON.parse(tenant1Resource?.data as string)?.name).toBe(
+			'Tenant 1 Resource',
+		);
 		expect(tenant2Resource).toBeTruthy();
-		expect(JSON.parse(tenant2Resource?.data as string)?.name).toBe('Tenant 2 Resource');
+		expect(JSON.parse(tenant2Resource?.data as string)?.name).toBe(
+			'Tenant 2 Resource',
+		);
 		expect(tenant1CannotAccessTenant2).toBeNull();
 		expect(tenant2CannotAccessTenant1).toBeNull();
 	});
@@ -89,7 +100,7 @@ describe('Multi-Tenancy Data Isolation', () => {
 				...createResourceData('Tenant 1 Resource 1'),
 			},
 		});
-		
+
 		await adapter.insert({
 			table: 'corsair_resources',
 			data: {
@@ -98,7 +109,7 @@ describe('Multi-Tenancy Data Isolation', () => {
 				...createResourceData('Tenant 1 Resource 2'),
 			},
 		});
-		
+
 		await adapter.insert({
 			table: 'corsair_resources',
 			data: {
@@ -120,9 +131,13 @@ describe('Multi-Tenancy Data Isolation', () => {
 		});
 
 		expect(tenant1Resources).toHaveLength(2);
-		expect(tenant1Resources.every((r: any) => r.tenant_id === 'tenant-1')).toBe(true);
+		expect(tenant1Resources.every((r: any) => r.tenant_id === 'tenant-1')).toBe(
+			true,
+		);
 		expect(tenant2Resources).toHaveLength(1);
-		expect(tenant2Resources.every((r: any) => r.tenant_id === 'tenant-2')).toBe(true);
+		expect(tenant2Resources.every((r: any) => r.tenant_id === 'tenant-2')).toBe(
+			true,
+		);
 	});
 
 	it('should automatically add tenant_id to insert operations', async () => {
@@ -145,12 +160,18 @@ describe('Multi-Tenancy Data Isolation', () => {
 			},
 		});
 
-		const tenant1Resource = await tenant1Adapter.findOne<{ id: string; tenant_id: string }>({
+		const tenant1Resource = await tenant1Adapter.findOne<{
+			id: string;
+			tenant_id: string;
+		}>({
 			table: 'corsair_resources',
 			where: [{ field: 'id', value: 'resource-1' }],
 		});
 
-		const tenant2Resource = await tenant2Adapter.findOne<{ id: string; tenant_id: string }>({
+		const tenant2Resource = await tenant2Adapter.findOne<{
+			id: string;
+			tenant_id: string;
+		}>({
 			table: 'corsair_resources',
 			where: [{ field: 'id', value: 'resource-2' }],
 		});
@@ -186,7 +207,7 @@ describe('Multi-Tenancy Data Isolation', () => {
 				...createResourceData('Original Name'),
 			},
 		});
-		
+
 		await adapter.insert({
 			table: 'corsair_resources',
 			data: {
@@ -199,13 +220,21 @@ describe('Multi-Tenancy Data Isolation', () => {
 		const tenant1Adapter = withTenantAdapter(adapter, 'tenant-1');
 		const tenant2Adapter = withTenantAdapter(adapter, 'tenant-2');
 
-		const updated1 = await tenant1Adapter.update<{ id: string; tenant_id: string; data: string }>({
+		const updated1 = await tenant1Adapter.update<{
+			id: string;
+			tenant_id: string;
+			data: string;
+		}>({
 			table: 'corsair_resources',
 			where: [{ field: 'id', value: 'resource-1' }],
 			data: { data: JSON.stringify({ name: 'Updated by Tenant 1' }) },
 		});
 
-		const updated2 = await tenant2Adapter.update<{ id: string; tenant_id: string; data: string }>({
+		const updated2 = await tenant2Adapter.update<{
+			id: string;
+			tenant_id: string;
+			data: string;
+		}>({
 			table: 'corsair_resources',
 			where: [{ field: 'id', value: 'resource-2' }],
 			data: { data: JSON.stringify({ name: 'Updated by Tenant 2' }) },
@@ -217,8 +246,12 @@ describe('Multi-Tenancy Data Isolation', () => {
 			data: { data: JSON.stringify({ name: 'Should Not Update' }) },
 		});
 
-		expect(JSON.parse(updated1?.data as string)?.name).toBe('Updated by Tenant 1');
-		expect(JSON.parse(updated2?.data as string)?.name).toBe('Updated by Tenant 2');
+		expect(JSON.parse(updated1?.data as string)?.name).toBe(
+			'Updated by Tenant 1',
+		);
+		expect(JSON.parse(updated2?.data as string)?.name).toBe(
+			'Updated by Tenant 2',
+		);
 		expect(tenant1CannotUpdateTenant2).toBeNull();
 	});
 
@@ -231,7 +264,7 @@ describe('Multi-Tenancy Data Isolation', () => {
 				...createResourceData('Tenant 1 Resource'),
 			},
 		});
-		
+
 		await adapter.insert({
 			table: 'corsair_resources',
 			data: {
@@ -273,7 +306,7 @@ describe('Multi-Tenancy Data Isolation', () => {
 				...createResourceData('Tenant 1 Resource 1'),
 			},
 		});
-		
+
 		await adapter.insert({
 			table: 'corsair_resources',
 			data: {
@@ -282,7 +315,7 @@ describe('Multi-Tenancy Data Isolation', () => {
 				...createResourceData('Tenant 1 Resource 2'),
 			},
 		});
-		
+
 		await adapter.insert({
 			table: 'corsair_resources',
 			data: {

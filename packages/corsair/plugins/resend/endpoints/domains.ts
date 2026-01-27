@@ -3,23 +3,18 @@ import type { ResendEndpoints } from '..';
 import { makeResendRequest } from '../client';
 import type { ResendEndpointOutputs } from './types';
 
-export const create: ResendEndpoints['domainsCreate'] = async (
-	ctx,
-	input,
-) => {
+export const create: ResendEndpoints['domainsCreate'] = async (ctx, input) => {
 	const body: Record<string, unknown> = {
 		name: input.name,
 	};
 	if (input.region) body.region = input.region;
 
-	const response = await makeResendRequest<ResendEndpointOutputs['domainsCreate']>(
-		'domains',
-		ctx.options.credentials.apiKey,
-		{
-			method: 'POST',
-			body,
-		},
-	);
+	const response = await makeResendRequest<
+		ResendEndpointOutputs['domainsCreate']
+	>('domains', ctx.options.credentials.apiKey, {
+		method: 'POST',
+		body,
+	});
 
 	if (ctx.db.domains && response.id) {
 		try {
@@ -67,12 +62,7 @@ export const get: ResendEndpoints['domainsGet'] = async (ctx, input) => {
 		}
 	}
 
-	await logEvent(
-		ctx.database,
-		'resend.domains.get',
-		{ ...input },
-		'completed',
-	);
+	await logEvent(ctx.database, 'resend.domains.get', { ...input }, 'completed');
 	return response;
 };
 
@@ -81,14 +71,12 @@ export const list: ResendEndpoints['domainsList'] = async (ctx, input) => {
 	if (input?.limit) query.limit = input.limit;
 	if (input?.cursor) query.cursor = input.cursor;
 
-	const response = await makeResendRequest<ResendEndpointOutputs['domainsList']>(
-		'domains',
-		ctx.options.credentials.apiKey,
-		{
-			method: 'GET',
-			query,
-		},
-	);
+	const response = await makeResendRequest<
+		ResendEndpointOutputs['domainsList']
+	>('domains', ctx.options.credentials.apiKey, {
+		method: 'GET',
+		query,
+	});
 
 	if (ctx.db.domains && response.data) {
 		try {
@@ -119,13 +107,11 @@ export const deleteDomain: ResendEndpoints['domainsDelete'] = async (
 	ctx,
 	input,
 ) => {
-	const response = await makeResendRequest<ResendEndpointOutputs['domainsDelete']>(
-		`domains/${input.id}`,
-		ctx.options.credentials.apiKey,
-		{
-			method: 'DELETE',
-		},
-	);
+	const response = await makeResendRequest<
+		ResendEndpointOutputs['domainsDelete']
+	>(`domains/${input.id}`, ctx.options.credentials.apiKey, {
+		method: 'DELETE',
+	});
 
 	if (ctx.db.domains && response.deleted) {
 		try {
@@ -144,17 +130,12 @@ export const deleteDomain: ResendEndpoints['domainsDelete'] = async (
 	return response;
 };
 
-export const verify: ResendEndpoints['domainsVerify'] = async (
-	ctx,
-	input,
-) => {
-	const response = await makeResendRequest<ResendEndpointOutputs['domainsVerify']>(
-		`domains/${input.id}/verify`,
-		ctx.options.credentials.apiKey,
-		{
-			method: 'POST',
-		},
-	);
+export const verify: ResendEndpoints['domainsVerify'] = async (ctx, input) => {
+	const response = await makeResendRequest<
+		ResendEndpointOutputs['domainsVerify']
+	>(`domains/${input.id}/verify`, ctx.options.credentials.apiKey, {
+		method: 'POST',
+	});
 
 	if (ctx.db.domains && response.id) {
 		try {

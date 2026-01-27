@@ -51,7 +51,6 @@ export const linearEventHandler = inngest.createFunction(
 			linearEvent.type,
 		);
 
-
 		const slackChannel = process.env.SLACK_LINEAR_CHANNEL_ID;
 
 		const eventType = linearEvent.type;
@@ -60,14 +59,12 @@ export const linearEventHandler = inngest.createFunction(
 
 		let message: string | null = null;
 
-		if (
-			eventType === 'Issue' &&
-			(action === 'create' || action === 'update')
-		) {
+		if (eventType === 'Issue' && (action === 'create' || action === 'update')) {
 			const issue = linearEvent.data as any;
-			message = action === 'create' 
-				? `*New Linear Issue Created*\n*Title:* ${issue.title || 'N/A'}\n*ID:* ${issue.identifier || 'N/A'}\n*URL:* ${eventUrl || 'N/A'}`
-				: `*Linear Issue Updated*\n*Title:* ${issue.title || 'N/A'}\n*ID:* ${issue.identifier || 'N/A'}\n*URL:* ${eventUrl || 'N/A'}`;
+			message =
+				action === 'create'
+					? `*New Linear Issue Created*\n*Title:* ${issue.title || 'N/A'}\n*ID:* ${issue.identifier || 'N/A'}\n*URL:* ${eventUrl || 'N/A'}`
+					: `*Linear Issue Updated*\n*Title:* ${issue.title || 'N/A'}\n*ID:* ${issue.identifier || 'N/A'}\n*URL:* ${eventUrl || 'N/A'}`;
 		}
 
 		if (
@@ -77,13 +74,13 @@ export const linearEventHandler = inngest.createFunction(
 			const comment = linearEvent.data as any;
 			const issueId = comment.issueId || comment.issue?.id || 'N/A';
 			const commentBody = comment.body || 'N/A';
-			const truncatedBody = typeof commentBody === 'string' 
-				? commentBody.substring(0, 200) 
-				: 'N/A';
-			
-			message = action === 'create'
-				? `*New Comment on Linear Issue*\n*Issue ID:* ${issueId}\n*Comment:* ${truncatedBody}`
-				: `*Comment Updated on Linear Issue*\n*Issue ID:* ${issueId}\n*Comment:* ${truncatedBody}`;
+			const truncatedBody =
+				typeof commentBody === 'string' ? commentBody.substring(0, 200) : 'N/A';
+
+			message =
+				action === 'create'
+					? `*New Comment on Linear Issue*\n*Issue ID:* ${issueId}\n*Comment:* ${truncatedBody}`
+					: `*Comment Updated on Linear Issue*\n*Issue ID:* ${issueId}\n*Comment:* ${truncatedBody}`;
 		}
 
 		if (message && slackChannel) {
@@ -136,7 +133,6 @@ export const issueReportedHandler = inngest.createFunction(
 		});
 	},
 );
-
 
 export const functions = [
 	slackEventHandler,

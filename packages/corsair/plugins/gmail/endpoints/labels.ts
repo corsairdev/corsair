@@ -49,12 +49,7 @@ export const list: GmailEndpoints['labelsList'] = async (ctx, input) => {
 		);
 		return result;
 	} catch (error) {
-		await logEvent(
-			ctx.database,
-			'gmail.labels.list',
-			{ ...input },
-			'failed',
-		);
+		await logEvent(ctx.database, 'gmail.labels.list', { ...input }, 'failed');
 		throw error;
 	}
 };
@@ -93,20 +88,10 @@ export const get: GmailEndpoints['labelsGet'] = async (ctx, input) => {
 			}
 		}
 
-		await logEvent(
-			ctx.database,
-			'gmail.labels.get',
-			{ ...input },
-			'completed',
-		);
+		await logEvent(ctx.database, 'gmail.labels.get', { ...input }, 'completed');
 		return result;
 	} catch (error) {
-		await logEvent(
-			ctx.database,
-			'gmail.labels.get',
-			{ ...input },
-			'failed',
-		);
+		await logEvent(ctx.database, 'gmail.labels.get', { ...input }, 'failed');
 		throw error;
 	}
 };
@@ -154,12 +139,7 @@ export const create: GmailEndpoints['labelsCreate'] = async (ctx, input) => {
 		);
 		return result;
 	} catch (error) {
-		await logEvent(
-			ctx.database,
-			'gmail.labels.create',
-			{ ...input },
-			'failed',
-		);
+		await logEvent(ctx.database, 'gmail.labels.create', { ...input }, 'failed');
 		throw error;
 	}
 };
@@ -207,12 +187,7 @@ export const update: GmailEndpoints['labelsUpdate'] = async (ctx, input) => {
 		);
 		return result;
 	} catch (error) {
-		await logEvent(
-			ctx.database,
-			'gmail.labels.update',
-			{ ...input },
-			'failed',
-		);
+		await logEvent(ctx.database, 'gmail.labels.update', { ...input }, 'failed');
 		throw error;
 	}
 };
@@ -250,12 +225,7 @@ export const deleteLabel: GmailEndpoints['labelsDelete'] = async (
 			'completed',
 		);
 	} catch (error) {
-		await logEvent(
-			ctx.database,
-			'gmail.labels.delete',
-			{ ...input },
-			'failed',
-		);
+		await logEvent(ctx.database, 'gmail.labels.delete', { ...input }, 'failed');
 		throw error;
 	}
 };
