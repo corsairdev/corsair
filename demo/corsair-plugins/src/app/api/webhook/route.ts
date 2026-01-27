@@ -110,6 +110,78 @@ export async function POST(request: NextRequest) {
 		return NextResponse.json({ success: true, queued: true });
 	}
 
+	// Handle GitHub webhooks
+	const githubEvent = request.headers.get('x-github-event');
+	if (githubEvent === 'star') {
+		const githubBody = body as {
+			action?: string;
+			sender?: {
+				login: string;
+				name?: string;
+				email?: string | null;
+			};
+			repository?: {
+				full_name: string;
+			};
+		};
+
+		if (githubBody.action === 'created') {
+			console.log('\n⭐ GitHub Star Event - Sending to Inngest');
+			console.log('   Sender:', githubBody.sender?.login);
+			console.log('   Repository:', githubBody.repository?.full_name);
+
+			await inngest.send({
+				name: 'github/star',
+				data: {
+					tenantId,
+					sender: githubBody.sender || { login: 'unknown' },
+					repository: githubBody.repository || { full_name: 'unknown' },
+				},
+			});
+
+			return NextResponse.json({ success: true, queued: true });
+		}
+	}
+
+	// Handle Resend webhooks
+	const resendSignature = request.headers.get('resend-signature');
+	if (resendSignature || body.type === 'email.received') {
+		const resendBody = body as {
+			type?: string;
+			data?: {
+				from?: string;
+				to?: string[];
+				subject?: string;
+				text?: string;
+				html?: string;
+			};
+		};
+
+		if (resendBody.type === 'email.received' && resendBody.data) {
+			console.log('\n📧 Resend Email Event - Sending to Inngest');
+			console.log('   From:', resendBody.data.from);
+			console.log('   To:', resendBody.data.to);
+
+			const toAddress = Array.isArray(resendBody.data.to) 
+				? resendBody.data.to[0] || 'unknown'
+				: resendBody.data.to || 'unknown';
+
+			await inngest.send({
+				name: 'resend/email',
+				data: {
+					tenantId,
+					from: resendBody.data.from || 'unknown',
+					to: toAddress,
+					subject: resendBody.data.subject || 'No subject',
+					text: resendBody.data.text,
+					html: resendBody.data.html,
+				},
+			});
+
+			return NextResponse.json({ success: true, queued: true });
+		}
+	}
+
 	// Unknown provider
 	console.log('\n⚠️  Unknown provider or event type');
 	return NextResponse.json(
