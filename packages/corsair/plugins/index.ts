@@ -20,3 +20,29 @@ export {
 	type SlackWebhooks,
 	slack,
 } from './slack';
+
+// PostHog Plugin
+export {
+	type PostHogBoundEndpoints,
+	type PostHogBoundWebhooks,
+	type PostHogContext,
+	type PostHogEndpoints,
+	type PostHogPluginOptions,
+	type PostHogWebhooks,
+	posthog,
+	type PostHogPlugin,
+} from './posthog';
+
+// Resend Plugin
+export {
+	type ResendBoundEndpoints,
+	type ResendBoundWebhooks,
+	type ResendContext,
+	type ResendEndpoints,
+	type ResendPluginOptions,
+	type ResendWebhooks,
+	type ResendPlugin,
+	resend,
+} from './resend';
+
+

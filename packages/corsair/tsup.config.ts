@@ -21,5 +21,7 @@ export default defineConfig({
 		'plugins/index.ts',
 		'plugins/slack/index.ts',
 		'plugins/linear/index.ts',
+		'plugins/resend/index.ts',
+		'plugins/posthog/index.ts'
 	],
 });
