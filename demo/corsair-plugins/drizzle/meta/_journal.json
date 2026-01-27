@@ -5,29 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1767926856974,
-      "tag": "0000_clean_next_avengers",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1768225617251,
-      "tag": "0001_chubby_carnage",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1768357754692,
-      "tag": "0002_zippy_moira_mactaggert",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "7",
-      "when": 1768361482396,
-      "tag": "0003_thick_skin",
+      "when": 1769538264646,
+      "tag": "0000_known_scalphunter",
       "breakpoints": true
     }
   ]

@@ -1,4 +1,4 @@
-import { logEvent } from '../../utils/events';
+import { logEventFromContext } from '../../utils/events';
 import type { PostHogEndpoints } from '..';
 import { makePostHogRequest } from '../client';
 import type { PostHogEndpointOutputs } from './types';
@@ -147,7 +147,7 @@ export const trackPage: PostHogEndpoints['trackPage'] = async (ctx, input) => {
 		body: payload,
 	});
 
-	await logEvent(ctx.database, 'posthog.track.page', { ...input }, 'completed');
+	await logEventFromContext(ctx, 'posthog.track.page', { ...input }, 'completed');
 	return response;
 };
 

@@ -1,4 +1,4 @@
-import { logEvent } from '../../utils/events';
+import { logEventFromContext } from '../../utils/events';
 import type { ResendEndpoints } from '..';
 import { makeResendRequest } from '../client';
 import type { ResendEndpointOutputs } from './types';
@@ -62,7 +62,7 @@ export const get: ResendEndpoints['domainsGet'] = async (ctx, input) => {
 		}
 	}
 
-	await logEvent(ctx.database, 'resend.domains.get', { ...input }, 'completed');
+	await logEventFromContext(ctx, 'resend.domains.get', { ...input }, 'completed');
 	return response;
 };
 
@@ -115,7 +115,7 @@ export const deleteDomain: ResendEndpoints['domainsDelete'] = async (
 
 	if (ctx.db.domains && response.deleted) {
 		try {
-			await ctx.db.domains.deleteByResourceId(input.id);
+			await ctx.db.domains.deleteByEntityId(input.id);
 		} catch (error) {
 			console.warn('Failed to delete domain from database:', error);
 		}

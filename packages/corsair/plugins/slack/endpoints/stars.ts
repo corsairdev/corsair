@@ -1,4 +1,4 @@
-import { logEvent } from '../../utils/events';
+import { logEventFromContext } from '../../utils/events';
 import type { SlackEndpoints } from '..';
 import { makeSlackRequest } from '../client';
 import type { SlackEndpointOutputs } from './types';
@@ -17,7 +17,7 @@ export const add: SlackEndpoints['starsAdd'] = async (ctx, input) => {
 			},
 		},
 	);
-	await logEvent(ctx.database, 'slack.stars.add', { ...input }, 'completed');
+	await logEventFromContext(ctx, 'slack.stars.add', { ...input }, 'completed');
 	return result;
 };
 
@@ -35,7 +35,12 @@ export const remove: SlackEndpoints['starsRemove'] = async (ctx, input) => {
 			},
 		},
 	);
-	await logEvent(ctx.database, 'slack.stars.remove', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'slack.stars.remove',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
@@ -54,6 +59,6 @@ export const list: SlackEndpoints['starsList'] = async (ctx, input) => {
 			},
 		},
 	);
-	await logEvent(ctx.database, 'slack.stars.list', { ...input }, 'completed');
+	await logEventFromContext(ctx, 'slack.stars.list', { ...input }, 'completed');
 	return result;
 };

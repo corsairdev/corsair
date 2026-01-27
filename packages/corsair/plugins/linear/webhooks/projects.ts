@@ -128,7 +128,7 @@ export const projectRemove: LinearWebhooks['projectRemove'] = {
 
 		if (ctx.db.projects && projectEvent.data.id) {
 			try {
-				await ctx.db.projects.deleteByResourceId(projectEvent.data.id);
+				await ctx.db.projects.deleteByEntityId(projectEvent.data.id);
 			} catch (error) {
 				console.warn('Failed to delete project from database:', error);
 			}

@@ -9,14 +9,16 @@ import type {
 export type PrismaPostgresAdapterConfig = {
 	adapterId?: string | undefined;
 	/**
-	 * Prisma delegate keys on the Prisma client (e.g. `prisma.corsairResource`).
+	 * Prisma delegate keys on the Prisma client (e.g. `prisma.corsairEntity`).
 	 *
 	 * Since Prisma model names are user-defined, these are configurable.
 	 */
 	models?:
 		| {
-				corsair_resources?: string | undefined;
-				corsair_credentials?: string | undefined;
+				corsair_integrations?: string | undefined;
+				corsair_accounts?: string | undefined;
+				corsair_entities?: string | undefined;
+				corsair_events?: string | undefined;
 		  }
 		| undefined;
 };
@@ -99,19 +101,26 @@ function getDelegate(
 	config: PrismaPostgresAdapterConfig,
 ) {
 	const models = config.models ?? {};
-	const key =
-		table === 'corsair_resources'
-			? (models.corsair_resources ?? 'corsair_resources')
-			: table === 'corsair_credentials'
-				? (models.corsair_credentials ?? 'corsair_credentials')
-				: undefined;
-	if (!key) {
-		throw new Error(
-			`Prisma adapter only supports "corsair_resources" and "corsair_credentials" (got "${String(
-				table,
-			)}").`,
-		);
+	let key: string | undefined;
+
+	switch (table) {
+		case 'corsair_integrations':
+			key = models.corsair_integrations ?? 'corsair_integrations';
+			break;
+		case 'corsair_accounts':
+			key = models.corsair_accounts ?? 'corsair_accounts';
+			break;
+		case 'corsair_entities':
+			key = models.corsair_entities ?? 'corsair_entities';
+			break;
+		case 'corsair_events':
+			key = models.corsair_events ?? 'corsair_events';
+			break;
+		default:
+			// Allow custom tables
+			key = table;
 	}
+
 	const delegate = (prisma as any)[key];
 	if (!delegate) {
 		throw new Error(

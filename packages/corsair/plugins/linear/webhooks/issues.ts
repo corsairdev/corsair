@@ -125,7 +125,7 @@ export const issueRemove: LinearWebhooks['issueRemove'] = {
 
 		if (ctx.db.issues && issueEvent.data.id) {
 			try {
-				await ctx.db.issues.deleteByResourceId(issueEvent.data.id);
+				await ctx.db.issues.deleteByEntityId(issueEvent.data.id);
 			} catch (error) {
 				console.warn('Failed to delete issue from database:', error);
 			}

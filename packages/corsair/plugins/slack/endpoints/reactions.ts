@@ -1,4 +1,4 @@
-import { logEvent } from '../../utils/events';
+import { logEventFromContext } from '../../utils/events';
 import type { SlackEndpoints } from '..';
 import { makeSlackRequest } from '../client';
 import type { SlackEndpointOutputs } from './types';
@@ -48,12 +48,7 @@ export const add: SlackEndpoints['reactionsAdd'] = async (ctx, input) => {
 			},
 		},
 	);
-	await logEvent(
-		ctx.database,
-		'slack.reactions.add',
-		{ ...input },
-		'completed',
-	);
+	await logEventFromContext(ctx, 'slack.reactions.add', { ...input }, 'completed');
 	return result;
 };
 
@@ -72,12 +67,7 @@ export const get: SlackEndpoints['reactionsGet'] = async (ctx, input) => {
 			},
 		},
 	);
-	await logEvent(
-		ctx.database,
-		'slack.reactions.get',
-		{ ...input },
-		'completed',
-	);
+	await logEventFromContext(ctx, 'slack.reactions.get', { ...input }, 'completed');
 	return result;
 };
 
@@ -94,11 +84,6 @@ export const remove: SlackEndpoints['reactionsRemove'] = async (ctx, input) => {
 			file_comment: input.file_comment,
 		},
 	});
-	await logEvent(
-		ctx.database,
-		'slack.reactions.remove',
-		{ ...input },
-		'completed',
-	);
+	await logEventFromContext(ctx, 'slack.reactions.remove', { ...input }, 'completed');
 	return result;
 };

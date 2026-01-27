@@ -1,4 +1,4 @@
-import { logEvent } from '../../utils/events';
+import { logEventFromContext } from '../../utils/events';
 import type { GmailEndpoints } from '..';
 import { makeGmailRequest } from '../client';
 import type { GmailEndpointOutputs } from './types';
@@ -50,7 +50,7 @@ export const list: GmailEndpoints['threadsList'] = async (ctx, input) => {
 		);
 		return result;
 	} catch (error) {
-		await logEvent(ctx.database, 'gmail.threads.list', { ...input }, 'failed');
+		await logEventFromContext(ctx, 'gmail.threads.list', { ...input }, 'failed');
 		throw error;
 	}
 };
@@ -95,7 +95,7 @@ export const get: GmailEndpoints['threadsGet'] = async (ctx, input) => {
 		);
 		return result;
 	} catch (error) {
-		await logEvent(ctx.database, 'gmail.threads.get', { ...input }, 'failed');
+		await logEventFromContext(ctx, 'gmail.threads.get', { ...input }, 'failed');
 		throw error;
 	}
 };
@@ -172,7 +172,7 @@ export const deleteThread: GmailEndpoints['threadsDelete'] = async (
 
 		if (ctx.db.threads) {
 			try {
-				await ctx.db.threads.deleteByResourceId(input.id);
+				await ctx.db.threads.deleteByEntityId(input.id);
 			} catch (error) {
 				console.warn('Failed to delete thread from database:', error);
 			}
@@ -218,7 +218,7 @@ export const trash: GmailEndpoints['threadsTrash'] = async (ctx, input) => {
 		);
 		return result;
 	} catch (error) {
-		await logEvent(ctx.database, 'gmail.threads.trash', { ...input }, 'failed');
+		await logEventFromContext(ctx, 'gmail.threads.trash', { ...input }, 'failed');
 		throw error;
 	}
 };

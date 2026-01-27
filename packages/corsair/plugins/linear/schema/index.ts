@@ -15,7 +15,7 @@ export type LinearCredentials = z.infer<typeof LinearCredentials>;
 
 export const LinearSchema = {
 	version: '1.0.0',
-	services: {
+	entities: {
 		issues: LinearIssue,
 		teams: LinearTeam,
 		projects: LinearProject,

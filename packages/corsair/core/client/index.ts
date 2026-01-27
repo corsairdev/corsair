@@ -3,8 +3,8 @@ import { withTenantAdapter } from '../../adapters/tenant';
 import type { CorsairDbAdapter } from '../../adapters/types';
 import type {
 	CorsairPluginSchema,
-	PluginServiceClient,
-	PluginServiceClients,
+	PluginEntityClient,
+	PluginEntityClients,
 } from '../../db/orm';
 import type { BindEndpoints, EndpointTree } from '../endpoints';
 import { bindEndpointsRecursively } from '../endpoints/bind';
@@ -14,18 +14,18 @@ import type { BindWebhooks, RawWebhookRequest, WebhookTree } from '../webhooks';
 import { bindWebhooksRecursively } from '../webhooks/bind';
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Service Client Types
+// Entity Client Types
 // ─────────────────────────────────────────────────────────────────────────────
 
 /**
- * Extracts typed service clients from a plugin schema.
- * Each service becomes a `PluginServiceClient<DataSchema>`.
- * Services are nested under `db` to separate them from API endpoints.
+ * Extracts typed entity clients from a plugin schema.
+ * Each entity type becomes a `PluginEntityClient<DataSchema>`.
+ * Entities are nested under `db` to separate them from API endpoints.
  */
-export type InferPluginServices<
+export type InferPluginEntities<
 	Schema extends CorsairPluginSchema<Record<string, ZodTypeAny>> | undefined,
-> = Schema extends CorsairPluginSchema<infer Services>
-	? { db: PluginServiceClients<Services> }
+> = Schema extends CorsairPluginSchema<infer Entities>
+	? { db: PluginEntityClients<Entities> }
 	: {};
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -43,7 +43,7 @@ type UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends (
 
 /**
  * Infers the complete namespace for a single plugin, including API endpoints,
- * database services, and webhooks if defined.
+ * database entities, and webhooks if defined.
  */
 type InferPluginNamespace<P extends CorsairPlugin> = P extends CorsairPlugin<
 	infer Id,
@@ -56,7 +56,7 @@ type InferPluginNamespace<P extends CorsairPlugin> = P extends CorsairPlugin<
 			[K in Id]: (Endpoints extends EndpointTree
 				? { api: BindEndpoints<Endpoints> }
 				: {}) &
-				InferPluginServices<Schema> &
+				InferPluginEntities<Schema> &
 				(Webhooks extends WebhookTree
 					? {
 							webhooks: BindWebhooks<Webhooks>;
@@ -78,7 +78,7 @@ type InferPluginNamespaces<Plugins extends readonly CorsairPlugin[]> =
 	UnionToIntersection<InferPluginNamespace<Plugins[number]>>;
 
 /**
- * The main Corsair client type that provides access to all plugin APIs, services, and webhooks.
+ * The main Corsair client type that provides access to all plugin APIs, entities, and webhooks.
  */
 export type CorsairClient<Plugins extends readonly CorsairPlugin[]> =
 	InferPluginNamespaces<Plugins>;
@@ -91,7 +91,61 @@ export type CorsairTenantWrapper<Plugins extends readonly CorsairPlugin[]> = {
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Service Client Factory
+// Account ID Resolver
+// ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Creates a cached account ID resolver for a specific tenant and integration.
+ * The account ID is lazily fetched on first access and cached for subsequent calls.
+ */
+function createAccountIdResolver(
+	database: CorsairDbAdapter | undefined,
+	integrationName: string,
+	tenantId: string,
+): () => Promise<string> {
+	let cachedAccountId: string | null = null;
+
+	return async () => {
+		if (cachedAccountId) return cachedAccountId;
+
+		if (!database) {
+			throw new Error('Database not configured');
+		}
+
+		// Find the integration by name
+		const integration = await database.findOne({
+			table: 'corsair_integrations',
+			where: [{ field: 'name', value: integrationName }],
+		});
+
+		if (!integration) {
+			throw new Error(
+				`Integration "${integrationName}" not found. Make sure to create the integration first.`,
+			);
+		}
+
+		// Find the account for this tenant and integration
+		const account = await database.findOne({
+			table: 'corsair_accounts',
+			where: [
+				{ field: 'tenant_id', value: tenantId },
+				{ field: 'integration_id', value: integration.id },
+			],
+		});
+
+		if (!account) {
+			throw new Error(
+				`Account not found for tenant "${tenantId}" and integration "${integrationName}". Make sure to create the account first.`,
+			);
+		}
+
+		cachedAccountId = account.id;
+		return cachedAccountId;
+	};
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Entity Client Factory
 // ─────────────────────────────────────────────────────────────────────────────
 
 /**
@@ -130,30 +184,28 @@ function parseJsonLike(value: unknown): unknown {
 }
 
 /**
- * Creates a service client for a specific plugin and service with database operations.
+ * Creates an entity client for a specific plugin and entity type with database operations.
+ * The client lazily resolves the account ID when operations are performed.
  * @param database - The database adapter instance
- * @param pluginId - The ID of the plugin this service belongs to
- * @param serviceName - The name of the service
- * @param tenantId - The tenant ID for multi-tenant setups
+ * @param getAccountId - Function to get the account ID
+ * @param entityTypeName - The name of the entity type
  * @param version - The schema version for data validation
  * @param dataSchema - The Zod schema for data validation
- * @returns A service client with CRUD operations
+ * @returns An entity client with CRUD operations
  */
-function createServiceClient(
+function createEntityClient(
 	database: CorsairDbAdapter | undefined,
-	pluginId: string,
-	serviceName: string,
-	tenantId: string,
+	getAccountId: () => Promise<string>,
+	entityTypeName: string,
 	version: string,
 	dataSchema: ZodTypeAny,
-): PluginServiceClient<ZodTypeAny> {
-	const tableName = 'corsair_resources';
+): PluginEntityClient<ZodTypeAny> {
+	const tableName = 'corsair_entities';
 
-	function baseWhere() {
+	function baseWhere(accountId: string) {
 		return [
-			{ field: 'tenant_id', value: tenantId },
-			{ field: 'resource', value: pluginId },
-			{ field: 'service', value: serviceName },
+			{ field: 'account_id', value: accountId },
+			{ field: 'entity_type', value: entityTypeName },
 		];
 	}
 
@@ -163,31 +215,37 @@ function createServiceClient(
 	}
 
 	return {
-		findByResourceId: async (resourceId) => {
+		findByEntityId: async (entityId) => {
 			if (!database) return null;
-			const row = await database.findOne<any>({
+			const accountId = await getAccountId();
+			const row = await database.findOne({
 				table: tableName,
-				where: [...baseWhere(), { field: 'resource_id', value: resourceId }],
+				where: [
+					...baseWhere(accountId),
+					{ field: 'entity_id', value: entityId },
+				],
 			});
 			return row ? parseRow(row) : null;
 		},
 
 		findById: async (id) => {
 			if (!database) return null;
-			const row = await database.findOne<any>({
+			const accountId = await getAccountId();
+			const row = await database.findOne({
 				table: tableName,
-				where: [...baseWhere(), { field: 'id', value: id }],
+				where: [...baseWhere(accountId), { field: 'id', value: id }],
 			});
 			return row ? parseRow(row) : null;
 		},
 
-		findManyByResourceIds: async (resourceIds) => {
-			if (!database || resourceIds.length === 0) return [];
-			const rows = await database.findMany<any>({
+		findManyByEntityIds: async (entityIds) => {
+			if (!database || entityIds.length === 0) return [];
+			const accountId = await getAccountId();
+			const rows = await database.findMany({
 				table: tableName,
 				where: [
-					...baseWhere(),
-					{ field: 'resource_id', operator: 'in' as const, value: resourceIds },
+					...baseWhere(accountId),
+					{ field: 'entity_id', operator: 'in' as const, value: entityIds },
 				],
 			});
 			return rows.map(parseRow);
@@ -195,9 +253,10 @@ function createServiceClient(
 
 		list: async (options) => {
 			if (!database) return [];
-			const rows = await database.findMany<any>({
+			const accountId = await getAccountId();
+			const rows = await database.findMany({
 				table: tableName,
-				where: baseWhere(),
+				where: baseWhere(accountId),
 				limit: options?.limit ?? 100,
 				offset: options?.offset ?? 0,
 			});
@@ -206,12 +265,13 @@ function createServiceClient(
 
 		search: async ({ query, limit, offset }) => {
 			if (!database) return [];
-			const rows = await database.findMany<any>({
+			const accountId = await getAccountId();
+			const rows = await database.findMany({
 				table: tableName,
 				where: [
-					...baseWhere(),
+					...baseWhere(accountId),
 					{
-						field: 'resource_id',
+						field: 'entity_id',
 						operator: 'like' as const,
 						value: `%${query}%`,
 					},
@@ -222,15 +282,19 @@ function createServiceClient(
 			return rows.map(parseRow);
 		},
 
-		upsert: async (resourceId, data) => {
+		upsert: async (entityId, data) => {
 			if (!database) throw new Error('Database not configured');
+			const accountId = await getAccountId();
 			const parsed = dataSchema.parse(data);
 			const now = new Date();
 
-			const existing = await database.findOne<{ id: string }>({
+			const existing = await database.findOne({
 				table: tableName,
 				select: ['id'],
-				where: [...baseWhere(), { field: 'resource_id', value: resourceId }],
+				where: [
+					...baseWhere(accountId),
+					{ field: 'entity_id', value: entityId },
+				],
 			});
 
 			if (existing?.id) {
@@ -239,7 +303,7 @@ function createServiceClient(
 					where: [{ field: 'id', value: existing.id }],
 					data: { version, data: parsed, updated_at: now },
 				});
-				const updated = await database.findOne<any>({
+				const updated = await database.findOne({
 					table: tableName,
 					where: [{ field: 'id', value: existing.id }],
 				});
@@ -253,16 +317,15 @@ function createServiceClient(
 					id,
 					created_at: now,
 					updated_at: now,
-					tenant_id: tenantId,
-					resource_id: resourceId,
-					resource: pluginId,
-					service: serviceName,
+					account_id: accountId,
+					entity_id: entityId,
+					entity_type: entityTypeName,
 					version,
 					data: parsed,
 				},
 			});
 
-			const inserted = await database.findOne<any>({
+			const inserted = await database.findOne({
 				table: tableName,
 				where: [{ field: 'id', value: id }],
 			});
@@ -271,25 +334,31 @@ function createServiceClient(
 
 		deleteById: async (id) => {
 			if (!database) return false;
+			const accountId = await getAccountId();
 			const deleted = await database.deleteMany({
 				table: tableName,
-				where: [...baseWhere(), { field: 'id', value: id }],
+				where: [...baseWhere(accountId), { field: 'id', value: id }],
 			});
 			return deleted > 0;
 		},
 
-		deleteByResourceId: async (resourceId) => {
+		deleteByEntityId: async (entityId) => {
 			if (!database) return false;
+			const accountId = await getAccountId();
 			const deleted = await database.deleteMany({
 				table: tableName,
-				where: [...baseWhere(), { field: 'resource_id', value: resourceId }],
+				where: [
+					...baseWhere(accountId),
+					{ field: 'entity_id', value: entityId },
+				],
 			});
 			return deleted > 0;
 		},
 
 		count: async () => {
 			if (!database) return 0;
-			return database.count({ table: tableName, where: baseWhere() });
+			const accountId = await getAccountId();
+			return database.count({ table: tableName, where: baseWhere(accountId) });
 		},
 	};
 }
@@ -299,9 +368,9 @@ function createServiceClient(
 // ─────────────────────────────────────────────────────────────────────────────
 
 /**
- * Builds a Corsair client instance with all plugin APIs, services, and webhooks bound.
+ * Builds a Corsair client instance with all plugin APIs, entities, and webhooks bound.
  * @param plugins - Array of plugin definitions to include in the client
- * @param database - Optional database adapter for ORM services
+ * @param database - Optional database adapter for ORM entities
  * @param tenantId - Optional tenant ID for multi-tenant setups
  * @param rootErrorHandlers - Optional root-level error handlers
  * @returns A fully configured Corsair client
@@ -318,38 +387,48 @@ export function buildCorsairClient<
 		database && tenantId ? withTenantAdapter(database, tenantId) : database;
 
 	const apiUnsafe: Record<string, Record<string, unknown>> = {};
-	const pluginServicesUnsafe: Record<string, Record<string, unknown>> = {};
+	const pluginEntitiesUnsafe: Record<string, Record<string, unknown>> = {};
 
 	for (const plugin of plugins) {
 		apiUnsafe[plugin.id] = {};
-		pluginServicesUnsafe[plugin.id] = {};
+		pluginEntitiesUnsafe[plugin.id] = {};
 	}
 
 	for (const plugin of plugins) {
 		const schema = plugin.schema;
+		const effectiveTenantId = tenantId ?? 'default';
 
-		// Create typed service clients from plugin schema, nested under `db`
-		if (schema?.services) {
+		// Create a shared account ID resolver for this plugin
+		const getAccountId = createAccountIdResolver(
+			scopedDatabase,
+			plugin.id,
+			effectiveTenantId,
+		);
+
+		// Create typed entity clients from plugin schema, nested under `db`
+		if (schema?.entities) {
 			const dbClients: Record<string, unknown> = {};
-			for (const [serviceName, dataSchema] of Object.entries(schema.services)) {
-				const serviceClient = createServiceClient(
+			for (const [entityTypeName, dataSchema] of Object.entries(
+				schema.entities,
+			)) {
+				const entityClient = createEntityClient(
 					scopedDatabase,
-					plugin.id,
-					serviceName,
-					tenantId ?? 'default',
+					getAccountId,
+					entityTypeName,
 					schema.version,
 					dataSchema,
 				);
-				dbClients[serviceName] = serviceClient;
+				dbClients[entityTypeName] = entityClient;
 			}
-			pluginServicesUnsafe[plugin.id]!.db = dbClients;
+			pluginEntitiesUnsafe[plugin.id]!.db = dbClients;
 			apiUnsafe[plugin.id]!.db = dbClients;
 		}
 
-		// Build plugin context with service clients under `db`
+		// Build plugin context with entity clients under `db` and account ID resolver
 		const ctxForPlugin: Record<string, unknown> = {
 			database: scopedDatabase,
-			db: pluginServicesUnsafe[plugin.id]?.db ?? {},
+			db: pluginEntitiesUnsafe[plugin.id]?.db ?? {},
+			$getAccountId: getAccountId,
 			...(plugin.options ? { options: plugin.options } : {}),
 		};
 

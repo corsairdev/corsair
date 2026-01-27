@@ -1,4 +1,4 @@
-import { logEvent } from '../../utils/events';
+import { logEventFromContext } from '../../utils/events';
 import type { GmailEndpoints } from '..';
 import { makeGmailRequest } from '../client';
 import type { GmailEndpointOutputs } from './types';
@@ -49,7 +49,7 @@ export const list: GmailEndpoints['labelsList'] = async (ctx, input) => {
 		);
 		return result;
 	} catch (error) {
-		await logEvent(ctx.database, 'gmail.labels.list', { ...input }, 'failed');
+		await logEventFromContext(ctx, 'gmail.labels.list', { ...input }, 'failed');
 		throw error;
 	}
 };
@@ -88,10 +88,10 @@ export const get: GmailEndpoints['labelsGet'] = async (ctx, input) => {
 			}
 		}
 
-		await logEvent(ctx.database, 'gmail.labels.get', { ...input }, 'completed');
+		await logEventFromContext(ctx, 'gmail.labels.get', { ...input }, 'completed');
 		return result;
 	} catch (error) {
-		await logEvent(ctx.database, 'gmail.labels.get', { ...input }, 'failed');
+		await logEventFromContext(ctx, 'gmail.labels.get', { ...input }, 'failed');
 		throw error;
 	}
 };
@@ -139,7 +139,7 @@ export const create: GmailEndpoints['labelsCreate'] = async (ctx, input) => {
 		);
 		return result;
 	} catch (error) {
-		await logEvent(ctx.database, 'gmail.labels.create', { ...input }, 'failed');
+		await logEventFromContext(ctx, 'gmail.labels.create', { ...input }, 'failed');
 		throw error;
 	}
 };
@@ -187,7 +187,7 @@ export const update: GmailEndpoints['labelsUpdate'] = async (ctx, input) => {
 		);
 		return result;
 	} catch (error) {
-		await logEvent(ctx.database, 'gmail.labels.update', { ...input }, 'failed');
+		await logEventFromContext(ctx, 'gmail.labels.update', { ...input }, 'failed');
 		throw error;
 	}
 };
@@ -212,7 +212,7 @@ export const deleteLabel: GmailEndpoints['labelsDelete'] = async (
 
 		if (ctx.db.labels) {
 			try {
-				await ctx.db.labels.deleteByResourceId(input.id);
+				await ctx.db.labels.deleteByEntityId(input.id);
 			} catch (error) {
 				console.warn('Failed to delete label from database:', error);
 			}
@@ -225,7 +225,7 @@ export const deleteLabel: GmailEndpoints['labelsDelete'] = async (
 			'completed',
 		);
 	} catch (error) {
-		await logEvent(ctx.database, 'gmail.labels.delete', { ...input }, 'failed');
+		await logEventFromContext(ctx, 'gmail.labels.delete', { ...input }, 'failed');
 		throw error;
 	}
 };

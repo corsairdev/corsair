@@ -1,39 +1,40 @@
-import { jsonb, pgTable, text, timestamp } from 'drizzle-orm/pg-core';
+import { jsonb, pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core';
 
-export const corsair_providers = pgTable('corsair_providers', {
-	id: text('id').primaryKey(),
+export const corsair_integrations = pgTable('corsair_integrations', {
+	id: uuid('id').primaryKey().defaultRandom(),
 	created_at: timestamp('created_at').notNull().defaultNow(),
 	updated_at: timestamp('updated_at').notNull().defaultNow(),
 	name: text('name').notNull(),
-	config: jsonb('config').notNull(),
+	config: jsonb('config'),
 });
 
-export const corsair_connections = pgTable('corsair_connections', {
-	id: text('id').primaryKey(),
+export const corsair_accounts = pgTable('corsair_accounts', {
+	id: uuid('id').primaryKey().defaultRandom(),
 	created_at: timestamp('created_at').notNull().defaultNow(),
 	updated_at: timestamp('updated_at').notNull().defaultNow(),
 	tenant_id: text('tenant_id').notNull(),
-	connection_id: text('connection_id').notNull(),
-	config: jsonb('config').notNull(),
+	integration_id: uuid('integration_id')
+		.notNull()
+		.references(() => corsair_integrations.id),
+	config: jsonb('config'),
 });
 
-export const corsair_resources = pgTable('corsair_resources', {
-	id: text('id').primaryKey(),
+export const corsair_entities = pgTable('corsair_entities', {
+	id: uuid('id').primaryKey().defaultRandom(),
 	created_at: timestamp('created_at').notNull().defaultNow(),
 	updated_at: timestamp('updated_at').notNull().defaultNow(),
-	tenant_id: text('tenant_id').notNull(),
-	resource_id: text('resource_id').notNull(),
-	resource: text('resource').notNull(),
-	service: text('service').notNull(),
+	account_id: uuid('account_id').notNull(),
+	entity_id: text('entity_id').notNull(),
+	entity_type: text('entity_type').notNull(),
 	version: text('version').notNull(),
 	data: jsonb('data').notNull(),
 });
 
 export const corsair_events = pgTable('corsair_events', {
-	id: text('id').primaryKey(),
+	id: uuid('id').primaryKey().defaultRandom(),
 	created_at: timestamp('created_at').notNull().defaultNow(),
 	updated_at: timestamp('updated_at').notNull().defaultNow(),
-	tenant_id: text('tenant_id').notNull(),
+	account_id: uuid('account_id').notNull(),
 	event_type: text('event_type').notNull(),
 	payload: jsonb('payload').notNull(),
 	status: text('status'),

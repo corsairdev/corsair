@@ -12,7 +12,7 @@ export type GmailCredentials = z.infer<typeof GmailCredentials>;
 
 export const GmailSchema = {
 	version: '1.0.0',
-	services: {
+	entities: {
 		messages: GmailMessage,
 		labels: GmailLabel,
 		drafts: GmailDraft,

@@ -1,4 +1,4 @@
-import { logEvent } from '../../utils/events';
+import { logEventFromContext } from '../../utils/events';
 import type { LinearEndpoints } from '..';
 import { makeLinearRequest } from '../client';
 import type {
@@ -140,12 +140,7 @@ export const list: LinearEndpoints['commentsList'] = async (ctx, input) => {
 		}
 	}
 
-	await logEvent(
-		ctx.database,
-		'linear.comments.list',
-		{ ...input },
-		'completed',
-	);
+	await logEventFromContext(ctx, 'linear.comments.list', { ...input }, 'completed');
 	return result;
 };
 
@@ -179,12 +174,7 @@ export const create: LinearEndpoints['commentsCreate'] = async (ctx, input) => {
 		}
 	}
 
-	await logEvent(
-		ctx.database,
-		'linear.comments.create',
-		{ ...input },
-		'completed',
-	);
+	await logEventFromContext(ctx, 'linear.comments.create', { ...input }, 'completed');
 	return result;
 };
 
@@ -204,7 +194,7 @@ export const update: LinearEndpoints['commentsUpdate'] = async (ctx, input) => {
 
 	if (result && ctx.db.comments) {
 		try {
-			const existing = await ctx.db.comments.findByResourceId(result.id);
+			const existing = await ctx.db.comments.findByEntityId(result.id);
 			await ctx.db.comments.upsert(result.id, {
 				id: result.id,
 				body: result.body,
@@ -221,12 +211,7 @@ export const update: LinearEndpoints['commentsUpdate'] = async (ctx, input) => {
 		}
 	}
 
-	await logEvent(
-		ctx.database,
-		'linear.comments.update',
-		{ ...input },
-		'completed',
-	);
+	await logEventFromContext(ctx, 'linear.comments.update', { ...input }, 'completed');
 	return result;
 };
 
@@ -248,17 +233,12 @@ export const deleteComment: LinearEndpoints['commentsDelete'] = async (
 
 	if (success && ctx.db.comments) {
 		try {
-			await ctx.db.comments.deleteByResourceId(input.id);
+			await ctx.db.comments.deleteByEntityId(input.id);
 		} catch (error) {
 			console.warn('Failed to delete comment from database:', error);
 		}
 	}
 
-	await logEvent(
-		ctx.database,
-		'linear.comments.delete',
-		{ ...input },
-		'completed',
-	);
+	await logEventFromContext(ctx, 'linear.comments.delete', { ...input }, 'completed');
 	return success;
 };

@@ -5,8 +5,13 @@ import type {
 	CorsairWhere,
 } from './types';
 
+/**
+ * Tables that have tenant_id directly and should be filtered.
+ * Note: corsair_entities and corsair_events do NOT have tenant_id directly.
+ * They are scoped through their account_id → corsair_accounts.tenant_id relationship.
+ */
 function shouldScopeTable(table: CorsairTableName): boolean {
-	return table === 'corsair_resources' || table === 'corsair_credentials';
+	return table === 'corsair_accounts';
 }
 
 function withTenantWhere(
@@ -35,8 +40,12 @@ function withTenantInsertData<T extends Record<string, any>>(
 }
 
 /**
- * Wraps a `CorsairDbAdapter` so all queries against Corsair-managed tables
- * (`corsair_resources`, `corsair_credentials`) are automatically tenant-scoped.
+ * Wraps a `CorsairDbAdapter` so all queries against tenant-scoped tables
+ * are automatically filtered by tenant_id.
+ *
+ * Note: In the new schema, only `corsair_accounts` has tenant_id directly.
+ * `corsair_entities` and `corsair_events` are scoped through their account_id
+ * which references corsair_accounts. The ORM layer handles this relationship.
  *
  * This is intended for `createCorsair({ multiTenancy: true }).withTenant(tenantId)`.
  */

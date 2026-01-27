@@ -1,4 +1,4 @@
-import { logEvent } from '../../utils/events';
+import { logEventFromContext } from '../../utils/events';
 import type { ResendEndpoints } from '..';
 import { makeResendRequest } from '../client';
 import type { ResendEndpointOutputs } from './types';
@@ -56,7 +56,7 @@ export const send: ResendEndpoints['emailsSend'] = async (ctx, input) => {
 		}
 	}
 
-	await logEvent(ctx.database, 'resend.emails.send', { ...input }, 'completed');
+	await logEventFromContext(ctx, 'resend.emails.send', { ...input }, 'completed');
 	return response;
 };
 
@@ -83,7 +83,7 @@ export const get: ResendEndpoints['emailsGet'] = async (ctx, input) => {
 		}
 	}
 
-	await logEvent(ctx.database, 'resend.emails.get', { ...input }, 'completed');
+	await logEventFromContext(ctx, 'resend.emails.get', { ...input }, 'completed');
 	return response;
 };
 
@@ -117,6 +117,6 @@ export const list: ResendEndpoints['emailsList'] = async (ctx, input) => {
 		}
 	}
 
-	await logEvent(ctx.database, 'resend.emails.list', { ...input }, 'completed');
+	await logEventFromContext(ctx, 'resend.emails.list', { ...input }, 'completed');
 	return response;
 };

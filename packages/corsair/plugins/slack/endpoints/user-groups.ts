@@ -1,4 +1,4 @@
-import { logEvent } from '../../utils/events';
+import { logEventFromContext } from '../../utils/events';
 import type { SlackEndpoints } from '..';
 import { makeSlackRequest } from '../client';
 import type { SlackEndpointOutputs } from './types';
@@ -35,8 +35,8 @@ export const create: SlackEndpoints['userGroupsCreate'] = async (
 		}
 	}
 
-	await logEvent(
-		ctx.database,
+	await logEventFromContext(
+		ctx,
 		'slack.userGroups.create',
 		{ ...input },
 		'completed',
@@ -61,9 +61,7 @@ export const disable: SlackEndpoints['userGroupsDisable'] = async (
 
 	if (result.ok && result.usergroup && ctx.db.userGroups) {
 		try {
-			const existing = await ctx.db.userGroups.findByResourceId(
-				input.userGroup,
-			);
+			const existing = await ctx.db.userGroups.findByEntityId(input.userGroup);
 			await ctx.db.userGroups.upsert(result.usergroup.id, {
 				...(existing?.data || { id: result.usergroup.id }),
 				date_update: Date.now(),
@@ -73,8 +71,8 @@ export const disable: SlackEndpoints['userGroupsDisable'] = async (
 		}
 	}
 
-	await logEvent(
-		ctx.database,
+	await logEventFromContext(
+		ctx,
 		'slack.userGroups.disable',
 		{ ...input },
 		'completed',
@@ -99,9 +97,7 @@ export const enable: SlackEndpoints['userGroupsEnable'] = async (
 
 	if (result.ok && result.usergroup && ctx.db.userGroups) {
 		try {
-			const existing = await ctx.db.userGroups.findByResourceId(
-				input.userGroup,
-			);
+			const existing = await ctx.db.userGroups.findByEntityId(input.userGroup);
 			await ctx.db.userGroups.upsert(result.usergroup.id, {
 				...(existing?.data || { id: result.usergroup.id }),
 				date_update: Date.now(),
@@ -111,8 +107,8 @@ export const enable: SlackEndpoints['userGroupsEnable'] = async (
 		}
 	}
 
-	await logEvent(
-		ctx.database,
+	await logEventFromContext(
+		ctx,
 		'slack.userGroups.enable',
 		{ ...input },
 		'completed',
@@ -150,8 +146,8 @@ export const list: SlackEndpoints['userGroupsList'] = async (ctx, input) => {
 		}
 	}
 
-	await logEvent(
-		ctx.database,
+	await logEventFromContext(
+		ctx,
 		'slack.userGroups.list',
 		{ ...input },
 		'completed',
@@ -180,9 +176,7 @@ export const update: SlackEndpoints['userGroupsUpdate'] = async (
 
 	if (result.ok && result.usergroup && ctx.db.userGroups) {
 		try {
-			const existing = await ctx.db.userGroups.findByResourceId(
-				input.userGroup,
-			);
+			const existing = await ctx.db.userGroups.findByEntityId(input.userGroup);
 			await ctx.db.userGroups.upsert(result.usergroup.id, {
 				...(existing?.data || { id: result.usergroup.id }),
 				name: result.usergroup.name || input.name,
@@ -195,8 +189,8 @@ export const update: SlackEndpoints['userGroupsUpdate'] = async (
 		}
 	}
 
-	await logEvent(
-		ctx.database,
+	await logEventFromContext(
+		ctx,
 		'slack.userGroups.update',
 		{ ...input },
 		'completed',

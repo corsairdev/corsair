@@ -17,7 +17,7 @@ export type SlackCredentials = z.infer<typeof SlackCredentials>;
 
 export const SlackSchema = {
 	version: '1.1.0',
-	services: {
+	entities: {
 		messages: SlackMessage,
 		channels: SlackChannel,
 		users: SlackUser,
