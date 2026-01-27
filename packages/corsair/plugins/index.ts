@@ -30,6 +30,7 @@ export {
 	type PostHogPluginOptions,
 	type PostHogWebhooks,
 	posthog,
+	type PostHogPlugin,
 } from './posthog';
 
 // Resend Plugin
@@ -40,5 +41,8 @@ export {
 	type ResendEndpoints,
 	type ResendPluginOptions,
 	type ResendWebhooks,
+	type ResendPlugin,
 	resend,
 } from './resend';
+
+
