@@ -140,6 +140,7 @@ export default async function Page(props: PageProps) {
 			{page.description && (
 				<p className="text-lg text-muted-foreground mb-8">{page.description}</p>
 			)}
+			{/* @ts-expect-error - React types version mismatch */}
 			<DocsBody>
 				<MDX components={mdxComponents} />
 			</DocsBody>
