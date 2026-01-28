@@ -10,16 +10,43 @@ export function createTestDatabase(): {
 	const sqlite = new Database(':memory:');
 
 	sqlite.exec(`
-		CREATE TABLE IF NOT EXISTS corsair_resources (
+
+		CREATE TABLE IF NOT EXISTS corsair_integrations (
+			id TEXT PRIMARY KEY,
+			created_at INTEGER NOT NULL,
+			updated_at INTEGER NOT NULL,
+			name TEXT NOT NULL,
+			config TEXT NOT NULL
+		);
+
+		CREATE TABLE IF NOT EXISTS corsair_accounts (
 			id TEXT PRIMARY KEY,
 			created_at INTEGER NOT NULL,
 			updated_at INTEGER NOT NULL,
 			tenant_id TEXT NOT NULL,
-			resource_id TEXT NOT NULL,
-			resource TEXT NOT NULL,
-			service TEXT NOT NULL,
+			integration_id TEXT NOT NULL,
+			config TEXT NOT NULL
+		);
+
+		CREATE TABLE IF NOT EXISTS corsair_entities (
+			id TEXT PRIMARY KEY,
+			created_at INTEGER NOT NULL,
+			updated_at INTEGER NOT NULL,
+			account_id TEXT NOT NULL,
+			entity_id TEXT NOT NULL,
+			entity_type TEXT NOT NULL,
 			version TEXT NOT NULL,
 			data TEXT NOT NULL
+		);
+
+		CREATE TABLE IF NOT EXISTS corsair_events (
+			id TEXT PRIMARY KEY,
+			created_at INTEGER NOT NULL,
+			updated_at INTEGER NOT NULL,
+			account_id TEXT NOT NULL,
+			event_type TEXT NOT NULL,
+			payload TEXT NOT NULL,
+			status TEXT
 		);
 	`);
 

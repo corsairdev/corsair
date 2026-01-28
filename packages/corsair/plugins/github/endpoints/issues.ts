@@ -1,5 +1,5 @@
 import { logEventFromContext } from '../../utils/events';
-import type { GithubEndpoints } from '..';
+import type { GithubBoundEndpoints, GithubEndpoints } from '..';
 import { makeGithubRequest } from '../client';
 import type {
 	IssueCommentCreateResponse,
@@ -23,26 +23,7 @@ export const list: GithubEndpoints['issuesList'] = async (ctx, input) => {
 	if (result && ctx.db.issues) {
 		try {
 			for (const issue of result) {
-				await ctx.db.issues.upsert(issue.id.toString(), {
-					id: issue.id,
-					nodeId: issue.nodeId,
-					url: issue.url,
-					repositoryUrl: issue.repositoryUrl,
-					labelsUrl: issue.labelsUrl,
-					commentsUrl: issue.commentsUrl,
-					eventsUrl: issue.eventsUrl,
-					htmlUrl: issue.htmlUrl,
-					number: issue.number,
-					state: issue.state,
-					stateReason: issue.stateReason,
-					title: issue.title,
-					body: issue.body,
-					locked: issue.locked,
-					comments: issue.comments,
-					createdAt: new Date(issue.createdAt),
-					updatedAt: new Date(issue.updatedAt),
-					closedAt: issue.closedAt ? new Date(issue.closedAt) : null,
-				});
+				await ctx.db.issues.upsert(issue.id.toString(), issue);
 			}
 		} catch (error) {
 			console.warn('Failed to save issues to database:', error);
@@ -64,24 +45,7 @@ export const get: GithubEndpoints['issuesGet'] = async (ctx, input) => {
 	if (result && ctx.db.issues) {
 		try {
 			await ctx.db.issues.upsert(result.id.toString(), {
-				id: result.id,
-				nodeId: result.nodeId,
-				url: result.url,
-				repositoryUrl: result.repositoryUrl,
-				labelsUrl: result.labelsUrl,
-				commentsUrl: result.commentsUrl,
-				eventsUrl: result.eventsUrl,
-				htmlUrl: result.htmlUrl,
-				number: result.number,
-				state: result.state,
-				stateReason: result.stateReason,
-				title: result.title,
-				body: result.body,
-				locked: result.locked,
-				comments: result.comments,
-				createdAt: new Date(result.createdAt),
-				updatedAt: new Date(result.updatedAt),
-				closedAt: result.closedAt ? new Date(result.closedAt) : null,
+				...result,
 			});
 		} catch (error) {
 			console.warn('Failed to save issue to database:', error);
@@ -103,26 +67,7 @@ export const create: GithubEndpoints['issuesCreate'] = async (ctx, input) => {
 
 	if (result && ctx.db.issues) {
 		try {
-			await ctx.db.issues.upsert(result.id.toString(), {
-				id: result.id,
-				nodeId: result.nodeId,
-				url: result.url,
-				repositoryUrl: result.repositoryUrl,
-				labelsUrl: result.labelsUrl,
-				commentsUrl: result.commentsUrl,
-				eventsUrl: result.eventsUrl,
-				htmlUrl: result.htmlUrl,
-				number: result.number,
-				state: result.state,
-				stateReason: result.stateReason,
-				title: result.title,
-				body: result.body,
-				locked: result.locked,
-				comments: result.comments,
-				createdAt: new Date(result.createdAt),
-				updatedAt: new Date(result.updatedAt),
-				closedAt: result.closedAt ? new Date(result.closedAt) : null,
-			});
+			await ctx.db.issues.upsert(result.id.toString(), result);
 		} catch (error) {
 			console.warn('Failed to save issue to database:', error);
 		}
@@ -143,26 +88,7 @@ export const update: GithubEndpoints['issuesUpdate'] = async (ctx, input) => {
 
 	if (result && ctx.db.issues) {
 		try {
-			await ctx.db.issues.upsert(result.id.toString(), {
-				id: result.id,
-				nodeId: result.nodeId,
-				url: result.url,
-				repositoryUrl: result.repositoryUrl,
-				labelsUrl: result.labelsUrl,
-				commentsUrl: result.commentsUrl,
-				eventsUrl: result.eventsUrl,
-				htmlUrl: result.htmlUrl,
-				number: result.number,
-				state: result.state,
-				stateReason: result.stateReason,
-				title: result.title,
-				body: result.body,
-				locked: result.locked,
-				comments: result.comments,
-				createdAt: new Date(result.createdAt),
-				updatedAt: new Date(result.updatedAt),
-				closedAt: result.closedAt ? new Date(result.closedAt) : null,
-			});
+			await ctx.db.issues.upsert(result.id.toString(), result);
 		} catch (error) {
 			console.warn('Failed to update issue in database:', error);
 		}
@@ -183,6 +109,21 @@ export const createComment: GithubEndpoints['issuesCreateComment'] = async (
 		ctx.options.token,
 		{ method: 'POST', body: { body } },
 	);
+
+	if (result && ctx.db.issues) {
+		try {
+
+			const endpoints = ctx.endpoints as GithubBoundEndpoints
+
+			await endpoints.issuesGet({
+				owner,
+				repo,
+				issueNumber,
+			});
+		} catch (error) {
+			console.warn('Failed to save issue comment to database:', error);
+		}
+	}
 
 	await logEventFromContext(
 		ctx,

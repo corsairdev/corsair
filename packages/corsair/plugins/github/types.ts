@@ -121,9 +121,9 @@ export type Repository = {
 	description: string | null;
 	fork: boolean;
 	url: string;
-	createdAt: string | null;
-	updatedAt: string | null;
-	pushedAt: string | null;
+	createdAt: Date | null;
+	updatedAt: Date | null;
+	pushedAt: Date | null;
 	defaultBranch: string;
 	language: string | null;
 	stargazersCount: number;
@@ -170,7 +170,7 @@ export type Release = {
 	draft: boolean;
 	prerelease: boolean;
 	createdAt: string;
-	publishedAt: string | null;
+	publishedAt: Date | null;
 	author: SimpleUser;
 	assets: Array<ReleaseAsset>;
 };

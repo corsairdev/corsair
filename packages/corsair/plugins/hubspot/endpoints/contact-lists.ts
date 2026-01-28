@@ -1,5 +1,5 @@
 import { logEventFromContext } from '../../utils/events';
-import type { HubSpotEndpoints } from '..';
+import type { HubSpotBoundEndpoints, HubSpotEndpoints } from '..';
 import { makeHubSpotRequest } from '../client';
 import type {
 	AddContactToListResponse,
