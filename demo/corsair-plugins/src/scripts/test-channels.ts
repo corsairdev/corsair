@@ -6,11 +6,14 @@ const main = async () => {
 
 	// console.log(res);
 
-	const test = await corsair
-		.withTenant('default')
-		.slack.db.channels.findByEntityId('C0123456789');
+	// const test = await corsair
+	// 	.withTenant('default')
+	// 	.slack.db.channels.findByEntityId('C0123456789');
 
-	console.log(test);
+	// console.log(test);
+
+	// const res = await corsair.withTenant('default').github.api.repositories.list({});
+	// console.log(res.length);
 };
 
 main();
