@@ -1,6 +1,6 @@
 import { createCorsair } from 'corsair';
 import { drizzleAdapter } from 'corsair/adapters/drizzle';
-import { linear, slack } from 'corsair/plugins';
+import { github, linear, slack } from 'corsair/plugins';
 import { db } from '../db';
 import * as schema from '../db/schema';
 
@@ -63,6 +63,12 @@ export const corsair = createCorsair({
 		// 		apiKey: process.env.RESEND_API_KEY ?? 'dev-token',
 		// 	},
 		// }),
+		github({
+			authType: 'api_key',
+			credentials: {
+				token: process.env.GITHUB_TOKEN ?? 'dev-token',
+			},
+		}),
 	],
 	errorHandlers: {
 		RATE_LIMIT_ERROR: {

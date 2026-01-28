@@ -11,6 +11,24 @@ export {
 	gmail,
 } from './gmail';
 export {
+	type GithubBoundEndpoints,
+	type GithubBoundWebhooks,
+	type GithubContext,
+	type GithubEndpoints,
+	type GithubPluginOptions,
+	type GithubWebhooks,
+	github,
+} from './github';
+export {
+	type HubSpotBoundEndpoints,
+	type HubSpotBoundWebhooks,
+	type HubSpotContext,
+	type HubSpotEndpoints,
+	type HubSpotPluginOptions,
+	type HubSpotWebhooks,
+	hubspot,
+} from './hubspot';
+export {
 	type LinearBoundEndpoints,
 	type LinearBoundWebhooks,
 	type LinearContext,
