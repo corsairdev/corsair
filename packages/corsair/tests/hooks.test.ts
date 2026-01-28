@@ -49,12 +49,10 @@ describe('Endpoint Hooks', () => {
 			const modifiedText = 'Modified by before hook';
 
 			const corsair = createCorsair({
+				kek: '',
 				plugins: [
 					slack({
-						authType: 'bot_token',
-						credentials: {
-							botToken: 'xoxb-test-token',
-						},
+						authType: 'api_key',
 						hooks: {
 							messages: {
 								post: {
@@ -71,6 +69,7 @@ describe('Endpoint Hooks', () => {
 					}),
 				],
 				database: testDb.adapter,
+				multiTenancy: false,
 			});
 
 			await corsair.slack.api.messages.post({
@@ -91,12 +90,10 @@ describe('Endpoint Hooks', () => {
 			const modifiedText = 'Modified text';
 
 			const corsair = createCorsair({
+				kek: '',
 				plugins: [
 					slack({
-						authType: 'bot_token',
-						credentials: {
-							botToken: 'xoxb-test-token',
-						},
+						authType: 'api_key',
 						hooks: {
 							messages: {
 								post: {
@@ -131,12 +128,11 @@ describe('Endpoint Hooks', () => {
 
 		it('should allow before hook to add new properties to args', async () => {
 			const corsair = createCorsair({
+				kek: '',
 				plugins: [
 					slack({
-						authType: 'bot_token',
-						credentials: {
-							botToken: 'xoxb-test-token',
-						},
+						authType: 'api_key',
+
 						hooks: {
 							messages: {
 								post: {
@@ -186,12 +182,11 @@ describe('Endpoint Hooks', () => {
 			let capturedResponse: any = null;
 
 			const corsair = createCorsair({
+				kek: '',
 				plugins: [
 					slack({
-						authType: 'bot_token',
-						credentials: {
-							botToken: 'xoxb-test-token',
-						},
+						authType: 'api_key',
+
 						hooks: {
 							messages: {
 								post: {
@@ -236,12 +231,11 @@ describe('Endpoint Hooks', () => {
 			mockedMakeSlackRequest.mockResolvedValueOnce(originalResponse as any);
 
 			const corsair = createCorsair({
+				kek: '',
 				plugins: [
 					slack({
-						authType: 'bot_token',
-						credentials: {
-							botToken: 'xoxb-test-token',
-						},
+						authType: 'api_key',
+
 						hooks: {
 							messages: {
 								post: {
@@ -283,12 +277,11 @@ describe('Endpoint Hooks', () => {
 			const executionOrder: string[] = [];
 
 			const corsair = createCorsair({
+				kek: '',
 				plugins: [
 					slack({
-						authType: 'bot_token',
-						credentials: {
-							botToken: 'xoxb-test-token',
-						},
+						authType: 'api_key',
+
 						hooks: {
 							messages: {
 								post: {
@@ -344,12 +337,11 @@ describe('Endpoint Hooks', () => {
 
 		it('should allow both hooks to modify their respective data', async () => {
 			const corsair = createCorsair({
+				kek: '',
 				plugins: [
 					slack({
-						authType: 'bot_token',
-						credentials: {
-							botToken: 'xoxb-test-token',
-						},
+						authType: 'api_key',
+
 						hooks: {
 							messages: {
 								post: {
@@ -388,12 +380,11 @@ describe('Endpoint Hooks', () => {
 	describe('Nested Endpoint Hooks', () => {
 		it('should work with nested endpoint paths', async () => {
 			const corsair = createCorsair({
+				kek: '',
 				plugins: [
 					slack({
-						authType: 'bot_token',
-						credentials: {
-							botToken: 'xoxb-test-token',
-						},
+						authType: 'api_key',
+
 						hooks: {
 							messages: {
 								post: {

@@ -1,4 +1,3 @@
-import type { AuthTypes } from '../../constants';
 import type {
 	BindEndpoints,
 	BindWebhooks,
@@ -6,7 +5,10 @@ import type {
 	CorsairPlugin,
 	CorsairPluginContext,
 	CorsairWebhook,
+	KeyBuilderContext,
 } from '../../core';
+import type { PickAuth } from '../../core/constants';
+import { getValidAccessToken } from './client';
 import type { GmailEndpointOutputs } from './endpoints';
 import {
 	DraftsEndpoints,
@@ -14,7 +16,6 @@ import {
 	MessagesEndpoints,
 	ThreadsEndpoints,
 } from './endpoints';
-import type { GmailCredentials } from './schema';
 import { GmailSchema } from './schema';
 import type {
 	GmailWebhookOutputs,
@@ -27,7 +28,7 @@ import { MessageWebhooks } from './webhooks';
 
 export type GmailContext = CorsairPluginContext<
 	typeof GmailSchema,
-	GmailCredentials
+	GmailPluginOptions
 >;
 
 type GmailEndpoint<
@@ -338,10 +339,9 @@ const gmailWebhooksNested = {
 };
 
 export type GmailPluginOptions = {
-	authType: AuthTypes;
-	credentials: GmailCredentials;
-	hooks?: GmailPlugin['hooks'] | undefined;
-	webhookHooks?: GmailPlugin['webhookHooks'] | undefined;
+	authType: PickAuth<'oauth_2'>;
+	hooks?: GmailPlugin['hooks'];
+	webhookHooks?: GmailPlugin['webhookHooks'];
 };
 
 export type GmailPlugin = CorsairPlugin<
@@ -349,23 +349,47 @@ export type GmailPlugin = CorsairPlugin<
 	typeof GmailSchema,
 	typeof gmailEndpointsNested,
 	typeof gmailWebhooksNested,
-	GmailCredentials
+	GmailPluginOptions
 >;
 
 export function gmail(options: GmailPluginOptions) {
 	return {
 		id: 'gmail',
 		schema: GmailSchema,
-		options: options.credentials,
+		options: options,
 		hooks: options.hooks,
 		webhookHooks: options.webhookHooks,
 		endpoints: gmailEndpointsNested,
 		webhooks: gmailWebhooksNested,
+		keyBuilder: async (ctx: KeyBuilderContext<GmailPluginOptions>) => {
+			if (ctx.authType === 'oauth_2') {
+				const accessToken = await ctx.keys.getAccessToken();
+				const refreshToken = await ctx.keys.getRefreshToken();
+
+				if (!accessToken || !refreshToken) {
+					// prob need to throw an error here
+					return '';
+				}
+
+				const res = await ctx.keys.getIntegrationCredentials();
+
+				const key = await getValidAccessToken({
+					accessToken,
+					refreshToken,
+					clientId: res.clientId,
+					clientSecret: res.clientSecret,
+				});
+
+				return key;
+			}
+
+			return '';
+		},
 		pluginWebhookMatcher: (
 			request: import('../../core/webhooks').RawWebhookRequest,
 		) => {
 			const body = request.body as Record<string, unknown>;
 			return (body?.message as Record<string, unknown>)?.data !== undefined;
 		},
-	} as GmailPlugin;
+	} satisfies GmailPlugin;
 }

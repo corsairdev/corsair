@@ -7,18 +7,16 @@ import type {
 	CorsairPluginContext,
 	CorsairWebhook,
 } from '../../core';
-import type { AuthTypes } from '../../core/constants';
+import type { PickAuth } from '../../core/constants';
 import { Events } from './endpoints';
 import type { PostHogEndpointOutputs } from './endpoints/types';
-import type { PostHogCredentials } from './schema';
 import { PostHogSchema } from './schema';
 import type { EventCapturedEvent, PostHogWebhookOutputs } from './webhooks';
 import { EventWebhooks } from './webhooks';
 
 export type PostHogPluginOptions = {
-	authType: AuthTypes;
-	credentials: PostHogCredentials;
-	hooks?: PostHogPlugin['hooks'] | undefined;
+	authType: PickAuth<'api_key'>;
+	hooks?: PostHogPlugin['hooks'];
 	webhookHooks?: PostHogPlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
 };

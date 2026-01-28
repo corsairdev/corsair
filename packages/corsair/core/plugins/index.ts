@@ -1,8 +1,9 @@
 import type { ZodTypeAny } from 'zod';
 import type { CorsairDbAdapter } from '../../adapters';
 import type { CorsairPluginSchema } from '../../db/orm';
+import type { AccountKeyManagerFor } from '../auth/types';
 import type { InferPluginEntities } from '../client';
-import type { AllProviders } from '../constants';
+import type { AllProviders, AuthTypes } from '../constants';
 import type {
 	BindEndpoints,
 	BoundEndpointTree,
@@ -202,18 +203,65 @@ type CorsairWebhookHooksMap<Webhooks extends WebhookTree> = {
 // ─────────────────────────────────────────────────────────────────────────────
 
 /**
- * Type for the keyBuilder callback function that generates a key from the plugin options.
+ * Extracts the authType from plugin options.
+ */
+type ExtractAuthType<Options> = Options extends { authType: infer T }
+	? T extends AuthTypes
+		? T
+		: never
+	: never;
+
+/**
+ * Context passed to keyBuilder as a discriminated union.
+ * Check `ctx.authType` to narrow the type of `ctx.keys`.
+ *
+ * @template Options - The plugin options type
+ *
+ * @example
+ * ```ts
+ * keyBuilder: async (ctx) => {
+ *   if (ctx.authType === 'api_key') {
+ *     // ctx.keys is narrowed to ApiKeyAccountKeyManager
+ *     return await ctx.keys.getApiKey();
+ *   } else if (ctx.authType === 'oauth_2') {
+ *     // ctx.keys is narrowed to OAuth2AccountKeyManager
+ *     return await ctx.keys.getAccessToken();
+ *   } else if (ctx.authType === 'bot_token') {
+ *     // ctx.keys is narrowed to BotTokenAccountKeyManager
+ *     return await ctx.keys.getBotToken();
+ *   }
+ *   return '';
+ * }
+ * ```
+ */
+export type KeyBuilderContext<Options extends Record<string, unknown>> =
+	ExtractAuthType<Options> extends infer A
+		? A extends AuthTypes
+			? {
+					/** The auth type - use this for narrowing ctx.keys */
+					authType: A;
+					/** Plugin-specific options */
+					options: Options;
+					/** Account-level key manager - type narrows based on authType check */
+					keys: AccountKeyManagerFor<A>;
+				}
+			: never
+		: never;
+
+/**
+ * Type for the keyBuilder callback function that retrieves the authentication key.
+ * The keyBuilder has access to the keys manager to retrieve or refresh tokens as needed.
  * @template Options - The options type for the plugin
  */
 export type CorsairKeyBuilder<Options extends Record<string, unknown>> = (
-	options: Options,
+	ctx: KeyBuilderContext<Options>,
 ) => string | Promise<string>;
 
 /**
  * Base keyBuilder type used internally for type compatibility.
  * Uses `any` to avoid contravariance issues when plugins are stored in arrays.
  */
-export type CorsairKeyBuilderBase = (options: any) => string | Promise<string>;
+export type CorsairKeyBuilderBase = (ctx: any) => string | Promise<string>;
 
 /**
  * Defines a Corsair plugin with endpoints, webhooks, schema, and configuration.
@@ -258,12 +306,13 @@ export type CorsairPlugin<
 	/** Plugin-specific error handlers */
 	errorHandlers?: CorsairErrorHandler;
 	/**
-	 * Async callback to generate a key from the plugin options.
-	 * This key is used to access data for API calls.
-	 * Note: Uses CorsairKeyBuilderBase for array compatibility, but type inference
-	 * works correctly when using `satisfies` on plugin definitions.
+	 * Async callback to retrieve the authentication key for API calls.
+	 * The keyBuilder receives a typed context with access to the keys manager,
+	 * allowing it to retrieve or refresh tokens as needed.
+	 * @param ctx - Context with `options` and `keys` (the account-level key manager)
+	 * @returns The authentication key string to use for API calls
 	 */
-	keyBuilder?: CorsairKeyBuilderBase;
+	keyBuilder?: CorsairKeyBuilder<Options>;
 };
 
 /**
@@ -287,7 +336,18 @@ export type CorsairPluginContext<
 		 * The result is cached after the first call.
 		 */
 		$getAccountId: () => Promise<string>;
-	} & (Options extends undefined ? {} : { options: Options });
+		/**
+		 * The resolved authentication key string for making API calls.
+		 * This is populated by the keyBuilder before endpoint execution.
+		 */
+		key: string;
+	} & (Options extends undefined ? {} : { options: Options }) &
+	// Include keys manager if authType is defined in options
+	(Options extends { authType: infer T }
+		? T extends AuthTypes
+			? { keys: AccountKeyManagerFor<T> }
+			: {}
+		: {});
 
 /**
  * Configuration for creating a Corsair integration with plugins.
@@ -302,4 +362,6 @@ export type CorsairIntegration<Plugins extends readonly CorsairPlugin[]> = {
 	multiTenancy?: boolean;
 	/** Root-level error handlers that apply when plugin-specific handlers are not defined */
 	errorHandlers?: CorsairErrorHandler;
+	/** Key Encryption Key (KEK) for envelope encryption. Used to encrypt/decrypt Data Encryption Keys (DEK) stored in the database. */
+	kek: string;
 };

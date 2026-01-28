@@ -7,11 +7,10 @@ import type {
 	CorsairPluginContext,
 	CorsairWebhook,
 } from '../../core';
-import type { AuthTypes } from '../../core/constants';
+import type { PickAuth } from '../../core/constants';
 import type { LinearEndpointOutputs } from './endpoints';
 import { Comments, Issues, Projects, Teams } from './endpoints';
 import { errorHandlers } from './error-handlers';
-import type { LinearCredentials } from './schema';
 import { LinearSchema } from './schema';
 import type {
 	CommentCreatedEvent,
@@ -29,9 +28,8 @@ import type {
 import { CommentWebhooks, IssueWebhooks, ProjectWebhooks } from './webhooks';
 
 export type LinearPluginOptions = {
-	authType: AuthTypes;
-	credentials: LinearCredentials;
-	hooks?: LinearPlugin['hooks'] | undefined;
+	authType: PickAuth<'api_key'>;
+	hooks?: LinearPlugin['hooks'];
 	webhookHooks?: LinearPlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
 };

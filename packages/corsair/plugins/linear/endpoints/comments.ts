@@ -106,7 +106,7 @@ const COMMENT_DELETE_MUTATION = `
 `;
 
 export const list: LinearEndpoints['commentsList'] = async (ctx, input) => {
-	const apiKey = ctx.options.credentials.apiKey;
+	const apiKey = ctx.key;
 
 	const response = await makeLinearRequest<CommentsListResponse>(
 		COMMENTS_LIST_QUERY,
@@ -140,12 +140,17 @@ export const list: LinearEndpoints['commentsList'] = async (ctx, input) => {
 		}
 	}
 
-	await logEventFromContext(ctx, 'linear.comments.list', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'linear.comments.list',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
 export const create: LinearEndpoints['commentsCreate'] = async (ctx, input) => {
-	const apiKey = ctx.options.credentials.apiKey;
+	const apiKey = ctx.key;
 
 	const response = await makeLinearRequest<CommentCreateResponse>(
 		COMMENT_CREATE_MUTATION,
@@ -174,12 +179,17 @@ export const create: LinearEndpoints['commentsCreate'] = async (ctx, input) => {
 		}
 	}
 
-	await logEventFromContext(ctx, 'linear.comments.create', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'linear.comments.create',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
 export const update: LinearEndpoints['commentsUpdate'] = async (ctx, input) => {
-	const apiKey = ctx.options.credentials.apiKey;
+	const apiKey = ctx.key;
 
 	const response = await makeLinearRequest<CommentUpdateResponse>(
 		COMMENT_UPDATE_MUTATION,
@@ -211,7 +221,12 @@ export const update: LinearEndpoints['commentsUpdate'] = async (ctx, input) => {
 		}
 	}
 
-	await logEventFromContext(ctx, 'linear.comments.update', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'linear.comments.update',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
@@ -219,7 +234,7 @@ export const deleteComment: LinearEndpoints['commentsDelete'] = async (
 	ctx,
 	input,
 ) => {
-	const apiKey = ctx.options.credentials.apiKey;
+	const apiKey = ctx.key;
 
 	const response = await makeLinearRequest<CommentDeleteResponse>(
 		COMMENT_DELETE_MUTATION,
@@ -239,6 +254,11 @@ export const deleteComment: LinearEndpoints['commentsDelete'] = async (
 		}
 	}
 
-	await logEventFromContext(ctx, 'linear.comments.delete', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'linear.comments.delete',
+		{ ...input },
+		'completed',
+	);
 	return success;
 };

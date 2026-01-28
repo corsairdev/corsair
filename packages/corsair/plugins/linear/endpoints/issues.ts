@@ -297,7 +297,7 @@ export const list: LinearEndpoints['issuesList'] = async (ctx, input) => {
 
 	const response = await makeLinearRequest<IssuesListResponse>(
 		query,
-		ctx.options.credentials.apiKey,
+		ctx.key,
 		variables,
 	);
 
@@ -339,14 +339,19 @@ export const list: LinearEndpoints['issuesList'] = async (ctx, input) => {
 		}
 	}
 
-	await logEventFromContext(ctx, 'linear.issues.list', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'linear.issues.list',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
 export const get: LinearEndpoints['issuesGet'] = async (ctx, input) => {
 	const response = await makeLinearRequest<IssueGetResponse>(
 		ISSUE_GET_QUERY,
-		ctx.options.credentials.apiKey,
+		ctx.key,
 		{ id: input.id },
 	);
 
@@ -386,14 +391,19 @@ export const get: LinearEndpoints['issuesGet'] = async (ctx, input) => {
 		}
 	}
 
-	await logEventFromContext(ctx, 'linear.issues.get', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'linear.issues.get',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
 export const create: LinearEndpoints['issuesCreate'] = async (ctx, input) => {
 	const response = await makeLinearRequest<IssueCreateResponse>(
 		ISSUE_CREATE_MUTATION,
-		ctx.options.credentials.apiKey,
+		ctx.key,
 		{ input },
 	);
 
@@ -423,14 +433,19 @@ export const create: LinearEndpoints['issuesCreate'] = async (ctx, input) => {
 		}
 	}
 
-	await logEventFromContext(ctx, 'linear.issues.create', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'linear.issues.create',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
 export const update: LinearEndpoints['issuesUpdate'] = async (ctx, input) => {
 	const response = await makeLinearRequest<IssueUpdateResponse>(
 		ISSUE_UPDATE_MUTATION,
-		ctx.options.credentials.apiKey,
+		ctx.key,
 		{ id: input.id, input: input.input },
 	);
 
@@ -471,7 +486,12 @@ export const update: LinearEndpoints['issuesUpdate'] = async (ctx, input) => {
 		}
 	}
 
-	await logEventFromContext(ctx, 'linear.issues.update', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'linear.issues.update',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
@@ -481,7 +501,7 @@ export const deleteIssue: LinearEndpoints['issuesDelete'] = async (
 ) => {
 	const response = await makeLinearRequest<IssueDeleteResponse>(
 		ISSUE_DELETE_MUTATION,
-		ctx.options.credentials.apiKey,
+		ctx.key,
 		{ id: input.id },
 	);
 
@@ -495,6 +515,11 @@ export const deleteIssue: LinearEndpoints['issuesDelete'] = async (
 		}
 	}
 
-	await logEventFromContext(ctx, 'linear.issues.delete', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'linear.issues.delete',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };

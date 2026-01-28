@@ -11,6 +11,7 @@ export const CorsairIntegrationsSchema = z.object({
 
 	name: z.string(),
 	config: z.record(z.unknown()),
+	dek: z.string().optional(),
 });
 
 export type CorsairIntegration = z.infer<typeof CorsairIntegrationsSchema>;
@@ -29,6 +30,7 @@ export const CorsairAccountsSchema = z.object({
 	integration_id: z.string(),
 
 	config: z.record(z.unknown()),
+	dek: z.string().optional(),
 });
 
 export type CorsairAccount = z.infer<typeof CorsairAccountsSchema>;

@@ -83,12 +83,7 @@ function extractBody(message: Message): string | undefined {
 export const list: GmailEndpoints['messagesList'] = async (ctx, input) => {
 	const result = await makeGmailRequest<GmailEndpointOutputs['messagesList']>(
 		`/users/${input.userId || 'me'}/messages`,
-		{
-			clientId: ctx.options.clientId,
-			clientSecret: ctx.options.clientSecret,
-			accessToken: ctx.options.accessToken,
-			refreshToken: ctx.options.refreshToken,
-		},
+		ctx.key,
 		{
 			method: 'GET',
 			query: {
@@ -134,12 +129,7 @@ export const list: GmailEndpoints['messagesList'] = async (ctx, input) => {
 export const get: GmailEndpoints['messagesGet'] = async (ctx, input) => {
 	const result = await makeGmailRequest<GmailEndpointOutputs['messagesGet']>(
 		`/users/${input.userId || 'me'}/messages/${input.id}`,
-		{
-			clientId: ctx.options.clientId,
-			clientSecret: ctx.options.clientSecret,
-			accessToken: ctx.options.accessToken,
-			refreshToken: ctx.options.refreshToken,
-		},
+		ctx.key,
 		{
 			method: 'GET',
 			query: {
@@ -188,12 +178,7 @@ export const get: GmailEndpoints['messagesGet'] = async (ctx, input) => {
 export const send: GmailEndpoints['messagesSend'] = async (ctx, input) => {
 	const result = await makeGmailRequest<GmailEndpointOutputs['messagesSend']>(
 		`/users/${input.userId || 'me'}/messages/send`,
-		{
-			clientId: ctx.options.clientId,
-			clientSecret: ctx.options.clientSecret,
-			accessToken: ctx.options.accessToken,
-			refreshToken: ctx.options.refreshToken,
-		},
+		ctx.key,
 		{
 			method: 'POST',
 			body: {
@@ -245,12 +230,7 @@ export const deleteMessage: GmailEndpoints['messagesDelete'] = async (
 ) => {
 	await makeGmailRequest<GmailEndpointOutputs['messagesDelete']>(
 		`/users/${input.userId || 'me'}/messages/${input.id}`,
-		{
-			clientId: ctx.options.clientId,
-			clientSecret: ctx.options.clientSecret,
-			accessToken: ctx.options.accessToken,
-			refreshToken: ctx.options.refreshToken,
-		},
+		ctx.key,
 		{
 			method: 'DELETE',
 		},
@@ -275,12 +255,7 @@ export const deleteMessage: GmailEndpoints['messagesDelete'] = async (
 export const modify: GmailEndpoints['messagesModify'] = async (ctx, input) => {
 	const result = await makeGmailRequest<GmailEndpointOutputs['messagesModify']>(
 		`/users/${input.userId || 'me'}/messages/${input.id}/modify`,
-		{
-			clientId: ctx.options.clientId,
-			clientSecret: ctx.options.clientSecret,
-			accessToken: ctx.options.accessToken,
-			refreshToken: ctx.options.refreshToken,
-		},
+		ctx.key,
 		{
 			method: 'POST',
 			body: {
@@ -332,12 +307,7 @@ export const batchModify: GmailEndpoints['messagesBatchModify'] = async (
 ) => {
 	await makeGmailRequest<GmailEndpointOutputs['messagesBatchModify']>(
 		`/users/${input.userId || 'me'}/messages/batchModify`,
-		{
-			clientId: ctx.options.clientId,
-			clientSecret: ctx.options.clientSecret,
-			accessToken: ctx.options.accessToken,
-			refreshToken: ctx.options.refreshToken,
-		},
+		ctx.key,
 		{
 			method: 'POST',
 			body: {
@@ -359,12 +329,7 @@ export const batchModify: GmailEndpoints['messagesBatchModify'] = async (
 export const trash: GmailEndpoints['messagesTrash'] = async (ctx, input) => {
 	const result = await makeGmailRequest<GmailEndpointOutputs['messagesTrash']>(
 		`/users/${input.userId || 'me'}/messages/${input.id}/trash`,
-		{
-			clientId: ctx.options.clientId,
-			clientSecret: ctx.options.clientSecret,
-			accessToken: ctx.options.accessToken,
-			refreshToken: ctx.options.refreshToken,
-		},
+		ctx.key,
 		{
 			method: 'POST',
 		},
@@ -385,18 +350,9 @@ export const untrash: GmailEndpoints['messagesUntrash'] = async (
 ) => {
 	const result = await makeGmailRequest<
 		GmailEndpointOutputs['messagesUntrash']
-	>(
-		`/users/${input.userId || 'me'}/messages/${input.id}/untrash`,
-		{
-			clientId: ctx.options.clientId,
-			clientSecret: ctx.options.clientSecret,
-			accessToken: ctx.options.accessToken,
-			refreshToken: ctx.options.refreshToken,
-		},
-		{
-			method: 'POST',
-		},
-	);
+	>(`/users/${input.userId || 'me'}/messages/${input.id}/untrash`, ctx.key, {
+		method: 'POST',
+	});
 
 	await logEventFromContext(
 		ctx,

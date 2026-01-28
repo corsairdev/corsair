@@ -6,12 +6,7 @@ import type { GmailEndpointOutputs } from './types';
 export const list: GmailEndpoints['draftsList'] = async (ctx, input) => {
 	const result = await makeGmailRequest<GmailEndpointOutputs['draftsList']>(
 		`/users/${input.userId || 'me'}/drafts`,
-		{
-			clientId: ctx.options.clientId,
-			clientSecret: ctx.options.clientSecret,
-			accessToken: ctx.options.accessToken,
-			refreshToken: ctx.options.refreshToken,
-		},
+		ctx.key,
 		{
 			method: 'GET',
 			query: {
@@ -50,12 +45,7 @@ export const list: GmailEndpoints['draftsList'] = async (ctx, input) => {
 export const get: GmailEndpoints['draftsGet'] = async (ctx, input) => {
 	const result = await makeGmailRequest<GmailEndpointOutputs['draftsGet']>(
 		`/users/${input.userId || 'me'}/drafts/${input.id}`,
-		{
-			clientId: ctx.options.clientId,
-			clientSecret: ctx.options.clientSecret,
-			accessToken: ctx.options.accessToken,
-			refreshToken: ctx.options.refreshToken,
-		},
+		ctx.key,
 		{
 			method: 'GET',
 			query: {
@@ -83,12 +73,7 @@ export const get: GmailEndpoints['draftsGet'] = async (ctx, input) => {
 export const create: GmailEndpoints['draftsCreate'] = async (ctx, input) => {
 	const result = await makeGmailRequest<GmailEndpointOutputs['draftsCreate']>(
 		`/users/${input.userId || 'me'}/drafts`,
-		{
-			clientId: ctx.options.clientId,
-			clientSecret: ctx.options.clientSecret,
-			accessToken: ctx.options.accessToken,
-			refreshToken: ctx.options.refreshToken,
-		},
+		ctx.key,
 		{
 			method: 'POST',
 			body: input.draft,
@@ -119,12 +104,7 @@ export const create: GmailEndpoints['draftsCreate'] = async (ctx, input) => {
 export const update: GmailEndpoints['draftsUpdate'] = async (ctx, input) => {
 	const result = await makeGmailRequest<GmailEndpointOutputs['draftsUpdate']>(
 		`/users/${input.userId || 'me'}/drafts/${input.id}`,
-		{
-			clientId: ctx.options.clientId,
-			clientSecret: ctx.options.clientSecret,
-			accessToken: ctx.options.accessToken,
-			refreshToken: ctx.options.refreshToken,
-		},
+		ctx.key,
 		{
 			method: 'PUT',
 			body: input.draft,
@@ -158,12 +138,7 @@ export const deleteDraft: GmailEndpoints['draftsDelete'] = async (
 ) => {
 	await makeGmailRequest<GmailEndpointOutputs['draftsDelete']>(
 		`/users/${input.userId || 'me'}/drafts/${input.id}`,
-		{
-			clientId: ctx.options.clientId,
-			clientSecret: ctx.options.clientSecret,
-			accessToken: ctx.options.accessToken,
-			refreshToken: ctx.options.refreshToken,
-		},
+		ctx.key,
 		{
 			method: 'DELETE',
 		},
@@ -188,12 +163,7 @@ export const deleteDraft: GmailEndpoints['draftsDelete'] = async (
 export const send: GmailEndpoints['draftsSend'] = async (ctx, input) => {
 	const result = await makeGmailRequest<GmailEndpointOutputs['draftsSend']>(
 		`/users/${input.userId || 'me'}/drafts/send`,
-		{
-			clientId: ctx.options.clientId,
-			clientSecret: ctx.options.clientSecret,
-			accessToken: ctx.options.accessToken,
-			refreshToken: ctx.options.refreshToken,
-		},
+		ctx.key,
 		{
 			method: 'POST',
 			body: {

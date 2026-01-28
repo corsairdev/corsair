@@ -46,7 +46,7 @@ const TEAM_GET_QUERY = `
 export const list: LinearEndpoints['teamsList'] = async (ctx, input) => {
 	const response = await makeLinearRequest<TeamsListResponse>(
 		TEAMS_LIST_QUERY,
-		ctx.options.credentials.apiKey,
+		ctx.key,
 		{
 			first: input.first || 50,
 			after: input.after,
@@ -76,14 +76,19 @@ export const list: LinearEndpoints['teamsList'] = async (ctx, input) => {
 		}
 	}
 
-	await logEventFromContext(ctx, 'linear.teams.list', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'linear.teams.list',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
 export const get: LinearEndpoints['teamsGet'] = async (ctx, input) => {
 	const response = await makeLinearRequest<TeamGetResponse>(
 		TEAM_GET_QUERY,
-		ctx.options.credentials.apiKey,
+		ctx.key,
 		{ id: input.id },
 	);
 

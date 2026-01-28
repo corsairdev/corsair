@@ -6,10 +6,19 @@ import type {
 	PluginEntityClient,
 	PluginEntityClients,
 } from '../../db/orm';
+import {
+	createAccountKeyManager,
+	createIntegrationKeyManager,
+} from '../auth/key-manager';
+import type {
+	AccountKeyManagerFor,
+	IntegrationKeyManagerFor,
+} from '../auth/types';
+import type { AuthTypes } from '../constants';
 import type { BindEndpoints, EndpointTree } from '../endpoints';
 import { bindEndpointsRecursively } from '../endpoints/bind';
 import type { CorsairErrorHandler } from '../errors';
-import type { CorsairPlugin } from '../plugins';
+import type { CorsairKeyBuilderBase, CorsairPlugin } from '../plugins';
 import type { BindWebhooks, RawWebhookRequest, WebhookTree } from '../webhooks';
 import { bindWebhooksRecursively } from '../webhooks/bind';
 
@@ -42,15 +51,24 @@ type UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends (
 	: never;
 
 /**
+ * Extracts the authType from plugin options.
+ */
+type ExtractAuthType<Options> = Options extends { authType: infer T }
+	? T extends AuthTypes
+		? T
+		: never
+	: never;
+
+/**
  * Infers the complete namespace for a single plugin, including API endpoints,
- * database entities, and webhooks if defined.
+ * database entities, webhooks, and account-level keys.
  */
 type InferPluginNamespace<P extends CorsairPlugin> = P extends CorsairPlugin<
 	infer Id,
 	infer Schema,
 	infer Endpoints,
 	infer Webhooks,
-	infer _Options
+	infer Options
 >
 	? {
 			[K in Id]: (Endpoints extends EndpointTree
@@ -67,9 +85,36 @@ type InferPluginNamespace<P extends CorsairPlugin> = P extends CorsairPlugin<
 							 */
 							pluginWebhookMatcher?: (request: RawWebhookRequest) => boolean;
 						}
+					: {}) &
+				// Account-level keys (per-tenant secrets like bot_token, api_key, access_token)
+				(ExtractAuthType<Options> extends AuthTypes
+					? { keys: AccountKeyManagerFor<ExtractAuthType<Options>> }
 					: {});
 		}
 	: never;
+
+/**
+ * Infers the integration-level key manager for a single plugin.
+ */
+type InferIntegrationKeys<P extends CorsairPlugin> = P extends CorsairPlugin<
+	infer Id,
+	infer _Schema,
+	infer _Endpoints,
+	infer _Webhooks,
+	infer Options
+>
+	? ExtractAuthType<Options> extends AuthTypes
+		? {
+				[K in Id]: IntegrationKeyManagerFor<ExtractAuthType<Options>>;
+			}
+		: never
+	: never;
+
+/**
+ * Combines all integration-level keys into a single interface.
+ */
+type InferAllIntegrationKeys<Plugins extends readonly CorsairPlugin[]> =
+	UnionToIntersection<InferIntegrationKeys<Plugins[number]>>;
 
 /**
  * Combines all plugin namespaces into a single client interface.
@@ -78,16 +123,35 @@ type InferPluginNamespaces<Plugins extends readonly CorsairPlugin[]> =
 	UnionToIntersection<InferPluginNamespace<Plugins[number]>>;
 
 /**
- * The main Corsair client type that provides access to all plugin APIs, entities, and webhooks.
+ * The main Corsair client type that provides access to all plugin APIs, entities, webhooks, and keys.
  */
 export type CorsairClient<Plugins extends readonly CorsairPlugin[]> =
 	InferPluginNamespaces<Plugins>;
 
 /**
  * Multi-tenant wrapper that provides a `withTenant` method to scope operations to a specific tenant.
+ * Also includes integration-level `keys` for managing shared secrets (OAuth2 client credentials, etc.)
  */
 export type CorsairTenantWrapper<Plugins extends readonly CorsairPlugin[]> = {
 	withTenant: (tenantId: string) => CorsairClient<Plugins>;
+	/**
+	 * Integration-level key managers for each plugin.
+	 * Used to manage secrets shared across all tenants (e.g., OAuth2 client_id, client_secret).
+	 */
+	keys: InferAllIntegrationKeys<Plugins>;
+};
+
+/**
+ * Single-tenant client that includes both plugin APIs and integration-level keys.
+ */
+export type CorsairSingleTenantClient<
+	Plugins extends readonly CorsairPlugin[],
+> = CorsairClient<Plugins> & {
+	/**
+	 * Integration-level key managers for each plugin.
+	 * Used to manage secrets shared across all tenants (e.g., OAuth2 client_id, client_secret).
+	 */
+	keys: InferAllIntegrationKeys<Plugins>;
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -364,25 +428,33 @@ function createEntityClient(
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// Client Builder Options
+// ─────────────────────────────────────────────────────────────────────────────
+
+export type BuildCorsairClientOptions = {
+	database: CorsairDbAdapter | undefined;
+	tenantId: string | undefined;
+	kek: string | undefined;
+	rootErrorHandlers?: CorsairErrorHandler;
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
 // Client Builder
 // ─────────────────────────────────────────────────────────────────────────────
 
 /**
- * Builds a Corsair client instance with all plugin APIs, entities, and webhooks bound.
+ * Builds a Corsair client instance with all plugin APIs, entities, webhooks, and account-level keys bound.
  * @param plugins - Array of plugin definitions to include in the client
- * @param database - Optional database adapter for ORM entities
- * @param tenantId - Optional tenant ID for multi-tenant setups
- * @param rootErrorHandlers - Optional root-level error handlers
- * @returns A fully configured Corsair client
+ * @param options - Client build options including database, tenantId, and kek
+ * @returns A fully configured Corsair client with account-level keys
  */
 export function buildCorsairClient<
 	const Plugins extends readonly CorsairPlugin[],
 >(
 	plugins: Plugins,
-	database: CorsairDbAdapter | undefined,
-	tenantId: string | undefined,
-	rootErrorHandlers?: CorsairErrorHandler,
+	options: BuildCorsairClientOptions,
 ): CorsairClient<Plugins> {
+	const { database, tenantId, kek, rootErrorHandlers } = options;
 	const scopedDatabase =
 		database && tenantId ? withTenantAdapter(database, tenantId) : database;
 
@@ -424,12 +496,32 @@ export function buildCorsairClient<
 			apiUnsafe[plugin.id]!.db = dbClients;
 		}
 
-		// Build plugin context with entity clients under `db` and account ID resolver
+		// Create account-level key manager BEFORE binding endpoints so keyBuilder can access it
+		const pluginOptions = plugin.options as
+			| { authType?: AuthTypes }
+			| undefined;
+		let accountKeyManager: AccountKeyManagerFor<AuthTypes> | undefined;
+		if (database && kek && pluginOptions?.authType) {
+			accountKeyManager = createAccountKeyManager({
+				authType: pluginOptions.authType,
+				integrationName: plugin.id,
+				tenantId: effectiveTenantId,
+				kek,
+				database,
+			});
+			apiUnsafe[plugin.id]!.keys = accountKeyManager;
+		}
+
+		// Build plugin context with entity clients under `db`, account ID resolver, and keys manager
 		const ctxForPlugin: Record<string, unknown> = {
 			database: scopedDatabase,
 			db: pluginEntitiesUnsafe[plugin.id]?.db ?? {},
 			$getAccountId: getAccountId,
 			...(plugin.options ? { options: plugin.options } : {}),
+			// Include keys manager and authType in context so keyBuilder can access and narrow types
+			...(accountKeyManager
+				? { keys: accountKeyManager, authType: pluginOptions?.authType }
+				: {}),
 		};
 
 		const endpoints = plugin.endpoints ?? {};
@@ -452,7 +544,7 @@ export function buildCorsairClient<
 			pluginId: plugin.id,
 			errorHandlers: allErrorHandlers,
 			currentPath: [],
-			keyBuilder: plugin.keyBuilder,
+			keyBuilder: plugin.keyBuilder as CorsairKeyBuilderBase | undefined,
 		});
 
 		if (Object.keys(boundTree).length > 0) {
@@ -491,4 +583,43 @@ export function buildCorsairClient<
 	return {
 		...(api as unknown as Record<string, unknown>),
 	} as CorsairClient<Plugins>;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Integration Keys Builder
+// ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Builds integration-level key managers for all plugins.
+ * These manage secrets shared across all tenants (OAuth2 client credentials, etc.)
+ * @param plugins - Array of plugin definitions
+ * @param database - Database adapter for storage
+ * @param kek - Key Encryption Key for envelope encryption
+ * @returns An object with key managers for each plugin
+ */
+export function buildIntegrationKeys<
+	const Plugins extends readonly CorsairPlugin[],
+>(
+	plugins: Plugins,
+	database: CorsairDbAdapter,
+	kek: string,
+): InferAllIntegrationKeys<Plugins> {
+	const keysUnsafe: Record<string, unknown> = {};
+
+	for (const plugin of plugins) {
+		const pluginOptions = plugin.options as
+			| { authType?: AuthTypes }
+			| undefined;
+		if (pluginOptions?.authType) {
+			const integrationKeyManager = createIntegrationKeyManager({
+				authType: pluginOptions.authType,
+				integrationName: plugin.id,
+				kek,
+				database,
+			});
+			keysUnsafe[plugin.id] = integrationKeyManager;
+		}
+	}
+
+	return keysUnsafe as InferAllIntegrationKeys<Plugins>;
 }

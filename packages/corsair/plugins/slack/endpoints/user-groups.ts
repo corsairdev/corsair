@@ -9,7 +9,7 @@ export const create: SlackEndpoints['userGroupsCreate'] = async (
 ) => {
 	const result = await makeSlackRequest<
 		SlackEndpointOutputs['userGroupsCreate']
-	>('userGroups.create', ctx.options.credentials.botToken, {
+	>('userGroups.create', ctx.key, {
 		method: 'POST',
 		body: {
 			name: input.name,
@@ -50,7 +50,7 @@ export const disable: SlackEndpoints['userGroupsDisable'] = async (
 ) => {
 	const result = await makeSlackRequest<
 		SlackEndpointOutputs['userGroupsDisable']
-	>('userGroups.disable', ctx.options.credentials.botToken, {
+	>('userGroups.disable', ctx.key, {
 		method: 'POST',
 		body: {
 			usergroup: input.userGroup,
@@ -86,7 +86,7 @@ export const enable: SlackEndpoints['userGroupsEnable'] = async (
 ) => {
 	const result = await makeSlackRequest<
 		SlackEndpointOutputs['userGroupsEnable']
-	>('userGroups.enable', ctx.options.credentials.botToken, {
+	>('userGroups.enable', ctx.key, {
 		method: 'POST',
 		body: {
 			usergroup: input.userGroup,
@@ -119,7 +119,7 @@ export const enable: SlackEndpoints['userGroupsEnable'] = async (
 export const list: SlackEndpoints['userGroupsList'] = async (ctx, input) => {
 	const result = await makeSlackRequest<SlackEndpointOutputs['userGroupsList']>(
 		'userGroups.list',
-		ctx.options.credentials.botToken,
+		ctx.key,
 		{
 			method: 'GET',
 			query: {
@@ -161,7 +161,7 @@ export const update: SlackEndpoints['userGroupsUpdate'] = async (
 ) => {
 	const result = await makeSlackRequest<
 		SlackEndpointOutputs['userGroupsUpdate']
-	>('userGroups.update', ctx.options.credentials.botToken, {
+	>('userGroups.update', ctx.key, {
 		method: 'POST',
 		body: {
 			usergroup: input.userGroup,

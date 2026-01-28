@@ -11,7 +11,7 @@ export const create: ResendEndpoints['domainsCreate'] = async (ctx, input) => {
 
 	const response = await makeResendRequest<
 		ResendEndpointOutputs['domainsCreate']
-	>('domains', ctx.options.credentials.apiKey, {
+	>('domains', ctx.key, {
 		method: 'POST',
 		body,
 	});
@@ -42,7 +42,7 @@ export const create: ResendEndpoints['domainsCreate'] = async (ctx, input) => {
 export const get: ResendEndpoints['domainsGet'] = async (ctx, input) => {
 	const response = await makeResendRequest<ResendEndpointOutputs['domainsGet']>(
 		`domains/${input.id}`,
-		ctx.options.credentials.apiKey,
+		ctx.key,
 		{
 			method: 'GET',
 		},
@@ -78,7 +78,7 @@ export const list: ResendEndpoints['domainsList'] = async (ctx, input) => {
 
 	const response = await makeResendRequest<
 		ResendEndpointOutputs['domainsList']
-	>('domains', ctx.options.credentials.apiKey, {
+	>('domains', ctx.key, {
 		method: 'GET',
 		query,
 	});
@@ -114,7 +114,7 @@ export const deleteDomain: ResendEndpoints['domainsDelete'] = async (
 ) => {
 	const response = await makeResendRequest<
 		ResendEndpointOutputs['domainsDelete']
-	>(`domains/${input.id}`, ctx.options.credentials.apiKey, {
+	>(`domains/${input.id}`, ctx.key, {
 		method: 'DELETE',
 	});
 
@@ -138,7 +138,7 @@ export const deleteDomain: ResendEndpoints['domainsDelete'] = async (
 export const verify: ResendEndpoints['domainsVerify'] = async (ctx, input) => {
 	const response = await makeResendRequest<
 		ResendEndpointOutputs['domainsVerify']
-	>(`domains/${input.id}/verify`, ctx.options.credentials.apiKey, {
+	>(`domains/${input.id}/verify`, ctx.key, {
 		method: 'POST',
 	});
 

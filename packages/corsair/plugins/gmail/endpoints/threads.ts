@@ -6,12 +6,7 @@ import type { GmailEndpointOutputs } from './types';
 export const list: GmailEndpoints['threadsList'] = async (ctx, input) => {
 	const result = await makeGmailRequest<GmailEndpointOutputs['threadsList']>(
 		`/users/${input.userId || 'me'}/threads`,
-		{
-			clientId: ctx.options.clientId,
-			clientSecret: ctx.options.clientSecret,
-			accessToken: ctx.options.accessToken,
-			refreshToken: ctx.options.refreshToken,
-		},
+		ctx.key,
 		{
 			method: 'GET',
 			query: {
@@ -53,12 +48,7 @@ export const list: GmailEndpoints['threadsList'] = async (ctx, input) => {
 export const get: GmailEndpoints['threadsGet'] = async (ctx, input) => {
 	const result = await makeGmailRequest<GmailEndpointOutputs['threadsGet']>(
 		`/users/${input.userId || 'me'}/threads/${input.id}`,
-		{
-			clientId: ctx.options.clientId,
-			clientSecret: ctx.options.clientSecret,
-			accessToken: ctx.options.accessToken,
-			refreshToken: ctx.options.refreshToken,
-		},
+		ctx.key,
 		{
 			method: 'GET',
 			query: {
@@ -93,12 +83,7 @@ export const get: GmailEndpoints['threadsGet'] = async (ctx, input) => {
 export const modify: GmailEndpoints['threadsModify'] = async (ctx, input) => {
 	const result = await makeGmailRequest<GmailEndpointOutputs['threadsModify']>(
 		`/users/${input.userId || 'me'}/threads/${input.id}/modify`,
-		{
-			clientId: ctx.options.clientId,
-			clientSecret: ctx.options.clientSecret,
-			accessToken: ctx.options.accessToken,
-			refreshToken: ctx.options.refreshToken,
-		},
+		ctx.key,
 		{
 			method: 'POST',
 			body: {
@@ -136,12 +121,7 @@ export const deleteThread: GmailEndpoints['threadsDelete'] = async (
 ) => {
 	await makeGmailRequest<GmailEndpointOutputs['threadsDelete']>(
 		`/users/${input.userId || 'me'}/threads/${input.id}`,
-		{
-			clientId: ctx.options.clientId,
-			clientSecret: ctx.options.clientSecret,
-			accessToken: ctx.options.accessToken,
-			refreshToken: ctx.options.refreshToken,
-		},
+		ctx.key,
 		{
 			method: 'DELETE',
 		},
@@ -166,12 +146,7 @@ export const deleteThread: GmailEndpoints['threadsDelete'] = async (
 export const trash: GmailEndpoints['threadsTrash'] = async (ctx, input) => {
 	const result = await makeGmailRequest<GmailEndpointOutputs['threadsTrash']>(
 		`/users/${input.userId || 'me'}/threads/${input.id}/trash`,
-		{
-			clientId: ctx.options.clientId,
-			clientSecret: ctx.options.clientSecret,
-			accessToken: ctx.options.accessToken,
-			refreshToken: ctx.options.refreshToken,
-		},
+		ctx.key,
 		{
 			method: 'POST',
 		},
@@ -189,12 +164,7 @@ export const trash: GmailEndpoints['threadsTrash'] = async (ctx, input) => {
 export const untrash: GmailEndpoints['threadsUntrash'] = async (ctx, input) => {
 	const result = await makeGmailRequest<GmailEndpointOutputs['threadsUntrash']>(
 		`/users/${input.userId || 'me'}/threads/${input.id}/untrash`,
-		{
-			clientId: ctx.options.clientId,
-			clientSecret: ctx.options.clientSecret,
-			accessToken: ctx.options.accessToken,
-			refreshToken: ctx.options.refreshToken,
-		},
+		ctx.key,
 		{
 			method: 'POST',
 		},

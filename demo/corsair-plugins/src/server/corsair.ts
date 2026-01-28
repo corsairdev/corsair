@@ -7,12 +7,10 @@ import * as schema from '../db/schema';
 export const corsair = createCorsair({
 	multiTenancy: true,
 	database: drizzleAdapter(db, { provider: 'pg', schema }),
+	kek: process.env.CORSAIR_KEK!,
 	plugins: [
 		slack({
 			authType: 'api_key',
-			credentials: {
-				botToken: process.env.SLACK_BOT_TOKEN!,
-			},
 			hooks: {
 				channels: {
 					random: {
@@ -53,9 +51,6 @@ export const corsair = createCorsair({
 		}),
 		linear({
 			authType: 'api_key',
-			credentials: {
-				apiKey: process.env.LINEAR_API_KEY ?? 'dev-token',
-			},
 		}),
 		// resend({
 		// 	authType: 'api_key',
