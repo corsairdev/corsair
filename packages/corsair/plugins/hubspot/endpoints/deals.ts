@@ -26,13 +26,7 @@ export const get: HubSpotEndpoints['dealsGet'] = async (ctx, input) => {
 
 	if (result && ctx.db.deals) {
 		try {
-			await ctx.db.deals.upsert(result.id, {
-				id: result.id,
-				properties: result.properties,
-				createdAt: new Date(result.createdAt),
-				updatedAt: new Date(result.updatedAt),
-				archived: result.archived,
-			});
+			await ctx.db.deals.upsert(result.id,result);
 		} catch (error) {
 			console.warn('Failed to save deal to database:', error);
 		}
@@ -61,13 +55,7 @@ export const getMany: HubSpotEndpoints['dealsGetMany'] = async (ctx, input) => {
 	if (result.results && ctx.db.deals) {
 		try {
 			for (const deal of result.results) {
-				await ctx.db.deals.upsert(deal.id, {
-					id: deal.id,
-					properties: deal.properties,
-					createdAt: new Date(deal.createdAt),
-					updatedAt: new Date(deal.updatedAt),
-					archived: deal.archived,
-				});
+				await ctx.db.deals.upsert(deal.id, deal);
 			}
 		} catch (error) {
 			console.warn('Failed to save deals to database:', error);
@@ -89,13 +77,7 @@ export const create: HubSpotEndpoints['dealsCreate'] = async (ctx, input) => {
 
 	if (result && ctx.db.deals) {
 		try {
-			await ctx.db.deals.upsert(result.id, {
-				id: result.id,
-				properties: result.properties,
-				createdAt: new Date(result.createdAt),
-				updatedAt: new Date(result.updatedAt),
-				archived: result.archived,
-			});
+			await ctx.db.deals.upsert(result.id, result);
 		} catch (error) {
 			console.warn('Failed to save deal to database:', error);
 		}
@@ -116,13 +98,7 @@ export const update: HubSpotEndpoints['dealsUpdate'] = async (ctx, input) => {
 
 	if (result && ctx.db.deals) {
 		try {
-			await ctx.db.deals.upsert(result.id, {
-				id: result.id,
-				properties: result.properties,
-				createdAt: new Date(result.createdAt),
-				updatedAt: new Date(result.updatedAt),
-				archived: result.archived,
-			});
+			await ctx.db.deals.upsert(result.id, result);
 		} catch (error) {
 			console.warn('Failed to update deal in database:', error);
 		}

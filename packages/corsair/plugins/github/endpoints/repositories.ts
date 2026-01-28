@@ -1,6 +1,6 @@
 import { logEventFromContext } from '../../utils/events';
-import type { GithubEndpoints } from '..';
-import { makeGithubRequest } from '../client';
+import type { GithubBoundEndpoints, GithubEndpoints } from '..';
+import { GithubAPIError, makeGithubRequest } from '../client';
 import type {
 	RepositoryBranchesListResponse,
 	RepositoryCommitsListResponse,
@@ -11,45 +11,14 @@ import type {
 
 export const list: GithubEndpoints['repositoriesList'] = async (ctx, input) => {
 	const { owner, type, ...queryParams } = input;
-	const endpoint = owner
-		? `/orgs/${owner}/repos`
-		: '/user/repos';
-	const result = await makeGithubRequest<RepositoriesListResponse>(
-		endpoint,
-		ctx.options.token,
-		{ query: { ...queryParams, type } },
-	);
+	let endpoint = owner ? `/orgs/${owner}/repos` : '/user/repos';
+	let result: RepositoriesListResponse;
 
-	if (result && ctx.db.repositories) {
-		try {
-			for (const repo of result) {
-				await ctx.db.repositories.upsert(repo.id.toString(), {
-					id: repo.id,
-					nodeId: repo.nodeId,
-					name: repo.name,
-					fullName: repo.fullName,
-					private: repo.private,
-					htmlUrl: repo.htmlUrl,
-					description: repo.description,
-					fork: repo.fork,
-					url: repo.url,
-					createdAt: repo.createdAt ? new Date(repo.createdAt) : undefined,
-					updatedAt: repo.updatedAt ? new Date(repo.updatedAt) : undefined,
-					pushedAt: repo.pushedAt ? new Date(repo.pushedAt) : null,
-					defaultBranch: repo.defaultBranch,
-					language: repo.language,
-					stargazersCount: repo.stargazersCount,
-					watchersCount: repo.watchersCount,
-					forksCount: repo.forksCount,
-					openIssuesCount: repo.openIssuesCount,
-					archived: repo.archived,
-					disabled: repo.disabled,
-				});
-			}
-		} catch (error) {
-			console.warn('Failed to save repositories to database:', error);
-		}
-	}
+		result = await makeGithubRequest<RepositoriesListResponse>(
+			endpoint,
+			ctx.options.token,
+			{ query: { ...queryParams, type } },
+		);
 
 	await logEventFromContext(
 		ctx,
@@ -70,28 +39,7 @@ export const get: GithubEndpoints['repositoriesGet'] = async (ctx, input) => {
 
 	if (result && ctx.db.repositories) {
 		try {
-			await ctx.db.repositories.upsert(result.id.toString(), {
-				id: result.id,
-				nodeId: result.nodeId,
-				name: result.name,
-				fullName: result.fullName,
-				private: result.private,
-				htmlUrl: result.htmlUrl,
-				description: result.description,
-				fork: result.fork,
-				url: result.url,
-				createdAt: result.createdAt ? new Date(result.createdAt) : undefined,
-				updatedAt: result.updatedAt ? new Date(result.updatedAt) : undefined,
-				pushedAt: result.pushedAt ? new Date(result.pushedAt) : null,
-				defaultBranch: result.defaultBranch,
-				language: result.language,
-				stargazersCount: result.stargazersCount,
-				watchersCount: result.watchersCount,
-				forksCount: result.forksCount,
-				openIssuesCount: result.openIssuesCount,
-				archived: result.archived,
-				disabled: result.disabled,
-			});
+			await ctx.db.repositories.upsert(result.id.toString(), result);
 		} catch (error) {
 			console.warn('Failed to save repository to database:', error);
 		}
@@ -112,6 +60,12 @@ export const listBranches: GithubEndpoints['repositoriesListBranches'] = async (
 		ctx.options.token,
 		{ query: queryParams },
 	);
+
+	const endpoints = ctx.endpoints as GithubBoundEndpoints
+	await endpoints.repositoriesGet({
+		owner,
+		repo,
+	});
 
 	await logEventFromContext(
 		ctx,
@@ -134,6 +88,12 @@ export const listCommits: GithubEndpoints['repositoriesListCommits'] = async (
 		{ query: queryParams },
 	);
 
+	const endpoints = ctx.endpoints as GithubBoundEndpoints
+	await endpoints.repositoriesGet({
+		owner,
+		repo,
+	});
+
 	await logEventFromContext(
 		ctx,
 		'github.repositories.listCommits',
@@ -154,6 +114,12 @@ export const getContent: GithubEndpoints['repositoriesGetContent'] = async (
 		ctx.options.token,
 		{ query: queryParams },
 	);
+
+	const endpoints = ctx.endpoints as GithubBoundEndpoints
+	await endpoints.repositoriesGet({
+		owner,
+		repo,
+	});
 
 	await logEventFromContext(
 		ctx,

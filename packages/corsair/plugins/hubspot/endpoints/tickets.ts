@@ -26,13 +26,7 @@ export const get: HubSpotEndpoints['ticketsGet'] = async (ctx, input) => {
 
 	if (result && ctx.db.tickets) {
 		try {
-			await ctx.db.tickets.upsert(result.id, {
-				id: result.id,
-				properties: result.properties,
-				createdAt: new Date(result.createdAt),
-				updatedAt: new Date(result.updatedAt),
-				archived: result.archived,
-			});
+			await ctx.db.tickets.upsert(result.id, result);
 		} catch (error) {
 			console.warn('Failed to save ticket to database:', error);
 		}
@@ -61,13 +55,7 @@ export const getMany: HubSpotEndpoints['ticketsGetMany'] = async (ctx, input) =>
 	if (result.results && ctx.db.tickets) {
 		try {
 			for (const ticket of result.results) {
-				await ctx.db.tickets.upsert(ticket.id, {
-					id: ticket.id,
-					properties: ticket.properties,
-					createdAt: new Date(ticket.createdAt),
-					updatedAt: new Date(ticket.updatedAt),
-					archived: ticket.archived,
-				});
+				await ctx.db.tickets.upsert(ticket.id, ticket);
 			}
 		} catch (error) {
 			console.warn('Failed to save tickets to database:', error);
@@ -89,13 +77,7 @@ export const create: HubSpotEndpoints['ticketsCreate'] = async (ctx, input) => {
 
 	if (result && ctx.db.tickets) {
 		try {
-			await ctx.db.tickets.upsert(result.id, {
-				id: result.id,
-				properties: result.properties,
-				createdAt: new Date(result.createdAt),
-				updatedAt: new Date(result.updatedAt),
-				archived: result.archived,
-			});
+			await ctx.db.tickets.upsert(result.id, result);
 		} catch (error) {
 			console.warn('Failed to save ticket to database:', error);
 		}
@@ -116,13 +98,7 @@ export const update: HubSpotEndpoints['ticketsUpdate'] = async (ctx, input) => {
 
 	if (result && ctx.db.tickets) {
 		try {
-			await ctx.db.tickets.upsert(result.id, {
-				id: result.id,
-				properties: result.properties,
-				createdAt: new Date(result.createdAt),
-				updatedAt: new Date(result.updatedAt),
-				archived: result.archived,
-			});
+			await ctx.db.tickets.upsert(result.id, result);
 		} catch (error) {
 			console.warn('Failed to update ticket in database:', error);
 		}

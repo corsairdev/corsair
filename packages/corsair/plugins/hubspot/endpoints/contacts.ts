@@ -25,13 +25,7 @@ export const get: HubSpotEndpoints['contactsGet'] = async (ctx, input) => {
 
 	if (result && ctx.db.contacts) {
 		try {
-			await ctx.db.contacts.upsert(result.id, {
-				id: result.id,
-				properties: result.properties,
-				createdAt: new Date(result.createdAt),
-				updatedAt: new Date(result.updatedAt),
-				archived: result.archived,
-			});
+			await ctx.db.contacts.upsert(result.id, result);
 		} catch (error) {
 			console.warn('Failed to save contact to database:', error);
 		}
@@ -60,13 +54,7 @@ export const getMany: HubSpotEndpoints['contactsGetMany'] = async (ctx, input) =
 	if (result.results && ctx.db.contacts) {
 		try {
 			for (const contact of result.results) {
-				await ctx.db.contacts.upsert(contact.id, {
-					id: contact.id,
-					properties: contact.properties,
-					createdAt: new Date(contact.createdAt),
-					updatedAt: new Date(contact.updatedAt),
-					archived: contact.archived,
-				});
+				await ctx.db.contacts.upsert(contact.id, contact);
 			}
 		} catch (error) {
 			console.warn('Failed to save contacts to database:', error);
@@ -91,13 +79,7 @@ export const createOrUpdate: HubSpotEndpoints['contactsCreateOrUpdate'] = async 
 
 	if (result && ctx.db.contacts) {
 		try {
-			await ctx.db.contacts.upsert(result.id, {
-				id: result.id,
-				properties: result.properties,
-				createdAt: new Date(result.createdAt),
-				updatedAt: new Date(result.updatedAt),
-				archived: result.archived,
-			});
+			await ctx.db.contacts.upsert(result.id, result);
 		} catch (error) {
 			console.warn('Failed to save contact to database:', error);
 		}

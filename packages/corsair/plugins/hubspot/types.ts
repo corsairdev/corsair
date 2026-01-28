@@ -1,32 +1,32 @@
 export type ContactResponse = {
 	id: string;
 	properties: Record<string, any>;
-	createdAt: string;
-	updatedAt: string;
+	createdAt: Date;
+	updatedAt: Date;
 	archived?: boolean;
 };
 
 export type CompanyResponse = {
 	id: string;
 	properties: Record<string, any>;
-	createdAt: string;
-	updatedAt: string;
+	createdAt: Date;
+	updatedAt: Date;
 	archived?: boolean;
 };
 
 export type DealResponse = {
 	id: string;
 	properties: Record<string, any>;
-	createdAt: string;
-	updatedAt: string;
+	createdAt: Date;
+	updatedAt: Date;
 	archived?: boolean;
 };
 
 export type TicketResponse = {
 	id: string;
 	properties: Record<string, any>;
-	createdAt: string;
-	updatedAt: string;
+	createdAt: Date;
+	updatedAt: Date;
 	archived?: boolean;
 };
 

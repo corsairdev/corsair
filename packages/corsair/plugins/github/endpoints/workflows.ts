@@ -1,5 +1,5 @@
 import { logEventFromContext } from '../../utils/events';
-import type { GithubEndpoints } from '..';
+import type { GithubBoundEndpoints, GithubEndpoints } from '..';
 import { makeGithubRequest } from '../client';
 import type {
 	WorkflowGetResponse,
@@ -16,28 +16,6 @@ export const list: GithubEndpoints['workflowsList'] = async (ctx, input) => {
 		{ query: queryParams },
 	);
 
-	if (result.workflows && ctx.db.workflows) {
-		try {
-			for (const workflow of result.workflows) {
-				await ctx.db.workflows.upsert(workflow.id.toString(), {
-					id: workflow.id,
-					nodeId: workflow.nodeId,
-					name: workflow.name,
-					path: workflow.path,
-					state: workflow.state,
-					url: workflow.url,
-					htmlUrl: workflow.htmlUrl,
-					badgeUrl: workflow.badgeUrl,
-					createdAt: new Date(workflow.createdAt),
-					updatedAt: new Date(workflow.updatedAt),
-					deletedAt: workflow.deletedAt ? new Date(workflow.deletedAt) : null,
-				});
-			}
-		} catch (error) {
-			console.warn('Failed to save workflows to database:', error);
-		}
-	}
-
 	await logEventFromContext(ctx, 'github.workflows.list', { ...input }, 'completed');
 	return result;
 };
@@ -52,19 +30,7 @@ export const get: GithubEndpoints['workflowsGet'] = async (ctx, input) => {
 
 	if (result && ctx.db.workflows) {
 		try {
-			await ctx.db.workflows.upsert(result.id.toString(), {
-				id: result.id,
-				nodeId: result.nodeId,
-				name: result.name,
-				path: result.path,
-				state: result.state,
-				url: result.url,
-				htmlUrl: result.htmlUrl,
-				badgeUrl: result.badgeUrl,
-				createdAt: new Date(result.createdAt),
-				updatedAt: new Date(result.updatedAt),
-				deletedAt: result.deletedAt ? new Date(result.deletedAt) : null,
-			});
+			await ctx.db.workflows.upsert(result.id.toString(), result);
 		} catch (error) {
 			console.warn('Failed to save workflow to database:', error);
 		}

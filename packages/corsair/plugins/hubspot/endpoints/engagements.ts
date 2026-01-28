@@ -18,10 +18,7 @@ export const get: HubSpotEndpoints['engagementsGet'] = async (ctx, input) => {
 	if (result && ctx.db.engagements) {
 		try {
 			await ctx.db.engagements.upsert(result.id, {
-				id: result.id,
-				engagement: result.engagement,
-				associations: result.associations,
-				metadata: result.metadata,
+				...result,
 			});
 		} catch (error) {
 			console.warn('Failed to save engagement to database:', error);
@@ -45,10 +42,7 @@ export const getMany: HubSpotEndpoints['engagementsGetMany'] = async (ctx, input
 		try {
 			for (const engagement of result.results) {
 				await ctx.db.engagements.upsert(engagement.id, {
-					id: engagement.id,
-					engagement: engagement.engagement,
-					associations: engagement.associations,
-					metadata: engagement.metadata,
+					...engagement,
 				});
 			}
 		} catch (error) {
@@ -72,10 +66,7 @@ export const create: HubSpotEndpoints['engagementsCreate'] = async (ctx, input) 
 	if (result && ctx.db.engagements) {
 		try {
 			await ctx.db.engagements.upsert(result.id, {
-				id: result.id,
-				engagement: result.engagement,
-				associations: result.associations,
-				metadata: result.metadata,
+				...result,
 			});
 		} catch (error) {
 			console.warn('Failed to save engagement to database:', error);

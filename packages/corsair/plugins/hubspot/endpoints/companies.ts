@@ -1,5 +1,5 @@
 import { logEventFromContext } from '../../utils/events';
-import type { HubSpotEndpoints } from '..';
+import type { HubSpotBoundEndpoints, HubSpotEndpoints } from '..';
 import { makeHubSpotRequest } from '../client';
 import type {
 	CreateCompanyResponse,
@@ -27,13 +27,7 @@ export const get: HubSpotEndpoints['companiesGet'] = async (ctx, input) => {
 
 	if (result && ctx.db.companies) {
 		try {
-			await ctx.db.companies.upsert(result.id, {
-				id: result.id,
-				properties: result.properties,
-				createdAt: new Date(result.createdAt),
-				updatedAt: new Date(result.updatedAt),
-				archived: result.archived,
-			});
+			await ctx.db.companies.upsert(result.id, result);
 		} catch (error) {
 			console.warn('Failed to save company to database:', error);
 		}
@@ -62,13 +56,7 @@ export const getMany: HubSpotEndpoints['companiesGetMany'] = async (ctx, input) 
 	if (result.results && ctx.db.companies) {
 		try {
 			for (const company of result.results) {
-				await ctx.db.companies.upsert(company.id, {
-					id: company.id,
-					properties: company.properties,
-					createdAt: new Date(company.createdAt),
-					updatedAt: new Date(company.updatedAt),
-					archived: company.archived,
-				});
+				await ctx.db.companies.upsert(company.id, company);
 			}
 		} catch (error) {
 			console.warn('Failed to save companies to database:', error);
@@ -88,19 +76,10 @@ export const create: HubSpotEndpoints['companiesCreate'] = async (ctx, input) =>
 		{ method: 'POST', body },
 	);
 
-	if (result && ctx.db.companies) {
-		try {
-			await ctx.db.companies.upsert(result.id, {
-				id: result.id,
-				properties: result.properties,
-				createdAt: new Date(result.createdAt),
-				updatedAt: new Date(result.updatedAt),
-				archived: result.archived,
-			});
-		} catch (error) {
-			console.warn('Failed to save company to database:', error);
-		}
-	}
+	const endpoints = ctx.endpoints as HubSpotBoundEndpoints
+	await endpoints.companiesGet({
+		companyId: result.id,
+	});
 
 	await logEventFromContext(ctx, 'hubspot.companies.create', { ...input }, 'completed');
 	return result;
@@ -115,19 +94,10 @@ export const update: HubSpotEndpoints['companiesUpdate'] = async (ctx, input) =>
 		{ method: 'PATCH', body },
 	);
 
-	if (result && ctx.db.companies) {
-		try {
-			await ctx.db.companies.upsert(result.id, {
-				id: result.id,
-				properties: result.properties,
-				createdAt: new Date(result.createdAt),
-				updatedAt: new Date(result.updatedAt),
-				archived: result.archived,
-			});
-		} catch (error) {
-			console.warn('Failed to update company in database:', error);
-		}
-	}
+	const endpoints = ctx.endpoints as HubSpotBoundEndpoints
+	await endpoints.companiesGet({
+		companyId: result.id,
+	});
 
 	await logEventFromContext(ctx, 'hubspot.companies.update', { ...input }, 'completed');
 	return result;
@@ -145,13 +115,10 @@ export const deleteCompany: HubSpotEndpoints['companiesDelete'] = async (
 		{ method: 'DELETE' },
 	);
 
-	if (ctx.db.companies) {
-		try {
-			await ctx.db.companies.deleteByEntityId(companyId);
-		} catch (error) {
-			console.warn('Failed to delete company from database:', error);
-		}
-	}
+	const endpoints = ctx.endpoints as HubSpotBoundEndpoints
+	await endpoints.companiesGet({
+		companyId: companyId,
+	});
 
 	await logEventFromContext(ctx, 'hubspot.companies.delete', { ...input }, 'completed');
 };
@@ -165,6 +132,11 @@ export const getRecentlyCreated: HubSpotEndpoints['companiesGetRecentlyCreated']
 			ctx.options.token,
 			{ query: queryParams },
 		);
+
+		const endpoints = ctx.endpoints as HubSpotBoundEndpoints
+		await endpoints.companiesGetMany({
+			...queryParams,
+		});
 
 		await logEventFromContext(
 			ctx,
@@ -184,6 +156,11 @@ export const getRecentlyUpdated: HubSpotEndpoints['companiesGetRecentlyUpdated']
 			ctx.options.token,
 			{ query: queryParams },
 		);
+
+		const endpoints = ctx.endpoints as HubSpotBoundEndpoints
+		await endpoints.companiesGetMany({
+			...queryParams,
+		});
 
 		await logEventFromContext(
 			ctx,

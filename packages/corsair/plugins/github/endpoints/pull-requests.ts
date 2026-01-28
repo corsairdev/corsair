@@ -1,5 +1,5 @@
 import { logEventFromContext } from '../../utils/events';
-import type { GithubEndpoints } from '..';
+import type { GithubBoundEndpoints, GithubEndpoints } from '..';
 import { makeGithubRequest } from '../client';
 import type {
 	PullRequestGetResponse,
@@ -20,34 +20,7 @@ export const list: GithubEndpoints['pullRequestsList'] = async (ctx, input) => {
 	if (result && ctx.db.pullRequests) {
 		try {
 			for (const pr of result) {
-				await ctx.db.pullRequests.upsert(pr.id.toString(), {
-					id: pr.id,
-					nodeId: pr.nodeId,
-					url: pr.url,
-					htmlUrl: pr.htmlUrl,
-					diffUrl: pr.diffUrl,
-					patchUrl: pr.patchUrl,
-					issueUrl: pr.issueUrl,
-					number: pr.number,
-					state: pr.state,
-					locked: pr.locked,
-					title: pr.title,
-					body: pr.body,
-					createdAt: new Date(pr.createdAt),
-					updatedAt: new Date(pr.updatedAt),
-					closedAt: pr.closedAt ? new Date(pr.closedAt) : null,
-					mergedAt: pr.mergedAt ? new Date(pr.mergedAt) : null,
-					mergeCommitSha: pr.mergeCommitSha,
-					draft: pr.draft,
-					merged: pr.merged,
-					mergeable: pr.mergeable,
-					comments: pr.comments,
-					reviewComments: pr.reviewComments,
-					commits: pr.commits,
-					additions: pr.additions,
-					deletions: pr.deletions,
-					changedFiles: pr.changedFiles,
-				});
+				await ctx.db.pullRequests.upsert(pr.id.toString(),pr);
 			}
 		} catch (error) {
 			console.warn('Failed to save pull requests to database:', error);
@@ -73,34 +46,7 @@ export const get: GithubEndpoints['pullRequestsGet'] = async (ctx, input) => {
 
 	if (result && ctx.db.pullRequests) {
 		try {
-			await ctx.db.pullRequests.upsert(result.id.toString(), {
-				id: result.id,
-				nodeId: result.nodeId,
-				url: result.url,
-				htmlUrl: result.htmlUrl,
-				diffUrl: result.diffUrl,
-				patchUrl: result.patchUrl,
-				issueUrl: result.issueUrl,
-				number: result.number,
-				state: result.state,
-				locked: result.locked,
-				title: result.title,
-				body: result.body,
-				createdAt: new Date(result.createdAt),
-				updatedAt: new Date(result.updatedAt),
-				closedAt: result.closedAt ? new Date(result.closedAt) : null,
-				mergedAt: result.mergedAt ? new Date(result.mergedAt) : null,
-				mergeCommitSha: result.mergeCommitSha,
-				draft: result.draft,
-				merged: result.merged,
-				mergeable: result.mergeable,
-				comments: result.comments,
-				reviewComments: result.reviewComments,
-				commits: result.commits,
-				additions: result.additions,
-				deletions: result.deletions,
-				changedFiles: result.changedFiles,
-			});
+			await ctx.db.pullRequests.upsert(result.id.toString(), result);
 		} catch (error) {
 			console.warn('Failed to save pull request to database:', error);
 		}
@@ -122,6 +68,13 @@ export const listReviews: GithubEndpoints['pullRequestsListReviews'] = async (
 		{ query: queryParams },
 	);
 
+	const endpoints = ctx.endpoints as GithubBoundEndpoints
+		await endpoints.pullRequestsGet({
+			owner,
+			repo,
+			pullNumber,
+		});
+
 	await logEventFromContext(
 		ctx,
 		'github.pullRequests.listReviews',
@@ -142,6 +95,13 @@ export const createReview: GithubEndpoints['pullRequestsCreateReview'] = async (
 		ctx.options.token,
 		{ method: 'POST', body },
 	);
+
+	const endpoints = ctx.endpoints as GithubBoundEndpoints
+	await endpoints.pullRequestsGet({
+		owner,
+		repo,
+		pullNumber,
+	});
 
 	await logEventFromContext(
 		ctx,
