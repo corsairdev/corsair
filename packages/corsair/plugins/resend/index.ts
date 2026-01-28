@@ -159,7 +159,13 @@ export function resend(options: ResendPluginOptions) {
 		endpoints: resendEndpointsNested,
 		webhooks: resendWebhooksNested,
 		pluginWebhookMatcher: (request) => {
-			return false;
+			const headers = request.headers as Record<string, string | undefined>;
+			const signature = headers['resend-signature'];
+			if (typeof signature === 'string' && signature.length > 0) return true;
+
+			const body = request.body as Record<string, unknown>;
+			const type = body?.type;
+			return typeof type === 'string' && (type.startsWith('email.') || type.startsWith('domain.'));
 		},
 		errorHandlers: options.errorHandlers,
 	} satisfies ResendPlugin;
