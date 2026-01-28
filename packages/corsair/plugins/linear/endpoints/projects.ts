@@ -150,7 +150,7 @@ const PROJECT_DELETE_MUTATION = `
 export const list: LinearEndpoints['projectsList'] = async (ctx, input) => {
 	const response = await makeLinearRequest<ProjectsListResponse>(
 		PROJECTS_LIST_QUERY,
-		ctx.options.credentials.apiKey,
+		ctx.key,
 		{
 			first: input.first || 50,
 			after: input.after,
@@ -159,7 +159,7 @@ export const list: LinearEndpoints['projectsList'] = async (ctx, input) => {
 
 	const result = response.projects;
 
-	if (result.nodes && ctx.db.projects) {
+	if (result.nodes) {
 		try {
 			for (const project of result.nodes) {
 				await ctx.db.projects.upsert(project.id, {
@@ -198,7 +198,7 @@ export const list: LinearEndpoints['projectsList'] = async (ctx, input) => {
 export const get: LinearEndpoints['projectsGet'] = async (ctx, input) => {
 	const response = await makeLinearRequest<ProjectGetResponse>(
 		PROJECT_GET_QUERY,
-		ctx.options.credentials.apiKey,
+		ctx.key,
 		{ id: input.id },
 	);
 
@@ -241,7 +241,7 @@ export const get: LinearEndpoints['projectsGet'] = async (ctx, input) => {
 export const create: LinearEndpoints['projectsCreate'] = async (ctx, input) => {
 	const response = await makeLinearRequest<ProjectCreateResponse>(
 		PROJECT_CREATE_MUTATION,
-		ctx.options.credentials.apiKey,
+		ctx.key,
 		{ input: input as CreateProjectInput },
 	);
 
@@ -284,7 +284,7 @@ export const create: LinearEndpoints['projectsCreate'] = async (ctx, input) => {
 export const update: LinearEndpoints['projectsUpdate'] = async (ctx, input) => {
 	const response = await makeLinearRequest<ProjectUpdateResponse>(
 		PROJECT_UPDATE_MUTATION,
-		ctx.options.credentials.apiKey,
+		ctx.key,
 		{ id: input.id, input: input.input as UpdateProjectInput },
 	);
 
@@ -331,7 +331,7 @@ export const deleteProject: LinearEndpoints['projectsDelete'] = async (
 ) => {
 	const response = await makeLinearRequest<ProjectDeleteResponse>(
 		PROJECT_DELETE_MUTATION,
-		ctx.options.credentials.apiKey,
+		ctx.key,
 		{ id: input.id },
 	);
 

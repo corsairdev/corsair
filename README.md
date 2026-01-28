@@ -117,3 +117,7 @@ export const onCustomerChurn = inngest.createFunction(
 ---
 
 Built for teams who want to ship integrations, not maintain infrastructure.
+
+## License
+
+Licensed under the Apache License, Version 2.0. See [LICENSE](LICENSE) for details.

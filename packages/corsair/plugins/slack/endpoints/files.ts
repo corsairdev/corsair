@@ -6,7 +6,7 @@ import type { SlackEndpointOutputs } from './types';
 export const get: SlackEndpoints['filesGet'] = async (ctx, input) => {
 	const result = await makeSlackRequest<SlackEndpointOutputs['filesGet']>(
 		'files.info',
-		ctx.options.credentials.botToken,
+		ctx.key,
 		{
 			method: 'GET',
 			query: {
@@ -37,7 +37,7 @@ export const get: SlackEndpoints['filesGet'] = async (ctx, input) => {
 export const list: SlackEndpoints['filesList'] = async (ctx, input) => {
 	const result = await makeSlackRequest<SlackEndpointOutputs['filesList']>(
 		'files.list',
-		ctx.options.credentials.botToken,
+		ctx.key,
 		{
 			method: 'GET',
 			query: {
@@ -76,7 +76,7 @@ export const list: SlackEndpoints['filesList'] = async (ctx, input) => {
 export const upload: SlackEndpoints['filesUpload'] = async (ctx, input) => {
 	const result = await makeSlackRequest<SlackEndpointOutputs['filesUpload']>(
 		'files.upload',
-		ctx.options.credentials.botToken,
+		ctx.key,
 		{
 			method: 'POST',
 			body: {
@@ -105,6 +105,11 @@ export const upload: SlackEndpoints['filesUpload'] = async (ctx, input) => {
 		}
 	}
 
-	await logEventFromContext(ctx, 'slack.files.upload', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'slack.files.upload',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };

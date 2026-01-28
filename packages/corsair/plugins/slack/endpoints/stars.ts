@@ -6,7 +6,7 @@ import type { SlackEndpointOutputs } from './types';
 export const add: SlackEndpoints['starsAdd'] = async (ctx, input) => {
 	const result = await makeSlackRequest<SlackEndpointOutputs['starsAdd']>(
 		'stars.add',
-		ctx.options.credentials.botToken,
+		ctx.key,
 		{
 			method: 'POST',
 			body: {
@@ -24,7 +24,7 @@ export const add: SlackEndpoints['starsAdd'] = async (ctx, input) => {
 export const remove: SlackEndpoints['starsRemove'] = async (ctx, input) => {
 	const result = await makeSlackRequest<SlackEndpointOutputs['starsRemove']>(
 		'stars.remove',
-		ctx.options.credentials.botToken,
+		ctx.key,
 		{
 			method: 'POST',
 			body: {
@@ -47,7 +47,7 @@ export const remove: SlackEndpoints['starsRemove'] = async (ctx, input) => {
 export const list: SlackEndpoints['starsList'] = async (ctx, input) => {
 	const result = await makeSlackRequest<SlackEndpointOutputs['starsList']>(
 		'stars.list',
-		ctx.options.credentials.botToken,
+		ctx.key,
 		{
 			method: 'GET',
 			query: {

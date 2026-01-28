@@ -35,7 +35,7 @@ export const send: ResendEndpoints['emailsSend'] = async (ctx, input) => {
 
 	const response = await makeResendRequest<ResendEndpointOutputs['emailsSend']>(
 		'emails',
-		ctx.options.credentials.apiKey,
+		ctx.key,
 		{
 			method: 'POST',
 			body,
@@ -56,14 +56,19 @@ export const send: ResendEndpoints['emailsSend'] = async (ctx, input) => {
 		}
 	}
 
-	await logEventFromContext(ctx, 'resend.emails.send', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'resend.emails.send',
+		{ ...input },
+		'completed',
+	);
 	return response;
 };
 
 export const get: ResendEndpoints['emailsGet'] = async (ctx, input) => {
 	const response = await makeResendRequest<ResendEndpointOutputs['emailsGet']>(
 		`emails/${input.id}`,
-		ctx.options.credentials.apiKey,
+		ctx.key,
 		{
 			method: 'GET',
 		},
@@ -83,7 +88,12 @@ export const get: ResendEndpoints['emailsGet'] = async (ctx, input) => {
 		}
 	}
 
-	await logEventFromContext(ctx, 'resend.emails.get', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'resend.emails.get',
+		{ ...input },
+		'completed',
+	);
 	return response;
 };
 
@@ -94,7 +104,7 @@ export const list: ResendEndpoints['emailsList'] = async (ctx, input) => {
 
 	const response = await makeResendRequest<ResendEndpointOutputs['emailsList']>(
 		'emails',
-		ctx.options.credentials.apiKey,
+		ctx.key,
 		{
 			method: 'GET',
 			query,
@@ -117,6 +127,11 @@ export const list: ResendEndpoints['emailsList'] = async (ctx, input) => {
 		}
 	}
 
-	await logEventFromContext(ctx, 'resend.emails.list', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'resend.emails.list',
+		{ ...input },
+		'completed',
+	);
 	return response;
 };

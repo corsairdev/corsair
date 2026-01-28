@@ -6,7 +6,7 @@ import type { SlackEndpointOutputs } from './types';
 export const get: SlackEndpoints['usersGet'] = async (ctx, input) => {
 	const result = await makeSlackRequest<SlackEndpointOutputs['usersGet']>(
 		'users.info',
-		ctx.options.credentials.botToken,
+		ctx.key,
 		{
 			method: 'GET',
 			query: {
@@ -34,7 +34,7 @@ export const get: SlackEndpoints['usersGet'] = async (ctx, input) => {
 export const list: SlackEndpoints['usersList'] = async (ctx, input) => {
 	const result = await makeSlackRequest<SlackEndpointOutputs['usersList']>(
 		'users.list',
-		ctx.options.credentials.botToken,
+		ctx.key,
 		{
 			method: 'GET',
 			query: {
@@ -71,7 +71,7 @@ export const getProfile: SlackEndpoints['usersGetProfile'] = async (
 ) => {
 	const result = await makeSlackRequest<
 		SlackEndpointOutputs['usersGetProfile']
-	>('users.profile.get', ctx.options.credentials.botToken, {
+	>('users.profile.get', ctx.key, {
 		method: 'GET',
 		query: {
 			user: input.user,
@@ -106,7 +106,7 @@ export const getPresence: SlackEndpoints['usersGetPresence'] = async (
 ) => {
 	const result = await makeSlackRequest<
 		SlackEndpointOutputs['usersGetPresence']
-	>('users.getPresence', ctx.options.credentials.botToken, {
+	>('users.getPresence', ctx.key, {
 		method: 'GET',
 		query: {
 			user: input.user,
@@ -127,7 +127,7 @@ export const updateProfile: SlackEndpoints['usersUpdateProfile'] = async (
 ) => {
 	const result = await makeSlackRequest<
 		SlackEndpointOutputs['usersUpdateProfile']
-	>('users.profile.set', ctx.options.credentials.botToken, {
+	>('users.profile.set', ctx.key, {
 		method: 'POST',
 		body: {
 			profile: input.profile,

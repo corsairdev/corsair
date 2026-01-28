@@ -1,5 +1,5 @@
 {
-  "id": "502f1668-ffa5-414e-a159-5348fed2762d",
+  "id": "dddbfd35-0f1d-462e-9cba-47a6d3e6f79a",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -46,6 +46,12 @@
           "type": "jsonb",
           "primaryKey": false,
           "notNull": false
+        },
+        "dek": {
+          "name": "dek",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
         }
       },
       "indexes": {},
@@ -54,12 +60,8 @@
           "name": "corsair_accounts_integration_id_corsair_integrations_id_fk",
           "tableFrom": "corsair_accounts",
           "tableTo": "corsair_integrations",
-          "columnsFrom": [
-            "integration_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["integration_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -226,6 +228,12 @@
         "config": {
           "name": "config",
           "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "dek": {
+          "name": "dek",
+          "type": "text",
           "primaryKey": false,
           "notNull": false
         }

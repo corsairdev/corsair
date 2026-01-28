@@ -143,12 +143,7 @@ function extractMessageIds(history: HistoryListResponse['history']): {
 }
 
 async function fetchFullMessage(
-	credentials: {
-		clientId: string;
-		clientSecret: string;
-		accessToken: string;
-		refreshToken: string;
-	},
+	credentials: string,
 	userId: string,
 	messageId: string,
 ): Promise<Message> {
@@ -182,12 +177,7 @@ async function fetchFullMessage(
 }
 
 async function fetchAttachment(
-	credentials: {
-		clientId: string;
-		clientSecret: string;
-		accessToken: string;
-		refreshToken: string;
-	},
+	credentials: string,
 	userId: string,
 	messageId: string,
 	attachmentId: string,
@@ -202,12 +192,7 @@ async function fetchAttachment(
 }
 
 async function enrichMessageWithAttachments(
-	credentials: {
-		clientId: string;
-		clientSecret: string;
-		accessToken: string;
-		refreshToken: string;
-	},
+	credentials: string,
 	userId: string,
 	message: Message,
 ): Promise<Message> {
@@ -304,12 +289,7 @@ export const messageReceived = {
 			};
 		}
 
-		const credentials = {
-			clientId: ctx.options.clientId,
-			clientSecret: ctx.options.clientSecret,
-			accessToken: ctx.options.accessToken,
-			refreshToken: ctx.options.refreshToken,
-		};
+		const credentials = ctx.key;
 
 		try {
 			const historyIdNum = Number(pushNotification.historyId);
@@ -484,12 +464,7 @@ export const messageDeleted = {
 			};
 		}
 
-		const credentials = {
-			clientId: ctx.options.clientId,
-			clientSecret: ctx.options.clientSecret,
-			accessToken: ctx.options.accessToken,
-			refreshToken: ctx.options.refreshToken,
-		};
+		const credentials = ctx.key;
 
 		try {
 			const historyIdNum = Number(pushNotification.historyId);
@@ -607,12 +582,7 @@ export const messageLabelChanged = {
 			};
 		}
 
-		const credentials = {
-			clientId: ctx.options.clientId,
-			clientSecret: ctx.options.clientSecret,
-			accessToken: ctx.options.accessToken,
-			refreshToken: ctx.options.refreshToken,
-		};
+		const credentials = ctx.key;
 
 		try {
 			const historyIdNum = Number(pushNotification.historyId);

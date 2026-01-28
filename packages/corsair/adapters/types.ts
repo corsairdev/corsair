@@ -51,6 +51,7 @@ export type CorsairIntegrationInsert = {
 	updated_at?: Date;
 	name: string;
 	config: Record<string, unknown>;
+	dek?: string;
 };
 
 /**
@@ -63,6 +64,7 @@ export type CorsairAccountInsert = {
 	tenant_id: string;
 	integration_id: string;
 	config: Record<string, unknown>;
+	dek?: string;
 };
 
 /**

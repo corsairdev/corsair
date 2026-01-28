@@ -6,6 +6,7 @@ import type {
 	CorsairPlugin,
 	CorsairPluginContext,
 	CorsairWebhook,
+	KeyBuilderContext,
 } from '../../core';
 import type { SlackEndpointOutputs, SlackReactionName } from './endpoints';
 import {
@@ -17,7 +18,6 @@ import {
 	UserGroups,
 	Users,
 } from './endpoints';
-import type { SlackCredentials } from './schema';
 import { SlackSchema } from './schema';
 import type {
 	ChannelCreatedEvent,
@@ -475,15 +475,8 @@ const slackWebhooksNested = {
 	},
 } as const;
 
-export type SlackContext = CorsairPluginContext<
-	typeof SlackSchema,
-	SlackPluginOptions
->;
-
 export type SlackPluginOptions = {
-	credentials: SlackCredentials;
-
-	authType: PickAuth<'api_key' | 'oauth_2' | 'bot_token'>;
+	authType: PickAuth<'api_key'>;
 
 	hooks?: SlackPlugin['hooks'];
 
@@ -491,6 +484,17 @@ export type SlackPluginOptions = {
 
 	errorHandlers?: CorsairErrorHandler;
 };
+
+export type SlackContext = CorsairPluginContext<
+	typeof SlackSchema,
+	SlackPluginOptions
+>;
+
+/**
+ * Context type for the Slack plugin's keyBuilder.
+ * Provides typed access to options and the keys manager.
+ */
+export type SlackKeyBuilderContext = KeyBuilderContext<SlackPluginOptions>;
 
 export type SlackPlugin = CorsairPlugin<
 	'slack',
@@ -500,7 +504,7 @@ export type SlackPlugin = CorsairPlugin<
 	SlackPluginOptions
 >;
 
-export function slack(options: SlackPluginOptions) {
+export function slack(options: SlackPluginOptions): SlackPlugin {
 	return {
 		id: 'slack',
 		schema: SlackSchema,
@@ -516,14 +520,20 @@ export function slack(options: SlackPluginOptions) {
 			...errorHandlers,
 			...options.errorHandlers,
 		},
-		keyBuilder: async (ctx: SlackContext) => {
-			console.log(ctx.options.credentials);
-			if (options.authType === 'api_key') {
-				console.log('key builder - api_key');
-			} else if (options.authType === 'oauth_2') {
-				console.log('key builder - oauth_2');
+		keyBuilder: async (ctx: SlackKeyBuilderContext) => {
+			// Check ctx.authType to narrow ctx.keys to the correct key manager type
+			if (ctx.authType === 'api_key') {
+				// ctx.keys is narrowed to ApiKeyAccountKeyManager
+
+				console.log('in api key section');
+				const res = await ctx.keys.getApiKey();
+
+				console.log(res);
+
+				return res;
 			}
+
 			return '';
 		},
-	} satisfies SlackPlugin;
+	} as SlackPlugin;
 }

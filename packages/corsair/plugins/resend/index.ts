@@ -7,10 +7,9 @@ import type {
 	CorsairPluginContext,
 	CorsairWebhook,
 } from '../../core';
-import type { AuthTypes } from '../../core/constants';
+import type { PickAuth } from '../../core/constants';
 import { Domains, Emails } from './endpoints';
 import type { ResendEndpointOutputs } from './endpoints/types';
-import type { ResendCredentials } from './schema';
 import { ResendSchema } from './schema';
 import type {
 	DomainCreatedEvent,
@@ -28,9 +27,8 @@ import type {
 import { DomainWebhooks, EmailWebhooks } from './webhooks';
 
 export type ResendPluginOptions = {
-	authType: AuthTypes;
-	credentials: ResendCredentials;
-	hooks?: ResendPlugin['hooks'] | undefined;
+	authType: PickAuth<'api_key'>;
+	hooks?: ResendPlugin['hooks'];
 	webhookHooks?: ResendPlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
 };

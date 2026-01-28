@@ -1,16 +1,11 @@
+import { corsair } from '@/server/corsair';
 import 'dotenv/config';
-import { corsair } from '../server/corsair';
 
 const main = async () => {
-	// const res = await corsair.withTenant('default').linear.api.projects.list({});
-
-	// console.log(res);
-
-	const test = await corsair
-		.withTenant('default')
-		.slack.db.channels.findByEntityId('C0123456789');
-
-	console.log(test);
+	const test2 = await corsair.withTenant('default').slack.api.messages.post({
+		channel: 'C0A3ZTB9X7X',
+		text: 'hello',
+	});
 };
 
 main();

@@ -6,6 +6,7 @@ export const corsair_integrations = pgTable('corsair_integrations', {
 	updated_at: timestamp('updated_at').notNull().defaultNow(),
 	name: text('name').notNull(),
 	config: jsonb('config'),
+	dek: text('dek'),
 });
 
 export const corsair_accounts = pgTable('corsair_accounts', {
@@ -17,6 +18,7 @@ export const corsair_accounts = pgTable('corsair_accounts', {
 		.notNull()
 		.references(() => corsair_integrations.id),
 	config: jsonb('config'),
+	dek: text('dek'),
 });
 
 export const corsair_entities = pgTable('corsair_entities', {
