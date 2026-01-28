@@ -1,10 +1,11 @@
 import { createCorsair } from 'corsair';
 import { drizzleAdapter } from 'corsair/adapters/drizzle';
-import { github, linear, slack } from 'corsair/plugins';
+import { github, linear, resend, slack } from 'corsair/plugins';
+import type { CorsairTenantWrapper } from 'corsair';
 import { db } from '../db';
 import * as schema from '../db/schema';
 
-export const corsair = createCorsair({
+export const corsair: CorsairTenantWrapper<any> = createCorsair({
 	multiTenancy: true,
 	database: drizzleAdapter(db, { provider: 'pg', schema }),
 	plugins: [
@@ -57,12 +58,12 @@ export const corsair = createCorsair({
 				apiKey: process.env.LINEAR_API_KEY ?? 'dev-token',
 			},
 		}),
-		// resend({
-		// 	authType: 'api_key',
-		// 	credentials: {
-		// 		apiKey: process.env.RESEND_API_KEY ?? 'dev-token',
-		// 	},
-		// }),
+		resend({
+			authType: 'api_key',
+			credentials: {
+				apiKey: process.env.RESEND_API_KEY ?? 'dev-token',
+			},
+		}),
 		github({
 			authType: 'api_key',
 			credentials: {

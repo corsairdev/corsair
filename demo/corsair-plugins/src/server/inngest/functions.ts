@@ -85,7 +85,11 @@ export const linearEventHandler = inngest.createFunction(
 
 		if (message && slackChannel) {
 			await step.run('send-slack-notification', async () => {
-				await tenant.slack.api.messages.post({
+				const slackMessages = (tenant as any).slack?.api?.messages;
+				if (!slackMessages) {
+					throw new Error('Slack messages API is not available');
+				}
+				await slackMessages.post({
 					channel: slackChannel,
 					text: message!,
 				});
@@ -118,7 +122,12 @@ export const issueReportedHandler = inngest.createFunction(
 				return { success: false, reason: 'team_not_configured' };
 			}
 
-			const issue = await tenant.linear.api.issues.create({
+			const linearIssues = (tenant as any).linear?.api?.issues;
+			if (!linearIssues) {
+				throw new Error('Linear issues API is not available');
+			}
+
+			const issue = await linearIssues.create({
 				title,
 				description: description || undefined,
 				teamId,
@@ -134,8 +143,98 @@ export const issueReportedHandler = inngest.createFunction(
 	},
 );
 
+export const githubStarCreatedHandler = inngest.createFunction(
+	{ id: 'github-star-created-handler', retries: 3 },
+	{ event: 'github/star' },
+	async ({ event, step }) => {
+		const { tenantId, sender, repository } = event.data;
+
+		const tenant = corsair.withTenant(tenantId);
+		const slackChannel = process.env.SLACK_GITHUB_STARS_CHANNEL_ID;
+
+		if (!slackChannel) {
+			return { success: false, reason: 'slack_channel_not_configured' };
+		}
+
+		const senderName = sender.name || sender.login || 'Unknown';
+		const senderEmail = sender.email || 'unknown';
+		const repoName = repository.full_name || 'unknown repo';
+
+		const message = `⭐ *New GitHub Star*\n*Repo:* ${repoName}\n*Name:* ${senderName}\n*Email:* ${senderEmail}`;
+
+		await step.run('send-slack-notification', async () => {
+			const slackMessages = (tenant as any).slack?.api?.messages;
+			if (!slackMessages) {
+				throw new Error('Slack messages API is not available');
+			}
+			await slackMessages.post({
+				channel: slackChannel,
+				text: message,
+			});
+		});
+
+		return { success: true, processedAt: new Date().toISOString() };
+	},
+);
+
+export const resendEmailReceivedHandler = inngest.createFunction(
+	{ id: 'resend-email-received-handler', retries: 3 },
+	{ event: 'resend/email' },
+	async ({ event, step }) => {
+		const { tenantId, from, to, subject, text, html } = event.data;
+
+		const tenant = corsair.withTenant(tenantId);
+		const slackChannel = process.env.SLACK_RESEND_CHANNEL_ID;
+		const teamId = process.env.LINEAR_TEAM_ID;
+
+		const slackMessage = `📬 *Inbound Email Received*\n*From:* ${from}\n*To:* ${to}\n*Subject:* ${subject}`;
+
+		if (slackChannel) {
+			await step.run('send-slack-notification', async () => {
+				const slackMessages = (tenant as any).slack?.api?.messages;
+				if (!slackMessages) {
+					throw new Error('Slack messages API is not available');
+				}
+				await slackMessages.post({
+					channel: slackChannel,
+					text: slackMessage,
+				});
+			});
+		}
+
+		if (!teamId) {
+			return { success: false, reason: 'linear_team_not_configured' };
+		}
+
+		const linearTitle = `Inbound email: ${subject}`;
+		const linearDescription = `From: ${from}\nTo: ${to}\n\n${text || html || ''}`;
+
+		const issue = await step.run('create-linear-issue', async () => {
+			const linearIssues = (tenant as any).linear?.api?.issues;
+			if (!linearIssues) {
+				throw new Error('Linear issues API is not available');
+			}
+
+			return await linearIssues.create({
+				title: linearTitle,
+				description: linearDescription,
+				teamId,
+			});
+		});
+
+		return {
+			success: true,
+			issueId: issue.id,
+			identifier: issue.identifier,
+			processedAt: new Date().toISOString(),
+		};
+	},
+);
+
 export const functions = [
 	slackEventHandler,
 	linearEventHandler,
 	issueReportedHandler,
+	githubStarCreatedHandler,
+	resendEmailReceivedHandler,
 ];
