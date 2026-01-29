@@ -1,6 +1,6 @@
 import { createCorsair } from 'corsair';
 import { drizzleAdapter } from 'corsair/adapters/drizzle';
-import { linear, slack } from 'corsair/plugins';
+import { linear, resend, slack } from 'corsair/plugins';
 import { db } from '../db';
 import * as schema from '../db/schema';
 
@@ -10,73 +10,13 @@ export const corsair = createCorsair({
 	kek: process.env.CORSAIR_KEK!,
 	plugins: [
 		slack({
-			authType: 'api_key',
-			hooks: {
-				channels: {
-					random: {
-						before(ctx, args) {
-							console.log('before hook');
-							return {
-								ctx,
-								args,
-							};
-						},
-					},
-				},
-			},
-			errorHandlers: {
-				RATE_LIMIT_ERROR: {
-					match: () => {
-						return false;
-					},
-					handler: async () => {
-						return {
-							maxRetries: 3,
-							retryStrategy: 'exponential_backoff_jitter',
-						};
-					},
-				},
-				DEFAULT: {
-					match: () => {
-						return true;
-					},
-					handler: async (error, context) => {
-						console.log('default');
-						return {
-							maxRetries: 0,
-						};
-					},
-				},
-			},
+			authType: 'oauth_2',
 		}),
 		linear({
 			authType: 'api_key',
 		}),
-		// resend({
-		// 	authType: 'api_key',
-		// 	credentials: {
-		// 		apiKey: process.env.RESEND_API_KEY ?? 'dev-token',
-		// 	},
-		// }),
+		resend({
+			authType: 'api_key',
+		}),
 	],
-	errorHandlers: {
-		RATE_LIMIT_ERROR: {
-			match: (error: Error, context) => {
-				const errorMessage = error.message.toLowerCase();
-				return (
-					errorMessage.includes('rate_limited') ||
-					errorMessage.includes('ratelimited') ||
-					error.message.includes('429')
-				);
-			},
-			handler: async (error: Error, context) => {
-				console.log(
-					`[SLACK:${context.operation}] Rate limit exceeded - ROOT LEVEL`,
-				);
-				return {
-					maxRetries: 5,
-				};
-			},
-		},
-	},
 });

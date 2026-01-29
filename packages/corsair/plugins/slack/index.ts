@@ -475,13 +475,14 @@ const slackWebhooksNested = {
 	},
 } as const;
 
+/**
+ * Options for the Slack plugin.
+ * Uses PickAuth to constrain to supported auth types.
+ */
 export type SlackPluginOptions = {
-	authType: PickAuth<'api_key'>;
-
-	hooks?: SlackPlugin['hooks'];
-
-	webhookHooks?: SlackPlugin['webhookHooks'];
-
+	authType: PickAuth<'api_key' | 'oauth_2'>;
+	hooks?: InternalSlackPlugin['hooks'];
+	webhookHooks?: InternalSlackPlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
 };
 
@@ -489,22 +490,29 @@ export type SlackContext = CorsairPluginContext<
 	typeof SlackSchema,
 	SlackPluginOptions
 >;
-
-/**
- * Context type for the Slack plugin's keyBuilder.
- * Provides typed access to options and the keys manager.
- */
 export type SlackKeyBuilderContext = KeyBuilderContext<SlackPluginOptions>;
 
-export type SlackPlugin = CorsairPlugin<
+export type BaseSlackPlugin<T extends SlackPluginOptions> = CorsairPlugin<
 	'slack',
 	typeof SlackSchema,
 	typeof slackEndpointsNested,
 	typeof slackWebhooksNested,
-	SlackPluginOptions
+	T
 >;
 
-export function slack(options: SlackPluginOptions): SlackPlugin {
+/**
+ * We have to type the internal plugin separately from the external plugin
+ * Because the internal plugin has to provide options for all possible auth methods
+ * The external plugin has to provide options for the auth method the user has selected
+ */
+export type InternalSlackPlugin = BaseSlackPlugin<SlackPluginOptions>;
+
+export type ExternalSlackPlugin<T extends SlackPluginOptions> =
+	BaseSlackPlugin<T>;
+
+export function slack<T extends SlackPluginOptions>(
+	options: T,
+): ExternalSlackPlugin<T> {
 	return {
 		id: 'slack',
 		schema: SlackSchema,
@@ -531,9 +539,13 @@ export function slack(options: SlackPluginOptions): SlackPlugin {
 				console.log(res);
 
 				return res;
+			} else if (ctx.authType === 'oauth_2') {
+				const res = await ctx.keys.getAccessToken();
+
+				return res;
 			}
 
 			return '';
 		},
-	} as SlackPlugin;
+	} satisfies InternalSlackPlugin;
 }
