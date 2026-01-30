@@ -107,9 +107,9 @@ export type BaseKeyManager = {
  * OAuth2 integration-level key manager methods
  */
 export type OAuth2IntegrationKeyManager = BaseKeyManager & {
-	getClientId: () => Promise<string>;
+	getClientId: () => Promise<string | null>;
 	setClientId: (clientId: string) => Promise<void>;
-	getClientSecret: () => Promise<string>;
+	getClientSecret: () => Promise<string | null>;
 	setClientSecret: (clientSecret: string) => Promise<void>;
 	getRedirectUrl: () => Promise<string | null>;
 	setRedirectUrl: (redirectUrl: string | null) => Promise<void>;
@@ -146,8 +146,8 @@ export type IntegrationKeyManagerFor<T extends AuthTypes> =
  * Integration credentials returned by getIntegrationCredentials
  */
 export type OAuth2IntegrationCredentials = {
-	clientId: string;
-	clientSecret: string;
+	clientId: string | null;
+	clientSecret: string | null;
 	redirectUrl: string | null;
 };
 
@@ -155,9 +155,9 @@ export type OAuth2IntegrationCredentials = {
  * OAuth2 account-level key manager methods
  */
 export type OAuth2AccountKeyManager = BaseKeyManager & {
-	getAccessToken: () => Promise<string>;
+	getAccessToken: () => Promise<string | null>;
 	setAccessToken: (accessToken: string) => Promise<void>;
-	getRefreshToken: () => Promise<string>;
+	getRefreshToken: () => Promise<string | null>;
 	setRefreshToken: (refreshToken: string) => Promise<void>;
 	getExpiresAt: () => Promise<number | null>;
 	setExpiresAt: (expiresAt: number | null) => Promise<void>;
@@ -174,7 +174,7 @@ export type OAuth2AccountKeyManager = BaseKeyManager & {
  * Bot token account-level key manager methods
  */
 export type BotTokenAccountKeyManager = BaseKeyManager & {
-	getBotToken: () => Promise<string>;
+	getBotToken: () => Promise<string | null>;
 	setBotToken: (botToken: string) => Promise<void>;
 };
 
@@ -182,7 +182,7 @@ export type BotTokenAccountKeyManager = BaseKeyManager & {
  * API key account-level key manager methods
  */
 export type ApiKeyAccountKeyManager = BaseKeyManager & {
-	getApiKey: () => Promise<string>;
+	getApiKey: () => Promise<string | null>;
 	setApiKey: (apiKey: string) => Promise<void>;
 };
 

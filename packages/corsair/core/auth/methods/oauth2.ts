@@ -100,12 +100,7 @@ export function createOAuth2IntegrationKeyManager(
 
 		getClientId: async () => {
 			const config = await getDecryptedConfig();
-			if (!config.client_id) {
-				throw new Error(
-					`client_id not found for integration "${ctx.integrationName}"`,
-				);
-			}
-			return config.client_id;
+			return config.client_id || null;
 		},
 
 		setClientId: async (clientId: string) => {
@@ -114,12 +109,7 @@ export function createOAuth2IntegrationKeyManager(
 
 		getClientSecret: async () => {
 			const config = await getDecryptedConfig();
-			if (!config.client_secret) {
-				throw new Error(
-					`client_secret not found for integration "${ctx.integrationName}"`,
-				);
-			}
-			return config.client_secret;
+			return config.client_secret || null;
 		},
 
 		setClientSecret: async (clientSecret: string) => {
@@ -246,12 +236,8 @@ export function createOAuth2AccountKeyManager(
 
 		getAccessToken: async () => {
 			const config = await getDecryptedConfig();
-			if (!config.access_token) {
-				throw new Error(
-					`access_token not found for account (tenant: "${ctx.tenantId}", integration: "${ctx.integrationName}")`,
-				);
-			}
-			return config.access_token;
+
+			return config.access_token || null;
 		},
 
 		setAccessToken: async (accessToken: string) => {
@@ -260,12 +246,7 @@ export function createOAuth2AccountKeyManager(
 
 		getRefreshToken: async () => {
 			const config = await getDecryptedConfig();
-			if (!config.refresh_token) {
-				throw new Error(
-					`refresh_token not found for account (tenant: "${ctx.tenantId}", integration: "${ctx.integrationName}")`,
-				);
-			}
-			return config.refresh_token;
+			return config.refresh_token || null;
 		},
 
 		setRefreshToken: async (refreshToken: string) => {
@@ -296,20 +277,9 @@ export function createOAuth2AccountKeyManager(
 			async (): Promise<OAuth2IntegrationCredentials> => {
 				const config = await getDecryptedIntegrationConfig();
 
-				if (!config.client_id) {
-					throw new Error(
-						`client_id not found for integration "${ctx.integrationName}"`,
-					);
-				}
-				if (!config.client_secret) {
-					throw new Error(
-						`client_secret not found for integration "${ctx.integrationName}"`,
-					);
-				}
-
 				return {
-					clientId: config.client_id,
-					clientSecret: config.client_secret,
+					clientId: config.client_id || null,
+					clientSecret: config.client_secret || null,
 					redirectUrl: config.redirect_url ?? null,
 				};
 			},

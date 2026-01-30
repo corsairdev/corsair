@@ -138,12 +138,7 @@ export function createApiKeyAccountKeyManager(
 
 		getApiKey: async () => {
 			const config = await getDecryptedConfig();
-			if (!config.api_key) {
-				throw new Error(
-					`api_key not found for account (tenant: "${ctx.tenantId}", integration: "${ctx.integrationName}")`,
-				);
-			}
-			return config.api_key;
+			return config.api_key || null;
 		},
 
 		setApiKey: async (apiKey: string) => {

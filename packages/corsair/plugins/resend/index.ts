@@ -1,3 +1,4 @@
+import type { AuthTypes } from '../../constants';
 import type {
 	BindEndpoints,
 	BindWebhooks,
@@ -6,6 +7,7 @@ import type {
 	CorsairPlugin,
 	CorsairPluginContext,
 	CorsairWebhook,
+	KeyBuilderContext,
 } from '../../core';
 import type { PickAuth } from '../../core/constants';
 import { Domains, Emails } from './endpoints';
@@ -27,9 +29,10 @@ import type {
 import { DomainWebhooks, EmailWebhooks } from './webhooks';
 
 export type ResendPluginOptions = {
-	authType: PickAuth<'api_key'>;
-	hooks?: ResendPlugin['hooks'];
-	webhookHooks?: ResendPlugin['webhookHooks'];
+	authType?: PickAuth<'api_key'>;
+	key?: string;
+	hooks?: InternalResendPlugin['hooks'];
+	webhookHooks?: InternalResendPlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
 };
 
@@ -37,6 +40,7 @@ export type ResendContext = CorsairPluginContext<
 	typeof ResendSchema,
 	ResendPluginOptions
 >;
+export type ResendKeyBuilderContext = KeyBuilderContext<ResendPluginOptions>;
 
 export type ResendBoundEndpoints = BindEndpoints<ResendEndpoints>;
 
@@ -139,15 +143,34 @@ const resendWebhooksNested = {
 	},
 } as const;
 
-export type ResendPlugin = CorsairPlugin<
+const defaultAuthType: AuthTypes = 'api_key';
+
+export type BaseResendPlugin<T extends ResendPluginOptions> = CorsairPlugin<
 	'resend',
 	typeof ResendSchema,
 	typeof resendEndpointsNested,
 	typeof resendWebhooksNested,
-	ResendPluginOptions
+	T,
+	typeof defaultAuthType
 >;
 
-export function resend(options: ResendPluginOptions) {
+/**
+ * We have to type the internal plugin separately from the external plugin
+ * Because the internal plugin has to provide options for all possible auth methods
+ * The external plugin has to provide options for the auth method the user has selected
+ */
+export type InternalResendPlugin = BaseResendPlugin<ResendPluginOptions>;
+
+export type ExternalResendPlugin<T extends ResendPluginOptions> =
+	BaseResendPlugin<T>;
+
+export function resend<const T extends ResendPluginOptions>(
+	incomingOptions: ResendPluginOptions & T = {} as ResendPluginOptions & T,
+): ExternalResendPlugin<T> {
+	const options = {
+		...incomingOptions,
+		authType: incomingOptions.authType ?? defaultAuthType,
+	};
 	return {
 		id: 'resend',
 		schema: ResendSchema,
@@ -160,5 +183,23 @@ export function resend(options: ResendPluginOptions) {
 			return false;
 		},
 		errorHandlers: options.errorHandlers,
-	} satisfies ResendPlugin;
+		keyBuilder: async (ctx: ResendKeyBuilderContext) => {
+			if (options.key) {
+				return options.key;
+			}
+
+			if (ctx.authType === 'api_key') {
+				const res = await ctx.keys.getApiKey();
+
+				if (!res) {
+					// prob need to throw an error here
+					return '';
+				}
+
+				return res;
+			}
+
+			return '';
+		},
+	} satisfies InternalResendPlugin;
 }

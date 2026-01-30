@@ -138,12 +138,7 @@ export function createBotTokenAccountKeyManager(
 
 		getBotToken: async () => {
 			const config = await getDecryptedConfig();
-			if (!config.bot_token) {
-				throw new Error(
-					`bot_token not found for account (tenant: "${ctx.tenantId}", integration: "${ctx.integrationName}")`,
-				);
-			}
-			return config.bot_token;
+			return config.bot_token || null;
 		},
 
 		setBotToken: async (botToken: string) => {

@@ -52,12 +52,43 @@ type UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends (
 
 /**
  * Extracts the authType from plugin options.
+ * @template Options - The plugin options type
+ * @template DefaultAuthType - Optional default auth type to use when authType is optional
+ *
+ * Priority:
+ * 1. If authType is a specific single AuthType (not a union), use that
+ * 2. If DefaultAuthType parameter is provided, use that as the fallback
+ * 3. Otherwise use the non-nullable union from authType
  */
-type ExtractAuthType<Options> = Options extends { authType: infer T }
-	? T extends AuthTypes
-		? T
-		: never
+export type ExtractAuthType<
+	Options,
+	DefaultAuthType extends AuthTypes | undefined = undefined,
+> = 'authType' extends keyof Options
+	? // Check if authType is a specific single auth type (narrowed, not a union)
+		Options['authType'] extends AuthTypes
+		? // authType is narrowed to a specific type - use it
+			Options['authType']
+		: // authType is optional or a union - use DefaultAuthType if provided
+			DefaultAuthType extends AuthTypes
+			? DefaultAuthType
+			: NonNullable<Options['authType']> extends AuthTypes
+				? NonNullable<Options['authType']>
+				: never
 	: never;
+
+/**
+ * Extracts Options type from plugin's options property.
+ */
+type InferPluginOptions<P> = P extends { options?: infer O } ? O : never;
+
+/**
+ * Extracts DefaultAuthType from plugin's __defaultAuthType property.
+ */
+type InferDefaultAuthType<P> = P extends { __defaultAuthType?: infer D }
+	? D extends AuthTypes
+		? D
+		: undefined
+	: undefined;
 
 /**
  * Infers the complete namespace for a single plugin, including API endpoints,
@@ -67,8 +98,7 @@ type InferPluginNamespace<P extends CorsairPlugin> = P extends CorsairPlugin<
 	infer Id,
 	infer Schema,
 	infer Endpoints,
-	infer Webhooks,
-	infer Options
+	infer Webhooks
 >
 	? {
 			[K in Id]: (Endpoints extends EndpointTree
@@ -87,8 +117,15 @@ type InferPluginNamespace<P extends CorsairPlugin> = P extends CorsairPlugin<
 						}
 					: {}) &
 				// Account-level keys (per-tenant secrets like bot_token, api_key, access_token)
-				(ExtractAuthType<Options> extends AuthTypes
-					? { keys: AccountKeyManagerFor<ExtractAuthType<Options>> }
+				(ExtractAuthType<
+					InferPluginOptions<P>,
+					InferDefaultAuthType<P>
+				> extends AuthTypes
+					? {
+							keys: AccountKeyManagerFor<
+								ExtractAuthType<InferPluginOptions<P>, InferDefaultAuthType<P>>
+							>;
+						}
 					: {});
 		}
 	: never;
@@ -97,15 +134,16 @@ type InferPluginNamespace<P extends CorsairPlugin> = P extends CorsairPlugin<
  * Infers the integration-level key manager for a single plugin.
  */
 type InferIntegrationKeys<P extends CorsairPlugin> = P extends CorsairPlugin<
-	infer Id,
-	infer _Schema,
-	infer _Endpoints,
-	infer _Webhooks,
-	infer Options
+	infer Id
 >
-	? ExtractAuthType<Options> extends AuthTypes
+	? ExtractAuthType<
+			InferPluginOptions<P>,
+			InferDefaultAuthType<P>
+		> extends AuthTypes
 		? {
-				[K in Id]: IntegrationKeyManagerFor<ExtractAuthType<Options>>;
+				[K in Id]: IntegrationKeyManagerFor<
+					ExtractAuthType<InferPluginOptions<P>, InferDefaultAuthType<P>>
+				>;
 			}
 		: never
 	: never;

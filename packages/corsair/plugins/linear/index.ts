@@ -1,3 +1,4 @@
+import type { AuthTypes } from '../../constants';
 import type {
 	BindEndpoints,
 	BindWebhooks,
@@ -6,6 +7,7 @@ import type {
 	CorsairPlugin,
 	CorsairPluginContext,
 	CorsairWebhook,
+	KeyBuilderContext,
 } from '../../core';
 import type { PickAuth } from '../../core/constants';
 import type { LinearEndpointOutputs } from './endpoints';
@@ -28,9 +30,10 @@ import type {
 import { CommentWebhooks, IssueWebhooks, ProjectWebhooks } from './webhooks';
 
 export type LinearPluginOptions = {
-	authType: PickAuth<'api_key'>;
-	hooks?: LinearPlugin['hooks'];
-	webhookHooks?: LinearPlugin['webhookHooks'];
+	authType?: PickAuth<'api_key'>;
+	key?: string;
+	hooks?: InternalLinearPlugin['hooks'];
+	webhookHooks?: InternalLinearPlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
 };
 
@@ -38,6 +41,7 @@ export type LinearContext = CorsairPluginContext<
 	typeof LinearSchema,
 	LinearPluginOptions
 >;
+export type LinearKeyBuilderContext = KeyBuilderContext<LinearPluginOptions>;
 
 export type LinearBoundEndpoints = BindEndpoints<LinearEndpoints>;
 
@@ -211,15 +215,34 @@ const linearEndpointsNested = {
 	},
 } as const;
 
-export type LinearPlugin = CorsairPlugin<
+const defaultAuthType: AuthTypes = 'api_key';
+
+export type BaseLinearPlugin<T extends LinearPluginOptions> = CorsairPlugin<
 	'linear',
 	typeof LinearSchema,
 	typeof linearEndpointsNested,
 	typeof linearWebhooksNested,
-	LinearPluginOptions
+	T,
+	typeof defaultAuthType
 >;
 
-export function linear(options: LinearPluginOptions) {
+/**
+ * We have to type the internal plugin separately from the external plugin
+ * Because the internal plugin has to provide options for all possible auth methods
+ * The external plugin has to provide options for the auth method the user has selected
+ */
+export type InternalLinearPlugin = BaseLinearPlugin<LinearPluginOptions>;
+
+export type ExternalLinearPlugin<T extends LinearPluginOptions> =
+	BaseLinearPlugin<T>;
+
+export function linear<const T extends LinearPluginOptions>(
+	incomingOptions: LinearPluginOptions & T = {} as LinearPluginOptions & T,
+): ExternalLinearPlugin<T> {
+	const options = {
+		...incomingOptions,
+		authType: incomingOptions.authType ?? defaultAuthType,
+	};
 	return {
 		id: 'linear',
 		schema: LinearSchema,
@@ -232,5 +255,23 @@ export function linear(options: LinearPluginOptions) {
 			...errorHandlers,
 			...options.errorHandlers,
 		},
-	} satisfies LinearPlugin;
+		keyBuilder: async (ctx: LinearKeyBuilderContext) => {
+			if (options.key) {
+				return options.key;
+			}
+
+			if (ctx.authType === 'api_key') {
+				const res = await ctx.keys.getApiKey();
+
+				if (!res) {
+					// prob need to throw an error here
+					return '';
+				}
+
+				return res;
+			}
+
+			return '';
+		},
+	} satisfies InternalLinearPlugin;
 }
