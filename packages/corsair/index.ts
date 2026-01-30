@@ -2,7 +2,6 @@ export * from './adapters';
 export * from './core';
 export * from './db/orm';
 export * from './plugins';
-
 // Linear
 export {
 	type LinearBoundEndpoints,
@@ -16,7 +15,6 @@ export type {
 	LinearWebhookAck,
 	LinearWebhookEvent,
 } from './plugins/linear/webhooks/types';
-
 // Resend
 export {
 	type ResendBoundEndpoints,
@@ -27,7 +25,6 @@ export {
 } from './plugins/resend';
 export type * from './plugins/resend/endpoints/types';
 export type * from './plugins/resend/webhooks/types';
-
 // Slack
 export {
 	type SlackBoundEndpoints,
@@ -36,3 +33,4 @@ export {
 	type SlackPluginOptions,
 	slack,
 } from './plugins/slack';
+export * from './webhooks';
