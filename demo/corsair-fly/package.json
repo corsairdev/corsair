@@ -1,5 +1,5 @@
 {
-  "name": "@corsair/demo-drizzle-pg-slack",
+  "name": "@corsair/demo-fly",
   "private": true,
   "type": "module",
   "scripts": {
