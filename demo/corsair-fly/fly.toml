@@ -1,7 +1,13 @@
 app = 'corsair-fly-demo'
 primary_region = 'sjc'
 
+# NOTE: This app is part of a pnpm workspace monorepo
+# Deploy from the monorepo root with:
+# fly deploy --config demo/corsair-fly/fly.toml --dockerfile demo/corsair-fly/Dockerfile
+
 [build]
+  dockerfile = "demo/corsair-fly/Dockerfile"
+  ignorefile = "demo/corsair-fly/.dockerignore"
 
 [http_service]
   internal_port = 3000
