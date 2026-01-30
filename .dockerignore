@@ -1,0 +1,38 @@
+# Git
+.git
+.github
+
+# Node
+node_modules
+npm-debug.log
+
+# Next.js
+.next
+demo/corsair-fly/.next
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# IDE
+.vscode
+.idea
+
+# Build artifacts
+dist
+build
+*.log
+
+# Turbo
+.turbo
+
+# Documentation
+docs
+
+# Other demos if any
+demo/*
+!demo/corsair-fly
+
+# pnpm
+.pnpm-store
