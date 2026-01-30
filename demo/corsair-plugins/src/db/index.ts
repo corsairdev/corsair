@@ -9,6 +9,13 @@ config({ path: '.env' });
 
 export const pool = new Pool({
 	connectionString: process.env.DATABASE_URL,
+	// pgbouncer transaction mode (port 6543) doesn't support prepared statements
+	// Keep max connections reasonable since pgbouncer manages the actual pool
+	max: 10,
+	// Connection timeout for production environments
+	connectionTimeoutMillis: 10000,
+	// Idle timeout to prevent stale connections
+	idleTimeoutMillis: 30000,
 });
 
 export const db = drizzle(pool, { schema });
