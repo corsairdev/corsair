@@ -2,7 +2,7 @@ import type { ZodTypeAny } from 'zod';
 import type { CorsairDbAdapter } from '../../adapters';
 import type { CorsairPluginSchema } from '../../db/orm';
 import type { AccountKeyManagerFor } from '../auth/types';
-import type { InferPluginEntities } from '../client';
+import type { ExtractAuthType, InferPluginEntities } from '../client';
 import type { AllProviders, AuthTypes } from '../constants';
 import type {
 	BindEndpoints,
@@ -203,11 +203,12 @@ type CorsairWebhookHooksMap<Webhooks extends WebhookTree> = {
 // ─────────────────────────────────────────────────────────────────────────────
 
 /**
- * Extracts the authType from plugin options.
+ * Extracts ALL possible auth types from options, ignoring defaultAuthType.
+ * Used for internal types like KeyBuilderContext where all auth types must be handled.
  */
-type ExtractAuthType<Options> = Options extends { authType: infer T }
-	? T extends AuthTypes
-		? T
+type ExtractAllAuthTypes<Options> = 'authType' extends keyof Options
+	? NonNullable<Options['authType']> extends AuthTypes
+		? NonNullable<Options['authType']>
 		: never
 	: never;
 
@@ -235,7 +236,7 @@ type ExtractAuthType<Options> = Options extends { authType: infer T }
  * ```
  */
 export type KeyBuilderContext<Options extends Record<string, unknown>> =
-	ExtractAuthType<Options> extends infer A
+	ExtractAllAuthTypes<Options> extends infer A
 		? A extends AuthTypes
 			? {
 					/** The auth type - use this for narrowing ctx.keys */
@@ -270,6 +271,7 @@ export type CorsairKeyBuilderBase = (ctx: any) => string | Promise<string>;
  * @template Schema - The plugin schema for database services
  * @template Options - Plugin-specific options (credentials, config, etc.)
  * @template Webhooks - The webhook tree structure
+ * @template DefaultAuthType - The default auth type when authType is optional and not specified
  */
 export type CorsairPlugin<
 	Id extends AllProviders = AllProviders,
@@ -279,6 +281,7 @@ export type CorsairPlugin<
 	Endpoints extends EndpointTree = EndpointTree,
 	Webhooks extends WebhookTree = WebhookTree,
 	Options extends Record<string, unknown> = Record<string, unknown>,
+	DefaultAuthType extends AuthTypes | undefined = AuthTypes | undefined,
 > = {
 	/** Unique identifier for the plugin */
 	id: Id;
@@ -313,6 +316,11 @@ export type CorsairPlugin<
 	 * @returns The authentication key string to use for API calls
 	 */
 	keyBuilder?: CorsairKeyBuilder<Options>;
+	/**
+	 * @internal Type-only field for inference. Do not set at runtime.
+	 * Specifies the default auth type when authType is optional and not provided.
+	 */
+	__defaultAuthType?: DefaultAuthType;
 };
 
 /**
@@ -343,10 +351,8 @@ export type CorsairPluginContext<
 		key: string;
 	} & (Options extends undefined ? {} : { options: Options }) &
 	// Include keys manager if authType is defined in options
-	(Options extends { authType: infer T }
-		? T extends AuthTypes
-			? { keys: AccountKeyManagerFor<T> }
-			: {}
+	(ExtractAuthType<Options> extends AuthTypes
+		? { keys: AccountKeyManagerFor<ExtractAuthType<Options>> }
 		: {});
 
 /**

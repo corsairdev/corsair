@@ -41,13 +41,9 @@ import {
 
 export type { SlackReactionName } from './endpoints';
 
+import type { AuthTypes } from '../../constants';
 import type { PickAuth } from '../../core/constants';
 import { errorHandlers } from './error-handlers';
-
-type SlackEndpoint<
-	K extends keyof SlackEndpointOutputs,
-	Input,
-> = CorsairEndpoint<SlackContext, Input, SlackEndpointOutputs[K]>;
 
 export type SlackEndpoints = {
 	channelsRandom: SlackEndpoint<'channelsRandom', {}>;
@@ -371,30 +367,6 @@ export type SlackEndpoints = {
 	>;
 };
 
-/**
- * const endpoints = ctx.endpoints as SlackBoundEndpoints
- */
-export type SlackBoundEndpoints = BindEndpoints<SlackEndpoints>;
-
-type SlackWebhook<K extends keyof SlackWebhookOutputs, TEvent> = CorsairWebhook<
-	SlackContext,
-	SlackWebhookPayload<TEvent>,
-	SlackWebhookOutputs[K]
->;
-
-export type SlackWebhooks = {
-	reactionAdded: SlackWebhook<'reactionAdded', ReactionAddedEvent>;
-	message: SlackWebhook<'message', MessageEvent>;
-	channelCreated: SlackWebhook<'channelCreated', ChannelCreatedEvent>;
-	teamJoin: SlackWebhook<'teamJoin', TeamJoinEvent>;
-	userChange: SlackWebhook<'userChange', UserChangeEvent>;
-	fileCreated: SlackWebhook<'fileCreated', FileCreatedEvent>;
-	filePublic: SlackWebhook<'filePublic', FilePublicEvent>;
-	fileShared: SlackWebhook<'fileShared', FileSharedEvent>;
-};
-
-export type SlackBoundWebhooks = BindWebhooks<SlackWebhooks>;
-
 const slackEndpointsNested = {
 	channels: {
 		random: Channels.random,
@@ -454,6 +426,17 @@ const slackEndpointsNested = {
 	},
 } as const;
 
+export type SlackWebhooks = {
+	reactionAdded: SlackWebhook<'reactionAdded', ReactionAddedEvent>;
+	message: SlackWebhook<'message', MessageEvent>;
+	channelCreated: SlackWebhook<'channelCreated', ChannelCreatedEvent>;
+	teamJoin: SlackWebhook<'teamJoin', TeamJoinEvent>;
+	userChange: SlackWebhook<'userChange', UserChangeEvent>;
+	fileCreated: SlackWebhook<'fileCreated', FileCreatedEvent>;
+	filePublic: SlackWebhook<'filePublic', FilePublicEvent>;
+	fileShared: SlackWebhook<'fileShared', FileSharedEvent>;
+};
+
 const slackWebhooksNested = {
 	messages: {
 		message: MessageWebhooks.message,
@@ -475,12 +458,29 @@ const slackWebhooksNested = {
 	},
 } as const;
 
+const defaultAuthType: AuthTypes = 'api_key';
+
+type SlackEndpoint<
+	K extends keyof SlackEndpointOutputs,
+	Input,
+> = CorsairEndpoint<SlackContext, Input, SlackEndpointOutputs[K]>;
+
 /**
- * Options for the Slack plugin.
- * Uses PickAuth to constrain to supported auth types.
+ * const endpoints = ctx.endpoints as SlackBoundEndpoints
  */
+export type SlackBoundEndpoints = BindEndpoints<SlackEndpoints>;
+
+type SlackWebhook<K extends keyof SlackWebhookOutputs, TEvent> = CorsairWebhook<
+	SlackContext,
+	SlackWebhookPayload<TEvent>,
+	SlackWebhookOutputs[K]
+>;
+
+export type SlackBoundWebhooks = BindWebhooks<SlackWebhooks>;
+
 export type SlackPluginOptions = {
-	authType: PickAuth<'api_key' | 'oauth_2'>;
+	authType?: PickAuth<'api_key' | 'oauth_2'>;
+	key?: string;
 	hooks?: InternalSlackPlugin['hooks'];
 	webhookHooks?: InternalSlackPlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
@@ -497,7 +497,8 @@ export type BaseSlackPlugin<T extends SlackPluginOptions> = CorsairPlugin<
 	typeof SlackSchema,
 	typeof slackEndpointsNested,
 	typeof slackWebhooksNested,
-	T
+	T,
+	typeof defaultAuthType
 >;
 
 /**
@@ -510,9 +511,13 @@ export type InternalSlackPlugin = BaseSlackPlugin<SlackPluginOptions>;
 export type ExternalSlackPlugin<T extends SlackPluginOptions> =
 	BaseSlackPlugin<T>;
 
-export function slack<T extends SlackPluginOptions>(
-	options: T,
+export function slack<const T extends SlackPluginOptions>(
+	incomingOptions: SlackPluginOptions & T = {} as SlackPluginOptions & T,
 ): ExternalSlackPlugin<T> {
+	const options = {
+		...incomingOptions,
+		authType: incomingOptions.authType ?? defaultAuthType,
+	};
 	return {
 		id: 'slack',
 		schema: SlackSchema,
@@ -529,6 +534,10 @@ export function slack<T extends SlackPluginOptions>(
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: SlackKeyBuilderContext) => {
+			if (options.key) {
+				return options.key;
+			}
+
 			// Check ctx.authType to narrow ctx.keys to the correct key manager type
 			if (ctx.authType === 'api_key') {
 				// ctx.keys is narrowed to ApiKeyAccountKeyManager
@@ -536,11 +545,21 @@ export function slack<T extends SlackPluginOptions>(
 				console.log('in api key section');
 				const res = await ctx.keys.getApiKey();
 
+				if (!res) {
+					// prob need to throw an error here
+					return '';
+				}
+
 				console.log(res);
 
 				return res;
 			} else if (ctx.authType === 'oauth_2') {
 				const res = await ctx.keys.getAccessToken();
+
+				if (!res) {
+					// prob need to throw an error here
+					return '';
+				}
 
 				return res;
 			}

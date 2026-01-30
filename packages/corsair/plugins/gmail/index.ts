@@ -1,3 +1,4 @@
+import type { AuthTypes } from '../../constants';
 import type {
 	BindEndpoints,
 	BindWebhooks,
@@ -339,20 +340,42 @@ const gmailWebhooksNested = {
 };
 
 export type GmailPluginOptions = {
-	authType: PickAuth<'oauth_2'>;
-	hooks?: GmailPlugin['hooks'];
-	webhookHooks?: GmailPlugin['webhookHooks'];
+	authType?: PickAuth<'oauth_2'>;
+	key?: string;
+	hooks?: InternalGmailPlugin['hooks'];
+	webhookHooks?: InternalGmailPlugin['webhookHooks'];
 };
 
-export type GmailPlugin = CorsairPlugin<
+export type GmailKeyBuilderContext = KeyBuilderContext<GmailPluginOptions>;
+
+const defaultAuthType: AuthTypes = 'oauth_2';
+
+export type BaseGmailPlugin<T extends GmailPluginOptions> = CorsairPlugin<
 	'gmail',
 	typeof GmailSchema,
 	typeof gmailEndpointsNested,
 	typeof gmailWebhooksNested,
-	GmailPluginOptions
+	T,
+	typeof defaultAuthType
 >;
 
-export function gmail(options: GmailPluginOptions) {
+/**
+ * We have to type the internal plugin separately from the external plugin
+ * Because the internal plugin has to provide options for all possible auth methods
+ * The external plugin has to provide options for the auth method the user has selected
+ */
+export type InternalGmailPlugin = BaseGmailPlugin<GmailPluginOptions>;
+
+export type ExternalGmailPlugin<T extends GmailPluginOptions> =
+	BaseGmailPlugin<T>;
+
+export function gmail<const T extends GmailPluginOptions>(
+	incomingOptions: GmailPluginOptions & T = {} as GmailPluginOptions & T,
+): ExternalGmailPlugin<T> {
+	const options = {
+		...incomingOptions,
+		authType: incomingOptions.authType ?? defaultAuthType,
+	};
 	return {
 		id: 'gmail',
 		schema: GmailSchema,
@@ -361,7 +384,11 @@ export function gmail(options: GmailPluginOptions) {
 		webhookHooks: options.webhookHooks,
 		endpoints: gmailEndpointsNested,
 		webhooks: gmailWebhooksNested,
-		keyBuilder: async (ctx: KeyBuilderContext<GmailPluginOptions>) => {
+		keyBuilder: async (ctx: GmailKeyBuilderContext) => {
+			if (options.key) {
+				return options.key;
+			}
+
 			if (ctx.authType === 'oauth_2') {
 				const accessToken = await ctx.keys.getAccessToken();
 				const refreshToken = await ctx.keys.getRefreshToken();
@@ -372,6 +399,11 @@ export function gmail(options: GmailPluginOptions) {
 				}
 
 				const res = await ctx.keys.getIntegrationCredentials();
+
+				if (!res.clientId || !res.clientSecret) {
+					// prob need to throw an error here
+					return '';
+				}
 
 				const key = await getValidAccessToken({
 					accessToken,
@@ -391,5 +423,5 @@ export function gmail(options: GmailPluginOptions) {
 			const body = request.body as Record<string, unknown>;
 			return (body?.message as Record<string, unknown>)?.data !== undefined;
 		},
-	} satisfies GmailPlugin;
+	} satisfies InternalGmailPlugin;
 }
