@@ -120,25 +120,25 @@ export const list: LinearEndpoints['commentsList'] = async (ctx, input) => {
 
 	const result = response.issue.comments;
 
-	if (result.nodes && ctx.db.comments) {
-		try {
-			for (const comment of result.nodes) {
-				await ctx.db.comments.upsert(comment.id, {
-					id: comment.id,
-					body: comment.body,
-					issueId: comment.issue.id,
-					userId: comment.user.id,
-					parentId: comment.parent?.id,
-					editedAt: comment.editedAt,
-					createdAt: new Date(comment.createdAt),
-					updatedAt: new Date(comment.updatedAt),
-					archivedAt: comment.archivedAt,
-				});
+		if (result.nodes && ctx.db.comments) {
+			try {
+				for (const comment of result.nodes) {
+					await ctx.db.comments.upsert(comment.id, {
+						id: comment.id,
+						body: comment.body,
+						issueId: comment.issue.id,
+						userId: comment.user.id,
+						parentId: comment.parent?.id ?? undefined,
+						editedAt: comment.editedAt ?? undefined,
+						createdAt: new Date(comment.createdAt),
+						updatedAt: new Date(comment.updatedAt),
+						archivedAt: comment.archivedAt ?? undefined,
+					});
+				}
+			} catch (error) {
+				console.warn('Failed to save comments to database:', error);
 			}
-		} catch (error) {
-			console.warn('Failed to save comments to database:', error);
 		}
-	}
 
 	await logEventFromContext(ctx, 'linear.comments.list', { ...input }, 'completed');
 	return result;
@@ -157,22 +157,22 @@ export const create: LinearEndpoints['commentsCreate'] = async (ctx, input) => {
 
 	const result = response.commentCreate.comment;
 
-	if (result && ctx.db.comments) {
-		try {
-			await ctx.db.comments.upsert(result.id, {
-				id: result.id,
-				body: result.body,
-				issueId: result.issue.id,
-				userId: result.user.id,
-				parentId: result.parent?.id,
-				createdAt: new Date(result.createdAt),
-				updatedAt: new Date(result.updatedAt),
-				archivedAt: result.archivedAt,
-			});
-		} catch (error) {
-			console.warn('Failed to save comment to database:', error);
+		if (result && ctx.db.comments) {
+			try {
+				await ctx.db.comments.upsert(result.id, {
+					id: result.id,
+					body: result.body,
+					issueId: result.issue.id,
+					userId: result.user.id,
+					parentId: result.parent?.id ?? undefined,
+					createdAt: new Date(result.createdAt),
+					updatedAt: new Date(result.updatedAt),
+					archivedAt: result.archivedAt ?? undefined,
+				});
+			} catch (error) {
+				console.warn('Failed to save comment to database:', error);
+			}
 		}
-	}
 
 	await logEventFromContext(ctx, 'linear.comments.create', { ...input }, 'completed');
 	return result;
@@ -192,24 +192,24 @@ export const update: LinearEndpoints['commentsUpdate'] = async (ctx, input) => {
 
 	const result = response.commentUpdate.comment;
 
-	if (result && ctx.db.comments) {
-		try {
-			const existing = await ctx.db.comments.findByEntityId(result.id);
-			await ctx.db.comments.upsert(result.id, {
-				id: result.id,
-				body: result.body,
-				issueId: result.issue.id,
-				userId: result.user.id,
-				parentId: result.parent?.id,
-				editedAt: result.editedAt,
-				createdAt: existing?.data?.createdAt || new Date(result.createdAt),
-				updatedAt: new Date(result.updatedAt),
-				archivedAt: result.archivedAt,
-			});
-		} catch (error) {
-			console.warn('Failed to update comment in database:', error);
+		if (result && ctx.db.comments) {
+			try {
+				const existing = await ctx.db.comments.findByEntityId(result.id);
+				await ctx.db.comments.upsert(result.id, {
+					id: result.id,
+					body: result.body,
+					issueId: result.issue.id,
+					userId: result.user.id,
+					parentId: result.parent?.id ?? undefined,
+					editedAt: result.editedAt ?? undefined,
+					createdAt: existing?.data?.createdAt || new Date(result.createdAt),
+					updatedAt: new Date(result.updatedAt),
+					archivedAt: result.archivedAt ?? undefined,
+				});
+			} catch (error) {
+				console.warn('Failed to update comment in database:', error);
+			}
 		}
-	}
 
 	await logEventFromContext(ctx, 'linear.comments.update', { ...input }, 'completed');
 	return result;

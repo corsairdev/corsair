@@ -62,13 +62,13 @@ export const list: LinearEndpoints['teamsList'] = async (ctx, input) => {
 					id: team.id,
 					name: team.name,
 					key: team.key,
-					description: team.description,
-					icon: team.icon,
-					color: team.color,
+					description: team.description ?? undefined,
+					icon: team.icon ?? undefined,
+					color: team.color ?? undefined,
 					private: team.private,
 					createdAt: new Date(team.createdAt),
 					updatedAt: new Date(team.updatedAt),
-					archivedAt: team.archivedAt,
+					archivedAt: team.archivedAt ?? undefined,
 				});
 			}
 		} catch (error) {
@@ -95,13 +95,13 @@ export const get: LinearEndpoints['teamsGet'] = async (ctx, input) => {
 				id: result.id,
 				name: result.name,
 				key: result.key,
-				description: result.description,
-				icon: result.icon,
-				color: result.color,
+				description: result.description ?? undefined,
+				icon: result.icon ?? undefined,
+				color: result.color ?? undefined,
 				private: result.private,
 				createdAt: new Date(result.createdAt),
 				updatedAt: new Date(result.updatedAt),
-				archivedAt: result.archivedAt,
+				archivedAt: result.archivedAt ?? undefined,
 			});
 		} catch (error) {
 			console.warn('Failed to save team to database:', error);
