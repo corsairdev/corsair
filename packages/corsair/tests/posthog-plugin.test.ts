@@ -2,6 +2,8 @@ import { createCorsair } from '../core';
 import { posthog } from '../plugins/posthog';
 import { createTestDatabase } from './setup-db';
 import { createIntegrationAndAccount } from './plugins-test-utils';
+import dotenv from 'dotenv';
+dotenv.config();
 
 async function createPosthogClient() {
 	const apiKey = process.env.POSTHOG_API_KEY;

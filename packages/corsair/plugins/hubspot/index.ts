@@ -3,11 +3,13 @@ import type {
 	BindEndpoints,
 	BindWebhooks,
 	CorsairEndpoint,
+	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
 	CorsairWebhook,
 } from '../../core';
 import type { HubSpotEndpointOutputs } from './endpoints';
+import { errorHandlers } from './error-handlers';
 import {
 	CompaniesEndpoints,
 	ContactListsEndpoints,
@@ -475,6 +477,7 @@ export type HubSpotPluginOptions = {
 	credentials: HubSpotCredentials;
 	hooks?: HubSpotPlugin['hooks'] | undefined;
 	webhookHooks?: HubSpotPlugin['webhookHooks'] | undefined;
+	errorHandlers?: CorsairErrorHandler;
 };
 
 export type HubSpotPlugin = CorsairPlugin<
@@ -505,5 +508,6 @@ export function hubspot(options: HubSpotPluginOptions) {
 					event.subscriptionType !== undefined,
 			);
 		},
+		errorHandlers: options.errorHandlers || errorHandlers,
 	} as HubSpotPlugin;
 }
