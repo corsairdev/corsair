@@ -2,12 +2,13 @@ import { createCorsair } from '../core';
 import { posthog } from '../plugins/posthog';
 import { createTestDatabase } from './setup-db';
 import { createIntegrationAndAccount } from './plugins-test-utils';
+import type { PostHogCredentials } from '../plugins/posthog/schema';
+import type { AuthTypes } from '../core/constants';
 import dotenv from 'dotenv';
 dotenv.config();
 
 async function createPosthogClient() {
 	const apiKey = process.env.POSTHOG_API_KEY;
-	const host = process.env.POSTHOG_HOST || 'https://app.posthog.com';
 	if (!apiKey) {
 		return null;
 	}
@@ -18,11 +19,10 @@ async function createPosthogClient() {
 	const corsair = createCorsair({
 		plugins: [
 			posthog({
-				authType: 'api_key' as any,
+				authType: 'api_key' as AuthTypes,
 				credentials: {
 					apiKey,
-					host,
-				} as any,
+				} satisfies PostHogCredentials,
 			}),
 		],
 		database: testDb.adapter,

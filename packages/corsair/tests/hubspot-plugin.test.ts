@@ -3,6 +3,9 @@ import { hubspot } from '../plugins/hubspot';
 import { createTestDatabase } from './setup-db';
 import { createIntegrationAndAccount } from './plugins-test-utils';
 import { HubSpotAPIError } from '../plugins/hubspot/client';
+import type { HubSpotCredentials } from '../plugins/hubspot/schema';
+import type { AuthTypes } from '../core/constants';
+import type { GetManyContactsResponse, GetManyCompaniesResponse, GetManyDealsResponse, CreateOrUpdateContactResponse, CreateCompanyResponse, CreateDealResponse, CreateTicketResponse } from '../plugins/hubspot/endpoints/types';
 import dotenv from 'dotenv';
 dotenv.config();
 
@@ -18,10 +21,10 @@ async function createHubspotClient() {
 	const corsair = createCorsair({
 		plugins: [
 			hubspot({
-				authType: 'oauth_2' as any,
+				authType: 'oauth_2' as AuthTypes,
 				credentials: {
 					token,
-				} as any,
+				} satisfies HubSpotCredentials,
 			}),
 		],
 		database: testDb.adapter,
@@ -41,7 +44,7 @@ describe('HubSpot plugin integration', () => {
 
 		const contactsList = await corsair.hubspot.api.contacts.getMany({
 			limit: 10,
-		} as any);
+		});
 
 		expect(contactsList).toBeDefined();
 
@@ -60,7 +63,7 @@ describe('HubSpot plugin integration', () => {
 			if (contactId) {
 				const contact = await corsair.hubspot.api.contacts.get({
 					contactId,
-				} as any);
+				});
 
 				expect(contact).toBeDefined();
 
@@ -79,13 +82,13 @@ describe('HubSpot plugin integration', () => {
 			}
 		}
 
-		const createdContact = await corsair.hubspot.api.contacts.createOrUpdate({
+		const createdContact: CreateOrUpdateContactResponse = await corsair.hubspot.api.contacts.createOrUpdate({
 			properties: {
 				email: `corsair-test-${Date.now()}@example.com`,
 				firstname: 'Corsair',
 				lastname: 'Test',
 			},
-		} as any);
+		});
 
 		expect(createdContact).toBeDefined();
 
@@ -98,8 +101,7 @@ describe('HubSpot plugin integration', () => {
 
 		expect(createEvents.length).toBeGreaterThan(0);
 
-		const createdContactId =
-			createdContact.id || (createdContact as any).results?.[0]?.id;
+		const createdContactId = createdContact.id;
 
 		if (createdContactId) {
 			const createdContactFromDb =
@@ -110,7 +112,7 @@ describe('HubSpot plugin integration', () => {
 			const searchResult = await corsair.hubspot.api.contacts.search({
 				query: 'corsair',
 				limit: 10,
-			} as any);
+			});
 
 			expect(searchResult).toBeDefined();
 
@@ -124,7 +126,7 @@ describe('HubSpot plugin integration', () => {
 			const recentlyCreated =
 				await corsair.hubspot.api.contacts.getRecentlyCreated({
 					count: 5,
-				} as any);
+				});
 
 			expect(recentlyCreated).toBeDefined();
 
@@ -143,7 +145,7 @@ describe('HubSpot plugin integration', () => {
 			const recentlyUpdated =
 				await corsair.hubspot.api.contacts.getRecentlyUpdated({
 					count: 5,
-				} as any);
+				});
 
 			expect(recentlyUpdated).toBeDefined();
 
@@ -177,7 +179,7 @@ describe('HubSpot plugin integration', () => {
 
 		const companiesList = await corsair.hubspot.api.companies.getMany({
 			limit: 10,
-		} as any);
+		});
 
 		expect(companiesList).toBeDefined();
 
@@ -196,7 +198,7 @@ describe('HubSpot plugin integration', () => {
 			if (companyId) {
 				const company = await corsair.hubspot.api.companies.get({
 					companyId,
-				} as any);
+				});
 
 				expect(company).toBeDefined();
 
@@ -215,12 +217,12 @@ describe('HubSpot plugin integration', () => {
 			}
 		}
 
-		const createdCompany = await corsair.hubspot.api.companies.create({
+		const createdCompany: CreateCompanyResponse = await corsair.hubspot.api.companies.create({
 			properties: {
 				name: `Corsair Test Company ${Date.now()}`,
 				domain: `corsair-test-${Date.now()}.example.com`,
 			},
-		} as any);
+		});
 
 		expect(createdCompany).toBeDefined();
 
@@ -231,8 +233,7 @@ describe('HubSpot plugin integration', () => {
 
 		expect(createEvents.length).toBeGreaterThan(0);
 
-		const createdCompanyId =
-			createdCompany.id || (createdCompany as any).results?.[0]?.id;
+		const createdCompanyId = createdCompany.id;
 
 		if (createdCompanyId) {
 			const createdCompanyFromDb =
@@ -245,7 +246,7 @@ describe('HubSpot plugin integration', () => {
 				properties: {
 					name: `Corsair Test Company Updated ${Date.now()}`,
 				},
-			} as any);
+			});
 
 			expect(updatedCompany).toBeDefined();
 
@@ -259,14 +260,14 @@ describe('HubSpot plugin integration', () => {
 			const recentlyCreated =
 				await corsair.hubspot.api.companies.getRecentlyCreated({
 					count: 5,
-				} as any);
+				});
 
 			expect(recentlyCreated).toBeDefined();
 
 			const recentlyUpdated =
 				await corsair.hubspot.api.companies.getRecentlyUpdated({
 					count: 5,
-				} as any);
+				});
 
 			expect(recentlyUpdated).toBeDefined();
 		}
@@ -288,7 +289,7 @@ describe('HubSpot plugin integration', () => {
 
 		const dealsList = await corsair.hubspot.api.deals.getMany({
 			limit: 10,
-		} as any);
+		});
 
 		expect(dealsList).toBeDefined();
 
@@ -307,7 +308,7 @@ describe('HubSpot plugin integration', () => {
 			if (dealId) {
 				const deal = await corsair.hubspot.api.deals.get({
 					dealId,
-				} as any);
+				});
 
 				expect(deal).toBeDefined();
 
@@ -324,13 +325,13 @@ describe('HubSpot plugin integration', () => {
 			}
 		}
 
-		const createdDeal = await corsair.hubspot.api.deals.create({
+		const createdDeal: CreateDealResponse = await corsair.hubspot.api.deals.create({
 			properties: {
 				dealname: `Corsair Test Deal ${Date.now()}`,
 				dealstage: 'appointmentscheduled',
 				pipeline: 'default',
 			},
-		} as any);
+		});
 
 		expect(createdDeal).toBeDefined();
 
@@ -341,7 +342,7 @@ describe('HubSpot plugin integration', () => {
 
 		expect(createEvents.length).toBeGreaterThan(0);
 
-		const createdDealId = createdDeal.id || (createdDeal as any).results?.[0]?.id;
+		const createdDealId = createdDeal.id;
 
 		if (createdDealId) {
 			const createdDealFromDb =
@@ -354,7 +355,7 @@ describe('HubSpot plugin integration', () => {
 				properties: {
 					dealname: `Corsair Test Deal Updated ${Date.now()}`,
 				},
-			} as any);
+			});
 
 			expect(updatedDeal).toBeDefined();
 
@@ -368,7 +369,7 @@ describe('HubSpot plugin integration', () => {
 			const searchResult = await corsair.hubspot.api.deals.search({
 				query: 'corsair',
 				limit: 10,
-			} as any);
+			});
 
 			expect(searchResult).toBeDefined();
 
@@ -399,7 +400,7 @@ describe('HubSpot plugin integration', () => {
 		try {
 			ticketsList = await corsair.hubspot.api.tickets.getMany({
 				limit: 10,
-			} as any);
+			});
 		} catch (error) {
 			if (error instanceof HubSpotAPIError && error.code === 403) {
 				testDb.cleanup();
@@ -425,7 +426,7 @@ describe('HubSpot plugin integration', () => {
 			if (ticketId) {
 				const ticket = await corsair.hubspot.api.tickets.get({
 					ticketId,
-				} as any);
+				});
 
 				expect(ticket).toBeDefined();
 
@@ -451,7 +452,7 @@ describe('HubSpot plugin integration', () => {
 					subject: `Corsair Test Ticket ${Date.now()}`,
 					content: 'Test ticket created by Corsair integration test',
 				},
-			} as any);
+			});
 		} catch (error) {
 			if (error instanceof HubSpotAPIError) {
 				console.warn(
@@ -473,8 +474,7 @@ describe('HubSpot plugin integration', () => {
 
 		expect(createEvents.length).toBeGreaterThan(0);
 
-		const createdTicketId =
-			createdTicket.id || (createdTicket as any).results?.[0]?.id;
+		const createdTicketId = createdTicket.id;
 
 		if (createdTicketId) {
 			const createdTicketFromDb =
@@ -487,7 +487,7 @@ describe('HubSpot plugin integration', () => {
 				properties: {
 					subject: `Corsair Test Ticket Updated ${Date.now()}`,
 				},
-			} as any);
+			});
 
 			expect(updatedTicket).toBeDefined();
 
@@ -516,7 +516,7 @@ describe('HubSpot plugin integration', () => {
 
 		const engagementsList = await corsair.hubspot.api.engagements.getMany({
 			limit: 10,
-		} as any);
+		});
 
 		expect(engagementsList).toBeDefined();
 
@@ -535,7 +535,7 @@ describe('HubSpot plugin integration', () => {
 			if (engagementId) {
 				const engagement = await corsair.hubspot.api.engagements.get({
 					engagementId,
-				} as any);
+				});
 
 				expect(engagement).toBeDefined();
 
@@ -552,7 +552,7 @@ describe('HubSpot plugin integration', () => {
 
 		const contactsList = await corsair.hubspot.api.contacts.getMany({
 			limit: 1,
-		} as any);
+		});
 
 		let contactId: number | undefined;
 
@@ -582,7 +582,7 @@ describe('HubSpot plugin integration', () => {
 				metadata: {
 					body: `Corsair test engagement ${Date.now()}`,
 				},
-			} as any);
+			});
 		} catch (error) {
 			if (error instanceof HubSpotAPIError) {
 				testDb.cleanup();
