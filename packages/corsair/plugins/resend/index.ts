@@ -9,6 +9,7 @@ import type {
 } from '../../core';
 import type { AuthTypes } from '../../core/constants';
 import { Domains, Emails } from './endpoints';
+import { errorHandlers } from './error-handlers';
 import type { ResendEndpointOutputs } from './endpoints/types';
 import type { ResendCredentials } from './schema';
 import { ResendSchema } from './schema';
@@ -167,6 +168,6 @@ export function resend(options: ResendPluginOptions) {
 			const type = body?.type;
 			return typeof type === 'string' && (type.startsWith('email.') || type.startsWith('domain.'));
 		},
-		errorHandlers: options.errorHandlers,
+		errorHandlers: options.errorHandlers || errorHandlers,
 	} satisfies ResendPlugin;
 }

@@ -144,13 +144,31 @@ export const verify: ResendEndpoints['domainsVerify'] = async (ctx, input) => {
 
 	if (ctx.db.domains && response.id) {
 		try {
-			await ctx.db.domains.upsert(response.id, {
-				id: response.id,
-				name: response.name,
-				status: response.status,
-				created_at: response.created_at,
-				region: response.region,
-			});
+			if (response.name && response.status && response.created_at) {
+				await ctx.db.domains.upsert(response.id, {
+					id: response.id,
+					name: response.name,
+					status: response.status,
+					created_at: response.created_at,
+					region: response.region,
+				});
+			} else {
+				const domainResponse = await makeResendRequest<
+					ResendEndpointOutputs['domainsGet']
+				>(`domains/${input.id}`, ctx.options.credentials.apiKey, {
+					method: 'GET',
+				});
+
+				if (domainResponse.id) {
+					await ctx.db.domains.upsert(domainResponse.id, {
+						id: domainResponse.id,
+						name: domainResponse.name,
+						status: domainResponse.status,
+						created_at: domainResponse.created_at,
+						region: domainResponse.region,
+					});
+				}
+			}
 		} catch (error) {
 			console.warn('Failed to update domain in database:', error);
 		}
