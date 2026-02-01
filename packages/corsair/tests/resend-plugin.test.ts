@@ -3,6 +3,8 @@ import { resend } from '../plugins/resend';
 import { createTestDatabase } from './setup-db';
 import { createIntegrationAndAccount } from './plugins-test-utils';
 import { ResendAPIError } from '../plugins/resend/client';
+import type { ResendCredentials } from '../plugins/resend/schema';
+import type { AuthTypes } from '../core/constants';
 import dotenv from 'dotenv';
 dotenv.config();
 
@@ -20,10 +22,10 @@ async function createResendClient() {
 	const corsair = createCorsair({
 		plugins: [
 			resend({
-				authType: 'api_key' as any,
+				authType: 'api_key' as AuthTypes,
 				credentials: {
 					apiKey,
-				} as any,
+				} satisfies ResendCredentials,
 			}),
 		],
 		database: testDb.adapter,
@@ -48,7 +50,7 @@ describe('Resend plugin integration', () => {
 				to: [to],
 				subject: `Corsair Resend integration test ${Date.now()}`,
 				html: '<p>Test</p>',
-			} as any);
+			});
 		} catch (error) {
 			if (error instanceof ResendAPIError && error.message.includes('Forbidden')) {
 				testDb.cleanup();

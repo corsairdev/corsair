@@ -23,7 +23,7 @@ async function createGithubClient() {
 				authType: 'oauth_2',
 				credentials: {
 					token,
-				} as any,
+				},
 			}),
 		],
 		database: testDb.adapter,
