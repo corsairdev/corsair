@@ -707,7 +707,7 @@ export type PluginEntityClient<DataSchema extends ZodTypeAny> = {
 	) => Promise<TypedEntity<DataSchema>[]>;
 
 	/** Create or update by external entity ID. */
-	upsert: (
+	upsertByEntityId: (
 		entityId: string,
 		data: z.input<DataSchema>,
 	) => Promise<TypedEntity<DataSchema>>;
@@ -979,7 +979,7 @@ function createPluginEntityClient<DataSchema extends ZodTypeAny>(
 			return rows.map(parseRow);
 		},
 
-		upsert: async (entityId, data) => {
+		upsertByEntityId: async (entityId, data) => {
 			assertDatabaseConfigured(database);
 			const accountId = await getAccountId();
 			const parsed = dataSchema.parse(data);
@@ -1088,7 +1088,7 @@ function createPluginEntityClient<DataSchema extends ZodTypeAny>(
  * const message = await slackOrm.messages.findByEntityId('1234567890.123456');
  * // message.data is typed as SlackMessage
  *
- * await slackOrm.channels.upsert('C123', {
+ * await slackOrm.channels.upsertByEntityId('C123', {
  *   id: 'C123',
  *   name: 'general',
  *   is_private: false,

@@ -65,7 +65,7 @@ export const eventCreate: PostHogEndpoints['eventCreate'] = async (
 	if (response && ctx.db.events) {
 		try {
 			const id = input.uuid || `${Date.now()}-${Math.random()}`;
-			await ctx.db.events.upsert(id, {
+			await ctx.db.events.upsertByEntityId(id, {
 				...input,
 				id,
 				createdAt: new Date(),

@@ -18,7 +18,7 @@ export const get: SlackEndpoints['usersGet'] = async (ctx, input) => {
 
 	if (result.ok && result.user && ctx.db.users) {
 		try {
-			await ctx.db.users.upsert(result.user.id, {
+			await ctx.db.users.upsertByEntityId(result.user.id, {
 				...result.user,
 			});
 		} catch (error) {
@@ -49,7 +49,7 @@ export const list: SlackEndpoints['usersList'] = async (ctx, input) => {
 		try {
 			for (const member of result.members) {
 				if (member.id) {
-					await ctx.db.users.upsert(member.id, {
+					await ctx.db.users.upsertByEntityId(member.id, {
 						...member,
 					});
 				}
@@ -80,7 +80,7 @@ export const getProfile: SlackEndpoints['usersGetProfile'] = async (
 	if (result.ok && result.profile && input.user && ctx.db.users) {
 		try {
 			const existing = await ctx.db.users.findByEntityId(input.user);
-			await ctx.db.users.upsert(input.user, {
+			await ctx.db.users.upsertByEntityId(input.user, {
 				...(existing?.data || { id: input.user }),
 				profile: result.profile,
 			});

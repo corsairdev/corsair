@@ -16,9 +16,11 @@ export const message: SlackWebhooks['message'] = {
 			};
 		}
 
+		let corsairEntityId = '';
+
 		if (ctx.db.messages && event.ts) {
 			try {
-				await ctx.db.messages.upsert(event.ts, {
+				const entity = await ctx.db.messages.upsertByEntityId(event.ts, {
 					...event,
 					id: event.ts,
 					authorId: 'user' in event ? event.user : undefined,
@@ -26,6 +28,8 @@ export const message: SlackWebhooks['message'] = {
 						? new Date(parseFloat(event.ts) * 1000)
 						: new Date(),
 				});
+
+				corsairEntityId = entity?.id || '';
 			} catch (error) {
 				console.warn('Failed to save message to database:', error);
 			}
@@ -40,6 +44,8 @@ export const message: SlackWebhooks['message'] = {
 
 		return {
 			success: true,
+			corsairEntityId,
+			tenantId: ctx.tenantId,
 			data: event,
 		};
 	},

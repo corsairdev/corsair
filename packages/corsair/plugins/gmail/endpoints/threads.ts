@@ -23,7 +23,7 @@ export const list: GmailEndpoints['threadsList'] = async (ctx, input) => {
 		try {
 			for (const thread of result.threads) {
 				if (thread.id) {
-					await ctx.db.threads.upsert(thread.id, {
+					await ctx.db.threads.upsertByEntityId(thread.id, {
 						...thread,
 						id: thread.id,
 						createdAt: new Date(),
@@ -59,7 +59,7 @@ export const get: GmailEndpoints['threadsGet'] = async (ctx, input) => {
 
 	if (result.id && ctx.db.threads) {
 		try {
-			await ctx.db.threads.upsert(result.id, {
+			await ctx.db.threads.upsertByEntityId(result.id, {
 				...result,
 				id: result.id,
 				createdAt: new Date(),

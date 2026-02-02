@@ -20,14 +20,18 @@ export const commentCreate: LinearWebhooks['commentCreate'] = {
 			body: event.data.body?.substring(0, 100),
 		});
 
+		let corsairEntityId = '';
+
 		if (ctx.db.comments && event.data.id) {
 			try {
 				const data = event.data;
-				await ctx.db.comments.upsert(data.id, {
+				const entity = await ctx.db.comments.upsertByEntityId(data.id, {
 					...data,
 					createdAt: new Date(data.createdAt),
 					updatedAt: new Date(data.updatedAt),
 				});
+
+				corsairEntityId = entity?.id || '';
 			} catch (error) {
 				console.warn('Failed to save comment to database:', error);
 			}
@@ -42,6 +46,8 @@ export const commentCreate: LinearWebhooks['commentCreate'] = {
 
 		return {
 			success: true,
+			corsairEntityId,
+			tenantId: ctx.tenantId,
 			data: event,
 		};
 	},
@@ -65,14 +71,18 @@ export const commentUpdate: LinearWebhooks['commentUpdate'] = {
 			updatedFields: event.updatedFrom ? Object.keys(event.updatedFrom) : [],
 		});
 
+		let corsairEntityId = '';
+
 		if (ctx.db.comments && event.data.id) {
 			try {
 				const data = event.data;
-				await ctx.db.comments.upsert(data.id, {
+				const entity = await ctx.db.comments.upsertByEntityId(data.id, {
 					...data,
 					createdAt: new Date(data.createdAt),
 					updatedAt: new Date(data.updatedAt),
 				});
+
+				corsairEntityId = entity?.id || '';
 			} catch (error) {
 				console.warn('Failed to update comment in database:', error);
 			}
@@ -87,6 +97,8 @@ export const commentUpdate: LinearWebhooks['commentUpdate'] = {
 
 		return {
 			success: true,
+			corsairEntityId,
+			tenantId: ctx.tenantId,
 			data: event,
 		};
 	},
@@ -109,8 +121,14 @@ export const commentRemove: LinearWebhooks['commentRemove'] = {
 			id: event.data.id,
 		});
 
+		let corsairEntityId = '';
+
 		if (ctx.db.comments && event.data.id) {
 			try {
+				const entity = await ctx.db.comments.findByEntityId(event.data.id);
+				if (entity) {
+					corsairEntityId = entity.id;
+				}
 				await ctx.db.comments.deleteByEntityId(event.data.id);
 			} catch (error) {
 				console.warn('Failed to delete comment from database:', error);
@@ -126,6 +144,8 @@ export const commentRemove: LinearWebhooks['commentRemove'] = {
 
 		return {
 			success: true,
+			corsairEntityId,
+			tenantId: ctx.tenantId,
 			data: event,
 		};
 	},

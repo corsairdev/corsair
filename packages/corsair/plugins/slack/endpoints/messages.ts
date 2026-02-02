@@ -35,7 +35,7 @@ export const postMessage: SlackEndpoints['postMessage'] = async (
 
 	if (result.ok && result.message && result.ts && ctx.db.messages) {
 		try {
-			await ctx.db.messages.upsert(result.ts, {
+			await ctx.db.messages.upsertByEntityId(result.ts, {
 				...result.message,
 				id: result.ts,
 				ts: result.ts,
@@ -114,7 +114,7 @@ export const update: SlackEndpoints['messagesUpdate'] = async (ctx, input) => {
 
 	if (result.ok && result.message && result.ts && ctx.db.messages) {
 		try {
-			await ctx.db.messages.upsert(result.ts, {
+			await ctx.db.messages.upsertByEntityId(result.ts, {
 				...result.message,
 				id: result.ts,
 				ts: result.ts,
@@ -180,7 +180,7 @@ export const search: SlackEndpoints['messagesSearch'] = async (ctx, input) => {
 		try {
 			for (const match of result.messages.matches) {
 				if (match.ts && match.channel?.id) {
-					await ctx.db.messages.upsert(match.ts, {
+					await ctx.db.messages.upsertByEntityId(match.ts, {
 						...match,
 						channel: match.channel?.id,
 						id: match.ts,

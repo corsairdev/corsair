@@ -21,16 +21,20 @@ export const issueCreate: LinearWebhooks['issueCreate'] = {
 			title: event.data.title,
 		});
 
+		let corsairEntityId = '';
+
 		if (ctx.db.issues && event.data.id) {
 			try {
 				const data = event.data;
-				await ctx.db.issues.upsert(data.id, {
+				const entity = await ctx.db.issues.upsertByEntityId(data.id, {
 					...data,
 					number: parseInt(data.identifier.split('-')[1] || '0', 10),
 					url: event.url,
 					createdAt: new Date(data.createdAt),
 					updatedAt: new Date(data.updatedAt),
 				});
+
+				corsairEntityId = entity?.id || '';
 			} catch (error) {
 				console.warn('Failed to save issue to database:', error);
 			}
@@ -45,6 +49,8 @@ export const issueCreate: LinearWebhooks['issueCreate'] = {
 
 		return {
 			success: true,
+			corsairEntityId,
+			tenantId: ctx.tenantId,
 			data: event,
 		};
 	},
@@ -70,16 +76,20 @@ export const issueUpdate: LinearWebhooks['issueUpdate'] = {
 			updatedFields: event.updatedFrom ? Object.keys(event.updatedFrom) : [],
 		});
 
+		let corsairEntityId = '';
+
 		if (ctx.db.issues && event.data.id) {
 			try {
 				const data = event.data;
-				await ctx.db.issues.upsert(data.id, {
+				const entity = await ctx.db.issues.upsertByEntityId(data.id, {
 					...data,
 					number: parseInt(data.identifier.split('-')[1] || '0', 10),
 					url: event.url,
 					createdAt: new Date(data.createdAt),
 					updatedAt: new Date(data.updatedAt),
 				});
+
+				corsairEntityId = entity?.id || '';
 			} catch (error) {
 				console.warn('Failed to update issue in database:', error);
 			}
@@ -94,6 +104,8 @@ export const issueUpdate: LinearWebhooks['issueUpdate'] = {
 
 		return {
 			success: true,
+			corsairEntityId,
+			tenantId: ctx.tenantId,
 			data: event,
 		};
 	},
@@ -117,8 +129,14 @@ export const issueRemove: LinearWebhooks['issueRemove'] = {
 			identifier: event.data.identifier,
 		});
 
+		let corsairEntityId = '';
+
 		if (ctx.db.issues && event.data.id) {
 			try {
+				const entity = await ctx.db.issues.findByEntityId(event.data.id);
+				if (entity) {
+					corsairEntityId = entity.id;
+				}
 				await ctx.db.issues.deleteByEntityId(event.data.id);
 			} catch (error) {
 				console.warn('Failed to delete issue from database:', error);
@@ -134,6 +152,8 @@ export const issueRemove: LinearWebhooks['issueRemove'] = {
 
 		return {
 			success: true,
+			corsairEntityId,
+			tenantId: ctx.tenantId,
 			data: event,
 		};
 	},

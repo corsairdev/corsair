@@ -21,14 +21,18 @@ export const projectCreate: LinearWebhooks['projectCreate'] = {
 			state: event.data.state,
 		});
 
+		let corsairEntityId = '';
+
 		if (ctx.db.projects && event.data.id) {
 			try {
 				const data = event.data;
-				await ctx.db.projects.upsert(data.id, {
+				const entity = await ctx.db.projects.upsertByEntityId(data.id, {
 					...data,
 					createdAt: new Date(data.createdAt),
 					updatedAt: new Date(data.updatedAt),
 				});
+
+				corsairEntityId = entity?.id || '';
 			} catch (error) {
 				console.warn('Failed to save project to database:', error);
 			}
@@ -43,6 +47,8 @@ export const projectCreate: LinearWebhooks['projectCreate'] = {
 
 		return {
 			success: true,
+			corsairEntityId,
+			tenantId: ctx.tenantId,
 			data: event,
 		};
 	},
@@ -67,14 +73,18 @@ export const projectUpdate: LinearWebhooks['projectUpdate'] = {
 			updatedFields: event.updatedFrom ? Object.keys(event.updatedFrom) : [],
 		});
 
+		let corsairEntityId = '';
+
 		if (ctx.db.projects && event.data.id) {
 			try {
 				const data = event.data;
-				await ctx.db.projects.upsert(data.id, {
+				const entity = await ctx.db.projects.upsertByEntityId(data.id, {
 					...data,
 					createdAt: new Date(data.createdAt),
 					updatedAt: new Date(data.updatedAt),
 				});
+
+				corsairEntityId = entity?.id || '';
 			} catch (error) {
 				console.warn('Failed to update project in database:', error);
 			}
@@ -89,6 +99,8 @@ export const projectUpdate: LinearWebhooks['projectUpdate'] = {
 
 		return {
 			success: true,
+			corsairEntityId,
+			tenantId: ctx.tenantId,
 			data: event,
 		};
 	},
@@ -112,8 +124,14 @@ export const projectRemove: LinearWebhooks['projectRemove'] = {
 			name: event.data.name,
 		});
 
+		let corsairEntityId = '';
+
 		if (ctx.db.projects && event.data.id) {
 			try {
+				const entity = await ctx.db.projects.findByEntityId(event.data.id);
+				if (entity) {
+					corsairEntityId = entity.id;
+				}
 				await ctx.db.projects.deleteByEntityId(event.data.id);
 			} catch (error) {
 				console.warn('Failed to delete project from database:', error);
@@ -129,6 +147,8 @@ export const projectRemove: LinearWebhooks['projectRemove'] = {
 
 		return {
 			success: true,
+			corsairEntityId,
+			tenantId: ctx.tenantId,
 			data: event,
 		};
 	},

@@ -21,12 +21,19 @@ export const emailSent: ResendWebhooks['emailSent'] = {
 			to: event.data.to,
 		});
 
+		let corsairEntityId = '';
+
 		if (ctx.db.emails && event.data.email_id) {
 			try {
-				await ctx.db.emails.upsert(event.data.email_id, {
-					...event.data,
-					id: event.data.email_id,
-				});
+				const entity = await ctx.db.emails.upsertByEntityId(
+					event.data.email_id,
+					{
+						...event.data,
+						id: event.data.email_id,
+					},
+				);
+
+				corsairEntityId = entity?.id || '';
 			} catch (error) {
 				console.warn('Failed to save email to database:', error);
 			}
@@ -41,6 +48,8 @@ export const emailSent: ResendWebhooks['emailSent'] = {
 
 		return {
 			success: true,
+			corsairEntityId,
+			tenantId: ctx.tenantId,
 			data: event,
 		};
 	},
@@ -72,6 +81,7 @@ export const emailDelivered: ResendWebhooks['emailDelivered'] = {
 
 		return {
 			success: true,
+			tenantId: ctx.tenantId,
 			data: event,
 		};
 	},
@@ -104,6 +114,7 @@ export const emailBounced: ResendWebhooks['emailBounced'] = {
 
 		return {
 			success: true,
+			tenantId: ctx.tenantId,
 			data: event,
 		};
 	},
@@ -135,6 +146,7 @@ export const emailOpened: ResendWebhooks['emailOpened'] = {
 
 		return {
 			success: true,
+			tenantId: ctx.tenantId,
 			data: event,
 		};
 	},
@@ -167,6 +179,7 @@ export const emailClicked: ResendWebhooks['emailClicked'] = {
 
 		return {
 			success: true,
+			tenantId: ctx.tenantId,
 			data: event,
 		};
 	},
@@ -198,6 +211,7 @@ export const emailComplained: ResendWebhooks['emailComplained'] = {
 
 		return {
 			success: true,
+			tenantId: ctx.tenantId,
 			data: event,
 		};
 	},
@@ -230,6 +244,7 @@ export const emailFailed: ResendWebhooks['emailFailed'] = {
 
 		return {
 			success: true,
+			tenantId: ctx.tenantId,
 			data: event,
 		};
 	},
@@ -252,12 +267,19 @@ export const emailReceived: ResendWebhooks['emailReceived'] = {
 			email_id: event.data.email_id,
 		});
 
+		let corsairEntityId = '';
+
 		if (ctx.db.emails && event.data.email_id) {
 			try {
-				await ctx.db.emails.upsert(event.data.email_id, {
-					...event.data,
-					id: event.data.email_id,
-				});
+				const entity = await ctx.db.emails.upsertByEntityId(
+					event.data.email_id,
+					{
+						...event.data,
+						id: event.data.email_id,
+					},
+				);
+
+				corsairEntityId = entity?.id || '';
 			} catch (error) {
 				console.warn('Failed to save email to database:', error);
 			}
@@ -272,6 +294,8 @@ export const emailReceived: ResendWebhooks['emailReceived'] = {
 
 		return {
 			success: true,
+			corsairEntityId,
+			tenantId: ctx.tenantId,
 			data: event,
 		};
 	},

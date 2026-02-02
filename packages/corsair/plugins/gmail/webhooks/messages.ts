@@ -360,6 +360,7 @@ export const messageReceived = {
 			}
 
 			let firstProcessedMessage: Message | null = null;
+			let corsairEntityId = '';
 
 			for (const messageId of added) {
 				try {
@@ -396,22 +397,29 @@ export const messageReceived = {
 						const bodyText = extractBody(enrichedMessage);
 						const from = extractFrom(enrichedMessage);
 						const to = extractTo(enrichedMessage);
-						await ctx.db.messages.upsert(enrichedMessage.id, {
-							id: enrichedMessage.id,
-							threadId: enrichedMessage.threadId,
-							labelIds: enrichedMessage.labelIds,
-							snippet: enrichedMessage.snippet,
-							historyId: enrichedMessage.historyId,
-							internalDate: enrichedMessage.internalDate,
-							sizeEstimate: enrichedMessage.sizeEstimate,
-							payload: enrichedMessage.payload,
-							raw: enrichedMessage.raw,
-							subject,
-							body: bodyText,
-							from,
-							to,
-							createdAt: new Date(),
-						});
+						const entity = await ctx.db.messages.upsertByEntityId(
+							enrichedMessage.id,
+							{
+								id: enrichedMessage.id,
+								threadId: enrichedMessage.threadId,
+								labelIds: enrichedMessage.labelIds,
+								snippet: enrichedMessage.snippet,
+								historyId: enrichedMessage.historyId,
+								internalDate: enrichedMessage.internalDate,
+								sizeEstimate: enrichedMessage.sizeEstimate,
+								payload: enrichedMessage.payload,
+								raw: enrichedMessage.raw,
+								subject,
+								body: bodyText,
+								from,
+								to,
+								createdAt: new Date(),
+							},
+						);
+
+						if (!corsairEntityId && entity) {
+							corsairEntityId = entity.id;
+						}
 					} catch (dbError) {
 						console.error(
 							`❌ Failed to save message ${enrichedMessage.id} to database:`,
@@ -440,6 +448,8 @@ export const messageReceived = {
 
 			return {
 				success: true,
+				corsairEntityId,
+				tenantId: ctx.tenantId,
 				data: event,
 			};
 		} catch (error) {
@@ -458,6 +468,7 @@ export const messageReceived = {
 			return {
 				success: false,
 				error: error instanceof Error ? error.message : 'Unknown error',
+				tenantId: ctx.tenantId,
 				data: event,
 			};
 		}
@@ -527,6 +538,7 @@ export const messageDeleted = {
 			const { deleted } = extractMessageIds(historyResponse.history);
 
 			let firstDeletedMessage: Message | null = null;
+			let corsairEntityId = '';
 
 			if (!ctx.db?.messages) {
 				console.warn(
@@ -540,6 +552,7 @@ export const messageDeleted = {
 				};
 				return {
 					success: true,
+					tenantId: ctx.tenantId,
 					data: event,
 				};
 			}
@@ -571,6 +584,13 @@ export const messageDeleted = {
 						firstDeletedMessage = message;
 					}
 
+					if (!corsairEntityId) {
+						const entity = await ctx.db.messages.findByEntityId(messageId);
+						if (entity) {
+							corsairEntityId = entity.id;
+						}
+					}
+
 					await ctx.db.messages.deleteByEntityId(messageId);
 				} catch (deleteError) {
 					console.warn(
@@ -596,6 +616,8 @@ export const messageDeleted = {
 
 			return {
 				success: true,
+				corsairEntityId,
+				tenantId: ctx.tenantId,
 				data: event,
 			};
 		} catch (error) {
@@ -614,6 +636,7 @@ export const messageDeleted = {
 			return {
 				success: false,
 				error: error instanceof Error ? error.message : 'Unknown error',
+				tenantId: ctx.tenantId,
 				data: event,
 			};
 		}
@@ -685,6 +708,7 @@ export const messageLabelChanged = {
 			let firstModifiedMessage: Message | null = null;
 			let labelsAdded: string[] = [];
 			let labelsRemoved: string[] = [];
+			let corsairEntityId = '';
 
 			if (!ctx.db?.messages) {
 				console.warn(
@@ -700,6 +724,7 @@ export const messageLabelChanged = {
 				};
 				return {
 					success: true,
+					tenantId: ctx.tenantId,
 					data: event,
 				};
 			}
@@ -733,22 +758,29 @@ export const messageLabelChanged = {
 					const to = extractTo(enrichedMessage);
 
 					try {
-						await ctx.db.messages.upsert(enrichedMessage.id, {
-							id: enrichedMessage.id,
-							threadId: enrichedMessage.threadId,
-							labelIds: enrichedMessage.labelIds,
-							snippet: enrichedMessage.snippet,
-							historyId: enrichedMessage.historyId,
-							internalDate: enrichedMessage.internalDate,
-							sizeEstimate: enrichedMessage.sizeEstimate,
-							payload: enrichedMessage.payload,
-							raw: enrichedMessage.raw,
-							subject,
-							body: bodyText,
-							from,
-							to,
-							createdAt: new Date(),
-						});
+						const entity = await ctx.db.messages.upsertByEntityId(
+							enrichedMessage.id,
+							{
+								id: enrichedMessage.id,
+								threadId: enrichedMessage.threadId,
+								labelIds: enrichedMessage.labelIds,
+								snippet: enrichedMessage.snippet,
+								historyId: enrichedMessage.historyId,
+								internalDate: enrichedMessage.internalDate,
+								sizeEstimate: enrichedMessage.sizeEstimate,
+								payload: enrichedMessage.payload,
+								raw: enrichedMessage.raw,
+								subject,
+								body: bodyText,
+								from,
+								to,
+								createdAt: new Date(),
+							},
+						);
+
+						if (!corsairEntityId && entity) {
+							corsairEntityId = entity.id;
+						}
 					} catch (dbError) {
 						console.error(
 							`❌ Failed to update message ${enrichedMessage.id} in database:`,
@@ -779,6 +811,8 @@ export const messageLabelChanged = {
 
 			return {
 				success: true,
+				corsairEntityId,
+				tenantId: ctx.tenantId,
 				data: event,
 			};
 		} catch (error) {
@@ -797,6 +831,7 @@ export const messageLabelChanged = {
 			return {
 				success: false,
 				error: error instanceof Error ? error.message : 'Unknown error',
+				tenantId: ctx.tenantId,
 				data: event,
 			};
 		}

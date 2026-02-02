@@ -411,7 +411,7 @@ function createEntityClient(
 			return rows.map(parseRow);
 		},
 
-		upsert: async (entityId, data) => {
+		upsertByEntityId: async (entityId, data) => {
 			if (!database) throw new Error('Database not configured');
 			const accountId = await getAccountId();
 			const parsed = dataSchema.parse(data);

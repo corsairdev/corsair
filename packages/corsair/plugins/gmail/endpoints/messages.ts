@@ -100,7 +100,7 @@ export const list: GmailEndpoints['messagesList'] = async (ctx, input) => {
 		try {
 			for (const message of result.messages) {
 				if (message.id) {
-					await ctx.db.messages.upsert(message.id, {
+					await ctx.db.messages.upsertByEntityId(message.id, {
 						...message,
 						id: message.id,
 						createdAt: new Date(),
@@ -140,7 +140,7 @@ export const get: GmailEndpoints['messagesGet'] = async (ctx, input) => {
 			const body = extractBody(result);
 			const from = extractFrom(result);
 			const to = extractTo(result);
-			await ctx.db.messages.upsert(result.id, {
+			await ctx.db.messages.upsertByEntityId(result.id, {
 				...result,
 				subject,
 				body,
