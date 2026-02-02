@@ -203,3 +203,43 @@ export function resend<const T extends ResendPluginOptions>(
 		},
 	} satisfies InternalResendPlugin;
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Webhook Type Exports
+// ─────────────────────────────────────────────────────────────────────────────
+
+export type {
+	DomainCreatedEvent,
+	DomainUpdatedEvent,
+	EmailBouncedEvent,
+	EmailClickedEvent,
+	EmailComplainedEvent,
+	EmailDeliveredEvent,
+	EmailFailedEvent,
+	EmailOpenedEvent,
+	EmailReceivedEvent,
+	EmailSentEvent,
+	ResendEventMap,
+	ResendEventName,
+	ResendWebhookEvent,
+	ResendWebhookOutputs,
+	ResendWebhookPayload,
+} from './webhooks/types';
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Endpoint Type Exports
+// ─────────────────────────────────────────────────────────────────────────────
+
+export type {
+	CreateDomainResponse,
+	DeleteDomainResponse,
+	Domain,
+	Email,
+	GetDomainResponse,
+	GetEmailResponse,
+	ListDomainsResponse,
+	ListEmailsResponse,
+	ResendEndpointOutputs,
+	SendEmailResponse,
+	VerifyDomainResponse,
+} from './endpoints/types';

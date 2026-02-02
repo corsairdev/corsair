@@ -82,7 +82,7 @@ export const issueUpdate: LinearWebhooks['issueUpdate'] = {
 				const data = issueEvent.data;
 				await ctx.db.issues.upsert(data.id, {
 					...data,
-					priority: data.priority as 0 | 1 | 2 | 3 | 4,
+					priority: data.priority,
 					number: parseInt(data.identifier.split('-')[1] || '0', 10),
 					url: issueEvent.url,
 					stateId: (data as { stateId?: string }).stateId || '',

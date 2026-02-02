@@ -731,7 +731,6 @@ export type SlackWebhookAck = {
 };
 
 // Webhook Outputs (maps webhook names to response types)
-
 export type SlackWebhookOutputs = {
 	reactionAdded: SlackWebhookAck;
 	message: SlackWebhookAck;

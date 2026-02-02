@@ -19,6 +19,13 @@ import {
 	Users,
 } from './endpoints';
 import { SlackSchema } from './schema';
+import {
+	ChannelWebhooks,
+	FileWebhooks,
+	MessageWebhooks,
+	ReactionWebhooks,
+	UserWebhooks,
+} from './webhooks';
 import type {
 	ChannelCreatedEvent,
 	FileCreatedEvent,
@@ -30,14 +37,7 @@ import type {
 	SlackWebhookPayload,
 	TeamJoinEvent,
 	UserChangeEvent,
-} from './webhooks';
-import {
-	ChannelWebhooks,
-	FileWebhooks,
-	MessageWebhooks,
-	ReactionWebhooks,
-	UserWebhooks,
-} from './webhooks';
+} from './webhooks/types';
 
 export type { SlackReactionName } from './endpoints';
 
@@ -568,3 +568,101 @@ export function slack<const T extends SlackPluginOptions>(
 		},
 	} satisfies InternalSlackPlugin;
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Webhook Type Exports
+// ─────────────────────────────────────────────────────────────────────────────
+
+export type {
+	AllMessageEvents,
+	AppMentionEvent,
+	BotMessageEvent,
+	BotProfile,
+	ChannelArchiveMessageEvent,
+	ChannelCreatedEvent,
+	ChannelJoinMessageEvent,
+	ChannelLeaveMessageEvent,
+	ChannelNameMessageEvent,
+	ChannelPostingPermissionsMessageEvent,
+	ChannelPurposeMessageEvent,
+	ChannelTopicMessageEvent,
+	ChannelUnarchiveMessageEvent,
+	EKMAccessDeniedMessageEvent,
+	FileCreatedEvent,
+	FilePublicEvent,
+	FileSharedEvent,
+	FileShareMessageEvent,
+	GenericMessageEvent,
+	MeMessageEvent,
+	MessageChangedEvent,
+	MessageDeletedEvent,
+	MessageEvent,
+	MessageRepliedEvent,
+	ReactionAddedEvent,
+	ReactionItem,
+	ReactionRemovedEvent,
+	SlackEventMap,
+	SlackEventName,
+	SlackEventPayload,
+	SlackUrlVerificationPayload,
+	SlackWebhookAck,
+	SlackWebhookOutputs,
+	SlackWebhookPayload,
+	StatusEmojiDisplayInfo,
+	TeamJoinEvent,
+	ThreadBroadcastMessageEvent,
+	UserChangeEvent,
+} from './webhooks/types';
+
+export { createSlackEventMatch } from './webhooks/types';
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Endpoint Type Exports
+// ─────────────────────────────────────────────────────────────────────────────
+
+export type {
+	ChannelsRandomResponse,
+	ChatDeleteResponse,
+	ChatGetPermalinkResponse,
+	ChatPostMessageResponse,
+	ChatUpdateResponse,
+	ConversationsArchiveResponse,
+	ConversationsCloseResponse,
+	ConversationsCreateResponse,
+	ConversationsHistoryResponse,
+	ConversationsInfoResponse,
+	ConversationsInviteResponse,
+	ConversationsJoinResponse,
+	ConversationsKickResponse,
+	ConversationsLeaveResponse,
+	ConversationsListResponse,
+	ConversationsMembersResponse,
+	ConversationsOpenResponse,
+	ConversationsRenameResponse,
+	ConversationsRepliesResponse,
+	ConversationsSetPurposeResponse,
+	ConversationsSetTopicResponse,
+	ConversationsUnarchiveResponse,
+	FilesInfoResponse,
+	FilesListResponse,
+	FilesUploadResponse,
+	ReactionsAddResponse,
+	ReactionsGetResponse,
+	ReactionsRemoveResponse,
+	SearchMessagesResponse,
+	SlackEndpointInputs,
+	SlackEndpointOutputs,
+	StarsAddResponse,
+	StarsListResponse,
+	StarsRemoveResponse,
+	UsergroupsCreateResponse,
+	UsergroupsDisableResponse,
+	UsergroupsEnableResponse,
+	UsergroupsListResponse,
+	UsergroupsUpdateResponse,
+	UsersGetPresenceResponse,
+	UsersInfoResponse,
+	UsersListResponse,
+	UsersProfileGetResponse,
+	UsersProfileSetResponse,
+} from './endpoints/types';
