@@ -1,3 +1,4 @@
+import { logEventFromContext } from '../../utils/events';
 import type { ResendWebhooks } from '..';
 import type {
 	EmailBouncedEvent,
@@ -44,6 +45,13 @@ export const emailSent: ResendWebhooks['emailSent'] = {
 			}
 		}
 
+		await logEventFromContext(
+			ctx,
+			'resend.webhook.emailSent',
+			{ ...event },
+			'completed',
+		);
+
 		return {
 			success: true,
 			data: event,
@@ -67,6 +75,13 @@ export const emailDelivered: ResendWebhooks['emailDelivered'] = {
 		console.log('✅ Resend Email Delivered Event:', {
 			email_id: event.data.email_id,
 		});
+
+		await logEventFromContext(
+			ctx,
+			'resend.webhook.emailDelivered',
+			{ ...event },
+			'completed',
+		);
 
 		return {
 			success: true,
@@ -93,6 +108,13 @@ export const emailBounced: ResendWebhooks['emailBounced'] = {
 			bounce_type: event.data.bounce_type,
 		});
 
+		await logEventFromContext(
+			ctx,
+			'resend.webhook.emailBounced',
+			{ ...event },
+			'completed',
+		);
+
 		return {
 			success: true,
 			data: event,
@@ -116,6 +138,13 @@ export const emailOpened: ResendWebhooks['emailOpened'] = {
 		console.log('👁️ Resend Email Opened Event:', {
 			email_id: event.data.email_id,
 		});
+
+		await logEventFromContext(
+			ctx,
+			'resend.webhook.emailOpened',
+			{ ...event },
+			'completed',
+		);
 
 		return {
 			success: true,
@@ -142,6 +171,13 @@ export const emailClicked: ResendWebhooks['emailClicked'] = {
 			link: event.data.link,
 		});
 
+		await logEventFromContext(
+			ctx,
+			'resend.webhook.emailClicked',
+			{ ...event },
+			'completed',
+		);
+
 		return {
 			success: true,
 			data: event,
@@ -165,6 +201,13 @@ export const emailComplained: ResendWebhooks['emailComplained'] = {
 		console.log('⚠️ Resend Email Complained Event:', {
 			email_id: event.data.email_id,
 		});
+
+		await logEventFromContext(
+			ctx,
+			'resend.webhook.emailComplained',
+			{ ...event },
+			'completed',
+		);
 
 		return {
 			success: true,
@@ -190,6 +233,13 @@ export const emailFailed: ResendWebhooks['emailFailed'] = {
 			email_id: event.data.email_id,
 			error: event.data.error,
 		});
+
+		await logEventFromContext(
+			ctx,
+			'resend.webhook.emailFailed',
+			{ ...event },
+			'completed',
+		);
 
 		return {
 			success: true,
@@ -228,6 +278,13 @@ export const emailReceived: ResendWebhooks['emailReceived'] = {
 				console.warn('Failed to save email to database:', error);
 			}
 		}
+
+		await logEventFromContext(
+			ctx,
+			'resend.webhook.emailReceived',
+			{ ...event },
+			'completed',
+		);
 
 		return {
 			success: true,

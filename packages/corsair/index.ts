@@ -256,7 +256,6 @@ export type {
 	SlackEventName,
 	SlackEventPayload,
 	SlackUrlVerificationPayload,
-	SlackWebhookAck,
 	SlackWebhookOutputs,
 	SlackWebhookPayload,
 	StatusEmojiDisplayInfo,

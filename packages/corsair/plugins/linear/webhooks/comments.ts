@@ -1,3 +1,4 @@
+import { logEventFromContext } from '../../utils/events';
 import type { LinearWebhooks } from '..';
 import type {
 	CommentCreatedEvent,
@@ -40,6 +41,13 @@ export const commentCreate: LinearWebhooks['commentCreate'] = {
 				console.warn('Failed to save comment to database:', error);
 			}
 		}
+
+		await logEventFromContext(
+			ctx,
+			'linear.webhook.commentCreate',
+			{ ...commentEvent },
+			'completed',
+		);
 
 		return {
 			success: true,
@@ -85,6 +93,13 @@ export const commentUpdate: LinearWebhooks['commentUpdate'] = {
 			}
 		}
 
+		await logEventFromContext(
+			ctx,
+			'linear.webhook.commentUpdate',
+			{ ...commentEvent },
+			'completed',
+		);
+
 		return {
 			success: true,
 			data: commentEvent,
@@ -118,6 +133,13 @@ export const commentRemove: LinearWebhooks['commentRemove'] = {
 				console.warn('Failed to delete comment from database:', error);
 			}
 		}
+
+		await logEventFromContext(
+			ctx,
+			'linear.webhook.commentRemove',
+			{ ...commentEvent },
+			'completed',
+		);
 
 		return {
 			success: true,

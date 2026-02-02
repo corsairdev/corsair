@@ -1,3 +1,4 @@
+import { logEventFromContext } from '../../utils/events';
 import type { SlackWebhooks } from '..';
 import type {
 	FileCreatedEvent,
@@ -40,6 +41,13 @@ export const created: SlackWebhooks['fileCreated'] = {
 			}
 		}
 
+		await logEventFromContext(
+			ctx,
+			'slack.webhook.fileCreated',
+			{ ...fileEvent },
+			'completed',
+		);
+
 		return {
 			success: true,
 			data: fileEvent,
@@ -78,6 +86,13 @@ export const publicFile: SlackWebhooks['filePublic'] = {
 				console.warn('Failed to update file in database:', error);
 			}
 		}
+
+		await logEventFromContext(
+			ctx,
+			'slack.webhook.filePublic',
+			{ ...fileEvent },
+			'completed',
+		);
 
 		return {
 			success: true,
@@ -118,6 +133,13 @@ export const shared: SlackWebhooks['fileShared'] = {
 				console.warn('Failed to update file in database:', error);
 			}
 		}
+
+		await logEventFromContext(
+			ctx,
+			'slack.webhook.fileShared',
+			{ ...fileEvent },
+			'completed',
+		);
 
 		return {
 			success: true,
