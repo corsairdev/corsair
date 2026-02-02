@@ -1,3 +1,4 @@
+import { logEventFromContext } from '../../utils/events';
 import type { LinearWebhooks } from '..';
 import type {
 	ProjectCreatedEvent,
@@ -47,6 +48,13 @@ export const projectCreate: LinearWebhooks['projectCreate'] = {
 				console.warn('Failed to save project to database:', error);
 			}
 		}
+
+		await logEventFromContext(
+			ctx,
+			'linear.webhook.projectCreate',
+			{ ...projectEvent },
+			'completed',
+		);
 
 		return {
 			success: true,
@@ -99,6 +107,13 @@ export const projectUpdate: LinearWebhooks['projectUpdate'] = {
 			}
 		}
 
+		await logEventFromContext(
+			ctx,
+			'linear.webhook.projectUpdate',
+			{ ...projectEvent },
+			'completed',
+		);
+
 		return {
 			success: true,
 			data: projectEvent,
@@ -133,6 +148,13 @@ export const projectRemove: LinearWebhooks['projectRemove'] = {
 				console.warn('Failed to delete project from database:', error);
 			}
 		}
+
+		await logEventFromContext(
+			ctx,
+			'linear.webhook.projectRemove',
+			{ ...projectEvent },
+			'completed',
+		);
 
 		return {
 			success: true,

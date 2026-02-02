@@ -1,3 +1,4 @@
+import { logEventFromContext } from '../../utils/events';
 import type { SlackWebhooks } from '..';
 import type { TeamJoinEvent, UserChangeEvent } from './types';
 import { createSlackEventMatch } from './types';
@@ -35,6 +36,13 @@ export const teamJoin: SlackWebhooks['teamJoin'] = {
 				console.warn('Failed to save user to database:', error);
 			}
 		}
+
+		await logEventFromContext(
+			ctx,
+			'slack.webhook.teamJoin',
+			{ ...userEvent },
+			'completed',
+		);
 
 		return {
 			success: true,
@@ -76,6 +84,13 @@ export const userChange: SlackWebhooks['userChange'] = {
 				console.warn('Failed to update user in database:', error);
 			}
 		}
+
+		await logEventFromContext(
+			ctx,
+			'slack.webhook.userChange',
+			{ ...userEvent },
+			'completed',
+		);
 
 		return {
 			success: true,

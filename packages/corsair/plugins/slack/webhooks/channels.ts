@@ -1,3 +1,4 @@
+import { logEventFromContext } from '../../utils/events';
 import type { SlackWebhooks } from '..';
 import type { ChannelCreatedEvent } from './types';
 import { createSlackEventMatch } from './types';
@@ -44,6 +45,13 @@ export const created: SlackWebhooks['channelCreated'] = {
 				console.warn('Failed to save channel to database:', error);
 			}
 		}
+
+		await logEventFromContext(
+			ctx,
+			'slack.webhook.channelCreated',
+			{ ...channelEvent },
+			'completed',
+		);
 
 		return {
 			success: true,

@@ -1,3 +1,4 @@
+import { logEventFromContext } from '../../utils/events';
 import type { LinearWebhooks } from '..';
 import type {
 	IssueCreatedEvent,
@@ -45,6 +46,13 @@ export const issueCreate: LinearWebhooks['issueCreate'] = {
 				console.warn('Failed to save issue to database:', error);
 			}
 		}
+
+		await logEventFromContext(
+			ctx,
+			'linear.webhook.issueCreate',
+			{ ...issueEvent },
+			'completed',
+		);
 
 		return {
 			success: true,
@@ -96,6 +104,13 @@ export const issueUpdate: LinearWebhooks['issueUpdate'] = {
 			}
 		}
 
+		await logEventFromContext(
+			ctx,
+			'linear.webhook.issueUpdate',
+			{ ...issueEvent },
+			'completed',
+		);
+
 		return {
 			success: true,
 			data: issueEvent,
@@ -130,6 +145,13 @@ export const issueRemove: LinearWebhooks['issueRemove'] = {
 				console.warn('Failed to delete issue from database:', error);
 			}
 		}
+
+		await logEventFromContext(
+			ctx,
+			'linear.webhook.issueRemove',
+			{ ...issueEvent },
+			'completed',
+		);
 
 		return {
 			success: true,

@@ -3,6 +3,7 @@ import type {
 	RawWebhookRequest,
 	WebhookRequest,
 } from '../../../core/webhooks';
+import { logEventFromContext } from '../../utils/events';
 import type { GmailContext } from '..';
 import { makeGmailRequest } from '../client';
 import type { HistoryListResponse, Message, MessagePart } from '../types';
@@ -430,6 +431,13 @@ export const messageReceived = {
 				message: firstProcessedMessage || ({} as Message),
 			};
 
+			await logEventFromContext(
+				ctx,
+				'gmail.webhook.messageReceived',
+				{ ...event },
+				'completed',
+			);
+
 			return {
 				success: true,
 				data: event,
@@ -441,6 +449,12 @@ export const messageReceived = {
 				historyId: pushNotification.historyId || '',
 				message: {} as Message,
 			};
+			await logEventFromContext(
+				ctx,
+				'gmail.webhook.messageReceived',
+				{ ...event },
+				'failed',
+			);
 			return {
 				success: false,
 				error: error instanceof Error ? error.message : 'Unknown error',
@@ -573,17 +587,30 @@ export const messageDeleted = {
 				message: firstDeletedMessage || ({} as Message),
 			};
 
+			await logEventFromContext(
+				ctx,
+				'gmail.webhook.messageDeleted',
+				{ ...event },
+				'completed',
+			);
+
 			return {
 				success: true,
 				data: event,
 			};
 		} catch (error) {
-			const event: MessageReceivedEvent = {
-				type: 'messageReceived',
+			const event: MessageDeletedEvent = {
+				type: 'messageDeleted',
 				emailAddress: pushNotification.emailAddress || '',
 				historyId: pushNotification.historyId || '',
 				message: {} as Message,
 			};
+			await logEventFromContext(
+				ctx,
+				'gmail.webhook.messageDeleted',
+				{ ...event },
+				'failed',
+			);
 			return {
 				success: false,
 				error: error instanceof Error ? error.message : 'Unknown error',
@@ -743,6 +770,13 @@ export const messageLabelChanged = {
 				labelsRemoved,
 			};
 
+			await logEventFromContext(
+				ctx,
+				'gmail.webhook.messageLabelChanged',
+				{ ...event },
+				'completed',
+			);
+
 			return {
 				success: true,
 				data: event,
@@ -754,6 +788,12 @@ export const messageLabelChanged = {
 				historyId: pushNotification.historyId || '',
 				message: {} as Message,
 			};
+			await logEventFromContext(
+				ctx,
+				'gmail.webhook.messageLabelChanged',
+				{ ...event },
+				'failed',
+			);
 			return {
 				success: false,
 				error: error instanceof Error ? error.message : 'Unknown error',

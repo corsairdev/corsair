@@ -1,3 +1,4 @@
+import { logEventFromContext } from '../../utils/events';
 import type { PostHogWebhooks } from '..';
 import type { EventCapturedEvent } from './types';
 import { createPostHogMatch } from './types';
@@ -37,6 +38,13 @@ export const eventCaptured: PostHogWebhooks['eventCaptured'] = {
 				console.warn('Failed to save event to database:', error);
 			}
 		}
+
+		await logEventFromContext(
+			ctx,
+			'posthog.webhook.eventCaptured',
+			{ ...event },
+			'completed',
+		);
 
 		return {
 			success: true,

@@ -1,3 +1,4 @@
+import { logEventFromContext } from '../../utils/events';
 import type { ResendWebhooks } from '..';
 import type { DomainCreatedEvent, DomainUpdatedEvent } from './types';
 import { createResendMatch } from './types';
@@ -38,6 +39,13 @@ export const domainCreated: ResendWebhooks['domainCreated'] = {
 				console.warn('Failed to save domain to database:', error);
 			}
 		}
+
+		await logEventFromContext(
+			ctx,
+			'resend.webhook.domainCreated',
+			{ ...event },
+			'completed',
+		);
 
 		return {
 			success: true,
@@ -82,6 +90,13 @@ export const domainUpdated: ResendWebhooks['domainUpdated'] = {
 				console.warn('Failed to update domain in database:', error);
 			}
 		}
+
+		await logEventFromContext(
+			ctx,
+			'resend.webhook.domainUpdated',
+			{ ...event },
+			'completed',
+		);
 
 		return {
 			success: true,

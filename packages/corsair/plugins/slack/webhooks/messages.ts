@@ -1,3 +1,4 @@
+import { logEventFromContext } from '../../utils/events';
 import type { SlackWebhooks } from '..';
 import type { MessageEvent } from './types';
 import { createSlackEventMatch } from './types';
@@ -47,6 +48,13 @@ export const message: SlackWebhooks['message'] = {
 				console.warn('Failed to save message to database:', error);
 			}
 		}
+
+		await logEventFromContext(
+			ctx,
+			'slack.webhook.message',
+			{ ...messageEvent },
+			'completed',
+		);
 
 		return {
 			success: true,
