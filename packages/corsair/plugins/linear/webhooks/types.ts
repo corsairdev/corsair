@@ -11,7 +11,7 @@ export interface Issue {
 	identifier: string;
 	title: string;
 	description?: string;
-	priority: number;
+	priority: 0 | 1 | 2 | 3 | 4;
 	estimate?: number;
 	sortOrder: number;
 	startedAt?: string;

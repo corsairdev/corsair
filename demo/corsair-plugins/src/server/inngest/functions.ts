@@ -51,7 +51,33 @@ export const linearEventHandler = inngest.createFunction(
 			linearEvent.type,
 		);
 
-		const slackChannel = process.env.SLACK_LINEAR_CHANNEL_ID;
+		const sdkTestChannels = await tenant.slack.db.channels.search({
+			query: 'sdk-test',
+		});
+
+		let sdkTestChannel = sdkTestChannels?.find(
+			(channel) => channel?.data?.name === 'sdk-test',
+		);
+
+		if (!sdkTestChannel?.id) {
+			await tenant.slack.api.channels.list({
+				exclude_archived: true,
+			});
+
+			const dbChannels = await tenant.slack.db.channels.search({
+				query: 'sdk-test',
+			});
+
+			sdkTestChannel = dbChannels?.find(
+				(channel) => channel?.data?.name === 'sdk-test',
+			);
+		}
+
+		if (!sdkTestChannel?.id) {
+			throw new Error(`Couldn't find #sdk-test channel`);
+		}
+
+		const slackChannel = sdkTestChannel?.entity_id;
 
 		const eventType = linearEvent.type;
 		const action = linearEvent.action;

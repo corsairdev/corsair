@@ -1,6 +1,6 @@
 # Corsair: The TypeScript Integration Framework
 
-A unified framework for integrating with third-party services. Add Slack, Linear, GitHub, Gmail, and hundreds of other integrations with the same syntax, same types, and same four database tables.
+A unified framework for API and webhook integrations. Add integrations with the same syntax, same types, and same four database tables.
 
 ## The Problem
 
@@ -13,8 +13,7 @@ When a user signs up in your app, you might want to:
 - Update them in your CRM
 
 Each integration requires the same infrastructure:
-- API calls with proper error handling
-- Authentication and rate limit management
+- API calls with proper auth and error handling
 - Database schemas to store responses
 - Type definitions for untyped API responses
 - Webhooks or polling to keep data fresh

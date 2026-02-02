@@ -31,5 +31,4 @@ export const UserWebhooks = {
 	userChange,
 };
 
-export * from './types';
 export * as usersWebhooks from './users';

@@ -275,3 +275,71 @@ export function linear<const T extends LinearPluginOptions>(
 		},
 	} satisfies InternalLinearPlugin;
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Webhook Type Exports
+// ─────────────────────────────────────────────────────────────────────────────
+
+export type {
+	CommentCreatedEvent,
+	CommentDeletedEvent,
+	CommentUpdatedEvent,
+	IssueCreatedEvent,
+	IssueDeletedEvent,
+	IssueUpdatedEvent,
+	LinearEventMap,
+	LinearEventName,
+	LinearWebhookAck,
+	LinearWebhookEvent,
+	LinearWebhookOutputs,
+	ProjectCreatedEvent,
+	ProjectDeletedEvent,
+	ProjectUpdatedEvent,
+	WebhookData,
+} from './webhooks/types';
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Endpoint Type Exports
+// ─────────────────────────────────────────────────────────────────────────────
+
+export type {
+	Comment,
+	CommentConnection,
+	CommentCreateResponse,
+	CommentDeleteResponse,
+	CommentsListResponse,
+	CommentUpdateResponse,
+	CreateCommentInput,
+	CreateIssueInput,
+	CreateProjectInput,
+	Cycle,
+	Issue,
+	IssueConnection,
+	IssueCreateResponse,
+	IssueDeleteResponse,
+	IssueGetResponse,
+	IssuePriority,
+	IssuesListResponse,
+	IssueUpdateResponse,
+	Label,
+	LinearEndpointOutputs,
+	PageInfo,
+	Project,
+	ProjectConnection,
+	ProjectCreateResponse,
+	ProjectDeleteResponse,
+	ProjectGetResponse,
+	ProjectState,
+	ProjectsListResponse,
+	ProjectUpdateResponse,
+	Team,
+	TeamConnection,
+	TeamGetResponse,
+	TeamsListResponse,
+	UpdateCommentInput,
+	UpdateIssueInput,
+	UpdateProjectInput,
+	User,
+	WorkflowState,
+	WorkflowStateType,
+} from './endpoints/types';
