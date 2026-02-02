@@ -69,8 +69,8 @@ export interface GmailEventMap {
 export type GmailWebhookPayload = PubSubNotification;
 
 export type GmailWebhookOutputs = {
-	messageReceived: { success: boolean };
-	messageDeleted: { success: boolean };
-	messageLabelChanged: { success: boolean };
-	history: { success: boolean };
+	messageReceived: MessageReceivedEvent;
+	messageDeleted: MessageDeletedEvent;
+	messageLabelChanged: MessageLabelChangedEvent;
+	history: HistoryEvent;
 };

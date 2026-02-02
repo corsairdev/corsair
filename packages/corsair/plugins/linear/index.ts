@@ -289,7 +289,6 @@ export type {
 	IssueUpdatedEvent,
 	LinearEventMap,
 	LinearEventName,
-	LinearWebhookAck,
 	LinearWebhookEvent,
 	LinearWebhookOutputs,
 	ProjectCreatedEvent,
