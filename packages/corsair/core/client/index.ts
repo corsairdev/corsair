@@ -1,6 +1,6 @@
 import type { ZodTypeAny } from 'zod';
 import { withTenantAdapter } from '../../adapters/tenant';
-import type { CorsairDbAdapter } from '../../adapters/types';
+import type { CorsairDbAdapter, CorsairWhere } from '../../adapters/types';
 import type {
 	CorsairPluginSchema,
 	PluginEntityClient,
@@ -53,12 +53,13 @@ type UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends (
 /**
  * Extracts the authType from plugin options.
  * @template Options - The plugin options type
- * @template DefaultAuthType - Optional default auth type to use when authType is optional
+ * @template DefaultAuthType - Optional default auth type to use when authType is optional or not present
  *
  * Priority:
  * 1. If authType is a specific single AuthType (not a union), use that
  * 2. If DefaultAuthType parameter is provided, use that as the fallback
  * 3. Otherwise use the non-nullable union from authType
+ * 4. If authType is not in Options at all, fall back to DefaultAuthType
  */
 export type ExtractAuthType<
 	Options,
@@ -74,7 +75,10 @@ export type ExtractAuthType<
 			: NonNullable<Options['authType']> extends AuthTypes
 				? NonNullable<Options['authType']>
 				: never
-	: never;
+	: // authType is not in Options - fall back to DefaultAuthType
+		DefaultAuthType extends AuthTypes
+		? DefaultAuthType
+		: never;
 
 /**
  * Extracts Options type from plugin's options property.
@@ -83,10 +87,12 @@ type InferPluginOptions<P> = P extends { options?: infer O } ? O : never;
 
 /**
  * Extracts DefaultAuthType from plugin's __defaultAuthType property.
+ * Uses NonNullable<D> because the __defaultAuthType property is optional,
+ * which causes TypeScript to infer D as `AuthType | undefined`.
  */
 type InferDefaultAuthType<P> = P extends { __defaultAuthType?: infer D }
-	? D extends AuthTypes
-		? D
+	? NonNullable<D> extends AuthTypes
+		? NonNullable<D>
 		: undefined
 	: undefined;
 
@@ -365,21 +371,64 @@ function createEntityClient(
 			return rows.map(parseRow);
 		},
 
-		search: async ({ query, limit, offset }) => {
+		search: async (options) => {
 			if (!database) return [];
 			const accountId = await getAccountId();
+
+			// Build where clauses from search options
+			const whereConditions: CorsairWhere[] = [...baseWhere(accountId)];
+
+			// Helper to parse filter value into operator and value
+			function parseFilterValue(filterValue: unknown): {
+				operator: 'like' | '=';
+				value: unknown;
+			} {
+				if (
+					typeof filterValue === 'object' &&
+					filterValue !== null &&
+					!Array.isArray(filterValue)
+				) {
+					const obj = filterValue as Record<string, unknown>;
+					if ('contains' in obj && typeof obj.contains === 'string') {
+						return { operator: 'like', value: `%${obj.contains}%` };
+					}
+					if ('equals' in obj) {
+						return { operator: '=', value: obj.equals };
+					}
+				}
+				// Exact match
+				return { operator: '=', value: filterValue };
+			}
+
+			// Reserved keys that aren't entity column filters
+			const reservedKeys = new Set(['data', 'limit', 'offset']);
+
+			// Handle entity column filters (derived from CorsairEntity)
+			for (const [key, filterValue] of Object.entries(options)) {
+				if (reservedKeys.has(key) || filterValue === undefined) continue;
+				const { operator, value } = parseFilterValue(filterValue);
+				whereConditions.push({ field: key, operator, value });
+			}
+
+			// Handle data (JSONB) filters
+			if (options.data && typeof options.data === 'object') {
+				for (const [key, filterValue] of Object.entries(options.data)) {
+					if (filterValue === undefined) continue;
+					const { operator, value } = parseFilterValue(filterValue);
+					// Use JSONB path query syntax: data->>'key'
+					whereConditions.push({
+						field: `data->>'${key}'`,
+						operator,
+						value,
+					});
+				}
+			}
+
 			const rows = await database.findMany({
 				table: tableName,
-				where: [
-					...baseWhere(accountId),
-					{
-						field: 'entity_id',
-						operator: 'like' as const,
-						value: `%${query}%`,
-					},
-				],
-				limit: limit ?? 100,
-				offset: offset ?? 0,
+				where: whereConditions,
+				limit: options.limit ?? 100,
+				offset: options.offset ?? 0,
 			});
 			return rows.map(parseRow);
 		},

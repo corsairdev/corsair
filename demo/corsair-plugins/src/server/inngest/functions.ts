@@ -52,12 +52,10 @@ export const linearEventHandler = inngest.createFunction(
 		);
 
 		const sdkTestChannels = await tenant.slack.db.channels.search({
-			query: 'sdk-test',
+			data: { name: 'sdk-test' },
 		});
 
-		let sdkTestChannel = sdkTestChannels?.find(
-			(channel) => channel?.data?.name === 'sdk-test',
-		);
+		let sdkTestChannel = sdkTestChannels?.[0];
 
 		if (!sdkTestChannel?.id) {
 			await tenant.slack.api.channels.list({
@@ -65,12 +63,10 @@ export const linearEventHandler = inngest.createFunction(
 			});
 
 			const dbChannels = await tenant.slack.db.channels.search({
-				query: 'sdk-test',
+				data: { name: 'sdk-test' },
 			});
 
-			sdkTestChannel = dbChannels?.find(
-				(channel) => channel?.data?.name === 'sdk-test',
-			);
+			sdkTestChannel = dbChannels?.[0];
 		}
 
 		if (!sdkTestChannel?.id) {

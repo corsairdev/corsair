@@ -87,46 +87,36 @@ export const create: SlackEndpoints['channelsCreate'] = async (ctx, input) => {
 };
 
 export const get: SlackEndpoints['channelsGet'] = async (ctx, input) => {
-	try {
-		const result = await makeSlackRequest<SlackEndpointOutputs['channelsGet']>(
-			'conversations.info',
-			ctx.key,
-			{
-				method: 'GET',
-				query: {
-					channel: input.channel,
-					include_locale: input.include_locale,
-					include_num_members: input.include_num_members,
-				},
+	const result = await makeSlackRequest<SlackEndpointOutputs['channelsGet']>(
+		'conversations.info',
+		ctx.key,
+		{
+			method: 'GET',
+			query: {
+				channel: input.channel,
+				include_locale: input.include_locale,
+				include_num_members: input.include_num_members,
 			},
-		);
+		},
+	);
 
-		if (result.ok && result.channel && ctx.db.channels) {
-			try {
-				await ctx.db.channels.upsert(result.channel.id, {
-					...result.channel,
-				});
-			} catch (error) {
-				console.warn('Failed to save channel to database:', error);
-			}
+	if (result.ok && result.channel && ctx.db.channels) {
+		try {
+			await ctx.db.channels.upsert(result.channel.id, {
+				...result.channel,
+			});
+		} catch (error) {
+			console.warn('Failed to save channel to database:', error);
 		}
-
-		await logEventFromContext(
-			ctx,
-			'slack.channels.get',
-			{ ...input },
-			'completed',
-		);
-		return result;
-	} catch (error) {
-		await logEventFromContext(
-			ctx,
-			'slack.channels.get',
-			{ ...input },
-			'failed',
-		);
-		throw error;
 	}
+
+	await logEventFromContext(
+		ctx,
+		'slack.channels.get',
+		{ ...input },
+		'completed',
+	);
+	return result;
 };
 
 export const list: SlackEndpoints['channelsList'] = async (ctx, input) => {
@@ -257,7 +247,7 @@ export const join: SlackEndpoints['channelsJoin'] = async (ctx, input) => {
 
 	if (result.ok && result.channel) {
 		const endpoints = ctx.endpoints as SlackBoundEndpoints;
-		await endpoints.channelsGet({ channel: result.channel.id });
+		await endpoints.channelsGetMembers({ channel: result.channel.id });
 	}
 
 	await logEventFromContext(
