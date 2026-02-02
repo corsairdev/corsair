@@ -15,11 +15,9 @@ export const corsair = createCorsair({
 				issues: {
 					create: {
 						after: async (ctx, res) => {
-							const tenantId = (ctx as any).$tenantId || 'default';
+							const tenantId = ctx.tenantId || 'default';
 							const rawBody = (ctx as any).$rawBody;
 							const linearBody = res.data as any;
-
-							console.log(tenantId, 'res.data here')
 
 							await inngest.send({
 								name: 'linear/event',
@@ -34,7 +32,7 @@ export const corsair = createCorsair({
 					update: {
 					
 						after: async (ctx, res) => {
-							const tenantId = (ctx as any).$tenantId || 'default';
+							const tenantId = ctx.tenantId || 'default';
 							const rawBody = (ctx as any).$rawBody;
 							const linearBody = res.data as any;
 					
@@ -53,7 +51,7 @@ export const corsair = createCorsair({
 					create: {
 					
 						after: async (ctx, res) => {
-							const tenantId = (ctx as any).$tenantId || 'default';
+							const tenantId = ctx.tenantId || 'default';
 							const rawBody = (ctx as any).$rawBody;
 							const linearBody = res.data as any;
 					
@@ -70,7 +68,7 @@ export const corsair = createCorsair({
 					update: {
 					
 						after: async (ctx, res) => {
-							const tenantId = (ctx as any).$tenantId || 'default';
+							const tenantId = ctx.tenantId || 'default';
 							const rawBody = (ctx as any).$rawBody;
 							const linearBody = res.data as any;
 							
@@ -93,7 +91,7 @@ export const corsair = createCorsair({
 					message: {
 						
 						after: async (ctx, res) => {
-							const tenantId = (ctx as any).$tenantId || 'default';
+							const tenantId = ctx.tenantId || 'default';
 							const rawBody = (ctx as any).$rawBody;
 							const slackEvent = res.data as any;
 						
@@ -116,7 +114,7 @@ export const corsair = createCorsair({
 					received: {
 					
 						after: async (ctx, res) => {
-							const tenantId = (ctx as any).$tenantId || 'default';
+							const tenantId = ctx.tenantId || 'default';
 							const resendBody = res.data as any;
 							
 							const toAddress = Array.isArray(resendBody?.data?.to)

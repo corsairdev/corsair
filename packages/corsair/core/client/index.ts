@@ -560,6 +560,8 @@ export function buildCorsairClient<
 			...(accountKeyManager
 				? { keys: accountKeyManager, authType: pluginOptions?.authType }
 				: {}),
+			// Include tenantId in context so it's available in webhook hooks
+			...(tenantId ? { tenantId } : {}),
 		};
 
 		const endpoints = plugin.endpoints ?? {};
