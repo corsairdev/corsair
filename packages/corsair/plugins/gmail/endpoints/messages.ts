@@ -1,5 +1,5 @@
 import { logEventFromContext } from '../../utils/events';
-import type { GmailEndpoints } from '..';
+import type { GmailBoundEndpoints, GmailEndpoints } from '..';
 import { makeGmailRequest } from '../client';
 import type { Message, MessagePart } from '../types';
 import type { GmailEndpointOutputs } from './types';
@@ -101,13 +101,8 @@ export const list: GmailEndpoints['messagesList'] = async (ctx, input) => {
 			for (const message of result.messages) {
 				if (message.id) {
 					await ctx.db.messages.upsert(message.id, {
+						...message,
 						id: message.id,
-						threadId: message.threadId,
-						labelIds: message.labelIds,
-						snippet: message.snippet,
-						historyId: message.historyId,
-						internalDate: message.internalDate,
-						sizeEstimate: message.sizeEstimate,
 						createdAt: new Date(),
 					});
 				}
@@ -146,19 +141,12 @@ export const get: GmailEndpoints['messagesGet'] = async (ctx, input) => {
 			const from = extractFrom(result);
 			const to = extractTo(result);
 			await ctx.db.messages.upsert(result.id, {
-				id: result.id,
-				threadId: result.threadId,
-				labelIds: result.labelIds,
-				snippet: result.snippet,
-				historyId: result.historyId,
-				internalDate: result.internalDate,
-				sizeEstimate: result.sizeEstimate,
-				payload: result.payload,
-				raw: result.raw,
+				...result,
 				subject,
 				body,
 				from,
 				to,
+				id: result.id,
 				createdAt: new Date(),
 			});
 		} catch (error) {
@@ -188,31 +176,9 @@ export const send: GmailEndpoints['messagesSend'] = async (ctx, input) => {
 		},
 	);
 
-	if (result.id && ctx.db.messages) {
-		try {
-			const subject = extractSubject(result);
-			const body = extractBody(result);
-			const from = extractFrom(result);
-			const to = extractTo(result);
-			await ctx.db.messages.upsert(result.id, {
-				id: result.id,
-				threadId: result.threadId,
-				labelIds: result.labelIds,
-				snippet: result.snippet,
-				historyId: result.historyId,
-				internalDate: result.internalDate,
-				sizeEstimate: result.sizeEstimate,
-				payload: result.payload,
-				raw: result.raw,
-				subject,
-				body,
-				from,
-				to,
-				createdAt: new Date(),
-			});
-		} catch (error) {
-			console.warn('Failed to save message to database:', error);
-		}
+	if (result.id) {
+		const endpoints = ctx.endpoints as GmailBoundEndpoints;
+		await endpoints.messagesGet({ id: result.id, userId: input.userId });
 	}
 
 	await logEventFromContext(
@@ -265,31 +231,9 @@ export const modify: GmailEndpoints['messagesModify'] = async (ctx, input) => {
 		},
 	);
 
-	if (result.id && ctx.db.messages) {
-		try {
-			const subject = extractSubject(result);
-			const body = extractBody(result);
-			const from = extractFrom(result);
-			const to = extractTo(result);
-			await ctx.db.messages.upsert(result.id, {
-				id: result.id,
-				threadId: result.threadId,
-				labelIds: result.labelIds,
-				snippet: result.snippet,
-				historyId: result.historyId,
-				internalDate: result.internalDate,
-				sizeEstimate: result.sizeEstimate,
-				payload: result.payload,
-				raw: result.raw,
-				subject,
-				body,
-				from,
-				to,
-				createdAt: new Date(),
-			});
-		} catch (error) {
-			console.warn('Failed to update message in database:', error);
-		}
+	if (result.id) {
+		const endpoints = ctx.endpoints as GmailBoundEndpoints;
+		await endpoints.messagesGet({ id: result.id, userId: input.userId });
 	}
 
 	await logEventFromContext(
@@ -335,6 +279,11 @@ export const trash: GmailEndpoints['messagesTrash'] = async (ctx, input) => {
 		},
 	);
 
+	if (result.id) {
+		const endpoints = ctx.endpoints as GmailBoundEndpoints;
+		await endpoints.messagesGet({ id: result.id, userId: input.userId });
+	}
+
 	await logEventFromContext(
 		ctx,
 		'gmail.messages.trash',
@@ -353,6 +302,11 @@ export const untrash: GmailEndpoints['messagesUntrash'] = async (
 	>(`/users/${input.userId || 'me'}/messages/${input.id}/untrash`, ctx.key, {
 		method: 'POST',
 	});
+
+	if (result.id) {
+		const endpoints = ctx.endpoints as GmailBoundEndpoints;
+		await endpoints.messagesGet({ id: result.id, userId: input.userId });
+	}
 
 	await logEventFromContext(
 		ctx,

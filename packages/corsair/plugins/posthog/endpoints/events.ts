@@ -62,20 +62,14 @@ export const eventCreate: PostHogEndpoints['eventCreate'] = async (
 		body: payload,
 	});
 
-	if (ctx.db.events && response) {
+	if (response && ctx.db.events) {
 		try {
-			await ctx.db.events.upsert(
-				input.uuid || `${Date.now()}-${Math.random()}`,
-				{
-					id: input.uuid || `${Date.now()}-${Math.random()}`,
-					event: input.event,
-					distinct_id: input.distinct_id,
-					timestamp: input.timestamp,
-					uuid: input.uuid,
-					properties: input.properties,
-					createdAt: new Date(),
-				},
-			);
+			const id = input.uuid || `${Date.now()}-${Math.random()}`;
+			await ctx.db.events.upsert(id, {
+				...input,
+				id,
+				createdAt: new Date(),
+			});
 		} catch (error) {
 			console.warn('Failed to save event to database:', error);
 		}

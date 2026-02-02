@@ -1,5 +1,5 @@
 import { logEventFromContext } from '../../utils/events';
-import type { GmailEndpoints } from '..';
+import type { GmailBoundEndpoints, GmailEndpoints } from '..';
 import { makeGmailRequest } from '../client';
 import type { GmailEndpointOutputs } from './types';
 
@@ -24,9 +24,8 @@ export const list: GmailEndpoints['threadsList'] = async (ctx, input) => {
 			for (const thread of result.threads) {
 				if (thread.id) {
 					await ctx.db.threads.upsert(thread.id, {
+						...thread,
 						id: thread.id,
-						snippet: thread.snippet,
-						historyId: thread.historyId,
 						createdAt: new Date(),
 					});
 				}
@@ -61,9 +60,8 @@ export const get: GmailEndpoints['threadsGet'] = async (ctx, input) => {
 	if (result.id && ctx.db.threads) {
 		try {
 			await ctx.db.threads.upsert(result.id, {
+				...result,
 				id: result.id,
-				snippet: result.snippet,
-				historyId: result.historyId,
 				createdAt: new Date(),
 			});
 		} catch (error) {
@@ -93,17 +91,9 @@ export const modify: GmailEndpoints['threadsModify'] = async (ctx, input) => {
 		},
 	);
 
-	if (result.id && ctx.db.threads) {
-		try {
-			await ctx.db.threads.upsert(result.id, {
-				id: result.id,
-				snippet: result.snippet,
-				historyId: result.historyId,
-				createdAt: new Date(),
-			});
-		} catch (error) {
-			console.warn('Failed to update thread in database:', error);
-		}
+	if (result.id) {
+		const endpoints = ctx.endpoints as GmailBoundEndpoints;
+		await endpoints.threadsGet({ id: result.id, userId: input.userId });
 	}
 
 	await logEventFromContext(
@@ -152,6 +142,11 @@ export const trash: GmailEndpoints['threadsTrash'] = async (ctx, input) => {
 		},
 	);
 
+	if (result.id) {
+		const endpoints = ctx.endpoints as GmailBoundEndpoints;
+		await endpoints.threadsGet({ id: result.id, userId: input.userId });
+	}
+
 	await logEventFromContext(
 		ctx,
 		'gmail.threads.trash',
@@ -169,6 +164,11 @@ export const untrash: GmailEndpoints['threadsUntrash'] = async (ctx, input) => {
 			method: 'POST',
 		},
 	);
+
+	if (result.id) {
+		const endpoints = ctx.endpoints as GmailBoundEndpoints;
+		await endpoints.threadsGet({ id: result.id, userId: input.userId });
+	}
 
 	await logEventFromContext(
 		ctx,

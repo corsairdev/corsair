@@ -59,16 +59,9 @@ export const list: LinearEndpoints['teamsList'] = async (ctx, input) => {
 		try {
 			for (const team of result.nodes) {
 				await ctx.db.teams.upsert(team.id, {
-					id: team.id,
-					name: team.name,
-					key: team.key,
-					description: team.description,
-					icon: team.icon,
-					color: team.color,
-					private: team.private,
+					...team,
 					createdAt: new Date(team.createdAt),
 					updatedAt: new Date(team.updatedAt),
-					archivedAt: team.archivedAt,
 				});
 			}
 		} catch (error) {
@@ -97,16 +90,9 @@ export const get: LinearEndpoints['teamsGet'] = async (ctx, input) => {
 	if (result && ctx.db.teams) {
 		try {
 			await ctx.db.teams.upsert(result.id, {
-				id: result.id,
-				name: result.name,
-				key: result.key,
-				description: result.description,
-				icon: result.icon,
-				color: result.color,
-				private: result.private,
+				...result,
 				createdAt: new Date(result.createdAt),
 				updatedAt: new Date(result.updatedAt),
-				archivedAt: result.archivedAt,
 			});
 		} catch (error) {
 			console.warn('Failed to save team to database:', error);

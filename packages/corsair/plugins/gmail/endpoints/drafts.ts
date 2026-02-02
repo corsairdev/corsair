@@ -1,5 +1,5 @@
 import { logEventFromContext } from '../../utils/events';
-import type { GmailEndpoints } from '..';
+import type { GmailBoundEndpoints, GmailEndpoints } from '..';
 import { makeGmailRequest } from '../client';
 import type { GmailEndpointOutputs } from './types';
 
@@ -22,6 +22,7 @@ export const list: GmailEndpoints['draftsList'] = async (ctx, input) => {
 			for (const draft of result.drafts) {
 				if (draft.id) {
 					await ctx.db.drafts.upsert(draft.id, {
+						...draft,
 						id: draft.id,
 						messageId: draft.message?.id,
 						createdAt: new Date(),
@@ -57,6 +58,7 @@ export const get: GmailEndpoints['draftsGet'] = async (ctx, input) => {
 	if (result.id && ctx.db.drafts) {
 		try {
 			await ctx.db.drafts.upsert(result.id, {
+				...result,
 				id: result.id,
 				messageId: result.message?.id,
 				createdAt: new Date(),
@@ -80,16 +82,9 @@ export const create: GmailEndpoints['draftsCreate'] = async (ctx, input) => {
 		},
 	);
 
-	if (result.id && ctx.db.drafts) {
-		try {
-			await ctx.db.drafts.upsert(result.id, {
-				id: result.id,
-				messageId: result.message?.id,
-				createdAt: new Date(),
-			});
-		} catch (error) {
-			console.warn('Failed to save draft to database:', error);
-		}
+	if (result.id) {
+		const endpoints = ctx.endpoints as GmailBoundEndpoints;
+		await endpoints.draftsGet({ id: result.id, userId: input.userId });
 	}
 
 	await logEventFromContext(
@@ -111,16 +106,9 @@ export const update: GmailEndpoints['draftsUpdate'] = async (ctx, input) => {
 		},
 	);
 
-	if (result.id && ctx.db.drafts) {
-		try {
-			await ctx.db.drafts.upsert(result.id, {
-				id: result.id,
-				messageId: result.message?.id,
-				createdAt: new Date(),
-			});
-		} catch (error) {
-			console.warn('Failed to update draft in database:', error);
-		}
+	if (result.id) {
+		const endpoints = ctx.endpoints as GmailBoundEndpoints;
+		await endpoints.draftsGet({ id: result.id, userId: input.userId });
 	}
 
 	await logEventFromContext(

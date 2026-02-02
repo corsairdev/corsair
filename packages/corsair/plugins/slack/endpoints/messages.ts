@@ -36,12 +36,11 @@ export const postMessage: SlackEndpoints['postMessage'] = async (
 	if (result.ok && result.message && result.ts && ctx.db.messages) {
 		try {
 			await ctx.db.messages.upsert(result.ts, {
+				...result.message,
 				id: result.ts,
 				ts: result.ts,
-				text: result.message.text,
 				channel: result.channel || input.channel,
 				thread_ts: input.thread_ts,
-				createdAt: new Date(),
 			});
 		} catch (error) {
 			console.warn('Failed to save message to database:', error);
@@ -116,11 +115,10 @@ export const update: SlackEndpoints['messagesUpdate'] = async (ctx, input) => {
 	if (result.ok && result.message && result.ts && ctx.db.messages) {
 		try {
 			await ctx.db.messages.upsert(result.ts, {
+				...result.message,
 				id: result.ts,
 				ts: result.ts,
-				text: result.message.text || result.text,
 				channel: result.channel || input.channel,
-				createdAt: new Date(),
 			});
 		} catch (error) {
 			console.warn('Failed to update message in database:', error);
@@ -181,13 +179,12 @@ export const search: SlackEndpoints['messagesSearch'] = async (ctx, input) => {
 	if (result.ok && result.messages?.matches && ctx.db.messages) {
 		try {
 			for (const match of result.messages.matches) {
-				if (match.ts) {
+				if (match.ts && match.channel?.id) {
 					await ctx.db.messages.upsert(match.ts, {
+						...match,
+						channel: match.channel?.id,
 						id: match.ts,
 						ts: match.ts,
-						text: match.text,
-						channel: '',
-						createdAt: new Date(),
 					});
 				}
 			}

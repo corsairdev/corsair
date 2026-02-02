@@ -124,15 +124,12 @@ export const list: LinearEndpoints['commentsList'] = async (ctx, input) => {
 		try {
 			for (const comment of result.nodes) {
 				await ctx.db.comments.upsert(comment.id, {
-					id: comment.id,
-					body: comment.body,
+					...comment,
 					issueId: comment.issue.id,
 					userId: comment.user.id,
 					parentId: comment.parent?.id,
-					editedAt: comment.editedAt,
 					createdAt: new Date(comment.createdAt),
 					updatedAt: new Date(comment.updatedAt),
-					archivedAt: comment.archivedAt,
 				});
 			}
 		} catch (error) {
@@ -160,19 +157,17 @@ export const create: LinearEndpoints['commentsCreate'] = async (ctx, input) => {
 		},
 	);
 
-	const result = response.commentCreate.comment;
+	const result = response.commentCreate;
 
-	if (result && ctx.db.comments) {
+	if (result.success && result.comment && ctx.db.comments) {
 		try {
-			await ctx.db.comments.upsert(result.id, {
-				id: result.id,
-				body: result.body,
-				issueId: result.issue.id,
-				userId: result.user.id,
-				parentId: result.parent?.id,
-				createdAt: new Date(result.createdAt),
-				updatedAt: new Date(result.updatedAt),
-				archivedAt: result.archivedAt,
+			await ctx.db.comments.upsert(result.comment.id, {
+				...result.comment,
+				issueId: result.comment.issue.id,
+				userId: result.comment.user.id,
+				parentId: result.comment.parent?.id,
+				createdAt: new Date(result.comment.createdAt),
+				updatedAt: new Date(result.comment.updatedAt),
 			});
 		} catch (error) {
 			console.warn('Failed to save comment to database:', error);
@@ -185,7 +180,7 @@ export const create: LinearEndpoints['commentsCreate'] = async (ctx, input) => {
 		{ ...input },
 		'completed',
 	);
-	return result;
+	return result.comment;
 };
 
 export const update: LinearEndpoints['commentsUpdate'] = async (ctx, input) => {
@@ -204,17 +199,13 @@ export const update: LinearEndpoints['commentsUpdate'] = async (ctx, input) => {
 
 	if (result && ctx.db.comments) {
 		try {
-			const existing = await ctx.db.comments.findByEntityId(result.id);
 			await ctx.db.comments.upsert(result.id, {
-				id: result.id,
-				body: result.body,
+				...result,
 				issueId: result.issue.id,
 				userId: result.user.id,
 				parentId: result.parent?.id,
-				editedAt: result.editedAt,
-				createdAt: existing?.data?.createdAt || new Date(result.createdAt),
+				createdAt: new Date(result.createdAt),
 				updatedAt: new Date(result.updatedAt),
-				archivedAt: result.archivedAt,
 			});
 		} catch (error) {
 			console.warn('Failed to update comment in database:', error);
