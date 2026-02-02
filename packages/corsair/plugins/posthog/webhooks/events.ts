@@ -1,18 +1,17 @@
 import { logEventFromContext } from '../../utils/events';
 import type { PostHogWebhooks } from '..';
-import type { EventCapturedEvent } from './types';
 import { createPostHogMatch } from './types';
 
 export const eventCaptured: PostHogWebhooks['eventCaptured'] = {
 	match: createPostHogMatch(),
 
 	handler: async (ctx, request) => {
-		const event = request.payload as EventCapturedEvent;
+		const event = request.payload;
 
 		if (!event.event || !event.distinct_id) {
 			return {
 				success: true,
-				data: event as unknown as EventCapturedEvent,
+				data: undefined,
 			};
 		}
 
