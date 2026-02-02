@@ -349,6 +349,11 @@ export type CorsairPluginContext<
 		 * This is populated by the keyBuilder before endpoint execution.
 		 */
 		key: string;
+		/**
+		 * The tenant ID for this context (when multi-tenancy is enabled).
+		 * Available in webhook hooks and endpoint hooks.
+		 */
+		tenantId?: string;
 	} & (Options extends undefined ? {} : { options: Options }) &
 	// Include keys manager if authType is defined in options
 	(ExtractAuthType<Options> extends AuthTypes
