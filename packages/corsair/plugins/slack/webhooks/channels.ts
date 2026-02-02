@@ -22,14 +22,21 @@ export const created: SlackWebhooks['channelCreated'] = {
 			creator: event.channel.creator,
 		});
 
+		let corsairEntityId = '';
+
 		if (ctx.db.channels && event.channel.id) {
 			try {
-				await ctx.db.channels.upsert(event.channel.id, {
-					...event.channel,
-					createdAt: event.channel.created
-						? new Date(event.channel.created * 1000)
-						: new Date(),
-				});
+				const entity = await ctx.db.channels.upsertByEntityId(
+					event.channel.id,
+					{
+						...event.channel,
+						createdAt: event.channel.created
+							? new Date(event.channel.created * 1000)
+							: new Date(),
+					},
+				);
+
+				corsairEntityId = entity?.id;
 			} catch (error) {
 				console.warn('Failed to save channel to database:', error);
 			}
@@ -44,6 +51,8 @@ export const created: SlackWebhooks['channelCreated'] = {
 
 		return {
 			success: true,
+			corsairEntityId,
+			tenantId: ctx.tenantId,
 			data: event,
 		};
 	},

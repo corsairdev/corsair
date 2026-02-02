@@ -58,7 +58,7 @@ export const list: LinearEndpoints['teamsList'] = async (ctx, input) => {
 	if (result.nodes && ctx.db.teams) {
 		try {
 			for (const team of result.nodes) {
-				await ctx.db.teams.upsert(team.id, {
+				await ctx.db.teams.upsertByEntityId(team.id, {
 					...team,
 					createdAt: new Date(team.createdAt),
 					updatedAt: new Date(team.updatedAt),
@@ -89,7 +89,7 @@ export const get: LinearEndpoints['teamsGet'] = async (ctx, input) => {
 
 	if (result && ctx.db.teams) {
 		try {
-			await ctx.db.teams.upsert(result.id, {
+			await ctx.db.teams.upsertByEntityId(result.id, {
 				...result,
 				createdAt: new Date(result.createdAt),
 				updatedAt: new Date(result.updatedAt),

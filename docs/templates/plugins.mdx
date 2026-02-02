@@ -259,7 +259,7 @@ const partialMatch = await corsair.{{PLUGIN_ID}}.db.{{SERVICE}}.search({
 });
 
 // Upsert
-await corsair.{{PLUGIN_ID}}.db.{{SERVICE}}.upsert("{{RESOURCE_ID}}", {
+await corsair.{{PLUGIN_ID}}.db.{{SERVICE}}.upsertByEntityId("{{RESOURCE_ID}}", {
     {{UPSERT_DATA}}
 });
 ```

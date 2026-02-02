@@ -22,13 +22,17 @@ export const teamJoin: SlackWebhooks['teamJoin'] = {
 			real_name: event.user.real_name,
 		});
 
+		let corsairEntityId = '';
+
 		if (ctx.db.users && event.user.id) {
 			try {
-				await ctx.db.users.upsert(event.user.id, {
+				const entity = await ctx.db.users.upsertByEntityId(event.user.id, {
 					...event.user,
 					display_name: event.user.profile?.display_name,
 					email: event.user.profile?.email,
 				});
+
+				corsairEntityId = entity?.id || '';
 			} catch (error) {
 				console.warn('Failed to save user to database:', error);
 			}
@@ -43,6 +47,8 @@ export const teamJoin: SlackWebhooks['teamJoin'] = {
 
 		return {
 			success: true,
+			corsairEntityId,
+			tenantId: ctx.tenantId,
 			data: event,
 		};
 	},
@@ -68,13 +74,17 @@ export const userChange: SlackWebhooks['userChange'] = {
 			real_name: event.user.real_name,
 		});
 
+		let corsairEntityId = '';
+
 		if (ctx.db.users && event.user.id) {
 			try {
-				await ctx.db.users.upsert(event.user.id, {
+				const entity = await ctx.db.users.upsertByEntityId(event.user.id, {
 					...event.user,
 					display_name: event.user.profile?.display_name,
 					email: event.user.profile?.email,
 				});
+
+				corsairEntityId = entity?.id || '';
 			} catch (error) {
 				console.warn('Failed to update user in database:', error);
 			}
@@ -89,6 +99,8 @@ export const userChange: SlackWebhooks['userChange'] = {
 
 		return {
 			success: true,
+			corsairEntityId,
+			tenantId: ctx.tenantId,
 			data: event,
 		};
 	},

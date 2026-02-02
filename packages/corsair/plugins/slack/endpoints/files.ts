@@ -21,7 +21,7 @@ export const get: SlackEndpoints['filesGet'] = async (ctx, input) => {
 
 	if (result.ok && result.file && ctx.db.files) {
 		try {
-			await ctx.db.files.upsert(result.file.id, {
+			await ctx.db.files.upsertByEntityId(result.file.id, {
 				...result.file,
 			});
 		} catch (error) {
@@ -57,7 +57,7 @@ export const list: SlackEndpoints['filesList'] = async (ctx, input) => {
 		try {
 			for (const file of result.files) {
 				if (file.id) {
-					await ctx.db.files.upsert(file.id, {
+					await ctx.db.files.upsertByEntityId(file.id, {
 						...file,
 					});
 				}

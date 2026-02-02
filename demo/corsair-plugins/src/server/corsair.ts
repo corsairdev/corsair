@@ -15,32 +15,22 @@ export const corsair = createCorsair({
 				issues: {
 					create: {
 						after: async (ctx, res) => {
-							const tenantId = ctx.tenantId || 'default';
-							const rawBody = (ctx as any).$rawBody;
-							const linearBody = res.data as any;
-
 							await inngest.send({
-								name: 'linear/event',
+								name: 'linear/issue-created',
 								data: {
-									tenantId,
-									event: linearBody,
-									rawBody,
+									tenantId: ctx.tenantId ?? 'default',
+									event: res.data!,
 								},
 							});
 						},
 					},
 					update: {
 						after: async (ctx, res) => {
-							const tenantId = ctx.tenantId || 'default';
-							const rawBody = (ctx as any).$rawBody;
-							const linearBody = res.data as any;
-
 							await inngest.send({
-								name: 'linear/event',
+								name: 'linear/issue-updated',
 								data: {
-									tenantId,
-									event: linearBody,
-									rawBody,
+									tenantId: ctx.tenantId ?? 'default',
+									event: res.data!,
 								},
 							});
 						},
@@ -49,32 +39,22 @@ export const corsair = createCorsair({
 				comments: {
 					create: {
 						after: async (ctx, res) => {
-							const tenantId = ctx.tenantId || 'default';
-							const rawBody = (ctx as any).$rawBody;
-							const linearBody = res.data as any;
-
 							await inngest.send({
-								name: 'linear/event',
+								name: 'linear/comment-created',
 								data: {
-									tenantId,
-									event: linearBody,
-									rawBody,
+									tenantId: ctx.tenantId ?? 'default',
+									event: res.data!,
 								},
 							});
 						},
 					},
 					update: {
 						after: async (ctx, res) => {
-							const tenantId = ctx.tenantId || 'default';
-							const rawBody = (ctx as any).$rawBody;
-							const linearBody = res.data as any;
-
 							await inngest.send({
-								name: 'linear/event',
+								name: 'linear/comment-updated',
 								data: {
-									tenantId,
-									event: linearBody,
-									rawBody,
+									tenantId: ctx.tenantId ?? 'default',
+									event: res.data!,
 								},
 							});
 						},
@@ -87,16 +67,11 @@ export const corsair = createCorsair({
 				messages: {
 					message: {
 						after: async (ctx, res) => {
-							const tenantId = ctx.tenantId || 'default';
-							const rawBody = (ctx as any).$rawBody;
-							const slackEvent = res.data as any;
-
 							await inngest.send({
 								name: 'slack/event',
 								data: {
-									tenantId,
-									event: slackEvent,
-									rawBody,
+									tenantId: ctx.tenantId ?? 'default',
+									event: res.data!,
 								},
 							});
 						},
@@ -109,22 +84,11 @@ export const corsair = createCorsair({
 				emails: {
 					received: {
 						after: async (ctx, res) => {
-							const tenantId = ctx.tenantId || 'default';
-							const resendBody = res.data as any;
-
-							const toAddress = Array.isArray(resendBody?.data?.to)
-								? resendBody.data.to[0] || 'unknown'
-								: resendBody?.data?.to || 'unknown';
-
 							await inngest.send({
 								name: 'resend/email',
 								data: {
-									tenantId,
-									from: resendBody?.data?.from || 'unknown',
-									to: toAddress,
-									subject: resendBody?.data?.subject || 'No subject',
-									text: resendBody?.data?.text,
-									html: resendBody?.data?.html,
+									tenantId: ctx.tenantId ?? 'default',
+									event: res.data!,
 								},
 							});
 						},

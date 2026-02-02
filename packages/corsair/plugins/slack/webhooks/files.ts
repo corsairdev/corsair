@@ -22,14 +22,18 @@ export const created: SlackWebhooks['fileCreated'] = {
 			userId: event.user_id,
 		});
 
+		let corsairEntityId = '';
+
 		if (ctx.db.files && event.file_id) {
 			try {
-				await ctx.db.files.upsert(event.file_id, {
+				const entity = await ctx.db.files.upsertByEntityId(event.file_id, {
 					...event,
 					id: event.file_id,
 					created: parseFloat(event.event_ts),
 					timestamp: parseFloat(event.event_ts),
 				});
+
+				corsairEntityId = entity?.id || '';
 			} catch (error) {
 				console.warn('Failed to save file to database:', error);
 			}
@@ -44,6 +48,8 @@ export const created: SlackWebhooks['fileCreated'] = {
 
 		return {
 			success: true,
+			corsairEntityId,
+			tenantId: ctx.tenantId,
 			data: event,
 		};
 	},
@@ -68,13 +74,17 @@ export const publicFile: SlackWebhooks['filePublic'] = {
 			userId: event.user_id,
 		});
 
+		let corsairEntityId = '';
+
 		if (ctx.db.files && event.file_id) {
 			try {
-				await ctx.db.files.upsert(event.file_id, {
+				const entity = await ctx.db.files.upsertByEntityId(event.file_id, {
 					...event,
 					id: event.file_id,
 					user: event.user_id,
 				});
+
+				corsairEntityId = entity?.id || '';
 			} catch (error) {
 				console.warn('Failed to update file in database:', error);
 			}
@@ -89,6 +99,8 @@ export const publicFile: SlackWebhooks['filePublic'] = {
 
 		return {
 			success: true,
+			corsairEntityId,
+			tenantId: ctx.tenantId,
 			data: event,
 		};
 	},
@@ -114,13 +126,17 @@ export const shared: SlackWebhooks['fileShared'] = {
 			channelId: event.channel_id,
 		});
 
+		let corsairEntityId = '';
+
 		if (ctx.db.files && event.file_id) {
 			try {
-				await ctx.db.files.upsert(event.file_id, {
+				const entity = await ctx.db.files.upsertByEntityId(event.file_id, {
 					...event,
 					id: event.file_id,
 					user: event.user_id,
 				});
+
+				corsairEntityId = entity?.id || '';
 			} catch (error) {
 				console.warn('Failed to update file in database:', error);
 			}
@@ -135,6 +151,8 @@ export const shared: SlackWebhooks['fileShared'] = {
 
 		return {
 			success: true,
+			corsairEntityId,
+			tenantId: ctx.tenantId,
 			data: event,
 		};
 	},

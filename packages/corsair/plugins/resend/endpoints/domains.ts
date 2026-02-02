@@ -41,7 +41,7 @@ export const get: ResendEndpoints['domainsGet'] = async (ctx, input) => {
 
 	if (response.id && ctx.db.domains) {
 		try {
-			await ctx.db.domains.upsert(response.id, {
+			await ctx.db.domains.upsertByEntityId(response.id, {
 				...response,
 			});
 		} catch (error) {
@@ -73,7 +73,7 @@ export const list: ResendEndpoints['domainsList'] = async (ctx, input) => {
 	if (response.data && ctx.db.domains) {
 		try {
 			for (const domain of response.data) {
-				await ctx.db.domains.upsert(domain.id, {
+				await ctx.db.domains.upsertByEntityId(domain.id, {
 					...domain,
 				});
 			}
