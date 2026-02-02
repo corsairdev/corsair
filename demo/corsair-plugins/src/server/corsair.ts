@@ -30,12 +30,11 @@ export const corsair = createCorsair({
 						},
 					},
 					update: {
-					
 						after: async (ctx, res) => {
 							const tenantId = ctx.tenantId || 'default';
 							const rawBody = (ctx as any).$rawBody;
 							const linearBody = res.data as any;
-					
+
 							await inngest.send({
 								name: 'linear/event',
 								data: {
@@ -49,12 +48,11 @@ export const corsair = createCorsair({
 				},
 				comments: {
 					create: {
-					
 						after: async (ctx, res) => {
 							const tenantId = ctx.tenantId || 'default';
 							const rawBody = (ctx as any).$rawBody;
 							const linearBody = res.data as any;
-					
+
 							await inngest.send({
 								name: 'linear/event',
 								data: {
@@ -66,12 +64,11 @@ export const corsair = createCorsair({
 						},
 					},
 					update: {
-					
 						after: async (ctx, res) => {
 							const tenantId = ctx.tenantId || 'default';
 							const rawBody = (ctx as any).$rawBody;
 							const linearBody = res.data as any;
-							
+
 							await inngest.send({
 								name: 'linear/event',
 								data: {
@@ -89,12 +86,11 @@ export const corsair = createCorsair({
 			webhookHooks: {
 				messages: {
 					message: {
-						
 						after: async (ctx, res) => {
 							const tenantId = ctx.tenantId || 'default';
 							const rawBody = (ctx as any).$rawBody;
 							const slackEvent = res.data as any;
-						
+
 							await inngest.send({
 								name: 'slack/event',
 								data: {
@@ -112,11 +108,10 @@ export const corsair = createCorsair({
 			webhookHooks: {
 				emails: {
 					received: {
-					
 						after: async (ctx, res) => {
 							const tenantId = ctx.tenantId || 'default';
 							const resendBody = res.data as any;
-							
+
 							const toAddress = Array.isArray(resendBody?.data?.to)
 								? resendBody.data.to[0] || 'unknown'
 								: resendBody?.data?.to || 'unknown';

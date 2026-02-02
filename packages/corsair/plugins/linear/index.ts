@@ -1,4 +1,3 @@
-import type { AuthTypes } from '../../constants';
 import type {
 	BindEndpoints,
 	BindWebhooks,
@@ -9,7 +8,7 @@ import type {
 	CorsairWebhook,
 	KeyBuilderContext,
 } from '../../core';
-import type { PickAuth } from '../../core/constants';
+import type { AuthTypes, PickAuth } from '../../core/constants';
 import type { LinearEndpointOutputs } from './endpoints';
 import { Comments, Issues, Projects, Teams } from './endpoints';
 import { errorHandlers } from './error-handlers';

@@ -41,8 +41,7 @@ import type {
 
 export type { SlackReactionName } from './endpoints';
 
-import type { AuthTypes } from '../../constants';
-import type { PickAuth } from '../../core/constants';
+import type { AuthTypes, PickAuth } from '../../core/constants';
 import { errorHandlers } from './error-handlers';
 
 export type SlackEndpoints = {

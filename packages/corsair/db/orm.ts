@@ -6,21 +6,19 @@ import type {
 	TableInsertType,
 	TableUpdateType,
 } from '../adapters/types';
-
+import { generateUUID } from '../core/utils';
 import type {
 	CorsairAccount,
 	CorsairEntity,
 	CorsairEvent,
 	CorsairIntegration,
 } from './';
-
 import {
 	CorsairAccountsSchema,
 	CorsairEntitiesSchema,
 	CorsairEventsSchema,
 	CorsairIntegrationsSchema,
 } from './';
-import { generateUUID } from '../core/utils';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Core Table Types
