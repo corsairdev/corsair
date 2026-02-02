@@ -1,5 +1,5 @@
 import type { SQL } from 'drizzle-orm';
-import { and, asc, count, desc, eq, ilike, inArray } from 'drizzle-orm';
+import { and, asc, count, desc, eq, ilike, inArray, sql } from 'drizzle-orm';
 
 import type {
 	CorsairDbAdapter,
@@ -100,14 +100,58 @@ function buildWhereExpr(
 	const parts: SQL[] = [];
 	for (const w of where) {
 		const operator = normalizeOperator(w.operator);
-		const col = getColumn(tableObj, w.field);
-		if (operator === 'in') {
-			parts.push(inArray(col as any, toArray(w.value) as any) as any);
-		} else if (operator === 'like') {
-			// Postgres-only: use ILIKE for case-insensitive search.
-			parts.push(ilike(col as any, String(w.value)) as any);
+
+		// Check if field is a JSONB path query (e.g., "data->>'name'")
+		if (w.field.includes('->>')) {
+			// Handle JSONB path queries
+			const parts_split = w.field.split('->>');
+			const jsonbColumn = parts_split[0];
+			const jsonbPath = parts_split[1];
+
+			if (!jsonbColumn || !jsonbPath) {
+				throw new Error(
+					`Invalid JSONB path format: "${w.field}". Expected format: "column->>'path'"`,
+				);
+			}
+
+			const col = getColumn(tableObj, jsonbColumn.trim());
+			// Remove surrounding quotes if present (e.g., "'name'" -> "name")
+			const cleanPath = jsonbPath.trim().replace(/^'|'$/g, '');
+			// Escape single quotes in path for SQL safety
+			const escapedPath = cleanPath.replace(/'/g, "''");
+
+			if (operator === 'like') {
+				// Use ILIKE for case-insensitive search on JSONB text
+				// Path is raw SQL (identifier), value is parameterized
+				parts.push(
+					sql`${col as any}->>'${sql.raw(escapedPath)}' ILIKE ${String(w.value)}` as any,
+				);
+			} else if (operator === 'in') {
+				// For 'in' operator with JSONB, check if value matches any in the array
+				const values = toArray(w.value);
+				const conditions = values.map(
+					(v) =>
+						sql`${col as any}->>'${sql.raw(escapedPath)}' = ${String(v)}` as any,
+				);
+				parts.push(and(...conditions) as any);
+			} else {
+				// Use equality for JSONB text
+				// Path is raw SQL (identifier), value is parameterized
+				parts.push(
+					sql`${col as any}->>'${sql.raw(escapedPath)}' = ${String(w.value)}` as any,
+				);
+			}
 		} else {
-			parts.push(eq(col as any, w.value as any) as any);
+			// Regular column query
+			const col = getColumn(tableObj, w.field);
+			if (operator === 'in') {
+				parts.push(inArray(col as any, toArray(w.value) as any) as any);
+			} else if (operator === 'like') {
+				// Postgres-only: use ILIKE for case-insensitive search.
+				parts.push(ilike(col as any, String(w.value)) as any);
+			} else {
+				parts.push(eq(col as any, w.value as any) as any);
+			}
 		}
 	}
 	return parts.length === 1 ? parts[0] : (and(...(parts as any)) as any);
