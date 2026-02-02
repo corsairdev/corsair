@@ -1,5 +1,5 @@
 import { logEventFromContext } from '../../utils/events';
-import type { SlackEndpoints } from '..';
+import type { SlackBoundEndpoints, SlackEndpoints } from '..';
 import { makeSlackRequest } from '../client';
 import type { SlackEndpointOutputs } from './types';
 
@@ -19,8 +19,7 @@ export const get: SlackEndpoints['usersGet'] = async (ctx, input) => {
 	if (result.ok && result.user && ctx.db.users) {
 		try {
 			await ctx.db.users.upsert(result.user.id, {
-				id: result.user.id,
-				name: result.user.name,
+				...result.user,
 			});
 		} catch (error) {
 			console.warn('Failed to save user to database:', error);
@@ -51,8 +50,7 @@ export const list: SlackEndpoints['usersList'] = async (ctx, input) => {
 			for (const member of result.members) {
 				if (member.id) {
 					await ctx.db.users.upsert(member.id, {
-						id: member.id,
-						name: member.name,
+						...member,
 					});
 				}
 			}
@@ -137,16 +135,9 @@ export const updateProfile: SlackEndpoints['usersUpdateProfile'] = async (
 		},
 	});
 
-	if (result.ok && result.profile && input.user && ctx.db.users) {
-		try {
-			const existing = await ctx.db.users.findByEntityId(input.user);
-			await ctx.db.users.upsert(input.user, {
-				...(existing?.data || { id: input.user }),
-				profile: result.profile,
-			});
-		} catch (error) {
-			console.warn('Failed to update user profile in database:', error);
-		}
+	if (result.ok && result.profile && input.user) {
+		const endpoints = ctx.endpoints as SlackBoundEndpoints;
+		await endpoints.usersGet({ user: input.user });
 	}
 
 	await logEventFromContext(

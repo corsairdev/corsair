@@ -1,5 +1,5 @@
 import { logEventFromContext } from '../../utils/events';
-import type { LinearEndpoints } from '..';
+import type { LinearBoundEndpoints, LinearEndpoints } from '..';
 import { makeLinearRequest } from '../client';
 import type {
 	CreateProjectInput,
@@ -159,26 +159,14 @@ export const list: LinearEndpoints['projectsList'] = async (ctx, input) => {
 
 	const result = response.projects;
 
-	if (result.nodes) {
+	if (result.nodes && ctx.db.projects) {
 		try {
 			for (const project of result.nodes) {
 				await ctx.db.projects.upsert(project.id, {
-					id: project.id,
-					name: project.name,
-					description: project.description,
-					icon: project.icon,
-					color: project.color,
-					state: project.state,
-					priority: project.priority,
-					sortOrder: project.sortOrder,
-					startDate: project.startDate,
-					targetDate: project.targetDate,
-					completedAt: project.completedAt,
-					canceledAt: project.canceledAt,
+					...project,
 					leadId: project.lead?.id,
 					createdAt: new Date(project.createdAt),
 					updatedAt: new Date(project.updatedAt),
-					archivedAt: project.archivedAt,
 				});
 			}
 		} catch (error) {
@@ -207,22 +195,10 @@ export const get: LinearEndpoints['projectsGet'] = async (ctx, input) => {
 	if (result && ctx.db.projects) {
 		try {
 			await ctx.db.projects.upsert(result.id, {
-				id: result.id,
-				name: result.name,
-				description: result.description,
-				icon: result.icon,
-				color: result.color,
-				state: result.state,
-				priority: result.priority,
-				sortOrder: result.sortOrder,
-				startDate: result.startDate,
-				targetDate: result.targetDate,
-				completedAt: result.completedAt,
-				canceledAt: result.canceledAt,
+				...result,
 				leadId: result.lead?.id,
 				createdAt: new Date(result.createdAt),
 				updatedAt: new Date(result.updatedAt),
-				archivedAt: result.archivedAt,
 			});
 		} catch (error) {
 			console.warn('Failed to save project to database:', error);
@@ -245,31 +221,11 @@ export const create: LinearEndpoints['projectsCreate'] = async (ctx, input) => {
 		{ input: input as CreateProjectInput },
 	);
 
-	const result = response.projectCreate.project;
+	const result = response.projectCreate;
 
-	if (result && ctx.db.projects) {
-		try {
-			await ctx.db.projects.upsert(result.id, {
-				id: result.id,
-				name: result.name,
-				description: result.description,
-				icon: result.icon,
-				color: result.color,
-				state: result.state,
-				priority: result.priority,
-				sortOrder: result.sortOrder,
-				startDate: result.startDate,
-				targetDate: result.targetDate,
-				completedAt: result.completedAt,
-				canceledAt: result.canceledAt,
-				leadId: result.lead?.id,
-				createdAt: new Date(result.createdAt),
-				updatedAt: new Date(result.updatedAt),
-				archivedAt: result.archivedAt,
-			});
-		} catch (error) {
-			console.warn('Failed to save project to database:', error);
-		}
+	if (result.success && result.project) {
+		const endpoints = ctx.endpoints as LinearBoundEndpoints;
+		await endpoints.projectsGet({ id: result.project.id });
 	}
 
 	await logEventFromContext(
@@ -278,7 +234,7 @@ export const create: LinearEndpoints['projectsCreate'] = async (ctx, input) => {
 		{ ...input },
 		'completed',
 	);
-	return result;
+	return result.project;
 };
 
 export const update: LinearEndpoints['projectsUpdate'] = async (ctx, input) => {
@@ -288,32 +244,11 @@ export const update: LinearEndpoints['projectsUpdate'] = async (ctx, input) => {
 		{ id: input.id, input: input.input as UpdateProjectInput },
 	);
 
-	const result = response.projectUpdate.project;
+	const result = response.projectUpdate;
 
-	if (result && ctx.db.projects) {
-		try {
-			const existing = await ctx.db.projects.findByEntityId(result.id);
-			await ctx.db.projects.upsert(result.id, {
-				id: result.id,
-				name: result.name,
-				description: result.description,
-				icon: result.icon,
-				color: result.color,
-				state: result.state,
-				priority: result.priority,
-				sortOrder: result.sortOrder,
-				startDate: result.startDate,
-				targetDate: result.targetDate,
-				completedAt: existing?.data?.completedAt,
-				canceledAt: existing?.data?.canceledAt,
-				leadId: existing?.data?.leadId,
-				createdAt: existing?.data?.createdAt || new Date(),
-				updatedAt: new Date(result.updatedAt),
-				archivedAt: existing?.data?.archivedAt,
-			});
-		} catch (error) {
-			console.warn('Failed to update project in database:', error);
-		}
+	if (result.success && result.project) {
+		const endpoints = ctx.endpoints as LinearBoundEndpoints;
+		await endpoints.projectsGet({ id: result.project.id });
 	}
 
 	await logEventFromContext(
@@ -322,7 +257,7 @@ export const update: LinearEndpoints['projectsUpdate'] = async (ctx, input) => {
 		{ ...input },
 		'completed',
 	);
-	return result;
+	return result.project;
 };
 
 export const deleteProject: LinearEndpoints['projectsDelete'] = async (

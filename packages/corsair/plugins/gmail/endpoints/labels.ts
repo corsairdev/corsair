@@ -1,5 +1,5 @@
 import { logEventFromContext } from '../../utils/events';
-import type { GmailEndpoints } from '..';
+import type { GmailBoundEndpoints, GmailEndpoints } from '..';
 import { makeGmailRequest } from '../client';
 import type { GmailEndpointOutputs } from './types';
 
@@ -17,15 +17,8 @@ export const list: GmailEndpoints['labelsList'] = async (ctx, input) => {
 			for (const label of result.labels) {
 				if (label.id) {
 					await ctx.db.labels.upsert(label.id, {
+						...label,
 						id: label.id,
-						name: label.name,
-						messageListVisibility: label.messageListVisibility,
-						labelListVisibility: label.labelListVisibility,
-						type: label.type,
-						messagesTotal: label.messagesTotal,
-						messagesUnread: label.messagesUnread,
-						threadsTotal: label.threadsTotal,
-						threadsUnread: label.threadsUnread,
 						createdAt: new Date(),
 					});
 				}
@@ -86,23 +79,9 @@ export const create: GmailEndpoints['labelsCreate'] = async (ctx, input) => {
 		},
 	);
 
-	if (result.id && ctx.db.labels) {
-		try {
-			await ctx.db.labels.upsert(result.id, {
-				id: result.id,
-				name: result.name,
-				messageListVisibility: result.messageListVisibility,
-				labelListVisibility: result.labelListVisibility,
-				type: result.type,
-				messagesTotal: result.messagesTotal,
-				messagesUnread: result.messagesUnread,
-				threadsTotal: result.threadsTotal,
-				threadsUnread: result.threadsUnread,
-				createdAt: new Date(),
-			});
-		} catch (error) {
-			console.warn('Failed to save label to database:', error);
-		}
+	if (result.id) {
+		const endpoints = ctx.endpoints as GmailBoundEndpoints;
+		await endpoints.labelsGet({ id: result.id, userId: input.userId });
 	}
 
 	await logEventFromContext(
@@ -124,23 +103,9 @@ export const update: GmailEndpoints['labelsUpdate'] = async (ctx, input) => {
 		},
 	);
 
-	if (result.id && ctx.db.labels) {
-		try {
-			await ctx.db.labels.upsert(result.id, {
-				id: result.id,
-				name: result.name,
-				messageListVisibility: result.messageListVisibility,
-				labelListVisibility: result.labelListVisibility,
-				type: result.type,
-				messagesTotal: result.messagesTotal,
-				messagesUnread: result.messagesUnread,
-				threadsTotal: result.threadsTotal,
-				threadsUnread: result.threadsUnread,
-				createdAt: new Date(),
-			});
-		} catch (error) {
-			console.warn('Failed to update label in database:', error);
-		}
+	if (result.id) {
+		const endpoints = ctx.endpoints as GmailBoundEndpoints;
+		await endpoints.labelsGet({ id: result.id, userId: input.userId });
 	}
 
 	await logEventFromContext(

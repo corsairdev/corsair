@@ -24,11 +24,7 @@ export const create: SlackEndpoints['userGroupsCreate'] = async (
 	if (result.ok && result.usergroup && ctx.db.userGroups) {
 		try {
 			await ctx.db.userGroups.upsert(result.usergroup.id, {
-				id: result.usergroup.id,
-				name: result.usergroup.name,
-				description: input.description,
-				handle: input.handle,
-				date_create: Date.now(),
+				...result.usergroup,
 			});
 		} catch (error) {
 			console.warn('Failed to save usergroup to database:', error);
@@ -61,10 +57,8 @@ export const disable: SlackEndpoints['userGroupsDisable'] = async (
 
 	if (result.ok && result.usergroup && ctx.db.userGroups) {
 		try {
-			const existing = await ctx.db.userGroups.findByEntityId(input.userGroup);
 			await ctx.db.userGroups.upsert(result.usergroup.id, {
-				...(existing?.data || { id: result.usergroup.id }),
-				date_update: Date.now(),
+				...result.usergroup,
 			});
 		} catch (error) {
 			console.warn('Failed to update usergroup in database:', error);
@@ -97,10 +91,8 @@ export const enable: SlackEndpoints['userGroupsEnable'] = async (
 
 	if (result.ok && result.usergroup && ctx.db.userGroups) {
 		try {
-			const existing = await ctx.db.userGroups.findByEntityId(input.userGroup);
 			await ctx.db.userGroups.upsert(result.usergroup.id, {
-				...(existing?.data || { id: result.usergroup.id }),
-				date_update: Date.now(),
+				...result.usergroup,
 			});
 		} catch (error) {
 			console.warn('Failed to update usergroup in database:', error);
@@ -136,8 +128,7 @@ export const list: SlackEndpoints['userGroupsList'] = async (ctx, input) => {
 			for (const usergroup of result.userGroups) {
 				if (usergroup.id) {
 					await ctx.db.userGroups.upsert(usergroup.id, {
-						id: usergroup.id,
-						name: usergroup.name,
+						...usergroup,
 					});
 				}
 			}
@@ -176,13 +167,8 @@ export const update: SlackEndpoints['userGroupsUpdate'] = async (
 
 	if (result.ok && result.usergroup && ctx.db.userGroups) {
 		try {
-			const existing = await ctx.db.userGroups.findByEntityId(input.userGroup);
 			await ctx.db.userGroups.upsert(result.usergroup.id, {
-				...(existing?.data || { id: result.usergroup.id }),
-				name: result.usergroup.name || input.name,
-				description: input.description,
-				handle: input.handle,
-				date_update: Date.now(),
+				...result.usergroup,
 			});
 		} catch (error) {
 			console.warn('Failed to update usergroup in database:', error);

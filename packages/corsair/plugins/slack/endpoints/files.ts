@@ -1,5 +1,5 @@
 import { logEventFromContext } from '../../utils/events';
-import type { SlackEndpoints } from '..';
+import type { SlackBoundEndpoints, SlackEndpoints } from '..';
 import { makeSlackRequest } from '../client';
 import type { SlackEndpointOutputs } from './types';
 
@@ -22,8 +22,7 @@ export const get: SlackEndpoints['filesGet'] = async (ctx, input) => {
 	if (result.ok && result.file && ctx.db.files) {
 		try {
 			await ctx.db.files.upsert(result.file.id, {
-				id: result.file.id,
-				name: result.file.name,
+				...result.file,
 			});
 		} catch (error) {
 			console.warn('Failed to save file to database:', error);
@@ -59,8 +58,7 @@ export const list: SlackEndpoints['filesList'] = async (ctx, input) => {
 			for (const file of result.files) {
 				if (file.id) {
 					await ctx.db.files.upsert(file.id, {
-						id: file.id,
-						name: file.name,
+						...file,
 					});
 				}
 			}
@@ -92,17 +90,9 @@ export const upload: SlackEndpoints['filesUpload'] = async (ctx, input) => {
 		},
 	);
 
-	if (result.ok && result.file && ctx.db.files) {
-		try {
-			await ctx.db.files.upsert(result.file.id, {
-				id: result.file.id,
-				name: result.file.name,
-				title: input.title,
-				filetype: input.filetype,
-			});
-		} catch (error) {
-			console.warn('Failed to save file to database:', error);
-		}
+	if (result.ok && result.file) {
+		const endpoints = ctx.endpoints as SlackBoundEndpoints;
+		await endpoints.filesGet({ file: result.file.id });
 	}
 
 	await logEventFromContext(
