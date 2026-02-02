@@ -174,7 +174,6 @@ export type {
 	LinearEndpointOutputs,
 	LinearEventMap,
 	LinearEventName,
-	LinearWebhookAck,
 	LinearWebhookEvent,
 	LinearWebhookOutputs,
 	Project,

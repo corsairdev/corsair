@@ -1,4 +1,3 @@
-import type { AuthTypes } from '../../constants';
 import type {
 	BindEndpoints,
 	BindWebhooks,
@@ -9,7 +8,7 @@ import type {
 	CorsairWebhook,
 	KeyBuilderContext,
 } from '../../core';
-import type { PickAuth } from '../../core/constants';
+import type { AuthTypes, PickAuth } from '../../core/constants';
 import { Domains, Emails } from './endpoints';
 import type { ResendEndpointOutputs } from './endpoints/types';
 import { ResendSchema } from './schema';

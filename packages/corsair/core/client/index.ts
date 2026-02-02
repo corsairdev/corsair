@@ -19,9 +19,9 @@ import type { BindEndpoints, EndpointTree } from '../endpoints';
 import { bindEndpointsRecursively } from '../endpoints/bind';
 import type { CorsairErrorHandler } from '../errors';
 import type { CorsairKeyBuilderBase, CorsairPlugin } from '../plugins';
+import { generateUUID } from '../utils';
 import type { BindWebhooks, RawWebhookRequest, WebhookTree } from '../webhooks';
 import { bindWebhooksRecursively } from '../webhooks/bind';
-import { generateUUID } from '../utils';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Entity Client Types

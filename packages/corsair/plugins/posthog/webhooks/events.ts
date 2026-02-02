@@ -1,7 +1,7 @@
+import { v7 } from 'uuid';
 import { logEventFromContext } from '../../utils/events';
 import type { PostHogWebhooks } from '..';
 import { createPostHogMatch } from './types';
-import { v7 } from 'uuid';
 
 export const eventCaptured: PostHogWebhooks['eventCaptured'] = {
 	match: createPostHogMatch(),
