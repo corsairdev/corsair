@@ -62,10 +62,15 @@ const message = await corsair.slack.db.messages.findByResourceId("msg_123");
 // List all messages for this tenant
 const messages = await corsair.slack.db.messages.list({ limit: 50 });
 
-// Search by resource ID pattern
+// Search by data fields (JSONB)
 const results = await corsair.slack.db.messages.search({
-    query: "msg_",
+    data: { channel: "C0123456789" },
     limit: 20,
+});
+
+// Search with contains (LIKE)
+const partialMatch = await corsair.slack.db.channels.search({
+    data: { name: { contains: "general" } },
 });
 ```
 

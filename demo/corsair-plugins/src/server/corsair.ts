@@ -9,9 +9,10 @@ export const corsair = createCorsair({
 	kek: process.env.CORSAIR_KEK!,
 	plugins: [
 		slack({
-			webhookHooks: {
+			authType: 'api_key',
+			hooks: {
 				channels: {
-					created: {
+					invite: {
 						after: async (ctx, res) => {
 							// some logic to fire after the channels.created webhook goes off
 						},
@@ -19,7 +20,18 @@ export const corsair = createCorsair({
 				},
 			},
 		}),
-		linear(),
+		linear({
+			webhookHooks: {
+				issues: {
+					create: {
+						after(ctx, response) {},
+					},
+					update: {
+						after(ctx, response) {},
+					},
+				},
+			},
+		}),
 		resend(),
 	],
 });
