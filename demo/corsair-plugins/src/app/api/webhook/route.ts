@@ -24,21 +24,7 @@ export async function POST(request: NextRequest) {
 		}
 	}
 
-	if (result.response) {
-		return NextResponse.json(result.response);
-	}
-
-	return NextResponse.json(
-		{
-			success: false,
-			error: 'Unknown provider',
-			filtered: {
-				plugin: result.plugin,
-				action: result.action,
-			},
-		},
-		{ status: 400 },
-	);
+	return NextResponse.json(result.response);
 }
 
 export async function GET() {
