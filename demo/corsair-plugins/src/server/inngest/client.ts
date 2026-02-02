@@ -1,18 +1,42 @@
+import type {
+	CommentCreatedEvent,
+	CommentUpdatedEvent,
+	IssueCreatedEvent,
+	IssueUpdatedEvent,
+} from 'corsair/plugins/linear';
+import type { EmailReceivedEvent } from 'corsair/plugins/resend';
+import type { MessageEvent } from 'corsair/plugins/slack';
 import { EventSchemas, Inngest } from 'inngest';
 
 type Events = {
 	'slack/event': {
 		data: {
 			tenantId: string;
-			event: any;
-			rawBody: any;
+			event: MessageEvent;
 		};
 	};
-	'linear/event': {
+	'linear/issue-created': {
 		data: {
 			tenantId: string;
-			event: any;
-			rawBody: any;
+			event: IssueCreatedEvent;
+		};
+	};
+	'linear/issue-updated': {
+		data: {
+			tenantId: string;
+			event: IssueUpdatedEvent;
+		};
+	};
+	'linear/comment-created': {
+		data: {
+			tenantId: string;
+			event: CommentCreatedEvent;
+		};
+	};
+	'linear/comment-updated': {
+		data: {
+			tenantId: string;
+			event: CommentUpdatedEvent;
 		};
 	};
 	'github/star': {
@@ -38,11 +62,7 @@ type Events = {
 	'resend/email': {
 		data: {
 			tenantId: string;
-			from: string;
-			to: string;
-			subject: string;
-			text?: string;
-			html?: string;
+			event: EmailReceivedEvent;
 		};
 	};
 };

@@ -1,3 +1,5 @@
+import { v7 } from 'uuid';
+
 // ─────────────────────────────────────────────────────────────────────────────
 // Type Utilities
 // ─────────────────────────────────────────────────────────────────────────────
@@ -30,22 +32,10 @@ export type Bivariant<Args extends unknown[], R> = {
 // ─────────────────────────────────────────────────────────────────────────────
 
 /**
- * Generates a UUID v4 string using crypto.randomUUID() if available,
- * otherwise falls back to a Math.random() implementation.
- * @returns A UUID v4 string
+ * @returns A UUID v7 string
  */
-export function generateUuidV4(): string {
-	const cryptoAny = globalThis.crypto as unknown as
-		| { randomUUID?: () => string }
-		| undefined;
-	if (cryptoAny?.randomUUID) {
-		return cryptoAny.randomUUID();
-	}
-	return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
-		const r = (Math.random() * 16) | 0;
-		const v = c === 'x' ? r : (r & 0x3) | 0x8;
-		return v.toString(16);
-	});
+export function generateUUID(): string {
+	return v7();
 }
 
 // ─────────────────────────────────────────────────────────────────────────────

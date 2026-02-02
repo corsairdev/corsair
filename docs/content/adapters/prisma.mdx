@@ -102,8 +102,8 @@ The Prisma adapter supports interactive transactions:
 
 ```ts title="example.ts"
 await corsair.slack.db.messages.transaction(async (trx) => {
-    await trx.upsert("msg_1", { text: "Hello" });
-    await trx.upsert("msg_2", { text: "World" });
+    await trx.upsertByEntityId("msg_1", { text: "Hello" });
+    await trx.upsertByEntityId("msg_2", { text: "World" });
 });
 ```
 

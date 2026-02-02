@@ -306,7 +306,7 @@ export const list: LinearEndpoints['issuesList'] = async (ctx, input) => {
 	if (result.nodes && ctx.db.issues) {
 		try {
 			for (const issue of result.nodes) {
-				await ctx.db.issues.upsert(issue.id, {
+				await ctx.db.issues.upsertByEntityId(issue.id, {
 					...issue,
 					stateId: issue.state.id,
 					teamId: issue.team.id,
@@ -345,7 +345,7 @@ export const get: LinearEndpoints['issuesGet'] = async (ctx, input) => {
 
 	if (result && ctx.db.issues) {
 		try {
-			await ctx.db.issues.upsert(result.id, {
+			await ctx.db.issues.upsertByEntityId(result.id, {
 				...result,
 				stateId: result.state.id,
 				teamId: result.team.id,

@@ -69,7 +69,7 @@ export const create: SlackEndpoints['channelsCreate'] = async (ctx, input) => {
 
 	if (result.ok && result.channel && ctx.db.channels) {
 		try {
-			await ctx.db.channels.upsert(result.channel.id, {
+			await ctx.db.channels.upsertByEntityId(result.channel.id, {
 				...result.channel,
 			});
 		} catch (error) {
@@ -102,7 +102,7 @@ export const get: SlackEndpoints['channelsGet'] = async (ctx, input) => {
 
 	if (result.ok && result.channel && ctx.db.channels) {
 		try {
-			await ctx.db.channels.upsert(result.channel.id, {
+			await ctx.db.channels.upsertByEntityId(result.channel.id, {
 				...result.channel,
 			});
 		} catch (error) {
@@ -139,7 +139,7 @@ export const list: SlackEndpoints['channelsList'] = async (ctx, input) => {
 		try {
 			for (const channel of result.channels) {
 				if (channel.id) {
-					await ctx.db.channels.upsert(channel.id, {
+					await ctx.db.channels.upsertByEntityId(channel.id, {
 						...channel,
 					});
 				}
@@ -181,7 +181,7 @@ export const getHistory: SlackEndpoints['channelsGetHistory'] = async (
 		try {
 			for (const message of result.messages) {
 				if (message.ts) {
-					await ctx.db.messages.upsert(message.ts, {
+					await ctx.db.messages.upsertByEntityId(message.ts, {
 						...message,
 						id: message.ts,
 						channel: input.channel,
@@ -218,7 +218,7 @@ export const invite: SlackEndpoints['channelsInvite'] = async (ctx, input) => {
 
 	if (result.ok && result.channel && ctx.db.channels) {
 		try {
-			await ctx.db.channels.upsert(result.channel.id, {
+			await ctx.db.channels.upsertByEntityId(result.channel.id, {
 				...result.channel,
 			});
 		} catch (error) {
@@ -323,7 +323,7 @@ export const getMembers: SlackEndpoints['channelsGetMembers'] = async (
 		try {
 			const existing = await ctx.db.channels.findByEntityId(input.channel);
 			if (existing) {
-				await ctx.db.channels.upsert(input.channel, {
+				await ctx.db.channels.upsertByEntityId(input.channel, {
 					...existing.data,
 					num_members: result.members.length,
 				});
@@ -359,7 +359,7 @@ export const open: SlackEndpoints['channelsOpen'] = async (ctx, input) => {
 
 	if (result.ok && result.channel && ctx.db.channels) {
 		try {
-			await ctx.db.channels.upsert(result.channel.id, {
+			await ctx.db.channels.upsertByEntityId(result.channel.id, {
 				...result.channel,
 			});
 		} catch (error) {
@@ -391,7 +391,7 @@ export const rename: SlackEndpoints['channelsRename'] = async (ctx, input) => {
 
 	if (result.ok && result.channel && ctx.db.channels) {
 		try {
-			await ctx.db.channels.upsert(result.channel.id, {
+			await ctx.db.channels.upsertByEntityId(result.channel.id, {
 				...result.channel,
 			});
 		} catch (error) {
@@ -432,7 +432,7 @@ export const getReplies: SlackEndpoints['channelsGetReplies'] = async (
 		try {
 			for (const message of result.messages) {
 				if (message.ts) {
-					await ctx.db.messages.upsert(message.ts, {
+					await ctx.db.messages.upsertByEntityId(message.ts, {
 						...message,
 						id: message.ts,
 						channel: input.channel,

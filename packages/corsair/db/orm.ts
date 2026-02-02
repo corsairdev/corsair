@@ -6,14 +6,13 @@ import type {
 	TableInsertType,
 	TableUpdateType,
 } from '../adapters/types';
-
+import { generateUUID } from '../core/utils';
 import type {
 	CorsairAccount,
 	CorsairEntity,
 	CorsairEvent,
 	CorsairIntegration,
 } from './';
-
 import {
 	CorsairAccountsSchema,
 	CorsairEntitiesSchema,
@@ -67,20 +66,6 @@ function assertDatabaseConfigured(
 			'Corsair database is not configured. Pass `database` to createCorsair(...) to enable ORM.',
 		);
 	}
-}
-
-function generateUuidV4(): string {
-	const cryptoAny = globalThis.crypto as unknown as
-		| { randomUUID?: () => string }
-		| undefined;
-	if (cryptoAny?.randomUUID) {
-		return cryptoAny.randomUUID();
-	}
-	return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
-		const r = (Math.random() * 16) | 0;
-		const v = c === 'x' ? r : (r & 0x3) | 0x8;
-		return v.toString(16);
-	});
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -302,7 +287,7 @@ function createBaseTableClient<
 			assertDatabaseConfigured(database);
 			const now = new Date();
 			const insert = {
-				id: (data as Record<string, unknown>).id ?? generateUuidV4(),
+				id: (data as Record<string, unknown>).id ?? generateUUID(),
 				created_at: now,
 				updated_at: now,
 				...data,
@@ -722,7 +707,7 @@ export type PluginEntityClient<DataSchema extends ZodTypeAny> = {
 	) => Promise<TypedEntity<DataSchema>[]>;
 
 	/** Create or update by external entity ID. */
-	upsert: (
+	upsertByEntityId: (
 		entityId: string,
 		data: z.input<DataSchema>,
 	) => Promise<TypedEntity<DataSchema>>;
@@ -994,7 +979,7 @@ function createPluginEntityClient<DataSchema extends ZodTypeAny>(
 			return rows.map(parseRow);
 		},
 
-		upsert: async (entityId, data) => {
+		upsertByEntityId: async (entityId, data) => {
 			assertDatabaseConfigured(database);
 			const accountId = await getAccountId();
 			const parsed = dataSchema.parse(data);
@@ -1023,7 +1008,7 @@ function createPluginEntityClient<DataSchema extends ZodTypeAny>(
 				return parseRow(updated!);
 			}
 
-			const id = generateUuidV4();
+			const id = generateUUID();
 			await database.insert({
 				table: 'corsair_entities' as const,
 				data: {
@@ -1103,7 +1088,7 @@ function createPluginEntityClient<DataSchema extends ZodTypeAny>(
  * const message = await slackOrm.messages.findByEntityId('1234567890.123456');
  * // message.data is typed as SlackMessage
  *
- * await slackOrm.channels.upsert('C123', {
+ * await slackOrm.channels.upsertByEntityId('C123', {
  *   id: 'C123',
  *   name: 'general',
  *   is_private: false,

@@ -11,17 +11,17 @@ import type {
 // Types
 // ─────────────────────────────────────────────────────────────────────────────
 
-export interface WebhookFilterHeaders {
+export interface WebhookHeaders {
 	[key: string]: string | string[] | undefined;
 }
 
-export interface WebhookFilterBody {
+export interface WebhookBody {
 	[key: string]: unknown;
 }
 
 export type WebhookFilterResult = {
 	/** The plugin that matched the webhook (e.g. 'slack', 'linear'), or null if no match */
-	plugin: string | null;
+	plugin: (typeof BaseProviders)[number] | null;
 	/** The path to the matched webhook handler (e.g. 'channels.created'), or null if no match */
 	action: string | null;
 	/** The parsed request body */
@@ -53,7 +53,7 @@ type CorsairInstance = Record<string, PluginWithWebhooks | undefined> & {
 /**
  * Checks if a value is a bound webhook object with match and handler.
  */
-function isBoundWebhook(value: unknown): value is BoundWebhook<any, any> {
+function isBoundWebhook(value: unknown): value is BoundWebhook {
 	return (
 		value !== null &&
 		typeof value === 'object' &&
@@ -68,7 +68,7 @@ function isBoundWebhook(value: unknown): value is BoundWebhook<any, any> {
  * Result from finding a matching webhook.
  */
 type MatchedWebhook = {
-	webhook: BoundWebhook<any, any>;
+	webhook: BoundWebhook;
 	path: string[];
 };
 
@@ -105,7 +105,7 @@ function findMatchingWebhook(
  * Normalizes headers to lowercase keys with string values.
  */
 function normalizeHeaders(
-	headers: WebhookFilterHeaders,
+	headers: WebhookHeaders,
 ): Record<string, string | undefined> {
 	const normalized: Record<string, string | undefined> = {};
 	for (const [key, value] of Object.entries(headers)) {
@@ -146,25 +146,23 @@ function normalizeHeaders(
  */
 export async function filterWebhook(
 	corsair: CorsairInstance,
-	headers: WebhookFilterHeaders,
-	body: WebhookFilterBody | string,
-	query?: Record<string, string | string[] | undefined>,
+	headers: WebhookHeaders,
+	body: WebhookBody | string,
+	query?: {
+		tenantId?: string;
+		[x: string]: string | string[] | undefined;
+	},
 ): Promise<WebhookFilterResult> {
 	const normalizedHeaders = normalizeHeaders(headers);
-	const parsedBody: WebhookFilterBody =
-		typeof body === 'string' ? JSON.parse(body) : body;
+	const parsedBody =
+		typeof body === 'string' ? (JSON.parse(body) satisfies WebhookBody) : body;
 
-	const rawRequest: RawWebhookRequest = {
+	const rawRequest = {
 		headers: normalizedHeaders,
 		body: parsedBody,
-	};
+	} satisfies RawWebhookRequest;
 
-	const tenantId =
-		query?.tenant_id && typeof query.tenant_id === 'string'
-			? query.tenant_id
-			: Array.isArray(query?.tenant_id) && query.tenant_id[0]
-				? query.tenant_id[0]
-				: 'default';
+	const tenantId = query?.tenantId || 'default';
 
 	const tenantScopedCorsair = corsair.withTenant
 		? corsair.withTenant(tenantId)
@@ -197,11 +195,11 @@ export async function filterWebhook(
 		if (matched) {
 			const action = matched.path.join('.');
 
-			const webhookRequest: WebhookRequest = {
+			const webhookRequest = {
 				payload: parsedBody,
 				headers: normalizedHeaders,
 				rawBody: typeof body === 'string' ? body : undefined,
-			};
+			} satisfies WebhookRequest;
 
 			try {
 				const response = await matched.webhook.handler(webhookRequest);
@@ -235,52 +233,3 @@ export async function filterWebhook(
 		body: parsedBody,
 	};
 }
-
-/**
-
-->demeter
-    -> using Corsair
-		-> customer a
-			-> sign in with slack 
-		-> customer b
-			-> sign in with slack 
-
-corsair db
-
-corsair_providers: 1 row
-	id: 123abc
-	name: slack
-	config: {}
-
-corsair_connections: 2 rows
-	id: 1
-	tenant_id: 60 demeter sets this; this lets demeter know who this tenant is in demeter's db
-	connection_id: 123abc
-	config: {
-		botToken: xxx-xxx-xxx
-		webhookCredentials: xxx-xxx-xxa
-	}
-
-	id: 2
-	tenant_id: 43 demeter sets this; this lets demeter know who this tenant is in demeter's db
-	connection_id: 123abc
-	config: {
-		botToken: xxy-xxy-yxx
-		webhookCredentials: xxx-xxx-xxb
-	}
-
-corsair_resources
-	id: 244
-	tenant_id: 60
-
-api.joindemeter.com/webhooks
-
-notification comes in:
-	slack message updated
-
-- is this for customer a or customer b? which tenant is this for?
-- which plugin is this for? this is for slack
-- which webhook is this for inside the plugin? this is for message updated
-
-
- */

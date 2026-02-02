@@ -16,7 +16,7 @@ export const list: GmailEndpoints['labelsList'] = async (ctx, input) => {
 		try {
 			for (const label of result.labels) {
 				if (label.id) {
-					await ctx.db.labels.upsert(label.id, {
+					await ctx.db.labels.upsertByEntityId(label.id, {
 						...label,
 						id: label.id,
 						createdAt: new Date(),
@@ -48,7 +48,7 @@ export const get: GmailEndpoints['labelsGet'] = async (ctx, input) => {
 
 	if (result.id && ctx.db.labels) {
 		try {
-			await ctx.db.labels.upsert(result.id, {
+			await ctx.db.labels.upsertByEntityId(result.id, {
 				id: result.id,
 				name: result.name,
 				messageListVisibility: result.messageListVisibility,

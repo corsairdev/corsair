@@ -21,7 +21,7 @@ export const list: GmailEndpoints['draftsList'] = async (ctx, input) => {
 		try {
 			for (const draft of result.drafts) {
 				if (draft.id) {
-					await ctx.db.drafts.upsert(draft.id, {
+					await ctx.db.drafts.upsertByEntityId(draft.id, {
 						...draft,
 						id: draft.id,
 						messageId: draft.message?.id,
@@ -57,7 +57,7 @@ export const get: GmailEndpoints['draftsGet'] = async (ctx, input) => {
 
 	if (result.id && ctx.db.drafts) {
 		try {
-			await ctx.db.drafts.upsert(result.id, {
+			await ctx.db.drafts.upsertByEntityId(result.id, {
 				...result,
 				id: result.id,
 				messageId: result.message?.id,
