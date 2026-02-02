@@ -10,6 +10,7 @@ export const corsair = createCorsair({
 	kek: process.env.CORSAIR_KEK!,
 	plugins: [
 		linear({
+			authType: 'api_key',
 			webhookHooks: {
 				issues: {
 					create: {
@@ -17,6 +18,8 @@ export const corsair = createCorsair({
 							const tenantId = (ctx as any).$tenantId || 'default';
 							const rawBody = (ctx as any).$rawBody;
 							const linearBody = res.data as any;
+
+							console.log(tenantId, 'res.data here')
 
 							await inngest.send({
 								name: 'linear/event',

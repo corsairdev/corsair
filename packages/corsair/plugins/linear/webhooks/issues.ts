@@ -1,10 +1,5 @@
 import { logEventFromContext } from '../../utils/events';
 import type { LinearWebhooks } from '..';
-import type {
-	IssueCreatedEvent,
-	IssueDeletedEvent,
-	IssueUpdatedEvent,
-} from './types';
 import { createLinearMatch } from './types';
 
 export const issueCreate: LinearWebhooks['issueCreate'] = {
@@ -16,26 +11,24 @@ export const issueCreate: LinearWebhooks['issueCreate'] = {
 		if (event.type !== 'Issue' || event.action !== 'create') {
 			return {
 				success: true,
-				data: event as unknown as IssueCreatedEvent,
+				data: undefined,
 			};
 		}
 
-		const issueEvent = event as IssueCreatedEvent;
-
 		console.log('📋 Linear Issue Created Event:', {
-			id: issueEvent.data.id,
-			identifier: issueEvent.data.identifier,
-			title: issueEvent.data.title,
+			id: event.data.id,
+			identifier: event.data.identifier,
+			title: event.data.title,
 		});
 
-		if (ctx.db.issues && issueEvent.data.id) {
+		if (ctx.db.issues && event.data.id) {
 			try {
-				const data = issueEvent.data;
+				const data = event.data;
 				await ctx.db.issues.upsert(data.id, {
 					...data,
 					priority: data.priority as 0 | 1 | 2 | 3 | 4,
 					number: parseInt(data.identifier.split('-')[1] || '0', 10),
-					url: issueEvent.url,
+					url: event.url,
 					stateId: (data as { stateId?: string }).stateId || '',
 					teamId: (data as { teamId?: string }).teamId || '',
 					creatorId: (data as { creatorId?: string }).creatorId || '',
@@ -50,13 +43,13 @@ export const issueCreate: LinearWebhooks['issueCreate'] = {
 		await logEventFromContext(
 			ctx,
 			'linear.webhook.issueCreate',
-			{ ...issueEvent },
+			{ ...event },
 			'completed',
 		);
 
 		return {
 			success: true,
-			data: issueEvent,
+			data: event,
 		};
 	},
 };
@@ -70,29 +63,27 @@ export const issueUpdate: LinearWebhooks['issueUpdate'] = {
 		if (event.type !== 'Issue' || event.action !== 'update') {
 			return {
 				success: true,
-				data: event as unknown as IssueUpdatedEvent,
+				data: undefined,
 			};
 		}
 
-		const issueEvent = event as IssueUpdatedEvent;
-
 		console.log('📝 Linear Issue Updated Event:', {
-			id: issueEvent.data.id,
-			identifier: issueEvent.data.identifier,
-			title: issueEvent.data.title,
-			updatedFields: issueEvent.updatedFrom
-				? Object.keys(issueEvent.updatedFrom)
+			id: event.data.id,
+			identifier: event.data.identifier,
+			title: event.data.title,
+			updatedFields: event.updatedFrom
+				? Object.keys(event.updatedFrom)
 				: [],
 		});
 
-		if (ctx.db.issues && issueEvent.data.id) {
+		if (ctx.db.issues && event.data.id) {
 			try {
-				const data = issueEvent.data;
+				const data = event.data;
 				await ctx.db.issues.upsert(data.id, {
 					...data,
 					priority: data.priority,
 					number: parseInt(data.identifier.split('-')[1] || '0', 10),
-					url: issueEvent.url,
+					url: event.url,
 					stateId: (data as { stateId?: string }).stateId || '',
 					teamId: (data as { teamId?: string }).teamId || '',
 					creatorId: (data as { creatorId?: string }).creatorId || '',
@@ -107,13 +98,13 @@ export const issueUpdate: LinearWebhooks['issueUpdate'] = {
 		await logEventFromContext(
 			ctx,
 			'linear.webhook.issueUpdate',
-			{ ...issueEvent },
+			{ ...event },
 			'completed',
 		);
 
 		return {
 			success: true,
-			data: issueEvent,
+			data: event,
 		};
 	},
 };
@@ -127,20 +118,18 @@ export const issueRemove: LinearWebhooks['issueRemove'] = {
 		if (event.type !== 'Issue' || event.action !== 'remove') {
 			return {
 				success: true,
-				data: event as unknown as IssueDeletedEvent,
+				data: undefined,
 			};
 		}
 
-		const issueEvent = event as IssueDeletedEvent;
-
 		console.log('🗑️ Linear Issue Deleted Event:', {
-			id: issueEvent.data.id,
-			identifier: issueEvent.data.identifier,
+			id: event.data.id,
+			identifier: event.data.identifier,
 		});
 
-		if (ctx.db.issues && issueEvent.data.id) {
+		if (ctx.db.issues && event.data.id) {
 			try {
-				await ctx.db.issues.deleteByEntityId(issueEvent.data.id);
+				await ctx.db.issues.deleteByEntityId(event.data.id);
 			} catch (error) {
 				console.warn('Failed to delete issue from database:', error);
 			}
@@ -149,13 +138,13 @@ export const issueRemove: LinearWebhooks['issueRemove'] = {
 		await logEventFromContext(
 			ctx,
 			'linear.webhook.issueRemove',
-			{ ...issueEvent },
+			{ ...event },
 			'completed',
 		);
 
 		return {
 			success: true,
-			data: issueEvent,
+			data: event,
 		};
 	},
 };

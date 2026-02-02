@@ -1,10 +1,6 @@
 import { logEventFromContext } from '../../utils/events';
 import type { SlackWebhooks } from '..';
-import type {
-	FileCreatedEvent,
-	FilePublicEvent,
-	FileSharedEvent,
-} from './types';
+
 import { createSlackEventMatch } from './types';
 
 export const created: SlackWebhooks['fileCreated'] = {
@@ -17,24 +13,22 @@ export const created: SlackWebhooks['fileCreated'] = {
 		if (!event || event.type !== 'file_created') {
 			return {
 				success: true,
-				data: event as unknown as FileCreatedEvent,
+				data: undefined,
 			};
 		}
 
-		const fileEvent = event as FileCreatedEvent;
-
 		console.log('📄 Slack File Created Event:', {
-			fileId: fileEvent.file_id,
-			userId: fileEvent.user_id,
+			fileId: event.file_id,
+			userId: event.user_id,
 		});
 
-		if (ctx.db.files && fileEvent.file_id) {
+		if (ctx.db.files && event.file_id) {
 			try {
-				await ctx.db.files.upsert(fileEvent.file_id, {
-					id: fileEvent.file_id,
-					user: fileEvent.user_id,
-					created: parseFloat(fileEvent.event_ts),
-					timestamp: parseFloat(fileEvent.event_ts),
+				await ctx.db.files.upsert(event.file_id, {
+					id: event.file_id,
+					user: event.user_id,
+					created: parseFloat(event.event_ts),
+					timestamp: parseFloat(event.event_ts),
 				});
 			} catch (error) {
 				console.warn('Failed to save file to database:', error);
@@ -44,13 +38,13 @@ export const created: SlackWebhooks['fileCreated'] = {
 		await logEventFromContext(
 			ctx,
 			'slack.webhook.fileCreated',
-			{ ...fileEvent },
+			{ ...event },
 			'completed',
 		);
 
 		return {
 			success: true,
-			data: fileEvent,
+			data: event,
 		};
 	},
 };
@@ -65,22 +59,20 @@ export const publicFile: SlackWebhooks['filePublic'] = {
 		if (!event || event.type !== 'file_public') {
 			return {
 				success: true,
-				data: event as unknown as FilePublicEvent,
+				data: undefined,
 			};
 		}
 
-		const fileEvent = event as FilePublicEvent;
-
 		console.log('🌐 Slack File Public Event:', {
-			fileId: fileEvent.file_id,
-			userId: fileEvent.user_id,
+			fileId: event.file_id,
+			userId: event.user_id,
 		});
 
-		if (ctx.db.files && fileEvent.file_id) {
+		if (ctx.db.files && event.file_id) {
 			try {
-				await ctx.db.files.upsert(fileEvent.file_id, {
-					id: fileEvent.file_id,
-					user: fileEvent.user_id,
+				await ctx.db.files.upsert(event.file_id, {
+					id: event.file_id,
+					user: event.user_id,
 				});
 			} catch (error) {
 				console.warn('Failed to update file in database:', error);
@@ -90,13 +82,13 @@ export const publicFile: SlackWebhooks['filePublic'] = {
 		await logEventFromContext(
 			ctx,
 			'slack.webhook.filePublic',
-			{ ...fileEvent },
+			{ ...event },
 			'completed',
 		);
 
 		return {
 			success: true,
-			data: fileEvent,
+			data: event,
 		};
 	},
 };
@@ -111,23 +103,21 @@ export const shared: SlackWebhooks['fileShared'] = {
 		if (!event || event.type !== 'file_shared') {
 			return {
 				success: true,
-				data: event as unknown as FileSharedEvent,
+				data: undefined,
 			};
 		}
 
-		const fileEvent = event as FileSharedEvent;
-
 		console.log('📎 Slack File Shared Event:', {
-			fileId: fileEvent.file_id,
-			userId: fileEvent.user_id,
-			channelId: fileEvent.channel_id,
+			fileId: event.file_id,
+			userId: event.user_id,
+			channelId: event.channel_id,
 		});
 
-		if (ctx.db.files && fileEvent.file_id) {
+		if (ctx.db.files && event.file_id) {
 			try {
-				await ctx.db.files.upsert(fileEvent.file_id, {
-					id: fileEvent.file_id,
-					user: fileEvent.user_id,
+				await ctx.db.files.upsert(event.file_id, {
+					id: event.file_id,
+					user: event.user_id,
 				});
 			} catch (error) {
 				console.warn('Failed to update file in database:', error);
@@ -137,13 +127,13 @@ export const shared: SlackWebhooks['fileShared'] = {
 		await logEventFromContext(
 			ctx,
 			'slack.webhook.fileShared',
-			{ ...fileEvent },
+			{ ...event },
 			'completed',
 		);
 
 		return {
 			success: true,
-			data: fileEvent,
+			data: event,
 		};
 	},
 };

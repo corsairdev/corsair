@@ -1,27 +1,17 @@
 import { logEventFromContext } from '../../utils/events';
 import type { ResendWebhooks } from '..';
-import type {
-	EmailBouncedEvent,
-	EmailClickedEvent,
-	EmailComplainedEvent,
-	EmailDeliveredEvent,
-	EmailFailedEvent,
-	EmailOpenedEvent,
-	EmailReceivedEvent,
-	EmailSentEvent,
-} from './types';
 import { createResendMatch } from './types';
 
 export const emailSent: ResendWebhooks['emailSent'] = {
 	match: createResendMatch('email.sent'),
 
 	handler: async (ctx, request) => {
-		const event = request.payload as EmailSentEvent;
+		const event = request.payload;
 
 		if (event.type !== 'email.sent') {
 			return {
 				success: true,
-				data: event as unknown as EmailSentEvent,
+				data: undefined,
 			};
 		}
 
@@ -63,12 +53,12 @@ export const emailDelivered: ResendWebhooks['emailDelivered'] = {
 	match: createResendMatch('email.delivered'),
 
 	handler: async (ctx, request) => {
-		const event = request.payload as EmailDeliveredEvent;
+		const event = request.payload;
 
 		if (event.type !== 'email.delivered') {
 			return {
 				success: true,
-				data: event as unknown as EmailDeliveredEvent,
+				data: undefined,
 			};
 		}
 
@@ -94,12 +84,12 @@ export const emailBounced: ResendWebhooks['emailBounced'] = {
 	match: createResendMatch('email.bounced'),
 
 	handler: async (ctx, request) => {
-		const event = request.payload as EmailBouncedEvent;
+		const event = request.payload;
 
 		if (event.type !== 'email.bounced') {
 			return {
 				success: true,
-				data: event as unknown as EmailBouncedEvent,
+				data: undefined,
 			};
 		}
 
@@ -126,12 +116,12 @@ export const emailOpened: ResendWebhooks['emailOpened'] = {
 	match: createResendMatch('email.opened'),
 
 	handler: async (ctx, request) => {
-		const event = request.payload as EmailOpenedEvent;
+		const event = request.payload;
 
 		if (event.type !== 'email.opened') {
 			return {
 				success: true,
-				data: event as unknown as EmailOpenedEvent,
+				data: undefined,
 			};
 		}
 
@@ -157,12 +147,12 @@ export const emailClicked: ResendWebhooks['emailClicked'] = {
 	match: createResendMatch('email.clicked'),
 
 	handler: async (ctx, request) => {
-		const event = request.payload as EmailClickedEvent;
+		const event = request.payload;
 
 		if (event.type !== 'email.clicked') {
 			return {
 				success: true,
-				data: event as unknown as EmailClickedEvent,
+				data: undefined,
 			};
 		}
 
@@ -189,12 +179,12 @@ export const emailComplained: ResendWebhooks['emailComplained'] = {
 	match: createResendMatch('email.complained'),
 
 	handler: async (ctx, request) => {
-		const event = request.payload as EmailComplainedEvent;
+		const event = request.payload;
 
 		if (event.type !== 'email.complained') {
 			return {
 				success: true,
-				data: event as unknown as EmailComplainedEvent,
+				data: undefined,
 			};
 		}
 
@@ -220,12 +210,12 @@ export const emailFailed: ResendWebhooks['emailFailed'] = {
 	match: createResendMatch('email.failed'),
 
 	handler: async (ctx, request) => {
-		const event = request.payload as EmailFailedEvent;
+		const event = request.payload;
 
 		if (event.type !== 'email.failed') {
 			return {
 				success: true,
-				data: event as unknown as EmailFailedEvent,
+				data: undefined,
 			};
 		}
 
@@ -252,12 +242,12 @@ export const emailReceived: ResendWebhooks['emailReceived'] = {
 	match: createResendMatch('email.received'),
 
 	handler: async (ctx, request) => {
-		const event = request.payload as EmailReceivedEvent;
+		const event = request.payload;
 
 		if (event.type !== 'email.received') {
 			return {
 				success: true,
-				data: event as unknown as EmailReceivedEvent,
+				data: undefined,
 			};
 		}
 

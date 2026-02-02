@@ -1,18 +1,17 @@
 import { logEventFromContext } from '../../utils/events';
 import type { ResendWebhooks } from '..';
-import type { DomainCreatedEvent, DomainUpdatedEvent } from './types';
 import { createResendMatch } from './types';
 
 export const domainCreated: ResendWebhooks['domainCreated'] = {
 	match: createResendMatch('domain.created'),
 
 	handler: async (ctx, request) => {
-		const event = request.payload as DomainCreatedEvent;
+		const event = request.payload;
 
 		if (event.type !== 'domain.created') {
 			return {
 				success: true,
-				data: event as unknown as DomainCreatedEvent,
+				data: undefined,
 			};
 		}
 
@@ -58,12 +57,12 @@ export const domainUpdated: ResendWebhooks['domainUpdated'] = {
 	match: createResendMatch('domain.updated'),
 
 	handler: async (ctx, request) => {
-		const event = request.payload as DomainUpdatedEvent;
+		const event = request.payload;
 
 		if (event.type !== 'domain.updated') {
 			return {
 				success: true,
-				data: event as unknown as DomainUpdatedEvent,
+				data: undefined,
 			};
 		}
 

@@ -1,6 +1,5 @@
 import { logEventFromContext } from '../../utils/events';
 import type { SlackWebhooks } from '..';
-import type { ReactionAddedEvent } from './types';
 import { createSlackEventMatch } from './types';
 
 export const added: SlackWebhooks['reactionAdded'] = {
@@ -13,22 +12,20 @@ export const added: SlackWebhooks['reactionAdded'] = {
 		if (!event || event.type !== 'reaction_added') {
 			return {
 				success: true,
-				data: {} as ReactionAddedEvent,
+				data: undefined,
 			};
 		}
-
-		const reactionEvent = event as ReactionAddedEvent;
 
 		await logEventFromContext(
 			ctx,
 			'slack.webhook.reactionAdded',
-			{ ...reactionEvent },
+			{ ...event },
 			'completed',
 		);
 
 		return {
 			success: true,
-			data: reactionEvent,
+			data: event,
 		};
 	},
 };
