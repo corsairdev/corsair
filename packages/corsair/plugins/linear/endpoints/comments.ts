@@ -123,7 +123,7 @@ export const list: LinearEndpoints['commentsList'] = async (ctx, input) => {
 	if (result.nodes && ctx.db.comments) {
 		try {
 			for (const comment of result.nodes) {
-				await ctx.db.comments.upsert(comment.id, {
+				await ctx.db.comments.upsertByEntityId(comment.id, {
 					...comment,
 					issueId: comment.issue.id,
 					userId: comment.user.id,
@@ -161,7 +161,7 @@ export const create: LinearEndpoints['commentsCreate'] = async (ctx, input) => {
 
 	if (result.success && result.comment && ctx.db.comments) {
 		try {
-			await ctx.db.comments.upsert(result.comment.id, {
+			await ctx.db.comments.upsertByEntityId(result.comment.id, {
 				...result.comment,
 				issueId: result.comment.issue.id,
 				userId: result.comment.user.id,
@@ -199,7 +199,7 @@ export const update: LinearEndpoints['commentsUpdate'] = async (ctx, input) => {
 
 	if (result && ctx.db.comments) {
 		try {
-			await ctx.db.comments.upsert(result.id, {
+			await ctx.db.comments.upsertByEntityId(result.id, {
 				...result,
 				issueId: result.issue.id,
 				userId: result.user.id,

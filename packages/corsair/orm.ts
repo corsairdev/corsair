@@ -18,7 +18,7 @@
  *   tenantId: 'tenant-123',
  * });
  *
- * await slackOrm.messages.upsert('1234567890.123456', {
+ * await slackOrm.messages.upsertByEntityId('1234567890.123456', {
  *   text: 'Hello world',
  *   channel: 'C123',
  * });

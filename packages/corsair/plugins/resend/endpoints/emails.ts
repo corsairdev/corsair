@@ -67,7 +67,7 @@ export const get: ResendEndpoints['emailsGet'] = async (ctx, input) => {
 
 	if (response.id && ctx.db.emails) {
 		try {
-			await ctx.db.emails.upsert(response.id, {
+			await ctx.db.emails.upsertByEntityId(response.id, {
 				...response,
 			});
 		} catch (error) {
@@ -101,7 +101,7 @@ export const list: ResendEndpoints['emailsList'] = async (ctx, input) => {
 	if (response.data && ctx.db.emails) {
 		try {
 			for (const email of response.data) {
-				await ctx.db.emails.upsert(email.id, {
+				await ctx.db.emails.upsertByEntityId(email.id, {
 					...email,
 				});
 			}

@@ -23,7 +23,7 @@ export const create: SlackEndpoints['userGroupsCreate'] = async (
 
 	if (result.ok && result.usergroup && ctx.db.userGroups) {
 		try {
-			await ctx.db.userGroups.upsert(result.usergroup.id, {
+			await ctx.db.userGroups.upsertByEntityId(result.usergroup.id, {
 				...result.usergroup,
 			});
 		} catch (error) {
@@ -57,7 +57,7 @@ export const disable: SlackEndpoints['userGroupsDisable'] = async (
 
 	if (result.ok && result.usergroup && ctx.db.userGroups) {
 		try {
-			await ctx.db.userGroups.upsert(result.usergroup.id, {
+			await ctx.db.userGroups.upsertByEntityId(result.usergroup.id, {
 				...result.usergroup,
 			});
 		} catch (error) {
@@ -91,7 +91,7 @@ export const enable: SlackEndpoints['userGroupsEnable'] = async (
 
 	if (result.ok && result.usergroup && ctx.db.userGroups) {
 		try {
-			await ctx.db.userGroups.upsert(result.usergroup.id, {
+			await ctx.db.userGroups.upsertByEntityId(result.usergroup.id, {
 				...result.usergroup,
 			});
 		} catch (error) {
@@ -127,7 +127,7 @@ export const list: SlackEndpoints['userGroupsList'] = async (ctx, input) => {
 		try {
 			for (const usergroup of result.userGroups) {
 				if (usergroup.id) {
-					await ctx.db.userGroups.upsert(usergroup.id, {
+					await ctx.db.userGroups.upsertByEntityId(usergroup.id, {
 						...usergroup,
 					});
 				}
@@ -167,7 +167,7 @@ export const update: SlackEndpoints['userGroupsUpdate'] = async (
 
 	if (result.ok && result.usergroup && ctx.db.userGroups) {
 		try {
-			await ctx.db.userGroups.upsert(result.usergroup.id, {
+			await ctx.db.userGroups.upsertByEntityId(result.usergroup.id, {
 				...result.usergroup,
 			});
 		} catch (error) {

@@ -1,5 +1,5 @@
+import { logEventFromContext } from '../../utils/events';
 import type { SlackWebhooks } from '..';
-import type { TeamJoinEvent, UserChangeEvent } from './types';
 import { createSlackEventMatch } from './types';
 
 export const teamJoin: SlackWebhooks['teamJoin'] = {
@@ -12,33 +12,44 @@ export const teamJoin: SlackWebhooks['teamJoin'] = {
 		if (!event || event.type !== 'team_join') {
 			return {
 				success: true,
-				data: {},
+				data: undefined,
 			};
 		}
 
-		const userEvent = event as TeamJoinEvent;
-
 		console.log('👋 Slack Team Join Event:', {
-			userId: userEvent.user.id,
-			name: userEvent.user.name,
-			real_name: userEvent.user.real_name,
+			userId: event.user.id,
+			name: event.user.name,
+			real_name: event.user.real_name,
 		});
 
-		if (ctx.db.users && userEvent.user.id) {
+		let corsairEntityId = '';
+
+		if (ctx.db.users && event.user.id) {
 			try {
-				await ctx.db.users.upsert(userEvent.user.id, {
-					...userEvent.user,
-					display_name: userEvent.user.profile?.display_name,
-					email: userEvent.user.profile?.email,
+				const entity = await ctx.db.users.upsertByEntityId(event.user.id, {
+					...event.user,
+					display_name: event.user.profile?.display_name,
+					email: event.user.profile?.email,
 				});
+
+				corsairEntityId = entity?.id || '';
 			} catch (error) {
 				console.warn('Failed to save user to database:', error);
 			}
 		}
 
+		await logEventFromContext(
+			ctx,
+			'slack.webhook.teamJoin',
+			{ ...event },
+			'completed',
+		);
+
 		return {
 			success: true,
-			data: {},
+			corsairEntityId,
+			tenantId: ctx.tenantId,
+			data: event,
 		};
 	},
 };
@@ -53,33 +64,44 @@ export const userChange: SlackWebhooks['userChange'] = {
 		if (!event || event.type !== 'user_change') {
 			return {
 				success: true,
-				data: {},
+				data: undefined,
 			};
 		}
 
-		const userEvent = event as UserChangeEvent;
-
 		console.log('👤 Slack User Change Event:', {
-			userId: userEvent.user.id,
-			name: userEvent.user.name,
-			real_name: userEvent.user.real_name,
+			userId: event.user.id,
+			name: event.user.name,
+			real_name: event.user.real_name,
 		});
 
-		if (ctx.db.users && userEvent.user.id) {
+		let corsairEntityId = '';
+
+		if (ctx.db.users && event.user.id) {
 			try {
-				await ctx.db.users.upsert(userEvent.user.id, {
-					...userEvent.user,
-					display_name: userEvent.user.profile?.display_name,
-					email: userEvent.user.profile?.email,
+				const entity = await ctx.db.users.upsertByEntityId(event.user.id, {
+					...event.user,
+					display_name: event.user.profile?.display_name,
+					email: event.user.profile?.email,
 				});
+
+				corsairEntityId = entity?.id || '';
 			} catch (error) {
 				console.warn('Failed to update user in database:', error);
 			}
 		}
 
+		await logEventFromContext(
+			ctx,
+			'slack.webhook.userChange',
+			{ ...event },
+			'completed',
+		);
+
 		return {
 			success: true,
-			data: {},
+			corsairEntityId,
+			tenantId: ctx.tenantId,
+			data: event,
 		};
 	},
 };

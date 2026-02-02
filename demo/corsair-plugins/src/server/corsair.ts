@@ -2,36 +2,99 @@ import { createCorsair, linear, resend, slack } from 'corsair';
 import { drizzleAdapter } from 'corsair/adapters';
 import { db } from '../db';
 import * as schema from '../db/schema';
+import { inngest } from './inngest/client';
 
 export const corsair = createCorsair({
 	multiTenancy: true,
 	database: drizzleAdapter(db, { provider: 'pg', schema }),
 	kek: process.env.CORSAIR_KEK!,
 	plugins: [
-		slack({
+		linear({
 			authType: 'api_key',
-			hooks: {
-				channels: {
-					invite: {
+			webhookHooks: {
+				issues: {
+					create: {
 						after: async (ctx, res) => {
-							// some logic to fire after the channels.created webhook goes off
+							await inngest.send({
+								name: 'linear/issue-created',
+								data: {
+									tenantId: ctx.tenantId ?? 'default',
+									event: res.data!,
+								},
+							});
+						},
+					},
+					update: {
+						after: async (ctx, res) => {
+							await inngest.send({
+								name: 'linear/issue-updated',
+								data: {
+									tenantId: ctx.tenantId ?? 'default',
+									event: res.data!,
+								},
+							});
+						},
+					},
+				},
+				comments: {
+					create: {
+						after: async (ctx, res) => {
+							await inngest.send({
+								name: 'linear/comment-created',
+								data: {
+									tenantId: ctx.tenantId ?? 'default',
+									event: res.data!,
+								},
+							});
+						},
+					},
+					update: {
+						after: async (ctx, res) => {
+							await inngest.send({
+								name: 'linear/comment-updated',
+								data: {
+									tenantId: ctx.tenantId ?? 'default',
+									event: res.data!,
+								},
+							});
 						},
 					},
 				},
 			},
 		}),
-		linear({
+		slack({
 			webhookHooks: {
-				issues: {
-					create: {
-						after(ctx, response) {},
-					},
-					update: {
-						after(ctx, response) {},
+				messages: {
+					message: {
+						after: async (ctx, res) => {
+							await inngest.send({
+								name: 'slack/event',
+								data: {
+									tenantId: ctx.tenantId ?? 'default',
+									event: res.data!,
+								},
+							});
+						},
 					},
 				},
 			},
 		}),
-		resend(),
+		resend({
+			webhookHooks: {
+				emails: {
+					received: {
+						after: async (ctx, res) => {
+							await inngest.send({
+								name: 'resend/email',
+								data: {
+									tenantId: ctx.tenantId ?? 'default',
+									event: res.data!,
+								},
+							});
+						},
+					},
+				},
+			},
+		}),
 	],
 });

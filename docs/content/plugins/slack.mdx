@@ -995,7 +995,7 @@ const partialMatch = await corsair.slack.db.channels.search({
 });
 
 // Upsert
-await corsair.slack.db.users.upsert("U0123456789", {
+await corsair.slack.db.users.upsertByEntityId("U0123456789", {
     id: "U0123456789",
     name: "johndoe",
     real_name: "John Doe",

@@ -1,4 +1,3 @@
-import type { AuthTypes } from '../../constants';
 import type {
 	BindEndpoints,
 	BindWebhooks,
@@ -8,7 +7,7 @@ import type {
 	CorsairWebhook,
 	KeyBuilderContext,
 } from '../../core';
-import type { PickAuth } from '../../core/constants';
+import type { AuthTypes, PickAuth } from '../../core/constants';
 import { getValidAccessToken } from './client';
 import type { GmailEndpointOutputs } from './endpoints';
 import {
