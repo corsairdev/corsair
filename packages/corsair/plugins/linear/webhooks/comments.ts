@@ -15,7 +15,7 @@ export const commentCreate: LinearWebhooks['commentCreate'] = {
 		if (event.type !== 'Comment' || event.action !== 'create') {
 			return {
 				success: true,
-				data: {},
+				data: event as unknown as CommentCreatedEvent,
 			};
 		}
 
@@ -43,7 +43,7 @@ export const commentCreate: LinearWebhooks['commentCreate'] = {
 
 		return {
 			success: true,
-			data: {},
+			data: commentEvent,
 		};
 	},
 };
@@ -57,7 +57,7 @@ export const commentUpdate: LinearWebhooks['commentUpdate'] = {
 		if (event.type !== 'Comment' || event.action !== 'update') {
 			return {
 				success: true,
-				data: {},
+				data: event as unknown as CommentUpdatedEvent,
 			};
 		}
 
@@ -87,7 +87,7 @@ export const commentUpdate: LinearWebhooks['commentUpdate'] = {
 
 		return {
 			success: true,
-			data: {},
+			data: commentEvent,
 		};
 	},
 };
@@ -101,7 +101,7 @@ export const commentRemove: LinearWebhooks['commentRemove'] = {
 		if (event.type !== 'Comment' || event.action !== 'remove') {
 			return {
 				success: true,
-				data: {},
+				data: event as unknown as CommentDeletedEvent,
 			};
 		}
 
@@ -121,7 +121,7 @@ export const commentRemove: LinearWebhooks['commentRemove'] = {
 
 		return {
 			success: true,
-			data: {},
+			data: commentEvent,
 		};
 	},
 };

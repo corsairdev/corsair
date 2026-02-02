@@ -15,7 +15,7 @@ export const projectCreate: LinearWebhooks['projectCreate'] = {
 		if (event.type !== 'Project' || event.action !== 'create') {
 			return {
 				success: true,
-				data: {},
+				data: event as unknown as ProjectCreatedEvent,
 			};
 		}
 
@@ -50,7 +50,7 @@ export const projectCreate: LinearWebhooks['projectCreate'] = {
 
 		return {
 			success: true,
-			data: {},
+			data: projectEvent,
 		};
 	},
 };
@@ -64,7 +64,7 @@ export const projectUpdate: LinearWebhooks['projectUpdate'] = {
 		if (event.type !== 'Project' || event.action !== 'update') {
 			return {
 				success: true,
-				data: {},
+				data: event as unknown as ProjectUpdatedEvent,
 			};
 		}
 
@@ -101,7 +101,7 @@ export const projectUpdate: LinearWebhooks['projectUpdate'] = {
 
 		return {
 			success: true,
-			data: {},
+			data: projectEvent,
 		};
 	},
 };
@@ -115,7 +115,7 @@ export const projectRemove: LinearWebhooks['projectRemove'] = {
 		if (event.type !== 'Project' || event.action !== 'remove') {
 			return {
 				success: true,
-				data: {},
+				data: event as unknown as ProjectDeletedEvent,
 			};
 		}
 
@@ -136,7 +136,7 @@ export const projectRemove: LinearWebhooks['projectRemove'] = {
 
 		return {
 			success: true,
-			data: {},
+			data: projectEvent,
 		};
 	},
 };

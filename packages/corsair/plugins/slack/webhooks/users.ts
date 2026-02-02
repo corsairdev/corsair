@@ -12,7 +12,7 @@ export const teamJoin: SlackWebhooks['teamJoin'] = {
 		if (!event || event.type !== 'team_join') {
 			return {
 				success: true,
-				data: {},
+				data: event as unknown as TeamJoinEvent,
 			};
 		}
 
@@ -38,7 +38,7 @@ export const teamJoin: SlackWebhooks['teamJoin'] = {
 
 		return {
 			success: true,
-			data: {},
+			data: userEvent,
 		};
 	},
 };
@@ -53,7 +53,7 @@ export const userChange: SlackWebhooks['userChange'] = {
 		if (!event || event.type !== 'user_change') {
 			return {
 				success: true,
-				data: {},
+				data: event as unknown as UserChangeEvent,
 			};
 		}
 
@@ -79,7 +79,7 @@ export const userChange: SlackWebhooks['userChange'] = {
 
 		return {
 			success: true,
-			data: {},
+			data: userEvent,
 		};
 	},
 };
