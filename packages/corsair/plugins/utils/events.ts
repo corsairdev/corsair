@@ -1,5 +1,5 @@
 import type { CorsairDbAdapter } from '../../adapters';
-import { generateUuidV4 } from '../../core/utils';
+import { generateUUID } from '../../core/utils';
 
 /**
  * Context interface with account ID resolver for logging events.
@@ -27,7 +27,7 @@ export async function logEvent(
 	status: 'pending' | 'processing' | 'completed' | 'failed' = 'pending',
 ): Promise<string | null> {
 	try {
-		const eventId = generateUuidV4();
+		const eventId = generateUUID();
 		const now = new Date();
 		await database.insert({
 			table: 'corsair_events',

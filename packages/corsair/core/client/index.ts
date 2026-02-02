@@ -21,6 +21,7 @@ import type { CorsairErrorHandler } from '../errors';
 import type { CorsairKeyBuilderBase, CorsairPlugin } from '../plugins';
 import type { BindWebhooks, RawWebhookRequest, WebhookTree } from '../webhooks';
 import { bindWebhooksRecursively } from '../webhooks/bind';
+import { generateUUID } from '../utils';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Entity Client Types
@@ -252,29 +253,6 @@ function createAccountIdResolver(
 	};
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Entity Client Factory
-// ─────────────────────────────────────────────────────────────────────────────
-
-/**
- * Generates a UUID v4 string using crypto.randomUUID() if available,
- * otherwise falls back to a Math.random() implementation.
- * @returns A UUID v4 string
- */
-function generateUuidV4(): string {
-	const cryptoAny = globalThis.crypto as unknown as
-		| { randomUUID?: () => string }
-		| undefined;
-	if (cryptoAny?.randomUUID) {
-		return cryptoAny.randomUUID();
-	}
-	return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
-		const r = (Math.random() * 16) | 0;
-		const v = c === 'x' ? r : (r & 0x3) | 0x8;
-		return v.toString(16);
-	});
-}
-
 /**
  * Attempts to parse a value as JSON if it's a string, otherwise returns the value unchanged.
  * @param value - The value to parse
@@ -461,7 +439,7 @@ function createEntityClient(
 				return parseRow(updated);
 			}
 
-			const id = generateUuidV4();
+			const id = generateUUID();
 			await database.insert({
 				table: tableName,
 				data: {
@@ -609,6 +587,8 @@ export function buildCorsairClient<
 			...(accountKeyManager
 				? { keys: accountKeyManager, authType: pluginOptions?.authType }
 				: {}),
+			// Include tenantId in context so it's available in webhook hooks
+			...(tenantId ? { tenantId } : {}),
 		};
 
 		const endpoints = plugin.endpoints ?? {};

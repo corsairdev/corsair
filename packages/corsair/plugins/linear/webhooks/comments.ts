@@ -1,9 +1,5 @@
+import { logEventFromContext } from '../../utils/events';
 import type { LinearWebhooks } from '..';
-import type {
-	CommentCreatedEvent,
-	CommentDeletedEvent,
-	CommentUpdatedEvent,
-} from './types';
 import { createLinearMatch } from './types';
 
 export const commentCreate: LinearWebhooks['commentCreate'] = {
@@ -15,24 +11,20 @@ export const commentCreate: LinearWebhooks['commentCreate'] = {
 		if (event.type !== 'Comment' || event.action !== 'create') {
 			return {
 				success: true,
-				data: {},
+				data: undefined,
 			};
 		}
 
-		const commentEvent = event as CommentCreatedEvent;
-
 		console.log('💬 Linear Comment Created Event:', {
-			id: commentEvent.data.id,
-			body: commentEvent.data.body?.substring(0, 100),
+			id: event.data.id,
+			body: event.data.body?.substring(0, 100),
 		});
 
-		if (ctx.db.comments && commentEvent.data.id) {
+		if (ctx.db.comments && event.data.id) {
 			try {
-				const data = commentEvent.data;
+				const data = event.data;
 				await ctx.db.comments.upsert(data.id, {
 					...data,
-					issueId: (data as { issueId?: string }).issueId || '',
-					userId: (data as { userId?: string }).userId || '',
 					createdAt: new Date(data.createdAt),
 					updatedAt: new Date(data.updatedAt),
 				});
@@ -41,9 +33,16 @@ export const commentCreate: LinearWebhooks['commentCreate'] = {
 			}
 		}
 
+		await logEventFromContext(
+			ctx,
+			'linear.webhook.commentCreate',
+			{ ...event },
+			'completed',
+		);
+
 		return {
 			success: true,
-			data: {},
+			data: event,
 		};
 	},
 };
@@ -57,26 +56,20 @@ export const commentUpdate: LinearWebhooks['commentUpdate'] = {
 		if (event.type !== 'Comment' || event.action !== 'update') {
 			return {
 				success: true,
-				data: {},
+				data: undefined,
 			};
 		}
 
-		const commentEvent = event as CommentUpdatedEvent;
-
 		console.log('✏️ Linear Comment Updated Event:', {
-			id: commentEvent.data.id,
-			updatedFields: commentEvent.updatedFrom
-				? Object.keys(commentEvent.updatedFrom)
-				: [],
+			id: event.data.id,
+			updatedFields: event.updatedFrom ? Object.keys(event.updatedFrom) : [],
 		});
 
-		if (ctx.db.comments && commentEvent.data.id) {
+		if (ctx.db.comments && event.data.id) {
 			try {
-				const data = commentEvent.data;
+				const data = event.data;
 				await ctx.db.comments.upsert(data.id, {
 					...data,
-					issueId: (data as { issueId?: string }).issueId || '',
-					userId: (data as { userId?: string }).userId || '',
 					createdAt: new Date(data.createdAt),
 					updatedAt: new Date(data.updatedAt),
 				});
@@ -85,9 +78,16 @@ export const commentUpdate: LinearWebhooks['commentUpdate'] = {
 			}
 		}
 
+		await logEventFromContext(
+			ctx,
+			'linear.webhook.commentUpdate',
+			{ ...event },
+			'completed',
+		);
+
 		return {
 			success: true,
-			data: {},
+			data: event,
 		};
 	},
 };
@@ -101,27 +101,32 @@ export const commentRemove: LinearWebhooks['commentRemove'] = {
 		if (event.type !== 'Comment' || event.action !== 'remove') {
 			return {
 				success: true,
-				data: {},
+				data: undefined,
 			};
 		}
 
-		const commentEvent = event as CommentDeletedEvent;
-
 		console.log('🗑️ Linear Comment Deleted Event:', {
-			id: commentEvent.data.id,
+			id: event.data.id,
 		});
 
-		if (ctx.db.comments && commentEvent.data.id) {
+		if (ctx.db.comments && event.data.id) {
 			try {
-				await ctx.db.comments.deleteByEntityId(commentEvent.data.id);
+				await ctx.db.comments.deleteByEntityId(event.data.id);
 			} catch (error) {
 				console.warn('Failed to delete comment from database:', error);
 			}
 		}
 
+		await logEventFromContext(
+			ctx,
+			'linear.webhook.commentRemove',
+			{ ...event },
+			'completed',
+		);
+
 		return {
 			success: true,
-			data: {},
+			data: event,
 		};
 	},
 };

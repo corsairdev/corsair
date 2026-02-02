@@ -20,6 +20,7 @@ import {
 	CorsairEventsSchema,
 	CorsairIntegrationsSchema,
 } from './';
+import { generateUUID } from '../core/utils';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Core Table Types
@@ -67,20 +68,6 @@ function assertDatabaseConfigured(
 			'Corsair database is not configured. Pass `database` to createCorsair(...) to enable ORM.',
 		);
 	}
-}
-
-function generateUuidV4(): string {
-	const cryptoAny = globalThis.crypto as unknown as
-		| { randomUUID?: () => string }
-		| undefined;
-	if (cryptoAny?.randomUUID) {
-		return cryptoAny.randomUUID();
-	}
-	return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
-		const r = (Math.random() * 16) | 0;
-		const v = c === 'x' ? r : (r & 0x3) | 0x8;
-		return v.toString(16);
-	});
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -302,7 +289,7 @@ function createBaseTableClient<
 			assertDatabaseConfigured(database);
 			const now = new Date();
 			const insert = {
-				id: (data as Record<string, unknown>).id ?? generateUuidV4(),
+				id: (data as Record<string, unknown>).id ?? generateUUID(),
 				created_at: now,
 				updated_at: now,
 				...data,
@@ -1023,7 +1010,7 @@ function createPluginEntityClient<DataSchema extends ZodTypeAny>(
 				return parseRow(updated!);
 			}
 
-			const id = generateUuidV4();
+			const id = generateUUID();
 			await database.insert({
 				table: 'corsair_entities' as const,
 				data: {
