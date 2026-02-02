@@ -12,7 +12,7 @@ export const created: SlackWebhooks['channelCreated'] = {
 		if (!event || event.type !== 'channel_created') {
 			return {
 				success: true,
-				data: {},
+				data: event as unknown as ChannelCreatedEvent,
 			};
 		}
 
@@ -47,7 +47,7 @@ export const created: SlackWebhooks['channelCreated'] = {
 
 		return {
 			success: true,
-			data: {},
+			data: channelEvent,
 		};
 	},
 };

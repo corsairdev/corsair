@@ -6,7 +6,13 @@ import type {
 import type { GmailContext } from '..';
 import { makeGmailRequest } from '../client';
 import type { HistoryListResponse, Message, MessagePart } from '../types';
-import type { GmailPushNotification, PubSubNotification } from './types';
+import type {
+	GmailPushNotification,
+	MessageDeletedEvent,
+	MessageLabelChangedEvent,
+	MessageReceivedEvent,
+	PubSubNotification,
+} from './types';
 
 function getHeaderValue(
 	part: MessagePart | undefined,
@@ -352,6 +358,8 @@ export const messageReceived = {
 				}
 			}
 
+			let firstProcessedMessage: Message | null = null;
+
 			for (const messageId of added) {
 				try {
 					const fullMessage = await fetchFullMessage(
@@ -365,6 +373,10 @@ export const messageReceived = {
 						pushNotification.emailAddress!,
 						fullMessage,
 					);
+
+					if (!firstProcessedMessage) {
+						firstProcessedMessage = enrichedMessage;
+					}
 
 					if (!ctx.db?.messages) {
 						console.warn(
@@ -411,15 +423,28 @@ export const messageReceived = {
 				}
 			}
 
+			const event: MessageReceivedEvent = {
+				type: 'messageReceived',
+				emailAddress: pushNotification.emailAddress!,
+				historyId: pushNotification.historyId!,
+				message: firstProcessedMessage || ({} as Message),
+			};
+
 			return {
 				success: true,
-				data: { success: true },
+				data: event,
 			};
 		} catch (error) {
+			const event: MessageReceivedEvent = {
+				type: 'messageReceived',
+				emailAddress: pushNotification.emailAddress || '',
+				historyId: pushNotification.historyId || '',
+				message: {} as Message,
+			};
 			return {
 				success: false,
 				error: error instanceof Error ? error.message : 'Unknown error',
-				data: { success: false },
+				data: event,
 			};
 		}
 	},
@@ -487,22 +512,29 @@ export const messageDeleted = {
 
 			const { deleted } = extractMessageIds(historyResponse.history);
 
+			let firstDeletedMessage: Message | null = null;
+
 			if (!ctx.db?.messages) {
 				console.warn(
 					'⚠️ ctx.db.messages is not available - database may not be configured',
 				);
+				const event: MessageDeletedEvent = {
+					type: 'messageDeleted',
+					emailAddress: pushNotification.emailAddress!,
+					historyId: pushNotification.historyId!,
+					message: {} as Message,
+				};
 				return {
 					success: true,
-					data: { success: true },
+					data: event,
 				};
 			}
 
 			for (const messageId of deleted) {
 				try {
-					await ctx.db.messages.deleteByEntityId(messageId);
-				} catch (deleteError) {
+					let message: Message | null = null;
 					try {
-						await makeGmailRequest<Message>(
+						message = await makeGmailRequest<Message>(
 							`/users/${pushNotification.emailAddress}/messages/${messageId}`,
 							credentials,
 							{
@@ -512,32 +544,50 @@ export const messageDeleted = {
 								},
 							},
 						);
-
-						await ctx.db.messages.deleteByEntityId(messageId);
 					} catch (fetchError: any) {
 						if (fetchError?.statusCode === 404) {
 							console.log(
 								`Message ${messageId} not found in Gmail (already deleted), skipping DB delete`,
 							);
-						} else {
-							console.warn(
-								`Failed to verify or delete message ${messageId}:`,
-								fetchError,
-							);
+							continue;
 						}
 					}
+
+					if (!firstDeletedMessage && message) {
+						firstDeletedMessage = message;
+					}
+
+					await ctx.db.messages.deleteByEntityId(messageId);
+				} catch (deleteError) {
+					console.warn(
+						`Failed to delete message ${messageId} from database:`,
+						deleteError,
+					);
 				}
 			}
 
+			const event: MessageDeletedEvent = {
+				type: 'messageDeleted',
+				emailAddress: pushNotification.emailAddress!,
+				historyId: pushNotification.historyId!,
+				message: firstDeletedMessage || ({} as Message),
+			};
+
 			return {
 				success: true,
-				data: { success: true },
+				data: event,
 			};
 		} catch (error) {
+			const event: MessageReceivedEvent = {
+				type: 'messageReceived',
+				emailAddress: pushNotification.emailAddress || '',
+				historyId: pushNotification.historyId || '',
+				message: {} as Message,
+			};
 			return {
 				success: false,
 				error: error instanceof Error ? error.message : 'Unknown error',
-				data: { success: false },
+				data: event,
 			};
 		}
 	},
@@ -605,13 +655,25 @@ export const messageLabelChanged = {
 
 			const { modified } = extractMessageIds(historyResponse.history);
 
+			let firstModifiedMessage: Message | null = null;
+			let labelsAdded: string[] = [];
+			let labelsRemoved: string[] = [];
+
 			if (!ctx.db?.messages) {
 				console.warn(
 					'⚠️ ctx.db.messages is not available - database may not be configured',
 				);
+				const event: MessageLabelChangedEvent = {
+					type: 'messageLabelChanged',
+					emailAddress: pushNotification.emailAddress!,
+					historyId: pushNotification.historyId!,
+					message: {} as Message,
+					labelsAdded,
+					labelsRemoved,
+				};
 				return {
 					success: true,
-					data: { success: true },
+					data: event,
 				};
 			}
 
@@ -628,6 +690,10 @@ export const messageLabelChanged = {
 						pushNotification.emailAddress!,
 						fullMessage,
 					);
+
+					if (!firstModifiedMessage) {
+						firstModifiedMessage = enrichedMessage;
+					}
 
 					if (!enrichedMessage.id) {
 						console.warn('⚠️ Message has no ID, skipping database update');
@@ -668,15 +734,30 @@ export const messageLabelChanged = {
 				}
 			}
 
+			const event: MessageLabelChangedEvent = {
+				type: 'messageLabelChanged',
+				emailAddress: pushNotification.emailAddress!,
+				historyId: pushNotification.historyId!,
+				message: firstModifiedMessage || ({} as Message),
+				labelsAdded,
+				labelsRemoved,
+			};
+
 			return {
 				success: true,
-				data: { success: true },
+				data: event,
 			};
 		} catch (error) {
+			const event: MessageLabelChangedEvent = {
+				type: 'messageLabelChanged',
+				emailAddress: pushNotification.emailAddress || '',
+				historyId: pushNotification.historyId || '',
+				message: {} as Message,
+			};
 			return {
 				success: false,
 				error: error instanceof Error ? error.message : 'Unknown error',
-				data: { success: false },
+				data: event,
 			};
 		}
 	},

@@ -8,6 +8,13 @@ export const domainCreated: ResendWebhooks['domainCreated'] = {
 	handler: async (ctx, request) => {
 		const event = request.payload as DomainCreatedEvent;
 
+		if (event.type !== 'domain.created') {
+			return {
+				success: true,
+				data: event as unknown as DomainCreatedEvent,
+			};
+		}
+
 		console.log('🌐 Resend Domain Created Event:', {
 			domain_id: event.data.domain_id,
 			name: event.data.name,
@@ -34,7 +41,7 @@ export const domainCreated: ResendWebhooks['domainCreated'] = {
 
 		return {
 			success: true,
-			data: {},
+			data: event,
 		};
 	},
 };
@@ -44,6 +51,13 @@ export const domainUpdated: ResendWebhooks['domainUpdated'] = {
 
 	handler: async (ctx, request) => {
 		const event = request.payload as DomainUpdatedEvent;
+
+		if (event.type !== 'domain.updated') {
+			return {
+				success: true,
+				data: event as unknown as DomainUpdatedEvent,
+			};
+		}
 
 		console.log('🔄 Resend Domain Updated Event:', {
 			domain_id: event.data.domain_id,
@@ -71,7 +85,7 @@ export const domainUpdated: ResendWebhooks['domainUpdated'] = {
 
 		return {
 			success: true,
-			data: {},
+			data: event,
 		};
 	},
 };

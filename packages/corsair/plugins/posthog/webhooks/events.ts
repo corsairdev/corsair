@@ -8,6 +8,13 @@ export const eventCaptured: PostHogWebhooks['eventCaptured'] = {
 	handler: async (ctx, request) => {
 		const event = request.payload as EventCapturedEvent;
 
+		if (!event.event || !event.distinct_id) {
+			return {
+				success: true,
+				data: event as unknown as EventCapturedEvent,
+			};
+		}
+
 		console.log('📊 PostHog Event Captured:', {
 			event: event.event,
 			distinct_id: event.distinct_id,
@@ -33,7 +40,7 @@ export const eventCaptured: PostHogWebhooks['eventCaptured'] = {
 
 		return {
 			success: true,
-			data: {},
+			data: event,
 		};
 	},
 };

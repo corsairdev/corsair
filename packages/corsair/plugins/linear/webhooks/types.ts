@@ -194,20 +194,16 @@ export interface LinearEventMap {
 	ProjectRemove: ProjectDeletedEvent;
 }
 
-export type LinearWebhookAck = {
-	success?: boolean;
-};
-
 export type LinearWebhookOutputs = {
-	issueCreate: LinearWebhookAck;
-	issueUpdate: LinearWebhookAck;
-	issueRemove: LinearWebhookAck;
-	commentCreate: LinearWebhookAck;
-	commentUpdate: LinearWebhookAck;
-	commentRemove: LinearWebhookAck;
-	projectCreate: LinearWebhookAck;
-	projectUpdate: LinearWebhookAck;
-	projectRemove: LinearWebhookAck;
+	issueCreate: IssueCreatedEvent;
+	issueUpdate: IssueUpdatedEvent;
+	issueRemove: IssueDeletedEvent;
+	commentCreate: CommentCreatedEvent;
+	commentUpdate: CommentUpdatedEvent;
+	commentRemove: CommentDeletedEvent;
+	projectCreate: ProjectCreatedEvent;
+	projectUpdate: ProjectUpdatedEvent;
+	projectRemove: ProjectDeletedEvent;
 };
 
 import type { CorsairWebhookMatcher, RawWebhookRequest } from '../../../core';

@@ -8,18 +8,19 @@ export const corsair = createCorsair({
 	database: drizzleAdapter(db, { provider: 'pg', schema }),
 	kek: process.env.CORSAIR_KEK!,
 	plugins: [
-		slack({
+		linear({
 			webhookHooks: {
-				channels: {
-					created: {
+				issues: {
+					create: {
 						after: async (ctx, res) => {
 							// some logic to fire after the channels.created webhook goes off
+							console.log(res.data?.type, 'type');
 						},
-					},
+					}
 				},
 			},
 		}),
-		linear(),
+		slack(),
 		resend(),
 	],
 });

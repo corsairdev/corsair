@@ -12,7 +12,7 @@ export const message: SlackWebhooks['message'] = {
 		if (!event || event.type !== 'message') {
 			return {
 				success: true,
-				data: {},
+				data: event as unknown as MessageEvent,
 			};
 		}
 
@@ -50,7 +50,7 @@ export const message: SlackWebhooks['message'] = {
 
 		return {
 			success: true,
-			data: {},
+			data: messageEvent,
 		};
 	},
 };

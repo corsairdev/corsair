@@ -176,16 +176,16 @@ export interface ResendEventMap {
 }
 
 export type ResendWebhookOutputs = {
-	emailBounced: Record<string, unknown>;
-	emailClicked: Record<string, unknown>;
-	emailComplained: Record<string, unknown>;
-	emailDelivered: Record<string, unknown>;
-	emailFailed: Record<string, unknown>;
-	emailOpened: Record<string, unknown>;
-	emailReceived: Record<string, unknown>;
-	emailSent: Record<string, unknown>;
-	domainCreated: Record<string, unknown>;
-	domainUpdated: Record<string, unknown>;
+	emailBounced: EmailBouncedEvent;
+	emailClicked: EmailClickedEvent;
+	emailComplained: EmailComplainedEvent;
+	emailDelivered: EmailDeliveredEvent;
+	emailFailed: EmailFailedEvent;
+	emailOpened: EmailOpenedEvent;
+	emailReceived: EmailReceivedEvent;
+	emailSent: EmailSentEvent;
+	domainCreated: DomainCreatedEvent;
+	domainUpdated: DomainUpdatedEvent;
 };
 
 import type { CorsairWebhookMatcher, RawWebhookRequest } from '../../../core';

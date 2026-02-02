@@ -16,7 +16,7 @@ export const created: SlackWebhooks['fileCreated'] = {
 		if (!event || event.type !== 'file_created') {
 			return {
 				success: true,
-				data: {},
+				data: event as unknown as FileCreatedEvent,
 			};
 		}
 
@@ -42,7 +42,7 @@ export const created: SlackWebhooks['fileCreated'] = {
 
 		return {
 			success: true,
-			data: {},
+			data: fileEvent,
 		};
 	},
 };
@@ -57,7 +57,7 @@ export const publicFile: SlackWebhooks['filePublic'] = {
 		if (!event || event.type !== 'file_public') {
 			return {
 				success: true,
-				data: {},
+				data: event as unknown as FilePublicEvent,
 			};
 		}
 
@@ -81,7 +81,7 @@ export const publicFile: SlackWebhooks['filePublic'] = {
 
 		return {
 			success: true,
-			data: {},
+			data: fileEvent,
 		};
 	},
 };
@@ -96,7 +96,7 @@ export const shared: SlackWebhooks['fileShared'] = {
 		if (!event || event.type !== 'file_shared') {
 			return {
 				success: true,
-				data: {},
+				data: event as unknown as FileSharedEvent,
 			};
 		}
 
@@ -121,7 +121,7 @@ export const shared: SlackWebhooks['fileShared'] = {
 
 		return {
 			success: true,
-			data: {},
+			data: fileEvent,
 		};
 	},
 };

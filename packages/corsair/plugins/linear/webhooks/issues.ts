@@ -15,7 +15,7 @@ export const issueCreate: LinearWebhooks['issueCreate'] = {
 		if (event.type !== 'Issue' || event.action !== 'create') {
 			return {
 				success: true,
-				data: {},
+				data: event as unknown as IssueCreatedEvent,
 			};
 		}
 
@@ -48,7 +48,7 @@ export const issueCreate: LinearWebhooks['issueCreate'] = {
 
 		return {
 			success: true,
-			data: {},
+			data: issueEvent,
 		};
 	},
 };
@@ -62,7 +62,7 @@ export const issueUpdate: LinearWebhooks['issueUpdate'] = {
 		if (event.type !== 'Issue' || event.action !== 'update') {
 			return {
 				success: true,
-				data: {},
+				data: event as unknown as IssueUpdatedEvent,
 			};
 		}
 
@@ -98,7 +98,7 @@ export const issueUpdate: LinearWebhooks['issueUpdate'] = {
 
 		return {
 			success: true,
-			data: {},
+			data: issueEvent,
 		};
 	},
 };
@@ -112,7 +112,7 @@ export const issueRemove: LinearWebhooks['issueRemove'] = {
 		if (event.type !== 'Issue' || event.action !== 'remove') {
 			return {
 				success: true,
-				data: {},
+				data: event as unknown as IssueDeletedEvent,
 			};
 		}
 
@@ -133,7 +133,7 @@ export const issueRemove: LinearWebhooks['issueRemove'] = {
 
 		return {
 			success: true,
-			data: {},
+			data: issueEvent,
 		};
 	},
 };

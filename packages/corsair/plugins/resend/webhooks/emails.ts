@@ -17,6 +17,13 @@ export const emailSent: ResendWebhooks['emailSent'] = {
 	handler: async (ctx, request) => {
 		const event = request.payload as EmailSentEvent;
 
+		if (event.type !== 'email.sent') {
+			return {
+				success: true,
+				data: event as unknown as EmailSentEvent,
+			};
+		}
+
 		console.log('📧 Resend Email Sent Event:', {
 			email_id: event.data.email_id,
 			from: event.data.from,
@@ -39,7 +46,7 @@ export const emailSent: ResendWebhooks['emailSent'] = {
 
 		return {
 			success: true,
-			data: {},
+			data: event,
 		};
 	},
 };
@@ -50,13 +57,20 @@ export const emailDelivered: ResendWebhooks['emailDelivered'] = {
 	handler: async (ctx, request) => {
 		const event = request.payload as EmailDeliveredEvent;
 
+		if (event.type !== 'email.delivered') {
+			return {
+				success: true,
+				data: event as unknown as EmailDeliveredEvent,
+			};
+		}
+
 		console.log('✅ Resend Email Delivered Event:', {
 			email_id: event.data.email_id,
 		});
 
 		return {
 			success: true,
-			data: {},
+			data: event,
 		};
 	},
 };
@@ -67,6 +81,13 @@ export const emailBounced: ResendWebhooks['emailBounced'] = {
 	handler: async (ctx, request) => {
 		const event = request.payload as EmailBouncedEvent;
 
+		if (event.type !== 'email.bounced') {
+			return {
+				success: true,
+				data: event as unknown as EmailBouncedEvent,
+			};
+		}
+
 		console.log('❌ Resend Email Bounced Event:', {
 			email_id: event.data.email_id,
 			bounce_type: event.data.bounce_type,
@@ -74,7 +95,7 @@ export const emailBounced: ResendWebhooks['emailBounced'] = {
 
 		return {
 			success: true,
-			data: {},
+			data: event,
 		};
 	},
 };
@@ -85,13 +106,20 @@ export const emailOpened: ResendWebhooks['emailOpened'] = {
 	handler: async (ctx, request) => {
 		const event = request.payload as EmailOpenedEvent;
 
+		if (event.type !== 'email.opened') {
+			return {
+				success: true,
+				data: event as unknown as EmailOpenedEvent,
+			};
+		}
+
 		console.log('👁️ Resend Email Opened Event:', {
 			email_id: event.data.email_id,
 		});
 
 		return {
 			success: true,
-			data: {},
+			data: event,
 		};
 	},
 };
@@ -102,6 +130,13 @@ export const emailClicked: ResendWebhooks['emailClicked'] = {
 	handler: async (ctx, request) => {
 		const event = request.payload as EmailClickedEvent;
 
+		if (event.type !== 'email.clicked') {
+			return {
+				success: true,
+				data: event as unknown as EmailClickedEvent,
+			};
+		}
+
 		console.log('🖱️ Resend Email Clicked Event:', {
 			email_id: event.data.email_id,
 			link: event.data.link,
@@ -109,7 +144,7 @@ export const emailClicked: ResendWebhooks['emailClicked'] = {
 
 		return {
 			success: true,
-			data: {},
+			data: event,
 		};
 	},
 };
@@ -120,13 +155,20 @@ export const emailComplained: ResendWebhooks['emailComplained'] = {
 	handler: async (ctx, request) => {
 		const event = request.payload as EmailComplainedEvent;
 
+		if (event.type !== 'email.complained') {
+			return {
+				success: true,
+				data: event as unknown as EmailComplainedEvent,
+			};
+		}
+
 		console.log('⚠️ Resend Email Complained Event:', {
 			email_id: event.data.email_id,
 		});
 
 		return {
 			success: true,
-			data: {},
+			data: event,
 		};
 	},
 };
@@ -137,6 +179,13 @@ export const emailFailed: ResendWebhooks['emailFailed'] = {
 	handler: async (ctx, request) => {
 		const event = request.payload as EmailFailedEvent;
 
+		if (event.type !== 'email.failed') {
+			return {
+				success: true,
+				data: event as unknown as EmailFailedEvent,
+			};
+		}
+
 		console.log('💥 Resend Email Failed Event:', {
 			email_id: event.data.email_id,
 			error: event.data.error,
@@ -144,7 +193,7 @@ export const emailFailed: ResendWebhooks['emailFailed'] = {
 
 		return {
 			success: true,
-			data: {},
+			data: event,
 		};
 	},
 };
@@ -154,6 +203,13 @@ export const emailReceived: ResendWebhooks['emailReceived'] = {
 
 	handler: async (ctx, request) => {
 		const event = request.payload as EmailReceivedEvent;
+
+		if (event.type !== 'email.received') {
+			return {
+				success: true,
+				data: event as unknown as EmailReceivedEvent,
+			};
+		}
 
 		console.log('📬 Resend Email Received Event:', {
 			email_id: event.data.email_id,
@@ -175,7 +231,7 @@ export const emailReceived: ResendWebhooks['emailReceived'] = {
 
 		return {
 			success: true,
-			data: {},
+			data: event,
 		};
 	},
 };
