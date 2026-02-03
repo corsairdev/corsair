@@ -10,9 +10,16 @@ export async function POST(request: NextRequest) {
 	});
 
 	const contentType = request.headers.get('content-type');
-	let body = contentType?.includes('application/json')
-		? await request.json()
-		: await request.text();
+
+	let body: any;
+
+	try {
+		body = contentType?.includes('application/json')
+			? await request.json()
+			: await request.text();
+	} catch (e) {
+		console.error(e);
+	}
 
 	const url = new URL(request.url);
 
@@ -23,7 +30,23 @@ export async function POST(request: NextRequest) {
 
 	const result = await filterWebhook(corsair, headers, body, { tenantId });
 
-	return NextResponse.json(result.response);
+	// Ensure response is serializable - NextResponse.json can fail on certain values
+	try {
+		return NextResponse.json(result.response);
+	} catch (error) {
+		console.error('Error serializing webhook response:', error);
+		return NextResponse.json(
+			{
+				success: false,
+				error: 'Failed to serialize response',
+				message:
+					error instanceof Error
+						? error.message
+						: 'Unknown serialization error',
+			},
+			{ status: 500 },
+		);
+	}
 }
 
 export async function GET() {
