@@ -49,7 +49,6 @@ export const emailSent: ResendWebhooks['emailSent'] = {
 		return {
 			success: true,
 			corsairEntityId,
-			tenantId: ctx.tenantId,
 			data: event,
 		};
 	},
@@ -81,7 +80,6 @@ export const emailDelivered: ResendWebhooks['emailDelivered'] = {
 
 		return {
 			success: true,
-			tenantId: ctx.tenantId,
 			data: event,
 		};
 	},
@@ -114,7 +112,6 @@ export const emailBounced: ResendWebhooks['emailBounced'] = {
 
 		return {
 			success: true,
-			tenantId: ctx.tenantId,
 			data: event,
 		};
 	},
@@ -146,7 +143,6 @@ export const emailOpened: ResendWebhooks['emailOpened'] = {
 
 		return {
 			success: true,
-			tenantId: ctx.tenantId,
 			data: event,
 		};
 	},
@@ -179,7 +175,6 @@ export const emailClicked: ResendWebhooks['emailClicked'] = {
 
 		return {
 			success: true,
-			tenantId: ctx.tenantId,
 			data: event,
 		};
 	},
@@ -211,7 +206,6 @@ export const emailComplained: ResendWebhooks['emailComplained'] = {
 
 		return {
 			success: true,
-			tenantId: ctx.tenantId,
 			data: event,
 		};
 	},
@@ -244,7 +238,6 @@ export const emailFailed: ResendWebhooks['emailFailed'] = {
 
 		return {
 			success: true,
-			tenantId: ctx.tenantId,
 			data: event,
 		};
 	},
@@ -295,7 +288,6 @@ export const emailReceived: ResendWebhooks['emailReceived'] = {
 		return {
 			success: true,
 			corsairEntityId,
-			tenantId: ctx.tenantId,
 			data: event,
 		};
 	},

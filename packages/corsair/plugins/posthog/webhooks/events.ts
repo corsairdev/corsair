@@ -50,7 +50,6 @@ export const eventCaptured: PostHogWebhooks['eventCaptured'] = {
 		return {
 			success: true,
 			corsairEntityId,
-			tenantId: ctx.tenantId,
 			data: event,
 		};
 	},

@@ -523,6 +523,12 @@ interface ReactionMessageItem {
 	ts: string;
 }
 
+export interface ChallengeEvent {
+	type: 'url_verification';
+	challenge: string;
+	token: string;
+}
+
 export interface ReactionAddedEvent {
 	type: 'reaction_added';
 	user: string;
@@ -735,6 +741,7 @@ export type SlackWebhookOutputs = {
 	fileCreated: FileCreatedEvent;
 	filePublic: FilePublicEvent;
 	fileShared: FileSharedEvent;
+	challenge: SlackUrlVerificationPayload;
 };
 
 import type { CorsairWebhookMatcher, RawWebhookRequest } from '../../../core';
@@ -752,6 +759,10 @@ export function createSlackEventMatch(
 ): CorsairWebhookMatcher {
 	return (request: RawWebhookRequest) => {
 		const parsedBody = parseBody(request.body) as Record<string, unknown>;
+
+		if (eventType === 'url_verification') {
+			return parsedBody.type === 'url_verification';
+		}
 
 		if (parsedBody.type === 'event_callback') {
 			const event = parsedBody.event;

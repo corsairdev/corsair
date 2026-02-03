@@ -50,7 +50,6 @@ export const issueCreate: LinearWebhooks['issueCreate'] = {
 		return {
 			success: true,
 			corsairEntityId,
-			tenantId: ctx.tenantId,
 			data: event,
 		};
 	},
@@ -105,7 +104,6 @@ export const issueUpdate: LinearWebhooks['issueUpdate'] = {
 		return {
 			success: true,
 			corsairEntityId,
-			tenantId: ctx.tenantId,
 			data: event,
 		};
 	},
@@ -153,7 +151,6 @@ export const issueRemove: LinearWebhooks['issueRemove'] = {
 		return {
 			success: true,
 			corsairEntityId,
-			tenantId: ctx.tenantId,
 			data: event,
 		};
 	},

@@ -3,7 +3,6 @@ import type {
 	BoundWebhook,
 	BoundWebhookTree,
 	RawWebhookRequest,
-	WebhookRequest,
 	WebhookResponse,
 } from '../core/webhooks';
 
@@ -199,7 +198,7 @@ export async function filterWebhook(
 				payload: parsedBody,
 				headers: normalizedHeaders,
 				rawBody: typeof body === 'string' ? body : undefined,
-			} satisfies WebhookRequest;
+			};
 
 			try {
 				const response = await matched.webhook.handler(webhookRequest);
@@ -207,7 +206,9 @@ export async function filterWebhook(
 					plugin: pluginId,
 					action,
 					body: parsedBody,
-					response,
+					response: response.returnToSender
+						? { success: true, data: response.data }
+						: { success: true },
 				};
 			} catch (error) {
 				console.error(
