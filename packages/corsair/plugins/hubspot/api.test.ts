@@ -523,6 +523,41 @@ describe('HubSpot API Type Tests', () => {
 		});
 
 		it('ticketsCreate returns correct type', async () => {
+				// First, get an existing ticket to extract the pipeline stage
+				const existingTickets = await makeHubSpotRequest<GetManyTicketsResponse>(
+					'/crm/v3/objects/tickets',
+					TEST_TOKEN,
+					{ 
+						query: { 
+							limit: 1,
+						} 
+					},
+				);
+				
+				const ticketId = existingTickets.results[0]?.id;
+				if (!ticketId) {
+					return;
+				}
+				
+				// Get the full ticket with all properties to see the pipeline stage format
+				const existingTicket = await makeHubSpotRequest<GetTicketResponse>(
+					`/crm/v3/objects/tickets/${ticketId}`,
+					TEST_TOKEN,
+					{
+						query: {
+							properties: 'hs_pipeline_stage,hs_pipeline',
+						},
+					},
+				);
+				
+				// Extract pipeline stage from existing ticket
+				const pipelineStage = existingTicket.properties?.hs_pipeline_stage;
+				const pipeline = existingTicket.properties?.hs_pipeline;
+				
+				if (!pipelineStage) {
+					return;
+				}
+				
 				const response = await makeHubSpotRequest<CreateTicketResponse>(
 					'/crm/v3/objects/tickets',
 					TEST_TOKEN,
@@ -531,6 +566,8 @@ describe('HubSpot API Type Tests', () => {
 						body: {
 							properties: {
 								subject: `Test Ticket ${Date.now()}`,
+								hs_pipeline_stage: pipelineStage,
+								...(pipeline && { hs_pipeline: pipeline }),
 							},
 						},
 					},
