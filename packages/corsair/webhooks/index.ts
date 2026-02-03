@@ -5,6 +5,7 @@ import type {
 	RawWebhookRequest,
 	WebhookResponse,
 } from '../core/webhooks';
+import type { SlackUrlVerificationPayload } from '../plugins/slack';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Types
@@ -208,7 +209,7 @@ export async function filterWebhook(
 				};
 
 				if (response.returnToSender && response.data !== undefined) {
-					const data = response.data;
+					const data = response.data as SlackUrlVerificationPayload;
 					// If data is an object with a 'type' field, remove it and extract the other value(s)
 					if (
 						typeof data === 'object' &&
@@ -216,13 +217,13 @@ export async function filterWebhook(
 						!Array.isArray(data) &&
 						'type' in data
 					) {
-						const { type, ...rest } = data as Record<string, unknown>;
+						const { type, ...rest } = data;
 						// If only one other field remains, return just that value
 						const otherKeys = Object.keys(rest);
 						if (otherKeys.length === 1 && otherKeys[0]) {
 							preparedResponse = {
 								...preparedResponse,
-								data: rest[otherKeys[0]],
+								data: rest[otherKeys[0] as 'challenge'],
 							};
 						} else {
 							// Otherwise return the object without 'type'
@@ -239,13 +240,11 @@ export async function filterWebhook(
 					}
 				}
 
-				console.log(preparedResponse);
-
 				return {
 					plugin: pluginId,
 					action,
 					body: parsedBody,
-					response: preparedResponse,
+					response: (response.data as any).challenge,
 				};
 			} catch (error) {
 				console.error(
