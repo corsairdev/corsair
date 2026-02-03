@@ -11,15 +11,9 @@ export async function POST(request: NextRequest) {
 
 	const contentType = request.headers.get('content-type');
 
-	let body: any;
-
-	try {
-		body = contentType?.includes('application/json')
-			? await request.json()
-			: await request.text();
-	} catch (e) {
-		console.error(e);
-	}
+	const body = contentType?.includes('application/json')
+		? await request.json()
+		: await request.text();
 
 	const url = new URL(request.url);
 
@@ -29,6 +23,11 @@ export async function POST(request: NextRequest) {
 		undefined;
 
 	const result = await filterWebhook(corsair, headers, body, { tenantId });
+
+	await corsair.withTenant('default').slack.api.messages.post({
+		channel: 'C0A3ZTB9X7X',
+		text: `Here - ${JSON.stringify(result.response)}`,
+	});
 
 	// Handle case where no webhook matched
 	if (!result.response) {
