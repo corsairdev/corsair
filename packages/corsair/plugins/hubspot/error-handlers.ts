@@ -51,13 +51,10 @@ export const errorHandlers = {
 			return true;
 		},
 		handler: async (error, context) => {
-			console.error(
-				`[corsair:${context.pluginId}:${context.operation}]`,
-				{
-					error: error.message,
-					input: context.input,
-				},
-			);
+			console.error(`[corsair:${context.pluginId}:${context.operation}]`, {
+				error: error.message,
+				input: context.input,
+			});
 
 			return {
 				maxRetries: 0,

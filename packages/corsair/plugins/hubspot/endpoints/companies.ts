@@ -27,17 +27,25 @@ export const get: HubSpotEndpoints['companiesGet'] = async (ctx, input) => {
 
 	if (result && ctx.db.companies) {
 		try {
-			await ctx.db.companies.upsert(result.id, result);
+			await ctx.db.companies.upsertByEntityId(result.id, result);
 		} catch (error) {
 			console.warn('Failed to save company to database:', error);
 		}
 	}
 
-	await logEventFromContext(ctx, 'hubspot.companies.get', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'hubspot.companies.get',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
-export const getMany: HubSpotEndpoints['companiesGetMany'] = async (ctx, input) => {
+export const getMany: HubSpotEndpoints['companiesGetMany'] = async (
+	ctx,
+	input,
+) => {
 	const { ...queryParams } = input || {};
 	const endpoint = '/crm/v3/objects/companies';
 	const result = await makeHubSpotRequest<GetManyCompaniesResponse>(
@@ -56,18 +64,26 @@ export const getMany: HubSpotEndpoints['companiesGetMany'] = async (ctx, input) 
 	if (result.results && ctx.db.companies) {
 		try {
 			for (const company of result.results) {
-				await ctx.db.companies.upsert(company.id, company);
+				await ctx.db.companies.upsertByEntityId(company.id, company);
 			}
 		} catch (error) {
 			console.warn('Failed to save companies to database:', error);
 		}
 	}
 
-	await logEventFromContext(ctx, 'hubspot.companies.getMany', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'hubspot.companies.getMany',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
-export const create: HubSpotEndpoints['companiesCreate'] = async (ctx, input) => {
+export const create: HubSpotEndpoints['companiesCreate'] = async (
+	ctx,
+	input,
+) => {
 	const { ...body } = input;
 	const endpoint = '/crm/v3/objects/companies';
 	const result = await makeHubSpotRequest<CreateCompanyResponse>(
@@ -78,17 +94,25 @@ export const create: HubSpotEndpoints['companiesCreate'] = async (ctx, input) =>
 
 	if (result && ctx.db.companies) {
 		try {
-			await ctx.db.companies.upsert(result.id, result);
+			await ctx.db.companies.upsertByEntityId(result.id, result);
 		} catch (error) {
 			console.warn('Failed to save company to database:', error);
 		}
 	}
 
-	await logEventFromContext(ctx, 'hubspot.companies.create', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'hubspot.companies.create',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
-export const update: HubSpotEndpoints['companiesUpdate'] = async (ctx, input) => {
+export const update: HubSpotEndpoints['companiesUpdate'] = async (
+	ctx,
+	input,
+) => {
 	const { companyId, ...body } = input;
 	const endpoint = `/crm/v3/objects/companies/${companyId}`;
 	const result = await makeHubSpotRequest<UpdateCompanyResponse>(
@@ -99,13 +123,18 @@ export const update: HubSpotEndpoints['companiesUpdate'] = async (ctx, input) =>
 
 	if (result && ctx.db.companies) {
 		try {
-			await ctx.db.companies.upsert(result.id, result);
+			await ctx.db.companies.upsertByEntityId(result.id, result);
 		} catch (error) {
 			console.warn('Failed to save company to database:', error);
 		}
 	}
 
-	await logEventFromContext(ctx, 'hubspot.companies.update', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'hubspot.companies.update',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
@@ -115,11 +144,9 @@ export const deleteCompany: HubSpotEndpoints['companiesDelete'] = async (
 ) => {
 	const { companyId } = input;
 	const endpoint = `/crm/v3/objects/companies/${companyId}`;
-	await makeHubSpotRequest<void>(
-		endpoint,
-		ctx.options.token,
-		{ method: 'DELETE' },
-	);
+	await makeHubSpotRequest<void>(endpoint, ctx.options.token, {
+		method: 'DELETE',
+	});
 
 	if (ctx.db.companies) {
 		try {
@@ -129,7 +156,12 @@ export const deleteCompany: HubSpotEndpoints['companiesDelete'] = async (
 		}
 	}
 
-	await logEventFromContext(ctx, 'hubspot.companies.delete', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'hubspot.companies.delete',
+		{ ...input },
+		'completed',
+	);
 };
 
 export const getRecentlyCreated: HubSpotEndpoints['companiesGetRecentlyCreated'] =
@@ -145,7 +177,7 @@ export const getRecentlyCreated: HubSpotEndpoints['companiesGetRecentlyCreated']
 		if (result.results && ctx.db.companies) {
 			try {
 				for (const company of result.results) {
-					await ctx.db.companies.upsert(company.id, company);
+					await ctx.db.companies.upsertByEntityId(company.id, company);
 				}
 			} catch (error) {
 				console.warn('Failed to save companies to database:', error);
@@ -174,7 +206,7 @@ export const getRecentlyUpdated: HubSpotEndpoints['companiesGetRecentlyUpdated']
 		if (result.results && ctx.db.companies) {
 			try {
 				for (const company of result.results) {
-					await ctx.db.companies.upsert(company.id, company);
+					await ctx.db.companies.upsertByEntityId(company.id, company);
 				}
 			} catch (error) {
 				console.warn('Failed to save companies to database:', error);
@@ -190,29 +222,27 @@ export const getRecentlyUpdated: HubSpotEndpoints['companiesGetRecentlyUpdated']
 		return result;
 	};
 
-export const searchByDomain: HubSpotEndpoints['companiesSearchByDomain'] = async (
-	ctx,
-	input,
-) => {
-	const { domain, ...queryParams } = input;
-	const endpoint = '/crm/v3/objects/companies/search';
-	const result = await makeHubSpotRequest<SearchCompanyByDomainResponse>(
-		endpoint,
-		ctx.options.token,
-		{
-			query: {
-				...queryParams,
-				domain,
-				properties: queryParams.properties?.join(','),
-			} as any,
-		},
-	);
+export const searchByDomain: HubSpotEndpoints['companiesSearchByDomain'] =
+	async (ctx, input) => {
+		const { domain, ...queryParams } = input;
+		const endpoint = '/crm/v3/objects/companies/search';
+		const result = await makeHubSpotRequest<SearchCompanyByDomainResponse>(
+			endpoint,
+			ctx.options.token,
+			{
+				query: {
+					...queryParams,
+					domain,
+					properties: queryParams.properties?.join(','),
+				} as any,
+			},
+		);
 
-	await logEventFromContext(
-		ctx,
-		'hubspot.companies.searchByDomain',
-		{ ...input },
-		'completed',
-	);
-	return result;
-};
+		await logEventFromContext(
+			ctx,
+			'hubspot.companies.searchByDomain',
+			{ ...input },
+			'completed',
+		);
+		return result;
+	};

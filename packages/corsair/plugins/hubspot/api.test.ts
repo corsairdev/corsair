@@ -1,8 +1,8 @@
-import { makeHubSpotRequest, HubSpotAPIError } from './client';
+import dotenv from 'dotenv';
+import { makeHubSpotRequest } from './client';
 import type {
 	CreateCompanyResponse,
 	CreateDealResponse,
-	CreateEngagementResponse,
 	CreateOrUpdateContactResponse,
 	CreateTicketResponse,
 	GetCompanyResponse,
@@ -15,14 +15,13 @@ import type {
 	GetManyEngagementsResponse,
 	GetManyTicketsResponse,
 	GetTicketResponse,
-	HubSpotEndpointOutputs,
 	SearchCompanyByDomainResponse,
 	UpdateCompanyResponse,
 	UpdateDealResponse,
 	UpdateTicketResponse,
 } from './endpoints/types';
 import { HubSpotEndpointOutputSchemas } from './endpoints/types';
-import dotenv from 'dotenv';
+
 dotenv.config();
 
 type AssertExactType<T, U> = T extends U ? (U extends T ? true : never) : never;
@@ -38,16 +37,17 @@ describe('HubSpot API Type Tests', () => {
 				{ query: { limit: 10 } },
 			);
 			const result = response;
-			
+
 			HubSpotEndpointOutputSchemas.contactsGetMany.parse(result);
 		});
 
 		it('contactsGet returns correct type', async () => {
-			const contactsListResponse = await makeHubSpotRequest<GetManyContactsResponse>(
-				'/crm/v3/objects/contacts',
-				TEST_TOKEN,
-				{ query: { limit: 1 } },
-			);
+			const contactsListResponse =
+				await makeHubSpotRequest<GetManyContactsResponse>(
+					'/crm/v3/objects/contacts',
+					TEST_TOKEN,
+					{ query: { limit: 1 } },
+				);
 			const contactId = contactsListResponse.results[0]?.id;
 			if (!contactId) {
 				return;
@@ -58,9 +58,8 @@ describe('HubSpot API Type Tests', () => {
 				TEST_TOKEN,
 			);
 			const result = response;
-			
+
 			HubSpotEndpointOutputSchemas.contactsGet.parse(result);
-			
 		});
 
 		it('contactsCreateOrUpdate returns correct type', async () => {
@@ -77,9 +76,8 @@ describe('HubSpot API Type Tests', () => {
 				},
 			);
 			const result = response;
-			
+
 			HubSpotEndpointOutputSchemas.contactsCreateOrUpdate.parse(result);
-			
 		});
 
 		it('contactsGetRecentlyCreated returns correct type', async () => {
@@ -89,7 +87,7 @@ describe('HubSpot API Type Tests', () => {
 				{ query: { limit: 10 } },
 			);
 			const result = response;
-			
+
 			HubSpotEndpointOutputSchemas.contactsGetRecentlyCreated.parse(result);
 		});
 
@@ -100,9 +98,8 @@ describe('HubSpot API Type Tests', () => {
 				{ query: { limit: 10 } },
 			);
 			const result = response;
-			
+
 			HubSpotEndpointOutputSchemas.contactsGetRecentlyUpdated.parse(result);
-			
 		});
 
 		it('contactsSearch returns correct type', async () => {
@@ -117,9 +114,8 @@ describe('HubSpot API Type Tests', () => {
 				},
 			);
 			const result = response;
-			
+
 			HubSpotEndpointOutputSchemas.contactsSearch.parse(result);
-			
 		});
 	});
 
@@ -131,17 +127,17 @@ describe('HubSpot API Type Tests', () => {
 				{ query: { limit: 10 } },
 			);
 			const result = response;
-			
+
 			HubSpotEndpointOutputSchemas.companiesGetMany.parse(result);
-			
 		});
 
 		it('companiesGet returns correct type', async () => {
-			const companiesListResponse = await makeHubSpotRequest<GetManyCompaniesResponse>(
-				'/crm/v3/objects/companies',
-				TEST_TOKEN,
-				{ query: { limit: 1 } },
-			);
+			const companiesListResponse =
+				await makeHubSpotRequest<GetManyCompaniesResponse>(
+					'/crm/v3/objects/companies',
+					TEST_TOKEN,
+					{ query: { limit: 1 } },
+				);
 			const companyId = companiesListResponse.results[0]?.id;
 			if (!companyId) {
 				return;
@@ -152,9 +148,8 @@ describe('HubSpot API Type Tests', () => {
 				TEST_TOKEN,
 			);
 			const result = response;
-			
+
 			HubSpotEndpointOutputSchemas.companiesGet.parse(result);
-			
 		});
 
 		it('companiesCreate returns correct type', async () => {
@@ -171,17 +166,17 @@ describe('HubSpot API Type Tests', () => {
 				},
 			);
 			const result = response;
-			
+
 			HubSpotEndpointOutputSchemas.companiesCreate.parse(result);
-			
 		});
 
 		it('companiesUpdate returns correct type', async () => {
-			const companiesListResponse = await makeHubSpotRequest<GetManyCompaniesResponse>(
-				'/crm/v3/objects/companies',
-				TEST_TOKEN,
-				{ query: { limit: 1 } },
-			);
+			const companiesListResponse =
+				await makeHubSpotRequest<GetManyCompaniesResponse>(
+					'/crm/v3/objects/companies',
+					TEST_TOKEN,
+					{ query: { limit: 1 } },
+				);
 			const companyId = companiesListResponse.results[0]?.id;
 			if (!companyId) {
 				return;
@@ -200,9 +195,8 @@ describe('HubSpot API Type Tests', () => {
 				},
 			);
 			const result = response;
-			
+
 			HubSpotEndpointOutputSchemas.companiesUpdate.parse(result);
-			
 		});
 
 		it('companiesGetRecentlyCreated returns correct type', async () => {
@@ -212,9 +206,8 @@ describe('HubSpot API Type Tests', () => {
 				{ query: { limit: 10 } },
 			);
 			const result = response;
-			
+
 			HubSpotEndpointOutputSchemas.companiesGetRecentlyCreated.parse(result);
-		
 		});
 
 		it('companiesGetRecentlyUpdated returns correct type', async () => {
@@ -224,9 +217,8 @@ describe('HubSpot API Type Tests', () => {
 				{ query: { limit: 10 } },
 			);
 			const result = response;
-			
+
 			HubSpotEndpointOutputSchemas.companiesGetRecentlyUpdated.parse(result);
-   
 		});
 
 		it('companiesSearchByDomain returns correct type', async () => {
@@ -244,9 +236,8 @@ describe('HubSpot API Type Tests', () => {
 				},
 			);
 			const result = response;
-			
+
 			HubSpotEndpointOutputSchemas.companiesSearchByDomain.parse(result);
-			
 		});
 	});
 
@@ -258,9 +249,8 @@ describe('HubSpot API Type Tests', () => {
 				{ query: { limit: 10 } },
 			);
 			const result = response;
-			
+
 			HubSpotEndpointOutputSchemas.dealsGetMany.parse(result);
-			
 		});
 
 		it('dealsGet returns correct type', async () => {
@@ -279,9 +269,8 @@ describe('HubSpot API Type Tests', () => {
 				TEST_TOKEN,
 			);
 			const result = response;
-			
+
 			HubSpotEndpointOutputSchemas.dealsGet.parse(result);
-			
 		});
 
 		it('dealsCreate returns correct type', async () => {
@@ -298,9 +287,8 @@ describe('HubSpot API Type Tests', () => {
 				},
 			);
 			const result = response;
-			
+
 			HubSpotEndpointOutputSchemas.dealsCreate.parse(result);
-			
 		});
 
 		it('dealsUpdate returns correct type', async () => {
@@ -327,9 +315,8 @@ describe('HubSpot API Type Tests', () => {
 				},
 			);
 			const result = response;
-			
+
 			HubSpotEndpointOutputSchemas.dealsUpdate.parse(result);
-			
 		});
 
 		it('dealsGetRecentlyCreated returns correct type', async () => {
@@ -339,7 +326,7 @@ describe('HubSpot API Type Tests', () => {
 				{ query: { limit: 10 } },
 			);
 			const result = response;
-			
+
 			HubSpotEndpointOutputSchemas.dealsGetRecentlyCreated.parse(result);
 		});
 
@@ -350,9 +337,8 @@ describe('HubSpot API Type Tests', () => {
 				{ query: { limit: 10 } },
 			);
 			const result = response;
-			
+
 			HubSpotEndpointOutputSchemas.dealsGetRecentlyUpdated.parse(result);
-			
 		});
 
 		it('dealsSearch returns correct type', async () => {
@@ -367,129 +353,126 @@ describe('HubSpot API Type Tests', () => {
 				},
 			);
 			const result = response;
-			
+
 			HubSpotEndpointOutputSchemas.dealsSearch.parse(result);
-			
 		});
 	});
 
 	describe('tickets', () => {
 		it('ticketsGetMany returns correct type', async () => {
-				const response = await makeHubSpotRequest<GetManyTicketsResponse>(
-					'/crm/v3/objects/tickets',
-					TEST_TOKEN,
-					{ query: { limit: 10 } },
-				);
-				const result = response;
-				
-				HubSpotEndpointOutputSchemas.ticketsGetMany.parse(result);
-				
+			const response = await makeHubSpotRequest<GetManyTicketsResponse>(
+				'/crm/v3/objects/tickets',
+				TEST_TOKEN,
+				{ query: { limit: 10 } },
+			);
+			const result = response;
+
+			HubSpotEndpointOutputSchemas.ticketsGetMany.parse(result);
 		});
 
 		it('ticketsGet returns correct type', async () => {
-				const ticketsListResponse = await makeHubSpotRequest<GetManyTicketsResponse>(
+			const ticketsListResponse =
+				await makeHubSpotRequest<GetManyTicketsResponse>(
 					'/crm/v3/objects/tickets',
 					TEST_TOKEN,
 					{ query: { limit: 1 } },
 				);
-				const ticketId = ticketsListResponse.results[0]?.id;
-				if (!ticketId) {
-					return;
-				}
+			const ticketId = ticketsListResponse.results[0]?.id;
+			if (!ticketId) {
+				return;
+			}
 
-				const response = await makeHubSpotRequest<GetTicketResponse>(
-					`/crm/v3/objects/tickets/${ticketId}`,
-					TEST_TOKEN,
-				);
-				const result = response;
-				
-				HubSpotEndpointOutputSchemas.ticketsGet.parse(result);
-				
+			const response = await makeHubSpotRequest<GetTicketResponse>(
+				`/crm/v3/objects/tickets/${ticketId}`,
+				TEST_TOKEN,
+			);
+			const result = response;
+
+			HubSpotEndpointOutputSchemas.ticketsGet.parse(result);
 		});
 
 		it('ticketsCreate returns correct type', async () => {
-				// First, get an existing ticket to extract the pipeline stage
-				const existingTickets = await makeHubSpotRequest<GetManyTicketsResponse>(
-					'/crm/v3/objects/tickets',
-					TEST_TOKEN,
-					{ 
-						query: { 
-							limit: 1,
-						} 
+			// First, get an existing ticket to extract the pipeline stage
+			const existingTickets = await makeHubSpotRequest<GetManyTicketsResponse>(
+				'/crm/v3/objects/tickets',
+				TEST_TOKEN,
+				{
+					query: {
+						limit: 1,
 					},
-				);
-				
-				const ticketId = existingTickets.results[0]?.id;
-				if (!ticketId) {
-					return;
-				}
-				
-				// Get the full ticket with all properties to see the pipeline stage format
-				const existingTicket = await makeHubSpotRequest<GetTicketResponse>(
-					`/crm/v3/objects/tickets/${ticketId}`,
-					TEST_TOKEN,
-					{
-						query: {
-							properties: 'hs_pipeline_stage,hs_pipeline',
+				},
+			);
+
+			const ticketId = existingTickets.results[0]?.id;
+			if (!ticketId) {
+				return;
+			}
+
+			// Get the full ticket with all properties to see the pipeline stage format
+			const existingTicket = await makeHubSpotRequest<GetTicketResponse>(
+				`/crm/v3/objects/tickets/${ticketId}`,
+				TEST_TOKEN,
+				{
+					query: {
+						properties: 'hs_pipeline_stage,hs_pipeline',
+					},
+				},
+			);
+
+			// Extract pipeline stage from existing ticket
+			const pipelineStage = existingTicket.properties?.hs_pipeline_stage;
+			const pipeline = existingTicket.properties?.hs_pipeline;
+
+			if (!pipelineStage) {
+				return;
+			}
+
+			const response = await makeHubSpotRequest<CreateTicketResponse>(
+				'/crm/v3/objects/tickets',
+				TEST_TOKEN,
+				{
+					method: 'POST',
+					body: {
+						properties: {
+							subject: `Test Ticket ${Date.now()}`,
+							hs_pipeline_stage: pipelineStage,
+							...(pipeline && { hs_pipeline: pipeline }),
 						},
 					},
-				);
-				
-				// Extract pipeline stage from existing ticket
-				const pipelineStage = existingTicket.properties?.hs_pipeline_stage;
-				const pipeline = existingTicket.properties?.hs_pipeline;
-				
-				if (!pipelineStage) {
-					return;
-				}
-				
-				const response = await makeHubSpotRequest<CreateTicketResponse>(
-					'/crm/v3/objects/tickets',
-					TEST_TOKEN,
-					{
-						method: 'POST',
-						body: {
-							properties: {
-								subject: `Test Ticket ${Date.now()}`,
-								hs_pipeline_stage: pipelineStage,
-								...(pipeline && { hs_pipeline: pipeline }),
-							},
-						},
-					},
-				);
-				const result = response;
-				
-				HubSpotEndpointOutputSchemas.ticketsCreate.parse(result);
-				
+				},
+			);
+			const result = response;
+
+			HubSpotEndpointOutputSchemas.ticketsCreate.parse(result);
 		});
 
 		it('ticketsUpdate returns correct type', async () => {
-				const ticketsListResponse = await makeHubSpotRequest<GetManyTicketsResponse>(
+			const ticketsListResponse =
+				await makeHubSpotRequest<GetManyTicketsResponse>(
 					'/crm/v3/objects/tickets',
 					TEST_TOKEN,
 					{ query: { limit: 1 } },
 				);
-				const ticketId = ticketsListResponse.results[0]?.id;
-				if (!ticketId) {
-					return;
-				}
+			const ticketId = ticketsListResponse.results[0]?.id;
+			if (!ticketId) {
+				return;
+			}
 
-				const response = await makeHubSpotRequest<UpdateTicketResponse>(
-					`/crm/v3/objects/tickets/${ticketId}`,
-					TEST_TOKEN,
-					{
-						method: 'PATCH',
-						body: {
-							properties: {
-								subject: `Updated Ticket ${Date.now()}`,
-							},
+			const response = await makeHubSpotRequest<UpdateTicketResponse>(
+				`/crm/v3/objects/tickets/${ticketId}`,
+				TEST_TOKEN,
+				{
+					method: 'PATCH',
+					body: {
+						properties: {
+							subject: `Updated Ticket ${Date.now()}`,
 						},
 					},
-				);
-				const result = response;
-				
-				HubSpotEndpointOutputSchemas.ticketsUpdate.parse(result);
-				
+				},
+			);
+			const result = response;
+
+			HubSpotEndpointOutputSchemas.ticketsUpdate.parse(result);
 		});
 	});
 
@@ -501,17 +484,17 @@ describe('HubSpot API Type Tests', () => {
 				{ query: { limit: 10 } },
 			);
 			const result = response;
-			
+
 			HubSpotEndpointOutputSchemas.engagementsGetMany.parse(result);
-			
 		});
 
 		it('engagementsGet returns correct type', async () => {
-			const engagementsListResponse = await makeHubSpotRequest<GetManyEngagementsResponse>(
-				'/crm/v3/objects/engagements',
-				TEST_TOKEN,
-				{ query: { limit: 1 } },
-			);
+			const engagementsListResponse =
+				await makeHubSpotRequest<GetManyEngagementsResponse>(
+					'/crm/v3/objects/engagements',
+					TEST_TOKEN,
+					{ query: { limit: 1 } },
+				);
 			const engagementId = engagementsListResponse.results[0]?.id;
 			if (!engagementId) {
 				return;
@@ -522,10 +505,8 @@ describe('HubSpot API Type Tests', () => {
 				TEST_TOKEN,
 			);
 			const result = response;
-			
+
 			HubSpotEndpointOutputSchemas.engagementsGet.parse(result);
-			
-        });
-        
+		});
 	});
 });

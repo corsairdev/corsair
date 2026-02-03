@@ -1,9 +1,10 @@
+import dotenv from 'dotenv';
 import { createCorsair } from '../core';
 import { resend } from '../plugins/resend';
-import { createTestDatabase } from './setup-db';
-import { createIntegrationAndAccount } from './plugins-test-utils';
 import { ResendAPIError } from '../plugins/resend/client';
-import dotenv from 'dotenv';
+import { createIntegrationAndAccount } from './plugins-test-utils';
+import { createTestDatabase } from './setup-db';
+
 dotenv.config();
 
 async function createResendClient() {
@@ -51,7 +52,10 @@ describe('Resend plugin integration', () => {
 				html: '<p>Test</p>',
 			});
 		} catch (error) {
-			if (error instanceof ResendAPIError && error.message.includes('Forbidden')) {
+			if (
+				error instanceof ResendAPIError &&
+				error.message.includes('Forbidden')
+			) {
 				testDb.cleanup();
 				return;
 			}
@@ -158,9 +162,7 @@ describe('Resend plugin integration', () => {
 
 				const verifyEvents = await testDb.adapter.findMany({
 					table: 'corsair_events',
-					where: [
-						{ field: 'event_type', value: 'resend.domains.verify' },
-					],
+					where: [{ field: 'event_type', value: 'resend.domains.verify' }],
 				});
 
 				expect(verifyEvents.length).toBeGreaterThan(0);
@@ -202,9 +204,7 @@ describe('Resend plugin integration', () => {
 
 					const deleteEvents = await testDb.adapter.findMany({
 						table: 'corsair_events',
-						where: [
-							{ field: 'event_type', value: 'resend.domains.delete' },
-						],
+						where: [{ field: 'event_type', value: 'resend.domains.delete' }],
 					});
 
 					expect(deleteEvents.length).toBeGreaterThan(0);
@@ -213,7 +213,10 @@ describe('Resend plugin integration', () => {
 				}
 			}
 		} catch (error) {
-			if (error instanceof ResendAPIError && error.message.includes('Forbidden')) {
+			if (
+				error instanceof ResendAPIError &&
+				error.message.includes('Forbidden')
+			) {
 			} else {
 				throw error;
 			}
@@ -228,4 +231,3 @@ describe('Resend plugin integration', () => {
 		testDb.cleanup();
 	});
 });
-

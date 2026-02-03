@@ -18,6 +18,8 @@ import WebhooksDoc from '@/content/concepts/webhooks.mdx';
 import ComparisonDoc from '@/content/getting-started/comparison.mdx';
 // Getting Started
 import IntroductionDoc from '@/content/getting-started/introduction.mdx';
+// Guides
+import CreateYourOwnPlugin from '@/content/guides/create-your-own-plugin.mdx';
 // Plugins
 import SlackDoc from '@/content/plugins/slack.mdx';
 import { extractTOC } from '@/lib/toc';
@@ -110,6 +112,11 @@ const pages = {
 		title: 'Slack',
 		description:
 			'Enable natural language queries and mutations for Slack operations',
+	},
+	'guides/create-your-own-plugin': {
+		Component: CreateYourOwnPlugin,
+		title: 'Create Your Own Plugin',
+		description: 'Create your own plugin for Corsair',
 	},
 } as const;
 

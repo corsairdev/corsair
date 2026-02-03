@@ -26,13 +26,18 @@ export const get: HubSpotEndpoints['dealsGet'] = async (ctx, input) => {
 
 	if (result && ctx.db.deals) {
 		try {
-			await ctx.db.deals.upsert(result.id,result);
+			await ctx.db.deals.upsertByEntityId(result.id, result);
 		} catch (error) {
 			console.warn('Failed to save deal to database:', error);
 		}
 	}
 
-	await logEventFromContext(ctx, 'hubspot.deals.get', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'hubspot.deals.get',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
@@ -55,14 +60,19 @@ export const getMany: HubSpotEndpoints['dealsGetMany'] = async (ctx, input) => {
 	if (result.results && ctx.db.deals) {
 		try {
 			for (const deal of result.results) {
-				await ctx.db.deals.upsert(deal.id, deal);
+				await ctx.db.deals.upsertByEntityId(deal.id, deal);
 			}
 		} catch (error) {
 			console.warn('Failed to save deals to database:', error);
 		}
 	}
 
-	await logEventFromContext(ctx, 'hubspot.deals.getMany', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'hubspot.deals.getMany',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
@@ -77,13 +87,18 @@ export const create: HubSpotEndpoints['dealsCreate'] = async (ctx, input) => {
 
 	if (result && ctx.db.deals) {
 		try {
-			await ctx.db.deals.upsert(result.id, result);
+			await ctx.db.deals.upsertByEntityId(result.id, result);
 		} catch (error) {
 			console.warn('Failed to save deal to database:', error);
 		}
 	}
 
-	await logEventFromContext(ctx, 'hubspot.deals.create', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'hubspot.deals.create',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
@@ -98,24 +113,30 @@ export const update: HubSpotEndpoints['dealsUpdate'] = async (ctx, input) => {
 
 	if (result && ctx.db.deals) {
 		try {
-			await ctx.db.deals.upsert(result.id, result);
+			await ctx.db.deals.upsertByEntityId(result.id, result);
 		} catch (error) {
 			console.warn('Failed to update deal in database:', error);
 		}
 	}
 
-	await logEventFromContext(ctx, 'hubspot.deals.update', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'hubspot.deals.update',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
-export const deleteDeal: HubSpotEndpoints['dealsDelete'] = async (ctx, input) => {
+export const deleteDeal: HubSpotEndpoints['dealsDelete'] = async (
+	ctx,
+	input,
+) => {
 	const { dealId } = input;
 	const endpoint = `/crm/v3/objects/deals/${dealId}`;
-	await makeHubSpotRequest<void>(
-		endpoint,
-		ctx.options.token,
-		{ method: 'DELETE' },
-	);
+	await makeHubSpotRequest<void>(endpoint, ctx.options.token, {
+		method: 'DELETE',
+	});
 
 	if (ctx.db.deals) {
 		try {
@@ -125,50 +146,51 @@ export const deleteDeal: HubSpotEndpoints['dealsDelete'] = async (ctx, input) =>
 		}
 	}
 
-	await logEventFromContext(ctx, 'hubspot.deals.delete', { ...input }, 'completed');
-};
-
-export const getRecentlyCreated: HubSpotEndpoints['dealsGetRecentlyCreated'] = async (
-	ctx,
-	input,
-) => {
-	const { ...queryParams } = input || {};
-	const endpoint = '/crm/v3/objects/deals';
-	const result = await makeHubSpotRequest<GetManyDealsResponse>(
-		endpoint,
-		ctx.options.token,
-		{ query: queryParams },
-	);
-
 	await logEventFromContext(
 		ctx,
-		'hubspot.deals.getRecentlyCreated',
+		'hubspot.deals.delete',
 		{ ...input },
 		'completed',
 	);
-	return result;
 };
 
-export const getRecentlyUpdated: HubSpotEndpoints['dealsGetRecentlyUpdated'] = async (
-	ctx,
-	input,
-) => {
-	const { ...queryParams } = input || {};
-	const endpoint = '/crm/v3/objects/deals';
-	const result = await makeHubSpotRequest<GetManyDealsResponse>(
-		endpoint,
-		ctx.options.token,
-		{ query: queryParams },
-	);
+export const getRecentlyCreated: HubSpotEndpoints['dealsGetRecentlyCreated'] =
+	async (ctx, input) => {
+		const { ...queryParams } = input || {};
+		const endpoint = '/crm/v3/objects/deals';
+		const result = await makeHubSpotRequest<GetManyDealsResponse>(
+			endpoint,
+			ctx.options.token,
+			{ query: queryParams },
+		);
 
-	await logEventFromContext(
-		ctx,
-		'hubspot.deals.getRecentlyUpdated',
-		{ ...input },
-		'completed',
-	);
-	return result;
-};
+		await logEventFromContext(
+			ctx,
+			'hubspot.deals.getRecentlyCreated',
+			{ ...input },
+			'completed',
+		);
+		return result;
+	};
+
+export const getRecentlyUpdated: HubSpotEndpoints['dealsGetRecentlyUpdated'] =
+	async (ctx, input) => {
+		const { ...queryParams } = input || {};
+		const endpoint = '/crm/v3/objects/deals';
+		const result = await makeHubSpotRequest<GetManyDealsResponse>(
+			endpoint,
+			ctx.options.token,
+			{ query: queryParams },
+		);
+
+		await logEventFromContext(
+			ctx,
+			'hubspot.deals.getRecentlyUpdated',
+			{ ...input },
+			'completed',
+		);
+		return result;
+	};
 
 export const search: HubSpotEndpoints['dealsSearch'] = async (ctx, input) => {
 	const { ...body } = input;
@@ -179,6 +201,11 @@ export const search: HubSpotEndpoints['dealsSearch'] = async (ctx, input) => {
 		{ method: 'POST', body },
 	);
 
-	await logEventFromContext(ctx, 'hubspot.deals.search', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'hubspot.deals.search',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };

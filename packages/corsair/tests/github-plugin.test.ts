@@ -1,10 +1,11 @@
+import dotenv from 'dotenv';
 import { createCorsair } from '../core';
 import { github } from '../plugins/github';
-import { createTestDatabase } from './setup-db';
-import { createIntegrationAndAccount } from './plugins-test-utils';
 import { GithubAPIError } from '../plugins/github/client';
-import dotenv from 'dotenv';
-dotenv.config();  
+import { createIntegrationAndAccount } from './plugins-test-utils';
+import { createTestDatabase } from './setup-db';
+
+dotenv.config();
 
 async function createGithubClient() {
 	const token = process.env.GITHUB_TOKEN;
@@ -35,7 +36,7 @@ async function createGithubClient() {
 
 describe('GitHub plugin integration', () => {
 	it('issues endpoints interact with API and DB', async () => {
-        const setup = await createGithubClient();
+		const setup = await createGithubClient();
 		if (!setup) {
 			return;
 		}
@@ -49,8 +50,7 @@ describe('GitHub plugin integration', () => {
 			perPage: 10,
 		});
 
-        const listedIssues = Array.isArray(listResult) ? listResult : [];
-        
+		const listedIssues = Array.isArray(listResult) ? listResult : [];
 
 		const eventsList = await testDb.adapter.findMany({
 			table: 'corsair_events',
@@ -65,8 +65,7 @@ describe('GitHub plugin integration', () => {
 			owner,
 			repo,
 			title: issueTitle,
-        });
-        
+		});
 
 		expect(createdIssue).toBeDefined();
 
@@ -112,9 +111,7 @@ describe('GitHub plugin integration', () => {
 
 		const eventsComment = await testDb.adapter.findMany({
 			table: 'corsair_events',
-			where: [
-				{ field: 'event_type', value: 'github.issues.createComment' },
-			],
+			where: [{ field: 'event_type', value: 'github.issues.createComment' }],
 		});
 
 		expect(eventsComment.length).toBeGreaterThan(0);
@@ -134,9 +131,8 @@ describe('GitHub plugin integration', () => {
 
 		expect(eventsGet.length).toBeGreaterThan(0);
 
-		const issueFromDbAfterUpdate = await corsair.github.db.issues.findByEntityId(
-			String(createdIssue.id),
-		);
+		const issueFromDbAfterUpdate =
+			await corsair.github.db.issues.findByEntityId(String(createdIssue.id));
 
 		expect(issueFromDbAfterUpdate).not.toBeNull();
 
@@ -236,9 +232,7 @@ describe('GitHub plugin integration', () => {
 
 		const eventsContent = await testDb.adapter.findMany({
 			table: 'corsair_events',
-			where: [
-				{ field: 'event_type', value: 'github.repositories.getContent' },
-			],
+			where: [{ field: 'event_type', value: 'github.repositories.getContent' }],
 		});
 
 		expect(eventsContent.length).toBeGreaterThan(0);
@@ -401,14 +395,13 @@ describe('GitHub plugin integration', () => {
 		expect(eventsListReviews.length).toBeGreaterThan(0);
 
 		try {
-			const createdReview =
-				await corsair.github.api.pullRequests.createReview({
-					owner,
-					repo,
-					pullNumber: firstPr.number,
-					body: 'Corsair test review',
-					event: 'COMMENT',
-				});
+			const createdReview = await corsair.github.api.pullRequests.createReview({
+				owner,
+				repo,
+				pullNumber: firstPr.number,
+				body: 'Corsair test review',
+				event: 'COMMENT',
+			});
 
 			expect(createdReview).toBeDefined();
 

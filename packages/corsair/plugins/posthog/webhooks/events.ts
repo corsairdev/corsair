@@ -1,4 +1,4 @@
-import { uuidv7 } from 'uuidv7';
+import { v7 } from 'uuid';
 import { logEventFromContext } from '../../utils/events';
 import type { PostHogWebhooks } from '..';
 import { createPostHogMatch } from './types';
@@ -27,7 +27,7 @@ export const eventCaptured: PostHogWebhooks['eventCaptured'] = {
 		if (ctx.db.events && event.distinct_id) {
 			try {
 				// PostHog docs use a uuid v7 so if we don't receive a uuid, then we create a uuid v7
-				const eventId = event.uuid || uuidv7();
+				const eventId = event.uuid || v7();
 				const entity = await ctx.db.events.upsertByEntityId(eventId, {
 					...event,
 					id: eventId,

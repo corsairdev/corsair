@@ -40,7 +40,7 @@ export const ticketCreated: HubSpotWebhooks['ticketCreated'] = {
 
 			if (ctx.db.tickets && event.objectId) {
 				try {
-					await ctx.db.tickets.upsert(event.objectId.toString(), {
+					await ctx.db.tickets.upsertByEntityId(event.objectId.toString(), {
 						id: event.objectId.toString(),
 						properties: {},
 						createdAt: new Date(event.occurredAt),
@@ -82,7 +82,7 @@ export const ticketUpdated: HubSpotWebhooks['ticketUpdated'] = {
 					const existing = await ctx.db.tickets.findByEntityId(
 						event.objectId.toString(),
 					);
-					await ctx.db.tickets.upsert(event.objectId.toString(), {
+					await ctx.db.tickets.upsertByEntityId(event.objectId.toString(), {
 						id: event.objectId.toString(),
 						properties: {
 							...(existing?.data?.properties || {}),

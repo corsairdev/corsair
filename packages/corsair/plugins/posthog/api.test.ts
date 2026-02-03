@@ -1,3 +1,4 @@
+import dotenv from 'dotenv';
 import { makePostHogRequest } from './client';
 import type {
 	CreateAliasResponse,
@@ -7,7 +8,7 @@ import type {
 	TrackScreenResponse,
 } from './endpoints/types';
 import { PostHogEndpointOutputSchemas } from './endpoints/types';
-import dotenv from 'dotenv';
+
 dotenv.config();
 
 type AssertExactType<T, U> = T extends U ? (U extends T ? true : never) : never;
@@ -34,9 +35,8 @@ describe('PostHog API Type Tests', () => {
 				},
 			);
 			const result = response;
-			
+
 			PostHogEndpointOutputSchemas.eventCreate.parse(result);
-			
 		});
 
 		it('aliasCreate returns correct type', async () => {
@@ -58,9 +58,8 @@ describe('PostHog API Type Tests', () => {
 				},
 			);
 			const result = response;
-			
+
 			PostHogEndpointOutputSchemas.aliasCreate.parse(result);
-			
 		});
 
 		it('identityCreate returns correct type', async () => {
@@ -82,9 +81,8 @@ describe('PostHog API Type Tests', () => {
 				},
 			);
 			const result = response;
-			
+
 			PostHogEndpointOutputSchemas.identityCreate.parse(result);
-			
 		});
 
 		it('trackPage returns correct type', async () => {
@@ -105,9 +103,8 @@ describe('PostHog API Type Tests', () => {
 				},
 			);
 			const result = response;
-			
+
 			PostHogEndpointOutputSchemas.trackPage.parse(result);
-			
 		});
 
 		it('trackScreen returns correct type', async () => {
@@ -128,9 +125,8 @@ describe('PostHog API Type Tests', () => {
 				},
 			);
 			const result = response;
-			
+
 			PostHogEndpointOutputSchemas.trackScreen.parse(result);
-			
 		});
 	});
 });

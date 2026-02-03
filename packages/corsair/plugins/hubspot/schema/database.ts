@@ -34,18 +34,20 @@ export const HubSpotTicket = z.object({
 
 export const HubSpotEngagement = z.object({
 	id: z.string(),
-	engagement: z.object({
-		id: z.number().optional(),
-		portalId: z.number().optional(),
-		active: z.boolean().optional(),
-		createdAt: z.number().optional(),
-		lastUpdated: z.number().optional(),
-		createdBy: z.number().optional(),
-		modifiedBy: z.number().optional(),
-		ownerId: z.number().optional(),
-		type: z.string().optional(),
-		timestamp: z.number().optional(),
-	}).optional(),
+	engagement: z
+		.object({
+			id: z.number().optional(),
+			portalId: z.number().optional(),
+			active: z.boolean().optional(),
+			createdAt: z.number().optional(),
+			lastUpdated: z.number().optional(),
+			createdBy: z.number().optional(),
+			modifiedBy: z.number().optional(),
+			ownerId: z.number().optional(),
+			type: z.string().optional(),
+			timestamp: z.number().optional(),
+		})
+		.optional(),
 	associations: z.record(z.string(), z.any()).optional(),
 	metadata: z.record(z.string(), z.any()).optional(),
 });

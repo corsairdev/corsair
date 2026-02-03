@@ -240,115 +240,115 @@ const MilestoneSchema = z.object({
 	dueOn: z.string().nullable().optional(),
 });
 
-const RepositorySchema =
-	z.object({
-		id: z.number(),
-		nodeId: z.string().optional(),
-		name: z.string(),
-		fullName: z.string().optional(),
-		private: z.boolean().optional(),
-		htmlUrl: z.string().optional(),
-		description: z.string().nullable().optional(),
-		fork: z.boolean().optional(),
-		url: z.string().optional(),
-		createdAt: z.union([z.string(), z.date()]).nullable().optional(),
-		updatedAt: z.union([z.string(), z.date()]).nullable().optional(),
-		pushedAt: z.union([z.string(), z.date()]).nullable().optional(),
-		defaultBranch: z.string().optional(),
-		language: z.string().nullable().optional(),
-		stargazersCount: z.number().optional(),
-		watchersCount: z.number().optional(),
-		forksCount: z.number().optional(),
-		openIssuesCount: z.number().optional(),
-		archived: z.boolean().optional(),
-		disabled: z.boolean().optional(),
-		owner: SimpleUserSchema.optional(),
-	})
+const RepositorySchema = z.object({
+	id: z.number(),
+	nodeId: z.string().optional(),
+	name: z.string(),
+	fullName: z.string().optional(),
+	private: z.boolean().optional(),
+	htmlUrl: z.string().optional(),
+	description: z.string().nullable().optional(),
+	fork: z.boolean().optional(),
+	url: z.string().optional(),
+	createdAt: z.union([z.string(), z.date()]).nullable().optional(),
+	updatedAt: z.union([z.string(), z.date()]).nullable().optional(),
+	pushedAt: z.union([z.string(), z.date()]).nullable().optional(),
+	defaultBranch: z.string().optional(),
+	language: z.string().nullable().optional(),
+	stargazersCount: z.number().optional(),
+	watchersCount: z.number().optional(),
+	forksCount: z.number().optional(),
+	openIssuesCount: z.number().optional(),
+	archived: z.boolean().optional(),
+	disabled: z.boolean().optional(),
+	owner: SimpleUserSchema.optional(),
+});
 
-const IssueSchema =
-	z.object({
-		id: z.number(),
-		nodeId: z.string().optional(),
-		url: z.string().optional(),
-		repositoryUrl: z.string().optional(),
-		labelsUrl: z.string().optional(),
-		commentsUrl: z.string().optional(),
-		eventsUrl: z.string().optional(),
-		htmlUrl: z.string().optional(),
-		number: z.number(),
-		state: z.string(),
-		stateReason: z
-			.enum(['completed', 'reopened', 'not_planned', 'duplicate'])
-			.nullable()
-			.optional(),
-		title: z.string(),
-		body: z.string().nullable().optional(),
-		user: SimpleUserSchema.nullable().optional(),
-		labels: z.array(z.union([z.string(), LabelSchema])).optional(),
-		assignee: SimpleUserSchema.nullable().optional(),
-		assignees: z.array(SimpleUserSchema).nullable().optional(),
-		locked: z.boolean().optional(),
-		comments: z.number().optional(),
-		createdAt: z.string().optional(),
-		updatedAt: z.string().optional(),
-		closedAt: z.string().nullable().optional(),
-	})
+const IssueSchema = z.object({
+	id: z.number(),
+	nodeId: z.string().optional(),
+	url: z.string().optional(),
+	repositoryUrl: z.string().optional(),
+	labelsUrl: z.string().optional(),
+	commentsUrl: z.string().optional(),
+	eventsUrl: z.string().optional(),
+	htmlUrl: z.string().optional(),
+	number: z.number(),
+	state: z.string(),
+	stateReason: z
+		.enum(['completed', 'reopened', 'not_planned', 'duplicate'])
+		.nullable()
+		.optional(),
+	title: z.string(),
+	body: z.string().nullable().optional(),
+	user: SimpleUserSchema.nullable().optional(),
+	labels: z.array(z.union([z.string(), LabelSchema])).optional(),
+	assignee: SimpleUserSchema.nullable().optional(),
+	assignees: z.array(SimpleUserSchema).nullable().optional(),
+	locked: z.boolean().optional(),
+	comments: z.number().optional(),
+	createdAt: z.string().optional(),
+	updatedAt: z.string().optional(),
+	closedAt: z.string().nullable().optional(),
+});
 
-
-const PullRequestSchema =
-	z.object({
-		url: z.string(),
-		id: z.number(),
-		nodeId: z.string().optional(),
-		htmlUrl: z.string().optional(),
-		diffUrl: z.string().optional(),
-		patchUrl: z.string().optional(),
-		issueUrl: z.string().optional(),
-		number: z.number(),
-		state: z.enum(['open', 'closed']),
-		locked: z.boolean().optional(),
-		title: z.string(),
-		user: SimpleUserSchema.optional(),
-		body: z.string().nullable().optional(),
-		createdAt: z.string().optional(),
-		updatedAt: z.string().optional(),
-		closedAt: z.string().nullable().optional(),
-		mergedAt: z.string().nullable().optional(),
-		mergeCommitSha: z.string().nullable().optional(),
-		assignee: SimpleUserSchema.nullable().optional(),
-		assignees: z.array(SimpleUserSchema).nullable().optional(),
-		labels: z.array(LabelSchema).optional(),
-		milestone: MilestoneSchema.nullable().optional(),
-		commitsUrl: z.string().optional(),
-		reviewCommentsUrl: z.string().optional(),
-		reviewCommentUrl: z.string().optional(),
-		commentsUrl: z.string().optional(),
-		statusesUrl: z.string().optional(),
-		head: z.object({
+const PullRequestSchema = z.object({
+	url: z.string(),
+	id: z.number(),
+	nodeId: z.string().optional(),
+	htmlUrl: z.string().optional(),
+	diffUrl: z.string().optional(),
+	patchUrl: z.string().optional(),
+	issueUrl: z.string().optional(),
+	number: z.number(),
+	state: z.enum(['open', 'closed']),
+	locked: z.boolean().optional(),
+	title: z.string(),
+	user: SimpleUserSchema.optional(),
+	body: z.string().nullable().optional(),
+	createdAt: z.string().optional(),
+	updatedAt: z.string().optional(),
+	closedAt: z.string().nullable().optional(),
+	mergedAt: z.string().nullable().optional(),
+	mergeCommitSha: z.string().nullable().optional(),
+	assignee: SimpleUserSchema.nullable().optional(),
+	assignees: z.array(SimpleUserSchema).nullable().optional(),
+	labels: z.array(LabelSchema).optional(),
+	milestone: MilestoneSchema.nullable().optional(),
+	commitsUrl: z.string().optional(),
+	reviewCommentsUrl: z.string().optional(),
+	reviewCommentUrl: z.string().optional(),
+	commentsUrl: z.string().optional(),
+	statusesUrl: z.string().optional(),
+	head: z
+		.object({
 			label: z.string().optional(),
 			ref: z.string().optional(),
 			sha: z.string().optional(),
 			user: SimpleUserSchema.optional(),
 			repo: RepositorySchema.nullable().optional(),
-		}).optional(),
-		base: z.object({
+		})
+		.optional(),
+	base: z
+		.object({
 			label: z.string().optional(),
 			ref: z.string().optional(),
 			sha: z.string().optional(),
 			user: SimpleUserSchema.optional(),
 			repo: RepositorySchema.optional(),
-		}).optional(),
-		authorAssociation: z.string().optional(),
-		draft: z.boolean().optional(),
-		merged: z.boolean().optional(),
-		mergeable: z.boolean().nullable().optional(),
-		comments: z.number().optional(),
-		reviewComments: z.number().optional(),
-		commits: z.number().optional(),
-		additions: z.number().optional(),
-		deletions: z.number().optional(),
-		changedFiles: z.number().optional(),
-	})
+		})
+		.optional(),
+	authorAssociation: z.string().optional(),
+	draft: z.boolean().optional(),
+	merged: z.boolean().optional(),
+	mergeable: z.boolean().nullable().optional(),
+	comments: z.number().optional(),
+	reviewComments: z.number().optional(),
+	commits: z.number().optional(),
+	additions: z.number().optional(),
+	deletions: z.number().optional(),
+	changedFiles: z.number().optional(),
+});
 
 const ReleaseAssetSchema = z.object({
 	url: z.string(),
@@ -434,12 +434,14 @@ const IssueCommentCreateResponseSchema = z.object({
 	bodyText: z.string().optional(),
 	bodyHtml: z.string().optional(),
 	htmlUrl: z.string().optional(),
-	user: z.object({
-		login: z.string(),
-		id: z.number(),
-		nodeId: z.string().optional(),
-		avatarUrl: z.string().optional(),
-	}).optional(),
+	user: z
+		.object({
+			login: z.string(),
+			id: z.number(),
+			nodeId: z.string().optional(),
+			avatarUrl: z.string().optional(),
+		})
+		.optional(),
 	createdAt: z.string().optional(),
 	updatedAt: z.string().optional(),
 	issueUrl: z.string().optional(),
@@ -448,10 +450,12 @@ const IssueCommentCreateResponseSchema = z.object({
 const PullRequestReviewSchema = z.object({
 	id: z.number(),
 	nodeId: z.string().optional(),
-	user: z.object({
-		login: z.string(),
-		id: z.number(),
-	}).optional(),
+	user: z
+		.object({
+			login: z.string(),
+			id: z.number(),
+		})
+		.optional(),
 	body: z.string().optional(),
 	state: z.string().optional(),
 	htmlUrl: z.string().optional(),
@@ -498,10 +502,12 @@ const RepositoryCommitsListResponseSchema = z.array(
 				.optional(),
 			message: z.string(),
 			commentCount: z.number().optional(),
-			tree: z.object({
-				sha: z.string(),
-				url: z.string().optional(),
-			}).optional(),
+			tree: z
+				.object({
+					sha: z.string(),
+					url: z.string().optional(),
+				})
+				.optional(),
 		}),
 		author: z
 			.object({
@@ -517,13 +523,15 @@ const RepositoryCommitsListResponseSchema = z.array(
 			})
 			.nullable()
 			.optional(),
-		parents: z.array(
-			z.object({
-				sha: z.string(),
-				url: z.string().optional(),
-				htmlUrl: z.string().optional(),
-			}),
-		).optional(),
+		parents: z
+			.array(
+				z.object({
+					sha: z.string(),
+					url: z.string().optional(),
+					htmlUrl: z.string().optional(),
+				}),
+			)
+			.optional(),
 	}),
 );
 
@@ -588,16 +596,20 @@ export const GithubEndpointOutputSchemas: {
 	releasesGet: ReleaseSchema,
 	releasesCreate: ReleaseSchema,
 	releasesUpdate: ReleaseSchema,
-	workflowsList: z.object({
-		totalCount: z.number().optional(),
-		total_count: z.number().optional(),
-		workflows: z.array(WorkflowSchema).optional(),
-	}).passthrough(),
+	workflowsList: z
+		.object({
+			totalCount: z.number().optional(),
+			total_count: z.number().optional(),
+			workflows: z.array(WorkflowSchema).optional(),
+		})
+		.passthrough(),
 	workflowsGet: WorkflowSchema,
-	workflowsListRuns: z.object({
-		totalCount: z.number().optional(),
-		total_count: z.number().optional(),
-		workflowRuns: z.array(WorkflowRunSchema).optional(),
-		workflow_runs: z.array(WorkflowRunSchema).optional(),
-	}).passthrough(),
+	workflowsListRuns: z
+		.object({
+			totalCount: z.number().optional(),
+			total_count: z.number().optional(),
+			workflowRuns: z.array(WorkflowRunSchema).optional(),
+			workflow_runs: z.array(WorkflowRunSchema).optional(),
+		})
+		.passthrough(),
 };

@@ -1,9 +1,10 @@
+import dotenv from 'dotenv';
 import { createCorsair } from '../core';
 import { slack } from '../plugins/slack';
 import { SlackAPIError } from '../plugins/slack/client';
-import { createTestDatabase } from './setup-db';
 import { createIntegrationAndAccount } from './plugins-test-utils';
-import dotenv from 'dotenv';
+import { createTestDatabase } from './setup-db';
+
 dotenv.config();
 
 async function createSlackClient() {
@@ -519,17 +520,12 @@ describe('Slack plugin integration', () => {
 
 					const removeEvents = await testDb.adapter.findMany({
 						table: 'corsair_events',
-						where: [
-							{ field: 'event_type', value: 'slack.reactions.remove' },
-						],
+						where: [{ field: 'event_type', value: 'slack.reactions.remove' }],
 					});
 
 					expect(removeEvents.length).toBeGreaterThan(0);
 				} catch (error) {
-					if (
-						error instanceof SlackAPIError &&
-						error.code === 'invalid_auth'
-					) {
+					if (error instanceof SlackAPIError && error.code === 'invalid_auth') {
 						console.warn(
 							'Skipping reactions.remove test - bot token missing required scopes',
 						);

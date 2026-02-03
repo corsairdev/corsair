@@ -25,7 +25,9 @@ export const dealCreated: HubSpotWebhooks['dealCreated'] = {
 	match: createHubSpotMatch('deal.creation'),
 
 	handler: async (ctx, request) => {
-		const payload = request.payload as DealCreatedEventType | Array<DealCreatedEventType>;
+		const payload = request.payload as
+			| DealCreatedEventType
+			| Array<DealCreatedEventType>;
 		const events = Array.isArray(payload) ? payload : [payload];
 
 		for (const event of events) {
@@ -38,7 +40,7 @@ export const dealCreated: HubSpotWebhooks['dealCreated'] = {
 
 			if (ctx.db.deals && event.objectId) {
 				try {
-					await ctx.db.deals.upsert(event.objectId.toString(), {
+					await ctx.db.deals.upsertByEntityId(event.objectId.toString(), {
 						id: event.objectId.toString(),
 						properties: {},
 						createdAt: new Date(event.occurredAt),
@@ -61,7 +63,9 @@ export const dealUpdated: HubSpotWebhooks['dealUpdated'] = {
 	match: createHubSpotMatch('deal.propertyChange'),
 
 	handler: async (ctx, request) => {
-		const payload = request.payload as DealUpdatedEventType | Array<DealUpdatedEventType>;
+		const payload = request.payload as
+			| DealUpdatedEventType
+			| Array<DealUpdatedEventType>;
 		const events = Array.isArray(payload) ? payload : [payload];
 
 		for (const event of events) {
@@ -78,7 +82,7 @@ export const dealUpdated: HubSpotWebhooks['dealUpdated'] = {
 					const existing = await ctx.db.deals.findByEntityId(
 						event.objectId.toString(),
 					);
-					await ctx.db.deals.upsert(event.objectId.toString(), {
+					await ctx.db.deals.upsertByEntityId(event.objectId.toString(), {
 						id: event.objectId.toString(),
 						properties: {
 							...(existing?.data?.properties || {}),
@@ -104,7 +108,9 @@ export const dealDeleted: HubSpotWebhooks['dealDeleted'] = {
 	match: createHubSpotMatch('deal.deletion'),
 
 	handler: async (ctx, request) => {
-		const payload = request.payload as DealDeletedEventType | Array<DealDeletedEventType>;
+		const payload = request.payload as
+			| DealDeletedEventType
+			| Array<DealDeletedEventType>;
 		const events = Array.isArray(payload) ? payload : [payload];
 
 		for (const event of events) {

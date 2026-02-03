@@ -195,7 +195,12 @@ export type Workflow = {
 	nodeId: string;
 	name: string;
 	path: string;
-	state: 'active' | 'deleted' | 'disabled_fork' | 'disabled_inactivity' | 'disabled_manually';
+	state:
+		| 'active'
+		| 'deleted'
+		| 'disabled_fork'
+		| 'disabled_inactivity'
+		| 'disabled_manually';
 	createdAt: string;
 	updatedAt: string;
 	url: string;

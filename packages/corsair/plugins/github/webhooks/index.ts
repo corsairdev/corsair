@@ -1,4 +1,8 @@
-import { pullRequestClosed, pullRequestOpened, pullRequestSynchronize } from './pull-requests';
+import {
+	pullRequestClosed,
+	pullRequestOpened,
+	pullRequestSynchronize,
+} from './pull-requests';
 import { push } from './push';
 import { starCreated, starDeleted } from './stars';
 

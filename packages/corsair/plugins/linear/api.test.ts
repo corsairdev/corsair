@@ -1,3 +1,4 @@
+import dotenv from 'dotenv';
 import { makeLinearRequest } from './client';
 import type {
 	CommentCreateResponse,
@@ -19,7 +20,7 @@ import type {
 	TeamsListResponse,
 } from './endpoints/types';
 import { LinearEndpointOutputSchemas } from './endpoints/types';
-import dotenv from 'dotenv';
+
 dotenv.config();
 
 type AssertExactType<T, U> = T extends U ? (U extends T ? true : never) : never;
@@ -521,10 +522,10 @@ describe('Linear API Type Tests', () => {
 				{ first: 50 },
 			);
 			const result = response.teams;
-			
+
 			// Runtime validation with Zod
 			const validated = LinearEndpointOutputSchemas.teamsList.parse(result);
-			
+
 			// Compile-time type check
 			type _Check = AssertExactType<
 				typeof result,
@@ -550,10 +551,10 @@ describe('Linear API Type Tests', () => {
 				{ id: teamId },
 			);
 			const result = response.team;
-			
+
 			// Runtime validation with Zod
 			const validated = LinearEndpointOutputSchemas.teamsGet.parse(result);
-			
+
 			// Compile-time type check
 			type _Check = AssertExactType<
 				typeof result,
@@ -571,10 +572,10 @@ describe('Linear API Type Tests', () => {
 				{ first: 50 },
 			);
 			const result = response.issues;
-			
+
 			// Runtime validation with Zod
 			const validated = LinearEndpointOutputSchemas.issuesList.parse(result);
-			
+
 			// Compile-time type check
 			type _Check = AssertExactType<
 				typeof result,
@@ -600,10 +601,10 @@ describe('Linear API Type Tests', () => {
 				{ id: issueId },
 			);
 			const result = response.issue;
-			
+
 			// Runtime validation with Zod
 			const validated = LinearEndpointOutputSchemas.issuesGet.parse(result);
-			
+
 			// Compile-time type check
 			type _Check = AssertExactType<
 				typeof result,
@@ -629,10 +630,10 @@ describe('Linear API Type Tests', () => {
 				{ input: { title: 'Test issue', teamId } },
 			);
 			const result = response.issueCreate.issue;
-			
+
 			// Runtime validation with Zod
 			const validated = LinearEndpointOutputSchemas.issuesCreate.parse(result);
-			
+
 			// Compile-time type check
 			type _Check = AssertExactType<
 				typeof result,
@@ -658,10 +659,10 @@ describe('Linear API Type Tests', () => {
 				{ id: issueId, input: { title: 'Updated issue' } },
 			);
 			const result = response.issueUpdate.issue;
-			
+
 			// Runtime validation with Zod
 			const validated = LinearEndpointOutputSchemas.issuesUpdate.parse(result);
-			
+
 			// Compile-time type check
 			type _Check = AssertExactType<
 				typeof result,
@@ -687,10 +688,10 @@ describe('Linear API Type Tests', () => {
 				{ id: issueId },
 			);
 			const result = response.issueDelete.success;
-			
+
 			// Runtime validation with Zod
 			const validated = LinearEndpointOutputSchemas.issuesDelete.parse(result);
-			
+
 			// Compile-time type check
 			type _Check = AssertExactType<
 				typeof result,
@@ -708,10 +709,10 @@ describe('Linear API Type Tests', () => {
 				{ first: 50 },
 			);
 			const result = response.projects;
-			
+
 			// Runtime validation with Zod
 			const validated = LinearEndpointOutputSchemas.projectsList.parse(result);
-			
+
 			// Compile-time type check
 			type _Check = AssertExactType<
 				typeof result,
@@ -721,11 +722,12 @@ describe('Linear API Type Tests', () => {
 		});
 
 		it('projectsGet returns correct type', async () => {
-			const projectsListResponse = await makeLinearRequest<ProjectsListResponse>(
-				PROJECTS_LIST_QUERY,
-				TEST_TOKEN,
-				{ first: 1 },
-			);
+			const projectsListResponse =
+				await makeLinearRequest<ProjectsListResponse>(
+					PROJECTS_LIST_QUERY,
+					TEST_TOKEN,
+					{ first: 1 },
+				);
 			const projectId = projectsListResponse.projects.nodes[0]?.id;
 			if (!projectId) {
 				throw new Error('No projects found');
@@ -737,10 +739,10 @@ describe('Linear API Type Tests', () => {
 				{ id: projectId },
 			);
 			const result = response.project;
-			
+
 			// Runtime validation with Zod
 			const validated = LinearEndpointOutputSchemas.projectsGet.parse(result);
-			
+
 			// Compile-time type check
 			type _Check = AssertExactType<
 				typeof result,
@@ -766,10 +768,11 @@ describe('Linear API Type Tests', () => {
 				{ input: { name: 'Test project', teamIds: [teamId] } },
 			);
 			const result = response.projectCreate.project;
-			
+
 			// Runtime validation with Zod
-			const validated = LinearEndpointOutputSchemas.projectsCreate.parse(result);
-			
+			const validated =
+				LinearEndpointOutputSchemas.projectsCreate.parse(result);
+
 			// Compile-time type check
 			type _Check = AssertExactType<
 				typeof result,
@@ -779,11 +782,12 @@ describe('Linear API Type Tests', () => {
 		});
 
 		it('projectsUpdate returns correct type', async () => {
-			const projectsListResponse = await makeLinearRequest<ProjectsListResponse>(
-				PROJECTS_LIST_QUERY,
-				TEST_TOKEN,
-				{ first: 1 },
-			);
+			const projectsListResponse =
+				await makeLinearRequest<ProjectsListResponse>(
+					PROJECTS_LIST_QUERY,
+					TEST_TOKEN,
+					{ first: 1 },
+				);
 			const projectId = projectsListResponse.projects.nodes[0]?.id;
 			if (!projectId) {
 				throw new Error('No projects found');
@@ -795,10 +799,11 @@ describe('Linear API Type Tests', () => {
 				{ id: projectId, input: { name: 'Updated project' } },
 			);
 			const result = response.projectUpdate.project;
-			
+
 			// Runtime validation with Zod
-			const validated = LinearEndpointOutputSchemas.projectsUpdate.parse(result);
-			
+			const validated =
+				LinearEndpointOutputSchemas.projectsUpdate.parse(result);
+
 			// Compile-time type check
 			type _Check = AssertExactType<
 				typeof result,
@@ -808,11 +813,12 @@ describe('Linear API Type Tests', () => {
 		});
 
 		it('projectsDelete returns correct type', async () => {
-			const projectsListResponse = await makeLinearRequest<ProjectsListResponse>(
-				PROJECTS_LIST_QUERY,
-				TEST_TOKEN,
-				{ first: 1 },
-			);
+			const projectsListResponse =
+				await makeLinearRequest<ProjectsListResponse>(
+					PROJECTS_LIST_QUERY,
+					TEST_TOKEN,
+					{ first: 1 },
+				);
 			const projectId = projectsListResponse.projects.nodes[0]?.id;
 			if (!projectId) {
 				throw new Error('No projects found');
@@ -824,10 +830,9 @@ describe('Linear API Type Tests', () => {
 				{ id: projectId },
 			);
 			const result = response.projectDelete.success;
-			
+
 			// Runtime validation with Zod
 			LinearEndpointOutputSchemas.projectsDelete.parse(result);
-			
 		});
 	});
 
@@ -849,10 +854,9 @@ describe('Linear API Type Tests', () => {
 				{ issueId, first: 50 },
 			);
 			const result = response.issue.comments;
-			
+
 			// Runtime validation with Zod
 			LinearEndpointOutputSchemas.commentsList.parse(result);
-			
 		});
 
 		it('commentsCreate returns correct type', async () => {
@@ -872,10 +876,9 @@ describe('Linear API Type Tests', () => {
 				{ input: { issueId, body: 'Test comment' } },
 			);
 			const result = response.commentCreate.comment;
-			
+
 			// Runtime validation with Zod
 			LinearEndpointOutputSchemas.commentsCreate.parse(result);
-			
 		});
 
 		it('commentsUpdate returns correct type', async () => {
@@ -889,11 +892,12 @@ describe('Linear API Type Tests', () => {
 				throw new Error('No issues found');
 			}
 
-			const commentsListResponse = await makeLinearRequest<CommentsListResponse>(
-				COMMENTS_LIST_QUERY,
-				TEST_TOKEN,
-				{ issueId, first: 1 },
-			);
+			const commentsListResponse =
+				await makeLinearRequest<CommentsListResponse>(
+					COMMENTS_LIST_QUERY,
+					TEST_TOKEN,
+					{ issueId, first: 1 },
+				);
 			const commentId = commentsListResponse.issue.comments.nodes[0]?.id;
 			if (!commentId) {
 				throw new Error('No comments found');
@@ -905,10 +909,9 @@ describe('Linear API Type Tests', () => {
 				{ id: commentId, input: { body: 'Updated comment' } },
 			);
 			const result = response.commentUpdate.comment;
-			
+
 			// Runtime validation with Zod
 			LinearEndpointOutputSchemas.commentsUpdate.parse(result);
-			
 		});
 
 		it('commentsDelete returns correct type', async () => {
@@ -922,11 +925,12 @@ describe('Linear API Type Tests', () => {
 				throw new Error('No issues found');
 			}
 
-			const commentsListResponse = await makeLinearRequest<CommentsListResponse>(
-				COMMENTS_LIST_QUERY,
-				TEST_TOKEN,
-				{ issueId, first: 1 },
-			);
+			const commentsListResponse =
+				await makeLinearRequest<CommentsListResponse>(
+					COMMENTS_LIST_QUERY,
+					TEST_TOKEN,
+					{ issueId, first: 1 },
+				);
 			const commentId = commentsListResponse.issue.comments.nodes[0]?.id;
 			if (!commentId) {
 				throw new Error('No comments found');
@@ -938,10 +942,9 @@ describe('Linear API Type Tests', () => {
 				{ id: commentId },
 			);
 			const result = response.commentDelete.success;
-			
+
 			// Runtime validation with Zod
 			LinearEndpointOutputSchemas.commentsDelete.parse(result);
-			
 		});
 	});
 });

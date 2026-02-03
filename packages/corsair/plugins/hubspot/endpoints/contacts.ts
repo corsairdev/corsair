@@ -25,17 +25,25 @@ export const get: HubSpotEndpoints['contactsGet'] = async (ctx, input) => {
 
 	if (result && ctx.db.contacts) {
 		try {
-			await ctx.db.contacts.upsert(result.id, result);
+			await ctx.db.contacts.upsertByEntityId(result.id, result);
 		} catch (error) {
 			console.warn('Failed to save contact to database:', error);
 		}
 	}
 
-	await logEventFromContext(ctx, 'hubspot.contacts.get', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'hubspot.contacts.get',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
-export const getMany: HubSpotEndpoints['contactsGetMany'] = async (ctx, input) => {
+export const getMany: HubSpotEndpoints['contactsGetMany'] = async (
+	ctx,
+	input,
+) => {
 	const { ...queryParams } = input || {};
 	const endpoint = '/crm/v3/objects/contacts';
 	const result = await makeHubSpotRequest<GetManyContactsResponse>(
@@ -54,45 +62,48 @@ export const getMany: HubSpotEndpoints['contactsGetMany'] = async (ctx, input) =
 	if (result.results && ctx.db.contacts) {
 		try {
 			for (const contact of result.results) {
-				await ctx.db.contacts.upsert(contact.id, contact);
+				await ctx.db.contacts.upsertByEntityId(contact.id, contact);
 			}
 		} catch (error) {
 			console.warn('Failed to save contacts to database:', error);
 		}
 	}
 
-	await logEventFromContext(ctx, 'hubspot.contacts.getMany', { ...input }, 'completed');
-	return result;
-};
-
-export const createOrUpdate: HubSpotEndpoints['contactsCreateOrUpdate'] = async (
-	ctx,
-	input,
-) => {
-	const { ...body } = input;
-	const endpoint = '/crm/v3/objects/contacts';
-	const result = await makeHubSpotRequest<CreateOrUpdateContactResponse>(
-		endpoint,
-		ctx.options.token,
-		{ method: 'POST', body },
-	);
-
-	if (result && ctx.db.contacts) {
-		try {
-			await ctx.db.contacts.upsert(result.id, result);
-		} catch (error) {
-			console.warn('Failed to save contact to database:', error);
-		}
-	}
-
 	await logEventFromContext(
 		ctx,
-		'hubspot.contacts.createOrUpdate',
+		'hubspot.contacts.getMany',
 		{ ...input },
 		'completed',
 	);
 	return result;
 };
+
+export const createOrUpdate: HubSpotEndpoints['contactsCreateOrUpdate'] =
+	async (ctx, input) => {
+		const { ...body } = input;
+		const endpoint = '/crm/v3/objects/contacts';
+		const result = await makeHubSpotRequest<CreateOrUpdateContactResponse>(
+			endpoint,
+			ctx.options.token,
+			{ method: 'POST', body },
+		);
+
+		if (result && ctx.db.contacts) {
+			try {
+				await ctx.db.contacts.upsertByEntityId(result.id, result);
+			} catch (error) {
+				console.warn('Failed to save contact to database:', error);
+			}
+		}
+
+		await logEventFromContext(
+			ctx,
+			'hubspot.contacts.createOrUpdate',
+			{ ...input },
+			'completed',
+		);
+		return result;
+	};
 
 export const deleteContact: HubSpotEndpoints['contactsDelete'] = async (
 	ctx,
@@ -100,11 +111,9 @@ export const deleteContact: HubSpotEndpoints['contactsDelete'] = async (
 ) => {
 	const { contactId } = input;
 	const endpoint = `/crm/v3/objects/contacts/${contactId}`;
-	await makeHubSpotRequest<void>(
-		endpoint,
-		ctx.options.token,
-		{ method: 'DELETE' },
-	);
+	await makeHubSpotRequest<void>(endpoint, ctx.options.token, {
+		method: 'DELETE',
+	});
 
 	if (ctx.db.contacts) {
 		try {
@@ -114,7 +123,12 @@ export const deleteContact: HubSpotEndpoints['contactsDelete'] = async (
 		}
 	}
 
-	await logEventFromContext(ctx, 'hubspot.contacts.delete', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'hubspot.contacts.delete',
+		{ ...input },
+		'completed',
+	);
 };
 
 export const getRecentlyCreated: HubSpotEndpoints['contactsGetRecentlyCreated'] =
@@ -155,7 +169,10 @@ export const getRecentlyUpdated: HubSpotEndpoints['contactsGetRecentlyUpdated'] 
 		return result;
 	};
 
-export const search: HubSpotEndpoints['contactsSearch'] = async (ctx, input) => {
+export const search: HubSpotEndpoints['contactsSearch'] = async (
+	ctx,
+	input,
+) => {
 	const { ...body } = input;
 	const endpoint = '/crm/v3/objects/contacts/search';
 	const result = await makeHubSpotRequest<GetManyContactsResponse>(
@@ -164,6 +181,11 @@ export const search: HubSpotEndpoints['contactsSearch'] = async (ctx, input) => 
 		{ method: 'POST', body },
 	);
 
-	await logEventFromContext(ctx, 'hubspot.contacts.search', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'hubspot.contacts.search',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };

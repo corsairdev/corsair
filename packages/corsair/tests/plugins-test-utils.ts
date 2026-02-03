@@ -1,4 +1,8 @@
-export function createIntegrationAndAccount(adapter: any, pluginId: string, tenantId = 'default') {
+export function createIntegrationAndAccount(
+	adapter: any,
+	pluginId: string,
+	tenantId = 'default',
+) {
 	const now = Date.now();
 	const integrationId = `${pluginId}-integration`;
 	const accountId = `${pluginId}-account`;
@@ -28,4 +32,3 @@ export function createIntegrationAndAccount(adapter: any, pluginId: string, tena
 			}),
 		);
 }
-

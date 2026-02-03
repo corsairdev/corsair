@@ -1,7 +1,7 @@
 import { createCorsair } from '../core';
 import { gmail } from '../plugins/gmail';
-import { createTestDatabase } from './setup-db';
 import { createIntegrationAndAccount } from './plugins-test-utils';
+import { createTestDatabase } from './setup-db';
 
 async function createGmailClient() {
 	const clientId = process.env.GMAIL_CLIENT_ID;
@@ -135,4 +135,3 @@ describe('Gmail plugin integration', () => {
 		testDb.cleanup();
 	});
 });
-

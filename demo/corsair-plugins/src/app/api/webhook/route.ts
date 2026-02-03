@@ -25,8 +25,12 @@ export async function POST(request: NextRequest) {
 
 	const result = await filterWebhook(corsair, headers, body, { tenantId });
 
-	if(result.plugin === 'slack') {
-		if (parsedBody && typeof parsedBody === 'object' && parsedBody.type === 'url_verification') {
+	if (result.plugin === 'slack') {
+		if (
+			parsedBody &&
+			typeof parsedBody === 'object' &&
+			parsedBody.type === 'url_verification'
+		) {
 			return NextResponse.json({ challenge: parsedBody.challenge });
 		}
 	}

@@ -21,7 +21,13 @@ export interface ListEmailsResponse {
 export interface Domain {
 	id: string;
 	name: string;
-	status: 'not_started' | 'validation' | 'scheduled' | 'ready' | 'error' | 'verified';
+	status:
+		| 'not_started'
+		| 'validation'
+		| 'scheduled'
+		| 'ready'
+		| 'error'
+		| 'verified';
 	created_at: string;
 	region?: string;
 }

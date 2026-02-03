@@ -1,5 +1,5 @@
 import { logEventFromContext } from '../../utils/events';
-import type { GithubBoundEndpoints, GithubEndpoints } from '..';
+import type { GithubEndpoints } from '..';
 import { makeGithubRequest } from '../client';
 import type {
 	ReleaseCreateResponse,
@@ -17,7 +17,12 @@ export const list: GithubEndpoints['releasesList'] = async (ctx, input) => {
 		{ query: queryParams },
 	);
 
-	await logEventFromContext(ctx, 'github.releases.list', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'github.releases.list',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
@@ -31,13 +36,18 @@ export const get: GithubEndpoints['releasesGet'] = async (ctx, input) => {
 
 	if (result && ctx.db.releases) {
 		try {
-			await ctx.db.releases.upsert(result.id.toString(), result);
+			await ctx.db.releases.upsertByEntityId(result.id.toString(), result);
 		} catch (error) {
 			console.warn('Failed to save release to database:', error);
 		}
 	}
 
-	await logEventFromContext(ctx, 'github.releases.get', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'github.releases.get',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
@@ -57,13 +67,18 @@ export const create: GithubEndpoints['releasesCreate'] = async (ctx, input) => {
 
 	if (result && ctx.db.releases) {
 		try {
-			await ctx.db.releases.upsert(result.id.toString(), result);
+			await ctx.db.releases.upsertByEntityId(result.id.toString(), result);
 		} catch (error) {
 			console.warn('Failed to save release to database:', error);
 		}
 	}
 
-	await logEventFromContext(ctx, 'github.releases.create', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'github.releases.create',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
@@ -85,12 +100,17 @@ export const update: GithubEndpoints['releasesUpdate'] = async (ctx, input) => {
 
 	if (result && ctx.db.releases) {
 		try {
-			await ctx.db.releases.upsert(result.id.toString(), result);
+			await ctx.db.releases.upsertByEntityId(result.id.toString(), result);
 		} catch (error) {
 			console.warn('Failed to update release in database:', error);
 		}
 	}
 
-	await logEventFromContext(ctx, 'github.releases.update', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'github.releases.update',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };

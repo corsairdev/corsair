@@ -1,19 +1,7 @@
-import {
-	companyCreated,
-	companyDeleted,
-	companyUpdated,
-} from './companies';
-import {
-	contactCreated,
-	contactDeleted,
-	contactUpdated,
-} from './contacts';
+import { companyCreated, companyDeleted, companyUpdated } from './companies';
+import { contactCreated, contactDeleted, contactUpdated } from './contacts';
 import { dealCreated, dealDeleted, dealUpdated } from './deals';
-import {
-	ticketCreated,
-	ticketDeleted,
-	ticketUpdated,
-} from './tickets';
+import { ticketCreated, ticketDeleted, ticketUpdated } from './tickets';
 
 export const ContactWebhooks = {
 	created: contactCreated,
