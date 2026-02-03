@@ -239,6 +239,8 @@ export async function filterWebhook(
 					}
 				}
 
+				console.log(preparedResponse);
+
 				return {
 					plugin: pluginId,
 					action,
