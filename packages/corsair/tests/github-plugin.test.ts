@@ -27,6 +27,7 @@ async function createGithubClient() {
 			}),
 		],
 		database: testDb.adapter,
+		kek: process.env.CORSAIR_KEK!,
 	});
 
 	return { corsair, testDb, owner, repo };

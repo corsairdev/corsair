@@ -20,13 +20,14 @@ async function createSlackClient() {
 	const corsair = createCorsair({
 		plugins: [
 			slack({
-				authType: 'bot_token',
+				authType: 'oauth_2',
 				credentials: {
 					botToken,
 				},
 			}),
 		],
 		database: testDb.adapter,
+		kek: process.env.CORSAIR_KEK!,
 	});
 
 	return { corsair, testDb, channel, userId };

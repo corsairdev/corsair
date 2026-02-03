@@ -3,8 +3,6 @@ import { resend } from '../plugins/resend';
 import { createTestDatabase } from './setup-db';
 import { createIntegrationAndAccount } from './plugins-test-utils';
 import { ResendAPIError } from '../plugins/resend/client';
-import type { ResendCredentials } from '../plugins/resend/schema';
-import type { AuthTypes } from '../core/constants';
 import dotenv from 'dotenv';
 dotenv.config();
 
@@ -22,13 +20,14 @@ async function createResendClient() {
 	const corsair = createCorsair({
 		plugins: [
 			resend({
-				authType: 'api_key' as AuthTypes,
+				authType: 'api_key',
 				credentials: {
 					apiKey,
-				} satisfies ResendCredentials,
+				},
 			}),
 		],
 		database: testDb.adapter,
+		kek: process.env.CORSAIR_KEK!,
 	});
 
 	return { corsair, testDb, from, to };
