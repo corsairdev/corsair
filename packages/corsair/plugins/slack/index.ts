@@ -20,6 +20,7 @@ import {
 } from './endpoints';
 import { SlackSchema } from './schema';
 import {
+	ChallengeWebhooks,
 	ChannelWebhooks,
 	FileWebhooks,
 	MessageWebhooks,
@@ -27,6 +28,7 @@ import {
 	UserWebhooks,
 } from './webhooks';
 import type {
+	ChallengeEvent,
 	ChannelCreatedEvent,
 	FileCreatedEvent,
 	FilePublicEvent,
@@ -426,6 +428,7 @@ const slackEndpointsNested = {
 } as const;
 
 export type SlackWebhooks = {
+	challenge: SlackWebhook<'challenge', ChallengeEvent>;
 	reactionAdded: SlackWebhook<'reactionAdded', ReactionAddedEvent>;
 	message: SlackWebhook<'message', MessageEvent>;
 	channelCreated: SlackWebhook<'channelCreated', ChannelCreatedEvent>;
@@ -437,6 +440,9 @@ export type SlackWebhooks = {
 };
 
 const slackWebhooksNested = {
+	challenge: {
+		challenge: ChallengeWebhooks.challenge,
+	},
 	messages: {
 		message: MessageWebhooks.message,
 	},
