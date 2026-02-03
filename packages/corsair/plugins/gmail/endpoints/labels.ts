@@ -1,17 +1,12 @@
 import { logEventFromContext } from '../../utils/events';
-import type { GmailEndpoints } from '..';
+import type { GmailBoundEndpoints, GmailEndpoints } from '..';
 import { makeGmailRequest } from '../client';
 import type { GmailEndpointOutputs } from './types';
 
 export const list: GmailEndpoints['labelsList'] = async (ctx, input) => {
 	const result = await makeGmailRequest<GmailEndpointOutputs['labelsList']>(
 		`/users/${input.userId || 'me'}/labels`,
-		{
-			clientId: ctx.options.clientId,
-			clientSecret: ctx.options.clientSecret,
-			accessToken: ctx.options.accessToken,
-			refreshToken: ctx.options.refreshToken,
-		},
+		ctx.key,
 		{
 			method: 'GET',
 		},
@@ -21,16 +16,9 @@ export const list: GmailEndpoints['labelsList'] = async (ctx, input) => {
 		try {
 			for (const label of result.labels) {
 				if (label.id) {
-					await ctx.db.labels.upsert(label.id, {
+					await ctx.db.labels.upsertByEntityId(label.id, {
+						...label,
 						id: label.id,
-						name: label.name,
-						messageListVisibility: label.messageListVisibility,
-						labelListVisibility: label.labelListVisibility,
-						type: label.type,
-						messagesTotal: label.messagesTotal,
-						messagesUnread: label.messagesUnread,
-						threadsTotal: label.threadsTotal,
-						threadsUnread: label.threadsUnread,
 						createdAt: new Date(),
 					});
 				}
@@ -52,12 +40,7 @@ export const list: GmailEndpoints['labelsList'] = async (ctx, input) => {
 export const get: GmailEndpoints['labelsGet'] = async (ctx, input) => {
 	const result = await makeGmailRequest<GmailEndpointOutputs['labelsGet']>(
 		`/users/${input.userId || 'me'}/labels/${input.id}`,
-		{
-			clientId: ctx.options.clientId,
-			clientSecret: ctx.options.clientSecret,
-			accessToken: ctx.options.accessToken,
-			refreshToken: ctx.options.refreshToken,
-		},
+		ctx.key,
 		{
 			method: 'GET',
 		},
@@ -65,7 +48,7 @@ export const get: GmailEndpoints['labelsGet'] = async (ctx, input) => {
 
 	if (result.id && ctx.db.labels) {
 		try {
-			await ctx.db.labels.upsert(result.id, {
+			await ctx.db.labels.upsertByEntityId(result.id, {
 				id: result.id,
 				name: result.name,
 				messageListVisibility: result.messageListVisibility,
@@ -89,35 +72,16 @@ export const get: GmailEndpoints['labelsGet'] = async (ctx, input) => {
 export const create: GmailEndpoints['labelsCreate'] = async (ctx, input) => {
 	const result = await makeGmailRequest<GmailEndpointOutputs['labelsCreate']>(
 		`/users/${input.userId || 'me'}/labels`,
-		{
-			clientId: ctx.options.clientId,
-			clientSecret: ctx.options.clientSecret,
-			accessToken: ctx.options.accessToken,
-			refreshToken: ctx.options.refreshToken,
-		},
+		ctx.key,
 		{
 			method: 'POST',
 			body: input.label,
 		},
 	);
 
-	if (result.id && ctx.db.labels) {
-		try {
-			await ctx.db.labels.upsert(result.id, {
-				id: result.id,
-				name: result.name,
-				messageListVisibility: result.messageListVisibility,
-				labelListVisibility: result.labelListVisibility,
-				type: result.type,
-				messagesTotal: result.messagesTotal,
-				messagesUnread: result.messagesUnread,
-				threadsTotal: result.threadsTotal,
-				threadsUnread: result.threadsUnread,
-				createdAt: new Date(),
-			});
-		} catch (error) {
-			console.warn('Failed to save label to database:', error);
-		}
+	if (result.id) {
+		const endpoints = ctx.endpoints as GmailBoundEndpoints;
+		await endpoints.labelsGet({ id: result.id, userId: input.userId });
 	}
 
 	await logEventFromContext(
@@ -132,35 +96,16 @@ export const create: GmailEndpoints['labelsCreate'] = async (ctx, input) => {
 export const update: GmailEndpoints['labelsUpdate'] = async (ctx, input) => {
 	const result = await makeGmailRequest<GmailEndpointOutputs['labelsUpdate']>(
 		`/users/${input.userId || 'me'}/labels/${input.id}`,
-		{
-			clientId: ctx.options.clientId,
-			clientSecret: ctx.options.clientSecret,
-			accessToken: ctx.options.accessToken,
-			refreshToken: ctx.options.refreshToken,
-		},
+		ctx.key,
 		{
 			method: 'PUT',
 			body: input.label,
 		},
 	);
 
-	if (result.id && ctx.db.labels) {
-		try {
-			await ctx.db.labels.upsert(result.id, {
-				id: result.id,
-				name: result.name,
-				messageListVisibility: result.messageListVisibility,
-				labelListVisibility: result.labelListVisibility,
-				type: result.type,
-				messagesTotal: result.messagesTotal,
-				messagesUnread: result.messagesUnread,
-				threadsTotal: result.threadsTotal,
-				threadsUnread: result.threadsUnread,
-				createdAt: new Date(),
-			});
-		} catch (error) {
-			console.warn('Failed to update label in database:', error);
-		}
+	if (result.id) {
+		const endpoints = ctx.endpoints as GmailBoundEndpoints;
+		await endpoints.labelsGet({ id: result.id, userId: input.userId });
 	}
 
 	await logEventFromContext(
@@ -178,12 +123,7 @@ export const deleteLabel: GmailEndpoints['labelsDelete'] = async (
 ) => {
 	await makeGmailRequest<GmailEndpointOutputs['labelsDelete']>(
 		`/users/${input.userId || 'me'}/labels/${input.id}`,
-		{
-			clientId: ctx.options.clientId,
-			clientSecret: ctx.options.clientSecret,
-			accessToken: ctx.options.accessToken,
-			refreshToken: ctx.options.refreshToken,
-		},
+		ctx.key,
 		{
 			method: 'DELETE',
 		},

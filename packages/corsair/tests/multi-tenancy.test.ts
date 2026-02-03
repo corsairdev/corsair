@@ -322,13 +322,11 @@ describe('Multi-Tenancy Data Isolation', () => {
 		const corsair = createCorsair({
 			plugins: [
 				slack({
-					authType: 'bot_token',
-					credentials: {
-						botToken: 'xoxb-test-token',
-					},
+					authType: 'api_key',
 				}),
 			],
 			database: adapter,
+			kek: '',
 			multiTenancy: true,
 		});
 

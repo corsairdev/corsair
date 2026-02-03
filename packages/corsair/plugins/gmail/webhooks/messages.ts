@@ -3,10 +3,17 @@ import type {
 	RawWebhookRequest,
 	WebhookRequest,
 } from '../../../core/webhooks';
+import { logEventFromContext } from '../../utils/events';
 import type { GmailContext } from '..';
 import { makeGmailRequest } from '../client';
 import type { HistoryListResponse, Message, MessagePart } from '../types';
-import type { GmailPushNotification, PubSubNotification } from './types';
+import type {
+	GmailPushNotification,
+	MessageDeletedEvent,
+	MessageLabelChangedEvent,
+	MessageReceivedEvent,
+	PubSubNotification,
+} from './types';
 
 function getHeaderValue(
 	part: MessagePart | undefined,
@@ -143,12 +150,7 @@ function extractMessageIds(history: HistoryListResponse['history']): {
 }
 
 async function fetchFullMessage(
-	credentials: {
-		clientId: string;
-		clientSecret: string;
-		accessToken: string;
-		refreshToken: string;
-	},
+	credentials: string,
 	userId: string,
 	messageId: string,
 ): Promise<Message> {
@@ -182,12 +184,7 @@ async function fetchFullMessage(
 }
 
 async function fetchAttachment(
-	credentials: {
-		clientId: string;
-		clientSecret: string;
-		accessToken: string;
-		refreshToken: string;
-	},
+	credentials: string,
 	userId: string,
 	messageId: string,
 	attachmentId: string,
@@ -202,12 +199,7 @@ async function fetchAttachment(
 }
 
 async function enrichMessageWithAttachments(
-	credentials: {
-		clientId: string;
-		clientSecret: string;
-		accessToken: string;
-		refreshToken: string;
-	},
+	credentials: string,
 	userId: string,
 	message: Message,
 ): Promise<Message> {
@@ -304,12 +296,7 @@ export const messageReceived = {
 			};
 		}
 
-		const credentials = {
-			clientId: ctx.options.clientId,
-			clientSecret: ctx.options.clientSecret,
-			accessToken: ctx.options.accessToken,
-			refreshToken: ctx.options.refreshToken,
-		};
+		const credentials = ctx.key;
 
 		try {
 			const historyIdNum = Number(pushNotification.historyId);
@@ -372,6 +359,9 @@ export const messageReceived = {
 				}
 			}
 
+			let firstProcessedMessage: Message | null = null;
+			let corsairEntityId = '';
+
 			for (const messageId of added) {
 				try {
 					const fullMessage = await fetchFullMessage(
@@ -385,6 +375,10 @@ export const messageReceived = {
 						pushNotification.emailAddress!,
 						fullMessage,
 					);
+
+					if (!firstProcessedMessage) {
+						firstProcessedMessage = enrichedMessage;
+					}
 
 					if (!ctx.db?.messages) {
 						console.warn(
@@ -403,22 +397,29 @@ export const messageReceived = {
 						const bodyText = extractBody(enrichedMessage);
 						const from = extractFrom(enrichedMessage);
 						const to = extractTo(enrichedMessage);
-						await ctx.db.messages.upsert(enrichedMessage.id, {
-							id: enrichedMessage.id,
-							threadId: enrichedMessage.threadId,
-							labelIds: enrichedMessage.labelIds,
-							snippet: enrichedMessage.snippet,
-							historyId: enrichedMessage.historyId,
-							internalDate: enrichedMessage.internalDate,
-							sizeEstimate: enrichedMessage.sizeEstimate,
-							payload: enrichedMessage.payload,
-							raw: enrichedMessage.raw,
-							subject,
-							body: bodyText,
-							from,
-							to,
-							createdAt: new Date(),
-						});
+						const entity = await ctx.db.messages.upsertByEntityId(
+							enrichedMessage.id,
+							{
+								id: enrichedMessage.id,
+								threadId: enrichedMessage.threadId,
+								labelIds: enrichedMessage.labelIds,
+								snippet: enrichedMessage.snippet,
+								historyId: enrichedMessage.historyId,
+								internalDate: enrichedMessage.internalDate,
+								sizeEstimate: enrichedMessage.sizeEstimate,
+								payload: enrichedMessage.payload,
+								raw: enrichedMessage.raw,
+								subject,
+								body: bodyText,
+								from,
+								to,
+								createdAt: new Date(),
+							},
+						);
+
+						if (!corsairEntityId && entity) {
+							corsairEntityId = entity.id;
+						}
 					} catch (dbError) {
 						console.error(
 							`❌ Failed to save message ${enrichedMessage.id} to database:`,
@@ -431,15 +432,44 @@ export const messageReceived = {
 				}
 			}
 
+			const event: MessageReceivedEvent = {
+				type: 'messageReceived',
+				emailAddress: pushNotification.emailAddress!,
+				historyId: pushNotification.historyId!,
+				message: firstProcessedMessage || ({} as Message),
+			};
+
+			await logEventFromContext(
+				ctx,
+				'gmail.webhook.messageReceived',
+				{ ...event },
+				'completed',
+			);
+
 			return {
 				success: true,
-				data: { success: true },
+				corsairEntityId,
+				tenantId: ctx.tenantId,
+				data: event,
 			};
 		} catch (error) {
+			const event: MessageReceivedEvent = {
+				type: 'messageReceived',
+				emailAddress: pushNotification.emailAddress || '',
+				historyId: pushNotification.historyId || '',
+				message: {} as Message,
+			};
+			await logEventFromContext(
+				ctx,
+				'gmail.webhook.messageReceived',
+				{ ...event },
+				'failed',
+			);
 			return {
 				success: false,
 				error: error instanceof Error ? error.message : 'Unknown error',
-				data: { success: false },
+				tenantId: ctx.tenantId,
+				data: event,
 			};
 		}
 	},
@@ -484,12 +514,7 @@ export const messageDeleted = {
 			};
 		}
 
-		const credentials = {
-			clientId: ctx.options.clientId,
-			clientSecret: ctx.options.clientSecret,
-			accessToken: ctx.options.accessToken,
-			refreshToken: ctx.options.refreshToken,
-		};
+		const credentials = ctx.key;
 
 		try {
 			const historyIdNum = Number(pushNotification.historyId);
@@ -512,22 +537,31 @@ export const messageDeleted = {
 
 			const { deleted } = extractMessageIds(historyResponse.history);
 
+			let firstDeletedMessage: Message | null = null;
+			let corsairEntityId = '';
+
 			if (!ctx.db?.messages) {
 				console.warn(
 					'⚠️ ctx.db.messages is not available - database may not be configured',
 				);
+				const event: MessageDeletedEvent = {
+					type: 'messageDeleted',
+					emailAddress: pushNotification.emailAddress!,
+					historyId: pushNotification.historyId!,
+					message: {} as Message,
+				};
 				return {
 					success: true,
-					data: { success: true },
+					tenantId: ctx.tenantId,
+					data: event,
 				};
 			}
 
 			for (const messageId of deleted) {
 				try {
-					await ctx.db.messages.deleteByEntityId(messageId);
-				} catch (deleteError) {
+					let message: Message | null = null;
 					try {
-						await makeGmailRequest<Message>(
+						message = await makeGmailRequest<Message>(
 							`/users/${pushNotification.emailAddress}/messages/${messageId}`,
 							credentials,
 							{
@@ -537,32 +571,73 @@ export const messageDeleted = {
 								},
 							},
 						);
-
-						await ctx.db.messages.deleteByEntityId(messageId);
 					} catch (fetchError: any) {
 						if (fetchError?.statusCode === 404) {
 							console.log(
 								`Message ${messageId} not found in Gmail (already deleted), skipping DB delete`,
 							);
-						} else {
-							console.warn(
-								`Failed to verify or delete message ${messageId}:`,
-								fetchError,
-							);
+							continue;
 						}
 					}
+
+					if (!firstDeletedMessage && message) {
+						firstDeletedMessage = message;
+					}
+
+					if (!corsairEntityId) {
+						const entity = await ctx.db.messages.findByEntityId(messageId);
+						if (entity) {
+							corsairEntityId = entity.id;
+						}
+					}
+
+					await ctx.db.messages.deleteByEntityId(messageId);
+				} catch (deleteError) {
+					console.warn(
+						`Failed to delete message ${messageId} from database:`,
+						deleteError,
+					);
 				}
 			}
 
+			const event: MessageDeletedEvent = {
+				type: 'messageDeleted',
+				emailAddress: pushNotification.emailAddress!,
+				historyId: pushNotification.historyId!,
+				message: firstDeletedMessage || ({} as Message),
+			};
+
+			await logEventFromContext(
+				ctx,
+				'gmail.webhook.messageDeleted',
+				{ ...event },
+				'completed',
+			);
+
 			return {
 				success: true,
-				data: { success: true },
+				corsairEntityId,
+				tenantId: ctx.tenantId,
+				data: event,
 			};
 		} catch (error) {
+			const event: MessageDeletedEvent = {
+				type: 'messageDeleted',
+				emailAddress: pushNotification.emailAddress || '',
+				historyId: pushNotification.historyId || '',
+				message: {} as Message,
+			};
+			await logEventFromContext(
+				ctx,
+				'gmail.webhook.messageDeleted',
+				{ ...event },
+				'failed',
+			);
 			return {
 				success: false,
 				error: error instanceof Error ? error.message : 'Unknown error',
-				data: { success: false },
+				tenantId: ctx.tenantId,
+				data: event,
 			};
 		}
 	},
@@ -607,12 +682,7 @@ export const messageLabelChanged = {
 			};
 		}
 
-		const credentials = {
-			clientId: ctx.options.clientId,
-			clientSecret: ctx.options.clientSecret,
-			accessToken: ctx.options.accessToken,
-			refreshToken: ctx.options.refreshToken,
-		};
+		const credentials = ctx.key;
 
 		try {
 			const historyIdNum = Number(pushNotification.historyId);
@@ -635,13 +705,27 @@ export const messageLabelChanged = {
 
 			const { modified } = extractMessageIds(historyResponse.history);
 
+			let firstModifiedMessage: Message | null = null;
+			let labelsAdded: string[] = [];
+			let labelsRemoved: string[] = [];
+			let corsairEntityId = '';
+
 			if (!ctx.db?.messages) {
 				console.warn(
 					'⚠️ ctx.db.messages is not available - database may not be configured',
 				);
+				const event: MessageLabelChangedEvent = {
+					type: 'messageLabelChanged',
+					emailAddress: pushNotification.emailAddress!,
+					historyId: pushNotification.historyId!,
+					message: {} as Message,
+					labelsAdded,
+					labelsRemoved,
+				};
 				return {
 					success: true,
-					data: { success: true },
+					tenantId: ctx.tenantId,
+					data: event,
 				};
 			}
 
@@ -659,6 +743,10 @@ export const messageLabelChanged = {
 						fullMessage,
 					);
 
+					if (!firstModifiedMessage) {
+						firstModifiedMessage = enrichedMessage;
+					}
+
 					if (!enrichedMessage.id) {
 						console.warn('⚠️ Message has no ID, skipping database update');
 						continue;
@@ -670,22 +758,29 @@ export const messageLabelChanged = {
 					const to = extractTo(enrichedMessage);
 
 					try {
-						await ctx.db.messages.upsert(enrichedMessage.id, {
-							id: enrichedMessage.id,
-							threadId: enrichedMessage.threadId,
-							labelIds: enrichedMessage.labelIds,
-							snippet: enrichedMessage.snippet,
-							historyId: enrichedMessage.historyId,
-							internalDate: enrichedMessage.internalDate,
-							sizeEstimate: enrichedMessage.sizeEstimate,
-							payload: enrichedMessage.payload,
-							raw: enrichedMessage.raw,
-							subject,
-							body: bodyText,
-							from,
-							to,
-							createdAt: new Date(),
-						});
+						const entity = await ctx.db.messages.upsertByEntityId(
+							enrichedMessage.id,
+							{
+								id: enrichedMessage.id,
+								threadId: enrichedMessage.threadId,
+								labelIds: enrichedMessage.labelIds,
+								snippet: enrichedMessage.snippet,
+								historyId: enrichedMessage.historyId,
+								internalDate: enrichedMessage.internalDate,
+								sizeEstimate: enrichedMessage.sizeEstimate,
+								payload: enrichedMessage.payload,
+								raw: enrichedMessage.raw,
+								subject,
+								body: bodyText,
+								from,
+								to,
+								createdAt: new Date(),
+							},
+						);
+
+						if (!corsairEntityId && entity) {
+							corsairEntityId = entity.id;
+						}
 					} catch (dbError) {
 						console.error(
 							`❌ Failed to update message ${enrichedMessage.id} in database:`,
@@ -698,15 +793,46 @@ export const messageLabelChanged = {
 				}
 			}
 
+			const event: MessageLabelChangedEvent = {
+				type: 'messageLabelChanged',
+				emailAddress: pushNotification.emailAddress!,
+				historyId: pushNotification.historyId!,
+				message: firstModifiedMessage || ({} as Message),
+				labelsAdded,
+				labelsRemoved,
+			};
+
+			await logEventFromContext(
+				ctx,
+				'gmail.webhook.messageLabelChanged',
+				{ ...event },
+				'completed',
+			);
+
 			return {
 				success: true,
-				data: { success: true },
+				corsairEntityId,
+				tenantId: ctx.tenantId,
+				data: event,
 			};
 		} catch (error) {
+			const event: MessageLabelChangedEvent = {
+				type: 'messageLabelChanged',
+				emailAddress: pushNotification.emailAddress || '',
+				historyId: pushNotification.historyId || '',
+				message: {} as Message,
+			};
+			await logEventFromContext(
+				ctx,
+				'gmail.webhook.messageLabelChanged',
+				{ ...event },
+				'failed',
+			);
 			return {
 				success: false,
 				error: error instanceof Error ? error.message : 'Unknown error',
-				data: { success: false },
+				tenantId: ctx.tenantId,
+				data: event,
 			};
 		}
 	},

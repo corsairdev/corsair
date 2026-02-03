@@ -8,7 +8,7 @@ export const aliasCreate: PostHogEndpoints['aliasCreate'] = async (
 	input,
 ) => {
 	const payload = {
-		api_key: ctx.options.credentials.apiKey,
+		api_key: ctx.key,
 		event: '$create_alias',
 		properties: {
 			distinct_id: input.distinct_id,
@@ -19,7 +19,7 @@ export const aliasCreate: PostHogEndpoints['aliasCreate'] = async (
 
 	const response = await makePostHogRequest<
 		PostHogEndpointOutputs['aliasCreate']
-	>('/capture/', ctx.options.credentials.apiKey, {
+	>('/capture/', ctx.key, {
 		method: 'POST',
 		body: payload,
 	});
@@ -38,7 +38,7 @@ export const eventCreate: PostHogEndpoints['eventCreate'] = async (
 	input,
 ) => {
 	const payload: any = {
-		api_key: ctx.options.credentials.apiKey,
+		api_key: ctx.key,
 		event: input.event,
 		properties: {
 			...input.properties,
@@ -57,25 +57,19 @@ export const eventCreate: PostHogEndpoints['eventCreate'] = async (
 
 	const response = await makePostHogRequest<
 		PostHogEndpointOutputs['eventCreate']
-	>('/capture/', ctx.options.credentials.apiKey, {
+	>('/capture/', ctx.key, {
 		method: 'POST',
 		body: payload,
 	});
 
-	if (ctx.db.events && response) {
+	if (response && ctx.db.events) {
 		try {
-			await ctx.db.events.upsert(
-				input.uuid || `${Date.now()}-${Math.random()}`,
-				{
-					id: input.uuid || `${Date.now()}-${Math.random()}`,
-					event: input.event,
-					distinct_id: input.distinct_id,
-					timestamp: input.timestamp,
-					uuid: input.uuid,
-					properties: input.properties,
-					createdAt: new Date(),
-				},
-			);
+			const id = input.uuid || `${Date.now()}-${Math.random()}`;
+			await ctx.db.events.upsertByEntityId(id, {
+				...input,
+				id,
+				createdAt: new Date(),
+			});
 		} catch (error) {
 			console.warn('Failed to save event to database:', error);
 		}
@@ -95,7 +89,7 @@ export const identityCreate: PostHogEndpoints['identityCreate'] = async (
 	input,
 ) => {
 	const payload = {
-		api_key: ctx.options.credentials.apiKey,
+		api_key: ctx.key,
 		event: '$identify',
 		properties: {
 			...input.properties,
@@ -106,7 +100,7 @@ export const identityCreate: PostHogEndpoints['identityCreate'] = async (
 
 	const response = await makePostHogRequest<
 		PostHogEndpointOutputs['identityCreate']
-	>('/capture/', ctx.options.credentials.apiKey, {
+	>('/capture/', ctx.key, {
 		method: 'POST',
 		body: payload,
 	});
@@ -122,7 +116,7 @@ export const identityCreate: PostHogEndpoints['identityCreate'] = async (
 
 export const trackPage: PostHogEndpoints['trackPage'] = async (ctx, input) => {
 	const payload: any = {
-		api_key: ctx.options.credentials.apiKey,
+		api_key: ctx.key,
 		event: '$pageview',
 		properties: {
 			...input.properties,
@@ -142,7 +136,7 @@ export const trackPage: PostHogEndpoints['trackPage'] = async (ctx, input) => {
 
 	const response = await makePostHogRequest<
 		PostHogEndpointOutputs['trackPage']
-	>('/capture/', ctx.options.credentials.apiKey, {
+	>('/capture/', ctx.key, {
 		method: 'POST',
 		body: payload,
 	});
@@ -161,7 +155,7 @@ export const trackScreen: PostHogEndpoints['trackScreen'] = async (
 	input,
 ) => {
 	const payload: any = {
-		api_key: ctx.options.credentials.apiKey,
+		api_key: ctx.key,
 		event: '$screen',
 		properties: {
 			...input.properties,
@@ -181,7 +175,7 @@ export const trackScreen: PostHogEndpoints['trackScreen'] = async (
 
 	const response = await makePostHogRequest<
 		PostHogEndpointOutputs['trackScreen']
-	>('/capture/', ctx.options.credentials.apiKey, {
+	>('/capture/', ctx.key, {
 		method: 'POST',
 		body: payload,
 	});

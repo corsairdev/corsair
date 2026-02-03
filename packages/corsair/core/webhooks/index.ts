@@ -36,6 +36,10 @@ export type WebhookRequest<TPayload = unknown> = {
 export type WebhookResponse<TData = unknown> = {
 	/** Whether the webhook was processed successfully */
 	success: boolean;
+	/** The entity relevant to the webhook (note that this is corsair_entities.id) */
+	corsairEntityId?: string;
+	/** The tenant this is being performed for (if multi-tenancy is disabled, this is undefined) */
+	tenantId?: string;
 	/** Optional data to return in the HTTP response */
 	data?: TData;
 	/** Optional error message if processing failed */

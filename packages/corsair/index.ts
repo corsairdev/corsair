@@ -1,43 +1,278 @@
-export * from './adapters';
-export * from './core';
-export * from './db/orm';
-export * from './plugins';
-export {
-	type LinearBoundEndpoints,
-	type LinearContext,
-	type LinearEndpoints,
-	type LinearPluginOptions,
-	linear,
-} from './plugins/linear';
-export * from './plugins/linear/endpoints/types';
+// ─────────────────────────────────────────────────────────────────────────────
+// Adapters
+// ─────────────────────────────────────────────────────────────────────────────
+
 export type {
-	Comment as LinearWebhookComment,
+	CorsairAccountInsert,
+	CorsairAccountUpdate,
+	CorsairDbAdapter,
+	CorsairEntityInsert,
+	CorsairEntityUpdate,
+	CorsairEventInsert,
+	CorsairEventUpdate,
+	CorsairIntegrationInsert,
+	CorsairIntegrationUpdate,
+	CorsairSortBy,
+	CorsairTableInsert,
+	CorsairTableName,
+	CorsairTableRow,
+	CorsairTableUpdate,
+	CorsairTransactionAdapter,
+	CorsairWhere,
+	CorsairWhereOperator,
+	DrizzleAdapterConfig,
+	KyselyAdapterConfig,
+	KyselyPostgresAdapterConfig,
+	PrismaPostgresAdapterConfig,
+	TableInsertType,
+	TableRowType,
+	TableUpdateType,
+} from './adapters';
+
+export {
+	drizzleAdapter,
+	kyselyAdapter,
+	kyselyPostgresAdapter,
+	prismaPostgresAdapter,
+	withTenantAdapter,
+} from './adapters';
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Core
+// ─────────────────────────────────────────────────────────────────────────────
+
+export type {
+	AccountConfigFor,
+	AccountConfigMap,
+	AccountKeyManagerFor,
+	AccountKeyManagerMap,
+	AllProviders,
+	ApiKeyAccountConfig,
+	ApiKeyAccountKeyManager,
+	ApiKeyIntegrationConfig,
+	ApiKeyIntegrationKeyManager,
+	AuthTypes,
+	BaseKeyManager,
+	BaseProviders,
+	BeforeHookResult,
+	BindEndpoints,
+	BindWebhooks,
+	Bivariant,
+	BotTokenAccountConfig,
+	BotTokenAccountKeyManager,
+	BotTokenIntegrationConfig,
+	BotTokenIntegrationKeyManager,
+	BoundEndpointFn,
+	BoundEndpointTree,
+	BoundWebhook,
+	BoundWebhookTree,
+	CorsairClient,
+	CorsairContext,
+	CorsairEndpoint,
+	CorsairErrorHandler,
+	CorsairIntegration,
+	CorsairKeyBuilder,
+	CorsairKeyBuilderBase,
+	CorsairPlugin,
+	CorsairPluginContext,
+	CorsairSingleTenantClient,
+	CorsairTenantWrapper,
+	CorsairWebhook,
+	CorsairWebhookHandler,
+	CorsairWebhookMatcher,
+	EndpointHooks,
+	EndpointTree,
+	ErrorContext,
+	ErrorHandler,
+	ErrorHandlerAndMatchFunction,
+	ErrorMatcher,
+	IntegrationConfigFor,
+	IntegrationConfigMap,
+	IntegrationKeyManagerFor,
+	IntegrationKeyManagerMap,
+	KeyBuilderContext,
+	OAuth2AccountConfig,
+	OAuth2AccountKeyManager,
+	OAuth2IntegrationConfig,
+	OAuth2IntegrationKeyManager,
+	RawWebhookRequest,
+	RetryStrategies,
+	RetryStrategy,
+	UnionToIntersection,
+	WebhookHooks,
+	WebhookRequest,
+	WebhookResponse,
+	WebhookTree,
+} from './core';
+export {
+	createAccountKeyManager,
+	createCorsair,
+	createIntegrationKeyManager,
+	decryptConfig,
+	decryptDEK,
+	decryptWithDEK,
+	encryptConfig,
+	encryptDEK,
+	encryptWithDEK,
+	generateDEK,
+	initializeAccountDEK,
+	initializeIntegrationDEK,
+	reEncryptConfig,
+} from './core';
+
+// ─────────────────────────────────────────────────────────────────────────────
+// ORM
+// ─────────────────────────────────────────────────────────────────────────────
+// Note: Full ORM types available from 'corsair/orm'
+
+// Database row types (re-exported with different names to avoid conflicts with core types)
+export type {
+	CorsairAccount as CorsairAccountRow,
+	CorsairAccountsClient,
+	CorsairEntitiesClient,
+	CorsairEntity as CorsairEntityRow,
+	CorsairEvent as CorsairEventRow,
+	CorsairEventsClient,
+	CorsairIntegration as CorsairIntegrationRow,
+	CorsairIntegrationsClient,
+	CorsairOrm,
+	CorsairOrmDatabase,
+	CorsairOrmTableName,
+	CorsairPluginOrm,
+	CorsairPluginSchema,
+	CorsairTableClient,
+	PluginContext,
+	PluginEntityClient,
+	PluginEntityClients,
+	TenantContext,
+	TenantScopedOrm,
+	TypedEntity,
+} from './orm';
+export {
+	CorsairAccountsSchema,
+	CorsairEntitiesSchema,
+	CorsairEventsSchema,
+	CorsairIntegrationsSchema,
+	createCorsairOrm,
+	createPluginOrm,
+	createPluginOrmFactory,
+	createTenantScopedOrm,
+} from './orm';
+export type {
+	Comment,
 	CommentCreatedEvent,
 	CommentDeletedEvent,
 	CommentUpdatedEvent,
-	Issue as LinearWebhookIssue,
+	Issue,
 	IssueCreatedEvent,
+	IssueCreateResponse,
 	IssueDeletedEvent,
+	IssueGetResponse,
+	IssuesListResponse,
 	IssueUpdatedEvent,
+	IssueUpdateResponse,
+	LinearEndpointOutputs,
 	LinearEventMap,
 	LinearEventName,
-	LinearWebhookAck,
 	LinearWebhookEvent,
 	LinearWebhookOutputs,
-	Project as LinearWebhookProject,
+	Project,
 	ProjectCreatedEvent,
 	ProjectDeletedEvent,
+	ProjectsListResponse,
 	ProjectUpdatedEvent,
+	Team,
+	TeamsListResponse,
 	WebhookData,
-} from './plugins/linear/webhooks/types';
-export { createLinearMatch } from './plugins/linear/webhooks/types';
+} from './plugins/linear';
+// ─────────────────────────────────────────────────────────────────────────────
+// Plugins
+// ─────────────────────────────────────────────────────────────────────────────
+// Linear
 export {
+	type LinearBoundEndpoints,
+	type LinearBoundWebhooks,
+	type LinearContext,
+	type LinearEndpoints,
+	type LinearPluginOptions,
+	type LinearWebhooks,
+	linear,
+} from './plugins/linear';
+export type {
+	CreateDomainResponse,
+	Domain,
+	DomainCreatedEvent,
+	DomainUpdatedEvent,
+	Email,
+	EmailBouncedEvent,
+	EmailClickedEvent,
+	EmailComplainedEvent,
+	EmailDeliveredEvent,
+	EmailFailedEvent,
+	EmailOpenedEvent,
+	EmailReceivedEvent,
+	EmailSentEvent,
+	GetDomainResponse,
+	GetEmailResponse,
+	ListDomainsResponse,
+	ListEmailsResponse,
+	ResendEndpointOutputs,
+	ResendEventMap,
+	ResendEventName,
+	ResendWebhookEvent,
+	ResendWebhookOutputs,
+	ResendWebhookPayload,
+	SendEmailResponse,
+} from './plugins/resend';
+// Resend
+export {
+	type ResendBoundEndpoints,
+	type ResendBoundWebhooks,
+	type ResendContext,
+	type ResendEndpoints,
+	type ResendPluginOptions,
+	type ResendWebhooks,
+	resend,
+} from './plugins/resend';
+export type {
+	AllMessageEvents,
+	BotMessageEvent,
+	BotProfile,
+	ChannelCreatedEvent,
+	ChatPostMessageResponse,
+	ChatUpdateResponse,
+	ConversationsInfoResponse,
+	ConversationsListResponse,
+	FileCreatedEvent,
+	FilePublicEvent,
+	FileSharedEvent,
+	GenericMessageEvent,
+	MessageEvent,
+	ReactionAddedEvent,
+	ReactionItem,
+	SlackEndpointOutputs,
+	SlackEventMap,
+	SlackEventName,
+	SlackEventPayload,
+	SlackUrlVerificationPayload,
+	SlackWebhookOutputs,
+	SlackWebhookPayload,
+	StatusEmojiDisplayInfo,
+	TeamJoinEvent,
+	UserChangeEvent,
+	UsersInfoResponse,
+	UsersListResponse,
+} from './plugins/slack';
+// Slack
+export {
+	createSlackEventMatch,
 	type SlackBoundEndpoints,
+	type SlackBoundWebhooks,
 	type SlackContext,
 	type SlackEndpoints,
 	type SlackPluginOptions,
+	type SlackReactionName,
+	type SlackWebhooks,
 	slack,
 } from './plugins/slack';
-export * from './plugins/slack/endpoints/types';
-export * from './plugins/slack/webhooks/types';
-export * from './webhooks';
+export { filterWebhook } from './webhooks';

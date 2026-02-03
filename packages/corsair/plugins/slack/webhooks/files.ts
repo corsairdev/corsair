@@ -1,9 +1,6 @@
+import { logEventFromContext } from '../../utils/events';
 import type { SlackWebhooks } from '..';
-import type {
-	FileCreatedEvent,
-	FilePublicEvent,
-	FileSharedEvent,
-} from './types';
+
 import { createSlackEventMatch } from './types';
 
 export const created: SlackWebhooks['fileCreated'] = {
@@ -16,33 +13,44 @@ export const created: SlackWebhooks['fileCreated'] = {
 		if (!event || event.type !== 'file_created') {
 			return {
 				success: true,
-				data: {},
+				data: undefined,
 			};
 		}
 
-		const fileEvent = event as FileCreatedEvent;
-
 		console.log('📄 Slack File Created Event:', {
-			fileId: fileEvent.file_id,
-			userId: fileEvent.user_id,
+			fileId: event.file_id,
+			userId: event.user_id,
 		});
 
-		if (ctx.db.files && fileEvent.file_id) {
+		let corsairEntityId = '';
+
+		if (ctx.db.files && event.file_id) {
 			try {
-				await ctx.db.files.upsert(fileEvent.file_id, {
-					id: fileEvent.file_id,
-					user: fileEvent.user_id,
-					created: parseFloat(fileEvent.event_ts),
-					timestamp: parseFloat(fileEvent.event_ts),
+				const entity = await ctx.db.files.upsertByEntityId(event.file_id, {
+					...event,
+					id: event.file_id,
+					created: parseFloat(event.event_ts),
+					timestamp: parseFloat(event.event_ts),
 				});
+
+				corsairEntityId = entity?.id || '';
 			} catch (error) {
 				console.warn('Failed to save file to database:', error);
 			}
 		}
 
+		await logEventFromContext(
+			ctx,
+			'slack.webhook.fileCreated',
+			{ ...event },
+			'completed',
+		);
+
 		return {
 			success: true,
-			data: {},
+			corsairEntityId,
+			tenantId: ctx.tenantId,
+			data: event,
 		};
 	},
 };
@@ -57,31 +65,43 @@ export const publicFile: SlackWebhooks['filePublic'] = {
 		if (!event || event.type !== 'file_public') {
 			return {
 				success: true,
-				data: {},
+				data: undefined,
 			};
 		}
 
-		const fileEvent = event as FilePublicEvent;
-
 		console.log('🌐 Slack File Public Event:', {
-			fileId: fileEvent.file_id,
-			userId: fileEvent.user_id,
+			fileId: event.file_id,
+			userId: event.user_id,
 		});
 
-		if (ctx.db.files && fileEvent.file_id) {
+		let corsairEntityId = '';
+
+		if (ctx.db.files && event.file_id) {
 			try {
-				await ctx.db.files.upsert(fileEvent.file_id, {
-					id: fileEvent.file_id,
-					user: fileEvent.user_id,
+				const entity = await ctx.db.files.upsertByEntityId(event.file_id, {
+					...event,
+					id: event.file_id,
+					user: event.user_id,
 				});
+
+				corsairEntityId = entity?.id || '';
 			} catch (error) {
 				console.warn('Failed to update file in database:', error);
 			}
 		}
 
+		await logEventFromContext(
+			ctx,
+			'slack.webhook.filePublic',
+			{ ...event },
+			'completed',
+		);
+
 		return {
 			success: true,
-			data: {},
+			corsairEntityId,
+			tenantId: ctx.tenantId,
+			data: event,
 		};
 	},
 };
@@ -96,32 +116,44 @@ export const shared: SlackWebhooks['fileShared'] = {
 		if (!event || event.type !== 'file_shared') {
 			return {
 				success: true,
-				data: {},
+				data: undefined,
 			};
 		}
 
-		const fileEvent = event as FileSharedEvent;
-
 		console.log('📎 Slack File Shared Event:', {
-			fileId: fileEvent.file_id,
-			userId: fileEvent.user_id,
-			channelId: fileEvent.channel_id,
+			fileId: event.file_id,
+			userId: event.user_id,
+			channelId: event.channel_id,
 		});
 
-		if (ctx.db.files && fileEvent.file_id) {
+		let corsairEntityId = '';
+
+		if (ctx.db.files && event.file_id) {
 			try {
-				await ctx.db.files.upsert(fileEvent.file_id, {
-					id: fileEvent.file_id,
-					user: fileEvent.user_id,
+				const entity = await ctx.db.files.upsertByEntityId(event.file_id, {
+					...event,
+					id: event.file_id,
+					user: event.user_id,
 				});
+
+				corsairEntityId = entity?.id || '';
 			} catch (error) {
 				console.warn('Failed to update file in database:', error);
 			}
 		}
 
+		await logEventFromContext(
+			ctx,
+			'slack.webhook.fileShared',
+			{ ...event },
+			'completed',
+		);
+
 		return {
 			success: true,
-			data: {},
+			corsairEntityId,
+			tenantId: ctx.tenantId,
+			data: event,
 		};
 	},
 };

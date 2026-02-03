@@ -1,5 +1,5 @@
 import { logEventFromContext } from '../../utils/events';
-import type { ResendEndpoints } from '..';
+import type { ResendBoundEndpoints, ResendEndpoints } from '..';
 import { makeResendRequest } from '../client';
 import type { ResendEndpointOutputs } from './types';
 
@@ -11,23 +11,14 @@ export const create: ResendEndpoints['domainsCreate'] = async (ctx, input) => {
 
 	const response = await makeResendRequest<
 		ResendEndpointOutputs['domainsCreate']
-	>('domains', ctx.options.credentials.apiKey, {
+	>('domains', ctx.key, {
 		method: 'POST',
 		body,
 	});
 
-	if (ctx.db.domains && response.id) {
-		try {
-			await ctx.db.domains.upsert(response.id, {
-				id: response.id,
-				name: response.name,
-				status: response.status,
-				created_at: response.created_at,
-				region: response.region,
-			});
-		} catch (error) {
-			console.warn('Failed to save domain to database:', error);
-		}
+	if (response.id) {
+		const endpoints = ctx.endpoints as ResendBoundEndpoints;
+		await endpoints.domainsGet({ id: response.id });
 	}
 
 	await logEventFromContext(
@@ -42,20 +33,16 @@ export const create: ResendEndpoints['domainsCreate'] = async (ctx, input) => {
 export const get: ResendEndpoints['domainsGet'] = async (ctx, input) => {
 	const response = await makeResendRequest<ResendEndpointOutputs['domainsGet']>(
 		`domains/${input.id}`,
-		ctx.options.credentials.apiKey,
+		ctx.key,
 		{
 			method: 'GET',
 		},
 	);
 
-	if (ctx.db.domains && response.id) {
+	if (response.id && ctx.db.domains) {
 		try {
-			await ctx.db.domains.upsert(response.id, {
-				id: response.id,
-				name: response.name,
-				status: response.status,
-				created_at: response.created_at,
-				region: response.region,
+			await ctx.db.domains.upsertByEntityId(response.id, {
+				...response,
 			});
 		} catch (error) {
 			console.warn('Failed to save domain to database:', error);
@@ -78,20 +65,16 @@ export const list: ResendEndpoints['domainsList'] = async (ctx, input) => {
 
 	const response = await makeResendRequest<
 		ResendEndpointOutputs['domainsList']
-	>('domains', ctx.options.credentials.apiKey, {
+	>('domains', ctx.key, {
 		method: 'GET',
 		query,
 	});
 
-	if (ctx.db.domains && response.data) {
+	if (response.data && ctx.db.domains) {
 		try {
 			for (const domain of response.data) {
-				await ctx.db.domains.upsert(domain.id, {
-					id: domain.id,
-					name: domain.name,
-					status: domain.status,
-					created_at: domain.created_at,
-					region: domain.region,
+				await ctx.db.domains.upsertByEntityId(domain.id, {
+					...domain,
 				});
 			}
 		} catch (error) {
@@ -114,11 +97,11 @@ export const deleteDomain: ResendEndpoints['domainsDelete'] = async (
 ) => {
 	const response = await makeResendRequest<
 		ResendEndpointOutputs['domainsDelete']
-	>(`domains/${input.id}`, ctx.options.credentials.apiKey, {
+	>(`domains/${input.id}`, ctx.key, {
 		method: 'DELETE',
 	});
 
-	if (ctx.db.domains && response.deleted) {
+	if (response.deleted && ctx.db.domains) {
 		try {
 			await ctx.db.domains.deleteByEntityId(input.id);
 		} catch (error) {
@@ -138,40 +121,13 @@ export const deleteDomain: ResendEndpoints['domainsDelete'] = async (
 export const verify: ResendEndpoints['domainsVerify'] = async (ctx, input) => {
 	const response = await makeResendRequest<
 		ResendEndpointOutputs['domainsVerify']
-	>(`domains/${input.id}/verify`, ctx.options.credentials.apiKey, {
+	>(`domains/${input.id}/verify`, ctx.key, {
 		method: 'POST',
 	});
 
-	if (ctx.db.domains && response.id) {
-		try {
-			if (response.name && response.status && response.created_at) {
-				await ctx.db.domains.upsert(response.id, {
-					id: response.id,
-					name: response.name,
-					status: response.status,
-					created_at: response.created_at,
-					region: response.region,
-				});
-			} else {
-				const domainResponse = await makeResendRequest<
-					ResendEndpointOutputs['domainsGet']
-				>(`domains/${input.id}`, ctx.options.credentials.apiKey, {
-					method: 'GET',
-				});
-
-				if (domainResponse.id) {
-					await ctx.db.domains.upsert(domainResponse.id, {
-						id: domainResponse.id,
-						name: domainResponse.name,
-						status: domainResponse.status,
-						created_at: domainResponse.created_at,
-						region: domainResponse.region,
-					});
-				}
-			}
-		} catch (error) {
-			console.warn('Failed to update domain in database:', error);
-		}
+	if (response.id) {
+		const endpoints = ctx.endpoints as ResendBoundEndpoints;
+		await endpoints.domainsGet({ id: response.id });
 	}
 
 	await logEventFromContext(

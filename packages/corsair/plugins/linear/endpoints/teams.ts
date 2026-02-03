@@ -46,7 +46,7 @@ const TEAM_GET_QUERY = `
 export const list: LinearEndpoints['teamsList'] = async (ctx, input) => {
 	const response = await makeLinearRequest<TeamsListResponse>(
 		TEAMS_LIST_QUERY,
-		ctx.options.credentials.apiKey,
+		ctx.key,
 		{
 			first: input.first || 50,
 			after: input.after,
@@ -58,17 +58,10 @@ export const list: LinearEndpoints['teamsList'] = async (ctx, input) => {
 	if (result.nodes && ctx.db.teams) {
 		try {
 			for (const team of result.nodes) {
-				await ctx.db.teams.upsert(team.id, {
-					id: team.id,
-					name: team.name,
-					key: team.key,
-					description: team.description ?? undefined,
-					icon: team.icon ?? undefined,
-					color: team.color ?? undefined,
-					private: team.private,
+				await ctx.db.teams.upsertByEntityId(team.id, {
+					...team,
 					createdAt: new Date(team.createdAt),
 					updatedAt: new Date(team.updatedAt),
-					archivedAt: team.archivedAt ?? undefined,
 				});
 			}
 		} catch (error) {
@@ -76,14 +69,19 @@ export const list: LinearEndpoints['teamsList'] = async (ctx, input) => {
 		}
 	}
 
-	await logEventFromContext(ctx, 'linear.teams.list', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'linear.teams.list',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
 export const get: LinearEndpoints['teamsGet'] = async (ctx, input) => {
 	const response = await makeLinearRequest<TeamGetResponse>(
 		TEAM_GET_QUERY,
-		ctx.options.credentials.apiKey,
+		ctx.key,
 		{ id: input.id },
 	);
 
@@ -91,17 +89,10 @@ export const get: LinearEndpoints['teamsGet'] = async (ctx, input) => {
 
 	if (result && ctx.db.teams) {
 		try {
-			await ctx.db.teams.upsert(result.id, {
-				id: result.id,
-				name: result.name,
-				key: result.key,
-				description: result.description ?? undefined,
-				icon: result.icon ?? undefined,
-				color: result.color ?? undefined,
-				private: result.private,
+			await ctx.db.teams.upsertByEntityId(result.id, {
+				...result,
 				createdAt: new Date(result.createdAt),
 				updatedAt: new Date(result.updatedAt),
-				archivedAt: result.archivedAt ?? undefined,
 			});
 		} catch (error) {
 			console.warn('Failed to save team to database:', error);

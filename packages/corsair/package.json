@@ -1,6 +1,6 @@
 {
   "name": "corsair",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "description": "",
   "type": "module",
   "main": "./dist/index.js",
@@ -78,6 +78,7 @@
     "ind": "tsx index.ts"
   },
   "dependencies": {
+    "uuid": "^13.0.0",
     "zod": "^3.25.76"
   },
   "peerDependencies": {
@@ -141,7 +142,7 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
+  "license": "Apache-2.0",
   "packageManager": "pnpm@10.20.0",
   "files": [
     "dist"

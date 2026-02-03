@@ -11,7 +11,7 @@ export interface Issue {
 	identifier: string;
 	title: string;
 	description?: string;
-	priority: number;
+	priority: 0 | 1 | 2 | 3 | 4;
 	estimate?: number;
 	sortOrder: number;
 	startedAt?: string;
@@ -27,6 +27,9 @@ export interface Issue {
 	updatedAt: string;
 	branchName: string;
 	customerTicketCount: number;
+	stateId: string;
+	teamId: string;
+	creatorId: string;
 	[key: string]: any;
 }
 
@@ -36,6 +39,8 @@ export interface Comment {
 	editedAt?: string;
 	createdAt: string;
 	updatedAt: string;
+	issueId: string;
+	userId: string;
 	[key: string]: any;
 }
 
@@ -45,7 +50,9 @@ export interface Project {
 	description?: string;
 	icon?: string;
 	color?: string;
-	state: string;
+	priority: 0 | 1 | 2 | 3 | 4;
+	sortOrder: number;
+	state: 'planned' | 'started' | 'paused' | 'completed' | 'canceled';
 	progress: number;
 	url: string;
 	startDate?: string;
@@ -194,20 +201,16 @@ export interface LinearEventMap {
 	ProjectRemove: ProjectDeletedEvent;
 }
 
-export type LinearWebhookAck = {
-	success?: boolean;
-};
-
 export type LinearWebhookOutputs = {
-	issueCreate: LinearWebhookAck;
-	issueUpdate: LinearWebhookAck;
-	issueRemove: LinearWebhookAck;
-	commentCreate: LinearWebhookAck;
-	commentUpdate: LinearWebhookAck;
-	commentRemove: LinearWebhookAck;
-	projectCreate: LinearWebhookAck;
-	projectUpdate: LinearWebhookAck;
-	projectRemove: LinearWebhookAck;
+	issueCreate: IssueCreatedEvent;
+	issueUpdate: IssueUpdatedEvent;
+	issueRemove: IssueDeletedEvent;
+	commentCreate: CommentCreatedEvent;
+	commentUpdate: CommentUpdatedEvent;
+	commentRemove: CommentDeletedEvent;
+	projectCreate: ProjectCreatedEvent;
+	projectUpdate: ProjectUpdatedEvent;
+	projectRemove: ProjectDeletedEvent;
 };
 
 import type { CorsairWebhookMatcher, RawWebhookRequest } from '../../../core';

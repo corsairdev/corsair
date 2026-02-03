@@ -1,5 +1,5 @@
 import { logEventFromContext } from '../../utils/events';
-import type { GmailEndpoints } from '..';
+import type { GmailBoundEndpoints, GmailEndpoints } from '..';
 import { makeGmailRequest } from '../client';
 import type { Message, MessagePart } from '../types';
 import type { GmailEndpointOutputs } from './types';
@@ -83,12 +83,7 @@ function extractBody(message: Message): string | undefined {
 export const list: GmailEndpoints['messagesList'] = async (ctx, input) => {
 	const result = await makeGmailRequest<GmailEndpointOutputs['messagesList']>(
 		`/users/${input.userId || 'me'}/messages`,
-		{
-			clientId: ctx.options.clientId,
-			clientSecret: ctx.options.clientSecret,
-			accessToken: ctx.options.accessToken,
-			refreshToken: ctx.options.refreshToken,
-		},
+		ctx.key,
 		{
 			method: 'GET',
 			query: {
@@ -105,14 +100,9 @@ export const list: GmailEndpoints['messagesList'] = async (ctx, input) => {
 		try {
 			for (const message of result.messages) {
 				if (message.id) {
-					await ctx.db.messages.upsert(message.id, {
+					await ctx.db.messages.upsertByEntityId(message.id, {
+						...message,
 						id: message.id,
-						threadId: message.threadId,
-						labelIds: message.labelIds,
-						snippet: message.snippet,
-						historyId: message.historyId,
-						internalDate: message.internalDate,
-						sizeEstimate: message.sizeEstimate,
 						createdAt: new Date(),
 					});
 				}
@@ -134,12 +124,7 @@ export const list: GmailEndpoints['messagesList'] = async (ctx, input) => {
 export const get: GmailEndpoints['messagesGet'] = async (ctx, input) => {
 	const result = await makeGmailRequest<GmailEndpointOutputs['messagesGet']>(
 		`/users/${input.userId || 'me'}/messages/${input.id}`,
-		{
-			clientId: ctx.options.clientId,
-			clientSecret: ctx.options.clientSecret,
-			accessToken: ctx.options.accessToken,
-			refreshToken: ctx.options.refreshToken,
-		},
+		ctx.key,
 		{
 			method: 'GET',
 			query: {
@@ -155,20 +140,13 @@ export const get: GmailEndpoints['messagesGet'] = async (ctx, input) => {
 			const body = extractBody(result);
 			const from = extractFrom(result);
 			const to = extractTo(result);
-			await ctx.db.messages.upsert(result.id, {
-				id: result.id,
-				threadId: result.threadId,
-				labelIds: result.labelIds,
-				snippet: result.snippet,
-				historyId: result.historyId,
-				internalDate: result.internalDate,
-				sizeEstimate: result.sizeEstimate,
-				payload: result.payload,
-				raw: result.raw,
+			await ctx.db.messages.upsertByEntityId(result.id, {
+				...result,
 				subject,
 				body,
 				from,
 				to,
+				id: result.id,
 				createdAt: new Date(),
 			});
 		} catch (error) {
@@ -188,12 +166,7 @@ export const get: GmailEndpoints['messagesGet'] = async (ctx, input) => {
 export const send: GmailEndpoints['messagesSend'] = async (ctx, input) => {
 	const result = await makeGmailRequest<GmailEndpointOutputs['messagesSend']>(
 		`/users/${input.userId || 'me'}/messages/send`,
-		{
-			clientId: ctx.options.clientId,
-			clientSecret: ctx.options.clientSecret,
-			accessToken: ctx.options.accessToken,
-			refreshToken: ctx.options.refreshToken,
-		},
+		ctx.key,
 		{
 			method: 'POST',
 			body: {
@@ -203,31 +176,9 @@ export const send: GmailEndpoints['messagesSend'] = async (ctx, input) => {
 		},
 	);
 
-	if (result.id && ctx.db.messages) {
-		try {
-			const subject = extractSubject(result);
-			const body = extractBody(result);
-			const from = extractFrom(result);
-			const to = extractTo(result);
-			await ctx.db.messages.upsert(result.id, {
-				id: result.id,
-				threadId: result.threadId,
-				labelIds: result.labelIds,
-				snippet: result.snippet,
-				historyId: result.historyId,
-				internalDate: result.internalDate,
-				sizeEstimate: result.sizeEstimate,
-				payload: result.payload,
-				raw: result.raw,
-				subject,
-				body,
-				from,
-				to,
-				createdAt: new Date(),
-			});
-		} catch (error) {
-			console.warn('Failed to save message to database:', error);
-		}
+	if (result.id) {
+		const endpoints = ctx.endpoints as GmailBoundEndpoints;
+		await endpoints.messagesGet({ id: result.id, userId: input.userId });
 	}
 
 	await logEventFromContext(
@@ -245,12 +196,7 @@ export const deleteMessage: GmailEndpoints['messagesDelete'] = async (
 ) => {
 	await makeGmailRequest<GmailEndpointOutputs['messagesDelete']>(
 		`/users/${input.userId || 'me'}/messages/${input.id}`,
-		{
-			clientId: ctx.options.clientId,
-			clientSecret: ctx.options.clientSecret,
-			accessToken: ctx.options.accessToken,
-			refreshToken: ctx.options.refreshToken,
-		},
+		ctx.key,
 		{
 			method: 'DELETE',
 		},
@@ -275,12 +221,7 @@ export const deleteMessage: GmailEndpoints['messagesDelete'] = async (
 export const modify: GmailEndpoints['messagesModify'] = async (ctx, input) => {
 	const result = await makeGmailRequest<GmailEndpointOutputs['messagesModify']>(
 		`/users/${input.userId || 'me'}/messages/${input.id}/modify`,
-		{
-			clientId: ctx.options.clientId,
-			clientSecret: ctx.options.clientSecret,
-			accessToken: ctx.options.accessToken,
-			refreshToken: ctx.options.refreshToken,
-		},
+		ctx.key,
 		{
 			method: 'POST',
 			body: {
@@ -290,31 +231,9 @@ export const modify: GmailEndpoints['messagesModify'] = async (ctx, input) => {
 		},
 	);
 
-	if (result.id && ctx.db.messages) {
-		try {
-			const subject = extractSubject(result);
-			const body = extractBody(result);
-			const from = extractFrom(result);
-			const to = extractTo(result);
-			await ctx.db.messages.upsert(result.id, {
-				id: result.id,
-				threadId: result.threadId,
-				labelIds: result.labelIds,
-				snippet: result.snippet,
-				historyId: result.historyId,
-				internalDate: result.internalDate,
-				sizeEstimate: result.sizeEstimate,
-				payload: result.payload,
-				raw: result.raw,
-				subject,
-				body,
-				from,
-				to,
-				createdAt: new Date(),
-			});
-		} catch (error) {
-			console.warn('Failed to update message in database:', error);
-		}
+	if (result.id) {
+		const endpoints = ctx.endpoints as GmailBoundEndpoints;
+		await endpoints.messagesGet({ id: result.id, userId: input.userId });
 	}
 
 	await logEventFromContext(
@@ -332,12 +251,7 @@ export const batchModify: GmailEndpoints['messagesBatchModify'] = async (
 ) => {
 	await makeGmailRequest<GmailEndpointOutputs['messagesBatchModify']>(
 		`/users/${input.userId || 'me'}/messages/batchModify`,
-		{
-			clientId: ctx.options.clientId,
-			clientSecret: ctx.options.clientSecret,
-			accessToken: ctx.options.accessToken,
-			refreshToken: ctx.options.refreshToken,
-		},
+		ctx.key,
 		{
 			method: 'POST',
 			body: {
@@ -359,16 +273,16 @@ export const batchModify: GmailEndpoints['messagesBatchModify'] = async (
 export const trash: GmailEndpoints['messagesTrash'] = async (ctx, input) => {
 	const result = await makeGmailRequest<GmailEndpointOutputs['messagesTrash']>(
 		`/users/${input.userId || 'me'}/messages/${input.id}/trash`,
-		{
-			clientId: ctx.options.clientId,
-			clientSecret: ctx.options.clientSecret,
-			accessToken: ctx.options.accessToken,
-			refreshToken: ctx.options.refreshToken,
-		},
+		ctx.key,
 		{
 			method: 'POST',
 		},
 	);
+
+	if (result.id) {
+		const endpoints = ctx.endpoints as GmailBoundEndpoints;
+		await endpoints.messagesGet({ id: result.id, userId: input.userId });
+	}
 
 	await logEventFromContext(
 		ctx,
@@ -385,18 +299,14 @@ export const untrash: GmailEndpoints['messagesUntrash'] = async (
 ) => {
 	const result = await makeGmailRequest<
 		GmailEndpointOutputs['messagesUntrash']
-	>(
-		`/users/${input.userId || 'me'}/messages/${input.id}/untrash`,
-		{
-			clientId: ctx.options.clientId,
-			clientSecret: ctx.options.clientSecret,
-			accessToken: ctx.options.accessToken,
-			refreshToken: ctx.options.refreshToken,
-		},
-		{
-			method: 'POST',
-		},
-	);
+	>(`/users/${input.userId || 'me'}/messages/${input.id}/untrash`, ctx.key, {
+		method: 'POST',
+	});
+
+	if (result.id) {
+		const endpoints = ctx.endpoints as GmailBoundEndpoints;
+		await endpoints.messagesGet({ id: result.id, userId: input.userId });
+	}
 
 	await logEventFromContext(
 		ctx,

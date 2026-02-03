@@ -1,5 +1,5 @@
 {
-  "name": "@corsair/demo-drizzle-pg-slack",
+  "name": "@corsair/demo-plugins",
   "private": true,
   "type": "module",
   "scripts": {
@@ -21,6 +21,7 @@
     "@trpc/react-query": "^11.0.0",
     "@trpc/server": "^11.0.0",
     "corsair": "workspace:*",
+    "@corsair-ai/cli": "workspace:*",
     "dotenv": "^17.2.3",
     "drizzle-orm": "^0.44.5",
     "inngest": "^3.31.0",

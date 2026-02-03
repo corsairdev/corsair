@@ -247,14 +247,19 @@ const {{RESOURCE}} = await corsair.{{PLUGIN_ID}}.db.{{SERVICE}}.findByResourceId
 // List all
 const {{RESOURCE_PLURAL}} = await corsair.{{PLUGIN_ID}}.db.{{SERVICE}}.list({ limit: 50 });
 
-// Search
+// Search by data fields
 const results = await corsair.{{PLUGIN_ID}}.db.{{SERVICE}}.search({
-    query: "{{SEARCH_TERM}}",
+    data: { name: "{{SEARCH_TERM}}" },
     limit: 20,
 });
 
+// Search with contains (LIKE)
+const partialMatch = await corsair.{{PLUGIN_ID}}.db.{{SERVICE}}.search({
+    data: { name: { contains: "{{SEARCH_TERM}}" } },
+});
+
 // Upsert
-await corsair.{{PLUGIN_ID}}.db.{{SERVICE}}.upsert("{{RESOURCE_ID}}", {
+await corsair.{{PLUGIN_ID}}.db.{{SERVICE}}.upsertByEntityId("{{RESOURCE_ID}}", {
     {{UPSERT_DATA}}
 });
 ```

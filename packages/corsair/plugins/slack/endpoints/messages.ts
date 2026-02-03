@@ -9,7 +9,7 @@ export const postMessage: SlackEndpoints['postMessage'] = async (
 ) => {
 	const result = await makeSlackRequest<SlackEndpointOutputs['postMessage']>(
 		'chat.postMessage',
-		ctx.options.credentials.botToken,
+		ctx.key,
 		{
 			method: 'POST',
 			body: {
@@ -35,13 +35,12 @@ export const postMessage: SlackEndpoints['postMessage'] = async (
 
 	if (result.ok && result.message && result.ts && ctx.db.messages) {
 		try {
-			await ctx.db.messages.upsert(result.ts, {
+			await ctx.db.messages.upsertByEntityId(result.ts, {
+				...result.message,
 				id: result.ts,
 				ts: result.ts,
-				text: result.message.text,
 				channel: result.channel || input.channel,
 				thread_ts: input.thread_ts,
-				createdAt: new Date(),
 			});
 		} catch (error) {
 			console.warn('Failed to save message to database:', error);
@@ -63,7 +62,7 @@ export const deleteMessage: SlackEndpoints['messagesDelete'] = async (
 ) => {
 	const result = await makeSlackRequest<SlackEndpointOutputs['messagesDelete']>(
 		'chat.delete',
-		ctx.options.credentials.botToken,
+		ctx.key,
 		{
 			method: 'POST',
 			body: {
@@ -94,7 +93,7 @@ export const deleteMessage: SlackEndpoints['messagesDelete'] = async (
 export const update: SlackEndpoints['messagesUpdate'] = async (ctx, input) => {
 	const result = await makeSlackRequest<SlackEndpointOutputs['messagesUpdate']>(
 		'chat.update',
-		ctx.options.credentials.botToken,
+		ctx.key,
 		{
 			method: 'POST',
 			body: {
@@ -115,12 +114,11 @@ export const update: SlackEndpoints['messagesUpdate'] = async (ctx, input) => {
 
 	if (result.ok && result.message && result.ts && ctx.db.messages) {
 		try {
-			await ctx.db.messages.upsert(result.ts, {
+			await ctx.db.messages.upsertByEntityId(result.ts, {
+				...result.message,
 				id: result.ts,
 				ts: result.ts,
-				text: result.message.text || result.text,
 				channel: result.channel || input.channel,
-				createdAt: new Date(),
 			});
 		} catch (error) {
 			console.warn('Failed to update message in database:', error);
@@ -142,7 +140,7 @@ export const getPermalink: SlackEndpoints['messagesGetPermalink'] = async (
 ) => {
 	const result = await makeSlackRequest<
 		SlackEndpointOutputs['messagesGetPermalink']
-	>('chat.getPermalink', ctx.options.credentials.botToken, {
+	>('chat.getPermalink', ctx.key, {
 		method: 'GET',
 		query: {
 			channel: input.channel,
@@ -161,7 +159,7 @@ export const getPermalink: SlackEndpoints['messagesGetPermalink'] = async (
 export const search: SlackEndpoints['messagesSearch'] = async (ctx, input) => {
 	const result = await makeSlackRequest<SlackEndpointOutputs['messagesSearch']>(
 		'search.messages',
-		ctx.options.credentials.botToken,
+		ctx.key,
 		{
 			method: 'GET',
 			query: {
@@ -181,13 +179,12 @@ export const search: SlackEndpoints['messagesSearch'] = async (ctx, input) => {
 	if (result.ok && result.messages?.matches && ctx.db.messages) {
 		try {
 			for (const match of result.messages.matches) {
-				if (match.ts) {
-					await ctx.db.messages.upsert(match.ts, {
+				if (match.ts && match.channel?.id) {
+					await ctx.db.messages.upsertByEntityId(match.ts, {
+						...match,
+						channel: match.channel?.id,
 						id: match.ts,
 						ts: match.ts,
-						text: match.text,
-						channel: '',
-						createdAt: new Date(),
 					});
 				}
 			}

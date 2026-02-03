@@ -29,7 +29,7 @@ export interface PostHogEventMap {
 }
 
 export type PostHogWebhookOutputs = {
-	eventCaptured: Record<string, unknown>;
+	eventCaptured: EventCapturedEvent;
 };
 
 import type { CorsairWebhookMatcher, RawWebhookRequest } from '../../../core';

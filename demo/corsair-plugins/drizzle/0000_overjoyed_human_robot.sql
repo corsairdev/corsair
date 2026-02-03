@@ -4,7 +4,8 @@ CREATE TABLE "corsair_accounts" (
 	"updated_at" timestamp DEFAULT now() NOT NULL,
 	"tenant_id" text NOT NULL,
 	"integration_id" uuid NOT NULL,
-	"config" jsonb
+	"config" jsonb,
+	"dek" text
 );
 --> statement-breakpoint
 CREATE TABLE "corsair_entities" (
@@ -33,7 +34,8 @@ CREATE TABLE "corsair_integrations" (
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL,
 	"name" text NOT NULL,
-	"config" jsonb
+	"config" jsonb,
+	"dek" text
 );
 --> statement-breakpoint
 ALTER TABLE "corsair_accounts" ADD CONSTRAINT "corsair_accounts_integration_id_corsair_integrations_id_fk" FOREIGN KEY ("integration_id") REFERENCES "public"."corsair_integrations"("id") ON DELETE no action ON UPDATE no action;

@@ -1,5 +1,5 @@
+import { logEventFromContext } from '../../utils/events';
 import type { SlackWebhooks } from '..';
-import type { MessageEvent } from './types';
 import { createSlackEventMatch } from './types';
 
 export const message: SlackWebhooks['message'] = {
@@ -12,45 +12,41 @@ export const message: SlackWebhooks['message'] = {
 		if (!event || event.type !== 'message') {
 			return {
 				success: true,
-				data: {},
+				data: undefined,
 			};
 		}
 
-		const messageEvent = event as MessageEvent;
-		const msg = messageEvent as unknown as {
-			channel?: string;
-			user?: string;
-			text?: string;
-			ts?: string;
-			thread_ts?: string;
-			[key: string]: unknown;
-		};
+		let corsairEntityId = '';
 
-		console.log('📬 Slack Message Event:', {
-			channel: msg.channel,
-			user: msg.user,
-			text: msg.text?.substring(0, 100),
-			ts: msg.ts,
-		});
-
-		if (ctx.db.messages && msg.ts) {
+		if (ctx.db.messages && event.ts) {
 			try {
-				await ctx.db.messages.upsert(msg.ts, {
-					...msg,
-					id: msg.ts,
-					type: messageEvent.type,
-					channel: msg.channel || '',
-					authorId: msg.user,
-					createdAt: msg.ts ? new Date(parseFloat(msg.ts) * 1000) : new Date(),
+				const entity = await ctx.db.messages.upsertByEntityId(event.ts, {
+					...event,
+					id: event.ts,
+					authorId: 'user' in event ? event.user : undefined,
+					createdAt: event.ts
+						? new Date(parseFloat(event.ts) * 1000)
+						: new Date(),
 				});
+
+				corsairEntityId = entity?.id || '';
 			} catch (error) {
 				console.warn('Failed to save message to database:', error);
 			}
 		}
 
+		await logEventFromContext(
+			ctx,
+			'slack.webhook.message',
+			{ ...event },
+			'completed',
+		);
+
 		return {
 			success: true,
-			data: {},
+			corsairEntityId,
+			tenantId: ctx.tenantId,
+			data: event,
 		};
 	},
 };

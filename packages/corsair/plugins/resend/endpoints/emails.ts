@@ -1,5 +1,5 @@
 import { logEventFromContext } from '../../utils/events';
-import type { ResendEndpoints } from '..';
+import type { ResendBoundEndpoints, ResendEndpoints } from '..';
 import { makeResendRequest } from '../client';
 import type { ResendEndpointOutputs } from './types';
 
@@ -35,55 +35,52 @@ export const send: ResendEndpoints['emailsSend'] = async (ctx, input) => {
 
 	const response = await makeResendRequest<ResendEndpointOutputs['emailsSend']>(
 		'emails',
-		ctx.options.credentials.apiKey,
+		ctx.key,
 		{
 			method: 'POST',
 			body,
 		},
 	);
 
-	if (ctx.db.emails && response.id) {
-		try {
-			await ctx.db.emails.upsert(response.id, {
-				id: response.id,
-				from: input.from,
-				to: Array.isArray(input.to) ? input.to : [input.to],
-				subject: input.subject,
-				created_at: new Date().toISOString(),
-			});
-		} catch (error) {
-			console.warn('Failed to save email to database:', error);
-		}
+	if (response.id) {
+		const endpoints = ctx.endpoints as ResendBoundEndpoints;
+		await endpoints.emailsGet({ id: response.id });
 	}
 
-	await logEventFromContext(ctx, 'resend.emails.send', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'resend.emails.send',
+		{ ...input },
+		'completed',
+	);
 	return response;
 };
 
 export const get: ResendEndpoints['emailsGet'] = async (ctx, input) => {
 	const response = await makeResendRequest<ResendEndpointOutputs['emailsGet']>(
 		`emails/${input.id}`,
-		ctx.options.credentials.apiKey,
+		ctx.key,
 		{
 			method: 'GET',
 		},
 	);
 
-	if (ctx.db.emails && response.id) {
+	if (response.id && ctx.db.emails) {
 		try {
-			await ctx.db.emails.upsert(response.id, {
-				id: response.id,
-				from: response.from,
-				to: response.to,
-				subject: response.subject,
-				created_at: response.created_at,
+			await ctx.db.emails.upsertByEntityId(response.id, {
+				...response,
 			});
 		} catch (error) {
 			console.warn('Failed to save email to database:', error);
 		}
 	}
 
-	await logEventFromContext(ctx, 'resend.emails.get', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'resend.emails.get',
+		{ ...input },
+		'completed',
+	);
 	return response;
 };
 
@@ -94,22 +91,18 @@ export const list: ResendEndpoints['emailsList'] = async (ctx, input) => {
 
 	const response = await makeResendRequest<ResendEndpointOutputs['emailsList']>(
 		'emails',
-		ctx.options.credentials.apiKey,
+		ctx.key,
 		{
 			method: 'GET',
 			query,
 		},
 	);
 
-	if (ctx.db.emails && response.data) {
+	if (response.data && ctx.db.emails) {
 		try {
 			for (const email of response.data) {
-				await ctx.db.emails.upsert(email.id, {
-					id: email.id,
-					from: email.from,
-					to: email.to,
-					subject: email.subject,
-					created_at: email.created_at,
+				await ctx.db.emails.upsertByEntityId(email.id, {
+					...email,
 				});
 			}
 		} catch (error) {
@@ -117,6 +110,11 @@ export const list: ResendEndpoints['emailsList'] = async (ctx, input) => {
 		}
 	}
 
-	await logEventFromContext(ctx, 'resend.emails.list', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'resend.emails.list',
+		{ ...input },
+		'completed',
+	);
 	return response;
 };

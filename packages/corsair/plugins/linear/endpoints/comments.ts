@@ -106,7 +106,7 @@ const COMMENT_DELETE_MUTATION = `
 `;
 
 export const list: LinearEndpoints['commentsList'] = async (ctx, input) => {
-	const apiKey = ctx.options.credentials.apiKey;
+	const apiKey = ctx.key;
 
 	const response = await makeLinearRequest<CommentsListResponse>(
 		COMMENTS_LIST_QUERY,
@@ -120,32 +120,34 @@ export const list: LinearEndpoints['commentsList'] = async (ctx, input) => {
 
 	const result = response.issue.comments;
 
-		if (result.nodes && ctx.db.comments) {
-			try {
-				for (const comment of result.nodes) {
-					await ctx.db.comments.upsert(comment.id, {
-						id: comment.id,
-						body: comment.body,
-						issueId: comment.issue.id,
-						userId: comment.user.id,
-						parentId: comment.parent?.id ?? undefined,
-						editedAt: comment.editedAt ?? undefined,
-						createdAt: new Date(comment.createdAt),
-						updatedAt: new Date(comment.updatedAt),
-						archivedAt: comment.archivedAt ?? undefined,
-					});
-				}
-			} catch (error) {
-				console.warn('Failed to save comments to database:', error);
+	if (result.nodes && ctx.db.comments) {
+		try {
+			for (const comment of result.nodes) {
+				await ctx.db.comments.upsertByEntityId(comment.id, {
+					...comment,
+					issueId: comment.issue.id,
+					userId: comment.user.id,
+					parentId: comment.parent?.id,
+					createdAt: new Date(comment.createdAt),
+					updatedAt: new Date(comment.updatedAt),
+				});
 			}
+		} catch (error) {
+			console.warn('Failed to save comments to database:', error);
 		}
+	}
 
-	await logEventFromContext(ctx, 'linear.comments.list', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'linear.comments.list',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
 export const create: LinearEndpoints['commentsCreate'] = async (ctx, input) => {
-	const apiKey = ctx.options.credentials.apiKey;
+	const apiKey = ctx.key;
 
 	const response = await makeLinearRequest<CommentCreateResponse>(
 		COMMENT_CREATE_MUTATION,
@@ -155,31 +157,34 @@ export const create: LinearEndpoints['commentsCreate'] = async (ctx, input) => {
 		},
 	);
 
-	const result = response.commentCreate.comment;
+	const result = response.commentCreate;
 
-		if (result && ctx.db.comments) {
-			try {
-				await ctx.db.comments.upsert(result.id, {
-					id: result.id,
-					body: result.body,
-					issueId: result.issue.id,
-					userId: result.user.id,
-					parentId: result.parent?.id ?? undefined,
-					createdAt: new Date(result.createdAt),
-					updatedAt: new Date(result.updatedAt),
-					archivedAt: result.archivedAt ?? undefined,
-				});
-			} catch (error) {
-				console.warn('Failed to save comment to database:', error);
-			}
+	if (result.success && result.comment && ctx.db.comments) {
+		try {
+			await ctx.db.comments.upsertByEntityId(result.comment.id, {
+				...result.comment,
+				issueId: result.comment.issue.id,
+				userId: result.comment.user.id,
+				parentId: result.comment.parent?.id,
+				createdAt: new Date(result.comment.createdAt),
+				updatedAt: new Date(result.comment.updatedAt),
+			});
+		} catch (error) {
+			console.warn('Failed to save comment to database:', error);
 		}
+	}
 
-	await logEventFromContext(ctx, 'linear.comments.create', { ...input }, 'completed');
-	return result;
+	await logEventFromContext(
+		ctx,
+		'linear.comments.create',
+		{ ...input },
+		'completed',
+	);
+	return result.comment;
 };
 
 export const update: LinearEndpoints['commentsUpdate'] = async (ctx, input) => {
-	const apiKey = ctx.options.credentials.apiKey;
+	const apiKey = ctx.key;
 
 	const response = await makeLinearRequest<CommentUpdateResponse>(
 		COMMENT_UPDATE_MUTATION,
@@ -192,26 +197,27 @@ export const update: LinearEndpoints['commentsUpdate'] = async (ctx, input) => {
 
 	const result = response.commentUpdate.comment;
 
-		if (result && ctx.db.comments) {
-			try {
-				const existing = await ctx.db.comments.findByEntityId(result.id);
-				await ctx.db.comments.upsert(result.id, {
-					id: result.id,
-					body: result.body,
-					issueId: result.issue.id,
-					userId: result.user.id,
-					parentId: result.parent?.id ?? undefined,
-					editedAt: result.editedAt ?? undefined,
-					createdAt: existing?.data?.createdAt || new Date(result.createdAt),
-					updatedAt: new Date(result.updatedAt),
-					archivedAt: result.archivedAt ?? undefined,
-				});
-			} catch (error) {
-				console.warn('Failed to update comment in database:', error);
-			}
+	if (result && ctx.db.comments) {
+		try {
+			await ctx.db.comments.upsertByEntityId(result.id, {
+				...result,
+				issueId: result.issue.id,
+				userId: result.user.id,
+				parentId: result.parent?.id,
+				createdAt: new Date(result.createdAt),
+				updatedAt: new Date(result.updatedAt),
+			});
+		} catch (error) {
+			console.warn('Failed to update comment in database:', error);
 		}
+	}
 
-	await logEventFromContext(ctx, 'linear.comments.update', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'linear.comments.update',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
@@ -219,7 +225,7 @@ export const deleteComment: LinearEndpoints['commentsDelete'] = async (
 	ctx,
 	input,
 ) => {
-	const apiKey = ctx.options.credentials.apiKey;
+	const apiKey = ctx.key;
 
 	const response = await makeLinearRequest<CommentDeleteResponse>(
 		COMMENT_DELETE_MUTATION,
@@ -239,6 +245,11 @@ export const deleteComment: LinearEndpoints['commentsDelete'] = async (
 		}
 	}
 
-	await logEventFromContext(ctx, 'linear.comments.delete', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'linear.comments.delete',
+		{ ...input },
+		'completed',
+	);
 	return success;
 };
