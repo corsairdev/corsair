@@ -30,23 +30,25 @@ export async function POST(request: NextRequest) {
 
 	const result = await filterWebhook(corsair, headers, body, { tenantId });
 
-	// Ensure response is serializable - NextResponse.json can fail on certain values
-	try {
-		return NextResponse.json({ ...result.response });
-	} catch (error) {
-		console.error('Error serializing webhook response:', error);
+	// Handle case where no webhook matched
+	if (!result.response) {
 		return NextResponse.json(
 			{
 				success: false,
-				error: 'Failed to serialize response',
-				message:
-					error instanceof Error
-						? error.message
-						: 'Unknown serialization error',
+				message: 'No matching webhook handler found',
 			},
-			{ status: 500 },
+			{ status: 404 },
 		);
 	}
+
+	// Only return data if returnToSender=true (like Slack challenge)
+	// Otherwise, the response is just for after hook context - return simple success
+	if (result.response.data !== undefined) {
+		return NextResponse.json(result.response.data);
+	}
+
+	// Webhook processed successfully, but no data to return to sender
+	return new NextResponse(null, { status: 200 });
 }
 
 export async function GET() {
