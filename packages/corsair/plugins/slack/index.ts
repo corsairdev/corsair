@@ -547,15 +547,12 @@ export function slack<const T extends SlackPluginOptions>(
 			if (ctx.authType === 'api_key') {
 				// ctx.keys is narrowed to ApiKeyAccountKeyManager
 
-				console.log('in api key section');
 				const res = await ctx.keys.getApiKey();
 
 				if (!res) {
 					// prob need to throw an error here
 					return '';
 				}
-
-				console.log(res);
 
 				return res;
 			} else if (ctx.authType === 'oauth_2') {
