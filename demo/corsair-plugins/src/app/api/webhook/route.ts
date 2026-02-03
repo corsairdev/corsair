@@ -32,7 +32,7 @@ export async function POST(request: NextRequest) {
 
 	// Ensure response is serializable - NextResponse.json can fail on certain values
 	try {
-		return NextResponse.json(result.response);
+		return NextResponse.json({ ...result.response });
 	} catch (error) {
 		console.error('Error serializing webhook response:', error);
 		return NextResponse.json(
