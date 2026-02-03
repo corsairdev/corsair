@@ -27,8 +27,6 @@ import { GithubEndpointOutputSchemas } from './endpoints/types';
 import dotenv from 'dotenv';
 dotenv.config();
 
-type AssertExactType<T, U> = T extends U ? (U extends T ? true : never) : never;
-
 const TEST_TOKEN = process.env.GITHUB_TOKEN!;
 const TEST_OWNER = process.env.TEST_GITHUB_OWNER || 'octocat';
 const TEST_REPO = process.env.TEST_GITHUB_REPO || 'Hello-World';

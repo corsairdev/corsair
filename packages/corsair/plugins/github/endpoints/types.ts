@@ -240,7 +240,7 @@ const MilestoneSchema = z.object({
 	dueOn: z.string().nullable().optional(),
 });
 
-const RepositorySchema: z.ZodType<unknown> = z.lazy(() =>
+const RepositorySchema =
 	z.object({
 		id: z.number(),
 		nodeId: z.string().optional(),
@@ -263,10 +263,9 @@ const RepositorySchema: z.ZodType<unknown> = z.lazy(() =>
 		archived: z.boolean().optional(),
 		disabled: z.boolean().optional(),
 		owner: SimpleUserSchema.optional(),
-	}),
-);
+	})
 
-const IssueSchema: z.ZodType<unknown> = z.lazy(() =>
+const IssueSchema =
 	z.object({
 		id: z.number(),
 		nodeId: z.string().optional(),
@@ -293,10 +292,10 @@ const IssueSchema: z.ZodType<unknown> = z.lazy(() =>
 		createdAt: z.string().optional(),
 		updatedAt: z.string().optional(),
 		closedAt: z.string().nullable().optional(),
-	}),
-);
+	})
 
-const PullRequestSchema: z.ZodType<unknown> = z.lazy(() =>
+
+const PullRequestSchema =
 	z.object({
 		url: z.string(),
 		id: z.number(),
@@ -349,8 +348,7 @@ const PullRequestSchema: z.ZodType<unknown> = z.lazy(() =>
 		additions: z.number().optional(),
 		deletions: z.number().optional(),
 		changedFiles: z.number().optional(),
-	}),
-);
+	})
 
 const ReleaseAssetSchema = z.object({
 	url: z.string(),
