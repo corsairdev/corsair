@@ -42,7 +42,7 @@ export async function POST(request: NextRequest) {
 	}
 
 	// Only return data if returnToSender=true (like Slack challenge)
-	// Otherwise, the response is just for after hook context - return simple success
+	// filterWebhook already handles stripping 'type' and extracting the value
 	if (result.response.data !== undefined) {
 		return NextResponse.json(result.response.data);
 	}
