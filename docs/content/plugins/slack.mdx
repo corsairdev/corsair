@@ -983,14 +983,19 @@ const channel = await corsair.slack.db.channels.findByResourceId("C0123456789");
 // List all
 const channels = await corsair.slack.db.channels.list({ limit: 50 });
 
-// Search
-const results = await corsair.slack.db.messages.search({
-    query: "project update",
+// Search by data fields
+const results = await corsair.slack.db.channels.search({
+    data: { name: "general" },
     limit: 20,
 });
 
+// Search with contains (LIKE)
+const partialMatch = await corsair.slack.db.channels.search({
+    data: { name: { contains: "sdk" } },
+});
+
 // Upsert
-await corsair.slack.db.users.upsert("U0123456789", {
+await corsair.slack.db.users.upsertByEntityId("U0123456789", {
     id: "U0123456789",
     name: "johndoe",
     real_name: "John Doe",

@@ -726,21 +726,15 @@ export type SlackWebhookPayload<TEvent = unknown> =
 
 // Webhook Response Types
 
-export type SlackWebhookAck = {
-	challenge?: string;
-};
-
-// Webhook Outputs (maps webhook names to response types)
-
 export type SlackWebhookOutputs = {
-	reactionAdded: SlackWebhookAck;
-	message: SlackWebhookAck;
-	channelCreated: SlackWebhookAck;
-	teamJoin: SlackWebhookAck;
-	userChange: SlackWebhookAck;
-	fileCreated: SlackWebhookAck;
-	filePublic: SlackWebhookAck;
-	fileShared: SlackWebhookAck;
+	reactionAdded: ReactionAddedEvent;
+	message: MessageEvent;
+	channelCreated: ChannelCreatedEvent;
+	teamJoin: TeamJoinEvent;
+	userChange: UserChangeEvent;
+	fileCreated: FileCreatedEvent;
+	filePublic: FilePublicEvent;
+	fileShared: FileSharedEvent;
 };
 
 import type { CorsairWebhookMatcher, RawWebhookRequest } from '../../../core';

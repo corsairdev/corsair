@@ -1,17 +1,12 @@
 import { logEventFromContext } from '../../utils/events';
-import type { GmailEndpoints } from '..';
+import type { GmailBoundEndpoints, GmailEndpoints } from '..';
 import { makeGmailRequest } from '../client';
 import type { GmailEndpointOutputs } from './types';
 
 export const list: GmailEndpoints['draftsList'] = async (ctx, input) => {
 	const result = await makeGmailRequest<GmailEndpointOutputs['draftsList']>(
 		`/users/${input.userId || 'me'}/drafts`,
-		{
-			clientId: ctx.options.clientId,
-			clientSecret: ctx.options.clientSecret,
-			accessToken: ctx.options.accessToken,
-			refreshToken: ctx.options.refreshToken,
-		},
+		ctx.key,
 		{
 			method: 'GET',
 			query: {
@@ -26,7 +21,8 @@ export const list: GmailEndpoints['draftsList'] = async (ctx, input) => {
 		try {
 			for (const draft of result.drafts) {
 				if (draft.id) {
-					await ctx.db.drafts.upsert(draft.id, {
+					await ctx.db.drafts.upsertByEntityId(draft.id, {
+						...draft,
 						id: draft.id,
 						messageId: draft.message?.id,
 						createdAt: new Date(),
@@ -50,12 +46,7 @@ export const list: GmailEndpoints['draftsList'] = async (ctx, input) => {
 export const get: GmailEndpoints['draftsGet'] = async (ctx, input) => {
 	const result = await makeGmailRequest<GmailEndpointOutputs['draftsGet']>(
 		`/users/${input.userId || 'me'}/drafts/${input.id}`,
-		{
-			clientId: ctx.options.clientId,
-			clientSecret: ctx.options.clientSecret,
-			accessToken: ctx.options.accessToken,
-			refreshToken: ctx.options.refreshToken,
-		},
+		ctx.key,
 		{
 			method: 'GET',
 			query: {
@@ -66,7 +57,8 @@ export const get: GmailEndpoints['draftsGet'] = async (ctx, input) => {
 
 	if (result.id && ctx.db.drafts) {
 		try {
-			await ctx.db.drafts.upsert(result.id, {
+			await ctx.db.drafts.upsertByEntityId(result.id, {
+				...result,
 				id: result.id,
 				messageId: result.message?.id,
 				createdAt: new Date(),
@@ -83,28 +75,16 @@ export const get: GmailEndpoints['draftsGet'] = async (ctx, input) => {
 export const create: GmailEndpoints['draftsCreate'] = async (ctx, input) => {
 	const result = await makeGmailRequest<GmailEndpointOutputs['draftsCreate']>(
 		`/users/${input.userId || 'me'}/drafts`,
-		{
-			clientId: ctx.options.clientId,
-			clientSecret: ctx.options.clientSecret,
-			accessToken: ctx.options.accessToken,
-			refreshToken: ctx.options.refreshToken,
-		},
+		ctx.key,
 		{
 			method: 'POST',
 			body: input.draft,
 		},
 	);
 
-	if (result.id && ctx.db.drafts) {
-		try {
-			await ctx.db.drafts.upsert(result.id, {
-				id: result.id,
-				messageId: result.message?.id,
-				createdAt: new Date(),
-			});
-		} catch (error) {
-			console.warn('Failed to save draft to database:', error);
-		}
+	if (result.id) {
+		const endpoints = ctx.endpoints as GmailBoundEndpoints;
+		await endpoints.draftsGet({ id: result.id, userId: input.userId });
 	}
 
 	await logEventFromContext(
@@ -119,28 +99,16 @@ export const create: GmailEndpoints['draftsCreate'] = async (ctx, input) => {
 export const update: GmailEndpoints['draftsUpdate'] = async (ctx, input) => {
 	const result = await makeGmailRequest<GmailEndpointOutputs['draftsUpdate']>(
 		`/users/${input.userId || 'me'}/drafts/${input.id}`,
-		{
-			clientId: ctx.options.clientId,
-			clientSecret: ctx.options.clientSecret,
-			accessToken: ctx.options.accessToken,
-			refreshToken: ctx.options.refreshToken,
-		},
+		ctx.key,
 		{
 			method: 'PUT',
 			body: input.draft,
 		},
 	);
 
-	if (result.id && ctx.db.drafts) {
-		try {
-			await ctx.db.drafts.upsert(result.id, {
-				id: result.id,
-				messageId: result.message?.id,
-				createdAt: new Date(),
-			});
-		} catch (error) {
-			console.warn('Failed to update draft in database:', error);
-		}
+	if (result.id) {
+		const endpoints = ctx.endpoints as GmailBoundEndpoints;
+		await endpoints.draftsGet({ id: result.id, userId: input.userId });
 	}
 
 	await logEventFromContext(
@@ -158,12 +126,7 @@ export const deleteDraft: GmailEndpoints['draftsDelete'] = async (
 ) => {
 	await makeGmailRequest<GmailEndpointOutputs['draftsDelete']>(
 		`/users/${input.userId || 'me'}/drafts/${input.id}`,
-		{
-			clientId: ctx.options.clientId,
-			clientSecret: ctx.options.clientSecret,
-			accessToken: ctx.options.accessToken,
-			refreshToken: ctx.options.refreshToken,
-		},
+		ctx.key,
 		{
 			method: 'DELETE',
 		},
@@ -188,12 +151,7 @@ export const deleteDraft: GmailEndpoints['draftsDelete'] = async (
 export const send: GmailEndpoints['draftsSend'] = async (ctx, input) => {
 	const result = await makeGmailRequest<GmailEndpointOutputs['draftsSend']>(
 		`/users/${input.userId || 'me'}/drafts/send`,
-		{
-			clientId: ctx.options.clientId,
-			clientSecret: ctx.options.clientSecret,
-			accessToken: ctx.options.accessToken,
-			refreshToken: ctx.options.refreshToken,
-		},
+		ctx.key,
 		{
 			method: 'POST',
 			body: {

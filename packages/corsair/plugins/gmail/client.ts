@@ -46,12 +46,17 @@ async function refreshAccessToken(
 	return await response.json();
 }
 
-async function getValidAccessToken(
-	clientId: string,
-	clientSecret: string,
-	accessToken: string,
-	refreshToken: string,
-): Promise<string> {
+export async function getValidAccessToken({
+	accessToken,
+	clientId,
+	clientSecret,
+	refreshToken,
+}: {
+	clientId: string;
+	clientSecret: string;
+	accessToken: string;
+	refreshToken: string;
+}): Promise<string> {
 	const now = Date.now();
 	const bufferTime = 5 * 60 * 1000;
 
@@ -82,12 +87,7 @@ async function getValidAccessToken(
 
 export async function makeGmailRequest<T>(
 	endpoint: string,
-	credentials: {
-		clientId: string;
-		clientSecret: string;
-		accessToken: string;
-		refreshToken: string;
-	},
+	credentials: string,
 	options: {
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 		body?: Record<string, unknown>;
@@ -96,19 +96,12 @@ export async function makeGmailRequest<T>(
 ): Promise<T> {
 	const { method = 'GET', body, query } = options;
 
-	const validAccessToken = await getValidAccessToken(
-		credentials.clientId,
-		credentials.clientSecret,
-		credentials.accessToken,
-		credentials.refreshToken,
-	);
-
 	const config: OpenAPIConfig = {
 		BASE: GMAIL_API_BASE,
 		VERSION: '1.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
-		TOKEN: validAccessToken,
+		TOKEN: credentials,
 		HEADERS: {
 			'Content-Type': 'application/json',
 		},
@@ -129,27 +122,6 @@ export async function makeGmailRequest<T>(
 		const response = await request<T>(config, requestOptions);
 		return response;
 	} catch (error) {
-		if (
-			error &&
-			typeof error === 'object' &&
-			'status' in error &&
-			error.status === 401
-		) {
-			const refreshedToken = await refreshAccessToken(
-				credentials.clientId,
-				credentials.clientSecret,
-				credentials.refreshToken,
-			);
-			cachedAccessToken = refreshedToken.access_token;
-			tokenExpiryTime = Date.now() + refreshedToken.expires_in * 1000;
-
-			const retryConfig: OpenAPIConfig = {
-				...config,
-				TOKEN: refreshedToken.access_token,
-			};
-
-			return await request<T>(retryConfig, requestOptions);
-		}
 		throw error;
 	}
 }

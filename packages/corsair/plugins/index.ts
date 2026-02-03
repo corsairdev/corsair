@@ -39,22 +39,26 @@ export {
 } from './linear';
 // PostHog Plugin
 export {
+	type BasePostHogPlugin,
+	type ExternalPostHogPlugin,
+	type InternalPostHogPlugin,
 	type PostHogBoundEndpoints,
 	type PostHogBoundWebhooks,
 	type PostHogContext,
 	type PostHogEndpoints,
-	type PostHogPlugin,
 	type PostHogPluginOptions,
 	type PostHogWebhooks,
 	posthog,
 } from './posthog';
 // Resend Plugin
 export {
+	type BaseResendPlugin,
+	type ExternalResendPlugin,
+	type InternalResendPlugin,
 	type ResendBoundEndpoints,
 	type ResendBoundWebhooks,
 	type ResendContext,
 	type ResendEndpoints,
-	type ResendPlugin,
 	type ResendPluginOptions,
 	type ResendWebhooks,
 	resend,

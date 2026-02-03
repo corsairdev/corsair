@@ -1,4 +1,3 @@
-import { z } from 'zod';
 import {
 	LinearComment,
 	LinearIssue,
@@ -6,12 +5,6 @@ import {
 	LinearTeam,
 	LinearUser,
 } from './database';
-
-export const LinearCredentials = z.object({
-	apiKey: z.string(),
-});
-
-export type LinearCredentials = z.infer<typeof LinearCredentials>;
 
 export const LinearSchema = {
 	version: '1.0.0',

@@ -6,20 +6,20 @@ import type {
 	CorsairPlugin,
 	CorsairPluginContext,
 	CorsairWebhook,
+	KeyBuilderContext,
 } from '../../core';
-import type { AuthTypes } from '../../core/constants';
+import type { AuthTypes, PickAuth } from '../../core/constants';
 import { Events } from './endpoints';
 import type { PostHogEndpointOutputs } from './endpoints/types';
-import type { PostHogCredentials } from './schema';
 import { PostHogSchema } from './schema';
 import type { EventCapturedEvent, PostHogWebhookOutputs } from './webhooks';
 import { EventWebhooks } from './webhooks';
 
 export type PostHogPluginOptions = {
-	authType: AuthTypes;
-	credentials: PostHogCredentials;
-	hooks?: PostHogPlugin['hooks'] | undefined;
-	webhookHooks?: PostHogPlugin['webhookHooks'];
+	authType?: PickAuth<'api_key'>;
+	key?: string;
+	hooks?: InternalPostHogPlugin['hooks'];
+	webhookHooks?: InternalPostHogPlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
 };
 
@@ -27,6 +27,7 @@ export type PostHogContext = CorsairPluginContext<
 	typeof PostHogSchema,
 	PostHogPluginOptions
 >;
+export type PostHogKeyBuilderContext = KeyBuilderContext<PostHogPluginOptions>;
 
 export type PostHogBoundEndpoints = BindEndpoints<PostHogEndpoints>;
 
@@ -103,15 +104,34 @@ const posthogWebhooksNested = {
 	},
 } as const;
 
-export type PostHogPlugin = CorsairPlugin<
+const defaultAuthType: AuthTypes = 'api_key';
+
+export type BasePostHogPlugin<T extends PostHogPluginOptions> = CorsairPlugin<
 	'posthog',
 	typeof PostHogSchema,
 	typeof posthogEndpointsNested,
 	typeof posthogWebhooksNested,
-	PostHogPluginOptions
+	T,
+	typeof defaultAuthType
 >;
 
-export function posthog(options: PostHogPluginOptions) {
+/**
+ * We have to type the internal plugin separately from the external plugin
+ * Because the internal plugin has to provide options for all possible auth methods
+ * The external plugin has to provide options for the auth method the user has selected
+ */
+export type InternalPostHogPlugin = BasePostHogPlugin<PostHogPluginOptions>;
+
+export type ExternalPostHogPlugin<T extends PostHogPluginOptions> =
+	BasePostHogPlugin<T>;
+
+export function posthog<const T extends PostHogPluginOptions>(
+	incomingOptions: PostHogPluginOptions & T = {} as PostHogPluginOptions & T,
+): ExternalPostHogPlugin<T> {
+	const options = {
+		...incomingOptions,
+		authType: incomingOptions.authType ?? defaultAuthType,
+	};
 	return {
 		id: 'posthog',
 		schema: PostHogSchema,
@@ -124,5 +144,23 @@ export function posthog(options: PostHogPluginOptions) {
 			return false;
 		},
 		errorHandlers: options.errorHandlers,
-	} satisfies PostHogPlugin;
+		keyBuilder: async (ctx: PostHogKeyBuilderContext) => {
+			if (options.key) {
+				return options.key;
+			}
+
+			if (ctx.authType === 'api_key') {
+				const res = await ctx.keys.getApiKey();
+
+				if (!res) {
+					// prob need to throw an error here
+					return '';
+				}
+
+				return res;
+			}
+
+			return '';
+		},
+	} satisfies InternalPostHogPlugin;
 }

@@ -38,7 +38,7 @@ export type SlackReactionName =
 export const add: SlackEndpoints['reactionsAdd'] = async (ctx, input) => {
 	const result = await makeSlackRequest<SlackEndpointOutputs['reactionsAdd']>(
 		'reactions.add',
-		ctx.options.credentials.botToken,
+		ctx.key,
 		{
 			method: 'POST',
 			body: {
@@ -48,14 +48,19 @@ export const add: SlackEndpoints['reactionsAdd'] = async (ctx, input) => {
 			},
 		},
 	);
-	await logEventFromContext(ctx, 'slack.reactions.add', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'slack.reactions.add',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
 export const get: SlackEndpoints['reactionsGet'] = async (ctx, input) => {
 	const result = await makeSlackRequest<SlackEndpointOutputs['reactionsGet']>(
 		'reactions.get',
-		ctx.options.credentials.botToken,
+		ctx.key,
 		{
 			method: 'GET',
 			query: {
@@ -67,14 +72,19 @@ export const get: SlackEndpoints['reactionsGet'] = async (ctx, input) => {
 			},
 		},
 	);
-	await logEventFromContext(ctx, 'slack.reactions.get', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'slack.reactions.get',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
 export const remove: SlackEndpoints['reactionsRemove'] = async (ctx, input) => {
 	const result = await makeSlackRequest<
 		SlackEndpointOutputs['reactionsRemove']
-	>('reactions.remove', ctx.options.credentials.botToken, {
+	>('reactions.remove', ctx.key, {
 		method: 'POST',
 		body: {
 			name: input.name,
@@ -84,6 +94,11 @@ export const remove: SlackEndpoints['reactionsRemove'] = async (ctx, input) => {
 			file_comment: input.file_comment,
 		},
 	});
-	await logEventFromContext(ctx, 'slack.reactions.remove', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'slack.reactions.remove',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };

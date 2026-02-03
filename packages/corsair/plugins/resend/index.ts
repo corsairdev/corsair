@@ -6,12 +6,11 @@ import type {
 	CorsairPlugin,
 	CorsairPluginContext,
 	CorsairWebhook,
+	KeyBuilderContext,
 } from '../../core';
-import type { AuthTypes } from '../../core/constants';
+import type { AuthTypes, PickAuth } from '../../core/constants';
 import { Domains, Emails } from './endpoints';
-import { errorHandlers } from './error-handlers';
 import type { ResendEndpointOutputs } from './endpoints/types';
-import type { ResendCredentials } from './schema';
 import { ResendSchema } from './schema';
 import type {
 	DomainCreatedEvent,
@@ -29,10 +28,10 @@ import type {
 import { DomainWebhooks, EmailWebhooks } from './webhooks';
 
 export type ResendPluginOptions = {
-	authType: AuthTypes;
-	credentials: ResendCredentials;
-	hooks?: ResendPlugin['hooks'] | undefined;
-	webhookHooks?: ResendPlugin['webhookHooks'];
+	authType?: PickAuth<'api_key'>;
+	key?: string;
+	hooks?: InternalResendPlugin['hooks'];
+	webhookHooks?: InternalResendPlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
 };
 
@@ -40,6 +39,7 @@ export type ResendContext = CorsairPluginContext<
 	typeof ResendSchema,
 	ResendPluginOptions
 >;
+export type ResendKeyBuilderContext = KeyBuilderContext<ResendPluginOptions>;
 
 export type ResendBoundEndpoints = BindEndpoints<ResendEndpoints>;
 
@@ -142,15 +142,34 @@ const resendWebhooksNested = {
 	},
 } as const;
 
-export type ResendPlugin = CorsairPlugin<
+const defaultAuthType: AuthTypes = 'api_key';
+
+export type BaseResendPlugin<T extends ResendPluginOptions> = CorsairPlugin<
 	'resend',
 	typeof ResendSchema,
 	typeof resendEndpointsNested,
 	typeof resendWebhooksNested,
-	ResendPluginOptions
+	T,
+	typeof defaultAuthType
 >;
 
-export function resend(options: ResendPluginOptions) {
+/**
+ * We have to type the internal plugin separately from the external plugin
+ * Because the internal plugin has to provide options for all possible auth methods
+ * The external plugin has to provide options for the auth method the user has selected
+ */
+export type InternalResendPlugin = BaseResendPlugin<ResendPluginOptions>;
+
+export type ExternalResendPlugin<T extends ResendPluginOptions> =
+	BaseResendPlugin<T>;
+
+export function resend<const T extends ResendPluginOptions>(
+	incomingOptions: ResendPluginOptions & T = {} as ResendPluginOptions & T,
+): ExternalResendPlugin<T> {
+	const options = {
+		...incomingOptions,
+		authType: incomingOptions.authType ?? defaultAuthType,
+	};
 	return {
 		id: 'resend',
 		schema: ResendSchema,
@@ -160,14 +179,66 @@ export function resend(options: ResendPluginOptions) {
 		endpoints: resendEndpointsNested,
 		webhooks: resendWebhooksNested,
 		pluginWebhookMatcher: (request) => {
-			const headers = request.headers as Record<string, string | undefined>;
-			const signature = headers['resend-signature'];
-			if (typeof signature === 'string' && signature.length > 0) return true;
-
-			const body = request.body as Record<string, unknown>;
-			const type = body?.type;
-			return typeof type === 'string' && (type.startsWith('email.') || type.startsWith('domain.'));
+			return false;
 		},
-		errorHandlers: options.errorHandlers || errorHandlers,
-	} satisfies ResendPlugin;
+		errorHandlers: options.errorHandlers,
+		keyBuilder: async (ctx: ResendKeyBuilderContext) => {
+			if (options.key) {
+				return options.key;
+			}
+
+			if (ctx.authType === 'api_key') {
+				const res = await ctx.keys.getApiKey();
+
+				if (!res) {
+					// prob need to throw an error here
+					return '';
+				}
+
+				return res;
+			}
+
+			return '';
+		},
+	} satisfies InternalResendPlugin;
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Webhook Type Exports
+// ─────────────────────────────────────────────────────────────────────────────
+
+export type {
+	DomainCreatedEvent,
+	DomainUpdatedEvent,
+	EmailBouncedEvent,
+	EmailClickedEvent,
+	EmailComplainedEvent,
+	EmailDeliveredEvent,
+	EmailFailedEvent,
+	EmailOpenedEvent,
+	EmailReceivedEvent,
+	EmailSentEvent,
+	ResendEventMap,
+	ResendEventName,
+	ResendWebhookEvent,
+	ResendWebhookOutputs,
+	ResendWebhookPayload,
+} from './webhooks/types';
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Endpoint Type Exports
+// ─────────────────────────────────────────────────────────────────────────────
+
+export type {
+	CreateDomainResponse,
+	DeleteDomainResponse,
+	Domain,
+	Email,
+	GetDomainResponse,
+	GetEmailResponse,
+	ListDomainsResponse,
+	ListEmailsResponse,
+	ResendEndpointOutputs,
+	SendEmailResponse,
+	VerifyDomainResponse,
+} from './endpoints/types';

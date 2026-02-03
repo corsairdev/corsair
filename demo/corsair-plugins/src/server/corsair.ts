@@ -1,94 +1,100 @@
-import { createCorsair } from 'corsair';
-import { drizzleAdapter } from 'corsair/adapters/drizzle';
-import { github, linear, resend, slack } from 'corsair/plugins';
-import type { CorsairTenantWrapper } from 'corsair';
+import { createCorsair, linear, resend, slack } from 'corsair';
+import { drizzleAdapter } from 'corsair/adapters';
 import { db } from '../db';
 import * as schema from '../db/schema';
+import { inngest } from './inngest/client';
 
-export const corsair: CorsairTenantWrapper<any> = createCorsair({
+export const corsair = createCorsair({
 	multiTenancy: true,
 	database: drizzleAdapter(db, { provider: 'pg', schema }),
+	kek: process.env.CORSAIR_KEK!,
 	plugins: [
-		slack({
+		linear({
 			authType: 'api_key',
-			credentials: {
-				botToken: process.env.SLACK_BOT_TOKEN!,
-			},
-			hooks: {
-				channels: {
-					random: {
-						before(ctx, args) {
-							console.log('before hook');
-							return {
-								ctx,
-								args,
-							};
+			webhookHooks: {
+				issues: {
+					create: {
+						after: async (ctx, res) => {
+							await inngest.send({
+								name: 'linear/issue-created',
+								data: {
+									tenantId: ctx.tenantId ?? 'default',
+									event: res.data!,
+								},
+							});
+						},
+					},
+					update: {
+						after: async (ctx, res) => {
+							await inngest.send({
+								name: 'linear/issue-updated',
+								data: {
+									tenantId: ctx.tenantId ?? 'default',
+									event: res.data!,
+								},
+							});
+						},
+					},
+				},
+				comments: {
+					create: {
+						after: async (ctx, res) => {
+							await inngest.send({
+								name: 'linear/comment-created',
+								data: {
+									tenantId: ctx.tenantId ?? 'default',
+									event: res.data!,
+								},
+							});
+						},
+					},
+					update: {
+						after: async (ctx, res) => {
+							await inngest.send({
+								name: 'linear/comment-updated',
+								data: {
+									tenantId: ctx.tenantId ?? 'default',
+									event: res.data!,
+								},
+							});
 						},
 					},
 				},
 			},
-			errorHandlers: {
-				RATE_LIMIT_ERROR: {
-					match: () => {
-						return false;
-					},
-					handler: async () => {
-						return {
-							maxRetries: 3,
-							retryStrategy: 'exponential_backoff_jitter',
-						};
-					},
-				},
-				DEFAULT: {
-					match: () => {
-						return true;
-					},
-					handler: async (error, context) => {
-						console.log('default');
-						return {
-							maxRetries: 0,
-						};
-					},
-				},
-			},
 		}),
-		linear({
-			authType: 'api_key',
-			credentials: {
-				apiKey: process.env.LINEAR_API_KEY ?? 'dev-token',
+		slack({
+			webhookHooks: {
+				messages: {
+					message: {
+						after: async (ctx, res) => {
+							await inngest.send({
+								name: 'slack/event',
+								data: {
+									tenantId: ctx.tenantId ?? 'default',
+									event: res.data!,
+								},
+							});
+						},
+					},
+				},
 			},
 		}),
 		resend({
-			authType: 'api_key',
-			credentials: {
-				apiKey: process.env.RESEND_API_KEY ?? 'dev-token',
-			},
-		}),
-		github({
-			authType: 'api_key',
-			credentials: {
-				token: process.env.GITHUB_TOKEN ?? 'dev-token',
+			webhookHooks: {
+				emails: {
+					received: {
+						after: async (ctx, res) => {
+							await inngest.send({
+								name: 'resend/email',
+								data: {
+									tenantId: ctx.tenantId ?? 'default',
+									event: res.data!,
+								},
+							});
+						},
+					},
+				},
 			},
 		}),
 	],
-	errorHandlers: {
-		RATE_LIMIT_ERROR: {
-			match: (error: Error, context) => {
-				const errorMessage = error.message.toLowerCase();
-				return (
-					errorMessage.includes('rate_limited') ||
-					errorMessage.includes('ratelimited') ||
-					error.message.includes('429')
-				);
-			},
-			handler: async (error: Error, context) => {
-				console.log(
-					`[SLACK:${context.operation}] Rate limit exceeded - ROOT LEVEL`,
-				);
-				return {
-					maxRetries: 5,
-				};
-			},
-		},
-	},
 });

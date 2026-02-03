@@ -6,14 +6,13 @@ import type {
 	TableInsertType,
 	TableUpdateType,
 } from '../adapters/types';
-
+import { generateUUID } from '../core/utils';
 import type {
 	CorsairAccount,
 	CorsairEntity,
 	CorsairEvent,
 	CorsairIntegration,
 } from './';
-
 import {
 	CorsairAccountsSchema,
 	CorsairEntitiesSchema,
@@ -67,20 +66,6 @@ function assertDatabaseConfigured(
 			'Corsair database is not configured. Pass `database` to createCorsair(...) to enable ORM.',
 		);
 	}
-}
-
-function generateUuidV4(): string {
-	const cryptoAny = globalThis.crypto as unknown as
-		| { randomUUID?: () => string }
-		| undefined;
-	if (cryptoAny?.randomUUID) {
-		return cryptoAny.randomUUID();
-	}
-	return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
-		const r = (Math.random() * 16) | 0;
-		const v = c === 'x' ? r : (r & 0x3) | 0x8;
-		return v.toString(16);
-	});
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -302,7 +287,7 @@ function createBaseTableClient<
 			assertDatabaseConfigured(database);
 			const now = new Date();
 			const insert = {
-				id: (data as Record<string, unknown>).id ?? generateUuidV4(),
+				id: (data as Record<string, unknown>).id ?? generateUUID(),
 				created_at: now,
 				updated_at: now,
 				...data,
@@ -588,6 +573,94 @@ export type TypedEntity<DataSchema extends ZodTypeAny> = Omit<
 	data: z.infer<DataSchema>;
 };
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Search Filter Types
+// ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Search filter value - can be an exact value or an operator object.
+ * @example
+ * // Exact match
+ * { name: "sdk-test" }
+ * // LIKE match (case-insensitive)
+ * { name: { contains: "sdk" } }
+ */
+export type SearchFilterValue<T> = T | { contains: string } | { equals: T };
+
+/**
+ * Fields that are automatically filtered by the ORM (not user-searchable).
+ */
+type AutoFilteredFields = 'account_id' | 'entity_type';
+
+/**
+ * Fields that require special handling (pagination, data).
+ */
+type SpecialFields = 'data' | 'created_at' | 'updated_at';
+
+/**
+ * Searchable entity fields derived from CorsairEntity.
+ * Excludes auto-filtered fields and special fields.
+ */
+type SearchableEntityFields = Omit<
+	CorsairEntity,
+	AutoFilteredFields | SpecialFields
+>;
+
+/**
+ * Search filter for entity table columns (derived from CorsairEntity).
+ * Maps each searchable field to SearchFilterValue.
+ */
+type EntityFieldsFilter = {
+	[K in keyof SearchableEntityFields]?: SearchFilterValue<
+		SearchableEntityFields[K]
+	>;
+};
+
+/**
+ * Search filter for JSONB data fields.
+ * Only supports top-level fields.
+ * Nested objects (like topic, purpose) are excluded.
+ */
+export type DataSearchFilter<DataSchema extends ZodTypeAny> = {
+	[K in keyof z.infer<DataSchema>]?: z.infer<DataSchema>[K] extends
+		| string
+		| number
+		| boolean
+		| undefined
+		? SearchFilterValue<NonNullable<z.infer<DataSchema>[K]>>
+		: never;
+};
+
+/**
+ * Search options for querying entities.
+ * Supports filtering by entity columns (derived from CorsairEntity) and JSONB data fields.
+ *
+ * @example
+ * // Search channels by name in JSONB data
+ * await tenant.slack.db.channels.search({
+ *   data: { name: "sdk-test" }
+ * });
+ *
+ * // Search with contains (LIKE)
+ * await tenant.slack.db.channels.search({
+ *   data: { name: { contains: "sdk" } }
+ * });
+ *
+ * // Search by entity_id
+ * await tenant.slack.db.channels.search({
+ *   entity_id: "C0123456789"
+ * });
+ */
+export type EntitySearchOptions<DataSchema extends ZodTypeAny> =
+	EntityFieldsFilter & {
+		/** Filter by JSONB data fields */
+		data?: DataSearchFilter<DataSchema>;
+		/** Maximum number of results */
+		limit?: number;
+		/** Number of results to skip */
+		offset?: number;
+	};
+
 /**
  * Entity client for a specific plugin entity type (e.g., slack.messages).
  * Provides typed access to entities with the entity type's data schema.
@@ -610,15 +683,31 @@ export type PluginEntityClient<DataSchema extends ZodTypeAny> = {
 		offset?: number;
 	}) => Promise<TypedEntity<DataSchema>[]>;
 
-	/** Search by entity ID substring. */
-	search: (options: {
-		query: string;
-		limit?: number;
-		offset?: number;
-	}) => Promise<TypedEntity<DataSchema>[]>;
+	/**
+	 * Search entities with typed filters.
+	 *
+	 * @example
+	 * // Search by JSONB data field
+	 * await tenant.slack.db.channels.search({
+	 *   data: { name: "sdk-test" }
+	 * });
+	 *
+	 * // Search with contains (LIKE)
+	 * await tenant.slack.db.channels.search({
+	 *   data: { name: { contains: "sdk" } }
+	 * });
+	 *
+	 * // Search by entity_id
+	 * await tenant.slack.db.channels.search({
+	 *   entity_id: { contains: "C012" }
+	 * });
+	 */
+	search: (
+		options: EntitySearchOptions<DataSchema>,
+	) => Promise<TypedEntity<DataSchema>[]>;
 
 	/** Create or update by external entity ID. */
-	upsert: (
+	upsertByEntityId: (
 		entityId: string,
 		data: z.input<DataSchema>,
 	) => Promise<TypedEntity<DataSchema>>;
@@ -828,22 +917,69 @@ function createPluginEntityClient<DataSchema extends ZodTypeAny>(
 			return rows.map(parseRow);
 		},
 
-		search: async ({ query, limit, offset }) => {
+		search: async (options) => {
 			assertDatabaseConfigured(database);
 			const accountId = await getAccountId();
+
+			// Build where clauses from search options
+			const whereConditions: CorsairWhere[] = [...baseWhere(accountId)];
+
+			// Helper to parse filter value into operator and value
+			function parseFilterValue(filterValue: unknown): {
+				operator: 'like' | '=';
+				value: unknown;
+			} {
+				if (
+					typeof filterValue === 'object' &&
+					filterValue !== null &&
+					!Array.isArray(filterValue)
+				) {
+					const obj = filterValue as Record<string, unknown>;
+					if ('contains' in obj && typeof obj.contains === 'string') {
+						return { operator: 'like', value: `%${obj.contains}%` };
+					}
+					if ('equals' in obj) {
+						return { operator: '=', value: obj.equals };
+					}
+				}
+				// Exact match
+				return { operator: '=', value: filterValue };
+			}
+
+			// Reserved keys that aren't entity column filters
+			const reservedKeys = new Set(['data', 'limit', 'offset']);
+
+			// Handle entity column filters (derived from CorsairEntity)
+			for (const [key, filterValue] of Object.entries(options)) {
+				if (reservedKeys.has(key) || filterValue === undefined) continue;
+				const { operator, value } = parseFilterValue(filterValue);
+				whereConditions.push({ field: key, operator, value });
+			}
+
+			// Handle data (JSONB) filters
+			if (options.data && typeof options.data === 'object') {
+				for (const [key, filterValue] of Object.entries(options.data)) {
+					if (filterValue === undefined) continue;
+					const { operator, value } = parseFilterValue(filterValue);
+					// Use JSONB path query syntax: data->>'key'
+					whereConditions.push({
+						field: `data->>'${key}'`,
+						operator,
+						value,
+					});
+				}
+			}
+
 			const rows = await database.findMany({
 				table: 'corsair_entities' as const,
-				where: [
-					...baseWhere(accountId),
-					{ field: 'entity_id', operator: 'like', value: `%${query}%` },
-				],
-				limit: limit ?? 100,
-				offset: offset ?? 0,
+				where: whereConditions,
+				limit: options.limit ?? 100,
+				offset: options.offset ?? 0,
 			});
 			return rows.map(parseRow);
 		},
 
-		upsert: async (entityId, data) => {
+		upsertByEntityId: async (entityId, data) => {
 			assertDatabaseConfigured(database);
 			const accountId = await getAccountId();
 			const parsed = dataSchema.parse(data);
@@ -872,7 +1008,7 @@ function createPluginEntityClient<DataSchema extends ZodTypeAny>(
 				return parseRow(updated!);
 			}
 
-			const id = generateUuidV4();
+			const id = generateUUID();
 			await database.insert({
 				table: 'corsair_entities' as const,
 				data: {
@@ -952,7 +1088,7 @@ function createPluginEntityClient<DataSchema extends ZodTypeAny>(
  * const message = await slackOrm.messages.findByEntityId('1234567890.123456');
  * // message.data is typed as SlackMessage
  *
- * await slackOrm.channels.upsert('C123', {
+ * await slackOrm.channels.upsertByEntityId('C123', {
  *   id: 'C123',
  *   name: 'general',
  *   is_private: false,

@@ -1,12 +1,19 @@
+import { logEventFromContext } from '../../utils/events';
 import type { ResendWebhooks } from '..';
-import type { DomainCreatedEvent, DomainUpdatedEvent } from './types';
 import { createResendMatch } from './types';
 
 export const domainCreated: ResendWebhooks['domainCreated'] = {
 	match: createResendMatch('domain.created'),
 
 	handler: async (ctx, request) => {
-		const event = request.payload as DomainCreatedEvent;
+		const event = request.payload;
+
+		if (event.type !== 'domain.created') {
+			return {
+				success: true,
+				data: undefined,
+			};
+		}
 
 		console.log('🌐 Resend Domain Created Event:', {
 			domain_id: event.data.domain_id,
@@ -14,27 +21,36 @@ export const domainCreated: ResendWebhooks['domainCreated'] = {
 			status: event.data.status,
 		});
 
+		let corsairEntityId = '';
+
 		if (ctx.db.domains && event.data.domain_id) {
 			try {
-				await ctx.db.domains.upsert(event.data.domain_id, {
-					id: event.data.domain_id,
-					name: event.data.name,
-					status: event.data.status as
-						| 'not_started'
-						| 'validation'
-						| 'scheduled'
-						| 'ready'
-						| 'error',
-					created_at: event.data.created_at,
-				});
+				const entity = await ctx.db.domains.upsertByEntityId(
+					event.data.domain_id,
+					{
+						...event.data,
+						id: event.data.domain_id,
+					},
+				);
+
+				corsairEntityId = entity?.id || '';
 			} catch (error) {
 				console.warn('Failed to save domain to database:', error);
 			}
 		}
 
+		await logEventFromContext(
+			ctx,
+			'resend.webhook.domainCreated',
+			{ ...event },
+			'completed',
+		);
+
 		return {
 			success: true,
-			data: {},
+			corsairEntityId,
+			tenantId: ctx.tenantId,
+			data: event,
 		};
 	},
 };
@@ -43,7 +59,14 @@ export const domainUpdated: ResendWebhooks['domainUpdated'] = {
 	match: createResendMatch('domain.updated'),
 
 	handler: async (ctx, request) => {
-		const event = request.payload as DomainUpdatedEvent;
+		const event = request.payload;
+
+		if (event.type !== 'domain.updated') {
+			return {
+				success: true,
+				data: undefined,
+			};
+		}
 
 		console.log('🔄 Resend Domain Updated Event:', {
 			domain_id: event.data.domain_id,
@@ -51,27 +74,36 @@ export const domainUpdated: ResendWebhooks['domainUpdated'] = {
 			status: event.data.status,
 		});
 
+		let corsairEntityId = '';
+
 		if (ctx.db.domains && event.data.domain_id) {
 			try {
-				await ctx.db.domains.upsert(event.data.domain_id, {
-					id: event.data.domain_id,
-					name: event.data.name,
-					status: event.data.status as
-						| 'not_started'
-						| 'validation'
-						| 'scheduled'
-						| 'ready'
-						| 'error',
-					created_at: event.data.created_at,
-				});
+				const entity = await ctx.db.domains.upsertByEntityId(
+					event.data.domain_id,
+					{
+						...event.data,
+						id: event.data.domain_id,
+					},
+				);
+
+				corsairEntityId = entity?.id || '';
 			} catch (error) {
 				console.warn('Failed to update domain in database:', error);
 			}
 		}
 
+		await logEventFromContext(
+			ctx,
+			'resend.webhook.domainUpdated',
+			{ ...event },
+			'completed',
+		);
+
 		return {
 			success: true,
-			data: {},
+			corsairEntityId,
+			tenantId: ctx.tenantId,
+			data: event,
 		};
 	},
 };

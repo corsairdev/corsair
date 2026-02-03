@@ -1,5 +1,6 @@
-import type { CorsairClient, CorsairTenantWrapper } from './client';
-import { buildCorsairClient } from './client';
+import { createMissingConfigProxy } from './auth/errors';
+import type { CorsairSingleTenantClient, CorsairTenantWrapper } from './client';
+import { buildCorsairClient, buildIntegrationKeys } from './client';
 import type { CorsairIntegration, CorsairPlugin } from './plugins';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -8,9 +9,10 @@ import type { CorsairIntegration, CorsairPlugin } from './plugins';
 
 /**
  * Creates a Corsair integration with multi-tenancy enabled.
- * Returns a wrapper with a `withTenant()` method to scope operations to specific tenants.
+ * Returns a wrapper with a `withTenant()` method to scope operations to specific tenants,
+ * and a `keys` property for integration-level key management.
  * @param config - Configuration with plugins, database, and multiTenancy: true
- * @returns A tenant wrapper with `withTenant(tenantId)` method
+ * @returns A tenant wrapper with `withTenant(tenantId)` method and integration-level `keys`
  */
 export function createCorsair<const Plugins extends readonly CorsairPlugin[]>(
 	config: CorsairIntegration<Plugins> & { multiTenancy: true },
@@ -18,23 +20,35 @@ export function createCorsair<const Plugins extends readonly CorsairPlugin[]>(
 
 /**
  * Creates a Corsair integration without multi-tenancy.
- * Returns a direct client instance.
+ * Returns a direct client instance with both plugin APIs and integration-level keys.
  * @param config - Configuration with plugins and optional database
- * @returns A Corsair client instance
+ * @returns A Corsair client instance with plugin APIs and integration-level `keys`
  */
 export function createCorsair<const Plugins extends readonly CorsairPlugin[]>(
 	config: CorsairIntegration<Plugins> & { multiTenancy?: false | undefined },
-): CorsairClient<Plugins>;
+): CorsairSingleTenantClient<Plugins>;
 
 /**
  * Main factory function that creates a Corsair integration.
  * Can return either a direct client or a multi-tenant wrapper depending on configuration.
  * @param config - Configuration object with plugins, database, and optional multi-tenancy
- * @returns Either a direct client or a tenant wrapper
+ * @returns Either a direct client (with keys) or a tenant wrapper (with keys)
  */
 export function createCorsair<const Plugins extends readonly CorsairPlugin[]>(
 	config: CorsairIntegration<Plugins>,
-): CorsairClient<Plugins> | CorsairTenantWrapper<Plugins> {
+): CorsairSingleTenantClient<Plugins> | CorsairTenantWrapper<Plugins> {
+	// Build integration-level keys if database and kek are configured
+	// Otherwise create a proxy that throws helpful errors
+	type IntegrationKeysType = ReturnType<typeof buildIntegrationKeys<Plugins>>;
+
+	const integrationKeys: IntegrationKeysType =
+		config.database && config.kek
+			? buildIntegrationKeys(config.plugins, config.database, config.kek)
+			: createMissingConfigProxy<IntegrationKeysType>(
+					!!config.database,
+					!!config.kek,
+				);
+
 	if (config.multiTenancy) {
 		return {
 			withTenant: (tenantId: string) => {
@@ -43,30 +57,77 @@ export function createCorsair<const Plugins extends readonly CorsairPlugin[]>(
 						'corsair.withTenant(tenantId): tenantId must be a non-empty string',
 					);
 				}
-				return buildCorsairClient(
-					config.plugins,
-					config.database,
+				return buildCorsairClient(config.plugins, {
+					database: config.database,
 					tenantId,
-					config.errorHandlers,
-				);
+					kek: config.kek,
+					rootErrorHandlers: config.errorHandlers,
+				});
 			},
+			keys: integrationKeys,
 		};
 	}
 
-	return buildCorsairClient(
-		config.plugins,
-		config.database,
-		undefined,
-		config.errorHandlers,
-	);
+	const client = buildCorsairClient(config.plugins, {
+		database: config.database,
+		tenantId: undefined,
+		kek: config.kek,
+		rootErrorHandlers: config.errorHandlers,
+	});
+
+	return Object.assign({}, client, {
+		keys: integrationKeys,
+	}) as CorsairSingleTenantClient<Plugins>;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Re-exports
 // ─────────────────────────────────────────────────────────────────────────────
 
+export type {
+	AccountConfigFor,
+	AccountConfigMap,
+	AccountKeyManagerFor,
+	AccountKeyManagerMap,
+	ApiKeyAccountConfig,
+	ApiKeyAccountKeyManager,
+	ApiKeyIntegrationConfig,
+	ApiKeyIntegrationKeyManager,
+	BaseKeyManager,
+	BotTokenAccountConfig,
+	BotTokenAccountKeyManager,
+	BotTokenIntegrationConfig,
+	BotTokenIntegrationKeyManager,
+	IntegrationConfigFor,
+	IntegrationConfigMap,
+	IntegrationKeyManagerFor,
+	IntegrationKeyManagerMap,
+	OAuth2AccountConfig,
+	OAuth2AccountKeyManager,
+	OAuth2IntegrationConfig,
+	OAuth2IntegrationKeyManager,
+} from './auth';
+// Auth utilities and types
+export {
+	createAccountKeyManager,
+	createIntegrationKeyManager,
+	decryptConfig,
+	decryptDEK,
+	decryptWithDEK,
+	encryptConfig,
+	encryptDEK,
+	encryptWithDEK,
+	generateDEK,
+	initializeAccountDEK,
+	initializeIntegrationDEK,
+	reEncryptConfig,
+} from './auth';
 // Core types
-export type { CorsairClient, CorsairTenantWrapper } from './client';
+export type {
+	CorsairClient,
+	CorsairSingleTenantClient,
+	CorsairTenantWrapper,
+} from './client';
 // Constants
 export type { AllProviders, AuthTypes, BaseProviders } from './constants';
 
@@ -98,6 +159,7 @@ export type {
 	CorsairPlugin,
 	CorsairPluginContext,
 	EndpointHooks,
+	KeyBuilderContext,
 	WebhookHooks,
 } from './plugins';
 

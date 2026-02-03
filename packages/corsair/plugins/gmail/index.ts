@@ -1,4 +1,3 @@
-import type { AuthTypes } from '../../constants';
 import type {
 	BindEndpoints,
 	BindWebhooks,
@@ -6,7 +5,10 @@ import type {
 	CorsairPlugin,
 	CorsairPluginContext,
 	CorsairWebhook,
+	KeyBuilderContext,
 } from '../../core';
+import type { AuthTypes, PickAuth } from '../../core/constants';
+import { getValidAccessToken } from './client';
 import type { GmailEndpointOutputs } from './endpoints';
 import {
 	DraftsEndpoints,
@@ -14,7 +16,6 @@ import {
 	MessagesEndpoints,
 	ThreadsEndpoints,
 } from './endpoints';
-import type { GmailCredentials } from './schema';
 import { GmailSchema } from './schema';
 import type {
 	GmailWebhookOutputs,
@@ -27,7 +28,7 @@ import { MessageWebhooks } from './webhooks';
 
 export type GmailContext = CorsairPluginContext<
 	typeof GmailSchema,
-	GmailCredentials
+	GmailPluginOptions
 >;
 
 type GmailEndpoint<
@@ -338,34 +339,88 @@ const gmailWebhooksNested = {
 };
 
 export type GmailPluginOptions = {
-	authType: AuthTypes;
-	credentials: GmailCredentials;
-	hooks?: GmailPlugin['hooks'] | undefined;
-	webhookHooks?: GmailPlugin['webhookHooks'] | undefined;
+	authType?: PickAuth<'oauth_2'>;
+	key?: string;
+	hooks?: InternalGmailPlugin['hooks'];
+	webhookHooks?: InternalGmailPlugin['webhookHooks'];
 };
 
-export type GmailPlugin = CorsairPlugin<
+export type GmailKeyBuilderContext = KeyBuilderContext<GmailPluginOptions>;
+
+const defaultAuthType: AuthTypes = 'oauth_2';
+
+export type BaseGmailPlugin<T extends GmailPluginOptions> = CorsairPlugin<
 	'gmail',
 	typeof GmailSchema,
 	typeof gmailEndpointsNested,
 	typeof gmailWebhooksNested,
-	GmailCredentials
+	T,
+	typeof defaultAuthType
 >;
 
-export function gmail(options: GmailPluginOptions) {
+/**
+ * We have to type the internal plugin separately from the external plugin
+ * Because the internal plugin has to provide options for all possible auth methods
+ * The external plugin has to provide options for the auth method the user has selected
+ */
+export type InternalGmailPlugin = BaseGmailPlugin<GmailPluginOptions>;
+
+export type ExternalGmailPlugin<T extends GmailPluginOptions> =
+	BaseGmailPlugin<T>;
+
+export function gmail<const T extends GmailPluginOptions>(
+	incomingOptions: GmailPluginOptions & T = {} as GmailPluginOptions & T,
+): ExternalGmailPlugin<T> {
+	const options = {
+		...incomingOptions,
+		authType: incomingOptions.authType ?? defaultAuthType,
+	};
 	return {
 		id: 'gmail',
 		schema: GmailSchema,
-		options: options.credentials,
+		options: options,
 		hooks: options.hooks,
 		webhookHooks: options.webhookHooks,
 		endpoints: gmailEndpointsNested,
 		webhooks: gmailWebhooksNested,
+		keyBuilder: async (ctx: GmailKeyBuilderContext) => {
+			if (options.key) {
+				return options.key;
+			}
+
+			if (ctx.authType === 'oauth_2') {
+				const accessToken = await ctx.keys.getAccessToken();
+				const refreshToken = await ctx.keys.getRefreshToken();
+
+				if (!accessToken || !refreshToken) {
+					// prob need to throw an error here
+					return '';
+				}
+
+				const res = await ctx.keys.getIntegrationCredentials();
+
+				if (!res.clientId || !res.clientSecret) {
+					// prob need to throw an error here
+					return '';
+				}
+
+				const key = await getValidAccessToken({
+					accessToken,
+					refreshToken,
+					clientId: res.clientId,
+					clientSecret: res.clientSecret,
+				});
+
+				return key;
+			}
+
+			return '';
+		},
 		pluginWebhookMatcher: (
 			request: import('../../core/webhooks').RawWebhookRequest,
 		) => {
 			const body = request.body as Record<string, unknown>;
 			return (body?.message as Record<string, unknown>)?.data !== undefined;
 		},
-	} as GmailPlugin;
+	} satisfies InternalGmailPlugin;
 }
