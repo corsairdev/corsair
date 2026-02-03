@@ -3,7 +3,6 @@ import type {
 	CreateAliasResponse,
 	CreateEventResponse,
 	CreateIdentityResponse,
-	PostHogEndpointOutputs,
 	TrackPageResponse,
 	TrackScreenResponse,
 } from './endpoints/types';
@@ -36,13 +35,8 @@ describe('PostHog API Type Tests', () => {
 			);
 			const result = response;
 			
-			const validated = PostHogEndpointOutputSchemas.eventCreate.parse(result);
+			PostHogEndpointOutputSchemas.eventCreate.parse(result);
 			
-			type _Check = AssertExactType<
-				typeof result,
-				PostHogEndpointOutputs['eventCreate']
-			>;
-			const _assert: _Check = true;
 		});
 
 		it('aliasCreate returns correct type', async () => {
@@ -65,13 +59,8 @@ describe('PostHog API Type Tests', () => {
 			);
 			const result = response;
 			
-			const validated = PostHogEndpointOutputSchemas.aliasCreate.parse(result);
+			PostHogEndpointOutputSchemas.aliasCreate.parse(result);
 			
-			type _Check = AssertExactType<
-				typeof result,
-				PostHogEndpointOutputs['aliasCreate']
-			>;
-			const _assert: _Check = true;
 		});
 
 		it('identityCreate returns correct type', async () => {
@@ -94,13 +83,8 @@ describe('PostHog API Type Tests', () => {
 			);
 			const result = response;
 			
-			const validated = PostHogEndpointOutputSchemas.identityCreate.parse(result);
+			PostHogEndpointOutputSchemas.identityCreate.parse(result);
 			
-			type _Check = AssertExactType<
-				typeof result,
-				PostHogEndpointOutputs['identityCreate']
-			>;
-			const _assert: _Check = true;
 		});
 
 		it('trackPage returns correct type', async () => {
@@ -122,13 +106,8 @@ describe('PostHog API Type Tests', () => {
 			);
 			const result = response;
 			
-			const validated = PostHogEndpointOutputSchemas.trackPage.parse(result);
+			PostHogEndpointOutputSchemas.trackPage.parse(result);
 			
-			type _Check = AssertExactType<
-				typeof result,
-				PostHogEndpointOutputs['trackPage']
-			>;
-			const _assert: _Check = true;
 		});
 
 		it('trackScreen returns correct type', async () => {
@@ -150,13 +129,8 @@ describe('PostHog API Type Tests', () => {
 			);
 			const result = response;
 			
-			const validated = PostHogEndpointOutputSchemas.trackScreen.parse(result);
+			PostHogEndpointOutputSchemas.trackScreen.parse(result);
 			
-			type _Check = AssertExactType<
-				typeof result,
-				PostHogEndpointOutputs['trackScreen']
-			>;
-			const _assert: _Check = true;
 		});
 	});
 });

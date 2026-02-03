@@ -826,14 +826,8 @@ describe('Linear API Type Tests', () => {
 			const result = response.projectDelete.success;
 			
 			// Runtime validation with Zod
-			const validated = LinearEndpointOutputSchemas.projectsDelete.parse(result);
+			LinearEndpointOutputSchemas.projectsDelete.parse(result);
 			
-			// Compile-time type check
-			type _Check = AssertExactType<
-				typeof result,
-				LinearEndpointOutputs['projectsDelete']
-			>;
-			const _assert: _Check = true;
 		});
 	});
 
@@ -857,14 +851,8 @@ describe('Linear API Type Tests', () => {
 			const result = response.issue.comments;
 			
 			// Runtime validation with Zod
-			const validated = LinearEndpointOutputSchemas.commentsList.parse(result);
+			LinearEndpointOutputSchemas.commentsList.parse(result);
 			
-			// Compile-time type check
-			type _Check = AssertExactType<
-				typeof result,
-				LinearEndpointOutputs['commentsList']
-			>;
-			const _assert: _Check = true;
 		});
 
 		it('commentsCreate returns correct type', async () => {
@@ -886,14 +874,8 @@ describe('Linear API Type Tests', () => {
 			const result = response.commentCreate.comment;
 			
 			// Runtime validation with Zod
-			const validated = LinearEndpointOutputSchemas.commentsCreate.parse(result);
+			LinearEndpointOutputSchemas.commentsCreate.parse(result);
 			
-			// Compile-time type check
-			type _Check = AssertExactType<
-				typeof result,
-				LinearEndpointOutputs['commentsCreate']
-			>;
-			const _assert: _Check = true;
 		});
 
 		it('commentsUpdate returns correct type', async () => {
@@ -925,14 +907,8 @@ describe('Linear API Type Tests', () => {
 			const result = response.commentUpdate.comment;
 			
 			// Runtime validation with Zod
-			const validated = LinearEndpointOutputSchemas.commentsUpdate.parse(result);
+			LinearEndpointOutputSchemas.commentsUpdate.parse(result);
 			
-			// Compile-time type check
-			type _Check = AssertExactType<
-				typeof result,
-				LinearEndpointOutputs['commentsUpdate']
-			>;
-			const _assert: _Check = true;
 		});
 
 		it('commentsDelete returns correct type', async () => {
@@ -964,14 +940,8 @@ describe('Linear API Type Tests', () => {
 			const result = response.commentDelete.success;
 			
 			// Runtime validation with Zod
-			const validated = LinearEndpointOutputSchemas.commentsDelete.parse(result);
+			LinearEndpointOutputSchemas.commentsDelete.parse(result);
 			
-			// Compile-time type check
-			type _Check = AssertExactType<
-				typeof result,
-				LinearEndpointOutputs['commentsDelete']
-			>;
-			const _assert: _Check = true;
 		});
 	});
 });

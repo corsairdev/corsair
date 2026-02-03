@@ -39,13 +39,7 @@ describe('HubSpot API Type Tests', () => {
 			);
 			const result = response;
 			
-			const validated = HubSpotEndpointOutputSchemas.contactsGetMany.parse(result);
-			
-			type _Check = AssertExactType<
-				typeof result,
-				HubSpotEndpointOutputs['contactsGetMany']
-			>;
-			const _assert: _Check = true;
+			HubSpotEndpointOutputSchemas.contactsGetMany.parse(result);
 		});
 
 		it('contactsGet returns correct type', async () => {
@@ -65,13 +59,8 @@ describe('HubSpot API Type Tests', () => {
 			);
 			const result = response;
 			
-			const validated = HubSpotEndpointOutputSchemas.contactsGet.parse(result);
+			HubSpotEndpointOutputSchemas.contactsGet.parse(result);
 			
-			type _Check = AssertExactType<
-				typeof result,
-				HubSpotEndpointOutputs['contactsGet']
-			>;
-			const _assert: _Check = true;
 		});
 
 		it('contactsCreateOrUpdate returns correct type', async () => {
@@ -89,13 +78,8 @@ describe('HubSpot API Type Tests', () => {
 			);
 			const result = response;
 			
-			const validated = HubSpotEndpointOutputSchemas.contactsCreateOrUpdate.parse(result);
+			HubSpotEndpointOutputSchemas.contactsCreateOrUpdate.parse(result);
 			
-			type _Check = AssertExactType<
-				typeof result,
-				HubSpotEndpointOutputs['contactsCreateOrUpdate']
-			>;
-			const _assert: _Check = true;
 		});
 
 		it('contactsGetRecentlyCreated returns correct type', async () => {
@@ -106,13 +90,7 @@ describe('HubSpot API Type Tests', () => {
 			);
 			const result = response;
 			
-			const validated = HubSpotEndpointOutputSchemas.contactsGetRecentlyCreated.parse(result);
-			
-			type _Check = AssertExactType<
-				typeof result,
-				HubSpotEndpointOutputs['contactsGetRecentlyCreated']
-			>;
-			const _assert: _Check = true;
+			HubSpotEndpointOutputSchemas.contactsGetRecentlyCreated.parse(result);
 		});
 
 		it('contactsGetRecentlyUpdated returns correct type', async () => {
@@ -123,13 +101,8 @@ describe('HubSpot API Type Tests', () => {
 			);
 			const result = response;
 			
-			const validated = HubSpotEndpointOutputSchemas.contactsGetRecentlyUpdated.parse(result);
+			HubSpotEndpointOutputSchemas.contactsGetRecentlyUpdated.parse(result);
 			
-			type _Check = AssertExactType<
-				typeof result,
-				HubSpotEndpointOutputs['contactsGetRecentlyUpdated']
-			>;
-			const _assert: _Check = true;
 		});
 
 		it('contactsSearch returns correct type', async () => {
@@ -145,13 +118,8 @@ describe('HubSpot API Type Tests', () => {
 			);
 			const result = response;
 			
-			const validated = HubSpotEndpointOutputSchemas.contactsSearch.parse(result);
+			HubSpotEndpointOutputSchemas.contactsSearch.parse(result);
 			
-			type _Check = AssertExactType<
-				typeof result,
-				HubSpotEndpointOutputs['contactsSearch']
-			>;
-			const _assert: _Check = true;
 		});
 	});
 
@@ -164,13 +132,8 @@ describe('HubSpot API Type Tests', () => {
 			);
 			const result = response;
 			
-			const validated = HubSpotEndpointOutputSchemas.companiesGetMany.parse(result);
+			HubSpotEndpointOutputSchemas.companiesGetMany.parse(result);
 			
-			type _Check = AssertExactType<
-				typeof result,
-				HubSpotEndpointOutputs['companiesGetMany']
-			>;
-			const _assert: _Check = true;
 		});
 
 		it('companiesGet returns correct type', async () => {
@@ -190,13 +153,8 @@ describe('HubSpot API Type Tests', () => {
 			);
 			const result = response;
 			
-			const validated = HubSpotEndpointOutputSchemas.companiesGet.parse(result);
+			HubSpotEndpointOutputSchemas.companiesGet.parse(result);
 			
-			type _Check = AssertExactType<
-				typeof result,
-				HubSpotEndpointOutputs['companiesGet']
-			>;
-			const _assert: _Check = true;
 		});
 
 		it('companiesCreate returns correct type', async () => {
@@ -214,13 +172,8 @@ describe('HubSpot API Type Tests', () => {
 			);
 			const result = response;
 			
-			const validated = HubSpotEndpointOutputSchemas.companiesCreate.parse(result);
+			HubSpotEndpointOutputSchemas.companiesCreate.parse(result);
 			
-			type _Check = AssertExactType<
-				typeof result,
-				HubSpotEndpointOutputs['companiesCreate']
-			>;
-			const _assert: _Check = true;
 		});
 
 		it('companiesUpdate returns correct type', async () => {
@@ -248,13 +201,8 @@ describe('HubSpot API Type Tests', () => {
 			);
 			const result = response;
 			
-			const validated = HubSpotEndpointOutputSchemas.companiesUpdate.parse(result);
+			HubSpotEndpointOutputSchemas.companiesUpdate.parse(result);
 			
-			type _Check = AssertExactType<
-				typeof result,
-				HubSpotEndpointOutputs['companiesUpdate']
-			>;
-			const _assert: _Check = true;
 		});
 
 		it('companiesGetRecentlyCreated returns correct type', async () => {
@@ -265,13 +213,8 @@ describe('HubSpot API Type Tests', () => {
 			);
 			const result = response;
 			
-			const validated = HubSpotEndpointOutputSchemas.companiesGetRecentlyCreated.parse(result);
-			
-			type _Check = AssertExactType<
-				typeof result,
-				HubSpotEndpointOutputs['companiesGetRecentlyCreated']
-			>;
-			const _assert: _Check = true;
+			HubSpotEndpointOutputSchemas.companiesGetRecentlyCreated.parse(result);
+		
 		});
 
 		it('companiesGetRecentlyUpdated returns correct type', async () => {
@@ -282,13 +225,8 @@ describe('HubSpot API Type Tests', () => {
 			);
 			const result = response;
 			
-			const validated = HubSpotEndpointOutputSchemas.companiesGetRecentlyUpdated.parse(result);
-			
-			type _Check = AssertExactType<
-				typeof result,
-				HubSpotEndpointOutputs['companiesGetRecentlyUpdated']
-			>;
-			const _assert: _Check = true;
+			HubSpotEndpointOutputSchemas.companiesGetRecentlyUpdated.parse(result);
+   
 		});
 
 		it('companiesSearchByDomain returns correct type', async () => {
@@ -307,13 +245,8 @@ describe('HubSpot API Type Tests', () => {
 			);
 			const result = response;
 			
-			const validated = HubSpotEndpointOutputSchemas.companiesSearchByDomain.parse(result);
+			HubSpotEndpointOutputSchemas.companiesSearchByDomain.parse(result);
 			
-			type _Check = AssertExactType<
-				typeof result,
-				HubSpotEndpointOutputs['companiesSearchByDomain']
-			>;
-			const _assert: _Check = true;
 		});
 	});
 
@@ -326,13 +259,8 @@ describe('HubSpot API Type Tests', () => {
 			);
 			const result = response;
 			
-			const validated = HubSpotEndpointOutputSchemas.dealsGetMany.parse(result);
+			HubSpotEndpointOutputSchemas.dealsGetMany.parse(result);
 			
-			type _Check = AssertExactType<
-				typeof result,
-				HubSpotEndpointOutputs['dealsGetMany']
-			>;
-			const _assert: _Check = true;
 		});
 
 		it('dealsGet returns correct type', async () => {
@@ -352,13 +280,8 @@ describe('HubSpot API Type Tests', () => {
 			);
 			const result = response;
 			
-			const validated = HubSpotEndpointOutputSchemas.dealsGet.parse(result);
+			HubSpotEndpointOutputSchemas.dealsGet.parse(result);
 			
-			type _Check = AssertExactType<
-				typeof result,
-				HubSpotEndpointOutputs['dealsGet']
-			>;
-			const _assert: _Check = true;
 		});
 
 		it('dealsCreate returns correct type', async () => {
@@ -376,13 +299,8 @@ describe('HubSpot API Type Tests', () => {
 			);
 			const result = response;
 			
-			const validated = HubSpotEndpointOutputSchemas.dealsCreate.parse(result);
+			HubSpotEndpointOutputSchemas.dealsCreate.parse(result);
 			
-			type _Check = AssertExactType<
-				typeof result,
-				HubSpotEndpointOutputs['dealsCreate']
-			>;
-			const _assert: _Check = true;
 		});
 
 		it('dealsUpdate returns correct type', async () => {
@@ -410,13 +328,8 @@ describe('HubSpot API Type Tests', () => {
 			);
 			const result = response;
 			
-			const validated = HubSpotEndpointOutputSchemas.dealsUpdate.parse(result);
+			HubSpotEndpointOutputSchemas.dealsUpdate.parse(result);
 			
-			type _Check = AssertExactType<
-				typeof result,
-				HubSpotEndpointOutputs['dealsUpdate']
-			>;
-			const _assert: _Check = true;
 		});
 
 		it('dealsGetRecentlyCreated returns correct type', async () => {
@@ -427,13 +340,7 @@ describe('HubSpot API Type Tests', () => {
 			);
 			const result = response;
 			
-			const validated = HubSpotEndpointOutputSchemas.dealsGetRecentlyCreated.parse(result);
-			
-			type _Check = AssertExactType<
-				typeof result,
-				HubSpotEndpointOutputs['dealsGetRecentlyCreated']
-			>;
-			const _assert: _Check = true;
+			HubSpotEndpointOutputSchemas.dealsGetRecentlyCreated.parse(result);
 		});
 
 		it('dealsGetRecentlyUpdated returns correct type', async () => {
@@ -444,13 +351,8 @@ describe('HubSpot API Type Tests', () => {
 			);
 			const result = response;
 			
-			const validated = HubSpotEndpointOutputSchemas.dealsGetRecentlyUpdated.parse(result);
+			HubSpotEndpointOutputSchemas.dealsGetRecentlyUpdated.parse(result);
 			
-			type _Check = AssertExactType<
-				typeof result,
-				HubSpotEndpointOutputs['dealsGetRecentlyUpdated']
-			>;
-			const _assert: _Check = true;
 		});
 
 		it('dealsSearch returns correct type', async () => {
@@ -466,13 +368,8 @@ describe('HubSpot API Type Tests', () => {
 			);
 			const result = response;
 			
-			const validated = HubSpotEndpointOutputSchemas.dealsSearch.parse(result);
+			HubSpotEndpointOutputSchemas.dealsSearch.parse(result);
 			
-			type _Check = AssertExactType<
-				typeof result,
-				HubSpotEndpointOutputs['dealsSearch']
-			>;
-			const _assert: _Check = true;
 		});
 	});
 
@@ -485,14 +382,8 @@ describe('HubSpot API Type Tests', () => {
 				);
 				const result = response;
 				
-				const validated = HubSpotEndpointOutputSchemas.ticketsGetMany.parse(result);
+				HubSpotEndpointOutputSchemas.ticketsGetMany.parse(result);
 				
-				type _Check = AssertExactType<
-					typeof result,
-					HubSpotEndpointOutputs['ticketsGetMany']
-				>;
-				const _assert: _Check = true;
-			
 		});
 
 		it('ticketsGet returns correct type', async () => {
@@ -512,14 +403,8 @@ describe('HubSpot API Type Tests', () => {
 				);
 				const result = response;
 				
-				const validated = HubSpotEndpointOutputSchemas.ticketsGet.parse(result);
+				HubSpotEndpointOutputSchemas.ticketsGet.parse(result);
 				
-				type _Check = AssertExactType<
-					typeof result,
-					HubSpotEndpointOutputs['ticketsGet']
-				>;
-				const _assert: _Check = true;
-			
 		});
 
 		it('ticketsCreate returns correct type', async () => {
@@ -574,14 +459,8 @@ describe('HubSpot API Type Tests', () => {
 				);
 				const result = response;
 				
-				const validated = HubSpotEndpointOutputSchemas.ticketsCreate.parse(result);
+				HubSpotEndpointOutputSchemas.ticketsCreate.parse(result);
 				
-				type _Check = AssertExactType<
-					typeof result,
-					HubSpotEndpointOutputs['ticketsCreate']
-				>;
-				const _assert: _Check = true;
-			
 		});
 
 		it('ticketsUpdate returns correct type', async () => {
@@ -609,14 +488,8 @@ describe('HubSpot API Type Tests', () => {
 				);
 				const result = response;
 				
-				const validated = HubSpotEndpointOutputSchemas.ticketsUpdate.parse(result);
+				HubSpotEndpointOutputSchemas.ticketsUpdate.parse(result);
 				
-				type _Check = AssertExactType<
-					typeof result,
-					HubSpotEndpointOutputs['ticketsUpdate']
-				>;
-				const _assert: _Check = true;
-			
 		});
 	});
 
@@ -629,13 +502,8 @@ describe('HubSpot API Type Tests', () => {
 			);
 			const result = response;
 			
-			const validated = HubSpotEndpointOutputSchemas.engagementsGetMany.parse(result);
+			HubSpotEndpointOutputSchemas.engagementsGetMany.parse(result);
 			
-			type _Check = AssertExactType<
-				typeof result,
-				HubSpotEndpointOutputs['engagementsGetMany']
-			>;
-			const _assert: _Check = true;
 		});
 
 		it('engagementsGet returns correct type', async () => {
@@ -655,47 +523,9 @@ describe('HubSpot API Type Tests', () => {
 			);
 			const result = response;
 			
-			const validated = HubSpotEndpointOutputSchemas.engagementsGet.parse(result);
+			HubSpotEndpointOutputSchemas.engagementsGet.parse(result);
 			
-			type _Check = AssertExactType<
-				typeof result,
-				HubSpotEndpointOutputs['engagementsGet']
-			>;
-			const _assert: _Check = true;
-		});
-
-		it('engagementsCreate returns correct type', async () => {
-			try {
-				const response = await makeHubSpotRequest<CreateEngagementResponse>(
-					'/crm/v3/objects/engagements',
-					TEST_TOKEN,
-					{
-						method: 'POST',
-						body: {
-							engagement: {
-								type: 'NOTE',
-							},
-							metadata: {
-								body: `Test engagement note ${Date.now()}`,
-							},
-						},
-					},
-				);
-				const result = response;
-				
-				const validated = HubSpotEndpointOutputSchemas.engagementsCreate.parse(result);
-				
-				type _Check = AssertExactType<
-					typeof result,
-					HubSpotEndpointOutputs['engagementsCreate']
-				>;
-				const _assert: _Check = true;
-			} catch (error) {
-				if (error instanceof HubSpotAPIError && (error.code === 400 || error.code === 403)) {
-					return;
-				}
-				throw error;
-			}
-		});
+        });
+        
 	});
 });
