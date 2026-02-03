@@ -1,4 +1,4 @@
-import type { AuthTypes } from '../../constants';
+import type { AuthTypes } from '../../core/constants';
 import type {
 	BindEndpoints,
 	BindWebhooks,

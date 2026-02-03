@@ -21,6 +21,7 @@ async function createSlackClient() {
 		plugins: [
 			slack({
 				authType: 'oauth_2',
+				key: process.env.SLACK_BOT_TOKEN!,
 				credentials: {
 					botToken,
 				},
