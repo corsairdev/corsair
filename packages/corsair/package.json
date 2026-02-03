@@ -79,6 +79,7 @@
   },
   "dependencies": {
     "uuid": "^13.0.0",
+    "uuidv7": "^1.1.0",
     "zod": "^3.25.76"
   },
   "peerDependencies": {
