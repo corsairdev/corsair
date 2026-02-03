@@ -14,6 +14,8 @@ export async function POST(request: NextRequest) {
 		? await request.json()
 		: await request.text();
 
+	const parsedBody = typeof body === 'string' ? JSON.parse(body) : body;
+
 	const url = new URL(request.url);
 
 	const tenantId =
@@ -23,9 +25,9 @@ export async function POST(request: NextRequest) {
 
 	const result = await filterWebhook(corsair, headers, body, { tenantId });
 
-	if (result.plugin === 'slack') {
-		if ((result.body as any).type === 'url_verification') {
-			return NextResponse.json({ challenge: (result.body as any).challenge });
+	if(result.plugin === 'slack') {
+		if (parsedBody && typeof parsedBody === 'object' && parsedBody.type === 'url_verification') {
+			return NextResponse.json({ challenge: parsedBody.challenge });
 		}
 	}
 
