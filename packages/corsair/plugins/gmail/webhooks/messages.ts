@@ -449,7 +449,6 @@ export const messageReceived = {
 			return {
 				success: true,
 				corsairEntityId,
-				tenantId: ctx.tenantId,
 				data: event,
 			};
 		} catch (error) {
@@ -468,7 +467,6 @@ export const messageReceived = {
 			return {
 				success: false,
 				error: error instanceof Error ? error.message : 'Unknown error',
-				tenantId: ctx.tenantId,
 				data: event,
 			};
 		}
@@ -552,7 +550,6 @@ export const messageDeleted = {
 				};
 				return {
 					success: true,
-					tenantId: ctx.tenantId,
 					data: event,
 				};
 			}
@@ -617,7 +614,6 @@ export const messageDeleted = {
 			return {
 				success: true,
 				corsairEntityId,
-				tenantId: ctx.tenantId,
 				data: event,
 			};
 		} catch (error) {
@@ -636,7 +632,6 @@ export const messageDeleted = {
 			return {
 				success: false,
 				error: error instanceof Error ? error.message : 'Unknown error',
-				tenantId: ctx.tenantId,
 				data: event,
 			};
 		}
@@ -724,7 +719,6 @@ export const messageLabelChanged = {
 				};
 				return {
 					success: true,
-					tenantId: ctx.tenantId,
 					data: event,
 				};
 			}
@@ -812,7 +806,6 @@ export const messageLabelChanged = {
 			return {
 				success: true,
 				corsairEntityId,
-				tenantId: ctx.tenantId,
 				data: event,
 			};
 		} catch (error) {
@@ -831,7 +824,6 @@ export const messageLabelChanged = {
 			return {
 				success: false,
 				error: error instanceof Error ? error.message : 'Unknown error',
-				tenantId: ctx.tenantId,
 				data: event,
 			};
 		}

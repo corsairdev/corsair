@@ -25,7 +25,6 @@ export const added: SlackWebhooks['reactionAdded'] = {
 
 		return {
 			success: true,
-			tenantId: ctx.tenantId,
 			data: event,
 		};
 	},

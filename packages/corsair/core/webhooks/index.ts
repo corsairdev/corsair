@@ -38,8 +38,8 @@ export type WebhookResponse<TData = unknown> = {
 	success: boolean;
 	/** The entity relevant to the webhook (note that this is corsair_entities.id) */
 	corsairEntityId?: string;
-	/** The tenant this is being performed for (if multi-tenancy is disabled, this is undefined) */
-	tenantId?: string;
+	/** Return the response of the webhook handler to the sender. Defaults to false. Usually only necessary for webhook confirmation / challenge. */
+	returnToSender?: boolean;
 	/** Optional data to return in the HTTP response */
 	data?: TData;
 	/** Optional error message if processing failed */

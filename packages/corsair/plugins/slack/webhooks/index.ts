@@ -7,6 +7,7 @@ import {
 import { message } from './messages';
 import { added as reactionAdded } from './reactions';
 import { teamJoin, userChange } from './users';
+import { challenge } from './challenge';
 
 export const ChannelWebhooks = {
 	created: channelCreated,
@@ -29,6 +30,10 @@ export const ReactionWebhooks = {
 export const UserWebhooks = {
 	teamJoin,
 	userChange,
+};
+
+export const ChallengeWebhooks = {
+	challenge,
 };
 
 export * as usersWebhooks from './users';
