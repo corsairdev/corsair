@@ -19,6 +19,7 @@ async function createLinearClient() {
 		plugins: [
 			linear({
 				authType: 'api_key',
+				key: process.env.LINEAR_API_KEY!,
 				credentials: {
 					apiKey,
 				},

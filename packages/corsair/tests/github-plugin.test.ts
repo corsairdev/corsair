@@ -20,7 +20,7 @@ async function createGithubClient() {
 	const corsair = createCorsair({
 		plugins: [
 			github({
-				authType: 'oauth_2',
+				authType: 'api_key',
 				credentials: {
 					token,
 				},
