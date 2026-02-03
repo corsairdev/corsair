@@ -202,13 +202,48 @@ export async function filterWebhook(
 
 			try {
 				const response = await matched.webhook.handler(webhookRequest);
+
+				let preparedResponse: { success: boolean; data?: unknown } = {
+					success: true,
+				};
+
+				if (response.returnToSender && response.data !== undefined) {
+					const data = response.data;
+					// If data is an object with a 'type' field, remove it and extract the other value(s)
+					if (
+						typeof data === 'object' &&
+						data !== null &&
+						!Array.isArray(data) &&
+						'type' in data
+					) {
+						const { type, ...rest } = data as Record<string, unknown>;
+						// If only one other field remains, return just that value
+						const otherKeys = Object.keys(rest);
+						if (otherKeys.length === 1 && otherKeys[0]) {
+							preparedResponse = {
+								...preparedResponse,
+								data: rest[otherKeys[0]],
+							};
+						} else {
+							// Otherwise return the object without 'type'
+							preparedResponse = {
+								...preparedResponse,
+								data: rest,
+							};
+						}
+					} else {
+						preparedResponse = {
+							...preparedResponse,
+							data: data,
+						};
+					}
+				}
+
 				return {
 					plugin: pluginId,
 					action,
 					body: parsedBody,
-					response: response.returnToSender
-						? { success: true, data: response.data }
-						: { success: true },
+					response: preparedResponse,
 				};
 			} catch (error) {
 				console.error(

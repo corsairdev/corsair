@@ -19,6 +19,7 @@ export const challenge: SlackWebhooks['challenge'] = {
 			returnToSender: true,
 			data: {
 				challenge: request.payload.challenge,
+				type: 'url_verification',
 			},
 		};
 	},
