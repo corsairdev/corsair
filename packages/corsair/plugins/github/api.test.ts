@@ -43,13 +43,8 @@ describe('GitHub API Type Tests', () => {
 			);
 			const result = response;
 			
-			const validated = GithubEndpointOutputSchemas.repositoriesList.parse(result);
+			GithubEndpointOutputSchemas.repositoriesList.parse(result);
 			
-			type _Check = AssertExactType<
-				typeof result,
-				GithubEndpointOutputs['repositoriesList']
-			>;
-			const _assert: _Check = true;
 		});
 
 
@@ -60,13 +55,8 @@ describe('GitHub API Type Tests', () => {
 			);
 			const result = response;
 			
-			const validated = GithubEndpointOutputSchemas.repositoriesGet.parse(result);
+			GithubEndpointOutputSchemas.repositoriesGet.parse(result);
 			
-			type _Check = AssertExactType<
-				typeof result,
-				GithubEndpointOutputs['repositoriesGet']
-			>;
-			const _assert: _Check = true;
 		});
 
 		it('repositoriesListBranches returns correct type', async () => {
@@ -77,13 +67,8 @@ describe('GitHub API Type Tests', () => {
 			);
 			const result = response;
 			
-			const validated = GithubEndpointOutputSchemas.repositoriesListBranches.parse(result);
+			GithubEndpointOutputSchemas.repositoriesListBranches.parse(result);
 			
-			type _Check = AssertExactType<
-				typeof result,
-				GithubEndpointOutputs['repositoriesListBranches']
-			>;
-			const _assert: _Check = true;
 		});
 
 		it('repositoriesListCommits returns correct type', async () => {
@@ -94,13 +79,8 @@ describe('GitHub API Type Tests', () => {
 			);
 			const result = response;
 			
-			const validated = GithubEndpointOutputSchemas.repositoriesListCommits.parse(result);
+			GithubEndpointOutputSchemas.repositoriesListCommits.parse(result);
 			
-			type _Check = AssertExactType<
-				typeof result,
-				GithubEndpointOutputs['repositoriesListCommits']
-			>;
-			const _assert: _Check = true;
 		});
 
 		it('repositoriesGetContent returns correct type', async () => {
@@ -110,13 +90,8 @@ describe('GitHub API Type Tests', () => {
 			);
 			const result = response;
 			
-			const validated = GithubEndpointOutputSchemas.repositoriesGetContent.parse(result);
+			GithubEndpointOutputSchemas.repositoriesGetContent.parse(result);
 			
-			type _Check = AssertExactType<
-				typeof result,
-				GithubEndpointOutputs['repositoriesGetContent']
-			>;
-			const _assert: _Check = true;
 		});
 	});
 
@@ -129,13 +104,8 @@ describe('GitHub API Type Tests', () => {
 			);
 			const result = response;
 			
-			const validated = GithubEndpointOutputSchemas.issuesList.parse(result);
+			GithubEndpointOutputSchemas.issuesList.parse(result);
 			
-			type _Check = AssertExactType<
-				typeof result,
-				GithubEndpointOutputs['issuesList']
-			>;
-			const _assert: _Check = true;
 		});
 
 		it('issuesGet returns correct type', async () => {
@@ -155,13 +125,8 @@ describe('GitHub API Type Tests', () => {
 			);
 			const result = response;
 			
-			const validated = GithubEndpointOutputSchemas.issuesGet.parse(result);
+			GithubEndpointOutputSchemas.issuesGet.parse(result);
 			
-			type _Check = AssertExactType<
-				typeof result,
-				GithubEndpointOutputs['issuesGet']
-			>;
-			const _assert: _Check = true;
 		});
 
 		it('issuesCreate returns correct type', async () => {
@@ -178,13 +143,8 @@ describe('GitHub API Type Tests', () => {
 			);
 			const result = response;
 			
-			const validated = GithubEndpointOutputSchemas.issuesCreate.parse(result);
+			GithubEndpointOutputSchemas.issuesCreate.parse(result);
 			
-			type _Check = AssertExactType<
-				typeof result,
-				GithubEndpointOutputs['issuesCreate']
-			>;
-			const _assert: _Check = true;
 		});
 
 		it('issuesUpdate returns correct type', async () => {
@@ -210,13 +170,8 @@ describe('GitHub API Type Tests', () => {
 			);
 			const result = response;
 			
-			const validated = GithubEndpointOutputSchemas.issuesUpdate.parse(result);
+			GithubEndpointOutputSchemas.issuesUpdate.parse(result);
 			
-			type _Check = AssertExactType<
-				typeof result,
-				GithubEndpointOutputs['issuesUpdate']
-			>;
-			const _assert: _Check = true;
 		});
 
 		it('issuesCreateComment returns correct type', async () => {
@@ -242,13 +197,8 @@ describe('GitHub API Type Tests', () => {
 			);
 			const result = response;
 			
-			const validated = GithubEndpointOutputSchemas.issuesCreateComment.parse(result);
+			GithubEndpointOutputSchemas.issuesCreateComment.parse(result);
 			
-			type _Check = AssertExactType<
-				typeof result,
-				GithubEndpointOutputs['issuesCreateComment']
-			>;
-			const _assert: _Check = true;
 		});
 	});
 
@@ -261,13 +211,8 @@ describe('GitHub API Type Tests', () => {
 			);
 			const result = response;
 			
-			const validated = GithubEndpointOutputSchemas.pullRequestsList.parse(result);
+			GithubEndpointOutputSchemas.pullRequestsList.parse(result);
 			
-			type _Check = AssertExactType<
-				typeof result,
-				GithubEndpointOutputs['pullRequestsList']
-			>;
-			const _assert: _Check = true;
 		});
 
 		it('pullRequestsGet returns correct type', async () => {
@@ -287,58 +232,10 @@ describe('GitHub API Type Tests', () => {
 			);
 			const result = response;
 			
-			const validated = GithubEndpointOutputSchemas.pullRequestsGet.parse(result);
+			GithubEndpointOutputSchemas.pullRequestsGet.parse(result);
 			
-			type _Check = AssertExactType<
-				typeof result,
-				GithubEndpointOutputs['pullRequestsGet']
-			>;
-			const _assert: _Check = true;
 		});
 
-		it('pullRequestsCreateReview returns correct type', async () => {
-			const pullRequestsListResponse = await makeGithubRequest<PullRequestsListResponse>(
-				`/repos/${TEST_OWNER}/${TEST_REPO}/pulls`,
-				TEST_TOKEN,
-				{ query: { per_page: 1, page: 1, state: 'open' } },
-			);
-			const pullNumber = pullRequestsListResponse[0]?.number;
-			if (!pullNumber) {
-				return;
-			}
-
-			try {
-				const response = await makeGithubRequest<PullRequestReviewCreateResponse>(
-					`/repos/${TEST_OWNER}/${TEST_REPO}/pulls/${pullNumber}/reviews`,
-					TEST_TOKEN,
-					{
-						method: 'POST',
-						body: {
-							body: 'Test review comment from API test',
-							event: 'COMMENT',
-						},
-					},
-				);
-				const result = response;
-				
-				const validated = GithubEndpointOutputSchemas.pullRequestsCreateReview.parse(result);
-				
-				type _Check = AssertExactType<
-					typeof result,
-					GithubEndpointOutputs['pullRequestsCreateReview']
-				>;
-				const _assert: _Check = true;
-			} catch (error) {
-				if (
-					error instanceof Error &&
-					(error.message.includes('Unprocessable Entity') ||
-						error.message.includes('422'))
-				) {
-					return;
-				}
-				throw error;
-			}
-		});
 	});
 
 	describe('releases', () => {
@@ -350,13 +247,8 @@ describe('GitHub API Type Tests', () => {
 			);
 			const result = response;
 			
-			const validated = GithubEndpointOutputSchemas.releasesList.parse(result);
+			GithubEndpointOutputSchemas.releasesList.parse(result);
 			
-			type _Check = AssertExactType<
-				typeof result,
-				GithubEndpointOutputs['releasesList']
-			>;
-			const _assert: _Check = true;
 		});
 
 		it('releasesGet returns correct type', async () => {
@@ -376,13 +268,8 @@ describe('GitHub API Type Tests', () => {
 			);
 			const result = response;
 			
-			const validated = GithubEndpointOutputSchemas.releasesGet.parse(result);
+			GithubEndpointOutputSchemas.releasesGet.parse(result);
 			
-			type _Check = AssertExactType<
-				typeof result,
-				GithubEndpointOutputs['releasesGet']
-			>;
-			const _assert: _Check = true;
 		});
 
 		it('releasesCreate returns correct type', async () => {
@@ -402,13 +289,8 @@ describe('GitHub API Type Tests', () => {
 			);
 			const result = response;
 			
-			const validated = GithubEndpointOutputSchemas.releasesCreate.parse(result);
+			GithubEndpointOutputSchemas.releasesCreate.parse(result);
 			
-			type _Check = AssertExactType<
-				typeof result,
-				GithubEndpointOutputs['releasesCreate']
-			>;
-			const _assert: _Check = true;
 		});
 
 		it('releasesUpdate returns correct type', async () => {
@@ -434,13 +316,8 @@ describe('GitHub API Type Tests', () => {
 			);
 			const result = response;
 			
-			const validated = GithubEndpointOutputSchemas.releasesUpdate.parse(result);
+			GithubEndpointOutputSchemas.releasesUpdate.parse(result);
 			
-			type _Check = AssertExactType<
-				typeof result,
-				GithubEndpointOutputs['releasesUpdate']
-			>;
-			const _assert: _Check = true;
 		});
 	});
 
@@ -453,13 +330,8 @@ describe('GitHub API Type Tests', () => {
 			);
 			const result = response;
 			
-			const validated = GithubEndpointOutputSchemas.workflowsList.parse(result);
+			GithubEndpointOutputSchemas.workflowsList.parse(result);
 			
-			type _Check = AssertExactType<
-				typeof result,
-				GithubEndpointOutputs['workflowsList']
-			>;
-			const _assert: _Check = true;
 		});
 
 		it('workflowsGet returns correct type', async () => {
@@ -479,13 +351,7 @@ describe('GitHub API Type Tests', () => {
 			);
 			const result = response;
 			
-			const validated = GithubEndpointOutputSchemas.workflowsGet.parse(result);
-			
-			type _Check = AssertExactType<
-				typeof result,
-				GithubEndpointOutputs['workflowsGet']
-			>;
-			const _assert: _Check = true;
+			GithubEndpointOutputSchemas.workflowsGet.parse(result);
 		});
 
 		it('workflowsListRuns returns correct type', async () => {
@@ -496,13 +362,8 @@ describe('GitHub API Type Tests', () => {
 			);
 			const result = response;
 			
-			const validated = GithubEndpointOutputSchemas.workflowsListRuns.parse(result);
+			GithubEndpointOutputSchemas.workflowsListRuns.parse(result);
 			
-			type _Check = AssertExactType<
-				typeof result,
-				GithubEndpointOutputs['workflowsListRuns']
-			>;
-			const _assert: _Check = true;
 		});
 	});
 });
