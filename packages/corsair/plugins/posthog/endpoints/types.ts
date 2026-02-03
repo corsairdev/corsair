@@ -1,3 +1,5 @@
+import { z } from 'zod';
+
 export type CreateAliasResponse =
 	| number
 	| {
@@ -39,4 +41,24 @@ export type PostHogEndpointOutputs = {
 	identityCreate: CreateIdentityResponse;
 	trackPage: TrackPageResponse;
 	trackScreen: TrackScreenResponse;
+};
+
+const PostHogSuccessResponseSchema = z.union([
+	z.number(),
+	z.string(),
+	z.object({
+		status: z.union([z.number(), z.string()]).optional(),
+		message: z.string().optional(),
+	}).passthrough(),
+	z.any(),
+]);
+
+export const PostHogEndpointOutputSchemas: {
+	[K in keyof PostHogEndpointOutputs]: z.ZodType<unknown>;
+} = {
+	aliasCreate: PostHogSuccessResponseSchema,
+	eventCreate: PostHogSuccessResponseSchema,
+	identityCreate: PostHogSuccessResponseSchema,
+	trackPage: PostHogSuccessResponseSchema,
+	trackScreen: PostHogSuccessResponseSchema,
 };
