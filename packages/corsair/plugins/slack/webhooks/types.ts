@@ -721,9 +721,9 @@ export type SlackEventPayload<TEvent = unknown> = {
 };
 
 export type SlackUrlVerificationPayload = {
-	token: string;
-	challenge: string;
+	// token: string;
 	type: 'url_verification';
+	challenge: string;
 };
 
 export type SlackWebhookPayload<TEvent = unknown> =
