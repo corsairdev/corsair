@@ -244,7 +244,7 @@ export async function filterWebhook(
 					plugin: pluginId,
 					action,
 					body: parsedBody,
-					response: (response.data as any).challenge,
+					response: (preparedResponse.data as any).challenge,
 				};
 			} catch (error) {
 				console.error(
