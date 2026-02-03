@@ -47,7 +47,6 @@ export const commentCreate: LinearWebhooks['commentCreate'] = {
 		return {
 			success: true,
 			corsairEntityId,
-			tenantId: ctx.tenantId,
 			data: event,
 		};
 	},
@@ -98,7 +97,6 @@ export const commentUpdate: LinearWebhooks['commentUpdate'] = {
 		return {
 			success: true,
 			corsairEntityId,
-			tenantId: ctx.tenantId,
 			data: event,
 		};
 	},
@@ -145,7 +143,6 @@ export const commentRemove: LinearWebhooks['commentRemove'] = {
 		return {
 			success: true,
 			corsairEntityId,
-			tenantId: ctx.tenantId,
 			data: event,
 		};
 	},

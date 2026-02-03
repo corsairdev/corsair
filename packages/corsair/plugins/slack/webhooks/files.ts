@@ -49,7 +49,6 @@ export const created: SlackWebhooks['fileCreated'] = {
 		return {
 			success: true,
 			corsairEntityId,
-			tenantId: ctx.tenantId,
 			data: event,
 		};
 	},
@@ -100,7 +99,6 @@ export const publicFile: SlackWebhooks['filePublic'] = {
 		return {
 			success: true,
 			corsairEntityId,
-			tenantId: ctx.tenantId,
 			data: event,
 		};
 	},
@@ -152,7 +150,6 @@ export const shared: SlackWebhooks['fileShared'] = {
 		return {
 			success: true,
 			corsairEntityId,
-			tenantId: ctx.tenantId,
 			data: event,
 		};
 	},

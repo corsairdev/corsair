@@ -49,7 +49,6 @@ export const domainCreated: ResendWebhooks['domainCreated'] = {
 		return {
 			success: true,
 			corsairEntityId,
-			tenantId: ctx.tenantId,
 			data: event,
 		};
 	},
@@ -102,7 +101,6 @@ export const domainUpdated: ResendWebhooks['domainUpdated'] = {
 		return {
 			success: true,
 			corsairEntityId,
-			tenantId: ctx.tenantId,
 			data: event,
 		};
 	},

@@ -45,7 +45,6 @@ export const message: SlackWebhooks['message'] = {
 		return {
 			success: true,
 			corsairEntityId,
-			tenantId: ctx.tenantId,
 			data: event,
 		};
 	},

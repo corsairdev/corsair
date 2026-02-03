@@ -48,7 +48,6 @@ export const projectCreate: LinearWebhooks['projectCreate'] = {
 		return {
 			success: true,
 			corsairEntityId,
-			tenantId: ctx.tenantId,
 			data: event,
 		};
 	},
@@ -100,7 +99,6 @@ export const projectUpdate: LinearWebhooks['projectUpdate'] = {
 		return {
 			success: true,
 			corsairEntityId,
-			tenantId: ctx.tenantId,
 			data: event,
 		};
 	},
@@ -148,7 +146,6 @@ export const projectRemove: LinearWebhooks['projectRemove'] = {
 		return {
 			success: true,
 			corsairEntityId,
-			tenantId: ctx.tenantId,
 			data: event,
 		};
 	},

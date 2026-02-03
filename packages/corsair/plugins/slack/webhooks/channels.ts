@@ -52,7 +52,6 @@ export const created: SlackWebhooks['channelCreated'] = {
 		return {
 			success: true,
 			corsairEntityId,
-			tenantId: ctx.tenantId,
 			data: event,
 		};
 	},

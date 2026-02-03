@@ -48,7 +48,6 @@ export const teamJoin: SlackWebhooks['teamJoin'] = {
 		return {
 			success: true,
 			corsairEntityId,
-			tenantId: ctx.tenantId,
 			data: event,
 		};
 	},
@@ -100,7 +99,6 @@ export const userChange: SlackWebhooks['userChange'] = {
 		return {
 			success: true,
 			corsairEntityId,
-			tenantId: ctx.tenantId,
 			data: event,
 		};
 	},
