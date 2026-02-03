@@ -3,8 +3,6 @@ import { linear } from '../plugins/linear';
 import { LinearAPIError } from '../plugins/linear/client';
 import { createTestDatabase } from './setup-db';
 import { createIntegrationAndAccount } from './plugins-test-utils';
-import type { LinearCredentials } from '../plugins/linear/schema';
-import type { AuthTypes } from '../core/constants';
 import dotenv from 'dotenv';
 dotenv.config();
 
@@ -20,13 +18,14 @@ async function createLinearClient() {
 	const corsair = createCorsair({
 		plugins: [
 			linear({
-				authType: 'api_key' as AuthTypes,
+				authType: 'api_key',
 				credentials: {
 					apiKey,
-				} satisfies LinearCredentials,
+				},
 			}),
 		],
 		database: testDb.adapter,
+		kek: process.env.CORSAIR_KEK!,
 	});
 
 	return { corsair, testDb };

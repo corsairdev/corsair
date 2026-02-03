@@ -3,8 +3,6 @@ import { hubspot } from '../plugins/hubspot';
 import { createTestDatabase } from './setup-db';
 import { createIntegrationAndAccount } from './plugins-test-utils';
 import { HubSpotAPIError } from '../plugins/hubspot/client';
-import type { HubSpotCredentials } from '../plugins/hubspot/schema';
-import type { AuthTypes } from '../core/constants';
 import type { GetManyContactsResponse, GetManyCompaniesResponse, GetManyDealsResponse, CreateOrUpdateContactResponse, CreateCompanyResponse, CreateDealResponse, CreateTicketResponse } from '../plugins/hubspot/endpoints/types';
 import dotenv from 'dotenv';
 dotenv.config();
@@ -21,13 +19,14 @@ async function createHubspotClient() {
 	const corsair = createCorsair({
 		plugins: [
 			hubspot({
-				authType: 'oauth_2' as AuthTypes,
+				authType: 'oauth_2',
 				credentials: {
 					token,
-				} satisfies HubSpotCredentials,
+				},
 			}),
 		],
 		database: testDb.adapter,
+		kek: process.env.CORSAIR_KEK!,
 	});
 
 	return { corsair, testDb };

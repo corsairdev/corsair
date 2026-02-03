@@ -2,8 +2,6 @@ import { createCorsair } from '../core';
 import { gmail } from '../plugins/gmail';
 import { createTestDatabase } from './setup-db';
 import { createIntegrationAndAccount } from './plugins-test-utils';
-import type { GmailCredentials } from '../plugins/gmail/schema';
-import type { AuthTypes } from '../core/constants';
 
 async function createGmailClient() {
 	const clientId = process.env.GMAIL_CLIENT_ID;
@@ -20,16 +18,17 @@ async function createGmailClient() {
 	const corsair = createCorsair({
 		plugins: [
 			gmail({
-				authType: 'oauth_2' as AuthTypes,
+				authType: 'oauth_2',
 				credentials: {
 					clientId,
 					clientSecret,
 					accessToken,
 					refreshToken,
-				} satisfies GmailCredentials,
+				},
 			}),
 		],
 		database: testDb.adapter,
+		kek: process.env.CORSAIR_KEK!,
 	});
 
 	return { corsair, testDb };
