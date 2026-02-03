@@ -17,7 +17,7 @@ export const get: HubSpotEndpoints['engagementsGet'] = async (ctx, input) => {
 
 	if (result && ctx.db.engagements) {
 		try {
-			await ctx.db.engagements.upsert(result.id, {
+			await ctx.db.engagements.upsertByEntityId(result.id, {
 				...result,
 			});
 		} catch (error) {
@@ -25,11 +25,19 @@ export const get: HubSpotEndpoints['engagementsGet'] = async (ctx, input) => {
 		}
 	}
 
-	await logEventFromContext(ctx, 'hubspot.engagements.get', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'hubspot.engagements.get',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
-export const getMany: HubSpotEndpoints['engagementsGetMany'] = async (ctx, input) => {
+export const getMany: HubSpotEndpoints['engagementsGetMany'] = async (
+	ctx,
+	input,
+) => {
 	const { ...queryParams } = input || {};
 	const endpoint = '/crm/v3/objects/engagements';
 	const result = await makeHubSpotRequest<GetManyEngagementsResponse>(
@@ -41,7 +49,7 @@ export const getMany: HubSpotEndpoints['engagementsGetMany'] = async (ctx, input
 	if (result.results && ctx.db.engagements) {
 		try {
 			for (const engagement of result.results) {
-				await ctx.db.engagements.upsert(engagement.id, {
+				await ctx.db.engagements.upsertByEntityId(engagement.id, {
 					...engagement,
 				});
 			}
@@ -50,11 +58,19 @@ export const getMany: HubSpotEndpoints['engagementsGetMany'] = async (ctx, input
 		}
 	}
 
-	await logEventFromContext(ctx, 'hubspot.engagements.getMany', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'hubspot.engagements.getMany',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
-export const create: HubSpotEndpoints['engagementsCreate'] = async (ctx, input) => {
+export const create: HubSpotEndpoints['engagementsCreate'] = async (
+	ctx,
+	input,
+) => {
 	const { ...body } = input;
 	const endpoint = '/crm/v3/objects/engagements';
 	const result = await makeHubSpotRequest<CreateEngagementResponse>(
@@ -65,7 +81,7 @@ export const create: HubSpotEndpoints['engagementsCreate'] = async (ctx, input) 
 
 	if (result && ctx.db.engagements) {
 		try {
-			await ctx.db.engagements.upsert(result.id, {
+			await ctx.db.engagements.upsertByEntityId(result.id, {
 				...result,
 			});
 		} catch (error) {
@@ -73,7 +89,12 @@ export const create: HubSpotEndpoints['engagementsCreate'] = async (ctx, input) 
 		}
 	}
 
-	await logEventFromContext(ctx, 'hubspot.engagements.create', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'hubspot.engagements.create',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
@@ -83,11 +104,9 @@ export const deleteEngagement: HubSpotEndpoints['engagementsDelete'] = async (
 ) => {
 	const { engagementId } = input;
 	const endpoint = `/crm/v3/objects/engagements/${engagementId}`;
-	await makeHubSpotRequest<void>(
-		endpoint,
-		ctx.options.token,
-		{ method: 'DELETE' },
-	);
+	await makeHubSpotRequest<void>(endpoint, ctx.options.token, {
+		method: 'DELETE',
+	});
 
 	if (ctx.db.engagements) {
 		try {

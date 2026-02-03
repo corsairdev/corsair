@@ -1,4 +1,3 @@
-import type { AuthTypes } from '../../core/constants';
 import type {
 	BindEndpoints,
 	BindWebhooks,
@@ -7,6 +6,7 @@ import type {
 	CorsairPluginContext,
 	CorsairWebhook,
 } from '../../core';
+import type { AuthTypes } from '../../core/constants';
 import type { GithubEndpointOutputs } from './endpoints';
 import {
 	IssuesEndpoints,
@@ -27,11 +27,7 @@ import type {
 	StarCreatedEvent,
 	StarDeletedEvent,
 } from './webhooks';
-import {
-	PullRequestWebhooks,
-	PushWebhooks,
-	StarWebhooks,
-} from './webhooks';
+import { PullRequestWebhooks, PushWebhooks, StarWebhooks } from './webhooks';
 
 export type GithubContext = CorsairPluginContext<
 	typeof GithubSchema,
@@ -79,7 +75,15 @@ export type GithubEndpoints = {
 			body?: string;
 			assignee?: string | null;
 			milestone?: string | number | null;
-			labels?: Array<string | { id?: number; name?: string; description?: string | null; color?: string | null }>;
+			labels?: Array<
+				| string
+				| {
+						id?: number;
+						name?: string;
+						description?: string | null;
+						color?: string | null;
+				  }
+			>;
 			assignees?: Array<string>;
 		}
 	>;
@@ -93,9 +97,22 @@ export type GithubEndpoints = {
 			body?: string | null;
 			assignee?: string | null;
 			state?: 'open' | 'closed';
-			stateReason?: 'completed' | 'not_planned' | 'duplicate' | 'reopened' | null;
+			stateReason?:
+				| 'completed'
+				| 'not_planned'
+				| 'duplicate'
+				| 'reopened'
+				| null;
 			milestone?: string | number | null;
-			labels?: Array<string | { id?: number; name?: string; description?: string | null; color?: string | null }>;
+			labels?: Array<
+				| string
+				| {
+						id?: number;
+						name?: string;
+						description?: string | null;
+						color?: string | null;
+				  }
+			>;
 			assignees?: Array<string>;
 		}
 	>;
@@ -282,7 +299,21 @@ export type GithubEndpoints = {
 			actor?: string;
 			branch?: string;
 			event?: string;
-			status?: 'completed' | 'action_required' | 'cancelled' | 'failure' | 'neutral' | 'skipped' | 'stale' | 'success' | 'timed_out' | 'in_progress' | 'queued' | 'requested' | 'waiting' | 'pending';
+			status?:
+				| 'completed'
+				| 'action_required'
+				| 'cancelled'
+				| 'failure'
+				| 'neutral'
+				| 'skipped'
+				| 'stale'
+				| 'success'
+				| 'timed_out'
+				| 'in_progress'
+				| 'queued'
+				| 'requested'
+				| 'waiting'
+				| 'pending';
 			perPage?: number;
 			page?: number;
 			created?: string;
@@ -295,7 +326,10 @@ export type GithubEndpoints = {
 
 export type GithubBoundEndpoints = BindEndpoints<GithubEndpoints>;
 
-type GithubWebhook<K extends keyof GithubWebhookOutputs, TEvent> = CorsairWebhook<
+type GithubWebhook<
+	K extends keyof GithubWebhookOutputs,
+	TEvent,
+> = CorsairWebhook<
 	GithubContext,
 	GithubWebhookPayload,
 	GithubWebhookOutputs[K]

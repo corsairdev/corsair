@@ -46,10 +46,12 @@ export type PostHogEndpointOutputs = {
 const PostHogSuccessResponseSchema = z.union([
 	z.number(),
 	z.string(),
-	z.object({
-		status: z.union([z.number(), z.string()]).optional(),
-		message: z.string().optional(),
-	}).passthrough(),
+	z
+		.object({
+			status: z.union([z.number(), z.string()]).optional(),
+			message: z.string().optional(),
+		})
+		.passthrough(),
 	z.any(),
 ]);
 

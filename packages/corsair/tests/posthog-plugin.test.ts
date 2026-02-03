@@ -1,8 +1,9 @@
+import dotenv from 'dotenv';
 import { createCorsair } from '../core';
 import { posthog } from '../plugins/posthog';
-import { createTestDatabase } from './setup-db';
 import { createIntegrationAndAccount } from './plugins-test-utils';
-import dotenv from 'dotenv';
+import { createTestDatabase } from './setup-db';
+
 dotenv.config();
 
 async function createPosthogClient() {
@@ -128,4 +129,3 @@ describe('PostHog plugin integration', () => {
 		testDb.cleanup();
 	});
 });
-

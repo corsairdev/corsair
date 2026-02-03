@@ -94,93 +94,121 @@ export type HubSpotEndpointOutputs = {
 	contactListsRemoveContact: RemoveContactFromListResponse;
 };
 
-const ContactResponseSchema = z.object({
-	id: z.string(),
-	properties: z.record(z.any()).optional(),
-	createdAt: z.union([z.string(), z.date(), z.coerce.date()]).optional(),
-	updatedAt: z.union([z.string(), z.date(), z.coerce.date()]).optional(),
-	archived: z.boolean().optional(),
-}).passthrough();
+const ContactResponseSchema = z
+	.object({
+		id: z.string(),
+		properties: z.record(z.any()).optional(),
+		createdAt: z.union([z.string(), z.date(), z.coerce.date()]).optional(),
+		updatedAt: z.union([z.string(), z.date(), z.coerce.date()]).optional(),
+		archived: z.boolean().optional(),
+	})
+	.passthrough();
 
-const CompanyResponseSchema = z.object({
-	id: z.string(),
-	properties: z.record(z.any()).optional(),
-	createdAt: z.union([z.string(), z.date(), z.coerce.date()]).optional(),
-	updatedAt: z.union([z.string(), z.date(), z.coerce.date()]).optional(),
-	archived: z.boolean().optional(),
-}).passthrough();
+const CompanyResponseSchema = z
+	.object({
+		id: z.string(),
+		properties: z.record(z.any()).optional(),
+		createdAt: z.union([z.string(), z.date(), z.coerce.date()]).optional(),
+		updatedAt: z.union([z.string(), z.date(), z.coerce.date()]).optional(),
+		archived: z.boolean().optional(),
+	})
+	.passthrough();
 
-const DealResponseSchema = z.object({
-	id: z.string(),
-	properties: z.record(z.any()).optional(),
-	createdAt: z.union([z.string(), z.date(), z.coerce.date()]).optional(),
-	updatedAt: z.union([z.string(), z.date(), z.coerce.date()]).optional(),
-	archived: z.boolean().optional(),
-}).passthrough();
+const DealResponseSchema = z
+	.object({
+		id: z.string(),
+		properties: z.record(z.any()).optional(),
+		createdAt: z.union([z.string(), z.date(), z.coerce.date()]).optional(),
+		updatedAt: z.union([z.string(), z.date(), z.coerce.date()]).optional(),
+		archived: z.boolean().optional(),
+	})
+	.passthrough();
 
-const TicketResponseSchema = z.object({
-	id: z.string(),
-	properties: z.record(z.any()).optional(),
-	createdAt: z.union([z.string(), z.date(), z.coerce.date()]).optional(),
-	updatedAt: z.union([z.string(), z.date(), z.coerce.date()]).optional(),
-	archived: z.boolean().optional(),
-}).passthrough();
+const TicketResponseSchema = z
+	.object({
+		id: z.string(),
+		properties: z.record(z.any()).optional(),
+		createdAt: z.union([z.string(), z.date(), z.coerce.date()]).optional(),
+		updatedAt: z.union([z.string(), z.date(), z.coerce.date()]).optional(),
+		archived: z.boolean().optional(),
+	})
+	.passthrough();
 
-const EngagementResponseSchema = z.object({
-	id: z.string(),
-	engagement: z.object({
-		id: z.number().optional(),
-		portalId: z.number().optional(),
-		active: z.boolean().optional(),
-		createdAt: z.number().optional(),
-		lastUpdated: z.number().optional(),
-		createdBy: z.number().optional(),
-		modifiedBy: z.number().optional(),
-		ownerId: z.number().optional(),
-		type: z.string().optional(),
-		timestamp: z.number().optional(),
-	}).optional(),
-	associations: z.record(z.any()).optional(),
-	metadata: z.record(z.any()).optional(),
-}).passthrough();
+const EngagementResponseSchema = z
+	.object({
+		id: z.string(),
+		engagement: z
+			.object({
+				id: z.number().optional(),
+				portalId: z.number().optional(),
+				active: z.boolean().optional(),
+				createdAt: z.number().optional(),
+				lastUpdated: z.number().optional(),
+				createdBy: z.number().optional(),
+				modifiedBy: z.number().optional(),
+				ownerId: z.number().optional(),
+				type: z.string().optional(),
+				timestamp: z.number().optional(),
+			})
+			.optional(),
+		associations: z.record(z.any()).optional(),
+		metadata: z.record(z.any()).optional(),
+	})
+	.passthrough();
 
 const PagingResponseSchema = z.object({
-	next: z.object({
-		after: z.string(),
-	}).optional(),
-	prev: z.object({
-		before: z.string(),
-	}).optional(),
+	next: z
+		.object({
+			after: z.string(),
+		})
+		.optional(),
+	prev: z
+		.object({
+			before: z.string(),
+		})
+		.optional(),
 });
 
-const GetManyContactsResponseSchema = z.object({
-	results: z.array(ContactResponseSchema).optional(),
-	paging: PagingResponseSchema.optional(),
-}).passthrough();
+const GetManyContactsResponseSchema = z
+	.object({
+		results: z.array(ContactResponseSchema).optional(),
+		paging: PagingResponseSchema.optional(),
+	})
+	.passthrough();
 
-const GetManyCompaniesResponseSchema = z.object({
-	results: z.array(CompanyResponseSchema).optional(),
-	paging: PagingResponseSchema.optional(),
-}).passthrough();
+const GetManyCompaniesResponseSchema = z
+	.object({
+		results: z.array(CompanyResponseSchema).optional(),
+		paging: PagingResponseSchema.optional(),
+	})
+	.passthrough();
 
-const GetManyDealsResponseSchema = z.object({
-	results: z.array(DealResponseSchema).optional(),
-	paging: PagingResponseSchema.optional(),
-}).passthrough();
+const GetManyDealsResponseSchema = z
+	.object({
+		results: z.array(DealResponseSchema).optional(),
+		paging: PagingResponseSchema.optional(),
+	})
+	.passthrough();
 
-const GetManyTicketsResponseSchema = z.object({
-	results: z.array(TicketResponseSchema).optional(),
-	paging: PagingResponseSchema.optional(),
-}).passthrough();
+const GetManyTicketsResponseSchema = z
+	.object({
+		results: z.array(TicketResponseSchema).optional(),
+		paging: PagingResponseSchema.optional(),
+	})
+	.passthrough();
 
-const GetManyEngagementsResponseSchema = z.object({
-	results: z.array(EngagementResponseSchema).optional(),
-	paging: PagingResponseSchema.optional(),
-}).passthrough();
+const GetManyEngagementsResponseSchema = z
+	.object({
+		results: z.array(EngagementResponseSchema).optional(),
+		paging: PagingResponseSchema.optional(),
+	})
+	.passthrough();
 
-const SearchCompanyByDomainResponseSchema = z.object({
-	results: z.array(CompanyResponseSchema).optional(),
-}).passthrough();
+const SearchCompanyByDomainResponseSchema = z
+	.object({
+		results: z.array(CompanyResponseSchema).optional(),
+	})
+	.passthrough();
 
 const AddContactToListResponseSchema = z.object({
 	updated: z.array(z.number()).optional(),

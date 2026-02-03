@@ -1,9 +1,10 @@
+import dotenv from 'dotenv';
 import { createCorsair } from '../core';
 import { linear } from '../plugins/linear';
 import { LinearAPIError } from '../plugins/linear/client';
-import { createTestDatabase } from './setup-db';
 import { createIntegrationAndAccount } from './plugins-test-utils';
-import dotenv from 'dotenv';
+import { createTestDatabase } from './setup-db';
+
 dotenv.config();
 
 async function createLinearClient() {

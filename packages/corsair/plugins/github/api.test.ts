@@ -1,30 +1,28 @@
+import dotenv from 'dotenv';
 import { makeGithubRequest } from './client';
 import type {
-	GithubEndpointOutputs,
 	IssueCommentCreateResponse,
 	IssueCreateResponse,
 	IssueGetResponse,
 	IssuesListResponse,
 	IssueUpdateResponse,
 	PullRequestGetResponse,
-	PullRequestReviewCreateResponse,
-	PullRequestReviewListResponse,
 	PullRequestsListResponse,
 	ReleaseCreateResponse,
 	ReleaseGetResponse,
 	ReleasesListResponse,
 	ReleaseUpdateResponse,
+	RepositoriesListResponse,
 	RepositoryBranchesListResponse,
 	RepositoryCommitsListResponse,
 	RepositoryContentGetResponse,
 	RepositoryGetResponse,
-	RepositoriesListResponse,
 	WorkflowGetResponse,
-	WorkflowsListResponse,
 	WorkflowRunsListResponse,
+	WorkflowsListResponse,
 } from './endpoints/types';
 import { GithubEndpointOutputSchemas } from './endpoints/types';
-import dotenv from 'dotenv';
+
 dotenv.config();
 
 const TEST_TOKEN = process.env.GITHUB_TOKEN!;
@@ -40,11 +38,9 @@ describe('GitHub API Type Tests', () => {
 				{ query: { per_page: 10, page: 1 } },
 			);
 			const result = response;
-			
-			GithubEndpointOutputSchemas.repositoriesList.parse(result);
-			
-		});
 
+			GithubEndpointOutputSchemas.repositoriesList.parse(result);
+		});
 
 		it('repositoriesGet returns correct type', async () => {
 			const response = await makeGithubRequest<RepositoryGetResponse>(
@@ -52,9 +48,8 @@ describe('GitHub API Type Tests', () => {
 				TEST_TOKEN,
 			);
 			const result = response;
-			
+
 			GithubEndpointOutputSchemas.repositoriesGet.parse(result);
-			
 		});
 
 		it('repositoriesListBranches returns correct type', async () => {
@@ -64,9 +59,8 @@ describe('GitHub API Type Tests', () => {
 				{ query: { per_page: 10, page: 1 } },
 			);
 			const result = response;
-			
+
 			GithubEndpointOutputSchemas.repositoriesListBranches.parse(result);
-			
 		});
 
 		it('repositoriesListCommits returns correct type', async () => {
@@ -76,9 +70,8 @@ describe('GitHub API Type Tests', () => {
 				{ query: { per_page: 10, page: 1 } },
 			);
 			const result = response;
-			
+
 			GithubEndpointOutputSchemas.repositoriesListCommits.parse(result);
-			
 		});
 
 		it('repositoriesGetContent returns correct type', async () => {
@@ -87,9 +80,8 @@ describe('GitHub API Type Tests', () => {
 				TEST_TOKEN,
 			);
 			const result = response;
-			
+
 			GithubEndpointOutputSchemas.repositoriesGetContent.parse(result);
-			
 		});
 	});
 
@@ -101,9 +93,8 @@ describe('GitHub API Type Tests', () => {
 				{ query: { per_page: 10, page: 1, state: 'all' } },
 			);
 			const result = response;
-			
+
 			GithubEndpointOutputSchemas.issuesList.parse(result);
-			
 		});
 
 		it('issuesGet returns correct type', async () => {
@@ -122,9 +113,8 @@ describe('GitHub API Type Tests', () => {
 				TEST_TOKEN,
 			);
 			const result = response;
-			
+
 			GithubEndpointOutputSchemas.issuesGet.parse(result);
-			
 		});
 
 		it('issuesCreate returns correct type', async () => {
@@ -140,9 +130,8 @@ describe('GitHub API Type Tests', () => {
 				},
 			);
 			const result = response;
-			
+
 			GithubEndpointOutputSchemas.issuesCreate.parse(result);
-			
 		});
 
 		it('issuesUpdate returns correct type', async () => {
@@ -167,9 +156,8 @@ describe('GitHub API Type Tests', () => {
 				},
 			);
 			const result = response;
-			
+
 			GithubEndpointOutputSchemas.issuesUpdate.parse(result);
-			
 		});
 
 		it('issuesCreateComment returns correct type', async () => {
@@ -194,9 +182,8 @@ describe('GitHub API Type Tests', () => {
 				},
 			);
 			const result = response;
-			
+
 			GithubEndpointOutputSchemas.issuesCreateComment.parse(result);
-			
 		});
 	});
 
@@ -208,17 +195,17 @@ describe('GitHub API Type Tests', () => {
 				{ query: { per_page: 10, page: 1, state: 'all' } },
 			);
 			const result = response;
-			
+
 			GithubEndpointOutputSchemas.pullRequestsList.parse(result);
-			
 		});
 
 		it('pullRequestsGet returns correct type', async () => {
-			const pullRequestsListResponse = await makeGithubRequest<PullRequestsListResponse>(
-				`/repos/${TEST_OWNER}/${TEST_REPO}/pulls`,
-				TEST_TOKEN,
-				{ query: { per_page: 1, page: 1, state: 'all' } },
-			);
+			const pullRequestsListResponse =
+				await makeGithubRequest<PullRequestsListResponse>(
+					`/repos/${TEST_OWNER}/${TEST_REPO}/pulls`,
+					TEST_TOKEN,
+					{ query: { per_page: 1, page: 1, state: 'all' } },
+				);
 			const pullNumber = pullRequestsListResponse[0]?.number;
 			if (!pullNumber) {
 				throw new Error('No pull requests found');
@@ -229,11 +216,9 @@ describe('GitHub API Type Tests', () => {
 				TEST_TOKEN,
 			);
 			const result = response;
-			
-			GithubEndpointOutputSchemas.pullRequestsGet.parse(result);
-			
-		});
 
+			GithubEndpointOutputSchemas.pullRequestsGet.parse(result);
+		});
 	});
 
 	describe('releases', () => {
@@ -244,17 +229,17 @@ describe('GitHub API Type Tests', () => {
 				{ query: { per_page: 10, page: 1 } },
 			);
 			const result = response;
-			
+
 			GithubEndpointOutputSchemas.releasesList.parse(result);
-			
 		});
 
 		it('releasesGet returns correct type', async () => {
-			const releasesListResponse = await makeGithubRequest<ReleasesListResponse>(
-				`/repos/${TEST_OWNER}/${TEST_REPO}/releases`,
-				TEST_TOKEN,
-				{ query: { per_page: 1, page: 1 } },
-			);
+			const releasesListResponse =
+				await makeGithubRequest<ReleasesListResponse>(
+					`/repos/${TEST_OWNER}/${TEST_REPO}/releases`,
+					TEST_TOKEN,
+					{ query: { per_page: 1, page: 1 } },
+				);
 			const releaseId = releasesListResponse[0]?.id;
 			if (!releaseId) {
 				throw new Error('No releases found');
@@ -265,9 +250,8 @@ describe('GitHub API Type Tests', () => {
 				TEST_TOKEN,
 			);
 			const result = response;
-			
+
 			GithubEndpointOutputSchemas.releasesGet.parse(result);
-			
 		});
 
 		it('releasesCreate returns correct type', async () => {
@@ -286,17 +270,17 @@ describe('GitHub API Type Tests', () => {
 				},
 			);
 			const result = response;
-			
+
 			GithubEndpointOutputSchemas.releasesCreate.parse(result);
-			
 		});
 
 		it('releasesUpdate returns correct type', async () => {
-			const releasesListResponse = await makeGithubRequest<ReleasesListResponse>(
-				`/repos/${TEST_OWNER}/${TEST_REPO}/releases`,
-				TEST_TOKEN,
-				{ query: { per_page: 1, page: 1 } },
-			);
+			const releasesListResponse =
+				await makeGithubRequest<ReleasesListResponse>(
+					`/repos/${TEST_OWNER}/${TEST_REPO}/releases`,
+					TEST_TOKEN,
+					{ query: { per_page: 1, page: 1 } },
+				);
 			const releaseId = releasesListResponse[0]?.id;
 			if (!releaseId) {
 				throw new Error('No releases found');
@@ -313,9 +297,8 @@ describe('GitHub API Type Tests', () => {
 				},
 			);
 			const result = response;
-			
+
 			GithubEndpointOutputSchemas.releasesUpdate.parse(result);
-			
 		});
 	});
 
@@ -327,17 +310,17 @@ describe('GitHub API Type Tests', () => {
 				{ query: { per_page: 10, page: 1 } },
 			);
 			const result = response;
-			
+
 			GithubEndpointOutputSchemas.workflowsList.parse(result);
-			
 		});
 
 		it('workflowsGet returns correct type', async () => {
-			const workflowsListResponse = await makeGithubRequest<WorkflowsListResponse>(
-				`/repos/${TEST_OWNER}/${TEST_REPO}/actions/workflows`,
-				TEST_TOKEN,
-				{ query: { per_page: 1, page: 1 } },
-			);
+			const workflowsListResponse =
+				await makeGithubRequest<WorkflowsListResponse>(
+					`/repos/${TEST_OWNER}/${TEST_REPO}/actions/workflows`,
+					TEST_TOKEN,
+					{ query: { per_page: 1, page: 1 } },
+				);
 			const workflowId = workflowsListResponse.workflows[0]?.id;
 			if (!workflowId) {
 				throw new Error('No workflows found');
@@ -348,7 +331,7 @@ describe('GitHub API Type Tests', () => {
 				TEST_TOKEN,
 			);
 			const result = response;
-			
+
 			GithubEndpointOutputSchemas.workflowsGet.parse(result);
 		});
 
@@ -359,9 +342,8 @@ describe('GitHub API Type Tests', () => {
 				{ query: { per_page: 10, page: 1 } },
 			);
 			const result = response;
-			
+
 			GithubEndpointOutputSchemas.workflowsListRuns.parse(result);
-			
 		});
 	});
 });

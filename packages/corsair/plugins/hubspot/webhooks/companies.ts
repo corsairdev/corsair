@@ -40,7 +40,7 @@ export const companyCreated: HubSpotWebhooks['companyCreated'] = {
 
 			if (ctx.db.companies && event.objectId) {
 				try {
-					await ctx.db.companies.upsert(event.objectId.toString(), {
+					await ctx.db.companies.upsertByEntityId(event.objectId.toString(), {
 						id: event.objectId.toString(),
 						properties: {},
 						createdAt: new Date(event.occurredAt),
@@ -82,7 +82,7 @@ export const companyUpdated: HubSpotWebhooks['companyUpdated'] = {
 					const existing = await ctx.db.companies.findByEntityId(
 						event.objectId.toString(),
 					);
-					await ctx.db.companies.upsert(event.objectId.toString(), {
+					await ctx.db.companies.upsertByEntityId(event.objectId.toString(), {
 						id: event.objectId.toString(),
 						properties: {
 							...(existing?.data?.properties || {}),

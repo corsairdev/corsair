@@ -26,17 +26,25 @@ export const get: HubSpotEndpoints['ticketsGet'] = async (ctx, input) => {
 
 	if (result && ctx.db.tickets) {
 		try {
-			await ctx.db.tickets.upsert(result.id, result);
+			await ctx.db.tickets.upsertByEntityId(result.id, result);
 		} catch (error) {
 			console.warn('Failed to save ticket to database:', error);
 		}
 	}
 
-	await logEventFromContext(ctx, 'hubspot.tickets.get', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'hubspot.tickets.get',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
-export const getMany: HubSpotEndpoints['ticketsGetMany'] = async (ctx, input) => {
+export const getMany: HubSpotEndpoints['ticketsGetMany'] = async (
+	ctx,
+	input,
+) => {
 	const { ...queryParams } = input || {};
 	const endpoint = '/crm/v3/objects/tickets';
 	const result = await makeHubSpotRequest<GetManyTicketsResponse>(
@@ -55,14 +63,19 @@ export const getMany: HubSpotEndpoints['ticketsGetMany'] = async (ctx, input) =>
 	if (result.results && ctx.db.tickets) {
 		try {
 			for (const ticket of result.results) {
-				await ctx.db.tickets.upsert(ticket.id, ticket);
+				await ctx.db.tickets.upsertByEntityId(ticket.id, ticket);
 			}
 		} catch (error) {
 			console.warn('Failed to save tickets to database:', error);
 		}
 	}
 
-	await logEventFromContext(ctx, 'hubspot.tickets.getMany', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'hubspot.tickets.getMany',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
@@ -77,13 +90,18 @@ export const create: HubSpotEndpoints['ticketsCreate'] = async (ctx, input) => {
 
 	if (result && ctx.db.tickets) {
 		try {
-			await ctx.db.tickets.upsert(result.id, result);
+			await ctx.db.tickets.upsertByEntityId(result.id, result);
 		} catch (error) {
 			console.warn('Failed to save ticket to database:', error);
 		}
 	}
 
-	await logEventFromContext(ctx, 'hubspot.tickets.create', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'hubspot.tickets.create',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
@@ -98,24 +116,30 @@ export const update: HubSpotEndpoints['ticketsUpdate'] = async (ctx, input) => {
 
 	if (result && ctx.db.tickets) {
 		try {
-			await ctx.db.tickets.upsert(result.id, result);
+			await ctx.db.tickets.upsertByEntityId(result.id, result);
 		} catch (error) {
 			console.warn('Failed to update ticket in database:', error);
 		}
 	}
 
-	await logEventFromContext(ctx, 'hubspot.tickets.update', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'hubspot.tickets.update',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
-export const deleteTicket: HubSpotEndpoints['ticketsDelete'] = async (ctx, input) => {
+export const deleteTicket: HubSpotEndpoints['ticketsDelete'] = async (
+	ctx,
+	input,
+) => {
 	const { ticketId } = input;
 	const endpoint = `/crm/v3/objects/tickets/${ticketId}`;
-	await makeHubSpotRequest<void>(
-		endpoint,
-		ctx.options.token,
-		{ method: 'DELETE' },
-	);
+	await makeHubSpotRequest<void>(endpoint, ctx.options.token, {
+		method: 'DELETE',
+	});
 
 	if (ctx.db.tickets) {
 		try {
@@ -125,5 +149,10 @@ export const deleteTicket: HubSpotEndpoints['ticketsDelete'] = async (ctx, input
 		}
 	}
 
-	await logEventFromContext(ctx, 'hubspot.tickets.delete', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'hubspot.tickets.delete',
+		{ ...input },
+		'completed',
+	);
 };

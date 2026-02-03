@@ -1,5 +1,14 @@
 // Linear Plugin
 
+export {
+	type GithubBoundEndpoints,
+	type GithubBoundWebhooks,
+	type GithubContext,
+	type GithubEndpoints,
+	type GithubPluginOptions,
+	type GithubWebhooks,
+	github,
+} from './github';
 // Gmail Plugin
 export {
 	type GmailBoundEndpoints,
@@ -10,15 +19,6 @@ export {
 	type GmailWebhooks,
 	gmail,
 } from './gmail';
-export {
-	type GithubBoundEndpoints,
-	type GithubBoundWebhooks,
-	type GithubContext,
-	type GithubEndpoints,
-	type GithubPluginOptions,
-	type GithubWebhooks,
-	github,
-} from './github';
 export {
 	type HubSpotBoundEndpoints,
 	type HubSpotBoundWebhooks,

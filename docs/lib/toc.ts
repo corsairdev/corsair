@@ -28,6 +28,8 @@ const slugToFilePath: Record<string, string> = {
 	'adapters/prisma': 'adapters/prisma.mdx',
 	// plugins
 	'plugins/slack': 'plugins/slack.mdx',
+	// guides
+	'guides/create-your-own-plugin': 'guides/create-your-own-plugin.mdx',
 };
 
 export function extractTOC(mdxPath: string): TOCItem[] {

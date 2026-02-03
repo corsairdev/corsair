@@ -1,10 +1,10 @@
 import { logEventFromContext } from '../../utils/events';
-import type { GithubBoundEndpoints, GithubEndpoints } from '..';
+import type { GithubEndpoints } from '..';
 import { makeGithubRequest } from '../client';
 import type {
 	WorkflowGetResponse,
-	WorkflowsListResponse,
 	WorkflowRunsListResponse,
+	WorkflowsListResponse,
 } from './types';
 
 export const list: GithubEndpoints['workflowsList'] = async (ctx, input) => {
@@ -16,7 +16,12 @@ export const list: GithubEndpoints['workflowsList'] = async (ctx, input) => {
 		{ query: queryParams },
 	);
 
-	await logEventFromContext(ctx, 'github.workflows.list', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'github.workflows.list',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
@@ -30,17 +35,25 @@ export const get: GithubEndpoints['workflowsGet'] = async (ctx, input) => {
 
 	if (result && ctx.db.workflows) {
 		try {
-			await ctx.db.workflows.upsert(result.id.toString(), result);
+			await ctx.db.workflows.upsertByEntityId(result.id.toString(), result);
 		} catch (error) {
 			console.warn('Failed to save workflow to database:', error);
 		}
 	}
 
-	await logEventFromContext(ctx, 'github.workflows.get', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'github.workflows.get',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
-export const listRuns: GithubEndpoints['workflowsListRuns'] = async (ctx, input) => {
+export const listRuns: GithubEndpoints['workflowsListRuns'] = async (
+	ctx,
+	input,
+) => {
 	const { owner, repo, ...queryParams } = input;
 	const endpoint = `/repos/${owner}/${repo}/actions/runs`;
 	const result = await makeGithubRequest<WorkflowRunsListResponse>(

@@ -14,17 +14,17 @@ export const UserSchema = z.object({
 });
 
 export const TeamSchema = z.object({
-		id: z.string(),
-		name: z.string(),
-		key: z.string(),
-		description: z.string().optional().nullable(),
-		icon: z.string().optional().nullable(),
-		color: z.string().optional().nullable(),
-		private: z.boolean(),
-		createdAt: z.string(),
-		updatedAt: z.string(),
-		archivedAt: z.string().optional().nullable(),
-	})
+	id: z.string(),
+	name: z.string(),
+	key: z.string(),
+	description: z.string().optional().nullable(),
+	icon: z.string().optional().nullable(),
+	color: z.string().optional().nullable(),
+	private: z.boolean(),
+	createdAt: z.string(),
+	updatedAt: z.string(),
+	archivedAt: z.string().optional().nullable(),
+});
 
 export const WorkflowStateTypeSchema = z.enum([
 	'backlog',
@@ -34,18 +34,17 @@ export const WorkflowStateTypeSchema = z.enum([
 	'canceled',
 ]);
 
-export const WorkflowStateSchema =
-	z.object({
-		id: z.string(),
-		names: z.string(),
-		type: WorkflowStateTypeSchema,
-		color: z.string(),
-		position: z.number(),
-		description: z.string().optional().nullable(),
-		team: TeamSchema,
-		createdAt: z.string(),
-		updatedAt: z.string(),
-	})
+export const WorkflowStateSchema = z.object({
+	id: z.string(),
+	names: z.string(),
+	type: WorkflowStateTypeSchema,
+	color: z.string(),
+	position: z.number(),
+	description: z.string().optional().nullable(),
+	team: TeamSchema,
+	createdAt: z.string(),
+	updatedAt: z.string(),
+});
 
 export const LabelSchema: z.ZodType<any> = z.lazy(() =>
 	z.object({
@@ -57,7 +56,7 @@ export const LabelSchema: z.ZodType<any> = z.lazy(() =>
 		parent: LabelSchema.optional().nullable(),
 		createdAt: z.string(),
 		updatedAt: z.string(),
-	})
+	}),
 );
 
 export const ProjectStateSchema = z.enum([
@@ -69,41 +68,39 @@ export const ProjectStateSchema = z.enum([
 	'canceled',
 ]);
 
-export const ProjectSchema = 
-	z.object({
-		id: z.string(),
-		name: z.string(),
-		description: z.string().optional().nullable(),
-		icon: z.string().optional().nullable(),
-		color: z.string().optional().nullable(),
-		state: ProjectStateSchema,
-		priority: z.number(),
-		sortOrder: z.number(),
-		startDate: z.string().optional().nullable(),
-		targetDate: z.string().optional().nullable(),
-		completedAt: z.string().optional().nullable(),
-		canceledAt: z.string().optional().nullable(),
-		lead: UserSchema.optional().nullable(),
-		teams: z.array(TeamSchema),
-		createdAt: z.string(),
-		updatedAt: z.string(),
-		archivedAt: z.string().optional().nullable(),
-	})
+export const ProjectSchema = z.object({
+	id: z.string(),
+	name: z.string(),
+	description: z.string().optional().nullable(),
+	icon: z.string().optional().nullable(),
+	color: z.string().optional().nullable(),
+	state: ProjectStateSchema,
+	priority: z.number(),
+	sortOrder: z.number(),
+	startDate: z.string().optional().nullable(),
+	targetDate: z.string().optional().nullable(),
+	completedAt: z.string().optional().nullable(),
+	canceledAt: z.string().optional().nullable(),
+	lead: UserSchema.optional().nullable(),
+	teams: z.array(TeamSchema),
+	createdAt: z.string(),
+	updatedAt: z.string(),
+	archivedAt: z.string().optional().nullable(),
+});
 
-export const CycleSchema =
-	z.object({
-		id: z.string(),
-		number: z.number(),
-		name: z.string().optional().nullable(),
-		description: z.string().optional().nullable(),
-		startsAt: z.string(),
-		endsAt: z.string(),
-		completedAt: z.string().optional().nullable(),
-		team: TeamSchema,
-		createdAt: z.string(),
-		updatedAt: z.string(),
-		archivedAt: z.string().optional().nullable(),
-	})
+export const CycleSchema = z.object({
+	id: z.string(),
+	number: z.number(),
+	name: z.string().optional().nullable(),
+	description: z.string().optional().nullable(),
+	startsAt: z.string(),
+	endsAt: z.string(),
+	completedAt: z.string().optional().nullable(),
+	team: TeamSchema,
+	createdAt: z.string(),
+	updatedAt: z.string(),
+	archivedAt: z.string().optional().nullable(),
+});
 
 export const IssuePrioritySchema = z.union([
 	z.literal(0),
@@ -142,7 +139,7 @@ export const IssueSchema: z.ZodType<any> = z.lazy(() =>
 		createdAt: z.string(),
 		updatedAt: z.string(),
 		archivedAt: z.string().optional().nullable(),
-	})
+	}),
 );
 
 export const CommentSchema: z.ZodType<any> = z.lazy(() =>
@@ -156,7 +153,7 @@ export const CommentSchema: z.ZodType<any> = z.lazy(() =>
 		createdAt: z.string(),
 		updatedAt: z.string(),
 		archivedAt: z.string().optional().nullable(),
-	})
+	}),
 );
 
 export const PageInfoSchema = z.object({
@@ -470,16 +467,22 @@ const IssueListGetSchema: z.ZodType<unknown> = z.lazy(() =>
 		team: MinimalTeamSchema,
 		assignee: MinimalUserSchema.optional().nullable(),
 		creator: MinimalUserSchema,
-		project: z.object({
-			id: z.string(),
-			name: z.string(),
-			state: ProjectStateSchema,
-		}).optional().nullable(),
-		cycle: z.object({
-			id: z.string(),
-			number: z.number(),
-			name: z.string().optional().nullable(),
-		}).optional().nullable(),
+		project: z
+			.object({
+				id: z.string(),
+				name: z.string(),
+				state: ProjectStateSchema,
+			})
+			.optional()
+			.nullable(),
+		cycle: z
+			.object({
+				id: z.string(),
+				number: z.number(),
+				name: z.string().optional().nullable(),
+			})
+			.optional()
+			.nullable(),
 		parent: IssueListGetSchema.optional().nullable(),
 		labels: LabelConnectionSchema,
 		subscribers: SubscriberConnectionSchema.nullish(),
@@ -492,7 +495,7 @@ const IssueListGetSchema: z.ZodType<unknown> = z.lazy(() =>
 		createdAt: z.string(),
 		updatedAt: z.string(),
 		archivedAt: z.string().optional().nullable(),
-	})
+	}),
 );
 
 const IssueListGetConnectionSchema = z.object({
@@ -593,7 +596,7 @@ const CommentTestSchema = z.lazy(() =>
 		createdAt: z.string(),
 		updatedAt: z.string(),
 		archivedAt: z.string().optional().nullable(),
-	})
+	}),
 );
 
 // Endpoint output schemas for runtime validation

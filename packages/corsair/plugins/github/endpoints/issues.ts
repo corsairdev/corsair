@@ -11,9 +11,7 @@ import type {
 
 export const list: GithubEndpoints['issuesList'] = async (ctx, input) => {
 	const { owner, repo, ...queryParams } = input;
-	const endpoint = repo
-		? `/repos/${owner}/${repo}/issues`
-		: '/user/issues';
+	const endpoint = repo ? `/repos/${owner}/${repo}/issues` : '/user/issues';
 	const result = await makeGithubRequest<IssuesListResponse>(
 		endpoint,
 		ctx.options.token,
@@ -23,14 +21,19 @@ export const list: GithubEndpoints['issuesList'] = async (ctx, input) => {
 	if (result && ctx.db.issues) {
 		try {
 			for (const issue of result) {
-				await ctx.db.issues.upsert(issue.id.toString(), issue);
+				await ctx.db.issues.upsertByEntityId(issue.id.toString(), issue);
 			}
 		} catch (error) {
 			console.warn('Failed to save issues to database:', error);
 		}
 	}
 
-	await logEventFromContext(ctx, 'github.issues.list', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'github.issues.list',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
@@ -44,7 +47,7 @@ export const get: GithubEndpoints['issuesGet'] = async (ctx, input) => {
 
 	if (result && ctx.db.issues) {
 		try {
-			await ctx.db.issues.upsert(result.id.toString(), {
+			await ctx.db.issues.upsertByEntityId(result.id.toString(), {
 				...result,
 			});
 		} catch (error) {
@@ -52,7 +55,12 @@ export const get: GithubEndpoints['issuesGet'] = async (ctx, input) => {
 		}
 	}
 
-	await logEventFromContext(ctx, 'github.issues.get', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'github.issues.get',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
@@ -67,13 +75,18 @@ export const create: GithubEndpoints['issuesCreate'] = async (ctx, input) => {
 
 	if (result && ctx.db.issues) {
 		try {
-			await ctx.db.issues.upsert(result.id.toString(), result);
+			await ctx.db.issues.upsertByEntityId(result.id.toString(), result);
 		} catch (error) {
 			console.warn('Failed to save issue to database:', error);
 		}
 	}
 
-	await logEventFromContext(ctx, 'github.issues.create', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'github.issues.create',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
@@ -88,13 +101,18 @@ export const update: GithubEndpoints['issuesUpdate'] = async (ctx, input) => {
 
 	if (result && ctx.db.issues) {
 		try {
-			await ctx.db.issues.upsert(result.id.toString(), result);
+			await ctx.db.issues.upsertByEntityId(result.id.toString(), result);
 		} catch (error) {
 			console.warn('Failed to update issue in database:', error);
 		}
 	}
 
-	await logEventFromContext(ctx, 'github.issues.update', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'github.issues.update',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
@@ -112,8 +130,7 @@ export const createComment: GithubEndpoints['issuesCreateComment'] = async (
 
 	if (result && ctx.db.issues) {
 		try {
-
-			const endpoints = ctx.endpoints as GithubBoundEndpoints
+			const endpoints = ctx.endpoints as GithubBoundEndpoints;
 
 			await endpoints.issuesGet({
 				owner,

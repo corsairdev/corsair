@@ -1,12 +1,12 @@
 import { logEventFromContext } from '../../utils/events';
 import type { GithubBoundEndpoints, GithubEndpoints } from '..';
-import { GithubAPIError, makeGithubRequest } from '../client';
+import { makeGithubRequest } from '../client';
 import type {
+	RepositoriesListResponse,
 	RepositoryBranchesListResponse,
 	RepositoryCommitsListResponse,
 	RepositoryContentGetResponse,
 	RepositoryGetResponse,
-	RepositoriesListResponse,
 } from './types';
 
 export const list: GithubEndpoints['repositoriesList'] = async (ctx, input) => {
@@ -14,11 +14,11 @@ export const list: GithubEndpoints['repositoriesList'] = async (ctx, input) => {
 	let endpoint = owner ? `/orgs/${owner}/repos` : '/user/repos';
 	let result: RepositoriesListResponse;
 
-		result = await makeGithubRequest<RepositoriesListResponse>(
-			endpoint,
-			ctx.options.token,
-			{ query: { ...queryParams, type } },
-		);
+	result = await makeGithubRequest<RepositoriesListResponse>(
+		endpoint,
+		ctx.options.token,
+		{ query: { ...queryParams, type } },
+	);
 
 	await logEventFromContext(
 		ctx,
@@ -39,13 +39,18 @@ export const get: GithubEndpoints['repositoriesGet'] = async (ctx, input) => {
 
 	if (result && ctx.db.repositories) {
 		try {
-			await ctx.db.repositories.upsert(result.id.toString(), result);
+			await ctx.db.repositories.upsertByEntityId(result.id.toString(), result);
 		} catch (error) {
 			console.warn('Failed to save repository to database:', error);
 		}
 	}
 
-	await logEventFromContext(ctx, 'github.repositories.get', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'github.repositories.get',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
@@ -61,7 +66,7 @@ export const listBranches: GithubEndpoints['repositoriesListBranches'] = async (
 		{ query: queryParams },
 	);
 
-	const endpoints = ctx.endpoints as GithubBoundEndpoints
+	const endpoints = ctx.endpoints as GithubBoundEndpoints;
 	await endpoints.repositoriesGet({
 		owner,
 		repo,
@@ -88,7 +93,7 @@ export const listCommits: GithubEndpoints['repositoriesListCommits'] = async (
 		{ query: queryParams },
 	);
 
-	const endpoints = ctx.endpoints as GithubBoundEndpoints
+	const endpoints = ctx.endpoints as GithubBoundEndpoints;
 	await endpoints.repositoriesGet({
 		owner,
 		repo,
@@ -115,7 +120,7 @@ export const getContent: GithubEndpoints['repositoriesGetContent'] = async (
 		{ query: queryParams },
 	);
 
-	const endpoints = ctx.endpoints as GithubBoundEndpoints
+	const endpoints = ctx.endpoints as GithubBoundEndpoints;
 	await endpoints.repositoriesGet({
 		owner,
 		repo,

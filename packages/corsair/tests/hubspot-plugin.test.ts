@@ -1,10 +1,15 @@
+import dotenv from 'dotenv';
 import { createCorsair } from '../core';
 import { hubspot } from '../plugins/hubspot';
-import { createTestDatabase } from './setup-db';
-import { createIntegrationAndAccount } from './plugins-test-utils';
 import { HubSpotAPIError } from '../plugins/hubspot/client';
-import type { GetManyContactsResponse, GetManyCompaniesResponse, GetManyDealsResponse, CreateOrUpdateContactResponse, CreateCompanyResponse, CreateDealResponse, CreateTicketResponse } from '../plugins/hubspot/endpoints/types';
-import dotenv from 'dotenv';
+import type {
+	CreateCompanyResponse,
+	CreateDealResponse,
+	CreateOrUpdateContactResponse,
+} from '../plugins/hubspot/endpoints/types';
+import { createIntegrationAndAccount } from './plugins-test-utils';
+import { createTestDatabase } from './setup-db';
+
 dotenv.config();
 
 async function createHubspotClient() {
@@ -73,21 +78,21 @@ describe('HubSpot plugin integration', () => {
 
 				expect(getEvents.length).toBeGreaterThan(0);
 
-				const contactFromDb = await corsair.hubspot.db.contacts.findByEntityId(
-					contactId,
-				);
+				const contactFromDb =
+					await corsair.hubspot.db.contacts.findByEntityId(contactId);
 
 				expect(contactFromDb).not.toBeNull();
 			}
 		}
 
-		const createdContact: CreateOrUpdateContactResponse = await corsair.hubspot.api.contacts.createOrUpdate({
-			properties: {
-				email: `corsair-test-${Date.now()}@example.com`,
-				firstname: 'Corsair',
-				lastname: 'Test',
-			},
-		});
+		const createdContact: CreateOrUpdateContactResponse =
+			await corsair.hubspot.api.contacts.createOrUpdate({
+				properties: {
+					email: `corsair-test-${Date.now()}@example.com`,
+					firstname: 'Corsair',
+					lastname: 'Test',
+				},
+			});
 
 		expect(createdContact).toBeDefined();
 
@@ -208,20 +213,20 @@ describe('HubSpot plugin integration', () => {
 
 				expect(getEvents.length).toBeGreaterThan(0);
 
-				const companyFromDb = await corsair.hubspot.db.companies.findByEntityId(
-					companyId,
-				);
+				const companyFromDb =
+					await corsair.hubspot.db.companies.findByEntityId(companyId);
 
 				expect(companyFromDb).not.toBeNull();
 			}
 		}
 
-		const createdCompany: CreateCompanyResponse = await corsair.hubspot.api.companies.create({
-			properties: {
-				name: `Corsair Test Company ${Date.now()}`,
-				domain: `corsair-test-${Date.now()}.example.com`,
-			},
-		});
+		const createdCompany: CreateCompanyResponse =
+			await corsair.hubspot.api.companies.create({
+				properties: {
+					name: `Corsair Test Company ${Date.now()}`,
+					domain: `corsair-test-${Date.now()}.example.com`,
+				},
+			});
 
 		expect(createdCompany).toBeDefined();
 
@@ -318,19 +323,21 @@ describe('HubSpot plugin integration', () => {
 
 				expect(getEvents.length).toBeGreaterThan(0);
 
-				const dealFromDb = await corsair.hubspot.db.deals.findByEntityId(dealId);
+				const dealFromDb =
+					await corsair.hubspot.db.deals.findByEntityId(dealId);
 
 				expect(dealFromDb).not.toBeNull();
 			}
 		}
 
-		const createdDeal: CreateDealResponse = await corsair.hubspot.api.deals.create({
-			properties: {
-				dealname: `Corsair Test Deal ${Date.now()}`,
-				dealstage: 'appointmentscheduled',
-				pipeline: 'default',
-			},
-		});
+		const createdDeal: CreateDealResponse =
+			await corsair.hubspot.api.deals.create({
+				properties: {
+					dealname: `Corsair Test Deal ${Date.now()}`,
+					dealstage: 'appointmentscheduled',
+					pipeline: 'default',
+				},
+			});
 
 		expect(createdDeal).toBeDefined();
 
@@ -436,9 +443,8 @@ describe('HubSpot plugin integration', () => {
 
 				expect(getEvents.length).toBeGreaterThan(0);
 
-				const ticketFromDb = await corsair.hubspot.db.tickets.findByEntityId(
-					ticketId,
-				);
+				const ticketFromDb =
+					await corsair.hubspot.db.tickets.findByEntityId(ticketId);
 
 				expect(ticketFromDb).not.toBeNull();
 			}
@@ -454,10 +460,7 @@ describe('HubSpot plugin integration', () => {
 			});
 		} catch (error) {
 			if (error instanceof HubSpotAPIError) {
-				console.warn(
-					'Skipping ticket creation - API error:',
-					error.message,
-				);
+				console.warn('Skipping ticket creation - API error:', error.message);
 				testDb.cleanup();
 				return;
 			}
@@ -540,9 +543,7 @@ describe('HubSpot plugin integration', () => {
 
 				const getEvents = await testDb.adapter.findMany({
 					table: 'corsair_events',
-					where: [
-						{ field: 'event_type', value: 'hubspot.engagements.get' },
-					],
+					where: [{ field: 'event_type', value: 'hubspot.engagements.get' }],
 				});
 
 				expect(getEvents.length).toBeGreaterThan(0);
@@ -611,4 +612,3 @@ describe('HubSpot plugin integration', () => {
 		testDb.cleanup();
 	});
 });
-

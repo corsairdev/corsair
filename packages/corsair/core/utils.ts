@@ -1,4 +1,4 @@
-import { uuidv7 } from 'uuidv7';
+import { v7 } from 'uuid';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Type Utilities
@@ -35,7 +35,7 @@ export type Bivariant<Args extends unknown[], R> = {
  * @returns A UUID v7 string
  */
 export function generateUUID(): string {
-	return uuidv7();
+	return v7();
 }
 
 // ─────────────────────────────────────────────────────────────────────────────

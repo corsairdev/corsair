@@ -1,4 +1,3 @@
-import type { AuthTypes } from '../../constants';
 import type {
 	BindEndpoints,
 	BindWebhooks,
@@ -8,8 +7,8 @@ import type {
 	CorsairPluginContext,
 	CorsairWebhook,
 } from '../../core';
+import type { AuthTypes } from '../../core/constants';
 import type { HubSpotEndpointOutputs } from './endpoints';
-import { errorHandlers } from './error-handlers';
 import {
 	CompaniesEndpoints,
 	ContactListsEndpoints,
@@ -18,6 +17,7 @@ import {
 	EngagementsEndpoints,
 	TicketsEndpoints,
 } from './endpoints';
+import { errorHandlers } from './error-handlers';
 import type { HubSpotCredentials } from './schema';
 import { HubSpotSchema } from './schema';
 import type {
@@ -30,8 +30,8 @@ import type {
 	DealCreatedEventType,
 	DealDeletedEventType,
 	DealUpdatedEventType,
-	HubSpotWebhookPayloadType,
 	HubSpotWebhookOutputs,
+	HubSpotWebhookPayloadType,
 	TicketCreatedEventType,
 	TicketDeletedEventType,
 	TicketUpdatedEventType,
@@ -372,7 +372,10 @@ export type HubSpotEndpoints = {
 
 export type HubSpotBoundEndpoints = BindEndpoints<HubSpotEndpoints>;
 
-type HubSpotWebhook<K extends keyof HubSpotWebhookOutputs, TEvent> = CorsairWebhook<
+type HubSpotWebhook<
+	K extends keyof HubSpotWebhookOutputs,
+	TEvent,
+> = CorsairWebhook<
 	HubSpotContext,
 	HubSpotWebhookPayloadType,
 	HubSpotWebhookOutputs[K]
@@ -500,7 +503,9 @@ export function hubspot(options: HubSpotPluginOptions) {
 		pluginWebhookMatcher: (
 			request: import('../../core/webhooks').RawWebhookRequest,
 		) => {
-			const body = request.body as Record<string, unknown> | Array<Record<string, unknown>>;
+			const body = request.body as
+				| Record<string, unknown>
+				| Array<Record<string, unknown>>;
 			const events = Array.isArray(body) ? body : [body];
 			return events.some(
 				(event) =>

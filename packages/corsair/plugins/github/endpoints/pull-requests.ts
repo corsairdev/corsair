@@ -20,7 +20,7 @@ export const list: GithubEndpoints['pullRequestsList'] = async (ctx, input) => {
 	if (result && ctx.db.pullRequests) {
 		try {
 			for (const pr of result) {
-				await ctx.db.pullRequests.upsert(pr.id.toString(),pr);
+				await ctx.db.pullRequests.upsertByEntityId(pr.id.toString(), pr);
 			}
 		} catch (error) {
 			console.warn('Failed to save pull requests to database:', error);
@@ -46,13 +46,18 @@ export const get: GithubEndpoints['pullRequestsGet'] = async (ctx, input) => {
 
 	if (result && ctx.db.pullRequests) {
 		try {
-			await ctx.db.pullRequests.upsert(result.id.toString(), result);
+			await ctx.db.pullRequests.upsertByEntityId(result.id.toString(), result);
 		} catch (error) {
 			console.warn('Failed to save pull request to database:', error);
 		}
 	}
 
-	await logEventFromContext(ctx, 'github.pullRequests.get', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'github.pullRequests.get',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
@@ -68,12 +73,12 @@ export const listReviews: GithubEndpoints['pullRequestsListReviews'] = async (
 		{ query: queryParams },
 	);
 
-	const endpoints = ctx.endpoints as GithubBoundEndpoints
-		await endpoints.pullRequestsGet({
-			owner,
-			repo,
-			pullNumber,
-		});
+	const endpoints = ctx.endpoints as GithubBoundEndpoints;
+	await endpoints.pullRequestsGet({
+		owner,
+		repo,
+		pullNumber,
+	});
 
 	await logEventFromContext(
 		ctx,
@@ -96,7 +101,7 @@ export const createReview: GithubEndpoints['pullRequestsCreateReview'] = async (
 		{ method: 'POST', body },
 	);
 
-	const endpoints = ctx.endpoints as GithubBoundEndpoints
+	const endpoints = ctx.endpoints as GithubBoundEndpoints;
 	await endpoints.pullRequestsGet({
 		owner,
 		repo,
