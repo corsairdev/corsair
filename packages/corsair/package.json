@@ -72,6 +72,7 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
+    "test:api": "jest --testPathPattern=api\\.test\\.ts",
     "build": "tsup && tsc -p tsconfig.build.json",
     "build:watch": "tsup --watch",
     "typecheck": "tsc --noEmit",
@@ -79,6 +80,7 @@
   },
   "dependencies": {
     "uuid": "^13.0.0",
+    "uuidv7": "^1.1.0",
     "zod": "^3.25.76"
   },
   "peerDependencies": {

@@ -1,0 +1,225 @@
+export type Issue = {
+	id: number;
+	nodeId: string;
+	url: string;
+	repositoryUrl: string;
+	labelsUrl: string;
+	commentsUrl: string;
+	eventsUrl: string;
+	htmlUrl: string;
+	number: number;
+	state: string;
+	stateReason?: 'completed' | 'reopened' | 'not_planned' | 'duplicate' | null;
+	title: string;
+	body?: string | null;
+	user: SimpleUser | null;
+	labels: Array<string | Label>;
+	assignee: SimpleUser | null;
+	assignees?: Array<SimpleUser> | null;
+	locked: boolean;
+	comments: number;
+	createdAt: string;
+	updatedAt: string;
+	closedAt: string | null;
+};
+
+export type SimpleUser = {
+	name?: string | null;
+	email?: string | null;
+	login: string;
+	id: number;
+	nodeId: string;
+	avatarUrl: string;
+	gravatarId: string | null;
+	url: string;
+	htmlUrl: string;
+	followersUrl: string;
+	followingUrl: string;
+	gistsUrl: string;
+	starredUrl: string;
+	subscriptionsUrl: string;
+	organizationsUrl: string;
+	reposUrl: string;
+	eventsUrl: string;
+	receivedEventsUrl: string;
+	type: string;
+	siteAdmin: boolean;
+	starredAt?: string;
+};
+
+export type Label = {
+	id?: number;
+	nodeId?: string;
+	url?: string;
+	name?: string;
+	description?: string | null;
+	color?: string | null;
+	default?: boolean;
+};
+
+export type PullRequest = {
+	url: string;
+	id: number;
+	nodeId: string;
+	htmlUrl: string;
+	diffUrl: string;
+	patchUrl: string;
+	issueUrl: string;
+	number: number;
+	state: 'open' | 'closed';
+	locked: boolean;
+	title: string;
+	user: SimpleUser;
+	body: string | null;
+	createdAt: string;
+	updatedAt: string;
+	closedAt: string | null;
+	mergedAt: string | null;
+	mergeCommitSha: string | null;
+	assignee: SimpleUser | null;
+	assignees?: Array<SimpleUser> | null;
+	labels: Array<Label>;
+	milestone: Milestone | null;
+	commitsUrl: string;
+	reviewCommentsUrl: string;
+	reviewCommentUrl: string;
+	commentsUrl: string;
+	statusesUrl: string;
+	head: {
+		label: string;
+		ref: string;
+		sha: string;
+		user: SimpleUser;
+		repo: Repository | null;
+	};
+	base: {
+		label: string;
+		ref: string;
+		sha: string;
+		user: SimpleUser;
+		repo: Repository;
+	};
+	authorAssociation: string;
+	draft?: boolean;
+	merged: boolean;
+	mergeable: boolean | null;
+	comments: number;
+	reviewComments: number;
+	commits: number;
+	additions: number;
+	deletions: number;
+	changedFiles: number;
+};
+
+export type Repository = {
+	id: number;
+	nodeId: string;
+	name: string;
+	fullName: string;
+	private: boolean;
+	htmlUrl: string;
+	description: string | null;
+	fork: boolean;
+	url: string;
+	createdAt: Date | null;
+	updatedAt: Date | null;
+	pushedAt: Date | null;
+	defaultBranch: string;
+	language: string | null;
+	stargazersCount: number;
+	watchersCount: number;
+	forksCount: number;
+	openIssuesCount: number;
+	archived: boolean;
+	disabled: boolean;
+	owner: SimpleUser;
+};
+
+export type Milestone = {
+	url: string;
+	htmlUrl: string;
+	labelsUrl: string;
+	id: number;
+	nodeId: string;
+	number: number;
+	state: 'open' | 'closed';
+	title: string;
+	description: string | null;
+	creator: SimpleUser;
+	openIssues: number;
+	closedIssues: number;
+	createdAt: string;
+	updatedAt: string;
+	closedAt: string | null;
+	dueOn: string | null;
+};
+
+export type Release = {
+	url: string;
+	htmlUrl: string;
+	assetsUrl: string;
+	uploadUrl: string;
+	tarballUrl: string | null;
+	zipballUrl: string | null;
+	id: number;
+	nodeId: string;
+	tagName: string;
+	targetCommitish: string;
+	name: string | null;
+	body?: string | null;
+	draft: boolean;
+	prerelease: boolean;
+	createdAt: string;
+	publishedAt: Date | null;
+	author: SimpleUser;
+	assets: Array<ReleaseAsset>;
+};
+
+export type ReleaseAsset = {
+	url: string;
+	browserDownloadUrl: string;
+	id: number;
+	nodeId: string;
+	name: string;
+	label: string | null;
+	state: 'uploaded' | 'open';
+	contentType: string;
+	size: number;
+	downloadCount: number;
+	createdAt: string;
+	updatedAt: string;
+};
+
+export type Workflow = {
+	id: number;
+	nodeId: string;
+	name: string;
+	path: string;
+	state: 'active' | 'deleted' | 'disabled_fork' | 'disabled_inactivity' | 'disabled_manually';
+	createdAt: string;
+	updatedAt: string;
+	url: string;
+	htmlUrl: string;
+	badgeUrl: string;
+	deletedAt?: string;
+};
+
+export type WorkflowRun = {
+	id: number;
+	nodeId: string;
+	name?: string | null;
+	headBranch: string | null;
+	headSha: string;
+	path: string;
+	runNumber: number;
+	runAttempt?: number;
+	event: string;
+	status: string | null;
+	conclusion: string | null;
+	workflowId: number;
+	url: string;
+	htmlUrl: string;
+	createdAt: string;
+	updatedAt: string;
+	displayTitle: string;
+};
