@@ -5,7 +5,6 @@ import type {
 	RawWebhookRequest,
 	WebhookResponse,
 } from '../core/webhooks';
-import type { SlackUrlVerificationPayload } from '../plugins/slack';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Types
