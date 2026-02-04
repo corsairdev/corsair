@@ -50,18 +50,15 @@ export async function makeSlackRequest<T>(
 		},
 	};
 
-	const bodyWithToken = body ? { ...body, token } : { token };
-	const queryWithToken = query ? { ...query, token } : { token };
-
 	const requestOptions: ApiRequestOptions = {
 		method,
 		url: endpoint,
 		body:
 			method === 'POST' || method === 'PUT' || method === 'PATCH'
-				? bodyWithToken
+				? body
 				: undefined,
 		mediaType: 'application/json; charset=utf-8',
-		query: method === 'GET' ? queryWithToken : undefined,
+		query: method === 'GET' ? query : undefined,
 	};
 
 	const response = await request<T>(config, requestOptions, {
