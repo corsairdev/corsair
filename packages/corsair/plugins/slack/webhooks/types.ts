@@ -795,13 +795,6 @@ export function createSlackEventMatch(
 	eventType: string,
 ): CorsairWebhookMatcher {
 	return (request: RawWebhookRequest) => {
-		const headers = request.headers;
-		const hasSlackSignature = 'x-slack-signature' in headers;
-		const hasSlackTimestamp = 'x-slack-request-timestamp' in headers;
-
-		if (!hasSlackSignature || !hasSlackTimestamp) {
-			return false;
-		}
 
 		const parsedBody = parseBody(request.body) as Record<string, unknown>;
 
