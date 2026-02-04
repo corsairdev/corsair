@@ -136,14 +136,14 @@ function normalizeHeaders(
  * });
  *
  * // In your webhook endpoint handler:
- * const result = await filterWebhook(corsair, req.headers, req.body, req.query);
+ * const result = await processWebhook(corsair, req.headers, req.body, req.query);
  *
  * if (result.plugin) {
  *   console.log(`Handled by ${result.plugin}.${result.action}`);
  * }
  * ```
  */
-export async function filterWebhook(
+export async function processWebhook(
 	corsair: CorsairInstance,
 	headers: WebhookHeaders,
 	body: WebhookBody | string,
@@ -204,48 +204,13 @@ export async function filterWebhook(
 		try {
 			const response = await matched.webhook.handler(webhookRequest);
 
-			let preparedResponse: { success: boolean; data?: unknown } = {
-				success: true,
-			};
-
-			if (response.returnToSender && response.data !== undefined) {
-				const data = response.data;
-				// If data is an object with a 'type' field, remove it and extract the other value(s)
-				if (
-					typeof data === 'object' &&
-					data !== null &&
-					!Array.isArray(data) &&
-					'type' in data
-				) {
-					const { type, ...rest } = data;
-					// If only one other field remains, return just that value
-					const otherKeys = Object.keys(rest);
-					if (otherKeys.length === 1 && otherKeys[0]) {
-						preparedResponse = {
-							...preparedResponse,
-							// @ts-expect-error it doesn't expect otherKeys[0] to be a string
-							data: rest?.[otherKeys[0]] || '',
-						};
-					} else {
-						// Otherwise return the object without 'type'
-						preparedResponse = {
-							...preparedResponse,
-							data: rest,
-						};
-					}
-				} else {
-					preparedResponse = {
-						...preparedResponse,
-						data: data,
-					};
-				}
-			}
-
 			return {
 				plugin: pluginId,
 				action,
 				body: parsedBody,
-				response: (preparedResponse.data as any).challenge,
+				response: response.returnToSender
+					? { success: true, data: response.data }
+					: { success: true },
 			};
 		} catch (error) {
 			console.error(

@@ -21,7 +21,16 @@ import IntroductionDoc from '@/content/getting-started/introduction.mdx';
 // Guides
 import CreateYourOwnPlugin from '@/content/guides/create-your-own-plugin.mdx';
 // Plugins
-import SlackDoc from '@/content/plugins/slack.mdx';
+import SlackDoc from '@/content/plugins/slack/main.mdx';
+import SlackApiEndpointsDoc from '@/content/plugins/slack/api-endpoints.mdx';
+import SlackWebhooksDoc from '@/content/plugins/slack/webhooks.mdx';
+import SlackDatabaseDoc from '@/content/plugins/slack/database.mdx';
+import SlackErrorHandlersDoc from '@/content/plugins/slack/error-handlers.mdx';
+import LinearDoc from '@/content/plugins/linear/main.mdx';
+import LinearApiEndpointsDoc from '@/content/plugins/linear/api-endpoints.mdx';
+import LinearWebhooksDoc from '@/content/plugins/linear/webhooks.mdx';
+import LinearDatabaseDoc from '@/content/plugins/linear/database.mdx';
+import LinearErrorHandlersDoc from '@/content/plugins/linear/error-handlers.mdx';
 import { extractTOC } from '@/lib/toc';
 import { useMDXComponents } from '@/mdx-components';
 
@@ -110,8 +119,52 @@ const pages = {
 	'plugins/slack': {
 		Component: SlackDoc,
 		title: 'Slack',
-		description:
-			'Enable natural language queries and mutations for Slack operations',
+		description: 'Extend Corsair to Slack Integrations',
+	},
+	'plugins/slack/api-endpoints': {
+		Component: SlackApiEndpointsDoc,
+		title: 'Slack API Endpoints',
+		description: 'Complete reference for all Slack API endpoints',
+	},
+	'plugins/slack/webhooks': {
+		Component: SlackWebhooksDoc,
+		title: 'Slack Webhooks',
+		description: 'All available Slack webhook events',
+	},
+	'plugins/slack/database': {
+		Component: SlackDatabaseDoc,
+		title: 'Slack Database Schema',
+		description: 'Database entities and querying synced Slack data',
+	},
+	'plugins/slack/error-handlers': {
+		Component: SlackErrorHandlersDoc,
+		title: 'Slack Error Handlers',
+		description: 'Built-in and custom error handling for Slack',
+	},
+	'plugins/linear': {
+		Component: LinearDoc,
+		title: 'Linear',
+		description: 'Integrate Linear with Corsair',
+	},
+	'plugins/linear/api-endpoints': {
+		Component: LinearApiEndpointsDoc,
+		title: 'Linear API Endpoints',
+		description: 'Complete reference for all Linear API endpoints',
+	},
+	'plugins/linear/webhooks': {
+		Component: LinearWebhooksDoc,
+		title: 'Linear Webhooks',
+		description: 'All available Linear webhook events',
+	},
+	'plugins/linear/database': {
+		Component: LinearDatabaseDoc,
+		title: 'Linear Database Schema',
+		description: 'Database entities and querying synced data',
+	},
+	'plugins/linear/error-handlers': {
+		Component: LinearErrorHandlersDoc,
+		title: 'Linear Error Handlers',
+		description: 'Built-in and custom error handling',
 	},
 	'guides/create-your-own-plugin': {
 		Component: CreateYourOwnPlugin,
