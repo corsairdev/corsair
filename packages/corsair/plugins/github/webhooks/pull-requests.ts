@@ -29,8 +29,8 @@ export const pullRequestOpened: GithubWebhooks['pullRequestOpened'] = {
 
 		if (event.action !== 'opened') {
 			return {
-				success: true,
-				data: { success: true },
+				success: false,
+				data: undefined,
 			};
 		}
 
@@ -78,7 +78,7 @@ export const pullRequestOpened: GithubWebhooks['pullRequestOpened'] = {
 
 		return {
 			success: true,
-			data: { success: true },
+			data: event,
 		};
 	},
 };
@@ -91,8 +91,8 @@ export const pullRequestClosed: GithubWebhooks['pullRequestClosed'] = {
 
 		if (event.action !== 'closed') {
 			return {
-				success: true,
-				data: { success: true },
+				success: false,
+				data: undefined,
 			};
 		}
 
@@ -140,7 +140,7 @@ export const pullRequestClosed: GithubWebhooks['pullRequestClosed'] = {
 
 		return {
 			success: true,
-			data: { success: true },
+			data: event,
 		};
 	},
 };
@@ -154,8 +154,8 @@ export const pullRequestSynchronize: GithubWebhooks['pullRequestSynchronize'] =
 
 			if (event.action !== 'synchronize') {
 				return {
-					success: true,
-					data: { success: true },
+					success: false,
+					data: undefined,
 				};
 			}
 
@@ -204,7 +204,7 @@ export const pullRequestSynchronize: GithubWebhooks['pullRequestSynchronize'] =
 
 			return {
 				success: true,
-				data: { success: true },
+				data: event,
 			};
 		},
 	};
