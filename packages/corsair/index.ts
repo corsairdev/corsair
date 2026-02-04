@@ -275,4 +275,4 @@ export {
 	type SlackWebhooks,
 	slack,
 } from './plugins/slack';
-export { filterWebhook } from './webhooks';
+export { processWebhook } from './webhooks';

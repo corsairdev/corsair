@@ -6,11 +6,11 @@ description: One endpoint for all webhooks, automatically routed and verified.
 Corsair consolidates all incoming webhooks to a single URL. It identifies which integration and service each webhook belongs to, then processes and updates your data automatically.
 
 ```ts title="webhook-handler.ts"
-import { filterWebhook } from "corsair";
+import { processWebhook } from "corsair";
 import { corsair } from "./corsair";
 
 export async function handleWebhook(req: Request) {
-    const result = await filterWebhook(
+    const result = await processWebhook(
         corsair,
         Object.fromEntries(req.headers),
         await req.json()
