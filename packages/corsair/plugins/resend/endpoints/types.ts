@@ -1,72 +1,5 @@
 import { z } from 'zod';
 
-export interface SendEmailResponse {
-	id: string;
-}
-
-export interface Email {
-	id: string;
-	from: string;
-	to: string[];
-	created_at: string;
-	subject?: string;
-}
-
-export interface GetEmailResponse extends Email {
-	[key: string]: any;
-}
-
-export interface ListEmailsResponse {
-	data: Email[];
-}
-
-export interface Domain {
-	id: string;
-	name: string;
-	status:
-		| 'not_started'
-		| 'validation'
-		| 'scheduled'
-		| 'ready'
-		| 'error'
-		| 'verified'
-		| 'pending';
-	created_at: string;
-	region?: string;
-}
-
-export interface CreateDomainResponse extends Domain {
-	[key: string]: any;
-}
-
-export interface GetDomainResponse extends Domain {
-	[key: string]: any;
-}
-
-export interface ListDomainsResponse {
-	data: Domain[];
-}
-
-export interface DeleteDomainResponse {
-	id: string;
-	object: string;
-	deleted: boolean;
-}
-
-export interface VerifyDomainResponse extends Domain {
-	[key: string]: any;
-}
-
-export type ResendEndpointOutputs = {
-	emailsSend: SendEmailResponse;
-	emailsGet: GetEmailResponse;
-	emailsList: ListEmailsResponse;
-	domainsCreate: CreateDomainResponse;
-	domainsGet: GetDomainResponse;
-	domainsList: ListDomainsResponse;
-	domainsDelete: DeleteDomainResponse;
-	domainsVerify: VerifyDomainResponse;
-};
 
 const SendEmailResponseSchema = z.object({
 	id: z.string(),
@@ -136,9 +69,7 @@ const VerifyDomainResponseSchema = z
 	})
 	.passthrough();
 
-export const ResendEndpointOutputSchemas: {
-	[K in keyof ResendEndpointOutputs]: z.ZodType<unknown>;
-} = {
+export const ResendEndpointOutputSchemas = {
 	emailsSend: SendEmailResponseSchema,
 	emailsGet: GetEmailResponseSchema,
 	emailsList: ListEmailsResponseSchema,
@@ -147,4 +78,37 @@ export const ResendEndpointOutputSchemas: {
 	domainsList: ListDomainsResponseSchema,
 	domainsDelete: DeleteDomainResponseSchema,
 	domainsVerify: VerifyDomainResponseSchema,
+} as const;
+
+export type ResendEndpointOutputs = {
+	[K in keyof typeof ResendEndpointOutputSchemas]: z.infer<
+		typeof ResendEndpointOutputSchemas[K]
+	>;
 };
+
+export type SendEmailResponse = z.infer<
+	typeof ResendEndpointOutputSchemas.emailsSend
+>;
+export type Email = z.infer<typeof EmailSchema>;
+export type GetEmailResponse = z.infer<
+	typeof ResendEndpointOutputSchemas.emailsGet
+>;
+export type ListEmailsResponse = z.infer<
+	typeof ResendEndpointOutputSchemas.emailsList
+>;
+export type Domain = z.infer<typeof DomainSchema>;
+export type CreateDomainResponse = z.infer<
+	typeof ResendEndpointOutputSchemas.domainsCreate
+>;
+export type GetDomainResponse = z.infer<
+	typeof ResendEndpointOutputSchemas.domainsGet
+>;
+export type ListDomainsResponse = z.infer<
+	typeof ResendEndpointOutputSchemas.domainsList
+>;
+export type DeleteDomainResponse = z.infer<
+	typeof ResendEndpointOutputSchemas.domainsDelete
+>;
+export type VerifyDomainResponse = z.infer<
+	typeof ResendEndpointOutputSchemas.domainsVerify
+>;

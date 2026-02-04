@@ -202,160 +202,6 @@ type Pagination = {
 	last?: number;
 };
 
-export type ConversationsArchiveResponse = SlackResponse;
-export type ConversationsCloseResponse = SlackResponse & {
-	no_op?: boolean;
-	already_closed?: boolean;
-};
-export type ConversationsCreateResponse = SlackResponse & { channel?: Channel };
-export type ConversationsInfoResponse = SlackResponse & { channel?: Channel };
-export type ConversationsListResponse = SlackResponse & {
-	channels?: Channel[];
-};
-export type ConversationsHistoryResponse = SlackResponse & {
-	messages?: Message[];
-	has_more?: boolean;
-	pin_count?: number;
-	channel_actions_count?: number;
-	channel_actions_ts?: number;
-};
-export type ConversationsInviteResponse = SlackResponse & { channel?: Channel };
-export type ConversationsJoinResponse = SlackResponse & {
-	channel?: Channel;
-	warning?: string;
-};
-export type ConversationsKickResponse = SlackResponse;
-export type ConversationsLeaveResponse = SlackResponse & {
-	not_in_channel?: boolean;
-};
-export type ConversationsMembersResponse = SlackResponse & {
-	members?: string[];
-};
-export type ConversationsOpenResponse = SlackResponse & {
-	channel?: Channel;
-	no_op?: boolean;
-	already_open?: boolean;
-};
-export type ConversationsRenameResponse = SlackResponse & { channel?: Channel };
-export type ConversationsRepliesResponse = SlackResponse & {
-	messages?: Message[];
-	has_more?: boolean;
-};
-export type ConversationsSetPurposeResponse = SlackResponse & {
-	channel?: Channel;
-	purpose?: string;
-};
-export type ConversationsSetTopicResponse = SlackResponse & {
-	channel?: Channel;
-	topic?: string;
-};
-export type ConversationsUnarchiveResponse = SlackResponse;
-
-export type UsersInfoResponse = SlackResponse & { user?: User };
-export type UsersListResponse = SlackResponse & {
-	members?: User[];
-	cache_ts?: number;
-};
-export type UsersProfileGetResponse = SlackResponse & { profile?: UserProfile };
-export type UsersGetPresenceResponse = SlackResponse & {
-	presence?: string;
-	online?: boolean;
-	auto_away?: boolean;
-	manual_away?: boolean;
-	connection_count?: number;
-	last_activity?: number;
-};
-export type UsersProfileSetResponse = SlackResponse & { profile?: UserProfile };
-
-export type UsergroupsCreateResponse = SlackResponse & {
-	usergroup?: Usergroup;
-};
-export type UsergroupsDisableResponse = SlackResponse & {
-	usergroup?: Usergroup;
-};
-export type UsergroupsEnableResponse = SlackResponse & {
-	usergroup?: Usergroup;
-};
-export type UsergroupsListResponse = SlackResponse & {
-	userGroups?: Usergroup[];
-};
-export type UsergroupsUpdateResponse = SlackResponse & {
-	usergroup?: Usergroup;
-};
-
-export type FilesInfoResponse = SlackResponse & {
-	file?: File;
-	comments?: Array<{
-		id: string;
-		timestamp: number;
-		user: string;
-		comment: string;
-	}>;
-	paging?: Paging;
-};
-export type FilesListResponse = SlackResponse & {
-	files?: File[];
-	paging?: Paging;
-};
-export type FilesUploadResponse = SlackResponse & { file?: File };
-
-export type ChatDeleteResponse = SlackResponse & {
-	channel?: string;
-	ts?: string;
-};
-export type ChatGetPermalinkResponse = SlackResponse & {
-	channel?: string;
-	permalink?: string;
-};
-export type SearchMessagesResponse = SlackResponse & {
-	query?: string;
-	messages?: {
-		total?: number;
-		pagination?: Pagination;
-		paging?: Paging;
-		matches?: Array<
-			Message & {
-				channel?: { id: string; name?: string };
-				permalink?: string;
-			}
-		>;
-	};
-};
-export type ChatPostMessageResponse = SlackResponse & {
-	channel?: string;
-	ts?: string;
-	message?: Message;
-};
-export type ChatUpdateResponse = SlackResponse & {
-	channel?: string;
-	ts?: string;
-	text?: string;
-	message?: Message;
-};
-
-export type ReactionsAddResponse = SlackResponse;
-export type ReactionsGetResponse = SlackResponse & {
-	type?: string;
-	channel?: string;
-	message?: Message;
-	file?: File;
-	comment?: { id: string; comment: string; reactions?: Reaction[] };
-};
-export type ReactionsRemoveResponse = SlackResponse;
-
-export type StarsAddResponse = SlackResponse;
-export type StarsRemoveResponse = SlackResponse;
-export type StarsListResponse = SlackResponse & {
-	items?: Array<{
-		type: string;
-		channel?: string;
-		message?: Message;
-		file?: File;
-		comment?: { id: string; comment: string };
-		date_create?: number;
-	}>;
-	paging?: Paging;
-};
 
 export type SlackEndpointInputs = {
 	channelsArchive: { channel: string };
@@ -571,54 +417,6 @@ export type SlackEndpointInputs = {
 		page?: number;
 		count?: number;
 	};
-};
-export type ChannelsRandomResponse = {
-	done: boolean;
-};
-
-export type SlackEndpointOutputs = {
-	channelsRandom: ChannelsRandomResponse;
-	channelsArchive: ConversationsArchiveResponse;
-	channelsClose: ConversationsCloseResponse;
-	channelsCreate: ConversationsCreateResponse;
-	channelsGet: ConversationsInfoResponse;
-	channelsList: ConversationsListResponse;
-	channelsGetHistory: ConversationsHistoryResponse;
-	channelsInvite: ConversationsInviteResponse;
-	channelsJoin: ConversationsJoinResponse;
-	channelsKick: ConversationsKickResponse;
-	channelsLeave: ConversationsLeaveResponse;
-	channelsGetMembers: ConversationsMembersResponse;
-	channelsOpen: ConversationsOpenResponse;
-	channelsRename: ConversationsRenameResponse;
-	channelsGetReplies: ConversationsRepliesResponse;
-	channelsSetPurpose: ConversationsSetPurposeResponse;
-	channelsSetTopic: ConversationsSetTopicResponse;
-	channelsUnarchive: ConversationsUnarchiveResponse;
-	usersGet: UsersInfoResponse;
-	usersList: UsersListResponse;
-	usersGetProfile: UsersProfileGetResponse;
-	usersGetPresence: UsersGetPresenceResponse;
-	usersUpdateProfile: UsersProfileSetResponse;
-	userGroupsCreate: UsergroupsCreateResponse;
-	userGroupsDisable: UsergroupsDisableResponse;
-	userGroupsEnable: UsergroupsEnableResponse;
-	userGroupsList: UsergroupsListResponse;
-	userGroupsUpdate: UsergroupsUpdateResponse;
-	filesGet: FilesInfoResponse;
-	filesList: FilesListResponse;
-	filesUpload: FilesUploadResponse;
-	messagesDelete: ChatDeleteResponse;
-	messagesGetPermalink: ChatGetPermalinkResponse;
-	messagesSearch: SearchMessagesResponse;
-	postMessage: ChatPostMessageResponse;
-	messagesUpdate: ChatUpdateResponse;
-	reactionsAdd: ReactionsAddResponse;
-	reactionsGet: ReactionsGetResponse;
-	reactionsRemove: ReactionsRemoveResponse;
-	starsAdd: StarsAddResponse;
-	starsRemove: StarsRemoveResponse;
-	starsList: StarsListResponse;
 };
 
 const ResponseMetadataSchema = z.object({
@@ -1014,9 +812,7 @@ const StarsListResponseSchema = SlackResponseSchema.extend({
 	paging: PagingSchema.optional(),
 }).passthrough();
 
-export const SlackEndpointOutputSchemas: {
-	[K in keyof SlackEndpointOutputs]: z.ZodType<unknown>;
-} = {
+export const SlackEndpointOutputSchemas = {
 	channelsRandom: ChannelsRandomResponseSchema,
 	channelsArchive: ConversationsArchiveResponseSchema,
 	channelsClose: ConversationsCloseResponseSchema,
@@ -1059,4 +855,137 @@ export const SlackEndpointOutputSchemas: {
 	starsAdd: StarsAddResponseSchema,
 	starsRemove: StarsRemoveResponseSchema,
 	starsList: StarsListResponseSchema,
+} as const;
+
+export type SlackEndpointOutputs = {
+	[K in keyof typeof SlackEndpointOutputSchemas]: z.infer<
+		typeof SlackEndpointOutputSchemas[K]
+	>;
 };
+
+export type ChannelsRandomResponse = z.infer<
+	typeof SlackEndpointOutputSchemas.channelsRandom
+>;
+export type ConversationsArchiveResponse = z.infer<
+	typeof SlackEndpointOutputSchemas.channelsArchive
+>;
+export type ConversationsCloseResponse = z.infer<
+	typeof SlackEndpointOutputSchemas.channelsClose
+>;
+export type ConversationsCreateResponse = z.infer<
+	typeof SlackEndpointOutputSchemas.channelsCreate
+>;
+export type ConversationsInfoResponse = z.infer<
+	typeof SlackEndpointOutputSchemas.channelsGet
+>;
+export type ConversationsListResponse = z.infer<
+	typeof SlackEndpointOutputSchemas.channelsList
+>;
+export type ConversationsHistoryResponse = z.infer<
+	typeof SlackEndpointOutputSchemas.channelsGetHistory
+>;
+export type ConversationsInviteResponse = z.infer<
+	typeof SlackEndpointOutputSchemas.channelsInvite
+>;
+export type ConversationsJoinResponse = z.infer<
+	typeof SlackEndpointOutputSchemas.channelsJoin
+>;
+export type ConversationsKickResponse = z.infer<
+	typeof SlackEndpointOutputSchemas.channelsKick
+>;
+export type ConversationsLeaveResponse = z.infer<
+	typeof SlackEndpointOutputSchemas.channelsLeave
+>;
+export type ConversationsMembersResponse = z.infer<
+	typeof SlackEndpointOutputSchemas.channelsGetMembers
+>;
+export type ConversationsOpenResponse = z.infer<
+	typeof SlackEndpointOutputSchemas.channelsOpen
+>;
+export type ConversationsRenameResponse = z.infer<
+	typeof SlackEndpointOutputSchemas.channelsRename
+>;
+export type ConversationsRepliesResponse = z.infer<
+	typeof SlackEndpointOutputSchemas.channelsGetReplies
+>;
+export type ConversationsSetPurposeResponse = z.infer<
+	typeof SlackEndpointOutputSchemas.channelsSetPurpose
+>;
+export type ConversationsSetTopicResponse = z.infer<
+	typeof SlackEndpointOutputSchemas.channelsSetTopic
+>;
+export type ConversationsUnarchiveResponse = z.infer<
+	typeof SlackEndpointOutputSchemas.channelsUnarchive
+>;
+export type UsersInfoResponse = z.infer<
+	typeof SlackEndpointOutputSchemas.usersGet
+>;
+export type UsersListResponse = z.infer<
+	typeof SlackEndpointOutputSchemas.usersList
+>;
+export type UsersProfileGetResponse = z.infer<
+	typeof SlackEndpointOutputSchemas.usersGetProfile
+>;
+export type UsersGetPresenceResponse = z.infer<
+	typeof SlackEndpointOutputSchemas.usersGetPresence
+>;
+export type UsersProfileSetResponse = z.infer<
+	typeof SlackEndpointOutputSchemas.usersUpdateProfile
+>;
+export type UsergroupsCreateResponse = z.infer<
+	typeof SlackEndpointOutputSchemas.userGroupsCreate
+>;
+export type UsergroupsDisableResponse = z.infer<
+	typeof SlackEndpointOutputSchemas.userGroupsDisable
+>;
+export type UsergroupsEnableResponse = z.infer<
+	typeof SlackEndpointOutputSchemas.userGroupsEnable
+>;
+export type UsergroupsListResponse = z.infer<
+	typeof SlackEndpointOutputSchemas.userGroupsList
+>;
+export type UsergroupsUpdateResponse = z.infer<
+	typeof SlackEndpointOutputSchemas.userGroupsUpdate
+>;
+export type FilesInfoResponse = z.infer<
+	typeof SlackEndpointOutputSchemas.filesGet
+>;
+export type FilesListResponse = z.infer<
+	typeof SlackEndpointOutputSchemas.filesList
+>;
+export type FilesUploadResponse = z.infer<
+	typeof SlackEndpointOutputSchemas.filesUpload
+>;
+export type ChatDeleteResponse = z.infer<
+	typeof SlackEndpointOutputSchemas.messagesDelete
+>;
+export type ChatGetPermalinkResponse = z.infer<
+	typeof SlackEndpointOutputSchemas.messagesGetPermalink
+>;
+export type SearchMessagesResponse = z.infer<
+	typeof SlackEndpointOutputSchemas.messagesSearch
+>;
+export type ChatPostMessageResponse = z.infer<
+	typeof SlackEndpointOutputSchemas.postMessage
+>;
+export type ChatUpdateResponse = z.infer<
+	typeof SlackEndpointOutputSchemas.messagesUpdate
+>;
+export type ReactionsAddResponse = z.infer<
+	typeof SlackEndpointOutputSchemas.reactionsAdd
+>;
+export type ReactionsGetResponse = z.infer<
+	typeof SlackEndpointOutputSchemas.reactionsGet
+>;
+export type ReactionsRemoveResponse = z.infer<
+	typeof SlackEndpointOutputSchemas.reactionsRemove
+>;
+export type StarsAddResponse = z.infer<
+	typeof SlackEndpointOutputSchemas.starsAdd
+>;
+export type StarsRemoveResponse = z.infer<
+	typeof SlackEndpointOutputSchemas.starsRemove
+>;
+export type StarsListResponse = z.infer<
+	typeof SlackEndpointOutputSchemas.starsList
+>;
