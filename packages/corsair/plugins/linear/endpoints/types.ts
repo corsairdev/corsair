@@ -387,27 +387,6 @@ export type CommentCreateResponse = z.infer<typeof CommentCreateResponseSchema>;
 export type CommentUpdateResponse = z.infer<typeof CommentUpdateResponseSchema>;
 export type CommentDeleteResponse = z.infer<typeof CommentDeleteResponseSchema>;
 
-export type LinearEndpointOutputs = {
-	issuesList: IssueConnection;
-	issuesGet: Issue;
-	issuesCreate: Issue;
-	issuesUpdate: Issue;
-	issuesDelete: boolean;
-	teamsList: TeamConnection;
-	teamsGet: Team;
-	projectsList: ProjectConnection;
-	projectsGet: Project;
-	projectsCreate: Project;
-	projectsUpdate: Project;
-	projectsDelete: boolean;
-	commentsList: CommentConnection;
-	commentsCreate: Comment;
-	commentsUpdate: Comment;
-	commentsDelete: boolean;
-};
-
-// Test-specific schemas for partial API responses
-// These match what the API actually returns (may differ from full schemas above)
 const MinimalUserSchema = z.object({
 	id: z.string(),
 	name: z.string(),
@@ -451,7 +430,6 @@ const ProjectTeamsConnectionSchema = z.object({
 	nodes: z.array(MinimalTeamSchema),
 });
 
-// Issue schema for list/get responses (with connections for labels/subscribers)
 const IssueListGetSchema: z.ZodType<unknown> = z.lazy(() =>
 	z.object({
 		id: z.string(),
@@ -599,13 +577,7 @@ const CommentTestSchema = z.lazy(() =>
 	}),
 );
 
-// Endpoint output schemas for runtime validation
-// These schemas match what the API actually returns (may differ from TypeScript types)
-// Note: Some schemas use partial/minimal structures that don't match the full types exactly
-// but are what the API actually returns. We use `z.ZodType<unknown>` to allow this flexibility.
-export const LinearEndpointOutputSchemas: {
-	[K in keyof LinearEndpointOutputs]: z.ZodType<unknown>;
-} = {
+export const LinearEndpointOutputSchemas = {
 	issuesList: IssueListGetConnectionSchema,
 	issuesGet: IssueListGetSchema,
 	issuesCreate: PartialIssueSchema,
@@ -622,4 +594,10 @@ export const LinearEndpointOutputSchemas: {
 	commentsCreate: CommentTestSchema,
 	commentsUpdate: CommentTestSchema,
 	commentsDelete: z.boolean(),
+} as const;
+
+export type LinearEndpointOutputs = {
+	[K in keyof typeof LinearEndpointOutputSchemas]: z.infer<
+		typeof LinearEndpointOutputSchemas[K]
+	>;
 };
