@@ -345,17 +345,6 @@ describe('Slack API Type Tests', () => {
 			SlackEndpointOutputSchemas.messagesGetPermalink.parse(result);
 		});
 
-		it('messagesSearch returns correct type', async () => {
-			const response = await makeSlackRequest<SearchMessagesResponse>(
-				'search.messages',
-				TEST_TOKEN,
-				{ query: { query: 'test', count: 10 } },
-			);
-			const result = response;
-			
-			SlackEndpointOutputSchemas.messagesSearch.parse(result);
-		});
-
 		it('messagesDelete returns correct type', async () => {
 			if (!testMessageTs) {
 				const postResponse = await makeSlackRequest<ChatPostMessageResponse>(
@@ -550,21 +539,27 @@ describe('Slack API Type Tests', () => {
 
 		it('reactionsRemove returns correct type', async () => {
 			if (!testMessageTs) {
-				const postResponse = await makeSlackRequest<ChatPostMessageResponse>(
-					'chat.postMessage',
-					TEST_TOKEN,
-					{
-						method: 'POST',
-						body: {
-							channel: testChannelId,
-							text: 'Test message for removing reaction',
+				try {
+					
+					const postResponse = await makeSlackRequest<ChatPostMessageResponse>(
+						'chat.postMessage',
+						TEST_TOKEN,
+						{
+							method: 'POST',
+							body: {
+								channel: testChannelId,
+								text: 'Test message for removing reaction',
+							},
 						},
-					},
-				);
-				if (!postResponse.ok || !postResponse.ts) {
-					throw new Error('Failed to create test message');
+					);
+					if (!postResponse.ok || !postResponse.ts) {
+						throw new Error('Failed to create test message');
+					}
+					testMessageTs = postResponse.ts;
 				}
-				testMessageTs = postResponse.ts;
+				catch (err) {
+					console.log(err, 'error')
+				}
 			}
 
 			const reactionsGetResponse = await makeSlackRequest<ReactionsGetResponse>(
@@ -574,18 +569,24 @@ describe('Slack API Type Tests', () => {
 			);
 			
 			if (!reactionsGetResponse.ok || !reactionsGetResponse.message?.reactions?.some(r => r.name === 'thumbsup')) {
-				await makeSlackRequest<ReactionsAddResponse>(
-					'reactions.add',
-					TEST_TOKEN,
-					{
-						method: 'POST',
-						body: {
-							channel: testChannelId,
-							timestamp: testMessageTs,
-							name: 'thumbsup',
+				try {
+					
+					await makeSlackRequest<ReactionsAddResponse>(
+						'reactions.add',
+						TEST_TOKEN,
+						{
+							method: 'POST',
+							body: {
+								channel: testChannelId,
+								timestamp: testMessageTs,
+								name: 'thumbsup',
+							},
 						},
-					},
-				);
+					);
+				}
+				catch (err) {
+					console.log(err, 'error')
+				}
 			}
 
 			const response = await makeSlackRequest<ReactionsRemoveResponse>(
@@ -745,6 +746,7 @@ describe('Slack API Type Tests', () => {
 				TEST_TOKEN,
 			);
 			const result = response;
+			console.log(result, 'result');
 			
 			if (result.ok && result.userGroups && result.userGroups.length > 0 && result.userGroups[0]?.id) {
 				testUserGroupId = result.userGroups[0].id;

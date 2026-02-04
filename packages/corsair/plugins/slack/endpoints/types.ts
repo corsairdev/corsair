@@ -854,7 +854,7 @@ const ConversationsHistoryResponseSchema = SlackResponseSchema.extend({
 	has_more: z.boolean().optional(),
 	pin_count: z.number().optional(),
 	channel_actions_count: z.number().optional(),
-	channel_actions_ts: z.number().optional(),
+	channel_actions_ts: z.number().nullable().optional(),
 }).passthrough();
 const ConversationsInviteResponseSchema = SlackResponseSchema.extend({
 	channel: ChannelSchema.optional(),
