@@ -1,0 +1,311 @@
+---
+title: Slack Error Handlers
+description: Built-in and custom error handling for the Slack plugin.
+---
+
+The Slack plugin includes comprehensive error handling with built-in handlers for common error scenarios. You can also add custom error handlers to handle specific cases in your application.
+
+<Callout type="info">
+**New to Corsair?** Learn about core concepts like [error handling](/concepts/error-handling) and [retry strategies](/concepts/error-handling) before customizing error handlers.
+</Callout>
+
+<Callout>
+**Full Implementation:** For the complete, up-to-date error handler implementations, see the [Slack plugin source code](https://github.com/corsairdev/corsair/tree/main/packages/corsair/plugins/slack) on GitHub.
+</Callout>
+
+## Built-in Error Handlers
+
+The Slack plugin automatically handles common error scenarios with sensible retry strategies.
+
+### Rate Limit Errors
+
+**Triggers:** HTTP 429 status, or error messages containing "rate_limited", "ratelimited", or "429"
+
+**Behavior:**
+- Maximum retries: **5**
+- Respects `Retry-After` header from Slack
+- Uses exponential backoff between retries
+
+**Example:**
+
+```ts
+// Automatically handled - no configuration needed
+await corsair.slack.api.messages.post({
+    channel: "C1234567890",
+    text: "This will automatically retry if rate limited", // [!code highlight]
+});
+```
+
+---
+
+### Authentication Errors
+
+**Triggers:** Error messages containing:
+- `invalid_auth`
+- `token_revoked`
+- `token_expired`
+- `not_authed`
+
+**Behavior:**
+- Maximum retries: **0** (no retries)
+- Logs error to console
+- Fails immediately for manual intervention
+
+**Example Error:**
+
+```
+[SLACK:messages.post] Authentication failed - check your bot token
+```
+
+**How to Fix:**
+1. Verify your bot token is valid
+2. Check if the token has been revoked in Slack
+3. Ensure the token hasn't expired (for OAuth tokens)
+
+---
+
+### Permission Errors
+
+**Triggers:** HTTP 403 status, or error messages containing:
+- `missing_scope`
+- `account_inactive`
+- `token_required`
+- `permission_denied`
+- `insufficient_permissions`
+- `access_denied`
+
+**Behavior:**
+- Maximum retries: **0** (no retries)
+- Logs warning to console
+- Fails immediately for manual intervention
+
+**Example Error:**
+
+```
+[SLACK:messages.post] Permission denied: missing_scope
+```
+
+**How to Fix:**
+1. Check your Slack app's OAuth scopes
+2. Add the required scopes in your app settings
+3. Reinstall the app to update permissions
+4. Common required scopes:
+   - `chat:write` - Send messages
+   - `channels:read` - View channels
+   - `users:read` - View users
+   - `files:write` - Upload files
+
+---
+
+### Network Errors
+
+**Triggers:** Error messages containing:
+- `network`
+- `connection`
+- `econnrefused`
+- `enotfound`
+- `etimedout`
+- `fetch failed`
+- `network error`
+
+**Behavior:**
+- Maximum retries: **3**
+- Uses exponential backoff
+- Logs warning to console
+
+**Example:**
+
+```ts
+// Automatically retries on network failures
+const users = await corsair.slack.api.users.list({});
+// Will retry up to 3 times if network fails
+```
+
+---
+
+### Resource Not Found Errors
+
+**Triggers:** Error messages containing:
+- `channel_not_found`
+- `user_not_found`
+- `file_not_found`
+- `message_not_found`
+
+**Behavior:**
+- Maximum retries: **0** (no retries)
+- Logs warning to console
+- Fails immediately
+
+**Example Error:**
+
+```
+[SLACK:channels.get] Resource not found: channel_not_found
+```
+
+**How to Handle:**
+
+```ts
+// Corsair handles the error automatically - no retry
+// Check if channel exists or if bot has access
+const channel = await corsair.slack.api.channels.get({
+    channel: channelId,
+});
+```
+
+---
+
+### Default Error Handler
+
+**Triggers:** Any error not matched by other handlers
+
+**Behavior:**
+- Maximum retries: **0** (no retries)
+- Logs error to console
+- Fails immediately
+
+**Example Error:**
+
+```
+[SLACK:messages.post] Unhandled error: Something went wrong
+```
+
+---
+
+## Custom Error Handlers
+
+You can add custom error handlers to handle specific scenarios in your application.
+
+### Basic Custom Handler
+
+```ts title="corsair.ts"
+slack({
+    errorHandlers: {
+        CUSTOM_ERROR: {
+            match: (error, context) => {
+                return error.message.includes("custom_error_code"); // [!code highlight]
+            },
+            handler: async (error, context) => {
+                console.log(`Custom error in ${context.operation}`);
+                
+                return {
+                    maxRetries: 2, // [!code highlight]
+                };
+            },
+        },
+    },
+})
+```
+
+### Error Handler with Retry-After
+
+```ts title="corsair.ts"
+slack({
+    errorHandlers: {
+        WORKSPACE_RATE_LIMIT: {
+            match: (error, context) => {
+                return error.message.includes("workspace_rate_limited");
+            },
+            handler: async (error, context) => {
+                // Wait 60 seconds before retrying
+                return {
+                    maxRetries: 3,
+                    headersRetryAfterMs: 60000, // [!code highlight]
+                };
+            },
+        },
+    },
+})
+```
+
+### Conditional Retry Logic
+
+```ts title="corsair.ts"
+slack({
+    errorHandlers: {
+        CHANNEL_ARCHIVE_ERROR: {
+            match: (error, context) => {
+                return (
+                    error.message.includes("channel_not_found") &&
+                    context.operation === "channels.archive"
+                );
+            },
+            handler: async (error, context) => {
+                // Check if channel is already archived
+                if (error.message.includes("already_archived")) {
+                    console.log("Channel already archived - treating as success"); // [!code highlight]
+                    return {
+                        maxRetries: 0,
+                    };
+                }
+                
+                // Otherwise retry
+                return {
+                    maxRetries: 1,
+                };
+            },
+        },
+    },
+})
+```
+
+### Multiple Custom Handlers
+
+```ts title="corsair.ts"
+slack({
+    errorHandlers: {
+        QUOTA_EXCEEDED: {
+            match: (error) => error.message.includes("quota_exceeded"),
+            handler: async (error, context) => {
+                await notifyTeam("Slack quota exceeded");
+                return { maxRetries: 0 };
+            },
+        },
+        TEMPORARY_ERROR: {
+            match: (error) => error.message.includes("temporary_error"),
+            handler: async (error, context) => {
+                return {
+                    maxRetries: 5,
+                    headersRetryAfterMs: 10000,
+                };
+            },
+        },
+        MAINTENANCE_MODE: {
+            match: (error) => error.message.includes("maintenance"),
+            handler: async (error, context) => {
+                console.log("Slack is in maintenance mode");
+                return {
+                    maxRetries: 10,
+                    headersRetryAfterMs: 30000,
+                };
+            },
+        },
+    },
+})
+```
+
+---
+
+## Error Handler Options
+
+### Return Object
+
+Error handlers return an object with the following options:
+
+| Option | Type | Description |
+|--------|------|-------------|
+| `maxRetries` | `number` | Maximum number of retry attempts |
+| `headersRetryAfterMs` | `number?` | Milliseconds to wait before retrying |
+
+### Context Object
+
+The `context` parameter provides information about the operation:
+
+```ts
+{
+    operation: string;      // e.g., "messages.post", "channels.list"
+    tenantId?: string;      // Tenant ID (if multi-tenancy enabled)
+    // ... additional context
+}
+```
+
+For comprehensive error handling strategies, patterns, and best practices, see the [Error Handling](/concepts/error-handling) concepts page.
