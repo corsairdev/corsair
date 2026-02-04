@@ -144,5 +144,14 @@ export function createBotTokenAccountKeyManager(
 		setBotToken: async (botToken: string) => {
 			await updateConfig({ bot_token: botToken });
 		},
+
+		getWebhookSignature: async () => {
+			const config = await getDecryptedConfig();
+			return config.webhook_signature ?? null;
+		},
+
+		setWebhookSignature: async (webhookSignature: string | null) => {
+			await updateConfig({ webhook_signature: webhookSignature });
+		},
 	};
 }

@@ -63,6 +63,7 @@ export const corsair = createCorsair({
 			},
 		}),
 		slack({
+			signingSecret: process.env.SLACK_SIGNING_SECRET!,
 			webhookHooks: {
 				messages: {
 					message: {

@@ -88,7 +88,7 @@ export type WebhookHooks = {
  * Each endpoint gets optional before/after hooks.
  */
 type CorsairEndpointHooksMap<Endpoints extends EndpointTree> = {
-	[K in keyof Endpoints]?: Endpoints[K] extends CorsairEndpoint<any, any, any>
+	[K in keyof Endpoints]?: Endpoints[K] extends CorsairEndpoint
 		? {
 				/**
 				 * Hook that runs before the endpoint is executed.
@@ -256,13 +256,17 @@ export type KeyBuilderContext<Options extends Record<string, unknown>> =
  */
 export type CorsairKeyBuilder<Options extends Record<string, unknown>> = (
 	ctx: KeyBuilderContext<Options>,
+	source: 'endpoint' | 'webhook',
 ) => string | Promise<string>;
 
 /**
  * Base keyBuilder type used internally for type compatibility.
  * Uses `any` to avoid contravariance issues when plugins are stored in arrays.
  */
-export type CorsairKeyBuilderBase = (ctx: any) => string | Promise<string>;
+export type CorsairKeyBuilderBase = (
+	ctx: any,
+	source: 'endpoint' | 'webhook',
+) => string | Promise<string>;
 
 /**
  * Defines a Corsair plugin with endpoints, webhooks, schema, and configuration.

@@ -144,5 +144,14 @@ export function createApiKeyAccountKeyManager(
 		setApiKey: async (apiKey: string) => {
 			await updateConfig({ api_key: apiKey });
 		},
+
+		getWebhookSignature: async () => {
+			const config = await getDecryptedConfig();
+			return config.webhook_signature ?? null;
+		},
+
+		setWebhookSignature: async (webhookSignature: string | null) => {
+			await updateConfig({ webhook_signature: webhookSignature });
+		},
 	};
 }

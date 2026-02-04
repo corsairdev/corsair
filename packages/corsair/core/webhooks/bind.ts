@@ -1,4 +1,4 @@
-import type { WebhookHooks } from '../plugins';
+import type { CorsairKeyBuilderBase, WebhookHooks } from '../plugins';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Webhook Utilities
@@ -36,11 +36,13 @@ export function bindWebhooksRecursively({
 	hooks,
 	ctx,
 	webhooksTree,
+	keyBuilder,
 }: {
 	webhooks: Record<string, unknown>;
 	hooks: Record<string, unknown> | undefined;
 	ctx: Record<string, unknown>;
 	webhooksTree: Record<string, unknown>;
+	keyBuilder?: CorsairKeyBuilderBase;
 }): void {
 	for (const [key, value] of Object.entries(webhooks)) {
 		// we have to retype this now because it's nested webhooks
@@ -50,17 +52,21 @@ export function bindWebhooksRecursively({
 			// it's a webhook object with match and handler - bind the handler with context
 			const webhookHooks = nodeHooks as WebhookHooks | undefined;
 
-			const boundHandler = (request: unknown) => {
+			const boundHandler = async (request: unknown) => {
 				const call = (callCtx: Record<string, unknown>, callRequest: unknown) =>
 					value.handler(callCtx, callRequest);
 
+				const key = keyBuilder ? await keyBuilder(ctx, 'webhook') : undefined;
+
 				if (!webhookHooks?.before && !webhookHooks?.after) {
-					return call(ctx, request);
+					return call({ ...ctx, key }, request);
 				}
 
 				return (async () => {
+					const ctxWithKey = { ...ctx, key };
+
 					const { ctx: updatedCtx, args: updatedRequest } = webhookHooks.before
-						? await webhookHooks.before(ctx, request)
+						? await webhookHooks.before(ctxWithKey, request)
 						: { ctx, args: request };
 					const res = await call(updatedCtx, updatedRequest);
 					await webhookHooks.after?.(updatedCtx, res);
@@ -82,6 +88,7 @@ export function bindWebhooksRecursively({
 				hooks: nodeHooks as Record<string, unknown> | undefined,
 				ctx,
 				webhooksTree: nestedWebhooksTree,
+				keyBuilder,
 			});
 
 			webhooksTree[key] = nestedWebhooksTree;

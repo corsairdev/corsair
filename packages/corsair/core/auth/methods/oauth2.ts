@@ -273,6 +273,15 @@ export function createOAuth2AccountKeyManager(
 			await updateConfig({ scope });
 		},
 
+		getWebhookSignature: async () => {
+			const config = await getDecryptedConfig();
+			return config.webhook_signature ?? null;
+		},
+
+		setWebhookSignature: async (webhookSignature: string | null) => {
+			await updateConfig({ webhook_signature: webhookSignature });
+		},
+
 		getIntegrationCredentials:
 			async (): Promise<OAuth2IntegrationCredentials> => {
 				const config = await getDecryptedIntegrationConfig();

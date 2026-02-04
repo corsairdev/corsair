@@ -1,11 +1,21 @@
 import { logEventFromContext } from '../../utils/events';
 import type { SlackWebhooks } from '..';
-import { createSlackEventMatch } from './types';
+import { createSlackEventMatch, verifySlackWebhookSignature } from './types';
 
 export const added: SlackWebhooks['reactionAdded'] = {
 	match: createSlackEventMatch('reaction_added'),
 
 	handler: async (ctx, request) => {
+		const signingSecret = ctx.options?.signingSecret;
+		const verification = verifySlackWebhookSignature(request, signingSecret);
+		if (!verification.valid) {
+			return {
+				success: false,
+				statusCode: 401,
+				error: verification.error || 'Signature verification failed',
+			};
+		}
+
 		const event =
 			request.payload.type === 'event_callback' ? request.payload.event : null;
 
