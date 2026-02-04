@@ -3,186 +3,96 @@ title: Create Your Own Plugin
 description: A comprehensive guide to building custom plugins for Corsair
 ---
 
-This guide walks you through creating a custom plugin for Corsair. We'll use the Slack plugin as a reference since it's the most comprehensive example, covering authentication, webhooks, API endpoints, types, database schemas, and more.
+This guide walks you through creating a custom plugin for Corsair. We'll explain the core types and structure you need to understand, then show you how to put it all together.
 
-## Overview
+## Core Types
 
-A Corsair plugin consists of several key components:
+### PluginOptions
 
-1. **Directory Structure** - Organized folders for schema, endpoints, and webhooks
-2. **Database Schema** - Zod schemas defining your plugin's data entities
-3. **API Client** - Functions to make authenticated requests to the external API
-4. **Endpoints** - API operations your plugin exposes
-5. **Webhooks** - Event handlers for incoming webhook payloads
-6. **Types** - TypeScript types for inputs, outputs, and events
-7. **Error Handlers** - Custom error handling logic
-8. **Plugin Definition** - Main plugin factory function with keyBuilder
+`PluginOptions` defines the configuration for your plugin, including authentication type, hooks, and error handlers.
 
-## Step 1: Create Plugin Directory Structure
+```ts
+import type { PickAuth } from '../../core/constants';
+import type { CorsairErrorHandler } from '../../core/errors';
 
-Create a new directory under `packages/corsair/plugins/` with the following structure:
-
-```
-packages/corsair/plugins/your-plugin/
-├── index.ts                 # Main plugin definition
-├── client.ts                # API client setup
-├── schema/
-│   ├── database.ts          # Zod schemas for entities
-│   └── index.ts             # Schema export
-├── endpoints/
-│   ├── index.ts             # Endpoint exports
-│   ├── types.ts             # Endpoint type definitions
-│   └── [resource].ts        # Individual endpoint implementations
-├── webhooks/
-│   ├── index.ts             # Webhook exports
-│   ├── types.ts             # Webhook type definitions
-│   └── [event].ts           # Individual webhook handlers
-└── error-handlers.ts        # Error handling (optional)
-```
-
-## Step 2: Define Database Schema
-
-Create Zod schemas for the entities your plugin will store in the database.
-
-```ts title="schema/database.ts"
-import z from 'zod';
-
-export const YourEntity = z.object({
-  id: z.string(),
-  name: z.string().optional(),
-  createdAt: z.coerce.date().optional(),
-  // Add other fields as needed
-});
-
-export type YourEntity = z.infer<typeof YourEntity>;
-```
-
-Export the schema:
-
-```ts title="schema/index.ts"
-import { YourEntity } from './database';
-
-export const YourPluginSchema = {
-  version: '1.0.0',
-  entities: {
-    entities: YourEntity, // Key should match your entity name
-  },
-} as const;
-```
-
-## Step 3: Create API Client
-
-Set up your API client with authentication, rate limiting, and request handling.
-
-```ts title="client.ts"
-import type { ApiRequestOptions } from '../../async-core/ApiRequestOptions';
-import type { OpenAPIConfig } from '../../async-core/OpenAPI';
-import type { RateLimitConfig } from '../../async-core/rate-limit';
-import { request } from '../../async-core/request';
-
-const API_BASE = 'https://api.example.com';
-
-const RATE_LIMIT_CONFIG: RateLimitConfig = {
-  enabled: true,
-  maxRetries: 3,
-  initialRetryDelay: 1000,
-  backoffMultiplier: 2,
-  headerNames: {
-    retryAfter: 'Retry-After',
-  },
-};
-
-export async function makeYourPluginRequest<T>(
-  endpoint: string,
-  token: string,
-  options: {
-    method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
-    body?: Record<string, unknown>;
-    query?: Record<string, string | number | boolean | undefined>;
-  } = {},
-): Promise<T> {
-  const { method = 'GET', body, query } = options;
-
-  const config: OpenAPIConfig = {
-    BASE: API_BASE,
-    VERSION: '1.0.0',
-    WITH_CREDENTIALS: false,
-    CREDENTIALS: 'omit',
-    TOKEN: token,
-    HEADERS: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`, // Adjust based on your API
-    },
-  };
-
-  const requestOptions: ApiRequestOptions = {
-    method,
-    url: endpoint,
-    body: method === 'POST' || method === 'PUT' || method === 'PATCH' 
-      ? body 
-      : undefined,
-    mediaType: 'application/json; charset=utf-8',
-    query: method === 'GET' ? query : undefined,
-  };
-
-  const response = await request<T>(config, requestOptions, {
-    rateLimitConfig: RATE_LIMIT_CONFIG,
-  });
-
-  return response;
-}
-```
-
-## Step 4: Define Endpoint Types
-
-Create TypeScript types for all your API endpoints.
-
-```ts title="endpoints/types.ts"
-// Response types
-export type GetEntityResponse = {
-  id: string;
-  name: string;
-  // ... other fields
-};
-
-export type ListEntitiesResponse = {
-  items: GetEntityResponse[];
-  cursor?: string;
-};
-
-// Input types
-export type YourPluginEndpointInputs = {
-  entitiesGet: { id: string };
-  entitiesList: { limit?: number; cursor?: string };
-  entitiesCreate: { name: string; /* other fields */ };
-};
-
-// Output types
-export type YourPluginEndpointOutputs = {
-  entitiesGet: GetEntityResponse;
-  entitiesList: ListEntitiesResponse;
-  entitiesCreate: GetEntityResponse;
+export type YourPluginOptions = {
+  authType?: PickAuth<'api_key' | 'oauth_2'>;
+  key?: string;
+  hooks?: InternalYourPlugin['hooks'];
+  webhookHooks?: InternalYourPlugin['webhookHooks'];
+  errorHandlers?: CorsairErrorHandler;
 };
 ```
 
-## Step 5: Implement Endpoints
+### CorsairPluginContext
 
-Create endpoint implementations. Each endpoint receives a context and input, and returns the API response.
+`CorsairPluginContext` is the context type that your endpoints and webhooks receive. It provides access to the database, authentication key, and other plugin services.
 
-```ts title="endpoints/entities.ts"
-import { logEventFromContext } from '../../utils/events';
-import type { YourPluginBoundEndpoints, YourPluginEndpoints } from '..';
-import { makeYourPluginRequest } from '../client';
+```ts
+import type { CorsairPluginContext } from '../../core';
+
+export type YourPluginContext = CorsairPluginContext<
+  typeof YourPluginSchema,
+  YourPluginOptions
+>;
+```
+
+The context provides:
+- `ctx.key` - The resolved authentication key
+- `ctx.db` - Typed database clients for your entities
+- `ctx.endpoints` - Bound endpoints for calling other endpoints
+- `ctx.database` - Raw database access
+- `ctx.$getAccountId()` - Get the account ID for this integration
+- `ctx.tenantId` - Tenant ID (for multi-tenancy)
+- `ctx.options` - Plugin-specific options
+- `ctx.keys` - Key manager (if authType is set)
+
+### KeyBuilderContext
+
+`KeyBuilderContext` is used in the `keyBuilder` function to retrieve authentication credentials. It's a discriminated union based on the auth type.
+
+```ts
+import type { KeyBuilderContext } from '../../core';
+
+export type YourPluginKeyBuilderContext = KeyBuilderContext<YourPluginOptions>;
+```
+
+### CorsairEndpoint
+
+`CorsairEndpoint` is the type for individual endpoints. It takes three type parameters: the context type, input type, and output type.
+
+```ts
+import type { CorsairEndpoint } from '../../core';
+
+type YourPluginEndpoint<
+  K extends keyof YourPluginEndpointOutputs,
+  Input,
+> = CorsairEndpoint<YourPluginContext, Input, YourPluginEndpointOutputs[K]>;
+```
+
+### Defining Endpoints
+
+Define your endpoints as a type mapping endpoint names to `CorsairEndpoint` types:
+
+```ts
+export type YourPluginEndpoints = {
+  entitiesGet: YourPluginEndpoint<'entitiesGet', { id: string }>;
+  entitiesList: YourPluginEndpoint<'entitiesList', { limit?: number; cursor?: string }>;
+  entitiesCreate: YourPluginEndpoint<'entitiesCreate', { name: string }>;
+};
+```
+
+### Implementing Endpoints
+
+Each endpoint is an async function that receives `(ctx, input)` and returns the typed output. Here's a minimal example:
+
+```ts
+import type { YourPluginEndpoints } from '..';
 import type { YourPluginEndpointOutputs } from './types';
 
 export const get: YourPluginEndpoints['entitiesGet'] = async (ctx, input) => {
-  const result = await makeYourPluginRequest<YourPluginEndpointOutputs['entitiesGet']>(
-    `entities/${input.id}`,
-    ctx.key,
-    {
-      method: 'GET',
-    },
-  );
+  // Your API call logic here
+  const result: YourPluginEndpointOutputs['entitiesGet'] = await fetch(...);
 
   // Optionally save to database
   if (result && ctx.db.entities) {
@@ -196,131 +106,57 @@ export const get: YourPluginEndpoints['entitiesGet'] = async (ctx, input) => {
     }
   }
 
-  await logEventFromContext(
-    ctx,
-    'your-plugin.entities.get',
-    { ...input },
-    'completed',
-  );
-
-  return result;
-};
-
-export const list: YourPluginEndpoints['entitiesList'] = async (ctx, input) => {
-  const result = await makeYourPluginRequest<YourPluginEndpointOutputs['entitiesList']>(
-    'entities',
-    ctx.key,
-    {
-      method: 'GET',
-      query: {
-        limit: input?.limit,
-        cursor: input?.cursor,
-      },
-    },
-  );
-
-  return result;
-};
-
-export const create: YourPluginEndpoints['entitiesCreate'] = async (ctx, input) => {
-  const result = await makeYourPluginRequest<YourPluginEndpointOutputs['entitiesCreate']>(
-    'entities',
-    ctx.key,
-    {
-      method: 'POST',
-      body: {
-        name: input.name,
-        // ... other fields
-      },
-    },
-  );
-
-  // Save to database after creation
-  if (result && ctx.db.entities) {
-    try {
-      await ctx.db.entities.upsertByEntityId(result.id, {
-        ...result,
-        createdAt: new Date(),
-      });
-    } catch (error) {
-      console.warn('Failed to save entity to database:', error);
-    }
-  }
-
-  await logEventFromContext(
-    ctx,
-    'your-plugin.entities.create',
-    { ...input },
-    'completed',
-  );
-
   return result;
 };
 ```
 
-Export all endpoints:
+### Nested Endpoints
 
-```ts title="endpoints/index.ts"
-import { create, get, list } from './entities';
+You can organize endpoints into nested structures for better organization. This creates a namespace like `plugin.entities.get()` instead of `plugin.entitiesGet()`.
 
-export const Entities = {
-  get,
-  list,
-  create,
-};
-
-export * from './types';
+```ts
+const yourPluginEndpointsNested = {
+  entities: {
+    get: Entities.get,
+    list: Entities.list,
+    create: Entities.create,
+  },
+} as const;
 ```
 
-## Step 6: Define Webhook Types
+### CorsairWebhook
 
-Create types for webhook events.
+`CorsairWebhook` is the type for webhook handlers. It takes three type parameters: the context type, payload type, and output type.
 
-```ts title="webhooks/types.ts"
-export type EntityCreatedEvent = {
-  type: 'entity.created';
-  entity: {
-    id: string;
-    name: string;
-  };
-  event_ts: string;
-};
+```ts
+import type { CorsairWebhook } from '../../core';
 
-export type EntityUpdatedEvent = {
-  type: 'entity.updated';
-  entity: {
-    id: string;
-    name: string;
-  };
-  event_ts: string;
-};
+type YourPluginWebhook<
+  K extends keyof YourPluginWebhookOutputs,
+  TEvent,
+> = CorsairWebhook<
+  YourPluginContext,
+  YourPluginWebhookPayload<TEvent>,
+  YourPluginWebhookOutputs[K]
+>;
+```
 
-export type YourPluginEventName = 'entity.created' | 'entity.updated';
+### Defining Webhooks
 
-export interface YourPluginEventMap {
-  'entity.created': EntityCreatedEvent;
-  'entity.updated': EntityUpdatedEvent;
-}
+Define your webhooks as a type mapping webhook names to `CorsairWebhook` types:
 
-export type YourPluginWebhookPayload<TEvent = unknown> = {
-  type: 'event_callback';
-  event: TEvent;
-  event_id: string;
-  event_time: number;
-};
-
-export type YourPluginWebhookOutputs = {
-  entityCreated: EntityCreatedEvent;
-  entityUpdated: EntityUpdatedEvent;
+```ts
+export type YourPluginWebhooks = {
+  entityCreated: YourPluginWebhook<'entityCreated', EntityCreatedEvent>;
+  entityUpdated: YourPluginWebhook<'entityUpdated', EntityUpdatedEvent>;
 };
 ```
 
-## Step 7: Implement Webhooks
+### Implementing Webhooks
 
-Create webhook handlers that process incoming events.
+Each webhook has a `match` function and a `handler` function:
 
-```ts title="webhooks/entities.ts"
-import { logEventFromContext } from '../../utils/events';
+```ts
 import type { YourPluginWebhooks } from '..';
 
 export const created: YourPluginWebhooks['entityCreated'] = {
@@ -345,214 +181,52 @@ export const created: YourPluginWebhooks['entityCreated'] = {
       };
     }
 
-    let corsairEntityId = '';
-
     // Save to database
     if (ctx.db.entities) {
       try {
-        const entity = await ctx.db.entities.upsertByEntityId(event.entity.id, {
+        await ctx.db.entities.upsertByEntityId(event.entity.id, {
           ...event.entity,
           id: event.entity.id,
           createdAt: new Date(parseFloat(event.event_ts) * 1000),
         });
-
-        corsairEntityId = entity?.id || '';
       } catch (error) {
         console.warn('Failed to save entity to database:', error);
       }
     }
 
-    await logEventFromContext(
-      ctx,
-      'your-plugin.webhook.entity.created',
-      { ...event },
-      'completed',
-    );
-
     return {
       success: true,
-      corsairEntityId,
-      
+      corsairEntityId: event.entity.id,
+      tenantId: ctx.tenantId,
       data: event,
     };
   },
 };
 ```
 
-Export webhooks:
+### Nested Webhooks
 
-```ts title="webhooks/index.ts"
-import { created, updated } from './entities';
+Similar to endpoints, you can organize webhooks into nested structures:
 
-export const EntityWebhooks = {
-  created,
-  updated,
-};
-
-export * from './types';
-```
-
-## Step 8: Create Error Handlers (Optional)
-
-Define custom error handling for your API.
-
-```ts title="error-handlers.ts"
-import { ApiError } from '../../async-core/ApiError';
-import type { CorsairErrorHandler } from '../../core/errors';
-
-export const errorHandlers = {
-  RATE_LIMIT_ERROR: {
-    match: (error, context) => {
-      if (error instanceof ApiError && error.status === 429) {
-        return true;
-      }
-      const errorMessage = error.message.toLowerCase();
-      return (
-        errorMessage.includes('rate_limited') ||
-        errorMessage.includes('429')
-      );
-    },
-    handler: async (error, context) => {
-      let retryAfterMs: number | undefined;
-      if (error instanceof ApiError && error.retryAfter !== undefined) {
-        retryAfterMs = error.retryAfter;
-      }
-
-      return {
-        maxRetries: 5,
-        headersRetryAfterMs: retryAfterMs,
-      };
-    },
-  },
-  AUTH_ERROR: {
-    match: (error, context) => {
-      const errorMessage = error.message.toLowerCase();
-      return (
-        errorMessage.includes('unauthorized') ||
-        errorMessage.includes('invalid_token') ||
-        errorMessage.includes('token_expired')
-      );
-    },
-    handler: async (error, context) => {
-      console.log(
-        `[YOUR_PLUGIN:${context.operation}] Authentication failed`,
-      );
-
-      return {
-        maxRetries: 0,
-      };
-    },
-  },
-  DEFAULT: {
-    match: (error, context) => {
-      return true;
-    },
-    handler: async (error, context) => {
-      console.error(
-        `[YOUR_PLUGIN:${context.operation}] Unhandled error: ${error.message}`,
-      );
-
-      return {
-        maxRetries: 0,
-      };
-    },
-  },
-} satisfies CorsairErrorHandler;
-```
-
-## Step 9: Define Plugin Types and Factory
-
-Create the main plugin file with all type definitions and the factory function.
-
-```ts title="index.ts"
-import type {
-  BindEndpoints,
-  BindWebhooks,
-  CorsairEndpoint,
-  CorsairErrorHandler,
-  CorsairPlugin,
-  CorsairPluginContext,
-  CorsairWebhook,
-  KeyBuilderContext,
-} from '../../core';
-import type { AuthTypes, PickAuth } from '../../core/constants';
-import { errorHandlers } from './error-handlers';
-import { Entities } from './endpoints';
-import type { YourPluginEndpointOutputs } from './endpoints/types';
-import { YourPluginSchema } from './schema';
-import { EntityWebhooks } from './webhooks';
-import type {
-  EntityCreatedEvent,
-  EntityUpdatedEvent,
-  YourPluginWebhookOutputs,
-  YourPluginWebhookPayload,
-} from './webhooks/types';
-
-// Plugin Options
-export type YourPluginOptions = {
-  authType?: PickAuth<'api_key' | 'oauth_2'>; // Adjust based on supported auth types
-  key?: string;
-  hooks?: InternalYourPlugin['hooks'];
-  webhookHooks?: InternalYourPlugin['webhookHooks'];
-  errorHandlers?: CorsairErrorHandler;
-};
-
-// Context Types
-export type YourPluginContext = CorsairPluginContext<
-  typeof YourPluginSchema,
-  YourPluginOptions
->;
-
-export type YourPluginKeyBuilderContext = KeyBuilderContext<YourPluginOptions>;
-
-// Endpoint Types
-type YourPluginEndpoint<
-  K extends keyof YourPluginEndpointOutputs,
-  Input,
-> = CorsairEndpoint<YourPluginContext, Input, YourPluginEndpointOutputs[K]>;
-
-export type YourPluginEndpoints = {
-  entitiesGet: YourPluginEndpoint<'entitiesGet', { id: string }>;
-  entitiesList: YourPluginEndpoint<'entitiesList', { limit?: number; cursor?: string }>;
-  entitiesCreate: YourPluginEndpoint<'entitiesCreate', { name: string }>;
-};
-
-// Webhook Types
-type YourPluginWebhook<
-  K extends keyof YourPluginWebhookOutputs,
-  TEvent,
-> = CorsairWebhook<YourPluginContext, YourPluginWebhookPayload<TEvent>, YourPluginWebhookOutputs[K]>;
-
-export type YourPluginWebhooks = {
-  entityCreated: YourPluginWebhook<'entityCreated', EntityCreatedEvent>;
-  entityUpdated: YourPluginWebhook<'entityUpdated', EntityUpdatedEvent>;
-};
-
-// Bound Types
-export type YourPluginBoundEndpoints = BindEndpoints<YourPluginEndpoints>;
-export type YourPluginBoundWebhooks = BindWebhooks<YourPluginWebhooks>;
-
-// Nested Endpoint Structure
-const yourPluginEndpointsNested = {
-  entities: {
-    get: Entities.get,
-    list: Entities.list,
-    create: Entities.create,
-  },
-} as const;
-
-// Nested Webhook Structure
+```ts
 const yourPluginWebhooksNested = {
   entities: {
     created: EntityWebhooks.created,
     updated: EntityWebhooks.updated,
   },
 } as const;
+```
 
-// Default Auth Type
+### Base Plugin Type
+
+`BaseYourPlugin` is the base plugin type that extends `CorsairPlugin`:
+
+```ts
+import type { CorsairPlugin } from '../../core';
+import type { AuthTypes } from '../../core/constants';
+
 const defaultAuthType: AuthTypes = 'api_key';
 
-// Base Plugin Type
 export type BaseYourPlugin<T extends YourPluginOptions> = CorsairPlugin<
   'your-plugin', // Plugin ID - must be unique
   typeof YourPluginSchema,
@@ -561,12 +235,25 @@ export type BaseYourPlugin<T extends YourPluginOptions> = CorsairPlugin<
   T,
   typeof defaultAuthType
 >;
+```
 
-// Internal vs External Plugin Types
+### Internal vs External Plugin Types
+
+Corsair distinguishes between internal and external plugin types:
+
+- **Internal Plugin**: Must provide options for all possible auth methods
+- **External Plugin**: Only needs to provide options for the auth method the user selected
+
+```ts
 export type InternalYourPlugin = BaseYourPlugin<YourPluginOptions>;
 export type ExternalYourPlugin<T extends YourPluginOptions> = BaseYourPlugin<T>;
+```
 
-// Plugin Factory Function
+### Plugin Factory Function
+
+The plugin factory function creates and returns your plugin instance:
+
+```ts
 export function yourPlugin<const T extends YourPluginOptions>(
   incomingOptions: YourPluginOptions & T = {} as YourPluginOptions & T,
 ): ExternalYourPlugin<T> {
@@ -585,65 +272,292 @@ export function yourPlugin<const T extends YourPluginOptions>(
     webhooks: yourPluginWebhooksNested,
     pluginWebhookMatcher: (request) => {
       // Return true if this request should be handled by this plugin
-      // You can check headers, body, etc.
-      return false; // Implement your matching logic
+      return false;
     },
-    errorHandlers: {
-      ...errorHandlers,
-      ...options.errorHandlers,
-    },
+    errorHandlers: options.errorHandlers,
     keyBuilder: async (ctx: YourPluginKeyBuilderContext) => {
-      // If a static key is provided, use it
+      // See Advanced section for keyBuilder implementation
       if (options.key) {
         return options.key;
       }
-
-      // Otherwise, retrieve from key manager based on auth type
-      if (ctx.authType === 'api_key') {
-        const res = await ctx.keys.getApiKey();
-
-        if (!res) {
-          throw new Error('API key not found');
-        }
-
-        return res;
-      } else if (ctx.authType === 'oauth_2') {
-        const res = await ctx.keys.getAccessToken();
-
-        if (!res) {
-          throw new Error('Access token not found');
-        }
-
-        return res;
-      }
-
-      throw new Error('No authentication method configured');
+      return '';
     },
   } satisfies InternalYourPlugin;
 }
+```
 
-// Export types
-export type {
+## Database Schema
+
+Define your database entities using Zod schemas:
+
+```ts title="schema/database.ts"
+import z from 'zod';
+
+export const YourEntity = z.object({
+  id: z.string(),
+  name: z.string().optional(),
+  createdAt: z.coerce.date().optional(),
+});
+
+export type YourEntity = z.infer<typeof YourEntity>;
+```
+
+Export the schema:
+
+```ts title="schema/index.ts"
+import { YourEntity } from './database';
+
+export const YourPluginSchema = {
+  version: '1.0.0',
+  entities: {
+    entities: YourEntity,
+  },
+} as const;
+```
+
+## Complete Example
+
+Here's a complete minimal plugin example:
+
+```ts title="index.ts"
+import type {
+  CorsairEndpoint,
+  CorsairPlugin,
+  CorsairPluginContext,
+  CorsairWebhook,
+  KeyBuilderContext,
+} from '../../core';
+import type { AuthTypes, PickAuth } from '../../core/constants';
+import { Entities } from './endpoints';
+import type { YourPluginEndpointOutputs } from './endpoints/types';
+import { YourPluginSchema } from './schema';
+import { EntityWebhooks } from './webhooks';
+import type {
   EntityCreatedEvent,
-  EntityUpdatedEvent,
   YourPluginWebhookOutputs,
   YourPluginWebhookPayload,
 } from './webhooks/types';
 
-export type {
-  YourPluginEndpointInputs,
-  YourPluginEndpointOutputs,
-} from './endpoints/types';
+// Plugin Options
+export type YourPluginOptions = {
+  authType?: PickAuth<'api_key'>;
+  key?: string;
+};
+
+// Context Types
+export type YourPluginContext = CorsairPluginContext<
+  typeof YourPluginSchema,
+  YourPluginOptions
+>;
+
+export type YourPluginKeyBuilderContext = KeyBuilderContext<YourPluginOptions>;
+
+// Endpoint Types
+type YourPluginEndpoint<
+  K extends keyof YourPluginEndpointOutputs,
+  Input,
+> = CorsairEndpoint<YourPluginContext, Input, YourPluginEndpointOutputs[K]>;
+
+export type YourPluginEndpoints = {
+  entitiesGet: YourPluginEndpoint<'entitiesGet', { id: string }>;
+  entitiesList: YourPluginEndpoint<'entitiesList', { limit?: number }>;
+};
+
+// Webhook Types
+type YourPluginWebhook<
+  K extends keyof YourPluginWebhookOutputs,
+  TEvent,
+> = CorsairWebhook<
+  YourPluginContext,
+  YourPluginWebhookPayload<TEvent>,
+  YourPluginWebhookOutputs[K]
+>;
+
+export type YourPluginWebhooks = {
+  entityCreated: YourPluginWebhook<'entityCreated', EntityCreatedEvent>;
+};
+
+// Nested Structures
+const yourPluginEndpointsNested = {
+  entities: {
+    get: Entities.get,
+    list: Entities.list,
+  },
+} as const;
+
+const yourPluginWebhooksNested = {
+  entities: {
+    created: EntityWebhooks.created,
+  },
+} as const;
+
+// Plugin Factory
+const defaultAuthType: AuthTypes = 'api_key';
+
+export type BaseYourPlugin<T extends YourPluginOptions> = CorsairPlugin<
+  'your-plugin',
+  typeof YourPluginSchema,
+  typeof yourPluginEndpointsNested,
+  typeof yourPluginWebhooksNested,
+  T,
+  typeof defaultAuthType
+>;
+
+export type InternalYourPlugin = BaseYourPlugin<YourPluginOptions>;
+export type ExternalYourPlugin<T extends YourPluginOptions> = BaseYourPlugin<T>;
+
+export function yourPlugin<const T extends YourPluginOptions>(
+  incomingOptions: YourPluginOptions & T = {} as YourPluginOptions & T,
+): ExternalYourPlugin<T> {
+  const options = {
+    ...incomingOptions,
+    authType: incomingOptions.authType ?? defaultAuthType,
+  };
+
+  return {
+    id: 'your-plugin',
+    schema: YourPluginSchema,
+    options: options,
+    endpoints: yourPluginEndpointsNested,
+    webhooks: yourPluginWebhooksNested,
+    pluginWebhookMatcher: () => false,
+    keyBuilder: async (ctx: YourPluginKeyBuilderContext) => {
+      if (options.key) return options.key;
+      return '';
+    },
+  } satisfies InternalYourPlugin;
+}
 ```
 
-## Step 10: Export Plugin
+## Advanced Topics
 
-Add your plugin to the main plugins export file.
+### BindEndpoints and BindWebhooks
+
+`BindEndpoints` and `BindWebhooks` are utility types that transform your flat endpoint/webhook type definitions into the nested structure used at runtime. You typically don't need to use these directly, but they're useful for type annotations:
+
+```ts
+import type { BindEndpoints, BindWebhooks } from '../../core';
+
+export type YourPluginBoundEndpoints = BindEndpoints<YourPluginEndpoints>;
+export type YourPluginBoundWebhooks = BindWebhooks<YourPluginWebhooks>;
+```
+
+These types are used internally by Corsair to provide type-safe access to endpoints and webhooks in the context.
+
+### KeyBuilder Implementation
+
+The `keyBuilder` function retrieves authentication credentials. It receives a `KeyBuilderContext` that narrows based on the auth type:
+
+```ts
+keyBuilder: async (ctx: YourPluginKeyBuilderContext) => {
+  // If a static key is provided, use it
+  if (options.key) {
+    return options.key;
+  }
+
+  // Check ctx.authType to narrow ctx.keys to the correct key manager type
+  if (ctx.authType === 'api_key') {
+    // ctx.keys is narrowed to ApiKeyAccountKeyManager
+    const res = await ctx.keys.getApiKey();
+
+    if (!res) {
+      throw new Error('API key not found');
+    }
+
+    return res;
+  } else if (ctx.authType === 'oauth_2') {
+    // ctx.keys is narrowed to OAuth2AccountKeyManager
+    const res = await ctx.keys.getAccessToken();
+
+    if (!res) {
+      throw new Error('Access token not found');
+    }
+
+    return res;
+  }
+
+  throw new Error('No authentication method configured');
+},
+```
+
+## File Organization
+
+Here's a recommended directory structure for organizing your plugin:
+
+```
+packages/corsair/plugins/your-plugin/
+├── index.ts                 # Main plugin definition
+├── schema/
+│   ├── database.ts          # Zod schemas for entities
+│   └── index.ts             # Schema export
+├── endpoints/
+│   ├── index.ts             # Endpoint exports
+│   ├── types.ts             # Endpoint type definitions
+│   └── [resource].ts        # Individual endpoint implementations
+├── webhooks/
+│   ├── index.ts             # Webhook exports
+│   ├── types.ts             # Webhook type definitions
+│   └── [event].ts           # Individual webhook handlers
+└── error-handlers.ts        # Error handling (optional)
+```
+
+### Endpoint Organization
+
+Group related endpoints together:
+
+```ts title="endpoints/entities.ts"
+import type { YourPluginEndpoints } from '..';
+import type { YourPluginEndpointOutputs } from './types';
+
+export const get: YourPluginEndpoints['entitiesGet'] = async (ctx, input) => {
+  // Implementation
+};
+
+export const list: YourPluginEndpoints['entitiesList'] = async (ctx, input) => {
+  // Implementation
+};
+```
+
+```ts title="endpoints/index.ts"
+import { get, list } from './entities';
+
+export const Entities = {
+  get,
+  list,
+};
+
+export * from './types';
+```
+
+### Webhook Organization
+
+Similarly, group related webhooks:
+
+```ts title="webhooks/entities.ts"
+import type { YourPluginWebhooks } from '..';
+
+export const created: YourPluginWebhooks['entityCreated'] = {
+  match: (request) => { /* ... */ },
+  handler: async (ctx, request) => { /* ... */ },
+};
+```
+
+```ts title="webhooks/index.ts"
+import { created } from './entities';
+
+export const EntityWebhooks = {
+  created,
+};
+
+export * from './types';
+```
+
+## Exporting Your Plugin
+
+Add your plugin to the main plugins export file:
 
 ```ts title="packages/corsair/plugins/index.ts"
 export {
-  type YourPluginBoundEndpoints,
-  type YourPluginBoundWebhooks,
   type YourPluginContext,
   type YourPluginEndpoints,
   type YourPluginOptions,
@@ -652,84 +566,8 @@ export {
 } from './your-plugin';
 ```
 
-## Step 11: Register Plugin ID
-
-If your plugin needs to be registered in a central list, add it to the appropriate type definitions. Check `packages/corsair/core/constants.ts` or similar files for where plugin IDs are defined.
-
-## Summary
-
-Creating a Corsair plugin involves:
-
-1. ✅ **Directory Structure** - Organize files logically
-2. ✅ **Database Schema** - Define Zod schemas for entities
-3. ✅ **API Client** - Set up authenticated API requests
-4. ✅ **Endpoint Types** - Define TypeScript types for inputs/outputs
-5. ✅ **Endpoint Implementations** - Create endpoint functions
-6. ✅ **Webhook Types** - Define webhook event types
-7. ✅ **Webhook Handlers** - Implement webhook processing
-8. ✅ **Error Handlers** - Add custom error handling (optional)
-9. ✅ **Plugin Definition** - Create factory function with keyBuilder
-10. ✅ **Export Plugin** - Add to main exports
-
-## Key Concepts
-
-### Context (`CorsairPluginContext`)
-
-The context provides:
-- `ctx.key` - The resolved authentication key
-- `ctx.db` - Typed database clients for your entities
-- `ctx.endpoints` - Bound endpoints for calling other endpoints
-- `ctx.database` - Raw database access
-- `ctx.$getAccountId()` - Get the account ID for this integration
-- `ctx.tenantId` - Tenant ID (for multi-tenancy)
-- `ctx.options` - Plugin-specific options
-- `ctx.keys` - Key manager (if authType is set)
-
-### KeyBuilder
-
-The `keyBuilder` function is responsible for retrieving authentication credentials. It:
-- Can use a static key from options
-- Can retrieve keys from the key manager based on auth type
-- Must handle different auth types (api_key, oauth_2, etc.)
-
-### Endpoints
-
-Endpoints are async functions that:
-- Receive `(ctx, input)` parameters
-- Make API calls using the client
-- Optionally save data to the database
-- Log events using `logEventFromContext`
-- Return typed responses
-
-### Webhooks
-
-Webhooks have:
-- A `match` function to determine if the request should be handled
-- A `handler` function that processes the webhook payload
-- Access to the same context as endpoints
-- Ability to save data to the database
-
-### Database Integration
-
-Entities defined in your schema automatically get database clients:
-- `ctx.db.entities.get(id)` - Get by ID
-- `ctx.db.entities.upsertByEntityId(id, data)` - Upsert by entity ID
-- `ctx.db.entities.list()` - List entities
-- And more methods depending on your database adapter
-
-## Testing Your Plugin
-
-1. Create a test file to verify your plugin structure
-2. Test endpoint calls with mock data
-3. Test webhook handlers with sample payloads
-4. Verify database operations work correctly
-5. Test error handling scenarios
-
 ## Next Steps
 
 - Review the Slack plugin (`packages/corsair/plugins/slack/`) for a comprehensive example
 - Check other plugins for simpler examples (Resend, PostHog)
 - Refer to the core types in `packages/corsair/core/` for advanced usage
-- Consider adding hooks for lifecycle events
-- Add comprehensive error handling for your API's specific error patterns
-
