@@ -1,0 +1,492 @@
+---
+title: Linear API Endpoints
+description: Complete reference for all Linear API endpoints.
+---
+
+This page provides a comprehensive reference for all Linear API endpoints available through the Corsair plugin. All endpoints are accessed via GraphQL under the hood, but Corsair provides a clean, typed interface.
+
+<Callout type="info">
+**New to Corsair?** Learn about core concepts like [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Callout>
+
+<Callout>
+**Full Implementation:** For the complete, up-to-date list, see the [Linear plugin source code](https://github.com/corsairdev/corsair/tree/main/packages/corsair/plugins/linear).
+</Callout>
+
+## Issues
+
+Issues are the core work items in Linear. They represent tasks, bugs, features, or any other trackable work.
+
+### list
+`issues.list`
+
+List issues with optional filtering by team and pagination support.
+
+```ts
+const result = await corsair.linear.api.issues.list({
+    teamId: "team-id", // [!code highlight]
+    first: 50,
+    after: "cursor",
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `teamId` | `string` | No | Filter issues by team ID. If omitted, returns all issues. |
+| `first` | `number` | No | Number of issues to return (default: 50) |
+| `after` | `string` | No | Cursor for pagination |
+
+**Returns:** `IssueConnection` with `nodes` array and `pageInfo` for pagination.
+
+---
+
+### get
+`issues.get`
+
+Get a single issue by ID with full details including project, cycle, labels, and subscribers.
+
+```ts
+const issue = await corsair.linear.api.issues.get({
+    id: "issue-id", // [!code highlight]
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The issue ID |
+
+**Returns:** `Issue` object with complete details.
+
+---
+
+### create
+`issues.create`
+
+Create a new issue in a team.
+
+```ts
+const issue = await corsair.linear.api.issues.create({
+    title: "Implement user authentication", // [!code highlight]
+    description: "Add JWT-based authentication", // [!code highlight]
+    teamId: "team-id", // [!code highlight]
+    priority: 1,
+    assigneeId: "user-id",
+    stateId: "state-id",
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `title` | `string` | Yes | Issue title |
+| `description` | `string` | No | Issue description (markdown supported) |
+| `teamId` | `string` | Yes | The team to create the issue in |
+| `assigneeId` | `string` | No | User ID to assign the issue to |
+| `priority` | `0 \| 1 \| 2 \| 3 \| 4` | No | Priority (0=No priority, 1=Urgent, 2=High, 3=Medium, 4=Low) |
+| `estimate` | `number` | No | Estimate points |
+| `stateId` | `string` | No | Workflow state ID |
+| `projectId` | `string` | No | Project ID to add issue to |
+| `cycleId` | `string` | No | Cycle ID to add issue to |
+| `parentId` | `string` | No | Parent issue ID for sub-issues |
+| `labelIds` | `string[]` | No | Array of label IDs |
+| `subscriberIds` | `string[]` | No | Array of user IDs to subscribe |
+| `dueDate` | `string` | No | Due date (ISO 8601 format) |
+
+**Returns:** Created `Issue` object.
+
+---
+
+### update
+`issues.update`
+
+Update an existing issue.
+
+```ts
+const issue = await corsair.linear.api.issues.update({
+    id: "issue-id", // [!code highlight]
+    input: { // [!code highlight]
+        title: "Updated title", // [!code highlight]
+        priority: 1, // [!code highlight]
+        stateId: "completed-state-id", // [!code highlight]
+    }, // [!code highlight]
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Issue ID to update |
+| `input` | `object` | Yes | Update payload |
+| `input.title` | `string` | No | New title |
+| `input.description` | `string` | No | New description |
+| `input.assigneeId` | `string` | No | New assignee |
+| `input.priority` | `0 \| 1 \| 2 \| 3 \| 4` | No | New priority |
+| `input.estimate` | `number` | No | New estimate |
+| `input.stateId` | `string` | No | New state |
+| `input.projectId` | `string` | No | New project |
+| `input.cycleId` | `string` | No | New cycle |
+| `input.parentId` | `string` | No | New parent issue |
+| `input.labelIds` | `string[]` | No | New labels |
+| `input.subscriberIds` | `string[]` | No | New subscribers |
+| `input.dueDate` | `string` | No | New due date |
+
+**Returns:** Updated `Issue` object.
+
+---
+
+### delete
+`issues.delete`
+
+Delete an issue.
+
+```ts
+const success = await corsair.linear.api.issues.delete({
+    id: "issue-id", // [!code highlight]
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Issue ID to delete |
+
+**Returns:** `boolean` indicating success.
+
+---
+
+## Projects
+
+Projects help organize and track work across multiple issues and teams.
+
+### list
+`projects.list`
+
+List all projects with pagination support.
+
+```ts
+const result = await corsair.linear.api.projects.list({
+    first: 50,
+    after: "cursor",
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `first` | `number` | No | Number of projects to return (default: 50) |
+| `after` | `string` | No | Cursor for pagination |
+
+**Returns:** `ProjectConnection` with `nodes` array and `pageInfo` for pagination.
+
+---
+
+### get
+`projects.get`
+
+Get a single project by ID with full details.
+
+```ts
+const project = await corsair.linear.api.projects.get({
+    id: "project-id", // [!code highlight]
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The project ID |
+
+**Returns:** `Project` object with complete details.
+
+---
+
+### create
+`projects.create`
+
+Create a new project.
+
+```ts
+const project = await corsair.linear.api.projects.create({
+    name: "Q1 2024 Roadmap", // [!code highlight]
+    description: "Goals and initiatives for Q1", // [!code highlight]
+    teamIds: ["team-id-1", "team-id-2"], // [!code highlight]
+    state: "started",
+    priority: 1,
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Project name |
+| `description` | `string` | No | Project description |
+| `icon` | `string` | No | Project icon (emoji or identifier) |
+| `color` | `string` | No | Project color (hex format) |
+| `teamIds` | `string[]` | Yes | Array of team IDs |
+| `leadId` | `string` | No | Project lead user ID |
+| `state` | `'planned' \| 'started' \| 'paused' \| 'completed' \| 'canceled'` | No | Project state |
+| `priority` | `number` | No | Project priority |
+| `startDate` | `string` | No | Start date (ISO 8601) |
+| `targetDate` | `string` | No | Target completion date (ISO 8601) |
+
+**Returns:** Created `Project` object.
+
+---
+
+### update
+`projects.update`
+
+Update an existing project.
+
+```ts
+const project = await corsair.linear.api.projects.update({
+    id: "project-id", // [!code highlight]
+    input: { // [!code highlight]
+        state: "completed", // [!code highlight]
+        targetDate: "2024-03-31", // [!code highlight]
+    }, // [!code highlight]
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Project ID to update |
+| `input` | `object` | Yes | Update payload |
+| `input.name` | `string` | No | New name |
+| `input.description` | `string` | No | New description |
+| `input.icon` | `string` | No | New icon |
+| `input.color` | `string` | No | New color |
+| `input.teamIds` | `string[]` | No | New team IDs |
+| `input.leadId` | `string` | No | New lead |
+| `input.state` | `'planned' \| 'started' \| 'paused' \| 'completed' \| 'canceled'` | No | New state |
+| `input.priority` | `number` | No | New priority |
+| `input.startDate` | `string` | No | New start date |
+| `input.targetDate` | `string` | No | New target date |
+
+**Returns:** Updated `Project` object.
+
+---
+
+### delete
+`projects.delete`
+
+Delete a project.
+
+```ts
+const success = await corsair.linear.api.projects.delete({
+    id: "project-id", // [!code highlight]
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Project ID to delete |
+
+**Returns:** `boolean` indicating success.
+
+---
+
+## Teams
+
+Teams are groups of users that work together on issues and projects.
+
+### list
+`teams.list`
+
+List all teams with pagination support.
+
+```ts
+const result = await corsair.linear.api.teams.list({
+    first: 50,
+    after: "cursor",
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `first` | `number` | No | Number of teams to return (default: 50) |
+| `after` | `string` | No | Cursor for pagination |
+
+**Returns:** `TeamConnection` with `nodes` array and `pageInfo` for pagination.
+
+---
+
+### get
+`teams.get`
+
+Get a single team by ID.
+
+```ts
+const team = await corsair.linear.api.teams.get({
+    id: "team-id", // [!code highlight]
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The team ID |
+
+**Returns:** `Team` object with details.
+
+---
+
+## Comments
+
+Comments allow discussion and collaboration on issues.
+
+### list
+`comments.list`
+
+List all comments on an issue with pagination support.
+
+```ts
+const result = await corsair.linear.api.comments.list({
+    issueId: "issue-id", // [!code highlight]
+    first: 50,
+    after: "cursor",
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `issueId` | `string` | Yes | Issue ID to get comments for |
+| `first` | `number` | No | Number of comments to return (default: 50) |
+| `after` | `string` | No | Cursor for pagination |
+
+**Returns:** `CommentConnection` with `nodes` array and `pageInfo` for pagination.
+
+---
+
+### create
+`comments.create`
+
+Create a new comment on an issue.
+
+```ts
+const comment = await corsair.linear.api.comments.create({
+    issueId: "issue-id", // [!code highlight]
+    body: "Great work on this! 👍", // [!code highlight]
+    parentId: "parent-comment-id", // Optional for replies
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `issueId` | `string` | Yes | Issue ID to comment on |
+| `body` | `string` | Yes | Comment body (markdown supported) |
+| `parentId` | `string` | No | Parent comment ID for replies |
+
+**Returns:** Created `Comment` object.
+
+---
+
+### update
+`comments.update`
+
+Update an existing comment.
+
+```ts
+const comment = await corsair.linear.api.comments.update({
+    id: "comment-id", // [!code highlight]
+    input: { // [!code highlight]
+        body: "Updated comment text", // [!code highlight]
+    }, // [!code highlight]
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Comment ID to update |
+| `input` | `object` | Yes | Update payload |
+| `input.body` | `string` | No | New comment body |
+
+**Returns:** Updated `Comment` object.
+
+---
+
+### delete
+`comments.delete`
+
+Delete a comment.
+
+```ts
+const success = await corsair.linear.api.comments.delete({
+    id: "comment-id", // [!code highlight]
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Comment ID to delete |
+
+**Returns:** `boolean` indicating success.
+
+---
+
+## Common Types
+
+### Priority Levels
+
+Linear uses numeric priority levels:
+
+- `0` - No priority
+- `1` - Urgent
+- `2` - High
+- `3` - Medium (default)
+- `4` - Low
+
+### Project States
+
+Projects can be in one of these states:
+
+- `planned` - Not yet started
+- `started` - Currently in progress
+- `paused` - Temporarily on hold
+- `completed` - Successfully finished
+- `canceled` - Abandoned
+
+### Pagination
+
+All list endpoints support cursor-based pagination:
+
+```ts
+let cursor: string | undefined;
+const allIssues = [];
+
+do {
+    const result = await corsair.linear.api.issues.list({
+        first: 50,
+        after: cursor,
+    });
+    
+    allIssues.push(...result.nodes);
+    cursor = result.pageInfo.hasNextPage ? result.pageInfo.endCursor : undefined;
+} while (cursor);
+```
+

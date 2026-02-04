@@ -1,0 +1,295 @@
+---
+title: Linear Error Handlers
+description: Built-in and custom error handling.
+---
+
+The Linear plugin includes comprehensive error handling for common API issues. Error handlers automatically manage retries, logging, and recovery strategies.
+
+<Callout type="info">
+**New to Corsair?** Learn about [error handling](/concepts/error-handling) and retry strategies.
+</Callout>
+
+<Callout>
+**Full Implementation:** See the [Linear plugin source code](https://github.com/corsairdev/corsair/tree/main/packages/corsair/plugins/linear).
+</Callout>
+
+## Built-in Error Handlers
+
+The Linear plugin includes the following built-in error handlers:
+
+### Rate Limit Error
+
+**Triggers:** When you exceed Linear's API rate limits.
+
+**Behavior:**
+- Maximum retries: **5**
+- Automatically respects `Retry-After` headers
+- Exponential backoff between retries
+- Logs rate limit events
+
+**Example Error Messages:**
+- `"rate_limited"`
+- `"too many requests"`
+- `"429"`
+
+**How to Fix:**
+1. Reduce API call frequency
+2. Implement caching for frequently accessed data
+3. Use database queries instead of repeated API calls
+4. Consider batching operations
+
+**Example:**
+
+```ts
+// Corsair automatically retries up to 5 times with exponential backoff
+await corsair.linear.api.issues.list();
+// No try-catch needed - errors are handled automatically
+```
+
+---
+
+### Authentication Error
+
+**Triggers:** When API key is invalid, expired, or revoked.
+
+**Behavior:**
+- Maximum retries: **0**
+- No automatic retries (auth issues require manual intervention)
+- Logs authentication failures
+
+**Example Error Messages:**
+- `"unauthorized"`
+- `"authentication failed"`
+- `"invalid token"`
+- `"token expired"`
+- `"token revoked"`
+- `"invalid api key"`
+- `"forbidden"`
+- `"access denied"`
+
+**How to Fix:**
+1. Verify your Linear API key is correct
+2. Check if the key has been revoked in [Linear settings](https://linear.app/settings/api)
+3. Generate a new API key if needed
+4. Ensure the key has appropriate permissions
+
+**Example:**
+
+```ts
+// Corsair will fail immediately without retries
+// Check your API key if authentication fails
+await corsair.linear.api.issues.list();
+```
+
+---
+
+### Not Found Error
+
+**Triggers:** When a requested resource doesn't exist.
+
+**Behavior:**
+- Maximum retries: **0**
+- No automatic retries (resource doesn't exist)
+- Logs not found errors
+
+**Example Error Messages:**
+- `"not found"`
+- `"does not exist"`
+- `"could not find"`
+- `"issue not found"`
+- `"team not found"`
+- `"project not found"`
+- `"comment not found"`
+- `"user not found"`
+
+**How to Fix:**
+1. Verify the ID is correct
+2. Check if the resource was deleted
+3. Ensure you have access to the resource
+4. Query the database to check if resource exists
+
+**Example:**
+
+```ts
+// Corsair will fail immediately if resource doesn't exist
+const issue = await corsair.linear.api.issues.get({
+    id: "invalid-id",
+});
+```
+
+---
+
+### Permission Error
+
+**Triggers:** When API key lacks permissions for the requested operation.
+
+**Behavior:**
+- Maximum retries: **0**
+- No automatic retries (permissions issue)
+- Logs permission denials
+
+**Example Error Messages:**
+- `"permission denied"`
+- `"forbidden"`
+- `"access denied"`
+- `"insufficient permissions"`
+- `"unauthorized access"`
+- `"not authorized"`
+
+**How to Fix:**
+1. Check API key permissions in Linear settings
+2. Ensure your API key has appropriate scopes
+3. Verify team/workspace membership
+4. Generate a new key with correct permissions
+
+**Example:**
+
+```ts
+// Corsair will fail immediately if permissions are insufficient
+await corsair.linear.api.projects.delete({
+    id: "project-id",
+});
+```
+
+---
+
+### Network Error
+
+**Triggers:** When network connectivity issues occur.
+
+**Behavior:**
+- Maximum retries: **3**
+- Automatic retry with exponential backoff
+- Logs network failures
+
+**Example Error Messages:**
+- `"network error"`
+- `"connection error"`
+- `"ECONNREFUSED"`
+- `"ENOTFOUND"`
+- `"ETIMEDOUT"`
+- `"fetch failed"`
+
+**How to Fix:**
+1. Check internet connectivity
+2. Verify firewall settings
+3. Check if Linear API is accessible
+4. Ensure DNS is working correctly
+
+**Example:**
+
+```ts
+// Corsair automatically retries up to 3 times on network failures
+await corsair.linear.api.issues.list();
+```
+
+---
+
+### Validation Error
+
+**Triggers:** When input data is invalid or malformed.
+
+**Behavior:**
+- Maximum retries: **0**
+- No automatic retries (input is invalid)
+- Logs validation errors
+
+**Example Error Messages:**
+- `"validation error"`
+- `"invalid input"`
+- `"bad request"`
+- `"malformed request"`
+- `"required field missing"`
+- `"graphql validation error"`
+
+**How to Fix:**
+1. Verify all required fields are provided
+2. Check data types match API requirements
+3. Validate IDs exist before using them
+4. Review Linear's API documentation
+
+**Example:**
+
+```ts
+// Corsair will fail immediately for validation errors
+await corsair.linear.api.issues.create({
+    title: "", // Invalid: empty title
+    teamId: "team-id",
+});
+// Fix input data and try again
+```
+
+---
+
+### Default Handler
+
+**Triggers:** For any errors not matched by other handlers.
+
+**Behavior:**
+- Maximum retries: **0**
+- Logs unhandled errors
+- Passes error to caller
+
+**Example:**
+
+```ts
+// Corsair handles all errors automatically
+await corsair.linear.api.issues.create({
+    title: "New issue",
+    teamId: "team-id",
+});
+```
+
+---
+
+## Custom Error Handlers
+
+You can add custom error handlers or override built-in ones:
+
+### Adding Custom Handler
+
+```ts
+linear({
+    errorHandlers: {
+        MY_CUSTOM_ERROR: {
+            match: (error, context) => {
+                // Return true if this handler should handle the error
+                return error.message.includes("custom error");
+            },
+            handler: async (error, context) => {
+                console.log(`Custom error in ${context.operation}`);
+                
+                return {
+                    maxRetries: 3, // [!code highlight]
+                    retryDelayMs: 2000, // [!code highlight]
+                };
+            },
+        },
+    },
+})
+```
+
+### Overriding Built-in Handler
+
+```ts
+linear({
+    errorHandlers: {
+        RATE_LIMIT_ERROR: {
+            match: (error, context) => {
+                return error.message.includes("rate limit");
+            },
+            handler: async (error, context) => {
+                // Custom rate limit handling
+                console.log("Custom rate limit handler");
+                
+                return {
+                    maxRetries: 10, // More retries than default // [!code highlight]
+                    retryDelayMs: 5000, // Longer delay // [!code highlight]
+                };
+            },
+        },
+    },
+})
+```
+
+For comprehensive error handling strategies, patterns, and best practices, see the [Error Handling](/concepts/error-handling) concepts page.

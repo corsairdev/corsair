@@ -1,0 +1,1064 @@
+---
+title: Slack API Endpoints
+description: Complete reference for all Slack API endpoints available in the Corsair Slack plugin.
+---
+
+The Slack plugin provides full access to Slack's API through a typed interface. All endpoints are organized by resource type and automatically handle authentication, rate limiting, and error handling.
+
+<Callout type="info">
+**New to Corsair?** Learn about core concepts like [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling) before diving into specific endpoints.
+</Callout>
+
+<Callout>
+**Full Implementation:** For the complete, up-to-date list of all endpoints and their implementations, see the [Slack plugin source code](https://github.com/corsairdev/corsair/tree/main/packages/corsair/plugins/slack) on GitHub.
+</Callout>
+
+## Channels
+
+Manage channels, conversations, and direct messages.
+
+### random
+
+`channels.random`
+
+Get a random channel from the workspace.
+
+```ts
+const channel = await corsair.slack.api.channels.random({});
+```
+
+**Parameters:** None
+
+---
+
+### create
+
+`channels.create`
+
+Create a new public or private channel.
+
+```ts
+const result = await corsair.slack.api.channels.create({
+    name: "project-updates",
+    is_private: false, // [!code highlight]
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Name of the channel to create |
+| `is_private` | `boolean` | No | Whether the channel should be private |
+| `team_id` | `string` | No | Team ID (for Enterprise Grid) |
+
+---
+
+### list
+
+`channels.list`
+
+List all channels in the workspace.
+
+```ts
+const channels = await corsair.slack.api.channels.list({
+    exclude_archived: true,
+    limit: 100,
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `exclude_archived` | `boolean` | No | Exclude archived channels |
+| `types` | `string` | No | Mix and match channel types (e.g., "public_channel,private_channel") |
+| `team_id` | `string` | No | Team ID (for Enterprise Grid) |
+| `cursor` | `string` | No | Pagination cursor |
+| `limit` | `number` | No | Number of channels to return (default: 100, max: 1000) |
+
+---
+
+### get
+
+`channels.get`
+
+Get information about a specific channel.
+
+```ts
+const channel = await corsair.slack.api.channels.get({
+    channel: "C1234567890",
+    include_num_members: true,
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel` | `string` | Yes | Channel ID |
+| `include_locale` | `boolean` | No | Include locale information |
+| `include_num_members` | `boolean` | No | Include member count |
+
+---
+
+### archive
+
+`channels.archive`
+
+Archive a channel.
+
+```ts
+await corsair.slack.api.channels.archive({
+    channel: "C1234567890",
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel` | `string` | Yes | Channel ID to archive |
+
+---
+
+### unarchive
+
+`channels.unarchive`
+
+Unarchive a channel.
+
+```ts
+await corsair.slack.api.channels.unarchive({
+    channel: "C1234567890",
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel` | `string` | Yes | Channel ID to unarchive |
+
+---
+
+### close
+
+`channels.close`
+
+Close a direct message or multi-party direct message.
+
+```ts
+await corsair.slack.api.channels.close({
+    channel: "D1234567890",
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel` | `string` | Yes | Channel ID to close |
+
+---
+
+### open
+
+`channels.open`
+
+Open or resume a direct message or multi-party direct message.
+
+```ts
+const dm = await corsair.slack.api.channels.open({
+    users: "U1234567890,U0987654321",
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel` | `string` | No | Resume a conversation by supplying an `im` or `mpim` ID |
+| `users` | `string` | No | Comma-separated list of user IDs |
+| `prevent_creation` | `boolean` | No | Don't create a new channel if one doesn't exist |
+| `return_im` | `boolean` | No | Return an IM channel instead of opening it |
+
+---
+
+### getHistory
+
+`channels.getHistory`
+
+Fetch conversation history for a channel.
+
+```ts
+const history = await corsair.slack.api.channels.getHistory({
+    channel: "C1234567890",
+    limit: 50,
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel` | `string` | Yes | Channel ID |
+| `latest` | `string` | No | End of time range (timestamp) |
+| `oldest` | `string` | No | Start of time range (timestamp) |
+| `inclusive` | `boolean` | No | Include messages with latest/oldest timestamps |
+| `include_all_metadata` | `boolean` | No | Include all metadata |
+| `cursor` | `string` | No | Pagination cursor |
+| `limit` | `number` | No | Number of messages to return (default: 100, max: 1000) |
+
+---
+
+### getReplies
+
+`channels.getReplies`
+
+Retrieve a thread of messages posted to a channel.
+
+```ts
+const replies = await corsair.slack.api.channels.getReplies({
+    channel: "C1234567890",
+    ts: "1234567890.123456", // [!code highlight]
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel` | `string` | Yes | Channel ID |
+| `ts` | `string` | Yes | Timestamp of the parent message |
+| `latest` | `string` | No | End of time range |
+| `oldest` | `string` | No | Start of time range |
+| `inclusive` | `boolean` | No | Include messages with latest/oldest timestamps |
+| `include_all_metadata` | `boolean` | No | Include all metadata |
+| `cursor` | `string` | No | Pagination cursor |
+| `limit` | `number` | No | Number of messages to return |
+
+---
+
+### invite
+
+`channels.invite`
+
+Invite a user to a channel.
+
+```ts
+await corsair.slack.api.channels.invite({
+    channel: "C1234567890",
+    users: "U1234567890",
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel` | `string` | Yes | Channel ID |
+| `users` | `string` | Yes | Comma-separated list of user IDs |
+| `force` | `boolean` | No | Force invite even if channel is archived |
+
+---
+
+### join
+
+`channels.join`
+
+Join an existing channel.
+
+```ts
+await corsair.slack.api.channels.join({
+    channel: "C1234567890",
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel` | `string` | Yes | Channel ID or name |
+
+---
+
+### kick
+
+`channels.kick`
+
+Remove a user from a channel.
+
+```ts
+await corsair.slack.api.channels.kick({
+    channel: "C1234567890",
+    user: "U1234567890",
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel` | `string` | Yes | Channel ID |
+| `user` | `string` | Yes | User ID to remove |
+
+---
+
+### leave
+
+`channels.leave`
+
+Leave a channel.
+
+```ts
+await corsair.slack.api.channels.leave({
+    channel: "C1234567890",
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel` | `string` | Yes | Channel ID to leave |
+
+---
+
+### getMembers
+
+`channels.getMembers`
+
+Retrieve members of a channel.
+
+```ts
+const members = await corsair.slack.api.channels.getMembers({
+    channel: "C1234567890",
+    limit: 100,
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel` | `string` | Yes | Channel ID |
+| `cursor` | `string` | No | Pagination cursor |
+| `limit` | `number` | No | Number of members to return |
+
+---
+
+### rename
+
+`channels.rename`
+
+Rename a channel.
+
+```ts
+await corsair.slack.api.channels.rename({
+    channel: "C1234567890",
+    name: "new-channel-name",
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel` | `string` | Yes | Channel ID |
+| `name` | `string` | Yes | New channel name |
+
+---
+
+### setPurpose
+
+`channels.setPurpose`
+
+Set the purpose for a channel.
+
+```ts
+await corsair.slack.api.channels.setPurpose({
+    channel: "C1234567890",
+    purpose: "Discuss project updates",
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel` | `string` | Yes | Channel ID |
+| `purpose` | `string` | Yes | New purpose text |
+
+---
+
+### setTopic
+
+`channels.setTopic`
+
+Set the topic for a channel.
+
+```ts
+await corsair.slack.api.channels.setTopic({
+    channel: "C1234567890",
+    topic: "Weekly standup notes",
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel` | `string` | Yes | Channel ID |
+| `topic` | `string` | Yes | New topic text |
+
+---
+
+## Messages
+
+Send, update, delete, and search messages.
+
+### post
+
+`messages.post`
+
+Send a message to a channel.
+
+```ts
+await corsair.slack.api.messages.post({
+    channel: "C1234567890",
+    text: "Hello, world!",
+});
+```
+
+**With blocks:**
+
+```ts
+await corsair.slack.api.messages.post({
+    channel: "C1234567890",
+    blocks: [ // [!code highlight]
+        { // [!code highlight]
+            type: "section", // [!code highlight]
+            text: { // [!code highlight]
+                type: "mrkdwn", // [!code highlight]
+                text: "*Hello* from Corsair!" // [!code highlight]
+            } // [!code highlight]
+        } // [!code highlight]
+    ] // [!code highlight]
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel` | `string` | Yes | Channel ID |
+| `text` | `string` | No | Message text (required if no blocks) |
+| `blocks` | `array` | No | Block Kit blocks |
+| `attachments` | `array` | No | Message attachments (legacy) |
+| `thread_ts` | `string` | No | Timestamp of parent message (for threads) |
+| `reply_broadcast` | `boolean` | No | Broadcast thread reply to channel |
+| `parse` | `'full' \| 'none'` | No | Parsing mode |
+| `link_names` | `boolean` | No | Find and link user names |
+| `unfurl_links` | `boolean` | No | Enable link unfurling |
+| `unfurl_media` | `boolean` | No | Enable media unfurling |
+| `mrkdwn` | `boolean` | No | Enable markdown formatting |
+| `as_user` | `boolean` | No | Post as the authenticated user |
+| `icon_emoji` | `string` | No | Emoji to use as icon |
+| `icon_url` | `string` | No | URL to image for icon |
+| `username` | `string` | No | Bot's username |
+| `metadata` | `object` | No | Event metadata |
+
+---
+
+### update
+
+`messages.update`
+
+Update an existing message.
+
+```ts
+await corsair.slack.api.messages.update({
+    channel: "C1234567890",
+    ts: "1234567890.123456",
+    text: "Updated message text",
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel` | `string` | Yes | Channel ID |
+| `ts` | `string` | Yes | Timestamp of message to update |
+| `text` | `string` | No | New message text |
+| `blocks` | `array` | No | New Block Kit blocks |
+| `attachments` | `array` | No | New attachments |
+| `parse` | `'full' \| 'none'` | No | Parsing mode |
+| `link_names` | `boolean` | No | Find and link user names |
+| `as_user` | `boolean` | No | Update as the authenticated user |
+| `file_ids` | `string[]` | No | File IDs to attach |
+| `reply_broadcast` | `boolean` | No | Broadcast thread reply to channel |
+| `metadata` | `object` | No | Event metadata |
+
+---
+
+### delete
+
+`messages.delete`
+
+Delete a message.
+
+```ts
+await corsair.slack.api.messages.delete({
+    channel: "C1234567890",
+    ts: "1234567890.123456",
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel` | `string` | Yes | Channel ID |
+| `ts` | `string` | Yes | Timestamp of message to delete |
+| `as_user` | `boolean` | No | Delete as the authenticated user |
+
+---
+
+### getPermalink
+
+`messages.getPermalink`
+
+Get a permalink URL for a message.
+
+```ts
+const result = await corsair.slack.api.messages.getPermalink({
+    channel: "C1234567890",
+    message_ts: "1234567890.123456",
+});
+
+console.log(result.permalink);
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel` | `string` | Yes | Channel ID |
+| `message_ts` | `string` | Yes | Message timestamp |
+
+---
+
+### search
+
+`messages.search`
+
+Search for messages matching a query.
+
+```ts
+const results = await corsair.slack.api.messages.search({
+    query: "important announcement",
+    sort: "timestamp",
+    sort_dir: "desc",
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | Search query |
+| `sort` | `'score' \| 'timestamp'` | No | Sort results by relevance or time |
+| `sort_dir` | `'asc' \| 'desc'` | No | Sort direction |
+| `highlight` | `boolean` | No | Highlight matching terms |
+| `team_id` | `string` | No | Team ID (for Enterprise Grid) |
+| `cursor` | `string` | No | Pagination cursor |
+| `limit` | `number` | No | Number of results to return |
+| `page` | `number` | No | Page number (legacy pagination) |
+| `count` | `number` | No | Number per page (legacy pagination) |
+
+---
+
+## Users
+
+Access user profiles, presence, and information.
+
+### list
+
+`users.list`
+
+List all users in the workspace.
+
+```ts
+const users = await corsair.slack.api.users.list({
+    limit: 100,
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `include_locale` | `boolean` | No | Include user locale |
+| `team_id` | `string` | No | Team ID (for Enterprise Grid) |
+| `cursor` | `string` | No | Pagination cursor |
+| `limit` | `number` | No | Number of users to return |
+
+---
+
+### get
+
+`users.get`
+
+Get information about a user.
+
+```ts
+const user = await corsair.slack.api.users.get({
+    user: "U1234567890",
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user` | `string` | Yes | User ID |
+| `include_locale` | `boolean` | No | Include user locale |
+
+---
+
+### getProfile
+
+`users.getProfile`
+
+Get a user's profile information.
+
+```ts
+const profile = await corsair.slack.api.users.getProfile({
+    user: "U1234567890",
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user` | `string` | No | User ID (defaults to authenticated user) |
+| `include_labels` | `boolean` | No | Include profile field labels |
+
+---
+
+### updateProfile
+
+`users.updateProfile`
+
+Update a user's profile.
+
+```ts
+await corsair.slack.api.users.updateProfile({
+    user: "U1234567890",
+    profile: {
+        status_text: "In a meeting",
+        status_emoji: ":calendar:",
+    },
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `profile` | `object` | No | Profile object with fields to update |
+| `user` | `string` | No | User ID (defaults to authenticated user) |
+| `name` | `string` | No | Profile field name to update |
+| `value` | `string` | No | Profile field value |
+
+---
+
+### getPresence
+
+`users.getPresence`
+
+Get a user's presence status.
+
+```ts
+const presence = await corsair.slack.api.users.getPresence({
+    user: "U1234567890",
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user` | `string` | No | User ID (defaults to authenticated user) |
+
+---
+
+## Files
+
+Upload, list, and retrieve files.
+
+### upload
+
+`files.upload`
+
+Upload a file to Slack.
+
+```ts
+await corsair.slack.api.files.upload({
+    channels: "C1234567890",
+    content: "File content here",
+    filename: "document.txt",
+    title: "Important Document",
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channels` | `string` | No | Comma-separated channel IDs |
+| `content` | `string` | No | File contents |
+| `file` | `unknown` | No | File object |
+| `filename` | `string` | No | Filename |
+| `filetype` | `string` | No | File type identifier |
+| `initial_comment` | `string` | No | Initial comment about the file |
+| `thread_ts` | `string` | No | Thread timestamp |
+| `title` | `string` | No | Title of the file |
+
+---
+
+### list
+
+`files.list`
+
+List files uploaded to the workspace.
+
+```ts
+const files = await corsair.slack.api.files.list({
+    channel: "C1234567890",
+    types: "images,pdfs",
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel` | `string` | No | Filter by channel ID |
+| `user` | `string` | No | Filter by user ID |
+| `types` | `string` | No | Filter by file type (comma-separated) |
+| `ts_from` | `string` | No | Filter files created after this timestamp |
+| `ts_to` | `string` | No | Filter files created before this timestamp |
+| `show_files_hidden_by_limit` | `boolean` | No | Show files hidden by limit |
+| `team_id` | `string` | No | Team ID (for Enterprise Grid) |
+| `page` | `number` | No | Page number |
+| `count` | `number` | No | Number per page |
+
+---
+
+### get
+
+`files.get`
+
+Get information about a file.
+
+```ts
+const file = await corsair.slack.api.files.get({
+    file: "F1234567890",
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file` | `string` | Yes | File ID |
+| `cursor` | `string` | No | Pagination cursor |
+| `limit` | `number` | No | Number of items to return |
+| `page` | `number` | No | Page number |
+| `count` | `number` | No | Number per page |
+
+---
+
+## Reactions
+
+Add and remove emoji reactions.
+
+### add
+
+`reactions.add`
+
+Add a reaction to a message.
+
+```ts
+await corsair.slack.api.reactions.add({
+    channel: "C1234567890",
+    timestamp: "1234567890.123456",
+    name: "thumbsup", // [!code highlight]
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel` | `string` | Yes | Channel ID |
+| `timestamp` | `string` | Yes | Message timestamp |
+| `name` | `string` | Yes | Reaction emoji name (without colons) |
+
+---
+
+### remove
+
+`reactions.remove`
+
+Remove a reaction from a message.
+
+```ts
+await corsair.slack.api.reactions.remove({
+    channel: "C1234567890",
+    timestamp: "1234567890.123456",
+    name: "thumbsup",
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Reaction emoji name (without colons) |
+| `channel` | `string` | No | Channel ID |
+| `timestamp` | `string` | No | Message timestamp |
+| `file` | `string` | No | File ID |
+| `file_comment` | `string` | No | File comment ID |
+
+---
+
+### get
+
+`reactions.get`
+
+Get reactions for a message, file, or file comment.
+
+```ts
+const reactions = await corsair.slack.api.reactions.get({
+    channel: "C1234567890",
+    timestamp: "1234567890.123456",
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel` | `string` | No | Channel ID |
+| `timestamp` | `string` | No | Message timestamp |
+| `file` | `string` | No | File ID |
+| `file_comment` | `string` | No | File comment ID |
+| `full` | `boolean` | No | Return full user objects |
+
+---
+
+## Stars
+
+Star and unstar items.
+
+### add
+
+`stars.add`
+
+Star a message, file, or file comment.
+
+```ts
+await corsair.slack.api.stars.add({
+    channel: "C1234567890",
+    timestamp: "1234567890.123456",
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel` | `string` | No | Channel ID |
+| `timestamp` | `string` | No | Message timestamp |
+| `file` | `string` | No | File ID |
+| `file_comment` | `string` | No | File comment ID |
+
+---
+
+### remove
+
+`stars.remove`
+
+Remove a star from a message, file, or file comment.
+
+```ts
+await corsair.slack.api.stars.remove({
+    channel: "C1234567890",
+    timestamp: "1234567890.123456",
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel` | `string` | No | Channel ID |
+| `timestamp` | `string` | No | Message timestamp |
+| `file` | `string` | No | File ID |
+| `file_comment` | `string` | No | File comment ID |
+
+---
+
+### list
+
+`stars.list`
+
+List starred items.
+
+```ts
+const stars = await corsair.slack.api.stars.list({
+    limit: 100,
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `team_id` | `string` | No | Team ID (for Enterprise Grid) |
+| `cursor` | `string` | No | Pagination cursor |
+| `limit` | `number` | No | Number of items to return |
+| `page` | `number` | No | Page number |
+| `count` | `number` | No | Number per page |
+
+---
+
+## User Groups
+
+Create and manage user groups.
+
+### create
+
+`userGroups.create`
+
+Create a new user group.
+
+```ts
+await corsair.slack.api.userGroups.create({
+    name: "engineering",
+    description: "Engineering team members",
+    handle: "eng",
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | User group name |
+| `channels` | `string` | No | Comma-separated channel IDs |
+| `description` | `string` | No | Group description |
+| `handle` | `string` | No | Mention handle (@handle) |
+| `include_count` | `boolean` | No | Include member count |
+| `team_id` | `string` | No | Team ID (for Enterprise Grid) |
+
+---
+
+### update
+
+`userGroups.update`
+
+Update an existing user group.
+
+```ts
+await corsair.slack.api.userGroups.update({
+    userGroup: "S1234567890",
+    name: "product-engineering",
+    description: "Updated description",
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userGroup` | `string` | Yes | User group ID |
+| `name` | `string` | No | New name |
+| `channels` | `string` | No | Comma-separated channel IDs |
+| `description` | `string` | No | New description |
+| `handle` | `string` | No | New mention handle |
+| `include_count` | `boolean` | No | Include member count |
+| `team_id` | `string` | No | Team ID (for Enterprise Grid) |
+
+---
+
+### list
+
+`userGroups.list`
+
+List all user groups.
+
+```ts
+const groups = await corsair.slack.api.userGroups.list({
+    include_users: true,
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `include_count` | `boolean` | No | Include member count |
+| `include_disabled` | `boolean` | No | Include disabled groups |
+| `include_users` | `boolean` | No | Include user IDs |
+| `team_id` | `string` | No | Team ID (for Enterprise Grid) |
+
+---
+
+### enable
+
+`userGroups.enable`
+
+Enable a user group.
+
+```ts
+await corsair.slack.api.userGroups.enable({
+    userGroup: "S1234567890",
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userGroup` | `string` | Yes | User group ID |
+| `include_count` | `boolean` | No | Include member count |
+| `team_id` | `string` | No | Team ID (for Enterprise Grid) |
+
+---
+
+### disable
+
+`userGroups.disable`
+
+Disable a user group.
+
+```ts
+await corsair.slack.api.userGroups.disable({
+    userGroup: "S1234567890",
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userGroup` | `string` | Yes | User group ID |
+| `include_count` | `boolean` | No | Include member count |
+| `team_id` | `string` | No | Team ID (for Enterprise Grid) |
+

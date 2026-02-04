@@ -1,0 +1,589 @@
+---
+title: Linear Database Schema
+description: Database entities and querying synced data.
+---
+
+The Linear plugin automatically syncs data from Linear to your database whenever you make API calls. This allows you to query Linear data efficiently without making additional API requests.
+
+<Callout type="info">
+**New to Corsair?** Learn about [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Callout>
+
+<Callout>
+**Full Implementation:** See the [Linear plugin source code](https://github.com/corsairdev/corsair/tree/main/packages/corsair/plugins/linear).
+</Callout>
+
+## Synced Entities
+
+The Linear plugin syncs the following entities to your database:
+
+- **issues** - Issue tracking data (synced on list, get, create, update operations)
+- **teams** - Team information (synced on list, get operations)
+- **projects** - Project data (synced on list, get, create, update operations)
+- **comments** - Comment data (synced on list, create, update operations)
+- **users** - User information (synced as part of other entities)
+
+Data is automatically synced whenever you fetch, create, or update entities through the API. Webhook events do not automatically sync to the database.
+
+## Database API
+
+Access synced data through the database API:
+
+```ts
+// Search for entities
+const issues = await corsair.linear.db.issues.search({
+    data: { teamId: "team-id" },
+});
+
+// Get by entity ID
+const issue = await corsair.linear.db.issues.getByEntityId("issue-id");
+
+// List all entities (with pagination)
+const allProjects = await corsair.linear.db.projects.list({
+    limit: 50,
+    offset: 0,
+});
+```
+
+---
+
+## Issues
+
+Issues are the core work items in Linear representing tasks, bugs, and features.
+
+### Schema
+
+```ts
+{
+    id: string;              // Internal database ID
+    entityId: string;        // Linear issue ID
+    tenantId: string;        // Tenant ID for multi-tenancy
+    
+    // Core fields
+    title: string;           // Issue title
+    description: string?;    // Issue description (markdown)
+    number: number;          // Issue number (e.g., 123)
+    identifier: string;      // Issue identifier (e.g., "ENG-123")
+    url: string;             // Linear URL to the issue
+    
+    // Status and priority
+    priority: 0 | 1 | 2 | 3 | 4;  // Priority level
+    estimate: number?;       // Estimate points
+    sortOrder: number?;      // Sort order in lists
+    
+    // Relations
+    stateId: string;         // Workflow state ID
+    teamId: string;          // Team ID
+    assigneeId: string?;     // Assigned user ID
+    creatorId: string;       // Creator user ID
+    projectId: string?;      // Project ID (if in a project)
+    cycleId: string?;        // Cycle ID (if in a cycle)
+    parentId: string?;       // Parent issue ID (for sub-issues)
+    
+    // Dates
+    dueDate: string?;        // Due date
+    startedAt: string?;      // When work started
+    completedAt: string?;    // When completed
+    canceledAt: string?;     // When canceled
+    createdAt: Date;         // When created
+    updatedAt: Date;         // Last updated
+    archivedAt: string?;     // When archived
+}
+```
+
+### Querying Issues
+
+**Search by team:**
+
+```ts
+const teamIssues = await corsair.linear.db.issues.search({
+    data: { teamId: "team-id" }, // [!code highlight]
+});
+```
+
+**Search by assignee:**
+
+```ts
+const myIssues = await corsair.linear.db.issues.search({
+    data: { assigneeId: "user-id" }, // [!code highlight]
+});
+```
+
+**Search by priority:**
+
+```ts
+const urgentIssues = await corsair.linear.db.issues.search({
+    data: { priority: 1 }, // [!code highlight]
+});
+```
+
+**Get specific issue:**
+
+```ts
+const issue = await corsair.linear.db.issues.getByEntityId("issue-id"); // [!code highlight]
+```
+
+### Example: Find Overdue Issues
+
+Find all issues past their due date:
+
+```ts
+const allIssues = await corsair.linear.db.issues.list();
+
+const overdueIssues = allIssues.filter(issue => {
+    if (!issue.dueDate || issue.completedAt || issue.canceledAt) {
+        return false;
+    }
+    return new Date(issue.dueDate) < new Date();
+});
+
+console.log(`Found ${overdueIssues.length} overdue issues`);
+```
+
+### Example: Issues by Project
+
+Find all issues in a specific project:
+
+```ts
+const projectIssues = await corsair.linear.db.issues.search({
+    data: { projectId: "project-id" }, // [!code highlight]
+});
+
+console.log(`Project has ${projectIssues.length} issues`);
+```
+
+---
+
+## Teams
+
+Teams represent groups of users that collaborate on issues and projects.
+
+### Schema
+
+```ts
+{
+    id: string;              // Internal database ID
+    entityId: string;        // Linear team ID
+    tenantId: string;        // Tenant ID for multi-tenancy
+    
+    // Core fields
+    name: string;            // Team name
+    key: string;             // Team key (e.g., "ENG")
+    description: string?;    // Team description
+    icon: string?;           // Team icon
+    color: string?;          // Team color
+    private: boolean;        // Whether team is private
+    
+    // Dates
+    createdAt: Date;         // When created
+    updatedAt: Date;         // Last updated
+    archivedAt: string?;     // When archived
+}
+```
+
+### Querying Teams
+
+**List all teams:**
+
+```ts
+const teams = await corsair.linear.db.teams.list();
+```
+
+**Get specific team:**
+
+```ts
+const team = await corsair.linear.db.teams.getByEntityId("team-id"); // [!code highlight]
+```
+
+**Search by key:**
+
+```ts
+const engTeam = await corsair.linear.db.teams.search({
+    data: { key: "ENG" }, // [!code highlight]
+});
+```
+
+### Example: Team Statistics
+
+Calculate issue counts per team:
+
+```ts
+const teams = await corsair.linear.db.teams.list();
+const allIssues = await corsair.linear.db.issues.list();
+
+const teamStats = teams.map(team => {
+    const issues = allIssues.filter(i => i.teamId === team.entityId);
+    const completed = issues.filter(i => i.completedAt);
+    
+    return {
+        team: team.name,
+        total: issues.length,
+        completed: completed.length,
+        inProgress: issues.length - completed.length,
+    };
+});
+
+console.table(teamStats);
+```
+
+---
+
+## Projects
+
+Projects help organize and track work across multiple issues and teams.
+
+### Schema
+
+```ts
+{
+    id: string;              // Internal database ID
+    entityId: string;        // Linear project ID
+    tenantId: string;        // Tenant ID for multi-tenancy
+    
+    // Core fields
+    name: string;            // Project name
+    description: string?;    // Project description
+    icon: string?;           // Project icon (emoji)
+    color: string?;          // Project color (hex)
+    
+    // Status
+    state: 'planned' | 'started' | 'paused' | 'completed' | 'canceled' | 'backlog';
+    priority: number;        // Project priority
+    sortOrder: number?;      // Sort order in lists
+    
+    // Relations
+    leadId: string?;         // Project lead user ID
+    
+    // Dates
+    startDate: string?;      // Planned start date
+    targetDate: string?;     // Target completion date
+    completedAt: string?;    // When completed
+    canceledAt: string?;     // When canceled
+    createdAt: Date;         // When created
+    updatedAt: Date;         // Last updated
+    archivedAt: string?;     // When archived
+}
+```
+
+### Querying Projects
+
+**Search by state:**
+
+```ts
+const activeProjects = await corsair.linear.db.projects.search({
+    data: { state: "started" }, // [!code highlight]
+});
+```
+
+**Search by lead:**
+
+```ts
+const myProjects = await corsair.linear.db.projects.search({
+    data: { leadId: "user-id" }, // [!code highlight]
+});
+```
+
+**Get specific project:**
+
+```ts
+const project = await corsair.linear.db.projects.getByEntityId("project-id"); // [!code highlight]
+```
+
+### Example: Project Dashboard
+
+Build a project dashboard with statistics:
+
+```ts
+const projects = await corsair.linear.db.projects.search({
+    data: { state: "started" },
+});
+
+const allIssues = await corsair.linear.db.issues.list();
+
+const dashboard = await Promise.all(
+    projects.map(async project => {
+        const issues = allIssues.filter(i => i.projectId === project.entityId);
+        const completed = issues.filter(i => i.completedAt);
+        const inProgress = issues.filter(i => i.startedAt && !i.completedAt);
+        
+        return {
+            name: project.name,
+            state: project.state,
+            targetDate: project.targetDate,
+            total: issues.length,
+            completed: completed.length,
+            inProgress: inProgress.length,
+            progress: issues.length > 0 
+                ? Math.round((completed.length / issues.length) * 100) 
+                : 0,
+        };
+    })
+);
+
+console.table(dashboard);
+```
+
+### Example: Overdue Projects
+
+Find projects past their target date:
+
+```ts
+const projects = await corsair.linear.db.projects.search({
+    data: { state: "started" },
+});
+
+const overdueProjects = projects.filter(project => {
+    if (!project.targetDate) return false;
+    return new Date(project.targetDate) < new Date();
+});
+
+for (const project of overdueProjects) {
+    console.log(`⚠️  ${project.name} is overdue (target: ${project.targetDate})`);
+}
+```
+
+---
+
+## Comments
+
+Comments enable discussion and collaboration on issues.
+
+### Schema
+
+```ts
+{
+    id: string;              // Internal database ID
+    entityId: string;        // Linear comment ID
+    tenantId: string;        // Tenant ID for multi-tenancy
+    
+    // Core fields
+    body: string;            // Comment body (markdown)
+    
+    // Relations
+    issueId: string;         // Issue the comment belongs to
+    userId: string;          // User who created the comment
+    parentId: string?;       // Parent comment ID (for replies)
+    
+    // Dates
+    editedAt: string?;       // When last edited
+    createdAt: Date;         // When created
+    updatedAt: Date;         // Last updated
+    archivedAt: string?;     // When archived
+}
+```
+
+### Querying Comments
+
+**Search by issue:**
+
+```ts
+const issueComments = await corsair.linear.db.comments.search({
+    data: { issueId: "issue-id" }, // [!code highlight]
+});
+```
+
+**Search by user:**
+
+```ts
+const userComments = await corsair.linear.db.comments.search({
+    data: { userId: "user-id" }, // [!code highlight]
+});
+```
+
+**Get specific comment:**
+
+```ts
+const comment = await corsair.linear.db.comments.getByEntityId("comment-id"); // [!code highlight]
+```
+
+### Example: Comment Activity Report
+
+Generate a report of commenting activity:
+
+```ts
+const comments = await corsair.linear.db.comments.list();
+
+// Group by user
+const userActivity = comments.reduce((acc, comment) => {
+    acc[comment.userId] = (acc[comment.userId] || 0) + 1;
+    return acc;
+}, {} as Record<string, number>);
+
+// Sort by activity
+const topCommenters = Object.entries(userActivity)
+    .sort(([, a], [, b]) => b - a)
+    .slice(0, 10);
+
+console.log("Top 10 commenters:");
+topCommenters.forEach(([userId, count]) => {
+    console.log(`  ${userId}: ${count} comments`);
+});
+```
+
+### Example: Find Recent Discussions
+
+Find issues with recent comment activity:
+
+```ts
+const recentComments = await corsair.linear.db.comments.list();
+
+// Get comments from last 7 days
+const sevenDaysAgo = new Date();
+sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
+const recentActivity = recentComments.filter(
+    comment => comment.createdAt >= sevenDaysAgo
+);
+
+// Group by issue
+const issueActivity = recentActivity.reduce((acc, comment) => {
+    acc[comment.issueId] = (acc[comment.issueId] || 0) + 1;
+    return acc;
+}, {} as Record<string, number>);
+
+console.log(`${Object.keys(issueActivity).length} issues with recent comments`);
+```
+
+---
+
+## Users
+
+User data is synced as part of other entities (issues, comments, projects).
+
+### Schema
+
+```ts
+{
+    id: string;              // Internal database ID
+    entityId: string;        // Linear user ID
+    tenantId: string;        // Tenant ID for multi-tenancy
+    
+    // Core fields
+    name: string;            // User name
+    email: string?;          // User email
+    displayName: string;     // Display name
+    avatarUrl: string?;      // Avatar URL
+    active: boolean;         // Whether user is active
+    admin: boolean;          // Whether user is admin
+    
+    // Dates
+    createdAt: Date;         // When created
+    updatedAt: Date;         // Last updated
+}
+```
+
+### Querying Users
+
+**List all users:**
+
+```ts
+const users = await corsair.linear.db.users.list();
+```
+
+**Get specific user:**
+
+```ts
+const user = await corsair.linear.db.users.getByEntityId("user-id"); // [!code highlight]
+```
+
+**Search by email:**
+
+```ts
+const user = await corsair.linear.db.users.search({
+    data: { email: "user@example.com" }, // [!code highlight]
+});
+```
+
+---
+
+## Multi-Tenancy
+
+All database operations are automatically scoped to the current tenant:
+
+```ts
+// Each tenant has isolated data
+const tenant1 = corsair.withTenant("tenant-1");
+const tenant2 = corsair.withTenant("tenant-2");
+
+// These return different results
+const tenant1Issues = await tenant1.linear.db.issues.list();
+const tenant2Issues = await tenant2.linear.db.issues.list();
+```
+
+See [Multi-Tenancy](/concepts/multi-tenancy) for more details.
+
+## Best Practices
+
+### 1. Query Database First
+
+For data you've already fetched, query the database instead of making API calls:
+
+```ts
+// ❌ Unnecessary API call
+const issue = await corsair.linear.api.issues.get({ id: "issue-id" });
+
+// ✅ Query database
+const issue = await corsair.linear.db.issues.getByEntityId("issue-id");
+```
+
+### 2. Sync Before Complex Queries
+
+For comprehensive reports, ensure data is synced:
+
+```ts
+// Sync latest issues
+await corsair.linear.api.issues.list({ first: 100 });
+
+// Now query database
+const issues = await corsair.linear.db.issues.list();
+```
+
+### 3. Use Pagination for Large Datasets
+
+When working with large datasets, use pagination:
+
+```ts
+const PAGE_SIZE = 100;
+let offset = 0;
+let hasMore = true;
+
+while (hasMore) {
+    const page = await corsair.linear.db.issues.list({
+        limit: PAGE_SIZE,
+        offset,
+    });
+    
+    // Process page
+    for (const issue of page) {
+        // ... process issue
+    }
+    
+    hasMore = page.length === PAGE_SIZE;
+    offset += PAGE_SIZE;
+}
+```
+
+### 4. Cache Complex Queries
+
+For frequently accessed data, consider caching:
+
+```ts
+let cachedStats: any = null;
+let cacheTime = 0;
+const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+
+async function getTeamStats() {
+    if (cachedStats && Date.now() - cacheTime < CACHE_TTL) {
+        return cachedStats;
+    }
+    
+    const teams = await corsair.linear.db.teams.list();
+    const issues = await corsair.linear.db.issues.list();
+    
+    cachedStats = calculateStats(teams, issues);
+    cacheTime = Date.now();
+    
+    return cachedStats;
+}
+```
+

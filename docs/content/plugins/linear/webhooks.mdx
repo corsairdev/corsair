@@ -1,0 +1,773 @@
+---
+title: Linear Webhooks
+description: All available Linear webhook events.
+---
+
+Linear webhooks allow you to receive real-time notifications when issues, projects, or comments are created, updated, or deleted. The Corsair plugin provides a clean interface for handling these events.
+
+<Callout type="info">
+**New to Corsair?** Learn about [webhooks](/concepts/webhooks), [hooks](/concepts/hooks), and [multi-tenancy](/concepts/multi-tenancy).
+</Callout>
+
+<Callout>
+**Full Implementation:** See the [Linear plugin source code](https://github.com/corsairdev/corsair/tree/main/packages/corsair/plugins/linear).
+</Callout>
+
+## Setup
+
+Configure webhook hooks when initializing the Linear plugin:
+
+```ts title="corsair.ts"
+import { linear } from "corsair/plugins";
+
+export const corsair = createCorsair({
+    plugins: [
+        linear({
+            webhookHooks: {
+                issues: {
+                    create: {
+                        after: async (ctx, result) => {
+                            console.log("Issue created:", result.data.title);
+                        },
+                    },
+                },
+            },
+        }),
+    ],
+});
+```
+
+To receive webhooks from Linear:
+
+1. Go to your [Linear workspace settings](https://linear.app/settings/api)
+2. Navigate to **Webhooks**
+3. Create a new webhook with your Corsair webhook URL: `https://your-app.com/webhooks/linear`
+4. Select the events you want to receive
+5. (Optional) Set a webhook secret for signature verification
+
+## Available Webhooks
+
+### create
+`issues.create`
+
+**Event Type:** Issue Created
+
+**When it fires:**
+- A new issue is created in any team
+- Issues are imported from external systems
+- Issues are created via API or automations
+
+**Payload Structure:**
+
+```ts
+{
+    action: "create",
+    type: "Issue",
+    data: { // [!code highlight]
+        id: "issue-id", // [!code highlight]
+        title: "Bug: Login form not working", // [!code highlight]
+        identifier: "ENG-123", // [!code highlight]
+        teamId: "team-id", // [!code highlight]
+        stateId: "state-id", // [!code highlight]
+        priority: 1, // [!code highlight]
+    }, // [!code highlight]
+    url: "https://linear.app/team/issue/ENG-123",
+    organizationId: "org-id",
+}
+```
+
+**Example Usage:**
+
+```ts
+linear({
+    webhookHooks: {
+        issues: {
+            create: {
+                after: async (ctx, result) => {
+                    // Send notification for high-priority issues
+                    if (result.data.priority <= 2) {
+                        await inngest.send({
+                            name: "linear/high-priority-issue",
+                            data: {
+                                tenantId: ctx.tenantId,
+                                issue: result.data,
+                            },
+                        });
+                    }
+                },
+            },
+        },
+    },
+})
+```
+
+**Key Fields:**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `data.id` | `string` | Unique issue ID |
+| `data.title` | `string` | Issue title |
+| `data.identifier` | `string` | Human-readable identifier (e.g., "ENG-123") |
+| `data.teamId` | `string` | Team the issue belongs to |
+| `data.stateId` | `string` | Current workflow state |
+| `data.priority` | `0 \| 1 \| 2 \| 3 \| 4` | Issue priority (0=None, 1=Urgent, 2=High, 3=Medium, 4=Low) |
+
+---
+
+### update
+`issues.update`
+
+**Event Type:** Issue Updated
+
+**When it fires:**
+- Issue fields are modified (title, description, priority, etc.)
+- Issue state changes (e.g., moved to "In Progress")
+- Issue is assigned or reassigned
+- Labels, estimates, or other metadata are updated
+
+**Payload Structure:**
+
+```ts
+{
+    action: "update",
+    type: "Issue",
+    data: {
+        id: "issue-id",
+        title: "Updated title",
+        stateId: "new-state-id", // [!code highlight]
+        // ... all current fields
+    },
+    updatedFrom: { // [!code highlight]
+        stateId: "old-state-id", // [!code highlight]
+        title: "Old title", // [!code highlight]
+    }, // [!code highlight]
+    url: "https://linear.app/team/issue/ENG-123",
+    organizationId: "org-id",
+}
+```
+
+**Example Usage:**
+
+```ts
+linear({
+    webhookHooks: {
+        issues: {
+            update: {
+                after: async (ctx, result) => {
+                    // Notify when issue is completed
+                    const stateChanged = result.updatedFrom?.stateId !== result.data.stateId;
+                    
+                    if (stateChanged) {
+                        // Fetch current state to check if completed
+                        const issue = await ctx.endpoints.issuesGet({
+                            id: result.data.id,
+                        });
+                        
+                        if (issue.state.type === "completed") {
+                            await inngest.send({
+                                name: "linear/issue-completed",
+                                data: {
+                                    tenantId: ctx.tenantId,
+                                    issue: result.data,
+                                },
+                            });
+                        }
+                    }
+                },
+            },
+        },
+    },
+})
+```
+
+**Key Fields:**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `data` | `Issue` | Current state of the issue |
+| `updatedFrom` | `Partial<Issue>` | Previous values of changed fields |
+| `updatedFrom.stateId` | `string` | Previous workflow state |
+
+---
+
+### remove
+`issues.remove`
+
+**Event Type:** Issue Deleted
+
+**When it fires:**
+- Issue is permanently deleted
+- Issue is archived (in some configurations)
+
+**Payload Structure:**
+
+```ts
+{
+    action: "remove",
+    type: "Issue",
+    data: {
+        id: "issue-id", // [!code highlight]
+        title: "Deleted issue",
+        identifier: "ENG-123",
+        // ... final state before deletion
+    },
+    url: "https://linear.app/team/issue/ENG-123",
+    organizationId: "org-id",
+}
+```
+
+**Example Usage:**
+
+```ts
+linear({
+    webhookHooks: {
+        issues: {
+            remove: {
+                after: async (ctx, result) => {
+                    // Clean up external references
+                    await inngest.send({
+                        name: "linear/issue-deleted",
+                        data: {
+                            tenantId: ctx.tenantId,
+                            issueId: result.data.id,
+                        },
+                    });
+                },
+            },
+        },
+    },
+})
+```
+
+**Key Fields:**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `data.id` | `string` | ID of deleted issue |
+| `data.identifier` | `string` | Issue identifier (e.g., "ENG-123") |
+
+---
+
+## Projects
+
+### create
+`projects.create`
+
+**Event Type:** Project Created
+
+**When it fires:**
+- A new project is created
+- Projects are created via API or automations
+
+**Payload Structure:**
+
+```ts
+{
+    action: "create",
+    type: "Project",
+    data: {
+        id: "project-id",
+        name: "Q1 2024 Roadmap", // [!code highlight]
+        state: "started", // [!code highlight]
+        priority: 1,
+    },
+    url: "https://linear.app/project/project-name",
+    organizationId: "org-id",
+}
+```
+
+**Example Usage:**
+
+```ts
+linear({
+    webhookHooks: {
+        projects: {
+            create: {
+                after: async (ctx, result) => {
+                    // Create tracking channel for new project
+                    await inngest.send({
+                        name: "linear/project-created",
+                        data: {
+                            tenantId: ctx.tenantId,
+                            project: result.data,
+                        },
+                    });
+                },
+            },
+        },
+    },
+})
+```
+
+**Key Fields:**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `data.id` | `string` | Unique project ID |
+| `data.name` | `string` | Project name |
+| `data.state` | `string` | Project state (planned, started, paused, completed, canceled) |
+
+---
+
+### update
+`projects.update`
+
+**Event Type:** Project Updated
+
+**When it fires:**
+- Project details are modified
+- Project state changes
+- Project dates are updated
+
+**Payload Structure:**
+
+```ts
+{
+    action: "update",
+    type: "Project",
+    data: {
+        id: "project-id",
+        name: "Q1 2024 Roadmap",
+        state: "completed", // [!code highlight]
+        // ... all current fields
+    },
+    updatedFrom: { // [!code highlight]
+        state: "started", // [!code highlight]
+    }, // [!code highlight]
+    url: "https://linear.app/project/project-name",
+    organizationId: "org-id",
+}
+```
+
+**Example Usage:**
+
+```ts
+linear({
+    webhookHooks: {
+        projects: {
+            update: {
+                after: async (ctx, result) => {
+                    // Notify when project is completed
+                    if (result.data.state === "completed" && 
+                        result.updatedFrom?.state !== "completed") {
+                        await inngest.send({
+                            name: "linear/project-completed",
+                            data: {
+                                tenantId: ctx.tenantId,
+                                project: result.data,
+                            },
+                        });
+                    }
+                },
+            },
+        },
+    },
+})
+```
+
+**Key Fields:**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `data` | `Project` | Current project state |
+| `updatedFrom` | `Partial<Project>` | Previous values of changed fields |
+
+---
+
+### remove
+`projects.remove`
+
+**Event Type:** Project Deleted
+
+**When it fires:**
+- Project is permanently deleted
+
+**Payload Structure:**
+
+```ts
+{
+    action: "remove",
+    type: "Project",
+    data: {
+        id: "project-id", // [!code highlight]
+        name: "Deleted project",
+        // ... final state before deletion
+    },
+    url: "https://linear.app/project/project-name",
+    organizationId: "org-id",
+}
+```
+
+**Example Usage:**
+
+```ts
+linear({
+    webhookHooks: {
+        projects: {
+            remove: {
+                after: async (ctx, result) => {
+                    // Archive project data
+                    await inngest.send({
+                        name: "linear/project-deleted",
+                        data: {
+                            tenantId: ctx.tenantId,
+                            projectId: result.data.id,
+                        },
+                    });
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Comments
+
+### create
+`comments.create`
+
+**Event Type:** Comment Created
+
+**When it fires:**
+- A new comment is added to an issue
+- Comments are created via API
+
+**Payload Structure:**
+
+```ts
+{
+    action: "create",
+    type: "Comment",
+    data: {
+        id: "comment-id",
+        body: "Great work on this! 👍", // [!code highlight]
+        issueId: "issue-id", // [!code highlight]
+        userId: "user-id",
+    },
+    url: "https://linear.app/team/issue/ENG-123#comment-id",
+    organizationId: "org-id",
+}
+```
+
+**Example Usage:**
+
+```ts
+linear({
+    webhookHooks: {
+        comments: {
+            create: {
+                after: async (ctx, result) => {
+                    // Send notification for new comments
+                    await inngest.send({
+                        name: "linear/comment-created",
+                        data: {
+                            tenantId: ctx.tenantId,
+                            comment: result.data,
+                        },
+                    });
+                },
+            },
+        },
+    },
+})
+```
+
+**Key Fields:**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `data.id` | `string` | Unique comment ID |
+| `data.body` | `string` | Comment content (markdown) |
+| `data.issueId` | `string` | Issue the comment belongs to |
+| `data.userId` | `string` | User who created the comment |
+
+---
+
+### update
+`comments.update`
+
+**Event Type:** Comment Updated
+
+**When it fires:**
+- Comment text is edited
+- Comment is modified
+
+**Payload Structure:**
+
+```ts
+{
+    action: "update",
+    type: "Comment",
+    data: {
+        id: "comment-id",
+        body: "Updated comment text", // [!code highlight]
+        editedAt: "2024-01-15T10:30:00Z", // [!code highlight]
+        issueId: "issue-id",
+        userId: "user-id",
+    },
+    updatedFrom: { // [!code highlight]
+        body: "Original comment text", // [!code highlight]
+    }, // [!code highlight]
+    url: "https://linear.app/team/issue/ENG-123#comment-id",
+    organizationId: "org-id",
+}
+```
+
+**Example Usage:**
+
+```ts
+linear({
+    webhookHooks: {
+        comments: {
+            update: {
+                after: async (ctx, result) => {
+                    // Track comment edits
+                    console.log("Comment edited:", result.data.id);
+                },
+            },
+        },
+    },
+})
+```
+
+**Key Fields:**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `data.body` | `string` | Updated comment text |
+| `data.editedAt` | `string` | Timestamp of last edit |
+| `updatedFrom.body` | `string` | Previous comment text |
+
+---
+
+### remove
+`comments.remove`
+
+**Event Type:** Comment Deleted
+
+**When it fires:**
+- Comment is permanently deleted
+
+**Payload Structure:**
+
+```ts
+{
+    action: "remove",
+    type: "Comment",
+    data: {
+        id: "comment-id", // [!code highlight]
+        body: "Deleted comment",
+        issueId: "issue-id",
+        userId: "user-id",
+    },
+    url: "https://linear.app/team/issue/ENG-123",
+    organizationId: "org-id",
+}
+```
+
+**Example Usage:**
+
+```ts
+linear({
+    webhookHooks: {
+        comments: {
+            remove: {
+                after: async (ctx, result) => {
+                    // Clean up comment references
+                    console.log("Comment deleted:", result.data.id);
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Best Practices
+
+### 1. Use Event Systems
+
+Don't call Corsair API methods directly in webhook hooks. Use an event system like Inngest:
+
+```ts
+// ❌ DON'T: Call corsair directly in webhook hook
+linear({
+    webhookHooks: {
+        issues: {
+            create: {
+                after: async (ctx, result) => {
+                    // This can cause circular calls
+                    await corsair.slack.api.chat.postMessage({...});
+                },
+            },
+        },
+    },
+})
+
+// ✅ DO: Send to event system
+linear({
+    webhookHooks: {
+        issues: {
+            create: {
+                after: async (ctx, result) => {
+                    await inngest.send({
+                        name: "linear/issue-created",
+                        data: { tenantId: ctx.tenantId, issue: result.data },
+                    });
+                },
+            },
+        },
+    },
+})
+```
+
+### 2. Check updatedFrom for Updates
+
+When handling update events, always check `updatedFrom` to see what actually changed:
+
+```ts
+linear({
+    webhookHooks: {
+        issues: {
+            update: {
+                after: async (ctx, result) => {
+                    // Only act if priority changed
+                    if (result.updatedFrom?.priority !== result.data.priority) {
+                        // Handle priority change
+                    }
+                },
+            },
+        },
+    },
+})
+```
+
+### 3. Handle Errors Gracefully
+
+Webhook failures shouldn't break your application:
+
+```ts
+linear({
+    webhookHooks: {
+        issues: {
+            create: {
+                after: async (ctx, result) => {
+                    try {
+                        await inngest.send({...});
+                    } catch (error) {
+                        console.error("Failed to process webhook:", error);
+                        // Don't throw - webhook will succeed
+                    }
+                },
+            },
+        },
+    },
+})
+```
+
+### 4. Use Webhook Signature Verification
+
+For production, always verify webhook signatures:
+
+```ts
+linear({
+    // Set webhook secret from Linear settings
+    webhookSecret: process.env.LINEAR_WEBHOOK_SECRET,
+})
+```
+
+## Common Patterns
+
+### Pattern 1: Issue State Tracking
+
+Track when issues move through workflow states:
+
+```ts
+linear({
+    webhookHooks: {
+        issues: {
+            update: {
+                after: async (ctx, result) => {
+                    if (result.updatedFrom?.stateId) {
+                        await inngest.send({
+                            name: "linear/issue-state-changed",
+                            data: {
+                                tenantId: ctx.tenantId,
+                                issueId: result.data.id,
+                                fromState: result.updatedFrom.stateId,
+                                toState: result.data.stateId,
+                            },
+                        });
+                    }
+                },
+            },
+        },
+    },
+})
+```
+
+### Pattern 2: Cross-Platform Notifications
+
+Sync issue updates to Slack or other platforms:
+
+```ts
+linear({
+    webhookHooks: {
+        issues: {
+            create: {
+                after: async (ctx, result) => {
+                    await inngest.send({
+                        name: "linear/notify-slack",
+                        data: {
+                            tenantId: ctx.tenantId,
+                            message: `New issue: ${result.data.title}`,
+                            issueUrl: result.url,
+                        },
+                    });
+                },
+            },
+        },
+    },
+})
+```
+
+### Pattern 3: Automated Workflows
+
+Trigger automations based on issue changes:
+
+```ts
+linear({
+    webhookHooks: {
+        issues: {
+            update: {
+                after: async (ctx, result) => {
+                    // Auto-escalate stale high-priority issues
+                    if (result.data.priority === 1) {
+                        const issue = await ctx.endpoints.issuesGet({
+                            id: result.data.id,
+                        });
+                        
+                        const daysSinceUpdate = 
+                            (Date.now() - new Date(issue.updatedAt).getTime()) / 
+                            (1000 * 60 * 60 * 24);
+                        
+                        if (daysSinceUpdate > 2) {
+                            await inngest.send({
+                                name: "linear/escalate-issue",
+                                data: {
+                                    tenantId: ctx.tenantId,
+                                    issue: result.data,
+                                },
+                            });
+                        }
+                    }
+                },
+            },
+        },
+    },
+})
+```
+

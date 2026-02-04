@@ -1,0 +1,647 @@
+---
+title: Slack Database Schema
+description: Database entities and querying synced Slack data.
+---
+
+The Slack plugin automatically syncs data from Slack to your database. This allows you to query Slack data without making API calls, providing faster access and offline capabilities.
+
+<Callout type="info">
+**New to Corsair?** Learn about core concepts like [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy) before working with the database.
+</Callout>
+
+<Callout>
+**Full Implementation:** For the complete, up-to-date database schema and implementations, see the [Slack plugin source code](https://github.com/corsairdev/corsair/tree/main/packages/corsair/plugins/slack) on GitHub.
+</Callout>
+
+## Synced Entities
+
+The Slack plugin syncs the following entities to your database:
+
+- **messages** - Channel messages and threads
+- **channels** - Channel information and metadata
+- **users** - User profiles and information
+- **files** - File metadata and details
+- **userGroups** - User group information
+
+## Database API
+
+Access synced data through the `db` property:
+
+```ts
+const channels = await corsair.slack.db.channels.search({
+    data: { name: "general" },
+});
+```
+
+### Search Options
+
+All entity searches support the following options:
+
+```ts
+await corsair.slack.db.channels.search({
+    data: { name: "general" },      // Search criteria
+    limit: 100,                      // Max results (optional)
+    offset: 0,                       // Pagination offset (optional)
+});
+```
+
+---
+
+## Messages
+
+Messages are automatically synced when you fetch conversation history or receive webhook events.
+
+### Schema
+
+```ts
+{
+    id: string;                    // Unique message ID
+    ts?: string;                   // Message timestamp
+    type?: string;                 // Message type
+    subtype?: string;              // Message subtype (e.g., "bot_message")
+    text?: string;                 // Message text content
+    user?: string;                 // User ID who sent the message
+    bot_id?: string;               // Bot ID if sent by a bot
+    app_id?: string;               // App ID if sent by an app
+    team?: string;                 // Team ID
+    username?: string;             // Username (for bot messages)
+    channel: string;               // Channel ID (required)
+    createdAt?: Date;              // Message creation timestamp
+    authorId?: string;             // Author user ID
+    thread_ts?: string;            // Parent message timestamp (for threads)
+    reply_count?: number;          // Number of replies
+    is_locked?: boolean;           // Whether thread is locked
+    subscribed?: boolean;          // Whether subscribed to thread
+}
+```
+
+### Querying Messages
+
+**Search by channel:**
+
+```ts
+const messages = await corsair.slack.db.messages.search({
+    data: { channel: "C1234567890" }, // [!code highlight]
+});
+```
+
+**Search by user:**
+
+```ts
+const userMessages = await corsair.slack.db.messages.search({
+    data: { user: "U1234567890" },
+});
+```
+
+**Search by text content:**
+
+```ts
+const searchResults = await corsair.slack.db.messages.search({
+    data: { text: "important announcement" },
+});
+```
+
+**Find thread messages:**
+
+```ts
+const threadMessages = await corsair.slack.db.messages.search({
+    data: { thread_ts: "1234567890.123456" }, // [!code highlight]
+});
+```
+
+**Filter bot messages:**
+
+```ts
+const botMessages = await corsair.slack.db.messages.search({
+    data: { bot_id: "B1234567890" },
+});
+```
+
+### Example: Get Recent Messages
+
+```ts
+async function getRecentMessages(channelId: string, limit = 50) {
+    // First, fetch latest messages from Slack API
+    await corsair.slack.api.channels.getHistory({
+        channel: channelId,
+        limit,
+    });
+    
+    // Then query from database
+    const messages = await corsair.slack.db.messages.search({
+        data: { channel: channelId },
+        limit,
+    });
+    
+    return messages.sort((a, b) => 
+        (b.ts || "").localeCompare(a.ts || "")
+    );
+}
+```
+
+---
+
+## Channels
+
+Channels are synced when you list channels or receive channel-related webhooks.
+
+### Schema
+
+```ts
+{
+    id: string;                          // Channel ID (required)
+    name?: string;                       // Channel name
+    name_normalized?: string;            // Normalized name
+    is_channel?: boolean;                // Whether it's a channel
+    is_group?: boolean;                  // Whether it's a private channel
+    is_im?: boolean;                     // Whether it's a DM
+    is_mpim?: boolean;                   // Whether it's a multi-party DM
+    is_private?: boolean;                // Whether channel is private
+    is_archived?: boolean;               // Whether channel is archived
+    is_general?: boolean;                // Whether it's the #general channel
+    created?: number;                    // Unix timestamp when created
+    createdAt?: Date;                    // Creation date
+    creator?: string;                    // User ID of creator
+    is_member?: boolean;                 // Whether bot is a member
+    num_members?: number;                // Number of members
+    topic?: {                            // Channel topic
+        value: string;
+        creator: string;
+        last_set: number;
+    };
+    purpose?: {                          // Channel purpose
+        value: string;
+        creator: string;
+        last_set: number;
+    };
+}
+```
+
+### Querying Channels
+
+**Search by name:**
+
+```ts
+const channels = await corsair.slack.db.channels.search({
+    data: { name: "general" }, // [!code highlight]
+});
+```
+
+**Find private channels:**
+
+```ts
+const privateChannels = await corsair.slack.db.channels.search({
+    data: { is_private: true },
+});
+```
+
+**Find channels you're a member of:**
+
+```ts
+const myChannels = await corsair.slack.db.channels.search({
+    data: { is_member: true },
+});
+```
+
+**Find non-archived channels:**
+
+```ts
+const activeChannels = await corsair.slack.db.channels.search({
+    data: { is_archived: false },
+});
+```
+
+### Example: Find or Fetch Channel
+
+```ts
+async function getChannelByName(channelName: string) {
+    // Try to find in database first
+    let channels = await corsair.slack.db.channels.search({
+        data: { name: channelName },
+    });
+    
+    // If not found, fetch from API
+    if (!channels[0]) {
+        await corsair.slack.api.channels.list({
+            exclude_archived: true,
+        });
+        
+        // Try again after syncing
+        channels = await corsair.slack.db.channels.search({
+            data: { name: channelName },
+        });
+    }
+    
+    if (!channels[0]) {
+        throw new Error(`Channel #${channelName} not found`);
+    }
+    
+    return channels[0];
+}
+```
+
+---
+
+## Users
+
+User profiles are synced when you list users or receive user-related webhooks.
+
+### Schema
+
+```ts
+{
+    id: string;                          // User ID (required)
+    name?: string;                       // Username
+    real_name?: string;                  // Full name
+    display_name?: string;               // Display name
+    email?: string;                      // Email address
+    is_bot?: boolean;                    // Whether user is a bot
+    is_admin?: boolean;                  // Whether user is an admin
+    deleted?: boolean;                   // Whether user is deleted
+    profile?: {                          // User profile
+        avatar_hash?: string;
+        status_text?: string;
+        status_emoji?: string;
+        real_name?: string;
+        display_name?: string;
+        email?: string;
+        image_24?: string;
+        image_32?: string;
+        image_48?: string;
+        image_72?: string;
+        image_192?: string;
+        image_512?: string;
+        phone?: string;
+        title?: string;
+    };
+}
+```
+
+### Querying Users
+
+**Search by name:**
+
+```ts
+const users = await corsair.slack.db.users.search({
+    data: { name: "john.doe" },
+});
+```
+
+**Search by email:**
+
+```ts
+const users = await corsair.slack.db.users.search({
+    data: { email: "john@example.com" }, // [!code highlight]
+});
+```
+
+**Search by real name:**
+
+```ts
+const users = await corsair.slack.db.users.search({
+    data: { real_name: "John Doe" },
+});
+```
+
+**Find non-bot users:**
+
+```ts
+const humans = await corsair.slack.db.users.search({
+    data: { is_bot: false },
+});
+```
+
+**Find admins:**
+
+```ts
+const admins = await corsair.slack.db.users.search({
+    data: { is_admin: true },
+});
+```
+
+### Example: Get User by Email
+
+```ts
+async function getUserByEmail(email: string) {
+    // Try database first
+    let users = await corsair.slack.db.users.search({
+        data: { email },
+    });
+    
+    // If not found, fetch from API
+    if (!users[0]) {
+        await corsair.slack.api.users.list({});
+        
+        users = await corsair.slack.db.users.search({
+            data: { email },
+        });
+    }
+    
+    return users[0] || null;
+}
+```
+
+---
+
+## Files
+
+File metadata is synced when you list files or receive file-related webhooks.
+
+### Schema
+
+```ts
+{
+    id: string;                          // File ID (required)
+    name?: string;                       // Filename
+    title?: string;                      // File title
+    mimetype?: string;                   // MIME type
+    filetype?: string;                   // File type (e.g., "pdf", "png")
+    pretty_type?: string;                // Human-readable type
+    user?: string;                       // User ID who uploaded
+    size?: number;                       // File size in bytes
+    url_private?: string;                // Private download URL
+    url_private_download?: string;       // Private direct download URL
+    permalink?: string;                  // Permalink to file
+    permalink_public?: string;           // Public permalink
+    created?: number;                    // Unix timestamp when created
+    timestamp?: number;                  // File timestamp
+}
+```
+
+### Querying Files
+
+**Search by filename:**
+
+```ts
+const files = await corsair.slack.db.files.search({
+    data: { name: "document.pdf" },
+});
+```
+
+**Search by file type:**
+
+```ts
+const pdfs = await corsair.slack.db.files.search({
+    data: { filetype: "pdf" }, // [!code highlight]
+});
+```
+
+**Search by uploader:**
+
+```ts
+const userFiles = await corsair.slack.db.files.search({
+    data: { user: "U1234567890" },
+});
+```
+
+### Example: Get Recent Files
+
+```ts
+async function getRecentFiles(fileType?: string) {
+    // Fetch from API first
+    await corsair.slack.api.files.list({
+        types: fileType,
+        count: 100,
+    });
+    
+    // Query from database
+    const files = await corsair.slack.db.files.search({
+        data: fileType ? { filetype: fileType } : {},
+        limit: 100,
+    });
+    
+    return files.sort((a, b) => 
+        (b.created || 0) - (a.created || 0)
+    );
+}
+```
+
+---
+
+## User Groups
+
+User group information is synced when you list user groups.
+
+### Schema
+
+```ts
+{
+    id: string;                          // User group ID (required)
+    name?: string;                       // Group name
+    description?: string;                // Group description
+    handle?: string;                     // Group handle (without @)
+    is_usergroup?: boolean;              // Whether it's a user group
+    date_create?: number;                // Unix timestamp when created
+    date_update?: number;                // Unix timestamp when last updated
+    created_by?: string;                 // User ID of creator
+    users?: string[];                    // Array of user IDs
+    user_count?: number;                 // Number of users
+    channel_count?: number;              // Number of channels
+}
+```
+
+### Querying User Groups
+
+**Search by name:**
+
+```ts
+const groups = await corsair.slack.db.userGroups.search({
+    data: { name: "engineering" },
+});
+```
+
+**Search by handle:**
+
+```ts
+const groups = await corsair.slack.db.userGroups.search({
+    data: { handle: "eng" }, // [!code highlight]
+});
+```
+
+### Example: Get User Group Members
+
+```ts
+async function getUserGroupMembers(groupName: string) {
+    // Fetch user groups with member data
+    await corsair.slack.api.userGroups.list({
+        include_users: true,
+    });
+    
+    // Find the group
+    const groups = await corsair.slack.db.userGroups.search({
+        data: { name: groupName },
+    });
+    
+    const group = groups[0];
+    if (!group?.users) {
+        return [];
+    }
+    
+    // Fetch user details for each member
+    const members = await Promise.all(
+        group.users.map(async (userId) => {
+            const users = await corsair.slack.db.users.search({
+                data: { id: userId },
+            });
+            return users[0];
+        })
+    );
+    
+    return members.filter(Boolean);
+}
+```
+
+---
+
+## Multi-Tenancy
+
+When using multi-tenancy, all database queries are automatically scoped to the tenant:
+
+```ts
+const tenant = corsair.withTenant("tenant-id");
+
+// Queries are scoped to this tenant
+const channels = await tenant.slack.db.channels.search({
+    data: { name: "general" },
+});
+
+// API calls trigger syncing for this tenant
+await tenant.slack.api.channels.list({});
+```
+
+Each tenant's data is isolated in the database.
+
+---
+
+## Data Synchronization
+
+### When Data is Synced
+
+Data is automatically synced to your database in the following scenarios:
+
+1. **API Calls** - When you call API endpoints, responses are synced
+2. **Webhooks** - When webhooks are received, data is updated
+3. **Automatic Updates** - Webhook events trigger updates for related entities
+
+### Manual Syncing
+
+You can trigger syncs manually by calling API endpoints:
+
+```ts
+// Sync all channels
+await corsair.slack.api.channels.list({
+    exclude_archived: true,
+});
+
+// Sync all users
+await corsair.slack.api.users.list({});
+
+// Sync channel messages
+await corsair.slack.api.channels.getHistory({
+    channel: "C1234567890",
+    limit: 100,
+});
+```
+
+### Data Freshness
+
+Database data reflects the last sync time. For real-time accuracy, consider:
+
+- **Webhooks** - Set up webhooks for real-time updates
+- **Periodic Syncing** - Schedule API calls to refresh data
+- **On-Demand** - Fetch from API when you need the latest data
+
+```ts
+async function getLatestChannelInfo(channelId: string) {
+    // Always fetch latest from API
+    const apiResult = await corsair.slack.api.channels.get({
+        channel: channelId,
+        include_num_members: true,
+    });
+    
+    // Data is now synced to database
+    const dbChannels = await corsair.slack.db.channels.search({
+        data: { id: channelId },
+    });
+    
+    return dbChannels[0];
+}
+```
+
+---
+
+## Best Practices
+
+### 1. Check Database First
+
+Always check the database before making API calls:
+
+```ts
+// Good - check database first
+let channels = await corsair.slack.db.channels.search({
+    data: { name: "general" },
+});
+
+if (!channels[0]) {
+    // Only call API if not in database
+    await corsair.slack.api.channels.list({});
+    channels = await corsair.slack.db.channels.search({
+        data: { name: "general" },
+    });
+}
+```
+
+### 2. Use Webhooks for Real-Time Updates
+
+Configure webhooks to keep data fresh automatically:
+
+```ts
+slack({
+    webhookHooks: {
+        channels: {
+            created: {
+                after: async (ctx, result) => {
+                    // Data is already synced
+                    console.log("Channel synced:", result.data.channel.name);
+                },
+            },
+        },
+    },
+})
+```
+
+### 3. Batch Database Queries
+
+When possible, fetch multiple entities in one query:
+
+```ts
+// Instead of multiple queries
+const general = await db.channels.search({ data: { name: "general" } });
+const random = await db.channels.search({ data: { name: "random" } });
+
+// Use a single query and filter in-memory
+const channels = await db.channels.search({ data: {} });
+const general = channels.find(c => c.name === "general");
+const random = channels.find(c => c.name === "random");
+```
+
+### 4. Handle Missing Data
+
+Always handle cases where data might not exist:
+
+```ts
+async function getChannelOrThrow(name: string) {
+    const channels = await corsair.slack.db.channels.search({
+        data: { name },
+    });
+    
+    if (!channels[0]) {
+        throw new Error(`Channel #${name} not found`);
+    }
+    
+    return channels[0];
+}
+```
+
+See [Database](/concepts/database) for more information about database concepts and querying patterns.
+
