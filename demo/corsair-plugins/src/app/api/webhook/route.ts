@@ -24,11 +24,6 @@ export async function POST(request: NextRequest) {
 
 	const result = await filterWebhook(corsair, headers, body, { tenantId });
 
-	await corsair.withTenant('default').slack.api.messages.post({
-		channel: 'C0A3ZTB9X7X',
-		text: `Here - ${JSON.stringify(result.response)}`,
-	});
-
 	// Handle case where no webhook matched
 	if (!result.response) {
 		return NextResponse.json(
