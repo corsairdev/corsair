@@ -486,6 +486,7 @@ export type SlackBoundWebhooks = BindWebhooks<SlackWebhooks>;
 export type SlackPluginOptions = {
 	authType?: PickAuth<'api_key' | 'oauth_2'>;
 	key?: string;
+	signingSecret?: string;
 	hooks?: InternalSlackPlugin['hooks'];
 	webhookHooks?: InternalSlackPlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
@@ -532,7 +533,11 @@ export function slack<const T extends SlackPluginOptions>(
 		endpoints: slackEndpointsNested,
 		webhooks: slackWebhooksNested,
 		pluginWebhookMatcher: (request) => {
-			return false;
+			const headers = request.headers;
+			const hasSlackSignature = 'x-slack-signature' in headers;
+			const hasSlackTimestamp = 'x-slack-request-timestamp' in headers;
+
+			return hasSlackSignature && hasSlackTimestamp;
 		},
 		errorHandlers: {
 			...errorHandlers,
