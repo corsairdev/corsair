@@ -18,6 +18,7 @@ async function createPosthogClient() {
 	const corsair = createCorsair({
 		plugins: [
 			posthog({
+				key: apiKey,
 				authType: 'api_key',
 				credentials: {
 					apiKey,
@@ -40,10 +41,12 @@ describe('PostHog plugin integration', () => {
 
 		const { corsair, testDb } = setup;
 
-		await corsair.posthog.api.events.aliasCreate({
+		const aliasInput = {
 			distinct_id: 'corsair-test-user',
 			alias: `alias-${Date.now()}`,
-		});
+		};
+
+		await corsair.posthog.api.events.aliasCreate(aliasInput);
 
 		const aliasEvents = await testDb.adapter.findMany({
 			table: 'corsair_events',
@@ -51,13 +54,20 @@ describe('PostHog plugin integration', () => {
 		});
 
 		expect(aliasEvents.length).toBeGreaterThan(0);
+		const aliasEvent = aliasEvents[aliasEvents.length - 1]!;
+		const aliasEventPayload = typeof aliasEvent.payload === 'string' 
+			? JSON.parse(aliasEvent.payload) 
+			: aliasEvent.payload;
+		expect(aliasEventPayload).toMatchObject(aliasInput);
 
-		await corsair.posthog.api.events.identityCreate({
+		const identityInput = {
 			distinct_id: 'corsair-test-user',
 			properties: {
 				role: 'tester',
 			},
-		});
+		};
+
+		await corsair.posthog.api.events.identityCreate(identityInput);
 
 		const identityEvents = await testDb.adapter.findMany({
 			table: 'corsair_events',
@@ -65,14 +75,21 @@ describe('PostHog plugin integration', () => {
 		});
 
 		expect(identityEvents.length).toBeGreaterThan(0);
+		const identityEvent = identityEvents[identityEvents.length - 1]!;
+		const identityEventPayload = typeof identityEvent.payload === 'string' 
+			? JSON.parse(identityEvent.payload) 
+			: identityEvent.payload;
+		expect(identityEventPayload).toMatchObject(identityInput);
 
-		await corsair.posthog.api.events.eventCreate({
+		const eventInput = {
 			event: 'corsair_posthog_integration_test',
 			distinct_id: 'corsair-test-user',
 			properties: {
 				source: 'jest',
 			},
-		});
+		};
+
+		await corsair.posthog.api.events.eventCreate(eventInput);
 
 		const eventEvents = await testDb.adapter.findMany({
 			table: 'corsair_events',
@@ -80,6 +97,11 @@ describe('PostHog plugin integration', () => {
 		});
 
 		expect(eventEvents.length).toBeGreaterThan(0);
+		const eventEvent = eventEvents[eventEvents.length - 1]!;
+		const eventEventPayload = typeof eventEvent.payload === 'string' 
+			? JSON.parse(eventEvent.payload) 
+			: eventEvent.payload;
+		expect(eventEventPayload).toMatchObject(eventInput);
 
 		const pluginEvents = await corsair.posthog.db.events.count();
 
@@ -96,13 +118,15 @@ describe('PostHog plugin integration', () => {
 
 		const { corsair, testDb } = setup;
 
-		await corsair.posthog.api.events.trackPage({
+		const pageInput = {
 			distinct_id: 'corsair-test-user',
 			url: 'https://example.com/page',
 			properties: {
 				title: 'Test Page',
 			},
-		});
+		};
+
+		await corsair.posthog.api.events.trackPage(pageInput);
 
 		const pageEvents = await testDb.adapter.findMany({
 			table: 'corsair_events',
@@ -110,14 +134,21 @@ describe('PostHog plugin integration', () => {
 		});
 
 		expect(pageEvents.length).toBeGreaterThan(0);
+		const pageEvent = pageEvents[pageEvents.length - 1]!;
+		const pageEventPayload = typeof pageEvent.payload === 'string' 
+			? JSON.parse(pageEvent.payload) 
+			: pageEvent.payload;
+		expect(pageEventPayload).toMatchObject(pageInput);
 
-		await corsair.posthog.api.events.trackScreen({
+		const screenInput = {
 			distinct_id: 'corsair-test-user',
 			screen_name: 'TestScreen',
 			properties: {
 				platform: 'jest',
 			},
-		});
+		};
+
+		await corsair.posthog.api.events.trackScreen(screenInput);
 
 		const screenEvents = await testDb.adapter.findMany({
 			table: 'corsair_events',
@@ -125,6 +156,11 @@ describe('PostHog plugin integration', () => {
 		});
 
 		expect(screenEvents.length).toBeGreaterThan(0);
+		const screenEvent = screenEvents[screenEvents.length - 1]!;
+		const screenEventPayload = typeof screenEvent.payload === 'string' 
+			? JSON.parse(screenEvent.payload) 
+			: screenEvent.payload;
+		expect(screenEventPayload).toMatchObject(screenInput);
 
 		testDb.cleanup();
 	});

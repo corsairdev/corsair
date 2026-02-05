@@ -295,35 +295,12 @@ export const list: LinearEndpoints['issuesList'] = async (ctx, input) => {
 		variables.after = input.after;
 	}
 
-	const response = await makeLinearRequest<IssuesListResponse>(
+	const result = await makeLinearRequest<IssuesListResponse>(
 		query,
 		ctx.key,
 		variables,
 	);
 
-	const result = response.issues;
-
-	if (result.nodes && ctx.db.issues) {
-		try {
-			for (const issue of result.nodes) {
-				await ctx.db.issues.upsertByEntityId(issue.id, {
-					...issue,
-					stateId: issue.state.id,
-					teamId: issue.team.id,
-					assigneeId: issue.assignee?.id,
-					creatorId: issue.creator.id,
-					projectId: issue.project?.id,
-					cycleId: issue.cycle?.id,
-					parentId: issue.parent?.id,
-					estimate: issue.estimate ?? undefined,
-					createdAt: new Date(issue.createdAt),
-					updatedAt: new Date(issue.updatedAt),
-				});
-			}
-		} catch (error) {
-			console.warn('Failed to save issues to database:', error);
-		}
-	}
 
 	await logEventFromContext(
 		ctx,
@@ -335,33 +312,11 @@ export const list: LinearEndpoints['issuesList'] = async (ctx, input) => {
 };
 
 export const get: LinearEndpoints['issuesGet'] = async (ctx, input) => {
-	const response = await makeLinearRequest<IssueGetResponse>(
+	const result = await makeLinearRequest<IssueGetResponse>(
 		ISSUE_GET_QUERY,
 		ctx.key,
 		{ id: input.id },
 	);
-
-	const result = response.issue;
-
-	if (result && ctx.db.issues) {
-		try {
-			await ctx.db.issues.upsertByEntityId(result.id, {
-				...result,
-				stateId: result.state.id,
-				teamId: result.team.id,
-				assigneeId: result.assignee?.id,
-				creatorId: result.creator.id,
-				projectId: result.project?.id,
-				cycleId: result.cycle?.id,
-				parentId: result.parent?.id,
-				estimate: result.estimate ?? undefined,
-				createdAt: new Date(result.createdAt),
-				updatedAt: new Date(result.updatedAt),
-			});
-		} catch (error) {
-			console.warn('Failed to save issue to database:', error);
-		}
-	}
 
 	await logEventFromContext(
 		ctx,
@@ -379,11 +334,11 @@ export const create: LinearEndpoints['issuesCreate'] = async (ctx, input) => {
 		{ input },
 	);
 
-	const result = response.issueCreate;
+	const result = response;
 
-	if (result.success && result.issue) {
+	if (result && result) {
 		const endpoints = ctx.endpoints as LinearBoundEndpoints;
-		await endpoints.issuesGet({ id: result.issue.id });
+		await endpoints.issuesGet({ id: result.id });
 	}
 
 	await logEventFromContext(
@@ -392,7 +347,7 @@ export const create: LinearEndpoints['issuesCreate'] = async (ctx, input) => {
 		{ ...input },
 		'completed',
 	);
-	return result.issue;
+	return result;
 };
 
 export const update: LinearEndpoints['issuesUpdate'] = async (ctx, input) => {
@@ -402,11 +357,11 @@ export const update: LinearEndpoints['issuesUpdate'] = async (ctx, input) => {
 		{ id: input.id, input: input.input },
 	);
 
-	const result = response.issueUpdate;
+	const result = response;
 
-	if (result.success && result.issue) {
+	if (result && result) {
 		const endpoints = ctx.endpoints as LinearBoundEndpoints;
-		await endpoints.issuesGet({ id: result.issue.id });
+		await endpoints.issuesGet({ id: result.id });
 	}
 
 	await logEventFromContext(
@@ -415,7 +370,7 @@ export const update: LinearEndpoints['issuesUpdate'] = async (ctx, input) => {
 		{ ...input },
 		'completed',
 	);
-	return result.issue;
+	return result;
 };
 
 export const deleteIssue: LinearEndpoints['issuesDelete'] = async (
@@ -428,7 +383,7 @@ export const deleteIssue: LinearEndpoints['issuesDelete'] = async (
 		{ id: input.id },
 	);
 
-	const result = response.issueDelete.success;
+	const result = response;
 
 	if (result && ctx.db.issues) {
 		try {

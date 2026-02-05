@@ -19,6 +19,7 @@ export const ResendDomain = z.object({
 		'error',
 		'verified',
 		'pending',
+		'failed',
 	]),
 	created_at: z.string(),
 	region: z.string().optional(),
