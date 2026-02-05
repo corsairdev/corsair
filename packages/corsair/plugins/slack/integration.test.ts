@@ -1,9 +1,8 @@
 import dotenv from 'dotenv';
-import { createCorsair } from '../core';
-import { slack } from '../plugins/slack';
-import { SlackAPIError } from '../plugins/slack/client';
-import { createIntegrationAndAccount } from './plugins-test-utils';
-import { createTestDatabase } from './setup-db';
+import { createCorsair } from '../../core';
+import { slack } from './index';
+import { createIntegrationAndAccount } from '../../tests/plugins-test-utils';
+import { createTestDatabase } from '../../tests/setup-db';
 
 dotenv.config();
 

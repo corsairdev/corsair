@@ -1,9 +1,9 @@
 import dotenv from 'dotenv';
-import { createCorsair } from '../core';
-import { linear } from '../plugins/linear';
-import { LinearAPIError } from '../plugins/linear/client';
-import { createIntegrationAndAccount } from './plugins-test-utils';
-import { createTestDatabase } from './setup-db';
+import { createCorsair } from '../../core';
+import { linear } from './index';
+import { LinearAPIError } from './client';
+import { createIntegrationAndAccount } from '../../tests/plugins-test-utils';
+import { createTestDatabase } from '../../tests/setup-db';
 
 dotenv.config();
 

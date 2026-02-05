@@ -1,9 +1,9 @@
 import dotenv from 'dotenv';
-import { createCorsair } from '../core';
-import { github } from '../plugins/github';
-import { GithubAPIError } from '../plugins/github/client';
-import { createIntegrationAndAccount } from './plugins-test-utils';
-import { createTestDatabase } from './setup-db';
+import { createCorsair } from '../../core';
+import { github } from './index';
+import { GithubAPIError } from './client';
+import { createIntegrationAndAccount } from '../../tests/plugins-test-utils';
+import { createTestDatabase } from '../../tests/setup-db';
 
 dotenv.config();
 

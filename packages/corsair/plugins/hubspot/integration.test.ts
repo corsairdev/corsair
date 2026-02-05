@@ -1,14 +1,14 @@
 import dotenv from 'dotenv';
-import { createCorsair } from '../core';
-import { hubspot } from '../plugins/hubspot';
-import { HubSpotAPIError } from '../plugins/hubspot/client';
+import { createCorsair } from '../../core';
+import { hubspot } from './index';
+import { HubSpotAPIError } from './client';
 import type {
 	CreateCompanyResponse,
 	CreateDealResponse,
 	CreateOrUpdateContactResponse,
-} from '../plugins/hubspot/endpoints/types';
-import { createIntegrationAndAccount } from './plugins-test-utils';
-import { createTestDatabase } from './setup-db';
+} from './endpoints/types';
+import { createIntegrationAndAccount } from '../../tests/plugins-test-utils';
+import { createTestDatabase } from '../../tests/setup-db';
 
 dotenv.config();
 
