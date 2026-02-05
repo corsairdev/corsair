@@ -1,4 +1,4 @@
-import { filterWebhook } from 'corsair';
+import { processWebhook } from 'corsair';
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 import { corsair } from '@/server/corsair';
@@ -22,7 +22,7 @@ export async function POST(request: NextRequest) {
 		url.searchParams.get('tenant_id') ||
 		undefined;
 
-	const result = await filterWebhook(corsair, headers, body, { tenantId });
+	const result = await processWebhook(corsair, headers, body, { tenantId });
 	// Handle case where no webhook matched
 	if (!result.response) {
 		return NextResponse.json(
@@ -34,7 +34,7 @@ export async function POST(request: NextRequest) {
 		);
 	}
 
-	// Only return data if returnToSender=true (like Slack challenge)
+	// Only return data if returnToSender is not null (like Slack challenge)
 	// filterWebhook already handles stripping 'type' and extracting the value
 	if (result.response.data !== undefined) {
 		return NextResponse.json(result.response.data);

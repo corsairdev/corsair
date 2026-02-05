@@ -3,7 +3,7 @@ title: Introduction
 description: The integration layer for your application.
 ---
 
-Corsair is a unified SDK for integrating with third-party services. Add Slack, Linear, GitHub, and hundreds of other integrations — all with the same syntax, same types, and the same four database tables.
+Corsair is a unified SDK for integrating third-party services into TypeScript applications. Corsair provides credential security, tenant data isolation, and rate limiting out of the box. You can work with hundreds of integrations like Slack or Github. Use the same syntax, same types, and the same four database tables. Focus on building your product instead of writing the same boilerplate integration code.
 
 ```ts title="corsair.ts"
 import { createCorsair } from "corsair";
@@ -14,14 +14,11 @@ export const corsair = createCorsair({
     multiTenancy: true,
     database: drizzleAdapter(db, { provider: "pg", schema }),
     plugins: [
-        slack({
-            authType: "api_key",
-            credentials: { botToken: process.env.SLACK_BOT_TOKEN },
-        }),
-        linear({
-            authType: "api_key",
-            credentials: { apiKey: process.env.LINEAR_API_KEY },
-        }),
+        slack(),
+        linear(),
+        github(),
+        gmail(),
+        resend(),
     ],
 });
 ```

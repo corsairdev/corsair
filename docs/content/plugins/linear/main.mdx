@@ -1,0 +1,325 @@
+---
+title: Linear
+description: Integrate Linear with Corsair for issue tracking and project management.
+---
+
+The Linear plugin allows you to manage issues, projects, teams, and comments in Linear from your Corsair instance. It provides full API access and webhook support for real-time event handling.
+
+## Quick Start
+
+Add the Linear plugin to your Corsair instance:
+
+```ts title="corsair.ts"
+import { createCorsair } from "corsair";
+import { linear } from "corsair/plugins";
+
+export const corsair = createCorsair({
+    plugins: [
+        linear(),
+    ],
+});
+```
+
+Once configured, you can access the API:
+
+```ts
+await corsair.linear.api.issues.create({
+    title: "Bug: Login form not working",
+    teamId: "team-id",
+    priority: 1,
+});
+```
+
+## Authentication
+
+### Supported Auth Types
+
+The Linear plugin supports:
+- **`api_key`** (default) - Use a Linear API key
+
+### Default Auth Type
+
+If no `authType` is specified, the plugin defaults to **`api_key`**.
+
+### Configuring API Key Authentication
+
+```ts title="corsair.ts"
+linear({
+    authType: "api_key",
+    // Optional: provide key directly, otherwise uses database
+    key: process.env.LINEAR_API_KEY,
+})
+```
+
+To generate a Linear API key:
+1. Go to your [Linear settings](https://linear.app/settings/api)
+2. Navigate to the **API** section
+3. Create a new personal API key
+4. Copy the key and store it securely
+
+See [Authentication](/concepts/auth) for details on managing credentials.
+
+### Webhook Signature Verification
+
+Linear webhooks can be secured using HMAC signature verification. When creating a webhook in Linear, you can set a webhook secret. The plugin will automatically verify webhook signatures when a secret is provided.
+
+## Options
+
+The Linear plugin accepts the following configuration options:
+
+| Option | Type | Description |
+|--------|------|-------------|
+| `authType` | `'api_key'` | Authentication method (defaults to `'api_key'`) |
+| `key` | `string` | API key (optional, uses database if not provided) |
+| `hooks` | `object` | Endpoint hooks for custom logic |
+| `webhookHooks` | `object` | Webhook hooks for event handling |
+| `errorHandlers` | `object` | Custom error handlers |
+
+### Hooks
+
+Hooks allow you to add custom logic before and after API calls:
+
+```ts
+linear({
+    hooks: {
+        issues: {
+            create: {
+                before: async (ctx, input) => {
+                    console.log("Creating issue:", input.title);
+                    return { ctx, input };
+                },
+                after: async (ctx, input, result) => {
+                    console.log("Created issue:", result.id);
+                    return result;
+                },
+            },
+        },
+    },
+})
+```
+
+See [Hooks](/concepts/hooks) for complete documentation.
+
+### Error Handling
+
+The plugin includes built-in error handlers for common scenarios like rate limiting, authentication errors, and network failures. For complete documentation, see the [Error Handlers reference](/plugins/linear/error-handlers).
+
+## Usage
+
+### Accessing the API
+
+The Linear API is organized into resource-based endpoints:
+
+```ts
+// Issues
+await corsair.linear.api.issues.list({ teamId: "team-id" });
+await corsair.linear.api.issues.get({ id: "issue-id" });
+await corsair.linear.api.issues.create({ title: "New issue", teamId: "team-id" });
+
+// Projects
+await corsair.linear.api.projects.list();
+await corsair.linear.api.projects.create({ name: "Q1 Roadmap", teamIds: ["team-id"] });
+
+// Comments
+await corsair.linear.api.comments.list({ issueId: "issue-id" });
+await corsair.linear.api.comments.create({ issueId: "issue-id", body: "Great work!" });
+
+// Teams
+await corsair.linear.api.teams.list();
+await corsair.linear.api.teams.get({ id: "team-id" });
+```
+
+For detailed endpoint documentation, see [API Endpoints](/plugins/linear/api-endpoints).
+
+### Webhooks
+
+Set up webhook event handlers to respond to changes in Linear:
+
+```ts
+linear({
+    webhookHooks: {
+        issues: {
+            create: {
+                after: async (ctx, result) => {
+                    console.log("Issue created:", result.data.title);
+                },
+            },
+            update: {
+                after: async (ctx, result) => {
+                    console.log("Issue updated:", result.data.title);
+                },
+            },
+        },
+    },
+})
+```
+
+For all available webhooks, see [Webhooks](/plugins/linear/webhooks).
+
+### Database Access
+
+The plugin automatically syncs data to your database. Query synced data:
+
+```ts
+// Find issues by team
+const issues = await corsair.linear.db.issues.search({
+    data: { teamId: "team-id" },
+});
+
+// Find projects by state
+const activeProjects = await corsair.linear.db.projects.search({
+    data: { state: "started" },
+});
+```
+
+See [Database](/plugins/linear/database) for complete schema documentation.
+
+### Multi-Tenancy
+
+Use the plugin with multiple tenants:
+
+```ts
+const tenant = corsair.withTenant("tenant-123");
+
+await tenant.linear.api.issues.create({
+    title: "Customer feedback",
+    teamId: "team-id",
+});
+```
+
+See [Multi-Tenancy](/concepts/multi-tenancy) for more details.
+
+## Examples
+
+### Example 1: Create Issue from External Event
+
+```ts title="corsair.ts"
+import { inngest } from "./inngest";
+import { createCorsair } from "corsair";
+import { slack, linear } from "corsair/plugins";
+
+export const corsair = createCorsair({
+    plugins: [
+        slack({
+            webhookHooks: {
+                events: {
+                    message: {
+                        after: async (ctx, result) => {
+                            // Check if message is in support channel
+                            if (result.event.channel === "support-channel-id") {
+                                // Send to event system
+                                await inngest.send({ // [!code highlight]
+                                    name: "slack/support-message", // [!code highlight]
+                                    data: { // [!code highlight]
+                                        tenantId: ctx.tenantId, // [!code highlight]
+                                        message: result.event, // [!code highlight]
+                                    }, // [!code highlight]
+                                }); // [!code highlight]
+                            }
+                        },
+                    },
+                },
+            },
+        }),
+        linear(),
+    ],
+});
+```
+
+```ts title="inngest/functions.ts"
+// Handle in background job - NOW you can call corsair
+export const handleSupportMessage = inngest.createFunction(
+    { id: "handle-support-message" },
+    { event: "slack/support-message" },
+    async ({ event }) => {
+        const tenant = corsair.withTenant(event.data.tenantId);
+        
+        // Create Linear issue from Slack message
+        await tenant.linear.api.issues.create({ // [!code highlight]
+            title: `Support: ${event.data.message.text.slice(0, 50)}`, // [!code highlight]
+            description: event.data.message.text, // [!code highlight]
+            teamId: process.env.LINEAR_SUPPORT_TEAM_ID!, // [!code highlight]
+            priority: 2, // [!code highlight]
+        }); // [!code highlight]
+    }
+);
+```
+
+### Example 2: Sync Issue Updates to Slack
+
+```ts title="corsair.ts"
+import { inngest } from "./inngest";
+import { createCorsair } from "corsair";
+import { slack, linear } from "corsair/plugins";
+
+export const corsair = createCorsair({
+    plugins: [
+        linear({
+            webhookHooks: {
+                issues: {
+                    update: {
+                        after: async (ctx, result) => {
+                            // Only notify if issue was completed
+                            if (result.data.state?.type === "completed") {
+                                await inngest.send({ // [!code highlight]
+                                    name: "linear/issue-completed", // [!code highlight]
+                                    data: { // [!code highlight]
+                                        tenantId: ctx.tenantId, // [!code highlight]
+                                        issue: result.data, // [!code highlight]
+                                    }, // [!code highlight]
+                                }); // [!code highlight]
+                            }
+                        },
+                    },
+                },
+            },
+        }),
+        slack(),
+    ],
+});
+```
+
+```ts title="inngest/functions.ts"
+export const notifyIssueCompleted = inngest.createFunction(
+    { id: "notify-issue-completed" },
+    { event: "linear/issue-completed" },
+    async ({ event }) => {
+        const tenant = corsair.withTenant(event.data.tenantId);
+        
+        await tenant.slack.api.chat.postMessage({
+            channel: "engineering",
+            text: `✅ Issue completed: ${event.data.issue.title}`,
+            blocks: [
+                {
+                    type: "section",
+                    text: {
+                        type: "mrkdwn",
+                        text: `*${event.data.issue.title}*\n${event.data.issue.identifier}`,
+                    },
+                },
+            ],
+        });
+    }
+);
+```
+
+### Example 3: Auto-Assign Issues by Priority
+
+```ts title="corsair.ts"
+linear({
+    hooks: {
+        issues: {
+            create: {
+                before: async (ctx, input) => {
+                    // Auto-assign high priority issues to team lead
+                    if (input.priority === 1 || input.priority === 2) {
+                        input.assigneeId = process.env.LINEAR_TEAM_LEAD_ID; // [!code highlight]
+                    }
+                    return { ctx, input };
+                },
+            },
+        },
+    },
+})
+```
+

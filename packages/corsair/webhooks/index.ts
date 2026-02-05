@@ -136,14 +136,14 @@ function normalizeHeaders(
  * });
  *
  * // In your webhook endpoint handler:
- * const result = await filterWebhook(corsair, req.headers, req.body, req.query);
+ * const result = await processWebhook(corsair, req.headers, req.body, req.query);
  *
  * if (result.plugin) {
  *   console.log(`Handled by ${result.plugin}.${result.action}`);
  * }
  * ```
  */
-export async function filterWebhook(
+export async function processWebhook(
 	corsair: CorsairInstance,
 	headers: WebhookHeaders,
 	body: WebhookBody | string,
@@ -204,24 +204,17 @@ export async function filterWebhook(
 		try {
 			const response = await matched.webhook.handler(webhookRequest);
 
-			let preparedResponse: { success: boolean; data?: unknown } = {
-				success: response.success,
-			};
-
-			if (response.returnToSender && response.data !== undefined) {
-				const data = response.data;
-				
-					preparedResponse = {
-						...preparedResponse,
-						data: data,
-					};
-			}
+			const returnToSenderObjectExists = !!Object.keys(
+				response.returnToSender || {},
+			)?.length;
 
 			return {
 				plugin: pluginId,
 				action,
 				body: parsedBody,
-				response: preparedResponse,
+				response: returnToSenderObjectExists
+					? { ...response?.returnToSender, success: true }
+					: { success: true },
 			};
 		} catch (error) {
 			console.error(
