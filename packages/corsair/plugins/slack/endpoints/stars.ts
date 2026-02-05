@@ -9,12 +9,7 @@ export const add: SlackEndpoints['starsAdd'] = async (ctx, input) => {
 		ctx.key,
 		{
 			method: 'POST',
-			body: {
-				channel: input.channel,
-				timestamp: input.timestamp,
-				file: input.file,
-				file_comment: input.file_comment,
-			},
+			body: input,
 		},
 	);
 	await logEventFromContext(ctx, 'slack.stars.add', { ...input }, 'completed');
@@ -27,12 +22,7 @@ export const remove: SlackEndpoints['starsRemove'] = async (ctx, input) => {
 		ctx.key,
 		{
 			method: 'POST',
-			body: {
-				channel: input.channel,
-				timestamp: input.timestamp,
-				file: input.file,
-				file_comment: input.file_comment,
-			},
+			body: input,
 		},
 	);
 	await logEventFromContext(
@@ -50,13 +40,7 @@ export const list: SlackEndpoints['starsList'] = async (ctx, input) => {
 		ctx.key,
 		{
 			method: 'GET',
-			query: {
-				team_id: input.team_id,
-				cursor: input.cursor,
-				limit: input.limit,
-				page: input.page,
-				count: input.count,
-			},
+			query: input,
 		},
 	);
 	await logEventFromContext(ctx, 'slack.stars.list', { ...input }, 'completed');

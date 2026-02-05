@@ -9,13 +9,7 @@ export const get: SlackEndpoints['filesGet'] = async (ctx, input) => {
 		ctx.key,
 		{
 			method: 'GET',
-			query: {
-				file: input.file,
-				cursor: input.cursor,
-				limit: input.limit,
-				page: input.page,
-				count: input.count,
-			},
+			query: input
 		},
 	);
 
@@ -39,17 +33,7 @@ export const list: SlackEndpoints['filesList'] = async (ctx, input) => {
 		ctx.key,
 		{
 			method: 'GET',
-			query: {
-				channel: input.channel,
-				user: input.user,
-				types: input.types,
-				ts_from: input.ts_from,
-				ts_to: input.ts_to,
-				show_files_hidden_by_limit: input.show_files_hidden_by_limit,
-				team_id: input.team_id,
-				page: input.page,
-				count: input.count,
-			},
+			query: input
 		},
 	);
 
@@ -77,16 +61,7 @@ export const upload: SlackEndpoints['filesUpload'] = async (ctx, input) => {
 		ctx.key,
 		{
 			method: 'POST',
-			body: {
-				channels: input.channels,
-				content: input.content,
-				file: input.file,
-				filename: input.filename,
-				filetype: input.filetype,
-				initial_comment: input.initial_comment,
-				thread_ts: input.thread_ts,
-				title: input.title,
-			},
+			body: input
 		},
 	);
 
