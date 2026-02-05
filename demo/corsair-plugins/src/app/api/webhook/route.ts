@@ -34,8 +34,8 @@ export async function POST(request: NextRequest) {
 		);
 	}
 
-	// Only return data if returnToSender=true (like Slack challenge)
-	// processWebhook already handles stripping 'type' and extracting the value
+	// Only return data if returnToSender is not null (like Slack challenge)
+	// filterWebhook already handles stripping 'type' and extracting the value
 	if (result.response.data !== undefined) {
 		return NextResponse.json(result.response.data);
 	}
