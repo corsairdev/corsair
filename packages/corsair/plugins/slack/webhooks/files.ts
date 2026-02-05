@@ -1,12 +1,22 @@
 import { logEventFromContext } from '../../utils/events';
 import type { SlackWebhooks } from '..';
 
-import { createSlackEventMatch } from './types';
+import { createSlackEventMatch, verifySlackWebhookSignature } from './types';
 
 export const created: SlackWebhooks['fileCreated'] = {
 	match: createSlackEventMatch('file_created'),
 
 	handler: async (ctx, request) => {
+		const signingSecret = ctx.options?.signingSecret;
+		const verification = verifySlackWebhookSignature(request, signingSecret);
+		if (!verification.valid) {
+			return {
+				success: false,
+				statusCode: 401,
+				error: verification.error || 'Signature verification failed',
+			};
+		}
+
 		const event =
 			request.payload.type === 'event_callback' ? request.payload.event : null;
 
@@ -58,6 +68,16 @@ export const publicFile: SlackWebhooks['filePublic'] = {
 	match: createSlackEventMatch('file_public'),
 
 	handler: async (ctx, request) => {
+		const signingSecret = ctx.options?.signingSecret;
+		const verification = verifySlackWebhookSignature(request, signingSecret);
+		if (!verification.valid) {
+			return {
+				success: false,
+				statusCode: 401,
+				error: verification.error || 'Signature verification failed',
+			};
+		}
+
 		const event =
 			request.payload.type === 'event_callback' ? request.payload.event : null;
 
@@ -108,6 +128,16 @@ export const shared: SlackWebhooks['fileShared'] = {
 	match: createSlackEventMatch('file_shared'),
 
 	handler: async (ctx, request) => {
+		const signingSecret = ctx.options?.signingSecret;
+		const verification = verifySlackWebhookSignature(request, signingSecret);
+		if (!verification.valid) {
+			return {
+				success: false,
+				statusCode: 401,
+				error: verification.error || 'Signature verification failed',
+			};
+		}
+
 		const event =
 			request.payload.type === 'event_callback' ? request.payload.event : null;
 

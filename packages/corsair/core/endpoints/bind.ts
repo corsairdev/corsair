@@ -127,7 +127,7 @@ export function bindEndpointsRecursively({
 					}
 				};
 
-				const key = keyBuilder ? await keyBuilder(ctx) : undefined;
+				const key = keyBuilder ? await keyBuilder(ctx, 'endpoint') : undefined;
 
 				if (!endpointHooks?.before && !endpointHooks?.after) {
 					return call(0, { ...ctx, key }, args);
