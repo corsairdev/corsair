@@ -132,7 +132,7 @@ export const createComment: GithubEndpoints['issuesCreateComment'] = async (
 		try {
 			const endpoints = ctx.endpoints as GithubBoundEndpoints;
 
-			await endpoints.issuesGet({
+			await endpoints.issues.get({
 				owner,
 				repo,
 				issueNumber,
