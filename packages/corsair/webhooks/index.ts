@@ -204,12 +204,16 @@ export async function processWebhook(
 		try {
 			const response = await matched.webhook.handler(webhookRequest);
 
+			const returnToSenderObjectExists = !!Object.keys(
+				response.returnToSender || {},
+			)?.length;
+
 			return {
 				plugin: pluginId,
 				action,
 				body: parsedBody,
-				response: response.returnToSender
-					? { success: true, data: response.data }
+				response: returnToSenderObjectExists
+					? { ...response?.returnToSender, success: true }
 					: { success: true },
 			};
 		} catch (error) {

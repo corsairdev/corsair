@@ -16,7 +16,9 @@ export const challenge: SlackWebhooks['challenge'] = {
 		// At this point, TypeScript knows it's SlackUrlVerificationPayload
 		return {
 			success: true,
-			returnToSender: true,
+			returnToSender: {
+				challenge: request.payload.challenge,
+			},
 			data: {
 				challenge: request.payload.challenge,
 				type: 'url_verification',

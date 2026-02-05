@@ -495,16 +495,18 @@ export type SlackContext = CorsairPluginContext<
 	typeof SlackSchema,
 	SlackPluginOptions
 >;
+
 export type SlackKeyBuilderContext = KeyBuilderContext<SlackPluginOptions>;
 
-export type BaseSlackPlugin<T extends SlackPluginOptions> = CorsairPlugin<
-	'slack',
-	typeof SlackSchema,
-	typeof slackEndpointsNested,
-	typeof slackWebhooksNested,
-	T,
-	typeof defaultAuthType
->;
+export type BaseSlackPlugin<PluginOptions extends SlackPluginOptions> =
+	CorsairPlugin<
+		'slack',
+		typeof SlackSchema,
+		typeof slackEndpointsNested,
+		typeof slackWebhooksNested,
+		PluginOptions,
+		typeof defaultAuthType
+	>;
 
 /**
  * We have to type the internal plugin separately from the external plugin
@@ -513,12 +515,13 @@ export type BaseSlackPlugin<T extends SlackPluginOptions> = CorsairPlugin<
  */
 export type InternalSlackPlugin = BaseSlackPlugin<SlackPluginOptions>;
 
-export type ExternalSlackPlugin<T extends SlackPluginOptions> =
-	BaseSlackPlugin<T>;
+export type ExternalSlackPlugin<PluginOptions extends SlackPluginOptions> =
+	BaseSlackPlugin<PluginOptions>;
 
-export function slack<const T extends SlackPluginOptions>(
-	incomingOptions: SlackPluginOptions & T = {} as SlackPluginOptions & T,
-): ExternalSlackPlugin<T> {
+export function slack<const PluginOptions extends SlackPluginOptions>(
+	incomingOptions: SlackPluginOptions &
+		PluginOptions = {} as SlackPluginOptions & PluginOptions,
+): ExternalSlackPlugin<PluginOptions> {
 	const options = {
 		...incomingOptions,
 		authType: incomingOptions.authType ?? defaultAuthType,
