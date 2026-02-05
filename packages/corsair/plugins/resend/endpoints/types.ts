@@ -30,6 +30,7 @@ const DomainSchema = z.object({
 		'error',
 		'verified',
 		'pending',
+		'failed',
 	]),
 	created_at: z.string(),
 	region: z.string().optional(),
