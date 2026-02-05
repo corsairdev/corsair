@@ -52,6 +52,8 @@ export type OAuth2AccountConfig = {
 	expires_at?: number;
 	/** Optional: scopes granted */
 	scope?: string;
+	/** Optional: webhook signature for verifying incoming webhooks */
+	webhook_signature?: string;
 };
 
 /**
@@ -59,6 +61,8 @@ export type OAuth2AccountConfig = {
  */
 export type BotTokenAccountConfig = {
 	bot_token: string;
+	/** Optional: webhook signature for verifying incoming webhooks */
+	webhook_signature?: string;
 };
 
 /**
@@ -66,6 +70,8 @@ export type BotTokenAccountConfig = {
  */
 export type ApiKeyAccountConfig = {
 	api_key: string;
+	/** Optional: webhook signature for verifying incoming webhooks */
+	webhook_signature?: string;
 };
 
 /**
@@ -164,6 +170,14 @@ export type OAuth2AccountKeyManager = BaseKeyManager & {
 	getScope: () => Promise<string | null>;
 	setScope: (scope: string | null) => Promise<void>;
 	/**
+	 * Get the webhook signature for verifying incoming webhooks.
+	 */
+	getWebhookSignature: () => Promise<string | null>;
+	/**
+	 * Set the webhook signature for verifying incoming webhooks.
+	 */
+	setWebhookSignature: (webhookSignature: string | null) => Promise<void>;
+	/**
 	 * Get the integration-level OAuth2 credentials (client_id, client_secret, redirect_url).
 	 * Useful for token refresh flows that need access to both account and integration secrets.
 	 */
@@ -176,6 +190,14 @@ export type OAuth2AccountKeyManager = BaseKeyManager & {
 export type BotTokenAccountKeyManager = BaseKeyManager & {
 	getBotToken: () => Promise<string | null>;
 	setBotToken: (botToken: string) => Promise<void>;
+	/**
+	 * Get the webhook signature for verifying incoming webhooks.
+	 */
+	getWebhookSignature: () => Promise<string | null>;
+	/**
+	 * Set the webhook signature for verifying incoming webhooks.
+	 */
+	setWebhookSignature: (webhookSignature: string | null) => Promise<void>;
 };
 
 /**
@@ -184,6 +206,14 @@ export type BotTokenAccountKeyManager = BaseKeyManager & {
 export type ApiKeyAccountKeyManager = BaseKeyManager & {
 	getApiKey: () => Promise<string | null>;
 	setApiKey: (apiKey: string) => Promise<void>;
+	/**
+	 * Get the webhook signature for verifying incoming webhooks.
+	 */
+	getWebhookSignature: () => Promise<string | null>;
+	/**
+	 * Set the webhook signature for verifying incoming webhooks.
+	 */
+	setWebhookSignature: (webhookSignature: string | null) => Promise<void>;
 };
 
 /**

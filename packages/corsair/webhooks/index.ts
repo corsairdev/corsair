@@ -198,7 +198,7 @@ export async function processWebhook(
 		const webhookRequest = {
 			payload: parsedBody,
 			headers: normalizedHeaders,
-			rawBody: typeof body === 'string' ? body : undefined,
+			rawBody: typeof body === 'string' ? body : JSON.stringify(body),
 		};
 
 		try {
@@ -236,6 +236,6 @@ export async function processWebhook(
 	return {
 		plugin: null,
 		action: null,
-		body: parsedBody,
+		body: null,
 	};
 }
