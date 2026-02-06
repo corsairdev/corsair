@@ -30,6 +30,7 @@ import { DomainWebhooks, EmailWebhooks } from './webhooks';
 export type ResendPluginOptions = {
 	authType?: PickAuth<'api_key'>;
 	key?: string;
+	webhookSecret?: string;
 	hooks?: InternalResendPlugin['hooks'];
 	webhookHooks?: InternalResendPlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
@@ -179,19 +180,35 @@ export function resend<const T extends ResendPluginOptions>(
 		endpoints: resendEndpointsNested,
 		webhooks: resendWebhooksNested,
 		pluginWebhookMatcher: (request) => {
-			return false;
+			const headers = request.headers;
+			const hasResendSignature =
+				'svix-signature' in headers || 'x-resend-signature' in headers;
+			return hasResendSignature;
 		},
 		errorHandlers: options.errorHandlers,
-		keyBuilder: async (ctx: ResendKeyBuilderContext) => {
-			if (options.key) {
+		keyBuilder: async (ctx: ResendKeyBuilderContext, source) => {
+			if (source === 'webhook' && options.webhookSecret) {
+				return options.webhookSecret;
+			}
+
+			if (source === 'webhook') {
+				const res = await ctx.keys.getWebhookSignature();
+
+				if (!res) {
+					return '';
+				}
+
+				return res;
+			}
+
+			if (source === 'endpoint' && options.key) {
 				return options.key;
 			}
 
-			if (ctx.authType === 'api_key') {
+			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.getApiKey();
 
 				if (!res) {
-					// prob need to throw an error here
 					return '';
 				}
 
@@ -202,6 +219,8 @@ export function resend<const T extends ResendPluginOptions>(
 		},
 	} satisfies InternalResendPlugin;
 }
+
+export { createResendEventMatch, verifyResendWebhookSignature } from './webhooks/types';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Webhook Type Exports

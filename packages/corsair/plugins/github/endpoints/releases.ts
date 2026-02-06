@@ -13,7 +13,7 @@ export const list: GithubEndpoints['releasesList'] = async (ctx, input) => {
 	const endpoint = `/repos/${owner}/${repo}/releases`;
 	const result = await makeGithubRequest<ReleasesListResponse>(
 		endpoint,
-		ctx.options.token,
+		ctx.key,
 		{ query: queryParams },
 	);
 
@@ -31,7 +31,7 @@ export const get: GithubEndpoints['releasesGet'] = async (ctx, input) => {
 	const endpoint = `/repos/${owner}/${repo}/releases/${releaseId}`;
 	const result = await makeGithubRequest<ReleaseGetResponse>(
 		endpoint,
-		ctx.options.token,
+		ctx.key,
 	);
 
 	if (result && ctx.db.releases) {
@@ -61,7 +61,7 @@ export const create: GithubEndpoints['releasesCreate'] = async (ctx, input) => {
 	};
 	const result = await makeGithubRequest<ReleaseCreateResponse>(
 		endpoint,
-		ctx.options.token,
+		ctx.key,
 		{ method: 'POST', body },
 	);
 
@@ -94,7 +94,7 @@ export const update: GithubEndpoints['releasesUpdate'] = async (ctx, input) => {
 	}
 	const result = await makeGithubRequest<ReleaseUpdateResponse>(
 		endpoint,
-		ctx.options.token,
+		ctx.key,
 		{ method: 'PATCH', body },
 	);
 

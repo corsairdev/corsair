@@ -122,3 +122,69 @@ export type DealDeletedEventType = DealDeletedEvent;
 export type TicketCreatedEventType = TicketCreatedEvent;
 export type TicketUpdatedEventType = TicketUpdatedEvent;
 export type TicketDeletedEventType = TicketDeletedEvent;
+
+import type {
+	CorsairWebhookMatcher,
+	RawWebhookRequest,
+	WebhookRequest,
+} from '../../../core';
+import { verifyHmacSignature } from '../../../async-core/webhook-utils';
+
+function parseBody(body: unknown): unknown {
+	return typeof body === 'string' ? JSON.parse(body) : body;
+}
+
+export function verifyHubSpotWebhookSignature(
+	request: WebhookRequest<unknown>,
+	webhookSecret?: string,
+): { valid: boolean; error?: string } {
+	if (!webhookSecret) {
+		return { valid: false };
+	}
+
+	const rawBody = request.rawBody;
+	if (!rawBody) {
+		return {
+			valid: false,
+			error: 'Missing raw body for signature verification',
+		};
+	}
+
+	const headers = request.headers;
+	const signature = Array.isArray(headers['x-hubspot-signature-v3'])
+		? headers['x-hubspot-signature-v3'][0]
+		: headers['x-hubspot-signature-v3'];
+
+	if (!signature) {
+		return {
+			valid: false,
+			error: 'Missing x-hubspot-signature-v3 header',
+		};
+	}
+
+	const isValid = verifyHmacSignature(rawBody, webhookSecret, signature);
+	if (!isValid) {
+		return { valid: false, error: 'Invalid signature' };
+	}
+
+	return { valid: true };
+}
+
+export function createHubSpotEventMatch(
+	subscriptionType: string,
+): CorsairWebhookMatcher {
+	return (request: RawWebhookRequest) => {
+		const parsedBody = parseBody(request.body);
+		const events = Array.isArray(parsedBody) ? parsedBody : [parsedBody];
+		return events.some(
+			(event) =>
+				typeof event === 'object' &&
+				event !== null &&
+				'subscriptionType' in event &&
+				typeof (event as Record<string, unknown>).subscriptionType ===
+					'string' &&
+				(event as Record<string, unknown>).subscriptionType ===
+					subscriptionType,
+		);
+	};
+}

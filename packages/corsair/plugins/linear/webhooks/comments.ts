@@ -1,11 +1,21 @@
 import { logEventFromContext } from '../../utils/events';
 import type { LinearWebhooks } from '..';
-import { createLinearMatch } from './types';
+import { createLinearMatch, verifyLinearWebhookSignature } from './types';
 
 export const commentCreate: LinearWebhooks['commentCreate'] = {
 	match: createLinearMatch('Comment', 'create'),
 
 	handler: async (ctx, request) => {
+		const webhookSecret = ctx.key;
+		const verification = verifyLinearWebhookSignature(request, webhookSecret);
+		if (!verification.valid) {
+			return {
+				success: false,
+				statusCode: 401,
+				error: verification.error || 'Signature verification failed',
+			};
+		}
+
 		const event = request.payload;
 
 		if (event.type !== 'Comment' || event.action !== 'create') {
@@ -56,6 +66,16 @@ export const commentUpdate: LinearWebhooks['commentUpdate'] = {
 	match: createLinearMatch('Comment', 'update'),
 
 	handler: async (ctx, request) => {
+		const webhookSecret = ctx.key;
+		const verification = verifyLinearWebhookSignature(request, webhookSecret);
+		if (!verification.valid) {
+			return {
+				success: false,
+				statusCode: 401,
+				error: verification.error || 'Signature verification failed',
+			};
+		}
+
 		const event = request.payload;
 
 		if (event.type !== 'Comment' || event.action !== 'update') {
@@ -106,6 +126,16 @@ export const commentRemove: LinearWebhooks['commentRemove'] = {
 	match: createLinearMatch('Comment', 'remove'),
 
 	handler: async (ctx, request) => {
+		const webhookSecret = ctx.key;
+		const verification = verifyLinearWebhookSignature(request, webhookSecret);
+		if (!verification.valid) {
+			return {
+				success: false,
+				statusCode: 401,
+				error: verification.error || 'Signature verification failed',
+			};
+		}
+
 		const event = request.payload;
 
 		if (event.type !== 'Comment' || event.action !== 'remove') {
