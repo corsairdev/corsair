@@ -19,6 +19,16 @@ export {
 	type GmailWebhooks,
 	gmail,
 } from './gmail';
+// Google Sheets Plugin
+export {
+	type GoogleSheetsBoundEndpoints,
+	type GoogleSheetsBoundWebhooks,
+	type GoogleSheetsContext,
+	type GoogleSheetsEndpoints,
+	type GoogleSheetsPluginOptions,
+	type GoogleSheetsWebhooks,
+	googlesheets,
+} from './googlesheets';
 export {
 	type HubSpotBoundEndpoints,
 	type HubSpotBoundWebhooks,
