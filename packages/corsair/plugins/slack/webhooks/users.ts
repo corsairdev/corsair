@@ -6,7 +6,7 @@ export const teamJoin: SlackWebhooks['teamJoin'] = {
 	match: createSlackEventMatch('team_join'),
 
 	handler: async (ctx, request) => {
-		const signingSecret = ctx.options?.signingSecret;
+		const signingSecret = ctx.options.key;
 		const verification = verifySlackWebhookSignature(request, signingSecret);
 		if (!verification.valid) {
 			return {
@@ -19,7 +19,7 @@ export const teamJoin: SlackWebhooks['teamJoin'] = {
 		const event =
 			request.payload.type === 'event_callback' ? request.payload.event : null;
 
-		if (!event || event.type !== 'team_join') {
+		if (!event || event?.type !== 'team_join') {
 			return {
 				success: true,
 				data: undefined,
@@ -67,7 +67,7 @@ export const userChange: SlackWebhooks['userChange'] = {
 	match: createSlackEventMatch('user_change'),
 
 	handler: async (ctx, request) => {
-		const signingSecret = ctx.options?.signingSecret;
+		const signingSecret = ctx.options.key;
 		const verification = verifySlackWebhookSignature(request, signingSecret);
 		if (!verification.valid) {
 			return {
@@ -80,7 +80,7 @@ export const userChange: SlackWebhooks['userChange'] = {
 		const event =
 			request.payload.type === 'event_callback' ? request.payload.event : null;
 
-		if (!event || event.type !== 'user_change') {
+		if (!event || event?.type !== 'user_change') {
 			return {
 				success: true,
 				data: undefined,

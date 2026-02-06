@@ -438,8 +438,8 @@ export function yourPlugin<const T extends YourPluginOptions>(
 ```ts
 import type { BindEndpoints, BindWebhooks } from '../../core';
 
-export type YourPluginBoundEndpoints = BindEndpoints<YourPluginEndpoints>;
-export type YourPluginBoundWebhooks = BindWebhooks<YourPluginWebhooks>;
+export type YourPluginBoundEndpoints = BindEndpoints<typeof yourPluginNestedEndpoints>;
+export type YourPluginBoundWebhooks = BindWebhooks<typeof yourPluginNestedWebhooks>;
 ```
 
 These types are used internally by Corsair to provide type-safe access to endpoints and webhooks in the context.

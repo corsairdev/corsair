@@ -225,7 +225,7 @@ export const create: LinearEndpoints['projectsCreate'] = async (ctx, input) => {
 
 	if (result.success && result.project) {
 		const endpoints = ctx.endpoints as LinearBoundEndpoints;
-		await endpoints.projectsGet({ id: result.project.id });
+		await endpoints.projects.get({ id: result.project.id });
 	}
 
 	await logEventFromContext(
@@ -248,7 +248,7 @@ export const update: LinearEndpoints['projectsUpdate'] = async (ctx, input) => {
 
 	if (result.success && result.project) {
 		const endpoints = ctx.endpoints as LinearBoundEndpoints;
-		await endpoints.projectsGet({ id: result.project.id });
+		await endpoints.projects.get({ id: result.project.id });
 	}
 
 	await logEventFromContext(

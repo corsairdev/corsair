@@ -23,7 +23,7 @@ export const archive: SlackEndpoints['channelsArchive'] = async (
 
 	if (result.ok && ctx.db.channels) {
 		const endpoints = ctx.endpoints as SlackBoundEndpoints;
-		await endpoints.channelsGet({ channel: input.channel });
+		await endpoints.channels.get({ channel: input.channel });
 	}
 
 	await logEventFromContext(
@@ -247,7 +247,7 @@ export const join: SlackEndpoints['channelsJoin'] = async (ctx, input) => {
 
 	if (result.ok && result.channel) {
 		const endpoints = ctx.endpoints as SlackBoundEndpoints;
-		await endpoints.channelsGetMembers({ channel: result.channel.id });
+		await endpoints.channels.getMembers({ channel: result.channel.id });
 	}
 
 	await logEventFromContext(
@@ -292,7 +292,7 @@ export const leave: SlackEndpoints['channelsLeave'] = async (ctx, input) => {
 
 	if (result.ok && ctx.db.channels) {
 		const endpoints = ctx.endpoints as SlackBoundEndpoints;
-		await endpoints.channelsGet({ channel: input.channel });
+		await endpoints.channels.get({ channel: input.channel });
 	}
 
 	await logEventFromContext(
@@ -470,7 +470,7 @@ export const setPurpose: SlackEndpoints['channelsSetPurpose'] = async (
 
 	if (result.ok && result.channel) {
 		const endpoints = ctx.endpoints as SlackBoundEndpoints;
-		await endpoints.channelsGet({ channel: result.channel.id });
+		await endpoints.channels.get({ channel: result.channel.id });
 	}
 
 	await logEventFromContext(
@@ -498,7 +498,7 @@ export const setTopic: SlackEndpoints['channelsSetTopic'] = async (
 
 	if (result.ok && result.channel) {
 		const endpoints = ctx.endpoints as SlackBoundEndpoints;
-		await endpoints.channelsGet({ channel: result.channel.id });
+		await endpoints.channels.get({ channel: result.channel.id });
 	}
 
 	await logEventFromContext(
@@ -523,7 +523,7 @@ export const unarchive: SlackEndpoints['channelsUnarchive'] = async (
 
 	if (result.ok && ctx.db.channels) {
 		const endpoints = ctx.endpoints as SlackBoundEndpoints;
-		await endpoints.channelsGet({ channel: input.channel });
+		await endpoints.channels.get({ channel: input.channel });
 	}
 
 	await logEventFromContext(

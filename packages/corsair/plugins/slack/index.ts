@@ -473,7 +473,7 @@ type SlackEndpoint<
 /**
  * const endpoints = ctx.endpoints as SlackBoundEndpoints
  */
-export type SlackBoundEndpoints = BindEndpoints<SlackEndpoints>;
+export type SlackBoundEndpoints = BindEndpoints<typeof slackEndpointsNested>;
 
 type SlackWebhook<K extends keyof SlackWebhookOutputs, TEvent> = CorsairWebhook<
 	SlackContext,

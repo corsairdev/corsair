@@ -324,7 +324,7 @@ export type GithubEndpoints = {
 	>;
 };
 
-export type GithubBoundEndpoints = BindEndpoints<GithubEndpoints>;
+export type GithubBoundEndpoints = BindEndpoints<typeof githubEndpointsNested>;
 
 type GithubWebhook<
 	K extends keyof GithubWebhookOutputs,
