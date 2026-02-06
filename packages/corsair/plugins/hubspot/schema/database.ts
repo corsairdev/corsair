@@ -2,33 +2,33 @@ import { z } from 'zod';
 
 export const HubSpotContact = z.object({
 	id: z.string(),
-	properties: z.record(z.string(), z.any()),
-	createdAt: z.coerce.date().optional(),
-	updatedAt: z.coerce.date().optional(),
+	properties: z.record(z.any()).optional(),
+	createdAt: z.union([z.string(), z.date(), z.coerce.date()]).optional(),
+	updatedAt: z.union([z.string(), z.date(), z.coerce.date()]).optional(),
 	archived: z.boolean().optional(),
 });
 
 export const HubSpotCompany = z.object({
 	id: z.string(),
-	properties: z.record(z.string(), z.any()),
-	createdAt: z.coerce.date().optional(),
-	updatedAt: z.coerce.date().optional(),
+	properties: z.record(z.any()).optional(),
+	createdAt: z.union([z.string(), z.date(), z.coerce.date()]).optional(),
+	updatedAt: z.union([z.string(), z.date(), z.coerce.date()]).optional(),
 	archived: z.boolean().optional(),
 });
 
 export const HubSpotDeal = z.object({
 	id: z.string(),
-	properties: z.record(z.string(), z.any()),
-	createdAt: z.coerce.date().optional(),
-	updatedAt: z.coerce.date().optional(),
+	properties: z.record(z.any()).optional(),
+	createdAt: z.union([z.string(), z.date(), z.coerce.date()]).optional(),
+	updatedAt: z.union([z.string(), z.date(), z.coerce.date()]).optional(),
 	archived: z.boolean().optional(),
 });
 
 export const HubSpotTicket = z.object({
 	id: z.string(),
-	properties: z.record(z.string(), z.any()),
-	createdAt: z.coerce.date().optional(),
-	updatedAt: z.coerce.date().optional(),
+	properties: z.record(z.any()).optional(),
+	createdAt: z.union([z.string(), z.date(), z.coerce.date()]).optional(),
+	updatedAt: z.union([z.string(), z.date(), z.coerce.date()]).optional(),
 	archived: z.boolean().optional(),
 });
 

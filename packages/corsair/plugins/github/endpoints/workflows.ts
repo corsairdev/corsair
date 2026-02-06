@@ -16,6 +16,19 @@ export const list: GithubEndpoints['workflowsList'] = async (ctx, input) => {
 		{ query: queryParams },
 	);
 
+	if (result && ctx.db.workflows) {
+		try {
+			const workflows = result.workflows || [];
+			if (Array.isArray(workflows)) {
+				for (const workflow of workflows) {
+					await ctx.db.workflows.upsertByEntityId(workflow.id.toString(), workflow);
+				}
+			}
+		} catch (error) {
+			console.warn('Failed to save workflows to database:', error);
+		}
+	}
+
 	await logEventFromContext(
 		ctx,
 		'github.workflows.list',

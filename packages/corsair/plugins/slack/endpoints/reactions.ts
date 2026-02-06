@@ -41,11 +41,7 @@ export const add: SlackEndpoints['reactionsAdd'] = async (ctx, input) => {
 		ctx.key,
 		{
 			method: 'POST',
-			body: {
-				channel: input.channel,
-				timestamp: input.timestamp,
-				name: input.name,
-			},
+			body: input,
 		},
 	);
 	await logEventFromContext(
@@ -63,13 +59,7 @@ export const get: SlackEndpoints['reactionsGet'] = async (ctx, input) => {
 		ctx.key,
 		{
 			method: 'GET',
-			query: {
-				channel: input.channel,
-				timestamp: input.timestamp,
-				file: input.file,
-				file_comment: input.file_comment,
-				full: input.full,
-			},
+			query: input,
 		},
 	);
 	await logEventFromContext(
@@ -86,13 +76,7 @@ export const remove: SlackEndpoints['reactionsRemove'] = async (ctx, input) => {
 		SlackEndpointOutputs['reactionsRemove']
 	>('reactions.remove', ctx.key, {
 		method: 'POST',
-		body: {
-			name: input.name,
-			channel: input.channel,
-			timestamp: input.timestamp,
-			file: input.file,
-			file_comment: input.file_comment,
-		},
+		body: input,
 	});
 	await logEventFromContext(
 		ctx,

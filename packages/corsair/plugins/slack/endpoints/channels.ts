@@ -416,16 +416,7 @@ export const getReplies: SlackEndpoints['channelsGetReplies'] = async (
 		SlackEndpointOutputs['channelsGetReplies']
 	>('conversations.replies', ctx.key, {
 		method: 'GET',
-		query: {
-			channel: input.channel,
-			ts: input.ts,
-			latest: input.latest,
-			oldest: input.oldest,
-			inclusive: input.inclusive,
-			include_all_metadata: input.include_all_metadata,
-			cursor: input.cursor,
-			limit: input.limit,
-		},
+		query: input,
 	});
 
 	if (result.ok && result.messages && ctx.db.messages) {

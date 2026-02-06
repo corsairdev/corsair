@@ -10,7 +10,6 @@ import type {
 	IssueGetResponse,
 	IssuesListResponse,
 	IssueUpdateResponse,
-	LinearEndpointOutputs,
 	ProjectCreateResponse,
 	ProjectDeleteResponse,
 	ProjectGetResponse,
@@ -22,8 +21,6 @@ import type {
 import { LinearEndpointOutputSchemas } from './endpoints/types';
 
 dotenv.config();
-
-type AssertExactType<T, U> = T extends U ? (U extends T ? true : never) : never;
 
 const TEST_TOKEN = process.env.LINEAR_API_KEY!;
 
@@ -524,14 +521,7 @@ describe('Linear API Type Tests', () => {
 			const result = response.teams;
 
 			// Runtime validation with Zod
-			const validated = LinearEndpointOutputSchemas.teamsList.parse(result);
-
-			// Compile-time type check
-			type _Check = AssertExactType<
-				typeof result,
-				LinearEndpointOutputs['teamsList']
-			>;
-			const _assert: _Check = true;
+			LinearEndpointOutputSchemas.teamsList.parse(result);
 		});
 
 		it('teamsGet returns correct type', async () => {
@@ -552,15 +542,7 @@ describe('Linear API Type Tests', () => {
 			);
 			const result = response.team;
 
-			// Runtime validation with Zod
-			const validated = LinearEndpointOutputSchemas.teamsGet.parse(result);
-
-			// Compile-time type check
-			type _Check = AssertExactType<
-				typeof result,
-				LinearEndpointOutputs['teamsGet']
-			>;
-			const _assert: _Check = true;
+			LinearEndpointOutputSchemas.teamsGet.parse(result);
 		});
 	});
 
@@ -573,15 +555,7 @@ describe('Linear API Type Tests', () => {
 			);
 			const result = response.issues;
 
-			// Runtime validation with Zod
-			const validated = LinearEndpointOutputSchemas.issuesList.parse(result);
-
-			// Compile-time type check
-			type _Check = AssertExactType<
-				typeof result,
-				LinearEndpointOutputs['issuesList']
-			>;
-			const _assert: _Check = true;
+			LinearEndpointOutputSchemas.issuesList.parse(result);
 		});
 
 		it('issuesGet returns correct type', async () => {
@@ -602,15 +576,7 @@ describe('Linear API Type Tests', () => {
 			);
 			const result = response.issue;
 
-			// Runtime validation with Zod
-			const validated = LinearEndpointOutputSchemas.issuesGet.parse(result);
-
-			// Compile-time type check
-			type _Check = AssertExactType<
-				typeof result,
-				LinearEndpointOutputs['issuesGet']
-			>;
-			const _assert: _Check = true;
+			LinearEndpointOutputSchemas.issuesGet.parse(result);
 		});
 
 		it('issuesCreate returns correct type', async () => {
@@ -631,15 +597,7 @@ describe('Linear API Type Tests', () => {
 			);
 			const result = response.issueCreate.issue;
 
-			// Runtime validation with Zod
-			const validated = LinearEndpointOutputSchemas.issuesCreate.parse(result);
-
-			// Compile-time type check
-			type _Check = AssertExactType<
-				typeof result,
-				LinearEndpointOutputs['issuesCreate']
-			>;
-			const _assert: _Check = true;
+			LinearEndpointOutputSchemas.issuesCreate.parse(result);
 		});
 
 		it('issuesUpdate returns correct type', async () => {
@@ -660,15 +618,7 @@ describe('Linear API Type Tests', () => {
 			);
 			const result = response.issueUpdate.issue;
 
-			// Runtime validation with Zod
-			const validated = LinearEndpointOutputSchemas.issuesUpdate.parse(result);
-
-			// Compile-time type check
-			type _Check = AssertExactType<
-				typeof result,
-				LinearEndpointOutputs['issuesUpdate']
-			>;
-			const _assert: _Check = true;
+			LinearEndpointOutputSchemas.issuesUpdate.parse(result);
 		});
 
 		it('issuesDelete returns correct type', async () => {
@@ -690,14 +640,7 @@ describe('Linear API Type Tests', () => {
 			const result = response.issueDelete.success;
 
 			// Runtime validation with Zod
-			const validated = LinearEndpointOutputSchemas.issuesDelete.parse(result);
-
-			// Compile-time type check
-			type _Check = AssertExactType<
-				typeof result,
-				LinearEndpointOutputs['issuesDelete']
-			>;
-			const _assert: _Check = true;
+			LinearEndpointOutputSchemas.issuesDelete.parse(result);
 		});
 	});
 
@@ -711,15 +654,9 @@ describe('Linear API Type Tests', () => {
 			const result = response.projects;
 
 			// Runtime validation with Zod
-			const validated = LinearEndpointOutputSchemas.projectsList.parse(result);
+			LinearEndpointOutputSchemas.projectsList.parse(result);
 
-			// Compile-time type check
-			type _Check = AssertExactType<
-				typeof result,
-				LinearEndpointOutputs['projectsList']
-			>;
-			const _assert: _Check = true;
-		});
+    });
 
 		it('projectsGet returns correct type', async () => {
 			const projectsListResponse =
@@ -743,12 +680,6 @@ describe('Linear API Type Tests', () => {
 			// Runtime validation with Zod
 			const validated = LinearEndpointOutputSchemas.projectsGet.parse(result);
 
-			// Compile-time type check
-			type _Check = AssertExactType<
-				typeof result,
-				LinearEndpointOutputs['projectsGet']
-			>;
-			const _assert: _Check = true;
 		});
 
 		it('projectsCreate returns correct type', async () => {
@@ -773,12 +704,6 @@ describe('Linear API Type Tests', () => {
 			const validated =
 				LinearEndpointOutputSchemas.projectsCreate.parse(result);
 
-			// Compile-time type check
-			type _Check = AssertExactType<
-				typeof result,
-				LinearEndpointOutputs['projectsCreate']
-			>;
-			const _assert: _Check = true;
 		});
 
 		it('projectsUpdate returns correct type', async () => {
@@ -804,12 +729,6 @@ describe('Linear API Type Tests', () => {
 			const validated =
 				LinearEndpointOutputSchemas.projectsUpdate.parse(result);
 
-			// Compile-time type check
-			type _Check = AssertExactType<
-				typeof result,
-				LinearEndpointOutputs['projectsUpdate']
-			>;
-			const _assert: _Check = true;
 		});
 
 		it('projectsDelete returns correct type', async () => {

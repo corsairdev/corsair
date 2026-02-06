@@ -53,7 +53,7 @@ export const list: LinearEndpoints['teamsList'] = async (ctx, input) => {
 		},
 	);
 
-	const result = response.teams;
+	const result = response;
 
 	if (result.nodes && ctx.db.teams) {
 		try {
@@ -85,7 +85,7 @@ export const get: LinearEndpoints['teamsGet'] = async (ctx, input) => {
 		{ id: input.id },
 	);
 
-	const result = response.team;
+	const result = response;
 
 	if (result && ctx.db.teams) {
 		try {

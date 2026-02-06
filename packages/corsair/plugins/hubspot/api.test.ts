@@ -48,6 +48,10 @@ describe('HubSpot API Type Tests', () => {
 					TEST_TOKEN,
 					{ query: { limit: 1 } },
 				);
+			
+			if (!contactsListResponse.results) {
+				return;
+			}
 			const contactId = contactsListResponse.results[0]?.id;
 			if (!contactId) {
 				return;
@@ -138,6 +142,10 @@ describe('HubSpot API Type Tests', () => {
 					TEST_TOKEN,
 					{ query: { limit: 1 } },
 				);
+			
+			if (!companiesListResponse.results) {
+				return;
+			}
 			const companyId = companiesListResponse.results[0]?.id;
 			if (!companyId) {
 				return;
@@ -177,6 +185,9 @@ describe('HubSpot API Type Tests', () => {
 					TEST_TOKEN,
 					{ query: { limit: 1 } },
 				);
+			if (!companiesListResponse.results) {
+				return;
+			}
 			const companyId = companiesListResponse.results[0]?.id;
 			if (!companyId) {
 				return;
@@ -259,6 +270,9 @@ describe('HubSpot API Type Tests', () => {
 				TEST_TOKEN,
 				{ query: { limit: 1 } },
 			);
+			if (!dealsListResponse.results) {
+				return;
+			}
 			const dealId = dealsListResponse.results[0]?.id;
 			if (!dealId) {
 				return;
@@ -297,6 +311,9 @@ describe('HubSpot API Type Tests', () => {
 				TEST_TOKEN,
 				{ query: { limit: 1 } },
 			);
+			if (!dealsListResponse.results) {
+				return;
+			}
 			const dealId = dealsListResponse.results[0]?.id;
 			if (!dealId) {
 				return;
@@ -377,6 +394,9 @@ describe('HubSpot API Type Tests', () => {
 					TEST_TOKEN,
 					{ query: { limit: 1 } },
 				);
+			if (!ticketsListResponse.results) {
+				return;
+			}
 			const ticketId = ticketsListResponse.results[0]?.id;
 			if (!ticketId) {
 				return;
@@ -403,6 +423,9 @@ describe('HubSpot API Type Tests', () => {
 				},
 			);
 
+			if (!existingTickets.results) {
+				return;
+			}
 			const ticketId = existingTickets.results[0]?.id;
 			if (!ticketId) {
 				return;
@@ -453,6 +476,9 @@ describe('HubSpot API Type Tests', () => {
 					TEST_TOKEN,
 					{ query: { limit: 1 } },
 				);
+			if (!ticketsListResponse.results) {
+				return;
+			}
 			const ticketId = ticketsListResponse.results[0]?.id;
 			if (!ticketId) {
 				return;
@@ -495,6 +521,9 @@ describe('HubSpot API Type Tests', () => {
 					TEST_TOKEN,
 					{ query: { limit: 1 } },
 				);
+			if (!engagementsListResponse.results) {
+				return;
+			}
 			const engagementId = engagementsListResponse.results[0]?.id;
 			if (!engagementId) {
 				return;

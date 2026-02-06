@@ -157,7 +157,7 @@ export const list: LinearEndpoints['projectsList'] = async (ctx, input) => {
 		},
 	);
 
-	const result = response.projects;
+	const result = response;
 
 	if (result.nodes && ctx.db.projects) {
 		try {
@@ -190,7 +190,7 @@ export const get: LinearEndpoints['projectsGet'] = async (ctx, input) => {
 		{ id: input.id },
 	);
 
-	const result = response.project;
+	const result = response;
 
 	if (result && ctx.db.projects) {
 		try {
@@ -221,11 +221,11 @@ export const create: LinearEndpoints['projectsCreate'] = async (ctx, input) => {
 		{ input: input as CreateProjectInput },
 	);
 
-	const result = response.projectCreate;
+	const result = response;
 
-	if (result.success && result.project) {
+	if (result) {
 		const endpoints = ctx.endpoints as LinearBoundEndpoints;
-		await endpoints.projects.get({ id: result.project.id });
+		await endpoints.projects.get({ id: result.id });
 	}
 
 	await logEventFromContext(
@@ -234,7 +234,7 @@ export const create: LinearEndpoints['projectsCreate'] = async (ctx, input) => {
 		{ ...input },
 		'completed',
 	);
-	return result.project;
+	return result;
 };
 
 export const update: LinearEndpoints['projectsUpdate'] = async (ctx, input) => {
@@ -244,11 +244,11 @@ export const update: LinearEndpoints['projectsUpdate'] = async (ctx, input) => {
 		{ id: input.id, input: input.input as UpdateProjectInput },
 	);
 
-	const result = response.projectUpdate;
+	const result = response;
 
-	if (result.success && result.project) {
+	if (result) {
 		const endpoints = ctx.endpoints as LinearBoundEndpoints;
-		await endpoints.projects.get({ id: result.project.id });
+		await endpoints.projects.get({ id: result.id });
 	}
 
 	await logEventFromContext(
@@ -257,7 +257,7 @@ export const update: LinearEndpoints['projectsUpdate'] = async (ctx, input) => {
 		{ ...input },
 		'completed',
 	);
-	return result.project;
+	return result;
 };
 
 export const deleteProject: LinearEndpoints['projectsDelete'] = async (
@@ -270,7 +270,7 @@ export const deleteProject: LinearEndpoints['projectsDelete'] = async (
 		{ id: input.id },
 	);
 
-	const result = response.projectDelete.success;
+	const result = response;
 
 	if (result && ctx.db.projects) {
 		try {
