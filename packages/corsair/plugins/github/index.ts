@@ -37,7 +37,7 @@ export {
 
 export type GithubContext = CorsairPluginContext<
 	typeof GithubSchema,
-	GithubCredentials
+	GithubPluginOptions
 >;
 
 export type GithubKeyBuilderContext = KeyBuilderContext<GithubPluginOptions>;
@@ -409,7 +409,7 @@ const githubWebhooksNested = {
 
 export type GithubPluginOptions = {
 	authType: AuthTypes;
-	credentials: GithubCredentials;
+	credentials?: GithubCredentials;
 	webhookSecret?: string;
 	hooks?: GithubPlugin['hooks'] | undefined;
 	webhookHooks?: GithubPlugin['webhookHooks'] | undefined;
@@ -420,14 +420,14 @@ export type GithubPlugin = CorsairPlugin<
 	typeof GithubSchema,
 	typeof githubEndpointsNested,
 	typeof githubWebhooksNested,
-	GithubCredentials
+	GithubPluginOptions
 >;
 
 export function github(options: GithubPluginOptions) {
 	return {
 		id: 'github',
 		schema: GithubSchema,
-		options: options.credentials,
+		options: options,
 		hooks: options.hooks,
 		webhookHooks: options.webhookHooks,
 		endpoints: githubEndpointsNested,

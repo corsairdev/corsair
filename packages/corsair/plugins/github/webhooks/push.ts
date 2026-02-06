@@ -1,22 +1,21 @@
 import type { GithubWebhooks } from '..';
+import { createGithubEventMatch, verifyGithubWebhookSignature } from './types';
 import type { PushEventType } from './types';
 
-function parseBody(body: unknown): unknown {
-	return typeof body === 'string' ? JSON.parse(body) : body;
-}
-
-function createGithubMatch(eventName: string) {
-	return (request: import('../../../core/webhooks').RawWebhookRequest) => {
-		const headers = request.headers as Record<string, string | undefined>;
-		const githubEvent = headers['x-github-event'];
-		return githubEvent === eventName;
-	};
-}
-
 export const push: GithubWebhooks['push'] = {
-	match: createGithubMatch('push'),
+	match: createGithubEventMatch('push'),
 
 	handler: async (ctx, request) => {
+		const webhookSecret = ctx.key;
+		const verification = verifyGithubWebhookSignature(request, webhookSecret);
+		if (!verification.valid) {
+			return {
+				success: false,
+				statusCode: 401,
+				error: verification.error || 'Signature verification failed',
+			};
+		}
+
 		const event = request.payload as PushEventType;
 
 		console.log('📤 GitHub Push Event:', {

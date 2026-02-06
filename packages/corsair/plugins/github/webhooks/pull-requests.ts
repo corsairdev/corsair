@@ -1,30 +1,25 @@
 import type { GithubWebhooks } from '..';
+import { createGithubEventMatch, verifyGithubWebhookSignature } from './types';
 import type {
 	PullRequestClosedEvent,
 	PullRequestOpenedEvent,
 	PullRequestSynchronizeEvent,
 } from './types';
 
-function parseBody(body: unknown): unknown {
-	return typeof body === 'string' ? JSON.parse(body) : body;
-}
-
-function createGithubMatch(eventName: string, action?: string) {
-	return (request: import('../../../core/webhooks').RawWebhookRequest) => {
-		const parsedBody = parseBody(request.body) as Record<string, unknown>;
-		const headers = request.headers as Record<string, string | undefined>;
-		const githubEvent = headers['x-github-event'];
-		return (
-			githubEvent === eventName &&
-			(!action || (parsedBody.action as string) === action)
-		);
-	};
-}
-
 export const pullRequestOpened: GithubWebhooks['pullRequestOpened'] = {
-	match: createGithubMatch('pull_request', 'opened'),
+	match: createGithubEventMatch('pull_request', 'opened'),
 
 	handler: async (ctx, request) => {
+		const webhookSecret = ctx.key;
+		const verification = verifyGithubWebhookSignature(request, webhookSecret);
+		if (!verification.valid) {
+			return {
+				success: false,
+				statusCode: 401,
+				error: verification.error || 'Signature verification failed',
+			};
+		}
+
 		const event = request.payload as PullRequestOpenedEvent;
 
 		if (event.action !== 'opened') {
@@ -84,9 +79,19 @@ export const pullRequestOpened: GithubWebhooks['pullRequestOpened'] = {
 };
 
 export const pullRequestClosed: GithubWebhooks['pullRequestClosed'] = {
-	match: createGithubMatch('pull_request', 'closed'),
+	match: createGithubEventMatch('pull_request', 'closed'),
 
 	handler: async (ctx, request) => {
+		const webhookSecret = ctx.key;
+		const verification = verifyGithubWebhookSignature(request, webhookSecret);
+		if (!verification.valid) {
+			return {
+				success: false,
+				statusCode: 401,
+				error: verification.error || 'Signature verification failed',
+			};
+		}
+
 		const event = request.payload as PullRequestClosedEvent;
 
 		if (event.action !== 'closed') {
@@ -147,9 +152,19 @@ export const pullRequestClosed: GithubWebhooks['pullRequestClosed'] = {
 
 export const pullRequestSynchronize: GithubWebhooks['pullRequestSynchronize'] =
 	{
-		match: createGithubMatch('pull_request', 'synchronize'),
+		match: createGithubEventMatch('pull_request', 'synchronize'),
 
 		handler: async (ctx, request) => {
+			const webhookSecret = ctx.key;
+			const verification = verifyGithubWebhookSignature(request, webhookSecret);
+			if (!verification.valid) {
+				return {
+					success: false,
+					statusCode: 401,
+					error: verification.error || 'Signature verification failed',
+				};
+			}
+
 			const event = request.payload as PullRequestSynchronizeEvent;
 
 			if (event.action !== 'synchronize') {

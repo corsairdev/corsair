@@ -340,10 +340,18 @@ export function verifyGithubWebhookSignature(
 
 export function createGithubEventMatch(
 	eventType: string,
+	action?: string,
 ): CorsairWebhookMatcher {
 	return (request: RawWebhookRequest) => {
 		const headers = request.headers as Record<string, string | undefined>;
 		const githubEvent = headers['x-github-event'];
-		return githubEvent === eventType;
+		if (githubEvent !== eventType) {
+			return false;
+		}
+		if (action) {
+			const parsedBody = parseBody(request.body) as Record<string, unknown>;
+			return (parsedBody.action as string) === action;
+		}
+		return true;
 	};
 }

@@ -4,8 +4,7 @@ import 'dotenv/config';
 const main = async () => {
 	const res = await corsair
 		.withTenant('default')
-		.slack.api.messages.post({ channel: '', text: '' });
-
+		.github.keys.setWebhookSignature('secret')
 	// ({
 	// 	from: 'noreply@updates.corsair.dev',
 	// 	to: 'dev@corsair.dev',

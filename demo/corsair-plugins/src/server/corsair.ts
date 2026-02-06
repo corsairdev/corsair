@@ -98,19 +98,16 @@ export const corsair = createCorsair({
 		}),
 		github({
 			authType: 'api_key',
-			credentials: {
-				token: process.env.GITHUB_TOKEN || '',
-			},
 			webhookHooks: {
 				starCreated: {
 					after: async (ctx, res) => {
-							await inngest.send({
-								name: 'github/star',
-								data: {
-									tenantId: ctx.tenantId ?? 'default',
-									event: res.data!,
-								},
-							});
+						await inngest.send({
+							name: 'github/star',
+							data: {
+								tenantId: ctx.tenantId ?? 'default',
+								event: res.data!,
+							},
+						});
 					},
 				},
 			},
