@@ -24,6 +24,8 @@ export async function POST(request: NextRequest) {
 
 	const result = await processWebhook(corsair, headers, body, { tenantId });
 
+	console.info('Plugin Processed:', result.plugin);
+
 	// Handle case where no webhook matched
 	if (!result.response) {
 		return NextResponse.json(
@@ -35,8 +37,6 @@ export async function POST(request: NextRequest) {
 		);
 	}
 
-	// Only return data if returnToSender is not null (like Slack challenge)
-	// filterWebhook already handles stripping 'type' and extracting the value
 	if (result.response !== undefined) {
 		return NextResponse.json(result.response);
 	}

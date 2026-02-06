@@ -1,13 +1,17 @@
-# Corsair: The TypeScript Integration Framework
+# Corsair: The TypeScript Integration ORM
 
-A unified framework for API and webhook integrations. Add integrations with the same syntax, same types, and same four database tables.
+A unified TypeScript framework for API and webhook integrations. Add integrations with the same syntax, same types, and same four database tables.
+
+Database ORMs let you interact with your database seamlessly: `db.query.users.findMany(...)`
+
+Corsair lets you interact with your integrations seamlessly: `corsair.withTenant(tenantId).slack.messages.post(...)`
 
 ## The Problem
 
 Building workflows across third-party services means writing integration code. Lots of it.
 
 When a user signs up in your app, you might want to:
-- Add them to your Slack workspace
+- Post to your Slack workspace
 - Create onboarding tasks in Linear
 - Send a welcome email via Resend
 - Update them in your CRM
@@ -34,8 +38,8 @@ export const corsair = createCorsair({
 // Same syntax across every integration, fully typed
 const tenant = corsair.withTenant('tenant_123');
 
-await tenant.slack.api.messages.post({ channel: 'C01234567', text: 'Hello!' });
-await tenant.linear.api.issues.create({ title: 'New feature', teamId: 'TEAM_ABC' });
+await tenant.slack.api.messages.post({ channel: 'C01234567', text: 'New signup!' });
+await tenant.linear.api.issues.create({ title: `Tasks for new user: ${user.name}`, teamId: 'TEAM_ABC' });
 await tenant.resend.api.emails.send({ to: 'user@example.com', subject: 'Welcome!' });
 ```
 
@@ -48,7 +52,7 @@ Your integrations work the same way whether you're calling Slack, Linear, GitHub
 Every API response is automatically synced to your local database using just four tables that handle all external data. You get full type safety when querying, and you can write foreign keys directly from your tables to Corsair's tables. No more maintaining custom schemas or trying to map untyped API responses.
 ```typescript
 // Query synced data with full type safety
-const issues = await tenant.linear.db.issues.findMany({
+const issues = await tenant.linear.db.issues.search({
   where: { state: 'in_progress' },
 });
 
@@ -65,7 +69,7 @@ Corsair provides sensible defaults but lets you override anything. Add custom er
 
 ## Works with your existing tools
 
-Corsair is the integration layer. It handles API calls, auth, typing, and data sync. Pair it with orchestration tools like Inngest or Temporal when you need async workflows, retries, or complex sequencing:
+Corsair is the integration layer. It handles API calls, auth, typing, and data sync. Pair it with orchestration tools like Inngest or Temporal when you need async workflows, sleep, or complex sequencing:
 ```typescript
 // Inngest handles orchestration, Corsair handles integrations
 export const onCustomerChurn = inngest.createFunction(
@@ -112,6 +116,49 @@ export const onCustomerChurn = inngest.createFunction(
 **Sales automation:** When a deal closes in HubSpot, provision a customer workspace in Slack, create their GitHub organization, send contracts via DocuSign, and track everything in your database with foreign keys to the HubSpot deal.
 
 **User onboarding:** When someone subscribes, add them to your Slack workspace, create personalized onboarding tasks in Linear, send welcome emails via Resend, and sync everything to your CRM—without writing integration code for each service.
+
+## FAQ
+
+<details>
+<summary>How are keys stored?</summary>
+
+Keys are stored using [envelope encryption](https://docs.cloud.google.com/kms/docs/envelope-encryption) in your database. You provide a master key (KEK) via environment variable or KMS, and Corsair generates unique encrypted keys (DEKs) for each tenant's integration (stored in the Corsair-managed tables). If multi-tenancy is enabled, keys are strictly scoped per tenant. **If you want to manage keys yourself, just pass them directly to Corsair and skip our key management.**
+
+</details>
+
+<details>
+<summary>Why wouldn't I just use the SDK directly?</summary>
+
+If you're going deep with one integration, use their SDK. But if you're coordinating multiple services, Corsair saves you from rebuilding auth, webhooks, rate limits, error handling, and database sync for each one. The same 20 lines work across all integrations. Plus, everything syncs to your local database automatically so you can write foreign keys and query fresh data.
+
+</details>
+
+<details>
+<summary>Couldn't I just use a no-code workflow automation tool?</summary>
+
+You could, but your data would live in their system, not yours. With Corsair, everything syncs to your database. So you can write SQL queries, create foreign keys, and build complex conditional logic that no-code tools can't handle. Plus it lives in your git repo and you only pay for what you use (no "monthly credits" or execution limits).
+
+</details>
+
+<details>
+<summary>What happens if an integration's API changes?</summary>
+
+Corsair manages API versioning by mapping version numbers to schemas. This is still under active development and you can expect improvements soon. 
+
+</details>
+
+<details>
+<summary>How does Corsair handle rate limits?</summary>
+
+Automatically. If an API sends `Retry-After`, we respect it. Otherwise, we use exponential backoff. Configurable per plugin if needed.
+
+</details>
+<details>
+<summary>Can I use Corsair alongside direct SDK calls?</summary>
+
+Yes. Corsair is just a function; use it where it helps, drop down to SDKs when you need custom logic. Mix them in the same workflow.
+
+</details>
 
 ---
 

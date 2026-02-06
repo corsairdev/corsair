@@ -5,6 +5,7 @@ import type {
 	CorsairPlugin,
 	CorsairPluginContext,
 	CorsairWebhook,
+	RawWebhookRequest,
 } from '../../core';
 import type { AuthTypes } from '../../core/constants';
 import type { GithubEndpointOutputs } from './endpoints';
@@ -423,9 +424,7 @@ export function github(options: GithubPluginOptions) {
 		webhookHooks: options.webhookHooks,
 		endpoints: githubEndpointsNested,
 		webhooks: githubWebhooksNested,
-		pluginWebhookMatcher: (
-			request: import('../../core/webhooks').RawWebhookRequest,
-		) => {
+		pluginWebhookMatcher: (request: RawWebhookRequest) => {
 			const headers = request.headers as Record<string, string | undefined>;
 			return headers['x-github-event'] !== undefined;
 		},

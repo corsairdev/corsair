@@ -24,6 +24,10 @@ export async function handleWebhook(req: Request) {
 }
 ```
 
+<Callout type="info">
+Note that webhooks are not guaranteed by most senders. If your project requires completely fresh data, add polling for that integration using an [api call](/docs/api).
+</Callout>
+
 ## Automatic Routing
 
 Point all your webhooks to a single endpoint. Corsair inspects the headers and payload to determine:

@@ -9,13 +9,16 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
     "fumadocs-core": "^15.2.1",
     "fumadocs-mdx": "^14.0.3",
     "fumadocs-ui": "^15.2.1",
     "lucide-react": "^0.546.0",
     "next": "15.5.9",
     "react": "19.2.4",
-    "react-dom": "19.2.4"
+    "react-dom": "19.2.4",
+    "tailwind-merge": "^3.3.1"
   },
   "devDependencies": {
     "@types/mdx": "^2.0.13",
