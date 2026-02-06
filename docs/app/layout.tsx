@@ -4,9 +4,11 @@ import { NextProvider } from 'fumadocs-core/framework/next';
 import { DocsLayout } from 'fumadocs-ui/layouts/docs';
 import { RootProvider } from 'fumadocs-ui/provider';
 import {
+	AlertTriangle,
 	Ban,
 	BicepsFlexed,
 	BookOpen,
+	CheckSquare,
 	Code2,
 	Database,
 	Download,
@@ -18,12 +20,10 @@ import {
 	RefreshCcwDot,
 	Rocket,
 	ScanFace,
-	Users,
-	Zap,
-	Webhook,
-	AlertTriangle,
 	Table2,
-	CheckSquare,
+	Users,
+	Webhook,
+	Zap,
 } from 'lucide-react';
 
 const tree = {

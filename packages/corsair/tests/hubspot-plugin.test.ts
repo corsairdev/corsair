@@ -402,7 +402,7 @@ describe('HubSpot plugin integration', () => {
 
 		const { corsair, testDb } = setup;
 
-		let ticketsList;
+		let ticketsList: any;
 		try {
 			ticketsList = await corsair.hubspot.api.tickets.getMany({
 				limit: 10,
@@ -450,7 +450,7 @@ describe('HubSpot plugin integration', () => {
 			}
 		}
 
-		let createdTicket;
+		let createdTicket: any;
 		try {
 			createdTicket = await corsair.hubspot.api.tickets.create({
 				properties: {
@@ -568,7 +568,7 @@ describe('HubSpot plugin integration', () => {
 			return;
 		}
 
-		let createdEngagement;
+		let createdEngagement: any;
 		try {
 			createdEngagement = await corsair.hubspot.api.engagements.create({
 				engagement: {

@@ -105,7 +105,7 @@ describe('Linear plugin integration', () => {
 			return;
 		}
 
-		let issuesList;
+		let issuesList: any;
 		try {
 			issuesList = await corsair.linear.api.issues.list({
 				teamId,
@@ -348,7 +348,7 @@ describe('Linear plugin integration', () => {
 			return;
 		}
 
-		let issuesList;
+		let issuesList: any;
 		try {
 			issuesList = await corsair.linear.api.issues.list({
 				teamId,

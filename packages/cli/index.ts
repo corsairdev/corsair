@@ -34,6 +34,10 @@ const possiblePaths = [
 	'app/corsair.tsx',
 	'app/corsair.js',
 	'app/corsair.jsx',
+	'corsair/index.ts',
+	'corsair/index.tsx',
+	'corsair/index.js',
+	'corsair/index.jsx',
 ];
 
 function resolveReferencePath(configDir: string, refPath: string): string {
@@ -381,8 +385,15 @@ async function main() {
 		console.log('[#corsair]: Corsair CLI\n');
 		console.log('Commands:');
 		console.log('  corsair                    Inspect your Corsair instance');
+		console.log('  corsair auth               Manage integration credentials');
 		console.log('  corsair migrate            Create a data migration script');
 		console.log('  corsair migrate help       Show migration help\n');
+		return;
+	}
+
+	if (command === 'auth') {
+		const { runAuth } = await import('./auth');
+		await runAuth({ cwd });
 		return;
 	}
 

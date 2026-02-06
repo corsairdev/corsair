@@ -1,7 +1,21 @@
+import type { CorsairDbAdapter } from '../adapters/types';
 import { createMissingConfigProxy } from './auth/errors';
 import type { CorsairSingleTenantClient, CorsairTenantWrapper } from './client';
 import { buildCorsairClient, buildIntegrationKeys } from './client';
 import type { CorsairIntegration, CorsairPlugin } from './plugins';
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Internal access for CLI tooling
+// ─────────────────────────────────────────────────────────────────────────────
+
+export const CORSAIR_INTERNAL = Symbol.for('corsair:internal');
+
+export type CorsairInternalConfig = {
+	plugins: readonly CorsairPlugin[];
+	database: CorsairDbAdapter | undefined;
+	kek: string;
+	multiTenancy: boolean;
+};
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Main Corsair Factory Functions
@@ -49,23 +63,33 @@ export function createCorsair<const Plugins extends readonly CorsairPlugin[]>(
 					!!config.kek,
 				);
 
+	const internalConfig: CorsairInternalConfig = {
+		plugins: config.plugins,
+		database: config.database,
+		kek: config.kek,
+		multiTenancy: !!config.multiTenancy,
+	};
+
 	if (config.multiTenancy) {
-		return {
-			withTenant: (tenantId: string) => {
-				if (!tenantId) {
-					throw new Error(
-						'corsair.withTenant(tenantId): tenantId must be a non-empty string',
-					);
-				}
-				return buildCorsairClient(config.plugins, {
-					database: config.database,
-					tenantId,
-					kek: config.kek,
-					rootErrorHandlers: config.errorHandlers,
-				});
+		return Object.assign(
+			{
+				withTenant: (tenantId: string) => {
+					if (!tenantId) {
+						throw new Error(
+							'corsair.withTenant(tenantId): tenantId must be a non-empty string',
+						);
+					}
+					return buildCorsairClient(config.plugins, {
+						database: config.database,
+						tenantId,
+						kek: config.kek,
+						rootErrorHandlers: config.errorHandlers,
+					});
+				},
+				keys: integrationKeys,
 			},
-			keys: integrationKeys,
-		};
+			{ [CORSAIR_INTERNAL]: internalConfig },
+		);
 	}
 
 	const client = buildCorsairClient(config.plugins, {
@@ -77,6 +101,7 @@ export function createCorsair<const Plugins extends readonly CorsairPlugin[]>(
 
 	return Object.assign({}, client, {
 		keys: integrationKeys,
+		[CORSAIR_INTERNAL]: internalConfig,
 	}) as CorsairSingleTenantClient<Plugins>;
 }
 
