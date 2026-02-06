@@ -21,7 +21,10 @@ export const list: GithubEndpoints['workflowsList'] = async (ctx, input) => {
 			const workflows = result.workflows || [];
 			if (Array.isArray(workflows)) {
 				for (const workflow of workflows) {
-					await ctx.db.workflows.upsertByEntityId(workflow.id.toString(), workflow);
+					await ctx.db.workflows.upsertByEntityId(
+						workflow.id.toString(),
+						workflow,
+					);
 				}
 			}
 		} catch (error) {
@@ -41,7 +44,10 @@ export const list: GithubEndpoints['workflowsList'] = async (ctx, input) => {
 export const get: GithubEndpoints['workflowsGet'] = async (ctx, input) => {
 	const { owner, repo, workflowId } = input;
 	const endpoint = `/repos/${owner}/${repo}/actions/workflows/${workflowId}`;
-	const result = await makeGithubRequest<WorkflowGetResponse>(endpoint, ctx.key);
+	const result = await makeGithubRequest<WorkflowGetResponse>(
+		endpoint,
+		ctx.key,
+	);
 
 	if (result && ctx.db.workflows) {
 		try {

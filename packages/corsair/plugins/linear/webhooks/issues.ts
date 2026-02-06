@@ -16,7 +16,7 @@ export const issueCreate: LinearWebhooks['issueCreate'] = {
 			};
 		}
 
-		const event = request.payload ;
+		const event = request.payload;
 
 		if (event.type !== 'Issue' || event.action !== 'create') {
 			return {

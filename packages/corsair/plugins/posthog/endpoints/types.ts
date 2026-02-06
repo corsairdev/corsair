@@ -1,6 +1,5 @@
 import { z } from 'zod';
 
-
 const PostHogSuccessResponseSchema = z.union([
 	z.number(),
 	z.string(),
@@ -23,7 +22,7 @@ export const PostHogEndpointOutputSchemas = {
 
 export type PostHogEndpointOutputs = {
 	[K in keyof typeof PostHogEndpointOutputSchemas]: z.infer<
-		typeof PostHogEndpointOutputSchemas[K]
+		(typeof PostHogEndpointOutputSchemas)[K]
 	>;
 };
 

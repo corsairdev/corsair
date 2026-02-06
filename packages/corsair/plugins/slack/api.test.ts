@@ -1,34 +1,33 @@
+import dotenv from 'dotenv';
 import { makeSlackRequest } from './client';
 import type {
-	SlackEndpointOutputs,
-	ConversationsListResponse,
-	ConversationsInfoResponse,
-	ConversationsCreateResponse,
-	ConversationsHistoryResponse,
-	ConversationsMembersResponse,
-	UsersListResponse,
-	UsersInfoResponse,
-	UsersProfileGetResponse,
-	UsersGetPresenceResponse,
-	ChatPostMessageResponse,
-	ChatUpdateResponse,
 	ChatDeleteResponse,
 	ChatGetPermalinkResponse,
-	SearchMessagesResponse,
-	FilesListResponse,
+	ChatPostMessageResponse,
+	ChatUpdateResponse,
+	ConversationsCreateResponse,
+	ConversationsHistoryResponse,
+	ConversationsInfoResponse,
+	ConversationsListResponse,
+	ConversationsMembersResponse,
 	FilesInfoResponse,
+	FilesListResponse,
 	ReactionsAddResponse,
 	ReactionsGetResponse,
 	ReactionsRemoveResponse,
 	StarsAddResponse,
 	StarsListResponse,
 	StarsRemoveResponse,
-	UsergroupsListResponse,
 	UsergroupsCreateResponse,
+	UsergroupsListResponse,
 	UsergroupsUpdateResponse,
+	UsersGetPresenceResponse,
+	UsersInfoResponse,
+	UsersListResponse,
+	UsersProfileGetResponse,
 } from './endpoints/types';
 import { SlackEndpointOutputSchemas } from './endpoints/types';
-import dotenv from 'dotenv';
+
 dotenv.config();
 
 const TEST_TOKEN = process.env.SLACK_BOT_TOKEN!;
@@ -43,17 +42,18 @@ describe('Slack API Type Tests', () => {
 				{ query: { limit: 10 } },
 			);
 			const result = response;
-			
+
 			SlackEndpointOutputSchemas.channelsList.parse(result);
 		});
 
 		it('channelsGet returns correct type', async () => {
 			if (!TEST_CHANNEL) {
-				const channelsListResponse = await makeSlackRequest<ConversationsListResponse>(
-					'conversations.list',
-					TEST_TOKEN,
-					{ query: { limit: 1 } },
-				);
+				const channelsListResponse =
+					await makeSlackRequest<ConversationsListResponse>(
+						'conversations.list',
+						TEST_TOKEN,
+						{ query: { limit: 1 } },
+					);
 				const channelId = channelsListResponse.channels?.[0]?.id;
 				if (!channelId) {
 					throw new Error('No channels found');
@@ -65,7 +65,7 @@ describe('Slack API Type Tests', () => {
 					{ query: { channel: channelId } },
 				);
 				const result = response;
-				
+
 				SlackEndpointOutputSchemas.channelsGet.parse(result);
 			} else {
 				const response = await makeSlackRequest<ConversationsInfoResponse>(
@@ -74,7 +74,7 @@ describe('Slack API Type Tests', () => {
 					{ query: { channel: TEST_CHANNEL } },
 				);
 				const result = response;
-				
+
 				SlackEndpointOutputSchemas.channelsGet.parse(result);
 			}
 		});
@@ -93,17 +93,18 @@ describe('Slack API Type Tests', () => {
 				},
 			);
 			const result = response;
-			
+
 			SlackEndpointOutputSchemas.channelsCreate.parse(result);
 		});
 
 		it('channelsGetHistory returns correct type', async () => {
 			if (!TEST_CHANNEL) {
-				const channelsListResponse = await makeSlackRequest<ConversationsListResponse>(
-					'conversations.list',
-					TEST_TOKEN,
-					{ query: { limit: 1 } },
-				);
+				const channelsListResponse =
+					await makeSlackRequest<ConversationsListResponse>(
+						'conversations.list',
+						TEST_TOKEN,
+						{ query: { limit: 1 } },
+					);
 				const channelId = channelsListResponse.channels?.[0]?.id;
 				if (!channelId) {
 					throw new Error('No channels found');
@@ -115,7 +116,7 @@ describe('Slack API Type Tests', () => {
 					{ query: { channel: channelId, limit: 10 } },
 				);
 				const result = response;
-				
+
 				SlackEndpointOutputSchemas.channelsGetHistory.parse(result);
 			} else {
 				const response = await makeSlackRequest<ConversationsHistoryResponse>(
@@ -124,18 +125,19 @@ describe('Slack API Type Tests', () => {
 					{ query: { channel: TEST_CHANNEL, limit: 10 } },
 				);
 				const result = response;
-				
+
 				SlackEndpointOutputSchemas.channelsGetHistory.parse(result);
 			}
 		});
 
 		it('channelsGetMembers returns correct type', async () => {
 			if (!TEST_CHANNEL) {
-				const channelsListResponse = await makeSlackRequest<ConversationsListResponse>(
-					'conversations.list',
-					TEST_TOKEN,
-					{ query: { limit: 1 } },
-				);
+				const channelsListResponse =
+					await makeSlackRequest<ConversationsListResponse>(
+						'conversations.list',
+						TEST_TOKEN,
+						{ query: { limit: 1 } },
+					);
 				const channelId = channelsListResponse.channels?.[0]?.id;
 				if (!channelId) {
 					throw new Error('No channels found');
@@ -147,7 +149,7 @@ describe('Slack API Type Tests', () => {
 					{ query: { channel: channelId, limit: 10 } },
 				);
 				const result = response;
-				
+
 				SlackEndpointOutputSchemas.channelsGetMembers.parse(result);
 			} else {
 				const response = await makeSlackRequest<ConversationsMembersResponse>(
@@ -156,7 +158,7 @@ describe('Slack API Type Tests', () => {
 					{ query: { channel: TEST_CHANNEL, limit: 10 } },
 				);
 				const result = response;
-				
+
 				SlackEndpointOutputSchemas.channelsGetMembers.parse(result);
 			}
 		});
@@ -170,7 +172,7 @@ describe('Slack API Type Tests', () => {
 				{ query: { limit: 10 } },
 			);
 			const result = response;
-			
+
 			SlackEndpointOutputSchemas.usersList.parse(result);
 		});
 
@@ -191,7 +193,7 @@ describe('Slack API Type Tests', () => {
 				{ query: { user: userId } },
 			);
 			const result = response;
-			
+
 			SlackEndpointOutputSchemas.usersGet.parse(result);
 		});
 
@@ -212,7 +214,7 @@ describe('Slack API Type Tests', () => {
 				{ query: { user: userId } },
 			);
 			const result = response;
-			
+
 			SlackEndpointOutputSchemas.usersGetProfile.parse(result);
 		});
 
@@ -233,7 +235,7 @@ describe('Slack API Type Tests', () => {
 				{ query: { user: userId } },
 			);
 			const result = response;
-			
+
 			SlackEndpointOutputSchemas.usersGetPresence.parse(result);
 		});
 	});
@@ -246,11 +248,12 @@ describe('Slack API Type Tests', () => {
 			if (TEST_CHANNEL) {
 				testChannelId = TEST_CHANNEL;
 			} else {
-				const channelsListResponse = await makeSlackRequest<ConversationsListResponse>(
-					'conversations.list',
-					TEST_TOKEN,
-					{ query: { limit: 1 } },
-				);
+				const channelsListResponse =
+					await makeSlackRequest<ConversationsListResponse>(
+						'conversations.list',
+						TEST_TOKEN,
+						{ query: { limit: 1 } },
+					);
 				const channelId = channelsListResponse.channels?.[0]?.id;
 				if (!channelId) {
 					throw new Error('No channels found');
@@ -272,11 +275,11 @@ describe('Slack API Type Tests', () => {
 				},
 			);
 			const result = response;
-			
+
 			if (result.ok && result.ts) {
 				testMessageTs = result.ts;
 			}
-			
+
 			SlackEndpointOutputSchemas.postMessage.parse(result);
 		});
 
@@ -312,7 +315,7 @@ describe('Slack API Type Tests', () => {
 				},
 			);
 			const result = response;
-			
+
 			SlackEndpointOutputSchemas.messagesUpdate.parse(result);
 		});
 
@@ -341,7 +344,7 @@ describe('Slack API Type Tests', () => {
 				{ query: { channel: testChannelId, message_ts: testMessageTs } },
 			);
 			const result = response;
-			
+
 			SlackEndpointOutputSchemas.messagesGetPermalink.parse(result);
 		});
 
@@ -376,7 +379,7 @@ describe('Slack API Type Tests', () => {
 				},
 			);
 			const result = response;
-			
+
 			SlackEndpointOutputSchemas.messagesDelete.parse(result);
 		});
 	});
@@ -389,7 +392,7 @@ describe('Slack API Type Tests', () => {
 				{ query: { count: 10 } },
 			);
 			const result = response;
-			
+
 			SlackEndpointOutputSchemas.filesList.parse(result);
 		});
 
@@ -410,7 +413,7 @@ describe('Slack API Type Tests', () => {
 				{ query: { file: fileId } },
 			);
 			const result = response;
-			
+
 			SlackEndpointOutputSchemas.filesGet.parse(result);
 		});
 	});
@@ -423,11 +426,12 @@ describe('Slack API Type Tests', () => {
 			if (TEST_CHANNEL) {
 				testChannelId = TEST_CHANNEL;
 			} else {
-				const channelsListResponse = await makeSlackRequest<ConversationsListResponse>(
-					'conversations.list',
-					TEST_TOKEN,
-					{ query: { limit: 1 } },
-				);
+				const channelsListResponse =
+					await makeSlackRequest<ConversationsListResponse>(
+						'conversations.list',
+						TEST_TOKEN,
+						{ query: { limit: 1 } },
+					);
 				const channelId = channelsListResponse.channels?.[0]?.id;
 				if (!channelId) {
 					throw new Error('No channels found');
@@ -475,8 +479,13 @@ describe('Slack API Type Tests', () => {
 				TEST_TOKEN,
 				{ query: { channel: testChannelId, timestamp: testMessageTs } },
 			);
-			
-			if (reactionsGetResponse.ok && reactionsGetResponse.message?.reactions?.some(r => r.name === 'thumbsup')) {
+
+			if (
+				reactionsGetResponse.ok &&
+				reactionsGetResponse.message?.reactions?.some(
+					(r) => r.name === 'thumbsup',
+				)
+			) {
 				await makeSlackRequest<ReactionsRemoveResponse>(
 					'reactions.remove',
 					TEST_TOKEN,
@@ -504,7 +513,7 @@ describe('Slack API Type Tests', () => {
 				},
 			);
 			const result = response;
-			
+
 			SlackEndpointOutputSchemas.reactionsAdd.parse(result);
 		});
 
@@ -533,14 +542,13 @@ describe('Slack API Type Tests', () => {
 				{ query: { channel: testChannelId, timestamp: testMessageTs } },
 			);
 			const result = response;
-			
+
 			SlackEndpointOutputSchemas.reactionsGet.parse(result);
 		});
 
 		it('reactionsRemove returns correct type', async () => {
 			if (!testMessageTs) {
 				try {
-					
 					const postResponse = await makeSlackRequest<ChatPostMessageResponse>(
 						'chat.postMessage',
 						TEST_TOKEN,
@@ -556,9 +564,8 @@ describe('Slack API Type Tests', () => {
 						throw new Error('Failed to create test message');
 					}
 					testMessageTs = postResponse.ts;
-				}
-				catch (err) {
-					console.log(err, 'error')
+				} catch (err) {
+					console.log(err, 'error');
 				}
 			}
 
@@ -567,10 +574,14 @@ describe('Slack API Type Tests', () => {
 				TEST_TOKEN,
 				{ query: { channel: testChannelId, timestamp: testMessageTs } },
 			);
-			
-			if (!reactionsGetResponse.ok || !reactionsGetResponse.message?.reactions?.some(r => r.name === 'thumbsup')) {
+
+			if (
+				!reactionsGetResponse.ok ||
+				!reactionsGetResponse.message?.reactions?.some(
+					(r) => r.name === 'thumbsup',
+				)
+			) {
 				try {
-					
 					await makeSlackRequest<ReactionsAddResponse>(
 						'reactions.add',
 						TEST_TOKEN,
@@ -583,9 +594,8 @@ describe('Slack API Type Tests', () => {
 							},
 						},
 					);
-				}
-				catch (err) {
-					console.log(err, 'error')
+				} catch (err) {
+					console.log(err, 'error');
 				}
 			}
 
@@ -602,7 +612,7 @@ describe('Slack API Type Tests', () => {
 				},
 			);
 			const result = response;
-			
+
 			SlackEndpointOutputSchemas.reactionsRemove.parse(result);
 		});
 	});
@@ -615,11 +625,12 @@ describe('Slack API Type Tests', () => {
 			if (TEST_CHANNEL) {
 				testChannelId = TEST_CHANNEL;
 			} else {
-				const channelsListResponse = await makeSlackRequest<ConversationsListResponse>(
-					'conversations.list',
-					TEST_TOKEN,
-					{ query: { limit: 1 } },
-				);
+				const channelsListResponse =
+					await makeSlackRequest<ConversationsListResponse>(
+						'conversations.list',
+						TEST_TOKEN,
+						{ query: { limit: 1 } },
+					);
 				const channelId = channelsListResponse.channels?.[0]?.id;
 				if (!channelId) {
 					throw new Error('No channels found');
@@ -674,7 +685,7 @@ describe('Slack API Type Tests', () => {
 				},
 			);
 			const result = response;
-			
+
 			SlackEndpointOutputSchemas.starsAdd.parse(result);
 		});
 
@@ -685,7 +696,7 @@ describe('Slack API Type Tests', () => {
 				{ query: { count: 10 } },
 			);
 			const result = response;
-			
+
 			SlackEndpointOutputSchemas.starsList.parse(result);
 		});
 
@@ -708,17 +719,13 @@ describe('Slack API Type Tests', () => {
 				testMessageTs = postResponse.ts;
 			}
 
-			await makeSlackRequest<StarsAddResponse>(
-				'stars.add',
-				TEST_TOKEN,
-				{
-					method: 'POST',
-					body: {
-						channel: testChannelId,
-						timestamp: testMessageTs,
-					},
+			await makeSlackRequest<StarsAddResponse>('stars.add', TEST_TOKEN, {
+				method: 'POST',
+				body: {
+					channel: testChannelId,
+					timestamp: testMessageTs,
 				},
-			);
+			});
 
 			const response = await makeSlackRequest<StarsRemoveResponse>(
 				'stars.remove',
@@ -732,7 +739,7 @@ describe('Slack API Type Tests', () => {
 				},
 			);
 			const result = response;
-			
+
 			SlackEndpointOutputSchemas.starsRemove.parse(result);
 		});
 	});
@@ -747,11 +754,16 @@ describe('Slack API Type Tests', () => {
 			);
 			const result = response;
 			console.log(result, 'result');
-			
-			if (result.ok && result.userGroups && result.userGroups.length > 0 && result.userGroups[0]?.id) {
+
+			if (
+				result.ok &&
+				result.userGroups &&
+				result.userGroups.length > 0 &&
+				result.userGroups[0]?.id
+			) {
 				testUserGroupId = result.userGroups[0].id;
 			}
-			
+
 			SlackEndpointOutputSchemas.userGroupsList.parse(result);
 		});
 
@@ -768,11 +780,11 @@ describe('Slack API Type Tests', () => {
 				},
 			);
 			const result = response;
-			
+
 			if (result.ok && result.usergroup) {
 				testUserGroupId = result.usergroup.id;
 			}
-			
+
 			SlackEndpointOutputSchemas.userGroupsCreate.parse(result);
 		});
 
@@ -810,7 +822,7 @@ describe('Slack API Type Tests', () => {
 				},
 			);
 			const result = response;
-			
+
 			SlackEndpointOutputSchemas.userGroupsUpdate.parse(result);
 		});
 	});

@@ -1,9 +1,9 @@
 import dotenv from 'dotenv';
 import { createCorsair } from '../../core';
-import { github } from './index';
-import { GithubAPIError } from './client';
 import { createIntegrationAndAccount } from '../../tests/plugins-test-utils';
 import { createTestDatabase } from '../../tests/setup-db';
+import { GithubAPIError } from './client';
+import { github } from './index';
 
 dotenv.config();
 
@@ -61,9 +61,10 @@ describe('GitHub plugin integration', () => {
 
 		expect(eventsList.length).toBeGreaterThan(0);
 		const listEvent = eventsList[eventsList.length - 1]!;
-		const listEventPayload = typeof listEvent.payload === 'string' 
-			? JSON.parse(listEvent.payload) 
-			: listEvent.payload;
+		const listEventPayload =
+			typeof listEvent.payload === 'string'
+				? JSON.parse(listEvent.payload)
+				: listEvent.payload;
 		expect(listEventPayload).toMatchObject(listInput);
 
 		if (listedIssues.length > 0) {
@@ -94,9 +95,10 @@ describe('GitHub plugin integration', () => {
 
 		expect(eventsCreate.length).toBeGreaterThan(0);
 		const createEvent = eventsCreate[eventsCreate.length - 1]!;
-		const createEventPayload = typeof createEvent.payload === 'string' 
-			? JSON.parse(createEvent.payload) 
-			: createEvent.payload;
+		const createEventPayload =
+			typeof createEvent.payload === 'string'
+				? JSON.parse(createEvent.payload)
+				: createEvent.payload;
 		expect(createEventPayload).toMatchObject(createInput);
 
 		const issueFromDb = await corsair.github.db.issues.findByEntityId(
@@ -126,9 +128,10 @@ describe('GitHub plugin integration', () => {
 
 		expect(eventsUpdate.length).toBeGreaterThan(0);
 		const updateEvent = eventsUpdate[eventsUpdate.length - 1]!;
-		const updateEventPayload = typeof updateEvent.payload === 'string' 
-			? JSON.parse(updateEvent.payload) 
-			: updateEvent.payload;
+		const updateEventPayload =
+			typeof updateEvent.payload === 'string'
+				? JSON.parse(updateEvent.payload)
+				: updateEvent.payload;
 		expect(updateEventPayload).toMatchObject(updateInput);
 
 		const updatedIssueFromDb = await corsair.github.db.issues.findByEntityId(
@@ -145,9 +148,8 @@ describe('GitHub plugin integration', () => {
 			body: commentBody,
 		};
 
-		const createdComment = await corsair.github.api.issues.createComment(
-			commentInput,
-		);
+		const createdComment =
+			await corsair.github.api.issues.createComment(commentInput);
 
 		expect(createdComment).toBeDefined();
 
@@ -158,9 +160,10 @@ describe('GitHub plugin integration', () => {
 
 		expect(eventsComment.length).toBeGreaterThan(0);
 		const commentEvent = eventsComment[eventsComment.length - 1]!;
-		const commentEventPayload = typeof commentEvent.payload === 'string' 
-			? JSON.parse(commentEvent.payload) 
-			: commentEvent.payload;
+		const commentEventPayload =
+			typeof commentEvent.payload === 'string'
+				? JSON.parse(commentEvent.payload)
+				: commentEvent.payload;
 		expect(commentEventPayload).toMatchObject(commentInput);
 
 		const issueAfterComment = await corsair.github.db.issues.findByEntityId(
@@ -185,9 +188,10 @@ describe('GitHub plugin integration', () => {
 
 		expect(eventsGet.length).toBeGreaterThan(0);
 		const getEvent = eventsGet[eventsGet.length - 1]!;
-		const getEventPayload = typeof getEvent.payload === 'string' 
-			? JSON.parse(getEvent.payload) 
-			: getEvent.payload;
+		const getEventPayload =
+			typeof getEvent.payload === 'string'
+				? JSON.parse(getEvent.payload)
+				: getEvent.payload;
 		expect(getEventPayload).toMatchObject(getInput);
 
 		const issueFromDbAfterUpdate =
@@ -229,9 +233,10 @@ describe('GitHub plugin integration', () => {
 
 		expect(eventsList.length).toBeGreaterThan(0);
 		const listEvent = eventsList[eventsList.length - 1]!;
-		const listEventPayload = typeof listEvent.payload === 'string' 
-			? JSON.parse(listEvent.payload) 
-			: listEvent.payload;
+		const listEventPayload =
+			typeof listEvent.payload === 'string'
+				? JSON.parse(listEvent.payload)
+				: listEvent.payload;
 		expect(listEventPayload).toMatchObject(listInput);
 
 		const reposCount = await corsair.github.db.repositories.count();
@@ -264,9 +269,10 @@ describe('GitHub plugin integration', () => {
 
 		expect(eventsGet.length).toBeGreaterThan(0);
 		const getEvent = eventsGet[eventsGet.length - 1]!;
-		const getEventPayload = typeof getEvent.payload === 'string' 
-			? JSON.parse(getEvent.payload) 
-			: getEvent.payload;
+		const getEventPayload =
+			typeof getEvent.payload === 'string'
+				? JSON.parse(getEvent.payload)
+				: getEvent.payload;
 		expect(getEventPayload).toMatchObject(getInput);
 
 		const repoFromDb = await corsair.github.db.repositories.findByEntityId(
@@ -283,9 +289,8 @@ describe('GitHub plugin integration', () => {
 			repo,
 		};
 
-		const branches = await corsair.github.api.repositories.listBranches(
-			branchesInput,
-		);
+		const branches =
+			await corsair.github.api.repositories.listBranches(branchesInput);
 
 		expect(branches).toBeDefined();
 
@@ -298,14 +303,14 @@ describe('GitHub plugin integration', () => {
 
 		expect(eventsBranches.length).toBeGreaterThan(0);
 		const branchesEvent = eventsBranches[eventsBranches.length - 1]!;
-		const branchesEventPayload = typeof branchesEvent.payload === 'string' 
-			? JSON.parse(branchesEvent.payload) 
-			: branchesEvent.payload;
+		const branchesEventPayload =
+			typeof branchesEvent.payload === 'string'
+				? JSON.parse(branchesEvent.payload)
+				: branchesEvent.payload;
 		expect(branchesEventPayload).toMatchObject(branchesInput);
 
-		const repoAfterBranches = await corsair.github.db.repositories.findByEntityId(
-			String(repoGet.id),
-		);
+		const repoAfterBranches =
+			await corsair.github.db.repositories.findByEntityId(String(repoGet.id));
 		expect(repoAfterBranches).not.toBeNull();
 
 		const commitsInput = {
@@ -313,9 +318,8 @@ describe('GitHub plugin integration', () => {
 			repo,
 		};
 
-		const commits = await corsair.github.api.repositories.listCommits(
-			commitsInput,
-		);
+		const commits =
+			await corsair.github.api.repositories.listCommits(commitsInput);
 
 		expect(commits).toBeDefined();
 
@@ -328,14 +332,14 @@ describe('GitHub plugin integration', () => {
 
 		expect(eventsCommits.length).toBeGreaterThan(0);
 		const commitsEvent = eventsCommits[eventsCommits.length - 1]!;
-		const commitsEventPayload = typeof commitsEvent.payload === 'string' 
-			? JSON.parse(commitsEvent.payload) 
-			: commitsEvent.payload;
+		const commitsEventPayload =
+			typeof commitsEvent.payload === 'string'
+				? JSON.parse(commitsEvent.payload)
+				: commitsEvent.payload;
 		expect(commitsEventPayload).toMatchObject(commitsInput);
 
-		const repoAfterCommits = await corsair.github.db.repositories.findByEntityId(
-			String(repoGet.id),
-		);
+		const repoAfterCommits =
+			await corsair.github.db.repositories.findByEntityId(String(repoGet.id));
 		expect(repoAfterCommits).not.toBeNull();
 
 		const path = 'README.md';
@@ -345,9 +349,8 @@ describe('GitHub plugin integration', () => {
 			path,
 		};
 
-		const content = await corsair.github.api.repositories.getContent(
-			contentInput,
-		);
+		const content =
+			await corsair.github.api.repositories.getContent(contentInput);
 
 		expect(content).toBeDefined();
 
@@ -358,14 +361,14 @@ describe('GitHub plugin integration', () => {
 
 		expect(eventsContent.length).toBeGreaterThan(0);
 		const contentEvent = eventsContent[eventsContent.length - 1]!;
-		const contentEventPayload = typeof contentEvent.payload === 'string' 
-			? JSON.parse(contentEvent.payload) 
-			: contentEvent.payload;
+		const contentEventPayload =
+			typeof contentEvent.payload === 'string'
+				? JSON.parse(contentEvent.payload)
+				: contentEvent.payload;
 		expect(contentEventPayload).toMatchObject(contentInput);
 
-		const repoAfterContent = await corsair.github.db.repositories.findByEntityId(
-			String(repoGet.id),
-		);
+		const repoAfterContent =
+			await corsair.github.db.repositories.findByEntityId(String(repoGet.id));
 		expect(repoAfterContent).not.toBeNull();
 
 		testDb.cleanup();
@@ -396,9 +399,10 @@ describe('GitHub plugin integration', () => {
 
 		expect(eventsList.length).toBeGreaterThan(0);
 		const listEvent = eventsList[eventsList.length - 1]!;
-		const listEventPayload = typeof listEvent.payload === 'string' 
-			? JSON.parse(listEvent.payload) 
-			: listEvent.payload;
+		const listEventPayload =
+			typeof listEvent.payload === 'string'
+				? JSON.parse(listEvent.payload)
+				: listEvent.payload;
 		expect(listEventPayload).toMatchObject(listInput);
 
 		const tagName = `corsair-test-tag-${Date.now()}`;
@@ -409,7 +413,8 @@ describe('GitHub plugin integration', () => {
 			name: tagName,
 		};
 
-		const createdRelease = await corsair.github.api.releases.create(createInput);
+		const createdRelease =
+			await corsair.github.api.releases.create(createInput);
 
 		expect(createdRelease).toBeDefined();
 
@@ -420,9 +425,10 @@ describe('GitHub plugin integration', () => {
 
 		expect(eventsCreate.length).toBeGreaterThan(0);
 		const createEvent = eventsCreate[eventsCreate.length - 1]!;
-		const createEventPayload = typeof createEvent.payload === 'string' 
-			? JSON.parse(createEvent.payload) 
-			: createEvent.payload;
+		const createEventPayload =
+			typeof createEvent.payload === 'string'
+				? JSON.parse(createEvent.payload)
+				: createEvent.payload;
 		expect(createEventPayload).toMatchObject(createInput);
 
 		const releaseFromDb = await corsair.github.db.releases.findByEntityId(
@@ -451,14 +457,16 @@ describe('GitHub plugin integration', () => {
 
 		expect(eventsGet.length).toBeGreaterThan(0);
 		const getEvent = eventsGet[eventsGet.length - 1]!;
-		const getEventPayload = typeof getEvent.payload === 'string' 
-			? JSON.parse(getEvent.payload) 
-			: getEvent.payload;
+		const getEventPayload =
+			typeof getEvent.payload === 'string'
+				? JSON.parse(getEvent.payload)
+				: getEvent.payload;
 		expect(getEventPayload).toMatchObject(getInput);
 
-		const fetchedReleaseFromDb = await corsair.github.db.releases.findByEntityId(
-			String(createdRelease.id),
-		);
+		const fetchedReleaseFromDb =
+			await corsair.github.db.releases.findByEntityId(
+				String(createdRelease.id),
+			);
 		expect(fetchedReleaseFromDb).not.toBeNull();
 		expect(fetchedReleaseFromDb?.data.id).toBe(fetchedRelease.id);
 		expect(fetchedReleaseFromDb?.data.name).toBe(fetchedRelease.name);
@@ -470,7 +478,8 @@ describe('GitHub plugin integration', () => {
 			name: `${tagName}-updated`,
 		};
 
-		const updatedRelease = await corsair.github.api.releases.update(updateInput);
+		const updatedRelease =
+			await corsair.github.api.releases.update(updateInput);
 
 		expect(updatedRelease).toBeDefined();
 
@@ -481,14 +490,16 @@ describe('GitHub plugin integration', () => {
 
 		expect(eventsUpdate.length).toBeGreaterThan(0);
 		const updateEvent = eventsUpdate[eventsUpdate.length - 1]!;
-		const updateEventPayload = typeof updateEvent.payload === 'string' 
-			? JSON.parse(updateEvent.payload) 
-			: updateEvent.payload;
+		const updateEventPayload =
+			typeof updateEvent.payload === 'string'
+				? JSON.parse(updateEvent.payload)
+				: updateEvent.payload;
 		expect(updateEventPayload).toMatchObject(updateInput);
 
-		const updatedReleaseFromDb = await corsair.github.db.releases.findByEntityId(
-			String(createdRelease.id),
-		);
+		const updatedReleaseFromDb =
+			await corsair.github.db.releases.findByEntityId(
+				String(createdRelease.id),
+			);
 		expect(updatedReleaseFromDb).not.toBeNull();
 		expect(updatedReleaseFromDb?.data.name).toBe(updatedRelease.name);
 
@@ -525,9 +536,10 @@ describe('GitHub plugin integration', () => {
 
 		expect(eventsList.length).toBeGreaterThan(0);
 		const listEvent = eventsList[eventsList.length - 1]!;
-		const listEventPayload = typeof listEvent.payload === 'string' 
-			? JSON.parse(listEvent.payload) 
-			: listEvent.payload;
+		const listEventPayload =
+			typeof listEvent.payload === 'string'
+				? JSON.parse(listEvent.payload)
+				: listEvent.payload;
 		expect(listEventPayload).toMatchObject(listInput);
 
 		if (prsArray.length === 0) {
@@ -562,9 +574,10 @@ describe('GitHub plugin integration', () => {
 
 		expect(eventsGet.length).toBeGreaterThan(0);
 		const getEvent = eventsGet[eventsGet.length - 1]!;
-		const getEventPayload = typeof getEvent.payload === 'string' 
-			? JSON.parse(getEvent.payload) 
-			: getEvent.payload;
+		const getEventPayload =
+			typeof getEvent.payload === 'string'
+				? JSON.parse(getEvent.payload)
+				: getEvent.payload;
 		expect(getEventPayload).toMatchObject(getInput);
 
 		const prAfterGet = await corsair.github.db.pullRequests.findByEntityId(
@@ -580,9 +593,8 @@ describe('GitHub plugin integration', () => {
 			pullNumber: firstPr.number,
 		};
 
-		const reviews = await corsair.github.api.pullRequests.listReviews(
-			reviewsInput,
-		);
+		const reviews =
+			await corsair.github.api.pullRequests.listReviews(reviewsInput);
 
 		expect(reviews).toBeDefined();
 
@@ -595,9 +607,10 @@ describe('GitHub plugin integration', () => {
 
 		expect(eventsListReviews.length).toBeGreaterThan(0);
 		const reviewsEvent = eventsListReviews[eventsListReviews.length - 1]!;
-		const reviewsEventPayload = typeof reviewsEvent.payload === 'string' 
-			? JSON.parse(reviewsEvent.payload) 
-			: reviewsEvent.payload;
+		const reviewsEventPayload =
+			typeof reviewsEvent.payload === 'string'
+				? JSON.parse(reviewsEvent.payload)
+				: reviewsEvent.payload;
 		expect(reviewsEventPayload).toMatchObject(reviewsInput);
 
 		const prAfterReviews = await corsair.github.db.pullRequests.findByEntityId(
@@ -614,9 +627,8 @@ describe('GitHub plugin integration', () => {
 				event: 'COMMENT' as const,
 			};
 
-			const createdReview = await corsair.github.api.pullRequests.createReview(
-				createReviewInput,
-			);
+			const createdReview =
+				await corsair.github.api.pullRequests.createReview(createReviewInput);
 
 			expect(createdReview).toBeDefined();
 
@@ -631,10 +643,12 @@ describe('GitHub plugin integration', () => {
 			});
 
 			expect(eventsCreateReview.length).toBeGreaterThan(0);
-			const createReviewEvent = eventsCreateReview[eventsCreateReview.length - 1]!;
-			const createReviewEventPayload = typeof createReviewEvent.payload === 'string' 
-				? JSON.parse(createReviewEvent.payload) 
-				: createReviewEvent.payload;
+			const createReviewEvent =
+				eventsCreateReview[eventsCreateReview.length - 1]!;
+			const createReviewEventPayload =
+				typeof createReviewEvent.payload === 'string'
+					? JSON.parse(createReviewEvent.payload)
+					: createReviewEvent.payload;
 			expect(createReviewEventPayload).toMatchObject(createReviewInput);
 
 			const prAfterReview = await corsair.github.db.pullRequests.findByEntityId(
@@ -680,9 +694,10 @@ describe('GitHub plugin integration', () => {
 
 		expect(eventsList.length).toBeGreaterThan(0);
 		const listEvent = eventsList[eventsList.length - 1]!;
-		const listEventPayload = typeof listEvent.payload === 'string' 
-			? JSON.parse(listEvent.payload) 
-			: listEvent.payload;
+		const listEventPayload =
+			typeof listEvent.payload === 'string'
+				? JSON.parse(listEvent.payload)
+				: listEvent.payload;
 		expect(listEventPayload).toMatchObject(listInput);
 
 		if (workflowsArray.length === 0) {
@@ -717,9 +732,10 @@ describe('GitHub plugin integration', () => {
 
 		expect(eventsGet.length).toBeGreaterThan(0);
 		const getEvent = eventsGet[eventsGet.length - 1]!;
-		const getEventPayload = typeof getEvent.payload === 'string' 
-			? JSON.parse(getEvent.payload) 
-			: getEvent.payload;
+		const getEventPayload =
+			typeof getEvent.payload === 'string'
+				? JSON.parse(getEvent.payload)
+				: getEvent.payload;
 		expect(getEventPayload).toMatchObject(getInput);
 
 		const workflowAfterGet = await corsair.github.db.workflows.findByEntityId(
@@ -746,9 +762,10 @@ describe('GitHub plugin integration', () => {
 
 		expect(eventsRuns.length).toBeGreaterThan(0);
 		const runsEvent = eventsRuns[eventsRuns.length - 1]!;
-		const runsEventPayload = typeof runsEvent.payload === 'string' 
-			? JSON.parse(runsEvent.payload) 
-			: runsEvent.payload;
+		const runsEventPayload =
+			typeof runsEvent.payload === 'string'
+				? JSON.parse(runsEvent.payload)
+				: runsEvent.payload;
 		expect(runsEventPayload).toMatchObject(runsInput);
 
 		testDb.cleanup();

@@ -1,5 +1,6 @@
 import dotenv from 'dotenv';
 import { makeGmailRequest } from './client';
+import { GmailEndpointOutputSchemas } from './endpoints/types';
 import type {
 	Draft,
 	DraftListResponse,
@@ -8,10 +9,9 @@ import type {
 	Message,
 	MessageListResponse,
 	Profile,
-	ThreadListResponse,
 	Thread,
+	ThreadListResponse,
 } from './types';
-import { GmailEndpointOutputSchemas } from './endpoints/types';
 
 dotenv.config();
 
@@ -53,7 +53,7 @@ describe('Gmail API Type Tests', () => {
 					},
 				},
 			);
-            const result = response;
+			const result = response;
 
 			GmailEndpointOutputSchemas.messagesList.parse(result);
 		});
@@ -206,9 +206,13 @@ describe('Gmail API Type Tests', () => {
 				throw new Error('No messages found');
 			}
 
-			await makeGmailRequest(`/users/me/messages/${messageId}/trash`, TEST_TOKEN, {
-				method: 'POST',
-			});
+			await makeGmailRequest(
+				`/users/me/messages/${messageId}/trash`,
+				TEST_TOKEN,
+				{
+					method: 'POST',
+				},
+			);
 
 			const response = await makeGmailRequest<Message>(
 				`/users/me/messages/${messageId}/untrash`,
@@ -401,8 +405,8 @@ describe('Gmail API Type Tests', () => {
 					},
 				},
 			);
-            const result = response;
-            
+			const result = response;
+
 			GmailEndpointOutputSchemas.draftsCreate.parse(result);
 
 			if (result.id) {
@@ -459,9 +463,13 @@ describe('Gmail API Type Tests', () => {
 
 			GmailEndpointOutputSchemas.draftsUpdate.parse(result);
 
-			await makeGmailRequest(`/users/me/drafts/${createResponse.id}`, TEST_TOKEN, {
-				method: 'DELETE',
-			});
+			await makeGmailRequest(
+				`/users/me/drafts/${createResponse.id}`,
+				TEST_TOKEN,
+				{
+					method: 'DELETE',
+				},
+			);
 		});
 	});
 
@@ -582,9 +590,13 @@ describe('Gmail API Type Tests', () => {
 
 			GmailEndpointOutputSchemas.threadsTrash.parse(result);
 
-			await makeGmailRequest(`/users/me/threads/${threadId}/untrash`, TEST_TOKEN, {
-				method: 'POST',
-			});
+			await makeGmailRequest(
+				`/users/me/threads/${threadId}/untrash`,
+				TEST_TOKEN,
+				{
+					method: 'POST',
+				},
+			);
 		});
 
 		it('threadsUntrash returns correct type', async () => {
@@ -603,9 +615,13 @@ describe('Gmail API Type Tests', () => {
 				throw new Error('No threads found');
 			}
 
-			await makeGmailRequest(`/users/me/threads/${threadId}/trash`, TEST_TOKEN, {
-				method: 'POST',
-			});
+			await makeGmailRequest(
+				`/users/me/threads/${threadId}/trash`,
+				TEST_TOKEN,
+				{
+					method: 'POST',
+				},
+			);
 
 			const response = await makeGmailRequest<Thread>(
 				`/users/me/threads/${threadId}/untrash`,

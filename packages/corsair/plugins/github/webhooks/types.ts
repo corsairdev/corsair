@@ -286,12 +286,12 @@ export type GithubWebhookOutputs = {
 
 export type PushEventType = PushEvent;
 
+import { verifyHmacSignatureWithPrefix } from '../../../async-core/webhook-utils';
 import type {
 	CorsairWebhookMatcher,
 	RawWebhookRequest,
 	WebhookRequest,
 } from '../../../core';
-import { verifyHmacSignatureWithPrefix } from '../../../async-core/webhook-utils';
 
 function parseBody(body: unknown): unknown {
 	return typeof body === 'string' ? JSON.parse(body) : body;

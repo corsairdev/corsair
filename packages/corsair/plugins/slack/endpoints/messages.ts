@@ -12,7 +12,7 @@ export const postMessage: SlackEndpoints['postMessage'] = async (
 		ctx.key,
 		{
 			method: 'POST',
-			body: input
+			body: input,
 		},
 	);
 

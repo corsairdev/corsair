@@ -1,12 +1,4 @@
 import { z } from 'zod';
-import type {
-	Issue,
-	PullRequest,
-	Release,
-	Repository,
-	Workflow,
-	WorkflowRun,
-} from '../types';
 
 const SimpleUserSchema = z.object({
 	name: z.string().nullable().optional(),
@@ -435,7 +427,7 @@ export const GithubEndpointOutputSchemas = {
 
 export type GithubEndpointOutputs = {
 	[K in keyof typeof GithubEndpointOutputSchemas]: z.infer<
-		typeof GithubEndpointOutputSchemas[K]
+		(typeof GithubEndpointOutputSchemas)[K]
 	>;
 };
 

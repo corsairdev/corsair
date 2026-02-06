@@ -193,4 +193,7 @@ export function posthog<const T extends PostHogPluginOptions>(
 	} satisfies InternalPostHogPlugin;
 }
 
-export { createPostHogEventMatch, verifyPostHogWebhookSignature } from './webhooks/types';
+export {
+	createPostHogEventMatch,
+	verifyPostHogWebhookSignature,
+} from './webhooks/types';

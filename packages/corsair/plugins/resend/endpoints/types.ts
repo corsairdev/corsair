@@ -1,6 +1,5 @@
 import { z } from 'zod';
 
-
 const SendEmailResponseSchema = z.object({
 	id: z.string(),
 });
@@ -83,7 +82,7 @@ export const ResendEndpointOutputSchemas = {
 
 export type ResendEndpointOutputs = {
 	[K in keyof typeof ResendEndpointOutputSchemas]: z.infer<
-		typeof ResendEndpointOutputSchemas[K]
+		(typeof ResendEndpointOutputSchemas)[K]
 	>;
 };
 

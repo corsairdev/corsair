@@ -123,12 +123,12 @@ export type TicketCreatedEventType = TicketCreatedEvent;
 export type TicketUpdatedEventType = TicketUpdatedEvent;
 export type TicketDeletedEventType = TicketDeletedEvent;
 
+import { verifyHmacSignature } from '../../../async-core/webhook-utils';
 import type {
 	CorsairWebhookMatcher,
 	RawWebhookRequest,
 	WebhookRequest,
 } from '../../../core';
-import { verifyHmacSignature } from '../../../async-core/webhook-utils';
 
 function parseBody(body: unknown): unknown {
 	return typeof body === 'string' ? JSON.parse(body) : body;

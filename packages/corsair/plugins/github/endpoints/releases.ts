@@ -29,10 +29,7 @@ export const list: GithubEndpoints['releasesList'] = async (ctx, input) => {
 export const get: GithubEndpoints['releasesGet'] = async (ctx, input) => {
 	const { owner, repo, releaseId } = input;
 	const endpoint = `/repos/${owner}/${repo}/releases/${releaseId}`;
-	const result = await makeGithubRequest<ReleaseGetResponse>(
-		endpoint,
-		ctx.key,
-	);
+	const result = await makeGithubRequest<ReleaseGetResponse>(endpoint, ctx.key);
 
 	if (result && ctx.db.releases) {
 		try {

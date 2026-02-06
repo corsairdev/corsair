@@ -1,4 +1,4 @@
-import { createCorsair, linear, resend, slack, github } from 'corsair';
+import { createCorsair, github, linear, resend, slack } from 'corsair';
 import { drizzleAdapter } from 'corsair/adapters';
 import { db } from '../db';
 import * as schema from '../db/schema';

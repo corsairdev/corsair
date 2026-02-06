@@ -294,7 +294,10 @@ export function linear<const T extends LinearPluginOptions>(
 	} satisfies InternalLinearPlugin;
 }
 
-export { createLinearEventMatch, verifyLinearWebhookSignature } from './webhooks/types';
+export {
+	createLinearEventMatch,
+	verifyLinearWebhookSignature,
+} from './webhooks/types';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Webhook Type Exports

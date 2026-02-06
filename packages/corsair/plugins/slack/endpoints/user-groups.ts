@@ -134,7 +134,7 @@ export const update: SlackEndpoints['userGroupsUpdate'] = async (
 		SlackEndpointOutputs['userGroupsUpdate']
 	>('userGroups.update', ctx.key, {
 		method: 'POST',
-	    body: input,
+		body: input,
 	});
 
 	if (result.ok && result.usergroup && ctx.db.userGroups) {
