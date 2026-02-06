@@ -1,11 +1,21 @@
 import { logEventFromContext } from '../../utils/events';
 import type { LinearWebhooks } from '..';
-import { createLinearMatch } from './types';
+import { createLinearMatch, verifyLinearWebhookSignature } from './types';
 
 export const projectCreate: LinearWebhooks['projectCreate'] = {
 	match: createLinearMatch('Project', 'create'),
 
 	handler: async (ctx, request) => {
+		const webhookSecret = ctx.key;
+		const verification = verifyLinearWebhookSignature(request, webhookSecret);
+		if (!verification.valid) {
+			return {
+				success: false,
+				statusCode: 401,
+				error: verification.error || 'Signature verification failed',
+			};
+		}
+
 		const event = request.payload;
 
 		if (event.type !== 'Project' || event.action !== 'create') {
@@ -57,6 +67,16 @@ export const projectUpdate: LinearWebhooks['projectUpdate'] = {
 	match: createLinearMatch('Project', 'update'),
 
 	handler: async (ctx, request) => {
+		const webhookSecret = ctx.key;
+		const verification = verifyLinearWebhookSignature(request, webhookSecret);
+		if (!verification.valid) {
+			return {
+				success: false,
+				statusCode: 401,
+				error: verification.error || 'Signature verification failed',
+			};
+		}
+
 		const event = request.payload;
 
 		if (event.type !== 'Project' || event.action !== 'update') {
@@ -108,6 +128,16 @@ export const projectRemove: LinearWebhooks['projectRemove'] = {
 	match: createLinearMatch('Project', 'remove'),
 
 	handler: async (ctx, request) => {
+		const webhookSecret = ctx.key;
+		const verification = verifyLinearWebhookSignature(request, webhookSecret);
+		if (!verification.valid) {
+			return {
+				success: false,
+				statusCode: 401,
+				error: verification.error || 'Signature verification failed',
+			};
+		}
+
 		const event = request.payload;
 
 		if (event.type !== 'Project' || event.action !== 'remove') {

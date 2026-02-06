@@ -213,17 +213,55 @@ export type LinearWebhookOutputs = {
 	projectRemove: ProjectDeletedEvent;
 };
 
-import type { CorsairWebhookMatcher, RawWebhookRequest } from '../../../core';
+import type {
+	CorsairWebhookMatcher,
+	RawWebhookRequest,
+	WebhookRequest,
+} from '../../../core';
+import { verifyHmacSignature } from '../../../async-core/webhook-utils';
 
 function parseBody(body: unknown): unknown {
 	return typeof body === 'string' ? JSON.parse(body) : body;
 }
 
-/**
- * Creates a webhook matcher for a specific Linear event type and action.
- * Returns a matcher function that checks if the incoming webhook matches.
- */
-export function createLinearMatch(
+export function verifyLinearWebhookSignature(
+	request: WebhookRequest<unknown>,
+	webhookSecret?: string,
+): { valid: boolean; error?: string } {
+	if (!webhookSecret) {
+		return { valid: false };
+	}
+
+	const rawBody = request.rawBody;
+	if (!rawBody) {
+		return {
+			valid: false,
+			error: 'Missing raw body for signature verification',
+		};
+	}
+
+	const headers = request.headers;
+	const signature = Array.isArray(headers['linear-signature'])
+		? headers['linear-signature'][0]
+		: headers['linear-signature'];
+
+	if (!signature) {
+		return {
+			valid: false,
+			error: 'Missing linear-signature header',
+		};
+	}
+
+	const isValid = verifyHmacSignature(rawBody, webhookSecret, signature);
+	if (!isValid) {
+		return { valid: false, error: 'Invalid signature' };
+	}
+
+	return { valid: true };
+}
+
+
+export function createLinearEventMatch(
 	type: string,
 	action: string,
 ): CorsairWebhookMatcher {
@@ -237,3 +275,5 @@ export function createLinearMatch(
 		);
 	};
 }
+
+export const createLinearMatch = createLinearEventMatch;

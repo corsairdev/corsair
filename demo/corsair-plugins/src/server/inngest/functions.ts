@@ -317,6 +317,51 @@ export const issueReportedHandler = inngest.createFunction(
 	},
 );
 
+export const githubStarHandler = inngest.createFunction(
+	{ id: 'github-star-handler', retries: 3 },
+	{ event: 'github/star' },
+	async ({ event, step }) => {
+		const { tenantId, event: githubStarEvent } = event.data;
+		const tenant = corsair.withTenant(tenantId);
+
+		const { repository, sender } = githubStarEvent;
+
+		console.log(
+			`Processing GitHub star for tenant ${tenantId}:`,
+			repository.full_name,
+			`by ${sender.login}`,
+		);
+
+		const slackChannel = await step.run('get-slack-channel', async () => {
+			return await getSlackChannel(tenantId, 'sdk-test');
+		});
+
+		const senderName = sender.name || sender.login || 'Unknown';
+		const senderEmail = sender.email || 'N/A';
+		const message = `*⭐ New GitHub Star*\n*Repository:* ${repository.full_name}\n*Name:* ${senderName}\n*Email:* ${senderEmail}\n*Username:* ${sender.login}`;
+
+		await step.run('send-slack-notification', async () => {
+			await tenant.slack.api.messages.post({
+				channel: slackChannel,
+				text: message,
+			});
+		});
+
+		const result = await step.run('process-github-star', async () => {
+			return {
+				success: true,
+				repository: repository.full_name,
+				sender: sender.login,
+				senderName,
+				senderEmail,
+				processedAt: new Date().toISOString(),
+			};
+		});
+
+		return result;
+	},
+);
+
 export const functions = [
 	slackEventHandler,
 	linearIssueCreatedHandler,
@@ -325,4 +370,5 @@ export const functions = [
 	linearCommentUpdatedHandler,
 	resendEmailHandler,
 	issueReportedHandler,
+	githubStarHandler,
 ];

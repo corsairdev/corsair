@@ -1,30 +1,28 @@
 import type { HubSpotWebhooks } from '..';
+import {
+	createHubSpotEventMatch,
+	verifyHubSpotWebhookSignature,
+} from './types';
 import type {
 	DealCreatedEventType,
 	DealDeletedEventType,
 	DealUpdatedEventType,
 } from './types';
 
-function parseBody(body: unknown): unknown {
-	return typeof body === 'string' ? JSON.parse(body) : body;
-}
-
-function createHubSpotMatch(subscriptionType: string) {
-	return (request: import('../../../core/webhooks').RawWebhookRequest) => {
-		const parsedBody = parseBody(request.body) as
-			| Record<string, unknown>
-			| Array<Record<string, unknown>>;
-		const events = Array.isArray(parsedBody) ? parsedBody : [parsedBody];
-		return events.some(
-			(event) => (event.subscriptionType as string) === subscriptionType,
-		);
-	};
-}
-
 export const dealCreated: HubSpotWebhooks['dealCreated'] = {
-	match: createHubSpotMatch('deal.creation'),
+	match: createHubSpotEventMatch('deal.creation'),
 
 	handler: async (ctx, request) => {
+		const webhookSecret = ctx.key;
+		const verification = verifyHubSpotWebhookSignature(request, webhookSecret);
+		if (!verification.valid) {
+			return {
+				success: false,
+				statusCode: 401,
+				error: verification.error || 'Signature verification failed',
+			};
+		}
+
 		const payload = request.payload as
 			| DealCreatedEventType
 			| Array<DealCreatedEventType>;
@@ -60,9 +58,19 @@ export const dealCreated: HubSpotWebhooks['dealCreated'] = {
 };
 
 export const dealUpdated: HubSpotWebhooks['dealUpdated'] = {
-	match: createHubSpotMatch('deal.propertyChange'),
+	match: createHubSpotEventMatch('deal.propertyChange'),
 
 	handler: async (ctx, request) => {
+		const webhookSecret = ctx.key;
+		const verification = verifyHubSpotWebhookSignature(request, webhookSecret);
+		if (!verification.valid) {
+			return {
+				success: false,
+				statusCode: 401,
+				error: verification.error || 'Signature verification failed',
+			};
+		}
+
 		const payload = request.payload as
 			| DealUpdatedEventType
 			| Array<DealUpdatedEventType>;
@@ -105,9 +113,19 @@ export const dealUpdated: HubSpotWebhooks['dealUpdated'] = {
 };
 
 export const dealDeleted: HubSpotWebhooks['dealDeleted'] = {
-	match: createHubSpotMatch('deal.deletion'),
+	match: createHubSpotEventMatch('deal.deletion'),
 
 	handler: async (ctx, request) => {
+		const webhookSecret = ctx.key;
+		const verification = verifyHubSpotWebhookSignature(request, webhookSecret);
+		if (!verification.valid) {
+			return {
+				success: false,
+				statusCode: 401,
+				error: verification.error || 'Signature verification failed',
+			};
+		}
+
 		const payload = request.payload as
 			| DealDeletedEventType
 			| Array<DealDeletedEventType>;

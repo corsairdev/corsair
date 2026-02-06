@@ -31,6 +31,7 @@ import { CommentWebhooks, IssueWebhooks, ProjectWebhooks } from './webhooks';
 export type LinearPluginOptions = {
 	authType?: PickAuth<'api_key'>;
 	key?: string;
+	webhookSecret?: string;
 	hooks?: InternalLinearPlugin['hooks'];
 	webhookHooks?: InternalLinearPlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
@@ -250,20 +251,38 @@ export function linear<const T extends LinearPluginOptions>(
 		webhookHooks: options.webhookHooks,
 		endpoints: linearEndpointsNested,
 		webhooks: linearWebhooksNested,
+		pluginWebhookMatcher: (request) => {
+			const headers = request.headers;
+			const hasLinearSignature = 'linear-signature' in headers;
+			return hasLinearSignature;
+		},
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
 		},
-		keyBuilder: async (ctx: LinearKeyBuilderContext) => {
-			if (options.key) {
+		keyBuilder: async (ctx: LinearKeyBuilderContext, source) => {
+			if (source === 'webhook' && options.webhookSecret) {
+				return options.webhookSecret;
+			}
+
+			if (source === 'webhook') {
+				const res = await ctx.keys.getWebhookSignature();
+
+				if (!res) {
+					return '';
+				}
+
+				return res;
+			}
+
+			if (source === 'endpoint' && options.key) {
 				return options.key;
 			}
 
-			if (ctx.authType === 'api_key') {
+			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.getApiKey();
 
 				if (!res) {
-					// prob need to throw an error here
 					return '';
 				}
 
@@ -274,6 +293,8 @@ export function linear<const T extends LinearPluginOptions>(
 		},
 	} satisfies InternalLinearPlugin;
 }
+
+export { createLinearEventMatch, verifyLinearWebhookSignature } from './webhooks/types';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Webhook Type Exports

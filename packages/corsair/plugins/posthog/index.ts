@@ -18,6 +18,7 @@ import { EventWebhooks } from './webhooks';
 export type PostHogPluginOptions = {
 	authType?: PickAuth<'api_key'>;
 	key?: string;
+	webhookSecret?: string;
 	hooks?: InternalPostHogPlugin['hooks'];
 	webhookHooks?: InternalPostHogPlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
@@ -143,19 +144,44 @@ export function posthog<const T extends PostHogPluginOptions>(
 		endpoints: posthogEndpointsNested,
 		webhooks: posthogWebhooksNested,
 		pluginWebhookMatcher: (request) => {
-			return false;
+			const headers = request.headers;
+			const hasPostHogSignature =
+				'x-posthog-signature' in headers || 'x-signature' in headers;
+			const parsedBody =
+				typeof request.body === 'string'
+					? JSON.parse(request.body)
+					: request.body;
+			const hasPostHogPayload =
+				typeof parsedBody === 'object' &&
+				parsedBody !== null &&
+				'event' in parsedBody &&
+				'distinct_id' in parsedBody;
+			return hasPostHogSignature || hasPostHogPayload;
 		},
 		errorHandlers: options.errorHandlers,
-		keyBuilder: async (ctx: PostHogKeyBuilderContext) => {
-			if (options.key) {
+		keyBuilder: async (ctx: PostHogKeyBuilderContext, source) => {
+			if (source === 'webhook' && options.webhookSecret) {
+				return options.webhookSecret;
+			}
+
+			if (source === 'webhook') {
+				const res = await ctx.keys.getWebhookSignature();
+
+				if (!res) {
+					return '';
+				}
+
+				return res;
+			}
+
+			if (source === 'endpoint' && options.key) {
 				return options.key;
 			}
 
-			if (ctx.authType === 'api_key') {
+			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.getApiKey();
 
 				if (!res) {
-					// prob need to throw an error here
 					return '';
 				}
 
@@ -166,3 +192,5 @@ export function posthog<const T extends PostHogPluginOptions>(
 		},
 	} satisfies InternalPostHogPlugin;
 }
+
+export { createPostHogEventMatch, verifyPostHogWebhookSignature } from './webhooks/types';

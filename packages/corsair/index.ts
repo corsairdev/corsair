@@ -277,4 +277,14 @@ export {
 	type SlackWebhooks,
 	slack,
 } from './plugins/slack';
+// GitHub
+export {
+	type GithubBoundEndpoints,
+	type GithubBoundWebhooks,
+	type GithubContext,
+	type GithubEndpoints,
+	type GithubPluginOptions,
+	type GithubWebhooks,
+	github,
+} from './plugins/github';
 export { processWebhook } from './webhooks';
