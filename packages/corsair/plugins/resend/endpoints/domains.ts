@@ -18,7 +18,7 @@ export const create: ResendEndpoints['domainsCreate'] = async (ctx, input) => {
 
 	if (response.id) {
 		const endpoints = ctx.endpoints as ResendBoundEndpoints;
-		await endpoints.domainsGet({ id: response.id });
+		await endpoints.domains.get({ id: response.id });
 	}
 
 	await logEventFromContext(
@@ -127,7 +127,7 @@ export const verify: ResendEndpoints['domainsVerify'] = async (ctx, input) => {
 
 	if (response.id) {
 		const endpoints = ctx.endpoints as ResendBoundEndpoints;
-		await endpoints.domainsGet({ id: response.id });
+		await endpoints.domains.get({ id: response.id });
 	}
 
 	await logEventFromContext(

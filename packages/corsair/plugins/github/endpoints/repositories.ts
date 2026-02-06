@@ -67,7 +67,7 @@ export const listBranches: GithubEndpoints['repositoriesListBranches'] = async (
 	);
 
 	const endpoints = ctx.endpoints as GithubBoundEndpoints;
-	await endpoints.repositoriesGet({
+	await endpoints.repositories.get({
 		owner,
 		repo,
 	});
@@ -94,7 +94,7 @@ export const listCommits: GithubEndpoints['repositoriesListCommits'] = async (
 	);
 
 	const endpoints = ctx.endpoints as GithubBoundEndpoints;
-	await endpoints.repositoriesGet({
+	await endpoints.repositories.get({
 		owner,
 		repo,
 	});
@@ -121,7 +121,7 @@ export const getContent: GithubEndpoints['repositoriesGetContent'] = async (
 	);
 
 	const endpoints = ctx.endpoints as GithubBoundEndpoints;
-	await endpoints.repositoriesGet({
+	await endpoints.repositories.get({
 		owner,
 		repo,
 	});

@@ -74,7 +74,7 @@ export const listReviews: GithubEndpoints['pullRequestsListReviews'] = async (
 	);
 
 	const endpoints = ctx.endpoints as GithubBoundEndpoints;
-	await endpoints.pullRequestsGet({
+	await endpoints.pullRequests.get({
 		owner,
 		repo,
 		pullNumber,
@@ -102,7 +102,7 @@ export const createReview: GithubEndpoints['pullRequestsCreateReview'] = async (
 	);
 
 	const endpoints = ctx.endpoints as GithubBoundEndpoints;
-	await endpoints.pullRequestsGet({
+	await endpoints.pullRequests.get({
 		owner,
 		repo,
 		pullNumber,

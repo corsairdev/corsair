@@ -23,6 +23,7 @@ export async function POST(request: NextRequest) {
 		undefined;
 
 	const result = await processWebhook(corsair, headers, body, { tenantId });
+
 	// Handle case where no webhook matched
 	if (!result.response) {
 		return NextResponse.json(

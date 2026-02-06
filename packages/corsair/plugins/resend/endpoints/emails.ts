@@ -44,7 +44,7 @@ export const send: ResendEndpoints['emailsSend'] = async (ctx, input) => {
 
 	if (response.id) {
 		const endpoints = ctx.endpoints as ResendBoundEndpoints;
-		await endpoints.emailsGet({ id: response.id });
+		await endpoints.emails.get({ id: response.id });
 	}
 
 	await logEventFromContext(

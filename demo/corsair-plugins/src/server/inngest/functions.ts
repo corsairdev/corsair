@@ -40,7 +40,7 @@ export const slackEventHandler = inngest.createFunction(
 			slackEvent.type,
 		);
 
-		const result = await step.run('process-slack-event', async () => {
+		await step.run('process-slack-event', async () => {
 			try {
 				// Process Slack event - add your business logic here
 				// For example: store in database, send notifications, trigger workflows, etc.
@@ -54,19 +54,11 @@ export const slackEventHandler = inngest.createFunction(
 
 				// Example: Access Slack API through Corsair if needed
 				// const channels = await corsair.withTenant(tenantId).slack.api.channels.list();
-
-				return {
-					success: true,
-					eventType: slackEvent.type,
-					processedAt: new Date().toISOString(),
-				};
 			} catch (error) {
 				console.error('Error processing Slack event:', error);
 				throw error;
 			}
 		});
-
-		return result;
 	},
 );
 

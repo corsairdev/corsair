@@ -743,7 +743,11 @@ export type SlackWebhookOutputs = {
 	challenge: SlackUrlVerificationPayload;
 };
 
-import type { CorsairWebhookMatcher, RawWebhookRequest, WebhookRequest } from '../../../core';
+import type {
+	CorsairWebhookMatcher,
+	RawWebhookRequest,
+	WebhookRequest,
+} from '../../../core';
 import { verifySlackSignature } from '../../../async-core/webhook-utils';
 
 function parseBody(body: unknown): unknown {
@@ -752,7 +756,7 @@ function parseBody(body: unknown): unknown {
 
 export function verifySlackWebhookSignature(
 	request: WebhookRequest<unknown>,
-	signingSecret: string,
+	signingSecret?: string,
 ): { valid: boolean; error?: string } {
 	if (!signingSecret) {
 		return { valid: false };
@@ -760,7 +764,10 @@ export function verifySlackWebhookSignature(
 
 	const rawBody = request.rawBody;
 	if (!rawBody) {
-		return { valid: false, error: 'Missing raw body for signature verification' };
+		return {
+			valid: false,
+			error: 'Missing raw body for signature verification',
+		};
 	}
 
 	const headers = request.headers;
@@ -778,7 +785,12 @@ export function verifySlackWebhookSignature(
 		};
 	}
 
-	const isValid = verifySlackSignature(rawBody, signingSecret, timestamp, signature);
+	const isValid = verifySlackSignature(
+		rawBody,
+		signingSecret,
+		timestamp,
+		signature,
+	);
 	if (!isValid) {
 		return { valid: false, error: 'Invalid signature' };
 	}
@@ -795,7 +807,6 @@ export function createSlackEventMatch(
 	eventType: string,
 ): CorsairWebhookMatcher {
 	return (request: RawWebhookRequest) => {
-
 		const parsedBody = parseBody(request.body) as Record<string, unknown>;
 
 		if (eventType === 'url_verification') {

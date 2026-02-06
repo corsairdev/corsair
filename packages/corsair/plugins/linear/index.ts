@@ -42,7 +42,7 @@ export type LinearContext = CorsairPluginContext<
 >;
 export type LinearKeyBuilderContext = KeyBuilderContext<LinearPluginOptions>;
 
-export type LinearBoundEndpoints = BindEndpoints<LinearEndpoints>;
+export type LinearBoundEndpoints = BindEndpoints<typeof linearEndpointsNested>;
 
 type LinearEndpoint<
 	K extends keyof LinearEndpointOutputs,

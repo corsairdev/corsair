@@ -41,7 +41,7 @@ export type ResendContext = CorsairPluginContext<
 >;
 export type ResendKeyBuilderContext = KeyBuilderContext<ResendPluginOptions>;
 
-export type ResendBoundEndpoints = BindEndpoints<ResendEndpoints>;
+export type ResendBoundEndpoints = BindEndpoints<typeof resendEndpointsNested>;
 
 type ResendEndpoint<
 	K extends keyof ResendEndpointOutputs,
