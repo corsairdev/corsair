@@ -1,11 +1,21 @@
 import { logEventFromContext } from '../../utils/events';
 import type { ResendWebhooks } from '..';
-import { createResendMatch } from './types';
+import { createResendMatch, verifyResendWebhookSignature } from './types';
 
 export const emailSent: ResendWebhooks['emailSent'] = {
 	match: createResendMatch('email.sent'),
 
 	handler: async (ctx, request) => {
+		const webhookSecret = ctx.key;
+		const verification = verifyResendWebhookSignature(request, webhookSecret);
+		if (!verification.valid) {
+			return {
+				success: false,
+				statusCode: 401,
+				error: verification.error || 'Signature verification failed',
+			};
+		}
+
 		const event = request.payload;
 
 		if (event.type !== 'email.sent') {
@@ -58,6 +68,16 @@ export const emailDelivered: ResendWebhooks['emailDelivered'] = {
 	match: createResendMatch('email.delivered'),
 
 	handler: async (ctx, request) => {
+		const webhookSecret = ctx.key;
+		const verification = verifyResendWebhookSignature(request, webhookSecret);
+		if (!verification.valid) {
+			return {
+				success: false,
+				statusCode: 401,
+				error: verification.error || 'Signature verification failed',
+			};
+		}
+
 		const event = request.payload;
 
 		if (event.type !== 'email.delivered') {
@@ -89,6 +109,16 @@ export const emailBounced: ResendWebhooks['emailBounced'] = {
 	match: createResendMatch('email.bounced'),
 
 	handler: async (ctx, request) => {
+		const webhookSecret = ctx.key;
+		const verification = verifyResendWebhookSignature(request, webhookSecret);
+		if (!verification.valid) {
+			return {
+				success: false,
+				statusCode: 401,
+				error: verification.error || 'Signature verification failed',
+			};
+		}
+
 		const event = request.payload;
 
 		if (event.type !== 'email.bounced') {
@@ -121,6 +151,16 @@ export const emailOpened: ResendWebhooks['emailOpened'] = {
 	match: createResendMatch('email.opened'),
 
 	handler: async (ctx, request) => {
+		const webhookSecret = ctx.key;
+		const verification = verifyResendWebhookSignature(request, webhookSecret);
+		if (!verification.valid) {
+			return {
+				success: false,
+				statusCode: 401,
+				error: verification.error || 'Signature verification failed',
+			};
+		}
+
 		const event = request.payload;
 
 		if (event.type !== 'email.opened') {
@@ -152,6 +192,16 @@ export const emailClicked: ResendWebhooks['emailClicked'] = {
 	match: createResendMatch('email.clicked'),
 
 	handler: async (ctx, request) => {
+		const webhookSecret = ctx.key;
+		const verification = verifyResendWebhookSignature(request, webhookSecret);
+		if (!verification.valid) {
+			return {
+				success: false,
+				statusCode: 401,
+				error: verification.error || 'Signature verification failed',
+			};
+		}
+
 		const event = request.payload;
 
 		if (event.type !== 'email.clicked') {
@@ -184,6 +234,16 @@ export const emailComplained: ResendWebhooks['emailComplained'] = {
 	match: createResendMatch('email.complained'),
 
 	handler: async (ctx, request) => {
+		const webhookSecret = ctx.key;
+		const verification = verifyResendWebhookSignature(request, webhookSecret);
+		if (!verification.valid) {
+			return {
+				success: false,
+				statusCode: 401,
+				error: verification.error || 'Signature verification failed',
+			};
+		}
+
 		const event = request.payload;
 
 		if (event.type !== 'email.complained') {
@@ -215,6 +275,16 @@ export const emailFailed: ResendWebhooks['emailFailed'] = {
 	match: createResendMatch('email.failed'),
 
 	handler: async (ctx, request) => {
+		const webhookSecret = ctx.key;
+		const verification = verifyResendWebhookSignature(request, webhookSecret);
+		if (!verification.valid) {
+			return {
+				success: false,
+				statusCode: 401,
+				error: verification.error || 'Signature verification failed',
+			};
+		}
+
 		const event = request.payload;
 
 		if (event.type !== 'email.failed') {
@@ -247,6 +317,16 @@ export const emailReceived: ResendWebhooks['emailReceived'] = {
 	match: createResendMatch('email.received'),
 
 	handler: async (ctx, request) => {
+		const webhookSecret = ctx.key;
+		const verification = verifyResendWebhookSignature(request, webhookSecret);
+		if (!verification.valid) {
+			return {
+				success: false,
+				statusCode: 401,
+				error: verification.error || 'Signature verification failed',
+			};
+		}
+
 		const event = request.payload;
 
 		if (event.type !== 'email.received') {

@@ -12,7 +12,7 @@ export const list: GithubEndpoints['workflowsList'] = async (ctx, input) => {
 	const endpoint = `/repos/${owner}/${repo}/actions/workflows`;
 	const result = await makeGithubRequest<WorkflowsListResponse>(
 		endpoint,
-		ctx.options.token,
+		ctx.key,
 		{ query: queryParams },
 	);
 
@@ -41,10 +41,7 @@ export const list: GithubEndpoints['workflowsList'] = async (ctx, input) => {
 export const get: GithubEndpoints['workflowsGet'] = async (ctx, input) => {
 	const { owner, repo, workflowId } = input;
 	const endpoint = `/repos/${owner}/${repo}/actions/workflows/${workflowId}`;
-	const result = await makeGithubRequest<WorkflowGetResponse>(
-		endpoint,
-		ctx.options.token,
-	);
+	const result = await makeGithubRequest<WorkflowGetResponse>(endpoint, ctx.key);
 
 	if (result && ctx.db.workflows) {
 		try {
@@ -71,7 +68,7 @@ export const listRuns: GithubEndpoints['workflowsListRuns'] = async (
 	const endpoint = `/repos/${owner}/${repo}/actions/runs`;
 	const result = await makeGithubRequest<WorkflowRunsListResponse>(
 		endpoint,
-		ctx.options.token,
+		ctx.key,
 		{ query: queryParams },
 	);
 

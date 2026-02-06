@@ -1,11 +1,21 @@
 import { logEventFromContext } from '../../utils/events';
 import type { ResendWebhooks } from '..';
-import { createResendMatch } from './types';
+import { createResendMatch, verifyResendWebhookSignature } from './types';
 
 export const domainCreated: ResendWebhooks['domainCreated'] = {
 	match: createResendMatch('domain.created'),
 
 	handler: async (ctx, request) => {
+		const webhookSecret = ctx.key;
+		const verification = verifyResendWebhookSignature(request, webhookSecret);
+		if (!verification.valid) {
+			return {
+				success: false,
+				statusCode: 401,
+				error: verification.error || 'Signature verification failed',
+			};
+		}
+
 		const event = request.payload;
 
 		if (event.type !== 'domain.created') {
@@ -58,6 +68,16 @@ export const domainUpdated: ResendWebhooks['domainUpdated'] = {
 	match: createResendMatch('domain.updated'),
 
 	handler: async (ctx, request) => {
+		const webhookSecret = ctx.key;
+		const verification = verifyResendWebhookSignature(request, webhookSecret);
+		if (!verification.valid) {
+			return {
+				success: false,
+				statusCode: 401,
+				error: verification.error || 'Signature verification failed',
+			};
+		}
+
 		const event = request.payload;
 
 		if (event.type !== 'domain.updated') {

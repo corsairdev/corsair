@@ -276,12 +276,82 @@ export type GithubWebhookEvent =
 export type GithubWebhookPayload = GithubWebhookEvent;
 
 export type GithubWebhookOutputs = {
-	pullRequestOpened: { success: boolean };
-	pullRequestClosed: { success: boolean };
-	pullRequestSynchronize: { success: boolean };
-	push: { success: boolean };
-	starCreated: { success: boolean };
-	starDeleted: { success: boolean };
+	pullRequestOpened: PullRequestOpenedEvent;
+	pullRequestClosed: PullRequestClosedEvent;
+	pullRequestSynchronize: PullRequestSynchronizeEvent;
+	push: PushEventType;
+	starCreated: StarCreatedEvent;
+	starDeleted: StarDeletedEvent;
 };
 
 export type PushEventType = PushEvent;
+
+import type {
+	CorsairWebhookMatcher,
+	RawWebhookRequest,
+	WebhookRequest,
+} from '../../../core';
+import { verifyHmacSignatureWithPrefix } from '../../../async-core/webhook-utils';
+
+function parseBody(body: unknown): unknown {
+	return typeof body === 'string' ? JSON.parse(body) : body;
+}
+
+export function verifyGithubWebhookSignature(
+	request: WebhookRequest<unknown>,
+	webhookSecret?: string,
+): { valid: boolean; error?: string } {
+	if (!webhookSecret) {
+		return { valid: false };
+	}
+
+	const rawBody = request.rawBody;
+	if (!rawBody) {
+		return {
+			valid: false,
+			error: 'Missing raw body for signature verification',
+		};
+	}
+
+	const headers = request.headers;
+	const signature = Array.isArray(headers['x-hub-signature-256'])
+		? headers['x-hub-signature-256'][0]
+		: headers['x-hub-signature-256'];
+
+	if (!signature) {
+		return {
+			valid: false,
+			error: 'Missing x-hub-signature-256 header',
+		};
+	}
+
+	const isValid = verifyHmacSignatureWithPrefix(
+		rawBody,
+		webhookSecret,
+		signature,
+		'sha256=',
+	);
+	if (!isValid) {
+		return { valid: false, error: 'Invalid signature' };
+	}
+
+	return { valid: true };
+}
+
+export function createGithubEventMatch(
+	eventType: string,
+	action?: string,
+): CorsairWebhookMatcher {
+	return (request: RawWebhookRequest) => {
+		const headers = request.headers as Record<string, string | undefined>;
+		const githubEvent = headers['x-github-event'];
+		if (githubEvent !== eventType) {
+			return false;
+		}
+		if (action) {
+			const parsedBody = parseBody(request.body) as Record<string, unknown>;
+			return (parsedBody.action as string) === action;
+		}
+		return true;
+	};
+}

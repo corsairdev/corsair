@@ -1,4 +1,4 @@
-import { createCorsair, linear, resend, slack } from 'corsair';
+import { createCorsair, linear, resend, slack, github } from 'corsair';
 import { drizzleAdapter } from 'corsair/adapters';
 import { db } from '../db';
 import * as schema from '../db/schema';
@@ -92,6 +92,22 @@ export const corsair = createCorsair({
 								},
 							});
 						},
+					},
+				},
+			},
+		}),
+		github({
+			authType: 'api_key',
+			webhookHooks: {
+				starCreated: {
+					after: async (ctx, res) => {
+						await inngest.send({
+							name: 'github/star',
+							data: {
+								tenantId: ctx.tenantId ?? 'default',
+								event: res.data!,
+							},
+						});
 					},
 				},
 			},

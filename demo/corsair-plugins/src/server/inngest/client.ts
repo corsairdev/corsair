@@ -7,6 +7,7 @@ import type {
 import type { EmailReceivedEvent } from 'corsair/plugins/resend';
 import type { MessageEvent } from 'corsair/plugins/slack';
 import { EventSchemas, Inngest } from 'inngest';
+import type { StarCreatedEvent, StarDeletedEvent } from 'corsair/plugins/github';
 
 type Events = {
 	'slack/event': {
@@ -42,14 +43,7 @@ type Events = {
 	'github/star': {
 		data: {
 			tenantId: string;
-			sender: {
-				login: string;
-				name?: string;
-				email?: string | null;
-			};
-			repository: {
-				full_name: string;
-			};
+			event: StarCreatedEvent | StarDeletedEvent;
 		};
 	};
 	'issue/reported': {

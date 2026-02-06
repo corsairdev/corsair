@@ -21,9 +21,8 @@ export async function POST(request: NextRequest) {
 		url.searchParams.get('tenantId') ||
 		url.searchParams.get('tenant_id') ||
 		undefined;
-
+	
 	const result = await processWebhook(corsair, headers, body, { tenantId });
-
 	// Handle case where no webhook matched
 	if (!result.response) {
 		return NextResponse.json(
