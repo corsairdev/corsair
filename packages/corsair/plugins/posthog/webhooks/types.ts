@@ -32,12 +32,15 @@ export type PostHogWebhookOutputs = {
 	eventCaptured: EventCapturedEvent;
 };
 
+import {
+	verifyHmacSignature,
+	verifyHmacSignatureWithPrefix,
+} from '../../../async-core/webhook-utils';
 import type {
 	CorsairWebhookMatcher,
 	RawWebhookRequest,
 	WebhookRequest,
 } from '../../../core';
-import { verifyHmacSignature, verifyHmacSignatureWithPrefix } from '../../../async-core/webhook-utils';
 
 function parseBody(body: unknown): unknown {
 	return typeof body === 'string' ? JSON.parse(body) : body;
@@ -60,13 +63,12 @@ export function verifyPostHogWebhookSignature(
 	}
 
 	const headers = request.headers;
-	const signature =
-		Array.isArray(headers['x-posthog-signature'])
-			? headers['x-posthog-signature'][0]
-			: headers['x-posthog-signature'] ||
-				(Array.isArray(headers['x-signature'])
-					? headers['x-signature'][0]
-					: headers['x-signature']);
+	const signature = Array.isArray(headers['x-posthog-signature'])
+		? headers['x-posthog-signature'][0]
+		: headers['x-posthog-signature'] ||
+			(Array.isArray(headers['x-signature'])
+				? headers['x-signature'][0]
+				: headers['x-signature']);
 
 	if (!signature) {
 		return {

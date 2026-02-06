@@ -1,8 +1,8 @@
 import dotenv from 'dotenv';
 import { createCorsair } from '../../core';
-import { posthog } from './index';
 import { createIntegrationAndAccount } from '../../tests/plugins-test-utils';
 import { createTestDatabase } from '../../tests/setup-db';
+import { posthog } from './index';
 
 dotenv.config();
 
@@ -55,9 +55,10 @@ describe('PostHog plugin integration', () => {
 
 		expect(aliasEvents.length).toBeGreaterThan(0);
 		const aliasEvent = aliasEvents[aliasEvents.length - 1]!;
-		const aliasEventPayload = typeof aliasEvent.payload === 'string' 
-			? JSON.parse(aliasEvent.payload) 
-			: aliasEvent.payload;
+		const aliasEventPayload =
+			typeof aliasEvent.payload === 'string'
+				? JSON.parse(aliasEvent.payload)
+				: aliasEvent.payload;
 		expect(aliasEventPayload).toMatchObject(aliasInput);
 
 		const identityInput = {
@@ -76,9 +77,10 @@ describe('PostHog plugin integration', () => {
 
 		expect(identityEvents.length).toBeGreaterThan(0);
 		const identityEvent = identityEvents[identityEvents.length - 1]!;
-		const identityEventPayload = typeof identityEvent.payload === 'string' 
-			? JSON.parse(identityEvent.payload) 
-			: identityEvent.payload;
+		const identityEventPayload =
+			typeof identityEvent.payload === 'string'
+				? JSON.parse(identityEvent.payload)
+				: identityEvent.payload;
 		expect(identityEventPayload).toMatchObject(identityInput);
 
 		const eventInput = {
@@ -98,9 +100,10 @@ describe('PostHog plugin integration', () => {
 
 		expect(eventEvents.length).toBeGreaterThan(0);
 		const eventEvent = eventEvents[eventEvents.length - 1]!;
-		const eventEventPayload = typeof eventEvent.payload === 'string' 
-			? JSON.parse(eventEvent.payload) 
-			: eventEvent.payload;
+		const eventEventPayload =
+			typeof eventEvent.payload === 'string'
+				? JSON.parse(eventEvent.payload)
+				: eventEvent.payload;
 		expect(eventEventPayload).toMatchObject(eventInput);
 
 		const pluginEvents = await corsair.posthog.db.events.count();
@@ -135,9 +138,10 @@ describe('PostHog plugin integration', () => {
 
 		expect(pageEvents.length).toBeGreaterThan(0);
 		const pageEvent = pageEvents[pageEvents.length - 1]!;
-		const pageEventPayload = typeof pageEvent.payload === 'string' 
-			? JSON.parse(pageEvent.payload) 
-			: pageEvent.payload;
+		const pageEventPayload =
+			typeof pageEvent.payload === 'string'
+				? JSON.parse(pageEvent.payload)
+				: pageEvent.payload;
 		expect(pageEventPayload).toMatchObject(pageInput);
 
 		const screenInput = {
@@ -157,9 +161,10 @@ describe('PostHog plugin integration', () => {
 
 		expect(screenEvents.length).toBeGreaterThan(0);
 		const screenEvent = screenEvents[screenEvents.length - 1]!;
-		const screenEventPayload = typeof screenEvent.payload === 'string' 
-			? JSON.parse(screenEvent.payload) 
-			: screenEvent.payload;
+		const screenEventPayload =
+			typeof screenEvent.payload === 'string'
+				? JSON.parse(screenEvent.payload)
+				: screenEvent.payload;
 		expect(screenEventPayload).toMatchObject(screenInput);
 
 		testDb.cleanup();

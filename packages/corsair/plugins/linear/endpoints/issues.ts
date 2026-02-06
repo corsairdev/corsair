@@ -301,7 +301,6 @@ export const list: LinearEndpoints['issuesList'] = async (ctx, input) => {
 		variables,
 	);
 
-
 	await logEventFromContext(
 		ctx,
 		'linear.issues.list',

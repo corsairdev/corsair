@@ -1,4 +1,8 @@
 import type {
+	StarCreatedEvent,
+	StarDeletedEvent,
+} from 'corsair/plugins/github';
+import type {
 	CommentCreatedEvent,
 	CommentUpdatedEvent,
 	IssueCreatedEvent,
@@ -7,7 +11,6 @@ import type {
 import type { EmailReceivedEvent } from 'corsair/plugins/resend';
 import type { MessageEvent } from 'corsair/plugins/slack';
 import { EventSchemas, Inngest } from 'inngest';
-import type { StarCreatedEvent, StarDeletedEvent } from 'corsair/plugins/github';
 
 type Events = {
 	'slack/event': {

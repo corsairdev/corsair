@@ -188,12 +188,12 @@ export type ResendWebhookOutputs = {
 	domainUpdated: DomainUpdatedEvent;
 };
 
+import { verifyHmacSignatureWithPrefix } from '../../../async-core/webhook-utils';
 import type {
 	CorsairWebhookMatcher,
 	RawWebhookRequest,
 	WebhookRequest,
 } from '../../../core';
-import { verifyHmacSignatureWithPrefix } from '../../../async-core/webhook-utils';
 
 function parseBody(body: unknown): unknown {
 	return typeof body === 'string' ? JSON.parse(body) : body;
@@ -216,13 +216,12 @@ export function verifyResendWebhookSignature(
 	}
 
 	const headers = request.headers;
-	const signature =
-		Array.isArray(headers['svix-signature'])
-			? headers['svix-signature'][0]
-			: headers['svix-signature'] ||
-				(Array.isArray(headers['x-resend-signature'])
-					? headers['x-resend-signature'][0]
-					: headers['x-resend-signature']);
+	const signature = Array.isArray(headers['svix-signature'])
+		? headers['svix-signature'][0]
+		: headers['svix-signature'] ||
+			(Array.isArray(headers['x-resend-signature'])
+				? headers['x-resend-signature'][0]
+				: headers['x-resend-signature']);
 
 	if (!signature) {
 		return {

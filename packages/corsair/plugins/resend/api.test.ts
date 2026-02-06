@@ -1,13 +1,13 @@
 import dotenv from 'dotenv';
 import { makeResendRequest } from './client';
 import type {
-	SendEmailResponse,
-	GetEmailResponse,
-	ListEmailsResponse,
 	CreateDomainResponse,
-	GetDomainResponse,
-	ListDomainsResponse,
 	DeleteDomainResponse,
+	GetDomainResponse,
+	GetEmailResponse,
+	ListDomainsResponse,
+	ListEmailsResponse,
+	SendEmailResponse,
 	VerifyDomainResponse,
 } from './endpoints/types';
 import { ResendEndpointOutputSchemas } from './endpoints/types';
@@ -86,10 +86,13 @@ describe('Resend API Type Tests', () => {
 		});
 
 		it('domainsGet returns correct type', async () => {
-			const domainsListResponse =
-				await makeResendRequest<ListDomainsResponse>('domains', TEST_API_KEY, {
+			const domainsListResponse = await makeResendRequest<ListDomainsResponse>(
+				'domains',
+				TEST_API_KEY,
+				{
 					query: { limit: 1 },
-				});
+				},
+			);
 			const domainId = domainsListResponse.data[0]?.id;
 			if (!domainId) {
 				return;
@@ -122,10 +125,13 @@ describe('Resend API Type Tests', () => {
 		});
 
 		it('domainsVerify returns correct type', async () => {
-			const domainsListResponse =
-				await makeResendRequest<ListDomainsResponse>('domains', TEST_API_KEY, {
+			const domainsListResponse = await makeResendRequest<ListDomainsResponse>(
+				'domains',
+				TEST_API_KEY,
+				{
 					query: { limit: 1 },
-				});
+				},
+			);
 			const domainId = domainsListResponse.data[0]?.id;
 			if (!domainId) {
 				return;
@@ -144,12 +150,15 @@ describe('Resend API Type Tests', () => {
 		});
 
 		it('domainsDelete returns correct type', async () => {
-			const domainsListResponse =
-				await makeResendRequest<ListDomainsResponse>('domains', TEST_API_KEY, {
+			const domainsListResponse = await makeResendRequest<ListDomainsResponse>(
+				'domains',
+				TEST_API_KEY,
+				{
 					query: { limit: 10 },
-				});
-			const testDomain = domainsListResponse.data.find(
-				(domain) => domain.name.startsWith('test-domain-'),
+				},
+			);
+			const testDomain = domainsListResponse.data.find((domain) =>
+				domain.name.startsWith('test-domain-'),
 			);
 			const domainId = testDomain?.id;
 			if (!domainId) {

@@ -37,9 +37,7 @@ module.exports = {
 			},
 		],
 	},
-	transformIgnorePatterns: [
-		'node_modules/(?!.*uuid.*)',
-	],
+	transformIgnorePatterns: ['node_modules/(?!.*uuid.*)'],
 	extensionsToTreatAsEsm: ['.ts'],
 	testTimeout: 30000,
 	verbose: true,

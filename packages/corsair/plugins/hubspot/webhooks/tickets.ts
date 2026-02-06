@@ -1,12 +1,12 @@
 import type { HubSpotWebhooks } from '..';
-import {
-	createHubSpotEventMatch,
-	verifyHubSpotWebhookSignature,
-} from './types';
 import type {
 	TicketCreatedEventType,
 	TicketDeletedEventType,
 	TicketUpdatedEventType,
+} from './types';
+import {
+	createHubSpotEventMatch,
+	verifyHubSpotWebhookSignature,
 } from './types';
 
 export const ticketCreated: HubSpotWebhooks['ticketCreated'] = {

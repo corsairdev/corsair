@@ -1,10 +1,10 @@
 import type { GithubWebhooks } from '..';
-import { createGithubEventMatch, verifyGithubWebhookSignature } from './types';
 import type {
 	PullRequestClosedEvent,
 	PullRequestOpenedEvent,
 	PullRequestSynchronizeEvent,
 } from './types';
+import { createGithubEventMatch, verifyGithubWebhookSignature } from './types';
 
 export const pullRequestOpened: GithubWebhooks['pullRequestOpened'] = {
 	match: createGithubEventMatch('pull_request', 'opened'),

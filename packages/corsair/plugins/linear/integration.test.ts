@@ -1,9 +1,9 @@
 import dotenv from 'dotenv';
 import { createCorsair } from '../../core';
-import { linear } from './index';
-import { LinearAPIError } from './client';
 import { createIntegrationAndAccount } from '../../tests/plugins-test-utils';
 import { createTestDatabase } from '../../tests/setup-db';
+import { LinearAPIError } from './client';
+import { linear } from './index';
 
 dotenv.config();
 
@@ -58,9 +58,10 @@ describe('Linear plugin integration', () => {
 
 		expect(listEvents.length).toBeGreaterThan(0);
 		const listEvent = listEvents[listEvents.length - 1]!;
-		const listEventPayload = typeof listEvent.payload === 'string' 
-			? JSON.parse(listEvent.payload) 
-			: listEvent.payload;
+		const listEventPayload =
+			typeof listEvent.payload === 'string'
+				? JSON.parse(listEvent.payload)
+				: listEvent.payload;
 		expect(listEventPayload).toMatchObject(listInput);
 
 		if (teamsList.nodes && teamsList.nodes.length > 0) {
@@ -89,9 +90,10 @@ describe('Linear plugin integration', () => {
 
 				expect(getEvents.length).toBeGreaterThan(0);
 				const getEvent = getEvents[getEvents.length - 1]!;
-				const getEventPayload = typeof getEvent.payload === 'string' 
-					? JSON.parse(getEvent.payload) 
-					: getEvent.payload;
+				const getEventPayload =
+					typeof getEvent.payload === 'string'
+						? JSON.parse(getEvent.payload)
+						: getEvent.payload;
 				expect(getEventPayload).toMatchObject(getInput);
 
 				if (teamInfo.id) {
@@ -176,9 +178,10 @@ describe('Linear plugin integration', () => {
 
 		expect(createEvents.length).toBeGreaterThan(0);
 		const createEvent = createEvents[createEvents.length - 1]!;
-		const createEventPayload = typeof createEvent.payload === 'string' 
-			? JSON.parse(createEvent.payload) 
-			: createEvent.payload;
+		const createEventPayload =
+			typeof createEvent.payload === 'string'
+				? JSON.parse(createEvent.payload)
+				: createEvent.payload;
 		expect(createEventPayload).toMatchObject(createInput);
 
 		const issueFromDb = await corsair.linear.db.issues.findByEntityId(
@@ -187,7 +190,7 @@ describe('Linear plugin integration', () => {
 
 		expect(issueFromDb).not.toBeNull();
 		if (issueFromDb) {
-		expect(issueFromDb.data.id).toBe(createdIssue.id);
+			expect(issueFromDb.data.id).toBe(createdIssue.id);
 			expect(issueFromDb.data.title).toBe(createdIssue.title);
 		}
 
@@ -206,9 +209,10 @@ describe('Linear plugin integration', () => {
 
 		expect(getEvents.length).toBeGreaterThan(0);
 		const getEvent = getEvents[getEvents.length - 1]!;
-		const getEventPayload = typeof getEvent.payload === 'string' 
-			? JSON.parse(getEvent.payload) 
-			: getEvent.payload;
+		const getEventPayload =
+			typeof getEvent.payload === 'string'
+				? JSON.parse(getEvent.payload)
+				: getEvent.payload;
 		expect(getEventPayload).toMatchObject(getInput);
 
 		const issueAfterGet = await corsair.linear.db.issues.findByEntityId(
@@ -235,9 +239,10 @@ describe('Linear plugin integration', () => {
 
 		expect(updateEvents.length).toBeGreaterThan(0);
 		const updateEvent = updateEvents[updateEvents.length - 1]!;
-		const updateEventPayload = typeof updateEvent.payload === 'string' 
-			? JSON.parse(updateEvent.payload) 
-			: updateEvent.payload;
+		const updateEventPayload =
+			typeof updateEvent.payload === 'string'
+				? JSON.parse(updateEvent.payload)
+				: updateEvent.payload;
 		expect(updateEventPayload).toMatchObject(updateInput);
 
 		const issueFromDbAfterUpdate =
@@ -263,9 +268,10 @@ describe('Linear plugin integration', () => {
 
 		expect(deleteEvents.length).toBeGreaterThan(0);
 		const deleteEvent = deleteEvents[deleteEvents.length - 1]!;
-		const deleteEventPayload = typeof deleteEvent.payload === 'string' 
-			? JSON.parse(deleteEvent.payload) 
-			: deleteEvent.payload;
+		const deleteEventPayload =
+			typeof deleteEvent.payload === 'string'
+				? JSON.parse(deleteEvent.payload)
+				: deleteEvent.payload;
 		expect(deleteEventPayload).toMatchObject(deleteInput);
 
 		const issuesCount = await corsair.linear.db.issues.count();
@@ -313,9 +319,10 @@ describe('Linear plugin integration', () => {
 
 		expect(listEvents.length).toBeGreaterThan(0);
 		const listEvent = listEvents[listEvents.length - 1]!;
-		const listEventPayload = typeof listEvent.payload === 'string' 
-			? JSON.parse(listEvent.payload) 
-			: listEvent.payload;
+		const listEventPayload =
+			typeof listEvent.payload === 'string'
+				? JSON.parse(listEvent.payload)
+				: listEvent.payload;
 		expect(listEventPayload).toMatchObject(listInput);
 
 		if (projectsList.nodes && projectsList.nodes.length > 0) {
@@ -344,15 +351,15 @@ describe('Linear plugin integration', () => {
 
 				expect(getEvents.length).toBeGreaterThan(0);
 				const getEvent = getEvents[getEvents.length - 1]!;
-				const getEventPayload = typeof getEvent.payload === 'string' 
-					? JSON.parse(getEvent.payload) 
-					: getEvent.payload;
+				const getEventPayload =
+					typeof getEvent.payload === 'string'
+						? JSON.parse(getEvent.payload)
+						: getEvent.payload;
 				expect(getEventPayload).toMatchObject(getInput);
 
 				if (projectInfo.id) {
-					const projectInfoFromDb = await corsair.linear.db.projects.findByEntityId(
-						projectInfo.id,
-					);
+					const projectInfoFromDb =
+						await corsair.linear.db.projects.findByEntityId(projectInfo.id);
 					if (projectInfoFromDb) {
 						expect(projectInfoFromDb.data.id).toBe(projectInfo.id);
 					}
@@ -367,7 +374,8 @@ describe('Linear plugin integration', () => {
 			description: 'Test project created by Corsair integration test',
 		};
 
-		const createdProject = await corsair.linear.api.projects.create(createInput);
+		const createdProject =
+			await corsair.linear.api.projects.create(createInput);
 
 		expect(createdProject).toBeDefined();
 		expect(createdProject.id).toBeDefined();
@@ -379,9 +387,10 @@ describe('Linear plugin integration', () => {
 
 		expect(createEvents.length).toBeGreaterThan(0);
 		const createEvent = createEvents[createEvents.length - 1]!;
-		const createEventPayload = typeof createEvent.payload === 'string' 
-			? JSON.parse(createEvent.payload) 
-			: createEvent.payload;
+		const createEventPayload =
+			typeof createEvent.payload === 'string'
+				? JSON.parse(createEvent.payload)
+				: createEvent.payload;
 		expect(createEventPayload).toMatchObject(createInput);
 
 		const projectFromDb = await corsair.linear.db.projects.findByEntityId(
@@ -402,7 +411,8 @@ describe('Linear plugin integration', () => {
 			},
 		};
 
-		const updatedProject = await corsair.linear.api.projects.update(updateInput);
+		const updatedProject =
+			await corsair.linear.api.projects.update(updateInput);
 
 		expect(updatedProject).toBeDefined();
 
@@ -413,9 +423,10 @@ describe('Linear plugin integration', () => {
 
 		expect(updateEvents.length).toBeGreaterThan(0);
 		const updateEvent = updateEvents[updateEvents.length - 1]!;
-		const updateEventPayload = typeof updateEvent.payload === 'string' 
-			? JSON.parse(updateEvent.payload) 
-			: updateEvent.payload;
+		const updateEventPayload =
+			typeof updateEvent.payload === 'string'
+				? JSON.parse(updateEvent.payload)
+				: updateEvent.payload;
 		expect(updateEventPayload).toMatchObject(updateInput);
 
 		const projectAfterUpdate = await corsair.linear.db.projects.findByEntityId(
@@ -430,7 +441,8 @@ describe('Linear plugin integration', () => {
 			id: createdProject.id,
 		};
 
-		const deletedProject = await corsair.linear.api.projects.delete(deleteInput);
+		const deletedProject =
+			await corsair.linear.api.projects.delete(deleteInput);
 
 		expect(deletedProject).toBeDefined();
 
@@ -441,9 +453,10 @@ describe('Linear plugin integration', () => {
 
 		expect(deleteEvents.length).toBeGreaterThan(0);
 		const deleteEvent = deleteEvents[deleteEvents.length - 1]!;
-		const deleteEventPayload = typeof deleteEvent.payload === 'string' 
-			? JSON.parse(deleteEvent.payload) 
-			: deleteEvent.payload;
+		const deleteEventPayload =
+			typeof deleteEvent.payload === 'string'
+				? JSON.parse(deleteEvent.payload)
+				: deleteEvent.payload;
 		expect(deleteEventPayload).toMatchObject(deleteInput);
 
 		testDb.cleanup();

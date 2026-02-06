@@ -1,14 +1,14 @@
 import dotenv from 'dotenv';
 import { createCorsair } from '../../core';
-import { hubspot } from './index';
+import { createIntegrationAndAccount } from '../../tests/plugins-test-utils';
+import { createTestDatabase } from '../../tests/setup-db';
 import { HubSpotAPIError } from './client';
 import type {
 	CreateCompanyResponse,
 	CreateDealResponse,
 	CreateOrUpdateContactResponse,
 } from './endpoints/types';
-import { createIntegrationAndAccount } from '../../tests/plugins-test-utils';
-import { createTestDatabase } from '../../tests/setup-db';
+import { hubspot } from './index';
 
 dotenv.config();
 
@@ -61,9 +61,10 @@ describe('HubSpot plugin integration', () => {
 
 		expect(listEvents.length).toBeGreaterThan(0);
 		const listEvent = listEvents[listEvents.length - 1]!;
-		const listEventPayload = typeof listEvent.payload === 'string' 
-			? JSON.parse(listEvent.payload) 
-			: listEvent.payload;
+		const listEventPayload =
+			typeof listEvent.payload === 'string'
+				? JSON.parse(listEvent.payload)
+				: listEvent.payload;
 		expect(listEventPayload).toMatchObject(listInput);
 
 		let contactId: string | undefined;
@@ -87,9 +88,10 @@ describe('HubSpot plugin integration', () => {
 
 				expect(getEvents.length).toBeGreaterThan(0);
 				const getEvent = getEvents[getEvents.length - 1]!;
-				const getEventPayload = typeof getEvent.payload === 'string' 
-					? JSON.parse(getEvent.payload) 
-					: getEvent.payload;
+				const getEventPayload =
+					typeof getEvent.payload === 'string'
+						? JSON.parse(getEvent.payload)
+						: getEvent.payload;
 				expect(getEventPayload).toMatchObject(getInput);
 
 				const contactFromDb =
@@ -124,9 +126,10 @@ describe('HubSpot plugin integration', () => {
 
 		expect(createEvents.length).toBeGreaterThan(0);
 		const createEvent = createEvents[createEvents.length - 1]!;
-		const createEventPayload = typeof createEvent.payload === 'string' 
-			? JSON.parse(createEvent.payload) 
-			: createEvent.payload;
+		const createEventPayload =
+			typeof createEvent.payload === 'string'
+				? JSON.parse(createEvent.payload)
+				: createEvent.payload;
 		expect(createEventPayload).toMatchObject(createInput);
 
 		const createdContactId = createdContact.id;
@@ -145,7 +148,8 @@ describe('HubSpot plugin integration', () => {
 				limit: 10,
 			};
 
-			const searchResult = await corsair.hubspot.api.contacts.search(searchInput);
+			const searchResult =
+				await corsair.hubspot.api.contacts.search(searchInput);
 
 			expect(searchResult).toBeDefined();
 
@@ -156,9 +160,10 @@ describe('HubSpot plugin integration', () => {
 
 			expect(searchEvents.length).toBeGreaterThan(0);
 			const searchEvent = searchEvents[searchEvents.length - 1]!;
-			const searchEventPayload = typeof searchEvent.payload === 'string' 
-				? JSON.parse(searchEvent.payload) 
-				: searchEvent.payload;
+			const searchEventPayload =
+				typeof searchEvent.payload === 'string'
+					? JSON.parse(searchEvent.payload)
+					: searchEvent.payload;
 			expect(searchEventPayload).toMatchObject(searchInput);
 
 			const recentlyCreatedInput = {
@@ -166,7 +171,9 @@ describe('HubSpot plugin integration', () => {
 			};
 
 			const recentlyCreated =
-				await corsair.hubspot.api.contacts.getRecentlyCreated(recentlyCreatedInput);
+				await corsair.hubspot.api.contacts.getRecentlyCreated(
+					recentlyCreatedInput,
+				);
 
 			expect(recentlyCreated).toBeDefined();
 
@@ -181,10 +188,12 @@ describe('HubSpot plugin integration', () => {
 			});
 
 			expect(recentlyCreatedEvents.length).toBeGreaterThan(0);
-			const recentlyCreatedEvent = recentlyCreatedEvents[recentlyCreatedEvents.length - 1]!;
-			const recentlyCreatedEventPayload = typeof recentlyCreatedEvent.payload === 'string' 
-				? JSON.parse(recentlyCreatedEvent.payload) 
-				: recentlyCreatedEvent.payload;
+			const recentlyCreatedEvent =
+				recentlyCreatedEvents[recentlyCreatedEvents.length - 1]!;
+			const recentlyCreatedEventPayload =
+				typeof recentlyCreatedEvent.payload === 'string'
+					? JSON.parse(recentlyCreatedEvent.payload)
+					: recentlyCreatedEvent.payload;
 			expect(recentlyCreatedEventPayload).toMatchObject(recentlyCreatedInput);
 
 			const recentlyUpdatedInput = {
@@ -192,7 +201,9 @@ describe('HubSpot plugin integration', () => {
 			};
 
 			const recentlyUpdated =
-				await corsair.hubspot.api.contacts.getRecentlyUpdated(recentlyUpdatedInput);
+				await corsair.hubspot.api.contacts.getRecentlyUpdated(
+					recentlyUpdatedInput,
+				);
 
 			expect(recentlyUpdated).toBeDefined();
 
@@ -207,10 +218,12 @@ describe('HubSpot plugin integration', () => {
 			});
 
 			expect(recentlyUpdatedEvents.length).toBeGreaterThan(0);
-			const recentlyUpdatedEvent = recentlyUpdatedEvents[recentlyUpdatedEvents.length - 1]!;
-			const recentlyUpdatedEventPayload = typeof recentlyUpdatedEvent.payload === 'string' 
-				? JSON.parse(recentlyUpdatedEvent.payload) 
-				: recentlyUpdatedEvent.payload;
+			const recentlyUpdatedEvent =
+				recentlyUpdatedEvents[recentlyUpdatedEvents.length - 1]!;
+			const recentlyUpdatedEventPayload =
+				typeof recentlyUpdatedEvent.payload === 'string'
+					? JSON.parse(recentlyUpdatedEvent.payload)
+					: recentlyUpdatedEvent.payload;
 			expect(recentlyUpdatedEventPayload).toMatchObject(recentlyUpdatedInput);
 		}
 
@@ -233,7 +246,8 @@ describe('HubSpot plugin integration', () => {
 			limit: 10,
 		};
 
-		const companiesList = await corsair.hubspot.api.companies.getMany(listInput);
+		const companiesList =
+			await corsair.hubspot.api.companies.getMany(listInput);
 
 		expect(companiesList).toBeDefined();
 
@@ -244,9 +258,10 @@ describe('HubSpot plugin integration', () => {
 
 		expect(listEvents.length).toBeGreaterThan(0);
 		const listEvent = listEvents[listEvents.length - 1]!;
-		const listEventPayload = typeof listEvent.payload === 'string' 
-			? JSON.parse(listEvent.payload) 
-			: listEvent.payload;
+		const listEventPayload =
+			typeof listEvent.payload === 'string'
+				? JSON.parse(listEvent.payload)
+				: listEvent.payload;
 		expect(listEventPayload).toMatchObject(listInput);
 
 		let companyId: string | undefined;
@@ -270,9 +285,10 @@ describe('HubSpot plugin integration', () => {
 
 				expect(getEvents.length).toBeGreaterThan(0);
 				const getEvent = getEvents[getEvents.length - 1]!;
-				const getEventPayload = typeof getEvent.payload === 'string' 
-					? JSON.parse(getEvent.payload) 
-					: getEvent.payload;
+				const getEventPayload =
+					typeof getEvent.payload === 'string'
+						? JSON.parse(getEvent.payload)
+						: getEvent.payload;
 				expect(getEventPayload).toMatchObject(getInput);
 
 				const companyFromDb =
@@ -304,9 +320,10 @@ describe('HubSpot plugin integration', () => {
 
 		expect(createEvents.length).toBeGreaterThan(0);
 		const createEvent = createEvents[createEvents.length - 1]!;
-		const createEventPayload = typeof createEvent.payload === 'string' 
-			? JSON.parse(createEvent.payload) 
-			: createEvent.payload;
+		const createEventPayload =
+			typeof createEvent.payload === 'string'
+				? JSON.parse(createEvent.payload)
+				: createEvent.payload;
 		expect(createEventPayload).toMatchObject(createInput);
 
 		const createdCompanyId = createdCompany.id;
@@ -327,7 +344,8 @@ describe('HubSpot plugin integration', () => {
 				},
 			};
 
-			const updatedCompany = await corsair.hubspot.api.companies.update(updateInput);
+			const updatedCompany =
+				await corsair.hubspot.api.companies.update(updateInput);
 
 			expect(updatedCompany).toBeDefined();
 
@@ -338,9 +356,10 @@ describe('HubSpot plugin integration', () => {
 
 			expect(updateEvents.length).toBeGreaterThan(0);
 			const updateEvent = updateEvents[updateEvents.length - 1]!;
-			const updateEventPayload = typeof updateEvent.payload === 'string' 
-				? JSON.parse(updateEvent.payload) 
-				: updateEvent.payload;
+			const updateEventPayload =
+				typeof updateEvent.payload === 'string'
+					? JSON.parse(updateEvent.payload)
+					: updateEvent.payload;
 			expect(updateEventPayload).toMatchObject(updateInput);
 
 			const recentlyCreatedInput = {
@@ -348,20 +367,29 @@ describe('HubSpot plugin integration', () => {
 			};
 
 			const recentlyCreated =
-				await corsair.hubspot.api.companies.getRecentlyCreated(recentlyCreatedInput);
+				await corsair.hubspot.api.companies.getRecentlyCreated(
+					recentlyCreatedInput,
+				);
 
 			expect(recentlyCreated).toBeDefined();
 
 			const recentlyCreatedEvents = await testDb.adapter.findMany({
 				table: 'corsair_events',
-				where: [{ field: 'event_type', value: 'hubspot.companies.getRecentlyCreated' }],
+				where: [
+					{
+						field: 'event_type',
+						value: 'hubspot.companies.getRecentlyCreated',
+					},
+				],
 			});
 
 			expect(recentlyCreatedEvents.length).toBeGreaterThan(0);
-			const recentlyCreatedEvent = recentlyCreatedEvents[recentlyCreatedEvents.length - 1]!;
-			const recentlyCreatedEventPayload = typeof recentlyCreatedEvent.payload === 'string' 
-				? JSON.parse(recentlyCreatedEvent.payload) 
-				: recentlyCreatedEvent.payload;
+			const recentlyCreatedEvent =
+				recentlyCreatedEvents[recentlyCreatedEvents.length - 1]!;
+			const recentlyCreatedEventPayload =
+				typeof recentlyCreatedEvent.payload === 'string'
+					? JSON.parse(recentlyCreatedEvent.payload)
+					: recentlyCreatedEvent.payload;
 			expect(recentlyCreatedEventPayload).toMatchObject(recentlyCreatedInput);
 
 			const recentlyUpdatedInput = {
@@ -369,20 +397,29 @@ describe('HubSpot plugin integration', () => {
 			};
 
 			const recentlyUpdated =
-				await corsair.hubspot.api.companies.getRecentlyUpdated(recentlyUpdatedInput);
+				await corsair.hubspot.api.companies.getRecentlyUpdated(
+					recentlyUpdatedInput,
+				);
 
 			expect(recentlyUpdated).toBeDefined();
 
 			const recentlyUpdatedEvents = await testDb.adapter.findMany({
 				table: 'corsair_events',
-				where: [{ field: 'event_type', value: 'hubspot.companies.getRecentlyUpdated' }],
+				where: [
+					{
+						field: 'event_type',
+						value: 'hubspot.companies.getRecentlyUpdated',
+					},
+				],
 			});
 
 			expect(recentlyUpdatedEvents.length).toBeGreaterThan(0);
-			const recentlyUpdatedEvent = recentlyUpdatedEvents[recentlyUpdatedEvents.length - 1]!;
-			const recentlyUpdatedEventPayload = typeof recentlyUpdatedEvent.payload === 'string' 
-				? JSON.parse(recentlyUpdatedEvent.payload) 
-				: recentlyUpdatedEvent.payload;
+			const recentlyUpdatedEvent =
+				recentlyUpdatedEvents[recentlyUpdatedEvents.length - 1]!;
+			const recentlyUpdatedEventPayload =
+				typeof recentlyUpdatedEvent.payload === 'string'
+					? JSON.parse(recentlyUpdatedEvent.payload)
+					: recentlyUpdatedEvent.payload;
 			expect(recentlyUpdatedEventPayload).toMatchObject(recentlyUpdatedInput);
 		}
 
@@ -416,9 +453,10 @@ describe('HubSpot plugin integration', () => {
 
 		expect(listEvents.length).toBeGreaterThan(0);
 		const listEvent = listEvents[listEvents.length - 1]!;
-		const listEventPayload = typeof listEvent.payload === 'string' 
-			? JSON.parse(listEvent.payload) 
-			: listEvent.payload;
+		const listEventPayload =
+			typeof listEvent.payload === 'string'
+				? JSON.parse(listEvent.payload)
+				: listEvent.payload;
 		expect(listEventPayload).toMatchObject(listInput);
 
 		let dealId: string | undefined;
@@ -442,9 +480,10 @@ describe('HubSpot plugin integration', () => {
 
 				expect(getEvents.length).toBeGreaterThan(0);
 				const getEvent = getEvents[getEvents.length - 1]!;
-				const getEventPayload = typeof getEvent.payload === 'string' 
-					? JSON.parse(getEvent.payload) 
-					: getEvent.payload;
+				const getEventPayload =
+					typeof getEvent.payload === 'string'
+						? JSON.parse(getEvent.payload)
+						: getEvent.payload;
 				expect(getEventPayload).toMatchObject(getInput);
 
 				const dealFromDb =
@@ -477,9 +516,10 @@ describe('HubSpot plugin integration', () => {
 
 		expect(createEvents.length).toBeGreaterThan(0);
 		const createEvent = createEvents[createEvents.length - 1]!;
-		const createEventPayload = typeof createEvent.payload === 'string' 
-			? JSON.parse(createEvent.payload) 
-			: createEvent.payload;
+		const createEventPayload =
+			typeof createEvent.payload === 'string'
+				? JSON.parse(createEvent.payload)
+				: createEvent.payload;
 		expect(createEventPayload).toMatchObject(createInput);
 
 		const createdDealId = createdDeal.id;
@@ -511,9 +551,10 @@ describe('HubSpot plugin integration', () => {
 
 			expect(updateEvents.length).toBeGreaterThan(0);
 			const updateEvent = updateEvents[updateEvents.length - 1]!;
-			const updateEventPayload = typeof updateEvent.payload === 'string' 
-				? JSON.parse(updateEvent.payload) 
-				: updateEvent.payload;
+			const updateEventPayload =
+				typeof updateEvent.payload === 'string'
+					? JSON.parse(updateEvent.payload)
+					: updateEvent.payload;
 			expect(updateEventPayload).toMatchObject(updateInput);
 
 			const searchInput = {
@@ -532,9 +573,10 @@ describe('HubSpot plugin integration', () => {
 
 			expect(searchEvents.length).toBeGreaterThan(0);
 			const searchEvent = searchEvents[searchEvents.length - 1]!;
-			const searchEventPayload = typeof searchEvent.payload === 'string' 
-				? JSON.parse(searchEvent.payload) 
-				: searchEvent.payload;
+			const searchEventPayload =
+				typeof searchEvent.payload === 'string'
+					? JSON.parse(searchEvent.payload)
+					: searchEvent.payload;
 			expect(searchEventPayload).toMatchObject(searchInput);
 		}
 
@@ -577,9 +619,10 @@ describe('HubSpot plugin integration', () => {
 
 		expect(listEvents.length).toBeGreaterThan(0);
 		const listEvent = listEvents[listEvents.length - 1]!;
-		const listEventPayload = typeof listEvent.payload === 'string' 
-			? JSON.parse(listEvent.payload) 
-			: listEvent.payload;
+		const listEventPayload =
+			typeof listEvent.payload === 'string'
+				? JSON.parse(listEvent.payload)
+				: listEvent.payload;
 		expect(listEventPayload).toMatchObject(listInput);
 
 		let ticketId: string | undefined;
@@ -603,9 +646,10 @@ describe('HubSpot plugin integration', () => {
 
 				expect(getEvents.length).toBeGreaterThan(0);
 				const getEvent = getEvents[getEvents.length - 1]!;
-				const getEventPayload = typeof getEvent.payload === 'string' 
-					? JSON.parse(getEvent.payload) 
-					: getEvent.payload;
+				const getEventPayload =
+					typeof getEvent.payload === 'string'
+						? JSON.parse(getEvent.payload)
+						: getEvent.payload;
 				expect(getEventPayload).toMatchObject(getInput);
 
 				const ticketFromDb =
@@ -646,9 +690,10 @@ describe('HubSpot plugin integration', () => {
 
 		expect(createEvents.length).toBeGreaterThan(0);
 		const createEvent = createEvents[createEvents.length - 1]!;
-		const createEventPayload = typeof createEvent.payload === 'string' 
-			? JSON.parse(createEvent.payload) 
-			: createEvent.payload;
+		const createEventPayload =
+			typeof createEvent.payload === 'string'
+				? JSON.parse(createEvent.payload)
+				: createEvent.payload;
 		expect(createEventPayload).toMatchObject(createInput);
 
 		const createdTicketId = createdTicket.id;
@@ -669,7 +714,8 @@ describe('HubSpot plugin integration', () => {
 				},
 			};
 
-			const updatedTicket = await corsair.hubspot.api.tickets.update(updateInput);
+			const updatedTicket =
+				await corsair.hubspot.api.tickets.update(updateInput);
 
 			expect(updatedTicket).toBeDefined();
 
@@ -680,9 +726,10 @@ describe('HubSpot plugin integration', () => {
 
 			expect(updateEvents.length).toBeGreaterThan(0);
 			const updateEvent = updateEvents[updateEvents.length - 1]!;
-			const updateEventPayload = typeof updateEvent.payload === 'string' 
-				? JSON.parse(updateEvent.payload) 
-				: updateEvent.payload;
+			const updateEventPayload =
+				typeof updateEvent.payload === 'string'
+					? JSON.parse(updateEvent.payload)
+					: updateEvent.payload;
 			expect(updateEventPayload).toMatchObject(updateInput);
 		}
 
@@ -705,7 +752,8 @@ describe('HubSpot plugin integration', () => {
 			limit: 10,
 		};
 
-		const engagementsList = await corsair.hubspot.api.engagements.getMany(listInput);
+		const engagementsList =
+			await corsair.hubspot.api.engagements.getMany(listInput);
 
 		expect(engagementsList).toBeDefined();
 
@@ -716,9 +764,10 @@ describe('HubSpot plugin integration', () => {
 
 		expect(listEvents.length).toBeGreaterThan(0);
 		const listEvent = listEvents[listEvents.length - 1]!;
-		const listEventPayload = typeof listEvent.payload === 'string' 
-			? JSON.parse(listEvent.payload) 
-			: listEvent.payload;
+		const listEventPayload =
+			typeof listEvent.payload === 'string'
+				? JSON.parse(listEvent.payload)
+				: listEvent.payload;
 		expect(listEventPayload).toMatchObject(listInput);
 
 		let engagementId: string | undefined;
@@ -742,9 +791,10 @@ describe('HubSpot plugin integration', () => {
 
 				expect(getEvents.length).toBeGreaterThan(0);
 				const getEvent = getEvents[getEvents.length - 1]!;
-				const getEventPayload = typeof getEvent.payload === 'string' 
-					? JSON.parse(getEvent.payload) 
-					: getEvent.payload;
+				const getEventPayload =
+					typeof getEvent.payload === 'string'
+						? JSON.parse(getEvent.payload)
+						: getEvent.payload;
 				expect(getEventPayload).toMatchObject(getInput);
 			}
 		}
@@ -783,7 +833,8 @@ describe('HubSpot plugin integration', () => {
 
 		let createdEngagement;
 		try {
-			createdEngagement = await corsair.hubspot.api.engagements.create(createInput);
+			createdEngagement =
+				await corsair.hubspot.api.engagements.create(createInput);
 		} catch (error) {
 			if (error instanceof HubSpotAPIError) {
 				testDb.cleanup();
@@ -801,9 +852,10 @@ describe('HubSpot plugin integration', () => {
 
 		expect(createEvents.length).toBeGreaterThan(0);
 		const createEvent = createEvents[createEvents.length - 1]!;
-		const createEventPayload = typeof createEvent.payload === 'string' 
-			? JSON.parse(createEvent.payload) 
-			: createEvent.payload;
+		const createEventPayload =
+			typeof createEvent.payload === 'string'
+				? JSON.parse(createEvent.payload)
+				: createEvent.payload;
 		expect(createEventPayload).toMatchObject(createInput);
 
 		if (createdEngagement && createdEngagement.id) {

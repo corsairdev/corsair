@@ -563,4 +563,7 @@ export function hubspot(options: HubSpotPluginOptions) {
 	} as HubSpotPlugin;
 }
 
-export { createHubSpotEventMatch, verifyHubSpotWebhookSignature } from './webhooks/types';
+export {
+	createHubSpotEventMatch,
+	verifyHubSpotWebhookSignature,
+} from './webhooks/types';

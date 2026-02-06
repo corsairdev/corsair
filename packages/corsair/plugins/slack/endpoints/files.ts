@@ -9,7 +9,7 @@ export const get: SlackEndpoints['filesGet'] = async (ctx, input) => {
 		ctx.key,
 		{
 			method: 'GET',
-			query: input
+			query: input,
 		},
 	);
 
@@ -33,7 +33,7 @@ export const list: SlackEndpoints['filesList'] = async (ctx, input) => {
 		ctx.key,
 		{
 			method: 'GET',
-			query: input
+			query: input,
 		},
 	);
 
@@ -61,7 +61,7 @@ export const upload: SlackEndpoints['filesUpload'] = async (ctx, input) => {
 		ctx.key,
 		{
 			method: 'POST',
-			body: input
+			body: input,
 		},
 	);
 

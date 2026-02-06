@@ -9,7 +9,7 @@ export const get: SlackEndpoints['usersGet'] = async (ctx, input) => {
 		ctx.key,
 		{
 			method: 'GET',
-			query: input
+			query: input,
 		},
 	);
 
@@ -33,7 +33,7 @@ export const list: SlackEndpoints['usersList'] = async (ctx, input) => {
 		ctx.key,
 		{
 			method: 'GET',
-			query: input
+			query: input,
 		},
 	);
 
@@ -63,7 +63,7 @@ export const getProfile: SlackEndpoints['usersGetProfile'] = async (
 		SlackEndpointOutputs['usersGetProfile']
 	>('users.profile.get', ctx.key, {
 		method: 'GET',
-		query: input
+		query: input,
 	});
 
 	if (result.ok && result.profile && input.user && ctx.db.users) {
@@ -95,7 +95,7 @@ export const getPresence: SlackEndpoints['usersGetPresence'] = async (
 		SlackEndpointOutputs['usersGetPresence']
 	>('users.getPresence', ctx.key, {
 		method: 'GET',
-		query: input
+		query: input,
 	});
 	await logEventFromContext(
 		ctx,
@@ -114,7 +114,7 @@ export const updateProfile: SlackEndpoints['usersUpdateProfile'] = async (
 		SlackEndpointOutputs['usersUpdateProfile']
 	>('users.profile.set', ctx.key, {
 		method: 'POST',
-		body: input
+		body: input,
 	});
 
 	if (result.ok && result.profile && input.user) {

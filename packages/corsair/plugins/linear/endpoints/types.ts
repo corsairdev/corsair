@@ -553,10 +553,9 @@ export const LinearEndpointOutputSchemas = {
 
 export type LinearEndpointOutputs = {
 	[K in keyof typeof LinearEndpointOutputSchemas]: z.infer<
-		typeof LinearEndpointOutputSchemas[K]
+		(typeof LinearEndpointOutputSchemas)[K]
 	>;
 };
-
 
 // TypeScript types inferred from Zod schemas
 export type User = z.infer<typeof UserSchema>;
@@ -583,22 +582,54 @@ export type UpdateProjectInput = z.infer<typeof UpdateProjectInputSchema>;
 export type CreateCommentInput = z.infer<typeof CreateCommentInputSchema>;
 export type UpdateCommentInput = z.infer<typeof UpdateCommentInputSchema>;
 
-export type IssuesListResponse = z.infer<typeof LinearEndpointOutputSchemas.issuesList>;
-export type IssueGetResponse = z.infer<typeof LinearEndpointOutputSchemas.issuesGet>;
-export type IssueCreateResponse = z.infer<typeof LinearEndpointOutputSchemas.issuesCreate>;
-export type IssueUpdateResponse = z.infer<typeof LinearEndpointOutputSchemas.issuesUpdate>;
-export type IssueDeleteResponse = z.infer<typeof LinearEndpointOutputSchemas.issuesDelete>;
+export type IssuesListResponse = z.infer<
+	typeof LinearEndpointOutputSchemas.issuesList
+>;
+export type IssueGetResponse = z.infer<
+	typeof LinearEndpointOutputSchemas.issuesGet
+>;
+export type IssueCreateResponse = z.infer<
+	typeof LinearEndpointOutputSchemas.issuesCreate
+>;
+export type IssueUpdateResponse = z.infer<
+	typeof LinearEndpointOutputSchemas.issuesUpdate
+>;
+export type IssueDeleteResponse = z.infer<
+	typeof LinearEndpointOutputSchemas.issuesDelete
+>;
 
-export type TeamsListResponse = z.infer<typeof LinearEndpointOutputSchemas.teamsList>;
-export type TeamGetResponse = z.infer<typeof LinearEndpointOutputSchemas.teamsGet>;
+export type TeamsListResponse = z.infer<
+	typeof LinearEndpointOutputSchemas.teamsList
+>;
+export type TeamGetResponse = z.infer<
+	typeof LinearEndpointOutputSchemas.teamsGet
+>;
 
-export type ProjectsListResponse = z.infer<typeof LinearEndpointOutputSchemas.projectsList>;
-export type ProjectGetResponse = z.infer<typeof LinearEndpointOutputSchemas.projectsGet>;
-export type ProjectCreateResponse = z.infer<typeof LinearEndpointOutputSchemas.projectsCreate>;
-export type ProjectUpdateResponse = z.infer<typeof LinearEndpointOutputSchemas.projectsUpdate>;
-export type ProjectDeleteResponse = z.infer<typeof LinearEndpointOutputSchemas.projectsDelete>;
+export type ProjectsListResponse = z.infer<
+	typeof LinearEndpointOutputSchemas.projectsList
+>;
+export type ProjectGetResponse = z.infer<
+	typeof LinearEndpointOutputSchemas.projectsGet
+>;
+export type ProjectCreateResponse = z.infer<
+	typeof LinearEndpointOutputSchemas.projectsCreate
+>;
+export type ProjectUpdateResponse = z.infer<
+	typeof LinearEndpointOutputSchemas.projectsUpdate
+>;
+export type ProjectDeleteResponse = z.infer<
+	typeof LinearEndpointOutputSchemas.projectsDelete
+>;
 
-export type CommentsListResponse = z.infer<typeof LinearEndpointOutputSchemas.commentsList>;
-export type CommentCreateResponse = z.infer<typeof LinearEndpointOutputSchemas.commentsCreate>;
-export type CommentUpdateResponse = z.infer<typeof LinearEndpointOutputSchemas.commentsUpdate>;
-export type CommentDeleteResponse = z.infer<typeof LinearEndpointOutputSchemas.commentsDelete>;
+export type CommentsListResponse = z.infer<
+	typeof LinearEndpointOutputSchemas.commentsList
+>;
+export type CommentCreateResponse = z.infer<
+	typeof LinearEndpointOutputSchemas.commentsCreate
+>;
+export type CommentUpdateResponse = z.infer<
+	typeof LinearEndpointOutputSchemas.commentsUpdate
+>;
+export type CommentDeleteResponse = z.infer<
+	typeof LinearEndpointOutputSchemas.commentsDelete
+>;

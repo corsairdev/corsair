@@ -1,6 +1,5 @@
 import { z } from 'zod';
 
-
 const ContactResponseSchema = z
 	.object({
 		id: z.string(),
@@ -163,7 +162,7 @@ export const HubSpotEndpointOutputSchemas = {
 
 export type HubSpotEndpointOutputs = {
 	[K in keyof typeof HubSpotEndpointOutputSchemas]: z.infer<
-		typeof HubSpotEndpointOutputSchemas[K]
+		(typeof HubSpotEndpointOutputSchemas)[K]
 	>;
 };
 

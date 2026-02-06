@@ -48,7 +48,7 @@ describe('HubSpot API Type Tests', () => {
 					TEST_TOKEN,
 					{ query: { limit: 1 } },
 				);
-			
+
 			if (!contactsListResponse.results) {
 				return;
 			}
@@ -142,7 +142,7 @@ describe('HubSpot API Type Tests', () => {
 					TEST_TOKEN,
 					{ query: { limit: 1 } },
 				);
-			
+
 			if (!companiesListResponse.results) {
 				return;
 			}

@@ -1,8 +1,8 @@
 import dotenv from 'dotenv';
 import { createCorsair } from '../../core';
-import { slack } from './index';
 import { createIntegrationAndAccount } from '../../tests/plugins-test-utils';
 import { createTestDatabase } from '../../tests/setup-db';
+import { slack } from './index';
 
 dotenv.config();
 
@@ -60,9 +60,10 @@ describe('Slack plugin integration', () => {
 
 		expect(postEvents.length).toBeGreaterThan(0);
 		const postEvent = postEvents[postEvents.length - 1]!;
-		const postEventPayload = typeof postEvent.payload === 'string' 
-			? JSON.parse(postEvent.payload) 
-			: postEvent.payload;
+		const postEventPayload =
+			typeof postEvent.payload === 'string'
+				? JSON.parse(postEvent.payload)
+				: postEvent.payload;
 		expect(postEventPayload).toMatchObject(postInput);
 
 		if (posted.ts) {
@@ -92,11 +93,11 @@ describe('Slack plugin integration', () => {
 
 			expect(updateEvents.length).toBeGreaterThan(0);
 			const updateEvent = updateEvents[updateEvents.length - 1]!;
-			const updateEventPayload = typeof updateEvent.payload === 'string' 
-				? JSON.parse(updateEvent.payload) 
-				: updateEvent.payload;
+			const updateEventPayload =
+				typeof updateEvent.payload === 'string'
+					? JSON.parse(updateEvent.payload)
+					: updateEvent.payload;
 			expect(updateEventPayload).toMatchObject(updateInput);
-
 
 			const deleteInput = {
 				channel,
@@ -115,9 +116,10 @@ describe('Slack plugin integration', () => {
 
 			expect(deleteEvents.length).toBeGreaterThan(0);
 			const deleteEvent = deleteEvents[deleteEvents.length - 1]!;
-			const deleteEventPayload = typeof deleteEvent.payload === 'string' 
-				? JSON.parse(deleteEvent.payload) 
-				: deleteEvent.payload;
+			const deleteEventPayload =
+				typeof deleteEvent.payload === 'string'
+					? JSON.parse(deleteEvent.payload)
+					: deleteEvent.payload;
 			expect(deleteEventPayload).toMatchObject(deleteInput);
 		}
 
@@ -148,9 +150,10 @@ describe('Slack plugin integration', () => {
 
 		expect(listEvents.length).toBeGreaterThan(0);
 		const listEvent = listEvents[listEvents.length - 1]!;
-		const listEventPayload = typeof listEvent.payload === 'string' 
-			? JSON.parse(listEvent.payload) 
-			: listEvent.payload;
+		const listEventPayload =
+			typeof listEvent.payload === 'string'
+				? JSON.parse(listEvent.payload)
+				: listEvent.payload;
 		expect(listEventPayload).toMatchObject(listInput);
 
 		if (list.channels && list.channels.length > 0) {
@@ -169,7 +172,6 @@ describe('Slack plugin integration', () => {
 		testDb.cleanup();
 	});
 
-
 	it('reactions endpoints interact with API and DB', async () => {
 		const setup = await createSlackClient();
 		if (!setup) {
@@ -186,51 +188,51 @@ describe('Slack plugin integration', () => {
 		const posted = await corsair.slack.api.messages.post(postInput);
 
 		if (posted.ok && posted.ts) {
-				const addInput = {
-					channel,
-					timestamp: posted.ts,
-					name: 'thumbsup',
-				};
+			const addInput = {
+				channel,
+				timestamp: posted.ts,
+				name: 'thumbsup',
+			};
 
-				const added = await corsair.slack.api.reactions.add(addInput);
+			const added = await corsair.slack.api.reactions.add(addInput);
 
-				expect(added).toBeDefined();
+			expect(added).toBeDefined();
 
-				const addEvents = await testDb.adapter.findMany({
-					table: 'corsair_events',
-					where: [{ field: 'event_type', value: 'slack.reactions.add' }],
-				});
+			const addEvents = await testDb.adapter.findMany({
+				table: 'corsair_events',
+				where: [{ field: 'event_type', value: 'slack.reactions.add' }],
+			});
 
-				expect(addEvents.length).toBeGreaterThan(0);
-				const addEvent = addEvents[addEvents.length - 1]!;
-				const addEventPayload = typeof addEvent.payload === 'string' 
-					? JSON.parse(addEvent.payload) 
+			expect(addEvents.length).toBeGreaterThan(0);
+			const addEvent = addEvents[addEvents.length - 1]!;
+			const addEventPayload =
+				typeof addEvent.payload === 'string'
+					? JSON.parse(addEvent.payload)
 					: addEvent.payload;
-				expect(addEventPayload).toMatchObject(addInput);
+			expect(addEventPayload).toMatchObject(addInput);
 
-					const removeInput = {
-						channel,
-						timestamp: posted.ts,
-						name: 'thumbsup',
-					};
+			const removeInput = {
+				channel,
+				timestamp: posted.ts,
+				name: 'thumbsup',
+			};
 
-					const removed = await corsair.slack.api.reactions.remove(removeInput);
+			const removed = await corsair.slack.api.reactions.remove(removeInput);
 
-					expect(removed).toBeDefined();
+			expect(removed).toBeDefined();
 
-					const removeEvents = await testDb.adapter.findMany({
-						table: 'corsair_events',
-						where: [{ field: 'event_type', value: 'slack.reactions.remove' }],
-					});
+			const removeEvents = await testDb.adapter.findMany({
+				table: 'corsair_events',
+				where: [{ field: 'event_type', value: 'slack.reactions.remove' }],
+			});
 
-					expect(removeEvents.length).toBeGreaterThan(0);
-					const removeEvent = removeEvents[removeEvents.length - 1]!;
-					const removeEventPayload = typeof removeEvent.payload === 'string' 
-						? JSON.parse(removeEvent.payload) 
-						: removeEvent.payload;
-					expect(removeEventPayload).toMatchObject(removeInput);
-				
-		
+			expect(removeEvents.length).toBeGreaterThan(0);
+			const removeEvent = removeEvents[removeEvents.length - 1]!;
+			const removeEventPayload =
+				typeof removeEvent.payload === 'string'
+					? JSON.parse(removeEvent.payload)
+					: removeEvent.payload;
+			expect(removeEventPayload).toMatchObject(removeInput);
 
 			await corsair.slack.api.messages.delete({
 				channel,
@@ -240,5 +242,4 @@ describe('Slack plugin integration', () => {
 
 		testDb.cleanup();
 	});
-
 });

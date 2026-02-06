@@ -1,9 +1,9 @@
 import dotenv from 'dotenv';
 import { createCorsair } from '../../core';
-import { resend } from './index';
-import { ResendAPIError } from './client';
 import { createIntegrationAndAccount } from '../../tests/plugins-test-utils';
 import { createTestDatabase } from '../../tests/setup-db';
+import { ResendAPIError } from './client';
+import { resend } from './index';
 
 dotenv.config();
 
@@ -74,9 +74,10 @@ describe('Resend plugin integration', () => {
 
 		expect(sendEvents.length).toBeGreaterThan(0);
 		const sendEvent = sendEvents[sendEvents.length - 1]!;
-		const sendEventPayload = typeof sendEvent.payload === 'string' 
-			? JSON.parse(sendEvent.payload) 
-			: sendEvent.payload;
+		const sendEventPayload =
+			typeof sendEvent.payload === 'string'
+				? JSON.parse(sendEvent.payload)
+				: sendEvent.payload;
 		expect(sendEventPayload).toMatchObject(sendInput);
 
 		const emailsCount = await corsair.resend.db.emails.count();
@@ -106,15 +107,15 @@ describe('Resend plugin integration', () => {
 
 			expect(getEvents.length).toBeGreaterThan(0);
 			const getEvent = getEvents[getEvents.length - 1]!;
-			const getEventPayload = typeof getEvent.payload === 'string' 
-				? JSON.parse(getEvent.payload) 
-				: getEvent.payload;
+			const getEventPayload =
+				typeof getEvent.payload === 'string'
+					? JSON.parse(getEvent.payload)
+					: getEvent.payload;
 			expect(getEventPayload).toMatchObject(getInput);
 
 			if (fetched.id) {
-				const fetchedEmailFromDb = await corsair.resend.db.emails.findByEntityId(
-					fetched.id,
-				);
+				const fetchedEmailFromDb =
+					await corsair.resend.db.emails.findByEntityId(fetched.id);
 				if (fetchedEmailFromDb) {
 					expect(fetchedEmailFromDb.data.id).toBe(fetched.id);
 				}
@@ -136,9 +137,10 @@ describe('Resend plugin integration', () => {
 
 		expect(listEvents.length).toBeGreaterThan(0);
 		const listEvent = listEvents[listEvents.length - 1]!;
-		const listEventPayload = typeof listEvent.payload === 'string' 
-			? JSON.parse(listEvent.payload) 
-			: listEvent.payload;
+		const listEventPayload =
+			typeof listEvent.payload === 'string'
+				? JSON.parse(listEvent.payload)
+				: listEvent.payload;
 		expect(listEventPayload).toMatchObject(listInput);
 
 		testDb.cleanup();
@@ -167,9 +169,10 @@ describe('Resend plugin integration', () => {
 
 		expect(listEvents.length).toBeGreaterThan(0);
 		const listEvent = listEvents[listEvents.length - 1]!;
-		const listEventPayload = typeof listEvent.payload === 'string' 
-			? JSON.parse(listEvent.payload) 
-			: listEvent.payload;
+		const listEventPayload =
+			typeof listEvent.payload === 'string'
+				? JSON.parse(listEvent.payload)
+				: listEvent.payload;
 		expect(listEventPayload).toMatchObject(listInput);
 
 		const domains = domainsList.data || [];
@@ -201,15 +204,15 @@ describe('Resend plugin integration', () => {
 
 			expect(getEvents.length).toBeGreaterThan(0);
 			const getEvent = getEvents[getEvents.length - 1]!;
-			const getEventPayload = typeof getEvent.payload === 'string' 
-				? JSON.parse(getEvent.payload) 
-				: getEvent.payload;
+			const getEventPayload =
+				typeof getEvent.payload === 'string'
+					? JSON.parse(getEvent.payload)
+					: getEvent.payload;
 			expect(getEventPayload).toMatchObject(getInput);
 
 			if (fetchedDomain.id) {
-				const fetchedDomainFromDb = await corsair.resend.db.domains.findByEntityId(
-					fetchedDomain.id,
-				);
+				const fetchedDomainFromDb =
+					await corsair.resend.db.domains.findByEntityId(fetchedDomain.id);
 				if (fetchedDomainFromDb) {
 					expect(fetchedDomainFromDb.data.id).toBe(fetchedDomain.id);
 				}
@@ -220,7 +223,8 @@ describe('Resend plugin integration', () => {
 					id: firstDomain.id,
 				};
 
-				const verifyResult = await corsair.resend.api.domains.verify(verifyInput);
+				const verifyResult =
+					await corsair.resend.api.domains.verify(verifyInput);
 
 				expect(verifyResult).toBeDefined();
 
@@ -231,9 +235,10 @@ describe('Resend plugin integration', () => {
 
 				expect(verifyEvents.length).toBeGreaterThan(0);
 				const verifyEvent = verifyEvents[verifyEvents.length - 1]!;
-				const verifyEventPayload = typeof verifyEvent.payload === 'string' 
-					? JSON.parse(verifyEvent.payload) 
-					: verifyEvent.payload;
+				const verifyEventPayload =
+					typeof verifyEvent.payload === 'string'
+						? JSON.parse(verifyEvent.payload)
+						: verifyEvent.payload;
 				expect(verifyEventPayload).toMatchObject(verifyInput);
 			} catch (error) {
 				console.warn('Domain verify may have failed:', error);
@@ -246,7 +251,8 @@ describe('Resend plugin integration', () => {
 				name: testDomainName,
 			};
 
-			const createdDomain = await corsair.resend.api.domains.create(createInput);
+			const createdDomain =
+				await corsair.resend.api.domains.create(createInput);
 
 			expect(createdDomain).toBeDefined();
 
@@ -257,9 +263,10 @@ describe('Resend plugin integration', () => {
 
 			expect(createEvents.length).toBeGreaterThan(0);
 			const createEvent = createEvents[createEvents.length - 1]!;
-			const createEventPayload = typeof createEvent.payload === 'string' 
-				? JSON.parse(createEvent.payload) 
-				: createEvent.payload;
+			const createEventPayload =
+				typeof createEvent.payload === 'string'
+					? JSON.parse(createEvent.payload)
+					: createEvent.payload;
 			expect(createEventPayload).toMatchObject(createInput);
 
 			const createdDomainId = createdDomain.id;
@@ -279,7 +286,8 @@ describe('Resend plugin integration', () => {
 						id: createdDomainId,
 					};
 
-					const deletedDomain = await corsair.resend.api.domains.delete(deleteInput);
+					const deletedDomain =
+						await corsair.resend.api.domains.delete(deleteInput);
 
 					expect(deletedDomain).toBeDefined();
 
@@ -290,9 +298,10 @@ describe('Resend plugin integration', () => {
 
 					expect(deleteEvents.length).toBeGreaterThan(0);
 					const deleteEvent = deleteEvents[deleteEvents.length - 1]!;
-					const deleteEventPayload = typeof deleteEvent.payload === 'string' 
-						? JSON.parse(deleteEvent.payload) 
-						: deleteEvent.payload;
+					const deleteEventPayload =
+						typeof deleteEvent.payload === 'string'
+							? JSON.parse(deleteEvent.payload)
+							: deleteEvent.payload;
 					expect(deleteEventPayload).toMatchObject(deleteInput);
 				} catch (error) {
 					console.warn('Domain delete may have failed:', error);

@@ -220,7 +220,10 @@ export function resend<const T extends ResendPluginOptions>(
 	} satisfies InternalResendPlugin;
 }
 
-export { createResendEventMatch, verifyResendWebhookSignature } from './webhooks/types';
+export {
+	createResendEventMatch,
+	verifyResendWebhookSignature,
+} from './webhooks/types';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Webhook Type Exports

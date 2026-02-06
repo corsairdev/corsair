@@ -4,7 +4,7 @@ import 'dotenv/config';
 const main = async () => {
 	const res = await corsair
 		.withTenant('default')
-		.resend.keys.setWebhookSignature('')
+		.resend.keys.setWebhookSignature('');
 	// ({
 	// 	from: 'noreply@updates.corsair.dev',
 	// 	to: 'dev@corsair.dev',
