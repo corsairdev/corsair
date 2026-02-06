@@ -14,11 +14,9 @@ export const list: GithubEndpoints['repositoriesList'] = async (ctx, input) => {
 	let endpoint = owner ? `/users/${owner}/repos` : '/user/repos';
 	let result: RepositoriesListResponse;
 
-	result = await makeGithubRequest<RepositoriesListResponse>(
-		endpoint,
-		ctx.options.token,
-		{ query: { ...queryParams, type } },
-	);
+	result = await makeGithubRequest<RepositoriesListResponse>(endpoint, ctx.key, {
+		query: { ...queryParams, type },
+	});
 
 	if (result && ctx.db.repositories) {
 		try {
@@ -42,10 +40,7 @@ export const list: GithubEndpoints['repositoriesList'] = async (ctx, input) => {
 export const get: GithubEndpoints['repositoriesGet'] = async (ctx, input) => {
 	const { owner, repo } = input;
 	const endpoint = `/repos/${owner}/${repo}`;
-	const result = await makeGithubRequest<RepositoryGetResponse>(
-		endpoint,
-		ctx.options.token,
-	);
+	const result = await makeGithubRequest<RepositoryGetResponse>(endpoint, ctx.key);
 
 	if (result && ctx.db.repositories) {
 		try {
@@ -72,7 +67,7 @@ export const listBranches: GithubEndpoints['repositoriesListBranches'] = async (
 	const endpoint = `/repos/${owner}/${repo}/branches`;
 	const result = await makeGithubRequest<RepositoryBranchesListResponse>(
 		endpoint,
-		ctx.options.token,
+		ctx.key,
 		{ query: queryParams },
 	);
 
@@ -99,7 +94,7 @@ export const listCommits: GithubEndpoints['repositoriesListCommits'] = async (
 	const endpoint = `/repos/${owner}/${repo}/commits`;
 	const result = await makeGithubRequest<RepositoryCommitsListResponse>(
 		endpoint,
-		ctx.options.token,
+		ctx.key,
 		{ query: queryParams },
 	);
 
@@ -126,7 +121,7 @@ export const getContent: GithubEndpoints['repositoriesGetContent'] = async (
 	const endpoint = `/repos/${owner}/${repo}/contents/${path}`;
 	const result = await makeGithubRequest<RepositoryContentGetResponse>(
 		endpoint,
-		ctx.options.token,
+		ctx.key,
 		{ query: queryParams },
 	);
 

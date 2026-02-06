@@ -66,6 +66,11 @@
       "dev-source": "./plugins/posthog/index.ts",
       "types": "./dist/plugins/posthog/index.d.ts",
       "default": "./dist/plugins/posthog/index.js"
+    },
+    "./plugins/github": {
+      "dev-source": "./plugins/github/index.ts",
+      "types": "./dist/plugins/github/index.d.ts",
+      "default": "./dist/plugins/github/index.js"
     }
   },
   "scripts": {
