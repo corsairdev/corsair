@@ -5,6 +5,7 @@ import type {
 	CorsairPlugin,
 	CorsairPluginContext,
 	CorsairWebhook,
+	KeyBuilderContext,
 } from '../../core';
 import type { AuthTypes } from '../../core/constants';
 import type { GithubEndpointOutputs } from './endpoints';
@@ -33,6 +34,8 @@ export type GithubContext = CorsairPluginContext<
 	typeof GithubSchema,
 	GithubCredentials
 >;
+
+export type GithubKeyBuilderContext = KeyBuilderContext<GithubPluginOptions>;
 
 type GithubEndpoint<
 	K extends keyof GithubEndpointOutputs,
@@ -402,6 +405,7 @@ const githubWebhooksNested = {
 export type GithubPluginOptions = {
 	authType: AuthTypes;
 	credentials: GithubCredentials;
+	webhookSecret?: string;
 	hooks?: GithubPlugin['hooks'] | undefined;
 	webhookHooks?: GithubPlugin['webhookHooks'] | undefined;
 };
@@ -427,7 +431,48 @@ export function github(options: GithubPluginOptions) {
 			request: import('../../core/webhooks').RawWebhookRequest,
 		) => {
 			const headers = request.headers as Record<string, string | undefined>;
-			return headers['x-github-event'] !== undefined;
+			const hasGithubEvent = headers['x-github-event'] !== undefined;
+			const hasGithubSignature = headers['x-hub-signature-256'] !== undefined;
+			return hasGithubEvent && hasGithubSignature;
+		},
+		keyBuilder: async (ctx: GithubKeyBuilderContext, source) => {
+			if (source === 'webhook' && options.webhookSecret) {
+				return options.webhookSecret;
+			}
+
+			if (source === 'webhook') {
+				const res = await ctx.keys.getWebhookSignature();
+
+				if (!res) {
+					return '';
+				}
+
+				return res;
+			}
+
+			if (source === 'endpoint') {
+				if (ctx.authType === 'api_key') {
+					const res = await ctx.keys.getApiKey();
+
+					if (!res) {
+						return '';
+					}
+
+					return res;
+				} else if (ctx.authType === 'oauth_2') {
+					const res = await ctx.keys.getAccessToken();
+
+					if (!res) {
+						return '';
+					}
+
+					return res;
+				}
+			}
+
+			return '';
 		},
 	} as GithubPlugin;
 }
+
+export { createGithubEventMatch, verifyGithubWebhookSignature } from './webhooks/types';

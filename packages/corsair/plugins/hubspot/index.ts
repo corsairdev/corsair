@@ -6,6 +6,7 @@ import type {
 	CorsairPlugin,
 	CorsairPluginContext,
 	CorsairWebhook,
+	KeyBuilderContext,
 } from '../../core';
 import type { AuthTypes } from '../../core/constants';
 import type { HubSpotEndpointOutputs } from './endpoints';
@@ -47,6 +48,8 @@ export type HubSpotContext = CorsairPluginContext<
 	typeof HubSpotSchema,
 	HubSpotCredentials
 >;
+
+export type HubSpotKeyBuilderContext = KeyBuilderContext<HubSpotPluginOptions>;
 
 type HubSpotEndpoint<
 	K extends keyof HubSpotEndpointOutputs,
@@ -480,6 +483,7 @@ const hubspotWebhooksNested = {
 export type HubSpotPluginOptions = {
 	authType: AuthTypes;
 	credentials: HubSpotCredentials;
+	webhookSecret?: string;
 	hooks?: HubSpotPlugin['hooks'] | undefined;
 	webhookHooks?: HubSpotPlugin['webhookHooks'] | undefined;
 	errorHandlers?: CorsairErrorHandler;
@@ -505,16 +509,58 @@ export function hubspot(options: HubSpotPluginOptions) {
 		pluginWebhookMatcher: (
 			request: import('../../core/webhooks').RawWebhookRequest,
 		) => {
+			const headers = request.headers;
+			const hasHubSpotSignature = 'x-hubspot-signature-v3' in headers;
 			const body = request.body as
 				| Record<string, unknown>
 				| Array<Record<string, unknown>>;
 			const events = Array.isArray(body) ? body : [body];
-			return events.some(
+			const hasHubSpotPayload = events.some(
 				(event) =>
 					typeof event.subscriptionType === 'string' &&
 					event.subscriptionType !== undefined,
 			);
+			return hasHubSpotSignature || hasHubSpotPayload;
 		},
 		errorHandlers: options.errorHandlers || errorHandlers,
+		keyBuilder: async (ctx: HubSpotKeyBuilderContext, source) => {
+			if (source === 'webhook' && options.webhookSecret) {
+				return options.webhookSecret;
+			}
+
+			if (source === 'webhook') {
+				const res = await ctx.keys.getWebhookSignature();
+
+				if (!res) {
+					return '';
+				}
+
+				return res;
+			}
+
+			if (source === 'endpoint') {
+				if (ctx.authType === 'api_key') {
+					const res = await ctx.keys.getApiKey();
+
+					if (!res) {
+						return '';
+					}
+
+					return res;
+				} else if (ctx.authType === 'oauth_2') {
+					const res = await ctx.keys.getAccessToken();
+
+					if (!res) {
+						return '';
+					}
+
+					return res;
+				}
+			}
+
+			return '';
+		},
 	} as HubSpotPlugin;
 }
+
+export { createHubSpotEventMatch, verifyHubSpotWebhookSignature } from './webhooks/types';

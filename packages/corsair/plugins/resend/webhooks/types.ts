@@ -188,15 +188,67 @@ export type ResendWebhookOutputs = {
 	domainUpdated: DomainUpdatedEvent;
 };
 
-import type { CorsairWebhookMatcher, RawWebhookRequest } from '../../../core';
+import type {
+	CorsairWebhookMatcher,
+	RawWebhookRequest,
+	WebhookRequest,
+} from '../../../core';
+import { verifyHmacSignatureWithPrefix } from '../../../async-core/webhook-utils';
 
 function parseBody(body: unknown): unknown {
 	return typeof body === 'string' ? JSON.parse(body) : body;
 }
 
-export function createResendMatch(type: string): CorsairWebhookMatcher {
+export function verifyResendWebhookSignature(
+	request: WebhookRequest<unknown>,
+	webhookSecret?: string,
+): { valid: boolean; error?: string } {
+	if (!webhookSecret) {
+		return { valid: false };
+	}
+
+	const rawBody = request.rawBody;
+	if (!rawBody) {
+		return {
+			valid: false,
+			error: 'Missing raw body for signature verification',
+		};
+	}
+
+	const headers = request.headers;
+	const signature =
+		Array.isArray(headers['svix-signature'])
+			? headers['svix-signature'][0]
+			: headers['svix-signature'] ||
+				(Array.isArray(headers['x-resend-signature'])
+					? headers['x-resend-signature'][0]
+					: headers['x-resend-signature']);
+
+	if (!signature) {
+		return {
+			valid: false,
+			error: 'Missing svix-signature or x-resend-signature header',
+		};
+	}
+
+	const isValid = verifyHmacSignatureWithPrefix(
+		rawBody,
+		webhookSecret,
+		signature,
+		'sha256=',
+	);
+	if (!isValid) {
+		return { valid: false, error: 'Invalid signature' };
+	}
+
+	return { valid: true };
+}
+
+export function createResendEventMatch(type: string): CorsairWebhookMatcher {
 	return (request: RawWebhookRequest) => {
 		const parsedBody = parseBody(request.body) as Record<string, unknown>;
 		return typeof parsedBody.type === 'string' && parsedBody.type === type;
 	};
 }
+
+export const createResendMatch = createResendEventMatch;
