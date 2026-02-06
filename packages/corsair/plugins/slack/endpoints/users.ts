@@ -119,7 +119,7 @@ export const updateProfile: SlackEndpoints['usersUpdateProfile'] = async (
 
 	if (result.ok && result.profile && input.user) {
 		const endpoints = ctx.endpoints as SlackBoundEndpoints;
-		await endpoints.usersGet({ user: input.user });
+		await endpoints.users.get({ user: input.user });
 	}
 
 	await logEventFromContext(

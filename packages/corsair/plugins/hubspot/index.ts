@@ -370,7 +370,9 @@ export type HubSpotEndpoints = {
 	>;
 };
 
-export type HubSpotBoundEndpoints = BindEndpoints<HubSpotEndpoints>;
+export type HubSpotBoundEndpoints = BindEndpoints<
+	typeof hubspotEndpointsNested
+>;
 
 type HubSpotWebhook<
 	K extends keyof HubSpotWebhookOutputs,

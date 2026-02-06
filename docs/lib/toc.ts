@@ -27,7 +27,16 @@ const slugToFilePath: Record<string, string> = {
 	'adapters/postgresql': 'adapters/postgresql.mdx',
 	'adapters/prisma': 'adapters/prisma.mdx',
 	// plugins
-	'plugins/slack': 'plugins/slack.mdx',
+	'plugins/slack': 'plugins/slack/main.mdx',
+	'plugins/slack/api-endpoints': 'plugins/slack/api-endpoints.mdx',
+	'plugins/slack/webhooks': 'plugins/slack/webhooks.mdx',
+	'plugins/slack/database': 'plugins/slack/database.mdx',
+	'plugins/slack/error-handlers': 'plugins/slack/error-handlers.mdx',
+	'plugins/linear': 'plugins/linear/main.mdx',
+	'plugins/linear/api-endpoints': 'plugins/linear/api-endpoints.mdx',
+	'plugins/linear/webhooks': 'plugins/linear/webhooks.mdx',
+	'plugins/linear/database': 'plugins/linear/database.mdx',
+	'plugins/linear/error-handlers': 'plugins/linear/error-handlers.mdx',
 	// guides
 	'guides/create-your-own-plugin': 'guides/create-your-own-plugin.mdx',
 };

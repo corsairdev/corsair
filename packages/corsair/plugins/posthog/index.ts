@@ -29,7 +29,9 @@ export type PostHogContext = CorsairPluginContext<
 >;
 export type PostHogKeyBuilderContext = KeyBuilderContext<PostHogPluginOptions>;
 
-export type PostHogBoundEndpoints = BindEndpoints<PostHogEndpoints>;
+export type PostHogBoundEndpoints = BindEndpoints<
+	typeof posthogEndpointsNested
+>;
 
 type PostHogEndpoint<
 	K extends keyof PostHogEndpointOutputs,

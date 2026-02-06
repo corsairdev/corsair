@@ -743,15 +743,65 @@ export type SlackWebhookOutputs = {
 	challenge: SlackUrlVerificationPayload;
 };
 
-import type { CorsairWebhookMatcher, RawWebhookRequest } from '../../../core';
+import { verifySlackSignature } from '../../../async-core/webhook-utils';
+import type {
+	CorsairWebhookMatcher,
+	RawWebhookRequest,
+	WebhookRequest,
+} from '../../../core';
 
 function parseBody(body: unknown): unknown {
 	return typeof body === 'string' ? JSON.parse(body) : body;
 }
 
+export function verifySlackWebhookSignature(
+	request: WebhookRequest<unknown>,
+	signingSecret?: string,
+): { valid: boolean; error?: string } {
+	if (!signingSecret) {
+		return { valid: false };
+	}
+
+	const rawBody = request.rawBody;
+	if (!rawBody) {
+		return {
+			valid: false,
+			error: 'Missing raw body for signature verification',
+		};
+	}
+
+	const headers = request.headers;
+	const signature = Array.isArray(headers['x-slack-signature'])
+		? headers['x-slack-signature'][0]
+		: headers['x-slack-signature'];
+	const timestamp = Array.isArray(headers['x-slack-request-timestamp'])
+		? headers['x-slack-request-timestamp'][0]
+		: headers['x-slack-request-timestamp'];
+
+	if (!signature || !timestamp) {
+		return {
+			valid: false,
+			error: 'Missing x-slack-signature or x-slack-request-timestamp header',
+		};
+	}
+
+	const isValid = verifySlackSignature(
+		rawBody,
+		signingSecret,
+		timestamp,
+		signature,
+	);
+	if (!isValid) {
+		return { valid: false, error: 'Invalid signature' };
+	}
+
+	return { valid: true };
+}
+
 /**
  * Creates a webhook matcher for a specific Slack event type.
  * Returns a matcher function that checks if the incoming webhook is for the specified event.
+ * Also verifies that required Slack headers are present.
  */
 export function createSlackEventMatch(
 	eventType: string,

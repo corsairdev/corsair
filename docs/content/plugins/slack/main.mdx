@@ -1,0 +1,379 @@
+---
+title: Slack
+description: Integrate Slack messaging, channels, users, and file management into your application with Corsair.
+---
+
+## Quick Start
+
+Add the Slack plugin to your Corsair instance:
+
+```ts title="corsair.ts"
+import { createCorsair } from "corsair";
+import { slack } from "corsair/plugins";
+
+export const corsair = createCorsair({
+    plugins: [
+        slack(),
+    ],
+});
+```
+
+Once configured, you can access the Slack API through your Corsair instance:
+
+```ts
+// Send a message
+await corsair.slack.api.messages.post({
+    channel: "C1234567890",
+    text: "Hello from Corsair!",
+});
+```
+
+## Authentication
+
+### Supported Auth Types
+
+The Slack plugin supports two authentication methods:
+
+- **`api_key`** (default) - Use a bot token from your Slack app
+- **`oauth_2`** - Use OAuth 2.0 for user authentication
+
+### Default Auth Type
+
+If no `authType` is specified, the plugin defaults to **`api_key`**.
+
+### Configuring API Key Authentication
+
+For API key authentication, provide a bot token from your Slack app:
+
+```ts title="corsair.ts"
+slack({
+    authType: "api_key",
+    // Optional: provide key directly, otherwise uses database
+    key: process.env.SLACK_BOT_TOKEN,
+})
+```
+
+The plugin will automatically retrieve the API key from your database if you don't provide it directly. See [Authentication](/concepts/auth) for details on managing credentials.
+
+### Configuring OAuth 2.0 Authentication
+
+For OAuth 2.0 authentication:
+
+```ts title="corsair.ts"
+slack({
+    authType: "oauth_2",
+})
+```
+
+The plugin will automatically retrieve the access token from your database. See [Authentication](/concepts/auth) for OAuth 2.0 setup details.
+
+### Webhook Signature Verification
+
+For webhook signature verification, you can provide a signing secret:
+
+```ts title="corsair.ts"
+slack({
+    signingSecret: process.env.SLACK_SIGNING_SECRET,
+    // Optional: if not provided, uses database
+})
+```
+
+## Options
+
+The Slack plugin accepts the following configuration options:
+
+| Option | Type | Description |
+|--------|------|-------------|
+| `authType` | `'api_key' \| 'oauth_2'` | Authentication method (defaults to `'api_key'`) |
+| `key` | `string` | API key for endpoints (optional, uses database if not provided) |
+| `signingSecret` | `string` | Webhook signing secret (optional, uses database if not provided) |
+| `hooks` | `object` | Endpoint hooks for custom logic |
+| `webhookHooks` | `object` | Webhook hooks for event handling |
+| `errorHandlers` | `object` | Custom error handlers |
+
+### Hooks
+
+Hooks allow you to add custom logic that runs at specific points in the request lifecycle. You can use both endpoint hooks and webhook hooks.
+
+```ts title="corsair.ts"
+slack({
+    hooks: {
+        // Endpoint hooks run for API calls
+        messages: {
+            post: {
+                before: async (ctx, input) => {
+                    console.log("Sending message:", input.text);
+                    return { ctx, input };
+                },
+                after: async (ctx, result) => {
+                    console.log("Message sent:", result.ts);
+                },
+            },
+        },
+    },
+    webhookHooks: {
+        // Webhook hooks run for incoming webhooks
+        messages: {
+            message: {
+                after: async (ctx, result) => {
+                    await processIncomingMessage(result);
+                },
+            },
+        },
+    },
+})
+```
+
+See [Hooks](/concepts/hooks) for complete documentation on hooks.
+
+### Error Handling
+
+The Slack plugin includes built-in error handlers for common scenarios:
+
+- **Rate Limit Errors** - Automatically retries with exponential backoff (up to 5 retries)
+- **Authentication Errors** - Detects invalid/expired tokens (no retries)
+- **Permission Errors** - Detects missing scopes or access denied (no retries)
+- **Network Errors** - Retries transient network issues (up to 3 retries)
+- **Not Found Errors** - Handles missing resources (no retries)
+- **Default Handler** - Catches all other errors (no retries)
+
+You can also add custom error handlers for application-specific scenarios. For complete documentation on all built-in handlers, retry strategies, and how to create custom error handlers, see the [Error Handlers reference](/plugins/slack/error-handlers).
+
+## Usage
+
+### Accessing the API
+
+Once the plugin is configured, access Slack API endpoints through your Corsair instance:
+
+```ts
+// Using the default tenant
+const channels = await corsair.slack.api.channels.list({
+    exclude_archived: true,
+});
+
+// Using a specific tenant (multi-tenancy)
+const tenant = corsair.withTenant("tenant-id");
+const messages = await tenant.slack.api.messages.post({
+    channel: "C1234567890",
+    text: "Hello!",
+});
+```
+
+The API is organized by resource type:
+- `api.channels.*` - Channel management
+- `api.messages.*` - Message operations
+- `api.users.*` - User information
+- `api.files.*` - File operations
+- `api.reactions.*` - Reaction management
+- `api.stars.*` - Star operations
+- `api.userGroups.*` - User group management
+
+For detailed information on all available endpoints, parameters, and return types, see the [API Endpoints reference](/plugins/slack/api-endpoints).
+
+### Webhooks
+
+The Slack plugin automatically handles incoming webhooks. Configure your webhook URL in Slack to point to your Corsair webhook endpoint:
+
+```ts title="app/api/webhook/route.ts"
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    const body = await request.json();
+    
+    const result = await processWebhook(corsair, headers, body);
+    return result.response;
+}
+```
+
+Available webhook events:
+- `messages.message` - New or updated messages
+- `channels.created` - New channel created
+- `reactions.added` - Reaction added to message
+- `users.teamJoin` - New user joined team
+- `users.userChange` - User profile updated
+- `files.created` - New file uploaded
+- `files.public` - File made public
+- `files.shared` - File shared
+- `challenge.challenge` - URL verification challenge
+
+For detailed information on webhook events, payload structures, and examples, see the [Webhooks reference](/plugins/slack/webhooks).
+
+### Database Access
+
+The Slack plugin automatically syncs data to your database. Query synced data using the database API:
+
+```ts
+// Search for channels
+const channels = await corsair.slack.db.channels.search({
+    data: { name: "general" },
+});
+
+// Search for messages
+const messages = await corsair.slack.db.messages.search({
+    data: { channel: "C1234567890" },
+});
+
+// Search for users
+const users = await corsair.slack.db.users.search({
+    data: { name: "john" },
+});
+```
+
+The plugin syncs the following entities:
+- `messages` - All messages from channels
+- `channels` - Channel information
+- `users` - User profiles
+- `files` - File metadata
+- `userGroups` - User group information
+
+For detailed schema information, query examples, and best practices, see the [Database reference](/plugins/slack/database).
+
+### Multi-Tenancy
+
+If you have multi-tenancy enabled, use `withTenant()` to access tenant-specific Slack instances:
+
+```ts
+const tenant = corsair.withTenant("tenant-id");
+
+// All API calls are scoped to this tenant
+await tenant.slack.api.messages.post({
+    channel: "C1234567890",
+    text: "Hello!",
+});
+
+// Database queries are also scoped
+const channels = await tenant.slack.db.channels.search({
+    data: { name: "general" },
+});
+```
+
+For webhooks, include the tenant ID in your webhook URL:
+
+```
+https://api.yourapp.com/webhook?tenantId=tenant-id
+```
+
+See [Multi-Tenancy](/concepts/multi-tenancy) for complete documentation.
+
+## Examples
+
+### Example 1: Sending a Message When a Linear Issue is Created
+
+This example shows how to send a Slack notification when a Linear issue is created using an event system like Inngest:
+
+```ts title="corsair.ts"
+import { createCorsair } from "corsair";
+import { slack, linear } from "corsair/plugins";
+import { inngest } from "./inngest";
+
+export const corsair = createCorsair({
+    plugins: [
+        linear({
+            webhookHooks: {
+                issues: {
+                    create: {
+                        after: async (ctx, result) => {
+                            // Send event to background job system
+                            await inngest.send({ // [!code highlight]
+                                name: "linear/issue-created", // [!code highlight]
+                                data: { // [!code highlight]
+                                    tenantId: ctx.tenantId ?? "default", // [!code highlight]
+                                    issue: result.data, // [!code highlight]
+                                }, // [!code highlight]
+                            }); // [!code highlight]
+                        },
+                    },
+                },
+            },
+        }),
+        slack(),
+    ],
+});
+```
+
+```ts title="inngest/functions.ts"
+// Handle the event in a background job
+export const notifySlackOnIssueCreated = inngest.createFunction(
+    { id: "notify-slack-issue-created" },
+    { event: "linear/issue-created" },
+    async ({ event }) => {
+        const { tenantId, issue } = event.data;
+        const tenant = corsair.withTenant(tenantId);
+        
+        // Find the Slack channel
+        const channels = await tenant.slack.db.channels.search({
+            data: { name: "notifications" },
+        });
+        
+        if (channels[0]?.entity_id) {
+            await tenant.slack.api.messages.post({
+                channel: channels[0].entity_id,
+                text: `🆕 New Linear issue: *${issue.title}*\n${issue.url}`,
+            });
+        }
+    }
+);
+```
+
+### Example 2: Processing Incoming Slack Messages
+
+This example shows how to use webhook hooks to process incoming Slack messages:
+
+```ts title="corsair.ts"
+slack({
+    webhookHooks: {
+        messages: {
+            message: {
+                after: async (ctx, result) => {
+                    // Skip bot messages
+                    if (result.data.bot_id) {
+                        return;
+                    }
+                    
+                    // Process the message
+                    console.log(`Message from ${result.data.user}: ${result.data.text}`);
+                    
+                    // Send to your event system
+                    await eventBus.publish("slack.message", { // [!code highlight]
+                        tenantId: ctx.tenantId, // [!code highlight]
+                        message: result.data, // [!code highlight]
+                    }); // [!code highlight]
+                },
+            },
+        },
+    },
+})
+```
+
+### Example 3: Querying and Displaying Channel Information
+
+This example shows how to query synced Slack data and use it in your application:
+
+```ts
+async function getChannelInfo(tenantId: string, channelName: string) {
+    const tenant = corsair.withTenant(tenantId);
+    
+    // First, sync channels from Slack
+    await tenant.slack.api.channels.list({
+        exclude_archived: true,
+    });
+    
+    // Then query from database
+    const channels = await tenant.slack.db.channels.search({ // [!code highlight]
+        data: { name: channelName }, // [!code highlight]
+    }); // [!code highlight]
+    
+    if (!channels[0]) {
+        throw new Error(`Channel #${channelName} not found`);
+    }
+    
+    return {
+        id: channels[0].entity_id,
+        name: channels[0].name,
+        memberCount: channels[0].num_members,
+        isPrivate: channels[0].is_private,
+    };
+}
+```

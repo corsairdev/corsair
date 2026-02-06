@@ -1,15 +1,25 @@
 import { logEventFromContext } from '../../utils/events';
 import type { SlackWebhooks } from '..';
-import { createSlackEventMatch } from './types';
+import { createSlackEventMatch, verifySlackWebhookSignature } from './types';
 
 export const teamJoin: SlackWebhooks['teamJoin'] = {
 	match: createSlackEventMatch('team_join'),
 
 	handler: async (ctx, request) => {
+		const signingSecret = ctx.options.key;
+		const verification = verifySlackWebhookSignature(request, signingSecret);
+		if (!verification.valid) {
+			return {
+				success: false,
+				statusCode: 401,
+				error: verification.error || 'Signature verification failed',
+			};
+		}
+
 		const event =
 			request.payload.type === 'event_callback' ? request.payload.event : null;
 
-		if (!event || event.type !== 'team_join') {
+		if (!event || event?.type !== 'team_join') {
 			return {
 				success: true,
 				data: undefined,
@@ -57,10 +67,20 @@ export const userChange: SlackWebhooks['userChange'] = {
 	match: createSlackEventMatch('user_change'),
 
 	handler: async (ctx, request) => {
+		const signingSecret = ctx.options.key;
+		const verification = verifySlackWebhookSignature(request, signingSecret);
+		if (!verification.valid) {
+			return {
+				success: false,
+				statusCode: 401,
+				error: verification.error || 'Signature verification failed',
+			};
+		}
+
 		const event =
 			request.payload.type === 'event_callback' ? request.payload.event : null;
 
-		if (!event || event.type !== 'user_change') {
+		if (!event || event?.type !== 'user_change') {
 			return {
 				success: true,
 				data: undefined,

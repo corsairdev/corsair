@@ -1,345 +1,787 @@
+# Plugin Documentation Template & Guidelines
+
+This template provides a standardized structure for documenting Corsair plugins. Follow these guidelines to ensure consistency, clarity, and excellent user experience.
+
+## ⚠️ Critical Guidelines
+
+**DO NOT include in plugin documentation:**
+1. ❌ **Error handling patterns** (circuit breakers, retry logic, exponential backoff, etc.)
+2. ❌ **Best practices sections** in error-handlers.mdx
+3. ❌ **Troubleshooting sections** with made-up solutions
+4. ❌ **Links to community resources** (Discord, Slack, forums) without verified URLs
+5. ❌ **Made-up external URLs or resources**
+6. ❌ **try-catch blocks in examples** - Corsair handles all errors automatically
+
+**Instead:**
+- ✅ Point developers to `/concepts/error-handling` for error handling strategies
+- ✅ Only link to verified official resources (plugin API docs, GitHub repo, Corsair concepts)
+- ✅ Keep error-handlers.mdx focused on documenting built-in handlers and custom handler examples
+- ✅ Show simple `await` calls in examples - no try-catch needed
+
 ---
-title: {{PLUGIN_NAME}}
-description: {{PLUGIN_DESCRIPTION}}
+
+## File Structure
+
+Create the following files in `/docs/content/plugins/{plugin-name}/`:
+
+```
+plugins/{plugin-name}/
+├── main.mdx              # Main plugin page (basics, setup, usage)
+├── api-endpoints.mdx     # Complete API reference
+├── webhooks.mdx          # Webhook events and handlers
+├── database.mdx          # Database schema and queries
+└── error-handlers.mdx    # Error handling documentation
+```
+
 ---
 
-{/* 
-TEMPLATE INSTRUCTIONS FOR LLM:
-- Replace all {{PLACEHOLDER}} values with actual content
-- Keep code examples concise — show the happy path, not every option
-- Every section MUST have a code example
-- Use the exact structure below for consistency
-- Services are like: slack.channels, linear.issues, slack.messages
-- Actions are like: channels.create, issues.delete, messages.post
-*/}
+## Main Page Structure (`main.mdx`)
 
-{{PLUGIN_NAME}} integration for Corsair. {{ONE_SENTENCE_DESCRIPTION}}.
+The main page should follow this exact structure with H2 headers:
 
-## Installation
+### 1. Quick Start (H2)
+- **Purpose:** Get users up and running in 30 seconds
+- **Content:**
+  - Minimal working example (3-5 lines)
+  - Copy-paste ready code
+  - DO NOT include `authType` if it's the default
+  - Show basic usage after installation
 
-Add the plugin to your Corsair instance:
+**Example:**
+```markdown
+## Quick Start
 
-```ts title="corsair.ts"
+Add the {Plugin} plugin to your Corsair instance:
+
+\`\`\`ts title="corsair.ts"
 import { createCorsair } from "corsair";
-import { {{PLUGIN_ID}} } from "corsair/plugins";
+import { pluginName } from "corsair/plugins";
 
 export const corsair = createCorsair({
     plugins: [
-        {{PLUGIN_ID}}({
-            authType: "{{AUTH_TYPE}}", // "api_key" | "oauth_2"
-            credentials: {
-                {{CREDENTIALS_EXAMPLE}}
-            },
-        }),
+        pluginName(),  // No authType if it's the default!
     ],
 });
+\`\`\`
+
+Once configured, you can access the API:
+
+\`\`\`ts
+await corsair.pluginName.api.resource.action({
+    param: "value",
+});
+\`\`\`
 ```
 
+### 2. Authentication (H2)
+- **Purpose:** Explain all supported auth types
+- **Structure:**
+  - H3: Supported Auth Types (list all, mark default)
+  - H3: Default Auth Type (explicitly state the default)
+  - H3: Configuring {AuthType} Authentication (one H3 per auth type)
+  - H3: Webhook Signature Verification (if applicable)
+- **Content:**
+  - Clear examples for each auth type
+  - Link to `/concepts/auth` for details
+  - Explain when to use `key` option vs database
+
+**Example:**
+```markdown
 ## Authentication
 
-{{PLUGIN_NAME}} supports the following auth types:
+### Supported Auth Types
 
-### API Key
+The {Plugin} plugin supports:
+- **`api_key`** (default) - Use an API key
+- **`oauth_2`** - Use OAuth 2.0
 
-```ts title="corsair.ts"
-{{PLUGIN_ID}}({
+### Default Auth Type
+
+If no `authType` is specified, the plugin defaults to **`api_key`**.
+
+### Configuring API Key Authentication
+
+\`\`\`ts title="corsair.ts"
+pluginName({
     authType: "api_key",
-    credentials: {
-        {{API_KEY_CREDENTIALS}}
-    },
+    // Optional: provide key directly, otherwise uses database
+    key: process.env.PLUGIN_API_KEY,
 })
+\`\`\`
+
+See [Authentication](/concepts/auth) for details on managing credentials.
 ```
 
-{/* Include OAuth section only if applicable */}
-### OAuth 2.0
+### 3. Options (H2)
+- **Purpose:** Document all plugin configuration options
+- **Structure:**
+  - H3: Plugin Options (table of all options)
+  - H3: Hooks (brief explanation with example)
+  - H3: Error Handling (overview, link to detailed page)
+- **Content:**
+  - Complete options table with types and descriptions
+  - Link to concept pages for hooks and error handling
+  - Brief examples showing usage patterns
 
-```ts title="corsair.ts"
-{{PLUGIN_ID}}({
-    authType: "oauth_2",
-    credentials: {
-        clientId: process.env.{{PLUGIN_NAME_UPPER}}_CLIENT_ID,
-        clientSecret: process.env.{{PLUGIN_NAME_UPPER}}_CLIENT_SECRET,
+**Example:**
+```markdown
+## Options
+
+The {Plugin} plugin accepts the following configuration options:
+
+| Option | Type | Description |
+|--------|------|-------------|
+| `authType` | `'api_key' \| 'oauth_2'` | Authentication method (defaults to `'api_key'`) |
+| `key` | `string` | API key (optional, uses database if not provided) |
+| `hooks` | `object` | Endpoint hooks for custom logic |
+| `webhookHooks` | `object` | Webhook hooks for event handling |
+| `errorHandlers` | `object` | Custom error handlers |
+
+### Hooks
+
+\`\`\`ts
+pluginName({
+    hooks: {
+        resource: {
+            action: {
+                before: async (ctx, input) => {
+                    console.log("Before action");
+                    return { ctx, input };
+                },
+            },
+        },
     },
 })
+\`\`\`
+
+See [Hooks](/concepts/hooks) for complete documentation.
+
+### Error Handling
+
+The plugin includes built-in error handlers for common scenarios. For complete documentation, see the [Error Handlers reference](/plugins/{plugin-name}/error-handlers).
 ```
 
----
+### 4. Usage (H2)
+- **Purpose:** Show how to use the plugin after setup
+- **Structure:**
+  - H3: Accessing the API
+  - H3: Webhooks
+  - H3: Database Access
+  - H3: Multi-Tenancy
+- **Content:**
+  - Basic usage patterns
+  - Links to detailed reference pages
+  - Multi-tenancy examples
 
-## Services
+### 5. Examples (H2)
+- **Purpose:** Provide 2-3 real-world, complete examples
+- **Requirements:**
+  - Each example should be H3
+  - Use realistic scenarios
+  - Include highlighted code with `// [!code highlight]`
+  - **IMPORTANT:** Don't call `corsair` from inside webhook hooks
+  - Use event systems (like Inngest) for webhook → action flows
+  - Show complete, working code
 
-{/* 
-List all services (resource groups) available in the plugin.
-Each service should have its own H3 section.
-*/}
+**Example Structure:**
+```markdown
+## Examples
 
-{{PLUGIN_NAME}} provides the following services:
+### Example 1: Sending Notification on External Event
 
-| Service | Description |
-|---------|-------------|
-{{#each SERVICES}}
-| `{{SERVICE_NAME}}` | {{SERVICE_DESCRIPTION}} |
-{{/each}}
+\`\`\`ts title="corsair.ts"
+import { inngest } from "./inngest";
 
----
-
-{/* 
-For each service, create an H3 section with all its actions.
-Keep action documentation brief — just show the call and key parameters.
-*/}
-
-### {{SERVICE_NAME_1}}
-
-#### {{ACTION_NAME}} 
-
-{{ACTION_DESCRIPTION}}.
-
-```ts title="example.ts"
-const result = await corsair.{{PLUGIN_ID}}.api.{{SERVICE}}.{{ACTION}}({
-    {{REQUIRED_PARAMS}}
+export const corsair = createCorsair({
+    plugins: [
+        externalPlugin({
+            webhookHooks: {
+                events: {
+                    created: {
+                        after: async (ctx, result) => {
+                            // Send to event system, DON'T call corsair here
+                            await inngest.send({ // [!code highlight]
+                                name: "external/event-created", // [!code highlight]
+                                data: { // [!code highlight]
+                                    tenantId: ctx.tenantId, // [!code highlight]
+                                    event: result.data, // [!code highlight]
+                                }, // [!code highlight]
+                            }); // [!code highlight]
+                        },
+                    },
+                },
+            },
+        }),
+        currentPlugin(),
+    ],
 });
+\`\`\`
+
+\`\`\`ts title="inngest/functions.ts"
+// Handle in background job - NOW you can call corsair
+export const handleEvent = inngest.createFunction(
+    { id: "handle-event" },
+    { event: "external/event-created" },
+    async ({ event }) => {
+        const tenant = corsair.withTenant(event.data.tenantId);
+        
+        await tenant.currentPlugin.api.resource.action({
+            data: event.data.event,
+        });
+    }
+);
+\`\`\`
 ```
+
+---
+
+## API Endpoints Page (`api-endpoints.mdx`)
+
+### Header Format (CRITICAL)
+
+**DO NOT use backticks in H3 headers!** They break the table of contents.
+
+**Wrong:**
+```markdown
+### `channels.create`
+Create a channel.
+```
+
+**Correct:**
+```markdown
+### create
+`channels.create`
+
+Create a channel.
+```
+
+### Page Structure
+
+```markdown
+---
+title: {Plugin} API Endpoints
+description: Complete reference for all {Plugin} API endpoints.
+---
+
+[Opening paragraph]
+
+<Callout type="info">
+**New to Corsair?** Learn about core concepts like [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Callout>
+
+<Callout>
+**Full Implementation:** For the complete, up-to-date list, see the [{Plugin} plugin source code](https://github.com/corsairdev/corsair/tree/main/packages/corsair/plugins/{plugin-name}).
+</Callout>
+
+## Resource Name (H2)
+
+### action (H3)
+`resource.action`
+
+Description of the endpoint.
+
+\`\`\`ts
+const result = await corsair.pluginName.api.resource.action({
+    param: "value",
+    highlighted: "param", // [!code highlight]
+});
+\`\`\`
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-{{#each PARAMS}}
-| `{{PARAM_NAME}}` | `{{PARAM_TYPE}}` | {{REQUIRED}} | {{PARAM_DESCRIPTION}} |
-{{/each}}
+| `param` | `string` | Yes | Description |
 
-**Response:**
+---
+```
 
-```ts
+### Organization
+- Use H2 for resource groupings (Channels, Messages, Users, etc.)
+- Use H3 for individual endpoints (create, list, get, etc.)
+- Include parameter tables for every endpoint
+- Show code examples with highlights
+- Use `---` separators between endpoints
+
+---
+
+## Webhooks Page (`webhooks.mdx`)
+
+### Header Format
+
+Same as API endpoints - **NO backticks in H3 headers!**
+
+**Correct:**
+```markdown
+### message
+`messages.message`
+
+**Event Type:** Message
+
+Fires when...
+```
+
+### Page Structure
+
+```markdown
+---
+title: {Plugin} Webhooks
+description: All available {Plugin} webhook events.
+---
+
+[Opening paragraph]
+
+<Callout type="info">
+**New to Corsair?** Learn about [webhooks](/concepts/webhooks), [hooks](/concepts/hooks), and [multi-tenancy](/concepts/multi-tenancy).
+</Callout>
+
+<Callout>
+**Full Implementation:** See the [{Plugin} plugin source code](https://github.com/corsairdev/corsair/tree/main/packages/corsair/plugins/{plugin-name}).
+</Callout>
+
+## Setup (H2)
+
+[Setup instructions with code]
+
+## Available Webhooks (H2)
+
+### eventName (H3)
+`resource.eventName`
+
+**Event Type:** Display Name
+
+**When it fires:**
+- Condition 1
+- Condition 2
+
+**Payload Structure:**
+
+\`\`\`ts
 {
-    {{RESPONSE_SHAPE}}
+    type: "event_type",
+    field: "value",
+    important: "field", // [!code highlight]
 }
-```
+\`\`\`
 
-{/* Repeat the above pattern for each action in the service */}
+**Example Usage:**
 
----
-
-### {{SERVICE_NAME_2}}
-
-{/* Continue with remaining services... */}
-
----
-
-## Webhooks
-
-{{PLUGIN_NAME}} supports the following webhook events:
-
-| Event | Description |
-|-------|-------------|
-{{#each WEBHOOKS}}
-| `{{WEBHOOK_NAME}}` | {{WEBHOOK_DESCRIPTION}} |
-{{/each}}
-
-### Handling Webhooks
-
-```ts title="corsair.ts"
-{{PLUGIN_ID}}({
-    authType: "api_key",
-    credentials: { ... },
+\`\`\`ts
+pluginName({
     webhookHooks: {
-        {{SERVICE}}: {
-            {{WEBHOOK_EVENT}}: {
+        resource: {
+            eventName: {
                 after: async (ctx, result) => {
-                    // Handle the webhook
-                    console.log("{{WEBHOOK_EVENT}}:", result);
+                    // Process event
                 },
             },
         },
     },
 })
-```
+\`\`\`
 
----
-
-## Hooks
-
-Add before/after hooks to customize behavior.
-
-### API Hooks
-
-```ts title="corsair.ts"
-{{PLUGIN_ID}}({
-    authType: "api_key",
-    credentials: { ... },
-    hooks: {
-        {{SERVICE}}: {
-            {{ACTION}}: {
-                before: (ctx, args) => {
-                    console.log("Before {{ACTION}}:", args);
-                    return { ctx, args };
-                },
-                after: (ctx, result) => {
-                    console.log("After {{ACTION}}:", result);
-                },
-            },
-        },
-    },
-})
-```
-
-### Webhook Hooks
-
-```ts title="corsair.ts"
-{{PLUGIN_ID}}({
-    authType: "api_key",
-    credentials: { ... },
-    webhookHooks: {
-        {{SERVICE}}: {
-            {{WEBHOOK_EVENT}}: {
-                before: async (ctx, payload) => {
-                    return { ctx, payload };
-                },
-                after: async (ctx, result) => {
-                    // Sync to external system, send notification, etc.
-                },
-            },
-        },
-    },
-})
-```
-
----
-
-## Error Handling
-
-Add custom error handlers for {{PLUGIN_NAME}}.
-
-```ts title="corsair.ts"
-{{PLUGIN_ID}}({
-    authType: "api_key",
-    credentials: { ... },
-    errorHandlers: {
-        RATE_LIMIT_ERROR: {
-            match: (error) => error.message.includes("{{RATE_LIMIT_INDICATOR}}"),
-            handler: async (error, context) => ({
-                maxRetries: 5,
-                retryStrategy: "exponential_backoff_jitter",
-            }),
-        },
-        DEFAULT: {
-            match: () => true,
-            handler: async (error, context) => {
-                console.error(`{{PLUGIN_NAME}} error:`, error.message);
-                return { maxRetries: 0 };
-            },
-        },
-    },
-})
-```
-
----
-
-## Database Schema
-
-Corsair stores {{PLUGIN_NAME}} data in the `corsair_resources` table. Each resource type has a strongly-typed schema.
-
-### Querying Data
-
-```ts title="example.ts"
-// Find by resource ID
-const {{RESOURCE}} = await corsair.{{PLUGIN_ID}}.db.{{SERVICE}}.findByResourceId("{{EXAMPLE_ID}}");
-
-// List all
-const {{RESOURCE_PLURAL}} = await corsair.{{PLUGIN_ID}}.db.{{SERVICE}}.list({ limit: 50 });
-
-// Search by data fields
-const results = await corsair.{{PLUGIN_ID}}.db.{{SERVICE}}.search({
-    data: { name: "{{SEARCH_TERM}}" },
-    limit: 20,
-});
-
-// Search with contains (LIKE)
-const partialMatch = await corsair.{{PLUGIN_ID}}.db.{{SERVICE}}.search({
-    data: { name: { contains: "{{SEARCH_TERM}}" } },
-});
-
-// Upsert
-await corsair.{{PLUGIN_ID}}.db.{{SERVICE}}.upsertByEntityId("{{RESOURCE_ID}}", {
-    {{UPSERT_DATA}}
-});
-```
-
-{/* 
-For each resource type, document the schema fields.
-Reference the actual schema file: packages/corsair/plugins/{{PLUGIN_ID}}/schema/database.ts
-*/}
-
-### {{RESOURCE_TYPE_1}}
+**Key Fields:**
 
 | Field | Type | Description |
 |-------|------|-------------|
-{{#each SCHEMA_FIELDS}}
-| `{{FIELD_NAME}}` | `{{FIELD_TYPE}}` | {{FIELD_DESCRIPTION}} |
-{{/each}}
+| `field` | `string` | Description |
 
-{/* Repeat for each resource type... */}
+---
+```
+
+### Content Requirements
+- Explain when each webhook fires
+- Show complete payload structure
+- Provide usage examples
+- Include key fields table
+- Show webhook hook patterns
 
 ---
 
-## Options
+## Database Page (`database.mdx`)
 
-| Option | Type | Description |
-|--------|------|-------------|
-| `authType` | `"api_key"` \| `"oauth_2"` | Authentication method |
-| `credentials` | `object` | Authentication credentials |
-| `hooks` | `object` | API hooks for before/after actions |
-| `webhookHooks` | `object` | Webhook hooks for before/after events |
-| `errorHandlers` | `object` | Custom error handlers |
+### Page Structure
+
+```markdown
+---
+title: {Plugin} Database Schema
+description: Database entities and querying synced data.
+---
+
+[Opening paragraph]
+
+<Callout type="info">
+**New to Corsair?** Learn about [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Callout>
+
+<Callout>
+**Full Implementation:** See the [{Plugin} plugin source code](https://github.com/corsairdev/corsair/tree/main/packages/corsair/plugins/{plugin-name}).
+</Callout>
+
+## Synced Entities (H2)
+
+- **entity1** - Description
+- **entity2** - Description
+
+## Database API (H2)
+
+[Basic usage example]
 
 ---
 
-## Full Example
+## Entity Name (H2)
 
-```ts title="corsair.ts"
-import { createCorsair } from "corsair";
-import { drizzleAdapter } from "corsair/adapters/drizzle";
-import { {{PLUGIN_ID}} } from "corsair/plugins";
+### Schema (H3)
 
-export const corsair = createCorsair({
-    multiTenancy: true,
-    database: drizzleAdapter(db, { provider: "pg", schema }),
-    plugins: [
-        {{PLUGIN_ID}}({
-            authType: "api_key",
-            credentials: {
-                {{CREDENTIALS_EXAMPLE}}
-            },
-            hooks: {
-                {{SERVICE}}: {
-                    {{ACTION}}: {
-                        after: (ctx, result) => {
-                            console.log("{{ACTION}} completed:", result.id);
-                        },
-                    },
-                },
-            },
-            errorHandlers: {
-                RATE_LIMIT_ERROR: {
-                    match: (error) => error.message.includes("rate"),
-                    handler: async () => ({
-                        maxRetries: 3,
-                        retryStrategy: "exponential_backoff_jitter",
-                    }),
-                },
-            },
-        }),
+\`\`\`ts
+{
+    id: string;          // Description
+    field: string;       // Description
+}
+\`\`\`
+
+### Querying Entity (H3)
+
+**Search by field:**
+
+\`\`\`ts
+const results = await corsair.pluginName.db.entity.search({
+    data: { field: "value" }, // [!code highlight]
+});
+\`\`\`
+
+### Example: [Use Case] (H3)
+
+[Complete example with explanation]
+
+---
+```
+
+### Content Requirements
+- Show complete schema for each entity
+- Provide multiple query examples per entity
+- Include real-world use case examples
+- Explain when data is synced
+- Show multi-tenancy usage
+
+---
+
+## Error Handlers Page (`error-handlers.mdx`)
+
+### Page Structure
+
+```markdown
+---
+title: {Plugin} Error Handlers
+description: Built-in and custom error handling.
+---
+
+[Opening paragraph]
+
+<Callout type="info">
+**New to Corsair?** Learn about [error handling](/concepts/error-handling) and retry strategies.
+</Callout>
+
+<Callout>
+**Full Implementation:** See the [{Plugin} plugin source code](https://github.com/corsairdev/corsair/tree/main/packages/corsair/plugins/{plugin-name}).
+</Callout>
+
+## Built-in Error Handlers (H2)
+
+### Error Type (H3)
+
+**Triggers:** What causes this error
+
+**Behavior:**
+- Maximum retries: **N**
+- Retry strategy details
+
+**Example:**
+
+```ts
+// ✅ CORRECT: Corsair handles errors automatically
+await corsair.pluginName.api.resource.action();
+// No try-catch needed - errors handled by Corsair
+
+// ❌ WRONG: Do NOT wrap in try-catch
+try {
+    await corsair.pluginName.api.resource.action();
+} catch (error) {
+    // Don't do this
+}
+```
+
+**How to Fix:**
+1. Step 1
+2. Step 2
+
+---
+
+## Custom Error Handlers (H2)
+
+[Examples of custom handlers]
+
+**IMPORTANT:** After documenting custom error handlers, add a reference to the error handling concepts page:
+
+For comprehensive error handling strategies, patterns, and best practices, see the [Error Handling](/concepts/error-handling) concepts page.
+
+**DO NOT include:**
+- Error handling patterns (circuit breakers, retry logic, etc.)
+- Best practices sections
+- Troubleshooting sections with made-up solutions
+- Links to external resources (Discord, etc.) without verified URLs
+
+These topics are covered in the [Error Handling concepts page](/concepts/error-handling).
+```
+
+---
+
+## Configuration Updates
+
+After creating documentation files, update these three files:
+
+### 1. `app/[[...slug]]/page.tsx`
+
+Add imports at the top:
+```typescript
+// Plugins
+import PluginDoc from '@/content/plugins/{plugin-name}/main.mdx';
+import PluginApiEndpointsDoc from '@/content/plugins/{plugin-name}/api-endpoints.mdx';
+import PluginWebhooksDoc from '@/content/plugins/{plugin-name}/webhooks.mdx';
+import PluginDatabaseDoc from '@/content/plugins/{plugin-name}/database.mdx';
+import PluginErrorHandlersDoc from '@/content/plugins/{plugin-name}/error-handlers.mdx';
+```
+
+Add entries in the `pages` object:
+```typescript
+'plugins/{plugin-name}': {
+    Component: PluginDoc,
+    title: '{Plugin}',
+    description: 'Integrate {Plugin} with Corsair',
+},
+'plugins/{plugin-name}/api-endpoints': {
+    Component: PluginApiEndpointsDoc,
+    title: '{Plugin} API Endpoints',
+    description: 'Complete reference for all {Plugin} API endpoints',
+},
+'plugins/{plugin-name}/webhooks': {
+    Component: PluginWebhooksDoc,
+    title: '{Plugin} Webhooks',
+    description: 'All available {Plugin} webhook events',
+},
+'plugins/{plugin-name}/database': {
+    Component: PluginDatabaseDoc,
+    title: '{Plugin} Database Schema',
+    description: 'Database entities and querying synced data',
+},
+'plugins/{plugin-name}/error-handlers': {
+    Component: PluginErrorHandlersDoc,
+    title: '{Plugin} Error Handlers',
+    description: 'Built-in and custom error handling',
+},
+```
+
+### 2. `app/layout.tsx`
+
+Add necessary icon imports:
+```typescript
+import {
+    // ... existing imports
+    Webhook,
+    AlertTriangle,
+    Table2,
+    Code2,
+    BookOpen,
+    // Add any plugin-specific icon
+} from 'lucide-react';
+```
+
+Add to the tree structure:
+```typescript
+{
+    type: 'folder' as const,
+    name: '{Plugin}',
+    icon: <PluginIcon className="size-4" />,  // Choose appropriate icon
+    children: [
+        {
+            type: 'page' as const,
+            name: 'Basics',
+            url: '/plugins/{plugin-name}',
+            icon: <BookOpen className="size-4" />,
+        },
+        {
+            type: 'page' as const,
+            name: 'API Endpoints',
+            url: '/plugins/{plugin-name}/api-endpoints',
+            icon: <Code2 className="size-4" />,
+        },
+        {
+            type: 'page' as const,
+            name: 'Webhooks',
+            url: '/plugins/{plugin-name}/webhooks',
+            icon: <Webhook className="size-4" />,
+        },
+        {
+            type: 'page' as const,
+            name: 'Database',
+            url: '/plugins/{plugin-name}/database',
+            icon: <Table2 className="size-4" />,
+        },
+        {
+            type: 'page' as const,
+            name: 'Error Handlers',
+            url: '/plugins/{plugin-name}/error-handlers',
+            icon: <AlertTriangle className="size-4" />,
+        },
     ],
-});
+},
 ```
 
-```ts title="example.ts"
-const tenant = corsair.withTenant("tenant_123");
+### 3. `lib/toc.ts`
 
-// {{ACTION_DESCRIPTION}}
-const result = await tenant.{{PLUGIN_ID}}.api.{{SERVICE}}.{{ACTION}}({
-    {{EXAMPLE_PARAMS}}
-});
-
-console.log(result);
+Add slug-to-file mappings:
+```typescript
+// plugins
+'plugins/{plugin-name}': 'plugins/{plugin-name}/main.mdx',
+'plugins/{plugin-name}/api-endpoints': 'plugins/{plugin-name}/api-endpoints.mdx',
+'plugins/{plugin-name}/webhooks': 'plugins/{plugin-name}/webhooks.mdx',
+'plugins/{plugin-name}/database': 'plugins/{plugin-name}/database.mdx',
+'plugins/{plugin-name}/error-handlers': 'plugins/{plugin-name}/error-handlers.mdx',
 ```
 
+---
+
+## Icon Guidelines
+
+Use semantic icons from `lucide-react`:
+
+- **Plugin folder**: Choose icon representing the service (e.g., `MessageSquare` for Slack, `Mail` for email)
+- **Basics page**: `BookOpen` (reading/learning)
+- **API Endpoints**: `Code2` (programming/API)
+- **Webhooks**: `Webhook` (webhook events)
+- **Database**: `Table2` (database/tables)
+- **Error Handlers**: `AlertTriangle` (warnings/errors)
+
+---
+
+## Writing Guidelines
+
+### Code Highlighting
+- Use `// [!code highlight]` to highlight important lines
+- Highlight key parameters, important concepts, and critical values
+- Don't over-highlight - use sparingly for maximum impact
+
+### Examples
+- Always provide complete, working code
+- Use realistic scenarios
+- Show proper error handling
+- Include multi-tenancy examples where relevant
+
+### Callouts
+- Use info callouts (`<Callout type="info">`) for concept links
+- Use regular callouts (`<Callout>`) for GitHub repo links
+- Place at the top of reference pages
+
+### Links
+- Link to concept pages for general topics
+- Link to GitHub for source code
+- Use relative URLs: `/concepts/auth` not `https://...`
+- Link between plugin pages: `/plugins/{plugin-name}/webhooks`
+- **CRITICAL: Never make up external URLs** (Discord, Slack, forums, etc.)
+- **CRITICAL: Never link to community resources** unless URLs are explicitly provided
+- Only link to official documentation (Linear API docs, GitHub repo, Corsair concepts)
+
+### Tone
+- Clear and concise
+- Practical and example-driven
+- Assume readers are developers
+- Avoid jargon without explanation
+
+### Formatting
+- Use `.mdx` extension for all files
+- Use consistent heading hierarchy (H2 → H3 → H4)
+- **Never use backticks in headings** - breaks TOC
+- Use tables for parameters and options
+- Use code fences with language hints: `ts`, `typescript`, `bash`
+
+---
+
+## Validation Checklist
+
+Before considering documentation complete, verify:
+
+### Structure
+- [ ] All 5 files created (main, api-endpoints, webhooks, database, error-handlers)
+- [ ] Proper heading hierarchy (H2 → H3 → H4)
+- [ ] No backticks in headings
+- [ ] Short names in H3 headers with full names below
+
+### Configuration
+- [ ] `page.tsx` updated with imports and entries
+- [ ] `layout.tsx` updated with sidebar navigation
+- [ ] `toc.ts` updated with slug mappings
+- [ ] Appropriate icons selected
+
+### Content
+- [ ] Quick start is copy-paste ready
+- [ ] No authType if it's the default
+- [ ] All auth types documented
+- [ ] Complete options table
+- [ ] 2-3 real-world examples
+- [ ] Examples use event systems, not direct corsair calls in webhooks
+- [ ] Code highlighting used effectively
+- [ ] Callouts present on reference pages
+- [ ] GitHub repo links included
+- [ ] Concept page links included
+
+### Quality
+- [ ] No linting errors
+- [ ] All code examples work
+- [ ] Multi-tenancy examples included
+- [ ] Error handlers documented (built-in + custom examples)
+- [ ] Error-handlers.mdx links to `/concepts/error-handling` (not inline patterns)
+- [ ] No made-up external URLs (Discord, community forums, etc.)
+- [ ] No error handling patterns in plugin docs
+- [ ] No best practices sections in error-handlers.mdx
+- [ ] No troubleshooting sections with made-up solutions
+- [ ] No try-catch blocks in examples (Corsair handles errors automatically)
+
+---
+
+## Template Variables
+
+When using this template, replace:
+- `{Plugin}` - Display name (e.g., "Slack")
+- `{plugin-name}` - Kebab-case name (e.g., "slack")
+- `{pluginName}` - camelCase name (e.g., "slack")
+- `PluginIcon` - Appropriate icon component
+- `resource` - API resource name
+- `action` - API action name
+- `entity` - Database entity name
+
+---
+
+## Example: Slack Plugin
+
+Reference the Slack plugin documentation as the canonical example:
+- `/docs/content/plugins/slack/main.mdx`
+- `/docs/content/plugins/slack/api-endpoints.mdx`
+- `/docs/content/plugins/slack/webhooks.mdx`
+- `/docs/content/plugins/slack/database.mdx`
+- `/docs/content/plugins/slack/error-handlers.mdx`
+
+This implementation follows all guidelines and serves as the reference for future plugin documentation.
+
+---
+
+## Summary
+
+This template ensures:
+✅ Consistent structure across all plugin documentation
+✅ Easy navigation with working table of contents
+✅ Clear, practical examples
+✅ Proper linking between pages
+✅ Professional presentation with appropriate icons
+✅ Comprehensive coverage of all plugin aspects
+
+Follow this template exactly for all future plugin documentation to maintain quality and consistency.

@@ -67,7 +67,7 @@ export const upload: SlackEndpoints['filesUpload'] = async (ctx, input) => {
 
 	if (result.ok && result.file) {
 		const endpoints = ctx.endpoints as SlackBoundEndpoints;
-		await endpoints.filesGet({ file: result.file.id });
+		await endpoints.files.get({ file: result.file.id });
 	}
 
 	await logEventFromContext(

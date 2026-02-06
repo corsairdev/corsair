@@ -4,9 +4,11 @@ import { NextProvider } from 'fumadocs-core/framework/next';
 import { DocsLayout } from 'fumadocs-ui/layouts/docs';
 import { RootProvider } from 'fumadocs-ui/provider';
 import {
+	AlertTriangle,
 	Ban,
 	BicepsFlexed,
 	BookOpen,
+	CheckSquare,
 	Code2,
 	Database,
 	Download,
@@ -18,7 +20,9 @@ import {
 	RefreshCcwDot,
 	Rocket,
 	ScanFace,
+	Table2,
 	Users,
+	Webhook,
 	Zap,
 } from 'lucide-react';
 
@@ -126,9 +130,70 @@ const tree = {
 					children: [
 						{
 							type: 'page' as const,
+							name: 'Basics',
+							url: '/plugins/slack',
+							icon: <BookOpen className="size-4" />,
+						},
+						{
+							type: 'page' as const,
+							name: 'API Endpoints',
+							url: '/plugins/slack/api-endpoints',
+							icon: <Code2 className="size-4" />,
+						},
+						{
+							type: 'page' as const,
 							name: 'Webhooks',
-							url: '/webhooks',
-							icon: <PhoneIncoming className="size-4" />,
+							url: '/plugins/slack/webhooks',
+							icon: <Webhook className="size-4" />,
+						},
+						{
+							type: 'page' as const,
+							name: 'Database',
+							url: '/plugins/slack/database',
+							icon: <Table2 className="size-4" />,
+						},
+						{
+							type: 'page' as const,
+							name: 'Error Handlers',
+							url: '/plugins/slack/error-handlers',
+							icon: <AlertTriangle className="size-4" />,
+						},
+					],
+				},
+				{
+					type: 'folder' as const,
+					name: 'Linear',
+					icon: <CheckSquare className="size-4" />,
+					children: [
+						{
+							type: 'page' as const,
+							name: 'Basics',
+							url: '/plugins/linear',
+							icon: <BookOpen className="size-4" />,
+						},
+						{
+							type: 'page' as const,
+							name: 'API Endpoints',
+							url: '/plugins/linear/api-endpoints',
+							icon: <Code2 className="size-4" />,
+						},
+						{
+							type: 'page' as const,
+							name: 'Webhooks',
+							url: '/plugins/linear/webhooks',
+							icon: <Webhook className="size-4" />,
+						},
+						{
+							type: 'page' as const,
+							name: 'Database',
+							url: '/plugins/linear/database',
+							icon: <Table2 className="size-4" />,
+						},
+						{
+							type: 'page' as const,
+							name: 'Error Handlers',
+							url: '/plugins/linear/error-handlers',
+							icon: <AlertTriangle className="size-4" />,
 						},
 					],
 				},

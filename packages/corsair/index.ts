@@ -71,6 +71,7 @@ export type {
 	CorsairEndpoint,
 	CorsairErrorHandler,
 	CorsairIntegration,
+	CorsairInternalConfig,
 	CorsairKeyBuilder,
 	CorsairKeyBuilderBase,
 	CorsairPlugin,
@@ -105,6 +106,7 @@ export type {
 	WebhookTree,
 } from './core';
 export {
+	CORSAIR_INTERNAL,
 	createAccountKeyManager,
 	createCorsair,
 	createIntegrationKeyManager,
@@ -275,4 +277,4 @@ export {
 	type SlackWebhooks,
 	slack,
 } from './plugins/slack';
-export { filterWebhook } from './webhooks';
+export { processWebhook } from './webhooks';

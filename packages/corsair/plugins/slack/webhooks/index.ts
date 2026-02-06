@@ -1,3 +1,4 @@
+import { challenge } from './challenge';
 import { created as channelCreated } from './channels';
 import {
 	created as fileCreated,
@@ -7,7 +8,6 @@ import {
 import { message } from './messages';
 import { added as reactionAdded } from './reactions';
 import { teamJoin, userChange } from './users';
-import { challenge } from './challenge';
 
 export const ChannelWebhooks = {
 	created: channelCreated,
