@@ -20,17 +20,17 @@ import ComparisonDoc from '@/content/getting-started/comparison.mdx';
 import IntroductionDoc from '@/content/getting-started/introduction.mdx';
 // Guides
 import CreateYourOwnPlugin from '@/content/guides/create-your-own-plugin.mdx';
-// Plugins
-import SlackDoc from '@/content/plugins/slack/main.mdx';
-import SlackApiEndpointsDoc from '@/content/plugins/slack/api-endpoints.mdx';
-import SlackWebhooksDoc from '@/content/plugins/slack/webhooks.mdx';
-import SlackDatabaseDoc from '@/content/plugins/slack/database.mdx';
-import SlackErrorHandlersDoc from '@/content/plugins/slack/error-handlers.mdx';
-import LinearDoc from '@/content/plugins/linear/main.mdx';
 import LinearApiEndpointsDoc from '@/content/plugins/linear/api-endpoints.mdx';
-import LinearWebhooksDoc from '@/content/plugins/linear/webhooks.mdx';
 import LinearDatabaseDoc from '@/content/plugins/linear/database.mdx';
 import LinearErrorHandlersDoc from '@/content/plugins/linear/error-handlers.mdx';
+import LinearDoc from '@/content/plugins/linear/main.mdx';
+import LinearWebhooksDoc from '@/content/plugins/linear/webhooks.mdx';
+import SlackApiEndpointsDoc from '@/content/plugins/slack/api-endpoints.mdx';
+import SlackDatabaseDoc from '@/content/plugins/slack/database.mdx';
+import SlackErrorHandlersDoc from '@/content/plugins/slack/error-handlers.mdx';
+// Plugins
+import SlackDoc from '@/content/plugins/slack/main.mdx';
+import SlackWebhooksDoc from '@/content/plugins/slack/webhooks.mdx';
 import { extractTOC } from '@/lib/toc';
 import { useMDXComponents } from '@/mdx-components';
 

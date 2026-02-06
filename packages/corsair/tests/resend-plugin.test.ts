@@ -43,7 +43,7 @@ describe('Resend plugin integration', () => {
 
 		const { corsair, testDb, from, to } = setup;
 
-		let sent;
+		let sent: any;
 		try {
 			sent = await corsair.resend.api.emails.send({
 				from,

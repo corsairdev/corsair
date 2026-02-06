@@ -71,6 +71,7 @@ export type {
 	CorsairEndpoint,
 	CorsairErrorHandler,
 	CorsairIntegration,
+	CorsairInternalConfig,
 	CorsairKeyBuilder,
 	CorsairKeyBuilderBase,
 	CorsairPlugin,
@@ -105,6 +106,7 @@ export type {
 	WebhookTree,
 } from './core';
 export {
+	CORSAIR_INTERNAL,
 	createAccountKeyManager,
 	createCorsair,
 	createIntegrationKeyManager,

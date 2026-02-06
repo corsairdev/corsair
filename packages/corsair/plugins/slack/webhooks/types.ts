@@ -743,12 +743,12 @@ export type SlackWebhookOutputs = {
 	challenge: SlackUrlVerificationPayload;
 };
 
+import { verifySlackSignature } from '../../../async-core/webhook-utils';
 import type {
 	CorsairWebhookMatcher,
 	RawWebhookRequest,
 	WebhookRequest,
 } from '../../../core';
-import { verifySlackSignature } from '../../../async-core/webhook-utils';
 
 function parseBody(body: unknown): unknown {
 	return typeof body === 'string' ? JSON.parse(body) : body;
