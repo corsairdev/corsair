@@ -25,8 +25,8 @@ export const starCreated: GithubWebhooks['starCreated'] = {
 
 		if (event.action !== 'created') {
 			return {
-				success: true,
-				data: { success: true },
+				success: false,
+				data: undefined,
 			};
 		}
 
@@ -37,7 +37,7 @@ export const starCreated: GithubWebhooks['starCreated'] = {
 
 		return {
 			success: true,
-			data: { success: true },
+			data: event,
 		};
 	},
 };
@@ -50,8 +50,8 @@ export const starDeleted: GithubWebhooks['starDeleted'] = {
 
 		if (event.action !== 'deleted') {
 			return {
-				success: true,
-				data: { success: true },
+				success: false,
+				 data: undefined
 			};
 		}
 
@@ -62,7 +62,7 @@ export const starDeleted: GithubWebhooks['starDeleted'] = {
 
 		return {
 			success: true,
-			data: { success: true },
+			data: event,
 		};
 	},
 };

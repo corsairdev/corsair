@@ -30,6 +30,11 @@ import type {
 } from './webhooks';
 import { PullRequestWebhooks, PushWebhooks, StarWebhooks } from './webhooks';
 
+export {
+	type StarCreatedEvent,
+	type StarDeletedEvent,
+} from './webhooks/types';
+
 export type GithubContext = CorsairPluginContext<
 	typeof GithubSchema,
 	GithubCredentials

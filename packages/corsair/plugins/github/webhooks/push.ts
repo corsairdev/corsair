@@ -29,7 +29,7 @@ export const push: GithubWebhooks['push'] = {
 
 		return {
 			success: true,
-			data: { success: true },
+			data: event,
 		};
 	},
 };

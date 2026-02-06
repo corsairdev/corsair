@@ -276,12 +276,12 @@ export type GithubWebhookEvent =
 export type GithubWebhookPayload = GithubWebhookEvent;
 
 export type GithubWebhookOutputs = {
-	pullRequestOpened: { success: boolean };
-	pullRequestClosed: { success: boolean };
-	pullRequestSynchronize: { success: boolean };
-	push: { success: boolean };
-	starCreated: { success: boolean };
-	starDeleted: { success: boolean };
+	pullRequestOpened: PullRequestOpenedEvent;
+	pullRequestClosed: PullRequestClosedEvent;
+	pullRequestSynchronize: PullRequestSynchronizeEvent;
+	push: PushEventType;
+	starCreated: StarCreatedEvent;
+	starDeleted: StarDeletedEvent;
 };
 
 export type PushEventType = PushEvent;
