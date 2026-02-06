@@ -342,72 +342,6 @@ export const CommentDeleteResponseSchema = z.object({
 	}),
 });
 
-// TypeScript types inferred from Zod schemas
-export type User = z.infer<typeof UserSchema>;
-export type Team = z.infer<typeof TeamSchema>;
-export type WorkflowStateType = z.infer<typeof WorkflowStateTypeSchema>;
-export type WorkflowState = z.infer<typeof WorkflowStateSchema>;
-export type Label = z.infer<typeof LabelSchema>;
-export type ProjectState = z.infer<typeof ProjectStateSchema>;
-export type Project = z.infer<typeof ProjectSchema>;
-export type Cycle = z.infer<typeof CycleSchema>;
-export type IssuePriority = z.infer<typeof IssuePrioritySchema>;
-export type Issue = z.infer<typeof IssueSchema>;
-export type Comment = z.infer<typeof CommentSchema>;
-export type PageInfo = z.infer<typeof PageInfoSchema>;
-export type IssueConnection = z.infer<typeof IssueConnectionSchema>;
-export type TeamConnection = z.infer<typeof TeamConnectionSchema>;
-export type ProjectConnection = z.infer<typeof ProjectConnectionSchema>;
-export type CommentConnection = z.infer<typeof CommentConnectionSchema>;
-
-export type CreateIssueInput = z.infer<typeof CreateIssueInputSchema>;
-export type UpdateIssueInput = z.infer<typeof UpdateIssueInputSchema>;
-export type CreateProjectInput = z.infer<typeof CreateProjectInputSchema>;
-export type UpdateProjectInput = z.infer<typeof UpdateProjectInputSchema>;
-export type CreateCommentInput = z.infer<typeof CreateCommentInputSchema>;
-export type UpdateCommentInput = z.infer<typeof UpdateCommentInputSchema>;
-
-export type IssuesListResponse = z.infer<typeof IssuesListResponseSchema>;
-export type IssueGetResponse = z.infer<typeof IssueGetResponseSchema>;
-export type IssueCreateResponse = z.infer<typeof IssueCreateResponseSchema>;
-export type IssueUpdateResponse = z.infer<typeof IssueUpdateResponseSchema>;
-export type IssueDeleteResponse = z.infer<typeof IssueDeleteResponseSchema>;
-
-export type TeamsListResponse = z.infer<typeof TeamsListResponseSchema>;
-export type TeamGetResponse = z.infer<typeof TeamGetResponseSchema>;
-
-export type ProjectsListResponse = z.infer<typeof ProjectsListResponseSchema>;
-export type ProjectGetResponse = z.infer<typeof ProjectGetResponseSchema>;
-export type ProjectCreateResponse = z.infer<typeof ProjectCreateResponseSchema>;
-export type ProjectUpdateResponse = z.infer<typeof ProjectUpdateResponseSchema>;
-export type ProjectDeleteResponse = z.infer<typeof ProjectDeleteResponseSchema>;
-
-export type CommentsListResponse = z.infer<typeof CommentsListResponseSchema>;
-export type CommentCreateResponse = z.infer<typeof CommentCreateResponseSchema>;
-export type CommentUpdateResponse = z.infer<typeof CommentUpdateResponseSchema>;
-export type CommentDeleteResponse = z.infer<typeof CommentDeleteResponseSchema>;
-
-export type LinearEndpointOutputs = {
-	issuesList: IssueConnection;
-	issuesGet: Issue;
-	issuesCreate: Issue;
-	issuesUpdate: Issue;
-	issuesDelete: boolean;
-	teamsList: TeamConnection;
-	teamsGet: Team;
-	projectsList: ProjectConnection;
-	projectsGet: Project;
-	projectsCreate: Project;
-	projectsUpdate: Project;
-	projectsDelete: boolean;
-	commentsList: CommentConnection;
-	commentsCreate: Comment;
-	commentsUpdate: Comment;
-	commentsDelete: boolean;
-};
-
-// Test-specific schemas for partial API responses
-// These match what the API actually returns (may differ from full schemas above)
 const MinimalUserSchema = z.object({
 	id: z.string(),
 	name: z.string(),
@@ -451,7 +385,6 @@ const ProjectTeamsConnectionSchema = z.object({
 	nodes: z.array(MinimalTeamSchema),
 });
 
-// Issue schema for list/get responses (with connections for labels/subscribers)
 const IssueListGetSchema: z.ZodType<unknown> = z.lazy(() =>
 	z.object({
 		id: z.string(),
@@ -599,13 +532,7 @@ const CommentTestSchema = z.lazy(() =>
 	}),
 );
 
-// Endpoint output schemas for runtime validation
-// These schemas match what the API actually returns (may differ from TypeScript types)
-// Note: Some schemas use partial/minimal structures that don't match the full types exactly
-// but are what the API actually returns. We use `z.ZodType<unknown>` to allow this flexibility.
-export const LinearEndpointOutputSchemas: {
-	[K in keyof LinearEndpointOutputs]: z.ZodType<unknown>;
-} = {
+export const LinearEndpointOutputSchemas = {
 	issuesList: IssueListGetConnectionSchema,
 	issuesGet: IssueListGetSchema,
 	issuesCreate: PartialIssueSchema,
@@ -622,4 +549,56 @@ export const LinearEndpointOutputSchemas: {
 	commentsCreate: CommentTestSchema,
 	commentsUpdate: CommentTestSchema,
 	commentsDelete: z.boolean(),
+} as const;
+
+export type LinearEndpointOutputs = {
+	[K in keyof typeof LinearEndpointOutputSchemas]: z.infer<
+		typeof LinearEndpointOutputSchemas[K]
+	>;
 };
+
+
+// TypeScript types inferred from Zod schemas
+export type User = z.infer<typeof UserSchema>;
+export type Team = z.infer<typeof TeamSchema>;
+export type WorkflowStateType = z.infer<typeof WorkflowStateTypeSchema>;
+export type WorkflowState = z.infer<typeof WorkflowStateSchema>;
+export type Label = z.infer<typeof LabelSchema>;
+export type ProjectState = z.infer<typeof ProjectStateSchema>;
+export type Project = z.infer<typeof ProjectSchema>;
+export type Cycle = z.infer<typeof CycleSchema>;
+export type IssuePriority = z.infer<typeof IssuePrioritySchema>;
+export type Issue = z.infer<typeof IssueSchema>;
+export type Comment = z.infer<typeof CommentSchema>;
+export type PageInfo = z.infer<typeof PageInfoSchema>;
+export type IssueConnection = z.infer<typeof IssueConnectionSchema>;
+export type TeamConnection = z.infer<typeof TeamConnectionSchema>;
+export type ProjectConnection = z.infer<typeof ProjectConnectionSchema>;
+export type CommentConnection = z.infer<typeof CommentConnectionSchema>;
+
+export type CreateIssueInput = z.infer<typeof CreateIssueInputSchema>;
+export type UpdateIssueInput = z.infer<typeof UpdateIssueInputSchema>;
+export type CreateProjectInput = z.infer<typeof CreateProjectInputSchema>;
+export type UpdateProjectInput = z.infer<typeof UpdateProjectInputSchema>;
+export type CreateCommentInput = z.infer<typeof CreateCommentInputSchema>;
+export type UpdateCommentInput = z.infer<typeof UpdateCommentInputSchema>;
+
+export type IssuesListResponse = z.infer<typeof LinearEndpointOutputSchemas.issuesList>;
+export type IssueGetResponse = z.infer<typeof LinearEndpointOutputSchemas.issuesGet>;
+export type IssueCreateResponse = z.infer<typeof LinearEndpointOutputSchemas.issuesCreate>;
+export type IssueUpdateResponse = z.infer<typeof LinearEndpointOutputSchemas.issuesUpdate>;
+export type IssueDeleteResponse = z.infer<typeof LinearEndpointOutputSchemas.issuesDelete>;
+
+export type TeamsListResponse = z.infer<typeof LinearEndpointOutputSchemas.teamsList>;
+export type TeamGetResponse = z.infer<typeof LinearEndpointOutputSchemas.teamsGet>;
+
+export type ProjectsListResponse = z.infer<typeof LinearEndpointOutputSchemas.projectsList>;
+export type ProjectGetResponse = z.infer<typeof LinearEndpointOutputSchemas.projectsGet>;
+export type ProjectCreateResponse = z.infer<typeof LinearEndpointOutputSchemas.projectsCreate>;
+export type ProjectUpdateResponse = z.infer<typeof LinearEndpointOutputSchemas.projectsUpdate>;
+export type ProjectDeleteResponse = z.infer<typeof LinearEndpointOutputSchemas.projectsDelete>;
+
+export type CommentsListResponse = z.infer<typeof LinearEndpointOutputSchemas.commentsList>;
+export type CommentCreateResponse = z.infer<typeof LinearEndpointOutputSchemas.commentsCreate>;
+export type CommentUpdateResponse = z.infer<typeof LinearEndpointOutputSchemas.commentsUpdate>;
+export type CommentDeleteResponse = z.infer<typeof LinearEndpointOutputSchemas.commentsDelete>;

@@ -12,24 +12,7 @@ export const postMessage: SlackEndpoints['postMessage'] = async (
 		ctx.key,
 		{
 			method: 'POST',
-			body: {
-				channel: input.channel,
-				text: input.text,
-				blocks: input.blocks,
-				attachments: input.attachments,
-				thread_ts: input.thread_ts,
-				reply_broadcast: input.reply_broadcast,
-				parse: input.parse,
-				link_names: input.link_names,
-				unfurl_links: input.unfurl_links,
-				unfurl_media: input.unfurl_media,
-				mrkdwn: input.mrkdwn,
-				as_user: input.as_user,
-				icon_emoji: input.icon_emoji,
-				icon_url: input.icon_url,
-				username: input.username,
-				metadata: input.metadata,
-			},
+			body: input
 		},
 	);
 
@@ -96,19 +79,7 @@ export const update: SlackEndpoints['messagesUpdate'] = async (ctx, input) => {
 		ctx.key,
 		{
 			method: 'POST',
-			body: {
-				channel: input.channel,
-				ts: input.ts,
-				text: input.text,
-				blocks: input.blocks,
-				attachments: input.attachments,
-				parse: input.parse,
-				link_names: input.link_names,
-				as_user: input.as_user,
-				file_ids: input.file_ids,
-				reply_broadcast: input.reply_broadcast,
-				metadata: input.metadata,
-			},
+			body: input,
 		},
 	);
 
@@ -162,17 +133,7 @@ export const search: SlackEndpoints['messagesSearch'] = async (ctx, input) => {
 		ctx.key,
 		{
 			method: 'GET',
-			query: {
-				query: input.query,
-				sort: input.sort,
-				sort_dir: input.sort_dir,
-				highlight: input.highlight,
-				team_id: input.team_id,
-				cursor: input.cursor,
-				limit: input.limit,
-				page: input.page,
-				count: input.count,
-			},
+			query: input,
 		},
 	);
 

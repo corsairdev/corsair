@@ -321,6 +321,9 @@ describe('GitHub API Type Tests', () => {
 					TEST_TOKEN,
 					{ query: { per_page: 1, page: 1 } },
 				);
+			if (!workflowsListResponse.workflows) {
+				throw new Error('No workflows found');
+			}
 			const workflowId = workflowsListResponse.workflows[0]?.id;
 			if (!workflowId) {
 				throw new Error('No workflows found');

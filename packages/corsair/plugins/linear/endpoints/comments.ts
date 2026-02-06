@@ -118,7 +118,7 @@ export const list: LinearEndpoints['commentsList'] = async (ctx, input) => {
 		},
 	);
 
-	const result = response.issue.comments;
+	const result = response;
 
 	if (result.nodes && ctx.db.comments) {
 		try {
@@ -157,17 +157,17 @@ export const create: LinearEndpoints['commentsCreate'] = async (ctx, input) => {
 		},
 	);
 
-	const result = response.commentCreate;
+	const result = response;
 
-	if (result.success && result.comment && ctx.db.comments) {
+	if (result && ctx.db.comments) {
 		try {
-			await ctx.db.comments.upsertByEntityId(result.comment.id, {
-				...result.comment,
-				issueId: result.comment.issue.id,
-				userId: result.comment.user.id,
-				parentId: result.comment.parent?.id,
-				createdAt: new Date(result.comment.createdAt),
-				updatedAt: new Date(result.comment.updatedAt),
+			await ctx.db.comments.upsertByEntityId(result.id, {
+				...result,
+				issueId: result.issue.id,
+				userId: result.user.id,
+				parentId: result.parent?.id,
+				createdAt: new Date(result.createdAt),
+				updatedAt: new Date(result.updatedAt),
 			});
 		} catch (error) {
 			console.warn('Failed to save comment to database:', error);
@@ -180,7 +180,7 @@ export const create: LinearEndpoints['commentsCreate'] = async (ctx, input) => {
 		{ ...input },
 		'completed',
 	);
-	return result.comment;
+	return result;
 };
 
 export const update: LinearEndpoints['commentsUpdate'] = async (ctx, input) => {
@@ -195,7 +195,7 @@ export const update: LinearEndpoints['commentsUpdate'] = async (ctx, input) => {
 		},
 	);
 
-	const result = response.commentUpdate.comment;
+	const result = response;
 
 	if (result && ctx.db.comments) {
 		try {
@@ -235,7 +235,7 @@ export const deleteComment: LinearEndpoints['commentsDelete'] = async (
 		},
 	);
 
-	const success = response.commentDelete.success;
+	const success = response;
 
 	if (success && ctx.db.comments) {
 		try {

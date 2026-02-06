@@ -1,7 +1,7 @@
-import { createCorsair } from '../core';
-import { gmail } from '../plugins/gmail';
-import { createIntegrationAndAccount } from './plugins-test-utils';
-import { createTestDatabase } from './setup-db';
+import { createCorsair } from '../../core';
+import { gmail } from './index';
+import { createIntegrationAndAccount } from '../../tests/plugins-test-utils';
+import { createTestDatabase } from '../../tests/setup-db';
 
 async function createGmailClient() {
 	const clientId = process.env.GMAIL_CLIENT_ID;

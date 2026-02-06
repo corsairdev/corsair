@@ -1,47 +1,5 @@
 import { z } from 'zod';
 
-export type CreateAliasResponse =
-	| number
-	| {
-			status?: number;
-			message?: string;
-	  };
-
-export type CreateEventResponse =
-	| number
-	| {
-			status?: number;
-			message?: string;
-	  };
-
-export type CreateIdentityResponse =
-	| number
-	| {
-			status?: number;
-			message?: string;
-	  };
-
-export type TrackPageResponse =
-	| number
-	| {
-			status?: number;
-			message?: string;
-	  };
-
-export type TrackScreenResponse =
-	| number
-	| {
-			status?: number;
-			message?: string;
-	  };
-
-export type PostHogEndpointOutputs = {
-	aliasCreate: CreateAliasResponse;
-	eventCreate: CreateEventResponse;
-	identityCreate: CreateIdentityResponse;
-	trackPage: TrackPageResponse;
-	trackScreen: TrackScreenResponse;
-};
 
 const PostHogSuccessResponseSchema = z.union([
 	z.number(),
@@ -55,12 +13,32 @@ const PostHogSuccessResponseSchema = z.union([
 	z.any(),
 ]);
 
-export const PostHogEndpointOutputSchemas: {
-	[K in keyof PostHogEndpointOutputs]: z.ZodType<unknown>;
-} = {
+export const PostHogEndpointOutputSchemas = {
 	aliasCreate: PostHogSuccessResponseSchema,
 	eventCreate: PostHogSuccessResponseSchema,
 	identityCreate: PostHogSuccessResponseSchema,
 	trackPage: PostHogSuccessResponseSchema,
 	trackScreen: PostHogSuccessResponseSchema,
+} as const;
+
+export type PostHogEndpointOutputs = {
+	[K in keyof typeof PostHogEndpointOutputSchemas]: z.infer<
+		typeof PostHogEndpointOutputSchemas[K]
+	>;
 };
+
+export type CreateAliasResponse = z.infer<
+	typeof PostHogEndpointOutputSchemas.aliasCreate
+>;
+export type CreateEventResponse = z.infer<
+	typeof PostHogEndpointOutputSchemas.eventCreate
+>;
+export type CreateIdentityResponse = z.infer<
+	typeof PostHogEndpointOutputSchemas.identityCreate
+>;
+export type TrackPageResponse = z.infer<
+	typeof PostHogEndpointOutputSchemas.trackPage
+>;
+export type TrackScreenResponse = z.infer<
+	typeof PostHogEndpointOutputSchemas.trackScreen
+>;
