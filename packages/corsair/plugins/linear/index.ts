@@ -253,7 +253,7 @@ export function linear<const T extends LinearPluginOptions>(
 		webhooks: linearWebhooksNested,
 		pluginWebhookMatcher: (request) => {
 			const headers = request.headers;
-			const hasLinearSignature = 'x-linear-signature' in headers;
+			const hasLinearSignature = 'linear-signature' in headers;
 			return hasLinearSignature;
 		},
 		errorHandlers: {

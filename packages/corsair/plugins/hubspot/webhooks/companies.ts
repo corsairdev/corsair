@@ -1,30 +1,28 @@
 import type { HubSpotWebhooks } from '..';
+import {
+	createHubSpotEventMatch,
+	verifyHubSpotWebhookSignature,
+} from './types';
 import type {
 	CompanyCreatedEventType,
 	CompanyDeletedEventType,
 	CompanyUpdatedEventType,
 } from './types';
 
-function parseBody(body: unknown): unknown {
-	return typeof body === 'string' ? JSON.parse(body) : body;
-}
-
-function createHubSpotMatch(subscriptionType: string) {
-	return (request: import('../../../core/webhooks').RawWebhookRequest) => {
-		const parsedBody = parseBody(request.body) as
-			| Record<string, unknown>
-			| Array<Record<string, unknown>>;
-		const events = Array.isArray(parsedBody) ? parsedBody : [parsedBody];
-		return events.some(
-			(event) => (event.subscriptionType as string) === subscriptionType,
-		);
-	};
-}
-
 export const companyCreated: HubSpotWebhooks['companyCreated'] = {
-	match: createHubSpotMatch('company.creation'),
+	match: createHubSpotEventMatch('company.creation'),
 
 	handler: async (ctx, request) => {
+		const webhookSecret = ctx.key;
+		const verification = verifyHubSpotWebhookSignature(request, webhookSecret);
+		if (!verification.valid) {
+			return {
+				success: false,
+				statusCode: 401,
+				error: verification.error || 'Signature verification failed',
+			};
+		}
+
 		const payload = request.payload as
 			| CompanyCreatedEventType
 			| Array<CompanyCreatedEventType>;
@@ -60,9 +58,19 @@ export const companyCreated: HubSpotWebhooks['companyCreated'] = {
 };
 
 export const companyUpdated: HubSpotWebhooks['companyUpdated'] = {
-	match: createHubSpotMatch('company.propertyChange'),
+	match: createHubSpotEventMatch('company.propertyChange'),
 
 	handler: async (ctx, request) => {
+		const webhookSecret = ctx.key;
+		const verification = verifyHubSpotWebhookSignature(request, webhookSecret);
+		if (!verification.valid) {
+			return {
+				success: false,
+				statusCode: 401,
+				error: verification.error || 'Signature verification failed',
+			};
+		}
+
 		const payload = request.payload as
 			| CompanyUpdatedEventType
 			| Array<CompanyUpdatedEventType>;
@@ -105,9 +113,19 @@ export const companyUpdated: HubSpotWebhooks['companyUpdated'] = {
 };
 
 export const companyDeleted: HubSpotWebhooks['companyDeleted'] = {
-	match: createHubSpotMatch('company.deletion'),
+	match: createHubSpotEventMatch('company.deletion'),
 
 	handler: async (ctx, request) => {
+		const webhookSecret = ctx.key;
+		const verification = verifyHubSpotWebhookSignature(request, webhookSecret);
+		if (!verification.valid) {
+			return {
+				success: false,
+				statusCode: 401,
+				error: verification.error || 'Signature verification failed',
+			};
+		}
+
 		const payload = request.payload as
 			| CompanyDeletedEventType
 			| Array<CompanyDeletedEventType>;

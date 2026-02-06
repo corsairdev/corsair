@@ -241,14 +241,14 @@ export function verifyLinearWebhookSignature(
 	}
 
 	const headers = request.headers;
-	const signature = Array.isArray(headers['x-linear-signature'])
-		? headers['x-linear-signature'][0]
-		: headers['x-linear-signature'];
+	const signature = Array.isArray(headers['linear-signature'])
+		? headers['linear-signature'][0]
+		: headers['linear-signature'];
 
 	if (!signature) {
 		return {
 			valid: false,
-			error: 'Missing x-linear-signature header',
+			error: 'Missing linear-signature header',
 		};
 	}
 
@@ -259,6 +259,7 @@ export function verifyLinearWebhookSignature(
 
 	return { valid: true };
 }
+
 
 export function createLinearEventMatch(
 	type: string,
