@@ -10,7 +10,6 @@ export const corsair = createCorsair({
 	kek: process.env.CORSAIR_KEK!,
 	plugins: [
 		linear({
-			authType: 'api_key',
 			webhookHooks: {
 				issues: {
 					create: {
