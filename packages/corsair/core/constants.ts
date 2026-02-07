@@ -18,6 +18,7 @@ export const BaseProviders = [
 	'linear',
 	'hubspot',
 	'gmail',
+	'resend',
 ] as const;
 
 export type AllProviders =
@@ -26,6 +27,7 @@ export type AllProviders =
 	| 'linear'
 	| 'hubspot'
 	| 'gmail'
+	| 'resend'
 	| (string & {});
 
 export type AuthTypes = 'oauth_2' | 'api_key' | 'bot_token';
