@@ -40,6 +40,7 @@ export const emailSent: ResendWebhooks['emailSent'] = {
 					{
 						...event.data,
 						id: event.data.email_id,
+						created_at: new Date(event.data.created_at ?? ''),
 					},
 				);
 
@@ -349,6 +350,7 @@ export const emailReceived: ResendWebhooks['emailReceived'] = {
 					{
 						...event.data,
 						id: event.data.email_id,
+						created_at: new Date(event.data.created_at ?? ''),
 					},
 				);
 

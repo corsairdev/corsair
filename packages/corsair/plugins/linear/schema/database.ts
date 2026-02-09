@@ -23,15 +23,15 @@ export const LinearIssue = z.object({
 	projectId: z.string().nullable().optional(),
 	cycleId: z.string().nullable().optional(),
 	parentId: z.string().nullable().optional(),
-	dueDate: z.string().nullable().optional(),
-	startedAt: z.string().nullable().optional(),
-	completedAt: z.string().nullable().optional(),
-	canceledAt: z.string().nullable().optional(),
-	triagedAt: z.string().nullable().optional(),
-	snoozedUntilAt: z.string().nullable().optional(),
-	createdAt: z.coerce.date().optional(),
-	updatedAt: z.coerce.date().optional(),
-	archivedAt: z.string().nullable().optional(),
+	dueDate: z.coerce.date().nullable().optional(),
+	startedAt: z.coerce.date().nullable().optional(),
+	completedAt: z.coerce.date().nullable().optional(),
+	canceledAt: z.coerce.date().nullable().optional(),
+	triagedAt: z.coerce.date().nullable().optional(),
+	snoozedUntilAt: z.coerce.date().nullable().optional(),
+	createdAt: z.coerce.date().nullable().optional(),
+	updatedAt: z.coerce.date().nullable().optional(),
+	archivedAt: z.coerce.date().nullable().optional(),
 });
 
 export const LinearTeam = z.object({
@@ -42,9 +42,9 @@ export const LinearTeam = z.object({
 	icon: z.string().nullable().optional(),
 	color: z.string().nullable().optional(),
 	private: z.boolean(),
-	createdAt: z.coerce.date().optional(),
-	updatedAt: z.coerce.date().optional(),
-	archivedAt: z.string().nullable().optional(),
+	createdAt: z.coerce.date().nullable().optional(),
+	updatedAt: z.coerce.date().nullable().optional(),
+	archivedAt: z.coerce.date().nullable().optional(),
 });
 
 export const LinearProject = z.object({
@@ -63,14 +63,14 @@ export const LinearProject = z.object({
 	]),
 	priority: z.number(),
 	sortOrder: z.number().optional(),
-	startDate: z.string().nullable().optional(),
-	targetDate: z.string().nullable().optional(),
-	completedAt: z.string().nullable().optional(),
-	canceledAt: z.string().nullable().optional(),
+	startDate: z.coerce.date().nullable().optional(),
+	targetDate: z.coerce.date().nullable().optional(),
+	completedAt: z.coerce.date().nullable().optional(),
+	canceledAt: z.coerce.date().nullable().optional(),
 	leadId: z.string().nullable().optional(),
-	createdAt: z.coerce.date().optional(),
-	updatedAt: z.coerce.date().optional(),
-	archivedAt: z.string().nullable().optional(),
+	createdAt: z.coerce.date().nullable().optional(),
+	updatedAt: z.coerce.date().nullable().optional(),
+	archivedAt: z.coerce.date().nullable().optional(),
 });
 
 export const LinearComment = z.object({
@@ -79,10 +79,10 @@ export const LinearComment = z.object({
 	issueId: z.string(),
 	userId: z.string(),
 	parentId: z.string().nullable().optional(),
-	editedAt: z.string().nullable().optional(),
-	createdAt: z.coerce.date().optional(),
-	updatedAt: z.coerce.date().optional(),
-	archivedAt: z.string().nullable().optional(),
+	editedAt: z.coerce.date().nullable().optional(),
+	createdAt: z.coerce.date().nullable().optional(),
+	updatedAt: z.coerce.date().nullable().optional(),
+	archivedAt: z.coerce.date().nullable().optional(),
 });
 
 export const LinearUser = z.object({
@@ -93,8 +93,8 @@ export const LinearUser = z.object({
 	avatarUrl: z.string().optional(),
 	active: z.boolean(),
 	admin: z.boolean(),
-	createdAt: z.coerce.date().optional(),
-	updatedAt: z.coerce.date().optional(),
+	createdAt: z.coerce.date().nullable().optional(),
+	updatedAt: z.coerce.date().nullable().optional(),
 });
 
 export type LinearIssue = z.infer<typeof LinearIssue>;

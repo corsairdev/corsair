@@ -39,7 +39,7 @@ const MessageSchema = z.object({
 	labelIds: z.array(z.string()).optional(),
 	snippet: z.string().optional(),
 	historyId: z.string().optional(),
-	internalDate: z.string().optional(),
+	internalDate: z.coerce.date().nullable().optional(),
 	sizeEstimate: z.number().optional(),
 	payload: MessagePartSchema.optional(),
 	raw: z.string().optional(),

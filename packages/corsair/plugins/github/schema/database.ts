@@ -12,8 +12,8 @@ export const GithubUser = z.object({
 	siteAdmin: z.boolean().optional(),
 	name: z.string().nullable().optional(),
 	email: z.string().nullable().optional(),
-	createdAt: z.any().optional(),
-	updatedAt: z.any().optional(),
+	createdAt: z.coerce.date().nullable().optional(),
+	updatedAt: z.coerce.date().nullable().optional(),
 });
 
 export const GithubRepository = z.object({
@@ -26,9 +26,9 @@ export const GithubRepository = z.object({
 	description: z.string().nullable().optional(),
 	fork: z.boolean().optional(),
 	url: z.string().optional(),
-	createdAt: z.any().optional(),
-	updatedAt: z.any().optional(),
-	pushedAt: z.union([z.string(), z.date()]).nullable().optional(),
+	createdAt: z.coerce.date().nullable().optional(),
+	updatedAt: z.coerce.date().nullable().optional(),
+	pushedAt: z.coerce.date().nullable().optional(),
 	defaultBranch: z.string().optional(),
 	language: z.string().nullable().optional(),
 	stargazersCount: z.number().optional(),
@@ -62,9 +62,9 @@ export const GithubIssue = z.object({
 	assignees: z.array(GithubUser).nullable().optional(),
 	locked: z.boolean().optional(),
 	comments: z.number().optional(),
-	createdAt: z.any().optional(),
-	updatedAt: z.any().optional(),
-	closedAt: z.any().optional(),
+	createdAt: z.coerce.date().nullable().optional(),
+	updatedAt: z.coerce.date().nullable().optional(),
+	closedAt: z.coerce.date().nullable().optional(),
 });
 
 export const GithubPullRequest = z.object({
@@ -81,10 +81,10 @@ export const GithubPullRequest = z.object({
 	title: z.string(),
 	user: GithubUser.optional(),
 	body: z.string().nullable().optional(),
-	createdAt: z.any().optional(),
-	updatedAt: z.any().optional(),
-	closedAt: z.any().optional(),
-	mergedAt: z.any().optional(),
+	createdAt: z.coerce.date().nullable().optional(),
+	updatedAt: z.coerce.date().nullable().optional(),
+	closedAt: z.coerce.date().nullable().optional(),
+	mergedAt: z.coerce.date().nullable().optional(),
 	mergeCommitSha: z.string().nullable().optional(),
 	assignee: GithubUser.nullable().optional(),
 	assignees: z.array(GithubUser).nullable().optional(),
@@ -114,8 +114,8 @@ export const GithubRelease = z.object({
 	body: z.string().nullable().optional(),
 	draft: z.boolean().optional(),
 	prerelease: z.boolean().optional(),
-	createdAt: z.any().optional(),
-	publishedAt: z.union([z.string(), z.date()]).nullable().optional(),
+	createdAt: z.coerce.date().nullable().optional(),
+	publishedAt: z.coerce.date().nullable().optional(),
 	author: GithubUser.optional(),
 });
 
@@ -134,9 +134,9 @@ export const GithubWorkflow = z.object({
 	url: z.string().optional(),
 	htmlUrl: z.string().optional(),
 	badgeUrl: z.string().optional(),
-	createdAt: z.any().optional(),
-	updatedAt: z.any().optional(),
-	deletedAt: z.any().optional(),
+	createdAt: z.coerce.date().nullable().optional(),
+	updatedAt: z.coerce.date().nullable().optional(),
+	deletedAt: z.coerce.date().nullable().optional(),
 });
 
 export type GithubUser = z.infer<typeof GithubUser>;

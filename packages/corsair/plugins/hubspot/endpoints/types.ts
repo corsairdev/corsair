@@ -4,8 +4,8 @@ const ContactResponseSchema = z
 	.object({
 		id: z.string(),
 		properties: z.record(z.any()).optional(),
-		createdAt: z.union([z.string(), z.date(), z.coerce.date()]).optional(),
-		updatedAt: z.union([z.string(), z.date(), z.coerce.date()]).optional(),
+		createdAt: z.coerce.date().nullable().optional(),
+		updatedAt: z.coerce.date().nullable().optional(),
 		archived: z.boolean().optional(),
 	})
 	.passthrough();
@@ -14,8 +14,8 @@ const CompanyResponseSchema = z
 	.object({
 		id: z.string(),
 		properties: z.record(z.any()).optional(),
-		createdAt: z.union([z.string(), z.date(), z.coerce.date()]).optional(),
-		updatedAt: z.union([z.string(), z.date(), z.coerce.date()]).optional(),
+		createdAt: z.coerce.date().nullable().optional(),
+		updatedAt: z.coerce.date().nullable().optional(),
 		archived: z.boolean().optional(),
 	})
 	.passthrough();
@@ -24,8 +24,8 @@ const DealResponseSchema = z
 	.object({
 		id: z.string(),
 		properties: z.record(z.any()).optional(),
-		createdAt: z.union([z.string(), z.date(), z.coerce.date()]).optional(),
-		updatedAt: z.union([z.string(), z.date(), z.coerce.date()]).optional(),
+		createdAt: z.coerce.date().nullable().optional(),
+		updatedAt: z.coerce.date().nullable().optional(),
 		archived: z.boolean().optional(),
 	})
 	.passthrough();
@@ -34,8 +34,8 @@ const TicketResponseSchema = z
 	.object({
 		id: z.string(),
 		properties: z.record(z.any()).optional(),
-		createdAt: z.union([z.string(), z.date(), z.coerce.date()]).optional(),
-		updatedAt: z.union([z.string(), z.date(), z.coerce.date()]).optional(),
+		createdAt: z.coerce.date().nullable().optional(),
+		updatedAt: z.coerce.date().nullable().optional(),
 		archived: z.boolean().optional(),
 	})
 	.passthrough();

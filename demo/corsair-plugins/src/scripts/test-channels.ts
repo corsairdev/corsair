@@ -4,13 +4,17 @@ import 'dotenv/config';
 const main = async () => {
 	const res = await corsair
 		.withTenant('default')
-		.resend.keys.setWebhookSignature('');
-	// ({
-	// 	from: 'noreply@updates.corsair.dev',
-	// 	to: 'dev@corsair.dev',
-	// 	subject: 'Hello',
-	// 	text: 'hi there',
-	// });
+		.linear.keys.getWebhookSignature();
+
+	console.log(res);
+
+	const test = await corsair.withTenant('default').linear.db.issues.search({
+		data: {
+			completedAt: {
+				between: [new Date(), new Date()],
+			},
+		},
+	});
 };
 
 main();

@@ -8,7 +8,7 @@ const EmailSchema = z.object({
 	id: z.string(),
 	from: z.string(),
 	to: z.array(z.string()),
-	created_at: z.string(),
+	created_at: z.coerce.date().nullable().optional(),
 	subject: z.string().optional(),
 });
 
@@ -31,7 +31,7 @@ const DomainSchema = z.object({
 		'pending',
 		'failed',
 	]),
-	created_at: z.string(),
+	created_at: z.coerce.date().nullable().optional(),
 	region: z.string().optional(),
 });
 
@@ -64,7 +64,7 @@ const VerifyDomainResponseSchema = z
 				'pending',
 			])
 			.optional(),
-		created_at: z.string().optional(),
+		created_at: z.coerce.date().nullable().optional(),
 		region: z.string().optional(),
 	})
 	.passthrough();

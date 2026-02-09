@@ -1,11 +1,5 @@
+import type { ExpressionBuilder, Insertable, Updateable } from 'kysely';
 import type { ZodTypeAny, z } from 'zod';
-
-import type {
-	CorsairDbAdapter,
-	CorsairWhere,
-	TableInsertType,
-	TableUpdateType,
-} from '../adapters/types';
 import { generateUUID } from '../core/utils';
 import type {
 	CorsairAccount,
@@ -19,6 +13,8 @@ import {
 	CorsairEventsSchema,
 	CorsairIntegrationsSchema,
 } from './';
+import type { CorsairDatabase, CorsairKyselyDatabase } from './kysely/database';
+import { createKyselyEntityClient } from './kysely/orm';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Core Table Types
@@ -33,15 +29,31 @@ export type CorsairOrmDatabase = {
 
 export type CorsairOrmTableName = keyof CorsairOrmDatabase;
 
-/**
- * Maps table names to their Zod schemas for runtime validation.
- */
-const TABLE_SCHEMAS: Record<CorsairOrmTableName, ZodTypeAny> = {
+export type CorsairWhereOperator = '=' | 'in' | 'like';
+
+export type CorsairWhere<TField extends string = string> = {
+	field: TField;
+	value: unknown;
+	operator?: CorsairWhereOperator | undefined;
+};
+
+const TABLE_SCHEMAS = {
 	corsair_integrations: CorsairIntegrationsSchema,
 	corsair_accounts: CorsairAccountsSchema,
 	corsair_entities: CorsairEntitiesSchema,
 	corsair_events: CorsairEventsSchema,
+} as const satisfies {
+	// Allow different input types (e.g. nullable from DB) as long as output matches
+	[K in CorsairOrmTableName]: z.ZodType<
+		CorsairOrmDatabase[K],
+		z.ZodTypeDef,
+		unknown
+	>;
 };
+
+function getTableSchema<TName extends CorsairOrmTableName>(tableName: TName) {
+	return TABLE_SCHEMAS[tableName];
+}
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Utility Functions
@@ -59,8 +71,8 @@ function parseJsonLike(value: unknown): unknown {
 }
 
 function assertDatabaseConfigured(
-	database: CorsairDbAdapter | undefined,
-): asserts database is CorsairDbAdapter {
+	database: CorsairDatabase | undefined,
+): asserts database is CorsairDatabase {
 	if (!database) {
 		throw new Error(
 			'Corsair database is not configured. Pass `database` to createCorsair(...) to enable ORM.',
@@ -207,10 +219,14 @@ export type CorsairOrm = {
 	events: CorsairEventsClient;
 };
 
-function buildWhere<T>(where: WhereClause<T> | undefined): CorsairWhere[] {
+function buildWhere<TRecord>(
+	where: WhereClause<TRecord> | undefined,
+): CorsairWhere<keyof TRecord & string>[] {
 	if (!where) return [];
-	const result: CorsairWhere[] = [];
-	for (const [field, value] of Object.entries(where)) {
+	const result: CorsairWhere<keyof TRecord & string>[] = [];
+	for (const key in where) {
+		const field = key as keyof TRecord & string;
+		const value = where[field];
 		if (value === undefined) continue;
 		if (
 			typeof value === 'object' &&
@@ -218,7 +234,7 @@ function buildWhere<T>(where: WhereClause<T> | undefined): CorsairWhere[] {
 			!Array.isArray(value) &&
 			!(value instanceof Date)
 		) {
-			const obj = value as { in?: unknown[]; like?: string };
+			const obj = value as { in?: TRecord[keyof TRecord][]; like?: string };
 			if ('in' in obj && Array.isArray(obj.in)) {
 				result.push({ field, operator: 'in', value: obj.in });
 			} else if ('like' in obj && typeof obj.like === 'string') {
@@ -231,133 +247,235 @@ function buildWhere<T>(where: WhereClause<T> | undefined): CorsairWhere[] {
 	return result;
 }
 
+type WhereableQuery<TBuilder> = {
+	where: (
+		column: string,
+		operator: CorsairWhereOperator,
+		value: unknown,
+	) => TBuilder;
+};
+
+function applyCorsairWhere<TBuilder>(
+	q: TBuilder,
+	where: CorsairWhere[] | undefined,
+): TBuilder {
+	if (!where?.length) return q;
+	let next = q as unknown as WhereableQuery<TBuilder>;
+	for (const w of where) {
+		const operator = w.operator ?? '=';
+		next = next.where(
+			w.field,
+			operator,
+			w.value,
+		) as unknown as WhereableQuery<TBuilder>;
+	}
+	return next as TBuilder;
+}
+
+function parseCountValue(countVal: unknown): number {
+	if (typeof countVal === 'number') return countVal;
+	if (typeof countVal === 'bigint') return Number(countVal);
+	return Number.parseInt(String(countVal ?? 0), 10);
+}
+
 /**
  * Creates a base table client for a specific table.
  * Uses the table name type to properly type adapter calls.
  */
 function createBaseTableClient<
-	TName extends CorsairOrmTableName,
-	TRow extends CorsairOrmDatabase[TName] = CorsairOrmDatabase[TName],
+	TName extends keyof CorsairKyselyDatabase & CorsairOrmTableName,
 >(
-	database: CorsairDbAdapter | undefined,
+	database: CorsairDatabase | undefined,
 	tableName: TName,
-): CorsairTableClient<TRow> {
-	const schema = TABLE_SCHEMAS[tableName];
+): CorsairTableClient<CorsairOrmDatabase[TName]> {
+	type TableRow = CorsairKyselyDatabase[TName];
+	type RowType = CorsairOrmDatabase[TName];
+	const schema = getTableSchema(tableName) as unknown as z.ZodType<RowType>;
+	type InsertRow = Insertable<TableRow>;
+	type UpdateRow = Updateable<TableRow>;
+	type SelectBuilder = {
+		selectAll: () => SelectBuilder;
+		select: (
+			selection:
+				| string
+				| ((eb: ExpressionBuilder<CorsairKyselyDatabase, TName>) => unknown),
+		) => SelectBuilder;
+		limit: (limit: number) => SelectBuilder;
+		offset: (offset: number) => SelectBuilder;
+		where: (
+			column: string,
+			operator: CorsairWhereOperator,
+			value: unknown,
+		) => SelectBuilder;
+		execute: () => Promise<TableRow[]>;
+		executeTakeFirst: () => Promise<TableRow | undefined>;
+	};
+	type InsertBuilder = {
+		values: (row: InsertRow) => InsertBuilder;
+		returningAll: () => InsertBuilder;
+		executeTakeFirst: () => Promise<TableRow | undefined>;
+	};
+	type UpdateBuilder = {
+		set: (update: UpdateRow) => UpdateBuilder;
+		returningAll: () => UpdateBuilder;
+		where: (
+			column: string,
+			operator: CorsairWhereOperator,
+			value: unknown,
+		) => UpdateBuilder;
+		execute: () => Promise<unknown>;
+		executeTakeFirst: () => Promise<TableRow | undefined>;
+	};
+	type DeleteBuilder = {
+		where: (
+			column: string,
+			operator: CorsairWhereOperator,
+			value: unknown,
+		) => DeleteBuilder;
+		executeTakeFirst: () => Promise<
+			{ numDeletedRows?: bigint | number } | undefined
+		>;
+	};
 
-	function parseRow(row: Record<string, unknown>): TRow {
-		if (!row) throw new Error('Row is null');
-		const parsed = { ...row };
-		for (const key of Object.keys(parsed)) {
-			parsed[key] = parseJsonLike(parsed[key]);
+	const getDb = () => {
+		assertDatabaseConfigured(database);
+		return database;
+	};
+	const selectFromTable = () =>
+		getDb().db.selectFrom(tableName) as unknown as SelectBuilder;
+	const insertIntoTable = () =>
+		getDb().db.insertInto(tableName) as unknown as InsertBuilder;
+	const updateTable = () =>
+		getDb().db.updateTable(tableName) as unknown as UpdateBuilder;
+	const deleteFromTable = () =>
+		getDb().db.deleteFrom(tableName) as unknown as DeleteBuilder;
+
+	function parseRow(row: TableRow): RowType {
+		const parsed: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(row)) {
+			parsed[key] = parseJsonLike(value);
 		}
-		return schema.parse(parsed) as TRow;
+		return schema.parse(parsed);
+	}
+
+	function parseRowFromRecord(record: Record<string, unknown>): RowType {
+		const parsed: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(record)) {
+			parsed[key] = parseJsonLike(value);
+		}
+		return schema.parse(parsed);
 	}
 
 	return {
 		findById: async (id: string) => {
 			assertDatabaseConfigured(database);
-			const row = await database.findOne({
-				table: tableName,
-				where: [{ field: 'id', value: id }],
-			});
-			return row ? parseRow(row as Record<string, unknown>) : null;
+			let q = selectFromTable().selectAll();
+			q = applyCorsairWhere(q, [{ field: 'id', value: id }]);
+			const row = (await q.executeTakeFirst()) as TableRow | undefined;
+			return row ? parseRow(row) : null;
 		},
 
-		findOne: async (where: WhereClause<TRow>) => {
+		findOne: async (where: WhereClause<RowType>) => {
 			assertDatabaseConfigured(database);
-			const row = await database.findOne({
-				table: tableName,
-				where: buildWhere(where),
-			});
-			return row ? parseRow(row as Record<string, unknown>) : null;
+			let q = selectFromTable().selectAll();
+			q = applyCorsairWhere(q, buildWhere(where));
+			const row = (await q.executeTakeFirst()) as TableRow | undefined;
+			return row ? parseRow(row) : null;
 		},
 
 		findMany: async (options) => {
 			assertDatabaseConfigured(database);
-			const rows = await database.findMany({
-				table: tableName,
-				where: buildWhere(options?.where),
-				limit: options?.limit ?? 100,
-				offset: options?.offset ?? 0,
-			});
-			return rows.map((row) => parseRow(row as Record<string, unknown>));
+			let q = selectFromTable().selectAll();
+			q = applyCorsairWhere(q, buildWhere(options?.where));
+			if (typeof options?.limit === 'number') q = q.limit(options.limit);
+			if (typeof options?.offset === 'number') q = q.offset(options.offset);
+			const rows = (await q.execute()) as TableRow[];
+			return rows.map((row) => parseRow(row));
 		},
 
-		create: async (data: CreateInput<TRow>) => {
+		create: async (data: CreateInput<RowType>) => {
 			assertDatabaseConfigured(database);
 			const now = new Date();
 			const insert = {
-				id: (data as Record<string, unknown>).id ?? generateUUID(),
+				id: data.id ?? generateUUID(),
 				created_at: now,
 				updated_at: now,
 				...data,
-			};
-			const row = await database.insert({
-				table: tableName,
-				data: insert as unknown as TableInsertType<TName>,
-			});
-			return parseRow(row as Record<string, unknown>);
+			} as InsertRow;
+			const row = await insertIntoTable()
+				.values(insert)
+				.returningAll()
+				.executeTakeFirst();
+			return row ? parseRow(row) : parseRowFromRecord(insert);
 		},
 
-		update: async (id: string, data: UpdateInput<TRow>) => {
+		update: async (id: string, data: UpdateInput<RowType>) => {
 			assertDatabaseConfigured(database);
-			const update = { ...data, updated_at: new Date() };
-			const row = await database.update({
-				table: tableName,
-				where: [{ field: 'id', value: id }],
-				data: update as unknown as TableUpdateType<TName>,
-			});
-			return row ? parseRow(row as Record<string, unknown>) : null;
+			const update = {
+				...data,
+				updated_at: new Date(),
+			} as UpdateRow;
+			let q = updateTable().set(update).returningAll();
+			q = applyCorsairWhere(q, [{ field: 'id', value: id }]);
+			const row = (await q.executeTakeFirst()) as TableRow | undefined;
+			return row ? parseRow(row) : null;
 		},
 
-		updateMany: async (where: WhereClause<TRow>, data: UpdateInput<TRow>) => {
+		updateMany: async (
+			where: WhereClause<RowType>,
+			data: UpdateInput<RowType>,
+		) => {
 			assertDatabaseConfigured(database);
-			const update = { ...data, updated_at: new Date() };
-			const rows = await database.findMany({
-				table: tableName,
-				where: buildWhere(where),
-				select: ['id'],
-			});
+			const update = {
+				...data,
+				updated_at: new Date(),
+			} as UpdateRow;
+			let q = selectFromTable().select('id');
+			q = applyCorsairWhere(q, buildWhere(where));
+			const rows = (await q.execute()) as Array<{ id: TableRow['id'] }>;
 			for (const row of rows) {
-				const typedRow = row as { id: string };
-				await database.update({
-					table: tableName,
-					where: [{ field: 'id', value: typedRow.id }],
-					data: update as unknown as TableUpdateType<TName>,
-				});
+				let updateQuery = updateTable().set(update);
+				updateQuery = applyCorsairWhere(updateQuery, [
+					{ field: 'id', value: row.id },
+				]);
+				await updateQuery.execute();
 			}
 			return rows.length;
 		},
 
 		delete: async (id: string) => {
 			assertDatabaseConfigured(database);
-			const deleted = await database.deleteMany({
-				table: tableName,
-				where: [{ field: 'id', value: id }],
-			});
-			return deleted > 0;
+			let q = deleteFromTable();
+			q = applyCorsairWhere(q, [{ field: 'id', value: id }]);
+			const res = await q.executeTakeFirst();
+			return Number(res?.numDeletedRows ?? 0) > 0;
 		},
 
-		deleteMany: async (where: WhereClause<TRow>) => {
+		deleteMany: async (where: WhereClause<RowType>) => {
 			assertDatabaseConfigured(database);
-			return await database.deleteMany({
-				table: tableName,
-				where: buildWhere(where),
-			});
+			let q = deleteFromTable();
+			q = applyCorsairWhere(q, buildWhere(where));
+			const res = await q.executeTakeFirst();
+			return Number(res?.numDeletedRows ?? 0);
 		},
 
 		count: async (where) => {
 			assertDatabaseConfigured(database);
-			return await database.count({
-				table: tableName,
-				where: buildWhere(where),
-			});
+			let q = selectFromTable().select(
+				(eb: ExpressionBuilder<CorsairKyselyDatabase, TName>) =>
+					eb.fn.countAll().as('count'),
+			);
+			q = applyCorsairWhere(q, buildWhere(where));
+			const row = (await q.executeTakeFirst()) as
+				| { count?: unknown }
+				| undefined;
+			return parseCountValue(row?.count);
 		},
 	};
 }
 
 function createIntegrationsClient(
-	database: CorsairDbAdapter | undefined,
+	database: CorsairDatabase | undefined,
 ): CorsairIntegrationsClient {
 	const base = createBaseTableClient(database, 'corsair_integrations');
 
@@ -375,7 +493,7 @@ function createIntegrationsClient(
 }
 
 function createAccountsClient(
-	database: CorsairDbAdapter | undefined,
+	database: CorsairDatabase | undefined,
 ): CorsairAccountsClient {
 	const base = createBaseTableClient(database, 'corsair_accounts');
 
@@ -384,10 +502,11 @@ function createAccountsClient(
 		findByTenantAndIntegration: async (tenantId, integrationName) => {
 			assertDatabaseConfigured(database);
 			// First find the integration by name
-			const integration = await database.findOne({
-				table: 'corsair_integrations' as const,
-				where: [{ field: 'name', value: integrationName }],
-			});
+			const integration = await database.db
+				.selectFrom('corsair_integrations')
+				.selectAll()
+				.where('name', '=', integrationName)
+				.executeTakeFirst();
 			if (!integration) return null;
 			return base.findOne({
 				tenant_id: tenantId,
@@ -418,7 +537,7 @@ function createAccountsClient(
 }
 
 function createEntitiesClient(
-	database: CorsairDbAdapter | undefined,
+	database: CorsairDatabase | undefined,
 ): CorsairEntitiesClient {
 	const base = createBaseTableClient(database, 'corsair_entities');
 
@@ -433,15 +552,14 @@ function createEntitiesClient(
 		findManyByEntityIds: async ({ accountId, entityType, entityIds }) => {
 			if (entityIds.length === 0) return [];
 			assertDatabaseConfigured(database);
-			const rows = await database.findMany({
-				table: 'corsair_entities' as const,
-				where: [
-					{ field: 'account_id', value: accountId },
-					{ field: 'entity_type', value: entityType },
-					{ field: 'entity_id', operator: 'in', value: entityIds },
-				],
-			});
-			return rows;
+			const rows = await database.db
+				.selectFrom('corsair_entities')
+				.selectAll()
+				.where('account_id', '=', accountId)
+				.where('entity_type', '=', entityType)
+				.where('entity_id', 'in', entityIds)
+				.execute();
+			return rows as CorsairEntity[];
 		},
 		listByScope: ({ accountId, entityType, limit, offset }) =>
 			base.findMany({
@@ -457,16 +575,15 @@ function createEntitiesClient(
 			offset,
 		}) => {
 			assertDatabaseConfigured(database);
-			return database.findMany({
-				table: 'corsair_entities' as const,
-				where: [
-					{ field: 'account_id', value: accountId },
-					{ field: 'entity_type', value: entityType },
-					{ field: 'entity_id', operator: 'like', value: `%${query}%` },
-				],
-				limit: limit ?? 100,
-				offset: offset ?? 0,
-			});
+			let q = database.db
+				.selectFrom('corsair_entities')
+				.selectAll()
+				.where('account_id', '=', accountId)
+				.where('entity_type', '=', entityType)
+				.where('entity_id', 'like', `%${query}%`);
+			if (typeof limit === 'number') q = q.limit(limit);
+			if (typeof offset === 'number') q = q.offset(offset);
+			return (await q.execute()) as CorsairEntity[];
 		},
 		upsertByEntityId: async ({
 			accountId,
@@ -493,21 +610,21 @@ function createEntitiesClient(
 		},
 		deleteByEntityId: async ({ accountId, entityType, entityId }) => {
 			assertDatabaseConfigured(database);
-			const deleted = await database.deleteMany({
-				table: 'corsair_entities',
-				where: [
-					{ field: 'account_id', value: accountId },
-					{ field: 'entity_type', value: entityType },
-					{ field: 'entity_id', value: entityId },
-				],
-			});
-			return deleted > 0;
+			const res = await database.db
+				.deleteFrom('corsair_entities')
+				.where('account_id', '=', accountId)
+				.where('entity_type', '=', entityType)
+				.where('entity_id', '=', entityId)
+				.executeTakeFirst();
+			return (
+				Number((res as { numDeletedRows?: bigint | number }).numDeletedRows) > 0
+			);
 		},
 	};
 }
 
 function createEventsClient(
-	database: CorsairDbAdapter | undefined,
+	database: CorsairDatabase | undefined,
 ): CorsairEventsClient {
 	const base = createBaseTableClient(database, 'corsair_events');
 
@@ -541,7 +658,7 @@ function createEventsClient(
  * Creates the base Corsair ORM with all table clients.
  */
 export function createCorsairOrm(
-	database: CorsairDbAdapter | undefined,
+	database: CorsairDatabase | undefined,
 ): CorsairOrm {
 	return {
 		integrations: createIntegrationsClient(database),
@@ -578,14 +695,229 @@ export type TypedEntity<DataSchema extends ZodTypeAny> = Omit<
 // ─────────────────────────────────────────────────────────────────────────────
 
 /**
- * Search filter value - can be an exact value or an operator object.
+ * Filter value for entity table columns (e.g., entity_id, version).
+ * Supports exact matches, string operations (for string fields), and array membership.
+ *
  * @example
- * // Exact match
- * { name: "sdk-test" }
- * // LIKE match (case-insensitive)
- * { name: { contains: "sdk" } }
+ * // Exact match (shorthand)
+ * { entity_id: "C0123456789" }
+ *
+ * @example
+ * // Explicit equals
+ * { entity_id: { equals: "C0123456789" } }
+ *
+ * @example
+ * // String contains (LIKE '%value%')
+ * { entity_id: { contains: "C012" } }
+ *
+ * @example
+ * // String starts with (LIKE 'value%')
+ * { entity_id: { startsWith: "C012" } }
+ *
+ * @example
+ * // String ends with (LIKE '%value')
+ * { entity_id: { endsWith: "6789" } }
+ *
+ * @example
+ * // Match any value in array (IN clause)
+ * { entity_id: { in: ["C0123456789", "C9876543210"] } }
  */
-export type SearchFilterValue<T> = T | { contains: string } | { equals: T };
+export type SearchFilterValue<T> =
+	| T
+	| {
+			/** Exact match. Equivalent to passing the value directly. */
+			equals?: T;
+			/** String contains (LIKE '%value%'). Only available for string fields. */
+			contains?: T extends string ? string : never;
+			/** String starts with (LIKE 'value%'). Only available for string fields. */
+			startsWith?: T extends string ? string : never;
+			/** String ends with (LIKE '%value'). Only available for string fields. */
+			endsWith?: T extends string ? string : never;
+			/** Match any value in array (IN clause). */
+			in?: T[];
+	  };
+
+/**
+ * Filter for string fields in JSONB data.
+ * Supports exact matches, substring search, prefix/suffix matching, and array membership.
+ *
+ * @example
+ * // Exact match (shorthand)
+ * { data: { name: "general" } }
+ *
+ * @example
+ * // Explicit equals
+ * { data: { name: { equals: "general" } } }
+ *
+ * @example
+ * // Contains substring (LIKE '%value%')
+ * { data: { name: { contains: "gen" } } }
+ *
+ * @example
+ * // Starts with prefix (LIKE 'value%')
+ * { data: { name: { startsWith: "gen" } } }
+ *
+ * @example
+ * // Ends with suffix (LIKE '%value')
+ * { data: { name: { endsWith: "eral" } } }
+ *
+ * @example
+ * // Match any value in array (IN clause)
+ * { data: { name: { in: ["general", "random", "announcements"] } } }
+ */
+export type StringDataFilter =
+	| string
+	| {
+			/** Exact match. Equivalent to passing the string directly. */
+			equals?: string;
+			/** Contains substring (LIKE '%value%'). Case-sensitive. */
+			contains?: string;
+			/** Starts with prefix (LIKE 'value%'). Case-sensitive. */
+			startsWith?: string;
+			/** Ends with suffix (LIKE '%value'). Case-sensitive. */
+			endsWith?: string;
+			/** Match any value in array (IN clause). */
+			in?: string[];
+	  };
+
+/**
+ * Filter for number fields in JSONB data.
+ * Supports exact matches, range comparisons, and array membership.
+ *
+ * @example
+ * // Exact match (shorthand)
+ * { data: { count: 42 } }
+ *
+ * @example
+ * // Explicit equals
+ * { data: { count: { equals: 42 } } }
+ *
+ * @example
+ * // Greater than
+ * { data: { count: { gt: 10 } } }
+ *
+ * @example
+ * // Greater than or equal
+ * { data: { count: { gte: 10 } } }
+ *
+ * @example
+ * // Less than
+ * { data: { count: { lt: 100 } } }
+ *
+ * @example
+ * // Less than or equal
+ * { data: { count: { lte: 100 } } }
+ *
+ * @example
+ * // Match any value in array (IN clause)
+ * { data: { count: { in: [10, 20, 30] } } }
+ */
+export type NumberDataFilter =
+	| number
+	| {
+			/** Exact match. Equivalent to passing the number directly. */
+			equals?: number;
+			/** Greater than (>). */
+			gt?: number;
+			/** Greater than or equal (>=). */
+			gte?: number;
+			/** Less than (<). */
+			lt?: number;
+			/** Less than or equal (<=). */
+			lte?: number;
+			/** Match any value in array (IN clause). */
+			in?: number[];
+	  };
+
+/**
+ * Filter for boolean fields in JSONB data.
+ * Supports exact matches only.
+ *
+ * @example
+ * // Exact match (shorthand)
+ * { data: { is_private: true } }
+ *
+ * @example
+ * // Explicit equals
+ * { data: { is_private: { equals: false } } }
+ */
+export type BooleanDataFilter =
+	| boolean
+	| {
+			/** Exact match. Equivalent to passing the boolean directly. */
+			equals?: boolean;
+	  };
+
+/**
+ * Filter for date fields in JSONB data.
+ * Supports exact matches, before/after comparisons, and date ranges.
+ *
+ * @example
+ * // Exact match (shorthand)
+ * { data: { created_at: new Date("2024-01-01") } }
+ *
+ * @example
+ * // Explicit equals
+ * { data: { created_at: { equals: new Date("2024-01-01") } } }
+ *
+ * @example
+ * // Before date (<)
+ * { data: { created_at: { before: new Date("2024-12-31") } } }
+ *
+ * @example
+ * // After date (>)
+ * { data: { created_at: { after: new Date("2024-01-01") } } }
+ *
+ * @example
+ * // Between two dates (inclusive)
+ * { data: { created_at: { between: [new Date("2024-01-01"), new Date("2024-12-31")] } } }
+ */
+export type DateDataFilter =
+	| Date
+	| {
+			/** Exact match. Equivalent to passing the Date directly. */
+			equals?: Date;
+			/** Before date (<). */
+			before?: Date;
+			/** After date (>). */
+			after?: Date;
+			/** Between two dates (inclusive). First element is start, second is end. */
+			between?: [Date, Date];
+	  };
+
+/**
+ * Filter value for JSONB data fields, automatically selected based on field type.
+ * Supports different filter operations depending on the data type:
+ * - String: exact match, contains, startsWith, endsWith, in
+ * - Number: exact match, gt, gte, lt, lte, in
+ * - Boolean: exact match only
+ * - Date: exact match, before, after, between
+ *
+ * @example
+ * // String field
+ * { data: { name: { contains: "test" } } }
+ *
+ * @example
+ * // Number field
+ * { data: { count: { gt: 10 } } }
+ *
+ * @example
+ * // Boolean field
+ * { data: { is_private: true } }
+ *
+ * @example
+ * // Date field
+ * { data: { created_at: { after: new Date("2024-01-01") } } }
+ */
+export type DataFilterValue<T> = T extends Date
+	? DateDataFilter
+	: T extends number
+		? NumberDataFilter
+		: T extends boolean
+			? BooleanDataFilter
+			: T extends string
+				? StringDataFilter
+				: never;
 
 /**
  * Fields that are automatically filtered by the ORM (not user-searchable).
@@ -618,46 +950,150 @@ type EntityFieldsFilter = {
 
 /**
  * Search filter for JSONB data fields.
- * Only supports top-level fields.
- * Nested objects (like topic, purpose) are excluded.
+ * Only supports top-level fields. Nested objects (like topic, purpose) are excluded.
+ * Each field uses the appropriate filter type based on its data type.
+ *
+ * @example
+ * // Filter by multiple data fields
+ * {
+ *   data: {
+ *     name: { contains: "general" },
+ *     is_private: false,
+ *     member_count: { gte: 10 }
+ *   }
+ * }
+ *
+ * @example
+ * // String field with contains
+ * {
+ *   data: {
+ *     name: { contains: "test" }
+ *   }
+ * }
+ *
+ * @example
+ * // Number field with range
+ * {
+ *   data: {
+ *     count: { gt: 5, lt: 100 }
+ *   }
+ * }
+ *
+ * @example
+ * // Date field with range
+ * {
+ *   data: {
+ *     created_at: { between: [new Date("2024-01-01"), new Date("2024-12-31")] }
+ *   }
+ * }
  */
 export type DataSearchFilter<DataSchema extends ZodTypeAny> = {
 	[K in keyof z.infer<DataSchema>]?: z.infer<DataSchema>[K] extends
 		| string
 		| number
 		| boolean
+		| Date
+		| null
 		| undefined
-		? SearchFilterValue<NonNullable<z.infer<DataSchema>[K]>>
+		? DataFilterValue<NonNullable<z.infer<DataSchema>[K]>>
 		: never;
 };
 
 /**
  * Search options for querying entities.
- * Supports filtering by entity columns (derived from CorsairEntity) and JSONB data fields.
+ * Supports filtering by entity table columns (entity_id, version, etc.) and JSONB data fields.
+ * All filters are combined with AND logic.
  *
  * @example
- * // Search channels by name in JSONB data
- * await tenant.slack.db.channels.search({
- *   data: { name: "sdk-test" }
- * });
- *
- * // Search with contains (LIKE)
- * await tenant.slack.db.channels.search({
- *   data: { name: { contains: "sdk" } }
- * });
- *
- * // Search by entity_id
+ * // Search by entity_id (exact match)
  * await tenant.slack.db.channels.search({
  *   entity_id: "C0123456789"
+ * });
+ *
+ * @example
+ * // Search by entity_id with contains
+ * await tenant.slack.db.channels.search({
+ *   entity_id: { contains: "C012" }
+ * });
+ *
+ * @example
+ * // Search by JSONB data field (exact match)
+ * await tenant.slack.db.channels.search({
+ *   data: { name: "general" }
+ * });
+ *
+ * @example
+ * // Search by JSONB data field with contains
+ * await tenant.slack.db.channels.search({
+ *   data: { name: { contains: "gen" } }
+ * });
+ *
+ * @example
+ * // Search with multiple filters
+ * await tenant.slack.db.channels.search({
+ *   entity_id: { startsWith: "C" },
+ *   data: {
+ *     name: { contains: "test" },
+ *     is_private: false,
+ *     member_count: { gte: 10 }
+ *   },
+ *   limit: 20,
+ *   offset: 0
+ * });
+ *
+ * @example
+ * // Search with number range
+ * await tenant.slack.db.channels.search({
+ *   data: {
+ *     member_count: { gt: 5, lt: 100 }
+ *   }
+ * });
+ *
+ * @example
+ * // Search with date range
+ * await tenant.slack.db.channels.search({
+ *   data: {
+ *     created_at: { between: [new Date("2024-01-01"), new Date("2024-12-31")] }
+ *   }
+ * });
+ *
+ * @example
+ * // Search with pagination
+ * await tenant.slack.db.channels.search({
+ *   data: { name: { contains: "test" } },
+ *   limit: 50,
+ *   offset: 100
  * });
  */
 export type EntitySearchOptions<DataSchema extends ZodTypeAny> =
 	EntityFieldsFilter & {
-		/** Filter by JSONB data fields */
+		/**
+		 * Filter by JSONB data fields.
+		 * Supports top-level fields only. Each field type has specific filter options.
+		 *
+		 * @example
+		 * { data: { name: { contains: "test" } } }
+		 *
+		 * @example
+		 * { data: { count: { gt: 10 } } }
+		 *
+		 * @example
+		 * { data: { is_private: false } }
+		 */
 		data?: DataSearchFilter<DataSchema>;
-		/** Maximum number of results */
+		/**
+		 * Maximum number of results to return.
+		 *
+		 * @example
+		 * { limit: 50 }
+		 */
 		limit?: number;
-		/** Number of results to skip */
+		/**
+		 * Number of results to skip (for pagination).
+		 *
+		 * @example
+		 * { offset: 100 }
+		 */
 		offset?: number;
 	};
 
@@ -685,21 +1121,68 @@ export type PluginEntityClient<DataSchema extends ZodTypeAny> = {
 
 	/**
 	 * Search entities with typed filters.
+	 * Supports filtering by entity table columns and JSONB data fields with various operators.
+	 * All filters are combined with AND logic.
 	 *
 	 * @example
-	 * // Search by JSONB data field
+	 * // Search by entity_id (exact match)
 	 * await tenant.slack.db.channels.search({
-	 *   data: { name: "sdk-test" }
+	 *   entity_id: "C0123456789"
 	 * });
 	 *
-	 * // Search with contains (LIKE)
-	 * await tenant.slack.db.channels.search({
-	 *   data: { name: { contains: "sdk" } }
-	 * });
-	 *
-	 * // Search by entity_id
+	 * @example
+	 * // Search by entity_id with contains (LIKE '%value%')
 	 * await tenant.slack.db.channels.search({
 	 *   entity_id: { contains: "C012" }
+	 * });
+	 *
+	 * @example
+	 * // Search by entity_id with startsWith (LIKE 'value%')
+	 * await tenant.slack.db.channels.search({
+	 *   entity_id: { startsWith: "C" }
+	 * });
+	 *
+	 * @example
+	 * // Search by JSONB data field (exact match)
+	 * await tenant.slack.db.channels.search({
+	 *   data: { name: "general" }
+	 * });
+	 *
+	 * @example
+	 * // Search by JSONB string field with contains
+	 * await tenant.slack.db.channels.search({
+	 *   data: { name: { contains: "gen" } }
+	 * });
+	 *
+	 * @example
+	 * // Search by JSONB number field with range
+	 * await tenant.slack.db.channels.search({
+	 *   data: { member_count: { gt: 10, lt: 100 } }
+	 * });
+	 *
+	 * @example
+	 * // Search by JSONB boolean field
+	 * await tenant.slack.db.channels.search({
+	 *   data: { is_private: false }
+	 * });
+	 *
+	 * @example
+	 * // Search by JSONB date field with range
+	 * await tenant.slack.db.channels.search({
+	 *   data: { created_at: { between: [new Date("2024-01-01"), new Date("2024-12-31")] } }
+	 * });
+	 *
+	 * @example
+	 * // Search with multiple filters and pagination
+	 * await tenant.slack.db.channels.search({
+	 *   entity_id: { startsWith: "C" },
+	 *   data: {
+	 *     name: { contains: "test" },
+	 *     is_private: false,
+	 *     member_count: { gte: 10 }
+	 *   },
+	 *   limit: 20,
+	 *   offset: 0
 	 * });
 	 */
 	search: (
@@ -807,7 +1290,7 @@ export type TenantScopedOrm = {
  * The client lazily resolves the account ID when operations are performed.
  */
 function createPluginEntityClient<DataSchema extends ZodTypeAny>(
-	database: CorsairDbAdapter | undefined,
+	database: CorsairDatabase | undefined,
 	context: PluginContext,
 	entityTypeName: string,
 	version: string,
@@ -821,11 +1304,11 @@ function createPluginEntityClient<DataSchema extends ZodTypeAny>(
 
 		assertDatabaseConfigured(database);
 
-		// Find the integration by name
-		const integration = await database.findOne({
-			table: 'corsair_integrations' as const,
-			where: [{ field: 'name', value: context.integrationName }],
-		});
+		const integration = await database.db
+			.selectFrom('corsair_integrations')
+			.selectAll()
+			.where('name', '=', context.integrationName)
+			.executeTakeFirst();
 
 		if (!integration) {
 			throw new Error(
@@ -833,14 +1316,12 @@ function createPluginEntityClient<DataSchema extends ZodTypeAny>(
 			);
 		}
 
-		// Find the account for this tenant and integration
-		const account = await database.findOne({
-			table: 'corsair_accounts' as const,
-			where: [
-				{ field: 'tenant_id', value: context.tenantId },
-				{ field: 'integration_id', value: integration.id },
-			],
-		});
+		const account = await database.db
+			.selectFrom('corsair_accounts')
+			.selectAll()
+			.where('tenant_id', '=', context.tenantId)
+			.where('integration_id', '=', integration.id)
+			.executeTakeFirst();
 
 		if (!account) {
 			throw new Error(
@@ -852,216 +1333,14 @@ function createPluginEntityClient<DataSchema extends ZodTypeAny>(
 		return cachedAccountId;
 	}
 
-	function baseWhere(accountId: string): CorsairWhere[] {
-		return [
-			{ field: 'account_id', value: accountId },
-			{ field: 'entity_type', value: entityTypeName },
-		];
-	}
-
-	function parseRow(row: CorsairEntity): TypedEntity<DataSchema> {
-		const data = parseJsonLike(row.data);
-		return {
-			...row,
-			data: dataSchema.parse(data),
-		} as TypedEntity<DataSchema>;
-	}
-
-	return {
-		findByEntityId: async (entityId) => {
-			assertDatabaseConfigured(database);
-			const accountId = await getAccountId();
-			const row = await database.findOne({
-				table: 'corsair_entities' as const,
-				where: [
-					...baseWhere(accountId),
-					{ field: 'entity_id', value: entityId },
-				],
-			});
-			return row ? parseRow(row) : null;
-		},
-
-		findById: async (id) => {
-			assertDatabaseConfigured(database);
-			const accountId = await getAccountId();
-			const row = await database.findOne({
-				table: 'corsair_entities' as const,
-				where: [...baseWhere(accountId), { field: 'id', value: id }],
-			});
-			return row ? parseRow(row) : null;
-		},
-
-		findManyByEntityIds: async (entityIds) => {
-			if (entityIds.length === 0) return [];
-			assertDatabaseConfigured(database);
-			const accountId = await getAccountId();
-			const rows = await database.findMany({
-				table: 'corsair_entities' as const,
-				where: [
-					...baseWhere(accountId),
-					{ field: 'entity_id', operator: 'in', value: entityIds },
-				],
-			});
-			return rows.map(parseRow);
-		},
-
-		list: async (options) => {
-			assertDatabaseConfigured(database);
-			const accountId = await getAccountId();
-			const rows = await database.findMany({
-				table: 'corsair_entities' as const,
-				where: baseWhere(accountId),
-				limit: options?.limit ?? 100,
-				offset: options?.offset ?? 0,
-			});
-			return rows.map(parseRow);
-		},
-
-		search: async (options) => {
-			assertDatabaseConfigured(database);
-			const accountId = await getAccountId();
-
-			// Build where clauses from search options
-			const whereConditions: CorsairWhere[] = [...baseWhere(accountId)];
-
-			// Helper to parse filter value into operator and value
-			function parseFilterValue(filterValue: unknown): {
-				operator: 'like' | '=';
-				value: unknown;
-			} {
-				if (
-					typeof filterValue === 'object' &&
-					filterValue !== null &&
-					!Array.isArray(filterValue)
-				) {
-					const obj = filterValue as Record<string, unknown>;
-					if ('contains' in obj && typeof obj.contains === 'string') {
-						return { operator: 'like', value: `%${obj.contains}%` };
-					}
-					if ('equals' in obj) {
-						return { operator: '=', value: obj.equals };
-					}
-				}
-				// Exact match
-				return { operator: '=', value: filterValue };
-			}
-
-			// Reserved keys that aren't entity column filters
-			const reservedKeys = new Set(['data', 'limit', 'offset']);
-
-			// Handle entity column filters (derived from CorsairEntity)
-			for (const [key, filterValue] of Object.entries(options)) {
-				if (reservedKeys.has(key) || filterValue === undefined) continue;
-				const { operator, value } = parseFilterValue(filterValue);
-				whereConditions.push({ field: key, operator, value });
-			}
-
-			// Handle data (JSONB) filters
-			if (options.data && typeof options.data === 'object') {
-				for (const [key, filterValue] of Object.entries(options.data)) {
-					if (filterValue === undefined) continue;
-					const { operator, value } = parseFilterValue(filterValue);
-					// Use JSONB path query syntax: data->>'key'
-					whereConditions.push({
-						field: `data->>'${key}'`,
-						operator,
-						value,
-					});
-				}
-			}
-
-			const rows = await database.findMany({
-				table: 'corsair_entities' as const,
-				where: whereConditions,
-				limit: options.limit ?? 100,
-				offset: options.offset ?? 0,
-			});
-			return rows.map(parseRow);
-		},
-
-		upsertByEntityId: async (entityId, data) => {
-			assertDatabaseConfigured(database);
-			const accountId = await getAccountId();
-			const parsed = dataSchema.parse(data);
-
-			const existing = await database.findOne({
-				table: 'corsair_entities' as const,
-				select: ['id'],
-				where: [
-					...baseWhere(accountId),
-					{ field: 'entity_id', value: entityId },
-				],
-			});
-
-			const now = new Date();
-
-			if (existing?.id) {
-				await database.update({
-					table: 'corsair_entities' as const,
-					where: [{ field: 'id', value: existing.id }],
-					data: { version, data: parsed, updated_at: now },
-				});
-				const updated = await database.findOne({
-					table: 'corsair_entities' as const,
-					where: [{ field: 'id', value: existing.id }],
-				});
-				return parseRow(updated!);
-			}
-
-			const id = generateUUID();
-			await database.insert({
-				table: 'corsair_entities' as const,
-				data: {
-					id,
-					created_at: now,
-					updated_at: now,
-					account_id: accountId,
-					entity_id: entityId,
-					entity_type: entityTypeName,
-					version,
-					data: parsed,
-				},
-			});
-
-			const inserted = await database.findOne({
-				table: 'corsair_entities' as const,
-				where: [{ field: 'id', value: id }],
-			});
-			return parseRow(inserted!);
-		},
-
-		deleteById: async (id) => {
-			assertDatabaseConfigured(database);
-			const accountId = await getAccountId();
-			const deleted = await database.deleteMany({
-				table: 'corsair_entities',
-				where: [...baseWhere(accountId), { field: 'id', value: id }],
-			});
-			return deleted > 0;
-		},
-
-		deleteByEntityId: async (entityId) => {
-			assertDatabaseConfigured(database);
-			const accountId = await getAccountId();
-			const deleted = await database.deleteMany({
-				table: 'corsair_entities',
-				where: [
-					...baseWhere(accountId),
-					{ field: 'entity_id', value: entityId },
-				],
-			});
-			return deleted > 0;
-		},
-
-		count: async () => {
-			assertDatabaseConfigured(database);
-			const accountId = await getAccountId();
-			return database.count({
-				table: 'corsair_entities',
-				where: baseWhere(accountId),
-			});
-		},
-	};
+	assertDatabaseConfigured(database);
+	return createKyselyEntityClient(
+		database.db,
+		getAccountId,
+		entityTypeName,
+		version,
+		dataSchema,
+	);
 }
 
 /**
@@ -1101,7 +1380,7 @@ function createPluginEntityClient<DataSchema extends ZodTypeAny>(
 export function createPluginOrm<
 	Entities extends Record<string, ZodTypeAny>,
 >(config: {
-	database: CorsairDbAdapter | undefined;
+	database: CorsairDatabase | undefined;
 	integrationName: string;
 	schema: CorsairPluginSchema<Entities>;
 	tenantId: string;
@@ -1119,10 +1398,11 @@ export function createPluginOrm<
 
 		assertDatabaseConfigured(database);
 
-		const integration = await database.findOne({
-			table: 'corsair_integrations' as const,
-			where: [{ field: 'name', value: integrationName }],
-		});
+		const integration = await database.db
+			.selectFrom('corsair_integrations')
+			.selectAll()
+			.where('name', '=', integrationName)
+			.executeTakeFirst();
 
 		if (!integration) {
 			throw new Error(
@@ -1130,13 +1410,12 @@ export function createPluginOrm<
 			);
 		}
 
-		const account = await database.findOne({
-			table: 'corsair_accounts' as const,
-			where: [
-				{ field: 'tenant_id', value: tenantId },
-				{ field: 'integration_id', value: integration.id },
-			],
-		});
+		const account = await database.db
+			.selectFrom('corsair_accounts')
+			.selectAll()
+			.where('tenant_id', '=', tenantId)
+			.where('integration_id', '=', integration.id)
+			.executeTakeFirst();
 
 		if (!account) {
 			throw new Error(
@@ -1191,7 +1470,7 @@ export function createPluginOrm<
  * ```
  */
 export function createTenantScopedOrm(
-	database: CorsairDbAdapter | undefined,
+	database: CorsairDatabase | undefined,
 	tenantId: string,
 ): TenantScopedOrm {
 	const baseOrm = createCorsairOrm(database);
@@ -1209,60 +1488,52 @@ export function createTenantScopedOrm(
 			assertDatabaseConfigured(database);
 
 			// Get all account IDs for this tenant
-			const accounts = await database.findMany({
-				table: 'corsair_accounts' as const,
-				where: [{ field: 'tenant_id', value: tenantId }],
-				select: ['id'],
-			});
+			const accounts = await database.db
+				.selectFrom('corsair_accounts')
+				.select('id')
+				.where('tenant_id', '=', tenantId)
+				.execute();
 
 			if (accounts.length === 0) return [];
 
 			const accountIds = accounts.map((a) => a.id);
 
-			const where: CorsairWhere[] = [
-				{ field: 'account_id', operator: 'in', value: accountIds },
-			];
-
+			let q = database.db
+				.selectFrom('corsair_entities')
+				.selectAll()
+				.where('account_id', 'in', accountIds);
 			if (options?.entityType) {
-				where.push({ field: 'entity_type', value: options.entityType });
+				q = q.where('entity_type', '=', options.entityType);
 			}
-
-			return database.findMany({
-				table: 'corsair_entities' as const,
-				where,
-				limit: options?.limit ?? 100,
-				offset: options?.offset ?? 0,
-			});
+			if (typeof options?.limit === 'number') q = q.limit(options.limit);
+			if (typeof options?.offset === 'number') q = q.offset(options.offset);
+			return (await q.execute()) as CorsairEntity[];
 		},
 
 		listEvents: async (options) => {
 			assertDatabaseConfigured(database);
 
 			// Get all account IDs for this tenant
-			const accounts = await database.findMany({
-				table: 'corsair_accounts' as const,
-				where: [{ field: 'tenant_id', value: tenantId }],
-				select: ['id'],
-			});
+			const accounts = await database.db
+				.selectFrom('corsair_accounts')
+				.select('id')
+				.where('tenant_id', '=', tenantId)
+				.execute();
 
 			if (accounts.length === 0) return [];
 
 			const accountIds = accounts.map((a) => a.id);
 
-			const where: CorsairWhere[] = [
-				{ field: 'account_id', operator: 'in', value: accountIds },
-			];
-
+			let q = database.db
+				.selectFrom('corsair_events')
+				.selectAll()
+				.where('account_id', 'in', accountIds);
 			if (options?.status) {
-				where.push({ field: 'status', value: options.status });
+				q = q.where('status', '=', options.status);
 			}
-
-			return database.findMany({
-				table: 'corsair_events' as const,
-				where,
-				limit: options?.limit ?? 100,
-				offset: options?.offset ?? 0,
-			});
+			if (typeof options?.limit === 'number') q = q.limit(options.limit);
+			if (typeof options?.offset === 'number') q = q.offset(options.offset);
+			return (await q.execute()) as CorsairEvent[];
 		},
 
 		forIntegration: <Entities extends Record<string, ZodTypeAny>>(config: {
@@ -1296,7 +1567,7 @@ export function createTenantScopedOrm(
 export function createPluginOrmFactory<
 	Entities extends Record<string, ZodTypeAny>,
 >(
-	database: CorsairDbAdapter | undefined,
+	database: CorsairDatabase | undefined,
 	config: {
 		integrationName: string;
 		schema: CorsairPluginSchema<Entities>;

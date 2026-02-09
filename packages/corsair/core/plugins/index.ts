@@ -1,5 +1,5 @@
 import type { ZodTypeAny } from 'zod';
-import type { CorsairDbAdapter } from '../../adapters';
+import type { CorsairDatabaseInput } from '../../db/kysely/database';
 import type { CorsairPluginSchema } from '../../db/orm';
 import type { AccountKeyManagerFor } from '../auth/types';
 import type { ExtractAuthType, InferPluginEntities } from '../client';
@@ -369,8 +369,8 @@ export type CorsairPluginContext<
  * @template Plugins - Array of plugin definitions
  */
 export type CorsairIntegration<Plugins extends readonly CorsairPlugin[]> = {
-	/** Database adapter for ORM entities (e.g. `slack.api.messages.post(...)` for API, `slack.db.messages.findByEntityId(...)` for DB) */
-	database?: CorsairDbAdapter;
+	/** Database connection for ORM entities (e.g. `slack.api.messages.post(...)` for API, `slack.db.messages.findByEntityId(...)` for DB) */
+	database?: CorsairDatabaseInput;
 	/** Array of plugin definitions to include */
 	plugins: Plugins;
 	/** If true, enables tenant-scoped access via `withTenant()` */

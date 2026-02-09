@@ -40,6 +40,7 @@ export const domainCreated: ResendWebhooks['domainCreated'] = {
 					{
 						...event.data,
 						id: event.data.domain_id,
+						created_at: new Date(event.data.created_at ?? ''),
 					},
 				);
 
@@ -102,6 +103,7 @@ export const domainUpdated: ResendWebhooks['domainUpdated'] = {
 					{
 						...event.data,
 						id: event.data.domain_id,
+						created_at: new Date(event.data.created_at ?? ''),
 					},
 				);
 

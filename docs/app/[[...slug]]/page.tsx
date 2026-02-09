@@ -1,10 +1,5 @@
 import { DocsBody, DocsPage } from 'fumadocs-ui/page';
 import { notFound } from 'next/navigation';
-// Adapters
-import DrizzleAdapterDoc from '@/content/adapters/drizzle.mdx';
-import KyselyAdapterDoc from '@/content/adapters/kysely.mdx';
-import PostgresqlAdapterDoc from '@/content/adapters/postgresql.mdx';
-import PrismaAdapterDoc from '@/content/adapters/prisma.mdx';
 // Concepts
 import ApiDoc from '@/content/concepts/api.mdx';
 import AuthDoc from '@/content/concepts/auth.mdx';
@@ -94,27 +89,6 @@ const pages = {
 		Component: WebhooksDoc,
 		title: 'Webhooks',
 		description: 'Handling webhooks in Corsair',
-	},
-	'adapters/drizzle': {
-		Component: DrizzleAdapterDoc,
-		title: 'Drizzle Adapter',
-		description:
-			'Use Corsair with Drizzle ORM for type-safe database operations',
-	},
-	'adapters/kysely': {
-		Component: KyselyAdapterDoc,
-		title: 'Kysely Adapter',
-		description: 'Use Corsair with Kysely for type-safe database operations',
-	},
-	'adapters/postgresql': {
-		Component: PostgresqlAdapterDoc,
-		title: 'PostgreSQL Adapter',
-		description: 'Use Corsair with raw PostgreSQL',
-	},
-	'adapters/prisma': {
-		Component: PrismaAdapterDoc,
-		title: 'Prisma Adapter',
-		description: 'Use Corsair with Prisma for type-safe database operations',
 	},
 	'plugins/slack': {
 		Component: SlackDoc,

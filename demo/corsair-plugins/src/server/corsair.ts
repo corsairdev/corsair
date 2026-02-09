@@ -1,12 +1,10 @@
 import { createCorsair, github, linear, resend, slack } from 'corsair';
-import { drizzleAdapter } from 'corsair/adapters';
-import { db } from '../db';
-import * as schema from '../db/schema';
+import { pool } from '../db';
 import { inngest } from './inngest/client';
 
 export const corsair = createCorsair({
 	multiTenancy: true,
-	database: drizzleAdapter(db, { provider: 'pg', schema }),
+	database: pool,
 	kek: process.env.CORSAIR_KEK!,
 	plugins: [
 		linear({
@@ -73,6 +71,13 @@ export const corsair = createCorsair({
 									event: res.data!,
 								},
 							});
+						},
+					},
+				},
+				reactions: {
+					added: {
+						after(ctx, response) {
+							console.log('added reaction', response.data?.reaction);
 						},
 					},
 				},

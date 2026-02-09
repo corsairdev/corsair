@@ -166,8 +166,8 @@ export const create: LinearEndpoints['commentsCreate'] = async (ctx, input) => {
 				issueId: result.issue.id,
 				userId: result.user.id,
 				parentId: result.parent?.id,
-				createdAt: new Date(result.createdAt),
-				updatedAt: new Date(result.updatedAt),
+				createdAt: new Date(result.createdAt ?? ''),
+				updatedAt: new Date(result.updatedAt ?? ''),
 			});
 		} catch (error) {
 			console.warn('Failed to save comment to database:', error);
@@ -204,8 +204,8 @@ export const update: LinearEndpoints['commentsUpdate'] = async (ctx, input) => {
 				issueId: result.issue.id,
 				userId: result.user.id,
 				parentId: result.parent?.id,
-				createdAt: new Date(result.createdAt),
-				updatedAt: new Date(result.updatedAt),
+				createdAt: new Date(result.createdAt ?? ''),
+				updatedAt: new Date(result.updatedAt ?? ''),
 			});
 		} catch (error) {
 			console.warn('Failed to update comment in database:', error);

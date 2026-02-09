@@ -1,4 +1,4 @@
-import type { CorsairDbAdapter } from '../../adapters/types';
+import type { CorsairDatabase } from '../../db/kysely/database';
 import type { AuthTypes } from '../constants';
 import { encryptDEK, generateDEK } from './encryption';
 import {
@@ -24,7 +24,7 @@ export type IntegrationKeyManagerOptions<T extends AuthTypes> = {
 	authType: T;
 	integrationName: string;
 	kek: string;
-	database: CorsairDbAdapter;
+	database: CorsairDatabase;
 };
 
 /**
@@ -53,10 +53,11 @@ export function createIntegrationKeyManager<T extends AuthTypes>(
 		getIntegration: async () => {
 			if (cachedIntegration) return cachedIntegration;
 
-			const integration = await database.findOne({
-				table: 'corsair_integrations',
-				where: [{ field: 'name', value: integrationName }],
-			});
+			const integration = await database.db
+				.selectFrom('corsair_integrations')
+				.selectAll()
+				.where('name', '=', integrationName)
+				.executeTakeFirst();
 
 			if (!integration) {
 				throw new Error(
@@ -75,15 +76,15 @@ export function createIntegrationKeyManager<T extends AuthTypes>(
 
 		updateIntegration: async (data) => {
 			const integration = await ctx.getIntegration();
-			await database.update({
-				table: 'corsair_integrations',
-				where: [{ field: 'id', value: integration.id }],
-				data: {
+			await database.db
+				.updateTable('corsair_integrations')
+				.set({
 					...(data.config !== undefined ? { config: data.config } : {}),
 					...(data.dek !== undefined ? { dek: data.dek } : {}),
 					updated_at: new Date(),
-				},
-			});
+				})
+				.where('id', '=', integration.id)
+				.execute();
 
 			// Invalidate cache
 			cachedIntegration = null;
@@ -118,7 +119,7 @@ export type AccountKeyManagerOptions<T extends AuthTypes> = {
 	integrationName: string;
 	tenantId: string;
 	kek: string;
-	database: CorsairDbAdapter;
+	database: CorsairDatabase;
 };
 
 /**
@@ -150,10 +151,11 @@ export function createAccountKeyManager<T extends AuthTypes>(
 	const getIntegration = async () => {
 		if (cachedIntegration) return cachedIntegration;
 
-		const integration = await database.findOne({
-			table: 'corsair_integrations',
-			where: [{ field: 'name', value: integrationName }],
-		});
+		const integration = await database.db
+			.selectFrom('corsair_integrations')
+			.selectAll()
+			.where('name', '=', integrationName)
+			.executeTakeFirst();
 
 		if (!integration) {
 			throw new Error(
@@ -182,13 +184,12 @@ export function createAccountKeyManager<T extends AuthTypes>(
 
 			const integration = await getIntegration();
 
-			const account = await database.findOne({
-				table: 'corsair_accounts',
-				where: [
-					{ field: 'tenant_id', value: tenantId },
-					{ field: 'integration_id', value: integration.id },
-				],
-			});
+			const account = await database.db
+				.selectFrom('corsair_accounts')
+				.selectAll()
+				.where('tenant_id', '=', tenantId)
+				.where('integration_id', '=', integration.id)
+				.executeTakeFirst();
 
 			if (!account) {
 				throw new Error(
@@ -207,15 +208,15 @@ export function createAccountKeyManager<T extends AuthTypes>(
 
 		updateAccount: async (data) => {
 			const account = await ctx.getAccount();
-			await database.update({
-				table: 'corsair_accounts',
-				where: [{ field: 'id', value: account.id }],
-				data: {
+			await database.db
+				.updateTable('corsair_accounts')
+				.set({
 					...(data.config !== undefined ? { config: data.config } : {}),
 					...(data.dek !== undefined ? { dek: data.dek } : {}),
 					updated_at: new Date(),
-				},
-			});
+				})
+				.where('id', '=', account.id)
+				.execute();
 
 			// Invalidate cache
 			cachedAccount = null;
@@ -244,14 +245,15 @@ export function createAccountKeyManager<T extends AuthTypes>(
  * Call this when creating a new integration or when setting up encryption for the first time.
  */
 export async function initializeIntegrationDEK(
-	database: CorsairDbAdapter,
+	database: CorsairDatabase,
 	integrationName: string,
 	kek: string,
 ): Promise<string> {
-	const integration = await database.findOne({
-		table: 'corsair_integrations',
-		where: [{ field: 'name', value: integrationName }],
-	});
+	const integration = await database.db
+		.selectFrom('corsair_integrations')
+		.selectAll()
+		.where('name', '=', integrationName)
+		.executeTakeFirst();
 
 	if (!integration) {
 		throw new Error(`Integration "${integrationName}" not found.`);
@@ -260,14 +262,14 @@ export async function initializeIntegrationDEK(
 	const dek = generateDEK();
 	const encryptedDek = await encryptDEK(dek, kek);
 
-	await database.update({
-		table: 'corsair_integrations',
-		where: [{ field: 'id', value: integration.id }],
-		data: {
+	await database.db
+		.updateTable('corsair_integrations')
+		.set({
 			dek: encryptedDek,
 			updated_at: new Date(),
-		},
-	});
+		})
+		.where('id', '=', integration.id)
+		.execute();
 
 	return dek;
 }
@@ -277,27 +279,27 @@ export async function initializeIntegrationDEK(
  * Call this when creating a new account or when setting up encryption for the first time.
  */
 export async function initializeAccountDEK(
-	database: CorsairDbAdapter,
+	database: CorsairDatabase,
 	integrationName: string,
 	tenantId: string,
 	kek: string,
 ): Promise<string> {
-	const integration = await database.findOne({
-		table: 'corsair_integrations',
-		where: [{ field: 'name', value: integrationName }],
-	});
+	const integration = await database.db
+		.selectFrom('corsair_integrations')
+		.selectAll()
+		.where('name', '=', integrationName)
+		.executeTakeFirst();
 
 	if (!integration) {
 		throw new Error(`Integration "${integrationName}" not found.`);
 	}
 
-	const account = await database.findOne({
-		table: 'corsair_accounts',
-		where: [
-			{ field: 'tenant_id', value: tenantId },
-			{ field: 'integration_id', value: integration.id },
-		],
-	});
+	const account = await database.db
+		.selectFrom('corsair_accounts')
+		.selectAll()
+		.where('tenant_id', '=', tenantId)
+		.where('integration_id', '=', integration.id)
+		.executeTakeFirst();
 
 	if (!account) {
 		throw new Error(
@@ -308,14 +310,14 @@ export async function initializeAccountDEK(
 	const dek = generateDEK();
 	const encryptedDek = await encryptDEK(dek, kek);
 
-	await database.update({
-		table: 'corsair_accounts',
-		where: [{ field: 'id', value: account.id }],
-		data: {
+	await database.db
+		.updateTable('corsair_accounts')
+		.set({
 			dek: encryptedDek,
 			updated_at: new Date(),
-		},
-	});
+		})
+		.where('id', '=', account.id)
+		.execute();
 
 	return dek;
 }

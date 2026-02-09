@@ -24,7 +24,6 @@
 
 - [CLI](/llms.txt/docs/cli.md): Command-line tools for code generation, validation, migrations, and AI agent integration.
 
-- [Adapters](/llms.txt/docs/adapters.md): Framework and database adapters for Next.js and Drizzle ORM.
 
 - [Plugins](/llms.txt/docs/plugins.md): Extend Corsair with third-party integrations like Slack, Stripe, and more.
 

@@ -37,8 +37,9 @@ export const commentCreate: LinearWebhooks['commentCreate'] = {
 				const data = event.data;
 				const entity = await ctx.db.comments.upsertByEntityId(data.id, {
 					...data,
-					createdAt: new Date(data.createdAt),
-					updatedAt: new Date(data.updatedAt),
+					editedAt: data.editedAt ? new Date(data.editedAt ?? '') : null,
+					createdAt: new Date(data.createdAt ?? ''),
+					updatedAt: new Date(data.updatedAt ?? ''),
 				});
 
 				corsairEntityId = entity?.id || '';
@@ -97,8 +98,9 @@ export const commentUpdate: LinearWebhooks['commentUpdate'] = {
 				const data = event.data;
 				const entity = await ctx.db.comments.upsertByEntityId(data.id, {
 					...data,
-					createdAt: new Date(data.createdAt),
-					updatedAt: new Date(data.updatedAt),
+					editedAt: data.editedAt ? new Date(data.editedAt ?? '') : null,
+					createdAt: new Date(data.createdAt ?? ''),
+					updatedAt: new Date(data.updatedAt ?? ''),
 				});
 
 				corsairEntityId = entity?.id || '';

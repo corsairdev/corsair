@@ -21,7 +21,7 @@ const SimpleUserSchema = z.object({
 	receivedEventsUrl: z.string().optional(),
 	type: z.string().optional(),
 	siteAdmin: z.boolean().optional(),
-	starredAt: z.string().optional(),
+	starredAt: z.coerce.date().nullable().optional(),
 });
 
 const LabelSchema = z.object({
@@ -47,10 +47,10 @@ const MilestoneSchema = z.object({
 	creator: SimpleUserSchema.optional(),
 	openIssues: z.number().optional(),
 	closedIssues: z.number().optional(),
-	createdAt: z.string().optional(),
-	updatedAt: z.string().optional(),
-	closedAt: z.string().nullable().optional(),
-	dueOn: z.string().nullable().optional(),
+	createdAt: z.coerce.date().nullable().optional(),
+	updatedAt: z.coerce.date().nullable().optional(),
+	closedAt: z.coerce.date().nullable().optional(),
+	dueOn: z.coerce.date().nullable().optional(),
 });
 
 const RepositorySchema = z.object({
@@ -63,9 +63,9 @@ const RepositorySchema = z.object({
 	description: z.string().nullable().optional(),
 	fork: z.boolean().optional(),
 	url: z.string().optional(),
-	createdAt: z.union([z.string(), z.date()]).nullable().optional(),
-	updatedAt: z.union([z.string(), z.date()]).nullable().optional(),
-	pushedAt: z.union([z.string(), z.date()]).nullable().optional(),
+	createdAt: z.coerce.date().nullable().optional(),
+	updatedAt: z.coerce.date().nullable().optional(),
+	pushedAt: z.coerce.date().nullable().optional(),
 	defaultBranch: z.string().optional(),
 	language: z.string().nullable().optional(),
 	stargazersCount: z.number().optional(),
@@ -100,9 +100,9 @@ const IssueSchema = z.object({
 	assignees: z.array(SimpleUserSchema).nullable().optional(),
 	locked: z.boolean().optional(),
 	comments: z.number().optional(),
-	createdAt: z.string().optional(),
-	updatedAt: z.string().optional(),
-	closedAt: z.string().nullable().optional(),
+	createdAt: z.coerce.date().nullable().optional(),
+	updatedAt: z.coerce.date().nullable().optional(),
+	closedAt: z.coerce.date().nullable().optional(),
 });
 
 const PullRequestSchema = z.object({
@@ -119,10 +119,10 @@ const PullRequestSchema = z.object({
 	title: z.string(),
 	user: SimpleUserSchema.optional(),
 	body: z.string().nullable().optional(),
-	createdAt: z.string().optional(),
-	updatedAt: z.string().optional(),
-	closedAt: z.string().nullable().optional(),
-	mergedAt: z.string().nullable().optional(),
+	createdAt: z.coerce.date().nullable().optional(),
+	updatedAt: z.coerce.date().nullable().optional(),
+	closedAt: z.coerce.date().nullable().optional(),
+	mergedAt: z.coerce.date().nullable().optional(),
 	mergeCommitSha: z.string().nullable().optional(),
 	assignee: SimpleUserSchema.nullable().optional(),
 	assignees: z.array(SimpleUserSchema).nullable().optional(),
@@ -174,8 +174,8 @@ const ReleaseAssetSchema = z.object({
 	contentType: z.string(),
 	size: z.number(),
 	downloadCount: z.number(),
-	createdAt: z.string(),
-	updatedAt: z.string(),
+	createdAt: z.coerce.date().nullable().optional(),
+	updatedAt: z.coerce.date().nullable().optional(),
 });
 
 const ReleaseSchema = z.object({
@@ -193,8 +193,8 @@ const ReleaseSchema = z.object({
 	body: z.string().nullable().optional(),
 	draft: z.boolean().optional(),
 	prerelease: z.boolean().optional(),
-	createdAt: z.string().optional(),
-	publishedAt: z.union([z.string(), z.date()]).nullable().optional(),
+	createdAt: z.coerce.date().nullable().optional(),
+	publishedAt: z.coerce.date().nullable().optional(),
 	author: SimpleUserSchema.optional(),
 	assets: z.array(ReleaseAssetSchema).optional(),
 });
@@ -211,12 +211,12 @@ const WorkflowSchema = z.object({
 		'disabled_inactivity',
 		'disabled_manually',
 	]),
-	createdAt: z.string().optional(),
-	updatedAt: z.string().optional(),
+	createdAt: z.coerce.date().nullable().optional(),
+	updatedAt: z.coerce.date().nullable().optional(),
 	url: z.string().optional(),
 	htmlUrl: z.string().optional(),
 	badgeUrl: z.string().optional(),
-	deletedAt: z.string().optional(),
+	deletedAt: z.coerce.date().nullable().optional(),
 });
 
 const WorkflowRunSchema = z.object({
@@ -234,8 +234,8 @@ const WorkflowRunSchema = z.object({
 	workflowId: z.number().optional(),
 	url: z.string().optional(),
 	htmlUrl: z.string().optional(),
-	createdAt: z.string().optional(),
-	updatedAt: z.string().optional(),
+	createdAt: z.coerce.date().nullable().optional(),
+	updatedAt: z.coerce.date().nullable().optional(),
 	displayTitle: z.string().optional(),
 });
 
@@ -255,8 +255,8 @@ const IssueCommentCreateResponseSchema = z.object({
 			avatarUrl: z.string().optional(),
 		})
 		.optional(),
-	createdAt: z.string().optional(),
-	updatedAt: z.string().optional(),
+	createdAt: z.coerce.date().nullable().optional(),
+	updatedAt: z.coerce.date().nullable().optional(),
 	issueUrl: z.string().optional(),
 });
 
@@ -273,7 +273,7 @@ const PullRequestReviewSchema = z.object({
 	state: z.string().optional(),
 	htmlUrl: z.string().optional(),
 	pullRequestUrl: z.string().optional(),
-	submittedAt: z.string().optional(),
+	submittedAt: z.coerce.date().nullable().optional(),
 	commitId: z.string().nullable().optional(),
 });
 
@@ -301,7 +301,7 @@ const RepositoryCommitsListResponseSchema = z.array(
 				.object({
 					name: z.string(),
 					email: z.string(),
-					date: z.string(),
+					date: z.coerce.date().nullable().optional(),
 				})
 				.nullable()
 				.optional(),
@@ -309,7 +309,7 @@ const RepositoryCommitsListResponseSchema = z.array(
 				.object({
 					name: z.string(),
 					email: z.string(),
-					date: z.string(),
+					date: z.coerce.date().nullable().optional(),
 				})
 				.nullable()
 				.optional(),

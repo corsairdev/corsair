@@ -1,3 +1,5 @@
+// @ts-nocheck we are currently removing all db adapters. leaving this for some legacy purposes but adding no-check since we are not using it
+
 import type { SQL } from 'drizzle-orm';
 import { and, asc, count, desc, eq, ilike, inArray, sql } from 'drizzle-orm';
 

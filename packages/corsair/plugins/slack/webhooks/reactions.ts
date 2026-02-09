@@ -6,7 +6,7 @@ export const added: SlackWebhooks['reactionAdded'] = {
 	match: createSlackEventMatch('reaction_added'),
 
 	handler: async (ctx, request) => {
-		const signingSecret = ctx.options?.signingSecret;
+		const signingSecret = ctx.key;
 		const verification = verifySlackWebhookSignature(request, signingSecret);
 		if (!verification.valid) {
 			return {

@@ -5,7 +5,7 @@ export const ResendEmail = z.object({
 	from: z.string(),
 	to: z.array(z.string()),
 	subject: z.string().optional(),
-	created_at: z.string(),
+	created_at: z.coerce.date().nullable().optional(),
 });
 
 export const ResendDomain = z.object({
@@ -21,7 +21,7 @@ export const ResendDomain = z.object({
 		'pending',
 		'failed',
 	]),
-	created_at: z.string(),
+	created_at: z.coerce.date().nullable().optional(),
 	region: z.string().optional(),
 });
 

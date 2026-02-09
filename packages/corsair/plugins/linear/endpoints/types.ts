@@ -9,8 +9,8 @@ export const UserSchema = z.object({
 	avatarUrl: z.string().optional().nullable(),
 	active: z.boolean(),
 	admin: z.boolean(),
-	createdAt: z.string(),
-	updatedAt: z.string(),
+	createdAt: z.coerce.date().nullable().optional(),
+	updatedAt: z.coerce.date().nullable().optional(),
 });
 
 export const TeamSchema = z.object({
@@ -21,9 +21,9 @@ export const TeamSchema = z.object({
 	icon: z.string().optional().nullable(),
 	color: z.string().optional().nullable(),
 	private: z.boolean(),
-	createdAt: z.string(),
-	updatedAt: z.string(),
-	archivedAt: z.string().optional().nullable(),
+	createdAt: z.coerce.date().nullable().optional(),
+	updatedAt: z.coerce.date().nullable().optional(),
+	archivedAt: z.coerce.date().nullable().optional(),
 });
 
 export const WorkflowStateTypeSchema = z.enum([
@@ -42,8 +42,8 @@ export const WorkflowStateSchema = z.object({
 	position: z.number(),
 	description: z.string().optional().nullable(),
 	team: TeamSchema,
-	createdAt: z.string(),
-	updatedAt: z.string(),
+	createdAt: z.coerce.date().nullable().optional(),
+	updatedAt: z.coerce.date().nullable().optional(),
 });
 
 export const LabelSchema: z.ZodType<any> = z.lazy(() =>
@@ -54,8 +54,8 @@ export const LabelSchema: z.ZodType<any> = z.lazy(() =>
 		color: z.string(),
 		team: TeamSchema.optional().nullable(),
 		parent: LabelSchema.optional().nullable(),
-		createdAt: z.string(),
-		updatedAt: z.string(),
+		createdAt: z.coerce.date().nullable().optional(),
+		updatedAt: z.coerce.date().nullable().optional(),
 	}),
 );
 
@@ -77,15 +77,15 @@ export const ProjectSchema = z.object({
 	state: ProjectStateSchema,
 	priority: z.number(),
 	sortOrder: z.number(),
-	startDate: z.string().optional().nullable(),
-	targetDate: z.string().optional().nullable(),
-	completedAt: z.string().optional().nullable(),
-	canceledAt: z.string().optional().nullable(),
+	startDate: z.coerce.date().nullable().optional(),
+	targetDate: z.coerce.date().nullable().optional(),
+	completedAt: z.coerce.date().nullable().optional(),
+	canceledAt: z.coerce.date().nullable().optional(),
 	lead: UserSchema.optional().nullable(),
 	teams: z.array(TeamSchema),
-	createdAt: z.string(),
-	updatedAt: z.string(),
-	archivedAt: z.string().optional().nullable(),
+	createdAt: z.coerce.date().nullable().optional(),
+	updatedAt: z.coerce.date().nullable().optional(),
+	archivedAt: z.coerce.date().nullable().optional(),
 });
 
 export const CycleSchema = z.object({
@@ -93,13 +93,13 @@ export const CycleSchema = z.object({
 	number: z.number(),
 	name: z.string().optional().nullable(),
 	description: z.string().optional().nullable(),
-	startsAt: z.string(),
-	endsAt: z.string(),
-	completedAt: z.string().optional().nullable(),
+	startsAt: z.coerce.date().nullable().optional(),
+	endsAt: z.coerce.date().nullable().optional(),
+	completedAt: z.coerce.date().nullable().optional(),
 	team: TeamSchema,
-	createdAt: z.string(),
-	updatedAt: z.string(),
-	archivedAt: z.string().optional().nullable(),
+	createdAt: z.coerce.date().nullable().optional(),
+	updatedAt: z.coerce.date().nullable().optional(),
+	archivedAt: z.coerce.date().nullable().optional(),
 });
 
 export const IssuePrioritySchema = z.union([
@@ -130,15 +130,15 @@ export const IssueSchema: z.ZodType<any> = z.lazy(() =>
 		parent: IssueSchema.optional().nullable(),
 		labels: z.array(LabelSchema),
 		subscribers: z.array(UserSchema),
-		dueDate: z.string().optional().nullable(),
-		startedAt: z.string().optional().nullable(),
-		completedAt: z.string().optional().nullable(),
-		canceledAt: z.string().optional().nullable(),
-		triagedAt: z.string().optional().nullable(),
-		snoozedUntilAt: z.string().optional().nullable(),
-		createdAt: z.string(),
-		updatedAt: z.string(),
-		archivedAt: z.string().optional().nullable(),
+		dueDate: z.coerce.date().nullable().optional(),
+		startedAt: z.coerce.date().nullable().optional(),
+		completedAt: z.coerce.date().nullable().optional(),
+		canceledAt: z.coerce.date().nullable().optional(),
+		triagedAt: z.coerce.date().nullable().optional(),
+		snoozedUntilAt: z.coerce.date().nullable().optional(),
+		createdAt: z.coerce.date().nullable().optional(),
+		updatedAt: z.coerce.date().nullable().optional(),
+		archivedAt: z.coerce.date().nullable().optional(),
 	}),
 );
 
@@ -149,10 +149,10 @@ export const CommentSchema: z.ZodType<any> = z.lazy(() =>
 		issue: IssueSchema,
 		user: UserSchema,
 		parent: CommentSchema.optional().nullable(),
-		editedAt: z.string().optional().nullable(),
-		createdAt: z.string(),
-		updatedAt: z.string(),
-		archivedAt: z.string().optional().nullable(),
+		editedAt: z.coerce.date().nullable().optional(),
+		createdAt: z.coerce.date().nullable().optional(),
+		updatedAt: z.coerce.date().nullable().optional(),
+		archivedAt: z.coerce.date().nullable().optional(),
 	}),
 );
 
@@ -197,7 +197,7 @@ export const CreateIssueInputSchema = z.object({
 	parentId: z.string().optional(),
 	labelIds: z.array(z.string()).optional(),
 	subscriberIds: z.array(z.string()).optional(),
-	dueDate: z.string().optional(),
+	dueDate: z.coerce.date().nullable().optional(),
 });
 
 export const UpdateIssueInputSchema = z.object({
@@ -212,7 +212,7 @@ export const UpdateIssueInputSchema = z.object({
 	parentId: z.string().optional(),
 	labelIds: z.array(z.string()).optional(),
 	subscriberIds: z.array(z.string()).optional(),
-	dueDate: z.string().optional(),
+	dueDate: z.coerce.date().nullable().optional(),
 });
 
 export const CreateProjectInputSchema = z.object({
@@ -224,8 +224,8 @@ export const CreateProjectInputSchema = z.object({
 	leadId: z.string().optional(),
 	state: ProjectStateSchema.optional(),
 	priority: z.number().optional(),
-	startDate: z.string().optional(),
-	targetDate: z.string().optional(),
+	startDate: z.coerce.date().nullable().optional(),
+	targetDate: z.coerce.date().nullable().optional(),
 });
 
 export const UpdateProjectInputSchema = z.object({
@@ -237,8 +237,8 @@ export const UpdateProjectInputSchema = z.object({
 	leadId: z.string().optional(),
 	state: ProjectStateSchema.optional(),
 	priority: z.number().optional(),
-	startDate: z.string().optional(),
-	targetDate: z.string().optional(),
+	startDate: z.coerce.date().nullable().optional(),
+	targetDate: z.coerce.date().nullable().optional(),
 });
 
 export const CreateCommentInputSchema = z.object({
@@ -419,15 +419,15 @@ const IssueListGetSchema: z.ZodType<unknown> = z.lazy(() =>
 		parent: IssueListGetSchema.optional().nullable(),
 		labels: LabelConnectionSchema,
 		subscribers: SubscriberConnectionSchema.nullish(),
-		dueDate: z.string().optional().nullable(),
-		startedAt: z.string().optional().nullable(),
-		completedAt: z.string().optional().nullable(),
-		canceledAt: z.string().optional().nullable(),
-		triagedAt: z.string().optional().nullable(),
-		snoozedUntilAt: z.string().optional().nullable(),
-		createdAt: z.string(),
-		updatedAt: z.string(),
-		archivedAt: z.string().optional().nullable(),
+		dueDate: z.coerce.date().nullable().optional(),
+		startedAt: z.coerce.date().nullable().optional(),
+		completedAt: z.coerce.date().nullable().optional(),
+		canceledAt: z.coerce.date().nullable().optional(),
+		triagedAt: z.coerce.date().nullable().optional(),
+		snoozedUntilAt: z.coerce.date().nullable().optional(),
+		createdAt: z.coerce.date().nullable().optional(),
+		updatedAt: z.coerce.date().nullable().optional(),
+		archivedAt: z.coerce.date().nullable().optional(),
 	}),
 );
 
@@ -450,8 +450,8 @@ const PartialIssueSchema = z.object({
 	team: MinimalTeamSchema.optional(),
 	assignee: MinimalUserSchema.optional().nullable(),
 	creator: MinimalUserSchema.optional(),
-	createdAt: z.string().optional(),
-	updatedAt: z.string(),
+	createdAt: z.coerce.date().nullable().optional(),
+	updatedAt: z.coerce.date().nullable().optional(),
 });
 
 const MinimalProjectSchema = z.object({
@@ -463,15 +463,15 @@ const MinimalProjectSchema = z.object({
 	state: ProjectStateSchema,
 	priority: z.number(),
 	sortOrder: z.number().optional(),
-	startDate: z.string().optional().nullable(),
-	targetDate: z.string().optional().nullable(),
-	completedAt: z.string().optional().nullable(),
-	canceledAt: z.string().optional().nullable(),
+	startDate: z.coerce.date().nullable().optional(),
+	targetDate: z.coerce.date().nullable().optional(),
+	completedAt: z.coerce.date().nullable().optional(),
+	canceledAt: z.coerce.date().nullable().optional(),
 	lead: MinimalUserSchema.optional().nullable(),
 	teams: ProjectTeamsConnectionSchema,
-	createdAt: z.string().optional(),
-	updatedAt: z.string(),
-	archivedAt: z.string().optional().nullable(),
+	createdAt: z.coerce.date().nullable().optional(),
+	updatedAt: z.coerce.date().nullable().optional(),
+	archivedAt: z.coerce.date().nullable().optional(),
 });
 
 const MinimalProjectUpdateSchema = z.object({
@@ -483,15 +483,15 @@ const MinimalProjectUpdateSchema = z.object({
 	state: ProjectStateSchema,
 	priority: z.number(),
 	sortOrder: z.number().optional(),
-	startDate: z.string().optional().nullable(),
-	targetDate: z.string().optional().nullable(),
-	completedAt: z.string().optional().nullable(),
-	canceledAt: z.string().optional().nullable(),
+	startDate: z.coerce.date().nullable().optional(),
+	targetDate: z.coerce.date().nullable().optional(),
+	completedAt: z.coerce.date().nullable().optional(),
+	canceledAt: z.coerce.date().nullable().optional(),
 	lead: MinimalUserSchema.optional().nullable(),
 	teams: ProjectTeamsConnectionSchema.optional(),
-	createdAt: z.string().optional(),
-	updatedAt: z.string(),
-	archivedAt: z.string().optional().nullable(),
+	createdAt: z.coerce.date().nullable().optional(),
+	updatedAt: z.coerce.date().nullable().optional(),
+	archivedAt: z.coerce.date().nullable().optional(),
 });
 
 const ProjectListGetSchema = z.object({
@@ -503,14 +503,14 @@ const ProjectListGetSchema = z.object({
 	state: ProjectStateSchema,
 	priority: z.number(),
 	sortOrder: z.number(),
-	startDate: z.string().optional().nullable(),
-	targetDate: z.string().optional().nullable(),
-	completedAt: z.string().optional().nullable(),
-	canceledAt: z.string().optional().nullable(),
+	startDate: z.coerce.date().nullable().optional(),
+	targetDate: z.coerce.date().nullable().optional(),
+	completedAt: z.coerce.date().nullable().optional(),
+	canceledAt: z.coerce.date().nullable().optional(),
 	lead: MinimalUserSchema.optional().nullable(),
 	teams: ProjectTeamsConnectionSchema,
-	createdAt: z.string(),
-	updatedAt: z.string(),
+	createdAt: z.coerce.date().nullable().optional(),
+	updatedAt: z.coerce.date().nullable().optional(),
 });
 
 const ProjectListGetConnectionSchema = z.object({
@@ -525,10 +525,10 @@ const CommentTestSchema = z.lazy(() =>
 		issue: MinimalIssueSchema,
 		user: MinimalUserSchema,
 		parent: z.object({ id: z.string() }).optional().nullable(),
-		editedAt: z.string().optional().nullable(),
-		createdAt: z.string(),
-		updatedAt: z.string(),
-		archivedAt: z.string().optional().nullable(),
+		editedAt: z.coerce.date().nullable().optional(),
+		createdAt: z.coerce.date().nullable().optional(),
+		updatedAt: z.coerce.date().nullable().optional(),
+		archivedAt: z.coerce.date().nullable().optional(),
 	}),
 );
 

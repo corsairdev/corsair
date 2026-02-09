@@ -21,11 +21,6 @@ const slugToFilePath: Record<string, string> = {
 	'multi-tenancy': 'concepts/multi-tenancy.mdx',
 	typescript: 'concepts/typescript.mdx',
 	webhooks: 'concepts/webhooks.mdx',
-	// adapters
-	'adapters/drizzle': 'adapters/drizzle.mdx',
-	'adapters/kysely': 'adapters/kysely.mdx',
-	'adapters/postgresql': 'adapters/postgresql.mdx',
-	'adapters/prisma': 'adapters/prisma.mdx',
 	// plugins
 	'plugins/slack': 'plugins/slack/main.mdx',
 	'plugins/slack/api-endpoints': 'plugins/slack/api-endpoints.mdx',

@@ -46,11 +46,6 @@ export const tree = {
 		},
 		{
 			type: 'page' as const,
-			name: 'Adapters',
-			url: '/docs/adapters',
-		},
-		{
-			type: 'page' as const,
 			name: 'Plugins',
 			url: '/docs/plugins',
 		},

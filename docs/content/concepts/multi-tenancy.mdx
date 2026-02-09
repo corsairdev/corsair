@@ -7,11 +7,12 @@ Corsair is built for multi-tenant applications. When enabled, every database ope
 
 ```ts title="corsair.ts"
 import { createCorsair } from "corsair";
+import { Pool } from "pg";
 import { slack } from "corsair/plugins";
 
 export const corsair = createCorsair({
     multiTenancy: true,
-    database: drizzleAdapter(db, { provider: "pg", schema }),
+    database: new Pool({ connectionString: process.env.DATABASE_URL }),
     plugins: [slack({ ... })],
 });
 ```

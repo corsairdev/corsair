@@ -5,37 +5,20 @@
 export type {
 	CorsairAccountInsert,
 	CorsairAccountUpdate,
-	CorsairDbAdapter,
 	CorsairEntityInsert,
 	CorsairEntityUpdate,
 	CorsairEventInsert,
 	CorsairEventUpdate,
 	CorsairIntegrationInsert,
 	CorsairIntegrationUpdate,
-	CorsairSortBy,
 	CorsairTableInsert,
 	CorsairTableName,
 	CorsairTableRow,
 	CorsairTableUpdate,
-	CorsairTransactionAdapter,
-	CorsairWhere,
-	CorsairWhereOperator,
-	DrizzleAdapterConfig,
-	KyselyAdapterConfig,
-	KyselyPostgresAdapterConfig,
-	PrismaPostgresAdapterConfig,
 	TableInsertType,
 	TableRowType,
 	TableUpdateType,
-} from './adapters';
-
-export {
-	drizzleAdapter,
-	kyselyAdapter,
-	kyselyPostgresAdapter,
-	prismaPostgresAdapter,
-	withTenantAdapter,
-} from './adapters';
+} from './db';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Core
@@ -127,6 +110,12 @@ export {
 // ─────────────────────────────────────────────────────────────────────────────
 // Note: Full ORM types available from 'corsair/orm'
 
+export { sql } from 'kysely';
+export type {
+	CorsairDatabase,
+	CorsairDatabaseInput,
+	CorsairKyselyDatabase,
+} from './db/kysely/database';
 // Database row types (re-exported with different names to avoid conflicts with core types)
 export type {
 	CorsairAccount as CorsairAccountRow,

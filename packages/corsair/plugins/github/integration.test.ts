@@ -1,5 +1,6 @@
 import dotenv from 'dotenv';
 import { createCorsair } from '../../core';
+import { createCorsairOrm } from '../../db/orm';
 import { createIntegrationAndAccount } from '../../tests/plugins-test-utils';
 import { createTestDatabase } from '../../tests/setup-db';
 import { GithubAPIError } from './client';
@@ -16,7 +17,7 @@ async function createGithubClient() {
 	}
 
 	const testDb = createTestDatabase();
-	await createIntegrationAndAccount(testDb.adapter, 'github');
+	await createIntegrationAndAccount(testDb.db, 'github');
 
 	const corsair = createCorsair({
 		plugins: [
@@ -27,7 +28,7 @@ async function createGithubClient() {
 				},
 			}),
 		],
-		database: testDb.adapter,
+		database: testDb.db,
 		kek: process.env.CORSAIR_KEK!,
 	});
 
@@ -54,9 +55,9 @@ describe('GitHub plugin integration', () => {
 
 		const listedIssues = Array.isArray(listResult) ? listResult : [];
 
-		const eventsList = await testDb.adapter.findMany({
-			table: 'corsair_events',
-			where: [{ field: 'event_type', value: 'github.issues.list' }],
+		const orm = createCorsairOrm(testDb.database);
+		const eventsList = await orm.events.findMany({
+			where: { event_type: 'github.issues.list' },
 		});
 
 		expect(eventsList.length).toBeGreaterThan(0);
@@ -88,9 +89,8 @@ describe('GitHub plugin integration', () => {
 
 		expect(createdIssue).toBeDefined();
 
-		const eventsCreate = await testDb.adapter.findMany({
-			table: 'corsair_events',
-			where: [{ field: 'event_type', value: 'github.issues.create' }],
+		const eventsCreate = await orm.events.findMany({
+			where: { event_type: 'github.issues.create' },
 		});
 
 		expect(eventsCreate.length).toBeGreaterThan(0);
@@ -121,9 +121,8 @@ describe('GitHub plugin integration', () => {
 
 		expect(updatedIssue).toBeDefined();
 
-		const eventsUpdate = await testDb.adapter.findMany({
-			table: 'corsair_events',
-			where: [{ field: 'event_type', value: 'github.issues.update' }],
+		const eventsUpdate = await orm.events.findMany({
+			where: { event_type: 'github.issues.update' },
 		});
 
 		expect(eventsUpdate.length).toBeGreaterThan(0);
@@ -153,9 +152,8 @@ describe('GitHub plugin integration', () => {
 
 		expect(createdComment).toBeDefined();
 
-		const eventsComment = await testDb.adapter.findMany({
-			table: 'corsair_events',
-			where: [{ field: 'event_type', value: 'github.issues.createComment' }],
+		const eventsComment = await orm.events.findMany({
+			where: { event_type: 'github.issues.createComment' },
 		});
 
 		expect(eventsComment.length).toBeGreaterThan(0);
@@ -181,9 +179,8 @@ describe('GitHub plugin integration', () => {
 
 		expect(fetchedIssue).toBeDefined();
 
-		const eventsGet = await testDb.adapter.findMany({
-			table: 'corsair_events',
-			where: [{ field: 'event_type', value: 'github.issues.get' }],
+		const eventsGet = await orm.events.findMany({
+			where: { event_type: 'github.issues.get' },
 		});
 
 		expect(eventsGet.length).toBeGreaterThan(0);
@@ -226,9 +223,9 @@ describe('GitHub plugin integration', () => {
 
 		const reposArray = Array.isArray(reposList) ? reposList : [];
 
-		const eventsList = await testDb.adapter.findMany({
-			table: 'corsair_events',
-			where: [{ field: 'event_type', value: 'github.repositories.list' }],
+		const orm = createCorsairOrm(testDb.database);
+		const eventsList = await orm.events.findMany({
+			where: { event_type: 'github.repositories.list' },
 		});
 
 		expect(eventsList.length).toBeGreaterThan(0);
@@ -262,9 +259,8 @@ describe('GitHub plugin integration', () => {
 
 		expect(repoGet).toBeDefined();
 
-		const eventsGet = await testDb.adapter.findMany({
-			table: 'corsair_events',
-			where: [{ field: 'event_type', value: 'github.repositories.get' }],
+		const eventsGet = await orm.events.findMany({
+			where: { event_type: 'github.repositories.get' },
 		});
 
 		expect(eventsGet.length).toBeGreaterThan(0);
@@ -294,11 +290,8 @@ describe('GitHub plugin integration', () => {
 
 		expect(branches).toBeDefined();
 
-		const eventsBranches = await testDb.adapter.findMany({
-			table: 'corsair_events',
-			where: [
-				{ field: 'event_type', value: 'github.repositories.listBranches' },
-			],
+		const eventsBranches = await orm.events.findMany({
+			where: { event_type: 'github.repositories.listBranches' },
 		});
 
 		expect(eventsBranches.length).toBeGreaterThan(0);
@@ -323,11 +316,8 @@ describe('GitHub plugin integration', () => {
 
 		expect(commits).toBeDefined();
 
-		const eventsCommits = await testDb.adapter.findMany({
-			table: 'corsair_events',
-			where: [
-				{ field: 'event_type', value: 'github.repositories.listCommits' },
-			],
+		const eventsCommits = await orm.events.findMany({
+			where: { event_type: 'github.repositories.listCommits' },
 		});
 
 		expect(eventsCommits.length).toBeGreaterThan(0);
@@ -354,9 +344,8 @@ describe('GitHub plugin integration', () => {
 
 		expect(content).toBeDefined();
 
-		const eventsContent = await testDb.adapter.findMany({
-			table: 'corsair_events',
-			where: [{ field: 'event_type', value: 'github.repositories.getContent' }],
+		const eventsContent = await orm.events.findMany({
+			where: { event_type: 'github.repositories.getContent' },
 		});
 
 		expect(eventsContent.length).toBeGreaterThan(0);
@@ -392,9 +381,9 @@ describe('GitHub plugin integration', () => {
 
 		expect(releasesList).toBeDefined();
 
-		const eventsList = await testDb.adapter.findMany({
-			table: 'corsair_events',
-			where: [{ field: 'event_type', value: 'github.releases.list' }],
+		const orm = createCorsairOrm(testDb.database);
+		const eventsList = await orm.events.findMany({
+			where: { event_type: 'github.releases.list' },
 		});
 
 		expect(eventsList.length).toBeGreaterThan(0);
@@ -418,9 +407,8 @@ describe('GitHub plugin integration', () => {
 
 		expect(createdRelease).toBeDefined();
 
-		const eventsCreate = await testDb.adapter.findMany({
-			table: 'corsair_events',
-			where: [{ field: 'event_type', value: 'github.releases.create' }],
+		const eventsCreate = await orm.events.findMany({
+			where: { event_type: 'github.releases.create' },
 		});
 
 		expect(eventsCreate.length).toBeGreaterThan(0);
@@ -450,9 +438,8 @@ describe('GitHub plugin integration', () => {
 
 		expect(fetchedRelease).toBeDefined();
 
-		const eventsGet = await testDb.adapter.findMany({
-			table: 'corsair_events',
-			where: [{ field: 'event_type', value: 'github.releases.get' }],
+		const eventsGet = await orm.events.findMany({
+			where: { event_type: 'github.releases.get' },
 		});
 
 		expect(eventsGet.length).toBeGreaterThan(0);
@@ -483,9 +470,8 @@ describe('GitHub plugin integration', () => {
 
 		expect(updatedRelease).toBeDefined();
 
-		const eventsUpdate = await testDb.adapter.findMany({
-			table: 'corsair_events',
-			where: [{ field: 'event_type', value: 'github.releases.update' }],
+		const eventsUpdate = await orm.events.findMany({
+			where: { event_type: 'github.releases.update' },
 		});
 
 		expect(eventsUpdate.length).toBeGreaterThan(0);
@@ -529,9 +515,9 @@ describe('GitHub plugin integration', () => {
 
 		const prsArray = Array.isArray(pullRequests) ? pullRequests : [];
 
-		const eventsList = await testDb.adapter.findMany({
-			table: 'corsair_events',
-			where: [{ field: 'event_type', value: 'github.pullRequests.list' }],
+		const orm = createCorsairOrm(testDb.database);
+		const eventsList = await orm.events.findMany({
+			where: { event_type: 'github.pullRequests.list' },
 		});
 
 		expect(eventsList.length).toBeGreaterThan(0);
@@ -567,9 +553,8 @@ describe('GitHub plugin integration', () => {
 
 		expect(pr).toBeDefined();
 
-		const eventsGet = await testDb.adapter.findMany({
-			table: 'corsair_events',
-			where: [{ field: 'event_type', value: 'github.pullRequests.get' }],
+		const eventsGet = await orm.events.findMany({
+			where: { event_type: 'github.pullRequests.get' },
 		});
 
 		expect(eventsGet.length).toBeGreaterThan(0);
@@ -598,11 +583,8 @@ describe('GitHub plugin integration', () => {
 
 		expect(reviews).toBeDefined();
 
-		const eventsListReviews = await testDb.adapter.findMany({
-			table: 'corsair_events',
-			where: [
-				{ field: 'event_type', value: 'github.pullRequests.listReviews' },
-			],
+		const eventsListReviews = await orm.events.findMany({
+			where: { event_type: 'github.pullRequests.listReviews' },
 		});
 
 		expect(eventsListReviews.length).toBeGreaterThan(0);
@@ -632,14 +614,8 @@ describe('GitHub plugin integration', () => {
 
 			expect(createdReview).toBeDefined();
 
-			const eventsCreateReview = await testDb.adapter.findMany({
-				table: 'corsair_events',
-				where: [
-					{
-						field: 'event_type',
-						value: 'github.pullRequests.createReview',
-					},
-				],
+			const eventsCreateReview = await orm.events.findMany({
+				where: { event_type: 'github.pullRequests.createReview' },
 			});
 
 			expect(eventsCreateReview.length).toBeGreaterThan(0);
@@ -687,9 +663,9 @@ describe('GitHub plugin integration', () => {
 
 		const workflowsArray = workflows.workflows || [];
 
-		const eventsList = await testDb.adapter.findMany({
-			table: 'corsair_events',
-			where: [{ field: 'event_type', value: 'github.workflows.list' }],
+		const orm = createCorsairOrm(testDb.database);
+		const eventsList = await orm.events.findMany({
+			where: { event_type: 'github.workflows.list' },
 		});
 
 		expect(eventsList.length).toBeGreaterThan(0);
@@ -725,9 +701,8 @@ describe('GitHub plugin integration', () => {
 
 		expect(workflow).toBeDefined();
 
-		const eventsGet = await testDb.adapter.findMany({
-			table: 'corsair_events',
-			where: [{ field: 'event_type', value: 'github.workflows.get' }],
+		const eventsGet = await orm.events.findMany({
+			where: { event_type: 'github.workflows.get' },
 		});
 
 		expect(eventsGet.length).toBeGreaterThan(0);
@@ -755,9 +730,8 @@ describe('GitHub plugin integration', () => {
 
 		expect(runs).toBeDefined();
 
-		const eventsRuns = await testDb.adapter.findMany({
-			table: 'corsair_events',
-			where: [{ field: 'event_type', value: 'github.workflows.listRuns' }],
+		const eventsRuns = await orm.events.findMany({
+			where: { event_type: 'github.workflows.listRuns' },
 		});
 
 		expect(eventsRuns.length).toBeGreaterThan(0);
