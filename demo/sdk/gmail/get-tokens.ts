@@ -21,6 +21,8 @@ const scopes = [
 	'https://www.googleapis.com/auth/gmail.labels',
 	'https://www.googleapis.com/auth/gmail.send',
 	'https://www.googleapis.com/auth/gmail.compose',
+	'https://www.googleapis.com/auth/spreadsheets',
+	'https://www.googleapis.com/auth/drive',
 ];
 
 // Build authorization URL manually

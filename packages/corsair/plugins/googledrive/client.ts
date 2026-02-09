@@ -2,17 +2,17 @@ import type { ApiRequestOptions } from '../../async-core/ApiRequestOptions';
 import type { OpenAPIConfig } from '../../async-core/OpenAPI';
 import { request } from '../../async-core/request';
 
-export class GoogleSheetsAPIError extends Error {
+export class GoogleDriveAPIError extends Error {
 	constructor(
 		message: string,
 		public readonly code?: number,
 	) {
 		super(message);
-		this.name = 'GoogleSheetsAPIError';
+		this.name = 'GoogleDriveAPIError';
 	}
 }
 
-const GOOGLE_SHEETS_API_BASE = 'https://sheets.googleapis.com/v4';
+const GOOGLE_DRIVE_API_BASE = 'https://www.googleapis.com/drive/v3';
 
 let cachedAccessToken: string | null = null;
 let tokenExpiryTime: number = 0;
@@ -37,7 +37,7 @@ async function refreshAccessToken(
 
 	if (!response.ok) {
 		const error = await response.text();
-		throw new GoogleSheetsAPIError(
+		throw new GoogleDriveAPIError(
 			`Failed to refresh access token: ${error}`,
 			response.status,
 		);
@@ -78,14 +78,14 @@ export async function getValidAccessToken({
 		tokenExpiryTime = now + tokenData.expires_in * 1000;
 		return cachedAccessToken;
 	} catch (error) {
-		if (error instanceof GoogleSheetsAPIError) {
+		if (error instanceof GoogleDriveAPIError) {
 			throw error;
 		}
 		return accessToken;
 	}
 }
 
-export async function makeSheetsRequest<T>(
+export async function makeGoogleDriveRequest<T>(
 	endpoint: string,
 	credentials: string,
 	options: {
@@ -97,7 +97,7 @@ export async function makeSheetsRequest<T>(
 	const { method = 'GET', body, query } = options;
 
 	const config: OpenAPIConfig = {
-		BASE: GOOGLE_SHEETS_API_BASE,
+		BASE: GOOGLE_DRIVE_API_BASE,
 		VERSION: '1.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
@@ -115,7 +115,7 @@ export async function makeSheetsRequest<T>(
 				? body
 				: undefined,
 		mediaType: 'application/json',
-		query,
+		query: method === 'GET' ? query : undefined,
 	};
 
 	try {

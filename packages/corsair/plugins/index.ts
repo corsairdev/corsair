@@ -29,6 +29,16 @@ export {
 	type GoogleSheetsWebhooks,
 	googlesheets,
 } from './googlesheets';
+// Google Drive Plugin
+export {
+	type GoogleDriveBoundEndpoints,
+	type GoogleDriveBoundWebhooks,
+	type GoogleDriveContext,
+	type GoogleDriveEndpoints,
+	type GoogleDrivePluginOptions,
+	type GoogleDriveWebhooks,
+	googledrive,
+} from './googledrive';
 export {
 	type HubSpotBoundEndpoints,
 	type HubSpotBoundWebhooks,
