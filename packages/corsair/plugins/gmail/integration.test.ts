@@ -1,4 +1,5 @@
 import { createCorsair } from '../../core';
+import { createCorsairOrm } from '../../db/orm';
 import { createIntegrationAndAccount } from '../../tests/plugins-test-utils';
 import { createTestDatabase } from '../../tests/setup-db';
 import { gmail } from './index';
@@ -13,7 +14,7 @@ async function createGmailClient() {
 	}
 
 	const testDb = createTestDatabase();
-	await createIntegrationAndAccount(testDb.adapter, 'gmail');
+	await createIntegrationAndAccount(testDb.db, 'gmail');
 
 	const corsair = createCorsair({
 		plugins: [
@@ -27,7 +28,7 @@ async function createGmailClient() {
 				},
 			}),
 		],
-		database: testDb.adapter,
+		database: testDb.db,
 		kek: process.env.CORSAIR_KEK!,
 	});
 
@@ -48,9 +49,9 @@ describe('Gmail plugin integration', () => {
 			maxResults: 5,
 		});
 
-		const listEvents = await testDb.adapter.findMany({
-			table: 'corsair_events',
-			where: [{ field: 'event_type', value: 'gmail.messages.list' }],
+		const orm = createCorsairOrm(testDb.database);
+		const listEvents = await orm.events.findMany({
+			where: { event_type: 'gmail.messages.list' },
 		});
 
 		expect(listEvents.length).toBeGreaterThan(0);
@@ -68,9 +69,8 @@ describe('Gmail plugin integration', () => {
 
 			expect(got).toBeDefined();
 
-			const getEvents = await testDb.adapter.findMany({
-				table: 'corsair_events',
-				where: [{ field: 'event_type', value: 'gmail.messages.get' }],
+			const getEvents = await orm.events.findMany({
+				where: { event_type: 'gmail.messages.get' },
 			});
 
 			expect(getEvents.length).toBeGreaterThan(0);
@@ -82,9 +82,8 @@ describe('Gmail plugin integration', () => {
 				removeLabelIds: [],
 			});
 
-			const modifyEvents = await testDb.adapter.findMany({
-				table: 'corsair_events',
-				where: [{ field: 'event_type', value: 'gmail.messages.modify' }],
+			const modifyEvents = await orm.events.findMany({
+				where: { event_type: 'gmail.messages.modify' },
 			});
 
 			expect(modifyEvents.length).toBeGreaterThan(0);
@@ -107,9 +106,9 @@ describe('Gmail plugin integration', () => {
 
 		expect(labels).toBeDefined();
 
-		const listEvents = await testDb.adapter.findMany({
-			table: 'corsair_events',
-			where: [{ field: 'event_type', value: 'gmail.labels.list' }],
+		const orm = createCorsairOrm(testDb.database);
+		const listEvents = await orm.events.findMany({
+			where: { event_type: 'gmail.labels.list' },
 		});
 
 		expect(listEvents.length).toBeGreaterThan(0);
@@ -124,9 +123,8 @@ describe('Gmail plugin integration', () => {
 
 			expect(label).toBeDefined();
 
-			const getEvents = await testDb.adapter.findMany({
-				table: 'corsair_events',
-				where: [{ field: 'event_type', value: 'gmail.labels.get' }],
+			const getEvents = await orm.events.findMany({
+				where: { event_type: 'gmail.labels.get' },
 			});
 
 			expect(getEvents.length).toBeGreaterThan(0);

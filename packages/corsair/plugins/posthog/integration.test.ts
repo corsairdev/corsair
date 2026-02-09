@@ -1,5 +1,6 @@
 import dotenv from 'dotenv';
 import { createCorsair } from '../../core';
+import { createCorsairOrm } from '../../db/orm';
 import { createIntegrationAndAccount } from '../../tests/plugins-test-utils';
 import { createTestDatabase } from '../../tests/setup-db';
 import { posthog } from './index';
@@ -13,7 +14,7 @@ async function createPosthogClient() {
 	}
 
 	const testDb = createTestDatabase();
-	await createIntegrationAndAccount(testDb.adapter, 'posthog');
+	await createIntegrationAndAccount(testDb.db, 'posthog');
 
 	const corsair = createCorsair({
 		plugins: [
@@ -25,7 +26,7 @@ async function createPosthogClient() {
 				},
 			}),
 		],
-		database: testDb.adapter,
+		database: testDb.db,
 		kek: process.env.CORSAIR_KEK!,
 	});
 
@@ -48,9 +49,9 @@ describe('PostHog plugin integration', () => {
 
 		await corsair.posthog.api.events.aliasCreate(aliasInput);
 
-		const aliasEvents = await testDb.adapter.findMany({
-			table: 'corsair_events',
-			where: [{ field: 'event_type', value: 'posthog.alias.create' }],
+		const orm = createCorsairOrm(testDb.database);
+		const aliasEvents = await orm.events.findMany({
+			where: { event_type: 'posthog.alias.create' },
 		});
 
 		expect(aliasEvents.length).toBeGreaterThan(0);
@@ -70,9 +71,8 @@ describe('PostHog plugin integration', () => {
 
 		await corsair.posthog.api.events.identityCreate(identityInput);
 
-		const identityEvents = await testDb.adapter.findMany({
-			table: 'corsair_events',
-			where: [{ field: 'event_type', value: 'posthog.identity.create' }],
+		const identityEvents = await orm.events.findMany({
+			where: { event_type: 'posthog.identity.create' },
 		});
 
 		expect(identityEvents.length).toBeGreaterThan(0);
@@ -93,9 +93,8 @@ describe('PostHog plugin integration', () => {
 
 		await corsair.posthog.api.events.eventCreate(eventInput);
 
-		const eventEvents = await testDb.adapter.findMany({
-			table: 'corsair_events',
-			where: [{ field: 'event_type', value: 'posthog.event.create' }],
+		const eventEvents = await orm.events.findMany({
+			where: { event_type: 'posthog.event.create' },
 		});
 
 		expect(eventEvents.length).toBeGreaterThan(0);
@@ -131,9 +130,9 @@ describe('PostHog plugin integration', () => {
 
 		await corsair.posthog.api.events.trackPage(pageInput);
 
-		const pageEvents = await testDb.adapter.findMany({
-			table: 'corsair_events',
-			where: [{ field: 'event_type', value: 'posthog.track.page' }],
+		const orm = createCorsairOrm(testDb.database);
+		const pageEvents = await orm.events.findMany({
+			where: { event_type: 'posthog.track.page' },
 		});
 
 		expect(pageEvents.length).toBeGreaterThan(0);
@@ -154,9 +153,8 @@ describe('PostHog plugin integration', () => {
 
 		await corsair.posthog.api.events.trackScreen(screenInput);
 
-		const screenEvents = await testDb.adapter.findMany({
-			table: 'corsair_events',
-			where: [{ field: 'event_type', value: 'posthog.track.screen' }],
+		const screenEvents = await orm.events.findMany({
+			where: { event_type: 'posthog.track.screen' },
 		});
 
 		expect(screenEvents.length).toBeGreaterThan(0);

@@ -87,23 +87,15 @@ CREATE TABLE my_tickets (
 );
 ```
 
-## Database Adapters
+## Database Configuration
 
-Corsair supports multiple database adapters. Choose the one that matches your stack.
-
-| Adapter | Description |
-|---------|-------------|
-| [Drizzle](/docs/adapters/drizzle) | Type-safe ORM with great DX |
-| [Kysely](/docs/adapters/kysely) | Lightweight type-safe query builder |
-| [Prisma](/docs/adapters/prisma) | Popular ORM with schema-first approach |
-
-All adapters require [PostgreSQL](/docs/adapters/postgresql).
+Corsair connects directly to PostgreSQL. Pass either a `pg` Pool or a Kysely instance.
 
 ```ts title="corsair.ts"
-import { drizzleAdapter } from "corsair/adapters/drizzle";
+import { Pool } from "pg";
 
 export const corsair = createCorsair({
-    database: drizzleAdapter(db, { provider: "pg", schema }),
+    database: new Pool({ connectionString: process.env.DATABASE_URL }),
     plugins: [...],
 });
 ```
@@ -114,8 +106,5 @@ Adding more integrations doesn't add more tables. Slack, Linear, GitHub — they
 
 ## Next Steps
 
-- [PostgreSQL Setup](/docs/adapters/postgresql) — Schema, indexes, and performance tips
-- [Drizzle Adapter](/docs/adapters/drizzle) — Full Drizzle ORM integration
-- [Kysely Adapter](/docs/adapters/kysely) — Lightweight query builder
-- [Prisma Adapter](/docs/adapters/prisma) — Prisma ORM integration
+- PostgreSQL schema, indexes, and performance tips
 

@@ -1,4 +1,4 @@
-import type { CorsairDbAdapter } from '../../adapters/types';
+import type { CorsairDatabase } from '../../db/kysely/database';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Utility Types
@@ -42,7 +42,7 @@ export type CorsairContext<
 	Endpoints extends BoundEndpointTree = BoundEndpointTree,
 > = {
 	/** The configured Corsair DB adapter (if provided to `createCorsair`) */
-	database: CorsairDbAdapter;
+	database?: CorsairDatabase;
 	/** All bound endpoints for this plugin, allowing endpoints to call each other */
 	endpoints: Endpoints;
 };

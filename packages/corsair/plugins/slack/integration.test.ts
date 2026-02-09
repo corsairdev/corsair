@@ -1,5 +1,6 @@
 import dotenv from 'dotenv';
 import { createCorsair } from '../../core';
+import { createCorsairOrm } from '../../db/orm';
 import { createIntegrationAndAccount } from '../../tests/plugins-test-utils';
 import { createTestDatabase } from '../../tests/setup-db';
 import { slack } from './index';
@@ -15,7 +16,7 @@ async function createSlackClient() {
 	}
 
 	const testDb = createTestDatabase();
-	await createIntegrationAndAccount(testDb.adapter, 'slack');
+	await createIntegrationAndAccount(testDb.db, 'slack');
 
 	const corsair = createCorsair({
 		plugins: [
@@ -27,7 +28,7 @@ async function createSlackClient() {
 				},
 			}),
 		],
-		database: testDb.adapter,
+		database: testDb.db,
 		kek: process.env.CORSAIR_KEK!,
 	});
 
@@ -53,9 +54,9 @@ describe('Slack plugin integration', () => {
 		expect(posted).toBeDefined();
 		expect(posted.ok).toBe(true);
 
-		const postEvents = await testDb.adapter.findMany({
-			table: 'corsair_events',
-			where: [{ field: 'event_type', value: 'slack.messages.postMessage' }],
+		const orm = createCorsairOrm(testDb.database);
+		const postEvents = await orm.events.findMany({
+			where: { event_type: 'slack.messages.postMessage' },
 		});
 
 		expect(postEvents.length).toBeGreaterThan(0);
@@ -86,9 +87,8 @@ describe('Slack plugin integration', () => {
 			expect(updated).toBeDefined();
 			expect(updated.ok).toBe(true);
 
-			const updateEvents = await testDb.adapter.findMany({
-				table: 'corsair_events',
-				where: [{ field: 'event_type', value: 'slack.messages.update' }],
+			const updateEvents = await orm.events.findMany({
+				where: { event_type: 'slack.messages.update' },
 			});
 
 			expect(updateEvents.length).toBeGreaterThan(0);
@@ -109,9 +109,8 @@ describe('Slack plugin integration', () => {
 			expect(deleted).toBeDefined();
 			expect(deleted.ok).toBe(true);
 
-			const deleteEvents = await testDb.adapter.findMany({
-				table: 'corsair_events',
-				where: [{ field: 'event_type', value: 'slack.messages.delete' }],
+			const deleteEvents = await orm.events.findMany({
+				where: { event_type: 'slack.messages.delete' },
 			});
 
 			expect(deleteEvents.length).toBeGreaterThan(0);
@@ -143,9 +142,9 @@ describe('Slack plugin integration', () => {
 		expect(list).toBeDefined();
 		expect(list.ok).toBe(true);
 
-		const listEvents = await testDb.adapter.findMany({
-			table: 'corsair_events',
-			where: [{ field: 'event_type', value: 'slack.channels.list' }],
+		const orm = createCorsairOrm(testDb.database);
+		const listEvents = await orm.events.findMany({
+			where: { event_type: 'slack.channels.list' },
 		});
 
 		expect(listEvents.length).toBeGreaterThan(0);
@@ -198,9 +197,9 @@ describe('Slack plugin integration', () => {
 
 			expect(added).toBeDefined();
 
-			const addEvents = await testDb.adapter.findMany({
-				table: 'corsair_events',
-				where: [{ field: 'event_type', value: 'slack.reactions.add' }],
+			const orm = createCorsairOrm(testDb.database);
+			const addEvents = await orm.events.findMany({
+				where: { event_type: 'slack.reactions.add' },
 			});
 
 			expect(addEvents.length).toBeGreaterThan(0);
@@ -221,9 +220,8 @@ describe('Slack plugin integration', () => {
 
 			expect(removed).toBeDefined();
 
-			const removeEvents = await testDb.adapter.findMany({
-				table: 'corsair_events',
-				where: [{ field: 'event_type', value: 'slack.reactions.remove' }],
+			const removeEvents = await orm.events.findMany({
+				where: { event_type: 'slack.reactions.remove' },
 			});
 
 			expect(removeEvents.length).toBeGreaterThan(0);

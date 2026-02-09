@@ -1,6 +1,6 @@
 import type { ZodTypeAny } from 'zod';
-import { withTenantAdapter } from '../../adapters/tenant';
-import type { CorsairDbAdapter, CorsairWhere } from '../../adapters/types';
+import type { CorsairDatabase } from '../../db/kysely/database';
+import { createKyselyEntityClient } from '../../db/kysely/orm';
 import type {
 	CorsairPluginSchema,
 	PluginEntityClient,
@@ -19,7 +19,6 @@ import type { BindEndpoints, EndpointTree } from '../endpoints';
 import { bindEndpointsRecursively } from '../endpoints/bind';
 import type { CorsairErrorHandler } from '../errors';
 import type { CorsairKeyBuilderBase, CorsairPlugin } from '../plugins';
-import { generateUUID } from '../utils';
 import type { BindWebhooks, RawWebhookRequest, WebhookTree } from '../webhooks';
 import { bindWebhooksRecursively } from '../webhooks/bind';
 
@@ -208,7 +207,7 @@ export type CorsairSingleTenantClient<
  * The account ID is lazily fetched on first access and cached for subsequent calls.
  */
 function createAccountIdResolver(
-	database: CorsairDbAdapter | undefined,
+	database: CorsairDatabase | undefined,
 	integrationName: string,
 	tenantId: string,
 ): () => Promise<string> {
@@ -222,10 +221,11 @@ function createAccountIdResolver(
 		}
 
 		// Find the integration by name
-		const integration = await database.findOne({
-			table: 'corsair_integrations',
-			where: [{ field: 'name', value: integrationName }],
-		});
+		const integration = await database.db
+			.selectFrom('corsair_integrations')
+			.selectAll()
+			.where('name', '=', integrationName)
+			.executeTakeFirst();
 
 		if (!integration) {
 			throw new Error(
@@ -234,13 +234,12 @@ function createAccountIdResolver(
 		}
 
 		// Find the account for this tenant and integration
-		const account = await database.findOne({
-			table: 'corsair_accounts',
-			where: [
-				{ field: 'tenant_id', value: tenantId },
-				{ field: 'integration_id', value: integration.id },
-			],
-		});
+		const account = await database.db
+			.selectFrom('corsair_accounts')
+			.selectAll()
+			.where('tenant_id', '=', tenantId)
+			.where('integration_id', '=', integration.id)
+			.executeTakeFirst();
 
 		if (!account) {
 			throw new Error(
@@ -254,22 +253,6 @@ function createAccountIdResolver(
 }
 
 /**
- * Attempts to parse a value as JSON if it's a string, otherwise returns the value unchanged.
- * @param value - The value to parse
- * @returns The parsed value or the original value if parsing fails
- */
-function parseJsonLike(value: unknown): unknown {
-	if (typeof value === 'string') {
-		try {
-			return JSON.parse(value);
-		} catch {
-			return value;
-		}
-	}
-	return value;
-}
-
-/**
  * Creates an entity client for a specific plugin and entity type with database operations.
  * The client lazily resolves the account ID when operations are performed.
  * @param database - The database adapter instance
@@ -280,215 +263,34 @@ function parseJsonLike(value: unknown): unknown {
  * @returns An entity client with CRUD operations
  */
 function createEntityClient(
-	database: CorsairDbAdapter | undefined,
+	database: CorsairDatabase | undefined,
 	getAccountId: () => Promise<string>,
 	entityTypeName: string,
 	version: string,
 	dataSchema: ZodTypeAny,
 ): PluginEntityClient<ZodTypeAny> {
-	const tableName = 'corsair_entities';
-
-	function baseWhere(accountId: string) {
-		return [
-			{ field: 'account_id', value: accountId },
-			{ field: 'entity_type', value: entityTypeName },
-		];
-	}
-
-	function parseRow(row: any) {
-		const data = parseJsonLike(row.data);
-		return { ...row, data: dataSchema.parse(data) };
+	if (database) {
+		return createKyselyEntityClient(
+			database.db,
+			getAccountId,
+			entityTypeName,
+			version,
+			dataSchema,
+		);
 	}
 
 	return {
-		findByEntityId: async (entityId) => {
-			if (!database) return null;
-			const accountId = await getAccountId();
-			const row = await database.findOne({
-				table: tableName,
-				where: [
-					...baseWhere(accountId),
-					{ field: 'entity_id', value: entityId },
-				],
-			});
-			return row ? parseRow(row) : null;
+		findByEntityId: async () => null,
+		findById: async () => null,
+		findManyByEntityIds: async () => [],
+		list: async () => [],
+		search: async () => [],
+		upsertByEntityId: async () => {
+			throw new Error('Database not configured');
 		},
-
-		findById: async (id) => {
-			if (!database) return null;
-			const accountId = await getAccountId();
-			const row = await database.findOne({
-				table: tableName,
-				where: [...baseWhere(accountId), { field: 'id', value: id }],
-			});
-			return row ? parseRow(row) : null;
-		},
-
-		findManyByEntityIds: async (entityIds) => {
-			if (!database || entityIds.length === 0) return [];
-			const accountId = await getAccountId();
-			const rows = await database.findMany({
-				table: tableName,
-				where: [
-					...baseWhere(accountId),
-					{ field: 'entity_id', operator: 'in' as const, value: entityIds },
-				],
-			});
-			return rows.map(parseRow);
-		},
-
-		list: async (options) => {
-			if (!database) return [];
-			const accountId = await getAccountId();
-			const rows = await database.findMany({
-				table: tableName,
-				where: baseWhere(accountId),
-				limit: options?.limit ?? 100,
-				offset: options?.offset ?? 0,
-			});
-			return rows.map(parseRow);
-		},
-
-		search: async (options) => {
-			if (!database) return [];
-			const accountId = await getAccountId();
-
-			// Build where clauses from search options
-			const whereConditions: CorsairWhere[] = [...baseWhere(accountId)];
-
-			// Helper to parse filter value into operator and value
-			function parseFilterValue(filterValue: unknown): {
-				operator: 'like' | '=';
-				value: unknown;
-			} {
-				if (
-					typeof filterValue === 'object' &&
-					filterValue !== null &&
-					!Array.isArray(filterValue)
-				) {
-					const obj = filterValue as Record<string, unknown>;
-					if ('contains' in obj && typeof obj.contains === 'string') {
-						return { operator: 'like', value: `%${obj.contains}%` };
-					}
-					if ('equals' in obj) {
-						return { operator: '=', value: obj.equals };
-					}
-				}
-				// Exact match
-				return { operator: '=', value: filterValue };
-			}
-
-			// Reserved keys that aren't entity column filters
-			const reservedKeys = new Set(['data', 'limit', 'offset']);
-
-			// Handle entity column filters (derived from CorsairEntity)
-			for (const [key, filterValue] of Object.entries(options)) {
-				if (reservedKeys.has(key) || filterValue === undefined) continue;
-				const { operator, value } = parseFilterValue(filterValue);
-				whereConditions.push({ field: key, operator, value });
-			}
-
-			// Handle data (JSONB) filters
-			if (options.data && typeof options.data === 'object') {
-				for (const [key, filterValue] of Object.entries(options.data)) {
-					if (filterValue === undefined) continue;
-					const { operator, value } = parseFilterValue(filterValue);
-					// Use JSONB path query syntax: data->>'key'
-					whereConditions.push({
-						field: `data->>'${key}'`,
-						operator,
-						value,
-					});
-				}
-			}
-
-			const rows = await database.findMany({
-				table: tableName,
-				where: whereConditions,
-				limit: options.limit ?? 100,
-				offset: options.offset ?? 0,
-			});
-			return rows.map(parseRow);
-		},
-
-		upsertByEntityId: async (entityId, data) => {
-			if (!database) throw new Error('Database not configured');
-			const accountId = await getAccountId();
-			const parsed = dataSchema.parse(data);
-			const now = new Date();
-
-			const existing = await database.findOne({
-				table: tableName,
-				select: ['id'],
-				where: [
-					...baseWhere(accountId),
-					{ field: 'entity_id', value: entityId },
-				],
-			});
-
-			if (existing?.id) {
-				await database.update({
-					table: tableName,
-					where: [{ field: 'id', value: existing.id }],
-					data: { version, data: parsed, updated_at: now },
-				});
-				const updated = await database.findOne({
-					table: tableName,
-					where: [{ field: 'id', value: existing.id }],
-				});
-				return parseRow(updated);
-			}
-
-			const id = generateUUID();
-			await database.insert({
-				table: tableName,
-				data: {
-					id,
-					created_at: now,
-					updated_at: now,
-					account_id: accountId,
-					entity_id: entityId,
-					entity_type: entityTypeName,
-					version,
-					data: parsed,
-				},
-			});
-
-			const inserted = await database.findOne({
-				table: tableName,
-				where: [{ field: 'id', value: id }],
-			});
-			return parseRow(inserted);
-		},
-
-		deleteById: async (id) => {
-			if (!database) return false;
-			const accountId = await getAccountId();
-			const deleted = await database.deleteMany({
-				table: tableName,
-				where: [...baseWhere(accountId), { field: 'id', value: id }],
-			});
-			return deleted > 0;
-		},
-
-		deleteByEntityId: async (entityId) => {
-			if (!database) return false;
-			const accountId = await getAccountId();
-			const deleted = await database.deleteMany({
-				table: tableName,
-				where: [
-					...baseWhere(accountId),
-					{ field: 'entity_id', value: entityId },
-				],
-			});
-			return deleted > 0;
-		},
-
-		count: async () => {
-			if (!database) return 0;
-			const accountId = await getAccountId();
-			return database.count({ table: tableName, where: baseWhere(accountId) });
-		},
+		deleteById: async () => false,
+		deleteByEntityId: async () => false,
+		count: async () => 0,
 	};
 }
 
@@ -497,7 +299,7 @@ function createEntityClient(
 // ─────────────────────────────────────────────────────────────────────────────
 
 export type BuildCorsairClientOptions = {
-	database: CorsairDbAdapter | undefined;
+	database: CorsairDatabase | undefined;
 	tenantId: string | undefined;
 	kek: string | undefined;
 	rootErrorHandlers?: CorsairErrorHandler;
@@ -520,8 +322,6 @@ export function buildCorsairClient<
 	options: BuildCorsairClientOptions,
 ): CorsairClient<Plugins> {
 	const { database, tenantId, kek, rootErrorHandlers } = options;
-	const scopedDatabase =
-		database && tenantId ? withTenantAdapter(database, tenantId) : database;
 
 	const apiUnsafe: Record<string, Record<string, unknown>> = {};
 	const pluginEntitiesUnsafe: Record<string, Record<string, unknown>> = {};
@@ -537,7 +337,7 @@ export function buildCorsairClient<
 
 		// Create a shared account ID resolver for this plugin
 		const getAccountId = createAccountIdResolver(
-			scopedDatabase,
+			database,
 			plugin.id,
 			effectiveTenantId,
 		);
@@ -548,13 +348,21 @@ export function buildCorsairClient<
 			for (const [entityTypeName, dataSchema] of Object.entries(
 				schema.entities,
 			)) {
-				const entityClient = createEntityClient(
-					scopedDatabase,
-					getAccountId,
-					entityTypeName,
-					schema.version,
-					dataSchema,
-				);
+				const entityClient = database
+					? createKyselyEntityClient(
+							database.db,
+							getAccountId,
+							entityTypeName,
+							schema.version,
+							dataSchema,
+						)
+					: createEntityClient(
+							undefined,
+							getAccountId,
+							entityTypeName,
+							schema.version,
+							dataSchema,
+						);
 				dbClients[entityTypeName] = entityClient;
 			}
 			pluginEntitiesUnsafe[plugin.id]!.db = dbClients;
@@ -579,7 +387,7 @@ export function buildCorsairClient<
 
 		// Build plugin context with entity clients under `db`, account ID resolver, and keys manager
 		const ctxForPlugin: Record<string, unknown> = {
-			database: scopedDatabase,
+			database,
 			db: pluginEntitiesUnsafe[plugin.id]?.db ?? {},
 			$getAccountId: getAccountId,
 			...(plugin.options ? { options: plugin.options } : {}),
@@ -669,7 +477,7 @@ export function buildIntegrationKeys<
 	const Plugins extends readonly CorsairPlugin[],
 >(
 	plugins: Plugins,
-	database: CorsairDbAdapter,
+	database: CorsairDatabase,
 	kek: string,
 ): InferAllIntegrationKeys<Plugins> {
 	const keysUnsafe: Record<string, unknown> = {};

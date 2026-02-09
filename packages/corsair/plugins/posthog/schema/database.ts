@@ -7,7 +7,7 @@ export const PostHogEvent = z.object({
 	timestamp: z.string().optional(),
 	uuid: z.string().optional(),
 	properties: z.record(z.string(), z.any()).optional(),
-	createdAt: z.coerce.date().optional(),
+	createdAt: z.coerce.date().nullable().optional(),
 });
 
 export type PostHogEvent = z.infer<typeof PostHogEvent>;

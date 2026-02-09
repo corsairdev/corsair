@@ -10,7 +10,11 @@ export const CorsairIntegrationsSchema = z.object({
 	updated_at: z.date(),
 
 	name: z.string(),
-	config: z.record(z.unknown()),
+	// Coerce DB null to empty object
+	config: z
+		.record(z.unknown())
+		.nullable()
+		.transform((v) => v ?? {}),
 	dek: z.string().optional(),
 });
 
@@ -29,7 +33,11 @@ export const CorsairAccountsSchema = z.object({
 	// references integrations.id
 	integration_id: z.string(),
 
-	config: z.record(z.unknown()),
+	// Coerce DB null to empty object
+	config: z
+		.record(z.unknown())
+		.nullable()
+		.transform((v) => v ?? {}),
 	dek: z.string().optional(),
 });
 
@@ -52,7 +60,11 @@ export const CorsairEntitiesSchema = z.object({
 
 	version: z.string(),
 
-	data: z.record(z.unknown()),
+	// Coerce DB null to empty object
+	data: z
+		.record(z.unknown())
+		.nullable()
+		.transform((v) => v ?? {}),
 });
 
 export type CorsairEntity = z.infer<typeof CorsairEntitiesSchema>;
@@ -70,9 +82,128 @@ export const CorsairEventsSchema = z.object({
 	account_id: z.string(),
 	event_type: z.string(),
 
-	payload: z.record(z.unknown()),
+	// Coerce DB null to empty object
+	payload: z
+		.record(z.unknown())
+		.nullable()
+		.transform((v) => v ?? {}),
 
 	status: z.enum(['pending', 'processing', 'completed', 'failed']).optional(),
 });
 
 export type CorsairEvent = z.infer<typeof CorsairEventsSchema>;
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Table Names
+// ─────────────────────────────────────────────────────────────────────────────
+
+export type CorsairTableName =
+	| 'corsair_integrations'
+	| 'corsair_accounts'
+	| 'corsair_entities'
+	| 'corsair_events'
+	| (string & {});
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Table Row Types
+// ─────────────────────────────────────────────────────────────────────────────
+
+export type CorsairTableRow = {
+	corsair_integrations: CorsairIntegration;
+	corsair_accounts: CorsairAccount;
+	corsair_entities: CorsairEntity;
+	corsair_events: CorsairEvent;
+};
+
+export type TableRowType<T extends CorsairTableName> =
+	T extends keyof CorsairTableRow
+		? CorsairTableRow[T]
+		: Record<string, unknown>;
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Insert Data Types (without auto-generated fields)
+// ─────────────────────────────────────────────────────────────────────────────
+
+export type CorsairIntegrationInsert = {
+	id?: string;
+	created_at?: Date;
+	updated_at?: Date;
+	name: string;
+	config: Record<string, unknown>;
+	dek?: string;
+};
+
+export type CorsairAccountInsert = {
+	id?: string;
+	created_at?: Date;
+	updated_at?: Date;
+	tenant_id: string;
+	integration_id: string;
+	config: Record<string, unknown>;
+	dek?: string;
+};
+
+export type CorsairEntityInsert = {
+	id?: string;
+	created_at?: Date;
+	updated_at?: Date;
+	account_id: string;
+	entity_id: string;
+	entity_type: string;
+	version: string;
+	data: Record<string, unknown>;
+};
+
+export type CorsairEventInsert = {
+	id?: string;
+	created_at?: Date;
+	updated_at?: Date;
+	account_id: string;
+	event_type: string;
+	payload: Record<string, unknown>;
+	status?: 'pending' | 'processing' | 'completed' | 'failed';
+};
+
+export type CorsairTableInsert = {
+	corsair_integrations: CorsairIntegrationInsert;
+	corsair_accounts: CorsairAccountInsert;
+	corsair_entities: CorsairEntityInsert;
+	corsair_events: CorsairEventInsert;
+};
+
+export type TableInsertType<T extends CorsairTableName> =
+	T extends keyof CorsairTableInsert
+		? CorsairTableInsert[T]
+		: Record<string, unknown>;
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Update Data Types
+// ─────────────────────────────────────────────────────────────────────────────
+
+export type CorsairIntegrationUpdate = Partial<
+	Omit<CorsairIntegration, 'id' | 'created_at'>
+>;
+
+export type CorsairAccountUpdate = Partial<
+	Omit<CorsairAccount, 'id' | 'created_at'>
+>;
+
+export type CorsairEntityUpdate = Partial<
+	Omit<CorsairEntity, 'id' | 'created_at'>
+>;
+
+export type CorsairEventUpdate = Partial<
+	Omit<CorsairEvent, 'id' | 'created_at'>
+>;
+
+export type CorsairTableUpdate = {
+	corsair_integrations: CorsairIntegrationUpdate;
+	corsair_accounts: CorsairAccountUpdate;
+	corsair_entities: CorsairEntityUpdate;
+	corsair_events: CorsairEventUpdate;
+};
+
+export type TableUpdateType<T extends CorsairTableName> =
+	T extends keyof CorsairTableUpdate
+		? CorsairTableUpdate[T]
+		: Record<string, unknown>;

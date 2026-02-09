@@ -40,8 +40,19 @@ export const issueCreate: LinearWebhooks['issueCreate'] = {
 					...data,
 					number: parseInt(data.identifier.split('-')[1] || '0', 10),
 					url: event.url,
-					createdAt: new Date(data.createdAt),
-					updatedAt: new Date(data.updatedAt),
+					dueDate: data.dueDate ? new Date(data.dueDate ?? '') : null,
+					startedAt: data.startedAt ? new Date(data.startedAt ?? '') : null,
+					completedAt: data.completedAt
+						? new Date(data.completedAt ?? '')
+						: null,
+					canceledAt: data.canceledAt ? new Date(data.canceledAt ?? '') : null,
+					triagedAt: data.triagedAt ? new Date(data.triagedAt ?? '') : null,
+					snoozedUntilAt: data.snoozedUntilAt
+						? new Date(data.snoozedUntilAt ?? '')
+						: null,
+					archivedAt: data.archivedAt ? new Date(data.archivedAt ?? '') : null,
+					createdAt: new Date(data.createdAt ?? ''),
+					updatedAt: new Date(data.updatedAt ?? ''),
 				});
 
 				corsairEntityId = entity?.id || '';
@@ -104,8 +115,19 @@ export const issueUpdate: LinearWebhooks['issueUpdate'] = {
 					...data,
 					number: parseInt(data.identifier.split('-')[1] || '0', 10),
 					url: event.url,
-					createdAt: new Date(data.createdAt),
-					updatedAt: new Date(data.updatedAt),
+					dueDate: data.dueDate ? new Date(data.dueDate ?? '') : null,
+					startedAt: data.startedAt ? new Date(data.startedAt ?? '') : null,
+					completedAt: data.completedAt
+						? new Date(data.completedAt ?? '')
+						: null,
+					canceledAt: data.canceledAt ? new Date(data.canceledAt ?? '') : null,
+					triagedAt: data.triagedAt ? new Date(data.triagedAt ?? '') : null,
+					snoozedUntilAt: data.snoozedUntilAt
+						? new Date(data.snoozedUntilAt ?? '')
+						: null,
+					archivedAt: data.archivedAt ? new Date(data.archivedAt ?? '') : null,
+					createdAt: new Date(data.createdAt ?? ''),
+					updatedAt: new Date(data.updatedAt ?? ''),
 				});
 
 				corsairEntityId = entity?.id || '';

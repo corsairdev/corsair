@@ -1,5 +1,5 @@
 export function createIntegrationAndAccount(
-	adapter: any,
+	db: { insertInto: (...args: any[]) => any },
 	pluginId: string,
 	tenantId = 'default',
 ) {
@@ -7,28 +7,27 @@ export function createIntegrationAndAccount(
 	const integrationId = `${pluginId}-integration`;
 	const accountId = `${pluginId}-account`;
 
-	return adapter
-		.insert({
-			table: 'corsair_integrations',
-			data: {
-				id: integrationId,
-				created_at: now,
-				updated_at: now,
-				name: pluginId,
-				config: JSON.stringify({}),
-			},
+	return db
+		.insertInto('corsair_integrations')
+		.values({
+			id: integrationId,
+			created_at: now,
+			updated_at: now,
+			name: pluginId,
+			config: JSON.stringify({}),
 		})
+		.execute()
 		.then(() =>
-			adapter.insert({
-				table: 'corsair_accounts',
-				data: {
+			db
+				.insertInto('corsair_accounts')
+				.values({
 					id: accountId,
 					created_at: now,
 					updated_at: now,
 					tenant_id: tenantId,
 					integration_id: integrationId,
 					config: JSON.stringify({}),
-				},
-			}),
+				})
+				.execute(),
 		);
 }

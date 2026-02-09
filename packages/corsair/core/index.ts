@@ -1,4 +1,5 @@
-import type { CorsairDbAdapter } from '../adapters/types';
+import type { CorsairDatabase } from '../db/kysely/database';
+import { createCorsairDatabase } from '../db/kysely/database';
 import { createMissingConfigProxy } from './auth/errors';
 import type { CorsairSingleTenantClient, CorsairTenantWrapper } from './client';
 import { buildCorsairClient, buildIntegrationKeys } from './client';
@@ -12,7 +13,7 @@ export const CORSAIR_INTERNAL = Symbol.for('corsair:internal');
 
 export type CorsairInternalConfig = {
 	plugins: readonly CorsairPlugin[];
-	database: CorsairDbAdapter | undefined;
+	database: CorsairDatabase | undefined;
 	kek: string;
 	multiTenancy: boolean;
 };
@@ -51,21 +52,25 @@ export function createCorsair<const Plugins extends readonly CorsairPlugin[]>(
 export function createCorsair<const Plugins extends readonly CorsairPlugin[]>(
 	config: CorsairIntegration<Plugins>,
 ): CorsairSingleTenantClient<Plugins> | CorsairTenantWrapper<Plugins> {
+	const resolvedDatabase = config.database
+		? createCorsairDatabase(config.database)
+		: undefined;
+
 	// Build integration-level keys if database and kek are configured
 	// Otherwise create a proxy that throws helpful errors
 	type IntegrationKeysType = ReturnType<typeof buildIntegrationKeys<Plugins>>;
 
 	const integrationKeys: IntegrationKeysType =
-		config.database && config.kek
-			? buildIntegrationKeys(config.plugins, config.database, config.kek)
+		resolvedDatabase && config.kek
+			? buildIntegrationKeys(config.plugins, resolvedDatabase, config.kek)
 			: createMissingConfigProxy<IntegrationKeysType>(
-					!!config.database,
+					!!resolvedDatabase,
 					!!config.kek,
 				);
 
 	const internalConfig: CorsairInternalConfig = {
 		plugins: config.plugins,
-		database: config.database,
+		database: resolvedDatabase,
 		kek: config.kek,
 		multiTenancy: !!config.multiTenancy,
 	};
@@ -80,7 +85,7 @@ export function createCorsair<const Plugins extends readonly CorsairPlugin[]>(
 						);
 					}
 					return buildCorsairClient(config.plugins, {
-						database: config.database,
+						database: resolvedDatabase,
 						tenantId,
 						kek: config.kek,
 						rootErrorHandlers: config.errorHandlers,
@@ -93,7 +98,7 @@ export function createCorsair<const Plugins extends readonly CorsairPlugin[]>(
 	}
 
 	const client = buildCorsairClient(config.plugins, {
-		database: config.database,
+		database: resolvedDatabase,
 		tenantId: undefined,
 		kek: config.kek,
 		rootErrorHandlers: config.errorHandlers,

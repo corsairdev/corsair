@@ -1,5 +1,6 @@
 import dotenv from 'dotenv';
 import { createCorsair } from '../../core';
+import { createCorsairOrm } from '../../db/orm';
 import { createIntegrationAndAccount } from '../../tests/plugins-test-utils';
 import { createTestDatabase } from '../../tests/setup-db';
 import { LinearAPIError } from './client';
@@ -14,7 +15,7 @@ async function createLinearClient() {
 	}
 
 	const testDb = createTestDatabase();
-	await createIntegrationAndAccount(testDb.adapter, 'linear');
+	await createIntegrationAndAccount(testDb.db, 'linear');
 
 	const corsair = createCorsair({
 		plugins: [
@@ -26,7 +27,7 @@ async function createLinearClient() {
 				},
 			}),
 		],
-		database: testDb.adapter,
+		database: testDb.db,
 		kek: process.env.CORSAIR_KEK!,
 	});
 
@@ -51,9 +52,9 @@ describe('Linear plugin integration', () => {
 		expect(teamsList).toBeDefined();
 		expect(teamsList.nodes).toBeDefined();
 
-		const listEvents = await testDb.adapter.findMany({
-			table: 'corsair_events',
-			where: [{ field: 'event_type', value: 'linear.teams.list' }],
+		const orm = createCorsairOrm(testDb.database);
+		const listEvents = await orm.events.findMany({
+			where: { event_type: 'linear.teams.list' },
 		});
 
 		expect(listEvents.length).toBeGreaterThan(0);
@@ -83,9 +84,8 @@ describe('Linear plugin integration', () => {
 
 				expect(teamInfo).toBeDefined();
 
-				const getEvents = await testDb.adapter.findMany({
-					table: 'corsair_events',
-					where: [{ field: 'event_type', value: 'linear.teams.get' }],
+				const getEvents = await orm.events.findMany({
+					where: { event_type: 'linear.teams.get' },
 				});
 
 				expect(getEvents.length).toBeGreaterThan(0);
@@ -152,9 +152,9 @@ describe('Linear plugin integration', () => {
 
 		expect(issuesList).toBeDefined();
 
-		const listEvents = await testDb.adapter.findMany({
-			table: 'corsair_events',
-			where: [{ field: 'event_type', value: 'linear.issues.list' }],
+		const orm = createCorsairOrm(testDb.database);
+		const listEvents = await orm.events.findMany({
+			where: { event_type: 'linear.issues.list' },
 		});
 
 		expect(listEvents.length).toBeGreaterThan(0);
@@ -171,9 +171,8 @@ describe('Linear plugin integration', () => {
 		expect(createdIssue).toBeDefined();
 		expect(createdIssue.id).toBeDefined();
 
-		const createEvents = await testDb.adapter.findMany({
-			table: 'corsair_events',
-			where: [{ field: 'event_type', value: 'linear.issues.create' }],
+		const createEvents = await orm.events.findMany({
+			where: { event_type: 'linear.issues.create' },
 		});
 
 		expect(createEvents.length).toBeGreaterThan(0);
@@ -202,9 +201,8 @@ describe('Linear plugin integration', () => {
 
 		expect(fetchedIssue).toBeDefined();
 
-		const getEvents = await testDb.adapter.findMany({
-			table: 'corsair_events',
-			where: [{ field: 'event_type', value: 'linear.issues.get' }],
+		const getEvents = await orm.events.findMany({
+			where: { event_type: 'linear.issues.get' },
 		});
 
 		expect(getEvents.length).toBeGreaterThan(0);
@@ -232,9 +230,8 @@ describe('Linear plugin integration', () => {
 
 		expect(updatedIssue).toBeDefined();
 
-		const updateEvents = await testDb.adapter.findMany({
-			table: 'corsair_events',
-			where: [{ field: 'event_type', value: 'linear.issues.update' }],
+		const updateEvents = await orm.events.findMany({
+			where: { event_type: 'linear.issues.update' },
 		});
 
 		expect(updateEvents.length).toBeGreaterThan(0);
@@ -261,9 +258,8 @@ describe('Linear plugin integration', () => {
 
 		expect(deletedIssue).toBeDefined();
 
-		const deleteEvents = await testDb.adapter.findMany({
-			table: 'corsair_events',
-			where: [{ field: 'event_type', value: 'linear.issues.delete' }],
+		const deleteEvents = await orm.events.findMany({
+			where: { event_type: 'linear.issues.delete' },
 		});
 
 		expect(deleteEvents.length).toBeGreaterThan(0);
@@ -312,9 +308,9 @@ describe('Linear plugin integration', () => {
 
 		expect(projectsList).toBeDefined();
 
-		const listEvents = await testDb.adapter.findMany({
-			table: 'corsair_events',
-			where: [{ field: 'event_type', value: 'linear.projects.list' }],
+		const orm = createCorsairOrm(testDb.database);
+		const listEvents = await orm.events.findMany({
+			where: { event_type: 'linear.projects.list' },
 		});
 
 		expect(listEvents.length).toBeGreaterThan(0);
@@ -344,9 +340,8 @@ describe('Linear plugin integration', () => {
 
 				expect(projectInfo).toBeDefined();
 
-				const getEvents = await testDb.adapter.findMany({
-					table: 'corsair_events',
-					where: [{ field: 'event_type', value: 'linear.projects.get' }],
+				const getEvents = await orm.events.findMany({
+					where: { event_type: 'linear.projects.get' },
 				});
 
 				expect(getEvents.length).toBeGreaterThan(0);
@@ -380,9 +375,8 @@ describe('Linear plugin integration', () => {
 		expect(createdProject).toBeDefined();
 		expect(createdProject.id).toBeDefined();
 
-		const createEvents = await testDb.adapter.findMany({
-			table: 'corsair_events',
-			where: [{ field: 'event_type', value: 'linear.projects.create' }],
+		const createEvents = await orm.events.findMany({
+			where: { event_type: 'linear.projects.create' },
 		});
 
 		expect(createEvents.length).toBeGreaterThan(0);
@@ -416,9 +410,8 @@ describe('Linear plugin integration', () => {
 
 		expect(updatedProject).toBeDefined();
 
-		const updateEvents = await testDb.adapter.findMany({
-			table: 'corsair_events',
-			where: [{ field: 'event_type', value: 'linear.projects.update' }],
+		const updateEvents = await orm.events.findMany({
+			where: { event_type: 'linear.projects.update' },
 		});
 
 		expect(updateEvents.length).toBeGreaterThan(0);
@@ -446,9 +439,8 @@ describe('Linear plugin integration', () => {
 
 		expect(deletedProject).toBeDefined();
 
-		const deleteEvents = await testDb.adapter.findMany({
-			table: 'corsair_events',
-			where: [{ field: 'event_type', value: 'linear.projects.delete' }],
+		const deleteEvents = await orm.events.findMany({
+			where: { event_type: 'linear.projects.delete' },
 		});
 
 		expect(deleteEvents.length).toBeGreaterThan(0);
@@ -524,9 +516,9 @@ describe('Linear plugin integration', () => {
 			expect(createdComment).toBeDefined();
 			expect(createdComment.id).toBeDefined();
 
-			const createEvents = await testDb.adapter.findMany({
-				table: 'corsair_events',
-				where: [{ field: 'event_type', value: 'linear.comments.create' }],
+			const orm = createCorsairOrm(testDb.database);
+			const createEvents = await orm.events.findMany({
+				where: { event_type: 'linear.comments.create' },
 			});
 
 			expect(createEvents.length).toBeGreaterThan(0);
@@ -544,9 +536,8 @@ describe('Linear plugin integration', () => {
 
 			expect(commentsList).toBeDefined();
 
-			const listEvents = await testDb.adapter.findMany({
-				table: 'corsair_events',
-				where: [{ field: 'event_type', value: 'linear.comments.list' }],
+			const listEvents = await orm.events.findMany({
+				where: { event_type: 'linear.comments.list' },
 			});
 
 			expect(listEvents.length).toBeGreaterThan(0);
@@ -560,9 +551,8 @@ describe('Linear plugin integration', () => {
 
 			expect(updatedComment).toBeDefined();
 
-			const updateEvents = await testDb.adapter.findMany({
-				table: 'corsair_events',
-				where: [{ field: 'event_type', value: 'linear.comments.update' }],
+			const updateEvents = await orm.events.findMany({
+				where: { event_type: 'linear.comments.update' },
 			});
 
 			expect(updateEvents.length).toBeGreaterThan(0);
@@ -573,9 +563,8 @@ describe('Linear plugin integration', () => {
 
 			expect(deletedComment).toBeDefined();
 
-			const deleteEvents = await testDb.adapter.findMany({
-				table: 'corsair_events',
-				where: [{ field: 'event_type', value: 'linear.comments.delete' }],
+			const deleteEvents = await orm.events.findMany({
+				where: { event_type: 'linear.comments.delete' },
 			});
 
 			expect(deleteEvents.length).toBeGreaterThan(0);

@@ -7,12 +7,12 @@ Corsair is a unified SDK for integrating third-party services into TypeScript ap
 
 ```ts title="corsair.ts"
 import { createCorsair } from "corsair";
-import { drizzleAdapter } from "corsair/adapters/drizzle";
+import { Pool } from "pg";
 import { slack, linear } from "corsair/plugins";
 
 export const corsair = createCorsair({
     multiTenancy: true,
-    database: drizzleAdapter(db, { provider: "pg", schema }),
+    database: new Pool({ connectionString: process.env.DATABASE_URL }),
     plugins: [
         slack(),
         linear(),

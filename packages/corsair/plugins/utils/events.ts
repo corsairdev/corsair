@@ -1,11 +1,11 @@
-import type { CorsairDbAdapter } from '../../adapters';
 import { generateUUID } from '../../core/utils';
+import type { CorsairDatabase } from '../../db/kysely/database';
 
 /**
  * Context interface with account ID resolver for logging events.
  */
 export interface EventLoggingContext {
-	database: CorsairDbAdapter;
+	database?: CorsairDatabase | undefined;
 	$getAccountId: () => Promise<string>;
 }
 
@@ -20,18 +20,21 @@ export interface EventLoggingContext {
  * @returns The event ID if successful, null if failed
  */
 export async function logEvent(
-	database: CorsairDbAdapter,
+	database: CorsairDatabase | undefined,
 	accountId: string,
 	eventType: string,
 	payload: Record<string, unknown>,
 	status: 'pending' | 'processing' | 'completed' | 'failed' = 'pending',
 ): Promise<string | null> {
+	if (!database) {
+		return null;
+	}
 	try {
 		const eventId = generateUUID();
 		const now = new Date();
-		await database.insert({
-			table: 'corsair_events',
-			data: {
+		await database.db
+			.insertInto('corsair_events')
+			.values({
 				id: eventId,
 				created_at: now,
 				updated_at: now,
@@ -39,8 +42,8 @@ export async function logEvent(
 				event_type: eventType,
 				payload,
 				status,
-			},
-		});
+			})
+			.execute();
 		return eventId;
 	} catch (error) {
 		console.warn('Failed to log event:', error);
