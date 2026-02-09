@@ -182,7 +182,7 @@ importers:
   demo/minimal:
     dependencies:
       corsair:
-        specifier: workspace:*
+        specifier: ^0.1.4
         version: link:../../packages/corsair
       express:
         specifier: ^4.18.2
