@@ -19,6 +19,9 @@ export const BaseProviders = [
 	'hubspot',
 	'gmail',
 	'resend',
+	'posthog',
+	'googlesheets',
+	'googledrive',
 ] as const;
 
 export type AllProviders =
@@ -28,6 +31,9 @@ export type AllProviders =
 	| 'hubspot'
 	| 'gmail'
 	| 'resend'
+	| 'posthog'
+	| 'googlesheets'
+	| 'googledrive'
 	| (string & {});
 
 export type AuthTypes = 'oauth_2' | 'api_key' | 'bot_token';
