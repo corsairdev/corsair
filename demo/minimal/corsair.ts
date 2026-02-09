@@ -3,7 +3,7 @@ import { database } from './db';
 
 /**
  * This is a minimal example
- * Go to corsair-full.ts to see some more of what you can configure
+ * Go to corsair-full.ts for more
  */
 
 export const corsair = createCorsair({

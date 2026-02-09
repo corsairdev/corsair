@@ -9,7 +9,8 @@
     "strict": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "noEmit": true
+    "noEmit": true,
+    "noImplicitAny": false // for demo purposes
   },
   "include": ["**/*.ts"],
   "exclude": ["node_modules"]
