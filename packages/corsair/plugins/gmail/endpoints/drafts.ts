@@ -1,5 +1,5 @@
 import { logEventFromContext } from '../../utils/events';
-import type { GmailBoundEndpoints, GmailEndpoints } from '..';
+import type { GmailBoundEndpoints, GmailBoundWebhooks, GmailEndpoints } from '..';
 import { makeGmailRequest } from '../client';
 import type { GmailEndpointOutputs } from './types';
 
@@ -84,7 +84,7 @@ export const create: GmailEndpoints['draftsCreate'] = async (ctx, input) => {
 
 	if (result.id) {
 		const endpoints = ctx.endpoints as GmailBoundEndpoints;
-		await endpoints.draftsGet({ id: result.id, userId: input.userId });
+		await endpoints.drafts.get({ id: result.id, userId: input.userId });
 	}
 
 	await logEventFromContext(
@@ -108,7 +108,7 @@ export const update: GmailEndpoints['draftsUpdate'] = async (ctx, input) => {
 
 	if (result.id) {
 		const endpoints = ctx.endpoints as GmailBoundEndpoints;
-		await endpoints.draftsGet({ id: result.id, userId: input.userId });
+		await endpoints.drafts.get({ id: result.id, userId: input.userId });
 	}
 
 	await logEventFromContext(
