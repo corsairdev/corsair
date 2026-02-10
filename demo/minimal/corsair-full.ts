@@ -20,7 +20,7 @@ export const corsair = createCorsair({
 						console.error(`Rate Limit error: ${error.message} by ${operation}`);
 						return {
 							// if headers return retryAfter, Corsair prioritizes that
-							headersRetryAfterMs: (error as any).retryAfter || undefined,
+							headersRetryAfterMs: (error as any)?.retryAfter || undefined,
 							// otherwise, you can define a retry strategy!
 							maxRetries: 3,
 							retryStrategy: 'exponential_backoff_jitter',
