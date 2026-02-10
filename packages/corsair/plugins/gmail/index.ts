@@ -16,7 +16,7 @@ import {
 	MessagesEndpoints,
 	ThreadsEndpoints,
 } from './endpoints';
-import { GmailSchema } from './schema';
+import { GmailCredentials, GmailSchema } from './schema';
 import type {
 	GmailWebhookOutputs,
 	GmailWebhookPayload,
@@ -273,7 +273,7 @@ export type GmailEndpoints = {
 	>;
 };
 
-export type GmailBoundEndpoints = BindEndpoints<GmailEndpoints>;
+export type GmailBoundEndpoints = BindEndpoints<typeof gmailEndpointsNested>;
 
 type GmailWebhook<K extends keyof GmailWebhookOutputs, TEvent> = CorsairWebhook<
 	GmailContext,
@@ -290,7 +290,7 @@ export type GmailWebhooks = {
 	>;
 };
 
-export type GmailBoundWebhooks = BindWebhooks<GmailWebhooks>;
+export type GmailBoundWebhooks = BindWebhooks<typeof gmailWebhooksNested>;
 
 const gmailEndpointsNested = {
 	messages: {
@@ -341,6 +341,7 @@ const gmailWebhooksNested = {
 export type GmailPluginOptions = {
 	authType?: PickAuth<'oauth_2'>;
 	key?: string;
+	credentials?: GmailCredentials;
 	hooks?: InternalGmailPlugin['hooks'];
 	webhookHooks?: InternalGmailPlugin['webhookHooks'];
 };
