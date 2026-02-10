@@ -39,6 +39,16 @@ export {
 	type GoogleDriveWebhooks,
 	googledrive,
 } from './googledrive';
+// Google Calendar Plugin
+export {
+	type GoogleCalendarBoundEndpoints,
+	type GoogleCalendarBoundWebhooks,
+	type GoogleCalendarContext,
+	type GoogleCalendarEndpoints,
+	type GoogleCalendarPluginOptions,
+	type GoogleCalendarWebhooks,
+	googlecalendar,
+} from './googlecalendar';
 export {
 	type HubSpotBoundEndpoints,
 	type HubSpotBoundWebhooks,

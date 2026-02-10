@@ -22,6 +22,7 @@ export const BaseProviders = [
 	'posthog',
 	'googlesheets',
 	'googledrive',
+	'googlecalendar',
 ] as const;
 
 export type AllProviders =
@@ -34,6 +35,7 @@ export type AllProviders =
 	| 'posthog'
 	| 'googlesheets'
 	| 'googledrive'
+	| 'googlecalendar'
 	| (string & {});
 
 export type AuthTypes = 'oauth_2' | 'api_key' | 'bot_token';
