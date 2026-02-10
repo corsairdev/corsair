@@ -47,6 +47,7 @@ export const corsair = createCorsair({
 		resend({
 			webhookHooks: {
 				emails: {
+					// <-- put your cursor before the comment and do control + space to see the other webhookHooks for emails
 					failed: {
 						after(ctx, response) {
 							// notice that this is a webhook hook
