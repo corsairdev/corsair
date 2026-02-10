@@ -43,13 +43,22 @@ export const create: GoogleSheetsEndpoints['spreadsheetsCreate'] = async (
 
 export const deleteSpreadsheet: GoogleSheetsEndpoints['spreadsheetsDelete'] =
 	async (ctx, input) => {
-		await makeSheetsRequest<GoogleSheetsEndpointOutputs['spreadsheetsDelete']>(
-			`/spreadsheets/${input.spreadsheetId}`,
-			ctx.key,
+		const response = await fetch(
+			`https://www.googleapis.com/drive/v3/files/${input.spreadsheetId}`,
 			{
 				method: 'DELETE',
+				headers: {
+					Authorization: `Bearer ${ctx.key}`,
+				},
 			},
 		);
+
+		if (!response.ok && response.status !== 404) {
+			const errorText = await response.text();
+			throw new Error(
+				`Failed to delete spreadsheet: ${response.status} ${errorText}`,
+			);
+		}
 
 		if (ctx.db.spreadsheets) {
 			try {
