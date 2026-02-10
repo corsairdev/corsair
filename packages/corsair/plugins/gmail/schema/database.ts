@@ -36,7 +36,7 @@ export const GmailMessage = z.object({
 	body: z.string().optional(),
 	from: z.string().optional(),
 	to: z.string().optional(),
-	createdAt: z.coerce.date().optional(),
+	createdAt: z.coerce.date().nullable().optional(),
 });
 
 export const GmailLabel = z.object({
@@ -51,20 +51,20 @@ export const GmailLabel = z.object({
 	messagesUnread: z.number().optional(),
 	threadsTotal: z.number().optional(),
 	threadsUnread: z.number().optional(),
-	createdAt: z.coerce.date().optional(),
+	createdAt: z.coerce.date().nullable().optional(),
 });
 
 export const GmailDraft = z.object({
 	id: z.string(),
 	messageId: z.string().optional(),
-	createdAt: z.coerce.date().optional(),
+	createdAt: z.coerce.date().nullable().optional(),
 });
 
 export const GmailThread = z.object({
 	id: z.string(),
 	snippet: z.string().optional(),
 	historyId: z.string().optional(),
-	createdAt: z.coerce.date().optional(),
+	createdAt: z.coerce.date().nullable().optional(),
 });
 
 export type GmailMessage = z.infer<typeof GmailMessage>;

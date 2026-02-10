@@ -38,8 +38,12 @@ export const projectCreate: LinearWebhooks['projectCreate'] = {
 				const data = event.data;
 				const entity = await ctx.db.projects.upsertByEntityId(data.id, {
 					...data,
-					createdAt: new Date(data.createdAt),
-					updatedAt: new Date(data.updatedAt),
+					completedAt: data.completedAt ? new Date(data.completedAt) : null,
+					canceledAt: data.canceledAt ? new Date(data.canceledAt) : null,
+					createdAt: new Date(data.createdAt ?? ''),
+					updatedAt: new Date(data.updatedAt ?? ''),
+					startDate: data.startDate ? new Date(data.startDate) : null,
+					targetDate: data.targetDate ? new Date(data.targetDate) : null,
 				});
 
 				corsairEntityId = entity?.id || '';
@@ -99,8 +103,12 @@ export const projectUpdate: LinearWebhooks['projectUpdate'] = {
 				const data = event.data;
 				const entity = await ctx.db.projects.upsertByEntityId(data.id, {
 					...data,
-					createdAt: new Date(data.createdAt),
-					updatedAt: new Date(data.updatedAt),
+					completedAt: data.completedAt ? new Date(data.completedAt) : null,
+					canceledAt: data.canceledAt ? new Date(data.canceledAt) : null,
+					createdAt: new Date(data.createdAt ?? ''),
+					startDate: data.startDate ? new Date(data.startDate) : null,
+					targetDate: data.targetDate ? new Date(data.targetDate) : null,
+					updatedAt: new Date(data.updatedAt ?? ''),
 				});
 
 				corsairEntityId = entity?.id || '';

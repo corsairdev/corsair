@@ -165,8 +165,8 @@ export const list: LinearEndpoints['projectsList'] = async (ctx, input) => {
 				await ctx.db.projects.upsertByEntityId(project.id, {
 					...project,
 					leadId: project.lead?.id,
-					createdAt: new Date(project.createdAt),
-					updatedAt: new Date(project.updatedAt),
+					createdAt: new Date(project.createdAt ?? ''),
+					updatedAt: new Date(project.updatedAt ?? ''),
 				});
 			}
 		} catch (error) {
@@ -197,8 +197,8 @@ export const get: LinearEndpoints['projectsGet'] = async (ctx, input) => {
 			await ctx.db.projects.upsertByEntityId(result.id, {
 				...result,
 				leadId: result.lead?.id,
-				createdAt: new Date(result.createdAt),
-				updatedAt: new Date(result.updatedAt),
+				createdAt: new Date(result.createdAt ?? ''),
+				updatedAt: new Date(result.updatedAt ?? ''),
 			});
 		} catch (error) {
 			console.warn('Failed to save project to database:', error);

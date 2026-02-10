@@ -68,7 +68,7 @@ describe('Endpoint Hooks', () => {
 						},
 					}),
 				],
-				database: testDb.adapter,
+				database: testDb.db,
 				multiTenancy: false,
 			});
 
@@ -110,7 +110,7 @@ describe('Endpoint Hooks', () => {
 						},
 					}),
 				],
-				database: testDb.adapter,
+				database: testDb.db,
 			});
 
 			await corsair.slack.api.messages.post({
@@ -149,7 +149,7 @@ describe('Endpoint Hooks', () => {
 						},
 					}),
 				],
-				database: testDb.adapter,
+				database: testDb.db,
 			});
 
 			await corsair.slack.api.messages.post({
@@ -201,7 +201,7 @@ describe('Endpoint Hooks', () => {
 						},
 					}),
 				],
-				database: testDb.adapter,
+				database: testDb.db,
 			});
 
 			const result = await corsair.slack.api.messages.post({
@@ -253,7 +253,7 @@ describe('Endpoint Hooks', () => {
 						},
 					}),
 				],
-				database: testDb.adapter,
+				database: testDb.db,
 			});
 
 			const result = await corsair.slack.api.messages.post({
@@ -304,7 +304,7 @@ describe('Endpoint Hooks', () => {
 						},
 					}),
 				],
-				database: testDb.adapter,
+				database: testDb.db,
 			});
 
 			mockedMakeSlackRequest.mockImplementation(
@@ -362,7 +362,7 @@ describe('Endpoint Hooks', () => {
 						},
 					}),
 				],
-				database: testDb.adapter,
+				database: testDb.db,
 			});
 
 			const result = await corsair.slack.api.messages.post({
@@ -400,7 +400,7 @@ describe('Endpoint Hooks', () => {
 						},
 					}),
 				],
-				database: testDb.adapter,
+				database: testDb.db,
 			});
 
 			await corsair.slack.api.messages.post({

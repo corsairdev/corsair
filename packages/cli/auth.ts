@@ -1,13 +1,14 @@
 import * as p from '@clack/prompts';
 import type {
 	AuthTypes,
-	CorsairDbAdapter,
+	CorsairDatabase,
 	CorsairInternalConfig,
 	CorsairPlugin,
 } from 'corsair';
 import {
 	CORSAIR_INTERNAL,
 	createAccountKeyManager,
+	createCorsairOrm,
 	createIntegrationKeyManager,
 	encryptDEK,
 	generateDEK,
@@ -22,6 +23,7 @@ type ActionDef = {
 	value: string;
 	label: string;
 	hint?: string;
+	description?: string;
 	level: 'account' | 'integration' | 'none';
 	type: 'set' | 'confirm' | 'display';
 	inputType?: 'password' | 'text';
@@ -56,16 +58,25 @@ const API_KEY_ACTIONS: ActionDef[] = [
 	},
 	{
 		value: 'issue-dek-account',
-		label: 'Issue New DEK (account)',
-		hint: 'keys.issueNewDEK()',
+		label: 'Issue New DEK (account level)',
+		hint: "For this tenant's integration",
+		description:
+			"Issues a new Data Encryption Key (DEK) for this specific tenant's integration with the plugin.\n\n" +
+			'Example: Issues a new DEK for the "default" tenant\'s integration with Slack.\n\n' +
+			'This will re-encrypt all account-level credentials (API keys, tokens, etc.) for this tenant only.',
 		level: 'account',
 		type: 'confirm',
 		method: 'issueNewDEK',
 	},
 	{
 		value: 'issue-dek-integration',
-		label: 'Issue New DEK (integration)',
-		hint: 'keys.issueNewDEK()',
+		label: 'Issue New DEK (integration level)',
+		hint: 'For the entire integration',
+		description:
+			'Issues a new Data Encryption Key (DEK) at the integration level (affects all tenants).\n\n' +
+			'This is typically only needed for OAuth integrations where you have integration-level\n' +
+			'credentials like Client ID and Client Secret that are shared across all tenants.\n\n' +
+			'This will re-encrypt all integration-level credentials for this plugin.',
 		level: 'integration',
 		type: 'confirm',
 		method: 'issueNewDEK',
@@ -107,16 +118,25 @@ const BOT_TOKEN_ACTIONS: ActionDef[] = [
 	},
 	{
 		value: 'issue-dek-account',
-		label: 'Issue New DEK (account)',
-		hint: 'keys.issueNewDEK()',
+		label: 'Issue New DEK (account level)',
+		hint: "For this tenant's integration",
+		description:
+			"Issues a new Data Encryption Key (DEK) for this specific tenant's integration with the plugin.\n\n" +
+			'Example: Issues a new DEK for the "default" tenant\'s integration with Slack.\n\n' +
+			'This will re-encrypt all account-level credentials (API keys, tokens, etc.) for this tenant only.',
 		level: 'account',
 		type: 'confirm',
 		method: 'issueNewDEK',
 	},
 	{
 		value: 'issue-dek-integration',
-		label: 'Issue New DEK (integration)',
-		hint: 'keys.issueNewDEK()',
+		label: 'Issue New DEK (integration level)',
+		hint: 'For the entire integration',
+		description:
+			'Issues a new Data Encryption Key (DEK) at the integration level (affects all tenants).\n\n' +
+			'This is typically only needed for OAuth integrations where you have integration-level\n' +
+			'credentials like Client ID and Client Secret that are shared across all tenants.\n\n' +
+			'This will re-encrypt all integration-level credentials for this plugin.',
 		level: 'integration',
 		type: 'confirm',
 		method: 'issueNewDEK',
@@ -194,16 +214,25 @@ const OAUTH2_ACTIONS: ActionDef[] = [
 	},
 	{
 		value: 'issue-dek-account',
-		label: 'Issue New DEK (account)',
-		hint: 'keys.issueNewDEK()',
+		label: 'Issue New DEK (account level)',
+		hint: "For this tenant's integration",
+		description:
+			"Issues a new Data Encryption Key (DEK) for this specific tenant's integration with the plugin.\n\n" +
+			'Example: Issues a new DEK for the "default" tenant\'s integration with Slack.\n\n' +
+			'This will re-encrypt all account-level credentials (API keys, tokens, etc.) for this tenant only.',
 		level: 'account',
 		type: 'confirm',
 		method: 'issueNewDEK',
 	},
 	{
 		value: 'issue-dek-integration',
-		label: 'Issue New DEK (integration)',
-		hint: 'keys.issueNewDEK()',
+		label: 'Issue New DEK (integration level)',
+		hint: 'For the entire integration',
+		description:
+			'Issues a new Data Encryption Key (DEK) at the integration level (affects all tenants).\n\n' +
+			'This is typically only needed for OAuth integrations where you have integration-level\n' +
+			'credentials like Client ID and Client Secret that are shared across all tenants.\n\n' +
+			'This will re-encrypt all integration-level credentials for this plugin.',
 		level: 'integration',
 		type: 'confirm',
 		method: 'issueNewDEK',
@@ -313,15 +342,12 @@ async function selectPlugin(
 }
 
 async function ensureIntegrationInitialized(
-	database: CorsairDbAdapter,
+	database: CorsairDatabase,
 	pluginId: string,
 	kek: string,
 ): Promise<{ id: string; dek: string | null; config: unknown }> {
-	const existing = await database.findOne({
-		table: 'corsair_integrations',
-		where: [{ field: 'name', value: pluginId }],
-	});
-
+	const orm = createCorsairOrm(database);
+	const existing = await orm.integrations.findByName(pluginId);
 	if (existing) {
 		return {
 			id: existing.id,
@@ -340,15 +366,10 @@ async function ensureIntegrationInitialized(
 	const dek = generateDEK();
 	const encryptedDek = await encryptDEK(dek, kek);
 
-	const row = await database.insert({
-		table: 'corsair_integrations',
-		data: {
-			name: pluginId,
-			config: {},
-			dek: encryptedDek,
-			created_at: new Date(),
-			updated_at: new Date(),
-		},
+	const row = await orm.integrations.create({
+		name: pluginId,
+		config: {},
+		dek: encryptedDek,
 	});
 
 	p.log.success(`Initialized plugin '${pluginId}' with a new DEK.`);
@@ -357,14 +378,14 @@ async function ensureIntegrationInitialized(
 }
 
 async function selectTenant(
-	database: CorsairDbAdapter,
+	database: CorsairDatabase,
 	integrationId: string,
 	multiTenancy: boolean,
 ): Promise<string> {
 	// Find existing accounts for this integration
-	const accounts = await database.findMany({
-		table: 'corsair_accounts',
-		where: [{ field: 'integration_id', value: integrationId }],
+	const orm = createCorsairOrm(database);
+	const accounts = await orm.accounts.findMany({
+		where: { integration_id: integrationId },
 	});
 
 	if (!multiTenancy && accounts.length === 0) {
@@ -426,17 +447,15 @@ async function selectTenant(
 }
 
 async function ensureAccountExists(
-	database: CorsairDbAdapter,
+	database: CorsairDatabase,
 	integrationId: string,
 	tenantId: string,
 	kek: string,
 ): Promise<void> {
-	const existing = await database.findOne({
-		table: 'corsair_accounts',
-		where: [
-			{ field: 'tenant_id', value: tenantId },
-			{ field: 'integration_id', value: integrationId },
-		],
+	const orm = createCorsairOrm(database);
+	const existing = await orm.accounts.findOne({
+		tenant_id: tenantId,
+		integration_id: integrationId,
 	});
 
 	if (existing) return;
@@ -445,16 +464,11 @@ async function ensureAccountExists(
 	const dek = generateDEK();
 	const encryptedDek = await encryptDEK(dek, kek);
 
-	await database.insert({
-		table: 'corsair_accounts',
-		data: {
-			tenant_id: tenantId,
-			integration_id: integrationId,
-			config: {},
-			dek: encryptedDek,
-			created_at: new Date(),
-			updated_at: new Date(),
-		},
+	await orm.accounts.create({
+		tenant_id: tenantId,
+		integration_id: integrationId,
+		config: {},
+		dek: encryptedDek,
 	});
 
 	p.log.success(`Created account for tenant '${tenantId}' with a new DEK.`);
@@ -485,7 +499,7 @@ async function selectAction(
 
 async function executeSetAction(
 	action: ActionDef,
-	database: CorsairDbAdapter,
+	database: CorsairDatabase,
 	pluginId: string,
 	kek: string,
 	authType: AuthTypes,
@@ -553,12 +567,21 @@ async function executeSetAction(
 
 async function executeConfirmAction(
 	action: ActionDef,
-	database: CorsairDbAdapter,
+	database: CorsairDatabase,
 	pluginId: string,
 	kek: string,
 	authType: AuthTypes,
 	tenantId: string,
 ): Promise<void> {
+	// Show detailed description for DEK actions
+	if (
+		action.description &&
+		(action.value === 'issue-dek-account' ||
+			action.value === 'issue-dek-integration')
+	) {
+		p.note(action.description, 'What this does');
+	}
+
 	const shouldProceed = await p.confirm({
 		message: `Are you sure you want to ${action.label.toLowerCase()}? This will re-encrypt all associated secrets.`,
 	});
@@ -614,7 +637,7 @@ async function executeConfirmAction(
 }
 
 async function executeGetCredentials(
-	database: CorsairDbAdapter,
+	database: CorsairDatabase,
 	pluginId: string,
 	kek: string,
 	authType: AuthTypes,
@@ -718,17 +741,15 @@ async function executeGetCredentials(
 }
 
 async function viewStatus(
-	database: CorsairDbAdapter,
+	database: CorsairDatabase,
 	pluginId: string,
 ): Promise<void> {
 	const spin = p.spinner();
 	spin.start('Querying database...');
 
 	try {
-		const integration = await database.findOne({
-			table: 'corsair_integrations',
-			where: [{ field: 'name', value: pluginId }],
-		});
+		const orm = createCorsairOrm(database);
+		const integration = await orm.integrations.findByName(pluginId);
 
 		if (!integration) {
 			spin.stop('Done.');
@@ -736,9 +757,8 @@ async function viewStatus(
 			return;
 		}
 
-		const accounts = await database.findMany({
-			table: 'corsair_accounts',
-			where: [{ field: 'integration_id', value: integration.id }],
+		const accounts = await orm.accounts.findMany({
+			where: { integration_id: integration.id },
 		});
 
 		spin.stop('Done.');
@@ -785,7 +805,7 @@ async function viewStatus(
 
 async function executeAction(
 	action: ActionDef,
-	database: CorsairDbAdapter,
+	database: CorsairDatabase,
 	pluginId: string,
 	kek: string,
 	authType: AuthTypes | undefined,
@@ -829,7 +849,7 @@ async function executeAction(
 // ─────────────────────────────────────────────────────────────────────────────
 
 export async function runAuth({ cwd }: { cwd: string }): Promise<void> {
-	p.intro('corsair auth');
+	p.intro('Corsair Auth');
 
 	// 1. Load instance
 	const spin = p.spinner();

@@ -1,5 +1,5 @@
 export function createIntegrationAndAccount(
-	adapter: any,
+	db: { insertInto: (...args: any[]) => any },
 	pluginId: string,
 	tenantId = 'default',
 ) {
@@ -19,10 +19,11 @@ export function createIntegrationAndAccount(
 				dek: null,
 			},
 		})
+		.execute()
 		.then(() =>
-			adapter.insert({
-				table: 'corsair_accounts',
-				data: {
+			db
+				.insertInto('corsair_accounts')
+				.values({
 					id: accountId,
 					created_at: now,
 					updated_at: now,

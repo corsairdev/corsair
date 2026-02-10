@@ -1,5 +1,6 @@
 import dotenv from 'dotenv';
 import { createCorsair } from '../../core';
+import { createCorsairOrm } from '../../db/orm';
 import { createIntegrationAndAccount } from '../../tests/plugins-test-utils';
 import { createTestDatabase } from '../../tests/setup-db';
 import { ResendAPIError } from './client';
@@ -16,7 +17,7 @@ async function createResendClient() {
 	}
 
 	const testDb = createTestDatabase();
-	await createIntegrationAndAccount(testDb.adapter, 'resend');
+	await createIntegrationAndAccount(testDb.db, 'resend');
 
 	const corsair = createCorsair({
 		plugins: [
@@ -28,7 +29,7 @@ async function createResendClient() {
 				},
 			}),
 		],
-		database: testDb.adapter,
+		database: testDb.db,
 		kek: process.env.CORSAIR_KEK!,
 	});
 
@@ -67,9 +68,9 @@ describe('Resend plugin integration', () => {
 
 		expect(sent).toBeDefined();
 
-		const sendEvents = await testDb.adapter.findMany({
-			table: 'corsair_events',
-			where: [{ field: 'event_type', value: 'resend.emails.send' }],
+		const orm = createCorsairOrm(testDb.database);
+		const sendEvents = await orm.events.findMany({
+			where: { event_type: 'resend.emails.send' },
 		});
 
 		expect(sendEvents.length).toBeGreaterThan(0);
@@ -100,9 +101,8 @@ describe('Resend plugin integration', () => {
 
 			expect(fetched).toBeDefined();
 
-			const getEvents = await testDb.adapter.findMany({
-				table: 'corsair_events',
-				where: [{ field: 'event_type', value: 'resend.emails.get' }],
+			const getEvents = await orm.events.findMany({
+				where: { event_type: 'resend.emails.get' },
 			});
 
 			expect(getEvents.length).toBeGreaterThan(0);
@@ -130,9 +130,8 @@ describe('Resend plugin integration', () => {
 
 		expect(listResult).toBeDefined();
 
-		const listEvents = await testDb.adapter.findMany({
-			table: 'corsair_events',
-			where: [{ field: 'event_type', value: 'resend.emails.list' }],
+		const listEvents = await orm.events.findMany({
+			where: { event_type: 'resend.emails.list' },
 		});
 
 		expect(listEvents.length).toBeGreaterThan(0);
@@ -162,9 +161,9 @@ describe('Resend plugin integration', () => {
 
 		expect(domainsList).toBeDefined();
 
-		const listEvents = await testDb.adapter.findMany({
-			table: 'corsair_events',
-			where: [{ field: 'event_type', value: 'resend.domains.list' }],
+		const orm = createCorsairOrm(testDb.database);
+		const listEvents = await orm.events.findMany({
+			where: { event_type: 'resend.domains.list' },
 		});
 
 		expect(listEvents.length).toBeGreaterThan(0);
@@ -197,9 +196,8 @@ describe('Resend plugin integration', () => {
 
 			expect(fetchedDomain).toBeDefined();
 
-			const getEvents = await testDb.adapter.findMany({
-				table: 'corsair_events',
-				where: [{ field: 'event_type', value: 'resend.domains.get' }],
+			const getEvents = await orm.events.findMany({
+				where: { event_type: 'resend.domains.get' },
 			});
 
 			expect(getEvents.length).toBeGreaterThan(0);
@@ -228,9 +226,8 @@ describe('Resend plugin integration', () => {
 
 				expect(verifyResult).toBeDefined();
 
-				const verifyEvents = await testDb.adapter.findMany({
-					table: 'corsair_events',
-					where: [{ field: 'event_type', value: 'resend.domains.verify' }],
+				const verifyEvents = await orm.events.findMany({
+					where: { event_type: 'resend.domains.verify' },
 				});
 
 				expect(verifyEvents.length).toBeGreaterThan(0);
@@ -256,9 +253,8 @@ describe('Resend plugin integration', () => {
 
 			expect(createdDomain).toBeDefined();
 
-			const createEvents = await testDb.adapter.findMany({
-				table: 'corsair_events',
-				where: [{ field: 'event_type', value: 'resend.domains.create' }],
+			const createEvents = await orm.events.findMany({
+				where: { event_type: 'resend.domains.create' },
 			});
 
 			expect(createEvents.length).toBeGreaterThan(0);
@@ -291,9 +287,8 @@ describe('Resend plugin integration', () => {
 
 					expect(deletedDomain).toBeDefined();
 
-					const deleteEvents = await testDb.adapter.findMany({
-						table: 'corsair_events',
-						where: [{ field: 'event_type', value: 'resend.domains.delete' }],
+					const deleteEvents = await orm.events.findMany({
+						where: { event_type: 'resend.domains.delete' },
 					});
 
 					expect(deleteEvents.length).toBeGreaterThan(0);

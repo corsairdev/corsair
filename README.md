@@ -2,9 +2,7 @@
 
 A unified TypeScript framework for API and webhook integrations. Add integrations with the same syntax, same types, and same four database tables.
 
-Database ORMs let you interact with your database seamlessly: `db.query.users.findMany(...)`
-
-Corsair lets you interact with your integrations seamlessly: `corsair.withTenant(tenantId).slack.messages.post(...)`
+Database ORMs give you one interface for all your tables. Corsair gives you one interface for all your integrations, with automatic syncing to your database.
 
 ## The Problem
 
@@ -31,8 +29,8 @@ Corsair gives you a single interface for all your integrations. Configure each p
 ```typescript
 export const corsair = createCorsair({
   multiTenancy: true,
-  database: drizzleAdapter(...),
-  plugins: [slack(), linear(), resend(), hubspot()],
+  database: pool,
+  plugins: [slack(), linear(), resend(), gmail()],
 });
 
 // Same syntax across every integration, fully typed
@@ -71,7 +69,7 @@ Corsair provides sensible defaults but lets you override anything. Add custom er
 
 Corsair is the integration layer. It handles API calls, auth, typing, and data sync. Pair it with orchestration tools like Inngest or Temporal when you need async workflows, sleep, or complex sequencing:
 ```typescript
-// Inngest handles orchestration, Corsair handles integrations
+// Use Inngest (or any TS orchestration platform) with Corsair
 export const onCustomerChurn = inngest.createFunction(
   { id: "customer-churn" },
   { event: "customer.churned" },
@@ -101,8 +99,9 @@ export const onCustomerChurn = inngest.createFunction(
 **Use Corsair when:**
 - Building workflows across multiple third-party services
 - You need local database copies of external data with foreign keys to your own tables
-- Managing integrations for multiple tenants with isolated auth and data
+- Multiple tenants need isolated auth credentials and data storage
 - You want type-safe integrations without maintaining SDK wrappers
+- You're adding your 3rd+ integration
 
 **Don't use Corsair when:**
 - Building deep, custom functionality with a single API (use that service's SDK directly)

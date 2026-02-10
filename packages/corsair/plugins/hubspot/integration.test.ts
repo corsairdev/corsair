@@ -1,5 +1,6 @@
 import dotenv from 'dotenv';
 import { createCorsair } from '../../core';
+import { createCorsairOrm } from '../../db/orm';
 import { createIntegrationAndAccount } from '../../tests/plugins-test-utils';
 import { createTestDatabase } from '../../tests/setup-db';
 import { HubSpotAPIError } from './client';
@@ -19,7 +20,7 @@ async function createHubspotClient() {
 	}
 
 	const testDb = createTestDatabase();
-	await createIntegrationAndAccount(testDb.adapter, 'hubspot');
+	await createIntegrationAndAccount(testDb.db, 'hubspot');
 
 	const corsair = createCorsair({
 		plugins: [
@@ -30,7 +31,7 @@ async function createHubspotClient() {
 				},
 			}),
 		],
-		database: testDb.adapter,
+		database: testDb.db,
 		kek: process.env.CORSAIR_KEK!,
 	});
 
@@ -54,9 +55,9 @@ describe('HubSpot plugin integration', () => {
 
 		expect(contactsList).toBeDefined();
 
-		const listEvents = await testDb.adapter.findMany({
-			table: 'corsair_events',
-			where: [{ field: 'event_type', value: 'hubspot.contacts.getMany' }],
+		const orm = createCorsairOrm(testDb.database);
+		const listEvents = await orm.events.findMany({
+			where: { event_type: 'hubspot.contacts.getMany' },
 		});
 
 		expect(listEvents.length).toBeGreaterThan(0);
@@ -81,9 +82,8 @@ describe('HubSpot plugin integration', () => {
 
 				expect(contact).toBeDefined();
 
-				const getEvents = await testDb.adapter.findMany({
-					table: 'corsair_events',
-					where: [{ field: 'event_type', value: 'hubspot.contacts.get' }],
+				const getEvents = await orm.events.findMany({
+					where: { event_type: 'hubspot.contacts.get' },
 				});
 
 				expect(getEvents.length).toBeGreaterThan(0);
@@ -117,11 +117,8 @@ describe('HubSpot plugin integration', () => {
 
 		expect(createdContact).toBeDefined();
 
-		const createEvents = await testDb.adapter.findMany({
-			table: 'corsair_events',
-			where: [
-				{ field: 'event_type', value: 'hubspot.contacts.createOrUpdate' },
-			],
+		const createEvents = await orm.events.findMany({
+			where: { event_type: 'hubspot.contacts.createOrUpdate' },
 		});
 
 		expect(createEvents.length).toBeGreaterThan(0);
@@ -153,9 +150,8 @@ describe('HubSpot plugin integration', () => {
 
 			expect(searchResult).toBeDefined();
 
-			const searchEvents = await testDb.adapter.findMany({
-				table: 'corsair_events',
-				where: [{ field: 'event_type', value: 'hubspot.contacts.search' }],
+			const searchEvents = await orm.events.findMany({
+				where: { event_type: 'hubspot.contacts.search' },
 			});
 
 			expect(searchEvents.length).toBeGreaterThan(0);
@@ -177,14 +173,8 @@ describe('HubSpot plugin integration', () => {
 
 			expect(recentlyCreated).toBeDefined();
 
-			const recentlyCreatedEvents = await testDb.adapter.findMany({
-				table: 'corsair_events',
-				where: [
-					{
-						field: 'event_type',
-						value: 'hubspot.contacts.getRecentlyCreated',
-					},
-				],
+			const recentlyCreatedEvents = await orm.events.findMany({
+				where: { event_type: 'hubspot.contacts.getRecentlyCreated' },
 			});
 
 			expect(recentlyCreatedEvents.length).toBeGreaterThan(0);
@@ -207,14 +197,8 @@ describe('HubSpot plugin integration', () => {
 
 			expect(recentlyUpdated).toBeDefined();
 
-			const recentlyUpdatedEvents = await testDb.adapter.findMany({
-				table: 'corsair_events',
-				where: [
-					{
-						field: 'event_type',
-						value: 'hubspot.contacts.getRecentlyUpdated',
-					},
-				],
+			const recentlyUpdatedEvents = await orm.events.findMany({
+				where: { event_type: 'hubspot.contacts.getRecentlyUpdated' },
 			});
 
 			expect(recentlyUpdatedEvents.length).toBeGreaterThan(0);
@@ -251,9 +235,9 @@ describe('HubSpot plugin integration', () => {
 
 		expect(companiesList).toBeDefined();
 
-		const listEvents = await testDb.adapter.findMany({
-			table: 'corsair_events',
-			where: [{ field: 'event_type', value: 'hubspot.companies.getMany' }],
+		const orm = createCorsairOrm(testDb.database);
+		const listEvents = await orm.events.findMany({
+			where: { event_type: 'hubspot.companies.getMany' },
 		});
 
 		expect(listEvents.length).toBeGreaterThan(0);
@@ -278,9 +262,8 @@ describe('HubSpot plugin integration', () => {
 
 				expect(company).toBeDefined();
 
-				const getEvents = await testDb.adapter.findMany({
-					table: 'corsair_events',
-					where: [{ field: 'event_type', value: 'hubspot.companies.get' }],
+				const getEvents = await orm.events.findMany({
+					where: { event_type: 'hubspot.companies.get' },
 				});
 
 				expect(getEvents.length).toBeGreaterThan(0);
@@ -313,9 +296,8 @@ describe('HubSpot plugin integration', () => {
 
 		expect(createdCompany).toBeDefined();
 
-		const createEvents = await testDb.adapter.findMany({
-			table: 'corsair_events',
-			where: [{ field: 'event_type', value: 'hubspot.companies.create' }],
+		const createEvents = await orm.events.findMany({
+			where: { event_type: 'hubspot.companies.create' },
 		});
 
 		expect(createEvents.length).toBeGreaterThan(0);
@@ -349,9 +331,8 @@ describe('HubSpot plugin integration', () => {
 
 			expect(updatedCompany).toBeDefined();
 
-			const updateEvents = await testDb.adapter.findMany({
-				table: 'corsair_events',
-				where: [{ field: 'event_type', value: 'hubspot.companies.update' }],
+			const updateEvents = await orm.events.findMany({
+				where: { event_type: 'hubspot.companies.update' },
 			});
 
 			expect(updateEvents.length).toBeGreaterThan(0);
@@ -373,14 +354,8 @@ describe('HubSpot plugin integration', () => {
 
 			expect(recentlyCreated).toBeDefined();
 
-			const recentlyCreatedEvents = await testDb.adapter.findMany({
-				table: 'corsair_events',
-				where: [
-					{
-						field: 'event_type',
-						value: 'hubspot.companies.getRecentlyCreated',
-					},
-				],
+			const recentlyCreatedEvents = await orm.events.findMany({
+				where: { event_type: 'hubspot.companies.getRecentlyCreated' },
 			});
 
 			expect(recentlyCreatedEvents.length).toBeGreaterThan(0);
@@ -403,14 +378,8 @@ describe('HubSpot plugin integration', () => {
 
 			expect(recentlyUpdated).toBeDefined();
 
-			const recentlyUpdatedEvents = await testDb.adapter.findMany({
-				table: 'corsair_events',
-				where: [
-					{
-						field: 'event_type',
-						value: 'hubspot.companies.getRecentlyUpdated',
-					},
-				],
+			const recentlyUpdatedEvents = await orm.events.findMany({
+				where: { event_type: 'hubspot.companies.getRecentlyUpdated' },
 			});
 
 			expect(recentlyUpdatedEvents.length).toBeGreaterThan(0);
@@ -446,9 +415,9 @@ describe('HubSpot plugin integration', () => {
 
 		expect(dealsList).toBeDefined();
 
-		const listEvents = await testDb.adapter.findMany({
-			table: 'corsair_events',
-			where: [{ field: 'event_type', value: 'hubspot.deals.getMany' }],
+		const orm = createCorsairOrm(testDb.database);
+		const listEvents = await orm.events.findMany({
+			where: { event_type: 'hubspot.deals.getMany' },
 		});
 
 		expect(listEvents.length).toBeGreaterThan(0);
@@ -473,9 +442,8 @@ describe('HubSpot plugin integration', () => {
 
 				expect(deal).toBeDefined();
 
-				const getEvents = await testDb.adapter.findMany({
-					table: 'corsair_events',
-					where: [{ field: 'event_type', value: 'hubspot.deals.get' }],
+				const getEvents = await orm.events.findMany({
+					where: { event_type: 'hubspot.deals.get' },
 				});
 
 				expect(getEvents.length).toBeGreaterThan(0);
@@ -509,9 +477,8 @@ describe('HubSpot plugin integration', () => {
 
 		expect(createdDeal).toBeDefined();
 
-		const createEvents = await testDb.adapter.findMany({
-			table: 'corsair_events',
-			where: [{ field: 'event_type', value: 'hubspot.deals.create' }],
+		const createEvents = await orm.events.findMany({
+			where: { event_type: 'hubspot.deals.create' },
 		});
 
 		expect(createEvents.length).toBeGreaterThan(0);
@@ -544,9 +511,8 @@ describe('HubSpot plugin integration', () => {
 
 			expect(updatedDeal).toBeDefined();
 
-			const updateEvents = await testDb.adapter.findMany({
-				table: 'corsair_events',
-				where: [{ field: 'event_type', value: 'hubspot.deals.update' }],
+			const updateEvents = await orm.events.findMany({
+				where: { event_type: 'hubspot.deals.update' },
 			});
 
 			expect(updateEvents.length).toBeGreaterThan(0);
@@ -566,9 +532,8 @@ describe('HubSpot plugin integration', () => {
 
 			expect(searchResult).toBeDefined();
 
-			const searchEvents = await testDb.adapter.findMany({
-				table: 'corsair_events',
-				where: [{ field: 'event_type', value: 'hubspot.deals.search' }],
+			const searchEvents = await orm.events.findMany({
+				where: { event_type: 'hubspot.deals.search' },
 			});
 
 			expect(searchEvents.length).toBeGreaterThan(0);
@@ -612,9 +577,9 @@ describe('HubSpot plugin integration', () => {
 
 		expect(ticketsList).toBeDefined();
 
-		const listEvents = await testDb.adapter.findMany({
-			table: 'corsair_events',
-			where: [{ field: 'event_type', value: 'hubspot.tickets.getMany' }],
+		const orm = createCorsairOrm(testDb.database);
+		const listEvents = await orm.events.findMany({
+			where: { event_type: 'hubspot.tickets.getMany' },
 		});
 
 		expect(listEvents.length).toBeGreaterThan(0);
@@ -639,9 +604,8 @@ describe('HubSpot plugin integration', () => {
 
 				expect(ticket).toBeDefined();
 
-				const getEvents = await testDb.adapter.findMany({
-					table: 'corsair_events',
-					where: [{ field: 'event_type', value: 'hubspot.tickets.get' }],
+				const getEvents = await orm.events.findMany({
+					where: { event_type: 'hubspot.tickets.get' },
 				});
 
 				expect(getEvents.length).toBeGreaterThan(0);
@@ -683,9 +647,8 @@ describe('HubSpot plugin integration', () => {
 
 		expect(createdTicket).toBeDefined();
 
-		const createEvents = await testDb.adapter.findMany({
-			table: 'corsair_events',
-			where: [{ field: 'event_type', value: 'hubspot.tickets.create' }],
+		const createEvents = await orm.events.findMany({
+			where: { event_type: 'hubspot.tickets.create' },
 		});
 
 		expect(createEvents.length).toBeGreaterThan(0);
@@ -719,9 +682,8 @@ describe('HubSpot plugin integration', () => {
 
 			expect(updatedTicket).toBeDefined();
 
-			const updateEvents = await testDb.adapter.findMany({
-				table: 'corsair_events',
-				where: [{ field: 'event_type', value: 'hubspot.tickets.update' }],
+			const updateEvents = await orm.events.findMany({
+				where: { event_type: 'hubspot.tickets.update' },
 			});
 
 			expect(updateEvents.length).toBeGreaterThan(0);
@@ -757,9 +719,9 @@ describe('HubSpot plugin integration', () => {
 
 		expect(engagementsList).toBeDefined();
 
-		const listEvents = await testDb.adapter.findMany({
-			table: 'corsair_events',
-			where: [{ field: 'event_type', value: 'hubspot.engagements.getMany' }],
+		const orm = createCorsairOrm(testDb.database);
+		const listEvents = await orm.events.findMany({
+			where: { event_type: 'hubspot.engagements.getMany' },
 		});
 
 		expect(listEvents.length).toBeGreaterThan(0);
@@ -784,9 +746,8 @@ describe('HubSpot plugin integration', () => {
 
 				expect(engagement).toBeDefined();
 
-				const getEvents = await testDb.adapter.findMany({
-					table: 'corsair_events',
-					where: [{ field: 'event_type', value: 'hubspot.engagements.get' }],
+				const getEvents = await orm.events.findMany({
+					where: { event_type: 'hubspot.engagements.get' },
 				});
 
 				expect(getEvents.length).toBeGreaterThan(0);
@@ -845,9 +806,8 @@ describe('HubSpot plugin integration', () => {
 
 		expect(createdEngagement).toBeDefined();
 
-		const createEvents = await testDb.adapter.findMany({
-			table: 'corsair_events',
-			where: [{ field: 'event_type', value: 'hubspot.engagements.create' }],
+		const createEvents = await orm.events.findMany({
+			where: { event_type: 'hubspot.engagements.create' },
 		});
 
 		expect(createEvents.length).toBeGreaterThan(0);
