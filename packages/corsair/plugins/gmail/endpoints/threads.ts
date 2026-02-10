@@ -102,8 +102,8 @@ export const modify: GmailEndpoints['threadsModify'] = async (ctx, input) => {
 	);
 
 	if (result.id) {
-		const endpoints = ctx.endpoints as any;
-		await endpoints.threads?.get({ id: result.id, userId: input.userId });
+		const endpoints = ctx.endpoints as GmailBoundEndpoints;
+		await endpoints.threads.get({ id: result.id, userId: input.userId });
 	}
 
 	await logEventFromContext(
@@ -153,8 +153,8 @@ export const trash: GmailEndpoints['threadsTrash'] = async (ctx, input) => {
 	);
 
 	if (result.id) {
-		const endpoints = ctx.endpoints as any;
-		await endpoints.threads?.get({ id: result.id, userId: input.userId });
+		const endpoints = ctx.endpoints as GmailBoundEndpoints;
+		await endpoints.threads.get({ id: result.id, userId: input.userId });
 	}
 
 	await logEventFromContext(
@@ -176,8 +176,8 @@ export const untrash: GmailEndpoints['threadsUntrash'] = async (ctx, input) => {
 	);
 
 	if (result.id) {
-		const endpoints = ctx.endpoints as any;
-		await endpoints.threads?.get({ id: result.id, userId: input.userId });
+		const endpoints = ctx.endpoints as GmailBoundEndpoints;
+		await endpoints.threads.get({ id: result.id, userId: input.userId });
 	}
 
 	await logEventFromContext(

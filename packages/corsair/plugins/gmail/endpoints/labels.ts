@@ -80,8 +80,8 @@ export const create: GmailEndpoints['labelsCreate'] = async (ctx, input) => {
 	);
 
 	if (result.id) {
-		const endpoints = ctx.endpoints as any;
-		await endpoints.labels?.get({ id: result.id, userId: input.userId });
+		const endpoints = ctx.endpoints as GmailBoundEndpoints;
+		await endpoints.labels.get({ id: result.id, userId: input.userId });
 	}
 
 	await logEventFromContext(
@@ -104,8 +104,8 @@ export const update: GmailEndpoints['labelsUpdate'] = async (ctx, input) => {
 	);
 
 	if (result.id) {
-		const endpoints = ctx.endpoints as any;
-		await endpoints.labels?.get({ id: result.id, userId: input.userId });
+		const endpoints = ctx.endpoints as GmailBoundEndpoints;
+		await endpoints.labels.get({ id: result.id, userId: input.userId });
 	}
 
 	await logEventFromContext(

@@ -177,8 +177,8 @@ export const send: GmailEndpoints['messagesSend'] = async (ctx, input) => {
 	);
 
 	if (result.id) {
-		const endpoints = ctx.endpoints as any;
-		await endpoints.messages?.get({ id: result.id, userId: input.userId });
+		const endpoints = ctx.endpoints as GmailBoundEndpoints;
+		await endpoints.messages.get({ id: result.id, userId: input.userId });
 	}
 
 	await logEventFromContext(
@@ -242,8 +242,8 @@ export const modify: GmailEndpoints['messagesModify'] = async (ctx, input) => {
 	);
 
 	if (result.id) {
-		const endpoints = ctx.endpoints as any;
-		await endpoints.messages?.get({ id: result.id, userId: input.userId });
+		const endpoints = ctx.endpoints as GmailBoundEndpoints;
+		await endpoints.messages.get({ id: result.id, userId: input.userId });
 	}
 
 	await logEventFromContext(
@@ -326,8 +326,8 @@ export const untrash: GmailEndpoints['messagesUntrash'] = async (
 	});
 
 	if (result.id) {
-		const endpoints = ctx.endpoints as any;
-		await endpoints.messages?.get({ id: result.id, userId: input.userId });
+		const endpoints = ctx.endpoints as GmailBoundEndpoints;
+		await endpoints.messages.get({ id: result.id, userId: input.userId });
 	}
 
 	await logEventFromContext(

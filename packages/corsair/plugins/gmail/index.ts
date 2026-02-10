@@ -273,7 +273,7 @@ export type GmailEndpoints = {
 	>;
 };
 
-export type GmailBoundEndpoints = BindEndpoints<GmailEndpoints>;
+export type GmailBoundEndpoints = BindEndpoints<typeof gmailEndpointsNested>;
 
 type GmailWebhook<K extends keyof GmailWebhookOutputs, TEvent> = CorsairWebhook<
 	GmailContext,
@@ -290,7 +290,7 @@ export type GmailWebhooks = {
 	>;
 };
 
-export type GmailBoundWebhooks = BindWebhooks<GmailWebhooks>;
+export type GmailBoundWebhooks = BindWebhooks<typeof gmailWebhooksNested>;
 
 const gmailEndpointsNested = {
 	messages: {
