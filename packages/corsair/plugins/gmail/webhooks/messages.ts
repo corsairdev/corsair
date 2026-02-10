@@ -1,10 +1,8 @@
 import type {
-	CorsairWebhookMatcher,
-	RawWebhookRequest,
 	WebhookRequest,
 } from '../../../core/webhooks';
 import { logEventFromContext } from '../../utils/events';
-import type { GmailContext } from '..';
+import type { GmailContext, GmailWebhooks } from '..';
 import { makeGmailRequest } from '../client';
 import type { HistoryListResponse, Message, MessagePart } from '../types';
 import type {
@@ -14,6 +12,7 @@ import type {
 	MessageReceivedEvent,
 	PubSubNotification,
 } from './types';
+import { createGmailWebhookMatcher, decodePubSubMessage } from './types';
 
 function getHeaderValue(
 	part: MessagePart | undefined,
@@ -91,10 +90,6 @@ function extractBody(message: Message): string | undefined {
 	return extractBodyText(message.payload);
 }
 
-function decodePubSubMessage(data: string): GmailPushNotification {
-	const decodedData = Buffer.from(data, 'base64').toString('utf-8');
-	return JSON.parse(decodedData);
-}
 
 function extractMessageIds(history: HistoryListResponse['history']): {
 	added: string[];
@@ -257,24 +252,11 @@ async function enrichMessageWithAttachments(
 	};
 }
 
-export const messageReceived = {
-	match: ((request: RawWebhookRequest) => {
-		const body = request.body as PubSubNotification;
-		if (!body.message?.data) {
-			return false;
-		}
-
-		try {
-			const pushNotification = decodePubSubMessage(body.message.data!);
-			return !!pushNotification.historyId && !!pushNotification.emailAddress;
-		} catch {
-			return false;
-		}
-	}) as CorsairWebhookMatcher,
-
+export const messageReceived: GmailWebhooks['messageReceived'] = {
+	match: createGmailWebhookMatcher('messageReceived'),
 	handler: async (
-		ctx: GmailContext,
-		request: WebhookRequest<PubSubNotification>,
+		ctx,
+		request
 	) => {
 		const body = request.payload as PubSubNotification;
 
@@ -282,7 +264,6 @@ export const messageReceived = {
 			return {
 				success: false,
 				error: 'No message data in notification',
-				data: { success: false },
 			};
 		}
 
@@ -292,7 +273,6 @@ export const messageReceived = {
 			return {
 				success: false,
 				error: 'Invalid push notification format',
-				data: { success: false },
 			};
 		}
 
@@ -473,24 +453,11 @@ export const messageReceived = {
 	},
 };
 
-export const messageDeleted = {
-	match: ((request: RawWebhookRequest) => {
-		const body = request.body as PubSubNotification;
-		if (!body.message?.data) {
-			return false;
-		}
-
-		try {
-			const pushNotification = decodePubSubMessage(body.message.data!);
-			return !!pushNotification.historyId && !!pushNotification.emailAddress;
-		} catch {
-			return false;
-		}
-	}) as CorsairWebhookMatcher,
-
+export const messageDeleted: GmailWebhooks['messageDeleted'] = {
+	match: createGmailWebhookMatcher('messageDeleted'),
 	handler: async (
-		ctx: GmailContext,
-		request: WebhookRequest<PubSubNotification>,
+		ctx,
+		request
 	) => {
 		const body = request.payload as PubSubNotification;
 
@@ -498,7 +465,6 @@ export const messageDeleted = {
 			return {
 				success: false,
 				error: 'No message data in notification',
-				data: { success: false },
 			};
 		}
 
@@ -508,7 +474,6 @@ export const messageDeleted = {
 			return {
 				success: false,
 				error: 'Invalid push notification format',
-				data: { success: false },
 			};
 		}
 
@@ -638,24 +603,11 @@ export const messageDeleted = {
 	},
 };
 
-export const messageLabelChanged = {
-	match: ((request: RawWebhookRequest) => {
-		const body = request.body as PubSubNotification;
-		if (!body.message?.data) {
-			return false;
-		}
-
-		try {
-			const pushNotification = decodePubSubMessage(body.message.data!);
-			return !!pushNotification.historyId && !!pushNotification.emailAddress;
-		} catch {
-			return false;
-		}
-	}) as CorsairWebhookMatcher,
-
+export const messageLabelChanged: GmailWebhooks['messageLabelChanged'] = {
+	match: createGmailWebhookMatcher('messageLabelChanged'),
 	handler: async (
-		ctx: GmailContext,
-		request: WebhookRequest<PubSubNotification>,
+		ctx,
+		request
 	) => {
 		const body = request.payload as PubSubNotification;
 
@@ -663,7 +615,6 @@ export const messageLabelChanged = {
 			return {
 				success: false,
 				error: 'No message data in notification',
-				data: { success: false },
 			};
 		}
 
@@ -673,7 +624,6 @@ export const messageLabelChanged = {
 			return {
 				success: false,
 				error: 'Invalid push notification format',
-				data: { success: false },
 			};
 		}
 

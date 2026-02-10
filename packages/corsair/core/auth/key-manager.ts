@@ -20,6 +20,18 @@ import type {
 // Integration Key Manager Factory
 // ─────────────────────────────────────────────────────────────────────────────
 
+const parseConfig = (config: unknown): Record<string, unknown> => {
+	if (!config) return {};
+	if (typeof config === 'string') {
+		try {
+			return JSON.parse(config);
+		} catch {
+			return {};
+		}
+	}
+	return config as Record<string, unknown>;
+};
+	
 export type IntegrationKeyManagerOptions<T extends AuthTypes> = {
 	authType: T;
 	integrationName: string;
@@ -67,7 +79,7 @@ export function createIntegrationKeyManager<T extends AuthTypes>(
 
 			cachedIntegration = {
 				id: integration.id,
-				config: (integration.config ?? {}) as Record<string, unknown>,
+				config: parseConfig(integration.config),
 				dek: integration.dek ?? null,
 			};
 
@@ -165,7 +177,7 @@ export function createAccountKeyManager<T extends AuthTypes>(
 
 		cachedIntegration = {
 			id: integration.id,
-			config: (integration.config ?? {}) as Record<string, unknown>,
+			config: parseConfig(integration.config),
 			dek: integration.dek ?? null,
 		};
 
@@ -199,7 +211,7 @@ export function createAccountKeyManager<T extends AuthTypes>(
 
 			cachedAccount = {
 				id: account.id,
-				config: (account.config ?? {}) as Record<string, unknown>,
+				config: parseConfig(account.config),
 				dek: account.dek ?? null,
 			};
 
