@@ -21,12 +21,6 @@ async function createGoogleDriveClient() {
 		plugins: [
 			googledrive({
 				authType: 'oauth_2',
-				credentials: {
-					clientId,
-					clientSecret,
-					accessToken,
-					refreshToken,
-				},
 			}),
 		],
 		database: testDb.adapter,

@@ -21,12 +21,6 @@ async function createGoogleCalendarClient() {
 		plugins: [
 			googlecalendar({
 				authType: 'oauth_2',
-				credentials: {
-					clientId,
-					clientSecret,
-					accessToken,
-					refreshToken,
-				},
 			}),
 		],
 		database: testDb.adapter,

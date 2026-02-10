@@ -21,12 +21,6 @@ async function createGoogleSheetsClient() {
 		plugins: [
 			googlesheets({
 				authType: 'oauth_2',
-				credentials: {
-					clientId,
-					clientSecret,
-					accessToken,
-					refreshToken,
-				},
 			}),
 		],
 		database: testDb.adapter,
