@@ -15,7 +15,7 @@ import type {
 
 dotenv.config();
 
-const TEST_TOKEN = process.env.GMAIL_ACCESS_TOKEN!;
+const TEST_TOKEN = process.env.GOOGLE_ACCESS_TOKEN!;
 const TEST_EMAIL = 'mukulydv15@gmail.com';
 
 function createRawEmailMessage(
