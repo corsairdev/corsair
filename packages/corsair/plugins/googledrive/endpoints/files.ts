@@ -133,7 +133,7 @@ export const createFromText: GoogleDriveEndpoints['filesCreateFromText'] = async
 
 	if (result.id) {
 		const endpoints = ctx.endpoints as GoogleDriveBoundEndpoints;
-		await endpoints.filesGet({ fileId: result.id });
+		await endpoints.files.get({ fileId: result.id });
 	}
 
 	await logEventFromContext(
@@ -169,7 +169,7 @@ export const upload: GoogleDriveEndpoints['filesUpload'] = async (ctx, input) =>
 
 	if (result.id) {
 		const endpoints = ctx.endpoints as GoogleDriveBoundEndpoints;
-		await endpoints.filesGet({ fileId: result.id });
+		await endpoints.files.get({ fileId: result.id });
 	}
 
 	await logEventFromContext(
@@ -207,7 +207,7 @@ export const update: GoogleDriveEndpoints['filesUpdate'] = async (ctx, input) =>
 
 	if (result.id) {
 		const endpoints = ctx.endpoints as GoogleDriveBoundEndpoints;
-		await endpoints.filesGet({ fileId: result.id });
+		await endpoints.files.get({ fileId: result.id });
 	}
 
 	await logEventFromContext(
@@ -267,7 +267,7 @@ export const copy: GoogleDriveEndpoints['filesCopy'] = async (ctx, input) => {
 
 	if (result.id) {
 		const endpoints = ctx.endpoints as GoogleDriveBoundEndpoints;
-		await endpoints.filesGet({ fileId: result.id });
+		await endpoints.files.get({ fileId: result.id });
 	}
 
 	await logEventFromContext(
@@ -297,7 +297,7 @@ export const move: GoogleDriveEndpoints['filesMove'] = async (ctx, input) => {
 
 	if (result.id) {
 		const endpoints = ctx.endpoints as GoogleDriveBoundEndpoints;
-		await endpoints.filesGet({ fileId: result.id });
+		await endpoints.files.get({ fileId: result.id });
 	}
 
 	await logEventFromContext(

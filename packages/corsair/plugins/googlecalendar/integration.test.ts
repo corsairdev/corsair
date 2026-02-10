@@ -1,0 +1,206 @@
+import { createCorsair } from '../../core';
+import { createIntegrationAndAccount } from '../../tests/plugins-test-utils';
+import { createTestDatabase } from '../../tests/setup-db';
+import { googlecalendar } from './index';
+import dotenv from 'dotenv';
+dotenv.config();
+
+async function createGoogleCalendarClient() {
+	const clientId = process.env.GOOGLE_CLIENT_ID;
+	const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
+	const accessToken = process.env.GOOGLE_ACCESS_TOKEN;
+	const refreshToken = process.env.GOOGLE_REFRESH_TOKEN;
+	if (!clientId || !clientSecret || !accessToken || !refreshToken) {
+		return null;
+	}
+
+	const testDb = createTestDatabase();
+	await createIntegrationAndAccount(testDb.adapter, 'googlecalendar');
+
+	const corsair = createCorsair({
+		plugins: [
+			googlecalendar({
+				authType: 'oauth_2',
+				credentials: {
+					clientId,
+					clientSecret,
+					accessToken,
+					refreshToken,
+				},
+			}),
+		],
+		database: testDb.adapter,
+		kek: process.env.CORSAIR_KEK!,
+	});
+
+	await corsair.keys.googlecalendar.issueNewDEK();
+	await corsair.keys.googlecalendar.setClientId(clientId);
+	await corsair.keys.googlecalendar.setClientSecret(clientSecret);
+
+	await corsair.googlecalendar.keys.issueNewDEK();
+	await corsair.googlecalendar.keys.setAccessToken(accessToken);
+	await corsair.googlecalendar.keys.setRefreshToken(refreshToken);
+
+	return { corsair, testDb };
+}
+
+function createTestEvent(summary: string) {
+	const now = new Date();
+	const start = new Date(now.getTime() + 60 * 60 * 1000);
+	const end = new Date(start.getTime() + 60 * 60 * 1000);
+
+	return {
+		summary,
+		description: `Test event created by integration test at ${now.toISOString()}`,
+		start: {
+			dateTime: start.toISOString(),
+			timeZone: 'UTC',
+		},
+		end: {
+			dateTime: end.toISOString(),
+			timeZone: 'UTC',
+		},
+	};
+}
+
+describe('Google Calendar plugin integration', () => {
+	it('events endpoints interact with API and DB', async () => {
+		const setup = await createGoogleCalendarClient();
+		if (!setup) {
+			return;
+		}
+
+		const { corsair, testDb } = setup;
+
+		const testEvent = createTestEvent(`Test Event ${Date.now()}`);
+
+		const createResponse = await corsair.googlecalendar.api.events.create({
+			event: testEvent,
+		});
+
+		expect(createResponse).toBeDefined();
+		expect(createResponse.id).toBeDefined();
+
+		const createEvents = await testDb.adapter.findMany({
+			table: 'corsair_events',
+			where: [{ field: 'event_type', value: 'googlecalendar.events.create' }],
+		});
+
+		expect(createEvents.length).toBeGreaterThan(0);
+
+		if (createResponse.id) {
+			const eventId = createResponse.id;
+
+			const getResponse = await corsair.googlecalendar.api.events.get({
+				id: eventId,
+			});
+
+			expect(getResponse).toBeDefined();
+
+			const getEvents = await testDb.adapter.findMany({
+				table: 'corsair_events',
+				where: [{ field: 'event_type', value: 'googlecalendar.events.get' }],
+			});
+
+			expect(getEvents.length).toBeGreaterThan(0);
+
+			const updatedEvent = {
+				...testEvent,
+				summary: `Updated Test Event ${Date.now()}`,
+			};
+
+			const updateResponse = await corsair.googlecalendar.api.events.update({
+				id: eventId,
+				event: updatedEvent,
+			});
+
+			expect(updateResponse).toBeDefined();
+
+			const updateEvents = await testDb.adapter.findMany({
+				table: 'corsair_events',
+				where: [{ field: 'event_type', value: 'googlecalendar.events.update' }],
+			});
+
+			expect(updateEvents.length).toBeGreaterThan(0);
+
+			await corsair.googlecalendar.api.events.delete({
+				id: eventId,
+			});
+
+			const deleteEvents = await testDb.adapter.findMany({
+				table: 'corsair_events',
+				where: [{ field: 'event_type', value: 'googlecalendar.events.delete' }],
+			});
+
+			expect(deleteEvents.length).toBeGreaterThan(0);
+		}
+
+		testDb.cleanup();
+	});
+
+	it('eventsGetMany endpoint reaches API', async () => {
+		const setup = await createGoogleCalendarClient();
+		if (!setup) {
+			return;
+		}
+
+		const { corsair, testDb } = setup;
+
+		const now = new Date();
+		const timeMin = now.toISOString();
+		const timeMax = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000).toISOString();
+
+		const getManyResponse = await corsair.googlecalendar.api.events.getMany({
+			timeMin,
+			timeMax,
+			maxResults: 10,
+		});
+
+		expect(getManyResponse).toBeDefined();
+
+		const getManyEvents = await testDb.adapter.findMany({
+			table: 'corsair_events',
+			where: [{ field: 'event_type', value: 'googlecalendar.events.getMany' }],
+		});
+
+		expect(getManyEvents.length).toBeGreaterThan(0);
+
+		testDb.cleanup();
+	});
+
+	it('calendarGetAvailability endpoint reaches API', async () => {
+		const setup = await createGoogleCalendarClient();
+		if (!setup) {
+			return;
+		}
+
+		const { corsair, testDb } = setup;
+
+		const now = new Date();
+		const timeMin = now.toISOString();
+		const timeMax = new Date(now.getTime() + 24 * 60 * 60 * 1000).toISOString();
+
+		const availabilityResponse =
+			await corsair.googlecalendar.api.calendar.getAvailability({
+				timeMin,
+				timeMax,
+				items: [{ id: 'primary' }],
+			});
+
+		expect(availabilityResponse).toBeDefined();
+
+		const availabilityEvents = await testDb.adapter.findMany({
+			table: 'corsair_events',
+			where: [
+				{
+					field: 'event_type',
+					value: 'googlecalendar.calendar.getAvailability',
+				},
+			],
+		});
+
+		expect(availabilityEvents.length).toBeGreaterThan(0);
+
+		testDb.cleanup();
+	});
+});

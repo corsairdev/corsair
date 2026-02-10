@@ -16,6 +16,7 @@ export function createIntegrationAndAccount(
 				updated_at: now,
 				name: pluginId,
 				config: JSON.stringify({}),
+				dek: null,
 			},
 		})
 		.then(() =>
@@ -28,6 +29,7 @@ export function createIntegrationAndAccount(
 					tenant_id: tenantId,
 					integration_id: integrationId,
 					config: JSON.stringify({}),
+					dek: null,
 				},
 			}),
 		);

@@ -11,7 +11,7 @@ import type {
 
 dotenv.config();
 
-const TEST_TOKEN = process.env.GOOGLE_SHEETS_ACCESS_TOKEN!;
+const TEST_TOKEN = process.env.GOOGLE_ACCESS_TOKEN!;
 const TEST_SPREADSHEET_ID = process.env.GOOGLE_SHEETS_TEST_SPREADSHEET_ID;
 
 async function listSpreadsheets(accessToken: string): Promise<string | null> {

@@ -284,7 +284,7 @@ export type GoogleDriveEndpoints = {
 	>;
 };
 
-export type GoogleDriveBoundEndpoints = BindEndpoints<GoogleDriveEndpoints>;
+export type GoogleDriveBoundEndpoints = BindEndpoints<typeof googleDriveEndpointsNested>;
 
 type GoogleDriveWebhook<K extends keyof GoogleDriveWebhookOutputs, TEvent> = CorsairWebhook<
 	GoogleDriveContext,

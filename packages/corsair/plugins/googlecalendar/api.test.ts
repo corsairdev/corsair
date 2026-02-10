@@ -9,7 +9,7 @@ import type {
 
 dotenv.config();
 
-const TEST_TOKEN = process.env.GOOGLE_CALENDAR_ACCESS_TOKEN!;
+const TEST_TOKEN = process.env.GOOGLE_ACCESS_TOKEN!;
 const TEST_CALENDAR_ID = 'primary';
 
 function createTestEvent(summary: string): Partial<Event> {

@@ -2,12 +2,14 @@ import { createCorsair } from '../../core';
 import { createIntegrationAndAccount } from '../../tests/plugins-test-utils';
 import { createTestDatabase } from '../../tests/setup-db';
 import { gmail } from './index';
+import dotenv from 'dotenv';
+dotenv.config();
 
 async function createGmailClient() {
-	const clientId = process.env.GMAIL_CLIENT_ID;
-	const clientSecret = process.env.GMAIL_CLIENT_SECRET;
-	const accessToken = process.env.GMAIL_ACCESS_TOKEN;
-	const refreshToken = process.env.GMAIL_REFRESH_TOKEN;
+	const clientId = process.env.GOOGLE_CLIENT_ID;
+	const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
+	const accessToken = process.env.GOOGLE_ACCESS_TOKEN;
+	const refreshToken = process.env.GOOGLE_REFRESH_TOKEN;
 	if (!clientId || !clientSecret || !accessToken || !refreshToken) {
 		return null;
 	}
@@ -30,6 +32,14 @@ async function createGmailClient() {
 		database: testDb.adapter,
 		kek: process.env.CORSAIR_KEK!,
 	});
+
+	await corsair.keys.gmail.issueNewDEK();
+	await corsair.keys.gmail.setClientId(clientId);
+	await corsair.keys.gmail.setClientSecret(clientSecret);
+
+	await corsair.gmail.keys.issueNewDEK();
+	await corsair.gmail.keys.setAccessToken(accessToken);
+	await corsair.gmail.keys.setRefreshToken(refreshToken);
 
 	return { corsair, testDb };
 }
@@ -78,8 +88,13 @@ describe('Gmail plugin integration', () => {
 			await corsair.gmail.api.messages.modify({
 				userId: 'me',
 				id,
-				addLabelIds: [],
-				removeLabelIds: [],
+				addLabelIds: ['STARRED'],
+			});
+
+			await corsair.gmail.api.messages.modify({
+				userId: 'me',
+				id,
+				removeLabelIds: ['STARRED'],
 			});
 
 			const modifyEvents = await testDb.adapter.findMany({

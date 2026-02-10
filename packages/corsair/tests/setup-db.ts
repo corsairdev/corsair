@@ -16,7 +16,8 @@ export function createTestDatabase(): {
 			created_at INTEGER NOT NULL,
 			updated_at INTEGER NOT NULL,
 			name TEXT NOT NULL,
-			config TEXT NOT NULL
+			config TEXT NOT NULL,
+			dek TEXT NULL
 		);
 
 		CREATE TABLE IF NOT EXISTS corsair_accounts (
@@ -25,7 +26,8 @@ export function createTestDatabase(): {
 			updated_at INTEGER NOT NULL,
 			tenant_id TEXT NOT NULL,
 			integration_id TEXT NOT NULL,
-			config TEXT NOT NULL
+			config TEXT NOT NULL,
+			dek TEXT NULL
 		);
 
 		CREATE TABLE IF NOT EXISTS corsair_entities (

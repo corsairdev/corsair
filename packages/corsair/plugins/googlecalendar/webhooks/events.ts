@@ -97,7 +97,7 @@ export const onEventCreated = {
 		const resourceUri = pushNotification.resourceUri;
 		const calendarIdMatch = resourceUri.match(/\/calendars\/([^\/]+)\/events\/(.+)/);
 		
-		if (!calendarIdMatch) {
+		if (!calendarIdMatch || !calendarIdMatch[1] || !calendarIdMatch[2]) {
 			return {
 				success: false,
 				error: 'Could not parse calendar ID and event ID from resource URI',
@@ -197,7 +197,7 @@ export const onEventUpdated = {
 		const resourceUri = pushNotification.resourceUri;
 		const calendarIdMatch = resourceUri.match(/\/calendars\/([^\/]+)\/events\/(.+)/);
 		
-		if (!calendarIdMatch) {
+		if (!calendarIdMatch || !calendarIdMatch[1] || !calendarIdMatch[2]) {
 			return {
 				success: false,
 				error: 'Could not parse calendar ID and event ID from resource URI',
@@ -295,7 +295,7 @@ export const onEventDeleted = {
 		const resourceUri = pushNotification.resourceUri;
 		const calendarIdMatch = resourceUri.match(/\/calendars\/([^\/]+)\/events\/(.+)/);
 		
-		if (!calendarIdMatch) {
+		if (!calendarIdMatch || !calendarIdMatch[1] || !calendarIdMatch[2]) {
 			return {
 				success: false,
 				error: 'Could not parse calendar ID and event ID from resource URI',
@@ -378,7 +378,7 @@ export const onEventStarted = {
 		const resourceUri = pushNotification.resourceUri;
 		const calendarIdMatch = resourceUri.match(/\/calendars\/([^\/]+)\/events\/(.+)/);
 		
-		if (!calendarIdMatch) {
+		if (!calendarIdMatch || !calendarIdMatch[1] || !calendarIdMatch[2]) {
 			return {
 				success: false,
 				error: 'Could not parse calendar ID and event ID from resource URI',
@@ -471,7 +471,7 @@ export const onEventEnded = {
 		const resourceUri = pushNotification.resourceUri;
 		const calendarIdMatch = resourceUri.match(/\/calendars\/([^\/]+)\/events\/(.+)/);
 		
-		if (!calendarIdMatch) {
+		if (!calendarIdMatch || !calendarIdMatch[1] || !calendarIdMatch[2]) {
 			return {
 				success: false,
 				error: 'Could not parse calendar ID and event ID from resource URI',
