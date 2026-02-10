@@ -1,29 +1,21 @@
 import type {
-	CorsairWebhookMatcher,
-	RawWebhookRequest,
 	WebhookRequest,
 } from '../../../core/webhooks';
 import { logEventFromContext } from '../../utils/events';
-import type { GoogleSheetsContext } from '..';
+import type { GoogleSheetsContext, GoogleSheetsWebhooks } from '..';
 import type {
 	GoogleAppsScriptWebhookPayload,
 	RowAddedEvent,
 	RowUpdatedEvent,
 	RowAddedOrUpdatedEvent,
 } from './types';
+import { createGoogleSheetsWebhookMatcher } from './types';
 
-export const rowAdded = {
-	match: ((request: RawWebhookRequest) => {
-		const body = request.body as GoogleAppsScriptWebhookPayload;
-		return (
-			body.eventType === 'rowAdded' ||
-			(body.spreadsheetId !== undefined && body.values !== undefined)
-		);
-	}) as CorsairWebhookMatcher,
-
+export const rowAdded: GoogleSheetsWebhooks['rowAdded'] = {
+	match: createGoogleSheetsWebhookMatcher('rowAdded'),
 	handler: async (
-		ctx: GoogleSheetsContext,
-		request: WebhookRequest<GoogleAppsScriptWebhookPayload>,
+		ctx,
+		request
 	) => {
 		const body = request.payload as GoogleAppsScriptWebhookPayload;
 
@@ -31,7 +23,6 @@ export const rowAdded = {
 			return {
 				success: false,
 				error: 'Missing required fields: spreadsheetId or values',
-				data: { success: false },
 			};
 		}
 
@@ -78,15 +69,11 @@ export const rowAdded = {
 	},
 };
 
-export const rowUpdated = {
-	match: ((request: RawWebhookRequest) => {
-		const body = request.body as GoogleAppsScriptWebhookPayload;
-		return body.eventType === 'rowUpdated';
-	}) as CorsairWebhookMatcher,
-
+export const rowUpdated: GoogleSheetsWebhooks['rowUpdated'] = {
+	match: createGoogleSheetsWebhookMatcher('rowUpdated'),
 	handler: async (
-		ctx: GoogleSheetsContext,
-		request: WebhookRequest<GoogleAppsScriptWebhookPayload>,
+		ctx,
+		request
 	) => {
 		const body = request.payload as GoogleAppsScriptWebhookPayload;
 
@@ -94,7 +81,6 @@ export const rowUpdated = {
 			return {
 				success: false,
 				error: 'Missing required fields: spreadsheetId or values',
-				data: { success: false },
 			};
 		}
 
@@ -141,18 +127,11 @@ export const rowUpdated = {
 	},
 };
 
-export const rowAddedOrUpdated = {
-	match: ((request: RawWebhookRequest) => {
-		const body = request.body as GoogleAppsScriptWebhookPayload;
-		return (
-			body.eventType === 'rowAddedOrUpdated' ||
-			(body.spreadsheetId !== undefined && body.values !== undefined)
-		);
-	}) as CorsairWebhookMatcher,
-
+export const rowAddedOrUpdated: GoogleSheetsWebhooks['rowAddedOrUpdated'] = {
+	match: createGoogleSheetsWebhookMatcher('rowAddedOrUpdated'),
 	handler: async (
-		ctx: GoogleSheetsContext,
-		request: WebhookRequest<GoogleAppsScriptWebhookPayload>,
+		ctx,
+		request
 	) => {
 		const body = request.payload as GoogleAppsScriptWebhookPayload;
 
@@ -160,7 +139,6 @@ export const rowAddedOrUpdated = {
 			return {
 				success: false,
 				error: 'Missing required fields: spreadsheetId or values',
-				data: { success: false },
 			};
 		}
 

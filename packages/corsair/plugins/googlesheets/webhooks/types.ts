@@ -1,3 +1,4 @@
+import type { CorsairWebhookMatcher, RawWebhookRequest } from '../../../core/webhooks';
 import type { ValueRange } from '../types';
 
 export type GoogleAppsScriptWebhookPayload = {
@@ -59,3 +60,16 @@ export type GoogleSheetsWebhookOutputs = {
 	rowUpdated: RowUpdatedEvent;
 	rowAddedOrUpdated: RowAddedOrUpdatedEvent;
 };
+
+function parseBody(body: unknown): unknown {
+	return typeof body === 'string' ? JSON.parse(body) : body;
+}
+export function createGoogleSheetsWebhookMatcher(eventType: GoogleSheetsEventName): CorsairWebhookMatcher {
+	return (request: RawWebhookRequest) => {
+		const body = parseBody(request.body) as Record<string, unknown>;
+		return (
+			body.eventType === eventType ||
+			(body.spreadsheetId !== undefined && body.values !== undefined)
+		);
+	};
+}

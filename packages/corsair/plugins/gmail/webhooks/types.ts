@@ -1,3 +1,4 @@
+import type { CorsairWebhookMatcher, RawWebhookRequest } from '../../../core/webhooks';
 import type { History, Message } from '../types';
 
 export type PubSubMessage = {
@@ -74,3 +75,24 @@ export type GmailWebhookOutputs = {
 	messageLabelChanged: MessageLabelChangedEvent;
 	history: HistoryEvent;
 };
+
+export function decodePubSubMessage(data: string): GmailPushNotification {
+	const decodedData = Buffer.from(data, 'base64').toString('utf-8');
+	return JSON.parse(decodedData);
+}
+
+export function createGmailWebhookMatcher(eventType: GmailEventName): CorsairWebhookMatcher {
+	return (request: RawWebhookRequest) => {
+		const body = request.body as PubSubNotification;
+		if (!body.message?.data) {
+			return false;
+		}
+
+		try {
+			const pushNotification = decodePubSubMessage(body.message.data!);
+			return !!pushNotification.historyId && !!pushNotification.emailAddress;
+		} catch {
+			return false;
+		}
+	};
+}

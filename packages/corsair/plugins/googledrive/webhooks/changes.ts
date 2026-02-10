@@ -1,10 +1,8 @@
 import type {
-	CorsairWebhookMatcher,
-	RawWebhookRequest,
 	WebhookRequest,
 } from '../../../core/webhooks';
 import { logEventFromContext } from '../../utils/events';
-import type { GoogleDriveContext } from '..';
+import type { GoogleDriveContext, GoogleDriveWebhooks } from '..';
 import { makeGoogleDriveRequest } from '../client';
 import type { Change, ChangeList, File } from '../types';
 import type {
@@ -13,11 +11,7 @@ import type {
 	GoogleDrivePushNotification,
 	PubSubNotification,
 } from './types';
-
-function decodePubSubMessage(data: string): GoogleDrivePushNotification {
-	const decodedData = Buffer.from(data, 'base64').toString('utf-8');
-	return JSON.parse(decodedData);
-}
+import { createGoogleDriveWebhookMatcher, decodePubSubMessage } from './types';
 
 async function fetchFile(
 	credentials: string,
@@ -51,24 +45,11 @@ async function fetchChanges(
 	});
 }
 
-export const fileChanged = {
-	match: ((request: RawWebhookRequest) => {
-		const body = request.body as PubSubNotification;
-		if (!body.message?.data) {
-			return false;
-		}
-
-		try {
-			const pushNotification = decodePubSubMessage(body.message.data!);
-			return !!pushNotification.resourceId && !!pushNotification.resourceUri;
-		} catch {
-			return false;
-		}
-	}) as CorsairWebhookMatcher,
-
+export const fileChanged: GoogleDriveWebhooks['fileChanged'] = {
+	match: createGoogleDriveWebhookMatcher('fileChanged'),
 	handler: async (
-		ctx: GoogleDriveContext,
-		request: WebhookRequest<PubSubNotification>,
+		ctx,
+		request
 	) => {
 		const body = request.payload as PubSubNotification;
 
@@ -76,7 +57,6 @@ export const fileChanged = {
 			return {
 				success: false,
 				error: 'No message data in notification',
-				data: { success: false },
 			};
 		}
 
@@ -86,7 +66,6 @@ export const fileChanged = {
 			return {
 				success: false,
 				error: 'Invalid push notification format',
-				data: { success: false },
 			};
 		}
 
@@ -197,24 +176,11 @@ export const fileChanged = {
 	},
 };
 
-export const folderChanged = {
-	match: ((request: RawWebhookRequest) => {
-		const body = request.body as PubSubNotification;
-		if (!body.message?.data) {
-			return false;
-		}
-
-		try {
-			const pushNotification = decodePubSubMessage(body.message.data!);
-			return !!pushNotification.resourceId && !!pushNotification.resourceUri;
-		} catch {
-			return false;
-		}
-	}) as CorsairWebhookMatcher,
-
+export const folderChanged: GoogleDriveWebhooks['folderChanged'] = {
+	match: createGoogleDriveWebhookMatcher('folderChanged'),
 	handler: async (
-		ctx: GoogleDriveContext,
-		request: WebhookRequest<PubSubNotification>,
+		ctx,
+		request
 	) => {
 		const body = request.payload as PubSubNotification;
 
@@ -222,7 +188,6 @@ export const folderChanged = {
 			return {
 				success: false,
 				error: 'No message data in notification',
-				data: { success: false },
 			};
 		}
 
@@ -232,7 +197,6 @@ export const folderChanged = {
 			return {
 				success: false,
 				error: 'Invalid push notification format',
-				data: { success: false },
 			};
 		}
 
