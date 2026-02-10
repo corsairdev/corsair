@@ -297,7 +297,7 @@ export type GoogleDriveWebhooks = {
 	folderChanged: GoogleDriveWebhook<'folderChanged', FolderChangedEvent>;
 };
 
-export type GoogleDriveBoundWebhooks = BindWebhooks<GoogleDriveWebhooks>;
+export type GoogleDriveBoundWebhooks = BindWebhooks<typeof googleDriveWebhooksNested>;
 
 const googleDriveEndpointsNested = {
 	files: {

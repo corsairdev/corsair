@@ -126,7 +126,7 @@ export type GoogleSheetsEndpoints = {
 	>;
 };
 
-export type GoogleSheetsBoundEndpoints = BindEndpoints<GoogleSheetsEndpoints>;
+export type GoogleSheetsBoundEndpoints = BindEndpoints<typeof googleSheetsEndpointsNested>;
 
 type GoogleSheetsWebhook<K extends keyof GoogleSheetsWebhookOutputs, TEvent> =
 	CorsairWebhook<
@@ -144,7 +144,7 @@ export type GoogleSheetsWebhooks = {
 	>;
 };
 
-export type GoogleSheetsBoundWebhooks = BindWebhooks<GoogleSheetsWebhooks>;
+export type GoogleSheetsBoundWebhooks = BindWebhooks<typeof googleSheetsWebhooksNested>;
 
 const googleSheetsEndpointsNested = {
 	spreadsheets: {

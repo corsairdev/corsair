@@ -111,7 +111,7 @@ export type GoogleCalendarEndpoints = {
 	>;
 };
 
-export type GoogleCalendarBoundEndpoints = BindEndpoints<GoogleCalendarEndpoints>;
+export type GoogleCalendarBoundEndpoints = BindEndpoints<typeof googleCalendarEndpointsNested>;
 
 type GoogleCalendarWebhook<K extends keyof GoogleCalendarWebhookOutputs, TEvent> =
 	CorsairWebhook<
@@ -128,7 +128,7 @@ export type GoogleCalendarWebhooks = {
 	onEventEnded: GoogleCalendarWebhook<'eventEnded', EventEndedEvent>;
 };
 
-export type GoogleCalendarBoundWebhooks = BindWebhooks<GoogleCalendarWebhooks>;
+export type GoogleCalendarBoundWebhooks = BindWebhooks<typeof googleCalendarWebhooksNested>;
 
 const googleCalendarEndpointsNested = {
 	events: {
