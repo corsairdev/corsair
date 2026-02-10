@@ -15,7 +15,7 @@ async function createGoogleDriveClient() {
 	}
 
 	const testDb = createTestDatabase();
-	await createIntegrationAndAccount(testDb.adapter, 'googledrive');
+	await createIntegrationAndAccount(testDb.db, 'googledrive');
 
 	const corsair = createCorsair({
 		plugins: [
@@ -23,7 +23,7 @@ async function createGoogleDriveClient() {
 				authType: 'oauth_2',
 			}),
 		],
-		database: testDb.adapter,
+		database: testDb.db,
 		kek: process.env.CORSAIR_KEK!,
 	});
 
@@ -53,10 +53,10 @@ describe('Google Drive plugin integration', () => {
 
 		expect(listResponse).toBeDefined();
 
-		const listEvents = await testDb.adapter.findMany({
-			table: 'corsair_events',
-			where: [{ field: 'event_type', value: 'googledrive.files.list' }],
-		});
+		const listEvents = await testDb.db
+			.selectFrom('corsair_events')
+			.where('event_type', '=', 'googledrive.files.list')
+			.execute();
 
 		expect(listEvents.length).toBeGreaterThan(0);
 
@@ -68,12 +68,10 @@ describe('Google Drive plugin integration', () => {
 		expect(createResponse).toBeDefined();
 		expect(createResponse.id).toBeDefined();
 
-		const createEvents = await testDb.adapter.findMany({
-			table: 'corsair_events',
-			where: [
-				{ field: 'event_type', value: 'googledrive.files.createFromText' },
-			],
-		});
+		const createEvents = await testDb.db
+			.selectFrom('corsair_events')
+			.where('event_type', '=', 'googledrive.files.createFromText')
+			.execute();
 
 		expect(createEvents.length).toBeGreaterThan(0);
 
@@ -86,10 +84,10 @@ describe('Google Drive plugin integration', () => {
 
 			expect(getResponse).toBeDefined();
 
-			const getEvents = await testDb.adapter.findMany({
-				table: 'corsair_events',
-				where: [{ field: 'event_type', value: 'googledrive.files.get' }],
-			});
+			const getEvents = await testDb.db
+				.selectFrom('corsair_events')
+				.where('event_type', '=', 'googledrive.files.get')
+				.execute();
 
 			expect(getEvents.length).toBeGreaterThan(0);
 
@@ -97,10 +95,10 @@ describe('Google Drive plugin integration', () => {
 				fileId,
 			});
 
-			const deleteEvents = await testDb.adapter.findMany({
-				table: 'corsair_events',
-				where: [{ field: 'event_type', value: 'googledrive.files.delete' }],
-			});
+			const deleteEvents = await testDb.db
+				.selectFrom('corsair_events')
+				.where('event_type', '=', 'googledrive.files.delete')
+				.execute();
 
 			expect(deleteEvents.length).toBeGreaterThan(0);
 		}
@@ -123,10 +121,10 @@ describe('Google Drive plugin integration', () => {
 		expect(createResponse).toBeDefined();
 		expect(createResponse.id).toBeDefined();
 
-		const createEvents = await testDb.adapter.findMany({
-			table: 'corsair_events',
-			where: [{ field: 'event_type', value: 'googledrive.folders.create' }],
-		});
+		const createEvents = await testDb.db
+			.selectFrom('corsair_events')
+			.where('event_type', '=', 'googledrive.folders.create')
+			.execute();
 
 		expect(createEvents.length).toBeGreaterThan(0);
 
@@ -139,10 +137,10 @@ describe('Google Drive plugin integration', () => {
 
 			expect(getResponse).toBeDefined();
 
-			const getEvents = await testDb.adapter.findMany({
-				table: 'corsair_events',
-				where: [{ field: 'event_type', value: 'googledrive.folders.get' }],
-			});
+			const getEvents = await testDb.db
+				.selectFrom('corsair_events')
+				.where('event_type', '=', 'googledrive.folders.get')
+				.execute();
 
 			expect(getEvents.length).toBeGreaterThan(0);
 
@@ -150,10 +148,10 @@ describe('Google Drive plugin integration', () => {
 				folderId,
 			});
 
-			const deleteEvents = await testDb.adapter.findMany({
-				table: 'corsair_events',
-				where: [{ field: 'event_type', value: 'googledrive.folders.delete' }],
-			});
+			const deleteEvents = await testDb.db
+				.selectFrom('corsair_events')
+				.where('event_type', '=', 'googledrive.folders.delete')
+				.execute();
 
 			expect(deleteEvents.length).toBeGreaterThan(0);
 		}
@@ -169,19 +167,19 @@ describe('Google Drive plugin integration', () => {
 
 		const { corsair, testDb } = setup;
 
-		const searchResponse = await corsair.googledrive.api.search.filesAndFolders({
-			q: "mimeType='text/plain'",
-			pageSize: 5,
-		});
+		const searchResponse = await corsair.googledrive.api.search.filesAndFolders(
+			{
+				q: "mimeType='text/plain'",
+				pageSize: 5,
+			},
+		);
 
 		expect(searchResponse).toBeDefined();
 
-		const searchEvents = await testDb.adapter.findMany({
-			table: 'corsair_events',
-			where: [
-				{ field: 'event_type', value: 'googledrive.search.filesAndFolders' },
-			],
-		});
+		const searchEvents = await testDb.db
+			.selectFrom('corsair_events')
+			.where('event_type', '=', 'googledrive.search.filesAndFolders')
+			.execute();
 
 		expect(searchEvents.length).toBeGreaterThan(0);
 

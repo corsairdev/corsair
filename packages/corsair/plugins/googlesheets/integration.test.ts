@@ -3,7 +3,7 @@ import { createIntegrationAndAccount } from '../../tests/plugins-test-utils';
 import { createTestDatabase } from '../../tests/setup-db';
 import { googlesheets } from './index';
 import dotenv from 'dotenv';
-dotenv.config();	
+dotenv.config();
 
 async function createGoogleSheetsClient() {
 	const clientId = process.env.GOOGLE_CLIENT_ID;
@@ -15,7 +15,7 @@ async function createGoogleSheetsClient() {
 	}
 
 	const testDb = createTestDatabase();
-	await createIntegrationAndAccount(testDb.adapter, 'googlesheets');
+	await createIntegrationAndAccount(testDb.db, 'googlesheets');
 
 	const corsair = createCorsair({
 		plugins: [
@@ -23,10 +23,10 @@ async function createGoogleSheetsClient() {
 				authType: 'oauth_2',
 			}),
 		],
-		database: testDb.adapter,
+		database: testDb.db,
 		kek: process.env.CORSAIR_KEK!,
 	});
-	
+
 	await corsair.keys.googlesheets.issueNewDEK();
 	await corsair.keys.googlesheets.setClientId(clientId);
 	await corsair.keys.googlesheets.setClientSecret(clientSecret);
@@ -56,11 +56,10 @@ describe('Google Sheets plugin integration', () => {
 		expect(createResponse).toBeDefined();
 		expect(createResponse.spreadsheetId).toBeDefined();
 
-		const createEvents = await testDb.adapter.findMany({
-			table: 'corsair_events',
-			where: [{ field: 'event_type', value: 'googlesheets.spreadsheets.create' }],
-		});
-
+		const createEvents = await testDb.db
+			.selectFrom('corsair_events')
+			.where('event_type', '=', 'googlesheets.spreadsheets.create')
+			.execute();
 		expect(createEvents.length).toBeGreaterThan(0);
 
 		if (createResponse.spreadsheetId) {
@@ -70,12 +69,10 @@ describe('Google Sheets plugin integration', () => {
 				spreadsheetId,
 			});
 
-			const deleteEvents = await testDb.adapter.findMany({
-				table: 'corsair_events',
-				where: [
-					{ field: 'event_type', value: 'googlesheets.spreadsheets.delete' },
-				],
-			});
+			const deleteEvents = await testDb.db
+				.selectFrom('corsair_events')
+				.where('event_type', '=', 'googlesheets.spreadsheets.delete')
+				.execute();
 
 			expect(deleteEvents.length).toBeGreaterThan(0);
 		}
@@ -111,10 +108,10 @@ describe('Google Sheets plugin integration', () => {
 
 		expect(appendResponse).toBeDefined();
 
-		const appendEvents = await testDb.adapter.findMany({
-			table: 'corsair_events',
-			where: [{ field: 'event_type', value: 'googlesheets.sheets.appendRow' }],
-		});
+		const appendEvents = await testDb.db
+			.selectFrom('corsair_events')
+			.where('event_type', '=', 'googlesheets.sheets.appendRow')
+			.execute();
 
 		expect(appendEvents.length).toBeGreaterThan(0);
 
@@ -124,10 +121,10 @@ describe('Google Sheets plugin integration', () => {
 
 		expect(getRowsResponse).toBeDefined();
 
-		const getRowsEvents = await testDb.adapter.findMany({
-			table: 'corsair_events',
-			where: [{ field: 'event_type', value: 'googlesheets.sheets.getRows' }],
-		});
+		const getRowsEvents = await testDb.db
+			.selectFrom('corsair_events')
+			.where('event_type', '=', 'googlesheets.sheets.getRows')
+			.execute();
 
 		expect(getRowsEvents.length).toBeGreaterThan(0);
 

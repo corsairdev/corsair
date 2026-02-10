@@ -15,7 +15,7 @@ async function createGoogleCalendarClient() {
 	}
 
 	const testDb = createTestDatabase();
-	await createIntegrationAndAccount(testDb.adapter, 'googlecalendar');
+	await createIntegrationAndAccount(testDb.db, 'googlecalendar');
 
 	const corsair = createCorsair({
 		plugins: [
@@ -23,7 +23,7 @@ async function createGoogleCalendarClient() {
 				authType: 'oauth_2',
 			}),
 		],
-		database: testDb.adapter,
+		database: testDb.db,
 		kek: process.env.CORSAIR_KEK!,
 	});
 
@@ -75,10 +75,10 @@ describe('Google Calendar plugin integration', () => {
 		expect(createResponse).toBeDefined();
 		expect(createResponse.id).toBeDefined();
 
-		const createEvents = await testDb.adapter.findMany({
-			table: 'corsair_events',
-			where: [{ field: 'event_type', value: 'googlecalendar.events.create' }],
-		});
+		const createEvents = await testDb.db
+			.selectFrom('corsair_events')
+			.where('event_type', '=', 'googlecalendar.events.create')
+			.execute();
 
 		expect(createEvents.length).toBeGreaterThan(0);
 
@@ -91,10 +91,10 @@ describe('Google Calendar plugin integration', () => {
 
 			expect(getResponse).toBeDefined();
 
-			const getEvents = await testDb.adapter.findMany({
-				table: 'corsair_events',
-				where: [{ field: 'event_type', value: 'googlecalendar.events.get' }],
-			});
+			const getEvents = await testDb.db
+				.selectFrom('corsair_events')
+				.where('event_type', '=', 'googlecalendar.events.get')
+				.execute();
 
 			expect(getEvents.length).toBeGreaterThan(0);
 
@@ -110,10 +110,10 @@ describe('Google Calendar plugin integration', () => {
 
 			expect(updateResponse).toBeDefined();
 
-			const updateEvents = await testDb.adapter.findMany({
-				table: 'corsair_events',
-				where: [{ field: 'event_type', value: 'googlecalendar.events.update' }],
-			});
+			const updateEvents = await testDb.db
+				.selectFrom('corsair_events')
+				.where('event_type', '=', 'googlecalendar.events.update')
+				.execute();
 
 			expect(updateEvents.length).toBeGreaterThan(0);
 
@@ -121,10 +121,10 @@ describe('Google Calendar plugin integration', () => {
 				id: eventId,
 			});
 
-			const deleteEvents = await testDb.adapter.findMany({
-				table: 'corsair_events',
-				where: [{ field: 'event_type', value: 'googlecalendar.events.delete' }],
-			});
+			const deleteEvents = await testDb.db
+				.selectFrom('corsair_events')
+				.where('event_type', '=', 'googlecalendar.events.delete')
+				.execute();
 
 			expect(deleteEvents.length).toBeGreaterThan(0);
 		}
@@ -142,7 +142,9 @@ describe('Google Calendar plugin integration', () => {
 
 		const now = new Date();
 		const timeMin = now.toISOString();
-		const timeMax = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000).toISOString();
+		const timeMax = new Date(
+			now.getTime() + 7 * 24 * 60 * 60 * 1000,
+		).toISOString();
 
 		const getManyResponse = await corsair.googlecalendar.api.events.getMany({
 			timeMin,
@@ -152,10 +154,10 @@ describe('Google Calendar plugin integration', () => {
 
 		expect(getManyResponse).toBeDefined();
 
-		const getManyEvents = await testDb.adapter.findMany({
-			table: 'corsair_events',
-			where: [{ field: 'event_type', value: 'googlecalendar.events.getMany' }],
-		});
+		const getManyEvents = await testDb.db
+			.selectFrom('corsair_events')
+			.where('event_type', '=', 'googlecalendar.events.getMany')
+			.execute();
 
 		expect(getManyEvents.length).toBeGreaterThan(0);
 
@@ -183,15 +185,10 @@ describe('Google Calendar plugin integration', () => {
 
 		expect(availabilityResponse).toBeDefined();
 
-		const availabilityEvents = await testDb.adapter.findMany({
-			table: 'corsair_events',
-			where: [
-				{
-					field: 'event_type',
-					value: 'googlecalendar.calendar.getAvailability',
-				},
-			],
-		});
+		const availabilityEvents = await testDb.db
+			.selectFrom('corsair_events')
+			.where('event_type', '=', 'googlecalendar.calendar.getAvailability')
+			.execute();
 
 		expect(availabilityEvents.length).toBeGreaterThan(0);
 

@@ -16,12 +16,10 @@ async function createSlackClient() {
 	}
 
 	const testDb = createTestDatabase();
-	await createIntegrationAndAccount(testDb.adapter, 'slack', 'default');
+	await createIntegrationAndAccount(testDb.db, 'slack', 'default');
 
 	const corsair = createCorsair({
-		plugins: [
-			slack({}),
-		],
+		plugins: [slack({})],
 		database: testDb.db,
 		kek: process.env.CORSAIR_KEK!,
 	});
@@ -30,10 +28,10 @@ async function createSlackClient() {
 
 	console.log(botToken);
 
-	await corsair.slack.keys.issueNewDEK()
-	
+	await corsair.slack.keys.issueNewDEK();
+
 	await corsair.slack.keys.setApiKey(botToken);
-	
+
 	return { corsair, testDb, channel, userId };
 }
 
