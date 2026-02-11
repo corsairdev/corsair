@@ -302,8 +302,8 @@ export const trash: GmailEndpoints['messagesTrash'] = async (ctx, input) => {
 	);
 
 	if (result.id) {
-		const endpoints = ctx.endpoints as any;
-		await endpoints.messages?.get({ id: result.id, userId: input.userId });
+		const endpoints = ctx.endpoints as GmailBoundEndpoints;
+		await endpoints.messages.get({ id: result.id, userId: input.userId });
 	}
 
 	await logEventFromContext(

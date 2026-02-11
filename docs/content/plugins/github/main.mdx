@@ -1,0 +1,120 @@
+---
+title: GitHub
+description: Integrate GitHub repositories, issues, pull requests, and releases into your application with Corsair.
+---
+
+## Quick Start
+
+Add the GitHub plugin to your Corsair instance:
+
+```ts title="corsair.ts"
+import { createCorsair } from "corsair";
+import { github } from "corsair/plugins";
+
+export const corsair = createCorsair({
+    plugins: [
+        github(),
+    ],
+});
+```
+
+Once configured, you can access the GitHub API through your Corsair instance:
+
+```ts
+const issues = await corsair.github.api.issues.list({
+    owner: "octocat",
+    repo: "Hello-World",
+});
+```
+
+## Authentication
+
+### Supported Auth Types
+
+The GitHub plugin supports two authentication methods:
+
+- **`api_key`** - Personal Access Token authentication
+- **`oauth_2`** - OAuth App authentication
+
+### API Key Authentication (Personal Access Token)
+
+Store the token in the database using the keys API:
+
+```ts
+await corsair
+    .withTenant('default')
+    .github.keys.setApiKey('your-personal-access-token');
+```
+
+Alternatively, you can provide it directly:
+
+```ts title="corsair.ts"
+github({
+    authType: "api_key",
+    credentials: {
+        token: process.env.GITHUB_TOKEN,
+    },
+})
+```
+
+See [Get Credentials](/plugins/github/get-credentials) for step-by-step instructions on obtaining a Personal Access Token.
+
+### OAuth 2.0 Authentication
+
+Store OAuth credentials in the database using the keys API:
+
+```ts
+await corsair.github.keys.setClientId('your-client-id');
+await corsair.github.keys.setClientSecret('your-client-secret');
+await corsair.github.keys.setRedirectUrl('https://yourapp.com/auth/github/callback');
+```
+
+After users complete the OAuth flow, access tokens are automatically stored. Alternatively, you can provide credentials directly:
+
+```ts title="corsair.ts"
+github({
+    authType: "oauth_2",
+    credentials: {
+        clientId: process.env.GITHUB_CLIENT_ID,
+        clientSecret: process.env.GITHUB_CLIENT_SECRET,
+    },
+})
+```
+
+See [Get Credentials](/plugins/github/get-credentials) for step-by-step instructions on setting up OAuth 2.0.
+
+### Webhook Secret
+
+Store the webhook secret in the database using the keys API:
+
+```ts
+await corsair
+    .withTenant('default')
+    .github.keys.setWebhookSignature('your-webhook-secret');
+```
+
+Alternatively, you can provide it directly:
+
+```ts title="corsair.ts"
+github({
+    webhookSecret: process.env.GITHUB_WEBHOOK_SECRET,
+})
+```
+
+See [Get Credentials](/plugins/github/get-credentials) for step-by-step instructions on setting up webhooks.
+
+See [Authentication](/concepts/auth) for details on managing credentials.
+
+## Options
+
+The GitHub plugin accepts the following configuration options:
+
+| Option | Type | Description |
+|--------|------|-------------|
+| `authType` | `'api_key' \| 'oauth_2'` | Authentication method |
+| `credentials` | `object` | Credentials object (token for api_key, clientId/clientSecret for oauth_2) |
+| `webhookSecret` | `string` | Webhook signing secret (optional) |
+| `hooks` | `object` | Endpoint hooks for custom logic |
+| `webhookHooks` | `object` | Webhook hooks for event handling |
+
+For complete documentation on getting credentials, see the [Plugin Credentials Guide](/guides/plugin-credentials#github).
