@@ -1,26 +1,25 @@
-// @ts-nocheck
+import type { Kysely } from 'kysely';
+import type { CorsairKyselyDatabase } from '../db/kysely/database';
 
 export function createIntegrationAndAccount(
-	db: { insertInto: (...args: any[]) => any },
+	db: Kysely<CorsairKyselyDatabase>,
 	pluginId: string,
 	tenantId = 'default',
 ) {
-	const now = Date.now();
+	const now = new Date();
 	const integrationId = `${pluginId}-integration`;
 	const accountId = `${pluginId}-account`;
 
-	return adapter
-		.insert({
-			table: 'corsair_integrations',
-			data: {
-				id: integrationId,
-				created_at: now,
-				updated_at: now,
-				name: pluginId,
-				config: JSON.stringify({}),
-				dek: null,
-			},
-		})
+	return db
+		.insertInto('corsair_integrations')
+		.values({
+			id: integrationId,
+			created_at: now,
+			updated_at: now,
+			name: pluginId,
+			config: {} as any,
+			dek: undefined,
+		} as any)
 		.execute()
 		.then(() =>
 			db.insertInto('corsair_accounts').values({
@@ -29,8 +28,8 @@ export function createIntegrationAndAccount(
 				updated_at: now,
 				tenant_id: tenantId,
 				integration_id: integrationId,
-				config: JSON.stringify({}),
-				dek: null,
-			}),
+				config: {} as any,
+				dek: undefined,
+			} as any).execute(),
 		);
 }

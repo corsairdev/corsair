@@ -157,7 +157,7 @@ export const list: LinearEndpoints['projectsList'] = async (ctx, input) => {
 		},
 	);
 
-	const result = response;
+	const result = response.projects;
 
 	if (result.nodes && ctx.db.projects) {
 		try {
@@ -190,7 +190,7 @@ export const get: LinearEndpoints['projectsGet'] = async (ctx, input) => {
 		{ id: input.id },
 	);
 
-	const result = response;
+	const result = response.project;
 
 	if (result && ctx.db.projects) {
 		try {
@@ -221,7 +221,7 @@ export const create: LinearEndpoints['projectsCreate'] = async (ctx, input) => {
 		{ input: input as CreateProjectInput },
 	);
 
-	const result = response;
+	const result = response.projectCreate.project;
 
 	if (result) {
 		const endpoints = ctx.endpoints as LinearBoundEndpoints;
@@ -244,7 +244,7 @@ export const update: LinearEndpoints['projectsUpdate'] = async (ctx, input) => {
 		{ id: input.id, input: input.input as UpdateProjectInput },
 	);
 
-	const result = response;
+	const result = response.projectUpdate.project;
 
 	if (result) {
 		const endpoints = ctx.endpoints as LinearBoundEndpoints;
@@ -270,7 +270,7 @@ export const deleteProject: LinearEndpoints['projectsDelete'] = async (
 		{ id: input.id },
 	);
 
-	const result = response;
+	const result = response.projectDelete.success;
 
 	if (result && ctx.db.projects) {
 		try {
