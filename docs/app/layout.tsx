@@ -6,13 +6,21 @@ import { RootProvider } from 'fumadocs-ui/provider';
 import {
 	AlertTriangle,
 	Ban,
+	BarChart3,
 	BicepsFlexed,
 	BookOpen,
+	Building2,
+	Calendar,
 	CheckSquare,
 	Code2,
 	Database,
 	Download,
+	FileSpreadsheet,
+	Folder,
+	GitBranch,
+	Key,
 	Layers,
+	Mail,
 	MessageSquare,
 	PhoneIncoming,
 	Plug,
@@ -20,6 +28,7 @@ import {
 	RefreshCcwDot,
 	Rocket,
 	ScanFace,
+	Send,
 	Table2,
 	Users,
 	Webhook,
@@ -119,6 +128,26 @@ const tree = {
 		},
 		{
 			type: 'folder' as const,
+			name: 'Guides',
+			icon: <BookOpen className="size-4" />,
+			defaultOpen: false,
+			children: [
+				{
+					type: 'page' as const,
+					name: 'Create Your Own Plugin',
+					url: '/guides/create-your-own-plugin',
+					icon: <Plug className="size-4" />,
+				},
+				{
+					type: 'page' as const,
+					name: 'Plugin Credentials Guide',
+					url: '/guides/plugin-credentials',
+					icon: <Key className="size-4" />,
+				},
+			],
+		},
+		{
+			type: 'folder' as const,
 			name: 'Plugins',
 			icon: <Puzzle className="size-4" />,
 			defaultOpen: false,
@@ -133,6 +162,12 @@ const tree = {
 							name: 'Basics',
 							url: '/plugins/slack',
 							icon: <BookOpen className="size-4" />,
+						},
+						{
+							type: 'page' as const,
+							name: 'Get Credentials',
+							url: '/plugins/slack/get-credentials',
+							icon: <Key className="size-4" />,
 						},
 						{
 							type: 'page' as const,
@@ -162,6 +197,120 @@ const tree = {
 				},
 				{
 					type: 'folder' as const,
+					name: 'GitHub',
+					icon: <GitBranch className="size-4" />,
+					children: [
+						{
+							type: 'page' as const,
+							name: 'Basics',
+							url: '/plugins/github',
+							icon: <BookOpen className="size-4" />,
+						},
+						{
+							type: 'page' as const,
+							name: 'Get Credentials',
+							url: '/plugins/github/get-credentials',
+							icon: <Key className="size-4" />,
+						},
+					],
+				},
+				{
+					type: 'folder' as const,
+					name: 'Gmail',
+					icon: <Mail className="size-4" />,
+					children: [
+						{
+							type: 'page' as const,
+							name: 'Basics',
+							url: '/plugins/gmail',
+							icon: <BookOpen className="size-4" />,
+						},
+						{
+							type: 'page' as const,
+							name: 'Get Credentials',
+							url: '/plugins/gmail/get-credentials',
+							icon: <Key className="size-4" />,
+						},
+					],
+				},
+				{
+					type: 'folder' as const,
+					name: 'Google Sheets',
+					icon: <FileSpreadsheet className="size-4" />,
+					children: [
+						{
+							type: 'page' as const,
+							name: 'Basics',
+							url: '/plugins/googlesheets',
+							icon: <BookOpen className="size-4" />,
+						},
+						{
+							type: 'page' as const,
+							name: 'Get Credentials',
+							url: '/plugins/googlesheets/get-credentials',
+							icon: <Key className="size-4" />,
+						},
+					],
+				},
+				{
+					type: 'folder' as const,
+					name: 'Google Drive',
+					icon: <Folder className="size-4" />,
+					children: [
+						{
+							type: 'page' as const,
+							name: 'Basics',
+							url: '/plugins/googledrive',
+							icon: <BookOpen className="size-4" />,
+						},
+						{
+							type: 'page' as const,
+							name: 'Get Credentials',
+							url: '/plugins/googledrive/get-credentials',
+							icon: <Key className="size-4" />,
+						},
+					],
+				},
+				{
+					type: 'folder' as const,
+					name: 'Google Calendar',
+					icon: <Calendar className="size-4" />,
+					children: [
+						{
+							type: 'page' as const,
+							name: 'Basics',
+							url: '/plugins/googlecalendar',
+							icon: <BookOpen className="size-4" />,
+						},
+						{
+							type: 'page' as const,
+							name: 'Get Credentials',
+							url: '/plugins/googlecalendar/get-credentials',
+							icon: <Key className="size-4" />,
+						},
+					],
+				},
+				{
+					type: 'folder' as const,
+					name: 'HubSpot',
+					icon: <Building2 className="size-4" />,
+					children: [
+						{
+							type: 'page' as const,
+							name: 'Basics',
+							url: '/plugins/hubspot',
+							icon: <BookOpen className="size-4" />,
+						},
+						{
+							type: 'page' as const,
+							name: 'Get Credentials',
+							url: '/plugins/hubspot/get-credentials',
+							icon: <Key className="size-4" />,
+						},
+					],
+				},
+				{
+					type: 'folder' as const,
 					name: 'Linear',
 					icon: <CheckSquare className="size-4" />,
 					children: [
@@ -170,6 +319,12 @@ const tree = {
 							name: 'Basics',
 							url: '/plugins/linear',
 							icon: <BookOpen className="size-4" />,
+						},
+						{
+							type: 'page' as const,
+							name: 'Get Credentials',
+							url: '/plugins/linear/get-credentials',
+							icon: <Key className="size-4" />,
 						},
 						{
 							type: 'page' as const,
@@ -194,6 +349,44 @@ const tree = {
 							name: 'Error Handlers',
 							url: '/plugins/linear/error-handlers',
 							icon: <AlertTriangle className="size-4" />,
+						},
+					],
+				},
+				{
+					type: 'folder' as const,
+					name: 'PostHog',
+					icon: <BarChart3 className="size-4" />,
+					children: [
+						{
+							type: 'page' as const,
+							name: 'Basics',
+							url: '/plugins/posthog',
+							icon: <BookOpen className="size-4" />,
+						},
+						{
+							type: 'page' as const,
+							name: 'Get Credentials',
+							url: '/plugins/posthog/get-credentials',
+							icon: <Key className="size-4" />,
+						},
+					],
+				},
+				{
+					type: 'folder' as const,
+					name: 'Resend',
+					icon: <Send className="size-4" />,
+					children: [
+						{
+							type: 'page' as const,
+							name: 'Basics',
+							url: '/plugins/resend',
+							icon: <BookOpen className="size-4" />,
+						},
+						{
+							type: 'page' as const,
+							name: 'Get Credentials',
+							url: '/plugins/resend/get-credentials',
+							icon: <Key className="size-4" />,
 						},
 					],
 				},
