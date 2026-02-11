@@ -15,17 +15,36 @@ import ComparisonDoc from '@/content/getting-started/comparison.mdx';
 import IntroductionDoc from '@/content/getting-started/introduction.mdx';
 // Guides
 import CreateYourOwnPlugin from '@/content/guides/create-your-own-plugin.mdx';
+import PluginCredentialsGuide from '@/content/guides/plugin-credentials.mdx';
 import LinearApiEndpointsDoc from '@/content/plugins/linear/api-endpoints.mdx';
 import LinearDatabaseDoc from '@/content/plugins/linear/database.mdx';
 import LinearErrorHandlersDoc from '@/content/plugins/linear/error-handlers.mdx';
+import LinearGetCredentialsDoc from '@/content/plugins/linear/get-credentials.mdx';
 import LinearDoc from '@/content/plugins/linear/main.mdx';
 import LinearWebhooksDoc from '@/content/plugins/linear/webhooks.mdx';
 import SlackApiEndpointsDoc from '@/content/plugins/slack/api-endpoints.mdx';
 import SlackDatabaseDoc from '@/content/plugins/slack/database.mdx';
 import SlackErrorHandlersDoc from '@/content/plugins/slack/error-handlers.mdx';
+import SlackGetCredentialsDoc from '@/content/plugins/slack/get-credentials.mdx';
 // Plugins
 import SlackDoc from '@/content/plugins/slack/main.mdx';
 import SlackWebhooksDoc from '@/content/plugins/slack/webhooks.mdx';
+import GithubDoc from '@/content/plugins/github/main.mdx';
+import GithubGetCredentialsDoc from '@/content/plugins/github/get-credentials.mdx';
+import GmailDoc from '@/content/plugins/gmail/main.mdx';
+import GmailGetCredentialsDoc from '@/content/plugins/gmail/get-credentials.mdx';
+import GoogleSheetsDoc from '@/content/plugins/googlesheets/main.mdx';
+import GoogleSheetsGetCredentialsDoc from '@/content/plugins/googlesheets/get-credentials.mdx';
+import GoogleDriveDoc from '@/content/plugins/googledrive/main.mdx';
+import GoogleDriveGetCredentialsDoc from '@/content/plugins/googledrive/get-credentials.mdx';
+import GoogleCalendarDoc from '@/content/plugins/googlecalendar/main.mdx';
+import GoogleCalendarGetCredentialsDoc from '@/content/plugins/googlecalendar/get-credentials.mdx';
+import HubSpotDoc from '@/content/plugins/hubspot/main.mdx';
+import HubSpotGetCredentialsDoc from '@/content/plugins/hubspot/get-credentials.mdx';
+import PostHogDoc from '@/content/plugins/posthog/main.mdx';
+import PostHogGetCredentialsDoc from '@/content/plugins/posthog/get-credentials.mdx';
+import ResendDoc from '@/content/plugins/resend/main.mdx';
+import ResendGetCredentialsDoc from '@/content/plugins/resend/get-credentials.mdx';
 import { extractTOC } from '@/lib/toc';
 import { useMDXComponents } from '@/mdx-components';
 
@@ -115,6 +134,11 @@ const pages = {
 		title: 'Slack Error Handlers',
 		description: 'Built-in and custom error handling for Slack',
 	},
+	'plugins/slack/get-credentials': {
+		Component: SlackGetCredentialsDoc,
+		title: 'Get Credentials',
+		description: 'Step-by-step instructions for obtaining Slack credentials',
+	},
 	'plugins/linear': {
 		Component: LinearDoc,
 		title: 'Linear',
@@ -140,10 +164,100 @@ const pages = {
 		title: 'Linear Error Handlers',
 		description: 'Built-in and custom error handling',
 	},
+	'plugins/linear/get-credentials': {
+		Component: LinearGetCredentialsDoc,
+		title: 'Get Credentials',
+		description: 'Step-by-step instructions for obtaining Linear credentials',
+	},
+	'plugins/github': {
+		Component: GithubDoc,
+		title: 'GitHub',
+		description: 'Integrate GitHub repositories, issues, pull requests, and releases',
+	},
+	'plugins/github/get-credentials': {
+		Component: GithubGetCredentialsDoc,
+		title: 'Get Credentials',
+		description: 'Step-by-step instructions for obtaining GitHub credentials',
+	},
+	'plugins/gmail': {
+		Component: GmailDoc,
+		title: 'Gmail',
+		description: 'Integrate Gmail messaging, labels, drafts, and threads',
+	},
+	'plugins/gmail/get-credentials': {
+		Component: GmailGetCredentialsDoc,
+		title: 'Get Credentials',
+		description: 'Step-by-step instructions for obtaining Gmail credentials',
+	},
+	'plugins/googlesheets': {
+		Component: GoogleSheetsDoc,
+		title: 'Google Sheets',
+		description: 'Integrate Google Sheets spreadsheets and data management',
+	},
+	'plugins/googlesheets/get-credentials': {
+		Component: GoogleSheetsGetCredentialsDoc,
+		title: 'Get Credentials',
+		description: 'Step-by-step instructions for obtaining Google Sheets credentials',
+	},
+	'plugins/googledrive': {
+		Component: GoogleDriveDoc,
+		title: 'Google Drive',
+		description: 'Integrate Google Drive files, folders, and shared drives',
+	},
+	'plugins/googledrive/get-credentials': {
+		Component: GoogleDriveGetCredentialsDoc,
+		title: 'Get Credentials',
+		description: 'Step-by-step instructions for obtaining Google Drive credentials',
+	},
+	'plugins/googlecalendar': {
+		Component: GoogleCalendarDoc,
+		title: 'Google Calendar',
+		description: 'Integrate Google Calendar events and availability',
+	},
+	'plugins/googlecalendar/get-credentials': {
+		Component: GoogleCalendarGetCredentialsDoc,
+		title: 'Get Credentials',
+		description: 'Step-by-step instructions for obtaining Google Calendar credentials',
+	},
+	'plugins/hubspot': {
+		Component: HubSpotDoc,
+		title: 'HubSpot',
+		description: 'Integrate HubSpot CRM contacts, companies, deals, and tickets',
+	},
+	'plugins/hubspot/get-credentials': {
+		Component: HubSpotGetCredentialsDoc,
+		title: 'Get Credentials',
+		description: 'Step-by-step instructions for obtaining HubSpot credentials',
+	},
+	'plugins/posthog': {
+		Component: PostHogDoc,
+		title: 'PostHog',
+		description: 'Integrate PostHog analytics and event tracking',
+	},
+	'plugins/posthog/get-credentials': {
+		Component: PostHogGetCredentialsDoc,
+		title: 'Get Credentials',
+		description: 'Step-by-step instructions for obtaining PostHog credentials',
+	},
+	'plugins/resend': {
+		Component: ResendDoc,
+		title: 'Resend',
+		description: 'Integrate Resend email sending and domain management',
+	},
+	'plugins/resend/get-credentials': {
+		Component: ResendGetCredentialsDoc,
+		title: 'Get Credentials',
+		description: 'Step-by-step instructions for obtaining Resend credentials',
+	},
 	'guides/create-your-own-plugin': {
 		Component: CreateYourOwnPlugin,
 		title: 'Create Your Own Plugin',
 		description: 'Create your own plugin for Corsair',
+	},
+	'guides/plugin-credentials': {
+		Component: PluginCredentialsGuide,
+		title: 'Plugin Credentials Guide',
+		description: 'Step-by-step instructions for obtaining credentials for all plugins',
 	},
 } as const;
 

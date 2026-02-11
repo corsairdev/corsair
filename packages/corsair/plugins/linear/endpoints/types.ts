@@ -68,25 +68,27 @@ export const ProjectStateSchema = z.enum([
 	'canceled',
 ]);
 
-export const ProjectSchema = z.object({
-	id: z.string(),
-	name: z.string(),
-	description: z.string().optional().nullable(),
-	icon: z.string().optional().nullable(),
-	color: z.string().optional().nullable(),
-	state: ProjectStateSchema,
-	priority: z.number(),
-	sortOrder: z.number(),
-	startDate: z.coerce.date().nullable().optional(),
-	targetDate: z.coerce.date().nullable().optional(),
-	completedAt: z.coerce.date().nullable().optional(),
-	canceledAt: z.coerce.date().nullable().optional(),
-	lead: UserSchema.optional().nullable(),
-	teams: z.array(TeamSchema),
-	createdAt: z.coerce.date().nullable().optional(),
-	updatedAt: z.coerce.date().nullable().optional(),
-	archivedAt: z.coerce.date().nullable().optional(),
-});
+export const ProjectSchema: z.ZodType<any> = z.lazy(() =>
+	z.object({
+		id: z.string(),
+		name: z.string(),
+		description: z.string().optional().nullable(),
+		icon: z.string().optional().nullable(),
+		color: z.string().optional().nullable(),
+		state: ProjectStateSchema,
+		priority: z.number(),
+		sortOrder: z.number(),
+		startDate: z.coerce.date().nullable().optional(),
+		targetDate: z.coerce.date().nullable().optional(),
+		completedAt: z.coerce.date().nullable().optional(),
+		canceledAt: z.coerce.date().nullable().optional(),
+		lead: UserSchema.optional().nullable(),
+		teams: z.array(TeamSchema),
+		createdAt: z.coerce.date().nullable().optional(),
+		updatedAt: z.coerce.date().nullable().optional(),
+		archivedAt: z.coerce.date().nullable().optional(),
+	}),
+);
 
 export const CycleSchema = z.object({
 	id: z.string(),
@@ -583,53 +585,53 @@ export type CreateCommentInput = z.infer<typeof CreateCommentInputSchema>;
 export type UpdateCommentInput = z.infer<typeof UpdateCommentInputSchema>;
 
 export type IssuesListResponse = z.infer<
-	typeof LinearEndpointOutputSchemas.issuesList
+	typeof IssuesListResponseSchema
 >;
 export type IssueGetResponse = z.infer<
-	typeof LinearEndpointOutputSchemas.issuesGet
+	typeof IssueGetResponseSchema
 >;
 export type IssueCreateResponse = z.infer<
-	typeof LinearEndpointOutputSchemas.issuesCreate
+	typeof IssueCreateResponseSchema
 >;
 export type IssueUpdateResponse = z.infer<
-	typeof LinearEndpointOutputSchemas.issuesUpdate
+	typeof IssueUpdateResponseSchema
 >;
 export type IssueDeleteResponse = z.infer<
-	typeof LinearEndpointOutputSchemas.issuesDelete
+	typeof IssueDeleteResponseSchema
 >;
 
 export type TeamsListResponse = z.infer<
-	typeof LinearEndpointOutputSchemas.teamsList
+	typeof TeamsListResponseSchema
 >;
 export type TeamGetResponse = z.infer<
-	typeof LinearEndpointOutputSchemas.teamsGet
+	typeof TeamGetResponseSchema
 >;
 
 export type ProjectsListResponse = z.infer<
-	typeof LinearEndpointOutputSchemas.projectsList
+	typeof ProjectsListResponseSchema
 >;
 export type ProjectGetResponse = z.infer<
-	typeof LinearEndpointOutputSchemas.projectsGet
+	typeof ProjectGetResponseSchema
 >;
 export type ProjectCreateResponse = z.infer<
-	typeof LinearEndpointOutputSchemas.projectsCreate
+	typeof ProjectCreateResponseSchema
 >;
 export type ProjectUpdateResponse = z.infer<
-	typeof LinearEndpointOutputSchemas.projectsUpdate
+	typeof ProjectUpdateResponseSchema
 >;
 export type ProjectDeleteResponse = z.infer<
-	typeof LinearEndpointOutputSchemas.projectsDelete
+	typeof ProjectDeleteResponseSchema
 >;
 
 export type CommentsListResponse = z.infer<
-	typeof LinearEndpointOutputSchemas.commentsList
+	typeof CommentsListResponseSchema
 >;
 export type CommentCreateResponse = z.infer<
-	typeof LinearEndpointOutputSchemas.commentsCreate
+	typeof CommentCreateResponseSchema
 >;
 export type CommentUpdateResponse = z.infer<
-	typeof LinearEndpointOutputSchemas.commentsUpdate
+	typeof CommentUpdateResponseSchema
 >;
 export type CommentDeleteResponse = z.infer<
-	typeof LinearEndpointOutputSchemas.commentsDelete
+	typeof CommentDeleteResponseSchema
 >;

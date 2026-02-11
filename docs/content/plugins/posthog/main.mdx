@@ -1,0 +1,96 @@
+---
+title: PostHog
+description: Integrate PostHog analytics and event tracking into your application with Corsair.
+---
+
+## Quick Start
+
+Add the PostHog plugin to your Corsair instance:
+
+```ts title="corsair.ts"
+import { createCorsair } from "corsair";
+import { posthog } from "corsair/plugins";
+
+export const corsair = createCorsair({
+    plugins: [
+        posthog(),
+    ],
+});
+```
+
+Once configured, you can access the PostHog API through your Corsair instance:
+
+```ts
+await corsair.posthog.api.events.eventCreate({
+    distinct_id: "user-123",
+    event: "page_view",
+    properties: { page: "/home" },
+});
+```
+
+## Authentication
+
+### Supported Auth Types
+
+The PostHog plugin uses API key authentication.
+
+- **`api_key`** (default) - Project API key authentication
+
+### API Key Setup
+
+```ts title="corsair.ts"
+Store the API key in the database using the keys API:
+
+```ts
+await corsair
+    .withTenant('default')
+    .posthog.keys.setApiKey('your-api-key');
+```
+
+Alternatively, you can provide it directly:
+
+```ts title="corsair.ts"
+posthog({
+    authType: "api_key",
+    key: process.env.POSTHOG_API_KEY,
+})
+```
+
+See [Get Credentials](/plugins/posthog/get-credentials) for step-by-step instructions on obtaining an API key.
+
+### Webhook Secret
+
+Store the webhook secret in the database using the keys API:
+
+```ts
+await corsair
+    .withTenant('default')
+    .posthog.keys.setWebhookSignature('your-webhook-secret');
+```
+
+Alternatively, you can provide it directly:
+
+```ts title="corsair.ts"
+posthog({
+    webhookSecret: process.env.POSTHOG_WEBHOOK_SECRET,
+})
+```
+
+See [Get Credentials](/plugins/posthog/get-credentials) for step-by-step instructions on setting up webhooks.
+
+See [Authentication](/concepts/auth) for details on managing credentials.
+
+## Options
+
+The PostHog plugin accepts the following configuration options:
+
+| Option | Type | Description |
+|--------|------|-------------|
+| `authType` | `'api_key'` | Authentication method (defaults to `'api_key'`) |
+| `key` | `string` | API key (optional, uses database if not provided) |
+| `webhookSecret` | `string` | Webhook signing secret (optional) |
+| `hooks` | `object` | Endpoint hooks for custom logic |
+| `webhookHooks` | `object` | Webhook hooks for event handling |
+| `errorHandlers` | `object` | Custom error handlers |
+
+For complete documentation on getting credentials, see the [Plugin Credentials Guide](/guides/plugin-credentials#posthog).

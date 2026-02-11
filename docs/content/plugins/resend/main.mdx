@@ -1,0 +1,96 @@
+---
+title: Resend
+description: Integrate Resend email sending and domain management into your application with Corsair.
+---
+
+## Quick Start
+
+Add the Resend plugin to your Corsair instance:
+
+```ts title="corsair.ts"
+import { createCorsair } from "corsair";
+import { resend } from "corsair/plugins";
+
+export const corsair = createCorsair({
+    plugins: [
+        resend(),
+    ],
+});
+```
+
+Once configured, you can access the Resend API through your Corsair instance:
+
+```ts
+await corsair.resend.api.emails.send({
+    from: "hello@example.com",
+    to: "user@example.com",
+    subject: "Hello",
+    html: "<p>Hello world!</p>",
+});
+```
+
+## Authentication
+
+### Supported Auth Types
+
+The Resend plugin uses API key authentication.
+
+- **`api_key`** (default) - API key authentication
+
+### API Key Setup
+
+Store the API key in the database using the keys API:
+
+```ts
+await corsair
+    .withTenant('default')
+    .resend.keys.setApiKey('your-api-key');
+```
+
+Alternatively, you can provide it directly:
+
+```ts title="corsair.ts"
+resend({
+    authType: "api_key",
+    key: process.env.RESEND_API_KEY,
+})
+```
+
+See [Get Credentials](/plugins/resend/get-credentials) for step-by-step instructions on obtaining an API key.
+
+### Webhook Secret
+
+Store the webhook secret in the database using the keys API:
+
+```ts
+await corsair
+    .withTenant('default')
+    .resend.keys.setWebhookSignature('your-webhook-secret');
+```
+
+Alternatively, you can provide it directly:
+
+```ts title="corsair.ts"
+resend({
+    webhookSecret: process.env.RESEND_WEBHOOK_SECRET,
+})
+```
+
+See [Get Credentials](/plugins/resend/get-credentials) for step-by-step instructions on setting up webhooks.
+
+See [Authentication](/concepts/auth) for details on managing credentials.
+
+## Options
+
+The Resend plugin accepts the following configuration options:
+
+| Option | Type | Description |
+|--------|------|-------------|
+| `authType` | `'api_key'` | Authentication method (defaults to `'api_key'`) |
+| `key` | `string` | API key (optional, uses database if not provided) |
+| `webhookSecret` | `string` | Webhook signing secret (optional) |
+| `hooks` | `object` | Endpoint hooks for custom logic |
+| `webhookHooks` | `object` | Webhook hooks for event handling |
+| `errorHandlers` | `object` | Custom error handlers |
+
+For complete documentation on getting credentials, see the [Plugin Credentials Guide](/guides/plugin-credentials#resend).

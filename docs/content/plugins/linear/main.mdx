@@ -43,25 +43,44 @@ If no `authType` is specified, the plugin defaults to **`api_key`**.
 
 ### Configuring API Key Authentication
 
+Store the API key in the database using the keys API:
+
+```ts
+await corsair
+    .withTenant('default')
+    .linear.keys.setApiKey('your-api-key');
+```
+
+The plugin will automatically retrieve the API key from your database. Alternatively, you can provide it directly:
+
 ```ts title="corsair.ts"
 linear({
     authType: "api_key",
-    // Optional: provide key directly, otherwise uses database
     key: process.env.LINEAR_API_KEY,
 })
 ```
 
-To generate a Linear API key:
-1. Go to your [Linear settings](https://linear.app/settings/api)
-2. Navigate to the **API** section
-3. Create a new personal API key
-4. Copy the key and store it securely
-
-See [Authentication](/concepts/auth) for details on managing credentials.
+See [Get Credentials](/plugins/linear/get-credentials) for step-by-step instructions on obtaining an API key.
 
 ### Webhook Signature Verification
 
-Linear webhooks can be secured using HMAC signature verification. When creating a webhook in Linear, you can set a webhook secret. The plugin will automatically verify webhook signatures when a secret is provided.
+Linear webhooks can be secured using HMAC signature verification. Store the webhook secret in the database using the keys API:
+
+```ts
+await corsair
+    .withTenant('default')
+    .linear.keys.setWebhookSignature('your-webhook-secret');
+```
+
+The plugin will automatically verify webhook signatures when a secret is provided. Alternatively, you can provide the secret directly:
+
+```ts title="corsair.ts"
+linear({
+    webhookSecret: process.env.LINEAR_WEBHOOK_SECRET,
+})
+```
+
+See [Get Credentials](/plugins/linear/get-credentials) for step-by-step instructions on setting up webhooks.
 
 ## Options
 

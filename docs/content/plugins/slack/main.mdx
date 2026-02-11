@@ -43,21 +43,36 @@ If no `authType` is specified, the plugin defaults to **`api_key`**.
 
 ### Configuring API Key Authentication
 
-For API key authentication, provide a bot token from your Slack app:
+For API key authentication, store the bot token in the database using the keys API:
+
+```ts
+await corsair
+    .withTenant('default')
+    .slack.keys.setBotToken('xoxb-your-bot-token');
+```
+
+The plugin will automatically retrieve the bot token from your database. Alternatively, you can provide it directly in the plugin configuration:
 
 ```ts title="corsair.ts"
 slack({
     authType: "api_key",
-    // Optional: provide key directly, otherwise uses database
     key: process.env.SLACK_BOT_TOKEN,
 })
 ```
 
-The plugin will automatically retrieve the API key from your database if you don't provide it directly. See [Authentication](/concepts/auth) for details on managing credentials.
+See [Get Credentials](/plugins/slack/get-credentials) for step-by-step instructions on obtaining a bot token.
 
 ### Configuring OAuth 2.0 Authentication
 
-For OAuth 2.0 authentication:
+For OAuth 2.0 authentication, store credentials in the database using the keys API:
+
+```ts
+await corsair.slack.keys.setClientId('your-client-id');
+await corsair.slack.keys.setClientSecret('your-client-secret');
+await corsair.slack.keys.setRedirectUrl('https://yourapp.com/auth/slack/callback');
+```
+
+After users complete the OAuth flow, access tokens are automatically stored. Alternatively, you can provide credentials directly:
 
 ```ts title="corsair.ts"
 slack({
@@ -65,18 +80,27 @@ slack({
 })
 ```
 
-The plugin will automatically retrieve the access token from your database. See [Authentication](/concepts/auth) for OAuth 2.0 setup details.
+The plugin will automatically retrieve the access token from your database. See [Get Credentials](/plugins/slack/get-credentials) for step-by-step instructions on setting up OAuth 2.0.
 
 ### Webhook Signature Verification
 
-For webhook signature verification, you can provide a signing secret:
+For webhook signature verification, store the signing secret in the database using the keys API:
+
+```ts
+await corsair
+    .withTenant('default')
+    .slack.keys.setWebhookSignature('your-signing-secret');
+```
+
+The plugin will automatically verify webhook signatures when a secret is provided. Alternatively, you can provide the secret directly:
 
 ```ts title="corsair.ts"
 slack({
     signingSecret: process.env.SLACK_SIGNING_SECRET,
-    // Optional: if not provided, uses database
 })
 ```
+
+See [Get Credentials](/plugins/slack/get-credentials) for step-by-step instructions on obtaining a webhook signing secret.
 
 ## Options
 
