@@ -2,6 +2,8 @@
 
 A minimal demo showing how easy it is to work with Corsair - great types, simple APIs, and automatic webhook routing.
 
+The sandbox editor on corsair.dev points to this project.
+
 ## Files
 
 - **`corsair.ts`** - Setup file showing how to initialize Corsair with multiple integrations
