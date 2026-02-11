@@ -1,0 +1,120 @@
+---
+title: HubSpot
+description: Integrate HubSpot CRM contacts, companies, deals, and tickets into your application with Corsair.
+---
+
+## Quick Start
+
+Add the HubSpot plugin to your Corsair instance:
+
+```ts title="corsair.ts"
+import { createCorsair } from "corsair";
+import { hubspot } from "corsair/plugins";
+
+export const corsair = createCorsair({
+    plugins: [
+        hubspot(),
+    ],
+});
+```
+
+Once configured, you can access the HubSpot API through your Corsair instance:
+
+```ts
+const contacts = await corsair.hubspot.api.contacts.getMany({
+    limit: 10,
+});
+```
+
+## Authentication
+
+### Supported Auth Types
+
+The HubSpot plugin supports both API key and OAuth 2.0 authentication methods.
+
+- **`api_key`** - Private App API key authentication
+- **`oauth_2`** - OAuth 2.0 authentication
+
+### API Key Authentication (Private App)
+
+Store the API key in the database using the keys API:
+
+```ts
+await corsair
+    .withTenant('default')
+    .hubspot.keys.setApiKey('your-api-key');
+```
+
+Alternatively, you can provide it directly:
+
+```ts title="corsair.ts"
+hubspot({
+    authType: "api_key",
+    credentials: {
+        apiKey: process.env.HUBSPOT_API_KEY,
+    },
+})
+```
+
+See [Get Credentials](/plugins/hubspot/get-credentials) for step-by-step instructions on obtaining an API key.
+
+### OAuth 2.0 Authentication
+
+Store OAuth credentials in the database using the keys API:
+
+```ts
+await corsair.hubspot.keys.setClientId('your-client-id');
+await corsair.hubspot.keys.setClientSecret('your-client-secret');
+await corsair.hubspot.keys.setRedirectUrl('https://yourapp.com/auth/hubspot/callback');
+```
+
+After users complete the OAuth flow, access tokens are automatically stored. Alternatively, you can provide credentials directly:
+
+```ts title="corsair.ts"
+hubspot({
+    authType: "oauth_2",
+    credentials: {
+        clientId: process.env.HUBSPOT_CLIENT_ID,
+        clientSecret: process.env.HUBSPOT_CLIENT_SECRET,
+    },
+})
+```
+
+See [Get Credentials](/plugins/hubspot/get-credentials) for step-by-step instructions on setting up OAuth 2.0.
+
+### Webhook Secret
+
+Store the webhook secret in the database using the keys API:
+
+```ts
+await corsair
+    .withTenant('default')
+    .hubspot.keys.setWebhookSignature('your-webhook-secret');
+```
+
+Alternatively, you can provide it directly:
+
+```ts title="corsair.ts"
+hubspot({
+    webhookSecret: process.env.HUBSPOT_WEBHOOK_SECRET,
+})
+```
+
+See [Get Credentials](/plugins/hubspot/get-credentials) for step-by-step instructions on setting up webhooks.
+
+See [Authentication](/concepts/auth) for details on managing credentials.
+
+## Options
+
+The HubSpot plugin accepts the following configuration options:
+
+| Option | Type | Description |
+|--------|------|-------------|
+| `authType` | `'api_key' \| 'oauth_2'` | Authentication method |
+| `credentials` | `object` | Credentials object (apiKey for api_key, clientId/clientSecret for oauth_2) |
+| `webhookSecret` | `string` | Webhook signing secret (optional) |
+| `hooks` | `object` | Endpoint hooks for custom logic |
+| `webhookHooks` | `object` | Webhook hooks for event handling |
+| `errorHandlers` | `object` | Custom error handlers |
+
+For complete documentation on getting credentials, see the [Plugin Credentials Guide](/guides/plugin-credentials#hubspot).
