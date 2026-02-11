@@ -295,11 +295,13 @@ export const list: LinearEndpoints['issuesList'] = async (ctx, input) => {
 		variables.after = input.after;
 	}
 
-	const result = await makeLinearRequest<IssuesListResponse>(
+	const response = await makeLinearRequest<IssuesListResponse>(
 		query,
 		ctx.key,
 		variables,
 	);
+
+	const result = response.issues;
 
 	await logEventFromContext(
 		ctx,
@@ -311,11 +313,13 @@ export const list: LinearEndpoints['issuesList'] = async (ctx, input) => {
 };
 
 export const get: LinearEndpoints['issuesGet'] = async (ctx, input) => {
-	const result = await makeLinearRequest<IssueGetResponse>(
+	const response = await makeLinearRequest<IssueGetResponse>(
 		ISSUE_GET_QUERY,
 		ctx.key,
 		{ id: input.id },
 	);
+
+	const result = response.issue;
 
 	await logEventFromContext(
 		ctx,
@@ -333,9 +337,9 @@ export const create: LinearEndpoints['issuesCreate'] = async (ctx, input) => {
 		{ input },
 	);
 
-	const result = response;
+	const result = response.issueCreate.issue;
 
-	if (result && result) {
+	if (result) {
 		const endpoints = ctx.endpoints as LinearBoundEndpoints;
 		await endpoints.issues.get({ id: result.id });
 	}
@@ -356,9 +360,9 @@ export const update: LinearEndpoints['issuesUpdate'] = async (ctx, input) => {
 		{ id: input.id, input: input.input },
 	);
 
-	const result = response;
+	const result = response.issueUpdate.issue;
 
-	if (result && result) {
+	if (result) {
 		const endpoints = ctx.endpoints as LinearBoundEndpoints;
 		await endpoints.issues.get({ id: result.id });
 	}
@@ -382,7 +386,7 @@ export const deleteIssue: LinearEndpoints['issuesDelete'] = async (
 		{ id: input.id },
 	);
 
-	const result = response;
+	const result = response.issueDelete.success;
 
 	if (result && ctx.db.issues) {
 		try {
