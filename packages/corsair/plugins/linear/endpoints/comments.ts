@@ -118,7 +118,7 @@ export const list: LinearEndpoints['commentsList'] = async (ctx, input) => {
 		},
 	);
 
-	const result = response;
+	const result = response.issue.comments;
 
 	if (result.nodes && ctx.db.comments) {
 		try {
@@ -128,8 +128,8 @@ export const list: LinearEndpoints['commentsList'] = async (ctx, input) => {
 					issueId: comment.issue.id,
 					userId: comment.user.id,
 					parentId: comment.parent?.id,
-					createdAt: new Date(comment.createdAt),
-					updatedAt: new Date(comment.updatedAt),
+					createdAt: new Date(comment.createdAt ?? ''),
+					updatedAt: new Date(comment.updatedAt ?? ''),
 				});
 			}
 		} catch (error) {
@@ -157,7 +157,7 @@ export const create: LinearEndpoints['commentsCreate'] = async (ctx, input) => {
 		},
 	);
 
-	const result = response;
+	const result = response.commentCreate.comment;
 
 	if (result && ctx.db.comments) {
 		try {
@@ -195,7 +195,7 @@ export const update: LinearEndpoints['commentsUpdate'] = async (ctx, input) => {
 		},
 	);
 
-	const result = response;
+	const result = response.commentUpdate.comment;
 
 	if (result && ctx.db.comments) {
 		try {
@@ -235,9 +235,9 @@ export const deleteComment: LinearEndpoints['commentsDelete'] = async (
 		},
 	);
 
-	const success = response;
+	const result = response.commentDelete.success;
 
-	if (success && ctx.db.comments) {
+	if (result && ctx.db.comments) {
 		try {
 			await ctx.db.comments.deleteByEntityId(input.id);
 		} catch (error) {
@@ -251,5 +251,5 @@ export const deleteComment: LinearEndpoints['commentsDelete'] = async (
 		{ ...input },
 		'completed',
 	);
-	return success;
+	return result;
 };

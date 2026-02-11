@@ -1,5 +1,3 @@
-// @ts-nocheck
-
 import dotenv from 'dotenv';
 import { makeLinearRequest } from './client';
 import type {
@@ -792,9 +790,8 @@ describe('Linear API Type Tests', () => {
 				TEST_TOKEN,
 				{ input: { issueId, body: 'Test comment' } },
 			);
-			const result = response;
+			const result = response.commentCreate.comment;
 
-			// Runtime validation with Zod
 			LinearEndpointOutputSchemas.commentsCreate.parse(result);
 		});
 
