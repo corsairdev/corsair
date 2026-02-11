@@ -1,0 +1,76 @@
+---
+title: Gmail
+description: Integrate Gmail messaging, labels, drafts, and threads into your application with Corsair.
+---
+
+## Quick Start
+
+Add the Gmail plugin to your Corsair instance:
+
+```ts title="corsair.ts"
+import { createCorsair } from "corsair";
+import { gmail } from "corsair/plugins";
+
+export const corsair = createCorsair({
+    plugins: [
+        gmail({
+            authType: "oauth_2",
+        }),
+    ],
+});
+```
+
+Once configured, you can access the Gmail API through your Corsair instance:
+
+```ts
+const messages = await corsair.gmail.api.messages.list({
+    maxResults: 10,
+});
+```
+
+## Authentication
+
+### Supported Auth Types
+
+The Gmail plugin uses OAuth 2.0 authentication exclusively.
+
+- **`oauth_2`** (default) - OAuth 2.0 authentication
+
+### OAuth 2.0 Setup
+
+Store OAuth credentials in the database using the keys API:
+
+```ts
+await corsair.gmail.keys.setClientId('your-client-id');
+await corsair.gmail.keys.setClientSecret('your-client-secret');
+await corsair.gmail.keys.setRedirectUrl('https://yourapp.com/auth/gmail/callback');
+```
+
+After users complete the OAuth flow, access tokens are automatically stored. Alternatively, you can provide credentials directly:
+
+```ts title="corsair.ts"
+gmail({
+    authType: "oauth_2",
+    credentials: {
+        clientId: process.env.GMAIL_CLIENT_ID,
+        clientSecret: process.env.GMAIL_CLIENT_SECRET,
+    },
+})
+```
+
+See [Get Credentials](/plugins/gmail/get-credentials) for step-by-step instructions on setting up OAuth 2.0.
+
+See [Authentication](/concepts/auth) for details on managing credentials.
+
+## Options
+
+The Gmail plugin accepts the following configuration options:
+
+| Option | Type | Description |
+|--------|------|-------------|
+| `authType` | `'oauth_2'` | Authentication method (defaults to `'oauth_2'`) |
+| `credentials` | `object` | Credentials object with clientId and clientSecret |
+| `hooks` | `object` | Endpoint hooks for custom logic |
+| `webhookHooks` | `object` | Webhook hooks for event handling |
+
+For complete documentation on getting credentials, see the [Plugin Credentials Guide](/guides/plugin-credentials#gmail).
