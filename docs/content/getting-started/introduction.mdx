@@ -8,7 +8,7 @@ Corsair is a unified SDK for integrating third-party services into TypeScript ap
 ```ts title="corsair.ts"
 import { createCorsair } from "corsair";
 import { Pool } from "pg";
-import { slack, linear } from "corsair/plugins";
+import { slack, linear, github, gmail, resend } from "corsair/plugins";
 
 export const corsair = createCorsair({
     multiTenancy: true,
@@ -20,6 +20,7 @@ export const corsair = createCorsair({
         gmail(),
         resend(),
     ],
+    kek: process.env.CORSAIR_KEK!,
 });
 ```
 

@@ -1,0 +1,198 @@
+---
+title: Resend API Endpoints
+description: Complete reference for all Resend API endpoints available in the Corsair Resend plugin.
+---
+
+The Resend plugin provides full access to Resend's API through a typed interface. All endpoints are organized by resource type and automatically handle authentication, rate limiting, and error handling.
+
+<Callout type="info">
+**New to Corsair?** Learn about core concepts like [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling) before diving into specific endpoints.
+</Callout>
+
+<Callout>
+**Full Implementation:** For the complete, up-to-date list of all endpoints and their implementations, see the [Resend plugin source code](https://github.com/corsairdev/corsair/tree/main/packages/corsair/plugins/resend) on GitHub.
+</Callout>
+
+## Emails
+
+Send and manage email messages.
+
+### send
+
+`emails.send`
+
+Send an email.
+
+```ts
+const email = await corsair.resend.api.emails.send({
+    from: "onboarding@resend.com",
+    to: "delivered@resend.dev",
+    subject: "Hello World",
+    html: "<p>It works!</p>",
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `from` | `string` | Yes | Sender email address |
+| `to` | `string \| string[]` | Yes | Recipient email address(es) |
+| `subject` | `string` | Yes | Email subject |
+| `html` | `string` | No | HTML content |
+| `text` | `string` | No | Plain text content |
+| `cc` | `string \| string[]` | No | CC recipients |
+| `bcc` | `string \| string[]` | No | BCC recipients |
+| `reply_to` | `string \| string[]` | No | Reply-to address(es) |
+| `attachments` | `Array<object>` | No | Email attachments |
+| `tags` | `Array<{name: string, value: string}>` | No | Email tags |
+| `headers` | `Record<string, string>` | No | Custom headers |
+
+---
+
+### get
+
+`emails.get`
+
+Get a specific email.
+
+```ts
+const email = await corsair.resend.api.emails.get({
+    id: "email-id",
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Email ID |
+
+---
+
+### list
+
+`emails.list`
+
+List emails.
+
+```ts
+const emails = await corsair.resend.api.emails.list({
+    limit: 10,
+    cursor: "cursor-token",
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | Number of results to return |
+| `cursor` | `string` | No | Pagination cursor |
+
+---
+
+## Domains
+
+Manage email domains.
+
+### create
+
+`domains.create`
+
+Create a new domain.
+
+```ts
+const domain = await corsair.resend.api.domains.create({
+    name: "example.com",
+    region: "us-east-1",
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Domain name |
+| `region` | `'us-east-1' \| 'eu-west-1' \| 'sa-east-1'` | No | AWS region |
+
+---
+
+### get
+
+`domains.get`
+
+Get a specific domain.
+
+```ts
+const domain = await corsair.resend.api.domains.get({
+    id: "domain-id",
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Domain ID |
+
+---
+
+### list
+
+`domains.list`
+
+List domains.
+
+```ts
+const domains = await corsair.resend.api.domains.list({
+    limit: 10,
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | Number of results to return |
+| `cursor` | `string` | No | Pagination cursor |
+
+---
+
+### delete
+
+`domains.delete`
+
+Delete a domain.
+
+```ts
+await corsair.resend.api.domains.delete({
+    id: "domain-id",
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Domain ID to delete |
+
+---
+
+### verify
+
+`domains.verify`
+
+Verify a domain.
+
+```ts
+await corsair.resend.api.domains.verify({
+    id: "domain-id",
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Domain ID to verify |
