@@ -1,0 +1,123 @@
+---
+title: Google Drive Database Schema
+description: Database entities and querying synced Google Drive data.
+---
+
+The Google Drive plugin automatically syncs data from Google Drive to your database. This allows you to query Drive data without making API calls, providing faster access and offline capabilities.
+
+<Callout type="info">
+**New to Corsair?** Learn about core concepts like [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy) before working with the database.
+</Callout>
+
+<Callout>
+**Full Implementation:** For the complete, up-to-date database schema and implementations, see the [Google Drive plugin source code](https://github.com/corsairdev/corsair/tree/main/packages/corsair/plugins/googledrive) on GitHub.
+</Callout>
+
+## Synced Entities
+
+The Google Drive plugin syncs the following entities to your database:
+
+- **files** - Files and documents
+- **folders** - Folders
+- **sharedDrives** - Shared drives (Team Drives)
+
+## Database API
+
+Access synced data through the `db` property:
+
+```ts
+const files = await corsair.googledrive.db.files.search({
+    data: { name: "document.pdf" },
+});
+```
+
+## Files
+
+### Schema
+
+```ts
+{
+    id: string;
+    name?: string;
+    mimeType?: string;
+    description?: string;
+    starred?: boolean;
+    trashed?: boolean;
+    parents?: string[];
+    webViewLink?: string;
+    createdTime?: string;
+    modifiedTime?: string;
+    size?: string;
+    createdAt?: Date;
+}
+```
+
+### Querying Files
+
+**Search by name:**
+
+```ts
+const files = await corsair.googledrive.db.files.search({
+    data: { name: "document.pdf" },
+});
+```
+
+**Find starred files:**
+
+```ts
+const starredFiles = await corsair.googledrive.db.files.search({
+    data: { starred: true },
+});
+```
+
+## Folders
+
+### Schema
+
+```ts
+{
+    id: string;
+    name?: string;
+    mimeType?: string;
+    parents?: string[];
+    createdAt?: Date;
+}
+```
+
+### Querying Folders
+
+**Search by name:**
+
+```ts
+const folders = await corsair.googledrive.db.folders.search({
+    data: { name: "My Folder" },
+});
+```
+
+## Shared Drives
+
+### Schema
+
+```ts
+{
+    id: string;
+    name?: string;
+    themeId?: string;
+    colorRgb?: string;
+    createdTime?: string;
+    hidden?: boolean;
+    createdAt?: Date;
+}
+```
+
+### Querying Shared Drives
+
+**Search by name:**
+
+```ts
+const drives = await corsair.googledrive.db.sharedDrives.search({
+    data: { name: "Team Drive" },
+});
+```
+
+See [Database](/concepts/database) for more information about database concepts and querying patterns.
