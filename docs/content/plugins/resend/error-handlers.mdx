@@ -1,0 +1,94 @@
+---
+title: Resend Error Handlers
+description: Built-in and custom error handling for the Resend plugin.
+---
+
+The Resend plugin includes comprehensive error handling with built-in handlers for common error scenarios. You can also add custom error handlers to handle specific cases in your application.
+
+<Callout type="info">
+**New to Corsair?** Learn about core concepts like [error handling](/concepts/error-handling) and [retry strategies](/concepts/error-handling) before customizing error handlers.
+</Callout>
+
+<Callout>
+**Full Implementation:** For the complete, up-to-date error handler implementations, see the [Resend plugin source code](https://github.com/corsairdev/corsair/tree/main/packages/corsair/plugins/resend) on GitHub.
+</Callout>
+
+## Built-in Error Handlers
+
+The Resend plugin automatically handles common error scenarios with sensible retry strategies.
+
+### Rate Limit Errors
+
+**Triggers:** HTTP 429 status
+
+**Behavior:**
+- Maximum retries: **5**
+- Uses exponential backoff between retries
+
+### Authentication Errors
+
+**Triggers:** HTTP 401 status, or error messages containing "Invalid API key" or "Unauthorized"
+
+**Behavior:**
+- Maximum retries: **0** (no retries)
+- Logs error to console
+- Fails immediately for manual intervention
+
+### Permission Errors
+
+**Triggers:** HTTP 403 status
+
+**Behavior:**
+- Maximum retries: **0** (no retries)
+- Logs warning to console
+- Fails immediately
+
+### Resource Not Found Errors
+
+**Triggers:** HTTP 404 status
+
+**Behavior:**
+- Maximum retries: **0** (no retries)
+- Logs warning to console
+- Fails immediately
+
+### Network Errors
+
+**Triggers:** Network-related error messages
+
+**Behavior:**
+- Maximum retries: **3**
+- Uses exponential backoff
+- Logs warning to console
+
+### Default Error Handler
+
+**Triggers:** Any error not matched by other handlers
+
+**Behavior:**
+- Maximum retries: **0** (no retries)
+- Logs error to console
+- Fails immediately
+
+## Custom Error Handlers
+
+You can add custom error handlers to handle specific scenarios:
+
+```ts title="corsair.ts"
+resend({
+    errorHandlers: {
+        CUSTOM_ERROR: {
+            match: (error, context) => {
+                return error.message.includes("custom_error_code");
+            },
+            handler: async (error, context) => {
+                return {
+                    maxRetries: 2,
+                };
+            },
+        },
+    },
+})
+```
+
+For comprehensive error handling strategies, patterns, and best practices, see the [Error Handling](/concepts/error-handling) concepts page.

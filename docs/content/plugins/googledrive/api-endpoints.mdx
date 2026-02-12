@@ -1,0 +1,526 @@
+---
+title: Google Drive API Endpoints
+description: Complete reference for all Google Drive API endpoints available in the Corsair Google Drive plugin.
+---
+
+The Google Drive plugin provides full access to Google Drive's API through a typed interface. All endpoints are organized by resource type and automatically handle authentication, rate limiting, and error handling.
+
+<Callout type="info">
+**New to Corsair?** Learn about core concepts like [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling) before diving into specific endpoints.
+</Callout>
+
+<Callout>
+**Full Implementation:** For the complete, up-to-date list of all endpoints and their implementations, see the [Google Drive plugin source code](https://github.com/corsairdev/corsair/tree/main/packages/corsair/plugins/googledrive) on GitHub.
+</Callout>
+
+## Files
+
+Manage files in Google Drive.
+
+### list
+
+`files.list`
+
+List files in Google Drive.
+
+```ts
+const files = await corsair.googledrive.api.files.list({
+    q: "mimeType='application/vnd.google-apps.folder'",
+    pageSize: 10,
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | No | Search query |
+| `pageSize` | `number` | No | Number of results per page |
+| `pageToken` | `string` | No | Page token for pagination |
+| `spaces` | `string` | No | Spaces to search |
+| `corpora` | `string` | No | Corpora to search |
+| `driveId` | `string` | No | Shared drive ID |
+| `includeItemsFromAllDrives` | `boolean` | No | Include items from all drives |
+| `orderBy` | `string` | No | Sort order |
+| `supportsAllDrives` | `boolean` | No | Support all drives |
+
+---
+
+### get
+
+`files.get`
+
+Get a specific file.
+
+```ts
+const file = await corsair.googledrive.api.files.get({
+    fileId: "file-id",
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fileId` | `string` | Yes | File ID |
+| `acknowledgeAbuse` | `boolean` | No | Acknowledge abuse warning |
+| `supportsAllDrives` | `boolean` | No | Support all drives |
+
+---
+
+### createFromText
+
+`files.createFromText`
+
+Create a file from text content.
+
+```ts
+const file = await corsair.googledrive.api.files.createFromText({
+    name: "document.txt",
+    content: "File content here",
+    mimeType: "text/plain",
+    parents: ["folder-id"],
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | File name |
+| `content` | `string` | Yes | File content |
+| `mimeType` | `string` | No | MIME type |
+| `parents` | `string[]` | No | Parent folder IDs |
+| `description` | `string` | No | File description |
+
+---
+
+### upload
+
+`files.upload`
+
+Upload a file to Google Drive.
+
+```ts
+const file = await corsair.googledrive.api.files.upload({
+    name: "document.pdf",
+    mimeType: "application/pdf",
+    parents: ["folder-id"],
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | File name |
+| `mimeType` | `string` | No | MIME type |
+| `parents` | `string[]` | No | Parent folder IDs |
+| `description` | `string` | No | File description |
+
+---
+
+### update
+
+`files.update`
+
+Update a file's metadata.
+
+```ts
+await corsair.googledrive.api.files.update({
+    fileId: "file-id",
+    name: "Updated Name",
+    description: "Updated description",
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fileId` | `string` | Yes | File ID |
+| `name` | `string` | No | New file name |
+| `description` | `string` | No | New description |
+| `starred` | `boolean` | No | Star status |
+| `trashed` | `boolean` | No | Trash status |
+| `parents` | `string[]` | No | Parent folders |
+| `properties` | `Record<string, string>` | No | File properties |
+| `appProperties` | `Record<string, string>` | No | App-specific properties |
+
+---
+
+### delete
+
+`files.delete`
+
+Delete a file.
+
+```ts
+await corsair.googledrive.api.files.delete({
+    fileId: "file-id",
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fileId` | `string` | Yes | File ID to delete |
+| `supportsAllDrives` | `boolean` | No | Support all drives |
+
+---
+
+### copy
+
+`files.copy`
+
+Copy a file.
+
+```ts
+const copiedFile = await corsair.googledrive.api.files.copy({
+    fileId: "file-id",
+    name: "Copy of File",
+    parents: ["folder-id"],
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fileId` | `string` | Yes | File ID to copy |
+| `name` | `string` | No | Name for the copy |
+| `parents` | `string[]` | No | Parent folder IDs |
+| `supportsAllDrives` | `boolean` | No | Support all drives |
+
+---
+
+### move
+
+`files.move`
+
+Move a file to different folders.
+
+```ts
+await corsair.googledrive.api.files.move({
+    fileId: "file-id",
+    addParents: "new-folder-id",
+    removeParents: "old-folder-id",
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fileId` | `string` | Yes | File ID |
+| `addParents` | `string` | No | Parent folder to add |
+| `removeParents` | `string` | No | Parent folder to remove |
+| `supportsAllDrives` | `boolean` | No | Support all drives |
+
+---
+
+### download
+
+`files.download`
+
+Download a file's content.
+
+```ts
+const content = await corsair.googledrive.api.files.download({
+    fileId: "file-id",
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fileId` | `string` | Yes | File ID |
+| `acknowledgeAbuse` | `boolean` | No | Acknowledge abuse warning |
+
+---
+
+### share
+
+`files.share`
+
+Share a file with users or groups.
+
+```ts
+await corsair.googledrive.api.files.share({
+    fileId: "file-id",
+    type: "user",
+    role: "reader",
+    emailAddress: "user@example.com",
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fileId` | `string` | Yes | File ID |
+| `type` | `'user' \| 'group' \| 'domain' \| 'anyone'` | No | Permission type |
+| `role` | `'owner' \| 'organizer' \| 'fileOrganizer' \| 'writer' \| 'commenter' \| 'reader'` | No | Permission role |
+| `emailAddress` | `string` | No | Email address for user/group |
+| `domain` | `string` | No | Domain for domain-wide sharing |
+| `allowFileDiscovery` | `boolean` | No | Allow file discovery |
+| `sendNotificationEmail` | `boolean` | No | Send notification email |
+| `transferOwnership` | `boolean` | No | Transfer ownership |
+
+---
+
+## Folders
+
+Manage folders in Google Drive.
+
+### create
+
+`folders.create`
+
+Create a new folder.
+
+```ts
+const folder = await corsair.googledrive.api.folders.create({
+    name: "My Folder",
+    parents: ["parent-folder-id"],
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Folder name |
+| `parents` | `string[]` | No | Parent folder IDs |
+| `description` | `string` | No | Folder description |
+
+---
+
+### get
+
+`folders.get`
+
+Get a specific folder.
+
+```ts
+const folder = await corsair.googledrive.api.folders.get({
+    folderId: "folder-id",
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `folderId` | `string` | Yes | Folder ID |
+| `supportsAllDrives` | `boolean` | No | Support all drives |
+
+---
+
+### list
+
+`folders.list`
+
+List folders.
+
+```ts
+const folders = await corsair.googledrive.api.folders.list({
+    q: "mimeType='application/vnd.google-apps.folder'",
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | No | Search query |
+| `pageSize` | `number` | No | Number of results |
+| `pageToken` | `string` | No | Page token |
+| `spaces` | `string` | No | Spaces to search |
+| `orderBy` | `string` | No | Sort order |
+
+---
+
+### delete
+
+`folders.delete`
+
+Delete a folder.
+
+```ts
+await corsair.googledrive.api.folders.delete({
+    folderId: "folder-id",
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `folderId` | `string` | Yes | Folder ID to delete |
+| `supportsAllDrives` | `boolean` | No | Support all drives |
+
+---
+
+### share
+
+`folders.share`
+
+Share a folder with users or groups.
+
+```ts
+await corsair.googledrive.api.folders.share({
+    folderId: "folder-id",
+    type: "user",
+    role: "writer",
+    emailAddress: "user@example.com",
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `folderId` | `string` | Yes | Folder ID |
+| `type` | `'user' \| 'group' \| 'domain' \| 'anyone'` | No | Permission type |
+| `role` | `'owner' \| 'organizer' \| 'fileOrganizer' \| 'writer' \| 'commenter' \| 'reader'` | No | Permission role |
+| `emailAddress` | `string` | No | Email address |
+| `domain` | `string` | No | Domain for domain-wide sharing |
+
+---
+
+## Shared Drives
+
+Manage shared drives (Team Drives).
+
+### create
+
+`sharedDrives.create`
+
+Create a new shared drive.
+
+```ts
+const drive = await corsair.googledrive.api.sharedDrives.create({
+    name: "Team Drive",
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Drive name |
+
+---
+
+### get
+
+`sharedDrives.get`
+
+Get a specific shared drive.
+
+```ts
+const drive = await corsair.googledrive.api.sharedDrives.get({
+    driveId: "drive-id",
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `driveId` | `string` | Yes | Drive ID |
+
+---
+
+### list
+
+`sharedDrives.list`
+
+List shared drives.
+
+```ts
+const drives = await corsair.googledrive.api.sharedDrives.list({
+    pageSize: 10,
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pageSize` | `number` | No | Number of results |
+| `pageToken` | `string` | No | Page token |
+
+---
+
+### update
+
+`sharedDrives.update`
+
+Update a shared drive.
+
+```ts
+await corsair.googledrive.api.sharedDrives.update({
+    driveId: "drive-id",
+    name: "Updated Drive Name",
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `driveId` | `string` | Yes | Drive ID |
+| `name` | `string` | No | New drive name |
+
+---
+
+### delete
+
+`sharedDrives.delete`
+
+Delete a shared drive.
+
+```ts
+await corsair.googledrive.api.sharedDrives.delete({
+    driveId: "drive-id",
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `driveId` | `string` | Yes | Drive ID to delete |
+
+---
+
+## Search
+
+Search for files and folders.
+
+### filesAndFolders
+
+`search.filesAndFolders`
+
+Search for files and folders.
+
+```ts
+const results = await corsair.googledrive.api.search.filesAndFolders({
+    q: "name contains 'document'",
+    pageSize: 10,
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | No | Search query |
+| `pageSize` | `number` | No | Number of results |
+| `pageToken` | `string` | No | Page token |
+| `spaces` | `string` | No | Spaces to search |
+| `orderBy` | `string` | No | Sort order |

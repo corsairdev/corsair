@@ -1,0 +1,296 @@
+---
+title: GitHub Error Handlers
+description: Built-in and custom error handling for the GitHub plugin.
+---
+
+The GitHub plugin includes comprehensive error handling with built-in handlers for common error scenarios. You can also add custom error handlers to handle specific cases in your application.
+
+<Callout type="info">
+**New to Corsair?** Learn about core concepts like [error handling](/concepts/error-handling) and [retry strategies](/concepts/error-handling) before customizing error handlers.
+</Callout>
+
+<Callout>
+**Full Implementation:** For the complete, up-to-date error handler implementations, see the [GitHub plugin source code](https://github.com/corsairdev/corsair/tree/main/packages/corsair/plugins/github) on GitHub.
+</Callout>
+
+## Built-in Error Handlers
+
+The GitHub plugin automatically handles common error scenarios with sensible retry strategies.
+
+### Rate Limit Errors
+
+**Triggers:** HTTP 429 status, or error messages containing "rate limit", "rate_limit", or "429"
+
+**Behavior:**
+- Maximum retries: **5**
+- Respects `X-RateLimit-Reset` header from GitHub
+- Uses exponential backoff between retries
+
+**Example:**
+
+```ts
+await corsair.github.api.issues.list({
+    owner: "octocat",
+    repo: "Hello-World",
+});
+```
+
+---
+
+### Authentication Errors
+
+**Triggers:** Error messages containing:
+- `Bad credentials`
+- `Requires authentication`
+- `Invalid token`
+- `Token expired`
+
+**Behavior:**
+- Maximum retries: **0** (no retries)
+- Logs error to console
+- Fails immediately for manual intervention
+
+**Example Error:**
+
+```
+[GITHUB:issues.list] Authentication failed - check your token
+```
+
+**How to Fix:**
+1. Verify your Personal Access Token or OAuth token is valid
+2. Check if the token has been revoked
+3. Ensure the token has the required scopes
+
+---
+
+### Permission Errors
+
+**Triggers:** HTTP 403 status, or error messages containing:
+- `Forbidden`
+- `Resource not accessible by integration`
+- `Insufficient permissions`
+
+**Behavior:**
+- Maximum retries: **0** (no retries)
+- Logs warning to console
+- Fails immediately for manual intervention
+
+**Example Error:**
+
+```
+[GITHUB:issues.create] Permission denied: Resource not accessible
+```
+
+**How to Fix:**
+1. Check your token's OAuth scopes
+2. Ensure the token has access to the repository
+3. For organization repositories, verify the token has organization access
+
+---
+
+### Resource Not Found Errors
+
+**Triggers:** HTTP 404 status, or error messages containing:
+- `Not Found`
+- `Repository not found`
+- `Issue not found`
+
+**Behavior:**
+- Maximum retries: **0** (no retries)
+- Logs warning to console
+- Fails immediately
+
+**Example Error:**
+
+```
+[GITHUB:repositories.get] Resource not found: Repository not found
+```
+
+**How to Handle:**
+
+```ts
+const repo = await corsair.github.api.repositories.get({
+    owner: "octocat",
+    repo: "Hello-World",
+});
+```
+
+---
+
+### Network Errors
+
+**Triggers:** Error messages containing:
+- `network`
+- `connection`
+- `econnrefused`
+- `enotfound`
+- `etimedout`
+- `fetch failed`
+- `network error`
+
+**Behavior:**
+- Maximum retries: **3**
+- Uses exponential backoff
+- Logs warning to console
+
+**Example:**
+
+```ts
+const repos = await corsair.github.api.repositories.list({
+    owner: "octocat",
+});
+```
+
+---
+
+### Default Error Handler
+
+**Triggers:** Any error not matched by other handlers
+
+**Behavior:**
+- Maximum retries: **0** (no retries)
+- Logs error to console
+- Fails immediately
+
+**Example Error:**
+
+```
+[GITHUB:issues.create] Unhandled error: Something went wrong
+```
+
+---
+
+## Custom Error Handlers
+
+You can add custom error handlers to handle specific scenarios in your application.
+
+### Basic Custom Handler
+
+```ts title="corsair.ts"
+github({
+    errorHandlers: {
+        CUSTOM_ERROR: {
+            match: (error, context) => {
+                return error.message.includes("custom_error_code");
+            },
+            handler: async (error, context) => {
+                console.log(`Custom error in ${context.operation}`);
+                
+                return {
+                    maxRetries: 2,
+                };
+            },
+        },
+    },
+})
+```
+
+### Error Handler with Retry-After
+
+```ts title="corsair.ts"
+github({
+    errorHandlers: {
+        SECONDARY_RATE_LIMIT: {
+            match: (error, context) => {
+                return error.message.includes("secondary rate limit");
+            },
+            handler: async (error, context) => {
+                return {
+                    maxRetries: 3,
+                    headersRetryAfterMs: 60000,
+                };
+            },
+        },
+    },
+})
+```
+
+### Conditional Retry Logic
+
+```ts title="corsair.ts"
+github({
+    errorHandlers: {
+        REPOSITORY_ARCHIVED_ERROR: {
+            match: (error, context) => {
+                return (
+                    error.message.includes("Repository archived") &&
+                    context.operation === "repositories.get"
+                );
+            },
+            handler: async (error, context) => {
+                if (error.message.includes("already archived")) {
+                    console.log("Repository already archived - treating as success");
+                    return {
+                        maxRetries: 0,
+                    };
+                }
+                
+                return {
+                    maxRetries: 1,
+                };
+            },
+        },
+    },
+})
+```
+
+### Multiple Custom Handlers
+
+```ts title="corsair.ts"
+github({
+    errorHandlers: {
+        QUOTA_EXCEEDED: {
+            match: (error) => error.message.includes("quota exceeded"),
+            handler: async (error, context) => {
+                await notifyTeam("GitHub quota exceeded");
+                return { maxRetries: 0 };
+            },
+        },
+        TEMPORARY_ERROR: {
+            match: (error) => error.message.includes("temporary_error"),
+            handler: async (error, context) => {
+                return {
+                    maxRetries: 5,
+                    headersRetryAfterMs: 10000,
+                };
+            },
+        },
+        MAINTENANCE_MODE: {
+            match: (error) => error.message.includes("maintenance"),
+            handler: async (error, context) => {
+                console.log("GitHub is in maintenance mode");
+                return {
+                    maxRetries: 10,
+                    headersRetryAfterMs: 30000,
+                };
+            },
+        },
+    },
+})
+```
+
+---
+
+## Error Handler Options
+
+### Return Object
+
+Error handlers return an object with the following options:
+
+| Option | Type | Description |
+|--------|------|-------------|
+| `maxRetries` | `number` | Maximum number of retry attempts |
+| `headersRetryAfterMs` | `number?` | Milliseconds to wait before retrying |
+
+### Context Object
+
+The `context` parameter provides information about the operation:
+
+```ts
+{
+    operation: string;
+    tenantId?: string;
+}
+```
+
+For comprehensive error handling strategies, patterns, and best practices, see the [Error Handling](/concepts/error-handling) concepts page.

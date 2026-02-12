@@ -31,20 +31,52 @@ import SlackDoc from '@/content/plugins/slack/main.mdx';
 import SlackWebhooksDoc from '@/content/plugins/slack/webhooks.mdx';
 import GithubDoc from '@/content/plugins/github/main.mdx';
 import GithubGetCredentialsDoc from '@/content/plugins/github/get-credentials.mdx';
+import GithubApiEndpointsDoc from '@/content/plugins/github/api-endpoints.mdx';
+import GithubWebhooksDoc from '@/content/plugins/github/webhooks.mdx';
+import GithubDatabaseDoc from '@/content/plugins/github/database.mdx';
+import GithubErrorHandlersDoc from '@/content/plugins/github/error-handlers.mdx';
 import GmailDoc from '@/content/plugins/gmail/main.mdx';
 import GmailGetCredentialsDoc from '@/content/plugins/gmail/get-credentials.mdx';
+import GmailApiEndpointsDoc from '@/content/plugins/gmail/api-endpoints.mdx';
+import GmailWebhooksDoc from '@/content/plugins/gmail/webhooks.mdx';
+import GmailDatabaseDoc from '@/content/plugins/gmail/database.mdx';
+import GmailErrorHandlersDoc from '@/content/plugins/gmail/error-handlers.mdx';
 import GoogleSheetsDoc from '@/content/plugins/googlesheets/main.mdx';
 import GoogleSheetsGetCredentialsDoc from '@/content/plugins/googlesheets/get-credentials.mdx';
+import GoogleSheetsApiEndpointsDoc from '@/content/plugins/googlesheets/api-endpoints.mdx';
+import GoogleSheetsWebhooksDoc from '@/content/plugins/googlesheets/webhooks.mdx';
+import GoogleSheetsDatabaseDoc from '@/content/plugins/googlesheets/database.mdx';
+import GoogleSheetsErrorHandlersDoc from '@/content/plugins/googlesheets/error-handlers.mdx';
 import GoogleDriveDoc from '@/content/plugins/googledrive/main.mdx';
 import GoogleDriveGetCredentialsDoc from '@/content/plugins/googledrive/get-credentials.mdx';
+import GoogleDriveApiEndpointsDoc from '@/content/plugins/googledrive/api-endpoints.mdx';
+import GoogleDriveWebhooksDoc from '@/content/plugins/googledrive/webhooks.mdx';
+import GoogleDriveDatabaseDoc from '@/content/plugins/googledrive/database.mdx';
+import GoogleDriveErrorHandlersDoc from '@/content/plugins/googledrive/error-handlers.mdx';
 import GoogleCalendarDoc from '@/content/plugins/googlecalendar/main.mdx';
 import GoogleCalendarGetCredentialsDoc from '@/content/plugins/googlecalendar/get-credentials.mdx';
+import GoogleCalendarApiEndpointsDoc from '@/content/plugins/googlecalendar/api-endpoints.mdx';
+import GoogleCalendarWebhooksDoc from '@/content/plugins/googlecalendar/webhooks.mdx';
+import GoogleCalendarDatabaseDoc from '@/content/plugins/googlecalendar/database.mdx';
+import GoogleCalendarErrorHandlersDoc from '@/content/plugins/googlecalendar/error-handlers.mdx';
 import HubSpotDoc from '@/content/plugins/hubspot/main.mdx';
 import HubSpotGetCredentialsDoc from '@/content/plugins/hubspot/get-credentials.mdx';
+import HubSpotApiEndpointsDoc from '@/content/plugins/hubspot/api-endpoints.mdx';
+import HubSpotWebhooksDoc from '@/content/plugins/hubspot/webhooks.mdx';
+import HubSpotDatabaseDoc from '@/content/plugins/hubspot/database.mdx';
+import HubSpotErrorHandlersDoc from '@/content/plugins/hubspot/error-handlers.mdx';
 import PostHogDoc from '@/content/plugins/posthog/main.mdx';
 import PostHogGetCredentialsDoc from '@/content/plugins/posthog/get-credentials.mdx';
+import PostHogApiEndpointsDoc from '@/content/plugins/posthog/api-endpoints.mdx';
+import PostHogWebhooksDoc from '@/content/plugins/posthog/webhooks.mdx';
+import PostHogDatabaseDoc from '@/content/plugins/posthog/database.mdx';
+import PostHogErrorHandlersDoc from '@/content/plugins/posthog/error-handlers.mdx';
 import ResendDoc from '@/content/plugins/resend/main.mdx';
 import ResendGetCredentialsDoc from '@/content/plugins/resend/get-credentials.mdx';
+import ResendApiEndpointsDoc from '@/content/plugins/resend/api-endpoints.mdx';
+import ResendWebhooksDoc from '@/content/plugins/resend/webhooks.mdx';
+import ResendDatabaseDoc from '@/content/plugins/resend/database.mdx';
+import ResendErrorHandlersDoc from '@/content/plugins/resend/error-handlers.mdx';
 import { extractTOC } from '@/lib/toc';
 import { useMDXComponents } from '@/mdx-components';
 
@@ -179,6 +211,26 @@ const pages = {
 		title: 'Get Credentials',
 		description: 'Step-by-step instructions for obtaining GitHub credentials',
 	},
+	'plugins/github/api-endpoints': {
+		Component: GithubApiEndpointsDoc,
+		title: 'GitHub API Endpoints',
+		description: 'Complete reference for all GitHub API endpoints',
+	},
+	'plugins/github/webhooks': {
+		Component: GithubWebhooksDoc,
+		title: 'GitHub Webhooks',
+		description: 'All available GitHub webhook events',
+	},
+	'plugins/github/database': {
+		Component: GithubDatabaseDoc,
+		title: 'GitHub Database Schema',
+		description: 'Database entities and querying synced GitHub data',
+	},
+	'plugins/github/error-handlers': {
+		Component: GithubErrorHandlersDoc,
+		title: 'GitHub Error Handlers',
+		description: 'Built-in and custom error handling for GitHub',
+	},
 	'plugins/gmail': {
 		Component: GmailDoc,
 		title: 'Gmail',
@@ -188,6 +240,26 @@ const pages = {
 		Component: GmailGetCredentialsDoc,
 		title: 'Get Credentials',
 		description: 'Step-by-step instructions for obtaining Gmail credentials',
+	},
+	'plugins/gmail/api-endpoints': {
+		Component: GmailApiEndpointsDoc,
+		title: 'Gmail API Endpoints',
+		description: 'Complete reference for all Gmail API endpoints',
+	},
+	'plugins/gmail/webhooks': {
+		Component: GmailWebhooksDoc,
+		title: 'Gmail Webhooks',
+		description: 'All available Gmail webhook events',
+	},
+	'plugins/gmail/database': {
+		Component: GmailDatabaseDoc,
+		title: 'Gmail Database Schema',
+		description: 'Database entities and querying synced Gmail data',
+	},
+	'plugins/gmail/error-handlers': {
+		Component: GmailErrorHandlersDoc,
+		title: 'Gmail Error Handlers',
+		description: 'Built-in and custom error handling for Gmail',
 	},
 	'plugins/googlesheets': {
 		Component: GoogleSheetsDoc,
@@ -199,6 +271,26 @@ const pages = {
 		title: 'Get Credentials',
 		description: 'Step-by-step instructions for obtaining Google Sheets credentials',
 	},
+	'plugins/googlesheets/api-endpoints': {
+		Component: GoogleSheetsApiEndpointsDoc,
+		title: 'Google Sheets API Endpoints',
+		description: 'Complete reference for all Google Sheets API endpoints',
+	},
+	'plugins/googlesheets/webhooks': {
+		Component: GoogleSheetsWebhooksDoc,
+		title: 'Google Sheets Webhooks',
+		description: 'All available Google Sheets webhook events',
+	},
+	'plugins/googlesheets/database': {
+		Component: GoogleSheetsDatabaseDoc,
+		title: 'Google Sheets Database Schema',
+		description: 'Database entities and querying synced Google Sheets data',
+	},
+	'plugins/googlesheets/error-handlers': {
+		Component: GoogleSheetsErrorHandlersDoc,
+		title: 'Google Sheets Error Handlers',
+		description: 'Built-in and custom error handling for Google Sheets',
+	},
 	'plugins/googledrive': {
 		Component: GoogleDriveDoc,
 		title: 'Google Drive',
@@ -208,6 +300,26 @@ const pages = {
 		Component: GoogleDriveGetCredentialsDoc,
 		title: 'Get Credentials',
 		description: 'Step-by-step instructions for obtaining Google Drive credentials',
+	},
+	'plugins/googledrive/api-endpoints': {
+		Component: GoogleDriveApiEndpointsDoc,
+		title: 'Google Drive API Endpoints',
+		description: 'Complete reference for all Google Drive API endpoints',
+	},
+	'plugins/googledrive/webhooks': {
+		Component: GoogleDriveWebhooksDoc,
+		title: 'Google Drive Webhooks',
+		description: 'All available Google Drive webhook events',
+	},
+	'plugins/googledrive/database': {
+		Component: GoogleDriveDatabaseDoc,
+		title: 'Google Drive Database Schema',
+		description: 'Database entities and querying synced Google Drive data',
+	},
+	'plugins/googledrive/error-handlers': {
+		Component: GoogleDriveErrorHandlersDoc,
+		title: 'Google Drive Error Handlers',
+		description: 'Built-in and custom error handling for Google Drive',
 	},
 	'plugins/googlecalendar': {
 		Component: GoogleCalendarDoc,
@@ -219,6 +331,26 @@ const pages = {
 		title: 'Get Credentials',
 		description: 'Step-by-step instructions for obtaining Google Calendar credentials',
 	},
+	'plugins/googlecalendar/api-endpoints': {
+		Component: GoogleCalendarApiEndpointsDoc,
+		title: 'Google Calendar API Endpoints',
+		description: 'Complete reference for all Google Calendar API endpoints',
+	},
+	'plugins/googlecalendar/webhooks': {
+		Component: GoogleCalendarWebhooksDoc,
+		title: 'Google Calendar Webhooks',
+		description: 'All available Google Calendar webhook events',
+	},
+	'plugins/googlecalendar/database': {
+		Component: GoogleCalendarDatabaseDoc,
+		title: 'Google Calendar Database Schema',
+		description: 'Database entities and querying synced Google Calendar data',
+	},
+	'plugins/googlecalendar/error-handlers': {
+		Component: GoogleCalendarErrorHandlersDoc,
+		title: 'Google Calendar Error Handlers',
+		description: 'Built-in and custom error handling for Google Calendar',
+	},
 	'plugins/hubspot': {
 		Component: HubSpotDoc,
 		title: 'HubSpot',
@@ -228,6 +360,26 @@ const pages = {
 		Component: HubSpotGetCredentialsDoc,
 		title: 'Get Credentials',
 		description: 'Step-by-step instructions for obtaining HubSpot credentials',
+	},
+	'plugins/hubspot/api-endpoints': {
+		Component: HubSpotApiEndpointsDoc,
+		title: 'HubSpot API Endpoints',
+		description: 'Complete reference for all HubSpot API endpoints',
+	},
+	'plugins/hubspot/webhooks': {
+		Component: HubSpotWebhooksDoc,
+		title: 'HubSpot Webhooks',
+		description: 'All available HubSpot webhook events',
+	},
+	'plugins/hubspot/database': {
+		Component: HubSpotDatabaseDoc,
+		title: 'HubSpot Database Schema',
+		description: 'Database entities and querying synced HubSpot data',
+	},
+	'plugins/hubspot/error-handlers': {
+		Component: HubSpotErrorHandlersDoc,
+		title: 'HubSpot Error Handlers',
+		description: 'Built-in and custom error handling for HubSpot',
 	},
 	'plugins/posthog': {
 		Component: PostHogDoc,
@@ -239,6 +391,26 @@ const pages = {
 		title: 'Get Credentials',
 		description: 'Step-by-step instructions for obtaining PostHog credentials',
 	},
+	'plugins/posthog/api-endpoints': {
+		Component: PostHogApiEndpointsDoc,
+		title: 'PostHog API Endpoints',
+		description: 'Complete reference for all PostHog API endpoints',
+	},
+	'plugins/posthog/webhooks': {
+		Component: PostHogWebhooksDoc,
+		title: 'PostHog Webhooks',
+		description: 'All available PostHog webhook events',
+	},
+	'plugins/posthog/database': {
+		Component: PostHogDatabaseDoc,
+		title: 'PostHog Database Schema',
+		description: 'Database entities and querying synced PostHog data',
+	},
+	'plugins/posthog/error-handlers': {
+		Component: PostHogErrorHandlersDoc,
+		title: 'PostHog Error Handlers',
+		description: 'Built-in and custom error handling for PostHog',
+	},
 	'plugins/resend': {
 		Component: ResendDoc,
 		title: 'Resend',
@@ -248,6 +420,26 @@ const pages = {
 		Component: ResendGetCredentialsDoc,
 		title: 'Get Credentials',
 		description: 'Step-by-step instructions for obtaining Resend credentials',
+	},
+	'plugins/resend/api-endpoints': {
+		Component: ResendApiEndpointsDoc,
+		title: 'Resend API Endpoints',
+		description: 'Complete reference for all Resend API endpoints',
+	},
+	'plugins/resend/webhooks': {
+		Component: ResendWebhooksDoc,
+		title: 'Resend Webhooks',
+		description: 'All available Resend webhook events',
+	},
+	'plugins/resend/database': {
+		Component: ResendDatabaseDoc,
+		title: 'Resend Database Schema',
+		description: 'Database entities and querying synced Resend data',
+	},
+	'plugins/resend/error-handlers': {
+		Component: ResendErrorHandlersDoc,
+		title: 'Resend Error Handlers',
+		description: 'Built-in and custom error handling for Resend',
 	},
 	'guides/create-your-own-plugin': {
 		Component: CreateYourOwnPlugin,
