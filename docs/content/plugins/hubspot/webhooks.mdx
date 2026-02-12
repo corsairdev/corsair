@@ -1,0 +1,129 @@
+---
+title: HubSpot Webhooks
+description: All available HubSpot webhook events and how to handle them.
+---
+
+The HubSpot plugin automatically handles incoming webhooks from HubSpot. Point your HubSpot webhook URL to your Corsair webhook endpoint, and the plugin will automatically process events and update your database.
+
+<Callout type="info">
+**New to Corsair?** Learn about core concepts like [webhooks](/concepts/webhooks), [hooks](/concepts/hooks), and [multi-tenancy](/concepts/multi-tenancy) before setting up webhook handlers.
+</Callout>
+
+<Callout>
+**Full Implementation:** For the complete, up-to-date list of all webhook events and their implementations, see the [HubSpot plugin source code](https://github.com/corsairdev/corsair/tree/main/packages/corsair/plugins/hubspot) on GitHub.
+</Callout>
+
+## Setup
+
+Configure your webhook endpoint to handle HubSpot events:
+
+```ts title="app/api/webhook/route.ts"
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    const body = await request.json();
+    
+    const result = await processWebhook(corsair, headers, body);
+    return result.response;
+}
+```
+
+In your HubSpot account, set the webhook URL to:
+
+```
+https://your-domain.com/api/webhook
+```
+
+## Available Webhooks
+
+### contactCreated
+
+`contacts.contactCreated`
+
+Fires when a contact is created.
+
+### contactUpdated
+
+`contacts.contactUpdated`
+
+Fires when a contact is updated.
+
+### contactDeleted
+
+`contacts.contactDeleted`
+
+Fires when a contact is deleted.
+
+### companyCreated
+
+`companies.companyCreated`
+
+Fires when a company is created.
+
+### companyUpdated
+
+`companies.companyUpdated`
+
+Fires when a company is updated.
+
+### companyDeleted
+
+`companies.companyDeleted`
+
+Fires when a company is deleted.
+
+### dealCreated
+
+`deals.dealCreated`
+
+Fires when a deal is created.
+
+### dealUpdated
+
+`deals.dealUpdated`
+
+Fires when a deal is updated.
+
+### dealDeleted
+
+`deals.dealDeleted`
+
+Fires when a deal is deleted.
+
+### ticketCreated
+
+`tickets.ticketCreated`
+
+Fires when a ticket is created.
+
+### ticketUpdated
+
+`tickets.ticketUpdated`
+
+Fires when a ticket is updated.
+
+### ticketDeleted
+
+`tickets.ticketDeleted`
+
+Fires when a ticket is deleted.
+
+**Example Usage:**
+
+```ts title="corsair.ts"
+hubspot({
+    webhookHooks: {
+        contacts: {
+            contactCreated: {
+                after: async (ctx, result) => {
+                    console.log("Contact created:", result.data);
+                },
+            },
+        },
+    },
+})
+```
+
+See [Webhooks](/concepts/webhooks) for more details on webhook concepts and [Hooks](/concepts/hooks) for the complete hooks documentation.

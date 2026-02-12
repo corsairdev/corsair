@@ -1,0 +1,843 @@
+---
+title: HubSpot API Endpoints
+description: Complete reference for all HubSpot API endpoints available in the Corsair HubSpot plugin.
+---
+
+The HubSpot plugin provides full access to HubSpot's API through a typed interface. All endpoints are organized by resource type and automatically handle authentication, rate limiting, and error handling.
+
+<Callout type="info">
+**New to Corsair?** Learn about core concepts like [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling) before diving into specific endpoints.
+</Callout>
+
+<Callout>
+**Full Implementation:** For the complete, up-to-date list of all endpoints and their implementations, see the [HubSpot plugin source code](https://github.com/corsairdev/corsair/tree/main/packages/corsair/plugins/hubspot) on GitHub.
+</Callout>
+
+## Contacts
+
+Manage contacts in HubSpot CRM.
+
+### get
+
+`contacts.get`
+
+Get a specific contact.
+
+```ts
+const contact = await corsair.hubspot.api.contacts.get({
+    contactId: "contact-id",
+    properties: ["email", "firstname", "lastname"],
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contactId` | `string` | Yes | Contact ID |
+| `properties` | `string[]` | No | Properties to return |
+| `propertiesWithHistory` | `string[]` | No | Properties with history |
+| `associations` | `string[]` | No | Associated objects to return |
+| `archived` | `boolean` | No | Include archived contacts |
+| `idProperty` | `string` | No | ID property to use |
+
+---
+
+### getMany
+
+`contacts.getMany`
+
+Get multiple contacts.
+
+```ts
+const contacts = await corsair.hubspot.api.contacts.getMany({
+    limit: 100,
+    properties: ["email", "firstname"],
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | Number of results to return |
+| `after` | `string` | No | Pagination cursor |
+| `properties` | `string[]` | No | Properties to return |
+| `propertiesWithHistory` | `string[]` | No | Properties with history |
+| `associations` | `string[]` | No | Associated objects |
+| `archived` | `boolean` | No | Include archived contacts |
+
+---
+
+### createOrUpdate
+
+`contacts.createOrUpdate`
+
+Create or update a contact.
+
+```ts
+const contact = await corsair.hubspot.api.contacts.createOrUpdate({
+    properties: {
+        email: "contact@example.com",
+        firstname: "John",
+        lastname: "Doe",
+    },
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `properties` | `Record<string, any>` | No | Contact properties |
+| `associations` | `Array<object>` | No | Associated objects |
+
+---
+
+### delete
+
+`contacts.delete`
+
+Delete a contact.
+
+```ts
+await corsair.hubspot.api.contacts.delete({
+    contactId: "contact-id",
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contactId` | `string` | Yes | Contact ID to delete |
+
+---
+
+### getRecentlyCreated
+
+`contacts.getRecentlyCreated`
+
+Get recently created contacts.
+
+```ts
+const contacts = await corsair.hubspot.api.contacts.getRecentlyCreated({
+    count: 10,
+    since: "2024-01-01T00:00:00Z",
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number` | No | Number of results |
+| `after` | `string` | No | Pagination cursor |
+| `since` | `string` | No | Only return contacts created after this time |
+
+---
+
+### getRecentlyUpdated
+
+`contacts.getRecentlyUpdated`
+
+Get recently updated contacts.
+
+```ts
+const contacts = await corsair.hubspot.api.contacts.getRecentlyUpdated({
+    count: 10,
+    since: "2024-01-01T00:00:00Z",
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number` | No | Number of results |
+| `after` | `string` | No | Pagination cursor |
+| `since` | `string` | No | Only return contacts updated after this time |
+
+---
+
+### search
+
+`contacts.search`
+
+Search for contacts.
+
+```ts
+const contacts = await corsair.hubspot.api.contacts.search({
+    query: "email:contact@example.com",
+    limit: 10,
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | No | Search query |
+| `limit` | `number` | No | Number of results |
+| `after` | `string` | No | Pagination cursor |
+| `sorts` | `string[]` | No | Sort criteria |
+| `properties` | `string[]` | No | Properties to return |
+| `filterGroups` | `Array<any>` | No | Filter groups |
+
+---
+
+## Companies
+
+Manage companies in HubSpot CRM.
+
+### get
+
+`companies.get`
+
+Get a specific company.
+
+```ts
+const company = await corsair.hubspot.api.companies.get({
+    companyId: "company-id",
+    properties: ["name", "domain"],
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `companyId` | `string` | Yes | Company ID |
+| `properties` | `string[]` | No | Properties to return |
+| `propertiesWithHistory` | `string[]` | No | Properties with history |
+| `associations` | `string[]` | No | Associated objects |
+| `archived` | `boolean` | No | Include archived companies |
+| `idProperty` | `string` | No | ID property to use |
+
+---
+
+### getMany
+
+`companies.getMany`
+
+Get multiple companies.
+
+```ts
+const companies = await corsair.hubspot.api.companies.getMany({
+    limit: 100,
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | Number of results |
+| `after` | `string` | No | Pagination cursor |
+| `properties` | `string[]` | No | Properties to return |
+| `propertiesWithHistory` | `string[]` | No | Properties with history |
+| `associations` | `string[]` | No | Associated objects |
+| `archived` | `boolean` | No | Include archived companies |
+
+---
+
+### create
+
+`companies.create`
+
+Create a new company.
+
+```ts
+const company = await corsair.hubspot.api.companies.create({
+    properties: {
+        name: "Acme Corp",
+        domain: "acme.com",
+    },
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `properties` | `Record<string, any>` | No | Company properties |
+| `associations` | `Array<object>` | No | Associated objects |
+
+---
+
+### update
+
+`companies.update`
+
+Update a company.
+
+```ts
+await corsair.hubspot.api.companies.update({
+    companyId: "company-id",
+    properties: {
+        name: "Updated Company Name",
+    },
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `companyId` | `string` | Yes | Company ID |
+| `properties` | `Record<string, any>` | No | Properties to update |
+| `associations` | `Array<object>` | No | Associated objects |
+
+---
+
+### delete
+
+`companies.delete`
+
+Delete a company.
+
+```ts
+await corsair.hubspot.api.companies.delete({
+    companyId: "company-id",
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `companyId` | `string` | Yes | Company ID to delete |
+
+---
+
+### getRecentlyCreated
+
+`companies.getRecentlyCreated`
+
+Get recently created companies.
+
+```ts
+const companies = await corsair.hubspot.api.companies.getRecentlyCreated({
+    count: 10,
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number` | No | Number of results |
+| `after` | `string` | No | Pagination cursor |
+| `since` | `string` | No | Only return companies created after this time |
+
+---
+
+### getRecentlyUpdated
+
+`companies.getRecentlyUpdated`
+
+Get recently updated companies.
+
+```ts
+const companies = await corsair.hubspot.api.companies.getRecentlyUpdated({
+    count: 10,
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number` | No | Number of results |
+| `after` | `string` | No | Pagination cursor |
+| `since` | `string` | No | Only return companies updated after this time |
+
+---
+
+### searchByDomain
+
+`companies.searchByDomain`
+
+Search for companies by domain.
+
+```ts
+const companies = await corsair.hubspot.api.companies.searchByDomain({
+    domain: "example.com",
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domain` | `string` | Yes | Domain to search for |
+| `limit` | `number` | No | Number of results |
+| `after` | `string` | No | Pagination cursor |
+| `properties` | `string[]` | No | Properties to return |
+| `associations` | `string[]` | No | Associated objects |
+
+---
+
+## Deals
+
+Manage deals in HubSpot CRM.
+
+### get
+
+`deals.get`
+
+Get a specific deal.
+
+```ts
+const deal = await corsair.hubspot.api.deals.get({
+    dealId: "deal-id",
+    properties: ["dealname", "amount"],
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `dealId` | `string` | Yes | Deal ID |
+| `properties` | `string[]` | No | Properties to return |
+| `propertiesWithHistory` | `string[]` | No | Properties with history |
+| `associations` | `string[]` | No | Associated objects |
+| `archived` | `boolean` | No | Include archived deals |
+| `idProperty` | `string` | No | ID property to use |
+
+---
+
+### getMany
+
+`deals.getMany`
+
+Get multiple deals.
+
+```ts
+const deals = await corsair.hubspot.api.deals.getMany({
+    limit: 100,
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | Number of results |
+| `after` | `string` | No | Pagination cursor |
+| `properties` | `string[]` | No | Properties to return |
+| `propertiesWithHistory` | `string[]` | No | Properties with history |
+| `associations` | `string[]` | No | Associated objects |
+| `archived` | `boolean` | No | Include archived deals |
+
+---
+
+### create
+
+`deals.create`
+
+Create a new deal.
+
+```ts
+const deal = await corsair.hubspot.api.deals.create({
+    properties: {
+        dealname: "New Deal",
+        amount: "10000",
+        dealstage: "appointmentscheduled",
+    },
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `properties` | `Record<string, any>` | No | Deal properties |
+| `associations` | `Array<object>` | No | Associated objects |
+
+---
+
+### update
+
+`deals.update`
+
+Update a deal.
+
+```ts
+await corsair.hubspot.api.deals.update({
+    dealId: "deal-id",
+    properties: {
+        dealstage: "closedwon",
+    },
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `dealId` | `string` | Yes | Deal ID |
+| `properties` | `Record<string, any>` | No | Properties to update |
+| `associations` | `Array<object>` | No | Associated objects |
+
+---
+
+### delete
+
+`deals.delete`
+
+Delete a deal.
+
+```ts
+await corsair.hubspot.api.deals.delete({
+    dealId: "deal-id",
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `dealId` | `string` | Yes | Deal ID to delete |
+
+---
+
+### getRecentlyCreated
+
+`deals.getRecentlyCreated`
+
+Get recently created deals.
+
+```ts
+const deals = await corsair.hubspot.api.deals.getRecentlyCreated({
+    count: 10,
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number` | No | Number of results |
+| `after` | `string` | No | Pagination cursor |
+| `since` | `string` | No | Only return deals created after this time |
+
+---
+
+### getRecentlyUpdated
+
+`deals.getRecentlyUpdated`
+
+Get recently updated deals.
+
+```ts
+const deals = await corsair.hubspot.api.deals.getRecentlyUpdated({
+    count: 10,
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number` | No | Number of results |
+| `after` | `string` | No | Pagination cursor |
+| `since` | `string` | No | Only return deals updated after this time |
+
+---
+
+### search
+
+`deals.search`
+
+Search for deals.
+
+```ts
+const deals = await corsair.hubspot.api.deals.search({
+    query: "dealname:New Deal",
+    limit: 10,
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | No | Search query |
+| `limit` | `number` | No | Number of results |
+| `after` | `string` | No | Pagination cursor |
+| `sorts` | `string[]` | No | Sort criteria |
+| `properties` | `string[]` | No | Properties to return |
+| `filterGroups` | `Array<any>` | No | Filter groups |
+
+---
+
+## Tickets
+
+Manage support tickets in HubSpot.
+
+### get
+
+`tickets.get`
+
+Get a specific ticket.
+
+```ts
+const ticket = await corsair.hubspot.api.tickets.get({
+    ticketId: "ticket-id",
+    properties: ["subject", "content"],
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ticketId` | `string` | Yes | Ticket ID |
+| `properties` | `string[]` | No | Properties to return |
+| `propertiesWithHistory` | `string[]` | No | Properties with history |
+| `associations` | `string[]` | No | Associated objects |
+| `archived` | `boolean` | No | Include archived tickets |
+| `idProperty` | `string` | No | ID property to use |
+
+---
+
+### getMany
+
+`tickets.getMany`
+
+Get multiple tickets.
+
+```ts
+const tickets = await corsair.hubspot.api.tickets.getMany({
+    limit: 100,
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | Number of results |
+| `after` | `string` | No | Pagination cursor |
+| `properties` | `string[]` | No | Properties to return |
+| `propertiesWithHistory` | `string[]` | No | Properties with history |
+| `associations` | `string[]` | No | Associated objects |
+| `archived` | `boolean` | No | Include archived tickets |
+
+---
+
+### create
+
+`tickets.create`
+
+Create a new ticket.
+
+```ts
+const ticket = await corsair.hubspot.api.tickets.create({
+    properties: {
+        subject: "Support Request",
+        content: "I need help with...",
+        hs_pipeline: "0",
+        hs_pipeline_stage: "1",
+    },
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `properties` | `Record<string, any>` | No | Ticket properties |
+| `associations` | `Array<object>` | No | Associated objects |
+
+---
+
+### update
+
+`tickets.update`
+
+Update a ticket.
+
+```ts
+await corsair.hubspot.api.tickets.update({
+    ticketId: "ticket-id",
+    properties: {
+        hs_pipeline_stage: "2",
+    },
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ticketId` | `string` | Yes | Ticket ID |
+| `properties` | `Record<string, any>` | No | Properties to update |
+
+---
+
+### delete
+
+`tickets.delete`
+
+Delete a ticket.
+
+```ts
+await corsair.hubspot.api.tickets.delete({
+    ticketId: "ticket-id",
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ticketId` | `string` | Yes | Ticket ID to delete |
+
+---
+
+## Engagements
+
+Manage engagements (calls, meetings, notes, tasks, emails).
+
+### get
+
+`engagements.get`
+
+Get a specific engagement.
+
+```ts
+const engagement = await corsair.hubspot.api.engagements.get({
+    engagementId: "engagement-id",
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `engagementId` | `string` | Yes | Engagement ID |
+
+---
+
+### getMany
+
+`engagements.getMany`
+
+Get multiple engagements.
+
+```ts
+const engagements = await corsair.hubspot.api.engagements.getMany({
+    limit: 100,
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | Number of results |
+| `after` | `string` | No | Pagination cursor |
+
+---
+
+### create
+
+`engagements.create`
+
+Create a new engagement.
+
+```ts
+const engagement = await corsair.hubspot.api.engagements.create({
+    engagement: {
+        type: "NOTE",
+        active: true,
+    },
+    associations: {
+        contactIds: [123],
+    },
+    metadata: {
+        body: "Meeting notes here",
+    },
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `engagement.type` | `string` | Yes | Engagement type (NOTE, CALL, MEETING, TASK, EMAIL) |
+| `engagement.active` | `boolean` | No | Whether engagement is active |
+| `engagement.timestamp` | `number` | No | Engagement timestamp |
+| `associations` | `object` | No | Associated contacts, companies, deals |
+| `metadata` | `Record<string, any>` | No | Engagement metadata |
+
+---
+
+### delete
+
+`engagements.delete`
+
+Delete an engagement.
+
+```ts
+await corsair.hubspot.api.engagements.delete({
+    engagementId: "engagement-id",
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `engagementId` | `string` | Yes | Engagement ID to delete |
+
+---
+
+## Contact Lists
+
+Manage contact lists.
+
+### addContact
+
+`contactLists.addContact`
+
+Add a contact to a list.
+
+```ts
+await corsair.hubspot.api.contactLists.addContact({
+    listId: "list-id",
+    contactId: "contact-id",
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `listId` | `string` | Yes | List ID |
+| `contactId` | `string` | Yes | Contact ID |
+
+---
+
+### removeContact
+
+`contactLists.removeContact`
+
+Remove a contact from a list.
+
+```ts
+await corsair.hubspot.api.contactLists.removeContact({
+    listId: "list-id",
+    contactId: "contact-id",
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `listId` | `string` | Yes | List ID |
+| `contactId` | `string` | Yes | Contact ID |

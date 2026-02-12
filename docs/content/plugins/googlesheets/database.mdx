@@ -1,0 +1,106 @@
+---
+title: Google Sheets Database Schema
+description: Database entities and querying synced Google Sheets data.
+---
+
+The Google Sheets plugin automatically syncs data from Google Sheets to your database. This allows you to query spreadsheet data without making API calls, providing faster access and offline capabilities.
+
+<Callout type="info">
+**New to Corsair?** Learn about core concepts like [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy) before working with the database.
+</Callout>
+
+<Callout>
+**Full Implementation:** For the complete, up-to-date database schema and implementations, see the [Google Sheets plugin source code](https://github.com/corsairdev/corsair/tree/main/packages/corsair/plugins/googlesheets) on GitHub.
+</Callout>
+
+## Synced Entities
+
+The Google Sheets plugin syncs the following entities to your database:
+
+- **spreadsheets** - Spreadsheet documents
+- **sheets** - Individual sheets within spreadsheets
+- **rows** - Row data from sheets
+
+## Database API
+
+Access synced data through the `db` property:
+
+```ts
+const spreadsheets = await corsair.googlesheets.db.spreadsheets.search({
+    data: { title: "My Spreadsheet" },
+});
+```
+
+## Spreadsheets
+
+### Schema
+
+```ts
+{
+    spreadsheetId: string;
+    title?: string;
+    spreadsheetUrl?: string;
+    createdAt?: Date;
+}
+```
+
+### Querying Spreadsheets
+
+**Search by title:**
+
+```ts
+const spreadsheets = await corsair.googlesheets.db.spreadsheets.search({
+    data: { title: "My Spreadsheet" },
+});
+```
+
+## Sheets
+
+### Schema
+
+```ts
+{
+    sheetId: string;
+    spreadsheetId: string;
+    title?: string;
+    index?: number;
+    createdAt?: Date;
+}
+```
+
+### Querying Sheets
+
+**Search by spreadsheet:**
+
+```ts
+const sheets = await corsair.googlesheets.db.sheets.search({
+    data: { spreadsheetId: "spreadsheet-id" },
+});
+```
+
+## Rows
+
+### Schema
+
+```ts
+{
+    rowId: string;
+    spreadsheetId: string;
+    sheetName?: string;
+    range?: string;
+    values?: Array<string | number | boolean | null>;
+    createdAt?: Date;
+}
+```
+
+### Querying Rows
+
+**Search by spreadsheet:**
+
+```ts
+const rows = await corsair.googlesheets.db.rows.search({
+    data: { spreadsheetId: "spreadsheet-id" },
+});
+```
+
+See [Database](/concepts/database) for more information about database concepts and querying patterns.

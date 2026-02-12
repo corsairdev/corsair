@@ -1,0 +1,593 @@
+---
+title: GitHub Database Schema
+description: Database entities and querying synced GitHub data.
+---
+
+The GitHub plugin automatically syncs data from GitHub to your database. This allows you to query GitHub data without making API calls, providing faster access and offline capabilities.
+
+<Callout type="info">
+**New to Corsair?** Learn about core concepts like [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy) before working with the database.
+</Callout>
+
+<Callout>
+**Full Implementation:** For the complete, up-to-date database schema and implementations, see the [GitHub plugin source code](https://github.com/corsairdev/corsair/tree/main/packages/corsair/plugins/github) on GitHub.
+</Callout>
+
+## Synced Entities
+
+The GitHub plugin syncs the following entities to your database:
+
+- **users** - GitHub user profiles
+- **repositories** - Repository information and metadata
+- **issues** - Issues and their comments
+- **pullRequests** - Pull requests and reviews
+- **releases** - Releases and release assets
+- **workflows** - GitHub Actions workflows
+
+## Database API
+
+Access synced data through the `db` property:
+
+```ts
+const repos = await corsair.github.db.repositories.search({
+    data: { name: "Hello-World" },
+});
+```
+
+### Search Options
+
+All entity searches support the following options:
+
+```ts
+await corsair.github.db.repositories.search({
+    data: { name: "Hello-World" },
+    limit: 100,
+    offset: 0,
+});
+```
+
+---
+
+## Users
+
+User profiles are synced when you fetch issues, pull requests, or repositories.
+
+### Schema
+
+```ts
+{
+    id: number;
+    login: string;
+    nodeId?: string;
+    avatarUrl?: string;
+    gravatarId?: string | null;
+    url?: string;
+    htmlUrl?: string;
+    type?: string;
+    siteAdmin?: boolean;
+    name?: string | null;
+    email?: string | null;
+    createdAt?: Date | null;
+    updatedAt?: Date | null;
+}
+```
+
+### Querying Users
+
+**Search by login:**
+
+```ts
+const users = await corsair.github.db.users.search({
+    data: { login: "octocat" },
+});
+```
+
+**Search by email:**
+
+```ts
+const users = await corsair.github.db.users.search({
+    data: { email: "octocat@github.com" },
+});
+```
+
+---
+
+## Repositories
+
+Repositories are synced when you list or get repositories.
+
+### Schema
+
+```ts
+{
+    id: number;
+    nodeId?: string;
+    name: string;
+    fullName?: string;
+    private?: boolean;
+    htmlUrl?: string;
+    description?: string | null;
+    fork?: boolean;
+    url?: string;
+    createdAt?: Date | null;
+    updatedAt?: Date | null;
+    pushedAt?: Date | null;
+    defaultBranch?: string;
+    language?: string | null;
+    stargazersCount?: number;
+    watchersCount?: number;
+    forksCount?: number;
+    openIssuesCount?: number;
+    archived?: boolean;
+    disabled?: boolean;
+}
+```
+
+### Querying Repositories
+
+**Search by name:**
+
+```ts
+const repos = await corsair.github.db.repositories.search({
+    data: { name: "Hello-World" },
+});
+```
+
+**Search by full name:**
+
+```ts
+const repos = await corsair.github.db.repositories.search({
+    data: { fullName: "octocat/Hello-World" },
+});
+```
+
+**Find private repositories:**
+
+```ts
+const privateRepos = await corsair.github.db.repositories.search({
+    data: { private: true },
+});
+```
+
+**Find archived repositories:**
+
+```ts
+const archivedRepos = await corsair.github.db.repositories.search({
+    data: { archived: true },
+});
+```
+
+**Filter by language:**
+
+```ts
+const jsRepos = await corsair.github.db.repositories.search({
+    data: { language: "JavaScript" },
+});
+```
+
+### Example: Get Repository by Name
+
+```ts
+async function getRepository(owner: string, name: string) {
+    await corsair.github.api.repositories.get({
+        owner,
+        repo: name,
+    });
+    
+    const repos = await corsair.github.db.repositories.search({
+        data: { name, fullName: `${owner}/${name}` },
+    });
+    
+    return repos[0] || null;
+}
+```
+
+---
+
+## Issues
+
+Issues are synced when you list, get, create, or update issues.
+
+### Schema
+
+```ts
+{
+    id: number;
+    nodeId?: string;
+    url?: string;
+    repositoryUrl?: string;
+    labelsUrl?: string;
+    commentsUrl?: string;
+    eventsUrl?: string;
+    htmlUrl?: string;
+    number: number;
+    state: string;
+    stateReason?: 'completed' | 'reopened' | 'not_planned' | 'duplicate' | null;
+    title: string;
+    body?: string | null;
+    user?: GithubUser | null;
+    labels?: Array<any>;
+    assignee?: GithubUser | null;
+    assignees?: Array<GithubUser> | null;
+    locked?: boolean;
+    comments?: number;
+    createdAt?: Date | null;
+    updatedAt?: Date | null;
+    closedAt?: Date | null;
+}
+```
+
+### Querying Issues
+
+**Search by state:**
+
+```ts
+const openIssues = await corsair.github.db.issues.search({
+    data: { state: "open" },
+});
+```
+
+**Search by number:**
+
+```ts
+const issue = await corsair.github.db.issues.search({
+    data: { number: 1 },
+});
+```
+
+**Find locked issues:**
+
+```ts
+const lockedIssues = await corsair.github.db.issues.search({
+    data: { locked: true },
+});
+```
+
+### Example: Get Recent Issues
+
+```ts
+async function getRecentIssues(owner: string, repo: string) {
+    await corsair.github.api.issues.list({
+        owner,
+        repo,
+        state: "open",
+        perPage: 50,
+    });
+    
+    const issues = await corsair.github.db.issues.search({
+        data: {},
+        limit: 50,
+    });
+    
+    return issues.sort((a, b) => 
+        (b.updatedAt?.getTime() || 0) - (a.updatedAt?.getTime() || 0)
+    );
+}
+```
+
+---
+
+## Pull Requests
+
+Pull requests are synced when you list, get, or receive pull request webhooks.
+
+### Schema
+
+```ts
+{
+    id: number;
+    nodeId?: string;
+    url?: string;
+    htmlUrl?: string;
+    diffUrl?: string;
+    patchUrl?: string;
+    issueUrl?: string;
+    number: number;
+    state: 'open' | 'closed';
+    locked?: boolean;
+    title: string;
+    user?: GithubUser;
+    body?: string | null;
+    createdAt?: Date | null;
+    updatedAt?: Date | null;
+    closedAt?: Date | null;
+    mergedAt?: Date | null;
+    mergeCommitSha?: string | null;
+    assignee?: GithubUser | null;
+    assignees?: Array<GithubUser> | null;
+    draft?: boolean;
+    merged?: boolean;
+    mergeable?: boolean | null;
+    comments?: number;
+    reviewComments?: number;
+    commits?: number;
+    additions?: number;
+    deletions?: number;
+    changedFiles?: number;
+}
+```
+
+### Querying Pull Requests
+
+**Search by state:**
+
+```ts
+const openPRs = await corsair.github.db.pullRequests.search({
+    data: { state: "open" },
+});
+```
+
+**Search by number:**
+
+```ts
+const pr = await corsair.github.db.pullRequests.search({
+    data: { number: 1 },
+});
+```
+
+**Find merged pull requests:**
+
+```ts
+const mergedPRs = await corsair.github.db.pullRequests.search({
+    data: { merged: true },
+});
+```
+
+**Find draft pull requests:**
+
+```ts
+const draftPRs = await corsair.github.db.pullRequests.search({
+    data: { draft: true },
+});
+```
+
+### Example: Get Pull Request by Number
+
+```ts
+async function getPullRequest(owner: string, repo: string, number: number) {
+    await corsair.github.api.pullRequests.get({
+        owner,
+        repo,
+        pullNumber: number,
+    });
+    
+    const prs = await corsair.github.db.pullRequests.search({
+        data: { number },
+    });
+    
+    return prs[0] || null;
+}
+```
+
+---
+
+## Releases
+
+Releases are synced when you get or create releases.
+
+### Schema
+
+```ts
+{
+    id: number;
+    nodeId?: string;
+    url?: string;
+    htmlUrl?: string;
+    assetsUrl?: string;
+    uploadUrl?: string;
+    tarballUrl?: string | null;
+    zipballUrl?: string | null;
+    tagName?: string;
+    targetCommitish?: string;
+    name?: string | null;
+    body?: string | null;
+    draft?: boolean;
+    prerelease?: boolean;
+    createdAt?: Date | null;
+    publishedAt?: Date | null;
+    author?: GithubUser;
+}
+```
+
+### Querying Releases
+
+**Search by tag name:**
+
+```ts
+const releases = await corsair.github.db.releases.search({
+    data: { tagName: "v1.0.0" },
+});
+```
+
+**Find draft releases:**
+
+```ts
+const draftReleases = await corsair.github.db.releases.search({
+    data: { draft: true },
+});
+```
+
+**Find prereleases:**
+
+```ts
+const prereleases = await corsair.github.db.releases.search({
+    data: { prerelease: true },
+});
+```
+
+---
+
+## Workflows
+
+Workflows are synced when you list or get workflows.
+
+### Schema
+
+```ts
+{
+    id: number;
+    nodeId?: string;
+    name: string;
+    path: string;
+    state: 'active' | 'deleted' | 'disabled_fork' | 'disabled_inactivity' | 'disabled_manually';
+    url?: string;
+    htmlUrl?: string;
+    badgeUrl?: string;
+    createdAt?: Date | null;
+    updatedAt?: Date | null;
+    deletedAt?: Date | null;
+}
+```
+
+### Querying Workflows
+
+**Search by name:**
+
+```ts
+const workflows = await corsair.github.db.workflows.search({
+    data: { name: "CI" },
+});
+```
+
+**Find active workflows:**
+
+```ts
+const activeWorkflows = await corsair.github.db.workflows.search({
+    data: { state: "active" },
+});
+```
+
+---
+
+## Multi-Tenancy
+
+When using multi-tenancy, all database queries are automatically scoped to the tenant:
+
+```ts
+const tenant = corsair.withTenant("tenant-id");
+
+const repos = await tenant.github.db.repositories.search({
+    data: { name: "Hello-World" },
+});
+
+await tenant.github.api.repositories.get({
+    owner: "octocat",
+    repo: "Hello-World",
+});
+```
+
+Each tenant's data is isolated in the database.
+
+---
+
+## Data Synchronization
+
+### When Data is Synced
+
+Data is automatically synced to your database in the following scenarios:
+
+1. **API Calls** - When you call API endpoints, responses are synced
+2. **Webhooks** - When webhooks are received, data is updated
+3. **Automatic Updates** - Webhook events trigger updates for related entities
+
+### Manual Syncing
+
+You can trigger syncs manually by calling API endpoints:
+
+```ts
+await corsair.github.api.repositories.list({
+    owner: "octocat",
+});
+
+await corsair.github.api.issues.list({
+    owner: "octocat",
+    repo: "Hello-World",
+});
+
+await corsair.github.api.pullRequests.list({
+    owner: "octocat",
+    repo: "Hello-World",
+});
+```
+
+### Data Freshness
+
+Database data reflects the last sync time. For real-time accuracy, consider:
+
+- **Webhooks** - Set up webhooks for real-time updates
+- **Periodic Syncing** - Schedule API calls to refresh data
+- **On-Demand** - Fetch from API when you need the latest data
+
+```ts
+async function getLatestRepository(owner: string, repo: string) {
+    const apiResult = await corsair.github.api.repositories.get({
+        owner,
+        repo,
+    });
+    
+    const dbRepos = await corsair.github.db.repositories.search({
+        data: { name: repo, fullName: `${owner}/${repo}` },
+    });
+    
+    return dbRepos[0];
+}
+```
+
+---
+
+## Best Practices
+
+### 1. Check Database First
+
+Always check the database before making API calls:
+
+```ts
+let repos = await corsair.github.db.repositories.search({
+    data: { name: "Hello-World" },
+});
+
+if (!repos[0]) {
+    await corsair.github.api.repositories.list({
+        owner: "octocat",
+    });
+    repos = await corsair.github.db.repositories.search({
+        data: { name: "Hello-World" },
+    });
+}
+```
+
+### 2. Use Webhooks for Real-Time Updates
+
+Configure webhooks to keep data fresh automatically:
+
+```ts
+github({
+    webhookHooks: {
+        pullRequestOpened: {
+            after: async (ctx, result) => {
+                console.log("Pull request synced:", result.data.pull_request.title);
+            },
+        },
+    },
+})
+```
+
+### 3. Handle Missing Data
+
+Always handle cases where data might not exist:
+
+```ts
+async function getRepositoryOrThrow(owner: string, name: string) {
+    const repos = await corsair.github.db.repositories.search({
+        data: { name, fullName: `${owner}/${name}` },
+    });
+    
+    if (!repos[0]) {
+        throw new Error(`Repository ${owner}/${name} not found`);
+    }
+    
+    return repos[0];
+}
+```
+
+See [Database](/concepts/database) for more information about database concepts and querying patterns.

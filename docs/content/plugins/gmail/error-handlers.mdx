@@ -1,0 +1,154 @@
+---
+title: Gmail Error Handlers
+description: Built-in and custom error handling for the Gmail plugin.
+---
+
+The Gmail plugin includes comprehensive error handling with built-in handlers for common error scenarios. You can also add custom error handlers to handle specific cases in your application.
+
+<Callout type="info">
+**New to Corsair?** Learn about core concepts like [error handling](/concepts/error-handling) and [retry strategies](/concepts/error-handling) before customizing error handlers.
+</Callout>
+
+<Callout>
+**Full Implementation:** For the complete, up-to-date error handler implementations, see the [Gmail plugin source code](https://github.com/corsairdev/corsair/tree/main/packages/corsair/plugins/gmail) on GitHub.
+</Callout>
+
+## Built-in Error Handlers
+
+The Gmail plugin automatically handles common error scenarios with sensible retry strategies.
+
+### Rate Limit Errors
+
+**Triggers:** HTTP 429 status, or error messages containing "rate limit", "rate_limit", or "429"
+
+**Behavior:**
+- Maximum retries: **5**
+- Respects rate limit headers from Gmail
+- Uses exponential backoff between retries
+
+---
+
+### Authentication Errors
+
+**Triggers:** Error messages containing:
+- `Invalid Credentials`
+- `Invalid token`
+- `Token expired`
+- `Unauthorized`
+
+**Behavior:**
+- Maximum retries: **0** (no retries)
+- Logs error to console
+- Fails immediately for manual intervention
+
+**How to Fix:**
+1. Verify your OAuth credentials are valid
+2. Check if the access token has expired
+3. Ensure the refresh token is valid
+
+---
+
+### Permission Errors
+
+**Triggers:** HTTP 403 status, or error messages containing:
+- `Forbidden`
+- `Insufficient permissions`
+- `Access denied`
+
+**Behavior:**
+- Maximum retries: **0** (no retries)
+- Logs warning to console
+- Fails immediately for manual intervention
+
+**How to Fix:**
+1. Check your OAuth scopes
+2. Ensure the required Gmail API scopes are granted
+3. Re-authorize the application
+
+---
+
+### Resource Not Found Errors
+
+**Triggers:** HTTP 404 status, or error messages containing:
+- `Not Found`
+- `Message not found`
+- `Thread not found`
+
+**Behavior:**
+- Maximum retries: **0** (no retries)
+- Logs warning to console
+- Fails immediately
+
+---
+
+### Network Errors
+
+**Triggers:** Error messages containing:
+- `network`
+- `connection`
+- `econnrefused`
+- `enotfound`
+- `etimedout`
+
+**Behavior:**
+- Maximum retries: **3**
+- Uses exponential backoff
+- Logs warning to console
+
+---
+
+### Default Error Handler
+
+**Triggers:** Any error not matched by other handlers
+
+**Behavior:**
+- Maximum retries: **0** (no retries)
+- Logs error to console
+- Fails immediately
+
+---
+
+## Custom Error Handlers
+
+You can add custom error handlers to handle specific scenarios in your application.
+
+### Basic Custom Handler
+
+```ts title="corsair.ts"
+gmail({
+    errorHandlers: {
+        CUSTOM_ERROR: {
+            match: (error, context) => {
+                return error.message.includes("custom_error_code");
+            },
+            handler: async (error, context) => {
+                console.log(`Custom error in ${context.operation}`);
+                
+                return {
+                    maxRetries: 2,
+                };
+            },
+        },
+    },
+})
+```
+
+### Error Handler with Retry-After
+
+```ts title="corsair.ts"
+gmail({
+    errorHandlers: {
+        QUOTA_EXCEEDED: {
+            match: (error) => error.message.includes("quota exceeded"),
+            handler: async (error, context) => {
+                return {
+                    maxRetries: 3,
+                    headersRetryAfterMs: 60000,
+                };
+            },
+        },
+    },
+})
+```
+
+For comprehensive error handling strategies, patterns, and best practices, see the [Error Handling](/concepts/error-handling) concepts page.

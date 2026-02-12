@@ -1,0 +1,197 @@
+---
+title: Google Calendar API Endpoints
+description: Complete reference for all Google Calendar API endpoints available in the Corsair Google Calendar plugin.
+---
+
+The Google Calendar plugin provides full access to Google Calendar's API through a typed interface. All endpoints are organized by resource type and automatically handle authentication, rate limiting, and error handling.
+
+<Callout type="info">
+**New to Corsair?** Learn about core concepts like [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling) before diving into specific endpoints.
+</Callout>
+
+<Callout>
+**Full Implementation:** For the complete, up-to-date list of all endpoints and their implementations, see the [Google Calendar plugin source code](https://github.com/corsairdev/corsair/tree/main/packages/corsair/plugins/googlecalendar) on GitHub.
+</Callout>
+
+## Events
+
+Manage calendar events.
+
+### create
+
+`events.create`
+
+Create a new calendar event.
+
+```ts
+const event = await corsair.googlecalendar.api.events.create({
+    calendarId: "primary",
+    event: {
+        summary: "Meeting",
+        start: {
+            dateTime: "2024-01-15T10:00:00",
+            timeZone: "America/New_York",
+        },
+        end: {
+            dateTime: "2024-01-15T11:00:00",
+            timeZone: "America/New_York",
+        },
+    },
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `calendarId` | `string` | No | Calendar ID (defaults to "primary") |
+| `event` | `object` | Yes | Event object |
+| `sendUpdates` | `'all' \| 'externalOnly' \| 'none'` | No | Send update notifications |
+| `sendNotifications` | `boolean` | No | Send notifications |
+| `conferenceDataVersion` | `number` | No | Conference data version |
+| `maxAttendees` | `number` | No | Maximum attendees to return |
+| `supportsAttachments` | `boolean` | No | Support attachments |
+
+---
+
+### get
+
+`events.get`
+
+Get a specific event.
+
+```ts
+const event = await corsair.googlecalendar.api.events.get({
+    calendarId: "primary",
+    id: "event-id",
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `calendarId` | `string` | No | Calendar ID (defaults to "primary") |
+| `id` | `string` | Yes | Event ID |
+| `timeZone` | `string` | No | Time zone for response |
+| `maxAttendees` | `number` | No | Maximum attendees to return |
+
+---
+
+### getMany
+
+`events.getMany`
+
+Get multiple events.
+
+```ts
+const events = await corsair.googlecalendar.api.events.getMany({
+    calendarId: "primary",
+    timeMin: "2024-01-01T00:00:00Z",
+    timeMax: "2024-01-31T23:59:59Z",
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `calendarId` | `string` | No | Calendar ID (defaults to "primary") |
+| `timeMin` | `string` | No | Start of time range |
+| `timeMax` | `string` | No | End of time range |
+| `timeZone` | `string` | No | Time zone for response |
+| `updatedMin` | `string` | No | Only return events updated after this time |
+| `singleEvents` | `boolean` | No | Expand recurring events |
+| `maxResults` | `number` | No | Maximum number of results |
+| `pageToken` | `string` | No | Page token for pagination |
+| `q` | `string` | No | Search query |
+| `orderBy` | `'startTime' \| 'updated'` | No | Sort order |
+| `iCalUID` | `string` | No | Filter by iCal UID |
+| `showDeleted` | `boolean` | No | Include deleted events |
+| `showHiddenInvitations` | `boolean` | No | Include hidden invitations |
+
+---
+
+### update
+
+`events.update`
+
+Update an existing event.
+
+```ts
+await corsair.googlecalendar.api.events.update({
+    calendarId: "primary",
+    id: "event-id",
+    event: {
+        summary: "Updated Meeting",
+    },
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `calendarId` | `string` | No | Calendar ID (defaults to "primary") |
+| `id` | `string` | Yes | Event ID |
+| `event` | `object` | Yes | Updated event object |
+| `sendUpdates` | `'all' \| 'externalOnly' \| 'none'` | No | Send update notifications |
+| `sendNotifications` | `boolean` | No | Send notifications |
+| `conferenceDataVersion` | `number` | No | Conference data version |
+| `maxAttendees` | `number` | No | Maximum attendees to return |
+| `supportsAttachments` | `boolean` | No | Support attachments |
+
+---
+
+### delete
+
+`events.delete`
+
+Delete an event.
+
+```ts
+await corsair.googlecalendar.api.events.delete({
+    calendarId: "primary",
+    id: "event-id",
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `calendarId` | `string` | No | Calendar ID (defaults to "primary") |
+| `id` | `string` | Yes | Event ID to delete |
+| `sendUpdates` | `'all' \| 'externalOnly' \| 'none'` | No | Send update notifications |
+| `sendNotifications` | `boolean` | No | Send notifications |
+
+---
+
+## Calendar
+
+Get calendar availability information.
+
+### getAvailability
+
+`calendar.getAvailability`
+
+Get free/busy information for calendars.
+
+```ts
+const availability = await corsair.googlecalendar.api.calendar.getAvailability({
+    timeMin: "2024-01-15T00:00:00Z",
+    timeMax: "2024-01-15T23:59:59Z",
+    items: [{ id: "calendar-id" }],
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `timeMin` | `string` | Yes | Start of time range |
+| `timeMax` | `string` | Yes | End of time range |
+| `timeZone` | `string` | No | Time zone |
+| `groupExpansionMax` | `number` | No | Maximum group expansions |
+| `calendarExpansionMax` | `number` | No | Maximum calendar expansions |
+| `items` | `Array<{id: string}>` | No | Calendar IDs to check |

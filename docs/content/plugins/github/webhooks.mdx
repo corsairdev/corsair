@@ -1,0 +1,509 @@
+---
+title: GitHub Webhooks
+description: All available GitHub webhook events and how to handle them.
+---
+
+The GitHub plugin automatically handles incoming webhooks from GitHub. Point your GitHub repository's webhook URL to your Corsair webhook endpoint, and the plugin will automatically process events and update your database.
+
+<Callout type="info">
+**New to Corsair?** Learn about core concepts like [webhooks](/concepts/webhooks), [hooks](/concepts/hooks), and [multi-tenancy](/concepts/multi-tenancy) before setting up webhook handlers.
+</Callout>
+
+<Callout>
+**Full Implementation:** For the complete, up-to-date list of all webhook events and their implementations, see the [GitHub plugin source code](https://github.com/corsairdev/corsair/tree/main/packages/corsair/plugins/github) on GitHub.
+</Callout>
+
+## Setup
+
+Configure your webhook endpoint to handle GitHub events:
+
+```ts title="app/api/webhook/route.ts"
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    const body = await request.json();
+    
+    const result = await processWebhook(corsair, headers, body);
+    return result.response;
+}
+```
+
+In your GitHub repository settings, set the webhook URL to:
+
+```
+https://your-domain.com/api/webhook
+```
+
+For multi-tenancy, include the tenant ID:
+
+```
+https://your-domain.com/api/webhook?tenantId=tenant-123
+```
+
+## Available Webhooks
+
+### pullRequestOpened
+
+`pullRequests.pullRequestOpened`
+
+**Event Type:** Pull Request Opened
+
+Fires when a pull request is opened.
+
+**When it fires:** A new pull request is created
+
+**Payload Structure:**
+
+```ts
+{
+    action: "opened",
+    number: number,
+    pull_request: {
+        id: number,
+        number: number,
+        state: "open",
+        title: string,
+        body: string | null,
+        user: User,
+        created_at: string,
+        updated_at: string,
+        closed_at: null,
+        merged_at: null,
+        merged: boolean | null,
+        draft: boolean,
+        // ... more fields
+    },
+    repository: Repository,
+    sender: User
+}
+```
+
+**Example Usage:**
+
+```ts title="corsair.ts"
+github({
+    webhookHooks: {
+        pullRequestOpened: {
+            after: async (ctx, result) => {
+                const pr = result.data.pull_request;
+                console.log(`New PR opened: #${pr.number} - ${pr.title}`);
+                
+                await notifyTeam({
+                    title: `New PR: ${pr.title}`,
+                    url: pr.html_url,
+                });
+            },
+        },
+    },
+})
+```
+
+**Key Fields:**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `action` | `string` | Always "opened" |
+| `number` | `number` | Pull request number |
+| `pull_request` | `object` | Full pull request object |
+| `repository` | `object` | Repository information |
+| `sender` | `object` | User who opened the PR |
+
+---
+
+### pullRequestClosed
+
+`pullRequests.pullRequestClosed`
+
+**Event Type:** Pull Request Closed
+
+Fires when a pull request is closed.
+
+**When it fires:** A pull request is closed (merged or not merged)
+
+**Payload Structure:**
+
+```ts
+{
+    action: "closed",
+    number: number,
+    pull_request: {
+        id: number,
+        number: number,
+        state: "closed",
+        title: string,
+        merged: boolean,
+        closed_at: string,
+        // ... more fields
+    },
+    repository: Repository,
+    sender: User
+}
+```
+
+**Example Usage:**
+
+```ts title="corsair.ts"
+github({
+    webhookHooks: {
+        pullRequestClosed: {
+            after: async (ctx, result) => {
+                const pr = result.data.pull_request;
+                
+                if (pr.merged) {
+                    console.log(`PR #${pr.number} was merged`);
+                    await triggerDeployment(pr);
+                } else {
+                    console.log(`PR #${pr.number} was closed without merging`);
+                }
+            },
+        },
+    },
+})
+```
+
+**Key Fields:**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `action` | `string` | Always "closed" |
+| `pull_request.merged` | `boolean` | Whether PR was merged |
+| `pull_request.closed_at` | `string` | When PR was closed |
+
+---
+
+### pullRequestSynchronize
+
+`pullRequests.pullRequestSynchronize`
+
+**Event Type:** Pull Request Synchronized
+
+Fires when new commits are pushed to a pull request.
+
+**When it fires:** New commits are pushed to an open pull request
+
+**Payload Structure:**
+
+```ts
+{
+    action: "synchronize",
+    number: number,
+    before: string,
+    after: string,
+    pull_request: PullRequest,
+    repository: Repository,
+    sender: User
+}
+```
+
+**Example Usage:**
+
+```ts title="corsair.ts"
+github({
+    webhookHooks: {
+        pullRequestSynchronize: {
+            after: async (ctx, result) => {
+                const { before, after, pull_request } = result.data;
+                
+                console.log(`PR #${pull_request.number} updated: ${before} -> ${after}`);
+                
+                await rerunCI(pull_request);
+            },
+        },
+    },
+})
+```
+
+**Key Fields:**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `action` | `string` | Always "synchronize" |
+| `before` | `string` | Previous commit SHA |
+| `after` | `string` | New commit SHA |
+| `pull_request` | `object` | Updated pull request |
+
+---
+
+### push
+
+`push`
+
+**Event Type:** Push
+
+Fires when code is pushed to a repository.
+
+**When it fires:** Commits are pushed to any branch
+
+**Payload Structure:**
+
+```ts
+{
+    ref: string,
+    before: string,
+    after: string,
+    created: boolean,
+    deleted: boolean,
+    forced: boolean,
+    commits: Array<{
+        id: string,
+        message: string,
+        timestamp: string,
+        author: {
+            name: string,
+            email: string | null,
+            username?: string
+        },
+        added: string[],
+        modified: string[],
+        removed: string[]
+    }>,
+    head_commit: Commit | null,
+    repository: Repository,
+    pusher: {
+        name: string,
+        email: string | null
+    },
+    sender: User
+}
+```
+
+**Example Usage:**
+
+```ts title="corsair.ts"
+github({
+    webhookHooks: {
+        push: {
+            after: async (ctx, result) => {
+                const { ref, commits, repository } = result.data;
+                
+                if (ref === `refs/heads/${repository.default_branch}`) {
+                    console.log(`Push to main branch: ${commits.length} commits`);
+                    await triggerDeployment(repository);
+                }
+            },
+        },
+    },
+})
+```
+
+**Key Fields:**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `ref` | `string` | Branch or tag ref (e.g., "refs/heads/main") |
+| `before` | `string` | Previous commit SHA |
+| `after` | `string` | New commit SHA |
+| `commits` | `Array<Commit>` | Array of commits in the push |
+| `created` | `boolean` | Whether branch/tag was created |
+| `deleted` | `boolean` | Whether branch/tag was deleted |
+| `forced` | `boolean` | Whether push was forced |
+
+---
+
+### starCreated
+
+`stars.starCreated`
+
+**Event Type:** Star Created
+
+Fires when a repository is starred.
+
+**When it fires:** A user stars the repository
+
+**Payload Structure:**
+
+```ts
+{
+    action: "created",
+    starred_at: string,
+    repository: Repository,
+    sender: User
+}
+```
+
+**Example Usage:**
+
+```ts title="corsair.ts"
+github({
+    webhookHooks: {
+        starCreated: {
+            after: async (ctx, result) => {
+                const { repository, sender } = result.data;
+                
+                console.log(`${sender.login} starred ${repository.full_name}`);
+                
+                await trackStar(repository, sender);
+            },
+        },
+    },
+})
+```
+
+**Key Fields:**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `action` | `string` | Always "created" |
+| `starred_at` | `string` | When repository was starred |
+| `repository` | `object` | Repository information |
+| `sender` | `object` | User who starred |
+
+---
+
+### starDeleted
+
+`stars.starDeleted`
+
+**Event Type:** Star Deleted
+
+Fires when a repository is unstarred.
+
+**When it fires:** A user unstars the repository
+
+**Payload Structure:**
+
+```ts
+{
+    action: "deleted",
+    starred_at: null,
+    repository: Repository,
+    sender: User
+}
+```
+
+**Example Usage:**
+
+```ts title="corsair.ts"
+github({
+    webhookHooks: {
+        starDeleted: {
+            after: async (ctx, result) => {
+                const { repository, sender } = result.data;
+                
+                console.log(`${sender.login} unstarred ${repository.full_name}`);
+            },
+        },
+    },
+})
+```
+
+**Key Fields:**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `action` | `string` | Always "deleted" |
+| `starred_at` | `null` | Always null for deleted events |
+| `repository` | `object` | Repository information |
+| `sender` | `object` | User who unstarred |
+
+---
+
+## Webhook Hooks
+
+Webhook hooks let you add custom logic that runs when Corsair processes a webhook event.
+
+### Before Hooks
+
+Run before the webhook is processed. Use them to validate, filter, or modify incoming webhooks.
+
+```ts title="corsair.ts"
+github({
+    webhookHooks: {
+        pullRequestOpened: {
+            before: async (ctx, payload) => {
+                if (payload.pull_request.draft) {
+                    throw new Error("Skipping draft PR");
+                }
+                
+                return { ctx, payload };
+            },
+        },
+    },
+})
+```
+
+### After Hooks
+
+Run after the webhook is processed and the database is updated. Use them for side effects, notifications, or triggering workflows.
+
+```ts title="corsair.ts"
+github({
+    webhookHooks: {
+        pullRequestOpened: {
+            after: async (ctx, result) => {
+                await notifyTeam(result.data);
+                await updateAnalytics(result.data);
+            },
+        },
+    },
+})
+```
+
+### Multiple Webhook Hooks
+
+You can add hooks for multiple webhook types:
+
+```ts title="corsair.ts"
+github({
+    webhookHooks: {
+        pullRequestOpened: {
+            after: async (ctx, result) => {
+                await processPullRequest(result.data);
+            },
+        },
+        push: {
+            after: async (ctx, result) => {
+                await triggerCI(result.data);
+            },
+        },
+        starCreated: {
+            after: async (ctx, result) => {
+                await trackStar(result.data);
+            },
+        },
+    },
+})
+```
+
+See [Webhooks](/concepts/webhooks) for more details on webhook concepts and [Hooks](/concepts/hooks) for the complete hooks documentation.
+
+## Configuring Webhooks in GitHub
+
+To receive webhook events, you need to configure your GitHub repository:
+
+1. Go to your repository on GitHub
+2. Navigate to **Settings** → **Webhooks**
+3. Click **Add webhook**
+4. Configure:
+   - **Payload URL:** Your webhook endpoint (e.g., `https://your-domain.com/api/webhook`)
+   - **Content type:** `application/json`
+   - **Secret:** Generate a random secret (save this for signature verification)
+   - **Events:** Select the events you want to receive:
+     - Pull requests
+     - Pushes
+     - Stars
+5. Click **Add webhook**
+
+**Webhook Secret:**
+
+Store the webhook secret in your database:
+
+```ts
+await corsair
+    .withTenant('default')
+    .github.keys.setWebhookSignature('your-webhook-secret');
+```
+
+Or provide it directly in the plugin configuration:
+
+```ts title="corsair.ts"
+github({
+    webhookSecret: process.env.GITHUB_WEBHOOK_SECRET,
+})
+```
+
+The plugin will automatically verify webhook signatures using HMAC-SHA256.
+
+See the [GitHub webhooks documentation](https://docs.github.com/en/webhooks-and-events/webhooks/about-webhooks) for more information.

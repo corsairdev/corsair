@@ -1,0 +1,69 @@
+---
+title: Google Sheets Webhooks
+description: All available Google Sheets webhook events and how to handle them.
+---
+
+The Google Sheets plugin automatically handles incoming webhooks from Google Sheets. Configure Google Apps Script or use Google Drive webhooks to receive notifications when sheets are modified.
+
+<Callout type="info">
+**New to Corsair?** Learn about core concepts like [webhooks](/concepts/webhooks), [hooks](/concepts/hooks), and [multi-tenancy](/concepts/multi-tenancy) before setting up webhook handlers.
+</Callout>
+
+<Callout>
+**Full Implementation:** For the complete, up-to-date list of all webhook events and their implementations, see the [Google Sheets plugin source code](https://github.com/corsairdev/corsair/tree/main/packages/corsair/plugins/googlesheets) on GitHub.
+</Callout>
+
+## Setup
+
+Configure your webhook endpoint to handle Google Sheets events:
+
+```ts title="app/api/webhook/route.ts"
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    const body = await request.json();
+    
+    const result = await processWebhook(corsair, headers, body);
+    return result.response;
+}
+```
+
+## Available Webhooks
+
+### rowAdded
+
+`rows.rowAdded`
+
+Fires when a row is added to a sheet.
+
+### rowUpdated
+
+`rows.rowUpdated`
+
+Fires when a row is updated in a sheet.
+
+### rowAddedOrUpdated
+
+`rows.rowAddedOrUpdated`
+
+Fires when a row is added or updated.
+
+**Example Usage:**
+
+```ts title="corsair.ts"
+googlesheets({
+    webhookHooks: {
+        rows: {
+            rowAdded: {
+                after: async (ctx, result) => {
+                    console.log("Row added:", result.data);
+                },
+            },
+        },
+    },
+})
+```
+
+See [Webhooks](/concepts/webhooks) for more details on webhook concepts and [Hooks](/concepts/hooks) for the complete hooks documentation.
