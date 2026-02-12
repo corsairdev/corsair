@@ -1,0 +1,148 @@
+---
+title: PostHog API Endpoints
+description: Complete reference for all PostHog API endpoints available in the Corsair PostHog plugin.
+---
+
+The PostHog plugin provides full access to PostHog's API through a typed interface. All endpoints are organized by resource type and automatically handle authentication, rate limiting, and error handling.
+
+<Callout type="info">
+**New to Corsair?** Learn about core concepts like [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling) before diving into specific endpoints.
+</Callout>
+
+<Callout>
+**Full Implementation:** For the complete, up-to-date list of all endpoints and their implementations, see the [PostHog plugin source code](https://github.com/corsairdev/corsair/tree/main/packages/corsair/plugins/posthog) on GitHub.
+</Callout>
+
+## Events
+
+Track events, create aliases, and manage user identities.
+
+### eventCreate
+
+`events.eventCreate`
+
+Track a custom event.
+
+```ts
+await corsair.posthog.api.events.eventCreate({
+    distinct_id: "user-123",
+    event: "purchase",
+    properties: {
+        price: 29.99,
+        product: "Premium Plan",
+    },
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `distinct_id` | `string` | Yes | Unique identifier for the user |
+| `event` | `string` | Yes | Event name |
+| `properties` | `Record<string, unknown>` | No | Event properties |
+| `timestamp` | `string` | No | Event timestamp (ISO 8601) |
+| `uuid` | `string` | No | Unique event ID |
+
+---
+
+### aliasCreate
+
+`events.aliasCreate`
+
+Create an alias to link two distinct IDs.
+
+```ts
+await corsair.posthog.api.events.aliasCreate({
+    distinct_id: "user-123",
+    alias: "user-456",
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `distinct_id` | `string` | Yes | Original distinct ID |
+| `alias` | `string` | Yes | Alias distinct ID |
+
+---
+
+### identityCreate
+
+`events.identityCreate`
+
+Create or update a user identity.
+
+```ts
+await corsair.posthog.api.events.identityCreate({
+    distinct_id: "user-123",
+    properties: {
+        email: "user@example.com",
+        name: "John Doe",
+    },
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `distinct_id` | `string` | Yes | Unique identifier for the user |
+| `properties` | `Record<string, unknown>` | No | User properties |
+
+---
+
+### trackPage
+
+`events.trackPage`
+
+Track a page view.
+
+```ts
+await corsair.posthog.api.events.trackPage({
+    distinct_id: "user-123",
+    url: "https://example.com/pricing",
+    properties: {
+        referrer: "https://google.com",
+    },
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `distinct_id` | `string` | Yes | Unique identifier for the user |
+| `url` | `string` | Yes | Page URL |
+| `properties` | `Record<string, unknown>` | No | Page view properties |
+| `timestamp` | `string` | No | Event timestamp |
+| `uuid` | `string` | No | Unique event ID |
+
+---
+
+### trackScreen
+
+`events.trackScreen`
+
+Track a screen view (mobile apps).
+
+```ts
+await corsair.posthog.api.events.trackScreen({
+    distinct_id: "user-123",
+    screen_name: "HomeScreen",
+    properties: {
+        app_version: "1.0.0",
+    },
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `distinct_id` | `string` | Yes | Unique identifier for the user |
+| `screen_name` | `string` | Yes | Screen name |
+| `properties` | `Record<string, unknown>` | No | Screen view properties |
+| `timestamp` | `string` | No | Event timestamp |
+| `uuid` | `string` | No | Unique event ID |

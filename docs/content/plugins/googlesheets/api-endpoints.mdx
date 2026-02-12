@@ -1,0 +1,273 @@
+---
+title: Google Sheets API Endpoints
+description: Complete reference for all Google Sheets API endpoints available in the Corsair Google Sheets plugin.
+---
+
+The Google Sheets plugin provides full access to Google Sheets API through a typed interface. All endpoints are organized by resource type and automatically handle authentication, rate limiting, and error handling.
+
+<Callout type="info">
+**New to Corsair?** Learn about core concepts like [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling) before diving into specific endpoints.
+</Callout>
+
+<Callout>
+**Full Implementation:** For the complete, up-to-date list of all endpoints and their implementations, see the [Google Sheets plugin source code](https://github.com/corsairdev/corsair/tree/main/packages/corsair/plugins/googlesheets) on GitHub.
+</Callout>
+
+## Spreadsheets
+
+Manage spreadsheet documents.
+
+### create
+
+`spreadsheets.create`
+
+Create a new spreadsheet.
+
+```ts
+const spreadsheet = await corsair.googlesheets.api.spreadsheets.create({
+    properties: {
+        title: "My Spreadsheet",
+    },
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `properties.title` | `string` | No | Spreadsheet title |
+| `properties.locale` | `string` | No | Spreadsheet locale |
+| `properties.timeZone` | `string` | No | Spreadsheet time zone |
+
+---
+
+### delete
+
+`spreadsheets.delete`
+
+Delete a spreadsheet.
+
+```ts
+await corsair.googlesheets.api.spreadsheets.delete({
+    spreadsheetId: "spreadsheet-id",
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `spreadsheetId` | `string` | Yes | Spreadsheet ID to delete |
+
+---
+
+## Sheets
+
+Manage individual sheets within a spreadsheet.
+
+### appendRow
+
+`sheets.appendRow`
+
+Append a row to a sheet.
+
+```ts
+await corsair.googlesheets.api.sheets.appendRow({
+    spreadsheetId: "spreadsheet-id",
+    sheetName: "Sheet1",
+    values: ["Name", "Email", "Age"],
+    valueInputOption: "USER_ENTERED",
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `spreadsheetId` | `string` | Yes | Spreadsheet ID |
+| `sheetName` | `string` | No | Sheet name |
+| `range` | `string` | No | Range to append to |
+| `values` | `Array<string \| number \| boolean \| null>` | No | Row values |
+| `valueInputOption` | `'RAW' \| 'USER_ENTERED'` | No | How to interpret values |
+| `insertDataOption` | `'OVERWRITE' \| 'INSERT_ROWS'` | No | How to insert data |
+
+---
+
+### appendOrUpdateRow
+
+`sheets.appendOrUpdateRow`
+
+Append a row or update if a matching key exists.
+
+```ts
+await corsair.googlesheets.api.sheets.appendOrUpdateRow({
+    spreadsheetId: "spreadsheet-id",
+    sheetName: "Sheet1",
+    keyColumn: "Email",
+    keyValue: "user@example.com",
+    values: ["John Doe", "user@example.com", 30],
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `spreadsheetId` | `string` | Yes | Spreadsheet ID |
+| `sheetName` | `string` | No | Sheet name |
+| `keyColumn` | `string` | No | Column to match for updates |
+| `keyValue` | `string \| number` | No | Value to match |
+| `values` | `Array<string \| number \| boolean \| null>` | No | Row values |
+| `valueInputOption` | `'RAW' \| 'USER_ENTERED'` | No | How to interpret values |
+| `insertDataOption` | `'OVERWRITE' \| 'INSERT_ROWS'` | No | How to insert data |
+
+---
+
+### getRows
+
+`sheets.getRows`
+
+Get rows from a sheet.
+
+```ts
+const rows = await corsair.googlesheets.api.sheets.getRows({
+    spreadsheetId: "spreadsheet-id",
+    sheetName: "Sheet1",
+    range: "A1:C10",
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `spreadsheetId` | `string` | Yes | Spreadsheet ID |
+| `sheetName` | `string` | No | Sheet name |
+| `range` | `string` | No | Range to get (e.g., "A1:C10") |
+| `valueRenderOption` | `'FORMATTED_VALUE' \| 'UNFORMATTED_VALUE' \| 'FORMULA'` | No | How to render values |
+| `dateTimeRenderOption` | `'SERIAL_NUMBER' \| 'FORMATTED_STRING'` | No | How to render dates |
+
+---
+
+### updateRow
+
+`sheets.updateRow`
+
+Update a specific row.
+
+```ts
+await corsair.googlesheets.api.sheets.updateRow({
+    spreadsheetId: "spreadsheet-id",
+    sheetName: "Sheet1",
+    range: "A2:C2",
+    rowIndex: 2,
+    values: ["Updated Name", "updated@example.com", 31],
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `spreadsheetId` | `string` | Yes | Spreadsheet ID |
+| `sheetName` | `string` | No | Sheet name |
+| `range` | `string` | No | Range to update |
+| `rowIndex` | `number` | No | Row index (1-based) |
+| `values` | `Array<string \| number \| boolean \| null>` | No | Row values |
+| `valueInputOption` | `'RAW' \| 'USER_ENTERED'` | No | How to interpret values |
+
+---
+
+### clearSheet
+
+`sheets.clearSheet`
+
+Clear all data from a sheet or range.
+
+```ts
+await corsair.googlesheets.api.sheets.clearSheet({
+    spreadsheetId: "spreadsheet-id",
+    sheetName: "Sheet1",
+    range: "A1:Z1000",
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `spreadsheetId` | `string` | Yes | Spreadsheet ID |
+| `sheetName` | `string` | No | Sheet name |
+| `range` | `string` | No | Range to clear |
+
+---
+
+### createSheet
+
+`sheets.createSheet`
+
+Create a new sheet in a spreadsheet.
+
+```ts
+await corsair.googlesheets.api.sheets.createSheet({
+    spreadsheetId: "spreadsheet-id",
+    title: "New Sheet",
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `spreadsheetId` | `string` | Yes | Spreadsheet ID |
+| `title` | `string` | No | Sheet title |
+
+---
+
+### deleteSheet
+
+`sheets.deleteSheet`
+
+Delete a sheet from a spreadsheet.
+
+```ts
+await corsair.googlesheets.api.sheets.deleteSheet({
+    spreadsheetId: "spreadsheet-id",
+    sheetId: 0,
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `spreadsheetId` | `string` | Yes | Spreadsheet ID |
+| `sheetId` | `number` | Yes | Sheet ID to delete |
+
+---
+
+### deleteRowsOrColumns
+
+`sheets.deleteRowsOrColumns`
+
+Delete rows or columns from a sheet.
+
+```ts
+await corsair.googlesheets.api.sheets.deleteRowsOrColumns({
+    spreadsheetId: "spreadsheet-id",
+    sheetId: 0,
+    dimension: "ROWS",
+    startIndex: 1,
+    endIndex: 5,
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `spreadsheetId` | `string` | Yes | Spreadsheet ID |
+| `sheetId` | `number` | Yes | Sheet ID |
+| `dimension` | `'ROWS' \| 'COLUMNS'` | Yes | Dimension to delete |
+| `startIndex` | `number` | Yes | Start index (0-based) |
+| `endIndex` | `number` | Yes | End index (exclusive) |

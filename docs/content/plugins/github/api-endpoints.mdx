@@ -1,0 +1,615 @@
+---
+title: GitHub API Endpoints
+description: Complete reference for all GitHub API endpoints available in the Corsair GitHub plugin.
+---
+
+The GitHub plugin provides full access to GitHub's API through a typed interface. All endpoints are organized by resource type and automatically handle authentication, rate limiting, and error handling.
+
+<Callout type="info">
+**New to Corsair?** Learn about core concepts like [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling) before diving into specific endpoints.
+</Callout>
+
+<Callout>
+**Full Implementation:** For the complete, up-to-date list of all endpoints and their implementations, see the [GitHub plugin source code](https://github.com/corsairdev/corsair/tree/main/packages/corsair/plugins/github) on GitHub.
+</Callout>
+
+## Issues
+
+Manage issues, comments, and labels.
+
+### list
+
+`issues.list`
+
+List issues for a repository or user.
+
+```ts
+const issues = await corsair.github.api.issues.list({
+    owner: "octocat",
+    repo: "Hello-World",
+    state: "open",
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | No | Repository owner (required if `repo` is provided) |
+| `repo` | `string` | No | Repository name (required if `owner` is provided) |
+| `milestone` | `string` | No | Filter by milestone |
+| `state` | `'open' \| 'closed' \| 'all'` | No | Filter by state (default: `'open'`) |
+| `assignee` | `string` | No | Filter by assignee |
+| `creator` | `string` | No | Filter by creator |
+| `mentioned` | `string` | No | Filter by mentioned user |
+| `labels` | `string` | No | Comma-separated label names |
+| `sort` | `'created' \| 'updated' \| 'comments'` | No | Sort field (default: `'created'`) |
+| `direction` | `'asc' \| 'desc'` | No | Sort direction (default: `'desc'`) |
+| `since` | `string` | No | Only show issues updated after this date |
+| `perPage` | `number` | No | Results per page (max: 100) |
+| `page` | `number` | No | Page number |
+
+---
+
+### get
+
+`issues.get`
+
+Get a specific issue.
+
+```ts
+const issue = await corsair.github.api.issues.get({
+    owner: "octocat",
+    repo: "Hello-World",
+    issueNumber: 1,
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | Repository owner |
+| `repo` | `string` | Yes | Repository name |
+| `issueNumber` | `number` | Yes | Issue number |
+
+---
+
+### create
+
+`issues.create`
+
+Create a new issue.
+
+```ts
+const issue = await corsair.github.api.issues.create({
+    owner: "octocat",
+    repo: "Hello-World",
+    title: "Bug: Login form not working",
+    body: "The login form is not responding to user input.",
+    labels: ["bug", "priority-high"],
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | Repository owner |
+| `repo` | `string` | Yes | Repository name |
+| `title` | `string \| number` | Yes | Issue title |
+| `body` | `string` | No | Issue body |
+| `assignee` | `string \| null` | No | Assignee username |
+| `milestone` | `string \| number \| null` | No | Milestone number or title |
+| `labels` | `Array<string \| object>` | No | Array of label names or label objects |
+| `assignees` | `Array<string>` | No | Array of assignee usernames |
+
+---
+
+### update
+
+`issues.update`
+
+Update an existing issue.
+
+```ts
+await corsair.github.api.issues.update({
+    owner: "octocat",
+    repo: "Hello-World",
+    issueNumber: 1,
+    state: "closed",
+    stateReason: "completed",
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | Repository owner |
+| `repo` | `string` | Yes | Repository name |
+| `issueNumber` | `number` | Yes | Issue number |
+| `title` | `string \| number \| null` | No | New title |
+| `body` | `string \| null` | No | New body |
+| `assignee` | `string \| null` | No | Assignee username |
+| `state` | `'open' \| 'closed'` | No | State |
+| `stateReason` | `'completed' \| 'not_planned' \| 'duplicate' \| 'reopened' \| null` | No | Reason for state change |
+| `milestone` | `string \| number \| null` | No | Milestone |
+| `labels` | `Array<string \| object>` | No | Labels |
+| `assignees` | `Array<string>` | No | Assignees |
+
+---
+
+### createComment
+
+`issues.createComment`
+
+Add a comment to an issue.
+
+```ts
+const comment = await corsair.github.api.issues.createComment({
+    owner: "octocat",
+    repo: "Hello-World",
+    issueNumber: 1,
+    body: "This looks good to me!",
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | Repository owner |
+| `repo` | `string` | Yes | Repository name |
+| `issueNumber` | `number` | Yes | Issue number |
+| `body` | `string` | Yes | Comment body |
+
+---
+
+## Pull Requests
+
+Manage pull requests, reviews, and merge operations.
+
+### list
+
+`pullRequests.list`
+
+List pull requests for a repository.
+
+```ts
+const pullRequests = await corsair.github.api.pullRequests.list({
+    owner: "octocat",
+    repo: "Hello-World",
+    state: "open",
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | Repository owner |
+| `repo` | `string` | Yes | Repository name |
+| `state` | `'open' \| 'closed' \| 'all'` | No | Filter by state |
+| `head` | `string` | No | Filter by head branch |
+| `base` | `string` | No | Filter by base branch |
+| `sort` | `'created' \| 'updated' \| 'popularity' \| 'long-running'` | No | Sort field |
+| `direction` | `'asc' \| 'desc'` | No | Sort direction |
+| `perPage` | `number` | No | Results per page |
+| `page` | `number` | No | Page number |
+
+---
+
+### get
+
+`pullRequests.get`
+
+Get a specific pull request.
+
+```ts
+const pullRequest = await corsair.github.api.pullRequests.get({
+    owner: "octocat",
+    repo: "Hello-World",
+    pullNumber: 1,
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | Repository owner |
+| `repo` | `string` | Yes | Repository name |
+| `pullNumber` | `number` | Yes | Pull request number |
+
+---
+
+### listReviews
+
+`pullRequests.listReviews`
+
+List reviews for a pull request.
+
+```ts
+const reviews = await corsair.github.api.pullRequests.listReviews({
+    owner: "octocat",
+    repo: "Hello-World",
+    pullNumber: 1,
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | Repository owner |
+| `repo` | `string` | Yes | Repository name |
+| `pullNumber` | `number` | Yes | Pull request number |
+| `perPage` | `number` | No | Results per page |
+| `page` | `number` | No | Page number |
+
+---
+
+### createReview
+
+`pullRequests.createReview`
+
+Create a review for a pull request.
+
+```ts
+const review = await corsair.github.api.pullRequests.createReview({
+    owner: "octocat",
+    repo: "Hello-World",
+    pullNumber: 1,
+    event: "APPROVE",
+    body: "Looks good!",
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | Repository owner |
+| `repo` | `string` | Yes | Repository name |
+| `pullNumber` | `number` | Yes | Pull request number |
+| `commitId` | `string` | No | SHA of commit to review |
+| `body` | `string` | No | Review body |
+| `event` | `'APPROVE' \| 'REQUEST_CHANGES' \| 'COMMENT'` | No | Review event |
+| `comments` | `Array<object>` | No | Array of review comments |
+
+---
+
+## Repositories
+
+Manage repositories, branches, commits, and content.
+
+### list
+
+`repositories.list`
+
+List repositories for a user or organization.
+
+```ts
+const repos = await corsair.github.api.repositories.list({
+    owner: "octocat",
+    type: "all",
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | No | User or organization name |
+| `type` | `'all' \| 'owner' \| 'public' \| 'private' \| 'member'` | No | Repository type |
+| `sort` | `'created' \| 'updated' \| 'pushed' \| 'full_name'` | No | Sort field |
+| `direction` | `'asc' \| 'desc'` | No | Sort direction |
+| `perPage` | `number` | No | Results per page |
+| `page` | `number` | No | Page number |
+
+---
+
+### get
+
+`repositories.get`
+
+Get a specific repository.
+
+```ts
+const repo = await corsair.github.api.repositories.get({
+    owner: "octocat",
+    repo: "Hello-World",
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | Repository owner |
+| `repo` | `string` | Yes | Repository name |
+
+---
+
+### listBranches
+
+`repositories.listBranches`
+
+List branches for a repository.
+
+```ts
+const branches = await corsair.github.api.repositories.listBranches({
+    owner: "octocat",
+    repo: "Hello-World",
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | Repository owner |
+| `repo` | `string` | Yes | Repository name |
+| `protected` | `boolean` | No | Filter by protected status |
+| `perPage` | `number` | No | Results per page |
+| `page` | `number` | No | Page number |
+
+---
+
+### listCommits
+
+`repositories.listCommits`
+
+List commits for a repository.
+
+```ts
+const commits = await corsair.github.api.repositories.listCommits({
+    owner: "octocat",
+    repo: "Hello-World",
+    since: "2024-01-01T00:00:00Z",
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | Repository owner |
+| `repo` | `string` | Yes | Repository name |
+| `sha` | `string` | No | SHA or branch to start listing commits from |
+| `path` | `string` | No | Filter by file path |
+| `author` | `string` | No | Filter by author |
+| `committer` | `string` | No | Filter by committer |
+| `since` | `string` | No | Only show commits after this date |
+| `until` | `string` | No | Only show commits before this date |
+| `perPage` | `number` | No | Results per page |
+| `page` | `number` | No | Page number |
+
+---
+
+### getContent
+
+`repositories.getContent`
+
+Get the contents of a file or directory.
+
+```ts
+const content = await corsair.github.api.repositories.getContent({
+    owner: "octocat",
+    repo: "Hello-World",
+    path: "README.md",
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | Repository owner |
+| `repo` | `string` | Yes | Repository name |
+| `path` | `string` | Yes | File or directory path |
+| `ref` | `string` | No | Branch, tag, or commit SHA |
+
+---
+
+## Releases
+
+Manage releases and release assets.
+
+### list
+
+`releases.list`
+
+List releases for a repository.
+
+```ts
+const releases = await corsair.github.api.releases.list({
+    owner: "octocat",
+    repo: "Hello-World",
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | Repository owner |
+| `repo` | `string` | Yes | Repository name |
+| `perPage` | `number` | No | Results per page |
+| `page` | `number` | No | Page number |
+
+---
+
+### get
+
+`releases.get`
+
+Get a specific release.
+
+```ts
+const release = await corsair.github.api.releases.get({
+    owner: "octocat",
+    repo: "Hello-World",
+    releaseId: 1,
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | Repository owner |
+| `repo` | `string` | Yes | Repository name |
+| `releaseId` | `number` | Yes | Release ID |
+
+---
+
+### create
+
+`releases.create`
+
+Create a new release.
+
+```ts
+const release = await corsair.github.api.releases.create({
+    owner: "octocat",
+    repo: "Hello-World",
+    tagName: "v1.0.0",
+    name: "Version 1.0.0",
+    body: "Initial release",
+    draft: false,
+    prerelease: false,
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | Repository owner |
+| `repo` | `string` | Yes | Repository name |
+| `tagName` | `string` | Yes | Tag name for the release |
+| `targetCommitish` | `string` | No | Target branch or commit SHA |
+| `name` | `string` | No | Release name |
+| `body` | `string` | No | Release notes |
+| `draft` | `boolean` | No | Whether release is a draft |
+| `prerelease` | `boolean` | No | Whether release is a prerelease |
+| `generateReleaseNotes` | `boolean` | No | Auto-generate release notes |
+
+---
+
+### update
+
+`releases.update`
+
+Update an existing release.
+
+```ts
+await corsair.github.api.releases.update({
+    owner: "octocat",
+    repo: "Hello-World",
+    releaseId: 1,
+    name: "Updated Release Name",
+    body: "Updated release notes",
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | Repository owner |
+| `repo` | `string` | Yes | Repository name |
+| `releaseId` | `number` | Yes | Release ID |
+| `tagName` | `string` | No | New tag name |
+| `targetCommitish` | `string` | No | New target commit |
+| `name` | `string` | No | New release name |
+| `body` | `string` | No | New release notes |
+| `draft` | `boolean` | No | Draft status |
+| `prerelease` | `boolean` | No | Prerelease status |
+
+---
+
+## Workflows
+
+Manage GitHub Actions workflows and runs.
+
+### list
+
+`workflows.list`
+
+List workflows for a repository.
+
+```ts
+const workflows = await corsair.github.api.workflows.list({
+    owner: "octocat",
+    repo: "Hello-World",
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | Repository owner |
+| `repo` | `string` | Yes | Repository name |
+| `perPage` | `number` | No | Results per page |
+| `page` | `number` | No | Page number |
+
+---
+
+### get
+
+`workflows.get`
+
+Get a specific workflow.
+
+```ts
+const workflow = await corsair.github.api.workflows.get({
+    owner: "octocat",
+    repo: "Hello-World",
+    workflowId: 123456,
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | Repository owner |
+| `repo` | `string` | Yes | Repository name |
+| `workflowId` | `number \| string` | Yes | Workflow ID or filename |
+
+---
+
+### listRuns
+
+`workflows.listRuns`
+
+List workflow runs.
+
+```ts
+const runs = await corsair.github.api.workflows.listRuns({
+    owner: "octocat",
+    repo: "Hello-World",
+    status: "success",
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | Repository owner |
+| `repo` | `string` | Yes | Repository name |
+| `actor` | `string` | No | Filter by actor |
+| `branch` | `string` | No | Filter by branch |
+| `event` | `string` | No | Filter by event |
+| `status` | `'completed' \| 'action_required' \| 'cancelled' \| 'failure' \| 'neutral' \| 'skipped' \| 'stale' \| 'success' \| 'timed_out' \| 'in_progress' \| 'queued' \| 'requested' \| 'waiting' \| 'pending'` | No | Filter by status |
+| `perPage` | `number` | No | Results per page |
+| `page` | `number` | No | Page number |
+| `created` | `string` | No | Filter by creation date |
+| `excludePullRequests` | `boolean` | No | Exclude pull request runs |
+| `checkSuiteId` | `number` | No | Filter by check suite ID |
+| `headSha` | `string` | No | Filter by head SHA |

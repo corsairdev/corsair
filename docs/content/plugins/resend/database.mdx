@@ -1,0 +1,89 @@
+---
+title: Resend Database Schema
+description: Database entities and querying synced Resend data.
+---
+
+The Resend plugin automatically syncs data from Resend to your database. This allows you to query Resend data without making API calls, providing faster access and offline capabilities.
+
+<Callout type="info">
+**New to Corsair?** Learn about core concepts like [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy) before working with the database.
+</Callout>
+
+<Callout>
+**Full Implementation:** For the complete, up-to-date database schema and implementations, see the [Resend plugin source code](https://github.com/corsairdev/corsair/tree/main/packages/corsair/plugins/resend) on GitHub.
+</Callout>
+
+## Synced Entities
+
+The Resend plugin syncs the following entities to your database:
+
+- **emails** - Sent email messages
+- **domains** - Email domains
+
+## Database API
+
+Access synced data through the `db` property:
+
+```ts
+const emails = await corsair.resend.db.emails.search({
+    data: { from: "onboarding@resend.com" },
+});
+```
+
+## Emails
+
+### Schema
+
+```ts
+{
+    id: string;
+    from: string;
+    to: string[];
+    subject?: string;
+    created_at?: Date | null;
+}
+```
+
+### Querying Emails
+
+**Search by sender:**
+
+```ts
+const emails = await corsair.resend.db.emails.search({
+    data: { from: "onboarding@resend.com" },
+});
+```
+
+## Domains
+
+### Schema
+
+```ts
+{
+    id: string;
+    name: string;
+    status: 'not_started' | 'validation' | 'scheduled' | 'ready' | 'error' | 'verified' | 'pending' | 'failed';
+    created_at?: Date | null;
+    region?: string;
+}
+```
+
+### Querying Domains
+
+**Search by name:**
+
+```ts
+const domains = await corsair.resend.db.domains.search({
+    data: { name: "example.com" },
+});
+```
+
+**Find verified domains:**
+
+```ts
+const verifiedDomains = await corsair.resend.db.domains.search({
+    data: { status: "verified" },
+});
+```
+
+See [Database](/concepts/database) for more information about database concepts and querying patterns.

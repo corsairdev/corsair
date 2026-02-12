@@ -1,0 +1,66 @@
+---
+title: PostHog Database Schema
+description: Database entities and querying synced PostHog data.
+---
+
+The PostHog plugin automatically syncs data from PostHog to your database. This allows you to query PostHog data without making API calls, providing faster access and offline capabilities.
+
+<Callout type="info">
+**New to Corsair?** Learn about core concepts like [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy) before working with the database.
+</Callout>
+
+<Callout>
+**Full Implementation:** For the complete, up-to-date database schema and implementations, see the [PostHog plugin source code](https://github.com/corsairdev/corsair/tree/main/packages/corsair/plugins/posthog) on GitHub.
+</Callout>
+
+## Synced Entities
+
+The PostHog plugin syncs the following entities to your database:
+
+- **events** - Tracked events
+
+## Database API
+
+Access synced data through the `db` property:
+
+```ts
+const events = await corsair.posthog.db.events.search({
+    data: { event: "purchase" },
+});
+```
+
+## Events
+
+### Schema
+
+```ts
+{
+    id: string;
+    event: string;
+    distinct_id: string;
+    timestamp?: string;
+    uuid?: string;
+    properties?: Record<string, any>;
+    createdAt?: Date | null;
+}
+```
+
+### Querying Events
+
+**Search by event name:**
+
+```ts
+const events = await corsair.posthog.db.events.search({
+    data: { event: "purchase" },
+});
+```
+
+**Search by user:**
+
+```ts
+const userEvents = await corsair.posthog.db.events.search({
+    data: { distinct_id: "user-123" },
+});
+```
+
+See [Database](/concepts/database) for more information about database concepts and querying patterns.

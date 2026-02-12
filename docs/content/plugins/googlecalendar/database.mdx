@@ -1,0 +1,107 @@
+---
+title: Google Calendar Database Schema
+description: Database entities and querying synced Google Calendar data.
+---
+
+The Google Calendar plugin automatically syncs data from Google Calendar to your database. This allows you to query calendar data without making API calls, providing faster access and offline capabilities.
+
+<Callout type="info">
+**New to Corsair?** Learn about core concepts like [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy) before working with the database.
+</Callout>
+
+<Callout>
+**Full Implementation:** For the complete, up-to-date database schema and implementations, see the [Google Calendar plugin source code](https://github.com/corsairdev/corsair/tree/main/packages/corsair/plugins/googlecalendar) on GitHub.
+</Callout>
+
+## Synced Entities
+
+The Google Calendar plugin syncs the following entities to your database:
+
+- **events** - Calendar events
+- **calendars** - Calendar information
+
+## Database API
+
+Access synced data through the `db` property:
+
+```ts
+const events = await corsair.googlecalendar.db.events.search({
+    data: { summary: "Meeting" },
+});
+```
+
+## Events
+
+### Schema
+
+```ts
+{
+    id: string;
+    status?: 'confirmed' | 'tentative' | 'cancelled';
+    summary?: string;
+    description?: string;
+    location?: string;
+    start?: {
+        date?: string;
+        dateTime?: string;
+        timeZone?: string;
+    };
+    end?: {
+        date?: string;
+        dateTime?: string;
+        timeZone?: string;
+    };
+    attendees?: Array<{
+        email?: string;
+        displayName?: string;
+        responseStatus?: 'needsAction' | 'declined' | 'tentative' | 'accepted';
+    }>;
+    calendarId?: string;
+    createdAt?: Date;
+}
+```
+
+### Querying Events
+
+**Search by summary:**
+
+```ts
+const events = await corsair.googlecalendar.db.events.search({
+    data: { summary: "Meeting" },
+});
+```
+
+**Search by calendar:**
+
+```ts
+const events = await corsair.googlecalendar.db.events.search({
+    data: { calendarId: "primary" },
+});
+```
+
+## Calendars
+
+### Schema
+
+```ts
+{
+    id: string;
+    summary?: string;
+    description?: string;
+    location?: string;
+    timeZone?: string;
+    createdAt?: Date;
+}
+```
+
+### Querying Calendars
+
+**Search by summary:**
+
+```ts
+const calendars = await corsair.googlecalendar.db.calendars.search({
+    data: { summary: "Work Calendar" },
+});
+```
+
+See [Database](/concepts/database) for more information about database concepts and querying patterns.

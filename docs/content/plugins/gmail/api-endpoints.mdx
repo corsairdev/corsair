@@ -1,0 +1,630 @@
+---
+title: Gmail API Endpoints
+description: Complete reference for all Gmail API endpoints available in the Corsair Gmail plugin.
+---
+
+The Gmail plugin provides full access to Gmail's API through a typed interface. All endpoints are organized by resource type and automatically handle authentication, rate limiting, and error handling.
+
+<Callout type="info">
+**New to Corsair?** Learn about core concepts like [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling) before diving into specific endpoints.
+</Callout>
+
+<Callout>
+**Full Implementation:** For the complete, up-to-date list of all endpoints and their implementations, see the [Gmail plugin source code](https://github.com/corsairdev/corsair/tree/main/packages/corsair/plugins/gmail) on GitHub.
+</Callout>
+
+## Messages
+
+Manage email messages, send, receive, and organize emails.
+
+### list
+
+`messages.list`
+
+List messages in the user's mailbox.
+
+```ts
+const messages = await corsair.gmail.api.messages.list({
+    maxResults: 10,
+    q: "from:example@gmail.com",
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userId` | `string` | No | User's email address (defaults to "me") |
+| `q` | `string` | No | Search query (Gmail search syntax) |
+| `maxResults` | `number` | No | Maximum number of messages to return |
+| `pageToken` | `string` | No | Page token for pagination |
+| `labelIds` | `string[]` | No | Filter by label IDs |
+| `includeSpamTrash` | `boolean` | No | Include spam and trash messages |
+
+---
+
+### get
+
+`messages.get`
+
+Get a specific message.
+
+```ts
+const message = await corsair.gmail.api.messages.get({
+    id: "message-id",
+    format: "full",
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userId` | `string` | No | User's email address (defaults to "me") |
+| `id` | `string` | Yes | Message ID |
+| `format` | `'minimal' \| 'full' \| 'raw' \| 'metadata'` | No | Format of the message |
+| `metadataHeaders` | `string[]` | No | Headers to include in metadata |
+
+---
+
+### send
+
+`messages.send`
+
+Send an email message.
+
+```ts
+const message = await corsair.gmail.api.messages.send({
+    raw: base64EncodedEmail,
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userId` | `string` | No | User's email address (defaults to "me") |
+| `raw` | `string` | Yes | Base64 encoded RFC 2822 email message |
+| `threadId` | `string` | No | Thread ID to send as reply |
+
+---
+
+### delete
+
+`messages.delete`
+
+Permanently delete a message.
+
+```ts
+await corsair.gmail.api.messages.delete({
+    id: "message-id",
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userId` | `string` | No | User's email address (defaults to "me") |
+| `id` | `string` | Yes | Message ID to delete |
+
+---
+
+### modify
+
+`messages.modify`
+
+Modify labels on a message.
+
+```ts
+await corsair.gmail.api.messages.modify({
+    id: "message-id",
+    addLabelIds: ["INBOX"],
+    removeLabelIds: ["UNREAD"],
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userId` | `string` | No | User's email address (defaults to "me") |
+| `id` | `string` | Yes | Message ID |
+| `addLabelIds` | `string[]` | No | Label IDs to add |
+| `removeLabelIds` | `string[]` | No | Label IDs to remove |
+
+---
+
+### batchModify
+
+`messages.batchModify`
+
+Modify labels on multiple messages.
+
+```ts
+await corsair.gmail.api.messages.batchModify({
+    ids: ["id1", "id2", "id3"],
+    addLabelIds: ["INBOX"],
+    removeLabelIds: ["UNREAD"],
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userId` | `string` | No | User's email address (defaults to "me") |
+| `ids` | `string[]` | No | Message IDs to modify |
+| `addLabelIds` | `string[]` | No | Label IDs to add |
+| `removeLabelIds` | `string[]` | No | Label IDs to remove |
+
+---
+
+### trash
+
+`messages.trash`
+
+Move a message to trash.
+
+```ts
+await corsair.gmail.api.messages.trash({
+    id: "message-id",
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userId` | `string` | No | User's email address (defaults to "me") |
+| `id` | `string` | Yes | Message ID to trash |
+
+---
+
+### untrash
+
+`messages.untrash`
+
+Remove a message from trash.
+
+```ts
+await corsair.gmail.api.messages.untrash({
+    id: "message-id",
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userId` | `string` | No | User's email address (defaults to "me") |
+| `id` | `string` | Yes | Message ID to untrash |
+
+---
+
+## Labels
+
+Manage Gmail labels for organizing messages.
+
+### list
+
+`labels.list`
+
+List all labels in the user's mailbox.
+
+```ts
+const labels = await corsair.gmail.api.labels.list({});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userId` | `string` | No | User's email address (defaults to "me") |
+
+---
+
+### get
+
+`labels.get`
+
+Get a specific label.
+
+```ts
+const label = await corsair.gmail.api.labels.get({
+    id: "INBOX",
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userId` | `string` | No | User's email address (defaults to "me") |
+| `id` | `string` | Yes | Label ID |
+
+---
+
+### create
+
+`labels.create`
+
+Create a new label.
+
+```ts
+const label = await corsair.gmail.api.labels.create({
+    label: {
+        name: "Important",
+        messageListVisibility: "show",
+        labelListVisibility: "labelShow",
+    },
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userId` | `string` | No | User's email address (defaults to "me") |
+| `label.name` | `string` | No | Label name |
+| `label.messageListVisibility` | `'show' \| 'hide'` | No | Visibility in message list |
+| `label.labelListVisibility` | `'labelShow' \| 'labelShowIfUnread' \| 'labelHide'` | No | Visibility in label list |
+| `label.color` | `object` | No | Label color (textColor, backgroundColor) |
+
+---
+
+### update
+
+`labels.update`
+
+Update an existing label.
+
+```ts
+await corsair.gmail.api.labels.update({
+    id: "label-id",
+    label: {
+        name: "Updated Label Name",
+    },
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userId` | `string` | No | User's email address (defaults to "me") |
+| `id` | `string` | Yes | Label ID |
+| `label` | `object` | No | Label properties to update |
+
+---
+
+### delete
+
+`labels.delete`
+
+Delete a label.
+
+```ts
+await corsair.gmail.api.labels.delete({
+    id: "label-id",
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userId` | `string` | No | User's email address (defaults to "me") |
+| `id` | `string` | Yes | Label ID to delete |
+
+---
+
+## Drafts
+
+Manage draft messages.
+
+### list
+
+`drafts.list`
+
+List all draft messages.
+
+```ts
+const drafts = await corsair.gmail.api.drafts.list({
+    maxResults: 10,
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userId` | `string` | No | User's email address (defaults to "me") |
+| `maxResults` | `number` | No | Maximum number of drafts to return |
+| `pageToken` | `string` | No | Page token for pagination |
+| `q` | `string` | No | Search query |
+
+---
+
+### get
+
+`drafts.get`
+
+Get a specific draft.
+
+```ts
+const draft = await corsair.gmail.api.drafts.get({
+    id: "draft-id",
+    format: "full",
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userId` | `string` | No | User's email address (defaults to "me") |
+| `id` | `string` | Yes | Draft ID |
+| `format` | `'minimal' \| 'full' \| 'raw' \| 'metadata'` | No | Format of the draft |
+
+---
+
+### create
+
+`drafts.create`
+
+Create a new draft.
+
+```ts
+const draft = await corsair.gmail.api.drafts.create({
+    draft: {
+        message: {
+            raw: base64EncodedEmail,
+        },
+    },
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userId` | `string` | No | User's email address (defaults to "me") |
+| `draft.message.raw` | `string` | No | Base64 encoded email message |
+| `draft.message.threadId` | `string` | No | Thread ID for reply |
+
+---
+
+### update
+
+`drafts.update`
+
+Update an existing draft.
+
+```ts
+await corsair.gmail.api.drafts.update({
+    id: "draft-id",
+    draft: {
+        message: {
+            raw: base64EncodedEmail,
+        },
+    },
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userId` | `string` | No | User's email address (defaults to "me") |
+| `id` | `string` | Yes | Draft ID |
+| `draft.message.raw` | `string` | No | Base64 encoded email message |
+| `draft.message.threadId` | `string` | No | Thread ID |
+
+---
+
+### delete
+
+`drafts.delete`
+
+Delete a draft.
+
+```ts
+await corsair.gmail.api.drafts.delete({
+    id: "draft-id",
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userId` | `string` | No | User's email address (defaults to "me") |
+| `id` | `string` | Yes | Draft ID to delete |
+
+---
+
+### send
+
+`drafts.send`
+
+Send a draft message.
+
+```ts
+const message = await corsair.gmail.api.drafts.send({
+    id: "draft-id",
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userId` | `string` | No | User's email address (defaults to "me") |
+| `id` | `string` | No | Draft ID to send |
+| `message.raw` | `string` | No | Base64 encoded email message (if not using draft ID) |
+| `message.threadId` | `string` | No | Thread ID for reply |
+
+---
+
+## Threads
+
+Manage email threads (conversations).
+
+### list
+
+`threads.list`
+
+List email threads.
+
+```ts
+const threads = await corsair.gmail.api.threads.list({
+    maxResults: 10,
+    q: "from:example@gmail.com",
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userId` | `string` | No | User's email address (defaults to "me") |
+| `q` | `string` | No | Search query |
+| `maxResults` | `number` | No | Maximum number of threads to return |
+| `pageToken` | `string` | No | Page token for pagination |
+| `labelIds` | `string[]` | No | Filter by label IDs |
+| `includeSpamTrash` | `boolean` | No | Include spam and trash threads |
+
+---
+
+### get
+
+`threads.get`
+
+Get a specific thread.
+
+```ts
+const thread = await corsair.gmail.api.threads.get({
+    id: "thread-id",
+    format: "full",
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userId` | `string` | No | User's email address (defaults to "me") |
+| `id` | `string` | Yes | Thread ID |
+| `format` | `'minimal' \| 'full' \| 'metadata'` | No | Format of the thread |
+| `metadataHeaders` | `string[]` | No | Headers to include in metadata |
+
+---
+
+### modify
+
+`threads.modify`
+
+Modify labels on a thread.
+
+```ts
+await corsair.gmail.api.threads.modify({
+    id: "thread-id",
+    addLabelIds: ["INBOX"],
+    removeLabelIds: ["UNREAD"],
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userId` | `string` | No | User's email address (defaults to "me") |
+| `id` | `string` | Yes | Thread ID |
+| `addLabelIds` | `string[]` | No | Label IDs to add |
+| `removeLabelIds` | `string[]` | No | Label IDs to remove |
+
+---
+
+### delete
+
+`threads.delete`
+
+Permanently delete a thread.
+
+```ts
+await corsair.gmail.api.threads.delete({
+    id: "thread-id",
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userId` | `string` | No | User's email address (defaults to "me") |
+| `id` | `string` | Yes | Thread ID to delete |
+
+---
+
+### trash
+
+`threads.trash`
+
+Move a thread to trash.
+
+```ts
+await corsair.gmail.api.threads.trash({
+    id: "thread-id",
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userId` | `string` | No | User's email address (defaults to "me") |
+| `id` | `string` | Yes | Thread ID to trash |
+
+---
+
+### untrash
+
+`threads.untrash`
+
+Remove a thread from trash.
+
+```ts
+await corsair.gmail.api.threads.untrash({
+    id: "thread-id",
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userId` | `string` | No | User's email address (defaults to "me") |
+| `id` | `string` | Yes | Thread ID to untrash |
+
+---
+
+## Users
+
+Get user profile information.
+
+### getProfile
+
+`users.getProfile`
+
+Get the user's Gmail profile.
+
+```ts
+const profile = await corsair.gmail.api.users.getProfile({});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userId` | `string` | No | User's email address (defaults to "me") |
