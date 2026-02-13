@@ -10,7 +10,7 @@ import type {
 } from '../../core';
 import type { AuthTypes, PickAuth } from '../../core/constants';
 import type { LinearEndpointOutputs } from './endpoints';
-import { Comments, Issues, Projects, Teams } from './endpoints';
+import { Comments, Issues, Projects, States, Teams, Users } from './endpoints';
 import { errorHandlers } from './error-handlers';
 import { LinearSchema } from './schema';
 import type {
@@ -53,7 +53,7 @@ type LinearEndpoint<
 export type LinearEndpoints = {
 	issuesList: LinearEndpoint<
 		'issuesList',
-		{ teamId?: string; first?: number; after?: string }
+		{ teamId?: string; first?: number; after?: string; filter?: Record<string, any> }
 	>;
 	issuesGet: LinearEndpoint<'issuesGet', { id: string }>;
 	issuesCreate: LinearEndpoint<
@@ -149,6 +149,14 @@ export type LinearEndpoints = {
 		{ id: string; input: { body?: string } }
 	>;
 	commentsDelete: LinearEndpoint<'commentsDelete', { id: string }>;
+	usersList: LinearEndpoint<'usersList', { first?: number; after?: string }>;
+	usersGet: LinearEndpoint<'usersGet', { id: string }>;
+	statesList: LinearEndpoint<'statesList', { teamId: string }>;
+	statesGet: LinearEndpoint<'statesGet', { id: string }>;
+	statesGetCanceled: LinearEndpoint<
+		'statesGetCanceled',
+		{ teamId: string }
+	>;
 };
 
 type LinearWebhook<
@@ -212,6 +220,15 @@ const linearEndpointsNested = {
 	teams: {
 		list: Teams.list,
 		get: Teams.get,
+	},
+	users: {
+		list: Users.list,
+		get: Users.get,
+	},
+	states: {
+		list: States.list,
+		get: States.get,
+		getCanceled: States.getCanceledStateId,
 	},
 } as const;
 
@@ -362,6 +379,12 @@ export type {
 	UpdateIssueInput,
 	UpdateProjectInput,
 	User,
+	UserConnection,
+	UserGetResponse,
+	UsersListResponse,
+	StateConnection,
+	StateGetResponse,
+	StatesListResponse,
 	WorkflowState,
 	WorkflowStateType,
 } from './endpoints/types';

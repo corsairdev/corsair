@@ -1,0 +1,39 @@
+{
+  "id": "daily-linear-burndown-to-slack",
+  "name": "Daily Linear burndown to Slack",
+  "description": "Sends a daily burndown report every weekday at 9 AM to your Slack channel showing progress on all active Linear projects. The report includes total issues, completed issues, remaining issues, and completion percentage for each project. This helps track project progress and identify projects that may need attention.",
+  "trigger": {
+    "type": "cron",
+    "config": {
+      "schedule": "0 9 * * 1-5"
+    }
+  },
+  "steps": [
+    {
+      "name": "Get Active Projects",
+      "description": "Fetches all Linear projects that are currently in 'started' state",
+      "service": "linear",
+      "code": "const projects = await tenant.linear.api.projects.list({ filter: { state: { name: { eq: 'started' } } } });"
+    },
+    {
+      "name": "Calculate Burndown",
+      "description": "For each project, calculates total, completed, and remaining issue counts",
+      "service": "linear",
+      "code": "const issues = await tenant.linear.api.issues.list({ filter: { project: { id: { eq: project.id } } } }); const completed = issues.filter(i => i.completedAt !== null).length;"
+    },
+    {
+      "name": "Format Burndown Message",
+      "description": "Builds a formatted message with project status and completion rates",
+      "service": "slack",
+      "code": "const message = `*Daily Burndown*\\n\\n*Projects:*\\n${projectReports}`;"
+    },
+    {
+      "name": "Send Burndown to Slack",
+      "description": "Posts the burndown report to the designated Slack channel",
+      "service": "slack",
+      "code": "await tenant.slack.api.messages.post({ channel: slackChannel, text: message });"
+    }
+  ],
+  "services": ["linear", "slack"],
+  "estimatedDuration": "~10 seconds"
+}

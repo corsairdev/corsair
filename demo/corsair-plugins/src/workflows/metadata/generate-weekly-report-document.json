@@ -1,0 +1,46 @@
+{
+  "id": "generate-weekly-report-document",
+  "name": "Generate weekly report document",
+  "description": "Manually generates a comprehensive weekly report document combining metrics from Linear, GitHub, and PostHog. The workflow gathers statistics from all three platforms, formats them into a markdown document, and uploads it to Google Drive. This creates a shareable weekly report that can be used for stakeholder updates, team retrospectives, or historical record-keeping. Execute this workflow manually by triggering the 'manual/generate-weekly-report' event.",
+  "trigger": {
+    "type": "manual",
+    "config": {
+      "event": "manual/generate-weekly-report",
+      "note": "Execute this workflow manually by sending an event: { name: 'manual/generate-weekly-report', data: { tenantId: 'default' } }"
+    }
+  },
+  "steps": [
+    {
+      "name": "Get Week Ago Date",
+      "description": "Calculates the date 7 days ago for filtering data",
+      "service": "linear",
+      "code": "const weekAgo = new Date(); weekAgo.setDate(weekAgo.getDate() - 7);"
+    },
+    {
+      "name": "Get Linear Stats",
+      "description": "Fetches completed and created issue counts from Linear",
+      "service": "linear",
+      "code": "const completed = await tenant.linear.api.issues.list({ filter: { completedAt: { gte: weekAgo } } });"
+    },
+    {
+      "name": "Get GitHub Stats",
+      "description": "Fetches pull request counts from GitHub",
+      "service": "github",
+      "code": "const prs = await tenant.github.api.pullRequests.list({ owner, repo, state: 'all' });"
+    },
+    {
+      "name": "Get PostHog Stats",
+      "description": "Counts events and unique users from PostHog",
+      "service": "posthog",
+      "code": "const events = await tenant.posthog.db.events.search({ data: { created_at: { $gte: weekAgo } } });"
+    },
+    {
+      "name": "Create Google Doc",
+      "description": "Creates a new markdown file in Google Drive with the report content",
+      "service": "googledrive",
+      "code": "const doc = await tenant.googledrive.api.files.create({ requestBody: { name: reportName, mimeType: 'text/markdown' } });"
+    }
+  ],
+  "services": ["linear", "github", "posthog", "googledrive"],
+  "estimatedDuration": "~15 seconds"
+}

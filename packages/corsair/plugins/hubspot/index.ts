@@ -44,6 +44,23 @@ import {
 	TicketWebhooks,
 } from './webhooks';
 
+export type {
+	CompanyCreatedEventType,
+	CompanyDeletedEventType,
+	CompanyUpdatedEventType,
+	ContactCreatedEventType,
+	ContactDeletedEventType,
+	ContactUpdatedEventType,
+	DealCreatedEventType,
+	DealDeletedEventType,
+	DealUpdatedEventType,
+	HubSpotWebhookOutputs,
+	HubSpotWebhookPayloadType,
+	TicketCreatedEventType,
+	TicketDeletedEventType,
+	TicketUpdatedEventType,
+} from './webhooks';
+
 export type HubSpotContext = CorsairPluginContext<
 	typeof HubSpotSchema,
 	HubSpotCredentials

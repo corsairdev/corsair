@@ -1,0 +1,40 @@
+{
+  "id": "sync-slack-channels-to-linear",
+  "name": "Sync Slack channels to Linear",
+  "description": "Manually syncs Slack channel information to Linear as issues. The workflow retrieves all active Slack channels, gathers detailed information about each channel (name, purpose, member count, creation date), and creates corresponding Linear issues with low priority. This is useful for documenting channel structure, onboarding, or creating a reference of team communication channels. Execute this workflow manually by triggering the 'manual/sync-slack-channels-to-linear' event.",
+  "trigger": {
+    "type": "manual",
+    "config": {
+      "event": "manual/sync-slack-channels-to-linear",
+      "note": "Execute this workflow manually by sending an event: { name: 'manual/sync-slack-channels-to-linear', data: { tenantId: 'default' } }"
+    }
+  },
+  "steps": [
+    {
+      "name": "Get Slack Channels",
+      "description": "Retrieves all active (non-archived) Slack channels",
+      "service": "slack",
+      "code": "await tenant.slack.api.channels.list({ exclude_archived: true }); const channels = await tenant.slack.db.channels.search({ data: {} });"
+    },
+    {
+      "name": "Get Linear Team ID",
+      "description": "Retrieves the Linear team ID from environment configuration",
+      "service": "linear",
+      "code": "const teamId = process.env.LINEAR_TEAM_ID;"
+    },
+    {
+      "name": "Get Channel Details",
+      "description": "Fetches detailed information for each channel",
+      "service": "slack",
+      "code": "const channelInfo = await tenant.slack.api.channels.get({ channel: channelId });"
+    },
+    {
+      "name": "Create Linear Issues for Channels",
+      "description": "Creates Linear issues with channel information (up to 50 channels)",
+      "service": "linear",
+      "code": "await tenant.linear.api.issues.create({ title: `[Slack] Channel: ${channelName}`, description: formattedDescription, teamId, priority: 3 });"
+    }
+  ],
+  "services": ["slack", "linear"],
+  "estimatedDuration": "~40 seconds"
+}

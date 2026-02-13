@@ -1,0 +1,45 @@
+{
+  "id": "send-email-digest-of-linear-issues",
+  "name": "Send email digest of Linear issues",
+  "description": "Sends a weekly email digest every Friday at 5 PM summarizing Linear issues from the past week. The email includes counts and lists of completed issues and issues still in progress, helping stakeholders stay informed about project status without needing to check Linear directly. Recipients are configurable via environment variables.",
+  "trigger": {
+    "type": "cron",
+    "config": {
+      "schedule": "0 17 * * 5"
+    }
+  },
+  "steps": [
+    {
+      "name": "Get Week Ago Date",
+      "description": "Calculates the date 7 days ago for filtering issues",
+      "service": "linear",
+      "code": "const weekAgo = new Date(); weekAgo.setDate(weekAgo.getDate() - 7);"
+    },
+    {
+      "name": "Get Completed Issues",
+      "description": "Fetches all Linear issues completed in the past week",
+      "service": "linear",
+      "code": "const issues = await tenant.linear.api.issues.list({ filter: { completedAt: { gte: weekAgo } } });"
+    },
+    {
+      "name": "Get In Progress Issues",
+      "description": "Fetches all Linear issues updated in the past week that are not done",
+      "service": "linear",
+      "code": "const issues = await tenant.linear.api.issues.list({ filter: { state: { name: { neq: 'Done' } }, updatedAt: { gte: weekAgo } } });"
+    },
+    {
+      "name": "Format Email Content",
+      "description": "Builds HTML and text versions of the email digest",
+      "service": "resend",
+      "code": "const emailContent = { subject: 'Weekly Digest', html: '<h2>Completed</h2><pre>...</pre>', text: 'Completed: ...' };"
+    },
+    {
+      "name": "Send Email Digest",
+      "description": "Sends the email digest to all configured recipients",
+      "service": "resend",
+      "code": "await tenant.resend.api.emails.send({ from, to, subject, html, text });"
+    }
+  ],
+  "services": ["linear", "resend"],
+  "estimatedDuration": "~8 seconds"
+}

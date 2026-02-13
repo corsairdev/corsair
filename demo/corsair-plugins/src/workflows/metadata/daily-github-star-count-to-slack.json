@@ -1,0 +1,45 @@
+{
+  "id": "daily-github-star-count-to-slack",
+  "name": "Daily GitHub star count to Slack",
+  "description": "Sends a daily update every day at 9 AM to your Slack engineering channel with GitHub star and fork counts for all monitored repositories. The message includes total stars across all repos, individual repository breakdowns, and fork counts. This helps track repository growth and community engagement over time.",
+  "trigger": {
+    "type": "cron",
+    "config": {
+      "schedule": "0 9 * * *"
+    }
+  },
+  "steps": [
+    {
+      "name": "Get Repositories",
+      "description": "Retrieves the list of repositories to monitor from configuration",
+      "service": "github",
+      "code": "const repositories = process.env.GITHUB_REPOS.split(',');"
+    },
+    {
+      "name": "Get Star Counts",
+      "description": "Fetches star and fork counts for each repository",
+      "service": "github",
+      "code": "const repoData = await tenant.github.api.repositories.get({ owner, repo }); return { stars: repoData.stargazers_count, forks: repoData.forks_count };"
+    },
+    {
+      "name": "Calculate Total Stars",
+      "description": "Sums up total stars across all repositories",
+      "service": "github",
+      "code": "const totalStars = starCounts.reduce((sum, repo) => sum + repo.stars, 0);"
+    },
+    {
+      "name": "Format Star Count Message",
+      "description": "Builds a formatted message with star and fork statistics",
+      "service": "slack",
+      "code": "const message = `⭐ *Daily Star Count*\\n\\n*Total:* ${totalStars}\\n*Breakdown:*\\n${repoList}`;"
+    },
+    {
+      "name": "Send Star Count to Slack",
+      "description": "Posts the star count update to the engineering channel",
+      "service": "slack",
+      "code": "await tenant.slack.api.messages.post({ channel: slackChannel, text: message });"
+    }
+  ],
+  "services": ["github", "slack"],
+  "estimatedDuration": "~8 seconds"
+}

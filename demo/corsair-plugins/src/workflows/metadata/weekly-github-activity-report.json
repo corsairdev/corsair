@@ -1,0 +1,45 @@
+{
+  "id": "weekly-github-activity-report",
+  "name": "Weekly GitHub activity report",
+  "description": "Sends a weekly summary every Monday at 9 AM to your Slack engineering channel with GitHub activity metrics from the past week. The report includes pull request statistics per repository, total star count across all repositories, and a summary of activity. This helps track development velocity and repository engagement over time.",
+  "trigger": {
+    "type": "cron",
+    "config": {
+      "schedule": "0 9 * * 1"
+    }
+  },
+  "steps": [
+    {
+      "name": "Get Week Ago Date",
+      "description": "Calculates the date 7 days ago for filtering activity",
+      "service": "github",
+      "code": "const weekAgo = new Date(); weekAgo.setDate(weekAgo.getDate() - 7);"
+    },
+    {
+      "name": "Get Repositories",
+      "description": "Retrieves the list of repositories to monitor from configuration",
+      "service": "github",
+      "code": "const repositories = process.env.GITHUB_REPOS.split(',');"
+    },
+    {
+      "name": "Get PR Statistics",
+      "description": "Fetches pull request counts for each repository from the past week",
+      "service": "github",
+      "code": "const prs = await tenant.github.api.pullRequests.list({ owner, repo, state: 'all', sort: 'updated' });"
+    },
+    {
+      "name": "Get Star Count",
+      "description": "Retrieves total star count across all monitored repositories",
+      "service": "github",
+      "code": "const repoData = await tenant.github.api.repositories.get({ owner, repo }); totalStars += repoData.stargazers_count;"
+    },
+    {
+      "name": "Send Weekly Report",
+      "description": "Posts the formatted weekly activity report to Slack",
+      "service": "slack",
+      "code": "await tenant.slack.api.messages.post({ channel: slackChannel, text: report });"
+    }
+  ],
+  "services": ["github", "slack"],
+  "estimatedDuration": "~10 seconds"
+}

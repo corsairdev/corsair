@@ -1,0 +1,40 @@
+{
+  "id": "sync-hubspot-contacts-to-slack",
+  "name": "Sync HubSpot contacts to Slack",
+  "description": "Manually syncs HubSpot contact information to Slack as a summary message. The workflow retrieves recent contacts from HubSpot, formats them with names, emails, and company information, and posts a summary to your Slack sales channel. This is useful for sharing contact updates with the sales team or reviewing recent additions to your CRM. Execute this workflow manually by triggering the 'manual/sync-hubspot-to-slack' event.",
+  "trigger": {
+    "type": "manual",
+    "config": {
+      "event": "manual/sync-hubspot-to-slack",
+      "note": "Execute this workflow manually by sending an event: { name: 'manual/sync-hubspot-to-slack', data: { tenantId: 'default', daysAgo: 7 } }"
+    }
+  },
+  "steps": [
+    {
+      "name": "Get Time Range",
+      "description": "Calculates the time range based on daysAgo parameter (default 7 days)",
+      "service": "hubspot",
+      "code": "const timeRange = new Date(); timeRange.setDate(timeRange.getDate() - daysAgo);"
+    },
+    {
+      "name": "Get Recent Contacts",
+      "description": "Retrieves recent contacts from HubSpot (up to 50)",
+      "service": "hubspot",
+      "code": "const contacts = await tenant.hubspot.api.contacts.list({ limit: 50 });"
+    },
+    {
+      "name": "Format Contacts Summary",
+      "description": "Builds a formatted message with contact information",
+      "service": "slack",
+      "code": "const summary = `*HubSpot Contacts*\\n\\n${contactList}`;"
+    },
+    {
+      "name": "Send Contacts to Slack",
+      "description": "Posts the contacts summary to the Slack sales channel",
+      "service": "slack",
+      "code": "await tenant.slack.api.messages.post({ channel: slackChannel, text: summary });"
+    }
+  ],
+  "services": ["hubspot", "slack"],
+  "estimatedDuration": "~5 seconds"
+}

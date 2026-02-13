@@ -21,6 +21,14 @@ import type {
 } from './webhooks';
 import { RowWebhooks } from './webhooks';
 
+export type {
+	GoogleSheetsWebhookOutputs,
+	GoogleSheetsWebhookPayload,
+	RowAddedEvent,
+	RowUpdatedEvent,
+	RowAddedOrUpdatedEvent,
+} from './webhooks';
+
 export type GoogleSheetsContext = CorsairPluginContext<
 	typeof GoogleSheetsSchema,
 	GoogleSheetsPluginOptions

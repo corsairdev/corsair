@@ -1,0 +1,46 @@
+{
+  "id": "backup-slack-messages-to-google-sheets",
+  "name": "Backup Slack messages to Google Sheets",
+  "description": "Manually backs up Slack messages from a specified channel to a Google Sheets spreadsheet. The workflow retrieves messages from the past 30 days (configurable), creates a new spreadsheet, and writes the messages with timestamps, user information, and message text. This is useful for archiving important conversations, compliance, or analysis. Execute this workflow manually by triggering the 'manual/backup-slack-to-sheets' event.",
+  "trigger": {
+    "type": "manual",
+    "config": {
+      "event": "manual/backup-slack-to-sheets",
+      "note": "Execute this workflow manually by sending an event: { name: 'manual/backup-slack-to-sheets', data: { tenantId: 'default', channelName: 'general', daysAgo: 30 } }"
+    }
+  },
+  "steps": [
+    {
+      "name": "Get Channel Name",
+      "description": "Retrieves the channel name from event data (default: 'general')",
+      "service": "slack",
+      "code": "const channelName = event.data.channelName || 'general';"
+    },
+    {
+      "name": "Get Time Range",
+      "description": "Calculates the time range based on daysAgo parameter (default 30 days)",
+      "service": "slack",
+      "code": "const timeRange = new Date(); timeRange.setDate(timeRange.getDate() - daysAgo);"
+    },
+    {
+      "name": "Get Channel Messages",
+      "description": "Fetches messages from the specified Slack channel within the time range",
+      "service": "slack",
+      "code": "const messages = await tenant.slack.api.messages.list({ channel: channelId, oldest: timestamp });"
+    },
+    {
+      "name": "Create or Get Spreadsheet",
+      "description": "Creates a new Google Sheets spreadsheet for the backup",
+      "service": "googlesheets",
+      "code": "const spreadsheet = await tenant.googlesheets.api.spreadsheets.create({ properties: { title: spreadsheetName } });"
+    },
+    {
+      "name": "Write Messages to Sheets",
+      "description": "Writes formatted message data to the spreadsheet",
+      "service": "googlesheets",
+      "code": "await tenant.googlesheets.api.spreadsheets.values.update({ spreadsheetId, range: 'Sheet1!A1', values: sheetData });"
+    }
+  ],
+  "services": ["slack", "googlesheets"],
+  "estimatedDuration": "~20 seconds"
+}

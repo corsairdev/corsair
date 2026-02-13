@@ -25,6 +25,13 @@ import type {
 } from './webhooks';
 import { ChangeWebhooks } from './webhooks';
 
+export type {
+	FileChangedEvent,
+	FolderChangedEvent,
+	GoogleDriveWebhookOutputs,
+	GoogleDriveWebhookPayload,
+} from './webhooks';
+
 export type GoogleDriveContext = CorsairPluginContext<
 	typeof GoogleDriveSchema,
 	GoogleDrivePluginOptions

@@ -1,0 +1,46 @@
+{
+  "id": "create-hubspot-contact-from-linear-issue",
+  "name": "Create HubSpot contact from Linear issue",
+  "description": "Automatically creates a HubSpot contact whenever a Linear issue is created that contains an email address. The workflow extracts email addresses from the issue title or description, gathers assignee information, and creates a corresponding contact in HubSpot with relevant details. This helps maintain customer relationships by automatically syncing issue-related contacts to your CRM.",
+  "trigger": {
+    "type": "webhook",
+    "config": {
+      "event": "linear/issue-created",
+      "note": "Configure this workflow to trigger from the Linear webhook. Ensure your Linear webhook is set up to send issue.created events to your webhook endpoint."
+    }
+  },
+  "steps": [
+    {
+      "name": "Get Issue Details",
+      "description": "Extracts the issue data from the webhook event",
+      "service": "linear",
+      "code": "const issue = issueEvent.data;"
+    },
+    {
+      "name": "Extract Email from Issue",
+      "description": "Searches the issue title and description for email addresses using regex",
+      "service": "linear",
+      "code": "const emailRegex = /[\\w\\.-]+@[\\w\\.-]+\\.\\w+/g; const matches = description.matchAll(emailRegex);"
+    },
+    {
+      "name": "Get Assignee Info",
+      "description": "Retrieves assignee details if the issue is assigned",
+      "service": "linear",
+      "code": "const assignee = await tenant.linear.api.users.get({ id: issue.assigneeId });"
+    },
+    {
+      "name": "Prepare Contact Data",
+      "description": "Formats the contact data with email, name, company, and notes",
+      "service": "hubspot",
+      "code": "const contactData = { email, firstname, lastname, company, notes: `Created from Linear issue ${issue.identifier}` };"
+    },
+    {
+      "name": "Create HubSpot Contact",
+      "description": "Creates a new contact in HubSpot with the prepared data",
+      "service": "hubspot",
+      "code": "await tenant.hubspot.api.contacts.create({ properties: contactData });"
+    }
+  ],
+  "services": ["linear", "hubspot"],
+  "estimatedDuration": "~4 seconds"
+}

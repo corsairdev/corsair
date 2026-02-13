@@ -1,0 +1,184 @@
+---
+title: Basic Usage
+description: Learn how to use Corsair to make API calls and manage integrations.
+---
+
+## Creating a Corsair Instance
+
+First, create and configure your Corsair instance:
+
+```ts title="corsair.ts"
+import { createCorsair } from "corsair";
+import { Pool } from "pg";
+import { slack, linear, resend } from "corsair/plugins";
+
+export const corsair = createCorsair({
+    multiTenancy: true,
+    database: new Pool({ connectionString: process.env.DATABASE_URL }),
+    plugins: [
+        slack(),
+        linear(),
+        resend(),
+    ],
+    kek: process.env.CORSAIR_KEK!,
+});
+```
+
+## Working with Tenants
+
+If you enabled multi-tenancy, use `withTenant()` to scope operations:
+
+```ts title="example.ts"
+const tenant = corsair.withTenant("tenant_123");
+
+await tenant.slack.api.messages.post({
+    channel: "C01234567",
+    text: "Hello from Corsair!",
+});
+```
+
+Without multi-tenancy, use the instance directly:
+
+```ts title="example.ts"
+await corsair.slack.api.messages.post({
+    channel: "C01234567",
+    text: "Hello from Corsair!",
+});
+```
+
+## Making API Calls
+
+All API calls are fully typed and follow the same pattern:
+
+```ts title="api-calls.ts"
+const tenant = corsair.withTenant("tenant_123");
+
+const message = await tenant.slack.api.messages.post({
+    channel: "C01234567",
+    text: "New user signed up!",
+});
+
+const issue = await tenant.linear.api.issues.create({
+    title: "Follow up with new user",
+    teamId: "TEAM_ABC",
+    description: "Reach out to welcome them",
+});
+
+const email = await tenant.resend.api.emails.send({
+    to: "user@example.com",
+    from: "onboarding@example.com",
+    subject: "Welcome!",
+    html: "<h1>Welcome to our platform</h1>",
+});
+```
+
+## Accessing Responses
+
+API responses are automatically typed based on the endpoint:
+
+```ts title="responses.ts"
+const tenant = corsair.withTenant("tenant_123");
+
+const message = await tenant.slack.api.messages.post({
+    channel: "C01234567",
+    text: "Hello!",
+});
+
+console.log(message.ts);
+console.log(message.message.text);
+```
+
+## Querying Database
+
+Corsair automatically stores API responses in your database. Query them using the ORM:
+
+```ts title="database.ts"
+const tenant = corsair.withTenant("tenant_123");
+
+const messages = await tenant.slack.db.messages.list({ limit: 50 });
+
+const message = await tenant.slack.db.messages.findByResourceId("msg_123");
+
+const results = await tenant.slack.db.messages.search({
+    data: { channel: "C01234567" },
+    limit: 20,
+});
+```
+
+## Error Handling
+
+Corsair handles rate limits, retries, and errors automatically. You can also catch and handle errors:
+
+```ts title="error-handling.ts"
+const tenant = corsair.withTenant("tenant_123");
+
+try {
+    await tenant.slack.api.messages.post({
+        channel: "C01234567",
+        text: "Hello!",
+    });
+} catch (error) {
+    if (error instanceof Error && 'status' in error && error.status === 429) {
+        console.log("Rate limited, will retry automatically");
+    } else {
+        console.error("API call failed:", error);
+    }
+}
+```
+
+## Setting Up Credentials
+
+Before making API calls, you need to set up credentials for each integration. This varies by authentication type:
+
+### API Key
+
+```ts title="api-key.ts"
+await corsair.keys.slack.set({
+    apiKey: "xoxb-your-bot-token",
+}, {
+    tenantId: "tenant_123",
+});
+```
+
+### OAuth 2.0
+
+OAuth flows require additional setup. See the [Authentication](/concepts/auth) guide for details.
+
+## Complete Example
+
+Here's a complete example that sends a Slack message when a user signs up:
+
+```ts title="user-signup.ts"
+import { corsair } from "./corsair";
+
+export async function handleUserSignup(userId: string, email: string) {
+    const tenant = corsair.withTenant(userId);
+
+    await tenant.slack.api.messages.post({
+        channel: process.env.SLACK_CHANNEL_ID!,
+        text: `New user signed up: ${email}`,
+    });
+
+    await tenant.resend.api.emails.send({
+        to: email,
+        from: "welcome@example.com",
+        subject: "Welcome!",
+        html: "<h1>Thanks for signing up!</h1>",
+    });
+
+    const issue = await tenant.linear.api.issues.create({
+        title: `Onboard user: ${email}`,
+        teamId: process.env.LINEAR_TEAM_ID!,
+    });
+
+    console.log(`Created Linear issue: ${issue.id}`);
+}
+```
+
+## Next Steps
+
+- [Authentication](/concepts/auth) - Set up OAuth and API keys
+- [Webhooks](/concepts/webhooks) - Handle incoming webhook events
+- [Database](/concepts/database) - Learn about the four-table architecture
+- [Hooks](/concepts/hooks) - Customize API and webhook behavior
+- [Error Handling](/concepts/error-handling) - Advanced error handling patterns

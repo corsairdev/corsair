@@ -1,0 +1,45 @@
+{
+  "id": "daily-posthog-metrics-to-slack",
+  "name": "Daily PostHog metrics to Slack",
+  "description": "Sends a daily summary of PostHog analytics to your Slack analytics channel every day at 9 AM. The report includes total event count, unique user count, and the top 5 most frequent events from the previous day. This provides a quick overview of product usage and helps identify trends in user behavior.",
+  "trigger": {
+    "type": "cron",
+    "config": {
+      "schedule": "0 9 * * *"
+    }
+  },
+  "steps": [
+    {
+      "name": "Get Yesterday Date",
+      "description": "Calculates yesterday's date range for filtering events",
+      "service": "posthog",
+      "code": "const yesterday = { start: new Date(date.setHours(0, 0, 0, 0)), end: new Date(date.setHours(23, 59, 59, 999)) };"
+    },
+    {
+      "name": "Count Events",
+      "description": "Counts total events captured in PostHog yesterday",
+      "service": "posthog",
+      "code": "const events = await tenant.posthog.db.events.search({ data: { created_at: { $gte: yesterdayStart, $lte: yesterdayEnd } } });"
+    },
+    {
+      "name": "Count Unique Users",
+      "description": "Calculates the number of unique users who generated events yesterday",
+      "service": "posthog",
+      "code": "const distinctIds = new Set(events.map(e => e.distinct_id)); return distinctIds.size;"
+    },
+    {
+      "name": "Get Top Events",
+      "description": "Identifies the top 5 most frequent event types from yesterday",
+      "service": "posthog",
+      "code": "const eventCounts = {}; events.forEach(e => { eventCounts[e.event_type] = (eventCounts[e.event_type] || 0) + 1; });"
+    },
+    {
+      "name": "Send Metrics to Slack",
+      "description": "Posts the formatted metrics report to the Slack analytics channel",
+      "service": "slack",
+      "code": "await tenant.slack.api.messages.post({ channel: slackChannel, text: metrics });"
+    }
+  ],
+  "services": ["posthog", "slack"],
+  "estimatedDuration": "~6 seconds"
+}

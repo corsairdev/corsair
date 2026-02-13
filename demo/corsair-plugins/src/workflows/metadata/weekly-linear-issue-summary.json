@@ -1,0 +1,45 @@
+{
+  "id": "weekly-linear-issue-summary",
+  "name": "Weekly Linear issue summary",
+  "description": "Sends a comprehensive weekly summary every Monday at 9 AM to your Slack channel with Linear issue statistics from the past week. The summary includes counts of completed, created, and in-progress issues, along with lists of the top items in each category. This provides a high-level view of team productivity and project status.",
+  "trigger": {
+    "type": "cron",
+    "config": {
+      "schedule": "0 9 * * 1"
+    }
+  },
+  "steps": [
+    {
+      "name": "Get Week Ago Date",
+      "description": "Calculates the date 7 days ago for filtering issues",
+      "service": "linear",
+      "code": "const weekAgo = new Date(); weekAgo.setDate(weekAgo.getDate() - 7);"
+    },
+    {
+      "name": "Get Completed Issues",
+      "description": "Fetches all Linear issues completed in the past week",
+      "service": "linear",
+      "code": "const issues = await tenant.linear.api.issues.list({ filter: { completedAt: { gte: weekAgo } } });"
+    },
+    {
+      "name": "Get Created Issues",
+      "description": "Fetches all Linear issues created in the past week",
+      "service": "linear",
+      "code": "const issues = await tenant.linear.api.issues.list({ filter: { createdAt: { gte: weekAgo } } });"
+    },
+    {
+      "name": "Get In Progress Issues",
+      "description": "Fetches all Linear issues currently in progress",
+      "service": "linear",
+      "code": "const issues = await tenant.linear.api.issues.list({ filter: { state: { name: { neq: 'Done' } } } });"
+    },
+    {
+      "name": "Send Weekly Summary",
+      "description": "Posts the formatted weekly summary to Slack",
+      "service": "slack",
+      "code": "await tenant.slack.api.messages.post({ channel: slackChannel, text: summary });"
+    }
+  ],
+  "services": ["linear", "slack"],
+  "estimatedDuration": "~8 seconds"
+}

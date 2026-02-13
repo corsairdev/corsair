@@ -15,6 +15,11 @@ import { PostHogSchema } from './schema';
 import type { EventCapturedEvent, PostHogWebhookOutputs } from './webhooks';
 import { EventWebhooks } from './webhooks';
 
+export type {
+	EventCapturedEvent,
+	PostHogWebhookOutputs,
+} from './webhooks';
+
 export type PostHogPluginOptions = {
 	authType?: PickAuth<'api_key'>;
 	key?: string;

@@ -1,0 +1,45 @@
+{
+  "id": "daily-standup-summary",
+  "name": "Daily standup summary",
+  "description": "Sends a daily summary to your Slack standup channel every weekday at 9 AM with an overview of completed and newly created Linear issues from the previous day. The summary includes counts and lists the top 5 items in each category, helping your team start the day with a clear picture of progress and new work items.",
+  "trigger": {
+    "type": "cron",
+    "config": {
+      "schedule": "0 9 * * 1-5"
+    }
+  },
+  "steps": [
+    {
+      "name": "Get Yesterday Date",
+      "description": "Calculates yesterday's date for filtering issues",
+      "service": "linear",
+      "code": "const yesterday = new Date(); yesterday.setDate(yesterday.getDate() - 1);"
+    },
+    {
+      "name": "Get Completed Issues",
+      "description": "Fetches all Linear issues completed yesterday",
+      "service": "linear",
+      "code": "const issues = await tenant.linear.api.issues.list({ filter: { completedAt: { gte: yesterdayStart, lte: yesterdayEnd } } });"
+    },
+    {
+      "name": "Get Created Issues",
+      "description": "Fetches all Linear issues created yesterday",
+      "service": "linear",
+      "code": "const issues = await tenant.linear.api.issues.list({ filter: { createdAt: { gte: yesterdayStart, lte: yesterdayEnd } } });"
+    },
+    {
+      "name": "Format Standup Summary",
+      "description": "Builds a formatted summary message with issue counts and lists",
+      "service": "slack",
+      "code": "const summary = `*Daily Standup Summary*\\n\\n*Completed:* ${completedCount}\\n*New:* ${createdCount}`;"
+    },
+    {
+      "name": "Send Standup Summary",
+      "description": "Posts the summary to the designated Slack standup channel",
+      "service": "slack",
+      "code": "await tenant.slack.api.messages.post({ channel: slackChannel, text: summary });"
+    }
+  ],
+  "services": ["linear", "slack"],
+  "estimatedDuration": "~5 seconds"
+}

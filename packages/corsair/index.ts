@@ -276,4 +276,64 @@ export {
 	type SlackWebhooks,
 	slack,
 } from './plugins/slack';
+export {
+	type PostHogBoundEndpoints,
+	type PostHogBoundWebhooks,
+	type PostHogContext,
+	type PostHogEndpoints,
+	type PostHogPluginOptions,
+	type PostHogWebhooks,
+	posthog,
+} from './plugins/posthog';
+export {
+	type HubSpotBoundEndpoints,
+	type HubSpotBoundWebhooks,
+	type HubSpotContext,
+	type HubSpotEndpoints,
+	type HubSpotPluginOptions,
+	type HubSpotWebhooks,
+	hubspot,
+} from './plugins/hubspot';
+
+export {
+	type GoogleSheetsBoundEndpoints,
+	type GoogleSheetsBoundWebhooks,
+	type GoogleSheetsContext,
+	type GoogleSheetsEndpoints,
+	type GoogleSheetsPluginOptions,
+	type GoogleSheetsWebhooks,
+	googlesheets,
+} from './plugins/googlesheets';
+
+export {
+	type GmailBoundEndpoints,
+	type GmailBoundWebhooks,
+	type GmailContext,
+	type GmailEndpoints,
+	type GmailPluginOptions,
+	type GmailWebhooks,
+	gmail,
+} from './plugins/gmail';
+
+
+export {
+	type GoogleDriveBoundEndpoints,
+	type GoogleDriveBoundWebhooks,
+	type GoogleDriveContext,
+	type GoogleDriveEndpoints,
+	type GoogleDrivePluginOptions,
+	type GoogleDriveWebhooks,
+	googledrive,
+} from './plugins/googledrive';
+
+export {
+	type GoogleCalendarBoundEndpoints,
+	type GoogleCalendarBoundWebhooks,
+	type GoogleCalendarContext,
+	type GoogleCalendarEndpoints,
+	type GoogleCalendarPluginOptions,
+	type GoogleCalendarWebhooks,
+	googlecalendar,
+} from './plugins/googlecalendar';
+
 export { processWebhook } from './webhooks';

@@ -1,0 +1,46 @@
+{
+  "id": "notify-on-linear-issue-assignment",
+  "name": "Notify on Linear issue assignment",
+  "description": "Sends a Slack notification whenever a Linear issue is assigned to someone. The workflow detects assignment changes, retrieves assignee information, attempts to find the corresponding Slack user, and sends a personalized notification with the issue details. If a matching Slack user is found, they are mentioned in the notification. This ensures team members are immediately aware when work is assigned to them.",
+  "trigger": {
+    "type": "webhook",
+    "config": {
+      "event": "linear/issue-updated",
+      "note": "Configure this workflow to trigger from the Linear webhook. Ensure your Linear webhook is set up to send issue.updated events to your webhook endpoint."
+    }
+  },
+  "steps": [
+    {
+      "name": "Get Issue Details",
+      "description": "Extracts the issue data from the webhook event",
+      "service": "linear",
+      "code": "const issue = issueEvent.data;"
+    },
+    {
+      "name": "Check Assignment Change",
+      "description": "Verifies that the issue has been assigned to someone",
+      "service": "linear",
+      "code": "const wasAssigned = issue.assigneeId !== null;"
+    },
+    {
+      "name": "Get Assignee Info",
+      "description": "Retrieves detailed information about the assignee",
+      "service": "linear",
+      "code": "const assignee = await tenant.linear.api.users.get({ id: issue.assigneeId });"
+    },
+    {
+      "name": "Get Slack User",
+      "description": "Attempts to find the corresponding Slack user by email or name",
+      "service": "slack",
+      "code": "const slackUser = users.members.find(u => u.profile.email === assignee.email);"
+    },
+    {
+      "name": "Send Slack Notification",
+      "description": "Sends a notification with issue details and mentions the assignee if found",
+      "service": "slack",
+      "code": "await tenant.slack.api.messages.post({ channel: slackChannel, text: message });"
+    }
+  ],
+  "services": ["linear", "slack"],
+  "estimatedDuration": "~4 seconds"
+}

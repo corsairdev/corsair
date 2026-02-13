@@ -1,0 +1,46 @@
+{
+  "id": "send-slack-update-on-linear-issue-created",
+  "name": "Send an update every time a Linear issue is created",
+  "description": "Automatically posts a formatted message to a Slack channel whenever a new issue is created in Linear. The message includes the issue title, identifier, priority, assignee information, and a direct link to the issue. This keeps your team informed in real-time about new work items without having to constantly check Linear.",
+  "trigger": {
+    "type": "webhook",
+    "config": {
+      "event": "linear/issue-created",
+      "note": "Configure this workflow to trigger from the Linear webhook. Ensure your Linear webhook is set up to send issue.created events to your webhook endpoint."
+    }
+  },
+  "steps": [
+    {
+      "name": "Get Linear Issue Details",
+      "description": "Extracts the issue data from the webhook event payload",
+      "service": "linear",
+      "code": "const issue = issueEvent.data;"
+    },
+    {
+      "name": "Get Slack Channel",
+      "description": "Finds the target Slack channel by name, syncing channels if needed",
+      "service": "slack",
+      "code": "const channel = await tenant.slack.db.channels.search({ data: { name: 'general' } });"
+    },
+    {
+      "name": "Get Assignee Info",
+      "description": "Retrieves assignee details if the issue is assigned to someone",
+      "service": "linear",
+      "code": "const assignee = await tenant.linear.api.users.get({ id: issue.assigneeId });"
+    },
+    {
+      "name": "Format Slack Message",
+      "description": "Builds a formatted message string with issue details and assignee information",
+      "service": "slack",
+      "code": "const message = `*New Linear Issue*\\n*Title:* ${issue.title}\\n*ID:* ${issue.identifier}`;"
+    },
+    {
+      "name": "Send Slack Message",
+      "description": "Posts the formatted message to the designated Slack channel",
+      "service": "slack",
+      "code": "await tenant.slack.api.messages.post({ channel: slackChannel, text: message });"
+    }
+  ],
+  "services": ["slack", "linear"],
+  "estimatedDuration": "~2 seconds"
+}

@@ -287,6 +287,7 @@ export const list: LinearEndpoints['issuesList'] = async (ctx, input) => {
 	const query = input.teamId ? ISSUES_LIST_QUERY : ISSUES_LIST_QUERY_NO_FILTER;
 	const variables: Record<string, unknown> = {
 		first: input.first || 50,
+		filter: input.filter || {},
 	};
 	if (input.teamId) {
 		variables.teamId = input.teamId;
@@ -294,7 +295,9 @@ export const list: LinearEndpoints['issuesList'] = async (ctx, input) => {
 	if (input.after) {
 		variables.after = input.after;
 	}
-
+	if (input.filter) {
+		variables.filter = input.filter;
+	}
 	const response = await makeLinearRequest<IssuesListResponse>(
 		query,
 		ctx.key,

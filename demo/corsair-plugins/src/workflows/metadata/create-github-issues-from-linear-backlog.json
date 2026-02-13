@@ -1,0 +1,34 @@
+{
+  "id": "create-github-issues-from-linear-backlog",
+  "name": "Create GitHub issues from Linear backlog",
+  "description": "Manually creates GitHub issues from Linear backlog items. The workflow retrieves all issues in the Linear backlog, formats them with Linear issue identifiers and descriptions, and creates corresponding GitHub issues in a specified repository. This is useful for syncing project management items to GitHub for development tracking. Execute this workflow manually by triggering the 'manual/create-github-from-linear' event.",
+  "trigger": {
+    "type": "manual",
+    "config": {
+      "event": "manual/create-github-from-linear",
+      "note": "Execute this workflow manually by sending an event: { name: 'manual/create-github-from-linear', data: { tenantId: 'default', repository: 'owner/repo' } }"
+    }
+  },
+  "steps": [
+    {
+      "name": "Get Repository",
+      "description": "Retrieves the target GitHub repository from event data or configuration",
+      "service": "github",
+      "code": "const repository = event.data.repository || process.env.GITHUB_REPOS.split(',')[0];"
+    },
+    {
+      "name": "Get Linear Backlog",
+      "description": "Fetches all Linear issues in the 'Backlog' state",
+      "service": "linear",
+      "code": "const issues = await tenant.linear.api.issues.list({ filter: { state: { name: { eq: 'Backlog' } } } });"
+    },
+    {
+      "name": "Create GitHub Issues",
+      "description": "Creates GitHub issues for each Linear backlog item (up to 20)",
+      "service": "github",
+      "code": "await tenant.github.api.issues.create({ owner, repo, title: `[Linear ${identifier}] ${title}`, body: formattedDescription, labels });"
+    }
+  ],
+  "services": ["linear", "github"],
+  "estimatedDuration": "~30 seconds"
+}

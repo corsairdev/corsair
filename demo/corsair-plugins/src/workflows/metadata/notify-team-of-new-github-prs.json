@@ -1,0 +1,46 @@
+{
+  "id": "notify-team-of-new-github-prs",
+  "name": "Notify team of new GitHub PRs",
+  "description": "Automatically sends a notification to your Slack channel whenever a new pull request is opened in GitHub. The notification includes the PR title, author, repository, change statistics (additions/deletions), and a direct link. This keeps your engineering team informed about new code reviews without constantly monitoring GitHub.",
+  "trigger": {
+    "type": "webhook",
+    "config": {
+      "event": "github/pull-request-opened",
+      "note": "Configure this workflow to trigger from GitHub webhooks. Set up a webhook in your GitHub repository settings to send pull_request events (opened action) to your webhook endpoint."
+    }
+  },
+  "steps": [
+    {
+      "name": "Extract PR Data",
+      "description": "Extracts pull request information from the GitHub webhook payload",
+      "service": "github",
+      "code": "const prData = { title: prEvent.pull_request.title, number: prEvent.pull_request.number, author: prEvent.pull_request.user.login };"
+    },
+    {
+      "name": "Get Slack Channel",
+      "description": "Finds the target Slack channel for notifications",
+      "service": "slack",
+      "code": "const channel = await tenant.slack.db.channels.search({ data: { name: 'engineering' } });"
+    },
+    {
+      "name": "Get PR Details",
+      "description": "Fetches additional PR details including change statistics",
+      "service": "github",
+      "code": "const pr = await tenant.github.api.pullRequests.get({ owner, repo, pullNumber: prData.number });"
+    },
+    {
+      "name": "Format Slack Message",
+      "description": "Builds a formatted notification message with PR details",
+      "service": "slack",
+      "code": "const message = `*New PR*\\n*Title:* ${prData.title}\\n*Author:* ${prData.author}\\n*Changes:* +${additions} -${deletions}`;"
+    },
+    {
+      "name": "Send Slack Notification",
+      "description": "Posts the notification to the designated Slack channel",
+      "service": "slack",
+      "code": "await tenant.slack.api.messages.post({ channel: slackChannel, text: message });"
+    }
+  ],
+  "services": ["slack", "github"],
+  "estimatedDuration": "~3 seconds"
+}

@@ -1,0 +1,46 @@
+{
+  "id": "alert-on-posthog-anomalies",
+  "name": "Alert on PostHog anomalies",
+  "description": "Manually checks for anomalies in PostHog event patterns by comparing current event counts against a baseline. The workflow compares events from a recent time period (default 24 hours) against a baseline average from the past week, and sends a Slack alert if the current count exceeds 150% of the baseline average. This helps detect unusual spikes in activity that might indicate issues or opportunities. Execute this workflow manually by triggering the 'manual/check-posthog-anomalies' event.",
+  "trigger": {
+    "type": "manual",
+    "config": {
+      "event": "manual/check-posthog-anomalies",
+      "note": "Execute this workflow manually by sending an event: { name: 'manual/check-posthog-anomalies', data: { tenantId: 'default', hoursAgo: 24, baselineDays: 7 } }"
+    }
+  },
+  "steps": [
+    {
+      "name": "Get Time Range",
+      "description": "Calculates the current time range based on hoursAgo parameter (default 24 hours)",
+      "service": "posthog",
+      "code": "const timeRange = { start: new Date(Date.now() - hoursAgo * 3600000), end: new Date() };"
+    },
+    {
+      "name": "Get Baseline Range",
+      "description": "Calculates the baseline time range from baselineDays ago (default 7 days)",
+      "service": "posthog",
+      "code": "const baselineRange = { start: new Date(Date.now() - baselineDays * 86400000), end: new Date(Date.now() - (baselineDays - 1) * 86400000) };"
+    },
+    {
+      "name": "Get Current Events",
+      "description": "Counts events in the current time range",
+      "service": "posthog",
+      "code": "const events = await tenant.posthog.db.events.search({ data: { created_at: { $gte: timeRange.start, $lte: timeRange.end } } });"
+    },
+    {
+      "name": "Get Baseline Events",
+      "description": "Counts events in the baseline time range",
+      "service": "posthog",
+      "code": "const events = await tenant.posthog.db.events.search({ data: { created_at: { $gte: baselineRange.start, $lte: baselineRange.end } } });"
+    },
+    {
+      "name": "Send Anomaly Alert",
+      "description": "Sends a Slack alert if an anomaly is detected",
+      "service": "slack",
+      "code": "await tenant.slack.api.messages.post({ channel: slackChannel, text: alertMessage });"
+    }
+  ],
+  "services": ["posthog", "slack"],
+  "estimatedDuration": "~8 seconds"
+}

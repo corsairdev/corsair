@@ -1,0 +1,46 @@
+{
+  "id": "alert-on-github-security-alerts",
+  "name": "Alert on GitHub security alerts",
+  "description": "Monitors GitHub for security alerts (vulnerabilities, dependency issues) and sends immediate notifications to your Slack security channel. For critical or high-severity alerts, the workflow also creates a high-priority Linear issue to ensure the security issue is tracked and addressed. The alert includes the alert type, severity level, affected repository, package name, and a direct link to the alert.",
+  "trigger": {
+    "type": "webhook",
+    "config": {
+      "event": "github/security-alert",
+      "note": "Configure this workflow to trigger from GitHub webhooks. Set up a webhook in your GitHub repository or organization settings to send security_and_analysis events to your webhook endpoint."
+    }
+  },
+  "steps": [
+    {
+      "name": "Extract Alert Data",
+      "description": "Extracts security alert information from the GitHub webhook payload",
+      "service": "github",
+      "code": "const alertData = { alertType: securityEvent.alert.type, severity: securityEvent.alert.severity, repository: securityEvent.repository.full_name };"
+    },
+    {
+      "name": "Get Slack Channel",
+      "description": "Finds the target Slack security channel",
+      "service": "slack",
+      "code": "const channel = await tenant.slack.db.channels.search({ data: { name: 'security' } });"
+    },
+    {
+      "name": "Determine Severity Level",
+      "description": "Categorizes the alert severity (critical, warning, info)",
+      "service": "github",
+      "code": "const severityLevel = severity === 'critical' || severity === 'high' ? 'critical' : 'warning';"
+    },
+    {
+      "name": "Send Slack Alert",
+      "description": "Posts the security alert to the Slack channel with appropriate emoji",
+      "service": "slack",
+      "code": "await tenant.slack.api.messages.post({ channel: slackChannel, text: message });"
+    },
+    {
+      "name": "Create Linear Issue",
+      "description": "Creates a high-priority Linear issue for critical security alerts",
+      "service": "linear",
+      "code": "await tenant.linear.api.issues.create({ title, description, teamId, priority: 1 });"
+    }
+  ],
+  "services": ["github", "slack", "linear"],
+  "estimatedDuration": "~4 seconds"
+}
