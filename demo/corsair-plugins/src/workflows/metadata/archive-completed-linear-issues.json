@@ -1,0 +1,34 @@
+{
+  "id": "archive-completed-linear-issues",
+  "name": "Archive completed Linear issues",
+  "description": "Manually archives old completed Linear issues that were completed before a specified date (default 90 days ago). The workflow finds all completed issues older than the threshold, marks them as canceled (archived), and helps keep your Linear workspace clean and focused on active work. This is useful for periodic maintenance of your issue tracker. Execute this workflow manually by triggering the 'manual/archive-linear-issues' event.",
+  "trigger": {
+    "type": "manual",
+    "config": {
+      "event": "manual/archive-linear-issues",
+      "note": "Execute this workflow manually by sending an event: { name: 'manual/archive-linear-issues', data: { tenantId: 'default', daysAgo: 90 } }"
+    }
+  },
+  "steps": [
+    {
+      "name": "Get Time Range",
+      "description": "Calculates the cutoff date based on daysAgo parameter (default 90 days)",
+      "service": "linear",
+      "code": "const timeRange = new Date(); timeRange.setDate(timeRange.getDate() - daysAgo);"
+    },
+    {
+      "name": "Get Old Completed Issues",
+      "description": "Fetches all completed Linear issues older than the cutoff date",
+      "service": "linear",
+      "code": "const issues = await tenant.linear.api.issues.list({ filter: { completedAt: { lte: timeRange }, state: { name: { eq: 'Done' } } } });"
+    },
+    {
+      "name": "Archive Issues",
+      "description": "Marks issues as canceled (archived) (up to 100 issues)",
+      "service": "linear",
+      "code": "await tenant.linear.api.issues.update({ id: issue.id, input: { canceled: true } });"
+    }
+  ],
+  "services": ["linear"],
+  "estimatedDuration": "~20 seconds"
+}

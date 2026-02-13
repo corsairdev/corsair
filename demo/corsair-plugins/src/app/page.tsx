@@ -156,6 +156,18 @@ export default function Home() {
 			</div>
 
 			<div style={{ marginTop: '2rem' }}>
+				<h2>Navigation</h2>
+				<ul>
+					<li>
+						<a href="/workflows" style={{ color: '#0070f3', textDecoration: 'none' }}>
+							📊 Workflows Dashboard
+						</a>{' '}
+						- Manage and trigger manual/cron workflows
+					</li>
+				</ul>
+			</div>
+
+			<div style={{ marginTop: '2rem' }}>
 				<h2>API Endpoints</h2>
 				<ul>
 					<li>
@@ -164,6 +176,9 @@ export default function Home() {
 					</li>
 					<li>
 						<code>/api/issues</code> - Report an issue (creates Linear issue)
+					</li>
+					<li>
+						<code>/api/workflows</code> - Workflow management and execution
 					</li>
 					<li>
 						<code>/api/trpc</code> - tRPC API endpoints

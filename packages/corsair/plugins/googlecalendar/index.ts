@@ -29,6 +29,16 @@ export type GoogleCalendarContext = CorsairPluginContext<
 	GoogleCalendarPluginOptions
 >;
 
+export type {
+	EventCreatedEvent,
+	EventUpdatedEvent,
+	EventDeletedEvent,
+	EventStartedEvent,
+	EventEndedEvent,
+	GoogleCalendarWebhookOutputs,
+	GoogleCalendarWebhookPayload,
+} from './webhooks';
+
 type GoogleCalendarEndpoint<
 	K extends keyof GoogleCalendarEndpointOutputs,
 	Input,

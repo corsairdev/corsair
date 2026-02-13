@@ -20,5 +20,10 @@ export default defineConfig({
 		'plugins/resend/index.ts',
 		'plugins/posthog/index.ts',
 		'plugins/github/index.ts',
+		'plugins/googlesheets/index.ts',
+		'plugins/googlecalendar/index.ts',
+		'plugins/googledrive/index.ts',
+		'plugins/gmail/index.ts',
+		'plugins/hubspot/index.ts',
 	],
 });

@@ -1,0 +1,186 @@
+---
+title: Installation
+description: Get Corsair up and running in your project.
+---
+
+## Prerequisites
+
+Before installing Corsair, make sure you have:
+
+- **Node.js** 18 or higher
+- **PostgreSQL** database (version 12 or higher)
+- **TypeScript** 5.0 or higher (recommended)
+
+## Install the Package
+
+Install Corsair using your preferred package manager:
+
+```bash
+npm install corsair
+```
+
+```bash
+pnpm add corsair
+```
+
+```bash
+yarn add corsair
+```
+
+## Install Database Driver
+
+Corsair requires a PostgreSQL database. Install a database driver:
+
+```bash
+npm install pg
+```
+
+Or if you prefer using Kysely directly:
+
+```bash
+npm install kysely pg
+```
+
+## Install Plugins
+
+Install the plugins you need for your integrations:
+
+```bash
+npm install corsair
+```
+
+Plugins are imported from the main package:
+
+```ts
+import { slack, linear, github, gmail, resend } from "corsair/plugins";
+```
+
+## Database Setup
+
+Corsair uses four tables to store all integration data. You need to create these tables in your PostgreSQL database.
+
+### Option 1: Using SQL Migration
+
+Run this SQL to create the required tables:
+
+```sql
+CREATE TABLE IF NOT EXISTS corsair_integrations (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
+    name TEXT NOT NULL,
+    config JSONB,
+    dek TEXT
+);
+
+CREATE TABLE IF NOT EXISTS corsair_accounts (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
+    tenant_id TEXT NOT NULL,
+    integration_id UUID NOT NULL REFERENCES corsair_integrations(id),
+    config JSONB,
+    dek TEXT,
+    UNIQUE(tenant_id, integration_id)
+);
+
+CREATE TABLE IF NOT EXISTS corsair_entities (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
+    account_id UUID NOT NULL REFERENCES corsair_accounts(id) ON DELETE CASCADE,
+    entity_id TEXT NOT NULL,
+    entity_type TEXT NOT NULL,
+    version TEXT NOT NULL,
+    data JSONB NOT NULL,
+    UNIQUE(account_id, entity_type, entity_id, version)
+);
+
+CREATE TABLE IF NOT EXISTS corsair_events (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
+    account_id UUID NOT NULL REFERENCES corsair_accounts(id) ON DELETE CASCADE,
+    event_type TEXT NOT NULL,
+    payload JSONB NOT NULL,
+    status TEXT
+);
+
+CREATE INDEX IF NOT EXISTS idx_accounts_tenant_integration ON corsair_accounts(tenant_id, integration_id);
+CREATE INDEX IF NOT EXISTS idx_entities_account_type ON corsair_entities(account_id, entity_type);
+CREATE INDEX IF NOT EXISTS idx_events_account_id ON corsair_events(account_id);
+```
+
+### Option 2: Using a Migration Tool
+
+If you're using a migration tool like Drizzle, Prisma, or Kysely migrations, create migrations based on the schema above.
+
+## Environment Variables
+
+Set up your environment variables. You'll need:
+
+### Required
+
+- `DATABASE_URL` - PostgreSQL connection string
+- `CORSAIR_KEK` - Key encryption key for securing credentials
+
+### Generate Encryption Key
+
+Generate a secure encryption key for `CORSAIR_KEK`:
+
+```bash
+openssl rand -base64 32
+```
+
+Or using Node.js:
+
+```bash
+node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
+```
+
+### Example `.env` File
+
+```bash
+DATABASE_URL="postgres://user:password@localhost:5432/mydb"
+CORSAIR_KEK="your-generated-encryption-key-here"
+```
+
+## Basic Setup
+
+Create your Corsair instance:
+
+```ts title="corsair.ts"
+import { createCorsair } from "corsair";
+import { Pool } from "pg";
+import { slack, linear, github } from "corsair/plugins";
+
+export const corsair = createCorsair({
+    multiTenancy: true,
+    database: new Pool({ connectionString: process.env.DATABASE_URL }),
+    plugins: [
+        slack(),
+        linear(),
+        github(),
+    ],
+    kek: process.env.CORSAIR_KEK!,
+});
+```
+
+## Verify Installation
+
+Test that everything is set up correctly:
+
+```ts title="test.ts"
+import { corsair } from "./corsair";
+
+const tenant = corsair.withTenant("test_tenant");
+
+console.log("Corsair is ready!");
+```
+
+## Next Steps
+
+- [Basic Usage](/getting-started/basic-usage) - Learn how to make API calls
+- [Multi-Tenancy](/concepts/multi-tenancy) - Understand tenant isolation
+- [Authentication](/concepts/auth) - Set up OAuth and API keys
+- [Plugins](/plugins) - Explore available integrations

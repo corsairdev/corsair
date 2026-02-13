@@ -1,0 +1,45 @@
+{
+  "id": "weekly-cross-platform-summary",
+  "name": "Weekly cross-platform summary",
+  "description": "Sends a comprehensive weekly summary every Monday at 9 AM combining metrics from Linear, GitHub, and PostHog into a single unified report. The summary includes Linear issue statistics, GitHub pull request and star counts, and PostHog event and user metrics. This provides a complete picture of team activity across all integrated platforms.",
+  "trigger": {
+    "type": "cron",
+    "config": {
+      "schedule": "0 9 * * 1"
+    }
+  },
+  "steps": [
+    {
+      "name": "Get Week Ago Date",
+      "description": "Calculates the date 7 days ago for filtering data",
+      "service": "linear",
+      "code": "const weekAgo = new Date(); weekAgo.setDate(weekAgo.getDate() - 7);"
+    },
+    {
+      "name": "Get Linear Stats",
+      "description": "Fetches completed and created issue counts from Linear",
+      "service": "linear",
+      "code": "const completed = await tenant.linear.api.issues.list({ filter: { completedAt: { gte: weekAgo } } });"
+    },
+    {
+      "name": "Get GitHub Stats",
+      "description": "Fetches pull request counts and total star counts from GitHub",
+      "service": "github",
+      "code": "const prs = await tenant.github.api.pullRequests.list({ owner, repo, state: 'all' }); const repoData = await tenant.github.api.repositories.get({ owner, repo });"
+    },
+    {
+      "name": "Get PostHog Stats",
+      "description": "Counts events and unique users from PostHog",
+      "service": "posthog",
+      "code": "const events = await tenant.posthog.db.events.search({ data: { created_at: { $gte: weekAgo } } }); const distinctUsers = new Set(events.map(e => e.distinct_id));"
+    },
+    {
+      "name": "Send Cross-Platform Summary",
+      "description": "Posts the unified summary to Slack",
+      "service": "slack",
+      "code": "await tenant.slack.api.messages.post({ channel: slackChannel, text: summary });"
+    }
+  ],
+  "services": ["linear", "github", "posthog", "slack"],
+  "estimatedDuration": "~15 seconds"
+}

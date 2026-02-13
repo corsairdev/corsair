@@ -1,0 +1,46 @@
+{
+  "id": "create-linear-issue-from-posthog-event",
+  "name": "Create Linear issue from PostHog event",
+  "description": "Automatically creates a high-priority Linear issue whenever a critical event (error, crash, or critical) is captured in PostHog. The workflow checks each captured event, identifies critical events, formats the event data as an issue, and creates it in Linear with high priority. This ensures production issues are immediately tracked and actionable in your project management system.",
+  "trigger": {
+    "type": "webhook",
+    "config": {
+      "event": "posthog/event-captured",
+      "note": "Configure this workflow to trigger from PostHog webhooks. Set up a webhook in PostHog to send event.captured events to your webhook endpoint."
+    }
+  },
+  "steps": [
+    {
+      "name": "Extract Event Data",
+      "description": "Extracts the event data from the PostHog webhook payload",
+      "service": "posthog",
+      "code": "const eventData = posthogEvent.data;"
+    },
+    {
+      "name": "Check Critical Event",
+      "description": "Determines if the event is critical (error, crash, or critical)",
+      "service": "posthog",
+      "code": "const isCritical = eventData.event.toLowerCase().includes('error') || eventData.event.toLowerCase().includes('crash');"
+    },
+    {
+      "name": "Format Issue Title",
+      "description": "Creates a descriptive title for the Linear issue",
+      "service": "linear",
+      "code": "const title = `[PostHog] ${eventData.event} - ${eventData.distinct_id}`;"
+    },
+    {
+      "name": "Format Issue Description",
+      "description": "Formats the event data and properties as a detailed issue description",
+      "service": "linear",
+      "code": "const description = `Critical event detected\\n\\n*Event:* ${eventData.event}\\n*User:* ${eventData.distinct_id}\\n*Properties:* ${JSON.stringify(eventData.properties)}`;"
+    },
+    {
+      "name": "Create Linear Issue",
+      "description": "Creates a high-priority Linear issue with the formatted data",
+      "service": "linear",
+      "code": "await tenant.linear.api.issues.create({ title, description, teamId, priority: 1 });"
+    }
+  ],
+  "services": ["posthog", "linear"],
+  "estimatedDuration": "~3 seconds"
+}

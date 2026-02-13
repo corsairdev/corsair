@@ -31,6 +31,14 @@ export type GmailContext = CorsairPluginContext<
 	GmailPluginOptions
 >;
 
+export type {
+	GmailWebhookOutputs,
+	GmailWebhookPayload,
+	MessageDeletedEvent,
+	MessageLabelChangedEvent,
+	MessageReceivedEvent,
+} from './webhooks';
+
 type GmailEndpoint<
 	K extends keyof GmailEndpointOutputs,
 	Input,

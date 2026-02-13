@@ -19,6 +19,12 @@ import {
 	update as projectsUpdate,
 } from './projects';
 import { get as teamsGet, list as teamsList } from './teams';
+import { get as usersGet, list as usersList } from './users';
+import {
+	get as statesGet,
+	getCanceledStateId,
+	list as statesList,
+} from './states';
 
 export const Comments = {
 	list: commentsList,
@@ -46,6 +52,17 @@ export const Projects = {
 export const Teams = {
 	list: teamsList,
 	get: teamsGet,
+};
+
+export const Users = {
+	list: usersList,
+	get: usersGet,
+};
+
+export const States = {
+	list: statesList,
+	get: statesGet,
+	getCanceledStateId,
 };
 
 export * from './types';

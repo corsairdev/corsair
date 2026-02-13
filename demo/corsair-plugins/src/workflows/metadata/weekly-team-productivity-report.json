@@ -1,0 +1,45 @@
+{
+  "id": "weekly-team-productivity-report",
+  "name": "Weekly team productivity report",
+  "description": "Sends a comprehensive weekly productivity report every Friday at 5 PM combining metrics from Linear, GitHub, and PostHog. The report includes completed Linear issues, GitHub pull request statistics (total and merged), PostHog event counts, and highlights top completed work items. This provides a unified view of team productivity across all tools.",
+  "trigger": {
+    "type": "cron",
+    "config": {
+      "schedule": "0 17 * * 5"
+    }
+  },
+  "steps": [
+    {
+      "name": "Get Week Ago Date",
+      "description": "Calculates the date 7 days ago for filtering data",
+      "service": "linear",
+      "code": "const weekAgo = new Date(); weekAgo.setDate(weekAgo.getDate() - 7);"
+    },
+    {
+      "name": "Get Completed Issues",
+      "description": "Fetches all Linear issues completed in the past week",
+      "service": "linear",
+      "code": "const issues = await tenant.linear.api.issues.list({ filter: { completedAt: { gte: weekAgo } } });"
+    },
+    {
+      "name": "Get PR Statistics",
+      "description": "Fetches GitHub pull request counts and merge statistics from the past week",
+      "service": "github",
+      "code": "const prs = await tenant.github.api.pullRequests.list({ owner, repo, state: 'all', sort: 'updated' });"
+    },
+    {
+      "name": "Get PostHog Events",
+      "description": "Counts PostHog events captured in the past week",
+      "service": "posthog",
+      "code": "const events = await tenant.posthog.db.events.search({ data: { created_at: { $gte: weekAgo } } });"
+    },
+    {
+      "name": "Send Productivity Report",
+      "description": "Posts the combined productivity report to Slack",
+      "service": "slack",
+      "code": "await tenant.slack.api.messages.post({ channel: slackChannel, text: report });"
+    }
+  ],
+  "services": ["linear", "github", "posthog", "slack"],
+  "estimatedDuration": "~12 seconds"
+}

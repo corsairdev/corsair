@@ -409,7 +409,7 @@ const githubWebhooksNested = {
 };
 
 export type GithubPluginOptions = {
-	authType: AuthTypes;
+	authType: 'api_key';
 	credentials?: GithubCredentials;
 	webhookSecret?: string;
 	hooks?: GithubPlugin['hooks'] | undefined;
@@ -463,15 +463,16 @@ export function github(options: GithubPluginOptions) {
 					}
 
 					return res;
-				} else if (ctx.authType === 'oauth_2') {
-					const res = await ctx.keys.getAccessToken();
-
-					if (!res) {
-						return '';
-					}
-
-					return res;
 				}
+				// else if (ctx.authType === 'oauth_2') {
+				// 	const res = await ctx.keys.getAccessToken();
+
+				// 	if (!res) {
+				// 		return '';
+				// 	}
+
+				// 	return res;
+				// }
 			}
 
 			return '';

@@ -1,0 +1,46 @@
+{
+  "id": "create-linear-issue-from-slack-message",
+  "name": "Create Linear issue from Slack message",
+  "description": "Monitors Slack messages for specific trigger keywords like '/create-issue' and automatically creates a corresponding Linear issue. The workflow extracts the message content, formats it as an issue title and description, and creates the issue in your configured Linear team. This enables quick issue creation directly from Slack conversations without switching contexts.",
+  "trigger": {
+    "type": "webhook",
+    "config": {
+      "event": "slack/event",
+      "note": "Configure this workflow to trigger from Slack webhooks. Set up Slack event subscriptions to receive message events and point them to your webhook endpoint."
+    }
+  },
+  "steps": [
+    {
+      "name": "Extract Slack Message",
+      "description": "Extracts message data from the Slack webhook event",
+      "service": "slack",
+      "code": "const messageData = { text: slackEvent.data.text, user: slackEvent.data.user, channel: slackEvent.data.channel };"
+    },
+    {
+      "name": "Check Trigger Keyword",
+      "description": "Checks if the message contains trigger keywords like '/create-issue'",
+      "service": "slack",
+      "code": "const shouldCreate = messageData.text.toLowerCase().includes('/create-issue');"
+    },
+    {
+      "name": "Get Linear Team ID",
+      "description": "Retrieves the configured Linear team ID from environment variables",
+      "service": "linear",
+      "code": "const teamId = process.env.LINEAR_TEAM_ID;"
+    },
+    {
+      "name": "Extract Issue Title",
+      "description": "Parses the message to extract or generate an appropriate issue title",
+      "service": "linear",
+      "code": "const title = messageData.text.split('\\n').find(line => line.includes('title:'));"
+    },
+    {
+      "name": "Create Linear Issue",
+      "description": "Creates a new Linear issue with the extracted title and formatted description",
+      "service": "linear",
+      "code": "await tenant.linear.api.issues.create({ title, description, teamId });"
+    }
+  ],
+  "services": ["slack", "linear"],
+  "estimatedDuration": "~3 seconds"
+}

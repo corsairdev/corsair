@@ -51,6 +51,31 @@
       "dev-source": "./plugins/github/index.ts",
       "types": "./dist/plugins/github/index.d.ts",
       "default": "./dist/plugins/github/index.js"
+    },
+    "./plugins/googlesheets": {
+      "dev-source": "./plugins/googlesheets/index.ts",
+      "types": "./dist/plugins/googlesheets/index.d.ts",
+      "default": "./dist/plugins/googlesheets/index.js"
+    },
+    "./plugins/googlecalendar": {
+      "dev-source": "./plugins/googlecalendar/index.ts",
+      "types": "./dist/plugins/googlecalendar/index.d.ts",
+      "default": "./dist/plugins/googlecalendar/index.js"
+    },
+    "./plugins/googledrive": {
+      "dev-source": "./plugins/googledrive/index.ts",
+      "types": "./dist/plugins/googledrive/index.d.ts",
+      "default": "./dist/plugins/googledrive/index.js"
+    },
+    "./plugins/gmail": {
+      "dev-source": "./plugins/gmail/index.ts",
+      "types": "./dist/plugins/gmail/index.d.ts",
+      "default": "./dist/plugins/gmail/index.js"
+    },
+    "./plugins/hubspot": {
+      "dev-source": "./plugins/hubspot/index.ts",
+      "types": "./dist/plugins/hubspot/index.d.ts",
+      "default": "./dist/plugins/hubspot/index.js"
     }
   },
   "scripts": {

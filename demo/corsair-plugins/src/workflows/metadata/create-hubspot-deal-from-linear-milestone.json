@@ -1,0 +1,46 @@
+{
+  "id": "create-hubspot-deal-from-linear-milestone",
+  "name": "Create HubSpot deal from Linear milestone",
+  "description": "Automatically creates a closed-won deal in HubSpot whenever a Linear project milestone is completed. The workflow retrieves the milestone details, calculates the deal value based on completed issue estimates, gathers project information, and creates a corresponding deal in HubSpot. This helps track project completions as revenue opportunities in your CRM.",
+  "trigger": {
+    "type": "webhook",
+    "config": {
+      "event": "linear/milestone-completed",
+      "note": "Configure this workflow to trigger from the Linear webhook. Ensure your Linear webhook is set up to send milestone completion events to your webhook endpoint."
+    }
+  },
+  "steps": [
+    {
+      "name": "Get Milestone Details",
+      "description": "Extracts milestone data from the webhook event",
+      "service": "linear",
+      "code": "const milestone = milestoneEvent.data;"
+    },
+    {
+      "name": "Get Project Info",
+      "description": "Retrieves the project associated with the milestone",
+      "service": "linear",
+      "code": "const project = await tenant.linear.api.projects.get({ id: milestone.projectId });"
+    },
+    {
+      "name": "Get Milestone Issues",
+      "description": "Fetches all issues associated with the completed milestone",
+      "service": "linear",
+      "code": "const issues = await tenant.linear.api.issues.list({ filter: { projectMilestone: { id: { eq: milestone.id } } } });"
+    },
+    {
+      "name": "Calculate Deal Value",
+      "description": "Calculates deal value based on issue estimates (hours * rate)",
+      "service": "hubspot",
+      "code": "const dealValue = issues.reduce((sum, issue) => sum + (issue.estimate || 0), 0) * 150;"
+    },
+    {
+      "name": "Create HubSpot Deal",
+      "description": "Creates a closed-won deal in HubSpot with the calculated value and milestone details",
+      "service": "hubspot",
+      "code": "await tenant.hubspot.api.deals.create({ properties: { dealname, dealstage: 'closedwon', amount: dealValue } });"
+    }
+  ],
+  "services": ["linear", "hubspot"],
+  "estimatedDuration": "~5 seconds"
+}

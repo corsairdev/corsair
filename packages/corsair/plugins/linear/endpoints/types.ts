@@ -185,6 +185,15 @@ export const CommentConnectionSchema = z.object({
 	pageInfo: PageInfoSchema,
 });
 
+export const UserConnectionSchema = z.object({
+	nodes: z.array(UserSchema),
+	pageInfo: PageInfoSchema,
+});
+
+export const StateConnectionSchema = z.object({
+	nodes: z.array(WorkflowStateSchema),
+});
+
 // Input schemas
 export const CreateIssueInputSchema = z.object({
 	title: z.string(),
@@ -342,6 +351,24 @@ export const CommentDeleteResponseSchema = z.object({
 	commentDelete: z.object({
 		success: z.boolean(),
 	}),
+});
+
+export const UsersListResponseSchema = z.object({
+	users: UserConnectionSchema,
+});
+
+export const UserGetResponseSchema = z.object({
+	user: UserSchema,
+});
+
+export const StatesListResponseSchema = z.object({
+	team: z.object({
+		states: StateConnectionSchema,
+	}),
+});
+
+export const StateGetResponseSchema = z.object({
+	workflowState: WorkflowStateSchema,
 });
 
 const MinimalUserSchema = z.object({
@@ -551,6 +578,11 @@ export const LinearEndpointOutputSchemas = {
 	commentsCreate: CommentTestSchema,
 	commentsUpdate: CommentTestSchema,
 	commentsDelete: z.boolean(),
+	usersList: UserConnectionSchema,
+	usersGet: UserSchema,
+	statesList: StateConnectionSchema,
+	statesGet: WorkflowStateSchema,
+	statesGetCanceled: z.string().nullable(),
 } as const;
 
 export type LinearEndpointOutputs = {
@@ -576,6 +608,8 @@ export type IssueConnection = z.infer<typeof IssueConnectionSchema>;
 export type TeamConnection = z.infer<typeof TeamConnectionSchema>;
 export type ProjectConnection = z.infer<typeof ProjectConnectionSchema>;
 export type CommentConnection = z.infer<typeof CommentConnectionSchema>;
+export type UserConnection = z.infer<typeof UserConnectionSchema>;
+export type StateConnection = z.infer<typeof StateConnectionSchema>;
 
 export type CreateIssueInput = z.infer<typeof CreateIssueInputSchema>;
 export type UpdateIssueInput = z.infer<typeof UpdateIssueInputSchema>;
@@ -635,3 +669,9 @@ export type CommentUpdateResponse = z.infer<
 export type CommentDeleteResponse = z.infer<
 	typeof CommentDeleteResponseSchema
 >;
+
+export type UsersListResponse = z.infer<typeof UsersListResponseSchema>;
+export type UserGetResponse = z.infer<typeof UserGetResponseSchema>;
+
+export type StatesListResponse = z.infer<typeof StatesListResponseSchema>;
+export type StateGetResponse = z.infer<typeof StateGetResponseSchema>;

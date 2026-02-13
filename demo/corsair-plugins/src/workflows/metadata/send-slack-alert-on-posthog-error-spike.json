@@ -1,0 +1,46 @@
+{
+  "id": "send-slack-alert-on-posthog-error-spike",
+  "name": "Send Slack alert on PostHog error spike",
+  "description": "Monitors PostHog events for error-related events and sends a Slack alert when the error rate exceeds a threshold (10 errors in the past hour). The workflow checks each captured event, identifies error events, counts recent errors, and sends an alert to your team's alerts channel when the threshold is exceeded. This helps catch production issues early before they impact users.",
+  "trigger": {
+    "type": "webhook",
+    "config": {
+      "event": "posthog/event-captured",
+      "note": "Configure this workflow to trigger from PostHog webhooks. Set up a webhook in PostHog to send event.captured events to your webhook endpoint."
+    }
+  },
+  "steps": [
+    {
+      "name": "Extract Event Data",
+      "description": "Extracts the event data from the PostHog webhook payload",
+      "service": "posthog",
+      "code": "const eventData = posthogEvent.data;"
+    },
+    {
+      "name": "Check if Error Event",
+      "description": "Determines if the captured event is an error-related event",
+      "service": "posthog",
+      "code": "const isError = eventData.event.toLowerCase().includes('error');"
+    },
+    {
+      "name": "Count Recent Errors",
+      "description": "Queries the database for error events in the past hour",
+      "service": "posthog",
+      "code": "const errors = await tenant.posthog.db.events.search({ data: { event_type: { $like: '%error%' }, created_at: { $gte: oneHourAgo } } });"
+    },
+    {
+      "name": "Check Error Threshold",
+      "description": "Compares the error count against the threshold (10 errors)",
+      "service": "posthog",
+      "code": "const threshold = recentErrors > 10;"
+    },
+    {
+      "name": "Send Slack Alert",
+      "description": "Sends an alert message to the designated Slack alerts channel",
+      "service": "slack",
+      "code": "await tenant.slack.api.messages.post({ channel: slackChannel, text: alertMessage });"
+    }
+  ],
+  "services": ["posthog", "slack"],
+  "estimatedDuration": "~5 seconds"
+}

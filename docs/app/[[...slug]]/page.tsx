@@ -13,6 +13,8 @@ import WebhooksDoc from '@/content/concepts/webhooks.mdx';
 import ComparisonDoc from '@/content/getting-started/comparison.mdx';
 // Getting Started
 import IntroductionDoc from '@/content/getting-started/introduction.mdx';
+import InstallationDoc from '@/content/getting-started/installation.mdx';
+import BasicUsageDoc from '@/content/getting-started/basic-usage.mdx';
 // Guides
 import CreateYourOwnPlugin from '@/content/guides/create-your-own-plugin.mdx';
 import PluginCredentialsGuide from '@/content/guides/plugin-credentials.mdx';
@@ -95,6 +97,16 @@ const pages = {
 		Component: ComparisonDoc,
 		title: 'Comparison',
 		description: 'How Corsair compares to other solutions',
+	},
+	installation: {
+		Component: InstallationDoc,
+		title: 'Installation',
+		description: 'Get Corsair up and running in your project',
+	},
+	'basic-usage': {
+		Component: BasicUsageDoc,
+		title: 'Basic Usage',
+		description: 'Learn how to use Corsair to make API calls and manage integrations',
 	},
 	api: {
 		Component: ApiDoc,

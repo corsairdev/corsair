@@ -1,0 +1,40 @@
+{
+  "id": "sync-posthog-events-to-linear",
+  "name": "Sync PostHog events to Linear",
+  "description": "Manually syncs critical PostHog events (errors, exceptions) from a specified time range to Linear as issues. The workflow searches for error-related events in PostHog, formats them with event details and properties, and creates corresponding Linear issues with medium priority. This is useful for batch processing historical events or creating issues from events that weren't automatically captured. Execute this workflow manually by triggering the 'manual/sync-posthog-to-linear' event.",
+  "trigger": {
+    "type": "manual",
+    "config": {
+      "event": "manual/sync-posthog-to-linear",
+      "note": "Execute this workflow manually by sending an event: { name: 'manual/sync-posthog-to-linear', data: { tenantId: 'default', daysAgo: 7 } }"
+    }
+  },
+  "steps": [
+    {
+      "name": "Get Time Range",
+      "description": "Calculates the time range based on daysAgo parameter (default 7 days)",
+      "service": "posthog",
+      "code": "const timeRange = new Date(); timeRange.setDate(timeRange.getDate() - daysAgo);"
+    },
+    {
+      "name": "Get Critical Events",
+      "description": "Searches PostHog database for error-related events in the time range",
+      "service": "posthog",
+      "code": "const events = await tenant.posthog.db.events.search({ data: { created_at: { $gte: timeRange }, event_type: { $like: '%error%' } } });"
+    },
+    {
+      "name": "Get Linear Team ID",
+      "description": "Retrieves the Linear team ID from environment configuration",
+      "service": "linear",
+      "code": "const teamId = process.env.LINEAR_TEAM_ID;"
+    },
+    {
+      "name": "Create Linear Issues",
+      "description": "Creates Linear issues for each critical event (up to 50)",
+      "service": "linear",
+      "code": "await tenant.linear.api.issues.create({ title: `[PostHog] ${event.event_type}`, description: formattedDescription, teamId, priority: 2 });"
+    }
+  ],
+  "services": ["posthog", "linear"],
+  "estimatedDuration": "~30 seconds"
+}

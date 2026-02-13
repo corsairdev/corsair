@@ -1,0 +1,40 @@
+{
+  "id": "export-slack-analytics-to-posthog",
+  "name": "Export Slack analytics to PostHog",
+  "description": "Manually exports Slack message activity to PostHog as events for analytics tracking. The workflow retrieves messages from specified channels (or all channels) within a time range, and creates PostHog events for each message with properties like channel name, message length, and thread information. This enables analyzing Slack communication patterns in PostHog alongside other product analytics. Execute this workflow manually by triggering the 'manual/export-slack-to-posthog' event.",
+  "trigger": {
+    "type": "manual",
+    "config": {
+      "event": "manual/export-slack-to-posthog",
+      "note": "Execute this workflow manually by sending an event: { name: 'manual/export-slack-to-posthog', data: { tenantId: 'default', channelName: 'optional', daysAgo: 7 } }"
+    }
+  },
+  "steps": [
+    {
+      "name": "Get Time Range",
+      "description": "Calculates the time range based on daysAgo parameter (default 7 days)",
+      "service": "slack",
+      "code": "const timeRange = new Date(); timeRange.setDate(timeRange.getDate() - daysAgo);"
+    },
+    {
+      "name": "Get Channels to Process",
+      "description": "Retrieves channels to process (specific channel or all channels)",
+      "service": "slack",
+      "code": "const channels = channelName ? [foundChannel] : await tenant.slack.db.channels.search({ data: {} });"
+    },
+    {
+      "name": "Get Channel Messages",
+      "description": "Fetches messages from each channel within the time range",
+      "service": "slack",
+      "code": "const messages = await tenant.slack.api.messages.list({ channel: channelId, oldest: timestamp });"
+    },
+    {
+      "name": "Create PostHog Events",
+      "description": "Creates PostHog events for each message with analytics properties",
+      "service": "posthog",
+      "code": "await tenant.posthog.api.events.eventCreate({ event: 'slack.message.sent', distinct_id: message.user, properties: { channel, message_length, has_thread } });"
+    }
+  ],
+  "services": ["slack", "posthog"],
+  "estimatedDuration": "~45 seconds"
+}

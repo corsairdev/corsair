@@ -1,0 +1,46 @@
+{
+  "id": "export-posthog-events-to-google-sheets",
+  "name": "Export PostHog events to Google Sheets",
+  "description": "Manually exports PostHog events to a Google Sheets spreadsheet for analysis. The workflow retrieves events from a specified time range (default 7 days), optionally filtered by event type, creates a new spreadsheet, and writes the events with timestamps, event types, user IDs, and properties. This is useful for data analysis, reporting, or sharing event data with stakeholders. Execute this workflow manually by triggering the 'manual/export-posthog-to-sheets' event.",
+  "trigger": {
+    "type": "manual",
+    "config": {
+      "event": "manual/export-posthog-to-sheets",
+      "note": "Execute this workflow manually by sending an event: { name: 'manual/export-posthog-to-sheets', data: { tenantId: 'default', daysAgo: 7, eventType: 'optional-filter' } }"
+    }
+  },
+  "steps": [
+    {
+      "name": "Get Time Range",
+      "description": "Calculates the time range based on daysAgo parameter (default 7 days)",
+      "service": "posthog",
+      "code": "const timeRange = new Date(); timeRange.setDate(timeRange.getDate() - daysAgo);"
+    },
+    {
+      "name": "Get Event Type Filter",
+      "description": "Retrieves optional event type filter from event data",
+      "service": "posthog",
+      "code": "const eventType = event.data.eventType || null;"
+    },
+    {
+      "name": "Get PostHog Events",
+      "description": "Searches PostHog database for events in the time range, optionally filtered by type",
+      "service": "posthog",
+      "code": "const events = await tenant.posthog.db.events.search({ data: { created_at: { $gte: timeRange }, event_type: eventType ? { $like: `%${eventType}%` } : undefined } });"
+    },
+    {
+      "name": "Create Spreadsheet",
+      "description": "Creates a new Google Sheets spreadsheet for the export",
+      "service": "googlesheets",
+      "code": "const spreadsheet = await tenant.googlesheets.api.spreadsheets.create({ properties: { title: spreadsheetName } });"
+    },
+    {
+      "name": "Write Events to Sheets",
+      "description": "Writes formatted event data to the spreadsheet",
+      "service": "googlesheets",
+      "code": "await tenant.googlesheets.api.spreadsheets.values.update({ spreadsheetId, range: 'Sheet1!A1', values: sheetData });"
+    }
+  ],
+  "services": ["posthog", "googlesheets"],
+  "estimatedDuration": "~25 seconds"
+}

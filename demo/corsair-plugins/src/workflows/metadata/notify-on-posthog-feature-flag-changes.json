@@ -1,0 +1,46 @@
+{
+  "id": "notify-on-posthog-feature-flag-changes",
+  "name": "Notify on PostHog feature flag changes",
+  "description": "Sends a Slack notification whenever a PostHog feature flag is enabled, disabled, or updated. The workflow detects the change type, formats a message with the flag key, previous and new states, who made the change, and posts it to your engineering channel. This keeps your team informed about feature flag changes in real-time, helping coordinate deployments and feature rollouts.",
+  "trigger": {
+    "type": "webhook",
+    "config": {
+      "event": "posthog/feature-flag-updated",
+      "note": "Configure this workflow to trigger from PostHog webhooks. Set up a webhook in PostHog to send feature_flag.updated events to your webhook endpoint."
+    }
+  },
+  "steps": [
+    {
+      "name": "Extract Flag Data",
+      "description": "Extracts feature flag information from the PostHog webhook payload",
+      "service": "posthog",
+      "code": "const flagData = { flagKey: flagEvent.data.key, enabled: flagEvent.data.enabled, previousState: flagEvent.data.previous_enabled };"
+    },
+    {
+      "name": "Get Slack Channel",
+      "description": "Finds the target Slack engineering channel",
+      "service": "slack",
+      "code": "const channel = await tenant.slack.db.channels.search({ data: { name: 'engineering' } });"
+    },
+    {
+      "name": "Determine Change Type",
+      "description": "Identifies whether the flag was enabled, disabled, or updated",
+      "service": "posthog",
+      "code": "const changeType = !previousState && enabled ? 'enabled' : previousState && !enabled ? 'disabled' : 'updated';"
+    },
+    {
+      "name": "Format Flag Change Message",
+      "description": "Builds a formatted message with flag details and change information",
+      "service": "slack",
+      "code": "const message = `${emoji} *Feature Flag ${changeType.toUpperCase()}*\\n*Flag:* ${flagKey}\\n*State:* ${enabled ? 'Enabled' : 'Disabled'}`;"
+    },
+    {
+      "name": "Send Slack Notification",
+      "description": "Posts the notification to the engineering channel",
+      "service": "slack",
+      "code": "await tenant.slack.api.messages.post({ channel: slackChannel, text: message });"
+    }
+  ],
+  "services": ["posthog", "slack"],
+  "estimatedDuration": "~2 seconds"
+}
