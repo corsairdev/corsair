@@ -31,7 +31,7 @@ const parseConfig = (config: unknown): Record<string, unknown> => {
 	}
 	return config as Record<string, unknown>;
 };
-	
+
 export type IntegrationKeyManagerOptions<T extends AuthTypes> = {
 	authType: T;
 	integrationName: string;

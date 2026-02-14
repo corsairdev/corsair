@@ -84,7 +84,17 @@ export type ExtendedValue = {
 };
 
 export type ErrorValue = {
-	type?: 'ERROR_TYPE_UNSPECIFIED' | 'ERROR' | 'NULL_VALUE' | 'DIVIDE_BY_ZERO' | 'VALUE' | 'REF' | 'NAME' | 'NUM' | 'N_A' | 'LOADING';
+	type?:
+		| 'ERROR_TYPE_UNSPECIFIED'
+		| 'ERROR'
+		| 'NULL_VALUE'
+		| 'DIVIDE_BY_ZERO'
+		| 'VALUE'
+		| 'REF'
+		| 'NAME'
+		| 'NUM'
+		| 'N_A'
+		| 'LOADING';
 	message?: string;
 };
 
@@ -102,7 +112,16 @@ export type CellFormat = {
 };
 
 export type NumberFormat = {
-	type?: 'NUMBER_FORMAT_TYPE_UNSPECIFIED' | 'TEXT' | 'NUMBER' | 'PERCENT' | 'CURRENCY' | 'DATE' | 'TIME' | 'DATE_TIME' | 'SCIENTIFIC';
+	type?:
+		| 'NUMBER_FORMAT_TYPE_UNSPECIFIED'
+		| 'TEXT'
+		| 'NUMBER'
+		| 'PERCENT'
+		| 'CURRENCY'
+		| 'DATE'
+		| 'TIME'
+		| 'DATE_TIME'
+		| 'SCIENTIFIC';
 	pattern?: string;
 };
 
@@ -121,7 +140,15 @@ export type Borders = {
 };
 
 export type Border = {
-	style?: 'STYLE_UNSPECIFIED' | 'DOTTED' | 'DASHED' | 'SOLID' | 'SOLID_MEDIUM' | 'SOLID_THICK' | 'NONE' | 'DOUBLE';
+	style?:
+		| 'STYLE_UNSPECIFIED'
+		| 'DOTTED'
+		| 'DASHED'
+		| 'SOLID'
+		| 'SOLID_MEDIUM'
+		| 'SOLID_THICK'
+		| 'NONE'
+		| 'DOUBLE';
 	color?: Color;
 };
 
@@ -155,12 +182,48 @@ export type DataValidationRule = {
 };
 
 export type BooleanCondition = {
-	type?: 'CONDITION_TYPE_UNSPECIFIED' | 'NUMBER_GREATER' | 'NUMBER_GREATER_THAN_EQ' | 'NUMBER_LESS' | 'NUMBER_LESS_THAN_EQ' | 'NUMBER_EQ' | 'NUMBER_NOT_EQ' | 'NUMBER_BETWEEN' | 'NUMBER_NOT_BETWEEN' | 'TEXT_CONTAINS' | 'TEXT_NOT_CONTAINS' | 'TEXT_STARTS_WITH' | 'TEXT_ENDS_WITH' | 'TEXT_EQ' | 'TEXT_IS_EMAIL' | 'TEXT_IS_URL' | 'DATE_EQ' | 'DATE_BEFORE' | 'DATE_AFTER' | 'DATE_ON_OR_BEFORE' | 'DATE_ON_OR_AFTER' | 'DATE_BETWEEN' | 'DATE_NOT_BETWEEN' | 'DATE_IS_VALID' | 'ONE_OF_RANGE' | 'ONE_OF_LIST' | 'BLANK' | 'NOT_BLANK' | 'CUSTOM_FORMULA';
+	type?:
+		| 'CONDITION_TYPE_UNSPECIFIED'
+		| 'NUMBER_GREATER'
+		| 'NUMBER_GREATER_THAN_EQ'
+		| 'NUMBER_LESS'
+		| 'NUMBER_LESS_THAN_EQ'
+		| 'NUMBER_EQ'
+		| 'NUMBER_NOT_EQ'
+		| 'NUMBER_BETWEEN'
+		| 'NUMBER_NOT_BETWEEN'
+		| 'TEXT_CONTAINS'
+		| 'TEXT_NOT_CONTAINS'
+		| 'TEXT_STARTS_WITH'
+		| 'TEXT_ENDS_WITH'
+		| 'TEXT_EQ'
+		| 'TEXT_IS_EMAIL'
+		| 'TEXT_IS_URL'
+		| 'DATE_EQ'
+		| 'DATE_BEFORE'
+		| 'DATE_AFTER'
+		| 'DATE_ON_OR_BEFORE'
+		| 'DATE_ON_OR_AFTER'
+		| 'DATE_BETWEEN'
+		| 'DATE_NOT_BETWEEN'
+		| 'DATE_IS_VALID'
+		| 'ONE_OF_RANGE'
+		| 'ONE_OF_LIST'
+		| 'BLANK'
+		| 'NOT_BLANK'
+		| 'CUSTOM_FORMULA';
 	values?: ConditionValue[];
 };
 
 export type ConditionValue = {
-	relativeDate?: 'RELATIVE_DATE_UNSPECIFIED' | 'PAST_YEAR' | 'PAST_MONTH' | 'PAST_WEEK' | 'YESTERDAY' | 'TODAY' | 'TOMORROW';
+	relativeDate?:
+		| 'RELATIVE_DATE_UNSPECIFIED'
+		| 'PAST_YEAR'
+		| 'PAST_MONTH'
+		| 'PAST_WEEK'
+		| 'YESTERDAY'
+		| 'TODAY'
+		| 'TOMORROW';
 	userEnteredValue?: string;
 };
 
@@ -201,7 +264,11 @@ export type PivotValue = {
 	sourceColumnOffset?: number;
 	formula?: string;
 	name?: string;
-	calculatedDisplayType?: 'PIVOT_VALUE_CALCULATED_DISPLAY_TYPE_UNSPECIFIED' | 'PERCENT_OF_ROW_TOTAL' | 'PERCENT_OF_COLUMN_TOTAL' | 'PERCENT_OF_GRAND_TOTAL';
+	calculatedDisplayType?:
+		| 'PIVOT_VALUE_CALCULATED_DISPLAY_TYPE_UNSPECIFIED'
+		| 'PERCENT_OF_ROW_TOTAL'
+		| 'PERCENT_OF_COLUMN_TOTAL'
+		| 'PERCENT_OF_GRAND_TOTAL';
 };
 
 export type DimensionProperties = {
@@ -216,7 +283,10 @@ export type DeveloperMetadata = {
 	metadataKey?: string;
 	metadataValue?: string;
 	location?: DeveloperMetadataLocation;
-	visibility?: 'DEVELOPER_METADATA_VISIBILITY_UNSPECIFIED' | 'DOCUMENT' | 'PROJECT';
+	visibility?:
+		| 'DEVELOPER_METADATA_VISIBILITY_UNSPECIFIED'
+		| 'DOCUMENT'
+		| 'PROJECT';
 };
 
 export type DeveloperMetadataLocation = {
@@ -334,27 +404,64 @@ export type ChartSpec = {
 	subtitleTextPosition?: TextPosition;
 	fontName?: string;
 	backgroundColor?: Color;
-	chartType?: 'CHART_TYPE_UNSPECIFIED' | 'COLUMN' | 'LINE' | 'PIE' | 'BAR' | 'AREA' | 'SCATTER' | 'STOCK' | 'HISTOGRAM' | 'CANDLESTICK' | 'COMBO' | 'ORG_CHART' | 'WATERFALL' | 'TREEMAP';
-	legendPosition?: 'LEGEND_POSITION_UNSPECIFIED' | 'BOTTOM_LEGEND' | 'LEFT_LEGEND' | 'RIGHT_LEGEND' | 'TOP_LEGEND' | 'NO_LEGEND' | 'INSIDE_LEGEND';
+	chartType?:
+		| 'CHART_TYPE_UNSPECIFIED'
+		| 'COLUMN'
+		| 'LINE'
+		| 'PIE'
+		| 'BAR'
+		| 'AREA'
+		| 'SCATTER'
+		| 'STOCK'
+		| 'HISTOGRAM'
+		| 'CANDLESTICK'
+		| 'COMBO'
+		| 'ORG_CHART'
+		| 'WATERFALL'
+		| 'TREEMAP';
+	legendPosition?:
+		| 'LEGEND_POSITION_UNSPECIFIED'
+		| 'BOTTOM_LEGEND'
+		| 'LEFT_LEGEND'
+		| 'RIGHT_LEGEND'
+		| 'TOP_LEGEND'
+		| 'NO_LEGEND'
+		| 'INSIDE_LEGEND';
 	axis?: ChartAxis[];
 	domains?: BasicChartDomain[];
 	series?: BasicChartSeries[];
 	headerCount?: number;
 	threeDimensional?: boolean;
 	interpolateNulls?: boolean;
-	stackedType?: 'STACKED_TYPE_UNSPECIFIED' | 'NOT_STACKED' | 'STACKED' | 'PERCENT_STACKED';
+	stackedType?:
+		| 'STACKED_TYPE_UNSPECIFIED'
+		| 'NOT_STACKED'
+		| 'STACKED'
+		| 'PERCENT_STACKED';
 	lineSmoothing?: boolean;
 	compareMode?: 'BASIC_CHART_COMPARE_MODE_UNSPECIFIED' | 'DATUM' | 'CATEGORY';
 	dataSourceChartProperties?: DataSourceChartProperties;
 };
 
 export type TextPosition = {
-	horizontalAlignment?: 'HORIZONTAL_ALIGN_UNSPECIFIED' | 'LEFT' | 'CENTER' | 'RIGHT';
-	verticalAlignment?: 'VERTICAL_ALIGN_UNSPECIFIED' | 'TOP' | 'MIDDLE' | 'BOTTOM';
+	horizontalAlignment?:
+		| 'HORIZONTAL_ALIGN_UNSPECIFIED'
+		| 'LEFT'
+		| 'CENTER'
+		| 'RIGHT';
+	verticalAlignment?:
+		| 'VERTICAL_ALIGN_UNSPECIFIED'
+		| 'TOP'
+		| 'MIDDLE'
+		| 'BOTTOM';
 };
 
 export type ChartAxis = {
-	position?: 'CHART_AXIS_POSITION_UNSPECIFIED' | 'BOTTOM_AXIS' | 'LEFT_AXIS' | 'RIGHT_AXIS';
+	position?:
+		| 'CHART_AXIS_POSITION_UNSPECIFIED'
+		| 'BOTTOM_AXIS'
+		| 'LEFT_AXIS'
+		| 'RIGHT_AXIS';
 	format?: TextFormat;
 	title?: string;
 	titleTextPosition?: TextPosition;
@@ -382,7 +489,11 @@ export type ChartSourceRange = {
 
 export type BasicChartSeries = {
 	series?: ChartData;
-	targetAxis?: 'BASIC_CHART_AXIS_POSITION_UNSPECIFIED' | 'BOTTOM_AXIS' | 'LEFT_AXIS' | 'RIGHT_AXIS';
+	targetAxis?:
+		| 'BASIC_CHART_AXIS_POSITION_UNSPECIFIED'
+		| 'BOTTOM_AXIS'
+		| 'LEFT_AXIS'
+		| 'RIGHT_AXIS';
 	type?: 'BASIC_CHART_TYPE_UNSPECIFIED' | 'BAR' | 'LINE' | 'AREA' | 'COLUMN';
 	color?: Color;
 	colorStyle?: ColorStyle;
@@ -392,17 +503,39 @@ export type BasicChartSeries = {
 
 export type ColorStyle = {
 	rgbColor?: Color;
-	themeColor?: 'THEME_COLOR_TYPE_UNSPECIFIED' | 'TEXT' | 'BACKGROUND' | 'ACCENT1' | 'ACCENT2' | 'ACCENT3' | 'ACCENT4' | 'ACCENT5' | 'ACCENT6' | 'LINK';
+	themeColor?:
+		| 'THEME_COLOR_TYPE_UNSPECIFIED'
+		| 'TEXT'
+		| 'BACKGROUND'
+		| 'ACCENT1'
+		| 'ACCENT2'
+		| 'ACCENT3'
+		| 'ACCENT4'
+		| 'ACCENT5'
+		| 'ACCENT6'
+		| 'LINK';
 };
 
 export type LineStyle = {
 	width?: number;
-	type?: 'LINE_TYPE_UNSPECIFIED' | 'STRAIGHT_LINES' | 'SMOOTH_LINES' | 'STRAIGHT_LINES_WITH_MARKERS' | 'SMOOTH_LINES_WITH_MARKERS';
+	type?:
+		| 'LINE_TYPE_UNSPECIFIED'
+		| 'STRAIGHT_LINES'
+		| 'SMOOTH_LINES'
+		| 'STRAIGHT_LINES_WITH_MARKERS'
+		| 'SMOOTH_LINES_WITH_MARKERS';
 };
 
 export type PointStyle = {
 	size?: number;
-	shape?: 'POINT_SHAPE_UNSPECIFIED' | 'CIRCLE' | 'DIAMOND' | 'SQUARE' | 'STAR' | 'TRIANGLE' | 'X_MARK';
+	shape?:
+		| 'POINT_SHAPE_UNSPECIFIED'
+		| 'CIRCLE'
+		| 'DIAMOND'
+		| 'SQUARE'
+		| 'STAR'
+		| 'TRIANGLE'
+		| 'X_MARK';
 };
 
 export type DataSourceChartProperties = {
@@ -411,13 +544,33 @@ export type DataSourceChartProperties = {
 };
 
 export type DataSourceExecutionStatus = {
-	state?: 'DATA_SOURCE_EXECUTION_STATUS_UNSPECIFIED' | 'RUNNING' | 'SUCCEEDED' | 'FAILED' | 'CANCELLED';
+	state?:
+		| 'DATA_SOURCE_EXECUTION_STATUS_UNSPECIFIED'
+		| 'RUNNING'
+		| 'SUCCEEDED'
+		| 'FAILED'
+		| 'CANCELLED';
 	dataExecutionStatus?: DataExecutionStatus;
 };
 
 export type DataExecutionStatus = {
-	state?: 'DATA_EXECUTION_STATE_UNSPECIFIED' | 'NOT_STARTED' | 'RUNNING' | 'SUCCEEDED' | 'FAILED';
-	errorCode?: 'DATA_EXECUTION_ERROR_CODE_UNSPECIFIED' | 'TIMED_OUT' | 'TOO_MANY_ROWS' | 'TOO_MANY_COLUMNS' | 'TOO_MANY_CELLS' | 'ENGINE' | 'PARAMETER_INVALID' | 'UNSUPPORTED_DATA_TYPE' | 'DUPLICATE_COLUMN_NAMES' | 'INTERRUPTED';
+	state?:
+		| 'DATA_EXECUTION_STATE_UNSPECIFIED'
+		| 'NOT_STARTED'
+		| 'RUNNING'
+		| 'SUCCEEDED'
+		| 'FAILED';
+	errorCode?:
+		| 'DATA_EXECUTION_ERROR_CODE_UNSPECIFIED'
+		| 'TIMED_OUT'
+		| 'TOO_MANY_ROWS'
+		| 'TOO_MANY_COLUMNS'
+		| 'TOO_MANY_CELLS'
+		| 'ENGINE'
+		| 'PARAMETER_INVALID'
+		| 'UNSUPPORTED_DATA_TYPE'
+		| 'DUPLICATE_COLUMN_NAMES'
+		| 'INTERRUPTED';
 	errorMessage?: string;
 	lastRefreshTime?: string;
 };
@@ -469,7 +622,10 @@ export type BatchUpdateValuesRequest = {
 	valueInputOption?: 'INPUT_VALUE_OPTION_UNSPECIFIED' | 'RAW' | 'USER_ENTERED';
 	data?: ValueRange[];
 	includeValuesInResponse?: boolean;
-	responseValueRenderOption?: 'FORMATTED_VALUE' | 'UNFORMATTED_VALUE' | 'FORMULA';
+	responseValueRenderOption?:
+		| 'FORMATTED_VALUE'
+		| 'UNFORMATTED_VALUE'
+		| 'FORMULA';
 	responseDateTimeRenderOption?: 'SERIAL_NUMBER' | 'FORMATTED_STRING';
 };
 
@@ -685,13 +841,29 @@ export type DeleteRangeRequest = {
 export type CutPasteRequest = {
 	source?: GridRange;
 	destination?: GridCoordinate;
-	pasteType?: 'PASTE_NORMAL' | 'PASTE_VALUES' | 'PASTE_FORMAT' | 'PASTE_NO_BORDERS' | 'PASTE_FORMULA' | 'PASTE_DATA_VALIDATION' | 'PASTE_CONDITIONAL_FORMATTING' | 'PASTE_ALL';
+	pasteType?:
+		| 'PASTE_NORMAL'
+		| 'PASTE_VALUES'
+		| 'PASTE_FORMAT'
+		| 'PASTE_NO_BORDERS'
+		| 'PASTE_FORMULA'
+		| 'PASTE_DATA_VALIDATION'
+		| 'PASTE_CONDITIONAL_FORMATTING'
+		| 'PASTE_ALL';
 };
 
 export type CopyPasteRequest = {
 	source?: GridRange;
 	destination?: GridCoordinate;
-	pasteType?: 'PASTE_NORMAL' | 'PASTE_VALUES' | 'PASTE_FORMAT' | 'PASTE_NO_BORDERS' | 'PASTE_FORMULA' | 'PASTE_DATA_VALIDATION' | 'PASTE_CONDITIONAL_FORMATTING' | 'PASTE_ALL';
+	pasteType?:
+		| 'PASTE_NORMAL'
+		| 'PASTE_VALUES'
+		| 'PASTE_FORMAT'
+		| 'PASTE_NO_BORDERS'
+		| 'PASTE_FORMULA'
+		| 'PASTE_DATA_VALIDATION'
+		| 'PASTE_CONDITIONAL_FORMATTING'
+		| 'PASTE_ALL';
 	pasteOrientation?: 'NORMAL' | 'TRANSPOSE';
 };
 
@@ -739,12 +911,23 @@ export type DataFilter = {
 };
 
 export type DeveloperMetadataLookup = {
-	locationType?: 'DEVELOPER_METADATA_LOCATION_TYPE_UNSPECIFIED' | 'ROW' | 'COLUMN' | 'SHEET' | 'SPREADSHEET';
-	locationMatchingStrategy?: 'LOCATION_MATCHING_STRATEGY_UNSPECIFIED' | 'EXACT_LOCATION' | 'INTERSECTING_LOCATION';
+	locationType?:
+		| 'DEVELOPER_METADATA_LOCATION_TYPE_UNSPECIFIED'
+		| 'ROW'
+		| 'COLUMN'
+		| 'SHEET'
+		| 'SPREADSHEET';
+	locationMatchingStrategy?:
+		| 'LOCATION_MATCHING_STRATEGY_UNSPECIFIED'
+		| 'EXACT_LOCATION'
+		| 'INTERSECTING_LOCATION';
 	metadataId?: number;
 	metadataKey?: string;
 	metadataValue?: string;
-	visibility?: 'DEVELOPER_METADATA_VISIBILITY_UNSPECIFIED' | 'DOCUMENT' | 'PROJECT';
+	visibility?:
+		| 'DEVELOPER_METADATA_VISIBILITY_UNSPECIFIED'
+		| 'DOCUMENT'
+		| 'PROJECT';
 };
 
 export type DeleteDeveloperMetadataRequest = {

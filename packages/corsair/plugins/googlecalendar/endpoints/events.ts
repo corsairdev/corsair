@@ -1,5 +1,5 @@
 import { logEventFromContext } from '../../utils/events';
-import type { GoogleCalendarBoundEndpoints, GoogleCalendarEndpoints } from '..';
+import type { GoogleCalendarEndpoints } from '..';
 import { makeCalendarRequest } from '../client';
 import type { GoogleCalendarEndpointOutputs } from './types';
 
@@ -8,14 +8,12 @@ export const create: GoogleCalendarEndpoints['eventsCreate'] = async (
 	input,
 ) => {
 	const calendarId = input.calendarId || 'primary';
-	const result = await makeCalendarRequest<GoogleCalendarEndpointOutputs['eventsCreate']>(
-		`/calendars/${calendarId}/events`,
-		ctx.key,
-		{
-			method: 'POST',
-			body: input.event,
-		},
-	);
+	const result = await makeCalendarRequest<
+		GoogleCalendarEndpointOutputs['eventsCreate']
+	>(`/calendars/${calendarId}/events`, ctx.key, {
+		method: 'POST',
+		body: input.event,
+	});
 
 	if (result.id && ctx.db.events) {
 		try {
@@ -39,22 +37,17 @@ export const create: GoogleCalendarEndpoints['eventsCreate'] = async (
 	return result;
 };
 
-export const get: GoogleCalendarEndpoints['eventsGet'] = async (
-	ctx,
-	input,
-) => {
+export const get: GoogleCalendarEndpoints['eventsGet'] = async (ctx, input) => {
 	const calendarId = input.calendarId || 'primary';
-	const result = await makeCalendarRequest<GoogleCalendarEndpointOutputs['eventsGet']>(
-		`/calendars/${calendarId}/events/${input.id}`,
-		ctx.key,
-		{
-			method: 'GET',
-			query: {
-				timeZone: input.timeZone,
-				maxAttendees: input.maxAttendees,
-			},
+	const result = await makeCalendarRequest<
+		GoogleCalendarEndpointOutputs['eventsGet']
+	>(`/calendars/${calendarId}/events/${input.id}`, ctx.key, {
+		method: 'GET',
+		query: {
+			timeZone: input.timeZone,
+			maxAttendees: input.maxAttendees,
 		},
-	);
+	});
 
 	if (result.id && ctx.db.events) {
 		try {
@@ -134,21 +127,19 @@ export const update: GoogleCalendarEndpoints['eventsUpdate'] = async (
 	input,
 ) => {
 	const calendarId = input.calendarId || 'primary';
-	const result = await makeCalendarRequest<GoogleCalendarEndpointOutputs['eventsUpdate']>(
-		`/calendars/${calendarId}/events/${input.id}`,
-		ctx.key,
-		{
-			method: 'PUT',
-			body: input.event,
-			query: {
-				sendUpdates: input.sendUpdates,
-				sendNotifications: input.sendNotifications,
-				conferenceDataVersion: input.conferenceDataVersion,
-				maxAttendees: input.maxAttendees,
-				supportsAttachments: input.supportsAttachments,
-			},
+	const result = await makeCalendarRequest<
+		GoogleCalendarEndpointOutputs['eventsUpdate']
+	>(`/calendars/${calendarId}/events/${input.id}`, ctx.key, {
+		method: 'PUT',
+		body: input.event,
+		query: {
+			sendUpdates: input.sendUpdates,
+			sendNotifications: input.sendNotifications,
+			conferenceDataVersion: input.conferenceDataVersion,
+			maxAttendees: input.maxAttendees,
+			supportsAttachments: input.supportsAttachments,
 		},
-	);
+	});
 
 	if (result.id && ctx.db.events) {
 		try {

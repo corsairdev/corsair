@@ -1,14 +1,10 @@
-import type {
-	WebhookRequest,
-} from '../../../core/webhooks';
 import { logEventFromContext } from '../../utils/events';
-import type { GoogleDriveContext, GoogleDriveWebhooks } from '..';
+import type { GoogleDriveWebhooks } from '..';
 import { makeGoogleDriveRequest } from '../client';
-import type { Change, ChangeList, File } from '../types';
+import type { ChangeList, File } from '../types';
 import type {
 	FileChangedEvent,
 	FolderChangedEvent,
-	GoogleDrivePushNotification,
 	PubSubNotification,
 } from './types';
 import { createGoogleDriveWebhookMatcher, decodePubSubMessage } from './types';
@@ -47,10 +43,7 @@ async function fetchChanges(
 
 export const fileChanged: GoogleDriveWebhooks['fileChanged'] = {
 	match: createGoogleDriveWebhookMatcher('fileChanged'),
-	handler: async (
-		ctx,
-		request
-	) => {
+	handler: async (ctx, request) => {
 		const body = request.payload as PubSubNotification;
 
 		if (!body.message?.data) {
@@ -76,8 +69,12 @@ export const fileChanged: GoogleDriveWebhooks['fileChanged'] = {
 			const changes = changesResponse.changes || [];
 
 			let firstChangedFile: File | null = null;
-			let changeType: 'created' | 'updated' | 'deleted' | 'trashed' | 'untrashed' =
-				'updated';
+			let changeType:
+				| 'created'
+				| 'updated'
+				| 'deleted'
+				| 'trashed'
+				| 'untrashed' = 'updated';
 			let corsairEntityId = '';
 
 			for (const change of changes) {
@@ -178,10 +175,7 @@ export const fileChanged: GoogleDriveWebhooks['fileChanged'] = {
 
 export const folderChanged: GoogleDriveWebhooks['folderChanged'] = {
 	match: createGoogleDriveWebhookMatcher('folderChanged'),
-	handler: async (
-		ctx,
-		request
-	) => {
+	handler: async (ctx, request) => {
 		const body = request.payload as PubSubNotification;
 
 		if (!body.message?.data) {
@@ -207,8 +201,12 @@ export const folderChanged: GoogleDriveWebhooks['folderChanged'] = {
 			const changes = changesResponse.changes || [];
 
 			let firstChangedFolder: File | null = null;
-			let changeType: 'created' | 'updated' | 'deleted' | 'trashed' | 'untrashed' =
-				'updated';
+			let changeType:
+				| 'created'
+				| 'updated'
+				| 'deleted'
+				| 'trashed'
+				| 'untrashed' = 'updated';
 			let corsairEntityId = '';
 
 			for (const change of changes) {

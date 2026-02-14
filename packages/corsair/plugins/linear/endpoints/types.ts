@@ -584,54 +584,22 @@ export type UpdateProjectInput = z.infer<typeof UpdateProjectInputSchema>;
 export type CreateCommentInput = z.infer<typeof CreateCommentInputSchema>;
 export type UpdateCommentInput = z.infer<typeof UpdateCommentInputSchema>;
 
-export type IssuesListResponse = z.infer<
-	typeof IssuesListResponseSchema
->;
-export type IssueGetResponse = z.infer<
-	typeof IssueGetResponseSchema
->;
-export type IssueCreateResponse = z.infer<
-	typeof IssueCreateResponseSchema
->;
-export type IssueUpdateResponse = z.infer<
-	typeof IssueUpdateResponseSchema
->;
-export type IssueDeleteResponse = z.infer<
-	typeof IssueDeleteResponseSchema
->;
+export type IssuesListResponse = z.infer<typeof IssuesListResponseSchema>;
+export type IssueGetResponse = z.infer<typeof IssueGetResponseSchema>;
+export type IssueCreateResponse = z.infer<typeof IssueCreateResponseSchema>;
+export type IssueUpdateResponse = z.infer<typeof IssueUpdateResponseSchema>;
+export type IssueDeleteResponse = z.infer<typeof IssueDeleteResponseSchema>;
 
-export type TeamsListResponse = z.infer<
-	typeof TeamsListResponseSchema
->;
-export type TeamGetResponse = z.infer<
-	typeof TeamGetResponseSchema
->;
+export type TeamsListResponse = z.infer<typeof TeamsListResponseSchema>;
+export type TeamGetResponse = z.infer<typeof TeamGetResponseSchema>;
 
-export type ProjectsListResponse = z.infer<
-	typeof ProjectsListResponseSchema
->;
-export type ProjectGetResponse = z.infer<
-	typeof ProjectGetResponseSchema
->;
-export type ProjectCreateResponse = z.infer<
-	typeof ProjectCreateResponseSchema
->;
-export type ProjectUpdateResponse = z.infer<
-	typeof ProjectUpdateResponseSchema
->;
-export type ProjectDeleteResponse = z.infer<
-	typeof ProjectDeleteResponseSchema
->;
+export type ProjectsListResponse = z.infer<typeof ProjectsListResponseSchema>;
+export type ProjectGetResponse = z.infer<typeof ProjectGetResponseSchema>;
+export type ProjectCreateResponse = z.infer<typeof ProjectCreateResponseSchema>;
+export type ProjectUpdateResponse = z.infer<typeof ProjectUpdateResponseSchema>;
+export type ProjectDeleteResponse = z.infer<typeof ProjectDeleteResponseSchema>;
 
-export type CommentsListResponse = z.infer<
-	typeof CommentsListResponseSchema
->;
-export type CommentCreateResponse = z.infer<
-	typeof CommentCreateResponseSchema
->;
-export type CommentUpdateResponse = z.infer<
-	typeof CommentUpdateResponseSchema
->;
-export type CommentDeleteResponse = z.infer<
-	typeof CommentDeleteResponseSchema
->;
+export type CommentsListResponse = z.infer<typeof CommentsListResponseSchema>;
+export type CommentCreateResponse = z.infer<typeof CommentCreateResponseSchema>;
+export type CommentUpdateResponse = z.infer<typeof CommentUpdateResponseSchema>;
+export type CommentDeleteResponse = z.infer<typeof CommentDeleteResponseSchema>;

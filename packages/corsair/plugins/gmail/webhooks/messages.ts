@@ -1,12 +1,8 @@
-import type {
-	WebhookRequest,
-} from '../../../core/webhooks';
 import { logEventFromContext } from '../../utils/events';
-import type { GmailContext, GmailWebhooks } from '..';
+import type { GmailWebhooks } from '..';
 import { makeGmailRequest } from '../client';
 import type { HistoryListResponse, Message, MessagePart } from '../types';
 import type {
-	GmailPushNotification,
 	MessageDeletedEvent,
 	MessageLabelChangedEvent,
 	MessageReceivedEvent,
@@ -89,7 +85,6 @@ function extractBody(message: Message): string | undefined {
 	}
 	return extractBodyText(message.payload);
 }
-
 
 function extractMessageIds(history: HistoryListResponse['history']): {
 	added: string[];
@@ -254,10 +249,7 @@ async function enrichMessageWithAttachments(
 
 export const messageReceived: GmailWebhooks['messageReceived'] = {
 	match: createGmailWebhookMatcher('messageReceived'),
-	handler: async (
-		ctx,
-		request
-	) => {
+	handler: async (ctx, request) => {
 		const body = request.payload as PubSubNotification;
 
 		if (!body.message?.data) {
@@ -455,10 +447,7 @@ export const messageReceived: GmailWebhooks['messageReceived'] = {
 
 export const messageDeleted: GmailWebhooks['messageDeleted'] = {
 	match: createGmailWebhookMatcher('messageDeleted'),
-	handler: async (
-		ctx,
-		request
-	) => {
+	handler: async (ctx, request) => {
 		const body = request.payload as PubSubNotification;
 
 		if (!body.message?.data) {
@@ -605,10 +594,7 @@ export const messageDeleted: GmailWebhooks['messageDeleted'] = {
 
 export const messageLabelChanged: GmailWebhooks['messageLabelChanged'] = {
 	match: createGmailWebhookMatcher('messageLabelChanged'),
-	handler: async (
-		ctx,
-		request
-	) => {
+	handler: async (ctx, request) => {
 		const body = request.payload as PubSubNotification;
 
 		if (!body.message?.data) {

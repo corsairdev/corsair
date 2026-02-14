@@ -1,22 +1,16 @@
-import type {
-	WebhookRequest,
-} from '../../../core/webhooks';
 import { logEventFromContext } from '../../utils/events';
-import type { GoogleSheetsContext, GoogleSheetsWebhooks } from '..';
+import type { GoogleSheetsWebhooks } from '..';
 import type {
 	GoogleAppsScriptWebhookPayload,
 	RowAddedEvent,
-	RowUpdatedEvent,
 	RowAddedOrUpdatedEvent,
+	RowUpdatedEvent,
 } from './types';
 import { createGoogleSheetsWebhookMatcher } from './types';
 
 export const rowAdded: GoogleSheetsWebhooks['rowAdded'] = {
 	match: createGoogleSheetsWebhookMatcher('rowAdded'),
-	handler: async (
-		ctx,
-		request
-	) => {
+	handler: async (ctx, request) => {
 		const body = request.payload as GoogleAppsScriptWebhookPayload;
 
 		if (!body.spreadsheetId || !body.values) {
@@ -26,9 +20,7 @@ export const rowAdded: GoogleSheetsWebhooks['rowAdded'] = {
 			};
 		}
 
-		const values = Array.isArray(body.values[0])
-			? body.values[0]
-			: body.values;
+		const values = Array.isArray(body.values[0]) ? body.values[0] : body.values;
 
 		const event: RowAddedEvent = {
 			type: 'rowAdded',
@@ -71,10 +63,7 @@ export const rowAdded: GoogleSheetsWebhooks['rowAdded'] = {
 
 export const rowUpdated: GoogleSheetsWebhooks['rowUpdated'] = {
 	match: createGoogleSheetsWebhookMatcher('rowUpdated'),
-	handler: async (
-		ctx,
-		request
-	) => {
+	handler: async (ctx, request) => {
 		const body = request.payload as GoogleAppsScriptWebhookPayload;
 
 		if (!body.spreadsheetId || !body.values) {
@@ -84,9 +73,7 @@ export const rowUpdated: GoogleSheetsWebhooks['rowUpdated'] = {
 			};
 		}
 
-		const values = Array.isArray(body.values[0])
-			? body.values[0]
-			: body.values;
+		const values = Array.isArray(body.values[0]) ? body.values[0] : body.values;
 
 		const event: RowUpdatedEvent = {
 			type: 'rowUpdated',
@@ -129,10 +116,7 @@ export const rowUpdated: GoogleSheetsWebhooks['rowUpdated'] = {
 
 export const rowAddedOrUpdated: GoogleSheetsWebhooks['rowAddedOrUpdated'] = {
 	match: createGoogleSheetsWebhookMatcher('rowAddedOrUpdated'),
-	handler: async (
-		ctx,
-		request
-	) => {
+	handler: async (ctx, request) => {
 		const body = request.payload as GoogleAppsScriptWebhookPayload;
 
 		if (!body.spreadsheetId || !body.values) {
@@ -142,9 +126,7 @@ export const rowAddedOrUpdated: GoogleSheetsWebhooks['rowAddedOrUpdated'] = {
 			};
 		}
 
-		const values = Array.isArray(body.values[0])
-			? body.values[0]
-			: body.values;
+		const values = Array.isArray(body.values[0]) ? body.values[0] : body.values;
 
 		const event: RowAddedOrUpdatedEvent = {
 			type: 'rowAddedOrUpdated',

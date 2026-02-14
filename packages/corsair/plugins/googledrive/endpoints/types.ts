@@ -63,7 +63,14 @@ const PermissionSchema = z.object({
 	emailAddress: z.string().optional(),
 	domain: z.string().optional(),
 	role: z
-		.enum(['owner', 'organizer', 'fileOrganizer', 'writer', 'commenter', 'reader'])
+		.enum([
+			'owner',
+			'organizer',
+			'fileOrganizer',
+			'writer',
+			'commenter',
+			'reader',
+		])
 		.optional(),
 	allowFileDiscovery: z.boolean().optional(),
 	displayName: z.string().optional(),

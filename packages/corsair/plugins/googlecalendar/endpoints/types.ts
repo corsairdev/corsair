@@ -1,9 +1,5 @@
 import { z } from 'zod';
-import type {
-	Event,
-	EventListResponse,
-	FreeBusyResponse,
-} from '../types';
+import type { Event, EventListResponse, FreeBusyResponse } from '../types';
 
 const EventDateTimeSchema = z.object({
 	date: z.string().optional(),
@@ -62,7 +58,9 @@ const EventSchema = z.object({
 	recurringEventId: z.string().optional(),
 	originalStartTime: EventDateTimeSchema.optional(),
 	transparency: z.enum(['opaque', 'transparent']).optional(),
-	visibility: z.enum(['default', 'public', 'private', 'confidential']).optional(),
+	visibility: z
+		.enum(['default', 'public', 'private', 'confidential'])
+		.optional(),
 	iCalUID: z.string().optional(),
 	sequence: z.number().optional(),
 	attendees: z.array(AttendeeSchema).optional(),
@@ -75,7 +73,9 @@ const EventSchema = z.object({
 	guestsCanSeeOtherGuests: z.boolean().optional(),
 	privateCopy: z.boolean().optional(),
 	locked: z.boolean().optional(),
-	eventType: z.enum(['default', 'outOfOffice', 'focusTime', 'workingLocation']).optional(),
+	eventType: z
+		.enum(['default', 'outOfOffice', 'focusTime', 'workingLocation'])
+		.optional(),
 });
 
 const EventListResponseSchema = z.object({

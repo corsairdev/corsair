@@ -14,13 +14,13 @@ import { CalendarEndpoints, EventsEndpoints } from './endpoints';
 import { GoogleCalendarSchema } from './schema';
 import type { Event } from './types';
 import type {
+	EventCreatedEvent,
+	EventDeletedEvent,
+	EventEndedEvent,
+	EventStartedEvent,
+	EventUpdatedEvent,
 	GoogleCalendarWebhookOutputs,
 	GoogleCalendarWebhookPayload,
-	EventCreatedEvent,
-	EventUpdatedEvent,
-	EventDeletedEvent,
-	EventStartedEvent,
-	EventEndedEvent,
 } from './webhooks';
 import { EventWebhooks } from './webhooks';
 
@@ -32,7 +32,11 @@ export type GoogleCalendarContext = CorsairPluginContext<
 type GoogleCalendarEndpoint<
 	K extends keyof GoogleCalendarEndpointOutputs,
 	Input,
-> = CorsairEndpoint<GoogleCalendarContext, Input, GoogleCalendarEndpointOutputs[K]>;
+> = CorsairEndpoint<
+	GoogleCalendarContext,
+	Input,
+	GoogleCalendarEndpointOutputs[K]
+>;
 
 export type GoogleCalendarEndpoints = {
 	eventsCreate: GoogleCalendarEndpoint<
@@ -111,14 +115,18 @@ export type GoogleCalendarEndpoints = {
 	>;
 };
 
-export type GoogleCalendarBoundEndpoints = BindEndpoints<typeof googleCalendarEndpointsNested>;
+export type GoogleCalendarBoundEndpoints = BindEndpoints<
+	typeof googleCalendarEndpointsNested
+>;
 
-type GoogleCalendarWebhook<K extends keyof GoogleCalendarWebhookOutputs, TEvent> =
-	CorsairWebhook<
-		GoogleCalendarContext,
-		GoogleCalendarWebhookPayload,
-		GoogleCalendarWebhookOutputs[K]
-	>;
+type GoogleCalendarWebhook<
+	K extends keyof GoogleCalendarWebhookOutputs,
+	TEvent,
+> = CorsairWebhook<
+	GoogleCalendarContext,
+	GoogleCalendarWebhookPayload,
+	GoogleCalendarWebhookOutputs[K]
+>;
 
 export type GoogleCalendarWebhooks = {
 	onEventCreated: GoogleCalendarWebhook<'eventCreated', EventCreatedEvent>;
@@ -128,7 +136,9 @@ export type GoogleCalendarWebhooks = {
 	onEventEnded: GoogleCalendarWebhook<'eventEnded', EventEndedEvent>;
 };
 
-export type GoogleCalendarBoundWebhooks = BindWebhooks<typeof googleCalendarWebhooksNested>;
+export type GoogleCalendarBoundWebhooks = BindWebhooks<
+	typeof googleCalendarWebhooksNested
+>;
 
 const googleCalendarEndpointsNested = {
 	events: {
@@ -182,11 +192,13 @@ export type BaseGoogleCalendarPlugin<T extends GoogleCalendarPluginOptions> =
 export type InternalGoogleCalendarPlugin =
 	BaseGoogleCalendarPlugin<GoogleCalendarPluginOptions>;
 
-export type ExternalGoogleCalendarPlugin<T extends GoogleCalendarPluginOptions> =
-	BaseGoogleCalendarPlugin<T>;
+export type ExternalGoogleCalendarPlugin<
+	T extends GoogleCalendarPluginOptions,
+> = BaseGoogleCalendarPlugin<T>;
 
 export function googlecalendar<const T extends GoogleCalendarPluginOptions>(
-	incomingOptions: GoogleCalendarPluginOptions & T = {} as GoogleCalendarPluginOptions & T,
+	incomingOptions: GoogleCalendarPluginOptions &
+		T = {} as GoogleCalendarPluginOptions & T,
 ): ExternalGoogleCalendarPlugin<T> {
 	const options = {
 		...incomingOptions,

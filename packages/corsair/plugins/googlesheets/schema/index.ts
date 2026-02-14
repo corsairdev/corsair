@@ -1,7 +1,7 @@
 import {
-	GoogleSheetsSpreadsheet,
-	GoogleSheetsSheet,
 	GoogleSheetsRow,
+	GoogleSheetsSheet,
+	GoogleSheetsSpreadsheet,
 } from './database';
 
 export const GoogleSheetsSchema = {

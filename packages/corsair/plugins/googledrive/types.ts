@@ -160,7 +160,13 @@ export type Permission = {
 	type?: 'user' | 'group' | 'domain' | 'anyone';
 	emailAddress?: string;
 	domain?: string;
-	role?: 'owner' | 'organizer' | 'fileOrganizer' | 'writer' | 'commenter' | 'reader';
+	role?:
+		| 'owner'
+		| 'organizer'
+		| 'fileOrganizer'
+		| 'writer'
+		| 'commenter'
+		| 'reader';
 	allowFileDiscovery?: boolean;
 	displayName?: string;
 	photoLink?: string;
@@ -272,7 +278,13 @@ export type CopyFileRequest = {
 
 export type CreatePermissionRequest = {
 	type?: 'user' | 'group' | 'domain' | 'anyone';
-	role?: 'owner' | 'organizer' | 'fileOrganizer' | 'writer' | 'commenter' | 'reader';
+	role?:
+		| 'owner'
+		| 'organizer'
+		| 'fileOrganizer'
+		| 'writer'
+		| 'commenter'
+		| 'reader';
 	emailAddress?: string;
 	domain?: string;
 	allowFileDiscovery?: boolean;

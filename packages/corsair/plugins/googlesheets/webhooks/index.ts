@@ -1,4 +1,4 @@
-import { rowAdded, rowUpdated, rowAddedOrUpdated } from './rows';
+import { rowAdded, rowAddedOrUpdated, rowUpdated } from './rows';
 
 export const RowWebhooks = {
 	rowAdded,

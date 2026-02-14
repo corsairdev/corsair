@@ -564,7 +564,7 @@ describe('HubSpot plugin integration', () => {
 			limit: 10,
 		};
 
-		let ticketsList;
+		let ticketsList: any;
 		try {
 			ticketsList = await corsair.hubspot.api.tickets.getMany(listInput);
 		} catch (error) {
@@ -633,7 +633,7 @@ describe('HubSpot plugin integration', () => {
 			},
 		};
 
-		let createdTicket;
+		let createdTicket: any;
 		try {
 			createdTicket = await corsair.hubspot.api.tickets.create(createInput);
 		} catch (error) {
@@ -792,7 +792,7 @@ describe('HubSpot plugin integration', () => {
 			},
 		};
 
-		let createdEngagement;
+		let createdEngagement: any;
 		try {
 			createdEngagement =
 				await corsair.hubspot.api.engagements.create(createInput);

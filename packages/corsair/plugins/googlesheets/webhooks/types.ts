@@ -1,5 +1,7 @@
-import type { CorsairWebhookMatcher, RawWebhookRequest } from '../../../core/webhooks';
-import type { ValueRange } from '../types';
+import type {
+	CorsairWebhookMatcher,
+	RawWebhookRequest,
+} from '../../../core/webhooks';
 
 export type GoogleAppsScriptWebhookPayload = {
 	spreadsheetId?: string;
@@ -64,7 +66,9 @@ export type GoogleSheetsWebhookOutputs = {
 function parseBody(body: unknown): unknown {
 	return typeof body === 'string' ? JSON.parse(body) : body;
 }
-export function createGoogleSheetsWebhookMatcher(eventType: GoogleSheetsEventName): CorsairWebhookMatcher {
+export function createGoogleSheetsWebhookMatcher(
+	eventType: GoogleSheetsEventName,
+): CorsairWebhookMatcher {
 	return (request: RawWebhookRequest) => {
 		const body = parseBody(request.body) as Record<string, unknown>;
 		return (

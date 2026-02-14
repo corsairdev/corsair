@@ -20,7 +20,9 @@ export const GoogleSheetsRow = z.object({
 	spreadsheetId: z.string(),
 	sheetName: z.string().optional(),
 	range: z.string().optional(),
-	values: z.array(z.union([z.string(), z.number(), z.boolean(), z.null()])).optional(),
+	values: z
+		.array(z.union([z.string(), z.number(), z.boolean(), z.null()]))
+		.optional(),
 	createdAt: z.coerce.date().optional(),
 });
 

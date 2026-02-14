@@ -1,11 +1,7 @@
 import dotenv from 'dotenv';
 import { makeCalendarRequest } from './client';
 import { GoogleCalendarEndpointOutputSchemas } from './endpoints/types';
-import type {
-	Event,
-	EventListResponse,
-	FreeBusyResponse,
-} from './types';
+import type { Event, EventListResponse, FreeBusyResponse } from './types';
 
 dotenv.config();
 
@@ -81,7 +77,7 @@ describe('Google Calendar API Type Tests', () => {
 				{
 					method: 'GET',
 				},
-            );
+			);
 			const result = response;
 
 			GoogleCalendarEndpointOutputSchemas.eventsGet.parse(result);
@@ -98,7 +94,9 @@ describe('Google Calendar API Type Tests', () => {
 		it('eventsGetMany returns correct type', async () => {
 			const now = new Date();
 			const timeMin = now.toISOString();
-			const timeMax = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000).toISOString();
+			const timeMax = new Date(
+				now.getTime() + 7 * 24 * 60 * 60 * 1000,
+			).toISOString();
 
 			const response = await makeCalendarRequest<EventListResponse>(
 				`/calendars/${TEST_CALENDAR_ID}/events`,
@@ -192,7 +190,9 @@ describe('Google Calendar API Type Tests', () => {
 		it('calendarGetAvailability returns correct type', async () => {
 			const now = new Date();
 			const timeMin = now.toISOString();
-			const timeMax = new Date(now.getTime() + 24 * 60 * 60 * 1000).toISOString();
+			const timeMax = new Date(
+				now.getTime() + 24 * 60 * 60 * 1000,
+			).toISOString();
 
 			const response = await makeCalendarRequest<FreeBusyResponse>(
 				'/freeBusy',

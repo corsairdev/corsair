@@ -83,11 +83,11 @@ export const modify: GmailEndpoints['threadsModify'] = async (ctx, input) => {
 		addLabelIds?: string[];
 		removeLabelIds?: string[];
 	} = {};
-	
+
 	if (input.addLabelIds && input.addLabelIds.length > 0) {
 		body.addLabelIds = input.addLabelIds;
 	}
-	
+
 	if (input.removeLabelIds && input.removeLabelIds.length > 0) {
 		body.removeLabelIds = input.removeLabelIds;
 	}

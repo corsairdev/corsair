@@ -1,5 +1,5 @@
-import * as Spreadsheets from './spreadsheets';
 import * as Sheets from './sheets';
+import * as Spreadsheets from './spreadsheets';
 
 export const SpreadsheetsEndpoints = {
 	create: Spreadsheets.create,

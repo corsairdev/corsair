@@ -1,21 +1,19 @@
-import type {
-	WebhookRequest,
-} from '../../../core/webhooks';
 import { logEventFromContext } from '../../utils/events';
-import type { GoogleCalendarContext, GoogleCalendarWebhooks } from '..';
+import type { GoogleCalendarWebhooks } from '..';
 import { makeCalendarRequest } from '../client';
 import type { Event } from '../types';
 import type {
-	GoogleCalendarPushNotification,
 	EventCreatedEvent,
-	EventUpdatedEvent,
 	EventDeletedEvent,
-	EventStartedEvent,
 	EventEndedEvent,
+	EventStartedEvent,
+	EventUpdatedEvent,
 	PubSubNotification,
 } from './types';
-import { createGoogleCalendarWebhookMatcher, decodePubSubMessage } from './types';
-
+import {
+	createGoogleCalendarWebhookMatcher,
+	decodePubSubMessage,
+} from './types';
 
 async function fetchEvent(
 	credentials: string,
@@ -51,10 +49,7 @@ function isEventEnded(event: Event): boolean {
 
 export const onEventCreated: GoogleCalendarWebhooks['onEventCreated'] = {
 	match: createGoogleCalendarWebhookMatcher('eventCreated'),
-	handler: async (
-		ctx,
-		request
-	) => {
+	handler: async (ctx, request) => {
 		const body = request.payload as PubSubNotification;
 
 		if (!body.message?.data) {
@@ -75,8 +70,10 @@ export const onEventCreated: GoogleCalendarWebhooks['onEventCreated'] = {
 
 		const credentials = ctx.key;
 		const resourceUri = pushNotification.resourceUri;
-		const calendarIdMatch = resourceUri.match(/\/calendars\/([^\/]+)\/events\/(.+)/);
-		
+		const calendarIdMatch = resourceUri.match(
+			/\/calendars\/([^\/]+)\/events\/(.+)/,
+		);
+
 		if (!calendarIdMatch || !calendarIdMatch[1] || !calendarIdMatch[2]) {
 			return {
 				success: false,
@@ -132,10 +129,7 @@ export const onEventCreated: GoogleCalendarWebhooks['onEventCreated'] = {
 
 export const onEventUpdated: GoogleCalendarWebhooks['onEventUpdated'] = {
 	match: createGoogleCalendarWebhookMatcher('eventUpdated'),
-	handler: async (
-		ctx,
-		request
-	) => {
+	handler: async (ctx, request) => {
 		const body = request.payload as PubSubNotification;
 
 		if (!body.message?.data) {
@@ -156,8 +150,10 @@ export const onEventUpdated: GoogleCalendarWebhooks['onEventUpdated'] = {
 
 		const credentials = ctx.key;
 		const resourceUri = pushNotification.resourceUri;
-		const calendarIdMatch = resourceUri.match(/\/calendars\/([^\/]+)\/events\/(.+)/);
-		
+		const calendarIdMatch = resourceUri.match(
+			/\/calendars\/([^\/]+)\/events\/(.+)/,
+		);
+
 		if (!calendarIdMatch || !calendarIdMatch[1] || !calendarIdMatch[2]) {
 			return {
 				success: false,
@@ -213,10 +209,7 @@ export const onEventUpdated: GoogleCalendarWebhooks['onEventUpdated'] = {
 
 export const onEventDeleted: GoogleCalendarWebhooks['onEventDeleted'] = {
 	match: createGoogleCalendarWebhookMatcher('eventDeleted'),
-	handler: async (
-		ctx,
-		request
-	) => {
+	handler: async (ctx, request) => {
 		const body = request.payload as PubSubNotification;
 
 		if (!body.message?.data) {
@@ -236,8 +229,10 @@ export const onEventDeleted: GoogleCalendarWebhooks['onEventDeleted'] = {
 		}
 
 		const resourceUri = pushNotification.resourceUri;
-		const calendarIdMatch = resourceUri.match(/\/calendars\/([^\/]+)\/events\/(.+)/);
-		
+		const calendarIdMatch = resourceUri.match(
+			/\/calendars\/([^\/]+)\/events\/(.+)/,
+		);
+
 		if (!calendarIdMatch || !calendarIdMatch[1] || !calendarIdMatch[2]) {
 			return {
 				success: false,
@@ -279,10 +274,7 @@ export const onEventDeleted: GoogleCalendarWebhooks['onEventDeleted'] = {
 
 export const onEventStarted: GoogleCalendarWebhooks['onEventStarted'] = {
 	match: createGoogleCalendarWebhookMatcher('eventStarted'),
-	handler: async (
-		ctx,
-		request
-	) => {
+	handler: async (ctx, request) => {
 		const body = request.payload as PubSubNotification;
 
 		if (!body.message?.data) {
@@ -303,8 +295,10 @@ export const onEventStarted: GoogleCalendarWebhooks['onEventStarted'] = {
 
 		const credentials = ctx.key;
 		const resourceUri = pushNotification.resourceUri;
-		const calendarIdMatch = resourceUri.match(/\/calendars\/([^\/]+)\/events\/(.+)/);
-		
+		const calendarIdMatch = resourceUri.match(
+			/\/calendars\/([^\/]+)\/events\/(.+)/,
+		);
+
 		if (!calendarIdMatch || !calendarIdMatch[1] || !calendarIdMatch[2]) {
 			return {
 				success: false,
@@ -354,10 +348,7 @@ export const onEventStarted: GoogleCalendarWebhooks['onEventStarted'] = {
 
 export const onEventEnded: GoogleCalendarWebhooks['onEventEnded'] = {
 	match: createGoogleCalendarWebhookMatcher('eventEnded'),
-	handler: async (
-		ctx,
-		request
-	) => {
+	handler: async (ctx, request) => {
 		const body = request.payload as PubSubNotification;
 
 		if (!body.message?.data) {
@@ -378,8 +369,10 @@ export const onEventEnded: GoogleCalendarWebhooks['onEventEnded'] = {
 
 		const credentials = ctx.key;
 		const resourceUri = pushNotification.resourceUri;
-		const calendarIdMatch = resourceUri.match(/\/calendars\/([^\/]+)\/events\/(.+)/);
-		
+		const calendarIdMatch = resourceUri.match(
+			/\/calendars\/([^\/]+)\/events\/(.+)/,
+		);
+
 		if (!calendarIdMatch || !calendarIdMatch[1] || !calendarIdMatch[2]) {
 			return {
 				success: false,
