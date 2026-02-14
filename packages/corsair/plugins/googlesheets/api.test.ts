@@ -2,11 +2,11 @@ import dotenv from 'dotenv';
 import { makeSheetsRequest } from './client';
 import { GoogleSheetsEndpointOutputSchemas } from './endpoints/types';
 import type {
-	Spreadsheet,
-	ValueRange,
+	BatchUpdateSpreadsheetResponse,
 	BatchUpdateValuesResponse,
 	ClearValuesResponse,
-	BatchUpdateSpreadsheetResponse,
+	Spreadsheet,
+	ValueRange,
 } from './types';
 
 dotenv.config();
@@ -91,7 +91,6 @@ async function getOrCreateTestSpreadsheet(
 }
 
 describe('Google Sheets API Type Tests', () => {
-
 	describe('spreadsheets', () => {
 		it('spreadsheetsCreate returns correct type', async () => {
 			const response = await makeSheetsRequest<Spreadsheet>(
@@ -382,26 +381,28 @@ describe('Google Sheets API Type Tests', () => {
 		});
 
 		it('sheetsDeleteSheet returns correct type', async () => {
-			const createResponse = await makeSheetsRequest<BatchUpdateSpreadsheetResponse>(
-				`/spreadsheets/${testSpreadsheetId}:batchUpdate`,
-				TEST_TOKEN,
-				{
-					method: 'POST',
-					body: {
-						requests: [
-							{
-								addSheet: {
-									properties: {
-										title: `Test Sheet for Delete ${Date.now()}`,
+			const createResponse =
+				await makeSheetsRequest<BatchUpdateSpreadsheetResponse>(
+					`/spreadsheets/${testSpreadsheetId}:batchUpdate`,
+					TEST_TOKEN,
+					{
+						method: 'POST',
+						body: {
+							requests: [
+								{
+									addSheet: {
+										properties: {
+											title: `Test Sheet for Delete ${Date.now()}`,
+										},
 									},
 								},
-							},
-						],
+							],
+						},
 					},
-				},
-			);
+				);
 
-			const sheetId = createResponse.replies?.[0]?.addSheet?.properties?.sheetId;
+			const sheetId =
+				createResponse.replies?.[0]?.addSheet?.properties?.sheetId;
 			if (!sheetId) {
 				throw new Error('Failed to create test sheet');
 			}

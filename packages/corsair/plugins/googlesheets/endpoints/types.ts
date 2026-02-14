@@ -1,10 +1,10 @@
 import { z } from 'zod';
 import type {
-	Spreadsheet,
-	ValueRange,
+	BatchUpdateSpreadsheetResponse,
 	BatchUpdateValuesResponse,
 	ClearValuesResponse,
-	BatchUpdateSpreadsheetResponse,
+	Spreadsheet,
+	ValueRange,
 } from '../types';
 
 const SpreadsheetPropertiesSchema = z.object({
@@ -22,8 +22,12 @@ const SpreadsheetSchema = z.object({
 
 const ValueRangeSchema = z.object({
 	range: z.string().optional(),
-	majorDimension: z.enum(['ROWS', 'COLUMNS', 'DIMENSION_UNSPECIFIED']).optional(),
-	values: z.array(z.array(z.union([z.string(), z.number(), z.boolean(), z.null()]))).optional(),
+	majorDimension: z
+		.enum(['ROWS', 'COLUMNS', 'DIMENSION_UNSPECIFIED'])
+		.optional(),
+	values: z
+		.array(z.array(z.union([z.string(), z.number(), z.boolean(), z.null()])))
+		.optional(),
 });
 
 const BatchUpdateValuesResponseSchema = z.object({

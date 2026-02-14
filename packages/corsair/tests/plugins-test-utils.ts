@@ -22,14 +22,17 @@ export function createIntegrationAndAccount(
 		} as any)
 		.execute()
 		.then(() =>
-			db.insertInto('corsair_accounts').values({
-				id: accountId,
-				created_at: now,
-				updated_at: now,
-				tenant_id: tenantId,
-				integration_id: integrationId,
-				config: {} as any,
-				dek: undefined,
-			} as any).execute(),
+			db
+				.insertInto('corsair_accounts')
+				.values({
+					id: accountId,
+					created_at: now,
+					updated_at: now,
+					tenant_id: tenantId,
+					integration_id: integrationId,
+					config: {} as any,
+					dek: undefined,
+				} as any)
+				.execute(),
 		);
 }

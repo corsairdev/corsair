@@ -16,7 +16,8 @@ import {
 	MessagesEndpoints,
 	ThreadsEndpoints,
 } from './endpoints';
-import { GmailCredentials, GmailSchema } from './schema';
+import type { GmailCredentials } from './schema';
+import { GmailSchema } from './schema';
 import type {
 	GmailWebhookOutputs,
 	GmailWebhookPayload,

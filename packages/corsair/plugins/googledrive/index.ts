@@ -139,7 +139,13 @@ export type GoogleDriveEndpoints = {
 		{
 			fileId: string;
 			type?: 'user' | 'group' | 'domain' | 'anyone';
-			role?: 'owner' | 'organizer' | 'fileOrganizer' | 'writer' | 'commenter' | 'reader';
+			role?:
+				| 'owner'
+				| 'organizer'
+				| 'fileOrganizer'
+				| 'writer'
+				| 'commenter'
+				| 'reader';
 			emailAddress?: string;
 			domain?: string;
 			allowFileDiscovery?: boolean;
@@ -199,7 +205,13 @@ export type GoogleDriveEndpoints = {
 		{
 			folderId: string;
 			type?: 'user' | 'group' | 'domain' | 'anyone';
-			role?: 'owner' | 'organizer' | 'fileOrganizer' | 'writer' | 'commenter' | 'reader';
+			role?:
+				| 'owner'
+				| 'organizer'
+				| 'fileOrganizer'
+				| 'writer'
+				| 'commenter'
+				| 'reader';
 			emailAddress?: string;
 			domain?: string;
 			allowFileDiscovery?: boolean;
@@ -284,9 +296,14 @@ export type GoogleDriveEndpoints = {
 	>;
 };
 
-export type GoogleDriveBoundEndpoints = BindEndpoints<typeof googleDriveEndpointsNested>;
+export type GoogleDriveBoundEndpoints = BindEndpoints<
+	typeof googleDriveEndpointsNested
+>;
 
-type GoogleDriveWebhook<K extends keyof GoogleDriveWebhookOutputs, TEvent> = CorsairWebhook<
+type GoogleDriveWebhook<
+	K extends keyof GoogleDriveWebhookOutputs,
+	TEvent,
+> = CorsairWebhook<
 	GoogleDriveContext,
 	GoogleDriveWebhookPayload,
 	GoogleDriveWebhookOutputs[K]
@@ -297,7 +314,9 @@ export type GoogleDriveWebhooks = {
 	folderChanged: GoogleDriveWebhook<'folderChanged', FolderChangedEvent>;
 };
 
-export type GoogleDriveBoundWebhooks = BindWebhooks<typeof googleDriveWebhooksNested>;
+export type GoogleDriveBoundWebhooks = BindWebhooks<
+	typeof googleDriveWebhooksNested
+>;
 
 const googleDriveEndpointsNested = {
 	files: {
@@ -346,26 +365,30 @@ export type GoogleDrivePluginOptions = {
 	webhookHooks?: InternalGoogleDrivePlugin['webhookHooks'];
 };
 
-export type GoogleDriveKeyBuilderContext = KeyBuilderContext<GoogleDrivePluginOptions>;
+export type GoogleDriveKeyBuilderContext =
+	KeyBuilderContext<GoogleDrivePluginOptions>;
 
 const defaultAuthType: AuthTypes = 'oauth_2';
 
-export type BaseGoogleDrivePlugin<T extends GoogleDrivePluginOptions> = CorsairPlugin<
-	'googledrive',
-	typeof GoogleDriveSchema,
-	typeof googleDriveEndpointsNested,
-	typeof googleDriveWebhooksNested,
-	T,
-	typeof defaultAuthType
->;
+export type BaseGoogleDrivePlugin<T extends GoogleDrivePluginOptions> =
+	CorsairPlugin<
+		'googledrive',
+		typeof GoogleDriveSchema,
+		typeof googleDriveEndpointsNested,
+		typeof googleDriveWebhooksNested,
+		T,
+		typeof defaultAuthType
+	>;
 
-export type InternalGoogleDrivePlugin = BaseGoogleDrivePlugin<GoogleDrivePluginOptions>;
+export type InternalGoogleDrivePlugin =
+	BaseGoogleDrivePlugin<GoogleDrivePluginOptions>;
 
 export type ExternalGoogleDrivePlugin<T extends GoogleDrivePluginOptions> =
 	BaseGoogleDrivePlugin<T>;
 
 export function googledrive<const T extends GoogleDrivePluginOptions>(
-	incomingOptions: GoogleDrivePluginOptions & T = {} as GoogleDrivePluginOptions & T,
+	incomingOptions: GoogleDrivePluginOptions &
+		T = {} as GoogleDrivePluginOptions & T,
 ): ExternalGoogleDrivePlugin<T> {
 	const options = {
 		...incomingOptions,

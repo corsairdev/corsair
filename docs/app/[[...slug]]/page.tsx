@@ -16,12 +16,60 @@ import IntroductionDoc from '@/content/getting-started/introduction.mdx';
 // Guides
 import CreateYourOwnPlugin from '@/content/guides/create-your-own-plugin.mdx';
 import PluginCredentialsGuide from '@/content/guides/plugin-credentials.mdx';
+import GithubApiEndpointsDoc from '@/content/plugins/github/api-endpoints.mdx';
+import GithubDatabaseDoc from '@/content/plugins/github/database.mdx';
+import GithubErrorHandlersDoc from '@/content/plugins/github/error-handlers.mdx';
+import GithubGetCredentialsDoc from '@/content/plugins/github/get-credentials.mdx';
+import GithubDoc from '@/content/plugins/github/main.mdx';
+import GithubWebhooksDoc from '@/content/plugins/github/webhooks.mdx';
+import GmailApiEndpointsDoc from '@/content/plugins/gmail/api-endpoints.mdx';
+import GmailDatabaseDoc from '@/content/plugins/gmail/database.mdx';
+import GmailErrorHandlersDoc from '@/content/plugins/gmail/error-handlers.mdx';
+import GmailGetCredentialsDoc from '@/content/plugins/gmail/get-credentials.mdx';
+import GmailDoc from '@/content/plugins/gmail/main.mdx';
+import GmailWebhooksDoc from '@/content/plugins/gmail/webhooks.mdx';
+import GoogleCalendarApiEndpointsDoc from '@/content/plugins/googlecalendar/api-endpoints.mdx';
+import GoogleCalendarDatabaseDoc from '@/content/plugins/googlecalendar/database.mdx';
+import GoogleCalendarErrorHandlersDoc from '@/content/plugins/googlecalendar/error-handlers.mdx';
+import GoogleCalendarGetCredentialsDoc from '@/content/plugins/googlecalendar/get-credentials.mdx';
+import GoogleCalendarDoc from '@/content/plugins/googlecalendar/main.mdx';
+import GoogleCalendarWebhooksDoc from '@/content/plugins/googlecalendar/webhooks.mdx';
+import GoogleDriveApiEndpointsDoc from '@/content/plugins/googledrive/api-endpoints.mdx';
+import GoogleDriveDatabaseDoc from '@/content/plugins/googledrive/database.mdx';
+import GoogleDriveErrorHandlersDoc from '@/content/plugins/googledrive/error-handlers.mdx';
+import GoogleDriveGetCredentialsDoc from '@/content/plugins/googledrive/get-credentials.mdx';
+import GoogleDriveDoc from '@/content/plugins/googledrive/main.mdx';
+import GoogleDriveWebhooksDoc from '@/content/plugins/googledrive/webhooks.mdx';
+import GoogleSheetsApiEndpointsDoc from '@/content/plugins/googlesheets/api-endpoints.mdx';
+import GoogleSheetsDatabaseDoc from '@/content/plugins/googlesheets/database.mdx';
+import GoogleSheetsErrorHandlersDoc from '@/content/plugins/googlesheets/error-handlers.mdx';
+import GoogleSheetsGetCredentialsDoc from '@/content/plugins/googlesheets/get-credentials.mdx';
+import GoogleSheetsDoc from '@/content/plugins/googlesheets/main.mdx';
+import GoogleSheetsWebhooksDoc from '@/content/plugins/googlesheets/webhooks.mdx';
+import HubSpotApiEndpointsDoc from '@/content/plugins/hubspot/api-endpoints.mdx';
+import HubSpotDatabaseDoc from '@/content/plugins/hubspot/database.mdx';
+import HubSpotErrorHandlersDoc from '@/content/plugins/hubspot/error-handlers.mdx';
+import HubSpotGetCredentialsDoc from '@/content/plugins/hubspot/get-credentials.mdx';
+import HubSpotDoc from '@/content/plugins/hubspot/main.mdx';
+import HubSpotWebhooksDoc from '@/content/plugins/hubspot/webhooks.mdx';
 import LinearApiEndpointsDoc from '@/content/plugins/linear/api-endpoints.mdx';
 import LinearDatabaseDoc from '@/content/plugins/linear/database.mdx';
 import LinearErrorHandlersDoc from '@/content/plugins/linear/error-handlers.mdx';
 import LinearGetCredentialsDoc from '@/content/plugins/linear/get-credentials.mdx';
 import LinearDoc from '@/content/plugins/linear/main.mdx';
 import LinearWebhooksDoc from '@/content/plugins/linear/webhooks.mdx';
+import PostHogApiEndpointsDoc from '@/content/plugins/posthog/api-endpoints.mdx';
+import PostHogDatabaseDoc from '@/content/plugins/posthog/database.mdx';
+import PostHogErrorHandlersDoc from '@/content/plugins/posthog/error-handlers.mdx';
+import PostHogGetCredentialsDoc from '@/content/plugins/posthog/get-credentials.mdx';
+import PostHogDoc from '@/content/plugins/posthog/main.mdx';
+import PostHogWebhooksDoc from '@/content/plugins/posthog/webhooks.mdx';
+import ResendApiEndpointsDoc from '@/content/plugins/resend/api-endpoints.mdx';
+import ResendDatabaseDoc from '@/content/plugins/resend/database.mdx';
+import ResendErrorHandlersDoc from '@/content/plugins/resend/error-handlers.mdx';
+import ResendGetCredentialsDoc from '@/content/plugins/resend/get-credentials.mdx';
+import ResendDoc from '@/content/plugins/resend/main.mdx';
+import ResendWebhooksDoc from '@/content/plugins/resend/webhooks.mdx';
 import SlackApiEndpointsDoc from '@/content/plugins/slack/api-endpoints.mdx';
 import SlackDatabaseDoc from '@/content/plugins/slack/database.mdx';
 import SlackErrorHandlersDoc from '@/content/plugins/slack/error-handlers.mdx';
@@ -29,54 +77,6 @@ import SlackGetCredentialsDoc from '@/content/plugins/slack/get-credentials.mdx'
 // Plugins
 import SlackDoc from '@/content/plugins/slack/main.mdx';
 import SlackWebhooksDoc from '@/content/plugins/slack/webhooks.mdx';
-import GithubDoc from '@/content/plugins/github/main.mdx';
-import GithubGetCredentialsDoc from '@/content/plugins/github/get-credentials.mdx';
-import GithubApiEndpointsDoc from '@/content/plugins/github/api-endpoints.mdx';
-import GithubWebhooksDoc from '@/content/plugins/github/webhooks.mdx';
-import GithubDatabaseDoc from '@/content/plugins/github/database.mdx';
-import GithubErrorHandlersDoc from '@/content/plugins/github/error-handlers.mdx';
-import GmailDoc from '@/content/plugins/gmail/main.mdx';
-import GmailGetCredentialsDoc from '@/content/plugins/gmail/get-credentials.mdx';
-import GmailApiEndpointsDoc from '@/content/plugins/gmail/api-endpoints.mdx';
-import GmailWebhooksDoc from '@/content/plugins/gmail/webhooks.mdx';
-import GmailDatabaseDoc from '@/content/plugins/gmail/database.mdx';
-import GmailErrorHandlersDoc from '@/content/plugins/gmail/error-handlers.mdx';
-import GoogleSheetsDoc from '@/content/plugins/googlesheets/main.mdx';
-import GoogleSheetsGetCredentialsDoc from '@/content/plugins/googlesheets/get-credentials.mdx';
-import GoogleSheetsApiEndpointsDoc from '@/content/plugins/googlesheets/api-endpoints.mdx';
-import GoogleSheetsWebhooksDoc from '@/content/plugins/googlesheets/webhooks.mdx';
-import GoogleSheetsDatabaseDoc from '@/content/plugins/googlesheets/database.mdx';
-import GoogleSheetsErrorHandlersDoc from '@/content/plugins/googlesheets/error-handlers.mdx';
-import GoogleDriveDoc from '@/content/plugins/googledrive/main.mdx';
-import GoogleDriveGetCredentialsDoc from '@/content/plugins/googledrive/get-credentials.mdx';
-import GoogleDriveApiEndpointsDoc from '@/content/plugins/googledrive/api-endpoints.mdx';
-import GoogleDriveWebhooksDoc from '@/content/plugins/googledrive/webhooks.mdx';
-import GoogleDriveDatabaseDoc from '@/content/plugins/googledrive/database.mdx';
-import GoogleDriveErrorHandlersDoc from '@/content/plugins/googledrive/error-handlers.mdx';
-import GoogleCalendarDoc from '@/content/plugins/googlecalendar/main.mdx';
-import GoogleCalendarGetCredentialsDoc from '@/content/plugins/googlecalendar/get-credentials.mdx';
-import GoogleCalendarApiEndpointsDoc from '@/content/plugins/googlecalendar/api-endpoints.mdx';
-import GoogleCalendarWebhooksDoc from '@/content/plugins/googlecalendar/webhooks.mdx';
-import GoogleCalendarDatabaseDoc from '@/content/plugins/googlecalendar/database.mdx';
-import GoogleCalendarErrorHandlersDoc from '@/content/plugins/googlecalendar/error-handlers.mdx';
-import HubSpotDoc from '@/content/plugins/hubspot/main.mdx';
-import HubSpotGetCredentialsDoc from '@/content/plugins/hubspot/get-credentials.mdx';
-import HubSpotApiEndpointsDoc from '@/content/plugins/hubspot/api-endpoints.mdx';
-import HubSpotWebhooksDoc from '@/content/plugins/hubspot/webhooks.mdx';
-import HubSpotDatabaseDoc from '@/content/plugins/hubspot/database.mdx';
-import HubSpotErrorHandlersDoc from '@/content/plugins/hubspot/error-handlers.mdx';
-import PostHogDoc from '@/content/plugins/posthog/main.mdx';
-import PostHogGetCredentialsDoc from '@/content/plugins/posthog/get-credentials.mdx';
-import PostHogApiEndpointsDoc from '@/content/plugins/posthog/api-endpoints.mdx';
-import PostHogWebhooksDoc from '@/content/plugins/posthog/webhooks.mdx';
-import PostHogDatabaseDoc from '@/content/plugins/posthog/database.mdx';
-import PostHogErrorHandlersDoc from '@/content/plugins/posthog/error-handlers.mdx';
-import ResendDoc from '@/content/plugins/resend/main.mdx';
-import ResendGetCredentialsDoc from '@/content/plugins/resend/get-credentials.mdx';
-import ResendApiEndpointsDoc from '@/content/plugins/resend/api-endpoints.mdx';
-import ResendWebhooksDoc from '@/content/plugins/resend/webhooks.mdx';
-import ResendDatabaseDoc from '@/content/plugins/resend/database.mdx';
-import ResendErrorHandlersDoc from '@/content/plugins/resend/error-handlers.mdx';
 import { extractTOC } from '@/lib/toc';
 import { useMDXComponents } from '@/mdx-components';
 
@@ -204,7 +204,8 @@ const pages = {
 	'plugins/github': {
 		Component: GithubDoc,
 		title: 'GitHub',
-		description: 'Integrate GitHub repositories, issues, pull requests, and releases',
+		description:
+			'Integrate GitHub repositories, issues, pull requests, and releases',
 	},
 	'plugins/github/get-credentials': {
 		Component: GithubGetCredentialsDoc,
@@ -269,7 +270,8 @@ const pages = {
 	'plugins/googlesheets/get-credentials': {
 		Component: GoogleSheetsGetCredentialsDoc,
 		title: 'Get Credentials',
-		description: 'Step-by-step instructions for obtaining Google Sheets credentials',
+		description:
+			'Step-by-step instructions for obtaining Google Sheets credentials',
 	},
 	'plugins/googlesheets/api-endpoints': {
 		Component: GoogleSheetsApiEndpointsDoc,
@@ -299,7 +301,8 @@ const pages = {
 	'plugins/googledrive/get-credentials': {
 		Component: GoogleDriveGetCredentialsDoc,
 		title: 'Get Credentials',
-		description: 'Step-by-step instructions for obtaining Google Drive credentials',
+		description:
+			'Step-by-step instructions for obtaining Google Drive credentials',
 	},
 	'plugins/googledrive/api-endpoints': {
 		Component: GoogleDriveApiEndpointsDoc,
@@ -329,7 +332,8 @@ const pages = {
 	'plugins/googlecalendar/get-credentials': {
 		Component: GoogleCalendarGetCredentialsDoc,
 		title: 'Get Credentials',
-		description: 'Step-by-step instructions for obtaining Google Calendar credentials',
+		description:
+			'Step-by-step instructions for obtaining Google Calendar credentials',
 	},
 	'plugins/googlecalendar/api-endpoints': {
 		Component: GoogleCalendarApiEndpointsDoc,
@@ -354,7 +358,8 @@ const pages = {
 	'plugins/hubspot': {
 		Component: HubSpotDoc,
 		title: 'HubSpot',
-		description: 'Integrate HubSpot CRM contacts, companies, deals, and tickets',
+		description:
+			'Integrate HubSpot CRM contacts, companies, deals, and tickets',
 	},
 	'plugins/hubspot/get-credentials': {
 		Component: HubSpotGetCredentialsDoc,
@@ -449,7 +454,8 @@ const pages = {
 	'guides/plugin-credentials': {
 		Component: PluginCredentialsGuide,
 		title: 'Plugin Credentials Guide',
-		description: 'Step-by-step instructions for obtaining credentials for all plugins',
+		description:
+			'Step-by-step instructions for obtaining credentials for all plugins',
 	},
 } as const;
 

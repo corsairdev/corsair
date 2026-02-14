@@ -1,5 +1,5 @@
-import * as Events from './events';
 import * as Calendar from './calendar';
+import * as Events from './events';
 
 export const EventsEndpoints = {
 	create: Events.create,

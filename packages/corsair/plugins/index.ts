@@ -19,26 +19,6 @@ export {
 	type GmailWebhooks,
 	gmail,
 } from './gmail';
-// Google Sheets Plugin
-export {
-	type GoogleSheetsBoundEndpoints,
-	type GoogleSheetsBoundWebhooks,
-	type GoogleSheetsContext,
-	type GoogleSheetsEndpoints,
-	type GoogleSheetsPluginOptions,
-	type GoogleSheetsWebhooks,
-	googlesheets,
-} from './googlesheets';
-// Google Drive Plugin
-export {
-	type GoogleDriveBoundEndpoints,
-	type GoogleDriveBoundWebhooks,
-	type GoogleDriveContext,
-	type GoogleDriveEndpoints,
-	type GoogleDrivePluginOptions,
-	type GoogleDriveWebhooks,
-	googledrive,
-} from './googledrive';
 // Google Calendar Plugin
 export {
 	type GoogleCalendarBoundEndpoints,
@@ -49,6 +29,26 @@ export {
 	type GoogleCalendarWebhooks,
 	googlecalendar,
 } from './googlecalendar';
+// Google Drive Plugin
+export {
+	type GoogleDriveBoundEndpoints,
+	type GoogleDriveBoundWebhooks,
+	type GoogleDriveContext,
+	type GoogleDriveEndpoints,
+	type GoogleDrivePluginOptions,
+	type GoogleDriveWebhooks,
+	googledrive,
+} from './googledrive';
+// Google Sheets Plugin
+export {
+	type GoogleSheetsBoundEndpoints,
+	type GoogleSheetsBoundWebhooks,
+	type GoogleSheetsContext,
+	type GoogleSheetsEndpoints,
+	type GoogleSheetsPluginOptions,
+	type GoogleSheetsWebhooks,
+	googlesheets,
+} from './googlesheets';
 export {
 	type HubSpotBoundEndpoints,
 	type HubSpotBoundWebhooks,

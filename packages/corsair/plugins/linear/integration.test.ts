@@ -138,7 +138,7 @@ describe('Linear plugin integration', () => {
 			first: 10,
 		};
 
-		let issuesList;
+		let issuesList: any;
 		try {
 			issuesList = await corsair.linear.api.issues.list(listInput);
 		} catch (error) {

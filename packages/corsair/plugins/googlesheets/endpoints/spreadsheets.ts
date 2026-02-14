@@ -1,23 +1,20 @@
 import { logEventFromContext } from '../../utils/events';
-import type { GoogleSheetsBoundEndpoints, GoogleSheetsEndpoints } from '..';
+import type { GoogleSheetsEndpoints } from '..';
 import { makeSheetsRequest } from '../client';
 import type { GoogleSheetsEndpointOutputs } from './types';
-import type { Spreadsheet } from '../types';
 
 export const create: GoogleSheetsEndpoints['spreadsheetsCreate'] = async (
 	ctx,
 	input,
 ) => {
-	const result = await makeSheetsRequest<GoogleSheetsEndpointOutputs['spreadsheetsCreate']>(
-		'/spreadsheets',
-		ctx.key,
-		{
-			method: 'POST',
-			body: {
-				properties: input.properties,
-			},
+	const result = await makeSheetsRequest<
+		GoogleSheetsEndpointOutputs['spreadsheetsCreate']
+	>('/spreadsheets', ctx.key, {
+		method: 'POST',
+		body: {
+			properties: input.properties,
 		},
-	);
+	});
 
 	if (result.spreadsheetId && ctx.db.spreadsheets) {
 		try {

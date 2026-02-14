@@ -1,37 +1,35 @@
 import { logEventFromContext } from '../../utils/events';
 import type { GoogleDriveBoundEndpoints, GoogleDriveEndpoints } from '..';
 import { makeGoogleDriveRequest } from '../client';
-import type { File, FileList } from '../types';
 import type { GoogleDriveEndpointOutputs } from './types';
 
 export const list: GoogleDriveEndpoints['filesList'] = async (ctx, input) => {
-	const result = await makeGoogleDriveRequest<GoogleDriveEndpointOutputs['filesList']>(
-		'/files',
-		ctx.key,
-		{
-			method: 'GET',
-			query: {
-				q: input.q,
-				pageSize: input.pageSize,
-				pageToken: input.pageToken,
-				spaces: input.spaces,
-				corpora: input.corpora,
-				driveId: input.driveId,
-				includeItemsFromAllDrives: input.includeItemsFromAllDrives,
-				includePermissionsForView: input.includePermissionsForView,
-				orderBy: input.orderBy,
-				supportsAllDrives: input.supportsAllDrives,
-				supportsTeamDrives: input.supportsTeamDrives,
-				teamDriveId: input.teamDriveId,
-			},
+	const result = await makeGoogleDriveRequest<
+		GoogleDriveEndpointOutputs['filesList']
+	>('/files', ctx.key, {
+		method: 'GET',
+		query: {
+			q: input.q,
+			pageSize: input.pageSize,
+			pageToken: input.pageToken,
+			spaces: input.spaces,
+			corpora: input.corpora,
+			driveId: input.driveId,
+			includeItemsFromAllDrives: input.includeItemsFromAllDrives,
+			includePermissionsForView: input.includePermissionsForView,
+			orderBy: input.orderBy,
+			supportsAllDrives: input.supportsAllDrives,
+			supportsTeamDrives: input.supportsTeamDrives,
+			teamDriveId: input.teamDriveId,
 		},
-	);
+	});
 
 	if (result.files && ctx.db.files) {
 		try {
 			for (const file of result.files) {
 				if (file.id) {
-					const isFolder = file.mimeType === 'application/vnd.google-apps.folder';
+					const isFolder =
+						file.mimeType === 'application/vnd.google-apps.folder';
 					if (isFolder && ctx.db.folders) {
 						await ctx.db.folders.upsertByEntityId(file.id, {
 							...file,
@@ -62,19 +60,17 @@ export const list: GoogleDriveEndpoints['filesList'] = async (ctx, input) => {
 };
 
 export const get: GoogleDriveEndpoints['filesGet'] = async (ctx, input) => {
-	const result = await makeGoogleDriveRequest<GoogleDriveEndpointOutputs['filesGet']>(
-		`/files/${input.fileId}`,
-		ctx.key,
-		{
-			method: 'GET',
-			query: {
-				acknowledgeAbuse: input.acknowledgeAbuse,
-				supportsAllDrives: input.supportsAllDrives,
-				supportsTeamDrives: input.supportsTeamDrives,
-				includePermissionsForView: input.includePermissionsForView,
-			},
+	const result = await makeGoogleDriveRequest<
+		GoogleDriveEndpointOutputs['filesGet']
+	>(`/files/${input.fileId}`, ctx.key, {
+		method: 'GET',
+		query: {
+			acknowledgeAbuse: input.acknowledgeAbuse,
+			supportsAllDrives: input.supportsAllDrives,
+			supportsTeamDrives: input.supportsTeamDrives,
+			includePermissionsForView: input.includePermissionsForView,
 		},
-	);
+	});
 
 	if (result.id) {
 		const isFolder = result.mimeType === 'application/vnd.google-apps.folder';
@@ -106,21 +102,18 @@ export const get: GoogleDriveEndpoints['filesGet'] = async (ctx, input) => {
 	return result;
 };
 
-export const createFromText: GoogleDriveEndpoints['filesCreateFromText'] = async (
-	ctx,
-	input,
-) => {
-	const fileMetadata = {
-		name: input.name,
-		mimeType: input.mimeType || 'text/plain',
-		parents: input.parents,
-		description: input.description,
-	};
+export const createFromText: GoogleDriveEndpoints['filesCreateFromText'] =
+	async (ctx, input) => {
+		const fileMetadata = {
+			name: input.name,
+			mimeType: input.mimeType || 'text/plain',
+			parents: input.parents,
+			description: input.description,
+		};
 
-	const result = await makeGoogleDriveRequest<GoogleDriveEndpointOutputs['filesCreateFromText']>(
-		'/files',
-		ctx.key,
-		{
+		const result = await makeGoogleDriveRequest<
+			GoogleDriveEndpointOutputs['filesCreateFromText']
+		>('/files', ctx.key, {
 			method: 'POST',
 			body: {
 				...fileMetadata,
@@ -128,24 +121,26 @@ export const createFromText: GoogleDriveEndpoints['filesCreateFromText'] = async
 			query: {
 				uploadType: 'multipart',
 			},
-		},
-	);
+		});
 
-	if (result.id) {
-		const endpoints = ctx.endpoints as GoogleDriveBoundEndpoints;
-		await endpoints.files.get({ fileId: result.id });
-	}
+		if (result.id) {
+			const endpoints = ctx.endpoints as GoogleDriveBoundEndpoints;
+			await endpoints.files.get({ fileId: result.id });
+		}
 
-	await logEventFromContext(
-		ctx,
-		'googledrive.files.createFromText',
-		{ ...input },
-		'completed',
-	);
-	return result;
-};
+		await logEventFromContext(
+			ctx,
+			'googledrive.files.createFromText',
+			{ ...input },
+			'completed',
+		);
+		return result;
+	};
 
-export const upload: GoogleDriveEndpoints['filesUpload'] = async (ctx, input) => {
+export const upload: GoogleDriveEndpoints['filesUpload'] = async (
+	ctx,
+	input,
+) => {
 	const fileMetadata = {
 		name: input.name,
 		mimeType: input.mimeType,
@@ -153,19 +148,17 @@ export const upload: GoogleDriveEndpoints['filesUpload'] = async (ctx, input) =>
 		description: input.description,
 	};
 
-	const result = await makeGoogleDriveRequest<GoogleDriveEndpointOutputs['filesUpload']>(
-		'/files',
-		ctx.key,
-		{
-			method: 'POST',
-			body: {
-				...fileMetadata,
-			},
-			query: {
-				uploadType: 'multipart',
-			},
+	const result = await makeGoogleDriveRequest<
+		GoogleDriveEndpointOutputs['filesUpload']
+	>('/files', ctx.key, {
+		method: 'POST',
+		body: {
+			...fileMetadata,
 		},
-	);
+		query: {
+			uploadType: 'multipart',
+		},
+	});
 
 	if (result.id) {
 		const endpoints = ctx.endpoints as GoogleDriveBoundEndpoints;
@@ -181,29 +174,30 @@ export const upload: GoogleDriveEndpoints['filesUpload'] = async (ctx, input) =>
 	return result;
 };
 
-export const update: GoogleDriveEndpoints['filesUpdate'] = async (ctx, input) => {
-	const result = await makeGoogleDriveRequest<GoogleDriveEndpointOutputs['filesUpdate']>(
-		`/files/${input.fileId}`,
-		ctx.key,
-		{
-			method: 'PATCH',
-			body: {
-				name: input.name,
-				description: input.description,
-				starred: input.starred,
-				trashed: input.trashed,
-				parents: input.parents,
-				properties: input.properties,
-				appProperties: input.appProperties,
-			},
-			query: {
-				addParents: input.addParents,
-				removeParents: input.removeParents,
-				supportsAllDrives: input.supportsAllDrives,
-				supportsTeamDrives: input.supportsTeamDrives,
-			},
+export const update: GoogleDriveEndpoints['filesUpdate'] = async (
+	ctx,
+	input,
+) => {
+	const result = await makeGoogleDriveRequest<
+		GoogleDriveEndpointOutputs['filesUpdate']
+	>(`/files/${input.fileId}`, ctx.key, {
+		method: 'PATCH',
+		body: {
+			name: input.name,
+			description: input.description,
+			starred: input.starred,
+			trashed: input.trashed,
+			parents: input.parents,
+			properties: input.properties,
+			appProperties: input.appProperties,
 		},
-	);
+		query: {
+			addParents: input.addParents,
+			removeParents: input.removeParents,
+			supportsAllDrives: input.supportsAllDrives,
+			supportsTeamDrives: input.supportsTeamDrives,
+		},
+	});
 
 	if (result.id) {
 		const endpoints = ctx.endpoints as GoogleDriveBoundEndpoints;
@@ -219,7 +213,10 @@ export const update: GoogleDriveEndpoints['filesUpdate'] = async (ctx, input) =>
 	return result;
 };
 
-export const deleteFile: GoogleDriveEndpoints['filesDelete'] = async (ctx, input) => {
+export const deleteFile: GoogleDriveEndpoints['filesDelete'] = async (
+	ctx,
+	input,
+) => {
 	await makeGoogleDriveRequest<GoogleDriveEndpointOutputs['filesDelete']>(
 		`/files/${input.fileId}`,
 		ctx.key,
@@ -249,21 +246,19 @@ export const deleteFile: GoogleDriveEndpoints['filesDelete'] = async (ctx, input
 };
 
 export const copy: GoogleDriveEndpoints['filesCopy'] = async (ctx, input) => {
-	const result = await makeGoogleDriveRequest<GoogleDriveEndpointOutputs['filesCopy']>(
-		`/files/${input.fileId}/copy`,
-		ctx.key,
-		{
-			method: 'POST',
-			body: {
-				name: input.name,
-				parents: input.parents,
-			},
-			query: {
-				supportsAllDrives: input.supportsAllDrives,
-				supportsTeamDrives: input.supportsTeamDrives,
-			},
+	const result = await makeGoogleDriveRequest<
+		GoogleDriveEndpointOutputs['filesCopy']
+	>(`/files/${input.fileId}/copy`, ctx.key, {
+		method: 'POST',
+		body: {
+			name: input.name,
+			parents: input.parents,
 		},
-	);
+		query: {
+			supportsAllDrives: input.supportsAllDrives,
+			supportsTeamDrives: input.supportsTeamDrives,
+		},
+	});
 
 	if (result.id) {
 		const endpoints = ctx.endpoints as GoogleDriveBoundEndpoints;
@@ -280,20 +275,18 @@ export const copy: GoogleDriveEndpoints['filesCopy'] = async (ctx, input) => {
 };
 
 export const move: GoogleDriveEndpoints['filesMove'] = async (ctx, input) => {
-	const result = await makeGoogleDriveRequest<GoogleDriveEndpointOutputs['filesMove']>(
-		`/files/${input.fileId}`,
-		ctx.key,
-		{
-			method: 'PATCH',
-			body: {},
-			query: {
-				addParents: input.addParents,
-				removeParents: input.removeParents,
-				supportsAllDrives: input.supportsAllDrives,
-				supportsTeamDrives: input.supportsTeamDrives,
-			},
+	const result = await makeGoogleDriveRequest<
+		GoogleDriveEndpointOutputs['filesMove']
+	>(`/files/${input.fileId}`, ctx.key, {
+		method: 'PATCH',
+		body: {},
+		query: {
+			addParents: input.addParents,
+			removeParents: input.removeParents,
+			supportsAllDrives: input.supportsAllDrives,
+			supportsTeamDrives: input.supportsTeamDrives,
 		},
-	);
+	});
 
 	if (result.id) {
 		const endpoints = ctx.endpoints as GoogleDriveBoundEndpoints;
@@ -309,18 +302,19 @@ export const move: GoogleDriveEndpoints['filesMove'] = async (ctx, input) => {
 	return result;
 };
 
-export const download: GoogleDriveEndpoints['filesDownload'] = async (ctx, input) => {
-	const result = await makeGoogleDriveRequest<GoogleDriveEndpointOutputs['filesDownload']>(
-		`/files/${input.fileId}`,
-		ctx.key,
-		{
-			method: 'GET',
-			query: {
-				alt: 'media',
-				acknowledgeAbuse: input.acknowledgeAbuse,
-			},
+export const download: GoogleDriveEndpoints['filesDownload'] = async (
+	ctx,
+	input,
+) => {
+	const result = await makeGoogleDriveRequest<
+		GoogleDriveEndpointOutputs['filesDownload']
+	>(`/files/${input.fileId}`, ctx.key, {
+		method: 'GET',
+		query: {
+			alt: 'media',
+			acknowledgeAbuse: input.acknowledgeAbuse,
 		},
-	);
+	});
 
 	await logEventFromContext(
 		ctx,
@@ -332,29 +326,27 @@ export const download: GoogleDriveEndpoints['filesDownload'] = async (ctx, input
 };
 
 export const share: GoogleDriveEndpoints['filesShare'] = async (ctx, input) => {
-	const result = await makeGoogleDriveRequest<GoogleDriveEndpointOutputs['filesShare']>(
-		`/files/${input.fileId}/permissions`,
-		ctx.key,
-		{
-			method: 'POST',
-			body: {
-				type: input.type,
-				role: input.role,
-				emailAddress: input.emailAddress,
-				domain: input.domain,
-				allowFileDiscovery: input.allowFileDiscovery,
-				expirationTime: input.expirationTime,
-				sendNotificationEmail: input.sendNotificationEmail,
-				emailMessage: input.emailMessage,
-			},
-			query: {
-				supportsAllDrives: input.supportsAllDrives,
-				supportsTeamDrives: input.supportsTeamDrives,
-				moveToNewOwnersRoot: input.moveToNewOwnersRoot,
-				transferOwnership: input.transferOwnership,
-			},
+	const result = await makeGoogleDriveRequest<
+		GoogleDriveEndpointOutputs['filesShare']
+	>(`/files/${input.fileId}/permissions`, ctx.key, {
+		method: 'POST',
+		body: {
+			type: input.type,
+			role: input.role,
+			emailAddress: input.emailAddress,
+			domain: input.domain,
+			allowFileDiscovery: input.allowFileDiscovery,
+			expirationTime: input.expirationTime,
+			sendNotificationEmail: input.sendNotificationEmail,
+			emailMessage: input.emailMessage,
 		},
-	);
+		query: {
+			supportsAllDrives: input.supportsAllDrives,
+			supportsTeamDrives: input.supportsTeamDrives,
+			moveToNewOwnersRoot: input.moveToNewOwnersRoot,
+			transferOwnership: input.transferOwnership,
+		},
+	});
 
 	await logEventFromContext(
 		ctx,

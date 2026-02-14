@@ -1,5 +1,8 @@
-import type { CorsairWebhookMatcher, RawWebhookRequest } from '../../../core/webhooks';
-import type { Change, ChangeList, File } from '../types';
+import type {
+	CorsairWebhookMatcher,
+	RawWebhookRequest,
+} from '../../../core/webhooks';
+import type { Change, File } from '../types';
 
 export type PubSubMessage = {
 	data?: string;
@@ -60,7 +63,9 @@ export function decodePubSubMessage(data: string): GoogleDrivePushNotification {
 	return JSON.parse(decodedData);
 }
 
-export function createGoogleDriveWebhookMatcher(eventType: GoogleDriveEventName): CorsairWebhookMatcher {
+export function createGoogleDriveWebhookMatcher(
+	eventType: GoogleDriveEventName,
+): CorsairWebhookMatcher {
 	return (request: RawWebhookRequest) => {
 		const body = request.body as PubSubNotification;
 		if (!body.message?.data) {

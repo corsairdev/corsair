@@ -57,7 +57,9 @@ export const GoogleCalendarEvent = z.object({
 	recurringEventId: z.string().optional(),
 	originalStartTime: EventDateTimeSchema.optional(),
 	transparency: z.enum(['opaque', 'transparent']).optional(),
-	visibility: z.enum(['default', 'public', 'private', 'confidential']).optional(),
+	visibility: z
+		.enum(['default', 'public', 'private', 'confidential'])
+		.optional(),
 	iCalUID: z.string().optional(),
 	sequence: z.number().optional(),
 	attendees: z.array(AttendeeSchema).optional(),
@@ -70,7 +72,9 @@ export const GoogleCalendarEvent = z.object({
 	guestsCanSeeOtherGuests: z.boolean().optional(),
 	privateCopy: z.boolean().optional(),
 	locked: z.boolean().optional(),
-	eventType: z.enum(['default', 'outOfOffice', 'focusTime', 'workingLocation']).optional(),
+	eventType: z
+		.enum(['default', 'outOfOffice', 'focusTime', 'workingLocation'])
+		.optional(),
 	calendarId: z.string().optional(),
 	createdAt: z.coerce.date().optional(),
 });

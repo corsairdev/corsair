@@ -55,12 +55,16 @@ afterAll(async () => {
 describe('Google Drive API Type Tests', () => {
 	describe('files', () => {
 		it('filesList returns correct type', async () => {
-			const response = await makeGoogleDriveRequest<FileList>('/files', TEST_TOKEN, {
-				method: 'GET',
-				query: {
-					pageSize: 10,
+			const response = await makeGoogleDriveRequest<FileList>(
+				'/files',
+				TEST_TOKEN,
+				{
+					method: 'GET',
+					query: {
+						pageSize: 10,
+					},
 				},
-			});
+			);
 			const result = response;
 
 			GoogleDriveEndpointOutputSchemas.filesList.parse(result);
@@ -103,10 +107,14 @@ describe('Google Drive API Type Tests', () => {
 				mimeType: 'text/plain',
 			};
 
-			const response = await makeGoogleDriveRequest<File>('/files', TEST_TOKEN, {
-				method: 'POST',
-				body: metadata,
-			});
+			const response = await makeGoogleDriveRequest<File>(
+				'/files',
+				TEST_TOKEN,
+				{
+					method: 'POST',
+					body: metadata,
+				},
+			);
 			const result = response;
 
 			if (result.id) {
@@ -118,13 +126,17 @@ describe('Google Drive API Type Tests', () => {
 
 		it('filesUpdate returns correct type', async () => {
 			const fileName = `test-file-update-${Date.now()}.txt`;
-			const createResponse = await makeGoogleDriveRequest<File>('/files', TEST_TOKEN, {
-				method: 'POST',
-				body: {
-					name: fileName,
-					mimeType: 'text/plain',
+			const createResponse = await makeGoogleDriveRequest<File>(
+				'/files',
+				TEST_TOKEN,
+				{
+					method: 'POST',
+					body: {
+						name: fileName,
+						mimeType: 'text/plain',
+					},
 				},
-			});
+			);
 
 			if (!createResponse.id) {
 				throw new Error('Failed to create test file');
@@ -149,13 +161,17 @@ describe('Google Drive API Type Tests', () => {
 
 		it('filesCopy returns correct type', async () => {
 			const fileName = `test-file-copy-${Date.now()}.txt`;
-			const createResponse = await makeGoogleDriveRequest<File>('/files', TEST_TOKEN, {
-				method: 'POST',
-				body: {
-					name: fileName,
-					mimeType: 'text/plain',
+			const createResponse = await makeGoogleDriveRequest<File>(
+				'/files',
+				TEST_TOKEN,
+				{
+					method: 'POST',
+					body: {
+						name: fileName,
+						mimeType: 'text/plain',
+					},
 				},
-			});
+			);
 
 			if (!createResponse.id) {
 				throw new Error('Failed to create test file');
@@ -184,13 +200,17 @@ describe('Google Drive API Type Tests', () => {
 
 		it('filesMove returns correct type', async () => {
 			const folderName = `test-folder-move-${Date.now()}`;
-			const folderResponse = await makeGoogleDriveRequest<File>('/files', TEST_TOKEN, {
-				method: 'POST',
-				body: {
-					name: folderName,
-					mimeType: 'application/vnd.google-apps.folder',
+			const folderResponse = await makeGoogleDriveRequest<File>(
+				'/files',
+				TEST_TOKEN,
+				{
+					method: 'POST',
+					body: {
+						name: folderName,
+						mimeType: 'application/vnd.google-apps.folder',
+					},
 				},
-			});
+			);
 
 			if (!folderResponse.id) {
 				throw new Error('Failed to create test folder');
@@ -198,13 +218,17 @@ describe('Google Drive API Type Tests', () => {
 			createdFolderIds.push(folderResponse.id);
 
 			const fileName = `test-file-move-${Date.now()}.txt`;
-			const fileResponse = await makeGoogleDriveRequest<File>('/files', TEST_TOKEN, {
-				method: 'POST',
-				body: {
-					name: fileName,
-					mimeType: 'text/plain',
+			const fileResponse = await makeGoogleDriveRequest<File>(
+				'/files',
+				TEST_TOKEN,
+				{
+					method: 'POST',
+					body: {
+						name: fileName,
+						mimeType: 'text/plain',
+					},
 				},
-			});
+			);
 
 			if (!fileResponse.id) {
 				throw new Error('Failed to create test file');
@@ -230,13 +254,17 @@ describe('Google Drive API Type Tests', () => {
 
 		it('filesShare returns correct type', async () => {
 			const fileName = `test-file-share-${Date.now()}.txt`;
-			const createResponse = await makeGoogleDriveRequest<File>('/files', TEST_TOKEN, {
-				method: 'POST',
-				body: {
-					name: fileName,
-					mimeType: 'text/plain',
+			const createResponse = await makeGoogleDriveRequest<File>(
+				'/files',
+				TEST_TOKEN,
+				{
+					method: 'POST',
+					body: {
+						name: fileName,
+						mimeType: 'text/plain',
+					},
 				},
-			});
+			);
 
 			if (!createResponse.id) {
 				throw new Error('Failed to create test file');
@@ -293,13 +321,17 @@ describe('Google Drive API Type Tests', () => {
 
 		it('filesDelete works correctly', async () => {
 			const fileName = `test-file-delete-${Date.now()}.txt`;
-			const createResponse = await makeGoogleDriveRequest<File>('/files', TEST_TOKEN, {
-				method: 'POST',
-				body: {
-					name: fileName,
-					mimeType: 'text/plain',
+			const createResponse = await makeGoogleDriveRequest<File>(
+				'/files',
+				TEST_TOKEN,
+				{
+					method: 'POST',
+					body: {
+						name: fileName,
+						mimeType: 'text/plain',
+					},
 				},
-			});
+			);
 
 			if (!createResponse.id) {
 				throw new Error('Failed to create test file');
@@ -316,13 +348,17 @@ describe('Google Drive API Type Tests', () => {
 	describe('folders', () => {
 		it('foldersCreate returns correct type', async () => {
 			const folderName = `test-folder-${Date.now()}`;
-			const response = await makeGoogleDriveRequest<File>('/files', TEST_TOKEN, {
-				method: 'POST',
-				body: {
-					name: folderName,
-					mimeType: 'application/vnd.google-apps.folder',
+			const response = await makeGoogleDriveRequest<File>(
+				'/files',
+				TEST_TOKEN,
+				{
+					method: 'POST',
+					body: {
+						name: folderName,
+						mimeType: 'application/vnd.google-apps.folder',
+					},
 				},
-			});
+			);
 			const result = response;
 
 			if (result.id) {
@@ -334,13 +370,17 @@ describe('Google Drive API Type Tests', () => {
 
 		it('foldersGet returns correct type', async () => {
 			const folderName = `test-folder-get-${Date.now()}`;
-			const createResponse = await makeGoogleDriveRequest<File>('/files', TEST_TOKEN, {
-				method: 'POST',
-				body: {
-					name: folderName,
-					mimeType: 'application/vnd.google-apps.folder',
+			const createResponse = await makeGoogleDriveRequest<File>(
+				'/files',
+				TEST_TOKEN,
+				{
+					method: 'POST',
+					body: {
+						name: folderName,
+						mimeType: 'application/vnd.google-apps.folder',
+					},
 				},
-			});
+			);
 
 			if (!createResponse.id) {
 				throw new Error('Failed to create test folder');
@@ -360,13 +400,17 @@ describe('Google Drive API Type Tests', () => {
 		});
 
 		it('foldersList returns correct type', async () => {
-			const response = await makeGoogleDriveRequest<FileList>('/files', TEST_TOKEN, {
-				method: 'GET',
-				query: {
-					q: "mimeType='application/vnd.google-apps.folder'",
-					pageSize: 10,
+			const response = await makeGoogleDriveRequest<FileList>(
+				'/files',
+				TEST_TOKEN,
+				{
+					method: 'GET',
+					query: {
+						q: "mimeType='application/vnd.google-apps.folder'",
+						pageSize: 10,
+					},
 				},
-			});
+			);
 			const result = response;
 
 			GoogleDriveEndpointOutputSchemas.foldersList.parse(result);
@@ -374,13 +418,17 @@ describe('Google Drive API Type Tests', () => {
 
 		it('foldersShare returns correct type', async () => {
 			const folderName = `test-folder-share-${Date.now()}`;
-			const createResponse = await makeGoogleDriveRequest<File>('/files', TEST_TOKEN, {
-				method: 'POST',
-				body: {
-					name: folderName,
-					mimeType: 'application/vnd.google-apps.folder',
+			const createResponse = await makeGoogleDriveRequest<File>(
+				'/files',
+				TEST_TOKEN,
+				{
+					method: 'POST',
+					body: {
+						name: folderName,
+						mimeType: 'application/vnd.google-apps.folder',
+					},
 				},
-			});
+			);
 
 			if (!createResponse.id) {
 				throw new Error('Failed to create test folder');
@@ -405,13 +453,17 @@ describe('Google Drive API Type Tests', () => {
 
 		it('foldersDelete works correctly', async () => {
 			const folderName = `test-folder-delete-${Date.now()}`;
-			const createResponse = await makeGoogleDriveRequest<File>('/files', TEST_TOKEN, {
-				method: 'POST',
-				body: {
-					name: folderName,
-					mimeType: 'application/vnd.google-apps.folder',
+			const createResponse = await makeGoogleDriveRequest<File>(
+				'/files',
+				TEST_TOKEN,
+				{
+					method: 'POST',
+					body: {
+						name: folderName,
+						mimeType: 'application/vnd.google-apps.folder',
+					},
 				},
-			});
+			);
 
 			if (!createResponse.id) {
 				throw new Error('Failed to create test folder');
@@ -430,15 +482,19 @@ describe('Google Drive API Type Tests', () => {
 			const driveName = `test-drive-${Date.now()}`;
 			const requestId = `req-${Date.now()}`;
 			try {
-				const response = await makeGoogleDriveRequest<SharedDrive>('/drives', TEST_TOKEN, {
-					method: 'POST',
-					body: {
-						name: driveName,
+				const response = await makeGoogleDriveRequest<SharedDrive>(
+					'/drives',
+					TEST_TOKEN,
+					{
+						method: 'POST',
+						body: {
+							name: driveName,
+						},
+						query: {
+							requestId,
+						},
 					},
-					query: {
-						requestId,
-					},
-				});
+				);
 				const result = response;
 
 				if (result.id) {
@@ -589,25 +645,33 @@ describe('Google Drive API Type Tests', () => {
 	describe('search', () => {
 		it('searchFilesAndFolders returns correct type', async () => {
 			const fileName = `test-search-${Date.now()}.txt`;
-			const createResponse = await makeGoogleDriveRequest<File>('/files', TEST_TOKEN, {
-				method: 'POST',
-				body: {
-					name: fileName,
-					mimeType: 'text/plain',
+			const createResponse = await makeGoogleDriveRequest<File>(
+				'/files',
+				TEST_TOKEN,
+				{
+					method: 'POST',
+					body: {
+						name: fileName,
+						mimeType: 'text/plain',
+					},
 				},
-			});
+			);
 
 			if (createResponse.id) {
 				createdFileIds.push(createResponse.id);
 			}
 
-			const response = await makeGoogleDriveRequest<FileList>('/files', TEST_TOKEN, {
-				method: 'GET',
-				query: {
-					q: `name contains 'test-search'`,
-					pageSize: 10,
+			const response = await makeGoogleDriveRequest<FileList>(
+				'/files',
+				TEST_TOKEN,
+				{
+					method: 'GET',
+					query: {
+						q: `name contains 'test-search'`,
+						pageSize: 10,
+					},
 				},
-			});
+			);
 			const result = response;
 
 			GoogleDriveEndpointOutputSchemas.searchFilesAndFolders.parse(result);

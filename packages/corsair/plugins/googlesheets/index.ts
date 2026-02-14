@@ -10,14 +10,14 @@ import type {
 import type { AuthTypes, PickAuth } from '../../core/constants';
 import { getValidAccessToken } from './client';
 import type { GoogleSheetsEndpointOutputs } from './endpoints';
-import { SpreadsheetsEndpoints, SheetsEndpoints } from './endpoints';
+import { SheetsEndpoints, SpreadsheetsEndpoints } from './endpoints';
 import { GoogleSheetsSchema } from './schema';
 import type {
 	GoogleSheetsWebhookOutputs,
 	GoogleSheetsWebhookPayload,
 	RowAddedEvent,
-	RowUpdatedEvent,
 	RowAddedOrUpdatedEvent,
+	RowUpdatedEvent,
 } from './webhooks';
 import { RowWebhooks } from './webhooks';
 
@@ -126,14 +126,18 @@ export type GoogleSheetsEndpoints = {
 	>;
 };
 
-export type GoogleSheetsBoundEndpoints = BindEndpoints<typeof googleSheetsEndpointsNested>;
+export type GoogleSheetsBoundEndpoints = BindEndpoints<
+	typeof googleSheetsEndpointsNested
+>;
 
-type GoogleSheetsWebhook<K extends keyof GoogleSheetsWebhookOutputs, TEvent> =
-	CorsairWebhook<
-		GoogleSheetsContext,
-		GoogleSheetsWebhookPayload,
-		GoogleSheetsWebhookOutputs[K]
-	>;
+type GoogleSheetsWebhook<
+	K extends keyof GoogleSheetsWebhookOutputs,
+	TEvent,
+> = CorsairWebhook<
+	GoogleSheetsContext,
+	GoogleSheetsWebhookPayload,
+	GoogleSheetsWebhookOutputs[K]
+>;
 
 export type GoogleSheetsWebhooks = {
 	rowAdded: GoogleSheetsWebhook<'rowAdded', RowAddedEvent>;
@@ -144,7 +148,9 @@ export type GoogleSheetsWebhooks = {
 	>;
 };
 
-export type GoogleSheetsBoundWebhooks = BindWebhooks<typeof googleSheetsWebhooksNested>;
+export type GoogleSheetsBoundWebhooks = BindWebhooks<
+	typeof googleSheetsWebhooksNested
+>;
 
 const googleSheetsEndpointsNested = {
 	spreadsheets: {
@@ -180,7 +186,8 @@ export type GoogleSheetsPluginOptions = {
 	webhookHooks?: InternalGoogleSheetsPlugin['webhookHooks'];
 };
 
-export type GoogleSheetsKeyBuilderContext = KeyBuilderContext<GoogleSheetsPluginOptions>;
+export type GoogleSheetsKeyBuilderContext =
+	KeyBuilderContext<GoogleSheetsPluginOptions>;
 
 const defaultAuthType: AuthTypes = 'oauth_2';
 
@@ -194,13 +201,15 @@ export type BaseGoogleSheetsPlugin<T extends GoogleSheetsPluginOptions> =
 		typeof defaultAuthType
 	>;
 
-export type InternalGoogleSheetsPlugin = BaseGoogleSheetsPlugin<GoogleSheetsPluginOptions>;
+export type InternalGoogleSheetsPlugin =
+	BaseGoogleSheetsPlugin<GoogleSheetsPluginOptions>;
 
 export type ExternalGoogleSheetsPlugin<T extends GoogleSheetsPluginOptions> =
 	BaseGoogleSheetsPlugin<T>;
 
 export function googlesheets<const T extends GoogleSheetsPluginOptions>(
-	incomingOptions: GoogleSheetsPluginOptions & T = {} as GoogleSheetsPluginOptions & T,
+	incomingOptions: GoogleSheetsPluginOptions &
+		T = {} as GoogleSheetsPluginOptions & T,
 ): ExternalGoogleSheetsPlugin<T> {
 	const options = {
 		...incomingOptions,

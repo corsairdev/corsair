@@ -39,11 +39,14 @@ const slugToFilePath: Record<string, string> = {
 	'plugins/gmail': 'plugins/gmail/main.mdx',
 	'plugins/gmail/get-credentials': 'plugins/gmail/get-credentials.mdx',
 	'plugins/googlesheets': 'plugins/googlesheets/main.mdx',
-	'plugins/googlesheets/get-credentials': 'plugins/googlesheets/get-credentials.mdx',
+	'plugins/googlesheets/get-credentials':
+		'plugins/googlesheets/get-credentials.mdx',
 	'plugins/googledrive': 'plugins/googledrive/main.mdx',
-	'plugins/googledrive/get-credentials': 'plugins/googledrive/get-credentials.mdx',
+	'plugins/googledrive/get-credentials':
+		'plugins/googledrive/get-credentials.mdx',
 	'plugins/googlecalendar': 'plugins/googlecalendar/main.mdx',
-	'plugins/googlecalendar/get-credentials': 'plugins/googlecalendar/get-credentials.mdx',
+	'plugins/googlecalendar/get-credentials':
+		'plugins/googlecalendar/get-credentials.mdx',
 	'plugins/hubspot': 'plugins/hubspot/main.mdx',
 	'plugins/hubspot/get-credentials': 'plugins/hubspot/get-credentials.mdx',
 	'plugins/posthog': 'plugins/posthog/main.mdx',

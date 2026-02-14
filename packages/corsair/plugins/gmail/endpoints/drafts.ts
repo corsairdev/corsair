@@ -1,5 +1,5 @@
 import { logEventFromContext } from '../../utils/events';
-import type { GmailBoundEndpoints, GmailBoundWebhooks, GmailEndpoints } from '..';
+import type { GmailBoundEndpoints, GmailEndpoints } from '..';
 import { makeGmailRequest } from '../client';
 import type { GmailEndpointOutputs } from './types';
 

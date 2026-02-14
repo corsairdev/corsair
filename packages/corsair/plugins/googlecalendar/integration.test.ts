@@ -1,8 +1,9 @@
+import dotenv from 'dotenv';
 import { createCorsair } from '../../core';
 import { createIntegrationAndAccount } from '../../tests/plugins-test-utils';
 import { createTestDatabase } from '../../tests/setup-db';
 import { googlecalendar } from './index';
-import dotenv from 'dotenv';
+
 dotenv.config();
 
 async function createGoogleCalendarClient() {

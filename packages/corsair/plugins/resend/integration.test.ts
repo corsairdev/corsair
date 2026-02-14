@@ -52,7 +52,7 @@ describe('Resend plugin integration', () => {
 			html: '<p>Test</p>',
 		};
 
-		let sent;
+		let sent: any;
 		try {
 			sent = await corsair.resend.api.emails.send(sendInput);
 		} catch (error) {
