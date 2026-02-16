@@ -14,7 +14,7 @@ export const get: HubSpotEndpoints['companiesGet'] = async (ctx, input) => {
 	const endpoint = `/crm/v3/objects/companies/${companyId}`;
 	const result = await makeHubSpotRequest<GetCompanyResponse>(
 		endpoint,
-		ctx.options.token,
+		ctx.key,
 		{
 			query: {
 				...queryParams,
@@ -50,7 +50,7 @@ export const getMany: HubSpotEndpoints['companiesGetMany'] = async (
 	const endpoint = '/crm/v3/objects/companies';
 	const result = await makeHubSpotRequest<GetManyCompaniesResponse>(
 		endpoint,
-		ctx.options.token,
+		ctx.key,
 		{
 			query: {
 				...queryParams,
@@ -88,7 +88,7 @@ export const create: HubSpotEndpoints['companiesCreate'] = async (
 	const endpoint = '/crm/v3/objects/companies';
 	const result = await makeHubSpotRequest<CreateCompanyResponse>(
 		endpoint,
-		ctx.options.token,
+		ctx.key,
 		{ method: 'POST', body },
 	);
 
@@ -117,7 +117,7 @@ export const update: HubSpotEndpoints['companiesUpdate'] = async (
 	const endpoint = `/crm/v3/objects/companies/${companyId}`;
 	const result = await makeHubSpotRequest<UpdateCompanyResponse>(
 		endpoint,
-		ctx.options.token,
+		ctx.key,
 		{ method: 'PATCH', body },
 	);
 
@@ -144,7 +144,7 @@ export const deleteCompany: HubSpotEndpoints['companiesDelete'] = async (
 ) => {
 	const { companyId } = input;
 	const endpoint = `/crm/v3/objects/companies/${companyId}`;
-	await makeHubSpotRequest<void>(endpoint, ctx.options.token, {
+	await makeHubSpotRequest<void>(endpoint, ctx.key, {
 		method: 'DELETE',
 	});
 
@@ -170,7 +170,7 @@ export const getRecentlyCreated: HubSpotEndpoints['companiesGetRecentlyCreated']
 		const endpoint = '/crm/v3/objects/companies';
 		const result = await makeHubSpotRequest<GetManyCompaniesResponse>(
 			endpoint,
-			ctx.options.token,
+			ctx.key,
 			{ query: queryParams },
 		);
 
@@ -199,7 +199,7 @@ export const getRecentlyUpdated: HubSpotEndpoints['companiesGetRecentlyUpdated']
 		const endpoint = '/crm/v3/objects/companies';
 		const result = await makeHubSpotRequest<GetManyCompaniesResponse>(
 			endpoint,
-			ctx.options.token,
+			ctx.key,
 			{ query: queryParams },
 		);
 
@@ -228,7 +228,7 @@ export const searchByDomain: HubSpotEndpoints['companiesSearchByDomain'] =
 		const endpoint = '/crm/v3/objects/companies/search';
 		const result = await makeHubSpotRequest<SearchCompanyByDomainResponse>(
 			endpoint,
-			ctx.options.token,
+			ctx.key,
 			{
 				query: {
 					...queryParams,

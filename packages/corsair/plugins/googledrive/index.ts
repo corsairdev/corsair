@@ -6,6 +6,7 @@ import type {
 	CorsairPluginContext,
 	CorsairWebhook,
 	KeyBuilderContext,
+	RawWebhookRequest,
 } from '../../core';
 import type { AuthTypes, PickAuth } from '../../core/constants';
 import { getValidAccessToken } from './client';
@@ -18,8 +19,6 @@ import {
 } from './endpoints';
 import { GoogleDriveSchema } from './schema';
 import type {
-	FileChangedEvent,
-	FolderChangedEvent,
 	GoogleDriveWebhookOutputs,
 	GoogleDriveWebhookPayload,
 } from './webhooks';
@@ -300,18 +299,16 @@ export type GoogleDriveBoundEndpoints = BindEndpoints<
 	typeof googleDriveEndpointsNested
 >;
 
-type GoogleDriveWebhook<
-	K extends keyof GoogleDriveWebhookOutputs,
-	TEvent,
-> = CorsairWebhook<
-	GoogleDriveContext,
-	GoogleDriveWebhookPayload,
-	GoogleDriveWebhookOutputs[K]
->;
+type GoogleDriveWebhook<K extends keyof GoogleDriveWebhookOutputs> =
+	CorsairWebhook<
+		GoogleDriveContext,
+		GoogleDriveWebhookPayload,
+		GoogleDriveWebhookOutputs[K]
+	>;
 
 export type GoogleDriveWebhooks = {
-	fileChanged: GoogleDriveWebhook<'fileChanged', FileChangedEvent>;
-	folderChanged: GoogleDriveWebhook<'folderChanged', FolderChangedEvent>;
+	fileChanged: GoogleDriveWebhook<'fileChanged'>;
+	folderChanged: GoogleDriveWebhook<'folderChanged'>;
 };
 
 export type GoogleDriveBoundWebhooks = BindWebhooks<
@@ -353,10 +350,7 @@ const googleDriveEndpointsNested = {
 const googleDriveWebhooksNested = {
 	fileChanged: ChangeWebhooks.fileChanged,
 	folderChanged: ChangeWebhooks.folderChanged,
-} as unknown as {
-	fileChanged: GoogleDriveWebhooks['fileChanged'];
-	folderChanged: GoogleDriveWebhooks['folderChanged'];
-};
+} as const;
 
 export type GoogleDrivePluginOptions = {
 	authType?: PickAuth<'oauth_2'>;
@@ -433,11 +427,35 @@ export function googledrive<const T extends GoogleDrivePluginOptions>(
 
 			return '';
 		},
-		pluginWebhookMatcher: (
-			request: import('../../core/webhooks').RawWebhookRequest,
-		) => {
+		pluginWebhookMatcher: (request: RawWebhookRequest) => {
 			const body = request.body as Record<string, unknown>;
 			return (body?.message as Record<string, unknown>)?.data !== undefined;
 		},
 	} satisfies InternalGoogleDrivePlugin;
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Webhook Type Exports
+// ─────────────────────────────────────────────────────────────────────────────
+
+export type {
+	FileChangedEvent,
+	FolderChangedEvent,
+	GoogleDriveEventName,
+	GoogleDrivePushNotification,
+	GoogleDriveWebhookEvent,
+	GoogleDriveWebhookOutputs,
+	GoogleDriveWebhookPayload,
+	PubSubMessage,
+	PubSubNotification,
+} from './webhooks/types';
+export {
+	createGoogleDriveWebhookMatcher,
+	decodePubSubMessage,
+} from './webhooks/types';
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Endpoint Type Exports
+// ─────────────────────────────────────────────────────────────────────────────
+
+export type { GoogleDriveEndpointOutputs } from './endpoints/types';

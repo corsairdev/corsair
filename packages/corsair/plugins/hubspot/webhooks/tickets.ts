@@ -1,9 +1,4 @@
 import type { HubSpotWebhooks } from '..';
-import type {
-	TicketCreatedEventType,
-	TicketDeletedEventType,
-	TicketUpdatedEventType,
-} from './types';
 import {
 	createHubSpotEventMatch,
 	verifyHubSpotWebhookSignature,
@@ -23,10 +18,9 @@ export const ticketCreated: HubSpotWebhooks['ticketCreated'] = {
 			};
 		}
 
-		const payload = request.payload as
-			| TicketCreatedEventType
-			| Array<TicketCreatedEventType>;
-		const events = Array.isArray(payload) ? payload : [payload];
+		const events = Array.isArray(request.payload)
+			? request.payload
+			: [request.payload];
 
 		for (const event of events) {
 			if (event.subscriptionType !== 'ticket.creation') continue;
@@ -71,10 +65,9 @@ export const ticketUpdated: HubSpotWebhooks['ticketUpdated'] = {
 			};
 		}
 
-		const payload = request.payload as
-			| TicketUpdatedEventType
-			| Array<TicketUpdatedEventType>;
-		const events = Array.isArray(payload) ? payload : [payload];
+		const events = Array.isArray(request.payload)
+			? request.payload
+			: [request.payload];
 
 		for (const event of events) {
 			if (event.subscriptionType !== 'ticket.propertyChange') continue;
@@ -126,10 +119,9 @@ export const ticketDeleted: HubSpotWebhooks['ticketDeleted'] = {
 			};
 		}
 
-		const payload = request.payload as
-			| TicketDeletedEventType
-			| Array<TicketDeletedEventType>;
-		const events = Array.isArray(payload) ? payload : [payload];
+		const events = Array.isArray(request.payload)
+			? request.payload
+			: [request.payload];
 
 		for (const event of events) {
 			if (event.subscriptionType !== 'ticket.deletion') continue;

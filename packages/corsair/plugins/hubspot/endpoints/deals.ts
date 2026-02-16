@@ -11,18 +11,14 @@ import type {
 export const get: HubSpotEndpoints['dealsGet'] = async (ctx, input) => {
 	const { dealId, ...queryParams } = input;
 	const endpoint = `/crm/v3/objects/deals/${dealId}`;
-	const result = await makeHubSpotRequest<GetDealResponse>(
-		endpoint,
-		ctx.options.token,
-		{
-			query: {
-				...queryParams,
-				properties: queryParams.properties?.join(','),
-				propertiesWithHistory: queryParams.propertiesWithHistory?.join(','),
-				associations: queryParams.associations?.join(','),
-			} as any,
-		},
-	);
+	const result = await makeHubSpotRequest<GetDealResponse>(endpoint, ctx.key, {
+		query: {
+			...queryParams,
+			properties: queryParams.properties?.join(','),
+			propertiesWithHistory: queryParams.propertiesWithHistory?.join(','),
+			associations: queryParams.associations?.join(','),
+		} as any,
+	});
 
 	if (result && ctx.db.deals) {
 		try {
@@ -46,7 +42,7 @@ export const getMany: HubSpotEndpoints['dealsGetMany'] = async (ctx, input) => {
 	const endpoint = '/crm/v3/objects/deals';
 	const result = await makeHubSpotRequest<GetManyDealsResponse>(
 		endpoint,
-		ctx.options.token,
+		ctx.key,
 		{
 			query: {
 				...queryParams,
@@ -81,7 +77,7 @@ export const create: HubSpotEndpoints['dealsCreate'] = async (ctx, input) => {
 	const endpoint = '/crm/v3/objects/deals';
 	const result = await makeHubSpotRequest<CreateDealResponse>(
 		endpoint,
-		ctx.options.token,
+		ctx.key,
 		{ method: 'POST', body },
 	);
 
@@ -107,7 +103,7 @@ export const update: HubSpotEndpoints['dealsUpdate'] = async (ctx, input) => {
 	const endpoint = `/crm/v3/objects/deals/${dealId}`;
 	const result = await makeHubSpotRequest<UpdateDealResponse>(
 		endpoint,
-		ctx.options.token,
+		ctx.key,
 		{ method: 'PATCH', body },
 	);
 
@@ -134,7 +130,7 @@ export const deleteDeal: HubSpotEndpoints['dealsDelete'] = async (
 ) => {
 	const { dealId } = input;
 	const endpoint = `/crm/v3/objects/deals/${dealId}`;
-	await makeHubSpotRequest<void>(endpoint, ctx.options.token, {
+	await makeHubSpotRequest<void>(endpoint, ctx.key, {
 		method: 'DELETE',
 	});
 
@@ -160,7 +156,7 @@ export const getRecentlyCreated: HubSpotEndpoints['dealsGetRecentlyCreated'] =
 		const endpoint = '/crm/v3/objects/deals';
 		const result = await makeHubSpotRequest<GetManyDealsResponse>(
 			endpoint,
-			ctx.options.token,
+			ctx.key,
 			{ query: queryParams },
 		);
 
@@ -179,7 +175,7 @@ export const getRecentlyUpdated: HubSpotEndpoints['dealsGetRecentlyUpdated'] =
 		const endpoint = '/crm/v3/objects/deals';
 		const result = await makeHubSpotRequest<GetManyDealsResponse>(
 			endpoint,
-			ctx.options.token,
+			ctx.key,
 			{ query: queryParams },
 		);
 
@@ -197,7 +193,7 @@ export const search: HubSpotEndpoints['dealsSearch'] = async (ctx, input) => {
 	const endpoint = '/crm/v3/objects/deals/search';
 	const result = await makeHubSpotRequest<GetManyDealsResponse>(
 		endpoint,
-		ctx.options.token,
+		ctx.key,
 		{ method: 'POST', body },
 	);
 

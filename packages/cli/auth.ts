@@ -1,18 +1,18 @@
 import * as p from '@clack/prompts';
 import type {
 	AuthTypes,
-	CorsairDatabase,
 	CorsairInternalConfig,
 	CorsairPlugin,
-} from 'corsair';
+} from 'corsair/core';
 import {
 	CORSAIR_INTERNAL,
 	createAccountKeyManager,
-	createCorsairOrm,
 	createIntegrationKeyManager,
 	encryptDEK,
 	generateDEK,
-} from 'corsair';
+} from 'corsair/core';
+import type { CorsairDatabase } from 'corsair/db';
+import { createCorsairOrm } from 'corsair/orm';
 import { getCorsairInstance } from './index';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -273,7 +273,10 @@ function getActionsForAuthType(authType: AuthTypes | undefined): ActionDef[] {
 // Helpers
 // ─────────────────────────────────────────────────────────────────────────────
 
-function maskValue(value: string): string {
+function maskValue(value: string, mask = false): string {
+	if (!mask) {
+		return value;
+	}
 	if (value.length <= 9) return '***';
 	return `${value.slice(0, 6)}...${value.slice(-3)}`;
 }

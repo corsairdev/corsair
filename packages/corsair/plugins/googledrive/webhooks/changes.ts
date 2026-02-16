@@ -44,7 +44,7 @@ async function fetchChanges(
 export const fileChanged: GoogleDriveWebhooks['fileChanged'] = {
 	match: createGoogleDriveWebhookMatcher('fileChanged'),
 	handler: async (ctx, request) => {
-		const body = request.payload as PubSubNotification;
+		const body = request.payload;
 
 		if (!body.message?.data) {
 			return {
@@ -176,7 +176,7 @@ export const fileChanged: GoogleDriveWebhooks['fileChanged'] = {
 export const folderChanged: GoogleDriveWebhooks['folderChanged'] = {
 	match: createGoogleDriveWebhookMatcher('folderChanged'),
 	handler: async (ctx, request) => {
-		const body = request.payload as PubSubNotification;
+		const body = request.payload;
 
 		if (!body.message?.data) {
 			return {

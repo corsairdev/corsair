@@ -1,5 +1,4 @@
 import type { GithubWebhooks } from '..';
-import type { StarCreatedEvent, StarDeletedEvent } from './types';
 import { createGithubEventMatch, verifyGithubWebhookSignature } from './types';
 
 export const starCreated: GithubWebhooks['starCreated'] = {
@@ -16,7 +15,7 @@ export const starCreated: GithubWebhooks['starCreated'] = {
 			};
 		}
 
-		const event = request.payload as StarCreatedEvent;
+		const event = request.payload;
 
 		if (event.action !== 'created') {
 			return {
@@ -51,7 +50,7 @@ export const starDeleted: GithubWebhooks['starDeleted'] = {
 			};
 		}
 
-		const event = request.payload as StarDeletedEvent;
+		const event = request.payload;
 
 		if (event.action !== 'deleted') {
 			return {

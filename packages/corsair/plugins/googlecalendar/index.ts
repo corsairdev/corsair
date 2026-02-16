@@ -6,6 +6,7 @@ import type {
 	CorsairPluginContext,
 	CorsairWebhook,
 	KeyBuilderContext,
+	RawWebhookRequest,
 } from '../../core';
 import type { AuthTypes, PickAuth } from '../../core/constants';
 import { getValidAccessToken } from './client';
@@ -14,11 +15,6 @@ import { CalendarEndpoints, EventsEndpoints } from './endpoints';
 import { GoogleCalendarSchema } from './schema';
 import type { Event } from './types';
 import type {
-	EventCreatedEvent,
-	EventDeletedEvent,
-	EventEndedEvent,
-	EventStartedEvent,
-	EventUpdatedEvent,
 	GoogleCalendarWebhookOutputs,
 	GoogleCalendarWebhookPayload,
 } from './webhooks';
@@ -119,21 +115,19 @@ export type GoogleCalendarBoundEndpoints = BindEndpoints<
 	typeof googleCalendarEndpointsNested
 >;
 
-type GoogleCalendarWebhook<
-	K extends keyof GoogleCalendarWebhookOutputs,
-	TEvent,
-> = CorsairWebhook<
-	GoogleCalendarContext,
-	GoogleCalendarWebhookPayload,
-	GoogleCalendarWebhookOutputs[K]
->;
+type GoogleCalendarWebhook<K extends keyof GoogleCalendarWebhookOutputs> =
+	CorsairWebhook<
+		GoogleCalendarContext,
+		GoogleCalendarWebhookPayload,
+		GoogleCalendarWebhookOutputs[K]
+	>;
 
 export type GoogleCalendarWebhooks = {
-	onEventCreated: GoogleCalendarWebhook<'eventCreated', EventCreatedEvent>;
-	onEventUpdated: GoogleCalendarWebhook<'eventUpdated', EventUpdatedEvent>;
-	onEventDeleted: GoogleCalendarWebhook<'eventDeleted', EventDeletedEvent>;
-	onEventStarted: GoogleCalendarWebhook<'eventStarted', EventStartedEvent>;
-	onEventEnded: GoogleCalendarWebhook<'eventEnded', EventEndedEvent>;
+	onEventCreated: GoogleCalendarWebhook<'eventCreated'>;
+	onEventUpdated: GoogleCalendarWebhook<'eventUpdated'>;
+	onEventDeleted: GoogleCalendarWebhook<'eventDeleted'>;
+	onEventStarted: GoogleCalendarWebhook<'eventStarted'>;
+	onEventEnded: GoogleCalendarWebhook<'eventEnded'>;
 };
 
 export type GoogleCalendarBoundWebhooks = BindWebhooks<
@@ -159,13 +153,7 @@ const googleCalendarWebhooksNested = {
 	onEventDeleted: EventWebhooks.onEventDeleted,
 	onEventStarted: EventWebhooks.onEventStarted,
 	onEventEnded: EventWebhooks.onEventEnded,
-} as unknown as {
-	onEventCreated: GoogleCalendarWebhooks['onEventCreated'];
-	onEventUpdated: GoogleCalendarWebhooks['onEventUpdated'];
-	onEventDeleted: GoogleCalendarWebhooks['onEventDeleted'];
-	onEventStarted: GoogleCalendarWebhooks['onEventStarted'];
-	onEventEnded: GoogleCalendarWebhooks['onEventEnded'];
-};
+} as const;
 
 export type GoogleCalendarPluginOptions = {
 	authType?: PickAuth<'oauth_2'>;
@@ -243,11 +231,41 @@ export function googlecalendar<const T extends GoogleCalendarPluginOptions>(
 
 			return '';
 		},
-		pluginWebhookMatcher: (
-			request: import('../../core/webhooks').RawWebhookRequest,
-		) => {
+		pluginWebhookMatcher: (request: RawWebhookRequest) => {
 			const body = request.body as Record<string, unknown>;
 			return (body?.message as Record<string, unknown>)?.data !== undefined;
 		},
 	} satisfies InternalGoogleCalendarPlugin;
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Webhook Type Exports
+// ─────────────────────────────────────────────────────────────────────────────
+
+export type {
+	EventCreatedEvent,
+	EventDeletedEvent,
+	EventEndedEvent,
+	EventStartedEvent,
+	EventUpdatedEvent,
+	GoogleCalendarEventName,
+	GoogleCalendarPushNotification,
+	GoogleCalendarWebhookEvent,
+	GoogleCalendarWebhookOutputs,
+	GoogleCalendarWebhookPayload,
+	PubSubMessage,
+	PubSubNotification,
+} from './webhooks/types';
+export {
+	createGoogleCalendarWebhookMatcher,
+	decodePubSubMessage,
+} from './webhooks/types';
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Endpoint Type Exports
+// ─────────────────────────────────────────────────────────────────────────────
+
+export type {
+	GoogleCalendarEndpointOutputSchemas,
+	GoogleCalendarEndpointOutputs,
+} from './endpoints/types';

@@ -12,7 +12,7 @@ export const get: HubSpotEndpoints['contactsGet'] = async (ctx, input) => {
 	const endpoint = `/crm/v3/objects/contacts/${contactId}`;
 	const result = await makeHubSpotRequest<GetContactResponse>(
 		endpoint,
-		ctx.options.token,
+		ctx.key,
 		{
 			query: {
 				...queryParams,
@@ -48,7 +48,7 @@ export const getMany: HubSpotEndpoints['contactsGetMany'] = async (
 	const endpoint = '/crm/v3/objects/contacts';
 	const result = await makeHubSpotRequest<GetManyContactsResponse>(
 		endpoint,
-		ctx.options.token,
+		ctx.key,
 		{
 			query: {
 				...queryParams,
@@ -84,7 +84,7 @@ export const createOrUpdate: HubSpotEndpoints['contactsCreateOrUpdate'] =
 		const endpoint = '/crm/v3/objects/contacts';
 		const result = await makeHubSpotRequest<CreateOrUpdateContactResponse>(
 			endpoint,
-			ctx.options.token,
+			ctx.key,
 			{ method: 'POST', body },
 		);
 
@@ -111,7 +111,7 @@ export const deleteContact: HubSpotEndpoints['contactsDelete'] = async (
 ) => {
 	const { contactId } = input;
 	const endpoint = `/crm/v3/objects/contacts/${contactId}`;
-	await makeHubSpotRequest<void>(endpoint, ctx.options.token, {
+	await makeHubSpotRequest<void>(endpoint, ctx.key, {
 		method: 'DELETE',
 	});
 
@@ -137,7 +137,7 @@ export const getRecentlyCreated: HubSpotEndpoints['contactsGetRecentlyCreated'] 
 		const endpoint = '/crm/v3/objects/contacts';
 		const result = await makeHubSpotRequest<GetManyContactsResponse>(
 			endpoint,
-			ctx.options.token,
+			ctx.key,
 			{ query: queryParams },
 		);
 
@@ -156,7 +156,7 @@ export const getRecentlyUpdated: HubSpotEndpoints['contactsGetRecentlyUpdated'] 
 		const endpoint = '/crm/v3/objects/contacts';
 		const result = await makeHubSpotRequest<GetManyContactsResponse>(
 			endpoint,
-			ctx.options.token,
+			ctx.key,
 			{ query: queryParams },
 		);
 
@@ -177,7 +177,7 @@ export const search: HubSpotEndpoints['contactsSearch'] = async (
 	const endpoint = '/crm/v3/objects/contacts/search';
 	const result = await makeHubSpotRequest<GetManyContactsResponse>(
 		endpoint,
-		ctx.options.token,
+		ctx.key,
 		{ method: 'POST', body },
 	);
 

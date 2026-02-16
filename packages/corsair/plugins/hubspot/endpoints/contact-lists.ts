@@ -14,7 +14,7 @@ export const addContact: HubSpotEndpoints['contactListsAddContact'] = async (
 	const endpoint = `/contacts/v1/lists/${listId}/add`;
 	const result = await makeHubSpotRequest<AddContactToListResponse>(
 		endpoint,
-		ctx.options.token,
+		ctx.key,
 		{ method: 'POST', body },
 	);
 
@@ -33,7 +33,7 @@ export const removeContact: HubSpotEndpoints['contactListsRemoveContact'] =
 		const endpoint = `/contacts/v1/lists/${listId}/remove`;
 		const result = await makeHubSpotRequest<RemoveContactFromListResponse>(
 			endpoint,
-			ctx.options.token,
+			ctx.key,
 			{ method: 'POST', body },
 		);
 

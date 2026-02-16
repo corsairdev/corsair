@@ -12,7 +12,7 @@ export const get: HubSpotEndpoints['engagementsGet'] = async (ctx, input) => {
 	const endpoint = `/crm/v3/objects/engagements/${engagementId}`;
 	const result = await makeHubSpotRequest<GetEngagementResponse>(
 		endpoint,
-		ctx.options.token,
+		ctx.key,
 	);
 
 	if (result && ctx.db.engagements) {
@@ -42,7 +42,7 @@ export const getMany: HubSpotEndpoints['engagementsGetMany'] = async (
 	const endpoint = '/crm/v3/objects/engagements';
 	const result = await makeHubSpotRequest<GetManyEngagementsResponse>(
 		endpoint,
-		ctx.options.token,
+		ctx.key,
 		{ query: queryParams },
 	);
 
@@ -75,7 +75,7 @@ export const create: HubSpotEndpoints['engagementsCreate'] = async (
 	const endpoint = '/crm/v3/objects/engagements';
 	const result = await makeHubSpotRequest<CreateEngagementResponse>(
 		endpoint,
-		ctx.options.token,
+		ctx.key,
 		{ method: 'POST', body },
 	);
 
@@ -104,7 +104,7 @@ export const deleteEngagement: HubSpotEndpoints['engagementsDelete'] = async (
 ) => {
 	const { engagementId } = input;
 	const endpoint = `/crm/v3/objects/engagements/${engagementId}`;
-	await makeHubSpotRequest<void>(endpoint, ctx.options.token, {
+	await makeHubSpotRequest<void>(endpoint, ctx.key, {
 		method: 'DELETE',
 	});
 

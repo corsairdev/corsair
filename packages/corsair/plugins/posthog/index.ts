@@ -197,3 +197,29 @@ export {
 	createPostHogEventMatch,
 	verifyPostHogWebhookSignature,
 } from './webhooks/types';
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Webhook Type Exports
+// ─────────────────────────────────────────────────────────────────────────────
+
+export type {
+	EventCapturedEvent,
+	PostHogEventMap,
+	PostHogEventName,
+	PostHogWebhookEvent,
+	PostHogWebhookOutputs,
+	PostHogWebhookPayload,
+} from './webhooks/types';
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Endpoint Type Exports
+// ─────────────────────────────────────────────────────────────────────────────
+
+export type {
+	CreateAliasResponse,
+	CreateEventResponse,
+	CreateIdentityResponse,
+	PostHogEndpointOutputs,
+	TrackPageResponse,
+	TrackScreenResponse,
+} from './endpoints/types';

@@ -93,7 +93,9 @@ export type HubSpotWebhookEventType =
 	| TicketUpdatedEvent
 	| TicketDeletedEvent;
 
-export type HubSpotWebhookPayloadType = HubSpotWebhookPayload;
+export type HubSpotWebhookPayloadType<
+	TEvent extends HubSpotWebhookPayload = HubSpotWebhookPayload,
+> = TEvent | Array<TEvent>;
 
 export type HubSpotWebhookOutputs = {
 	contactCreated: { success: boolean };

@@ -7,8 +7,9 @@ import type {
 	CorsairPluginContext,
 	CorsairWebhook,
 	KeyBuilderContext,
+	RawWebhookRequest,
 } from '../../core';
-import type { AuthTypes } from '../../core/constants';
+import type { AuthTypes, PickAuth } from '../../core/constants';
 import type { HubSpotEndpointOutputs } from './endpoints';
 import {
 	CompaniesEndpoints,
@@ -32,6 +33,7 @@ import type {
 	DealDeletedEventType,
 	DealUpdatedEventType,
 	HubSpotWebhookOutputs,
+	HubSpotWebhookPayload,
 	HubSpotWebhookPayloadType,
 	TicketCreatedEventType,
 	TicketDeletedEventType,
@@ -46,7 +48,7 @@ import {
 
 export type HubSpotContext = CorsairPluginContext<
 	typeof HubSpotSchema,
-	HubSpotCredentials
+	HubSpotPluginOptions
 >;
 
 export type HubSpotKeyBuilderContext = KeyBuilderContext<HubSpotPluginOptions>;
@@ -379,10 +381,10 @@ export type HubSpotBoundEndpoints = BindEndpoints<
 
 type HubSpotWebhook<
 	K extends keyof HubSpotWebhookOutputs,
-	TEvent,
+	TEvent extends HubSpotWebhookPayload,
 > = CorsairWebhook<
 	HubSpotContext,
-	HubSpotWebhookPayloadType,
+	HubSpotWebhookPayloadType<TEvent>,
 	HubSpotWebhookOutputs[K]
 >;
 
@@ -465,50 +467,56 @@ const hubspotWebhooksNested = {
 	ticketCreated: TicketWebhooks.created,
 	ticketUpdated: TicketWebhooks.updated,
 	ticketDeleted: TicketWebhooks.deleted,
-} as unknown as {
-	contactCreated: HubSpotWebhooks['contactCreated'];
-	contactUpdated: HubSpotWebhooks['contactUpdated'];
-	contactDeleted: HubSpotWebhooks['contactDeleted'];
-	companyCreated: HubSpotWebhooks['companyCreated'];
-	companyUpdated: HubSpotWebhooks['companyUpdated'];
-	companyDeleted: HubSpotWebhooks['companyDeleted'];
-	dealCreated: HubSpotWebhooks['dealCreated'];
-	dealUpdated: HubSpotWebhooks['dealUpdated'];
-	dealDeleted: HubSpotWebhooks['dealDeleted'];
-	ticketCreated: HubSpotWebhooks['ticketCreated'];
-	ticketUpdated: HubSpotWebhooks['ticketUpdated'];
-	ticketDeleted: HubSpotWebhooks['ticketDeleted'];
-};
+} as const;
+
+const defaultAuthType: AuthTypes = 'api_key';
 
 export type HubSpotPluginOptions = {
-	authType: AuthTypes;
-	credentials: HubSpotCredentials;
+	authType?: PickAuth<'api_key' | 'oauth_2'>;
+	credentials?: HubSpotCredentials;
 	webhookSecret?: string;
-	hooks?: HubSpotPlugin['hooks'] | undefined;
-	webhookHooks?: HubSpotPlugin['webhookHooks'] | undefined;
+	hooks?: InternalHubSpotPlugin['hooks'];
+	webhookHooks?: InternalHubSpotPlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
 };
 
-export type HubSpotPlugin = CorsairPlugin<
-	'hubspot',
-	typeof HubSpotSchema,
-	typeof hubspotEndpointsNested,
-	typeof hubspotWebhooksNested,
-	HubSpotCredentials
->;
+export type BaseHubSpotPlugin<PluginOptions extends HubSpotPluginOptions> =
+	CorsairPlugin<
+		'hubspot',
+		typeof HubSpotSchema,
+		typeof hubspotEndpointsNested,
+		typeof hubspotWebhooksNested,
+		PluginOptions,
+		typeof defaultAuthType
+	>;
 
-export function hubspot(options: HubSpotPluginOptions) {
+/**
+ * We have to type the internal plugin separately from the external plugin
+ * Because the internal plugin has to provide options for all possible auth methods
+ * The external plugin has to provide options for the auth method the user has selected
+ */
+export type InternalHubSpotPlugin = BaseHubSpotPlugin<HubSpotPluginOptions>;
+
+export type ExternalHubSpotPlugin<PluginOptions extends HubSpotPluginOptions> =
+	BaseHubSpotPlugin<PluginOptions>;
+
+export function hubspot<const PluginOptions extends HubSpotPluginOptions>(
+	incomingOptions: HubSpotPluginOptions &
+		PluginOptions = {} as HubSpotPluginOptions & PluginOptions,
+): ExternalHubSpotPlugin<PluginOptions> {
+	const options = {
+		...incomingOptions,
+		authType: incomingOptions.authType ?? defaultAuthType,
+	};
 	return {
 		id: 'hubspot',
 		schema: HubSpotSchema,
-		options: options.credentials,
+		options: options,
 		hooks: options.hooks,
 		webhookHooks: options.webhookHooks,
 		endpoints: hubspotEndpointsNested,
 		webhooks: hubspotWebhooksNested,
-		pluginWebhookMatcher: (
-			request: import('../../core/webhooks').RawWebhookRequest,
-		) => {
+		pluginWebhookMatcher: (request: RawWebhookRequest) => {
 			const headers = request.headers;
 			const hasHubSpotSignature = 'x-hubspot-signature-v3' in headers;
 			const body = request.body as
@@ -560,10 +568,80 @@ export function hubspot(options: HubSpotPluginOptions) {
 
 			return '';
 		},
-	} as HubSpotPlugin;
+	} satisfies InternalHubSpotPlugin;
 }
 
 export {
 	createHubSpotEventMatch,
 	verifyHubSpotWebhookSignature,
 } from './webhooks/types';
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Webhook Type Exports
+// ─────────────────────────────────────────────────────────────────────────────
+
+export type {
+	CompanyCreatedEvent,
+	CompanyCreatedEventType,
+	CompanyDeletedEvent,
+	CompanyDeletedEventType,
+	CompanyUpdatedEvent,
+	CompanyUpdatedEventType,
+	ContactCreatedEvent,
+	ContactCreatedEventType,
+	ContactDeletedEvent,
+	ContactDeletedEventType,
+	ContactUpdatedEvent,
+	ContactUpdatedEventType,
+	DealCreatedEvent,
+	DealCreatedEventType,
+	DealDeletedEvent,
+	DealDeletedEventType,
+	DealUpdatedEvent,
+	DealUpdatedEventType,
+	HubSpotWebhookEventType,
+	HubSpotWebhookOutputs,
+	HubSpotWebhookPayload,
+	HubSpotWebhookPayloadType,
+	TicketCreatedEvent,
+	TicketCreatedEventType,
+	TicketDeletedEvent,
+	TicketDeletedEventType,
+	TicketUpdatedEvent,
+	TicketUpdatedEventType,
+} from './webhooks/types';
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Endpoint Type Exports
+// ─────────────────────────────────────────────────────────────────────────────
+
+export type {
+	AddContactToListResponse,
+	CreateCompanyResponse,
+	CreateDealResponse,
+	CreateEngagementResponse,
+	CreateOrUpdateContactResponse,
+	CreateTicketResponse,
+	GetCompanyResponse,
+	GetContactResponse,
+	GetDealResponse,
+	GetEngagementResponse,
+	GetManyCompaniesResponse,
+	GetManyContactsResponse,
+	GetManyDealsResponse,
+	GetManyEngagementsResponse,
+	GetManyTicketsResponse,
+	GetTicketResponse,
+	HubSpotEndpointOutputs,
+	RemoveContactFromListResponse,
+	SearchCompanyByDomainResponse,
+	UpdateCompanyResponse,
+	UpdateDealResponse,
+	UpdateTicketResponse,
+} from './endpoints/types';
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Schema Type Exports
+// ─────────────────────────────────────────────────────────────────────────────
+
+export type { HubSpotCredentials } from './schema';
