@@ -8,20 +8,7 @@ export const list: GoogleDriveEndpoints['filesList'] = async (ctx, input) => {
 		GoogleDriveEndpointOutputs['filesList']
 	>('/files', ctx.key, {
 		method: 'GET',
-		query: {
-			q: input.q,
-			pageSize: input.pageSize,
-			pageToken: input.pageToken,
-			spaces: input.spaces,
-			corpora: input.corpora,
-			driveId: input.driveId,
-			includeItemsFromAllDrives: input.includeItemsFromAllDrives,
-			includePermissionsForView: input.includePermissionsForView,
-			orderBy: input.orderBy,
-			supportsAllDrives: input.supportsAllDrives,
-			supportsTeamDrives: input.supportsTeamDrives,
-			teamDriveId: input.teamDriveId,
-		},
+		query: input,
 	});
 
 	if (result.files && ctx.db.files) {
@@ -48,7 +35,7 @@ export const list: GoogleDriveEndpoints['filesList'] = async (ctx, input) => {
 		} catch (error) {
 			console.warn('Failed to save files to database:', error);
 		}
-	}
+	}	
 
 	await logEventFromContext(
 		ctx,
@@ -64,12 +51,7 @@ export const get: GoogleDriveEndpoints['filesGet'] = async (ctx, input) => {
 		GoogleDriveEndpointOutputs['filesGet']
 	>(`/files/${input.fileId}`, ctx.key, {
 		method: 'GET',
-		query: {
-			acknowledgeAbuse: input.acknowledgeAbuse,
-			supportsAllDrives: input.supportsAllDrives,
-			supportsTeamDrives: input.supportsTeamDrives,
-			includePermissionsForView: input.includePermissionsForView,
-		},
+		query: input,
 	});
 
 	if (result.id) {
@@ -104,19 +86,13 @@ export const get: GoogleDriveEndpoints['filesGet'] = async (ctx, input) => {
 
 export const createFromText: GoogleDriveEndpoints['filesCreateFromText'] =
 	async (ctx, input) => {
-		const fileMetadata = {
-			name: input.name,
-			mimeType: input.mimeType || 'text/plain',
-			parents: input.parents,
-			description: input.description,
-		};
 
 		const result = await makeGoogleDriveRequest<
 			GoogleDriveEndpointOutputs['filesCreateFromText']
 		>('/files', ctx.key, {
 			method: 'POST',
 			body: {
-				...fileMetadata,
+				...input,
 			},
 			query: {
 				uploadType: 'multipart',
@@ -141,19 +117,12 @@ export const upload: GoogleDriveEndpoints['filesUpload'] = async (
 	ctx,
 	input,
 ) => {
-	const fileMetadata = {
-		name: input.name,
-		mimeType: input.mimeType,
-		parents: input.parents,
-		description: input.description,
-	};
-
 	const result = await makeGoogleDriveRequest<
 		GoogleDriveEndpointOutputs['filesUpload']
 	>('/files', ctx.key, {
 		method: 'POST',
 		body: {
-			...fileMetadata,
+			...input,
 		},
 		query: {
 			uploadType: 'multipart',
@@ -280,12 +249,7 @@ export const move: GoogleDriveEndpoints['filesMove'] = async (ctx, input) => {
 	>(`/files/${input.fileId}`, ctx.key, {
 		method: 'PATCH',
 		body: {},
-		query: {
-			addParents: input.addParents,
-			removeParents: input.removeParents,
-			supportsAllDrives: input.supportsAllDrives,
-			supportsTeamDrives: input.supportsTeamDrives,
-		},
+		query: input,
 	});
 
 	if (result.id) {

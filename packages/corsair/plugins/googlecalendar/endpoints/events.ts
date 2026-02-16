@@ -80,20 +80,7 @@ export const getMany: GoogleCalendarEndpoints['eventsGetMany'] = async (
 		GoogleCalendarEndpointOutputs['eventsGetMany']
 	>(`/calendars/${calendarId}/events`, ctx.key, {
 		method: 'GET',
-		query: {
-			timeMin: input.timeMin,
-			timeMax: input.timeMax,
-			timeZone: input.timeZone,
-			updatedMin: input.updatedMin,
-			singleEvents: input.singleEvents,
-			maxResults: input.maxResults,
-			pageToken: input.pageToken,
-			q: input.q,
-			orderBy: input.orderBy,
-			iCalUID: input.iCalUID,
-			showDeleted: input.showDeleted,
-			showHiddenInvitations: input.showHiddenInvitations,
-		},
+		query: input,
 	});
 
 	if (result.items && ctx.db.events) {
