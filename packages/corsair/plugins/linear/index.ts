@@ -16,7 +16,19 @@ import type {
 import { Comments, Issues, Projects, Teams } from './endpoints';
 import { errorHandlers } from './error-handlers';
 import { LinearSchema } from './schema';
-import type { LinearWebhookEvent, LinearWebhookOutputs } from './webhooks';
+import type {
+	CommentCreatedEvent,
+	CommentDeletedEvent,
+	CommentUpdatedEvent,
+	IssueCreatedEvent,
+	IssueDeletedEvent,
+	IssueUpdatedEvent,
+	LinearWebhookOutputs,
+	LinearWebhookPayload,
+	ProjectCreatedEvent,
+	ProjectDeletedEvent,
+	ProjectUpdatedEvent,
+} from './webhooks';
 import { CommentWebhooks, IssueWebhooks, ProjectWebhooks } from './webhooks';
 
 export type LinearPluginOptions = {
@@ -63,22 +75,22 @@ export type LinearEndpoints = {
 	commentsDelete: LinearEndpoint<'commentsDelete'>;
 };
 
-type LinearWebhook<K extends keyof LinearWebhookOutputs> = CorsairWebhook<
+type LinearWebhook<K extends keyof LinearWebhookOutputs, TEvent> = CorsairWebhook<
 	LinearContext,
-	LinearWebhookEvent,
+	LinearWebhookPayload<TEvent>,
 	LinearWebhookOutputs[K]
 >;
 
 export type LinearWebhooks = {
-	issueCreate: LinearWebhook<'issueCreate'>;
-	issueUpdate: LinearWebhook<'issueUpdate'>;
-	issueRemove: LinearWebhook<'issueRemove'>;
-	commentCreate: LinearWebhook<'commentCreate'>;
-	commentUpdate: LinearWebhook<'commentUpdate'>;
-	commentRemove: LinearWebhook<'commentRemove'>;
-	projectCreate: LinearWebhook<'projectCreate'>;
-	projectUpdate: LinearWebhook<'projectUpdate'>;
-	projectRemove: LinearWebhook<'projectRemove'>;
+	issueCreate: LinearWebhook<'issueCreate', IssueCreatedEvent>;
+	issueUpdate: LinearWebhook<'issueUpdate', IssueUpdatedEvent>;
+	issueRemove: LinearWebhook<'issueRemove', IssueDeletedEvent>;
+	commentCreate: LinearWebhook<'commentCreate', CommentCreatedEvent>;
+	commentUpdate: LinearWebhook<'commentUpdate', CommentUpdatedEvent>;
+	commentRemove: LinearWebhook<'commentRemove', CommentDeletedEvent>;
+	projectCreate: LinearWebhook<'projectCreate', ProjectCreatedEvent>;
+	projectUpdate: LinearWebhook<'projectUpdate', ProjectUpdatedEvent>;
+	projectRemove: LinearWebhook<'projectRemove', ProjectDeletedEvent>;
 };
 
 export type LinearBoundWebhooks = BindWebhooks<LinearWebhooks>;
