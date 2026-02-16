@@ -1,9 +1,4 @@
 import type { GithubWebhooks } from '..';
-import type {
-	PullRequestClosedEvent,
-	PullRequestOpenedEvent,
-	PullRequestSynchronizeEvent,
-} from './types';
 import { createGithubEventMatch, verifyGithubWebhookSignature } from './types';
 
 export const pullRequestOpened: GithubWebhooks['pullRequestOpened'] = {
@@ -20,7 +15,7 @@ export const pullRequestOpened: GithubWebhooks['pullRequestOpened'] = {
 			};
 		}
 
-		const event = request.payload as PullRequestOpenedEvent;
+		const event = request.payload;
 
 		if (event.action !== 'opened') {
 			return {
@@ -92,7 +87,7 @@ export const pullRequestClosed: GithubWebhooks['pullRequestClosed'] = {
 			};
 		}
 
-		const event = request.payload as PullRequestClosedEvent;
+		const event = request.payload;
 
 		if (event.action !== 'closed') {
 			return {
@@ -165,7 +160,7 @@ export const pullRequestSynchronize: GithubWebhooks['pullRequestSynchronize'] =
 				};
 			}
 
-			const event = request.payload as PullRequestSynchronizeEvent;
+			const event = request.payload;
 
 			if (event.action !== 'synchronize') {
 				return {

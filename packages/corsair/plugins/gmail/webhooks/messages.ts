@@ -250,7 +250,7 @@ async function enrichMessageWithAttachments(
 export const messageReceived: GmailWebhooks['messageReceived'] = {
 	match: createGmailWebhookMatcher('messageReceived'),
 	handler: async (ctx, request) => {
-		const body = request.payload as PubSubNotification;
+		const body = request.payload;
 
 		if (!body.message?.data) {
 			return {
@@ -448,7 +448,7 @@ export const messageReceived: GmailWebhooks['messageReceived'] = {
 export const messageDeleted: GmailWebhooks['messageDeleted'] = {
 	match: createGmailWebhookMatcher('messageDeleted'),
 	handler: async (ctx, request) => {
-		const body = request.payload as PubSubNotification;
+		const body = request.payload;
 
 		if (!body.message?.data) {
 			return {
@@ -595,7 +595,7 @@ export const messageDeleted: GmailWebhooks['messageDeleted'] = {
 export const messageLabelChanged: GmailWebhooks['messageLabelChanged'] = {
 	match: createGmailWebhookMatcher('messageLabelChanged'),
 	handler: async (ctx, request) => {
-		const body = request.payload as PubSubNotification;
+		const body = request.payload;
 
 		if (!body.message?.data) {
 			return {

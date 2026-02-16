@@ -63,13 +63,6 @@ export type GmailEventName =
 	| 'messageDeleted'
 	| 'messageLabelChanged';
 
-export interface GmailEventMap {
-	history: HistoryEvent;
-	messageReceived: MessageReceivedEvent;
-	messageDeleted: MessageDeletedEvent;
-	messageLabelChanged: MessageLabelChangedEvent;
-}
-
 export type GmailWebhookPayload = PubSubNotification;
 
 export type GmailWebhookOutputs = {

@@ -50,7 +50,7 @@ function isEventEnded(event: Event): boolean {
 export const onEventCreated: GoogleCalendarWebhooks['onEventCreated'] = {
 	match: createGoogleCalendarWebhookMatcher('eventCreated'),
 	handler: async (ctx, request) => {
-		const body = request.payload as PubSubNotification;
+		const body = request.payload;
 
 		if (!body.message?.data) {
 			return {
@@ -130,7 +130,7 @@ export const onEventCreated: GoogleCalendarWebhooks['onEventCreated'] = {
 export const onEventUpdated: GoogleCalendarWebhooks['onEventUpdated'] = {
 	match: createGoogleCalendarWebhookMatcher('eventUpdated'),
 	handler: async (ctx, request) => {
-		const body = request.payload as PubSubNotification;
+		const body = request.payload;
 
 		if (!body.message?.data) {
 			return {
@@ -210,7 +210,7 @@ export const onEventUpdated: GoogleCalendarWebhooks['onEventUpdated'] = {
 export const onEventDeleted: GoogleCalendarWebhooks['onEventDeleted'] = {
 	match: createGoogleCalendarWebhookMatcher('eventDeleted'),
 	handler: async (ctx, request) => {
-		const body = request.payload as PubSubNotification;
+		const body = request.payload;
 
 		if (!body.message?.data) {
 			return {
@@ -275,7 +275,7 @@ export const onEventDeleted: GoogleCalendarWebhooks['onEventDeleted'] = {
 export const onEventStarted: GoogleCalendarWebhooks['onEventStarted'] = {
 	match: createGoogleCalendarWebhookMatcher('eventStarted'),
 	handler: async (ctx, request) => {
-		const body = request.payload as PubSubNotification;
+		const body = request.payload;
 
 		if (!body.message?.data) {
 			return {
@@ -349,7 +349,7 @@ export const onEventStarted: GoogleCalendarWebhooks['onEventStarted'] = {
 export const onEventEnded: GoogleCalendarWebhooks['onEventEnded'] = {
 	match: createGoogleCalendarWebhookMatcher('eventEnded'),
 	handler: async (ctx, request) => {
-		const body = request.payload as PubSubNotification;
+		const body = request.payload;
 
 		if (!body.message?.data) {
 			return {

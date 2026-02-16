@@ -1,5 +1,4 @@
 import type { GithubWebhooks } from '..';
-import type { PushEventType } from './types';
 import { createGithubEventMatch, verifyGithubWebhookSignature } from './types';
 
 export const push: GithubWebhooks['push'] = {
@@ -16,7 +15,7 @@ export const push: GithubWebhooks['push'] = {
 			};
 		}
 
-		const event = request.payload as PushEventType;
+		const event = request.payload;
 
 		console.log('📤 GitHub Push Event:', {
 			ref: event.ref,

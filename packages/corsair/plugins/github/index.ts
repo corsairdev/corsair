@@ -8,7 +8,7 @@ import type {
 	KeyBuilderContext,
 	RawWebhookRequest,
 } from '../../core';
-import type { AuthTypes } from '../../core/constants';
+import type { AuthTypes, PickAuth } from '../../core/constants';
 import type { GithubEndpointOutputs } from './endpoints';
 import {
 	IssuesEndpoints,
@@ -20,6 +20,7 @@ import {
 import type { GithubCredentials } from './schema';
 import { GithubSchema } from './schema';
 import type {
+	GithubWebhookEvent,
 	GithubWebhookOutputs,
 	GithubWebhookPayload,
 	PullRequestClosedEvent,
@@ -337,10 +338,10 @@ export type GithubBoundEndpoints = BindEndpoints<typeof githubEndpointsNested>;
 
 type GithubWebhook<
 	K extends keyof GithubWebhookOutputs,
-	TEvent,
+	TEvent extends GithubWebhookEvent,
 > = CorsairWebhook<
 	GithubContext,
-	GithubWebhookPayload,
+	GithubWebhookPayload<TEvent>,
 	GithubWebhookOutputs[K]
 >;
 
@@ -399,32 +400,46 @@ const githubWebhooksNested = {
 	push: PushWebhooks.push,
 	starCreated: StarWebhooks.created,
 	starDeleted: StarWebhooks.deleted,
-} as unknown as {
-	pullRequestOpened: GithubWebhooks['pullRequestOpened'];
-	pullRequestClosed: GithubWebhooks['pullRequestClosed'];
-	pullRequestSynchronize: GithubWebhooks['pullRequestSynchronize'];
-	push: GithubWebhooks['push'];
-	starCreated: GithubWebhooks['starCreated'];
-	starDeleted: GithubWebhooks['starDeleted'];
-};
+} as const;
+
+const defaultAuthType: AuthTypes = 'api_key';
 
 export type GithubPluginOptions = {
-	authType: AuthTypes;
+	authType?: PickAuth<'api_key' | 'oauth_2'>;
 	credentials?: GithubCredentials;
 	webhookSecret?: string;
-	hooks?: GithubPlugin['hooks'] | undefined;
-	webhookHooks?: GithubPlugin['webhookHooks'] | undefined;
+	hooks?: InternalGithubPlugin['hooks'];
+	webhookHooks?: InternalGithubPlugin['webhookHooks'];
 };
 
-export type GithubPlugin = CorsairPlugin<
-	'github',
-	typeof GithubSchema,
-	typeof githubEndpointsNested,
-	typeof githubWebhooksNested,
-	GithubPluginOptions
->;
+export type BaseGithubPlugin<PluginOptions extends GithubPluginOptions> =
+	CorsairPlugin<
+		'github',
+		typeof GithubSchema,
+		typeof githubEndpointsNested,
+		typeof githubWebhooksNested,
+		PluginOptions,
+		typeof defaultAuthType
+	>;
 
-export function github(options: GithubPluginOptions) {
+/**
+ * We have to type the internal plugin separately from the external plugin
+ * Because the internal plugin has to provide options for all possible auth methods
+ * The external plugin has to provide options for the auth method the user has selected
+ */
+export type InternalGithubPlugin = BaseGithubPlugin<GithubPluginOptions>;
+
+export type ExternalGithubPlugin<PluginOptions extends GithubPluginOptions> =
+	BaseGithubPlugin<PluginOptions>;
+
+export function github<const PluginOptions extends GithubPluginOptions>(
+	incomingOptions: GithubPluginOptions &
+		PluginOptions = {} as GithubPluginOptions & PluginOptions,
+): ExternalGithubPlugin<PluginOptions> {
+	const options = {
+		...incomingOptions,
+		authType: incomingOptions.authType ?? defaultAuthType,
+	};
 	return {
 		id: 'github',
 		schema: GithubSchema,
@@ -476,7 +491,7 @@ export function github(options: GithubPluginOptions) {
 
 			return '';
 		},
-	} as GithubPlugin;
+	} satisfies InternalGithubPlugin;
 }
 
 export {

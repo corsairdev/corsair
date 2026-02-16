@@ -6,6 +6,7 @@ import type {
 	CorsairPluginContext,
 	CorsairWebhook,
 	KeyBuilderContext,
+	RawWebhookRequest,
 } from '../../core';
 import type { AuthTypes, PickAuth } from '../../core/constants';
 import { getValidAccessToken } from './client';
@@ -15,9 +16,6 @@ import { GoogleSheetsSchema } from './schema';
 import type {
 	GoogleSheetsWebhookOutputs,
 	GoogleSheetsWebhookPayload,
-	RowAddedEvent,
-	RowAddedOrUpdatedEvent,
-	RowUpdatedEvent,
 } from './webhooks';
 import { RowWebhooks } from './webhooks';
 
@@ -130,22 +128,17 @@ export type GoogleSheetsBoundEndpoints = BindEndpoints<
 	typeof googleSheetsEndpointsNested
 >;
 
-type GoogleSheetsWebhook<
-	K extends keyof GoogleSheetsWebhookOutputs,
-	TEvent,
-> = CorsairWebhook<
-	GoogleSheetsContext,
-	GoogleSheetsWebhookPayload,
-	GoogleSheetsWebhookOutputs[K]
->;
+type GoogleSheetsWebhook<K extends keyof GoogleSheetsWebhookOutputs> =
+	CorsairWebhook<
+		GoogleSheetsContext,
+		GoogleSheetsWebhookPayload,
+		GoogleSheetsWebhookOutputs[K]
+	>;
 
 export type GoogleSheetsWebhooks = {
-	rowAdded: GoogleSheetsWebhook<'rowAdded', RowAddedEvent>;
-	rowUpdated: GoogleSheetsWebhook<'rowUpdated', RowUpdatedEvent>;
-	rowAddedOrUpdated: GoogleSheetsWebhook<
-		'rowAddedOrUpdated',
-		RowAddedOrUpdatedEvent
-	>;
+	rowAdded: GoogleSheetsWebhook<'rowAdded'>;
+	rowUpdated: GoogleSheetsWebhook<'rowUpdated'>;
+	rowAddedOrUpdated: GoogleSheetsWebhook<'rowAddedOrUpdated'>;
 };
 
 export type GoogleSheetsBoundWebhooks = BindWebhooks<
@@ -173,11 +166,7 @@ const googleSheetsWebhooksNested = {
 	rowAdded: RowWebhooks.rowAdded,
 	rowUpdated: RowWebhooks.rowUpdated,
 	rowAddedOrUpdated: RowWebhooks.rowAddedOrUpdated,
-} as unknown as {
-	rowAdded: GoogleSheetsWebhooks['rowAdded'];
-	rowUpdated: GoogleSheetsWebhooks['rowUpdated'];
-	rowAddedOrUpdated: GoogleSheetsWebhooks['rowAddedOrUpdated'];
-};
+} as const;
 
 export type GoogleSheetsPluginOptions = {
 	authType?: PickAuth<'oauth_2'>;
@@ -254,9 +243,7 @@ export function googlesheets<const T extends GoogleSheetsPluginOptions>(
 
 			return '';
 		},
-		pluginWebhookMatcher: (
-			request: import('../../core/webhooks').RawWebhookRequest,
-		) => {
+		pluginWebhookMatcher: (request: RawWebhookRequest) => {
 			const body = request.body as Record<string, unknown>;
 			return (
 				body?.spreadsheetId !== undefined ||
@@ -266,3 +253,25 @@ export function googlesheets<const T extends GoogleSheetsPluginOptions>(
 		},
 	} satisfies InternalGoogleSheetsPlugin;
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Webhook Type Exports
+// ─────────────────────────────────────────────────────────────────────────────
+
+export type {
+	GoogleAppsScriptWebhookPayload,
+	GoogleSheetsEventName,
+	GoogleSheetsWebhookEvent,
+	GoogleSheetsWebhookOutputs,
+	GoogleSheetsWebhookPayload,
+	RowAddedEvent,
+	RowAddedOrUpdatedEvent,
+	RowUpdatedEvent,
+} from './webhooks/types';
+export { createGoogleSheetsWebhookMatcher } from './webhooks/types';
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Endpoint Type Exports
+// ─────────────────────────────────────────────────────────────────────────────
+
+export type { GoogleSheetsEndpointOutputs } from './endpoints/types';

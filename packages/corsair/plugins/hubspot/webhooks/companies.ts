@@ -1,9 +1,4 @@
 import type { HubSpotWebhooks } from '..';
-import type {
-	CompanyCreatedEventType,
-	CompanyDeletedEventType,
-	CompanyUpdatedEventType,
-} from './types';
 import {
 	createHubSpotEventMatch,
 	verifyHubSpotWebhookSignature,
@@ -23,10 +18,9 @@ export const companyCreated: HubSpotWebhooks['companyCreated'] = {
 			};
 		}
 
-		const payload = request.payload as
-			| CompanyCreatedEventType
-			| Array<CompanyCreatedEventType>;
-		const events = Array.isArray(payload) ? payload : [payload];
+		const events = Array.isArray(request.payload)
+			? request.payload
+			: [request.payload];
 
 		for (const event of events) {
 			if (event.subscriptionType !== 'company.creation') continue;
@@ -71,10 +65,9 @@ export const companyUpdated: HubSpotWebhooks['companyUpdated'] = {
 			};
 		}
 
-		const payload = request.payload as
-			| CompanyUpdatedEventType
-			| Array<CompanyUpdatedEventType>;
-		const events = Array.isArray(payload) ? payload : [payload];
+		const events = Array.isArray(request.payload)
+			? request.payload
+			: [request.payload];
 
 		for (const event of events) {
 			if (event.subscriptionType !== 'company.propertyChange') continue;
@@ -126,10 +119,9 @@ export const companyDeleted: HubSpotWebhooks['companyDeleted'] = {
 			};
 		}
 
-		const payload = request.payload as
-			| CompanyDeletedEventType
-			| Array<CompanyDeletedEventType>;
-		const events = Array.isArray(payload) ? payload : [payload];
+		const events = Array.isArray(request.payload)
+			? request.payload
+			: [request.payload];
 
 		for (const event of events) {
 			if (event.subscriptionType !== 'company.deletion') continue;

@@ -1,4 +1,16 @@
-import { createCorsair, github, linear, resend, slack } from 'corsair';
+import {
+	createCorsair,
+	github,
+	gmail,
+	googlecalendar,
+	googledrive,
+	googlesheets,
+	hubspot,
+	linear,
+	posthog,
+	resend,
+	slack,
+} from 'corsair';
 import { pool } from '../db';
 import { inngest } from './inngest/client';
 
@@ -101,7 +113,6 @@ export const corsair = createCorsair({
 			},
 		}),
 		github({
-			authType: 'api_key',
 			webhookHooks: {
 				starCreated: {
 					after: async (ctx, res) => {
@@ -116,5 +127,11 @@ export const corsair = createCorsair({
 				},
 			},
 		}),
+		gmail(),
+		googlecalendar(),
+		googledrive(),
+		googlesheets(),
+		hubspot(),
+		posthog(),
 	],
 });

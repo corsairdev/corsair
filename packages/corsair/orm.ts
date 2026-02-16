@@ -25,11 +25,16 @@
  * ```
  */
 
+// Database row types (re-exported with different names to avoid conflicts with core types)
 export type {
 	CorsairAccount,
+	CorsairAccount as CorsairAccountRow,
 	CorsairEntity,
+	CorsairEntity as CorsairEntityRow,
 	CorsairEvent,
+	CorsairEvent as CorsairEventRow,
 	CorsairIntegration,
+	CorsairIntegration as CorsairIntegrationRow,
 } from './db';
 export {
 	CorsairAccountsSchema,

@@ -1,7 +1,6 @@
 import { logEventFromContext } from '../../utils/events';
 import type { GoogleSheetsWebhooks } from '..';
 import type {
-	GoogleAppsScriptWebhookPayload,
 	RowAddedEvent,
 	RowAddedOrUpdatedEvent,
 	RowUpdatedEvent,
@@ -11,7 +10,7 @@ import { createGoogleSheetsWebhookMatcher } from './types';
 export const rowAdded: GoogleSheetsWebhooks['rowAdded'] = {
 	match: createGoogleSheetsWebhookMatcher('rowAdded'),
 	handler: async (ctx, request) => {
-		const body = request.payload as GoogleAppsScriptWebhookPayload;
+		const body = request.payload;
 
 		if (!body.spreadsheetId || !body.values) {
 			return {
@@ -64,7 +63,7 @@ export const rowAdded: GoogleSheetsWebhooks['rowAdded'] = {
 export const rowUpdated: GoogleSheetsWebhooks['rowUpdated'] = {
 	match: createGoogleSheetsWebhookMatcher('rowUpdated'),
 	handler: async (ctx, request) => {
-		const body = request.payload as GoogleAppsScriptWebhookPayload;
+		const body = request.payload;
 
 		if (!body.spreadsheetId || !body.values) {
 			return {
@@ -117,7 +116,7 @@ export const rowUpdated: GoogleSheetsWebhooks['rowUpdated'] = {
 export const rowAddedOrUpdated: GoogleSheetsWebhooks['rowAddedOrUpdated'] = {
 	match: createGoogleSheetsWebhookMatcher('rowAddedOrUpdated'),
 	handler: async (ctx, request) => {
-		const body = request.payload as GoogleAppsScriptWebhookPayload;
+		const body = request.payload;
 
 		if (!body.spreadsheetId || !body.values) {
 			return {

@@ -13,7 +13,7 @@ export const get: HubSpotEndpoints['ticketsGet'] = async (ctx, input) => {
 	const endpoint = `/crm/v3/objects/tickets/${ticketId}`;
 	const result = await makeHubSpotRequest<GetTicketResponse>(
 		endpoint,
-		ctx.options.token,
+		ctx.key,
 		{
 			query: {
 				...queryParams,
@@ -49,7 +49,7 @@ export const getMany: HubSpotEndpoints['ticketsGetMany'] = async (
 	const endpoint = '/crm/v3/objects/tickets';
 	const result = await makeHubSpotRequest<GetManyTicketsResponse>(
 		endpoint,
-		ctx.options.token,
+		ctx.key,
 		{
 			query: {
 				...queryParams,
@@ -84,7 +84,7 @@ export const create: HubSpotEndpoints['ticketsCreate'] = async (ctx, input) => {
 	const endpoint = '/crm/v3/objects/tickets';
 	const result = await makeHubSpotRequest<CreateTicketResponse>(
 		endpoint,
-		ctx.options.token,
+		ctx.key,
 		{ method: 'POST', body },
 	);
 
@@ -110,7 +110,7 @@ export const update: HubSpotEndpoints['ticketsUpdate'] = async (ctx, input) => {
 	const endpoint = `/crm/v3/objects/tickets/${ticketId}`;
 	const result = await makeHubSpotRequest<UpdateTicketResponse>(
 		endpoint,
-		ctx.options.token,
+		ctx.key,
 		{ method: 'PATCH', body },
 	);
 
@@ -137,7 +137,7 @@ export const deleteTicket: HubSpotEndpoints['ticketsDelete'] = async (
 ) => {
 	const { ticketId } = input;
 	const endpoint = `/crm/v3/objects/tickets/${ticketId}`;
-	await makeHubSpotRequest<void>(endpoint, ctx.options.token, {
+	await makeHubSpotRequest<void>(endpoint, ctx.key, {
 		method: 'DELETE',
 	});
 

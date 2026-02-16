@@ -273,7 +273,9 @@ export type GithubWebhookEvent =
 	| StarCreatedEvent
 	| StarDeletedEvent;
 
-export type GithubWebhookPayload = GithubWebhookEvent;
+export type GithubWebhookPayload<
+	TEvent extends GithubWebhookEvent = GithubWebhookEvent,
+> = TEvent;
 
 export type GithubWebhookOutputs = {
 	pullRequestOpened: PullRequestOpenedEvent;
