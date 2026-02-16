@@ -11,9 +11,10 @@ export type PubSubMessage = {
 	publishTime?: string;
 };
 
-export type PubSubNotification = {
+export type PubSubNotification<TEvent = unknown> = {
 	message?: PubSubMessage;
 	subscription?: string;
+	event?: TEvent;
 };
 
 export type GmailPushNotification = {
@@ -63,7 +64,7 @@ export type GmailEventName =
 	| 'messageDeleted'
 	| 'messageLabelChanged';
 
-export type GmailWebhookPayload = PubSubNotification;
+export type GmailWebhookPayload<TEvent = unknown> = PubSubNotification<TEvent>;
 
 export type GmailWebhookOutputs = {
 	messageReceived: MessageReceivedEvent;

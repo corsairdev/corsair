@@ -24,6 +24,8 @@ import { GoogleDriveSchema } from './schema';
 import type {
 	GoogleDriveWebhookOutputs,
 	GoogleDriveWebhookPayload,
+	FileChangedEvent,
+	FolderChangedEvent,
 } from './webhooks';
 import { ChangeWebhooks } from './webhooks';
 
@@ -68,16 +70,16 @@ export type GoogleDriveBoundEndpoints = BindEndpoints<
 	typeof googleDriveEndpointsNested
 >;
 
-type GoogleDriveWebhook<K extends keyof GoogleDriveWebhookOutputs> =
+type GoogleDriveWebhook<K extends keyof GoogleDriveWebhookOutputs, TEvent> =
 	CorsairWebhook<
 		GoogleDriveContext,
-		GoogleDriveWebhookPayload,
+		GoogleDriveWebhookPayload<TEvent>,
 		GoogleDriveWebhookOutputs[K]
 	>;
 
 export type GoogleDriveWebhooks = {
-	fileChanged: GoogleDriveWebhook<'fileChanged'>;
-	folderChanged: GoogleDriveWebhook<'folderChanged'>;
+	fileChanged: GoogleDriveWebhook<'fileChanged', FileChangedEvent>;
+	folderChanged: GoogleDriveWebhook<'folderChanged', FolderChangedEvent>;
 };
 
 export type GoogleDriveBoundWebhooks = BindWebhooks<

@@ -20,6 +20,11 @@ import type { Event } from './types';
 import type {
 	GoogleCalendarWebhookOutputs,
 	GoogleCalendarWebhookPayload,
+	EventCreatedEvent,
+	EventDeletedEvent,
+	EventEndedEvent,
+	EventStartedEvent,
+	EventUpdatedEvent,
 } from './webhooks';
 import { EventWebhooks } from './webhooks';
 
@@ -49,19 +54,19 @@ export type GoogleCalendarBoundEndpoints = BindEndpoints<
 	typeof googleCalendarEndpointsNested
 >;
 
-type GoogleCalendarWebhook<K extends keyof GoogleCalendarWebhookOutputs> =
+type GoogleCalendarWebhook<K extends keyof GoogleCalendarWebhookOutputs, TEvent> =
 	CorsairWebhook<
 		GoogleCalendarContext,
-		GoogleCalendarWebhookPayload,
+		GoogleCalendarWebhookPayload<TEvent>,
 		GoogleCalendarWebhookOutputs[K]
 	>;
 
 export type GoogleCalendarWebhooks = {
-	onEventCreated: GoogleCalendarWebhook<'eventCreated'>;
-	onEventUpdated: GoogleCalendarWebhook<'eventUpdated'>;
-	onEventDeleted: GoogleCalendarWebhook<'eventDeleted'>;
-	onEventStarted: GoogleCalendarWebhook<'eventStarted'>;
-	onEventEnded: GoogleCalendarWebhook<'eventEnded'>;
+	onEventCreated: GoogleCalendarWebhook<'eventCreated', EventCreatedEvent>;
+	onEventUpdated: GoogleCalendarWebhook<'eventUpdated', EventUpdatedEvent>;
+	onEventDeleted: GoogleCalendarWebhook<'eventDeleted', EventDeletedEvent>;
+	onEventStarted: GoogleCalendarWebhook<'eventStarted', EventStartedEvent>;
+	onEventEnded: GoogleCalendarWebhook<'eventEnded', EventEndedEvent>;
 };
 
 export type GoogleCalendarBoundWebhooks = BindWebhooks<

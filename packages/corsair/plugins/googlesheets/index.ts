@@ -19,6 +19,9 @@ import { GoogleSheetsSchema } from './schema';
 import type {
 	GoogleSheetsWebhookOutputs,
 	GoogleSheetsWebhookPayload,
+	RowAddedEvent,
+	RowAddedOrUpdatedEvent,
+	RowUpdatedEvent,
 } from './webhooks';
 import { RowWebhooks } from './webhooks';
 
@@ -52,17 +55,17 @@ export type GoogleSheetsBoundEndpoints = BindEndpoints<
 	typeof googleSheetsEndpointsNested
 >;
 
-type GoogleSheetsWebhook<K extends keyof GoogleSheetsWebhookOutputs> =
+type GoogleSheetsWebhook<K extends keyof GoogleSheetsWebhookOutputs, TEvent> =
 	CorsairWebhook<
 		GoogleSheetsContext,
-		GoogleSheetsWebhookPayload,
+		GoogleSheetsWebhookPayload<TEvent>,
 		GoogleSheetsWebhookOutputs[K]
 	>;
 
 export type GoogleSheetsWebhooks = {
-	rowAdded: GoogleSheetsWebhook<'rowAdded'>;
-	rowUpdated: GoogleSheetsWebhook<'rowUpdated'>;
-	rowAddedOrUpdated: GoogleSheetsWebhook<'rowAddedOrUpdated'>;
+	rowAdded: GoogleSheetsWebhook<'rowAdded', RowAddedEvent>;
+	rowUpdated: GoogleSheetsWebhook<'rowUpdated', RowUpdatedEvent>;
+	rowAddedOrUpdated: GoogleSheetsWebhook<'rowAddedOrUpdated', RowAddedOrUpdatedEvent>;
 };
 
 export type GoogleSheetsBoundWebhooks = BindWebhooks<

@@ -22,7 +22,7 @@ import {
 } from './endpoints';
 import type { GmailCredentials } from './schema';
 import { GmailSchema } from './schema';
-import type { GmailWebhookOutputs, GmailWebhookPayload } from './webhooks';
+import type { GmailWebhookOutputs, GmailWebhookPayload, HistoryEvent, MessageDeletedEvent, MessageLabelChangedEvent, MessageReceivedEvent } from './webhooks';
 import { MessageWebhooks } from './webhooks';
 
 export type GmailContext = CorsairPluginContext<
@@ -69,16 +69,16 @@ export type GmailEndpoints = {
 
 export type GmailBoundEndpoints = BindEndpoints<typeof gmailEndpointsNested>;
 
-type GmailWebhook<K extends keyof GmailWebhookOutputs> = CorsairWebhook<
+type GmailWebhook<K extends keyof GmailWebhookOutputs, TEvent> = CorsairWebhook<
 	GmailContext,
-	GmailWebhookPayload,
+	GmailWebhookPayload<TEvent>,
 	GmailWebhookOutputs[K]
 >;
 
 export type GmailWebhooks = {
-	messageReceived: GmailWebhook<'messageReceived'>;
-	messageDeleted: GmailWebhook<'messageDeleted'>;
-	messageLabelChanged: GmailWebhook<'messageLabelChanged'>;
+	messageReceived: GmailWebhook<'messageReceived', MessageReceivedEvent>;
+	messageDeleted: GmailWebhook<'messageDeleted', MessageDeletedEvent>;
+	messageLabelChanged: GmailWebhook<'messageLabelChanged', MessageLabelChangedEvent>;
 };
 
 export type GmailBoundWebhooks = BindWebhooks<typeof gmailWebhooksNested>;

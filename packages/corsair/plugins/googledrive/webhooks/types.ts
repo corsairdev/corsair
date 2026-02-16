@@ -11,9 +11,10 @@ export type PubSubMessage = {
 	publishTime?: string;
 };
 
-export type PubSubNotification = {
+export type PubSubNotification<TEvent = unknown> = {
 	message?: PubSubMessage;
 	subscription?: string;
+	event?: TEvent;
 };
 
 export type GoogleDrivePushNotification = {
@@ -51,7 +52,7 @@ export interface GoogleDriveEventMap {
 	folderChanged: FolderChangedEvent;
 }
 
-export type GoogleDriveWebhookPayload = PubSubNotification;
+export type GoogleDriveWebhookPayload<TEvent = unknown> = PubSubNotification<TEvent>;
 
 export type GoogleDriveWebhookOutputs = {
 	fileChanged: FileChangedEvent;

@@ -107,10 +107,10 @@ export type HubSpotBoundEndpoints = BindEndpoints<
 
 type HubSpotWebhook<
 	K extends keyof HubSpotWebhookOutputs,
-	TEvent extends HubSpotWebhookPayload,
+	TEvent,
 > = CorsairWebhook<
 	HubSpotContext,
-	HubSpotWebhookPayloadType<TEvent>,
+	HubSpotWebhookPayload<TEvent>,
 	HubSpotWebhookOutputs[K]
 >;
 

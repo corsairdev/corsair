@@ -11,9 +11,10 @@ export type PubSubMessage = {
 	publishTime?: string;
 };
 
-export type PubSubNotification = {
+export type PubSubNotification<TEvent = unknown> = {
 	message?: PubSubMessage;
 	subscription?: string;
+	event?: TEvent;
 };
 
 export type GoogleCalendarPushNotification = {
@@ -83,7 +84,7 @@ export interface GoogleCalendarEventMap {
 	eventEnded: EventEndedEvent;
 }
 
-export type GoogleCalendarWebhookPayload = PubSubNotification;
+export type GoogleCalendarWebhookPayload<TEvent = unknown> = PubSubNotification<TEvent>;
 
 export type GoogleCalendarWebhookOutputs = {
 	eventCreated: EventCreatedEvent;

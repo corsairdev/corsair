@@ -3,13 +3,14 @@ import type {
 	RawWebhookRequest,
 } from '../../../core/webhooks';
 
-export type GoogleAppsScriptWebhookPayload = {
+export type GoogleAppsScriptWebhookPayload<TEvent = unknown> = {
 	spreadsheetId?: string;
 	sheetName?: string;
 	range?: string;
 	values?: (string | number | boolean | null)[][];
 	eventType?: 'rowAdded' | 'rowUpdated' | 'rowAddedOrUpdated';
 	timestamp?: string;
+	event?: TEvent;
 };
 
 export type RowAddedEvent = {
@@ -55,7 +56,7 @@ export interface GoogleSheetsEventMap {
 	rowAddedOrUpdated: RowAddedOrUpdatedEvent;
 }
 
-export type GoogleSheetsWebhookPayload = GoogleAppsScriptWebhookPayload;
+export type GoogleSheetsWebhookPayload<TEvent = unknown> = GoogleAppsScriptWebhookPayload<TEvent>;
 
 export type GoogleSheetsWebhookOutputs = {
 	rowAdded: RowAddedEvent;
