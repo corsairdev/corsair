@@ -10,7 +10,10 @@ import type {
 } from '../../core';
 import type { AuthTypes, PickAuth } from '../../core/constants';
 import { Domains, Emails } from './endpoints';
-import type { ResendEndpointOutputs } from './endpoints/types';
+import type {
+	ResendEndpointInputs,
+	ResendEndpointOutputs,
+} from './endpoints/types';
 import { ResendSchema } from './schema';
 import type {
 	DomainCreatedEvent,
@@ -46,49 +49,21 @@ export type ResendBoundEndpoints = BindEndpoints<typeof resendEndpointsNested>;
 
 type ResendEndpoint<
 	K extends keyof ResendEndpointOutputs,
-	Input,
-> = CorsairEndpoint<ResendContext, Input, ResendEndpointOutputs[K]>;
+> = CorsairEndpoint<
+	ResendContext,
+	ResendEndpointInputs[K],
+	ResendEndpointOutputs[K]
+>;
 
 export type ResendEndpoints = {
-	emailsSend: ResendEndpoint<
-		'emailsSend',
-		{
-			from: string;
-			to: string | string[];
-			subject: string;
-			html?: string;
-			text?: string;
-			cc?: string | string[];
-			bcc?: string | string[];
-			reply_to?: string | string[];
-			attachments?: Array<{
-				filename: string;
-				content: string | Buffer;
-				path?: string;
-			}>;
-			tags?: Array<{ name: string; value: string }>;
-			headers?: Record<string, string>;
-		}
-	>;
-	emailsGet: ResendEndpoint<'emailsGet', { id: string }>;
-	emailsList: ResendEndpoint<
-		'emailsList',
-		{ limit?: number; cursor?: string } | undefined
-	>;
-	domainsCreate: ResendEndpoint<
-		'domainsCreate',
-		{
-			name: string;
-			region?: 'us-east-1' | 'eu-west-1' | 'sa-east-1';
-		}
-	>;
-	domainsGet: ResendEndpoint<'domainsGet', { id: string }>;
-	domainsList: ResendEndpoint<
-		'domainsList',
-		{ limit?: number; cursor?: string } | undefined
-	>;
-	domainsDelete: ResendEndpoint<'domainsDelete', { id: string }>;
-	domainsVerify: ResendEndpoint<'domainsVerify', { id: string }>;
+	emailsSend: ResendEndpoint<'emailsSend'>;
+	emailsGet: ResendEndpoint<'emailsGet'>;
+	emailsList: ResendEndpoint<'emailsList'>;
+	domainsCreate: ResendEndpoint<'domainsCreate'>;
+	domainsGet: ResendEndpoint<'domainsGet'>;
+	domainsList: ResendEndpoint<'domainsList'>;
+	domainsDelete: ResendEndpoint<'domainsDelete'>;
+	domainsVerify: ResendEndpoint<'domainsVerify'>;
 };
 
 type ResendWebhook<

@@ -10,7 +10,10 @@ import type {
 } from '../../core';
 import type { AuthTypes, PickAuth } from '../../core/constants';
 import { getValidAccessToken } from './client';
-import type { GoogleDriveEndpointOutputs } from './endpoints';
+import type {
+	GoogleDriveEndpointInputs,
+	GoogleDriveEndpointOutputs,
+} from './endpoints';
 import {
 	FilesEndpoints,
 	FoldersEndpoints,
@@ -31,268 +34,34 @@ export type GoogleDriveContext = CorsairPluginContext<
 
 type GoogleDriveEndpoint<
 	K extends keyof GoogleDriveEndpointOutputs,
-	Input,
-> = CorsairEndpoint<GoogleDriveContext, Input, GoogleDriveEndpointOutputs[K]>;
+> = CorsairEndpoint<
+	GoogleDriveContext,
+	GoogleDriveEndpointInputs[K],
+	GoogleDriveEndpointOutputs[K]
+>;
 
 export type GoogleDriveEndpoints = {
-	filesList: GoogleDriveEndpoint<
-		'filesList',
-		{
-			q?: string;
-			pageSize?: number;
-			pageToken?: string;
-			spaces?: string;
-			corpora?: string;
-			driveId?: string;
-			includeItemsFromAllDrives?: boolean;
-			includePermissionsForView?: string;
-			orderBy?: string;
-			supportsAllDrives?: boolean;
-			supportsTeamDrives?: boolean;
-			teamDriveId?: string;
-		}
-	>;
-	filesGet: GoogleDriveEndpoint<
-		'filesGet',
-		{
-			fileId: string;
-			acknowledgeAbuse?: boolean;
-			supportsAllDrives?: boolean;
-			supportsTeamDrives?: boolean;
-			includePermissionsForView?: string;
-		}
-	>;
-	filesCreateFromText: GoogleDriveEndpoint<
-		'filesCreateFromText',
-		{
-			name: string;
-			content: string;
-			mimeType?: string;
-			parents?: string[];
-			description?: string;
-		}
-	>;
-	filesUpload: GoogleDriveEndpoint<
-		'filesUpload',
-		{
-			name: string;
-			mimeType?: string;
-			parents?: string[];
-			description?: string;
-		}
-	>;
-	filesUpdate: GoogleDriveEndpoint<
-		'filesUpdate',
-		{
-			fileId: string;
-			name?: string;
-			description?: string;
-			starred?: boolean;
-			trashed?: boolean;
-			parents?: string[];
-			addParents?: string;
-			removeParents?: string;
-			properties?: Record<string, string>;
-			appProperties?: Record<string, string>;
-			supportsAllDrives?: boolean;
-			supportsTeamDrives?: boolean;
-		}
-	>;
-	filesDelete: GoogleDriveEndpoint<
-		'filesDelete',
-		{
-			fileId: string;
-			supportsAllDrives?: boolean;
-			supportsTeamDrives?: boolean;
-		}
-	>;
-	filesCopy: GoogleDriveEndpoint<
-		'filesCopy',
-		{
-			fileId: string;
-			name?: string;
-			parents?: string[];
-			supportsAllDrives?: boolean;
-			supportsTeamDrives?: boolean;
-		}
-	>;
-	filesMove: GoogleDriveEndpoint<
-		'filesMove',
-		{
-			fileId: string;
-			addParents?: string;
-			removeParents?: string;
-			supportsAllDrives?: boolean;
-			supportsTeamDrives?: boolean;
-		}
-	>;
-	filesDownload: GoogleDriveEndpoint<
-		'filesDownload',
-		{
-			fileId: string;
-			acknowledgeAbuse?: boolean;
-		}
-	>;
-	filesShare: GoogleDriveEndpoint<
-		'filesShare',
-		{
-			fileId: string;
-			type?: 'user' | 'group' | 'domain' | 'anyone';
-			role?:
-				| 'owner'
-				| 'organizer'
-				| 'fileOrganizer'
-				| 'writer'
-				| 'commenter'
-				| 'reader';
-			emailAddress?: string;
-			domain?: string;
-			allowFileDiscovery?: boolean;
-			expirationTime?: string;
-			sendNotificationEmail?: boolean;
-			emailMessage?: string;
-			supportsAllDrives?: boolean;
-			supportsTeamDrives?: boolean;
-			moveToNewOwnersRoot?: boolean;
-			transferOwnership?: boolean;
-		}
-	>;
-	foldersCreate: GoogleDriveEndpoint<
-		'foldersCreate',
-		{
-			name: string;
-			parents?: string[];
-			description?: string;
-		}
-	>;
-	foldersGet: GoogleDriveEndpoint<
-		'foldersGet',
-		{
-			folderId: string;
-			supportsAllDrives?: boolean;
-			supportsTeamDrives?: boolean;
-			includePermissionsForView?: string;
-		}
-	>;
-	foldersList: GoogleDriveEndpoint<
-		'foldersList',
-		{
-			q?: string;
-			pageSize?: number;
-			pageToken?: string;
-			spaces?: string;
-			corpora?: string;
-			driveId?: string;
-			includeItemsFromAllDrives?: boolean;
-			includePermissionsForView?: string;
-			orderBy?: string;
-			supportsAllDrives?: boolean;
-			supportsTeamDrives?: boolean;
-			teamDriveId?: string;
-		}
-	>;
-	foldersDelete: GoogleDriveEndpoint<
-		'foldersDelete',
-		{
-			folderId: string;
-			supportsAllDrives?: boolean;
-			supportsTeamDrives?: boolean;
-		}
-	>;
-	foldersShare: GoogleDriveEndpoint<
-		'foldersShare',
-		{
-			folderId: string;
-			type?: 'user' | 'group' | 'domain' | 'anyone';
-			role?:
-				| 'owner'
-				| 'organizer'
-				| 'fileOrganizer'
-				| 'writer'
-				| 'commenter'
-				| 'reader';
-			emailAddress?: string;
-			domain?: string;
-			allowFileDiscovery?: boolean;
-			expirationTime?: string;
-			sendNotificationEmail?: boolean;
-			emailMessage?: string;
-			supportsAllDrives?: boolean;
-			supportsTeamDrives?: boolean;
-			moveToNewOwnersRoot?: boolean;
-			transferOwnership?: boolean;
-		}
-	>;
-	sharedDrivesCreate: GoogleDriveEndpoint<
-		'sharedDrivesCreate',
-		{
-			name: string;
-			requestId?: string;
-			themeId?: string;
-			colorRgb?: string;
-			restrictions?: {
-				adminManagedRestrictions?: boolean;
-				copyRequiresWriterPermission?: boolean;
-				domainUsersOnly?: boolean;
-				driveMembersOnly?: boolean;
-			};
-		}
-	>;
-	sharedDrivesGet: GoogleDriveEndpoint<
-		'sharedDrivesGet',
-		{
-			driveId: string;
-			useDomainAdminAccess?: boolean;
-		}
-	>;
-	sharedDrivesList: GoogleDriveEndpoint<
-		'sharedDrivesList',
-		{
-			pageSize?: number;
-			pageToken?: string;
-			q?: string;
-			useDomainAdminAccess?: boolean;
-		}
-	>;
-	sharedDrivesUpdate: GoogleDriveEndpoint<
-		'sharedDrivesUpdate',
-		{
-			driveId: string;
-			name?: string;
-			themeId?: string;
-			colorRgb?: string;
-			restrictions?: {
-				adminManagedRestrictions?: boolean;
-				copyRequiresWriterPermission?: boolean;
-				domainUsersOnly?: boolean;
-				driveMembersOnly?: boolean;
-			};
-			useDomainAdminAccess?: boolean;
-		}
-	>;
-	sharedDrivesDelete: GoogleDriveEndpoint<
-		'sharedDrivesDelete',
-		{
-			driveId: string;
-		}
-	>;
-	searchFilesAndFolders: GoogleDriveEndpoint<
-		'searchFilesAndFolders',
-		{
-			q: string;
-			pageSize?: number;
-			pageToken?: string;
-			spaces?: string;
-			corpora?: string;
-			driveId?: string;
-			includeItemsFromAllDrives?: boolean;
-			includePermissionsForView?: string;
-			orderBy?: string;
-			supportsAllDrives?: boolean;
-			supportsTeamDrives?: boolean;
-			teamDriveId?: string;
-		}
-	>;
+	filesList: GoogleDriveEndpoint<'filesList'>;
+	filesGet: GoogleDriveEndpoint<'filesGet'>;
+	filesCreateFromText: GoogleDriveEndpoint<'filesCreateFromText'>;
+	filesUpload: GoogleDriveEndpoint<'filesUpload'>;
+	filesUpdate: GoogleDriveEndpoint<'filesUpdate'>;
+	filesDelete: GoogleDriveEndpoint<'filesDelete'>;
+	filesCopy: GoogleDriveEndpoint<'filesCopy'>;
+	filesMove: GoogleDriveEndpoint<'filesMove'>;
+	filesDownload: GoogleDriveEndpoint<'filesDownload'>;
+	filesShare: GoogleDriveEndpoint<'filesShare'>;
+	foldersCreate: GoogleDriveEndpoint<'foldersCreate'>;
+	foldersGet: GoogleDriveEndpoint<'foldersGet'>;
+	foldersList: GoogleDriveEndpoint<'foldersList'>;
+	foldersDelete: GoogleDriveEndpoint<'foldersDelete'>;
+	foldersShare: GoogleDriveEndpoint<'foldersShare'>;
+	sharedDrivesCreate: GoogleDriveEndpoint<'sharedDrivesCreate'>;
+	sharedDrivesGet: GoogleDriveEndpoint<'sharedDrivesGet'>;
+	sharedDrivesList: GoogleDriveEndpoint<'sharedDrivesList'>;
+	sharedDrivesUpdate: GoogleDriveEndpoint<'sharedDrivesUpdate'>;
+	sharedDrivesDelete: GoogleDriveEndpoint<'sharedDrivesDelete'>;
+	searchFilesAndFolders: GoogleDriveEndpoint<'searchFilesAndFolders'>;
 };
 
 export type GoogleDriveBoundEndpoints = BindEndpoints<
@@ -458,4 +227,7 @@ export {
 // Endpoint Type Exports
 // ─────────────────────────────────────────────────────────────────────────────
 
-export type { GoogleDriveEndpointOutputs } from './endpoints/types';
+export type {
+	GoogleDriveEndpointInputs,
+	GoogleDriveEndpointOutputs,
+} from './endpoints/types';

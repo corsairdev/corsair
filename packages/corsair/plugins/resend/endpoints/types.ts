@@ -1,5 +1,86 @@
 import { z } from 'zod';
 
+const EmailsSendInputSchema = z.object({
+	from: z.string(),
+	to: z.union([z.string(), z.array(z.string())]),
+	subject: z.string(),
+	html: z.string().optional(),
+	text: z.string().optional(),
+	cc: z.union([z.string(), z.array(z.string())]).optional(),
+	bcc: z.union([z.string(), z.array(z.string())]).optional(),
+	reply_to: z.union([z.string(), z.array(z.string())]).optional(),
+	attachments: z
+		.array(
+			z.object({
+				filename: z.string(),
+				content: z.union([z.string(), z.instanceof(Buffer)]),
+				path: z.string().optional(),
+			}),
+		)
+		.optional(),
+	tags: z
+		.array(
+			z.object({
+				name: z.string(),
+				value: z.string(),
+			}),
+		)
+		.optional(),
+	headers: z.record(z.string()).optional(),
+});
+
+const EmailsGetInputSchema = z.object({
+	id: z.string(),
+});
+
+const EmailsListInputSchema = z
+	.object({
+		limit: z.number().optional(),
+		cursor: z.string().optional(),
+	})
+	.optional();
+
+const DomainsCreateInputSchema = z.object({
+	name: z.string(),
+	region: z.enum(['us-east-1', 'eu-west-1', 'sa-east-1']).optional(),
+});
+
+const DomainsGetInputSchema = z.object({
+	id: z.string(),
+});
+
+const DomainsListInputSchema = z
+	.object({
+		limit: z.number().optional(),
+		cursor: z.string().optional(),
+	})
+	.optional();
+
+const DomainsDeleteInputSchema = z.object({
+	id: z.string(),
+});
+
+const DomainsVerifyInputSchema = z.object({
+	id: z.string(),
+});
+
+export const ResendEndpointInputSchemas = {
+	emailsSend: EmailsSendInputSchema,
+	emailsGet: EmailsGetInputSchema,
+	emailsList: EmailsListInputSchema,
+	domainsCreate: DomainsCreateInputSchema,
+	domainsGet: DomainsGetInputSchema,
+	domainsList: DomainsListInputSchema,
+	domainsDelete: DomainsDeleteInputSchema,
+	domainsVerify: DomainsVerifyInputSchema,
+} as const;
+
+export type ResendEndpointInputs = {
+	[K in keyof typeof ResendEndpointInputSchemas]: z.infer<
+		(typeof ResendEndpointInputSchemas)[K]
+	>;
+};
+
 const SendEmailResponseSchema = z.object({
 	id: z.string(),
 });

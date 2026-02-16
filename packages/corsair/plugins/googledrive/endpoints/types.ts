@@ -7,6 +7,262 @@ import type {
 	SharedDriveList,
 } from '../types';
 
+const FilesListInputSchema = z.object({
+	q: z.string().optional(),
+	pageSize: z.number().optional(),
+	pageToken: z.string().optional(),
+	spaces: z.string().optional(),
+	corpora: z.string().optional(),
+	driveId: z.string().optional(),
+	includeItemsFromAllDrives: z.boolean().optional(),
+	includePermissionsForView: z.string().optional(),
+	orderBy: z.string().optional(),
+	supportsAllDrives: z.boolean().optional(),
+	supportsTeamDrives: z.boolean().optional(),
+	teamDriveId: z.string().optional(),
+});
+
+const FilesGetInputSchema = z.object({
+	fileId: z.string(),
+	acknowledgeAbuse: z.boolean().optional(),
+	supportsAllDrives: z.boolean().optional(),
+	supportsTeamDrives: z.boolean().optional(),
+	includePermissionsForView: z.string().optional(),
+});
+
+const FilesCreateFromTextInputSchema = z.object({
+	name: z.string(),
+	content: z.string(),
+	mimeType: z.string().optional(),
+	parents: z.array(z.string()).optional(),
+	description: z.string().optional(),
+});
+
+const FilesUploadInputSchema = z.object({
+	name: z.string(),
+	mimeType: z.string().optional(),
+	parents: z.array(z.string()).optional(),
+	description: z.string().optional(),
+});
+
+const FilesUpdateInputSchema = z.object({
+	fileId: z.string(),
+	name: z.string().optional(),
+	description: z.string().optional(),
+	starred: z.boolean().optional(),
+	trashed: z.boolean().optional(),
+	parents: z.array(z.string()).optional(),
+	addParents: z.string().optional(),
+	removeParents: z.string().optional(),
+	properties: z.record(z.string()).optional(),
+	appProperties: z.record(z.string()).optional(),
+	supportsAllDrives: z.boolean().optional(),
+	supportsTeamDrives: z.boolean().optional(),
+});
+
+const FilesDeleteInputSchema = z.object({
+	fileId: z.string(),
+	supportsAllDrives: z.boolean().optional(),
+	supportsTeamDrives: z.boolean().optional(),
+});
+
+const FilesCopyInputSchema = z.object({
+	fileId: z.string(),
+	name: z.string().optional(),
+	parents: z.array(z.string()).optional(),
+	supportsAllDrives: z.boolean().optional(),
+	supportsTeamDrives: z.boolean().optional(),
+});
+
+const FilesMoveInputSchema = z.object({
+	fileId: z.string(),
+	addParents: z.string().optional(),
+	removeParents: z.string().optional(),
+	supportsAllDrives: z.boolean().optional(),
+	supportsTeamDrives: z.boolean().optional(),
+});
+
+const FilesDownloadInputSchema = z.object({
+	fileId: z.string(),
+	acknowledgeAbuse: z.boolean().optional(),
+});
+
+const FilesShareInputSchema = z.object({
+	fileId: z.string(),
+	type: z.enum(['user', 'group', 'domain', 'anyone']).optional(),
+	role: z
+		.enum([
+			'owner',
+			'organizer',
+			'fileOrganizer',
+			'writer',
+			'commenter',
+			'reader',
+		])
+		.optional(),
+	emailAddress: z.string().optional(),
+	domain: z.string().optional(),
+	allowFileDiscovery: z.boolean().optional(),
+	expirationTime: z.string().optional(),
+	sendNotificationEmail: z.boolean().optional(),
+	emailMessage: z.string().optional(),
+	supportsAllDrives: z.boolean().optional(),
+	supportsTeamDrives: z.boolean().optional(),
+	moveToNewOwnersRoot: z.boolean().optional(),
+	transferOwnership: z.boolean().optional(),
+});
+
+const FoldersCreateInputSchema = z.object({
+	name: z.string(),
+	parents: z.array(z.string()).optional(),
+	description: z.string().optional(),
+});
+
+const FoldersGetInputSchema = z.object({
+	folderId: z.string(),
+	supportsAllDrives: z.boolean().optional(),
+	supportsTeamDrives: z.boolean().optional(),
+	includePermissionsForView: z.string().optional(),
+});
+
+const FoldersListInputSchema = z.object({
+	q: z.string().optional(),
+	pageSize: z.number().optional(),
+	pageToken: z.string().optional(),
+	spaces: z.string().optional(),
+	corpora: z.string().optional(),
+	driveId: z.string().optional(),
+	includeItemsFromAllDrives: z.boolean().optional(),
+	includePermissionsForView: z.string().optional(),
+	orderBy: z.string().optional(),
+	supportsAllDrives: z.boolean().optional(),
+	supportsTeamDrives: z.boolean().optional(),
+	teamDriveId: z.string().optional(),
+});
+
+const FoldersDeleteInputSchema = z.object({
+	folderId: z.string(),
+	supportsAllDrives: z.boolean().optional(),
+	supportsTeamDrives: z.boolean().optional(),
+});
+
+const FoldersShareInputSchema = z.object({
+	folderId: z.string(),
+	type: z.enum(['user', 'group', 'domain', 'anyone']).optional(),
+	role: z
+		.enum([
+			'owner',
+			'organizer',
+			'fileOrganizer',
+			'writer',
+			'commenter',
+			'reader',
+		])
+		.optional(),
+	emailAddress: z.string().optional(),
+	domain: z.string().optional(),
+	allowFileDiscovery: z.boolean().optional(),
+	expirationTime: z.string().optional(),
+	sendNotificationEmail: z.boolean().optional(),
+	emailMessage: z.string().optional(),
+	supportsAllDrives: z.boolean().optional(),
+	supportsTeamDrives: z.boolean().optional(),
+	moveToNewOwnersRoot: z.boolean().optional(),
+	transferOwnership: z.boolean().optional(),
+});
+
+const SharedDrivesCreateInputSchema = z.object({
+	name: z.string(),
+	requestId: z.string().optional(),
+	themeId: z.string().optional(),
+	colorRgb: z.string().optional(),
+	restrictions: z
+		.object({
+			adminManagedRestrictions: z.boolean().optional(),
+			copyRequiresWriterPermission: z.boolean().optional(),
+			domainUsersOnly: z.boolean().optional(),
+			driveMembersOnly: z.boolean().optional(),
+		})
+		.optional(),
+});
+
+const SharedDrivesGetInputSchema = z.object({
+	driveId: z.string(),
+	useDomainAdminAccess: z.boolean().optional(),
+});
+
+const SharedDrivesListInputSchema = z.object({
+	pageSize: z.number().optional(),
+	pageToken: z.string().optional(),
+	q: z.string().optional(),
+	useDomainAdminAccess: z.boolean().optional(),
+});
+
+const SharedDrivesUpdateInputSchema = z.object({
+	driveId: z.string(),
+	name: z.string().optional(),
+	themeId: z.string().optional(),
+	colorRgb: z.string().optional(),
+	restrictions: z
+		.object({
+			adminManagedRestrictions: z.boolean().optional(),
+			copyRequiresWriterPermission: z.boolean().optional(),
+			domainUsersOnly: z.boolean().optional(),
+			driveMembersOnly: z.boolean().optional(),
+		})
+		.optional(),
+	useDomainAdminAccess: z.boolean().optional(),
+});
+
+const SharedDrivesDeleteInputSchema = z.object({
+	driveId: z.string(),
+});
+
+const SearchFilesAndFoldersInputSchema = z.object({
+	q: z.string(),
+	pageSize: z.number().optional(),
+	pageToken: z.string().optional(),
+	spaces: z.string().optional(),
+	corpora: z.string().optional(),
+	driveId: z.string().optional(),
+	includeItemsFromAllDrives: z.boolean().optional(),
+	includePermissionsForView: z.string().optional(),
+	orderBy: z.string().optional(),
+	supportsAllDrives: z.boolean().optional(),
+	supportsTeamDrives: z.boolean().optional(),
+	teamDriveId: z.string().optional(),
+});
+
+export const GoogleDriveEndpointInputSchemas = {
+	filesList: FilesListInputSchema,
+	filesGet: FilesGetInputSchema,
+	filesCreateFromText: FilesCreateFromTextInputSchema,
+	filesUpload: FilesUploadInputSchema,
+	filesUpdate: FilesUpdateInputSchema,
+	filesDelete: FilesDeleteInputSchema,
+	filesCopy: FilesCopyInputSchema,
+	filesMove: FilesMoveInputSchema,
+	filesDownload: FilesDownloadInputSchema,
+	filesShare: FilesShareInputSchema,
+	foldersCreate: FoldersCreateInputSchema,
+	foldersGet: FoldersGetInputSchema,
+	foldersList: FoldersListInputSchema,
+	foldersDelete: FoldersDeleteInputSchema,
+	foldersShare: FoldersShareInputSchema,
+	sharedDrivesCreate: SharedDrivesCreateInputSchema,
+	sharedDrivesGet: SharedDrivesGetInputSchema,
+	sharedDrivesList: SharedDrivesListInputSchema,
+	sharedDrivesUpdate: SharedDrivesUpdateInputSchema,
+	sharedDrivesDelete: SharedDrivesDeleteInputSchema,
+	searchFilesAndFolders: SearchFilesAndFoldersInputSchema,
+} as const;
+
+export type GoogleDriveEndpointInputs = {
+	[K in keyof typeof GoogleDriveEndpointInputSchemas]: z.infer<
+		(typeof GoogleDriveEndpointInputSchemas)[K]
+	>;
+};
+
 const FileSchema = z.object({
 	id: z.string().optional(),
 	name: z.string().optional(),

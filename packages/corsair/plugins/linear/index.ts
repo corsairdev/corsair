@@ -9,7 +9,10 @@ import type {
 	KeyBuilderContext,
 } from '../../core';
 import type { AuthTypes, PickAuth } from '../../core/constants';
-import type { LinearEndpointOutputs } from './endpoints';
+import type {
+	LinearEndpointInputs,
+	LinearEndpointOutputs,
+} from './endpoints';
 import { Comments, Issues, Projects, Teams } from './endpoints';
 import { errorHandlers } from './error-handlers';
 import { LinearSchema } from './schema';
@@ -35,108 +38,29 @@ export type LinearBoundEndpoints = BindEndpoints<typeof linearEndpointsNested>;
 
 type LinearEndpoint<
 	K extends keyof LinearEndpointOutputs,
-	Input,
-> = CorsairEndpoint<LinearContext, Input, LinearEndpointOutputs[K]>;
+> = CorsairEndpoint<
+	LinearContext,
+	LinearEndpointInputs[K],
+	LinearEndpointOutputs[K]
+>;
 
 export type LinearEndpoints = {
-	issuesList: LinearEndpoint<
-		'issuesList',
-		{ teamId?: string; first?: number; after?: string }
-	>;
-	issuesGet: LinearEndpoint<'issuesGet', { id: string }>;
-	issuesCreate: LinearEndpoint<
-		'issuesCreate',
-		{
-			title: string;
-			description?: string;
-			teamId: string;
-			assigneeId?: string;
-			priority?: 0 | 1 | 2 | 3 | 4;
-			estimate?: number;
-			stateId?: string;
-			projectId?: string;
-			cycleId?: string;
-			parentId?: string;
-			labelIds?: string[];
-			subscriberIds?: string[];
-			dueDate?: string;
-		}
-	>;
-	issuesUpdate: LinearEndpoint<
-		'issuesUpdate',
-		{
-			id: string;
-			input: {
-				title?: string;
-				description?: string;
-				assigneeId?: string;
-				priority?: 0 | 1 | 2 | 3 | 4;
-				estimate?: number;
-				stateId?: string;
-				projectId?: string;
-				cycleId?: string;
-				parentId?: string;
-				labelIds?: string[];
-				subscriberIds?: string[];
-				dueDate?: string;
-			};
-		}
-	>;
-	issuesDelete: LinearEndpoint<'issuesDelete', { id: string }>;
-	teamsList: LinearEndpoint<'teamsList', { first?: number; after?: string }>;
-	teamsGet: LinearEndpoint<'teamsGet', { id: string }>;
-	projectsList: LinearEndpoint<
-		'projectsList',
-		{ first?: number; after?: string }
-	>;
-	projectsGet: LinearEndpoint<'projectsGet', { id: string }>;
-	projectsCreate: LinearEndpoint<
-		'projectsCreate',
-		{
-			name: string;
-			description?: string;
-			icon?: string;
-			color?: string;
-			teamIds: string[];
-			leadId?: string;
-			state?: 'planned' | 'started' | 'paused' | 'completed' | 'canceled';
-			priority?: number;
-			startDate?: string;
-			targetDate?: string;
-		}
-	>;
-	projectsUpdate: LinearEndpoint<
-		'projectsUpdate',
-		{
-			id: string;
-			input: {
-				name?: string;
-				description?: string;
-				icon?: string;
-				color?: string;
-				teamIds?: string[];
-				leadId?: string;
-				state?: 'planned' | 'started' | 'paused' | 'completed' | 'canceled';
-				priority?: number;
-				startDate?: string;
-				targetDate?: string;
-			};
-		}
-	>;
-	projectsDelete: LinearEndpoint<'projectsDelete', { id: string }>;
-	commentsList: LinearEndpoint<
-		'commentsList',
-		{ issueId: string; first?: number; after?: string }
-	>;
-	commentsCreate: LinearEndpoint<
-		'commentsCreate',
-		{ issueId: string; body: string; parentId?: string }
-	>;
-	commentsUpdate: LinearEndpoint<
-		'commentsUpdate',
-		{ id: string; input: { body?: string } }
-	>;
-	commentsDelete: LinearEndpoint<'commentsDelete', { id: string }>;
+	issuesList: LinearEndpoint<'issuesList'>;
+	issuesGet: LinearEndpoint<'issuesGet'>;
+	issuesCreate: LinearEndpoint<'issuesCreate'>;
+	issuesUpdate: LinearEndpoint<'issuesUpdate'>;
+	issuesDelete: LinearEndpoint<'issuesDelete'>;
+	teamsList: LinearEndpoint<'teamsList'>;
+	teamsGet: LinearEndpoint<'teamsGet'>;
+	projectsList: LinearEndpoint<'projectsList'>;
+	projectsGet: LinearEndpoint<'projectsGet'>;
+	projectsCreate: LinearEndpoint<'projectsCreate'>;
+	projectsUpdate: LinearEndpoint<'projectsUpdate'>;
+	projectsDelete: LinearEndpoint<'projectsDelete'>;
+	commentsList: LinearEndpoint<'commentsList'>;
+	commentsCreate: LinearEndpoint<'commentsCreate'>;
+	commentsUpdate: LinearEndpoint<'commentsUpdate'>;
+	commentsDelete: LinearEndpoint<'commentsDelete'>;
 };
 
 type LinearWebhook<K extends keyof LinearWebhookOutputs> = CorsairWebhook<
@@ -333,6 +257,7 @@ export type {
 	IssuesListResponse,
 	IssueUpdateResponse,
 	Label,
+	LinearEndpointInputs,
 	LinearEndpointOutputs,
 	PageInfo,
 	Project,

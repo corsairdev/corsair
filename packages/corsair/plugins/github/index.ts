@@ -9,7 +9,10 @@ import type {
 	RawWebhookRequest,
 } from '../../core';
 import type { AuthTypes, PickAuth } from '../../core/constants';
-import type { GithubEndpointOutputs } from './endpoints';
+import type {
+	GithubEndpointInputs,
+	GithubEndpointOutputs,
+} from './endpoints';
 import {
 	IssuesEndpoints,
 	PullRequestsEndpoints,
@@ -46,292 +49,34 @@ export type GithubKeyBuilderContext = KeyBuilderContext<GithubPluginOptions>;
 
 type GithubEndpoint<
 	K extends keyof GithubEndpointOutputs,
-	Input,
-> = CorsairEndpoint<GithubContext, Input, GithubEndpointOutputs[K]>;
+> = CorsairEndpoint<
+	GithubContext,
+	GithubEndpointInputs[K],
+	GithubEndpointOutputs[K]
+>;
 
 export type GithubEndpoints = {
-	issuesList: GithubEndpoint<
-		'issuesList',
-		{
-			owner?: string;
-			repo?: string;
-			milestone?: string;
-			state?: 'open' | 'closed' | 'all';
-			assignee?: string;
-			creator?: string;
-			mentioned?: string;
-			labels?: string;
-			sort?: 'created' | 'updated' | 'comments';
-			direction?: 'asc' | 'desc';
-			since?: string;
-			perPage?: number;
-			page?: number;
-		}
-	>;
-	issuesGet: GithubEndpoint<
-		'issuesGet',
-		{
-			owner: string;
-			repo: string;
-			issueNumber: number;
-		}
-	>;
-	issuesCreate: GithubEndpoint<
-		'issuesCreate',
-		{
-			owner: string;
-			repo: string;
-			title: string | number;
-			body?: string;
-			assignee?: string | null;
-			milestone?: string | number | null;
-			labels?: Array<
-				| string
-				| {
-						id?: number;
-						name?: string;
-						description?: string | null;
-						color?: string | null;
-				  }
-			>;
-			assignees?: Array<string>;
-		}
-	>;
-	issuesUpdate: GithubEndpoint<
-		'issuesUpdate',
-		{
-			owner: string;
-			repo: string;
-			issueNumber: number;
-			title?: string | number | null;
-			body?: string | null;
-			assignee?: string | null;
-			state?: 'open' | 'closed';
-			stateReason?:
-				| 'completed'
-				| 'not_planned'
-				| 'duplicate'
-				| 'reopened'
-				| null;
-			milestone?: string | number | null;
-			labels?: Array<
-				| string
-				| {
-						id?: number;
-						name?: string;
-						description?: string | null;
-						color?: string | null;
-				  }
-			>;
-			assignees?: Array<string>;
-		}
-	>;
-	issuesCreateComment: GithubEndpoint<
-		'issuesCreateComment',
-		{
-			owner: string;
-			repo: string;
-			issueNumber: number;
-			body: string;
-		}
-	>;
-	pullRequestsList: GithubEndpoint<
-		'pullRequestsList',
-		{
-			owner: string;
-			repo: string;
-			state?: 'open' | 'closed' | 'all';
-			head?: string;
-			base?: string;
-			sort?: 'created' | 'updated' | 'popularity' | 'long-running';
-			direction?: 'asc' | 'desc';
-			perPage?: number;
-			page?: number;
-		}
-	>;
-	pullRequestsGet: GithubEndpoint<
-		'pullRequestsGet',
-		{
-			owner: string;
-			repo: string;
-			pullNumber: number;
-		}
-	>;
-	pullRequestsListReviews: GithubEndpoint<
-		'pullRequestsListReviews',
-		{
-			owner: string;
-			repo: string;
-			pullNumber: number;
-			perPage?: number;
-			page?: number;
-		}
-	>;
-	pullRequestsCreateReview: GithubEndpoint<
-		'pullRequestsCreateReview',
-		{
-			owner: string;
-			repo: string;
-			pullNumber: number;
-			commitId?: string;
-			body?: string;
-			event?: 'APPROVE' | 'REQUEST_CHANGES' | 'COMMENT';
-			comments?: Array<{
-				path: string;
-				position?: number;
-				body: string;
-				line?: number;
-				side?: string;
-				startLine?: number;
-				startSide?: string;
-			}>;
-		}
-	>;
-	repositoriesList: GithubEndpoint<
-		'repositoriesList',
-		{
-			owner?: string;
-			type?: 'all' | 'owner' | 'public' | 'private' | 'member';
-			sort?: 'created' | 'updated' | 'pushed' | 'full_name';
-			direction?: 'asc' | 'desc';
-			perPage?: number;
-			page?: number;
-		}
-	>;
-	repositoriesGet: GithubEndpoint<
-		'repositoriesGet',
-		{
-			owner: string;
-			repo: string;
-		}
-	>;
-	repositoriesListBranches: GithubEndpoint<
-		'repositoriesListBranches',
-		{
-			owner: string;
-			repo: string;
-			protected?: boolean;
-			perPage?: number;
-			page?: number;
-		}
-	>;
-	repositoriesListCommits: GithubEndpoint<
-		'repositoriesListCommits',
-		{
-			owner: string;
-			repo: string;
-			sha?: string;
-			path?: string;
-			author?: string;
-			committer?: string;
-			since?: string;
-			until?: string;
-			perPage?: number;
-			page?: number;
-		}
-	>;
-	repositoriesGetContent: GithubEndpoint<
-		'repositoriesGetContent',
-		{
-			owner: string;
-			repo: string;
-			path: string;
-			ref?: string;
-		}
-	>;
-	releasesList: GithubEndpoint<
-		'releasesList',
-		{
-			owner: string;
-			repo: string;
-			perPage?: number;
-			page?: number;
-		}
-	>;
-	releasesGet: GithubEndpoint<
-		'releasesGet',
-		{
-			owner: string;
-			repo: string;
-			releaseId: number;
-		}
-	>;
-	releasesCreate: GithubEndpoint<
-		'releasesCreate',
-		{
-			owner: string;
-			repo: string;
-			tagName: string;
-			targetCommitish?: string;
-			name?: string;
-			body?: string;
-			draft?: boolean;
-			prerelease?: boolean;
-			generateReleaseNotes?: boolean;
-		}
-	>;
-	releasesUpdate: GithubEndpoint<
-		'releasesUpdate',
-		{
-			owner: string;
-			repo: string;
-			releaseId: number;
-			tagName?: string;
-			targetCommitish?: string;
-			name?: string;
-			body?: string;
-			draft?: boolean;
-			prerelease?: boolean;
-		}
-	>;
-	workflowsList: GithubEndpoint<
-		'workflowsList',
-		{
-			owner: string;
-			repo: string;
-			perPage?: number;
-			page?: number;
-		}
-	>;
-	workflowsGet: GithubEndpoint<
-		'workflowsGet',
-		{
-			owner: string;
-			repo: string;
-			workflowId: number | string;
-		}
-	>;
-	workflowsListRuns: GithubEndpoint<
-		'workflowsListRuns',
-		{
-			owner: string;
-			repo: string;
-			actor?: string;
-			branch?: string;
-			event?: string;
-			status?:
-				| 'completed'
-				| 'action_required'
-				| 'cancelled'
-				| 'failure'
-				| 'neutral'
-				| 'skipped'
-				| 'stale'
-				| 'success'
-				| 'timed_out'
-				| 'in_progress'
-				| 'queued'
-				| 'requested'
-				| 'waiting'
-				| 'pending';
-			perPage?: number;
-			page?: number;
-			created?: string;
-			excludePullRequests?: boolean;
-			checkSuiteId?: number;
-			headSha?: string;
-		}
-	>;
+	issuesList: GithubEndpoint<'issuesList'>;
+	issuesGet: GithubEndpoint<'issuesGet'>;
+	issuesCreate: GithubEndpoint<'issuesCreate'>;
+	issuesUpdate: GithubEndpoint<'issuesUpdate'>;
+	issuesCreateComment: GithubEndpoint<'issuesCreateComment'>;
+	pullRequestsList: GithubEndpoint<'pullRequestsList'>;
+	pullRequestsGet: GithubEndpoint<'pullRequestsGet'>;
+	pullRequestsListReviews: GithubEndpoint<'pullRequestsListReviews'>;
+	pullRequestsCreateReview: GithubEndpoint<'pullRequestsCreateReview'>;
+	repositoriesList: GithubEndpoint<'repositoriesList'>;
+	repositoriesGet: GithubEndpoint<'repositoriesGet'>;
+	repositoriesListBranches: GithubEndpoint<'repositoriesListBranches'>;
+	repositoriesListCommits: GithubEndpoint<'repositoriesListCommits'>;
+	repositoriesGetContent: GithubEndpoint<'repositoriesGetContent'>;
+	releasesList: GithubEndpoint<'releasesList'>;
+	releasesGet: GithubEndpoint<'releasesGet'>;
+	releasesCreate: GithubEndpoint<'releasesCreate'>;
+	releasesUpdate: GithubEndpoint<'releasesUpdate'>;
+	workflowsList: GithubEndpoint<'workflowsList'>;
+	workflowsGet: GithubEndpoint<'workflowsGet'>;
+	workflowsListRuns: GithubEndpoint<'workflowsListRuns'>;
 };
 
 export type GithubBoundEndpoints = BindEndpoints<typeof githubEndpointsNested>;

@@ -10,7 +10,10 @@ import type {
 } from '../../core';
 import type { AuthTypes, PickAuth } from '../../core/constants';
 import { getValidAccessToken } from './client';
-import type { GmailEndpointOutputs } from './endpoints';
+import type {
+	GmailEndpointInputs,
+	GmailEndpointOutputs,
+} from './endpoints';
 import {
 	DraftsEndpoints,
 	LabelsEndpoints,
@@ -29,244 +32,39 @@ export type GmailContext = CorsairPluginContext<
 
 type GmailEndpoint<
 	K extends keyof GmailEndpointOutputs,
-	Input,
-> = CorsairEndpoint<GmailContext, Input, GmailEndpointOutputs[K]>;
+> = CorsairEndpoint<
+	GmailContext,
+	GmailEndpointInputs[K],
+	GmailEndpointOutputs[K]
+>;
 
 export type GmailEndpoints = {
-	messagesList: GmailEndpoint<
-		'messagesList',
-		{
-			userId?: string;
-			q?: string;
-			maxResults?: number;
-			pageToken?: string;
-			labelIds?: string[];
-			includeSpamTrash?: boolean;
-		}
-	>;
-	messagesGet: GmailEndpoint<
-		'messagesGet',
-		{
-			userId?: string;
-			id: string;
-			format?: 'minimal' | 'full' | 'raw' | 'metadata';
-			metadataHeaders?: string[];
-		}
-	>;
-	messagesSend: GmailEndpoint<
-		'messagesSend',
-		{
-			userId?: string;
-			raw: string;
-			threadId?: string;
-		}
-	>;
-	messagesDelete: GmailEndpoint<
-		'messagesDelete',
-		{
-			userId?: string;
-			id: string;
-		}
-	>;
-	messagesModify: GmailEndpoint<
-		'messagesModify',
-		{
-			userId?: string;
-			id: string;
-			addLabelIds?: string[];
-			removeLabelIds?: string[];
-		}
-	>;
-	messagesBatchModify: GmailEndpoint<
-		'messagesBatchModify',
-		{
-			userId?: string;
-			ids?: string[];
-			addLabelIds?: string[];
-			removeLabelIds?: string[];
-		}
-	>;
-	messagesTrash: GmailEndpoint<
-		'messagesTrash',
-		{
-			userId?: string;
-			id: string;
-		}
-	>;
-	messagesUntrash: GmailEndpoint<
-		'messagesUntrash',
-		{
-			userId?: string;
-			id: string;
-		}
-	>;
-	labelsList: GmailEndpoint<
-		'labelsList',
-		{
-			userId?: string;
-		}
-	>;
-	labelsGet: GmailEndpoint<
-		'labelsGet',
-		{
-			userId?: string;
-			id: string;
-		}
-	>;
-	labelsCreate: GmailEndpoint<
-		'labelsCreate',
-		{
-			userId?: string;
-			label: {
-				name?: string;
-				messageListVisibility?: 'show' | 'hide';
-				labelListVisibility?: 'labelShow' | 'labelShowIfUnread' | 'labelHide';
-				color?: {
-					textColor?: string;
-					backgroundColor?: string;
-				};
-			};
-		}
-	>;
-	labelsUpdate: GmailEndpoint<
-		'labelsUpdate',
-		{
-			userId?: string;
-			id: string;
-			label: {
-				name?: string;
-				messageListVisibility?: 'show' | 'hide';
-				labelListVisibility?: 'labelShow' | 'labelShowIfUnread' | 'labelHide';
-				color?: {
-					textColor?: string;
-					backgroundColor?: string;
-				};
-			};
-		}
-	>;
-	labelsDelete: GmailEndpoint<
-		'labelsDelete',
-		{
-			userId?: string;
-			id: string;
-		}
-	>;
-	draftsList: GmailEndpoint<
-		'draftsList',
-		{
-			userId?: string;
-			maxResults?: number;
-			pageToken?: string;
-			q?: string;
-		}
-	>;
-	draftsGet: GmailEndpoint<
-		'draftsGet',
-		{
-			userId?: string;
-			id: string;
-			format?: 'minimal' | 'full' | 'raw' | 'metadata';
-		}
-	>;
-	draftsCreate: GmailEndpoint<
-		'draftsCreate',
-		{
-			userId?: string;
-			draft: {
-				message?: {
-					raw?: string;
-					threadId?: string;
-				};
-			};
-		}
-	>;
-	draftsUpdate: GmailEndpoint<
-		'draftsUpdate',
-		{
-			userId?: string;
-			id: string;
-			draft: {
-				message?: {
-					raw?: string;
-					threadId?: string;
-				};
-			};
-		}
-	>;
-	draftsDelete: GmailEndpoint<
-		'draftsDelete',
-		{
-			userId?: string;
-			id: string;
-		}
-	>;
-	draftsSend: GmailEndpoint<
-		'draftsSend',
-		{
-			userId?: string;
-			id?: string;
-			message?: {
-				raw?: string;
-				threadId?: string;
-			};
-		}
-	>;
-	threadsList: GmailEndpoint<
-		'threadsList',
-		{
-			userId?: string;
-			q?: string;
-			maxResults?: number;
-			pageToken?: string;
-			labelIds?: string[];
-			includeSpamTrash?: boolean;
-		}
-	>;
-	threadsGet: GmailEndpoint<
-		'threadsGet',
-		{
-			userId?: string;
-			id: string;
-			format?: 'minimal' | 'full' | 'metadata';
-			metadataHeaders?: string[];
-		}
-	>;
-	threadsModify: GmailEndpoint<
-		'threadsModify',
-		{
-			userId?: string;
-			id: string;
-			addLabelIds?: string[];
-			removeLabelIds?: string[];
-		}
-	>;
-	threadsDelete: GmailEndpoint<
-		'threadsDelete',
-		{
-			userId?: string;
-			id: string;
-		}
-	>;
-	threadsTrash: GmailEndpoint<
-		'threadsTrash',
-		{
-			userId?: string;
-			id: string;
-		}
-	>;
-	threadsUntrash: GmailEndpoint<
-		'threadsUntrash',
-		{
-			userId?: string;
-			id: string;
-		}
-	>;
-	usersGetProfile: GmailEndpoint<
-		'usersGetProfile',
-		{
-			userId?: string;
-		}
-	>;
+	messagesList: GmailEndpoint<'messagesList'>;
+	messagesGet: GmailEndpoint<'messagesGet'>;
+	messagesSend: GmailEndpoint<'messagesSend'>;
+	messagesDelete: GmailEndpoint<'messagesDelete'>;
+	messagesModify: GmailEndpoint<'messagesModify'>;
+	messagesBatchModify: GmailEndpoint<'messagesBatchModify'>;
+	messagesTrash: GmailEndpoint<'messagesTrash'>;
+	messagesUntrash: GmailEndpoint<'messagesUntrash'>;
+	labelsList: GmailEndpoint<'labelsList'>;
+	labelsGet: GmailEndpoint<'labelsGet'>;
+	labelsCreate: GmailEndpoint<'labelsCreate'>;
+	labelsUpdate: GmailEndpoint<'labelsUpdate'>;
+	labelsDelete: GmailEndpoint<'labelsDelete'>;
+	draftsList: GmailEndpoint<'draftsList'>;
+	draftsGet: GmailEndpoint<'draftsGet'>;
+	draftsCreate: GmailEndpoint<'draftsCreate'>;
+	draftsUpdate: GmailEndpoint<'draftsUpdate'>;
+	draftsDelete: GmailEndpoint<'draftsDelete'>;
+	draftsSend: GmailEndpoint<'draftsSend'>;
+	threadsList: GmailEndpoint<'threadsList'>;
+	threadsGet: GmailEndpoint<'threadsGet'>;
+	threadsModify: GmailEndpoint<'threadsModify'>;
+	threadsDelete: GmailEndpoint<'threadsDelete'>;
+	threadsTrash: GmailEndpoint<'threadsTrash'>;
+	threadsUntrash: GmailEndpoint<'threadsUntrash'>;
+	usersGetProfile: GmailEndpoint<'usersGetProfile'>;
 };
 
 export type GmailBoundEndpoints = BindEndpoints<typeof gmailEndpointsNested>;
@@ -439,7 +237,10 @@ export {
 // Endpoint Type Exports
 // ─────────────────────────────────────────────────────────────────────────────
 
-export type { GmailEndpointOutputs } from './endpoints/types';
+export type {
+	GmailEndpointInputs,
+	GmailEndpointOutputs,
+} from './endpoints/types';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Schema Type Exports

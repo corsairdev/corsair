@@ -1,5 +1,156 @@
 import { z } from 'zod';
 
+const IssuesListInputSchema = z.object({
+	teamId: z.string().optional(),
+	first: z.number().optional(),
+	after: z.string().optional(),
+});
+
+const IssuesGetInputSchema = z.object({
+	id: z.string(),
+});
+
+const IssuesCreateInputSchema = z.object({
+	title: z.string(),
+	description: z.string().optional(),
+	teamId: z.string(),
+	assigneeId: z.string().optional(),
+	priority: z.enum([0, 1, 2, 3, 4]).optional(),
+	estimate: z.number().optional(),
+	stateId: z.string().optional(),
+	projectId: z.string().optional(),
+	cycleId: z.string().optional(),
+	parentId: z.string().optional(),
+	labelIds: z.array(z.string()).optional(),
+	subscriberIds: z.array(z.string()).optional(),
+	dueDate: z.string().optional(),
+});
+
+const IssuesUpdateInputSchema = z.object({
+	id: z.string(),
+	input: z.object({
+		title: z.string().optional(),
+		description: z.string().optional(),
+		assigneeId: z.string().optional(),
+		priority: z.enum([0, 1, 2, 3, 4]).optional(),
+		estimate: z.number().optional(),
+		stateId: z.string().optional(),
+		projectId: z.string().optional(),
+		cycleId: z.string().optional(),
+		parentId: z.string().optional(),
+		labelIds: z.array(z.string()).optional(),
+		subscriberIds: z.array(z.string()).optional(),
+		dueDate: z.string().optional(),
+	}),
+});
+
+const IssuesDeleteInputSchema = z.object({
+	id: z.string(),
+});
+
+const TeamsListInputSchema = z.object({
+	first: z.number().optional(),
+	after: z.string().optional(),
+});
+
+const TeamsGetInputSchema = z.object({
+	id: z.string(),
+});
+
+const ProjectsListInputSchema = z.object({
+	first: z.number().optional(),
+	after: z.string().optional(),
+});
+
+const ProjectsGetInputSchema = z.object({
+	id: z.string(),
+});
+
+const ProjectsCreateInputSchema = z.object({
+	name: z.string(),
+	description: z.string().optional(),
+	icon: z.string().optional(),
+	color: z.string().optional(),
+	teamIds: z.array(z.string()),
+	leadId: z.string().optional(),
+	state: z
+		.enum(['planned', 'started', 'paused', 'completed', 'canceled'])
+		.optional(),
+	priority: z.number().optional(),
+	startDate: z.string().optional(),
+	targetDate: z.string().optional(),
+});
+
+const ProjectsUpdateInputSchema = z.object({
+	id: z.string(),
+	input: z.object({
+		name: z.string().optional(),
+		description: z.string().optional(),
+		icon: z.string().optional(),
+		color: z.string().optional(),
+		teamIds: z.array(z.string()).optional(),
+		leadId: z.string().optional(),
+		state: z
+			.enum(['planned', 'started', 'paused', 'completed', 'canceled'])
+			.optional(),
+		priority: z.number().optional(),
+		startDate: z.string().optional(),
+		targetDate: z.string().optional(),
+	}),
+});
+
+const ProjectsDeleteInputSchema = z.object({
+	id: z.string(),
+});
+
+const CommentsListInputSchema = z.object({
+	issueId: z.string(),
+	first: z.number().optional(),
+	after: z.string().optional(),
+});
+
+const CommentsCreateInputSchema = z.object({
+	issueId: z.string(),
+	body: z.string(),
+	parentId: z.string().optional(),
+});
+
+const CommentsUpdateInputSchema = z.object({
+	id: z.string(),
+	input: z.object({
+		body: z.string().optional(),
+	}),
+});
+
+const CommentsDeleteInputSchema = z.object({
+	id: z.string(),
+});
+
+export const LinearEndpointInputSchemas = {
+	issuesList: IssuesListInputSchema,
+	issuesGet: IssuesGetInputSchema,
+	issuesCreate: IssuesCreateInputSchema,
+	issuesUpdate: IssuesUpdateInputSchema,
+	issuesDelete: IssuesDeleteInputSchema,
+	teamsList: TeamsListInputSchema,
+	teamsGet: TeamsGetInputSchema,
+	projectsList: ProjectsListInputSchema,
+	projectsGet: ProjectsGetInputSchema,
+	projectsCreate: ProjectsCreateInputSchema,
+	projectsUpdate: ProjectsUpdateInputSchema,
+	projectsDelete: ProjectsDeleteInputSchema,
+	commentsList: CommentsListInputSchema,
+	commentsCreate: CommentsCreateInputSchema,
+	commentsUpdate: CommentsUpdateInputSchema,
+	commentsDelete: CommentsDeleteInputSchema,
+} as const;
+
+export type LinearEndpointInputs = {
+	[K in keyof typeof LinearEndpointInputSchemas]: z.infer<
+		(typeof LinearEndpointInputSchemas)[K]
+	>;
+};
+
 // Base schemas
 export const UserSchema = z.object({
 	id: z.string(),

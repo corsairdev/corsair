@@ -10,7 +10,10 @@ import type {
 } from '../../core';
 import type { AuthTypes, PickAuth } from '../../core/constants';
 import { getValidAccessToken } from './client';
-import type { GoogleCalendarEndpointOutputs } from './endpoints';
+import type {
+	GoogleCalendarEndpointInputs,
+	GoogleCalendarEndpointOutputs,
+} from './endpoints';
 import { CalendarEndpoints, EventsEndpoints } from './endpoints';
 import { GoogleCalendarSchema } from './schema';
 import type { Event } from './types';
@@ -27,88 +30,19 @@ export type GoogleCalendarContext = CorsairPluginContext<
 
 type GoogleCalendarEndpoint<
 	K extends keyof GoogleCalendarEndpointOutputs,
-	Input,
 > = CorsairEndpoint<
 	GoogleCalendarContext,
-	Input,
+	GoogleCalendarEndpointInputs[K],
 	GoogleCalendarEndpointOutputs[K]
 >;
 
 export type GoogleCalendarEndpoints = {
-	eventsCreate: GoogleCalendarEndpoint<
-		'eventsCreate',
-		{
-			calendarId?: string;
-			event: Partial<Event>;
-			sendUpdates?: 'all' | 'externalOnly' | 'none';
-			sendNotifications?: boolean;
-			conferenceDataVersion?: number;
-			maxAttendees?: number;
-			supportsAttachments?: boolean;
-		}
-	>;
-	eventsGet: GoogleCalendarEndpoint<
-		'eventsGet',
-		{
-			calendarId?: string;
-			id: string;
-			timeZone?: string;
-			maxAttendees?: number;
-		}
-	>;
-	eventsGetMany: GoogleCalendarEndpoint<
-		'eventsGetMany',
-		{
-			calendarId?: string;
-			timeMin?: string;
-			timeMax?: string;
-			timeZone?: string;
-			updatedMin?: string;
-			singleEvents?: boolean;
-			maxResults?: number;
-			pageToken?: string;
-			q?: string;
-			orderBy?: 'startTime' | 'updated';
-			iCalUID?: string;
-			showDeleted?: boolean;
-			showHiddenInvitations?: boolean;
-		}
-	>;
-	eventsUpdate: GoogleCalendarEndpoint<
-		'eventsUpdate',
-		{
-			calendarId?: string;
-			id: string;
-			event: Partial<Event>;
-			sendUpdates?: 'all' | 'externalOnly' | 'none';
-			sendNotifications?: boolean;
-			conferenceDataVersion?: number;
-			maxAttendees?: number;
-			supportsAttachments?: boolean;
-		}
-	>;
-	eventsDelete: GoogleCalendarEndpoint<
-		'eventsDelete',
-		{
-			calendarId?: string;
-			id: string;
-			sendUpdates?: 'all' | 'externalOnly' | 'none';
-			sendNotifications?: boolean;
-		}
-	>;
-	calendarGetAvailability: GoogleCalendarEndpoint<
-		'calendarGetAvailability',
-		{
-			timeMin: string;
-			timeMax: string;
-			timeZone?: string;
-			groupExpansionMax?: number;
-			calendarExpansionMax?: number;
-			items?: Array<{
-				id: string;
-			}>;
-		}
-	>;
+	eventsCreate: GoogleCalendarEndpoint<'eventsCreate'>;
+	eventsGet: GoogleCalendarEndpoint<'eventsGet'>;
+	eventsGetMany: GoogleCalendarEndpoint<'eventsGetMany'>;
+	eventsUpdate: GoogleCalendarEndpoint<'eventsUpdate'>;
+	eventsDelete: GoogleCalendarEndpoint<'eventsDelete'>;
+	calendarGetAvailability: GoogleCalendarEndpoint<'calendarGetAvailability'>;
 };
 
 export type GoogleCalendarBoundEndpoints = BindEndpoints<
@@ -266,6 +200,7 @@ export {
 // ─────────────────────────────────────────────────────────────────────────────
 
 export type {
+	GoogleCalendarEndpointInputs,
 	GoogleCalendarEndpointOutputSchemas,
 	GoogleCalendarEndpointOutputs,
 } from './endpoints/types';

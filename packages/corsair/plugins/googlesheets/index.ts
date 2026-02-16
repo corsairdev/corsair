@@ -10,7 +10,10 @@ import type {
 } from '../../core';
 import type { AuthTypes, PickAuth } from '../../core/constants';
 import { getValidAccessToken } from './client';
-import type { GoogleSheetsEndpointOutputs } from './endpoints';
+import type {
+	GoogleSheetsEndpointInputs,
+	GoogleSheetsEndpointOutputs,
+} from './endpoints';
 import { SheetsEndpoints, SpreadsheetsEndpoints } from './endpoints';
 import { GoogleSheetsSchema } from './schema';
 import type {
@@ -26,102 +29,23 @@ export type GoogleSheetsContext = CorsairPluginContext<
 
 type GoogleSheetsEndpoint<
 	K extends keyof GoogleSheetsEndpointOutputs,
-	Input,
-> = CorsairEndpoint<GoogleSheetsContext, Input, GoogleSheetsEndpointOutputs[K]>;
+> = CorsairEndpoint<
+	GoogleSheetsContext,
+	GoogleSheetsEndpointInputs[K],
+	GoogleSheetsEndpointOutputs[K]
+>;
 
 export type GoogleSheetsEndpoints = {
-	spreadsheetsCreate: GoogleSheetsEndpoint<
-		'spreadsheetsCreate',
-		{
-			properties?: {
-				title?: string;
-				locale?: string;
-				timeZone?: string;
-			};
-		}
-	>;
-	spreadsheetsDelete: GoogleSheetsEndpoint<
-		'spreadsheetsDelete',
-		{
-			spreadsheetId: string;
-		}
-	>;
-	sheetsAppendRow: GoogleSheetsEndpoint<
-		'sheetsAppendRow',
-		{
-			spreadsheetId: string;
-			sheetName?: string;
-			range?: string;
-			values?: (string | number | boolean | null)[];
-			valueInputOption?: 'RAW' | 'USER_ENTERED';
-			insertDataOption?: 'OVERWRITE' | 'INSERT_ROWS';
-		}
-	>;
-	sheetsAppendOrUpdateRow: GoogleSheetsEndpoint<
-		'sheetsAppendOrUpdateRow',
-		{
-			spreadsheetId: string;
-			sheetName?: string;
-			keyColumn?: string;
-			keyValue?: string | number;
-			values?: (string | number | boolean | null)[];
-			valueInputOption?: 'RAW' | 'USER_ENTERED';
-			insertDataOption?: 'OVERWRITE' | 'INSERT_ROWS';
-		}
-	>;
-	sheetsGetRows: GoogleSheetsEndpoint<
-		'sheetsGetRows',
-		{
-			spreadsheetId: string;
-			sheetName?: string;
-			range?: string;
-			valueRenderOption?: 'FORMATTED_VALUE' | 'UNFORMATTED_VALUE' | 'FORMULA';
-			dateTimeRenderOption?: 'SERIAL_NUMBER' | 'FORMATTED_STRING';
-		}
-	>;
-	sheetsUpdateRow: GoogleSheetsEndpoint<
-		'sheetsUpdateRow',
-		{
-			spreadsheetId: string;
-			sheetName?: string;
-			range?: string;
-			rowIndex?: number;
-			values?: (string | number | boolean | null)[];
-			valueInputOption?: 'RAW' | 'USER_ENTERED';
-		}
-	>;
-	sheetsClearSheet: GoogleSheetsEndpoint<
-		'sheetsClearSheet',
-		{
-			spreadsheetId: string;
-			sheetName?: string;
-			range?: string;
-		}
-	>;
-	sheetsCreateSheet: GoogleSheetsEndpoint<
-		'sheetsCreateSheet',
-		{
-			spreadsheetId: string;
-			title?: string;
-		}
-	>;
-	sheetsDeleteSheet: GoogleSheetsEndpoint<
-		'sheetsDeleteSheet',
-		{
-			spreadsheetId: string;
-			sheetId: number;
-		}
-	>;
-	sheetsDeleteRowsOrColumns: GoogleSheetsEndpoint<
-		'sheetsDeleteRowsOrColumns',
-		{
-			spreadsheetId: string;
-			sheetId: number;
-			dimension?: 'ROWS' | 'COLUMNS';
-			startIndex?: number;
-			endIndex?: number;
-		}
-	>;
+	spreadsheetsCreate: GoogleSheetsEndpoint<'spreadsheetsCreate'>;
+	spreadsheetsDelete: GoogleSheetsEndpoint<'spreadsheetsDelete'>;
+	sheetsAppendRow: GoogleSheetsEndpoint<'sheetsAppendRow'>;
+	sheetsAppendOrUpdateRow: GoogleSheetsEndpoint<'sheetsAppendOrUpdateRow'>;
+	sheetsGetRows: GoogleSheetsEndpoint<'sheetsGetRows'>;
+	sheetsUpdateRow: GoogleSheetsEndpoint<'sheetsUpdateRow'>;
+	sheetsClearSheet: GoogleSheetsEndpoint<'sheetsClearSheet'>;
+	sheetsCreateSheet: GoogleSheetsEndpoint<'sheetsCreateSheet'>;
+	sheetsDeleteSheet: GoogleSheetsEndpoint<'sheetsDeleteSheet'>;
+	sheetsDeleteRowsOrColumns: GoogleSheetsEndpoint<'sheetsDeleteRowsOrColumns'>;
 };
 
 export type GoogleSheetsBoundEndpoints = BindEndpoints<
@@ -274,4 +198,7 @@ export { createGoogleSheetsWebhookMatcher } from './webhooks/types';
 // Endpoint Type Exports
 // ─────────────────────────────────────────────────────────────────────────────
 
-export type { GoogleSheetsEndpointOutputs } from './endpoints/types';
+export type {
+	GoogleSheetsEndpointInputs,
+	GoogleSheetsEndpointOutputs,
+} from './endpoints/types';
