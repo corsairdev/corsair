@@ -28,6 +28,8 @@ import type {
 	FolderChangedEvent,
 } from './webhooks';
 import { ChangeWebhooks } from './webhooks';
+import type { PubSubNotification } from './webhooks/types';
+import { decodePubSubMessage } from './webhooks/types';
 
 export type GoogleDriveContext = CorsairPluginContext<
 	typeof GoogleDriveSchema,
@@ -199,8 +201,23 @@ export function googledrive<const T extends GoogleDrivePluginOptions>(
 			return '';
 		},
 		pluginWebhookMatcher: (request: RawWebhookRequest) => {
-			const body = request.body as Record<string, unknown>;
-			return (body?.message as Record<string, unknown>)?.data !== undefined;
+			const headers = request.headers;
+			const isFromGoogle =
+				headers.from === 'noreply@google.com' ||
+				(typeof headers['user-agent'] === 'string' &&
+					headers['user-agent'].includes('APIs-Google'));
+
+			if (!isFromGoogle) return false;
+
+			const body = request.body as PubSubNotification;
+			if (!body?.message?.data) return false;
+
+			try {
+				const decoded = decodePubSubMessage(body.message.data);
+				return !!decoded.resourceId && !!decoded.kind;
+			} catch {
+				return false;
+			}
 		},
 	} satisfies InternalGoogleDrivePlugin;
 }

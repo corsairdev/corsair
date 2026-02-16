@@ -75,7 +75,18 @@ export function createGoogleDriveWebhookMatcher(
 
 		try {
 			const pushNotification = decodePubSubMessage(body.message.data!);
-			return !!pushNotification.resourceId && !!pushNotification.resourceUri;
+
+			if (!pushNotification.resourceId || !pushNotification.resourceUri) {
+				return false;
+			}
+
+			const state = pushNotification.resourceState;
+
+			if (state === 'sync') {
+				return false;
+			}
+
+			return state === 'change' || state === 'update';
 		} catch {
 			return false;
 		}

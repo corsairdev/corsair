@@ -172,11 +172,12 @@ export function googlesheets<const T extends GoogleSheetsPluginOptions>(
 		},
 		pluginWebhookMatcher: (request: RawWebhookRequest) => {
 			const body = request.body as Record<string, unknown>;
-			return (
-				body?.spreadsheetId !== undefined ||
-				body?.eventType !== undefined ||
-				(body?.values !== undefined && Array.isArray(body.values))
-			);
+			const hasSpreadsheetId = typeof body?.spreadsheetId === 'string';
+			const hasSheetsEventType =
+				body?.eventType === 'rowAdded' ||
+				body?.eventType === 'rowUpdated' ||
+				body?.eventType === 'rowAddedOrUpdated';
+			return hasSpreadsheetId || hasSheetsEventType;
 		},
 	} satisfies InternalGoogleSheetsPlugin;
 }

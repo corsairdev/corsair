@@ -27,6 +27,8 @@ import type {
 	EventUpdatedEvent,
 } from './webhooks';
 import { EventWebhooks } from './webhooks';
+import type { PubSubNotification } from './webhooks/types';
+import { decodePubSubMessage } from './webhooks/types';
 
 export type GoogleCalendarContext = CorsairPluginContext<
 	typeof GoogleCalendarSchema,
@@ -171,8 +173,23 @@ export function googlecalendar<const T extends GoogleCalendarPluginOptions>(
 			return '';
 		},
 		pluginWebhookMatcher: (request: RawWebhookRequest) => {
-			const body = request.body as Record<string, unknown>;
-			return (body?.message as Record<string, unknown>)?.data !== undefined;
+			const headers = request.headers;
+			const isFromGoogle =
+				headers.from === 'noreply@google.com' ||
+				(typeof headers['user-agent'] === 'string' &&
+					headers['user-agent'].includes('APIs-Google'));
+
+			if (!isFromGoogle) return false;
+
+			const body = request.body as PubSubNotification;
+			if (!body?.message?.data) return false;
+
+			try {
+				const decoded = decodePubSubMessage(body.message.data);
+				return !!decoded.channelId && !!decoded.resourceUri;
+			} catch {
+				return false;
+			}
 		},
 	} satisfies InternalGoogleCalendarPlugin;
 }
