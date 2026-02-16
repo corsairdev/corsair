@@ -17,7 +17,7 @@ export const get: HubSpotEndpoints['dealsGet'] = async (ctx, input) => {
 			properties: queryParams.properties?.join(','),
 			propertiesWithHistory: queryParams.propertiesWithHistory?.join(','),
 			associations: queryParams.associations?.join(','),
-		} as any,
+		},
 	});
 
 	if (result && ctx.db.deals) {
@@ -49,7 +49,7 @@ export const getMany: HubSpotEndpoints['dealsGetMany'] = async (ctx, input) => {
 				properties: queryParams.properties?.join(','),
 				propertiesWithHistory: queryParams.propertiesWithHistory?.join(','),
 				associations: queryParams.associations?.join(','),
-			} as any,
+			},
 		},
 	);
 

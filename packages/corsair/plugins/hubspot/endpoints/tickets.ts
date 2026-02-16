@@ -20,7 +20,7 @@ export const get: HubSpotEndpoints['ticketsGet'] = async (ctx, input) => {
 				properties: queryParams.properties?.join(','),
 				propertiesWithHistory: queryParams.propertiesWithHistory?.join(','),
 				associations: queryParams.associations?.join(','),
-			} as any,
+			},
 		},
 	);
 
@@ -56,7 +56,7 @@ export const getMany: HubSpotEndpoints['ticketsGetMany'] = async (
 				properties: queryParams.properties?.join(','),
 				propertiesWithHistory: queryParams.propertiesWithHistory?.join(','),
 				associations: queryParams.associations?.join(','),
-			} as any,
+			},
 		},
 	);
 

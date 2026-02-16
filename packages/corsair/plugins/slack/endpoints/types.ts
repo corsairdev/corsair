@@ -1,421 +1,375 @@
 import { z } from 'zod';
-import type { SlackReactionName } from './reactions';
 
-type ResponseMetadata = {
-	next_cursor?: string;
-	messages?: string[];
-};
+const ChannelsRandomInputSchema = z.object({});
 
-type SlackResponse = {
-	ok: boolean;
-	error?: string;
-	needed?: string;
-	provided?: string;
-	response_metadata?: ResponseMetadata;
-};
+const ChannelsArchiveInputSchema = z.object({
+	channel: z.string(),
+});
 
-type ChannelTopic = {
-	value: string;
-	creator: string;
-	last_set: number;
-};
+const ChannelsCloseInputSchema = z.object({
+	channel: z.string(),
+});
 
-type Channel = {
-	id: string;
-	name?: string;
-	is_channel?: boolean;
-	is_group?: boolean;
-	is_im?: boolean;
-	is_mpim?: boolean;
-	is_private?: boolean;
-	created?: number;
-	is_archived?: boolean;
-	is_general?: boolean;
-	unlinked?: number;
-	name_normalized?: string;
-	is_shared?: boolean;
-	is_org_shared?: boolean;
-	is_pending_ext_shared?: boolean;
-	pending_shared?: string[];
-	context_team_id?: string;
-	updated?: number;
-	creator?: string;
-	is_member?: boolean;
-	num_members?: number;
-	topic?: ChannelTopic;
-	purpose?: ChannelTopic;
-} & Record<string, unknown>;
+const ChannelsCreateInputSchema = z.object({
+	name: z.string(),
+	is_private: z.boolean().optional(),
+	team_id: z.string().optional(),
+});
 
-type UserProfile = {
-	avatar_hash?: string;
-	status_text?: string;
-	status_emoji?: string;
-	status_expiration?: number;
-	real_name?: string;
-	display_name?: string;
-	real_name_normalized?: string;
-	display_name_normalized?: string;
-	email?: string;
-	image_24?: string;
-	image_32?: string;
-	image_48?: string;
-	image_72?: string;
-	image_192?: string;
-	image_512?: string;
-	team?: string;
-	title?: string;
-	phone?: string;
-	skype?: string;
-	first_name?: string;
-	last_name?: string;
-} & Record<string, unknown>;
+const ChannelsGetInputSchema = z.object({
+	channel: z.string(),
+	include_locale: z.boolean().optional(),
+	include_num_members: z.boolean().optional(),
+});
 
-type User = {
-	id: string;
-	team_id?: string;
-	name?: string;
-	deleted?: boolean;
-	color?: string;
-	real_name?: string;
-	tz?: string;
-	tz_label?: string;
-	tz_offset?: number;
-	profile?: UserProfile;
-	is_admin?: boolean;
-	is_owner?: boolean;
-	is_primary_owner?: boolean;
-	is_restricted?: boolean;
-	is_ultra_restricted?: boolean;
-	is_bot?: boolean;
-	is_app_user?: boolean;
-	updated?: number;
-	is_email_confirmed?: boolean;
-	who_can_share_contact_card?: string;
-	locale?: string;
-} & Record<string, unknown>;
+const ChannelsListInputSchema = z.object({
+	exclude_archived: z.boolean().optional(),
+	types: z.string().optional(),
+	team_id: z.string().optional(),
+	cursor: z.string().optional(),
+	limit: z.number().optional(),
+});
 
-type Usergroup = {
-	id: string;
-	team_id?: string;
-	is_usergroup?: boolean;
-	is_subteam?: boolean;
-	name?: string;
-	description?: string;
-	handle?: string;
-	is_external?: boolean;
-	date_create?: number;
-	date_update?: number;
-	date_delete?: number;
-	auto_type?: string | null;
-	auto_provision?: boolean;
-	enterprise_subteam_id?: string;
-	created_by?: string;
-	updated_by?: string;
-	deleted_by?: string | null;
-	prefs?: {
-		channels?: string[];
-		groups?: string[];
-	};
-	users?: string[];
-	user_count?: number;
-	channel_count?: number;
-} & Record<string, unknown>;
+const ChannelsGetHistoryInputSchema = z.object({
+	channel: z.string(),
+	latest: z.string().optional(),
+	oldest: z.string().optional(),
+	inclusive: z.boolean().optional(),
+	include_all_metadata: z.boolean().optional(),
+	cursor: z.string().optional(),
+	limit: z.number().optional(),
+});
 
-type File = {
-	id: string;
-	created?: number;
-	timestamp?: number;
-	name?: string;
-	title?: string;
-	mimetype?: string;
-	filetype?: string;
-	pretty_type?: string;
-	user?: string;
-	user_team?: string;
-	editable?: boolean;
-	size?: number;
-	mode?: string;
-	is_external?: boolean;
-	external_type?: string;
-	is_public?: boolean;
-	public_url_shared?: boolean;
-	display_as_bot?: boolean;
-	username?: string;
-	url_private?: string;
-	url_private_download?: string;
-	permalink?: string;
-	permalink_public?: string;
-	channels?: string[];
-	groups?: string[];
-	ims?: string[];
-} & Record<string, unknown>;
+const ChannelsInviteInputSchema = z.object({
+	channel: z.string(),
+	users: z.string(),
+	force: z.boolean().optional(),
+});
 
-type Block = { type: string } & Record<string, unknown>;
+const ChannelsJoinInputSchema = z.object({
+	channel: z.string(),
+});
 
-type Attachment = Record<string, unknown>;
+const ChannelsKickInputSchema = z.object({
+	channel: z.string(),
+	user: z.string(),
+});
 
-type Reaction = { name: string; count: number; users: string[] };
+const ChannelsLeaveInputSchema = z.object({
+	channel: z.string(),
+});
 
-type Message = {
-	type?: string;
-	subtype?: string;
-	text?: string;
-	ts?: string;
-	user?: string;
-	bot_id?: string;
-	app_id?: string;
-	team?: string;
-	username?: string;
-	icons?: {
-		emoji?: string;
-		image_36?: string;
-		image_48?: string;
-		image_72?: string;
-	};
-	blocks?: Block[];
-	attachments?: Attachment[];
-	thread_ts?: string;
-	parent_user_id?: string;
-	reply_count?: number;
-	reply_users_count?: number;
-	latest_reply?: string;
-	reply_users?: string[];
-	is_locked?: boolean;
-	subscribed?: boolean;
-	reactions?: Reaction[];
-	edited?: { user: string; ts: string };
-} & Record<string, unknown>;
+const ChannelsGetMembersInputSchema = z.object({
+	channel: z.string(),
+	cursor: z.string().optional(),
+	limit: z.number().optional(),
+});
 
-type Paging = {
-	count: number;
-	total: number;
-	page: number;
-	pages: number;
-};
+const ChannelsOpenInputSchema = z.object({
+	channel: z.string().optional(),
+	users: z.string().optional(),
+	prevent_creation: z.boolean().optional(),
+	return_im: z.boolean().optional(),
+});
 
-type Pagination = {
-	total_count?: number;
-	page?: number;
-	per_page?: number;
-	page_count?: number;
-	first?: number;
-	last?: number;
-};
+const ChannelsRenameInputSchema = z.object({
+	channel: z.string(),
+	name: z.string(),
+});
+
+const ChannelsGetRepliesInputSchema = z.object({
+	channel: z.string(),
+	ts: z.string(),
+	latest: z.string().optional(),
+	oldest: z.string().optional(),
+	inclusive: z.boolean().optional(),
+	include_all_metadata: z.boolean().optional(),
+	cursor: z.string().optional(),
+	limit: z.number().optional(),
+});
+
+const ChannelsSetPurposeInputSchema = z.object({
+	channel: z.string(),
+	purpose: z.string(),
+});
+
+const ChannelsSetTopicInputSchema = z.object({
+	channel: z.string(),
+	topic: z.string(),
+});
+
+const ChannelsUnarchiveInputSchema = z.object({
+	channel: z.string(),
+});
+
+const UsersGetInputSchema = z.object({
+	user: z.string(),
+	include_locale: z.boolean().optional(),
+});
+
+const UsersListInputSchema = z.object({
+	include_locale: z.boolean().optional(),
+	team_id: z.string().optional(),
+	cursor: z.string().optional(),
+	limit: z.number().optional(),
+});
+
+const UsersGetProfileInputSchema = z.object({
+	user: z.string().optional(),
+	include_labels: z.boolean().optional(),
+});
+
+const UsersGetPresenceInputSchema = z.object({
+	user: z.string().optional(),
+});
+
+const UsersUpdateProfileInputSchema = z.object({
+	profile: z.record(z.unknown()).optional(),
+	user: z.string().optional(),
+	name: z.string().optional(),
+	value: z.string().optional(),
+});
+
+const UserGroupsCreateInputSchema = z.object({
+	name: z.string(),
+	channels: z.string().optional(),
+	description: z.string().optional(),
+	handle: z.string().optional(),
+	include_count: z.boolean().optional(),
+	team_id: z.string().optional(),
+});
+
+const UserGroupsDisableInputSchema = z.object({
+	userGroup: z.string(),
+	include_count: z.boolean().optional(),
+	team_id: z.string().optional(),
+});
+
+const UserGroupsEnableInputSchema = z.object({
+	userGroup: z.string(),
+	include_count: z.boolean().optional(),
+	team_id: z.string().optional(),
+});
+
+const UserGroupsListInputSchema = z.object({
+	include_count: z.boolean().optional(),
+	include_disabled: z.boolean().optional(),
+	include_users: z.boolean().optional(),
+	team_id: z.string().optional(),
+});
+
+const UserGroupsUpdateInputSchema = z.object({
+	userGroup: z.string(),
+	name: z.string().optional(),
+	channels: z.string().optional(),
+	description: z.string().optional(),
+	handle: z.string().optional(),
+	include_count: z.boolean().optional(),
+	team_id: z.string().optional(),
+});
+
+const FilesGetInputSchema = z.object({
+	file: z.string(),
+	cursor: z.string().optional(),
+	limit: z.number().optional(),
+	page: z.number().optional(),
+	count: z.number().optional(),
+});
+
+const FilesListInputSchema = z.object({
+	channel: z.string().optional(),
+	user: z.string().optional(),
+	types: z.string().optional(),
+	ts_from: z.string().optional(),
+	ts_to: z.string().optional(),
+	show_files_hidden_by_limit: z.boolean().optional(),
+	team_id: z.string().optional(),
+	page: z.number().optional(),
+	count: z.number().optional(),
+});
+
+const FilesUploadInputSchema = z.object({
+	channels: z.string().optional(),
+	content: z.string().optional(),
+	file: z.unknown().optional(),
+	filename: z.string().optional(),
+	filetype: z.string().optional(),
+	initial_comment: z.string().optional(),
+	thread_ts: z.string().optional(),
+	title: z.string().optional(),
+});
+
+const MessagesDeleteInputSchema = z.object({
+	channel: z.string(),
+	ts: z.string(),
+	as_user: z.boolean().optional(),
+});
+
+const MessagesGetPermalinkInputSchema = z.object({
+	channel: z.string(),
+	message_ts: z.string(),
+});
+
+const MessagesSearchInputSchema = z.object({
+	query: z.string(),
+	sort: z.enum(['score', 'timestamp']).optional(),
+	sort_dir: z.enum(['asc', 'desc']).optional(),
+	highlight: z.boolean().optional(),
+	team_id: z.string().optional(),
+	cursor: z.string().optional(),
+	limit: z.number().optional(),
+	page: z.number().optional(),
+	count: z.number().optional(),
+});
+
+const PostMessageInputSchema = z.object({
+	channel: z.string(),
+	text: z.string().optional(),
+	blocks: z
+		.array(
+			z.object({
+				type: z.string(),
+			}).passthrough(),
+		)
+		.optional(),
+	attachments: z.array(z.record(z.unknown())).optional(),
+	thread_ts: z.string().optional(),
+	reply_broadcast: z.boolean().optional(),
+	parse: z.enum(['full', 'none']).optional(),
+	link_names: z.boolean().optional(),
+	unfurl_links: z.boolean().optional(),
+	unfurl_media: z.boolean().optional(),
+	mrkdwn: z.boolean().optional(),
+	as_user: z.boolean().optional(),
+	icon_emoji: z.string().optional(),
+	icon_url: z.string().optional(),
+	username: z.string().optional(),
+	metadata: z
+		.object({
+			event_type: z.string(),
+			event_payload: z.record(z.unknown()),
+		})
+		.optional(),
+});
+
+const MessagesUpdateInputSchema = z.object({
+	channel: z.string(),
+	ts: z.string(),
+	text: z.string().optional(),
+	blocks: z
+		.array(
+			z.object({
+				type: z.string(),
+			}).passthrough(),
+		)
+		.optional(),
+	attachments: z.array(z.record(z.unknown())).optional(),
+	parse: z.enum(['full', 'none']).optional(),
+	link_names: z.boolean().optional(),
+	as_user: z.boolean().optional(),
+	file_ids: z.array(z.string()).optional(),
+	reply_broadcast: z.boolean().optional(),
+	metadata: z
+		.object({
+			event_type: z.string(),
+			event_payload: z.record(z.unknown()),
+		})
+		.optional(),
+});
+
+const ReactionsAddInputSchema = z.object({
+	channel: z.string(),
+	timestamp: z.string(),
+	name: z.string(),
+});
+
+const ReactionsGetInputSchema = z.object({
+	channel: z.string().optional(),
+	timestamp: z.string().optional(),
+	file: z.string().optional(),
+	file_comment: z.string().optional(),
+	full: z.boolean().optional(),
+});
+
+const ReactionsRemoveInputSchema = z.object({
+	name: z.string(),
+	channel: z.string().optional(),
+	timestamp: z.string().optional(),
+	file: z.string().optional(),
+	file_comment: z.string().optional(),
+});
+
+const StarsAddInputSchema = z.object({
+	channel: z.string().optional(),
+	timestamp: z.string().optional(),
+	file: z.string().optional(),
+	file_comment: z.string().optional(),
+});
+
+const StarsRemoveInputSchema = z.object({
+	channel: z.string().optional(),
+	timestamp: z.string().optional(),
+	file: z.string().optional(),
+	file_comment: z.string().optional(),
+});
+
+const StarsListInputSchema = z.object({
+	team_id: z.string().optional(),
+	cursor: z.string().optional(),
+	limit: z.number().optional(),
+	page: z.number().optional(),
+	count: z.number().optional(),
+});
+
+export const SlackEndpointInputSchemas = {
+	channelsRandom: ChannelsRandomInputSchema,
+	channelsArchive: ChannelsArchiveInputSchema,
+	channelsClose: ChannelsCloseInputSchema,
+	channelsCreate: ChannelsCreateInputSchema,
+	channelsGet: ChannelsGetInputSchema,
+	channelsList: ChannelsListInputSchema,
+	channelsGetHistory: ChannelsGetHistoryInputSchema,
+	channelsInvite: ChannelsInviteInputSchema,
+	channelsJoin: ChannelsJoinInputSchema,
+	channelsKick: ChannelsKickInputSchema,
+	channelsLeave: ChannelsLeaveInputSchema,
+	channelsGetMembers: ChannelsGetMembersInputSchema,
+	channelsOpen: ChannelsOpenInputSchema,
+	channelsRename: ChannelsRenameInputSchema,
+	channelsGetReplies: ChannelsGetRepliesInputSchema,
+	channelsSetPurpose: ChannelsSetPurposeInputSchema,
+	channelsSetTopic: ChannelsSetTopicInputSchema,
+	channelsUnarchive: ChannelsUnarchiveInputSchema,
+	usersGet: UsersGetInputSchema,
+	usersList: UsersListInputSchema,
+	usersGetProfile: UsersGetProfileInputSchema,
+	usersGetPresence: UsersGetPresenceInputSchema,
+	usersUpdateProfile: UsersUpdateProfileInputSchema,
+	userGroupsCreate: UserGroupsCreateInputSchema,
+	userGroupsDisable: UserGroupsDisableInputSchema,
+	userGroupsEnable: UserGroupsEnableInputSchema,
+	userGroupsList: UserGroupsListInputSchema,
+	userGroupsUpdate: UserGroupsUpdateInputSchema,
+	filesGet: FilesGetInputSchema,
+	filesList: FilesListInputSchema,
+	filesUpload: FilesUploadInputSchema,
+	messagesDelete: MessagesDeleteInputSchema,
+	messagesGetPermalink: MessagesGetPermalinkInputSchema,
+	messagesSearch: MessagesSearchInputSchema,
+	postMessage: PostMessageInputSchema,
+	messagesUpdate: MessagesUpdateInputSchema,
+	reactionsAdd: ReactionsAddInputSchema,
+	reactionsGet: ReactionsGetInputSchema,
+	reactionsRemove: ReactionsRemoveInputSchema,
+	starsAdd: StarsAddInputSchema,
+	starsRemove: StarsRemoveInputSchema,
+	starsList: StarsListInputSchema,
+} as const;
 
 export type SlackEndpointInputs = {
-	channelsArchive: { channel: string };
-	channelsClose: { channel: string };
-	channelsCreate: { name: string; is_private?: boolean; team_id?: string };
-	channelsGet: {
-		channel: string;
-		include_locale?: boolean;
-		include_num_members?: boolean;
-	};
-	channelsList: {
-		exclude_archived?: boolean;
-		types?: string;
-		team_id?: string;
-		cursor?: string;
-		limit?: number;
-	};
-	channelsGetHistory: {
-		channel: string;
-		latest?: string;
-		oldest?: string;
-		inclusive?: boolean;
-		include_all_metadata?: boolean;
-		cursor?: string;
-		limit?: number;
-	};
-	channelsInvite: { channel: string; users: string; force?: boolean };
-	channelsJoin: { channel: string };
-	channelsKick: { channel: string; user: string };
-	channelsLeave: { channel: string };
-	channelsGetMembers: { channel: string; cursor?: string; limit?: number };
-	channelsOpen: {
-		channel?: string;
-		users?: string;
-		prevent_creation?: boolean;
-		return_im?: boolean;
-	};
-	channelsRename: { channel: string; name: string };
-	channelsGetReplies: {
-		channel: string;
-		ts: string;
-		latest?: string;
-		oldest?: string;
-		inclusive?: boolean;
-		include_all_metadata?: boolean;
-		cursor?: string;
-		limit?: number;
-	};
-	channelsSetPurpose: { channel: string; purpose: string };
-	channelsSetTopic: { channel: string; topic: string };
-	channelsUnarchive: { channel: string };
-	usersGet: { user: string; include_locale?: boolean };
-	usersList: {
-		include_locale?: boolean;
-		team_id?: string;
-		cursor?: string;
-		limit?: number;
-	};
-	usersGetProfile: { user?: string; include_labels?: boolean };
-	usersGetPresence: { user?: string };
-	usersUpdateProfile: {
-		profile?: Record<string, unknown>;
-		user?: string;
-		name?: string;
-		value?: string;
-	};
-	userGroupsCreate: {
-		name: string;
-		channels?: string;
-		description?: string;
-		handle?: string;
-		include_count?: boolean;
-		team_id?: string;
-	};
-	userGroupsDisable: {
-		userGroup: string;
-		include_count?: boolean;
-		team_id?: string;
-	};
-	userGroupsEnable: {
-		userGroup: string;
-		include_count?: boolean;
-		team_id?: string;
-	};
-	userGroupsList: {
-		include_count?: boolean;
-		include_disabled?: boolean;
-		include_users?: boolean;
-		team_id?: string;
-	};
-	userGroupsUpdate: {
-		userGroup: string;
-		name?: string;
-		channels?: string;
-		description?: string;
-		handle?: string;
-		include_count?: boolean;
-		team_id?: string;
-	};
-	filesGet: {
-		file: string;
-		cursor?: string;
-		limit?: number;
-		page?: number;
-		count?: number;
-	};
-	filesList: {
-		channel?: string;
-		user?: string;
-		types?: string;
-		ts_from?: string;
-		ts_to?: string;
-		show_files_hidden_by_limit?: boolean;
-		team_id?: string;
-		page?: number;
-		count?: number;
-	};
-	filesUpload: {
-		channels?: string;
-		content?: string;
-		file?: unknown;
-		filename?: string;
-		filetype?: string;
-		initial_comment?: string;
-		thread_ts?: string;
-		title?: string;
-	};
-	messagesDelete: { channel: string; ts: string; as_user?: boolean };
-	messagesGetPermalink: { channel: string; message_ts: string };
-	messagesSearch: {
-		query: string;
-		sort?: 'score' | 'timestamp';
-		sort_dir?: 'asc' | 'desc';
-		highlight?: boolean;
-		team_id?: string;
-		cursor?: string;
-		limit?: number;
-		page?: number;
-		count?: number;
-	};
-	postMessage: {
-		channel: string;
-		text?: string;
-		blocks?: Array<{ type: string; [key: string]: unknown }>;
-		attachments?: Array<{ [key: string]: unknown }>;
-		thread_ts?: string;
-		reply_broadcast?: boolean;
-		parse?: 'full' | 'none';
-		link_names?: boolean;
-		unfurl_links?: boolean;
-		unfurl_media?: boolean;
-		mrkdwn?: boolean;
-		as_user?: boolean;
-		icon_emoji?: string;
-		icon_url?: string;
-		username?: string;
-		metadata?: {
-			event_type: string;
-			event_payload: Record<string, unknown>;
-		};
-	};
-	messagesUpdate: {
-		channel: string;
-		ts: string;
-		text?: string;
-		blocks?: Array<{ type: string; [key: string]: unknown }>;
-		attachments?: Array<{ [key: string]: unknown }>;
-		parse?: 'full' | 'none';
-		link_names?: boolean;
-		as_user?: boolean;
-		file_ids?: string[];
-		reply_broadcast?: boolean;
-		metadata?: {
-			event_type: string;
-			event_payload: Record<string, unknown>;
-		};
-	};
-	reactionsAdd: {
-		channel: string;
-		timestamp: string;
-		name: SlackReactionName;
-	};
-	reactionsGet: {
-		channel?: string;
-		timestamp?: string;
-		file?: string;
-		file_comment?: string;
-		full?: boolean;
-	};
-	reactionsRemove: {
-		name: SlackReactionName;
-		channel?: string;
-		timestamp?: string;
-		file?: string;
-		file_comment?: string;
-	};
-	starsAdd: {
-		channel?: string;
-		timestamp?: string;
-		file?: string;
-		file_comment?: string;
-	};
-	starsRemove: {
-		channel?: string;
-		timestamp?: string;
-		file?: string;
-		file_comment?: string;
-	};
-	starsList: {
-		team_id?: string;
-		cursor?: string;
-		limit?: number;
-		page?: number;
-		count?: number;
-	};
+	[K in keyof typeof SlackEndpointInputSchemas]: z.infer<
+		(typeof SlackEndpointInputSchemas)[K]
+	>;
 };
 
 const ResponseMetadataSchema = z
