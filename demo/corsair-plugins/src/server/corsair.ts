@@ -127,7 +127,17 @@ export const corsair = createCorsair({
 				},
 			},
 		}),
-		gmail(),
+		gmail(
+			{
+				webhookHooks: {
+					messageChanged: {
+						after: async (ctx, res) => {
+							console.log(res.data?.type, 'res.data?.type');
+						},
+					},
+				},
+			}
+		),
 		googlecalendar(
 			{
 				webhookHooks: {

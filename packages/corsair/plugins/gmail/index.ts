@@ -22,7 +22,7 @@ import {
 } from './endpoints';
 import type { GmailCredentials } from './schema';
 import { GmailSchema } from './schema';
-import type { GmailWebhookOutputs, GmailWebhookPayload, HistoryEvent, MessageDeletedEvent, MessageLabelChangedEvent, MessageReceivedEvent } from './webhooks';
+import type { GmailWebhookOutputs, GmailWebhookPayload, MessageDeletedEvent, MessageLabelChangedEvent, MessageReceivedEvent } from './webhooks';
 import { MessageWebhooks } from './webhooks';
 import type { PubSubNotification } from './webhooks/types';
 import { decodePubSubMessage } from './webhooks/types';
@@ -78,9 +78,7 @@ type GmailWebhook<K extends keyof GmailWebhookOutputs, TEvent> = CorsairWebhook<
 >;
 
 export type GmailWebhooks = {
-	messageReceived: GmailWebhook<'messageReceived', MessageReceivedEvent>;
-	messageDeleted: GmailWebhook<'messageDeleted', MessageDeletedEvent>;
-	messageLabelChanged: GmailWebhook<'messageLabelChanged', MessageLabelChangedEvent>;
+	messageChanged: GmailWebhook<'messageChanged', MessageReceivedEvent | MessageDeletedEvent | MessageLabelChangedEvent>;
 };
 
 export type GmailBoundWebhooks = BindWebhooks<typeof gmailWebhooksNested>;
@@ -122,9 +120,7 @@ export const gmailEndpointsNested = {
 } as const;
 
 export const gmailWebhooksNested = {
-	messageReceived: MessageWebhooks.messageReceived,
-	messageDeleted: MessageWebhooks.messageDeleted,
-	messageLabelChanged: MessageWebhooks.messageLabelChanged,
+	messageChanged: MessageWebhooks.messageChanged,
 } as const;
 
 export type GmailPluginOptions = {
@@ -238,7 +234,6 @@ export type {
 	GmailWebhookEvent,
 	GmailWebhookOutputs,
 	GmailWebhookPayload,
-	HistoryEvent,
 	MessageDeletedEvent,
 	MessageLabelChangedEvent,
 	MessageReceivedEvent,
