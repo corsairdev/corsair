@@ -29,6 +29,27 @@ async function fetchEvent(
 	);
 }
 
+async function fetchRecentlyUpdatedEvents(
+	credentials: string,
+	calendarId: string,
+): Promise<Event[]> {
+	const updatedMin = new Date(Date.now() - 2 * 60 * 1000).toISOString();
+	const response = await makeCalendarRequest<{ items?: Event[] }>(
+		`/calendars/${calendarId}/events`,
+		credentials,
+		{
+			method: 'GET',
+			query: {
+				maxResults: 10,
+				orderBy: 'updated',
+				updatedMin,
+				showDeleted: true,
+			},
+		},
+	);
+	return response.items || [];
+}
+
 function isEventStarted(event: Event): boolean {
 	if (!event.start?.dateTime) {
 		return false;
@@ -70,34 +91,50 @@ export const onEventCreated: GoogleCalendarWebhooks['onEventCreated'] = {
 
 		const credentials = ctx.key;
 		const resourceUri = pushNotification.resourceUri;
-		const calendarIdMatch = resourceUri.match(
-			/\/calendars\/([^\/]+)\/events\/(.+)/,
-		);
 
-		if (!calendarIdMatch || !calendarIdMatch[1] || !calendarIdMatch[2]) {
+		const calendarIdMatch = resourceUri.match(/\/calendars\/([^\/\?]+)/);
+		if (!calendarIdMatch || !calendarIdMatch[1]) {
 			return {
 				success: false,
-				error: 'Could not parse calendar ID and event ID from resource URI',
+				error: 'Could not parse calendar ID from resource URI',
 			};
 		}
 
 		const calendarId = calendarIdMatch[1];
-		const eventId = calendarIdMatch[2];
+
+		const eventIdMatch = resourceUri.match(
+			/\/calendars\/[^\/]+\/events\/([^\/\?]+)/,
+		);
 
 		try {
-			const event = await fetchEvent(credentials, calendarId, eventId);
+			let event: Event;
+
+			if (eventIdMatch && eventIdMatch[1]) {
+				event = await fetchEvent(credentials, calendarId, eventIdMatch[1]);
+				console.log(event, 'event');
+			} else {
+				const recentEvents = await fetchRecentlyUpdatedEvents(
+					credentials,
+					calendarId,
+				);
+				console.log(recentEvents, 'recentEvents');
+				const latestEvent = recentEvents[recentEvents.length - 1];
+				if (!latestEvent) {
+					return {
+						success: false,
+						error: 'No recently updated events found in calendar',
+					};
+				}
+				event = latestEvent;
+			}
 
 			if (event.id && ctx.db.events) {
-				try {
-					await ctx.db.events.upsertByEntityId(event.id, {
-						...event,
-						id: event.id,
-						calendarId,
-						createdAt: new Date(),
-					});
-				} catch (error) {
-					console.warn('Failed to save event to database:', error);
-				}
+				await ctx.db.events.upsertByEntityId(event.id, {
+					...event,
+					id: event.id,
+					calendarId,
+					createdAt: new Date(),
+				});
 			}
 
 			const eventData: EventCreatedEvent = {
@@ -119,6 +156,7 @@ export const onEventCreated: GoogleCalendarWebhooks['onEventCreated'] = {
 				data: eventData,
 			};
 		} catch (error) {
+			console.error('Failed to process eventCreated webhook:', error);
 			return {
 				success: false,
 				error: `Failed to fetch event: ${error instanceof Error ? error.message : 'Unknown error'}`,
@@ -150,34 +188,48 @@ export const onEventUpdated: GoogleCalendarWebhooks['onEventUpdated'] = {
 
 		const credentials = ctx.key;
 		const resourceUri = pushNotification.resourceUri;
-		const calendarIdMatch = resourceUri.match(
-			/\/calendars\/([^\/]+)\/events\/(.+)/,
-		);
 
-		if (!calendarIdMatch || !calendarIdMatch[1] || !calendarIdMatch[2]) {
+		const calendarIdMatch = resourceUri.match(/\/calendars\/([^\/\?]+)/);
+		if (!calendarIdMatch || !calendarIdMatch[1]) {
 			return {
 				success: false,
-				error: 'Could not parse calendar ID and event ID from resource URI',
+				error: 'Could not parse calendar ID from resource URI',
 			};
 		}
 
 		const calendarId = calendarIdMatch[1];
-		const eventId = calendarIdMatch[2];
+
+		const eventIdMatch = resourceUri.match(
+			/\/calendars\/[^\/]+\/events\/([^\/\?]+)/,
+		);
 
 		try {
-			const event = await fetchEvent(credentials, calendarId, eventId);
+			let event: Event;
+
+			if (eventIdMatch && eventIdMatch[1]) {
+				event = await fetchEvent(credentials, calendarId, eventIdMatch[1]);
+			} else {
+				const recentEvents = await fetchRecentlyUpdatedEvents(
+					credentials,
+					calendarId,
+				);
+				const latestEvent = recentEvents[recentEvents.length - 1];
+				if (!latestEvent) {
+					return {
+						success: false,
+						error: 'No recently updated events found in calendar',
+					};
+				}
+				event = latestEvent;
+			}
 
 			if (event.id && ctx.db.events) {
-				try {
-					await ctx.db.events.upsertByEntityId(event.id, {
-						...event,
-						id: event.id,
-						calendarId,
-						createdAt: new Date(),
-					});
-				} catch (error) {
-					console.warn('Failed to save event to database:', error);
-				}
+				await ctx.db.events.upsertByEntityId(event.id, {
+					...event,
+					id: event.id,
+					calendarId,
+					createdAt: new Date(),
+				});
 			}
 
 			const eventData: EventUpdatedEvent = {
@@ -199,6 +251,7 @@ export const onEventUpdated: GoogleCalendarWebhooks['onEventUpdated'] = {
 				data: eventData,
 			};
 		} catch (error) {
+			console.error('Failed to process eventUpdated webhook:', error);
 			return {
 				success: false,
 				error: `Failed to fetch event: ${error instanceof Error ? error.message : 'Unknown error'}`,
@@ -229,46 +282,87 @@ export const onEventDeleted: GoogleCalendarWebhooks['onEventDeleted'] = {
 		}
 
 		const resourceUri = pushNotification.resourceUri;
-		const calendarIdMatch = resourceUri.match(
-			/\/calendars\/([^\/]+)\/events\/(.+)/,
-		);
 
-		if (!calendarIdMatch || !calendarIdMatch[1] || !calendarIdMatch[2]) {
+		const calendarIdMatch = resourceUri.match(/\/calendars\/([^\/\?]+)/);
+		if (!calendarIdMatch || !calendarIdMatch[1]) {
 			return {
 				success: false,
-				error: 'Could not parse calendar ID and event ID from resource URI',
+				error: 'Could not parse calendar ID from resource URI',
 			};
 		}
 
 		const calendarId = calendarIdMatch[1];
-		const eventId = calendarIdMatch[2];
 
-		if (ctx.db.events) {
-			try {
-				await ctx.db.events.deleteByEntityId(eventId);
-			} catch (error) {
-				console.warn('Failed to delete event from database:', error);
-			}
-		}
-
-		const eventData: EventDeletedEvent = {
-			type: 'eventDeleted',
-			calendarId,
-			eventId,
-			timestamp: new Date().toISOString(),
-		};
-
-		await logEventFromContext(
-			ctx,
-			'googlecalendar.webhook.eventDeleted',
-			{ ...eventData },
-			'completed',
+		const eventIdMatch = resourceUri.match(
+			/\/calendars\/[^\/]+\/events\/([^\/\?]+)/,
 		);
 
-		return {
-			success: true,
-			data: eventData,
-		};
+		try {
+			if (eventIdMatch && eventIdMatch[1]) {
+				const eventId = eventIdMatch[1];
+				if (ctx.db.events) {
+					await ctx.db.events.deleteByEntityId(eventId);
+				}
+
+				const eventData: EventDeletedEvent = {
+					type: 'eventDeleted',
+					calendarId,
+					eventId,
+					timestamp: new Date().toISOString(),
+				};
+
+				await logEventFromContext(
+					ctx,
+					'googlecalendar.webhook.eventDeleted',
+					{ ...eventData },
+					'completed',
+				);
+
+				return {
+					success: true,
+					data: eventData,
+				};
+			}
+
+			const recentEvents = await fetchRecentlyUpdatedEvents(
+				ctx.key,
+				calendarId,
+			);
+			const deletedEvent = recentEvents.find(
+				(e) => e.status === 'cancelled',
+			);
+
+			const eventId = deletedEvent?.id || pushNotification.resourceId || '';
+
+			if (eventId && ctx.db.events) {
+				await ctx.db.events.deleteByEntityId(eventId);
+			}
+
+			const eventData: EventDeletedEvent = {
+				type: 'eventDeleted',
+				calendarId,
+				eventId,
+				timestamp: new Date().toISOString(),
+			};
+
+			await logEventFromContext(
+				ctx,
+				'googlecalendar.webhook.eventDeleted',
+				{ ...eventData },
+				'completed',
+			);
+
+			return {
+				success: true,
+				data: eventData,
+			};
+		} catch (error) {
+			console.error('Failed to process eventDeleted webhook:', error);
+			return {
+				success: false,
+				error: `Failed to process deleted event: ${error instanceof Error ? error.message : 'Unknown error'}`,
+			};
+		}
 	},
 };
 
@@ -295,22 +389,42 @@ export const onEventStarted: GoogleCalendarWebhooks['onEventStarted'] = {
 
 		const credentials = ctx.key;
 		const resourceUri = pushNotification.resourceUri;
-		const calendarIdMatch = resourceUri.match(
-			/\/calendars\/([^\/]+)\/events\/(.+)/,
-		);
 
-		if (!calendarIdMatch || !calendarIdMatch[1] || !calendarIdMatch[2]) {
+		const calendarIdMatch = resourceUri.match(/\/calendars\/([^\/\?]+)/);
+		if (!calendarIdMatch || !calendarIdMatch[1]) {
 			return {
 				success: false,
-				error: 'Could not parse calendar ID and event ID from resource URI',
+				error: 'Could not parse calendar ID from resource URI',
 			};
 		}
 
 		const calendarId = calendarIdMatch[1];
-		const eventId = calendarIdMatch[2];
+
+		const eventIdMatch = resourceUri.match(
+			/\/calendars\/[^\/]+\/events\/([^\/\?]+)/,
+		);
 
 		try {
-			const event = await fetchEvent(credentials, calendarId, eventId);
+			let event: Event;
+
+			if (eventIdMatch && eventIdMatch[1]) {
+				event = await fetchEvent(credentials, calendarId, eventIdMatch[1]);
+			} else {
+				const recentEvents = await fetchRecentlyUpdatedEvents(
+					credentials,
+					calendarId,
+				);
+				const startedEvent = recentEvents
+					.reverse()
+					.find((e) => isEventStarted(e));
+				if (!startedEvent) {
+					return {
+						success: false,
+						error: 'No recently started events found',
+					};
+				}
+				event = startedEvent;
+			}
 
 			if (!isEventStarted(event)) {
 				return {
@@ -338,6 +452,7 @@ export const onEventStarted: GoogleCalendarWebhooks['onEventStarted'] = {
 				data: eventData,
 			};
 		} catch (error) {
+			console.error('Failed to process eventStarted webhook:', error);
 			return {
 				success: false,
 				error: `Failed to fetch event: ${error instanceof Error ? error.message : 'Unknown error'}`,
@@ -369,22 +484,42 @@ export const onEventEnded: GoogleCalendarWebhooks['onEventEnded'] = {
 
 		const credentials = ctx.key;
 		const resourceUri = pushNotification.resourceUri;
-		const calendarIdMatch = resourceUri.match(
-			/\/calendars\/([^\/]+)\/events\/(.+)/,
-		);
 
-		if (!calendarIdMatch || !calendarIdMatch[1] || !calendarIdMatch[2]) {
+		const calendarIdMatch = resourceUri.match(/\/calendars\/([^\/\?]+)/);
+		if (!calendarIdMatch || !calendarIdMatch[1]) {
 			return {
 				success: false,
-				error: 'Could not parse calendar ID and event ID from resource URI',
+				error: 'Could not parse calendar ID from resource URI',
 			};
 		}
 
 		const calendarId = calendarIdMatch[1];
-		const eventId = calendarIdMatch[2];
+
+		const eventIdMatch = resourceUri.match(
+			/\/calendars\/[^\/]+\/events\/([^\/\?]+)/,
+		);
 
 		try {
-			const event = await fetchEvent(credentials, calendarId, eventId);
+			let event: Event;
+
+			if (eventIdMatch && eventIdMatch[1]) {
+				event = await fetchEvent(credentials, calendarId, eventIdMatch[1]);
+			} else {
+				const recentEvents = await fetchRecentlyUpdatedEvents(
+					credentials,
+					calendarId,
+				);
+				const endedEvent = recentEvents
+					.reverse()
+					.find((e) => isEventEnded(e));
+				if (!endedEvent) {
+					return {
+						success: false,
+						error: 'No recently ended events found',
+					};
+				}
+				event = endedEvent;
+			}
 
 			if (!isEventEnded(event)) {
 				return {
@@ -412,6 +547,7 @@ export const onEventEnded: GoogleCalendarWebhooks['onEventEnded'] = {
 				data: eventData,
 			};
 		} catch (error) {
+			console.error('Failed to process eventEnded webhook:', error);
 			return {
 				success: false,
 				error: `Failed to fetch event: ${error instanceof Error ? error.message : 'Unknown error'}`,
