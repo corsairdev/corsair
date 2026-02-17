@@ -113,6 +113,35 @@ function normalizeHeaders(
 	return normalized;
 }
 
+function buildGoogleChannelBody(
+	headers: Record<string, string | undefined>,
+): Record<string, unknown> | null {
+	const resourceUri = headers['x-goog-resource-uri'];
+	const channelId = headers['x-goog-channel-id'];
+	if (!resourceUri || !channelId) return null;
+
+	const notification: Record<string, string> = {
+		resourceId: headers['x-goog-resource-id'] || '',
+		resourceState: headers['x-goog-resource-state'] || '',
+		resourceUri,
+		channelId,
+		channelExpiration: headers['x-goog-channel-expiration'] || '',
+	};
+
+	if (resourceUri.includes('/drive/')) {
+		notification.kind = 'drive#change';
+	}
+
+	const data = Buffer.from(JSON.stringify(notification)).toString('base64');
+
+	return {
+		message: {
+			data,
+			messageId: headers['x-goog-message-number'] || '',
+		},
+	};
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
 // Main Function
 // ─────────────────────────────────────────────────────────────────────────────
@@ -153,8 +182,15 @@ export async function processWebhook(
 	},
 ): Promise<WebhookFilterResult> {
 	const normalizedHeaders = normalizeHeaders(headers);
-	const parsedBody =
+	let parsedBody =
 		typeof body === 'string' ? (JSON.parse(body) satisfies WebhookBody) : body;
+
+	const isEmptyBody =
+		!parsedBody || (typeof parsedBody === 'object' && Object.keys(parsedBody).length === 0);
+
+	if (isEmptyBody && normalizedHeaders['x-goog-resource-uri']) {
+		parsedBody = buildGoogleChannelBody(normalizedHeaders) || parsedBody;
+	}
 
 	const rawRequest = {
 		headers: normalizedHeaders,
