@@ -22,8 +22,6 @@ import type {
 	GoogleCalendarWebhookPayload,
 	EventCreatedEvent,
 	EventDeletedEvent,
-	EventEndedEvent,
-	EventStartedEvent,
 	EventUpdatedEvent,
 } from './webhooks';
 import { EventWebhooks } from './webhooks';
@@ -65,8 +63,6 @@ type GoogleCalendarWebhook<K extends keyof GoogleCalendarWebhookOutputs, TEvent>
 
 export type GoogleCalendarWebhooks = {
 	onEventChanged: GoogleCalendarWebhook<'eventChanged', EventCreatedEvent | EventUpdatedEvent | EventDeletedEvent>;
-	onEventStarted: GoogleCalendarWebhook<'eventStarted', EventStartedEvent>;
-	onEventEnded: GoogleCalendarWebhook<'eventEnded', EventEndedEvent>;
 };
 
 export type GoogleCalendarBoundWebhooks = BindWebhooks<
@@ -88,8 +84,6 @@ const googleCalendarEndpointsNested = {
 
 const googleCalendarWebhooksNested = {
 	onEventChanged: EventWebhooks.onEventChanged,
-	onEventStarted: EventWebhooks.onEventStarted,
-	onEventEnded: EventWebhooks.onEventEnded,
 } as const;
 
 export type GoogleCalendarPluginOptions = {
@@ -197,8 +191,6 @@ export function googlecalendar<const T extends GoogleCalendarPluginOptions>(
 export type {
 	EventCreatedEvent,
 	EventDeletedEvent,
-	EventEndedEvent,
-	EventStartedEvent,
 	EventUpdatedEvent,
 	GoogleCalendarEventName,
 	GoogleCalendarPushNotification,

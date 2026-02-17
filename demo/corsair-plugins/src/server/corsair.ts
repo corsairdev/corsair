@@ -136,16 +136,6 @@ export const corsair = createCorsair({
 						console.log(res.data?.type, 'res.data?.type');
 					},
 				},
-				onEventStarted: {
-						after: async (ctx, res) => {
-							console.log(res, 'res');
-						},
-					},
-					onEventEnded: {
-						after: async (ctx, res) => {
-							console.log(res, 'res');
-						},
-					},
 				},
 			}
 		),

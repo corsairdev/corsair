@@ -48,44 +48,22 @@ export type EventDeletedEvent = {
 	timestamp: string;
 };
 
-export type EventStartedEvent = {
-	type: 'eventStarted';
-	calendarId: string;
-	event: Event;
-	timestamp: string;
-};
-
-export type EventEndedEvent = {
-	type: 'eventEnded';
-	calendarId: string;
-	event: Event;
-	timestamp: string;
-};
-
 export type GoogleCalendarWebhookEvent =
 	| EventCreatedEvent
 	| EventUpdatedEvent
-	| EventDeletedEvent
-	| EventStartedEvent
-	| EventEndedEvent;
+	| EventDeletedEvent;
 
 export type GoogleCalendarEventName =
-	| 'eventChanged'
-	| 'eventStarted'
-	| 'eventEnded';
+	| 'eventChanged';
 
 export interface GoogleCalendarEventMap {
 	eventChanged: EventCreatedEvent | EventUpdatedEvent | EventDeletedEvent;
-	eventStarted: EventStartedEvent;
-	eventEnded: EventEndedEvent;
 }
 
 export type GoogleCalendarWebhookPayload<TEvent = unknown> = PubSubNotification<TEvent>;
 
 export type GoogleCalendarWebhookOutputs = {
 	eventChanged: EventCreatedEvent | EventUpdatedEvent | EventDeletedEvent;
-	eventStarted: EventStartedEvent;
-	eventEnded: EventEndedEvent;
 };
 
 export function decodePubSubMessage(
