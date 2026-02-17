@@ -149,7 +149,15 @@ export const corsair = createCorsair({
 				},
 			}
 		),
-		googledrive(),
+		googledrive({
+			webhookHooks: {
+				driveChanged: {
+					after: async (ctx, res) => {
+						console.log(res.data?.type, 'res.data?.type');
+					},
+				},
+			},
+		}),
 		googlesheets(),
 		hubspot(),
 		posthog(),

@@ -32,6 +32,7 @@ export type FileChangedEvent = {
 	fileId: string;
 	changeType: 'created' | 'updated' | 'deleted' | 'trashed' | 'untrashed';
 	file?: File;
+	filePath?: string;
 	change?: Change;
 };
 
@@ -40,23 +41,22 @@ export type FolderChangedEvent = {
 	folderId: string;
 	changeType: 'created' | 'updated' | 'deleted' | 'trashed' | 'untrashed';
 	folder?: File;
+	filePath?: string;
 	change?: Change;
 };
 
 export type GoogleDriveWebhookEvent = FileChangedEvent | FolderChangedEvent;
 
-export type GoogleDriveEventName = 'fileChanged' | 'folderChanged';
+export type GoogleDriveEventName = 'driveChanged';
 
 export interface GoogleDriveEventMap {
-	fileChanged: FileChangedEvent;
-	folderChanged: FolderChangedEvent;
+	driveChanged: FileChangedEvent | FolderChangedEvent;
 }
 
 export type GoogleDriveWebhookPayload<TEvent = unknown> = PubSubNotification<TEvent>;
 
 export type GoogleDriveWebhookOutputs = {
-	fileChanged: FileChangedEvent;
-	folderChanged: FolderChangedEvent;
+	driveChanged: FileChangedEvent | FolderChangedEvent;
 };
 
 export function decodePubSubMessage(data: string): GoogleDrivePushNotification {
@@ -75,18 +75,7 @@ export function createGoogleDriveWebhookMatcher(
 
 		try {
 			const pushNotification = decodePubSubMessage(body.message.data!);
-
-			if (!pushNotification.resourceId || !pushNotification.resourceUri) {
-				return false;
-			}
-
-			const state = pushNotification.resourceState;
-
-			if (state === 'sync') {
-				return false;
-			}
-
-			return state === 'change' || state === 'update';
+			return !!pushNotification.resourceId && !!pushNotification.resourceUri;
 		} catch {
 			return false;
 		}

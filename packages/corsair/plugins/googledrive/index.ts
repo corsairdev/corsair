@@ -24,8 +24,7 @@ import { GoogleDriveSchema } from './schema';
 import type {
 	GoogleDriveWebhookOutputs,
 	GoogleDriveWebhookPayload,
-	FileChangedEvent,
-	FolderChangedEvent,
+	GoogleDriveWebhookEvent,
 } from './webhooks';
 import { ChangeWebhooks } from './webhooks';
 import type { PubSubNotification } from './webhooks/types';
@@ -80,8 +79,7 @@ type GoogleDriveWebhook<K extends keyof GoogleDriveWebhookOutputs, TEvent> =
 	>;
 
 export type GoogleDriveWebhooks = {
-	fileChanged: GoogleDriveWebhook<'fileChanged', FileChangedEvent>;
-	folderChanged: GoogleDriveWebhook<'folderChanged', FolderChangedEvent>;
+	driveChanged: GoogleDriveWebhook<'driveChanged', GoogleDriveWebhookEvent>;
 };
 
 export type GoogleDriveBoundWebhooks = BindWebhooks<
@@ -121,8 +119,7 @@ const googleDriveEndpointsNested = {
 } as const;
 
 const googleDriveWebhooksNested = {
-	fileChanged: ChangeWebhooks.fileChanged,
-	folderChanged: ChangeWebhooks.folderChanged,
+	driveChanged: ChangeWebhooks.driveChanged,
 } as const;
 
 export type GoogleDrivePluginOptions = {
@@ -236,7 +233,7 @@ export type {
 	GoogleDriveWebhookPayload,
 	PubSubMessage,
 	PubSubNotification,
-} from './webhooks/types';
+} from './webhooks';
 export {
 	createGoogleDriveWebhookMatcher,
 	decodePubSubMessage,
