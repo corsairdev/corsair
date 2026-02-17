@@ -85,21 +85,7 @@ export function createGoogleCalendarWebhookMatcher(
 		try {
 			const pushNotification = decodePubSubMessage(body.message.data!);
 
-			if (!pushNotification.channelId || !pushNotification.resourceId) {
-				return false;
-			}
-
-			const state = pushNotification.resourceState;
-
-			if (state === 'sync') {
-				return false;
-			}
-
-			if (eventType === 'eventChanged') {
-				return (state === 'exists' || state === 'not_exists') && !!pushNotification.resourceUri;
-			}
-
-			return state === 'exists' && !!pushNotification.resourceUri;
+			return !!pushNotification.channelId && !!pushNotification.resourceId && !!pushNotification.resourceUri;
 		} catch {
 			return false;
 		}

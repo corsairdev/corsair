@@ -6,23 +6,42 @@ import type {
 	EventCreatedEvent,
 	EventDeletedEvent,
 	EventUpdatedEvent,
+	GoogleCalendarPushNotification,
 } from './types';
 import {
 	createGoogleCalendarWebhookMatcher,
 	decodePubSubMessage,
 } from './types';
 
-async function fetchEvent(
+const CALENDAR_ID_PATTERN = /\/calendars\/([^\/\?]+)/;
+const EVENT_ID_PATTERN = /\/calendars\/[^\/]+\/events\/([^\/\?]+)/;
+const RECENT_EVENTS_WINDOW_MS = 2 * 60 * 1000;
+const CREATE_VS_UPDATE_THRESHOLD_MS = 5000;
+
+function parseResourceUri(resourceUri: string) {
+	return {
+		calendarId: resourceUri.match(CALENDAR_ID_PATTERN)?.[1],
+		eventId: resourceUri.match(EVENT_ID_PATTERN)?.[1],
+	};
+}
+
+function isNewEvent(event: Event): boolean {
+	if (!event.created || !event.updated) return false;
+	const diff = Math.abs(
+		new Date(event.updated).getTime() - new Date(event.created).getTime(),
+	);
+	return diff < CREATE_VS_UPDATE_THRESHOLD_MS;
+}
+
+function fetchEvent(
 	credentials: string,
 	calendarId: string,
 	eventId: string,
 ): Promise<Event> {
-	return await makeCalendarRequest<Event>(
+	return makeCalendarRequest<Event>(
 		`/calendars/${calendarId}/events/${eventId}`,
 		credentials,
-		{
-			method: 'GET',
-		},
+		{ method: 'GET' },
 	);
 }
 
@@ -30,7 +49,7 @@ async function fetchRecentlyUpdatedEvents(
 	credentials: string,
 	calendarId: string,
 ): Promise<Event[]> {
-	const updatedMin = new Date(Date.now() - 2 * 60 * 1000).toISOString();
+	const updatedMin = new Date(Date.now() - RECENT_EVENTS_WINDOW_MS).toISOString();
 	const response = await makeCalendarRequest<{ items?: Event[] }>(
 		`/calendars/${calendarId}/events`,
 		credentials,
@@ -44,7 +63,57 @@ async function fetchRecentlyUpdatedEvents(
 			},
 		},
 	);
-	return response.items || [];
+	return response.items ?? [];
+}
+
+async function resolveEvent(
+	credentials: string,
+	calendarId: string,
+	eventId: string | undefined,
+): Promise<Event | null> {
+	if (eventId) {
+		return fetchEvent(credentials, calendarId, eventId);
+	}
+	const recentEvents = await fetchRecentlyUpdatedEvents(credentials, calendarId);
+	return recentEvents.at(-1) ?? null;
+}
+
+async function resolveDeletedEventId(
+	credentials: string,
+	calendarId: string,
+	eventId: string | undefined,
+	notification: GoogleCalendarPushNotification,
+): Promise<string> {
+	if (eventId) return eventId;
+	const recentEvents = await fetchRecentlyUpdatedEvents(credentials, calendarId);
+	const cancelled = recentEvents.find((e) => e.status === 'cancelled');
+	return cancelled?.id ?? notification.resourceId ?? '';
+}
+
+async function handleDeletedEvent(
+	ctx: Parameters<GoogleCalendarWebhooks['onEventChanged']['handler']>[0],
+	calendarId: string,
+	eventId: string,
+): Promise<{ eventData: EventDeletedEvent }> {
+	if (eventId && ctx.db.events) {
+		await ctx.db.events.deleteByEntityId(eventId);
+	}
+
+	const eventData = {
+		type: 'eventDeleted' as const,
+		calendarId,
+		eventId,
+		timestamp: new Date().toISOString(),
+	};
+
+	await logEventFromContext(
+		ctx,
+		'googlecalendar.webhook.eventDeleted',
+		{ ...eventData },
+		'completed',
+	);
+
+	return { eventData };
 }
 
 export const onEventChanged: GoogleCalendarWebhooks['onEventChanged'] = {
@@ -53,146 +122,61 @@ export const onEventChanged: GoogleCalendarWebhooks['onEventChanged'] = {
 		const body = request.payload;
 
 		if (!body.message?.data) {
-			return {
-				success: false,
-				error: 'No message data in notification',
-			};
+			return { success: false, error: 'No message data in notification' };
 		}
 
-		const pushNotification = decodePubSubMessage(body.message.data!);
+		const notification = decodePubSubMessage(body.message.data);
 
-		if (!pushNotification.resourceUri) {
-			return {
-				success: false,
-				error: 'Invalid push notification format',
-			};
+		if (!notification.resourceUri) {
+			return { success: false, error: 'Invalid push notification format' };
+		}
+
+		const { calendarId, eventId } = parseResourceUri(notification.resourceUri);
+
+		if (!calendarId) {
+			return { success: false, error: 'Could not parse calendar ID from resource URI' };
 		}
 
 		const credentials = ctx.key;
-		const resourceUri = pushNotification.resourceUri;
-		const resourceState = pushNotification.resourceState;
-
-		const calendarIdMatch = resourceUri.match(/\/calendars\/([^\/\?]+)/);
-		if (!calendarIdMatch || !calendarIdMatch[1]) {
-			return {
-				success: false,
-				error: 'Could not parse calendar ID from resource URI',
-			};
-		}
-
-		const calendarId = calendarIdMatch[1];
-
-		const eventIdMatch = resourceUri.match(
-			/\/calendars\/[^\/]+\/events\/([^\/\?]+)/,
-		);
 
 		try {
-			if (resourceState === 'not_exists') {
-				let eventId = '';
-
-				if (eventIdMatch && eventIdMatch[1]) {
-					eventId = eventIdMatch[1];
-				} else {
-					const recentEvents = await fetchRecentlyUpdatedEvents(
-						credentials,
-						calendarId,
-					);
-					const deletedEvent = recentEvents.find(
-						(e) => e.status === 'cancelled',
-					);
-					eventId = deletedEvent?.id || pushNotification.resourceId || '';
-				}
-
-				if (eventId && ctx.db.events) {
-					await ctx.db.events.deleteByEntityId(eventId);
-				}
-
-				const eventData: EventDeletedEvent = {
-					type: 'eventDeleted',
-					calendarId,
-					eventId,
-					timestamp: new Date().toISOString(),
-				};
-
-				await logEventFromContext(
-					ctx,
-					'googlecalendar.webhook.eventDeleted',
-					{ ...eventData },
-					'completed',
-				);
-
-				return {
-					success: true,
-					data: eventData,
-				};
-			}
-
-			let event: Event;
-
-			if (eventIdMatch && eventIdMatch[1]) {
-				event = await fetchEvent(credentials, calendarId, eventIdMatch[1]);
-			} else {
-				const recentEvents = await fetchRecentlyUpdatedEvents(
+			if (notification.resourceState === 'not_exists') {
+				const deletedEventId = await resolveDeletedEventId(
 					credentials,
 					calendarId,
+					eventId,
+					notification,
 				);
-				const latestEvent = recentEvents[recentEvents.length - 1];
-				if (!latestEvent) {
-					return {
-						success: false,
-						error: 'No recently updated events found in calendar',
-					};
-				}
-				event = latestEvent;
+				const { eventData } = await handleDeletedEvent(ctx, calendarId, deletedEventId);
+				return { success: true, data: eventData };
+			}
+
+			const event = await resolveEvent(credentials, calendarId, eventId);
+
+			if (!event) {
+				return { success: false, error: 'No recently updated events found in calendar' };
 			}
 
 			if (event.status === 'cancelled') {
-				const eventId = event.id || '';
-
-				if (eventId && ctx.db.events) {
-					await ctx.db.events.deleteByEntityId(eventId);
-				}
-
-				const eventData: EventDeletedEvent = {
-					type: 'eventDeleted',
-					calendarId,
-					eventId,
-					timestamp: new Date().toISOString(),
-				};
-
-				await logEventFromContext(
-					ctx,
-					'googlecalendar.webhook.eventDeleted',
-					{ ...eventData },
-					'completed',
-				);
-
-				return {
-					success: true,
-					data: eventData,
-				};
+				const { eventData } = await handleDeletedEvent(ctx, calendarId, event.id ?? '');
+				return { success: true, data: eventData };
 			}
 
+			let corsairEntityId = '';
+
 			if (event.id && ctx.db.events) {
-				await ctx.db.events.upsertByEntityId(event.id, {
+				const entity = await ctx.db.events.upsertByEntityId(event.id, {
 					...event,
 					id: event.id,
 					calendarId,
 					createdAt: new Date(),
 				});
+				corsairEntityId = entity?.id ?? '';
 			}
 
-			const isNewEvent =
-				event.created &&
-				event.updated &&
-				Math.abs(
-					new Date(event.updated).getTime() -
-						new Date(event.created).getTime(),
-				) < 5000;
-
-			if (isNewEvent) {
-				const eventData: EventCreatedEvent = {
-					type: 'eventCreated',
+			if (isNewEvent(event)) {
+				const eventData = {
+					type: 'eventCreated' as const,
 					calendarId,
 					event,
 					timestamp: new Date().toISOString(),
@@ -205,14 +189,11 @@ export const onEventChanged: GoogleCalendarWebhooks['onEventChanged'] = {
 					'completed',
 				);
 
-				return {
-					success: true,
-					data: eventData,
-				};
+				return { success: true, corsairEntityId, data: eventData };
 			}
 
-			const eventData: EventUpdatedEvent = {
-				type: 'eventUpdated',
+			const eventData = {
+				type: 'eventUpdated' as const,
 				calendarId,
 				event,
 				timestamp: new Date().toISOString(),
@@ -225,10 +206,7 @@ export const onEventChanged: GoogleCalendarWebhooks['onEventChanged'] = {
 				'completed',
 			);
 
-			return {
-				success: true,
-				data: eventData,
-			};
+			return { success: true, corsairEntityId, data: eventData };
 		} catch (error) {
 			console.error('Failed to process webhook:', error);
 			return {
