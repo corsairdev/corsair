@@ -32,23 +32,11 @@ export async function POST(request: Request) {
 
 ## Available Webhooks
 
-### onEventCreated
+### onEventChanged
 
-`events.onEventCreated`
+`events.onEventChanged`
 
-Fires when a calendar event is created.
-
-### onEventUpdated
-
-`events.onEventUpdated`
-
-Fires when a calendar event is updated.
-
-### onEventDeleted
-
-`events.onEventDeleted`
-
-Fires when a calendar event is deleted.
+Fires when a calendar event is created, updated, or deleted.
 
 ### onEventStarted
 
@@ -68,7 +56,7 @@ Fires when a calendar event ends.
 googlecalendar({
     webhookHooks: {
         events: {
-            onEventCreated: {
+            onEventChanged: {
                 after: async (ctx, result) => {
                     console.log("Event created:", result.data.summary);
                 },

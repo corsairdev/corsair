@@ -64,9 +64,7 @@ type GoogleCalendarWebhook<K extends keyof GoogleCalendarWebhookOutputs, TEvent>
 	>;
 
 export type GoogleCalendarWebhooks = {
-	onEventCreated: GoogleCalendarWebhook<'eventCreated', EventCreatedEvent>;
-	onEventUpdated: GoogleCalendarWebhook<'eventUpdated', EventUpdatedEvent>;
-	onEventDeleted: GoogleCalendarWebhook<'eventDeleted', EventDeletedEvent>;
+	onEventChanged: GoogleCalendarWebhook<'eventChanged', EventCreatedEvent | EventUpdatedEvent | EventDeletedEvent>;
 	onEventStarted: GoogleCalendarWebhook<'eventStarted', EventStartedEvent>;
 	onEventEnded: GoogleCalendarWebhook<'eventEnded', EventEndedEvent>;
 };
@@ -89,9 +87,7 @@ const googleCalendarEndpointsNested = {
 } as const;
 
 const googleCalendarWebhooksNested = {
-	onEventCreated: EventWebhooks.onEventCreated,
-	onEventUpdated: EventWebhooks.onEventUpdated,
-	onEventDeleted: EventWebhooks.onEventDeleted,
+	onEventChanged: EventWebhooks.onEventChanged,
 	onEventStarted: EventWebhooks.onEventStarted,
 	onEventEnded: EventWebhooks.onEventEnded,
 } as const;

@@ -70,16 +70,12 @@ export type GoogleCalendarWebhookEvent =
 	| EventEndedEvent;
 
 export type GoogleCalendarEventName =
-	| 'eventCreated'
-	| 'eventUpdated'
-	| 'eventDeleted'
+	| 'eventChanged'
 	| 'eventStarted'
 	| 'eventEnded';
 
 export interface GoogleCalendarEventMap {
-	eventCreated: EventCreatedEvent;
-	eventUpdated: EventUpdatedEvent;
-	eventDeleted: EventDeletedEvent;
+	eventChanged: EventCreatedEvent | EventUpdatedEvent | EventDeletedEvent;
 	eventStarted: EventStartedEvent;
 	eventEnded: EventEndedEvent;
 }
@@ -87,9 +83,7 @@ export interface GoogleCalendarEventMap {
 export type GoogleCalendarWebhookPayload<TEvent = unknown> = PubSubNotification<TEvent>;
 
 export type GoogleCalendarWebhookOutputs = {
-	eventCreated: EventCreatedEvent;
-	eventUpdated: EventUpdatedEvent;
-	eventDeleted: EventDeletedEvent;
+	eventChanged: EventCreatedEvent | EventUpdatedEvent | EventDeletedEvent;
 	eventStarted: EventStartedEvent;
 	eventEnded: EventEndedEvent;
 };
@@ -123,8 +117,8 @@ export function createGoogleCalendarWebhookMatcher(
 				return false;
 			}
 
-			if (eventType === 'eventDeleted') {
-				return state === 'not_exists';
+			if (eventType === 'eventChanged') {
+				return (state === 'exists' || state === 'not_exists') && !!pushNotification.resourceUri;
 			}
 
 			return state === 'exists' && !!pushNotification.resourceUri;
