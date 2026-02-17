@@ -1,0 +1,79 @@
+name: Report an issue
+description: Help us fix bugs by providing detailed information
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for reporting an issue! The more details you provide, the faster we can help.
+
+        **Before submitting:**
+        - Search [existing issues](https://github.com/corsair/corsair/issues) to see if this has already been reported. If so, please add a 👍 reaction or comment with additional details.
+        - For feature requests, please use the [feature request template](https://github.com/corsair/corsair/issues/new?assignees=&labels=&projects=&template=feature_request.yml&title=) instead.
+        - For integration requests, please use the [integration request template](https://github.com/corsair/corsair/issues/new?assignees=&labels=&projects=&template=integration_request.yml&title=) instead.
+  - type: textarea
+    attributes:
+      label: Steps to reproduce
+      description: Provide clear, numbered steps that someone else can follow to reproduce the issue. Include any relevant code snippets or commands.
+      placeholder: |
+        1. Set up...
+        2. Run...
+        3. Observe...
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Expected Behavior
+      description: |
+        Describe both the actual behavior you're seeing and what you expected to happen instead. Include any error messages, logs, or screenshots.
+
+        **Note:** Issues without clear descriptions of the problem and expected behavior may be closed.
+      placeholder: When I type X, I see TypeScript suggesting Y, but I expected Z.
+    validations:
+      required: true
+  - type: input
+    attributes:
+      label: Corsair version
+      description: Which version of Corsair are you using? (Check your package.json)
+      placeholder: "e.g., 0.0.0"
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Environment details
+      description: Your operating system, Node.js version, package manager, and any other relevant environment information.
+      render: bash
+      placeholder: |
+        OS: macOS 14.0
+        Node: v20.x.x
+        Package manager: pnpm 8.x.x
+    validations:
+      required: true
+  - type: dropdown
+    attributes:
+      label: What part of Corsair is affected?
+      multiple: true
+      options:
+        - 'Integrations'
+        - 'Types'
+        - 'Documentation'
+        - 'Other'
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Configuration (if relevant)
+      description: Share your Corsair configuration. **Remove any sensitive information** like API keys, tokens, or credentials.
+      render: typescript
+      value: |
+        import { createCorsair } from "corsair"
+        
+        export const corsair = createCorsair({
+          // share the plugin configuration as well
+          plugins: [],
+        });
+  - type: textarea
+    attributes:
+      label: Anything else
+      description: Any other context that might be helpful. For example, does this only happen with specific integrations or auth types?
+      placeholder: Additional notes, workarounds, or related issues...
+

@@ -1,0 +1,34 @@
+name: Feature request
+description: Share your ideas to improve Corsair
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to suggest a new feature! 
+
+        **Before submitting:**
+        - Check if a [similar feature request](https://github.com/corsair/corsair/issues) already exists. If it does, please add a 👍 reaction instead of creating a duplicate.
+        - If you're requesting a new integration, please use the [integration request template](https://github.com/corsair/corsair/issues/new?assignees=&labels=&projects=&template=integration_request.yml&title=) instead.
+        - If you're reporting a bug, please use the [bug report template](https://github.com/corsair/corsair/issues/new?assignees=&labels=bug&projects=&template=bug_report.yml) instead.
+  - type: textarea
+    attributes:
+      label: What problem does this solve?
+      description: What challenge or limitation are you facing that this feature would address?
+      placeholder: I need to... / It would be helpful if...
+  - type: textarea
+    attributes:
+      label: Proposed solution
+      description: How would you like this feature to work? Be as specific as possible.
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Alternative approaches
+      description: Have you considered other ways to solve this? What workarounds are you currently using?
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Additional details
+      description: Any examples, mockups, use cases, or other information that would help us understand your request.
+

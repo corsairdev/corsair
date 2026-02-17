@@ -1,0 +1,57 @@
+name: Integration request
+description: Request a new integration to be added to Corsair
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Interested in using a new API with Corsair? Let us know!
+
+        **Before submitting:**
+        - Check if this integration has already been [requested](https://github.com/corsair/corsair/issues?q=is%3Aissue+label%3Aintegration) or [implemented](https://github.com/corsair/corsair/issues?q=is%3Aissue+label%3Aintegration+is%3Aclosed). If it has, please add a 👍 reaction instead of creating a duplicate.
+        - For general feature requests, please use the [feature request template](https://github.com/corsair/corsair/issues/new?assignees=&labels=&projects=&template=feature_request.yml&title=) instead.
+  - type: input
+    attributes:
+      label: What API or service would you like integrated?
+      description: The name of the API, service, or platform you want to use with Corsair
+      placeholder: "e.g., Stripe, Notion, Airtable"
+    validations:
+      required: true
+  - type: input
+    attributes:
+      label: API documentation link
+      description: Link to the official API documentation for this service
+      placeholder: "https://..."
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: What would you like to do with this integration?
+      description: Describe your use case, what endpoints or features you need, and how you plan to use this integration.
+      placeholder: |
+        Specifically, I need access to...
+        
+        I'm doing this so I can...
+    validations:
+      required: true
+  - type: checkboxes
+    attributes:
+      label: Do you need webhook support?
+      description: Does this API support webhooks, and would you need webhook functionality for this integration?
+      options:
+        - label: Yes, I need webhook support for this integration
+  - type: textarea
+    attributes:
+      label: Webhook details (if applicable)
+      description: If you need webhook support, please describe what webhook events you'd like to receive or handle.
+      placeholder: |
+        I need to receive webhooks for...
+        
+        Specific events I'm interested in:
+        - Event 1
+        - Event 2
+  - type: textarea
+    attributes:
+      label: Additional context
+      description: Any other information that might be helpful, such as authentication requirements, rate limits, or specific features you're most interested in.
+      placeholder: Additional notes or requirements...
+
