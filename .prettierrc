@@ -1,8 +1,8 @@
 {
-  "arrowParens": "avoid",
-  "semi": false,
-  "singleQuote": true,
-  "trailingComma": "es5",
-  "endOfLine": "lf",
-  "quoteProps": "consistent"
+	"arrowParens": "avoid",
+	"semi": false,
+	"singleQuote": true,
+	"trailingComma": "es5",
+	"quoteProps": "consistent",
+	"endOfLine": "lf"
 }

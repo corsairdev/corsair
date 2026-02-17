@@ -19,7 +19,7 @@
   },
   "editor.formatOnType": true, // required
   "editor.formatOnPaste": true, // optional
-  "editor.formatOnSave": true, // optional
+  "editor.formatOnSave": true,
   "editor.formatOnSaveMode": "file", // required to format on save
   "files.autoSave": "off",
   "[typescriptreact]": {
