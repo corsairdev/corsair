@@ -95,8 +95,7 @@ function determineChangeType(
 ): 'created' | 'updated' | 'deleted' | 'trashed' | 'untrashed' {
 	if (change.removed) return 'deleted';
 	if (file.trashed) return 'trashed';
-	if (!isFirstMatch) return 'updated';
-	return 'created';
+	return 'updated';
 }
 
 function filterRecentChanges<T extends { time?: string }>(
