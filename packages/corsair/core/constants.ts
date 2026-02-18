@@ -13,29 +13,31 @@ export type AllErrors =
 	| (string & {});
 
 export const BaseProviders = [
-	'slack',
+	'discord',
 	'github',
-	'linear',
-	'hubspot',
 	'gmail',
-	'resend',
-	'posthog',
-	'googlesheets',
-	'googledrive',
 	'googlecalendar',
+	'googledrive',
+	'googlesheets',
+	'hubspot',
+	'linear',
+	'posthog',
+	'resend',
+	'slack',
 ] as const;
 
 export type AllProviders =
-	| 'slack'
+	| 'discord'
 	| 'github'
-	| 'linear'
-	| 'hubspot'
 	| 'gmail'
-	| 'resend'
-	| 'posthog'
-	| 'googlesheets'
-	| 'googledrive'
 	| 'googlecalendar'
+	| 'googledrive'
+	| 'googlesheets'
+	| 'hubspot'
+	| 'linear'
+	| 'posthog'
+	| 'resend'
+	| 'slack'
 	| (string & {});
 
 export type AuthTypes = 'oauth_2' | 'api_key' | 'bot_token';

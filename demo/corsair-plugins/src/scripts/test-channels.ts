@@ -25,17 +25,17 @@ const main = async () => {
 		throw new Error('Missing Google Calendar credentials');
 	}
 
-	await corsair.keys.googlesheets.issueNewDEK();
-	await corsair.keys.googlesheets.setClientId(clientId);
-	await corsair.keys.googlesheets.setClientSecret(clientSecret);
+	await corsair.keys.googlesheets.issue_new_dek();
+	await corsair.keys.googlesheets.set_client_id(clientId);
+	await corsair.keys.googlesheets.set_client_secret(clientSecret);
 
-	await corsair.withTenant('default').googlesheets.keys.issueNewDEK();
+	await corsair.withTenant('default').googlesheets.keys.issue_new_dek();
 	await corsair
 		.withTenant('default')
-		.googlesheets.keys.setAccessToken(accessToken);
+		.googlesheets.keys.set_access_token(accessToken);
 	await corsair
 		.withTenant('default')
-		.googlesheets.keys.setRefreshToken(refreshToken);
+		.googlesheets.keys.set_refresh_token(refreshToken);
 };
 
 main();

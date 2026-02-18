@@ -6,6 +6,7 @@ import type {
 	CorsairPluginContext,
 	CorsairWebhook,
 	KeyBuilderContext,
+	PluginAuthConfig,
 	RawWebhookRequest,
 } from '../../core';
 import type { AuthTypes, PickAuth } from '../../core/constants';
@@ -30,9 +31,22 @@ import { MessageWebhooks } from './webhooks';
 import type { PubSubNotification } from './webhooks/types';
 import { decodePubSubMessage } from './webhooks/types';
 
+/**
+ * Auth config extending the base OAuth2 fields with Gmail-specific fields.
+ * - integration: topic_id (Google Cloud Pub/Sub topic for push notifications)
+ */
+export const gmailAuthConfig = {
+	oauth_2: {
+		integration: ['topic_id'] as const,
+		account: ['something_else'] as const,
+	},
+} as const satisfies PluginAuthConfig;
+
 export type GmailContext = CorsairPluginContext<
 	typeof GmailSchema,
-	GmailPluginOptions
+	GmailPluginOptions,
+	undefined,
+	typeof gmailAuthConfig
 >;
 
 type GmailEndpoint<K extends keyof GmailEndpointOutputs> = CorsairEndpoint<
@@ -135,7 +149,10 @@ export type GmailPluginOptions = {
 	webhookHooks?: InternalGmailPlugin['webhookHooks'];
 };
 
-export type GmailKeyBuilderContext = KeyBuilderContext<GmailPluginOptions>;
+export type GmailKeyBuilderContext = KeyBuilderContext<
+	GmailPluginOptions,
+	typeof gmailAuthConfig
+>;
 
 const defaultAuthType: AuthTypes = 'oauth_2';
 
@@ -145,7 +162,8 @@ export type BaseGmailPlugin<T extends GmailPluginOptions> = CorsairPlugin<
 	typeof gmailEndpointsNested,
 	typeof gmailWebhooksNested,
 	T,
-	typeof defaultAuthType
+	typeof defaultAuthType,
+	typeof gmailAuthConfig
 >;
 
 /**
@@ -169,6 +187,7 @@ export function gmail<const T extends GmailPluginOptions>(
 		id: 'gmail',
 		schema: GmailSchema,
 		options: options,
+		authConfig: gmailAuthConfig,
 		hooks: options.hooks,
 		webhookHooks: options.webhookHooks,
 		endpoints: gmailEndpointsNested,
@@ -179,17 +198,17 @@ export function gmail<const T extends GmailPluginOptions>(
 			}
 
 			if (ctx.authType === 'oauth_2') {
-				const accessToken = await ctx.keys.getAccessToken();
-				const refreshToken = await ctx.keys.getRefreshToken();
+				const accessToken = await ctx.keys.get_access_token();
+				const refreshToken = await ctx.keys.get_refresh_token();
 
 				if (!accessToken || !refreshToken) {
 					// prob need to throw an error here
 					return '';
 				}
 
-				const res = await ctx.keys.getIntegrationCredentials();
+				const res = await ctx.keys.get_integration_credentials();
 
-				if (!res.clientId || !res.clientSecret) {
+				if (!res.client_id || !res.client_secret) {
 					// prob need to throw an error here
 					return '';
 				}
@@ -197,8 +216,8 @@ export function gmail<const T extends GmailPluginOptions>(
 				const key = await getValidAccessToken({
 					accessToken,
 					refreshToken,
-					clientId: res.clientId,
-					clientSecret: res.clientSecret,
+					clientId: res.client_id,
+					clientSecret: res.client_secret,
 				});
 
 				return key;

@@ -200,7 +200,7 @@ export function github<const PluginOptions extends GithubPluginOptions>(
 			}
 
 			if (source === 'webhook') {
-				const res = await ctx.keys.getWebhookSignature();
+				const res = await ctx.keys.get_webhook_signature();
 
 				if (!res) {
 					return '';
@@ -211,7 +211,7 @@ export function github<const PluginOptions extends GithubPluginOptions>(
 
 			if (source === 'endpoint') {
 				if (ctx.authType === 'api_key') {
-					const res = await ctx.keys.getApiKey();
+					const res = await ctx.keys.get_api_key();
 
 					if (!res) {
 						return '';
@@ -219,7 +219,7 @@ export function github<const PluginOptions extends GithubPluginOptions>(
 
 					return res;
 				} else if (ctx.authType === 'oauth_2') {
-					const res = await ctx.keys.getAccessToken();
+					const res = await ctx.keys.get_access_token();
 
 					if (!res) {
 						return '';

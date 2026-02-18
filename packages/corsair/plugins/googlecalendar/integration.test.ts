@@ -28,13 +28,13 @@ async function createGoogleCalendarClient() {
 		kek: process.env.CORSAIR_KEK!,
 	});
 
-	await corsair.keys.googlecalendar.issueNewDEK();
-	await corsair.keys.googlecalendar.setClientId(clientId);
-	await corsair.keys.googlecalendar.setClientSecret(clientSecret);
+	await corsair.keys.googlecalendar.issue_new_dek();
+	await corsair.keys.googlecalendar.set_client_id(clientId);
+	await corsair.keys.googlecalendar.set_client_secret(clientSecret);
 
-	await corsair.googlecalendar.keys.issueNewDEK();
-	await corsair.googlecalendar.keys.setAccessToken(accessToken);
-	await corsair.googlecalendar.keys.setRefreshToken(refreshToken);
+	await corsair.googlecalendar.keys.issue_new_dek();
+	await corsair.googlecalendar.keys.set_access_token(accessToken);
+	await corsair.googlecalendar.keys.set_refresh_token(refreshToken);
 
 	return { corsair, testDb };
 }

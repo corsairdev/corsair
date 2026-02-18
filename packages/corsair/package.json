@@ -91,7 +91,8 @@
     "build": "tsup && tsc -p tsconfig.build.json",
     "build:watch": "tsup --watch",
     "typecheck": "tsc --noEmit",
-    "ind": "tsx index.ts"
+    "ind": "tsx index.ts",
+    "generate:plugin": "tsx templates/plugin/generate.ts"
   },
   "dependencies": {
     "kysely": "^0.28.5",

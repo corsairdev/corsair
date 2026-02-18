@@ -136,7 +136,7 @@ export function posthog<const T extends PostHogPluginOptions>(
 			}
 
 			if (source === 'webhook') {
-				const res = await ctx.keys.getWebhookSignature();
+				const res = await ctx.keys.get_webhook_signature();
 
 				if (!res) {
 					return '';
@@ -150,7 +150,7 @@ export function posthog<const T extends PostHogPluginOptions>(
 			}
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
-				const res = await ctx.keys.getApiKey();
+				const res = await ctx.keys.get_api_key();
 
 				if (!res) {
 					return '';

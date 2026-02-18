@@ -13,6 +13,7 @@ import {
 import type {
 	AccountKeyManagerFor,
 	IntegrationKeyManagerFor,
+	PluginAuthConfig,
 } from '../auth/types';
 import type { AuthTypes } from '../constants';
 import type { BindEndpoints, EndpointTree } from '../endpoints';
@@ -97,6 +98,15 @@ type InferDefaultAuthType<P> = P extends { __defaultAuthType?: infer D }
 	: undefined;
 
 /**
+ * Extracts the AuthConfig from a plugin's authConfig property.
+ */
+type InferAuthConfig<P> = P extends { authConfig?: infer C }
+	? C extends PluginAuthConfig
+		? C
+		: undefined
+	: undefined;
+
+/**
  * Infers the complete namespace for a single plugin, including API endpoints,
  * database entities, webhooks, and account-level keys.
  */
@@ -129,7 +139,8 @@ type InferPluginNamespace<P extends CorsairPlugin> = P extends CorsairPlugin<
 				> extends AuthTypes
 					? {
 							keys: AccountKeyManagerFor<
-								ExtractAuthType<InferPluginOptions<P>, InferDefaultAuthType<P>>
+								ExtractAuthType<InferPluginOptions<P>, InferDefaultAuthType<P>>,
+								InferAuthConfig<P>
 							>;
 						}
 					: {});
@@ -148,7 +159,8 @@ type InferIntegrationKeys<P extends CorsairPlugin> = P extends CorsairPlugin<
 		> extends AuthTypes
 		? {
 				[K in Id]: IntegrationKeyManagerFor<
-					ExtractAuthType<InferPluginOptions<P>, InferDefaultAuthType<P>>
+					ExtractAuthType<InferPluginOptions<P>, InferDefaultAuthType<P>>,
+					InferAuthConfig<P>
 				>;
 			}
 		: never
@@ -373,14 +385,20 @@ export function buildCorsairClient<
 		const pluginOptions = plugin.options as
 			| { authType?: AuthTypes }
 			| undefined;
+		const authConfig = plugin.authConfig as PluginAuthConfig | undefined;
 		let accountKeyManager: AccountKeyManagerFor<AuthTypes> | undefined;
 		if (database && kek && pluginOptions?.authType) {
+			// Extract extra account fields from plugin authConfig
+			const extraAccountFields =
+				authConfig?.[pluginOptions.authType]?.account ?? [];
+
 			accountKeyManager = createAccountKeyManager({
 				authType: pluginOptions.authType,
 				integrationName: plugin.id,
 				tenantId: effectiveTenantId,
 				kek,
 				database,
+				extraAccountFields,
 			});
 			apiUnsafe[plugin.id]!.keys = accountKeyManager;
 		}
@@ -486,12 +504,18 @@ export function buildIntegrationKeys<
 		const pluginOptions = plugin.options as
 			| { authType?: AuthTypes }
 			| undefined;
+		const authConfig = plugin.authConfig as PluginAuthConfig | undefined;
 		if (pluginOptions?.authType) {
+			// Extract extra integration fields from plugin authConfig
+			const extraIntegrationFields =
+				authConfig?.[pluginOptions.authType]?.integration ?? [];
+
 			const integrationKeyManager = createIntegrationKeyManager({
 				authType: pluginOptions.authType,
 				integrationName: plugin.id,
 				kek,
 				database,
+				extraIntegrationFields,
 			});
 			keysUnsafe[plugin.id] = integrationKeyManager;
 		}
