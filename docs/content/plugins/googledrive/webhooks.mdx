@@ -32,22 +32,37 @@ export async function POST(request: Request) {
 
 ## Available Webhooks
 
-### fileChanged
+### driveChanged
 
-`files.fileChanged`
+`driveChanged`
 
-Fires when a file is created, updated, or deleted.
+**Event Type:** Drive Changed
+
+Fires when a file or folder is created, updated, deleted, or trashed. The handler automatically determines the resource type and returns the appropriate event.
+
+**When it fires:** A file or folder is created, modified, trashed, or deleted in the connected Google Drive.
+
+**Possible event types in `result.data.type`:**
+- `fileChanged` — A file was created, updated, deleted, or trashed
+- `folderChanged` — A folder was created, updated, deleted, or trashed
 
 **Example Usage:**
 
 ```ts title="corsair.ts"
 googledrive({
     webhookHooks: {
-        files: {
-            fileChanged: {
-                after: async (ctx, result) => {
-                    console.log("File changed:", result.data);
-                },
+        driveChanged: {
+            after: async (ctx, result) => {
+                console.log(`Drive event: ${result.data?.type}`);
+                
+                if (result.data?.type === 'fileChanged') {
+                    console.log(`File ${result.data.fileId} was ${result.data.changeType}`);
+                    console.log(`Path: ${result.data.filePath}`);
+                }
+                
+                if (result.data?.type === 'folderChanged') {
+                    console.log(`Folder ${result.data.folderId} was ${result.data.changeType}`);
+                }
             },
         },
     },
@@ -55,27 +70,5 @@ googledrive({
 ```
 
 ---
-
-### folderChanged
-
-`folders.folderChanged`
-
-Fires when a folder is created, updated, or deleted.
-
-**Example Usage:**
-
-```ts title="corsair.ts"
-googledrive({
-    webhookHooks: {
-        folders: {
-            folderChanged: {
-                after: async (ctx, result) => {
-                    console.log("Folder changed:", result.data);
-                },
-            },
-        },
-    },
-})
-```
 
 See [Webhooks](/concepts/webhooks) for more details on webhook concepts and [Hooks](/concepts/hooks) for the complete hooks documentation.

@@ -1,5 +1,288 @@
 import { z } from 'zod';
 
+const IssuesListInputSchema = z.object({
+	owner: z.string().optional(),
+	repo: z.string().optional(),
+	milestone: z.string().optional(),
+	state: z.enum(['open', 'closed', 'all']).optional(),
+	assignee: z.string().optional(),
+	creator: z.string().optional(),
+	mentioned: z.string().optional(),
+	labels: z.string().optional(),
+	sort: z.enum(['created', 'updated', 'comments']).optional(),
+	direction: z.enum(['asc', 'desc']).optional(),
+	since: z.string().optional(),
+	perPage: z.number().optional(),
+	page: z.number().optional(),
+});
+
+const IssuesGetInputSchema = z.object({
+	owner: z.string(),
+	repo: z.string(),
+	issueNumber: z.number(),
+});
+
+const IssuesCreateInputSchema = z.object({
+	owner: z.string(),
+	repo: z.string(),
+	title: z.union([z.string(), z.number()]),
+	body: z.string().optional(),
+	assignee: z.string().nullable().optional(),
+	milestone: z.union([z.string(), z.number()]).nullable().optional(),
+	labels: z
+		.array(
+			z.union([
+				z.string(),
+				z.object({
+					id: z.number().optional(),
+					name: z.string().optional(),
+					description: z.string().nullable().optional(),
+					color: z.string().nullable().optional(),
+				}),
+			]),
+		)
+		.optional(),
+	assignees: z.array(z.string()).optional(),
+});
+
+const IssuesUpdateInputSchema = z.object({
+	owner: z.string(),
+	repo: z.string(),
+	issueNumber: z.number(),
+	title: z.union([z.string(), z.number()]).nullable().optional(),
+	body: z.string().nullable().optional(),
+	assignee: z.string().nullable().optional(),
+	state: z.enum(['open', 'closed']).optional(),
+	stateReason: z
+		.enum(['completed', 'not_planned', 'duplicate', 'reopened'])
+		.nullable()
+		.optional(),
+	milestone: z.union([z.string(), z.number()]).nullable().optional(),
+	labels: z
+		.array(
+			z.union([
+				z.string(),
+				z.object({
+					id: z.number().optional(),
+					name: z.string().optional(),
+					description: z.string().nullable().optional(),
+					color: z.string().nullable().optional(),
+				}),
+			]),
+		)
+		.optional(),
+	assignees: z.array(z.string()).optional(),
+});
+
+const IssuesCreateCommentInputSchema = z.object({
+	owner: z.string(),
+	repo: z.string(),
+	issueNumber: z.number(),
+	body: z.string(),
+});
+
+const PullRequestsListInputSchema = z.object({
+	owner: z.string(),
+	repo: z.string(),
+	state: z.enum(['open', 'closed', 'all']).optional(),
+	head: z.string().optional(),
+	base: z.string().optional(),
+	sort: z.enum(['created', 'updated', 'popularity', 'long-running']).optional(),
+	direction: z.enum(['asc', 'desc']).optional(),
+	perPage: z.number().optional(),
+	page: z.number().optional(),
+});
+
+const PullRequestsGetInputSchema = z.object({
+	owner: z.string(),
+	repo: z.string(),
+	pullNumber: z.number(),
+});
+
+const PullRequestsListReviewsInputSchema = z.object({
+	owner: z.string(),
+	repo: z.string(),
+	pullNumber: z.number(),
+	perPage: z.number().optional(),
+	page: z.number().optional(),
+});
+
+const PullRequestsCreateReviewInputSchema = z.object({
+	owner: z.string(),
+	repo: z.string(),
+	pullNumber: z.number(),
+	commitId: z.string().optional(),
+	body: z.string().optional(),
+	event: z.enum(['APPROVE', 'REQUEST_CHANGES', 'COMMENT']).optional(),
+	comments: z
+		.array(
+			z.object({
+				path: z.string(),
+				position: z.number().optional(),
+				body: z.string(),
+				line: z.number().optional(),
+				side: z.string().optional(),
+				startLine: z.number().optional(),
+				startSide: z.string().optional(),
+			}),
+		)
+		.optional(),
+});
+
+const RepositoriesListInputSchema = z.object({
+	owner: z.string().optional(),
+	type: z.enum(['all', 'owner', 'public', 'private', 'member']).optional(),
+	sort: z.enum(['created', 'updated', 'pushed', 'full_name']).optional(),
+	direction: z.enum(['asc', 'desc']).optional(),
+	perPage: z.number().optional(),
+	page: z.number().optional(),
+});
+
+const RepositoriesGetInputSchema = z.object({
+	owner: z.string(),
+	repo: z.string(),
+});
+
+const RepositoriesListBranchesInputSchema = z.object({
+	owner: z.string(),
+	repo: z.string(),
+	protected: z.boolean().optional(),
+	perPage: z.number().optional(),
+	page: z.number().optional(),
+});
+
+const RepositoriesListCommitsInputSchema = z.object({
+	owner: z.string(),
+	repo: z.string(),
+	sha: z.string().optional(),
+	path: z.string().optional(),
+	author: z.string().optional(),
+	committer: z.string().optional(),
+	since: z.string().optional(),
+	until: z.string().optional(),
+	perPage: z.number().optional(),
+	page: z.number().optional(),
+});
+
+const RepositoriesGetContentInputSchema = z.object({
+	owner: z.string(),
+	repo: z.string(),
+	path: z.string(),
+	ref: z.string().optional(),
+});
+
+const ReleasesListInputSchema = z.object({
+	owner: z.string(),
+	repo: z.string(),
+	perPage: z.number().optional(),
+	page: z.number().optional(),
+});
+
+const ReleasesGetInputSchema = z.object({
+	owner: z.string(),
+	repo: z.string(),
+	releaseId: z.number(),
+});
+
+const ReleasesCreateInputSchema = z.object({
+	owner: z.string(),
+	repo: z.string(),
+	tagName: z.string(),
+	targetCommitish: z.string().optional(),
+	name: z.string().optional(),
+	body: z.string().optional(),
+	draft: z.boolean().optional(),
+	prerelease: z.boolean().optional(),
+	generateReleaseNotes: z.boolean().optional(),
+});
+
+const ReleasesUpdateInputSchema = z.object({
+	owner: z.string(),
+	repo: z.string(),
+	releaseId: z.number(),
+	tagName: z.string().optional(),
+	targetCommitish: z.string().optional(),
+	name: z.string().optional(),
+	body: z.string().optional(),
+	draft: z.boolean().optional(),
+	prerelease: z.boolean().optional(),
+});
+
+const WorkflowsListInputSchema = z.object({
+	owner: z.string(),
+	repo: z.string(),
+	perPage: z.number().optional(),
+	page: z.number().optional(),
+});
+
+const WorkflowsGetInputSchema = z.object({
+	owner: z.string(),
+	repo: z.string(),
+	workflowId: z.union([z.number(), z.string()]),
+});
+
+const WorkflowsListRunsInputSchema = z.object({
+	owner: z.string(),
+	repo: z.string(),
+	actor: z.string().optional(),
+	branch: z.string().optional(),
+	event: z.string().optional(),
+	status: z
+		.enum([
+			'completed',
+			'action_required',
+			'cancelled',
+			'failure',
+			'neutral',
+			'skipped',
+			'stale',
+			'success',
+			'timed_out',
+			'in_progress',
+			'queued',
+			'requested',
+			'waiting',
+			'pending',
+		])
+		.optional(),
+	perPage: z.number().optional(),
+	page: z.number().optional(),
+	created: z.string().optional(),
+	excludePullRequests: z.boolean().optional(),
+	checkSuiteId: z.number().optional(),
+	headSha: z.string().optional(),
+});
+
+export const GithubEndpointInputSchemas = {
+	issuesList: IssuesListInputSchema,
+	issuesGet: IssuesGetInputSchema,
+	issuesCreate: IssuesCreateInputSchema,
+	issuesUpdate: IssuesUpdateInputSchema,
+	issuesCreateComment: IssuesCreateCommentInputSchema,
+	pullRequestsList: PullRequestsListInputSchema,
+	pullRequestsGet: PullRequestsGetInputSchema,
+	pullRequestsListReviews: PullRequestsListReviewsInputSchema,
+	pullRequestsCreateReview: PullRequestsCreateReviewInputSchema,
+	repositoriesList: RepositoriesListInputSchema,
+	repositoriesGet: RepositoriesGetInputSchema,
+	repositoriesListBranches: RepositoriesListBranchesInputSchema,
+	repositoriesListCommits: RepositoriesListCommitsInputSchema,
+	repositoriesGetContent: RepositoriesGetContentInputSchema,
+	releasesList: ReleasesListInputSchema,
+	releasesGet: ReleasesGetInputSchema,
+	releasesCreate: ReleasesCreateInputSchema,
+	releasesUpdate: ReleasesUpdateInputSchema,
+	workflowsList: WorkflowsListInputSchema,
+	workflowsGet: WorkflowsGetInputSchema,
+	workflowsListRuns: WorkflowsListRunsInputSchema,
+} as const;
+
+export type GithubEndpointInputs = {
+	[K in keyof typeof GithubEndpointInputSchemas]: z.infer<
+		(typeof GithubEndpointInputSchemas)[K]
+	>;
+};
+
 const SimpleUserSchema = z.object({
 	name: z.string().nullable().optional(),
 	email: z.string().nullable().optional(),

@@ -11,6 +11,237 @@ import type {
 	ThreadListResponse,
 } from '../types';
 
+const MessagesListInputSchema = z.object({
+	userId: z.string().optional(),
+	q: z.string().optional(),
+	maxResults: z.number().optional(),
+	pageToken: z.string().optional(),
+	labelIds: z.array(z.string()).optional(),
+	includeSpamTrash: z.boolean().optional(),
+});
+
+const MessagesGetInputSchema = z.object({
+	userId: z.string().optional(),
+	id: z.string(),
+	format: z.enum(['minimal', 'full', 'raw', 'metadata']).optional(),
+	metadataHeaders: z.array(z.string()).optional(),
+});
+
+const MessagesSendInputSchema = z.object({
+	userId: z.string().optional(),
+	raw: z.string(),
+	threadId: z.string().optional(),
+});
+
+const MessagesDeleteInputSchema = z.object({
+	userId: z.string().optional(),
+	id: z.string(),
+});
+
+const MessagesModifyInputSchema = z.object({
+	userId: z.string().optional(),
+	id: z.string(),
+	addLabelIds: z.array(z.string()).optional(),
+	removeLabelIds: z.array(z.string()).optional(),
+});
+
+const MessagesBatchModifyInputSchema = z.object({
+	userId: z.string().optional(),
+	ids: z.array(z.string()).optional(),
+	addLabelIds: z.array(z.string()).optional(),
+	removeLabelIds: z.array(z.string()).optional(),
+});
+
+const MessagesTrashInputSchema = z.object({
+	userId: z.string().optional(),
+	id: z.string(),
+});
+
+const MessagesUntrashInputSchema = z.object({
+	userId: z.string().optional(),
+	id: z.string(),
+});
+
+const LabelsListInputSchema = z.object({
+	userId: z.string().optional(),
+});
+
+const LabelsGetInputSchema = z.object({
+	userId: z.string().optional(),
+	id: z.string(),
+});
+
+const LabelsCreateInputSchema = z.object({
+	userId: z.string().optional(),
+	label: z.object({
+		name: z.string().optional(),
+		messageListVisibility: z.enum(['show', 'hide']).optional(),
+		labelListVisibility: z
+			.enum(['labelShow', 'labelShowIfUnread', 'labelHide'])
+			.optional(),
+		color: z
+			.object({
+				textColor: z.string().optional(),
+				backgroundColor: z.string().optional(),
+			})
+			.optional(),
+	}),
+});
+
+const LabelsUpdateInputSchema = z.object({
+	userId: z.string().optional(),
+	id: z.string(),
+	label: z.object({
+		name: z.string().optional(),
+		messageListVisibility: z.enum(['show', 'hide']).optional(),
+		labelListVisibility: z
+			.enum(['labelShow', 'labelShowIfUnread', 'labelHide'])
+			.optional(),
+		color: z
+			.object({
+				textColor: z.string().optional(),
+				backgroundColor: z.string().optional(),
+			})
+			.optional(),
+	}),
+});
+
+const LabelsDeleteInputSchema = z.object({
+	userId: z.string().optional(),
+	id: z.string(),
+});
+
+const DraftsListInputSchema = z.object({
+	userId: z.string().optional(),
+	maxResults: z.number().optional(),
+	pageToken: z.string().optional(),
+	q: z.string().optional(),
+});
+
+const DraftsGetInputSchema = z.object({
+	userId: z.string().optional(),
+	id: z.string(),
+	format: z.enum(['minimal', 'full', 'raw', 'metadata']).optional(),
+});
+
+const DraftsCreateInputSchema = z.object({
+	userId: z.string().optional(),
+	draft: z.object({
+		message: z
+			.object({
+				raw: z.string().optional(),
+				threadId: z.string().optional(),
+			})
+			.optional(),
+	}),
+});
+
+const DraftsUpdateInputSchema = z.object({
+	userId: z.string().optional(),
+	id: z.string(),
+	draft: z.object({
+		message: z
+			.object({
+				raw: z.string().optional(),
+				threadId: z.string().optional(),
+			})
+			.optional(),
+	}),
+});
+
+const DraftsDeleteInputSchema = z.object({
+	userId: z.string().optional(),
+	id: z.string(),
+});
+
+const DraftsSendInputSchema = z.object({
+	userId: z.string().optional(),
+	id: z.string().optional(),
+	message: z
+		.object({
+			raw: z.string().optional(),
+			threadId: z.string().optional(),
+		})
+		.optional(),
+});
+
+const ThreadsListInputSchema = z.object({
+	userId: z.string().optional(),
+	q: z.string().optional(),
+	maxResults: z.number().optional(),
+	pageToken: z.string().optional(),
+	labelIds: z.array(z.string()).optional(),
+	includeSpamTrash: z.boolean().optional(),
+});
+
+const ThreadsGetInputSchema = z.object({
+	userId: z.string().optional(),
+	id: z.string(),
+	format: z.enum(['minimal', 'full', 'metadata']).optional(),
+	metadataHeaders: z.array(z.string()).optional(),
+});
+
+const ThreadsModifyInputSchema = z.object({
+	userId: z.string().optional(),
+	id: z.string(),
+	addLabelIds: z.array(z.string()).optional(),
+	removeLabelIds: z.array(z.string()).optional(),
+});
+
+const ThreadsDeleteInputSchema = z.object({
+	userId: z.string().optional(),
+	id: z.string(),
+});
+
+const ThreadsTrashInputSchema = z.object({
+	userId: z.string().optional(),
+	id: z.string(),
+});
+
+const ThreadsUntrashInputSchema = z.object({
+	userId: z.string().optional(),
+	id: z.string(),
+});
+
+const UsersGetProfileInputSchema = z.object({
+	userId: z.string().optional(),
+});
+
+export const GmailEndpointInputSchemas = {
+	messagesList: MessagesListInputSchema,
+	messagesGet: MessagesGetInputSchema,
+	messagesSend: MessagesSendInputSchema,
+	messagesDelete: MessagesDeleteInputSchema,
+	messagesModify: MessagesModifyInputSchema,
+	messagesBatchModify: MessagesBatchModifyInputSchema,
+	messagesTrash: MessagesTrashInputSchema,
+	messagesUntrash: MessagesUntrashInputSchema,
+	labelsList: LabelsListInputSchema,
+	labelsGet: LabelsGetInputSchema,
+	labelsCreate: LabelsCreateInputSchema,
+	labelsUpdate: LabelsUpdateInputSchema,
+	labelsDelete: LabelsDeleteInputSchema,
+	draftsList: DraftsListInputSchema,
+	draftsGet: DraftsGetInputSchema,
+	draftsCreate: DraftsCreateInputSchema,
+	draftsUpdate: DraftsUpdateInputSchema,
+	draftsDelete: DraftsDeleteInputSchema,
+	draftsSend: DraftsSendInputSchema,
+	threadsList: ThreadsListInputSchema,
+	threadsGet: ThreadsGetInputSchema,
+	threadsModify: ThreadsModifyInputSchema,
+	threadsDelete: ThreadsDeleteInputSchema,
+	threadsTrash: ThreadsTrashInputSchema,
+	threadsUntrash: ThreadsUntrashInputSchema,
+	usersGetProfile: UsersGetProfileInputSchema,
+} as const;
+
+export type GmailEndpointInputs = {
+	[K in keyof typeof GmailEndpointInputSchemas]: z.infer<
+		(typeof GmailEndpointInputSchemas)[K]
+	>;
+};
+
 const MessagePartHeaderSchema = z.object({
 	name: z.string().optional(),
 	value: z.string().optional(),

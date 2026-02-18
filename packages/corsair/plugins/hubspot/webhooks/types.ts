@@ -1,4 +1,4 @@
-export interface HubSpotWebhookPayload {
+export interface HubSpotWebhookPayload<TEvent = unknown> {
 	subscriptionId: number;
 	portalId: number;
 	occurredAt: number;
@@ -9,6 +9,7 @@ export interface HubSpotWebhookPayload {
 	propertyValue?: string;
 	changeSource?: string;
 	eventId?: string;
+	event?: TEvent;
 }
 
 export interface ContactCreatedEvent extends HubSpotWebhookPayload {

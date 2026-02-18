@@ -1,5 +1,53 @@
 import { z } from 'zod';
 
+const AliasCreateInputSchema = z.object({
+	distinct_id: z.string(),
+	alias: z.string(),
+});
+
+const EventCreateInputSchema = z.object({
+	distinct_id: z.string(),
+	event: z.string(),
+	properties: z.record(z.unknown()).optional(),
+	timestamp: z.string().optional(),
+	uuid: z.string().optional(),
+});
+
+const IdentityCreateInputSchema = z.object({
+	distinct_id: z.string(),
+	properties: z.record(z.unknown()).optional(),
+});
+
+const TrackPageInputSchema = z.object({
+	distinct_id: z.string(),
+	url: z.string(),
+	properties: z.record(z.unknown()).optional(),
+	timestamp: z.string().optional(),
+	uuid: z.string().optional(),
+});
+
+const TrackScreenInputSchema = z.object({
+	distinct_id: z.string(),
+	screen_name: z.string(),
+	properties: z.record(z.unknown()).optional(),
+	timestamp: z.string().optional(),
+	uuid: z.string().optional(),
+});
+
+export const PostHogEndpointInputSchemas = {
+	aliasCreate: AliasCreateInputSchema,
+	eventCreate: EventCreateInputSchema,
+	identityCreate: IdentityCreateInputSchema,
+	trackPage: TrackPageInputSchema,
+	trackScreen: TrackScreenInputSchema,
+} as const;
+
+export type PostHogEndpointInputs = {
+	[K in keyof typeof PostHogEndpointInputSchemas]: z.infer<
+		(typeof PostHogEndpointInputSchemas)[K]
+	>;
+};
+
 const PostHogSuccessResponseSchema = z.union([
 	z.number(),
 	z.string(),

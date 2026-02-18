@@ -1,13 +1,7 @@
-import {
-	messageDeleted,
-	messageLabelChanged,
-	messageReceived,
-} from './messages';
+import { messageChanged } from './messages';
 
 export const MessageWebhooks = {
-	messageReceived,
-	messageDeleted,
-	messageLabelChanged,
+	messageChanged,
 };
 
 export * from './types';

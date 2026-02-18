@@ -11,9 +11,14 @@ export async function POST(request: NextRequest) {
 
 	const contentType = request.headers.get('content-type');
 
-	const body = contentType?.includes('application/json')
-		? await request.json()
-		: await request.text();
+	let body: string | Record<string, unknown>;
+
+	if (contentType?.includes('application/json')) {
+		body = await request.json();
+	} else {
+		const text = await request.text();
+		body = text && text.trim() ? text : {};
+	}
 
 	const url = new URL(request.url);
 
@@ -24,7 +29,7 @@ export async function POST(request: NextRequest) {
 
 	const result = await processWebhook(corsair, headers, body, { tenantId });
 
-	console.info('Plugin Processed:', result.plugin);
+	console.info('Plugin Processed:', result.plugin, result.action);
 
 	// Handle case where no webhook matched
 	if (!result.response) {

@@ -386,6 +386,10 @@ async function main() {
 		console.log('Commands:');
 		console.log('  corsair                    Inspect your Corsair instance');
 		console.log('  corsair auth               Manage integration credentials');
+		console.log('  corsair get-tokens         Generate Google OAuth2 tokens');
+		console.log(
+			'  corsair watch-renew        Renew Google webhook watch (Gmail/Drive/Calendar)',
+		);
 		console.log('  corsair migrate            Create a data migration script');
 		console.log('  corsair migrate help       Show migration help\n');
 		return;
@@ -394,6 +398,18 @@ async function main() {
 	if (command === 'auth') {
 		const { runAuth } = await import('./auth');
 		await runAuth({ cwd });
+		return;
+	}
+
+	if (command === 'get-tokens') {
+		const { runGetTokens } = await import('./get-tokens');
+		await runGetTokens({ cwd });
+		return;
+	}
+
+	if (command === 'watch-renew') {
+		const { runWatchRenew } = await import('./watch-renew');
+		await runWatchRenew({ cwd });
 		return;
 	}
 

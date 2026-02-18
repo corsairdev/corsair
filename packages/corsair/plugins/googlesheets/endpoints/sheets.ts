@@ -25,6 +25,27 @@ export const appendRow: GoogleSheetsEndpoints['sheetsAppendRow'] = async (
 		},
 	});
 
+	if (result.responses && result.responses.length > 0 && ctx.db.rows) {
+		try {
+			const response = result.responses[0];
+			if (response) {
+				const updatedRange = response.updatedRange || range;
+				const sheetName = input.sheetName || 'Sheet1';
+				const rowId = `${input.spreadsheetId}_${sheetName}_${updatedRange}`;
+				await ctx.db.rows.upsertByEntityId(rowId, {
+					rowId,
+					spreadsheetId: input.spreadsheetId,
+					sheetName,
+					range: updatedRange,
+					values: input.values,
+					createdAt: new Date(),
+				});
+			}
+		} catch (error) {
+			console.warn('Failed to save row to database:', error);
+		}
+	}
+
 	await logEventFromContext(
 		ctx,
 		'googlesheets.sheets.appendRow',
@@ -83,6 +104,26 @@ export const appendOrUpdateRow: GoogleSheetsEndpoints['sheetsAppendOrUpdateRow']
 				},
 			});
 
+			if (result.responses && result.responses.length > 0 && ctx.db.rows) {
+				try {
+					const response = result.responses[0];
+					if (response) {
+						const updatedRange = response.updatedRange || updateRange;
+						const rowId = `${input.spreadsheetId}_${sheetName}_${updatedRange}`;
+						await ctx.db.rows.upsertByEntityId(rowId, {
+							rowId,
+							spreadsheetId: input.spreadsheetId,
+							sheetName,
+							range: updatedRange,
+							values: input.values,
+							createdAt: new Date(),
+						});
+					}
+				} catch (error) {
+					console.warn('Failed to update row in database:', error);
+				}
+			}
+
 			await logEventFromContext(
 				ctx,
 				'googlesheets.sheets.appendOrUpdateRow',
@@ -109,6 +150,26 @@ export const appendOrUpdateRow: GoogleSheetsEndpoints['sheetsAppendOrUpdateRow']
 				},
 			);
 
+			if (result.responses && result.responses.length > 0 && ctx.db.rows) {
+				try {
+					const response = result.responses[0];
+					if (response) {
+						const updatedRange = response.updatedRange || updateRange;
+						const rowId = `${input.spreadsheetId}_${sheetName}_${updatedRange}`;
+						await ctx.db.rows.upsertByEntityId(rowId, {
+							rowId,
+							spreadsheetId: input.spreadsheetId,
+							sheetName,
+							range: updatedRange,
+							values: input.values,
+							createdAt: new Date(),
+						});
+					}
+				} catch (error) {
+					console.warn('Failed to save row to database:', error);
+				}
+			}
+
 			await logEventFromContext(
 				ctx,
 				'googlesheets.sheets.appendOrUpdateRow',
@@ -134,6 +195,30 @@ export const getRows: GoogleSheetsEndpoints['sheetsGetRows'] = async (
 			dateTimeRenderOption: input.dateTimeRenderOption || 'FORMATTED_STRING',
 		},
 	});
+
+	if (result.values && ctx.db.rows) {
+		try {
+			const sheetName = input.sheetName || 'Sheet1';
+			for (let i = 0; i < result.values.length; i++) {
+				const rowValues = result.values[i];
+				if (rowValues) {
+					const rowIndex = i + 1;
+					const rowRange = `${sheetName}!${rowIndex}:${rowIndex}`;
+					const rowId = `${input.spreadsheetId}_${sheetName}_${rowRange}`;
+					await ctx.db.rows.upsertByEntityId(rowId, {
+						rowId,
+						spreadsheetId: input.spreadsheetId,
+						sheetName,
+						range: rowRange,
+						values: rowValues,
+						createdAt: new Date(),
+					});
+				}
+			}
+		} catch (error) {
+			console.warn('Failed to save rows to database:', error);
+		}
+	}
 
 	await logEventFromContext(
 		ctx,
@@ -166,6 +251,27 @@ export const updateRow: GoogleSheetsEndpoints['sheetsUpdateRow'] = async (
 		},
 	});
 
+	if (result.responses && result.responses.length > 0 && ctx.db.rows) {
+		try {
+			const response = result.responses[0];
+			if (response) {
+				const updatedRange = response.updatedRange || range;
+				const sheetName = input.sheetName || 'Sheet1';
+				const rowId = `${input.spreadsheetId}_${sheetName}_${updatedRange}`;
+				await ctx.db.rows.upsertByEntityId(rowId, {
+					rowId,
+					spreadsheetId: input.spreadsheetId,
+					sheetName,
+					range: updatedRange,
+					values: input.values,
+					createdAt: new Date(),
+				});
+			}
+		} catch (error) {
+			console.warn('Failed to update row in database:', error);
+		}
+	}
+
 	await logEventFromContext(
 		ctx,
 		'googlesheets.sheets.updateRow',
@@ -186,6 +292,17 @@ export const clearSheet: GoogleSheetsEndpoints['sheetsClearSheet'] = async (
 	>(`/spreadsheets/${input.spreadsheetId}/values/${range}:clear`, ctx.key, {
 		method: 'POST',
 	});
+
+	if (result.clearedRange && ctx.db.rows) {
+		try {
+			const sheetName = input.sheetName || 'Sheet1';
+			const clearedRange = result.clearedRange;
+			const rowId = `${input.spreadsheetId}_${sheetName}_${clearedRange}`;
+			await ctx.db.rows.deleteByEntityId(rowId);
+		} catch (error) {
+			console.warn('Failed to delete rows from database:', error);
+		}
+	}
 
 	await logEventFromContext(
 		ctx,
@@ -217,6 +334,24 @@ export const createSheet: GoogleSheetsEndpoints['sheetsCreateSheet'] = async (
 		},
 	});
 
+	if (result.replies && result.replies.length > 0 && ctx.db.sheets) {
+		try {
+			const reply = result.replies[0];
+			const sheetProperties = reply.addSheet?.properties;
+			if (sheetProperties?.sheetId !== undefined) {
+				await ctx.db.sheets.upsertByEntityId(String(sheetProperties.sheetId), {
+					sheetId: String(sheetProperties.sheetId),
+					spreadsheetId: input.spreadsheetId,
+					title: sheetProperties.title || input.title || 'Sheet1',
+					index: sheetProperties.index,
+					createdAt: new Date(),
+				});
+			}
+		} catch (error) {
+			console.warn('Failed to save sheet to database:', error);
+		}
+	}
+
 	await logEventFromContext(
 		ctx,
 		'googlesheets.sheets.createSheet',
@@ -244,6 +379,14 @@ export const deleteSheet: GoogleSheetsEndpoints['sheetsDeleteSheet'] = async (
 			],
 		},
 	});
+
+	if (ctx.db.sheets) {
+		try {
+			await ctx.db.sheets.deleteByEntityId(String(input.sheetId));
+		} catch (error) {
+			console.warn('Failed to delete sheet from database:', error);
+		}
+	}
 
 	await logEventFromContext(
 		ctx,
@@ -279,6 +422,20 @@ export const deleteRowsOrColumns: GoogleSheetsEndpoints['sheetsDeleteRowsOrColum
 				],
 			},
 		});
+
+		if (dimension === 'ROWS' && ctx.db.rows) {
+			try {
+				const sheetName = `Sheet_${input.sheetId}`;
+				for (let i = startIndex; i < endIndex; i++) {
+					const rowIndex = i + 1;
+					const rowRange = `${sheetName}!${rowIndex}:${rowIndex}`;
+					const rowId = `${input.spreadsheetId}_${sheetName}_${rowRange}`;
+					await ctx.db.rows.deleteByEntityId(rowId);
+				}
+			} catch (error) {
+				console.warn('Failed to delete rows from database:', error);
+			}
+		}
 
 		await logEventFromContext(
 			ctx,
