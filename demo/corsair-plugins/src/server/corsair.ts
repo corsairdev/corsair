@@ -167,7 +167,15 @@ export const corsair = createCorsair({
 				},
 			},
 		}),
-		googlesheets(),
+		googlesheets({
+			webhookHooks: {
+				rangeUpdated: {
+					after: async (ctx, res) => {
+						console.log("rangeUpdated", ctx.tenantId, res.data);
+					}
+				}
+			}
+		}),
 		hubspot(),
 		posthog(),
 	],

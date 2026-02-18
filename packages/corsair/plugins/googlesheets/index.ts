@@ -19,9 +19,7 @@ import { GoogleSheetsSchema } from './schema';
 import type {
 	GoogleSheetsWebhookOutputs,
 	GoogleSheetsWebhookPayload,
-	RowAddedEvent,
-	RowAddedOrUpdatedEvent,
-	RowUpdatedEvent,
+	RangeUpdatedEvent,
 } from './webhooks';
 import { RowWebhooks } from './webhooks';
 
@@ -63,9 +61,7 @@ type GoogleSheetsWebhook<K extends keyof GoogleSheetsWebhookOutputs, TEvent> =
 	>;
 
 export type GoogleSheetsWebhooks = {
-	rowAdded: GoogleSheetsWebhook<'rowAdded', RowAddedEvent>;
-	rowUpdated: GoogleSheetsWebhook<'rowUpdated', RowUpdatedEvent>;
-	rowAddedOrUpdated: GoogleSheetsWebhook<'rowAddedOrUpdated', RowAddedOrUpdatedEvent>;
+	rangeUpdated: GoogleSheetsWebhook<'rangeUpdated', RangeUpdatedEvent>;
 };
 
 export type GoogleSheetsBoundWebhooks = BindWebhooks<
@@ -90,9 +86,7 @@ const googleSheetsEndpointsNested = {
 } as const;
 
 const googleSheetsWebhooksNested = {
-	rowAdded: RowWebhooks.rowAdded,
-	rowUpdated: RowWebhooks.rowUpdated,
-	rowAddedOrUpdated: RowWebhooks.rowAddedOrUpdated,
+	rangeUpdated: RowWebhooks.rangeUpdated,
 } as const;
 
 export type GoogleSheetsPluginOptions = {
@@ -173,10 +167,7 @@ export function googlesheets<const T extends GoogleSheetsPluginOptions>(
 		pluginWebhookMatcher: (request: RawWebhookRequest) => {
 			const body = request.body as Record<string, unknown>;
 			const hasSpreadsheetId = typeof body?.spreadsheetId === 'string';
-			const hasSheetsEventType =
-				body?.eventType === 'rowAdded' ||
-				body?.eventType === 'rowUpdated' ||
-				body?.eventType === 'rowAddedOrUpdated';
+			const hasSheetsEventType = body?.eventType === 'rangeUpdated';
 			return hasSpreadsheetId || hasSheetsEventType;
 		},
 	} satisfies InternalGoogleSheetsPlugin;
@@ -192,9 +183,7 @@ export type {
 	GoogleSheetsWebhookEvent,
 	GoogleSheetsWebhookOutputs,
 	GoogleSheetsWebhookPayload,
-	RowAddedEvent,
-	RowAddedOrUpdatedEvent,
-	RowUpdatedEvent,
+	RangeUpdatedEvent,
 } from './webhooks/types';
 export { createGoogleSheetsWebhookMatcher } from './webhooks/types';
 

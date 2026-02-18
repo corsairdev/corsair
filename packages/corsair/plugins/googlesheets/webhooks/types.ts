@@ -8,13 +8,13 @@ export type GoogleAppsScriptWebhookPayload<TEvent = unknown> = {
 	sheetName?: string;
 	range?: string;
 	values?: (string | number | boolean | null)[][];
-	eventType?: 'rowAdded' | 'rowUpdated' | 'rowAddedOrUpdated';
+	eventType?: 'rangeUpdated';
 	timestamp?: string;
 	event?: TEvent;
 };
 
-export type RowAddedEvent = {
-	type: 'rowAdded';
+export type RangeUpdatedEvent = {
+	type: 'rangeUpdated';
 	spreadsheetId: string;
 	sheetName: string;
 	range: string;
@@ -22,46 +22,18 @@ export type RowAddedEvent = {
 	timestamp: string;
 };
 
-export type RowUpdatedEvent = {
-	type: 'rowUpdated';
-	spreadsheetId: string;
-	sheetName: string;
-	range: string;
-	values: (string | number | boolean | null)[];
-	timestamp: string;
-};
+export type GoogleSheetsWebhookEvent = RangeUpdatedEvent;
 
-export type RowAddedOrUpdatedEvent = {
-	type: 'rowAddedOrUpdated';
-	spreadsheetId: string;
-	sheetName: string;
-	range: string;
-	values: (string | number | boolean | null)[];
-	timestamp: string;
-};
-
-export type GoogleSheetsWebhookEvent =
-	| RowAddedEvent
-	| RowUpdatedEvent
-	| RowAddedOrUpdatedEvent;
-
-export type GoogleSheetsEventName =
-	| 'rowAdded'
-	| 'rowUpdated'
-	| 'rowAddedOrUpdated';
+export type GoogleSheetsEventName = 'rangeUpdated';
 
 export interface GoogleSheetsEventMap {
-	rowAdded: RowAddedEvent;
-	rowUpdated: RowUpdatedEvent;
-	rowAddedOrUpdated: RowAddedOrUpdatedEvent;
+	rangeUpdated: RangeUpdatedEvent;
 }
 
 export type GoogleSheetsWebhookPayload<TEvent = unknown> = GoogleAppsScriptWebhookPayload<TEvent>;
 
 export type GoogleSheetsWebhookOutputs = {
-	rowAdded: RowAddedEvent;
-	rowUpdated: RowUpdatedEvent;
-	rowAddedOrUpdated: RowAddedOrUpdatedEvent;
+	rangeUpdated: RangeUpdatedEvent;
 };
 
 function parseBody(body: unknown): unknown {
@@ -71,8 +43,7 @@ export function createGoogleSheetsWebhookMatcher(
 	eventType: GoogleSheetsEventName,
 ): CorsairWebhookMatcher {
 	return (request: RawWebhookRequest) => {
-		console.log(eventType, 'eventType', request);
 		const body = parseBody(request.body) as Record<string, unknown>;
-		return body.eventType === eventType 
+		return body.eventType === eventType;
 	};
 }
