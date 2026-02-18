@@ -362,7 +362,7 @@ export const GoogleDriveEndpointOutputSchemas = {
 	filesDelete: z.void(),
 	filesCopy: FileSchema,
 	filesMove: FileSchema,
-	filesDownload: z.any(),
+	filesDownload: z.any(), // Using any because download returns a raw binary stream whose shape depends on file type
 	filesShare: PermissionSchema,
 	foldersCreate: FileSchema,
 	foldersGet: FileSchema,
