@@ -48,6 +48,34 @@ async function fetchFile(
 	}
 }
 
+async function fetchFileBinary(
+	credentials: string,
+	fileId: string,
+): Promise<string | null> {
+	try {
+		const url = `https://www.googleapis.com/drive/v3/files/${fileId}?alt=media&supportsAllDrives=true`;
+		const response = await fetch(url, {
+			method: 'GET',
+			headers: {
+				Authorization: `Bearer ${credentials}`,
+			},
+		});
+
+		console.log(response, 'response');
+
+		if (!response.ok) {
+			return null;
+		}
+
+		const arrayBuffer = await response.arrayBuffer();
+		const buffer = Buffer.from(arrayBuffer);
+		return buffer.toString('base64');
+	} catch (error) {
+		console.warn(`Failed to fetch binary data for file ${fileId}:`, error);
+		return null;
+	}
+}
+
 async function fetchChanges(
 	credentials: string,
 	pageToken: string,
@@ -156,8 +184,8 @@ export const driveChanged: GoogleDriveWebhooks['driveChanged'] = {
 				};
 			}
 
-			const files: Array<{ file: File; filePath: string; change: typeof changes[0]; changeType: 'created' | 'updated' | 'deleted' | 'trashed' | 'untrashed' }> = [];
-			const folders: Array<{ folder: File; filePath: string; change: typeof changes[0]; changeType: 'created' | 'updated' | 'deleted' | 'trashed' | 'untrashed' }> = [];
+			const files = [];
+			const folders = [];
 
 			for (const change of changes) {
 				if (!change.fileId) continue;
@@ -180,11 +208,15 @@ export const driveChanged: GoogleDriveWebhooks['driveChanged'] = {
 						changeType,
 					});
 				} else {
+					const binaryData = await fetchFileBinary(credentials, change.fileId);
+					console.log(binaryData, 'binaryData');
+					
 					files.push({
 						file,
 						filePath,
 						change,
 						changeType,
+						binaryData,
 					});
 				}
 			}
@@ -201,7 +233,13 @@ export const driveChanged: GoogleDriveWebhooks['driveChanged'] = {
 					filePath: firstFolder.filePath,
 					change: firstFolder.change,
 					allFolders: folders,
-					allFiles: files,
+					allFiles: files.map(f => ({
+						file: f.file,
+						filePath: f.filePath,
+						change: f.change,
+						changeType: f.changeType,
+						binaryData: f.binaryData,
+					})),
 				};
 
 				await logEventFromContext(
@@ -221,7 +259,14 @@ export const driveChanged: GoogleDriveWebhooks['driveChanged'] = {
 				file: firstFile?.file,
 				filePath: firstFile?.filePath ?? '',
 				change: firstFile?.change ?? changes[0],
-				allFiles: files,
+				binaryData: firstFile?.binaryData ?? null,
+				allFiles: files.map(f => ({
+					file: f.file,
+					filePath: f.filePath,
+					change: f.change,
+					changeType: f.changeType,
+					binaryData: f.binaryData,
+				})),
 				allFolders: folders,
 			};
 

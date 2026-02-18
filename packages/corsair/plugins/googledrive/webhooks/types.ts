@@ -27,40 +27,32 @@ export type GoogleDrivePushNotification = {
 	expiration?: string;
 };
 
-export type FileChangedEvent = {
-	type: 'fileChanged';
-	fileId: string;
-	changeType: 'created' | 'updated' | 'deleted' | 'trashed' | 'untrashed';
+type ChangeType = 'created' | 'updated' | 'deleted' | 'trashed' | 'untrashed';
+
+export type DriveChangedEvent = {
+	type: 'fileChanged' | 'folderChanged';
+	fileId?: string;
+	folderId?: string;
+	changeType: ChangeType;
 	file?: File;
 	filePath?: string;
 	change?: Change;
-	allFiles: Array<{ file: File; filePath: string; change: Change; changeType: 'created' | 'updated' | 'deleted' | 'trashed' | 'untrashed' }>;
-	allFolders: Array<{ folder: File; filePath: string; change: Change; changeType: 'created' | 'updated' | 'deleted' | 'trashed' | 'untrashed' }>;
+	allFiles: Array<{ file: File; filePath: string; change: Change; changeType: ChangeType }>;
+	allFolders: Array<{ folder: File; filePath: string; change: Change; changeType: ChangeType }>;
 };
 
-export type FolderChangedEvent = {
-	type: 'folderChanged';
-	folderId: string;
-	changeType: 'created' | 'updated' | 'deleted' | 'trashed' | 'untrashed';
-	folder?: File;
-	filePath?: string;
-	change?: Change;
-	allFiles: Array<{ file: File; filePath: string; change: Change; changeType: 'created' | 'updated' | 'deleted' | 'trashed' | 'untrashed' }>;
-	allFolders: Array<{ folder: File; filePath: string; change: Change; changeType: 'created' | 'updated' | 'deleted' | 'trashed' | 'untrashed' }>;
-};
-
-export type GoogleDriveWebhookEvent = FileChangedEvent | FolderChangedEvent;
+export type GoogleDriveWebhookEvent = DriveChangedEvent;
 
 export type GoogleDriveEventName = 'driveChanged';
 
 export interface GoogleDriveEventMap {
-	driveChanged: FileChangedEvent | FolderChangedEvent;
+	driveChanged: DriveChangedEvent;
 }
 
 export type GoogleDriveWebhookPayload<TEvent = unknown> = PubSubNotification<TEvent>;
 
 export type GoogleDriveWebhookOutputs = {
-	driveChanged: FileChangedEvent | FolderChangedEvent;
+	driveChanged: DriveChangedEvent;
 };
 
 export function decodePubSubMessage(data: string): GoogleDrivePushNotification {

@@ -224,8 +224,7 @@ export function googledrive<const T extends GoogleDrivePluginOptions>(
 // ─────────────────────────────────────────────────────────────────────────────
 
 export type {
-	FileChangedEvent,
-	FolderChangedEvent,
+	DriveChangedEvent,
 	GoogleDriveEventName,
 	GoogleDrivePushNotification,
 	GoogleDriveWebhookEvent,
