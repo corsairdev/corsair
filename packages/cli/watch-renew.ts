@@ -1,5 +1,6 @@
 import * as p from '@clack/prompts';
 import * as crypto from 'node:crypto';
+import { execSync } from 'node:child_process';
 import type { CorsairInternalConfig } from 'corsair/core';
 import {
 	CORSAIR_INTERNAL,
@@ -12,7 +13,7 @@ const GMAIL_API_BASE = 'https://gmail.googleapis.com/gmail/v1';
 const DRIVE_API_BASE = 'https://www.googleapis.com/drive/v3';
 const CALENDAR_API_BASE = 'https://www.googleapis.com/calendar/v3';
 
-const GOOGLE_PLUGINS = ['gmail', 'googledrive', 'googlecalendar'] as const;
+const GOOGLE_PLUGINS = ['gmail', 'googledrive', 'googlecalendar', 'googlesheets'] as const;
 type GooglePlugin = (typeof GOOGLE_PLUGINS)[number];
 
 async function extractInternalConfig(
@@ -214,6 +215,142 @@ async function renewCalendarWatch(
 	);
 }
 
+function copyToClipboard(text: string): boolean {
+	try {
+		const platform = process.platform;
+		if (platform === 'darwin') {
+			execSync('pbcopy', { input: text });
+			return true;
+		} else if (platform === 'linux') {
+			try {
+				execSync('xclip -selection clipboard', { input: text });
+				return true;
+			} catch {
+				try {
+					execSync('xsel --clipboard --input', { input: text });
+					return true;
+				} catch {
+					return false;
+				}
+			}
+		} else if (platform === 'win32') {
+			execSync('clip', { input: text });
+			return true;
+		}
+		return false;
+	} catch {
+		return false;
+	}
+}
+
+async function renewSheetsWatch(webhookUrl: string): Promise<void> {
+	const appsScriptCode = `var WEBHOOK_URL = "${webhookUrl}";
+
+function onEditTrigger(e) {
+  if (!e || !e.range) return;
+
+  var sheet = e.range.getSheet();
+  var payload = {
+    spreadsheetId: e.source.getId(),
+    sheetName: sheet.getName(),
+    range: e.range.getA1Notation(),
+    values: e.range.getValues(),
+    eventType: "rangeUpdated",
+    timestamp: new Date().toISOString()
+  };
+
+  UrlFetchApp.fetch(WEBHOOK_URL, {
+    method: "post",
+    contentType: "application/json",
+    payload: JSON.stringify(payload)
+  });
+}
+
+function onChangeTrigger(e) {
+  if (!e) return;
+
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = ss.getActiveSheet();
+  var lastRow = sheet.getLastRow();
+  var lastCol = sheet.getLastColumn();
+  if (lastRow === 0 || lastCol === 0) return;
+
+  var values = sheet.getRange(lastRow, 1, 1, lastCol).getValues();
+
+  var payload = {
+    spreadsheetId: ss.getId(),
+    sheetName: sheet.getName(),
+    range: "A" + lastRow + ":" + String.fromCharCode(64 + lastCol) + lastRow,
+    values: values,
+    eventType: "rangeUpdated",
+    timestamp: new Date().toISOString()
+  };
+
+  UrlFetchApp.fetch(WEBHOOK_URL, {
+    method: "post",
+    contentType: "application/json",
+    payload: JSON.stringify(payload)
+  });
+}
+
+function createTriggers() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+
+  ScriptApp.newTrigger("onEditTrigger").forSpreadsheet(ss).onEdit().create();
+  ScriptApp.newTrigger("onChangeTrigger").forSpreadsheet(ss).onChange().create();
+  
+  Logger.log("Triggers created successfully!");
+}
+
+function removeTriggers() {
+  var triggers = ScriptApp.getProjectTriggers();
+  triggers.forEach(function(trigger) {
+    ScriptApp.deleteTrigger(trigger);
+  });
+  Logger.log("All triggers removed.");
+}`;
+
+	p.log.info('Google Sheets does not have a native watch API.');
+	p.log.info('Instead, you need to set up Google Apps Script triggers in your spreadsheet.');
+	p.log.info('');
+
+	const shouldCopy = await p.confirm({
+		message: 'Copy Apps Script code to clipboard?',
+		initialValue: true,
+	});
+
+	let copied = false;
+	if (shouldCopy) {
+		copied = copyToClipboard(appsScriptCode);
+		if (copied) {
+			p.log.success('Apps Script code copied to clipboard!');
+		} else {
+			p.log.warn('Failed to copy to clipboard. Code will be displayed below.');
+		}
+	}
+
+	p.log.info('');
+	p.log.info('Setup Instructions:');
+	p.log.info('1. Open your Google Sheet');
+	p.log.info('2. Go to Extensions > Apps Script');
+	p.log.info('3. Paste the code into the script editor');
+	p.log.info('4. Run the "createTriggers" function once to install the triggers');
+	p.log.info('5. Authorize the script when prompted');
+	p.log.info('');
+
+	if (!copied) {
+		p.log.info('Apps Script Code:');
+		p.log.info('');
+		p.log.info(appsScriptCode);
+		p.log.info('');
+	}
+
+	p.note(
+		`Webhook URL: ${webhookUrl}\n\nThe Apps Script code ${copied ? 'has been copied to your clipboard' : 'is displayed above'}. Paste it into your Google Sheet's Apps Script editor.`,
+		'Google Sheets Setup',
+	);
+}
+
 export async function runWatchRenew({ cwd }: { cwd: string }): Promise<void> {
 	p.intro('Corsair — Google Watch Renewal');
 
@@ -270,6 +407,30 @@ export async function runWatchRenew({ cwd }: { cwd: string }): Promise<void> {
 		process.exit(0);
 	}
 
+	const pluginType = pluginId as GooglePlugin;
+
+	if (pluginType === 'googlesheets') {
+		const webhookUrl = await p.text({
+			message: 'Enter webhook URL:',
+			placeholder: 'https://example.com/api/webhook',
+			validate: (v) => {
+				if (!v || v.trim().length === 0) return 'Webhook URL is required';
+				if (!v.startsWith('http://') && !v.startsWith('https://')) {
+					return 'Webhook URL must start with http:// or https://';
+				}
+			},
+		});
+
+		if (p.isCancel(webhookUrl)) {
+			p.cancel('Operation cancelled.');
+			process.exit(0);
+		}
+
+		await renewSheetsWatch(webhookUrl as string);
+		p.outro('Done!');
+		return;
+	}
+
 	const tenantId = await p.text({
 		message: 'Enter tenant ID:',
 		defaultValue: 'default',
@@ -320,8 +481,6 @@ export async function runWatchRenew({ cwd }: { cwd: string }): Promise<void> {
 		);
 
 		credSpin.stop('Credentials loaded.');
-
-		const pluginType = pluginId as GooglePlugin;
 
 		if (pluginType === 'gmail') {
 			const topicName = await p.text({
