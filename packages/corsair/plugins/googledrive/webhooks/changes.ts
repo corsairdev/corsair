@@ -6,6 +6,7 @@ import { createGoogleDriveWebhookMatcher, decodePubSubMessage } from './types';
 
 const PAGE_TOKEN_PATTERN = /[?&]pageToken=([^&]+)/;
 const FOLDER_MIME_TYPE = 'application/vnd.google-apps.folder';
+const RECENT_CHANGES_WINDOW_MS = 60000;
 const FILE_FIELDS = [
 	'id',
 	'name',
@@ -98,6 +99,20 @@ function determineChangeType(
 	return 'created';
 }
 
+function filterRecentChanges<T extends { time?: string }>(
+	changes: T[],
+	maxAgeMs: number = RECENT_CHANGES_WINDOW_MS,
+): T[] {
+	if (changes.length === 0) return changes;
+
+	const now = Date.now();
+	return changes.filter((change) => {
+		if (!change.time) return true;
+		const changeTime = new Date(change.time).getTime();
+		return (now - changeTime) <= maxAgeMs;
+	});
+}
+
 
 export const driveChanged: GoogleDriveWebhooks['driveChanged'] = {
 	match: createGoogleDriveWebhookMatcher('driveChanged'),
@@ -126,7 +141,23 @@ export const driveChanged: GoogleDriveWebhooks['driveChanged'] = {
 
 		try {
 			const changesResponse = await fetchChanges(credentials, pageToken);
-			const changes = changesResponse.changes ?? [];
+			let changes = changesResponse.changes ?? [];
+
+			changes = filterRecentChanges(changes);
+
+			if (changes.length === 0) {
+				return {
+					success: true,
+					corsairEntityId: '',
+					data: {
+						type: 'fileChanged' as const,
+						fileId: pushNotification.resourceId ?? '',
+						changeType: 'updated' as const,
+						allFiles: [],
+						allFolders: [],
+					},
+				};
+			}
 
 			const files: Array<{ file: File; filePath: string; change: typeof changes[0]; changeType: 'created' | 'updated' | 'deleted' | 'trashed' | 'untrashed' }> = [];
 			const folders: Array<{ folder: File; filePath: string; change: typeof changes[0]; changeType: 'created' | 'updated' | 'deleted' | 'trashed' | 'untrashed' }> = [];
