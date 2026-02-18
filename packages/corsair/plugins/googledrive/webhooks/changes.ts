@@ -98,70 +98,6 @@ function determineChangeType(
 	return 'created';
 }
 
-type DriveChangedContext = Parameters<
-	GoogleDriveWebhooks['driveChanged']['handler']
->[0];
-
-async function processFileChange(
-	ctx: DriveChangedContext,
-	credentials: string,
-	file: File,
-	removed: boolean,
-	filePath: string,
-): Promise<string> {
-	if (!ctx.db?.files || !file.id) return '';
-
-	try {
-		if (removed) {
-			await ctx.db.files.deleteByEntityId(file.id);
-			return '';
-		}
-
-		const entity = await ctx.db.files.upsertByEntityId(file.id, {
-			...file,
-			id: file.id,
-			filePath,
-			createdAt: new Date(),
-		});
-
-		return entity?.id ?? '';
-	} catch (dbError) {
-		console.error(`Failed to save file ${file.id} to database:`, dbError);
-		return '';
-	}
-}
-
-async function processFolderChange(
-	ctx: DriveChangedContext,
-	credentials: string,
-	folder: File,
-	removed: boolean,
-	filePath: string,
-): Promise<string> {
-	if (!ctx.db?.folders || !folder.id) return '';
-
-	try {
-		if (removed) {
-			await ctx.db.folders.deleteByEntityId(folder.id);
-			return '';
-		}
-
-		const entity = await ctx.db.folders.upsertByEntityId(folder.id, {
-			...folder,
-			id: folder.id,
-			filePath,
-			createdAt: new Date(),
-		});
-
-		return entity?.id ?? '';
-	} catch (dbError) {
-		console.error(
-			`Failed to save folder ${folder.id} to database:`,
-			dbError,
-		);
-		return '';
-	}
-}
 
 export const driveChanged: GoogleDriveWebhooks['driveChanged'] = {
 	match: createGoogleDriveWebhookMatcher('driveChanged'),
@@ -192,13 +128,8 @@ export const driveChanged: GoogleDriveWebhooks['driveChanged'] = {
 			const changesResponse = await fetchChanges(credentials, pageToken);
 			const changes = changesResponse.changes ?? [];
 
-			let firstFile: File | null = null;
-			let firstFolder: File | null = null;
-			let fileChangeType: 'created' | 'updated' | 'deleted' | 'trashed' | 'untrashed' = 'updated';
-			let folderChangeType: 'created' | 'updated' | 'deleted' | 'trashed' | 'untrashed' = 'updated';
-			let corsairEntityId = '';
-			let firstFilePath = '';
-			let firstFolderPath = '';
+			const files: Array<{ file: File; filePath: string; change: typeof changes[0]; changeType: 'created' | 'updated' | 'deleted' | 'trashed' | 'untrashed' }> = [];
+			const folders: Array<{ folder: File; filePath: string; change: typeof changes[0]; changeType: 'created' | 'updated' | 'deleted' | 'trashed' | 'untrashed' }> = [];
 
 			for (const change of changes) {
 				if (!change.fileId) continue;
@@ -211,53 +142,38 @@ export const driveChanged: GoogleDriveWebhooks['driveChanged'] = {
 					? ''
 					: await buildFilePath(credentials, file);
 
+				const changeType = determineChangeType(change, file, files.length === 0 && folders.length === 0);
+
 				if (isFolder) {
-					const isFirstFolder = !firstFolder;
-					if (isFirstFolder) {
-						firstFolder = file;
-						firstFolderPath = filePath;
-						folderChangeType = determineChangeType(change, file, true);
-					} else {
-						folderChangeType = determineChangeType(change, file, false);
-					}
-
-					const entityId = await processFolderChange(
-						ctx,
-						credentials,
-						file,
-						!!change.removed,
+					folders.push({
+						folder: file,
 						filePath,
-					);
-					if (!corsairEntityId && entityId) corsairEntityId = entityId;
+						change,
+						changeType,
+					});
 				} else {
-					const isFirstFile = !firstFile;
-					if (isFirstFile) {
-						firstFile = file;
-						firstFilePath = filePath;
-						fileChangeType = determineChangeType(change, file, true);
-					} else {
-						fileChangeType = determineChangeType(change, file, false);
-					}
-
-					const entityId = await processFileChange(
-						ctx,
-						credentials,
+					files.push({
 						file,
-						!!change.removed,
 						filePath,
-					);
-					if (!corsairEntityId && entityId) corsairEntityId = entityId;
+						change,
+						changeType,
+					});
 				}
 			}
+
+			const firstFolder = folders[0];
+			const firstFile = files[0];
 
 			if (firstFolder && !firstFile) {
 				const eventData = {
 					type: 'folderChanged' as const,
-					folderId: firstFolder.id ?? pushNotification.resourceId ?? '',
-					changeType: folderChangeType,
-					folder: firstFolder,
-					filePath: firstFolderPath,
-					change: changes[0],
+					folderId: firstFolder.folder.id ?? pushNotification.resourceId ?? '',
+					changeType: firstFolder.changeType,
+					folder: firstFolder.folder,
+					filePath: firstFolder.filePath,
+					change: firstFolder.change,
+					allFolders: folders,
+					allFiles: files,
 				};
 
 				await logEventFromContext(
@@ -267,16 +183,18 @@ export const driveChanged: GoogleDriveWebhooks['driveChanged'] = {
 					'completed',
 				);
 
-				return { success: true, corsairEntityId, data: eventData };
+				return { success: true, corsairEntityId: '', data: eventData };
 			}
 
 			const eventData = {
 				type: 'fileChanged' as const,
-				fileId: firstFile?.id ?? pushNotification.resourceId ?? '',
-				changeType: fileChangeType,
-				file: firstFile ?? undefined,
-				filePath: firstFilePath,
-				change: changes[0],
+				fileId: firstFile?.file.id ?? pushNotification.resourceId ?? '',
+				changeType: firstFile?.changeType ?? 'updated',
+				file: firstFile?.file,
+				filePath: firstFile?.filePath ?? '',
+				change: firstFile?.change ?? changes[0],
+				allFiles: files,
+				allFolders: folders,
 			};
 
 			await logEventFromContext(
@@ -286,7 +204,7 @@ export const driveChanged: GoogleDriveWebhooks['driveChanged'] = {
 				'completed',
 			);
 
-			return { success: true, corsairEntityId, data: eventData };
+			return { success: true, corsairEntityId: '', data: eventData };
 		} catch (error) {
 			console.error('Failed to process Google Drive webhook:', error);
 			return {

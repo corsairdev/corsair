@@ -154,6 +154,15 @@ export const corsair = createCorsair({
 				driveChanged: {
 					after: async (ctx, res) => {
 						console.log(res.data?.type, 'res.data?.type');
+						// Access all files
+						res.data?.allFiles.forEach(({ file, filePath, changeType }) => {
+						console.log(`File ${file.name} was ${changeType}, ${filePath}, ${file.size}`);
+						});
+						
+						// Access all folders
+						res.data?.allFolders.forEach(({ folder, filePath, changeType }) => {
+						console.log(`Folder ${folder.name} was ${changeType}, ${filePath}`);
+						});
 					},
 				},
 			},

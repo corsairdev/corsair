@@ -34,6 +34,8 @@ export type FileChangedEvent = {
 	file?: File;
 	filePath?: string;
 	change?: Change;
+	allFiles: Array<{ file: File; filePath: string; change: Change; changeType: 'created' | 'updated' | 'deleted' | 'trashed' | 'untrashed' }>;
+	allFolders: Array<{ folder: File; filePath: string; change: Change; changeType: 'created' | 'updated' | 'deleted' | 'trashed' | 'untrashed' }>;
 };
 
 export type FolderChangedEvent = {
@@ -43,6 +45,8 @@ export type FolderChangedEvent = {
 	folder?: File;
 	filePath?: string;
 	change?: Change;
+	allFiles: Array<{ file: File; filePath: string; change: Change; changeType: 'created' | 'updated' | 'deleted' | 'trashed' | 'untrashed' }>;
+	allFolders: Array<{ folder: File; filePath: string; change: Change; changeType: 'created' | 'updated' | 'deleted' | 'trashed' | 'untrashed' }>;
 };
 
 export type GoogleDriveWebhookEvent = FileChangedEvent | FolderChangedEvent;
