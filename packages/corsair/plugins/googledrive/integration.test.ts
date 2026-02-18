@@ -28,13 +28,13 @@ async function createGoogleDriveClient() {
 		kek: process.env.CORSAIR_KEK!,
 	});
 
-	await corsair.keys.googledrive.issueNewDEK();
-	await corsair.keys.googledrive.setClientId(clientId);
-	await corsair.keys.googledrive.setClientSecret(clientSecret);
+	await corsair.keys.googledrive.issue_new_dek();
+	await corsair.keys.googledrive.set_client_id(clientId);
+	await corsair.keys.googledrive.set_client_secret(clientSecret);
 
-	await corsair.googledrive.keys.issueNewDEK();
-	await corsair.googledrive.keys.setAccessToken(accessToken);
-	await corsair.googledrive.keys.setRefreshToken(refreshToken);
+	await corsair.googledrive.keys.issue_new_dek();
+	await corsair.googledrive.keys.set_access_token(accessToken);
+	await corsair.googledrive.keys.set_refresh_token(refreshToken);
 
 	return { corsair, testDb };
 }

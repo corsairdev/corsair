@@ -6,7 +6,6 @@ import type {
 	MessageDeletedEvent,
 	MessageLabelChangedEvent,
 	MessageReceivedEvent,
-	PubSubNotification,
 } from './types';
 import { createGmailWebhookMatcher, decodePubSubMessage } from './types';
 

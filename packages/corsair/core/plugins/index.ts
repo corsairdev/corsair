@@ -1,7 +1,7 @@
 import type { ZodTypeAny } from 'zod';
 import type { CorsairDatabaseInput } from '../../db/kysely/database';
 import type { CorsairPluginSchema } from '../../db/orm';
-import type { AccountKeyManagerFor } from '../auth/types';
+import type { AccountKeyManagerFor, PluginAuthConfig } from '../auth/types';
 import type { ExtractAuthType, InferPluginEntities } from '../client';
 import type { AllProviders, AuthTypes } from '../constants';
 import type {
@@ -217,45 +217,49 @@ type ExtractAllAuthTypes<Options> = 'authType' extends keyof Options
  * Check `ctx.authType` to narrow the type of `ctx.keys`.
  *
  * @template Options - The plugin options type
+ * @template AuthConfig - Optional plugin auth config for extension fields
  *
  * @example
  * ```ts
  * keyBuilder: async (ctx) => {
  *   if (ctx.authType === 'api_key') {
- *     // ctx.keys is narrowed to ApiKeyAccountKeyManager
- *     return await ctx.keys.getApiKey();
+ *     return await ctx.keys.get_api_key();
  *   } else if (ctx.authType === 'oauth_2') {
- *     // ctx.keys is narrowed to OAuth2AccountKeyManager
- *     return await ctx.keys.getAccessToken();
+ *     return await ctx.keys.get_access_token();
  *   } else if (ctx.authType === 'bot_token') {
- *     // ctx.keys is narrowed to BotTokenAccountKeyManager
- *     return await ctx.keys.getBotToken();
+ *     return await ctx.keys.get_bot_token();
  *   }
  *   return '';
  * }
  * ```
  */
-export type KeyBuilderContext<Options extends Record<string, unknown>> =
-	ExtractAllAuthTypes<Options> extends infer A
-		? A extends AuthTypes
-			? {
-					/** The auth type - use this for narrowing ctx.keys */
-					authType: A;
-					/** Plugin-specific options */
-					options: Options;
-					/** Account-level key manager - type narrows based on authType check */
-					keys: AccountKeyManagerFor<A>;
-				}
-			: never
-		: never;
+export type KeyBuilderContext<
+	Options extends Record<string, unknown>,
+	AuthConfig extends PluginAuthConfig | undefined = undefined,
+> = ExtractAllAuthTypes<Options> extends infer A
+	? A extends AuthTypes
+		? {
+				/** The auth type - use this for narrowing ctx.keys */
+				authType: A;
+				/** Plugin-specific options */
+				options: Options;
+				/** Account-level key manager - type narrows based on authType check */
+				keys: AccountKeyManagerFor<A, AuthConfig>;
+			}
+		: never
+	: never;
 
 /**
  * Type for the keyBuilder callback function that retrieves the authentication key.
  * The keyBuilder has access to the keys manager to retrieve or refresh tokens as needed.
  * @template Options - The options type for the plugin
+ * @template AuthConfig - Optional plugin auth config for extension fields
  */
-export type CorsairKeyBuilder<Options extends Record<string, unknown>> = (
-	ctx: KeyBuilderContext<Options>,
+export type CorsairKeyBuilder<
+	Options extends Record<string, unknown>,
+	AuthConfig extends PluginAuthConfig | undefined = undefined,
+> = (
+	ctx: KeyBuilderContext<Options, AuthConfig>,
 	source: 'endpoint' | 'webhook',
 ) => string | Promise<string>;
 
@@ -271,11 +275,12 @@ export type CorsairKeyBuilderBase = (
 /**
  * Defines a Corsair plugin with endpoints, webhooks, schema, and configuration.
  * @template Id - The plugin identifier (must be one of AllProviders)
- * @template Endpoints - The endpoint tree structure
  * @template Schema - The plugin schema for database services
- * @template Options - Plugin-specific options (credentials, config, etc.)
+ * @template Endpoints - The endpoint tree structure
  * @template Webhooks - The webhook tree structure
+ * @template Options - Plugin-specific options (credentials, config, etc.)
  * @template DefaultAuthType - The default auth type when authType is optional and not specified
+ * @template AuthConfig - Optional auth config for extending base auth fields with plugin-specific fields
  */
 export type CorsairPlugin<
 	Id extends AllProviders = AllProviders,
@@ -286,6 +291,9 @@ export type CorsairPlugin<
 	Webhooks extends WebhookTree = WebhookTree,
 	Options extends Record<string, unknown> = Record<string, unknown>,
 	DefaultAuthType extends AuthTypes | undefined = AuthTypes | undefined,
+	AuthConfig extends PluginAuthConfig | undefined =
+		| PluginAuthConfig
+		| undefined,
 > = {
 	/** Unique identifier for the plugin */
 	id: Id;
@@ -319,12 +327,28 @@ export type CorsairPlugin<
 	 * @param ctx - Context with `options` and `keys` (the account-level key manager)
 	 * @returns The authentication key string to use for API calls
 	 */
-	keyBuilder?: CorsairKeyBuilder<Options>;
+	keyBuilder?: CorsairKeyBuilder<Options, AuthConfig>;
 	/**
 	 * @internal Type-only field for inference. Do not set at runtime.
 	 * Specifies the default auth type when authType is optional and not provided.
 	 */
 	__defaultAuthType?: DefaultAuthType;
+	/**
+	 * Auth config that extends the base auth fields with plugin-specific fields.
+	 * Each auth type can define extra integration-level and/or account-level fields
+	 * that will get auto-generated getters/setters on the key managers.
+	 *
+	 * @example
+	 * ```ts
+	 * authConfig: {
+	 *   oauth_2: {
+	 *     integration: ["topic_id"],
+	 *     account: ["history_id"],
+	 *   },
+	 * }
+	 * ```
+	 */
+	authConfig?: AuthConfig;
 };
 
 /**
@@ -332,6 +356,7 @@ export type CorsairPlugin<
  * @template Schema - The plugin schema for database services
  * @template Options - Plugin-specific options
  * @template Endpoints - The endpoint tree structure
+ * @template AuthConfig - Optional plugin auth config for extension fields
  */
 export type CorsairPluginContext<
 	Schema extends
@@ -339,6 +364,7 @@ export type CorsairPluginContext<
 		| undefined = undefined,
 	Options extends Record<string, unknown> | undefined = undefined,
 	Endpoints extends EndpointTree | undefined = undefined,
+	AuthConfig extends PluginAuthConfig | undefined = undefined,
 > = CorsairContext<
 	Endpoints extends EndpointTree ? BindEndpoints<Endpoints> : BoundEndpointTree
 > &
@@ -361,7 +387,7 @@ export type CorsairPluginContext<
 	} & (Options extends undefined ? {} : { options: Options }) &
 	// Include keys manager if authType is defined in options
 	(ExtractAuthType<Options> extends AuthTypes
-		? { keys: AccountKeyManagerFor<ExtractAuthType<Options>> }
+		? { keys: AccountKeyManagerFor<ExtractAuthType<Options>, AuthConfig> }
 		: {});
 
 /**

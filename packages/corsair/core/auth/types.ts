@@ -1,235 +1,212 @@
 import type { AuthTypes } from '../constants';
+import type { UnionToIntersection } from '../utils';
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Integration-Level Config Types (stored in corsair_integrations.config)
-// ─────────────────────────────────────────────────────────────────────────────
-
-/**
- * OAuth2 integration config - stored at integration level (shared across tenants)
- */
-export type OAuth2IntegrationConfig = {
-	client_id: string;
-	client_secret: string;
-	redirect_url?: string;
-};
-
-/**
- * Bot token integration config - no integration-level secrets
- */
-export type BotTokenIntegrationConfig = Record<string, never>;
-
-/**
- * API key integration config - no integration-level secrets
- */
-export type ApiKeyIntegrationConfig = Record<string, never>;
-
-/**
- * Maps auth types to their integration-level config shapes
- */
-export type IntegrationConfigMap = {
-	oauth_2: OAuth2IntegrationConfig;
-	bot_token: BotTokenIntegrationConfig;
-	api_key: ApiKeyIntegrationConfig;
-};
-
-/**
- * Get the integration config type for a given auth type
- */
-export type IntegrationConfigFor<T extends AuthTypes> =
-	T extends keyof IntegrationConfigMap ? IntegrationConfigMap[T] : never;
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Account-Level Config Types (stored in corsair_accounts.config)
+// Base Auth Field Configuration
 // ─────────────────────────────────────────────────────────────────────────────
 
 /**
- * OAuth2 account config - per-tenant tokens
+ * Defines the default fields for each auth type at the integration and account levels.
+ * These are the base fields that every key manager of that auth type will have.
+ * Plugins can extend these with additional fields via `authConfig`.
  */
-export type OAuth2AccountConfig = {
-	access_token: string;
-	refresh_token: string;
-	/** Optional: token expiry timestamp */
-	expires_at?: number;
-	/** Optional: scopes granted */
-	scope?: string;
-	/** Optional: webhook signature for verifying incoming webhooks */
-	webhook_signature?: string;
+export const BASE_AUTH_FIELDS = {
+	oauth_2: {
+		integration: ['client_id', 'client_secret', 'redirect_url'] as const,
+		account: [
+			'access_token',
+			'refresh_token',
+			'expires_at',
+			'scope',
+			'webhook_signature',
+		] as const,
+	},
+	api_key: {
+		integration: [] as const,
+		account: ['api_key', 'webhook_signature'] as const,
+	},
+	bot_token: {
+		integration: [] as const,
+		account: ['bot_token', 'webhook_signature'] as const,
+	},
+} as const satisfies Record<
+	AuthTypes,
+	{
+		integration: readonly string[];
+		account: readonly string[];
+	}
+>;
+
+/**
+ * Type-level representation of the base auth field config.
+ */
+export type BaseAuthFieldConfig = typeof BASE_AUTH_FIELDS;
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Plugin Auth Config (extension mechanism)
+// ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Configuration that plugins can provide to extend the base auth fields.
+ * Each auth type can have additional integration-level and/or account-level fields.
+ *
+ * @example
+ * ```ts
+ * const gmailAuthConfig = {
+ *   oauth_2: {
+ *     integration: ["topic_id"] as const,
+ *     account: ["history_id"] as const,
+ *   },
+ * } as const satisfies PluginAuthConfig;
+ * ```
+ */
+export type PluginAuthConfig = {
+	[K in AuthTypes]?: {
+		integration?: readonly string[];
+		account?: readonly string[];
+	};
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Field Name Utility Types
+// ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Extracts extra integration fields from a plugin auth config for a given auth type.
+ */
+type ExtraIntegrationFields<
+	Config extends PluginAuthConfig | undefined,
+	T extends AuthTypes,
+> = Config extends PluginAuthConfig
+	? T extends keyof Config
+		? NonNullable<Config[T]> extends {
+				integration: infer F extends readonly string[];
+			}
+			? F[number]
+			: never
+		: never
+	: never;
+
+/**
+ * Extracts extra account fields from a plugin auth config for a given auth type.
+ */
+type ExtraAccountFields<
+	Config extends PluginAuthConfig | undefined,
+	T extends AuthTypes,
+> = Config extends PluginAuthConfig
+	? T extends keyof Config
+		? NonNullable<Config[T]> extends {
+				account: infer F extends readonly string[];
+			}
+			? F[number]
+			: never
+		: never
+	: never;
+
+/**
+ * All integration field names for a given auth type (base + extension).
+ */
+export type IntegrationFieldNames<
+	T extends AuthTypes,
+	Config extends PluginAuthConfig | undefined = undefined,
+> =
+	| BaseAuthFieldConfig[T]['integration'][number]
+	| ExtraIntegrationFields<Config, T>;
+
+/**
+ * All account field names for a given auth type (base + extension).
+ */
+export type AccountFieldNames<
+	T extends AuthTypes,
+	Config extends PluginAuthConfig | undefined = undefined,
+> = BaseAuthFieldConfig[T]['account'][number] | ExtraAccountFields<Config, T>;
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Getter/Setter Type Generation
+// ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Generates getter and setter types for a single field.
+ * e.g., "client_id" → { get_client_id: () => Promise<string | null>, set_client_id: (value: string | null) => Promise<void> }
+ */
+type FieldAccessors<Field extends string> = {
+	[K in `get_${Field}`]: () => Promise<string | null>;
+} & {
+	[K in `set_${Field}`]: (value: string | null) => Promise<void>;
 };
 
 /**
- * Bot token account config - per-tenant bot token
+ * Generates getters and setters for all fields in a union.
+ * Uses UnionToIntersection to merge individual field accessor types.
  */
-export type BotTokenAccountConfig = {
-	bot_token: string;
-	/** Optional: webhook signature for verifying incoming webhooks */
-	webhook_signature?: string;
-};
-
-/**
- * API key account config - per-tenant API key
- */
-export type ApiKeyAccountConfig = {
-	api_key: string;
-	/** Optional: webhook signature for verifying incoming webhooks */
-	webhook_signature?: string;
-};
-
-/**
- * Maps auth types to their account-level config shapes
- */
-export type AccountConfigMap = {
-	oauth_2: OAuth2AccountConfig;
-	bot_token: BotTokenAccountConfig;
-	api_key: ApiKeyAccountConfig;
-};
-
-/**
- * Get the account config type for a given auth type
- */
-export type AccountConfigFor<T extends AuthTypes> =
-	T extends keyof AccountConfigMap ? AccountConfigMap[T] : never;
+type AllFieldAccessors<Fields extends string> = [Fields] extends [never]
+	? {}
+	: UnionToIntersection<FieldAccessors<Fields>>;
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Key Manager Types
 // ─────────────────────────────────────────────────────────────────────────────
 
 /**
- * Base key manager interface with DEK operations
+ * Base key manager interface with DEK operations.
+ * All key managers (integration and account) include these.
  */
 export type BaseKeyManager = {
 	/**
 	 * Get the current DEK (decrypted using KEK)
 	 */
-	getDEK: () => Promise<string>;
+	get_dek: () => Promise<string>;
 
 	/**
 	 * Issue a new DEK and re-encrypt all associated secrets
 	 * @returns The new DEK (for reference, not typically needed)
 	 */
-	issueNewDEK: () => Promise<string>;
+	issue_new_dek: () => Promise<string>;
 };
 
 /**
- * OAuth2 integration-level key manager methods
- */
-export type OAuth2IntegrationKeyManager = BaseKeyManager & {
-	getClientId: () => Promise<string | null>;
-	setClientId: (clientId: string) => Promise<void>;
-	getClientSecret: () => Promise<string | null>;
-	setClientSecret: (clientSecret: string) => Promise<void>;
-	getRedirectUrl: () => Promise<string | null>;
-	setRedirectUrl: (redirectUrl: string | null) => Promise<void>;
-};
-
-/**
- * Bot token integration-level key manager - only DEK operations
- */
-export type BotTokenIntegrationKeyManager = BaseKeyManager;
-
-/**
- * API key integration-level key manager - only DEK operations
- */
-export type ApiKeyIntegrationKeyManager = BaseKeyManager;
-
-/**
- * Maps auth types to their integration key manager types
- */
-export type IntegrationKeyManagerMap = {
-	oauth_2: OAuth2IntegrationKeyManager;
-	bot_token: BotTokenIntegrationKeyManager;
-	api_key: ApiKeyIntegrationKeyManager;
-};
-
-/**
- * Get the integration key manager type for a given auth type
- */
-export type IntegrationKeyManagerFor<T extends AuthTypes> =
-	T extends keyof IntegrationKeyManagerMap
-		? IntegrationKeyManagerMap[T]
-		: never;
-
-/**
- * Integration credentials returned by getIntegrationCredentials
+ * Integration credentials returned by get_integration_credentials (OAuth2 only).
  */
 export type OAuth2IntegrationCredentials = {
-	clientId: string | null;
-	clientSecret: string | null;
-	redirectUrl: string | null;
+	client_id: string | null;
+	client_secret: string | null;
+	redirect_url: string | null;
 };
 
 /**
- * OAuth2 account-level key manager methods
+ * Integration-level key manager for a given auth type.
+ * Includes base DEK operations + auto-generated getters/setters for all fields.
+ *
+ * @template T - The auth type
+ * @template Config - Optional plugin auth config for extension fields
  */
-export type OAuth2AccountKeyManager = BaseKeyManager & {
-	getAccessToken: () => Promise<string | null>;
-	setAccessToken: (accessToken: string) => Promise<void>;
-	getRefreshToken: () => Promise<string | null>;
-	setRefreshToken: (refreshToken: string) => Promise<void>;
-	getExpiresAt: () => Promise<number | null>;
-	setExpiresAt: (expiresAt: number | null) => Promise<void>;
-	getScope: () => Promise<string | null>;
-	setScope: (scope: string | null) => Promise<void>;
-	/**
-	 * Get the webhook signature for verifying incoming webhooks.
-	 */
-	getWebhookSignature: () => Promise<string | null>;
-	/**
-	 * Set the webhook signature for verifying incoming webhooks.
-	 */
-	setWebhookSignature: (webhookSignature: string | null) => Promise<void>;
-	/**
-	 * Get the integration-level OAuth2 credentials (client_id, client_secret, redirect_url).
-	 * Useful for token refresh flows that need access to both account and integration secrets.
-	 */
-	getIntegrationCredentials: () => Promise<OAuth2IntegrationCredentials>;
-};
+export type IntegrationKeyManagerFor<
+	T extends AuthTypes,
+	Config extends PluginAuthConfig | undefined = undefined,
+> = BaseKeyManager & AllFieldAccessors<IntegrationFieldNames<T, Config>>;
 
 /**
- * Bot token account-level key manager methods
+ * Account-level key manager for a given auth type.
+ * Includes base DEK operations + auto-generated getters/setters for all fields.
+ * OAuth2 account managers also include `get_integration_credentials`.
+ *
+ * @template T - The auth type
+ * @template Config - Optional plugin auth config for extension fields
  */
-export type BotTokenAccountKeyManager = BaseKeyManager & {
-	getBotToken: () => Promise<string | null>;
-	setBotToken: (botToken: string) => Promise<void>;
-	/**
-	 * Get the webhook signature for verifying incoming webhooks.
-	 */
-	getWebhookSignature: () => Promise<string | null>;
-	/**
-	 * Set the webhook signature for verifying incoming webhooks.
-	 */
-	setWebhookSignature: (webhookSignature: string | null) => Promise<void>;
-};
-
-/**
- * API key account-level key manager methods
- */
-export type ApiKeyAccountKeyManager = BaseKeyManager & {
-	getApiKey: () => Promise<string | null>;
-	setApiKey: (apiKey: string) => Promise<void>;
-	/**
-	 * Get the webhook signature for verifying incoming webhooks.
-	 */
-	getWebhookSignature: () => Promise<string | null>;
-	/**
-	 * Set the webhook signature for verifying incoming webhooks.
-	 */
-	setWebhookSignature: (webhookSignature: string | null) => Promise<void>;
-};
-
-/**
- * Maps auth types to their account key manager types
- */
-export type AccountKeyManagerMap = {
-	oauth_2: OAuth2AccountKeyManager;
-	bot_token: BotTokenAccountKeyManager;
-	api_key: ApiKeyAccountKeyManager;
-};
-
-/**
- * Get the account key manager type for a given auth type
- */
-export type AccountKeyManagerFor<T extends AuthTypes> =
-	T extends keyof AccountKeyManagerMap ? AccountKeyManagerMap[T] : never;
+export type AccountKeyManagerFor<
+	T extends AuthTypes,
+	Config extends PluginAuthConfig | undefined = undefined,
+> = BaseKeyManager &
+	AllFieldAccessors<AccountFieldNames<T, Config>> &
+	(T extends 'oauth_2'
+		? {
+				/**
+				 * Get the integration-level OAuth2 credentials (client_id, client_secret, redirect_url).
+				 * Useful for token refresh flows that need access to both account and integration secrets.
+				 */
+				get_integration_credentials: () => Promise<OAuth2IntegrationCredentials>;
+			}
+		: {});
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Key Context Types (internal use)

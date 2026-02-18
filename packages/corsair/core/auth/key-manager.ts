@@ -1,23 +1,55 @@
 import type { CorsairDatabase } from '../../db/kysely/database';
 import type { AuthTypes } from '../constants';
-import { encryptDEK, generateDEK } from './encryption';
 import {
-	createApiKeyAccountKeyManager,
-	createApiKeyIntegrationKeyManager,
-	createBotTokenAccountKeyManager,
-	createBotTokenIntegrationKeyManager,
-	createOAuth2AccountKeyManager,
-	createOAuth2IntegrationKeyManager,
-} from './methods';
+	decryptConfig,
+	decryptDEK,
+	encryptConfig,
+	encryptDEK,
+	generateDEK,
+	reEncryptConfig,
+} from './encryption';
 import type {
 	AccountKeyContext,
 	AccountKeyManagerFor,
 	IntegrationKeyContext,
 	IntegrationKeyManagerFor,
+	OAuth2IntegrationCredentials,
 } from './types';
+import { BASE_AUTH_FIELDS } from './types';
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Integration Key Manager Factory
+// Field Accessor Generator
+// ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Creates getter and setter functions for a list of field names.
+ * Each field gets a `get_<field>` and `set_<field>` method that
+ * reads/writes from encrypted config storage.
+ */
+function createFieldAccessors(
+	getDecryptedConfig: () => Promise<Record<string, string>>,
+	updateConfig: (updates: Record<string, string | null>) => Promise<void>,
+	fields: readonly string[],
+): Record<string, (...args: unknown[]) => Promise<unknown>> {
+	const accessors: Record<string, (...args: unknown[]) => Promise<unknown>> =
+		{};
+
+	for (const field of fields) {
+		accessors[`get_${field}`] = async () => {
+			const config = await getDecryptedConfig();
+			return config[field] ?? null;
+		};
+
+		accessors[`set_${field}`] = async (value: unknown) => {
+			await updateConfig({ [field]: value as string | null });
+		};
+	}
+
+	return accessors;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Config Parsing
 // ─────────────────────────────────────────────────────────────────────────────
 
 const parseConfig = (config: unknown): Record<string, unknown> => {
@@ -32,24 +64,40 @@ const parseConfig = (config: unknown): Record<string, unknown> => {
 	return config as Record<string, unknown>;
 };
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Integration Key Manager Factory
+// ─────────────────────────────────────────────────────────────────────────────
+
 export type IntegrationKeyManagerOptions<T extends AuthTypes> = {
 	authType: T;
 	integrationName: string;
 	kek: string;
 	database: CorsairDatabase;
+	/** Extra integration-level fields from plugin authConfig */
+	extraIntegrationFields?: readonly string[];
 };
 
 /**
  * Creates an integration-level key manager for the given auth type.
- * The returned manager has methods based on the auth type:
- * - oauth_2: getClientId, setClientId, getClientSecret, setClientSecret, etc.
- * - bot_token: only getDEK, issueNewDEK
- * - api_key: only getDEK, issueNewDEK
+ * The returned manager has auto-generated getters/setters for all fields
+ * (base fields for the auth type + any extra fields from plugin authConfig).
  */
 export function createIntegrationKeyManager<T extends AuthTypes>(
 	options: IntegrationKeyManagerOptions<T>,
 ): IntegrationKeyManagerFor<T> {
-	const { authType, integrationName, kek, database } = options;
+	const {
+		authType,
+		integrationName,
+		kek,
+		database,
+		extraIntegrationFields = [],
+	} = options;
+
+	// Merge base + extra fields
+	const allFields = [
+		...BASE_AUTH_FIELDS[authType].integration,
+		...extraIntegrationFields,
+	];
 
 	// Create cached integration lookup
 	let cachedIntegration: {
@@ -103,23 +151,88 @@ export function createIntegrationKeyManager<T extends AuthTypes>(
 		},
 	};
 
-	// Create the appropriate manager based on auth type
-	switch (authType) {
-		case 'oauth_2':
-			return createOAuth2IntegrationKeyManager(
-				ctx,
-			) as IntegrationKeyManagerFor<T>;
-		case 'bot_token':
-			return createBotTokenIntegrationKeyManager(
-				ctx,
-			) as IntegrationKeyManagerFor<T>;
-		case 'api_key':
-			return createApiKeyIntegrationKeyManager(
-				ctx,
-			) as IntegrationKeyManagerFor<T>;
-		default:
-			throw new Error(`Unknown auth type: ${authType}`);
-	}
+	// DEK cache
+	let cachedDek: string | null = null;
+
+	const getDecryptedDek = async (): Promise<string> => {
+		if (cachedDek) return cachedDek;
+
+		const integration = await ctx.getIntegration();
+		if (!integration.dek) {
+			throw new Error(
+				`No DEK found for integration "${integrationName}". Initialize the integration first.`,
+			);
+		}
+
+		cachedDek = await decryptDEK(integration.dek, kek);
+		return cachedDek;
+	};
+
+	const getDecryptedConfig = async (): Promise<Record<string, string>> => {
+		const integration = await ctx.getIntegration();
+		const dek = await getDecryptedDek();
+		const config = integration.config as Record<string, string>;
+
+		if (!config || Object.keys(config).length === 0) {
+			return {};
+		}
+
+		return decryptConfig(config, dek);
+	};
+
+	const updateConfig = async (
+		updates: Record<string, string | null>,
+	): Promise<void> => {
+		const dek = await getDecryptedDek();
+		const currentConfig = await getDecryptedConfig();
+
+		const newConfig = { ...currentConfig };
+		for (const [key, value] of Object.entries(updates)) {
+			if (value === null) {
+				delete newConfig[key];
+			} else {
+				newConfig[key] = value;
+			}
+		}
+
+		const encryptedConfig = encryptConfig(newConfig, dek);
+		await ctx.updateIntegration({ config: encryptedConfig });
+	};
+
+	// Build the key manager
+	const manager = {
+		get_dek: getDecryptedDek,
+
+		issue_new_dek: async () => {
+			const integration = await ctx.getIntegration();
+			const newDek = generateDEK();
+
+			// If there's an existing DEK, re-encrypt config; otherwise start fresh
+			let newConfig: Record<string, string> = {};
+			if (integration.dek) {
+				const oldDek = await decryptDEK(integration.dek, kek);
+				const config = integration.config as Record<string, string>;
+				if (config && Object.keys(config).length > 0) {
+					newConfig = reEncryptConfig(config, oldDek, newDek);
+				}
+			}
+
+			const encryptedNewDek = await encryptDEK(newDek, kek);
+
+			await ctx.updateIntegration({
+				config: newConfig,
+				dek: encryptedNewDek,
+			});
+
+			cachedDek = newDek;
+			return newDek;
+		},
+
+		// Auto-generated field accessors
+		...createFieldAccessors(getDecryptedConfig, updateConfig, allFields),
+	};
+
+	return manager as IntegrationKeyManagerFor<T>;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -132,19 +245,33 @@ export type AccountKeyManagerOptions<T extends AuthTypes> = {
 	tenantId: string;
 	kek: string;
 	database: CorsairDatabase;
+	/** Extra account-level fields from plugin authConfig */
+	extraAccountFields?: readonly string[];
 };
 
 /**
  * Creates an account-level key manager for the given auth type.
- * The returned manager has methods based on the auth type:
- * - oauth_2: getAccessToken, setAccessToken, getRefreshToken, setRefreshToken, etc.
- * - bot_token: getBotToken, setBotToken
- * - api_key: getApiKey, setApiKey
+ * The returned manager has auto-generated getters/setters for all fields
+ * (base fields for the auth type + any extra fields from plugin authConfig).
+ * OAuth2 account managers also include `get_integration_credentials`.
  */
 export function createAccountKeyManager<T extends AuthTypes>(
 	options: AccountKeyManagerOptions<T>,
 ): AccountKeyManagerFor<T> {
-	const { authType, integrationName, tenantId, kek, database } = options;
+	const {
+		authType,
+		integrationName,
+		tenantId,
+		kek,
+		database,
+		extraAccountFields = [],
+	} = options;
+
+	// Merge base + extra fields
+	const allFields = [
+		...BASE_AUTH_FIELDS[authType].account,
+		...extraAccountFields,
+	];
 
 	// Cache for account lookup
 	let cachedAccount: {
@@ -235,17 +362,131 @@ export function createAccountKeyManager<T extends AuthTypes>(
 		},
 	};
 
-	// Create the appropriate manager based on auth type
-	switch (authType) {
-		case 'oauth_2':
-			return createOAuth2AccountKeyManager(ctx) as AccountKeyManagerFor<T>;
-		case 'bot_token':
-			return createBotTokenAccountKeyManager(ctx) as AccountKeyManagerFor<T>;
-		case 'api_key':
-			return createApiKeyAccountKeyManager(ctx) as AccountKeyManagerFor<T>;
-		default:
-			throw new Error(`Unknown auth type: ${authType}`);
+	// DEK caches
+	let cachedDek: string | null = null;
+	let cachedIntegrationDek: string | null = null;
+
+	const getDecryptedDek = async (): Promise<string> => {
+		if (cachedDek) return cachedDek;
+
+		const account = await ctx.getAccount();
+		if (!account.dek) {
+			throw new Error(
+				`No DEK found for account (tenant: "${tenantId}", integration: "${integrationName}"). Initialize the account first.`,
+			);
+		}
+
+		cachedDek = await decryptDEK(account.dek, kek);
+		return cachedDek;
+	};
+
+	const getDecryptedIntegrationDek = async (): Promise<string> => {
+		if (cachedIntegrationDek) return cachedIntegrationDek;
+
+		const integration = await ctx.getIntegration();
+		if (!integration.dek) {
+			throw new Error(
+				`No DEK found for integration "${integrationName}". Initialize the integration first.`,
+			);
+		}
+
+		cachedIntegrationDek = await decryptDEK(integration.dek, kek);
+		return cachedIntegrationDek;
+	};
+
+	const getDecryptedConfig = async (): Promise<Record<string, string>> => {
+		const account = await ctx.getAccount();
+		const dek = await getDecryptedDek();
+		const config = account.config as Record<string, string>;
+
+		if (!config || Object.keys(config).length === 0) {
+			return {};
+		}
+
+		return decryptConfig(config, dek);
+	};
+
+	const getDecryptedIntegrationConfig = async (): Promise<
+		Record<string, string>
+	> => {
+		const integration = await ctx.getIntegration();
+		const dek = await getDecryptedIntegrationDek();
+		const config = integration.config as Record<string, string>;
+
+		if (!config || Object.keys(config).length === 0) {
+			return {};
+		}
+
+		return decryptConfig(config, dek);
+	};
+
+	const updateConfig = async (
+		updates: Record<string, string | null>,
+	): Promise<void> => {
+		const dek = await getDecryptedDek();
+		const currentConfig = await getDecryptedConfig();
+
+		const newConfig = { ...currentConfig };
+		for (const [key, value] of Object.entries(updates)) {
+			if (value === null) {
+				delete newConfig[key];
+			} else {
+				newConfig[key] = value;
+			}
+		}
+
+		const encryptedConfig = encryptConfig(newConfig, dek);
+		await ctx.updateAccount({ config: encryptedConfig });
+	};
+
+	// Build the key manager
+	const manager: Record<string, unknown> = {
+		get_dek: getDecryptedDek,
+
+		issue_new_dek: async () => {
+			const account = await ctx.getAccount();
+			const newDek = generateDEK();
+
+			// If there's an existing DEK, re-encrypt config; otherwise start fresh
+			let newConfig: Record<string, string> = {};
+			if (account.dek) {
+				const oldDek = await decryptDEK(account.dek, kek);
+				const config = account.config as Record<string, string>;
+				if (config && Object.keys(config).length > 0) {
+					newConfig = reEncryptConfig(config, oldDek, newDek);
+				}
+			}
+
+			const encryptedNewDek = await encryptDEK(newDek, kek);
+
+			await ctx.updateAccount({
+				config: newConfig,
+				dek: encryptedNewDek,
+			});
+
+			cachedDek = newDek;
+			return newDek;
+		},
+
+		// Auto-generated field accessors
+		...createFieldAccessors(getDecryptedConfig, updateConfig, allFields),
+	};
+
+	// Add OAuth2-specific get_integration_credentials method
+	if (authType === 'oauth_2') {
+		manager.get_integration_credentials =
+			async (): Promise<OAuth2IntegrationCredentials> => {
+				const config = await getDecryptedIntegrationConfig();
+
+				return {
+					client_id: config.client_id || null,
+					client_secret: config.client_secret || null,
+					redirect_url: config.redirect_url ?? null,
+				};
+			};
 	}
+
+	return manager as AccountKeyManagerFor<T>;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────

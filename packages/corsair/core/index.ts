@@ -115,30 +115,18 @@ export function createCorsair<const Plugins extends readonly CorsairPlugin[]>(
 // ─────────────────────────────────────────────────────────────────────────────
 
 export type {
-	AccountConfigFor,
-	AccountConfigMap,
+	AccountFieldNames,
 	AccountKeyManagerFor,
-	AccountKeyManagerMap,
-	ApiKeyAccountConfig,
-	ApiKeyAccountKeyManager,
-	ApiKeyIntegrationConfig,
-	ApiKeyIntegrationKeyManager,
+	BaseAuthFieldConfig,
 	BaseKeyManager,
-	BotTokenAccountConfig,
-	BotTokenAccountKeyManager,
-	BotTokenIntegrationConfig,
-	BotTokenIntegrationKeyManager,
-	IntegrationConfigFor,
-	IntegrationConfigMap,
+	IntegrationFieldNames,
 	IntegrationKeyManagerFor,
-	IntegrationKeyManagerMap,
-	OAuth2AccountConfig,
-	OAuth2AccountKeyManager,
-	OAuth2IntegrationConfig,
-	OAuth2IntegrationKeyManager,
+	OAuth2IntegrationCredentials,
+	PluginAuthConfig,
 } from './auth';
 // Auth utilities and types
 export {
+	BASE_AUTH_FIELDS,
 	createAccountKeyManager,
 	createIntegrationKeyManager,
 	decryptConfig,

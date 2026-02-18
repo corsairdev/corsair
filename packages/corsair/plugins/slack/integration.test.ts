@@ -28,9 +28,9 @@ async function createSlackClient() {
 
 	console.log(botToken);
 
-	await corsair.slack.keys.issueNewDEK();
+	await corsair.slack.keys.issue_new_dek();
 
-	await corsair.slack.keys.setApiKey(botToken);
+	await corsair.slack.keys.set_api_key(botToken);
 
 	return { corsair, testDb, channel, userId };
 }
