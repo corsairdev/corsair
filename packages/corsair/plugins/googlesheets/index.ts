@@ -165,7 +165,8 @@ export function googlesheets<const T extends GoogleSheetsPluginOptions>(
 			return '';
 		},
 		pluginWebhookMatcher: (request: RawWebhookRequest) => {
-			const body = request.body as Record<string, unknown>;
+			const body = request.body as RangeUpdatedEvent;
+			if (!body) return false;
 			const hasSpreadsheetId = typeof body?.spreadsheetId === 'string';
 			const hasSheetsEventType = body?.eventType === 'rangeUpdated';
 			return hasSpreadsheetId || hasSheetsEventType;

@@ -210,7 +210,7 @@ export const getRows: GoogleSheetsEndpoints['sheetsGetRows'] = async (
 						spreadsheetId: input.spreadsheetId,
 						sheetName,
 						range: rowRange,
-						values: rowValues as (string | number | boolean | null)[],
+						values: rowValues,
 						createdAt: new Date(),
 					});
 				}

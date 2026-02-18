@@ -153,7 +153,7 @@ export const create: LinearEndpoints['commentsCreate'] = async (ctx, input) => {
 		COMMENT_CREATE_MUTATION,
 		apiKey,
 		{
-			input: input as CreateCommentInput,
+			input: input,
 		},
 	);
 
@@ -191,7 +191,7 @@ export const update: LinearEndpoints['commentsUpdate'] = async (ctx, input) => {
 		apiKey,
 		{
 			id: input.id,
-			input: input.input as UpdateCommentInput,
+			input: input.input,
 		},
 	);
 

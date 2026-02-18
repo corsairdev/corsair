@@ -491,8 +491,6 @@ export const messageChanged: GmailWebhooks['messageChanged'] = {
 				},
 			);
 
-			console.log(historyResponse.history, 'historyResponse.history');
-
 			const { added, deleted, modified } = extractMessageIds(
 				historyResponse.history,
 			);
@@ -509,7 +507,7 @@ export const messageChanged: GmailWebhooks['messageChanged'] = {
 					type: 'messageReceived' as const,
 					emailAddress,
 					historyId,
-					message: result.message ?? ({} as Message),
+					message: result.message ?? {},
 				};
 
 				await logEventFromContext(
@@ -538,7 +536,7 @@ export const messageChanged: GmailWebhooks['messageChanged'] = {
 					type: 'messageDeleted' as const,
 					emailAddress,
 					historyId,
-					message: result.message ?? ({} as Message),
+					message: result.message ?? {},
 				};
 
 				await logEventFromContext(
@@ -567,7 +565,7 @@ export const messageChanged: GmailWebhooks['messageChanged'] = {
 					type: 'messageLabelChanged' as const,
 					emailAddress,
 					historyId,
-					message: result.message ?? ({} as Message),
+					message: result.message ?? {},
 				};
 
 				await logEventFromContext(
@@ -601,7 +599,7 @@ export const messageChanged: GmailWebhooks['messageChanged'] = {
 				type: 'messageReceived' as const,
 				emailAddress,
 				historyId,
-				message: result.message ?? ({} as Message),
+				message: result.message ?? {},
 			};
 
 			await logEventFromContext(

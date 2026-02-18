@@ -15,14 +15,13 @@ export const rangeUpdated: GoogleSheetsWebhooks['rangeUpdated'] = {
 			};
 		}
 
-		const values = Array.isArray(body.values[0]) ? body.values[0] : body.values;
 
-		const event: RangeUpdatedEvent = {
-			type: 'rangeUpdated',
+		const event = {
+			eventType: 'rangeUpdated' as const,
 			spreadsheetId: body.spreadsheetId,
 			sheetName: body.sheetName || 'Sheet1',
 			range: body.range || 'A:Z',
-			values: values as (string | number | boolean | null)[],
+			values: body.values,
 			timestamp: body.timestamp || new Date().toISOString(),
 		};
 
@@ -34,7 +33,7 @@ export const rangeUpdated: GoogleSheetsWebhooks['rangeUpdated'] = {
 					spreadsheetId: body.spreadsheetId,
 					sheetName: body.sheetName || 'Sheet1',
 					range: body.range || 'A:Z',
-					values: values as (string | number | boolean | null)[],
+					values: body.values,
 					createdAt: new Date(),
 				});
 			} catch (error) {

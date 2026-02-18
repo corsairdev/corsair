@@ -194,7 +194,7 @@ export function github<const PluginOptions extends GithubPluginOptions>(
 		endpoints: githubEndpointsNested,
 		webhooks: githubWebhooksNested,
 		pluginWebhookMatcher: (request: RawWebhookRequest) => {
-			const headers = request.headers as Record<string, string | undefined>;
+			const headers = request.headers
 			const hasGithubEvent = headers['x-github-event'] !== undefined;
 			const hasGithubSignature = headers['x-hub-signature-256'] !== undefined;
 			return hasGithubEvent && hasGithubSignature;

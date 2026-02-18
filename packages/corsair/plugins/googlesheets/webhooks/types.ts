@@ -7,14 +7,14 @@ export type GoogleAppsScriptWebhookPayload<TEvent = unknown> = {
 	spreadsheetId?: string;
 	sheetName?: string;
 	range?: string;
-	values?: (string | number | boolean | null)[][];
+	values?: (string | number | boolean | null)[];
 	eventType?: 'rangeUpdated';
 	timestamp?: string;
 	event?: TEvent;
 };
 
 export type RangeUpdatedEvent = {
-	type: 'rangeUpdated';
+	eventType: 'rangeUpdated';
 	spreadsheetId: string;
 	sheetName: string;
 	range: string;

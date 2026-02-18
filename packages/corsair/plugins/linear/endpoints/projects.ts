@@ -2,13 +2,11 @@ import { logEventFromContext } from '../../utils/events';
 import type { LinearBoundEndpoints, LinearEndpoints } from '..';
 import { makeLinearRequest } from '../client';
 import type {
-	CreateProjectInput,
 	ProjectCreateResponse,
 	ProjectDeleteResponse,
 	ProjectGetResponse,
 	ProjectsListResponse,
 	ProjectUpdateResponse,
-	UpdateProjectInput,
 } from './types';
 
 const PROJECTS_LIST_QUERY = `
@@ -218,7 +216,7 @@ export const create: LinearEndpoints['projectsCreate'] = async (ctx, input) => {
 	const response = await makeLinearRequest<ProjectCreateResponse>(
 		PROJECT_CREATE_MUTATION,
 		ctx.key,
-		{ input: input as CreateProjectInput },
+		{ input: input},
 	);
 
 	const result = response.projectCreate.project;
@@ -241,7 +239,7 @@ export const update: LinearEndpoints['projectsUpdate'] = async (ctx, input) => {
 	const response = await makeLinearRequest<ProjectUpdateResponse>(
 		PROJECT_UPDATE_MUTATION,
 		ctx.key,
-		{ id: input.id, input: input.input as UpdateProjectInput },
+		{ id: input.id, input: input.input },
 	);
 
 	const result = response.projectUpdate.project;
