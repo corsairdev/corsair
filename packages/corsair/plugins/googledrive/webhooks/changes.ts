@@ -66,25 +66,23 @@ async function fetchChanges(
 async function buildFilePath(
 	credentials: string,
 	file: File,
+	maxDepth: number = 20,
 ): Promise<string> {
 	const parts: string[] = [file.name ?? ''];
 	let currentParents = file.parents;
-
-	while (currentParents?.length) {
+	let depth = 0;
+	while (currentParents?.length && depth < maxDepth) {
 		const parentId = currentParents[0];
 		if (!parentId) break;
-
 		const parent = await fetchFile(credentials, parentId);
 		if (!parent?.name) break;
-
 		if (!parent.parents?.length) {
 			break;
 		}
-
 		parts.unshift(parent.name);
 		currentParents = parent.parents;
+		depth++;
 	}
-
 	return '/' + parts.join('/');
 }
 

@@ -378,7 +378,7 @@ async function processDeletedMessages(
 						query: { format: 'full' },
 					},
 				);
-			} catch (fetchError: any) {
+			} catch (fetchError: any) { // Using 'any' because Gmail API error shape varies and we only check statusCode
 				if (fetchError?.statusCode === 404) {
 					continue;
 				}
