@@ -71,10 +71,8 @@ export function createGoogleSheetsWebhookMatcher(
 	eventType: GoogleSheetsEventName,
 ): CorsairWebhookMatcher {
 	return (request: RawWebhookRequest) => {
+		console.log(eventType, 'eventType', request);
 		const body = parseBody(request.body) as Record<string, unknown>;
-		return (
-			body.eventType === eventType ||
-			(body.spreadsheetId !== undefined && body.values !== undefined)
-		);
+		return body.eventType === eventType 
 	};
 }
