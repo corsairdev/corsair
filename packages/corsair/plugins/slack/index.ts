@@ -7,6 +7,7 @@ import type {
 	CorsairPluginContext,
 	CorsairWebhook,
 	KeyBuilderContext,
+	PluginAuthConfig,
 } from '../../core';
 import type { SlackEndpointOutputs, SlackReactionName } from './endpoints';
 import {
@@ -465,6 +466,12 @@ const slackWebhooksNested = {
 
 const defaultAuthType: AuthTypes = 'api_key';
 
+export const slackAuthConfig = {
+	api_key: {
+		account: ['one'] as const,
+	},
+} as const satisfies PluginAuthConfig;
+
 type SlackEndpoint<
 	K extends keyof SlackEndpointOutputs,
 	Input,
@@ -552,7 +559,7 @@ export function slack<const PluginOptions extends SlackPluginOptions>(
 			}
 
 			if (source === 'webhook') {
-				const res = await ctx.keys.getWebhookSignature();
+				const res = await ctx.keys.get_webhook_signature();
 
 				if (!res) {
 					// prob need to throw an error here
@@ -568,9 +575,7 @@ export function slack<const PluginOptions extends SlackPluginOptions>(
 
 			// Check ctx.authType to narrow ctx.keys to the correct key manager type
 			if (ctx.authType === 'api_key') {
-				// ctx.keys is narrowed to ApiKeyAccountKeyManager
-
-				const res = await ctx.keys.getApiKey();
+				const res = await ctx.keys.get_api_key();
 
 				if (!res) {
 					// prob need to throw an error here
@@ -579,7 +584,7 @@ export function slack<const PluginOptions extends SlackPluginOptions>(
 
 				return res;
 			} else if (ctx.authType === 'oauth_2') {
-				const res = await ctx.keys.getAccessToken();
+				const res = await ctx.keys.get_access_token();
 
 				if (!res) {
 					// prob need to throw an error here

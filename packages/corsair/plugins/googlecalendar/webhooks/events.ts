@@ -8,7 +8,6 @@ import type {
 	EventEndedEvent,
 	EventStartedEvent,
 	EventUpdatedEvent,
-	PubSubNotification,
 } from './types';
 import {
 	createGoogleCalendarWebhookMatcher,

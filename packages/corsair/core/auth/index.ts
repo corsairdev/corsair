@@ -23,40 +23,19 @@ export {
 	initializeIntegrationDEK,
 } from './key-manager';
 
-// Auth method factories
-export {
-	createApiKeyAccountKeyManager,
-	createApiKeyIntegrationKeyManager,
-	createBotTokenAccountKeyManager,
-	createBotTokenIntegrationKeyManager,
-	createOAuth2AccountKeyManager,
-	createOAuth2IntegrationKeyManager,
-} from './methods';
-
 // Types
 export type {
-	AccountConfigFor,
-	AccountConfigMap,
+	AccountFieldNames,
 	AccountKeyContext,
 	AccountKeyManagerFor,
-	AccountKeyManagerMap,
-	ApiKeyAccountConfig,
-	ApiKeyAccountKeyManager,
-	ApiKeyIntegrationConfig,
-	ApiKeyIntegrationKeyManager,
+	BaseAuthFieldConfig,
 	BaseKeyManager,
-	BotTokenAccountConfig,
-	BotTokenAccountKeyManager,
-	BotTokenIntegrationConfig,
-	BotTokenIntegrationKeyManager,
-	IntegrationConfigFor,
-	IntegrationConfigMap,
+	IntegrationFieldNames,
 	IntegrationKeyContext,
 	IntegrationKeyManagerFor,
-	IntegrationKeyManagerMap,
 	KeyManagerContext,
-	OAuth2AccountConfig,
-	OAuth2AccountKeyManager,
-	OAuth2IntegrationConfig,
-	OAuth2IntegrationKeyManager,
+	OAuth2IntegrationCredentials,
+	PluginAuthConfig,
 } from './types';
+
+export { BASE_AUTH_FIELDS } from './types';

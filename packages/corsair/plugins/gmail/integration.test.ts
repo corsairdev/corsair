@@ -29,13 +29,13 @@ async function createGmailClient() {
 		kek: process.env.CORSAIR_KEK!,
 	});
 
-	await corsair.keys.gmail.issueNewDEK();
-	await corsair.keys.gmail.setClientId(clientId);
-	await corsair.keys.gmail.setClientSecret(clientSecret);
+	await corsair.keys.gmail.issue_new_dek();
+	await corsair.keys.gmail.set_client_id(clientId);
+	await corsair.keys.gmail.set_client_secret(clientSecret);
 
-	await corsair.gmail.keys.issueNewDEK();
-	await corsair.gmail.keys.setAccessToken(accessToken);
-	await corsair.gmail.keys.setRefreshToken(refreshToken);
+	await corsair.gmail.keys.issue_new_dek();
+	await corsair.gmail.keys.set_access_token(accessToken);
+	await corsair.gmail.keys.set_refresh_token(refreshToken);
 
 	return { corsair, testDb };
 }

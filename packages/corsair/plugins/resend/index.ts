@@ -192,7 +192,7 @@ export function resend<const T extends ResendPluginOptions>(
 			}
 
 			if (source === 'webhook') {
-				const res = await ctx.keys.getWebhookSignature();
+				const res = await ctx.keys.get_webhook_signature();
 
 				if (!res) {
 					return '';
@@ -206,7 +206,7 @@ export function resend<const T extends ResendPluginOptions>(
 			}
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
-				const res = await ctx.keys.getApiKey();
+				const res = await ctx.keys.get_api_key();
 
 				if (!res) {
 					return '';

@@ -2,11 +2,7 @@ import { logEventFromContext } from '../../utils/events';
 import type { GoogleDriveWebhooks } from '..';
 import { makeGoogleDriveRequest } from '../client';
 import type { ChangeList, File } from '../types';
-import type {
-	FileChangedEvent,
-	FolderChangedEvent,
-	PubSubNotification,
-} from './types';
+import type { FileChangedEvent, FolderChangedEvent } from './types';
 import { createGoogleDriveWebhookMatcher, decodePubSubMessage } from './types';
 
 async function fetchFile(

@@ -28,13 +28,13 @@ async function createGoogleSheetsClient() {
 		kek: process.env.CORSAIR_KEK!,
 	});
 
-	await corsair.keys.googlesheets.issueNewDEK();
-	await corsair.keys.googlesheets.setClientId(clientId);
-	await corsair.keys.googlesheets.setClientSecret(clientSecret);
+	await corsair.keys.googlesheets.issue_new_dek();
+	await corsair.keys.googlesheets.set_client_id(clientId);
+	await corsair.keys.googlesheets.set_client_secret(clientSecret);
 
-	await corsair.googlesheets.keys.issueNewDEK();
-	await corsair.googlesheets.keys.setAccessToken(accessToken);
-	await corsair.googlesheets.keys.setRefreshToken(refreshToken);
+	await corsair.googlesheets.keys.issue_new_dek();
+	await corsair.googlesheets.keys.set_access_token(accessToken);
+	await corsair.googlesheets.keys.set_refresh_token(refreshToken);
 
 	return { corsair, testDb };
 }

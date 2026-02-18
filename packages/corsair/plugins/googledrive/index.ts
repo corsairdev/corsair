@@ -402,24 +402,24 @@ export function googledrive<const T extends GoogleDrivePluginOptions>(
 			}
 
 			if (ctx.authType === 'oauth_2') {
-				const accessToken = await ctx.keys.getAccessToken();
-				const refreshToken = await ctx.keys.getRefreshToken();
+				const accessToken = await ctx.keys.get_access_token();
+				const refreshToken = await ctx.keys.get_refresh_token();
 
 				if (!accessToken || !refreshToken) {
 					return '';
 				}
 
-				const res = await ctx.keys.getIntegrationCredentials();
+				const res = await ctx.keys.get_integration_credentials();
 
-				if (!res.clientId || !res.clientSecret) {
+				if (!res.client_id || !res.client_secret) {
 					return '';
 				}
 
 				const key = await getValidAccessToken({
 					accessToken,
 					refreshToken,
-					clientId: res.clientId,
-					clientSecret: res.clientSecret,
+					clientId: res.client_id,
+					clientSecret: res.client_secret,
 				});
 
 				return key;
