@@ -2,34 +2,69 @@ import { corsair } from '@/server/corsair';
 import 'dotenv/config';
 
 const main = async () => {
-	// Create a Linear issue in a team. This example demonstrates creating a new issue with a title, description, and priority level.
-	// const res = await corsair.keys.gmail.get_topic_id();
-
+	// 1. Get all Linear teams
 	const allLinearTeams = await corsair.linear.api.teams.list({});
-
 	const teams = allLinearTeams.nodes.map((team) => ({
 		teamId: team.id,
 		teamName: team.name,
 	}));
-
-	if (teams.length > 1) {
-		const teamNames = teams.map((team) => team.teamName);
-		console.log('Which team? Here is a list of the teams', teamNames);
-
-		return;
-	} else if (teams.length === 0) {
-		console.log('No Linear teams found');
-
+	//2. Find the team with name matching 'join demeter' (case-insensitive)
+	const targetTeam = teams.find(
+		(team) => team.teamName.toLowerCase() === 'join demeter',
+	);
+	if (!targetTeam) {
+		console.log(
+			'Could not find a Linear team named \\\"join demeter\\\". Available teams:',
+			teams.map((t) => t.teamName),
+		);
 		return;
 	}
-
-	const postedIssue = await corsair.linear.api.issues.create({
-		teamId: teams[0]?.teamId!,
-		title: 'This is the title of the Linear issue',
+	//3. List all issues for the team
+	const issuesResponse = await corsair.linear.api.issues.list({
+		teamId: targetTeam.teamId,
 	});
-
-	console.log(postedIssue.id);
-
+	console.log(JSON.stringify(issuesResponse.nodes, null, 2));
+	const completedIssues = (issuesResponse.nodes || []).filter(
+		(issue) => issue.state?.type?.toLowerCase() === 'completed',
+	);
+	if (completedIssues.length === 0) {
+		console.log('No completed issues found for team join demeter.');
+		return;
+	}
+	//4. Build a summary
+	const summary = completedIssues
+		.map(
+			(issue) =>
+				`• ${issue.title} (ID: ${issue.identifier})${
+					issue.description
+						? `\\
+${issue.description}`
+						: ''
+				}`,
+		)
+		.join('\\\\');
+	const messageText = `*Completed issues for team join demeter:*\\${summary}`;
+	//5. Find Slack channel 'sdk-test'
+	const channelsApiResponse = await corsair.slack.api.channels.list({});
+	const channelId = channelsApiResponse.channels?.find(
+		(channel) => channel.name === 'sdk-test',
+	)?.name;
+	if (!channelId) {
+		const channelsList = channelsApiResponse?.channels?.map(
+			(channel) => channel.name,
+		);
+		console.log(
+			'Slack channel sdk-test not found. Here is a list of the existing channels',
+			channelsList,
+		);
+		return;
+	}
+	//6. Post the summary to Slack
+	await corsair.slack.api.messages.post({
+		channel: channelId,
+		text: messageText,
+	});
+	console.log('Summary of completed issues sent to sdk-test.');
 	return;
 };
 

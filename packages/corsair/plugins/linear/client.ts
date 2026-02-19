@@ -1,3 +1,4 @@
+import { ApiError } from '../../async-core/ApiError';
 import type { ApiRequestOptions } from '../../async-core/ApiRequestOptions';
 import type { OpenAPIConfig } from '../../async-core/OpenAPI';
 import { request } from '../../async-core/request';
@@ -66,6 +67,15 @@ export async function makeLinearRequest<T>(
 	} catch (error) {
 		if (error instanceof LinearAPIError) {
 			throw error;
+		}
+		if (error instanceof ApiError) {
+			const bodyDetail =
+				typeof error.body === 'object'
+					? JSON.stringify(error.body)
+					: String(error.body ?? '');
+			throw new LinearAPIError(
+				`${error.message} (status=${error.status}, body=${bodyDetail})`,
+			);
 		}
 		throw new LinearAPIError(
 			error instanceof Error ? error.message : 'Unknown error',
