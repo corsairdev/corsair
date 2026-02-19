@@ -1,3 +1,5 @@
+import * as https from 'node:https';
+import * as querystring from 'node:querystring';
 import * as p from '@clack/prompts';
 import type {
 	AuthTypes,
@@ -15,6 +17,83 @@ import {
 import type { CorsairDatabase } from 'corsair/db';
 import { createCorsairOrm } from 'corsair/orm';
 import { getCorsairInstance } from './index';
+
+// ─────────────────────────────────────────────────────────────────────────────
+// OAuth2 Token Generation
+// ─────────────────────────────────────────────────────────────────────────────
+
+const GOOGLE_SCOPES: Record<string, string[]> = {
+	gmail: [
+		'https://www.googleapis.com/auth/gmail.modify',
+		'https://www.googleapis.com/auth/gmail.labels',
+		'https://www.googleapis.com/auth/gmail.send',
+		'https://www.googleapis.com/auth/gmail.compose',
+	],
+	googlesheets: ['https://www.googleapis.com/auth/spreadsheets'],
+	googledrive: ['https://www.googleapis.com/auth/drive'],
+	googlecalendar: ['https://www.googleapis.com/auth/calendar'],
+};
+
+function getScopesForPlugin(pluginId: string): string[] {
+	return GOOGLE_SCOPES[pluginId] || [];
+}
+
+const REDIRECT_URI = 'urn:ietf:wg:oauth:2.0:oob';
+
+function exchangeCodeForTokens(
+	code: string,
+	clientId: string,
+	clientSecret: string,
+): Promise<{
+	access_token?: string;
+	refresh_token?: string;
+	expires_in?: number;
+	token_type?: string;
+}> {
+	return new Promise((resolve, reject) => {
+		const postData = querystring.stringify({
+			code: code.trim(),
+			client_id: clientId,
+			client_secret: clientSecret,
+			redirect_uri: REDIRECT_URI,
+			grant_type: 'authorization_code',
+		});
+
+		const options = {
+			hostname: 'oauth2.googleapis.com',
+			path: '/token',
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/x-www-form-urlencoded',
+				'Content-Length': Buffer.byteLength(postData),
+			},
+		};
+
+		const req = https.request(options, (res) => {
+			let data = '';
+			res.on('data', (chunk) => {
+				data += chunk;
+			});
+			res.on('end', () => {
+				if (res.statusCode !== 200) {
+					const errorData = JSON.parse(data || '{}');
+					reject(
+						new Error(`Token exchange failed: ${JSON.stringify(errorData)}`),
+					);
+					return;
+				}
+				resolve(JSON.parse(data));
+			});
+		});
+
+		req.on('error', (error) => {
+			reject(new Error(`Request failed: ${error.message}`));
+		});
+
+		req.write(postData);
+		req.end();
+	});
+}
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Action Definitions
@@ -152,6 +231,19 @@ const BOT_TOKEN_ACTIONS: ActionDef[] = [
 ];
 
 const OAUTH2_ACTIONS: ActionDef[] = [
+	{
+		value: 'get-tokens',
+		label: 'Setup OAuth & Get Tokens',
+		hint: 'Complete OAuth setup (prompts for credentials if needed)',
+		description:
+			'Complete OAuth2 setup in one flow. This will:\n\n' +
+			'1. Prompt for Client ID and Client Secret if not already set\n' +
+			'2. Guide you through the OAuth authorization process\n' +
+			'3. Automatically save access and refresh tokens\n\n' +
+			'This is the recommended way to set up OAuth integrations.',
+		level: 'account',
+		type: 'confirm',
+	},
 	{
 		value: 'set-client-id',
 		label: 'Set Client ID',
@@ -634,11 +726,83 @@ async function ensureAccountExists(
 	p.log.success(`Created account for tenant '${tenantId}' with a new DEK.`);
 }
 
+async function checkOAuthCredentials(
+	database: CorsairDatabase,
+	pluginId: string,
+	kek: string,
+	plugin?: CorsairPlugin,
+): Promise<{ hasClientId: boolean; hasClientSecret: boolean }> {
+	try {
+		const extraIntegrationFields = plugin
+			? getCustomIntegrationFields(plugin, 'oauth_2')
+			: [];
+		const integrationKm = createIntegrationKeyManager({
+			authType: 'oauth_2',
+			integrationName: pluginId,
+			kek,
+			database,
+			extraIntegrationFields,
+		});
+
+		const clientId = await integrationKm.get_client_id();
+		const clientSecret = await integrationKm.get_client_secret();
+
+		return {
+			hasClientId: !!clientId,
+			hasClientSecret: !!clientSecret,
+		};
+	} catch {
+		return { hasClientId: false, hasClientSecret: false };
+	}
+}
+
+function reorderOAuthActions(
+	actions: ActionDef[],
+	hasClientId: boolean,
+	hasClientSecret: boolean,
+): ActionDef[] {
+	const getTokensAction = actions.find((a) => a.value === 'get-tokens');
+	const otherActions = actions.filter((a) => a.value !== 'get-tokens');
+
+	if (!getTokensAction) return actions;
+
+	const credentialsMissing = !hasClientId || !hasClientSecret;
+
+	if (credentialsMissing) {
+		return [getTokensAction, ...otherActions];
+	}
+
+	return actions;
+}
+
 async function selectAction(
 	authType: AuthTypes | undefined,
 	plugin?: CorsairPlugin,
+	database?: CorsairDatabase,
+	pluginId?: string,
+	kek?: string,
 ): Promise<ActionDef> {
-	const actions = getActionsForAuthType(authType, plugin);
+	let actions = getActionsForAuthType(authType, plugin);
+
+	if (
+		authType === 'oauth_2' &&
+		database &&
+		pluginId &&
+		kek &&
+		plugin
+	) {
+		const credentials = await checkOAuthCredentials(
+			database,
+			pluginId,
+			kek,
+			plugin,
+		);
+		actions = reorderOAuthActions(
+			actions,
+			credentials.hasClientId,
+			credentials.hasClientSecret,
+		);
+	}
 
 	const result = await p.select({
 		message: 'What would you like to do?',
@@ -729,6 +893,160 @@ async function executeSetAction(
 	}
 }
 
+async function executeGetTokens(
+	database: CorsairDatabase,
+	pluginId: string,
+	kek: string,
+	tenantId: string,
+	plugin?: CorsairPlugin,
+): Promise<void> {
+	const extraIntegrationFields = plugin
+		? getCustomIntegrationFields(plugin, 'oauth_2')
+		: [];
+	const integrationKm = createIntegrationKeyManager({
+		authType: 'oauth_2',
+		integrationName: pluginId,
+		kek,
+		database,
+		extraIntegrationFields,
+	});
+
+	let clientId: string | null = null;
+	let clientSecret: string | null = null;
+
+	try {
+		clientId = await integrationKm.get_client_id();
+		clientSecret = await integrationKm.get_client_secret();
+	} catch {
+	}
+
+	if (!clientId) {
+		const inputClientId = await p.text({
+			message: 'Enter Google Client ID:',
+			validate: (v) => {
+				if (!v || v.trim().length === 0) return 'Client ID is required';
+			},
+		});
+		if (p.isCancel(inputClientId)) handleCancel();
+		clientId = inputClientId as string;
+		await integrationKm.set_client_id(clientId);
+		p.log.success('Client ID saved.');
+	} else {
+		p.log.info(`Using Client ID from corsair: ${clientId.slice(0, 12)}...`);
+	}
+
+	if (!clientSecret) {
+		const inputClientSecret = await p.password({
+			message: 'Enter Google Client Secret:',
+			mask: '*',
+		});
+		if (p.isCancel(inputClientSecret)) handleCancel();
+		clientSecret = inputClientSecret as string;
+		await integrationKm.set_client_secret(clientSecret);
+		p.log.success('Client Secret saved.');
+	} else {
+		p.log.info('Using Client Secret from corsair.');
+	}
+
+	const scopes = getScopesForPlugin(pluginId);
+	if (scopes.length === 0) {
+		p.log.error(`No scopes configured for plugin: ${pluginId}`);
+		return;
+	}
+
+	const authParams = querystring.stringify({
+		client_id: clientId,
+		redirect_uri: REDIRECT_URI,
+		response_type: 'code',
+		scope: scopes.join(' '),
+		access_type: 'offline',
+		prompt: 'consent',
+	});
+
+	const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?${authParams}`;
+
+	p.log.info('\n1. Visit this URL in your browser:');
+	console.log(`\n${authUrl}\n`);
+	p.log.info('2. Authorize the application');
+	p.log.info('3. Copy the authorization code\n');
+
+	const code = await p.text({
+		message: 'Enter the authorization code:',
+		validate: (v) => {
+			if (!v || v.trim().length === 0) return 'Authorization code is required';
+		},
+	});
+
+	if (p.isCancel(code)) handleCancel();
+
+	const tokenSpin = p.spinner();
+	tokenSpin.start('Exchanging authorization code for tokens...');
+
+	try {
+		const tokens = await exchangeCodeForTokens(
+			code as string,
+			clientId,
+			clientSecret,
+		);
+
+		if (!tokens.access_token) {
+			tokenSpin.stop('Failed.');
+			p.log.error('No access token received from Google.');
+			return;
+		}
+
+		tokenSpin.stop('Tokens received.');
+
+		const lines: string[] = [];
+		lines.push(`Access Token: ${tokens.access_token.slice(0, 20)}...`);
+		if (tokens.refresh_token) {
+			lines.push(`Refresh Token: ${tokens.refresh_token.slice(0, 20)}...`);
+		}
+		lines.push(`Expires In: ${tokens.expires_in} seconds`);
+		if (!tokens.refresh_token) {
+			lines.push(
+				'\nWarning: No refresh token received. You may need to re-authorize.',
+			);
+		}
+		p.note(lines.join('\n'), 'Tokens');
+
+		const saveSpin = p.spinner();
+		saveSpin.start('Saving tokens...');
+
+		const extraAccountFields = plugin
+			? getCustomAccountFields(plugin, 'oauth_2')
+			: [];
+		const accountKm = createAccountKeyManager({
+			authType: 'oauth_2',
+			integrationName: pluginId,
+			tenantId,
+			kek,
+			database,
+			extraAccountFields,
+		});
+
+		await accountKm.set_access_token(tokens.access_token);
+		if (tokens.refresh_token) {
+			await accountKm.set_refresh_token(tokens.refresh_token);
+		}
+		if (tokens.expires_in) {
+			await accountKm.set_expires_at(
+				(Date.now() + tokens.expires_in * 1000).toString(),
+			);
+		}
+
+		saveSpin.stop('Tokens saved to corsair.');
+		p.log.success(
+			`Tokens saved for tenant '${tenantId}'. You can now use the integration.`,
+		);
+	} catch (error) {
+		tokenSpin.stop('Failed.');
+		p.log.error(
+			`Error: ${error instanceof Error ? error.message : String(error)}`,
+		);
+	}
+}
+
 async function executeConfirmAction(
 	action: ActionDef,
 	database: CorsairDatabase,
@@ -738,7 +1056,23 @@ async function executeConfirmAction(
 	tenantId: string,
 	plugin?: CorsairPlugin,
 ): Promise<void> {
-	// Show detailed description for DEK actions
+	if (action.value === 'get-tokens') {
+		if (action.description) {
+			p.note(action.description, 'What this does');
+		}
+		const shouldProceed = await p.confirm({
+			message: 'Start OAuth2 flow to get tokens?',
+		});
+
+		if (p.isCancel(shouldProceed) || !shouldProceed) {
+			p.log.info('Cancelled.');
+			return;
+		}
+
+		await executeGetTokens(database, pluginId, kek, tenantId, plugin);
+		return;
+	}
+
 	if (
 		action.description &&
 		(action.value === 'issue-dek-account' ||
@@ -1202,7 +1536,13 @@ export async function runAuth({ cwd }: { cwd: string }): Promise<void> {
 	await ensureAccountExists(database, integration.id, tenantId, kek);
 
 	// 6. Select and execute action
-	const action = await selectAction(authType, plugin);
+	const action = await selectAction(
+		authType,
+		plugin,
+		database,
+		plugin.id,
+		kek,
+	);
 	await executeAction(
 		action,
 		database,
