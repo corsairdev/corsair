@@ -10,7 +10,7 @@ import type {
 } from './types';
 
 const ISSUES_LIST_QUERY = `
-  query Issues($teamId: String!, $first: Int!, $after: String) {
+  query Issues($teamId: ID!, $first: Int!, $after: String) {
     issues(filter: { team: { id: { eq: $teamId } } }, first: $first, after: $after) {
       nodes {
         id
