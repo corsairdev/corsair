@@ -203,14 +203,14 @@ export function gmail<const T extends GmailPluginOptions>(
 
 				if (!accessToken || !refreshToken) {
 					// prob need to throw an error here
-					return '';
+					throw new Error('No access token or refresh token');
 				}
 
 				const res = await ctx.keys.get_integration_credentials();
 
 				if (!res.client_id || !res.client_secret) {
 					// prob need to throw an error here
-					return '';
+					throw new Error('No client id or client secret');
 				}
 
 				const key = await getValidAccessToken({

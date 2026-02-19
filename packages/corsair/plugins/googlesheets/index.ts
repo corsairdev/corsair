@@ -144,13 +144,13 @@ export function googlesheets<const T extends GoogleSheetsPluginOptions>(
 				const refreshToken = await ctx.keys.get_refresh_token();
 
 				if (!accessToken || !refreshToken) {
-					return '';
+					throw new Error('No client id or client secret');
 				}
 
 				const res = await ctx.keys.get_integration_credentials();
 
 				if (!res.client_id || !res.client_secret) {
-					return '';
+					throw new Error('No client id or client secret');
 				}
 
 				const key = await getValidAccessToken({
