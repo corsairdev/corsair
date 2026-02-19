@@ -270,7 +270,19 @@ const MessageSchema = z.object({
 	labelIds: z.array(z.string()).optional(),
 	snippet: z.string().optional(),
 	historyId: z.string().optional(),
-	internalDate: z.coerce.date().nullable().optional(),
+	internalDate: z
+		.union([z.string(), z.number(), z.date()])
+		.transform((val) => {
+			if (val instanceof Date) return val;
+			if (typeof val === 'number') return new Date(val);
+			if (typeof val === 'string') {
+				const num = Number(val);
+				return isNaN(num) ? null : new Date(num);
+			}
+			return null;
+		})
+		.nullable()
+		.optional(),
 	sizeEstimate: z.number().optional(),
 	payload: MessagePartSchema.optional(),
 	raw: z.string().optional(),
