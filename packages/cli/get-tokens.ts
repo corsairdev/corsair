@@ -164,8 +164,8 @@ export async function runGetTokens({ cwd }: { cwd: string }): Promise<void> {
 	let clientSecret: string | null = null;
 
 	try {
-		clientId = await integrationKm.getClientId();
-		clientSecret = await integrationKm.getClientSecret();
+		clientId = await integrationKm.get_client_id();
+		clientSecret = await integrationKm.get_client_secret();
 	} catch {
 		// credentials not set yet
 	}
@@ -299,12 +299,14 @@ export async function runGetTokens({ cwd }: { cwd: string }): Promise<void> {
 			database,
 		});
 
-		await accountKm.setAccessToken(tokens.access_token);
+		await accountKm.set_access_token(tokens.access_token);
 		if (tokens.refresh_token) {
-			await accountKm.setRefreshToken(tokens.refresh_token);
+			await accountKm.set_refresh_token(tokens.refresh_token);
 		}
 		if (tokens.expires_in) {
-			await accountKm.setExpiresAt(Date.now() + tokens.expires_in * 1000);
+			await accountKm.set_expires_at(
+				(Date.now() + tokens.expires_in * 1000).toString(),
+			);
 		}
 
 		saveSpin.stop('Tokens saved to corsair.');

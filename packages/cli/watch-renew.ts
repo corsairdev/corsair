@@ -470,9 +470,9 @@ export async function runWatchRenew({ cwd }: { cwd: string }): Promise<void> {
 			database,
 		});
 
-		const clientId = await integrationKm.getClientId();
-		const clientSecret = await integrationKm.getClientSecret();
-		const refreshToken = await accountKm.getRefreshToken();
+		const clientId = await integrationKm.get_client_id();
+		const clientSecret = await integrationKm.get_client_secret();
+		const refreshToken = await accountKm.get_refresh_token();
 
 		if (!clientId || !clientSecret || !refreshToken) {
 			credSpin.stop('Missing credentials.');

@@ -3,6 +3,7 @@ import type {
 	AuthTypes,
 	CorsairInternalConfig,
 	CorsairPlugin,
+	PluginAuthConfig,
 } from 'corsair/core';
 import {
 	CORSAIR_INTERNAL,
@@ -34,20 +35,20 @@ const API_KEY_ACTIONS: ActionDef[] = [
 	{
 		value: 'set-api-key',
 		label: 'Set API Key',
-		hint: 'keys.setApiKey()',
+		hint: 'keys.set_api_key()',
 		level: 'account',
 		type: 'set',
 		inputType: 'password',
-		method: 'setApiKey',
+		method: 'set_api_key',
 	},
 	{
 		value: 'set-webhook-sig',
 		label: 'Set Webhook Signature',
-		hint: 'keys.setWebhookSignature()',
+		hint: 'keys.set_webhook_signature()',
 		level: 'account',
 		type: 'set',
 		inputType: 'password',
-		method: 'setWebhookSignature',
+		method: 'set_webhook_signature',
 	},
 	{
 		value: 'get-credentials',
@@ -66,7 +67,7 @@ const API_KEY_ACTIONS: ActionDef[] = [
 			'This will re-encrypt all account-level credentials (API keys, tokens, etc.) for this tenant only.',
 		level: 'account',
 		type: 'confirm',
-		method: 'issueNewDEK',
+		method: 'issue_new_dek',
 	},
 	{
 		value: 'issue-dek-integration',
@@ -79,7 +80,7 @@ const API_KEY_ACTIONS: ActionDef[] = [
 			'This will re-encrypt all integration-level credentials for this plugin.',
 		level: 'integration',
 		type: 'confirm',
-		method: 'issueNewDEK',
+		method: 'issue_new_dek',
 	},
 	{
 		value: 'view-status',
@@ -94,20 +95,20 @@ const BOT_TOKEN_ACTIONS: ActionDef[] = [
 	{
 		value: 'set-bot-token',
 		label: 'Set Bot Token',
-		hint: 'keys.setBotToken()',
+		hint: 'keys.set_bot_token()',
 		level: 'account',
 		type: 'set',
 		inputType: 'password',
-		method: 'setBotToken',
+		method: 'set_bot_token',
 	},
 	{
 		value: 'set-webhook-sig',
 		label: 'Set Webhook Signature',
-		hint: 'keys.setWebhookSignature()',
+		hint: 'keys.set_webhook_signature()',
 		level: 'account',
 		type: 'set',
 		inputType: 'password',
-		method: 'setWebhookSignature',
+		method: 'set_webhook_signature',
 	},
 	{
 		value: 'get-credentials',
@@ -126,7 +127,7 @@ const BOT_TOKEN_ACTIONS: ActionDef[] = [
 			'This will re-encrypt all account-level credentials (API keys, tokens, etc.) for this tenant only.',
 		level: 'account',
 		type: 'confirm',
-		method: 'issueNewDEK',
+		method: 'issue_new_dek',
 	},
 	{
 		value: 'issue-dek-integration',
@@ -139,7 +140,7 @@ const BOT_TOKEN_ACTIONS: ActionDef[] = [
 			'This will re-encrypt all integration-level credentials for this plugin.',
 		level: 'integration',
 		type: 'confirm',
-		method: 'issueNewDEK',
+		method: 'issue_new_dek',
 	},
 	{
 		value: 'view-status',
@@ -154,56 +155,56 @@ const OAUTH2_ACTIONS: ActionDef[] = [
 	{
 		value: 'set-client-id',
 		label: 'Set Client ID',
-		hint: 'keys.setClientId()',
+		hint: 'keys.set_client_id()',
 		level: 'integration',
 		type: 'set',
 		inputType: 'password',
-		method: 'setClientId',
+		method: 'set_client_id',
 	},
 	{
 		value: 'set-client-secret',
 		label: 'Set Client Secret',
-		hint: 'keys.setClientSecret()',
+		hint: 'keys.set_client_secret()',
 		level: 'integration',
 		type: 'set',
 		inputType: 'password',
-		method: 'setClientSecret',
+		method: 'set_client_secret',
 	},
 	{
 		value: 'set-redirect-url',
 		label: 'Set Redirect URL',
-		hint: 'keys.setRedirectUrl()',
+		hint: 'keys.set_redirect_url()',
 		level: 'integration',
 		type: 'set',
 		inputType: 'text',
-		method: 'setRedirectUrl',
+		method: 'set_redirect_url',
 	},
 	{
 		value: 'set-access-token',
 		label: 'Set Access Token',
-		hint: 'keys.setAccessToken()',
+		hint: 'keys.set_access_token()',
 		level: 'account',
 		type: 'set',
 		inputType: 'password',
-		method: 'setAccessToken',
+		method: 'set_access_token',
 	},
 	{
 		value: 'set-refresh-token',
 		label: 'Set Refresh Token',
-		hint: 'keys.setRefreshToken()',
+		hint: 'keys.set_refresh_token()',
 		level: 'account',
 		type: 'set',
 		inputType: 'password',
-		method: 'setRefreshToken',
+		method: 'set_refresh_token',
 	},
 	{
 		value: 'set-webhook-sig',
 		label: 'Set Webhook Signature',
-		hint: 'keys.setWebhookSignature()',
+		hint: 'keys.set_webhook_signature()',
 		level: 'account',
 		type: 'set',
 		inputType: 'password',
-		method: 'setWebhookSignature',
+		method: 'set_webhook_signature',
 	},
 	{
 		value: 'get-credentials',
@@ -222,7 +223,7 @@ const OAUTH2_ACTIONS: ActionDef[] = [
 			'This will re-encrypt all account-level credentials (API keys, tokens, etc.) for this tenant only.',
 		level: 'account',
 		type: 'confirm',
-		method: 'issueNewDEK',
+		method: 'issue_new_dek',
 	},
 	{
 		value: 'issue-dek-integration',
@@ -235,7 +236,7 @@ const OAUTH2_ACTIONS: ActionDef[] = [
 			'This will re-encrypt all integration-level credentials for this plugin.',
 		level: 'integration',
 		type: 'confirm',
-		method: 'issueNewDEK',
+		method: 'issue_new_dek',
 	},
 	{
 		value: 'view-status',
@@ -256,17 +257,61 @@ const NO_AUTH_ACTIONS: ActionDef[] = [
 	},
 ];
 
-function getActionsForAuthType(authType: AuthTypes | undefined): ActionDef[] {
+function getActionsForAuthType(
+	authType: AuthTypes | undefined,
+	plugin?: CorsairPlugin,
+): ActionDef[] {
+	let baseActions: ActionDef[];
 	switch (authType) {
 		case 'api_key':
-			return API_KEY_ACTIONS;
+			baseActions = API_KEY_ACTIONS;
+			break;
 		case 'bot_token':
-			return BOT_TOKEN_ACTIONS;
+			baseActions = BOT_TOKEN_ACTIONS;
+			break;
 		case 'oauth_2':
-			return OAUTH2_ACTIONS;
+			baseActions = OAUTH2_ACTIONS;
+			break;
 		default:
 			return NO_AUTH_ACTIONS;
 	}
+
+	// If plugin is provided, add custom field actions
+	if (plugin && authType) {
+		const customIntegrationFields = getCustomIntegrationFields(
+			plugin,
+			authType,
+		);
+		const customAccountFields = getCustomAccountFields(plugin, authType);
+
+		const customActions: ActionDef[] = [];
+
+		// Add custom integration-level field actions
+		if (customIntegrationFields.length > 0) {
+			customActions.push(
+				...generateCustomFieldActions(customIntegrationFields, 'integration'),
+			);
+		}
+
+		// Add custom account-level field actions
+		if (customAccountFields.length > 0) {
+			customActions.push(
+				...generateCustomFieldActions(customAccountFields, 'account'),
+			);
+		}
+
+		// Insert custom actions before the "view-status" action
+		const viewStatusIndex = baseActions.findIndex(
+			(a) => a.value === 'view-status',
+		);
+		if (viewStatusIndex >= 0) {
+			baseActions.splice(viewStatusIndex, 0, ...customActions);
+		} else {
+			baseActions.push(...customActions);
+		}
+	}
+
+	return baseActions;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -300,9 +345,121 @@ function getAuthType(plugin: CorsairPlugin): AuthTypes | undefined {
 		| undefined;
 }
 
+/**
+ * Extracts custom integration-level fields from plugin authConfig for a given auth type.
+ */
+function getCustomIntegrationFields(
+	plugin: CorsairPlugin,
+	authType: AuthTypes,
+): readonly string[] {
+	const authConfig = plugin.authConfig as PluginAuthConfig | undefined;
+	if (!authConfig || !authType) return [];
+	const configForAuthType = authConfig[authType];
+	if (!configForAuthType) return [];
+	return configForAuthType.integration ?? [];
+}
+
+/**
+ * Extracts custom account-level fields from plugin authConfig for a given auth type.
+ */
+function getCustomAccountFields(
+	plugin: CorsairPlugin,
+	authType: AuthTypes,
+): readonly string[] {
+	const authConfig = plugin.authConfig as PluginAuthConfig | undefined;
+	if (!authConfig || !authType) return [];
+	const configForAuthType = authConfig[authType];
+	if (!configForAuthType) return [];
+	return configForAuthType.account ?? [];
+}
+
+/**
+ * Converts a field name to a method name (e.g., "topic_id" -> "set_topic_id" or "get_topic_id").
+ */
+function fieldToMethodName(field: string, prefix: 'get' | 'set'): string {
+	// Convert snake_case to method name
+	return `${prefix}_${field}`;
+}
+
+/**
+ * Converts a field name to a human-readable label (e.g., "topic_id" -> "Topic ID").
+ */
+function fieldToLabel(field: string): string {
+	// Convert snake_case to Title Case
+	return field
+		.split('_')
+		.map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+		.join(' ');
+}
+
+/**
+ * Generates actions for custom fields at a given level.
+ */
+function generateCustomFieldActions(
+	fields: readonly string[],
+	level: 'account' | 'integration',
+): ActionDef[] {
+	const actions: ActionDef[] = [];
+	for (const field of fields) {
+		// Add set action
+		actions.push({
+			value: `set-${field}`,
+			label: `Set ${fieldToLabel(field)}`,
+			hint: `keys.${fieldToMethodName(field, 'set')}()`,
+			level,
+			type: 'set',
+			inputType: 'text',
+			method: fieldToMethodName(field, 'set'),
+		});
+		// Add get action
+		actions.push({
+			value: `get-${field}`,
+			label: `Get ${fieldToLabel(field)}`,
+			hint: `keys.${fieldToMethodName(field, 'get')}()`,
+			level,
+			type: 'display',
+			method: fieldToMethodName(field, 'get'),
+		});
+	}
+	return actions;
+}
+
 function handleCancel(): never {
 	p.cancel('Operation cancelled.');
 	process.exit(0);
+}
+
+/**
+ * Calls a method by name on a key manager, throwing if the method doesn't exist.
+ *
+ * Key managers are plain objects with dynamically-generated methods (via `createFieldAccessors`),
+ * so this helper provides a safe wrapper around runtime dynamic dispatch, keeping the
+ * type-assertion in a single place.
+ */
+async function callKeyManagerMethod(
+	km: object,
+	method: string,
+	...args: unknown[]
+): Promise<unknown> {
+	const fn = (km as Record<string, unknown>)[method];
+	if (typeof fn !== 'function') {
+		throw new Error(`Method "${method}" not found on key manager`);
+	}
+	return (fn as (...a: unknown[]) => Promise<unknown>)(...args);
+}
+
+/**
+ * Calls a method by name on a key manager if it exists, returning `null` otherwise.
+ * Useful for optional/custom field lookups where the method may not be present.
+ */
+async function tryCallKeyManagerMethod(
+	km: object,
+	method: string,
+	...args: unknown[]
+): Promise<unknown> {
+	const fn = (km as Record<string, unknown>)[method];
+	if (typeof fn !== 'function') return null;
+	return (fn as (...a: unknown[]) => Promise<unknown>)(...args);
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -479,8 +636,9 @@ async function ensureAccountExists(
 
 async function selectAction(
 	authType: AuthTypes | undefined,
+	plugin?: CorsairPlugin,
 ): Promise<ActionDef> {
-	const actions = getActionsForAuthType(authType);
+	const actions = getActionsForAuthType(authType, plugin);
 
 	const result = await p.select({
 		message: 'What would you like to do?',
@@ -507,6 +665,7 @@ async function executeSetAction(
 	kek: string,
 	authType: AuthTypes,
 	tenantId: string,
+	plugin?: CorsairPlugin,
 ): Promise<void> {
 	let value: string | symbol;
 
@@ -528,28 +687,30 @@ async function executeSetAction(
 
 	try {
 		if (action.level === 'account') {
+			const extraAccountFields = plugin
+				? getCustomAccountFields(plugin, authType)
+				: [];
 			const km = createAccountKeyManager({
 				authType,
 				integrationName: pluginId,
 				tenantId,
 				kek,
 				database,
+				extraAccountFields,
 			});
-			const fn = (
-				km as unknown as Record<string, (...args: unknown[]) => Promise<void>>
-			)[action.method!]!;
-			await fn(value);
+			await callKeyManagerMethod(km, action.method!, value);
 		} else if (action.level === 'integration') {
+			const extraIntegrationFields = plugin
+				? getCustomIntegrationFields(plugin, authType)
+				: [];
 			const km = createIntegrationKeyManager({
 				authType,
 				integrationName: pluginId,
 				kek,
 				database,
+				extraIntegrationFields,
 			});
-			const fn = (
-				km as unknown as Record<string, (...args: unknown[]) => Promise<void>>
-			)[action.method!]!;
-			await fn(value);
+			await callKeyManagerMethod(km, action.method!, value);
 		}
 
 		spin.stop('Saved.');
@@ -575,6 +736,7 @@ async function executeConfirmAction(
 	kek: string,
 	authType: AuthTypes,
 	tenantId: string,
+	plugin?: CorsairPlugin,
 ): Promise<void> {
 	// Show detailed description for DEK actions
 	if (
@@ -599,28 +761,30 @@ async function executeConfirmAction(
 
 	try {
 		if (action.level === 'account') {
+			const extraAccountFields = plugin
+				? getCustomAccountFields(plugin, authType)
+				: [];
 			const km = createAccountKeyManager({
 				authType,
 				integrationName: pluginId,
 				tenantId,
 				kek,
 				database,
+				extraAccountFields,
 			});
-			const fn = (
-				km as unknown as Record<string, (...args: unknown[]) => Promise<void>>
-			)[action.method!]!;
-			await fn();
+			await callKeyManagerMethod(km, action.method!);
 		} else if (action.level === 'integration') {
+			const extraIntegrationFields = plugin
+				? getCustomIntegrationFields(plugin, authType)
+				: [];
 			const km = createIntegrationKeyManager({
 				authType,
 				integrationName: pluginId,
 				kek,
 				database,
+				extraIntegrationFields,
 			});
-			const fn = (
-				km as unknown as Record<string, (...args: unknown[]) => Promise<void>>
-			)[action.method!]!;
-			await fn();
+			await callKeyManagerMethod(km, action.method!);
 		}
 
 		spin.stop('Done.');
@@ -645,6 +809,7 @@ async function executeGetCredentials(
 	kek: string,
 	authType: AuthTypes,
 	tenantId: string,
+	plugin?: CorsairPlugin,
 ): Promise<void> {
 	const spin = p.spinner();
 	spin.start('Fetching credentials...');
@@ -654,16 +819,20 @@ async function executeGetCredentials(
 
 		if (authType === 'oauth_2') {
 			// Integration-level credentials
+			const extraIntegrationFields = plugin
+				? getCustomIntegrationFields(plugin, authType)
+				: [];
 			const integrationKm = createIntegrationKeyManager({
 				authType: 'oauth_2',
 				integrationName: pluginId,
 				kek,
 				database,
+				extraIntegrationFields,
 			});
 
-			const clientId = await integrationKm.getClientId();
-			const clientSecret = await integrationKm.getClientSecret();
-			const redirectUrl = await integrationKm.getRedirectUrl();
+			const clientId = await integrationKm.get_client_id();
+			const clientSecret = await integrationKm.get_client_secret();
+			const redirectUrl = await integrationKm.get_redirect_url();
 
 			lines.push('[Integration]');
 			lines.push(
@@ -676,18 +845,34 @@ async function executeGetCredentials(
 				`  Redirect URL: ${redirectUrl ? maskValue(redirectUrl) : '(not set)'}`,
 			);
 
+			// Display custom integration fields
+			for (const field of extraIntegrationFields) {
+				const getMethod = fieldToMethodName(field, 'get');
+				const value = (await tryCallKeyManagerMethod(
+					integrationKm,
+					getMethod,
+				)) as string | null;
+				lines.push(
+					`  ${fieldToLabel(field)}: ${value ? maskValue(value) : '(not set)'}`,
+				);
+			}
+
 			// Account-level credentials
+			const extraAccountFields = plugin
+				? getCustomAccountFields(plugin, authType)
+				: [];
 			const accountKm = createAccountKeyManager({
 				authType: 'oauth_2',
 				integrationName: pluginId,
 				tenantId,
 				kek,
 				database,
+				extraAccountFields,
 			});
 
-			const accessToken = await accountKm.getAccessToken();
-			const refreshToken = await accountKm.getRefreshToken();
-			const webhookSig = await accountKm.getWebhookSignature();
+			const accessToken = await accountKm.get_access_token();
+			const refreshToken = await accountKm.get_refresh_token();
+			const webhookSig = await accountKm.get_webhook_signature();
 
 			lines.push('[Account]');
 			lines.push(
@@ -699,38 +884,79 @@ async function executeGetCredentials(
 			lines.push(
 				`  Webhook Signature: ${webhookSig ? maskValue(webhookSig) : '(not set)'}`,
 			);
+
+			// Display custom account fields
+			for (const field of extraAccountFields) {
+				const getMethod = fieldToMethodName(field, 'get');
+				const value = (await tryCallKeyManagerMethod(accountKm, getMethod)) as
+					| string
+					| null;
+				lines.push(
+					`  ${fieldToLabel(field)}: ${value ? maskValue(value) : '(not set)'}`,
+				);
+			}
 		} else if (authType === 'bot_token') {
+			const extraAccountFields = plugin
+				? getCustomAccountFields(plugin, authType)
+				: [];
 			const accountKm = createAccountKeyManager({
 				authType: 'bot_token',
 				integrationName: pluginId,
 				tenantId,
 				kek,
 				database,
+				extraAccountFields,
 			});
 
-			const botToken = await accountKm.getBotToken();
-			const webhookSig = await accountKm.getWebhookSignature();
+			const botToken = await accountKm.get_bot_token();
+			const webhookSig = await accountKm.get_webhook_signature();
 
 			lines.push(`Bot Token: ${botToken ? maskValue(botToken) : '(not set)'}`);
 			lines.push(
 				`Webhook Signature: ${webhookSig ? maskValue(webhookSig) : '(not set)'}`,
 			);
+
+			// Display custom account fields
+			for (const field of extraAccountFields) {
+				const getMethod = fieldToMethodName(field, 'get');
+				const value = (await tryCallKeyManagerMethod(accountKm, getMethod)) as
+					| string
+					| null;
+				lines.push(
+					`${fieldToLabel(field)}: ${value ? maskValue(value) : '(not set)'}`,
+				);
+			}
 		} else if (authType === 'api_key') {
+			const extraAccountFields = plugin
+				? getCustomAccountFields(plugin, authType)
+				: [];
 			const accountKm = createAccountKeyManager({
 				authType: 'api_key',
 				integrationName: pluginId,
 				tenantId,
 				kek,
 				database,
+				extraAccountFields,
 			});
 
-			const apiKey = await accountKm.getApiKey();
-			const webhookSig = await accountKm.getWebhookSignature();
+			const apiKey = await accountKm.get_api_key();
+			const webhookSig = await accountKm.get_webhook_signature();
 
 			lines.push(`API Key: ${apiKey ? maskValue(apiKey) : '(not set)'}`);
 			lines.push(
 				`Webhook Signature: ${webhookSig ? maskValue(webhookSig) : '(not set)'}`,
 			);
+
+			// Display custom account fields
+			for (const field of extraAccountFields) {
+				const getMethod = fieldToMethodName(field, 'get');
+				const value = (await tryCallKeyManagerMethod(accountKm, getMethod)) as
+					| string
+					| null;
+				lines.push(
+					`${fieldToLabel(field)}: ${value ? maskValue(value) : '(not set)'}`,
+				);
+			}
 		}
 
 		spin.stop('Credentials retrieved.');
@@ -813,6 +1039,7 @@ async function executeAction(
 	kek: string,
 	authType: AuthTypes | undefined,
 	tenantId: string,
+	plugin?: CorsairPlugin,
 ): Promise<void> {
 	if (action.value === 'view-status') {
 		await viewStatus(database, pluginId);
@@ -824,7 +1051,72 @@ async function executeAction(
 			p.log.warn('No auth type configured for this plugin.');
 			return;
 		}
-		await executeGetCredentials(database, pluginId, kek, authType, tenantId);
+		await executeGetCredentials(
+			database,
+			pluginId,
+			kek,
+			authType,
+			tenantId,
+			plugin,
+		);
+		return;
+	}
+
+	// Handle custom field get actions
+	if (action.type === 'display' && action.method?.startsWith('get_')) {
+		if (!authType) {
+			p.log.warn('No auth type configured for this plugin.');
+			return;
+		}
+
+		const spin = p.spinner();
+		spin.start('Fetching value...');
+
+		try {
+			let value: string | null = null;
+			if (action.level === 'account') {
+				const extraAccountFields = plugin
+					? getCustomAccountFields(plugin, authType)
+					: [];
+				const km = createAccountKeyManager({
+					authType,
+					integrationName: pluginId,
+					tenantId,
+					kek,
+					database,
+					extraAccountFields,
+				});
+				value = (await tryCallKeyManagerMethod(km, action.method!)) as
+					| string
+					| null;
+			} else if (action.level === 'integration') {
+				const extraIntegrationFields = plugin
+					? getCustomIntegrationFields(plugin, authType)
+					: [];
+				const km = createIntegrationKeyManager({
+					authType,
+					integrationName: pluginId,
+					kek,
+					database,
+					extraIntegrationFields,
+				});
+				value = (await tryCallKeyManagerMethod(km, action.method!)) as
+					| string
+					| null;
+			}
+
+			spin.stop('Value retrieved.');
+			const displayValue = value ? maskValue(value) : '(not set)';
+			p.note(
+				`${fieldToLabel(action.method.replace('get_', ''))}: ${displayValue}`,
+				'Value',
+			);
+		} catch (error) {
+			spin.stop('Failed.');
+			p.log.error(
+				`Error: ${error instanceof Error ? error.message : String(error)}`,
+			);
+		}
 		return;
 	}
 
@@ -834,7 +1126,15 @@ async function executeAction(
 	}
 
 	if (action.type === 'set') {
-		await executeSetAction(action, database, pluginId, kek, authType, tenantId);
+		await executeSetAction(
+			action,
+			database,
+			pluginId,
+			kek,
+			authType,
+			tenantId,
+			plugin,
+		);
 	} else if (action.type === 'confirm') {
 		await executeConfirmAction(
 			action,
@@ -843,6 +1143,7 @@ async function executeAction(
 			kek,
 			authType,
 			tenantId,
+			plugin,
 		);
 	}
 }
@@ -901,8 +1202,16 @@ export async function runAuth({ cwd }: { cwd: string }): Promise<void> {
 	await ensureAccountExists(database, integration.id, tenantId, kek);
 
 	// 6. Select and execute action
-	const action = await selectAction(authType);
-	await executeAction(action, database, plugin.id, kek, authType, tenantId);
+	const action = await selectAction(authType, plugin);
+	await executeAction(
+		action,
+		database,
+		plugin.id,
+		kek,
+		authType,
+		tenantId,
+		plugin,
+	);
 
 	p.outro('Done!');
 }
