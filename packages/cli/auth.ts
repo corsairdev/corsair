@@ -661,9 +661,9 @@ async function executeGetCredentials(
 				database,
 			});
 
-			const clientId = await integrationKm.getClientId();
-			const clientSecret = await integrationKm.getClientSecret();
-			const redirectUrl = await integrationKm.getRedirectUrl();
+			const clientId = await integrationKm.get_client_id();
+			const clientSecret = await integrationKm.get_client_secret();
+			const redirectUrl = await integrationKm.get_redirect_url();
 
 			lines.push('[Integration]');
 			lines.push(
@@ -685,9 +685,9 @@ async function executeGetCredentials(
 				database,
 			});
 
-			const accessToken = await accountKm.getAccessToken();
-			const refreshToken = await accountKm.getRefreshToken();
-			const webhookSig = await accountKm.getWebhookSignature();
+			const accessToken = await accountKm.get_access_token();
+			const refreshToken = await accountKm.get_refresh_token();
+			const webhookSig = await accountKm.get_webhook_signature();
 
 			lines.push('[Account]');
 			lines.push(
@@ -708,8 +708,8 @@ async function executeGetCredentials(
 				database,
 			});
 
-			const botToken = await accountKm.getBotToken();
-			const webhookSig = await accountKm.getWebhookSignature();
+			const botToken = await accountKm.get_bot_token();
+			const webhookSig = await accountKm.get_webhook_signature();
 
 			lines.push(`Bot Token: ${botToken ? maskValue(botToken) : '(not set)'}`);
 			lines.push(
@@ -724,8 +724,8 @@ async function executeGetCredentials(
 				database,
 			});
 
-			const apiKey = await accountKm.getApiKey();
-			const webhookSig = await accountKm.getWebhookSignature();
+			const apiKey = await accountKm.get_api_key();
+			const webhookSig = await accountKm.get_webhook_signature();
 
 			lines.push(`API Key: ${apiKey ? maskValue(apiKey) : '(not set)'}`);
 			lines.push(
