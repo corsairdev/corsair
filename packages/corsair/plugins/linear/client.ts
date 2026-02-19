@@ -31,9 +31,9 @@ export async function makeLinearRequest<T>(
 		VERSION: '1.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
-		TOKEN: token,
 		HEADERS: {
 			'Content-Type': 'application/json',
+			Authorization: token,
 		},
 	};
 
