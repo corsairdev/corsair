@@ -177,13 +177,13 @@ export function googledrive<const T extends GoogleDrivePluginOptions>(
 				const refreshToken = await ctx.keys.get_refresh_token();
 
 				if (!accessToken || !refreshToken) {
-					return '';
+					throw new Error('No access token or refresh token');
 				}
 
 				const res = await ctx.keys.get_integration_credentials();
 
 				if (!res.client_id || !res.client_secret) {
-					return '';
+					throw new Error('No client id or client secret');
 				}
 
 				const key = await getValidAccessToken({
@@ -210,12 +210,13 @@ export function googledrive<const T extends GoogleDrivePluginOptions>(
 			const body = request.body as PubSubNotification;
 			if (!body?.message?.data) return false;
 
-			try {
-				const decoded = decodePubSubMessage(body.message.data);
-				return !!decoded.resourceId && !!decoded.kind;
-			} catch {
-				return false;
-			}
+		try {
+			const decoded = decodePubSubMessage(body.message.data);
+
+			return !!decoded.resourceUri && decoded.resourceUri.includes('drive')
+		} catch {
+			return false;
+		}
 		},
 	} satisfies InternalGoogleDrivePlugin;
 }

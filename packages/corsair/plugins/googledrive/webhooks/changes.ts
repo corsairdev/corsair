@@ -61,8 +61,6 @@ async function fetchFileBinary(
 			},
 		});
 
-		console.log(response, 'response');
-
 		if (!response.ok) {
 			return null;
 		}
@@ -169,6 +167,8 @@ export const driveChanged: GoogleDriveWebhooks['driveChanged'] = {
 
 			changes = filterRecentChanges(changes);
 
+			let corsairEntityId = '';
+
 			if (changes.length === 0) {
 				return {
 					success: true,
@@ -204,6 +204,31 @@ export const driveChanged: GoogleDriveWebhooks['driveChanged'] = {
 				);
 
 				if (isFolder) {
+					if (ctx.db?.folders && file.id) {
+						try {
+							if (changeType === 'deleted') {
+								await ctx.db.folders.deleteByEntityId(file.id);
+							} else {
+								const entity = await ctx.db.folders.upsertByEntityId(
+									file.id,
+									{
+										...file,
+										id: file.id,
+										filePath,
+									},
+								);
+								if (!corsairEntityId && entity?.id) {
+									corsairEntityId = entity.id;
+								}
+							}
+						} catch (error) {
+							console.warn(
+								`Failed to save folder ${file.id} to database:`,
+								error,
+							);
+						}
+					}
+
 					folders.push({
 						folder: file,
 						filePath,
@@ -212,7 +237,29 @@ export const driveChanged: GoogleDriveWebhooks['driveChanged'] = {
 					});
 				} else {
 					const binaryData = await fetchFileBinary(credentials, change.fileId);
-					console.log(binaryData, 'binaryData');
+
+					if (ctx.db?.files && file.id) {
+						try {
+							if (changeType === 'deleted') {
+								await ctx.db.files.deleteByEntityId(file.id);
+							} else {
+								const entity = await ctx.db.files.upsertByEntityId(file.id, {
+									...file,
+									id: file.id,
+									filePath,
+								});
+
+								if (!corsairEntityId && entity?.id) {
+									corsairEntityId = entity.id;
+								}
+							}
+						} catch (error) {
+							console.warn(
+								`Failed to save file ${file.id} to database:`,
+								error,
+							);
+						}
+					}
 
 					files.push({
 						file,
@@ -252,7 +299,7 @@ export const driveChanged: GoogleDriveWebhooks['driveChanged'] = {
 					'completed',
 				);
 
-				return { success: true, corsairEntityId: '', data: eventData };
+				return { success: true, corsairEntityId, data: eventData };
 			}
 
 			const eventData = {
@@ -280,7 +327,7 @@ export const driveChanged: GoogleDriveWebhooks['driveChanged'] = {
 				'completed',
 			);
 
-			return { success: true, corsairEntityId: '', data: eventData };
+			return { success: true, corsairEntityId, data: eventData };
 		} catch (error) {
 			console.error('Failed to process Google Drive webhook:', error);
 			return {

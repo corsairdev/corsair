@@ -144,13 +144,13 @@ export function googlecalendar<const T extends GoogleCalendarPluginOptions>(
 				const refreshToken = await ctx.keys.get_refresh_token();
 
 				if (!accessToken || !refreshToken) {
-					return '';
+					throw new Error('No access token or refresh token');
 				}
 
 				const res = await ctx.keys.get_integration_credentials();
 
 				if (!res.client_id || !res.client_secret) {
-					return '';
+					throw new Error('No client id or client secret');
 				}
 
 				const key = await getValidAccessToken({
@@ -179,7 +179,8 @@ export function googlecalendar<const T extends GoogleCalendarPluginOptions>(
 
 			try {
 				const decoded = decodePubSubMessage(body.message.data);
-				return !!decoded.channelId && !!decoded.resourceUri;
+				
+				return !!decoded.resourceUri && decoded.resourceUri.includes('calendar')
 			} catch {
 				return false;
 			}

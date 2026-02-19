@@ -263,11 +263,16 @@ async function upsertMessageToDb(
 	return entity?.id ?? '';
 }
 
-async function resolveAddedMessageIds(
+
+async function resolveAndCategorizeMessageIds(
+	ctx: MessageChangedContext,
 	credentials: string,
 	emailAddress: string,
 	historyId: string,
-): Promise<string[]> {
+): Promise<{
+	added: string[];
+	modified: string[];
+}> {
 	const messagesResponse = await makeGmailRequest<{
 		messages?: Array<{ id?: string }>;
 	}>(`/users/${emailAddress}/messages`, credentials, {
@@ -275,8 +280,11 @@ async function resolveAddedMessageIds(
 		query: { maxResults: RECENT_MESSAGES_LIMIT },
 	});
 
+	const added: string[] = [];
+	const modified: string[] = [];
+
 	if (!messagesResponse.messages?.length) {
-		return [];
+		return { added, modified };
 	}
 
 	const targetHistoryIdNum = Number(historyId);
@@ -298,12 +306,23 @@ async function resolveAddedMessageIds(
 				messageHistoryIdNum >=
 				targetHistoryIdNum - HISTORY_ID_MATCH_THRESHOLD
 			) {
-				return [msg.id];
+				if (ctx.db?.messages) {
+					const existingEntity = await ctx.db.messages.findByEntityId(
+						msg.id,
+					);
+					if (existingEntity) {
+						modified.push(msg.id);
+					} else {
+						added.push(msg.id);
+					}
+				} else {
+					added.push(msg.id);
+				}
 			}
 		} catch {}
 	}
 
-	return [];
+	return { added, modified };
 }
 
 async function processAddedMessages(
@@ -492,16 +511,44 @@ export const messageChanged: GmailWebhooks['messageChanged'] = {
 				},
 			);
 
-			const { added, deleted, modified } = extractMessageIds(
-				historyResponse.history,
-			);
+			const { added: historyAdded, deleted, modified: historyModified } =
+				extractMessageIds(historyResponse.history);
 
-			if (added.length > 0) {
+			if (historyModified.length > 0) {
+				const result = await processModifiedMessages(
+					ctx,
+					credentials,
+					emailAddress,
+					historyModified,
+				);
+
+				const eventData = {
+					type: 'messageLabelChanged' as const,
+					emailAddress,
+					historyId,
+					message: result.message ?? {},
+				};
+
+				await logEventFromContext(
+					ctx,
+					'gmail.webhook.messageLabelChanged',
+					{ ...eventData },
+					'completed',
+				);
+
+				return {
+					success: true,
+					corsairEntityId: result.corsairEntityId,
+					data: eventData,
+				};
+			}
+
+			if (historyAdded.length > 0) {
 				const result = await processAddedMessages(
 					ctx,
 					credentials,
 					emailAddress,
-					added,
+					historyAdded,
 				);
 
 				const eventData = {
@@ -554,6 +601,13 @@ export const messageChanged: GmailWebhooks['messageChanged'] = {
 				};
 			}
 
+			const { added, modified } = await resolveAndCategorizeMessageIds(
+				ctx,
+				credentials,
+				emailAddress,
+				historyId,
+			);
+
 			if (modified.length > 0) {
 				const result = await processModifiedMessages(
 					ctx,
@@ -583,37 +637,44 @@ export const messageChanged: GmailWebhooks['messageChanged'] = {
 				};
 			}
 
-			const resolvedIds = await resolveAddedMessageIds(
-				credentials,
-				emailAddress,
-				historyId,
-			);
+			if (added.length > 0) {
+				const result = await processAddedMessages(
+					ctx,
+					credentials,
+					emailAddress,
+					added,
+				);
 
-			const result = await processAddedMessages(
-				ctx,
-				credentials,
-				emailAddress,
-				resolvedIds,
-			);
+				const eventData = {
+					type: 'messageReceived' as const,
+					emailAddress,
+					historyId,
+					message: result.message ?? {},
+				};
 
-			const eventData = {
-				type: 'messageReceived' as const,
-				emailAddress,
-				historyId,
-				message: result.message ?? {},
-			};
+				await logEventFromContext(
+					ctx,
+					'gmail.webhook.messageReceived',
+					{ ...eventData },
+					'completed',
+				);
 
-			await logEventFromContext(
-				ctx,
-				'gmail.webhook.messageReceived',
-				{ ...eventData },
-				'completed',
-			);
+				return {
+					success: true,
+					corsairEntityId: result.corsairEntityId,
+					data: eventData,
+				};
+			}
 
 			return {
 				success: true,
-				corsairEntityId: result.corsairEntityId,
-				data: eventData,
+				corsairEntityId: '',
+				data: {
+					type: 'messageReceived' as const,
+					emailAddress,
+					historyId,
+					message: {},
+				},
 			};
 		} catch (error) {
 			console.error('Failed to process Gmail webhook:', error);
