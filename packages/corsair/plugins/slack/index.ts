@@ -9,7 +9,7 @@ import type {
 	KeyBuilderContext,
 	PluginAuthConfig,
 } from '../../core';
-import type { SlackEndpointOutputs, SlackReactionName } from './endpoints';
+import type { SlackEndpointInputs, SlackEndpointOutputs } from './endpoints';
 import {
 	Channels,
 	Files,
@@ -48,325 +48,48 @@ import type { AuthTypes, PickAuth } from '../../core/constants';
 import { errorHandlers } from './error-handlers';
 
 export type SlackEndpoints = {
-	channelsRandom: SlackEndpoint<'channelsRandom', {}>;
-	channelsArchive: SlackEndpoint<'channelsArchive', { channel: string }>;
-	channelsClose: SlackEndpoint<'channelsClose', { channel: string }>;
-	channelsCreate: SlackEndpoint<
-		'channelsCreate',
-		{ name: string; is_private?: boolean; team_id?: string }
-	>;
-	channelsGet: SlackEndpoint<
-		'channelsGet',
-		{
-			channel: string;
-			include_locale?: boolean;
-			include_num_members?: boolean;
-		}
-	>;
-	channelsList: SlackEndpoint<
-		'channelsList',
-		{
-			exclude_archived?: boolean;
-			types?: string;
-			team_id?: string;
-			cursor?: string;
-			limit?: number;
-		}
-	>;
-	channelsGetHistory: SlackEndpoint<
-		'channelsGetHistory',
-		{
-			channel: string;
-			latest?: string;
-			oldest?: string;
-			inclusive?: boolean;
-			include_all_metadata?: boolean;
-			cursor?: string;
-			limit?: number;
-		}
-	>;
-	channelsInvite: SlackEndpoint<
-		'channelsInvite',
-		{ channel: string; users: string; force?: boolean }
-	>;
-	channelsJoin: SlackEndpoint<'channelsJoin', { channel: string }>;
-	channelsKick: SlackEndpoint<
-		'channelsKick',
-		{ channel: string; user: string }
-	>;
-	channelsLeave: SlackEndpoint<'channelsLeave', { channel: string }>;
-	channelsGetMembers: SlackEndpoint<
-		'channelsGetMembers',
-		{ channel: string; cursor?: string; limit?: number }
-	>;
-	channelsOpen: SlackEndpoint<
-		'channelsOpen',
-		{
-			channel?: string;
-			users?: string;
-			prevent_creation?: boolean;
-			return_im?: boolean;
-		}
-	>;
-	channelsRename: SlackEndpoint<
-		'channelsRename',
-		{ channel: string; name: string }
-	>;
-	channelsGetReplies: SlackEndpoint<
-		'channelsGetReplies',
-		{
-			channel: string;
-			ts: string;
-			latest?: string;
-			oldest?: string;
-			inclusive?: boolean;
-			include_all_metadata?: boolean;
-			cursor?: string;
-			limit?: number;
-		}
-	>;
-	channelsSetPurpose: SlackEndpoint<
-		'channelsSetPurpose',
-		{ channel: string; purpose: string }
-	>;
-	channelsSetTopic: SlackEndpoint<
-		'channelsSetTopic',
-		{ channel: string; topic: string }
-	>;
-	channelsUnarchive: SlackEndpoint<'channelsUnarchive', { channel: string }>;
-	usersGet: SlackEndpoint<
-		'usersGet',
-		{ user: string; include_locale?: boolean }
-	>;
-	usersList: SlackEndpoint<
-		'usersList',
-		{
-			include_locale?: boolean;
-			team_id?: string;
-			cursor?: string;
-			limit?: number;
-		}
-	>;
-	usersGetProfile: SlackEndpoint<
-		'usersGetProfile',
-		{ user?: string; include_labels?: boolean }
-	>;
-	usersGetPresence: SlackEndpoint<'usersGetPresence', { user?: string }>;
-	usersUpdateProfile: SlackEndpoint<
-		'usersUpdateProfile',
-		{
-			profile?: Record<string, unknown>;
-			user?: string;
-			name?: string;
-			value?: string;
-		}
-	>;
-	userGroupsCreate: SlackEndpoint<
-		'userGroupsCreate',
-		{
-			name: string;
-			channels?: string;
-			description?: string;
-			handle?: string;
-			include_count?: boolean;
-			team_id?: string;
-		}
-	>;
-	userGroupsDisable: SlackEndpoint<
-		'userGroupsDisable',
-		{
-			userGroup: string;
-			include_count?: boolean;
-			team_id?: string;
-		}
-	>;
-	userGroupsEnable: SlackEndpoint<
-		'userGroupsEnable',
-		{
-			userGroup: string;
-			include_count?: boolean;
-			team_id?: string;
-		}
-	>;
-	userGroupsList: SlackEndpoint<
-		'userGroupsList',
-		{
-			include_count?: boolean;
-			include_disabled?: boolean;
-			include_users?: boolean;
-			team_id?: string;
-		}
-	>;
-	userGroupsUpdate: SlackEndpoint<
-		'userGroupsUpdate',
-		{
-			userGroup: string;
-			name?: string;
-			channels?: string;
-			description?: string;
-			handle?: string;
-			include_count?: boolean;
-			team_id?: string;
-		}
-	>;
-	filesGet: SlackEndpoint<
-		'filesGet',
-		{
-			file: string;
-			cursor?: string;
-			limit?: number;
-			page?: number;
-			count?: number;
-		}
-	>;
-	filesList: SlackEndpoint<
-		'filesList',
-		{
-			channel?: string;
-			user?: string;
-			types?: string;
-			ts_from?: string;
-			ts_to?: string;
-			show_files_hidden_by_limit?: boolean;
-			team_id?: string;
-			page?: number;
-			count?: number;
-		}
-	>;
-	filesUpload: SlackEndpoint<
-		'filesUpload',
-		{
-			channels?: string;
-			content?: string;
-			file?: unknown;
-			filename?: string;
-			filetype?: string;
-			initial_comment?: string;
-			thread_ts?: string;
-			title?: string;
-		}
-	>;
-	messagesDelete: SlackEndpoint<
-		'messagesDelete',
-		{ channel: string; ts: string; as_user?: boolean }
-	>;
-	messagesGetPermalink: SlackEndpoint<
-		'messagesGetPermalink',
-		{ channel: string; message_ts: string }
-	>;
-	messagesSearch: SlackEndpoint<
-		'messagesSearch',
-		{
-			query: string;
-			sort?: 'score' | 'timestamp';
-			sort_dir?: 'asc' | 'desc';
-			highlight?: boolean;
-			team_id?: string;
-			cursor?: string;
-			limit?: number;
-			page?: number;
-			count?: number;
-		}
-	>;
-	postMessage: SlackEndpoint<
-		'postMessage',
-		{
-			channel: string;
-			text?: string;
-			blocks?: Array<{ type: string; [key: string]: unknown }>;
-			attachments?: Array<{ [key: string]: unknown }>;
-			thread_ts?: string;
-			reply_broadcast?: boolean;
-			parse?: 'full' | 'none';
-			link_names?: boolean;
-			unfurl_links?: boolean;
-			unfurl_media?: boolean;
-			mrkdwn?: boolean;
-			as_user?: boolean;
-			icon_emoji?: string;
-			icon_url?: string;
-			username?: string;
-			metadata?: {
-				event_type: string;
-				event_payload: Record<string, unknown>;
-			};
-		}
-	>;
-	messagesUpdate: SlackEndpoint<
-		'messagesUpdate',
-		{
-			channel: string;
-			ts: string;
-			text?: string;
-			blocks?: Array<{ type: string; [key: string]: unknown }>;
-			attachments?: Array<{ [key: string]: unknown }>;
-			parse?: 'full' | 'none';
-			link_names?: boolean;
-			as_user?: boolean;
-			file_ids?: string[];
-			reply_broadcast?: boolean;
-			metadata?: {
-				event_type: string;
-				event_payload: Record<string, unknown>;
-			};
-		}
-	>;
-	reactionsAdd: SlackEndpoint<
-		'reactionsAdd',
-		{
-			channel: string;
-			timestamp: string;
-			name: SlackReactionName;
-		}
-	>;
-	reactionsGet: SlackEndpoint<
-		'reactionsGet',
-		{
-			channel?: string;
-			timestamp?: string;
-			file?: string;
-			file_comment?: string;
-			full?: boolean;
-		}
-	>;
-	reactionsRemove: SlackEndpoint<
-		'reactionsRemove',
-		{
-			name: SlackReactionName;
-			channel?: string;
-			timestamp?: string;
-			file?: string;
-			file_comment?: string;
-		}
-	>;
-	starsAdd: SlackEndpoint<
-		'starsAdd',
-		{
-			channel?: string;
-			timestamp?: string;
-			file?: string;
-			file_comment?: string;
-		}
-	>;
-	starsRemove: SlackEndpoint<
-		'starsRemove',
-		{
-			channel?: string;
-			timestamp?: string;
-			file?: string;
-			file_comment?: string;
-		}
-	>;
-	starsList: SlackEndpoint<
-		'starsList',
-		{
-			team_id?: string;
-			cursor?: string;
-			limit?: number;
-			page?: number;
-			count?: number;
-		}
-	>;
+	channelsRandom: SlackEndpoint<'channelsRandom'>;
+	channelsArchive: SlackEndpoint<'channelsArchive'>;
+	channelsClose: SlackEndpoint<'channelsClose'>;
+	channelsCreate: SlackEndpoint<'channelsCreate'>;
+	channelsGet: SlackEndpoint<'channelsGet'>;
+	channelsList: SlackEndpoint<'channelsList'>;
+	channelsGetHistory: SlackEndpoint<'channelsGetHistory'>;
+	channelsInvite: SlackEndpoint<'channelsInvite'>;
+	channelsJoin: SlackEndpoint<'channelsJoin'>;
+	channelsKick: SlackEndpoint<'channelsKick'>;
+	channelsLeave: SlackEndpoint<'channelsLeave'>;
+	channelsGetMembers: SlackEndpoint<'channelsGetMembers'>;
+	channelsOpen: SlackEndpoint<'channelsOpen'>;
+	channelsRename: SlackEndpoint<'channelsRename'>;
+	channelsGetReplies: SlackEndpoint<'channelsGetReplies'>;
+	channelsSetPurpose: SlackEndpoint<'channelsSetPurpose'>;
+	channelsSetTopic: SlackEndpoint<'channelsSetTopic'>;
+	channelsUnarchive: SlackEndpoint<'channelsUnarchive'>;
+	usersGet: SlackEndpoint<'usersGet'>;
+	usersList: SlackEndpoint<'usersList'>;
+	usersGetProfile: SlackEndpoint<'usersGetProfile'>;
+	usersGetPresence: SlackEndpoint<'usersGetPresence'>;
+	usersUpdateProfile: SlackEndpoint<'usersUpdateProfile'>;
+	userGroupsCreate: SlackEndpoint<'userGroupsCreate'>;
+	userGroupsDisable: SlackEndpoint<'userGroupsDisable'>;
+	userGroupsEnable: SlackEndpoint<'userGroupsEnable'>;
+	userGroupsList: SlackEndpoint<'userGroupsList'>;
+	userGroupsUpdate: SlackEndpoint<'userGroupsUpdate'>;
+	filesGet: SlackEndpoint<'filesGet'>;
+	filesList: SlackEndpoint<'filesList'>;
+	filesUpload: SlackEndpoint<'filesUpload'>;
+	messagesDelete: SlackEndpoint<'messagesDelete'>;
+	messagesGetPermalink: SlackEndpoint<'messagesGetPermalink'>;
+	messagesSearch: SlackEndpoint<'messagesSearch'>;
+	postMessage: SlackEndpoint<'postMessage'>;
+	messagesUpdate: SlackEndpoint<'messagesUpdate'>;
+	reactionsAdd: SlackEndpoint<'reactionsAdd'>;
+	reactionsGet: SlackEndpoint<'reactionsGet'>;
+	reactionsRemove: SlackEndpoint<'reactionsRemove'>;
+	starsAdd: SlackEndpoint<'starsAdd'>;
+	starsRemove: SlackEndpoint<'starsRemove'>;
+	starsList: SlackEndpoint<'starsList'>;
 };
 
 const slackEndpointsNested = {
@@ -466,16 +189,16 @@ const slackWebhooksNested = {
 
 const defaultAuthType: AuthTypes = 'api_key';
 
+type SlackEndpoint<K extends keyof SlackEndpointOutputs> = CorsairEndpoint<
+	SlackContext,
+	SlackEndpointInputs[K],
+	SlackEndpointOutputs[K]
+>;
 export const slackAuthConfig = {
 	api_key: {
 		account: ['one'] as const,
 	},
 } as const satisfies PluginAuthConfig;
-
-type SlackEndpoint<
-	K extends keyof SlackEndpointOutputs,
-	Input,
-> = CorsairEndpoint<SlackContext, Input, SlackEndpointOutputs[K]>;
 
 /**
  * const endpoints = ctx.endpoints as SlackBoundEndpoints
@@ -679,7 +402,6 @@ export type {
 	ReactionsGetResponse,
 	ReactionsRemoveResponse,
 	SearchMessagesResponse,
-	SlackEndpointInputs,
 	SlackEndpointOutputs,
 	StarsAddResponse,
 	StarsListResponse,

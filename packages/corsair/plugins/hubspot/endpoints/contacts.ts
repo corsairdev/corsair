@@ -19,7 +19,7 @@ export const get: HubSpotEndpoints['contactsGet'] = async (ctx, input) => {
 				properties: queryParams.properties?.join(','),
 				propertiesWithHistory: queryParams.propertiesWithHistory?.join(','),
 				associations: queryParams.associations?.join(','),
-			} as any,
+			},
 		},
 	);
 
@@ -55,7 +55,7 @@ export const getMany: HubSpotEndpoints['contactsGetMany'] = async (
 				properties: queryParams.properties?.join(','),
 				propertiesWithHistory: queryParams.propertiesWithHistory?.join(','),
 				associations: queryParams.associations?.join(','),
-			} as any,
+			},
 		},
 	);
 

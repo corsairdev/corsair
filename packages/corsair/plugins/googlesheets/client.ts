@@ -118,10 +118,6 @@ export async function makeSheetsRequest<T>(
 		query,
 	};
 
-	try {
-		const response = await request<T>(config, requestOptions);
-		return response;
-	} catch (error) {
-		throw error;
-	}
+	const response = await request<T>(config, requestOptions);
+	return response;
 }

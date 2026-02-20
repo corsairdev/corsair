@@ -1,17 +1,7 @@
-import {
-	onEventCreated,
-	onEventDeleted,
-	onEventEnded,
-	onEventStarted,
-	onEventUpdated,
-} from './events';
+import { onEventChanged } from './events';
 
 export const EventWebhooks = {
-	onEventCreated,
-	onEventUpdated,
-	onEventDeleted,
-	onEventStarted,
-	onEventEnded,
+	onEventChanged,
 };
 
 export * from './types';

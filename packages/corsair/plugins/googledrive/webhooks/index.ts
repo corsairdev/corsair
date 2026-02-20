@@ -1,8 +1,7 @@
-import { fileChanged, folderChanged } from './changes';
+import { driveChanged } from './changes';
 
 export const ChangeWebhooks = {
-	fileChanged,
-	folderChanged,
+	driveChanged,
 };
 
 export * from './types';

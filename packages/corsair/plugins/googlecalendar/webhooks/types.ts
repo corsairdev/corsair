@@ -11,9 +11,10 @@ export type PubSubMessage = {
 	publishTime?: string;
 };
 
-export type PubSubNotification = {
+export type PubSubNotification<TEvent = unknown> = {
 	message?: PubSubMessage;
 	subscription?: string;
+	event?: TEvent;
 };
 
 export type GoogleCalendarPushNotification = {
@@ -47,50 +48,22 @@ export type EventDeletedEvent = {
 	timestamp: string;
 };
 
-export type EventStartedEvent = {
-	type: 'eventStarted';
-	calendarId: string;
-	event: Event;
-	timestamp: string;
-};
-
-export type EventEndedEvent = {
-	type: 'eventEnded';
-	calendarId: string;
-	event: Event;
-	timestamp: string;
-};
-
 export type GoogleCalendarWebhookEvent =
 	| EventCreatedEvent
 	| EventUpdatedEvent
-	| EventDeletedEvent
-	| EventStartedEvent
-	| EventEndedEvent;
+	| EventDeletedEvent;
 
-export type GoogleCalendarEventName =
-	| 'eventCreated'
-	| 'eventUpdated'
-	| 'eventDeleted'
-	| 'eventStarted'
-	| 'eventEnded';
+export type GoogleCalendarEventName = 'eventChanged';
 
 export interface GoogleCalendarEventMap {
-	eventCreated: EventCreatedEvent;
-	eventUpdated: EventUpdatedEvent;
-	eventDeleted: EventDeletedEvent;
-	eventStarted: EventStartedEvent;
-	eventEnded: EventEndedEvent;
+	eventChanged: EventCreatedEvent | EventUpdatedEvent | EventDeletedEvent;
 }
 
-export type GoogleCalendarWebhookPayload = PubSubNotification;
+export type GoogleCalendarWebhookPayload<TEvent = unknown> =
+	PubSubNotification<TEvent>;
 
 export type GoogleCalendarWebhookOutputs = {
-	eventCreated: EventCreatedEvent;
-	eventUpdated: EventUpdatedEvent;
-	eventDeleted: EventDeletedEvent;
-	eventStarted: EventStartedEvent;
-	eventEnded: EventEndedEvent;
+	eventChanged: EventCreatedEvent | EventUpdatedEvent | EventDeletedEvent;
 };
 
 export function decodePubSubMessage(
@@ -112,36 +85,11 @@ export function createGoogleCalendarWebhookMatcher(
 		try {
 			const pushNotification = decodePubSubMessage(body.message.data!);
 
-			if (eventType === 'eventCreated') {
-				return (
-					pushNotification.resourceState === 'exists' &&
-					!!pushNotification.resourceUri
-				);
-			}
-
-			if (eventType === 'eventUpdated') {
-				return (
-					pushNotification.resourceState === 'exists' &&
-					!!pushNotification.resourceUri &&
-					!!pushNotification.changed
-				);
-			}
-
-			if (eventType === 'eventDeleted') {
-				return (
-					pushNotification.resourceState === 'not_exists' ||
-					pushNotification.resourceState === 'sync'
-				);
-			}
-
-			if (eventType === 'eventStarted' || eventType === 'eventEnded') {
-				return (
-					pushNotification.resourceState === 'exists' &&
-					!!pushNotification.resourceUri
-				);
-			}
-
-			return false;
+			return (
+				!!pushNotification.channelId &&
+				!!pushNotification.resourceId &&
+				!!pushNotification.resourceUri
+			);
 		} catch {
 			return false;
 		}

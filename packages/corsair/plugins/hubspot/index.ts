@@ -10,7 +10,10 @@ import type {
 	RawWebhookRequest,
 } from '../../core';
 import type { AuthTypes, PickAuth } from '../../core/constants';
-import type { HubSpotEndpointOutputs } from './endpoints';
+import type {
+	HubSpotEndpointInputs,
+	HubSpotEndpointOutputs,
+} from './endpoints';
 import {
 	CompaniesEndpoints,
 	ContactListsEndpoints,
@@ -34,7 +37,6 @@ import type {
 	DealUpdatedEventType,
 	HubSpotWebhookOutputs,
 	HubSpotWebhookPayload,
-	HubSpotWebhookPayloadType,
 	TicketCreatedEventType,
 	TicketDeletedEventType,
 	TicketUpdatedEventType,
@@ -53,326 +55,47 @@ export type HubSpotContext = CorsairPluginContext<
 
 export type HubSpotKeyBuilderContext = KeyBuilderContext<HubSpotPluginOptions>;
 
-type HubSpotEndpoint<
-	K extends keyof HubSpotEndpointOutputs,
-	Input,
-> = CorsairEndpoint<HubSpotContext, Input, HubSpotEndpointOutputs[K]>;
+type HubSpotEndpoint<K extends keyof HubSpotEndpointOutputs> = CorsairEndpoint<
+	HubSpotContext,
+	HubSpotEndpointInputs[K],
+	HubSpotEndpointOutputs[K]
+>;
 
 export type HubSpotEndpoints = {
-	contactsGet: HubSpotEndpoint<
-		'contactsGet',
-		{
-			contactId: string;
-			properties?: Array<string>;
-			propertiesWithHistory?: Array<string>;
-			associations?: Array<string>;
-			archived?: boolean;
-			idProperty?: string;
-		}
-	>;
-	contactsGetMany: HubSpotEndpoint<
-		'contactsGetMany',
-		{
-			limit?: number;
-			after?: string;
-			properties?: Array<string>;
-			propertiesWithHistory?: Array<string>;
-			associations?: Array<string>;
-			archived?: boolean;
-		}
-	>;
-	contactsCreateOrUpdate: HubSpotEndpoint<
-		'contactsCreateOrUpdate',
-		{
-			properties?: Record<string, any>;
-			associations?: Array<{
-				to: { id: string };
-				types: Array<{
-					associationCategory: string;
-					associationTypeId: number;
-				}>;
-			}>;
-		}
-	>;
-	contactsDelete: HubSpotEndpoint<
-		'contactsDelete',
-		{
-			contactId: string;
-		}
-	>;
-	contactsGetRecentlyCreated: HubSpotEndpoint<
-		'contactsGetRecentlyCreated',
-		{
-			count?: number;
-			after?: string;
-			since?: string;
-		}
-	>;
-	contactsGetRecentlyUpdated: HubSpotEndpoint<
-		'contactsGetRecentlyUpdated',
-		{
-			count?: number;
-			after?: string;
-			since?: string;
-		}
-	>;
-	contactsSearch: HubSpotEndpoint<
-		'contactsSearch',
-		{
-			query?: string;
-			limit?: number;
-			after?: string;
-			sorts?: Array<string>;
-			properties?: Array<string>;
-			filterGroups?: Array<any>;
-		}
-	>;
-	companiesGet: HubSpotEndpoint<
-		'companiesGet',
-		{
-			companyId: string;
-			properties?: Array<string>;
-			propertiesWithHistory?: Array<string>;
-			associations?: Array<string>;
-			archived?: boolean;
-			idProperty?: string;
-		}
-	>;
-	companiesGetMany: HubSpotEndpoint<
-		'companiesGetMany',
-		{
-			limit?: number;
-			after?: string;
-			properties?: Array<string>;
-			propertiesWithHistory?: Array<string>;
-			associations?: Array<string>;
-			archived?: boolean;
-		}
-	>;
-	companiesCreate: HubSpotEndpoint<
-		'companiesCreate',
-		{
-			properties?: Record<string, any>;
-			associations?: Array<{
-				to: { id: string };
-				types: Array<{
-					associationCategory: string;
-					associationTypeId: number;
-				}>;
-			}>;
-		}
-	>;
-	companiesUpdate: HubSpotEndpoint<
-		'companiesUpdate',
-		{
-			companyId: string;
-			properties?: Record<string, any>;
-		}
-	>;
-	companiesDelete: HubSpotEndpoint<
-		'companiesDelete',
-		{
-			companyId: string;
-		}
-	>;
-	companiesGetRecentlyCreated: HubSpotEndpoint<
-		'companiesGetRecentlyCreated',
-		{
-			count?: number;
-			after?: string;
-			since?: string;
-		}
-	>;
-	companiesGetRecentlyUpdated: HubSpotEndpoint<
-		'companiesGetRecentlyUpdated',
-		{
-			count?: number;
-			after?: string;
-			since?: string;
-		}
-	>;
-	companiesSearchByDomain: HubSpotEndpoint<
-		'companiesSearchByDomain',
-		{
-			domain: string;
-			properties?: Array<string>;
-		}
-	>;
-	dealsGet: HubSpotEndpoint<
-		'dealsGet',
-		{
-			dealId: string;
-			properties?: Array<string>;
-			propertiesWithHistory?: Array<string>;
-			associations?: Array<string>;
-			archived?: boolean;
-			idProperty?: string;
-		}
-	>;
-	dealsGetMany: HubSpotEndpoint<
-		'dealsGetMany',
-		{
-			limit?: number;
-			after?: string;
-			properties?: Array<string>;
-			propertiesWithHistory?: Array<string>;
-			associations?: Array<string>;
-			archived?: boolean;
-		}
-	>;
-	dealsCreate: HubSpotEndpoint<
-		'dealsCreate',
-		{
-			properties?: Record<string, any>;
-			associations?: Array<{
-				to: { id: string };
-				types: Array<{
-					associationCategory: string;
-					associationTypeId: number;
-				}>;
-			}>;
-		}
-	>;
-	dealsUpdate: HubSpotEndpoint<
-		'dealsUpdate',
-		{
-			dealId: string;
-			properties?: Record<string, any>;
-		}
-	>;
-	dealsDelete: HubSpotEndpoint<
-		'dealsDelete',
-		{
-			dealId: string;
-		}
-	>;
-	dealsGetRecentlyCreated: HubSpotEndpoint<
-		'dealsGetRecentlyCreated',
-		{
-			count?: number;
-			after?: string;
-			since?: string;
-		}
-	>;
-	dealsGetRecentlyUpdated: HubSpotEndpoint<
-		'dealsGetRecentlyUpdated',
-		{
-			count?: number;
-			after?: string;
-			since?: string;
-		}
-	>;
-	dealsSearch: HubSpotEndpoint<
-		'dealsSearch',
-		{
-			query?: string;
-			limit?: number;
-			after?: string;
-			sorts?: Array<string>;
-			properties?: Array<string>;
-			filterGroups?: Array<any>;
-		}
-	>;
-	ticketsGet: HubSpotEndpoint<
-		'ticketsGet',
-		{
-			ticketId: string;
-			properties?: Array<string>;
-			propertiesWithHistory?: Array<string>;
-			associations?: Array<string>;
-			archived?: boolean;
-			idProperty?: string;
-		}
-	>;
-	ticketsGetMany: HubSpotEndpoint<
-		'ticketsGetMany',
-		{
-			limit?: number;
-			after?: string;
-			properties?: Array<string>;
-			propertiesWithHistory?: Array<string>;
-			associations?: Array<string>;
-			archived?: boolean;
-		}
-	>;
-	ticketsCreate: HubSpotEndpoint<
-		'ticketsCreate',
-		{
-			properties?: Record<string, any>;
-			associations?: Array<{
-				to: { id: string };
-				types: Array<{
-					associationCategory: string;
-					associationTypeId: number;
-				}>;
-			}>;
-		}
-	>;
-	ticketsUpdate: HubSpotEndpoint<
-		'ticketsUpdate',
-		{
-			ticketId: string;
-			properties?: Record<string, any>;
-		}
-	>;
-	ticketsDelete: HubSpotEndpoint<
-		'ticketsDelete',
-		{
-			ticketId: string;
-		}
-	>;
-	engagementsGet: HubSpotEndpoint<
-		'engagementsGet',
-		{
-			engagementId: string;
-		}
-	>;
-	engagementsGetMany: HubSpotEndpoint<
-		'engagementsGetMany',
-		{
-			limit?: number;
-			after?: string;
-		}
-	>;
-	engagementsCreate: HubSpotEndpoint<
-		'engagementsCreate',
-		{
-			engagement: {
-				active?: boolean;
-				type: string;
-				timestamp?: number;
-			};
-			associations?: {
-				contactIds?: Array<number>;
-				companyIds?: Array<number>;
-				dealIds?: Array<number>;
-				ownerIds?: Array<number>;
-			};
-			metadata?: Record<string, any>;
-		}
-	>;
-	engagementsDelete: HubSpotEndpoint<
-		'engagementsDelete',
-		{
-			engagementId: string;
-		}
-	>;
-	contactListsAddContact: HubSpotEndpoint<
-		'contactListsAddContact',
-		{
-			listId: string;
-			emails?: Array<string>;
-			vids?: Array<number>;
-		}
-	>;
-	contactListsRemoveContact: HubSpotEndpoint<
-		'contactListsRemoveContact',
-		{
-			listId: string;
-			emails?: Array<string>;
-			vids?: Array<number>;
-		}
-	>;
+	contactsGet: HubSpotEndpoint<'contactsGet'>;
+	contactsGetMany: HubSpotEndpoint<'contactsGetMany'>;
+	contactsCreateOrUpdate: HubSpotEndpoint<'contactsCreateOrUpdate'>;
+	contactsDelete: HubSpotEndpoint<'contactsDelete'>;
+	contactsGetRecentlyCreated: HubSpotEndpoint<'contactsGetRecentlyCreated'>;
+	contactsGetRecentlyUpdated: HubSpotEndpoint<'contactsGetRecentlyUpdated'>;
+	contactsSearch: HubSpotEndpoint<'contactsSearch'>;
+	companiesGet: HubSpotEndpoint<'companiesGet'>;
+	companiesGetMany: HubSpotEndpoint<'companiesGetMany'>;
+	companiesCreate: HubSpotEndpoint<'companiesCreate'>;
+	companiesUpdate: HubSpotEndpoint<'companiesUpdate'>;
+	companiesDelete: HubSpotEndpoint<'companiesDelete'>;
+	companiesGetRecentlyCreated: HubSpotEndpoint<'companiesGetRecentlyCreated'>;
+	companiesGetRecentlyUpdated: HubSpotEndpoint<'companiesGetRecentlyUpdated'>;
+	companiesSearchByDomain: HubSpotEndpoint<'companiesSearchByDomain'>;
+	dealsGet: HubSpotEndpoint<'dealsGet'>;
+	dealsGetMany: HubSpotEndpoint<'dealsGetMany'>;
+	dealsCreate: HubSpotEndpoint<'dealsCreate'>;
+	dealsUpdate: HubSpotEndpoint<'dealsUpdate'>;
+	dealsDelete: HubSpotEndpoint<'dealsDelete'>;
+	dealsGetRecentlyCreated: HubSpotEndpoint<'dealsGetRecentlyCreated'>;
+	dealsGetRecentlyUpdated: HubSpotEndpoint<'dealsGetRecentlyUpdated'>;
+	dealsSearch: HubSpotEndpoint<'dealsSearch'>;
+	ticketsGet: HubSpotEndpoint<'ticketsGet'>;
+	ticketsGetMany: HubSpotEndpoint<'ticketsGetMany'>;
+	ticketsCreate: HubSpotEndpoint<'ticketsCreate'>;
+	ticketsUpdate: HubSpotEndpoint<'ticketsUpdate'>;
+	ticketsDelete: HubSpotEndpoint<'ticketsDelete'>;
+	engagementsGet: HubSpotEndpoint<'engagementsGet'>;
+	engagementsGetMany: HubSpotEndpoint<'engagementsGetMany'>;
+	engagementsCreate: HubSpotEndpoint<'engagementsCreate'>;
+	engagementsDelete: HubSpotEndpoint<'engagementsDelete'>;
+	contactListsAddContact: HubSpotEndpoint<'contactListsAddContact'>;
+	contactListsRemoveContact: HubSpotEndpoint<'contactListsRemoveContact'>;
 };
 
 export type HubSpotBoundEndpoints = BindEndpoints<
@@ -381,10 +104,10 @@ export type HubSpotBoundEndpoints = BindEndpoints<
 
 type HubSpotWebhook<
 	K extends keyof HubSpotWebhookOutputs,
-	TEvent extends HubSpotWebhookPayload,
+	TEvent,
 > = CorsairWebhook<
 	HubSpotContext,
-	HubSpotWebhookPayloadType<TEvent>,
+	HubSpotWebhookPayload<TEvent>,
 	HubSpotWebhookOutputs[K]
 >;
 
@@ -632,6 +355,7 @@ export type {
 	GetManyEngagementsResponse,
 	GetManyTicketsResponse,
 	GetTicketResponse,
+	HubSpotEndpointInputs,
 	HubSpotEndpointOutputs,
 	RemoveContactFromListResponse,
 	SearchCompanyByDomainResponse,

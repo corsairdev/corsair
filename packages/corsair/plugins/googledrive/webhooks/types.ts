@@ -11,9 +11,10 @@ export type PubSubMessage = {
 	publishTime?: string;
 };
 
-export type PubSubNotification = {
+export type PubSubNotification<TEvent = unknown> = {
 	message?: PubSubMessage;
 	subscription?: string;
+	event?: TEvent;
 };
 
 export type GoogleDrivePushNotification = {
@@ -26,36 +27,43 @@ export type GoogleDrivePushNotification = {
 	expiration?: string;
 };
 
-export type FileChangedEvent = {
-	type: 'fileChanged';
-	fileId: string;
-	changeType: 'created' | 'updated' | 'deleted' | 'trashed' | 'untrashed';
+type ChangeType = 'created' | 'updated' | 'deleted' | 'trashed' | 'untrashed';
+
+export type DriveChangedEvent = {
+	type: 'fileChanged' | 'folderChanged';
+	fileId?: string;
+	folderId?: string;
+	changeType: ChangeType;
 	file?: File;
+	filePath?: string;
 	change?: Change;
+	allFiles: Array<{
+		file: File;
+		filePath: string;
+		change: Change;
+		changeType: ChangeType;
+	}>;
+	allFolders: Array<{
+		folder: File;
+		filePath: string;
+		change: Change;
+		changeType: ChangeType;
+	}>;
 };
 
-export type FolderChangedEvent = {
-	type: 'folderChanged';
-	folderId: string;
-	changeType: 'created' | 'updated' | 'deleted' | 'trashed' | 'untrashed';
-	folder?: File;
-	change?: Change;
-};
+export type GoogleDriveWebhookEvent = DriveChangedEvent;
 
-export type GoogleDriveWebhookEvent = FileChangedEvent | FolderChangedEvent;
-
-export type GoogleDriveEventName = 'fileChanged' | 'folderChanged';
+export type GoogleDriveEventName = 'driveChanged';
 
 export interface GoogleDriveEventMap {
-	fileChanged: FileChangedEvent;
-	folderChanged: FolderChangedEvent;
+	driveChanged: DriveChangedEvent;
 }
 
-export type GoogleDriveWebhookPayload = PubSubNotification;
+export type GoogleDriveWebhookPayload<TEvent = unknown> =
+	PubSubNotification<TEvent>;
 
 export type GoogleDriveWebhookOutputs = {
-	fileChanged: FileChangedEvent;
-	folderChanged: FolderChangedEvent;
+	driveChanged: DriveChangedEvent;
 };
 
 export function decodePubSubMessage(data: string): GoogleDrivePushNotification {

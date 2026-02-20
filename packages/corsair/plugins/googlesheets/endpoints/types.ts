@@ -7,6 +7,109 @@ import type {
 	ValueRange,
 } from '../types';
 
+const SpreadsheetsCreateInputSchema = z.object({
+	properties: z
+		.object({
+			title: z.string().optional(),
+			locale: z.string().optional(),
+			timeZone: z.string().optional(),
+		})
+		.optional(),
+});
+
+const SpreadsheetsDeleteInputSchema = z.object({
+	spreadsheetId: z.string(),
+});
+
+const SheetsAppendRowInputSchema = z.object({
+	spreadsheetId: z.string(),
+	sheetName: z.string().optional(),
+	range: z.string().optional(),
+	values: z
+		.array(z.union([z.string(), z.number(), z.boolean(), z.null()]))
+		.optional(),
+	valueInputOption: z.enum(['RAW', 'USER_ENTERED']).optional(),
+	insertDataOption: z.enum(['OVERWRITE', 'INSERT_ROWS']).optional(),
+});
+
+const SheetsAppendOrUpdateRowInputSchema = z.object({
+	spreadsheetId: z.string(),
+	sheetName: z.string().optional(),
+	keyColumn: z.string().optional(),
+	keyValue: z.union([z.string(), z.number()]).optional(),
+	values: z
+		.array(z.union([z.string(), z.number(), z.boolean(), z.null()]))
+		.optional(),
+	valueInputOption: z.enum(['RAW', 'USER_ENTERED']).optional(),
+	insertDataOption: z.enum(['OVERWRITE', 'INSERT_ROWS']).optional(),
+});
+
+const SheetsGetRowsInputSchema = z.object({
+	spreadsheetId: z.string(),
+	sheetName: z.string().optional(),
+	range: z.string().optional(),
+	valueRenderOption: z
+		.enum(['FORMATTED_VALUE', 'UNFORMATTED_VALUE', 'FORMULA'])
+		.optional(),
+	dateTimeRenderOption: z
+		.enum(['SERIAL_NUMBER', 'FORMATTED_STRING'])
+		.optional(),
+});
+
+const SheetsUpdateRowInputSchema = z.object({
+	spreadsheetId: z.string(),
+	sheetName: z.string().optional(),
+	range: z.string().optional(),
+	rowIndex: z.number().optional(),
+	values: z
+		.array(z.union([z.string(), z.number(), z.boolean(), z.null()]))
+		.optional(),
+	valueInputOption: z.enum(['RAW', 'USER_ENTERED']).optional(),
+});
+
+const SheetsClearSheetInputSchema = z.object({
+	spreadsheetId: z.string(),
+	sheetName: z.string().optional(),
+	range: z.string().optional(),
+});
+
+const SheetsCreateSheetInputSchema = z.object({
+	spreadsheetId: z.string(),
+	title: z.string().optional(),
+});
+
+const SheetsDeleteSheetInputSchema = z.object({
+	spreadsheetId: z.string(),
+	sheetId: z.number(),
+});
+
+const SheetsDeleteRowsOrColumnsInputSchema = z.object({
+	spreadsheetId: z.string(),
+	sheetId: z.number(),
+	dimension: z.enum(['ROWS', 'COLUMNS']).optional(),
+	startIndex: z.number().optional(),
+	endIndex: z.number().optional(),
+});
+
+export const GoogleSheetsEndpointInputSchemas = {
+	spreadsheetsCreate: SpreadsheetsCreateInputSchema,
+	spreadsheetsDelete: SpreadsheetsDeleteInputSchema,
+	sheetsAppendRow: SheetsAppendRowInputSchema,
+	sheetsAppendOrUpdateRow: SheetsAppendOrUpdateRowInputSchema,
+	sheetsGetRows: SheetsGetRowsInputSchema,
+	sheetsUpdateRow: SheetsUpdateRowInputSchema,
+	sheetsClearSheet: SheetsClearSheetInputSchema,
+	sheetsCreateSheet: SheetsCreateSheetInputSchema,
+	sheetsDeleteSheet: SheetsDeleteSheetInputSchema,
+	sheetsDeleteRowsOrColumns: SheetsDeleteRowsOrColumnsInputSchema,
+} as const;
+
+export type GoogleSheetsEndpointInputs = {
+	[K in keyof typeof GoogleSheetsEndpointInputSchemas]: z.infer<
+		(typeof GoogleSheetsEndpointInputSchemas)[K]
+	>;
+};
+
 const SpreadsheetPropertiesSchema = z.object({
 	title: z.string().optional(),
 	locale: z.string().optional(),
