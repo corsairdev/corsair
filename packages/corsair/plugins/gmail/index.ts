@@ -11,7 +11,7 @@ import type {
 } from '../../core';
 import type { AuthTypes, PickAuth } from '../../core/constants';
 import { getValidAccessToken } from './client';
-import type { GmailEndpointOutputs } from './endpoints';
+import type { GmailEndpointInputs, GmailEndpointOutputs } from './endpoints';
 import {
 	DraftsEndpoints,
 	LabelsEndpoints,
@@ -20,8 +20,16 @@ import {
 } from './endpoints';
 import type { GmailCredentials } from './schema';
 import { GmailSchema } from './schema';
-import type { GmailWebhookOutputs, GmailWebhookPayload } from './webhooks';
+import type {
+	GmailWebhookOutputs,
+	GmailWebhookPayload,
+	MessageDeletedEvent,
+	MessageLabelChangedEvent,
+	MessageReceivedEvent,
+} from './webhooks';
 import { MessageWebhooks } from './webhooks';
+import type { PubSubNotification } from './webhooks/types';
+import { decodePubSubMessage } from './webhooks/types';
 
 /**
  * Auth config extending the base OAuth2 fields with Gmail-specific fields.
@@ -30,7 +38,6 @@ import { MessageWebhooks } from './webhooks';
 export const gmailAuthConfig = {
 	oauth_2: {
 		integration: ['topic_id'] as const,
-		account: ['something_else'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 
@@ -41,260 +48,54 @@ export type GmailContext = CorsairPluginContext<
 	typeof gmailAuthConfig
 >;
 
-type GmailEndpoint<
-	K extends keyof GmailEndpointOutputs,
-	Input,
-> = CorsairEndpoint<GmailContext, Input, GmailEndpointOutputs[K]>;
+type GmailEndpoint<K extends keyof GmailEndpointOutputs> = CorsairEndpoint<
+	GmailContext,
+	GmailEndpointInputs[K],
+	GmailEndpointOutputs[K]
+>;
 
 export type GmailEndpoints = {
-	messagesList: GmailEndpoint<
-		'messagesList',
-		{
-			userId?: string;
-			q?: string;
-			maxResults?: number;
-			pageToken?: string;
-			labelIds?: string[];
-			includeSpamTrash?: boolean;
-		}
-	>;
-	messagesGet: GmailEndpoint<
-		'messagesGet',
-		{
-			userId?: string;
-			id: string;
-			format?: 'minimal' | 'full' | 'raw' | 'metadata';
-			metadataHeaders?: string[];
-		}
-	>;
-	messagesSend: GmailEndpoint<
-		'messagesSend',
-		{
-			userId?: string;
-			raw: string;
-			threadId?: string;
-		}
-	>;
-	messagesDelete: GmailEndpoint<
-		'messagesDelete',
-		{
-			userId?: string;
-			id: string;
-		}
-	>;
-	messagesModify: GmailEndpoint<
-		'messagesModify',
-		{
-			userId?: string;
-			id: string;
-			addLabelIds?: string[];
-			removeLabelIds?: string[];
-		}
-	>;
-	messagesBatchModify: GmailEndpoint<
-		'messagesBatchModify',
-		{
-			userId?: string;
-			ids?: string[];
-			addLabelIds?: string[];
-			removeLabelIds?: string[];
-		}
-	>;
-	messagesTrash: GmailEndpoint<
-		'messagesTrash',
-		{
-			userId?: string;
-			id: string;
-		}
-	>;
-	messagesUntrash: GmailEndpoint<
-		'messagesUntrash',
-		{
-			userId?: string;
-			id: string;
-		}
-	>;
-	labelsList: GmailEndpoint<
-		'labelsList',
-		{
-			userId?: string;
-		}
-	>;
-	labelsGet: GmailEndpoint<
-		'labelsGet',
-		{
-			userId?: string;
-			id: string;
-		}
-	>;
-	labelsCreate: GmailEndpoint<
-		'labelsCreate',
-		{
-			userId?: string;
-			label: {
-				name?: string;
-				messageListVisibility?: 'show' | 'hide';
-				labelListVisibility?: 'labelShow' | 'labelShowIfUnread' | 'labelHide';
-				color?: {
-					textColor?: string;
-					backgroundColor?: string;
-				};
-			};
-		}
-	>;
-	labelsUpdate: GmailEndpoint<
-		'labelsUpdate',
-		{
-			userId?: string;
-			id: string;
-			label: {
-				name?: string;
-				messageListVisibility?: 'show' | 'hide';
-				labelListVisibility?: 'labelShow' | 'labelShowIfUnread' | 'labelHide';
-				color?: {
-					textColor?: string;
-					backgroundColor?: string;
-				};
-			};
-		}
-	>;
-	labelsDelete: GmailEndpoint<
-		'labelsDelete',
-		{
-			userId?: string;
-			id: string;
-		}
-	>;
-	draftsList: GmailEndpoint<
-		'draftsList',
-		{
-			userId?: string;
-			maxResults?: number;
-			pageToken?: string;
-			q?: string;
-		}
-	>;
-	draftsGet: GmailEndpoint<
-		'draftsGet',
-		{
-			userId?: string;
-			id: string;
-			format?: 'minimal' | 'full' | 'raw' | 'metadata';
-		}
-	>;
-	draftsCreate: GmailEndpoint<
-		'draftsCreate',
-		{
-			userId?: string;
-			draft: {
-				message?: {
-					raw?: string;
-					threadId?: string;
-				};
-			};
-		}
-	>;
-	draftsUpdate: GmailEndpoint<
-		'draftsUpdate',
-		{
-			userId?: string;
-			id: string;
-			draft: {
-				message?: {
-					raw?: string;
-					threadId?: string;
-				};
-			};
-		}
-	>;
-	draftsDelete: GmailEndpoint<
-		'draftsDelete',
-		{
-			userId?: string;
-			id: string;
-		}
-	>;
-	draftsSend: GmailEndpoint<
-		'draftsSend',
-		{
-			userId?: string;
-			id?: string;
-			message?: {
-				raw?: string;
-				threadId?: string;
-			};
-		}
-	>;
-	threadsList: GmailEndpoint<
-		'threadsList',
-		{
-			userId?: string;
-			q?: string;
-			maxResults?: number;
-			pageToken?: string;
-			labelIds?: string[];
-			includeSpamTrash?: boolean;
-		}
-	>;
-	threadsGet: GmailEndpoint<
-		'threadsGet',
-		{
-			userId?: string;
-			id: string;
-			format?: 'minimal' | 'full' | 'metadata';
-			metadataHeaders?: string[];
-		}
-	>;
-	threadsModify: GmailEndpoint<
-		'threadsModify',
-		{
-			userId?: string;
-			id: string;
-			addLabelIds?: string[];
-			removeLabelIds?: string[];
-		}
-	>;
-	threadsDelete: GmailEndpoint<
-		'threadsDelete',
-		{
-			userId?: string;
-			id: string;
-		}
-	>;
-	threadsTrash: GmailEndpoint<
-		'threadsTrash',
-		{
-			userId?: string;
-			id: string;
-		}
-	>;
-	threadsUntrash: GmailEndpoint<
-		'threadsUntrash',
-		{
-			userId?: string;
-			id: string;
-		}
-	>;
-	usersGetProfile: GmailEndpoint<
-		'usersGetProfile',
-		{
-			userId?: string;
-		}
-	>;
+	messagesList: GmailEndpoint<'messagesList'>;
+	messagesGet: GmailEndpoint<'messagesGet'>;
+	messagesSend: GmailEndpoint<'messagesSend'>;
+	messagesDelete: GmailEndpoint<'messagesDelete'>;
+	messagesModify: GmailEndpoint<'messagesModify'>;
+	messagesBatchModify: GmailEndpoint<'messagesBatchModify'>;
+	messagesTrash: GmailEndpoint<'messagesTrash'>;
+	messagesUntrash: GmailEndpoint<'messagesUntrash'>;
+	labelsList: GmailEndpoint<'labelsList'>;
+	labelsGet: GmailEndpoint<'labelsGet'>;
+	labelsCreate: GmailEndpoint<'labelsCreate'>;
+	labelsUpdate: GmailEndpoint<'labelsUpdate'>;
+	labelsDelete: GmailEndpoint<'labelsDelete'>;
+	draftsList: GmailEndpoint<'draftsList'>;
+	draftsGet: GmailEndpoint<'draftsGet'>;
+	draftsCreate: GmailEndpoint<'draftsCreate'>;
+	draftsUpdate: GmailEndpoint<'draftsUpdate'>;
+	draftsDelete: GmailEndpoint<'draftsDelete'>;
+	draftsSend: GmailEndpoint<'draftsSend'>;
+	threadsList: GmailEndpoint<'threadsList'>;
+	threadsGet: GmailEndpoint<'threadsGet'>;
+	threadsModify: GmailEndpoint<'threadsModify'>;
+	threadsDelete: GmailEndpoint<'threadsDelete'>;
+	threadsTrash: GmailEndpoint<'threadsTrash'>;
+	threadsUntrash: GmailEndpoint<'threadsUntrash'>;
+	usersGetProfile: GmailEndpoint<'usersGetProfile'>;
 };
 
 export type GmailBoundEndpoints = BindEndpoints<typeof gmailEndpointsNested>;
 
-type GmailWebhook<K extends keyof GmailWebhookOutputs> = CorsairWebhook<
+type GmailWebhook<K extends keyof GmailWebhookOutputs, TEvent> = CorsairWebhook<
 	GmailContext,
-	GmailWebhookPayload,
+	GmailWebhookPayload<TEvent>,
 	GmailWebhookOutputs[K]
 >;
 
 export type GmailWebhooks = {
-	messageReceived: GmailWebhook<'messageReceived'>;
-	messageDeleted: GmailWebhook<'messageDeleted'>;
-	messageLabelChanged: GmailWebhook<'messageLabelChanged'>;
+	messageChanged: GmailWebhook<
+		'messageChanged',
+		MessageReceivedEvent | MessageDeletedEvent | MessageLabelChangedEvent
+	>;
 };
 
 export type GmailBoundWebhooks = BindWebhooks<typeof gmailWebhooksNested>;
@@ -336,9 +137,7 @@ export const gmailEndpointsNested = {
 } as const;
 
 export const gmailWebhooksNested = {
-	messageReceived: MessageWebhooks.messageReceived,
-	messageDeleted: MessageWebhooks.messageDeleted,
-	messageLabelChanged: MessageWebhooks.messageLabelChanged,
+	messageChanged: MessageWebhooks.messageChanged,
 } as const;
 
 export type GmailPluginOptions = {
@@ -403,14 +202,14 @@ export function gmail<const T extends GmailPluginOptions>(
 
 				if (!accessToken || !refreshToken) {
 					// prob need to throw an error here
-					return '';
+					throw new Error('No access token or refresh token');
 				}
 
 				const res = await ctx.keys.get_integration_credentials();
 
 				if (!res.client_id || !res.client_secret) {
 					// prob need to throw an error here
-					return '';
+					throw new Error('No client id or client secret');
 				}
 
 				const key = await getValidAccessToken({
@@ -426,8 +225,23 @@ export function gmail<const T extends GmailPluginOptions>(
 			return '';
 		},
 		pluginWebhookMatcher: (request: RawWebhookRequest) => {
-			const body = request.body as Record<string, unknown>;
-			return (body?.message as Record<string, unknown>)?.data !== undefined;
+			const headers = request.headers;
+			const isFromGoogle =
+				headers.from === 'noreply@google.com' ||
+				(typeof headers['user-agent'] === 'string' &&
+					headers['user-agent'].includes('APIs-Google'));
+
+			if (!isFromGoogle) return false;
+
+			const body = request.body as PubSubNotification;
+			if (!body?.message?.data) return false;
+
+			try {
+				const decoded = decodePubSubMessage(body.message.data);
+				return !!decoded.emailAddress && !!decoded.historyId;
+			} catch {
+				return false;
+			}
 		},
 	} satisfies InternalGmailPlugin;
 }
@@ -442,7 +256,6 @@ export type {
 	GmailWebhookEvent,
 	GmailWebhookOutputs,
 	GmailWebhookPayload,
-	HistoryEvent,
 	MessageDeletedEvent,
 	MessageLabelChangedEvent,
 	MessageReceivedEvent,
@@ -458,7 +271,10 @@ export {
 // Endpoint Type Exports
 // ─────────────────────────────────────────────────────────────────────────────
 
-export type { GmailEndpointOutputs } from './endpoints/types';
+export type {
+	GmailEndpointInputs,
+	GmailEndpointOutputs,
+} from './endpoints/types';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Schema Type Exports

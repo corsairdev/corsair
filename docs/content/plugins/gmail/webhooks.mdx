@@ -44,111 +44,40 @@ https://your-domain.com/api/webhook?tenantId=tenant-123
 
 ## Available Webhooks
 
-### messageReceived
+### messageChanged
 
-`messages.messageReceived`
+`messageChanged`
 
-**Event Type:** Message Received
+**Event Type:** Message Changed
 
-Fires when a new email message is received.
+Fires when a message is received, deleted, or has its labels modified. The handler automatically determines the change type from Gmail's history API and returns the appropriate event.
 
-**When it fires:** A new email arrives in the mailbox
+**When it fires:** A new email arrives, a message is deleted, or labels are added/removed from a message.
 
-**Payload Structure:**
-
-```ts
-{
-    messageId: string;
-    threadId: string;
-    labelIds: string[];
-    // ... message data
-}
-```
+**Possible event types in `result.data.type`:**
+- `messageReceived` — A new email was received
+- `messageDeleted` — A message was permanently deleted
+- `messageLabelChanged` — Labels were added or removed from a message
 
 **Example Usage:**
 
 ```ts title="corsair.ts"
 gmail({
     webhookHooks: {
-        messageReceived: {
+        messageChanged: {
             after: async (ctx, result) => {
-                const message = result.data;
-                console.log(`New email received: ${message.subject}`);
+                console.log(`Gmail event: ${result.data?.type}`);
                 
-                await processNewEmail(message);
-            },
-        },
-    },
-})
-```
-
----
-
-### messageDeleted
-
-`messages.messageDeleted`
-
-**Event Type:** Message Deleted
-
-Fires when a message is deleted.
-
-**When it fires:** A message is permanently deleted
-
-**Payload Structure:**
-
-```ts
-{
-    messageId: string;
-}
-```
-
-**Example Usage:**
-
-```ts title="corsair.ts"
-gmail({
-    webhookHooks: {
-        messageDeleted: {
-            after: async (ctx, result) => {
-                console.log(`Message deleted: ${result.data.messageId}`);
-            },
-        },
-    },
-})
-```
-
----
-
-### messageLabelChanged
-
-`messages.messageLabelChanged`
-
-**Event Type:** Message Label Changed
-
-Fires when labels are added or removed from a message.
-
-**When it fires:** Labels are modified on a message
-
-**Payload Structure:**
-
-```ts
-{
-    messageId: string;
-    addedLabelIds: string[];
-    removedLabelIds: string[];
-}
-```
-
-**Example Usage:**
-
-```ts title="corsair.ts"
-gmail({
-    webhookHooks: {
-        messageLabelChanged: {
-            after: async (ctx, result) => {
-                const { messageId, addedLabelIds, removedLabelIds } = result.data;
+                if (result.data?.type === 'messageReceived') {
+                    await processNewEmail(result.data.message);
+                }
                 
-                if (addedLabelIds.includes("INBOX")) {
-                    console.log(`Message ${messageId} moved to inbox`);
+                if (result.data?.type === 'messageDeleted') {
+                    console.log('Message deleted');
+                }
+                
+                if (result.data?.type === 'messageLabelChanged') {
+                    console.log('Labels changed on message');
                 }
             },
         },

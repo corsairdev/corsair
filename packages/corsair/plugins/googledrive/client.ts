@@ -118,10 +118,6 @@ export async function makeGoogleDriveRequest<T>(
 		query: method === 'GET' ? query : undefined,
 	};
 
-	try {
-		const response = await request<T>(config, requestOptions);
-		return response;
-	} catch (error) {
-		throw error;
-	}
+	const response = await request<T>(config, requestOptions);
+	return response;
 }

@@ -15,7 +15,7 @@ import { pool } from '../db';
 import { inngest } from './inngest/client';
 
 export const corsair = createCorsair({
-	multiTenancy: false,
+	multiTenancy: true,
 	database: pool,
 	kek: process.env.CORSAIR_KEK!,
 	plugins: [
@@ -127,10 +127,55 @@ export const corsair = createCorsair({
 				},
 			},
 		}),
-		gmail(),
-		googlecalendar(),
-		googledrive(),
-		googlesheets(),
+		gmail({
+			webhookHooks: {
+				messageChanged: {
+					after: async (ctx, res) => {
+						console.log(res.data?.type, 'res.data?.type');
+					},
+				},
+			},
+		}),
+		googlecalendar({
+			webhookHooks: {
+				onEventChanged: {
+					after: async (ctx, res) => {
+						console.log(res.data?.type, 'res.data?.type');
+					},
+				},
+			},
+		}),
+		googledrive({
+			webhookHooks: {
+				driveChanged: {
+					after: async (ctx, res) => {
+						console.log(res.data?.type, 'res.data?.type');
+						// Access all files
+						res.data?.allFiles.forEach(({ file, filePath, changeType }) => {
+							console.log(
+								`File ${file.name} was ${changeType}, ${filePath}, ${file.size}`,
+							);
+						});
+
+						// Access all folders
+						res.data?.allFolders.forEach(({ folder, filePath, changeType }) => {
+							console.log(
+								`Folder ${folder.name} was ${changeType}, ${filePath}`,
+							);
+						});
+					},
+				},
+			},
+		}),
+		googlesheets({
+			webhookHooks: {
+				rangeUpdated: {
+					after: async (ctx, res) => {
+						console.log('rangeUpdated', ctx.tenantId, res.data);
+					},
+				},
+			},
+		}),
 		hubspot(),
 		posthog(),
 	],

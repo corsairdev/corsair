@@ -10,12 +10,16 @@ import type {
 } from '../../core';
 import type { AuthTypes, PickAuth } from '../../core/constants';
 import { getValidAccessToken } from './client';
-import type { GoogleSheetsEndpointOutputs } from './endpoints';
+import type {
+	GoogleSheetsEndpointInputs,
+	GoogleSheetsEndpointOutputs,
+} from './endpoints';
 import { SheetsEndpoints, SpreadsheetsEndpoints } from './endpoints';
 import { GoogleSheetsSchema } from './schema';
 import type {
 	GoogleSheetsWebhookOutputs,
 	GoogleSheetsWebhookPayload,
+	RangeUpdatedEvent,
 } from './webhooks';
 import { RowWebhooks } from './webhooks';
 
@@ -24,121 +28,41 @@ export type GoogleSheetsContext = CorsairPluginContext<
 	GoogleSheetsPluginOptions
 >;
 
-type GoogleSheetsEndpoint<
-	K extends keyof GoogleSheetsEndpointOutputs,
-	Input,
-> = CorsairEndpoint<GoogleSheetsContext, Input, GoogleSheetsEndpointOutputs[K]>;
+type GoogleSheetsEndpoint<K extends keyof GoogleSheetsEndpointOutputs> =
+	CorsairEndpoint<
+		GoogleSheetsContext,
+		GoogleSheetsEndpointInputs[K],
+		GoogleSheetsEndpointOutputs[K]
+	>;
 
 export type GoogleSheetsEndpoints = {
-	spreadsheetsCreate: GoogleSheetsEndpoint<
-		'spreadsheetsCreate',
-		{
-			properties?: {
-				title?: string;
-				locale?: string;
-				timeZone?: string;
-			};
-		}
-	>;
-	spreadsheetsDelete: GoogleSheetsEndpoint<
-		'spreadsheetsDelete',
-		{
-			spreadsheetId: string;
-		}
-	>;
-	sheetsAppendRow: GoogleSheetsEndpoint<
-		'sheetsAppendRow',
-		{
-			spreadsheetId: string;
-			sheetName?: string;
-			range?: string;
-			values?: (string | number | boolean | null)[];
-			valueInputOption?: 'RAW' | 'USER_ENTERED';
-			insertDataOption?: 'OVERWRITE' | 'INSERT_ROWS';
-		}
-	>;
-	sheetsAppendOrUpdateRow: GoogleSheetsEndpoint<
-		'sheetsAppendOrUpdateRow',
-		{
-			spreadsheetId: string;
-			sheetName?: string;
-			keyColumn?: string;
-			keyValue?: string | number;
-			values?: (string | number | boolean | null)[];
-			valueInputOption?: 'RAW' | 'USER_ENTERED';
-			insertDataOption?: 'OVERWRITE' | 'INSERT_ROWS';
-		}
-	>;
-	sheetsGetRows: GoogleSheetsEndpoint<
-		'sheetsGetRows',
-		{
-			spreadsheetId: string;
-			sheetName?: string;
-			range?: string;
-			valueRenderOption?: 'FORMATTED_VALUE' | 'UNFORMATTED_VALUE' | 'FORMULA';
-			dateTimeRenderOption?: 'SERIAL_NUMBER' | 'FORMATTED_STRING';
-		}
-	>;
-	sheetsUpdateRow: GoogleSheetsEndpoint<
-		'sheetsUpdateRow',
-		{
-			spreadsheetId: string;
-			sheetName?: string;
-			range?: string;
-			rowIndex?: number;
-			values?: (string | number | boolean | null)[];
-			valueInputOption?: 'RAW' | 'USER_ENTERED';
-		}
-	>;
-	sheetsClearSheet: GoogleSheetsEndpoint<
-		'sheetsClearSheet',
-		{
-			spreadsheetId: string;
-			sheetName?: string;
-			range?: string;
-		}
-	>;
-	sheetsCreateSheet: GoogleSheetsEndpoint<
-		'sheetsCreateSheet',
-		{
-			spreadsheetId: string;
-			title?: string;
-		}
-	>;
-	sheetsDeleteSheet: GoogleSheetsEndpoint<
-		'sheetsDeleteSheet',
-		{
-			spreadsheetId: string;
-			sheetId: number;
-		}
-	>;
-	sheetsDeleteRowsOrColumns: GoogleSheetsEndpoint<
-		'sheetsDeleteRowsOrColumns',
-		{
-			spreadsheetId: string;
-			sheetId: number;
-			dimension?: 'ROWS' | 'COLUMNS';
-			startIndex?: number;
-			endIndex?: number;
-		}
-	>;
+	spreadsheetsCreate: GoogleSheetsEndpoint<'spreadsheetsCreate'>;
+	spreadsheetsDelete: GoogleSheetsEndpoint<'spreadsheetsDelete'>;
+	sheetsAppendRow: GoogleSheetsEndpoint<'sheetsAppendRow'>;
+	sheetsAppendOrUpdateRow: GoogleSheetsEndpoint<'sheetsAppendOrUpdateRow'>;
+	sheetsGetRows: GoogleSheetsEndpoint<'sheetsGetRows'>;
+	sheetsUpdateRow: GoogleSheetsEndpoint<'sheetsUpdateRow'>;
+	sheetsClearSheet: GoogleSheetsEndpoint<'sheetsClearSheet'>;
+	sheetsCreateSheet: GoogleSheetsEndpoint<'sheetsCreateSheet'>;
+	sheetsDeleteSheet: GoogleSheetsEndpoint<'sheetsDeleteSheet'>;
+	sheetsDeleteRowsOrColumns: GoogleSheetsEndpoint<'sheetsDeleteRowsOrColumns'>;
 };
 
 export type GoogleSheetsBoundEndpoints = BindEndpoints<
 	typeof googleSheetsEndpointsNested
 >;
 
-type GoogleSheetsWebhook<K extends keyof GoogleSheetsWebhookOutputs> =
-	CorsairWebhook<
-		GoogleSheetsContext,
-		GoogleSheetsWebhookPayload,
-		GoogleSheetsWebhookOutputs[K]
-	>;
+type GoogleSheetsWebhook<
+	K extends keyof GoogleSheetsWebhookOutputs,
+	TEvent,
+> = CorsairWebhook<
+	GoogleSheetsContext,
+	GoogleSheetsWebhookPayload<TEvent>,
+	GoogleSheetsWebhookOutputs[K]
+>;
 
 export type GoogleSheetsWebhooks = {
-	rowAdded: GoogleSheetsWebhook<'rowAdded'>;
-	rowUpdated: GoogleSheetsWebhook<'rowUpdated'>;
-	rowAddedOrUpdated: GoogleSheetsWebhook<'rowAddedOrUpdated'>;
+	rangeUpdated: GoogleSheetsWebhook<'rangeUpdated', RangeUpdatedEvent>;
 };
 
 export type GoogleSheetsBoundWebhooks = BindWebhooks<
@@ -163,9 +87,7 @@ const googleSheetsEndpointsNested = {
 } as const;
 
 const googleSheetsWebhooksNested = {
-	rowAdded: RowWebhooks.rowAdded,
-	rowUpdated: RowWebhooks.rowUpdated,
-	rowAddedOrUpdated: RowWebhooks.rowAddedOrUpdated,
+	rangeUpdated: RowWebhooks.rangeUpdated,
 } as const;
 
 export type GoogleSheetsPluginOptions = {
@@ -222,13 +144,13 @@ export function googlesheets<const T extends GoogleSheetsPluginOptions>(
 				const refreshToken = await ctx.keys.get_refresh_token();
 
 				if (!accessToken || !refreshToken) {
-					return '';
+					throw new Error('No client id or client secret');
 				}
 
 				const res = await ctx.keys.get_integration_credentials();
 
 				if (!res.client_id || !res.client_secret) {
-					return '';
+					throw new Error('No client id or client secret');
 				}
 
 				const key = await getValidAccessToken({
@@ -244,12 +166,11 @@ export function googlesheets<const T extends GoogleSheetsPluginOptions>(
 			return '';
 		},
 		pluginWebhookMatcher: (request: RawWebhookRequest) => {
-			const body = request.body as Record<string, unknown>;
-			return (
-				body?.spreadsheetId !== undefined ||
-				body?.eventType !== undefined ||
-				(body?.values !== undefined && Array.isArray(body.values))
-			);
+			const body = request.body as RangeUpdatedEvent;
+			if (!body) return false;
+			const hasSpreadsheetId = typeof body?.spreadsheetId === 'string';
+			const hasSheetsEventType = body?.eventType === 'rangeUpdated';
+			return hasSpreadsheetId || hasSheetsEventType;
 		},
 	} satisfies InternalGoogleSheetsPlugin;
 }
@@ -264,9 +185,7 @@ export type {
 	GoogleSheetsWebhookEvent,
 	GoogleSheetsWebhookOutputs,
 	GoogleSheetsWebhookPayload,
-	RowAddedEvent,
-	RowAddedOrUpdatedEvent,
-	RowUpdatedEvent,
+	RangeUpdatedEvent,
 } from './webhooks/types';
 export { createGoogleSheetsWebhookMatcher } from './webhooks/types';
 
@@ -274,4 +193,7 @@ export { createGoogleSheetsWebhookMatcher } from './webhooks/types';
 // Endpoint Type Exports
 // ─────────────────────────────────────────────────────────────────────────────
 
-export type { GoogleSheetsEndpointOutputs } from './endpoints/types';
+export type {
+	GoogleSheetsEndpointInputs,
+	GoogleSheetsEndpointOutputs,
+} from './endpoints/types';

@@ -201,6 +201,8 @@ export interface LinearEventMap {
 	ProjectRemove: ProjectDeletedEvent;
 }
 
+export type LinearWebhookPayload<TEvent = LinearWebhookEvent> = TEvent;
+
 export type LinearWebhookOutputs = {
 	issueCreate: IssueCreatedEvent;
 	issueUpdate: IssueUpdatedEvent;

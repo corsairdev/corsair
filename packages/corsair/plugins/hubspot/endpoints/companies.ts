@@ -21,7 +21,7 @@ export const get: HubSpotEndpoints['companiesGet'] = async (ctx, input) => {
 				properties: queryParams.properties?.join(','),
 				propertiesWithHistory: queryParams.propertiesWithHistory?.join(','),
 				associations: queryParams.associations?.join(','),
-			} as any,
+			},
 		},
 	);
 
@@ -57,7 +57,7 @@ export const getMany: HubSpotEndpoints['companiesGetMany'] = async (
 				properties: queryParams.properties?.join(','),
 				propertiesWithHistory: queryParams.propertiesWithHistory?.join(','),
 				associations: queryParams.associations?.join(','),
-			} as any,
+			},
 		},
 	);
 
@@ -234,7 +234,7 @@ export const searchByDomain: HubSpotEndpoints['companiesSearchByDomain'] =
 					...queryParams,
 					domain,
 					properties: queryParams.properties?.join(','),
-				} as any,
+				},
 			},
 		);
 

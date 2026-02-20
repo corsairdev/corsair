@@ -10,7 +10,10 @@ import type {
 } from '../../core';
 import type { AuthTypes, PickAuth } from '../../core/constants';
 import { Events } from './endpoints';
-import type { PostHogEndpointOutputs } from './endpoints/types';
+import type {
+	PostHogEndpointInputs,
+	PostHogEndpointOutputs,
+} from './endpoints/types';
 import { PostHogSchema } from './schema';
 import type { EventCapturedEvent, PostHogWebhookOutputs } from './webhooks';
 import { EventWebhooks } from './webhooks';
@@ -34,50 +37,18 @@ export type PostHogBoundEndpoints = BindEndpoints<
 	typeof posthogEndpointsNested
 >;
 
-type PostHogEndpoint<
-	K extends keyof PostHogEndpointOutputs,
-	Input,
-> = CorsairEndpoint<PostHogContext, Input, PostHogEndpointOutputs[K]>;
+type PostHogEndpoint<K extends keyof PostHogEndpointOutputs> = CorsairEndpoint<
+	PostHogContext,
+	PostHogEndpointInputs[K],
+	PostHogEndpointOutputs[K]
+>;
 
 export type PostHogEndpoints = {
-	aliasCreate: PostHogEndpoint<
-		'aliasCreate',
-		{ distinct_id: string; alias: string }
-	>;
-	eventCreate: PostHogEndpoint<
-		'eventCreate',
-		{
-			distinct_id: string;
-			event: string;
-			properties?: Record<string, unknown>;
-			timestamp?: string;
-			uuid?: string;
-		}
-	>;
-	identityCreate: PostHogEndpoint<
-		'identityCreate',
-		{ distinct_id: string; properties?: Record<string, unknown> }
-	>;
-	trackPage: PostHogEndpoint<
-		'trackPage',
-		{
-			distinct_id: string;
-			url: string;
-			properties?: Record<string, unknown>;
-			timestamp?: string;
-			uuid?: string;
-		}
-	>;
-	trackScreen: PostHogEndpoint<
-		'trackScreen',
-		{
-			distinct_id: string;
-			screen_name: string;
-			properties?: Record<string, unknown>;
-			timestamp?: string;
-			uuid?: string;
-		}
-	>;
+	aliasCreate: PostHogEndpoint<'aliasCreate'>;
+	eventCreate: PostHogEndpoint<'eventCreate'>;
+	identityCreate: PostHogEndpoint<'identityCreate'>;
+	trackPage: PostHogEndpoint<'trackPage'>;
+	trackScreen: PostHogEndpoint<'trackScreen'>;
 };
 
 type PostHogWebhook<

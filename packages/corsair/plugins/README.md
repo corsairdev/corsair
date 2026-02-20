@@ -5,9 +5,7 @@ This document lists all available plugins with their webhooks and endpoints.
 ## Gmail
 
 ### Webhooks
-- `messageReceived`: triggered when a message is received
-- `messageDeleted`: triggered when a message is deleted
-- `messageLabelChanged`: triggered when a message label is changed
+- `messageChanged`: triggered when a message is received, deleted, or has labels changed
 
 ### Endpoints
 - `messagesList`: lists all messages

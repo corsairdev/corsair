@@ -1,6 +1,87 @@
 import { z } from 'zod';
 import type { Event, EventListResponse, FreeBusyResponse } from '../types';
 
+const EventsCreateInputSchema = z.object({
+	calendarId: z.string().optional(),
+	event: z.record(z.unknown()),
+	sendUpdates: z.enum(['all', 'externalOnly', 'none']).optional(),
+	sendNotifications: z.boolean().optional(),
+	conferenceDataVersion: z.number().optional(),
+	maxAttendees: z.number().optional(),
+	supportsAttachments: z.boolean().optional(),
+});
+
+const EventsGetInputSchema = z.object({
+	calendarId: z.string().optional(),
+	id: z.string(),
+	timeZone: z.string().optional(),
+	maxAttendees: z.number().optional(),
+});
+
+const EventsGetManyInputSchema = z.object({
+	calendarId: z.string().optional(),
+	timeMin: z.string().optional(),
+	timeMax: z.string().optional(),
+	timeZone: z.string().optional(),
+	updatedMin: z.string().optional(),
+	singleEvents: z.boolean().optional(),
+	maxResults: z.number().optional(),
+	pageToken: z.string().optional(),
+	q: z.string().optional(),
+	orderBy: z.enum(['startTime', 'updated']).optional(),
+	iCalUID: z.string().optional(),
+	showDeleted: z.boolean().optional(),
+	showHiddenInvitations: z.boolean().optional(),
+});
+
+const EventsUpdateInputSchema = z.object({
+	calendarId: z.string().optional(),
+	id: z.string(),
+	event: z.record(z.unknown()),
+	sendUpdates: z.enum(['all', 'externalOnly', 'none']).optional(),
+	sendNotifications: z.boolean().optional(),
+	conferenceDataVersion: z.number().optional(),
+	maxAttendees: z.number().optional(),
+	supportsAttachments: z.boolean().optional(),
+});
+
+const EventsDeleteInputSchema = z.object({
+	calendarId: z.string().optional(),
+	id: z.string(),
+	sendUpdates: z.enum(['all', 'externalOnly', 'none']).optional(),
+	sendNotifications: z.boolean().optional(),
+});
+
+const CalendarGetAvailabilityInputSchema = z.object({
+	timeMin: z.string(),
+	timeMax: z.string(),
+	timeZone: z.string().optional(),
+	groupExpansionMax: z.number().optional(),
+	calendarExpansionMax: z.number().optional(),
+	items: z
+		.array(
+			z.object({
+				id: z.string(),
+			}),
+		)
+		.optional(),
+});
+
+export const GoogleCalendarEndpointInputSchemas = {
+	eventsCreate: EventsCreateInputSchema,
+	eventsGet: EventsGetInputSchema,
+	eventsGetMany: EventsGetManyInputSchema,
+	eventsUpdate: EventsUpdateInputSchema,
+	eventsDelete: EventsDeleteInputSchema,
+	calendarGetAvailability: CalendarGetAvailabilityInputSchema,
+} as const;
+
+export type GoogleCalendarEndpointInputs = {
+	[K in keyof typeof GoogleCalendarEndpointInputSchemas]: z.infer<
+		(typeof GoogleCalendarEndpointInputSchemas)[K]
+	>;
+};
+
 const EventDateTimeSchema = z.object({
 	date: z.string().optional(),
 	dateTime: z.string().optional(),

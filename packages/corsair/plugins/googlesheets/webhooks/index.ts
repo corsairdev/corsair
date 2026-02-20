@@ -1,9 +1,7 @@
-import { rowAdded, rowAddedOrUpdated, rowUpdated } from './rows';
+import { rangeUpdated } from './rows';
 
 export const RowWebhooks = {
-	rowAdded,
-	rowUpdated,
-	rowAddedOrUpdated,
+	rangeUpdated,
 };
 
 export * from './types';

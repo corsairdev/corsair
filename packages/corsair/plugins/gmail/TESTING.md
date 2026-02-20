@@ -92,13 +92,13 @@ To test with real Gmail notifications:
 
 Check the server logs for:
 - ✅ Plugin identification: Should show `plugin: 'gmail'`
-- ✅ Action identification: Should show `action: 'messages.messageReceived'` (or similar)
+- ✅ Action identification: Should show `action: 'messageChanged'` (or similar)
 - ✅ History fetching: Should fetch message details from Gmail API
 - ✅ Database updates: Should save messages to the database
 
 ### 5. Test Individual Webhook Handlers
 
-#### Test messageReceived
+#### Test messageChanged
 
 ```bash
 # Create a notification for a new message
@@ -111,13 +111,10 @@ curl -X POST http://localhost:3000/webhook?tenant_id=test-tenant \
   }'
 ```
 
-#### Test messageDeleted
-
-Similar to above, but the history API should return `messagesDeleted` entries.
-
-#### Test messageLabelChanged
-
-Similar to above, but the history API should return `labelsAdded` or `labelsRemoved` entries.
+The `messageChanged` handler automatically determines the event type from Gmail history:
+- `messagesAdded` entries → `messageReceived` event
+- `messagesDeleted` entries → `messageDeleted` event
+- `labelsAdded`/`labelsRemoved` entries → `messageLabelChanged` event
 
 ### 6. Test Tenant ID Extraction
 
@@ -166,11 +163,11 @@ When a webhook is received, you should see:
 
 ✅ Filter Result:
    Plugin: gmail
-   Action: messages.messageReceived
+   Action: messageChanged
 ════════════════════════════════════════════════════════════
 
 📧 Gmail Event Details:
-   Action: messages.messageReceived
+   Action: messageChanged
    Message ID: <message-id>
    Has Data: true
 ```

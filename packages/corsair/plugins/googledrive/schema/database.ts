@@ -74,6 +74,7 @@ export const GoogleDriveFile = z.object({
 	resourceKey: z.string().optional(),
 	sha1Checksum: z.string().optional(),
 	sha256Checksum: z.string().optional(),
+	filePath: z.string().optional(),
 	createdAt: z.coerce.date().optional(),
 });
 
@@ -111,6 +112,7 @@ export const GoogleDriveFolder = z.object({
 	permissionIds: z.array(z.string()).optional(),
 	hasAugmentedPermissions: z.boolean().optional(),
 	folderColorRgb: z.string().optional(),
+	filePath: z.string().optional(),
 	createdAt: z.coerce.date().optional(),
 });
 
