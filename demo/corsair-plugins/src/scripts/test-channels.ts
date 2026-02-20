@@ -2,40 +2,70 @@ import { corsair } from '@/server/corsair';
 import 'dotenv/config';
 
 const main = async () => {
-	// const res = await corsair
-	// 	.withTenant('default')
-	// 	.linear.keys.getWebhookSignature();
-
-	// console.log(res);
-
-	// const test = await corsair.withTenant('default').linear.db.issues.search({
-	// 	data: {
-	// 		completedAt: {
-	// 			between: [new Date(), new Date()],
-	// 		},
-	// 	},
-	// });
-
-	const clientId = process.env.GOOGLE_CLIENT_ID;
-	const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
-	const accessToken = process.env.GOOGLE_ACCESS_TOKEN;
-	const refreshToken = process.env.GOOGLE_REFRESH_TOKEN;
-
-	if (!clientId || !clientSecret || !accessToken || !refreshToken) {
-		throw new Error('Missing Google Calendar credentials');
+	// 1. Get all Linear teams
+	const allLinearTeams = await corsair.linear.api.teams.list({});
+	const teams = allLinearTeams.nodes.map((team) => ({
+		teamId: team.id,
+		teamName: team.name,
+	}));
+	//2. Find the team with name matching 'join demeter' (case-insensitive)
+	const targetTeam = teams.find(
+		(team) => team.teamName.toLowerCase() === 'join demeter',
+	);
+	if (!targetTeam) {
+		console.log(
+			'Could not find a Linear team named \\\"join demeter\\\". Available teams:',
+			teams.map((t) => t.teamName),
+		);
+		return;
 	}
-
-	await corsair.keys.googlesheets.issue_new_dek();
-	await corsair.keys.googlesheets.set_client_id(clientId);
-	await corsair.keys.googlesheets.set_client_secret(clientSecret);
-
-	await corsair.withTenant('default').googlesheets.keys.issue_new_dek();
-	await corsair
-		.withTenant('default')
-		.googlesheets.keys.set_access_token(accessToken);
-	await corsair
-		.withTenant('default')
-		.googlesheets.keys.set_refresh_token(refreshToken);
+	//3. List all issues for the team
+	const issuesResponse = await corsair.linear.api.issues.list({
+		teamId: targetTeam.teamId,
+	});
+	console.log(JSON.stringify(issuesResponse.nodes, null, 2));
+	const completedIssues = (issuesResponse.nodes || []).filter(
+		(issue) => issue.state?.type?.toLowerCase() === 'completed',
+	);
+	if (completedIssues.length === 0) {
+		console.log('No completed issues found for team join demeter.');
+		return;
+	}
+	//4. Build a summary
+	const summary = completedIssues
+		.map(
+			(issue) =>
+				`• ${issue.title} (ID: ${issue.identifier})${
+					issue.description
+						? `\\
+${issue.description}`
+						: ''
+				}`,
+		)
+		.join('\\\\');
+	const messageText = `*Completed issues for team join demeter:*\\${summary}`;
+	//5. Find Slack channel 'sdk-test'
+	const channelsApiResponse = await corsair.slack.api.channels.list({});
+	const channelId = channelsApiResponse.channels?.find(
+		(channel) => channel.name === 'sdk-test',
+	)?.name;
+	if (!channelId) {
+		const channelsList = channelsApiResponse?.channels?.map(
+			(channel) => channel.name,
+		);
+		console.log(
+			'Slack channel sdk-test not found. Here is a list of the existing channels',
+			channelsList,
+		);
+		return;
+	}
+	//6. Post the summary to Slack
+	await corsair.slack.api.messages.post({
+		channel: channelId,
+		text: messageText,
+	});
+	console.log('Summary of completed issues sent to sdk-test.');
+	return;
 };
 
 main();
