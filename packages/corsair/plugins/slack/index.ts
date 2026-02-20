@@ -187,7 +187,7 @@ const slackWebhooksNested = {
 	},
 } as const;
 
-const defaultAuthType: AuthTypes = 'api_key';
+const defaultAuthType = 'api_key' as const;
 
 type SlackEndpoint<K extends keyof SlackEndpointOutputs> = CorsairEndpoint<
 	SlackContext,

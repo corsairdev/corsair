@@ -99,7 +99,7 @@ export type GoogleCalendarPluginOptions = {
 export type GoogleCalendarKeyBuilderContext =
 	KeyBuilderContext<GoogleCalendarPluginOptions>;
 
-const defaultAuthType: AuthTypes = 'oauth_2';
+const defaultAuthType = 'oauth_2' as const;
 
 export type BaseGoogleCalendarPlugin<T extends GoogleCalendarPluginOptions> =
 	CorsairPlugin<

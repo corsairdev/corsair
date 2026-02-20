@@ -188,7 +188,7 @@ const ${camelName}WebhooksNested = {
  * - 'oauth_2': For OAuth 2.0 authentication  
  * - 'bot_token': For bot token authentication
  */
-const defaultAuthType: AuthTypes = 'api_key';
+const defaultAuthType: AuthTypes = 'api_key' as const;
 
 /**
  * Authentication configuration

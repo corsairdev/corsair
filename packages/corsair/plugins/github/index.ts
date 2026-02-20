@@ -142,7 +142,7 @@ const githubWebhooksNested = {
 	starDeleted: StarWebhooks.deleted,
 } as const;
 
-const defaultAuthType: AuthTypes = 'api_key';
+const defaultAuthType = 'api_key' as const;
 
 export type GithubPluginOptions = {
 	authType?: PickAuth<'api_key' | 'oauth_2'>;

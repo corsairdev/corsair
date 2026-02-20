@@ -138,7 +138,7 @@ const linearEndpointsNested = {
 	},
 } as const;
 
-const defaultAuthType: AuthTypes = 'api_key';
+const defaultAuthType = 'api_key' as const;
 
 export type BaseLinearPlugin<T extends LinearPluginOptions> = CorsairPlugin<
 	'linear',
