@@ -17,7 +17,7 @@ export const preCheckoutQuery: TelegramWebhooks['preCheckoutQuery'] = {
 			};
 		}
 
-		const update = request.payload as TelegramUpdate;
+		const update = request.payload;
 
 		if (!update || !update.pre_checkout_query) {
 			return {

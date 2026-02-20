@@ -17,7 +17,7 @@ export const callbackQuery: TelegramWebhooks['callbackQuery'] = {
 			};
 		}
 
-		const update = request.payload as TelegramUpdate;
+		const update = request.payload;
 
 		if (!update || !update.callback_query) {
 			return {

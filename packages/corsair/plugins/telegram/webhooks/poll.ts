@@ -17,7 +17,7 @@ export const poll: TelegramWebhooks['poll'] = {
 			};
 		}
 
-		const update = request.payload as TelegramUpdate;
+		const update = request.payload;
 
 		if (!update || !update.poll) {
 			return {

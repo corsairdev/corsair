@@ -9,13 +9,7 @@ export const answerCallbackQuery: TelegramEndpoints['answerCallbackQuery'] =
 			TelegramEndpointOutputs['answerCallbackQuery']
 		>('answerCallbackQuery', ctx.key, {
 			method: 'POST',
-			body: {
-				callback_query_id: input.callback_query_id,
-				text: input.text,
-				show_alert: input.show_alert,
-				url: input.url,
-				cache_time: input.cache_time,
-			},
+			body: input,
 		});
 
 		await logEventFromContext(
@@ -35,15 +29,7 @@ export const answerInlineQuery: TelegramEndpoints['answerInlineQuery'] = async (
 		TelegramEndpointOutputs['answerInlineQuery']
 	>('answerInlineQuery', ctx.key, {
 		method: 'POST',
-		body: {
-			inline_query_id: input.inline_query_id,
-			results: input.results,
-			cache_time: input.cache_time,
-			is_personal: input.is_personal,
-			next_offset: input.next_offset,
-			switch_pm_text: input.switch_pm_text,
-			switch_pm_parameter: input.switch_pm_parameter,
-		},
+		body: input,
 	});
 
 	await logEventFromContext(

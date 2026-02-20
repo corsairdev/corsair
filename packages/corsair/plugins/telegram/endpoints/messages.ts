@@ -12,24 +12,14 @@ export const sendMessage: TelegramEndpoints['sendMessage'] = async (
 		ctx.key,
 		{
 			method: 'POST',
-			body: {
-				chat_id: input.chat_id,
-				text: input.text,
-				parse_mode: input.parse_mode,
-				entities: input.entities,
-				disable_web_page_preview: input.disable_web_page_preview,
-				disable_notification: input.disable_notification,
-				protect_content: input.protect_content,
-				reply_to_message_id: input.reply_to_message_id,
-				allow_sending_without_reply: input.allow_sending_without_reply,
-				reply_markup: input.reply_markup,
-			},
+			body: input,
 		},
 	);
 
 	if (result && result.message_id && ctx.db.messages) {
 		try {
 			await ctx.db.messages.upsertByEntityId(result.message_id.toString(), {
+				id: result.message_id.toString(),
 				...result,
 				message_id: result.message_id,
 				chat_id: result.chat.id.toString(),
@@ -54,18 +44,7 @@ export const sendMessageAndWaitForResponse: TelegramEndpoints['sendMessageAndWai
 			TelegramEndpointOutputs['sendMessageAndWaitForResponse']
 		>('sendMessage', ctx.key, {
 			method: 'POST',
-			body: {
-				chat_id: input.chat_id,
-				text: input.text,
-				parse_mode: input.parse_mode,
-				entities: input.entities,
-				disable_web_page_preview: input.disable_web_page_preview,
-				disable_notification: input.disable_notification,
-				protect_content: input.protect_content,
-				reply_to_message_id: input.reply_to_message_id,
-				allow_sending_without_reply: input.allow_sending_without_reply,
-				reply_markup: input.reply_markup,
-			},
+			body: input,
 		});
 
 		await logEventFromContext(
@@ -97,12 +76,13 @@ export const editMessageText: TelegramEndpoints['editMessageText'] = async (
 		},
 	});
 
-	if (result && result.message_id && ctx.db.messages) {
+	if (result && typeof result === 'object' && result.message_id && ctx.db.messages) {
 		try {
 			await ctx.db.messages.upsertByEntityId(result.message_id.toString(), {
+				id: result.message_id.toString(),
 				...result,
 				message_id: result.message_id,
-				chat_id: result.chat.id.toString(),
+				chat_id: result.chat?.id.toString() || '',
 			});
 		} catch (error) {
 			console.warn('Failed to update message in database:', error);
@@ -221,6 +201,7 @@ export const sendPhoto: TelegramEndpoints['sendPhoto'] = async (ctx, input) => {
 	if (result && result.message_id && ctx.db.messages) {
 		try {
 			await ctx.db.messages.upsertByEntityId(result.message_id.toString(), {
+				id: result.message_id.toString(),
 				...result,
 				message_id: result.message_id,
 				chat_id: result.chat.id.toString(),
@@ -245,30 +226,14 @@ export const sendVideo: TelegramEndpoints['sendVideo'] = async (ctx, input) => {
 		ctx.key,
 		{
 			method: 'POST',
-			body: {
-				chat_id: input.chat_id,
-				video: input.video,
-				duration: input.duration,
-				width: input.width,
-				height: input.height,
-				thumb: input.thumb,
-				caption: input.caption,
-				parse_mode: input.parse_mode,
-				caption_entities: input.caption_entities,
-				has_spoiler: input.has_spoiler,
-				supports_streaming: input.supports_streaming,
-				disable_notification: input.disable_notification,
-				protect_content: input.protect_content,
-				reply_to_message_id: input.reply_to_message_id,
-				allow_sending_without_reply: input.allow_sending_without_reply,
-				reply_markup: input.reply_markup,
-			},
+			body: input,
 		},
 	);
 
 	if (result && result.message_id && ctx.db.messages) {
 		try {
 			await ctx.db.messages.upsertByEntityId(result.message_id.toString(), {
+				id: result.message_id.toString(),
 				...result,
 				message_id: result.message_id,
 				chat_id: result.chat.id.toString(),
@@ -293,28 +258,14 @@ export const sendAudio: TelegramEndpoints['sendAudio'] = async (ctx, input) => {
 		ctx.key,
 		{
 			method: 'POST',
-			body: {
-				chat_id: input.chat_id,
-				audio: input.audio,
-				caption: input.caption,
-				parse_mode: input.parse_mode,
-				caption_entities: input.caption_entities,
-				duration: input.duration,
-				performer: input.performer,
-				title: input.title,
-				thumb: input.thumb,
-				disable_notification: input.disable_notification,
-				protect_content: input.protect_content,
-				reply_to_message_id: input.reply_to_message_id,
-				allow_sending_without_reply: input.allow_sending_without_reply,
-				reply_markup: input.reply_markup,
-			},
+			body: input,
 		},
 	);
 
 	if (result && result.message_id && ctx.db.messages) {
 		try {
 			await ctx.db.messages.upsertByEntityId(result.message_id.toString(), {
+				id: result.message_id.toString(),
 				...result,
 				message_id: result.message_id,
 				chat_id: result.chat.id.toString(),
@@ -341,25 +292,13 @@ export const sendDocument: TelegramEndpoints['sendDocument'] = async (
 		TelegramEndpointOutputs['sendDocument']
 	>('sendDocument', ctx.key, {
 		method: 'POST',
-		body: {
-			chat_id: input.chat_id,
-			document: input.document,
-			thumb: input.thumb,
-			caption: input.caption,
-			parse_mode: input.parse_mode,
-			caption_entities: input.caption_entities,
-			disable_content_type_detection: input.disable_content_type_detection,
-			disable_notification: input.disable_notification,
-			protect_content: input.protect_content,
-			reply_to_message_id: input.reply_to_message_id,
-			allow_sending_without_reply: input.allow_sending_without_reply,
-			reply_markup: input.reply_markup,
-		},
+		body: input,
 	});
 
 	if (result && result.message_id && ctx.db.messages) {
 		try {
 			await ctx.db.messages.upsertByEntityId(result.message_id.toString(), {
+				id: result.message_id.toString(),
 				...result,
 				message_id: result.message_id,
 				chat_id: result.chat.id.toString(),
@@ -386,20 +325,13 @@ export const sendSticker: TelegramEndpoints['sendSticker'] = async (
 		TelegramEndpointOutputs['sendSticker']
 	>('sendSticker', ctx.key, {
 		method: 'POST',
-		body: {
-			chat_id: input.chat_id,
-			sticker: input.sticker,
-			disable_notification: input.disable_notification,
-			protect_content: input.protect_content,
-			reply_to_message_id: input.reply_to_message_id,
-			allow_sending_without_reply: input.allow_sending_without_reply,
-			reply_markup: input.reply_markup,
-		},
+		body: input,
 	});
 
 	if (result && result.message_id && ctx.db.messages) {
 		try {
 			await ctx.db.messages.upsertByEntityId(result.message_id.toString(), {
+				id: result.message_id.toString(),
 				...result,
 				message_id: result.message_id,
 				chat_id: result.chat.id.toString(),
@@ -426,28 +358,13 @@ export const sendAnimation: TelegramEndpoints['sendAnimation'] = async (
 		TelegramEndpointOutputs['sendAnimation']
 	>('sendAnimation', ctx.key, {
 		method: 'POST',
-		body: {
-			chat_id: input.chat_id,
-			animation: input.animation,
-			duration: input.duration,
-			width: input.width,
-			height: input.height,
-			thumb: input.thumb,
-			caption: input.caption,
-			parse_mode: input.parse_mode,
-			caption_entities: input.caption_entities,
-			has_spoiler: input.has_spoiler,
-			disable_notification: input.disable_notification,
-			protect_content: input.protect_content,
-			reply_to_message_id: input.reply_to_message_id,
-			allow_sending_without_reply: input.allow_sending_without_reply,
-			reply_markup: input.reply_markup,
-		},
+		body: input,
 	});
 
 	if (result && result.message_id && ctx.db.messages) {
 		try {
 			await ctx.db.messages.upsertByEntityId(result.message_id.toString(), {
+				id: result.message_id.toString(),
 				...result,
 				message_id: result.message_id,
 				chat_id: result.chat.id.toString(),
@@ -474,25 +391,13 @@ export const sendLocation: TelegramEndpoints['sendLocation'] = async (
 		TelegramEndpointOutputs['sendLocation']
 	>('sendLocation', ctx.key, {
 		method: 'POST',
-		body: {
-			chat_id: input.chat_id,
-			latitude: input.latitude,
-			longitude: input.longitude,
-			horizontal_accuracy: input.horizontal_accuracy,
-			live_period: input.live_period,
-			heading: input.heading,
-			proximity_alert_radius: input.proximity_alert_radius,
-			disable_notification: input.disable_notification,
-			protect_content: input.protect_content,
-			reply_to_message_id: input.reply_to_message_id,
-			allow_sending_without_reply: input.allow_sending_without_reply,
-			reply_markup: input.reply_markup,
-		},
+		body: input
 	});
 
 	if (result && result.message_id && ctx.db.messages) {
 		try {
 			await ctx.db.messages.upsertByEntityId(result.message_id.toString(), {
+				id: result.message_id.toString(),
 				...result,
 				message_id: result.message_id,
 				chat_id: result.chat.id.toString(),
@@ -519,14 +424,7 @@ export const sendMediaGroup: TelegramEndpoints['sendMediaGroup'] = async (
 		TelegramEndpointOutputs['sendMediaGroup']
 	>('sendMediaGroup', ctx.key, {
 		method: 'POST',
-		body: {
-			chat_id: input.chat_id,
-			media: input.media,
-			disable_notification: input.disable_notification,
-			protect_content: input.protect_content,
-			reply_to_message_id: input.reply_to_message_id,
-			allow_sending_without_reply: input.allow_sending_without_reply,
-		},
+		body: input,
 	});
 
 	if (result && Array.isArray(result) && ctx.db.messages) {
@@ -534,6 +432,7 @@ export const sendMediaGroup: TelegramEndpoints['sendMediaGroup'] = async (
 			for (const message of result) {
 				if (message.message_id) {
 					await ctx.db.messages.upsertByEntityId(message.message_id.toString(), {
+						id: message.message_id.toString(),
 						...message,
 						message_id: message.message_id,
 						chat_id: message.chat.id.toString(),

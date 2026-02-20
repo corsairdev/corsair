@@ -17,7 +17,7 @@ export const inlineQuery: TelegramWebhooks['inlineQuery'] = {
 			};
 		}
 
-		const update = request.payload as TelegramUpdate;
+		const update = request.payload;
 
 		if (!update || !update.inline_query) {
 			return {

@@ -17,7 +17,7 @@ export const editedMessage: TelegramWebhooks['editedMessage'] = {
 			};
 		}
 
-		const update = request.payload as TelegramUpdate;
+		const update = request.payload;
 
 		if (!update || !update.edited_message) {
 			return {

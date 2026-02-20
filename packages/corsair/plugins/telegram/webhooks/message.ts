@@ -17,7 +17,7 @@ export const message: TelegramWebhooks['message'] = {
 			};
 		}
 
-		const update = request.payload as TelegramUpdate;
+		const update = request.payload;
 
 		if (!update || !update.message) {
 			return {
