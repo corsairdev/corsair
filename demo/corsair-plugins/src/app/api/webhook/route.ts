@@ -4,6 +4,7 @@ import { NextResponse } from 'next/server';
 import { corsair } from '@/server/corsair';
 
 export async function POST(request: NextRequest) {
+	console.log('Webhook received');
 	const headers: Record<string, string> = {};
 	request.headers.forEach((value, key) => {
 		headers[key] = value;

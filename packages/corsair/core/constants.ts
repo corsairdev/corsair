@@ -24,6 +24,7 @@ export const BaseProviders = [
 	'posthog',
 	'resend',
 	'slack',
+	'telegram',
 ] as const;
 
 export type AllProviders =
@@ -38,6 +39,7 @@ export type AllProviders =
 	| 'posthog'
 	| 'resend'
 	| 'slack'
+	| 'telegram'
 	| (string & {});
 
 export type AuthTypes = 'oauth_2' | 'api_key' | 'bot_token';
