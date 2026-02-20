@@ -133,7 +133,7 @@ export type GoogleDrivePluginOptions = {
 export type GoogleDriveKeyBuilderContext =
 	KeyBuilderContext<GoogleDrivePluginOptions>;
 
-const defaultAuthType: AuthTypes = 'oauth_2';
+const defaultAuthType = 'oauth_2' as const;
 
 export type BaseGoogleDrivePlugin<T extends GoogleDrivePluginOptions> =
 	CorsairPlugin<

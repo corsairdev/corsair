@@ -100,7 +100,7 @@ export type GoogleSheetsPluginOptions = {
 export type GoogleSheetsKeyBuilderContext =
 	KeyBuilderContext<GoogleSheetsPluginOptions>;
 
-const defaultAuthType: AuthTypes = 'oauth_2';
+const defaultAuthType = 'oauth_2' as const;
 
 export type BaseGoogleSheetsPlugin<T extends GoogleSheetsPluginOptions> =
 	CorsairPlugin<

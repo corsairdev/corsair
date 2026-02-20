@@ -192,7 +192,7 @@ const hubspotWebhooksNested = {
 	ticketDeleted: TicketWebhooks.deleted,
 } as const;
 
-const defaultAuthType: AuthTypes = 'api_key';
+const defaultAuthType = 'api_key' as const;
 
 export type HubSpotPluginOptions = {
 	authType?: PickAuth<'api_key' | 'oauth_2'>;
