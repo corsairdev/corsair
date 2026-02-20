@@ -38,7 +38,6 @@ import { decodePubSubMessage } from './webhooks/types';
 export const gmailAuthConfig = {
 	oauth_2: {
 		integration: ['topic_id'] as const,
-		account: ['something_else'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 

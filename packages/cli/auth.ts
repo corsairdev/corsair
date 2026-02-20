@@ -1057,18 +1057,6 @@ async function executeConfirmAction(
 	plugin?: CorsairPlugin,
 ): Promise<void> {
 	if (action.value === 'get-tokens') {
-		if (action.description) {
-			p.note(action.description, 'What this does');
-		}
-		const shouldProceed = await p.confirm({
-			message: 'Start OAuth2 flow to get tokens?',
-		});
-
-		if (p.isCancel(shouldProceed) || !shouldProceed) {
-			p.log.info('Cancelled.');
-			return;
-		}
-
 		await executeGetTokens(database, pluginId, kek, tenantId, plugin);
 		return;
 	}
