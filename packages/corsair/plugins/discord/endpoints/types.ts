@@ -503,3 +503,49 @@ export const DeleteRoleResponseSchema = z.object({
 export const AssignRoleToMemberResponseSchema = z.object({
   success: z.boolean(),
 })
+
+export type GetGetInput = z.infer<typeof GetGetInputSchema>
+export type CreateGuildInput = z.infer<typeof CreateGuildInputSchema>
+export type UpdateGuildInput = z.infer<typeof UpdateGuildInputSchema>
+export type DeleteGuildInput = z.infer<typeof DeleteGuildInputSchema>
+
+export type ListGuildMembersInput = z.infer<typeof ListGuildMembersInputSchema>
+
+export type GetChannelInput = z.infer<typeof GetChannelInputSchema>
+export type ModifyChannelInput = z.infer<typeof ModifyChannelInputSchema>
+export type DeleteChannelInput = z.infer<typeof DeleteChannelInputSchema>
+export type ListGuildChannelsInput = z.infer<typeof ListGuildChannelsInputSchema>
+export type CreateGuildChannelInput = z.infer<typeof CreateGuildChannelInputSchema>
+
+export type SendChannelMessageInput = z.infer<typeof SendChannelMessageInputSchema>
+export type GetChannelMessagesInput = z.infer<typeof GetChannelMessagesInputSchema>
+export type EditChannelMessageInput = z.infer<typeof EditChannelMessageInputSchema>
+export type DeleteChannelMessageInput = z.infer<typeof DeleteChannelMessageInputSchema>
+export type AddChannelMessageReactionInput = z.infer<typeof AddChannelMessageReactionInputSchema>
+
+export type GetMemberInput = z.infer<typeof GetMemberInputSchema>
+export type AddMemberInput = z.infer<typeof AddMemberInputSchema>
+export type ModifyMemberInput = z.infer<typeof ModifyMemberInputSchema>
+export type KickMemberInput = z.infer<typeof KickMemberInputSchema>
+
+export type ListRolesInput = z.infer<typeof ListRolesInputSchema>
+export type CreateRoleInput = z.infer<typeof CreateRoleInputSchema>
+export type UpdateRoleInput = z.infer<typeof UpdateRoleInputSchema>
+export type DeleteRoleInput = z.infer<typeof DeleteRoleInputSchema>
+export type AssignRoleToMemberInput = z.infer<typeof AssignRoleToMemberInputSchema>
+
+export type GetCurrentUserInput = z.infer<typeof GetCurrentUserInputSchema>
+export type GetUserInput = z.infer<typeof GetUserInputSchema>
+export type ModifyCurrentUserInput = z.infer<typeof ModifyCurrentUserInputSchema>
+
+export type GetInviteInput = z.infer<typeof GetInviteInputSchema>
+export type CreateChannelInviteInput = z.infer<typeof CreateChannelInviteInputSchema>
+export type RevokeInviteInput = z.infer<typeof RevokeInviteInputSchema>
+export type ListGuildInvitesInput = z.infer<typeof ListGuildInvitesInputSchema>
+
+export type CreateChannelWebhookInput = z.infer<typeof CreateChannelWebhookInputSchema>
+export type ListGuildWebhooksInput = z.infer<typeof ListGuildWebhooksInputSchema>
+export type ExecuteWebhookInput = z.infer<typeof ExecuteWebhookInputSchema>
+
+export type RegisterCommandInput = z.infer<typeof RegisterCommandInputSchema>
+export type RespondToInteractionInput = z.infer<typeof RespondToInteractionInputSchema>
