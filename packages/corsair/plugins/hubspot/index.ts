@@ -9,7 +9,7 @@ import type {
 	KeyBuilderContext,
 	RawWebhookRequest,
 } from '../../core';
-import type { AuthTypes, PickAuth } from '../../core/constants';
+import type { PickAuth } from '../../core/constants';
 import type {
 	HubSpotEndpointInputs,
 	HubSpotEndpointOutputs,

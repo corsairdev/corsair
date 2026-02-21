@@ -1,0 +1,44 @@
+{
+  "name": "corsair-agent",
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx server/server.ts",
+    "typecheck": "tsc --noEmit",
+    "start": "tsx server/server.ts",
+    "db:up": "docker compose up -d",
+    "db:down": "docker compose down",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:push": "drizzle-kit push",
+    "db:studio": "drizzle-kit studio",
+    "script": "tsx server/script.ts",
+    "seed:code": "tsx server/seed/index.ts",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "@ai-sdk/anthropic": "3.0.44",
+    "@ai-sdk/openai": "3.0.29",
+    "ai": "6.0.89",
+    "@trpc/server": "^11.10.0",
+    "chokidar": "^4.0.3",
+    "corsair": "workspace:*",
+    "dotenv": "^16.4.0",
+    "drizzle-orm": "^0.44.5",
+    "express": "^4.21.0",
+    "mem0ai": "^2.2.3",
+    "node-cron": "^4.2.1",
+    "pg": "^8.13.0",
+    "tsx": "^4.19.0",
+    "zod": "^3.25.0"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/node": "^22.0.0",
+    "@types/pg": "^8.11.0",
+    "drizzle-kit": "^0.31.8",
+    "typescript": "^5.8.0",
+    "vitest": "^3.2.4"
+  }
+}

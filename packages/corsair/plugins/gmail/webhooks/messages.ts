@@ -263,7 +263,6 @@ async function upsertMessageToDb(
 	return entity?.id ?? '';
 }
 
-
 async function resolveAndCategorizeMessageIds(
 	ctx: MessageChangedContext,
 	credentials: string,
@@ -307,9 +306,7 @@ async function resolveAndCategorizeMessageIds(
 				targetHistoryIdNum - HISTORY_ID_MATCH_THRESHOLD
 			) {
 				if (ctx.db?.messages) {
-					const existingEntity = await ctx.db.messages.findByEntityId(
-						msg.id,
-					);
+					const existingEntity = await ctx.db.messages.findByEntityId(msg.id);
 					if (existingEntity) {
 						modified.push(msg.id);
 					} else {
@@ -511,8 +508,11 @@ export const messageChanged: GmailWebhooks['messageChanged'] = {
 				},
 			);
 
-			const { added: historyAdded, deleted, modified: historyModified } =
-				extractMessageIds(historyResponse.history);
+			const {
+				added: historyAdded,
+				deleted,
+				modified: historyModified,
+			} = extractMessageIds(historyResponse.history);
 
 			if (historyModified.length > 0) {
 				const result = await processModifiedMessages(
