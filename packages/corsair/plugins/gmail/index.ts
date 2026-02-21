@@ -9,7 +9,7 @@ import type {
 	PluginAuthConfig,
 	RawWebhookRequest,
 } from '../../core';
-import type { AuthTypes, PickAuth } from '../../core/constants';
+import type { PickAuth } from '../../core/constants';
 import { getValidAccessToken } from './client';
 import type { GmailEndpointInputs, GmailEndpointOutputs } from './endpoints';
 import {

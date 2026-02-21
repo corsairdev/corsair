@@ -8,7 +8,7 @@ import type {
 	CorsairWebhook,
 	KeyBuilderContext,
 } from '../../core';
-import type { AuthTypes, PickAuth } from '../../core/constants';
+import type { PickAuth } from '../../core/constants';
 import { Events } from './endpoints';
 import type {
 	PostHogEndpointInputs,

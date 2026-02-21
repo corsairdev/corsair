@@ -1,4 +1,6 @@
+import * as http from 'node:http';
 import * as https from 'node:https';
+import * as net from 'node:net';
 import * as querystring from 'node:querystring';
 import * as p from '@clack/prompts';
 import type {
@@ -38,12 +40,67 @@ function getScopesForPlugin(pluginId: string): string[] {
 	return GOOGLE_SCOPES[pluginId] || [];
 }
 
-const REDIRECT_URI = 'urn:ietf:wg:oauth:2.0:oob';
+function getRedirectUri(port: number): string {
+	return `http://localhost:${port}`;
+}
+
+function findFreePort(): Promise<number> {
+	return new Promise((resolve, reject) => {
+		const server = net.createServer();
+		server.listen(0, '127.0.0.1', () => {
+			const address = server.address();
+			const port = typeof address === 'object' && address ? address.port : 0;
+			server.close((err) => {
+				if (err) reject(err);
+				else resolve(port);
+			});
+		});
+		server.on('error', reject);
+	});
+}
+
+function waitForOAuthCode(port: number): Promise<string> {
+	return new Promise((resolve, reject) => {
+		const server = http.createServer((req, res) => {
+			const url = new URL(req.url ?? '/', `http://localhost:${port}`);
+			const code = url.searchParams.get('code');
+			const error = url.searchParams.get('error');
+
+			if (error) {
+				res.writeHead(400, { 'Content-Type': 'text/html' });
+				res.end(
+					`<html><body><h2>Authorization failed: ${error}</h2><p>You can close this tab.</p></body></html>`,
+				);
+				server.close();
+				reject(new Error(`OAuth error: ${error}`));
+				return;
+			}
+
+			if (code) {
+				res.writeHead(200, { 'Content-Type': 'text/html' });
+				res.end(
+					'<html><body><h2>Authorization successful!</h2><p>You can close this tab and return to the terminal.</p></body></html>',
+				);
+				server.close();
+				resolve(code);
+			} else {
+				res.writeHead(400, { 'Content-Type': 'text/html' });
+				res.end(
+					'<html><body><h2>No code received.</h2><p>You can close this tab.</p></body></html>',
+				);
+			}
+		});
+
+		server.listen(port, '127.0.0.1', () => {});
+		server.on('error', reject);
+	});
+}
 
 function exchangeCodeForTokens(
 	code: string,
 	clientId: string,
 	clientSecret: string,
+	redirectUri: string,
 ): Promise<{
 	access_token?: string;
 	refresh_token?: string;
@@ -55,7 +112,7 @@ function exchangeCodeForTokens(
 			code: code.trim(),
 			client_id: clientId,
 			client_secret: clientSecret,
-			redirect_uri: REDIRECT_URI,
+			redirect_uri: redirectUri,
 			grant_type: 'authorization_code',
 		});
 
@@ -784,13 +841,7 @@ async function selectAction(
 ): Promise<ActionDef> {
 	let actions = getActionsForAuthType(authType, plugin);
 
-	if (
-		authType === 'oauth_2' &&
-		database &&
-		pluginId &&
-		kek &&
-		plugin
-	) {
+	if (authType === 'oauth_2' && database && pluginId && kek && plugin) {
 		const credentials = await checkOAuthCredentials(
 			database,
 			pluginId,
@@ -917,8 +968,7 @@ async function executeGetTokens(
 	try {
 		clientId = await integrationKm.get_client_id();
 		clientSecret = await integrationKm.get_client_secret();
-	} catch {
-	}
+	} catch {}
 
 	if (!clientId) {
 		const inputClientId = await p.text({
@@ -954,9 +1004,12 @@ async function executeGetTokens(
 		return;
 	}
 
+	const port = await findFreePort();
+	const redirectUri = getRedirectUri(port);
+
 	const authParams = querystring.stringify({
 		client_id: clientId,
-		redirect_uri: REDIRECT_URI,
+		redirect_uri: redirectUri,
 		response_type: 'code',
 		scope: scopes.join(' '),
 		access_type: 'offline',
@@ -965,28 +1018,31 @@ async function executeGetTokens(
 
 	const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?${authParams}`;
 
-	p.log.info('\n1. Visit this URL in your browser:');
+	p.log.info('\nVisit this URL in your browser to authorize:');
 	console.log(`\n${authUrl}\n`);
-	p.log.info('2. Authorize the application');
-	p.log.info('3. Copy the authorization code\n');
+	p.log.info(`Waiting for authorization on http://localhost:${port} ...`);
 
-	const code = await p.text({
-		message: 'Enter the authorization code:',
-		validate: (v) => {
-			if (!v || v.trim().length === 0) return 'Authorization code is required';
-		},
-	});
+	const codePromise = waitForOAuthCode(port);
 
-	if (p.isCancel(code)) handleCancel();
+	let code: string;
+	try {
+		code = await codePromise;
+	} catch (err) {
+		p.log.error(
+			`Authorization failed: ${err instanceof Error ? err.message : String(err)}`,
+		);
+		return;
+	}
 
 	const tokenSpin = p.spinner();
 	tokenSpin.start('Exchanging authorization code for tokens...');
 
 	try {
 		const tokens = await exchangeCodeForTokens(
-			code as string,
+			code,
 			clientId,
 			clientSecret,
+			redirectUri,
 		);
 
 		if (!tokens.access_token) {
@@ -1524,13 +1580,7 @@ export async function runAuth({ cwd }: { cwd: string }): Promise<void> {
 	await ensureAccountExists(database, integration.id, tenantId, kek);
 
 	// 6. Select and execute action
-	const action = await selectAction(
-		authType,
-		plugin,
-		database,
-		plugin.id,
-		kek,
-	);
+	const action = await selectAction(authType, plugin, database, plugin.id, kek);
 	await executeAction(
 		action,
 		database,

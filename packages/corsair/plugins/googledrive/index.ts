@@ -8,7 +8,7 @@ import type {
 	KeyBuilderContext,
 	RawWebhookRequest,
 } from '../../core';
-import type { AuthTypes, PickAuth } from '../../core/constants';
+import type { PickAuth } from '../../core/constants';
 import { getValidAccessToken } from './client';
 import type {
 	GoogleDriveEndpointInputs,
@@ -210,13 +210,13 @@ export function googledrive<const T extends GoogleDrivePluginOptions>(
 			const body = request.body as PubSubNotification;
 			if (!body?.message?.data) return false;
 
-		try {
-			const decoded = decodePubSubMessage(body.message.data);
+			try {
+				const decoded = decodePubSubMessage(body.message.data);
 
-			return !!decoded.resourceUri && decoded.resourceUri.includes('drive')
-		} catch {
-			return false;
-		}
+				return !!decoded.resourceUri && decoded.resourceUri.includes('drive');
+			} catch {
+				return false;
+			}
 		},
 	} satisfies InternalGoogleDrivePlugin;
 }
