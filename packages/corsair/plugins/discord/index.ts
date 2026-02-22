@@ -10,42 +10,70 @@ import type {
 	PluginAuthConfig,
 } from '../../core';
 import type { AuthTypes, PickAuth } from '../../core/constants';
-import { Example } from './endpoints';
-import type { DiscordEndpointOutputs } from './endpoints/types';
+import {
+	Channels,
+	Guilds,
+	Members,
+	Messages,
+	Reactions,
+	Threads,
+} from './endpoints';
+import type {
+	ChannelsListInput,
+	DiscordEndpointOutputs,
+	GuildsGetInput,
+	GuildsListInput,
+	MembersGetInput,
+	MembersListInput,
+	MessagesDeleteInput,
+	MessagesEditInput,
+	MessagesGetInput,
+	MessagesListInput,
+	MessagesReplyInput,
+	MessagesSendInput,
+	ReactionsAddInput,
+	ReactionsListInput,
+	ReactionsRemoveInput,
+	ThreadsCreateFromMessageInput,
+	ThreadsCreateInput,
+} from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { DiscordSchema } from './schema';
-import { ExampleWebhooks } from './webhooks';
-import type { DiscordWebhookOutputs, ExampleEvent } from './webhooks/types';
+import { InteractionWebhooks } from './webhooks';
+import type {
+	DiscordApplicationCommandInteraction,
+	DiscordMessageComponentInteraction,
+	DiscordModalSubmitInteraction,
+	DiscordWebhookOutputs,
+} from './webhooks/types';
 
-/**
- * Plugin options type - configure authentication and behavior
- *
- * AUTH CONFIGURATION:
- * - authType: The authentication method to use. Options:
- *   - 'api_key': For API key authentication (most common)
- *   - 'oauth_2': For OAuth 2.0 authentication
- *   - 'bot_token': For bot token authentication
- *   Update PickAuth<'api_key'> to include all auth types your plugin supports.
- *   Example: PickAuth<'api_key' | 'oauth_2'> for plugins that support both.
- *
- * - key: Optional API key to use directly (bypasses key manager)
- * - webhookSecret: Optional webhook secret for signature verification
- */
+// ── Plugin Options ─────────────────────────────────────────────────────────────
+
 export type DiscordPluginOptions = {
-	// TODO: Update authType to match your plugin's supported auth methods
-	// Example: PickAuth<'api_key' | 'oauth_2'> if you support OAuth
+	/**
+	 * Authentication method. Discord bots use an API key (bot token).
+	 */
 	authType?: PickAuth<'api_key'>;
-	// Optional: Direct API key (overrides key manager)
+	/**
+	 * Bot token for Discord API calls (e.g. "MTk4NjIyNDgzNDcxOTI1MjQ4.Cl2FDg...").
+	 * If omitted the key manager is used to retrieve it.
+	 */
 	key?: string;
-	// Optional: Webhook secret for signature verification
-	webhookSecret?: string;
-	// Optional: Lifecycle hooks for endpoints
+	/**
+	 * Ed25519 public key for verifying incoming interaction webhooks.
+	 * Found in the Discord Developer Portal under Application > General Information.
+	 * If omitted the key manager's webhook_signature store is used.
+	 */
+	publicKey?: string;
+	/** Lifecycle hooks for API endpoints. */
 	hooks?: InternalDiscordPlugin['hooks'];
-	// Optional: Lifecycle hooks for webhooks
+	/** Lifecycle hooks for webhook handlers. */
 	webhookHooks?: InternalDiscordPlugin['webhookHooks'];
-	// Optional: Custom error handlers (merged with default error handlers)
+	/** Custom error handlers (merged with built-in defaults). */
 	errorHandlers?: CorsairErrorHandler;
 };
+
+// ── Context ────────────────────────────────────────────────────────────────────
 
 export type DiscordContext = CorsairPluginContext<
 	typeof DiscordSchema,
@@ -53,6 +81,8 @@ export type DiscordContext = CorsairPluginContext<
 >;
 
 export type DiscordKeyBuilderContext = KeyBuilderContext<DiscordPluginOptions>;
+
+// ── Endpoint Types ─────────────────────────────────────────────────────────────
 
 export type DiscordBoundEndpoints = BindEndpoints<
 	typeof discordEndpointsNested
@@ -64,8 +94,34 @@ type DiscordEndpoint<
 > = CorsairEndpoint<DiscordContext, Input, DiscordEndpointOutputs[K]>;
 
 export type DiscordEndpoints = {
-	exampleGet: DiscordEndpoint<'exampleGet', { id: string }>;
+	// Messages
+	messagesSend: DiscordEndpoint<'messagesSend', MessagesSendInput>;
+	messagesReply: DiscordEndpoint<'messagesReply', MessagesReplyInput>;
+	messagesGet: DiscordEndpoint<'messagesGet', MessagesGetInput>;
+	messagesList: DiscordEndpoint<'messagesList', MessagesListInput>;
+	messagesEdit: DiscordEndpoint<'messagesEdit', MessagesEditInput>;
+	messagesDelete: DiscordEndpoint<'messagesDelete', MessagesDeleteInput>;
+	// Threads
+	threadsCreate: DiscordEndpoint<'threadsCreate', ThreadsCreateInput>;
+	threadsCreateFromMessage: DiscordEndpoint<
+		'threadsCreateFromMessage',
+		ThreadsCreateFromMessageInput
+	>;
+	// Reactions
+	reactionsAdd: DiscordEndpoint<'reactionsAdd', ReactionsAddInput>;
+	reactionsRemove: DiscordEndpoint<'reactionsRemove', ReactionsRemoveInput>;
+	reactionsList: DiscordEndpoint<'reactionsList', ReactionsListInput>;
+	// Guilds
+	guildsList: DiscordEndpoint<'guildsList', GuildsListInput>;
+	guildsGet: DiscordEndpoint<'guildsGet', GuildsGetInput>;
+	// Channels
+	channelsList: DiscordEndpoint<'channelsList', ChannelsListInput>;
+	// Members
+	membersList: DiscordEndpoint<'membersList', MembersListInput>;
+	membersGet: DiscordEndpoint<'membersGet', MembersGetInput>;
 };
+
+// ── Webhook Types ──────────────────────────────────────────────────────────────
 
 type DiscordWebhook<
 	K extends keyof DiscordWebhookOutputs,
@@ -73,73 +129,69 @@ type DiscordWebhook<
 > = CorsairWebhook<DiscordContext, TEvent, DiscordWebhookOutputs[K]>;
 
 export type DiscordWebhooks = {
-	example: DiscordWebhook<'example', ExampleEvent>;
+	ping: DiscordWebhook<'ping', { type: 1 }>;
+	applicationCommand: DiscordWebhook<
+		'applicationCommand',
+		DiscordApplicationCommandInteraction
+	>;
+	messageComponent: DiscordWebhook<
+		'messageComponent',
+		DiscordMessageComponentInteraction
+	>;
+	modalSubmit: DiscordWebhook<'modalSubmit', DiscordModalSubmitInteraction>;
 };
 
 export type DiscordBoundWebhooks = BindWebhooks<DiscordWebhooks>;
 
+// ── Endpoint & Webhook Trees ───────────────────────────────────────────────────
+
 const discordEndpointsNested = {
-	example: {
-		get: Example.get,
+	messages: {
+		send: Messages.send,
+		reply: Messages.reply,
+		get: Messages.get,
+		list: Messages.list,
+		edit: Messages.edit,
+		delete: Messages.del,
+	},
+	threads: {
+		create: Threads.create,
+		createFromMessage: Threads.createFromMessage,
+	},
+	reactions: {
+		add: Reactions.add,
+		remove: Reactions.remove,
+		list: Reactions.list,
+	},
+	guilds: {
+		list: Guilds.list,
+		get: Guilds.get,
+	},
+	channels: {
+		list: Channels.list,
+	},
+	members: {
+		list: Members.list,
+		get: Members.get,
 	},
 } as const;
 
 const discordWebhooksNested = {
-	example: {
-		example: ExampleWebhooks.example,
+	interactions: {
+		ping: InteractionWebhooks.ping,
+		applicationCommand: InteractionWebhooks.applicationCommand,
+		messageComponent: InteractionWebhooks.messageComponent,
+		modalSubmit: InteractionWebhooks.modalSubmit,
 	},
 } as const;
 
-/**
- * Default authentication type for this plugin
- *
- * AUTH CONFIGURATION:
- * Change this to match your plugin's default auth method:
- * - 'api_key': For API key authentication
- * - 'oauth_2': For OAuth 2.0 authentication
- * - 'bot_token': For bot token authentication
- */
+// ── Auth ───────────────────────────────────────────────────────────────────────
+
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
-/**
- * Authentication configuration
- *
- * AUTH CONFIGURATION:
- * This defines which auth types are supported and how accounts are structured.
- *
- * For 'api_key' auth:
- *   - account: ['one'] means single account per plugin instance
- *   - account: ['many'] means multiple accounts per plugin instance
- *
- * For 'oauth_2' auth:
- *   - account: ['one'] or ['many'] depending on your needs
- *   - You may also need to add 'scopes' configuration
- *
- * Example for OAuth 2.0:
- * export const discordAuthConfig = {
- *   oauth_2: {
- *     account: ['one'] as const,
- *     scopes: ['read', 'write'] as const,
- *   },
- * } as const satisfies PluginAuthConfig;
- *
- * Example for multiple auth types:
- * export const discordAuthConfig = {
- *   api_key: {
- *     account: ['one'] as const,
- *   },
- *   oauth_2: {
- *     account: ['one'] as const,
- *     scopes: ['read', 'write'] as const,
- *   },
- * } as const satisfies PluginAuthConfig;
- */
-export const discordAuthConfig = {
-	api_key: {
-		// TODO: Change to ['many'] if you support multiple accounts per instance
-		account: ['one'] as const,
-	},
-} as const satisfies PluginAuthConfig;
+export const discordAuthConfig = {} as const satisfies PluginAuthConfig;
+
+// ── Plugin Type Hierarchy ──────────────────────────────────────────────────────
 
 export type BaseDiscordPlugin<T extends DiscordPluginOptions> = CorsairPlugin<
 	'discord',
@@ -150,15 +202,12 @@ export type BaseDiscordPlugin<T extends DiscordPluginOptions> = CorsairPlugin<
 	typeof defaultAuthType
 >;
 
-/**
- * We have to type the internal plugin separately from the external plugin
- * Because the internal plugin has to provide options for all possible auth methods
- * The external plugin has to provide options for the auth method the user has selected
- */
 export type InternalDiscordPlugin = BaseDiscordPlugin<DiscordPluginOptions>;
 
 export type ExternalDiscordPlugin<T extends DiscordPluginOptions> =
 	BaseDiscordPlugin<T>;
+
+// ── Plugin Factory ─────────────────────────────────────────────────────────────
 
 export function discord<const T extends DiscordPluginOptions>(
 	incomingOptions: DiscordPluginOptions & T = {} as DiscordPluginOptions & T,
@@ -167,126 +216,128 @@ export function discord<const T extends DiscordPluginOptions>(
 		...incomingOptions,
 		authType: incomingOptions.authType ?? defaultAuthType,
 	};
+
 	return {
 		id: 'discord',
 		schema: DiscordSchema,
-		options: options,
+		options,
 		hooks: options.hooks,
 		webhookHooks: options.webhookHooks,
 		endpoints: discordEndpointsNested,
 		webhooks: discordWebhooksNested,
+
 		/**
-		 * Webhook matcher function - determines if an incoming request is a webhook for this plugin
+		 * Identifies incoming Discord interaction webhooks.
 		 *
-		 * WEBHOOK CONFIGURATION:
-		 * Update this to check for headers that identify your provider's webhooks.
-		 * Common patterns:
-		 * - Check for signature headers (e.g., 'x-discord-signature')
-		 * - Check for user-agent strings
-		 * - Check for specific path patterns
-		 *
-		 * Example for multiple headers:
-		 * pluginWebhookMatcher: (request) => {
-		 *   const headers = request.headers;
-		 *   return 'x-discord-signature' in headers && 'x-discord-timestamp' in headers;
-		 * },
+		 * Discord does not send an explicit "X-Discord-*" header, so we fingerprint
+		 * the request using two signals:
+		 *   1. Both Ed25519 signature headers must be present (Discord-specific names).
+		 *   2. The body must look like a Discord interaction object: it must have an
+		 *      `application_id` string (a Discord snowflake) and a numeric `type`
+		 *      in the range 1–5 (PING → MODAL_SUBMIT).
 		 */
-		pluginWebhookMatcher: (request) => {
-			const headers = request.headers;
-			// TODO: Update this to match your webhook signature headers
-			const hasSignature = 'x-discord-signature' in headers;
-			return hasSignature;
+		pluginWebhookMatcher: ({ body, headers }) => {
+			if (
+				!headers['x-signature-ed25519'] ||
+				!headers['x-signature-timestamp']
+			) {
+				return false;
+			}
+
+			try {
+				const parsedBody =
+					typeof body === 'string'
+						? (JSON.parse(body) as Record<string, unknown>)
+						: (body as Record<string, unknown>);
+
+				return (
+					typeof parsedBody?.application_id === 'string' &&
+					typeof parsedBody?.type === 'number' &&
+					parsedBody.type >= 1 &&
+					parsedBody.type <= 5
+				);
+			} catch {
+				return false;
+			}
 		},
+
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
 		},
+
 		/**
-		 * Key builder function - retrieves the appropriate key/secret for API calls or webhook verification
+		 * Resolves the appropriate credential for the calling context:
 		 *
-		 * AUTH CONFIGURATION:
-		 * This function determines which key to use based on:
-		 * - source: 'endpoint' (for API calls) or 'webhook' (for webhook verification)
-		 * - ctx.authType: The authentication type being used
-		 *
-		 * Priority order:
-		 * 1. Direct options (options.key, options.webhookSecret)
-		 * 2. Key manager (ctx.keys.get_api_key(), ctx.keys.get_access_token(), etc.)
-		 *
-		 * For OAuth 2.0, you'll need to add:
-		 * } else if (ctx.authType === 'oauth_2') {
-		 *   const res = await ctx.keys.get_access_token();
-		 *   if (!res) return '';
-		 *   return res;
-		 * }
-		 *
-		 * For bot_token, you'll need to add:
-		 * } else if (ctx.authType === 'bot_token') {
-		 *   const res = await ctx.keys.get_bot_token();
-		 *   if (!res) return '';
-		 *   return res;
-		 * }
+		 * - source === 'webhook'  → Ed25519 public key for interaction signature verification
+		 * - source === 'endpoint' → Bot token for Discord REST API calls (used as "Bot <token>")
 		 */
 		keyBuilder: async (ctx: DiscordKeyBuilderContext, source) => {
-			// Webhook signature verification - check direct option first
-			if (source === 'webhook' && options.webhookSecret) {
-				return options.webhookSecret;
-			}
-
-			// Webhook signature from key manager
 			if (source === 'webhook') {
+				if (options.publicKey) return options.publicKey;
 				const res = await ctx.keys.get_webhook_signature();
+				return res ?? '';
+			}
 
-				if (!res) {
-					return '';
+			if (source === 'endpoint') {
+				if (options.key) return options.key;
+				if (ctx.authType === 'api_key') {
+					const res = await ctx.keys.get_api_key();
+					return res ?? '';
 				}
-
-				return res;
 			}
-
-			// Endpoint API calls - check direct option first
-			if (source === 'endpoint' && options.key) {
-				return options.key;
-			}
-
-			// Endpoint API calls - get from key manager based on auth type
-			if (source === 'endpoint' && ctx.authType === 'api_key') {
-				const res = await ctx.keys.get_api_key();
-
-				if (!res) {
-					return '';
-				}
-
-				return res;
-			}
-
-			// TODO: Add support for other auth types if needed
-			// Example for OAuth 2.0:
-			// } else if (ctx.authType === 'oauth_2') {
-			//   const res = await ctx.keys.get_access_token();
-			//   if (!res) return '';
-			//   return res;
-			// }
 
 			return '';
 		},
 	} satisfies InternalDiscordPlugin;
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Webhook Type Exports
-// ─────────────────────────────────────────────────────────────────────────────
+// ── Type Exports ───────────────────────────────────────────────────────────────
 
 export type {
-	DiscordWebhookOutputs,
-	ExampleEvent,
-} from './webhooks/types';
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Endpoint Type Exports
-// ─────────────────────────────────────────────────────────────────────────────
-
-export type {
+	// Shared response / entity types
+	Attachment,
+	Channel,
 	DiscordEndpointOutputs,
-	ExampleGetResponse,
+	DiscordUser,
+	Embed,
+	Guild,
+	GuildMember,
+	Message,
+	MessageReference,
+	PartialGuild,
+	Role,
+	SuccessResponse,
+	// Endpoint input types (needed so callers can name them in their own code)
+	ChannelsListInput,
+	GuildsGetInput,
+	GuildsListInput,
+	MembersGetInput,
+	MembersListInput,
+	MessagesDeleteInput,
+	MessagesEditInput,
+	MessagesGetInput,
+	MessagesListInput,
+	MessagesReplyInput,
+	MessagesSendInput,
+	ReactionsAddInput,
+	ReactionsListInput,
+	ReactionsRemoveInput,
+	ThreadsCreateFromMessageInput,
+	ThreadsCreateInput,
 } from './endpoints/types';
+export type {
+	ApplicationCommandData,
+	ApplicationCommandOption,
+	DiscordApplicationCommandInteraction,
+	DiscordGuildMemberPartial,
+	DiscordInteraction,
+	DiscordInteractionTypeValue,
+	DiscordMessageComponentInteraction,
+	DiscordMessagePartial,
+	DiscordModalSubmitInteraction,
+	DiscordPingInteraction,
+	DiscordWebhookOutputs,
+	MessageComponentData,
+	ModalSubmitData,
+} from './webhooks/types';
