@@ -22,20 +22,84 @@ import { getCorsairInstance } from './index';
 // OAuth2 Token Generation
 // ─────────────────────────────────────────────────────────────────────────────
 
-const GOOGLE_SCOPES: Record<string, string[]> = {
-	gmail: [
-		'https://www.googleapis.com/auth/gmail.modify',
-		'https://www.googleapis.com/auth/gmail.labels',
-		'https://www.googleapis.com/auth/gmail.send',
-		'https://www.googleapis.com/auth/gmail.compose',
-	],
-	googlesheets: ['https://www.googleapis.com/auth/spreadsheets'],
-	googledrive: ['https://www.googleapis.com/auth/drive'],
-	googlecalendar: ['https://www.googleapis.com/auth/calendar'],
+type OAuthProviderConfig = {
+	providerName: string;
+	authUrl: string;
+	tokenUrl: string;
+	scopes?: string[];
 };
 
-function getScopesForPlugin(pluginId: string): string[] {
-	return GOOGLE_SCOPES[pluginId] || [];
+const OAUTH_PROVIDER_CONFIG: Record<string, OAuthProviderConfig> = {
+	gmail: {
+		providerName: 'Google',
+		authUrl: 'https://accounts.google.com/o/oauth2/v2/auth',
+		tokenUrl: 'https://oauth2.googleapis.com/token',
+		scopes: [
+			'https://www.googleapis.com/auth/gmail.modify',
+			'https://www.googleapis.com/auth/gmail.labels',
+			'https://www.googleapis.com/auth/gmail.send',
+			'https://www.googleapis.com/auth/gmail.compose',
+		],
+	},
+	googlesheets: {
+		providerName: 'Google',
+		authUrl: 'https://accounts.google.com/o/oauth2/v2/auth',
+		tokenUrl: 'https://oauth2.googleapis.com/token',
+		scopes: ['https://www.googleapis.com/auth/spreadsheets'],
+	},
+	googledrive: {
+		providerName: 'Google',
+		authUrl: 'https://accounts.google.com/o/oauth2/v2/auth',
+		tokenUrl: 'https://oauth2.googleapis.com/token',
+		scopes: ['https://www.googleapis.com/auth/drive'],
+	},
+	googlecalendar: {
+		providerName: 'Google',
+		authUrl: 'https://accounts.google.com/o/oauth2/v2/auth',
+		tokenUrl: 'https://oauth2.googleapis.com/token',
+		scopes: ['https://www.googleapis.com/auth/calendar'],
+	},
+	spotify: {
+		providerName: 'Spotify',
+		authUrl: 'https://accounts.spotify.com/authorize',
+		tokenUrl: 'https://accounts.spotify.com/api/token',
+		scopes: [
+			'user-read-private',
+			'user-read-email',
+			'user-read-playback-state',
+			'user-modify-playback-state',
+			'user-read-currently-playing',
+			'user-read-recently-played',
+			'user-library-read',
+			'user-library-modify',
+			'user-follow-read',
+			'user-follow-modify',
+			'playlist-read-private',
+			'playlist-read-collaborative',
+			'playlist-modify-public',
+			'playlist-modify-private',
+		],
+	},
+};
+
+function getOAuthConfigForPlugin(
+	pluginId: string,
+	plugin?: CorsairPlugin,
+): OAuthProviderConfig | null {
+	return OAUTH_PROVIDER_CONFIG[pluginId] || null;
+}
+
+function getScopesForPlugin(
+	pluginId: string,
+	plugin?: CorsairPlugin,
+): string[] {
+	const config = getOAuthConfigForPlugin(pluginId, plugin);
+	return config?.scopes || [];
+}
+
+function getProviderName(pluginId: string, plugin?: CorsairPlugin): string {
+	const config = getOAuthConfigForPlugin(pluginId, plugin);
+	return config?.providerName || 'OAuth Provider';
 }
 
 const REDIRECT_URI = 'urn:ietf:wg:oauth:2.0:oob';
@@ -44,29 +108,58 @@ function exchangeCodeForTokens(
 	code: string,
 	clientId: string,
 	clientSecret: string,
+	pluginId: string,
+	plugin: CorsairPlugin | undefined,
+	redirectUri: string,
 ): Promise<{
 	access_token?: string;
 	refresh_token?: string;
 	expires_in?: number;
 	token_type?: string;
 }> {
+	const config = getOAuthConfigForPlugin(pluginId, plugin);
+	if (!config) {
+		return Promise.reject(
+			new Error(`No OAuth configuration found for plugin: ${pluginId}`),
+		);
+	}
+
+	const tokenUrl = new URL(config.tokenUrl);
+	const isSpotify = pluginId === 'spotify';
+
 	return new Promise((resolve, reject) => {
-		const postData = querystring.stringify({
+		const postDataParams: Record<string, string> = {
 			code: code.trim(),
-			client_id: clientId,
-			client_secret: clientSecret,
-			redirect_uri: REDIRECT_URI,
+			redirect_uri: redirectUri,
 			grant_type: 'authorization_code',
-		});
+		};
+
+		if (isSpotify) {
+			postDataParams.grant_type = 'authorization_code';
+		} else {
+			postDataParams.client_id = clientId;
+			postDataParams.client_secret = clientSecret;
+		}
+
+		const postData = querystring.stringify(postDataParams);
+
+		const headers: Record<string, string> = {
+			'Content-Type': 'application/x-www-form-urlencoded',
+			'Content-Length': Buffer.byteLength(postData).toString(),
+		};
+
+		if (isSpotify) {
+			const authHeader = Buffer.from(`${clientId}:${clientSecret}`).toString(
+				'base64',
+			);
+			headers.Authorization = `Basic ${authHeader}`;
+		}
 
 		const options = {
-			hostname: 'oauth2.googleapis.com',
-			path: '/token',
+			hostname: tokenUrl.hostname,
+			path: tokenUrl.pathname,
 			method: 'POST',
-			headers: {
-				'Content-Type': 'application/x-www-form-urlencoded',
-				'Content-Length': Buffer.byteLength(postData),
-			},
+			headers,
 		};
 
 		const req = https.request(options, (res) => {
@@ -920,9 +1013,11 @@ async function executeGetTokens(
 	} catch {
 	}
 
+	const providerName = getProviderName(pluginId, plugin);
+
 	if (!clientId) {
 		const inputClientId = await p.text({
-			message: 'Enter Google Client ID:',
+			message: `Enter ${providerName} Client ID:`,
 			validate: (v) => {
 				if (!v || v.trim().length === 0) return 'Client ID is required';
 			},
@@ -937,7 +1032,7 @@ async function executeGetTokens(
 
 	if (!clientSecret) {
 		const inputClientSecret = await p.password({
-			message: 'Enter Google Client Secret:',
+			message: `Enter ${providerName} Client Secret:`,
 			mask: '*',
 		});
 		if (p.isCancel(inputClientSecret)) handleCancel();
@@ -948,27 +1043,77 @@ async function executeGetTokens(
 		p.log.info('Using Client Secret from corsair.');
 	}
 
-	const scopes = getScopesForPlugin(pluginId);
+	const isSpotify = pluginId === 'spotify';
+	let redirectUrl: string | null = null;
+
+	try {
+		redirectUrl = await integrationKm.get_redirect_url();
+	} catch {
+	}
+
+	if (isSpotify && !redirectUrl) {
+		const inputRedirectUrl = await p.text({
+			message: 'Enter Redirect URI (must match Spotify app settings):',
+			validate: (v) => {
+				if (!v || v.trim().length === 0) return 'Redirect URI is required';
+				if (!v.startsWith('http://') && !v.startsWith('https://')) {
+					return 'Redirect URI must be a valid HTTP/HTTPS URL';
+				}
+			},
+		});
+		if (p.isCancel(inputRedirectUrl)) handleCancel();
+		redirectUrl = inputRedirectUrl as string;
+		await integrationKm.set_redirect_url(redirectUrl);
+		p.log.success('Redirect URI saved.');
+	} else if (redirectUrl) {
+		p.log.info(`Using Redirect URI from corsair: ${redirectUrl}`);
+	}
+
+	const scopes = getScopesForPlugin(pluginId, plugin);
 	if (scopes.length === 0) {
 		p.log.error(`No scopes configured for plugin: ${pluginId}`);
 		return;
 	}
 
-	const authParams = querystring.stringify({
+	const oauthConfig = getOAuthConfigForPlugin(pluginId, plugin);
+	if (!oauthConfig) {
+		p.log.error(`No OAuth configuration found for plugin: ${pluginId}`);
+		return;
+	}
+
+	const finalRedirectUri = isSpotify
+		? redirectUrl || REDIRECT_URI
+		: REDIRECT_URI;
+
+	const authParams: Record<string, string> = {
 		client_id: clientId,
-		redirect_uri: REDIRECT_URI,
+		redirect_uri: finalRedirectUri,
 		response_type: 'code',
 		scope: scopes.join(' '),
-		access_type: 'offline',
-		prompt: 'consent',
-	});
+	};
 
-	const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?${authParams}`;
+	if (pluginId === 'spotify') {
+		authParams.show_dialog = 'true';
+	} else {
+		authParams.access_type = 'offline';
+		authParams.prompt = 'consent';
+	}
+
+	const authUrl = `${oauthConfig.authUrl}?${querystring.stringify(authParams)}`;
 
 	p.log.info('\n1. Visit this URL in your browser:');
 	console.log(`\n${authUrl}\n`);
 	p.log.info('2. Authorize the application');
-	p.log.info('3. Copy the authorization code\n');
+	if (isSpotify) {
+		p.log.info(
+			'3. After authorization, you will be redirected to your callback URL',
+		);
+		p.log.info(
+			'4. Copy the "code" parameter from the redirect URL (e.g., ?code=ABC123)',
+		);
+	} else {
+		p.log.info('3. Copy the authorization code from the page\n');
+	}
 
 	const code = await p.text({
 		message: 'Enter the authorization code:',
@@ -987,11 +1132,14 @@ async function executeGetTokens(
 			code as string,
 			clientId,
 			clientSecret,
+			pluginId,
+			plugin,
+			finalRedirectUri,
 		);
 
 		if (!tokens.access_token) {
 			tokenSpin.stop('Failed.');
-			p.log.error('No access token received from Google.');
+			p.log.error(`No access token received from ${providerName}.`);
 			return;
 		}
 

@@ -20,5 +20,6 @@ export default defineConfig({
 		'plugins/resend/index.ts',
 		'plugins/posthog/index.ts',
 		'plugins/github/index.ts',
+		'plugins/spotify/index.ts',
 	],
 });
