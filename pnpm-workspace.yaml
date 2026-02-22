@@ -2,7 +2,6 @@ packages:
   - packages/**
   - docs
   - demo/*
-  - agent
 
 catalog:
   typescript: ^5.9.3

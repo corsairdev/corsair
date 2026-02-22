@@ -67,6 +67,11 @@
       "types": "./dist/plugins/googlecalendar/index.d.ts",
       "default": "./dist/plugins/googlecalendar/index.js"
     },
+    "./plugins/googlecalendar/setup": {
+      "dev-source": "./plugins/googlecalendar/setup.ts",
+      "types": "./dist/plugins/googlecalendar/setup.d.ts",
+      "default": "./dist/plugins/googlecalendar/setup.js"
+    },
     "./plugins/googledrive": {
       "dev-source": "./plugins/googledrive/index.ts",
       "types": "./dist/plugins/googledrive/index.d.ts",
