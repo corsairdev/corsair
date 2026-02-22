@@ -16,7 +16,7 @@ import { pool } from '../db';
 import { inngest } from './inngest/client';
 
 export const corsair = createCorsair({
-	multiTenancy: false,
+	multiTenancy: true,
 	database: pool,
 	kek: process.env.CORSAIR_KEK!,
 	plugins: [
