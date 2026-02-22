@@ -29,6 +29,8 @@ export {
 	type GoogleCalendarWebhooks,
 	googlecalendar,
 } from './googlecalendar';
+// Setup Guides
+export { GoogleCalendarSetup as googlecalendarsetupguide } from './googlecalendar/setup';
 // Google Drive Plugin
 export {
 	type GoogleDriveBoundEndpoints,
