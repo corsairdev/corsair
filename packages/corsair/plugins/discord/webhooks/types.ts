@@ -1,119 +1,241 @@
-/**
- * Base webhook payload interface
- *
- * CONFIGURATION:
- * Update this to match your provider's webhook payload structure.
- * Most providers include a 'type' field and 'data' field, but the structure may vary.
- */
-export interface DiscordWebhookPayload {
-	type: string;
-	created_at: string;
-	data: {
-		[key: string]: any;
-	};
-	// TODO: Add provider-specific fields if needed
-	// Example:
-	// id: string;
-	// timestamp: number;
-}
+import * as crypto from 'crypto';
+import type {
+	CorsairWebhookMatcher,
+	RawWebhookRequest,
+	WebhookRequest,
+} from '../../../core';
+import type { DiscordUser, Embed } from '../endpoints/types';
 
-/**
- * Webhook Event Types
- *
- * CONFIGURATION:
- * - Replace ExampleEvent with your actual webhook event types
- * - Each event type should extend DiscordWebhookPayload
- * - Add all event-specific fields in the data object
- *
- * Example:
- * export interface UserCreatedEvent extends DiscordWebhookPayload {
- *   type: 'user.created';
- *   data: {
- *     user_id: string;
- *     email: string;
- *     name: string;
- *   };
- * }
- */
-export interface ExampleEvent extends DiscordWebhookPayload {
-	type: 'example';
-	data: {
-		id: string;
-		// TODO: Add your event data fields here
-		[key: string]: any;
-	};
-}
+// ── Discord Interaction Types ──────────────────────────────────────────────────
 
-/**
- * Webhook Outputs Type
- *
- * Maps each webhook key to its event type.
- * This is used by the plugin system for type inference.
- *
- * CONFIGURATION:
- * - Replace 'example' with your actual webhook keys
- * - Add all your webhooks here
- * - Each key should match a webhook in your webhooks/ directory
- */
-export type DiscordWebhookOutputs = {
-	example: ExampleEvent;
-	// TODO: Add more webhooks as you implement them
+export const DiscordInteractionType = {
+	PING: 1,
+	APPLICATION_COMMAND: 2,
+	MESSAGE_COMPONENT: 3,
+	APPLICATION_COMMAND_AUTOCOMPLETE: 4,
+	MODAL_SUBMIT: 5,
+} as const;
+
+export type DiscordInteractionTypeValue =
+	(typeof DiscordInteractionType)[keyof typeof DiscordInteractionType];
+
+export type DiscordGuildMemberPartial = {
+	user?: DiscordUser;
+	nick: string | null;
+	roles: string[];
+	joined_at: string;
+	permissions: string;
+	deaf: boolean;
+	mute: boolean;
 };
 
+export type ApplicationCommandOption = {
+	name: string;
+	type: number;
+	value?: string | number | boolean;
+	options?: ApplicationCommandOption[];
+	focused?: boolean;
+};
+
+export type ApplicationCommandData = {
+	id: string;
+	name: string;
+	type: number;
+	options?: ApplicationCommandOption[];
+	guild_id?: string;
+	target_id?: string;
+};
+
+export type MessageComponentData = {
+	custom_id: string;
+	component_type: number;
+	values?: string[];
+};
+
+export type ModalSubmitData = {
+	custom_id: string;
+	components: {
+		type: number;
+		components: {
+			type: number;
+			custom_id: string;
+			value: string;
+		}[];
+	}[];
+};
+
+export type DiscordMessagePartial = {
+	id: string;
+	channel_id: string;
+	content: string;
+	author: DiscordUser;
+	timestamp: string;
+	edited_timestamp: string | null;
+	tts: boolean;
+	mention_everyone: boolean;
+	mentions: DiscordUser[];
+	attachments: unknown[];
+	embeds: Embed[];
+	pinned: boolean;
+	type: number;
+};
+
+// Base interaction shape shared by all types
+type DiscordInteractionBase = {
+	id: string;
+	application_id: string;
+	token: string;
+	version: 1;
+	guild_id?: string;
+	channel_id?: string;
+	member?: DiscordGuildMemberPartial;
+	user?: DiscordUser;
+	locale?: string;
+	guild_locale?: string;
+	app_permissions?: string;
+};
+
+export type DiscordPingInteraction = DiscordInteractionBase & {
+	type: 1;
+};
+
+export type DiscordApplicationCommandInteraction = DiscordInteractionBase & {
+	type: 2;
+	data: ApplicationCommandData;
+};
+
+export type DiscordMessageComponentInteraction = DiscordInteractionBase & {
+	type: 3;
+	data: MessageComponentData;
+	message: DiscordMessagePartial;
+};
+
+export type DiscordModalSubmitInteraction = DiscordInteractionBase & {
+	type: 5;
+	data: ModalSubmitData;
+};
+
+export type DiscordInteraction =
+	| DiscordPingInteraction
+	| DiscordApplicationCommandInteraction
+	| DiscordMessageComponentInteraction
+	| DiscordModalSubmitInteraction;
+
+// ── Webhook Output Types ───────────────────────────────────────────────────────
+
+export type DiscordWebhookOutputs = {
+	ping: { type: 1 };
+	applicationCommand: DiscordApplicationCommandInteraction;
+	messageComponent: DiscordMessageComponentInteraction;
+	modalSubmit: DiscordModalSubmitInteraction;
+};
+
+// ── Signature Verification ─────────────────────────────────────────────────────
+
 /**
- * Creates a matcher function for a specific event type
- *
- * CONFIGURATION:
- * This function is used to match incoming webhooks to the correct handler.
- * Most providers use a 'type' field, but you may need to customize this.
+ * Verifies a Discord interaction webhook using Ed25519.
+ * Discord uses Ed25519 asymmetric signatures, not HMAC.
+ * The public key comes from the Discord Developer Portal (Application > General Information).
  */
-export function createDiscordMatch(eventType: string) {
-	return (payload: DiscordWebhookPayload) => {
-		return payload.type === eventType;
-	};
+export function verifyDiscordWebhookSignature(
+	request: WebhookRequest<unknown>,
+	publicKey: string,
+): { valid: boolean; error?: string } {
+	if (!publicKey) {
+		return { valid: false, error: 'Missing Discord application public key' };
+	}
+
+	const rawBody = request.rawBody;
+	if (!rawBody) {
+		return {
+			valid: false,
+			error: 'Missing raw body for signature verification',
+		};
+	}
+
+	const headers = request.headers;
+	const signature = Array.isArray(headers['x-signature-ed25519'])
+		? headers['x-signature-ed25519'][0]
+		: headers['x-signature-ed25519'];
+	const timestamp = Array.isArray(headers['x-signature-timestamp'])
+		? headers['x-signature-timestamp'][0]
+		: headers['x-signature-timestamp'];
+
+	if (!signature || !timestamp) {
+		return {
+			valid: false,
+			error: 'Missing x-signature-ed25519 or x-signature-timestamp header',
+		};
+	}
+
+	try {
+		// Discord's message to sign: timestamp + rawBody (concatenated, not hashed)
+		const message = Buffer.concat([
+			Buffer.from(timestamp, 'utf8'),
+			Buffer.from(rawBody, 'utf8'),
+		]);
+
+		// Wrap the raw 32-byte public key in a DER SubjectPublicKeyInfo envelope
+		// OID 1.3.101.112 (id-EdDSA Ed25519) = 06 03 2b 65 70; BIT STRING wrapper
+		const publicKeyDer = Buffer.concat([
+			Buffer.from('302a300506032b6570032100', 'hex'),
+			Buffer.from(publicKey, 'hex'),
+		]);
+
+		const keyObject = crypto.createPublicKey({
+			key: publicKeyDer,
+			format: 'der',
+			type: 'spki',
+		});
+
+		const signatureBuffer = Buffer.from(signature, 'hex');
+		const isValid = crypto.verify(null, message, keyObject, signatureBuffer);
+
+		return {
+			valid: isValid,
+			error: isValid ? undefined : 'Invalid Ed25519 signature',
+		};
+	} catch (error) {
+		return {
+			valid: false,
+			error: `Signature verification failed: ${error instanceof Error ? error.message : 'unknown error'}`,
+		};
+	}
+}
+
+// ── Webhook Matcher Factory ────────────────────────────────────────────────────
+
+function parseBody(body: unknown): Record<string, unknown> {
+	if (typeof body === 'string') {
+		try {
+			return JSON.parse(body) as Record<string, unknown>;
+		} catch {
+			return {};
+		}
+	}
+	return (body as Record<string, unknown>) ?? {};
 }
 
 /**
- * Webhook Signature Verification
- *
- * WEBHOOK CONFIGURATION:
- * Implement signature verification based on your provider's method.
- *
- * Common verification methods:
- * - HMAC SHA256 (most common)
- * - HMAC SHA1
- * - Custom signature algorithms
- *
- * Example for HMAC SHA256:
- * import crypto from 'crypto';
- * export function verifyDiscordWebhookSignature(
- *   request: { payload: DiscordWebhookPayload; headers: Record<string, string> },
- *   secret: string,
- * ): { valid: boolean; error?: string } {
- *   const signature = request.headers['x-discord-signature'];
- *   if (!signature) {
- *     return { valid: false, error: 'Missing signature' };
- *   }
- *
- *   const payload = JSON.stringify(request.payload);
- *   const expectedSignature = crypto
- *     .createHmac('sha256', secret)
- *     .update(payload)
- *     .digest('hex');
- *
- *   const isValid = crypto.timingSafeEqual(
- *     Buffer.from(signature),
- *     Buffer.from(expectedSignature)
- *   );
- *
- *   return { valid: isValid, error: isValid ? undefined : 'Invalid signature' };
- * }
+ * Creates a matcher function for a specific Discord interaction type.
+ * Checks both required Discord signature headers and the interaction type field.
  */
-export function verifyDiscordWebhookSignature(
-	request: { payload: DiscordWebhookPayload; headers: Record<string, string> },
-	secret: string,
-): { valid: boolean; error?: string } {
-	// TODO: Implement webhook signature verification
-	// This is a placeholder - implement based on your provider's webhook verification method
-	return { valid: true };
+export function createDiscordInteractionMatch(
+	interactionType: DiscordInteractionTypeValue,
+): CorsairWebhookMatcher {
+	return (request: RawWebhookRequest) => {
+		const headers = request.headers as Record<
+			string,
+			string | string[] | undefined
+		>;
+		const hasSignature = Boolean(headers['x-signature-ed25519']);
+		const hasTimestamp = Boolean(headers['x-signature-timestamp']);
+
+		if (!hasSignature || !hasTimestamp) {
+			return false;
+		}
+
+		const parsedBody = parseBody(request.body);
+		return (parsedBody.type as number) === interactionType;
+	};
 }

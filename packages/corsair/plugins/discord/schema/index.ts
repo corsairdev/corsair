@@ -1,15 +1,16 @@
-// TODO: Import your database entities and create the schema
-// Example:
-// import { DiscordExample } from './database';
-//
-// export const DiscordSchema = {
-// 	version: '1.0.0',
-// 	entities: {
-// 		example: DiscordExample,
-// 	},
-// } as const;
+import {
+	DiscordChannel,
+	DiscordGuild,
+	DiscordMember,
+	DiscordMessage,
+} from './database';
 
 export const DiscordSchema = {
 	version: '1.0.0',
-	entities: {},
+	entities: {
+		messages: DiscordMessage,
+		channels: DiscordChannel,
+		guilds: DiscordGuild,
+		members: DiscordMember,
+	},
 } as const;

@@ -1,4 +1,13 @@
-// Linear Plugin
+// Discord Plugin
+export {
+	type DiscordBoundEndpoints,
+	type DiscordBoundWebhooks,
+	type DiscordContext,
+	type DiscordEndpoints,
+	type DiscordPluginOptions,
+	type DiscordWebhooks,
+	discord,
+} from './discord';
 
 export {
 	type GithubBoundEndpoints,

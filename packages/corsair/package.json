@@ -1,6 +1,6 @@
 {
   "name": "corsair",
-  "version": "0.1.10",
+  "version": "0.1.11",
   "description": "",
   "type": "module",
   "main": "./dist/index.js",
@@ -86,6 +86,11 @@
       "dev-source": "./plugins/hubspot/index.ts",
       "types": "./dist/plugins/hubspot/index.d.ts",
       "default": "./dist/plugins/hubspot/index.js"
+    },
+    "./plugins/discord": {
+      "dev-source": "./plugins/discord/index.ts",
+      "types": "./dist/plugins/discord/index.d.ts",
+      "default": "./dist/plugins/discord/index.js"
     }
   },
   "scripts": {

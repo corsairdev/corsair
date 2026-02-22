@@ -1,7 +1,15 @@
-import { example } from './example';
+import {
+	applicationCommand,
+	messageComponent,
+	modalSubmit,
+	ping,
+} from './interactions';
 
-export const ExampleWebhooks = {
-	example: example,
+export const InteractionWebhooks = {
+	ping,
+	applicationCommand,
+	messageComponent,
+	modalSubmit,
 };
 
 export * from './types';
