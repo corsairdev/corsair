@@ -10,6 +10,7 @@ import {
 	posthog,
 	resend,
 	slack,
+	spotify,
 } from 'corsair';
 import { pool } from '../db';
 import { inngest } from './inngest/client';
@@ -178,5 +179,6 @@ export const corsair = createCorsair({
 		}),
 		hubspot(),
 		posthog(),
+		spotify()
 	],
 });
