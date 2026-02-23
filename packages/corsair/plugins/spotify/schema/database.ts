@@ -15,15 +15,39 @@ export const SpotifyTrack = z.object({
 		.object({
 			id: z.string(),
 			name: z.string(),
+			album_type: z.string().optional(),
+			artists: z
+				.array(
+					z.object({
+						id: z.string(),
+						name: z.string(),
+						external_urls: z
+							.object({
+								spotify: z.string().optional(),
+							})
+							.optional(),
+					}),
+				)
+				.optional(),
 			images: z
 				.array(
 					z.object({
 						url: z.string(),
-						height: z.number().optional(),
-						width: z.number().optional(),
+						height: z.number().nullable().optional(),
+						width: z.number().nullable().optional(),
 					}),
 				)
 				.optional(),
+			external_urls: z
+				.object({
+					spotify: z.string().optional(),
+				})
+				.optional(),
+			href: z.string().optional(),
+			total_tracks: z.number().optional(),
+			available_markets: z.array(z.string()).optional(),
+			release_date: z.string().optional(),
+			release_date_precision: z.string().optional(),
 		})
 		.optional(),
 	duration_ms: z.number().optional(),
@@ -57,8 +81,8 @@ export const SpotifyAlbum = z.object({
 		.array(
 			z.object({
 				url: z.string(),
-				height: z.number().optional(),
-				width: z.number().optional(),
+				height: z.number().nullable().optional(),
+				width: z.number().nullable().optional(),
 			}),
 		)
 		.optional(),
@@ -99,8 +123,8 @@ export const SpotifyArtist = z.object({
 		.array(
 			z.object({
 				url: z.string(),
-				height: z.number().optional(),
-				width: z.number().optional(),
+				height: z.number().nullable().optional(),
+				width: z.number().nullable().optional(),
 			}),
 		)
 		.optional(),
@@ -134,8 +158,8 @@ export const SpotifyPlaylist = z.object({
 		.array(
 			z.object({
 				url: z.string(),
-				height: z.number().optional(),
-				width: z.number().optional(),
+				height: z.number().nullable().optional(),
+				width: z.number().nullable().optional(),
 			}),
 		)
 		.optional(),
@@ -187,8 +211,8 @@ export const SpotifyUser = z.object({
 		.array(
 			z.object({
 				url: z.string(),
-				height: z.number().optional(),
-				width: z.number().optional(),
+				height: z.number().nullable().optional(),
+				width: z.number().nullable().optional(),
 			}),
 		)
 		.optional(),

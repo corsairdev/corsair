@@ -289,28 +289,6 @@ const spotifyWebhooksNested = {
 
 const defaultAuthType: AuthTypes = 'oauth_2';
 
-export const spotifyAuthConfig = {
-	oauth_2: {
-		account: ['one'] as const,
-		scopes: [
-			'user-read-private',
-			'user-read-email',
-			'user-read-playback-state',
-			'user-modify-playback-state',
-			'user-read-currently-playing',
-			'user-read-recently-played',
-			'user-library-read',
-			'user-library-modify',
-			'user-follow-read',
-			'user-follow-modify',
-			'playlist-read-private',
-			'playlist-read-collaborative',
-			'playlist-modify-public',
-			'playlist-modify-private',
-		] as const,
-	},
-} as const satisfies PluginAuthConfig;
-
 export type BaseSpotifyPlugin<T extends SpotifyPluginOptions> = CorsairPlugin<
 	'spotify',
 	typeof SpotifySchema,

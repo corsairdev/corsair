@@ -1,3 +1,13 @@
+import type {
+	CorsairWebhookMatcher,
+	RawWebhookRequest,
+	WebhookRequest,
+} from '../../../core';
+
+function parseBody(body: unknown): unknown {
+	return typeof body === 'string' ? JSON.parse(body) : body;
+}
+
 /**
  * Base webhook payload interface
  * 
@@ -67,9 +77,12 @@ export type SpotifyWebhookOutputs = {
  * This function is used to match incoming webhooks to the correct handler.
  * Most providers use a 'type' field, but you may need to customize this.
  */
-export function createSpotifyMatch(eventType: string) {
-	return (payload: SpotifyWebhookPayload) => {
-		return payload.type === eventType;
+export function createSpotifyMatch(eventType: string): CorsairWebhookMatcher {
+	return (request: RawWebhookRequest) => {
+		const parsedBody = parseBody(request.body) as Record<string, unknown>;
+		return (
+			typeof parsedBody.type === 'string' && parsedBody.type === eventType
+		);
 	};
 }
 
@@ -87,7 +100,7 @@ export function createSpotifyMatch(eventType: string) {
  * Example for HMAC SHA256:
  * import crypto from 'crypto';
  * export function verifySpotifyWebhookSignature(
- *   request: { payload: SpotifyWebhookPayload; headers: Record<string, string> },
+ *   request: WebhookRequest<unknown>,
  *   secret: string,
  * ): { valid: boolean; error?: string } {
  *   const signature = request.headers['x-spotify-signature'];
@@ -95,7 +108,7 @@ export function createSpotifyMatch(eventType: string) {
  *     return { valid: false, error: 'Missing signature' };
  *   }
  *   
- *   const payload = JSON.stringify(request.payload);
+ *   const payload = request.rawBody || JSON.stringify(request.payload);
  *   const expectedSignature = crypto
  *     .createHmac('sha256', secret)
  *     .update(payload)
@@ -110,22 +123,30 @@ export function createSpotifyMatch(eventType: string) {
  * }
  */
 export function verifySpotifyWebhookSignature(
-	request: { payload: SpotifyWebhookPayload; headers: Record<string, string> },
+	request: WebhookRequest<unknown>,
 	secret: string,
 ): { valid: boolean; error?: string } {
 	if (!secret) {
 		return { valid: true };
 	}
 
-	const signature = request.headers['x-spotify-signature'];
+	const signatureHeader = request.headers['x-spotify-signature'];
+	const signature =
+		typeof signatureHeader === 'string'
+			? signatureHeader
+			: Array.isArray(signatureHeader)
+				? signatureHeader[0]
+				: undefined;
+
 	if (!signature) {
 		return { valid: false, error: 'Missing signature header' };
 	}
 
 	const payloadString =
-		typeof request.payload === 'string'
+		request.rawBody ||
+		(typeof request.payload === 'string'
 			? request.payload
-			: JSON.stringify(request.payload);
+			: JSON.stringify(request.payload));
 
 	try {
 		const crypto = require('crypto');

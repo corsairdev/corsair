@@ -16,8 +16,8 @@ const AlbumSchema = z.object({
 		.array(
 			z.object({
 				url: z.string(),
-				height: z.number().optional(),
-				width: z.number().optional(),
+				height: z.number().nullable().optional(),
+				width: z.number().nullable().optional(),
 			}),
 		)
 		.optional(),
@@ -57,8 +57,8 @@ const ArtistSchema = z.object({
 		.array(
 			z.object({
 				url: z.string(),
-				height: z.number().optional(),
-				width: z.number().optional(),
+				height: z.number().nullable().optional(),
+				width: z.number().nullable().optional(),
 			}),
 		)
 		.optional(),
@@ -117,8 +117,8 @@ const PlaylistSchema = z.object({
 		.array(
 			z.object({
 				url: z.string(),
-				height: z.number().optional(),
-				width: z.number().optional(),
+				height: z.number().nullable().optional(),
+				width: z.number().nullable().optional(),
 			}),
 		)
 		.optional(),
@@ -531,7 +531,7 @@ const MyDataGetFollowedArtistsResponseSchema = z.object({
 		next: z.string().nullable().optional(),
 		cursors: z
 			.object({
-				after: z.string().optional(),
+				after: z.string().nullable().optional(),
 			})
 			.optional(),
 		total: z.number().optional(),
@@ -540,7 +540,7 @@ const MyDataGetFollowedArtistsResponseSchema = z.object({
 });
 
 const PlayerAddToQueueResponseSchema = z.object({});
-const PlayerGetCurrentlyPlayingResponseSchema = CurrentlyPlayingSchema.nullable();
+const PlayerGetCurrentlyPlayingResponseSchema = CurrentlyPlayingSchema.nullable().optional();
 const PlayerSkipToNextResponseSchema = z.object({});
 const PlayerPauseResponseSchema = z.object({});
 const PlayerSkipToPreviousResponseSchema = z.object({});
@@ -561,6 +561,7 @@ const PlayerGetRecentlyPlayedResponseSchema = z.object({
 							.optional(),
 						uri: z.string().optional(),
 					})
+					.nullable()
 					.optional(),
 			}),
 		)
@@ -590,7 +591,7 @@ const PlaylistsGetUserPlaylistsResponseSchema = z.object({
 	offset: z.number().optional(),
 	previous: z.string().nullable().optional(),
 	total: z.number().optional(),
-	items: z.array(PlaylistSchema).optional(),
+	items: z.array(PlaylistSchema.nullable()).optional(),
 });
 const PlaylistsGetTracksResponseSchema = z.object({
 	href: z.string().optional(),
@@ -612,7 +613,7 @@ const PlaylistsSearchResponseSchema = z.object({
 		offset: z.number().optional(),
 		previous: z.string().nullable().optional(),
 		total: z.number().optional(),
-		items: z.array(PlaylistSchema).optional(),
+		items: z.array(PlaylistSchema.nullable()).optional(),
 	}),
 });
 
@@ -702,6 +703,39 @@ export type TracksGetAudioFeaturesResponse = z.infer<
 	typeof TracksGetAudioFeaturesResponseSchema
 >;
 export type TracksSearchResponse = z.infer<typeof TracksSearchResponseSchema>;
+
+export const SpotifyEndpointOutputSchemas = {
+	albumsGet: AlbumsGetResponseSchema,
+	albumsGetNewReleases: AlbumsGetNewReleasesResponseSchema,
+	albumsGetTracks: AlbumsGetTracksResponseSchema,
+	albumsSearch: AlbumsSearchResponseSchema,
+	artistsGet: ArtistsGetResponseSchema,
+	artistsGetAlbums: ArtistsGetAlbumsResponseSchema,
+	artistsGetRelatedArtists: ArtistsGetRelatedArtistsResponseSchema,
+	artistsGetTopTracks: ArtistsGetTopTracksResponseSchema,
+	artistsSearch: ArtistsSearchResponseSchema,
+	libraryGetLikedTracks: LibraryGetLikedTracksResponseSchema,
+	myDataGetFollowedArtists: MyDataGetFollowedArtistsResponseSchema,
+	playerAddToQueue: PlayerAddToQueueResponseSchema,
+	playerGetCurrentlyPlaying: PlayerGetCurrentlyPlayingResponseSchema,
+	playerSkipToNext: PlayerSkipToNextResponseSchema,
+	playerPause: PlayerPauseResponseSchema,
+	playerSkipToPrevious: PlayerSkipToPreviousResponseSchema,
+	playerGetRecentlyPlayed: PlayerGetRecentlyPlayedResponseSchema,
+	playerResume: PlayerResumeResponseSchema,
+	playerSetVolume: PlayerSetVolumeResponseSchema,
+	playerStartPlayback: PlayerStartPlaybackResponseSchema,
+	playlistsAddItem: PlaylistsAddItemResponseSchema,
+	playlistsCreate: PlaylistsCreateResponseSchema,
+	playlistsGet: PlaylistsGetResponseSchema,
+	playlistsGetUserPlaylists: PlaylistsGetUserPlaylistsResponseSchema,
+	playlistsGetTracks: PlaylistsGetTracksResponseSchema,
+	playlistsRemoveItem: PlaylistsRemoveItemResponseSchema,
+	playlistsSearch: PlaylistsSearchResponseSchema,
+	tracksGet: TracksGetResponseSchema,
+	tracksGetAudioFeatures: TracksGetAudioFeaturesResponseSchema,
+	tracksSearch: TracksSearchResponseSchema,
+} as const;
 
 export type SpotifyEndpointOutputs = {
 	albumsGet: AlbumsGetResponse;
