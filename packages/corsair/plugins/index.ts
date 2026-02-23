@@ -1,4 +1,13 @@
-// Linear Plugin
+// Discord Plugin
+export {
+	type DiscordBoundEndpoints,
+	type DiscordBoundWebhooks,
+	type DiscordContext,
+	type DiscordEndpoints,
+	type DiscordPluginOptions,
+	type DiscordWebhooks,
+	discord,
+} from './discord';
 
 export {
 	type GithubBoundEndpoints,
@@ -29,6 +38,8 @@ export {
 	type GoogleCalendarWebhooks,
 	googlecalendar,
 } from './googlecalendar';
+// Setup Guides
+export { GoogleCalendarSetup as googlecalendarsetupguide } from './googlecalendar/setup';
 // Google Drive Plugin
 export {
 	type GoogleDriveBoundEndpoints,

@@ -9,7 +9,7 @@ import type {
 	PluginAuthConfig,
 	RawWebhookRequest,
 } from '../../core';
-import type { AuthTypes, PickAuth } from '../../core/constants';
+import type { PickAuth } from '../../core/constants';
 import { getValidAccessToken } from './client';
 import type { GmailEndpointInputs, GmailEndpointOutputs } from './endpoints';
 import {
@@ -153,7 +153,7 @@ export type GmailKeyBuilderContext = KeyBuilderContext<
 	typeof gmailAuthConfig
 >;
 
-const defaultAuthType: AuthTypes = 'oauth_2';
+const defaultAuthType = 'oauth_2' as const;
 
 export type BaseGmailPlugin<T extends GmailPluginOptions> = CorsairPlugin<
 	'gmail',

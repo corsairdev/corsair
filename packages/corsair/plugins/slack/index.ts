@@ -44,7 +44,7 @@ import type {
 
 export type { SlackReactionName } from './endpoints';
 
-import type { AuthTypes, PickAuth } from '../../core/constants';
+import type { PickAuth } from '../../core/constants';
 import { errorHandlers } from './error-handlers';
 
 export type SlackEndpoints = {
@@ -187,7 +187,7 @@ const slackWebhooksNested = {
 	},
 } as const;
 
-const defaultAuthType: AuthTypes = 'api_key';
+const defaultAuthType = 'api_key' as const;
 
 type SlackEndpoint<K extends keyof SlackEndpointOutputs> = CorsairEndpoint<
 	SlackContext,

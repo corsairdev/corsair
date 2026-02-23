@@ -1,5 +1,6 @@
 import {
 	createCorsair,
+	discord,
 	github,
 	gmail,
 	googlecalendar,
@@ -20,6 +21,7 @@ export const corsair = createCorsair({
 	database: pool,
 	kek: process.env.CORSAIR_KEK!,
 	plugins: [
+		discord(),
 		linear({
 			webhookHooks: {
 				issues: {

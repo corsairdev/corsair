@@ -8,7 +8,7 @@ import type {
 	CorsairWebhook,
 	KeyBuilderContext,
 } from '../../core';
-import type { AuthTypes, PickAuth } from '../../core/constants';
+import type { PickAuth } from '../../core/constants';
 import { Domains, Emails } from './endpoints';
 import type {
 	ResendEndpointInputs,
@@ -116,7 +116,7 @@ const resendWebhooksNested = {
 	},
 } as const;
 
-const defaultAuthType: AuthTypes = 'api_key';
+const defaultAuthType = 'api_key' as const;
 
 export type BaseResendPlugin<T extends ResendPluginOptions> = CorsairPlugin<
 	'resend',

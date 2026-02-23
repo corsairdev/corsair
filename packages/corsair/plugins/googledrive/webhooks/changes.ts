@@ -209,14 +209,11 @@ export const driveChanged: GoogleDriveWebhooks['driveChanged'] = {
 							if (changeType === 'deleted') {
 								await ctx.db.folders.deleteByEntityId(file.id);
 							} else {
-								const entity = await ctx.db.folders.upsertByEntityId(
-									file.id,
-									{
-										...file,
-										id: file.id,
-										filePath,
-									},
-								);
+								const entity = await ctx.db.folders.upsertByEntityId(file.id, {
+									...file,
+									id: file.id,
+									filePath,
+								});
 								if (!corsairEntityId && entity?.id) {
 									corsairEntityId = entity.id;
 								}
