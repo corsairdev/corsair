@@ -52,6 +52,7 @@ type EndpointResult<E> = E extends CorsairEndpoint<any, any, infer Res>
 export type BeforeHookResult<Ctx, Args> = {
 	ctx: Ctx;
 	args: Args;
+	continue?: boolean;
 };
 
 /**

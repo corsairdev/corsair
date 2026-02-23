@@ -133,15 +133,16 @@ export function bindEndpointsRecursively({
 					return call(0, { ...ctx, key }, args);
 				}
 
-				return (async () => {
-					const ctxWithKey = { ...ctx, key };
-					const { ctx: updatedCtx, args: updatedArgs } = endpointHooks.before
-						? await endpointHooks.before(ctxWithKey, args)
-						: { ctx: ctxWithKey, args };
-					const res = await call(0, updatedCtx, updatedArgs);
-					await endpointHooks.after?.(updatedCtx, res);
-					return res;
-				})();
+			return (async () => {
+				const ctxWithKey = { ...ctx, key };
+				const beforeResult = endpointHooks.before
+					? await endpointHooks.before(ctxWithKey, args)
+					: { ctx: ctxWithKey, args, continue: true as const };
+				if (beforeResult.continue === false) return;
+				const res = await call(0, beforeResult.ctx, beforeResult.args);
+				await endpointHooks.after?.(beforeResult.ctx, res);
+				return res;
+			})();
 			};
 
 			tree[key] = boundFn;
