@@ -140,13 +140,12 @@ export const removeItem: SpotifyEndpoints['playlistsRemoveItem'] = async (
 	ctx,
 	input,
 ) => {
-	const body: Record<string, unknown> = {...input};
 
 	const result = await makeSpotifyRequest<
 		SpotifyEndpointOutputs['playlistsRemoveItem']
 	>(`playlists/${input.playlist_id}/tracks`, ctx.key, {
 		method: 'DELETE',
-		body,
+		body: input,
 	});
 
 	await logEventFromContext(

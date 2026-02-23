@@ -32,6 +32,7 @@ export async function makeSpotifyRequest<T>(
 	accessToken: string,
 	options: {
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+		// Using 'unknown' because request body structure varies by endpoint and is validated by the Spotify API
 		body?: Record<string, unknown>;
 		query?: Record<string, string | number | boolean | undefined>;
 	} = {},

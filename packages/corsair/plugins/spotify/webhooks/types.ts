@@ -19,6 +19,7 @@ export interface SpotifyWebhookPayload {
 	type: string;
 	created_at: string;
 	data: {
+		// Using 'any' because the structure varies by event and is validated by the Spotify API
 		[key: string]: any;
 	};
 	// TODO: Add provider-specific fields if needed
@@ -50,6 +51,7 @@ export interface ExampleEvent extends SpotifyWebhookPayload {
 	data: {
 		id: string;
 		// TODO: Add your event data fields here
+		// Using 'any' because the structure varies by event and is validated by the Spotify API
 		[key: string]: any;
 	};
 }
