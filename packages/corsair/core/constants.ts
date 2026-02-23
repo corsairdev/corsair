@@ -25,6 +25,7 @@ export const BaseProviders = [
 	'resend',
 	'slack',
 	'spotify',
+	'tavily',
 ] as const;
 
 export type AllProviders =
@@ -40,6 +41,7 @@ export type AllProviders =
 	| 'resend'
 	| 'slack'
 	| 'spotify'
+	| 'tavily'
 	| (string & {});
 
 export type AuthTypes = 'oauth_2' | 'api_key' | 'bot_token';

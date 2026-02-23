@@ -188,7 +188,7 @@ const ${camelName}WebhooksNested = {
  * - 'oauth_2': For OAuth 2.0 authentication  
  * - 'bot_token': For bot token authentication
  */
-const defaultAuthType: AuthTypes = 'api_key';
+const defaultAuthType: AuthTypes = 'api_key' as const;
 
 /**
  * Authentication configuration
@@ -963,6 +963,38 @@ export const ${pascalName}Schema = {
 				writeFileSync(constantsPath, finalContent);
 				console.log(`✅ Updated packages/corsair/core/constants.ts`);
 			}
+		}
+	}
+
+	// Update package.json exports
+	const packageJsonPath = join(baseDir, 'package.json');
+	if (existsSync(packageJsonPath)) {
+		const packageJson = JSON.parse(readFileSync(packageJsonPath, 'utf-8'));
+		const exportKey = `./plugins/${lowerName}`;
+
+		if (packageJson.exports?.[exportKey]) {
+			console.log(`⚠️  Export "${exportKey}" already exists in package.json`);
+		} else {
+			packageJson.exports = packageJson.exports ?? {};
+			packageJson.exports[exportKey] = {
+				'dev-source': `./plugins/${lowerName}/index.ts`,
+				types: `./dist/plugins/${lowerName}/index.d.ts`,
+				default: `./dist/plugins/${lowerName}/index.js`,
+			};
+
+			// Re-sort exports: keep "." and "./core" etc. before plugins, sort plugins alphabetically
+			const { '.': root, ...rest } = packageJson.exports;
+			const nonPlugins = Object.entries(rest).filter(([k]) => !k.startsWith('./plugins/'));
+			const plugins = Object.entries(rest).filter(([k]) => k.startsWith('./plugins/'));
+			plugins.sort(([a], [b]) => a.localeCompare(b));
+			packageJson.exports = {
+				...(root ? { '.': root } : {}),
+				...Object.fromEntries(nonPlugins),
+				...Object.fromEntries(plugins),
+			};
+
+			writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2) + '\n');
+			console.log(`✅ Updated package.json exports`);
 		}
 	}
 

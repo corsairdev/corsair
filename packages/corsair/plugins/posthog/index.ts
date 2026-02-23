@@ -8,7 +8,7 @@ import type {
 	CorsairWebhook,
 	KeyBuilderContext,
 } from '../../core';
-import type { AuthTypes, PickAuth } from '../../core/constants';
+import type { PickAuth } from '../../core/constants';
 import { Events } from './endpoints';
 import type {
 	PostHogEndpointInputs,
@@ -78,7 +78,7 @@ const posthogWebhooksNested = {
 	},
 } as const;
 
-const defaultAuthType: AuthTypes = 'api_key';
+const defaultAuthType = 'api_key' as const;
 
 export type BasePostHogPlugin<T extends PostHogPluginOptions> = CorsairPlugin<
 	'posthog',

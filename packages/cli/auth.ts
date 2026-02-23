@@ -1,4 +1,6 @@
+import * as http from 'node:http';
 import * as https from 'node:https';
+import * as net from 'node:net';
 import * as querystring from 'node:querystring';
 import * as p from '@clack/prompts';
 import type {
@@ -102,7 +104,61 @@ function getProviderName(pluginId: string, plugin?: CorsairPlugin): string {
 	return config?.providerName || 'OAuth Provider';
 }
 
-const REDIRECT_URI = 'urn:ietf:wg:oauth:2.0:oob';
+function getRedirectUri(port: number): string {
+	return `http://localhost:${port}`;
+}
+
+function findFreePort(): Promise<number> {
+	return new Promise((resolve, reject) => {
+		const server = net.createServer();
+		server.listen(0, '127.0.0.1', () => {
+			const address = server.address();
+			const port = typeof address === 'object' && address ? address.port : 0;
+			server.close((err) => {
+				if (err) reject(err);
+				else resolve(port);
+			});
+		});
+		server.on('error', reject);
+	});
+}
+
+function waitForOAuthCode(port: number): Promise<string> {
+	return new Promise((resolve, reject) => {
+		const server = http.createServer((req, res) => {
+			const url = new URL(req.url ?? '/', `http://localhost:${port}`);
+			const code = url.searchParams.get('code');
+			const error = url.searchParams.get('error');
+
+			if (error) {
+				res.writeHead(400, { 'Content-Type': 'text/html' });
+				res.end(
+					`<html><body><h2>Authorization failed: ${error}</h2><p>You can close this tab.</p></body></html>`,
+				);
+				server.close();
+				reject(new Error(`OAuth error: ${error}`));
+				return;
+			}
+
+			if (code) {
+				res.writeHead(200, { 'Content-Type': 'text/html' });
+				res.end(
+					'<html><body><h2>Authorization successful!</h2><p>You can close this tab and return to the terminal.</p></body></html>',
+				);
+				server.close();
+				resolve(code);
+			} else {
+				res.writeHead(400, { 'Content-Type': 'text/html' });
+				res.end(
+					'<html><body><h2>No code received.</h2><p>You can close this tab.</p></body></html>',
+				);
+			}
+		});
+
+		server.listen(port, '127.0.0.1', () => {});
+		server.on('error', reject);
+	});
+}
 
 function exchangeCodeForTokens(
 	code: string,
@@ -110,7 +166,7 @@ function exchangeCodeForTokens(
 	clientSecret: string,
 	pluginId: string,
 	plugin: CorsairPlugin | undefined,
-	redirectUri: string,
+	redirectUri: string | null,
 ): Promise<{
 	access_token?: string;
 	refresh_token?: string;
@@ -128,8 +184,10 @@ function exchangeCodeForTokens(
 	const isSpotify = pluginId === 'spotify';
 
 	return new Promise((resolve, reject) => {
-		const postDataParams: Record<string, string> = {
+		const postDataParams: Record<string, string | null> = {
 			code: code.trim(),
+			client_id: clientId,
+			client_secret: clientSecret,
 			redirect_uri: redirectUri,
 			grant_type: 'authorization_code',
 		};
@@ -877,13 +935,7 @@ async function selectAction(
 ): Promise<ActionDef> {
 	let actions = getActionsForAuthType(authType, plugin);
 
-	if (
-		authType === 'oauth_2' &&
-		database &&
-		pluginId &&
-		kek &&
-		plugin
-	) {
+	if (authType === 'oauth_2' && database && pluginId && kek && plugin) {
 		const credentials = await checkOAuthCredentials(
 			database,
 			pluginId,
@@ -1010,8 +1062,7 @@ async function executeGetTokens(
 	try {
 		clientId = await integrationKm.get_client_id();
 		clientSecret = await integrationKm.get_client_secret();
-	} catch {
-	}
+	} catch {}
 
 	const providerName = getProviderName(pluginId, plugin);
 
@@ -1081,13 +1132,14 @@ async function executeGetTokens(
 		return;
 	}
 
-	const finalRedirectUri = isSpotify
-		? redirectUrl || REDIRECT_URI
-		: REDIRECT_URI;
+	const port = await findFreePort();
 
-	const authParams: Record<string, string> = {
+	const redirectUri = isSpotify
+		? redirectUrl : getRedirectUri(port);
+
+	const authParams: Record<string, string| null> = {
 		client_id: clientId,
-		redirect_uri: finalRedirectUri,
+		redirect_uri: redirectUri,
 		response_type: 'code',
 		scope: scopes.join(' '),
 	};
@@ -1101,7 +1153,7 @@ async function executeGetTokens(
 
 	const authUrl = `${oauthConfig.authUrl}?${querystring.stringify(authParams)}`;
 
-	p.log.info('\n1. Visit this URL in your browser:');
+	p.log.info('\nVisit this URL in your browser to authorize:');
 	console.log(`\n${authUrl}\n`);
 	p.log.info('2. Authorize the application');
 	if (isSpotify) {
@@ -1114,27 +1166,31 @@ async function executeGetTokens(
 	} else {
 		p.log.info('3. Copy the authorization code from the page\n');
 	}
+	p.log.info(`Waiting for authorization on http://localhost:${port} ...`);
 
-	const code = await p.text({
-		message: 'Enter the authorization code:',
-		validate: (v) => {
-			if (!v || v.trim().length === 0) return 'Authorization code is required';
-		},
-	});
+	const codePromise = waitForOAuthCode(port);
 
-	if (p.isCancel(code)) handleCancel();
+	let code: string;
+	try {
+		code = await codePromise;
+	} catch (err) {
+		p.log.error(
+			`Authorization failed: ${err instanceof Error ? err.message : String(err)}`,
+		);
+		return;
+	}
 
 	const tokenSpin = p.spinner();
 	tokenSpin.start('Exchanging authorization code for tokens...');
 
 	try {
 		const tokens = await exchangeCodeForTokens(
-			code as string,
+			code,
 			clientId,
 			clientSecret,
 			pluginId,
 			plugin,
-			finalRedirectUri,
+			redirectUri,
 		);
 
 		if (!tokens.access_token) {
@@ -1672,13 +1728,7 @@ export async function runAuth({ cwd }: { cwd: string }): Promise<void> {
 	await ensureAccountExists(database, integration.id, tenantId, kek);
 
 	// 6. Select and execute action
-	const action = await selectAction(
-		authType,
-		plugin,
-		database,
-		plugin.id,
-		kek,
-	);
+	const action = await selectAction(authType, plugin, database, plugin.id, kek);
 	await executeAction(
 		action,
 		database,

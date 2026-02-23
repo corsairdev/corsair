@@ -5,6 +5,7 @@ export { processWebhook } from './webhooks';
 
 // plugin function exports
 
+export { discord } from './plugins/discord';
 export { github } from './plugins/github';
 export { gmail } from './plugins/gmail';
 export { googlecalendar } from './plugins/googlecalendar';

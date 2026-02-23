@@ -8,7 +8,7 @@ import type {
 	KeyBuilderContext,
 	RawWebhookRequest,
 } from '../../core';
-import type { AuthTypes, PickAuth } from '../../core/constants';
+import type { PickAuth } from '../../core/constants';
 import { getValidAccessToken } from './client';
 import type {
 	GoogleCalendarEndpointInputs,
@@ -99,7 +99,7 @@ export type GoogleCalendarPluginOptions = {
 export type GoogleCalendarKeyBuilderContext =
 	KeyBuilderContext<GoogleCalendarPluginOptions>;
 
-const defaultAuthType: AuthTypes = 'oauth_2';
+const defaultAuthType = 'oauth_2' as const;
 
 export type BaseGoogleCalendarPlugin<T extends GoogleCalendarPluginOptions> =
 	CorsairPlugin<
@@ -179,8 +179,10 @@ export function googlecalendar<const T extends GoogleCalendarPluginOptions>(
 
 			try {
 				const decoded = decodePubSubMessage(body.message.data);
-				
-				return !!decoded.resourceUri && decoded.resourceUri.includes('calendar')
+
+				return (
+					!!decoded.resourceUri && decoded.resourceUri.includes('calendar')
+				);
 			} catch {
 				return false;
 			}
