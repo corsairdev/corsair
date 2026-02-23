@@ -5,15 +5,11 @@ export interface TelegramUpdate {
 	channel_post?: TelegramMessage;
 	edited_channel_post?: TelegramMessage;
 	inline_query?: TelegramInlineQuery;
-	chosen_inline_result?: unknown;
 	callback_query?: TelegramCallbackQuery;
 	shipping_query?: TelegramShippingQuery;
 	pre_checkout_query?: TelegramPreCheckoutQuery;
 	poll?: TelegramPoll;
-	poll_answer?: unknown;
-	my_chat_member?: unknown;
-	chat_member?: unknown;
-	chat_join_request?: unknown;
+	// Using 'unknown' because the structure varies by event and is validated by the Telegram API
 	[key: string]: unknown;
 }
 
@@ -38,52 +34,19 @@ export interface TelegramMessage {
 	author_signature?: string;
 	text?: string;
 	entities?: TelegramMessageEntity[];
-	animation?: unknown;
-	audio?: unknown;
-	document?: unknown;
-	photo?: unknown[];
-	sticker?: unknown;
-	video?: unknown;
-	video_note?: unknown;
-	voice?: unknown;
 	caption?: string;
 	caption_entities?: TelegramMessageEntity[];
-	contact?: unknown;
-	dice?: unknown;
-	game?: unknown;
-	poll?: TelegramPoll;
-	venue?: unknown;
-	location?: unknown;
 	new_chat_members?: TelegramUser[];
-	new_chat_member?: TelegramUser;
 	left_chat_member?: TelegramUser;
 	new_chat_title?: string;
-	new_chat_photo?: unknown[];
 	delete_chat_photo?: boolean;
 	group_chat_created?: boolean;
 	supergroup_chat_created?: boolean;
 	channel_chat_created?: boolean;
-	message_auto_delete_timer_changed?: unknown;
 	migrate_to_chat_id?: number;
 	migrate_from_chat_id?: number;
 	pinned_message?: TelegramMessage;
-	invoice?: unknown;
-	successful_payment?: unknown;
-	connected_website?: string;
-	write_access_allowed?: unknown;
-	passport_data?: unknown;
-	proximity_alert_triggered?: unknown;
-	forum_topic_created?: unknown;
-	forum_topic_closed?: unknown;
-	forum_topic_reopened?: unknown;
-	general_forum_topic_hidden?: unknown;
-	general_forum_topic_unhidden?: unknown;
-	video_chat_scheduled?: unknown;
-	video_chat_started?: unknown;
-	video_chat_ended?: unknown;
-	video_chat_participants_invited?: unknown;
-	web_app_data?: unknown;
-	reply_markup?: unknown;
+	// Using 'unknown' because the structure varies by event and is validated by the Telegram API
 	[key: string]: unknown;
 }
 
@@ -110,7 +73,6 @@ export interface TelegramChat {
 	first_name?: string;
 	last_name?: string;
 	is_forum?: boolean;
-	photo?: unknown;
 	active_usernames?: string[];
 	emoji_status_custom_emoji_id?: string;
 	bio?: string;
@@ -121,7 +83,6 @@ export interface TelegramChat {
 	description?: string;
 	invite_link?: string;
 	pinned_message?: TelegramMessage;
-	permissions?: unknown;
 	slow_mode_delay?: number;
 	message_auto_delete_time?: number;
 	has_aggressive_anti_spam_enabled?: boolean;
@@ -130,7 +91,7 @@ export interface TelegramChat {
 	sticker_set_name?: string;
 	can_set_sticker_set?: boolean;
 	linked_chat_id?: number;
-	location?: unknown;
+	// Using 'unknown' because the structure varies by event and is validated by the Telegram API
 	[key: string]: unknown;
 }
 
@@ -142,6 +103,7 @@ export interface TelegramMessageEntity {
 	user?: TelegramUser;
 	language?: string;
 	custom_emoji_id?: string;
+	// Using 'unknown' because the structure varies by event and is validated by the Telegram API
 	[key: string]: unknown;
 }
 
@@ -153,6 +115,7 @@ export interface TelegramCallbackQuery {
 	chat_instance: string;
 	data?: string;
 	game_short_name?: string;
+	// Using 'unknown' because the structure varies by event and is validated by the Telegram API
 	[key: string]: unknown;
 }
 
@@ -162,7 +125,7 @@ export interface TelegramInlineQuery {
 	query: string;
 	offset: string;
 	chat_type?: string;
-	location?: unknown;
+	// Using 'unknown' because the structure varies by event and is validated by the Telegram API
 	[key: string]: unknown;
 }
 
@@ -170,7 +133,7 @@ export interface TelegramShippingQuery {
 	id: string;
 	from: TelegramUser;
 	invoice_payload: string;
-	shipping_address: unknown;
+	// Using 'unknown' because the structure varies by event and is validated by the Telegram API
 	[key: string]: unknown;
 }
 
@@ -181,7 +144,7 @@ export interface TelegramPreCheckoutQuery {
 	total_amount: number;
 	invoice_payload: string;
 	shipping_option_id?: string;
-	order_info?: unknown;
+	// Using 'unknown' because the structure varies by event and is validated by the Telegram API
 	[key: string]: unknown;
 }
 
@@ -191,6 +154,7 @@ export interface TelegramPoll {
 	options: Array<{
 		text: string;
 		voter_count: number;
+		// Using 'unknown' because the structure varies by event and is validated by the Telegram API
 		[key: string]: unknown;
 	}>;
 	total_voter_count: number;
@@ -203,6 +167,7 @@ export interface TelegramPoll {
 	explanation_entities?: TelegramMessageEntity[];
 	open_period?: number;
 	close_date?: number;
+	// Using 'unknown' because the structure varies by event and is validated by the Telegram API
 	[key: string]: unknown;
 }
 
@@ -269,6 +234,7 @@ import type {
 	WebhookRequest,
 } from '../../../core';
 
+// Using 'unknown' because the structure varies by event and is validated by the Telegram API
 function parseBody(body: unknown): unknown {
 	return typeof body === 'string' ? JSON.parse(body) : body;
 }
