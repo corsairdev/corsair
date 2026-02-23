@@ -234,6 +234,61 @@ const GetUpdatesInputSchema = z.object({
 
 const GetMeInputSchema = z.object({});
 
+const GetMeOutputSchema = z.object({
+	id: z.number(),
+	is_bot: z.boolean(),
+	first_name: z.string(),
+	username: z.string().optional(),
+	can_join_groups: z.boolean().optional(),
+	can_read_all_group_messages: z.boolean().optional(),
+	supports_inline_queries: z.boolean().optional(),
+});
+
+const GetChatOutputSchema = z.object({
+	id: z.number(),
+	type: z.string(),
+	title: z.string().optional(),
+	username: z.string().optional(),
+	first_name: z.string().optional(),
+	last_name: z.string().optional(),
+});
+
+const SendMessageOutputSchema = z.object({
+	message_id: z.number(),
+	from: z.unknown().optional(),
+	date: z.number(),
+	chat: z.object({
+		id: z.number(),
+		type: z.string(),
+	}),
+	text: z.string().optional(),
+});
+
+const GetUpdatesOutputSchema = z.array(
+	z.object({
+		update_id: z.number(),
+		message: z.unknown().optional(),
+		edited_message: z.unknown().optional(),
+		channel_post: z.unknown().optional(),
+		callback_query: z.unknown().optional(),
+	}),
+);
+
+const GetFileOutputSchema = z.object({
+	file_id: z.string(),
+	file_unique_id: z.string(),
+	file_size: z.number().optional(),
+	file_path: z.string().optional(),
+});
+
+export {
+	GetMeOutputSchema,
+	GetChatOutputSchema,
+	SendMessageOutputSchema,
+	GetUpdatesOutputSchema,
+	GetFileOutputSchema,
+};
+
 export type TelegramEndpointInputs = {
 	getChat: z.infer<typeof GetChatInputSchema>;
 	getChatAdministrators: z.infer<typeof GetChatAdministratorsInputSchema>;
@@ -452,16 +507,8 @@ export type TelegramEndpointOutputs = {
 		[key: string]: unknown;
 	}>;
 	sendChatAction: boolean;
-	setWebhook: {
-		ok: boolean;
-		result: boolean;
-		description?: string;
-	};
-	deleteWebhook: {
-		ok: boolean;
-		result: boolean;
-		description?: string;
-	};
+	setWebhook: boolean;
+	deleteWebhook: boolean;
 	getUpdates: Array<{
 		update_id: number;
 		message?: {
