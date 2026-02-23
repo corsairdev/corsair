@@ -240,8 +240,7 @@ describe('Telegram plugin integration', () => {
 		const setResult = await corsair.telegram.api.webhook.setWebhook(setWebhookInput);
 
 		expect(setResult).toBeDefined();
-		expect(setResult.ok).toBeDefined();
-		expect(typeof setResult.result === 'boolean').toBe(true);
+		expect(typeof setResult === 'boolean').toBe(true);
 
 		const orm = createCorsairOrm(testDb.database);
 		const setWebhookEvents = await orm.events.findMany({
@@ -262,8 +261,7 @@ describe('Telegram plugin integration', () => {
 		});
 
 		expect(deleteResult).toBeDefined();
-		expect(deleteResult.ok).toBeDefined();
-		expect(typeof deleteResult.result === 'boolean').toBe(true);
+		expect(typeof deleteResult === 'boolean').toBe(true);
 
 		const deleteWebhookEvents = await orm.events.findMany({
 			where: { event_type: 'telegram.webhook.deleteWebhook' },
