@@ -4,10 +4,18 @@ import 'dotenv/config';
 const main = async () => {
 	const tenant = corsair.withTenant('default');
 	const CHAT_ID = '-1003750192801';
-	await tenant.telegram.api.messages.sendMessage({
-		chat_id: CHAT_ID,
-		text: 'Hello, world!',
+
+	const res = await tenant.telegram.api.webhook.setWebhook({
+		url: 'https://ff2d-2401-4900-889b-9324-24ce-f2b9-2703-3234.ngrok-free.app/api/webhook?tenant_id=default',
+		secret_token: process.env.TELEGRAM_WEBHOOK_SECRET || '',
 	});
+
+	console.log('Webhook set:', res);
+
+	// await tenant.telegram.api.messages.sendMessage({
+	// 	chat_id: CHAT_ID,
+	// 	text: 'Hello, world!',
+	// });
 	// const BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN || 'YOUR_BOT_TOKEN';
 	
 	// await tenant.telegram.keys.set_bot_token(BOT_TOKEN);

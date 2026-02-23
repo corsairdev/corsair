@@ -1,7 +1,7 @@
 import { logEventFromContext } from '../../utils/events';
 import type { TelegramWebhooks } from '..';
 import { createTelegramMatch, verifyTelegramWebhookSignature } from './types';
-import type { ChannelPostEvent, TelegramUpdate } from './types';
+import type { TelegramUpdate } from './types';
 
 export const channelPost: TelegramWebhooks['channelPost'] = {
 	match: createTelegramMatch('channel_post'),
@@ -26,7 +26,7 @@ export const channelPost: TelegramWebhooks['channelPost'] = {
 			};
 		}
 
-		const event: ChannelPostEvent = {
+		const event = {
 			update_id: update.update_id,
 			channel_post: update.channel_post,
 		};
@@ -38,12 +38,9 @@ export const channelPost: TelegramWebhooks['channelPost'] = {
 				const entity = await ctx.db.messages.upsertByEntityId(
 					event.channel_post.message_id.toString(),
 					{
+						...event.channel_post,
 						id: event.channel_post.message_id.toString(),
-						message_id: event.channel_post.message_id,
 						chat_id: event.channel_post.chat.id.toString(),
-						date: event.channel_post.date,
-						text: event.channel_post.text,
-						caption: event.channel_post.caption,
 						createdAt: new Date(event.channel_post.date * 1000),
 					},
 				);

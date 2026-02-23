@@ -1,7 +1,6 @@
 import { logEventFromContext } from '../../utils/events';
 import type { TelegramWebhooks } from '..';
 import { createTelegramMatch, verifyTelegramWebhookSignature } from './types';
-import type { MessageEvent, TelegramUpdate } from './types';
 
 export const message: TelegramWebhooks['message'] = {
 	match: createTelegramMatch('message'),
@@ -26,7 +25,7 @@ export const message: TelegramWebhooks['message'] = {
 			};
 		}
 
-		const event: MessageEvent = {
+		const event = {
 			update_id: update.update_id,
 			message: update.message,
 		};
@@ -38,13 +37,10 @@ export const message: TelegramWebhooks['message'] = {
 				const entity = await ctx.db.messages.upsertByEntityId(
 					event.message.message_id.toString(),
 					{
+						...event.message,
 						id: event.message.message_id.toString(),
-						message_id: event.message.message_id,
 						chat_id: event.message.chat.id.toString(),
 						authorId: event.message.from?.id.toString(),
-						date: event.message.date,
-						text: event.message.text,
-						caption: event.message.caption,
 						createdAt: new Date(event.message.date * 1000),
 					},
 				);

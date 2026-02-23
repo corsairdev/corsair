@@ -1,7 +1,6 @@
 import { logEventFromContext } from '../../utils/events';
 import type { TelegramWebhooks } from '..';
 import { createTelegramMatch, verifyTelegramWebhookSignature } from './types';
-import type { CallbackQueryEvent, TelegramUpdate } from './types';
 
 export const callbackQuery: TelegramWebhooks['callbackQuery'] = {
 	match: createTelegramMatch('callback_query'),
@@ -26,7 +25,7 @@ export const callbackQuery: TelegramWebhooks['callbackQuery'] = {
 			};
 		}
 
-		const event: CallbackQueryEvent = {
+		const event = {
 			update_id: update.update_id,
 			callback_query: update.callback_query,
 		};

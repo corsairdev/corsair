@@ -1,7 +1,6 @@
 import { logEventFromContext } from '../../utils/events';
 import type { TelegramWebhooks } from '..';
 import { createTelegramMatch, verifyTelegramWebhookSignature } from './types';
-import type { InlineQueryEvent, TelegramUpdate } from './types';
 
 export const inlineQuery: TelegramWebhooks['inlineQuery'] = {
 	match: createTelegramMatch('inline_query'),
@@ -26,7 +25,7 @@ export const inlineQuery: TelegramWebhooks['inlineQuery'] = {
 			};
 		}
 
-		const event: InlineQueryEvent = {
+		const event = {
 			update_id: update.update_id,
 			inline_query: update.inline_query,
 		};

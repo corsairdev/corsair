@@ -18,8 +18,8 @@ export const getFile: TelegramEndpoints['getFile'] = async (ctx, input) => {
 	if (result && ctx.db.files) {
 		try {
 			await ctx.db.files.upsertByEntityId(result.file_id, {
-				id: result.file_id,
 				...result,
+				id: result.file_id,
 				file_id: result.file_id,
 			});
 		} catch (error) {

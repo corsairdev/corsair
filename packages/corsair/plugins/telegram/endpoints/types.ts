@@ -320,7 +320,7 @@ export type TelegramEndpointInputs = {
 export type TelegramEndpointOutputs = {
 	getChat: {
 		id: number;
-		type: string;
+		type: 'private' | 'group' | 'supergroup' | 'channel';
 		title?: string;
 		username?: string;
 		first_name?: string;

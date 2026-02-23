@@ -64,16 +64,7 @@ export const editMessageText: TelegramEndpoints['editMessageText'] = async (
 		TelegramEndpointOutputs['editMessageText']
 	>('editMessageText', ctx.key, {
 		method: 'POST',
-		body: {
-			chat_id: input.chat_id,
-			message_id: input.message_id,
-			inline_message_id: input.inline_message_id,
-			text: input.text,
-			parse_mode: input.parse_mode,
-			entities: input.entities,
-			disable_web_page_preview: input.disable_web_page_preview,
-			reply_markup: input.reply_markup,
-		},
+		body: input,
 	});
 
 	if (result && typeof result === 'object' && result.message_id && ctx.db.messages) {
@@ -106,10 +97,7 @@ export const deleteMessage: TelegramEndpoints['deleteMessage'] = async (
 		TelegramEndpointOutputs['deleteMessage']
 	>('deleteMessage', ctx.key, {
 		method: 'POST',
-		body: {
-			chat_id: input.chat_id,
-			message_id: input.message_id,
-		},
+		body: input,
 	});
 
 	if (result && ctx.db.messages) {
@@ -137,11 +125,7 @@ export const pinChatMessage: TelegramEndpoints['pinChatMessage'] = async (
 		TelegramEndpointOutputs['pinChatMessage']
 	>('pinChatMessage', ctx.key, {
 		method: 'POST',
-		body: {
-			chat_id: input.chat_id,
-			message_id: input.message_id,
-			disable_notification: input.disable_notification,
-		},
+		body: input,
 	});
 
 	await logEventFromContext(
@@ -161,10 +145,7 @@ export const unpinChatMessage: TelegramEndpoints['unpinChatMessage'] = async (
 		TelegramEndpointOutputs['unpinChatMessage']
 	>('unpinChatMessage', ctx.key, {
 		method: 'POST',
-		body: {
-			chat_id: input.chat_id,
-			message_id: input.message_id,
-		},
+		body: input,
 	});
 
 	await logEventFromContext(
@@ -182,19 +163,7 @@ export const sendPhoto: TelegramEndpoints['sendPhoto'] = async (ctx, input) => {
 		ctx.key,
 		{
 			method: 'POST',
-			body: {
-				chat_id: input.chat_id,
-				photo: input.photo,
-				caption: input.caption,
-				parse_mode: input.parse_mode,
-				caption_entities: input.caption_entities,
-				has_spoiler: input.has_spoiler,
-				disable_notification: input.disable_notification,
-				protect_content: input.protect_content,
-				reply_to_message_id: input.reply_to_message_id,
-				allow_sending_without_reply: input.allow_sending_without_reply,
-				reply_markup: input.reply_markup,
-			},
+			body: input,
 		},
 	);
 
@@ -461,10 +430,7 @@ export const sendChatAction: TelegramEndpoints['sendChatAction'] = async (
 		TelegramEndpointOutputs['sendChatAction']
 	>('sendChatAction', ctx.key, {
 		method: 'POST',
-		body: {
-			chat_id: input.chat_id,
-			action: input.action,
-		},
+		body: input,
 	});
 
 	await logEventFromContext(

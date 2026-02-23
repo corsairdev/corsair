@@ -1,7 +1,7 @@
 import { logEventFromContext } from '../../utils/events';
 import type { TelegramWebhooks } from '..';
 import { createTelegramMatch, verifyTelegramWebhookSignature } from './types';
-import type { EditedChannelPostEvent, TelegramUpdate } from './types';
+import type { TelegramUpdate } from './types';
 
 export const editedChannelPost: TelegramWebhooks['editedChannelPost'] = {
 	match: createTelegramMatch('edited_channel_post'),
@@ -26,7 +26,7 @@ export const editedChannelPost: TelegramWebhooks['editedChannelPost'] = {
 			};
 		}
 
-		const event: EditedChannelPostEvent = {
+		const event = {
 			update_id: update.update_id,
 			edited_channel_post: update.edited_channel_post,
 		};
@@ -36,13 +36,9 @@ export const editedChannelPost: TelegramWebhooks['editedChannelPost'] = {
 				await ctx.db.messages.upsertByEntityId(
 					event.edited_channel_post.message_id.toString(),
 					{
+						...event.edited_channel_post,
 						id: event.edited_channel_post.message_id.toString(),
-						message_id: event.edited_channel_post.message_id,
 						chat_id: event.edited_channel_post.chat.id.toString(),
-						date: event.edited_channel_post.date,
-						text: event.edited_channel_post.text,
-						caption: event.edited_channel_post.caption,
-						edit_date: event.edited_channel_post.edit_date,
 						createdAt: new Date(event.edited_channel_post.date * 1000),
 					},
 				);

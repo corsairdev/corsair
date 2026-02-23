@@ -9,15 +9,7 @@ export const setWebhook: TelegramEndpoints['setWebhook'] = async (ctx, input) =>
 		ctx.key,
 		{
 			method: 'POST',
-			body: {
-				url: input.url,
-				secret_token: input.secret_token,
-				certificate: input.certificate,
-				ip_address: input.ip_address,
-				max_connections: input.max_connections,
-				allowed_updates: input.allowed_updates,
-				drop_pending_updates: input.drop_pending_updates,
-			},
+			body: input,
 		},
 	);
 
@@ -36,9 +28,7 @@ export const deleteWebhook: TelegramEndpoints['deleteWebhook'] = async (ctx, inp
 		ctx.key,
 		{
 			method: 'POST',
-			body: {
-				drop_pending_updates: input.drop_pending_updates,
-			},
+			body: input,
 		},
 	);
 

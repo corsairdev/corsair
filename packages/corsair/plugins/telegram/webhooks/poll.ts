@@ -1,7 +1,6 @@
 import { logEventFromContext } from '../../utils/events';
 import type { TelegramWebhooks } from '..';
 import { createTelegramMatch, verifyTelegramWebhookSignature } from './types';
-import type { PollEvent, TelegramUpdate } from './types';
 
 export const poll: TelegramWebhooks['poll'] = {
 	match: createTelegramMatch('poll'),
@@ -26,7 +25,7 @@ export const poll: TelegramWebhooks['poll'] = {
 			};
 		}
 
-		const event: PollEvent = {
+		const event = {
 			update_id: update.update_id,
 			poll: update.poll,
 		};

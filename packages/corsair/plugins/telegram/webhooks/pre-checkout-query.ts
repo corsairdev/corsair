@@ -1,7 +1,6 @@
 import { logEventFromContext } from '../../utils/events';
 import type { TelegramWebhooks } from '..';
 import { createTelegramMatch, verifyTelegramWebhookSignature } from './types';
-import type { PreCheckoutQueryEvent, TelegramUpdate } from './types';
 
 export const preCheckoutQuery: TelegramWebhooks['preCheckoutQuery'] = {
 	match: createTelegramMatch('pre_checkout_query'),
@@ -26,7 +25,7 @@ export const preCheckoutQuery: TelegramWebhooks['preCheckoutQuery'] = {
 			};
 		}
 
-		const event: PreCheckoutQueryEvent = {
+		const event = {
 			update_id: update.update_id,
 			pre_checkout_query: update.pre_checkout_query,
 		};

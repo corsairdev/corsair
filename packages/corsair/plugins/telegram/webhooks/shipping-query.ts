@@ -1,7 +1,6 @@
 import { logEventFromContext } from '../../utils/events';
 import type { TelegramWebhooks } from '..';
 import { createTelegramMatch, verifyTelegramWebhookSignature } from './types';
-import type { ShippingQueryEvent, TelegramUpdate } from './types';
 
 export const shippingQuery: TelegramWebhooks['shippingQuery'] = {
 	match: createTelegramMatch('shipping_query'),
@@ -26,7 +25,7 @@ export const shippingQuery: TelegramWebhooks['shippingQuery'] = {
 			};
 		}
 
-		const event: ShippingQueryEvent = {
+		const event = {
 			update_id: update.update_id,
 			shipping_query: update.shipping_query,
 		};

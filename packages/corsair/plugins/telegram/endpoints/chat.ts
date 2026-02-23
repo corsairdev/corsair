@@ -18,16 +18,9 @@ export const getChat: TelegramEndpoints['getChat'] = async (ctx, input) => {
 	if (result && ctx.db.chats) {
 		try {
 			await ctx.db.chats.upsertByEntityId(result.id.toString(), {
-				id: result.id.toString(),
+				...result,
 				chat_id: result.id,
-				type: result.type as 'private' | 'group' | 'supergroup' | 'channel',
-				title: result.title,
-				username: result.username,
-				first_name: result.first_name,
-				last_name: result.last_name,
-				is_forum: result.is_forum,
-				description: result.description,
-				invite_link: result.invite_link,
+				id: result.id.toString(),
 			});
 		} catch (error) {
 			console.warn('Failed to save chat to database:', error);
@@ -71,10 +64,7 @@ export const getChatMember: TelegramEndpoints['getChatMember'] = async (
 		TelegramEndpointOutputs['getChatMember']
 	>('getChatMember', ctx.key, {
 		method: 'POST',
-		body: {
-			chat_id: input.chat_id,
-			user_id: input.user_id,
-		},
+		body: input
 	});
 
 	await logEventFromContext(
