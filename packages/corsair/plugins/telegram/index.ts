@@ -236,9 +236,15 @@ export function telegram<const T extends TelegramPluginOptions>(
 		endpoints: telegramEndpointsNested,
 		webhooks: telegramWebhooksNested,
 		pluginWebhookMatcher: (request) => {
-			const headers = request.headers;
-			const hasSecretToken = 'x-telegram-bot-api-secret-token' in headers;
-			return hasSecretToken;
+			const body = typeof request.body === 'string' 
+				? JSON.parse(request.body) 
+				: request.body;
+			
+			if (!body || typeof body !== 'object') {
+				return false;
+			}
+			
+			return 'update_id' in body && typeof (body as { update_id?: unknown }).update_id === 'number';
 		},
 		errorHandlers: {
 			...errorHandlers,
