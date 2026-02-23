@@ -41,16 +41,7 @@ export const getNewReleases: SpotifyEndpoints['albumsGetNewReleases'] = async (
 	ctx,
 	input,
 ) => {
-	const query: Record<string, string | number | undefined> = {};
-	if (input.limit) {
-		query.limit = input.limit;
-	}
-	if (input.offset) {
-		query.offset = input.offset;
-	}
-	if (input.country) {
-		query.country = input.country;
-	}
+	const query: Record<string, string | number | undefined> = {...input};
 
 	const result = await makeSpotifyRequest<
 		SpotifyEndpointOutputs['albumsGetNewReleases']
@@ -72,16 +63,7 @@ export const getTracks: SpotifyEndpoints['albumsGetTracks'] = async (
 	ctx,
 	input,
 ) => {
-	const query: Record<string, string | number | undefined> = {};
-	if (input.limit) {
-		query.limit = input.limit;
-	}
-	if (input.offset) {
-		query.offset = input.offset;
-	}
-	if (input.market) {
-		query.market = input.market;
-	}
+	const query: Record<string, string | number | undefined> = {...input};
 
 	const result = await makeSpotifyRequest<
 		SpotifyEndpointOutputs['albumsGetTracks']

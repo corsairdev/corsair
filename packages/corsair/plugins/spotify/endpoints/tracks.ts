@@ -4,10 +4,7 @@ import { makeSpotifyRequest } from '../client';
 import type { SpotifyEndpointOutputs } from './types';
 
 export const get: SpotifyEndpoints['tracksGet'] = async (ctx, input) => {
-	const query: Record<string, string | undefined> = {};
-	if (input.market) {
-		query.market = input.market;
-	}
+	const query: Record<string, string | undefined> = {...input};
 
 	const result = await makeSpotifyRequest<SpotifyEndpointOutputs['tracksGet']>(
 		`tracks/${input.id}`,
@@ -55,20 +52,8 @@ export const getAudioFeatures: SpotifyEndpoints['tracksGetAudioFeatures'] =
 	};
 
 export const search: SpotifyEndpoints['tracksSearch'] = async (ctx, input) => {
-	const query: Record<string, string | number | undefined> = {
-		q: input.q,
-		type: input.type || 'track',
-	};
-	if (input.market) {
-		query.market = input.market;
-	}
-	if (input.limit) {
-		query.limit = input.limit;
-	}
-	if (input.offset) {
-		query.offset = input.offset;
-	}
-
+	const query: Record<string, string | number | undefined> = {...input};
+	
 	const result = await makeSpotifyRequest<SpotifyEndpointOutputs['tracksSearch']>(
 		'search',
 		ctx.key,

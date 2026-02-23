@@ -39,12 +39,7 @@ export const create: SpotifyEndpoints['playlistsCreate'] = async (
 		SpotifyEndpointOutputs['playlistsCreate']
 	>(`users/${input.user_id}/playlists`, ctx.key, {
 		method: 'POST',
-		body: {
-			name: input.name,
-			public: input.public,
-			collaborative: input.collaborative,
-			description: input.description,
-		},
+		body: input
 	});
 
 	if (result && ctx.db.playlists) {
@@ -67,16 +62,8 @@ export const create: SpotifyEndpoints['playlistsCreate'] = async (
 };
 
 export const get: SpotifyEndpoints['playlistsGet'] = async (ctx, input) => {
-	const query: Record<string, string | undefined> = {};
-	if (input.market) {
-		query.market = input.market;
-	}
-	if (input.fields) {
-		query.fields = input.fields;
-	}
-	if (input.additional_types) {
-		query.additional_types = input.additional_types;
-	}
+	const query: Record<string, string | undefined> = {...input};
+	
 
 	const result = await makeSpotifyRequest<SpotifyEndpointOutputs['playlistsGet']>(
 		`playlists/${input.playlist_id}`,
@@ -109,13 +96,7 @@ export const get: SpotifyEndpoints['playlistsGet'] = async (ctx, input) => {
 export const getUserPlaylists: SpotifyEndpoints['playlistsGetUserPlaylists'] =
 	async (ctx, input) => {
 		const userId = input.user_id || 'me';
-		const query: Record<string, string | number | undefined> = {};
-		if (input.limit) {
-			query.limit = input.limit;
-		}
-		if (input.offset) {
-			query.offset = input.offset;
-		}
+		const query: Record<string, string | number | undefined> = {...input};
 
 		const result = await makeSpotifyRequest<
 			SpotifyEndpointOutputs['playlistsGetUserPlaylists']
@@ -137,22 +118,7 @@ export const getTracks: SpotifyEndpoints['playlistsGetTracks'] = async (
 	ctx,
 	input,
 ) => {
-	const query: Record<string, string | number | undefined> = {};
-	if (input.market) {
-		query.market = input.market;
-	}
-	if (input.fields) {
-		query.fields = input.fields;
-	}
-	if (input.limit) {
-		query.limit = input.limit;
-	}
-	if (input.offset) {
-		query.offset = input.offset;
-	}
-	if (input.additional_types) {
-		query.additional_types = input.additional_types;
-	}
+	const query: Record<string, string | number | undefined> = {...input};
 
 	const result = await makeSpotifyRequest<
 		SpotifyEndpointOutputs['playlistsGetTracks']
@@ -174,12 +140,7 @@ export const removeItem: SpotifyEndpoints['playlistsRemoveItem'] = async (
 	ctx,
 	input,
 ) => {
-	const body: Record<string, unknown> = {
-		tracks: input.tracks,
-	};
-	if (input.snapshot_id) {
-		body.snapshot_id = input.snapshot_id;
-	}
+	const body: Record<string, unknown> = {...input};
 
 	const result = await makeSpotifyRequest<
 		SpotifyEndpointOutputs['playlistsRemoveItem']
@@ -198,19 +159,7 @@ export const removeItem: SpotifyEndpoints['playlistsRemoveItem'] = async (
 };
 
 export const search: SpotifyEndpoints['playlistsSearch'] = async (ctx, input) => {
-	const query: Record<string, string | number | undefined> = {
-		q: input.q,
-		type: input.type || 'playlist',
-	};
-	if (input.market) {
-		query.market = input.market;
-	}
-	if (input.limit) {
-		query.limit = input.limit;
-	}
-	if (input.offset) {
-		query.offset = input.offset;
-	}
+	const query: Record<string, string | number | undefined> = {...input};
 
 	const result = await makeSpotifyRequest<
 		SpotifyEndpointOutputs['playlistsSearch']

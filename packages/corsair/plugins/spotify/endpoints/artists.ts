@@ -35,19 +35,7 @@ export const getAlbums: SpotifyEndpoints['artistsGetAlbums'] = async (
 	ctx,
 	input,
 ) => {
-	const query: Record<string, string | number | undefined> = {};
-	if (input.include_groups) {
-		query.include_groups = input.include_groups;
-	}
-	if (input.market) {
-		query.market = input.market;
-	}
-	if (input.limit) {
-		query.limit = input.limit;
-	}
-	if (input.offset) {
-		query.offset = input.offset;
-	}
+	const query: Record<string, string | number | undefined> = {...input};
 
 	const result = await makeSpotifyRequest<
 		SpotifyEndpointOutputs['artistsGetAlbums']
@@ -86,10 +74,7 @@ export const getTopTracks: SpotifyEndpoints['artistsGetTopTracks'] = async (
 	ctx,
 	input,
 ) => {
-	const query: Record<string, string | undefined> = {};
-	if (input.market) {
-		query.market = input.market;
-	}
+	const query: Record<string, string | undefined> = {...input};
 
 	const result = await makeSpotifyRequest<
 		SpotifyEndpointOutputs['artistsGetTopTracks']
@@ -108,19 +93,7 @@ export const getTopTracks: SpotifyEndpoints['artistsGetTopTracks'] = async (
 };
 
 export const search: SpotifyEndpoints['artistsSearch'] = async (ctx, input) => {
-	const query: Record<string, string | number | undefined> = {
-		q: input.q,
-		type: input.type || 'artist',
-	};
-	if (input.market) {
-		query.market = input.market;
-	}
-	if (input.limit) {
-		query.limit = input.limit;
-	}
-	if (input.offset) {
-		query.offset = input.offset;
-	}
+	const query: Record<string, string | number | undefined> = {...input};
 
 	const result = await makeSpotifyRequest<
 		SpotifyEndpointOutputs['artistsSearch']

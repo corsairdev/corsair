@@ -381,6 +381,45 @@ const TracksSearchInputSchema = z.object({
 	offset: z.number().optional(),
 });
 
+export const SpotifyEndpointInputSchemas = {
+	albumsGet: AlbumsGetInputSchema,
+	albumsGetNewReleases: AlbumsGetNewReleasesInputSchema,
+	albumsGetTracks: AlbumsGetTracksInputSchema,
+	albumsSearch: AlbumsSearchInputSchema,
+	artistsGet: ArtistsGetInputSchema,
+	artistsGetAlbums: ArtistsGetAlbumsInputSchema,
+	artistsGetRelatedArtists: ArtistsGetRelatedArtistsInputSchema,
+	artistsGetTopTracks: ArtistsGetTopTracksInputSchema,
+	artistsSearch: ArtistsSearchInputSchema,
+	libraryGetLikedTracks: LibraryGetLikedTracksInputSchema,
+	myDataGetFollowedArtists: MyDataGetFollowedArtistsInputSchema,
+	playerAddToQueue: PlayerAddToQueueInputSchema,
+	playerGetCurrentlyPlaying: PlayerGetCurrentlyPlayingInputSchema,
+	playerSkipToNext: PlayerSkipToNextInputSchema,
+	playerPause: PlayerPauseInputSchema,
+	playerSkipToPrevious: PlayerSkipToPreviousInputSchema,
+	playerGetRecentlyPlayed: PlayerGetRecentlyPlayedInputSchema,
+	playerResume: PlayerResumeInputSchema,
+	playerSetVolume: PlayerSetVolumeInputSchema,
+	playerStartPlayback: PlayerStartPlaybackInputSchema,
+	playlistsAddItem: PlaylistsAddItemInputSchema,
+	playlistsCreate: PlaylistsCreateInputSchema,
+	playlistsGet: PlaylistsGetInputSchema,
+	playlistsGetUserPlaylists: PlaylistsGetUserPlaylistsInputSchema,
+	playlistsGetTracks: PlaylistsGetTracksInputSchema,
+	playlistsRemoveItem: PlaylistsRemoveItemInputSchema,
+	playlistsSearch: PlaylistsSearchInputSchema,
+	tracksGet: TracksGetInputSchema,
+	tracksGetAudioFeatures: TracksGetAudioFeaturesInputSchema,
+	tracksSearch: TracksSearchInputSchema,
+} as const;
+
+export type SpotifyEndpointInputs = {
+	[K in keyof typeof SpotifyEndpointInputSchemas]: z.infer<
+		(typeof SpotifyEndpointInputSchemas)[K]
+	>;
+};
+
 export type AlbumsGetInput = z.infer<typeof AlbumsGetInputSchema>;
 export type AlbumsGetNewReleasesInput = z.infer<
 	typeof AlbumsGetNewReleasesInputSchema

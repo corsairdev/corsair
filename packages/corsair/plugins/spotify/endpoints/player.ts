@@ -219,19 +219,7 @@ export const startPlayback: SpotifyEndpoints['playerStartPlayback'] = async (
 		query.device_id = input.device_id;
 	}
 
-	const body: Record<string, unknown> = {};
-	if (input.context_uri) {
-		body.context_uri = input.context_uri;
-	}
-	if (input.uris) {
-		body.uris = input.uris;
-	}
-	if (input.offset) {
-		body.offset = input.offset;
-	}
-	if (input.position_ms) {
-		body.position_ms = input.position_ms;
-	}
+	const body: Record<string, unknown> = {...input};
 
 	const result = await makeSpotifyRequest<
 		SpotifyEndpointOutputs['playerStartPlayback']

@@ -10,7 +10,10 @@ import type {
 	PluginAuthConfig,
 } from '../../core';
 import type { AuthTypes, PickAuth } from '../../core/constants';
-import type { SpotifyEndpointOutputs } from './endpoints/types';
+import type {
+	SpotifyEndpointInputs,
+	SpotifyEndpointOutputs,
+} from './endpoints/types';
 import type {
 	SpotifyWebhookOutputs,
 	ExampleEvent,
@@ -52,175 +55,43 @@ export type SpotifyKeyBuilderContext = KeyBuilderContext<SpotifyPluginOptions>;
 
 export type SpotifyBoundEndpoints = BindEndpoints<typeof spotifyEndpointsNested>;
 
-type SpotifyEndpoint<
-	K extends keyof SpotifyEndpointOutputs,
-	Input,
-> = CorsairEndpoint<SpotifyContext, Input, SpotifyEndpointOutputs[K]>;
+type SpotifyEndpoint<K extends keyof SpotifyEndpointOutputs> = CorsairEndpoint<
+	SpotifyContext,
+	SpotifyEndpointInputs[K],
+	SpotifyEndpointOutputs[K]
+>;
 
 export type SpotifyEndpoints = {
-	albumsGet: SpotifyEndpoint<'albumsGet', { id: string; market?: string }>;
-	albumsGetNewReleases: SpotifyEndpoint<
-		'albumsGetNewReleases',
-		{ limit?: number; offset?: number; country?: string }
-	>;
-	albumsGetTracks: SpotifyEndpoint<
-		'albumsGetTracks',
-		{ id: string; limit?: number; offset?: number; market?: string }
-	>;
-	albumsSearch: SpotifyEndpoint<
-		'albumsSearch',
-		{
-			q: string;
-			type?: 'album';
-			market?: string;
-			limit?: number;
-			offset?: number;
-		}
-	>;
-	artistsGet: SpotifyEndpoint<'artistsGet', { id: string }>;
-	artistsGetAlbums: SpotifyEndpoint<
-		'artistsGetAlbums',
-		{
-			id: string;
-			include_groups?: string;
-			market?: string;
-			limit?: number;
-			offset?: number;
-		}
-	>;
-	artistsGetRelatedArtists: SpotifyEndpoint<
-		'artistsGetRelatedArtists',
-		{ id: string }
-	>;
-	artistsGetTopTracks: SpotifyEndpoint<
-		'artistsGetTopTracks',
-		{ id: string; market?: string }
-	>;
-	artistsSearch: SpotifyEndpoint<
-		'artistsSearch',
-		{
-			q: string;
-			type?: 'artist';
-			market?: string;
-			limit?: number;
-			offset?: number;
-		}
-	>;
-	libraryGetLikedTracks: SpotifyEndpoint<
-		'libraryGetLikedTracks',
-		{ limit?: number; offset?: number; market?: string }
-	>;
-	myDataGetFollowedArtists: SpotifyEndpoint<
-		'myDataGetFollowedArtists',
-		{ type?: 'artist'; limit?: number; after?: string }
-	>;
-	playerAddToQueue: SpotifyEndpoint<
-		'playerAddToQueue',
-		{ uri: string; device_id?: string }
-	>;
-	playerGetCurrentlyPlaying: SpotifyEndpoint<
-		'playerGetCurrentlyPlaying',
-		{ market?: string; additional_types?: string }
-	>;
-	playerSkipToNext: SpotifyEndpoint<
-		'playerSkipToNext',
-		{ device_id?: string }
-	>;
-	playerPause: SpotifyEndpoint<'playerPause', { device_id?: string }>;
-	playerSkipToPrevious: SpotifyEndpoint<
-		'playerSkipToPrevious',
-		{ device_id?: string }
-	>;
-	playerGetRecentlyPlayed: SpotifyEndpoint<
-		'playerGetRecentlyPlayed',
-		{ limit?: number; after?: number; before?: number }
-	>;
-	playerResume: SpotifyEndpoint<'playerResume', { device_id?: string }>;
-	playerSetVolume: SpotifyEndpoint<
-		'playerSetVolume',
-		{ volume_percent: number; device_id?: string }
-	>;
-	playerStartPlayback: SpotifyEndpoint<
-		'playerStartPlayback',
-		{
-			device_id?: string;
-			context_uri?: string;
-			uris?: string[];
-			offset?: { position?: number; uri?: string };
-			position_ms?: number;
-		}
-	>;
-	playlistsAddItem: SpotifyEndpoint<
-		'playlistsAddItem',
-		{ playlist_id: string; uris: string[]; position?: number }
-	>;
-	playlistsCreate: SpotifyEndpoint<
-		'playlistsCreate',
-		{
-			user_id: string;
-			name: string;
-			public?: boolean;
-			collaborative?: boolean;
-			description?: string;
-		}
-	>;
-	playlistsGet: SpotifyEndpoint<
-		'playlistsGet',
-		{
-			playlist_id: string;
-			market?: string;
-			fields?: string;
-			additional_types?: string;
-		}
-	>;
-	playlistsGetUserPlaylists: SpotifyEndpoint<
-		'playlistsGetUserPlaylists',
-		{ user_id?: string; limit?: number; offset?: number }
-	>;
-	playlistsGetTracks: SpotifyEndpoint<
-		'playlistsGetTracks',
-		{
-			playlist_id: string;
-			market?: string;
-			fields?: string;
-			limit?: number;
-			offset?: number;
-			additional_types?: string;
-		}
-	>;
-	playlistsRemoveItem: SpotifyEndpoint<
-		'playlistsRemoveItem',
-		{
-			playlist_id: string;
-			tracks: Array<{ uri: string }>;
-			snapshot_id?: string;
-		}
-	>;
-	playlistsSearch: SpotifyEndpoint<
-		'playlistsSearch',
-		{
-			q: string;
-			type?: 'playlist';
-			market?: string;
-			limit?: number;
-			offset?: number;
-		}
-	>;
-	tracksGet: SpotifyEndpoint<'tracksGet', { id: string; market?: string }>;
-	tracksGetAudioFeatures: SpotifyEndpoint<
-		'tracksGetAudioFeatures',
-		{ id: string }
-	>;
-	tracksSearch: SpotifyEndpoint<
-		'tracksSearch',
-		{
-			q: string;
-			type?: 'track';
-			market?: string;
-			limit?: number;
-			offset?: number;
-		}
-	>;
+	albumsGet: SpotifyEndpoint<'albumsGet'>;
+	albumsGetNewReleases: SpotifyEndpoint<'albumsGetNewReleases'>;
+	albumsGetTracks: SpotifyEndpoint<'albumsGetTracks'>;
+	albumsSearch: SpotifyEndpoint<'albumsSearch'>;
+	artistsGet: SpotifyEndpoint<'artistsGet'>;
+	artistsGetAlbums: SpotifyEndpoint<'artistsGetAlbums'>;
+	artistsGetRelatedArtists: SpotifyEndpoint<'artistsGetRelatedArtists'>;
+	artistsGetTopTracks: SpotifyEndpoint<'artistsGetTopTracks'>;
+	artistsSearch: SpotifyEndpoint<'artistsSearch'>;
+	libraryGetLikedTracks: SpotifyEndpoint<'libraryGetLikedTracks'>;
+	myDataGetFollowedArtists: SpotifyEndpoint<'myDataGetFollowedArtists'>;
+	playerAddToQueue: SpotifyEndpoint<'playerAddToQueue'>;
+	playerGetCurrentlyPlaying: SpotifyEndpoint<'playerGetCurrentlyPlaying'>;
+	playerSkipToNext: SpotifyEndpoint<'playerSkipToNext'>;
+	playerPause: SpotifyEndpoint<'playerPause'>;
+	playerSkipToPrevious: SpotifyEndpoint<'playerSkipToPrevious'>;
+	playerGetRecentlyPlayed: SpotifyEndpoint<'playerGetRecentlyPlayed'>;
+	playerResume: SpotifyEndpoint<'playerResume'>;
+	playerSetVolume: SpotifyEndpoint<'playerSetVolume'>;
+	playerStartPlayback: SpotifyEndpoint<'playerStartPlayback'>;
+	playlistsAddItem: SpotifyEndpoint<'playlistsAddItem'>;
+	playlistsCreate: SpotifyEndpoint<'playlistsCreate'>;
+	playlistsGet: SpotifyEndpoint<'playlistsGet'>;
+	playlistsGetUserPlaylists: SpotifyEndpoint<'playlistsGetUserPlaylists'>;
+	playlistsGetTracks: SpotifyEndpoint<'playlistsGetTracks'>;
+	playlistsRemoveItem: SpotifyEndpoint<'playlistsRemoveItem'>;
+	playlistsSearch: SpotifyEndpoint<'playlistsSearch'>;
+	tracksGet: SpotifyEndpoint<'tracksGet'>;
+	tracksGetAudioFeatures: SpotifyEndpoint<'tracksGetAudioFeatures'>;
+	tracksSearch: SpotifyEndpoint<'tracksSearch'>;
 };
 
 type SpotifyWebhook<
@@ -421,6 +292,7 @@ export type {
 // ─────────────────────────────────────────────────────────────────────────────
 
 export type {
+	SpotifyEndpointInputs,
 	SpotifyEndpointOutputs,
 	AlbumsGetResponse,
 	AlbumsGetNewReleasesResponse,
