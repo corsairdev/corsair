@@ -131,6 +131,7 @@ const MessageSchema = z
 		type: z.number(),
 		flags: z.number().optional(),
 		message_reference: MessageReferenceSchema.optional(),
+		// Using z.any() because referenced_message can be null or recursively reference Message, causing circular dependency issues
 		referenced_message: z.any().optional(),
 		thread: ChannelSchema.optional(),
 		nonce: z.union([z.string(), z.number()]).optional(),
