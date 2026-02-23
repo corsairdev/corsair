@@ -439,14 +439,12 @@ describe('Discord API Type Tests', () => {
 				testMessageId = sendResponse.id;
 			}
 
-			try {
-				await makeDiscordRequest<void>(
-					`channels/${testChannelId}/messages/${testMessageId}/reactions/👍/@me`,
-					TEST_TOKEN,
-					{ method: 'PUT' },
-				);
-			} catch (error) {
-			}
+			await makeDiscordRequest<void>(
+				`channels/${testChannelId}/messages/${testMessageId}/reactions/👍/@me`,
+				TEST_TOKEN,
+				{ method: 'PUT' },
+			);
+			
 
 			await makeDiscordRequest<void>(
 				`channels/${testChannelId}/messages/${testMessageId}/reactions/👍/@me`,
