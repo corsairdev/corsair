@@ -54,9 +54,9 @@ export async function getValidAccessToken({
 }: {
 	clientId: string;
 	clientSecret: string;
-	accessToken: string;
+	accessToken?: string | null;
 	refreshToken: string;
-}): Promise<string> {
+}): Promise<string | undefined> {
 	const now = Date.now();
 	const bufferTime = 5 * 60 * 1000;
 
@@ -81,7 +81,7 @@ export async function getValidAccessToken({
 		if (error instanceof GoogleDriveAPIError) {
 			throw error;
 		}
-		return accessToken;
+		return accessToken || undefined;
 	}
 }
 
