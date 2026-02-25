@@ -10,7 +10,7 @@ import type {
 } from '../../core';
 import type { PickAuth } from '../../core/constants';
 import type { LinearEndpointInputs, LinearEndpointOutputs } from './endpoints';
-import { Comments, Issues, Projects, Teams } from './endpoints';
+import { Comments, Issues, Projects, Teams, Users } from './endpoints';
 import { errorHandlers } from './error-handlers';
 import { LinearSchema } from './schema';
 import type {
@@ -59,6 +59,8 @@ export type LinearEndpoints = {
 	issuesDelete: LinearEndpoint<'issuesDelete'>;
 	teamsList: LinearEndpoint<'teamsList'>;
 	teamsGet: LinearEndpoint<'teamsGet'>;
+	usersList: LinearEndpoint<'usersList'>;
+	usersGet: LinearEndpoint<'usersGet'>;
 	projectsList: LinearEndpoint<'projectsList'>;
 	projectsGet: LinearEndpoint<'projectsGet'>;
 	projectsCreate: LinearEndpoint<'projectsCreate'>;
@@ -135,6 +137,10 @@ const linearEndpointsNested = {
 	teams: {
 		list: Teams.list,
 		get: Teams.get,
+	},
+	users: {
+		list: Users.list,
+		get: Users.get,
 	},
 } as const;
 
