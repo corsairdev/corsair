@@ -10,19 +10,16 @@ import type {
 	PluginAuthConfig,
 } from '../../core';
 import type { AuthTypes, PickAuth } from '../../core/constants';
-import type { DiscordEndpointOutputs } from './endpoints/types';
-import type {
-	DiscordWebhookOutputs,
-	ExampleEvent,
-} from './webhooks/types';
+import type { DiscordEndpointOutputs } from './endpoints';
 import { Example } from './endpoints';
-import { DiscordSchema } from './schema';
+import type { DiscordWebhookOutputs, ExampleEvent } from './webhooks';
 import { ExampleWebhooks } from './webhooks';
+import { DiscordSchema } from './schema';
 import { errorHandlers } from './error-handlers';
 
 /**
  * Plugin options type - configure authentication and behavior
- * 
+ *
  * AUTH CONFIGURATION:
  * - authType: The authentication method to use. Options:
  *   - 'api_key': For API key authentication (most common)
@@ -30,7 +27,7 @@ import { errorHandlers } from './error-handlers';
  *   - 'bot_token': For bot token authentication
  *   Update PickAuth<'api_key'> to include all auth types your plugin supports.
  *   Example: PickAuth<'api_key' | 'oauth_2'> for plugins that support both.
- * 
+ *
  * - key: Optional API key to use directly (bypasses key manager)
  * - webhookSecret: Optional webhook secret for signature verification
  */
@@ -57,7 +54,9 @@ export type DiscordContext = CorsairPluginContext<
 
 export type DiscordKeyBuilderContext = KeyBuilderContext<DiscordPluginOptions>;
 
-export type DiscordBoundEndpoints = BindEndpoints<typeof discordEndpointsNested>;
+export type DiscordBoundEndpoints = BindEndpoints<
+	typeof discordEndpointsNested
+>;
 
 type DiscordEndpoint<
 	K extends keyof DiscordEndpointOutputs,
@@ -93,29 +92,29 @@ const discordWebhooksNested = {
 
 /**
  * Default authentication type for this plugin
- * 
+ *
  * AUTH CONFIGURATION:
  * Change this to match your plugin's default auth method:
  * - 'api_key': For API key authentication
- * - 'oauth_2': For OAuth 2.0 authentication  
+ * - 'oauth_2': For OAuth 2.0 authentication
  * - 'bot_token': For bot token authentication
  */
 const defaultAuthType: AuthTypes = 'api_key';
 
 /**
  * Authentication configuration
- * 
+ *
  * AUTH CONFIGURATION:
  * This defines which auth types are supported and how accounts are structured.
- * 
+ *
  * For 'api_key' auth:
  *   - account: ['one'] means single account per plugin instance
  *   - account: ['many'] means multiple accounts per plugin instance
- * 
+ *
  * For 'oauth_2' auth:
  *   - account: ['one'] or ['many'] depending on your needs
  *   - You may also need to add 'scopes' configuration
- * 
+ *
  * Example for OAuth 2.0:
  * export const discordAuthConfig = {
  *   oauth_2: {
@@ -123,7 +122,7 @@ const defaultAuthType: AuthTypes = 'api_key';
  *     scopes: ['read', 'write'] as const,
  *   },
  * } as const satisfies PluginAuthConfig;
- * 
+ *
  * Example for multiple auth types:
  * export const discordAuthConfig = {
  *   api_key: {
@@ -178,14 +177,14 @@ export function discord<const T extends DiscordPluginOptions>(
 		webhooks: discordWebhooksNested,
 		/**
 		 * Webhook matcher function - determines if an incoming request is a webhook for this plugin
-		 * 
+		 *
 		 * WEBHOOK CONFIGURATION:
 		 * Update this to check for headers that identify your provider's webhooks.
 		 * Common patterns:
 		 * - Check for signature headers (e.g., 'x-discord-signature')
 		 * - Check for user-agent strings
 		 * - Check for specific path patterns
-		 * 
+		 *
 		 * Example for multiple headers:
 		 * pluginWebhookMatcher: (request) => {
 		 *   const headers = request.headers;
@@ -204,23 +203,23 @@ export function discord<const T extends DiscordPluginOptions>(
 		},
 		/**
 		 * Key builder function - retrieves the appropriate key/secret for API calls or webhook verification
-		 * 
+		 *
 		 * AUTH CONFIGURATION:
 		 * This function determines which key to use based on:
 		 * - source: 'endpoint' (for API calls) or 'webhook' (for webhook verification)
 		 * - ctx.authType: The authentication type being used
-		 * 
+		 *
 		 * Priority order:
 		 * 1. Direct options (options.key, options.webhookSecret)
 		 * 2. Key manager (ctx.keys.get_api_key(), ctx.keys.get_access_token(), etc.)
-		 * 
+		 *
 		 * For OAuth 2.0, you'll need to add:
 		 * } else if (ctx.authType === 'oauth_2') {
 		 *   const res = await ctx.keys.get_access_token();
 		 *   if (!res) return '';
 		 *   return res;
 		 * }
-		 * 
+		 *
 		 * For bot_token, you'll need to add:
 		 * } else if (ctx.authType === 'bot_token') {
 		 *   const res = await ctx.keys.get_bot_token();
@@ -278,10 +277,7 @@ export function discord<const T extends DiscordPluginOptions>(
 // Webhook Type Exports
 // ─────────────────────────────────────────────────────────────────────────────
 
-export type {
-	ExampleEvent,
-	DiscordWebhookOutputs,
-} from './webhooks/types';
+export type { ExampleEvent, DiscordWebhookOutputs } from './webhooks/types';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Endpoint Type Exports

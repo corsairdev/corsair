@@ -14,15 +14,15 @@ export class DiscordAPIError extends Error {
 
 /**
  * API Configuration
- * 
+ *
  * AUTH CONFIGURATION:
  * Update the API base URL and authentication headers based on your provider.
- * 
+ *
  * Common authentication patterns:
  * - API Key in header: HEADERS: { 'X-API-Key': apiKey }
  * - Bearer token: HEADERS: { 'Authorization': `Bearer ${apiKey}` }
  * - Custom header: HEADERS: { 'X-Custom-Auth': apiKey }
- * 
+ *
  * For OAuth 2.0, you might use:
  * - HEADERS: { 'Authorization': `Bearer ${accessToken}` }
  */
@@ -30,13 +30,13 @@ const DISCORD_API_BASE = 'https://api.example.com'; // TODO: Update with your AP
 
 /**
  * Makes a request to the Discord API
- * 
+ *
  * AUTH CONFIGURATION:
  * The 'apiKey' parameter will contain:
  * - For 'api_key' auth: The API key from keyBuilder
  * - For 'oauth_2' auth: The access token from keyBuilder
  * - For 'bot_token' auth: The bot token from keyBuilder
- * 
+ *
  * Update the TOKEN and HEADERS configuration based on how your API expects authentication.
  */
 export async function makeDiscordRequest<T>(

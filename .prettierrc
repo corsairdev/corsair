@@ -4,5 +4,6 @@
 	"singleQuote": true,
 	"trailingComma": "es5",
 	"quoteProps": "consistent",
-	"endOfLine": "lf"
+	"endOfLine": "lf",
+	"tabWidth": 2
 }
