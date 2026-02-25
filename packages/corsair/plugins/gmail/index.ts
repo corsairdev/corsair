@@ -200,15 +200,13 @@ export function gmail<const T extends GmailPluginOptions>(
 				const accessToken = await ctx.keys.get_access_token();
 				const refreshToken = await ctx.keys.get_refresh_token();
 
-				if (!accessToken || !refreshToken) {
-					// prob need to throw an error here
-					throw new Error('No access token or refresh token');
+				if (!refreshToken) {
+					throw new Error('No refresh token. Cannot get access token.');
 				}
 
 				const res = await ctx.keys.get_integration_credentials();
 
 				if (!res.client_id || !res.client_secret) {
-					// prob need to throw an error here
 					throw new Error('No client id or client secret');
 				}
 
@@ -218,6 +216,10 @@ export function gmail<const T extends GmailPluginOptions>(
 					clientId: res.client_id,
 					clientSecret: res.client_secret,
 				});
+
+				if (!key) {
+					throw new Error('Access token cannot be created.');
+				}
 
 				return key;
 			}

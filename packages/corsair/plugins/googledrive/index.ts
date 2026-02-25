@@ -176,8 +176,8 @@ export function googledrive<const T extends GoogleDrivePluginOptions>(
 				const accessToken = await ctx.keys.get_access_token();
 				const refreshToken = await ctx.keys.get_refresh_token();
 
-				if (!accessToken || !refreshToken) {
-					throw new Error('No access token or refresh token');
+				if (!refreshToken) {
+					throw new Error('No refresh token. Cannot get access token.');
 				}
 
 				const res = await ctx.keys.get_integration_credentials();
@@ -192,6 +192,10 @@ export function googledrive<const T extends GoogleDrivePluginOptions>(
 					clientId: res.client_id,
 					clientSecret: res.client_secret,
 				});
+
+				if (!key) {
+					throw new Error('Access token cannot be created.');
+				}
 
 				return key;
 			}
