@@ -1381,46 +1381,43 @@ const ExecuteWebhookResponseSchema = z.object({
   message: Message,
 })
 
-export const endpointNames: string[] = [
-  'guildGet',
-  'guildCreate',
-  'guildUpdate',
-  'guildDelete',
-  'guildMembersList',
-  'channelGet',
-  'channelModify',
-  'channelDelete',
-  'guildChannelsList',
-  'guildChannelCreate',
-  'channelMessageSend',
-  'channelMessagesGet',
-  'channelMessageEdit',
-  'channelMessageDelete',
-  'channelMessageReactionAdd',
-  'memberGet',
-  'memberAdd',
-  'memberModify',
-  'memberKick',
-  'rolesList',
-  'roleCreate',
-  'roleUpdate',
-  'roleDelete',
-  'roleAssignToMember',
-  'currentUserGet',
-  'userGet',
-  'currentUserModify',
-  'inviteGet',
-  'channelInviteCreate',
-  'inviteRevoke',
-  'guildInvitesList',
-  'channelWebhookCreate',
-  'guildWebhooksList',
-  'webhookExecute',
-  'commandRegister',
-  'interactionRespond',
-]
-
-export type DiscordEndpointName = typeof endpointNames[number]
+export type DiscordEndpointName =
+  | 'guildGet'
+  | 'guildCreate'
+  | 'guildUpdate'
+  | 'guildDelete'
+  | 'guildMembersList'
+  | 'channelGet'
+  | 'channelModify'
+  | 'channelDelete'
+  | 'guildChannelsList'
+  | 'guildChannelCreate'
+  | 'channelMessageSend'
+  | 'channelMessagesGet'
+  | 'channelMessageEdit'
+  | 'channelMessageDelete'
+  | 'channelMessageReactionAdd'
+  | 'memberGet'
+  | 'memberAdd'
+  | 'memberModify'
+  | 'memberKick'
+  | 'rolesList'
+  | 'roleCreate'
+  | 'roleUpdate'
+  | 'roleDelete'
+  | 'roleAssignToMember'
+  | 'currentUserGet'
+  | 'userGet'
+  | 'currentUserModify'
+  | 'inviteGet'
+  | 'channelInviteCreate'
+  | 'inviteRevoke'
+  | 'guildInvitesList'
+  | 'channelWebhookCreate'
+  | 'guildWebhooksList'
+  | 'webhookExecute'
+  | 'commandRegister'
+  | 'interactionRespond';
 
 export const DiscordEndpointInputSchemas: Record<DiscordEndpointName, z.ZodTypeAny> = {
   guildGet: GetGuildInputSchema,
@@ -1447,15 +1444,15 @@ export const DiscordEndpointInputSchemas: Record<DiscordEndpointName, z.ZodTypeA
   roleUpdate: UpdateRoleInputSchema,
   roleDelete: DeleteRoleInputSchema,
   roleAssignToMember: AssignRoleToMemberInputSchema,
-  userGetCurrent: GetCurrentUserInputSchema,
+  currentUserGet: GetCurrentUserInputSchema,
   userGet: GetUserInputSchema,
-  userModifyCurrent: ModifyCurrentUserInputSchema,
+  currentUserModify: ModifyCurrentUserInputSchema,
   inviteGet: GetInviteInputSchema,
-  inviteCreate: CreateChannelInviteInputSchema,
+  channelInviteCreate: CreateChannelInviteInputSchema,
   inviteRevoke: RevokeInviteInputSchema,
-  inviteListGuild: ListGuildInvitesInputSchema,
-  webhookCreateChannel: CreateChannelWebhookInputSchema,
-  webhookListGuild: ListGuildWebhooksInputSchema,
+  guildInvitesList: ListGuildInvitesInputSchema,
+  channelWebhookCreate: CreateChannelWebhookInputSchema,
+  guildWebhooksList: ListGuildWebhooksInputSchema,
   webhookExecute: ExecuteWebhookInputSchema,
   commandRegister: RegisterCommandInputSchema,
   interactionRespond: RespondToInteractionInputSchema,

@@ -10,8 +10,13 @@ import type {
 	PluginAuthConfig,
 } from '../../core'
 import type { AuthTypes, PickAuth } from '../../core/constants'
-import type { DiscordEndpointInputs, DiscordEndpointName, DiscordEndpointOutputs } from './endpoints'
-import { Example } from './endpoints'
+import {
+	type DiscordEndpointInputs,
+	type DiscordEndpointName,
+	type DiscordEndpointOutputs,
+	Example,
+	Guild
+} from './endpoints'
 import type { DiscordWebhookOutputs, ExampleEvent } from './webhooks'
 import { ExampleWebhooks } from './webhooks'
 import { DiscordSchema } from './schema'
@@ -59,7 +64,7 @@ export type DiscordBoundEndpoints = BindEndpoints<
 >;
 
 type DiscordEndpoint<
-	K extends DiscordEndpointName,
+	K extends DiscordEndpointName
 > = CorsairEndpoint<DiscordContext, DiscordEndpointInputs[K], DiscordEndpointOutputs[K]>;
 
 export type DiscordEndpoints = {
@@ -124,6 +129,9 @@ const discordEndpointsNested = {
 	example: {
 		get: Example.get,
 	},
+	guild: {
+		get: Guild.get
+	}
 } as const;
 
 const discordWebhooksNested = {
