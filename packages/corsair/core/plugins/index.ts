@@ -53,6 +53,7 @@ export type BeforeHookResult<Ctx, Args> = {
 	ctx: Ctx;
 	args: Args;
 	continue?: boolean;
+	passToAfter?: string;
 };
 
 /**
@@ -65,7 +66,7 @@ export type EndpointHooks = {
 	) =>
 		| BeforeHookResult<Record<string, unknown>, unknown>
 		| Promise<BeforeHookResult<Record<string, unknown>, unknown>>;
-	after?: (ctx: Record<string, unknown>, res: unknown) => void | Promise<void>;
+	after?: (ctx: Record<string, unknown>, res: unknown, passToAfter?: string) => void | Promise<void>;
 };
 
 /**
@@ -81,6 +82,7 @@ export type WebhookHooks = {
 	after?: (
 		ctx: Record<string, unknown>,
 		response: unknown,
+		passToAfter?: string,
 	) => void | Promise<void>;
 };
 
@@ -115,10 +117,12 @@ type CorsairEndpointHooksMap<Endpoints extends EndpointTree> = {
 				 * Hook that runs after the endpoint is executed.
 				 * @param ctx - The endpoint context
 				 * @param res - The endpoint result
+				 * @param passToAfter - Optional string passed from the before hook
 				 */
 				after?: (
 					ctx: EndpointContext<Endpoints[K]>,
 					res: EndpointResult<Endpoints[K]>,
+					passToAfter?: string,
 				) => void | Promise<void>;
 			}
 		: Endpoints[K] extends EndpointTree
@@ -188,10 +192,12 @@ type CorsairWebhookHooksMap<Webhooks extends WebhookTree> = {
 				 * Hook that runs after the webhook is processed.
 				 * @param ctx - The webhook context
 				 * @param response - The webhook response
+				 * @param passToAfter - Optional string passed from the before hook
 				 */
 				after?: (
 					ctx: WebhookContext<Webhooks[K]>,
 					response: WebhookResponse<WebhookResponseData<Webhooks[K]>>,
+					passToAfter?: string,
 				) => void | Promise<void>;
 			}
 		: Webhooks[K] extends WebhookTree
