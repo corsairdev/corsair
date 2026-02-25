@@ -8,14 +8,14 @@ import type {
 	CorsairWebhook,
 	KeyBuilderContext,
 	PluginAuthConfig,
-} from '../../core';
-import type { AuthTypes, PickAuth } from '../../core/constants';
-import type { DiscordEndpointOutputs } from './endpoints';
-import { Example } from './endpoints';
-import type { DiscordWebhookOutputs, ExampleEvent } from './webhooks';
-import { ExampleWebhooks } from './webhooks';
-import { DiscordSchema } from './schema';
-import { errorHandlers } from './error-handlers';
+} from '../../core'
+import type { AuthTypes, PickAuth } from '../../core/constants'
+import type { DiscordEndpointInputs, DiscordEndpointName, DiscordEndpointOutputs } from './endpoints'
+import { Example } from './endpoints'
+import type { DiscordWebhookOutputs, ExampleEvent } from './webhooks'
+import { ExampleWebhooks } from './webhooks'
+import { DiscordSchema } from './schema'
+import { errorHandlers } from './error-handlers'
 
 /**
  * Plugin options type - configure authentication and behavior
@@ -59,13 +59,55 @@ export type DiscordBoundEndpoints = BindEndpoints<
 >;
 
 type DiscordEndpoint<
-	K extends keyof DiscordEndpointOutputs,
-	Input,
-> = CorsairEndpoint<DiscordContext, Input, DiscordEndpointOutputs[K]>;
+	K extends DiscordEndpointName,
+> = CorsairEndpoint<DiscordContext, DiscordEndpointInputs[K], DiscordEndpointOutputs[K]>;
 
 export type DiscordEndpoints = {
-	exampleGet: DiscordEndpoint<'exampleGet', { id: string }>;
-};
+	guildGet: DiscordEndpoint<'guildGet'>
+	guildCreate: DiscordEndpoint<'guildCreate'>
+	guildUpdate: DiscordEndpoint<'guildUpdate'>
+	guildDelete: DiscordEndpoint<'guildDelete'>
+	guildMembersList: DiscordEndpoint<'guildMembersList'>
+
+	channelGet: DiscordEndpoint<'channelGet'>
+	channelModify: DiscordEndpoint<'channelModify'>
+	channelDelete: DiscordEndpoint<'channelDelete'>
+	guildChannelsList: DiscordEndpoint<'guildChannelsList'>
+	guildChannelCreate: DiscordEndpoint<'guildChannelCreate'>
+
+	channelMessageSend: DiscordEndpoint<'channelMessageSend'>
+	channelMessagesGet: DiscordEndpoint<'channelMessagesGet'>
+	channelMessageEdit: DiscordEndpoint<'channelMessageEdit'>
+	channelMessageDelete: DiscordEndpoint<'channelMessageDelete'>
+	channelMessageReactionAdd: DiscordEndpoint<'channelMessageReactionAdd'>
+
+	memberGet: DiscordEndpoint<'memberGet'>
+	memberAdd: DiscordEndpoint<'memberAdd'>
+	memberModify: DiscordEndpoint<'memberModify'>
+	memberKick: DiscordEndpoint<'memberKick'>
+
+	rolesList: DiscordEndpoint<'rolesList'>
+	roleCreate: DiscordEndpoint<'roleCreate'>
+	roleUpdate: DiscordEndpoint<'roleUpdate'>
+	roleDelete: DiscordEndpoint<'roleDelete'>
+	roleAssignToMember: DiscordEndpoint<'roleAssignToMember'>
+
+	currentUserGet: DiscordEndpoint<'currentUserGet'>
+	userGet: DiscordEndpoint<'userGet'>
+	currentUserModify: DiscordEndpoint<'currentUserModify'>
+
+	inviteGet: DiscordEndpoint<'inviteGet'>
+	channelInviteCreate: DiscordEndpoint<'channelInviteCreate'>
+	inviteRevoke: DiscordEndpoint<'inviteRevoke'>
+	guildInvitesList: DiscordEndpoint<'guildInvitesList'>
+
+	channelWebhookCreate: DiscordEndpoint<'channelWebhookCreate'>
+	guildWebhooksList: DiscordEndpoint<'guildWebhooksList'>
+	webhookExecute: DiscordEndpoint<'webhookExecute'>
+
+	commandRegister: DiscordEndpoint<'commandRegister'>
+	interactionRespond: DiscordEndpoint<'interactionRespond'>
+}
 
 type DiscordWebhook<
 	K extends keyof DiscordWebhookOutputs,
@@ -284,6 +326,40 @@ export type { ExampleEvent, DiscordWebhookOutputs } from './webhooks/types';
 // ─────────────────────────────────────────────────────────────────────────────
 
 export type {
-	DiscordEndpointOutputs,
-	ExampleGetResponse,
+	GetGuildResponse,
+	CreateGuildResponse,
+	UpdateGuildResponse,
+	DeleteGuildResponse,
+	ListGuildMembersResponse,
+	GetChannelResponse,
+	ModifyChannelResponse,
+	DeleteChannelResponse,
+	ListGuildChannelsResponse,
+	CreateGuildChannelResponse,
+	SendChannelMessageResponse,
+	GetChannelMessagesResponse,
+	EditChannelMessageResponse,
+	DeleteChannelMessageResponse,
+	AddChannelMessageReactionResponse,
+	GetMemberResponse,
+	AddMemberResponse,
+	ModifyMemberResponse,
+	KickMemberResponse,
+	ListRolesResponse,
+	CreateRoleResponse,
+	UpdateRoleResponse,
+	DeleteRoleResponse,
+	AssignRoleToMemberResponse,
+	GetCurrentUserResponse,
+	GetUserResponse,
+	ModifyCurrentUserResponse,
+	GetInviteResponse,
+	CreateChannelInviteResponse,
+	RevokeInviteResponse,
+	ListGuildInvitesResponse,
+	CreateChannelWebhookResponse,
+	ListGuildWebhooksResponse,
+	ExecuteWebhookResponse,
+	RegisterCommandResponse,
+	RespondToInteractionResponse,
 } from './endpoints/types';
