@@ -77,7 +77,7 @@ export async function makeNotionRequest<T>(
 	try {
 		const response = await request<T>(config, requestOptions);
 		return response;
-	} catch (error: any) {
+	} catch (error: any) { // Using any because error type from request() is unknown and varies
 		if (error?.body?.message) {
 			throw new NotionAPIError(error.body.message, error.body.code);
 		}
