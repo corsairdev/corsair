@@ -83,7 +83,6 @@ export function createNotionMatch(
 	eventType: string,
 ): CorsairWebhookMatcher {
 	return (request: RawWebhookRequest) => {
-		console.log(request.body, 'request.body', eventType)
 		if(eventType === 'url_verification') {
 			const parsedBody = parseBody(request.body) as VerificationEvent;
 			return !!parsedBody.verification_token;
