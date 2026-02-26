@@ -6,28 +6,28 @@
 
 ---
 
-AI personal assistants are genuinely capable now. They can draft emails, file GitHub issues, send Slack messages, and manage your calendar. But giving them the keys to everything feels reckless, because one misunderstood instruction and they're deleting issues, sending half-finished emails, or closing PRs you weren't ready to merge.
+AI personal assistants are genuinely capable now. They can draft emails, send messages, and manage your calendar. But giving them the keys to everything feels reckless, because one misunderstood instruction and they're abusing your email, sending calendar invites to strangers, or deleting important files.
 
-So you end up doing it yourself anyway, while the agent watches.
+So you end up doing the work yourself anyway, because you are afraid of providing the access.
 
-Corsair sits between your agent and your integrations, holding your API credentials in an encrypted local database and enforcing a configurable permission layer on every action the agent tries to take. Reads go through instantly. Anything risky (a send, a delete, a write) gets paused and sent to you as a review link. You approve or deny it, and your agent never sees raw tokens, so it can't go rogue.
+Corsair sits between your agent and your integrations, holding your API credentials in an encrypted local database and enforcing a configurable permission layer on every actiything risky (a send, a delete, a write) gets paused and sent to you as a review link. You approve or deny it, and your agent cannot get around it.
 
 ---
 
 ## What it looks like
 
-You're in your coding agent. You ask it to send an email.
+You're away from your computer. You remotely ask your agent to send an email.
 
 ```
-You: Send Sarah the Q1 numbers. Her email is sarah@company.com.
+You: Send Sarah the Q1 numbers from the Financials folder in Drive.
 ```
 
-Your agent calls the Gmail tool. Corsair intercepts it, sees it's a send action, and pauses.
+Your agent calls the Google Drive tool, thn the Gmail tool. Corsair intercepts the Gmail call, sees it's a send action, and pauses.
 
 ```
 Agent: I've drafted the email. This action requires your approval before it sends.
 
-  ⚠️  gmail_send → sarah@company.com
+  ⚠️ gmail_send → sarah@company.dev
      Subject: "Q1 Numbers"
      "Hi Sarah, here's the breakdown we discussed on the call..."
 
@@ -35,37 +35,7 @@ Agent: I've drafted the email. This action requires your approval before it send
   Expires in 10 minutes.
 ```
 
-You open the link, see exactly what's about to be sent, and click **Allow**. The email goes out.
-
----
-
-**What if the agent gets it wrong?**
-
-```
-You: File a GitHub issue for the login bug and assign it to @corsair.
-```
-
-```
-Agent: I've prepared the issue. This action requires your approval.
-
-  ⚠️  github_issues_create
-     Title: "Login bug - critical"
-     Body: "Users are unable to log in after the recent deploy..."
-     Assignee: @corsair
-
-  Review and approve: https://abc123.ngrok-free.app/review/b3d9e7
-```
-
-You open the link. The title reads "Login bug - critical", but you wanted "Login redirect loop" with a specific mention of the OAuth callback. You click **Deny** and follow up in the same thread.
-
-```
-You: Denied. The title should be "Login redirect loop" and the body should mention
-     the OAuth callback specifically.
-
-Agent: Understood. Updating and sending for approval again.
-```
-
-The agent adjusts. Nothing wrong ever got published, and there's no cleanup needed. That's what it actually means to delegate.
+You open the link and can see all important details. The email is to **.dev** instead of **.com**! Deny the request, follow up with your agent, and tell it what needs to be fixed. Once it updates it, it will send you a new request.
 
 ---
 
@@ -117,6 +87,8 @@ To change a setting, tell your agent: _"Make GitHub strict"_ or _"Don't allow an
 - **Discord**: messages, channels, and webhooks
 - **Resend**: transactional email
 - **PostHog**: events and feature flags
+
+We actively have about 15 more integrations in development that will be released soon. Also ask your coding agent to build a Corsair plugin!
 
 ---
 
