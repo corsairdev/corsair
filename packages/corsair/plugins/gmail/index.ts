@@ -197,8 +197,11 @@ export function gmail<const T extends GmailPluginOptions>(
 			}
 
 			if (ctx.authType === 'oauth_2') {
-				const accessToken = await ctx.keys.get_access_token();
-				const refreshToken = await ctx.keys.get_refresh_token();
+				const [accessToken, expiresAt, refreshToken] = await Promise.all([
+					ctx.keys.get_access_token(),
+					ctx.keys.get_expires_at(),
+					ctx.keys.get_refresh_token(),
+				]);
 
 				if (!refreshToken) {
 					throw new Error('No refresh token. Cannot get access token.');
@@ -210,18 +213,22 @@ export function gmail<const T extends GmailPluginOptions>(
 					throw new Error('No client id or client secret');
 				}
 
-				const key = await getValidAccessToken({
+				const result = await getValidAccessToken({
 					accessToken,
+					expiresAt,
 					refreshToken,
 					clientId: res.client_id,
 					clientSecret: res.client_secret,
 				});
 
-				if (!key) {
-					throw new Error('Access token cannot be created.');
+				if (result.refreshed) {
+					await Promise.all([
+						ctx.keys.set_access_token(result.accessToken),
+						ctx.keys.set_expires_at(String(result.expiresAt)),
+					]);
 				}
 
-				return key;
+				return result.accessToken;
 			}
 
 			return '';
