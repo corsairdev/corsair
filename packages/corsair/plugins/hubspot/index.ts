@@ -7,6 +7,7 @@ import type {
 	CorsairPluginContext,
 	CorsairWebhook,
 	KeyBuilderContext,
+	PluginEndpointMeta,
 	RawWebhookRequest,
 } from '../../core';
 import type { PickAuth } from '../../core/constants';
@@ -25,6 +26,7 @@ import {
 import { errorHandlers } from './error-handlers';
 import type { HubSpotCredentials } from './schema';
 import { HubSpotSchema } from './schema';
+import { hubspotEndpointSchemas } from './endpoints/types';
 import type {
 	CompanyCreatedEventType,
 	CompanyDeletedEventType,
@@ -194,6 +196,91 @@ const hubspotWebhooksNested = {
 
 const defaultAuthType = 'api_key' as const;
 
+/**
+ * Risk-level metadata for each HubSpot endpoint.
+ * Used by the MCP server permission system to decide allow / deny / require_approval.
+ */
+const hubspotEndpointMeta = {
+	'contacts.get': { riskLevel: 'read', description: 'Get a specific contact' },
+	'contacts.getMany': { riskLevel: 'read', description: 'Get multiple contacts' },
+	'contacts.createOrUpdate': {
+		riskLevel: 'write',
+		description: 'Create a new contact or update an existing one',
+	},
+	'contacts.delete': {
+		riskLevel: 'destructive',
+		irreversible: true,
+		description: 'Permanently delete a contact [DESTRUCTIVE · IRREVERSIBLE]',
+	},
+	'contacts.getRecentlyCreated': {
+		riskLevel: 'read',
+		description: 'List recently created contacts',
+	},
+	'contacts.getRecentlyUpdated': {
+		riskLevel: 'read',
+		description: 'List recently updated contacts',
+	},
+	'contacts.search': { riskLevel: 'read', description: 'Search contacts' },
+	'companies.get': { riskLevel: 'read', description: 'Get a specific company' },
+	'companies.getMany': { riskLevel: 'read', description: 'Get multiple companies' },
+	'companies.create': { riskLevel: 'write', description: 'Create a new company' },
+	'companies.update': { riskLevel: 'write', description: 'Update an existing company' },
+	'companies.delete': {
+		riskLevel: 'destructive',
+		irreversible: true,
+		description: 'Permanently delete a company [DESTRUCTIVE · IRREVERSIBLE]',
+	},
+	'companies.getRecentlyCreated': {
+		riskLevel: 'read',
+		description: 'List recently created companies',
+	},
+	'companies.getRecentlyUpdated': {
+		riskLevel: 'read',
+		description: 'List recently updated companies',
+	},
+	'companies.searchByDomain': {
+		riskLevel: 'read',
+		description: 'Search companies by domain name',
+	},
+	'deals.get': { riskLevel: 'read', description: 'Get a specific deal' },
+	'deals.getMany': { riskLevel: 'read', description: 'Get multiple deals' },
+	'deals.create': { riskLevel: 'write', description: 'Create a new deal' },
+	'deals.update': { riskLevel: 'write', description: 'Update an existing deal' },
+	'deals.delete': {
+		riskLevel: 'destructive',
+		irreversible: true,
+		description: 'Permanently delete a deal [DESTRUCTIVE · IRREVERSIBLE]',
+	},
+	'deals.getRecentlyCreated': { riskLevel: 'read', description: 'List recently created deals' },
+	'deals.getRecentlyUpdated': { riskLevel: 'read', description: 'List recently updated deals' },
+	'deals.search': { riskLevel: 'read', description: 'Search deals' },
+	'tickets.get': { riskLevel: 'read', description: 'Get a specific ticket' },
+	'tickets.getMany': { riskLevel: 'read', description: 'Get multiple tickets' },
+	'tickets.create': { riskLevel: 'write', description: 'Create a new support ticket' },
+	'tickets.update': { riskLevel: 'write', description: 'Update an existing ticket' },
+	'tickets.delete': {
+		riskLevel: 'destructive',
+		irreversible: true,
+		description: 'Permanently delete a ticket [DESTRUCTIVE · IRREVERSIBLE]',
+	},
+	'engagements.get': { riskLevel: 'read', description: 'Get a specific engagement' },
+	'engagements.getMany': { riskLevel: 'read', description: 'Get multiple engagements' },
+	'engagements.create': { riskLevel: 'write', description: 'Create a new engagement' },
+	'engagements.delete': {
+		riskLevel: 'destructive',
+		irreversible: true,
+		description: 'Permanently delete an engagement [DESTRUCTIVE · IRREVERSIBLE]',
+	},
+	'contactLists.addContact': {
+		riskLevel: 'write',
+		description: 'Add a contact to a static contact list',
+	},
+	'contactLists.removeContact': {
+		riskLevel: 'write',
+		description: 'Remove a contact from a static contact list',
+	},
+} satisfies PluginEndpointMeta<typeof hubspotEndpointsNested>;
+
 export type HubSpotPluginOptions = {
 	authType?: PickAuth<'api_key' | 'oauth_2'>;
 	credentials?: HubSpotCredentials;
@@ -239,6 +326,8 @@ export function hubspot<const PluginOptions extends HubSpotPluginOptions>(
 		webhookHooks: options.webhookHooks,
 		endpoints: hubspotEndpointsNested,
 		webhooks: hubspotWebhooksNested,
+		endpointMeta: hubspotEndpointMeta,
+		endpointSchemas: hubspotEndpointSchemas,
 		pluginWebhookMatcher: (request: RawWebhookRequest) => {
 			const headers = request.headers;
 			const hasHubSpotSignature = 'x-hubspot-signature-v3' in headers;
@@ -363,6 +452,7 @@ export type {
 	UpdateDealResponse,
 	UpdateTicketResponse,
 } from './endpoints/types';
+export { hubspotEndpointSchemas } from './endpoints/types';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Schema Type Exports

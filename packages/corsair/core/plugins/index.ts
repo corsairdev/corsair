@@ -9,6 +9,7 @@ import type {
 	BoundEndpointTree,
 	CorsairContext,
 	CorsairEndpoint,
+	EndpointPathsOf,
 	EndpointTree,
 } from '../endpoints';
 import type { CorsairErrorHandler } from '../errors';
@@ -20,6 +21,100 @@ import type {
 	WebhookResponse,
 	WebhookTree,
 } from '../webhooks';
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Permission System Types
+// ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Risk level classification for plugin endpoints.
+ * The permission mode maps each risk level to a policy (allow / deny / require_approval).
+ */
+export type EndpointRiskLevel = 'read' | 'write' | 'destructive';
+
+/**
+ * Permission mode controlling what the AI agent is allowed to do by default.
+ *
+ * | mode     | read  | write            | destructive         |
+ * |----------|-------|------------------|---------------------|
+ * | open     | allow | allow            | allow               |
+ * | cautious | allow | allow            | require_approval    |
+ * | strict   | allow | require_approval | deny                |
+ * | readonly | allow | deny             | deny                |
+ */
+export type PermissionMode = 'open' | 'cautious' | 'strict' | 'readonly';
+
+/**
+ * The resolved policy for a specific endpoint after combining mode + overrides.
+ * - `allow`            → executes immediately
+ * - `deny`             → returns a denied response, does not call the API
+ * - `require_approval` → stores a pending approval, returns a review URL to the agent
+ */
+export type PermissionPolicy = 'allow' | 'deny' | 'require_approval';
+
+/**
+ * Metadata for a single endpoint entry. Drives permission decisions and MCP tool descriptions.
+ * Plugin authors populate this on the `endpointMeta` field of their plugin definition.
+ */
+export type EndpointMetaEntry = {
+	/** Risk classification — determines the default policy given the active permission mode. */
+	riskLevel: EndpointRiskLevel;
+	/**
+	 * If true, this action cannot be undone. Shown prominently on the approval review page
+	 * and in the MCP tool description so the agent can warn users proactively.
+	 */
+	irreversible?: boolean;
+	/**
+	 * Human-readable description of what this endpoint does.
+	 * Included in the MCP tool description surfaced to the AI agent.
+	 */
+	description?: string;
+};
+
+/**
+ * A partial map from dot-notation endpoint paths to their metadata entries.
+ * Keys are strongly typed as exact string literals derived from the plugin's endpoint tree —
+ * using an invalid path (e.g. a typo) is a compile-time error.
+ *
+ * @template T - The plugin's endpoint tree (e.g. `typeof githubEndpointsNested`)
+ */
+export type PluginEndpointMeta<T extends EndpointTree> = Partial<
+	Record<EndpointPathsOf<T>, EndpointMetaEntry>
+>;
+
+/**
+ * Permission configuration for a plugin, passed as `permissions` in the plugin options.
+ * Controls what the AI agent is allowed to do via the MCP server.
+ *
+ * The `overrides` object uses dot-notation keys derived from the plugin's endpoint tree at
+ * the TypeScript level — only valid paths autocomplete and compile. Passing a nonexistent
+ * endpoint path is a type error.
+ *
+ * @template T - The plugin's endpoint tree (enables path autocomplete and type safety)
+ *
+ * @example
+ * ```ts
+ * github({
+ *   permissions: {
+ *     mode: 'cautious',
+ *     overrides: {
+ *       'repositories.delete': 'deny',          // never allowed
+ *       'releases.create': 'require_approval',  // escalate beyond mode default
+ *     },
+ *   },
+ * })
+ * ```
+ */
+export type PluginPermissionsConfig<T extends EndpointTree = EndpointTree> = {
+	/** The default permission mode for all endpoints in this plugin. */
+	mode: PermissionMode;
+	/**
+	 * Per-endpoint policy overrides.
+	 * Keys are strongly-typed dot-notation paths through this plugin's endpoint tree.
+	 * Only valid paths for this specific plugin compile — typos are type errors.
+	 */
+	overrides?: Partial<Record<EndpointPathsOf<T>, PermissionPolicy>>;
+};
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Hook Types for Endpoints
@@ -66,7 +161,11 @@ export type EndpointHooks = {
 	) =>
 		| BeforeHookResult<Record<string, unknown>, unknown>
 		| Promise<BeforeHookResult<Record<string, unknown>, unknown>>;
-	after?: (ctx: Record<string, unknown>, res: unknown, passToAfter?: string) => void | Promise<void>;
+	after?: (
+		ctx: Record<string, unknown>,
+		res: unknown,
+		passToAfter?: string,
+	) => void | Promise<void>;
 };
 
 /**
@@ -356,6 +455,39 @@ export type CorsairPlugin<
 	 * ```
 	 */
 	authConfig?: AuthConfig;
+	/**
+	 * Risk metadata for each endpoint in this plugin. Drives the permission system:
+	 * riskLevel against the active mode determines the policy (allow / deny / require_approval).
+	 * Also used by get_schema() to surface descriptions to the agent.
+	 *
+	 * Keys are dot-notation paths derived from `Endpoints` — only valid paths compile.
+	 *
+	 * @example
+	 * ```ts
+	 * endpointMeta: {
+	 *   'issues.list':          { riskLevel: 'read' },
+	 *   'issues.create':        { riskLevel: 'write' },
+	 *   'repositories.delete':  { riskLevel: 'destructive', irreversible: true },
+	 * }
+	 * ```
+	 */
+	endpointMeta?: Endpoints extends EndpointTree
+		? PluginEndpointMeta<Endpoints>
+		: never;
+	/**
+	 * Zod input and output schemas for each endpoint, keyed by dot-notation path.
+	 * Used by get_schema() to expose structured type information to the agent.
+	 * Keys must match the endpoint dot-paths used in endpointMeta.
+	 *
+	 * @example
+	 * ```ts
+	 * endpointSchemas: {
+	 *   'issues.list': { input: IssuesListInputSchema, output: IssuesListOutputSchema },
+	 *   'issues.create': { input: IssuesCreateInputSchema, output: IssuesCreateOutputSchema },
+	 * }
+	 * ```
+	 */
+	endpointSchemas?: Record<string, { input?: ZodTypeAny; output?: ZodTypeAny }>;
 };
 
 /**
@@ -412,4 +544,23 @@ export type CorsairIntegration<Plugins extends readonly CorsairPlugin[]> = {
 	errorHandlers?: CorsairErrorHandler;
 	/** Key Encryption Key (KEK) for envelope encryption. Used to encrypt/decrypt Data Encryption Keys (DEK) stored in the database. */
 	kek: string;
+	/**
+	 * Global approval configuration for the permission system.
+	 * Controls how long approval requests stay active and what happens when they expire.
+	 * Only relevant when the MCP server is used and a plugin is in `cautious` or `strict` mode.
+	 */
+	approval?: {
+		/**
+		 * How long an approval request remains valid before expiring.
+		 * Accepts duration strings: '10m', '1h', '30s', '2h30m'.
+		 * Defaults to '10m' if not specified.
+		 */
+		timeout: string;
+		/**
+		 * What to do when an approval request expires without a response.
+		 * - `'deny'`    → the action is automatically denied (recommended)
+		 * - `'approve'` → the action is automatically approved (use only in low-risk setups)
+		 */
+		onTimeout: 'deny' | 'approve';
+	};
 };

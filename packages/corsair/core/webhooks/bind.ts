@@ -62,19 +62,28 @@ export function bindWebhooksRecursively({
 					return call({ ...ctx, key }, request);
 				}
 
-			return (async () => {
-				const ctxWithKey = { ...ctx, key };
+				return (async () => {
+					const ctxWithKey = { ...ctx, key };
 
-				const beforeResult = webhookHooks.before
-					? await webhookHooks.before(ctxWithKey, request)
-					: { ctx: ctxWithKey, args: request, continue: true as const, passToAfter: undefined };
-				if (beforeResult.continue === false) return;
-				const res = await call(beforeResult.ctx, beforeResult.args);
-				if (res?.success === true) {
-					await webhookHooks.after?.(beforeResult.ctx, res, beforeResult.passToAfter);
-				}
-				return res;
-			})();
+					const beforeResult = webhookHooks.before
+						? await webhookHooks.before(ctxWithKey, request)
+						: {
+								ctx: ctxWithKey,
+								args: request,
+								continue: true as const,
+								passToAfter: undefined,
+							};
+					if (beforeResult.continue === false) return;
+					const res = await call(beforeResult.ctx, beforeResult.args);
+					if (res?.success === true) {
+						await webhookHooks.after?.(
+							beforeResult.ctx,
+							res,
+							beforeResult.passToAfter,
+						);
+					}
+					return res;
+				})();
 			};
 
 			// return the bound webhook with both match and bound handler

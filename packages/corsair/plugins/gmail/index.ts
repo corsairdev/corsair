@@ -7,6 +7,7 @@ import type {
 	CorsairWebhook,
 	KeyBuilderContext,
 	PluginAuthConfig,
+	PluginEndpointMeta,
 	RawWebhookRequest,
 } from '../../core';
 import type { PickAuth } from '../../core/constants';
@@ -30,6 +31,7 @@ import type {
 import { MessageWebhooks } from './webhooks';
 import type { PubSubNotification } from './webhooks/types';
 import { decodePubSubMessage } from './webhooks/types';
+import { gmailEndpointSchemas } from './endpoints/types';
 
 /**
  * Auth config extending the base OAuth2 fields with Gmail-specific fields.
@@ -155,6 +157,97 @@ export type GmailKeyBuilderContext = KeyBuilderContext<
 
 const defaultAuthType = 'oauth_2' as const;
 
+/**
+ * Risk-level metadata for each Gmail endpoint.
+ * Used by the MCP server permission system to decide allow / deny / require_approval.
+ */
+const gmailEndpointMeta = {
+	'messages.list': {
+		riskLevel: 'read',
+		description: 'List messages in a mailbox',
+	},
+	'messages.get': { riskLevel: 'read', description: 'Get a specific message' },
+	'messages.send': {
+		riskLevel: 'write',
+		description: 'Send an email to one or more recipients',
+	},
+	'messages.delete': {
+		riskLevel: 'destructive',
+		irreversible: true,
+		description: 'Permanently delete a message [DESTRUCTIVE · IRREVERSIBLE]',
+	},
+	'messages.modify': {
+		riskLevel: 'write',
+		description: 'Add or remove labels from a message',
+	},
+	'messages.batchModify': {
+		riskLevel: 'write',
+		description: 'Add or remove labels from multiple messages in bulk',
+	},
+	'messages.trash': {
+		riskLevel: 'write',
+		description: 'Move a message to the trash',
+	},
+	'messages.untrash': {
+		riskLevel: 'write',
+		description: 'Restore a message from the trash',
+	},
+	'labels.list': {
+		riskLevel: 'read',
+		description: 'List all labels in the mailbox',
+	},
+	'labels.get': { riskLevel: 'read', description: 'Get a specific label' },
+	'labels.create': { riskLevel: 'write', description: 'Create a new label' },
+	'labels.update': {
+		riskLevel: 'write',
+		description: 'Update an existing label',
+	},
+	'labels.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete a label [DESTRUCTIVE]',
+	},
+	'drafts.list': {
+		riskLevel: 'read',
+		description: 'List drafts in the mailbox',
+	},
+	'drafts.get': { riskLevel: 'read', description: 'Get a specific draft' },
+	'drafts.create': { riskLevel: 'write', description: 'Create a new draft' },
+	'drafts.update': {
+		riskLevel: 'write',
+		description: 'Update an existing draft',
+	},
+	'drafts.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete a draft [DESTRUCTIVE]',
+	},
+	'drafts.send': {
+		riskLevel: 'write',
+		description: 'Send a draft as an email',
+	},
+	'threads.list': {
+		riskLevel: 'read',
+		description: 'List threads in the mailbox',
+	},
+	'threads.get': { riskLevel: 'read', description: 'Get a specific thread' },
+	'threads.modify': {
+		riskLevel: 'write',
+		description: 'Add or remove labels from a thread',
+	},
+	'threads.delete': {
+		riskLevel: 'destructive',
+		irreversible: true,
+		description: 'Permanently delete a thread [DESTRUCTIVE · IRREVERSIBLE]',
+	},
+	'threads.trash': {
+		riskLevel: 'write',
+		description: 'Move a thread to the trash',
+	},
+	'threads.untrash': {
+		riskLevel: 'write',
+		description: 'Restore a thread from the trash',
+	},
+} satisfies PluginEndpointMeta<typeof gmailEndpointsNested>;
+
 export type BaseGmailPlugin<T extends GmailPluginOptions> = CorsairPlugin<
 	'gmail',
 	typeof GmailSchema,
@@ -191,14 +284,19 @@ export function gmail<const T extends GmailPluginOptions>(
 		webhookHooks: options.webhookHooks,
 		endpoints: gmailEndpointsNested,
 		webhooks: gmailWebhooksNested,
+		endpointMeta: gmailEndpointMeta,
+		endpointSchemas: gmailEndpointSchemas,
 		keyBuilder: async (ctx: GmailKeyBuilderContext) => {
 			if (options.key) {
 				return options.key;
 			}
 
 			if (ctx.authType === 'oauth_2') {
-				const accessToken = await ctx.keys.get_access_token();
-				const refreshToken = await ctx.keys.get_refresh_token();
+				const [accessToken, expiresAt, refreshToken] = await Promise.all([
+					ctx.keys.get_access_token(),
+					ctx.keys.get_expires_at(),
+					ctx.keys.get_refresh_token(),
+				]);
 
 				if (!refreshToken) {
 					throw new Error('No refresh token. Cannot get access token.');
@@ -210,18 +308,22 @@ export function gmail<const T extends GmailPluginOptions>(
 					throw new Error('No client id or client secret');
 				}
 
-				const key = await getValidAccessToken({
+				const result = await getValidAccessToken({
 					accessToken,
+					expiresAt,
 					refreshToken,
 					clientId: res.client_id,
 					clientSecret: res.client_secret,
 				});
 
-				if (!key) {
-					throw new Error('Access token cannot be created.');
+				if (result.refreshed) {
+					await Promise.all([
+						ctx.keys.set_access_token(result.accessToken),
+						ctx.keys.set_expires_at(String(result.expiresAt)),
+					]);
 				}
 
-				return key;
+				return result.accessToken;
 			}
 
 			return '';
@@ -277,6 +379,7 @@ export type {
 	GmailEndpointInputs,
 	GmailEndpointOutputs,
 } from './endpoints/types';
+export { gmailEndpointSchemas } from './endpoints/types';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Schema Type Exports

@@ -15,96 +15,22 @@ import {
 	notion,
 } from 'corsair';
 import { pool } from '../db';
-import { inngest } from './inngest/client';
 
 export const corsair = createCorsair({
 	multiTenancy: true,
 	database: pool,
 	kek: process.env.CORSAIR_KEK!,
+	approval: {
+		timeout: '10m',
+		onTimeout: 'deny',
+	},
 	plugins: [
-		discord(),
-		linear({
-			hooks: {
-				issues: {
-					create: {
-						before(ctx, args) {
-							return { args, ctx, continue: false };
-						},
-					},
-				},
-			},
-			webhookHooks: {
-				issues: {
-					create: {
-						after: async (ctx, res) => {
-							await inngest.send({
-								name: 'linear/issue-created',
-								data: {
-									tenantId: ctx.tenantId ?? 'default',
-									event: res.data!,
-								},
-							});
-						},
-					},
-					update: {
-						after: async (ctx, res) => {
-							await inngest.send({
-								name: 'linear/issue-updated',
-								data: {
-									tenantId: ctx.tenantId ?? 'default',
-									event: res.data!,
-								},
-							});
-						},
-					},
-				},
-				comments: {
-					create: {
-						after: async (ctx, res) => {
-							await inngest.send({
-								name: 'linear/comment-created',
-								data: {
-									tenantId: ctx.tenantId ?? 'default',
-									event: res.data!,
-								},
-							});
-						},
-					},
-					update: {
-						after: async (ctx, res) => {
-							await inngest.send({
-								name: 'linear/comment-updated',
-								data: {
-									tenantId: ctx.tenantId ?? 'default',
-									event: res.data!,
-								},
-							});
-						},
-					},
-				},
-			},
-		}),
+		linear(),
 		slack({
-			webhookHooks: {
-				messages: {
-					message: {
-						after: async (ctx, res) => {
-							await inngest.send({
-								name: 'slack/event',
-								data: {
-									tenantId: ctx.tenantId ?? 'default',
-									event: res.data!,
-								},
-							});
-						},
-					},
-				},
-				reactions: {
-					added: {
-						after(ctx, response) {
-							console.log('added reaction', response.data?.reaction);
-						},
-					},
+			permissions: {
+				mode: 'cautious',
+				overrides: {
+					'messages.post': 'require_approval',
 				},
 			},
 		}),

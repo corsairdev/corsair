@@ -400,3 +400,31 @@ export type GoogleDriveEndpointOutputs = {
 	sharedDrivesDelete: void;
 	searchFilesAndFolders: FileList;
 };
+
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Endpoint Schema Map — dot-path → {{ input, output }} for get_schema()
+// ─────────────────────────────────────────────────────────────────────────────
+export const googledriveEndpointSchemas = {
+  'files.list': { input: GoogleDriveEndpointInputSchemas.filesList, output: GoogleDriveEndpointOutputSchemas.filesList },
+  'files.get': { input: GoogleDriveEndpointInputSchemas.filesGet, output: GoogleDriveEndpointOutputSchemas.filesGet },
+  'files.createFromText': { input: GoogleDriveEndpointInputSchemas.filesCreateFromText, output: GoogleDriveEndpointOutputSchemas.filesCreateFromText },
+  'files.upload': { input: GoogleDriveEndpointInputSchemas.filesUpload, output: GoogleDriveEndpointOutputSchemas.filesUpload },
+  'files.update': { input: GoogleDriveEndpointInputSchemas.filesUpdate, output: GoogleDriveEndpointOutputSchemas.filesUpdate },
+  'files.delete': { input: GoogleDriveEndpointInputSchemas.filesDelete, output: GoogleDriveEndpointOutputSchemas.filesDelete },
+  'files.copy': { input: GoogleDriveEndpointInputSchemas.filesCopy, output: GoogleDriveEndpointOutputSchemas.filesCopy },
+  'files.move': { input: GoogleDriveEndpointInputSchemas.filesMove, output: GoogleDriveEndpointOutputSchemas.filesMove },
+  'files.download': { input: GoogleDriveEndpointInputSchemas.filesDownload, output: GoogleDriveEndpointOutputSchemas.filesDownload },
+  'files.share': { input: GoogleDriveEndpointInputSchemas.filesShare, output: GoogleDriveEndpointOutputSchemas.filesShare },
+  'folders.create': { input: GoogleDriveEndpointInputSchemas.foldersCreate, output: GoogleDriveEndpointOutputSchemas.foldersCreate },
+  'folders.get': { input: GoogleDriveEndpointInputSchemas.foldersGet, output: GoogleDriveEndpointOutputSchemas.foldersGet },
+  'folders.list': { input: GoogleDriveEndpointInputSchemas.foldersList, output: GoogleDriveEndpointOutputSchemas.foldersList },
+  'folders.delete': { input: GoogleDriveEndpointInputSchemas.foldersDelete, output: GoogleDriveEndpointOutputSchemas.foldersDelete },
+  'folders.share': { input: GoogleDriveEndpointInputSchemas.foldersShare, output: GoogleDriveEndpointOutputSchemas.foldersShare },
+  'sharedDrives.create': { input: GoogleDriveEndpointInputSchemas.sharedDrivesCreate, output: GoogleDriveEndpointOutputSchemas.sharedDrivesCreate },
+  'sharedDrives.get': { input: GoogleDriveEndpointInputSchemas.sharedDrivesGet, output: GoogleDriveEndpointOutputSchemas.sharedDrivesGet },
+  'sharedDrives.list': { input: GoogleDriveEndpointInputSchemas.sharedDrivesList, output: GoogleDriveEndpointOutputSchemas.sharedDrivesList },
+  'sharedDrives.update': { input: GoogleDriveEndpointInputSchemas.sharedDrivesUpdate, output: GoogleDriveEndpointOutputSchemas.sharedDrivesUpdate },
+  'sharedDrives.delete': { input: GoogleDriveEndpointInputSchemas.sharedDrivesDelete, output: GoogleDriveEndpointOutputSchemas.sharedDrivesDelete },
+  'search.filesAndFolders': { input: GoogleDriveEndpointInputSchemas.searchFilesAndFolders, output: GoogleDriveEndpointOutputSchemas.searchFilesAndFolders },
+} as const;

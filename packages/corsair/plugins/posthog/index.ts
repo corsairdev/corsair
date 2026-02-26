@@ -7,6 +7,7 @@ import type {
 	CorsairPluginContext,
 	CorsairWebhook,
 	KeyBuilderContext,
+	PluginEndpointMeta,
 } from '../../core';
 import type { PickAuth } from '../../core/constants';
 import { Events } from './endpoints';
@@ -14,6 +15,7 @@ import type {
 	PostHogEndpointInputs,
 	PostHogEndpointOutputs,
 } from './endpoints/types';
+import { posthogEndpointSchemas } from './endpoints/types';
 import { PostHogSchema } from './schema';
 import type { EventCapturedEvent, PostHogWebhookOutputs } from './webhooks';
 import { EventWebhooks } from './webhooks';
@@ -80,6 +82,24 @@ const posthogWebhooksNested = {
 
 const defaultAuthType = 'api_key' as const;
 
+/**
+ * Risk-level metadata for each PostHog endpoint.
+ * Used by the MCP server permission system to decide allow / deny / require_approval.
+ */
+const posthogEndpointMeta = {
+	'events.aliasCreate': {
+		riskLevel: 'write',
+		description: 'Create an alias linking two distinct user IDs',
+	},
+	'events.eventCreate': { riskLevel: 'write', description: 'Ingest an analytics event' },
+	'events.identityCreate': {
+		riskLevel: 'write',
+		description: 'Associate properties with a user identity',
+	},
+	'events.trackPage': { riskLevel: 'write', description: 'Track a page view event' },
+	'events.trackScreen': { riskLevel: 'write', description: 'Track a screen view event' },
+} satisfies PluginEndpointMeta<typeof posthogEndpointsNested>;
+
 export type BasePostHogPlugin<T extends PostHogPluginOptions> = CorsairPlugin<
 	'posthog',
 	typeof PostHogSchema,
@@ -114,6 +134,8 @@ export function posthog<const T extends PostHogPluginOptions>(
 		webhookHooks: options.webhookHooks,
 		endpoints: posthogEndpointsNested,
 		webhooks: posthogWebhooksNested,
+		endpointMeta: posthogEndpointMeta,
+		endpointSchemas: posthogEndpointSchemas,
 		pluginWebhookMatcher: (request) => {
 			const headers = request.headers;
 			const hasPostHogSignature =
@@ -194,3 +216,4 @@ export type {
 	TrackPageResponse,
 	TrackScreenResponse,
 } from './endpoints/types';
+export { posthogEndpointSchemas } from './endpoints/types';
