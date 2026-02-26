@@ -14,9 +14,6 @@ export class GoogleSheetsAPIError extends Error {
 
 const GOOGLE_SHEETS_API_BASE = 'https://sheets.googleapis.com/v4';
 
-let cachedAccessToken: string | null = null;
-let tokenExpiryTime: number = 0;
-
 async function refreshAccessToken(
 	clientId: string,
 	clientSecret: string,
@@ -48,6 +45,7 @@ async function refreshAccessToken(
 
 export async function getValidAccessToken({
 	accessToken,
+	expiresAt,
 	clientId,
 	clientSecret,
 	refreshToken,
@@ -55,34 +53,22 @@ export async function getValidAccessToken({
 	clientId: string;
 	clientSecret: string;
 	accessToken?: string | null;
+	expiresAt?: string | null;
 	refreshToken: string;
-}): Promise<string | undefined> {
-	const now = Date.now();
-	const bufferTime = 5 * 60 * 1000;
+}): Promise<{ accessToken: string; expiresAt: number; refreshed: boolean }> {
+	const now = Math.floor(Date.now() / 1000);
+	const bufferSeconds = 5 * 60;
 
-	if (
-		cachedAccessToken &&
-		tokenExpiryTime > now + bufferTime &&
-		cachedAccessToken === accessToken
-	) {
-		return cachedAccessToken;
+	if (accessToken && expiresAt && Number(expiresAt) > now + bufferSeconds) {
+		return { accessToken, expiresAt: Number(expiresAt), refreshed: false };
 	}
 
-	try {
-		const tokenData = await refreshAccessToken(
-			clientId,
-			clientSecret,
-			refreshToken,
-		);
-		cachedAccessToken = tokenData.access_token;
-		tokenExpiryTime = now + tokenData.expires_in * 1000;
-		return cachedAccessToken;
-	} catch (error) {
-		if (error instanceof GoogleSheetsAPIError) {
-			throw error;
-		}
-		return accessToken || undefined;
-	}
+	const tokenData = await refreshAccessToken(clientId, clientSecret, refreshToken);
+	return {
+		accessToken: tokenData.access_token,
+		expiresAt: now + tokenData.expires_in,
+		refreshed: true,
+	};
 }
 
 export async function makeSheetsRequest<T>(
