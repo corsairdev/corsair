@@ -1,8 +1,8 @@
 # Corsair
 
-**Your Agent's Integration Infrastructure.**
+**Your agent's integration layer, with guardrails built in.**
 
-> Don't do work yourself because you're too scared to hand it off.
+> Don't do the work yourself because you're too scared to hand it off.
 
 ---
 
@@ -37,113 +37,153 @@ Agent: I've drafted the email. This action requires your approval before it send
 
 You open the link and can see all important details. The email is to **.dev** instead of **.com**! Deny the request, follow up with your agent, and tell it what needs to be fixed. Once it updates it, it will send you a new request.
 
----
-
-## How to install it
-
-Corsair is installed by your coding agent. Run this in Claude Code, Cursor, or any agent that supports skills:
-
-```
-/add-corsair
-```
-
-Your agent will:
-
-1. Ask which integrations you want to connect
-2. Ask your preferred permission mode
-3. Set up an encrypted local database at `.corsair/data.db`
-4. Configure ngrok for webhook callbacks and review pages
-5. Register the Corsair MCP server so it has access to the tools
-6. Walk you through connecting each integration (OAuth or API key)
-
-You don't need to install a CLI or write any config files by hand. The agent handles the entire setup.
 
 ---
 
 ## Permission modes
 
-Each integration can have its own permission mode, so you can set GitHub to strict and Slack to cautious based on how much you trust each surface.
+Each integration can have its own permission mode. Set GitHub to strict and Slack to cautious based on how much you trust each surface.
 
 | Mode | Reads | Writes | Destructive actions |
-|------|-------|--------|---------------------|
+|---|---|---|---|
 | **cautious** _(recommended)_ | Instant | Instant | Approval required |
 | **strict** | Instant | Approval required | Blocked |
 | **open** | Instant | Instant | Instant |
 | **readonly** | Instant | Blocked | Blocked |
 
-To change a setting, tell your agent: _"Make GitHub strict"_ or _"Don't allow any deletes in Slack."_ It edits `corsair.ts` directly and no restart is needed.
+You can also override individual endpoints:
 
----
-
-## Integrations
-
-- **GitHub**: issues, pull requests, repositories, releases, and workflows
-- **Slack**: messages, channels, users, and files
-- **Gmail**: send, read, and draft emails
-- **Google Calendar**: events and availability
-- **Google Drive**: files and folders
-- **Linear**: issues, projects, and teams
-- **HubSpot**: contacts, companies, and deals
-- **Discord**: messages, channels, and webhooks
-- **Resend**: transactional email
-- **PostHog**: events and feature flags
-
-We actively have about 15 more integrations in development that will be released soon. Also ask your coding agent to build a Corsair plugin!
+```typescript
+github({
+  permissions: {
+    mode: 'cautious',
+    overrides: {
+      'releases.create': 'require_approval',
+      'issues.create': 'allow',
+    },
+  },
+})
+```
 
 ---
 
 ## How it works
 
-Corsair runs as an MCP server alongside your coding agent. When your agent calls a tool like `gmail_send` or `github_issues_create`, Corsair checks the action against your permission policy and does one of three things:
+When your agent calls a Corsair endpoint, Corsair:
 
-- **Executes it immediately**: reads always go through, as do writes in open or cautious mode
-- **Pauses and sends a review link**: for anything that exceeds your configured threshold
-- **Blocks it outright**: for actions your policy does not allow
+1. **Resolves the credential** for that integration from the encrypted database — the agent never sees raw keys or tokens
+2. **Checks the permission policy** — reads pass through immediately; writes and destructive actions are evaluated against the configured mode
+3. **Executes or pauses** — allowed actions run immediately and return typed results; actions that require approval are held and a review link is sent to you
+4. **Handles retries and errors** — rate limits, transient failures, and auth errors are handled automatically with configurable retry strategies
 
-API credentials live in an encrypted local SQLite database (`.corsair/data.db`) and never leave your machine. Your agent only sees tool names and results, so it has no access to your tokens, keys, or secrets.
-
-Corsair also registers webhooks with each connected service automatically. Events from GitHub, Slack, and others get synced to your local database in real time, so your agent can query fresh data without making a live API call every time.
+Your agent only ever sees method names and results. It has no way to read, log, or exfiltrate your credentials.
 
 ---
 
-## For developers
+## Integrations
 
-If you're building an application that needs to coordinate multiple integrations across tenants, Corsair also works as a standard TypeScript library:
+- **Slack** — messages, channels, users, files, reactions
+- **GitHub** — issues, pull requests, repositories, releases, workflows
+- **Gmail** — messages, drafts, labels, threads
+- **Google Calendar** — events and availability
+- **Google Drive** — files, folders, shared drives
+- **Google Sheets** — spreadsheets and rows
+- **Linear** — issues, projects, teams, comments
+- **HubSpot** — contacts, companies, deals, tickets
+- **Resend** — transactional email and domains
+- **PostHog** — event ingestion and analytics
+- **Tavily** — web search
+- **Discord** — messages, channels, webhooks
+
+We actively have about 15 more integrations in development that will be released soon. Also ask your coding agent to build a Corsair plugin!
+
+---
+
+## Using Corsair as a library
 
 ```typescript
-import { createCorsair, github, slack, linear } from 'corsair';
-import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { slack } from 'corsair/plugins/slack';
+import { github } from 'corsair/plugins/github';
+import { linear } from 'corsair/plugins/linear';
 
-export const corsair = createCorsair({
-  database: new Database('.corsair/data.db'),
+const corsair = createCorsair({
   plugins: [
     github({ permissions: { mode: 'cautious' } }),
     slack({ permissions: { mode: 'cautious' } }),
     linear({ permissions: { mode: 'open' } }),
   ],
+  database: { url: process.env.DATABASE_URL! },
+  kek: process.env.KEK!,
 });
 
-// Same syntax across every integration, fully typed
-const tenant = corsair.withTenant('tenant_123');
-await tenant.slack.api.messages.post({ channel: 'C01234567', text: 'Shipped.' });
-await tenant.linear.api.issues.create({ title: 'Follow-up tasks', teamId: 'TEAM_ABC' });
-await tenant.resend.api.emails.send({ to: 'user@example.com', subject: 'Welcome!' });
+// Fully typed, consistent API surface across every integration
+await corsair.slack.api.messages.post({ channel: '#general', text: 'Shipped.' });
+await corsair.linear.api.issues.create({ title: 'Follow-up tasks', teamId: 'TEAM_ABC' });
+await corsair.github.api.pullRequests.get({ owner: 'acme', repo: 'api', pull_number: 42 });
 ```
 
-Every API response is automatically synced to your local database using four shared tables. You can query with full type safety, write foreign keys directly from your own tables to Corsair's, and get webhooks or polling configured automatically per integration.
+**Multi-tenancy** — scope every call and credential to an individual tenant:
 
 ```typescript
-// Query synced data without making a live API call
-const issues = await tenant.linear.db.issues.search({
-  where: { state: 'in_progress' },
+const corsair = createCorsair({
+  plugins: [slack(), github()],
+  database: { url: process.env.DATABASE_URL! },
+  kek: process.env.KEK!,
+  multiTenancy: true,
 });
 
-// Write foreign keys directly to Corsair tables
-await db.projects.create({
-  name: 'New Project',
-  linearIssueId: issues[0].id, // stays in sync automatically
+// Endpoint discovery works at the root — no tenant needed
+corsair.get_methods('slack');
+
+// API calls are tenant-scoped
+const client = corsair.withTenant('org-456');
+await client.slack.api.messages.post({ channel: '#alerts', text: 'Deploy complete.' });
+```
+
+---
+
+## Key management
+
+Credentials are stored using envelope encryption. A key-encryption key (KEK) you control encrypts per-tenant data-encryption keys, which encrypt the actual secrets. Nothing leaves your database.
+
+```typescript
+// Integration-level keys (shared across tenants — e.g. OAuth client credentials)
+await corsair.keys.github.set_api_key('ghp_...');
+
+// Per-tenant keys (account-level secrets like user tokens)
+const client = corsair.withTenant('user-123');
+await client.github.keys.set_api_key('ghp_...');
+```
+
+You can also skip key management entirely and pass credentials directly if you're managing them yourself.
+
+---
+
+## Webhooks
+
+Plugins ship with typed, signature-verified webhook handlers alongside their API endpoints:
+
+```typescript
+app.post('/webhooks', async (req, res) => {
+  const webhook = corsair.github.webhooks.pullRequests.opened;
+  const matched = await webhook.match(req);
+  if (matched) {
+    const result = await webhook.handler(req);
+    // result.data is typed as PullRequestOpenedEvent
+  }
 });
 ```
+
+---
+
+## Adding a plugin
+
+```bash
+npx tsx templates/plugin/generate.ts MyPlugin
+```
+
+Scaffolds a full plugin: Zod input/output schemas, endpoint definitions, webhook handlers, error handlers, key builder, and the `endpointMeta` and `endpointSchemas` maps that power `get_schema()`.
 
 ---
 
@@ -152,49 +192,35 @@ await db.projects.create({
 <details>
 <summary>Where are credentials stored?</summary>
 
-Credentials are stored in an encrypted local SQLite database at `.corsair/data.db` using [envelope encryption](https://docs.cloud.google.com/kms/docs/envelope-encryption). A master key encrypts per-tenant data keys, which encrypt the actual secrets. Nothing leaves your machine. If you'd rather manage keys yourself, you can pass them directly to Corsair and skip its key management entirely.
+In an encrypted database using [envelope encryption](https://docs.cloud.google.com/kms/docs/envelope-encryption). A KEK you control encrypts per-tenant data keys, which encrypt the actual secrets. If you'd rather manage keys yourself, you can pass them directly and skip the key manager entirely.
 
 </details>
 
 <details>
 <summary>Does the agent ever see my API keys?</summary>
 
-No. Your agent has access to tool names and their results. Credentials are stored in the encrypted database and Corsair uses them internally when executing calls. The agent cannot read, log, or exfiltrate them.
+No. The agent sees method names and results. Credentials are resolved internally by Corsair at call time. The agent cannot read, log, or exfiltrate them.
 
 </details>
 
 <details>
-<summary>What happens if I deny an action?</summary>
+<summary>What happens if I deny an approval request?</summary>
 
-The action is discarded and nothing is sent, created, or modified. You can follow up with your agent in the same thread to correct course; it will try again with updated parameters and send a new review link.
-
-</details>
-
-<details>
-<summary>Do I need to keep something running for the review links to work?</summary>
-
-Yes. The Corsair MCP server (started automatically when your coding agent connects) runs an HTTP server that handles review pages and OAuth callbacks. It uses ngrok to get a stable public URL, which is included in every review link it sends you.
+The action is discarded — nothing is sent, created, or modified. Your agent can try again with corrected parameters and will send a new approval request.
 
 </details>
 
 <details>
 <summary>Can I use Corsair with multiple tenants?</summary>
 
-Yes. Enable `multiTenancy: true` and each tenant gets fully isolated credentials, data storage, and permission policies.
+Yes. Set `multiTenancy: true` and each tenant gets isolated credentials, data storage, and permission evaluation. Endpoint discovery (`get_methods`, `get_schema`) is available at the root and doesn't require a tenant.
 
 </details>
 
 <details>
 <summary>Can I use Corsair alongside direct SDK calls?</summary>
 
-Yes. Corsair is a library and an MCP server; use it where it helps and drop down to individual SDKs when you need custom logic.
-
-</details>
-
-<details>
-<summary>What happens if an integration's API changes?</summary>
-
-Corsair manages API versioning by mapping version numbers to schemas. This is under active development.
+Yes. Corsair is a library. Use it where the permission layer and key management help you, and drop down to individual SDKs when you need custom logic.
 
 </details>
 
