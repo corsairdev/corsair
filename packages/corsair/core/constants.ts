@@ -21,6 +21,7 @@ export const BaseProviders = [
 	'googlesheets',
 	'hubspot',
 	'linear',
+	'notion',
 	'posthog',
 	'resend',
 	'slack',
@@ -37,6 +38,7 @@ export type AllProviders =
 	| 'googlesheets'
 	| 'hubspot'
 	| 'linear'
+	| 'notion'
 	| 'posthog'
 	| 'resend'
 	| 'slack'
