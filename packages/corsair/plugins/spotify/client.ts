@@ -27,6 +27,78 @@ const SPOTIFY_RATE_LIMIT_CONFIG: RateLimitConfig = {
 	},
 };
 
+let cachedAccessToken: string | null = null;
+let tokenExpiryTime: number = 0;
+
+async function refreshAccessToken(
+	clientId: string,
+	clientSecret: string,
+	refreshToken: string,
+): Promise<{ access_token: string; expires_in: number }> {
+	const response = await fetch('https://accounts.spotify.com/api/token', {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/x-www-form-urlencoded',
+		},
+		body: new URLSearchParams({
+			grant_type: 'refresh_token',
+			refresh_token: refreshToken,
+			client_id: clientId,
+			client_secret: clientSecret,
+		}),
+	});
+
+	if (!response.ok) {
+		const error = await response.text();
+		throw new SpotifyAPIError(
+			`Failed to refresh access token: ${error}`,
+			undefined,
+			response.status,
+		);
+	}
+
+	return await response.json();
+}
+
+export async function getValidAccessToken({
+	accessToken,
+	clientId,
+	clientSecret,
+	refreshToken,
+}: {
+	clientId: string;
+	clientSecret: string;
+	accessToken?: string | null;
+	refreshToken: string;
+}): Promise<string | undefined> {
+	const now = Date.now();
+	const bufferTime = 5 * 60 * 1000;
+
+	if (
+		cachedAccessToken &&
+		tokenExpiryTime > now + bufferTime &&
+		cachedAccessToken === accessToken
+	) {
+		return cachedAccessToken;
+	}
+
+	try {
+		const tokenData = await refreshAccessToken(
+			clientId,
+			clientSecret,
+			refreshToken,
+		);
+		cachedAccessToken = tokenData.access_token;
+		tokenExpiryTime = now + tokenData.expires_in * 1000;
+		return cachedAccessToken;
+	} catch (error) {
+		if (error instanceof SpotifyAPIError) {
+			throw error;
+		}
+		return accessToken || undefined;
+	}
+}
+
 export async function makeSpotifyRequest<T>(
 	endpoint: string,
 	accessToken: string,

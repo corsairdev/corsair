@@ -22,6 +22,7 @@ import { Albums, Artists, Library, MyData, Player, Playlists, Tracks } from './e
 import { SpotifySchema } from './schema';
 import { ExampleWebhooks } from './webhooks';
 import { errorHandlers } from './error-handlers';
+import { getValidAccessToken } from './client';
 
 /**
  * Plugin options type - configure authentication and behavior
@@ -264,13 +265,31 @@ export function spotify<const T extends SpotifyPluginOptions>(
 			}
 
 			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
-				const res = await ctx.keys.get_access_token();
+				const accessToken = await ctx.keys.get_access_token();
+				const refreshToken = await ctx.keys.get_refresh_token();
 
-				if (!res) {
-					return '';
+				if (!refreshToken) {
+					throw new Error('No refresh token. Cannot get access token.');
 				}
 
-				return res;
+				const res = await ctx.keys.get_integration_credentials();
+
+				if (!res.client_id || !res.client_secret) {
+					throw new Error('No client id or client secret');
+				}
+
+				const key = await getValidAccessToken({
+					accessToken,
+					refreshToken,
+					clientId: res.client_id,
+					clientSecret: res.client_secret,
+				});
+
+				if (!key) {
+					throw new Error('Access token cannot be created.');
+				}
+
+				return key;
 			}
 
 			return '';
