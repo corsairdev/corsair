@@ -89,3 +89,15 @@ export type TrackPageResponse = z.infer<
 export type TrackScreenResponse = z.infer<
 	typeof PostHogEndpointOutputSchemas.trackScreen
 >;
+
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Endpoint Schema Map — dot-path → {{ input, output }} for get_schema()
+// ─────────────────────────────────────────────────────────────────────────────
+export const posthogEndpointSchemas = {
+  'events.aliasCreate': { input: PostHogEndpointInputSchemas.aliasCreate, output: PostHogEndpointOutputSchemas.aliasCreate },
+  'events.eventCreate': { input: PostHogEndpointInputSchemas.eventCreate, output: PostHogEndpointOutputSchemas.eventCreate },
+  'events.identityCreate': { input: PostHogEndpointInputSchemas.identityCreate, output: PostHogEndpointOutputSchemas.identityCreate },
+  'events.trackPage': { input: PostHogEndpointInputSchemas.trackPage, output: PostHogEndpointOutputSchemas.trackPage },
+  'events.trackScreen': { input: PostHogEndpointInputSchemas.trackScreen, output: PostHogEndpointOutputSchemas.trackScreen },
+} as const;

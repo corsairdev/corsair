@@ -7,6 +7,8 @@ import type {
 	CorsairPluginContext,
 	CorsairWebhook,
 	KeyBuilderContext,
+	PluginEndpointMeta,
+	PluginPermissionsConfig,
 } from '../../core';
 import type { PickAuth } from '../../core/constants';
 import type { LinearEndpointInputs, LinearEndpointOutputs } from './endpoints';
@@ -27,6 +29,7 @@ import type {
 	ProjectUpdatedEvent,
 } from './webhooks';
 import { CommentWebhooks, IssueWebhooks, ProjectWebhooks } from './webhooks';
+import { linearEndpointSchemas } from './endpoints/types';
 
 export type LinearPluginOptions = {
 	authType?: PickAuth<'api_key'>;
@@ -35,6 +38,12 @@ export type LinearPluginOptions = {
 	hooks?: InternalLinearPlugin['hooks'];
 	webhookHooks?: InternalLinearPlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
+	/**
+	 * Permission configuration for the Linear plugin.
+	 * Controls what the AI agent is allowed to do via the MCP server.
+	 * Overrides use dot-notation paths from the Linear endpoint tree — invalid paths are type errors.
+	 */
+	permissions?: PluginPermissionsConfig<typeof linearEndpointsNested>;
 };
 
 export type LinearContext = CorsairPluginContext<
@@ -146,6 +155,67 @@ const linearEndpointsNested = {
 
 const defaultAuthType = 'api_key' as const;
 
+/**
+ * Risk-level metadata for each Linear endpoint.
+ * Used by the MCP server permission system to decide allow / deny / require_approval.
+ */
+const linearEndpointMeta = {
+	'issues.list': { riskLevel: 'read', description: 'List issues in a team' },
+	'issues.get': { riskLevel: 'read', description: 'Get a specific issue' },
+	'issues.create': { riskLevel: 'write', description: 'Create a new issue' },
+	'issues.update': {
+		riskLevel: 'write',
+		description: 'Update an existing issue',
+	},
+	'issues.delete': {
+		riskLevel: 'destructive',
+		irreversible: true,
+		description: 'Permanently delete an issue [DESTRUCTIVE · IRREVERSIBLE]',
+	},
+	'comments.list': {
+		riskLevel: 'read',
+		description: 'List comments on an issue',
+	},
+	'comments.create': {
+		riskLevel: 'write',
+		description: 'Post a comment on an issue',
+	},
+	'comments.update': { riskLevel: 'write', description: 'Update a comment' },
+	'comments.delete': {
+		riskLevel: 'destructive',
+		irreversible: true,
+		description: 'Delete a comment [DESTRUCTIVE]',
+	},
+	'projects.list': {
+		riskLevel: 'read',
+		description: 'List projects in a team',
+	},
+	'projects.get': { riskLevel: 'read', description: 'Get a specific project' },
+	'projects.create': {
+		riskLevel: 'write',
+		description: 'Create a new project',
+	},
+	'projects.update': {
+		riskLevel: 'write',
+		description: 'Update an existing project',
+	},
+	'projects.delete': {
+		riskLevel: 'destructive',
+		irreversible: true,
+		description: 'Permanently delete a project [DESTRUCTIVE · IRREVERSIBLE]',
+	},
+	'teams.list': {
+		riskLevel: 'read',
+		description: 'List teams in the workspace',
+	},
+	'teams.get': { riskLevel: 'read', description: 'Get a specific team' },
+	'users.list': {
+		riskLevel: 'read',
+		description: 'List users in the workspace',
+	},
+	'users.get': { riskLevel: 'read', description: 'Get a specific user' },
+} satisfies PluginEndpointMeta<typeof linearEndpointsNested>;
+
 export type BaseLinearPlugin<T extends LinearPluginOptions> = CorsairPlugin<
 	'linear',
 	typeof LinearSchema,
@@ -180,6 +250,8 @@ export function linear<const T extends LinearPluginOptions>(
 		webhookHooks: options.webhookHooks,
 		endpoints: linearEndpointsNested,
 		webhooks: linearWebhooksNested,
+		endpointMeta: linearEndpointMeta,
+		endpointSchemas: linearEndpointSchemas,
 		pluginWebhookMatcher: (request) => {
 			const headers = request.headers;
 			const hasLinearSignature = 'linear-signature' in headers;
@@ -295,3 +367,4 @@ export type {
 	WorkflowState,
 	WorkflowStateType,
 } from './endpoints/types';
+export { linearEndpointSchemas } from './endpoints/types';

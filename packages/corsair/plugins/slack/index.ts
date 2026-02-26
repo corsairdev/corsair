@@ -8,6 +8,8 @@ import type {
 	CorsairWebhook,
 	KeyBuilderContext,
 	PluginAuthConfig,
+	PluginEndpointMeta,
+	PluginPermissionsConfig,
 } from '../../core';
 import type { SlackEndpointInputs, SlackEndpointOutputs } from './endpoints';
 import {
@@ -19,6 +21,7 @@ import {
 	UserGroups,
 	Users,
 } from './endpoints';
+import { slackEndpointSchemas } from './endpoints/types';
 import { SlackSchema } from './schema';
 import {
 	ChallengeWebhooks,
@@ -189,6 +192,151 @@ const slackWebhooksNested = {
 
 const defaultAuthType = 'api_key' as const;
 
+/**
+ * Risk-level metadata for each Slack endpoint.
+ * Used by the MCP server permission system to decide allow / deny / require_approval.
+ */
+const slackEndpointMeta = {
+	'channels.random': { riskLevel: 'read', description: 'Get a random channel' },
+	'channels.archive': {
+		riskLevel: 'destructive',
+		description: 'Archive a Slack channel [DESTRUCTIVE]',
+	},
+	'channels.close': {
+		riskLevel: 'write',
+		description: 'Close a direct message or multi-party DM',
+	},
+	'channels.create': {
+		riskLevel: 'write',
+		description: 'Create a new Slack channel',
+	},
+	'channels.get': {
+		riskLevel: 'read',
+		description: 'Get info about a channel',
+	},
+	'channels.list': {
+		riskLevel: 'read',
+		description: 'List all channels in the workspace',
+	},
+	'channels.getHistory': {
+		riskLevel: 'read',
+		description: 'Fetch message history for a channel',
+	},
+	'channels.invite': {
+		riskLevel: 'write',
+		description: 'Invite users to a channel',
+	},
+	'channels.join': { riskLevel: 'write', description: 'Join a channel' },
+	'channels.kick': {
+		riskLevel: 'write',
+		description: 'Remove a user from a channel',
+	},
+	'channels.leave': { riskLevel: 'write', description: 'Leave a channel' },
+	'channels.getMembers': {
+		riskLevel: 'read',
+		description: 'List members of a channel',
+	},
+	'channels.open': {
+		riskLevel: 'write',
+		description: 'Open a direct message or multi-party DM',
+	},
+	'channels.rename': { riskLevel: 'write', description: 'Rename a channel' },
+	'channels.getReplies': {
+		riskLevel: 'read',
+		description: 'Fetch replies for a thread',
+	},
+	'channels.setPurpose': {
+		riskLevel: 'write',
+		description: 'Set the purpose of a channel',
+	},
+	'channels.setTopic': {
+		riskLevel: 'write',
+		description: 'Set the topic of a channel',
+	},
+	'channels.unarchive': {
+		riskLevel: 'write',
+		description: 'Unarchive a channel',
+	},
+	'users.get': { riskLevel: 'read', description: 'Get info about a user' },
+	'users.list': {
+		riskLevel: 'read',
+		description: 'List all users in the workspace',
+	},
+	'users.getProfile': { riskLevel: 'read', description: 'Get a user profile' },
+	'users.getPresence': {
+		riskLevel: 'read',
+		description: 'Get the presence status of a user',
+	},
+	'users.updateProfile': {
+		riskLevel: 'write',
+		description: "Update the authenticated user's profile",
+	},
+	'userGroups.create': {
+		riskLevel: 'write',
+		description: 'Create a user group',
+	},
+	'userGroups.disable': {
+		riskLevel: 'write',
+		description: 'Disable a user group',
+	},
+	'userGroups.enable': {
+		riskLevel: 'write',
+		description: 'Enable a user group',
+	},
+	'userGroups.list': {
+		riskLevel: 'read',
+		description: 'List user groups in the workspace',
+	},
+	'userGroups.update': {
+		riskLevel: 'write',
+		description: 'Update a user group',
+	},
+	'files.get': { riskLevel: 'read', description: 'Get info about a file' },
+	'files.list': {
+		riskLevel: 'read',
+		description: 'List files in the workspace',
+	},
+	'files.upload': { riskLevel: 'write', description: 'Upload a file to Slack' },
+	'messages.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete a message [DESTRUCTIVE]',
+	},
+	'messages.getPermalink': {
+		riskLevel: 'read',
+		description: 'Get a permalink for a message',
+	},
+	'messages.search': {
+		riskLevel: 'read',
+		description: 'Search messages in the workspace',
+	},
+	'messages.post': {
+		riskLevel: 'write',
+		description: 'Post a message to a channel',
+	},
+	'messages.update': {
+		riskLevel: 'write',
+		description: 'Update an existing message',
+	},
+	'reactions.add': {
+		riskLevel: 'write',
+		description: 'Add a reaction emoji to a message',
+	},
+	'reactions.get': {
+		riskLevel: 'read',
+		description: 'Get reactions for a message',
+	},
+	'reactions.remove': {
+		riskLevel: 'write',
+		description: 'Remove a reaction emoji from a message',
+	},
+	'stars.add': { riskLevel: 'write', description: 'Star an item' },
+	'stars.remove': { riskLevel: 'write', description: 'Unstar an item' },
+	'stars.list': {
+		riskLevel: 'read',
+		description: 'List starred items for the authenticated user',
+	},
+} satisfies PluginEndpointMeta<typeof slackEndpointsNested>;
+
 type SlackEndpoint<K extends keyof SlackEndpointOutputs> = CorsairEndpoint<
 	SlackContext,
 	SlackEndpointInputs[K],
@@ -220,6 +368,12 @@ export type SlackPluginOptions = {
 	hooks?: InternalSlackPlugin['hooks'];
 	webhookHooks?: InternalSlackPlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
+	/**
+	 * Permission configuration for the Slack plugin.
+	 * Controls what the AI agent is allowed to do via the MCP server.
+	 * Overrides use dot-notation paths from the Slack endpoint tree — invalid paths are type errors.
+	 */
+	permissions?: PluginPermissionsConfig<typeof slackEndpointsNested>;
 };
 
 export type SlackContext = CorsairPluginContext<
@@ -265,6 +419,8 @@ export function slack<const PluginOptions extends SlackPluginOptions>(
 		webhookHooks: options.webhookHooks,
 		endpoints: slackEndpointsNested,
 		webhooks: slackWebhooksNested,
+		endpointMeta: slackEndpointMeta,
+		endpointSchemas: slackEndpointSchemas,
 		pluginWebhookMatcher: (request) => {
 			const headers = request.headers;
 			const hasSlackSignature = 'x-slack-signature' in headers;
@@ -417,3 +573,4 @@ export type {
 	UsersProfileGetResponse,
 	UsersProfileSetResponse,
 } from './endpoints/types';
+export { slackEndpointSchemas } from './endpoints/types';

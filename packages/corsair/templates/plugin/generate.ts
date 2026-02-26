@@ -96,9 +96,11 @@ function generatePlugin(pluginName: string) {
 	CorsairWebhook,
 	KeyBuilderContext,
 	PluginAuthConfig,
+	PluginEndpointMeta,
 } from '../../core';
 import type { AuthTypes, PickAuth } from '../../core/constants';
-import type { ${pascalName}EndpointOutputs } from './endpoints/types';
+import type { ${pascalName}EndpointInputs, ${pascalName}EndpointOutputs } from './endpoints/types';
+import { ${camelName}EndpointSchemas } from './endpoints/types';
 import type {
 	${pascalName}WebhookOutputs,
 	ExampleEvent,
@@ -191,6 +193,19 @@ const ${camelName}WebhooksNested = {
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
 /**
+ * Risk-level metadata for each endpoint.
+ * Used by the MCP permission system and get_schema() for endpoint discovery.
+ * Keys must be dot-paths matching the endpoint tree (e.g. 'example.get').
+ * TODO: Add an entry for every endpoint you add, updating riskLevel and description.
+ */
+const ${camelName}EndpointMeta = {
+	'example.get': {
+		riskLevel: 'read',
+		description: 'Get an example resource by ID',
+	},
+} satisfies PluginEndpointMeta<typeof ${camelName}EndpointsNested>;
+
+/**
  * Authentication configuration
  * 
  * AUTH CONFIGURATION:
@@ -264,6 +279,8 @@ export function ${lowerName}<const T extends ${pascalName}PluginOptions>(
 		webhookHooks: options.webhookHooks,
 		endpoints: ${camelName}EndpointsNested,
 		webhooks: ${camelName}WebhooksNested,
+		endpointMeta: ${camelName}EndpointMeta,
+		endpointSchemas: ${camelName}EndpointSchemas,
 		/**
 		 * Webhook matcher function - determines if an incoming request is a webhook for this plugin
 		 * 
@@ -376,13 +393,27 @@ export type {
 // ─────────────────────────────────────────────────────────────────────────────
 
 export type {
+	${pascalName}EndpointInputs,
 	${pascalName}EndpointOutputs,
+	ExampleGetInput,
 	ExampleGetResponse,
 } from './endpoints/types';
+export { ${camelName}EndpointSchemas } from './endpoints/types';
 `;
 
 	// Generate endpoints/types.ts
 	const endpointsTypesTs = `import { z } from 'zod';
+
+// ── Input Schemas ────────────────────────────────────────────────────────────
+
+const ExampleGetInputSchema = z.object({
+	id: z.string(),
+	// TODO: Add your input fields here
+});
+
+export type ExampleGetInput = z.infer<typeof ExampleGetInputSchema>;
+
+// ── Output Schemas ───────────────────────────────────────────────────────────
 
 const ExampleGetResponseSchema = z.object({
 	id: z.string(),
@@ -391,9 +422,32 @@ const ExampleGetResponseSchema = z.object({
 
 export type ExampleGetResponse = z.infer<typeof ExampleGetResponseSchema>;
 
+// ── Endpoint I/O Maps ────────────────────────────────────────────────────────
+
+export type ${pascalName}EndpointInputs = {
+	exampleGet: ExampleGetInput;
+};
+
 export type ${pascalName}EndpointOutputs = {
 	exampleGet: ExampleGetResponse;
 };
+
+export const ${pascalName}EndpointInputSchemas = {
+	exampleGet: ExampleGetInputSchema,
+} as const;
+
+export const ${pascalName}EndpointOutputSchemas = {
+	exampleGet: ExampleGetResponseSchema,
+} as const;
+
+// ── Dot-path schema map (used by get_schema()) ───────────────────────────────
+
+export const ${camelName}EndpointSchemas = {
+	'example.get': {
+		input: ${pascalName}EndpointInputSchemas.exampleGet,
+		output: ${pascalName}EndpointOutputSchemas.exampleGet,
+	},
+} as const;
 `;
 
 	// Generate endpoints/example.ts
@@ -984,8 +1038,12 @@ export const ${pascalName}Schema = {
 
 			// Re-sort exports: keep "." and "./core" etc. before plugins, sort plugins alphabetically
 			const { '.': root, ...rest } = packageJson.exports;
-			const nonPlugins = Object.entries(rest).filter(([k]) => !k.startsWith('./plugins/'));
-			const plugins = Object.entries(rest).filter(([k]) => k.startsWith('./plugins/'));
+			const nonPlugins = Object.entries(rest).filter(
+				([k]) => !k.startsWith('./plugins/'),
+			);
+			const plugins = Object.entries(rest).filter(([k]) =>
+				k.startsWith('./plugins/'),
+			);
 			plugins.sort(([a], [b]) => a.localeCompare(b));
 			packageJson.exports = {
 				...(root ? { '.': root } : {}),
@@ -993,7 +1051,10 @@ export const ${pascalName}Schema = {
 				...Object.fromEntries(plugins),
 			};
 
-			writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2) + '\n');
+			writeFileSync(
+				packageJsonPath,
+				JSON.stringify(packageJson, null, 2) + '\n',
+			);
 			console.log(`✅ Updated package.json exports`);
 		}
 	}

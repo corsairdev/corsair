@@ -595,7 +595,7 @@ describe('Linear API Type Tests', () => {
 				TEST_TOKEN,
 				{ first: 50 },
 			);
-      const result = response.users;
+			const result = response.users;
 
 			LinearEndpointOutputSchemas.usersList.parse(result);
 		});
@@ -606,7 +606,7 @@ describe('Linear API Type Tests', () => {
 				TEST_TOKEN,
 				{ first: 1 },
 			);
-      const userId = usersListResponse.users.nodes[0]?.id;
+			const userId = usersListResponse.users.nodes[0]?.id;
 			if (!userId) {
 				throw new Error('No users found');
 			}

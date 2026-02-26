@@ -63,7 +63,11 @@ export async function getValidAccessToken({
 		return { accessToken, expiresAt: Number(expiresAt), refreshed: false };
 	}
 
-	const tokenData = await refreshAccessToken(clientId, clientSecret, refreshToken);
+	const tokenData = await refreshAccessToken(
+		clientId,
+		clientSecret,
+		refreshToken,
+	);
 	return {
 		accessToken: tokenData.access_token,
 		expiresAt: now + tokenData.expires_in,

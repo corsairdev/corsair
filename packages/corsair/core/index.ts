@@ -3,6 +3,7 @@ import { createCorsairDatabase } from '../db/kysely/database';
 import { createMissingConfigProxy } from './auth/errors';
 import type { CorsairSingleTenantClient, CorsairTenantWrapper } from './client';
 import { buildCorsairClient, buildIntegrationKeys } from './client';
+import { buildInspectMethods } from './inspect';
 import type { CorsairIntegration, CorsairPlugin } from './plugins';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -16,6 +17,10 @@ export type CorsairInternalConfig = {
 	database: CorsairDatabase | undefined;
 	kek: string;
 	multiTenancy: boolean;
+	approval?: {
+		timeout: string;
+		onTimeout: 'deny' | 'approve';
+	};
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -73,6 +78,7 @@ export function createCorsair<const Plugins extends readonly CorsairPlugin[]>(
 		database: resolvedDatabase,
 		kek: config.kek,
 		multiTenancy: !!config.multiTenancy,
+		approval: config.approval,
 	};
 
 	if (config.multiTenancy) {
@@ -89,9 +95,11 @@ export function createCorsair<const Plugins extends readonly CorsairPlugin[]>(
 						tenantId,
 						kek: config.kek,
 						rootErrorHandlers: config.errorHandlers,
+						approvalConfig: config.approval,
 					});
 				},
 				keys: integrationKeys,
+				...buildInspectMethods(config.plugins),
 			},
 			{ [CORSAIR_INTERNAL]: internalConfig },
 		);
@@ -102,6 +110,7 @@ export function createCorsair<const Plugins extends readonly CorsairPlugin[]>(
 		tenantId: undefined,
 		kek: config.kek,
 		rootErrorHandlers: config.errorHandlers,
+		approvalConfig: config.approval,
 	});
 
 	return Object.assign({}, client, {
@@ -146,6 +155,8 @@ export type {
 	CorsairSingleTenantClient,
 	CorsairTenantWrapper,
 } from './client';
+// Inspection types
+export type { CorsairInspectMethods, EndpointSchemaResult } from './inspect';
 // Constants
 export type { AllProviders, AuthTypes, BaseProviders } from './constants';
 
@@ -156,6 +167,7 @@ export type {
 	BoundEndpointTree,
 	CorsairContext,
 	CorsairEndpoint,
+	EndpointPathsOf,
 	EndpointTree,
 } from './endpoints';
 // Error handling types
@@ -168,6 +180,8 @@ export type {
 	RetryStrategies,
 	RetryStrategy,
 } from './errors';
+export type { EnforcePermissionOptions } from './permissions';
+
 // Plugin types
 export type {
 	BeforeHookResult,
@@ -177,7 +191,13 @@ export type {
 	CorsairPlugin,
 	CorsairPluginContext,
 	EndpointHooks,
+	EndpointMetaEntry,
+	EndpointRiskLevel,
 	KeyBuilderContext,
+	PermissionMode,
+	PermissionPolicy,
+	PluginEndpointMeta,
+	PluginPermissionsConfig,
 	WebhookHooks,
 } from './plugins';
 

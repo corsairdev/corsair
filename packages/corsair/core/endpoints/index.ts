@@ -103,3 +103,44 @@ export type BindEndpoints<T extends EndpointTree> = {
 			? BindEndpoints<T[K]>
 			: never;
 };
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Endpoint Path Types (for Permission System)
+// ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Derives all dot-notation endpoint paths from an EndpointTree as a string literal union.
+ * Used to provide compile-time validation for permission overrides and endpoint metadata keys.
+ * Passing an invalid path to any config that accepts EndpointPathsOf<T> is a type error.
+ *
+ * Design note: The constraint on `T` is intentionally loosened to `object` (not `EndpointTree`)
+ * on the recursive call because `as const` endpoint trees have specific readonly literal keys —
+ * `{ readonly issues: { readonly list: fn } }` — which do NOT satisfy `EndpointTree`'s string
+ * index signature (`{ [key: string]: ... }`), even though the values are valid endpoints.
+ * If we recurse with `T extends EndpointTree`, TypeScript widens the subtypes and loses the
+ * literal keys we need. The outer-facing `PluginEndpointMeta<T extends EndpointTree>` and
+ * `PluginPermissionsConfig<T extends EndpointTree>` still enforce the EndpointTree constraint
+ * at the call site.
+ *
+ * Similarly, `T[K] extends Record<string, unknown>` fails for named-property objects without an
+ * index signature (a plain `{ list: fn }` does not satisfy `{ [key: string]: unknown }`), so we
+ * use `extends object` instead, which all non-primitive values satisfy.
+ *
+ * @example
+ * Given: `{ issues: { list: Endpoint, create: Endpoint }, repos: { list: Endpoint } }`
+ * Result: `'issues.list' | 'issues.create' | 'repos.list'`
+ *
+ * @template T - The endpoint tree to extract paths from (unconstrained to allow recursion through as-const types)
+ * @template Prefix - Internal accumulator for the current path prefix (do not supply manually)
+ */
+export type EndpointPathsOf<T, Prefix extends string = ''> = {
+	[K in keyof T & string]: T[K] extends (...args: any[]) => any
+		? // Leaf: it's an endpoint function — emit the full dot-notation path
+			Prefix extends ''
+			? K
+			: `${Prefix}.${K}`
+		: T[K] extends object
+			? // Non-leaf: it's a nested subtree — recurse with the accumulated prefix
+				EndpointPathsOf<T[K], Prefix extends '' ? K : `${Prefix}.${K}`>
+			: never;
+}[keyof T & string];

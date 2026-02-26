@@ -6,10 +6,13 @@ import type {
 	CorsairPluginContext,
 	CorsairWebhook,
 	KeyBuilderContext,
+	PluginEndpointMeta,
+	PluginPermissionsConfig,
 	RawWebhookRequest,
 } from '../../core';
 import type { PickAuth } from '../../core/constants';
 import type { GithubEndpointInputs, GithubEndpointOutputs } from './endpoints';
+import { githubEndpointSchemas } from './endpoints/types';
 import {
 	IssuesEndpoints,
 	PullRequestsEndpoints,
@@ -144,12 +147,108 @@ const githubWebhooksNested = {
 
 const defaultAuthType = 'api_key' as const;
 
+/**
+ * Risk-level metadata for each GitHub endpoint.
+ * Used by the MCP server permission system to decide allow / deny / require_approval.
+ * Keys are validated against the endpoint tree — invalid paths are type errors.
+ */
+const githubEndpointMeta = {
+	'issues.list': {
+		riskLevel: 'read',
+		description: 'List issues in a repository',
+	},
+	'issues.get': { riskLevel: 'read', description: 'Get a specific issue' },
+	'issues.create': { riskLevel: 'write', description: 'Create a new issue' },
+	'issues.update': {
+		riskLevel: 'write',
+		description: 'Update an existing issue',
+	},
+	'issues.createComment': {
+		riskLevel: 'write',
+		description: 'Post a comment on an issue',
+	},
+	'pullRequests.list': { riskLevel: 'read', description: 'List pull requests' },
+	'pullRequests.get': {
+		riskLevel: 'read',
+		description: 'Get a specific pull request',
+	},
+	'pullRequests.listReviews': {
+		riskLevel: 'read',
+		description: 'List reviews on a pull request',
+	},
+	'pullRequests.createReview': {
+		riskLevel: 'write',
+		description: 'Submit a pull request review',
+	},
+	'repositories.list': {
+		riskLevel: 'read',
+		description: 'List repositories for the authenticated user',
+	},
+	'repositories.get': {
+		riskLevel: 'read',
+		description: 'Get a specific repository',
+	},
+	'repositories.listBranches': {
+		riskLevel: 'read',
+		description: 'List branches in a repository',
+	},
+	'repositories.listCommits': {
+		riskLevel: 'read',
+		description: 'List commits in a repository',
+	},
+	'repositories.getContent': {
+		riskLevel: 'read',
+		description: 'Get file or directory content from a repository',
+	},
+	'releases.list': {
+		riskLevel: 'read',
+		description: 'List releases in a repository',
+	},
+	'releases.get': { riskLevel: 'read', description: 'Get a specific release' },
+	'releases.create': {
+		riskLevel: 'write',
+		description: 'Create a new release',
+	},
+	'releases.update': {
+		riskLevel: 'write',
+		description: 'Update an existing release',
+	},
+	'workflows.list': {
+		riskLevel: 'read',
+		description: 'List workflows in a repository',
+	},
+	'workflows.get': {
+		riskLevel: 'read',
+		description: 'Get a specific workflow',
+	},
+	'workflows.listRuns': {
+		riskLevel: 'read',
+		description: 'List workflow runs',
+	},
+} satisfies PluginEndpointMeta<typeof githubEndpointsNested>;
+
 export type GithubPluginOptions = {
 	authType?: PickAuth<'api_key' | 'oauth_2'>;
 	credentials?: GithubCredentials;
 	webhookSecret?: string;
 	hooks?: InternalGithubPlugin['hooks'];
 	webhookHooks?: InternalGithubPlugin['webhookHooks'];
+	/**
+	 * Permission configuration for the GitHub plugin.
+	 * Controls what the AI agent is allowed to do via the MCP server.
+	 * Overrides use dot-notation paths from the GitHub endpoint tree — invalid paths are type errors.
+	 *
+	 * @example
+	 * ```ts
+	 * github({
+	 *   permissions: {
+	 *     mode: 'cautious',
+	 *     overrides: { 'releases.create': 'require_approval' },
+	 *   },
+	 * })
+	 * ```
+	 */
+	permissions?: PluginPermissionsConfig<typeof githubEndpointsNested>;
 };
 
 export type BaseGithubPlugin<PluginOptions extends GithubPluginOptions> =
@@ -188,6 +287,8 @@ export function github<const PluginOptions extends GithubPluginOptions>(
 		webhookHooks: options.webhookHooks,
 		endpoints: githubEndpointsNested,
 		webhooks: githubWebhooksNested,
+		endpointMeta: githubEndpointMeta,
+		endpointSchemas: githubEndpointSchemas,
 		pluginWebhookMatcher: (request: RawWebhookRequest) => {
 			const headers = request.headers;
 			const hasGithubEvent = headers['x-github-event'] !== undefined;
