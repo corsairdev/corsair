@@ -15,7 +15,6 @@ export const verification: NotionWebhooks['verification'] = {
 			};
 		}
 		
-		console.log(verification, 'verification')
 
 		if (!('verification_token' in request.payload) || !request.payload.verification_token) {
 			return {
