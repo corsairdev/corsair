@@ -6,6 +6,7 @@ import type {
 	CorsairPluginContext,
 	CorsairWebhook,
 	KeyBuilderContext,
+	PluginEndpointMeta,
 	RawWebhookRequest,
 } from '../../core';
 import type { PickAuth } from '../../core/constants';
@@ -26,6 +27,7 @@ import type {
 import { EventWebhooks } from './webhooks';
 import type { PubSubNotification } from './webhooks/types';
 import { decodePubSubMessage } from './webhooks/types';
+import { googlecalendarEndpointSchemas } from './endpoints/types';
 
 export type GoogleCalendarContext = CorsairPluginContext<
 	typeof GoogleCalendarSchema,
@@ -101,6 +103,25 @@ export type GoogleCalendarKeyBuilderContext =
 
 const defaultAuthType = 'oauth_2' as const;
 
+/**
+ * Risk-level metadata for each Google Calendar endpoint.
+ * Used by the MCP server permission system to decide allow / deny / require_approval.
+ */
+const googleCalendarEndpointMeta = {
+	'events.create': { riskLevel: 'write', description: 'Create a new calendar event' },
+	'events.get': { riskLevel: 'read', description: 'Get a specific calendar event' },
+	'events.getMany': { riskLevel: 'read', description: 'List calendar events' },
+	'events.update': { riskLevel: 'write', description: 'Update an existing calendar event' },
+	'events.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete a calendar event [DESTRUCTIVE]',
+	},
+	'calendar.getAvailability': {
+		riskLevel: 'read',
+		description: 'Get free/busy availability for a calendar',
+	},
+} satisfies PluginEndpointMeta<typeof googleCalendarEndpointsNested>;
+
 export type BaseGoogleCalendarPlugin<T extends GoogleCalendarPluginOptions> =
 	CorsairPlugin<
 		'googlecalendar',
@@ -134,6 +155,8 @@ export function googlecalendar<const T extends GoogleCalendarPluginOptions>(
 		webhookHooks: options.webhookHooks,
 		endpoints: googleCalendarEndpointsNested,
 		webhooks: googleCalendarWebhooksNested,
+		endpointMeta: googleCalendarEndpointMeta,
+		endpointSchemas: googlecalendarEndpointSchemas,
 		keyBuilder: async (ctx: GoogleCalendarKeyBuilderContext) => {
 			if (options.key) {
 				return options.key;
@@ -231,3 +254,4 @@ export type {
 	GoogleCalendarEndpointOutputSchemas,
 	GoogleCalendarEndpointOutputs,
 } from './endpoints/types';
+export { googlecalendarEndpointSchemas } from './endpoints/types';

@@ -94,6 +94,54 @@ export const CorsairEventsSchema = z.object({
 export type CorsairEvent = z.infer<typeof CorsairEventsSchema>;
 
 // ─────────────────────────────────────────────────────────────────────────────
+// Corsair Permissions (approval queue)
+// ─────────────────────────────────────────────────────────────────────────────
+
+export const CorsairPermissionsSchema = z.object({
+	id: z.string(),
+	created_at: z.date(),
+	updated_at: z.date(),
+
+	/** 32-byte hex-encoded secure random token, single-use. Embedded in the review URL. */
+	token: z.string(),
+	/** Plugin identifier, e.g. 'github' */
+	plugin: z.string(),
+	/** Dot-notation endpoint path, e.g. 'repositories.delete' */
+	endpoint: z.string(),
+	/** JSON-encoded args that will be forwarded to the endpoint upon approval */
+	args: z.string(),
+	/** Agent session ID from the orchestrator (NanoClaw / OpenClaw) — used to resume the agent */
+	session_id: z.string().optional(),
+	/** URL to POST to when the action is approved or denied, to resume the agent */
+	callback_url: z.string().optional(),
+	/** Full public review page URL (ngrok URL + path + token query param) */
+	review_url: z.string().optional(),
+	/** Current state of the approval request */
+	status: z
+		.enum(['pending', 'approved', 'denied', 'expired'])
+		.default('pending'),
+	/** ISO8601 timestamp — when this request becomes invalid */
+	expires_at: z.string(),
+});
+
+export type CorsairPermission = z.infer<typeof CorsairPermissionsSchema>;
+
+export type CorsairPermissionInsert = {
+	id?: string;
+	created_at?: Date;
+	updated_at?: Date;
+	token: string;
+	plugin: string;
+	endpoint: string;
+	args: string;
+	session_id?: string;
+	callback_url?: string;
+	review_url?: string;
+	status?: 'pending' | 'approved' | 'denied' | 'expired';
+	expires_at: string;
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
 // Table Names
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -102,6 +150,7 @@ export type CorsairTableName =
 	| 'corsair_accounts'
 	| 'corsair_entities'
 	| 'corsair_events'
+	| 'corsair_permissions'
 	| (string & {});
 
 // ─────────────────────────────────────────────────────────────────────────────

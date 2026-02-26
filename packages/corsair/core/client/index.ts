@@ -1,6 +1,10 @@
 import type { ZodTypeAny } from 'zod';
 import type { CorsairDatabase } from '../../db/kysely/database';
 import { createKyselyEntityClient } from '../../db/kysely/orm';
+import {
+	buildInspectMethods,
+	type CorsairInspectMethods,
+} from '../inspect';
 import type {
 	CorsairPluginSchema,
 	PluginEntityClient,
@@ -19,7 +23,13 @@ import type { AuthTypes } from '../constants';
 import type { BindEndpoints, EndpointTree } from '../endpoints';
 import { bindEndpointsRecursively } from '../endpoints/bind';
 import type { CorsairErrorHandler } from '../errors';
-import type { CorsairKeyBuilderBase, CorsairPlugin } from '../plugins';
+import type {
+	CorsairKeyBuilderBase,
+	CorsairPlugin,
+	EndpointMetaEntry,
+	PermissionMode,
+	PermissionPolicy,
+} from '../plugins';
 import type { BindWebhooks, RawWebhookRequest, WebhookTree } from '../webhooks';
 import { bindWebhooksRecursively } from '../webhooks/bind';
 
@@ -180,13 +190,15 @@ type InferPluginNamespaces<Plugins extends readonly CorsairPlugin[]> =
 
 /**
  * The main Corsair client type that provides access to all plugin APIs, entities, webhooks, and keys.
+ * Also includes get_methods() and get_schema() for agent-facing endpoint discovery.
  */
 export type CorsairClient<Plugins extends readonly CorsairPlugin[]> =
-	InferPluginNamespaces<Plugins>;
+	InferPluginNamespaces<Plugins> & CorsairInspectMethods;
 
 /**
  * Multi-tenant wrapper that provides a `withTenant` method to scope operations to a specific tenant.
  * Also includes integration-level `keys` for managing shared secrets (OAuth2 client credentials, etc.)
+ * Inspect methods (get_methods / get_schema) are available at the root — no need to call withTenant().
  */
 export type CorsairTenantWrapper<Plugins extends readonly CorsairPlugin[]> = {
 	withTenant: (tenantId: string) => CorsairClient<Plugins>;
@@ -195,7 +207,7 @@ export type CorsairTenantWrapper<Plugins extends readonly CorsairPlugin[]> = {
 	 * Used to manage secrets shared across all tenants (e.g., OAuth2 client_id, client_secret).
 	 */
 	keys: InferAllIntegrationKeys<Plugins>;
-};
+} & CorsairInspectMethods;
 
 /**
  * Single-tenant client that includes both plugin APIs and integration-level keys.
@@ -315,6 +327,8 @@ export type BuildCorsairClientOptions = {
 	tenantId: string | undefined;
 	kek: string | undefined;
 	rootErrorHandlers?: CorsairErrorHandler;
+	/** Approval timeout from createCorsair({ approval: ... }). Forwarded to the permission guard. */
+	approvalConfig?: { timeout: string; onTimeout: 'deny' | 'approve' };
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -333,7 +347,13 @@ export function buildCorsairClient<
 	plugins: Plugins,
 	options: BuildCorsairClientOptions,
 ): CorsairClient<Plugins> {
-	const { database, tenantId, kek, rootErrorHandlers } = options;
+	const {
+		database,
+		tenantId,
+		kek,
+		rootErrorHandlers,
+		approvalConfig,
+	} = options;
 
 	const apiUnsafe: Record<string, Record<string, unknown>> = {};
 	const pluginEntitiesUnsafe: Record<string, Record<string, unknown>> = {};
@@ -429,6 +449,15 @@ export function buildCorsairClient<
 		// Create bound endpoints under `api` (supports nested structures)
 		const boundTree: Record<string, unknown> = {};
 
+		// Extract permission config from plugin options.
+		// options is Record<string, unknown> — permissions is not in the base CorsairPlugin type
+		// because it's plugin-specific (typed via PluginPermissionsConfig<T> in each plugin).
+		const pluginPermsConfig = (
+			plugin.options as Record<string, unknown> | undefined
+		)?.permissions as
+			| { mode: PermissionMode; overrides?: Record<string, PermissionPolicy> }
+			| undefined;
+
 		bindEndpointsRecursively({
 			endpoints,
 			hooks,
@@ -438,6 +467,13 @@ export function buildCorsairClient<
 			errorHandlers: allErrorHandlers,
 			currentPath: [],
 			keyBuilder: plugin.keyBuilder as CorsairKeyBuilderBase | undefined,
+			permissionsConfig: pluginPermsConfig,
+			// endpointMeta is typed with plugin-specific literal keys — cast to runtime Record
+			endpointMeta: plugin.endpointMeta as
+				| Record<string, EndpointMetaEntry>
+				| undefined,
+			database,
+			approvalConfig,
 		});
 
 		if (Object.keys(boundTree).length > 0) {
@@ -473,9 +509,11 @@ export function buildCorsairClient<
 	}
 
 	const api = apiUnsafe as InferPluginNamespaces<Plugins>;
+	const inspect = buildInspectMethods(plugins);
 
 	return {
 		...(api as unknown as Record<string, unknown>),
+		...inspect,
 	} as CorsairClient<Plugins>;
 }
 

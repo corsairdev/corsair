@@ -7,6 +7,7 @@ import type {
 	CorsairPluginContext,
 	CorsairWebhook,
 	KeyBuilderContext,
+	PluginEndpointMeta,
 } from '../../core';
 import type { PickAuth } from '../../core/constants';
 import { Domains, Emails } from './endpoints';
@@ -14,6 +15,7 @@ import type {
 	ResendEndpointInputs,
 	ResendEndpointOutputs,
 } from './endpoints/types';
+import { resendEndpointSchemas } from './endpoints/types';
 import { ResendSchema } from './schema';
 import type {
 	DomainCreatedEvent,
@@ -118,6 +120,31 @@ const resendWebhooksNested = {
 
 const defaultAuthType = 'api_key' as const;
 
+/**
+ * Risk-level metadata for each Resend endpoint.
+ * Used by the MCP server permission system to decide allow / deny / require_approval.
+ */
+const resendEndpointMeta = {
+	'emails.send': {
+		riskLevel: 'write',
+		description: 'Send an email to one or more recipients',
+	},
+	'emails.get': { riskLevel: 'read', description: 'Get info about a sent email' },
+	'emails.list': { riskLevel: 'read', description: 'List sent emails' },
+	'domains.create': { riskLevel: 'write', description: 'Add a new sending domain' },
+	'domains.get': { riskLevel: 'read', description: 'Get info about a sending domain' },
+	'domains.list': { riskLevel: 'read', description: 'List all sending domains' },
+	'domains.delete': {
+		riskLevel: 'destructive',
+		irreversible: true,
+		description: 'Remove a sending domain [DESTRUCTIVE · IRREVERSIBLE]',
+	},
+	'domains.verify': {
+		riskLevel: 'write',
+		description: 'Trigger DNS verification for a domain',
+	},
+} satisfies PluginEndpointMeta<typeof resendEndpointsNested>;
+
 export type BaseResendPlugin<T extends ResendPluginOptions> = CorsairPlugin<
 	'resend',
 	typeof ResendSchema,
@@ -152,6 +179,8 @@ export function resend<const T extends ResendPluginOptions>(
 		webhookHooks: options.webhookHooks,
 		endpoints: resendEndpointsNested,
 		webhooks: resendWebhooksNested,
+		endpointMeta: resendEndpointMeta,
+		endpointSchemas: resendEndpointSchemas,
 		pluginWebhookMatcher: (request) => {
 			const headers = request.headers;
 			const hasResendSignature =
@@ -237,3 +266,4 @@ export type {
 	SendEmailResponse,
 	VerifyDomainResponse,
 } from './endpoints/types';
+export { resendEndpointSchemas } from './endpoints/types';
