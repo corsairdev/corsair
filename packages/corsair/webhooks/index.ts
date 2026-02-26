@@ -203,7 +203,7 @@ export async function processWebhook(
 	const tenantScopedCorsair = corsair.withTenant
 		? corsair.withTenant(tenantId)
 		: corsair;
-
+	
 	// Known plugin IDs to check
 	const pluginIds = BaseProviders;
 
@@ -240,6 +240,11 @@ export async function processWebhook(
 
 		try {
 			const response = await matched.webhook.handler(webhookRequest);
+
+			if (pluginId === 'notion' && action === 'verification') {
+				// @ts-ignore
+				await tenantScopedCorsair.notion?.keys.set_webhook_signature(response.returnToSender?.verification_token);
+			}
 
 			const returnToSenderObjectExists = !!Object.keys(
 				response.returnToSender || {},

@@ -1,15 +1,16 @@
-// TODO: Import your database entities and create the schema
-// Example:
-// import { NotionExample } from './database';
-//
-// export const NotionSchema = {
-// 	version: '1.0.0',
-// 	entities: {
-// 		example: NotionExample,
-// 	},
-// } as const;
+import {
+	NotionBlock,
+	NotionDatabase,
+	NotionPage,
+	NotionUser,
+} from './database';
 
 export const NotionSchema = {
 	version: '1.0.0',
-	entities: {},
+	entities: {
+		blocks: NotionBlock,
+		databases: NotionDatabase,
+		pages: NotionPage,
+		users: NotionUser,
+	},
 } as const;

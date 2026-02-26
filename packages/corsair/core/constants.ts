@@ -27,6 +27,7 @@ export const BaseProviders = [
 	'slack',
 	'spotify',
 	'tavily',
+	'notion',
 ] as const;
 
 export type AllProviders =
@@ -44,6 +45,7 @@ export type AllProviders =
 	| 'slack'
 	| 'spotify'
 	| 'tavily'
+	| 'notion'
 	| (string & {});
 
 export type AuthTypes = 'oauth_2' | 'api_key' | 'bot_token';

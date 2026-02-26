@@ -42,8 +42,13 @@ export interface NotionWebhookPayload {
 	};
 }
 
-export interface PageAddedToDatabaseEvent extends NotionWebhookPayload {
-	type: 'page.added_to_database';
+export type VerificationEvent = {
+	type: 'url_verification';
+	verification_token: string;
+}
+
+export interface PageCreatedEvent extends NotionWebhookPayload {
+	type: 'page.created';
 	data: {
 		page_id: string;
 		database_id: string;
@@ -53,8 +58,8 @@ export interface PageAddedToDatabaseEvent extends NotionWebhookPayload {
 	};
 }
 
-export interface PageUpdatedInDatabaseEvent extends NotionWebhookPayload {
-	type: 'page.updated_in_database';
+export interface PageUpdatedEvent extends NotionWebhookPayload {
+	type: 'page.updated';
 	data: {
 		page_id: string;
 		database_id: string;
@@ -65,8 +70,9 @@ export interface PageUpdatedInDatabaseEvent extends NotionWebhookPayload {
 }
 
 export type NotionWebhookOutputs = {
-	pageAddedToDatabase: PageAddedToDatabaseEvent;
-	pageUpdatedInDatabase: PageUpdatedInDatabaseEvent;
+	verification: VerificationEvent;
+	pageCreated: PageCreatedEvent;
+	pageUpdated: PageUpdatedEvent;
 };
 
 function parseBody(body: unknown): unknown {
@@ -77,6 +83,11 @@ export function createNotionMatch(
 	eventType: string,
 ): CorsairWebhookMatcher {
 	return (request: RawWebhookRequest) => {
+		console.log(request.body, 'request.body', eventType)
+		if(eventType === 'url_verification') {
+			const parsedBody = parseBody(request.body) as VerificationEvent;
+			return !!parsedBody.verification_token;
+		}
 		const parsedBody = parseBody(request.body) as NotionWebhookPayload;
 		return parsedBody.type === eventType;
 	};
@@ -110,18 +121,29 @@ export function verifyNotionWebhookSignature(
 		};
 	}
 
-	const expectedSignature = crypto
+	const bodyString = typeof rawBody === 'string' 
+		? rawBody 
+		: JSON.stringify(rawBody);
+
+	const calculatedSignature = `sha256=${crypto
 		.createHmac('sha256', secret)
-		.update(rawBody)
-		.digest('hex');
+		.update(bodyString)
+		.digest('hex')}`;
 
-	const isValid = crypto.timingSafeEqual(
-		Buffer.from(signature),
-		Buffer.from(expectedSignature),
-	);
+	try {
+		const isValid = crypto.timingSafeEqual(
+			Buffer.from(calculatedSignature),
+			Buffer.from(signature),
+		);
 
-	return {
-		valid: isValid,
-		error: isValid ? undefined : 'Invalid signature',
-	};
+		return {
+			valid: isValid,
+			error: isValid ? undefined : 'Invalid signature',
+		};
+	} catch (error) {
+		return {
+			valid: false,
+			error: `Signature verification failed: ${error instanceof Error ? error.message : 'unknown error'}`,
+		};
+	}
 }

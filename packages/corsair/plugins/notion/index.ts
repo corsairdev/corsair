@@ -13,8 +13,9 @@ import type { AuthTypes, PickAuth } from '../../core/constants';
 import type { NotionEndpointOutputs } from './endpoints/types';
 import type {
 	NotionWebhookOutputs,
-	PageAddedToDatabaseEvent,
-	PageUpdatedInDatabaseEvent,
+	PageCreatedEvent,
+	PageUpdatedEvent,
+	VerificationEvent,
 } from './webhooks/types';
 import {
 	Blocks,
@@ -24,7 +25,7 @@ import {
 	Users,
 } from './endpoints';
 import { NotionSchema } from './schema';
-import { DatabasePagesWebhooks } from './webhooks';
+import { NotionWebhooks } from './webhooks';
 import { errorHandlers } from './error-handlers';
 
 /**
@@ -156,13 +157,17 @@ type NotionWebhook<
 > = CorsairWebhook<NotionContext, TEvent, NotionWebhookOutputs[K]>;
 
 export type NotionWebhooks = {
-	pageAddedToDatabase: NotionWebhook<
-		'pageAddedToDatabase',
-		PageAddedToDatabaseEvent
+	verification: NotionWebhook<
+		'verification',
+		VerificationEvent
 	>;
-	pageUpdatedInDatabase: NotionWebhook<
-		'pageUpdatedInDatabase',
-		PageUpdatedInDatabaseEvent
+	pageCreated: NotionWebhook<
+		'pageCreated',
+		PageCreatedEvent
+	>;
+	pageUpdated: NotionWebhook<
+		'pageUpdated',
+		PageUpdatedEvent
 	>;
 };
 
@@ -197,9 +202,10 @@ const notionEndpointsNested = {
 
 const notionWebhooksNested = {
 	databasePages: {
-		pageAddedToDatabase: DatabasePagesWebhooks.pageAddedToDatabase,
-		pageUpdatedInDatabase: DatabasePagesWebhooks.pageUpdatedInDatabase,
+		pageCreated: NotionWebhooks.pageCreated,
+		pageUpdated: NotionWebhooks.pageUpdated,
 	},
+	verification: NotionWebhooks.verification,
 } as const;
 
 /**
@@ -390,8 +396,8 @@ export function notion<const T extends NotionPluginOptions>(
 // ─────────────────────────────────────────────────────────────────────────────
 
 export type {
-	PageAddedToDatabaseEvent,
-	PageUpdatedInDatabaseEvent,
+	PageCreatedEvent,
+	PageUpdatedEvent,
 	NotionWebhookOutputs,
 } from './webhooks/types';
 

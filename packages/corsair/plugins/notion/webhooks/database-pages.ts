@@ -5,8 +5,8 @@ import {
 	verifyNotionWebhookSignature,
 } from './types';
 
-export const pageAddedToDatabase: NotionWebhooks['pageAddedToDatabase'] = {
-	match: createNotionMatch('page.added_to_database'),
+export const pageCreated: NotionWebhooks['pageCreated'] = {
+	match: createNotionMatch('page.created'),
 
 	handler: async (ctx, request) => {
 		const webhookSecret = ctx.key;
@@ -19,9 +19,9 @@ export const pageAddedToDatabase: NotionWebhooks['pageAddedToDatabase'] = {
 			};
 		}
 
-		const event = request.payload
+		const event = request.payload;
 
-		if (event.type !== 'page.added_to_database') {
+		if (event.type !== 'page.created') {
 			return {
 				success: false,
 				statusCode: 400,
@@ -29,9 +29,52 @@ export const pageAddedToDatabase: NotionWebhooks['pageAddedToDatabase'] = {
 			};
 		}
 
+		// Save entity to database if available
+		if (event.entity && ctx.db.pages) {
+			try {
+				const entity = event.entity as { id?: string; object?: string; [key: string]: unknown };
+				if (entity.id && entity.object === 'page') {
+					const parentId =
+						entity.parent && typeof entity.parent === 'object' && entity.parent !== null
+							? 'page_id' in entity.parent
+								? String(entity.parent.page_id)
+								: 'database_id' in entity.parent
+									? String(entity.parent.database_id)
+									: 'block_id' in entity.parent
+										? String(entity.parent.block_id)
+										: undefined
+							: undefined;
+
+					const databaseId =
+						entity.parent && typeof entity.parent === 'object' && entity.parent !== null
+							? 'database_id' in entity.parent
+								? String(entity.parent.database_id)
+								: undefined
+							: event.data.database_id;
+
+					await ctx.db.pages.upsertByEntityId(entity.id, {
+						id: entity.id,
+						object: entity.object,
+						database_id: databaseId,
+						parent_id: parentId,
+						parent_type:
+							entity.parent && typeof entity.parent === 'object' && entity.parent !== null
+								? 'type' in entity.parent
+									? String(entity.parent.type)
+									: undefined
+								: undefined,
+						properties_json: JSON.stringify(entity.properties || {}),
+						...entity,
+					});
+				}
+			} catch (error) {
+				console.warn('Failed to save page from webhook to database:', error);
+			}
+		}
+
 		await logEventFromContext(
 			ctx,
-			'notion.webhook.pageAddedToDatabase',
+			'notion.webhook.pageCreated',
 			{ ...event },
 			'completed',
 		);
@@ -43,8 +86,8 @@ export const pageAddedToDatabase: NotionWebhooks['pageAddedToDatabase'] = {
 	},
 };
 
-export const pageUpdatedInDatabase: NotionWebhooks['pageUpdatedInDatabase'] = {
-	match: createNotionMatch('page.updated_in_database'),
+export const pageUpdated: NotionWebhooks['pageUpdated'] = {
+	match: createNotionMatch('page.updated'),
 
 	handler: async (ctx, request) => {
 		const webhookSecret = ctx.key;
@@ -57,9 +100,9 @@ export const pageUpdatedInDatabase: NotionWebhooks['pageUpdatedInDatabase'] = {
 			};
 		}
 
-		const event = request.payload
+		const event = request.payload;
 
-		if (event.type !== 'page.updated_in_database') {
+		if (event.type !== 'page.updated') {
 			return {
 				success: false,
 				statusCode: 400,
@@ -67,9 +110,52 @@ export const pageUpdatedInDatabase: NotionWebhooks['pageUpdatedInDatabase'] = {
 			};
 		}
 
+		// Save entity to database if available
+		if (event.entity && ctx.db.pages) {
+			try {
+				const entity = event.entity as { id?: string; object?: string; [key: string]: unknown };
+				if (entity.id && entity.object === 'page') {
+					const parentId =
+						entity.parent && typeof entity.parent === 'object' && entity.parent !== null
+							? 'page_id' in entity.parent
+								? String(entity.parent.page_id)
+								: 'database_id' in entity.parent
+									? String(entity.parent.database_id)
+									: 'block_id' in entity.parent
+										? String(entity.parent.block_id)
+										: undefined
+							: undefined;
+
+					const databaseId =
+						entity.parent && typeof entity.parent === 'object' && entity.parent !== null
+							? 'database_id' in entity.parent
+								? String(entity.parent.database_id)
+								: undefined
+							: event.data.database_id;
+
+					await ctx.db.pages.upsertByEntityId(entity.id, {
+						id: entity.id,
+						object: entity.object,
+						database_id: databaseId,
+						parent_id: parentId,
+						parent_type:
+							entity.parent && typeof entity.parent === 'object' && entity.parent !== null
+								? 'type' in entity.parent
+									? String(entity.parent.type)
+									: undefined
+								: undefined,
+						properties_json: JSON.stringify(entity.properties || {}),
+						...entity,
+					});
+				}
+			} catch (error) {
+				console.warn('Failed to save page from webhook to database:', error);
+			}
+		}
+
 		await logEventFromContext(
 			ctx,
-			'notion.webhook.pageUpdatedInDatabase',
+			'notion.webhook.pageUpdated',
 			{ ...event },
 			'completed',
 		);

@@ -16,6 +16,22 @@ export const appendBlock: NotionEndpoints['blocksAppendBlock'] = async (
 		},
 	});
 
+	if (result.results && ctx.db.blocks) {
+		try {
+			for (const block of result.results) {
+				if (block.id) {
+					await ctx.db.blocks.upsertByEntityId(block.id, {
+						...block,
+						parent_id: input.block_id,
+						parent_type: 'block',
+					});
+				}
+			}
+		} catch (error) {
+			console.warn('Failed to save blocks to database:', error);
+		}
+	}
+
 	await logEventFromContext(
 		ctx,
 		'notion.blocks.appendBlock',
@@ -36,6 +52,22 @@ export const getManyChildBlocks: NotionEndpoints['blocksGetManyChildBlocks'] =
 				page_size: input.page_size,
 			},
 		});
+
+		if (result.results && ctx.db.blocks) {
+			try {
+				for (const block of result.results) {
+					if (block.id) {
+						await ctx.db.blocks.upsertByEntityId(block.id, {
+							...block,
+							parent_id: input.block_id,
+							parent_type: 'block',
+						});
+					}
+				}
+			} catch (error) {
+				console.warn('Failed to save blocks to database:', error);
+			}
+		}
 
 		await logEventFromContext(
 			ctx,
