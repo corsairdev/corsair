@@ -23,6 +23,15 @@ export const corsair = createCorsair({
 	plugins: [
 		discord(),
 		linear({
+			hooks: {
+				issues: {
+					create: {
+						before(ctx, args) {
+							return { args, ctx, continue: false };
+						},
+					},
+				},
+			},
 			webhookHooks: {
 				issues: {
 					create: {
