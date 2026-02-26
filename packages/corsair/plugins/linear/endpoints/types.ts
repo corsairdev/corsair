@@ -65,6 +65,15 @@ const TeamsGetInputSchema = z.object({
 	id: z.string(),
 });
 
+const UsersListInputSchema = z.object({
+	first: z.number().optional(),
+	after: z.string().optional(),
+});
+
+const UsersGetInputSchema = z.object({
+	id: z.string(),
+});
+
 const ProjectsListInputSchema = z.object({
 	first: z.number().optional(),
 	after: z.string().optional(),
@@ -142,6 +151,8 @@ export const LinearEndpointInputSchemas = {
 	issuesDelete: IssuesDeleteInputSchema,
 	teamsList: TeamsListInputSchema,
 	teamsGet: TeamsGetInputSchema,
+	usersList: UsersListInputSchema,
+	usersGet: UsersGetInputSchema,
 	projectsList: ProjectsListInputSchema,
 	projectsGet: ProjectsGetInputSchema,
 	projectsCreate: ProjectsCreateInputSchema,
@@ -439,6 +450,11 @@ export const TeamConnectionSchema = z.object({
 	pageInfo: PageInfoSchema,
 });
 
+export const UserConnectionSchema = z.object({
+	nodes: z.array(UserSchema),
+	pageInfo: PageInfoSchema,
+});
+
 export const ProjectConnectionSchema = z.object({
 	nodes: z.array(ProjectSchema),
 	pageInfo: PageInfoSchema,
@@ -618,6 +634,14 @@ export const TeamGetResponseSchema = z.object({
 	team: TeamSchema,
 });
 
+export const UsersListResponseSchema = z.object({
+	users: UserConnectionSchema,
+});
+
+export const UserGetResponseSchema = z.object({
+	user: UserSchema,
+});
+
 export const ProjectsListResponseSchema = z.object({
 	projects: ProjectListGetConnectionSchema,
 });
@@ -710,6 +734,8 @@ export const LinearEndpointOutputSchemas = {
 	issuesDelete: z.boolean(),
 	teamsList: TeamConnectionSchema,
 	teamsGet: TeamSchema,
+	usersList: UserConnectionSchema,
+	usersGet: UserSchema,
 	projectsList: ProjectListGetConnectionSchema,
 	projectsGet: ProjectListGetSchema,
 	projectsCreate: MinimalProjectSchema,
@@ -742,6 +768,7 @@ export type Comment = z.infer<typeof CommentSchema>;
 export type PageInfo = z.infer<typeof PageInfoSchema>;
 export type IssueConnection = z.infer<typeof IssueConnectionSchema>;
 export type TeamConnection = z.infer<typeof TeamConnectionSchema>;
+export type UserConnection = z.infer<typeof UserConnectionSchema>;
 export type ProjectConnection = z.infer<typeof ProjectConnectionSchema>;
 export type CommentConnection = z.infer<typeof CommentConnectionSchema>;
 
@@ -760,6 +787,9 @@ export type IssueDeleteResponse = z.infer<typeof IssueDeleteResponseSchema>;
 
 export type TeamsListResponse = z.infer<typeof TeamsListResponseSchema>;
 export type TeamGetResponse = z.infer<typeof TeamGetResponseSchema>;
+
+export type UsersListResponse = z.infer<typeof UsersListResponseSchema>;
+export type UserGetResponse = z.infer<typeof UserGetResponseSchema>;
 
 export type ProjectsListResponse = z.infer<typeof ProjectsListResponseSchema>;
 export type ProjectGetResponse = z.infer<typeof ProjectGetResponseSchema>;
