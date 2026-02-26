@@ -2,9 +2,10 @@ import { corsair } from '@/server/corsair';
 import 'dotenv/config';
 
 const main = async () => {
-	const res = corsair.get_schema('slac');
+	const res = corsair.get_schema('slack.api.channels.gethistory');
+	// const res = corsair.get_methods();
 
-	console.log(res);
+	console.log(JSON.stringify(res, null, 2));
 };
 
 main();

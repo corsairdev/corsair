@@ -105,33 +105,37 @@ export type EndpointSchemaResult = {
 export type CorsairInspectMethods = {
 	/**
 	 * Returns all available endpoint paths for every registered plugin.
-	 * Keys are plugin IDs, values are arrays of full-form paths (plugin.group.method).
+	 * Keys are plugin IDs, values are arrays of full-form paths (plugin.api.group.method), all lowercase.
 	 *
 	 * @example
 	 * corsair.get_methods()
-	 * // { slack: ['slack.channels.list', 'slack.messages.post', ...], github: ['github.issues.list', ...] }
+	 * // { slack: ['slack.api.channels.list', 'slack.api.messages.post', ...], github: ['github.api.issues.list', ...] }
 	 */
 	get_methods(): Record<string, string[]>;
 	/**
 	 * Returns all available endpoint paths for a specific plugin.
-	 * Paths are full-form (plugin.group.method) so they can be passed directly to get_schema().
+	 * Paths are full-form (plugin.api.group.method), all lowercase, and can be passed directly to get_schema().
 	 *
 	 * @example
 	 * corsair.get_methods('slack')
-	 * // ['slack.channels.list', 'slack.channels.get', 'slack.messages.post', ...]
+	 * // ['slack.api.channels.list', 'slack.api.channels.get', 'slack.api.messages.post', ...]
 	 */
 	get_methods(plugin: string): string[];
 	/**
 	 * Returns schema and metadata for a specific endpoint.
-	 * Pass the full dot-path including the plugin ID: 'slack.channels.list'.
+	 * Pass the full dot-path including the plugin ID and 'api' segment: 'slack.api.channels.list'.
+	 * Casing is ignored — the method string is lowercased before lookup.
 	 * If the method is not found, returns an empty result with `availableMethods` listing all valid paths.
 	 *
 	 * @example
-	 * corsair.get_schema('slack.channels.list')
+	 * corsair.get_schema('slack.api.channels.list')
 	 * // { description: '...', riskLevel: 'read', input: { type: 'object', ... }, output: { ... } }
 	 *
-	 * corsair.get_schema('slack.invalid')
-	 * // { availableMethods: { slack: ['slack.channels.list', ...], ... } }
+	 * corsair.get_schema('slack.api.channels.getHistory') // casing normalised automatically
+	 * // { description: '...', riskLevel: 'read', input: { type: 'object', ... }, output: { ... } }
+	 *
+	 * corsair.get_schema('slack.api.invalid')
+	 * // { availableMethods: { slack: ['slack.api.channels.list', ...], ... } }
 	 */
 	get_schema(method: string): EndpointSchemaResult;
 };
@@ -168,33 +172,61 @@ function getMethods(
 		if (!found?.endpoints) return [];
 		const paths: string[] = [];
 		walkEndpointTree(found.endpoints as Record<string, unknown>, [], paths);
-		return paths.map((path) => `${found.id}.${path}`);
+		return paths.map((path) => `${found.id}.api.${path.toLowerCase()}`);
 	}
 	const result: Record<string, string[]> = {};
 	for (const p of plugins) {
 		if (!p.endpoints) continue;
 		const paths: string[] = [];
 		walkEndpointTree(p.endpoints as Record<string, unknown>, [], paths);
-		result[p.id] = paths.map((path) => `${p.id}.${path}`);
+		result[p.id] = paths.map((path) => `${p.id}.api.${path.toLowerCase()}`);
 	}
 	return result;
+}
+
+/**
+ * Case-insensitive lookup in an endpoint record (endpointMeta or endpointSchemas).
+ * Keys in those records use camelCase (e.g. 'channels.getHistory') while the
+ * normalised path coming from the agent is fully lowercased.
+ */
+function findEndpointCaseInsensitive<T>(
+	record: Record<string, T> | undefined,
+	lowercasedPath: string,
+): T | undefined {
+	if (!record) return undefined;
+	for (const [key, value] of Object.entries(record)) {
+		if (key.toLowerCase() === lowercasedPath) return value;
+	}
+	return undefined;
 }
 
 function getSchema(
 	plugins: readonly CorsairPlugin[],
 	method: string,
 ): EndpointSchemaResult {
-	const dotIndex = method.indexOf('.');
+	// Normalise casing so the agent can call with any capitalisation
+	const normalised = method.toLowerCase();
+	const dotIndex = normalised.indexOf('.');
 	if (dotIndex !== -1) {
-		const pluginId = method.slice(0, dotIndex);
-		const endpointPath = method.slice(dotIndex + 1);
+		const pluginId = normalised.slice(0, dotIndex);
+		let remainder = normalised.slice(dotIndex + 1);
+
+		// Strip the optional 'api.' segment (present in the new full-form paths)
+		if (remainder.startsWith('api.')) {
+			remainder = remainder.slice(4);
+		}
+
 		const plugin = plugins.find((p) => p.id === pluginId);
 
 		if (plugin) {
-			const meta = (
-				plugin.endpointMeta as Record<string, EndpointMetaEntry> | undefined
-			)?.[endpointPath];
-			const schemas = plugin.endpointSchemas?.[endpointPath];
+			const meta = findEndpointCaseInsensitive(
+				plugin.endpointMeta as Record<string, EndpointMetaEntry> | undefined,
+				remainder,
+			);
+			const schemas = findEndpointCaseInsensitive(
+				plugin.endpointSchemas,
+				remainder,
+			);
 
 			// Valid entry — meta or schemas found
 			if (meta || schemas) {

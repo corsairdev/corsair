@@ -33,38 +33,38 @@ export const corsair = createCorsair({
 				},
 			},
 		}),
-		resend({
-			webhookHooks: {
-				emails: {
-					received: {
-						after: async (ctx, res) => {
-							await inngest.send({
-								name: 'resend/email',
-								data: {
-									tenantId: ctx.tenantId ?? 'default',
-									event: res.data!,
-								},
-							});
-						},
-					},
-				},
-			},
-		}),
-		github({
-			webhookHooks: {
-				starCreated: {
-					after: async (ctx, res) => {
-						await inngest.send({
-							name: 'github/star',
-							data: {
-								tenantId: ctx.tenantId ?? 'default',
-								event: res.data!,
-							},
-						});
-					},
-				},
-			},
-		}),
+		// resend({
+		// 	webhookHooks: {
+		// 		emails: {
+		// 			received: {
+		// 				after: async (ctx, res) => {
+		// 					await inngest.send({
+		// 						name: 'resend/email',
+		// 						data: {
+		// 							tenantId: ctx.tenantId ?? 'default',
+		// 							event: res.data!,
+		// 						},
+		// 					});
+		// 				},
+		// 			},
+		// 		},
+		// 	},
+		// }),
+		// github({
+		// 	webhookHooks: {
+		// 		starCreated: {
+		// 			after: async (ctx, res) => {
+		// 				await inngest.send({
+		// 					name: 'github/star',
+		// 					data: {
+		// 						tenantId: ctx.tenantId ?? 'default',
+		// 						event: res.data!,
+		// 					},
+		// 				});
+		// 			},
+		// 		},
+		// 	},
+		// }),
 		gmail({
 			webhookHooks: {
 				messageChanged: {
