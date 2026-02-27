@@ -10,7 +10,10 @@ import type {
 	PluginAuthConfig,
 } from '../../core';
 import type { AuthTypes, PickAuth } from '../../core/constants';
-import type { NotionEndpointOutputs } from './endpoints/types';
+import type {
+	NotionEndpointInputs,
+	NotionEndpointOutputs,
+} from './endpoints/types';
 import type {
 	NotionWebhookOutputs,
 	PageCreatedEvent,
@@ -48,86 +51,23 @@ export type NotionBoundEndpoints = BindEndpoints<typeof notionEndpointsNested>;
 
 type NotionEndpoint<
 	K extends keyof NotionEndpointOutputs,
-	Input,
-> = CorsairEndpoint<NotionContext, Input, NotionEndpointOutputs[K]>;
+> = CorsairEndpoint<NotionContext, NotionEndpointInputs[K], NotionEndpointOutputs[K]>;
 
 export type NotionEndpoints = {
-	blocksAppendBlock: NotionEndpoint<
-		'blocksAppendBlock',
-		{ block_id: string; children: unknown[] }
-	>;
-	blocksGetManyChildBlocks: NotionEndpoint<
-		'blocksGetManyChildBlocks',
-		{ block_id: string; start_cursor?: string; page_size?: number }
-	>;
-	databasesGetDatabase: NotionEndpoint<
-		'databasesGetDatabase',
-		{ database_id: string }
-	>;
-	databasesGetManyDatabases: NotionEndpoint<
-		'databasesGetManyDatabases',
-		{ start_cursor?: string; page_size?: number }
-	>;
-	databasesSearchDatabase: NotionEndpoint<
-		'databasesSearchDatabase',
-		{
-			query?: string;
-			sort?: unknown;
-			filter?: unknown;
-			start_cursor?: string;
-			page_size?: number;
-		}
-	>;
-	databasePagesCreateDatabasePage: NotionEndpoint<
-		'databasePagesCreateDatabasePage',
-		{ database_id: string; properties: Record<string, unknown> }
-	>;
-	databasePagesGetDatabasePage: NotionEndpoint<
-		'databasePagesGetDatabasePage',
-		{ page_id: string }
-	>;
-	databasePagesGetManyDatabasePages: NotionEndpoint<
-		'databasePagesGetManyDatabasePages',
-		{
-			database_id: string;
-			filter?: unknown;
-			sorts?: unknown[];
-			start_cursor?: string;
-			page_size?: number;
-		}
-	>;
-	databasePagesUpdateDatabasePage: NotionEndpoint<
-		'databasePagesUpdateDatabasePage',
-		{
-			page_id: string;
-			properties?: Record<string, unknown>;
-			archived?: boolean;
-		}
-	>;
-	pagesArchivePage: NotionEndpoint<'pagesArchivePage', { page_id: string }>;
-	pagesCreatePage: NotionEndpoint<
-		'pagesCreatePage',
-		{
-			parent: unknown;
-			properties?: Record<string, unknown>;
-			children?: unknown[];
-		}
-	>;
-	pagesSearchPage: NotionEndpoint<
-		'pagesSearchPage',
-		{
-			query?: string;
-			sort?: unknown;
-			filter?: unknown;
-			start_cursor?: string;
-			page_size?: number;
-		}
-	>;
-	usersGetUser: NotionEndpoint<'usersGetUser', { user_id: string }>;
-	usersGetManyUsers: NotionEndpoint<
-		'usersGetManyUsers',
-		{ start_cursor?: string; page_size?: number }
-	>;
+	blocksAppendBlock: NotionEndpoint<'blocksAppendBlock'>;
+	blocksGetManyChildBlocks: NotionEndpoint<'blocksGetManyChildBlocks'>;
+	databasesGetDatabase: NotionEndpoint<'databasesGetDatabase'>;
+	databasesGetManyDatabases: NotionEndpoint<'databasesGetManyDatabases'>;
+	databasesSearchDatabase: NotionEndpoint<'databasesSearchDatabase'>;
+	databasePagesCreateDatabasePage: NotionEndpoint<'databasePagesCreateDatabasePage'>;
+	databasePagesGetDatabasePage: NotionEndpoint<'databasePagesGetDatabasePage'>;
+	databasePagesGetManyDatabasePages: NotionEndpoint<'databasePagesGetManyDatabasePages'>;
+	databasePagesUpdateDatabasePage: NotionEndpoint<'databasePagesUpdateDatabasePage'>;
+	pagesArchivePage: NotionEndpoint<'pagesArchivePage'>;
+	pagesCreatePage: NotionEndpoint<'pagesCreatePage'>;
+	pagesSearchPage: NotionEndpoint<'pagesSearchPage'>;
+	usersGetUser: NotionEndpoint<'usersGetUser'>;
+	usersGetManyUsers: NotionEndpoint<'usersGetManyUsers'>;
 };
 
 type NotionWebhook<
@@ -286,4 +226,4 @@ export type {
 // Endpoint Type Exports
 // ─────────────────────────────────────────────────────────────────────────────
 
-export type { NotionEndpointOutputs } from './endpoints/types';
+export type { NotionEndpointInputs, NotionEndpointOutputs } from './endpoints/types';

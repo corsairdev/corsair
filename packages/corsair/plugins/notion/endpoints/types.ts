@@ -352,6 +352,23 @@ export type UsersGetManyUsersResponse = z.infer<
 	ReturnType<typeof ListResponseSchema<typeof UserSchema>>
 >;
 
+export type NotionEndpointInputs = {
+	blocksAppendBlock: BlocksAppendBlockInput;
+	blocksGetManyChildBlocks: BlocksGetManyChildBlocksInput;
+	databasesGetDatabase: DatabasesGetDatabaseInput;
+	databasesGetManyDatabases: DatabasesGetManyDatabasesInput;
+	databasesSearchDatabase: DatabasesSearchDatabaseInput;
+	databasePagesCreateDatabasePage: DatabasePagesCreateDatabasePageInput;
+	databasePagesGetDatabasePage: DatabasePagesGetDatabasePageInput;
+	databasePagesGetManyDatabasePages: DatabasePagesGetManyDatabasePagesInput;
+	databasePagesUpdateDatabasePage: DatabasePagesUpdateDatabasePageInput;
+	pagesArchivePage: PagesArchivePageInput;
+	pagesCreatePage: PagesCreatePageInput;
+	pagesSearchPage: PagesSearchPageInput;
+	usersGetUser: UsersGetUserInput;
+	usersGetManyUsers: UsersGetManyUsersInput;
+};
+
 export type NotionEndpointOutputs = {
 	blocksAppendBlock: BlocksAppendBlockResponse;
 	blocksGetManyChildBlocks: BlocksGetManyChildBlocksResponse;
