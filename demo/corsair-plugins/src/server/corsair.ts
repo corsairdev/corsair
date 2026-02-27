@@ -1,15 +1,11 @@
 import {
 	createCorsair,
-	discord,
-	github,
 	gmail,
 	googlecalendar,
 	googledrive,
 	googlesheets,
 	hubspot,
-	linear,
 	posthog,
-	resend,
 	slack,
 	spotify,
 } from 'corsair';
@@ -24,7 +20,21 @@ export const corsair = createCorsair({
 		onTimeout: 'deny',
 	},
 	plugins: [
-		linear(),
+		googlecalendar({
+			permissions: {
+				mode: 'cautious',
+				overrides: {
+					'events.create': 'require_approval',
+				},
+			},
+			webhookHooks: {
+				onEventChanged: {
+					after: async (ctx, res) => {
+						console.log(res.data?.type, 'res.data?.type');
+					},
+				},
+			},
+		}),
 		slack({
 			permissions: {
 				mode: 'cautious',
@@ -68,15 +78,6 @@ export const corsair = createCorsair({
 		gmail({
 			webhookHooks: {
 				messageChanged: {
-					after: async (ctx, res) => {
-						console.log(res.data?.type, 'res.data?.type');
-					},
-				},
-			},
-		}),
-		googlecalendar({
-			webhookHooks: {
-				onEventChanged: {
 					after: async (ctx, res) => {
 						console.log(res.data?.type, 'res.data?.type');
 					},

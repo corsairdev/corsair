@@ -7,6 +7,7 @@ import type {
 	CorsairWebhook,
 	KeyBuilderContext,
 	PluginEndpointMeta,
+	PluginPermissionsConfig,
 	RawWebhookRequest,
 } from '../../core';
 import type { PickAuth } from '../../core/constants';
@@ -21,6 +22,7 @@ import {
 	SearchEndpoints,
 	SharedDrivesEndpoints,
 } from './endpoints';
+import { googledriveEndpointSchemas } from './endpoints/types';
 import { GoogleDriveSchema } from './schema';
 import type {
 	GoogleDriveWebhookEvent,
@@ -30,7 +32,6 @@ import type {
 import { ChangeWebhooks } from './webhooks';
 import type { PubSubNotification } from './webhooks/types';
 import { decodePubSubMessage } from './webhooks/types';
-import { googledriveEndpointSchemas } from './endpoints/types';
 
 export type GoogleDriveContext = CorsairPluginContext<
 	typeof GoogleDriveSchema,
@@ -130,6 +131,12 @@ export type GoogleDrivePluginOptions = {
 	key?: string;
 	hooks?: InternalGoogleDrivePlugin['hooks'];
 	webhookHooks?: InternalGoogleDrivePlugin['webhookHooks'];
+	/**
+	 * Permission configuration for the Google Drive plugin.
+	 * Controls what the AI agent is allowed to do via the MCP server.
+	 * Overrides use dot-notation paths from the Google Drive endpoint tree — invalid paths are type errors.
+	 */
+	permissions?: PluginPermissionsConfig<typeof googleDriveEndpointsNested>;
 };
 
 export type GoogleDriveKeyBuilderContext =
@@ -142,46 +149,84 @@ const defaultAuthType = 'oauth_2' as const;
  * Used by the MCP server permission system to decide allow / deny / require_approval.
  */
 const googleDriveEndpointMeta = {
-	'files.list': { riskLevel: 'read', description: 'List files in Google Drive' },
-	'files.get': { riskLevel: 'read', description: 'Get metadata for a specific file' },
+	'files.list': {
+		riskLevel: 'read',
+		description: 'List files in Google Drive',
+	},
+	'files.get': {
+		riskLevel: 'read',
+		description: 'Get metadata for a specific file',
+	},
 	'files.createFromText': {
 		riskLevel: 'write',
 		description: 'Create a new Drive file from text content',
 	},
-	'files.upload': { riskLevel: 'write', description: 'Upload a file to Google Drive' },
-	'files.update': { riskLevel: 'write', description: 'Update the content or metadata of a file' },
+	'files.upload': {
+		riskLevel: 'write',
+		description: 'Upload a file to Google Drive',
+	},
+	'files.update': {
+		riskLevel: 'write',
+		description: 'Update the content or metadata of a file',
+	},
 	'files.delete': {
 		riskLevel: 'destructive',
 		irreversible: true,
 		description: 'Permanently delete a file [DESTRUCTIVE · IRREVERSIBLE]',
 	},
-	'files.copy': { riskLevel: 'write', description: 'Copy a file in Google Drive' },
-	'files.move': { riskLevel: 'write', description: 'Move a file to a different folder' },
-	'files.download': { riskLevel: 'read', description: 'Download the content of a file' },
+	'files.copy': {
+		riskLevel: 'write',
+		description: 'Copy a file in Google Drive',
+	},
+	'files.move': {
+		riskLevel: 'write',
+		description: 'Move a file to a different folder',
+	},
+	'files.download': {
+		riskLevel: 'read',
+		description: 'Download the content of a file',
+	},
 	'files.share': {
 		riskLevel: 'write',
 		description: 'Share a file by granting permissions to users',
 	},
 	'folders.create': { riskLevel: 'write', description: 'Create a new folder' },
-	'folders.get': { riskLevel: 'read', description: 'Get metadata for a specific folder' },
-	'folders.list': { riskLevel: 'read', description: 'List folders in Google Drive' },
+	'folders.get': {
+		riskLevel: 'read',
+		description: 'Get metadata for a specific folder',
+	},
+	'folders.list': {
+		riskLevel: 'read',
+		description: 'List folders in Google Drive',
+	},
 	'folders.delete': {
 		riskLevel: 'destructive',
 		irreversible: true,
-		description: 'Permanently delete a folder and its contents [DESTRUCTIVE · IRREVERSIBLE]',
+		description:
+			'Permanently delete a folder and its contents [DESTRUCTIVE · IRREVERSIBLE]',
 	},
 	'folders.share': {
 		riskLevel: 'write',
 		description: 'Share a folder by granting permissions to users',
 	},
-	'sharedDrives.create': { riskLevel: 'write', description: 'Create a new shared drive' },
-	'sharedDrives.get': { riskLevel: 'read', description: 'Get info about a shared drive' },
+	'sharedDrives.create': {
+		riskLevel: 'write',
+		description: 'Create a new shared drive',
+	},
+	'sharedDrives.get': {
+		riskLevel: 'read',
+		description: 'Get info about a shared drive',
+	},
 	'sharedDrives.list': { riskLevel: 'read', description: 'List shared drives' },
-	'sharedDrives.update': { riskLevel: 'write', description: 'Update a shared drive' },
+	'sharedDrives.update': {
+		riskLevel: 'write',
+		description: 'Update a shared drive',
+	},
 	'sharedDrives.delete': {
 		riskLevel: 'destructive',
 		irreversible: true,
-		description: 'Permanently delete a shared drive [DESTRUCTIVE · IRREVERSIBLE]',
+		description:
+			'Permanently delete a shared drive [DESTRUCTIVE · IRREVERSIBLE]',
 	},
 	'search.filesAndFolders': {
 		riskLevel: 'read',

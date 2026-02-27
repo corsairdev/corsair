@@ -8,6 +8,7 @@ import type {
 	CorsairWebhook,
 	KeyBuilderContext,
 	PluginEndpointMeta,
+	PluginPermissionsConfig,
 } from '../../core';
 import type { PickAuth } from '../../core/constants';
 import { Domains, Emails } from './endpoints';
@@ -39,6 +40,12 @@ export type ResendPluginOptions = {
 	hooks?: InternalResendPlugin['hooks'];
 	webhookHooks?: InternalResendPlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
+	/**
+	 * Permission configuration for the Resend plugin.
+	 * Controls what the AI agent is allowed to do via the MCP server.
+	 * Overrides use dot-notation paths from the Resend endpoint tree — invalid paths are type errors.
+	 */
+	permissions?: PluginPermissionsConfig<typeof resendEndpointsNested>;
 };
 
 export type ResendContext = CorsairPluginContext<
@@ -129,11 +136,23 @@ const resendEndpointMeta = {
 		riskLevel: 'write',
 		description: 'Send an email to one or more recipients',
 	},
-	'emails.get': { riskLevel: 'read', description: 'Get info about a sent email' },
+	'emails.get': {
+		riskLevel: 'read',
+		description: 'Get info about a sent email',
+	},
 	'emails.list': { riskLevel: 'read', description: 'List sent emails' },
-	'domains.create': { riskLevel: 'write', description: 'Add a new sending domain' },
-	'domains.get': { riskLevel: 'read', description: 'Get info about a sending domain' },
-	'domains.list': { riskLevel: 'read', description: 'List all sending domains' },
+	'domains.create': {
+		riskLevel: 'write',
+		description: 'Add a new sending domain',
+	},
+	'domains.get': {
+		riskLevel: 'read',
+		description: 'Get info about a sending domain',
+	},
+	'domains.list': {
+		riskLevel: 'read',
+		description: 'List all sending domains',
+	},
 	'domains.delete': {
 		riskLevel: 'destructive',
 		irreversible: true,

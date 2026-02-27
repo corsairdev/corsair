@@ -97,6 +97,7 @@ function generatePlugin(pluginName: string) {
 	KeyBuilderContext,
 	PluginAuthConfig,
 	PluginEndpointMeta,
+	PluginPermissionsConfig,
 } from '../../core';
 import type { AuthTypes, PickAuth } from '../../core/constants';
 import type { ${pascalName}EndpointInputs, ${pascalName}EndpointOutputs } from './endpoints/types';
@@ -138,6 +139,12 @@ export type ${pascalName}PluginOptions = {
 	webhookHooks?: Internal${pascalName}Plugin['webhookHooks'];
 	// Optional: Custom error handlers (merged with default error handlers)
 	errorHandlers?: CorsairErrorHandler;
+	/**
+	 * Permission configuration for the ${pascalName} plugin.
+	 * Controls what the AI agent is allowed to do via the MCP server.
+	 * Overrides use dot-notation paths from the ${pascalName} endpoint tree — invalid paths are type errors.
+	 */
+	permissions?: PluginPermissionsConfig<typeof ${camelName}EndpointsNested>;
 };
 
 export type ${pascalName}Context = CorsairPluginContext<

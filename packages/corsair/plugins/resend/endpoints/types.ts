@@ -194,17 +194,40 @@ export type VerifyDomainResponse = z.infer<
 	typeof ResendEndpointOutputSchemas.domainsVerify
 >;
 
-
 // ─────────────────────────────────────────────────────────────────────────────
 // Endpoint Schema Map — dot-path → {{ input, output }} for get_schema()
 // ─────────────────────────────────────────────────────────────────────────────
 export const resendEndpointSchemas = {
-  'emails.send': { input: ResendEndpointInputSchemas.emailsSend, output: ResendEndpointOutputSchemas.emailsSend },
-  'emails.get': { input: ResendEndpointInputSchemas.emailsGet, output: ResendEndpointOutputSchemas.emailsGet },
-  'emails.list': { input: ResendEndpointInputSchemas.emailsList, output: ResendEndpointOutputSchemas.emailsList },
-  'domains.create': { input: ResendEndpointInputSchemas.domainsCreate, output: ResendEndpointOutputSchemas.domainsCreate },
-  'domains.get': { input: ResendEndpointInputSchemas.domainsGet, output: ResendEndpointOutputSchemas.domainsGet },
-  'domains.list': { input: ResendEndpointInputSchemas.domainsList, output: ResendEndpointOutputSchemas.domainsList },
-  'domains.delete': { input: ResendEndpointInputSchemas.domainsDelete, output: ResendEndpointOutputSchemas.domainsDelete },
-  'domains.verify': { input: ResendEndpointInputSchemas.domainsVerify, output: ResendEndpointOutputSchemas.domainsVerify },
+	'emails.send': {
+		input: ResendEndpointInputSchemas.emailsSend,
+		output: ResendEndpointOutputSchemas.emailsSend,
+	},
+	'emails.get': {
+		input: ResendEndpointInputSchemas.emailsGet,
+		output: ResendEndpointOutputSchemas.emailsGet,
+	},
+	'emails.list': {
+		input: ResendEndpointInputSchemas.emailsList,
+		output: ResendEndpointOutputSchemas.emailsList,
+	},
+	'domains.create': {
+		input: ResendEndpointInputSchemas.domainsCreate,
+		output: ResendEndpointOutputSchemas.domainsCreate,
+	},
+	'domains.get': {
+		input: ResendEndpointInputSchemas.domainsGet,
+		output: ResendEndpointOutputSchemas.domainsGet,
+	},
+	'domains.list': {
+		input: ResendEndpointInputSchemas.domainsList,
+		output: ResendEndpointOutputSchemas.domainsList,
+	},
+	'domains.delete': {
+		input: ResendEndpointInputSchemas.domainsDelete,
+		output: ResendEndpointOutputSchemas.domainsDelete,
+	},
+	'domains.verify': {
+		input: ResendEndpointInputSchemas.domainsVerify,
+		output: ResendEndpointOutputSchemas.domainsVerify,
+	},
 } as const;

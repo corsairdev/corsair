@@ -8,6 +8,7 @@ import type {
 	CorsairWebhook,
 	KeyBuilderContext,
 	PluginEndpointMeta,
+	PluginPermissionsConfig,
 } from '../../core';
 import type { PickAuth } from '../../core/constants';
 import { Events } from './endpoints';
@@ -27,6 +28,12 @@ export type PostHogPluginOptions = {
 	hooks?: InternalPostHogPlugin['hooks'];
 	webhookHooks?: InternalPostHogPlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
+	/**
+	 * Permission configuration for the PostHog plugin.
+	 * Controls what the AI agent is allowed to do via the MCP server.
+	 * Overrides use dot-notation paths from the PostHog endpoint tree — invalid paths are type errors.
+	 */
+	permissions?: PluginPermissionsConfig<typeof posthogEndpointsNested>;
 };
 
 export type PostHogContext = CorsairPluginContext<
@@ -91,13 +98,22 @@ const posthogEndpointMeta = {
 		riskLevel: 'write',
 		description: 'Create an alias linking two distinct user IDs',
 	},
-	'events.eventCreate': { riskLevel: 'write', description: 'Ingest an analytics event' },
+	'events.eventCreate': {
+		riskLevel: 'write',
+		description: 'Ingest an analytics event',
+	},
 	'events.identityCreate': {
 		riskLevel: 'write',
 		description: 'Associate properties with a user identity',
 	},
-	'events.trackPage': { riskLevel: 'write', description: 'Track a page view event' },
-	'events.trackScreen': { riskLevel: 'write', description: 'Track a screen view event' },
+	'events.trackPage': {
+		riskLevel: 'write',
+		description: 'Track a page view event',
+	},
+	'events.trackScreen': {
+		riskLevel: 'write',
+		description: 'Track a screen view event',
+	},
 } satisfies PluginEndpointMeta<typeof posthogEndpointsNested>;
 
 export type BasePostHogPlugin<T extends PostHogPluginOptions> = CorsairPlugin<

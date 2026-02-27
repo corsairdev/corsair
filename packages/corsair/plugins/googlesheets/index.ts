@@ -7,6 +7,7 @@ import type {
 	CorsairWebhook,
 	KeyBuilderContext,
 	PluginEndpointMeta,
+	PluginPermissionsConfig,
 	RawWebhookRequest,
 } from '../../core';
 import type { PickAuth } from '../../core/constants';
@@ -16,6 +17,7 @@ import type {
 	GoogleSheetsEndpointOutputs,
 } from './endpoints';
 import { SheetsEndpoints, SpreadsheetsEndpoints } from './endpoints';
+import { googlesheetsEndpointSchemas } from './endpoints/types';
 import { GoogleSheetsSchema } from './schema';
 import type {
 	GoogleSheetsWebhookOutputs,
@@ -23,7 +25,6 @@ import type {
 	RangeUpdatedEvent,
 } from './webhooks';
 import { RowWebhooks } from './webhooks';
-import { googlesheetsEndpointSchemas } from './endpoints/types';
 
 export type GoogleSheetsContext = CorsairPluginContext<
 	typeof GoogleSheetsSchema,
@@ -97,6 +98,12 @@ export type GoogleSheetsPluginOptions = {
 	key?: string;
 	hooks?: InternalGoogleSheetsPlugin['hooks'];
 	webhookHooks?: InternalGoogleSheetsPlugin['webhookHooks'];
+	/**
+	 * Permission configuration for the Google Sheets plugin.
+	 * Controls what the AI agent is allowed to do via the MCP server.
+	 * Overrides use dot-notation paths from the Google Sheets endpoint tree — invalid paths are type errors.
+	 */
+	permissions?: PluginPermissionsConfig<typeof googleSheetsEndpointsNested>;
 };
 
 export type GoogleSheetsKeyBuilderContext =
@@ -109,19 +116,32 @@ const defaultAuthType = 'oauth_2' as const;
  * Used by the MCP server permission system to decide allow / deny / require_approval.
  */
 const googleSheetsEndpointMeta = {
-	'spreadsheets.create': { riskLevel: 'write', description: 'Create a new spreadsheet' },
+	'spreadsheets.create': {
+		riskLevel: 'write',
+		description: 'Create a new spreadsheet',
+	},
 	'spreadsheets.delete': {
 		riskLevel: 'destructive',
 		irreversible: true,
-		description: 'Permanently delete a spreadsheet [DESTRUCTIVE · IRREVERSIBLE]',
+		description:
+			'Permanently delete a spreadsheet [DESTRUCTIVE · IRREVERSIBLE]',
 	},
-	'sheets.appendRow': { riskLevel: 'write', description: 'Append a new row to a sheet' },
+	'sheets.appendRow': {
+		riskLevel: 'write',
+		description: 'Append a new row to a sheet',
+	},
 	'sheets.appendOrUpdateRow': {
 		riskLevel: 'write',
 		description: 'Append a new row or update an existing one',
 	},
-	'sheets.getRows': { riskLevel: 'read', description: 'Read rows from a sheet' },
-	'sheets.updateRow': { riskLevel: 'write', description: 'Update an existing row in a sheet' },
+	'sheets.getRows': {
+		riskLevel: 'read',
+		description: 'Read rows from a sheet',
+	},
+	'sheets.updateRow': {
+		riskLevel: 'write',
+		description: 'Update an existing row in a sheet',
+	},
 	'sheets.clearSheet': {
 		riskLevel: 'destructive',
 		description: 'Clear all data from a sheet [DESTRUCTIVE]',
@@ -133,7 +153,8 @@ const googleSheetsEndpointMeta = {
 	'sheets.deleteSheet': {
 		riskLevel: 'destructive',
 		irreversible: true,
-		description: 'Delete a sheet tab and all its data [DESTRUCTIVE · IRREVERSIBLE]',
+		description:
+			'Delete a sheet tab and all its data [DESTRUCTIVE · IRREVERSIBLE]',
 	},
 	'sheets.deleteRowsOrColumns': {
 		riskLevel: 'destructive',

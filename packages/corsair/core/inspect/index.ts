@@ -50,12 +50,12 @@ function zodToJsonSchema(schema: ZodTypeAny): unknown {
 			const required: string[] = [];
 			for (const [key, val] of Object.entries(shape)) {
 				properties[key] = zodToJsonSchema(val);
-				const fieldTypeName = (
-					(val as { _def: Record<string, unknown> })._def.typeName as
-						| string
-						| undefined
-				);
-				if (fieldTypeName !== 'ZodOptional' && fieldTypeName !== 'ZodNullable') {
+				const fieldTypeName = (val as { _def: Record<string, unknown> })._def
+					.typeName as string | undefined;
+				if (
+					fieldTypeName !== 'ZodOptional' &&
+					fieldTypeName !== 'ZodNullable'
+				) {
 					required.push(key);
 				}
 			}

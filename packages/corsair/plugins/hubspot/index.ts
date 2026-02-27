@@ -8,6 +8,7 @@ import type {
 	CorsairWebhook,
 	KeyBuilderContext,
 	PluginEndpointMeta,
+	PluginPermissionsConfig,
 	RawWebhookRequest,
 } from '../../core';
 import type { PickAuth } from '../../core/constants';
@@ -23,10 +24,10 @@ import {
 	EngagementsEndpoints,
 	TicketsEndpoints,
 } from './endpoints';
+import { hubspotEndpointSchemas } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import type { HubSpotCredentials } from './schema';
 import { HubSpotSchema } from './schema';
-import { hubspotEndpointSchemas } from './endpoints/types';
 import type {
 	CompanyCreatedEventType,
 	CompanyDeletedEventType,
@@ -202,7 +203,10 @@ const defaultAuthType = 'api_key' as const;
  */
 const hubspotEndpointMeta = {
 	'contacts.get': { riskLevel: 'read', description: 'Get a specific contact' },
-	'contacts.getMany': { riskLevel: 'read', description: 'Get multiple contacts' },
+	'contacts.getMany': {
+		riskLevel: 'read',
+		description: 'Get multiple contacts',
+	},
 	'contacts.createOrUpdate': {
 		riskLevel: 'write',
 		description: 'Create a new contact or update an existing one',
@@ -222,9 +226,18 @@ const hubspotEndpointMeta = {
 	},
 	'contacts.search': { riskLevel: 'read', description: 'Search contacts' },
 	'companies.get': { riskLevel: 'read', description: 'Get a specific company' },
-	'companies.getMany': { riskLevel: 'read', description: 'Get multiple companies' },
-	'companies.create': { riskLevel: 'write', description: 'Create a new company' },
-	'companies.update': { riskLevel: 'write', description: 'Update an existing company' },
+	'companies.getMany': {
+		riskLevel: 'read',
+		description: 'Get multiple companies',
+	},
+	'companies.create': {
+		riskLevel: 'write',
+		description: 'Create a new company',
+	},
+	'companies.update': {
+		riskLevel: 'write',
+		description: 'Update an existing company',
+	},
 	'companies.delete': {
 		riskLevel: 'destructive',
 		irreversible: true,
@@ -245,31 +258,56 @@ const hubspotEndpointMeta = {
 	'deals.get': { riskLevel: 'read', description: 'Get a specific deal' },
 	'deals.getMany': { riskLevel: 'read', description: 'Get multiple deals' },
 	'deals.create': { riskLevel: 'write', description: 'Create a new deal' },
-	'deals.update': { riskLevel: 'write', description: 'Update an existing deal' },
+	'deals.update': {
+		riskLevel: 'write',
+		description: 'Update an existing deal',
+	},
 	'deals.delete': {
 		riskLevel: 'destructive',
 		irreversible: true,
 		description: 'Permanently delete a deal [DESTRUCTIVE · IRREVERSIBLE]',
 	},
-	'deals.getRecentlyCreated': { riskLevel: 'read', description: 'List recently created deals' },
-	'deals.getRecentlyUpdated': { riskLevel: 'read', description: 'List recently updated deals' },
+	'deals.getRecentlyCreated': {
+		riskLevel: 'read',
+		description: 'List recently created deals',
+	},
+	'deals.getRecentlyUpdated': {
+		riskLevel: 'read',
+		description: 'List recently updated deals',
+	},
 	'deals.search': { riskLevel: 'read', description: 'Search deals' },
 	'tickets.get': { riskLevel: 'read', description: 'Get a specific ticket' },
 	'tickets.getMany': { riskLevel: 'read', description: 'Get multiple tickets' },
-	'tickets.create': { riskLevel: 'write', description: 'Create a new support ticket' },
-	'tickets.update': { riskLevel: 'write', description: 'Update an existing ticket' },
+	'tickets.create': {
+		riskLevel: 'write',
+		description: 'Create a new support ticket',
+	},
+	'tickets.update': {
+		riskLevel: 'write',
+		description: 'Update an existing ticket',
+	},
 	'tickets.delete': {
 		riskLevel: 'destructive',
 		irreversible: true,
 		description: 'Permanently delete a ticket [DESTRUCTIVE · IRREVERSIBLE]',
 	},
-	'engagements.get': { riskLevel: 'read', description: 'Get a specific engagement' },
-	'engagements.getMany': { riskLevel: 'read', description: 'Get multiple engagements' },
-	'engagements.create': { riskLevel: 'write', description: 'Create a new engagement' },
+	'engagements.get': {
+		riskLevel: 'read',
+		description: 'Get a specific engagement',
+	},
+	'engagements.getMany': {
+		riskLevel: 'read',
+		description: 'Get multiple engagements',
+	},
+	'engagements.create': {
+		riskLevel: 'write',
+		description: 'Create a new engagement',
+	},
 	'engagements.delete': {
 		riskLevel: 'destructive',
 		irreversible: true,
-		description: 'Permanently delete an engagement [DESTRUCTIVE · IRREVERSIBLE]',
+		description:
+			'Permanently delete an engagement [DESTRUCTIVE · IRREVERSIBLE]',
 	},
 	'contactLists.addContact': {
 		riskLevel: 'write',
@@ -288,6 +326,12 @@ export type HubSpotPluginOptions = {
 	hooks?: InternalHubSpotPlugin['hooks'];
 	webhookHooks?: InternalHubSpotPlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
+	/**
+	 * Permission configuration for the HubSpot plugin.
+	 * Controls what the AI agent is allowed to do via the MCP server.
+	 * Overrides use dot-notation paths from the HubSpot endpoint tree — invalid paths are type errors.
+	 */
+	permissions?: PluginPermissionsConfig<typeof hubspotEndpointsNested>;
 };
 
 export type BaseHubSpotPlugin<PluginOptions extends HubSpotPluginOptions> =

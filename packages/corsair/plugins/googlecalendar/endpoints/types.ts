@@ -329,15 +329,32 @@ export type GoogleCalendarEndpointOutputs = {
 	calendarGetAvailability: FreeBusyResponse;
 };
 
-
 // ─────────────────────────────────────────────────────────────────────────────
 // Endpoint Schema Map — dot-path → {{ input, output }} for get_schema()
 // ─────────────────────────────────────────────────────────────────────────────
 export const googlecalendarEndpointSchemas = {
-  'events.create': { input: GoogleCalendarEndpointInputSchemas.eventsCreate, output: GoogleCalendarEndpointOutputSchemas.eventsCreate },
-  'events.get': { input: GoogleCalendarEndpointInputSchemas.eventsGet, output: GoogleCalendarEndpointOutputSchemas.eventsGet },
-  'events.getMany': { input: GoogleCalendarEndpointInputSchemas.eventsGetMany, output: GoogleCalendarEndpointOutputSchemas.eventsGetMany },
-  'events.update': { input: GoogleCalendarEndpointInputSchemas.eventsUpdate, output: GoogleCalendarEndpointOutputSchemas.eventsUpdate },
-  'events.delete': { input: GoogleCalendarEndpointInputSchemas.eventsDelete, output: GoogleCalendarEndpointOutputSchemas.eventsDelete },
-  'calendar.getAvailability': { input: GoogleCalendarEndpointInputSchemas.calendarGetAvailability, output: GoogleCalendarEndpointOutputSchemas.calendarGetAvailability },
+	'events.create': {
+		input: GoogleCalendarEndpointInputSchemas.eventsCreate,
+		output: GoogleCalendarEndpointOutputSchemas.eventsCreate,
+	},
+	'events.get': {
+		input: GoogleCalendarEndpointInputSchemas.eventsGet,
+		output: GoogleCalendarEndpointOutputSchemas.eventsGet,
+	},
+	'events.getMany': {
+		input: GoogleCalendarEndpointInputSchemas.eventsGetMany,
+		output: GoogleCalendarEndpointOutputSchemas.eventsGetMany,
+	},
+	'events.update': {
+		input: GoogleCalendarEndpointInputSchemas.eventsUpdate,
+		output: GoogleCalendarEndpointOutputSchemas.eventsUpdate,
+	},
+	'events.delete': {
+		input: GoogleCalendarEndpointInputSchemas.eventsDelete,
+		output: GoogleCalendarEndpointOutputSchemas.eventsDelete,
+	},
+	'calendar.getAvailability': {
+		input: GoogleCalendarEndpointInputSchemas.calendarGetAvailability,
+		output: GoogleCalendarEndpointOutputSchemas.calendarGetAvailability,
+	},
 } as const;

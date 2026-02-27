@@ -155,11 +155,8 @@ export type {
 	CorsairSingleTenantClient,
 	CorsairTenantWrapper,
 } from './client';
-// Inspection types
-export type { CorsairInspectMethods, EndpointSchemaResult } from './inspect';
 // Constants
 export type { AllProviders, AuthTypes, BaseProviders } from './constants';
-
 // Endpoint types
 export type {
 	BindEndpoints,
@@ -180,6 +177,8 @@ export type {
 	RetryStrategies,
 	RetryStrategy,
 } from './errors';
+// Inspection types
+export type { CorsairInspectMethods, EndpointSchemaResult } from './inspect';
 export type { EnforcePermissionOptions } from './permissions';
 
 // Plugin types

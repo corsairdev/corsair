@@ -7,26 +7,32 @@ import type {
 	CorsairPluginContext,
 	CorsairWebhook,
 	KeyBuilderContext,
-	PluginAuthConfig,
+	PluginEndpointMeta,
+	PluginPermissionsConfig,
 } from '../../core';
 import type { AuthTypes, PickAuth } from '../../core/constants';
+import { getValidAccessToken } from './client';
+import {
+	Albums,
+	Artists,
+	Library,
+	MyData,
+	Player,
+	Playlists,
+	Tracks,
+} from './endpoints';
 import type {
 	SpotifyEndpointInputs,
 	SpotifyEndpointOutputs,
 } from './endpoints/types';
-import type {
-	SpotifyWebhookOutputs,
-	ExampleEvent,
-} from './webhooks/types';
-import { Albums, Artists, Library, MyData, Player, Playlists, Tracks } from './endpoints';
+import { errorHandlers } from './error-handlers';
 import { SpotifySchema } from './schema';
 import { ExampleWebhooks } from './webhooks';
-import { errorHandlers } from './error-handlers';
-import { getValidAccessToken } from './client';
+import type { ExampleEvent, SpotifyWebhookOutputs } from './webhooks/types';
 
 /**
  * Plugin options type - configure authentication and behavior
- * 
+ *
  * AUTH CONFIGURATION:
  * - authType: The authentication method to use. Options:
  *   - 'api_key': For API key authentication (most common)
@@ -34,7 +40,7 @@ import { getValidAccessToken } from './client';
  *   - 'bot_token': For bot token authentication
  *   Update PickAuth<'api_key'> to include all auth types your plugin supports.
  *   Example: PickAuth<'api_key' | 'oauth_2'> for plugins that support both.
- * 
+ *
  * - key: Optional API key to use directly (bypasses key manager)
  * - webhookSecret: Optional webhook secret for signature verification
  */
@@ -45,6 +51,12 @@ export type SpotifyPluginOptions = {
 	hooks?: InternalSpotifyPlugin['hooks'];
 	webhookHooks?: InternalSpotifyPlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
+	/**
+	 * Permission configuration for the Spotify plugin.
+	 * Controls what the AI agent is allowed to do via the MCP server.
+	 * Overrides use dot-notation paths from the Spotify endpoint tree — invalid paths are type errors.
+	 */
+	permissions?: PluginPermissionsConfig<typeof spotifyEndpointsNested>;
 };
 
 export type SpotifyContext = CorsairPluginContext<
@@ -54,7 +66,9 @@ export type SpotifyContext = CorsairPluginContext<
 
 export type SpotifyKeyBuilderContext = KeyBuilderContext<SpotifyPluginOptions>;
 
-export type SpotifyBoundEndpoints = BindEndpoints<typeof spotifyEndpointsNested>;
+export type SpotifyBoundEndpoints = BindEndpoints<
+	typeof spotifyEndpointsNested
+>;
 
 type SpotifyEndpoint<K extends keyof SpotifyEndpointOutputs> = CorsairEndpoint<
 	SpotifyContext,
@@ -161,6 +175,109 @@ const spotifyWebhooksNested = {
 
 const defaultAuthType: AuthTypes = 'oauth_2';
 
+/**
+ * Risk-level metadata for each Spotify endpoint.
+ * Used by the MCP server permission system to decide allow / deny / require_approval.
+ */
+const spotifyEndpointMeta = {
+	'albums.get': { riskLevel: 'read', description: 'Get info about an album' },
+	'albums.getNewReleases': {
+		riskLevel: 'read',
+		description: 'Get new album releases',
+	},
+	'albums.getTracks': {
+		riskLevel: 'read',
+		description: 'Get tracks from an album',
+	},
+	'albums.search': { riskLevel: 'read', description: 'Search for albums' },
+	'artists.get': { riskLevel: 'read', description: 'Get info about an artist' },
+	'artists.getAlbums': {
+		riskLevel: 'read',
+		description: 'Get albums by an artist',
+	},
+	'artists.getRelatedArtists': {
+		riskLevel: 'read',
+		description: 'Get artists related to an artist',
+	},
+	'artists.getTopTracks': {
+		riskLevel: 'read',
+		description: 'Get top tracks for an artist',
+	},
+	'artists.search': { riskLevel: 'read', description: 'Search for artists' },
+	'library.getLikedTracks': {
+		riskLevel: 'read',
+		description: "Get the current user's liked tracks",
+	},
+	'myData.getFollowedArtists': {
+		riskLevel: 'read',
+		description: 'Get artists followed by the current user',
+	},
+	'player.addToQueue': {
+		riskLevel: 'write',
+		description: 'Add a track to the playback queue',
+	},
+	'player.getCurrentlyPlaying': {
+		riskLevel: 'read',
+		description: 'Get the currently playing track',
+	},
+	'player.getRecentlyPlayed': {
+		riskLevel: 'read',
+		description: 'Get recently played tracks',
+	},
+	'player.pause': { riskLevel: 'write', description: 'Pause playback' },
+	'player.resume': { riskLevel: 'write', description: 'Resume playback' },
+	'player.setVolume': {
+		riskLevel: 'write',
+		description: 'Set the playback volume',
+	},
+	'player.skipToNext': {
+		riskLevel: 'write',
+		description: 'Skip to the next track',
+	},
+	'player.skipToPrevious': {
+		riskLevel: 'write',
+		description: 'Skip to the previous track',
+	},
+	'player.startPlayback': {
+		riskLevel: 'write',
+		description: 'Start playback of specified content',
+	},
+	'playlists.addItem': {
+		riskLevel: 'write',
+		description: 'Add a track to a playlist',
+	},
+	'playlists.create': {
+		riskLevel: 'write',
+		description: 'Create a new playlist',
+	},
+	'playlists.get': {
+		riskLevel: 'read',
+		description: 'Get info about a playlist',
+	},
+	'playlists.getTracks': {
+		riskLevel: 'read',
+		description: 'Get tracks in a playlist',
+	},
+	'playlists.getUserPlaylists': {
+		riskLevel: 'read',
+		description: "Get the current user's playlists",
+	},
+	'playlists.removeItem': {
+		riskLevel: 'write',
+		description: 'Remove a track from a playlist',
+	},
+	'playlists.search': {
+		riskLevel: 'read',
+		description: 'Search for playlists',
+	},
+	'tracks.get': { riskLevel: 'read', description: 'Get info about a track' },
+	'tracks.getAudioFeatures': {
+		riskLevel: 'read',
+		description: 'Get audio features for a track',
+	},
+	'tracks.search': { riskLevel: 'read', description: 'Search for tracks' },
+} satisfies PluginEndpointMeta<typeof spotifyEndpointsNested>;
+
 export type BaseSpotifyPlugin<T extends SpotifyPluginOptions> = CorsairPlugin<
 	'spotify',
 	typeof SpotifySchema,
@@ -195,16 +312,17 @@ export function spotify<const T extends SpotifyPluginOptions>(
 		webhookHooks: options.webhookHooks,
 		endpoints: spotifyEndpointsNested,
 		webhooks: spotifyWebhooksNested,
+		endpointMeta: spotifyEndpointMeta,
 		/**
 		 * Webhook matcher function - determines if an incoming request is a webhook for this plugin
-		 * 
+		 *
 		 * WEBHOOK CONFIGURATION:
 		 * Update this to check for headers that identify your provider's webhooks.
 		 * Common patterns:
 		 * - Check for signature headers (e.g., 'x-spotify-signature')
 		 * - Check for user-agent strings
 		 * - Check for specific path patterns
-		 * 
+		 *
 		 * Example for multiple headers:
 		 * pluginWebhookMatcher: (request) => {
 		 *   const headers = request.headers;
@@ -221,23 +339,23 @@ export function spotify<const T extends SpotifyPluginOptions>(
 		},
 		/**
 		 * Key builder function - retrieves the appropriate key/secret for API calls or webhook verification
-		 * 
+		 *
 		 * AUTH CONFIGURATION:
 		 * This function determines which key to use based on:
 		 * - source: 'endpoint' (for API calls) or 'webhook' (for webhook verification)
 		 * - ctx.authType: The authentication type being used
-		 * 
+		 *
 		 * Priority order:
 		 * 1. Direct options (options.key, options.webhookSecret)
 		 * 2. Key manager (ctx.keys.get_api_key(), ctx.keys.get_access_token(), etc.)
-		 * 
+		 *
 		 * For OAuth 2.0, you'll need to add:
 		 * } else if (ctx.authType === 'oauth_2') {
 		 *   const res = await ctx.keys.get_access_token();
 		 *   if (!res) return '';
 		 *   return res;
 		 * }
-		 * 
+		 *
 		 * For bot_token, you'll need to add:
 		 * } else if (ctx.authType === 'bot_token') {
 		 *   const res = await ctx.keys.get_bot_token();
@@ -311,43 +429,43 @@ export type {
 // ─────────────────────────────────────────────────────────────────────────────
 
 export type {
-	SpotifyEndpointInputs,
-	SpotifyEndpointOutputs,
-	AlbumsGetResponse,
+	Album,
 	AlbumsGetNewReleasesResponse,
+	AlbumsGetResponse,
 	AlbumsGetTracksResponse,
 	AlbumsSearchResponse,
-	ArtistsGetResponse,
+	Artist,
 	ArtistsGetAlbumsResponse,
 	ArtistsGetRelatedArtistsResponse,
+	ArtistsGetResponse,
 	ArtistsGetTopTracksResponse,
 	ArtistsSearchResponse,
+	AudioFeatures,
+	CurrentlyPlaying,
 	LibraryGetLikedTracksResponse,
 	MyDataGetFollowedArtistsResponse,
 	PlayerAddToQueueResponse,
 	PlayerGetCurrentlyPlayingResponse,
-	PlayerSkipToNextResponse,
-	PlayerPauseResponse,
-	PlayerSkipToPreviousResponse,
 	PlayerGetRecentlyPlayedResponse,
+	PlayerPauseResponse,
 	PlayerResumeResponse,
 	PlayerSetVolumeResponse,
+	PlayerSkipToNextResponse,
+	PlayerSkipToPreviousResponse,
 	PlayerStartPlaybackResponse,
+	Playlist,
 	PlaylistsAddItemResponse,
 	PlaylistsCreateResponse,
 	PlaylistsGetResponse,
-	PlaylistsGetUserPlaylistsResponse,
 	PlaylistsGetTracksResponse,
+	PlaylistsGetUserPlaylistsResponse,
 	PlaylistsRemoveItemResponse,
 	PlaylistsSearchResponse,
-	TracksGetResponse,
-	TracksGetAudioFeaturesResponse,
-	TracksSearchResponse,
-	Album,
-	Artist,
-	Track,
-	Playlist,
 	PlaylistTrack,
-	AudioFeatures,
-	CurrentlyPlaying,
+	SpotifyEndpointInputs,
+	SpotifyEndpointOutputs,
+	Track,
+	TracksGetAudioFeaturesResponse,
+	TracksGetResponse,
+	TracksSearchResponse,
 } from './endpoints/types';

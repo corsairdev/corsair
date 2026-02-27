@@ -1,5 +1,5 @@
-import type { SpotifyEndpoints } from '..';
 import { logEventFromContext } from '../../utils/events';
+import type { SpotifyEndpoints } from '..';
 import { makeSpotifyRequest } from '../client';
 import type { SpotifyEndpointOutputs } from './types';
 
@@ -35,7 +35,7 @@ export const getAlbums: SpotifyEndpoints['artistsGetAlbums'] = async (
 	ctx,
 	input,
 ) => {
-	const query: Record<string, string | number | undefined> = {...input};
+	const query: Record<string, string | number | undefined> = { ...input };
 
 	const result = await makeSpotifyRequest<
 		SpotifyEndpointOutputs['artistsGetAlbums']
@@ -74,7 +74,7 @@ export const getTopTracks: SpotifyEndpoints['artistsGetTopTracks'] = async (
 	ctx,
 	input,
 ) => {
-	const query: Record<string, string | undefined> = {...input};
+	const query: Record<string, string | undefined> = { ...input };
 
 	const result = await makeSpotifyRequest<
 		SpotifyEndpointOutputs['artistsGetTopTracks']
@@ -93,7 +93,7 @@ export const getTopTracks: SpotifyEndpoints['artistsGetTopTracks'] = async (
 };
 
 export const search: SpotifyEndpoints['artistsSearch'] = async (ctx, input) => {
-	const query: Record<string, string | number | undefined> = {...input};
+	const query: Record<string, string | number | undefined> = { ...input };
 
 	const result = await makeSpotifyRequest<
 		SpotifyEndpointOutputs['artistsSearch']

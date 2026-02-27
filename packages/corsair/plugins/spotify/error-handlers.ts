@@ -3,14 +3,14 @@ import type { CorsairErrorHandler } from '../../core/errors';
 
 /**
  * Error Handlers Configuration
- * 
+ *
  * CONFIGURATION:
  * Customize these error handlers to match your provider's error patterns.
- * 
+ *
  * Each handler has two parts:
  * 1. match: Function that determines if an error matches this handler
  * 2. handler: Function that returns retry configuration
- * 
+ *
  * You can:
  * - Add more error patterns to match() functions
  * - Adjust maxRetries based on error type
@@ -21,7 +21,7 @@ import type { CorsairErrorHandler } from '../../core/errors';
 export const errorHandlers = {
 	/**
 	 * Rate Limit Error Handler
-	 * 
+	 *
 	 * CONFIGURATION:
 	 * - Update match() to check for your provider's rate limit error patterns
 	 * - Adjust maxRetries (default: 5)
@@ -54,7 +54,7 @@ export const errorHandlers = {
 	},
 	/**
 	 * Authentication Error Handler
-	 * 
+	 *
 	 * CONFIGURATION:
 	 * - Update match() to check for your provider's auth error patterns
 	 * - maxRetries: 0 (no retries for auth errors - they won't succeed)
@@ -87,7 +87,7 @@ export const errorHandlers = {
 	},
 	/**
 	 * Permission Error Handler
-	 * 
+	 *
 	 * CONFIGURATION:
 	 * - Update match() to check for your provider's permission error patterns
 	 * - maxRetries: 0 (no retries for permission errors)
@@ -119,7 +119,7 @@ export const errorHandlers = {
 	},
 	/**
 	 * Default Error Handler
-	 * 
+	 *
 	 * CONFIGURATION:
 	 * - This catches all errors not matched by other handlers
 	 * - maxRetries: 0 (default - change if you want to retry unknown errors)

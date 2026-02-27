@@ -1,5 +1,5 @@
-import type { SpotifyWebhooks } from '..';
 import { logEventFromContext } from '../../utils/events';
+import type { SpotifyWebhooks } from '..';
 import { createSpotifyMatch, verifySpotifyWebhookSignature } from './types';
 
 export const example: SpotifyWebhooks['example'] = {

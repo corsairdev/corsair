@@ -8,6 +8,7 @@ import type {
 	KeyBuilderContext,
 	PluginAuthConfig,
 	PluginEndpointMeta,
+	PluginPermissionsConfig,
 	RawWebhookRequest,
 } from '../../core';
 import type { PickAuth } from '../../core/constants';
@@ -19,6 +20,7 @@ import {
 	MessagesEndpoints,
 	ThreadsEndpoints,
 } from './endpoints';
+import { gmailEndpointSchemas } from './endpoints/types';
 import type { GmailCredentials } from './schema';
 import { GmailSchema } from './schema';
 import type {
@@ -31,7 +33,6 @@ import type {
 import { MessageWebhooks } from './webhooks';
 import type { PubSubNotification } from './webhooks/types';
 import { decodePubSubMessage } from './webhooks/types';
-import { gmailEndpointSchemas } from './endpoints/types';
 
 /**
  * Auth config extending the base OAuth2 fields with Gmail-specific fields.
@@ -148,6 +149,12 @@ export type GmailPluginOptions = {
 	credentials?: GmailCredentials;
 	hooks?: InternalGmailPlugin['hooks'];
 	webhookHooks?: InternalGmailPlugin['webhookHooks'];
+	/**
+	 * Permission configuration for the Gmail plugin.
+	 * Controls what the AI agent is allowed to do via the MCP server.
+	 * Overrides use dot-notation paths from the Gmail endpoint tree — invalid paths are type errors.
+	 */
+	permissions?: PluginPermissionsConfig<typeof gmailEndpointsNested>;
 };
 
 export type GmailKeyBuilderContext = KeyBuilderContext<
