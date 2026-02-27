@@ -8,11 +8,7 @@ export const create: TodoistEndpoints['commentsCreate'] = async (ctx, input) => 
 		TodoistEndpointOutputs['commentsCreate']
 	>('comments', ctx.key, {
 		method: 'POST',
-		body: {
-			task_id: input.task_id,
-			project_id: input.project_id,
-			content: input.content,
-		},
+		body: input,
 	});
 
 	if (ctx.db.comments) {
@@ -83,10 +79,7 @@ export const getMany: TodoistEndpoints['commentsGetMany'] = async (
 		TodoistEndpointOutputs['commentsGetMany']
 	>('comments', ctx.key, {
 		method: 'GET',
-		query: {
-			task_id: input.task_id,
-			project_id: input.project_id,
-		},
+		query: input,
 	});
 
 	if (Array.isArray(result) && ctx.db.comments) {

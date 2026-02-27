@@ -22,20 +22,7 @@ export const create: TodoistEndpoints['tasksCreate'] = async (ctx, input) => {
 		ctx.key,
 		{
 			method: 'POST',
-			body: {
-				content: input.content,
-				description: input.description,
-				project_id: input.project_id,
-				section_id: input.section_id,
-				parent_id: input.parent_id,
-				order: input.order,
-				labels: input.labels,
-				priority: input.priority,
-				due_datetime: input.due_datetime,
-				due_date: input.due_date,
-				due_string: input.due_string,
-				assignee_id: input.assignee_id,
-			},
+			body: input,
 		},
 	);
 
@@ -92,10 +79,7 @@ export const getMany: TodoistEndpoints['tasksGetMany'] = async (ctx, input) => {
 		{
 			method: 'GET',
 			query: {
-				project_id: input.project_id,
-				section_id: input.section_id,
-				label: input.label,
-				filter: input.filter,
+				...input,
 				ids: input.ids ? input.ids.join(',') : undefined,
 			},
 		},
@@ -124,12 +108,7 @@ export const move: TodoistEndpoints['tasksMove'] = async (ctx, input) => {
 		ctx.key,
 		{
 			method: 'POST',
-			body: {
-				project_id: input.project_id,
-				section_id: input.section_id,
-				parent_id: input.parent_id,
-				order: input.order,
-			},
+			body: input
 		},
 	);
 
@@ -149,12 +128,7 @@ export const quickAdd: TodoistEndpoints['tasksQuickAdd'] = async (ctx, input) =>
 		ctx.key,
 		{
 			method: 'POST',
-			body: {
-				text: input.text,
-				reminder: input.reminder,
-				note: input.note,
-				lang: input.lang,
-			},
+			body: input,
 		},
 	);
 

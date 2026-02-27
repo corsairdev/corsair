@@ -8,16 +8,7 @@ export const create: TodoistEndpoints['remindersCreate'] = async (ctx, input) =>
 		TodoistEndpointOutputs['remindersCreate']
 	>('reminders', ctx.key, {
 		method: 'POST',
-		body: {
-			task_id: input.task_id,
-			due_datetime: input.due_datetime,
-			due_date: input.due_date,
-			due_string: input.due_string,
-			relative_duration: input.relative_duration,
-			notification_type: input.notification_type,
-			notify_uid: input.notify_uid,
-			description: input.description,
-		},
+		body: input,
 	});
 
 	if (ctx.db.reminders) {

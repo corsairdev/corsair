@@ -34,13 +34,7 @@ export const create: TodoistEndpoints['projectsCreate'] = async (ctx, input) => 
 		TodoistEndpointOutputs['projectsCreate']
 	>('projects', ctx.key, {
 		method: 'POST',
-		body: {
-			name: input.name,
-			color: input.color,
-			favorite: input.favorite,
-			parent_id: input.parent_id,
-			order: input.order,
-		},
+		body: input,
 	});
 
 	if (ctx.db.projects) {

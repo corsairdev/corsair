@@ -8,12 +8,7 @@ export const create: TodoistEndpoints['labelsCreate'] = async (ctx, input) => {
 		TodoistEndpointOutputs['labelsCreate']
 	>('labels', ctx.key, {
 		method: 'POST',
-		body: {
-			name: input.name,
-			color: input.color,
-			favorite: input.favorite,
-			order: input.order,
-		},
+		body: input,
 	});
 
 	if (ctx.db.labels) {
