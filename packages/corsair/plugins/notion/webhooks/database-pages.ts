@@ -32,7 +32,7 @@ export const pageCreated: NotionWebhooks['pageCreated'] = {
 		// Save entity to database if available
 		if (event.entity && ctx.db.pages) {
 			try {
-				const entity = event.entity as { id?: string; object?: string; [key: string]: unknown };
+				const entity = event.entity
 				if (entity.id && entity.object === 'page') {
 					const parentId =
 						entity.parent && typeof entity.parent === 'object' && entity.parent !== null
@@ -53,6 +53,7 @@ export const pageCreated: NotionWebhooks['pageCreated'] = {
 							: event.data.database_id;
 
 					await ctx.db.pages.upsertByEntityId(entity.id, {
+						...entity,
 						id: entity.id,
 						object: entity.object,
 						database_id: databaseId,
@@ -64,7 +65,6 @@ export const pageCreated: NotionWebhooks['pageCreated'] = {
 									: undefined
 								: undefined,
 						properties_json: JSON.stringify(entity.properties || {}),
-						...entity,
 					});
 				}
 			} catch (error) {
@@ -113,7 +113,7 @@ export const pageUpdated: NotionWebhooks['pageUpdated'] = {
 		// Save entity to database if available
 		if (event.entity && ctx.db.pages) {
 			try {
-				const entity = event.entity as { id?: string; object?: string; [key: string]: unknown };
+				const entity = event.entity
 				if (entity.id && entity.object === 'page') {
 					const parentId =
 						entity.parent && typeof entity.parent === 'object' && entity.parent !== null
@@ -134,6 +134,7 @@ export const pageUpdated: NotionWebhooks['pageUpdated'] = {
 							: event.data.database_id;
 
 					await ctx.db.pages.upsertByEntityId(entity.id, {
+						...entity,
 						id: entity.id,
 						object: entity.object,
 						database_id: databaseId,
@@ -145,7 +146,6 @@ export const pageUpdated: NotionWebhooks['pageUpdated'] = {
 									: undefined
 								: undefined,
 						properties_json: JSON.stringify(entity.properties || {}),
-						...entity,
 					});
 				}
 			} catch (error) {

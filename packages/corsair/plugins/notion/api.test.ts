@@ -8,10 +8,8 @@ const TEST_API_KEY = process.env.NOTION_API_KEY!;
 
 // Helper function to fetch a database ID
 async function fetchDatabaseId(): Promise<string> {
-	console.log('[fetchDatabaseId] Starting database search...');
 	
 	// Try searching for pages first, they might be in databases
-	console.log('[fetchDatabaseId] Searching for pages...');
 	const pagesResponse = await makeNotionRequest<NotionEndpointOutputs['pagesSearchPage']>(
 		'v1/search',
 		TEST_API_KEY,
@@ -26,26 +24,17 @@ async function fetchDatabaseId(): Promise<string> {
 			},
 		},
 	);
-	console.log('[fetchDatabaseId] Pages response:', JSON.stringify(pagesResponse, null, 2));
-	const pages = pagesResponse as { results?: Array<{ id?: string; parent?: { type?: string; database_id?: string } }> };
-	console.log('[fetchDatabaseId] Pages found:', pages?.results?.length || 0);
+	const pages = pagesResponse
 	if (pages?.results) {
 		for (let i = 0; i < pages.results.length; i++) {
 			const page = pages.results[i];
-			console.log(`[fetchDatabaseId] Page ${i}:`, {
-				id: page?.id,
-				parentType: page?.parent?.type,
-				databaseId: page?.parent?.database_id,
-			});
 			if (page?.parent?.type === 'database_id' && page.parent.database_id) {
-				console.log('[fetchDatabaseId] Found database ID from page:', page.parent.database_id);
 				return page.parent.database_id;
 			}
 		}
 	}
 	
 	// If still no database, try direct search
-	console.log('[fetchDatabaseId] No database found from pages, searching directly for databases...');
 	const databasesResponse = await makeNotionRequest<NotionEndpointOutputs['databasesGetManyDatabases']>(
 		'v1/search',
 		TEST_API_KEY,
@@ -60,24 +49,15 @@ async function fetchDatabaseId(): Promise<string> {
 			},
 		},
 	);
-	console.log('[fetchDatabaseId] Databases response:', JSON.stringify(databasesResponse, null, 2));
-	const databases = databasesResponse as { results?: Array<{ id?: string; object?: string; title?: any }> };
-	console.log('[fetchDatabaseId] Databases found:', databases?.results?.length || 0);
+	const databases = databasesResponse
 	if (databases?.results) {
 		for (let i = 0; i < databases.results.length; i++) {
 			const db = databases.results[i];
-			console.log(`[fetchDatabaseId] Database ${i}:`, {
-				id: db?.id,
-				object: db?.object,
-				title: db?.title,
-			});
 		}
 	}
 	if (databases?.results && databases.results.length > 0 && databases.results[0]?.id) {
-		console.log('[fetchDatabaseId] Found database ID:', databases.results[0].id);
 		return databases.results[0].id;
 	}
-	console.error('[fetchDatabaseId] No databases found in response');
 	throw new Error('No databases found');
 }
 
@@ -88,10 +68,7 @@ describe('Notion API Type Tests', () => {
 	let testUserId: string | undefined;
 
 	beforeAll(async () => {
-		console.log('[beforeAll] Starting setup...');
-		
 		// Try to get a page first (more common than databases)
-		console.log('[beforeAll] Searching for pages...');
 		const pagesSearchResponse = await makeNotionRequest<NotionEndpointOutputs['pagesSearchPage']>(
 			'v1/search',
 			TEST_API_KEY,
@@ -106,23 +83,17 @@ describe('Notion API Type Tests', () => {
 				},
 			},
 		);
-		console.log('[beforeAll] Pages search response:', JSON.stringify(pagesSearchResponse, null, 2));
-		const pagesSearch = pagesSearchResponse as { results?: Array<{ id?: string; parent?: { type?: string; database_id?: string } }> };
-		console.log('[beforeAll] Pages found:', pagesSearch?.results?.length || 0);
+		const pagesSearch = pagesSearchResponse
 		if (pagesSearch?.results && pagesSearch.results.length > 0) {
 			testPageId = pagesSearch.results[0]?.id;
-			console.log('[beforeAll] First page ID:', testPageId);
-			console.log('[beforeAll] First page parent:', pagesSearch.results[0]?.parent);
 			// If the page is in a database, get the database ID
 			if (pagesSearch.results[0]?.parent?.type === 'database_id' && pagesSearch.results[0]?.parent?.database_id) {
 				testDatabaseId = pagesSearch.results[0].parent.database_id;
-				console.log('[beforeAll] Found database ID from page:', testDatabaseId);
 			}
 		}
 
 		// If we don't have a database yet, try to search for one
 		if (!testDatabaseId) {
-			console.log('[beforeAll] No database from pages, searching directly for databases...');
 			const databasesResponse = await makeNotionRequest<NotionEndpointOutputs['databasesGetManyDatabases']>(
 				'v1/search',
 				TEST_API_KEY,
@@ -137,31 +108,17 @@ describe('Notion API Type Tests', () => {
 					},
 				},
 			);
-			console.log('[beforeAll] Databases search response:', JSON.stringify(databasesResponse, null, 2));
-			const databases = databasesResponse as { results?: Array<{ id?: string; object?: string; title?: any }> };
-			console.log('[beforeAll] Databases found:', databases?.results?.length || 0);
+			const databases = databasesResponse
 			if (databases?.results) {
 				for (let i = 0; i < databases.results.length; i++) {
 					const db = databases.results[i];
-					console.log(`[beforeAll] Database ${i}:`, {
-						id: db?.id,
-						object: db?.object,
-						title: db?.title,
-					});
 				}
 			}
 			if (databases?.results && databases.results.length > 0) {
 				testDatabaseId = databases.results[0]?.id;
-				console.log('[beforeAll] Found database ID:', testDatabaseId);
 			}
 		}
 		
-		console.log('[beforeAll] Final values:', {
-			testDatabaseId,
-			testPageId,
-			testBlockId,
-			testUserId,
-		});
 
 		// If we have a database but no page, try to get a page from the database
 		if (testDatabaseId && !testPageId) {
@@ -175,7 +132,7 @@ describe('Notion API Type Tests', () => {
 					},
 				},
 			);
-			const pages = pagesResponse as { results?: Array<{ id?: string }> };
+			const pages = pagesResponse
 			if (pages?.results && pages.results.length > 0) {
 				testPageId = pages.results[0]?.id;
 			}
@@ -193,7 +150,7 @@ describe('Notion API Type Tests', () => {
 					},
 				},
 			);
-			const blocks = blocksResponse as { results?: Array<{ id?: string }> };
+			const blocks = blocksResponse
 			if (blocks?.results && blocks.results.length > 0) {
 				testBlockId = blocks.results[0]?.id;
 			}
@@ -209,7 +166,7 @@ describe('Notion API Type Tests', () => {
 				},
 			},
 		);
-		const users = usersResponse as { results?: Array<{ id?: string }> };
+		const users = usersResponse
 		if (users?.results && users.results.length > 0) {
 			testUserId = users.results[0]?.id;
 		}
@@ -229,7 +186,7 @@ describe('Notion API Type Tests', () => {
 						},
 					},
 				);
-				const pages = pagesResponse as { results?: Array<{ id?: string }> };
+				const pages = pagesResponse
 				if (!pages?.results || pages.results.length === 0) {
 					throw new Error('No pages found in database - cannot test blocksGetManyChildBlocks');
 				}
@@ -266,7 +223,7 @@ describe('Notion API Type Tests', () => {
 						},
 					},
 				);
-				const pages = pagesResponse as { results?: Array<{ id?: string }> };
+				const pages = pagesResponse
 				if (!pages?.results || pages.results.length === 0) {
 					throw new Error('No pages found in database - cannot test blocksAppendBlock');
 				}
@@ -397,7 +354,7 @@ describe('Notion API Type Tests', () => {
 				},
 			);
 			expect(response).toBeDefined();
-			const page = response as { id?: string };
+			const page = response
 			if (page.id) {
 				testPageId = page.id;
 			}
@@ -417,7 +374,7 @@ describe('Notion API Type Tests', () => {
 						},
 					},
 				);
-				const pages = pagesResponse as { results?: Array<{ id?: string }> };
+				const pages = pagesResponse
 				if (!pages?.results || pages.results.length === 0) {
 					throw new Error('No pages found in database - cannot test databasePagesGetDatabasePage');
 				}
@@ -450,7 +407,7 @@ describe('Notion API Type Tests', () => {
 						},
 					},
 				);
-				const pages = pagesResponse as { results?: Array<{ id?: string }> };
+				const pages = pagesResponse
 				if (!pages?.results || pages.results.length === 0) {
 					throw new Error('No pages found in database - cannot test databasePagesUpdateDatabasePage');
 				}
@@ -545,7 +502,7 @@ describe('Notion API Type Tests', () => {
 						},
 					},
 				);
-				const pages = pagesResponse as { results?: Array<{ id?: string }> };
+				const pages = pagesResponse
 				if (!pages?.results || pages.results.length === 0) {
 					throw new Error('No pages found in database - cannot test pagesArchivePage');
 				}
