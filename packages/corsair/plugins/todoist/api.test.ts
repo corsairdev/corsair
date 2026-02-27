@@ -61,6 +61,7 @@ describe('Todoist API Type Tests', () => {
 			});
 
             const result = response;
+            console.log(result, 'result')
 
 			taskId = result.id;
 

@@ -20,6 +20,12 @@ export const create: TodoistEndpoints['remindersCreate'] = async (ctx, input) =>
 		},
 	});
 
+	if (ctx.db.reminders) {
+		await ctx.db.reminders.upsertByEntityId(result.id, {
+			...result,
+		});
+	}
+
 	await logEventFromContext(
 		ctx,
 		'todoist.reminders.create',
@@ -38,6 +44,10 @@ export const deleteReminder: TodoistEndpoints['remindersDelete'] = async (
 	>(`reminders/${input.id}`, ctx.key, {
 		method: 'DELETE',
 	});
+
+	if (ctx.db.reminders) {
+		await ctx.db.reminders.deleteByEntityId(input.id);
+	}
 
 	await logEventFromContext(
 		ctx,
@@ -58,6 +68,14 @@ export const getMany: TodoistEndpoints['remindersGetMany'] = async (
 		method: 'GET',
 	});
 
+	if (Array.isArray(result) && ctx.db.reminders) {
+		for (const reminder of result) {
+			await ctx.db.reminders.upsertByEntityId(reminder.id, {
+				...reminder,
+			});
+		}
+	}
+
 	await logEventFromContext(
 		ctx,
 		'todoist.reminders.getMany',
@@ -76,6 +94,12 @@ export const update: TodoistEndpoints['remindersUpdate'] = async (ctx, input) =>
 		method: 'POST',
 		body: updates,
 	});
+
+	if (ctx.db.reminders) {
+		await ctx.db.reminders.upsertByEntityId(result.id, {
+			...result,
+		});
+	}
 
 	await logEventFromContext(
 		ctx,

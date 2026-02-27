@@ -1,55 +1,80 @@
 import { z } from 'zod';
 
-export const TodoistTask = z.object({
-	id: z.string(),
-	project_id: z.string().nullable().optional(),
-	section_id: z.string().nullable().optional(),
-	content: z.string().optional(),
-	description: z.string().optional(),
-	is_completed: z.boolean().optional(),
-	created_at: z.coerce.date().nullable().optional(),
-	assignee_id: z.string().nullable().optional(),
-	priority: z.number().optional(),
-});
+export const TodoistTask = z
+	.object({
+		id: z.string(),
+		project_id: z.string().nullable().optional(),
+		section_id: z.string().nullable().optional(),
+		content: z.string(),
+		description: z.string().optional(),
+		is_completed: z.boolean().optional(),
+		labels: z.array(z.string()).optional(),
+		parent_id: z.string().nullable().optional(),
+		order: z.number().optional(),
+		priority: z.number().optional(),
+		due: z.record(z.unknown()).nullable().optional(),
+		url: z.string().optional(),
+		comment_count: z.number().optional(),
+		created_at: z.string().optional(),
+		creator_id: z.string().optional(),
+		assignee_id: z.string().optional(),
+		assigner_id: z.string().optional(),
+	})
+	.passthrough();
 
-export const TodoistProject = z.object({
-	id: z.string(),
-	name: z.string().optional(),
-	color: z.string().optional(),
-	parent_id: z.string().nullable().optional(),
-	order: z.number().optional(),
-	favorite: z.boolean().optional(),
-});
+export const TodoistProject = z
+	.object({
+		id: z.string(),
+		name: z.string(),
+		color: z.string().optional(),
+		parent_id: z.string().optional(),
+		order: z.number().optional(),
+		favorite: z.boolean().optional(),
+		comment_count: z.number().optional(),
+		is_shared: z.boolean().optional(),
+		is_archived: z.boolean().optional(),
+		is_favorite: z.boolean().optional(),
+		view_style: z.string().optional(),
+	})
+	.passthrough();
 
-export const TodoistSection = z.object({
-	id: z.string(),
-	project_id: z.string(),
-	name: z.string().optional(),
-	order: z.number().optional(),
-});
+export const TodoistSection = z
+	.object({
+		id: z.string(),
+		project_id: z.string(),
+		name: z.string(),
+		order: z.number().optional(),
+	})
+	.passthrough();
 
-export const TodoistComment = z.object({
-	id: z.string(),
-	task_id: z.string().nullable().optional(),
-	project_id: z.string().nullable().optional(),
-	content: z.string().optional(),
-	posted_at: z.coerce.date().nullable().optional(),
-});
+export const TodoistComment = z
+	.object({
+		id: z.string(),
+		task_id: z.string().optional(),
+		project_id: z.string().optional(),
+		content: z.string(),
+		posted_at: z.string().optional(),
+	})
+	.passthrough();
 
-export const TodoistLabel = z.object({
-	id: z.string(),
-	name: z.string().optional(),
-	color: z.string().optional(),
-	order: z.number().optional(),
-	favorite: z.boolean().optional(),
-});
+export const TodoistLabel = z
+	.object({
+		id: z.string(),
+		name: z.string(),
+		color: z.string().optional(),
+		order: z.number().optional(),
+		favorite: z.boolean().optional(),
+	})
+	.passthrough();
 
-export const TodoistReminder = z.object({
-	id: z.string(),
-	task_id: z.string().nullable().optional(),
-	notify_uid: z.string().nullable().optional(),
-	due_at: z.coerce.date().nullable().optional(),
-});
+export const TodoistReminder = z
+	.object({
+		id: z.string(),
+		task_id: z.string().optional(),
+		notify_uid: z.string().optional(),
+		due: z.record(z.unknown()).optional(),
+	})
+	.passthrough();
 
 export type TodoistTask = z.infer<typeof TodoistTask>;
 export type TodoistProject = z.infer<typeof TodoistProject>;

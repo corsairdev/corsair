@@ -10,6 +10,16 @@ export const archive: TodoistEndpoints['projectsArchive'] = async (ctx, input) =
 		method: 'POST',
 	});
 
+	if (ctx.db.projects) {
+		const existing = await ctx.db.projects.findByEntityId(input.id);
+		if (existing) {
+			await ctx.db.projects.upsertByEntityId(input.id, {
+				...existing.data,
+				is_archived: true,
+			});
+		}
+	}
+
 	await logEventFromContext(
 		ctx,
 		'todoist.projects.archive',
@@ -33,8 +43,10 @@ export const create: TodoistEndpoints['projectsCreate'] = async (ctx, input) => 
 		},
 	});
 
-	if (ctx.db.projects && result && (result as any).id) {
-		await ctx.db.projects.upsertByEntityId((result as any).id, result as any);
+	if (ctx.db.projects) {
+		await ctx.db.projects.upsertByEntityId(result.id, {
+			...result,
+		});
 	}
 
 	await logEventFromContext(
@@ -56,7 +68,7 @@ export const deleteProject: TodoistEndpoints['projectsDelete'] = async (
 		method: 'DELETE',
 	});
 
-	if (ctx.db.projects && input.id) {
+	if (ctx.db.projects) {
 		await ctx.db.projects.deleteByEntityId(input.id);
 	}
 
@@ -78,8 +90,10 @@ export const get: TodoistEndpoints['projectsGet'] = async (ctx, input) => {
 		},
 	);
 
-	if (ctx.db.projects && result && (result as any).id) {
-		await ctx.db.projects.upsertByEntityId((result as any).id, result as any);
+	if (ctx.db.projects) {
+		await ctx.db.projects.upsertByEntityId(result.id, {
+			...result,
+		});
 	}
 
 	await logEventFromContext(ctx, 'todoist.projects.get', { ...input }, 'completed');
@@ -110,17 +124,11 @@ export const getMany: TodoistEndpoints['projectsGetMany'] = async (ctx, input) =
 		method: 'GET',
 	});
 
-	if (ctx.db.projects) {
-		const data: any = result;
-		const items: any[] = Array.isArray(data)
-			? data
-			: Array.isArray(data?.projects)
-			? data.projects
-			: [];
-		for (const project of items) {
-			if (project && project.id) {
-				await ctx.db.projects.upsertByEntityId(project.id, project);
-			}
+	if (Array.isArray(result) && ctx.db.projects) {
+		for (const project of result) {
+			await ctx.db.projects.upsertByEntityId(project.id, {
+				...project,
+			});
 		}
 	}
 
@@ -143,16 +151,13 @@ export const unarchive: TodoistEndpoints['projectsUnarchive'] = async (
 		method: 'POST',
 	});
 
-	if (ctx.db.projects && input.id) {
-		const project = await makeTodoistRequest<TodoistEndpointOutputs['projectsGet']>(
-			`projects/${input.id}`,
-			ctx.key,
-			{
-				method: 'GET',
-			},
-		);
-		if (project && (project as any).id) {
-			await ctx.db.projects.upsertByEntityId((project as any).id, project as any);
+	if (ctx.db.projects) {
+		const existing = await ctx.db.projects.findByEntityId(input.id);
+		if (existing) {
+			await ctx.db.projects.upsertByEntityId(input.id, {
+				...existing.data,
+				is_archived: false,
+			});
 		}
 	}
 
@@ -175,8 +180,10 @@ export const update: TodoistEndpoints['projectsUpdate'] = async (ctx, input) => 
 		body: updates,
 	});
 
-	if (ctx.db.projects && result && (result as any).id) {
-		await ctx.db.projects.upsertByEntityId((result as any).id, result as any);
+	if (ctx.db.projects) {
+		await ctx.db.projects.upsertByEntityId(result.id, {
+			...result,
+		});
 	}
 
 	await logEventFromContext(

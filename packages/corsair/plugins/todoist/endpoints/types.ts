@@ -327,14 +327,27 @@ export const TodoistEndpointInputSchemas = {
 	remindersUpdate: RemindersUpdateInputSchema,
 } as const;
 
-const TasksCloseResponseSchema = z.unknown();
+const TasksCloseResponseSchema = z
+	.union([z.undefined(), z.object({}).passthrough()])
+	.optional();
 const TasksCreateResponseSchema = TaskSchema;
-const TasksDeleteResponseSchema = z.unknown();
+const TasksDeleteResponseSchema = z
+	.union([z.undefined(), z.object({}).passthrough()])
+	.optional();
 const TasksGetResponseSchema = TaskSchema;
-const TasksGetManyResponseSchema = z.unknown();
+const TasksGetManyResponseSchema = z.union([
+	z.array(TaskSchema),
+	z
+		.object({
+			tasks: z.array(TaskSchema).optional(),
+		})
+		.passthrough(),
+]);
 const TasksMoveResponseSchema = TaskSchema;
 const TasksQuickAddResponseSchema = TaskSchema;
-const TasksReopenResponseSchema = z.unknown();
+const TasksReopenResponseSchema = z
+	.union([z.undefined(), z.object({}).passthrough()])
+	.optional();
 const TasksUpdateResponseSchema = TaskSchema;
 
 const ProjectsArchiveResponseSchema = z.object({}).passthrough();
@@ -353,7 +366,14 @@ const ProjectsGetCollaboratorsResponseSchema = z
 	)
 	.optional()
 	.default([]);
-const ProjectsGetManyResponseSchema = z.unknown();
+const ProjectsGetManyResponseSchema = z.union([
+	z.array(ProjectSchema),
+	z
+		.object({
+			projects: z.array(ProjectSchema).optional(),
+		})
+		.passthrough(),
+]);
 const ProjectsUnarchiveResponseSchema = z.object({}).passthrough();
 const ProjectsUpdateResponseSchema = ProjectSchema;
 

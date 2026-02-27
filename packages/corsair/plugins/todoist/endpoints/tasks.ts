@@ -12,10 +12,6 @@ export const close: TodoistEndpoints['tasksClose'] = async (ctx, input) => {
 		},
 	);
 
-	if (ctx.db.tasks && input.id) {
-		await ctx.db.tasks.upsertByEntityId(input.id, { id: input.id });
-	}
-
 	await logEventFromContext(ctx, 'todoist.tasks.close', { ...input }, 'completed');
 	return result;
 };
@@ -43,8 +39,10 @@ export const create: TodoistEndpoints['tasksCreate'] = async (ctx, input) => {
 		},
 	);
 
-	if (ctx.db.tasks && result && (result as any).id) {
-		await ctx.db.tasks.upsertByEntityId((result as any).id, result as any);
+	if (ctx.db.tasks) {
+		await ctx.db.tasks.upsertByEntityId(result.id, {
+			...result,
+		});
 	}
 
 	await logEventFromContext(ctx, 'todoist.tasks.create', { ...input }, 'completed');
@@ -60,7 +58,7 @@ export const deleteTask: TodoistEndpoints['tasksDelete'] = async (ctx, input) =>
 		},
 	);
 
-	if (ctx.db.tasks && input.id) {
+	if (ctx.db.tasks) {
 		await ctx.db.tasks.deleteByEntityId(input.id);
 	}
 
@@ -77,8 +75,10 @@ export const get: TodoistEndpoints['tasksGet'] = async (ctx, input) => {
 		},
 	);
 
-	if (ctx.db.tasks && result && (result as any).id) {
-		await ctx.db.tasks.upsertByEntityId((result as any).id, result as any);
+	if (ctx.db.tasks) {
+		await ctx.db.tasks.upsertByEntityId(result.id, {
+			...result,
+		});
 	}
 
 	await logEventFromContext(ctx, 'todoist.tasks.get', { ...input }, 'completed');
@@ -101,17 +101,11 @@ export const getMany: TodoistEndpoints['tasksGetMany'] = async (ctx, input) => {
 		},
 	);
 
-	if (ctx.db.tasks) {
-		const data: any = result;
-		const items: any[] = Array.isArray(data)
-			? data
-			: Array.isArray(data?.tasks)
-			? data.tasks
-			: [];
-		for (const task of items) {
-			if (task && task.id) {
-				await ctx.db.tasks.upsertByEntityId(task.id, task);
-			}
+	if (Array.isArray(result) && ctx.db.tasks) {
+		for (const task of result) {
+			await ctx.db.tasks.upsertByEntityId(task.id, {
+				...task,
+			});
 		}
 	}
 
@@ -139,8 +133,10 @@ export const move: TodoistEndpoints['tasksMove'] = async (ctx, input) => {
 		},
 	);
 
-	if (ctx.db.tasks && result && (result as any).id) {
-		await ctx.db.tasks.upsertByEntityId((result as any).id, result as any);
+	if (ctx.db.tasks) {
+		await ctx.db.tasks.upsertByEntityId(result.id, {
+			...result,
+		});
 	}
 
 	await logEventFromContext(ctx, 'todoist.tasks.move', { ...input }, 'completed');
@@ -162,8 +158,10 @@ export const quickAdd: TodoistEndpoints['tasksQuickAdd'] = async (ctx, input) =>
 		},
 	);
 
-	if (ctx.db.tasks && result && (result as any).id) {
-		await ctx.db.tasks.upsertByEntityId((result as any).id, result as any);
+	if (ctx.db.tasks) {
+		await ctx.db.tasks.upsertByEntityId(result.id, {
+			...result,
+		});
 	}
 
 	await logEventFromContext(
@@ -184,10 +182,6 @@ export const reopen: TodoistEndpoints['tasksReopen'] = async (ctx, input) => {
 		},
 	);
 
-	if (ctx.db.tasks && input.id) {
-		await ctx.db.tasks.upsertByEntityId(input.id, { id: input.id });
-	}
-
 	await logEventFromContext(ctx, 'todoist.tasks.reopen', { ...input }, 'completed');
 	return result;
 };
@@ -204,8 +198,10 @@ export const update: TodoistEndpoints['tasksUpdate'] = async (ctx, input) => {
 		},
 	);
 
-	if (ctx.db.tasks && result && (result as any).id) {
-		await ctx.db.tasks.upsertByEntityId((result as any).id, result as any);
+	if (ctx.db.tasks) {
+		await ctx.db.tasks.upsertByEntityId(result.id, {
+			...result,
+		});
 	}
 
 	await logEventFromContext(ctx, 'todoist.tasks.update', { ...input }, 'completed');

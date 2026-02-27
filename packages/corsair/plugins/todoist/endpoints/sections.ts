@@ -15,8 +15,10 @@ export const create: TodoistEndpoints['sectionsCreate'] = async (ctx, input) => 
 		},
 	});
 
-	if (ctx.db.sections && result && (result as any).id) {
-		await ctx.db.sections.upsertByEntityId((result as any).id, result as any);
+	if (ctx.db.sections) {
+		await ctx.db.sections.upsertByEntityId(result.id, {
+			...result,
+		});
 	}
 
 	await logEventFromContext(
@@ -38,7 +40,7 @@ export const deleteSection: TodoistEndpoints['sectionsDelete'] = async (
 		method: 'DELETE',
 	});
 
-	if (ctx.db.sections && input.id) {
+	if (ctx.db.sections) {
 		await ctx.db.sections.deleteByEntityId(input.id);
 	}
 
@@ -60,8 +62,10 @@ export const get: TodoistEndpoints['sectionsGet'] = async (ctx, input) => {
 		},
 	);
 
-	if (ctx.db.sections && result && (result as any).id) {
-		await ctx.db.sections.upsertByEntityId((result as any).id, result as any);
+	if (ctx.db.sections) {
+		await ctx.db.sections.upsertByEntityId(result.id, {
+			...result,
+		});
 	}
 
 	await logEventFromContext(
@@ -86,13 +90,11 @@ export const getMany: TodoistEndpoints['sectionsGetMany'] = async (
 		},
 	});
 
-	if (ctx.db.sections) {
-		const data: any = result;
-		const items: any[] = Array.isArray(data) ? data : [];
-		for (const section of items) {
-			if (section && section.id) {
-				await ctx.db.sections.upsertByEntityId(section.id, section);
-			}
+	if (Array.isArray(result) && ctx.db.sections) {
+		for (const section of result) {
+			await ctx.db.sections.upsertByEntityId(section.id, {
+				...section,
+			});
 		}
 	}
 
@@ -115,8 +117,10 @@ export const update: TodoistEndpoints['sectionsUpdate'] = async (ctx, input) => 
 		body: updates,
 	});
 
-	if (ctx.db.sections && result && (result as any).id) {
-		await ctx.db.sections.upsertByEntityId((result as any).id, result as any);
+	if (ctx.db.sections) {
+		await ctx.db.sections.upsertByEntityId(result.id, {
+			...result,
+		});
 	}
 
 	await logEventFromContext(
