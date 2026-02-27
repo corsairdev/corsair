@@ -1,32 +1,7 @@
 import { ApiError } from '../../async-core/ApiError';
 import type { CorsairErrorHandler } from '../../core/errors';
 
-/**
- * Error Handlers Configuration
- * 
- * CONFIGURATION:
- * Customize these error handlers to match your provider's error patterns.
- * 
- * Each handler has two parts:
- * 1. match: Function that determines if an error matches this handler
- * 2. handler: Function that returns retry configuration
- * 
- * You can:
- * - Add more error patterns to match() functions
- * - Adjust maxRetries based on error type
- * - Add provider-specific error codes
- * - Remove handlers you don't need
- * - Add custom handlers for provider-specific errors
- */
 export const errorHandlers = {
-	/**
-	 * Rate Limit Error Handler
-	 * 
-	 * CONFIGURATION:
-	 * - Update match() to check for your provider's rate limit error patterns
-	 * - Adjust maxRetries (default: 5)
-	 * - The handler will respect Retry-After headers if available
-	 */
 	RATE_LIMIT_ERROR: {
 		match: (error, context) => {
 			// Check for HTTP 429 status code
@@ -39,8 +14,6 @@ export const errorHandlers = {
 				errorMessage.includes('rate_limited') ||
 				errorMessage.includes('ratelimited') ||
 				error.message.includes('429')
-				// TODO: Add provider-specific rate limit error patterns
-				// Example: errorMessage.includes('too_many_requests')
 			);
 		},
 		handler: async (error, context) => {
@@ -51,19 +24,11 @@ export const errorHandlers = {
 			}
 
 			return {
-				maxRetries: 5, // TODO: Adjust based on your provider's rate limits
+				maxRetries: 5,
 				headersRetryAfterMs: retryAfterMs,
 			};
 		},
 	},
-	/**
-	 * Authentication Error Handler
-	 * 
-	 * CONFIGURATION:
-	 * - Update match() to check for your provider's auth error patterns
-	 * - maxRetries: 0 (no retries for auth errors - they won't succeed)
-	 * - Add provider-specific auth error codes/messages
-	 */
 	AUTH_ERROR: {
 		match: (error, context) => {
 			// Check for HTTP 401 status code
@@ -76,8 +41,6 @@ export const errorHandlers = {
 				errorMessage.includes('invalid_auth') ||
 				errorMessage.includes('unauthorized') ||
 				errorMessage.includes('authentication failed')
-				// TODO: Add provider-specific auth error patterns
-				// Example: errorMessage.includes('invalid_token')
 			);
 		},
 		handler: async (error, context) => {
@@ -86,18 +49,10 @@ export const errorHandlers = {
 			);
 
 			return {
-				maxRetries: 0, // No retries for auth errors
+				maxRetries: 0,
 			};
 		},
 	},
-	/**
-	 * Permission Error Handler
-	 * 
-	 * CONFIGURATION:
-	 * - Update match() to check for your provider's permission error patterns
-	 * - maxRetries: 0 (no retries for permission errors)
-	 * - Add provider-specific permission error codes/messages
-	 */
 	PERMISSION_ERROR: {
 		match: (error, context) => {
 			// Check for HTTP 403 status code
@@ -110,8 +65,6 @@ export const errorHandlers = {
 				errorMessage.includes('permission_denied') ||
 				errorMessage.includes('forbidden') ||
 				errorMessage.includes('access_denied')
-				// TODO: Add provider-specific permission error patterns
-				// Example: errorMessage.includes('insufficient_permissions')
 			);
 		},
 		handler: async (error, context) => {
@@ -120,18 +73,10 @@ export const errorHandlers = {
 			);
 
 			return {
-				maxRetries: 0, // No retries for permission errors
+				maxRetries: 0,
 			};
 		},
 	},
-	/**
-	 * Default Error Handler
-	 * 
-	 * CONFIGURATION:
-	 * - This catches all errors not matched by other handlers
-	 * - maxRetries: 0 (default - change if you want to retry unknown errors)
-	 * - Consider adding more specific handlers before this one
-	 */
 	DEFAULT: {
 		match: (error, context) => {
 			return true; // Matches all errors
@@ -142,7 +87,7 @@ export const errorHandlers = {
 			);
 
 			return {
-				maxRetries: 0, // TODO: Consider if unknown errors should be retried
+				maxRetries: 0,
 			};
 		},
 	},
