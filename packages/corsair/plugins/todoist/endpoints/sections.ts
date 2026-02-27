@@ -15,6 +15,10 @@ export const create: TodoistEndpoints['sectionsCreate'] = async (ctx, input) => 
 		},
 	});
 
+	if (ctx.db.sections && result && (result as any).id) {
+		await ctx.db.sections.upsertByEntityId((result as any).id, result as any);
+	}
+
 	await logEventFromContext(
 		ctx,
 		'todoist.sections.create',
@@ -34,6 +38,10 @@ export const deleteSection: TodoistEndpoints['sectionsDelete'] = async (
 		method: 'DELETE',
 	});
 
+	if (ctx.db.sections && input.id) {
+		await ctx.db.sections.deleteByEntityId(input.id);
+	}
+
 	await logEventFromContext(
 		ctx,
 		'todoist.sections.delete',
@@ -51,6 +59,10 @@ export const get: TodoistEndpoints['sectionsGet'] = async (ctx, input) => {
 			method: 'GET',
 		},
 	);
+
+	if (ctx.db.sections && result && (result as any).id) {
+		await ctx.db.sections.upsertByEntityId((result as any).id, result as any);
+	}
 
 	await logEventFromContext(
 		ctx,
@@ -74,6 +86,16 @@ export const getMany: TodoistEndpoints['sectionsGetMany'] = async (
 		},
 	});
 
+	if (ctx.db.sections) {
+		const data: any = result;
+		const items: any[] = Array.isArray(data) ? data : [];
+		for (const section of items) {
+			if (section && section.id) {
+				await ctx.db.sections.upsertByEntityId(section.id, section);
+			}
+		}
+	}
+
 	await logEventFromContext(
 		ctx,
 		'todoist.sections.getMany',
@@ -92,6 +114,10 @@ export const update: TodoistEndpoints['sectionsUpdate'] = async (ctx, input) => 
 		method: 'POST',
 		body: updates,
 	});
+
+	if (ctx.db.sections && result && (result as any).id) {
+		await ctx.db.sections.upsertByEntityId((result as any).id, result as any);
+	}
 
 	await logEventFromContext(
 		ctx,

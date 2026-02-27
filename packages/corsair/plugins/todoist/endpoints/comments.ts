@@ -15,6 +15,10 @@ export const create: TodoistEndpoints['commentsCreate'] = async (ctx, input) => 
 		},
 	});
 
+	if (ctx.db.comments && result && (result as any).id) {
+		await ctx.db.comments.upsertByEntityId((result as any).id, result as any);
+	}
+
 	await logEventFromContext(
 		ctx,
 		'todoist.comments.create',
@@ -34,6 +38,10 @@ export const deleteComment: TodoistEndpoints['commentsDelete'] = async (
 		method: 'DELETE',
 	});
 
+	if (ctx.db.comments && input.id) {
+		await ctx.db.comments.deleteByEntityId(input.id);
+	}
+
 	await logEventFromContext(
 		ctx,
 		'todoist.comments.delete',
@@ -49,6 +57,10 @@ export const get: TodoistEndpoints['commentsGet'] = async (ctx, input) => {
 	>(`comments/${input.id}`, ctx.key, {
 		method: 'GET',
 	});
+
+	if (ctx.db.comments && result && (result as any).id) {
+		await ctx.db.comments.upsertByEntityId((result as any).id, result as any);
+	}
 
 	await logEventFromContext(
 		ctx,
@@ -73,6 +85,16 @@ export const getMany: TodoistEndpoints['commentsGetMany'] = async (
 		},
 	});
 
+	if (ctx.db.comments) {
+		const data: any = result;
+		const items: any[] = Array.isArray(data) ? data : [];
+		for (const comment of items) {
+			if (comment && comment.id) {
+				await ctx.db.comments.upsertByEntityId(comment.id, comment);
+			}
+		}
+	}
+
 	await logEventFromContext(
 		ctx,
 		'todoist.comments.getMany',
@@ -91,6 +113,10 @@ export const update: TodoistEndpoints['commentsUpdate'] = async (ctx, input) => 
 		method: 'POST',
 		body: updates,
 	});
+
+	if (ctx.db.comments && result && (result as any).id) {
+		await ctx.db.comments.upsertByEntityId((result as any).id, result as any);
+	}
 
 	await logEventFromContext(
 		ctx,

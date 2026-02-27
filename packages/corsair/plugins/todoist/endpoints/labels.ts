@@ -16,6 +16,10 @@ export const create: TodoistEndpoints['labelsCreate'] = async (ctx, input) => {
 		},
 	});
 
+	if (ctx.db.labels && result && (result as any).id) {
+		await ctx.db.labels.upsertByEntityId((result as any).id, result as any);
+	}
+
 	await logEventFromContext(
 		ctx,
 		'todoist.labels.create',
@@ -35,6 +39,10 @@ export const deleteLabel: TodoistEndpoints['labelsDelete'] = async (
 		method: 'DELETE',
 	});
 
+	if (ctx.db.labels && input.id) {
+		await ctx.db.labels.deleteByEntityId(input.id);
+	}
+
 	await logEventFromContext(
 		ctx,
 		'todoist.labels.delete',
@@ -53,6 +61,10 @@ export const get: TodoistEndpoints['labelsGet'] = async (ctx, input) => {
 		},
 	);
 
+	if (ctx.db.labels && result && (result as any).id) {
+		await ctx.db.labels.upsertByEntityId((result as any).id, result as any);
+	}
+
 	await logEventFromContext(ctx, 'todoist.labels.get', { ...input }, 'completed');
 	return result;
 };
@@ -63,6 +75,16 @@ export const getMany: TodoistEndpoints['labelsGetMany'] = async (ctx, input) => 
 	>('labels', ctx.key, {
 		method: 'GET',
 	});
+
+	if (ctx.db.labels) {
+		const data: any = result;
+		const items: any[] = Array.isArray(data) ? data : [];
+		for (const label of items) {
+			if (label && label.id) {
+				await ctx.db.labels.upsertByEntityId(label.id, label);
+			}
+		}
+	}
 
 	await logEventFromContext(
 		ctx,
@@ -82,6 +104,10 @@ export const update: TodoistEndpoints['labelsUpdate'] = async (ctx, input) => {
 		method: 'POST',
 		body: updates,
 	});
+
+	if (ctx.db.labels && result && (result as any).id) {
+		await ctx.db.labels.upsertByEntityId((result as any).id, result as any);
+	}
 
 	await logEventFromContext(
 		ctx,

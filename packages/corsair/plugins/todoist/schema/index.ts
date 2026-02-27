@@ -1,15 +1,20 @@
-// TODO: Import your database entities and create the schema
-// Example:
-// import { TodoistExample } from './database';
-//
-// export const TodoistSchema = {
-// 	version: '1.0.0',
-// 	entities: {
-// 		example: TodoistExample,
-// 	},
-// } as const;
+import {
+	TodoistComment,
+	TodoistLabel,
+	TodoistProject,
+	TodoistReminder,
+	TodoistSection,
+	TodoistTask,
+} from './database';
 
 export const TodoistSchema = {
 	version: '1.0.0',
-	entities: {},
+	entities: {
+		tasks: TodoistTask,
+		projects: TodoistProject,
+		sections: TodoistSection,
+		comments: TodoistComment,
+		labels: TodoistLabel,
+		reminders: TodoistReminder,
+	},
 } as const;
