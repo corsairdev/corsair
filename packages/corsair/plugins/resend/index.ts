@@ -7,8 +7,9 @@ import type {
 	CorsairPluginContext,
 	CorsairWebhook,
 	KeyBuilderContext,
-	PluginEndpointMeta,
 	PluginPermissionsConfig,
+	RequiredPluginEndpointMeta,
+	RequiredPluginEndpointSchemas,
 } from '../../core';
 import type { PickAuth } from '../../core/constants';
 import { Domains, Emails } from './endpoints';
@@ -16,7 +17,10 @@ import type {
 	ResendEndpointInputs,
 	ResendEndpointOutputs,
 } from './endpoints/types';
-import { resendEndpointSchemas } from './endpoints/types';
+import {
+	ResendEndpointInputSchemas,
+	ResendEndpointOutputSchemas,
+} from './endpoints/types';
 import { ResendSchema } from './schema';
 import type {
 	DomainCreatedEvent,
@@ -42,7 +46,7 @@ export type ResendPluginOptions = {
 	errorHandlers?: CorsairErrorHandler;
 	/**
 	 * Permission configuration for the Resend plugin.
-	 * Controls what the AI agent is allowed to do via the MCP server.
+	 * Controls what the AI agent is allowed to do.
 	 * Overrides use dot-notation paths from the Resend endpoint tree — invalid paths are type errors.
 	 */
 	permissions?: PluginPermissionsConfig<typeof resendEndpointsNested>;
@@ -108,6 +112,41 @@ const resendEndpointsNested = {
 	},
 } as const;
 
+export const resendEndpointSchemas = {
+	'emails.send': {
+		input: ResendEndpointInputSchemas.emailsSend,
+		output: ResendEndpointOutputSchemas.emailsSend,
+	},
+	'emails.get': {
+		input: ResendEndpointInputSchemas.emailsGet,
+		output: ResendEndpointOutputSchemas.emailsGet,
+	},
+	'emails.list': {
+		input: ResendEndpointInputSchemas.emailsList,
+		output: ResendEndpointOutputSchemas.emailsList,
+	},
+	'domains.create': {
+		input: ResendEndpointInputSchemas.domainsCreate,
+		output: ResendEndpointOutputSchemas.domainsCreate,
+	},
+	'domains.get': {
+		input: ResendEndpointInputSchemas.domainsGet,
+		output: ResendEndpointOutputSchemas.domainsGet,
+	},
+	'domains.list': {
+		input: ResendEndpointInputSchemas.domainsList,
+		output: ResendEndpointOutputSchemas.domainsList,
+	},
+	'domains.delete': {
+		input: ResendEndpointInputSchemas.domainsDelete,
+		output: ResendEndpointOutputSchemas.domainsDelete,
+	},
+	'domains.verify': {
+		input: ResendEndpointInputSchemas.domainsVerify,
+		output: ResendEndpointOutputSchemas.domainsVerify,
+	},
+} satisfies RequiredPluginEndpointSchemas<typeof resendEndpointsNested>;
+
 const resendWebhooksNested = {
 	emails: {
 		sent: EmailWebhooks.sent,
@@ -162,7 +201,7 @@ const resendEndpointMeta = {
 		riskLevel: 'write',
 		description: 'Trigger DNS verification for a domain',
 	},
-} satisfies PluginEndpointMeta<typeof resendEndpointsNested>;
+} satisfies RequiredPluginEndpointMeta<typeof resendEndpointsNested>;
 
 export type BaseResendPlugin<T extends ResendPluginOptions> = CorsairPlugin<
 	'resend',
@@ -285,4 +324,3 @@ export type {
 	SendEmailResponse,
 	VerifyDomainResponse,
 } from './endpoints/types';
-export { resendEndpointSchemas } from './endpoints/types';

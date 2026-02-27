@@ -175,3 +175,36 @@ export type BindWebhooks<T extends WebhookTree> = {
 			? BindWebhooks<T[K]>
 			: never;
 };
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Webhook Path Types (for Schema Registry)
+// ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Derives all dot-notation webhook paths from a WebhookTree as a string literal union.
+ * Used to provide compile-time validation for webhook schema registry keys.
+ * Passing an invalid path to any config that accepts WebhookPathsOf<T> is a type error.
+ *
+ * Design note: Same recursive constraint relaxation as EndpointPathsOf — see that type
+ * for a full explanation of why we use `extends object` rather than `extends WebhookTree`
+ * on the recursive call. We also check `{ match: any; handler: any }` before `object`
+ * because webhook leaves are objects themselves.
+ *
+ * @example
+ * Given: `{ messages: { message: { match: fn, handler: fn } }, channels: { created: { match: fn, handler: fn } } }`
+ * Result: `'messages.message' | 'channels.created'`
+ *
+ * @template T - The webhook tree to extract paths from (unconstrained to allow recursion through as-const types)
+ * @template Prefix - Internal accumulator for the current path prefix (do not supply manually)
+ */
+export type WebhookPathsOf<T, Prefix extends string = ''> = {
+	[K in keyof T & string]: T[K] extends { match: any; handler: any }
+		? // Leaf: it's a webhook — emit the full dot-notation path
+			Prefix extends ''
+			? K
+			: `${Prefix}.${K}`
+		: T[K] extends object
+			? // Non-leaf: it's a nested subtree — recurse with the accumulated prefix
+				WebhookPathsOf<T[K], Prefix extends '' ? K : `${Prefix}.${K}`>
+			: never;
+}[keyof T & string];

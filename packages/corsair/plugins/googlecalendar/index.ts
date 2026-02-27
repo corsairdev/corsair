@@ -6,9 +6,10 @@ import type {
 	CorsairPluginContext,
 	CorsairWebhook,
 	KeyBuilderContext,
-	PluginEndpointMeta,
 	PluginPermissionsConfig,
 	RawWebhookRequest,
+	RequiredPluginEndpointMeta,
+	RequiredPluginEndpointSchemas,
 } from '../../core';
 import type { PickAuth } from '../../core/constants';
 import { getValidAccessToken } from './client';
@@ -17,7 +18,10 @@ import type {
 	GoogleCalendarEndpointOutputs,
 } from './endpoints';
 import { CalendarEndpoints, EventsEndpoints } from './endpoints';
-import { googlecalendarEndpointSchemas } from './endpoints/types';
+import {
+	GoogleCalendarEndpointInputSchemas,
+	GoogleCalendarEndpointOutputSchemas,
+} from './endpoints/types';
 import { GoogleCalendarSchema } from './schema';
 import type {
 	EventCreatedEvent,
@@ -88,6 +92,33 @@ const googleCalendarEndpointsNested = {
 	},
 } as const;
 
+export const googlecalendarEndpointSchemas = {
+	'events.create': {
+		input: GoogleCalendarEndpointInputSchemas.eventsCreate,
+		output: GoogleCalendarEndpointOutputSchemas.eventsCreate,
+	},
+	'events.get': {
+		input: GoogleCalendarEndpointInputSchemas.eventsGet,
+		output: GoogleCalendarEndpointOutputSchemas.eventsGet,
+	},
+	'events.getMany': {
+		input: GoogleCalendarEndpointInputSchemas.eventsGetMany,
+		output: GoogleCalendarEndpointOutputSchemas.eventsGetMany,
+	},
+	'events.update': {
+		input: GoogleCalendarEndpointInputSchemas.eventsUpdate,
+		output: GoogleCalendarEndpointOutputSchemas.eventsUpdate,
+	},
+	'events.delete': {
+		input: GoogleCalendarEndpointInputSchemas.eventsDelete,
+		output: GoogleCalendarEndpointOutputSchemas.eventsDelete,
+	},
+	'calendar.getAvailability': {
+		input: GoogleCalendarEndpointInputSchemas.calendarGetAvailability,
+		output: GoogleCalendarEndpointOutputSchemas.calendarGetAvailability,
+	},
+} satisfies RequiredPluginEndpointSchemas<typeof googleCalendarEndpointsNested>;
+
 const googleCalendarWebhooksNested = {
 	onEventChanged: EventWebhooks.onEventChanged,
 } as const;
@@ -99,7 +130,7 @@ export type GoogleCalendarPluginOptions = {
 	webhookHooks?: InternalGoogleCalendarPlugin['webhookHooks'];
 	/**
 	 * Permission configuration for the Google Calendar plugin.
-	 * Controls what the AI agent is allowed to do via the MCP server.
+	 * Controls what the AI agent is allowed to do.
 	 * Overrides use dot-notation paths from the Google Calendar endpoint tree — invalid paths are type errors.
 	 */
 	permissions?: PluginPermissionsConfig<typeof googleCalendarEndpointsNested>;
@@ -136,7 +167,7 @@ const googleCalendarEndpointMeta = {
 		riskLevel: 'read',
 		description: 'Get free/busy availability for a calendar',
 	},
-} satisfies PluginEndpointMeta<typeof googleCalendarEndpointsNested>;
+} satisfies RequiredPluginEndpointMeta<typeof googleCalendarEndpointsNested>;
 
 export type BaseGoogleCalendarPlugin<T extends GoogleCalendarPluginOptions> =
 	CorsairPlugin<
@@ -270,4 +301,3 @@ export type {
 	GoogleCalendarEndpointOutputSchemas,
 	GoogleCalendarEndpointOutputs,
 } from './endpoints/types';
-export { googlecalendarEndpointSchemas } from './endpoints/types';

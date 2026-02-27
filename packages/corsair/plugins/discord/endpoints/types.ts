@@ -1,3 +1,5 @@
+import { z } from 'zod';
+
 // ── Shared Discord API Types ───────────────────────────────────────────────────
 
 export type DiscordUser = {
@@ -276,3 +278,130 @@ export type DiscordEndpointOutputs = {
 	membersList: GuildMember[];
 	membersGet: GuildMember;
 };
+
+// ── Endpoint Input Schemas ─────────────────────────────────────────────────────
+
+export const DiscordEndpointInputSchemas = {
+	messagesSend: z.object({
+		channel_id: z.string(),
+		content: z.string().optional(),
+		embeds: z.array(z.any()).optional(),
+		tts: z.boolean().optional(),
+		nonce: z.union([z.string(), z.number()]).optional(),
+	}),
+	messagesReply: z.object({
+		channel_id: z.string(),
+		message_id: z.string(),
+		content: z.string().optional(),
+		embeds: z.array(z.any()).optional(),
+		fail_if_not_exists: z.boolean().optional(),
+	}),
+	messagesGet: z.object({
+		channel_id: z.string(),
+		message_id: z.string(),
+	}),
+	messagesList: z.object({
+		channel_id: z.string(),
+		limit: z.number().optional(),
+		before: z.string().optional(),
+		after: z.string().optional(),
+		around: z.string().optional(),
+	}),
+	messagesEdit: z.object({
+		channel_id: z.string(),
+		message_id: z.string(),
+		content: z.string().optional(),
+		embeds: z.array(z.any()).optional(),
+	}),
+	messagesDelete: z.object({
+		channel_id: z.string(),
+		message_id: z.string(),
+	}),
+	threadsCreate: z.object({
+		channel_id: z.string(),
+		name: z.string(),
+		auto_archive_duration: z
+			.union([
+				z.literal(60),
+				z.literal(1440),
+				z.literal(4320),
+				z.literal(10080),
+			])
+			.optional(),
+		type: z.number().optional(),
+		invitable: z.boolean().optional(),
+	}),
+	threadsCreateFromMessage: z.object({
+		channel_id: z.string(),
+		message_id: z.string(),
+		name: z.string(),
+		auto_archive_duration: z
+			.union([
+				z.literal(60),
+				z.literal(1440),
+				z.literal(4320),
+				z.literal(10080),
+			])
+			.optional(),
+	}),
+	reactionsAdd: z.object({
+		channel_id: z.string(),
+		message_id: z.string(),
+		emoji: z.string(),
+	}),
+	reactionsRemove: z.object({
+		channel_id: z.string(),
+		message_id: z.string(),
+		emoji: z.string(),
+	}),
+	reactionsList: z.object({
+		channel_id: z.string(),
+		message_id: z.string(),
+		emoji: z.string(),
+		limit: z.number().optional(),
+		after: z.string().optional(),
+	}),
+	guildsList: z.object({
+		before: z.string().optional(),
+		after: z.string().optional(),
+		limit: z.number().optional(),
+		with_counts: z.boolean().optional(),
+	}),
+	guildsGet: z.object({
+		guild_id: z.string(),
+		with_counts: z.boolean().optional(),
+	}),
+	channelsList: z.object({
+		guild_id: z.string(),
+	}),
+	membersList: z.object({
+		guild_id: z.string(),
+		limit: z.number().optional(),
+		after: z.string().optional(),
+	}),
+	membersGet: z.object({
+		guild_id: z.string(),
+		user_id: z.string(),
+	}),
+} as const;
+
+// ── Endpoint Output Schemas ────────────────────────────────────────────────────
+
+export const DiscordEndpointOutputSchemas = {
+	messagesSend: z.any(),
+	messagesReply: z.any(),
+	messagesGet: z.any(),
+	messagesList: z.array(z.any()),
+	messagesEdit: z.any(),
+	messagesDelete: z.object({ success: z.literal(true) }),
+	threadsCreate: z.any(),
+	threadsCreateFromMessage: z.any(),
+	reactionsAdd: z.object({ success: z.literal(true) }),
+	reactionsRemove: z.object({ success: z.literal(true) }),
+	reactionsList: z.array(z.any()),
+	guildsList: z.array(z.any()),
+	guildsGet: z.any(),
+	channelsList: z.array(z.any()),
+	membersList: z.array(z.any()),
+	membersGet: z.any(),
+} as const;

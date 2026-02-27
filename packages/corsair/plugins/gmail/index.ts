@@ -7,9 +7,10 @@ import type {
 	CorsairWebhook,
 	KeyBuilderContext,
 	PluginAuthConfig,
-	PluginEndpointMeta,
 	PluginPermissionsConfig,
 	RawWebhookRequest,
+	RequiredPluginEndpointMeta,
+	RequiredPluginEndpointSchemas,
 } from '../../core';
 import type { PickAuth } from '../../core/constants';
 import { getValidAccessToken } from './client';
@@ -20,7 +21,10 @@ import {
 	MessagesEndpoints,
 	ThreadsEndpoints,
 } from './endpoints';
-import { gmailEndpointSchemas } from './endpoints/types';
+import {
+	GmailEndpointInputSchemas,
+	GmailEndpointOutputSchemas,
+} from './endpoints/types';
 import type { GmailCredentials } from './schema';
 import { GmailSchema } from './schema';
 import type {
@@ -139,6 +143,109 @@ export const gmailEndpointsNested = {
 	},
 } as const;
 
+export const gmailEndpointSchemas = {
+	'messages.list': {
+		input: GmailEndpointInputSchemas.messagesList,
+		output: GmailEndpointOutputSchemas.messagesList,
+	},
+	'messages.get': {
+		input: GmailEndpointInputSchemas.messagesGet,
+		output: GmailEndpointOutputSchemas.messagesGet,
+	},
+	'messages.send': {
+		input: GmailEndpointInputSchemas.messagesSend,
+		output: GmailEndpointOutputSchemas.messagesSend,
+	},
+	'messages.delete': {
+		input: GmailEndpointInputSchemas.messagesDelete,
+		output: GmailEndpointOutputSchemas.messagesDelete,
+	},
+	'messages.modify': {
+		input: GmailEndpointInputSchemas.messagesModify,
+		output: GmailEndpointOutputSchemas.messagesModify,
+	},
+	'messages.batchModify': {
+		input: GmailEndpointInputSchemas.messagesBatchModify,
+		output: GmailEndpointOutputSchemas.messagesBatchModify,
+	},
+	'messages.trash': {
+		input: GmailEndpointInputSchemas.messagesTrash,
+		output: GmailEndpointOutputSchemas.messagesTrash,
+	},
+	'messages.untrash': {
+		input: GmailEndpointInputSchemas.messagesUntrash,
+		output: GmailEndpointOutputSchemas.messagesUntrash,
+	},
+	'labels.list': {
+		input: GmailEndpointInputSchemas.labelsList,
+		output: GmailEndpointOutputSchemas.labelsList,
+	},
+	'labels.get': {
+		input: GmailEndpointInputSchemas.labelsGet,
+		output: GmailEndpointOutputSchemas.labelsGet,
+	},
+	'labels.create': {
+		input: GmailEndpointInputSchemas.labelsCreate,
+		output: GmailEndpointOutputSchemas.labelsCreate,
+	},
+	'labels.update': {
+		input: GmailEndpointInputSchemas.labelsUpdate,
+		output: GmailEndpointOutputSchemas.labelsUpdate,
+	},
+	'labels.delete': {
+		input: GmailEndpointInputSchemas.labelsDelete,
+		output: GmailEndpointOutputSchemas.labelsDelete,
+	},
+	'drafts.list': {
+		input: GmailEndpointInputSchemas.draftsList,
+		output: GmailEndpointOutputSchemas.draftsList,
+	},
+	'drafts.get': {
+		input: GmailEndpointInputSchemas.draftsGet,
+		output: GmailEndpointOutputSchemas.draftsGet,
+	},
+	'drafts.create': {
+		input: GmailEndpointInputSchemas.draftsCreate,
+		output: GmailEndpointOutputSchemas.draftsCreate,
+	},
+	'drafts.update': {
+		input: GmailEndpointInputSchemas.draftsUpdate,
+		output: GmailEndpointOutputSchemas.draftsUpdate,
+	},
+	'drafts.delete': {
+		input: GmailEndpointInputSchemas.draftsDelete,
+		output: GmailEndpointOutputSchemas.draftsDelete,
+	},
+	'drafts.send': {
+		input: GmailEndpointInputSchemas.draftsSend,
+		output: GmailEndpointOutputSchemas.draftsSend,
+	},
+	'threads.list': {
+		input: GmailEndpointInputSchemas.threadsList,
+		output: GmailEndpointOutputSchemas.threadsList,
+	},
+	'threads.get': {
+		input: GmailEndpointInputSchemas.threadsGet,
+		output: GmailEndpointOutputSchemas.threadsGet,
+	},
+	'threads.modify': {
+		input: GmailEndpointInputSchemas.threadsModify,
+		output: GmailEndpointOutputSchemas.threadsModify,
+	},
+	'threads.delete': {
+		input: GmailEndpointInputSchemas.threadsDelete,
+		output: GmailEndpointOutputSchemas.threadsDelete,
+	},
+	'threads.trash': {
+		input: GmailEndpointInputSchemas.threadsTrash,
+		output: GmailEndpointOutputSchemas.threadsTrash,
+	},
+	'threads.untrash': {
+		input: GmailEndpointInputSchemas.threadsUntrash,
+		output: GmailEndpointOutputSchemas.threadsUntrash,
+	},
+} satisfies RequiredPluginEndpointSchemas<typeof gmailEndpointsNested>;
+
 export const gmailWebhooksNested = {
 	messageChanged: MessageWebhooks.messageChanged,
 } as const;
@@ -151,7 +258,7 @@ export type GmailPluginOptions = {
 	webhookHooks?: InternalGmailPlugin['webhookHooks'];
 	/**
 	 * Permission configuration for the Gmail plugin.
-	 * Controls what the AI agent is allowed to do via the MCP server.
+	 * Controls what the AI agent is allowed to do.
 	 * Overrides use dot-notation paths from the Gmail endpoint tree — invalid paths are type errors.
 	 */
 	permissions?: PluginPermissionsConfig<typeof gmailEndpointsNested>;
@@ -253,7 +360,7 @@ const gmailEndpointMeta = {
 		riskLevel: 'write',
 		description: 'Restore a thread from the trash',
 	},
-} satisfies PluginEndpointMeta<typeof gmailEndpointsNested>;
+} satisfies RequiredPluginEndpointMeta<typeof gmailEndpointsNested>;
 
 export type BaseGmailPlugin<T extends GmailPluginOptions> = CorsairPlugin<
 	'gmail',
@@ -386,7 +493,6 @@ export type {
 	GmailEndpointInputs,
 	GmailEndpointOutputs,
 } from './endpoints/types';
-export { gmailEndpointSchemas } from './endpoints/types';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Schema Type Exports

@@ -7,8 +7,9 @@ import type {
 	CorsairPluginContext,
 	CorsairWebhook,
 	KeyBuilderContext,
-	PluginEndpointMeta,
 	PluginPermissionsConfig,
+	RequiredPluginEndpointMeta,
+	RequiredPluginEndpointSchemas,
 } from '../../core';
 import type { AuthTypes, PickAuth } from '../../core/constants';
 import { getValidAccessToken } from './client';
@@ -24,6 +25,10 @@ import {
 import type {
 	SpotifyEndpointInputs,
 	SpotifyEndpointOutputs,
+} from './endpoints/types';
+import {
+	SpotifyEndpointInputSchemas,
+	SpotifyEndpointOutputSchemas,
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { SpotifySchema } from './schema';
@@ -53,7 +58,7 @@ export type SpotifyPluginOptions = {
 	errorHandlers?: CorsairErrorHandler;
 	/**
 	 * Permission configuration for the Spotify plugin.
-	 * Controls what the AI agent is allowed to do via the MCP server.
+	 * Controls what the AI agent is allowed to do.
 	 * Overrides use dot-notation paths from the Spotify endpoint tree — invalid paths are type errors.
 	 */
 	permissions?: PluginPermissionsConfig<typeof spotifyEndpointsNested>;
@@ -167,6 +172,129 @@ const spotifyEndpointsNested = {
 	},
 } as const;
 
+export const spotifyEndpointSchemas = {
+	'albums.get': {
+		input: SpotifyEndpointInputSchemas.albumsGet,
+		output: SpotifyEndpointOutputSchemas.albumsGet,
+	},
+	'albums.getNewReleases': {
+		input: SpotifyEndpointInputSchemas.albumsGetNewReleases,
+		output: SpotifyEndpointOutputSchemas.albumsGetNewReleases,
+	},
+	'albums.getTracks': {
+		input: SpotifyEndpointInputSchemas.albumsGetTracks,
+		output: SpotifyEndpointOutputSchemas.albumsGetTracks,
+	},
+	'albums.search': {
+		input: SpotifyEndpointInputSchemas.albumsSearch,
+		output: SpotifyEndpointOutputSchemas.albumsSearch,
+	},
+	'artists.get': {
+		input: SpotifyEndpointInputSchemas.artistsGet,
+		output: SpotifyEndpointOutputSchemas.artistsGet,
+	},
+	'artists.getAlbums': {
+		input: SpotifyEndpointInputSchemas.artistsGetAlbums,
+		output: SpotifyEndpointOutputSchemas.artistsGetAlbums,
+	},
+	'artists.getRelatedArtists': {
+		input: SpotifyEndpointInputSchemas.artistsGetRelatedArtists,
+		output: SpotifyEndpointOutputSchemas.artistsGetRelatedArtists,
+	},
+	'artists.getTopTracks': {
+		input: SpotifyEndpointInputSchemas.artistsGetTopTracks,
+		output: SpotifyEndpointOutputSchemas.artistsGetTopTracks,
+	},
+	'artists.search': {
+		input: SpotifyEndpointInputSchemas.artistsSearch,
+		output: SpotifyEndpointOutputSchemas.artistsSearch,
+	},
+	'library.getLikedTracks': {
+		input: SpotifyEndpointInputSchemas.libraryGetLikedTracks,
+		output: SpotifyEndpointOutputSchemas.libraryGetLikedTracks,
+	},
+	'myData.getFollowedArtists': {
+		input: SpotifyEndpointInputSchemas.myDataGetFollowedArtists,
+		output: SpotifyEndpointOutputSchemas.myDataGetFollowedArtists,
+	},
+	'player.addToQueue': {
+		input: SpotifyEndpointInputSchemas.playerAddToQueue,
+		output: SpotifyEndpointOutputSchemas.playerAddToQueue,
+	},
+	'player.getCurrentlyPlaying': {
+		input: SpotifyEndpointInputSchemas.playerGetCurrentlyPlaying,
+		output: SpotifyEndpointOutputSchemas.playerGetCurrentlyPlaying,
+	},
+	'player.getRecentlyPlayed': {
+		input: SpotifyEndpointInputSchemas.playerGetRecentlyPlayed,
+		output: SpotifyEndpointOutputSchemas.playerGetRecentlyPlayed,
+	},
+	'player.pause': {
+		input: SpotifyEndpointInputSchemas.playerPause,
+		output: SpotifyEndpointOutputSchemas.playerPause,
+	},
+	'player.resume': {
+		input: SpotifyEndpointInputSchemas.playerResume,
+		output: SpotifyEndpointOutputSchemas.playerResume,
+	},
+	'player.setVolume': {
+		input: SpotifyEndpointInputSchemas.playerSetVolume,
+		output: SpotifyEndpointOutputSchemas.playerSetVolume,
+	},
+	'player.skipToNext': {
+		input: SpotifyEndpointInputSchemas.playerSkipToNext,
+		output: SpotifyEndpointOutputSchemas.playerSkipToNext,
+	},
+	'player.skipToPrevious': {
+		input: SpotifyEndpointInputSchemas.playerSkipToPrevious,
+		output: SpotifyEndpointOutputSchemas.playerSkipToPrevious,
+	},
+	'player.startPlayback': {
+		input: SpotifyEndpointInputSchemas.playerStartPlayback,
+		output: SpotifyEndpointOutputSchemas.playerStartPlayback,
+	},
+	'playlists.addItem': {
+		input: SpotifyEndpointInputSchemas.playlistsAddItem,
+		output: SpotifyEndpointOutputSchemas.playlistsAddItem,
+	},
+	'playlists.create': {
+		input: SpotifyEndpointInputSchemas.playlistsCreate,
+		output: SpotifyEndpointOutputSchemas.playlistsCreate,
+	},
+	'playlists.get': {
+		input: SpotifyEndpointInputSchemas.playlistsGet,
+		output: SpotifyEndpointOutputSchemas.playlistsGet,
+	},
+	'playlists.getTracks': {
+		input: SpotifyEndpointInputSchemas.playlistsGetTracks,
+		output: SpotifyEndpointOutputSchemas.playlistsGetTracks,
+	},
+	'playlists.getUserPlaylists': {
+		input: SpotifyEndpointInputSchemas.playlistsGetUserPlaylists,
+		output: SpotifyEndpointOutputSchemas.playlistsGetUserPlaylists,
+	},
+	'playlists.removeItem': {
+		input: SpotifyEndpointInputSchemas.playlistsRemoveItem,
+		output: SpotifyEndpointOutputSchemas.playlistsRemoveItem,
+	},
+	'playlists.search': {
+		input: SpotifyEndpointInputSchemas.playlistsSearch,
+		output: SpotifyEndpointOutputSchemas.playlistsSearch,
+	},
+	'tracks.get': {
+		input: SpotifyEndpointInputSchemas.tracksGet,
+		output: SpotifyEndpointOutputSchemas.tracksGet,
+	},
+	'tracks.getAudioFeatures': {
+		input: SpotifyEndpointInputSchemas.tracksGetAudioFeatures,
+		output: SpotifyEndpointOutputSchemas.tracksGetAudioFeatures,
+	},
+	'tracks.search': {
+		input: SpotifyEndpointInputSchemas.tracksSearch,
+		output: SpotifyEndpointOutputSchemas.tracksSearch,
+	},
+} satisfies RequiredPluginEndpointSchemas<typeof spotifyEndpointsNested>;
+
 const spotifyWebhooksNested = {
 	example: {
 		example: ExampleWebhooks.example,
@@ -276,7 +404,7 @@ const spotifyEndpointMeta = {
 		description: 'Get audio features for a track',
 	},
 	'tracks.search': { riskLevel: 'read', description: 'Search for tracks' },
-} satisfies PluginEndpointMeta<typeof spotifyEndpointsNested>;
+} satisfies RequiredPluginEndpointMeta<typeof spotifyEndpointsNested>;
 
 export type BaseSpotifyPlugin<T extends SpotifyPluginOptions> = CorsairPlugin<
 	'spotify',
@@ -313,6 +441,7 @@ export function spotify<const T extends SpotifyPluginOptions>(
 		endpoints: spotifyEndpointsNested,
 		webhooks: spotifyWebhooksNested,
 		endpointMeta: spotifyEndpointMeta,
+		endpointSchemas: spotifyEndpointSchemas,
 		/**
 		 * Webhook matcher function - determines if an incoming request is a webhook for this plugin
 		 *

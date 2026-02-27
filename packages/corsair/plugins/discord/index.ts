@@ -8,8 +8,9 @@ import type {
 	CorsairWebhook,
 	KeyBuilderContext,
 	PluginAuthConfig,
-	PluginEndpointMeta,
 	PluginPermissionsConfig,
+	RequiredPluginEndpointMeta,
+	RequiredPluginEndpointSchemas,
 } from '../../core';
 import type { AuthTypes, PickAuth } from '../../core/constants';
 import {
@@ -38,6 +39,10 @@ import type {
 	ReactionsRemoveInput,
 	ThreadsCreateFromMessageInput,
 	ThreadsCreateInput,
+} from './endpoints/types';
+import {
+	DiscordEndpointInputSchemas,
+	DiscordEndpointOutputSchemas,
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { DiscordSchema } from './schema';
@@ -75,7 +80,7 @@ export type DiscordPluginOptions = {
 	errorHandlers?: CorsairErrorHandler;
 	/**
 	 * Permission configuration for the Discord plugin.
-	 * Controls what the AI agent is allowed to do via the MCP server.
+	 * Controls what the AI agent is allowed to do.
 	 * Overrides use dot-notation paths from the Discord endpoint tree — invalid paths are type errors.
 	 */
 	permissions?: PluginPermissionsConfig<typeof discordEndpointsNested>;
@@ -184,6 +189,73 @@ const discordEndpointsNested = {
 	},
 } as const;
 
+export const discordEndpointSchemas = {
+	'messages.send': {
+		input: DiscordEndpointInputSchemas.messagesSend,
+		output: DiscordEndpointOutputSchemas.messagesSend,
+	},
+	'messages.reply': {
+		input: DiscordEndpointInputSchemas.messagesReply,
+		output: DiscordEndpointOutputSchemas.messagesReply,
+	},
+	'messages.get': {
+		input: DiscordEndpointInputSchemas.messagesGet,
+		output: DiscordEndpointOutputSchemas.messagesGet,
+	},
+	'messages.list': {
+		input: DiscordEndpointInputSchemas.messagesList,
+		output: DiscordEndpointOutputSchemas.messagesList,
+	},
+	'messages.edit': {
+		input: DiscordEndpointInputSchemas.messagesEdit,
+		output: DiscordEndpointOutputSchemas.messagesEdit,
+	},
+	'messages.delete': {
+		input: DiscordEndpointInputSchemas.messagesDelete,
+		output: DiscordEndpointOutputSchemas.messagesDelete,
+	},
+	'threads.create': {
+		input: DiscordEndpointInputSchemas.threadsCreate,
+		output: DiscordEndpointOutputSchemas.threadsCreate,
+	},
+	'threads.createFromMessage': {
+		input: DiscordEndpointInputSchemas.threadsCreateFromMessage,
+		output: DiscordEndpointOutputSchemas.threadsCreateFromMessage,
+	},
+	'reactions.add': {
+		input: DiscordEndpointInputSchemas.reactionsAdd,
+		output: DiscordEndpointOutputSchemas.reactionsAdd,
+	},
+	'reactions.remove': {
+		input: DiscordEndpointInputSchemas.reactionsRemove,
+		output: DiscordEndpointOutputSchemas.reactionsRemove,
+	},
+	'reactions.list': {
+		input: DiscordEndpointInputSchemas.reactionsList,
+		output: DiscordEndpointOutputSchemas.reactionsList,
+	},
+	'guilds.list': {
+		input: DiscordEndpointInputSchemas.guildsList,
+		output: DiscordEndpointOutputSchemas.guildsList,
+	},
+	'guilds.get': {
+		input: DiscordEndpointInputSchemas.guildsGet,
+		output: DiscordEndpointOutputSchemas.guildsGet,
+	},
+	'channels.list': {
+		input: DiscordEndpointInputSchemas.channelsList,
+		output: DiscordEndpointOutputSchemas.channelsList,
+	},
+	'members.list': {
+		input: DiscordEndpointInputSchemas.membersList,
+		output: DiscordEndpointOutputSchemas.membersList,
+	},
+	'members.get': {
+		input: DiscordEndpointInputSchemas.membersGet,
+		output: DiscordEndpointOutputSchemas.membersGet,
+	},
+} satisfies RequiredPluginEndpointSchemas<typeof discordEndpointsNested>;
+
 const discordWebhooksNested = {
 	interactions: {
 		ping: InteractionWebhooks.ping,
@@ -258,7 +330,7 @@ const discordEndpointMeta = {
 		riskLevel: 'read',
 		description: 'Get info about a guild member',
 	},
-} satisfies PluginEndpointMeta<typeof discordEndpointsNested>;
+} satisfies RequiredPluginEndpointMeta<typeof discordEndpointsNested>;
 
 export const discordAuthConfig = {} as const satisfies PluginAuthConfig;
 
@@ -297,6 +369,7 @@ export function discord<const T extends DiscordPluginOptions>(
 		endpoints: discordEndpointsNested,
 		webhooks: discordWebhooksNested,
 		endpointMeta: discordEndpointMeta,
+		endpointSchemas: discordEndpointSchemas,
 
 		/**
 		 * Identifies incoming Discord interaction webhooks.

@@ -1,342 +1,385 @@
-export interface StatusEmojiDisplayInfo {
-	emoji_name?: string;
-	display_alias?: string;
-	display_url?: string;
-}
+import { z } from 'zod';
+import { verifySlackSignature } from '../../../async-core/webhook-utils';
+import type {
+	CorsairWebhookMatcher,
+	RawWebhookRequest,
+	WebhookRequest,
+} from '../../../core';
 
-export interface BotProfile {
-	id: string;
-	name: string;
-	app_id: string;
-	team_id: string;
-	icons: {
-		[size: string]: string;
-	};
-	updated: number;
-	deleted: boolean;
-}
+// ─────────────────────────────────────────────────────────────────────────────
+// Shared sub-schemas
+// ─────────────────────────────────────────────────────────────────────────────
 
-type ChannelTypes = 'channel' | 'group' | 'im' | 'mpim' | 'app_home';
+export const StatusEmojiDisplayInfoSchema = z.object({
+	emoji_name: z.string().optional(),
+	display_alias: z.string().optional(),
+	display_url: z.string().optional(),
+});
+export type StatusEmojiDisplayInfo = z.infer<
+	typeof StatusEmojiDisplayInfoSchema
+>;
 
-interface MessageAttachment {
-	blocks?: unknown[];
-	fallback?: string;
-	color?: string;
-	pretext?: string;
-	author_name?: string;
-	author_link?: string;
-	author_icon?: string;
-	title?: string;
-	title_link?: string;
-	text?: string;
-	fields?: {
-		title: string;
-		value: string;
-		short?: boolean;
-	}[];
-	image_url?: string;
-	thumb_url?: string;
-	footer?: string;
-	footer_icon?: string;
-	ts?: string;
-	[key: string]: unknown;
-}
+export const BotProfileSchema = z.object({
+	id: z.string(),
+	name: z.string(),
+	app_id: z.string(),
+	team_id: z.string(),
+	icons: z.record(z.string()),
+	updated: z.number(),
+	deleted: z.boolean(),
+});
+export type BotProfile = z.infer<typeof BotProfileSchema>;
 
-interface Block {
-	type: string;
-	block_id?: string;
-	[key: string]: unknown;
-}
+const ChannelTypeSchema = z.enum([
+	'channel',
+	'group',
+	'im',
+	'mpim',
+	'app_home',
+]);
+type ChannelTypes = z.infer<typeof ChannelTypeSchema>;
 
-interface KnownBlock extends Block {
-	type:
-		| 'section'
-		| 'divider'
-		| 'image'
-		| 'actions'
-		| 'context'
-		| 'input'
-		| 'file'
-		| 'header'
-		| 'video'
-		| 'rich_text';
-}
+const BlockSchema = z.object({
+	type: z.string(),
+	block_id: z.string().optional(),
+});
 
-interface File {
-	id: string;
-	created: number;
-	name: string | null;
-	title: string | null;
-	mimetype: string;
-	filetype: string;
-	pretty_type: string;
-	user?: string;
-	editable: boolean;
-	size: number;
-	mode: 'hosted' | 'external' | 'snippet' | 'post';
-	is_external: boolean;
-	external_type: string | null;
-	is_public: boolean;
-	public_url_shared: boolean;
-	display_as_bot: boolean;
-	username: string | null;
-	url_private?: string;
-	url_private_download?: string;
-	thumb_64?: string;
-	thumb_80?: string;
-	thumb_160?: string;
-	thumb_360?: string;
-	thumb_360_w?: number;
-	thumb_360_h?: number;
-	thumb_360_gif?: string;
-	thumb_480?: string;
-	thumb_720?: string;
-	thumb_960?: string;
-	thumb_1024?: string;
-	permalink: string;
-	permalink_public?: string;
-	edit_link?: string;
-	image_exif_rotation?: number;
-	original_w?: number;
-	original_h?: number;
-	deanimate_gif?: string;
-	preview?: string;
-	preview_highlight?: string;
-	lines?: string;
-	lines_more?: string;
-	preview_is_truncated?: boolean;
-	has_rich_preview?: boolean;
-	shares?: {
-		[key: string]: unknown;
-	};
-	channels: string[] | null;
-	groups: string[] | null;
-	users?: string[];
-	pinned_to?: string[];
-	reactions?: {
-		[key: string]: unknown;
-	}[];
-	is_starred?: boolean;
-	num_stars?: number;
-	initial_comment?: string;
-	comments_count?: string;
-}
+const KnownBlockSchema = BlockSchema.extend({
+	type: z.enum([
+		'section',
+		'divider',
+		'image',
+		'actions',
+		'context',
+		'input',
+		'file',
+		'header',
+		'video',
+		'rich_text',
+	]),
+});
 
-export type AllMessageEvents =
-	| GenericMessageEvent
-	| BotMessageEvent
-	| ChannelArchiveMessageEvent
-	| ChannelJoinMessageEvent
-	| ChannelLeaveMessageEvent
-	| ChannelNameMessageEvent
-	| ChannelPostingPermissionsMessageEvent
-	| ChannelPurposeMessageEvent
-	| ChannelTopicMessageEvent
-	| ChannelUnarchiveMessageEvent
-	| EKMAccessDeniedMessageEvent
-	| FileShareMessageEvent
-	| MeMessageEvent
-	| MessageChangedEvent
-	| MessageDeletedEvent
-	| MessageRepliedEvent
-	| ThreadBroadcastMessageEvent;
+const MessageAttachmentSchema = z.object({
+	blocks: z.array(z.union([KnownBlockSchema, BlockSchema])).optional(),
+	fallback: z.string().optional(),
+	color: z.string().optional(),
+	pretext: z.string().optional(),
+	author_name: z.string().optional(),
+	author_link: z.string().optional(),
+	author_icon: z.string().optional(),
+	title: z.string().optional(),
+	title_link: z.string().optional(),
+	text: z.string().optional(),
+	fields: z
+		.array(
+			z.object({
+				title: z.string(),
+				value: z.string(),
+				short: z.boolean().optional(),
+			}),
+		)
+		.optional(),
+	image_url: z.string().optional(),
+	thumb_url: z.string().optional(),
+	footer: z.string().optional(),
+	footer_icon: z.string().optional(),
+	ts: z.string().optional(),
+});
 
-export type MessageEvent = AllMessageEvents;
+const SlackFileSchema = z.object({
+	id: z.string(),
+	created: z.number(),
+	name: z.string().nullable(),
+	title: z.string().nullable(),
+	mimetype: z.string(),
+	filetype: z.string(),
+	pretty_type: z.string(),
+	user: z.string().optional(),
+	editable: z.boolean(),
+	size: z.number(),
+	mode: z.enum(['hosted', 'external', 'snippet', 'post']),
+	is_external: z.boolean(),
+	external_type: z.string().nullable(),
+	is_public: z.boolean(),
+	public_url_shared: z.boolean(),
+	display_as_bot: z.boolean(),
+	username: z.string().nullable(),
+	url_private: z.string().optional(),
+	url_private_download: z.string().optional(),
+	permalink: z.string(),
+	permalink_public: z.string().optional(),
+	channels: z.array(z.string()).nullable(),
+	groups: z.array(z.string()).nullable(),
+	users: z.array(z.string()).optional(),
+	is_starred: z.boolean().optional(),
+	num_stars: z.number().optional(),
+});
 
-export interface GenericMessageEvent {
-	type: 'message';
-	subtype: undefined;
-	event_ts: string;
-	team?: string;
-	channel: string;
-	user: string;
-	bot_id?: string;
-	bot_profile?: BotProfile;
-	text?: string;
-	ts: string;
-	thread_ts?: string;
-	channel_type: ChannelTypes;
-	attachments?: MessageAttachment[];
-	blocks?: (KnownBlock | Block)[];
-	files?: File[];
-	edited?: {
-		user: string;
-		ts: string;
-	};
-	client_msg_id?: string;
-	parent_user_id?: string;
-	is_starred?: boolean;
-	pinned_to?: string[];
-	reactions?: {
-		name: string;
-		count: number;
-		users: string[];
-	}[];
-	assistant_thread?: Record<string, unknown>;
-}
+// ─────────────────────────────────────────────────────────────────────────────
+// Non-recursive message event schemas
+// ─────────────────────────────────────────────────────────────────────────────
 
-export interface BotMessageEvent {
-	type: 'message';
-	subtype: 'bot_message';
-	event_ts: string;
-	channel: string;
-	channel_type: ChannelTypes;
-	streaming_state?: 'in_progress' | 'completed' | 'errored';
-	ts: string;
-	text: string;
-	bot_id: string;
-	username?: string;
-	icons?: {
-		[size: string]: string;
-	};
-	user?: string;
-	attachments?: MessageAttachment[];
-	blocks?: (KnownBlock | Block)[];
-	edited?: {
-		user: string;
-		ts: string;
-	};
-	thread_ts?: string;
-}
+export const GenericMessageEventSchema = z.object({
+	type: z.literal('message'),
+	event_ts: z.string(),
+	team: z.string().optional(),
+	channel: z.string(),
+	user: z.string(),
+	bot_id: z.string().optional(),
+	bot_profile: BotProfileSchema.optional(),
+	text: z.string().optional(),
+	ts: z.string(),
+	thread_ts: z.string().optional(),
+	channel_type: ChannelTypeSchema,
+	attachments: z.array(MessageAttachmentSchema).optional(),
+	blocks: z.array(z.union([KnownBlockSchema, BlockSchema])).optional(),
+	files: z.array(SlackFileSchema).optional(),
+	edited: z.object({ user: z.string(), ts: z.string() }).optional(),
+	client_msg_id: z.string().optional(),
+	parent_user_id: z.string().optional(),
+	is_starred: z.boolean().optional(),
+	pinned_to: z.array(z.string()).optional(),
+	reactions: z
+		.array(
+			z.object({
+				name: z.string(),
+				count: z.number(),
+				users: z.array(z.string()),
+			}),
+		)
+		.optional(),
+	assistant_thread: z.record(z.unknown()).optional(),
+});
+export type GenericMessageEvent = z.infer<typeof GenericMessageEventSchema>;
 
-export interface ChannelArchiveMessageEvent {
-	type: 'message';
-	subtype: 'channel_archive';
-	team: string;
-	user: string;
-	channel: string;
-	channel_type: ChannelTypes;
-	text: string;
-	ts: string;
-	event_ts: string;
-}
+export const BotMessageEventSchema = z.object({
+	type: z.literal('message'),
+	subtype: z.literal('bot_message'),
+	event_ts: z.string(),
+	channel: z.string(),
+	channel_type: ChannelTypeSchema,
+	streaming_state: z.enum(['in_progress', 'completed', 'errored']).optional(),
+	ts: z.string(),
+	text: z.string(),
+	bot_id: z.string(),
+	username: z.string().optional(),
+	user: z.string().optional(),
+	attachments: z.array(MessageAttachmentSchema).optional(),
+	blocks: z.array(z.union([KnownBlockSchema, BlockSchema])).optional(),
+	edited: z.object({ user: z.string(), ts: z.string() }).optional(),
+	thread_ts: z.string().optional(),
+});
+export type BotMessageEvent = z.infer<typeof BotMessageEventSchema>;
 
-export interface ChannelJoinMessageEvent {
-	type: 'message';
-	subtype: 'channel_join';
-	team: string;
-	user: string;
-	inviter: string;
-	channel: string;
-	channel_type: ChannelTypes;
-	text: string;
-	ts: string;
-	event_ts: string;
-}
+export const ChannelArchiveMessageEventSchema = z.object({
+	type: z.literal('message'),
+	subtype: z.literal('channel_archive'),
+	team: z.string(),
+	user: z.string(),
+	channel: z.string(),
+	channel_type: ChannelTypeSchema,
+	text: z.string(),
+	ts: z.string(),
+	event_ts: z.string(),
+});
+export type ChannelArchiveMessageEvent = z.infer<
+	typeof ChannelArchiveMessageEventSchema
+>;
 
-export interface ChannelLeaveMessageEvent {
-	type: 'message';
-	subtype: 'channel_leave';
-	team: string;
-	user: string;
-	channel: string;
-	channel_type: ChannelTypes;
-	text: string;
-	ts: string;
-	event_ts: string;
-}
+export const ChannelJoinMessageEventSchema = z.object({
+	type: z.literal('message'),
+	subtype: z.literal('channel_join'),
+	team: z.string(),
+	user: z.string(),
+	inviter: z.string(),
+	channel: z.string(),
+	channel_type: ChannelTypeSchema,
+	text: z.string(),
+	ts: z.string(),
+	event_ts: z.string(),
+});
+export type ChannelJoinMessageEvent = z.infer<
+	typeof ChannelJoinMessageEventSchema
+>;
 
-export interface ChannelNameMessageEvent {
-	type: 'message';
-	subtype: 'channel_name';
-	team: string;
-	user: string;
-	name: string;
-	old_name: string;
-	channel: string;
-	channel_type: ChannelTypes;
-	text: string;
-	ts: string;
-	event_ts: string;
-}
+export const ChannelLeaveMessageEventSchema = z.object({
+	type: z.literal('message'),
+	subtype: z.literal('channel_leave'),
+	team: z.string(),
+	user: z.string(),
+	channel: z.string(),
+	channel_type: ChannelTypeSchema,
+	text: z.string(),
+	ts: z.string(),
+	event_ts: z.string(),
+});
+export type ChannelLeaveMessageEvent = z.infer<
+	typeof ChannelLeaveMessageEventSchema
+>;
 
-export interface ChannelPostingPermissionsMessageEvent {
-	type: 'message';
-	subtype: 'channel_posting_permissions';
-	user: string;
-	channel: string;
-	channel_type: ChannelTypes;
-	text: string;
-	ts: string;
-	event_ts: string;
-}
+export const ChannelNameMessageEventSchema = z.object({
+	type: z.literal('message'),
+	subtype: z.literal('channel_name'),
+	team: z.string(),
+	user: z.string(),
+	name: z.string(),
+	old_name: z.string(),
+	channel: z.string(),
+	channel_type: ChannelTypeSchema,
+	text: z.string(),
+	ts: z.string(),
+	event_ts: z.string(),
+});
+export type ChannelNameMessageEvent = z.infer<
+	typeof ChannelNameMessageEventSchema
+>;
 
-export interface ChannelPurposeMessageEvent {
-	type: 'message';
-	subtype: 'channel_purpose';
-	user: string;
-	channel: string;
-	channel_type: ChannelTypes;
-	text: string;
-	purpose: string;
-	ts: string;
-	event_ts: string;
-}
+export const ChannelPostingPermissionsMessageEventSchema = z.object({
+	type: z.literal('message'),
+	subtype: z.literal('channel_posting_permissions'),
+	user: z.string(),
+	channel: z.string(),
+	channel_type: ChannelTypeSchema,
+	text: z.string(),
+	ts: z.string(),
+	event_ts: z.string(),
+});
+export type ChannelPostingPermissionsMessageEvent = z.infer<
+	typeof ChannelPostingPermissionsMessageEventSchema
+>;
 
-export interface ChannelTopicMessageEvent {
-	type: 'message';
-	subtype: 'channel_topic';
-	user: string;
-	channel: string;
-	channel_type: ChannelTypes;
-	text: string;
-	topic: string;
-	ts: string;
-	event_ts: string;
-}
+export const ChannelPurposeMessageEventSchema = z.object({
+	type: z.literal('message'),
+	subtype: z.literal('channel_purpose'),
+	user: z.string(),
+	channel: z.string(),
+	channel_type: ChannelTypeSchema,
+	text: z.string(),
+	purpose: z.string(),
+	ts: z.string(),
+	event_ts: z.string(),
+});
+export type ChannelPurposeMessageEvent = z.infer<
+	typeof ChannelPurposeMessageEventSchema
+>;
 
-export interface ChannelUnarchiveMessageEvent {
-	type: 'message';
-	subtype: 'channel_unarchive';
-	team: string;
-	user: string;
-	channel: string;
-	channel_type: ChannelTypes;
-	text: string;
-	ts: string;
-	event_ts: string;
-}
+export const ChannelTopicMessageEventSchema = z.object({
+	type: z.literal('message'),
+	subtype: z.literal('channel_topic'),
+	user: z.string(),
+	channel: z.string(),
+	channel_type: ChannelTypeSchema,
+	text: z.string(),
+	topic: z.string(),
+	ts: z.string(),
+	event_ts: z.string(),
+});
+export type ChannelTopicMessageEvent = z.infer<
+	typeof ChannelTopicMessageEventSchema
+>;
 
-export interface EKMAccessDeniedMessageEvent {
-	type: 'message';
-	subtype: 'ekm_access_denied';
-	event_ts: string;
-	channel: string;
-	channel_type: ChannelTypes;
-	ts: string;
-	text: string;
-	user: 'UREVOKEDU';
-}
+export const ChannelUnarchiveMessageEventSchema = z.object({
+	type: z.literal('message'),
+	subtype: z.literal('channel_unarchive'),
+	team: z.string(),
+	user: z.string(),
+	channel: z.string(),
+	channel_type: ChannelTypeSchema,
+	text: z.string(),
+	ts: z.string(),
+	event_ts: z.string(),
+});
+export type ChannelUnarchiveMessageEvent = z.infer<
+	typeof ChannelUnarchiveMessageEventSchema
+>;
 
-export interface FileShareMessageEvent {
-	type: 'message';
-	subtype: 'file_share';
-	text: string;
-	attachments?: MessageAttachment[];
-	blocks?: (KnownBlock | Block)[];
-	files?: File[];
-	upload?: boolean;
-	display_as_bot?: boolean;
-	x_files?: string[];
-	user: string;
-	parent_user_id?: string;
-	ts: string;
-	thread_ts?: string;
-	channel: string;
-	channel_type: ChannelTypes;
-	event_ts: string;
-}
+export const EKMAccessDeniedMessageEventSchema = z.object({
+	type: z.literal('message'),
+	subtype: z.literal('ekm_access_denied'),
+	event_ts: z.string(),
+	channel: z.string(),
+	channel_type: ChannelTypeSchema,
+	ts: z.string(),
+	text: z.string(),
+	user: z.literal('UREVOKEDU'),
+});
+export type EKMAccessDeniedMessageEvent = z.infer<
+	typeof EKMAccessDeniedMessageEventSchema
+>;
 
-export interface MeMessageEvent {
-	type: 'message';
-	subtype: 'me_message';
-	event_ts: string;
-	channel: string;
-	channel_type: ChannelTypes;
-	user: string;
-	text: string;
-	ts: string;
-}
+export const FileShareMessageEventSchema = z.object({
+	type: z.literal('message'),
+	subtype: z.literal('file_share'),
+	text: z.string(),
+	attachments: z.array(MessageAttachmentSchema).optional(),
+	blocks: z.array(z.union([KnownBlockSchema, BlockSchema])).optional(),
+	files: z.array(SlackFileSchema).optional(),
+	upload: z.boolean().optional(),
+	display_as_bot: z.boolean().optional(),
+	x_files: z.array(z.string()).optional(),
+	user: z.string(),
+	parent_user_id: z.string().optional(),
+	ts: z.string(),
+	thread_ts: z.string().optional(),
+	channel: z.string(),
+	channel_type: ChannelTypeSchema,
+	event_ts: z.string(),
+});
+export type FileShareMessageEvent = z.infer<typeof FileShareMessageEventSchema>;
+
+export const MeMessageEventSchema = z.object({
+	type: z.literal('message'),
+	subtype: z.literal('me_message'),
+	event_ts: z.string(),
+	channel: z.string(),
+	channel_type: ChannelTypeSchema,
+	user: z.string(),
+	text: z.string(),
+	ts: z.string(),
+});
+export type MeMessageEvent = z.infer<typeof MeMessageEventSchema>;
+
+export const ThreadBroadcastMessageEventSchema = z.object({
+	type: z.literal('message'),
+	subtype: z.literal('thread_broadcast'),
+	event_ts: z.string(),
+	text: z.string(),
+	attachments: z.array(MessageAttachmentSchema).optional(),
+	blocks: z.array(z.union([KnownBlockSchema, BlockSchema])).optional(),
+	user: z.string(),
+	ts: z.string(),
+	thread_ts: z.string().optional(),
+	root: z.object({
+		type: z.literal('message'),
+		event_ts: z.string(),
+		channel: z.string(),
+		ts: z.string(),
+		channel_type: ChannelTypeSchema,
+		thread_ts: z.string(),
+		reply_count: z.number(),
+		reply_users_count: z.number(),
+		latest_reply: z.string(),
+		reply_users: z.array(z.string()),
+		user: z.string().optional(),
+		text: z.string().optional(),
+		bot_id: z.string().optional(),
+	}),
+	client_msg_id: z.string(),
+	channel: z.string(),
+	channel_type: ChannelTypeSchema,
+});
+export type ThreadBroadcastMessageEvent = z.infer<
+	typeof ThreadBroadcastMessageEventSchema
+>;
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Recursive message event types
+//
+// MessageChangedEvent, MessageDeletedEvent, MessageRepliedEvent all reference
+// MessageEvent, creating a cycle. TypeScript interfaces handle cycles natively.
+// The Zod schemas use z.lazy(() => MessageEventSchema) for the recursive fields,
+// which defers evaluation until parse time — by then the full module is loaded.
+// ─────────────────────────────────────────────────────────────────────────────
 
 export interface MessageChangedEvent {
 	type: 'message';
@@ -373,303 +416,316 @@ export interface MessageRepliedEvent {
 	message: MessageEvent & {
 		thread_ts: string;
 		reply_count: number;
-		replies: MessageEvent[];
+		reply_users_count?: number;
+		latest_reply?: string;
+		reply_users?: string[];
+		/** Slack sends minimal reply references at runtime, not full message objects. */
+		replies: { user: string; ts: string }[];
 	};
 }
 
-export interface ThreadBroadcastMessageEvent {
-	type: 'message';
-	subtype: 'thread_broadcast';
-	event_ts: string;
-	text: string;
-	attachments?: MessageAttachment[];
-	blocks?: (KnownBlock | Block)[];
-	user: string;
-	ts: string;
-	thread_ts?: string;
-	root: (GenericMessageEvent | BotMessageEvent) & {
-		thread_ts: string;
-		reply_count: number;
-		reply_users_count: number;
-		latest_reply: string;
-		reply_users: string[];
-	};
-	client_msg_id: string;
-	channel: string;
-	channel_type: ChannelTypes;
-}
+export type AllMessageEvents =
+	| GenericMessageEvent
+	| BotMessageEvent
+	| ChannelArchiveMessageEvent
+	| ChannelJoinMessageEvent
+	| ChannelLeaveMessageEvent
+	| ChannelNameMessageEvent
+	| ChannelPostingPermissionsMessageEvent
+	| ChannelPurposeMessageEvent
+	| ChannelTopicMessageEvent
+	| ChannelUnarchiveMessageEvent
+	| EKMAccessDeniedMessageEvent
+	| FileShareMessageEvent
+	| MeMessageEvent
+	| MessageChangedEvent
+	| MessageDeletedEvent
+	| MessageRepliedEvent
+	| ThreadBroadcastMessageEvent;
 
-export interface AppMentionEvent {
-	type: 'app_mention';
-	subtype?: string;
-	bot_id?: string;
-	bot_profile?: BotProfile;
-	username?: string;
-	team?: string;
-	user_team?: string;
-	source_team?: string;
-	user_profile?: {
-		name: string;
-		first_name: string;
-		real_name: string;
-		display_name: string;
-		team: string;
-		is_restricted?: boolean;
-		is_ultra_restricted?: boolean;
-		avatar_hash?: string;
-		image_72?: string;
-	};
-	user?: string;
-	text: string;
-	attachments?: MessageAttachment[];
-	blocks?: (KnownBlock | Block)[];
-	files?: {
-		id: string;
-		created: number;
-		timestamp: number;
-		name: string;
-		title: string;
-		mimetype: string;
-		filetype: string;
-		pretty_type: string;
-		user: string;
-		user_team: string;
-		editable: boolean;
-		size: number;
-		mode: string;
-		is_external: boolean;
-		external_type: string;
-		is_public: boolean;
-		public_url_shared: boolean;
-		display_as_bot: boolean;
-		username: string;
-		url_private: string;
-		url_private_download: string;
-		media_display_type: string;
-		thumb_pdf?: string;
-		thumb_pdf_w?: number;
-		thumb_pdf_h?: number;
-		thumb_64?: string;
-		thumb_80?: string;
-		thumb_360?: string;
-		thumb_360_w?: number;
-		thumb_360_h?: number;
-		thumb_480?: string;
-		thumb_480_w?: number;
-		thumb_480_h?: number;
-		thumb_160?: string;
-		thumb_720?: string;
-		thumb_720_w?: number;
-		thumb_720_h?: number;
-		thumb_800?: string;
-		thumb_800_w?: number;
-		thumb_800_h?: number;
-		thumb_960?: string;
-		thumb_960_w?: number;
-		thumb_960_h?: number;
-		thumb_1024?: string;
-		thumb_1024_w?: number;
-		thumb_1024_h?: number;
-		original_w?: number;
-		original_h?: number;
-		thumb_tiny?: string;
-		permalink: string;
-		permalink_public: string;
-		is_starred: boolean;
-		has_rich_preview: boolean;
-		file_access: string;
-	}[];
-	upload?: boolean;
-	display_as_bot?: boolean;
-	edited?: {
-		user: string;
-		ts: string;
-	};
-	ts: string;
-	channel: string;
-	event_ts: string;
-	thread_ts?: string;
-	client_msg_id?: string;
-}
+export type MessageEvent = AllMessageEvents;
 
-export interface ChannelCreatedEvent {
-	type: 'channel_created';
-	event_ts: string;
-	channel: {
-		id: string;
-		is_channel: boolean;
-		name: string;
-		name_normalized: string;
-		created: number;
-		creator: string;
-		is_shared: boolean;
-		is_org_shared: boolean;
-		context_team_id: string;
-		is_archived: boolean;
-		is_frozen: boolean;
-		is_general: boolean;
-		is_group: boolean;
-		is_private: boolean;
-		is_ext_shared: boolean;
-		is_im: boolean;
-		is_mpim: boolean;
-		is_pending_ext_shared: boolean;
-	};
-}
+export const MessageChangedEventSchema: z.ZodType<MessageChangedEvent> =
+	z.object({
+		type: z.literal('message'),
+		subtype: z.literal('message_changed'),
+		event_ts: z.string(),
+		hidden: z.literal(true),
+		channel: z.string(),
+		channel_type: ChannelTypeSchema,
+		ts: z.string(),
+		message: z.lazy(() => MessageEventSchema),
+		previous_message: z.lazy(() => MessageEventSchema),
+	});
 
-interface ReactionMessageItem {
-	type: 'message';
-	channel: string;
-	ts: string;
-}
+export const MessageDeletedEventSchema: z.ZodType<MessageDeletedEvent> =
+	z.object({
+		type: z.literal('message'),
+		subtype: z.literal('message_deleted'),
+		event_ts: z.string(),
+		hidden: z.literal(true),
+		channel: z.string(),
+		channel_type: ChannelTypeSchema,
+		ts: z.string(),
+		deleted_ts: z.string(),
+		previous_message: z.lazy(() => MessageEventSchema),
+	});
 
-export interface ChallengeEvent {
-	type: 'url_verification';
-	challenge: string;
-	token: string;
-}
+export const MessageRepliedEventSchema: z.ZodType<MessageRepliedEvent> =
+	z.object({
+		type: z.literal('message'),
+		subtype: z.literal('message_replied'),
+		event_ts: z.string(),
+		hidden: z.literal(true),
+		channel: z.string(),
+		channel_type: ChannelTypeSchema,
+		ts: z.string(),
+		message: z.lazy(() => MessageEventSchema).and(
+			z.object({
+				thread_ts: z.string(),
+				reply_count: z.number(),
+				reply_users_count: z.number().optional(),
+				latest_reply: z.string().optional(),
+				reply_users: z.array(z.string()).optional(),
+				replies: z.array(
+					z.object({ user: z.string(), ts: z.string() }),
+				),
+			}),
+		),
+	});
 
-export interface ReactionAddedEvent {
-	type: 'reaction_added';
-	user: string;
-	reaction: string;
-	item_user: string;
-	item: ReactionMessageItem;
-	event_ts: string;
-}
+export const AllMessageEventsSchema: z.ZodType<AllMessageEvents> = z.union([
+	GenericMessageEventSchema,
+	BotMessageEventSchema,
+	ChannelArchiveMessageEventSchema,
+	ChannelJoinMessageEventSchema,
+	ChannelLeaveMessageEventSchema,
+	ChannelNameMessageEventSchema,
+	ChannelPostingPermissionsMessageEventSchema,
+	ChannelPurposeMessageEventSchema,
+	ChannelTopicMessageEventSchema,
+	ChannelUnarchiveMessageEventSchema,
+	EKMAccessDeniedMessageEventSchema,
+	FileShareMessageEventSchema,
+	MeMessageEventSchema,
+	MessageChangedEventSchema,
+	MessageDeletedEventSchema,
+	MessageRepliedEventSchema,
+	ThreadBroadcastMessageEventSchema,
+]);
 
-export interface ReactionRemovedEvent {
-	type: 'reaction_removed';
-	user: string;
-	reaction: string;
-	item_user: string;
-	item: ReactionMessageItem;
-	event_ts: string;
-}
+export const MessageEventSchema: z.ZodType<MessageEvent> =
+	AllMessageEventsSchema;
 
-interface UserProfile {
-	title: string;
-	phone: string;
-	skype: string;
-	real_name: string;
-	real_name_normalized: string;
-	display_name: string;
-	display_name_normalized: string;
-	status_text: string;
-	status_text_canonical: string;
-	status_emoji: string;
-	status_emoji_display_info: StatusEmojiDisplayInfo[];
-	status_expiration: number;
-	avatar_hash: string;
-	huddle_state?: string;
-	huddle_state_expiration_ts?: number;
-	first_name: string;
-	last_name: string;
-	email?: string;
-	image_original?: string;
-	is_custom_image?: boolean;
-	image_24: string;
-	image_32: string;
-	image_48: string;
-	image_72: string;
-	image_192: string;
-	image_512: string;
-	image_1024?: string;
-	team: string;
-	fields:
-		| {
-				[key: string]: {
-					value: string;
-					alt: string;
-				};
-		  }
-		| []
-		| null;
-}
+// ─────────────────────────────────────────────────────────────────────────────
+// Other event schemas
+// ─────────────────────────────────────────────────────────────────────────────
 
-interface SlackUser {
-	id: string;
-	team_id: string;
-	name: string;
-	deleted: boolean;
-	color: string;
-	real_name: string;
-	tz: string;
-	tz_label: string;
-	tz_offset: number;
-	profile: UserProfile;
-	is_admin: boolean;
-	is_owner: boolean;
-	is_primary_owner: boolean;
-	is_restricted: boolean;
-	is_ultra_restricted: boolean;
-	is_bot: boolean;
-	is_stranger?: boolean;
-	updated: number;
-	is_email_confirmed: boolean;
-	is_app_user: boolean;
-	is_invited_user?: boolean;
-	has_2fa?: boolean;
-	locale: string;
-	presence?: string;
-	enterprise_user?: {
-		id: string;
-		enterprise_id: string;
-		enterprise_name: string;
-		is_admin: boolean;
-		is_owner: boolean;
-		teams: string[];
-	};
-	two_factor_type?: string;
-	has_files?: boolean;
-	is_workflow_bot?: boolean;
-	who_can_share_contact_card: string;
-}
+export const AppMentionEventSchema = z.object({
+	type: z.literal('app_mention'),
+	subtype: z.string().optional(),
+	bot_id: z.string().optional(),
+	bot_profile: BotProfileSchema.optional(),
+	username: z.string().optional(),
+	team: z.string().optional(),
+	user: z.string().optional(),
+	text: z.string(),
+	attachments: z.array(MessageAttachmentSchema).optional(),
+	blocks: z.array(z.union([KnownBlockSchema, BlockSchema])).optional(),
+	upload: z.boolean().optional(),
+	display_as_bot: z.boolean().optional(),
+	edited: z.object({ user: z.string(), ts: z.string() }).optional(),
+	ts: z.string(),
+	channel: z.string(),
+	event_ts: z.string(),
+	thread_ts: z.string().optional(),
+	client_msg_id: z.string().optional(),
+});
+export type AppMentionEvent = z.infer<typeof AppMentionEventSchema>;
 
-export interface TeamJoinEvent {
-	type: 'team_join';
-	user: SlackUser;
-	cache_ts: number;
-	event_ts: string;
-}
+export const ChannelCreatedEventSchema = z.object({
+	type: z.literal('channel_created'),
+	event_ts: z.string(),
+	channel: z.object({
+		id: z.string(),
+		is_channel: z.boolean(),
+		name: z.string(),
+		name_normalized: z.string(),
+		created: z.number(),
+		creator: z.string(),
+		is_shared: z.boolean(),
+		is_org_shared: z.boolean(),
+		context_team_id: z.string(),
+		is_archived: z.boolean(),
+		is_frozen: z.boolean(),
+		is_general: z.boolean(),
+		is_group: z.boolean(),
+		is_private: z.boolean(),
+		is_ext_shared: z.boolean(),
+		is_im: z.boolean(),
+		is_mpim: z.boolean(),
+		is_pending_ext_shared: z.boolean(),
+	}),
+});
+export type ChannelCreatedEvent = z.infer<typeof ChannelCreatedEventSchema>;
 
-export interface UserChangeEvent {
-	type: 'user_change';
-	user: SlackUser;
-	cache_ts: number;
-	event_ts: string;
-}
+const ReactionMessageItemSchema = z.object({
+	type: z.literal('message'),
+	channel: z.string(),
+	ts: z.string(),
+});
 
-export interface FileCreatedEvent {
-	type: 'file_created';
-	file_id: string;
-	user_id: string;
-	file: {
-		id: string;
-	};
-	event_ts: string;
-}
+export const ChallengeEventSchema = z.object({
+	type: z.literal('url_verification'),
+	challenge: z.string(),
+	token: z.string(),
+});
+export type ChallengeEvent = z.infer<typeof ChallengeEventSchema>;
 
-export interface FilePublicEvent {
-	type: 'file_public';
-	file_id: string;
-	user_id: string;
-	file: {
-		id: string;
-	};
-	event_ts: string;
-}
+export const ReactionAddedEventSchema = z.object({
+	type: z.literal('reaction_added'),
+	user: z.string(),
+	reaction: z.string(),
+	item_user: z.string(),
+	item: ReactionMessageItemSchema,
+	event_ts: z.string(),
+});
+export type ReactionAddedEvent = z.infer<typeof ReactionAddedEventSchema>;
 
-export interface FileSharedEvent {
-	type: 'file_shared';
-	file_id: string;
-	user_id: string;
-	file: {
-		id: string;
-	};
-	channel_id: string;
-	event_ts: string;
-}
+export const ReactionRemovedEventSchema = z.object({
+	type: z.literal('reaction_removed'),
+	user: z.string(),
+	reaction: z.string(),
+	item_user: z.string(),
+	item: ReactionMessageItemSchema,
+	event_ts: z.string(),
+});
+export type ReactionRemovedEvent = z.infer<typeof ReactionRemovedEventSchema>;
+
+const UserProfileSchema = z.object({
+	title: z.string(),
+	phone: z.string(),
+	skype: z.string(),
+	real_name: z.string(),
+	real_name_normalized: z.string(),
+	display_name: z.string(),
+	display_name_normalized: z.string(),
+	status_text: z.string(),
+	status_text_canonical: z.string(),
+	status_emoji: z.string(),
+	status_emoji_display_info: z.array(StatusEmojiDisplayInfoSchema),
+	status_expiration: z.number(),
+	avatar_hash: z.string(),
+	huddle_state: z.string().optional(),
+	huddle_state_expiration_ts: z.number().optional(),
+	first_name: z.string(),
+	last_name: z.string(),
+	email: z.string().optional(),
+	image_original: z.string().optional(),
+	is_custom_image: z.boolean().optional(),
+	image_24: z.string(),
+	image_32: z.string(),
+	image_48: z.string(),
+	image_72: z.string(),
+	image_192: z.string(),
+	image_512: z.string(),
+	image_1024: z.string().optional(),
+	team: z.string(),
+	fields: z.union([
+		z.record(z.object({ value: z.string(), alt: z.string() })),
+		z.array(z.never()),
+		z.null(),
+	]),
+});
+
+const SlackUserSchema = z.object({
+	id: z.string(),
+	team_id: z.string(),
+	name: z.string(),
+	deleted: z.boolean(),
+	color: z.string(),
+	real_name: z.string(),
+	tz: z.string(),
+	tz_label: z.string(),
+	tz_offset: z.number(),
+	profile: UserProfileSchema,
+	is_admin: z.boolean(),
+	is_owner: z.boolean(),
+	is_primary_owner: z.boolean(),
+	is_restricted: z.boolean(),
+	is_ultra_restricted: z.boolean(),
+	is_bot: z.boolean(),
+	is_stranger: z.boolean().optional(),
+	updated: z.number(),
+	is_email_confirmed: z.boolean(),
+	is_app_user: z.boolean(),
+	is_invited_user: z.boolean().optional(),
+	has_2fa: z.boolean().optional(),
+	locale: z.string(),
+	presence: z.string().optional(),
+	enterprise_user: z
+		.object({
+			id: z.string(),
+			enterprise_id: z.string(),
+			enterprise_name: z.string(),
+			is_admin: z.boolean(),
+			is_owner: z.boolean(),
+			teams: z.array(z.string()),
+		})
+		.optional(),
+	two_factor_type: z.string().optional(),
+	has_files: z.boolean().optional(),
+	is_workflow_bot: z.boolean().optional(),
+	who_can_share_contact_card: z.string(),
+});
+
+export const TeamJoinEventSchema = z.object({
+	type: z.literal('team_join'),
+	user: SlackUserSchema,
+	cache_ts: z.number(),
+	event_ts: z.string(),
+});
+export type TeamJoinEvent = z.infer<typeof TeamJoinEventSchema>;
+
+export const UserChangeEventSchema = z.object({
+	type: z.literal('user_change'),
+	user: SlackUserSchema,
+	cache_ts: z.number(),
+	event_ts: z.string(),
+});
+export type UserChangeEvent = z.infer<typeof UserChangeEventSchema>;
+
+export const FileCreatedEventSchema = z.object({
+	type: z.literal('file_created'),
+	file_id: z.string(),
+	user_id: z.string(),
+	file: z.object({ id: z.string() }),
+	event_ts: z.string(),
+});
+export type FileCreatedEvent = z.infer<typeof FileCreatedEventSchema>;
+
+export const FilePublicEventSchema = z.object({
+	type: z.literal('file_public'),
+	file_id: z.string(),
+	user_id: z.string(),
+	file: z.object({ id: z.string() }),
+	event_ts: z.string(),
+});
+export type FilePublicEvent = z.infer<typeof FilePublicEventSchema>;
+
+export const FileSharedEventSchema = z.object({
+	type: z.literal('file_shared'),
+	file_id: z.string(),
+	user_id: z.string(),
+	file: z.object({ id: z.string() }),
+	channel_id: z.string(),
+	event_ts: z.string(),
+});
+export type FileSharedEvent = z.infer<typeof FileSharedEventSchema>;
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Event name / map
+// ─────────────────────────────────────────────────────────────────────────────
 
 export type SlackEventName =
 	| 'message'
@@ -696,40 +752,101 @@ export interface SlackEventMap {
 	user_change: UserChangeEvent;
 }
 
-export type ReactionItem = {
-	type: 'message';
-	channel: string;
-	ts: string;
-};
+export const ReactionItemSchema = z.object({
+	type: z.literal('message'),
+	channel: z.string(),
+	ts: z.string(),
+});
+export type ReactionItem = z.infer<typeof ReactionItemSchema>;
 
-export type SlackEventPayload<TEvent = unknown> = {
-	token?: string;
-	team_id: string;
-	api_app_id: string;
-	event: TEvent;
-	type: 'event_callback';
-	event_id: string;
-	event_time: number;
-	event_context?: string;
-	authorizations?: Array<{
-		enterprise_id: string | null;
-		team_id: string;
-		user_id: string;
-		is_bot: boolean;
-		is_enterprise_install: boolean;
-	}>;
-};
+// ─────────────────────────────────────────────────────────────────────────────
+// Webhook payload wrappers
+// ─────────────────────────────────────────────────────────────────────────────
 
-export type SlackUrlVerificationPayload = {
-	type: 'url_verification';
-	challenge: string;
-};
+const SlackEventPayloadBaseSchema = z.object({
+	token: z.string().optional(),
+	team_id: z.string(),
+	api_app_id: z.string(),
+	type: z.literal('event_callback'),
+	event_id: z.string(),
+	event_time: z.number(),
+	event_context: z.string().optional(),
+	authorizations: z
+		.array(
+			z.object({
+				enterprise_id: z.string().nullable(),
+				team_id: z.string(),
+				user_id: z.string(),
+				is_bot: z.boolean(),
+				is_enterprise_install: z.boolean(),
+			}),
+		)
+		.optional(),
+});
+
+export const SlackUrlVerificationPayloadSchema = z.object({
+	type: z.literal('url_verification'),
+	challenge: z.string(),
+});
+export type SlackUrlVerificationPayload = z.infer<
+	typeof SlackUrlVerificationPayloadSchema
+>;
+
+// Generic SlackEventPayload — keeps the TypeScript generic for use in typed
+// webhook handler signatures while exposing a base Zod schema for inspection.
+export type SlackEventPayload<TEvent = unknown> = z.infer<
+	typeof SlackEventPayloadBaseSchema
+> & { event: TEvent };
 
 export type SlackWebhookPayload<TEvent = unknown> =
 	| SlackEventPayload<TEvent>
 	| SlackUrlVerificationPayload;
 
-// Webhook Response Types
+// ─────────────────────────────────────────────────────────────────────────────
+// Per-webhook payload schemas (request.payload in the before hook)
+// ─────────────────────────────────────────────────────────────────────────────
+
+export const SlackChallengePayloadSchema = SlackUrlVerificationPayloadSchema;
+
+export const SlackMessagePayloadSchema = SlackEventPayloadBaseSchema.extend({
+	event: MessageEventSchema,
+});
+
+export const SlackChannelCreatedPayloadSchema =
+	SlackEventPayloadBaseSchema.extend({
+		event: ChannelCreatedEventSchema,
+	});
+
+export const SlackReactionAddedPayloadSchema =
+	SlackEventPayloadBaseSchema.extend({
+		event: ReactionAddedEventSchema,
+	});
+
+export const SlackTeamJoinPayloadSchema = SlackEventPayloadBaseSchema.extend({
+	event: TeamJoinEventSchema,
+});
+
+export const SlackUserChangePayloadSchema = SlackEventPayloadBaseSchema.extend({
+	event: UserChangeEventSchema,
+});
+
+export const SlackFileCreatedPayloadSchema = SlackEventPayloadBaseSchema.extend(
+	{
+		event: FileCreatedEventSchema,
+	},
+);
+
+export const SlackFilePublicPayloadSchema = SlackEventPayloadBaseSchema.extend({
+	event: FilePublicEventSchema,
+});
+
+export const SlackFileSharedPayloadSchema = SlackEventPayloadBaseSchema.extend({
+	event: FileSharedEventSchema,
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+// SlackWebhookOutputs — response.data type per webhook key
+// ─────────────────────────────────────────────────────────────────────────────
 
 export type SlackWebhookOutputs = {
 	reactionAdded: ReactionAddedEvent;
@@ -743,12 +860,9 @@ export type SlackWebhookOutputs = {
 	challenge: SlackUrlVerificationPayload;
 };
 
-import { verifySlackSignature } from '../../../async-core/webhook-utils';
-import type {
-	CorsairWebhookMatcher,
-	RawWebhookRequest,
-	WebhookRequest,
-} from '../../../core';
+// ─────────────────────────────────────────────────────────────────────────────
+// Utilities
+// ─────────────────────────────────────────────────────────────────────────────
 
 function parseBody(body: unknown): unknown {
 	return typeof body === 'string' ? JSON.parse(body) : body;
