@@ -1,20 +1,11 @@
 import type { NotionWebhooks } from '..';
-import { createNotionMatch, verifyNotionWebhookSignature } from './types';
+import { createNotionMatch } from './types';
 
 export const verification: NotionWebhooks['verification'] = {
 	match: createNotionMatch('url_verification'),
 	handler: async (ctx, request) => {
-		const signingSecret = ctx.key;
-		const verification = verifyNotionWebhookSignature(request, request.payload.verification_token);
-
-		if (!verification.valid) {
-			return {
-				success: false,
-				statusCode: 401,
-				error: verification.error || 'Signature verification failed',
-			};
-		}
-		
+		ctx.keys.set_webhook_signature(request.payload.verification_token);
+		console.log(`Enter this key in your Notion webhook verification modal: ${ctx.key}`)
 
 		if (!('verification_token' in request.payload) || !request.payload.verification_token) {
 			return {

@@ -241,11 +241,6 @@ export async function processWebhook(
 		try {
 			const response = await matched.webhook.handler(webhookRequest);
 
-			if (pluginId === 'notion' && action === 'verification') {
-				// @ts-ignore
-				await tenantScopedCorsair.notion?.keys.set_webhook_signature(response.returnToSender?.verification_token);
-			}
-
 			const returnToSenderObjectExists = !!Object.keys(
 				response.returnToSender || {},
 			)?.length;
