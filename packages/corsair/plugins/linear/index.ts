@@ -10,6 +10,7 @@ import type {
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
+	RequiredPluginWebhookSchemas,
 } from '../../core';
 import type { PickAuth } from '../../core/constants';
 import type { LinearEndpointInputs, LinearEndpointOutputs } from './endpoints';
@@ -34,6 +35,17 @@ import type {
 	ProjectUpdatedEvent,
 } from './webhooks';
 import { CommentWebhooks, IssueWebhooks, ProjectWebhooks } from './webhooks';
+import {
+	CommentCreatedEventSchema,
+	CommentDeletedEventSchema,
+	CommentUpdatedEventSchema,
+	IssueCreatedEventSchema,
+	IssueDeletedEventSchema,
+	IssueUpdatedEventSchema,
+	ProjectCreatedEventSchema,
+	ProjectDeletedEventSchema,
+	ProjectUpdatedEventSchema,
+} from './webhooks/types';
 
 export type LinearPluginOptions = {
 	authType?: PickAuth<'api_key'>;
@@ -232,6 +244,54 @@ export const linearEndpointSchemas = {
 	},
 } satisfies RequiredPluginEndpointSchemas<typeof linearEndpointsNested>;
 
+const linearWebhookSchemas = {
+	'issues.create': {
+		description: 'A new issue was created',
+		payload: IssueCreatedEventSchema,
+		response: IssueCreatedEventSchema,
+	},
+	'issues.update': {
+		description: 'An issue was updated',
+		payload: IssueUpdatedEventSchema,
+		response: IssueUpdatedEventSchema,
+	},
+	'issues.remove': {
+		description: 'An issue was deleted',
+		payload: IssueDeletedEventSchema,
+		response: IssueDeletedEventSchema,
+	},
+	'comments.create': {
+		description: 'A comment was added to an issue',
+		payload: CommentCreatedEventSchema,
+		response: CommentCreatedEventSchema,
+	},
+	'comments.update': {
+		description: 'A comment was updated',
+		payload: CommentUpdatedEventSchema,
+		response: CommentUpdatedEventSchema,
+	},
+	'comments.remove': {
+		description: 'A comment was deleted',
+		payload: CommentDeletedEventSchema,
+		response: CommentDeletedEventSchema,
+	},
+	'projects.create': {
+		description: 'A new project was created',
+		payload: ProjectCreatedEventSchema,
+		response: ProjectCreatedEventSchema,
+	},
+	'projects.update': {
+		description: 'A project was updated',
+		payload: ProjectUpdatedEventSchema,
+		response: ProjectUpdatedEventSchema,
+	},
+	'projects.remove': {
+		description: 'A project was deleted',
+		payload: ProjectDeletedEventSchema,
+		response: ProjectDeletedEventSchema,
+	},
+} satisfies RequiredPluginWebhookSchemas<typeof linearWebhooksNested>;
+
 const defaultAuthType = 'api_key' as const;
 
 /**
@@ -331,6 +391,7 @@ export function linear<const T extends LinearPluginOptions>(
 		webhooks: linearWebhooksNested,
 		endpointMeta: linearEndpointMeta,
 		endpointSchemas: linearEndpointSchemas,
+		webhookSchemas: linearWebhookSchemas,
 		pluginWebhookMatcher: (request) => {
 			const headers = request.headers;
 			const hasLinearSignature = 'linear-signature' in headers;

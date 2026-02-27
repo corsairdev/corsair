@@ -11,6 +11,7 @@ import type {
 	RawWebhookRequest,
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
+	RequiredPluginWebhookSchemas,
 } from '../../core';
 import type { PickAuth } from '../../core/constants';
 import { getValidAccessToken } from './client';
@@ -36,7 +37,11 @@ import type {
 } from './webhooks';
 import { MessageWebhooks } from './webhooks';
 import type { PubSubNotification } from './webhooks/types';
-import { decodePubSubMessage } from './webhooks/types';
+import {
+	decodePubSubMessage,
+	GmailWebhookEventSchema,
+	PubSubNotificationSchema,
+} from './webhooks/types';
 
 /**
  * Auth config extending the base OAuth2 fields with Gmail-specific fields.
@@ -269,6 +274,15 @@ export type GmailKeyBuilderContext = KeyBuilderContext<
 	typeof gmailAuthConfig
 >;
 
+const gmailWebhookSchemas = {
+	messageChanged: {
+		description:
+			'A Gmail message was received, deleted, or had its labels changed',
+		payload: PubSubNotificationSchema,
+		response: GmailWebhookEventSchema,
+	},
+} satisfies RequiredPluginWebhookSchemas<typeof gmailWebhooksNested>;
+
 const defaultAuthType = 'oauth_2' as const;
 
 /**
@@ -400,6 +414,7 @@ export function gmail<const T extends GmailPluginOptions>(
 		webhooks: gmailWebhooksNested,
 		endpointMeta: gmailEndpointMeta,
 		endpointSchemas: gmailEndpointSchemas,
+		webhookSchemas: gmailWebhookSchemas,
 		keyBuilder: async (ctx: GmailKeyBuilderContext) => {
 			if (options.key) {
 				return options.key;
@@ -500,3 +515,5 @@ export type {
 
 export type { GmailCredentials } from './schema';
 export { GmailSchema } from './schema';
+
+export type * from './types';

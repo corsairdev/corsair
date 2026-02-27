@@ -10,6 +10,7 @@ import type {
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
+	RequiredPluginWebhookSchemas,
 } from '../../core';
 import type { PickAuth } from '../../core/constants';
 import { Domains, Emails } from './endpoints';
@@ -36,6 +37,18 @@ import type {
 	ResendWebhookOutputs,
 } from './webhooks';
 import { DomainWebhooks, EmailWebhooks } from './webhooks';
+import {
+	DomainCreatedEventSchema,
+	DomainUpdatedEventSchema,
+	EmailBouncedEventSchema,
+	EmailClickedEventSchema,
+	EmailComplainedEventSchema,
+	EmailDeliveredEventSchema,
+	EmailFailedEventSchema,
+	EmailOpenedEventSchema,
+	EmailReceivedEventSchema,
+	EmailSentEventSchema,
+} from './webhooks/types';
 
 export type ResendPluginOptions = {
 	authType?: PickAuth<'api_key'>;
@@ -164,6 +177,59 @@ const resendWebhooksNested = {
 	},
 } as const;
 
+const resendWebhookSchemas = {
+	'emails.sent': {
+		description: 'An email was accepted and sent',
+		payload: EmailSentEventSchema,
+		response: EmailSentEventSchema,
+	},
+	'emails.delivered': {
+		description: 'An email was delivered to the recipient',
+		payload: EmailDeliveredEventSchema,
+		response: EmailDeliveredEventSchema,
+	},
+	'emails.bounced': {
+		description: 'An email bounced and was not delivered',
+		payload: EmailBouncedEventSchema,
+		response: EmailBouncedEventSchema,
+	},
+	'emails.opened': {
+		description: 'A recipient opened an email',
+		payload: EmailOpenedEventSchema,
+		response: EmailOpenedEventSchema,
+	},
+	'emails.clicked': {
+		description: 'A recipient clicked a link in an email',
+		payload: EmailClickedEventSchema,
+		response: EmailClickedEventSchema,
+	},
+	'emails.complained': {
+		description: 'A recipient marked an email as spam',
+		payload: EmailComplainedEventSchema,
+		response: EmailComplainedEventSchema,
+	},
+	'emails.failed': {
+		description: 'An email failed to send',
+		payload: EmailFailedEventSchema,
+		response: EmailFailedEventSchema,
+	},
+	'emails.received': {
+		description: 'An inbound email was received',
+		payload: EmailReceivedEventSchema,
+		response: EmailReceivedEventSchema,
+	},
+	'domains.created': {
+		description: 'A new sending domain was created',
+		payload: DomainCreatedEventSchema,
+		response: DomainCreatedEventSchema,
+	},
+	'domains.updated': {
+		description: 'A sending domain was updated',
+		payload: DomainUpdatedEventSchema,
+		response: DomainUpdatedEventSchema,
+	},
+} satisfies RequiredPluginWebhookSchemas<typeof resendWebhooksNested>;
+
 const defaultAuthType = 'api_key' as const;
 
 /**
@@ -239,6 +305,7 @@ export function resend<const T extends ResendPluginOptions>(
 		webhooks: resendWebhooksNested,
 		endpointMeta: resendEndpointMeta,
 		endpointSchemas: resendEndpointSchemas,
+		webhookSchemas: resendWebhookSchemas,
 		pluginWebhookMatcher: (request) => {
 			const headers = request.headers;
 			const hasResendSignature =

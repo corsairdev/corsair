@@ -1,24 +1,39 @@
-export interface PostHogWebhookPayload {
-	event: string;
-	distinct_id: string;
-	timestamp?: string;
-	uuid?: string;
-	properties?: Record<string, any>;
-	person?: {
-		distinct_id: string;
-		properties?: Record<string, any>;
-	};
-	groups?: Record<string, any>;
-	$set?: Record<string, any>;
-	$set_once?: Record<string, any>;
-	$unset?: string[];
-}
+import { z } from 'zod';
+import {
+	verifyHmacSignature,
+	verifyHmacSignatureWithPrefix,
+} from '../../../async-core/webhook-utils';
+import type {
+	CorsairWebhookMatcher,
+	RawWebhookRequest,
+	WebhookRequest,
+} from '../../../core';
 
-export interface EventCapturedEvent extends PostHogWebhookPayload {
-	event: string;
-	distinct_id: string;
-	properties?: Record<string, any>;
-}
+// ─────────────────────────────────────────────────────────────────────────────
+// Schemas
+// ─────────────────────────────────────────────────────────────────────────────
+
+export const PostHogWebhookPayloadSchema = z.object({
+	event: z.string(),
+	distinct_id: z.string(),
+	timestamp: z.string().optional(),
+	uuid: z.string().optional(),
+	properties: z.record(z.unknown()).optional(),
+	person: z
+		.object({
+			distinct_id: z.string(),
+			properties: z.record(z.unknown()).optional(),
+		})
+		.optional(),
+	groups: z.record(z.unknown()).optional(),
+	$set: z.record(z.unknown()).optional(),
+	$set_once: z.record(z.unknown()).optional(),
+	$unset: z.array(z.string()).optional(),
+});
+export type PostHogWebhookPayload = z.infer<typeof PostHogWebhookPayloadSchema>;
+
+export const EventCapturedEventSchema = PostHogWebhookPayloadSchema;
+export type EventCapturedEvent = z.infer<typeof EventCapturedEventSchema>;
 
 export type PostHogWebhookEvent = EventCapturedEvent;
 
@@ -32,15 +47,9 @@ export type PostHogWebhookOutputs = {
 	eventCaptured: EventCapturedEvent;
 };
 
-import {
-	verifyHmacSignature,
-	verifyHmacSignatureWithPrefix,
-} from '../../../async-core/webhook-utils';
-import type {
-	CorsairWebhookMatcher,
-	RawWebhookRequest,
-	WebhookRequest,
-} from '../../../core';
+// ─────────────────────────────────────────────────────────────────────────────
+// Utilities
+// ─────────────────────────────────────────────────────────────────────────────
 
 function parseBody(body: unknown): unknown {
 	return typeof body === 'string' ? JSON.parse(body) : body;

@@ -1,10 +1,11 @@
 import * as crypto from 'crypto';
+import { z } from 'zod';
 import type {
 	CorsairWebhookMatcher,
 	RawWebhookRequest,
 	WebhookRequest,
 } from '../../../core';
-import type { DiscordUser, Embed } from '../endpoints/types';
+import { DiscordUserSchema, EmbedSchema } from '../endpoints/types';
 
 // ── Discord Interaction Types ──────────────────────────────────────────────────
 
@@ -19,107 +20,168 @@ export const DiscordInteractionType = {
 export type DiscordInteractionTypeValue =
 	(typeof DiscordInteractionType)[keyof typeof DiscordInteractionType];
 
-export type DiscordGuildMemberPartial = {
-	user?: DiscordUser;
-	nick: string | null;
-	roles: string[];
-	joined_at: string;
-	permissions: string;
-	deaf: boolean;
-	mute: boolean;
+// ─────────────────────────────────────────────────────────────────────────────
+// Recursive type
+//
+// ApplicationCommandOption references itself via options?: ApplicationCommandOption[].
+// BaseSchema holds all non-recursive fields; the final schema extends it with
+// the circular field via z.lazy(). The exported type is derived from the schema.
+// ─────────────────────────────────────────────────────────────────────────────
+
+const ApplicationCommandOptionBaseSchema = z.object({
+	name: z.string(),
+	type: z.number(),
+	value: z.union([z.string(), z.number(), z.boolean()]).optional(),
+	focused: z.boolean().optional(),
+});
+
+type ApplicationCommandOptionShape = z.infer<
+	typeof ApplicationCommandOptionBaseSchema
+> & {
+	options?: ApplicationCommandOptionShape[];
 };
 
-export type ApplicationCommandOption = {
-	name: string;
-	type: number;
-	value?: string | number | boolean;
-	options?: ApplicationCommandOption[];
-	focused?: boolean;
-};
+export const ApplicationCommandOptionSchema: z.ZodType<ApplicationCommandOptionShape> =
+	ApplicationCommandOptionBaseSchema.extend({
+		options: z.lazy(() => z.array(ApplicationCommandOptionSchema)).optional(),
+	});
 
-export type ApplicationCommandData = {
-	id: string;
-	name: string;
-	type: number;
-	options?: ApplicationCommandOption[];
-	guild_id?: string;
-	target_id?: string;
-};
+export type ApplicationCommandOption = z.infer<
+	typeof ApplicationCommandOptionSchema
+>;
 
-export type MessageComponentData = {
-	custom_id: string;
-	component_type: number;
-	values?: string[];
-};
+// ─────────────────────────────────────────────────────────────────────────────
+// Non-recursive schemas
+// ─────────────────────────────────────────────────────────────────────────────
 
-export type ModalSubmitData = {
-	custom_id: string;
-	components: {
-		type: number;
-		components: {
-			type: number;
-			custom_id: string;
-			value: string;
-		}[];
-	}[];
-};
+export const DiscordGuildMemberPartialSchema = z.object({
+	user: DiscordUserSchema.optional(),
+	nick: z.string().nullable(),
+	roles: z.array(z.string()),
+	joined_at: z.string(),
+	permissions: z.string(),
+	deaf: z.boolean(),
+	mute: z.boolean(),
+});
+export type DiscordGuildMemberPartial = z.infer<
+	typeof DiscordGuildMemberPartialSchema
+>;
 
-export type DiscordMessagePartial = {
-	id: string;
-	channel_id: string;
-	content: string;
-	author: DiscordUser;
-	timestamp: string;
-	edited_timestamp: string | null;
-	tts: boolean;
-	mention_everyone: boolean;
-	mentions: DiscordUser[];
-	attachments: unknown[];
-	embeds: Embed[];
-	pinned: boolean;
-	type: number;
-};
+export const ApplicationCommandDataSchema = z.object({
+	id: z.string(),
+	name: z.string(),
+	type: z.number(),
+	options: z.array(ApplicationCommandOptionSchema).optional(),
+	guild_id: z.string().optional(),
+	target_id: z.string().optional(),
+});
+export type ApplicationCommandData = z.infer<
+	typeof ApplicationCommandDataSchema
+>;
 
-// Base interaction shape shared by all types
-type DiscordInteractionBase = {
-	id: string;
-	application_id: string;
-	token: string;
-	version: 1;
-	guild_id?: string;
-	channel_id?: string;
-	member?: DiscordGuildMemberPartial;
-	user?: DiscordUser;
-	locale?: string;
-	guild_locale?: string;
-	app_permissions?: string;
-};
+export const MessageComponentDataSchema = z.object({
+	custom_id: z.string(),
+	component_type: z.number(),
+	values: z.array(z.string()).optional(),
+});
+export type MessageComponentData = z.infer<typeof MessageComponentDataSchema>;
 
-export type DiscordPingInteraction = DiscordInteractionBase & {
-	type: 1;
-};
+export const ModalSubmitDataSchema = z.object({
+	custom_id: z.string(),
+	components: z.array(
+		z.object({
+			type: z.number(),
+			components: z.array(
+				z.object({
+					type: z.number(),
+					custom_id: z.string(),
+					value: z.string(),
+				}),
+			),
+		}),
+	),
+});
+export type ModalSubmitData = z.infer<typeof ModalSubmitDataSchema>;
 
-export type DiscordApplicationCommandInteraction = DiscordInteractionBase & {
-	type: 2;
-	data: ApplicationCommandData;
-};
+export const DiscordMessagePartialSchema = z.object({
+	id: z.string(),
+	channel_id: z.string(),
+	content: z.string(),
+	author: DiscordUserSchema,
+	timestamp: z.string(),
+	edited_timestamp: z.string().nullable(),
+	tts: z.boolean(),
+	mention_everyone: z.boolean(),
+	mentions: z.array(DiscordUserSchema),
+	attachments: z.array(z.unknown()),
+	embeds: z.array(EmbedSchema),
+	pinned: z.boolean(),
+	type: z.number(),
+});
+export type DiscordMessagePartial = z.infer<typeof DiscordMessagePartialSchema>;
 
-export type DiscordMessageComponentInteraction = DiscordInteractionBase & {
-	type: 3;
-	data: MessageComponentData;
-	message: DiscordMessagePartial;
-};
+// ─────────────────────────────────────────────────────────────────────────────
+// Interaction schemas
+// ─────────────────────────────────────────────────────────────────────────────
 
-export type DiscordModalSubmitInteraction = DiscordInteractionBase & {
-	type: 5;
-	data: ModalSubmitData;
-};
+const DiscordInteractionBaseSchema = z.object({
+	id: z.string(),
+	application_id: z.string(),
+	token: z.string(),
+	version: z.literal(1),
+	guild_id: z.string().optional(),
+	channel_id: z.string().optional(),
+	member: DiscordGuildMemberPartialSchema.optional(),
+	user: DiscordUserSchema.optional(),
+	locale: z.string().optional(),
+	guild_locale: z.string().optional(),
+	app_permissions: z.string().optional(),
+});
 
-export type DiscordInteraction =
-	| DiscordPingInteraction
-	| DiscordApplicationCommandInteraction
-	| DiscordMessageComponentInteraction
-	| DiscordModalSubmitInteraction;
+export const DiscordPingInteractionSchema = DiscordInteractionBaseSchema.extend(
+	{
+		type: z.literal(1),
+	},
+);
+export type DiscordPingInteraction = z.infer<
+	typeof DiscordPingInteractionSchema
+>;
+
+export const DiscordApplicationCommandInteractionSchema =
+	DiscordInteractionBaseSchema.extend({
+		type: z.literal(2),
+		data: ApplicationCommandDataSchema,
+	});
+export type DiscordApplicationCommandInteraction = z.infer<
+	typeof DiscordApplicationCommandInteractionSchema
+>;
+
+export const DiscordMessageComponentInteractionSchema =
+	DiscordInteractionBaseSchema.extend({
+		type: z.literal(3),
+		data: MessageComponentDataSchema,
+		message: DiscordMessagePartialSchema,
+	});
+export type DiscordMessageComponentInteraction = z.infer<
+	typeof DiscordMessageComponentInteractionSchema
+>;
+
+export const DiscordModalSubmitInteractionSchema =
+	DiscordInteractionBaseSchema.extend({
+		type: z.literal(5),
+		data: ModalSubmitDataSchema,
+	});
+export type DiscordModalSubmitInteraction = z.infer<
+	typeof DiscordModalSubmitInteractionSchema
+>;
+
+export const DiscordInteractionSchema = z.union([
+	DiscordPingInteractionSchema,
+	DiscordApplicationCommandInteractionSchema,
+	DiscordMessageComponentInteractionSchema,
+	DiscordModalSubmitInteractionSchema,
+]);
+export type DiscordInteraction = z.infer<typeof DiscordInteractionSchema>;
 
 // ── Webhook Output Types ───────────────────────────────────────────────────────
 

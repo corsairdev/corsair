@@ -1,57 +1,81 @@
+import { z } from 'zod';
 import type {
 	CorsairWebhookMatcher,
 	RawWebhookRequest,
 } from '../../../core/webhooks';
 import type { Event } from '../types';
 
-export type PubSubMessage = {
-	data?: string;
-	attributes?: Record<string, string>;
-	messageId?: string;
-	publishTime?: string;
-};
+// ─────────────────────────────────────────────────────────────────────────────
+// Schemas
+// ─────────────────────────────────────────────────────────────────────────────
 
-export type PubSubNotification<TEvent = unknown> = {
-	message?: PubSubMessage;
-	subscription?: string;
-	event?: TEvent;
-};
+export const PubSubMessageSchema = z.object({
+	data: z.string().optional(),
+	attributes: z.record(z.string()).optional(),
+	messageId: z.string().optional(),
+	publishTime: z.string().optional(),
+});
+export type PubSubMessage = z.infer<typeof PubSubMessageSchema>;
 
-export type GoogleCalendarPushNotification = {
-	resourceId?: string;
-	resourceState?: string;
-	resourceUri?: string;
-	channelId?: string;
-	channelExpiration?: string;
-	channelToken?: string;
-	changed?: string;
-};
+export const PubSubNotificationSchema = z.object({
+	message: PubSubMessageSchema.optional(),
+	subscription: z.string().optional(),
+	event: z.unknown().optional(),
+});
+export type PubSubNotification<TEvent = unknown> = Omit<
+	z.infer<typeof PubSubNotificationSchema>,
+	'event'
+> & { event?: TEvent };
 
-export type EventCreatedEvent = {
-	type: 'eventCreated';
-	calendarId: string;
-	event: Event;
-	timestamp: string;
-};
+export const GoogleCalendarPushNotificationSchema = z.object({
+	resourceId: z.string().optional(),
+	resourceState: z.string().optional(),
+	resourceUri: z.string().optional(),
+	channelId: z.string().optional(),
+	channelExpiration: z.string().optional(),
+	channelToken: z.string().optional(),
+	changed: z.string().optional(),
+});
+export type GoogleCalendarPushNotification = z.infer<
+	typeof GoogleCalendarPushNotificationSchema
+>;
 
-export type EventUpdatedEvent = {
-	type: 'eventUpdated';
-	calendarId: string;
-	event: Event;
-	timestamp: string;
-};
+// z.custom<T>() is used for the Event type imported from ../types to avoid
+// duplicating the large schema here. Provides correct TypeScript types with
+// no-op runtime validation.
 
-export type EventDeletedEvent = {
-	type: 'eventDeleted';
-	calendarId: string;
-	eventId: string;
-	timestamp: string;
-};
+export const EventCreatedEventSchema = z.object({
+	type: z.literal('eventCreated'),
+	calendarId: z.string(),
+	event: z.custom<Event>(),
+	timestamp: z.string(),
+});
+export type EventCreatedEvent = z.infer<typeof EventCreatedEventSchema>;
 
-export type GoogleCalendarWebhookEvent =
-	| EventCreatedEvent
-	| EventUpdatedEvent
-	| EventDeletedEvent;
+export const EventUpdatedEventSchema = z.object({
+	type: z.literal('eventUpdated'),
+	calendarId: z.string(),
+	event: z.custom<Event>(),
+	timestamp: z.string(),
+});
+export type EventUpdatedEvent = z.infer<typeof EventUpdatedEventSchema>;
+
+export const EventDeletedEventSchema = z.object({
+	type: z.literal('eventDeleted'),
+	calendarId: z.string(),
+	eventId: z.string(),
+	timestamp: z.string(),
+});
+export type EventDeletedEvent = z.infer<typeof EventDeletedEventSchema>;
+
+export const GoogleCalendarWebhookEventSchema = z.union([
+	EventCreatedEventSchema,
+	EventUpdatedEventSchema,
+	EventDeletedEventSchema,
+]);
+export type GoogleCalendarWebhookEvent = z.infer<
+	typeof GoogleCalendarWebhookEventSchema
+>;
 
 export type GoogleCalendarEventName = 'eventChanged';
 
@@ -65,6 +89,10 @@ export type GoogleCalendarWebhookPayload<TEvent = unknown> =
 export type GoogleCalendarWebhookOutputs = {
 	eventChanged: EventCreatedEvent | EventUpdatedEvent | EventDeletedEvent;
 };
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Utilities
+// ─────────────────────────────────────────────────────────────────────────────
 
 export function decodePubSubMessage(
 	data: string,
@@ -88,7 +116,8 @@ export function createGoogleCalendarWebhookMatcher(
 			return (
 				!!pushNotification.channelId &&
 				!!pushNotification.resourceId &&
-				!!pushNotification.resourceUri
+				!!pushNotification.resourceUri &&
+				pushNotification.resourceUri.includes('/calendar/')
 			);
 		} catch {
 			return false;

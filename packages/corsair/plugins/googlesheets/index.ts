@@ -10,6 +10,7 @@ import type {
 	RawWebhookRequest,
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
+	RequiredPluginWebhookSchemas,
 } from '../../core';
 import type { PickAuth } from '../../core/constants';
 import { getValidAccessToken } from './client';
@@ -29,6 +30,10 @@ import type {
 	RangeUpdatedEvent,
 } from './webhooks';
 import { RowWebhooks } from './webhooks';
+import {
+	GoogleAppsScriptWebhookPayloadSchema,
+	RangeUpdatedEventSchema,
+} from './webhooks/types';
 
 export type GoogleSheetsContext = CorsairPluginContext<
 	typeof GoogleSheetsSchema,
@@ -156,6 +161,14 @@ export type GoogleSheetsPluginOptions = {
 export type GoogleSheetsKeyBuilderContext =
 	KeyBuilderContext<GoogleSheetsPluginOptions>;
 
+const googlesheetsWebhookSchemas = {
+	rangeUpdated: {
+		description: 'A range of cells in a Google Sheet was updated',
+		payload: GoogleAppsScriptWebhookPayloadSchema,
+		response: RangeUpdatedEventSchema,
+	},
+} satisfies RequiredPluginWebhookSchemas<typeof googleSheetsWebhooksNested>;
+
 const defaultAuthType = 'oauth_2' as const;
 
 /**
@@ -243,6 +256,7 @@ export function googlesheets<const T extends GoogleSheetsPluginOptions>(
 		webhooks: googleSheetsWebhooksNested,
 		endpointMeta: googleSheetsEndpointMeta,
 		endpointSchemas: googlesheetsEndpointSchemas,
+		webhookSchemas: googlesheetsWebhookSchemas,
 		keyBuilder: async (ctx: GoogleSheetsKeyBuilderContext) => {
 			if (options.key) {
 				return options.key;

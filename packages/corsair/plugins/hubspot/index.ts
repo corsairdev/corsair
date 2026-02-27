@@ -1,3 +1,4 @@
+import { z } from 'zod';
 import type {
 	BindEndpoints,
 	BindWebhooks,
@@ -11,6 +12,7 @@ import type {
 	RawWebhookRequest,
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
+	RequiredPluginWebhookSchemas,
 } from '../../core';
 import type { PickAuth } from '../../core/constants';
 import type {
@@ -54,6 +56,20 @@ import {
 	DealWebhooks,
 	TicketWebhooks,
 } from './webhooks';
+import {
+	CompanyCreatedEventSchema,
+	CompanyDeletedEventSchema,
+	CompanyUpdatedEventSchema,
+	ContactCreatedEventSchema,
+	ContactDeletedEventSchema,
+	ContactUpdatedEventSchema,
+	DealCreatedEventSchema,
+	DealDeletedEventSchema,
+	DealUpdatedEventSchema,
+	TicketCreatedEventSchema,
+	TicketDeletedEventSchema,
+	TicketUpdatedEventSchema,
+} from './webhooks/types';
 
 export type HubSpotContext = CorsairPluginContext<
 	typeof HubSpotSchema,
@@ -338,6 +354,69 @@ const hubspotWebhooksNested = {
 	ticketDeleted: TicketWebhooks.deleted,
 } as const;
 
+const hubspotWebhookSchemas = {
+	contactCreated: {
+		description: 'A new contact was created',
+		payload: ContactCreatedEventSchema,
+		response: z.object({ success: z.boolean() }),
+	},
+	contactUpdated: {
+		description: 'A contact property was updated',
+		payload: ContactUpdatedEventSchema,
+		response: z.object({ success: z.boolean() }),
+	},
+	contactDeleted: {
+		description: 'A contact was deleted',
+		payload: ContactDeletedEventSchema,
+		response: z.object({ success: z.boolean() }),
+	},
+	companyCreated: {
+		description: 'A new company was created',
+		payload: CompanyCreatedEventSchema,
+		response: z.object({ success: z.boolean() }),
+	},
+	companyUpdated: {
+		description: 'A company property was updated',
+		payload: CompanyUpdatedEventSchema,
+		response: z.object({ success: z.boolean() }),
+	},
+	companyDeleted: {
+		description: 'A company was deleted',
+		payload: CompanyDeletedEventSchema,
+		response: z.object({ success: z.boolean() }),
+	},
+	dealCreated: {
+		description: 'A new deal was created',
+		payload: DealCreatedEventSchema,
+		response: z.object({ success: z.boolean() }),
+	},
+	dealUpdated: {
+		description: 'A deal property was updated',
+		payload: DealUpdatedEventSchema,
+		response: z.object({ success: z.boolean() }),
+	},
+	dealDeleted: {
+		description: 'A deal was deleted',
+		payload: DealDeletedEventSchema,
+		response: z.object({ success: z.boolean() }),
+	},
+	ticketCreated: {
+		description: 'A new support ticket was created',
+		payload: TicketCreatedEventSchema,
+		response: z.object({ success: z.boolean() }),
+	},
+	ticketUpdated: {
+		description: 'A support ticket property was updated',
+		payload: TicketUpdatedEventSchema,
+		response: z.object({ success: z.boolean() }),
+	},
+	ticketDeleted: {
+		description: 'A support ticket was deleted',
+		payload: TicketDeletedEventSchema,
+		response: z.object({ success: z.boolean() }),
+	},
+} satisfies RequiredPluginWebhookSchemas<typeof hubspotWebhooksNested>;
+
 const defaultAuthType = 'api_key' as const;
 
 /**
@@ -515,6 +594,7 @@ export function hubspot<const PluginOptions extends HubSpotPluginOptions>(
 		webhooks: hubspotWebhooksNested,
 		endpointMeta: hubspotEndpointMeta,
 		endpointSchemas: hubspotEndpointSchemas,
+		webhookSchemas: hubspotWebhookSchemas,
 		pluginWebhookMatcher: (request: RawWebhookRequest) => {
 			const headers = request.headers;
 			const hasHubSpotSignature = 'x-hubspot-signature-v3' in headers;

@@ -10,6 +10,7 @@ import type {
 	RawWebhookRequest,
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
+	RequiredPluginWebhookSchemas,
 } from '../../core';
 import type { PickAuth } from '../../core/constants';
 import { getValidAccessToken } from './client';
@@ -32,7 +33,11 @@ import type {
 } from './webhooks';
 import { EventWebhooks } from './webhooks';
 import type { PubSubNotification } from './webhooks/types';
-import { decodePubSubMessage } from './webhooks/types';
+import {
+	decodePubSubMessage,
+	GoogleCalendarWebhookEventSchema,
+	PubSubNotificationSchema,
+} from './webhooks/types';
 
 export type GoogleCalendarContext = CorsairPluginContext<
 	typeof GoogleCalendarSchema,
@@ -139,6 +144,14 @@ export type GoogleCalendarPluginOptions = {
 export type GoogleCalendarKeyBuilderContext =
 	KeyBuilderContext<GoogleCalendarPluginOptions>;
 
+const googlecalendarWebhookSchemas = {
+	onEventChanged: {
+		description: 'A Google Calendar event was created, updated, or deleted',
+		payload: PubSubNotificationSchema,
+		response: GoogleCalendarWebhookEventSchema,
+	},
+} satisfies RequiredPluginWebhookSchemas<typeof googleCalendarWebhooksNested>;
+
 const defaultAuthType = 'oauth_2' as const;
 
 /**
@@ -204,6 +217,7 @@ export function googlecalendar<const T extends GoogleCalendarPluginOptions>(
 		webhooks: googleCalendarWebhooksNested,
 		endpointMeta: googleCalendarEndpointMeta,
 		endpointSchemas: googlecalendarEndpointSchemas,
+		webhookSchemas: googlecalendarWebhookSchemas,
 		keyBuilder: async (ctx: GoogleCalendarKeyBuilderContext) => {
 			if (options.key) {
 				return options.key;
@@ -301,3 +315,5 @@ export type {
 	GoogleCalendarEndpointOutputSchemas,
 	GoogleCalendarEndpointOutputs,
 } from './endpoints/types';
+
+export type * from './types';
