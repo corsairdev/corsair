@@ -7,8 +7,9 @@ import type {
 	CorsairPluginContext,
 	CorsairWebhook,
 	KeyBuilderContext,
-	PluginEndpointMeta,
 	PluginPermissionsConfig,
+	RequiredPluginEndpointMeta,
+	RequiredPluginEndpointSchemas,
 } from '../../core';
 import type { PickAuth } from '../../core/constants';
 import { Events } from './endpoints';
@@ -16,7 +17,10 @@ import type {
 	PostHogEndpointInputs,
 	PostHogEndpointOutputs,
 } from './endpoints/types';
-import { posthogEndpointSchemas } from './endpoints/types';
+import {
+	PostHogEndpointInputSchemas,
+	PostHogEndpointOutputSchemas,
+} from './endpoints/types';
 import { PostHogSchema } from './schema';
 import type { EventCapturedEvent, PostHogWebhookOutputs } from './webhooks';
 import { EventWebhooks } from './webhooks';
@@ -30,7 +34,7 @@ export type PostHogPluginOptions = {
 	errorHandlers?: CorsairErrorHandler;
 	/**
 	 * Permission configuration for the PostHog plugin.
-	 * Controls what the AI agent is allowed to do via the MCP server.
+	 * Controls what the AI agent is allowed to do.
 	 * Overrides use dot-notation paths from the PostHog endpoint tree — invalid paths are type errors.
 	 */
 	permissions?: PluginPermissionsConfig<typeof posthogEndpointsNested>;
@@ -81,6 +85,29 @@ const posthogEndpointsNested = {
 	},
 } as const;
 
+export const posthogEndpointSchemas = {
+	'events.aliasCreate': {
+		input: PostHogEndpointInputSchemas.aliasCreate,
+		output: PostHogEndpointOutputSchemas.aliasCreate,
+	},
+	'events.eventCreate': {
+		input: PostHogEndpointInputSchemas.eventCreate,
+		output: PostHogEndpointOutputSchemas.eventCreate,
+	},
+	'events.identityCreate': {
+		input: PostHogEndpointInputSchemas.identityCreate,
+		output: PostHogEndpointOutputSchemas.identityCreate,
+	},
+	'events.trackPage': {
+		input: PostHogEndpointInputSchemas.trackPage,
+		output: PostHogEndpointOutputSchemas.trackPage,
+	},
+	'events.trackScreen': {
+		input: PostHogEndpointInputSchemas.trackScreen,
+		output: PostHogEndpointOutputSchemas.trackScreen,
+	},
+} satisfies RequiredPluginEndpointSchemas<typeof posthogEndpointsNested>;
+
 const posthogWebhooksNested = {
 	events: {
 		captured: EventWebhooks.captured,
@@ -114,7 +141,7 @@ const posthogEndpointMeta = {
 		riskLevel: 'write',
 		description: 'Track a screen view event',
 	},
-} satisfies PluginEndpointMeta<typeof posthogEndpointsNested>;
+} satisfies RequiredPluginEndpointMeta<typeof posthogEndpointsNested>;
 
 export type BasePostHogPlugin<T extends PostHogPluginOptions> = CorsairPlugin<
 	'posthog',
@@ -232,4 +259,3 @@ export type {
 	TrackPageResponse,
 	TrackScreenResponse,
 } from './endpoints/types';
-export { posthogEndpointSchemas } from './endpoints/types';

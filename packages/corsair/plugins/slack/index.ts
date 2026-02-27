@@ -8,8 +8,10 @@ import type {
 	CorsairWebhook,
 	KeyBuilderContext,
 	PluginAuthConfig,
-	PluginEndpointMeta,
 	PluginPermissionsConfig,
+	RequiredPluginEndpointMeta,
+	RequiredPluginEndpointSchemas,
+	RequiredPluginWebhookSchemas,
 } from '../../core';
 import type { SlackEndpointInputs, SlackEndpointOutputs } from './endpoints';
 import {
@@ -21,7 +23,10 @@ import {
 	UserGroups,
 	Users,
 } from './endpoints';
-import { slackEndpointSchemas } from './endpoints/types';
+import {
+	SlackEndpointInputSchemas,
+	SlackEndpointOutputSchemas,
+} from './endpoints/types';
 import { SlackSchema } from './schema';
 import {
 	ChallengeWebhooks,
@@ -43,6 +48,26 @@ import type {
 	SlackWebhookPayload,
 	TeamJoinEvent,
 	UserChangeEvent,
+} from './webhooks/types';
+import {
+	ChannelCreatedEventSchema,
+	FileCreatedEventSchema,
+	FilePublicEventSchema,
+	FileSharedEventSchema,
+	MessageEventSchema,
+	ReactionAddedEventSchema,
+	SlackChallengePayloadSchema,
+	SlackChannelCreatedPayloadSchema,
+	SlackFileCreatedPayloadSchema,
+	SlackFilePublicPayloadSchema,
+	SlackFileSharedPayloadSchema,
+	SlackMessagePayloadSchema,
+	SlackReactionAddedPayloadSchema,
+	SlackTeamJoinPayloadSchema,
+	SlackUrlVerificationPayloadSchema,
+	SlackUserChangePayloadSchema,
+	TeamJoinEventSchema,
+	UserChangeEventSchema,
 } from './webhooks/types';
 
 export type { SlackReactionName } from './endpoints';
@@ -153,6 +178,177 @@ const slackEndpointsNested = {
 		list: Stars.list,
 	},
 } as const;
+
+export const slackEndpointSchemas = {
+	'channels.random': {
+		input: SlackEndpointInputSchemas.channelsRandom,
+		output: SlackEndpointOutputSchemas.channelsRandom,
+	},
+	'channels.archive': {
+		input: SlackEndpointInputSchemas.channelsArchive,
+		output: SlackEndpointOutputSchemas.channelsArchive,
+	},
+	'channels.close': {
+		input: SlackEndpointInputSchemas.channelsClose,
+		output: SlackEndpointOutputSchemas.channelsClose,
+	},
+	'channels.create': {
+		input: SlackEndpointInputSchemas.channelsCreate,
+		output: SlackEndpointOutputSchemas.channelsCreate,
+	},
+	'channels.get': {
+		input: SlackEndpointInputSchemas.channelsGet,
+		output: SlackEndpointOutputSchemas.channelsGet,
+	},
+	'channels.list': {
+		input: SlackEndpointInputSchemas.channelsList,
+		output: SlackEndpointOutputSchemas.channelsList,
+	},
+	'channels.getHistory': {
+		input: SlackEndpointInputSchemas.channelsGetHistory,
+		output: SlackEndpointOutputSchemas.channelsGetHistory,
+	},
+	'channels.invite': {
+		input: SlackEndpointInputSchemas.channelsInvite,
+		output: SlackEndpointOutputSchemas.channelsInvite,
+	},
+	'channels.join': {
+		input: SlackEndpointInputSchemas.channelsJoin,
+		output: SlackEndpointOutputSchemas.channelsJoin,
+	},
+	'channels.kick': {
+		input: SlackEndpointInputSchemas.channelsKick,
+		output: SlackEndpointOutputSchemas.channelsKick,
+	},
+	'channels.leave': {
+		input: SlackEndpointInputSchemas.channelsLeave,
+		output: SlackEndpointOutputSchemas.channelsLeave,
+	},
+	'channels.getMembers': {
+		input: SlackEndpointInputSchemas.channelsGetMembers,
+		output: SlackEndpointOutputSchemas.channelsGetMembers,
+	},
+	'channels.open': {
+		input: SlackEndpointInputSchemas.channelsOpen,
+		output: SlackEndpointOutputSchemas.channelsOpen,
+	},
+	'channels.rename': {
+		input: SlackEndpointInputSchemas.channelsRename,
+		output: SlackEndpointOutputSchemas.channelsRename,
+	},
+	'channels.getReplies': {
+		input: SlackEndpointInputSchemas.channelsGetReplies,
+		output: SlackEndpointOutputSchemas.channelsGetReplies,
+	},
+	'channels.setPurpose': {
+		input: SlackEndpointInputSchemas.channelsSetPurpose,
+		output: SlackEndpointOutputSchemas.channelsSetPurpose,
+	},
+	'channels.setTopic': {
+		input: SlackEndpointInputSchemas.channelsSetTopic,
+		output: SlackEndpointOutputSchemas.channelsSetTopic,
+	},
+	'channels.unarchive': {
+		input: SlackEndpointInputSchemas.channelsUnarchive,
+		output: SlackEndpointOutputSchemas.channelsUnarchive,
+	},
+	'users.get': {
+		input: SlackEndpointInputSchemas.usersGet,
+		output: SlackEndpointOutputSchemas.usersGet,
+	},
+	'users.list': {
+		input: SlackEndpointInputSchemas.usersList,
+		output: SlackEndpointOutputSchemas.usersList,
+	},
+	'users.getProfile': {
+		input: SlackEndpointInputSchemas.usersGetProfile,
+		output: SlackEndpointOutputSchemas.usersGetProfile,
+	},
+	'users.getPresence': {
+		input: SlackEndpointInputSchemas.usersGetPresence,
+		output: SlackEndpointOutputSchemas.usersGetPresence,
+	},
+	'users.updateProfile': {
+		input: SlackEndpointInputSchemas.usersUpdateProfile,
+		output: SlackEndpointOutputSchemas.usersUpdateProfile,
+	},
+	'userGroups.create': {
+		input: SlackEndpointInputSchemas.userGroupsCreate,
+		output: SlackEndpointOutputSchemas.userGroupsCreate,
+	},
+	'userGroups.disable': {
+		input: SlackEndpointInputSchemas.userGroupsDisable,
+		output: SlackEndpointOutputSchemas.userGroupsDisable,
+	},
+	'userGroups.enable': {
+		input: SlackEndpointInputSchemas.userGroupsEnable,
+		output: SlackEndpointOutputSchemas.userGroupsEnable,
+	},
+	'userGroups.list': {
+		input: SlackEndpointInputSchemas.userGroupsList,
+		output: SlackEndpointOutputSchemas.userGroupsList,
+	},
+	'userGroups.update': {
+		input: SlackEndpointInputSchemas.userGroupsUpdate,
+		output: SlackEndpointOutputSchemas.userGroupsUpdate,
+	},
+	'files.get': {
+		input: SlackEndpointInputSchemas.filesGet,
+		output: SlackEndpointOutputSchemas.filesGet,
+	},
+	'files.list': {
+		input: SlackEndpointInputSchemas.filesList,
+		output: SlackEndpointOutputSchemas.filesList,
+	},
+	'files.upload': {
+		input: SlackEndpointInputSchemas.filesUpload,
+		output: SlackEndpointOutputSchemas.filesUpload,
+	},
+	'messages.delete': {
+		input: SlackEndpointInputSchemas.messagesDelete,
+		output: SlackEndpointOutputSchemas.messagesDelete,
+	},
+	'messages.getPermalink': {
+		input: SlackEndpointInputSchemas.messagesGetPermalink,
+		output: SlackEndpointOutputSchemas.messagesGetPermalink,
+	},
+	'messages.search': {
+		input: SlackEndpointInputSchemas.messagesSearch,
+		output: SlackEndpointOutputSchemas.messagesSearch,
+	},
+	'messages.post': {
+		input: SlackEndpointInputSchemas.postMessage,
+		output: SlackEndpointOutputSchemas.postMessage,
+	},
+	'messages.update': {
+		input: SlackEndpointInputSchemas.messagesUpdate,
+		output: SlackEndpointOutputSchemas.messagesUpdate,
+	},
+	'reactions.add': {
+		input: SlackEndpointInputSchemas.reactionsAdd,
+		output: SlackEndpointOutputSchemas.reactionsAdd,
+	},
+	'reactions.get': {
+		input: SlackEndpointInputSchemas.reactionsGet,
+		output: SlackEndpointOutputSchemas.reactionsGet,
+	},
+	'reactions.remove': {
+		input: SlackEndpointInputSchemas.reactionsRemove,
+		output: SlackEndpointOutputSchemas.reactionsRemove,
+	},
+	'stars.add': {
+		input: SlackEndpointInputSchemas.starsAdd,
+		output: SlackEndpointOutputSchemas.starsAdd,
+	},
+	'stars.remove': {
+		input: SlackEndpointInputSchemas.starsRemove,
+		output: SlackEndpointOutputSchemas.starsRemove,
+	},
+	'stars.list': {
+		input: SlackEndpointInputSchemas.starsList,
+		output: SlackEndpointOutputSchemas.starsList,
+	},
+} satisfies RequiredPluginEndpointSchemas<typeof slackEndpointsNested>;
 
 export type SlackWebhooks = {
 	challenge: SlackWebhook<'challenge', ChallengeEvent>;
@@ -335,7 +531,56 @@ const slackEndpointMeta = {
 		riskLevel: 'read',
 		description: 'List starred items for the authenticated user',
 	},
-} satisfies PluginEndpointMeta<typeof slackEndpointsNested>;
+} satisfies RequiredPluginEndpointMeta<typeof slackEndpointsNested>;
+
+const slackWebhookSchemas = {
+	'challenge.challenge': {
+		description:
+			'Slack URL verification challenge — respond to confirm the webhook endpoint',
+		payload: SlackChallengePayloadSchema,
+		response: SlackUrlVerificationPayloadSchema,
+	},
+	'messages.message': {
+		description: 'A message was posted or updated in a channel',
+		payload: SlackMessagePayloadSchema,
+		response: MessageEventSchema,
+	},
+	'channels.created': {
+		description: 'A new channel was created in the workspace',
+		payload: SlackChannelCreatedPayloadSchema,
+		response: ChannelCreatedEventSchema,
+	},
+	'reactions.added': {
+		description: 'A reaction emoji was added to a message',
+		payload: SlackReactionAddedPayloadSchema,
+		response: ReactionAddedEventSchema,
+	},
+	'users.teamJoin': {
+		description: 'A new user joined the workspace',
+		payload: SlackTeamJoinPayloadSchema,
+		response: TeamJoinEventSchema,
+	},
+	'users.userChange': {
+		description: "A user's profile or account settings were updated",
+		payload: SlackUserChangePayloadSchema,
+		response: UserChangeEventSchema,
+	},
+	'files.created': {
+		description: 'A file was uploaded or created',
+		payload: SlackFileCreatedPayloadSchema,
+		response: FileCreatedEventSchema,
+	},
+	'files.public': {
+		description: 'A file was made publicly accessible',
+		payload: SlackFilePublicPayloadSchema,
+		response: FilePublicEventSchema,
+	},
+	'files.shared': {
+		description: 'A file was shared into a channel',
+		payload: SlackFileSharedPayloadSchema,
+		response: FileSharedEventSchema,
+	},
+} satisfies RequiredPluginWebhookSchemas<typeof slackWebhooksNested>;
 
 type SlackEndpoint<K extends keyof SlackEndpointOutputs> = CorsairEndpoint<
 	SlackContext,
@@ -370,7 +615,7 @@ export type SlackPluginOptions = {
 	errorHandlers?: CorsairErrorHandler;
 	/**
 	 * Permission configuration for the Slack plugin.
-	 * Controls what the AI agent is allowed to do via the MCP server.
+	 * Controls what the AI agent is allowed to do.
 	 * Overrides use dot-notation paths from the Slack endpoint tree — invalid paths are type errors.
 	 */
 	permissions?: PluginPermissionsConfig<typeof slackEndpointsNested>;
@@ -421,6 +666,7 @@ export function slack<const PluginOptions extends SlackPluginOptions>(
 		webhooks: slackWebhooksNested,
 		endpointMeta: slackEndpointMeta,
 		endpointSchemas: slackEndpointSchemas,
+		webhookSchemas: slackWebhookSchemas,
 		pluginWebhookMatcher: (request) => {
 			const headers = request.headers;
 			const hasSlackSignature = 'x-slack-signature' in headers;
@@ -573,4 +819,3 @@ export type {
 	UsersProfileGetResponse,
 	UsersProfileSetResponse,
 } from './endpoints/types';
-export { slackEndpointSchemas } from './endpoints/types';

@@ -102,6 +102,25 @@ export type EndpointSchemaResult = {
 	availableMethods?: Record<string, string[]>;
 };
 
+export type WebhookSchemaResult = {
+	/** Human-readable description of what triggers this webhook. */
+	description?: string;
+	/** JSON Schema for the webhook payload — the type of `request.payload` in the before hook. */
+	payload?: unknown;
+	/** JSON Schema for the webhook response data — the type of `response.data` in the after hook. */
+	response?: unknown;
+	/**
+	 * Ready-to-copy code example showing exactly how to configure this webhook,
+	 * including response.data type as an inline comment.
+	 */
+	usage?: string;
+	/**
+	 * Present when the requested webhook path was not found.
+	 * Lists all available webhook dot-paths per plugin so the caller can self-correct.
+	 */
+	availableWebhooks?: Record<string, string[]>;
+};
+
 export type CorsairInspectMethods = {
 	/**
 	 * Returns all available endpoint paths for every registered plugin.
@@ -138,6 +157,62 @@ export type CorsairInspectMethods = {
 	 * // { availableMethods: { slack: ['slack.api.channels.list', ...], ... } }
 	 */
 	get_schema(method: string): EndpointSchemaResult;
+	/**
+	 * Returns all available webhook paths for every registered plugin.
+	 * Keys are plugin IDs, values are arrays of full dot-paths (pluginId.group.event).
+	 * Pass a path directly to get_webhook_schema() to get its usage example and type info.
+	 *
+	 * @example
+	 * corsair.get_webhooks()
+	 * // {
+	 * //   slack: ['slack.messages.message', 'slack.channels.created', ...],
+	 * //   googlecalendar: ['googlecalendar.onEventChanged', 'googlecalendar.onEventCreated', ...],
+	 * // }
+	 */
+	get_webhooks(): Record<string, string[]>;
+	/**
+	 * Returns all available webhook paths for a specific plugin.
+	 *
+	 * @example
+	 * corsair.get_webhooks('slack')
+	 * // ['slack.messages.message', 'slack.channels.created', ...]
+	 */
+	get_webhooks(plugin: string): string[];
+	/**
+	 * Returns a ready-to-copy usage example plus type information for a specific webhook.
+	 * Pass the dot-path from get_webhooks(): 'slack.messages.message'.
+	 * Casing is ignored — the path is lowercased before lookup.
+	 *
+	 * The `usage` field is a complete code snippet showing how to configure this webhook
+	 * inside the plugin options, with the response.data type embedded as an inline comment.
+	 *
+	 * If the webhook path is not found, returns `availableWebhooks` for self-correction.
+	 *
+	 * @example
+	 * corsair.get_webhook_schema('slack.messages.message')
+	 * // {
+	 * //   description: 'Fires when a message is posted',
+	 * //   usage: `
+	 * //     slack({
+	 * //         webhookHooks: {
+	 * //             messages: {
+	 * //                 message: {
+	 * //                     before(ctx, args) {
+	 * //                         return { ctx, args };
+	 * //                     },
+	 * //                     after(ctx, response) {
+	 * //                         // response.data:
+	 * //                         // { "type": "object", ... }
+	 * //                     },
+	 * //                 },
+	 * //             },
+	 * //         },
+	 * //     })`,
+	 * //   payload: { ... },
+	 * //   response: { ... },
+	 * // }
+	 */
+	get_webhook_schema(webhook: string): WebhookSchemaResult;
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -157,6 +232,143 @@ function walkEndpointTree(
 			walkEndpointTree(value as Record<string, unknown>, current, result);
 		}
 	}
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Webhook Tree Helpers
+// ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Returns true if a value is a webhook leaf (has both `match` and `handler` functions).
+ * Mirrors the isWebhook guard in core/webhooks/bind.ts without importing it.
+ */
+function isWebhookLeaf(
+	value: unknown,
+): value is { match: unknown; handler: unknown } {
+	return (
+		value !== null &&
+		typeof value === 'object' &&
+		'match' in value &&
+		'handler' in value &&
+		typeof (value as Record<string, unknown>).match === 'function' &&
+		typeof (value as Record<string, unknown>).handler === 'function'
+	);
+}
+
+/**
+ * Recursively collects all webhook leaf paths in a webhook tree.
+ * Preserves original key casing so paths can be used as object keys in webhookHooks config.
+ */
+function walkWebhookTree(
+	tree: Record<string, unknown>,
+	pathParts: string[],
+	result: string[],
+): void {
+	for (const [key, value] of Object.entries(tree)) {
+		const current = [...pathParts, key];
+		if (isWebhookLeaf(value)) {
+			result.push(current.join('.'));
+		} else if (value !== null && typeof value === 'object') {
+			walkWebhookTree(value as Record<string, unknown>, current, result);
+		}
+	}
+}
+
+/**
+ * Walks a webhook tree with a normalised (lowercased) path and returns the original-cased
+ * key segments when found. Used to reconstruct the exact key names for usage examples.
+ * Returns null if the path does not resolve to a webhook leaf.
+ */
+function resolveWebhookPathOriginalCase(
+	tree: Record<string, unknown>,
+	normalizedParts: string[],
+): string[] | null {
+	if (normalizedParts.length === 0) return null;
+	const [head, ...tail] = normalizedParts;
+
+	const entry = Object.entries(tree).find(([k]) => k.toLowerCase() === head);
+	if (!entry) return null;
+	const [originalKey, value] = entry;
+
+	if (tail.length === 0) {
+		return isWebhookLeaf(value) ? [originalKey] : null;
+	}
+
+	if (value !== null && typeof value === 'object' && !isWebhookLeaf(value)) {
+		const rest = resolveWebhookPathOriginalCase(
+			value as Record<string, unknown>,
+			tail,
+		);
+		if (rest !== null) return [originalKey, ...rest];
+	}
+
+	return null;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Webhook Usage Example Builder
+// ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Builds a ready-to-copy code snippet showing how to configure a specific webhook.
+ * The response.data type (if available) is embedded as an inline comment inside the after hook.
+ *
+ * @param pluginId       Plugin ID (e.g. 'slack')
+ * @param pathParts      Original-cased path segments (e.g. ['messages', 'message'])
+ * @param responseSchema JSON Schema for response.data, or null if no schema registered
+ */
+function buildWebhookUsageExample(
+	pluginId: string,
+	pathParts: string[],
+	responseSchema: unknown | null,
+): string {
+	const lines: string[] = [];
+
+	lines.push(`${pluginId}({`);
+	lines.push(`    webhookHooks: {`);
+
+	// Open nested key blocks
+	for (let i = 0; i < pathParts.length; i++) {
+		const indent = '    '.repeat(i + 2);
+		lines.push(`${indent}${pathParts[i]}: {`);
+	}
+
+	// Hook body — indented one level deeper than the innermost key
+	const hookIndent = '    '.repeat(pathParts.length + 2);
+	const bodyIndent = hookIndent + '    ';
+
+	lines.push(`${hookIndent}before(ctx, args) {`);
+	lines.push(`${bodyIndent}return { ctx, args };`);
+	lines.push(`${hookIndent}},`);
+
+	lines.push(`${hookIndent}after(ctx, response) {`);
+	if (responseSchema !== null) {
+		const json = JSON.stringify(responseSchema, null, 2);
+		const commentLines = json
+			.split('\n')
+			.map((l, i) =>
+				i === 0
+					? `${bodyIndent}// response.data: ${l}`
+					: `${bodyIndent}// ${l}`,
+			);
+		lines.push(...commentLines);
+	} else {
+		lines.push(
+			`${bodyIndent}// response.data: unknown (register webhookSchemas to see the type)`,
+		);
+	}
+	lines.push(`${hookIndent}},`);
+
+	// Close nested key blocks (innermost first)
+	for (let i = pathParts.length - 1; i >= 0; i--) {
+		const indent = '    '.repeat(i + 2);
+		lines.push(`${indent}},`);
+	}
+
+	lines.push(`    },`);
+	lines.push(`})`);
+
+	return lines.join('\n');
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -180,6 +392,27 @@ function getMethods(
 		const paths: string[] = [];
 		walkEndpointTree(p.endpoints as Record<string, unknown>, [], paths);
 		result[p.id] = paths.map((path) => `${p.id}.api.${path.toLowerCase()}`);
+	}
+	return result;
+}
+
+function getWebhooks(
+	plugins: readonly CorsairPlugin[],
+	plugin?: string,
+): Record<string, string[]> | string[] {
+	if (plugin !== undefined) {
+		const found = plugins.find((p) => p.id === plugin);
+		if (!found?.webhooks) return [];
+		const paths: string[] = [];
+		walkWebhookTree(found.webhooks as Record<string, unknown>, [], paths);
+		return paths.map((path) => `${found.id}.${path}`);
+	}
+	const result: Record<string, string[]> = {};
+	for (const p of plugins) {
+		if (!p.webhooks) continue;
+		const paths: string[] = [];
+		walkWebhookTree(p.webhooks as Record<string, unknown>, [], paths);
+		result[p.id] = paths.map((path) => `${p.id}.${path}`);
 	}
 	return result;
 }
@@ -245,13 +478,66 @@ function getSchema(
 	return { availableMethods: getMethods(plugins) as Record<string, string[]> };
 }
 
+function getWebhookSchema(
+	plugins: readonly CorsairPlugin[],
+	webhook: string,
+): WebhookSchemaResult {
+	// Normalise casing so the agent can call with any capitalisation
+	const normalised = webhook.toLowerCase();
+	const dotIndex = normalised.indexOf('.');
+	if (dotIndex !== -1) {
+		const pluginId = normalised.slice(0, dotIndex);
+		const webhookPathNormalised = normalised.slice(dotIndex + 1);
+		const plugin = plugins.find((p) => p.id === pluginId);
+
+		if (plugin?.webhooks) {
+			// Resolve original-cased key segments from the webhook tree
+			const originalPathParts = resolveWebhookPathOriginalCase(
+				plugin.webhooks as Record<string, unknown>,
+				webhookPathNormalised.split('.'),
+			);
+
+			if (originalPathParts !== null) {
+				// Look up optional schemas using original-cased path (case-insensitive fallback)
+				const originalPath = originalPathParts.join('.');
+				const schemas = findEndpointCaseInsensitive(
+					plugin.webhookSchemas,
+					originalPath.toLowerCase(),
+				);
+
+				const responseSchema = schemas?.response
+					? zodToJsonSchema(schemas.response)
+					: null;
+
+				return {
+					description: schemas?.description,
+					payload: schemas?.payload
+						? zodToJsonSchema(schemas.payload)
+						: undefined,
+					response: responseSchema ?? undefined,
+					usage: buildWebhookUsageExample(
+						pluginId,
+						originalPathParts,
+						responseSchema,
+					),
+				};
+			}
+		}
+	}
+
+	// Invalid or unknown webhook — return all available webhooks so the caller can self-correct
+	return {
+		availableWebhooks: getWebhooks(plugins) as Record<string, string[]>,
+	};
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
 // Factory — binds inspect methods to a fixed plugin list
 // ─────────────────────────────────────────────────────────────────────────────
 
 /**
- * Creates the get_methods / get_schema functions bound to a specific plugin list.
- * Used by both single-tenant and multi-tenant client builders.
+ * Creates the get_methods / get_schema / get_webhooks / get_webhook_schema functions
+ * bound to a specific plugin list. Used by both single-tenant and multi-tenant client builders.
  */
 export function buildInspectMethods(
 	plugins: readonly CorsairPlugin[],
@@ -262,6 +548,13 @@ export function buildInspectMethods(
 		},
 		get_schema(method: string) {
 			return getSchema(plugins, method);
+		},
+		get_webhooks(plugin?: string) {
+			return getWebhooks(plugins, plugin) as Record<string, string[]> &
+				string[];
+		},
+		get_webhook_schema(webhook: string) {
+			return getWebhookSchema(plugins, webhook);
 		},
 	};
 }

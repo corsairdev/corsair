@@ -16,7 +16,12 @@ const main = async () => {
 	// 		},
 	// 	},
 	// });
+
 	// console.log(JSON.stringify(res, null, 2));
+
+	const res = corsair.get_webhooks();
+
+	console.log(res);
 };
 
 main();

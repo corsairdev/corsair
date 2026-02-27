@@ -96,12 +96,13 @@ function generatePlugin(pluginName: string) {
 	CorsairWebhook,
 	KeyBuilderContext,
 	PluginAuthConfig,
-	PluginEndpointMeta,
+	RequiredPluginEndpointMeta,
+	RequiredPluginEndpointSchemas,
 	PluginPermissionsConfig,
 } from '../../core';
 import type { AuthTypes, PickAuth } from '../../core/constants';
 import type { ${pascalName}EndpointInputs, ${pascalName}EndpointOutputs } from './endpoints/types';
-import { ${camelName}EndpointSchemas } from './endpoints/types';
+import { ${pascalName}EndpointInputSchemas, ${pascalName}EndpointOutputSchemas } from './endpoints/types';
 import type {
 	${pascalName}WebhookOutputs,
 	ExampleEvent,
@@ -141,7 +142,7 @@ export type ${pascalName}PluginOptions = {
 	errorHandlers?: CorsairErrorHandler;
 	/**
 	 * Permission configuration for the ${pascalName} plugin.
-	 * Controls what the AI agent is allowed to do via the MCP server.
+	 * Controls what the AI agent is allowed to do.
 	 * Overrides use dot-notation paths from the ${pascalName} endpoint tree — invalid paths are type errors.
 	 */
 	permissions?: PluginPermissionsConfig<typeof ${camelName}EndpointsNested>;
@@ -188,6 +189,13 @@ const ${camelName}WebhooksNested = {
 	},
 } as const;
 
+export const ${camelName}EndpointSchemas = {
+	'example.get': {
+		input: ${pascalName}EndpointInputSchemas.exampleGet,
+		output: ${pascalName}EndpointOutputSchemas.exampleGet,
+	},
+} satisfies RequiredPluginEndpointSchemas<typeof ${camelName}EndpointsNested>;
+
 /**
  * Default authentication type for this plugin
  * 
@@ -210,7 +218,7 @@ const ${camelName}EndpointMeta = {
 		riskLevel: 'read',
 		description: 'Get an example resource by ID',
 	},
-} satisfies PluginEndpointMeta<typeof ${camelName}EndpointsNested>;
+} satisfies RequiredPluginEndpointMeta<typeof ${camelName}EndpointsNested>;
 
 /**
  * Authentication configuration
@@ -405,7 +413,6 @@ export type {
 	ExampleGetInput,
 	ExampleGetResponse,
 } from './endpoints/types';
-export { ${camelName}EndpointSchemas } from './endpoints/types';
 `;
 
 	// Generate endpoints/types.ts
@@ -445,15 +452,6 @@ export const ${pascalName}EndpointInputSchemas = {
 
 export const ${pascalName}EndpointOutputSchemas = {
 	exampleGet: ExampleGetResponseSchema,
-} as const;
-
-// ── Dot-path schema map (used by get_schema()) ───────────────────────────────
-
-export const ${camelName}EndpointSchemas = {
-	'example.get': {
-		input: ${pascalName}EndpointInputSchemas.exampleGet,
-		output: ${pascalName}EndpointOutputSchemas.exampleGet,
-	},
 } as const;
 `;
 

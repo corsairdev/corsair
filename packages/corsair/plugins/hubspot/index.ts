@@ -7,9 +7,10 @@ import type {
 	CorsairPluginContext,
 	CorsairWebhook,
 	KeyBuilderContext,
-	PluginEndpointMeta,
 	PluginPermissionsConfig,
 	RawWebhookRequest,
+	RequiredPluginEndpointMeta,
+	RequiredPluginEndpointSchemas,
 } from '../../core';
 import type { PickAuth } from '../../core/constants';
 import type {
@@ -24,7 +25,10 @@ import {
 	EngagementsEndpoints,
 	TicketsEndpoints,
 } from './endpoints';
-import { hubspotEndpointSchemas } from './endpoints/types';
+import {
+	HubSpotEndpointInputSchemas,
+	HubSpotEndpointOutputSchemas,
+} from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import type { HubSpotCredentials } from './schema';
 import { HubSpotSchema } from './schema';
@@ -180,6 +184,145 @@ const hubspotEndpointsNested = {
 	},
 } as const;
 
+export const hubspotEndpointSchemas = {
+	'contacts.get': {
+		input: HubSpotEndpointInputSchemas.contactsGet,
+		output: HubSpotEndpointOutputSchemas.contactsGet,
+	},
+	'contacts.getMany': {
+		input: HubSpotEndpointInputSchemas.contactsGetMany,
+		output: HubSpotEndpointOutputSchemas.contactsGetMany,
+	},
+	'contacts.createOrUpdate': {
+		input: HubSpotEndpointInputSchemas.contactsCreateOrUpdate,
+		output: HubSpotEndpointOutputSchemas.contactsCreateOrUpdate,
+	},
+	'contacts.delete': {
+		input: HubSpotEndpointInputSchemas.contactsDelete,
+		output: HubSpotEndpointOutputSchemas.contactsDelete,
+	},
+	'contacts.getRecentlyCreated': {
+		input: HubSpotEndpointInputSchemas.contactsGetRecentlyCreated,
+		output: HubSpotEndpointOutputSchemas.contactsGetRecentlyCreated,
+	},
+	'contacts.getRecentlyUpdated': {
+		input: HubSpotEndpointInputSchemas.contactsGetRecentlyUpdated,
+		output: HubSpotEndpointOutputSchemas.contactsGetRecentlyUpdated,
+	},
+	'contacts.search': {
+		input: HubSpotEndpointInputSchemas.contactsSearch,
+		output: HubSpotEndpointOutputSchemas.contactsSearch,
+	},
+	'companies.get': {
+		input: HubSpotEndpointInputSchemas.companiesGet,
+		output: HubSpotEndpointOutputSchemas.companiesGet,
+	},
+	'companies.getMany': {
+		input: HubSpotEndpointInputSchemas.companiesGetMany,
+		output: HubSpotEndpointOutputSchemas.companiesGetMany,
+	},
+	'companies.create': {
+		input: HubSpotEndpointInputSchemas.companiesCreate,
+		output: HubSpotEndpointOutputSchemas.companiesCreate,
+	},
+	'companies.update': {
+		input: HubSpotEndpointInputSchemas.companiesUpdate,
+		output: HubSpotEndpointOutputSchemas.companiesUpdate,
+	},
+	'companies.delete': {
+		input: HubSpotEndpointInputSchemas.companiesDelete,
+		output: HubSpotEndpointOutputSchemas.companiesDelete,
+	},
+	'companies.getRecentlyCreated': {
+		input: HubSpotEndpointInputSchemas.companiesGetRecentlyCreated,
+		output: HubSpotEndpointOutputSchemas.companiesGetRecentlyCreated,
+	},
+	'companies.getRecentlyUpdated': {
+		input: HubSpotEndpointInputSchemas.companiesGetRecentlyUpdated,
+		output: HubSpotEndpointOutputSchemas.companiesGetRecentlyUpdated,
+	},
+	'companies.searchByDomain': {
+		input: HubSpotEndpointInputSchemas.companiesSearchByDomain,
+		output: HubSpotEndpointOutputSchemas.companiesSearchByDomain,
+	},
+	'deals.get': {
+		input: HubSpotEndpointInputSchemas.dealsGet,
+		output: HubSpotEndpointOutputSchemas.dealsGet,
+	},
+	'deals.getMany': {
+		input: HubSpotEndpointInputSchemas.dealsGetMany,
+		output: HubSpotEndpointOutputSchemas.dealsGetMany,
+	},
+	'deals.create': {
+		input: HubSpotEndpointInputSchemas.dealsCreate,
+		output: HubSpotEndpointOutputSchemas.dealsCreate,
+	},
+	'deals.update': {
+		input: HubSpotEndpointInputSchemas.dealsUpdate,
+		output: HubSpotEndpointOutputSchemas.dealsUpdate,
+	},
+	'deals.delete': {
+		input: HubSpotEndpointInputSchemas.dealsDelete,
+		output: HubSpotEndpointOutputSchemas.dealsDelete,
+	},
+	'deals.getRecentlyCreated': {
+		input: HubSpotEndpointInputSchemas.dealsGetRecentlyCreated,
+		output: HubSpotEndpointOutputSchemas.dealsGetRecentlyCreated,
+	},
+	'deals.getRecentlyUpdated': {
+		input: HubSpotEndpointInputSchemas.dealsGetRecentlyUpdated,
+		output: HubSpotEndpointOutputSchemas.dealsGetRecentlyUpdated,
+	},
+	'deals.search': {
+		input: HubSpotEndpointInputSchemas.dealsSearch,
+		output: HubSpotEndpointOutputSchemas.dealsSearch,
+	},
+	'tickets.get': {
+		input: HubSpotEndpointInputSchemas.ticketsGet,
+		output: HubSpotEndpointOutputSchemas.ticketsGet,
+	},
+	'tickets.getMany': {
+		input: HubSpotEndpointInputSchemas.ticketsGetMany,
+		output: HubSpotEndpointOutputSchemas.ticketsGetMany,
+	},
+	'tickets.create': {
+		input: HubSpotEndpointInputSchemas.ticketsCreate,
+		output: HubSpotEndpointOutputSchemas.ticketsCreate,
+	},
+	'tickets.update': {
+		input: HubSpotEndpointInputSchemas.ticketsUpdate,
+		output: HubSpotEndpointOutputSchemas.ticketsUpdate,
+	},
+	'tickets.delete': {
+		input: HubSpotEndpointInputSchemas.ticketsDelete,
+		output: HubSpotEndpointOutputSchemas.ticketsDelete,
+	},
+	'engagements.get': {
+		input: HubSpotEndpointInputSchemas.engagementsGet,
+		output: HubSpotEndpointOutputSchemas.engagementsGet,
+	},
+	'engagements.getMany': {
+		input: HubSpotEndpointInputSchemas.engagementsGetMany,
+		output: HubSpotEndpointOutputSchemas.engagementsGetMany,
+	},
+	'engagements.create': {
+		input: HubSpotEndpointInputSchemas.engagementsCreate,
+		output: HubSpotEndpointOutputSchemas.engagementsCreate,
+	},
+	'engagements.delete': {
+		input: HubSpotEndpointInputSchemas.engagementsDelete,
+		output: HubSpotEndpointOutputSchemas.engagementsDelete,
+	},
+	'contactLists.addContact': {
+		input: HubSpotEndpointInputSchemas.contactListsAddContact,
+		output: HubSpotEndpointOutputSchemas.contactListsAddContact,
+	},
+	'contactLists.removeContact': {
+		input: HubSpotEndpointInputSchemas.contactListsRemoveContact,
+		output: HubSpotEndpointOutputSchemas.contactListsRemoveContact,
+	},
+} satisfies RequiredPluginEndpointSchemas<typeof hubspotEndpointsNested>;
+
 const hubspotWebhooksNested = {
 	contactCreated: ContactWebhooks.created,
 	contactUpdated: ContactWebhooks.updated,
@@ -317,7 +460,7 @@ const hubspotEndpointMeta = {
 		riskLevel: 'write',
 		description: 'Remove a contact from a static contact list',
 	},
-} satisfies PluginEndpointMeta<typeof hubspotEndpointsNested>;
+} satisfies RequiredPluginEndpointMeta<typeof hubspotEndpointsNested>;
 
 export type HubSpotPluginOptions = {
 	authType?: PickAuth<'api_key' | 'oauth_2'>;
@@ -328,7 +471,7 @@ export type HubSpotPluginOptions = {
 	errorHandlers?: CorsairErrorHandler;
 	/**
 	 * Permission configuration for the HubSpot plugin.
-	 * Controls what the AI agent is allowed to do via the MCP server.
+	 * Controls what the AI agent is allowed to do.
 	 * Overrides use dot-notation paths from the HubSpot endpoint tree — invalid paths are type errors.
 	 */
 	permissions?: PluginPermissionsConfig<typeof hubspotEndpointsNested>;
@@ -496,7 +639,6 @@ export type {
 	UpdateDealResponse,
 	UpdateTicketResponse,
 } from './endpoints/types';
-export { hubspotEndpointSchemas } from './endpoints/types';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Schema Type Exports

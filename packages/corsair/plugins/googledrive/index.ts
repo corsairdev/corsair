@@ -6,9 +6,10 @@ import type {
 	CorsairPluginContext,
 	CorsairWebhook,
 	KeyBuilderContext,
-	PluginEndpointMeta,
 	PluginPermissionsConfig,
 	RawWebhookRequest,
+	RequiredPluginEndpointMeta,
+	RequiredPluginEndpointSchemas,
 } from '../../core';
 import type { PickAuth } from '../../core/constants';
 import { getValidAccessToken } from './client';
@@ -22,7 +23,10 @@ import {
 	SearchEndpoints,
 	SharedDrivesEndpoints,
 } from './endpoints';
-import { googledriveEndpointSchemas } from './endpoints/types';
+import {
+	GoogleDriveEndpointInputSchemas,
+	GoogleDriveEndpointOutputSchemas,
+} from './endpoints/types';
 import { GoogleDriveSchema } from './schema';
 import type {
 	GoogleDriveWebhookEvent,
@@ -122,6 +126,93 @@ const googleDriveEndpointsNested = {
 	},
 } as const;
 
+export const googledriveEndpointSchemas = {
+	'files.list': {
+		input: GoogleDriveEndpointInputSchemas.filesList,
+		output: GoogleDriveEndpointOutputSchemas.filesList,
+	},
+	'files.get': {
+		input: GoogleDriveEndpointInputSchemas.filesGet,
+		output: GoogleDriveEndpointOutputSchemas.filesGet,
+	},
+	'files.createFromText': {
+		input: GoogleDriveEndpointInputSchemas.filesCreateFromText,
+		output: GoogleDriveEndpointOutputSchemas.filesCreateFromText,
+	},
+	'files.upload': {
+		input: GoogleDriveEndpointInputSchemas.filesUpload,
+		output: GoogleDriveEndpointOutputSchemas.filesUpload,
+	},
+	'files.update': {
+		input: GoogleDriveEndpointInputSchemas.filesUpdate,
+		output: GoogleDriveEndpointOutputSchemas.filesUpdate,
+	},
+	'files.delete': {
+		input: GoogleDriveEndpointInputSchemas.filesDelete,
+		output: GoogleDriveEndpointOutputSchemas.filesDelete,
+	},
+	'files.copy': {
+		input: GoogleDriveEndpointInputSchemas.filesCopy,
+		output: GoogleDriveEndpointOutputSchemas.filesCopy,
+	},
+	'files.move': {
+		input: GoogleDriveEndpointInputSchemas.filesMove,
+		output: GoogleDriveEndpointOutputSchemas.filesMove,
+	},
+	'files.download': {
+		input: GoogleDriveEndpointInputSchemas.filesDownload,
+		output: GoogleDriveEndpointOutputSchemas.filesDownload,
+	},
+	'files.share': {
+		input: GoogleDriveEndpointInputSchemas.filesShare,
+		output: GoogleDriveEndpointOutputSchemas.filesShare,
+	},
+	'folders.create': {
+		input: GoogleDriveEndpointInputSchemas.foldersCreate,
+		output: GoogleDriveEndpointOutputSchemas.foldersCreate,
+	},
+	'folders.get': {
+		input: GoogleDriveEndpointInputSchemas.foldersGet,
+		output: GoogleDriveEndpointOutputSchemas.foldersGet,
+	},
+	'folders.list': {
+		input: GoogleDriveEndpointInputSchemas.foldersList,
+		output: GoogleDriveEndpointOutputSchemas.foldersList,
+	},
+	'folders.delete': {
+		input: GoogleDriveEndpointInputSchemas.foldersDelete,
+		output: GoogleDriveEndpointOutputSchemas.foldersDelete,
+	},
+	'folders.share': {
+		input: GoogleDriveEndpointInputSchemas.foldersShare,
+		output: GoogleDriveEndpointOutputSchemas.foldersShare,
+	},
+	'sharedDrives.create': {
+		input: GoogleDriveEndpointInputSchemas.sharedDrivesCreate,
+		output: GoogleDriveEndpointOutputSchemas.sharedDrivesCreate,
+	},
+	'sharedDrives.get': {
+		input: GoogleDriveEndpointInputSchemas.sharedDrivesGet,
+		output: GoogleDriveEndpointOutputSchemas.sharedDrivesGet,
+	},
+	'sharedDrives.list': {
+		input: GoogleDriveEndpointInputSchemas.sharedDrivesList,
+		output: GoogleDriveEndpointOutputSchemas.sharedDrivesList,
+	},
+	'sharedDrives.update': {
+		input: GoogleDriveEndpointInputSchemas.sharedDrivesUpdate,
+		output: GoogleDriveEndpointOutputSchemas.sharedDrivesUpdate,
+	},
+	'sharedDrives.delete': {
+		input: GoogleDriveEndpointInputSchemas.sharedDrivesDelete,
+		output: GoogleDriveEndpointOutputSchemas.sharedDrivesDelete,
+	},
+	'search.filesAndFolders': {
+		input: GoogleDriveEndpointInputSchemas.searchFilesAndFolders,
+		output: GoogleDriveEndpointOutputSchemas.searchFilesAndFolders,
+	},
+} satisfies RequiredPluginEndpointSchemas<typeof googleDriveEndpointsNested>;
+
 const googleDriveWebhooksNested = {
 	driveChanged: ChangeWebhooks.driveChanged,
 } as const;
@@ -133,7 +224,7 @@ export type GoogleDrivePluginOptions = {
 	webhookHooks?: InternalGoogleDrivePlugin['webhookHooks'];
 	/**
 	 * Permission configuration for the Google Drive plugin.
-	 * Controls what the AI agent is allowed to do via the MCP server.
+	 * Controls what the AI agent is allowed to do.
 	 * Overrides use dot-notation paths from the Google Drive endpoint tree — invalid paths are type errors.
 	 */
 	permissions?: PluginPermissionsConfig<typeof googleDriveEndpointsNested>;
@@ -232,7 +323,7 @@ const googleDriveEndpointMeta = {
 		riskLevel: 'read',
 		description: 'Search for files and folders in Google Drive',
 	},
-} satisfies PluginEndpointMeta<typeof googleDriveEndpointsNested>;
+} satisfies RequiredPluginEndpointMeta<typeof googleDriveEndpointsNested>;
 
 export type BaseGoogleDrivePlugin<T extends GoogleDrivePluginOptions> =
 	CorsairPlugin<
@@ -360,4 +451,3 @@ export type {
 	GoogleDriveEndpointInputs,
 	GoogleDriveEndpointOutputs,
 } from './endpoints/types';
-export { googledriveEndpointSchemas } from './endpoints/types';

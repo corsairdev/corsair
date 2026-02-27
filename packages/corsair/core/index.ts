@@ -197,6 +197,9 @@ export type {
 	PermissionPolicy,
 	PluginEndpointMeta,
 	PluginPermissionsConfig,
+	RequiredPluginEndpointMeta,
+	RequiredPluginEndpointSchemas,
+	RequiredPluginWebhookSchemas,
 	WebhookHooks,
 } from './plugins';
 
@@ -211,6 +214,7 @@ export type {
 	CorsairWebhookHandler,
 	CorsairWebhookMatcher,
 	RawWebhookRequest,
+	WebhookPathsOf,
 	WebhookRequest,
 	WebhookResponse,
 	WebhookTree,
