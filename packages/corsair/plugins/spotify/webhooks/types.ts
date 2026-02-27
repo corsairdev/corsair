@@ -10,7 +10,7 @@ function parseBody(body: unknown): unknown {
 
 /**
  * Base webhook payload interface
- * 
+ *
  * CONFIGURATION:
  * Update this to match your provider's webhook payload structure.
  * Most providers include a 'type' field and 'data' field, but the structure may vary.
@@ -30,12 +30,12 @@ export interface SpotifyWebhookPayload {
 
 /**
  * Webhook Event Types
- * 
+ *
  * CONFIGURATION:
  * - Replace ExampleEvent with your actual webhook event types
  * - Each event type should extend SpotifyWebhookPayload
  * - Add all event-specific fields in the data object
- * 
+ *
  * Example:
  * export interface UserCreatedEvent extends SpotifyWebhookPayload {
  *   type: 'user.created';
@@ -58,10 +58,10 @@ export interface ExampleEvent extends SpotifyWebhookPayload {
 
 /**
  * Webhook Outputs Type
- * 
+ *
  * Maps each webhook key to its event type.
  * This is used by the plugin system for type inference.
- * 
+ *
  * CONFIGURATION:
  * - Replace 'example' with your actual webhook keys
  * - Add all your webhooks here
@@ -74,7 +74,7 @@ export type SpotifyWebhookOutputs = {
 
 /**
  * Creates a matcher function for a specific event type
- * 
+ *
  * CONFIGURATION:
  * This function is used to match incoming webhooks to the correct handler.
  * Most providers use a 'type' field, but you may need to customize this.
@@ -82,23 +82,21 @@ export type SpotifyWebhookOutputs = {
 export function createSpotifyMatch(eventType: string): CorsairWebhookMatcher {
 	return (request: RawWebhookRequest) => {
 		const parsedBody = parseBody(request.body) as Record<string, unknown>;
-		return (
-			typeof parsedBody.type === 'string' && parsedBody.type === eventType
-		);
+		return typeof parsedBody.type === 'string' && parsedBody.type === eventType;
 	};
 }
 
 /**
  * Webhook Signature Verification
- * 
+ *
  * WEBHOOK CONFIGURATION:
  * Implement signature verification based on your provider's method.
- * 
+ *
  * Common verification methods:
  * - HMAC SHA256 (most common)
  * - HMAC SHA1
  * - Custom signature algorithms
- * 
+ *
  * Example for HMAC SHA256:
  * import crypto from 'crypto';
  * export function verifySpotifyWebhookSignature(
@@ -109,18 +107,18 @@ export function createSpotifyMatch(eventType: string): CorsairWebhookMatcher {
  *   if (!signature) {
  *     return { valid: false, error: 'Missing signature' };
  *   }
- *   
+ *
  *   const payload = request.rawBody || JSON.stringify(request.payload);
  *   const expectedSignature = crypto
  *     .createHmac('sha256', secret)
  *     .update(payload)
  *     .digest('hex');
- *   
+ *
  *   const isValid = crypto.timingSafeEqual(
  *     Buffer.from(signature),
  *     Buffer.from(expectedSignature)
  *   );
- *   
+ *
  *   return { valid: isValid, error: isValid ? undefined : 'Invalid signature' };
  * }
  */

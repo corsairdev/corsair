@@ -13,6 +13,7 @@ import type {
 import type { PickAuth } from '../../core/constants';
 import type { LinearEndpointInputs, LinearEndpointOutputs } from './endpoints';
 import { Comments, Issues, Projects, Teams, Users } from './endpoints';
+import { linearEndpointSchemas } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { LinearSchema } from './schema';
 import type {
@@ -29,7 +30,6 @@ import type {
 	ProjectUpdatedEvent,
 } from './webhooks';
 import { CommentWebhooks, IssueWebhooks, ProjectWebhooks } from './webhooks';
-import { linearEndpointSchemas } from './endpoints/types';
 
 export type LinearPluginOptions = {
 	authType?: PickAuth<'api_key'>;

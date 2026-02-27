@@ -1099,8 +1099,7 @@ async function executeGetTokens(
 
 	try {
 		redirectUrl = await integrationKm.get_redirect_url();
-	} catch {
-	}
+	} catch {}
 
 	if (isSpotify && !redirectUrl) {
 		const inputRedirectUrl = await p.text({
@@ -1134,10 +1133,9 @@ async function executeGetTokens(
 
 	const port = await findFreePort();
 
-	const redirectUri = isSpotify
-		? redirectUrl : getRedirectUri(port);
+	const redirectUri = isSpotify ? redirectUrl : getRedirectUri(port);
 
-	const authParams: Record<string, string| null> = {
+	const authParams: Record<string, string | null> = {
 		client_id: clientId,
 		redirect_uri: redirectUri,
 		response_type: 'code',

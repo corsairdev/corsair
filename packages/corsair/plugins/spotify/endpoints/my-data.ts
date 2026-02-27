@@ -1,5 +1,5 @@
-import type { SpotifyEndpoints } from '..';
 import { logEventFromContext } from '../../utils/events';
+import type { SpotifyEndpoints } from '..';
 import { makeSpotifyRequest } from '../client';
 import type { SpotifyEndpointOutputs } from './types';
 

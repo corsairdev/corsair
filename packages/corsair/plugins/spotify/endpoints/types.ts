@@ -579,7 +579,8 @@ const MyDataGetFollowedArtistsResponseSchema = z.object({
 });
 
 const PlayerAddToQueueResponseSchema = z.object({});
-const PlayerGetCurrentlyPlayingResponseSchema = CurrentlyPlayingSchema.nullable().optional();
+const PlayerGetCurrentlyPlayingResponseSchema =
+	CurrentlyPlayingSchema.nullable().optional();
 const PlayerSkipToNextResponseSchema = z.object({});
 const PlayerPauseResponseSchema = z.object({});
 const PlayerSkipToPreviousResponseSchema = z.object({});

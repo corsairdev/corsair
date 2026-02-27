@@ -191,19 +191,48 @@ export type GoogleSheetsEndpointOutputs = {
 	sheetsDeleteRowsOrColumns: BatchUpdateSpreadsheetResponse;
 };
 
-
 // ─────────────────────────────────────────────────────────────────────────────
 // Endpoint Schema Map — dot-path → {{ input, output }} for get_schema()
 // ─────────────────────────────────────────────────────────────────────────────
 export const googlesheetsEndpointSchemas = {
-  'spreadsheets.create': { input: GoogleSheetsEndpointInputSchemas.spreadsheetsCreate, output: GoogleSheetsEndpointOutputSchemas.spreadsheetsCreate },
-  'spreadsheets.delete': { input: GoogleSheetsEndpointInputSchemas.spreadsheetsDelete, output: GoogleSheetsEndpointOutputSchemas.spreadsheetsDelete },
-  'sheets.appendRow': { input: GoogleSheetsEndpointInputSchemas.sheetsAppendRow, output: GoogleSheetsEndpointOutputSchemas.sheetsAppendRow },
-  'sheets.appendOrUpdateRow': { input: GoogleSheetsEndpointInputSchemas.sheetsAppendOrUpdateRow, output: GoogleSheetsEndpointOutputSchemas.sheetsAppendOrUpdateRow },
-  'sheets.getRows': { input: GoogleSheetsEndpointInputSchemas.sheetsGetRows, output: GoogleSheetsEndpointOutputSchemas.sheetsGetRows },
-  'sheets.updateRow': { input: GoogleSheetsEndpointInputSchemas.sheetsUpdateRow, output: GoogleSheetsEndpointOutputSchemas.sheetsUpdateRow },
-  'sheets.clearSheet': { input: GoogleSheetsEndpointInputSchemas.sheetsClearSheet, output: GoogleSheetsEndpointOutputSchemas.sheetsClearSheet },
-  'sheets.createSheet': { input: GoogleSheetsEndpointInputSchemas.sheetsCreateSheet, output: GoogleSheetsEndpointOutputSchemas.sheetsCreateSheet },
-  'sheets.deleteSheet': { input: GoogleSheetsEndpointInputSchemas.sheetsDeleteSheet, output: GoogleSheetsEndpointOutputSchemas.sheetsDeleteSheet },
-  'sheets.deleteRowsOrColumns': { input: GoogleSheetsEndpointInputSchemas.sheetsDeleteRowsOrColumns, output: GoogleSheetsEndpointOutputSchemas.sheetsDeleteRowsOrColumns },
+	'spreadsheets.create': {
+		input: GoogleSheetsEndpointInputSchemas.spreadsheetsCreate,
+		output: GoogleSheetsEndpointOutputSchemas.spreadsheetsCreate,
+	},
+	'spreadsheets.delete': {
+		input: GoogleSheetsEndpointInputSchemas.spreadsheetsDelete,
+		output: GoogleSheetsEndpointOutputSchemas.spreadsheetsDelete,
+	},
+	'sheets.appendRow': {
+		input: GoogleSheetsEndpointInputSchemas.sheetsAppendRow,
+		output: GoogleSheetsEndpointOutputSchemas.sheetsAppendRow,
+	},
+	'sheets.appendOrUpdateRow': {
+		input: GoogleSheetsEndpointInputSchemas.sheetsAppendOrUpdateRow,
+		output: GoogleSheetsEndpointOutputSchemas.sheetsAppendOrUpdateRow,
+	},
+	'sheets.getRows': {
+		input: GoogleSheetsEndpointInputSchemas.sheetsGetRows,
+		output: GoogleSheetsEndpointOutputSchemas.sheetsGetRows,
+	},
+	'sheets.updateRow': {
+		input: GoogleSheetsEndpointInputSchemas.sheetsUpdateRow,
+		output: GoogleSheetsEndpointOutputSchemas.sheetsUpdateRow,
+	},
+	'sheets.clearSheet': {
+		input: GoogleSheetsEndpointInputSchemas.sheetsClearSheet,
+		output: GoogleSheetsEndpointOutputSchemas.sheetsClearSheet,
+	},
+	'sheets.createSheet': {
+		input: GoogleSheetsEndpointInputSchemas.sheetsCreateSheet,
+		output: GoogleSheetsEndpointOutputSchemas.sheetsCreateSheet,
+	},
+	'sheets.deleteSheet': {
+		input: GoogleSheetsEndpointInputSchemas.sheetsDeleteSheet,
+		output: GoogleSheetsEndpointOutputSchemas.sheetsDeleteSheet,
+	},
+	'sheets.deleteRowsOrColumns': {
+		input: GoogleSheetsEndpointInputSchemas.sheetsDeleteRowsOrColumns,
+		output: GoogleSheetsEndpointOutputSchemas.sheetsDeleteRowsOrColumns,
+	},
 } as const;

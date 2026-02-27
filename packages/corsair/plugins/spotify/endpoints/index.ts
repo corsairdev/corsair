@@ -1,15 +1,15 @@
 import {
 	get as albumsGet,
-	getNewReleases,
 	getTracks as albumsGetTracks,
 	search as albumsSearch,
+	getNewReleases,
 } from './albums';
 import {
 	get as artistsGet,
+	search as artistsSearch,
 	getAlbums,
 	getRelatedArtists,
 	getTopTracks,
-	search as artistsSearch,
 } from './artists';
 import { getLikedTracks } from './library';
 import { getFollowedArtists } from './my-data';
@@ -27,15 +27,15 @@ import {
 import {
 	addItem,
 	create,
+	getUserPlaylists,
 	get as playlistsGet,
 	getTracks as playlistsGetTracks,
-	getUserPlaylists,
-	removeItem,
 	search as playlistsSearch,
+	removeItem,
 } from './playlists';
 import {
-	get as tracksGet,
 	getAudioFeatures,
+	get as tracksGet,
 	search as tracksSearch,
 } from './tracks';
 

@@ -7,6 +7,7 @@ import type {
 	CorsairWebhook,
 	KeyBuilderContext,
 	PluginEndpointMeta,
+	PluginPermissionsConfig,
 	RawWebhookRequest,
 } from '../../core';
 import type { PickAuth } from '../../core/constants';
@@ -16,6 +17,7 @@ import type {
 	GoogleCalendarEndpointOutputs,
 } from './endpoints';
 import { CalendarEndpoints, EventsEndpoints } from './endpoints';
+import { googlecalendarEndpointSchemas } from './endpoints/types';
 import { GoogleCalendarSchema } from './schema';
 import type {
 	EventCreatedEvent,
@@ -27,7 +29,6 @@ import type {
 import { EventWebhooks } from './webhooks';
 import type { PubSubNotification } from './webhooks/types';
 import { decodePubSubMessage } from './webhooks/types';
-import { googlecalendarEndpointSchemas } from './endpoints/types';
 
 export type GoogleCalendarContext = CorsairPluginContext<
 	typeof GoogleCalendarSchema,
@@ -96,6 +97,12 @@ export type GoogleCalendarPluginOptions = {
 	key?: string;
 	hooks?: InternalGoogleCalendarPlugin['hooks'];
 	webhookHooks?: InternalGoogleCalendarPlugin['webhookHooks'];
+	/**
+	 * Permission configuration for the Google Calendar plugin.
+	 * Controls what the AI agent is allowed to do via the MCP server.
+	 * Overrides use dot-notation paths from the Google Calendar endpoint tree — invalid paths are type errors.
+	 */
+	permissions?: PluginPermissionsConfig<typeof googleCalendarEndpointsNested>;
 };
 
 export type GoogleCalendarKeyBuilderContext =
@@ -108,10 +115,19 @@ const defaultAuthType = 'oauth_2' as const;
  * Used by the MCP server permission system to decide allow / deny / require_approval.
  */
 const googleCalendarEndpointMeta = {
-	'events.create': { riskLevel: 'write', description: 'Create a new calendar event' },
-	'events.get': { riskLevel: 'read', description: 'Get a specific calendar event' },
+	'events.create': {
+		riskLevel: 'write',
+		description: 'Create a new calendar event',
+	},
+	'events.get': {
+		riskLevel: 'read',
+		description: 'Get a specific calendar event',
+	},
 	'events.getMany': { riskLevel: 'read', description: 'List calendar events' },
-	'events.update': { riskLevel: 'write', description: 'Update an existing calendar event' },
+	'events.update': {
+		riskLevel: 'write',
+		description: 'Update an existing calendar event',
+	},
 	'events.delete': {
 		riskLevel: 'destructive',
 		description: 'Delete a calendar event [DESTRUCTIVE]',

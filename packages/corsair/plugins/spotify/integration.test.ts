@@ -78,7 +78,9 @@ describe('Spotify plugin integration', () => {
 		expect(getEventPayload).toMatchObject(getInput);
 
 		if (album && corsair.spotify.db.albums) {
-			const albumFromDb = await corsair.spotify.db.albums.findByEntityId(album.id);
+			const albumFromDb = await corsair.spotify.db.albums.findByEntityId(
+				album.id,
+			);
 			expect(albumFromDb).not.toBeNull();
 			if (albumFromDb) {
 				expect(albumFromDb.data.id).toBe(album.id);
@@ -112,9 +114,8 @@ describe('Spotify plugin integration', () => {
 			limit: 10,
 		};
 
-		const newReleases = await corsair.spotify.api.albums.getNewReleases(
-			newReleasesInput,
-		);
+		const newReleases =
+			await corsair.spotify.api.albums.getNewReleases(newReleasesInput);
 
 		expect(newReleases).toBeDefined();
 		expect(newReleases.albums).toBeDefined();
@@ -211,9 +212,8 @@ describe('Spotify plugin integration', () => {
 			market: 'US',
 		};
 
-		const topTracks = await corsair.spotify.api.artists.getTopTracks(
-			getTopTracksInput,
-		);
+		const topTracks =
+			await corsair.spotify.api.artists.getTopTracks(getTopTracksInput);
 
 		expect(topTracks).toBeDefined();
 		expect(topTracks.tracks).toBeDefined();
@@ -223,7 +223,8 @@ describe('Spotify plugin integration', () => {
 		});
 
 		expect(getTopTracksEvents.length).toBeGreaterThan(0);
-		const getTopTracksEvent = getTopTracksEvents[getTopTracksEvents.length - 1]!;
+		const getTopTracksEvent =
+			getTopTracksEvents[getTopTracksEvents.length - 1]!;
 		const getTopTracksEventPayload =
 			typeof getTopTracksEvent.payload === 'string'
 				? JSON.parse(getTopTracksEvent.payload)
@@ -298,7 +299,9 @@ describe('Spotify plugin integration', () => {
 		expect(getEventPayload).toMatchObject(getInput);
 
 		if (track && corsair.spotify.db.tracks) {
-			const trackFromDb = await corsair.spotify.db.tracks.findByEntityId(track.id);
+			const trackFromDb = await corsair.spotify.db.tracks.findByEntityId(
+				track.id,
+			);
 			expect(trackFromDb).not.toBeNull();
 			if (trackFromDb) {
 				expect(trackFromDb.data.id).toBe(track.id);
@@ -444,9 +447,8 @@ describe('Spotify plugin integration', () => {
 				expect(getEventPayload).toMatchObject(getInput);
 
 				if (playlist && corsair.spotify.db.playlists) {
-					const playlistFromDb = await corsair.spotify.db.playlists.findByEntityId(
-						playlist.id,
-					);
+					const playlistFromDb =
+						await corsair.spotify.db.playlists.findByEntityId(playlist.id);
 					expect(playlistFromDb).not.toBeNull();
 					if (playlistFromDb) {
 						expect(playlistFromDb.data.id).toBe(playlist.id);
@@ -458,9 +460,8 @@ describe('Spotify plugin integration', () => {
 					limit: 10,
 				};
 
-				const tracks = await corsair.spotify.api.playlists.getTracks(
-					getTracksInput,
-				);
+				const tracks =
+					await corsair.spotify.api.playlists.getTracks(getTracksInput);
 
 				expect(tracks).toBeDefined();
 
@@ -484,7 +485,8 @@ describe('Spotify plugin integration', () => {
 			public: false,
 		};
 
-		const createdPlaylist = await corsair.spotify.api.playlists.create(createInput);
+		const createdPlaylist =
+			await corsair.spotify.api.playlists.create(createInput);
 
 		expect(createdPlaylist).toBeDefined();
 		expect(createdPlaylist.name).toBe(createInput.name);
@@ -518,7 +520,8 @@ describe('Spotify plugin integration', () => {
 			limit: 10,
 		};
 
-		const searchResult = await corsair.spotify.api.playlists.search(searchInput);
+		const searchResult =
+			await corsair.spotify.api.playlists.search(searchInput);
 
 		expect(searchResult).toBeDefined();
 		expect(searchResult.playlists).toBeDefined();
@@ -550,9 +553,8 @@ describe('Spotify plugin integration', () => {
 			limit: 10,
 		};
 
-		const likedTracks = await corsair.spotify.api.library.getLikedTracks(
-			getLikedTracksInput,
-		);
+		const likedTracks =
+			await corsair.spotify.api.library.getLikedTracks(getLikedTracksInput);
 
 		expect(likedTracks).toBeDefined();
 
@@ -605,7 +607,9 @@ describe('Spotify plugin integration', () => {
 			typeof getFollowedArtistsEvent.payload === 'string'
 				? JSON.parse(getFollowedArtistsEvent.payload)
 				: getFollowedArtistsEvent.payload;
-		expect(getFollowedArtistsEventPayload).toMatchObject(getFollowedArtistsInput);
+		expect(getFollowedArtistsEventPayload).toMatchObject(
+			getFollowedArtistsInput,
+		);
 
 		testDb.cleanup();
 	});

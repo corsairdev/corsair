@@ -12,7 +12,6 @@ import type {
 } from '../../core';
 import type { PickAuth } from '../../core/constants';
 import type { GithubEndpointInputs, GithubEndpointOutputs } from './endpoints';
-import { githubEndpointSchemas } from './endpoints/types';
 import {
 	IssuesEndpoints,
 	PullRequestsEndpoints,
@@ -20,6 +19,7 @@ import {
 	RepositoriesEndpoints,
 	WorkflowsEndpoints,
 } from './endpoints';
+import { githubEndpointSchemas } from './endpoints/types';
 import type { GithubCredentials } from './schema';
 import { GithubSchema } from './schema';
 import type {

@@ -9,6 +9,7 @@ import type {
 	KeyBuilderContext,
 	PluginAuthConfig,
 	PluginEndpointMeta,
+	PluginPermissionsConfig,
 } from '../../core';
 import type { AuthTypes, PickAuth } from '../../core/constants';
 import {
@@ -72,6 +73,12 @@ export type DiscordPluginOptions = {
 	webhookHooks?: InternalDiscordPlugin['webhookHooks'];
 	/** Custom error handlers (merged with built-in defaults). */
 	errorHandlers?: CorsairErrorHandler;
+	/**
+	 * Permission configuration for the Discord plugin.
+	 * Controls what the AI agent is allowed to do via the MCP server.
+	 * Overrides use dot-notation paths from the Discord endpoint tree — invalid paths are type errors.
+	 */
+	permissions?: PluginPermissionsConfig<typeof discordEndpointsNested>;
 };
 
 // ── Context ────────────────────────────────────────────────────────────────────
@@ -195,29 +202,62 @@ const defaultAuthType: AuthTypes = 'api_key' as const;
  * Used by the MCP server permission system to decide allow / deny / require_approval.
  */
 const discordEndpointMeta = {
-	'messages.send': { riskLevel: 'write', description: 'Send a message to a channel' },
-	'messages.reply': { riskLevel: 'write', description: 'Reply to a message in a channel' },
+	'messages.send': {
+		riskLevel: 'write',
+		description: 'Send a message to a channel',
+	},
+	'messages.reply': {
+		riskLevel: 'write',
+		description: 'Reply to a message in a channel',
+	},
 	'messages.get': { riskLevel: 'read', description: 'Get a specific message' },
-	'messages.list': { riskLevel: 'read', description: 'List recent messages in a channel' },
-	'messages.edit': { riskLevel: 'write', description: 'Edit an existing message' },
+	'messages.list': {
+		riskLevel: 'read',
+		description: 'List recent messages in a channel',
+	},
+	'messages.edit': {
+		riskLevel: 'write',
+		description: 'Edit an existing message',
+	},
 	'messages.delete': {
 		riskLevel: 'destructive',
 		irreversible: true,
 		description: 'Permanently delete a message [DESTRUCTIVE]',
 	},
-	'threads.create': { riskLevel: 'write', description: 'Create a new thread in a channel' },
+	'threads.create': {
+		riskLevel: 'write',
+		description: 'Create a new thread in a channel',
+	},
 	'threads.createFromMessage': {
 		riskLevel: 'write',
 		description: 'Create a thread from an existing message',
 	},
-	'reactions.add': { riskLevel: 'write', description: 'Add a reaction to a message' },
-	'reactions.remove': { riskLevel: 'write', description: 'Remove a reaction from a message' },
-	'reactions.list': { riskLevel: 'read', description: 'List reactions on a message' },
-	'guilds.list': { riskLevel: 'read', description: 'List guilds the bot is a member of' },
+	'reactions.add': {
+		riskLevel: 'write',
+		description: 'Add a reaction to a message',
+	},
+	'reactions.remove': {
+		riskLevel: 'write',
+		description: 'Remove a reaction from a message',
+	},
+	'reactions.list': {
+		riskLevel: 'read',
+		description: 'List reactions on a message',
+	},
+	'guilds.list': {
+		riskLevel: 'read',
+		description: 'List guilds the bot is a member of',
+	},
 	'guilds.get': { riskLevel: 'read', description: 'Get info about a guild' },
-	'channels.list': { riskLevel: 'read', description: 'List channels in a guild' },
+	'channels.list': {
+		riskLevel: 'read',
+		description: 'List channels in a guild',
+	},
 	'members.list': { riskLevel: 'read', description: 'List members of a guild' },
-	'members.get': { riskLevel: 'read', description: 'Get info about a guild member' },
+	'members.get': {
+		riskLevel: 'read',
+		description: 'Get info about a guild member',
+	},
 } satisfies PluginEndpointMeta<typeof discordEndpointsNested>;
 
 export const discordAuthConfig = {} as const satisfies PluginAuthConfig;

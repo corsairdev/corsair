@@ -1,10 +1,6 @@
 import type { ZodTypeAny } from 'zod';
 import type { CorsairDatabase } from '../../db/kysely/database';
 import { createKyselyEntityClient } from '../../db/kysely/orm';
-import {
-	buildInspectMethods,
-	type CorsairInspectMethods,
-} from '../inspect';
 import type {
 	CorsairPluginSchema,
 	PluginEntityClient,
@@ -23,6 +19,8 @@ import type { AuthTypes } from '../constants';
 import type { BindEndpoints, EndpointTree } from '../endpoints';
 import { bindEndpointsRecursively } from '../endpoints/bind';
 import type { CorsairErrorHandler } from '../errors';
+import type { CorsairInspectMethods } from '../inspect';
+import { buildInspectMethods } from '../inspect';
 import type {
 	CorsairKeyBuilderBase,
 	CorsairPlugin,
@@ -347,13 +345,8 @@ export function buildCorsairClient<
 	plugins: Plugins,
 	options: BuildCorsairClientOptions,
 ): CorsairClient<Plugins> {
-	const {
-		database,
-		tenantId,
-		kek,
-		rootErrorHandlers,
-		approvalConfig,
-	} = options;
+	const { database, tenantId, kek, rootErrorHandlers, approvalConfig } =
+		options;
 
 	const apiUnsafe: Record<string, Record<string, unknown>> = {};
 	const pluginEntitiesUnsafe: Record<string, Record<string, unknown>> = {};
