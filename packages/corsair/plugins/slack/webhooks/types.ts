@@ -480,18 +480,18 @@ export const MessageRepliedEventSchema: z.ZodType<MessageRepliedEvent> =
 		channel: z.string(),
 		channel_type: ChannelTypeSchema,
 		ts: z.string(),
-		message: z.lazy(() => MessageEventSchema).and(
-			z.object({
-				thread_ts: z.string(),
-				reply_count: z.number(),
-				reply_users_count: z.number().optional(),
-				latest_reply: z.string().optional(),
-				reply_users: z.array(z.string()).optional(),
-				replies: z.array(
-					z.object({ user: z.string(), ts: z.string() }),
-				),
-			}),
-		),
+		message: z
+			.lazy(() => MessageEventSchema)
+			.and(
+				z.object({
+					thread_ts: z.string(),
+					reply_count: z.number(),
+					reply_users_count: z.number().optional(),
+					latest_reply: z.string().optional(),
+					reply_users: z.array(z.string()).optional(),
+					replies: z.array(z.object({ user: z.string(), ts: z.string() })),
+				}),
+			),
 	});
 
 export const AllMessageEventsSchema: z.ZodType<AllMessageEvents> = z.union([

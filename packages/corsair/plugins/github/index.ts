@@ -10,6 +10,7 @@ import type {
 	RawWebhookRequest,
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
+	RequiredPluginWebhookSchemas,
 } from '../../core';
 import type { PickAuth } from '../../core/constants';
 import type { GithubEndpointInputs, GithubEndpointOutputs } from './endpoints';
@@ -38,6 +39,14 @@ import type {
 	StarDeletedEvent,
 } from './webhooks';
 import { PullRequestWebhooks, PushWebhooks, StarWebhooks } from './webhooks';
+import {
+	PullRequestClosedEventSchema,
+	PullRequestOpenedEventSchema,
+	PullRequestSynchronizeEventSchema,
+	PushEventSchema,
+	StarCreatedEventSchema,
+	StarDeletedEventSchema,
+} from './webhooks/types';
 
 export {
 	type StarCreatedEvent,
@@ -236,6 +245,39 @@ const githubWebhooksNested = {
 	starDeleted: StarWebhooks.deleted,
 } as const;
 
+const githubWebhookSchemas = {
+	pullRequestOpened: {
+		description: 'A pull request was opened',
+		payload: PullRequestOpenedEventSchema,
+		response: PullRequestOpenedEventSchema,
+	},
+	pullRequestClosed: {
+		description: 'A pull request was closed or merged',
+		payload: PullRequestClosedEventSchema,
+		response: PullRequestClosedEventSchema,
+	},
+	pullRequestSynchronize: {
+		description: 'New commits were pushed to a pull request',
+		payload: PullRequestSynchronizeEventSchema,
+		response: PullRequestSynchronizeEventSchema,
+	},
+	push: {
+		description: 'Commits were pushed to a branch',
+		payload: PushEventSchema,
+		response: PushEventSchema,
+	},
+	starCreated: {
+		description: 'A repository was starred',
+		payload: StarCreatedEventSchema,
+		response: StarCreatedEventSchema,
+	},
+	starDeleted: {
+		description: 'A star was removed from a repository',
+		payload: StarDeletedEventSchema,
+		response: StarDeletedEventSchema,
+	},
+} satisfies RequiredPluginWebhookSchemas<typeof githubWebhooksNested>;
+
 const defaultAuthType = 'api_key' as const;
 
 /**
@@ -380,6 +422,7 @@ export function github<const PluginOptions extends GithubPluginOptions>(
 		webhooks: githubWebhooksNested,
 		endpointMeta: githubEndpointMeta,
 		endpointSchemas: githubEndpointSchemas,
+		webhookSchemas: githubWebhookSchemas,
 		pluginWebhookMatcher: (request: RawWebhookRequest) => {
 			const headers = request.headers;
 			const hasGithubEvent = headers['x-github-event'] !== undefined;

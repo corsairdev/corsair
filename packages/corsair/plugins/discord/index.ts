@@ -11,6 +11,7 @@ import type {
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
+	RequiredPluginWebhookSchemas,
 } from '../../core';
 import type { AuthTypes, PickAuth } from '../../core/constants';
 import {
@@ -52,6 +53,12 @@ import type {
 	DiscordMessageComponentInteraction,
 	DiscordModalSubmitInteraction,
 	DiscordWebhookOutputs,
+} from './webhooks/types';
+import {
+	DiscordApplicationCommandInteractionSchema,
+	DiscordMessageComponentInteractionSchema,
+	DiscordModalSubmitInteractionSchema,
+	DiscordPingInteractionSchema,
 } from './webhooks/types';
 
 // ── Plugin Options ─────────────────────────────────────────────────────────────
@@ -267,6 +274,29 @@ const discordWebhooksNested = {
 
 // ── Auth ───────────────────────────────────────────────────────────────────────
 
+const discordWebhookSchemas = {
+	'interactions.ping': {
+		description: 'Discord sends a PING to verify the endpoint is live',
+		payload: DiscordPingInteractionSchema,
+		response: DiscordPingInteractionSchema,
+	},
+	'interactions.applicationCommand': {
+		description: 'A user invoked a slash command or context-menu action',
+		payload: DiscordApplicationCommandInteractionSchema,
+		response: DiscordApplicationCommandInteractionSchema,
+	},
+	'interactions.messageComponent': {
+		description: 'A user clicked a button or selected a menu option',
+		payload: DiscordMessageComponentInteractionSchema,
+		response: DiscordMessageComponentInteractionSchema,
+	},
+	'interactions.modalSubmit': {
+		description: 'A user submitted a modal dialog',
+		payload: DiscordModalSubmitInteractionSchema,
+		response: DiscordModalSubmitInteractionSchema,
+	},
+} satisfies RequiredPluginWebhookSchemas<typeof discordWebhooksNested>;
+
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
 /**
@@ -370,6 +400,7 @@ export function discord<const T extends DiscordPluginOptions>(
 		webhooks: discordWebhooksNested,
 		endpointMeta: discordEndpointMeta,
 		endpointSchemas: discordEndpointSchemas,
+		webhookSchemas: discordWebhookSchemas,
 
 		/**
 		 * Identifies incoming Discord interaction webhooks.
@@ -445,6 +476,7 @@ export type {
 	Channel,
 	// Endpoint input types (needed so callers can name them in their own code)
 	ChannelsListInput,
+	DiscordEndpointInputs,
 	DiscordEndpointOutputs,
 	DiscordUser,
 	Embed,

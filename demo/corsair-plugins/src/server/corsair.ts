@@ -42,6 +42,18 @@ export const corsair = createCorsair({
 					'messages.post': 'require_approval',
 				},
 			},
+			webhookHooks: {
+				challenge: {
+					challenge: {
+						before(ctx, args) {
+							return { ctx, args };
+						},
+						after(ctx, response) {
+							// full type for the repsonse.data, which is a zod schema
+						},
+					},
+				},
+			},
 		}),
 		// resend({
 		// 	webhookHooks: {

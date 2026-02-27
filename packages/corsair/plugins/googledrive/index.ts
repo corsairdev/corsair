@@ -10,6 +10,7 @@ import type {
 	RawWebhookRequest,
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
+	RequiredPluginWebhookSchemas,
 } from '../../core';
 import type { PickAuth } from '../../core/constants';
 import { getValidAccessToken } from './client';
@@ -35,7 +36,11 @@ import type {
 } from './webhooks';
 import { ChangeWebhooks } from './webhooks';
 import type { PubSubNotification } from './webhooks/types';
-import { decodePubSubMessage } from './webhooks/types';
+import {
+	DriveChangedEventSchema,
+	decodePubSubMessage,
+	PubSubNotificationSchema,
+} from './webhooks/types';
 
 export type GoogleDriveContext = CorsairPluginContext<
 	typeof GoogleDriveSchema,
@@ -233,6 +238,15 @@ export type GoogleDrivePluginOptions = {
 export type GoogleDriveKeyBuilderContext =
 	KeyBuilderContext<GoogleDrivePluginOptions>;
 
+const googledriveWebhookSchemas = {
+	driveChanged: {
+		description:
+			'A file or folder in Google Drive was created, updated, or deleted',
+		payload: PubSubNotificationSchema,
+		response: DriveChangedEventSchema,
+	},
+} satisfies RequiredPluginWebhookSchemas<typeof googleDriveWebhooksNested>;
+
 const defaultAuthType = 'oauth_2' as const;
 
 /**
@@ -359,6 +373,7 @@ export function googledrive<const T extends GoogleDrivePluginOptions>(
 		webhooks: googleDriveWebhooksNested,
 		endpointMeta: googleDriveEndpointMeta,
 		endpointSchemas: googledriveEndpointSchemas,
+		webhookSchemas: googledriveWebhookSchemas,
 		keyBuilder: async (ctx: GoogleDriveKeyBuilderContext) => {
 			if (options.key) {
 				return options.key;
@@ -451,3 +466,5 @@ export type {
 	GoogleDriveEndpointInputs,
 	GoogleDriveEndpointOutputs,
 } from './endpoints/types';
+
+export type * from './types';

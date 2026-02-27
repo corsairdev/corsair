@@ -10,6 +10,7 @@ import type {
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
+	RequiredPluginWebhookSchemas,
 } from '../../core';
 import type { AuthTypes, PickAuth } from '../../core/constants';
 import { getValidAccessToken } from './client';
@@ -34,6 +35,7 @@ import { errorHandlers } from './error-handlers';
 import { SpotifySchema } from './schema';
 import { ExampleWebhooks } from './webhooks';
 import type { ExampleEvent, SpotifyWebhookOutputs } from './webhooks/types';
+import { ExampleEventSchema } from './webhooks/types';
 
 /**
  * Plugin options type - configure authentication and behavior
@@ -301,6 +303,14 @@ const spotifyWebhooksNested = {
 	},
 } as const;
 
+const spotifyWebhookSchemas = {
+	'example.example': {
+		description: 'An example Spotify webhook event',
+		payload: ExampleEventSchema,
+		response: ExampleEventSchema,
+	},
+} satisfies RequiredPluginWebhookSchemas<typeof spotifyWebhooksNested>;
+
 const defaultAuthType: AuthTypes = 'oauth_2';
 
 /**
@@ -442,6 +452,7 @@ export function spotify<const T extends SpotifyPluginOptions>(
 		webhooks: spotifyWebhooksNested,
 		endpointMeta: spotifyEndpointMeta,
 		endpointSchemas: spotifyEndpointSchemas,
+		webhookSchemas: spotifyWebhookSchemas,
 		/**
 		 * Webhook matcher function - determines if an incoming request is a webhook for this plugin
 		 *

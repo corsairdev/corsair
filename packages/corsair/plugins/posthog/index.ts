@@ -10,6 +10,7 @@ import type {
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
+	RequiredPluginWebhookSchemas,
 } from '../../core';
 import type { PickAuth } from '../../core/constants';
 import { Events } from './endpoints';
@@ -24,6 +25,7 @@ import {
 import { PostHogSchema } from './schema';
 import type { EventCapturedEvent, PostHogWebhookOutputs } from './webhooks';
 import { EventWebhooks } from './webhooks';
+import { EventCapturedEventSchema } from './webhooks/types';
 
 export type PostHogPluginOptions = {
 	authType?: PickAuth<'api_key'>;
@@ -114,6 +116,14 @@ const posthogWebhooksNested = {
 	},
 } as const;
 
+const posthogWebhookSchemas = {
+	'events.captured': {
+		description: 'A PostHog event was captured',
+		payload: EventCapturedEventSchema,
+		response: EventCapturedEventSchema,
+	},
+} satisfies RequiredPluginWebhookSchemas<typeof posthogWebhooksNested>;
+
 const defaultAuthType = 'api_key' as const;
 
 /**
@@ -179,6 +189,7 @@ export function posthog<const T extends PostHogPluginOptions>(
 		webhooks: posthogWebhooksNested,
 		endpointMeta: posthogEndpointMeta,
 		endpointSchemas: posthogEndpointSchemas,
+		webhookSchemas: posthogWebhookSchemas,
 		pluginWebhookMatcher: (request) => {
 			const headers = request.headers;
 			const hasPostHogSignature =

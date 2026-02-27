@@ -1,98 +1,160 @@
-export interface HubSpotWebhookPayload<TEvent = unknown> {
-	subscriptionId: number;
-	portalId: number;
-	occurredAt: number;
-	subscriptionType: string;
-	attemptNumber: number;
-	objectId?: number;
-	propertyName?: string;
-	propertyValue?: string;
-	changeSource?: string;
-	eventId?: string;
-	event?: TEvent;
-}
+import { z } from 'zod';
+import { verifyHmacSignature } from '../../../async-core/webhook-utils';
+import type {
+	CorsairWebhookMatcher,
+	RawWebhookRequest,
+	WebhookRequest,
+} from '../../../core';
 
-export interface ContactCreatedEvent extends HubSpotWebhookPayload {
-	subscriptionType: 'contact.creation';
-	objectId: number;
-}
+// ─────────────────────────────────────────────────────────────────────────────
+// Base payload schema
+// ─────────────────────────────────────────────────────────────────────────────
 
-export interface ContactUpdatedEvent extends HubSpotWebhookPayload {
-	subscriptionType: 'contact.propertyChange';
-	objectId: number;
-	propertyName: string;
-	propertyValue: string;
-}
+export const HubSpotWebhookPayloadBaseSchema = z.object({
+	subscriptionId: z.number(),
+	portalId: z.number(),
+	occurredAt: z.number(),
+	subscriptionType: z.string(),
+	attemptNumber: z.number(),
+	objectId: z.number().optional(),
+	propertyName: z.string().optional(),
+	propertyValue: z.string().optional(),
+	changeSource: z.string().optional(),
+	eventId: z.string().optional(),
+});
+export type HubSpotWebhookPayload<TEvent = unknown> = z.infer<
+	typeof HubSpotWebhookPayloadBaseSchema
+> & { event?: TEvent };
 
-export interface ContactDeletedEvent extends HubSpotWebhookPayload {
-	subscriptionType: 'contact.deletion';
-	objectId: number;
-}
+// ─────────────────────────────────────────────────────────────────────────────
+// Contact event schemas
+// ─────────────────────────────────────────────────────────────────────────────
 
-export interface CompanyCreatedEvent extends HubSpotWebhookPayload {
-	subscriptionType: 'company.creation';
-	objectId: number;
-}
+export const ContactCreatedEventSchema = HubSpotWebhookPayloadBaseSchema.extend(
+	{
+		subscriptionType: z.literal('contact.creation'),
+		objectId: z.number(),
+	},
+);
+export type ContactCreatedEvent = z.infer<typeof ContactCreatedEventSchema>;
 
-export interface CompanyUpdatedEvent extends HubSpotWebhookPayload {
-	subscriptionType: 'company.propertyChange';
-	objectId: number;
-	propertyName: string;
-	propertyValue: string;
-}
+export const ContactUpdatedEventSchema = HubSpotWebhookPayloadBaseSchema.extend(
+	{
+		subscriptionType: z.literal('contact.propertyChange'),
+		objectId: z.number(),
+		propertyName: z.string(),
+		propertyValue: z.string(),
+	},
+);
+export type ContactUpdatedEvent = z.infer<typeof ContactUpdatedEventSchema>;
 
-export interface CompanyDeletedEvent extends HubSpotWebhookPayload {
-	subscriptionType: 'company.deletion';
-	objectId: number;
-}
+export const ContactDeletedEventSchema = HubSpotWebhookPayloadBaseSchema.extend(
+	{
+		subscriptionType: z.literal('contact.deletion'),
+		objectId: z.number(),
+	},
+);
+export type ContactDeletedEvent = z.infer<typeof ContactDeletedEventSchema>;
 
-export interface DealCreatedEvent extends HubSpotWebhookPayload {
-	subscriptionType: 'deal.creation';
-	objectId: number;
-}
+// ─────────────────────────────────────────────────────────────────────────────
+// Company event schemas
+// ─────────────────────────────────────────────────────────────────────────────
 
-export interface DealUpdatedEvent extends HubSpotWebhookPayload {
-	subscriptionType: 'deal.propertyChange';
-	objectId: number;
-	propertyName: string;
-	propertyValue: string;
-}
+export const CompanyCreatedEventSchema = HubSpotWebhookPayloadBaseSchema.extend(
+	{
+		subscriptionType: z.literal('company.creation'),
+		objectId: z.number(),
+	},
+);
+export type CompanyCreatedEvent = z.infer<typeof CompanyCreatedEventSchema>;
 
-export interface DealDeletedEvent extends HubSpotWebhookPayload {
-	subscriptionType: 'deal.deletion';
-	objectId: number;
-}
+export const CompanyUpdatedEventSchema = HubSpotWebhookPayloadBaseSchema.extend(
+	{
+		subscriptionType: z.literal('company.propertyChange'),
+		objectId: z.number(),
+		propertyName: z.string(),
+		propertyValue: z.string(),
+	},
+);
+export type CompanyUpdatedEvent = z.infer<typeof CompanyUpdatedEventSchema>;
 
-export interface TicketCreatedEvent extends HubSpotWebhookPayload {
-	subscriptionType: 'ticket.creation';
-	objectId: number;
-}
+export const CompanyDeletedEventSchema = HubSpotWebhookPayloadBaseSchema.extend(
+	{
+		subscriptionType: z.literal('company.deletion'),
+		objectId: z.number(),
+	},
+);
+export type CompanyDeletedEvent = z.infer<typeof CompanyDeletedEventSchema>;
 
-export interface TicketUpdatedEvent extends HubSpotWebhookPayload {
-	subscriptionType: 'ticket.propertyChange';
-	objectId: number;
-	propertyName: string;
-	propertyValue: string;
-}
+// ─────────────────────────────────────────────────────────────────────────────
+// Deal event schemas
+// ─────────────────────────────────────────────────────────────────────────────
 
-export interface TicketDeletedEvent extends HubSpotWebhookPayload {
-	subscriptionType: 'ticket.deletion';
-	objectId: number;
-}
+export const DealCreatedEventSchema = HubSpotWebhookPayloadBaseSchema.extend({
+	subscriptionType: z.literal('deal.creation'),
+	objectId: z.number(),
+});
+export type DealCreatedEvent = z.infer<typeof DealCreatedEventSchema>;
 
-export type HubSpotWebhookEventType =
-	| ContactCreatedEvent
-	| ContactUpdatedEvent
-	| ContactDeletedEvent
-	| CompanyCreatedEvent
-	| CompanyUpdatedEvent
-	| CompanyDeletedEvent
-	| DealCreatedEvent
-	| DealUpdatedEvent
-	| DealDeletedEvent
-	| TicketCreatedEvent
-	| TicketUpdatedEvent
-	| TicketDeletedEvent;
+export const DealUpdatedEventSchema = HubSpotWebhookPayloadBaseSchema.extend({
+	subscriptionType: z.literal('deal.propertyChange'),
+	objectId: z.number(),
+	propertyName: z.string(),
+	propertyValue: z.string(),
+});
+export type DealUpdatedEvent = z.infer<typeof DealUpdatedEventSchema>;
+
+export const DealDeletedEventSchema = HubSpotWebhookPayloadBaseSchema.extend({
+	subscriptionType: z.literal('deal.deletion'),
+	objectId: z.number(),
+});
+export type DealDeletedEvent = z.infer<typeof DealDeletedEventSchema>;
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Ticket event schemas
+// ─────────────────────────────────────────────────────────────────────────────
+
+export const TicketCreatedEventSchema = HubSpotWebhookPayloadBaseSchema.extend({
+	subscriptionType: z.literal('ticket.creation'),
+	objectId: z.number(),
+});
+export type TicketCreatedEvent = z.infer<typeof TicketCreatedEventSchema>;
+
+export const TicketUpdatedEventSchema = HubSpotWebhookPayloadBaseSchema.extend({
+	subscriptionType: z.literal('ticket.propertyChange'),
+	objectId: z.number(),
+	propertyName: z.string(),
+	propertyValue: z.string(),
+});
+export type TicketUpdatedEvent = z.infer<typeof TicketUpdatedEventSchema>;
+
+export const TicketDeletedEventSchema = HubSpotWebhookPayloadBaseSchema.extend({
+	subscriptionType: z.literal('ticket.deletion'),
+	objectId: z.number(),
+});
+export type TicketDeletedEvent = z.infer<typeof TicketDeletedEventSchema>;
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Union and map types
+// ─────────────────────────────────────────────────────────────────────────────
+
+export const HubSpotWebhookEventTypeSchema = z.union([
+	ContactCreatedEventSchema,
+	ContactUpdatedEventSchema,
+	ContactDeletedEventSchema,
+	CompanyCreatedEventSchema,
+	CompanyUpdatedEventSchema,
+	CompanyDeletedEventSchema,
+	DealCreatedEventSchema,
+	DealUpdatedEventSchema,
+	DealDeletedEventSchema,
+	TicketCreatedEventSchema,
+	TicketUpdatedEventSchema,
+	TicketDeletedEventSchema,
+]);
+export type HubSpotWebhookEventType = z.infer<
+	typeof HubSpotWebhookEventTypeSchema
+>;
 
 export type HubSpotWebhookPayloadType<
 	TEvent extends HubSpotWebhookPayload = HubSpotWebhookPayload,
@@ -126,12 +188,9 @@ export type TicketCreatedEventType = TicketCreatedEvent;
 export type TicketUpdatedEventType = TicketUpdatedEvent;
 export type TicketDeletedEventType = TicketDeletedEvent;
 
-import { verifyHmacSignature } from '../../../async-core/webhook-utils';
-import type {
-	CorsairWebhookMatcher,
-	RawWebhookRequest,
-	WebhookRequest,
-} from '../../../core';
+// ─────────────────────────────────────────────────────────────────────────────
+// Utilities
+// ─────────────────────────────────────────────────────────────────────────────
 
 function parseBody(body: unknown): unknown {
 	return typeof body === 'string' ? JSON.parse(body) : body;

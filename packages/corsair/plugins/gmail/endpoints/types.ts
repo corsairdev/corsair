@@ -253,16 +253,30 @@ const MessagePartBodySchema = z.object({
 	data: z.string().optional(),
 });
 
-const MessagePartSchema: z.ZodType<any> = z.lazy(() =>
-	z.object({
-		partId: z.string().optional(),
-		mimeType: z.string().optional(),
-		filename: z.string().optional(),
-		headers: z.array(MessagePartHeaderSchema).optional(),
-		body: MessagePartBodySchema.optional(),
-		parts: z.array(MessagePartSchema).optional(),
-	}),
-);
+// ─────────────────────────────────────────────────────────────────────────────
+// Recursive type
+//
+// MessagePart references itself via parts?: MessagePart[].
+// BaseSchema holds all non-recursive fields; the final schema extends it with
+// the circular field via z.lazy(). The exported type is derived from the schema.
+// ─────────────────────────────────────────────────────────────────────────────
+
+const MessagePartBaseSchema = z.object({
+	partId: z.string().optional(),
+	mimeType: z.string().optional(),
+	filename: z.string().optional(),
+	headers: z.array(MessagePartHeaderSchema).optional(),
+	body: MessagePartBodySchema.optional(),
+});
+
+export type MessagePartShape = z.infer<typeof MessagePartBaseSchema> & {
+	parts?: MessagePartShape[];
+};
+
+const MessagePartSchema: z.ZodType<MessagePartShape> =
+	MessagePartBaseSchema.extend({
+		parts: z.lazy(() => z.array(MessagePartSchema).optional()),
+	});
 
 const MessageSchema = z.object({
 	id: z.string().optional(),
