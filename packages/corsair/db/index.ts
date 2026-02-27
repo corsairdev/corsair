@@ -118,7 +118,7 @@ export const CorsairPermissionsSchema = z.object({
 	review_url: z.string().optional(),
 	/** Current state of the approval request */
 	status: z
-		.enum(['pending', 'approved', 'denied', 'expired'])
+		.enum(['pending', 'approved', 'completed', 'denied', 'expired'])
 		.default('pending'),
 	/** ISO8601 timestamp — when this request becomes invalid */
 	expires_at: z.string(),
@@ -137,7 +137,7 @@ export type CorsairPermissionInsert = {
 	session_id?: string;
 	callback_url?: string;
 	review_url?: string;
-	status?: 'pending' | 'approved' | 'denied' | 'expired';
+	status?: 'pending' | 'approved' | 'completed' | 'denied' | 'expired';
 	expires_at: string;
 };
 
