@@ -81,9 +81,10 @@ export function bindEndpointsRecursively({
 
 			const boundFn = async (args: unknown) => {
 				// ── Permission guard ────────────────────────────────────────────────────────────────
+				let onPermissionComplete: (() => Promise<void>) | undefined;
 				if (permissionsConfig) {
 					const meta = endpointMeta?.[operationPath];
-					const permResult = await enforcePermission({
+					const { result: permResult, onComplete } = await enforcePermission({
 						pluginId,
 						endpointPath: operationPath,
 						args,
@@ -98,6 +99,7 @@ export function bindEndpointsRecursively({
 							: undefined,
 					});
 					if (permResult === 'blocked') return null;
+					onPermissionComplete = onComplete;
 				}
 
 				const call = async (
@@ -173,28 +175,29 @@ export function bindEndpointsRecursively({
 				const key = keyBuilder ? await keyBuilder(ctx, 'endpoint') : undefined;
 
 				if (!endpointHooks?.before && !endpointHooks?.after) {
-					return call(0, { ...ctx, key }, args);
+					const res = await call(0, { ...ctx, key }, args);
+					await onPermissionComplete?.();
+					return res;
 				}
 
-				return (async () => {
-					const ctxWithKey = { ...ctx, key };
-					const beforeResult = endpointHooks.before
-						? await endpointHooks.before(ctxWithKey, args)
-						: {
-								ctx: ctxWithKey,
-								args,
-								continue: true as const,
-								passToAfter: undefined,
-							};
-					if (beforeResult.continue === false) return;
-					const res = await call(0, beforeResult.ctx, beforeResult.args);
-					await endpointHooks.after?.(
-						beforeResult.ctx,
-						res,
-						beforeResult.passToAfter,
-					);
-					return res;
-				})();
+				const ctxWithKey = { ...ctx, key };
+				const beforeResult = endpointHooks.before
+					? await endpointHooks.before(ctxWithKey, args)
+					: {
+							ctx: ctxWithKey,
+							args,
+							continue: true as const,
+							passToAfter: undefined,
+						};
+				if (beforeResult.continue === false) return;
+				const res = await call(0, beforeResult.ctx, beforeResult.args);
+				await endpointHooks.after?.(
+					beforeResult.ctx,
+					res,
+					beforeResult.passToAfter,
+				);
+				await onPermissionComplete?.();
+				return res;
 			};
 
 			tree[key] = boundFn;
