@@ -8,6 +8,7 @@ import {
 	posthog,
 	slack,
 	spotify,
+	todoist,
 } from 'corsair';
 import { pool } from '../db';
 
@@ -118,5 +119,6 @@ export const corsair = createCorsair({
 		hubspot(),
 		posthog(),
 		spotify(),
+		todoist(),
 	],
 });

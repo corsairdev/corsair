@@ -96,6 +96,11 @@
       "dev-source": "./plugins/discord/index.ts",
       "types": "./dist/plugins/discord/index.d.ts",
       "default": "./dist/plugins/discord/index.js"
+    },
+    "./plugins/todoist": {
+      "dev-source": "./plugins/todoist/index.ts",
+      "types": "./dist/plugins/todoist/index.d.ts",
+      "default": "./dist/plugins/todoist/index.js"
     }
   },
   "scripts": {
