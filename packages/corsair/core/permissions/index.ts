@@ -77,6 +77,8 @@ export type EnforcePermissionOptions = {
 	/** Required to create an approval record. Without a DB, 'require_approval' falls back to deny. */
 	db?: CorsairDatabase;
 	timeoutMs?: number;
+	/** Tenant ID for multi-tenant instances. Stored on the record so executePermission can scope correctly. Defaults to 'default'. */
+	tenantId?: string;
 };
 
 export type EnforcePermissionResult = {
@@ -125,14 +127,16 @@ export async function enforcePermission(
 
 	const argsJson = JSON.stringify(opts.args);
 	const now = new Date().toISOString();
+	const tenantId = opts.tenantId ?? 'default';
 
-	// Check for an existing, non-expired permission record for this plugin + endpoint + args
+	// Check for an existing, non-expired permission record for this plugin + endpoint + args + tenant
 	const existing = await opts.db.db
 		.selectFrom('corsair_permissions')
 		.selectAll()
 		.where('plugin', '=', opts.pluginId)
 		.where('endpoint', '=', opts.endpointPath)
 		.where('args', '=', argsJson)
+		.where('tenant_id', '=', tenantId)
 		.where('expires_at', '>', now)
 		.where('status', 'in', ['pending', 'approved'])
 		.orderBy('created_at', 'desc')
@@ -182,6 +186,7 @@ export async function enforcePermission(
 			plugin: opts.pluginId,
 			endpoint: opts.endpointPath,
 			args: argsJson,
+			tenant_id: tenantId,
 			status: 'pending',
 			expires_at: expiresAt,
 		})

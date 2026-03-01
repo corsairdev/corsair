@@ -110,12 +110,12 @@ export const CorsairPermissionsSchema = z.object({
 	endpoint: z.string(),
 	/** JSON-encoded args that will be forwarded to the endpoint upon approval */
 	args: z.string(),
-	/** Agent session ID from the orchestrator (NanoClaw / OpenClaw) — used to resume the agent */
-	session_id: z.string().optional(),
-	/** URL to POST to when the action is approved or denied, to resume the agent */
-	callback_url: z.string().optional(),
-	/** Full public review page URL (ngrok URL + path + token query param) */
-	review_url: z.string().optional(),
+	/**
+	 * Tenant ID for multi-tenant corsair instances. Stored so executePermission
+	 * can scope the corsair instance correctly when executing the approved action.
+	 * Defaults to 'default' for single-tenant instances.
+	 */
+	tenant_id: z.string().optional(),
 	/** Current state of the approval request */
 	status: z
 		.enum(['pending', 'approved', 'completed', 'denied', 'expired'])
@@ -134,9 +134,7 @@ export type CorsairPermissionInsert = {
 	plugin: string;
 	endpoint: string;
 	args: string;
-	session_id?: string;
-	callback_url?: string;
-	review_url?: string;
+	tenant_id?: string;
 	status?: 'pending' | 'approved' | 'completed' | 'denied' | 'expired';
 	expires_at: string;
 };

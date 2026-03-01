@@ -48,6 +48,7 @@ export function bindEndpointsRecursively({
 	endpointMeta,
 	database,
 	approvalConfig,
+	tenantId,
 }: {
 	endpoints: Record<string, unknown>;
 	hooks: Record<string, unknown> | undefined;
@@ -68,6 +69,8 @@ export function bindEndpointsRecursively({
 	database?: CorsairDatabase;
 	/** Approval timeout config from createCorsair({ approval: ... }). */
 	approvalConfig?: { timeout: string; onTimeout: 'deny' | 'approve' };
+	/** Tenant ID for multi-tenant instances. Forwarded to the permission record so executePermission can scope correctly. */
+	tenantId?: string;
 }): void {
 	for (const [key, value] of Object.entries(endpoints)) {
 		// we have to retype this now because it's nested webhooks
@@ -97,6 +100,7 @@ export function bindEndpointsRecursively({
 						timeoutMs: approvalConfig
 							? parseDurationMs(approvalConfig.timeout)
 							: undefined,
+						tenantId,
 					});
 					if (permResult === 'blocked') return null;
 					onPermissionComplete = onComplete;
@@ -218,6 +222,7 @@ export function bindEndpointsRecursively({
 				endpointMeta,
 				database,
 				approvalConfig,
+				tenantId,
 			});
 
 			tree[key] = nestedTree;
