@@ -467,6 +467,7 @@ export function buildCorsairClient<
 				| undefined,
 			database,
 			approvalConfig,
+			tenantId,
 		});
 
 		if (Object.keys(boundTree).length > 0) {

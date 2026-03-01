@@ -2,6 +2,8 @@
 
 export { createCorsair } from './core';
 export { processWebhook } from './webhooks';
+export { executePermission } from './permissions';
+export type { PermissionExecuteResult } from './permissions';
 
 // plugin function exports
 
