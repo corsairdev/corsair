@@ -1,9 +1,9 @@
 // main function exports
 
 export { createCorsair } from './core';
-export { processWebhook } from './webhooks';
-export { executePermission } from './permissions';
 export type { PermissionExecuteResult } from './permissions';
+export { executePermission } from './permissions';
+export { processWebhook } from './webhooks';
 
 // plugin function exports
 

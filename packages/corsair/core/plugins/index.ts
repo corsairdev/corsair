@@ -498,7 +498,7 @@ export type CorsairPlugin<
 	/**
 	 * Risk metadata for each endpoint in this plugin. Drives the permission system:
 	 * riskLevel against the active mode determines the policy (allow / deny / require_approval).
-	 * Also used by get_schema() to surface descriptions to the agent.
+	 * Also used by list_operations() and get_schema() to surface descriptions to the agent.
 	 *
 	 * Keys are dot-notation paths derived from `Endpoints` — only valid paths compile.
 	 *
@@ -516,7 +516,7 @@ export type CorsairPlugin<
 		: never;
 	/**
 	 * Zod input and output schemas for each endpoint, keyed by dot-notation path.
-	 * Used by get_schema() to expose structured type information to the agent.
+	 * Used by get_schema() to expose structured endpoint type information to the agent.
 	 * Keys must match the endpoint dot-paths used in endpointMeta.
 	 *
 	 * @example
@@ -530,7 +530,7 @@ export type CorsairPlugin<
 	endpointSchemas?: Record<string, { input?: ZodTypeAny; output?: ZodTypeAny }>;
 	/**
 	 * Zod schemas for each webhook, keyed by dot-notation path.
-	 * Used by get_webhook_schema() to expose structured type information to the agent.
+	 * Used by get_schema() to expose structured webhook type information to the agent.
 	 * Keys must match the dot-paths of the webhook tree (e.g. 'messages.message').
 	 *
 	 * - `payload` — the type of `request.payload` in the before hook
