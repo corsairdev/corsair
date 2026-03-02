@@ -1,176 +1,235 @@
-export interface WebhookData {
-	id: string;
-	createdAt: string;
-	updatedAt: string;
-	archivedAt?: string;
-	[key: string]: any;
-}
+import { z } from 'zod';
+import { verifyHmacSignature } from '../../../async-core/webhook-utils';
+import type {
+	CorsairWebhookMatcher,
+	RawWebhookRequest,
+	WebhookRequest,
+} from '../../../core';
 
-export interface Issue {
-	id: string;
-	identifier: string;
-	title: string;
-	description?: string;
-	priority: 0 | 1 | 2 | 3 | 4;
-	estimate?: number;
-	sortOrder: number;
-	startedAt?: string;
-	completedAt?: string;
-	canceledAt?: string;
-	autoArchivedAt?: string;
-	autoClosedAt?: string;
-	dueDate?: string;
-	trashed?: boolean;
-	snoozedUntilAt?: string;
-	previousIdentifiers: string[];
-	createdAt: string;
-	updatedAt: string;
-	branchName: string;
-	customerTicketCount: number;
-	stateId: string;
-	teamId: string;
-	creatorId: string;
-	[key: string]: any;
-}
+// ─────────────────────────────────────────────────────────────────────────────
+// Shared sub-schemas
+// ─────────────────────────────────────────────────────────────────────────────
 
-export interface Comment {
-	id: string;
-	body: string;
-	editedAt?: string;
-	createdAt: string;
-	updatedAt: string;
-	issueId: string;
-	userId: string;
-	[key: string]: any;
-}
+export const WebhookDataSchema = z
+	.object({
+		id: z.string(),
+		createdAt: z.string(),
+		updatedAt: z.string(),
+		archivedAt: z.string().optional(),
+	})
+	.catchall(z.any());
+export type WebhookData = z.infer<typeof WebhookDataSchema>;
 
-export interface Project {
-	id: string;
-	name: string;
-	description?: string;
-	icon?: string;
-	color?: string;
-	priority: 0 | 1 | 2 | 3 | 4;
-	sortOrder: number;
-	state: 'planned' | 'started' | 'paused' | 'completed' | 'canceled';
-	progress: number;
-	url: string;
-	startDate?: string;
-	targetDate?: string;
-	completedAt?: string;
-	canceledAt?: string;
-	startedAt?: string;
-	completedScopeHistory: number[];
-	inProgressScopeHistory: number[];
-	scope: number;
-	createdAt: string;
-	updatedAt: string;
-	[key: string]: any;
-}
+export const IssueSchema = z
+	.object({
+		id: z.string(),
+		identifier: z.string(),
+		title: z.string(),
+		description: z.string().optional(),
+		priority: z.union([
+			z.literal(0),
+			z.literal(1),
+			z.literal(2),
+			z.literal(3),
+			z.literal(4),
+		]),
+		estimate: z.number().optional(),
+		sortOrder: z.number(),
+		startedAt: z.string().optional(),
+		completedAt: z.string().optional(),
+		canceledAt: z.string().optional(),
+		autoArchivedAt: z.string().optional(),
+		autoClosedAt: z.string().optional(),
+		dueDate: z.string().optional(),
+		trashed: z.boolean().optional(),
+		snoozedUntilAt: z.string().optional(),
+		previousIdentifiers: z.array(z.string()),
+		createdAt: z.string(),
+		updatedAt: z.string(),
+		branchName: z.string(),
+		customerTicketCount: z.number(),
+		stateId: z.string(),
+		teamId: z.string(),
+		creatorId: z.string(),
+	})
+	.catchall(z.any());
+export type Issue = z.infer<typeof IssueSchema>;
 
-export interface IssueCreatedEvent {
-	action: 'create';
-	type: 'Issue';
-	data: Issue;
-	url: string;
-	createdAt: string;
-	organizationId: string;
-	webhookId: string;
-}
+export const CommentSchema = z
+	.object({
+		id: z.string(),
+		body: z.string(),
+		editedAt: z.string().optional(),
+		createdAt: z.string(),
+		updatedAt: z.string(),
+		issueId: z.string(),
+		userId: z.string(),
+	})
+	.catchall(z.any());
+export type Comment = z.infer<typeof CommentSchema>;
 
-export interface IssueUpdatedEvent {
-	action: 'update';
-	type: 'Issue';
-	data: Issue;
-	updatedFrom?: Partial<Issue>;
-	url: string;
-	createdAt: string;
-	organizationId: string;
-	webhookId: string;
-}
+export const ProjectSchema = z
+	.object({
+		id: z.string(),
+		name: z.string(),
+		description: z.string().optional(),
+		icon: z.string().optional(),
+		color: z.string().optional(),
+		priority: z.union([
+			z.literal(0),
+			z.literal(1),
+			z.literal(2),
+			z.literal(3),
+			z.literal(4),
+		]),
+		sortOrder: z.number(),
+		state: z.enum(['planned', 'started', 'paused', 'completed', 'canceled']),
+		progress: z.number(),
+		url: z.string(),
+		startDate: z.string().optional(),
+		targetDate: z.string().optional(),
+		completedAt: z.string().optional(),
+		canceledAt: z.string().optional(),
+		startedAt: z.string().optional(),
+		completedScopeHistory: z.array(z.number()),
+		inProgressScopeHistory: z.array(z.number()),
+		scope: z.number(),
+		createdAt: z.string(),
+		updatedAt: z.string(),
+	})
+	.catchall(z.any());
+export type Project = z.infer<typeof ProjectSchema>;
 
-export interface IssueDeletedEvent {
-	action: 'remove';
-	type: 'Issue';
-	data: Issue;
-	url: string;
-	createdAt: string;
-	organizationId: string;
-	webhookId: string;
-}
+// ─────────────────────────────────────────────────────────────────────────────
+// Issue event schemas
+// ─────────────────────────────────────────────────────────────────────────────
 
-export interface CommentCreatedEvent {
-	action: 'create';
-	type: 'Comment';
-	data: Comment;
-	url: string;
-	createdAt: string;
-	organizationId: string;
-	webhookId: string;
-}
+export const IssueCreatedEventSchema = z.object({
+	action: z.literal('create'),
+	type: z.literal('Issue'),
+	data: IssueSchema,
+	url: z.string(),
+	createdAt: z.string(),
+	organizationId: z.string(),
+	webhookId: z.string(),
+});
+export type IssueCreatedEvent = z.infer<typeof IssueCreatedEventSchema>;
 
-export interface CommentUpdatedEvent {
-	action: 'update';
-	type: 'Comment';
-	data: Comment;
-	updatedFrom?: Partial<Comment>;
-	url: string;
-	createdAt: string;
-	organizationId: string;
-	webhookId: string;
-}
+export const IssueUpdatedEventSchema = z.object({
+	action: z.literal('update'),
+	type: z.literal('Issue'),
+	data: IssueSchema,
+	updatedFrom: IssueSchema.partial().optional(),
+	url: z.string(),
+	createdAt: z.string(),
+	organizationId: z.string(),
+	webhookId: z.string(),
+});
+export type IssueUpdatedEvent = z.infer<typeof IssueUpdatedEventSchema>;
 
-export interface CommentDeletedEvent {
-	action: 'remove';
-	type: 'Comment';
-	data: Comment;
-	url: string;
-	createdAt: string;
-	organizationId: string;
-	webhookId: string;
-}
+export const IssueDeletedEventSchema = z.object({
+	action: z.literal('remove'),
+	type: z.literal('Issue'),
+	data: IssueSchema,
+	url: z.string(),
+	createdAt: z.string(),
+	organizationId: z.string(),
+	webhookId: z.string(),
+});
+export type IssueDeletedEvent = z.infer<typeof IssueDeletedEventSchema>;
 
-export interface ProjectCreatedEvent {
-	action: 'create';
-	type: 'Project';
-	data: Project;
-	url: string;
-	createdAt: string;
-	organizationId: string;
-	webhookId: string;
-}
+// ─────────────────────────────────────────────────────────────────────────────
+// Comment event schemas
+// ─────────────────────────────────────────────────────────────────────────────
 
-export interface ProjectUpdatedEvent {
-	action: 'update';
-	type: 'Project';
-	data: Project;
-	updatedFrom?: Partial<Project>;
-	url: string;
-	createdAt: string;
-	organizationId: string;
-	webhookId: string;
-}
+export const CommentCreatedEventSchema = z.object({
+	action: z.literal('create'),
+	type: z.literal('Comment'),
+	data: CommentSchema,
+	url: z.string(),
+	createdAt: z.string(),
+	organizationId: z.string(),
+	webhookId: z.string(),
+});
+export type CommentCreatedEvent = z.infer<typeof CommentCreatedEventSchema>;
 
-export interface ProjectDeletedEvent {
-	action: 'remove';
-	type: 'Project';
-	data: Project;
-	url: string;
-	createdAt: string;
-	organizationId: string;
-	webhookId: string;
-}
+export const CommentUpdatedEventSchema = z.object({
+	action: z.literal('update'),
+	type: z.literal('Comment'),
+	data: CommentSchema,
+	updatedFrom: CommentSchema.partial().optional(),
+	url: z.string(),
+	createdAt: z.string(),
+	organizationId: z.string(),
+	webhookId: z.string(),
+});
+export type CommentUpdatedEvent = z.infer<typeof CommentUpdatedEventSchema>;
 
-export type LinearWebhookEvent =
-	| IssueCreatedEvent
-	| IssueUpdatedEvent
-	| IssueDeletedEvent
-	| CommentCreatedEvent
-	| CommentUpdatedEvent
-	| CommentDeletedEvent
-	| ProjectCreatedEvent
-	| ProjectUpdatedEvent
-	| ProjectDeletedEvent;
+export const CommentDeletedEventSchema = z.object({
+	action: z.literal('remove'),
+	type: z.literal('Comment'),
+	data: CommentSchema,
+	url: z.string(),
+	createdAt: z.string(),
+	organizationId: z.string(),
+	webhookId: z.string(),
+});
+export type CommentDeletedEvent = z.infer<typeof CommentDeletedEventSchema>;
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Project event schemas
+// ─────────────────────────────────────────────────────────────────────────────
+
+export const ProjectCreatedEventSchema = z.object({
+	action: z.literal('create'),
+	type: z.literal('Project'),
+	data: ProjectSchema,
+	url: z.string(),
+	createdAt: z.string(),
+	organizationId: z.string(),
+	webhookId: z.string(),
+});
+export type ProjectCreatedEvent = z.infer<typeof ProjectCreatedEventSchema>;
+
+export const ProjectUpdatedEventSchema = z.object({
+	action: z.literal('update'),
+	type: z.literal('Project'),
+	data: ProjectSchema,
+	updatedFrom: ProjectSchema.partial().optional(),
+	url: z.string(),
+	createdAt: z.string(),
+	organizationId: z.string(),
+	webhookId: z.string(),
+});
+export type ProjectUpdatedEvent = z.infer<typeof ProjectUpdatedEventSchema>;
+
+export const ProjectDeletedEventSchema = z.object({
+	action: z.literal('remove'),
+	type: z.literal('Project'),
+	data: ProjectSchema,
+	url: z.string(),
+	createdAt: z.string(),
+	organizationId: z.string(),
+	webhookId: z.string(),
+});
+export type ProjectDeletedEvent = z.infer<typeof ProjectDeletedEventSchema>;
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Union and map types
+// ─────────────────────────────────────────────────────────────────────────────
+
+export const LinearWebhookEventSchema = z.union([
+	IssueCreatedEventSchema,
+	IssueUpdatedEventSchema,
+	IssueDeletedEventSchema,
+	CommentCreatedEventSchema,
+	CommentUpdatedEventSchema,
+	CommentDeletedEventSchema,
+	ProjectCreatedEventSchema,
+	ProjectUpdatedEventSchema,
+	ProjectDeletedEventSchema,
+]);
+export type LinearWebhookEvent = z.infer<typeof LinearWebhookEventSchema>;
 
 export type LinearEventName =
 	| 'Issue'
@@ -215,12 +274,9 @@ export type LinearWebhookOutputs = {
 	projectRemove: ProjectDeletedEvent;
 };
 
-import { verifyHmacSignature } from '../../../async-core/webhook-utils';
-import type {
-	CorsairWebhookMatcher,
-	RawWebhookRequest,
-	WebhookRequest,
-} from '../../../core';
+// ─────────────────────────────────────────────────────────────────────────────
+// Utilities
+// ─────────────────────────────────────────────────────────────────────────────
 
 function parseBody(body: unknown): unknown {
 	return typeof body === 'string' ? JSON.parse(body) : body;

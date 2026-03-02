@@ -1,6 +1,6 @@
 # Corsair
 
-**Your agent's integration layer, with guardrails built in.**
+**Your agent's integration layer, with guardrails built in 🦞**
 
 > Don't do the work yourself because you're too scared to hand it off.
 

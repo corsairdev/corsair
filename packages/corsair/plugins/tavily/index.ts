@@ -7,6 +7,7 @@ import type {
 	KeyBuilderContext,
 	PluginAuthConfig,
 	PluginEndpointMeta,
+	PluginPermissionsConfig,
 } from '../../core';
 import type { AuthTypes, PickAuth } from '../../core/constants';
 import { Search } from './endpoints';
@@ -45,6 +46,12 @@ export type TavilyPluginOptions = {
 	webhookHooks?: InternalTavilyPlugin['webhookHooks'];
 	// Optional: Custom error handlers (merged with default error handlers)
 	errorHandlers?: CorsairErrorHandler;
+	/**
+	 * Permission configuration for the Tavily plugin.
+	 * Controls what the AI agent is allowed to do.
+	 * Overrides use dot-notation paths from the Tavily endpoint tree — invalid paths are type errors.
+	 */
+	permissions?: PluginPermissionsConfig<typeof tavilyEndpointsNested>;
 };
 
 export type TavilyContext = CorsairPluginContext<

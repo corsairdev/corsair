@@ -7,12 +7,18 @@ import type {
 	CorsairPluginContext,
 	CorsairWebhook,
 	KeyBuilderContext,
-	PluginEndpointMeta,
 	PluginPermissionsConfig,
+	RequiredPluginEndpointMeta,
+	RequiredPluginEndpointSchemas,
+	RequiredPluginWebhookSchemas,
 } from '../../core';
 import type { PickAuth } from '../../core/constants';
 import type { LinearEndpointInputs, LinearEndpointOutputs } from './endpoints';
 import { Comments, Issues, Projects, Teams, Users } from './endpoints';
+import {
+	LinearEndpointInputSchemas,
+	LinearEndpointOutputSchemas,
+} from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { LinearSchema } from './schema';
 import type {
@@ -29,7 +35,17 @@ import type {
 	ProjectUpdatedEvent,
 } from './webhooks';
 import { CommentWebhooks, IssueWebhooks, ProjectWebhooks } from './webhooks';
-import { linearEndpointSchemas } from './endpoints/types';
+import {
+	CommentCreatedEventSchema,
+	CommentDeletedEventSchema,
+	CommentUpdatedEventSchema,
+	IssueCreatedEventSchema,
+	IssueDeletedEventSchema,
+	IssueUpdatedEventSchema,
+	ProjectCreatedEventSchema,
+	ProjectDeletedEventSchema,
+	ProjectUpdatedEventSchema,
+} from './webhooks/types';
 
 export type LinearPluginOptions = {
 	authType?: PickAuth<'api_key'>;
@@ -40,7 +56,7 @@ export type LinearPluginOptions = {
 	errorHandlers?: CorsairErrorHandler;
 	/**
 	 * Permission configuration for the Linear plugin.
-	 * Controls what the AI agent is allowed to do via the MCP server.
+	 * Controls what the AI agent is allowed to do.
 	 * Overrides use dot-notation paths from the Linear endpoint tree — invalid paths are type errors.
 	 */
 	permissions?: PluginPermissionsConfig<typeof linearEndpointsNested>;
@@ -153,6 +169,129 @@ const linearEndpointsNested = {
 	},
 } as const;
 
+export const linearEndpointSchemas = {
+	'issues.list': {
+		input: LinearEndpointInputSchemas.issuesList,
+		output: LinearEndpointOutputSchemas.issuesList,
+	},
+	'issues.get': {
+		input: LinearEndpointInputSchemas.issuesGet,
+		output: LinearEndpointOutputSchemas.issuesGet,
+	},
+	'issues.create': {
+		input: LinearEndpointInputSchemas.issuesCreate,
+		output: LinearEndpointOutputSchemas.issuesCreate,
+	},
+	'issues.update': {
+		input: LinearEndpointInputSchemas.issuesUpdate,
+		output: LinearEndpointOutputSchemas.issuesUpdate,
+	},
+	'issues.delete': {
+		input: LinearEndpointInputSchemas.issuesDelete,
+		output: LinearEndpointOutputSchemas.issuesDelete,
+	},
+	'comments.list': {
+		input: LinearEndpointInputSchemas.commentsList,
+		output: LinearEndpointOutputSchemas.commentsList,
+	},
+	'comments.create': {
+		input: LinearEndpointInputSchemas.commentsCreate,
+		output: LinearEndpointOutputSchemas.commentsCreate,
+	},
+	'comments.update': {
+		input: LinearEndpointInputSchemas.commentsUpdate,
+		output: LinearEndpointOutputSchemas.commentsUpdate,
+	},
+	'comments.delete': {
+		input: LinearEndpointInputSchemas.commentsDelete,
+		output: LinearEndpointOutputSchemas.commentsDelete,
+	},
+	'projects.list': {
+		input: LinearEndpointInputSchemas.projectsList,
+		output: LinearEndpointOutputSchemas.projectsList,
+	},
+	'projects.get': {
+		input: LinearEndpointInputSchemas.projectsGet,
+		output: LinearEndpointOutputSchemas.projectsGet,
+	},
+	'projects.create': {
+		input: LinearEndpointInputSchemas.projectsCreate,
+		output: LinearEndpointOutputSchemas.projectsCreate,
+	},
+	'projects.update': {
+		input: LinearEndpointInputSchemas.projectsUpdate,
+		output: LinearEndpointOutputSchemas.projectsUpdate,
+	},
+	'projects.delete': {
+		input: LinearEndpointInputSchemas.projectsDelete,
+		output: LinearEndpointOutputSchemas.projectsDelete,
+	},
+	'teams.list': {
+		input: LinearEndpointInputSchemas.teamsList,
+		output: LinearEndpointOutputSchemas.teamsList,
+	},
+	'teams.get': {
+		input: LinearEndpointInputSchemas.teamsGet,
+		output: LinearEndpointOutputSchemas.teamsGet,
+	},
+	'users.list': {
+		input: LinearEndpointInputSchemas.usersList,
+		output: LinearEndpointOutputSchemas.usersList,
+	},
+	'users.get': {
+		input: LinearEndpointInputSchemas.usersGet,
+		output: LinearEndpointOutputSchemas.usersGet,
+	},
+} satisfies RequiredPluginEndpointSchemas<typeof linearEndpointsNested>;
+
+const linearWebhookSchemas = {
+	'issues.create': {
+		description: 'A new issue was created',
+		payload: IssueCreatedEventSchema,
+		response: IssueCreatedEventSchema,
+	},
+	'issues.update': {
+		description: 'An issue was updated',
+		payload: IssueUpdatedEventSchema,
+		response: IssueUpdatedEventSchema,
+	},
+	'issues.remove': {
+		description: 'An issue was deleted',
+		payload: IssueDeletedEventSchema,
+		response: IssueDeletedEventSchema,
+	},
+	'comments.create': {
+		description: 'A comment was added to an issue',
+		payload: CommentCreatedEventSchema,
+		response: CommentCreatedEventSchema,
+	},
+	'comments.update': {
+		description: 'A comment was updated',
+		payload: CommentUpdatedEventSchema,
+		response: CommentUpdatedEventSchema,
+	},
+	'comments.remove': {
+		description: 'A comment was deleted',
+		payload: CommentDeletedEventSchema,
+		response: CommentDeletedEventSchema,
+	},
+	'projects.create': {
+		description: 'A new project was created',
+		payload: ProjectCreatedEventSchema,
+		response: ProjectCreatedEventSchema,
+	},
+	'projects.update': {
+		description: 'A project was updated',
+		payload: ProjectUpdatedEventSchema,
+		response: ProjectUpdatedEventSchema,
+	},
+	'projects.remove': {
+		description: 'A project was deleted',
+		payload: ProjectDeletedEventSchema,
+		response: ProjectDeletedEventSchema,
+	},
+} satisfies RequiredPluginWebhookSchemas<typeof linearWebhooksNested>;
+
 const defaultAuthType = 'api_key' as const;
 
 /**
@@ -214,7 +353,7 @@ const linearEndpointMeta = {
 		description: 'List users in the workspace',
 	},
 	'users.get': { riskLevel: 'read', description: 'Get a specific user' },
-} satisfies PluginEndpointMeta<typeof linearEndpointsNested>;
+} satisfies RequiredPluginEndpointMeta<typeof linearEndpointsNested>;
 
 export type BaseLinearPlugin<T extends LinearPluginOptions> = CorsairPlugin<
 	'linear',
@@ -252,6 +391,7 @@ export function linear<const T extends LinearPluginOptions>(
 		webhooks: linearWebhooksNested,
 		endpointMeta: linearEndpointMeta,
 		endpointSchemas: linearEndpointSchemas,
+		webhookSchemas: linearWebhookSchemas,
 		pluginWebhookMatcher: (request) => {
 			const headers = request.headers;
 			const hasLinearSignature = 'linear-signature' in headers;
@@ -367,4 +507,3 @@ export type {
 	WorkflowState,
 	WorkflowStateType,
 } from './endpoints/types';
-export { linearEndpointSchemas } from './endpoints/types';

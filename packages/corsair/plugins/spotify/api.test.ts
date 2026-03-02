@@ -1,13 +1,13 @@
 import dotenv from 'dotenv';
 import { makeSpotifyRequest } from './client';
 import type {
-	AlbumsGetResponse,
 	AlbumsGetNewReleasesResponse,
+	AlbumsGetResponse,
 	AlbumsGetTracksResponse,
 	AlbumsSearchResponse,
-	ArtistsGetResponse,
 	ArtistsGetAlbumsResponse,
 	ArtistsGetRelatedArtistsResponse,
+	ArtistsGetResponse,
 	ArtistsGetTopTracksResponse,
 	ArtistsSearchResponse,
 	LibraryGetLikedTracksResponse,
@@ -16,11 +16,11 @@ import type {
 	PlayerGetRecentlyPlayedResponse,
 	PlaylistsCreateResponse,
 	PlaylistsGetResponse,
-	PlaylistsGetUserPlaylistsResponse,
 	PlaylistsGetTracksResponse,
+	PlaylistsGetUserPlaylistsResponse,
 	PlaylistsSearchResponse,
-	TracksGetResponse,
 	TracksGetAudioFeaturesResponse,
+	TracksGetResponse,
 	TracksSearchResponse,
 } from './endpoints/types';
 import { SpotifyEndpointOutputSchemas } from './endpoints/types';
@@ -128,10 +128,11 @@ describe('Spotify API Type Tests', () => {
 		});
 
 		it('artistsGetRelatedArtists returns correct type', async () => {
-			const response = await makeSpotifyRequest<ArtistsGetRelatedArtistsResponse>(
-				`artists/${testArtistId}/related-artists`,
-				TEST_ACCESS_TOKEN,
-			);
+			const response =
+				await makeSpotifyRequest<ArtistsGetRelatedArtistsResponse>(
+					`artists/${testArtistId}/related-artists`,
+					TEST_ACCESS_TOKEN,
+				);
 			const result = response;
 
 			SpotifyEndpointOutputSchemas.artistsGetRelatedArtists.parse(result);
@@ -167,7 +168,13 @@ describe('Spotify API Type Tests', () => {
 			const searchResponse = await makeSpotifyRequest<TracksSearchResponse>(
 				'search',
 				TEST_ACCESS_TOKEN,
-				{ query: { q: 'track:smells like teen spirit', type: 'track', limit: 1 } },
+				{
+					query: {
+						q: 'track:smells like teen spirit',
+						type: 'track',
+						limit: 1,
+					},
+				},
 			);
 			const trackId = searchResponse.tracks?.items?.[0]?.id;
 			if (!trackId) {
@@ -200,7 +207,13 @@ describe('Spotify API Type Tests', () => {
 			const response = await makeSpotifyRequest<TracksSearchResponse>(
 				'search',
 				TEST_ACCESS_TOKEN,
-				{ query: { q: 'track:smells like teen spirit', type: 'track', limit: 10 } },
+				{
+					query: {
+						q: 'track:smells like teen spirit',
+						type: 'track',
+						limit: 10,
+					},
+				},
 			);
 			const result = response;
 
@@ -227,11 +240,12 @@ describe('Spotify API Type Tests', () => {
 					testUserId = playlist.owner.id;
 				}
 			} else {
-				const searchResponse = await makeSpotifyRequest<PlaylistsSearchResponse>(
-					'search',
-					TEST_ACCESS_TOKEN,
-					{ query: { q: 'playlist:workout', type: 'playlist', limit: 1 } },
-				);
+				const searchResponse =
+					await makeSpotifyRequest<PlaylistsSearchResponse>(
+						'search',
+						TEST_ACCESS_TOKEN,
+						{ query: { q: 'playlist:workout', type: 'playlist', limit: 1 } },
+					);
 				const searchPlaylistId = searchResponse.playlists?.items?.[0]?.id;
 				if (searchPlaylistId && searchResponse.playlists?.items) {
 					testPlaylistId = searchPlaylistId;
@@ -259,20 +273,22 @@ describe('Spotify API Type Tests', () => {
 
 		it('playlistsGetUserPlaylists returns correct type', async () => {
 			if (!testUserId) {
-				const response = await makeSpotifyRequest<PlaylistsGetUserPlaylistsResponse>(
-					'me/playlists',
-					TEST_ACCESS_TOKEN,
-					{ query: { limit: 10 } },
-				);
+				const response =
+					await makeSpotifyRequest<PlaylistsGetUserPlaylistsResponse>(
+						'me/playlists',
+						TEST_ACCESS_TOKEN,
+						{ query: { limit: 10 } },
+					);
 				const result = response;
 
 				SpotifyEndpointOutputSchemas.playlistsGetUserPlaylists.parse(result);
 			} else {
-				const response = await makeSpotifyRequest<PlaylistsGetUserPlaylistsResponse>(
-					`users/${testUserId}/playlists`,
-					TEST_ACCESS_TOKEN,
-					{ query: { limit: 10 } },
-				);
+				const response =
+					await makeSpotifyRequest<PlaylistsGetUserPlaylistsResponse>(
+						`users/${testUserId}/playlists`,
+						TEST_ACCESS_TOKEN,
+						{ query: { limit: 10 } },
+					);
 				const result = response;
 
 				SpotifyEndpointOutputSchemas.playlistsGetUserPlaylists.parse(result);
@@ -343,11 +359,12 @@ describe('Spotify API Type Tests', () => {
 
 	describe('myData', () => {
 		it('myDataGetFollowedArtists returns correct type', async () => {
-			const response = await makeSpotifyRequest<MyDataGetFollowedArtistsResponse>(
-				'me/following',
-				TEST_ACCESS_TOKEN,
-				{ query: { type: 'artist', limit: 10 } },
-			);
+			const response =
+				await makeSpotifyRequest<MyDataGetFollowedArtistsResponse>(
+					'me/following',
+					TEST_ACCESS_TOKEN,
+					{ query: { type: 'artist', limit: 10 } },
+				);
 			const result = response;
 
 			SpotifyEndpointOutputSchemas.myDataGetFollowedArtists.parse(result);
@@ -356,21 +373,23 @@ describe('Spotify API Type Tests', () => {
 
 	describe('player', () => {
 		it('playerGetCurrentlyPlaying returns correct type', async () => {
-			const response = await makeSpotifyRequest<PlayerGetCurrentlyPlayingResponse>(
-				'me/player/currently-playing',
-				TEST_ACCESS_TOKEN,
-			);
+			const response =
+				await makeSpotifyRequest<PlayerGetCurrentlyPlayingResponse>(
+					'me/player/currently-playing',
+					TEST_ACCESS_TOKEN,
+				);
 			const result = response;
 
 			SpotifyEndpointOutputSchemas.playerGetCurrentlyPlaying.parse(result);
 		});
 
 		it('playerGetRecentlyPlayed returns correct type', async () => {
-			const response = await makeSpotifyRequest<PlayerGetRecentlyPlayedResponse>(
-				'me/player/recently-played',
-				TEST_ACCESS_TOKEN,
-				{ query: { limit: 10 } },
-			);
+			const response =
+				await makeSpotifyRequest<PlayerGetRecentlyPlayedResponse>(
+					'me/player/recently-played',
+					TEST_ACCESS_TOKEN,
+					{ query: { limit: 10 } },
+				);
 			const result = response;
 
 			SpotifyEndpointOutputSchemas.playerGetRecentlyPlayed.parse(result);

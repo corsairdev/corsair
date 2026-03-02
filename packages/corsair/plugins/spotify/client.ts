@@ -1,7 +1,7 @@
+import { ApiError } from '../../async-core/ApiError';
 import type { ApiRequestOptions } from '../../async-core/ApiRequestOptions';
 import type { OpenAPIConfig } from '../../async-core/OpenAPI';
 import type { RateLimitConfig } from '../../async-core/rate-limit';
-import { ApiError } from '../../async-core/ApiError';
 import { request } from '../../async-core/request';
 
 export class SpotifyAPIError extends Error {

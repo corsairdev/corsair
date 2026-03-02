@@ -781,31 +781,3 @@ export type WorkflowGetResponse = z.infer<
 export type WorkflowRunsListResponse = z.infer<
 	typeof GithubEndpointOutputSchemas.workflowsListRuns
 >;
-
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Endpoint Schema Map — dot-path → {{ input, output }} for get_schema()
-// ─────────────────────────────────────────────────────────────────────────────
-export const githubEndpointSchemas = {
-  'issues.list': { input: GithubEndpointInputSchemas.issuesList, output: GithubEndpointOutputSchemas.issuesList },
-  'issues.get': { input: GithubEndpointInputSchemas.issuesGet, output: GithubEndpointOutputSchemas.issuesGet },
-  'issues.create': { input: GithubEndpointInputSchemas.issuesCreate, output: GithubEndpointOutputSchemas.issuesCreate },
-  'issues.update': { input: GithubEndpointInputSchemas.issuesUpdate, output: GithubEndpointOutputSchemas.issuesUpdate },
-  'issues.createComment': { input: GithubEndpointInputSchemas.issuesCreateComment, output: GithubEndpointOutputSchemas.issuesCreateComment },
-  'pullRequests.list': { input: GithubEndpointInputSchemas.pullRequestsList, output: GithubEndpointOutputSchemas.pullRequestsList },
-  'pullRequests.get': { input: GithubEndpointInputSchemas.pullRequestsGet, output: GithubEndpointOutputSchemas.pullRequestsGet },
-  'pullRequests.listReviews': { input: GithubEndpointInputSchemas.pullRequestsListReviews, output: GithubEndpointOutputSchemas.pullRequestsListReviews },
-  'pullRequests.createReview': { input: GithubEndpointInputSchemas.pullRequestsCreateReview, output: GithubEndpointOutputSchemas.pullRequestsCreateReview },
-  'repositories.list': { input: GithubEndpointInputSchemas.repositoriesList, output: GithubEndpointOutputSchemas.repositoriesList },
-  'repositories.get': { input: GithubEndpointInputSchemas.repositoriesGet, output: GithubEndpointOutputSchemas.repositoriesGet },
-  'repositories.listBranches': { input: GithubEndpointInputSchemas.repositoriesListBranches, output: GithubEndpointOutputSchemas.repositoriesListBranches },
-  'repositories.listCommits': { input: GithubEndpointInputSchemas.repositoriesListCommits, output: GithubEndpointOutputSchemas.repositoriesListCommits },
-  'repositories.getContent': { input: GithubEndpointInputSchemas.repositoriesGetContent, output: GithubEndpointOutputSchemas.repositoriesGetContent },
-  'releases.list': { input: GithubEndpointInputSchemas.releasesList, output: GithubEndpointOutputSchemas.releasesList },
-  'releases.get': { input: GithubEndpointInputSchemas.releasesGet, output: GithubEndpointOutputSchemas.releasesGet },
-  'releases.create': { input: GithubEndpointInputSchemas.releasesCreate, output: GithubEndpointOutputSchemas.releasesCreate },
-  'releases.update': { input: GithubEndpointInputSchemas.releasesUpdate, output: GithubEndpointOutputSchemas.releasesUpdate },
-  'workflows.list': { input: GithubEndpointInputSchemas.workflowsList, output: GithubEndpointOutputSchemas.workflowsList },
-  'workflows.get': { input: GithubEndpointInputSchemas.workflowsGet, output: GithubEndpointOutputSchemas.workflowsGet },
-  'workflows.listRuns': { input: GithubEndpointInputSchemas.workflowsListRuns, output: GithubEndpointOutputSchemas.workflowsListRuns },
-} as const;

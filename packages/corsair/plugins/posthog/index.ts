@@ -7,7 +7,10 @@ import type {
 	CorsairPluginContext,
 	CorsairWebhook,
 	KeyBuilderContext,
-	PluginEndpointMeta,
+	PluginPermissionsConfig,
+	RequiredPluginEndpointMeta,
+	RequiredPluginEndpointSchemas,
+	RequiredPluginWebhookSchemas,
 } from '../../core';
 import type { PickAuth } from '../../core/constants';
 import { Events } from './endpoints';
@@ -15,10 +18,14 @@ import type {
 	PostHogEndpointInputs,
 	PostHogEndpointOutputs,
 } from './endpoints/types';
-import { posthogEndpointSchemas } from './endpoints/types';
+import {
+	PostHogEndpointInputSchemas,
+	PostHogEndpointOutputSchemas,
+} from './endpoints/types';
 import { PostHogSchema } from './schema';
 import type { EventCapturedEvent, PostHogWebhookOutputs } from './webhooks';
 import { EventWebhooks } from './webhooks';
+import { EventCapturedEventSchema } from './webhooks/types';
 
 export type PostHogPluginOptions = {
 	authType?: PickAuth<'api_key'>;
@@ -27,6 +34,12 @@ export type PostHogPluginOptions = {
 	hooks?: InternalPostHogPlugin['hooks'];
 	webhookHooks?: InternalPostHogPlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
+	/**
+	 * Permission configuration for the PostHog plugin.
+	 * Controls what the AI agent is allowed to do.
+	 * Overrides use dot-notation paths from the PostHog endpoint tree — invalid paths are type errors.
+	 */
+	permissions?: PluginPermissionsConfig<typeof posthogEndpointsNested>;
 };
 
 export type PostHogContext = CorsairPluginContext<
@@ -74,11 +87,42 @@ const posthogEndpointsNested = {
 	},
 } as const;
 
+export const posthogEndpointSchemas = {
+	'events.aliasCreate': {
+		input: PostHogEndpointInputSchemas.aliasCreate,
+		output: PostHogEndpointOutputSchemas.aliasCreate,
+	},
+	'events.eventCreate': {
+		input: PostHogEndpointInputSchemas.eventCreate,
+		output: PostHogEndpointOutputSchemas.eventCreate,
+	},
+	'events.identityCreate': {
+		input: PostHogEndpointInputSchemas.identityCreate,
+		output: PostHogEndpointOutputSchemas.identityCreate,
+	},
+	'events.trackPage': {
+		input: PostHogEndpointInputSchemas.trackPage,
+		output: PostHogEndpointOutputSchemas.trackPage,
+	},
+	'events.trackScreen': {
+		input: PostHogEndpointInputSchemas.trackScreen,
+		output: PostHogEndpointOutputSchemas.trackScreen,
+	},
+} satisfies RequiredPluginEndpointSchemas<typeof posthogEndpointsNested>;
+
 const posthogWebhooksNested = {
 	events: {
 		captured: EventWebhooks.captured,
 	},
 } as const;
+
+const posthogWebhookSchemas = {
+	'events.captured': {
+		description: 'A PostHog event was captured',
+		payload: EventCapturedEventSchema,
+		response: EventCapturedEventSchema,
+	},
+} satisfies RequiredPluginWebhookSchemas<typeof posthogWebhooksNested>;
 
 const defaultAuthType = 'api_key' as const;
 
@@ -91,14 +135,23 @@ const posthogEndpointMeta = {
 		riskLevel: 'write',
 		description: 'Create an alias linking two distinct user IDs',
 	},
-	'events.eventCreate': { riskLevel: 'write', description: 'Ingest an analytics event' },
+	'events.eventCreate': {
+		riskLevel: 'write',
+		description: 'Ingest an analytics event',
+	},
 	'events.identityCreate': {
 		riskLevel: 'write',
 		description: 'Associate properties with a user identity',
 	},
-	'events.trackPage': { riskLevel: 'write', description: 'Track a page view event' },
-	'events.trackScreen': { riskLevel: 'write', description: 'Track a screen view event' },
-} satisfies PluginEndpointMeta<typeof posthogEndpointsNested>;
+	'events.trackPage': {
+		riskLevel: 'write',
+		description: 'Track a page view event',
+	},
+	'events.trackScreen': {
+		riskLevel: 'write',
+		description: 'Track a screen view event',
+	},
+} satisfies RequiredPluginEndpointMeta<typeof posthogEndpointsNested>;
 
 export type BasePostHogPlugin<T extends PostHogPluginOptions> = CorsairPlugin<
 	'posthog',
@@ -136,6 +189,7 @@ export function posthog<const T extends PostHogPluginOptions>(
 		webhooks: posthogWebhooksNested,
 		endpointMeta: posthogEndpointMeta,
 		endpointSchemas: posthogEndpointSchemas,
+		webhookSchemas: posthogWebhookSchemas,
 		pluginWebhookMatcher: (request) => {
 			const headers = request.headers;
 			const hasPostHogSignature =
@@ -216,4 +270,3 @@ export type {
 	TrackPageResponse,
 	TrackScreenResponse,
 } from './endpoints/types';
-export { posthogEndpointSchemas } from './endpoints/types';

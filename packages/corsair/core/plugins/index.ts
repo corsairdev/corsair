@@ -17,6 +17,7 @@ import type {
 	CorsairWebhook,
 	CorsairWebhookHandler,
 	CorsairWebhookMatcher,
+	WebhookPathsOf,
 	WebhookRequest,
 	WebhookResponse,
 	WebhookTree,
@@ -83,8 +84,47 @@ export type PluginEndpointMeta<T extends EndpointTree> = Partial<
 >;
 
 /**
+ * A **required** map from dot-notation endpoint paths to their metadata entries.
+ * Every endpoint in the tree must have a corresponding entry — omitting any path
+ * is a compile-time error. Use this for `satisfies` annotations on `endpointMeta`
+ * objects where exhaustiveness is enforced.
+ *
+ * @template T - The plugin's endpoint tree (e.g. `typeof githubEndpointsNested`)
+ */
+export type RequiredPluginEndpointMeta<T extends EndpointTree> = Record<
+	EndpointPathsOf<T>,
+	EndpointMetaEntry
+>;
+
+/**
+ * A **required** map from dot-notation endpoint paths to their `{ input, output }` schema
+ * pairs. Every endpoint in the tree must have a corresponding entry — omitting any path
+ * is a compile-time error. Use this for `satisfies` annotations on `endpointSchemas`
+ * objects where exhaustiveness is enforced.
+ *
+ * @template T - The plugin's endpoint tree (e.g. `typeof githubEndpointsNested`)
+ */
+export type RequiredPluginEndpointSchemas<T extends EndpointTree> = Record<
+	EndpointPathsOf<T>,
+	{ input?: ZodTypeAny; output?: ZodTypeAny }
+>;
+
+/**
+ * A **required** map from dot-notation webhook paths to their `{ description, payload, response }`
+ * schema entries. Every webhook in the tree must have a corresponding entry — omitting any path
+ * is a compile-time error. Use this for `satisfies` annotations on `webhookSchemas` objects
+ * where exhaustiveness is enforced.
+ *
+ * @template T - The plugin's webhook tree (e.g. `typeof slackWebhooksNested`)
+ */
+export type RequiredPluginWebhookSchemas<T extends WebhookTree> = Record<
+	WebhookPathsOf<T>,
+	{ description?: string; payload?: ZodTypeAny; response?: ZodTypeAny }
+>;
+
+/**
  * Permission configuration for a plugin, passed as `permissions` in the plugin options.
- * Controls what the AI agent is allowed to do via the MCP server.
+ * Controls what the AI agent is allowed to do.
  *
  * The `overrides` object uses dot-notation keys derived from the plugin's endpoint tree at
  * the TypeScript level — only valid paths autocomplete and compile. Passing a nonexistent
@@ -488,6 +528,26 @@ export type CorsairPlugin<
 	 * ```
 	 */
 	endpointSchemas?: Record<string, { input?: ZodTypeAny; output?: ZodTypeAny }>;
+	/**
+	 * Zod schemas for each webhook, keyed by dot-notation path.
+	 * Used by get_webhook_schema() to expose structured type information to the agent.
+	 * Keys must match the dot-paths of the webhook tree (e.g. 'messages.message').
+	 *
+	 * - `payload` — the type of `request.payload` in the before hook
+	 * - `response` — the type of `response.data` in the after hook
+	 * - `description` — optional human-readable description of what triggers this webhook
+	 *
+	 * @example
+	 * ```ts
+	 * webhookSchemas: {
+	 *   'messages.message': { description: 'Fires when a message is posted', payload: MessageEventSchema, response: z.object({ ... }) },
+	 * }
+	 * ```
+	 */
+	webhookSchemas?: Record<
+		string,
+		{ description?: string; payload?: ZodTypeAny; response?: ZodTypeAny }
+	>;
 };
 
 /**

@@ -6,8 +6,11 @@ import type {
 	CorsairPluginContext,
 	CorsairWebhook,
 	KeyBuilderContext,
-	PluginEndpointMeta,
+	PluginPermissionsConfig,
 	RawWebhookRequest,
+	RequiredPluginEndpointMeta,
+	RequiredPluginEndpointSchemas,
+	RequiredPluginWebhookSchemas,
 } from '../../core';
 import type { PickAuth } from '../../core/constants';
 import { getValidAccessToken } from './client';
@@ -16,6 +19,10 @@ import type {
 	GoogleSheetsEndpointOutputs,
 } from './endpoints';
 import { SheetsEndpoints, SpreadsheetsEndpoints } from './endpoints';
+import {
+	GoogleSheetsEndpointInputSchemas,
+	GoogleSheetsEndpointOutputSchemas,
+} from './endpoints/types';
 import { GoogleSheetsSchema } from './schema';
 import type {
 	GoogleSheetsWebhookOutputs,
@@ -23,7 +30,10 @@ import type {
 	RangeUpdatedEvent,
 } from './webhooks';
 import { RowWebhooks } from './webhooks';
-import { googlesheetsEndpointSchemas } from './endpoints/types';
+import {
+	GoogleAppsScriptWebhookPayloadSchema,
+	RangeUpdatedEventSchema,
+} from './webhooks/types';
 
 export type GoogleSheetsContext = CorsairPluginContext<
 	typeof GoogleSheetsSchema,
@@ -88,6 +98,49 @@ const googleSheetsEndpointsNested = {
 	},
 } as const;
 
+export const googlesheetsEndpointSchemas = {
+	'spreadsheets.create': {
+		input: GoogleSheetsEndpointInputSchemas.spreadsheetsCreate,
+		output: GoogleSheetsEndpointOutputSchemas.spreadsheetsCreate,
+	},
+	'spreadsheets.delete': {
+		input: GoogleSheetsEndpointInputSchemas.spreadsheetsDelete,
+		output: GoogleSheetsEndpointOutputSchemas.spreadsheetsDelete,
+	},
+	'sheets.appendRow': {
+		input: GoogleSheetsEndpointInputSchemas.sheetsAppendRow,
+		output: GoogleSheetsEndpointOutputSchemas.sheetsAppendRow,
+	},
+	'sheets.appendOrUpdateRow': {
+		input: GoogleSheetsEndpointInputSchemas.sheetsAppendOrUpdateRow,
+		output: GoogleSheetsEndpointOutputSchemas.sheetsAppendOrUpdateRow,
+	},
+	'sheets.getRows': {
+		input: GoogleSheetsEndpointInputSchemas.sheetsGetRows,
+		output: GoogleSheetsEndpointOutputSchemas.sheetsGetRows,
+	},
+	'sheets.updateRow': {
+		input: GoogleSheetsEndpointInputSchemas.sheetsUpdateRow,
+		output: GoogleSheetsEndpointOutputSchemas.sheetsUpdateRow,
+	},
+	'sheets.clearSheet': {
+		input: GoogleSheetsEndpointInputSchemas.sheetsClearSheet,
+		output: GoogleSheetsEndpointOutputSchemas.sheetsClearSheet,
+	},
+	'sheets.createSheet': {
+		input: GoogleSheetsEndpointInputSchemas.sheetsCreateSheet,
+		output: GoogleSheetsEndpointOutputSchemas.sheetsCreateSheet,
+	},
+	'sheets.deleteSheet': {
+		input: GoogleSheetsEndpointInputSchemas.sheetsDeleteSheet,
+		output: GoogleSheetsEndpointOutputSchemas.sheetsDeleteSheet,
+	},
+	'sheets.deleteRowsOrColumns': {
+		input: GoogleSheetsEndpointInputSchemas.sheetsDeleteRowsOrColumns,
+		output: GoogleSheetsEndpointOutputSchemas.sheetsDeleteRowsOrColumns,
+	},
+} satisfies RequiredPluginEndpointSchemas<typeof googleSheetsEndpointsNested>;
+
 const googleSheetsWebhooksNested = {
 	rangeUpdated: RowWebhooks.rangeUpdated,
 } as const;
@@ -97,10 +150,24 @@ export type GoogleSheetsPluginOptions = {
 	key?: string;
 	hooks?: InternalGoogleSheetsPlugin['hooks'];
 	webhookHooks?: InternalGoogleSheetsPlugin['webhookHooks'];
+	/**
+	 * Permission configuration for the Google Sheets plugin.
+	 * Controls what the AI agent is allowed to do.
+	 * Overrides use dot-notation paths from the Google Sheets endpoint tree — invalid paths are type errors.
+	 */
+	permissions?: PluginPermissionsConfig<typeof googleSheetsEndpointsNested>;
 };
 
 export type GoogleSheetsKeyBuilderContext =
 	KeyBuilderContext<GoogleSheetsPluginOptions>;
+
+const googlesheetsWebhookSchemas = {
+	rangeUpdated: {
+		description: 'A range of cells in a Google Sheet was updated',
+		payload: GoogleAppsScriptWebhookPayloadSchema,
+		response: RangeUpdatedEventSchema,
+	},
+} satisfies RequiredPluginWebhookSchemas<typeof googleSheetsWebhooksNested>;
 
 const defaultAuthType = 'oauth_2' as const;
 
@@ -109,19 +176,32 @@ const defaultAuthType = 'oauth_2' as const;
  * Used by the MCP server permission system to decide allow / deny / require_approval.
  */
 const googleSheetsEndpointMeta = {
-	'spreadsheets.create': { riskLevel: 'write', description: 'Create a new spreadsheet' },
+	'spreadsheets.create': {
+		riskLevel: 'write',
+		description: 'Create a new spreadsheet',
+	},
 	'spreadsheets.delete': {
 		riskLevel: 'destructive',
 		irreversible: true,
-		description: 'Permanently delete a spreadsheet [DESTRUCTIVE · IRREVERSIBLE]',
+		description:
+			'Permanently delete a spreadsheet [DESTRUCTIVE · IRREVERSIBLE]',
 	},
-	'sheets.appendRow': { riskLevel: 'write', description: 'Append a new row to a sheet' },
+	'sheets.appendRow': {
+		riskLevel: 'write',
+		description: 'Append a new row to a sheet',
+	},
 	'sheets.appendOrUpdateRow': {
 		riskLevel: 'write',
 		description: 'Append a new row or update an existing one',
 	},
-	'sheets.getRows': { riskLevel: 'read', description: 'Read rows from a sheet' },
-	'sheets.updateRow': { riskLevel: 'write', description: 'Update an existing row in a sheet' },
+	'sheets.getRows': {
+		riskLevel: 'read',
+		description: 'Read rows from a sheet',
+	},
+	'sheets.updateRow': {
+		riskLevel: 'write',
+		description: 'Update an existing row in a sheet',
+	},
 	'sheets.clearSheet': {
 		riskLevel: 'destructive',
 		description: 'Clear all data from a sheet [DESTRUCTIVE]',
@@ -133,13 +213,14 @@ const googleSheetsEndpointMeta = {
 	'sheets.deleteSheet': {
 		riskLevel: 'destructive',
 		irreversible: true,
-		description: 'Delete a sheet tab and all its data [DESTRUCTIVE · IRREVERSIBLE]',
+		description:
+			'Delete a sheet tab and all its data [DESTRUCTIVE · IRREVERSIBLE]',
 	},
 	'sheets.deleteRowsOrColumns': {
 		riskLevel: 'destructive',
 		description: 'Delete rows or columns from a sheet [DESTRUCTIVE]',
 	},
-} satisfies PluginEndpointMeta<typeof googleSheetsEndpointsNested>;
+} satisfies RequiredPluginEndpointMeta<typeof googleSheetsEndpointsNested>;
 
 export type BaseGoogleSheetsPlugin<T extends GoogleSheetsPluginOptions> =
 	CorsairPlugin<
@@ -175,6 +256,7 @@ export function googlesheets<const T extends GoogleSheetsPluginOptions>(
 		webhooks: googleSheetsWebhooksNested,
 		endpointMeta: googleSheetsEndpointMeta,
 		endpointSchemas: googlesheetsEndpointSchemas,
+		webhookSchemas: googlesheetsWebhookSchemas,
 		keyBuilder: async (ctx: GoogleSheetsKeyBuilderContext) => {
 			if (options.key) {
 				return options.key;
@@ -249,4 +331,3 @@ export type {
 	GoogleSheetsEndpointInputs,
 	GoogleSheetsEndpointOutputs,
 } from './endpoints/types';
-export { googlesheetsEndpointSchemas } from './endpoints/types';

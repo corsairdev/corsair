@@ -155,11 +155,8 @@ export type {
 	CorsairSingleTenantClient,
 	CorsairTenantWrapper,
 } from './client';
-// Inspection types
-export type { CorsairInspectMethods, EndpointSchemaResult } from './inspect';
 // Constants
 export type { AllProviders, AuthTypes, BaseProviders } from './constants';
-
 // Endpoint types
 export type {
 	BindEndpoints,
@@ -180,7 +177,9 @@ export type {
 	RetryStrategies,
 	RetryStrategy,
 } from './errors';
-export type { EnforcePermissionOptions } from './permissions';
+// Inspection types
+export type { CorsairInspectMethods, EndpointSchemaResult } from './inspect';
+export type { EnforcePermissionOptions, EnforcePermissionResult } from './permissions';
 
 // Plugin types
 export type {
@@ -198,6 +197,9 @@ export type {
 	PermissionPolicy,
 	PluginEndpointMeta,
 	PluginPermissionsConfig,
+	RequiredPluginEndpointMeta,
+	RequiredPluginEndpointSchemas,
+	RequiredPluginWebhookSchemas,
 	WebhookHooks,
 } from './plugins';
 
@@ -212,6 +214,7 @@ export type {
 	CorsairWebhookHandler,
 	CorsairWebhookMatcher,
 	RawWebhookRequest,
+	WebhookPathsOf,
 	WebhookRequest,
 	WebhookResponse,
 	WebhookTree,

@@ -1,5 +1,5 @@
-import type { SpotifyEndpoints } from '..';
 import { logEventFromContext } from '../../utils/events';
+import type { SpotifyEndpoints } from '..';
 import { makeSpotifyRequest } from '../client';
 import type { SpotifyEndpointOutputs } from './types';
 
@@ -87,14 +87,12 @@ export const pause: SpotifyEndpoints['playerPause'] = async (ctx, input) => {
 		query.device_id = input.device_id;
 	}
 
-	const result = await makeSpotifyRequest<SpotifyEndpointOutputs['playerPause']>(
-		'me/player/pause',
-		ctx.key,
-		{
-			method: 'PUT',
-			query,
-		},
-	);
+	const result = await makeSpotifyRequest<
+		SpotifyEndpointOutputs['playerPause']
+	>('me/player/pause', ctx.key, {
+		method: 'PUT',
+		query,
+	});
 
 	await logEventFromContext(
 		ctx,
@@ -165,14 +163,12 @@ export const resume: SpotifyEndpoints['playerResume'] = async (ctx, input) => {
 		query.device_id = input.device_id;
 	}
 
-	const result = await makeSpotifyRequest<SpotifyEndpointOutputs['playerResume']>(
-		'me/player/play',
-		ctx.key,
-		{
-			method: 'PUT',
-			query,
-		},
-	);
+	const result = await makeSpotifyRequest<
+		SpotifyEndpointOutputs['playerResume']
+	>('me/player/play', ctx.key, {
+		method: 'PUT',
+		query,
+	});
 
 	await logEventFromContext(
 		ctx,

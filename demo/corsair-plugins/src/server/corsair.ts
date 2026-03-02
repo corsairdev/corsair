@@ -1,15 +1,11 @@
 import {
 	createCorsair,
-	discord,
-	github,
 	gmail,
 	googlecalendar,
 	googledrive,
 	googlesheets,
 	hubspot,
-	linear,
 	posthog,
-	resend,
 	slack,
 	spotify,
 	notion,
@@ -25,7 +21,21 @@ export const corsair = createCorsair({
 		onTimeout: 'deny',
 	},
 	plugins: [
-		linear(),
+		googlecalendar({
+			permissions: {
+				mode: 'cautious',
+				overrides: {
+					'events.create': 'require_approval',
+				},
+			},
+			webhookHooks: {
+				onEventChanged: {
+					after: async (ctx, res) => {
+						console.log(res.data?.type, 'res.data?.type');
+					},
+				},
+			},
+		}),
 		slack({
 			permissions: {
 				mode: 'cautious',
@@ -33,51 +43,54 @@ export const corsair = createCorsair({
 					'messages.post': 'require_approval',
 				},
 			},
-		}),
-		resend({
 			webhookHooks: {
-				emails: {
-					received: {
-						after: async (ctx, res) => {
-							await inngest.send({
-								name: 'resend/email',
-								data: {
-									tenantId: ctx.tenantId ?? 'default',
-									event: res.data!,
-								},
-							});
+				challenge: {
+					challenge: {
+						before(ctx, args) {
+							return { ctx, args };
+						},
+						after(ctx, response) {
+							// full type for the repsonse.data, which is a zod schema
 						},
 					},
 				},
 			},
 		}),
-		github({
-			webhookHooks: {
-				starCreated: {
-					after: async (ctx, res) => {
-						await inngest.send({
-							name: 'github/star',
-							data: {
-								tenantId: ctx.tenantId ?? 'default',
-								event: res.data!,
-							},
-						});
-					},
-				},
-			},
-		}),
+		// resend({
+		// 	webhookHooks: {
+		// 		emails: {
+		// 			received: {
+		// 				after: async (ctx, res) => {
+		// 					await inngest.send({
+		// 						name: 'resend/email',
+		// 						data: {
+		// 							tenantId: ctx.tenantId ?? 'default',
+		// 							event: res.data!,
+		// 						},
+		// 					});
+		// 				},
+		// 			},
+		// 		},
+		// 	},
+		// }),
+		// github({
+		// 	webhookHooks: {
+		// 		starCreated: {
+		// 			after: async (ctx, res) => {
+		// 				await inngest.send({
+		// 					name: 'github/star',
+		// 					data: {
+		// 						tenantId: ctx.tenantId ?? 'default',
+		// 						event: res.data!,
+		// 					},
+		// 				});
+		// 			},
+		// 		},
+		// 	},
+		// }),
 		gmail({
 			webhookHooks: {
 				messageChanged: {
-					after: async (ctx, res) => {
-						console.log(res.data?.type, 'res.data?.type');
-					},
-				},
-			},
-		}),
-		googlecalendar({
-			webhookHooks: {
-				onEventChanged: {
 					after: async (ctx, res) => {
 						console.log(res.data?.type, 'res.data?.type');
 					},
