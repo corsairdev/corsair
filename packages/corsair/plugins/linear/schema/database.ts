@@ -88,9 +88,9 @@ export const LinearComment = z.object({
 export const LinearUser = z.object({
 	id: z.string(),
 	name: z.string(),
-	email: z.string().optional(),
+	email: z.string().optional().nullable(),
 	displayName: z.string(),
-	avatarUrl: z.string().optional(),
+	avatarUrl: z.string().optional().nullable(),
 	active: z.boolean(),
 	admin: z.boolean(),
 	createdAt: z.coerce.date().nullable().optional(),

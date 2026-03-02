@@ -7,7 +7,11 @@ import type {
 	CorsairWebhook,
 	KeyBuilderContext,
 	PluginAuthConfig,
+	PluginPermissionsConfig,
 	RawWebhookRequest,
+	RequiredPluginEndpointMeta,
+	RequiredPluginEndpointSchemas,
+	RequiredPluginWebhookSchemas,
 } from '../../core';
 import type { PickAuth } from '../../core/constants';
 import { getValidAccessToken } from './client';
@@ -18,6 +22,10 @@ import {
 	MessagesEndpoints,
 	ThreadsEndpoints,
 } from './endpoints';
+import {
+	GmailEndpointInputSchemas,
+	GmailEndpointOutputSchemas,
+} from './endpoints/types';
 import type { GmailCredentials } from './schema';
 import { GmailSchema } from './schema';
 import type {
@@ -29,7 +37,11 @@ import type {
 } from './webhooks';
 import { MessageWebhooks } from './webhooks';
 import type { PubSubNotification } from './webhooks/types';
-import { decodePubSubMessage } from './webhooks/types';
+import {
+	decodePubSubMessage,
+	GmailWebhookEventSchema,
+	PubSubNotificationSchema,
+} from './webhooks/types';
 
 /**
  * Auth config extending the base OAuth2 fields with Gmail-specific fields.
@@ -136,6 +148,109 @@ export const gmailEndpointsNested = {
 	},
 } as const;
 
+export const gmailEndpointSchemas = {
+	'messages.list': {
+		input: GmailEndpointInputSchemas.messagesList,
+		output: GmailEndpointOutputSchemas.messagesList,
+	},
+	'messages.get': {
+		input: GmailEndpointInputSchemas.messagesGet,
+		output: GmailEndpointOutputSchemas.messagesGet,
+	},
+	'messages.send': {
+		input: GmailEndpointInputSchemas.messagesSend,
+		output: GmailEndpointOutputSchemas.messagesSend,
+	},
+	'messages.delete': {
+		input: GmailEndpointInputSchemas.messagesDelete,
+		output: GmailEndpointOutputSchemas.messagesDelete,
+	},
+	'messages.modify': {
+		input: GmailEndpointInputSchemas.messagesModify,
+		output: GmailEndpointOutputSchemas.messagesModify,
+	},
+	'messages.batchModify': {
+		input: GmailEndpointInputSchemas.messagesBatchModify,
+		output: GmailEndpointOutputSchemas.messagesBatchModify,
+	},
+	'messages.trash': {
+		input: GmailEndpointInputSchemas.messagesTrash,
+		output: GmailEndpointOutputSchemas.messagesTrash,
+	},
+	'messages.untrash': {
+		input: GmailEndpointInputSchemas.messagesUntrash,
+		output: GmailEndpointOutputSchemas.messagesUntrash,
+	},
+	'labels.list': {
+		input: GmailEndpointInputSchemas.labelsList,
+		output: GmailEndpointOutputSchemas.labelsList,
+	},
+	'labels.get': {
+		input: GmailEndpointInputSchemas.labelsGet,
+		output: GmailEndpointOutputSchemas.labelsGet,
+	},
+	'labels.create': {
+		input: GmailEndpointInputSchemas.labelsCreate,
+		output: GmailEndpointOutputSchemas.labelsCreate,
+	},
+	'labels.update': {
+		input: GmailEndpointInputSchemas.labelsUpdate,
+		output: GmailEndpointOutputSchemas.labelsUpdate,
+	},
+	'labels.delete': {
+		input: GmailEndpointInputSchemas.labelsDelete,
+		output: GmailEndpointOutputSchemas.labelsDelete,
+	},
+	'drafts.list': {
+		input: GmailEndpointInputSchemas.draftsList,
+		output: GmailEndpointOutputSchemas.draftsList,
+	},
+	'drafts.get': {
+		input: GmailEndpointInputSchemas.draftsGet,
+		output: GmailEndpointOutputSchemas.draftsGet,
+	},
+	'drafts.create': {
+		input: GmailEndpointInputSchemas.draftsCreate,
+		output: GmailEndpointOutputSchemas.draftsCreate,
+	},
+	'drafts.update': {
+		input: GmailEndpointInputSchemas.draftsUpdate,
+		output: GmailEndpointOutputSchemas.draftsUpdate,
+	},
+	'drafts.delete': {
+		input: GmailEndpointInputSchemas.draftsDelete,
+		output: GmailEndpointOutputSchemas.draftsDelete,
+	},
+	'drafts.send': {
+		input: GmailEndpointInputSchemas.draftsSend,
+		output: GmailEndpointOutputSchemas.draftsSend,
+	},
+	'threads.list': {
+		input: GmailEndpointInputSchemas.threadsList,
+		output: GmailEndpointOutputSchemas.threadsList,
+	},
+	'threads.get': {
+		input: GmailEndpointInputSchemas.threadsGet,
+		output: GmailEndpointOutputSchemas.threadsGet,
+	},
+	'threads.modify': {
+		input: GmailEndpointInputSchemas.threadsModify,
+		output: GmailEndpointOutputSchemas.threadsModify,
+	},
+	'threads.delete': {
+		input: GmailEndpointInputSchemas.threadsDelete,
+		output: GmailEndpointOutputSchemas.threadsDelete,
+	},
+	'threads.trash': {
+		input: GmailEndpointInputSchemas.threadsTrash,
+		output: GmailEndpointOutputSchemas.threadsTrash,
+	},
+	'threads.untrash': {
+		input: GmailEndpointInputSchemas.threadsUntrash,
+		output: GmailEndpointOutputSchemas.threadsUntrash,
+	},
+} satisfies RequiredPluginEndpointSchemas<typeof gmailEndpointsNested>;
+
 export const gmailWebhooksNested = {
 	messageChanged: MessageWebhooks.messageChanged,
 } as const;
@@ -146,6 +261,12 @@ export type GmailPluginOptions = {
 	credentials?: GmailCredentials;
 	hooks?: InternalGmailPlugin['hooks'];
 	webhookHooks?: InternalGmailPlugin['webhookHooks'];
+	/**
+	 * Permission configuration for the Gmail plugin.
+	 * Controls what the AI agent is allowed to do.
+	 * Overrides use dot-notation paths from the Gmail endpoint tree — invalid paths are type errors.
+	 */
+	permissions?: PluginPermissionsConfig<typeof gmailEndpointsNested>;
 };
 
 export type GmailKeyBuilderContext = KeyBuilderContext<
@@ -153,7 +274,107 @@ export type GmailKeyBuilderContext = KeyBuilderContext<
 	typeof gmailAuthConfig
 >;
 
+const gmailWebhookSchemas = {
+	messageChanged: {
+		description:
+			'A Gmail message was received, deleted, or had its labels changed',
+		payload: PubSubNotificationSchema,
+		response: GmailWebhookEventSchema,
+	},
+} satisfies RequiredPluginWebhookSchemas<typeof gmailWebhooksNested>;
+
 const defaultAuthType = 'oauth_2' as const;
+
+/**
+ * Risk-level metadata for each Gmail endpoint.
+ * Used by the MCP server permission system to decide allow / deny / require_approval.
+ */
+const gmailEndpointMeta = {
+	'messages.list': {
+		riskLevel: 'read',
+		description: 'List messages in a mailbox',
+	},
+	'messages.get': { riskLevel: 'read', description: 'Get a specific message' },
+	'messages.send': {
+		riskLevel: 'write',
+		description: 'Send an email to one or more recipients',
+	},
+	'messages.delete': {
+		riskLevel: 'destructive',
+		irreversible: true,
+		description: 'Permanently delete a message [DESTRUCTIVE · IRREVERSIBLE]',
+	},
+	'messages.modify': {
+		riskLevel: 'write',
+		description: 'Add or remove labels from a message',
+	},
+	'messages.batchModify': {
+		riskLevel: 'write',
+		description: 'Add or remove labels from multiple messages in bulk',
+	},
+	'messages.trash': {
+		riskLevel: 'write',
+		description: 'Move a message to the trash',
+	},
+	'messages.untrash': {
+		riskLevel: 'write',
+		description: 'Restore a message from the trash',
+	},
+	'labels.list': {
+		riskLevel: 'read',
+		description: 'List all labels in the mailbox',
+	},
+	'labels.get': { riskLevel: 'read', description: 'Get a specific label' },
+	'labels.create': { riskLevel: 'write', description: 'Create a new label' },
+	'labels.update': {
+		riskLevel: 'write',
+		description: 'Update an existing label',
+	},
+	'labels.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete a label [DESTRUCTIVE]',
+	},
+	'drafts.list': {
+		riskLevel: 'read',
+		description: 'List drafts in the mailbox',
+	},
+	'drafts.get': { riskLevel: 'read', description: 'Get a specific draft' },
+	'drafts.create': { riskLevel: 'write', description: 'Create a new draft' },
+	'drafts.update': {
+		riskLevel: 'write',
+		description: 'Update an existing draft',
+	},
+	'drafts.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete a draft [DESTRUCTIVE]',
+	},
+	'drafts.send': {
+		riskLevel: 'write',
+		description: 'Send a draft as an email',
+	},
+	'threads.list': {
+		riskLevel: 'read',
+		description: 'List threads in the mailbox',
+	},
+	'threads.get': { riskLevel: 'read', description: 'Get a specific thread' },
+	'threads.modify': {
+		riskLevel: 'write',
+		description: 'Add or remove labels from a thread',
+	},
+	'threads.delete': {
+		riskLevel: 'destructive',
+		irreversible: true,
+		description: 'Permanently delete a thread [DESTRUCTIVE · IRREVERSIBLE]',
+	},
+	'threads.trash': {
+		riskLevel: 'write',
+		description: 'Move a thread to the trash',
+	},
+	'threads.untrash': {
+		riskLevel: 'write',
+		description: 'Restore a thread from the trash',
+	},
+} satisfies RequiredPluginEndpointMeta<typeof gmailEndpointsNested>;
 
 export type BaseGmailPlugin<T extends GmailPluginOptions> = CorsairPlugin<
 	'gmail',
@@ -191,35 +412,47 @@ export function gmail<const T extends GmailPluginOptions>(
 		webhookHooks: options.webhookHooks,
 		endpoints: gmailEndpointsNested,
 		webhooks: gmailWebhooksNested,
+		endpointMeta: gmailEndpointMeta,
+		endpointSchemas: gmailEndpointSchemas,
+		webhookSchemas: gmailWebhookSchemas,
 		keyBuilder: async (ctx: GmailKeyBuilderContext) => {
 			if (options.key) {
 				return options.key;
 			}
 
 			if (ctx.authType === 'oauth_2') {
-				const accessToken = await ctx.keys.get_access_token();
-				const refreshToken = await ctx.keys.get_refresh_token();
+				const [accessToken, expiresAt, refreshToken] = await Promise.all([
+					ctx.keys.get_access_token(),
+					ctx.keys.get_expires_at(),
+					ctx.keys.get_refresh_token(),
+				]);
 
-				if (!accessToken || !refreshToken) {
-					// prob need to throw an error here
-					throw new Error('No access token or refresh token');
+				if (!refreshToken) {
+					throw new Error('No refresh token. Cannot get access token.');
 				}
 
 				const res = await ctx.keys.get_integration_credentials();
 
 				if (!res.client_id || !res.client_secret) {
-					// prob need to throw an error here
 					throw new Error('No client id or client secret');
 				}
 
-				const key = await getValidAccessToken({
+				const result = await getValidAccessToken({
 					accessToken,
+					expiresAt,
 					refreshToken,
 					clientId: res.client_id,
 					clientSecret: res.client_secret,
 				});
 
-				return key;
+				if (result.refreshed) {
+					await Promise.all([
+						ctx.keys.set_access_token(result.accessToken),
+						ctx.keys.set_expires_at(String(result.expiresAt)),
+					]);
+				}
+
+				return result.accessToken;
 			}
 
 			return '';
@@ -282,3 +515,5 @@ export type {
 
 export type { GmailCredentials } from './schema';
 export { GmailSchema } from './schema';
+
+export type * from './types';

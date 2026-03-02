@@ -6,7 +6,11 @@ import type {
 	CorsairPluginContext,
 	CorsairWebhook,
 	KeyBuilderContext,
+	PluginPermissionsConfig,
 	RawWebhookRequest,
+	RequiredPluginEndpointMeta,
+	RequiredPluginEndpointSchemas,
+	RequiredPluginWebhookSchemas,
 } from '../../core';
 import type { PickAuth } from '../../core/constants';
 import { getValidAccessToken } from './client';
@@ -15,6 +19,10 @@ import type {
 	GoogleCalendarEndpointOutputs,
 } from './endpoints';
 import { CalendarEndpoints, EventsEndpoints } from './endpoints';
+import {
+	GoogleCalendarEndpointInputSchemas,
+	GoogleCalendarEndpointOutputSchemas,
+} from './endpoints/types';
 import { GoogleCalendarSchema } from './schema';
 import type {
 	EventCreatedEvent,
@@ -25,7 +33,11 @@ import type {
 } from './webhooks';
 import { EventWebhooks } from './webhooks';
 import type { PubSubNotification } from './webhooks/types';
-import { decodePubSubMessage } from './webhooks/types';
+import {
+	decodePubSubMessage,
+	GoogleCalendarWebhookEventSchema,
+	PubSubNotificationSchema,
+} from './webhooks/types';
 
 export type GoogleCalendarContext = CorsairPluginContext<
 	typeof GoogleCalendarSchema,
@@ -85,6 +97,33 @@ const googleCalendarEndpointsNested = {
 	},
 } as const;
 
+export const googlecalendarEndpointSchemas = {
+	'events.create': {
+		input: GoogleCalendarEndpointInputSchemas.eventsCreate,
+		output: GoogleCalendarEndpointOutputSchemas.eventsCreate,
+	},
+	'events.get': {
+		input: GoogleCalendarEndpointInputSchemas.eventsGet,
+		output: GoogleCalendarEndpointOutputSchemas.eventsGet,
+	},
+	'events.getMany': {
+		input: GoogleCalendarEndpointInputSchemas.eventsGetMany,
+		output: GoogleCalendarEndpointOutputSchemas.eventsGetMany,
+	},
+	'events.update': {
+		input: GoogleCalendarEndpointInputSchemas.eventsUpdate,
+		output: GoogleCalendarEndpointOutputSchemas.eventsUpdate,
+	},
+	'events.delete': {
+		input: GoogleCalendarEndpointInputSchemas.eventsDelete,
+		output: GoogleCalendarEndpointOutputSchemas.eventsDelete,
+	},
+	'calendar.getAvailability': {
+		input: GoogleCalendarEndpointInputSchemas.calendarGetAvailability,
+		output: GoogleCalendarEndpointOutputSchemas.calendarGetAvailability,
+	},
+} satisfies RequiredPluginEndpointSchemas<typeof googleCalendarEndpointsNested>;
+
 const googleCalendarWebhooksNested = {
 	onEventChanged: EventWebhooks.onEventChanged,
 } as const;
@@ -94,12 +133,54 @@ export type GoogleCalendarPluginOptions = {
 	key?: string;
 	hooks?: InternalGoogleCalendarPlugin['hooks'];
 	webhookHooks?: InternalGoogleCalendarPlugin['webhookHooks'];
+	/**
+	 * Permission configuration for the Google Calendar plugin.
+	 * Controls what the AI agent is allowed to do.
+	 * Overrides use dot-notation paths from the Google Calendar endpoint tree — invalid paths are type errors.
+	 */
+	permissions?: PluginPermissionsConfig<typeof googleCalendarEndpointsNested>;
 };
 
 export type GoogleCalendarKeyBuilderContext =
 	KeyBuilderContext<GoogleCalendarPluginOptions>;
 
+const googlecalendarWebhookSchemas = {
+	onEventChanged: {
+		description: 'A Google Calendar event was created, updated, or deleted',
+		payload: PubSubNotificationSchema,
+		response: GoogleCalendarWebhookEventSchema,
+	},
+} satisfies RequiredPluginWebhookSchemas<typeof googleCalendarWebhooksNested>;
+
 const defaultAuthType = 'oauth_2' as const;
+
+/**
+ * Risk-level metadata for each Google Calendar endpoint.
+ * Used by the MCP server permission system to decide allow / deny / require_approval.
+ */
+const googleCalendarEndpointMeta = {
+	'events.create': {
+		riskLevel: 'write',
+		description: 'Create a new calendar event',
+	},
+	'events.get': {
+		riskLevel: 'read',
+		description: 'Get a specific calendar event',
+	},
+	'events.getMany': { riskLevel: 'read', description: 'List calendar events' },
+	'events.update': {
+		riskLevel: 'write',
+		description: 'Update an existing calendar event',
+	},
+	'events.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete a calendar event [DESTRUCTIVE]',
+	},
+	'calendar.getAvailability': {
+		riskLevel: 'read',
+		description: 'Get free/busy availability for a calendar',
+	},
+} satisfies RequiredPluginEndpointMeta<typeof googleCalendarEndpointsNested>;
 
 export type BaseGoogleCalendarPlugin<T extends GoogleCalendarPluginOptions> =
 	CorsairPlugin<
@@ -134,17 +215,23 @@ export function googlecalendar<const T extends GoogleCalendarPluginOptions>(
 		webhookHooks: options.webhookHooks,
 		endpoints: googleCalendarEndpointsNested,
 		webhooks: googleCalendarWebhooksNested,
+		endpointMeta: googleCalendarEndpointMeta,
+		endpointSchemas: googlecalendarEndpointSchemas,
+		webhookSchemas: googlecalendarWebhookSchemas,
 		keyBuilder: async (ctx: GoogleCalendarKeyBuilderContext) => {
 			if (options.key) {
 				return options.key;
 			}
 
 			if (ctx.authType === 'oauth_2') {
-				const accessToken = await ctx.keys.get_access_token();
-				const refreshToken = await ctx.keys.get_refresh_token();
+				const [accessToken, expiresAt, refreshToken] = await Promise.all([
+					ctx.keys.get_access_token(),
+					ctx.keys.get_expires_at(),
+					ctx.keys.get_refresh_token(),
+				]);
 
-				if (!accessToken || !refreshToken) {
-					throw new Error('No access token or refresh token');
+				if (!refreshToken) {
+					throw new Error('No refresh token. Cannot get access token.');
 				}
 
 				const res = await ctx.keys.get_integration_credentials();
@@ -153,14 +240,22 @@ export function googlecalendar<const T extends GoogleCalendarPluginOptions>(
 					throw new Error('No client id or client secret');
 				}
 
-				const key = await getValidAccessToken({
+				const result = await getValidAccessToken({
 					accessToken,
+					expiresAt,
 					refreshToken,
 					clientId: res.client_id,
 					clientSecret: res.client_secret,
 				});
 
-				return key;
+				if (result.refreshed) {
+					await Promise.all([
+						ctx.keys.set_access_token(result.accessToken),
+						ctx.keys.set_expires_at(String(result.expiresAt)),
+					]);
+				}
+
+				return result.accessToken;
 			}
 
 			return '';
@@ -220,3 +315,5 @@ export type {
 	GoogleCalendarEndpointOutputSchemas,
 	GoogleCalendarEndpointOutputs,
 } from './endpoints/types';
+
+export type * from './types';

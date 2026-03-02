@@ -9,10 +9,17 @@ export default defineConfig({
 	bundle: true,
 	splitting: false,
 	outDir: 'dist',
-	external: ['dotenv'],
+	external: [
+		'dotenv',
+		'@modelcontextprotocol/sdk',
+		'@ngrok/ngrok',
+		'jiti',
+		'better-sqlite3',
+	],
 	entry: [
 		'index.ts',
 		'core.ts',
+		'mcp.ts',
 		'orm.ts',
 		'plugins/index.ts',
 		'plugins/slack/index.ts',
@@ -20,5 +27,6 @@ export default defineConfig({
 		'plugins/resend/index.ts',
 		'plugins/posthog/index.ts',
 		'plugins/github/index.ts',
+		'plugins/spotify/index.ts',
 	],
 });

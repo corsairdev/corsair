@@ -2,6 +2,8 @@
 
 export { createCorsair } from './core';
 export { processWebhook } from './webhooks';
+export { executePermission } from './permissions';
+export type { PermissionExecuteResult } from './permissions';
 
 // plugin function exports
 
@@ -16,3 +18,4 @@ export { linear } from './plugins/linear';
 export { posthog } from './plugins/posthog';
 export { resend } from './plugins/resend';
 export { slack } from './plugins/slack';
+export { spotify } from './plugins/spotify';

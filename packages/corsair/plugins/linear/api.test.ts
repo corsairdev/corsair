@@ -17,6 +17,8 @@ import type {
 	ProjectUpdateResponse,
 	TeamGetResponse,
 	TeamsListResponse,
+	UserGetResponse,
+	UsersListResponse,
 } from './endpoints/types';
 import { LinearEndpointOutputSchemas } from './endpoints/types';
 
@@ -58,6 +60,46 @@ const TEAM_GET_QUERY = `
       icon
       color
       private
+      createdAt
+      updatedAt
+    }
+  }
+`;
+
+const USERS_LIST_QUERY = `
+  query Users($first: Int!, $after: String) {
+    users(first: $first, after: $after) {
+      nodes {
+        id
+        name
+        email
+        displayName
+        avatarUrl
+        active
+        admin
+        createdAt
+        updatedAt
+      }
+      pageInfo {
+        hasNextPage
+        hasPreviousPage
+        startCursor
+        endCursor
+      }
+    }
+  }
+`;
+
+const USER_GET_QUERY = `
+  query User($id: String!) {
+    user(id: $id) {
+      id
+      name
+      email
+      displayName
+      avatarUrl
+      active
+      admin
       createdAt
       updatedAt
     }
@@ -543,6 +585,40 @@ describe('Linear API Type Tests', () => {
 			const result = response.team;
 
 			LinearEndpointOutputSchemas.teamsGet.parse(result);
+		});
+	});
+
+	describe('users', () => {
+		it('usersList returns correct type', async () => {
+			const response = await makeLinearRequest<UsersListResponse>(
+				USERS_LIST_QUERY,
+				TEST_TOKEN,
+				{ first: 50 },
+			);
+			const result = response.users;
+
+			LinearEndpointOutputSchemas.usersList.parse(result);
+		});
+
+		it('usersGet returns correct type', async () => {
+			const usersListResponse = await makeLinearRequest<UsersListResponse>(
+				USERS_LIST_QUERY,
+				TEST_TOKEN,
+				{ first: 1 },
+			);
+			const userId = usersListResponse.users.nodes[0]?.id;
+			if (!userId) {
+				throw new Error('No users found');
+			}
+
+			const response = await makeLinearRequest<UserGetResponse>(
+				USER_GET_QUERY,
+				TEST_TOKEN,
+				{ id: userId },
+			);
+			const result = response.user;
+
+			LinearEndpointOutputSchemas.usersGet.parse(result);
 		});
 	});
 

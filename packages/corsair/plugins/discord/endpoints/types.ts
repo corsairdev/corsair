@@ -4,7 +4,7 @@ import { z } from 'zod';
 
 // ── Zod Schemas for Validation ─────────────────────────────────────────────────
 
-const DiscordUserSchema = z.object({
+export const DiscordUserSchema = z.object({
 	id: z.string(),
 	username: z.string(),
 	discriminator: z.string(),
@@ -19,8 +19,9 @@ const DiscordUserSchema = z.object({
 	public_flags: z.number().optional(),
 	flags: z.number().optional(),
 });
+export type DiscordUser = z.infer<typeof DiscordUserSchema>;
 
-const EmbedSchema = z.object({
+export const EmbedSchema = z.object({
 	title: z.string().optional(),
 	description: z.string().optional(),
 	url: z.string().optional(),
@@ -35,21 +36,10 @@ const EmbedSchema = z.object({
 		)
 		.optional(),
 	footer: z
-		.object({
-			text: z.string(),
-			icon_url: z.string().optional(),
-		})
+		.object({ text: z.string(), icon_url: z.string().optional() })
 		.optional(),
-	image: z
-		.object({
-			url: z.string(),
-		})
-		.optional(),
-	thumbnail: z
-		.object({
-			url: z.string(),
-		})
-		.optional(),
+	image: z.object({ url: z.string() }).optional(),
+	thumbnail: z.object({ url: z.string() }).optional(),
 	author: z
 		.object({
 			name: z.string(),
@@ -59,8 +49,9 @@ const EmbedSchema = z.object({
 		.optional(),
 	timestamp: z.string().optional(),
 });
+export type Embed = z.infer<typeof EmbedSchema>;
 
-const AttachmentSchema = z.object({
+export const AttachmentSchema = z.object({
 	id: z.string(),
 	filename: z.string(),
 	description: z.string().optional(),
@@ -71,74 +62,86 @@ const AttachmentSchema = z.object({
 	height: z.number().nullable().optional(),
 	width: z.number().nullable().optional(),
 });
+export type Attachment = z.infer<typeof AttachmentSchema>;
 
-const MessageReferenceSchema = z.object({
+export const MessageReferenceSchema = z.object({
 	message_id: z.string().optional(),
 	channel_id: z.string().optional(),
 	guild_id: z.string().optional(),
 });
+export type MessageReference = z.infer<typeof MessageReferenceSchema>;
 
-const ChannelSchema = z
-	.object({
-		id: z.string(),
-		type: z.number(),
-		guild_id: z.string().optional(),
-		name: z.string().nullable().optional(),
-		topic: z.string().nullable().optional(),
-		position: z.number().optional(),
-		parent_id: z.string().nullable().optional(),
-		last_message_id: z.string().nullable().optional(),
-		owner_id: z.string().optional(),
-		thread_metadata: z
-			.object({
-				archived: z.boolean(),
-				auto_archive_duration: z.number(),
-				archive_timestamp: z.string(),
-				locked: z.boolean(),
-				invitable: z.boolean().optional(),
-			})
-			.optional(),
-	})
-	.passthrough();
+export const ChannelSchema = z.object({
+	id: z.string(),
+	type: z.number(),
+	guild_id: z.string().optional(),
+	name: z.string().nullable().optional(),
+	topic: z.string().nullable().optional(),
+	position: z.number().optional(),
+	parent_id: z.string().nullable().optional(),
+	last_message_id: z.string().nullable().optional(),
+	owner_id: z.string().optional(),
+	thread_metadata: z
+		.object({
+			archived: z.boolean(),
+			auto_archive_duration: z.number(),
+			archive_timestamp: z.string(),
+			locked: z.boolean(),
+			invitable: z.boolean().optional(),
+		})
+		.optional(),
+});
+export type Channel = z.infer<typeof ChannelSchema>;
 
-const MessageSchema = z
-	.object({
-		id: z.string(),
-		channel_id: z.string(),
-		author: DiscordUserSchema,
-		content: z.string(),
-		timestamp: z.string(),
-		edited_timestamp: z.string().nullable(),
-		tts: z.boolean(),
-		mention_everyone: z.boolean(),
-		mentions: z.array(DiscordUserSchema),
-		mention_roles: z.array(z.string()),
-		attachments: z.array(AttachmentSchema),
-		embeds: z.array(EmbedSchema),
-		reactions: z
-			.array(
-				z.object({
-					count: z.number(),
-					me: z.boolean(),
-					emoji: z.object({
-						id: z.string().nullable(),
-						name: z.string(),
-					}),
-				}),
-			)
-			.optional(),
-		pinned: z.boolean(),
-		type: z.number(),
-		flags: z.number().optional(),
-		message_reference: MessageReferenceSchema.optional(),
-		// Using z.any() because referenced_message can be null or recursively reference Message, causing circular dependency issues
-		referenced_message: z.any().optional(),
-		thread: ChannelSchema.optional(),
-		nonce: z.union([z.string(), z.number()]).optional(),
-	})
-	.passthrough();
+// ─────────────────────────────────────────────────────────────────────────────
+// Recursive type
+//
+// Message references itself via referenced_message?: Message | null.
+// BaseSchema holds all non-recursive fields; the final schema extends it with
+// the circular field via z.lazy(). The exported type is derived from the schema.
+// ─────────────────────────────────────────────────────────────────────────────
 
-const RoleSchema = z.object({
+const MessageBaseSchema = z.object({
+	id: z.string(),
+	channel_id: z.string(),
+	author: DiscordUserSchema,
+	content: z.string(),
+	timestamp: z.string(),
+	edited_timestamp: z.string().nullable(),
+	tts: z.boolean(),
+	mention_everyone: z.boolean(),
+	mentions: z.array(DiscordUserSchema),
+	mention_roles: z.array(z.string()),
+	attachments: z.array(AttachmentSchema),
+	embeds: z.array(EmbedSchema),
+	reactions: z
+		.array(
+			z.object({
+				count: z.number(),
+				me: z.boolean(),
+				emoji: z.object({ id: z.string().nullable(), name: z.string() }),
+			}),
+		)
+		.optional(),
+	pinned: z.boolean(),
+	type: z.number(),
+	flags: z.number().optional(),
+	message_reference: MessageReferenceSchema.optional(),
+	thread: ChannelSchema.optional(),
+	nonce: z.union([z.string(), z.number()]).optional(),
+});
+
+type MessageShape = z.infer<typeof MessageBaseSchema> & {
+	referenced_message?: MessageShape | null;
+};
+
+export const MessageSchema: z.ZodType<MessageShape> = MessageBaseSchema.extend({
+	referenced_message: z.lazy(() => MessageSchema.nullable().optional()),
+});
+
+export type Message = z.infer<typeof MessageSchema>;
+
+export const RoleSchema = z.object({
 	id: z.string(),
 	name: z.string(),
 	permissions: z.string(),
@@ -148,8 +151,9 @@ const RoleSchema = z.object({
 	managed: z.boolean(),
 	mentionable: z.boolean(),
 });
+export type Role = z.infer<typeof RoleSchema>;
 
-const GuildSchema = z.object({
+export const GuildSchema = z.object({
 	id: z.string(),
 	name: z.string(),
 	icon: z.string().nullable(),
@@ -169,8 +173,9 @@ const GuildSchema = z.object({
 	approximate_member_count: z.number().optional(),
 	approximate_presence_count: z.number().optional(),
 });
+export type Guild = z.infer<typeof GuildSchema>;
 
-const PartialGuildSchema = z.object({
+export const PartialGuildSchema = z.object({
 	id: z.string(),
 	name: z.string(),
 	icon: z.string().nullable(),
@@ -180,8 +185,9 @@ const PartialGuildSchema = z.object({
 	approximate_member_count: z.number().optional(),
 	approximate_presence_count: z.number().optional(),
 });
+export type PartialGuild = z.infer<typeof PartialGuildSchema>;
 
-const GuildMemberSchema = z.object({
+export const GuildMemberSchema = z.object({
 	user: DiscordUserSchema.optional(),
 	nick: z.string().nullable(),
 	avatar: z.string().nullable().optional(),
@@ -193,117 +199,144 @@ const GuildMemberSchema = z.object({
 	flags: z.number(),
 	pending: z.boolean().optional(),
 });
+export type GuildMember = z.infer<typeof GuildMemberSchema>;
 
-const SuccessResponseSchema = z.object({
-	success: z.literal(true),
-});
+// ── Endpoint Input Schemas ─────────────────────────────────────────────────────
 
-const MessagesSendInputSchema = z.object({
+export const MessagesSendInputSchema = z.object({
 	channel_id: z.string(),
 	content: z.string().optional(),
 	embeds: z.array(EmbedSchema).optional(),
 	tts: z.boolean().optional(),
 	nonce: z.union([z.string(), z.number()]).optional(),
 });
+export type MessagesSendInput = z.infer<typeof MessagesSendInputSchema>;
 
-const MessagesReplyInputSchema = z.object({
+export const MessagesReplyInputSchema = z.object({
 	channel_id: z.string(),
 	message_id: z.string(),
 	content: z.string().optional(),
 	embeds: z.array(EmbedSchema).optional(),
 	fail_if_not_exists: z.boolean().optional(),
 });
+export type MessagesReplyInput = z.infer<typeof MessagesReplyInputSchema>;
 
-const MessagesGetInputSchema = z.object({
+export const MessagesGetInputSchema = z.object({
 	channel_id: z.string(),
 	message_id: z.string(),
 });
+export type MessagesGetInput = z.infer<typeof MessagesGetInputSchema>;
 
-const MessagesListInputSchema = z.object({
+export const MessagesListInputSchema = z.object({
 	channel_id: z.string(),
 	limit: z.number().optional(),
 	before: z.string().optional(),
 	after: z.string().optional(),
 	around: z.string().optional(),
 });
+export type MessagesListInput = z.infer<typeof MessagesListInputSchema>;
 
-const MessagesEditInputSchema = z.object({
+export const MessagesEditInputSchema = z.object({
 	channel_id: z.string(),
 	message_id: z.string(),
 	content: z.string().optional(),
 	embeds: z.array(EmbedSchema).optional(),
 });
+export type MessagesEditInput = z.infer<typeof MessagesEditInputSchema>;
 
-const MessagesDeleteInputSchema = z.object({
+export const MessagesDeleteInputSchema = z.object({
 	channel_id: z.string(),
 	message_id: z.string(),
 });
+export type MessagesDeleteInput = z.infer<typeof MessagesDeleteInputSchema>;
 
-const ThreadsCreateInputSchema = z.object({
+const AutoArchiveDurationSchema = z.union([
+	z.literal(60),
+	z.literal(1440),
+	z.literal(4320),
+	z.literal(10080),
+]);
+
+export const ThreadsCreateInputSchema = z.object({
 	channel_id: z.string(),
 	name: z.string(),
-	auto_archive_duration: z
-		.union([z.literal(60), z.literal(1440), z.literal(4320), z.literal(10080)])
-		.optional(),
+	auto_archive_duration: AutoArchiveDurationSchema.optional(),
 	type: z.number().optional(),
 	invitable: z.boolean().optional(),
 });
+export type ThreadsCreateInput = z.infer<typeof ThreadsCreateInputSchema>;
 
-const ThreadsCreateFromMessageInputSchema = z.object({
+export const ThreadsCreateFromMessageInputSchema = z.object({
 	channel_id: z.string(),
 	message_id: z.string(),
 	name: z.string(),
-	auto_archive_duration: z
-		.union([z.literal(60), z.literal(1440), z.literal(4320), z.literal(10080)])
-		.optional(),
+	auto_archive_duration: AutoArchiveDurationSchema.optional(),
 });
+export type ThreadsCreateFromMessageInput = z.infer<
+	typeof ThreadsCreateFromMessageInputSchema
+>;
 
-const ReactionsAddInputSchema = z.object({
+export const ReactionsAddInputSchema = z.object({
 	channel_id: z.string(),
 	message_id: z.string(),
 	emoji: z.string(),
 });
+export type ReactionsAddInput = z.infer<typeof ReactionsAddInputSchema>;
 
-const ReactionsRemoveInputSchema = z.object({
+export const ReactionsRemoveInputSchema = z.object({
 	channel_id: z.string(),
 	message_id: z.string(),
 	emoji: z.string(),
 });
+export type ReactionsRemoveInput = z.infer<typeof ReactionsRemoveInputSchema>;
 
-const ReactionsListInputSchema = z.object({
+export const ReactionsListInputSchema = z.object({
 	channel_id: z.string(),
 	message_id: z.string(),
 	emoji: z.string(),
 	limit: z.number().optional(),
 	after: z.string().optional(),
 });
+export type ReactionsListInput = z.infer<typeof ReactionsListInputSchema>;
 
-const GuildsListInputSchema = z.object({
+export const GuildsListInputSchema = z.object({
 	before: z.string().optional(),
 	after: z.string().optional(),
 	limit: z.number().optional(),
 	with_counts: z.boolean().optional(),
 });
+export type GuildsListInput = z.infer<typeof GuildsListInputSchema>;
 
-const GuildsGetInputSchema = z.object({
+export const GuildsGetInputSchema = z.object({
 	guild_id: z.string(),
 	with_counts: z.boolean().optional(),
 });
+export type GuildsGetInput = z.infer<typeof GuildsGetInputSchema>;
 
-const ChannelsListInputSchema = z.object({
+export const ChannelsListInputSchema = z.object({
 	guild_id: z.string(),
 });
+export type ChannelsListInput = z.infer<typeof ChannelsListInputSchema>;
 
-const MembersListInputSchema = z.object({
+export const MembersListInputSchema = z.object({
 	guild_id: z.string(),
 	limit: z.number().optional(),
 	after: z.string().optional(),
 });
+export type MembersListInput = z.infer<typeof MembersListInputSchema>;
 
-const MembersGetInputSchema = z.object({
+export const MembersGetInputSchema = z.object({
 	guild_id: z.string(),
 	user_id: z.string(),
 });
+export type MembersGetInput = z.infer<typeof MembersGetInputSchema>;
+
+// ── Shared response schemas ────────────────────────────────────────────────────
+
+export const SuccessResponseSchema = z.object({ success: z.literal(true) });
+export type SuccessResponse = z.infer<typeof SuccessResponseSchema>;
+
+// ── Endpoint Input/Output Schema Maps ─────────────────────────────────────────
 
 export const DiscordEndpointInputSchemas = {
 	messagesSend: MessagesSendInputSchema,
@@ -324,6 +357,12 @@ export const DiscordEndpointInputSchemas = {
 	membersGet: MembersGetInputSchema,
 } as const;
 
+export type DiscordEndpointInputs = {
+	[K in keyof typeof DiscordEndpointInputSchemas]: z.infer<
+		(typeof DiscordEndpointInputSchemas)[K]
+	>;
+};
+
 export const DiscordEndpointOutputSchemas = {
 	messagesSend: MessageSchema,
 	messagesReply: MessageSchema,
@@ -343,45 +382,8 @@ export const DiscordEndpointOutputSchemas = {
 	membersGet: GuildMemberSchema,
 } as const;
 
-export type DiscordEndpointInputs = {
-	[K in keyof typeof DiscordEndpointInputSchemas]: z.infer<
-		(typeof DiscordEndpointInputSchemas)[K]
-	>;
-};
-
 export type DiscordEndpointOutputs = {
 	[K in keyof typeof DiscordEndpointOutputSchemas]: z.infer<
 		(typeof DiscordEndpointOutputSchemas)[K]
 	>;
 };
-
-export type MessagesSendInput = z.infer<typeof MessagesSendInputSchema>;
-export type MessagesReplyInput = z.infer<typeof MessagesReplyInputSchema>;
-export type MessagesGetInput = z.infer<typeof MessagesGetInputSchema>;
-export type MessagesListInput = z.infer<typeof MessagesListInputSchema>;
-export type MessagesEditInput = z.infer<typeof MessagesEditInputSchema>;
-export type MessagesDeleteInput = z.infer<typeof MessagesDeleteInputSchema>;
-export type ThreadsCreateInput = z.infer<typeof ThreadsCreateInputSchema>;
-export type ThreadsCreateFromMessageInput = z.infer<
-	typeof ThreadsCreateFromMessageInputSchema
->;
-export type ReactionsAddInput = z.infer<typeof ReactionsAddInputSchema>;
-export type ReactionsRemoveInput = z.infer<typeof ReactionsRemoveInputSchema>;
-export type ReactionsListInput = z.infer<typeof ReactionsListInputSchema>;
-export type GuildsListInput = z.infer<typeof GuildsListInputSchema>;
-export type GuildsGetInput = z.infer<typeof GuildsGetInputSchema>;
-export type ChannelsListInput = z.infer<typeof ChannelsListInputSchema>;
-export type MembersListInput = z.infer<typeof MembersListInputSchema>;
-export type MembersGetInput = z.infer<typeof MembersGetInputSchema>;
-
-export type DiscordUser = z.infer<typeof DiscordUserSchema>;
-export type Embed = z.infer<typeof EmbedSchema>;
-export type Attachment = z.infer<typeof AttachmentSchema>;
-export type MessageReference = z.infer<typeof MessageReferenceSchema>;
-export type Message = z.infer<typeof MessageSchema>;
-export type Channel = z.infer<typeof ChannelSchema>;
-export type Role = z.infer<typeof RoleSchema>;
-export type Guild = z.infer<typeof GuildSchema>;
-export type PartialGuild = z.infer<typeof PartialGuildSchema>;
-export type GuildMember = z.infer<typeof GuildMemberSchema>;
-export type SuccessResponse = z.infer<typeof SuccessResponseSchema>;

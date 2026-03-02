@@ -1,154 +1,220 @@
-export interface ResendWebhookPayload {
-	type: string;
-	created_at: string;
-	data: {
-		email_id?: string;
-		domain_id?: string;
-		from?: string;
-		to?: string[];
-		subject?: string;
-		created_at: string;
-		name?: string;
-		status?: string;
-		bounce_type?: string;
-		link?: string;
-		error?: string;
-		[key: string]: any;
-	};
-}
+import { z } from 'zod';
+import { verifyHmacSignatureWithPrefix } from '../../../async-core/webhook-utils';
+import type {
+	CorsairWebhookMatcher,
+	RawWebhookRequest,
+	WebhookRequest,
+} from '../../../core';
 
-export interface EmailBouncedEvent extends ResendWebhookPayload {
-	type: 'email.bounced';
-	data: {
-		email_id: string;
-		from: string;
-		to: string[];
-		subject?: string;
-		created_at: string;
-		bounce_type?: string;
-		[key: string]: any;
-	};
-}
+// ─────────────────────────────────────────────────────────────────────────────
+// Base payload schema
+// ─────────────────────────────────────────────────────────────────────────────
 
-export interface EmailClickedEvent extends ResendWebhookPayload {
-	type: 'email.clicked';
-	data: {
-		email_id: string;
-		from: string;
-		to: string[];
-		subject?: string;
-		created_at: string;
-		link?: string;
-		[key: string]: any;
-	};
-}
+export const ResendWebhookPayloadSchema = z.object({
+	type: z.string(),
+	created_at: z.string(),
+	data: z
+		.object({
+			email_id: z.string().optional(),
+			domain_id: z.string().optional(),
+			from: z.string().optional(),
+			to: z.array(z.string()).optional(),
+			subject: z.string().optional(),
+			created_at: z.string(),
+			name: z.string().optional(),
+			status: z.string().optional(),
+			bounce_type: z.string().optional(),
+			link: z.string().optional(),
+			error: z.string().optional(),
+		})
+		.catchall(z.unknown()),
+});
+export type ResendWebhookPayload = z.infer<typeof ResendWebhookPayloadSchema>;
 
-export interface EmailComplainedEvent extends ResendWebhookPayload {
-	type: 'email.complained';
-	data: {
-		email_id: string;
-		from: string;
-		to: string[];
-		subject?: string;
-		created_at: string;
-		[key: string]: any;
-	};
-}
+// ─────────────────────────────────────────────────────────────────────────────
+// Email event schemas
+// ─────────────────────────────────────────────────────────────────────────────
 
-export interface EmailDeliveredEvent extends ResendWebhookPayload {
-	type: 'email.delivered';
-	data: {
-		email_id: string;
-		from: string;
-		to: string[];
-		subject?: string;
-		created_at: string;
-		[key: string]: any;
-	};
-}
+export const EmailBouncedEventSchema = z.object({
+	type: z.literal('email.bounced'),
+	created_at: z.string(),
+	data: z
+		.object({
+			email_id: z.string(),
+			from: z.string(),
+			to: z.array(z.string()),
+			subject: z.string().optional(),
+			created_at: z.string(),
+			bounce_type: z.string().optional(),
+		})
+		.catchall(z.unknown()),
+});
+export type EmailBouncedEvent = z.infer<typeof EmailBouncedEventSchema>;
 
-export interface EmailFailedEvent extends ResendWebhookPayload {
-	type: 'email.failed';
-	data: {
-		email_id: string;
-		from: string;
-		to: string[];
-		subject?: string;
-		created_at: string;
-		error?: string;
-		[key: string]: any;
-	};
-}
+export const EmailClickedEventSchema = z.object({
+	type: z.literal('email.clicked'),
+	created_at: z.string(),
+	data: z
+		.object({
+			email_id: z.string(),
+			from: z.string(),
+			to: z.array(z.string()),
+			subject: z.string().optional(),
+			created_at: z.string(),
+			link: z.string().optional(),
+		})
+		.catchall(z.unknown()),
+});
+export type EmailClickedEvent = z.infer<typeof EmailClickedEventSchema>;
 
-export interface EmailOpenedEvent extends ResendWebhookPayload {
-	type: 'email.opened';
-	data: {
-		email_id: string;
-		from: string;
-		to: string[];
-		subject?: string;
-		created_at: string;
-		[key: string]: any;
-	};
-}
+export const EmailComplainedEventSchema = z.object({
+	type: z.literal('email.complained'),
+	created_at: z.string(),
+	data: z
+		.object({
+			email_id: z.string(),
+			from: z.string(),
+			to: z.array(z.string()),
+			subject: z.string().optional(),
+			created_at: z.string(),
+		})
+		.catchall(z.unknown()),
+});
+export type EmailComplainedEvent = z.infer<typeof EmailComplainedEventSchema>;
 
-export interface EmailReceivedEvent extends ResendWebhookPayload {
-	type: 'email.received';
-	data: {
-		email_id: string;
-		from: string;
-		to: string[];
-		subject?: string;
-		created_at: string;
-		[key: string]: any;
-	};
-}
+export const EmailDeliveredEventSchema = z.object({
+	type: z.literal('email.delivered'),
+	created_at: z.string(),
+	data: z
+		.object({
+			email_id: z.string(),
+			from: z.string(),
+			to: z.array(z.string()),
+			subject: z.string().optional(),
+			created_at: z.string(),
+		})
+		.catchall(z.unknown()),
+});
+export type EmailDeliveredEvent = z.infer<typeof EmailDeliveredEventSchema>;
 
-export interface EmailSentEvent extends ResendWebhookPayload {
-	type: 'email.sent';
-	data: {
-		email_id: string;
-		from: string;
-		to: string[];
-		subject?: string;
-		created_at: string;
-		[key: string]: any;
-	};
-}
+export const EmailFailedEventSchema = z.object({
+	type: z.literal('email.failed'),
+	created_at: z.string(),
+	data: z
+		.object({
+			email_id: z.string(),
+			from: z.string(),
+			to: z.array(z.string()),
+			subject: z.string().optional(),
+			created_at: z.string(),
+			error: z.string().optional(),
+		})
+		.catchall(z.unknown()),
+});
+export type EmailFailedEvent = z.infer<typeof EmailFailedEventSchema>;
 
-export interface DomainCreatedEvent extends ResendWebhookPayload {
-	type: 'domain.created';
-	data: {
-		domain_id: string;
-		name: string;
-		status: 'not_started' | 'validation' | 'scheduled' | 'ready' | 'error';
-		created_at: string;
-		[key: string]: any;
-	};
-}
+export const EmailOpenedEventSchema = z.object({
+	type: z.literal('email.opened'),
+	created_at: z.string(),
+	data: z
+		.object({
+			email_id: z.string(),
+			from: z.string(),
+			to: z.array(z.string()),
+			subject: z.string().optional(),
+			created_at: z.string(),
+		})
+		.catchall(z.unknown()),
+});
+export type EmailOpenedEvent = z.infer<typeof EmailOpenedEventSchema>;
 
-export interface DomainUpdatedEvent extends ResendWebhookPayload {
-	type: 'domain.updated';
-	data: {
-		domain_id: string;
-		name: string;
-		status: 'not_started' | 'validation' | 'scheduled' | 'ready' | 'error';
-		created_at: string;
-		[key: string]: any;
-	};
-}
+export const EmailReceivedEventSchema = z.object({
+	type: z.literal('email.received'),
+	created_at: z.string(),
+	data: z
+		.object({
+			email_id: z.string(),
+			from: z.string(),
+			to: z.array(z.string()),
+			subject: z.string().optional(),
+			created_at: z.string(),
+		})
+		.catchall(z.unknown()),
+});
+export type EmailReceivedEvent = z.infer<typeof EmailReceivedEventSchema>;
 
-export type ResendWebhookEvent =
-	| EmailBouncedEvent
-	| EmailClickedEvent
-	| EmailComplainedEvent
-	| EmailDeliveredEvent
-	| EmailFailedEvent
-	| EmailOpenedEvent
-	| EmailReceivedEvent
-	| EmailSentEvent
-	| DomainCreatedEvent
-	| DomainUpdatedEvent;
+export const EmailSentEventSchema = z.object({
+	type: z.literal('email.sent'),
+	created_at: z.string(),
+	data: z
+		.object({
+			email_id: z.string(),
+			from: z.string(),
+			to: z.array(z.string()),
+			subject: z.string().optional(),
+			created_at: z.string(),
+		})
+		.catchall(z.unknown()),
+});
+export type EmailSentEvent = z.infer<typeof EmailSentEventSchema>;
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Domain event schemas
+// ─────────────────────────────────────────────────────────────────────────────
+
+const DomainStatusSchema = z.enum([
+	'not_started',
+	'validation',
+	'scheduled',
+	'ready',
+	'error',
+]);
+
+export const DomainCreatedEventSchema = z.object({
+	type: z.literal('domain.created'),
+	created_at: z.string(),
+	data: z
+		.object({
+			domain_id: z.string(),
+			name: z.string(),
+			status: DomainStatusSchema,
+			created_at: z.string(),
+		})
+		.catchall(z.unknown()),
+});
+export type DomainCreatedEvent = z.infer<typeof DomainCreatedEventSchema>;
+
+export const DomainUpdatedEventSchema = z.object({
+	type: z.literal('domain.updated'),
+	created_at: z.string(),
+	data: z
+		.object({
+			domain_id: z.string(),
+			name: z.string(),
+			status: DomainStatusSchema,
+			created_at: z.string(),
+		})
+		.catchall(z.unknown()),
+});
+export type DomainUpdatedEvent = z.infer<typeof DomainUpdatedEventSchema>;
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Union and map types
+// ─────────────────────────────────────────────────────────────────────────────
+
+export const ResendWebhookEventSchema = z.union([
+	EmailBouncedEventSchema,
+	EmailClickedEventSchema,
+	EmailComplainedEventSchema,
+	EmailDeliveredEventSchema,
+	EmailFailedEventSchema,
+	EmailOpenedEventSchema,
+	EmailReceivedEventSchema,
+	EmailSentEventSchema,
+	DomainCreatedEventSchema,
+	DomainUpdatedEventSchema,
+]);
+export type ResendWebhookEvent = z.infer<typeof ResendWebhookEventSchema>;
 
 export type ResendEventName =
 	| 'email.bounced'
@@ -188,12 +254,9 @@ export type ResendWebhookOutputs = {
 	domainUpdated: DomainUpdatedEvent;
 };
 
-import { verifyHmacSignatureWithPrefix } from '../../../async-core/webhook-utils';
-import type {
-	CorsairWebhookMatcher,
-	RawWebhookRequest,
-	WebhookRequest,
-} from '../../../core';
+// ─────────────────────────────────────────────────────────────────────────────
+// Utilities
+// ─────────────────────────────────────────────────────────────────────────────
 
 function parseBody(body: unknown): unknown {
 	return typeof body === 'string' ? JSON.parse(body) : body;
