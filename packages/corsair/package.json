@@ -32,25 +32,15 @@
       "types": "./dist/plugins/index.d.ts",
       "default": "./dist/plugins/index.js"
     },
-    "./plugins/slack": {
-      "dev-source": "./plugins/slack/index.ts",
-      "types": "./dist/plugins/slack/index.d.ts",
-      "default": "./dist/plugins/slack/index.js"
+    "./plugins/cal": {
+      "dev-source": "./plugins/cal/index.ts",
+      "types": "./dist/plugins/cal/index.d.ts",
+      "default": "./dist/plugins/cal/index.js"
     },
-    "./plugins/linear": {
-      "dev-source": "./plugins/linear/index.ts",
-      "types": "./dist/plugins/linear/index.d.ts",
-      "default": "./dist/plugins/linear/index.js"
-    },
-    "./plugins/resend": {
-      "dev-source": "./plugins/resend/index.ts",
-      "types": "./dist/plugins/resend/index.d.ts",
-      "default": "./dist/plugins/resend/index.js"
-    },
-    "./plugins/posthog": {
-      "dev-source": "./plugins/posthog/index.ts",
-      "types": "./dist/plugins/posthog/index.d.ts",
-      "default": "./dist/plugins/posthog/index.js"
+    "./plugins/discord": {
+      "dev-source": "./plugins/discord/index.ts",
+      "types": "./dist/plugins/discord/index.d.ts",
+      "default": "./dist/plugins/discord/index.js"
     },
     "./plugins/github": {
       "dev-source": "./plugins/github/index.ts",
@@ -87,15 +77,30 @@
       "types": "./dist/plugins/hubspot/index.d.ts",
       "default": "./dist/plugins/hubspot/index.js"
     },
+    "./plugins/linear": {
+      "dev-source": "./plugins/linear/index.ts",
+      "types": "./dist/plugins/linear/index.d.ts",
+      "default": "./dist/plugins/linear/index.js"
+    },
+    "./plugins/posthog": {
+      "dev-source": "./plugins/posthog/index.ts",
+      "types": "./dist/plugins/posthog/index.d.ts",
+      "default": "./dist/plugins/posthog/index.js"
+    },
+    "./plugins/resend": {
+      "dev-source": "./plugins/resend/index.ts",
+      "types": "./dist/plugins/resend/index.d.ts",
+      "default": "./dist/plugins/resend/index.js"
+    },
+    "./plugins/slack": {
+      "dev-source": "./plugins/slack/index.ts",
+      "types": "./dist/plugins/slack/index.d.ts",
+      "default": "./dist/plugins/slack/index.js"
+    },
     "./plugins/spotify": {
       "dev-source": "./plugins/spotify/index.ts",
       "types": "./dist/plugins/spotify/index.d.ts",
       "default": "./dist/plugins/spotify/index.js"
-    },
-    "./plugins/discord": {
-      "dev-source": "./plugins/discord/index.ts",
-      "types": "./dist/plugins/discord/index.d.ts",
-      "default": "./dist/plugins/discord/index.js"
     }
   },
   "scripts": {

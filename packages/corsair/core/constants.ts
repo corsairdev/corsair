@@ -13,6 +13,7 @@ export type AllErrors =
 	| (string & {});
 
 export const BaseProviders = [
+	'cal',
 	'discord',
 	'github',
 	'gmail',
@@ -29,6 +30,7 @@ export const BaseProviders = [
 ] as const;
 
 export type AllProviders =
+	| 'cal'
 	| 'discord'
 	| 'github'
 	| 'gmail'

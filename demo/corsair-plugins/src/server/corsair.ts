@@ -1,5 +1,6 @@
 import {
 	createCorsair,
+	cal,
 	gmail,
 	googlecalendar,
 	googledrive,
@@ -20,6 +21,7 @@ export const corsair = createCorsair({
 		onTimeout: 'deny',
 	},
 	plugins: [
+		cal(),
 		googlecalendar({
 			permissions: {
 				mode: 'cautious',
