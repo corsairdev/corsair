@@ -179,7 +179,7 @@ export type {
 } from './errors';
 // Inspection types
 export type { CorsairInspectMethods, EndpointSchemaResult } from './inspect';
-export type { EnforcePermissionOptions } from './permissions';
+export type { EnforcePermissionOptions, EnforcePermissionResult } from './permissions';
 
 // Plugin types
 export type {
@@ -197,6 +197,9 @@ export type {
 	PermissionPolicy,
 	PluginEndpointMeta,
 	PluginPermissionsConfig,
+	RequiredPluginEndpointMeta,
+	RequiredPluginEndpointSchemas,
+	RequiredPluginWebhookSchemas,
 	WebhookHooks,
 } from './plugins';
 
@@ -211,6 +214,7 @@ export type {
 	CorsairWebhookHandler,
 	CorsairWebhookMatcher,
 	RawWebhookRequest,
+	WebhookPathsOf,
 	WebhookRequest,
 	WebhookResponse,
 	WebhookTree,

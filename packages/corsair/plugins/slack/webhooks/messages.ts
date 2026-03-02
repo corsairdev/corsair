@@ -28,18 +28,35 @@ export const message: SlackWebhooks['message'] = {
 
 		let corsairEntityId = '';
 
-		if (ctx.db.messages && event.ts) {
+		if (ctx.db.messages) {
 			try {
-				const entity = await ctx.db.messages.upsertByEntityId(event.ts, {
-					...event,
-					id: event.ts,
-					authorId: 'user' in event ? event.user : undefined,
-					createdAt: event.ts
-						? new Date(parseFloat(event.ts) * 1000)
-						: new Date(),
-				});
-
-				corsairEntityId = entity?.id || '';
+				if ('subtype' in event && event.subtype === 'message_changed' && 'message' in event) {
+					// For message_changed events, event.ts is the change-event timestamp (always new).
+					// The original message lives at event.message, with event.message.ts as the stable ID.
+					const updated = event.message;
+					const messageTs = 'ts' in updated ? updated.ts : undefined;
+					if (messageTs) {
+						const entity = await ctx.db.messages.upsertByEntityId(messageTs, {
+							...updated,
+							id: messageTs,
+							authorId: 'user' in updated ? updated.user : undefined,
+							createdAt: new Date(parseFloat(messageTs) * 1000),
+						});
+						corsairEntityId = entity?.id || '';
+					}
+				} else if (!('subtype' in event) || event.subtype !== 'message_deleted') {
+					// Skip message_deleted events — the message no longer exists and we don't
+					// want to create a spurious record keyed on the deletion-event timestamp.
+					if (event.ts) {
+						const entity = await ctx.db.messages.upsertByEntityId(event.ts, {
+							...event,
+							id: event.ts,
+							authorId: 'user' in event ? event.user : undefined,
+							createdAt: new Date(parseFloat(event.ts) * 1000),
+						});
+						corsairEntityId = entity?.id || '';
+					}
+				}
 			} catch (error) {
 				console.warn('Failed to save message to database:', error);
 			}

@@ -77,21 +77,39 @@ export type EnforcePermissionOptions = {
 	/** Required to create an approval record. Without a DB, 'require_approval' falls back to deny. */
 	db?: CorsairDatabase;
 	timeoutMs?: number;
+	/** Tenant ID for multi-tenant instances. Stored on the record so executePermission can scope correctly. Defaults to 'default'. */
+	tenantId?: string;
+};
+
+export type EnforcePermissionResult = {
+	result: 'allow' | 'blocked';
+	/**
+	 * Called by the endpoint binding layer after the endpoint executes successfully.
+	 * Marks the permission record as 'completed' (single-use approval consumed).
+	 * Only present when an 'approved' record was found and the call is allowed through.
+	 */
+	onComplete?: () => Promise<void>;
 };
 
 /**
  * Evaluates the permission policy and returns whether the action is allowed.
  *
- * - `'allow'`            → returns 'allow', caller proceeds normally
- * - `'deny'`             → logs a blocked message, returns 'blocked'
- * - `'require_approval'` → creates a `corsair_permissions` record, logs the token, returns 'blocked'
- *                          (falls back to deny if no database is configured)
+ * Lifecycle:
+ * - `'allow'`            → policy permits, caller proceeds normally
+ * - `'deny'`             → blocked by policy mode; no DB record created
+ * - `'require_approval'` → checks for an existing matching permission record first:
+ *     - `pending`  (not expired) → already waiting for approval, returns 'blocked'
+ *     - `approved` (not expired) → approved and ready; returns 'allow' + onComplete callback
+ *                                  that marks the record 'completed' after the endpoint runs
+ *     - otherwise               → creates a new 'pending' record, returns 'blocked'
+ *
+ * Falls back to deny if no database is configured.
  */
 export async function enforcePermission(
 	opts: EnforcePermissionOptions,
-): Promise<'allow' | 'blocked'> {
+): Promise<EnforcePermissionResult> {
 	const policy = evaluatePermission(opts.riskLevel, opts.mode, opts.override);
-	if (policy === 'allow') return 'allow';
+	if (policy === 'allow') return { result: 'allow' };
 
 	const irreversibleNote = opts.meta?.irreversible ? ' (irreversible)' : '';
 	const description = opts.meta?.description
@@ -104,10 +122,55 @@ export async function enforcePermission(
 			`\n  Action: ${description}`,
 			`\n  To allow this, update the permission mode or add an override in your corsair config.`,
 		);
-		return 'blocked';
+		return { result: 'blocked' };
 	}
 
-	// require_approval: create a pending record and log the token
+	const argsJson = JSON.stringify(opts.args);
+	const now = new Date().toISOString();
+	const tenantId = opts.tenantId ?? 'default';
+
+	// Check for an existing, non-expired permission record for this plugin + endpoint + args + tenant
+	const existing = await opts.db.db
+		.selectFrom('corsair_permissions')
+		.selectAll()
+		.where('plugin', '=', opts.pluginId)
+		.where('endpoint', '=', opts.endpointPath)
+		.where('args', '=', argsJson)
+		.where('tenant_id', '=', tenantId)
+		.where('expires_at', '>', now)
+		.where('status', 'in', ['pending', 'approved'])
+		.orderBy('created_at', 'desc')
+		.limit(1)
+		.executeTakeFirst();
+
+	if (existing) {
+		if (existing.status === 'approved') {
+			// Single-use: let the call through; onComplete will mark it 'completed'
+			const db = opts.db;
+			const permissionId = existing.id;
+			return {
+				result: 'allow',
+				onComplete: async () => {
+					await db.db
+						.updateTable('corsair_permissions')
+						.set({ status: 'completed', updated_at: new Date() })
+						.where('id', '=', permissionId)
+						.execute();
+				},
+			};
+		}
+
+		// status === 'pending': already waiting for approval, don't create a duplicate
+		console.log(
+			`[corsair/${opts.pluginId}] '${opts.endpointPath}' blocked — approval already pending.`,
+			`\n  Action: ${description}`,
+			`\n  Permission ID: ${existing.id}`,
+			`\n  Use the token to approve or deny this request.`,
+		);
+		return { result: 'blocked' };
+	}
+
+	// No existing actionable record — create a new pending approval request
 	const id = uuidv4();
 	const token = randomBytes(32).toString('hex');
 	const timeoutMs = opts.timeoutMs ?? 10 * 60 * 1_000;
@@ -122,8 +185,8 @@ export async function enforcePermission(
 			token,
 			plugin: opts.pluginId,
 			endpoint: opts.endpointPath,
-			// unknown args serialized to JSON; available for inspection or re-execution
-			args: JSON.stringify(opts.args),
+			args: argsJson,
+			tenant_id: tenantId,
 			status: 'pending',
 			expires_at: expiresAt,
 		})
@@ -138,5 +201,5 @@ export async function enforcePermission(
 		`\n  Use the token to approve or deny this request.`,
 	);
 
-	return 'blocked';
+	return { result: 'blocked' };
 }
