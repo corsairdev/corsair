@@ -30,27 +30,43 @@ export const message: SlackWebhooks['message'] = {
 
 		if (ctx.db.messages) {
 			try {
-				if ('subtype' in event && event.subtype === 'message_changed' && 'message' in event) {
-					// For message_changed events, event.ts is the change-event timestamp (always new).
-					// The original message lives at event.message, with event.message.ts as the stable ID.
+				if ('subtype' in event && event.subtype === 'message_changed') {
+					// MessageChangedEvent — event.message is SlackMessageObject (no channel/event_ts)
 					const updated = event.message;
-					const messageTs = 'ts' in updated ? updated.ts : undefined;
-					if (messageTs) {
-						const entity = await ctx.db.messages.upsertByEntityId(messageTs, {
-							...updated,
-							id: messageTs,
-							authorId: 'user' in updated ? updated.user : undefined,
-							createdAt: new Date(parseFloat(messageTs) * 1000),
-						});
-						corsairEntityId = entity?.id || '';
-					}
+					const entity = await ctx.db.messages.upsertByEntityId(updated.ts, {
+						id: updated.ts,
+						ts: updated.ts,
+						type: updated.type,
+						text: updated.text,
+						user: updated.user,
+						bot_id: updated.bot_id,
+						team: updated.team,
+						channel: event.channel,
+						thread_ts: updated.thread_ts,
+						reply_count: updated.reply_count,
+						is_locked: updated.is_locked,
+						subscribed: updated.subscribed,
+						authorId: updated.user,
+						createdAt: new Date(parseFloat(updated.ts) * 1000),
+					});
+					corsairEntityId = entity?.id || '';
 				} else if (!('subtype' in event) || event.subtype !== 'message_deleted') {
-					// Skip message_deleted events — the message no longer exists and we don't
+					// GenericMessageEvent, BotMessageEvent, FileShareMessageEvent, etc.
+					// Skip message_deleted — the message no longer exists and we don't
 					// want to create a spurious record keyed on the deletion-event timestamp.
 					if (event.ts) {
 						const entity = await ctx.db.messages.upsertByEntityId(event.ts, {
-							...event,
 							id: event.ts,
+							ts: event.ts,
+							type: event.type,
+							subtype: 'subtype' in event ? event.subtype : undefined,
+							text: 'text' in event ? event.text : undefined,
+							user: 'user' in event ? event.user : undefined,
+							bot_id: 'bot_id' in event ? event.bot_id : undefined,
+							team: 'team' in event ? event.team : undefined,
+							username: 'username' in event ? event.username : undefined,
+							channel: event.channel,
+							thread_ts: 'thread_ts' in event ? event.thread_ts : undefined,
 							authorId: 'user' in event ? event.user : undefined,
 							createdAt: new Date(parseFloat(event.ts) * 1000),
 						});
