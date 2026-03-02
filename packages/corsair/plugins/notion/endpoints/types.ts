@@ -385,3 +385,37 @@ export type NotionEndpointOutputs = {
 	usersGetUser: UsersGetUserResponse;
 	usersGetManyUsers: UsersGetManyUsersResponse;
 };
+
+export const NotionEndpointInputSchemas = {
+	blocksAppendBlock: BlocksAppendBlockInputSchema,
+	blocksGetManyChildBlocks: BlocksGetManyChildBlocksInputSchema,
+	databasesGetDatabase: DatabasesGetDatabaseInputSchema,
+	databasesGetManyDatabases: DatabasesGetManyDatabasesInputSchema,
+	databasesSearchDatabase: DatabasesSearchDatabaseInputSchema,
+	databasePagesCreateDatabasePage: DatabasePagesCreateDatabasePageInputSchema,
+	databasePagesGetDatabasePage: DatabasePagesGetDatabasePageInputSchema,
+	databasePagesGetManyDatabasePages: DatabasePagesGetManyDatabasePagesInputSchema,
+	databasePagesUpdateDatabasePage: DatabasePagesUpdateDatabasePageInputSchema,
+	pagesArchivePage: PagesArchivePageInputSchema,
+	pagesCreatePage: PagesCreatePageInputSchema,
+	pagesSearchPage: PagesSearchPageInputSchema,
+	usersGetUser: UsersGetUserInputSchema,
+	usersGetManyUsers: UsersGetManyUsersInputSchema,
+} as const;
+
+export const NotionEndpointOutputSchemas = {
+	blocksAppendBlock: ListResponseSchema(BlockSchema),
+	blocksGetManyChildBlocks: ListResponseSchema(BlockSchema),
+	databasesGetDatabase: DatabaseSchema,
+	databasesGetManyDatabases: ListResponseSchema(DatabaseSchema),
+	databasesSearchDatabase: ListResponseSchema(DatabaseSchema),
+	databasePagesCreateDatabasePage: PageSchema,
+	databasePagesGetDatabasePage: PageSchema,
+	databasePagesGetManyDatabasePages: ListResponseSchema(PageSchema),
+	databasePagesUpdateDatabasePage: PageSchema,
+	pagesArchivePage: PageSchema,
+	pagesCreatePage: PageSchema,
+	pagesSearchPage: ListResponseSchema(PageOrDatabaseSchema),
+	usersGetUser: UserSchema,
+	usersGetManyUsers: ListResponseSchema(UserSchema),
+} as const;

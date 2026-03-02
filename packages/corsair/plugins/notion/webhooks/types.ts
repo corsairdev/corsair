@@ -1,9 +1,64 @@
 import crypto from 'crypto';
+import { z } from 'zod';
 import type {
 	CorsairWebhookMatcher,
 	RawWebhookRequest,
 	WebhookRequest,
 } from '../../../core';
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Zod Schemas
+// ─────────────────────────────────────────────────────────────────────────────
+
+const NotionUserReferenceSchema = z.object({
+	id: z.string(),
+	object: z.string(),
+	type: z.string().optional(),
+	name: z.string().optional(),
+	avatar_url: z.string().optional(),
+});
+
+export const NotionWebhookPayloadSchema = z.object({
+	id: z.string(),
+	timestamp: z.string(),
+	workspace_id: z.string(),
+	subscription_id: z.string(),
+	integration_id: z.string(),
+	type: z.string(),
+	authors: z.array(NotionUserReferenceSchema),
+	accessible_by: z.array(NotionUserReferenceSchema),
+	entity: z.object({ id: z.string(), object: z.string() }).passthrough(),
+	data: z.record(z.unknown()),
+});
+
+export const NotionVerificationPayloadSchema = z.object({
+	verification_token: z.string(),
+});
+
+export const VerificationEventSchema = z.object({
+	type: z.literal('url_verification'),
+	verification_token: z.string(),
+});
+
+export const PageCreatedEventSchema = NotionWebhookPayloadSchema.extend({
+	type: z.literal('page.created'),
+	data: z.object({
+		page_id: z.string(),
+		database_id: z.string(),
+	}).passthrough(),
+});
+
+export const PageUpdatedEventSchema = NotionWebhookPayloadSchema.extend({
+	type: z.literal('page.updated'),
+	data: z.object({
+		page_id: z.string(),
+		database_id: z.string(),
+	}).passthrough(),
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+// TypeScript Interfaces
+// ─────────────────────────────────────────────────────────────────────────────
 
 export interface NotionWebhookPayload {
 	id: string;

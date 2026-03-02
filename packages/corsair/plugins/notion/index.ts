@@ -8,17 +8,31 @@ import type {
 	CorsairWebhook,
 	KeyBuilderContext,
 	PluginAuthConfig,
+	PluginPermissionsConfig,
+	RequiredPluginEndpointMeta,
+	RequiredPluginEndpointSchemas,
+	RequiredPluginWebhookSchemas,
 } from '../../core';
 import type { AuthTypes, PickAuth } from '../../core/constants';
 import type {
 	NotionEndpointInputs,
 	NotionEndpointOutputs,
 } from './endpoints/types';
+import {
+	NotionEndpointInputSchemas,
+	NotionEndpointOutputSchemas,
+} from './endpoints/types';
 import type {
 	NotionWebhookOutputs,
 	PageCreatedEvent,
 	PageUpdatedEvent,
 	VerificationEvent,
+} from './webhooks/types';
+import {
+	NotionVerificationPayloadSchema,
+	VerificationEventSchema,
+	PageCreatedEventSchema,
+	PageUpdatedEventSchema,
 } from './webhooks/types';
 import {
 	Blocks,
@@ -38,6 +52,12 @@ export type NotionPluginOptions = {
 	hooks?: InternalNotionPlugin['hooks'];
 	webhookHooks?: InternalNotionPlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
+	/**
+	 * Permission configuration for the Notion plugin.
+	 * Controls what the AI agent is allowed to do.
+	 * Overrides use dot-notation paths from the Notion endpoint tree — invalid paths are type errors.
+	 */
+	permissions?: PluginPermissionsConfig<typeof notionEndpointsNested>;
 };
 
 export type NotionContext = CorsairPluginContext<
@@ -127,6 +147,146 @@ const notionWebhooksNested = {
 	verification: NotionWebhooks.verification,
 } as const;
 
+/**
+ * Risk-level metadata for each Notion endpoint.
+ * Used by the MCP server permission system to decide allow / deny / require_approval.
+ */
+const notionEndpointMeta = {
+	'blocks.appendBlock': {
+		riskLevel: 'write',
+		description: 'Append new blocks to a block or page',
+	},
+	'blocks.getManyChildBlocks': {
+		riskLevel: 'read',
+		description: 'Retrieve child blocks of a block or page',
+	},
+	'databases.getDatabase': {
+		riskLevel: 'read',
+		description: 'Get info about a database',
+	},
+	'databases.getManyDatabases': {
+		riskLevel: 'read',
+		description: 'List databases accessible to the integration',
+	},
+	'databases.searchDatabase': {
+		riskLevel: 'read',
+		description: 'Search and filter databases',
+	},
+	'databasePages.createDatabasePage': {
+		riskLevel: 'write',
+		description: 'Create a new page in a database',
+	},
+	'databasePages.getDatabasePage': {
+		riskLevel: 'read',
+		description: 'Get a page from a database',
+	},
+	'databasePages.getManyDatabasePages': {
+		riskLevel: 'read',
+		description: 'List and filter pages in a database',
+	},
+	'databasePages.updateDatabasePage': {
+		riskLevel: 'write',
+		description: 'Update properties of a database page',
+	},
+	'pages.archivePage': {
+		riskLevel: 'destructive',
+		description: 'Archive (trash) a page [DESTRUCTIVE]',
+	},
+	'pages.createPage': {
+		riskLevel: 'write',
+		description: 'Create a new page',
+	},
+	'pages.searchPage': {
+		riskLevel: 'read',
+		description: 'Search pages and databases by title',
+	},
+	'users.getUser': {
+		riskLevel: 'read',
+		description: 'Get info about a user',
+	},
+	'users.getManyUsers': {
+		riskLevel: 'read',
+		description: 'List all users in the workspace',
+	},
+} satisfies RequiredPluginEndpointMeta<typeof notionEndpointsNested>;
+
+const notionEndpointSchemas = {
+	'blocks.appendBlock': {
+		input: NotionEndpointInputSchemas.blocksAppendBlock,
+		output: NotionEndpointOutputSchemas.blocksAppendBlock,
+	},
+	'blocks.getManyChildBlocks': {
+		input: NotionEndpointInputSchemas.blocksGetManyChildBlocks,
+		output: NotionEndpointOutputSchemas.blocksGetManyChildBlocks,
+	},
+	'databases.getDatabase': {
+		input: NotionEndpointInputSchemas.databasesGetDatabase,
+		output: NotionEndpointOutputSchemas.databasesGetDatabase,
+	},
+	'databases.getManyDatabases': {
+		input: NotionEndpointInputSchemas.databasesGetManyDatabases,
+		output: NotionEndpointOutputSchemas.databasesGetManyDatabases,
+	},
+	'databases.searchDatabase': {
+		input: NotionEndpointInputSchemas.databasesSearchDatabase,
+		output: NotionEndpointOutputSchemas.databasesSearchDatabase,
+	},
+	'databasePages.createDatabasePage': {
+		input: NotionEndpointInputSchemas.databasePagesCreateDatabasePage,
+		output: NotionEndpointOutputSchemas.databasePagesCreateDatabasePage,
+	},
+	'databasePages.getDatabasePage': {
+		input: NotionEndpointInputSchemas.databasePagesGetDatabasePage,
+		output: NotionEndpointOutputSchemas.databasePagesGetDatabasePage,
+	},
+	'databasePages.getManyDatabasePages': {
+		input: NotionEndpointInputSchemas.databasePagesGetManyDatabasePages,
+		output: NotionEndpointOutputSchemas.databasePagesGetManyDatabasePages,
+	},
+	'databasePages.updateDatabasePage': {
+		input: NotionEndpointInputSchemas.databasePagesUpdateDatabasePage,
+		output: NotionEndpointOutputSchemas.databasePagesUpdateDatabasePage,
+	},
+	'pages.archivePage': {
+		input: NotionEndpointInputSchemas.pagesArchivePage,
+		output: NotionEndpointOutputSchemas.pagesArchivePage,
+	},
+	'pages.createPage': {
+		input: NotionEndpointInputSchemas.pagesCreatePage,
+		output: NotionEndpointOutputSchemas.pagesCreatePage,
+	},
+	'pages.searchPage': {
+		input: NotionEndpointInputSchemas.pagesSearchPage,
+		output: NotionEndpointOutputSchemas.pagesSearchPage,
+	},
+	'users.getUser': {
+		input: NotionEndpointInputSchemas.usersGetUser,
+		output: NotionEndpointOutputSchemas.usersGetUser,
+	},
+	'users.getManyUsers': {
+		input: NotionEndpointInputSchemas.usersGetManyUsers,
+		output: NotionEndpointOutputSchemas.usersGetManyUsers,
+	},
+} satisfies RequiredPluginEndpointSchemas<typeof notionEndpointsNested>;
+
+const notionWebhookSchemas = {
+	verification: {
+		description: 'Notion URL verification — respond to confirm the webhook endpoint',
+		payload: NotionVerificationPayloadSchema,
+		response: VerificationEventSchema,
+	},
+	'databasePages.pageCreated': {
+		description: 'A page was created in a database',
+		payload: PageCreatedEventSchema,
+		response: PageCreatedEventSchema,
+	},
+	'databasePages.pageUpdated': {
+		description: 'A page was updated in a database',
+		payload: PageUpdatedEventSchema,
+		response: PageUpdatedEventSchema,
+	},
+} satisfies RequiredPluginWebhookSchemas<typeof notionWebhooksNested>;
+
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
 export const notionAuthConfig = {
@@ -169,6 +329,9 @@ export function notion<const T extends NotionPluginOptions>(
 		webhookHooks: options.webhookHooks,
 		endpoints: notionEndpointsNested,
 		webhooks: notionWebhooksNested,
+		endpointMeta: notionEndpointMeta,
+		endpointSchemas: notionEndpointSchemas,
+		webhookSchemas: notionWebhookSchemas,
 		pluginWebhookMatcher: (request) => {
 			const headers = request.headers;
 			const hasSignature = 'x-notion-signature' in headers;
