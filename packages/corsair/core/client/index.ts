@@ -21,6 +21,7 @@ import { bindEndpointsRecursively } from '../endpoints/bind';
 import type { CorsairErrorHandler } from '../errors';
 import type { CorsairInspectMethods } from '../inspect';
 import { buildInspectMethods } from '../inspect';
+import type { CorsairPermissionsNamespace } from '../permissions';
 import type {
 	CorsairKeyBuilderBase,
 	CorsairPlugin,
@@ -205,6 +206,11 @@ export type CorsairTenantWrapper<Plugins extends readonly CorsairPlugin[]> = {
 	 * Used to manage secrets shared across all tenants (e.g., OAuth2 client_id, client_secret).
 	 */
 	keys: InferAllIntegrationKeys<Plugins>;
+	/**
+	 * Permission management namespace. Use this to query and transition permission records.
+	 * Available at the root regardless of multi-tenancy setting.
+	 */
+	permissions: CorsairPermissionsNamespace;
 } & CorsairInspectMethods;
 
 /**
@@ -218,6 +224,11 @@ export type CorsairSingleTenantClient<
 	 * Used to manage secrets shared across all tenants (e.g., OAuth2 client_id, client_secret).
 	 */
 	keys: InferAllIntegrationKeys<Plugins>;
+	/**
+	 * Permission management namespace. Use this to query and transition permission records.
+	 * Available at the root regardless of multi-tenancy setting.
+	 */
+	permissions: CorsairPermissionsNamespace;
 };
 
 // ─────────────────────────────────────────────────────────────────────────────

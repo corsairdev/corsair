@@ -1,5 +1,6 @@
 import { randomBytes } from 'node:crypto';
 import { v4 as uuidv4 } from 'uuid';
+import type { CorsairPermission } from '../../db';
 import type { CorsairDatabase } from '../../db/kysely/database';
 import type {
 	EndpointMetaEntry,
@@ -59,6 +60,85 @@ export function parseDurationMs(duration: string): number {
 		}
 	}
 	return total > 0 ? total : 10 * 60 * 1_000;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Permissions Namespace
+// ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * The `corsair.permissions` namespace available at the root of every corsair instance.
+ * Provides methods for querying and transitioning permission records.
+ *
+ * Status transitions exposed here are intentionally limited to safe, non-escalating states.
+ * Setting a record to 'approved' (which grants execution) is deliberately excluded —
+ * that must happen through the out-of-band review flow.
+ */
+export type CorsairPermissionsNamespace = {
+	/**
+	 * Fetches a single permission record by its ID.
+	 * Returns undefined if no record exists or if no database is configured.
+	 */
+	find_by_permission_id(id: string): Promise<CorsairPermission | undefined>;
+	/**
+	 * Fetches a single permission record by its token.
+	 * The token is the public-facing handle embedded in review URLs.
+	 * Returns undefined if no record exists or if no database is configured.
+	 */
+	find_by_token(token: string): Promise<CorsairPermission | undefined>;
+	/**
+	 * Marks the permission as 'executing'. Call this when executePermission picks up
+	 * an approved record and is about to run the endpoint.
+	 */
+	set_executing(id: string): Promise<void>;
+	/**
+	 * Marks the permission as 'completed'. Call this after the endpoint has finished
+	 * executing successfully.
+	 */
+	set_completed(id: string): Promise<void>;
+};
+
+/**
+ * Builds the `corsair.permissions` namespace for a given database instance.
+ * Returns no-op stubs when no database is configured.
+ */
+export function buildPermissionsNamespace(
+	db: CorsairDatabase | undefined,
+): CorsairPermissionsNamespace {
+	return {
+		async find_by_permission_id(id: string) {
+			if (!db) return undefined;
+			return db.db
+				.selectFrom('corsair_permissions')
+				.selectAll()
+				.where('id', '=', id)
+				.executeTakeFirst();
+		},
+		async find_by_token(token: string) {
+			if (!db) return undefined;
+			return db.db
+				.selectFrom('corsair_permissions')
+				.selectAll()
+				.where('token', '=', token)
+				.executeTakeFirst();
+		},
+		async set_executing(id: string) {
+			if (!db) return;
+			await db.db
+				.updateTable('corsair_permissions')
+				.set({ status: 'executing', updated_at: new Date() })
+				.where('id', '=', id)
+				.execute();
+		},
+		async set_completed(id: string) {
+			if (!db) return;
+			await db.db
+				.updateTable('corsair_permissions')
+				.set({ status: 'completed', updated_at: new Date() })
+				.where('id', '=', id)
+				.execute();
+		},
+	};
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -138,7 +218,7 @@ export async function enforcePermission(
 		.where('args', '=', argsJson)
 		.where('tenant_id', '=', tenantId)
 		.where('expires_at', '>', now)
-		.where('status', 'in', ['pending', 'approved'])
+		.where('status', 'in', ['pending', 'approved', 'executing'])
 		.orderBy('created_at', 'desc')
 		.limit(1)
 		.executeTakeFirst();
@@ -158,6 +238,12 @@ export async function enforcePermission(
 						.execute();
 				},
 			};
+		}
+
+		if (existing.status === 'executing') {
+			// executePermission is actively running this — let the endpoint body proceed.
+			// Completion is handled by executePermission itself, not via onComplete here.
+			return { result: 'allow' };
 		}
 
 		// status === 'pending': already waiting for approval, don't create a duplicate

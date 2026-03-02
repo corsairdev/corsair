@@ -1,7 +1,7 @@
 import type { ZodTypeAny } from 'zod';
+import type { CorsairPluginSchema } from '../../db/orm';
 import { BaseProviders } from '../constants';
 import type { CorsairPlugin, EndpointMetaEntry } from '../plugins';
-import type { CorsairPluginSchema } from '../../db/orm';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Zod → JSON Schema Converter
@@ -518,7 +518,9 @@ function listOperations(
 		}
 		if (type === 'db') {
 			const entities = (
-				found.schema as CorsairPluginSchema<Record<string, ZodTypeAny>> | undefined
+				found.schema as
+					| CorsairPluginSchema<Record<string, ZodTypeAny>>
+					| undefined
 			)?.entities;
 			if (!entities) return [];
 			return Object.keys(entities).map(
@@ -718,7 +720,9 @@ export function buildInspectMethods(
 		list_operations(options?: ListOperationsOptions) {
 			return listOperations(plugins, options);
 		},
-		get_schema(path: string): EndpointSchemaResult | WebhookSchemaResult | DbSearchSchemaResult {
+		get_schema(
+			path: string,
+		): EndpointSchemaResult | WebhookSchemaResult | DbSearchSchemaResult {
 			return getSchema(plugins, path);
 		},
 	};
