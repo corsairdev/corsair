@@ -1,6 +1,7 @@
 import type { ZodTypeAny } from 'zod';
 import { BaseProviders } from '../constants';
 import type { CorsairPlugin, EndpointMetaEntry } from '../plugins';
+import type { CorsairPluginSchema } from '../../db/orm';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Zod → JSON Schema Converter
@@ -82,6 +83,100 @@ function zodToJsonSchema(schema: ZodTypeAny): unknown {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// DB Entity Helpers
+// ─────────────────────────────────────────────────────────────────────────────
+
+const STRING_OPERATORS = ['equals', 'contains', 'startsWith', 'endsWith', 'in'];
+const NUMBER_OPERATORS = ['equals', 'gt', 'gte', 'lt', 'lte', 'in'];
+const BOOLEAN_OPERATORS = ['equals'];
+const DATE_OPERATORS = ['equals', 'before', 'after', 'between'];
+
+type DbFieldType = 'string' | 'number' | 'boolean' | 'date';
+
+/**
+ * Unwraps Optional/Nullable/Default/Effects wrappers to find the primitive leaf type.
+ * Returns null for complex types (objects, arrays, unions) that are not directly filterable.
+ */
+function getSchemaLeafType(schema: ZodTypeAny): DbFieldType | null {
+	const def = (schema as { _def: Record<string, unknown> })._def;
+	const typeName = def.typeName as string | undefined;
+	switch (typeName) {
+		case 'ZodOptional':
+		case 'ZodNullable':
+		case 'ZodDefault':
+			return getSchemaLeafType(def.innerType as ZodTypeAny);
+		case 'ZodEffects':
+			// Covers z.coerce.date() and other transforms
+			return getSchemaLeafType(def.schema as ZodTypeAny);
+		case 'ZodString':
+			return 'string';
+		case 'ZodNumber':
+			return 'number';
+		case 'ZodBoolean':
+			return 'boolean';
+		case 'ZodDate':
+			return 'date';
+		default:
+			return null;
+	}
+}
+
+/**
+ * Derives the filterable fields from a Zod object schema.
+ * Only flat primitive fields (string, number, boolean, date) are included.
+ * Nested objects and arrays are skipped — the ORM does not support filtering into them.
+ */
+function buildFilterableFields(
+	schema: ZodTypeAny,
+): Record<string, { type: DbFieldType; operators: string[] }> {
+	const def = (schema as { _def: Record<string, unknown> })._def;
+	const typeName = def.typeName as string | undefined;
+
+	if (
+		typeName === 'ZodOptional' ||
+		typeName === 'ZodNullable' ||
+		typeName === 'ZodDefault'
+	) {
+		return buildFilterableFields(def.innerType as ZodTypeAny);
+	}
+	if (typeName === 'ZodEffects') {
+		return buildFilterableFields(def.schema as ZodTypeAny);
+	}
+	if (typeName !== 'ZodObject') return {};
+
+	const shape = (def.shape as () => Record<string, ZodTypeAny>)();
+	const result: Record<string, { type: DbFieldType; operators: string[] }> = {};
+	for (const [key, fieldSchema] of Object.entries(shape)) {
+		const leafType = getSchemaLeafType(fieldSchema);
+		if (leafType === 'string') {
+			result[key] = { type: 'string', operators: STRING_OPERATORS };
+		} else if (leafType === 'number') {
+			result[key] = { type: 'number', operators: NUMBER_OPERATORS };
+		} else if (leafType === 'boolean') {
+			result[key] = { type: 'boolean', operators: BOOLEAN_OPERATORS };
+		} else if (leafType === 'date') {
+			result[key] = { type: 'date', operators: DATE_OPERATORS };
+		}
+		// Nested objects, arrays, unions — not filterable via ORM, omit them
+	}
+	return result;
+}
+
+/**
+ * Case-insensitive lookup for an entity name in a schema's entities map.
+ * Entity names are camelCase (e.g. 'userGroups') but agent paths are lowercased.
+ */
+function findEntityCaseInsensitive(
+	entities: Record<string, ZodTypeAny>,
+	lowercasedName: string,
+): [string, ZodTypeAny] | undefined {
+	for (const [key, schema] of Object.entries(entities)) {
+		if (key.toLowerCase() === lowercasedName) return [key, schema];
+	}
+	return undefined;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 // Public API Types
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -122,6 +217,30 @@ export type WebhookSchemaResult = {
 	availableWebhooks?: Record<string, string[]>;
 };
 
+export type DbSearchSchemaResult = {
+	/**
+	 * What this entity type represents and how to search it.
+	 * Pass `limit` and `offset` as numbers for pagination.
+	 */
+	description: string;
+	/**
+	 * Filterable fields for the search() call.
+	 * All active filters are AND-combined. Omit a field to skip filtering on it.
+	 *
+	 * Each operator shorthand: passing a raw value (string/number/boolean/Date) is
+	 * equivalent to `{ equals: value }`.
+	 */
+	filters: {
+		/** Filter by the entity's external platform ID (e.g. a Slack channel ID). */
+		entity_id: { type: 'string'; operators: string[] };
+		/**
+		 * Filter by fields inside the entity's data payload.
+		 * Only flat primitive fields are listed — nested objects are not filterable.
+		 */
+		data: Record<string, { type: DbFieldType; operators: string[] }>;
+	};
+};
+
 export type ListOperationsOptions = {
 	/**
 	 * Filter to a specific plugin by its ID (e.g. 'slack', 'github').
@@ -130,25 +249,30 @@ export type ListOperationsOptions = {
 	 */
 	plugin?: string;
 	/**
-	 * Whether to list API endpoints or webhooks.
-	 * Defaults to 'api' when not provided.
+	 * Whether to list API endpoints, webhooks, or database entities.
+	 * - 'api' (default) — lists callable API endpoint paths
+	 * - 'webhooks' — lists receivable webhook event paths
+	 * - 'db' — lists searchable database entity paths (one .search per entity type)
 	 */
-	type?: 'api' | 'webhooks';
+	type?: 'api' | 'webhooks' | 'db';
 };
 
 export type CorsairInspectMethods = {
 	/**
-	 * Lists available operations (API endpoints or webhooks) for the configured plugins.
+	 * Lists available operations (API endpoints, webhooks, or database entities) for the configured plugins.
 	 *
 	 * - No options → all API endpoint paths across every plugin, keyed by plugin ID
 	 * - `{ type: 'webhooks' }` → all webhook paths across every plugin, keyed by plugin ID
+	 * - `{ type: 'db' }` → all searchable DB entity paths across every plugin, keyed by plugin ID
 	 * - `{ plugin: 'slack' }` → Slack API endpoint paths as a flat array
 	 * - `{ plugin: 'slack', type: 'webhooks' }` → Slack webhook paths as a flat array
+	 * - `{ plugin: 'slack', type: 'db' }` → Slack DB entity search paths as a flat array
 	 * - If the plugin is known but not configured, returns a plain string message.
 	 * - If the plugin string is completely unrecognised, returns all API endpoints (same as no options).
 	 *
 	 * API paths use the format `plugin.api.group.method` (e.g. `slack.api.messages.post`).
 	 * Webhook paths use the format `plugin.webhooks.group.event` (e.g. `slack.webhooks.messages.message`).
+	 * DB paths use the format `plugin.db.entityType.search` (e.g. `slack.db.messages.search`).
 	 * All paths can be passed directly to `get_schema()`.
 	 *
 	 * @example
@@ -161,6 +285,9 @@ export type CorsairInspectMethods = {
 	 * corsair.list_operations({ plugin: 'slack', type: 'webhooks' })
 	 * // ['slack.webhooks.messages.message', 'slack.webhooks.channels.created', ...]
 	 *
+	 * corsair.list_operations({ plugin: 'slack', type: 'db' })
+	 * // ['slack.db.messages.search', 'slack.db.channels.search', 'slack.db.users.search', ...]
+	 *
 	 * corsair.list_operations({ plugin: 'unknown' })
 	 * // "unknown isn't configured in the Corsair instance."
 	 */
@@ -168,10 +295,11 @@ export type CorsairInspectMethods = {
 		options?: ListOperationsOptions,
 	): Record<string, string[]> | string[] | string;
 	/**
-	 * Returns schema and metadata for a specific API endpoint or webhook.
+	 * Returns schema and metadata for a specific API endpoint, webhook, or database entity search.
 	 * The path format determines which kind of schema is returned:
 	 * - API path (`plugin.api.group.method`) → `EndpointSchemaResult`
 	 * - Webhook path (`plugin.webhooks.group.event`) → `WebhookSchemaResult`
+	 * - DB path (`plugin.db.entityType.search`) → `DbSearchSchemaResult`
 	 *
 	 * Casing is ignored — the path is lowercased before lookup.
 	 * If the path is not found, returns an object with available paths for self-correction.
@@ -183,10 +311,15 @@ export type CorsairInspectMethods = {
 	 * corsair.get_schema('slack.webhooks.messages.message')
 	 * // { description: '...', usage: '...', payload: { ... }, response: { ... } }
 	 *
+	 * corsair.get_schema('slack.db.messages.search')
+	 * // { description: '...', filters: { entity_id: { ... }, data: { text: { type: 'string', operators: [...] }, ... } } }
+	 *
 	 * corsair.get_schema('slack.api.invalid')
 	 * // { availableMethods: { slack: ['slack.api.channels.list', ...], ... } }
 	 */
-	get_schema(path: string): EndpointSchemaResult | WebhookSchemaResult;
+	get_schema(
+		path: string,
+	): EndpointSchemaResult | WebhookSchemaResult | DbSearchSchemaResult;
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -382,12 +515,20 @@ function listOperations(
 			const paths: string[] = [];
 			walkWebhookTree(found.webhooks as Record<string, unknown>, [], paths);
 			return paths.map((path) => `${found.id}.webhooks.${path}`);
-		} else {
-			if (!found.endpoints) return [];
-			const paths: string[] = [];
-			walkEndpointTree(found.endpoints as Record<string, unknown>, [], paths);
-			return paths.map((path) => `${found.id}.api.${path.toLowerCase()}`);
 		}
+		if (type === 'db') {
+			const entities = (
+				found.schema as CorsairPluginSchema<Record<string, ZodTypeAny>> | undefined
+			)?.entities;
+			if (!entities) return [];
+			return Object.keys(entities).map(
+				(entityName) => `${found.id}.db.${entityName}.search`,
+			);
+		}
+		if (!found.endpoints) return [];
+		const paths: string[] = [];
+		walkEndpointTree(found.endpoints as Record<string, unknown>, [], paths);
+		return paths.map((path) => `${found.id}.api.${path.toLowerCase()}`);
 	}
 
 	const result: Record<string, string[]> = {};
@@ -397,6 +538,16 @@ function listOperations(
 			const paths: string[] = [];
 			walkWebhookTree(p.webhooks as Record<string, unknown>, [], paths);
 			result[p.id] = paths.map((path) => `${p.id}.webhooks.${path}`);
+		}
+	} else if (type === 'db') {
+		for (const p of plugins) {
+			const entities = (
+				p.schema as CorsairPluginSchema<Record<string, ZodTypeAny>> | undefined
+			)?.entities;
+			if (!entities) continue;
+			result[p.id] = Object.keys(entities).map(
+				(entityName) => `${p.id}.db.${entityName}.search`,
+			);
 		}
 	} else {
 		for (const p of plugins) {
@@ -428,7 +579,7 @@ function findEndpointCaseInsensitive<T>(
 function getSchema(
 	plugins: readonly CorsairPlugin[],
 	path: string,
-): EndpointSchemaResult | WebhookSchemaResult {
+): EndpointSchemaResult | WebhookSchemaResult | DbSearchSchemaResult {
 	// Normalise casing so the agent can call with any capitalisation
 	const normalised = path.toLowerCase();
 	const dotIndex = normalised.indexOf('.');
@@ -438,6 +589,43 @@ function getSchema(
 		const plugin = plugins.find((p) => p.id === pluginId);
 
 		if (plugin) {
+			// ── DB search path: plugin.db.entityType.search ────────────────────────
+			if (remainder.startsWith('db.')) {
+				const dbPath = remainder.slice(3); // strip 'db.'
+				const lastDot = dbPath.lastIndexOf('.');
+				if (lastDot !== -1) {
+					const entityNameLower = dbPath.slice(0, lastDot);
+					const method = dbPath.slice(lastDot + 1);
+					const entities = (
+						plugin.schema as
+							| CorsairPluginSchema<Record<string, ZodTypeAny>>
+							| undefined
+					)?.entities;
+					if (method === 'search' && entities) {
+						const entry = findEntityCaseInsensitive(entities, entityNameLower);
+						if (entry) {
+							const [entityName, entitySchema] = entry;
+							return {
+								description: `Search ${pluginId} ${entityName} stored in the local database. Returns an array of matching records. Pass limit and offset (numbers) for pagination.`,
+								filters: {
+									entity_id: {
+										type: 'string',
+										operators: STRING_OPERATORS,
+									},
+									data: buildFilterableFields(entitySchema),
+								},
+							};
+						}
+					}
+				}
+				// Invalid db path — return available db operations for self-correction
+				return {
+					availableMethods: listOperations(plugins, {
+						type: 'db',
+					}) as Record<string, string[]>,
+				};
+			}
+
 			// ── Webhook path: plugin.webhooks.group.event ──────────────────────────
 			if (remainder.startsWith('webhooks.')) {
 				const webhookPathNormalised = remainder.slice(9); // strip 'webhooks.'
@@ -530,7 +718,7 @@ export function buildInspectMethods(
 		list_operations(options?: ListOperationsOptions) {
 			return listOperations(plugins, options);
 		},
-		get_schema(path: string) {
+		get_schema(path: string): EndpointSchemaResult | WebhookSchemaResult | DbSearchSchemaResult {
 			return getSchema(plugins, path);
 		},
 	};
