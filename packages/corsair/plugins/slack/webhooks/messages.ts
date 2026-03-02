@@ -50,7 +50,10 @@ export const message: SlackWebhooks['message'] = {
 						createdAt: new Date(parseFloat(updated.ts) * 1000),
 					});
 					corsairEntityId = entity?.id || '';
-				} else if (!('subtype' in event) || event.subtype !== 'message_deleted') {
+				} else if (
+					!('subtype' in event) ||
+					event.subtype !== 'message_deleted'
+				) {
 					// GenericMessageEvent, BotMessageEvent, FileShareMessageEvent, etc.
 					// Skip message_deleted — the message no longer exists and we don't
 					// want to create a spurious record keyed on the deletion-event timestamp.
