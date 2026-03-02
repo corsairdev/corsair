@@ -179,7 +179,10 @@ export type {
 } from './errors';
 // Inspection types
 export type { CorsairInspectMethods, EndpointSchemaResult } from './inspect';
-export type { EnforcePermissionOptions, EnforcePermissionResult } from './permissions';
+export type {
+	EnforcePermissionOptions,
+	EnforcePermissionResult,
+} from './permissions';
 
 // Plugin types
 export type {
