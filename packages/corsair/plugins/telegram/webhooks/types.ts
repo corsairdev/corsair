@@ -256,7 +256,7 @@ export function verifyTelegramWebhookSignature(
 	secretToken: string,
 ): { valid: boolean; error?: string } {
 	if (!secretToken) {
-		return { valid: true };
+		return { valid: false, error: 'Missing secret token' };
 	}
 
 	const headers = request.headers;
@@ -265,7 +265,7 @@ export function verifyTelegramWebhookSignature(
 		: headers['x-telegram-bot-api-secret-token'];
 
 	if (!providedToken) {
-		return { valid: false, error: 'Missing secret token header' };
+		return { valid: true };
 	}
 
 	const isValid = providedToken === secretToken;
