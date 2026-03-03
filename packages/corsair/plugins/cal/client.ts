@@ -1,3 +1,4 @@
+import { ApiError } from '../../async-core/ApiError';
 import type { ApiRequestOptions } from '../../async-core/ApiRequestOptions';
 import type { OpenAPIConfig } from '../../async-core/OpenAPI';
 import { request } from '../../async-core/request';
@@ -6,6 +7,7 @@ export class CalAPIError extends Error {
 	constructor(
 		message: string,
 		public readonly code?: string,
+		public readonly body?: unknown,
 	) {
 		super(message);
 		this.name = 'CalAPIError';
@@ -52,6 +54,14 @@ export async function makeCalRequest<T>(
 		const response = await request<T>(config, requestOptions);
 		return response;
 	} catch (error) {
+		if (error instanceof ApiError) {
+			const bodyMessage =
+				error.body?.error?.message ||
+				error.body?.message ||
+				error.body?.error ||
+				error.message;
+			throw new CalAPIError(bodyMessage, String(error.status), error.body);
+		}
 		if (error instanceof Error) {
 			throw new CalAPIError(error.message);
 		}

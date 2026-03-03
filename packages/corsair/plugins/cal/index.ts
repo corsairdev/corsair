@@ -162,15 +162,15 @@ const calEndpointMeta = {
 	},
 	'bookings.reschedule': {
 		riskLevel: 'write',
-		description: 'Reschedule a booking',
+		description: 'Reschedule a booking to a new time',
 	},
 	'bookings.confirm': {
 		riskLevel: 'write',
-		description: 'Confirm a booking',
+		description: 'Confirm a pending booking',
 	},
 	'bookings.decline': {
 		riskLevel: 'write',
-		description: 'Decline a booking',
+		description: 'Decline a pending booking',
 	},
 } satisfies RequiredPluginEndpointMeta<typeof calEndpointsNested>;
 
@@ -285,10 +285,6 @@ export function cal<const T extends CalPluginOptions>(
 	} satisfies InternalCalPlugin;
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Webhook Type Exports
-// ─────────────────────────────────────────────────────────────────────────────
-
 export type {
 	BookingCreatedEvent,
 	BookingCancelledEvent,
@@ -300,10 +296,6 @@ export type {
 } from './webhooks/types';
 
 export { createCalMatch } from './webhooks/types';
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Endpoint Type Exports
-// ─────────────────────────────────────────────────────────────────────────────
 
 export type {
 	CalEndpointInputs,

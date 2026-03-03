@@ -1,7 +1,5 @@
 import { z } from 'zod';
 
-// ── Input Schemas ────────────────────────────────────────────────────────────
-
 const BookingsListInputSchema = z.object({
 	status: z
 		.enum(['upcoming', 'recurring', 'past', 'cancelled', 'unconfirmed'])
@@ -32,7 +30,6 @@ const BookingsCreateInputSchema = z.object({
 		name: z.string(),
 		email: z.string(),
 		timeZone: z.string(),
-		language: z.string().optional(),
 	}),
 	meetingUrl: z.string().optional(),
 	lengthInMinutes: z.number().optional(),
@@ -43,12 +40,13 @@ const BookingsCreateInputSchema = z.object({
 const BookingsCancelInputSchema = z.object({
 	uid: z.string(),
 	cancellationReason: z.string().optional(),
+	allRemainingBookings: z.boolean().optional(),
 });
 
 const BookingsRescheduleInputSchema = z.object({
 	uid: z.string(),
 	start: z.string(),
-	reschedulingReason: z.string().optional(),
+	rescheduledBy: z.string().optional(),
 });
 
 const BookingsConfirmInputSchema = z.object({
@@ -64,13 +62,9 @@ export type BookingsListInput = z.infer<typeof BookingsListInputSchema>;
 export type BookingsGetInput = z.infer<typeof BookingsGetInputSchema>;
 export type BookingsCreateInput = z.infer<typeof BookingsCreateInputSchema>;
 export type BookingsCancelInput = z.infer<typeof BookingsCancelInputSchema>;
-export type BookingsRescheduleInput = z.infer<
-	typeof BookingsRescheduleInputSchema
->;
+export type BookingsRescheduleInput = z.infer<typeof BookingsRescheduleInputSchema>;
 export type BookingsConfirmInput = z.infer<typeof BookingsConfirmInputSchema>;
 export type BookingsDeclineInput = z.infer<typeof BookingsDeclineInputSchema>;
-
-// ── Output Schemas ───────────────────────────────────────────────────────────
 
 const AttendeeSchema = z
 	.object({
@@ -160,8 +154,6 @@ const BookingsConfirmResponseSchema = CalResponseSchema.extend({
 const BookingsDeclineResponseSchema = CalResponseSchema.extend({
 	data: BookingSchema.optional(),
 }).passthrough();
-
-// ── Endpoint I/O Maps ────────────────────────────────────────────────────────
 
 export const CalEndpointInputSchemas = {
 	bookingsList: BookingsListInputSchema,

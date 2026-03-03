@@ -9,22 +9,7 @@ export const list: CalEndpoints['bookingsList'] = async (ctx, input) => {
 		ctx.key,
 		{
 			method: 'GET',
-			query: {
-				status: input.status,
-				attendeeEmail: input.attendeeEmail,
-				attendeeName: input.attendeeName,
-				eventTypeIds: input.eventTypeIds,
-				eventTypeId: input.eventTypeId,
-				teamsIds: input.teamsIds,
-				teamId: input.teamId,
-				afterStart: input.afterStart,
-				beforeEnd: input.beforeEnd,
-				sortStart: input.sortStart,
-				sortEnd: input.sortEnd,
-				sortCreated: input.sortCreated,
-				take: input.take,
-				skip: input.skip,
-			},
+			query: input,
 		},
 	);
 
@@ -42,12 +27,7 @@ export const list: CalEndpoints['bookingsList'] = async (ctx, input) => {
 		}
 	}
 
-	await logEventFromContext(
-		ctx,
-		'cal.bookings.list',
-		{ ...input },
-		'completed',
-	);
+	await logEventFromContext(ctx, 'cal.bookings.list', { ...input }, 'completed');
 	return result;
 };
 
@@ -70,12 +50,7 @@ export const get: CalEndpoints['bookingsGet'] = async (ctx, input) => {
 		}
 	}
 
-	await logEventFromContext(
-		ctx,
-		'cal.bookings.get',
-		{ ...input },
-		'completed',
-	);
+	await logEventFromContext(ctx, 'cal.bookings.get', { ...input }, 'completed');
 	return result;
 };
 
@@ -85,15 +60,7 @@ export const create: CalEndpoints['bookingsCreate'] = async (ctx, input) => {
 		ctx.key,
 		{
 			method: 'POST',
-			body: {
-				start: input.start,
-				eventTypeId: input.eventTypeId,
-				attendee: input.attendee,
-				meetingUrl: input.meetingUrl,
-				lengthInMinutes: input.lengthInMinutes,
-				bookingFieldsResponses: input.bookingFieldsResponses,
-				metadata: input.metadata,
-			},
+			body: input,
 		},
 	);
 
@@ -107,24 +74,19 @@ export const create: CalEndpoints['bookingsCreate'] = async (ctx, input) => {
 		}
 	}
 
-	await logEventFromContext(
-		ctx,
-		'cal.bookings.create',
-		{ ...input },
-		'completed',
-	);
+	await logEventFromContext(ctx, 'cal.bookings.create', { ...input }, 'completed');
 	return result;
 };
 
 export const cancel: CalEndpoints['bookingsCancel'] = async (ctx, input) => {
+	const { uid, ...body } = input;
+
 	const result = await makeCalRequest<CalEndpointOutputs['bookingsCancel']>(
-		`/bookings/${input.uid}/cancel`,
+		`/bookings/${uid}/cancel`,
 		ctx.key,
 		{
 			method: 'POST',
-			body: {
-				cancellationReason: input.cancellationReason,
-			},
+			body,
 		},
 	);
 
@@ -138,28 +100,21 @@ export const cancel: CalEndpoints['bookingsCancel'] = async (ctx, input) => {
 		}
 	}
 
-	await logEventFromContext(
-		ctx,
-		'cal.bookings.cancel',
-		{ ...input },
-		'completed',
-	);
+	await logEventFromContext(ctx, 'cal.bookings.cancel', { ...input }, 'completed');
 	return result;
 };
 
-export const reschedule: CalEndpoints['bookingsReschedule'] = async (
-	ctx,
-	input,
-) => {
-	const result = await makeCalRequest<
-		CalEndpointOutputs['bookingsReschedule']
-	>(`/bookings/${input.uid}/reschedule`, ctx.key, {
-		method: 'POST',
-		body: {
-			start: input.start,
-			reschedulingReason: input.reschedulingReason,
+export const reschedule: CalEndpoints['bookingsReschedule'] = async (ctx, input) => {
+	const { uid, ...body } = input;
+
+	const result = await makeCalRequest<CalEndpointOutputs['bookingsReschedule']>(
+		`/bookings/${uid}/reschedule`,
+		ctx.key,
+		{
+			method: 'POST',
+			body,
 		},
-	});
+	);
 
 	if (result.data && ctx.db.bookings) {
 		try {
@@ -171,12 +126,7 @@ export const reschedule: CalEndpoints['bookingsReschedule'] = async (
 		}
 	}
 
-	await logEventFromContext(
-		ctx,
-		'cal.bookings.reschedule',
-		{ ...input },
-		'completed',
-	);
+	await logEventFromContext(ctx, 'cal.bookings.reschedule', { ...input }, 'completed');
 	return result;
 };
 
@@ -199,24 +149,19 @@ export const confirm: CalEndpoints['bookingsConfirm'] = async (ctx, input) => {
 		}
 	}
 
-	await logEventFromContext(
-		ctx,
-		'cal.bookings.confirm',
-		{ ...input },
-		'completed',
-	);
+	await logEventFromContext(ctx, 'cal.bookings.confirm', { ...input }, 'completed');
 	return result;
 };
 
 export const decline: CalEndpoints['bookingsDecline'] = async (ctx, input) => {
+	const { uid, ...body } = input;
+
 	const result = await makeCalRequest<CalEndpointOutputs['bookingsDecline']>(
-		`/bookings/${input.uid}/decline`,
+		`/bookings/${uid}/decline`,
 		ctx.key,
 		{
 			method: 'POST',
-			body: {
-				reason: input.reason,
-			},
+			body,
 		},
 	);
 
@@ -230,11 +175,6 @@ export const decline: CalEndpoints['bookingsDecline'] = async (ctx, input) => {
 		}
 	}
 
-	await logEventFromContext(
-		ctx,
-		'cal.bookings.decline',
-		{ ...input },
-		'completed',
-	);
+	await logEventFromContext(ctx, 'cal.bookings.decline', { ...input }, 'completed');
 	return result;
 };
