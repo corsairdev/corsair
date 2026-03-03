@@ -15,6 +15,7 @@
 
 export { sql } from 'kysely';
 export * from './db/index';
+export { createCorsairDatabase } from './db/kysely/database';
 export type {
 	CorsairDatabase,
 	CorsairDatabaseInput,
