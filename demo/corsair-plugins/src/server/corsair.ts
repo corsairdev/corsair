@@ -8,6 +8,7 @@ import {
 	posthog,
 	slack,
 	spotify,
+	airtable,
 } from 'corsair';
 import { pool } from '../db';
 
@@ -130,5 +131,6 @@ export const corsair = createCorsair({
 		hubspot(),
 		posthog(),
 		spotify(),
+		airtable(),
 	],
 });
