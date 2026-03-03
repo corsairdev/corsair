@@ -10,7 +10,7 @@
     "rootDir": "./",
     "composite": true,
     "incremental": true,
-    "emitDeclarationOnly": false,
+    "noEmit": true,
     "declaration": true,
     "declarationMap": true,
     "skipLibCheck": true
