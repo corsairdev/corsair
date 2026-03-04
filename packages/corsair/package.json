@@ -87,6 +87,11 @@
       "types": "./dist/plugins/hubspot/index.d.ts",
       "default": "./dist/plugins/hubspot/index.js"
     },
+    "./plugins/telegram": {
+      "dev-source": "./plugins/telegram/index.ts",
+      "types": "./dist/plugins/telegram/index.d.ts",
+      "default": "./dist/plugins/telegram/index.js"
+    },
     "./plugins/spotify": {
       "dev-source": "./plugins/spotify/index.ts",
       "types": "./dist/plugins/spotify/index.d.ts",
