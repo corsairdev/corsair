@@ -50,11 +50,6 @@ async function fetchDatabaseId(): Promise<string> {
 		},
 	);
 	const databases = databasesResponse
-	if (databases?.results) {
-		for (let i = 0; i < databases.results.length; i++) {
-			const db = databases.results[i];
-		}
-	}
 	if (databases?.results && databases.results.length > 0 && databases.results[0]?.id) {
 		return databases.results[0].id;
 	}

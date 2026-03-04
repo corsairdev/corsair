@@ -101,11 +101,6 @@
       "dev-source": "./plugins/spotify/index.ts",
       "types": "./dist/plugins/spotify/index.d.ts",
       "default": "./dist/plugins/spotify/index.js"
-    },
-    "./plugins/spotify/setup": {
-      "dev-source": "./plugins/notion/setup.ts",
-      "types": "./dist/plugins/notion/setup.d.ts",
-      "default": "./dist/plugins/notion/setup.js"
     }
   },
   "scripts": {

@@ -138,10 +138,14 @@ export function createNotionMatch(
 	eventType: string,
 ): CorsairWebhookMatcher {
 	return (request: RawWebhookRequest) => {
-		if(eventType === 'url_verification') {
+		if (eventType === 'url_verification') {
+			// Asserting as VerificationEvent because parseBody returns unknown and the
+			// verification token check is the sole purpose of this matcher path.
 			const parsedBody = parseBody(request.body) as VerificationEvent;
 			return !!parsedBody.verification_token;
 		}
+		// Asserting as NotionWebhookPayload because parseBody returns unknown and we
+		// only need to read the top-level `type` field for routing purposes here.
 		const parsedBody = parseBody(request.body) as NotionWebhookPayload;
 		return parsedBody.type === eventType;
 	};
