@@ -265,7 +265,7 @@ export function verifyTelegramWebhookSignature(
 		: headers['x-telegram-bot-api-secret-token'];
 
 	if (!providedToken) {
-		return { valid: true };
+		return { valid: false, error: 'Missing x-telegram-bot-api-secret-token header' };
 	}
 
 	const isValid = providedToken === secretToken;
