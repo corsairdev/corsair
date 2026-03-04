@@ -354,8 +354,6 @@ const SendMessageInputSchema = z.object({
 	reply_markup: TelegramReplyMarkupSchema.optional(),
 });
 
-const SendMessageAndWaitForResponseInputSchema = SendMessageInputSchema;
-
 const EditMessageTextInputSchema = z.object({
 	chat_id: z.union([z.string(), z.number()]).optional(),
 	message_id: z.number().optional(),
@@ -611,7 +609,6 @@ export type TelegramEndpointInputs = {
 	answerInlineQuery: z.infer<typeof AnswerInlineQueryInputSchema>;
 	getFile: z.infer<typeof GetFileInputSchema>;
 	sendMessage: z.infer<typeof SendMessageInputSchema>;
-	sendMessageAndWaitForResponse: z.infer<typeof SendMessageAndWaitForResponseInputSchema>;
 	editMessageText: z.infer<typeof EditMessageTextInputSchema>;
 	deleteMessage: z.infer<typeof DeleteMessageInputSchema>;
 	pinChatMessage: z.infer<typeof PinChatMessageInputSchema>;
@@ -682,18 +679,6 @@ export type TelegramEndpointOutputs = {
 		file_path?: string;
 	};
 	sendMessage: {
-		message_id: number;
-		from?: z.infer<typeof TelegramUserSchema>;
-		date: number;
-		chat: {
-			id: number;
-			type: string;
-			[key: string]: unknown;
-		};
-		text?: string;
-		[key: string]: unknown;
-	};
-	sendMessageAndWaitForResponse: {
 		message_id: number;
 		from?: z.infer<typeof TelegramUserSchema>;
 		date: number;

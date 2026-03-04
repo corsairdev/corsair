@@ -38,24 +38,6 @@ export const sendMessage: TelegramEndpoints['sendMessage'] = async (
 	return result;
 };
 
-export const sendMessageAndWaitForResponse: TelegramEndpoints['sendMessageAndWaitForResponse'] =
-	async (ctx, input) => {
-		const result = await makeTelegramRequest<
-			TelegramEndpointOutputs['sendMessageAndWaitForResponse']
-		>('sendMessage', ctx.key, {
-			method: 'POST',
-			body: input,
-		});
-
-		await logEventFromContext(
-			ctx,
-			'telegram.messages.sendMessageAndWaitForResponse',
-			{ ...input },
-			'completed',
-		);
-		return result;
-	};
-
 export const editMessageText: TelegramEndpoints['editMessageText'] = async (
 	ctx,
 	input,

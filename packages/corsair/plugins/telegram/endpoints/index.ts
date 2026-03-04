@@ -10,7 +10,6 @@ import {
 import { getFile } from './file';
 import {
 	sendMessage,
-	sendMessageAndWaitForResponse,
 	editMessageText,
 	deleteMessage,
 	pinChatMessage,
@@ -46,7 +45,6 @@ export const File = {
 
 export const Messages = {
 	sendMessage,
-	sendMessageAndWaitForResponse,
 	editMessageText,
 	deleteMessage,
 	pinChatMessage,

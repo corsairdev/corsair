@@ -82,7 +82,6 @@ export type TelegramEndpoints = {
 	answerInlineQuery: TelegramEndpoint<'answerInlineQuery'>;
 	getFile: TelegramEndpoint<'getFile'>;
 	sendMessage: TelegramEndpoint<'sendMessage'>;
-	sendMessageAndWaitForResponse: TelegramEndpoint<'sendMessageAndWaitForResponse'>;
 	editMessageText: TelegramEndpoint<'editMessageText'>;
 	deleteMessage: TelegramEndpoint<'deleteMessage'>;
 	pinChatMessage: TelegramEndpoint<'pinChatMessage'>;
@@ -136,7 +135,6 @@ const telegramEndpointsNested = {
 	},
 	messages: {
 		sendMessage: Messages.sendMessage,
-		sendMessageAndWaitForResponse: Messages.sendMessageAndWaitForResponse,
 		editMessageText: Messages.editMessageText,
 		deleteMessage: Messages.deleteMessage,
 		pinChatMessage: Messages.pinChatMessage,
