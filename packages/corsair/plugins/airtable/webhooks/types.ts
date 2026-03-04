@@ -101,7 +101,7 @@ function parseBody(body: unknown): unknown {
 	return typeof body === 'string' ? JSON.parse(body) : body;
 }
 
-export function createAirtableMatch(eventType: string): CorsairWebhookMatcher {
+export function createAirtableMatch(): CorsairWebhookMatcher {
 	return (request: RawWebhookRequest) => {
 		const parsedBody = parseBody(request.body) as Record<string, unknown>;
 		return (

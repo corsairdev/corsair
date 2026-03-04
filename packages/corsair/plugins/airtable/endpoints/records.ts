@@ -155,15 +155,9 @@ export const search: AirtableEndpoints['recordsSearch'] = async (
 	>(`${input.baseId}/${input.tableIdOrName}`, ctx.key, {
 		method: 'GET',
 		query: {
-			filterByFormula: input.filterByFormula,
-			maxRecords: input.maxRecords,
-			pageSize: input.pageSize,
-			view: input.view,
-			cellFormat: input.cellFormat,
-			timeZone: input.timeZone,
-			userLocale: input.userLocale,
-			returnFieldsByFieldId: input.returnFieldsByFieldId,
-			offset: input.offset,
+			...input,
+			sort: input.sort?.map((sort) => `${sort.field}:${sort.direction}`).join(','),
+			fields: input.fields?.join(','),
 		},
 	});
 

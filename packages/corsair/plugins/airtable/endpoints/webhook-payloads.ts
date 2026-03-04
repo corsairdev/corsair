@@ -18,7 +18,6 @@ export const getPayloads = async (
 	input: WebhooksGetPayloadsInput,
 ): Promise<WebhooksGetPayloadsResponse> => {
 
-    console.log('input', input);
 	const response = await makeAirtableRequest(
 		`bases/${input.baseId}/webhooks/${input.webhookId}/payloads`,
 		ctx.key,
@@ -30,10 +29,7 @@ export const getPayloads = async (
 		},
 	);
 
-    console.log('response', response);
-
     const parsed = AirtableWebhookPayloadsResponseSchema.parse(response);
-    console.log('parsed', parsed);
 
 	if (parsed.payloads && ctx.db.records) {
 		try {

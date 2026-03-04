@@ -7,7 +7,7 @@ import {
 } from './types';
 
 export const event: AirtableWebhooks['event'] = {
-	match: createAirtableMatch('event'),
+	match: createAirtableMatch(),
 
 	handler: async (ctx, request) => {
 		const webhookSecret = ctx.key;
@@ -15,7 +15,6 @@ export const event: AirtableWebhooks['event'] = {
 			request,
 			webhookSecret,
 		);
-		console.log('verification', verification);
 		if (!verification.valid) {
 			return {
 				success: false,
@@ -38,12 +37,13 @@ export const event: AirtableWebhooks['event'] = {
 			};
 		}
 
-		const event = payload as AirtableEvent;
+		const event = payload
 
 		let corsairEntityId = '';
 
 
 		try {
+			// Type assertion to ensure the endpoints are the correct type
 			const endpoints = ctx.endpoints as AirtableBoundEndpoints;
 			const payloadResponse = await endpoints.webhooks.getPayloads({
 				baseId: event.base.id,

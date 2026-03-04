@@ -45,7 +45,26 @@ export const getSchema: AirtableEndpoints['basesGetSchema'] = async (
 		AirtableEndpointOutputs['basesGetSchema']
 	>(`meta/bases/${input.baseId}/tables`, ctx.key, {
 		method: 'GET',
+		query: {
+			include: input.include?.join(','),
+		},
 	});
+
+	if (response.tables && ctx.db.records) {
+		try {
+			for (const table of response.tables) {
+				for (const field of table.fields) {
+					await ctx.db.records.upsertByEntityId(field.id, {
+						...field,
+						baseId: input.baseId,
+						tableId: table.id,
+					});
+				}
+			}
+		} catch (error) {
+			console.warn('Failed to save records to database:', error);
+		}
+	}
 
 	await logEventFromContext(
 		ctx,
