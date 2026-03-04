@@ -15,6 +15,7 @@ describe('Todoist API Type Tests', () => {
 		let taskId: string | undefined;
 
 		beforeAll(async () => {
+				// using any here because this helper is reused across Todoist endpoints in tests
 				const projects = await makeTodoistRequest<any>('projects', TEST_TOKEN, {
 				method: 'GET',
 			});
@@ -220,6 +221,7 @@ describe('Todoist API Type Tests', () => {
 				method: 'GET',
 			});
 
+			// result is any to simplify test assertions over multiple possible response shapes
 			const result: any = response;
 
 			if (Array.isArray(result) && result.length > 0) {
@@ -238,6 +240,7 @@ describe('Todoist API Type Tests', () => {
 
 		it('projectsGet returns correct type', async () => {
 			if (!projectId) {
+				// using any here because the projects response shape can vary in tests
 				const projects = await makeTodoistRequest<any>('projects', TEST_TOKEN, {
 					method: 'GET',
 				});
@@ -247,9 +250,11 @@ describe('Todoist API Type Tests', () => {
 				} else if (
 					!Array.isArray(projects) &&
 					'projects' in projects &&
+					// casting to any to handle union response shapes from the Todoist API in tests
 					Array.isArray((projects as any).projects) &&
 					(projects as any).projects.length > 0
 				) {
+					// casting to any to handle union response shapes from the Todoist API in tests
 					projectId = (projects as any).projects[0]?.id;
 				} else {
 					return;

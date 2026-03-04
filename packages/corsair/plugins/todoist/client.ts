@@ -19,6 +19,7 @@ export async function makeTodoistRequest<T>(
 	apiKey: string,
 	options: {
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+		// body uses unknown to allow arbitrary JSON payloads for different Todoist endpoints
 		body?: Record<string, unknown>;
 		query?: Record<string, string | number | boolean | undefined>;
 	} = {},

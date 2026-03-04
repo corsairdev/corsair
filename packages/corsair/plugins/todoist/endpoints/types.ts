@@ -12,6 +12,7 @@ const TaskSchema = z
 		parent_id: z.string().nullable().optional(),
 		order: z.number().optional(),
 		priority: z.number().optional(),
+		// due is loosely typed because the Todoist due object structure is not strictly defined
 		due: z.record(z.unknown()).nullable().optional(),
 		url: z.string().optional(),
 		comment_count: z.number().optional(),
@@ -72,6 +73,7 @@ const ReminderSchema = z
 		id: z.string(),
 		task_id: z.string().optional(),
 		notify_uid: z.string().optional(),
+		// due is loosely typed because the Todoist due object structure is not strictly defined
 		due: z.record(z.unknown()).optional(),
 	})
 	.passthrough();
