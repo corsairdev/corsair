@@ -35,6 +35,7 @@ export async function makeTelegramRequest<T>(
 	botToken: string,
 	options: {
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+		// Request body for Telegram API can contain various parameter types - unknown ensures type safety
 		body?: Record<string, unknown>;
 		query?: Record<string, string | number | boolean | undefined>;
 	} = {},

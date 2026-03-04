@@ -658,16 +658,19 @@ export type TelegramEndpointOutputs = {
 		can_set_sticker_set?: boolean;
 		linked_chat_id?: number;
 		location?: z.infer<typeof TelegramChatLocationSchema>;
+		// Telegram chat response may include additional fields not explicitly typed - unknown allows for safe extension
 		[key: string]: unknown;
 	};
 	getChatAdministrators: Array<{
 		status: string;
 		user: z.infer<typeof TelegramUserSchema>;
+		// Telegram chat administrator response may include additional fields not explicitly typed - unknown allows for safe extension
 		[key: string]: unknown;
 	}>;
 	getChatMember: {
 		status: string;
 		user: z.infer<typeof TelegramUserSchema>;
+		// Telegram chat member response may include additional fields not explicitly typed - unknown allows for safe extension
 		[key: string]: unknown;
 	};
 	answerCallbackQuery: boolean;
@@ -685,9 +688,11 @@ export type TelegramEndpointOutputs = {
 		chat: {
 			id: number;
 			type: string;
+			// Telegram chat object in message response may include additional fields not explicitly typed - unknown allows for safe extension
 			[key: string]: unknown;
 		};
 		text?: string;
+		// Telegram send message response may include additional fields not explicitly typed - unknown allows for safe extension
 		[key: string]: unknown;
 	};
 	editMessageText: {
@@ -697,9 +702,11 @@ export type TelegramEndpointOutputs = {
 		chat?: {
 			id: number;
 			type: string;
+			// Telegram chat object in edit message response may include additional fields not explicitly typed - unknown allows for safe extension
 			[key: string]: unknown;
 		};
 		text?: string;
+		// Telegram edit message response may include additional fields not explicitly typed - unknown allows for safe extension
 		[key: string]: unknown;
 	} | boolean;
 	deleteMessage: boolean;
@@ -712,10 +719,12 @@ export type TelegramEndpointOutputs = {
 		chat: {
 			id: number;
 			type: string;
+			// Telegram chat object in photo message response may include additional fields not explicitly typed - unknown allows for safe extension
 			[key: string]: unknown;
 		};
 		photo?: z.infer<typeof TelegramPhotoSizeSchema>[];
 		caption?: string;
+		// Telegram send photo response may include additional fields not explicitly typed - unknown allows for safe extension
 		[key: string]: unknown;
 	};
 	sendVideo: {
@@ -725,10 +734,12 @@ export type TelegramEndpointOutputs = {
 		chat: {
 			id: number;
 			type: string;
+			// Telegram chat object in video message response may include additional fields not explicitly typed - unknown allows for safe extension
 			[key: string]: unknown;
 		};
 		video?: z.infer<typeof TelegramVideoSchema>;
 		caption?: string;
+		// Telegram send video response may include additional fields not explicitly typed - unknown allows for safe extension
 		[key: string]: unknown;
 	};
 	sendAudio: {
@@ -738,10 +749,12 @@ export type TelegramEndpointOutputs = {
 		chat: {
 			id: number;
 			type: string;
+			// Telegram chat object in audio message response may include additional fields not explicitly typed - unknown allows for safe extension
 			[key: string]: unknown;
 		};
 		audio?: z.infer<typeof TelegramAudioSchema>;
 		caption?: string;
+		// Telegram send audio response may include additional fields not explicitly typed - unknown allows for safe extension
 		[key: string]: unknown;
 	};
 	sendDocument: {
@@ -751,10 +764,12 @@ export type TelegramEndpointOutputs = {
 		chat: {
 			id: number;
 			type: string;
+			// Telegram chat object in document message response may include additional fields not explicitly typed - unknown allows for safe extension
 			[key: string]: unknown;
 		};
 		document?: z.infer<typeof TelegramDocumentSchema>;
 		caption?: string;
+		// Telegram send document response may include additional fields not explicitly typed - unknown allows for safe extension
 		[key: string]: unknown;
 	};
 	sendSticker: {
@@ -764,9 +779,11 @@ export type TelegramEndpointOutputs = {
 		chat: {
 			id: number;
 			type: string;
+			// Telegram chat object in sticker message response may include additional fields not explicitly typed - unknown allows for safe extension
 			[key: string]: unknown;
 		};
 		sticker?: z.infer<typeof TelegramStickerSchema>;
+		// Telegram send sticker response may include additional fields not explicitly typed - unknown allows for safe extension
 		[key: string]: unknown;
 	};
 	sendAnimation: {
@@ -776,10 +793,12 @@ export type TelegramEndpointOutputs = {
 		chat: {
 			id: number;
 			type: string;
+			// Telegram chat object in animation message response may include additional fields not explicitly typed - unknown allows for safe extension
 			[key: string]: unknown;
 		};
 		animation?: z.infer<typeof TelegramAnimationSchema>;
 		caption?: string;
+		// Telegram send animation response may include additional fields not explicitly typed - unknown allows for safe extension
 		[key: string]: unknown;
 	};
 	sendLocation: {
@@ -789,9 +808,11 @@ export type TelegramEndpointOutputs = {
 		chat: {
 			id: number;
 			type: string;
+			// Telegram chat object in location message response may include additional fields not explicitly typed - unknown allows for safe extension
 			[key: string]: unknown;
 		};
 		location?: z.infer<typeof TelegramLocationSchema>;
+		// Telegram send location response may include additional fields not explicitly typed - unknown allows for safe extension
 		[key: string]: unknown;
 	};
 	sendMediaGroup: Array<{
@@ -801,8 +822,10 @@ export type TelegramEndpointOutputs = {
 		chat: {
 			id: number;
 			type: string;
+			// Telegram chat object in media group message response may include additional fields not explicitly typed - unknown allows for safe extension
 			[key: string]: unknown;
 		};
+		// Telegram send media group response may include additional fields not explicitly typed - unknown allows for safe extension
 		[key: string]: unknown;
 	}>;
 	sendChatAction: boolean;
@@ -830,6 +853,7 @@ export type TelegramEndpointOutputs = {
 			data?: string;
 			game_short_name?: string;
 		};
+		// Telegram get updates response may include additional fields not explicitly typed - unknown allows for safe extension
 		[key: string]: unknown;
 	}>;
 	getMe: {
@@ -840,6 +864,7 @@ export type TelegramEndpointOutputs = {
 		can_join_groups?: boolean;
 		can_read_all_group_messages?: boolean;
 		supports_inline_queries?: boolean;
+		// Telegram bot info response may include additional fields not explicitly typed - unknown allows for safe extension
 		[key: string]: unknown;
 	};
 };

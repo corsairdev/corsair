@@ -242,6 +242,7 @@ export function telegram<const T extends TelegramPluginOptions>(
 				return false;
 			}
 			
+			// Type assertion for webhook body validation - unknown used for safe type checking before validation
 			return 'update_id' in body && typeof (body as { update_id?: unknown }).update_id === 'number';
 		},
 		errorHandlers: {

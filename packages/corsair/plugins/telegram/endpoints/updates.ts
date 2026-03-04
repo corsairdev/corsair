@@ -4,6 +4,7 @@ import { makeTelegramRequest } from '../client';
 import type { TelegramEndpointOutputs } from './types';
 
 export const getUpdates: TelegramEndpoints['getUpdates'] = async (ctx, input) => {
+	// Request body for Telegram API can contain various parameter types - unknown ensures type safety
 	const body: Record<string, unknown> = {};
 	
 	if (input.offset !== undefined) {

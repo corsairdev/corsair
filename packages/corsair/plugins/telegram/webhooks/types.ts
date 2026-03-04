@@ -9,7 +9,7 @@ export interface TelegramUpdate {
 	shipping_query?: TelegramShippingQuery;
 	pre_checkout_query?: TelegramPreCheckoutQuery;
 	poll?: TelegramPoll;
-	// Using 'unknown' because the structure varies by event and is validated by the Telegram API
+	// Telegram API may include additional fields not explicitly typed - unknown allows for safe extension
 	[key: string]: unknown;
 }
 
@@ -46,7 +46,7 @@ export interface TelegramMessage {
 	migrate_to_chat_id?: number;
 	migrate_from_chat_id?: number;
 	pinned_message?: TelegramMessage;
-	// Using 'unknown' because the structure varies by event and is validated by the Telegram API
+	// Telegram message objects may contain additional fields not explicitly typed - unknown allows for safe extension
 	[key: string]: unknown;
 }
 
@@ -62,6 +62,7 @@ export interface TelegramUser {
 	can_join_groups?: boolean;
 	can_read_all_group_messages?: boolean;
 	supports_inline_queries?: boolean;
+	// Telegram user objects may contain additional fields not explicitly typed - unknown allows for safe extension
 	[key: string]: unknown;
 }
 
@@ -91,7 +92,7 @@ export interface TelegramChat {
 	sticker_set_name?: string;
 	can_set_sticker_set?: boolean;
 	linked_chat_id?: number;
-	// Using 'unknown' because the structure varies by event and is validated by the Telegram API
+	// Telegram chat objects may contain additional fields not explicitly typed - unknown allows for safe extension
 	[key: string]: unknown;
 }
 
@@ -103,7 +104,7 @@ export interface TelegramMessageEntity {
 	user?: TelegramUser;
 	language?: string;
 	custom_emoji_id?: string;
-	// Using 'unknown' because the structure varies by event and is validated by the Telegram API
+	// Telegram message entity objects may contain additional fields not explicitly typed - unknown allows for safe extension
 	[key: string]: unknown;
 }
 
@@ -115,7 +116,7 @@ export interface TelegramCallbackQuery {
 	chat_instance: string;
 	data?: string;
 	game_short_name?: string;
-	// Using 'unknown' because the structure varies by event and is validated by the Telegram API
+	// Telegram callback query objects may contain additional fields not explicitly typed - unknown allows for safe extension
 	[key: string]: unknown;
 }
 
@@ -125,7 +126,7 @@ export interface TelegramInlineQuery {
 	query: string;
 	offset: string;
 	chat_type?: string;
-	// Using 'unknown' because the structure varies by event and is validated by the Telegram API
+	// Telegram inline query objects may contain additional fields not explicitly typed - unknown allows for safe extension
 	[key: string]: unknown;
 }
 
@@ -133,7 +134,7 @@ export interface TelegramShippingQuery {
 	id: string;
 	from: TelegramUser;
 	invoice_payload: string;
-	// Using 'unknown' because the structure varies by event and is validated by the Telegram API
+	// Telegram shipping query objects may contain additional fields not explicitly typed - unknown allows for safe extension
 	[key: string]: unknown;
 }
 
@@ -144,7 +145,7 @@ export interface TelegramPreCheckoutQuery {
 	total_amount: number;
 	invoice_payload: string;
 	shipping_option_id?: string;
-	// Using 'unknown' because the structure varies by event and is validated by the Telegram API
+	// Telegram pre-checkout query objects may contain additional fields not explicitly typed - unknown allows for safe extension
 	[key: string]: unknown;
 }
 
@@ -154,7 +155,7 @@ export interface TelegramPoll {
 	options: Array<{
 		text: string;
 		voter_count: number;
-		// Using 'unknown' because the structure varies by event and is validated by the Telegram API
+		// Telegram poll option objects may contain additional fields not explicitly typed - unknown allows for safe extension
 		[key: string]: unknown;
 	}>;
 	total_voter_count: number;
@@ -167,7 +168,7 @@ export interface TelegramPoll {
 	explanation_entities?: TelegramMessageEntity[];
 	open_period?: number;
 	close_date?: number;
-	// Using 'unknown' because the structure varies by event and is validated by the Telegram API
+	// Telegram poll objects may contain additional fields not explicitly typed - unknown allows for safe extension
 	[key: string]: unknown;
 }
 
@@ -234,7 +235,7 @@ import type {
 	WebhookRequest,
 } from '../../../core';
 
-// Using 'unknown' because the structure varies by event and is validated by the Telegram API
+// Body can be string or object from webhook request - unknown ensures type safety before parsing
 function parseBody(body: unknown): unknown {
 	return typeof body === 'string' ? JSON.parse(body) : body;
 }
