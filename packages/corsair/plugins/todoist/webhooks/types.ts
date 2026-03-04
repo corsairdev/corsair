@@ -1,154 +1,145 @@
 import type { CorsairWebhookMatcher, RawWebhookRequest, WebhookRequest } from '../../../core';
 
-export interface TodoistWebhookPayload {
-	type: string;
-	created_at: string;
-	data: {
-		[key: string]: any;
-	};
+export interface TodoistWebhookPayload<TData = { [key: string]: any }> {
+	event_name: string;
+	triggered_at?: string;
+	created_at?: string;
+	event_data?: TData;
+	data?: TData;
+	[key: string]: any;
 }
 
-export interface ItemAddedEvent extends TodoistWebhookPayload {
-	type: 'item:added';
-	data: {
-		id: string;
-		project_id: string;
-		section_id?: string;
-		content: string;
-		description?: string;
-		priority?: number;
-		parent_id?: string;
-		labels?: string[];
-		[key: string]: any;
-	};
+type ItemBaseData = {
+	id: string;
+	project_id: string;
+	section_id?: string | null;
+	content: string;
+	description?: string;
+	priority?: number;
+	parent_id?: string | null;
+	labels?: string[];
+	[key: string]: any;
+};
+
+export interface ItemAddedEvent extends TodoistWebhookPayload<ItemBaseData> {
+	event_name: 'item:added';
 }
 
-export interface ItemUpdatedEvent extends TodoistWebhookPayload {
-	type: 'item:updated';
-	data: {
-		id: string;
-		project_id: string;
-		section_id?: string;
-		content: string;
-		description?: string;
-		priority?: number;
-		parent_id?: string;
-		labels?: string[];
-		[key: string]: any;
-	};
+export interface ItemUpdatedEvent extends TodoistWebhookPayload<ItemBaseData> {
+	event_name: 'item:updated';
 }
 
-export interface ItemDeletedEvent extends TodoistWebhookPayload {
-	type: 'item:deleted';
-	data: {
+export interface ItemDeletedEvent
+	extends TodoistWebhookPayload<{
 		id: string;
 		project_id?: string;
 		content?: string;
 		[key: string]: any;
-	};
+	}> {
+	event_name: 'item:deleted';
 }
 
-export interface ItemCompletedEvent extends TodoistWebhookPayload {
-	type: 'item:completed';
-	data: {
+export interface ItemCompletedEvent
+	extends TodoistWebhookPayload<{
 		id: string;
 		project_id?: string;
 		content?: string;
 		[key: string]: any;
-	};
+	}> {
+	event_name: 'item:completed';
 }
 
-export interface ItemUncompletedEvent extends TodoistWebhookPayload {
-	type: 'item:uncompleted';
-	data: {
+export interface ItemUncompletedEvent
+	extends TodoistWebhookPayload<{
 		id: string;
 		project_id?: string;
 		content?: string;
 		[key: string]: any;
-	};
+	}> {
+	event_name: 'item:uncompleted';
 }
 
-export interface NoteAddedEvent extends TodoistWebhookPayload {
-	type: 'note:added';
-	data: {
+export interface NoteAddedEvent
+	extends TodoistWebhookPayload<{
 		id: string;
 		item_id?: string;
 		project_id?: string;
 		content: string;
 		posted_uid?: string;
 		[key: string]: any;
-	};
+	}> {
+	event_name: 'note:added';
 }
 
-export interface NoteUpdatedEvent extends TodoistWebhookPayload {
-	type: 'note:updated';
-	data: {
+export interface NoteUpdatedEvent
+	extends TodoistWebhookPayload<{
 		id: string;
 		item_id?: string;
 		project_id?: string;
 		content: string;
 		posted_uid?: string;
 		[key: string]: any;
-	};
+	}> {
+	event_name: 'note:updated';
 }
 
-export interface NoteDeletedEvent extends TodoistWebhookPayload {
-	type: 'note:deleted';
-	data: {
+export interface NoteDeletedEvent
+	extends TodoistWebhookPayload<{
 		id: string;
 		item_id?: string;
 		project_id?: string;
 		[key: string]: any;
-	};
+	}> {
+	event_name: 'note:deleted';
 }
 
-export interface ProjectAddedEvent extends TodoistWebhookPayload {
-	type: 'project:added';
-	data: {
+export interface ProjectAddedEvent
+	extends TodoistWebhookPayload<{
 		id: string;
 		name: string;
 		color?: string;
 		parent_id?: string;
 		[key: string]: any;
-	};
+	}> {
+	event_name: 'project:added';
 }
 
-export interface ProjectUpdatedEvent extends TodoistWebhookPayload {
-	type: 'project:updated';
-	data: {
+export interface ProjectUpdatedEvent
+	extends TodoistWebhookPayload<{
 		id: string;
 		name: string;
 		color?: string;
 		parent_id?: string;
 		[key: string]: any;
-	};
+	}> {
+	event_name: 'project:updated';
 }
 
-export interface ProjectDeletedEvent extends TodoistWebhookPayload {
-	type: 'project:deleted';
-	data: {
+export interface ProjectDeletedEvent
+	extends TodoistWebhookPayload<{
 		id: string;
 		name?: string;
 		[key: string]: any;
-	};
+	}> {
+	event_name: 'project:deleted';
 }
 
-export interface ProjectArchivedEvent extends TodoistWebhookPayload {
-	type: 'project:archived';
-	data: {
+export interface ProjectArchivedEvent
+	extends TodoistWebhookPayload<{
 		id: string;
 		name?: string;
 		[key: string]: any;
-	};
+	}> {
+	event_name: 'project:archived';
 }
 
-export interface ProjectUnarchivedEvent extends TodoistWebhookPayload {
-	type: 'project:unarchived';
-	data: {
+export interface ProjectUnarchivedEvent
+	extends TodoistWebhookPayload<{
 		id: string;
 		name?: string;
 		[key: string]: any;
-	};
+	}> {
+	event_name: 'project:unarchived';
 }
 
 export type TodoistWebhookOutputs = {
@@ -174,7 +165,7 @@ function parseBody(body: unknown): unknown {
 export function createTodoistMatch(eventType: string): CorsairWebhookMatcher {
 	return (request: RawWebhookRequest) => {
 		const parsedBody = parseBody(request.body) as TodoistWebhookPayload;
-		return parsedBody.type === eventType;
+		return parsedBody.event_name === eventType;
 	};
 }
 
@@ -183,10 +174,10 @@ export function verifyTodoistWebhookSignature(
 	secret: string,
 ): { valid: boolean; error?: string } {
 	if (!secret) {
-		return { valid: true };
+		return { valid: false, error: 'No secret provided' };
 	}
 
-	const signatureHeader = request.headers['x-todoist-signature'];
+	const signatureHeader = request.headers['x-todoist-hmac-sha256'];
 	const signature =
 		typeof signatureHeader === 'string'
 			? signatureHeader
@@ -195,7 +186,7 @@ export function verifyTodoistWebhookSignature(
 				: undefined;
 
 	if (!signature) {
-		return { valid: false, error: 'Missing x-todoist-signature header' };
+		return { valid: false, error: 'Missing x-todoist-hmac-sha256 header' };
 	}
 
 	const rawBody = request.rawBody;
@@ -211,7 +202,7 @@ export function verifyTodoistWebhookSignature(
 		const expectedSignature = crypto
 			.createHmac('sha256', secret)
 			.update(rawBody)
-			.digest('hex');
+			.digest('base64');
 
 		const isValid = crypto.timingSafeEqual(
 			Buffer.from(signature),

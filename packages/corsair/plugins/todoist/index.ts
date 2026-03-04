@@ -451,8 +451,8 @@ export function todoist<const T extends TodoistPluginOptions>(
 		webhookSchemas: todoistWebhookSchemas,
 		pluginWebhookMatcher: (request) => {
 			const headers = request.headers;
-			const hasSignature = 'x-todoist-signature' in headers;
-			return hasSignature;
+			const hasDeliveryId = 'x-todoist-delivery-id' in headers;
+			return hasDeliveryId;
 		},
 		errorHandlers: {
 			...errorHandlers,

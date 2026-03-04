@@ -7,7 +7,8 @@ export const added: TodoistWebhooks['itemAdded'] = {
 
 	handler: async (ctx, request) => {
 		const webhookSecret = ctx.key;
-		const verification = verifyTodoistWebhookSignature(request, webhookSecret);
+        const verification = verifyTodoistWebhookSignature(request, webhookSecret);
+        console.log(verification, 'verification');
 		if (!verification.valid) {
 			return {
 				success: false,
@@ -17,20 +18,14 @@ export const added: TodoistWebhooks['itemAdded'] = {
 		}
 
 		const event = request.payload;
-
-		if (event.type !== 'item:added') {
-			return {
-				success: true,
-				data: undefined,
-			};
-		}
+		const data = event.event_data ?? event.data;
 
 		let corsairEntityId = '';
 
-		if (ctx.db.tasks && event.data.id) {
+		if (ctx.db.tasks && data && data.id) {
 			try {
-				const entity = await ctx.db.tasks.upsertByEntityId(event.data.id, {
-					...event.data,
+				const entity = await ctx.db.tasks.upsertByEntityId(data.id, {
+					...data,
 				});
 				corsairEntityId = entity?.id || '';
 			} catch (error) {
@@ -68,20 +63,14 @@ export const updated: TodoistWebhooks['itemUpdated'] = {
 		}
 
 		const event = request.payload;
-
-		if (event.type !== 'item:updated') {
-			return {
-				success: true,
-				data: undefined,
-			};
-		}
+		const data = event.event_data ?? event.data;
 
 		let corsairEntityId = '';
 
-		if (ctx.db.tasks && event.data.id) {
+		if (ctx.db.tasks && data && data.id) {
 			try {
-				const entity = await ctx.db.tasks.upsertByEntityId(event.data.id, {
-					...event.data,
+				const entity = await ctx.db.tasks.upsertByEntityId(data.id, {
+					...data,
 				});
 				corsairEntityId = entity?.id || '';
 			} catch (error) {
@@ -119,17 +108,11 @@ export const deleted: TodoistWebhooks['itemDeleted'] = {
 		}
 
 		const event = request.payload;
+		const data = event.event_data ?? event.data;
 
-		if (event.type !== 'item:deleted') {
-			return {
-				success: true,
-				data: undefined,
-			};
-		}
-
-		if (ctx.db.tasks && event.data.id) {
+		if (ctx.db.tasks && data && data.id) {
 			try {
-				await ctx.db.tasks.deleteByEntityId(event.data.id);
+				await ctx.db.tasks.deleteByEntityId(data.id);
 			} catch (error) {
 				console.warn('Failed to delete task from database:', error);
 			}
@@ -164,23 +147,17 @@ export const completed: TodoistWebhooks['itemCompleted'] = {
 		}
 
 		const event = request.payload;
-
-		if (event.type !== 'item:completed') {
-			return {
-				success: true,
-				data: undefined,
-			};
-		}
+		const data = event.event_data ?? event.data;
 
 		let corsairEntityId = '';
 
-		if (ctx.db.tasks && event.data.id) {
+		if (ctx.db.tasks && data && data.id) {
 			try {
-				const existing = await ctx.db.tasks.findByEntityId(event.data.id);
-				const entity = await ctx.db.tasks.upsertByEntityId(event.data.id, {
+				const existing = await ctx.db.tasks.findByEntityId(data.id);
+				const entity = await ctx.db.tasks.upsertByEntityId(data.id, {
 					...(existing?.data || {}),
-					...event.data,
-					content: event.data.content || existing?.data?.content || '',
+					...data,
+					content: data.content || existing?.data?.content || '',
 					is_completed: true,
 				});
 				corsairEntityId = entity?.id || '';
@@ -219,23 +196,17 @@ export const uncompleted: TodoistWebhooks['itemUncompleted'] = {
 		}
 
 		const event = request.payload;
-
-		if (event.type !== 'item:uncompleted') {
-			return {
-				success: true,
-				data: undefined,
-			};
-		}
+		const data = event.event_data ?? event.data;
 
 		let corsairEntityId = '';
 
-		if (ctx.db.tasks && event.data.id) {
+		if (ctx.db.tasks && data && data.id) {
 			try {
-				const existing = await ctx.db.tasks.findByEntityId(event.data.id);
-				const entity = await ctx.db.tasks.upsertByEntityId(event.data.id, {
+				const existing = await ctx.db.tasks.findByEntityId(data.id);
+				const entity = await ctx.db.tasks.upsertByEntityId(data.id, {
 					...(existing?.data || {}),
-					...event.data,
-					content: event.data.content || existing?.data?.content || '',
+					...data,
+					content: data.content || existing?.data?.content || '',
 					is_completed: false,
 				});
 				corsairEntityId = entity?.id || '';

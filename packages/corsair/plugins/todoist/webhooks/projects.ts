@@ -17,20 +17,14 @@ export const added: TodoistWebhooks['projectAdded'] = {
 		}
 
 		const event = request.payload;
-
-		if (event.type !== 'project:added') {
-			return {
-				success: true,
-				data: undefined,
-			};
-		}
+		const data = event.event_data ?? event.data;
 
 		let corsairEntityId = '';
 
-		if (ctx.db.projects && event.data.id) {
+		if (ctx.db.projects && data && data.id) {
 			try {
-				const entity = await ctx.db.projects.upsertByEntityId(event.data.id, {
-					...event.data,
+				const entity = await ctx.db.projects.upsertByEntityId(data.id, {
+					...data,
 				});
 				corsairEntityId = entity?.id || '';
 			} catch (error) {
@@ -68,20 +62,14 @@ export const updated: TodoistWebhooks['projectUpdated'] = {
 		}
 
 		const event = request.payload;
-
-		if (event.type !== 'project:updated') {
-			return {
-				success: true,
-				data: undefined,
-			};
-		}
+		const data = event.event_data ?? event.data;
 
 		let corsairEntityId = '';
 
-		if (ctx.db.projects && event.data.id) {
+		if (ctx.db.projects && data && data.id) {
 			try {
-				const entity = await ctx.db.projects.upsertByEntityId(event.data.id, {
-					...event.data,
+				const entity = await ctx.db.projects.upsertByEntityId(data.id, {
+					...data,
 				});
 				corsairEntityId = entity?.id || '';
 			} catch (error) {
@@ -119,17 +107,11 @@ export const deleted: TodoistWebhooks['projectDeleted'] = {
 		}
 
 		const event = request.payload;
+		const data = event.event_data ?? event.data;
 
-		if (event.type !== 'project:deleted') {
-			return {
-				success: true,
-				data: undefined,
-			};
-		}
-
-		if (ctx.db.projects && event.data.id) {
+		if (ctx.db.projects && data && data.id) {
 			try {
-				await ctx.db.projects.deleteByEntityId(event.data.id);
+				await ctx.db.projects.deleteByEntityId(data.id);
 			} catch (error) {
 				console.warn('Failed to delete project from database:', error);
 			}
@@ -164,23 +146,17 @@ export const archived: TodoistWebhooks['projectArchived'] = {
 		}
 
 		const event = request.payload;
-
-		if (event.type !== 'project:archived') {
-			return {
-				success: true,
-				data: undefined,
-			};
-		}
+		const data = event.event_data ?? event.data;
 
 		let corsairEntityId = '';
 
-		if (ctx.db.projects && event.data.id) {
+		if (ctx.db.projects && data && data.id) {
 			try {
-				const existing = await ctx.db.projects.findByEntityId(event.data.id);
+				const existing = await ctx.db.projects.findByEntityId(data.id);
 				if (existing) {
-					const entity = await ctx.db.projects.upsertByEntityId(event.data.id, {
+					const entity = await ctx.db.projects.upsertByEntityId(data.id, {
 						...existing.data,
-						...event.data,
+						...data,
 						is_archived: true,
 					});
 					corsairEntityId = entity?.id || '';
@@ -220,23 +196,17 @@ export const unarchived: TodoistWebhooks['projectUnarchived'] = {
 		}
 
 		const event = request.payload;
-
-		if (event.type !== 'project:unarchived') {
-			return {
-				success: true,
-				data: undefined,
-			};
-		}
+		const data = event.event_data ?? event.data;
 
 		let corsairEntityId = '';
 
-		if (ctx.db.projects && event.data.id) {
+		if (ctx.db.projects && data && data.id) {
 			try {
-				const existing = await ctx.db.projects.findByEntityId(event.data.id);
+				const existing = await ctx.db.projects.findByEntityId(data.id);
 				if (existing) {
-					const entity = await ctx.db.projects.upsertByEntityId(event.data.id, {
+					const entity = await ctx.db.projects.upsertByEntityId(data.id, {
 						...existing.data,
-						...event.data,
+						...data,
 						is_archived: false,
 					});
 					corsairEntityId = entity?.id || '';
