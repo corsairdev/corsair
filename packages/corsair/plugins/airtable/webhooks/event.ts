@@ -1,5 +1,4 @@
 import type { AirtableBoundEndpoints, AirtableWebhooks } from '..';
-import type { AirtableEvent } from './types';
 import { logEventFromContext } from '../../utils/events';
 import {
 	createAirtableMatch,
@@ -37,8 +36,6 @@ export const event: AirtableWebhooks['event'] = {
 			};
 		}
 
-		const event = payload
-
 		let corsairEntityId = '';
 
 
@@ -46,15 +43,15 @@ export const event: AirtableWebhooks['event'] = {
 			// Type assertion to ensure the endpoints are the correct type
 			const endpoints = ctx.endpoints as AirtableBoundEndpoints;
 			const payloadResponse = await endpoints.webhooks.getPayloads({
-				baseId: event.base.id,
-				webhookId: event.webhook.id,
-				cursor: 0,
+				baseId: payload.base.id,
+				webhookId: payload.webhook.id,
+				cursor: undefined,
 			});
 
 			await logEventFromContext(
 				ctx,
 				'airtable.webhook.event',
-				{ ...event, payloads: [...payloadResponse.payloads] },
+				{ ...payload, payloads: [...payloadResponse.payloads] },
 				'completed',
 			);
 		} catch (error) {
@@ -62,7 +59,7 @@ export const event: AirtableWebhooks['event'] = {
 			await logEventFromContext(
 				ctx,
 				'airtable.webhook.event',
-				{ ...event },
+				{ ...payload },
 				'completed',
 			);
 		}
@@ -70,7 +67,7 @@ export const event: AirtableWebhooks['event'] = {
 		return {
 			success: true,
 			corsairEntityId,
-			data: event,
+			data: payload,
 		};
 	},
 };
