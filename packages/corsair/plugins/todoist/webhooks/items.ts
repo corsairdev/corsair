@@ -8,7 +8,6 @@ export const added: TodoistWebhooks['itemAdded'] = {
 	handler: async (ctx, request) => {
 		const webhookSecret = ctx.key;
         const verification = verifyTodoistWebhookSignature(request, webhookSecret);
-        console.log(verification, 'verification');
 		if (!verification.valid) {
 			return {
 				success: false,
