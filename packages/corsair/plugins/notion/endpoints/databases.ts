@@ -108,7 +108,7 @@ export const searchDatabase: NotionEndpoints['databasesSearchDatabase'] =
 			body: {
 				query: input.query,
 				sort: input.sort,
-				filter: input.filter,
+				filter: input.filter ?? { value: 'database', property: 'object' },
 				start_cursor: input.start_cursor,
 				page_size: input.page_size,
 			},
