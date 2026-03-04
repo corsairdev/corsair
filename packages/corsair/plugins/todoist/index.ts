@@ -10,12 +10,26 @@ import type {
 	PluginAuthConfig,
 	PluginEndpointMeta,
 	PluginPermissionsConfig,
+	RequiredPluginWebhookSchemas,
 } from '../../core';
 import type { AuthTypes, PickAuth } from '../../core/constants';
 import type { TodoistEndpointInputs, TodoistEndpointOutputs } from './endpoints/types';
 import { todoistEndpointSchemas } from './endpoints/types';
 import type {
 	TodoistWebhookOutputs,
+	ItemAddedEvent,
+	ItemUpdatedEvent,
+	ItemDeletedEvent,
+	ItemCompletedEvent,
+	ItemUncompletedEvent,
+	NoteAddedEvent,
+	NoteUpdatedEvent,
+	NoteDeletedEvent,
+	ProjectAddedEvent,
+	ProjectUpdatedEvent,
+	ProjectDeletedEvent,
+	ProjectArchivedEvent,
+	ProjectUnarchivedEvent,
 } from './webhooks/types';
 import {
 	Comments,
@@ -26,7 +40,7 @@ import {
 	Tasks,
 } from './endpoints';
 import { TodoistSchema } from './schema';
-import { ExampleWebhooks } from './webhooks';
+import { ItemWebhooks, NoteWebhooks, ProjectWebhooks } from './webhooks';
 import { errorHandlers } from './error-handlers';
 
 export type TodoistPluginOptions = {
@@ -111,7 +125,19 @@ type TodoistWebhook<
 > = CorsairWebhook<TodoistContext, TEvent, TodoistWebhookOutputs[K]>;
 
 export type TodoistWebhooks = {
-	example: TodoistWebhook<'example', TodoistWebhookOutputs['example']>;
+	itemAdded: TodoistWebhook<'itemAdded', ItemAddedEvent>;
+	itemUpdated: TodoistWebhook<'itemUpdated', ItemUpdatedEvent>;
+	itemDeleted: TodoistWebhook<'itemDeleted', ItemDeletedEvent>;
+	itemCompleted: TodoistWebhook<'itemCompleted', ItemCompletedEvent>;
+	itemUncompleted: TodoistWebhook<'itemUncompleted', ItemUncompletedEvent>;
+	noteAdded: TodoistWebhook<'noteAdded', NoteAddedEvent>;
+	noteUpdated: TodoistWebhook<'noteUpdated', NoteUpdatedEvent>;
+	noteDeleted: TodoistWebhook<'noteDeleted', NoteDeletedEvent>;
+	projectAdded: TodoistWebhook<'projectAdded', ProjectAddedEvent>;
+	projectUpdated: TodoistWebhook<'projectUpdated', ProjectUpdatedEvent>;
+	projectDeleted: TodoistWebhook<'projectDeleted', ProjectDeletedEvent>;
+	projectArchived: TodoistWebhook<'projectArchived', ProjectArchivedEvent>;
+	projectUnarchived: TodoistWebhook<'projectUnarchived', ProjectUnarchivedEvent>;
 };
 
 export type TodoistBoundWebhooks = BindWebhooks<TodoistWebhooks>;
@@ -168,8 +194,24 @@ const todoistEndpointsNested = {
 } as const;
 
 const todoistWebhooksNested = {
-	example: {
-		example: ExampleWebhooks.example,
+	items: {
+		added: ItemWebhooks.added,
+		updated: ItemWebhooks.updated,
+		deleted: ItemWebhooks.deleted,
+		completed: ItemWebhooks.completed,
+		uncompleted: ItemWebhooks.uncompleted,
+	},
+	notes: {
+		added: NoteWebhooks.added,
+		updated: NoteWebhooks.updated,
+		deleted: NoteWebhooks.deleted,
+	},
+	projects: {
+		added: ProjectWebhooks.added,
+		updated: ProjectWebhooks.updated,
+		deleted: ProjectWebhooks.deleted,
+		archived: ProjectWebhooks.archived,
+		unarchived: ProjectWebhooks.unarchived,
 	},
 } as const;
 
@@ -322,6 +364,48 @@ const todoistEndpointMeta = {
 	},
 } satisfies PluginEndpointMeta<typeof todoistEndpointsNested>;
 
+const todoistWebhookSchemas = {
+	'items.added': {
+		description: 'A new task was added',
+	},
+	'items.updated': {
+		description: 'A task was updated',
+	},
+	'items.deleted': {
+		description: 'A task was deleted',
+	},
+	'items.completed': {
+		description: 'A task was completed',
+	},
+	'items.uncompleted': {
+		description: 'A completed task was uncompleted',
+	},
+	'notes.added': {
+		description: 'A new note/comment was added',
+	},
+	'notes.updated': {
+		description: 'A note/comment was updated',
+	},
+	'notes.deleted': {
+		description: 'A note/comment was deleted',
+	},
+	'projects.added': {
+		description: 'A new project was created',
+	},
+	'projects.updated': {
+		description: 'A project was updated',
+	},
+	'projects.deleted': {
+		description: 'A project was deleted',
+	},
+	'projects.archived': {
+		description: 'A project was archived',
+	},
+	'projects.unarchived': {
+		description: 'A project was unarchived',
+	},
+} satisfies RequiredPluginWebhookSchemas<typeof todoistWebhooksNested>;
+
 export const todoistAuthConfig = {
 	api_key: {
 		account: ['one'] as const,
@@ -364,6 +448,7 @@ export function todoist<const T extends TodoistPluginOptions>(
 		webhooks: todoistWebhooksNested,
 		endpointMeta: todoistEndpointMeta,
 		endpointSchemas: todoistEndpointSchemas,
+		webhookSchemas: todoistWebhookSchemas,
 		pluginWebhookMatcher: (request) => {
 			const headers = request.headers;
 			const hasSignature = 'x-todoist-signature' in headers;
@@ -414,8 +499,21 @@ export function todoist<const T extends TodoistPluginOptions>(
 // ─────────────────────────────────────────────────────────────────────────────
 
 export type {
-	ExampleEvent,
 	TodoistWebhookOutputs,
+	TodoistWebhookPayload,
+	ItemAddedEvent,
+	ItemUpdatedEvent,
+	ItemDeletedEvent,
+	ItemCompletedEvent,
+	ItemUncompletedEvent,
+	NoteAddedEvent,
+	NoteUpdatedEvent,
+	NoteDeletedEvent,
+	ProjectAddedEvent,
+	ProjectUpdatedEvent,
+	ProjectDeletedEvent,
+	ProjectArchivedEvent,
+	ProjectUnarchivedEvent,
 } from './webhooks/types';
 
 // ─────────────────────────────────────────────────────────────────────────────
