@@ -42,7 +42,7 @@ export const getPayloads = async (
 								baseId: input.baseId,
 								tableId: change.path.tableId,
 								fields: {
-									...(change.cellValuesByFieldId as Record<string, unknown>),
+									...change.cellValuesByFieldId ,
 								},
 							});
 						}
@@ -53,9 +53,11 @@ export const getPayloads = async (
 					for (const [tableId, tableData] of Object.entries(
 						payload.changedTablesById,
 					)) {
+						// Airtable table change payloads use unknown for dynamic table metadata
 						const tableInfo = tableData as Record<string, unknown>;
 						
 						if (tableInfo.changedRecordsById) {
+							// Airtable changed records use unknown for field payloads
 							const changedRecords = tableInfo.changedRecordsById as Record<
 								string,
 								unknown
@@ -64,6 +66,7 @@ export const getPayloads = async (
 							for (const [recordId, recordData] of Object.entries(
 								changedRecords,
 							)) {
+								// Airtable record payloads use unknown for field values
 								const recordInfo = recordData as Record<string, unknown>;
 								
 								if (recordInfo.cellValuesByFieldId) {
@@ -71,6 +74,7 @@ export const getPayloads = async (
 										id: recordId,
 										baseId: input.baseId,
 										tableId: tableId,
+										// Airtable field values use unknown because per-field types are not statically known
 										fields: {
 											...(recordInfo.cellValuesByFieldId as Record<
 												string,
@@ -83,6 +87,7 @@ export const getPayloads = async (
 						}
 
 						if (tableInfo.createdRecordsById) {
+							// Airtable created records use unknown for dynamic field payloads
 							const createdRecords = tableInfo.createdRecordsById as Record<
 								string,
 								unknown
@@ -91,6 +96,7 @@ export const getPayloads = async (
 							for (const [recordId, recordData] of Object.entries(
 								createdRecords,
 							)) {
+								// Airtable created record payloads use unknown for field values
 								const recordInfo = recordData as Record<string, unknown>;
 								
 								if (recordInfo.cellValuesByFieldId) {
@@ -98,6 +104,7 @@ export const getPayloads = async (
 										id: recordId,
 										baseId: input.baseId,
 										tableId: tableId,
+										// Airtable field values use unknown because they are determined by the base configuration
 										fields: {
 											...(recordInfo.cellValuesByFieldId as Record<
 												string,

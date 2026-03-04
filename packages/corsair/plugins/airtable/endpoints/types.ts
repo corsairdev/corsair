@@ -16,6 +16,7 @@ const BasesGetSchemaInputSchema = z.object({
 const RecordsCreateInputSchema = z.object({
 	baseId: z.string(),
 	tableIdOrName: z.string(),
+	// Record fields use unknown here because Airtable field types vary by base
 	fields: z.record(z.unknown()),
 	typecast: z.boolean().optional(),
 });
@@ -23,6 +24,7 @@ const RecordsCreateInputSchema = z.object({
 const RecordsCreateOrUpdateInputSchema = z.object({
 	baseId: z.string(),
 	tableIdOrName: z.string(),
+	// Upsert payload fields use unknown because their types are defined in Airtable, not statically
 	fields: z.record(z.unknown()),
 	fieldsToMergeOn: z.array(z.string()),
 	typecast: z.boolean().optional(),
@@ -68,6 +70,7 @@ const RecordsUpdateInputSchema = z.object({
 	baseId: z.string(),
 	tableIdOrName: z.string(),
 	recordId: z.string(),
+	// Update payload fields use unknown because Airtable controls the field schema
 	fields: z.record(z.unknown()),
 	typecast: z.boolean().optional(),
 });
@@ -98,6 +101,7 @@ export type AirtableEndpointInputs = {
 
 // ── Output Schemas ───────────────────────────────────────────────────────────
 
+// Airtable records use unknown for field values because they depend on the remote base schema
 const AirtableRecordSchema = z
 	.object({
 		id: z.string(),
@@ -114,6 +118,7 @@ const AirtableBaseSchema = z
 	})
 	.passthrough();
 
+// Airtable field options use unknown because option shapes depend on the field type
 const AirtableFieldSchema = z
 	.object({
 		id: z.string(),
@@ -201,6 +206,7 @@ const RecordsUpdateResponseSchema = z
 	})
 	.passthrough();
 
+// Webhook payload items use unknown for payloads because they mirror Airtable’s dynamic webhook format
 const WebhooksGetPayloadsResponseSchema = z
 	.object({
 		cursorForNextPayload: z.number().optional(),

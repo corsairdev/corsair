@@ -1,5 +1,6 @@
 import { z } from 'zod';
 
+// Airtable record fields use unknown because they depend on the configured base schema
 export const AirtableRecord = z.object({
 	id: z.string(),
 	fields: z.record(z.unknown()).optional(),

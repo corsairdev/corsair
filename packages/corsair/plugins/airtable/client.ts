@@ -17,6 +17,7 @@ const AIRTABLE_API_BASE = 'https://api.airtable.com/v0';
 export async function makeAirtableRequest<T>(
 	endpoint: string,
 	apiKey: string,
+	// Request body uses unknown because Airtable accepts arbitrary field values per base
 	options: {
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 		body?: Record<string, unknown>;

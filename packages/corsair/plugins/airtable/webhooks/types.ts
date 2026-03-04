@@ -64,6 +64,7 @@ export type AirtableWebhookOutputs = {
 
 export const AirtableEventPayloadSchema = AirtableWebhookPayloadSchema;
 
+// Airtable change payloads use unknown for field values because fields are user-defined
 const AirtableWebhookChangeSchema = z
 	.object({
 		path: z
@@ -77,6 +78,7 @@ const AirtableWebhookChangeSchema = z
 	})
 	.passthrough();
 
+// Airtable payload items use unknown for table data because schemas differ per base
 const AirtableWebhookPayloadItemSchema = z
 	.object({
 		timestamp: z.string(),
@@ -97,12 +99,14 @@ export type AirtableWebhookPayloadsResponse = z.infer<
 
 // ── Utilities ────────────────────────────────────────────────────────────────
 
+// The webhook body is unknown because it comes directly from the HTTP request payload
 function parseBody(body: unknown): unknown {
 	return typeof body === 'string' ? JSON.parse(body) : body;
 }
 
 export function createAirtableMatch(): CorsairWebhookMatcher {
 	return (request: RawWebhookRequest) => {
+		// Parsed webhook body uses unknown for values because Airtable payloads are dynamic
 		const parsedBody = parseBody(request.body) as Record<string, unknown>;
 		return (
 			typeof parsedBody === 'object' &&
@@ -113,6 +117,7 @@ export function createAirtableMatch(): CorsairWebhookMatcher {
 	};
 }
 
+// WebhookRequest body is typed as unknown because only the raw body is needed for verification
 export function verifyAirtableWebhookSignature(
 	request: WebhookRequest<unknown>,
 	secret: string,
