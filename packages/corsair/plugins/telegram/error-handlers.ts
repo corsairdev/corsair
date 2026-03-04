@@ -56,12 +56,10 @@ export const errorHandlers = {
 				return true;
 			}
 			if (error instanceof TelegramAPIError) {
-				const code = error.code;
-				return (
-					code === '401' ||
-					code === '403' ||
-					error.message.toLowerCase().includes('unauthorized')
-				);
+			return (
+				code === '401' ||
+				error.message.toLowerCase().includes('unauthorized')
+			);
 			}
 			const errorMessage = error.message.toLowerCase();
 			return (
