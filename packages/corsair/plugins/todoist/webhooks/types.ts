@@ -1,4 +1,5 @@
 import type { CorsairWebhookMatcher, RawWebhookRequest, WebhookRequest } from '../../../core';
+import * as crypto from 'crypto';
 
 export interface TodoistWebhookPayload<TData = { [key: string]: any }> {
 	event_name: string;
@@ -162,8 +163,10 @@ function parseBody(body: unknown): unknown {
 	return typeof body === 'string' ? JSON.parse(body) : body;
 }
 
+
 export function createTodoistMatch(eventType: string): CorsairWebhookMatcher {
 	return (request: RawWebhookRequest) => {
+		// type assertion because the body is unknown
 		const parsedBody = parseBody(request.body) as TodoistWebhookPayload;
 		return parsedBody.event_name === eventType;
 	};
@@ -198,7 +201,6 @@ export function verifyTodoistWebhookSignature(
 	}
 
 	try {
-		const crypto = require('crypto');
 		const expectedSignature = crypto
 			.createHmac('sha256', secret)
 			.update(rawBody)
