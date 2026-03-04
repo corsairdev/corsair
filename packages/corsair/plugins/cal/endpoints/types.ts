@@ -33,7 +33,9 @@ const BookingsCreateInputSchema = z.object({
 	}),
 	meetingUrl: z.string().optional(),
 	lengthInMinutes: z.number().optional(),
+	// Custom form field responses with dynamic field names and values
 	bookingFieldsResponses: z.record(z.unknown()).optional(),
+	// Additional metadata that can be attached to the booking
 	metadata: z.record(z.unknown()).optional(),
 });
 
@@ -115,7 +117,9 @@ const BookingSchema = z
 		attendees: z.array(AttendeeSchema).optional(),
 		hosts: z.array(HostSchema).optional(),
 		guests: z.array(z.string()).optional(),
+		// Custom metadata associated with the booking
 		metadata: z.record(z.unknown()).nullable().optional(),
+		// Responses to custom booking form fields
 		bookingFieldsResponses: z.record(z.unknown()).nullable().optional(),
 	})
 	.passthrough();
@@ -123,6 +127,7 @@ const BookingSchema = z
 const CalResponseSchema = z
 	.object({
 		status: z.string(),
+		// Response data from Cal.com API - structure varies by endpoint
 		data: z.unknown().optional(),
 	})
 	.passthrough();

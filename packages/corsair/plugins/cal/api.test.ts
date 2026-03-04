@@ -90,6 +90,7 @@ async function createTestBooking(
 					query: { take: 50 },
 				},
 			);
+			// Find booking by email or start time - using any due to dynamic Cal.com response structure
 			const created = listResponse.data?.find(
 				(b: any) =>
 					b.attendees?.some((a: any) => a.email === testEmail) ||

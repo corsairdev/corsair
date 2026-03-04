@@ -7,6 +7,7 @@ export class CalAPIError extends Error {
 	constructor(
 		message: string,
 		public readonly code?: string,
+		// Error response body from Cal.com API - can be string, object, or other formats
 		public readonly body?: unknown,
 	) {
 		super(message);

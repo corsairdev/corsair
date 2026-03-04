@@ -44,6 +44,7 @@ export const CalBooking = z
 					.passthrough(),
 			)
 			.optional(),
+		// Custom metadata fields that can contain arbitrary data from Cal.com
 		metadata: z.record(z.unknown()).nullable().optional(),
 	})
 	.passthrough();

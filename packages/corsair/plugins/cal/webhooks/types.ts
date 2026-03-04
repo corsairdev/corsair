@@ -15,6 +15,7 @@ const AttendeeSchema = z
 		name: z.string(),
 		email: z.string(),
 		timeZone: z.string().optional(),
+		// Language configuration object with dynamic keys and values
 		language: z.record(z.unknown()).optional(),
 		absent: z.boolean().optional(),
 	})
@@ -48,6 +49,7 @@ const BookingDataSchema = z
 		rescheduledFromUid: z.string().nullable().optional(),
 		attendees: z.array(AttendeeSchema).optional(),
 		hosts: z.array(HostSchema).optional(),
+		// Flexible metadata object containing arbitrary key-value pairs from Cal.com
 		metadata: z.record(z.unknown()).nullable().optional(),
 	})
 	.passthrough();
@@ -89,6 +91,7 @@ export type MeetingEndedEvent = z.infer<typeof MeetingEndedEventSchema>;
 export const PingEventSchema = z.object({
 	triggerEvent: z.literal('PING'),
 	createdAt: z.string().optional(),
+	// Ping payload can contain arbitrary test data
 	payload: z.record(z.unknown()).optional(),
 });
 export type PingEvent = z.infer<typeof PingEventSchema>;
@@ -102,6 +105,7 @@ export interface CalWebhookPayload {
 	createdAt: string;
 	payload: {
 		uid: string;
+		// Additional dynamic properties that may be included in the payload
 		[key: string]: unknown;
 	};
 }
@@ -122,6 +126,7 @@ export type CalWebhookOutputs = {
 // Utilities
 // ─────────────────────────────────────────────────────────────────────────────
 
+// Parse webhook request body, handling both string and object formats
 function parseBody(body: unknown): unknown {
 	return typeof body === 'string' ? JSON.parse(body) : body;
 }

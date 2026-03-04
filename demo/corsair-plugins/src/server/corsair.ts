@@ -9,6 +9,7 @@ import {
 	posthog,
 	slack,
 	spotify,
+	linear
 } from 'corsair';
 import { pool } from '../db';
 
@@ -22,6 +23,7 @@ export const corsair = createCorsair({
 	},
 	plugins: [
 		cal(),
+		linear(),
 		googlecalendar({
 			permissions: {
 				mode: 'cautious',
