@@ -176,22 +176,12 @@ const RecordsCreateOrUpdateResponseSchema = z
 
 const RecordsDeleteResponseSchema = z
 	.object({
-		records: z.array(
-			z
-				.object({
-					id: z.string(),
-					deleted: z.boolean(),
-				})
-				.passthrough(),
-		),
+		id: z.string(),
+		deleted: z.boolean(),
 	})
 	.passthrough();
 
-const RecordsGetResponseSchema = z
-	.object({
-		records: z.array(AirtableRecordSchema),
-	})
-	.passthrough();
+const RecordsGetResponseSchema = AirtableRecordSchema;
 
 const RecordsSearchResponseSchema = z
 	.object({

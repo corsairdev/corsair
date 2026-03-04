@@ -88,13 +88,9 @@ export const deleteRecord: AirtableEndpoints['recordsDelete'] = async (
 		method: 'DELETE',
 	});
 
-	if (response.records && ctx.db.records) {
+	if (ctx.db.records && response.deleted && response.id) {
 		try {
-			for (const record of response.records) {
-				if (record.deleted && record.id) {
-					await ctx.db.records.deleteByEntityId(record.id);
-				}
-			}
+			await ctx.db.records.deleteByEntityId(response.id);
 		} catch (error) {
 			console.warn('Failed to delete records from database:', error);
 		}
@@ -123,15 +119,13 @@ export const get: AirtableEndpoints['recordsGet'] = async (ctx, input) => {
 		},
 	);
 
-	if (response.records && ctx.db.records) {
+	if (ctx.db.records) {
 		try {
-			for (const record of response.records) {
-				await ctx.db.records.upsertByEntityId(record.id, {
-					...record,
-					baseId: input.baseId,
-					tableId: input.tableIdOrName,
-				});
-			}
+			await ctx.db.records.upsertByEntityId(response.id, {
+				...response,
+				baseId: input.baseId,
+				tableId: input.tableIdOrName,
+			});
 		} catch (error) {
 			console.warn('Failed to save records to database:', error);
 		}

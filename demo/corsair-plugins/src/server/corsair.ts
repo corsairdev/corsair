@@ -9,6 +9,7 @@ import {
 	slack,
 	spotify,
 	airtable,
+	linear
 } from 'corsair';
 import { pool } from '../db';
 
@@ -21,6 +22,7 @@ export const corsair = createCorsair({
 		onTimeout: 'deny',
 	},
 	plugins: [
+		linear(),
 		googlecalendar({
 			permissions: {
 				mode: 'cautious',
