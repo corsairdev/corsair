@@ -1,5 +1,6 @@
 import type { SqliteDialectConfig } from 'kysely';
 import { Kysely, PostgresDialect, SqliteDialect } from 'kysely';
+import { SqliteDatePlugin } from './sqlite-date-plugin.js';
 import type { Pool } from 'pg';
 import type {
 	CorsairAccount,
@@ -71,6 +72,7 @@ export function createCorsairDatabase(
 	if (isBetterSqlite3(input)) {
 		const db = new Kysely<CorsairKyselyDatabase>({
 			dialect: new SqliteDialect({ database: input }),
+			plugins: [new SqliteDatePlugin()],
 		});
 		return { db };
 	}
