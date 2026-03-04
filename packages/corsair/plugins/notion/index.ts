@@ -315,6 +315,9 @@ export type ExternalNotionPlugin<T extends NotionPluginOptions> =
 	BaseNotionPlugin<T>;
 
 export function notion<const T extends NotionPluginOptions>(
+    // Default to an empty object cast to the expected options type because all fields
+	// in NotionPluginOptions are optional, making {} a valid runtime value even though
+	// TypeScript cannot narrow the generic T from an untyped literal
 	incomingOptions: NotionPluginOptions & T = {} as NotionPluginOptions & T,
 ): ExternalNotionPlugin<T> {
 	const options = {

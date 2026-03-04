@@ -184,11 +184,19 @@ export function verifyNotionWebhookSignature(
 		};
 	}
 
-	const bodyString = typeof rawBody === 'string' 
+	let bodyString: string;
+	try {
+		bodyString = typeof rawBody === 'string' 
 		? rawBody 
 		: JSON.stringify(rawBody);
-
-	const calculatedSignature = `sha256=${crypto
+	} catch (error) {
+		return {
+			valid: false,
+			error: `Failed to parse body: ${error instanceof Error ? error.message : 'unknown error'}`,
+		};
+	}
+		
+		const calculatedSignature = `sha256=${crypto
 		.createHmac('sha256', secret)
 		.update(bodyString)
 		.digest('hex')}`;
