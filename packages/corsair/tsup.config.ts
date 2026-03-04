@@ -19,6 +19,7 @@ export default defineConfig({
 	entry: [
 		'index.ts',
 		'core.ts',
+		'db.ts',
 		'mcp.ts',
 		'orm.ts',
 		'plugins/index.ts',

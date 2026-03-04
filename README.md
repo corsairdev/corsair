@@ -1,20 +1,41 @@
 # Corsair
 
-**Your agent's integration layer, with guardrails built in 🦞**
+**Your agent's safe integration layer**
 
-> Don't do the work yourself because you're too scared to hand it off.
-
----
-
-AI personal assistants are genuinely capable now. They can draft emails, send messages, and manage your calendar. But giving them the keys to everything feels reckless, because one misunderstood instruction and they're abusing your email, sending calendar invites to strangers, or deleting important files.
-
-So you end up doing the work yourself anyway, because you are afraid of providing the access.
-
-Corsair sits between your agent and your integrations, holding your API credentials in an encrypted local database and enforcing a configurable permission layer on every actiything risky (a send, a delete, a write) gets paused and sent to you as a review link. You approve or deny it, and your agent cannot get around it.
+> Agents are capable of anything. Take advantage of their potential, safely.
 
 ---
 
-## What it looks like
+AI agents are genuinely capable now. They can research, manage your inbox, write code, and do just about anything else. But giving them the keys to everything feels reckless, because one misunderstood instruction and they're making destructive changes.
+
+So you end up doing the work yourself anyway, because you are afraid of granting access.
+
+Corsair is your agent's integration layer. Connect to 1,000+ apps all from one place. Your agent never sees credentials, and you can enforce a permission layer on any action. 
+
+---
+
+## Why Corsair exists
+
+Integrations in the TypeScript ecosystem are a solved problem in theory, but a nightmare in practice. Every SDK is designed from the perspective of the company that built it, not the developer trying to ship quickly, so each one has its own conventions, its own credential model, and its own way of thinking about webhooks. No-code tools require you to hand over your data, pay, and learn a new interface. Unified API platforms are thin wrappers around an API and you have to scour their docs for a good description of how to integrate. 
+
+I ran into this building an earlier product where different customers wanted different integrations where they worked (Slack, Teams, Gmail), and I couldn't find anything that handled them consistently in my own codebase, with my own data, and under my own control. I wanted strong types so I could learn the API as I used it. I wanted native webhook support to keep data fresh. I wanted credentials and token refresh handled for me natively. It didn't exist, and so I built it.
+
+
+---
+
+## Use cases
+
+**Startups**: Corsair is mult-tenant by default. If your customers need to integrate to many different sources, use Corsair as a centralized place to write integrations in one paradigm. Your users' credentials and data are automatically partitioned.
+
+**Personal Assistants (🦞)**: Corsair automatically integrates into OpenClaw and NanoClaw. Simply drop-in the skill.md and Corsair opens you up to any integration you can think of.
+
+**Workflow Automation**: Corsair allows any action you can do in a traditional drag-and-drop workflow automation tool in one place. Simply vibe code any workflow across 1,000+ apps.
+
+**RAG**: Corsair stores all data that flows through it, and automatically keeps it fresh through webhooks and polling. Store and vectorize data for context retrieval across all apps in one centralized database. 
+
+---
+
+## What permissions look like
 
 You're away from your computer. You remotely ask your agent to send an email.
 

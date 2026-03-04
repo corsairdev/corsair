@@ -4,6 +4,7 @@ import { createMissingConfigProxy } from './auth/errors';
 import type { CorsairSingleTenantClient, CorsairTenantWrapper } from './client';
 import { buildCorsairClient, buildIntegrationKeys } from './client';
 import { buildInspectMethods } from './inspect';
+import { buildPermissionsNamespace } from './permissions';
 import type { CorsairIntegration, CorsairPlugin } from './plugins';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -81,6 +82,8 @@ export function createCorsair<const Plugins extends readonly CorsairPlugin[]>(
 		approval: config.approval,
 	};
 
+	const permissions = buildPermissionsNamespace(resolvedDatabase);
+
 	if (config.multiTenancy) {
 		return Object.assign(
 			{
@@ -99,6 +102,7 @@ export function createCorsair<const Plugins extends readonly CorsairPlugin[]>(
 					});
 				},
 				keys: integrationKeys,
+				permissions,
 				...buildInspectMethods(config.plugins),
 			},
 			{ [CORSAIR_INTERNAL]: internalConfig },
@@ -115,6 +119,7 @@ export function createCorsair<const Plugins extends readonly CorsairPlugin[]>(
 
 	return Object.assign({}, client, {
 		keys: integrationKeys,
+		permissions,
 		[CORSAIR_INTERNAL]: internalConfig,
 	}) as CorsairSingleTenantClient<Plugins>;
 }
@@ -179,7 +184,11 @@ export type {
 } from './errors';
 // Inspection types
 export type { CorsairInspectMethods, EndpointSchemaResult } from './inspect';
-export type { EnforcePermissionOptions, EnforcePermissionResult } from './permissions';
+export type {
+	CorsairPermissionsNamespace,
+	EnforcePermissionOptions,
+	EnforcePermissionResult,
+} from './permissions';
 
 // Plugin types
 export type {
