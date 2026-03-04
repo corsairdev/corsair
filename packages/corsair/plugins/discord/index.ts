@@ -8,6 +8,10 @@ import type {
 	CorsairWebhook,
 	KeyBuilderContext,
 	PluginAuthConfig,
+	PluginPermissionsConfig,
+	RequiredPluginEndpointMeta,
+	RequiredPluginEndpointSchemas,
+	RequiredPluginWebhookSchemas,
 } from '../../core';
 import type { AuthTypes, PickAuth } from '../../core/constants';
 import {
@@ -37,6 +41,10 @@ import type {
 	ThreadsCreateFromMessageInput,
 	ThreadsCreateInput,
 } from './endpoints/types';
+import {
+	DiscordEndpointInputSchemas,
+	DiscordEndpointOutputSchemas,
+} from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { DiscordSchema } from './schema';
 import { InteractionWebhooks } from './webhooks';
@@ -45,6 +53,12 @@ import type {
 	DiscordMessageComponentInteraction,
 	DiscordModalSubmitInteraction,
 	DiscordWebhookOutputs,
+} from './webhooks/types';
+import {
+	DiscordApplicationCommandInteractionSchema,
+	DiscordMessageComponentInteractionSchema,
+	DiscordModalSubmitInteractionSchema,
+	DiscordPingInteractionSchema,
 } from './webhooks/types';
 
 // ── Plugin Options ─────────────────────────────────────────────────────────────
@@ -71,6 +85,12 @@ export type DiscordPluginOptions = {
 	webhookHooks?: InternalDiscordPlugin['webhookHooks'];
 	/** Custom error handlers (merged with built-in defaults). */
 	errorHandlers?: CorsairErrorHandler;
+	/**
+	 * Permission configuration for the Discord plugin.
+	 * Controls what the AI agent is allowed to do.
+	 * Overrides use dot-notation paths from the Discord endpoint tree — invalid paths are type errors.
+	 */
+	permissions?: PluginPermissionsConfig<typeof discordEndpointsNested>;
 };
 
 // ── Context ────────────────────────────────────────────────────────────────────
@@ -176,6 +196,73 @@ const discordEndpointsNested = {
 	},
 } as const;
 
+export const discordEndpointSchemas = {
+	'messages.send': {
+		input: DiscordEndpointInputSchemas.messagesSend,
+		output: DiscordEndpointOutputSchemas.messagesSend,
+	},
+	'messages.reply': {
+		input: DiscordEndpointInputSchemas.messagesReply,
+		output: DiscordEndpointOutputSchemas.messagesReply,
+	},
+	'messages.get': {
+		input: DiscordEndpointInputSchemas.messagesGet,
+		output: DiscordEndpointOutputSchemas.messagesGet,
+	},
+	'messages.list': {
+		input: DiscordEndpointInputSchemas.messagesList,
+		output: DiscordEndpointOutputSchemas.messagesList,
+	},
+	'messages.edit': {
+		input: DiscordEndpointInputSchemas.messagesEdit,
+		output: DiscordEndpointOutputSchemas.messagesEdit,
+	},
+	'messages.delete': {
+		input: DiscordEndpointInputSchemas.messagesDelete,
+		output: DiscordEndpointOutputSchemas.messagesDelete,
+	},
+	'threads.create': {
+		input: DiscordEndpointInputSchemas.threadsCreate,
+		output: DiscordEndpointOutputSchemas.threadsCreate,
+	},
+	'threads.createFromMessage': {
+		input: DiscordEndpointInputSchemas.threadsCreateFromMessage,
+		output: DiscordEndpointOutputSchemas.threadsCreateFromMessage,
+	},
+	'reactions.add': {
+		input: DiscordEndpointInputSchemas.reactionsAdd,
+		output: DiscordEndpointOutputSchemas.reactionsAdd,
+	},
+	'reactions.remove': {
+		input: DiscordEndpointInputSchemas.reactionsRemove,
+		output: DiscordEndpointOutputSchemas.reactionsRemove,
+	},
+	'reactions.list': {
+		input: DiscordEndpointInputSchemas.reactionsList,
+		output: DiscordEndpointOutputSchemas.reactionsList,
+	},
+	'guilds.list': {
+		input: DiscordEndpointInputSchemas.guildsList,
+		output: DiscordEndpointOutputSchemas.guildsList,
+	},
+	'guilds.get': {
+		input: DiscordEndpointInputSchemas.guildsGet,
+		output: DiscordEndpointOutputSchemas.guildsGet,
+	},
+	'channels.list': {
+		input: DiscordEndpointInputSchemas.channelsList,
+		output: DiscordEndpointOutputSchemas.channelsList,
+	},
+	'members.list': {
+		input: DiscordEndpointInputSchemas.membersList,
+		output: DiscordEndpointOutputSchemas.membersList,
+	},
+	'members.get': {
+		input: DiscordEndpointInputSchemas.membersGet,
+		output: DiscordEndpointOutputSchemas.membersGet,
+	},
+} satisfies RequiredPluginEndpointSchemas<typeof discordEndpointsNested>;
+
 const discordWebhooksNested = {
 	interactions: {
 		ping: InteractionWebhooks.ping,
@@ -187,7 +274,93 @@ const discordWebhooksNested = {
 
 // ── Auth ───────────────────────────────────────────────────────────────────────
 
+const discordWebhookSchemas = {
+	'interactions.ping': {
+		description: 'Discord sends a PING to verify the endpoint is live',
+		payload: DiscordPingInteractionSchema,
+		response: DiscordPingInteractionSchema,
+	},
+	'interactions.applicationCommand': {
+		description: 'A user invoked a slash command or context-menu action',
+		payload: DiscordApplicationCommandInteractionSchema,
+		response: DiscordApplicationCommandInteractionSchema,
+	},
+	'interactions.messageComponent': {
+		description: 'A user clicked a button or selected a menu option',
+		payload: DiscordMessageComponentInteractionSchema,
+		response: DiscordMessageComponentInteractionSchema,
+	},
+	'interactions.modalSubmit': {
+		description: 'A user submitted a modal dialog',
+		payload: DiscordModalSubmitInteractionSchema,
+		response: DiscordModalSubmitInteractionSchema,
+	},
+} satisfies RequiredPluginWebhookSchemas<typeof discordWebhooksNested>;
+
 const defaultAuthType: AuthTypes = 'api_key' as const;
+
+/**
+ * Risk-level metadata for each Discord endpoint.
+ * Used by the MCP server permission system to decide allow / deny / require_approval.
+ */
+const discordEndpointMeta = {
+	'messages.send': {
+		riskLevel: 'write',
+		description: 'Send a message to a channel',
+	},
+	'messages.reply': {
+		riskLevel: 'write',
+		description: 'Reply to a message in a channel',
+	},
+	'messages.get': { riskLevel: 'read', description: 'Get a specific message' },
+	'messages.list': {
+		riskLevel: 'read',
+		description: 'List recent messages in a channel',
+	},
+	'messages.edit': {
+		riskLevel: 'write',
+		description: 'Edit an existing message',
+	},
+	'messages.delete': {
+		riskLevel: 'destructive',
+		irreversible: true,
+		description: 'Permanently delete a message [DESTRUCTIVE]',
+	},
+	'threads.create': {
+		riskLevel: 'write',
+		description: 'Create a new thread in a channel',
+	},
+	'threads.createFromMessage': {
+		riskLevel: 'write',
+		description: 'Create a thread from an existing message',
+	},
+	'reactions.add': {
+		riskLevel: 'write',
+		description: 'Add a reaction to a message',
+	},
+	'reactions.remove': {
+		riskLevel: 'write',
+		description: 'Remove a reaction from a message',
+	},
+	'reactions.list': {
+		riskLevel: 'read',
+		description: 'List reactions on a message',
+	},
+	'guilds.list': {
+		riskLevel: 'read',
+		description: 'List guilds the bot is a member of',
+	},
+	'guilds.get': { riskLevel: 'read', description: 'Get info about a guild' },
+	'channels.list': {
+		riskLevel: 'read',
+		description: 'List channels in a guild',
+	},
+	'members.list': { riskLevel: 'read', description: 'List members of a guild' },
+	'members.get': {
+		riskLevel: 'read',
+		description: 'Get info about a guild member',
+	},
+} satisfies RequiredPluginEndpointMeta<typeof discordEndpointsNested>;
 
 export const discordAuthConfig = {} as const satisfies PluginAuthConfig;
 
@@ -225,6 +398,9 @@ export function discord<const T extends DiscordPluginOptions>(
 		webhookHooks: options.webhookHooks,
 		endpoints: discordEndpointsNested,
 		webhooks: discordWebhooksNested,
+		endpointMeta: discordEndpointMeta,
+		endpointSchemas: discordEndpointSchemas,
+		webhookSchemas: discordWebhookSchemas,
 
 		/**
 		 * Identifies incoming Discord interaction webhooks.
@@ -298,31 +474,32 @@ export type {
 	// Shared response / entity types
 	Attachment,
 	Channel,
+	// Endpoint input types (needed so callers can name them in their own code)
+	ChannelsListInput,
+	DiscordEndpointInputs,
 	DiscordEndpointOutputs,
 	DiscordUser,
 	Embed,
 	Guild,
 	GuildMember,
-	Message,
-	MessageReference,
-	PartialGuild,
-	Role,
-	SuccessResponse,
-	// Endpoint input types (needed so callers can name them in their own code)
-	ChannelsListInput,
 	GuildsGetInput,
 	GuildsListInput,
 	MembersGetInput,
 	MembersListInput,
+	Message,
+	MessageReference,
 	MessagesDeleteInput,
 	MessagesEditInput,
 	MessagesGetInput,
 	MessagesListInput,
 	MessagesReplyInput,
 	MessagesSendInput,
+	PartialGuild,
 	ReactionsAddInput,
 	ReactionsListInput,
 	ReactionsRemoveInput,
+	Role,
+	SuccessResponse,
 	ThreadsCreateFromMessageInput,
 	ThreadsCreateInput,
 } from './endpoints/types';

@@ -1,6 +1,14 @@
+import type { CorsairDatabase } from '../../db/kysely/database';
 import type { CorsairErrorHandler } from '../errors';
 import { handleCorsairError } from '../errors/handler';
-import type { CorsairKeyBuilderBase, EndpointHooks } from '../plugins';
+import { enforcePermission, parseDurationMs } from '../permissions';
+import type {
+	CorsairKeyBuilderBase,
+	EndpointHooks,
+	EndpointMetaEntry,
+	PermissionMode,
+	PermissionPolicy,
+} from '../plugins';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Endpoint Utilities
@@ -36,6 +44,11 @@ export function bindEndpointsRecursively({
 	errorHandlers,
 	currentPath = [],
 	keyBuilder,
+	permissionsConfig,
+	endpointMeta,
+	database,
+	approvalConfig,
+	tenantId,
 }: {
 	endpoints: Record<string, unknown>;
 	hooks: Record<string, unknown> | undefined;
@@ -45,6 +58,19 @@ export function bindEndpointsRecursively({
 	errorHandlers: CorsairErrorHandler;
 	currentPath: string[];
 	keyBuilder?: CorsairKeyBuilderBase;
+	/** Permission mode + per-endpoint overrides from plugin options. When set, every call is gated. */
+	permissionsConfig?: {
+		mode: PermissionMode;
+		overrides?: Record<string, PermissionPolicy>;
+	};
+	/** Risk level metadata per dot-notation endpoint path. Defaults riskLevel to 'write' when missing. */
+	endpointMeta?: Record<string, EndpointMetaEntry>;
+	/** Required for 'require_approval' to persist the approval record to the DB. */
+	database?: CorsairDatabase;
+	/** Approval timeout config from createCorsair({ approval: ... }). */
+	approvalConfig?: { timeout: string; onTimeout: 'deny' | 'approve' };
+	/** Tenant ID for multi-tenant instances. Forwarded to the permission record so executePermission can scope correctly. */
+	tenantId?: string;
 }): void {
 	for (const [key, value] of Object.entries(endpoints)) {
 		// we have to retype this now because it's nested webhooks
@@ -57,6 +83,29 @@ export function bindEndpointsRecursively({
 			const operationPath = [...currentPath, key].join('.');
 
 			const boundFn = async (args: unknown) => {
+				// ── Permission guard ────────────────────────────────────────────────────────────────
+				let onPermissionComplete: (() => Promise<void>) | undefined;
+				if (permissionsConfig) {
+					const meta = endpointMeta?.[operationPath];
+					const { result: permResult, onComplete } = await enforcePermission({
+						pluginId,
+						endpointPath: operationPath,
+						args,
+						mode: permissionsConfig.mode,
+						override: permissionsConfig.overrides?.[operationPath],
+						// Default to 'write' when no meta declared — conservative fallback
+						riskLevel: meta?.riskLevel ?? 'write',
+						meta,
+						db: database,
+						timeoutMs: approvalConfig
+							? parseDurationMs(approvalConfig.timeout)
+							: undefined,
+						tenantId,
+					});
+					if (permResult === 'blocked') return null;
+					onPermissionComplete = onComplete;
+				}
+
 				const call = async (
 					attemptNumber: number,
 					callCtx: Record<string, unknown>,
@@ -130,18 +179,29 @@ export function bindEndpointsRecursively({
 				const key = keyBuilder ? await keyBuilder(ctx, 'endpoint') : undefined;
 
 				if (!endpointHooks?.before && !endpointHooks?.after) {
-					return call(0, { ...ctx, key }, args);
+					const res = await call(0, { ...ctx, key }, args);
+					await onPermissionComplete?.();
+					return res;
 				}
 
-				return (async () => {
-					const ctxWithKey = { ...ctx, key };
-					const { ctx: updatedCtx, args: updatedArgs } = endpointHooks.before
-						? await endpointHooks.before(ctxWithKey, args)
-						: { ctx: ctxWithKey, args };
-					const res = await call(0, updatedCtx, updatedArgs);
-					await endpointHooks.after?.(updatedCtx, res);
-					return res;
-				})();
+				const ctxWithKey = { ...ctx, key };
+				const beforeResult = endpointHooks.before
+					? await endpointHooks.before(ctxWithKey, args)
+					: {
+							ctx: ctxWithKey,
+							args,
+							continue: true as const,
+							passToAfter: undefined,
+						};
+				if (beforeResult.continue === false) return;
+				const res = await call(0, beforeResult.ctx, beforeResult.args);
+				await endpointHooks.after?.(
+					beforeResult.ctx,
+					res,
+					beforeResult.passToAfter,
+				);
+				await onPermissionComplete?.();
+				return res;
 			};
 
 			tree[key] = boundFn;
@@ -158,6 +218,11 @@ export function bindEndpointsRecursively({
 				errorHandlers,
 				currentPath: [...currentPath, key],
 				keyBuilder,
+				permissionsConfig,
+				endpointMeta,
+				database,
+				approvalConfig,
+				tenantId,
 			});
 
 			tree[key] = nestedTree;

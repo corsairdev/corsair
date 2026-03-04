@@ -303,6 +303,24 @@ export const list: LinearEndpoints['issuesList'] = async (ctx, input) => {
 
 	const result = response.issues;
 
+	if (result.nodes && ctx.db.issues) {
+		try {
+			for (const issue of result.nodes) {
+				await ctx.db.issues.upsertByEntityId(issue.id, {
+					...issue,
+					stateId: issue.state?.id,
+					teamId: issue.team?.id,
+					assigneeId: issue.assignee?.id,
+					creatorId: issue.creator?.id,
+					createdAt: new Date(issue.createdAt ?? ''),
+					updatedAt: new Date(issue.updatedAt ?? ''),
+				});
+			}
+		} catch (error) {
+			console.warn('Failed to save issues to database:', error);
+		}
+	}
+
 	await logEventFromContext(
 		ctx,
 		'linear.issues.list',
@@ -320,6 +338,24 @@ export const get: LinearEndpoints['issuesGet'] = async (ctx, input) => {
 	);
 
 	const result = response.issue;
+
+	if (result && ctx.db.issues) {
+		try {
+			await ctx.db.issues.upsertByEntityId(result.id, {
+				...result,
+				stateId: result.state?.id,
+				teamId: result.team?.id,
+				assigneeId: result.assignee?.id,
+				creatorId: result.creator?.id,
+				projectId: result.project?.id,
+				cycleId: result.cycle?.id,
+				createdAt: new Date(result.createdAt ?? ''),
+				updatedAt: new Date(result.updatedAt ?? ''),
+			});
+		} catch (error) {
+			console.warn('Failed to save issue to database:', error);
+		}
+	}
 
 	await logEventFromContext(
 		ctx,

@@ -6,6 +6,8 @@ import type {
 	CorsairPluginContext,
 	KeyBuilderContext,
 	PluginAuthConfig,
+	PluginEndpointMeta,
+	PluginPermissionsConfig,
 } from '../../core';
 import type { AuthTypes, PickAuth } from '../../core/constants';
 import { Search } from './endpoints';
@@ -44,6 +46,12 @@ export type TavilyPluginOptions = {
 	webhookHooks?: InternalTavilyPlugin['webhookHooks'];
 	// Optional: Custom error handlers (merged with default error handlers)
 	errorHandlers?: CorsairErrorHandler;
+	/**
+	 * Permission configuration for the Tavily plugin.
+	 * Controls what the AI agent is allowed to do.
+	 * Overrides use dot-notation paths from the Tavily endpoint tree — invalid paths are type errors.
+	 */
+	permissions?: PluginPermissionsConfig<typeof tavilyEndpointsNested>;
 };
 
 export type TavilyContext = CorsairPluginContext<
@@ -69,6 +77,14 @@ const tavilyEndpointsNested = {
 } as const;
 
 const tavilyWebhooksNested = {} as const;
+
+/**
+ * Risk-level metadata for each Tavily endpoint.
+ * Used by the MCP server permission system to decide allow / deny / require_approval.
+ */
+const tavilyEndpointMeta = {
+	search: { riskLevel: 'read', description: 'Search the web using Tavily' },
+} satisfies PluginEndpointMeta<typeof tavilyEndpointsNested>;
 
 /**
  * Default authentication type for this plugin
@@ -155,6 +171,7 @@ export function tavily<const T extends TavilyPluginOptions>(
 		webhookHooks: options.webhookHooks,
 		endpoints: tavilyEndpointsNested,
 		webhooks: tavilyWebhooksNested,
+		endpointMeta: tavilyEndpointMeta,
 		/**
 		 * Webhook matcher function - determines if an incoming request is a webhook for this plugin
 		 *

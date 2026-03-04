@@ -7,12 +7,20 @@ import type {
 	CorsairPluginContext,
 	CorsairWebhook,
 	KeyBuilderContext,
+	PluginPermissionsConfig,
+	RequiredPluginEndpointMeta,
+	RequiredPluginEndpointSchemas,
+	RequiredPluginWebhookSchemas,
 } from '../../core';
 import type { PickAuth } from '../../core/constants';
 import { Domains, Emails } from './endpoints';
 import type {
 	ResendEndpointInputs,
 	ResendEndpointOutputs,
+} from './endpoints/types';
+import {
+	ResendEndpointInputSchemas,
+	ResendEndpointOutputSchemas,
 } from './endpoints/types';
 import { ResendSchema } from './schema';
 import type {
@@ -29,6 +37,18 @@ import type {
 	ResendWebhookOutputs,
 } from './webhooks';
 import { DomainWebhooks, EmailWebhooks } from './webhooks';
+import {
+	DomainCreatedEventSchema,
+	DomainUpdatedEventSchema,
+	EmailBouncedEventSchema,
+	EmailClickedEventSchema,
+	EmailComplainedEventSchema,
+	EmailDeliveredEventSchema,
+	EmailFailedEventSchema,
+	EmailOpenedEventSchema,
+	EmailReceivedEventSchema,
+	EmailSentEventSchema,
+} from './webhooks/types';
 
 export type ResendPluginOptions = {
 	authType?: PickAuth<'api_key'>;
@@ -37,6 +57,12 @@ export type ResendPluginOptions = {
 	hooks?: InternalResendPlugin['hooks'];
 	webhookHooks?: InternalResendPlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
+	/**
+	 * Permission configuration for the Resend plugin.
+	 * Controls what the AI agent is allowed to do.
+	 * Overrides use dot-notation paths from the Resend endpoint tree — invalid paths are type errors.
+	 */
+	permissions?: PluginPermissionsConfig<typeof resendEndpointsNested>;
 };
 
 export type ResendContext = CorsairPluginContext<
@@ -99,6 +125,41 @@ const resendEndpointsNested = {
 	},
 } as const;
 
+export const resendEndpointSchemas = {
+	'emails.send': {
+		input: ResendEndpointInputSchemas.emailsSend,
+		output: ResendEndpointOutputSchemas.emailsSend,
+	},
+	'emails.get': {
+		input: ResendEndpointInputSchemas.emailsGet,
+		output: ResendEndpointOutputSchemas.emailsGet,
+	},
+	'emails.list': {
+		input: ResendEndpointInputSchemas.emailsList,
+		output: ResendEndpointOutputSchemas.emailsList,
+	},
+	'domains.create': {
+		input: ResendEndpointInputSchemas.domainsCreate,
+		output: ResendEndpointOutputSchemas.domainsCreate,
+	},
+	'domains.get': {
+		input: ResendEndpointInputSchemas.domainsGet,
+		output: ResendEndpointOutputSchemas.domainsGet,
+	},
+	'domains.list': {
+		input: ResendEndpointInputSchemas.domainsList,
+		output: ResendEndpointOutputSchemas.domainsList,
+	},
+	'domains.delete': {
+		input: ResendEndpointInputSchemas.domainsDelete,
+		output: ResendEndpointOutputSchemas.domainsDelete,
+	},
+	'domains.verify': {
+		input: ResendEndpointInputSchemas.domainsVerify,
+		output: ResendEndpointOutputSchemas.domainsVerify,
+	},
+} satisfies RequiredPluginEndpointSchemas<typeof resendEndpointsNested>;
+
 const resendWebhooksNested = {
 	emails: {
 		sent: EmailWebhooks.sent,
@@ -116,7 +177,97 @@ const resendWebhooksNested = {
 	},
 } as const;
 
+const resendWebhookSchemas = {
+	'emails.sent': {
+		description: 'An email was accepted and sent',
+		payload: EmailSentEventSchema,
+		response: EmailSentEventSchema,
+	},
+	'emails.delivered': {
+		description: 'An email was delivered to the recipient',
+		payload: EmailDeliveredEventSchema,
+		response: EmailDeliveredEventSchema,
+	},
+	'emails.bounced': {
+		description: 'An email bounced and was not delivered',
+		payload: EmailBouncedEventSchema,
+		response: EmailBouncedEventSchema,
+	},
+	'emails.opened': {
+		description: 'A recipient opened an email',
+		payload: EmailOpenedEventSchema,
+		response: EmailOpenedEventSchema,
+	},
+	'emails.clicked': {
+		description: 'A recipient clicked a link in an email',
+		payload: EmailClickedEventSchema,
+		response: EmailClickedEventSchema,
+	},
+	'emails.complained': {
+		description: 'A recipient marked an email as spam',
+		payload: EmailComplainedEventSchema,
+		response: EmailComplainedEventSchema,
+	},
+	'emails.failed': {
+		description: 'An email failed to send',
+		payload: EmailFailedEventSchema,
+		response: EmailFailedEventSchema,
+	},
+	'emails.received': {
+		description: 'An inbound email was received',
+		payload: EmailReceivedEventSchema,
+		response: EmailReceivedEventSchema,
+	},
+	'domains.created': {
+		description: 'A new sending domain was created',
+		payload: DomainCreatedEventSchema,
+		response: DomainCreatedEventSchema,
+	},
+	'domains.updated': {
+		description: 'A sending domain was updated',
+		payload: DomainUpdatedEventSchema,
+		response: DomainUpdatedEventSchema,
+	},
+} satisfies RequiredPluginWebhookSchemas<typeof resendWebhooksNested>;
+
 const defaultAuthType = 'api_key' as const;
+
+/**
+ * Risk-level metadata for each Resend endpoint.
+ * Used by the MCP server permission system to decide allow / deny / require_approval.
+ */
+const resendEndpointMeta = {
+	'emails.send': {
+		riskLevel: 'write',
+		description: 'Send an email to one or more recipients',
+	},
+	'emails.get': {
+		riskLevel: 'read',
+		description: 'Get info about a sent email',
+	},
+	'emails.list': { riskLevel: 'read', description: 'List sent emails' },
+	'domains.create': {
+		riskLevel: 'write',
+		description: 'Add a new sending domain',
+	},
+	'domains.get': {
+		riskLevel: 'read',
+		description: 'Get info about a sending domain',
+	},
+	'domains.list': {
+		riskLevel: 'read',
+		description: 'List all sending domains',
+	},
+	'domains.delete': {
+		riskLevel: 'destructive',
+		irreversible: true,
+		description: 'Remove a sending domain [DESTRUCTIVE · IRREVERSIBLE]',
+	},
+	'domains.verify': {
+		riskLevel: 'write',
+		description: 'Trigger DNS verification for a domain',
+	},
+} satisfies RequiredPluginEndpointMeta<typeof resendEndpointsNested>;
 
 export type BaseResendPlugin<T extends ResendPluginOptions> = CorsairPlugin<
 	'resend',
@@ -152,6 +303,9 @@ export function resend<const T extends ResendPluginOptions>(
 		webhookHooks: options.webhookHooks,
 		endpoints: resendEndpointsNested,
 		webhooks: resendWebhooksNested,
+		endpointMeta: resendEndpointMeta,
+		endpointSchemas: resendEndpointSchemas,
+		webhookSchemas: resendWebhookSchemas,
 		pluginWebhookMatcher: (request) => {
 			const headers = request.headers;
 			const hasResendSignature =

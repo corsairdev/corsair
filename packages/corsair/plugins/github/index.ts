@@ -6,7 +6,11 @@ import type {
 	CorsairPluginContext,
 	CorsairWebhook,
 	KeyBuilderContext,
+	PluginPermissionsConfig,
 	RawWebhookRequest,
+	RequiredPluginEndpointMeta,
+	RequiredPluginEndpointSchemas,
+	RequiredPluginWebhookSchemas,
 } from '../../core';
 import type { PickAuth } from '../../core/constants';
 import type { GithubEndpointInputs, GithubEndpointOutputs } from './endpoints';
@@ -17,6 +21,10 @@ import {
 	RepositoriesEndpoints,
 	WorkflowsEndpoints,
 } from './endpoints';
+import {
+	GithubEndpointInputSchemas,
+	GithubEndpointOutputSchemas,
+} from './endpoints/types';
 import type { GithubCredentials } from './schema';
 import { GithubSchema } from './schema';
 import type {
@@ -31,6 +39,14 @@ import type {
 	StarDeletedEvent,
 } from './webhooks';
 import { PullRequestWebhooks, PushWebhooks, StarWebhooks } from './webhooks';
+import {
+	PullRequestClosedEventSchema,
+	PullRequestOpenedEventSchema,
+	PullRequestSynchronizeEventSchema,
+	PushEventSchema,
+	StarCreatedEventSchema,
+	StarDeletedEventSchema,
+} from './webhooks/types';
 
 export {
 	type StarCreatedEvent,
@@ -133,6 +149,93 @@ const githubEndpointsNested = {
 	},
 } as const;
 
+export const githubEndpointSchemas = {
+	'issues.list': {
+		input: GithubEndpointInputSchemas.issuesList,
+		output: GithubEndpointOutputSchemas.issuesList,
+	},
+	'issues.get': {
+		input: GithubEndpointInputSchemas.issuesGet,
+		output: GithubEndpointOutputSchemas.issuesGet,
+	},
+	'issues.create': {
+		input: GithubEndpointInputSchemas.issuesCreate,
+		output: GithubEndpointOutputSchemas.issuesCreate,
+	},
+	'issues.update': {
+		input: GithubEndpointInputSchemas.issuesUpdate,
+		output: GithubEndpointOutputSchemas.issuesUpdate,
+	},
+	'issues.createComment': {
+		input: GithubEndpointInputSchemas.issuesCreateComment,
+		output: GithubEndpointOutputSchemas.issuesCreateComment,
+	},
+	'pullRequests.list': {
+		input: GithubEndpointInputSchemas.pullRequestsList,
+		output: GithubEndpointOutputSchemas.pullRequestsList,
+	},
+	'pullRequests.get': {
+		input: GithubEndpointInputSchemas.pullRequestsGet,
+		output: GithubEndpointOutputSchemas.pullRequestsGet,
+	},
+	'pullRequests.listReviews': {
+		input: GithubEndpointInputSchemas.pullRequestsListReviews,
+		output: GithubEndpointOutputSchemas.pullRequestsListReviews,
+	},
+	'pullRequests.createReview': {
+		input: GithubEndpointInputSchemas.pullRequestsCreateReview,
+		output: GithubEndpointOutputSchemas.pullRequestsCreateReview,
+	},
+	'repositories.list': {
+		input: GithubEndpointInputSchemas.repositoriesList,
+		output: GithubEndpointOutputSchemas.repositoriesList,
+	},
+	'repositories.get': {
+		input: GithubEndpointInputSchemas.repositoriesGet,
+		output: GithubEndpointOutputSchemas.repositoriesGet,
+	},
+	'repositories.listBranches': {
+		input: GithubEndpointInputSchemas.repositoriesListBranches,
+		output: GithubEndpointOutputSchemas.repositoriesListBranches,
+	},
+	'repositories.listCommits': {
+		input: GithubEndpointInputSchemas.repositoriesListCommits,
+		output: GithubEndpointOutputSchemas.repositoriesListCommits,
+	},
+	'repositories.getContent': {
+		input: GithubEndpointInputSchemas.repositoriesGetContent,
+		output: GithubEndpointOutputSchemas.repositoriesGetContent,
+	},
+	'releases.list': {
+		input: GithubEndpointInputSchemas.releasesList,
+		output: GithubEndpointOutputSchemas.releasesList,
+	},
+	'releases.get': {
+		input: GithubEndpointInputSchemas.releasesGet,
+		output: GithubEndpointOutputSchemas.releasesGet,
+	},
+	'releases.create': {
+		input: GithubEndpointInputSchemas.releasesCreate,
+		output: GithubEndpointOutputSchemas.releasesCreate,
+	},
+	'releases.update': {
+		input: GithubEndpointInputSchemas.releasesUpdate,
+		output: GithubEndpointOutputSchemas.releasesUpdate,
+	},
+	'workflows.list': {
+		input: GithubEndpointInputSchemas.workflowsList,
+		output: GithubEndpointOutputSchemas.workflowsList,
+	},
+	'workflows.get': {
+		input: GithubEndpointInputSchemas.workflowsGet,
+		output: GithubEndpointOutputSchemas.workflowsGet,
+	},
+	'workflows.listRuns': {
+		input: GithubEndpointInputSchemas.workflowsListRuns,
+		output: GithubEndpointOutputSchemas.workflowsListRuns,
+	},
+} satisfies RequiredPluginEndpointSchemas<typeof githubEndpointsNested>;
+
 const githubWebhooksNested = {
 	pullRequestOpened: PullRequestWebhooks.opened,
 	pullRequestClosed: PullRequestWebhooks.closed,
@@ -142,7 +245,120 @@ const githubWebhooksNested = {
 	starDeleted: StarWebhooks.deleted,
 } as const;
 
+const githubWebhookSchemas = {
+	pullRequestOpened: {
+		description: 'A pull request was opened',
+		payload: PullRequestOpenedEventSchema,
+		response: PullRequestOpenedEventSchema,
+	},
+	pullRequestClosed: {
+		description: 'A pull request was closed or merged',
+		payload: PullRequestClosedEventSchema,
+		response: PullRequestClosedEventSchema,
+	},
+	pullRequestSynchronize: {
+		description: 'New commits were pushed to a pull request',
+		payload: PullRequestSynchronizeEventSchema,
+		response: PullRequestSynchronizeEventSchema,
+	},
+	push: {
+		description: 'Commits were pushed to a branch',
+		payload: PushEventSchema,
+		response: PushEventSchema,
+	},
+	starCreated: {
+		description: 'A repository was starred',
+		payload: StarCreatedEventSchema,
+		response: StarCreatedEventSchema,
+	},
+	starDeleted: {
+		description: 'A star was removed from a repository',
+		payload: StarDeletedEventSchema,
+		response: StarDeletedEventSchema,
+	},
+} satisfies RequiredPluginWebhookSchemas<typeof githubWebhooksNested>;
+
 const defaultAuthType = 'api_key' as const;
+
+/**
+ * Risk-level metadata for each GitHub endpoint.
+ * Used by the MCP server permission system to decide allow / deny / require_approval.
+ * Keys are validated against the endpoint tree — invalid paths are type errors.
+ */
+const githubEndpointMeta = {
+	'issues.list': {
+		riskLevel: 'read',
+		description: 'List issues in a repository',
+	},
+	'issues.get': { riskLevel: 'read', description: 'Get a specific issue' },
+	'issues.create': { riskLevel: 'write', description: 'Create a new issue' },
+	'issues.update': {
+		riskLevel: 'write',
+		description: 'Update an existing issue',
+	},
+	'issues.createComment': {
+		riskLevel: 'write',
+		description: 'Post a comment on an issue',
+	},
+	'pullRequests.list': { riskLevel: 'read', description: 'List pull requests' },
+	'pullRequests.get': {
+		riskLevel: 'read',
+		description: 'Get a specific pull request',
+	},
+	'pullRequests.listReviews': {
+		riskLevel: 'read',
+		description: 'List reviews on a pull request',
+	},
+	'pullRequests.createReview': {
+		riskLevel: 'write',
+		description: 'Submit a pull request review',
+	},
+	'repositories.list': {
+		riskLevel: 'read',
+		description: 'List repositories for the authenticated user',
+	},
+	'repositories.get': {
+		riskLevel: 'read',
+		description: 'Get a specific repository',
+	},
+	'repositories.listBranches': {
+		riskLevel: 'read',
+		description: 'List branches in a repository',
+	},
+	'repositories.listCommits': {
+		riskLevel: 'read',
+		description: 'List commits in a repository',
+	},
+	'repositories.getContent': {
+		riskLevel: 'read',
+		description: 'Get file or directory content from a repository',
+	},
+	'releases.list': {
+		riskLevel: 'read',
+		description: 'List releases in a repository',
+	},
+	'releases.get': { riskLevel: 'read', description: 'Get a specific release' },
+	'releases.create': {
+		riskLevel: 'write',
+		description: 'Create a new release',
+	},
+	'releases.update': {
+		riskLevel: 'write',
+		description: 'Update an existing release',
+	},
+	'workflows.list': {
+		riskLevel: 'read',
+		description: 'List workflows in a repository',
+	},
+	'workflows.get': {
+		riskLevel: 'read',
+		description: 'Get a specific workflow',
+	},
+	'workflows.listRuns': {
+		riskLevel: 'read',
+		description: 'List workflow runs',
+	},
+} satisfies RequiredPluginEndpointMeta<typeof githubEndpointsNested>;
 
 export type GithubPluginOptions = {
 	authType?: PickAuth<'api_key' | 'oauth_2'>;
@@ -150,6 +366,22 @@ export type GithubPluginOptions = {
 	webhookSecret?: string;
 	hooks?: InternalGithubPlugin['hooks'];
 	webhookHooks?: InternalGithubPlugin['webhookHooks'];
+	/**
+	 * Permission configuration for the GitHub plugin.
+	 * Controls what the AI agent is allowed to do.
+	 * Overrides use dot-notation paths from the GitHub endpoint tree — invalid paths are type errors.
+	 *
+	 * @example
+	 * ```ts
+	 * github({
+	 *   permissions: {
+	 *     mode: 'cautious',
+	 *     overrides: { 'releases.create': 'require_approval' },
+	 *   },
+	 * })
+	 * ```
+	 */
+	permissions?: PluginPermissionsConfig<typeof githubEndpointsNested>;
 };
 
 export type BaseGithubPlugin<PluginOptions extends GithubPluginOptions> =
@@ -188,6 +420,9 @@ export function github<const PluginOptions extends GithubPluginOptions>(
 		webhookHooks: options.webhookHooks,
 		endpoints: githubEndpointsNested,
 		webhooks: githubWebhooksNested,
+		endpointMeta: githubEndpointMeta,
+		endpointSchemas: githubEndpointSchemas,
+		webhookSchemas: githubWebhookSchemas,
 		pluginWebhookMatcher: (request: RawWebhookRequest) => {
 			const headers = request.headers;
 			const hasGithubEvent = headers['x-github-event'] !== undefined;
