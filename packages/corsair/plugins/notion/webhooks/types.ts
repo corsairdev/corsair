@@ -131,7 +131,12 @@ export type NotionWebhookOutputs = {
 };
 
 function parseBody(body: unknown): unknown {
-	return typeof body === 'string' ? JSON.parse(body) : body;
+	if (typeof body !== 'string') return body;
+	try {
+		return JSON.parse(body);
+	} catch {
+		return null;
+	}
 }
 
 export function createNotionMatch(
