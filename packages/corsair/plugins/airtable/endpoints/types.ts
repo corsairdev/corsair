@@ -157,24 +157,36 @@ const BasesGetSchemaResponseSchema = z
 	})
 	.passthrough();
 
-const RecordsCreateResponseSchema = AirtableRecordSchema;
+const RecordsCreateResponseSchema = z
+	.object({
+		records: z.array(AirtableRecordSchema),
+	})
+	.passthrough();
 
 const RecordsCreateOrUpdateResponseSchema = z
 	.object({
-		id: z.string(),
-		createdTime: z.string(),
-		fields: z.record(z.unknown()),
+		records: z.array(AirtableRecordSchema),
 	})
 	.passthrough();
 
 const RecordsDeleteResponseSchema = z
 	.object({
-		id: z.string(),
-		deleted: z.boolean(),
+		records: z.array(
+			z
+				.object({
+					id: z.string(),
+					deleted: z.boolean(),
+				})
+				.passthrough(),
+		),
 	})
 	.passthrough();
 
-const RecordsGetResponseSchema = AirtableRecordSchema;
+const RecordsGetResponseSchema = z
+	.object({
+		records: z.array(AirtableRecordSchema),
+	})
+	.passthrough();
 
 const RecordsSearchResponseSchema = z
 	.object({
@@ -183,7 +195,11 @@ const RecordsSearchResponseSchema = z
 	})
 	.passthrough();
 
-const RecordsUpdateResponseSchema = AirtableRecordSchema;
+const RecordsUpdateResponseSchema = z
+	.object({
+		records: z.array(AirtableRecordSchema),
+	})
+	.passthrough();
 
 const WebhooksGetPayloadsResponseSchema = z
 	.object({

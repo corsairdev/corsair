@@ -17,15 +17,17 @@ export const create: AirtableEndpoints['recordsCreate'] = async (
 		},
 	});
 
-	if (response.id && ctx.db.records) {
+	if (response.records && ctx.db.records) {
 		try {
-			await ctx.db.records.upsertByEntityId(response.id, {
-				...response,
-				baseId: input.baseId,
-				tableId: input.tableIdOrName,
-			});
+			for (const record of response.records) {
+				await ctx.db.records.upsertByEntityId(record.id, {
+					...record,
+					baseId: input.baseId,
+					tableId: input.tableIdOrName,
+				});
+			}
 		} catch (error) {
-			console.warn('Failed to save record to database:', error);
+			console.warn('Failed to save records to database:', error);
 		}
 	}
 
@@ -53,15 +55,17 @@ export const createOrUpdate: AirtableEndpoints['recordsCreateOrUpdate'] =
 			},
 		});
 
-		if (response.id && ctx.db.records) {
+		if (response.records && ctx.db.records) {
 			try {
-				await ctx.db.records.upsertByEntityId(response.id, {
-					...response,
-					baseId: input.baseId,
-					tableId: input.tableIdOrName,
-				});
+				for (const record of response.records) {
+					await ctx.db.records.upsertByEntityId(record.id, {
+						...record,
+						baseId: input.baseId,
+						tableId: input.tableIdOrName,
+					});
+				}
 			} catch (error) {
-				console.warn('Failed to save record to database:', error);
+				console.warn('Failed to save records to database:', error);
 			}
 		}
 
@@ -84,11 +88,15 @@ export const deleteRecord: AirtableEndpoints['recordsDelete'] = async (
 		method: 'DELETE',
 	});
 
-	if (response.deleted && response.id && ctx.db.records) {
+	if (response.records && ctx.db.records) {
 		try {
-			await ctx.db.records.deleteByEntityId(response.id);
+			for (const record of response.records) {
+				if (record.deleted && record.id) {
+					await ctx.db.records.deleteByEntityId(record.id);
+				}
+			}
 		} catch (error) {
-			console.warn('Failed to delete record from database:', error);
+			console.warn('Failed to delete records from database:', error);
 		}
 	}
 
@@ -115,15 +123,17 @@ export const get: AirtableEndpoints['recordsGet'] = async (ctx, input) => {
 		},
 	);
 
-	if (response.id && ctx.db.records) {
+	if (response.records && ctx.db.records) {
 		try {
-			await ctx.db.records.upsertByEntityId(response.id, {
-				...response,
-				baseId: input.baseId,
-				tableId: input.tableIdOrName,
-			});
+			for (const record of response.records) {
+				await ctx.db.records.upsertByEntityId(record.id, {
+					...record,
+					baseId: input.baseId,
+					tableId: input.tableIdOrName,
+				});
+			}
 		} catch (error) {
-			console.warn('Failed to save record to database:', error);
+			console.warn('Failed to save records to database:', error);
 		}
 	}
 
@@ -199,15 +209,17 @@ export const update: AirtableEndpoints['recordsUpdate'] = async (
 		},
 	});
 
-	if (response.id && ctx.db.records) {
+	if (response.records && ctx.db.records) {
 		try {
-			await ctx.db.records.upsertByEntityId(response.id, {
-				...response,
-				baseId: input.baseId,
-				tableId: input.tableIdOrName,
-			});
+			for (const record of response.records) {
+				await ctx.db.records.upsertByEntityId(record.id, {
+					...record,
+					baseId: input.baseId,
+					tableId: input.tableIdOrName,
+				});
+			}
 		} catch (error) {
-			console.warn('Failed to save record to database:', error);
+			console.warn('Failed to save records to database:', error);
 		}
 	}
 
