@@ -243,8 +243,7 @@ export function cal<const T extends CalPluginOptions>(
 		pluginWebhookMatcher: (request) => {
 			const headers = request.headers;
 			const hasSignature = 'x-cal-signature-256' in headers;
-			console.log(headers);
-			console.log(hasSignature);
+			return hasSignature;
 			return hasSignature;
 		},
 		errorHandlers: {
