@@ -11,9 +11,9 @@ import {
 	resend,
 	slack,
 	spotify,
+	linear,
 	notion,
 	todoist,
-	linear,
 	airtable,
 } from 'corsair';
 import { pool } from '../db';
