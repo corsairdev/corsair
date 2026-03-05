@@ -2,6 +2,8 @@ import { z } from 'zod';
 
 // ── Shared Discord API Types ───────────────────────────────────────────────────
 
+// ── Zod Schemas for Validation ─────────────────────────────────────────────────
+
 export const DiscordUserSchema = z.object({
 	id: z.string(),
 	username: z.string(),
@@ -334,7 +336,7 @@ export type MembersGetInput = z.infer<typeof MembersGetInputSchema>;
 export const SuccessResponseSchema = z.object({ success: z.literal(true) });
 export type SuccessResponse = z.infer<typeof SuccessResponseSchema>;
 
-// ── Endpoint Input Schemas ─────────────────────────────────────────────────────
+// ── Endpoint Input/Output Schema Maps ─────────────────────────────────────────
 
 export const DiscordEndpointInputSchemas = {
 	messagesSend: MessagesSendInputSchema,
@@ -360,8 +362,6 @@ export type DiscordEndpointInputs = {
 		(typeof DiscordEndpointInputSchemas)[K]
 	>;
 };
-
-// ── Endpoint Output Schemas ────────────────────────────────────────────────────
 
 export const DiscordEndpointOutputSchemas = {
 	messagesSend: MessageSchema,
