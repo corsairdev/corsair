@@ -6,7 +6,6 @@ import {
 	googledrive,
 	googlesheets,
 	hubspot,
-	linear,
 	posthog,
 	resend,
 	slack,
