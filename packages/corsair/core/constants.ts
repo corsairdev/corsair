@@ -13,6 +13,7 @@ export type AllErrors =
 	| (string & {});
 
 export const BaseProviders = [
+	'cal',
 	'airtable',
 	'discord',
 	'github',
@@ -30,6 +31,7 @@ export const BaseProviders = [
 ] as const;
 
 export type AllProviders =
+	| 'cal'
 	| 'airtable'
 	| 'discord'
 	| 'github'
