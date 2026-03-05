@@ -47,7 +47,6 @@ export const slackEventHandler = inngest.createFunction(
 
 				console.log('Slack event details:', {
 					type: slackEvent.type,
-					subtype: slackEvent.type,
 					tenant: tenantId,
 					timestamp: new Date().toISOString(),
 				});

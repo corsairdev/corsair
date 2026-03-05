@@ -3,32 +3,25 @@ import { corsair } from '@/server/corsair';
 import 'dotenv/config';
 
 const main = async () => {
-	// const res = await executePermission(corsair, '123');
+	// const res = await corsair.googlecalendar.api.events.create({
+	// 	calendarId: 'primary',
+	// 	event: {
+	// 		summary: 'Guitar Lesson',
+	// 		start: {
+	// 			dateTime: '2026-03-03T15:00:00-05:00',
+	// 			timeZone: 'America/New_York',
+	// 		},
+	// 		end: {
+	// 			dateTime: '2026-03-03T16:00:00-05:00',
+	// 			timeZone: 'America/New_York',
+	// 		},
+	// 	},
+	// });
 
-	const sdkTestChannel = await corsair
-		.withTenant('default')
-		.slack.db.channels.search({
-			data: {
-				name: 'sdk-test',
-			},
-		});
+	// console.log(JSON.stringify(res, null, 2));
 
-	const channelId = sdkTestChannel[0]?.entity_id;
-
-	if (!channelId) {
-		return;
-	}
-
-	const res = await corsair.withTenant('default').slack.api.messages.post({
-		channel: channelId,
-		text: 'hello',
-	});
+	const res = await corsair.withTenant('default').airtable.api.bases.getMany({});
+	console.log(JSON.stringify(res, null, 2));
 };
-
-const main2 = async () => {
-	await executePermission(corsair, '041808fb-6a56-4a8e-86c4-2d26e596fbb1');
-};
-
-main2();
 
 // main();

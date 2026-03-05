@@ -6,10 +6,12 @@ import {
 	googledrive,
 	googlesheets,
 	hubspot,
-	linear,
 	posthog,
 	resend,
 	slack,
+	spotify,
+	airtable,
+	linear
 } from 'corsair';
 import { pool } from '../db';
 
@@ -124,5 +126,7 @@ export const corsair = createCorsair({
 		}),
 		hubspot(),
 		posthog(),
+		spotify(),
+		airtable(),
 	],
 });
