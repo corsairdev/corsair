@@ -127,5 +127,7 @@ export const corsair = createCorsair({
 		}),
 		hubspot(),
 		posthog(),
+		spotify(),
+		airtable(),
 	],
 });
