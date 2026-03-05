@@ -87,6 +87,11 @@
       "types": "./dist/plugins/linear/index.d.ts",
       "default": "./dist/plugins/linear/index.js"
     },
+    "./plugins/notion": {
+      "dev-source": "./plugins/notion/index.ts",
+      "types": "./dist/plugins/notion/index.d.ts",
+      "default": "./dist/plugins/notion/index.js"
+    },
     "./plugins/posthog": {
       "dev-source": "./plugins/posthog/index.ts",
       "types": "./dist/plugins/posthog/index.d.ts",
