@@ -29,5 +29,6 @@ export default defineConfig({
 		'plugins/posthog/index.ts',
 		'plugins/github/index.ts',
 		'plugins/spotify/index.ts',
+		'plugins/cal/index.ts',
 	],
 });
