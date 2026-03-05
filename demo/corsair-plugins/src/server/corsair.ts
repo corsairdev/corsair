@@ -11,6 +11,7 @@ import {
 	resend,
 	slack,
 	spotify,
+	todoist,
 	linear,
 	airtable,
 } from 'corsair';
@@ -129,6 +130,7 @@ export const corsair = createCorsair({
 		hubspot(),
 		posthog(),
 		spotify(),
+		todoist(),
 		airtable(),
 	],
 });

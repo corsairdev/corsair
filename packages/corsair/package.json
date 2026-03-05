@@ -106,6 +106,11 @@
       "dev-source": "./plugins/spotify/index.ts",
       "types": "./dist/plugins/spotify/index.d.ts",
       "default": "./dist/plugins/spotify/index.js"
+    },
+    "./plugins/todoist": {
+      "dev-source": "./plugins/todoist/index.ts",
+      "types": "./dist/plugins/todoist/index.d.ts",
+      "default": "./dist/plugins/todoist/index.js"
     }
   },
   "scripts": {

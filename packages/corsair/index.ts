@@ -19,5 +19,6 @@ export { posthog } from './plugins/posthog';
 export { resend } from './plugins/resend';
 export { slack } from './plugins/slack';
 export { spotify } from './plugins/spotify';
+export { todoist } from './plugins/todoist';
 export { cal } from './plugins/cal';
 export { airtable } from './plugins/airtable';
