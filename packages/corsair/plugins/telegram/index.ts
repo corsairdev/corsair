@@ -241,9 +241,10 @@ export function telegram<const T extends TelegramPluginOptions>(
 			if (!body || typeof body !== 'object') {
 				return false;
 			}
+
+			const hasSignature = 'x-telegram-bot-api-secret-token' in request.headers;
 			
-			// Type assertion for webhook body validation - unknown used for safe type checking before validation
-			return 'update_id' in body && typeof (body as { update_id?: unknown }).update_id === 'number';
+			return hasSignature && 'update_id' in body
 		},
 		errorHandlers: {
 			...errorHandlers,
