@@ -6,8 +6,8 @@ import { z } from 'zod';
 
 export const CorsairIntegrationsSchema = z.object({
 	id: z.string(),
-	created_at: z.date(),
-	updated_at: z.date(),
+	created_at: z.coerce.date(),
+	updated_at: z.coerce.date(),
 
 	name: z.string(),
 	// Coerce DB null to empty object
@@ -15,7 +15,7 @@ export const CorsairIntegrationsSchema = z.object({
 		.record(z.unknown())
 		.nullable()
 		.transform((v) => v ?? {}),
-	dek: z.string().optional(),
+	dek: z.string().nullish(),
 });
 
 export type CorsairIntegration = z.infer<typeof CorsairIntegrationsSchema>;
@@ -26,8 +26,8 @@ export type CorsairIntegration = z.infer<typeof CorsairIntegrationsSchema>;
 
 export const CorsairAccountsSchema = z.object({
 	id: z.string(),
-	created_at: z.date(),
-	updated_at: z.date(),
+	created_at: z.coerce.date(),
+	updated_at: z.coerce.date(),
 
 	tenant_id: z.string(),
 	// references integrations.id
@@ -38,7 +38,7 @@ export const CorsairAccountsSchema = z.object({
 		.record(z.unknown())
 		.nullable()
 		.transform((v) => v ?? {}),
-	dek: z.string().optional(),
+	dek: z.string().nullish(),
 });
 
 export type CorsairAccount = z.infer<typeof CorsairAccountsSchema>;
@@ -49,8 +49,8 @@ export type CorsairAccount = z.infer<typeof CorsairAccountsSchema>;
 
 export const CorsairEntitiesSchema = z.object({
 	id: z.string(),
-	created_at: z.date(),
-	updated_at: z.date(),
+	created_at: z.coerce.date(),
+	updated_at: z.coerce.date(),
 
 	// references accounts.id (which provides tenant scoping)
 	account_id: z.string(),
@@ -75,8 +75,8 @@ export type CorsairEntity = z.infer<typeof CorsairEntitiesSchema>;
 
 export const CorsairEventsSchema = z.object({
 	id: z.string(),
-	created_at: z.date(),
-	updated_at: z.date(),
+	created_at: z.coerce.date(),
+	updated_at: z.coerce.date(),
 
 	// references accounts.id (which provides tenant scoping)
 	account_id: z.string(),
@@ -99,8 +99,8 @@ export type CorsairEvent = z.infer<typeof CorsairEventsSchema>;
 
 export const CorsairPermissionsSchema = z.object({
 	id: z.string(),
-	created_at: z.date(),
-	updated_at: z.date(),
+	created_at: z.coerce.date(),
+	updated_at: z.coerce.date(),
 
 	/** 32-byte hex-encoded secure random token, single-use. Embedded in the review URL. */
 	token: z.string(),
@@ -115,13 +115,23 @@ export const CorsairPermissionsSchema = z.object({
 	 * can scope the corsair instance correctly when executing the approved action.
 	 * Defaults to 'default' for single-tenant instances.
 	 */
-	tenant_id: z.string().optional(),
+	tenant_id: z.string(),
 	/** Current state of the approval request */
 	status: z
-		.enum(['pending', 'approved', 'completed', 'denied', 'expired'])
+		.enum([
+			'pending',
+			'approved',
+			'executing',
+			'completed',
+			'denied',
+			'expired',
+			'failed',
+		])
 		.default('pending'),
 	/** ISO8601 timestamp — when this request becomes invalid */
 	expires_at: z.string(),
+	/** Stringified error captured when status transitions to 'failed'. Null otherwise. */
+	error: z.string().nullable().optional(),
 });
 
 export type CorsairPermission = z.infer<typeof CorsairPermissionsSchema>;
@@ -135,8 +145,16 @@ export type CorsairPermissionInsert = {
 	endpoint: string;
 	args: string;
 	tenant_id?: string;
-	status?: 'pending' | 'approved' | 'completed' | 'denied' | 'expired';
+	status?:
+		| 'pending'
+		| 'approved'
+		| 'executing'
+		| 'completed'
+		| 'denied'
+		| 'expired'
+		| 'failed';
 	expires_at: string;
+	error?: string | null;
 };
 
 // ─────────────────────────────────────────────────────────────────────────────

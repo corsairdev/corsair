@@ -21,6 +21,7 @@ import { bindEndpointsRecursively } from '../endpoints/bind';
 import type { CorsairErrorHandler } from '../errors';
 import type { CorsairInspectMethods } from '../inspect';
 import { buildInspectMethods } from '../inspect';
+import type { CorsairPermissionsNamespace } from '../permissions';
 import type {
 	CorsairKeyBuilderBase,
 	CorsairPlugin,
@@ -188,7 +189,7 @@ type InferPluginNamespaces<Plugins extends readonly CorsairPlugin[]> =
 
 /**
  * The main Corsair client type that provides access to all plugin APIs, entities, webhooks, and keys.
- * Also includes get_methods() and get_schema() for agent-facing endpoint discovery.
+ * Also includes list_operations() and get_schema() for agent-facing endpoint discovery.
  */
 export type CorsairClient<Plugins extends readonly CorsairPlugin[]> =
 	InferPluginNamespaces<Plugins> & CorsairInspectMethods;
@@ -196,7 +197,7 @@ export type CorsairClient<Plugins extends readonly CorsairPlugin[]> =
 /**
  * Multi-tenant wrapper that provides a `withTenant` method to scope operations to a specific tenant.
  * Also includes integration-level `keys` for managing shared secrets (OAuth2 client credentials, etc.)
- * Inspect methods (get_methods / get_schema) are available at the root — no need to call withTenant().
+ * Inspect methods (list_operations / get_schema) are available at the root — no need to call withTenant().
  */
 export type CorsairTenantWrapper<Plugins extends readonly CorsairPlugin[]> = {
 	withTenant: (tenantId: string) => CorsairClient<Plugins>;
@@ -205,6 +206,11 @@ export type CorsairTenantWrapper<Plugins extends readonly CorsairPlugin[]> = {
 	 * Used to manage secrets shared across all tenants (e.g., OAuth2 client_id, client_secret).
 	 */
 	keys: InferAllIntegrationKeys<Plugins>;
+	/**
+	 * Permission management namespace. Use this to query and transition permission records.
+	 * Available at the root regardless of multi-tenancy setting.
+	 */
+	permissions: CorsairPermissionsNamespace;
 } & CorsairInspectMethods;
 
 /**
@@ -218,6 +224,11 @@ export type CorsairSingleTenantClient<
 	 * Used to manage secrets shared across all tenants (e.g., OAuth2 client_id, client_secret).
 	 */
 	keys: InferAllIntegrationKeys<Plugins>;
+	/**
+	 * Permission management namespace. Use this to query and transition permission records.
+	 * Available at the root regardless of multi-tenancy setting.
+	 */
+	permissions: CorsairPermissionsNamespace;
 };
 
 // ─────────────────────────────────────────────────────────────────────────────

@@ -1,9 +1,9 @@
 // main function exports
 
 export { createCorsair } from './core';
-export { processWebhook } from './webhooks';
-export { executePermission } from './permissions';
 export type { PermissionExecuteResult } from './permissions';
+export { executePermission } from './permissions';
+export { processWebhook } from './webhooks';
 
 // plugin function exports
 
@@ -20,3 +20,5 @@ export { resend } from './plugins/resend';
 export { slack } from './plugins/slack';
 export { spotify } from './plugins/spotify';
 export { todoist } from './plugins/todoist';
+export { cal } from './plugins/cal';
+export { airtable } from './plugins/airtable';

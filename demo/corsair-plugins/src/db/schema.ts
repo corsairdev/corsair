@@ -64,4 +64,5 @@ export const corsair_permissions = pgTable('corsair_permissions', {
 	status: text('status'),
 	/** ISO8601 timestamp — when this request becomes invalid */
 	expires_at: timestamp('expires_at'),
+	tenant_id: text('tenant_id'),
 });

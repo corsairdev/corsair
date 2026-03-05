@@ -60,12 +60,8 @@
           "name": "corsair_accounts_integration_id_corsair_integrations_id_fk",
           "tableFrom": "corsair_accounts",
           "tableTo": "corsair_integrations",
-          "columnsFrom": [
-            "integration_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["integration_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }

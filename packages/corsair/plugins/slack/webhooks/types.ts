@@ -373,12 +373,51 @@ export type ThreadBroadcastMessageEvent = z.infer<
 >;
 
 // ─────────────────────────────────────────────────────────────────────────────
+// Inner message object for message_changed / message_deleted events.
+//
+// Slack sends a partial message representation inside these event envelopes —
+// it lacks `channel` and `event_ts` (those live on the outer envelope) and
+// may include source/user team fields not present on regular message events.
+// ─────────────────────────────────────────────────────────────────────────────
+
+export const SlackMessageObjectSchema = z.object({
+	type: z.literal('message'),
+	subtype: z.string().optional(),
+	user: z.string().optional(),
+	bot_id: z.string().optional(),
+	ts: z.string(),
+	client_msg_id: z.string().optional(),
+	text: z.string().optional(),
+	team: z.string().optional(),
+	source_team: z.string().optional(),
+	user_team: z.string().optional(),
+	edited: z.object({ user: z.string(), ts: z.string() }).optional(),
+	blocks: z
+		.array(
+			z
+				.object({ type: z.string(), block_id: z.string().optional() })
+				.passthrough(),
+		)
+		.optional(),
+	thread_ts: z.string().optional(),
+	reply_count: z.number().optional(),
+	reply_users_count: z.number().optional(),
+	latest_reply: z.string().optional(),
+	reply_users: z.array(z.string()).optional(),
+	subscribed: z.boolean().optional(),
+	is_locked: z.boolean().optional(),
+});
+export type SlackMessageObject = z.infer<typeof SlackMessageObjectSchema>;
+
+// ─────────────────────────────────────────────────────────────────────────────
 // Recursive message event types
 //
-// MessageChangedEvent, MessageDeletedEvent, MessageRepliedEvent all reference
-// MessageEvent, creating a cycle. TypeScript interfaces handle cycles natively.
-// The Zod schemas use z.lazy(() => MessageEventSchema) for the recursive fields,
-// which defers evaluation until parse time — by then the full module is loaded.
+// MessageDeletedEvent and MessageRepliedEvent reference MessageEvent, creating
+// a cycle. TypeScript interfaces handle cycles natively. The Zod schemas use
+// z.lazy(() => MessageEventSchema) for the recursive fields.
+//
+// MessageChangedEvent uses SlackMessageObject (non-recursive) because Slack
+// sends a partial inner message without `channel` / `event_ts`.
 // ─────────────────────────────────────────────────────────────────────────────
 
 export interface MessageChangedEvent {
@@ -389,8 +428,8 @@ export interface MessageChangedEvent {
 	channel: string;
 	channel_type: ChannelTypes;
 	ts: string;
-	message: MessageEvent;
-	previous_message: MessageEvent;
+	message: SlackMessageObject;
+	previous_message: SlackMessageObject;
 }
 
 export interface MessageDeletedEvent {
@@ -454,8 +493,8 @@ export const MessageChangedEventSchema: z.ZodType<MessageChangedEvent> =
 		channel: z.string(),
 		channel_type: ChannelTypeSchema,
 		ts: z.string(),
-		message: z.lazy(() => MessageEventSchema),
-		previous_message: z.lazy(() => MessageEventSchema),
+		message: SlackMessageObjectSchema,
+		previous_message: SlackMessageObjectSchema,
 	});
 
 export const MessageDeletedEventSchema: z.ZodType<MessageDeletedEvent> =

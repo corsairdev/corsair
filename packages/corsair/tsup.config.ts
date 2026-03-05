@@ -19,6 +19,7 @@ export default defineConfig({
 	entry: [
 		'index.ts',
 		'core.ts',
+		'db.ts',
 		'mcp.ts',
 		'orm.ts',
 		'plugins/index.ts',
@@ -29,5 +30,6 @@ export default defineConfig({
 		'plugins/github/index.ts',
 		'plugins/spotify/index.ts',
 		'plugins/todoist/index.ts',
+		'plugins/cal/index.ts',
 	],
 });
