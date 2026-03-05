@@ -759,6 +759,7 @@ export type {
 	SlackEventMap,
 	SlackEventName,
 	SlackEventPayload,
+	SlackMessageObject,
 	SlackUrlVerificationPayload,
 	SlackWebhookOutputs,
 	SlackWebhookPayload,

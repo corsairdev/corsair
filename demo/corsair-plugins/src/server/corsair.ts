@@ -1,14 +1,20 @@
 import {
 	createCorsair,
+	cal,
+	github,
 	gmail,
 	googlecalendar,
 	googledrive,
 	googlesheets,
 	hubspot,
 	posthog,
+	resend,
 	slack,
 	spotify,
-	linear
+	linear,
+	notion,
+	todoist,
+	airtable,
 } from 'corsair';
 import { pool } from '../db';
 
@@ -21,6 +27,7 @@ export const corsair = createCorsair({
 		onTimeout: 'deny',
 	},
 	plugins: [
+		cal(),
 		linear(),
 		googlecalendar({
 			permissions: {
@@ -42,6 +49,7 @@ export const corsair = createCorsair({
 				mode: 'cautious',
 				overrides: {
 					'messages.post': 'require_approval',
+					'channels.join': 'require_approval',
 				},
 			},
 			webhookHooks: {
@@ -57,38 +65,30 @@ export const corsair = createCorsair({
 				},
 			},
 		}),
-		// resend({
-		// 	webhookHooks: {
-		// 		emails: {
-		// 			received: {
-		// 				after: async (ctx, res) => {
-		// 					await inngest.send({
-		// 						name: 'resend/email',
-		// 						data: {
-		// 							tenantId: ctx.tenantId ?? 'default',
-		// 							event: res.data!,
-		// 						},
-		// 					});
-		// 				},
-		// 			},
-		// 		},
-		// 	},
-		// }),
-		// github({
-		// 	webhookHooks: {
-		// 		starCreated: {
-		// 			after: async (ctx, res) => {
-		// 				await inngest.send({
-		// 					name: 'github/star',
-		// 					data: {
-		// 						tenantId: ctx.tenantId ?? 'default',
-		// 						event: res.data!,
-		// 					},
-		// 				});
-		// 			},
-		// 		},
-		// 	},
-		// }),
+		resend({
+			webhookHooks: {
+				emails: {
+					received: {
+						after: async (ctx, res) => {
+							// await inngest.send({
+							// 	name: 'resend/email',
+							// 	data: {
+							// 		tenantId: ctx.tenantId ?? 'default',
+							// 		event: res.data!,
+							// 	},
+							// });
+						},
+					},
+				},
+			},
+		}),
+		github({
+			webhookHooks: {
+				starCreated: {
+					after: async (ctx, res) => {},
+				},
+			},
+		}),
 		gmail({
 			webhookHooks: {
 				messageChanged: {
@@ -109,7 +109,6 @@ export const corsair = createCorsair({
 								`File ${file.name} was ${changeType}, ${filePath}, ${file.size}`,
 							);
 						});
-
 						// Access all folders
 						res.data?.allFolders.forEach(({ folder, filePath, changeType }) => {
 							console.log(
@@ -132,5 +131,8 @@ export const corsair = createCorsair({
 		hubspot(),
 		posthog(),
 		spotify(),
+		notion(),
+		todoist(),
+		airtable(),
 	],
 });

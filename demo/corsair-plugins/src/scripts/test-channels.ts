@@ -1,3 +1,4 @@
+import { executePermission } from 'corsair';
 import { corsair } from '@/server/corsair';
 import 'dotenv/config';
 
@@ -19,9 +20,8 @@ const main = async () => {
 
 	// console.log(JSON.stringify(res, null, 2));
 
-	const res = corsair.get_webhooks();
-
-	console.log(res);
+	const res = await corsair.withTenant('default').airtable.api.bases.getMany({});
+	console.log(JSON.stringify(res, null, 2));
 };
 
-main();
+// main();
