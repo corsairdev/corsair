@@ -30,5 +30,7 @@ export default defineConfig({
 		'plugins/github/index.ts',
 		'plugins/spotify/index.ts',
 		'plugins/notion/index.ts',
+		'plugins/todoist/index.ts',
+		'plugins/cal/index.ts',
 	],
 });
