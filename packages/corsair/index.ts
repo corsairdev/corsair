@@ -23,3 +23,5 @@ export { notion } from './plugins/notion';
 export { todoist } from './plugins/todoist';
 export { cal } from './plugins/cal';
 export { airtable } from './plugins/airtable';
+
+export { setupCorsair, type SetupCorsairOptions } from './setup/index';

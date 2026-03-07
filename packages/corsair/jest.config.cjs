@@ -2,7 +2,7 @@ module.exports = {
 	preset: 'ts-jest',
 	testEnvironment: 'node',
 	roots: ['<rootDir>'],
-	testMatch: ['**/tests/**/*.test.ts', '**/plugins/**/*.test.ts'],
+	testMatch: ['**/tests/**/*.test.ts', '**/plugins/**/*.test.ts', '**/setup/**/*.test.ts'],
 	collectCoverageFrom: [
 		'**/*.ts',
 		'!**/*.d.ts',
@@ -13,6 +13,7 @@ module.exports = {
 	],
 	moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json'],
 	transform: {
+		'^.+\\.yaml$': '<rootDir>/jest-yaml-transform.cjs',
 		'^.+\\.ts$': [
 			'ts-jest',
 			{
@@ -36,6 +37,9 @@ module.exports = {
 				},
 			},
 		],
+	},
+	moduleNameMapper: {
+		'^(\\.\\.?/.*)\\.js$': '$1',
 	},
 	transformIgnorePatterns: ['node_modules/(?!.*uuid.*)'],
 	extensionsToTreatAsEsm: ['.ts'],
