@@ -19,9 +19,6 @@ const main = async () => {
 	// });
 
 	// console.log(JSON.stringify(res, null, 2));
-
-	const res = await corsair.withTenant('default').airtable.api.bases.getMany({});
-	console.log(JSON.stringify(res, null, 2));
 };
 
 // main();

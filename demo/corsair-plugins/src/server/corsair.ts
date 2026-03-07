@@ -1,20 +1,12 @@
 import {
 	createCorsair,
-	cal,
 	github,
 	gmail,
 	googlecalendar,
 	googledrive,
 	googlesheets,
-	hubspot,
-	posthog,
 	resend,
 	slack,
-	spotify,
-	linear,
-	notion,
-	todoist,
-	airtable,
 } from 'corsair';
 import { pool } from '../db';
 
@@ -27,8 +19,6 @@ export const corsair = createCorsair({
 		onTimeout: 'deny',
 	},
 	plugins: [
-		cal(),
-		linear(),
 		googlecalendar({
 			permissions: {
 				mode: 'cautious',
@@ -128,11 +118,5 @@ export const corsair = createCorsair({
 				},
 			},
 		}),
-		hubspot(),
-		posthog(),
-		spotify(),
-		notion(),
-		todoist(),
-		airtable(),
 	],
 });

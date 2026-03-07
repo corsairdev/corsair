@@ -1,6 +1,6 @@
 {
   "name": "corsair",
-  "version": "0.1.26",
+  "version": "0.1.27",
   "description": "",
   "type": "module",
   "main": "./dist/index.js",
@@ -116,6 +116,11 @@
       "dev-source": "./plugins/todoist/index.ts",
       "types": "./dist/plugins/todoist/index.d.ts",
       "default": "./dist/plugins/todoist/index.js"
+    },
+    "./setup": {
+      "dev-source": "./setup.ts",
+      "types": "./dist/setup.d.ts",
+      "default": "./dist/setup.js"
     }
   },
   "scripts": {
@@ -136,10 +141,12 @@
   },
   "devDependencies": {
     "@types/jest": "^29.5.14",
+    "@types/js-yaml": "^4.0.9",
     "@types/node": "^24.10.1",
     "@types/pg": "^8.15.6",
     "better-sqlite3": "^12.0.0",
     "dotenv": "^17.2.3",
+    "js-yaml": "^4.1.0",
     "jest": "^29.7.0",
     "ts-jest": "^29.1.1",
     "ts-node": "^10.9.2",
