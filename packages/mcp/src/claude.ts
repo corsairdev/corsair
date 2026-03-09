@@ -1,3 +1,4 @@
+import type { SdkMcpToolDefinition } from '@anthropic-ai/claude-agent-sdk';
 import { z } from 'zod';
 import type { BaseMcpOptions } from './adapters.js';
 
@@ -11,14 +12,14 @@ export type CreateClaudeToolsOptions = BaseMcpOptions & {
 
 export async function createClaudeTools(
   options: CreateClaudeToolsOptions,
-): Promise<unknown[]> {
+): Promise<SdkMcpToolDefinition<any>[]> {
   const { tool } = await import('@anthropic-ai/claude-agent-sdk');
   const { corsair, workflows, cron, permissions, basePermissionUrl, context } =
     options;
   const inspect = corsair;
   const notifyJid = context?.jid;
 
-  const tools: unknown[] = [];
+  const tools: SdkMcpToolDefinition<any>[] = [];
 
   tools.push(
     tool(
