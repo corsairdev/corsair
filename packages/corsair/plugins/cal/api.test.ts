@@ -1,13 +1,13 @@
 import dotenv from 'dotenv';
 import { CalAPIError, makeCalRequest } from './client';
 import type {
-	BookingsListResponse,
-	BookingsGetResponse,
-	BookingsCreateResponse,
 	BookingsCancelResponse,
-	BookingsRescheduleResponse,
 	BookingsConfirmResponse,
+	BookingsCreateResponse,
 	BookingsDeclineResponse,
+	BookingsGetResponse,
+	BookingsListResponse,
+	BookingsRescheduleResponse,
 } from './endpoints/types';
 import { CalEndpointOutputSchemas } from './endpoints/types';
 
@@ -22,9 +22,7 @@ async function getAvailableSlot(eventTypeId: number): Promise<string> {
 	const startTime = new Date(
 		Date.now() + 7 * 24 * 60 * 60 * 1000,
 	).toISOString();
-	const endTime = new Date(
-		Date.now() + 14 * 24 * 60 * 60 * 1000,
-	).toISOString();
+	const endTime = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString();
 
 	const response = await makeCalRequest<{
 		status: string;
@@ -137,14 +135,10 @@ describe('Cal API Type Tests', () => {
 		afterAll(async () => {
 			for (const uid of bookingsToCleanup) {
 				try {
-					await makeCalRequest(
-						`/bookings/${uid}/cancel`,
-						TEST_API_KEY,
-						{
-							method: 'POST',
-							body: { cancellationReason: 'API test cleanup' },
-						},
-					);
+					await makeCalRequest(`/bookings/${uid}/cancel`, TEST_API_KEY, {
+						method: 'POST',
+						body: { cancellationReason: 'API test cleanup' },
+					});
 				} catch {
 					// Ignore cleanup errors
 				}
@@ -206,9 +200,7 @@ describe('Cal API Type Tests', () => {
 			const bookingUid = await getOrCreateBooking();
 
 			if (!bookingUid) {
-				console.warn(
-					'No bookings available — skipping get test.',
-				);
+				console.warn('No bookings available — skipping get test.');
 				return;
 			}
 
@@ -228,26 +220,23 @@ describe('Cal API Type Tests', () => {
 			const bookingUid = await getOrCreateBooking();
 
 			if (!bookingUid) {
-				console.warn(
-					'No bookings available — skipping reschedule test.',
-				);
+				console.warn('No bookings available — skipping reschedule test.');
 				return;
 			}
 
 			const newSlot = await getAvailableSlot(TEST_EVENT_TYPE_ID);
 
 			try {
-				const response =
-					await makeCalRequest<BookingsRescheduleResponse>(
-						`/bookings/${bookingUid}/reschedule`,
-						TEST_API_KEY,
-						{
-							method: 'POST',
-							body: {
-								start: newSlot,
-							},
+				const response = await makeCalRequest<BookingsRescheduleResponse>(
+					`/bookings/${bookingUid}/reschedule`,
+					TEST_API_KEY,
+					{
+						method: 'POST',
+						body: {
+							start: newSlot,
 						},
-					);
+					},
+				);
 
 				CalEndpointOutputSchemas.bookingsReschedule.parse(response);
 
@@ -284,14 +273,13 @@ describe('Cal API Type Tests', () => {
 			}
 
 			try {
-				const response =
-					await makeCalRequest<BookingsConfirmResponse>(
-						`/bookings/${unconfirmedUid}/confirm`,
-						TEST_API_KEY,
-						{
-							method: 'POST',
-						},
-					);
+				const response = await makeCalRequest<BookingsConfirmResponse>(
+					`/bookings/${unconfirmedUid}/confirm`,
+					TEST_API_KEY,
+					{
+						method: 'POST',
+					},
+				);
 
 				CalEndpointOutputSchemas.bookingsConfirm.parse(response);
 
@@ -328,17 +316,16 @@ describe('Cal API Type Tests', () => {
 			}
 
 			try {
-				const response =
-					await makeCalRequest<BookingsDeclineResponse>(
-						`/bookings/${unconfirmedUid}/decline`,
-						TEST_API_KEY,
-						{
-							method: 'POST',
-							body: {
-								reason: 'API test decline',
-							},
+				const response = await makeCalRequest<BookingsDeclineResponse>(
+					`/bookings/${unconfirmedUid}/decline`,
+					TEST_API_KEY,
+					{
+						method: 'POST',
+						body: {
+							reason: 'API test decline',
 						},
-					);
+					},
+				);
 
 				CalEndpointOutputSchemas.bookingsDecline.parse(response);
 			} catch (error) {
@@ -354,9 +341,7 @@ describe('Cal API Type Tests', () => {
 			const bookingUid = await getOrCreateBooking();
 
 			if (!bookingUid) {
-				console.warn(
-					'No bookings available — skipping cancel test.',
-				);
+				console.warn('No bookings available — skipping cancel test.');
 				return;
 			}
 

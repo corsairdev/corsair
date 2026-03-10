@@ -1,0 +1,1 @@
+export { corsairPermissions } from './permissions';

@@ -1,11 +1,11 @@
 // @ts-expect-error - better-sqlite3 types may not be available
 import Database from 'better-sqlite3';
 import { Kysely, SqliteDialect } from 'kysely';
+import { createCorsair } from '../core';
 import type { CorsairKyselyDatabase } from '../db/kysely/database';
 import { SqliteDatePlugin } from '../db/kysely/sqlite-date-plugin';
-import { createCorsair } from '../core';
-import { slack } from '../plugins/slack';
 import { linear } from '../plugins/linear';
+import { slack } from '../plugins/slack';
 import { setupCorsair } from './index';
 
 function createTestDb() {
@@ -218,8 +218,6 @@ describe('setupCorsair', () => {
 			multiTenancy: true,
 		});
 
-		await expect(
-			setupCorsair(corsair as any),
-		).rejects.toThrow('multi-tenancy');
+		await expect(setupCorsair(corsair as any)).rejects.toThrow('multi-tenancy');
 	});
 });

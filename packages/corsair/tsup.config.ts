@@ -1,6 +1,6 @@
-import { defineConfig } from 'tsup';
 import { readFileSync } from 'node:fs';
 import { load as parseYaml } from 'js-yaml';
+import { defineConfig } from 'tsup';
 
 // Esbuild plugin that inlines *.yaml files as plain JS objects at build time.
 // This means no YAML parser is shipped to end-users at runtime.

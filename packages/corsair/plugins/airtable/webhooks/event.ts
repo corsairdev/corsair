@@ -1,19 +1,13 @@
-import type { AirtableBoundEndpoints, AirtableWebhooks } from '..';
 import { logEventFromContext } from '../../utils/events';
-import {
-	createAirtableMatch,
-	verifyAirtableWebhookSignature,
-} from './types';
+import type { AirtableBoundEndpoints, AirtableWebhooks } from '..';
+import { createAirtableMatch, verifyAirtableWebhookSignature } from './types';
 
 export const event: AirtableWebhooks['event'] = {
 	match: createAirtableMatch(),
 
 	handler: async (ctx, request) => {
 		const webhookSecret = ctx.key;
-		const verification = verifyAirtableWebhookSignature(
-			request,
-			webhookSecret,
-		);
+		const verification = verifyAirtableWebhookSignature(request, webhookSecret);
 		if (!verification.valid) {
 			return {
 				success: false,
@@ -37,7 +31,6 @@ export const event: AirtableWebhooks['event'] = {
 		}
 
 		let corsairEntityId = '';
-
 
 		try {
 			// Type assertion to ensure the endpoints are the correct type

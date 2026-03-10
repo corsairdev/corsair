@@ -7,18 +7,22 @@ import { z } from 'zod';
 // Rich text structure used in blocks and properties
 const RichTextSchema = z.object({
 	type: z.string(),
-	text: z.object({
-		content: z.string(),
-		link: z.object({ url: z.string() }).nullable().optional(),
-	}).optional(),
-	annotations: z.object({
-		bold: z.boolean().optional(),
-		italic: z.boolean().optional(),
-		strikethrough: z.boolean().optional(),
-		underline: z.boolean().optional(),
-		code: z.boolean().optional(),
-		color: z.string().optional(),
-	}).optional(),
+	text: z
+		.object({
+			content: z.string(),
+			link: z.object({ url: z.string() }).nullable().optional(),
+		})
+		.optional(),
+	annotations: z
+		.object({
+			bold: z.boolean().optional(),
+			italic: z.boolean().optional(),
+			strikethrough: z.boolean().optional(),
+			underline: z.boolean().optional(),
+			code: z.boolean().optional(),
+			color: z.string().optional(),
+		})
+		.optional(),
 	plain_text: z.string().optional(),
 	href: z.string().nullable().optional(),
 });
@@ -53,18 +57,20 @@ const ParentSchema = z.union([
 // NOTE: Block types vary significantly (paragraph, heading, list, etc.) and each has
 // different properties. We use passthrough() to allow additional properties while
 // maintaining type safety for common fields.
-const BlockSchema = z.object({
-	object: z.literal('block'),
-	id: z.string(),
-	type: z.string(), // paragraph, heading_1, heading_2, heading_3, bulleted_list_item, etc.
-	created_time: z.string().optional(),
-	created_by: UserReferenceSchema.optional(),
-	last_edited_time: z.string().optional(),
-	last_edited_by: UserReferenceSchema.optional(),
-	archived: z.boolean().optional(),
-	has_children: z.boolean().optional(),
-	parent: ParentSchema.optional(),
-}).passthrough();
+const BlockSchema = z
+	.object({
+		object: z.literal('block'),
+		id: z.string(),
+		type: z.string(), // paragraph, heading_1, heading_2, heading_3, bulleted_list_item, etc.
+		created_time: z.string().optional(),
+		created_by: UserReferenceSchema.optional(),
+		last_edited_time: z.string().optional(),
+		last_edited_by: UserReferenceSchema.optional(),
+		archived: z.boolean().optional(),
+		has_children: z.boolean().optional(),
+		parent: ParentSchema.optional(),
+	})
+	.passthrough();
 
 // ============================================================================
 // Input Schemas
@@ -227,86 +233,92 @@ const ListResponseSchema = <T extends z.ZodTypeAny>(itemSchema: T) =>
 	});
 
 // Page structure
-const PageSchema = z.object({
-	object: z.literal('page'),
-	id: z.string(),
-	created_time: z.string(),
-	created_by: UserReferenceSchema.optional(),
-	last_edited_time: z.string(),
-	last_edited_by: UserReferenceSchema.optional(),
-	cover: z
-		.object({
-			type: z.string(),
-			external: z.object({ url: z.string() }).optional(),
-			file: z.object({ url: z.string() }).optional(),
-		})
-		.nullable()
-		.optional(),
-	icon: z
-		.object({
-			type: z.string(),
-			external: z.object({ url: z.string() }).optional(),
-			emoji: z.string().optional(),
-		})
-		.nullable()
-		.optional(),
-	parent: ParentSchema,
-	archived: z.boolean(),
-	in_trash: z.boolean().optional(),
-	is_locked: z.boolean().optional(),
-	// NOTE: Properties are typed as unknown because they vary by page type.
-	// Database pages have schema-based properties, regular pages have title/rich_text.
-	properties: z.record(z.unknown()),
-	url: z.string(),
-	public_url: z.string().nullable().optional(),
-}).passthrough();
+const PageSchema = z
+	.object({
+		object: z.literal('page'),
+		id: z.string(),
+		created_time: z.string(),
+		created_by: UserReferenceSchema.optional(),
+		last_edited_time: z.string(),
+		last_edited_by: UserReferenceSchema.optional(),
+		cover: z
+			.object({
+				type: z.string(),
+				external: z.object({ url: z.string() }).optional(),
+				file: z.object({ url: z.string() }).optional(),
+			})
+			.nullable()
+			.optional(),
+		icon: z
+			.object({
+				type: z.string(),
+				external: z.object({ url: z.string() }).optional(),
+				emoji: z.string().optional(),
+			})
+			.nullable()
+			.optional(),
+		parent: ParentSchema,
+		archived: z.boolean(),
+		in_trash: z.boolean().optional(),
+		is_locked: z.boolean().optional(),
+		// NOTE: Properties are typed as unknown because they vary by page type.
+		// Database pages have schema-based properties, regular pages have title/rich_text.
+		properties: z.record(z.unknown()),
+		url: z.string(),
+		public_url: z.string().nullable().optional(),
+	})
+	.passthrough();
 
 // Database structure
-const DatabaseSchema = z.object({
-	object: z.literal('database'),
-	id: z.string(),
-	cover: z
-		.object({
-			type: z.string(),
-			external: z.object({ url: z.string() }).optional(),
-		})
-		.nullable()
-		.optional(),
-	icon: z
-		.object({
-			type: z.string(),
-			external: z.object({ url: z.string() }).optional(),
-			emoji: z.string().optional(),
-		})
-		.nullable()
-		.optional(),
-	created_time: z.string(),
-	created_by: UserReferenceSchema.optional(),
-	last_edited_time: z.string(),
-	last_edited_by: UserReferenceSchema.optional(),
-	title: z.array(RichTextSchema),
-	description: z.array(RichTextSchema),
-	is_inline: z.boolean(),
-	// NOTE: Properties are typed as unknown because each database has a unique schema
-	// with different property types (title, rich_text, number, select, date, etc.).
-	properties: z.record(z.unknown()),
-	parent: ParentSchema,
-	url: z.string(),
-	public_url: z.string().nullable().optional(),
-	archived: z.boolean(),
-	in_trash: z.boolean().optional(),
-}).passthrough();
+const DatabaseSchema = z
+	.object({
+		object: z.literal('database'),
+		id: z.string(),
+		cover: z
+			.object({
+				type: z.string(),
+				external: z.object({ url: z.string() }).optional(),
+			})
+			.nullable()
+			.optional(),
+		icon: z
+			.object({
+				type: z.string(),
+				external: z.object({ url: z.string() }).optional(),
+				emoji: z.string().optional(),
+			})
+			.nullable()
+			.optional(),
+		created_time: z.string(),
+		created_by: UserReferenceSchema.optional(),
+		last_edited_time: z.string(),
+		last_edited_by: UserReferenceSchema.optional(),
+		title: z.array(RichTextSchema),
+		description: z.array(RichTextSchema),
+		is_inline: z.boolean(),
+		// NOTE: Properties are typed as unknown because each database has a unique schema
+		// with different property types (title, rich_text, number, select, date, etc.).
+		properties: z.record(z.unknown()),
+		parent: ParentSchema,
+		url: z.string(),
+		public_url: z.string().nullable().optional(),
+		archived: z.boolean(),
+		in_trash: z.boolean().optional(),
+	})
+	.passthrough();
 
 // User structure
-const UserSchema = z.object({
-	object: z.literal('user'),
-	id: z.string(),
-	type: z.enum(['person', 'bot']),
-	name: z.string().nullable().optional(),
-	avatar_url: z.string().nullable().optional(),
-	// NOTE: Bot users have additional fields like owner, workspace_name, etc.
-	// Using passthrough to allow these dynamic fields.
-}).passthrough();
+const UserSchema = z
+	.object({
+		object: z.literal('user'),
+		id: z.string(),
+		type: z.enum(['person', 'bot']),
+		name: z.string().nullable().optional(),
+		avatar_url: z.string().nullable().optional(),
+		// NOTE: Bot users have additional fields like owner, workspace_name, etc.
+		// Using passthrough to allow these dynamic fields.
+	})
+	.passthrough();
 
 // Response type definitions
 export type BlocksAppendBlockResponse = z.infer<
@@ -327,7 +339,9 @@ export type DatabasesSearchDatabaseResponse = z.infer<
 	ReturnType<typeof ListResponseSchema<typeof DatabaseSchema>>
 >;
 
-export type DatabasePagesCreateDatabasePageResponse = z.infer<typeof PageSchema>;
+export type DatabasePagesCreateDatabasePageResponse = z.infer<
+	typeof PageSchema
+>;
 
 export type DatabasePagesGetDatabasePageResponse = z.infer<typeof PageSchema>;
 
@@ -335,7 +349,9 @@ export type DatabasePagesGetManyDatabasePagesResponse = z.infer<
 	ReturnType<typeof ListResponseSchema<typeof PageSchema>>
 >;
 
-export type DatabasePagesUpdateDatabasePageResponse = z.infer<typeof PageSchema>;
+export type DatabasePagesUpdateDatabasePageResponse = z.infer<
+	typeof PageSchema
+>;
 
 export type PagesArchivePageResponse = z.infer<typeof PageSchema>;
 
@@ -394,7 +410,8 @@ export const NotionEndpointInputSchemas = {
 	databasesSearchDatabase: DatabasesSearchDatabaseInputSchema,
 	databasePagesCreateDatabasePage: DatabasePagesCreateDatabasePageInputSchema,
 	databasePagesGetDatabasePage: DatabasePagesGetDatabasePageInputSchema,
-	databasePagesGetManyDatabasePages: DatabasePagesGetManyDatabasePagesInputSchema,
+	databasePagesGetManyDatabasePages:
+		DatabasePagesGetManyDatabasePagesInputSchema,
 	databasePagesUpdateDatabasePage: DatabasePagesUpdateDatabasePageInputSchema,
 	pagesArchivePage: PagesArchivePageInputSchema,
 	pagesCreatePage: PagesCreatePageInputSchema,

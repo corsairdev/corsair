@@ -203,7 +203,7 @@ export async function processWebhook(
 	const tenantScopedCorsair = corsair.withTenant
 		? corsair.withTenant(tenantId)
 		: corsair;
-	
+
 	// Known plugin IDs to check
 	const pluginIds = BaseProviders;
 

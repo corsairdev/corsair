@@ -1,7 +1,7 @@
-import type { TodoistEndpoints } from '..';
-import type { TodoistEndpointOutputs } from './types';
 import { logEventFromContext } from '../../utils/events';
+import type { TodoistEndpoints } from '..';
 import { makeTodoistRequest } from '../client';
+import type { TodoistEndpointOutputs } from './types';
 
 export const close: TodoistEndpoints['tasksClose'] = async (ctx, input) => {
 	const result = await makeTodoistRequest<TodoistEndpointOutputs['tasksClose']>(
@@ -12,19 +12,22 @@ export const close: TodoistEndpoints['tasksClose'] = async (ctx, input) => {
 		},
 	);
 
-	await logEventFromContext(ctx, 'todoist.tasks.close', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'todoist.tasks.close',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
 export const create: TodoistEndpoints['tasksCreate'] = async (ctx, input) => {
-	const result = await makeTodoistRequest<TodoistEndpointOutputs['tasksCreate']>(
-		'tasks',
-		ctx.key,
-		{
-			method: 'POST',
-			body: input,
-		},
-	);
+	const result = await makeTodoistRequest<
+		TodoistEndpointOutputs['tasksCreate']
+	>('tasks', ctx.key, {
+		method: 'POST',
+		body: input,
+	});
 
 	if (ctx.db.tasks) {
 		await ctx.db.tasks.upsertByEntityId(result.id, {
@@ -32,24 +35,35 @@ export const create: TodoistEndpoints['tasksCreate'] = async (ctx, input) => {
 		});
 	}
 
-	await logEventFromContext(ctx, 'todoist.tasks.create', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'todoist.tasks.create',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
-export const deleteTask: TodoistEndpoints['tasksDelete'] = async (ctx, input) => {
-	const result = await makeTodoistRequest<TodoistEndpointOutputs['tasksDelete']>(
-		`tasks/${input.id}`,
-		ctx.key,
-		{
-			method: 'DELETE',
-		},
-	);
+export const deleteTask: TodoistEndpoints['tasksDelete'] = async (
+	ctx,
+	input,
+) => {
+	const result = await makeTodoistRequest<
+		TodoistEndpointOutputs['tasksDelete']
+	>(`tasks/${input.id}`, ctx.key, {
+		method: 'DELETE',
+	});
 
 	if (ctx.db.tasks) {
 		await ctx.db.tasks.deleteByEntityId(input.id);
 	}
 
-	await logEventFromContext(ctx, 'todoist.tasks.delete', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'todoist.tasks.delete',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
@@ -68,22 +82,25 @@ export const get: TodoistEndpoints['tasksGet'] = async (ctx, input) => {
 		});
 	}
 
-	await logEventFromContext(ctx, 'todoist.tasks.get', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'todoist.tasks.get',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
 export const getMany: TodoistEndpoints['tasksGetMany'] = async (ctx, input) => {
-	const result = await makeTodoistRequest<TodoistEndpointOutputs['tasksGetMany']>(
-		'tasks',
-		ctx.key,
-		{
-			method: 'GET',
-			query: {
-				...input,
-				ids: input.ids ? input.ids.join(',') : undefined,
-			},
+	const result = await makeTodoistRequest<
+		TodoistEndpointOutputs['tasksGetMany']
+	>('tasks', ctx.key, {
+		method: 'GET',
+		query: {
+			...input,
+			ids: input.ids ? input.ids.join(',') : undefined,
 		},
-	);
+	});
 
 	if (Array.isArray(result) && ctx.db.tasks) {
 		for (const task of result) {
@@ -108,7 +125,7 @@ export const move: TodoistEndpoints['tasksMove'] = async (ctx, input) => {
 		ctx.key,
 		{
 			method: 'POST',
-			body: input
+			body: input,
 		},
 	);
 
@@ -118,19 +135,25 @@ export const move: TodoistEndpoints['tasksMove'] = async (ctx, input) => {
 		});
 	}
 
-	await logEventFromContext(ctx, 'todoist.tasks.move', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'todoist.tasks.move',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
-export const quickAdd: TodoistEndpoints['tasksQuickAdd'] = async (ctx, input) => {
-	const result = await makeTodoistRequest<TodoistEndpointOutputs['tasksQuickAdd']>(
-		'quick/add',
-		ctx.key,
-		{
-			method: 'POST',
-			body: input,
-		},
-	);
+export const quickAdd: TodoistEndpoints['tasksQuickAdd'] = async (
+	ctx,
+	input,
+) => {
+	const result = await makeTodoistRequest<
+		TodoistEndpointOutputs['tasksQuickAdd']
+	>('quick/add', ctx.key, {
+		method: 'POST',
+		body: input,
+	});
 
 	if (ctx.db.tasks) {
 		await ctx.db.tasks.upsertByEntityId(result.id, {
@@ -148,29 +171,30 @@ export const quickAdd: TodoistEndpoints['tasksQuickAdd'] = async (ctx, input) =>
 };
 
 export const reopen: TodoistEndpoints['tasksReopen'] = async (ctx, input) => {
-	const result = await makeTodoistRequest<TodoistEndpointOutputs['tasksReopen']>(
-		`tasks/${input.id}/reopen`,
-		ctx.key,
-		{
-			method: 'POST',
-		},
-	);
+	const result = await makeTodoistRequest<
+		TodoistEndpointOutputs['tasksReopen']
+	>(`tasks/${input.id}/reopen`, ctx.key, {
+		method: 'POST',
+	});
 
-	await logEventFromContext(ctx, 'todoist.tasks.reopen', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'todoist.tasks.reopen',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
 export const update: TodoistEndpoints['tasksUpdate'] = async (ctx, input) => {
 	const { id, ...updates } = input;
 
-	const result = await makeTodoistRequest<TodoistEndpointOutputs['tasksUpdate']>(
-		`tasks/${id}`,
-		ctx.key,
-		{
-			method: 'POST',
-			body: updates,
-		},
-	);
+	const result = await makeTodoistRequest<
+		TodoistEndpointOutputs['tasksUpdate']
+	>(`tasks/${id}`, ctx.key, {
+		method: 'POST',
+		body: updates,
+	});
 
 	if (ctx.db.tasks) {
 		await ctx.db.tasks.upsertByEntityId(result.id, {
@@ -178,7 +202,11 @@ export const update: TodoistEndpoints['tasksUpdate'] = async (ctx, input) => {
 		});
 	}
 
-	await logEventFromContext(ctx, 'todoist.tasks.update', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'todoist.tasks.update',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
-

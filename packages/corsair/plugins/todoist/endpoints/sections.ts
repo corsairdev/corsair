@@ -1,9 +1,12 @@
-import type { TodoistEndpoints } from '..';
-import type { TodoistEndpointOutputs } from './types';
 import { logEventFromContext } from '../../utils/events';
+import type { TodoistEndpoints } from '..';
 import { makeTodoistRequest } from '../client';
+import type { TodoistEndpointOutputs } from './types';
 
-export const create: TodoistEndpoints['sectionsCreate'] = async (ctx, input) => {
+export const create: TodoistEndpoints['sectionsCreate'] = async (
+	ctx,
+	input,
+) => {
 	const result = await makeTodoistRequest<
 		TodoistEndpointOutputs['sectionsCreate']
 	>('sections', ctx.key, {
@@ -54,13 +57,11 @@ export const deleteSection: TodoistEndpoints['sectionsDelete'] = async (
 };
 
 export const get: TodoistEndpoints['sectionsGet'] = async (ctx, input) => {
-	const result = await makeTodoistRequest<TodoistEndpointOutputs['sectionsGet']>(
-		`sections/${input.id}`,
-		ctx.key,
-		{
-			method: 'GET',
-		},
-	);
+	const result = await makeTodoistRequest<
+		TodoistEndpointOutputs['sectionsGet']
+	>(`sections/${input.id}`, ctx.key, {
+		method: 'GET',
+	});
 
 	if (ctx.db.sections) {
 		await ctx.db.sections.upsertByEntityId(result.id, {
@@ -107,7 +108,10 @@ export const getMany: TodoistEndpoints['sectionsGetMany'] = async (
 	return result;
 };
 
-export const update: TodoistEndpoints['sectionsUpdate'] = async (ctx, input) => {
+export const update: TodoistEndpoints['sectionsUpdate'] = async (
+	ctx,
+	input,
+) => {
 	const { id, ...updates } = input;
 
 	const result = await makeTodoistRequest<
@@ -131,4 +135,3 @@ export const update: TodoistEndpoints['sectionsUpdate'] = async (ctx, input) => 
 	);
 	return result;
 };
-

@@ -1,6 +1,6 @@
 import {
-	bookingCreated,
 	bookingCancelled,
+	bookingCreated,
 	bookingRescheduled,
 	meetingEnded,
 } from './bookings';

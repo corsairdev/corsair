@@ -1,5 +1,5 @@
-import type { TodoistWebhooks } from '..';
 import { logEventFromContext } from '../../utils/events';
+import type { TodoistWebhooks } from '..';
 import { createTodoistMatch, verifyTodoistWebhookSignature } from './types';
 
 export const added: TodoistWebhooks['noteAdded'] = {

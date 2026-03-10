@@ -64,7 +64,9 @@ export type BookingsListInput = z.infer<typeof BookingsListInputSchema>;
 export type BookingsGetInput = z.infer<typeof BookingsGetInputSchema>;
 export type BookingsCreateInput = z.infer<typeof BookingsCreateInputSchema>;
 export type BookingsCancelInput = z.infer<typeof BookingsCancelInputSchema>;
-export type BookingsRescheduleInput = z.infer<typeof BookingsRescheduleInputSchema>;
+export type BookingsRescheduleInput = z.infer<
+	typeof BookingsRescheduleInputSchema
+>;
 export type BookingsConfirmInput = z.infer<typeof BookingsConfirmInputSchema>;
 export type BookingsDeclineInput = z.infer<typeof BookingsDeclineInputSchema>;
 

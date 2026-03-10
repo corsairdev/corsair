@@ -14,6 +14,7 @@ import type {
 	RequiredPluginWebhookSchemas,
 } from '../../core';
 import type { AuthTypes, PickAuth } from '../../core/constants';
+import { Blocks, DatabasePages, Databases, Pages, Users } from './endpoints';
 import type {
 	NotionEndpointInputs,
 	NotionEndpointOutputs,
@@ -22,6 +23,9 @@ import {
 	NotionEndpointInputSchemas,
 	NotionEndpointOutputSchemas,
 } from './endpoints/types';
+import { errorHandlers } from './error-handlers';
+import { NotionSchema } from './schema';
+import { NotionWebhooks } from './webhooks';
 import type {
 	NotionWebhookOutputs,
 	PageCreatedEvent,
@@ -30,20 +34,10 @@ import type {
 } from './webhooks/types';
 import {
 	NotionVerificationPayloadSchema,
-	VerificationEventSchema,
 	PageCreatedEventSchema,
 	PageUpdatedEventSchema,
+	VerificationEventSchema,
 } from './webhooks/types';
-import {
-	Blocks,
-	Databases,
-	DatabasePages,
-	Pages,
-	Users,
-} from './endpoints';
-import { NotionSchema } from './schema';
-import { NotionWebhooks } from './webhooks';
-import { errorHandlers } from './error-handlers';
 
 export type NotionPluginOptions = {
 	authType?: PickAuth<'api_key'>;
@@ -69,9 +63,11 @@ export type NotionKeyBuilderContext = KeyBuilderContext<NotionPluginOptions>;
 
 export type NotionBoundEndpoints = BindEndpoints<typeof notionEndpointsNested>;
 
-type NotionEndpoint<
-	K extends keyof NotionEndpointOutputs,
-> = CorsairEndpoint<NotionContext, NotionEndpointInputs[K], NotionEndpointOutputs[K]>;
+type NotionEndpoint<K extends keyof NotionEndpointOutputs> = CorsairEndpoint<
+	NotionContext,
+	NotionEndpointInputs[K],
+	NotionEndpointOutputs[K]
+>;
 
 export type NotionEndpoints = {
 	blocksAppendBlock: NotionEndpoint<'blocksAppendBlock'>;
@@ -96,18 +92,9 @@ type NotionWebhook<
 > = CorsairWebhook<NotionContext, TEvent, NotionWebhookOutputs[K]>;
 
 export type NotionWebhooks = {
-	verification: NotionWebhook<
-		'verification',
-		VerificationEvent
-	>;
-	pageCreated: NotionWebhook<
-		'pageCreated',
-		PageCreatedEvent
-	>;
-	pageUpdated: NotionWebhook<
-		'pageUpdated',
-		PageUpdatedEvent
-	>;
+	verification: NotionWebhook<'verification', VerificationEvent>;
+	pageCreated: NotionWebhook<'pageCreated', PageCreatedEvent>;
+	pageUpdated: NotionWebhook<'pageUpdated', PageUpdatedEvent>;
 };
 
 export type NotionBoundWebhooks = BindWebhooks<NotionWebhooks>;
@@ -271,7 +258,8 @@ const notionEndpointSchemas = {
 
 const notionWebhookSchemas = {
 	verification: {
-		description: 'Notion URL verification — respond to confirm the webhook endpoint',
+		description:
+			'Notion URL verification — respond to confirm the webhook endpoint',
 		payload: NotionVerificationPayloadSchema,
 		response: VerificationEventSchema,
 	},
@@ -315,7 +303,7 @@ export type ExternalNotionPlugin<T extends NotionPluginOptions> =
 	BaseNotionPlugin<T>;
 
 export function notion<const T extends NotionPluginOptions>(
-    // Default to an empty object cast to the expected options type because all fields
+	// Default to an empty object cast to the expected options type because all fields
 	// in NotionPluginOptions are optional, making {} a valid runtime value even though
 	// TypeScript cannot narrow the generic T from an untyped literal
 	incomingOptions: NotionPluginOptions & T = {} as NotionPluginOptions & T,
@@ -383,13 +371,16 @@ export function notion<const T extends NotionPluginOptions>(
 // ─────────────────────────────────────────────────────────────────────────────
 
 export type {
+	NotionWebhookOutputs,
 	PageCreatedEvent,
 	PageUpdatedEvent,
-	NotionWebhookOutputs,
 } from './webhooks/types';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Endpoint Type Exports
 // ─────────────────────────────────────────────────────────────────────────────
 
-export type { NotionEndpointInputs, NotionEndpointOutputs } from './endpoints/types';
+export type {
+	NotionEndpointInputs,
+	NotionEndpointOutputs,
+} from './endpoints/types';
