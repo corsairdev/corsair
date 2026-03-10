@@ -7,6 +7,8 @@ export { processWebhook } from './webhooks';
 
 // plugin function exports
 
+export { airtable } from './plugins/airtable';
+export { cal } from './plugins/cal';
 export { discord } from './plugins/discord';
 export { github } from './plugins/github';
 export { gmail } from './plugins/gmail';
@@ -15,13 +17,11 @@ export { googledrive } from './plugins/googledrive';
 export { googlesheets } from './plugins/googlesheets';
 export { hubspot } from './plugins/hubspot';
 export { linear } from './plugins/linear';
+export { notion } from './plugins/notion';
 export { posthog } from './plugins/posthog';
 export { resend } from './plugins/resend';
 export { slack } from './plugins/slack';
-export { spotify } from './plugins/spotify';    
-export { notion } from './plugins/notion';
+export { spotify } from './plugins/spotify';
 export { todoist } from './plugins/todoist';
-export { cal } from './plugins/cal';
-export { airtable } from './plugins/airtable';
 
-export { setupCorsair, type SetupCorsairOptions } from './setup/index';
+export { type SetupCorsairOptions, setupCorsair } from './setup/index';

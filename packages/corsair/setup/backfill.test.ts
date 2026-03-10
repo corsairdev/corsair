@@ -8,15 +8,16 @@
  *
  * The test is skipped automatically when any of these are absent.
  */
-import dotenv from 'dotenv';
+
 // @ts-expect-error - better-sqlite3 types may not be available
 import Database from 'better-sqlite3';
+import dotenv from 'dotenv';
 import { Kysely, SqliteDialect } from 'kysely';
+import { createCorsair } from '../core';
 import type { CorsairKyselyDatabase } from '../db/kysely/database';
 import { SqliteDatePlugin } from '../db/kysely/sqlite-date-plugin';
-import { createCorsair } from '../core';
-import { slack } from '../plugins/slack';
 import { linear } from '../plugins/linear';
+import { slack } from '../plugins/slack';
 import { setupCorsair } from './index';
 
 dotenv.config();
@@ -94,7 +95,9 @@ describe('setupCorsair backfill', () => {
 		const botToken = process.env.SLACK_BOT_TOKEN;
 		const kek = process.env.CORSAIR_KEK;
 		if (!botToken || !kek) {
-			console.log('[backfill.test] Skipping — SLACK_BOT_TOKEN or CORSAIR_KEK not set');
+			console.log(
+				'[backfill.test] Skipping — SLACK_BOT_TOKEN or CORSAIR_KEK not set',
+			);
 			return;
 		}
 
@@ -125,7 +128,9 @@ describe('setupCorsair backfill', () => {
 
 		const entityTypes = new Set(entities.map((e) => e.entity_type));
 		// channels.list stores channels; users.list stores users
-		expect([...entityTypes].some((t) => t.includes('channel') || t.includes('user'))).toBe(true);
+		expect(
+			[...entityTypes].some((t) => t.includes('channel') || t.includes('user')),
+		).toBe(true);
 
 		const summary = [...entityTypes].map((type) => ({
 			type,
@@ -140,7 +145,9 @@ describe('setupCorsair backfill', () => {
 		const apiKey = process.env.LINEAR_API_KEY;
 		const kek = process.env.CORSAIR_KEK;
 		if (!apiKey || !kek) {
-			console.log('[backfill.test] Skipping — LINEAR_API_KEY or CORSAIR_KEK not set');
+			console.log(
+				'[backfill.test] Skipping — LINEAR_API_KEY or CORSAIR_KEK not set',
+			);
 			return;
 		}
 
@@ -171,7 +178,12 @@ describe('setupCorsair backfill', () => {
 		expect(entities.length).toBeGreaterThan(0);
 
 		const entityTypes = new Set(entities.map((e) => e.entity_type));
-		expect([...entityTypes].some((t) => t.includes('project') || t.includes('issue') || t.includes('team'))).toBe(true);
+		expect(
+			[...entityTypes].some(
+				(t) =>
+					t.includes('project') || t.includes('issue') || t.includes('team'),
+			),
+		).toBe(true);
 
 		const summary = [...entityTypes].map((type) => ({
 			type,
@@ -187,7 +199,9 @@ describe('setupCorsair backfill', () => {
 		const apiKey = process.env.LINEAR_API_KEY;
 		const kek = process.env.CORSAIR_KEK;
 		if (!botToken || !apiKey || !kek) {
-			console.log('[backfill.test] Skipping — SLACK_BOT_TOKEN, LINEAR_API_KEY, or CORSAIR_KEK not set');
+			console.log(
+				'[backfill.test] Skipping — SLACK_BOT_TOKEN, LINEAR_API_KEY, or CORSAIR_KEK not set',
+			);
 			return;
 		}
 
@@ -195,7 +209,10 @@ describe('setupCorsair backfill', () => {
 
 		const corsair = createCorsair({
 			kek,
-			plugins: [slack({ authType: 'api_key' }), linear({ authType: 'api_key' })],
+			plugins: [
+				slack({ authType: 'api_key' }),
+				linear({ authType: 'api_key' }),
+			],
 			database: testDb.db,
 		});
 

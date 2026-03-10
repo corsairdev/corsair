@@ -42,18 +42,22 @@ export const VerificationEventSchema = z.object({
 
 export const PageCreatedEventSchema = NotionWebhookPayloadSchema.extend({
 	type: z.literal('page.created'),
-	data: z.object({
-		page_id: z.string(),
-		database_id: z.string(),
-	}).passthrough(),
+	data: z
+		.object({
+			page_id: z.string(),
+			database_id: z.string(),
+		})
+		.passthrough(),
 });
 
 export const PageUpdatedEventSchema = NotionWebhookPayloadSchema.extend({
 	type: z.literal('page.updated'),
-	data: z.object({
-		page_id: z.string(),
-		database_id: z.string(),
-	}).passthrough(),
+	data: z
+		.object({
+			page_id: z.string(),
+			database_id: z.string(),
+		})
+		.passthrough(),
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -100,7 +104,7 @@ export interface NotionWebhookPayload {
 export type VerificationEvent = {
 	type: 'url_verification';
 	verification_token: string;
-}
+};
 
 export interface PageCreatedEvent extends NotionWebhookPayload {
 	type: 'page.created';
@@ -139,9 +143,7 @@ function parseBody(body: unknown): unknown {
 	}
 }
 
-export function createNotionMatch(
-	eventType: string,
-): CorsairWebhookMatcher {
+export function createNotionMatch(eventType: string): CorsairWebhookMatcher {
 	return (request: RawWebhookRequest) => {
 		if (eventType === 'url_verification') {
 			// Asserting as VerificationEvent because parseBody returns unknown and the
@@ -186,17 +188,16 @@ export function verifyNotionWebhookSignature(
 
 	let bodyString: string;
 	try {
-		bodyString = typeof rawBody === 'string' 
-		? rawBody 
-		: JSON.stringify(rawBody);
+		bodyString =
+			typeof rawBody === 'string' ? rawBody : JSON.stringify(rawBody);
 	} catch (error) {
 		return {
 			valid: false,
 			error: `Failed to parse body: ${error instanceof Error ? error.message : 'unknown error'}`,
 		};
 	}
-		
-		const calculatedSignature = `sha256=${crypto
+
+	const calculatedSignature = `sha256=${crypto
 		.createHmac('sha256', secret)
 		.update(bodyString)
 		.digest('hex')}`;

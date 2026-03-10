@@ -8,9 +8,7 @@ const BasesGetManyInputSchema = z.object({
 
 const BasesGetSchemaInputSchema = z.object({
 	baseId: z.string(),
-	include: z
-		.array(z.enum(['visibleFieldIds', 'fieldIdsInSynced']))
-		.optional(),
+	include: z.array(z.enum(['visibleFieldIds', 'fieldIdsInSynced'])).optional(),
 });
 
 const RecordsCreateInputSchema = z.object({

@@ -1,5 +1,5 @@
-import type { CalWebhooks } from '..';
 import { logEventFromContext } from '../../utils/events';
+import type { CalWebhooks } from '..';
 import { createCalMatch, verifyCalWebhookSignature } from './types';
 
 export const bookingCreated: CalWebhooks['bookingCreated'] = {

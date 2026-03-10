@@ -1,8 +1,6 @@
 import dotenv from 'dotenv';
 import { makeTodoistRequest } from './client';
-import type {
-	TodoistEndpointOutputs,
-} from './endpoints/types';
+import type { TodoistEndpointOutputs } from './endpoints/types';
 import { TodoistEndpointOutputSchemas } from './endpoints/types';
 
 dotenv.config();
@@ -57,19 +55,21 @@ describe('Todoist API Type Tests', () => {
 					content: 'Test task from API test',
 					project_id: projectId,
 				},
-            });
-            
-            await makeTodoistRequest<
-				TodoistEndpointOutputs['tasksCreate']
-			>('tasks', TEST_TOKEN, {
-				method: 'POST',
-				body: {
-					content: 'Test task from API test 2',
-					project_id: projectId,
-				},
 			});
 
-            const result = response;
+			await makeTodoistRequest<TodoistEndpointOutputs['tasksCreate']>(
+				'tasks',
+				TEST_TOKEN,
+				{
+					method: 'POST',
+					body: {
+						content: 'Test task from API test 2',
+						project_id: projectId,
+					},
+				},
+			);
+
+			const result = response;
 
 			taskId = result.id;
 
@@ -278,4 +278,3 @@ describe('Todoist API Type Tests', () => {
 		});
 	});
 });
-

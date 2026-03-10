@@ -2,7 +2,6 @@ import dotenv from 'dotenv';
 import { makeDiscordRequest } from './client';
 import type {
 	Channel,
-	DiscordEndpointOutputs,
 	DiscordUser,
 	Guild,
 	GuildMember,
@@ -11,6 +10,7 @@ import type {
 	SuccessResponse,
 } from './endpoints/types';
 import { DiscordEndpointOutputSchemas } from './endpoints/types';
+
 dotenv.config();
 
 const TEST_TOKEN = process.env.DISCORD_BOT_TOKEN!;
@@ -35,9 +35,7 @@ describe('Discord API Type Tests', () => {
 			`guilds/${testGuildId}/channels`,
 			TEST_TOKEN,
 		);
-		const channelId = channelsListResponse.find(
-			(ch) => ch.type === 0,
-		)?.id;
+		const channelId = channelsListResponse.find((ch) => ch.type === 0)?.id;
 		if (!channelId) {
 			throw new Error('No text channels found');
 		}
@@ -444,7 +442,6 @@ describe('Discord API Type Tests', () => {
 				TEST_TOKEN,
 				{ method: 'PUT' },
 			);
-			
 
 			await makeDiscordRequest<void>(
 				`channels/${testChannelId}/messages/${testMessageId}/reactions/👍/@me`,

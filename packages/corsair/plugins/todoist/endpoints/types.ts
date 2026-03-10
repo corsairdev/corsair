@@ -599,4 +599,3 @@ export const todoistEndpointSchemas = {
 		output: TodoistEndpointOutputSchemas.remindersUpdate,
 	},
 } as const;
-

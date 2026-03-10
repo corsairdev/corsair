@@ -33,7 +33,7 @@ export async function makeNotionRequest<T>(
 		TOKEN: apiKey,
 		HEADERS: {
 			'Content-Type': 'application/json',
-			'Authorization': `Bearer ${apiKey}`,
+			Authorization: `Bearer ${apiKey}`,
 			'Notion-Version': '2022-06-28',
 		},
 	};
@@ -52,7 +52,8 @@ export async function makeNotionRequest<T>(
 	try {
 		const response = await request<T>(config, requestOptions);
 		return response;
-	} catch (error: any) { // Using any because error type from request() is unknown and varies
+	} catch (error: any) {
+		// Using any because error type from request() is unknown and varies
 		if (error?.body?.message) {
 			throw new NotionAPIError(error.body.message, error.body.code);
 		}

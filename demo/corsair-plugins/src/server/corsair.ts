@@ -5,6 +5,7 @@ import {
 	googlecalendar,
 	googledrive,
 	googlesheets,
+	linear,
 	resend,
 	slack,
 } from 'corsair';
@@ -118,5 +119,6 @@ export const corsair = createCorsair({
 				},
 			},
 		}),
+		linear(),
 	],
 });

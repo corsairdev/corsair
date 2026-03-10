@@ -1,4 +1,12 @@
-import { list, get, create, cancel, reschedule, confirm, decline } from './bookings';
+import {
+	cancel,
+	confirm,
+	create,
+	decline,
+	get,
+	list,
+	reschedule,
+} from './bookings';
 
 export const Bookings = {
 	list,

@@ -1,51 +1,51 @@
 import {
-	close,
-	create as tasksCreate,
-	deleteTask,
-	get as tasksGet,
-	getMany as tasksGetMany,
-	move,
-	quickAdd,
-	reopen,
-	update as tasksUpdate,
-} from './tasks';
-import {
-	archive as projectsArchive,
-	create as projectsCreate,
-	deleteProject,
-	get as projectsGet,
-	getCollaborators,
-	getMany as projectsGetMany,
-	unarchive,
-	update as projectsUpdate,
-} from './projects';
-import {
-	create as sectionsCreate,
-	deleteSection,
-	get as sectionsGet,
-	getMany as sectionsGetMany,
-	update as sectionsUpdate,
-} from './sections';
-import {
 	create as commentsCreate,
-	deleteComment,
 	get as commentsGet,
 	getMany as commentsGetMany,
 	update as commentsUpdate,
+	deleteComment,
 } from './comments';
 import {
-	create as labelsCreate,
 	deleteLabel,
+	create as labelsCreate,
 	get as labelsGet,
 	getMany as labelsGetMany,
 	update as labelsUpdate,
 } from './labels';
 import {
-	create as remindersCreate,
+	deleteProject,
+	getCollaborators,
+	archive as projectsArchive,
+	create as projectsCreate,
+	get as projectsGet,
+	getMany as projectsGetMany,
+	update as projectsUpdate,
+	unarchive,
+} from './projects';
+import {
 	deleteReminder,
+	create as remindersCreate,
 	getMany as remindersGetMany,
 	update as remindersUpdate,
 } from './reminders';
+import {
+	deleteSection,
+	create as sectionsCreate,
+	get as sectionsGet,
+	getMany as sectionsGetMany,
+	update as sectionsUpdate,
+} from './sections';
+import {
+	close,
+	deleteTask,
+	move,
+	quickAdd,
+	reopen,
+	create as tasksCreate,
+	get as tasksGet,
+	getMany as tasksGetMany,
+	update as tasksUpdate,
+} from './tasks';
 
 export const Tasks = {
 	close,
@@ -102,4 +102,3 @@ export const Reminders = {
 };
 
 export * from './types';
-

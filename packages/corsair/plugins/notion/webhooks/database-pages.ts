@@ -1,9 +1,6 @@
 import { logEventFromContext } from '../../utils/events';
 import type { NotionWebhooks } from '..';
-import {
-	createNotionMatch,
-	verifyNotionWebhookSignature,
-} from './types';
+import { createNotionMatch, verifyNotionWebhookSignature } from './types';
 
 export const pageCreated: NotionWebhooks['pageCreated'] = {
 	match: createNotionMatch('page.created'),
@@ -32,10 +29,12 @@ export const pageCreated: NotionWebhooks['pageCreated'] = {
 		// Save entity to database if available
 		if (event.entity && ctx.db.pages) {
 			try {
-				const entity = event.entity
+				const entity = event.entity;
 				if (entity.id && entity.object === 'page') {
 					const parentId =
-						entity.parent && typeof entity.parent === 'object' && entity.parent !== null
+						entity.parent &&
+						typeof entity.parent === 'object' &&
+						entity.parent !== null
 							? 'page_id' in entity.parent
 								? String(entity.parent.page_id)
 								: 'database_id' in entity.parent
@@ -46,7 +45,9 @@ export const pageCreated: NotionWebhooks['pageCreated'] = {
 							: undefined;
 
 					const databaseId =
-						entity.parent && typeof entity.parent === 'object' && entity.parent !== null
+						entity.parent &&
+						typeof entity.parent === 'object' &&
+						entity.parent !== null
 							? 'database_id' in entity.parent
 								? String(entity.parent.database_id)
 								: undefined
@@ -59,7 +60,9 @@ export const pageCreated: NotionWebhooks['pageCreated'] = {
 						database_id: databaseId,
 						parent_id: parentId,
 						parent_type:
-							entity.parent && typeof entity.parent === 'object' && entity.parent !== null
+							entity.parent &&
+							typeof entity.parent === 'object' &&
+							entity.parent !== null
 								? 'type' in entity.parent
 									? String(entity.parent.type)
 									: undefined
@@ -113,10 +116,12 @@ export const pageUpdated: NotionWebhooks['pageUpdated'] = {
 		// Save entity to database if available
 		if (event.entity && ctx.db.pages) {
 			try {
-				const entity = event.entity
+				const entity = event.entity;
 				if (entity.id && entity.object === 'page') {
 					const parentId =
-						entity.parent && typeof entity.parent === 'object' && entity.parent !== null
+						entity.parent &&
+						typeof entity.parent === 'object' &&
+						entity.parent !== null
 							? 'page_id' in entity.parent
 								? String(entity.parent.page_id)
 								: 'database_id' in entity.parent
@@ -127,7 +132,9 @@ export const pageUpdated: NotionWebhooks['pageUpdated'] = {
 							: undefined;
 
 					const databaseId =
-						entity.parent && typeof entity.parent === 'object' && entity.parent !== null
+						entity.parent &&
+						typeof entity.parent === 'object' &&
+						entity.parent !== null
 							? 'database_id' in entity.parent
 								? String(entity.parent.database_id)
 								: undefined
@@ -140,7 +147,9 @@ export const pageUpdated: NotionWebhooks['pageUpdated'] = {
 						database_id: databaseId,
 						parent_id: parentId,
 						parent_type:
-							entity.parent && typeof entity.parent === 'object' && entity.parent !== null
+							entity.parent &&
+							typeof entity.parent === 'object' &&
+							entity.parent !== null
 								? 'type' in entity.parent
 									? String(entity.parent.type)
 									: undefined

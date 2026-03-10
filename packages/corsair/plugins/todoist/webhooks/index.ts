@@ -1,21 +1,21 @@
 import {
 	added as itemAdded,
-	updated as itemUpdated,
-	deleted as itemDeleted,
 	completed as itemCompleted,
+	deleted as itemDeleted,
 	uncompleted as itemUncompleted,
+	updated as itemUpdated,
 } from './items';
 import {
 	added as noteAdded,
-	updated as noteUpdated,
 	deleted as noteDeleted,
+	updated as noteUpdated,
 } from './notes';
 import {
 	added as projectAdded,
-	updated as projectUpdated,
-	deleted as projectDeleted,
 	archived as projectArchived,
+	deleted as projectDeleted,
 	unarchived as projectUnarchived,
+	updated as projectUpdated,
 } from './projects';
 
 export const ItemWebhooks = {

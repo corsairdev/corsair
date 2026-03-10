@@ -1,7 +1,7 @@
-import type { AirtableEndpoints } from '..';
-import type { AirtableEndpointOutputs } from './types';
 import { logEventFromContext } from '../../utils/events';
+import type { AirtableEndpoints } from '..';
 import { makeAirtableRequest } from '../client';
+import type { AirtableEndpointOutputs } from './types';
 
 export const create: AirtableEndpoints['recordsCreate'] = async (
 	ctx,
@@ -108,16 +108,12 @@ export const deleteRecord: AirtableEndpoints['recordsDelete'] = async (
 export const get: AirtableEndpoints['recordsGet'] = async (ctx, input) => {
 	const response = await makeAirtableRequest<
 		AirtableEndpointOutputs['recordsGet']
-	>(
-		`${input.baseId}/${input.tableIdOrName}/${input.recordId}`,
-		ctx.key,
-		{
-			method: 'GET',
-			query: {
-				returnFieldsByFieldId: input.returnFieldsByFieldId,
-			},
+	>(`${input.baseId}/${input.tableIdOrName}/${input.recordId}`, ctx.key, {
+		method: 'GET',
+		query: {
+			returnFieldsByFieldId: input.returnFieldsByFieldId,
 		},
-	);
+	});
 
 	if (ctx.db.records) {
 		try {
@@ -150,7 +146,9 @@ export const search: AirtableEndpoints['recordsSearch'] = async (
 		method: 'GET',
 		query: {
 			...input,
-			sort: input.sort?.map((sort) => `${sort.field}:${sort.direction}`).join(','),
+			sort: input.sort
+				?.map((sort) => `${sort.field}:${sort.direction}`)
+				.join(','),
 			fields: input.fields?.join(','),
 		},
 	});

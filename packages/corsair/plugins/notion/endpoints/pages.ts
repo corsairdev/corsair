@@ -57,18 +57,16 @@ export const createPage: NotionEndpoints['pagesCreatePage'] = async (
 	ctx,
 	input,
 ) => {
-	const result = await makeNotionRequest<NotionEndpointOutputs['pagesCreatePage']>(
-		'v1/pages',
-		ctx.key,
-		{
-			method: 'POST',
-			body: {
-				parent: input.parent,
-				...(input.properties && { properties: input.properties }),
-				...(input.children && { children: input.children }),
-			},
+	const result = await makeNotionRequest<
+		NotionEndpointOutputs['pagesCreatePage']
+	>('v1/pages', ctx.key, {
+		method: 'POST',
+		body: {
+			parent: input.parent,
+			...(input.properties && { properties: input.properties }),
+			...(input.children && { children: input.children }),
 		},
-	);
+	});
 
 	if (result && ctx.db.pages) {
 		try {
@@ -111,20 +109,18 @@ export const searchPage: NotionEndpoints['pagesSearchPage'] = async (
 	ctx,
 	input,
 ) => {
-	const result = await makeNotionRequest<NotionEndpointOutputs['pagesSearchPage']>(
-		'v1/search',
-		ctx.key,
-		{
-			method: 'POST',
-			body: {
-				query: input.query,
-				sort: input.sort,
-				filter: input.filter,
-				start_cursor: input.start_cursor,
-				page_size: input.page_size,
-			},
+	const result = await makeNotionRequest<
+		NotionEndpointOutputs['pagesSearchPage']
+	>('v1/search', ctx.key, {
+		method: 'POST',
+		body: {
+			query: input.query,
+			sort: input.sort,
+			filter: input.filter,
+			start_cursor: input.start_cursor,
+			page_size: input.page_size,
 		},
-	);
+	});
 
 	if (result.results && ctx.db.pages) {
 		try {

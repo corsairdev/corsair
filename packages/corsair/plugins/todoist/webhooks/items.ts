@@ -1,5 +1,5 @@
-import type { TodoistWebhooks } from '..';
 import { logEventFromContext } from '../../utils/events';
+import type { TodoistWebhooks } from '..';
 import { createTodoistMatch, verifyTodoistWebhookSignature } from './types';
 
 export const added: TodoistWebhooks['itemAdded'] = {
@@ -7,7 +7,7 @@ export const added: TodoistWebhooks['itemAdded'] = {
 
 	handler: async (ctx, request) => {
 		const webhookSecret = ctx.key;
-        const verification = verifyTodoistWebhookSignature(request, webhookSecret);
+		const verification = verifyTodoistWebhookSignature(request, webhookSecret);
 		if (!verification.valid) {
 			return {
 				success: false,

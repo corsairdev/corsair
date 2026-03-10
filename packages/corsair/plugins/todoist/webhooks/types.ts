@@ -1,5 +1,9 @@
-import type { CorsairWebhookMatcher, RawWebhookRequest, WebhookRequest } from '../../../core';
 import * as crypto from 'crypto';
+import type {
+	CorsairWebhookMatcher,
+	RawWebhookRequest,
+	WebhookRequest,
+} from '../../../core';
 
 export interface TodoistWebhookPayload<TData = { [key: string]: any }> {
 	event_name: string;
@@ -162,7 +166,6 @@ export type TodoistWebhookOutputs = {
 function parseBody(body: unknown): unknown {
 	return typeof body === 'string' ? JSON.parse(body) : body;
 }
-
 
 export function createTodoistMatch(eventType: string): CorsairWebhookMatcher {
 	return (request: RawWebhookRequest) => {

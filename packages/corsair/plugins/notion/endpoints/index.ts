@@ -1,17 +1,13 @@
 import { appendBlock, getManyChildBlocks } from './blocks';
 import {
-	getDatabase,
-	getManyDatabases,
-	searchDatabase,
-} from './databases';
-import {
 	createDatabasePage,
 	getDatabasePage,
 	getManyDatabasePages,
 	updateDatabasePage,
 } from './database-pages';
+import { getDatabase, getManyDatabases, searchDatabase } from './databases';
 import { archivePage, createPage, searchPage } from './pages';
-import { getUser, getManyUsers } from './users';
+import { getManyUsers, getUser } from './users';
 
 export const Blocks = {
 	appendBlock,
