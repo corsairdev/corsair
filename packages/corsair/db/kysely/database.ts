@@ -1,6 +1,5 @@
 import type { SqliteDialectConfig } from 'kysely';
 import { Kysely, PostgresDialect, SqliteDialect } from 'kysely';
-import { SqliteDatePlugin } from './sqlite-date-plugin.js';
 import type { Pool } from 'pg';
 import type {
 	CorsairAccount,
@@ -9,6 +8,7 @@ import type {
 	CorsairIntegration,
 	CorsairPermission,
 } from '../index';
+import { SqliteDatePlugin } from './sqlite-date-plugin.js';
 
 export type CorsairKyselyDatabase = {
 	corsair_integrations: CorsairIntegration;

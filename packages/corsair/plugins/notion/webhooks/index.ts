@@ -1,7 +1,4 @@
-import {
-	pageCreated,
-	pageUpdated,
-} from './database-pages';
+import { pageCreated, pageUpdated } from './database-pages';
 import { verification } from './verification';
 
 export const NotionWebhooks = {

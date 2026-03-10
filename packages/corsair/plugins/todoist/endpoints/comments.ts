@@ -1,9 +1,12 @@
-import type { TodoistEndpoints } from '..';
-import type { TodoistEndpointOutputs } from './types';
 import { logEventFromContext } from '../../utils/events';
+import type { TodoistEndpoints } from '..';
 import { makeTodoistRequest } from '../client';
+import type { TodoistEndpointOutputs } from './types';
 
-export const create: TodoistEndpoints['commentsCreate'] = async (ctx, input) => {
+export const create: TodoistEndpoints['commentsCreate'] = async (
+	ctx,
+	input,
+) => {
 	const result = await makeTodoistRequest<
 		TodoistEndpointOutputs['commentsCreate']
 	>('comments', ctx.key, {
@@ -99,7 +102,10 @@ export const getMany: TodoistEndpoints['commentsGetMany'] = async (
 	return result;
 };
 
-export const update: TodoistEndpoints['commentsUpdate'] = async (ctx, input) => {
+export const update: TodoistEndpoints['commentsUpdate'] = async (
+	ctx,
+	input,
+) => {
 	const { id, ...updates } = input;
 
 	const result = await makeTodoistRequest<
@@ -123,4 +129,3 @@ export const update: TodoistEndpoints['commentsUpdate'] = async (ctx, input) => 
 	);
 	return result;
 };
-

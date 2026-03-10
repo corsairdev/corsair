@@ -1,9 +1,7 @@
 import type { AirtableContext } from '..';
 import { makeAirtableRequest } from '../client';
-import {
-	AirtableWebhookPayloadsResponseSchema,
-	type AirtableWebhookPayloadsResponse,
-} from '../webhooks/types';
+import type { AirtableWebhookPayloadsResponse } from '../webhooks/types';
+import { AirtableWebhookPayloadsResponseSchema } from '../webhooks/types';
 
 type WebhooksGetPayloadsInput = {
 	baseId: string;
@@ -17,7 +15,6 @@ export const getPayloads = async (
 	ctx: AirtableContext,
 	input: WebhooksGetPayloadsInput,
 ): Promise<WebhooksGetPayloadsResponse> => {
-
 	const response = await makeAirtableRequest(
 		`bases/${input.baseId}/webhooks/${input.webhookId}/payloads`,
 		ctx.key,
@@ -29,7 +26,7 @@ export const getPayloads = async (
 		},
 	);
 
-    const parsed = AirtableWebhookPayloadsResponseSchema.parse(response);
+	const parsed = AirtableWebhookPayloadsResponseSchema.parse(response);
 
 	if (parsed.payloads && ctx.db.records) {
 		try {
@@ -42,7 +39,7 @@ export const getPayloads = async (
 								baseId: input.baseId,
 								tableId: change.path.tableId,
 								fields: {
-									...change.cellValuesByFieldId ,
+									...change.cellValuesByFieldId,
 								},
 							});
 						}
@@ -55,20 +52,20 @@ export const getPayloads = async (
 					)) {
 						// Airtable table change payloads use unknown for dynamic table metadata
 						const tableInfo = tableData as Record<string, unknown>;
-						
+
 						if (tableInfo.changedRecordsById) {
 							// Airtable changed records use unknown for field payloads
 							const changedRecords = tableInfo.changedRecordsById as Record<
 								string,
 								unknown
 							>;
-							
+
 							for (const [recordId, recordData] of Object.entries(
 								changedRecords,
 							)) {
 								// Airtable record payloads use unknown for field values
 								const recordInfo = recordData as Record<string, unknown>;
-								
+
 								if (recordInfo.cellValuesByFieldId) {
 									await ctx.db.records.upsertByEntityId(recordId, {
 										id: recordId,
@@ -92,13 +89,13 @@ export const getPayloads = async (
 								string,
 								unknown
 							>;
-							
+
 							for (const [recordId, recordData] of Object.entries(
 								createdRecords,
 							)) {
 								// Airtable created record payloads use unknown for field values
 								const recordInfo = recordData as Record<string, unknown>;
-								
+
 								if (recordInfo.cellValuesByFieldId) {
 									await ctx.db.records.upsertByEntityId(recordId, {
 										id: recordId,
@@ -120,7 +117,7 @@ export const getPayloads = async (
 							const destroyedIds = Array.isArray(tableInfo.destroyedRecordIds)
 								? tableInfo.destroyedRecordIds
 								: [tableInfo.destroyedRecordIds];
-							
+
 							for (const recordId of destroyedIds) {
 								if (typeof recordId === 'string') {
 									await ctx.db.records.deleteByEntityId(recordId);
@@ -131,7 +128,10 @@ export const getPayloads = async (
 				}
 			}
 		} catch (error) {
-			console.warn('Failed to save webhook payload records to database:', error);
+			console.warn(
+				'Failed to save webhook payload records to database:',
+				error,
+			);
 		}
 	}
 
@@ -146,4 +146,3 @@ export async function fetchWebhookPayloads(
 ): Promise<AirtableWebhookPayloadsResponse> {
 	return getPayloads(ctx, { baseId, webhookId, cursor });
 }
-

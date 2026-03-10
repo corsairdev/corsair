@@ -1,7 +1,7 @@
-import type { AirtableEndpoints } from '..';
-import type { AirtableEndpointOutputs } from './types';
 import { logEventFromContext } from '../../utils/events';
+import type { AirtableEndpoints } from '..';
 import { makeAirtableRequest } from '../client';
+import type { AirtableEndpointOutputs } from './types';
 
 export const getMany: AirtableEndpoints['basesGetMany'] = async (
 	ctx,

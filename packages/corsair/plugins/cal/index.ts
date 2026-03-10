@@ -8,34 +8,36 @@ import type {
 	CorsairWebhook,
 	KeyBuilderContext,
 	PluginAuthConfig,
+	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
 	RequiredPluginWebhookSchemas,
-	PluginPermissionsConfig,
 } from '../../core';
 import type { AuthTypes, PickAuth } from '../../core/constants';
+import { Bookings } from './endpoints';
 import type { CalEndpointInputs, CalEndpointOutputs } from './endpoints/types';
-import { CalEndpointInputSchemas, CalEndpointOutputSchemas } from './endpoints/types';
+import {
+	CalEndpointInputSchemas,
+	CalEndpointOutputSchemas,
+} from './endpoints/types';
+import { errorHandlers } from './error-handlers';
+import { CalSchema } from './schema';
+import { BookingWebhooks, PingWebhooks } from './webhooks';
 import type {
-	BookingCreatedEvent,
 	BookingCancelledEvent,
+	BookingCreatedEvent,
 	BookingRescheduledEvent,
+	CalWebhookOutputs,
 	MeetingEndedEvent,
 	PingEvent,
-	CalWebhookOutputs,
-	CalWebhookPayload,
 } from './webhooks/types';
 import {
-	BookingCreatedEventSchema,
 	BookingCancelledEventSchema,
+	BookingCreatedEventSchema,
 	BookingRescheduledEventSchema,
 	MeetingEndedEventSchema,
 	PingEventSchema,
 } from './webhooks/types';
-import { Bookings } from './endpoints';
-import { CalSchema } from './schema';
-import { BookingWebhooks, PingWebhooks } from './webhooks';
-import { errorHandlers } from './error-handlers';
 
 export type CalPluginOptions = {
 	authType?: PickAuth<'api_key'>;
@@ -56,25 +58,42 @@ export type CalKeyBuilderContext = KeyBuilderContext<CalPluginOptions>;
 
 export type CalBoundEndpoints = BindEndpoints<typeof calEndpointsNested>;
 
-type CalEndpoint<
-	K extends keyof CalEndpointOutputs,
+type CalEndpoint<K extends keyof CalEndpointOutputs, Input> = CorsairEndpoint<
+	CalContext,
 	Input,
-> = CorsairEndpoint<CalContext, Input, CalEndpointOutputs[K]>;
+	CalEndpointOutputs[K]
+>;
 
 export type CalEndpoints = {
 	bookingsList: CalEndpoint<'bookingsList', CalEndpointInputs['bookingsList']>;
 	bookingsGet: CalEndpoint<'bookingsGet', CalEndpointInputs['bookingsGet']>;
-	bookingsCreate: CalEndpoint<'bookingsCreate', CalEndpointInputs['bookingsCreate']>;
-	bookingsCancel: CalEndpoint<'bookingsCancel', CalEndpointInputs['bookingsCancel']>;
-	bookingsReschedule: CalEndpoint<'bookingsReschedule', CalEndpointInputs['bookingsReschedule']>;
-	bookingsConfirm: CalEndpoint<'bookingsConfirm', CalEndpointInputs['bookingsConfirm']>;
-	bookingsDecline: CalEndpoint<'bookingsDecline', CalEndpointInputs['bookingsDecline']>;
+	bookingsCreate: CalEndpoint<
+		'bookingsCreate',
+		CalEndpointInputs['bookingsCreate']
+	>;
+	bookingsCancel: CalEndpoint<
+		'bookingsCancel',
+		CalEndpointInputs['bookingsCancel']
+	>;
+	bookingsReschedule: CalEndpoint<
+		'bookingsReschedule',
+		CalEndpointInputs['bookingsReschedule']
+	>;
+	bookingsConfirm: CalEndpoint<
+		'bookingsConfirm',
+		CalEndpointInputs['bookingsConfirm']
+	>;
+	bookingsDecline: CalEndpoint<
+		'bookingsDecline',
+		CalEndpointInputs['bookingsDecline']
+	>;
 };
 
-type CalWebhook<
-	K extends keyof CalWebhookOutputs,
+type CalWebhook<K extends keyof CalWebhookOutputs, TEvent> = CorsairWebhook<
+	CalContext,
 	TEvent,
-> = CorsairWebhook<CalContext, TEvent, CalWebhookOutputs[K]>;
+	CalWebhookOutputs[K]
+>;
 
 export type CalWebhooks = {
 	bookingCreated: CalWebhook<'bookingCreated', BookingCreatedEvent>;
@@ -219,8 +238,7 @@ export type BaseCalPlugin<T extends CalPluginOptions> = CorsairPlugin<
 
 export type InternalCalPlugin = BaseCalPlugin<CalPluginOptions>;
 
-export type ExternalCalPlugin<T extends CalPluginOptions> =
-	BaseCalPlugin<T>;
+export type ExternalCalPlugin<T extends CalPluginOptions> = BaseCalPlugin<T>;
 
 export function cal<const T extends CalPluginOptions>(
 	incomingOptions: CalPluginOptions & T = {} as CalPluginOptions & T,
@@ -285,32 +303,30 @@ export function cal<const T extends CalPluginOptions>(
 }
 
 export type {
-	BookingCreatedEvent,
-	BookingCancelledEvent,
-	BookingRescheduledEvent,
-	MeetingEndedEvent,
-	PingEvent,
-	CalWebhookOutputs,
-	CalWebhookPayload,
-} from './webhooks/types';
-
-export { createCalMatch } from './webhooks/types';
-
-export type {
+	BookingsCancelInput,
+	BookingsCancelResponse,
+	BookingsConfirmInput,
+	BookingsConfirmResponse,
+	BookingsCreateInput,
+	BookingsCreateResponse,
+	BookingsDeclineInput,
+	BookingsDeclineResponse,
+	BookingsGetInput,
+	BookingsGetResponse,
+	BookingsListInput,
+	BookingsListResponse,
+	BookingsRescheduleInput,
+	BookingsRescheduleResponse,
 	CalEndpointInputs,
 	CalEndpointOutputs,
-	BookingsListInput,
-	BookingsGetInput,
-	BookingsCreateInput,
-	BookingsCancelInput,
-	BookingsRescheduleInput,
-	BookingsConfirmInput,
-	BookingsDeclineInput,
-	BookingsListResponse,
-	BookingsGetResponse,
-	BookingsCreateResponse,
-	BookingsCancelResponse,
-	BookingsRescheduleResponse,
-	BookingsConfirmResponse,
-	BookingsDeclineResponse,
 } from './endpoints/types';
+export type {
+	BookingCancelledEvent,
+	BookingCreatedEvent,
+	BookingRescheduledEvent,
+	CalWebhookOutputs,
+	CalWebhookPayload,
+	MeetingEndedEvent,
+	PingEvent,
+} from './webhooks/types';
+export { createCalMatch } from './webhooks/types';

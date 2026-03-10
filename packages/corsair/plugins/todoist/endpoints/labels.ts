@@ -1,7 +1,7 @@
-import type { TodoistEndpoints } from '..';
-import type { TodoistEndpointOutputs } from './types';
 import { logEventFromContext } from '../../utils/events';
+import type { TodoistEndpoints } from '..';
 import { makeTodoistRequest } from '../client';
+import type { TodoistEndpointOutputs } from './types';
 
 export const create: TodoistEndpoints['labelsCreate'] = async (ctx, input) => {
 	const result = await makeTodoistRequest<
@@ -64,11 +64,19 @@ export const get: TodoistEndpoints['labelsGet'] = async (ctx, input) => {
 		});
 	}
 
-	await logEventFromContext(ctx, 'todoist.labels.get', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'todoist.labels.get',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
-export const getMany: TodoistEndpoints['labelsGetMany'] = async (ctx, input) => {
+export const getMany: TodoistEndpoints['labelsGetMany'] = async (
+	ctx,
+	input,
+) => {
 	const result = await makeTodoistRequest<
 		TodoistEndpointOutputs['labelsGetMany']
 	>('labels', ctx.key, {
@@ -116,4 +124,3 @@ export const update: TodoistEndpoints['labelsUpdate'] = async (ctx, input) => {
 	);
 	return result;
 };
-

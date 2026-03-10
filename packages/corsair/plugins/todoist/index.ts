@@ -13,24 +13,6 @@ import type {
 	RequiredPluginWebhookSchemas,
 } from '../../core';
 import type { AuthTypes, PickAuth } from '../../core/constants';
-import type { TodoistEndpointInputs, TodoistEndpointOutputs } from './endpoints/types';
-import { todoistEndpointSchemas } from './endpoints/types';
-import type {
-	TodoistWebhookOutputs,
-	ItemAddedEvent,
-	ItemUpdatedEvent,
-	ItemDeletedEvent,
-	ItemCompletedEvent,
-	ItemUncompletedEvent,
-	NoteAddedEvent,
-	NoteUpdatedEvent,
-	NoteDeletedEvent,
-	ProjectAddedEvent,
-	ProjectUpdatedEvent,
-	ProjectDeletedEvent,
-	ProjectArchivedEvent,
-	ProjectUnarchivedEvent,
-} from './webhooks/types';
 import {
 	Comments,
 	Labels,
@@ -39,9 +21,30 @@ import {
 	Sections,
 	Tasks,
 } from './endpoints';
+import type {
+	TodoistEndpointInputs,
+	TodoistEndpointOutputs,
+} from './endpoints/types';
+import { todoistEndpointSchemas } from './endpoints/types';
+import { errorHandlers } from './error-handlers';
 import { TodoistSchema } from './schema';
 import { ItemWebhooks, NoteWebhooks, ProjectWebhooks } from './webhooks';
-import { errorHandlers } from './error-handlers';
+import type {
+	ItemAddedEvent,
+	ItemCompletedEvent,
+	ItemDeletedEvent,
+	ItemUncompletedEvent,
+	ItemUpdatedEvent,
+	NoteAddedEvent,
+	NoteDeletedEvent,
+	NoteUpdatedEvent,
+	ProjectAddedEvent,
+	ProjectArchivedEvent,
+	ProjectDeletedEvent,
+	ProjectUnarchivedEvent,
+	ProjectUpdatedEvent,
+	TodoistWebhookOutputs,
+} from './webhooks/types';
 
 export type TodoistPluginOptions = {
 	authType?: PickAuth<'api_key'>;
@@ -70,11 +73,11 @@ export type TodoistContext = CorsairPluginContext<
 
 export type TodoistKeyBuilderContext = KeyBuilderContext<TodoistPluginOptions>;
 
-export type TodoistBoundEndpoints = BindEndpoints<typeof todoistEndpointsNested>;
+export type TodoistBoundEndpoints = BindEndpoints<
+	typeof todoistEndpointsNested
+>;
 
-type TodoistEndpoint<
-	K extends keyof TodoistEndpointOutputs,
-> = CorsairEndpoint<
+type TodoistEndpoint<K extends keyof TodoistEndpointOutputs> = CorsairEndpoint<
 	TodoistContext,
 	TodoistEndpointInputs[K],
 	TodoistEndpointOutputs[K]
@@ -137,7 +140,10 @@ export type TodoistWebhooks = {
 	projectUpdated: TodoistWebhook<'projectUpdated', ProjectUpdatedEvent>;
 	projectDeleted: TodoistWebhook<'projectDeleted', ProjectDeletedEvent>;
 	projectArchived: TodoistWebhook<'projectArchived', ProjectArchivedEvent>;
-	projectUnarchived: TodoistWebhook<'projectUnarchived', ProjectUnarchivedEvent>;
+	projectUnarchived: TodoistWebhook<
+		'projectUnarchived',
+		ProjectUnarchivedEvent
+	>;
 };
 
 export type TodoistBoundWebhooks = BindWebhooks<TodoistWebhooks>;
@@ -499,21 +505,21 @@ export function todoist<const T extends TodoistPluginOptions>(
 // ─────────────────────────────────────────────────────────────────────────────
 
 export type {
+	ItemAddedEvent,
+	ItemCompletedEvent,
+	ItemDeletedEvent,
+	ItemUncompletedEvent,
+	ItemUpdatedEvent,
+	NoteAddedEvent,
+	NoteDeletedEvent,
+	NoteUpdatedEvent,
+	ProjectAddedEvent,
+	ProjectArchivedEvent,
+	ProjectDeletedEvent,
+	ProjectUnarchivedEvent,
+	ProjectUpdatedEvent,
 	TodoistWebhookOutputs,
 	TodoistWebhookPayload,
-	ItemAddedEvent,
-	ItemUpdatedEvent,
-	ItemDeletedEvent,
-	ItemCompletedEvent,
-	ItemUncompletedEvent,
-	NoteAddedEvent,
-	NoteUpdatedEvent,
-	NoteDeletedEvent,
-	ProjectAddedEvent,
-	ProjectUpdatedEvent,
-	ProjectDeletedEvent,
-	ProjectArchivedEvent,
-	ProjectUnarchivedEvent,
 } from './webhooks/types';
 
 // ─────────────────────────────────────────────────────────────────────────────

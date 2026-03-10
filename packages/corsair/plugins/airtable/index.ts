@@ -8,26 +8,27 @@ import type {
 	CorsairWebhook,
 	KeyBuilderContext,
 	PluginAuthConfig,
-	RequiredPluginEndpointMeta,
-	RequiredPluginEndpointSchemas,
-	RequiredPluginWebhookSchemas,
 	PluginPermissionsConfig,
+	RequiredPluginWebhookSchemas,
 } from '../../core';
 import type { AuthTypes, PickAuth } from '../../core/constants';
-import type { AirtableEndpointInputs, AirtableEndpointOutputs } from './endpoints/types';
-import { AirtableEndpointInputSchemas, AirtableEndpointOutputSchemas } from './endpoints/types';
+import { Bases, Records, Webhooks } from './endpoints';
 import type {
-	AirtableEvent,
-	AirtableWebhookOutputs,
-} from './webhooks/types';
+	AirtableEndpointInputs,
+	AirtableEndpointOutputs,
+} from './endpoints/types';
+import {
+	AirtableEndpointInputSchemas,
+	AirtableEndpointOutputSchemas,
+} from './endpoints/types';
+import { errorHandlers } from './error-handlers';
+import { AirtableSchema } from './schema';
+import { EventWebhooks } from './webhooks';
+import type { AirtableEvent, AirtableWebhookOutputs } from './webhooks/types';
 import {
 	AirtableEventPayloadSchema,
 	AirtableEventSchema,
 } from './webhooks/types';
-import { Bases, Records, Webhooks } from './endpoints';
-import { AirtableSchema } from './schema';
-import { EventWebhooks } from './webhooks';
-import { errorHandlers } from './error-handlers';
 
 export type AirtablePluginOptions = {
 	authType?: PickAuth<'api_key'>;
@@ -44,13 +45,19 @@ export type AirtableContext = CorsairPluginContext<
 	AirtablePluginOptions
 >;
 
-export type AirtableKeyBuilderContext = KeyBuilderContext<AirtablePluginOptions>;
+export type AirtableKeyBuilderContext =
+	KeyBuilderContext<AirtablePluginOptions>;
 
-export type AirtableBoundEndpoints = BindEndpoints<typeof airtableEndpointsNested>;
+export type AirtableBoundEndpoints = BindEndpoints<
+	typeof airtableEndpointsNested
+>;
 
-type AirtableEndpoint<
-	K extends keyof AirtableEndpointOutputs,
-> = CorsairEndpoint<AirtableContext, AirtableEndpointInputs[K], AirtableEndpointOutputs[K]>;
+type AirtableEndpoint<K extends keyof AirtableEndpointOutputs> =
+	CorsairEndpoint<
+		AirtableContext,
+		AirtableEndpointInputs[K],
+		AirtableEndpointOutputs[K]
+	>;
 
 export type AirtableEndpoints = {
 	basesGetMany: AirtableEndpoint<'basesGetMany'>;
@@ -264,10 +271,10 @@ export function airtable<const T extends AirtablePluginOptions>(
 // ─────────────────────────────────────────────────────────────────────────────
 
 export type {
+	AirtableActionMetadata,
 	AirtableEvent,
 	AirtableWebhookOutputs,
 	AirtableWebhookPayload,
-	AirtableActionMetadata,
 } from './webhooks/types';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -282,9 +289,9 @@ export type {
 	BasesGetSchemaInput,
 	BasesGetSchemaResponse,
 	RecordsCreateInput,
-	RecordsCreateResponse,
 	RecordsCreateOrUpdateInput,
 	RecordsCreateOrUpdateResponse,
+	RecordsCreateResponse,
 	RecordsDeleteInput,
 	RecordsDeleteResponse,
 	RecordsGetInput,

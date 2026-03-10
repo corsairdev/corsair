@@ -1,12 +1,11 @@
-import {
-	createCorsair,
-	CORSAIR_INTERNAL,
-	type CorsairInternalConfig,
-	type CorsairPlugin,
-	type CorsairSingleTenantClient,
-} from '../core';
-import type { CorsairKyselyDatabase } from '../db/kysely/database';
 import type { Kysely } from 'kysely';
+import type {
+	CorsairInternalConfig,
+	CorsairPlugin,
+	CorsairSingleTenantClient,
+} from '../core';
+import { CORSAIR_INTERNAL, createCorsair } from '../core';
+import type { CorsairKyselyDatabase } from '../db/kysely/database';
 
 // Inlined at build time by the esbuild YAML plugin in tsup.config.ts.
 // Edit setup/backfill.yaml to add or change plugin backfill steps.
@@ -17,7 +16,10 @@ import backfillConfig from './backfill.yaml';
 // ─────────────────────────────────────────────────────────────────────────────
 
 // backfill.yaml shape: { [pluginId]: { [group]: { [method]: params } } }
-type BackfillYaml = Record<string, Record<string, Record<string, Record<string, unknown>>>>;
+type BackfillYaml = Record<
+	string,
+	Record<string, Record<string, Record<string, unknown>>>
+>;
 
 type KeyManager = Record<string, unknown>;
 
@@ -51,7 +53,9 @@ export interface SetupCorsairOptions {
  *
  * Only single-tenant corsair instances are accepted.
  */
-export async function setupCorsair<const Plugins extends readonly CorsairPlugin[]>(
+export async function setupCorsair<
+	const Plugins extends readonly CorsairPlugin[],
+>(
 	corsair: CorsairSingleTenantClient<Plugins>,
 	options?: SetupCorsairOptions,
 ): Promise<void> {
@@ -91,7 +95,11 @@ export async function setupCorsair<const Plugins extends readonly CorsairPlugin[
 
 	// 2. Ensure integration + account rows and DEKs for every plugin,
 	//    then check auth status and log guidance for missing credentials.
-	const authReadyPlugins = await ensurePluginRows(db, instance, internal.plugins);
+	const authReadyPlugins = await ensurePluginRows(
+		db,
+		instance,
+		internal.plugins,
+	);
 
 	// 3. Optional backfill — only for plugins with auth configured
 	if (options?.backfill) {
@@ -159,7 +167,9 @@ async function checkAuthStatus(
 		if (!key.startsWith('set_')) continue;
 		const field = key.slice(4);
 		if (OPTIONAL_FIELDS.has(field)) continue;
-		const getter = integrationKeyMgr[`get_${field}`] as (() => Promise<string | null>) | undefined;
+		const getter = integrationKeyMgr[`get_${field}`] as
+			| (() => Promise<string | null>)
+			| undefined;
 		if (!getter) continue;
 		const value = await getter();
 		if (!value) missingIntegration.push(field);
@@ -169,13 +179,16 @@ async function checkAuthStatus(
 		if (!key.startsWith('set_')) continue;
 		const field = key.slice(4);
 		if (OPTIONAL_FIELDS.has(field)) continue;
-		const getter = accountKeyMgr[`get_${field}`] as (() => Promise<string | null>) | undefined;
+		const getter = accountKeyMgr[`get_${field}`] as
+			| (() => Promise<string | null>)
+			| undefined;
 		if (!getter) continue;
 		const value = await getter();
 		if (!value) missingAccount.push(field);
 	}
 
-	const isReady = missingIntegration.length === 0 && missingAccount.length === 0;
+	const isReady =
+		missingIntegration.length === 0 && missingAccount.length === 0;
 
 	if (!isReady) {
 		const lines: string[] = [
@@ -219,7 +232,10 @@ async function ensurePluginRows(
 
 	for (const plugin of plugins) {
 		const pluginId = plugin.id;
-		const authType = ((plugin.options as Record<string, unknown>)?.authType as string | undefined) ?? 'unknown';
+		const authType =
+			((plugin.options as Record<string, unknown>)?.authType as
+				| string
+				| undefined) ?? 'unknown';
 
 		// ── Integration row ────────────────────────────────────────────────────
 
@@ -233,7 +249,13 @@ async function ensurePluginRows(
 			const id = crypto.randomUUID();
 			await db
 				.insertInto('corsair_integrations')
-				.values({ id, name: pluginId, config: {}, created_at: now, updated_at: now })
+				.values({
+					id,
+					name: pluginId,
+					config: {},
+					created_at: now,
+					updated_at: now,
+				})
 				.execute();
 			integration = await db
 				.selectFrom('corsair_integrations')
@@ -248,7 +270,9 @@ async function ensurePluginRows(
 		const integrationKeyMgr = integrationKeys[pluginId];
 
 		if (integration && !integration.dek && integrationKeyMgr) {
-			await (integrationKeyMgr as { issue_new_dek: () => Promise<void> }).issue_new_dek();
+			await (
+				integrationKeyMgr as { issue_new_dek: () => Promise<void> }
+			).issue_new_dek();
 			console.log(`[corsair:setup] Issued integration DEK: ${pluginId}`);
 		}
 
@@ -289,14 +313,21 @@ async function ensurePluginRows(
 		const accountKeyMgr = pluginNamespaces[pluginId]?.keys;
 
 		if (account && !account.dek && accountKeyMgr) {
-			await (accountKeyMgr as { issue_new_dek: () => Promise<void> }).issue_new_dek();
+			await (
+				accountKeyMgr as { issue_new_dek: () => Promise<void> }
+			).issue_new_dek();
 			console.log(`[corsair:setup] Issued account DEK: ${pluginId}`);
 		}
 
 		// ── Auth status check ─────────────────────────────────────────────────
 
 		if (integrationKeyMgr && accountKeyMgr) {
-			const isReady = await checkAuthStatus(pluginId, authType, integrationKeyMgr, accountKeyMgr);
+			const isReady = await checkAuthStatus(
+				pluginId,
+				authType,
+				integrationKeyMgr,
+				accountKeyMgr,
+			);
 			if (isReady) authReadyPlugins.add(pluginId);
 		}
 	}
@@ -317,14 +348,22 @@ async function runBackfill(
 	const activePluginIds = new Set(plugins.map((p) => p.id));
 	const instanceRecord = instance as unknown as Record<
 		string,
-		{ api: Record<string, Record<string, (params: unknown) => Promise<unknown>>> } | undefined
+		| {
+				api: Record<
+					string,
+					Record<string, (params: unknown) => Promise<unknown>>
+				>;
+		  }
+		| undefined
 	>;
 
 	for (const [pluginId, groups] of Object.entries(config)) {
 		if (!activePluginIds.has(pluginId)) continue;
 
 		if (!authReadyPlugins.has(pluginId)) {
-			console.log(`[corsair:setup] Skipping backfill for '${pluginId}' — auth not configured.`);
+			console.log(
+				`[corsair:setup] Skipping backfill for '${pluginId}' — auth not configured.`,
+			);
 			continue;
 		}
 
@@ -333,7 +372,9 @@ async function runBackfill(
 
 		for (const [group, methods] of Object.entries(groups)) {
 			for (const [method, params] of Object.entries(methods)) {
-				console.log(`[corsair:setup] Backfilling ${pluginId} › ${group}.${method}...`);
+				console.log(
+					`[corsair:setup] Backfilling ${pluginId} › ${group}.${method}...`,
+				);
 				try {
 					await api[group]?.[method]?.(params);
 				} catch (error) {

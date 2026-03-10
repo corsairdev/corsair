@@ -1,9 +1,12 @@
-import type { TodoistEndpoints } from '..';
-import type { TodoistEndpointOutputs } from './types';
 import { logEventFromContext } from '../../utils/events';
+import type { TodoistEndpoints } from '..';
 import { makeTodoistRequest } from '../client';
+import type { TodoistEndpointOutputs } from './types';
 
-export const create: TodoistEndpoints['remindersCreate'] = async (ctx, input) => {
+export const create: TodoistEndpoints['remindersCreate'] = async (
+	ctx,
+	input,
+) => {
 	const result = await makeTodoistRequest<
 		TodoistEndpointOutputs['remindersCreate']
 	>('reminders', ctx.key, {
@@ -76,7 +79,10 @@ export const getMany: TodoistEndpoints['remindersGetMany'] = async (
 	return result;
 };
 
-export const update: TodoistEndpoints['remindersUpdate'] = async (ctx, input) => {
+export const update: TodoistEndpoints['remindersUpdate'] = async (
+	ctx,
+	input,
+) => {
 	const { id, ...updates } = input;
 
 	const result = await makeTodoistRequest<
@@ -100,4 +106,3 @@ export const update: TodoistEndpoints['remindersUpdate'] = async (ctx, input) =>
 	);
 	return result;
 };
-

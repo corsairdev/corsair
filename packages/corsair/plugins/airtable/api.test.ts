@@ -21,7 +21,7 @@ describe('Airtable API Type Tests', () => {
 			{ method: 'GET' },
 		);
 
-        AirtableEndpointOutputSchemas.basesGetMany.parse(basesResponse);
+		AirtableEndpointOutputSchemas.basesGetMany.parse(basesResponse);
 
 		const base = basesResponse.bases[0];
 		if (!base) {
@@ -80,4 +80,3 @@ describe('Airtable API Type Tests', () => {
 		});
 	});
 });
-
