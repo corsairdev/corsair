@@ -8,7 +8,7 @@ export function createBaseMcpServer(options: BaseMcpOptions): McpServer {
 		name: 'corsair',
 		version: '1.0.0',
 		description:
-			'Use this to interact with the Corsair API. Corsair helps you integrate with dozens of tools and services. You can setup cron jobs and webhooks triggered jobs.',
+			'Use this to interact with the Corsair API. Corsair helps you integrate with dozens of tools and services.',
 	});
 
 	for (const def of buildCorsairToolDefs(options)) {
