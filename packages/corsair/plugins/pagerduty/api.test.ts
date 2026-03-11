@@ -17,6 +17,7 @@ dotenv.config();
 
 const TEST_TOKEN = process.env.PAGERDUTY_API_KEY!;
 const TEST_SERVICE_ID = process.env.PAGERDUTY_SERVICE_ID!;
+const TEST_FROM_EMAIL = process.env.PAGERDUTY_FROM_EMAIL!;
 
 describe('PagerDuty API Type Tests', () => {
 	describe('incidents', () => {
@@ -55,6 +56,7 @@ describe('PagerDuty API Type Tests', () => {
 				TEST_TOKEN,
 				{
 					method: 'POST',
+					from: TEST_FROM_EMAIL,
 					body: {
 						incident: {
 							type: 'incident',
@@ -92,6 +94,7 @@ describe('PagerDuty API Type Tests', () => {
 				TEST_TOKEN,
 				{
 					method: 'PUT',
+					from: TEST_FROM_EMAIL,
 					body: {
 						incident: {
 							type: 'incident',
@@ -141,6 +144,7 @@ describe('PagerDuty API Type Tests', () => {
 				TEST_TOKEN,
 				{
 					method: 'POST',
+					from: TEST_FROM_EMAIL,
 					body: {
 						note: {
 							content: 'Test note from API test',

@@ -6,11 +6,11 @@ const PagerdutyReferenceSchema = z.object({
 	id: z.string(),
 	type: z.string(),
 	summary: z.string().optional(),
-	html_url: z.string().optional(),
+	html_url: z.string().nullable().optional(),
 });
 
 const PagerdutyIncidentBodySchema = z.object({
-	type: z.literal('incident_body'),
+	type: z.string().optional(),
 	details: z.string().optional(),
 });
 
@@ -45,7 +45,7 @@ const PagerdutyIncidentNoteSchema = z.object({
 	user: PagerdutyReferenceSchema.optional(),
 	channel: z
 		.object({
-			type: z.string(),
+			type: z.string().optional(),
 			name: z.string().optional(),
 		})
 		.optional(),
@@ -56,7 +56,7 @@ const PagerdutyLogEntrySchema = z.object({
 	type: z.string().optional(),
 	summary: z.string().optional(),
 	created_at: z.string().optional(),
-	html_url: z.string().optional(),
+	html_url: z.string().nullable().optional(),
 	incident: PagerdutyReferenceSchema.optional(),
 	service: PagerdutyReferenceSchema.optional(),
 	teams: z.array(PagerdutyReferenceSchema).optional(),
@@ -74,7 +74,7 @@ const PagerdutyUserSchema = z.object({
 	name: z.string().optional(),
 	email: z.string().optional(),
 	role: z.string().optional(),
-	description: z.string().optional(),
+	description: z.string().nullable().optional(),
 	time_zone: z.string().optional(),
 	html_url: z.string().optional(),
 	avatar_url: z.string().optional(),

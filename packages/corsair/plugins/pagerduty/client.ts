@@ -32,9 +32,10 @@ export async function makePagerdutyRequest<T>(
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 		body?: Record<string, unknown>;
 		query?: Record<string, string | number | boolean | undefined>;
+		from?: string;
 	} = {},
 ): Promise<T> {
-	const { method = 'GET', body, query } = options;
+	const { method = 'GET', body, query, from } = options;
 
 	const config: OpenAPIConfig = {
 		BASE: PAGERDUTY_API_BASE,
@@ -46,6 +47,7 @@ export async function makePagerdutyRequest<T>(
 			'Content-Type': 'application/json',
 			'Accept': 'application/vnd.pagerduty+json;version=2',
 			'Authorization': `Token token=${apiKey}`,
+			...(from && { 'From': from }),
 		},
 	};
 
