@@ -154,6 +154,19 @@ export const deleteProject: SentryEndpoints['projectsDelete'] = async (
 		{ method: 'DELETE' },
 	);
 
+	if (ctx.db.projects) {
+		try {
+			const entities = await ctx.db.projects.search({
+				data: { slug: input.projectSlug },
+			});
+			for (const entity of entities) {
+				await ctx.db.projects.deleteByEntityId(entity.entity_id);
+			}
+		} catch (error) {
+			console.warn('Failed to delete project from database:', error);
+		}
+	}
+
 	await logEventFromContext(
 		ctx,
 		'sentry.projects.delete',

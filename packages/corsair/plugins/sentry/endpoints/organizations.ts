@@ -49,6 +49,23 @@ export const list: SentryEndpoints['organizationsList'] = async (
 		},
 	});
 
+	if (response && ctx.db.organizations) {
+		try {
+			for (const org of response) {
+				await ctx.db.organizations.upsertByEntityId(org.id, {
+					...org,
+					status:
+						org.status && typeof org.status === 'object'
+							? org.status.name
+							: null,
+					dateCreated: org.dateCreated ? new Date(org.dateCreated) : null,
+				});
+			}
+		} catch (error) {
+			console.warn('Failed to save organizations to database:', error);
+		}
+	}
+
 	await logEventFromContext(
 		ctx,
 		'sentry.organizations.list',

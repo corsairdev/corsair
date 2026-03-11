@@ -77,9 +77,18 @@ export const SentryEvent = z.object({
 	groupID: z.string().nullable().optional(),
 });
 
+export const SentryComment = z.object({
+	comment_id: z.string(),
+	issue_id: z.string().nullable().optional(),
+	project_slug: z.string().nullable().optional(),
+	comment: z.string().nullable().optional(),
+	timestamp: z.coerce.date().nullable().optional(),
+});
+
 export type SentryIssue = z.infer<typeof SentryIssue>;
 export type SentryProject = z.infer<typeof SentryProject>;
 export type SentryOrganization = z.infer<typeof SentryOrganization>;
 export type SentryTeam = z.infer<typeof SentryTeam>;
 export type SentryRelease = z.infer<typeof SentryRelease>;
 export type SentryEvent = z.infer<typeof SentryEvent>;
+export type SentryComment = z.infer<typeof SentryComment>;

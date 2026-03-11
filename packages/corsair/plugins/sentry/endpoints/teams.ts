@@ -140,6 +140,19 @@ export const deleteTeam: SentryEndpoints['teamsDelete'] = async (
 		{ method: 'DELETE' },
 	);
 
+	if (ctx.db.teams) {
+		try {
+			const entities = await ctx.db.teams.search({
+				data: { slug: input.teamSlug },
+			});
+			for (const entity of entities) {
+				await ctx.db.teams.deleteByEntityId(entity.entity_id);
+			}
+		} catch (error) {
+			console.warn('Failed to delete team from database:', error);
+		}
+	}
+
 	await logEventFromContext(
 		ctx,
 		'sentry.teams.delete',

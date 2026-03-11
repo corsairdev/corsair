@@ -24,15 +24,7 @@ export const issueCreated: SentryWebhooks['issueCreated'] = {
 		if (ctx.db.issues && issue.id) {
 			try {
 				const entity = await ctx.db.issues.upsertByEntityId(issue.id, {
-					id: issue.id,
-					shortId: issue.shortId,
-					title: issue.title,
-					culprit: issue.culprit,
-					level: issue.level,
-					status: issue.status,
-					platform: issue.platform,
-					type: issue.type,
-					permalink: issue.permalink,
+					...issue,
 					firstSeen: issue.firstSeen ? new Date(issue.firstSeen) : null,
 					lastSeen: issue.lastSeen ? new Date(issue.lastSeen) : null,
 				});
@@ -80,17 +72,9 @@ export const issueResolved: SentryWebhooks['issueResolved'] = {
 		if (ctx.db.issues && issue.id) {
 			try {
 				const entity = await ctx.db.issues.upsertByEntityId(issue.id, {
-					id: issue.id,
-					shortId: issue.shortId,
-					title: issue.title,
-					culprit: issue.culprit,
-					level: issue.level,
-					status: issue.status,
-					platform: issue.platform,
-					type: issue.type,
-					permalink: issue.permalink,
-					firstSeen: issue.firstSeen ? new Date(issue.firstSeen) : null,
+					...issue,
 					lastSeen: issue.lastSeen ? new Date(issue.lastSeen) : null,
+					firstSeen: issue.firstSeen ? new Date(issue.firstSeen) : null,
 				});
 
 				corsairEntityId = entity?.id || '';
@@ -136,15 +120,7 @@ export const issueAssigned: SentryWebhooks['issueAssigned'] = {
 		if (ctx.db.issues && issue.id) {
 			try {
 				const entity = await ctx.db.issues.upsertByEntityId(issue.id, {
-					id: issue.id,
-					shortId: issue.shortId,
-					title: issue.title,
-					culprit: issue.culprit,
-					level: issue.level,
-					status: issue.status,
-					platform: issue.platform,
-					type: issue.type,
-					permalink: issue.permalink,
+					...issue,
 					firstSeen: issue.firstSeen ? new Date(issue.firstSeen) : null,
 					lastSeen: issue.lastSeen ? new Date(issue.lastSeen) : null,
 				});

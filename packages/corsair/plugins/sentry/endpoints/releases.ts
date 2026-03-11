@@ -52,6 +52,26 @@ export const list: SentryEndpoints['releasesList'] = async (ctx, input) => {
 		},
 	});
 
+	if (response && ctx.db.releases) {
+		try {
+			for (const release of response) {
+				await ctx.db.releases.upsertByEntityId(String(release.id), {
+					...release,
+					dateCreated: release.dateCreated
+						? new Date(release.dateCreated)
+						: null,
+					dateReleased: release.dateReleased
+						? new Date(release.dateReleased)
+						: null,
+					firstEvent: release.firstEvent ? new Date(release.firstEvent) : null,
+					lastEvent: release.lastEvent ? new Date(release.lastEvent) : null,
+				});
+			}
+		} catch (error) {
+			console.warn('Failed to save releases to database:', error);
+		}
+	}
+
 	await logEventFromContext(
 		ctx,
 		'sentry.releases.list',
@@ -156,6 +176,19 @@ export const deleteRelease: SentryEndpoints['releasesDelete'] = async (
 		ctx.key,
 		{ method: 'DELETE' },
 	);
+
+	if (ctx.db.releases) {
+		try {
+			const entities = await ctx.db.releases.search({
+				data: { version: input.version },
+			});
+			for (const entity of entities) {
+				await ctx.db.releases.deleteByEntityId(entity.entity_id);
+			}
+		} catch (error) {
+			console.warn('Failed to delete release from database:', error);
+		}
+	}
 
 	await logEventFromContext(
 		ctx,

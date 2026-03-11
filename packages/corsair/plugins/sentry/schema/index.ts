@@ -1,4 +1,5 @@
 import {
+	SentryComment,
 	SentryEvent,
 	SentryIssue,
 	SentryOrganization,
@@ -16,5 +17,6 @@ export const SentrySchema = {
 		teams: SentryTeam,
 		releases: SentryRelease,
 		events: SentryEvent,
+		comments: SentryComment,
 	},
 } as const;

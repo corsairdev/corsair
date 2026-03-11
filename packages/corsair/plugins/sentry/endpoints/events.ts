@@ -49,6 +49,22 @@ export const list: SentryEndpoints['eventsList'] = async (ctx, input) => {
 		},
 	);
 
+	if (response && ctx.db.events) {
+		try {
+			for (const event of response) {
+				await ctx.db.events.upsertByEntityId(event.eventID, {
+					...event,
+					dateCreated: event.dateCreated ? new Date(event.dateCreated) : null,
+					dateReceived: event.dateReceived
+						? new Date(event.dateReceived)
+						: null,
+				});
+			}
+		} catch (error) {
+			console.warn('Failed to save events to database:', error);
+		}
+	}
+
 	await logEventFromContext(
 		ctx,
 		'sentry.events.list',
