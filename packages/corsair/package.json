@@ -32,15 +32,25 @@
       "types": "./dist/plugins/index.d.ts",
       "default": "./dist/plugins/index.js"
     },
-    "./plugins/cal": {
-      "dev-source": "./plugins/cal/index.ts",
-      "types": "./dist/plugins/cal/index.d.ts",
-      "default": "./dist/plugins/cal/index.js"
+    "./setup": {
+      "dev-source": "./setup.ts",
+      "types": "./dist/setup.d.ts",
+      "default": "./dist/setup.js"
     },
     "./plugins/airtable": {
       "dev-source": "./plugins/airtable/index.ts",
       "types": "./dist/plugins/airtable/index.d.ts",
       "default": "./dist/plugins/airtable/index.js"
+    },
+    "./plugins/amplitude": {
+      "dev-source": "./plugins/amplitude/index.ts",
+      "types": "./dist/plugins/amplitude/index.d.ts",
+      "default": "./dist/plugins/amplitude/index.js"
+    },
+    "./plugins/cal": {
+      "dev-source": "./plugins/cal/index.ts",
+      "types": "./dist/plugins/cal/index.d.ts",
+      "default": "./dist/plugins/cal/index.js"
     },
     "./plugins/discord": {
       "dev-source": "./plugins/discord/index.ts",
@@ -116,11 +126,6 @@
       "dev-source": "./plugins/todoist/index.ts",
       "types": "./dist/plugins/todoist/index.d.ts",
       "default": "./dist/plugins/todoist/index.js"
-    },
-    "./setup": {
-      "dev-source": "./setup.ts",
-      "types": "./dist/setup.d.ts",
-      "default": "./dist/setup.js"
     }
   },
   "scripts": {
