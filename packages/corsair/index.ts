@@ -18,6 +18,7 @@ export { googlesheets } from './plugins/googlesheets';
 export { hubspot } from './plugins/hubspot';
 export { linear } from './plugins/linear';
 export { notion } from './plugins/notion';
+export { pagerduty } from './plugins/pagerduty';
 export { posthog } from './plugins/posthog';
 export { resend } from './plugins/resend';
 export { slack } from './plugins/slack';
