@@ -26,11 +26,9 @@ export const computed: AmplitudeWebhooks['cohortsComputed'] = {
 		if (ctx.db.cohorts) {
 			try {
 				const entity = await ctx.db.cohorts.upsertByEntityId(event.cohort_id, {
-					id: event.cohort_id,
+					...event,
 					name: event.cohort_name,
-					app_id: event.app_id,
-					size: event.size,
-					published: event.published,
+					id: event.cohort_id,
 					last_computed: event.computed_at
 						? new Date(event.computed_at).getTime()
 						: undefined,

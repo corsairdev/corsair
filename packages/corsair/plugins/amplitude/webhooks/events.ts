@@ -27,17 +27,8 @@ export const track: AmplitudeWebhooks['eventsTrack'] = {
 			try {
 				const entityId = event.event_id ?? event.insert_id ?? String(event.time);
 				const entity = await ctx.db.events.upsertByEntityId(entityId, {
+					...event,
 					id: entityId,
-					event_type: event.event_type,
-					user_id: event.user_id,
-					device_id: event.device_id,
-					time: event.time,
-					event_properties: event.event_properties,
-					user_properties: event.user_properties,
-					app_version: event.app_version,
-					platform: event.platform,
-					session_id: event.session_id,
-					insert_id: event.insert_id,
 					createdAt: new Date(event.time),
 				});
 				corsairEntityId = entity?.id || '';

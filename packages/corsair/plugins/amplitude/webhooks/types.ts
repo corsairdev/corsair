@@ -184,19 +184,22 @@ export type AmplitudeWebhookOutputs = {
 // Utilities
 // ─────────────────────────────────────────────────────────────────────────────
 
+// body can be either a raw string (from HTTP) or an already-parsed object; unknown
+// is required here because the structure cannot be known before parsing.
 function parseBody(body: unknown): unknown {
 	return typeof body === 'string' ? JSON.parse(body) : body;
 }
 
 export function createAmplitudeMatch(eventType: string): CorsairWebhookMatcher {
 	return (request: RawWebhookRequest) => {
+		// Req body is unknown
 		const parsedBody = parseBody(request.body) as Record<string, unknown>;
 		return parsedBody.type === eventType;
 	};
 }
 
 export function verifyAmplitudeWebhookSignature(
-	request: WebhookRequest<unknown>,
+	request: WebhookRequest,
 	secret?: string,
 ): { valid: boolean; error?: string } {
 	if (!secret) {
