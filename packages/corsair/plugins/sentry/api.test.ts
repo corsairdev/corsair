@@ -22,9 +22,7 @@ describe('Sentry API Type Tests', () => {
 				SentryEndpointOutputs['organizationsList']
 			>('organizations/', TEST_TOKEN, { method: 'GET' });
 
-			const orgSlug = Array.isArray(listResponse)
-				? listResponse[0]?.slug
-				: (listResponse as unknown as { slug?: string }[])[0]?.slug;
+			const orgSlug = listResponse[0]?.slug
 			if (!orgSlug) {
 				throw new Error('No organizations found');
 			}
@@ -46,9 +44,7 @@ describe('Sentry API Type Tests', () => {
 			const listResponse = await makeSentryRequest<
 				SentryEndpointOutputs['organizationsList']
 			>('organizations/', TEST_TOKEN, { method: 'GET' });
-			const orgs = Array.isArray(listResponse)
-				? listResponse
-				: (listResponse as unknown as { slug: string }[]);
+			const orgs = listResponse
 			const slug = orgs[0]?.slug;
 			if (!slug) {
 				throw new Error('No organizations found');

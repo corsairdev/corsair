@@ -77,7 +77,7 @@ export const update: SentryEndpoints['issuesUpdate'] = async (ctx, input) => {
 		SentryEndpointOutputs['issuesUpdate']
 	>(`issues/${issueId}/`, ctx.key, {
 		method: 'PUT',
-		body: updateData as Record<string, unknown>,
+		body: updateData
 	});
 
 	if (response && ctx.db.issues) {
