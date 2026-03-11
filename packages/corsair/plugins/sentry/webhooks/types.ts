@@ -224,14 +224,6 @@ export function verifySentryWebhookSignature(
 		return { valid: false, error: 'Missing webhook secret' };
 	}
 
-	const rawBody = request.rawBody;
-	if (!rawBody) {
-		return {
-			valid: false,
-			error: 'Missing raw body for signature verification',
-		};
-	}
-
 	const headers = request.headers;
 	const signature = Array.isArray(headers['sentry-hook-signature'])
 		? headers['sentry-hook-signature'][0]
@@ -241,6 +233,14 @@ export function verifySentryWebhookSignature(
 		return {
 			valid: false,
 			error: 'Missing sentry-hook-signature header',
+		};
+	}
+
+	const rawBody = request.rawBody;
+	if (!rawBody) {
+		return {
+			valid: false,
+			error: 'Missing raw body for signature verification',
 		};
 	}
 
@@ -262,7 +262,6 @@ export function createSentryEventMatch(
 ): CorsairWebhookMatcher {
 	return (request: RawWebhookRequest) => {
 		const headers = request.headers;
-
 		const hookResource = Array.isArray(headers['sentry-hook-resource'])
 			? headers['sentry-hook-resource'][0]
 			: headers['sentry-hook-resource'];
