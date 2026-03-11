@@ -86,28 +86,22 @@ export type IncidentAssignedEvent = z.infer<typeof IncidentAssignedEventSchema>;
 
 // ── Payload Wrapper ───────────────────────────────────────────────────────────
 
-export const PagerdutyWebhookMessageSchema = z.object({
+export const PagerdutyWebhookPayloadSchema = z.object({
 	event: z.union([
 		IncidentTriggeredEventSchema,
 		IncidentAcknowledgedEventSchema,
 		IncidentResolvedEventSchema,
 		IncidentAssignedEventSchema,
 		PagerdutyEventBaseSchema.extend({
-			// fallback for unknown event types
-			// event_type can be any string not covered by the above
 			data: z.record(z.string(), z.unknown()),
 		}),
 	]),
 });
 
-export const PagerdutyWebhookPayloadSchema = z.object({
-	messages: z.array(PagerdutyWebhookMessageSchema),
-});
-
 export type PagerdutyWebhookPayload = z.infer<typeof PagerdutyWebhookPayloadSchema>;
 
 export type PagerdutyWebhookPayloadFor<TEvent> = {
-	messages: Array<{ event: TEvent }>;
+	event: TEvent;
 };
 
 // ── Webhook Outputs ───────────────────────────────────────────────────────────
@@ -130,21 +124,9 @@ function parseBody(body: unknown): unknown {
 
 export function createPagerdutyMatch(eventType: string): CorsairWebhookMatcher {
 	return (request: RawWebhookRequest) => {
-		// body can be string or parsed object
 		const parsedBody = parseBody(request.body) as Record<string, unknown>;
-		const messages = parsedBody.messages;
-
-		if (!Array.isArray(messages) || messages.length === 0) {
-			return false;
-		}
-
-		// any message in the batch matching the event type triggers this handler
-		return messages.some((message: unknown) => {
-			// each message is an object with an event field
-			const msg = message as Record<string, unknown>;
-			const event = msg.event as Record<string, unknown> | undefined;
-			return event?.event_type === eventType;
-		});
+		const event = parsedBody.event as Record<string, unknown> | undefined;
+		return event?.event_type === eventType;
 	};
 }
 

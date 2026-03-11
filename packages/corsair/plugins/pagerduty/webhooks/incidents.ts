@@ -15,20 +15,7 @@ export const triggered: PagerdutyWebhooks['incidentTriggered'] = {
 			};
 		}
 
-		const message = request.payload.messages.find(
-			(m) => m.event.event_type === 'incident.triggered',
-		);
-
-		if (!message) {
-			return { success: true, data: undefined };
-		}
-
-		const event = message.event;
-
-		console.log('PagerDuty Incident Triggered:', {
-			id: event.data.id,
-			title: event.data.title,
-		});
+		const event = request.payload.event;
 
 		let corsairEntityId = '';
 
@@ -77,20 +64,7 @@ export const acknowledged: PagerdutyWebhooks['incidentAcknowledged'] = {
 			};
 		}
 
-		const message = request.payload.messages.find(
-			(m) => m.event.event_type === 'incident.acknowledged',
-		);
-
-		if (!message) {
-			return { success: true, data: undefined };
-		}
-
-		const event = message.event;
-
-		console.log('PagerDuty Incident Acknowledged:', {
-			id: event.data.id,
-			title: event.data.title,
-		});
+		const event = request.payload.event;
 
 		if (ctx.db.incidents && event.data.id) {
 			try {
@@ -133,20 +107,7 @@ export const resolved: PagerdutyWebhooks['incidentResolved'] = {
 			};
 		}
 
-		const message = request.payload.messages.find(
-			(m) => m.event.event_type === 'incident.resolved',
-		);
-
-		if (!message) {
-			return { success: true, data: undefined };
-		}
-
-		const event = message.event;
-
-		console.log('PagerDuty Incident Resolved:', {
-			id: event.data.id,
-			title: event.data.title,
-		});
+		const event = request.payload.event;
 
 		if (ctx.db.incidents && event.data.id) {
 			try {
@@ -192,20 +153,7 @@ export const assigned: PagerdutyWebhooks['incidentAssigned'] = {
 			};
 		}
 
-		const message = request.payload.messages.find(
-			(m) => m.event.event_type === 'incident.assigned',
-		);
-
-		if (!message) {
-			return { success: true, data: undefined };
-		}
-
-		const event = message.event;
-
-		console.log('PagerDuty Incident Assigned:', {
-			id: event.data.id,
-			title: event.data.title,
-		});
+		const event = request.payload.event;
 
 		if (ctx.db.incidents && event.data.id) {
 			try {
