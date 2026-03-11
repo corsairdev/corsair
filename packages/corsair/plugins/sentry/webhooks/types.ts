@@ -102,6 +102,29 @@ export const IssueAssignedEventSchema = z.object({
 });
 export type IssueAssignedEvent = z.infer<typeof IssueAssignedEventSchema>;
 
+// ── Error Webhook Schemas ────────────────────────────────────────────────────
+
+export const ErrorCreatedEventSchema = z.object({
+	action: z.literal('created'),
+	data: z.object({
+		error: z
+			.object({
+				event_id: z.string().optional(),
+				title: z.string().optional(),
+				platform: z.string().nullable().optional(),
+				level: z.string().nullable().optional(),
+				url: z.string().optional(),
+				culprit: z.string().nullable().optional(),
+				project: z.string().nullable().optional(),
+				message: z.string().nullable().optional(),
+			})
+			.catchall(z.unknown()),
+	}),
+	actor: SentryActorSchema.optional(),
+	installation: SentryInstallationSchema.optional(),
+});
+export type ErrorCreatedEvent = z.infer<typeof ErrorCreatedEventSchema>;
+
 // ── Alert Webhook Schemas ────────────────────────────────────────────────────
 
 export const EventAlertEventSchema = z.object({
@@ -189,6 +212,7 @@ export const SentryWebhookEventSchema = z.union([
 	IssueCreatedEventSchema,
 	IssueResolvedEventSchema,
 	IssueAssignedEventSchema,
+	ErrorCreatedEventSchema,
 	EventAlertEventSchema,
 	MetricAlertEventSchema,
 	CommentCreatedEventSchema,
@@ -201,6 +225,7 @@ export type SentryWebhookOutputs = {
 	issueCreated: IssueCreatedEvent;
 	issueResolved: IssueResolvedEvent;
 	issueAssigned: IssueAssignedEvent;
+	errorCreated: ErrorCreatedEvent;
 	eventAlert: EventAlertEvent;
 	metricAlert: MetricAlertEvent;
 	commentCreated: CommentCreatedEvent;

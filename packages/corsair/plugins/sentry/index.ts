@@ -33,6 +33,7 @@ import type {
 	CommentCreatedEvent,
 	CommentDeletedEvent,
 	CommentUpdatedEvent,
+	ErrorCreatedEvent,
 	EventAlertEvent,
 	IssueAssignedEvent,
 	IssueCreatedEvent,
@@ -44,12 +45,14 @@ import type {
 import {
 	AlertWebhooks,
 	CommentWebhooks,
+	ErrorWebhooks,
 	IssueWebhooks,
 } from './webhooks';
 import {
 	CommentCreatedEventSchema,
 	CommentDeletedEventSchema,
 	CommentUpdatedEventSchema,
+	ErrorCreatedEventSchema,
 	EventAlertEventSchema,
 	IssueAssignedEventSchema,
 	IssueCreatedEventSchema,
@@ -123,6 +126,7 @@ export type SentryWebhooks = {
 	issueCreated: SentryWebhook<'issueCreated', IssueCreatedEvent>;
 	issueResolved: SentryWebhook<'issueResolved', IssueResolvedEvent>;
 	issueAssigned: SentryWebhook<'issueAssigned', IssueAssignedEvent>;
+	errorCreated: SentryWebhook<'errorCreated', ErrorCreatedEvent>;
 	eventAlert: SentryWebhook<'eventAlert', EventAlertEvent>;
 	metricAlert: SentryWebhook<'metricAlert', MetricAlertEvent>;
 	commentCreated: SentryWebhook<'commentCreated', CommentCreatedEvent>;
@@ -177,6 +181,9 @@ const sentryWebhooksNested = {
 		created: IssueWebhooks.created,
 		resolved: IssueWebhooks.resolved,
 		assigned: IssueWebhooks.assigned,
+	},
+	errors: {
+		created: ErrorWebhooks.created,
 	},
 	alerts: {
 		eventAlert: AlertWebhooks.eventAlert,
@@ -307,6 +314,11 @@ const sentryWebhookSchemas = {
 		description: 'An issue was assigned to a user or team',
 		payload: IssueAssignedEventSchema,
 		response: IssueAssignedEventSchema,
+	},
+	'errors.created': {
+		description: 'A new error event was captured in Sentry',
+		payload: ErrorCreatedEventSchema,
+		response: ErrorCreatedEventSchema,
 	},
 	'alerts.eventAlert': {
 		description: 'An issue alert rule was triggered',
@@ -540,6 +552,7 @@ export type {
 	CommentCreatedEvent,
 	CommentDeletedEvent,
 	CommentUpdatedEvent,
+	ErrorCreatedEvent,
 	EventAlertEvent,
 	IssueAssignedEvent,
 	IssueCreatedEvent,
