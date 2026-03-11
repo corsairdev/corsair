@@ -113,12 +113,10 @@ export const update: PagerdutyEndpoints['incidentsUpdate'] = async (ctx, input) 
 	if (result.incident && ctx.db.incidents) {
 		try {
 			await ctx.db.incidents.upsertByEntityId(result.incident.id, {
-				id: result.incident.id,
-				title: result.incident.title,
-				status: result.incident.status,
-				urgency: result.incident.urgency,
-				incident_number: result.incident.incident_number,
-				html_url: result.incident.html_url,
+				...result.incident,
+				created_at: result.incident.created_at
+					? new Date(result.incident.created_at)
+					: new Date(),
 				updated_at: result.incident.updated_at
 					? new Date(result.incident.updated_at)
 					: new Date(),

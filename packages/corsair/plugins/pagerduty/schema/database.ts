@@ -6,7 +6,7 @@ export const PagerdutyIncident = z.object({
 	title: z.string().optional(),
 	status: z.enum(['triggered', 'acknowledged', 'resolved']).optional(),
 	urgency: z.enum(['high', 'low']).optional(),
-	html_url: z.string().optional(),
+	html_url: z.string().nullable().optional(),
 	created_at: z.coerce.date().nullable().optional(),
 	updated_at: z.coerce.date().nullable().optional(),
 	resolved_at: z.coerce.date().nullable().optional(),
@@ -15,7 +15,7 @@ export const PagerdutyIncident = z.object({
 			id: z.string(),
 			type: z.string(),
 			summary: z.string().optional(),
-			html_url: z.string().optional(),
+			html_url: z.string().nullable().optional(),
 		})
 		.optional(),
 	assigned_to: z

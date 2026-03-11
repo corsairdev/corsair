@@ -117,6 +117,9 @@ export type PagerdutyWebhookOutputs = {
 
 // ── Utilities ─────────────────────────────────────────────────────────────────
 
+// Using 'unknown' for both parameter and return because the body can arrive as
+// a raw JSON string or an already-parsed object, and we cannot assume a shape
+// before inspecting whether it is a string. 
 function parseBody(body: unknown): unknown {
 	return typeof body === 'string' ? JSON.parse(body) : body;
 }
