@@ -1,15 +1,6 @@
 import { logEventFromContext } from '../../utils/events';
 import type { PagerdutyWebhooks } from '..';
-import type {
-	IncidentAcknowledgedEvent,
-	IncidentAssignedEvent,
-	IncidentResolvedEvent,
-	IncidentTriggeredEvent,
-} from './types';
-import {
-	createPagerdutyMatch,
-	verifyPagerdutyWebhookSignature,
-} from './types';
+import { createPagerdutyMatch, verifyPagerdutyWebhookSignature } from './types';
 
 export const triggered: PagerdutyWebhooks['incidentTriggered'] = {
 	match: createPagerdutyMatch('incident.triggered'),
@@ -32,8 +23,7 @@ export const triggered: PagerdutyWebhooks['incidentTriggered'] = {
 			return { success: true, data: undefined };
 		}
 
-		// narrowed by createPagerdutyMatch — safe to cast
-		const event = message.event as IncidentTriggeredEvent;
+		const event = message.event;
 
 		console.log('PagerDuty Incident Triggered:', {
 			id: event.data.id,
@@ -95,8 +85,7 @@ export const acknowledged: PagerdutyWebhooks['incidentAcknowledged'] = {
 			return { success: true, data: undefined };
 		}
 
-		// narrowed by createPagerdutyMatch — safe to cast
-		const event = message.event as IncidentAcknowledgedEvent;
+		const event = message.event;
 
 		console.log('PagerDuty Incident Acknowledged:', {
 			id: event.data.id,
@@ -152,8 +141,7 @@ export const resolved: PagerdutyWebhooks['incidentResolved'] = {
 			return { success: true, data: undefined };
 		}
 
-		// narrowed by createPagerdutyMatch — safe to cast
-		const event = message.event as IncidentResolvedEvent;
+		const event = message.event;
 
 		console.log('PagerDuty Incident Resolved:', {
 			id: event.data.id,
@@ -212,8 +200,7 @@ export const assigned: PagerdutyWebhooks['incidentAssigned'] = {
 			return { success: true, data: undefined };
 		}
 
-		// narrowed by createPagerdutyMatch — safe to cast
-		const event = message.event as IncidentAssignedEvent;
+		const event = message.event;
 
 		console.log('PagerDuty Incident Assigned:', {
 			id: event.data.id,

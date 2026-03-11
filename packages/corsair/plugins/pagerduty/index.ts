@@ -29,6 +29,7 @@ import type {
 	IncidentTriggeredEvent,
 	PagerdutyWebhookOutputs,
 	PagerdutyWebhookPayload,
+	PagerdutyWebhookPayloadFor,
 } from './webhooks/types';
 import {
 	IncidentAcknowledgedEventSchema,
@@ -111,10 +112,10 @@ export const pagerdutyEndpointSchemas = {
 } satisfies RequiredPluginEndpointSchemas<typeof pagerdutyEndpointsNested>;
 
 export type PagerdutyWebhooks = {
-	incidentTriggered: PagerdutyWebhook<'incidentTriggered', PagerdutyWebhookPayload>;
-	incidentAcknowledged: PagerdutyWebhook<'incidentAcknowledged', PagerdutyWebhookPayload>;
-	incidentResolved: PagerdutyWebhook<'incidentResolved', PagerdutyWebhookPayload>;
-	incidentAssigned: PagerdutyWebhook<'incidentAssigned', PagerdutyWebhookPayload>;
+	incidentTriggered: PagerdutyWebhook<'incidentTriggered', IncidentTriggeredEvent>;
+	incidentAcknowledged: PagerdutyWebhook<'incidentAcknowledged', IncidentAcknowledgedEvent>;
+	incidentResolved: PagerdutyWebhook<'incidentResolved', IncidentResolvedEvent>;
+	incidentAssigned: PagerdutyWebhook<'incidentAssigned', IncidentAssignedEvent>;
 };
 
 const pagerdutyWebhooksNested = {
@@ -203,8 +204,8 @@ type PagerdutyEndpoint<
 
 type PagerdutyWebhook<
 	K extends keyof PagerdutyWebhookOutputs,
-	TPayload,
-> = CorsairWebhook<PagerdutyContext, TPayload, PagerdutyWebhookOutputs[K]>;
+	TEvent,
+> = CorsairWebhook<PagerdutyContext, PagerdutyWebhookPayloadFor<TEvent>, PagerdutyWebhookOutputs[K]>;
 
 export type PagerdutyBoundEndpoints = BindEndpoints<typeof pagerdutyEndpointsNested>;
 export type PagerdutyBoundWebhooks = BindWebhooks<PagerdutyWebhooks>;
@@ -312,6 +313,7 @@ export type {
 	PagerdutyWebhookIncidentData,
 	PagerdutyWebhookOutputs,
 	PagerdutyWebhookPayload,
+	PagerdutyWebhookPayloadFor,
 	PagerdutyWebhookReference,
 } from './webhooks/types';
 

@@ -106,6 +106,10 @@ export const PagerdutyWebhookPayloadSchema = z.object({
 
 export type PagerdutyWebhookPayload = z.infer<typeof PagerdutyWebhookPayloadSchema>;
 
+export type PagerdutyWebhookPayloadFor<TEvent> = {
+	messages: Array<{ event: TEvent }>;
+};
+
 // ── Webhook Outputs ───────────────────────────────────────────────────────────
 
 export type PagerdutyWebhookOutputs = {
