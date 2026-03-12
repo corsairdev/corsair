@@ -81,7 +81,7 @@ export const create: SentryEndpoints['projectsCreate'] = async (
 		SentryEndpointOutputs['projectsCreate']
 	>(`teams/${organizationSlug}/${teamSlug}/projects/`, ctx.key, {
 		method: 'POST',
-		body: createData as Record<string, unknown>,
+		body: createData
 	});
 
 	if (response && ctx.db.projects) {
@@ -117,7 +117,7 @@ export const update: SentryEndpoints['projectsUpdate'] = async (
 		SentryEndpointOutputs['projectsUpdate']
 	>(`projects/${organizationSlug}/${projectSlug}/`, ctx.key, {
 		method: 'PUT',
-		body: updateData as Record<string, unknown>,
+		body: updateData
 	});
 
 	if (response && ctx.db.projects) {

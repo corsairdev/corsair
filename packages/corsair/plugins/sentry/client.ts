@@ -33,6 +33,8 @@ export async function makeSentryRequest<T>(
 	apiKey: string,
 	options: {
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+		// Body values vary by endpoint (strings, numbers, arrays, nested objects);
+		// unknown keeps callers type-safe while avoiding a premature union.
 		body?: Record<string, unknown>;
 		query?: Record<string, string | number | boolean | undefined>;
 	} = {},

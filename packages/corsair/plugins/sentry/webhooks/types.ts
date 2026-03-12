@@ -38,6 +38,8 @@ export const IssueCreatedEventSchema = z.object({
 				firstSeen: z.string().nullable().optional(),
 				lastSeen: z.string().nullable().optional(),
 			})
+			// Sentry may send additional issue fields not covered by the schema above;
+			// catchall(unknown) passes them through without stripping or failing validation.
 			.catchall(z.unknown()),
 	}),
 	actor: SentryActorSchema,
@@ -62,6 +64,8 @@ export const IssueResolvedEventSchema = z.object({
 				firstSeen: z.string().nullable().optional(),
 				lastSeen: z.string().nullable().optional(),
 			})
+			// Sentry may send additional issue fields not covered by the schema above;
+			// catchall(unknown) passes them through without stripping or failing validation.
 			.catchall(z.unknown()),
 		resolution_type: z.string().optional(),
 	}),
@@ -95,6 +99,8 @@ export const IssueAssignedEventSchema = z.object({
 					.nullable()
 					.optional(),
 			})
+			// Sentry may send additional issue fields not covered by the schema above;
+			// catchall(unknown) passes them through without stripping or failing validation.
 			.catchall(z.unknown()),
 	}),
 	actor: SentryActorSchema,
@@ -118,6 +124,8 @@ export const ErrorCreatedEventSchema = z.object({
 				project: z.string().nullable().optional(),
 				message: z.string().nullable().optional(),
 			})
+			// Sentry error events carry platform-specific fields (stacktrace, breadcrumbs,
+			// sdk info, etc.) not enumerated here; catchall(unknown) preserves them.
 			.catchall(z.unknown()),
 	}),
 	actor: SentryActorSchema.optional(),
@@ -139,6 +147,8 @@ export const EventAlertEventSchema = z.object({
 				level: z.string().nullable().optional(),
 				url: z.string().optional(),
 			})
+			// Alert event payloads embed the triggering error event which may carry
+			// arbitrary platform-specific fields; catchall(unknown) preserves them.
 			.catchall(z.unknown()),
 		triggered_rule: z.string().optional(),
 	}),
@@ -163,6 +173,8 @@ export const MetricAlertEventSchema = z.object({
 				status: z.string().optional(),
 				date_triggered: z.string().optional(),
 			})
+			// Metric alert objects include rule-type-specific fields (thresholds,
+			// query details, etc.) that vary by configuration; catchall(unknown) keeps them.
 			.catchall(z.unknown()),
 		description_title: z.string().optional(),
 		description_text: z.string().optional(),
@@ -184,6 +196,7 @@ const SentryCommentDataSchema = z.object({
 
 export const CommentCreatedEventSchema = z.object({
 	action: z.literal('created'),
+	// catchall(unknown) allows Sentry to add future comment fields without breaking parsing.
 	data: SentryCommentDataSchema.catchall(z.unknown()),
 	actor: SentryActorSchema,
 	installation: SentryInstallationSchema.optional(),
@@ -192,6 +205,7 @@ export type CommentCreatedEvent = z.infer<typeof CommentCreatedEventSchema>;
 
 export const CommentUpdatedEventSchema = z.object({
 	action: z.literal('updated'),
+	// catchall(unknown) allows Sentry to add future comment fields without breaking parsing.
 	data: SentryCommentDataSchema.catchall(z.unknown()),
 	actor: SentryActorSchema,
 	installation: SentryInstallationSchema.optional(),
@@ -200,6 +214,7 @@ export type CommentUpdatedEvent = z.infer<typeof CommentUpdatedEventSchema>;
 
 export const CommentDeletedEventSchema = z.object({
 	action: z.literal('deleted'),
+	// catchall(unknown) allows Sentry to add future comment fields without breaking parsing.
 	data: SentryCommentDataSchema.catchall(z.unknown()),
 	actor: SentryActorSchema,
 	installation: SentryInstallationSchema.optional(),
@@ -237,11 +252,15 @@ export type SentryWebhookPayload<TEvent = SentryWebhookEvent> = TEvent;
 
 // ── Utilities ────────────────────────────────────────────────────────────────
 
+// Body arrives as either a pre-parsed object or a raw JSON string depending on
+// the HTTP framework; both parameter and return are unknown until narrowed by callers.
 function parseBody(body: unknown): unknown {
 	return typeof body === 'string' ? JSON.parse(body) : body;
 }
 
 export function verifySentryWebhookSignature(
+	// The body type is not inspected during signature verification; unknown
+	// avoids forcing callers to narrow it before passing the request in.
 	request: WebhookRequest<unknown>,
 	webhookSecret?: string,
 ): { valid: boolean; error?: string } {
@@ -295,6 +314,8 @@ export function createSentryEventMatch(
 			return false;
 		}
 
+		// parseBody returns unknown; cast to a string-keyed map so we can read
+		// the 'action' field without a lengthy type-guard chain.
 		const parsedBody = parseBody(request.body) as Record<string, unknown>;
 		return (
 			typeof parsedBody.action === 'string' && parsedBody.action === action
