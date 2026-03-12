@@ -42,6 +42,11 @@
       "types": "./dist/plugins/airtable/index.d.ts",
       "default": "./dist/plugins/airtable/index.js"
     },
+    "./plugins/amplitude": {
+      "dev-source": "./plugins/amplitude/index.ts",
+      "types": "./dist/plugins/amplitude/index.d.ts",
+      "default": "./dist/plugins/amplitude/index.js"
+    },
     "./plugins/cal": {
       "dev-source": "./plugins/cal/index.ts",
       "types": "./dist/plugins/cal/index.d.ts",
@@ -111,6 +116,11 @@
       "dev-source": "./plugins/resend/index.ts",
       "types": "./dist/plugins/resend/index.d.ts",
       "default": "./dist/plugins/resend/index.js"
+    },
+    "./plugins/sentry": {
+      "dev-source": "./plugins/sentry/index.ts",
+      "types": "./dist/plugins/sentry/index.d.ts",
+      "default": "./dist/plugins/sentry/index.js"
     },
     "./plugins/slack": {
       "dev-source": "./plugins/slack/index.ts",
