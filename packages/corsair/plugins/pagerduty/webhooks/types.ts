@@ -92,6 +92,10 @@ export const PagerdutyWebhookPayloadSchema = z.object({
 		IncidentAcknowledgedEventSchema,
 		IncidentResolvedEventSchema,
 		IncidentAssignedEventSchema,
+		// unknown is intentional: this catch-all arm handles any event_type not
+		// explicitly modelled above. The data payload shape is fully determined by
+		// the event_type, which we don't know at parse time, so we accept any
+		// string-keyed object and let downstream handlers narrow further.
 		PagerdutyEventBaseSchema.extend({
 			data: z.record(z.string(), z.unknown()),
 		}),
@@ -115,9 +119,10 @@ export type PagerdutyWebhookOutputs = {
 
 // ── Utilities ─────────────────────────────────────────────────────────────────
 
-// Using 'unknown' for both parameter and return because the body can arrive as
-// a raw JSON string or an already-parsed object, and we cannot assume a shape
-// before inspecting whether it is a string. 
+// unknown for both parameter and return: the body arrives from the HTTP layer
+// either as a raw JSON string or as an already-parsed object depending on the
+// framework. We cannot assert any shape before we check for string-ness, and
+// the caller immediately casts to Record<string, unknown> after parsing.
 function parseBody(body: unknown): unknown {
 	return typeof body === 'string' ? JSON.parse(body) : body;
 }
@@ -130,6 +135,9 @@ export function createPagerdutyMatch(eventType: string): CorsairWebhookMatcher {
 	};
 }
 
+// WebhookRequest<unknown>: signature verification only needs rawBody and
+// headers — it never inspects the typed payload. Using unknown avoids coupling
+// this utility to any specific event schema.
 export function verifyPagerdutyWebhookSignature(
 	request: WebhookRequest<unknown>,
 	secret: string,
