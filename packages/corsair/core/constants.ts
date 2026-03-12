@@ -25,6 +25,7 @@ export const BaseProviders = [
 	'hubspot',
 	'linear',
 	'notion',
+	'pagerduty',
 	'posthog',
 	'resend',
 	'sentry',
@@ -47,6 +48,7 @@ export type AllProviders =
 	| 'hubspot'
 	| 'linear'
 	| 'notion'
+	| 'pagerduty'
 	| 'posthog'
 	| 'resend'
 	| 'sentry'

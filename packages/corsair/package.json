@@ -102,6 +102,11 @@
       "types": "./dist/plugins/notion/index.d.ts",
       "default": "./dist/plugins/notion/index.js"
     },
+    "./plugins/pagerduty": {
+      "dev-source": "./plugins/pagerduty/index.ts",
+      "types": "./dist/plugins/pagerduty/index.d.ts",
+      "default": "./dist/plugins/pagerduty/index.js"
+    },
     "./plugins/posthog": {
       "dev-source": "./plugins/posthog/index.ts",
       "types": "./dist/plugins/posthog/index.d.ts",
