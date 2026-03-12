@@ -18,14 +18,15 @@ export const PagerdutyIncident = z.object({
 			html_url: z.string().nullable().optional(),
 		})
 		.optional(),
-	assigned_to: z
+	assignments: z
 		.array(
 			z.object({
 				at: z.string(),
-				object: z.object({
+				assignee: z.object({
 					id: z.string(),
 					type: z.string(),
 					summary: z.string().optional(),
+					html_url: z.string().nullable().optional(),
 				}),
 			}),
 		)

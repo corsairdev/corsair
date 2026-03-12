@@ -88,6 +88,7 @@ const PagerdutyUserSchema = z.object({
 
 const IncidentsCreateInputSchema = z.object({
 	title: z.string(),
+	from: z.string(),
 	service: z.object({
 		id: z.string(),
 		type: z.literal('service_reference'),

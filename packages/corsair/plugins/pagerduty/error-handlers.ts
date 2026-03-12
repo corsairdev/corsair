@@ -41,7 +41,7 @@ export const errorHandlers = {
 			);
 		},
 		handler: async (error, context) => {
-			console.log(
+			console.warn(
 				`[PAGERDUTY:${context.operation}] Authentication failed - check your API key`,
 			);
 

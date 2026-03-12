@@ -9,15 +9,11 @@ export const create: PagerdutyEndpoints['incidentsCreate'] = async (ctx, input) 
 		ctx.key,
 		{
 			method: 'POST',
+			from: input.from,
 			body: {
 				incident: {
 					type: 'incident',
-					title: input.title,
-					service: input.service,
-					urgency: input.urgency,
-					body: input.body,
-					escalation_policy: input.escalation_policy,
-					assignments: input.assignments,
+					...input,
 				},
 			},
 		},
