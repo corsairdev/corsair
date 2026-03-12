@@ -17,6 +17,21 @@ export const search: AmplitudeEndpoints['usersSearch'] = async (ctx, input) => {
 		},
 	);
 
+	if (result.matches && ctx.db.users) {
+		try {
+			for (const match of result.matches) {
+				const userId = match.user_id ?? String(match.amplitude_id);
+				await ctx.db.users.upsertByEntityId(userId, {
+					...match,
+					id: userId,
+					canonical_amplitude_id: match.amplitude_id,
+				});
+			}
+		} catch (error) {
+			console.warn('Failed to save users to database:', error);
+		}
+	}
+
 	await logEventFromContext(ctx, 'amplitude.users.search', { ...input }, 'completed');
 	return result;
 };
@@ -44,20 +59,8 @@ export const getProfile: AmplitudeEndpoints['usersGetProfile'] = async (ctx, inp
 
 			if (userId && ctx.db.users) {
 				await ctx.db.users.upsertByEntityId(userId, {
+					...result.userData,
 					id: userId,
-					user_id: result.userData.user_id,
-					canonical_amplitude_id: result.userData.canonical_amplitude_id,
-					// User properties are open-ended key-value pairs
-					user_properties: result.userData.user_properties,
-					is_identified: result.userData.is_identified,
-					country: result.userData.country,
-					region: result.userData.region,
-					city: result.userData.city,
-					language: result.userData.language,
-					platform: result.userData.platform,
-					os: result.userData.os,
-					device: result.userData.device,
-					last_seen: result.userData.last_seen,
 				});
 			}
 		} catch (error) {
@@ -82,6 +85,26 @@ export const getActivity: AmplitudeEndpoints['usersGetActivity'] = async (ctx, i
 			},
 		},
 	);
+
+	if (result.events && ctx.db.events) {
+		try {
+			for (const event of result.events) {
+				const entityId = [
+					String(event.amplitude_id ?? input.user),
+					event.event_time ?? '',
+					event.event_type ?? '',
+				].join(':');
+				await ctx.db.events.upsertByEntityId(entityId, {
+					...event,
+					id: entityId,
+					event_type: event.event_type ?? '',
+					createdAt: event.event_time ? new Date(event.event_time) : new Date(),
+				});
+			}
+		} catch (error) {
+			console.warn('Failed to save activity events to database:', error);
+		}
+	}
 
 	await logEventFromContext(ctx, 'amplitude.users.getActivity', { ...input }, 'completed');
 	return result;

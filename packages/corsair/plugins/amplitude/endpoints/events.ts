@@ -18,6 +18,23 @@ export const upload: AmplitudeEndpoints['eventsUpload'] = async (ctx, input) => 
 		},
 	);
 
+	if (ctx.db.events && input.events.length > 0) {
+		try {
+			for (const event of input.events) {
+				const entityId =
+					event.insert_id ??
+					[event.event_type, event.user_id ?? event.device_id ?? '', String(event.time ?? Date.now())].join(':');
+				await ctx.db.events.upsertByEntityId(entityId, {
+					...event,
+					id: entityId,
+					createdAt: event.time ? new Date(event.time) : new Date(),
+				});
+			}
+		} catch (error) {
+			console.warn('Failed to save events to database:', error);
+		}
+	}
+
 	await logEventFromContext(ctx, 'amplitude.events.upload', { ...input }, 'completed');
 	return result;
 };
@@ -37,6 +54,23 @@ export const uploadBatch: AmplitudeEndpoints['eventsUploadBatch'] = async (ctx, 
 		},
 	);
 
+	if (ctx.db.events && input.events.length > 0) {
+		try {
+			for (const event of input.events) {
+				const entityId =
+					event.insert_id ??
+					[event.event_type, event.user_id ?? event.device_id ?? '', String(event.time ?? Date.now())].join(':');
+				await ctx.db.events.upsertByEntityId(entityId, {
+					...event,
+					id: entityId,
+					createdAt: event.time ? new Date(event.time) : new Date(),
+				});
+			}
+		} catch (error) {
+			console.warn('Failed to save events to database:', error);
+		}
+	}
+
 	await logEventFromContext(ctx, 'amplitude.events.uploadBatch', { ...input }, 'completed');
 	return result;
 };
@@ -54,6 +88,24 @@ export const identifyUser: AmplitudeEndpoints['eventsIdentifyUser'] = async (ctx
 			baseUrl: AMPLITUDE_HTTP_API_BASE,
 		},
 	);
+
+	if (ctx.db.users && input.identification.length > 0) {
+		try {
+			for (const identify of input.identification) {
+				const userId = identify.user_id ?? identify.device_id;
+				if (userId) {
+					await ctx.db.users.upsertByEntityId(userId, {
+						id: userId,
+						user_id: identify.user_id,
+						user_properties: identify.user_properties,
+						createdAt: new Date(),
+					});
+				}
+			}
+		} catch (error) {
+			console.warn('Failed to save users to database:', error);
+		}
+	}
 
 	await logEventFromContext(ctx, 'amplitude.events.identifyUser', { ...input }, 'completed');
 	return result;
