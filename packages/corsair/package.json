@@ -42,6 +42,11 @@
       "types": "./dist/plugins/airtable/index.d.ts",
       "default": "./dist/plugins/airtable/index.js"
     },
+    "./plugins/amplitude": {
+      "dev-source": "./plugins/amplitude/index.ts",
+      "types": "./dist/plugins/amplitude/index.d.ts",
+      "default": "./dist/plugins/amplitude/index.js"
+    },
     "./plugins/cal": {
       "dev-source": "./plugins/cal/index.ts",
       "types": "./dist/plugins/cal/index.d.ts",
