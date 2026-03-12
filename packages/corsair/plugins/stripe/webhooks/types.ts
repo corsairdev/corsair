@@ -1,0 +1,313 @@
+import { z } from 'zod';
+import { verifyHmacSignature } from '../../../async-core/webhook-utils';
+import type {
+	CorsairWebhookMatcher,
+	RawWebhookRequest,
+	WebhookRequest,
+} from '../../../core';
+
+// ── Stripe resource sub-schemas ───────────────────────────────────────────────
+
+export const StripeChargeDataSchema = z
+	.object({
+		id: z.string(),
+		object: z.literal('charge'),
+		amount: z.number(),
+		currency: z.string(),
+		status: z.string(),
+		customer: z.string().nullable().optional(),
+		description: z.string().nullable().optional(),
+		paid: z.boolean().optional(),
+		refunded: z.boolean().optional(),
+		created: z.number().optional(),
+		payment_intent: z.string().nullable().optional(),
+		failure_code: z.string().nullable().optional(),
+		failure_message: z.string().nullable().optional(),
+		metadata: z.record(z.string()).optional(),
+	})
+	.passthrough();
+export type StripeChargeData = z.infer<typeof StripeChargeDataSchema>;
+
+export const StripeCustomerDataSchema = z
+	.object({
+		id: z.string(),
+		object: z.literal('customer'),
+		email: z.string().nullable().optional(),
+		name: z.string().nullable().optional(),
+		phone: z.string().nullable().optional(),
+		description: z.string().nullable().optional(),
+		currency: z.string().nullable().optional(),
+		balance: z.number().optional(),
+		created: z.number().optional(),
+		livemode: z.boolean().optional(),
+		metadata: z.record(z.string()).optional(),
+	})
+	.passthrough();
+export type StripeCustomerData = z.infer<typeof StripeCustomerDataSchema>;
+
+export const StripePaymentIntentDataSchema = z
+	.object({
+		id: z.string(),
+		object: z.literal('payment_intent'),
+		amount: z.number(),
+		currency: z.string(),
+		status: z.string(),
+		customer: z.string().nullable().optional(),
+		description: z.string().nullable().optional(),
+		created: z.number().optional(),
+		payment_method: z.string().nullable().optional(),
+		client_secret: z.string().nullable().optional(),
+		canceled_at: z.number().nullable().optional(),
+		cancellation_reason: z.string().nullable().optional(),
+		metadata: z.record(z.string()).optional(),
+		last_payment_error: z
+			.object({
+				code: z.string().optional(),
+				message: z.string().optional(),
+				type: z.string().optional(),
+			})
+			.nullable()
+			.optional(),
+	})
+	.passthrough();
+export type StripePaymentIntentData = z.infer<
+	typeof StripePaymentIntentDataSchema
+>;
+
+export const StripeCouponDataSchema = z
+	.object({
+		id: z.string(),
+		object: z.literal('coupon'),
+		name: z.string().nullable().optional(),
+		amount_off: z.number().nullable().optional(),
+		percent_off: z.number().nullable().optional(),
+		currency: z.string().nullable().optional(),
+		duration: z.string().optional(),
+		duration_in_months: z.number().nullable().optional(),
+		max_redemptions: z.number().nullable().optional(),
+		times_redeemed: z.number().optional(),
+		valid: z.boolean().optional(),
+		created: z.number().optional(),
+		livemode: z.boolean().optional(),
+		metadata: z.record(z.string()).optional(),
+	})
+	.passthrough();
+export type StripeCouponData = z.infer<typeof StripeCouponDataSchema>;
+
+// ── Stripe webhook event envelope ─────────────────────────────────────────────
+
+const StripeEventBaseSchema = z.object({
+	id: z.string(),
+	object: z.literal('event'),
+	api_version: z.string().nullable().optional(),
+	created: z.number(),
+	livemode: z.boolean(),
+	type: z.string(),
+	request: z
+		.object({
+			id: z.string().nullable().optional(),
+			idempotency_key: z.string().nullable().optional(),
+		})
+		.nullable()
+		.optional(),
+});
+
+// ── Typed event schemas ────────────────────────────────────────────────────────
+
+export const StripeChargeSucceededEventSchema = StripeEventBaseSchema.extend({
+	type: z.literal('charge.succeeded'),
+	data: z.object({
+		object: StripeChargeDataSchema,
+	}),
+});
+export type StripeChargeSucceededEvent = z.infer<
+	typeof StripeChargeSucceededEventSchema
+>;
+
+export const StripeChargeFailedEventSchema = StripeEventBaseSchema.extend({
+	type: z.literal('charge.failed'),
+	data: z.object({
+		object: StripeChargeDataSchema,
+	}),
+});
+export type StripeChargeFailedEvent = z.infer<
+	typeof StripeChargeFailedEventSchema
+>;
+
+export const StripeChargeRefundedEventSchema = StripeEventBaseSchema.extend({
+	type: z.literal('charge.refunded'),
+	data: z.object({
+		object: StripeChargeDataSchema,
+	}),
+});
+export type StripeChargeRefundedEvent = z.infer<
+	typeof StripeChargeRefundedEventSchema
+>;
+
+export const StripeCustomerCreatedEventSchema = StripeEventBaseSchema.extend({
+	type: z.literal('customer.created'),
+	data: z.object({
+		object: StripeCustomerDataSchema,
+	}),
+});
+export type StripeCustomerCreatedEvent = z.infer<
+	typeof StripeCustomerCreatedEventSchema
+>;
+
+export const StripeCustomerDeletedEventSchema = StripeEventBaseSchema.extend({
+	type: z.literal('customer.deleted'),
+	data: z.object({
+		object: StripeCustomerDataSchema,
+	}),
+});
+export type StripeCustomerDeletedEvent = z.infer<
+	typeof StripeCustomerDeletedEventSchema
+>;
+
+export const StripeCustomerUpdatedEventSchema = StripeEventBaseSchema.extend({
+	type: z.literal('customer.updated'),
+	data: z.object({
+		object: StripeCustomerDataSchema,
+	}),
+});
+export type StripeCustomerUpdatedEvent = z.infer<
+	typeof StripeCustomerUpdatedEventSchema
+>;
+
+export const StripePaymentIntentSucceededEventSchema =
+	StripeEventBaseSchema.extend({
+		type: z.literal('payment_intent.succeeded'),
+		data: z.object({
+			object: StripePaymentIntentDataSchema,
+		}),
+	});
+export type StripePaymentIntentSucceededEvent = z.infer<
+	typeof StripePaymentIntentSucceededEventSchema
+>;
+
+export const StripePaymentIntentFailedEventSchema =
+	StripeEventBaseSchema.extend({
+		type: z.literal('payment_intent.payment_failed'),
+		data: z.object({
+			object: StripePaymentIntentDataSchema,
+		}),
+	});
+export type StripePaymentIntentFailedEvent = z.infer<
+	typeof StripePaymentIntentFailedEventSchema
+>;
+
+export const StripeCouponCreatedEventSchema = StripeEventBaseSchema.extend({
+	type: z.literal('coupon.created'),
+	data: z.object({
+		object: StripeCouponDataSchema,
+	}),
+});
+export type StripeCouponCreatedEvent = z.infer<
+	typeof StripeCouponCreatedEventSchema
+>;
+
+export const StripeCouponDeletedEventSchema = StripeEventBaseSchema.extend({
+	type: z.literal('coupon.deleted'),
+	data: z.object({
+		object: StripeCouponDataSchema,
+	}),
+});
+export type StripeCouponDeletedEvent = z.infer<
+	typeof StripeCouponDeletedEventSchema
+>;
+
+export const StripePingEventSchema = StripeEventBaseSchema.extend({
+	type: z.literal('ping'),
+	data: z.object({ object: z.record(z.unknown()) }),
+});
+export type StripePingEvent = z.infer<typeof StripePingEventSchema>;
+
+// ── Webhook output map ────────────────────────────────────────────────────────
+
+export type StripeWebhookOutputs = {
+	chargeSucceeded: StripeChargeSucceededEvent;
+	chargeFailed: StripeChargeFailedEvent;
+	chargeRefunded: StripeChargeRefundedEvent;
+	customerCreated: StripeCustomerCreatedEvent;
+	customerDeleted: StripeCustomerDeletedEvent;
+	customerUpdated: StripeCustomerUpdatedEvent;
+	paymentIntentSucceeded: StripePaymentIntentSucceededEvent;
+	paymentIntentFailed: StripePaymentIntentFailedEvent;
+	couponCreated: StripeCouponCreatedEvent;
+	couponDeleted: StripeCouponDeletedEvent;
+	ping: StripePingEvent;
+};
+
+// ── Utilities ─────────────────────────────────────────────────────────────────
+
+function parseBody(body: unknown): unknown {
+	return typeof body === 'string' ? JSON.parse(body) : body;
+}
+
+/**
+ * Verifies a Stripe webhook signature.
+ * Stripe sends: x-stripe-signature: t=TIMESTAMP,v1=SIGNATURE
+ * Signed payload format: `${timestamp}.${rawBody}`
+ */
+export function verifyStripeWebhookSignature(
+	request: WebhookRequest<unknown>,
+	secret?: string,
+): { valid: boolean; error?: string } {
+	if (!secret) {
+		return { valid: false, error: 'Missing webhook secret' };
+	}
+
+	const rawBody = request.rawBody;
+	if (!rawBody) {
+		return { valid: false, error: 'Missing raw body for signature verification' };
+	}
+
+	const headers = request.headers;
+	const sigHeader = Array.isArray(headers['x-stripe-signature'])
+		? headers['x-stripe-signature'][0]
+		: headers['x-stripe-signature'];
+
+	if (!sigHeader) {
+		return { valid: false, error: 'Missing x-stripe-signature header' };
+	}
+
+	// Parse t=TIMESTAMP,v1=SIGNATURE from the header
+	const parts = sigHeader.split(',');
+	let timestamp: string | undefined;
+	let v1Signature: string | undefined;
+
+	for (const part of parts) {
+		if (part.startsWith('t=')) {
+			timestamp = part.slice(2);
+		} else if (part.startsWith('v1=')) {
+			v1Signature = part.slice(3);
+		}
+	}
+
+	if (!timestamp || !v1Signature) {
+		return { valid: false, error: 'Malformed x-stripe-signature header' };
+	}
+
+	const signedPayload = `${timestamp}.${rawBody}`;
+	const isValid = verifyHmacSignature(signedPayload, secret, v1Signature);
+
+	if (!isValid) {
+		return { valid: false, error: 'Invalid signature' };
+	}
+
+	return { valid: true };
+}
+
+/**
+ * Creates a webhook matcher that checks if an incoming request is a Stripe
+ * event of the specified type.
+ */
+export function createStripeEventMatch(eventType: string): CorsairWebhookMatcher {
+	return (request: RawWebhookRequest) => {
+		if (!('stripe-signature' in request.headers)) {
+			return false;
+		}
+		const body = parseBody(request.body) as Record<string, unknown>;
+		return body.type === eventType;
+	};
+}
