@@ -1,10 +1,10 @@
-import { ApiError } from '../../async-core/ApiError';
 import type { CorsairErrorHandler } from '../../core/errors';
+import { SentryAPIError } from './client';
 
 export const errorHandlers = {
 	RATE_LIMIT_ERROR: {
 		match: (error, context) => {
-			if (error instanceof ApiError && error.status === 429) {
+			if (error instanceof SentryAPIError && error.status === 429) {
 				return true;
 			}
 			const errorMessage = error.message.toLowerCase();
@@ -20,7 +20,7 @@ export const errorHandlers = {
 			console.log(`[SENTRY:${context.operation}] Rate limit exceeded`);
 
 			let retryAfterMs: number | undefined;
-			if (error instanceof ApiError && error.retryAfter) {
+			if (error instanceof SentryAPIError && error.retryAfter) {
 				retryAfterMs = error.retryAfter;
 			}
 
@@ -32,7 +32,7 @@ export const errorHandlers = {
 	},
 	AUTH_ERROR: {
 		match: (error, context) => {
-			if (error instanceof ApiError && error.status === 401) {
+			if (error instanceof SentryAPIError && error.status === 401) {
 				return true;
 			}
 			const errorMessage = error.message.toLowerCase();
@@ -57,7 +57,7 @@ export const errorHandlers = {
 	},
 	NOT_FOUND_ERROR: {
 		match: (error, context) => {
-			if (error instanceof ApiError && error.status === 404) {
+			if (error instanceof SentryAPIError && error.status === 404) {
 				return true;
 			}
 			const errorMessage = error.message.toLowerCase();
@@ -84,7 +84,7 @@ export const errorHandlers = {
 	},
 	PERMISSION_ERROR: {
 		match: (error, context) => {
-			if (error instanceof ApiError && error.status === 403) {
+			if (error instanceof SentryAPIError && error.status === 403) {
 				return true;
 			}
 			const errorMessage = error.message.toLowerCase();

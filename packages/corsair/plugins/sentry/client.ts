@@ -1,3 +1,4 @@
+import { ApiError } from '../../async-core/ApiError';
 import type { ApiRequestOptions } from '../../async-core/ApiRequestOptions';
 import type { OpenAPIConfig } from '../../async-core/OpenAPI';
 import type { RateLimitConfig } from '../../async-core/rate-limit';
@@ -7,6 +8,8 @@ export class SentryAPIError extends Error {
 	constructor(
 		message: string,
 		public readonly code?: string,
+		public readonly status?: number,
+		public readonly retryAfter?: number,
 	) {
 		super(message);
 		this.name = 'SentryAPIError';
@@ -64,6 +67,9 @@ export async function makeSentryRequest<T>(
 		});
 		return response;
 	} catch (error) {
+		if (error instanceof ApiError) {
+			throw new SentryAPIError(error.message, undefined, error.status, error.retryAfter);
+		}
 		if (error instanceof Error) {
 			throw new SentryAPIError(error.message);
 		}
