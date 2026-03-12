@@ -104,6 +104,16 @@ export {
 	type ResendWebhooks,
 	resend,
 } from './resend';
+// Sentry Plugin
+export {
+	type SentryBoundEndpoints,
+	type SentryBoundWebhooks,
+	type SentryContext,
+	type SentryEndpoints,
+	type SentryPluginOptions,
+	type SentryWebhooks,
+	sentry,
+} from './sentry';
 // Slack Plugin
 export {
 	type SlackBoundEndpoints,

@@ -27,6 +27,7 @@ export const BaseProviders = [
 	'notion',
 	'posthog',
 	'resend',
+	'sentry',
 	'slack',
 	'spotify',
 	'tavily',
@@ -48,6 +49,7 @@ export type AllProviders =
 	| 'notion'
 	| 'posthog'
 	| 'resend'
+	| 'sentry'
 	| 'slack'
 	| 'spotify'
 	| 'tavily'
