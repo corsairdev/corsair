@@ -135,7 +135,7 @@ export function buildCorsairToolDefs(
 		{
 			name: 'corsair_setup',
 			description:
-				'Set up the Corsair instance — creates plugin rows, issues encryption keys, and checks auth status for every configured plugin. Call this before using any other Corsair tools if setup has not been run yet.',
+				'Helps the user configure Corsair. Call this to see if any keys or tokens need to be set up. It will also provide the instructions to set them up.',
 			shape: {},
 			handler: async () => {
 				try {
