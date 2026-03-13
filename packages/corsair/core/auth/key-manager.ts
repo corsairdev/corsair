@@ -41,7 +41,10 @@ function createFieldAccessors(
 		};
 
 		accessors[`set_${field}`] = async (value: unknown) => {
-			await updateConfig({ [field]: value as string | null });
+			const normalized = [null, undefined, ''].includes(value as null)
+				? null
+				: (value as string);
+			await updateConfig({ [field]: normalized });
 		};
 	}
 
@@ -184,7 +187,13 @@ export function createIntegrationKeyManager<T extends AuthTypes>(
 		updates: Record<string, string | null>,
 	): Promise<void> => {
 		const dek = await getDecryptedDek();
-		const currentConfig = await getDecryptedConfig();
+		let currentConfig: Record<string, string>;
+		try {
+			currentConfig = await getDecryptedConfig();
+		} catch (err) {
+			console.error(`[corsair] Failed to decrypt config for integration "${integrationName}", starting fresh:`, err);
+			currentConfig = {};
+		}
 
 		const newConfig = { ...currentConfig };
 		for (const [key, value] of Object.entries(updates)) {
@@ -424,7 +433,13 @@ export function createAccountKeyManager<T extends AuthTypes>(
 		updates: Record<string, string | null>,
 	): Promise<void> => {
 		const dek = await getDecryptedDek();
-		const currentConfig = await getDecryptedConfig();
+		let currentConfig: Record<string, string>;
+		try {
+			currentConfig = await getDecryptedConfig();
+		} catch (err) {
+			console.error(`[corsair] Failed to decrypt config for account (tenant: "${tenantId}", integration: "${integrationName}"), starting fresh:`, err);
+			currentConfig = {};
+		}
 
 		const newConfig = { ...currentConfig };
 		for (const [key, value] of Object.entries(updates)) {
