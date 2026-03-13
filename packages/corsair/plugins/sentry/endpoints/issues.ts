@@ -1,7 +1,7 @@
 import { logEventFromContext } from '../../utils/events';
 import type { SentryEndpoints } from '..';
-import type { SentryEndpointOutputs } from './types';
 import { makeSentryRequest } from '../client';
+import type { SentryEndpointOutputs } from './types';
 
 export const get: SentryEndpoints['issuesGet'] = async (ctx, input) => {
 	const response = await makeSentryRequest<SentryEndpointOutputs['issuesGet']>(
@@ -33,9 +33,7 @@ export const get: SentryEndpoints['issuesGet'] = async (ctx, input) => {
 };
 
 export const list: SentryEndpoints['issuesList'] = async (ctx, input) => {
-	const response = await makeSentryRequest<
-		SentryEndpointOutputs['issuesList']
-	>(
+	const response = await makeSentryRequest<SentryEndpointOutputs['issuesList']>(
 		`projects/${input.organizationSlug}/${input.projectSlug}/issues/`,
 		ctx.key,
 		{
@@ -77,7 +75,7 @@ export const update: SentryEndpoints['issuesUpdate'] = async (ctx, input) => {
 		SentryEndpointOutputs['issuesUpdate']
 	>(`issues/${issueId}/`, ctx.key, {
 		method: 'PUT',
-		body: updateData
+		body: updateData,
 	});
 
 	if (response && ctx.db.issues) {

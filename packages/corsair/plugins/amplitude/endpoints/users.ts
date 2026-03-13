@@ -4,18 +4,16 @@ import { makeAmplitudeRequest } from '../client';
 import type { AmplitudeEndpointOutputs } from './types';
 
 export const search: AmplitudeEndpoints['usersSearch'] = async (ctx, input) => {
-	const result = await makeAmplitudeRequest<AmplitudeEndpointOutputs['usersSearch']>(
-		'/api/2/usersearch',
-		ctx.key,
-		{
-			method: 'GET',
-			query: {
-				user: input.user,
-				limit: input.limit,
-				offset: input.offset,
-			},
+	const result = await makeAmplitudeRequest<
+		AmplitudeEndpointOutputs['usersSearch']
+	>('/api/2/usersearch', ctx.key, {
+		method: 'GET',
+		query: {
+			user: input.user,
+			limit: input.limit,
+			offset: input.offset,
 		},
-	);
+	});
 
 	if (result.matches && ctx.db.users) {
 		try {
@@ -32,22 +30,28 @@ export const search: AmplitudeEndpoints['usersSearch'] = async (ctx, input) => {
 		}
 	}
 
-	await logEventFromContext(ctx, 'amplitude.users.search', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'amplitude.users.search',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
-export const getProfile: AmplitudeEndpoints['usersGetProfile'] = async (ctx, input) => {
-	const result = await makeAmplitudeRequest<AmplitudeEndpointOutputs['usersGetProfile']>(
-		'/api/2/userprofile',
-		ctx.key,
-		{
-			method: 'GET',
-			query: {
-				user_id: input.user_id,
-				amplitude_id: input.amplitude_id,
-			},
+export const getProfile: AmplitudeEndpoints['usersGetProfile'] = async (
+	ctx,
+	input,
+) => {
+	const result = await makeAmplitudeRequest<
+		AmplitudeEndpointOutputs['usersGetProfile']
+	>('/api/2/userprofile', ctx.key, {
+		method: 'GET',
+		query: {
+			user_id: input.user_id,
+			amplitude_id: input.amplitude_id,
 		},
-	);
+	});
 
 	if (result.userData) {
 		try {
@@ -68,23 +72,29 @@ export const getProfile: AmplitudeEndpoints['usersGetProfile'] = async (ctx, inp
 		}
 	}
 
-	await logEventFromContext(ctx, 'amplitude.users.getProfile', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'amplitude.users.getProfile',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
-export const getActivity: AmplitudeEndpoints['usersGetActivity'] = async (ctx, input) => {
-	const result = await makeAmplitudeRequest<AmplitudeEndpointOutputs['usersGetActivity']>(
-		'/api/2/useractivity',
-		ctx.key,
-		{
-			method: 'GET',
-			query: {
-				user: input.user,
-				limit: input.limit,
-				offset: input.offset,
-			},
+export const getActivity: AmplitudeEndpoints['usersGetActivity'] = async (
+	ctx,
+	input,
+) => {
+	const result = await makeAmplitudeRequest<
+		AmplitudeEndpointOutputs['usersGetActivity']
+	>('/api/2/useractivity', ctx.key, {
+		method: 'GET',
+		query: {
+			user: input.user,
+			limit: input.limit,
+			offset: input.offset,
 		},
-	);
+	});
 
 	if (result.events && ctx.db.events) {
 		try {
@@ -106,6 +116,11 @@ export const getActivity: AmplitudeEndpoints['usersGetActivity'] = async (ctx, i
 		}
 	}
 
-	await logEventFromContext(ctx, 'amplitude.users.getActivity', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'amplitude.users.getActivity',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };

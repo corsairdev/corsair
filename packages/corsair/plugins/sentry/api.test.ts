@@ -22,7 +22,7 @@ describe('Sentry API Type Tests', () => {
 				SentryEndpointOutputs['organizationsList']
 			>('organizations/', TEST_TOKEN, { method: 'GET' });
 
-			const orgSlug = listResponse[0]?.slug
+			const orgSlug = listResponse[0]?.slug;
 			if (!orgSlug) {
 				throw new Error('No organizations found');
 			}
@@ -44,7 +44,7 @@ describe('Sentry API Type Tests', () => {
 			const listResponse = await makeSentryRequest<
 				SentryEndpointOutputs['organizationsList']
 			>('organizations/', TEST_TOKEN, { method: 'GET' });
-			const orgs = listResponse
+			const orgs = listResponse;
 			const slug = orgs[0]?.slug;
 			if (!slug) {
 				throw new Error('No organizations found');
@@ -87,11 +87,7 @@ describe('Sentry API Type Tests', () => {
 
 			const response = await makeSentryRequest<
 				SentryEndpointOutputs['projectsGet']
-			>(
-				`projects/${orgSlug}/${projectSlug}/`,
-				TEST_TOKEN,
-				{ method: 'GET' },
-			);
+			>(`projects/${orgSlug}/${projectSlug}/`, TEST_TOKEN, { method: 'GET' });
 
 			SentryEndpointOutputSchemas.projectsGet.parse(response);
 		});
@@ -168,11 +164,9 @@ describe('Sentry API Type Tests', () => {
 		it('eventsList returns correct type', async () => {
 			const response = await makeSentryRequest<
 				SentryEndpointOutputs['eventsList']
-			>(
-				`projects/${orgSlug}/${projectSlug}/events/`,
-				TEST_TOKEN,
-				{ method: 'GET' },
-			);
+			>(`projects/${orgSlug}/${projectSlug}/events/`, TEST_TOKEN, {
+				method: 'GET',
+			});
 
 			SentryEndpointOutputSchemas.eventsList.parse(response);
 		});
@@ -180,11 +174,9 @@ describe('Sentry API Type Tests', () => {
 		it('eventsGet returns correct type', async () => {
 			const listResponse = await makeSentryRequest<
 				SentryEndpointOutputs['eventsList']
-			>(
-				`projects/${orgSlug}/${projectSlug}/events/`,
-				TEST_TOKEN,
-				{ method: 'GET' },
-			);
+			>(`projects/${orgSlug}/${projectSlug}/events/`, TEST_TOKEN, {
+				method: 'GET',
+			});
 			const events = Array.isArray(listResponse) ? listResponse : [];
 			const eventId = events[0]?.eventID;
 			if (!eventId) {
@@ -193,11 +185,9 @@ describe('Sentry API Type Tests', () => {
 
 			const response = await makeSentryRequest<
 				SentryEndpointOutputs['eventsGet']
-			>(
-				`projects/${orgSlug}/${projectSlug}/events/${eventId}/`,
-				TEST_TOKEN,
-				{ method: 'GET' },
-			);
+			>(`projects/${orgSlug}/${projectSlug}/events/${eventId}/`, TEST_TOKEN, {
+				method: 'GET',
+			});
 
 			SentryEndpointOutputSchemas.eventsGet.parse(response);
 		});
@@ -233,11 +223,9 @@ describe('Sentry API Type Tests', () => {
 		it('issuesList returns correct type', async () => {
 			const response = await makeSentryRequest<
 				SentryEndpointOutputs['issuesList']
-			>(
-				`projects/${orgSlug}/${projectSlug}/issues/`,
-				TEST_TOKEN,
-				{ method: 'GET' },
-			);
+			>(`projects/${orgSlug}/${projectSlug}/issues/`, TEST_TOKEN, {
+				method: 'GET',
+			});
 
 			SentryEndpointOutputSchemas.issuesList.parse(response);
 		});
@@ -245,11 +233,9 @@ describe('Sentry API Type Tests', () => {
 		it('issuesGet returns correct type', async () => {
 			const listResponse = await makeSentryRequest<
 				SentryEndpointOutputs['issuesList']
-			>(
-				`projects/${orgSlug}/${projectSlug}/issues/`,
-				TEST_TOKEN,
-				{ method: 'GET' },
-			);
+			>(`projects/${orgSlug}/${projectSlug}/issues/`, TEST_TOKEN, {
+				method: 'GET',
+			});
 			const issues = Array.isArray(listResponse) ? listResponse : [];
 			const issueId = issues[0]?.id;
 			if (!issueId) {
@@ -266,11 +252,9 @@ describe('Sentry API Type Tests', () => {
 		it('issuesUpdate returns correct type', async () => {
 			const listResponse = await makeSentryRequest<
 				SentryEndpointOutputs['issuesList']
-			>(
-				`projects/${orgSlug}/${projectSlug}/issues/`,
-				TEST_TOKEN,
-				{ method: 'GET' },
-			);
+			>(`projects/${orgSlug}/${projectSlug}/issues/`, TEST_TOKEN, {
+				method: 'GET',
+			});
 			const issues = Array.isArray(listResponse) ? listResponse : [];
 			const issueId = issues[0]?.id;
 			if (!issueId) {
@@ -286,7 +270,6 @@ describe('Sentry API Type Tests', () => {
 
 			SentryEndpointOutputSchemas.issuesUpdate.parse(response);
 		});
-
 	});
 
 	describe('teams', () => {
@@ -328,11 +311,7 @@ describe('Sentry API Type Tests', () => {
 
 			const response = await makeSentryRequest<
 				SentryEndpointOutputs['teamsGet']
-			>(
-				`teams/${orgSlug}/${teamSlug}/`,
-				TEST_TOKEN,
-				{ method: 'GET' },
-			);
+			>(`teams/${orgSlug}/${teamSlug}/`, TEST_TOKEN, { method: 'GET' });
 
 			SentryEndpointOutputSchemas.teamsGet.parse(response);
 		});

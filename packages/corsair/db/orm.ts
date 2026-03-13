@@ -37,7 +37,7 @@ export type CorsairWhere<TField extends string = string> = {
 	operator?: CorsairWhereOperator | undefined;
 };
 
-const TABLE_SCHEMAS = {
+export const TABLE_SCHEMAS = {
 	corsair_integrations: CorsairIntegrationsSchema,
 	corsair_accounts: CorsairAccountsSchema,
 	corsair_entities: CorsairEntitiesSchema,

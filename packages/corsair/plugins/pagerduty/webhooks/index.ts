@@ -1,4 +1,4 @@
-import { triggered, acknowledged, resolved, assigned } from './incidents';
+import { acknowledged, assigned, resolved, triggered } from './incidents';
 
 export const IncidentWebhooks = {
 	triggered,

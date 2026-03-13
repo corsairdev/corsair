@@ -1,10 +1,10 @@
-import type { PermissionActionCallback, PermissionLike } from './types';
 import { renderBase } from './plugins/base';
-import { renderSlackMessagesPost } from './plugins/slack/messages-post';
-import { renderGmailMessagesSend } from './plugins/gmail/messages-send';
-import { renderLinearIssuesCreate } from './plugins/linear/issues-create';
-import { renderGoogleCalendarEventsCreate } from './plugins/googlecalendar/events-create';
 import { renderCalBookingsCreate } from './plugins/cal/bookings-create';
+import { renderGmailMessagesSend } from './plugins/gmail/messages-send';
+import { renderGoogleCalendarEventsCreate } from './plugins/googlecalendar/events-create';
+import { renderLinearIssuesCreate } from './plugins/linear/issues-create';
+import { renderSlackMessagesPost } from './plugins/slack/messages-post';
+import type { PermissionActionCallback, PermissionLike } from './types';
 
 type Renderer = (
 	permission: PermissionLike,

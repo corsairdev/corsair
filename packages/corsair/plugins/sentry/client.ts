@@ -70,7 +70,12 @@ export async function makeSentryRequest<T>(
 		return response;
 	} catch (error) {
 		if (error instanceof ApiError) {
-			throw new SentryAPIError(error.message, undefined, error.status, error.retryAfter);
+			throw new SentryAPIError(
+				error.message,
+				undefined,
+				error.status,
+				error.retryAfter,
+			);
 		}
 		if (error instanceof Error) {
 			throw new SentryAPIError(error.message);

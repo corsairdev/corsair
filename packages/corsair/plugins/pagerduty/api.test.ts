@@ -68,7 +68,8 @@ describe('PagerDuty API Type Tests', () => {
 							urgency: 'low',
 							body: {
 								type: 'incident_body',
-								details: 'This is a test incident created by the API test suite',
+								details:
+									'This is a test incident created by the API test suite',
 							},
 						},
 					},
