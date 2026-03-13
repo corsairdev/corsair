@@ -1,7 +1,7 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "lib": ["esnext"],
+    "lib": ["esnext", "dom"],
     "types": ["node"],
     "module": "ESNext",
     "moduleResolution": "Bundler",
@@ -11,6 +11,6 @@
     "declarationMap": true,
     "skipLibCheck": true
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "../corsair/yaml.d.ts"],
   "exclude": ["dist", "node_modules"]
 }
