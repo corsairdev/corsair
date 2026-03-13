@@ -208,7 +208,12 @@ async function checkAuthStatus(
 			| (() => Promise<string | null>)
 			| undefined;
 		if (!getter) continue;
-		const value = await getter();
+		let value: string | null = null;
+		try {
+			value = await getter();
+		} catch {
+			// Treat decryption failures as missing
+		}
 		if (!value) missingIntegration.push(field);
 	}
 
@@ -220,7 +225,12 @@ async function checkAuthStatus(
 			| (() => Promise<string | null>)
 			| undefined;
 		if (!getter) continue;
-		const value = await getter();
+		let value: string | null = null;
+		try {
+			value = await getter();
+		} catch {
+			// Treat decryption failures as missing
+		}
 		if (!value) missingAccount.push(field);
 	}
 
