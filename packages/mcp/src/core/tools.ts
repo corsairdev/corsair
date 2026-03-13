@@ -1,4 +1,5 @@
 import type { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
+import { setupCorsair } from 'corsair';
 import { z } from 'zod';
 import type { BaseMcpOptions } from './adapters.js';
 
@@ -139,7 +140,11 @@ export function buildCorsairToolDefs(
 			shape: {},
 			handler: async () => {
 				try {
-					await corsair.setup();
+					if (Object.keys(corsair).includes('withTenant')) {
+						throw new Error("Cannot setup Corsair if it multiTenancy is enabled.")
+					}
+
+					await setupCorsair(corsair as Parameters<typeof setupCorsair>[0]);
 					return {
 						content: [{ type: 'text', text: 'Corsair setup complete.' }],
 					};
