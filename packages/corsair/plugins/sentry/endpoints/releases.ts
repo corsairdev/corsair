@@ -1,7 +1,7 @@
 import { logEventFromContext } from '../../utils/events';
 import type { SentryEndpoints } from '..';
-import type { SentryEndpointOutputs } from './types';
 import { makeSentryRequest } from '../client';
+import type { SentryEndpointOutputs } from './types';
 
 export const get: SentryEndpoints['releasesGet'] = async (ctx, input) => {
 	const response = await makeSentryRequest<
@@ -22,9 +22,7 @@ export const get: SentryEndpoints['releasesGet'] = async (ctx, input) => {
 				dateReleased: response.dateReleased
 					? new Date(response.dateReleased)
 					: null,
-				firstEvent: response.firstEvent
-					? new Date(response.firstEvent)
-					: null,
+				firstEvent: response.firstEvent ? new Date(response.firstEvent) : null,
 				lastEvent: response.lastEvent ? new Date(response.lastEvent) : null,
 			});
 		} catch (error) {
@@ -81,16 +79,13 @@ export const list: SentryEndpoints['releasesList'] = async (ctx, input) => {
 	return response;
 };
 
-export const create: SentryEndpoints['releasesCreate'] = async (
-	ctx,
-	input,
-) => {
+export const create: SentryEndpoints['releasesCreate'] = async (ctx, input) => {
 	const { organizationSlug, ...createData } = input;
 	const response = await makeSentryRequest<
 		SentryEndpointOutputs['releasesCreate']
 	>(`organizations/${organizationSlug}/releases/`, ctx.key, {
 		method: 'POST',
-		body: createData
+		body: createData,
 	});
 
 	if (response && ctx.db.releases) {
@@ -103,9 +98,7 @@ export const create: SentryEndpoints['releasesCreate'] = async (
 				dateReleased: response.dateReleased
 					? new Date(response.dateReleased)
 					: null,
-				firstEvent: response.firstEvent
-					? new Date(response.firstEvent)
-					: null,
+				firstEvent: response.firstEvent ? new Date(response.firstEvent) : null,
 				lastEvent: response.lastEvent ? new Date(response.lastEvent) : null,
 			});
 		} catch (error) {
@@ -122,10 +115,7 @@ export const create: SentryEndpoints['releasesCreate'] = async (
 	return response;
 };
 
-export const update: SentryEndpoints['releasesUpdate'] = async (
-	ctx,
-	input,
-) => {
+export const update: SentryEndpoints['releasesUpdate'] = async (ctx, input) => {
 	const { organizationSlug, version, ...updateData } = input;
 	const response = await makeSentryRequest<
 		SentryEndpointOutputs['releasesUpdate']
@@ -134,7 +124,7 @@ export const update: SentryEndpoints['releasesUpdate'] = async (
 		ctx.key,
 		{
 			method: 'PUT',
-			body: updateData
+			body: updateData,
 		},
 	);
 
@@ -148,9 +138,7 @@ export const update: SentryEndpoints['releasesUpdate'] = async (
 				dateReleased: response.dateReleased
 					? new Date(response.dateReleased)
 					: null,
-				firstEvent: response.firstEvent
-					? new Date(response.firstEvent)
-					: null,
+				firstEvent: response.firstEvent ? new Date(response.firstEvent) : null,
 				lastEvent: response.lastEvent ? new Date(response.lastEvent) : null,
 			});
 		} catch (error) {

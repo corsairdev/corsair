@@ -13,6 +13,7 @@ export type BaseMcpOptions = {
 			type?: 'api' | 'webhooks' | 'db';
 		}) => unknown;
 		get_schema: (path: string) => unknown;
+		setup: () => Promise<void>;
 		[key: string]: unknown;
 	};
 	permissions?: PermissionAdapter;

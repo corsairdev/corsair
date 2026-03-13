@@ -1,5 +1,5 @@
 import dotenv from 'dotenv';
-import { makeAmplitudeRequest, AMPLITUDE_HTTP_API_BASE } from './client';
+import { AMPLITUDE_HTTP_API_BASE, makeAmplitudeRequest } from './client';
 import type {
 	AnnotationsCreateResponse,
 	AnnotationsListResponse,
@@ -24,7 +24,9 @@ dotenv.config();
 const apiKey = process.env.AMPLITUDE_API_KEY!;
 const secretKey = process.env.AMPLITUDE_SECRET_KEY!;
 const credentials =
-	apiKey && secretKey ? `${apiKey}:${secretKey}` : process.env.AMPLITUDE_CREDENTIALS!;
+	apiKey && secretKey
+		? `${apiKey}:${secretKey}`
+		: process.env.AMPLITUDE_CREDENTIALS!;
 
 describe('Amplitude API Type Tests', () => {
 	describe('events', () => {
@@ -335,8 +337,12 @@ describe('Amplitude API Type Tests', () => {
 		});
 
 		it('annotationsCreate returns correct type', async () => {
-			const date = process.env.AMPLITUDE_TEST_ANNOTATION_DATE ?? new Date().toISOString().slice(0, 10);
-			const label = process.env.AMPLITUDE_TEST_ANNOTATION_LABEL ?? `test-annotation-${Date.now()}`;
+			const date =
+				process.env.AMPLITUDE_TEST_ANNOTATION_DATE ??
+				new Date().toISOString().slice(0, 10);
+			const label =
+				process.env.AMPLITUDE_TEST_ANNOTATION_LABEL ??
+				`test-annotation-${Date.now()}`;
 			const appId = process.env.AMPLITUDE_TEST_APP_ID;
 
 			const response = await makeAmplitudeRequest<AnnotationsCreateResponse>(
@@ -357,8 +363,12 @@ describe('Amplitude API Type Tests', () => {
 
 	describe('exports', () => {
 		it('exportsGetData returns correct type', async () => {
-			const start = process.env.AMPLITUDE_TEST_EXPORT_START ?? new Date(Date.now() - 86400000).toISOString().slice(0, 10);
-			const end = process.env.AMPLITUDE_TEST_EXPORT_END ?? new Date().toISOString().slice(0, 10);
+			const start =
+				process.env.AMPLITUDE_TEST_EXPORT_START ??
+				new Date(Date.now() - 86400000).toISOString().slice(0, 10);
+			const end =
+				process.env.AMPLITUDE_TEST_EXPORT_END ??
+				new Date().toISOString().slice(0, 10);
 
 			const response = await makeAmplitudeRequest<ExportsGetDataResponse>(
 				'/api/2/export',

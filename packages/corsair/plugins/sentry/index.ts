@@ -497,8 +497,7 @@ export function sentry<const T extends SentryPluginOptions>(
 		pluginWebhookMatcher: (request) => {
 			const headers = request.headers;
 			return (
-				'sentry-hook-signature' in headers &&
-				'sentry-hook-resource' in headers
+				'sentry-hook-signature' in headers && 'sentry-hook-resource' in headers
 			);
 		},
 		errorHandlers: {

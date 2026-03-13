@@ -1,4 +1,3 @@
-import type { PermissionActionCallback, PermissionLike } from '../types';
 import {
 	actionsHtml,
 	buildActionDescriptors,
@@ -7,6 +6,7 @@ import {
 	parseArgs,
 	statusBannerHtml,
 } from '../shared';
+import type { PermissionActionCallback, PermissionLike } from '../types';
 
 export function renderBase(
 	permission: PermissionLike,

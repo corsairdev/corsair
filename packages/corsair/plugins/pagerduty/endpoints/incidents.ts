@@ -3,21 +3,22 @@ import type { PagerdutyEndpoints } from '..';
 import { makePagerdutyRequest } from '../client';
 import type { PagerdutyEndpointOutputs } from './types';
 
-export const create: PagerdutyEndpoints['incidentsCreate'] = async (ctx, input) => {
-	const result = await makePagerdutyRequest<PagerdutyEndpointOutputs['incidentsCreate']>(
-		'incidents',
-		ctx.key,
-		{
-			method: 'POST',
-			from: input.from,
-			body: {
-				incident: {
-					type: 'incident',
-					...input,
-				},
+export const create: PagerdutyEndpoints['incidentsCreate'] = async (
+	ctx,
+	input,
+) => {
+	const result = await makePagerdutyRequest<
+		PagerdutyEndpointOutputs['incidentsCreate']
+	>('incidents', ctx.key, {
+		method: 'POST',
+		from: input.from,
+		body: {
+			incident: {
+				type: 'incident',
+				...input,
 			},
 		},
-	);
+	});
 
 	if (result.incident && ctx.db.incidents) {
 		try {
@@ -48,10 +49,9 @@ export const create: PagerdutyEndpoints['incidentsCreate'] = async (ctx, input) 
 };
 
 export const get: PagerdutyEndpoints['incidentsGet'] = async (ctx, input) => {
-	const result = await makePagerdutyRequest<PagerdutyEndpointOutputs['incidentsGet']>(
-		`incidents/${input.id}`,
-		ctx.key,
-	);
+	const result = await makePagerdutyRequest<
+		PagerdutyEndpointOutputs['incidentsGet']
+	>(`incidents/${input.id}`, ctx.key);
 
 	await logEventFromContext(
 		ctx,
@@ -63,23 +63,23 @@ export const get: PagerdutyEndpoints['incidentsGet'] = async (ctx, input) => {
 };
 
 export const list: PagerdutyEndpoints['incidentsList'] = async (ctx, input) => {
-	const result = await makePagerdutyRequest<PagerdutyEndpointOutputs['incidentsList']>(
-		'incidents',
-		ctx.key,
-		{
-			query: {
-				limit: input.limit,
-				offset: input.offset,
-				since: input.since,
-				until: input.until,
-				sort_by: input.sort_by,
-				...(input.statuses && { 'statuses[]': input.statuses.join(',') }),
-				...(input.urgencies && { 'urgencies[]': input.urgencies.join(',') }),
-				...(input.service_ids && { 'service_ids[]': input.service_ids.join(',') }),
-				...(input.team_ids && { 'team_ids[]': input.team_ids.join(',') }),
-			},
+	const result = await makePagerdutyRequest<
+		PagerdutyEndpointOutputs['incidentsList']
+	>('incidents', ctx.key, {
+		query: {
+			limit: input.limit,
+			offset: input.offset,
+			since: input.since,
+			until: input.until,
+			sort_by: input.sort_by,
+			...(input.statuses && { 'statuses[]': input.statuses.join(',') }),
+			...(input.urgencies && { 'urgencies[]': input.urgencies.join(',') }),
+			...(input.service_ids && {
+				'service_ids[]': input.service_ids.join(','),
+			}),
+			...(input.team_ids && { 'team_ids[]': input.team_ids.join(',') }),
 		},
-	);
+	});
 
 	await logEventFromContext(
 		ctx,
@@ -90,21 +90,22 @@ export const list: PagerdutyEndpoints['incidentsList'] = async (ctx, input) => {
 	return result;
 };
 
-export const update: PagerdutyEndpoints['incidentsUpdate'] = async (ctx, input) => {
+export const update: PagerdutyEndpoints['incidentsUpdate'] = async (
+	ctx,
+	input,
+) => {
 	const { id, ...fields } = input;
-	const result = await makePagerdutyRequest<PagerdutyEndpointOutputs['incidentsUpdate']>(
-		`incidents/${id}`,
-		ctx.key,
-		{
-			method: 'PUT',
-			body: {
-				incident: {
-					type: 'incident',
-					...fields,
-				},
+	const result = await makePagerdutyRequest<
+		PagerdutyEndpointOutputs['incidentsUpdate']
+	>(`incidents/${id}`, ctx.key, {
+		method: 'PUT',
+		body: {
+			incident: {
+				type: 'incident',
+				...fields,
 			},
 		},
-	);
+	});
 
 	if (result.incident && ctx.db.incidents) {
 		try {

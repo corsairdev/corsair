@@ -26,7 +26,9 @@ export const triggered: PagerdutyWebhooks['incidentTriggered'] = {
 					title: event.data.title,
 					status: event.data.status,
 					urgency: event.data.urgency,
-					created_at: event.occurred_at ? new Date(event.occurred_at) : new Date(),
+					created_at: event.occurred_at
+						? new Date(event.occurred_at)
+						: new Date(),
 					updated_at: new Date(),
 				});
 

@@ -1,4 +1,4 @@
-import type { PermissionActionCallback, PermissionLike } from '../../types';
+import type { CalBoundEndpoints } from 'corsair/plugins/cal';
 import {
 	actionsHtml,
 	buildActionDescriptors,
@@ -7,7 +7,7 @@ import {
 	parseArgs,
 	statusBannerHtml,
 } from '../../shared';
-import type { CalBoundEndpoints } from 'corsair/plugins/cal';
+import type { PermissionActionCallback, PermissionLike } from '../../types';
 
 type Args = Parameters<CalBoundEndpoints['bookings']['create']>[0];
 
@@ -74,13 +74,13 @@ export function renderCalBookingsCreate(
         </div>
 
         ${
-			args.meetingUrl
-				? `<div style="display:flex;align-items:flex-start;gap:10px">
+					args.meetingUrl
+						? `<div style="display:flex;align-items:flex-start;gap:10px">
             <span style="font-size:16px;width:20px;flex-shrink:0">&#x1f4bb;</span>
             <div style="font-size:13px;color:#d1d5db">${escapeHtml(args.meetingUrl)}</div>
           </div>`
-				: ''
-		}
+						: ''
+				}
 
       </div>
     </div>

@@ -25,7 +25,12 @@ export async function makeAmplitudeRequest<T>(
 		baseUrl?: string;
 	} = {},
 ): Promise<T> {
-	const { method = 'GET', body, query, baseUrl = AMPLITUDE_DASHBOARD_API_BASE } = options;
+	const {
+		method = 'GET',
+		body,
+		query,
+		baseUrl = AMPLITUDE_DASHBOARD_API_BASE,
+	} = options;
 
 	const config: OpenAPIConfig = {
 		BASE: baseUrl,

@@ -1,4 +1,4 @@
-import type { PermissionActionCallback, PermissionLike } from '../../types';
+import type { SlackBoundEndpoints } from 'corsair/plugins';
 import {
 	actionsHtml,
 	buildActionDescriptors,
@@ -7,7 +7,7 @@ import {
 	parseArgs,
 	statusBannerHtml,
 } from '../../shared';
-import type { SlackBoundEndpoints } from 'corsair/plugins';
+import type { PermissionActionCallback, PermissionLike } from '../../types';
 
 type Args = Parameters<SlackBoundEndpoints['messages']['post']>[0];
 
@@ -59,8 +59,8 @@ export function renderSlackMessagesPost(
 
     <!-- Message bubble -->
     ${
-		text
-			? `<div style="background:#222529;border:1px solid #2e3035;border-radius:8px;padding:16px;margin-bottom:12px">
+			text
+				? `<div style="background:#222529;border:1px solid #2e3035;border-radius:8px;padding:16px;margin-bottom:12px">
       <div style="display:flex;align-items:flex-start;gap:10px">
         <div style="width:36px;height:36px;border-radius:4px;background:#4a154b;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:16px">&#x1f916;</div>
         <div>
@@ -69,8 +69,8 @@ export function renderSlackMessagesPost(
         </div>
       </div>
     </div>`
-			: ''
-	}
+				: ''
+		}
 
     <!-- Thread info -->
     ${threadTs ? `<div style="font-size:12px;color:#6b7280;margin-bottom:12px;padding-left:4px">&#x21b3; Reply in thread${replyBroadcast ? ' &middot; also sending to channel' : ''}</div>` : ''}

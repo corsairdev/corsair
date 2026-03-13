@@ -1,5 +1,3 @@
-import { executePermission } from 'corsair';
-import { corsair } from '@/server/corsair';
 import 'dotenv/config';
 
 const main = async () => {
@@ -17,7 +15,6 @@ const main = async () => {
 	// 		},
 	// 	},
 	// });
-
 	// console.log(JSON.stringify(res, null, 2));
 };
 

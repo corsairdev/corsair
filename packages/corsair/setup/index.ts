@@ -1,4 +1,17 @@
 import type { Kysely } from 'kysely';
+import type { ZodTypeAny } from 'zod';
+import {
+	ZodBoolean,
+	ZodDate,
+	ZodEffects,
+	ZodEnum,
+	ZodNullable,
+	ZodNumber,
+	ZodObject,
+	ZodOptional,
+	ZodRecord,
+	ZodString,
+} from 'zod';
 import type {
 	CorsairInternalConfig,
 	CorsairPlugin,
@@ -6,6 +19,7 @@ import type {
 } from '../core';
 import { CORSAIR_INTERNAL, createCorsair } from '../core';
 import type { CorsairKyselyDatabase } from '../db/kysely/database';
+import { TABLE_SCHEMAS } from '../db/orm';
 
 // Inlined at build time by the esbuild YAML plugin in tsup.config.ts.
 // Edit setup/backfill.yaml to add or change plugin backfill steps.
@@ -113,23 +127,46 @@ export async function setupCorsair<
 // Table check
 // ─────────────────────────────────────────────────────────────────────────────
 
-const REQUIRED_TABLES = [
-	'corsair_integrations',
-	'corsair_accounts',
-	'corsair_entities',
-	'corsair_events',
-	'corsair_permissions',
-] as const;
+const REQUIRED_TABLES = {
+	...TABLE_SCHEMAS,
+} as const;
+
+function describeZodSchema(schema: ZodTypeAny): unknown {
+	if (schema instanceof ZodObject) {
+		const shape: Record<string, unknown> = {};
+		for (const [key, val] of Object.entries(
+			schema.shape as Record<string, ZodTypeAny>,
+		)) {
+			shape[key] = describeZodSchema(val);
+		}
+		return shape;
+	}
+	if (schema instanceof ZodEffects)
+		return describeZodSchema(schema.innerType());
+	if (schema instanceof ZodNullable)
+		return `${describeZodSchema(schema.unwrap())} | null`;
+	if (schema instanceof ZodOptional)
+		return `${describeZodSchema(schema.unwrap())} | undefined`;
+	if (schema instanceof ZodEnum)
+		return (schema.options as string[]).join(' | ');
+	if (schema instanceof ZodString) return 'string';
+	if (schema instanceof ZodNumber) return 'number';
+	if (schema instanceof ZodBoolean) return 'boolean';
+	if (schema instanceof ZodDate) return 'date';
+	if (schema instanceof ZodRecord) return 'Record<string, unknown>';
+	return 'unknown';
+}
 
 async function checkTables(db: Kysely<CorsairKyselyDatabase>): Promise<void> {
 	const existing = await db.introspection.getTables();
 	const existingNames = new Set(existing.map((t) => t.name));
 
-	for (const table of REQUIRED_TABLES) {
+	for (const [table, schema] of Object.entries(REQUIRED_TABLES)) {
 		if (!existingNames.has(table)) {
 			console.warn(
 				`[corsair:setup] Table "${table}" does not exist. ` +
-					'Run your database migrations before calling setupCorsair.',
+					'Run your database migrations before calling setupCorsair.\n' +
+					`Schema: ${JSON.stringify(describeZodSchema(schema), null, 2)}`,
 			);
 		}
 	}

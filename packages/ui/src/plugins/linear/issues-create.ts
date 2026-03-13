@@ -1,4 +1,4 @@
-import type { PermissionActionCallback, PermissionLike } from '../../types';
+import type { LinearBoundEndpoints } from 'corsair/plugins';
 import {
 	actionsHtml,
 	buildActionDescriptors,
@@ -7,7 +7,7 @@ import {
 	parseArgs,
 	statusBannerHtml,
 } from '../../shared';
-import type { LinearBoundEndpoints } from 'corsair/plugins';
+import type { PermissionActionCallback, PermissionLike } from '../../types';
 
 type Args = Parameters<LinearBoundEndpoints['issues']['create']>[0];
 
@@ -37,7 +37,8 @@ export function renderLinearIssuesCreate(
 	const args = parseArgs(permission) as Args;
 	const ts = formatTimestamp(permission.created_at);
 
-	const priorityLabel = args.priority != null ? priorityLabels[args.priority] : undefined;
+	const priorityLabel =
+		args.priority != null ? priorityLabels[args.priority] : undefined;
 
 	return `<!DOCTYPE html>
 <html lang="en">
@@ -78,10 +79,10 @@ export function renderLinearIssuesCreate(
 
       <!-- Description -->
       ${
-		args.description
-			? `<div style="font-size:14px;color:#9ca3af;line-height:1.7;margin-bottom:16px;padding-left:26px;white-space:pre-wrap;word-break:break-word">${escapeHtml(args.description)}</div>`
-			: ''
-	}
+				args.description
+					? `<div style="font-size:14px;color:#9ca3af;line-height:1.7;margin-bottom:16px;padding-left:26px;white-space:pre-wrap;word-break:break-word">${escapeHtml(args.description)}</div>`
+					: ''
+			}
 
       <!-- Meta chips -->
       <div style="display:flex;flex-wrap:wrap;gap:8px;padding-left:26px">

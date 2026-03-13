@@ -2,7 +2,6 @@ import type { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
 import { z } from 'zod';
 import type { BaseMcpOptions } from './adapters.js';
 
-
 export type CorsairToolDef = {
 	name: string;
 	description: string;
@@ -10,7 +9,9 @@ export type CorsairToolDef = {
 	handler: (args: Record<string, unknown>) => Promise<CallToolResult>;
 };
 
-export function buildCorsairToolDefs(options: BaseMcpOptions): CorsairToolDef[] {
+export function buildCorsairToolDefs(
+	options: BaseMcpOptions,
+): CorsairToolDef[] {
 	const { corsair, permissions, basePermissionUrl } = options;
 
 	const defs: CorsairToolDef[] = [
@@ -106,7 +107,9 @@ export function buildCorsairToolDefs(options: BaseMcpOptions): CorsairToolDef[] 
 				}
 
 				try {
-					const result = await (fn as (args: unknown) => Promise<unknown>)(args);
+					const result = await (fn as (args: unknown) => Promise<unknown>)(
+						args,
+					);
 					return {
 						content: [{ type: 'text', text: JSON.stringify(result, null, 2) }],
 					};
@@ -125,6 +128,26 @@ export function buildCorsairToolDefs(options: BaseMcpOptions): CorsairToolDef[] 
 								text: `Error running "${path}": ${message}${extra}\n${full}`,
 							},
 						],
+					};
+				}
+			},
+		},
+		{
+			name: 'corsair_setup',
+			description:
+				'Set up the Corsair instance — creates plugin rows, issues encryption keys, and checks auth status for every configured plugin. Call this before using any other Corsair tools if setup has not been run yet.',
+			shape: {},
+			handler: async () => {
+				try {
+					await corsair.setup();
+					return {
+						content: [{ type: 'text', text: 'Corsair setup complete.' }],
+					};
+				} catch (err) {
+					const message = err instanceof Error ? err.message : String(err);
+					return {
+						isError: true,
+						content: [{ type: 'text', text: `Setup failed: ${message}` }],
 					};
 				}
 			},

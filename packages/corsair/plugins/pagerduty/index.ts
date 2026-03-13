@@ -14,12 +14,16 @@ import type {
 	RequiredPluginWebhookSchemas,
 } from '../../core';
 import type { PickAuth } from '../../core/constants';
-import type { PagerdutyEndpointInputs, PagerdutyEndpointOutputs } from './endpoints/types';
+import { IncidentNotes, Incidents, LogEntries, Users } from './endpoints';
+import type {
+	PagerdutyEndpointInputs,
+	PagerdutyEndpointOutputs,
+} from './endpoints/types';
 import {
 	PagerdutyEndpointInputSchemas,
 	PagerdutyEndpointOutputSchemas,
 } from './endpoints/types';
-import { Incidents, IncidentNotes, LogEntries, Users } from './endpoints';
+import { errorHandlers } from './error-handlers';
 import { PagerdutySchema } from './schema';
 import { IncidentWebhooks } from './webhooks';
 import type {
@@ -28,7 +32,6 @@ import type {
 	IncidentResolvedEvent,
 	IncidentTriggeredEvent,
 	PagerdutyWebhookOutputs,
-	PagerdutyWebhookPayload,
 	PagerdutyWebhookPayloadFor,
 } from './webhooks/types';
 import {
@@ -38,17 +41,40 @@ import {
 	IncidentTriggeredEventSchema,
 	PagerdutyWebhookPayloadSchema,
 } from './webhooks/types';
-import { errorHandlers } from './error-handlers';
 
 export type PagerdutyEndpoints = {
-	incidentsCreate: PagerdutyEndpoint<'incidentsCreate', PagerdutyEndpointInputs['incidentsCreate']>;
-	incidentsGet: PagerdutyEndpoint<'incidentsGet', PagerdutyEndpointInputs['incidentsGet']>;
-	incidentsList: PagerdutyEndpoint<'incidentsList', PagerdutyEndpointInputs['incidentsList']>;
-	incidentsUpdate: PagerdutyEndpoint<'incidentsUpdate', PagerdutyEndpointInputs['incidentsUpdate']>;
-	incidentNotesCreate: PagerdutyEndpoint<'incidentNotesCreate', PagerdutyEndpointInputs['incidentNotesCreate']>;
-	incidentNotesList: PagerdutyEndpoint<'incidentNotesList', PagerdutyEndpointInputs['incidentNotesList']>;
-	logEntriesGet: PagerdutyEndpoint<'logEntriesGet', PagerdutyEndpointInputs['logEntriesGet']>;
-	logEntriesList: PagerdutyEndpoint<'logEntriesList', PagerdutyEndpointInputs['logEntriesList']>;
+	incidentsCreate: PagerdutyEndpoint<
+		'incidentsCreate',
+		PagerdutyEndpointInputs['incidentsCreate']
+	>;
+	incidentsGet: PagerdutyEndpoint<
+		'incidentsGet',
+		PagerdutyEndpointInputs['incidentsGet']
+	>;
+	incidentsList: PagerdutyEndpoint<
+		'incidentsList',
+		PagerdutyEndpointInputs['incidentsList']
+	>;
+	incidentsUpdate: PagerdutyEndpoint<
+		'incidentsUpdate',
+		PagerdutyEndpointInputs['incidentsUpdate']
+	>;
+	incidentNotesCreate: PagerdutyEndpoint<
+		'incidentNotesCreate',
+		PagerdutyEndpointInputs['incidentNotesCreate']
+	>;
+	incidentNotesList: PagerdutyEndpoint<
+		'incidentNotesList',
+		PagerdutyEndpointInputs['incidentNotesList']
+	>;
+	logEntriesGet: PagerdutyEndpoint<
+		'logEntriesGet',
+		PagerdutyEndpointInputs['logEntriesGet']
+	>;
+	logEntriesList: PagerdutyEndpoint<
+		'logEntriesList',
+		PagerdutyEndpointInputs['logEntriesList']
+	>;
 	usersGet: PagerdutyEndpoint<'usersGet', PagerdutyEndpointInputs['usersGet']>;
 };
 
@@ -112,8 +138,14 @@ export const pagerdutyEndpointSchemas = {
 } satisfies RequiredPluginEndpointSchemas<typeof pagerdutyEndpointsNested>;
 
 export type PagerdutyWebhooks = {
-	incidentTriggered: PagerdutyWebhook<'incidentTriggered', IncidentTriggeredEvent>;
-	incidentAcknowledged: PagerdutyWebhook<'incidentAcknowledged', IncidentAcknowledgedEvent>;
+	incidentTriggered: PagerdutyWebhook<
+		'incidentTriggered',
+		IncidentTriggeredEvent
+	>;
+	incidentAcknowledged: PagerdutyWebhook<
+		'incidentAcknowledged',
+		IncidentAcknowledgedEvent
+	>;
 	incidentResolved: PagerdutyWebhook<'incidentResolved', IncidentResolvedEvent>;
 	incidentAssigned: PagerdutyWebhook<'incidentAssigned', IncidentAssignedEvent>;
 };
@@ -205,9 +237,15 @@ type PagerdutyEndpoint<
 type PagerdutyWebhook<
 	K extends keyof PagerdutyWebhookOutputs,
 	TEvent,
-> = CorsairWebhook<PagerdutyContext, PagerdutyWebhookPayloadFor<TEvent>, PagerdutyWebhookOutputs[K]>;
+> = CorsairWebhook<
+	PagerdutyContext,
+	PagerdutyWebhookPayloadFor<TEvent>,
+	PagerdutyWebhookOutputs[K]
+>;
 
-export type PagerdutyBoundEndpoints = BindEndpoints<typeof pagerdutyEndpointsNested>;
+export type PagerdutyBoundEndpoints = BindEndpoints<
+	typeof pagerdutyEndpointsNested
+>;
 export type PagerdutyBoundWebhooks = BindWebhooks<PagerdutyWebhooks>;
 
 export type PagerdutyPluginOptions = {
@@ -225,24 +263,28 @@ export type PagerdutyContext = CorsairPluginContext<
 	PagerdutyPluginOptions
 >;
 
-export type PagerdutyKeyBuilderContext = KeyBuilderContext<PagerdutyPluginOptions>;
+export type PagerdutyKeyBuilderContext =
+	KeyBuilderContext<PagerdutyPluginOptions>;
 
-export type BasePagerdutyPlugin<T extends PagerdutyPluginOptions> = CorsairPlugin<
-	'pagerduty',
-	typeof PagerdutySchema,
-	typeof pagerdutyEndpointsNested,
-	typeof pagerdutyWebhooksNested,
-	T,
-	typeof defaultAuthType
->;
+export type BasePagerdutyPlugin<T extends PagerdutyPluginOptions> =
+	CorsairPlugin<
+		'pagerduty',
+		typeof PagerdutySchema,
+		typeof pagerdutyEndpointsNested,
+		typeof pagerdutyWebhooksNested,
+		T,
+		typeof defaultAuthType
+	>;
 
-export type InternalPagerdutyPlugin = BasePagerdutyPlugin<PagerdutyPluginOptions>;
+export type InternalPagerdutyPlugin =
+	BasePagerdutyPlugin<PagerdutyPluginOptions>;
 
 export type ExternalPagerdutyPlugin<T extends PagerdutyPluginOptions> =
 	BasePagerdutyPlugin<T>;
 
 export function pagerduty<const T extends PagerdutyPluginOptions>(
-	incomingOptions: PagerdutyPluginOptions & T = {} as PagerdutyPluginOptions & T,
+	incomingOptions: PagerdutyPluginOptions & T = {} as PagerdutyPluginOptions &
+		T,
 ): ExternalPagerdutyPlugin<T> {
 	const options = {
 		...incomingOptions,

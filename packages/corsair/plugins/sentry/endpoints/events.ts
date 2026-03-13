@@ -1,7 +1,7 @@
 import { logEventFromContext } from '../../utils/events';
 import type { SentryEndpoints } from '..';
-import type { SentryEndpointOutputs } from './types';
 import { makeSentryRequest } from '../client';
+import type { SentryEndpointOutputs } from './types';
 
 export const get: SentryEndpoints['eventsGet'] = async (ctx, input) => {
 	const response = await makeSentryRequest<SentryEndpointOutputs['eventsGet']>(
@@ -36,9 +36,7 @@ export const get: SentryEndpoints['eventsGet'] = async (ctx, input) => {
 };
 
 export const list: SentryEndpoints['eventsList'] = async (ctx, input) => {
-	const response = await makeSentryRequest<
-		SentryEndpointOutputs['eventsList']
-	>(
+	const response = await makeSentryRequest<SentryEndpointOutputs['eventsList']>(
 		`projects/${input.organizationSlug}/${input.projectSlug}/events/`,
 		ctx.key,
 		{

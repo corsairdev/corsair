@@ -25,7 +25,11 @@ export const exposure: AmplitudeWebhooks['experimentsExposure'] = {
 
 		if (ctx.db.events) {
 			try {
-				const entityId = [event.flag_key, event.variant, String(event.time)].join(':');
+				const entityId = [
+					event.flag_key,
+					event.variant,
+					String(event.time),
+				].join(':');
 				const entity = await ctx.db.events.upsertByEntityId(entityId, {
 					...event,
 					id: entityId,
@@ -40,7 +44,10 @@ export const exposure: AmplitudeWebhooks['experimentsExposure'] = {
 				});
 				corsairEntityId = entity?.id || '';
 			} catch (error) {
-				console.warn('Failed to save experiment exposure event to database:', error);
+				console.warn(
+					'Failed to save experiment exposure event to database:',
+					error,
+				);
 			}
 		}
 
@@ -55,7 +62,10 @@ export const exposure: AmplitudeWebhooks['experimentsExposure'] = {
 					});
 				}
 			} catch (error) {
-				console.warn('Failed to save user from experiment exposure to database:', error);
+				console.warn(
+					'Failed to save user from experiment exposure to database:',
+					error,
+				);
 			}
 		}
 

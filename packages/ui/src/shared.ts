@@ -1,4 +1,8 @@
-import type { PermissionActionCallback, PermissionLike, PermissionStatus } from './types';
+import type {
+	PermissionActionCallback,
+	PermissionLike,
+	PermissionStatus,
+} from './types';
 
 export function escapeHtml(s: unknown): string {
 	return String(s ?? '')
@@ -45,7 +49,10 @@ export function buildActionDescriptors(
 	};
 }
 
-export function actionsHtml(status: PermissionStatus, actions: ActionDescriptors): string {
+export function actionsHtml(
+	status: PermissionStatus,
+	actions: ActionDescriptors,
+): string {
 	if (status !== 'pending') return '';
 	return `<form id="corsair-permission-form" style="display:flex;gap:10px;justify-content:flex-end;margin-top:20px">
   <button type="button" data-action="decline" style="cursor:pointer;border:1px solid #2a2a2a;background:#141414;color:#e5e7eb;border-radius:6px;padding:10px 24px;font-size:14px;font-weight:600">Decline</button>

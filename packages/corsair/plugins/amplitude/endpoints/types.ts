@@ -71,8 +71,12 @@ const EventsUploadBatchResponseSchema = z.object({
 	server_upload_time: z.number().optional(),
 });
 
-export type EventsUploadBatchInput = z.infer<typeof EventsUploadBatchInputSchema>;
-export type EventsUploadBatchResponse = z.infer<typeof EventsUploadBatchResponseSchema>;
+export type EventsUploadBatchInput = z.infer<
+	typeof EventsUploadBatchInputSchema
+>;
+export type EventsUploadBatchResponse = z.infer<
+	typeof EventsUploadBatchResponseSchema
+>;
 
 // ─────────────────────────────────────────────────────────────────────────────
 // events.identifyUser
@@ -95,8 +99,12 @@ const EventsIdentifyUserResponseSchema = z.object({
 	error: z.string().optional(),
 });
 
-export type EventsIdentifyUserInput = z.infer<typeof EventsIdentifyUserInputSchema>;
-export type EventsIdentifyUserResponse = z.infer<typeof EventsIdentifyUserResponseSchema>;
+export type EventsIdentifyUserInput = z.infer<
+	typeof EventsIdentifyUserInputSchema
+>;
+export type EventsIdentifyUserResponse = z.infer<
+	typeof EventsIdentifyUserResponseSchema
+>;
 
 // ─────────────────────────────────────────────────────────────────────────────
 // events.getList
@@ -188,7 +196,9 @@ const UsersGetProfileResponseSchema = z.object({
 });
 
 export type UsersGetProfileInput = z.infer<typeof UsersGetProfileInputSchema>;
-export type UsersGetProfileResponse = z.infer<typeof UsersGetProfileResponseSchema>;
+export type UsersGetProfileResponse = z.infer<
+	typeof UsersGetProfileResponseSchema
+>;
 
 // ─────────────────────────────────────────────────────────────────────────────
 // users.getActivity
@@ -225,7 +235,9 @@ const UsersGetActivityResponseSchema = z.object({
 });
 
 export type UsersGetActivityInput = z.infer<typeof UsersGetActivityInputSchema>;
-export type UsersGetActivityResponse = z.infer<typeof UsersGetActivityResponseSchema>;
+export type UsersGetActivityResponse = z.infer<
+	typeof UsersGetActivityResponseSchema
+>;
 
 // ─────────────────────────────────────────────────────────────────────────────
 // cohorts.list
@@ -328,8 +340,12 @@ const CohortsGetMembersResponseSchema = z.object({
 	zip_url: z.string().optional(),
 });
 
-export type CohortsGetMembersInput = z.infer<typeof CohortsGetMembersInputSchema>;
-export type CohortsGetMembersResponse = z.infer<typeof CohortsGetMembersResponseSchema>;
+export type CohortsGetMembersInput = z.infer<
+	typeof CohortsGetMembersInputSchema
+>;
+export type CohortsGetMembersResponse = z.infer<
+	typeof CohortsGetMembersResponseSchema
+>;
 
 // ─────────────────────────────────────────────────────────────────────────────
 // charts.get
@@ -384,7 +400,9 @@ const DashboardsListResponseSchema = z.object({
 });
 
 export type DashboardsListInput = z.infer<typeof DashboardsListInputSchema>;
-export type DashboardsListResponse = z.infer<typeof DashboardsListResponseSchema>;
+export type DashboardsListResponse = z.infer<
+	typeof DashboardsListResponseSchema
+>;
 
 // ─────────────────────────────────────────────────────────────────────────────
 // dashboards.get
@@ -443,7 +461,9 @@ const AnnotationsListResponseSchema = z.object({
 });
 
 export type AnnotationsListInput = z.infer<typeof AnnotationsListInputSchema>;
-export type AnnotationsListResponse = z.infer<typeof AnnotationsListResponseSchema>;
+export type AnnotationsListResponse = z.infer<
+	typeof AnnotationsListResponseSchema
+>;
 
 // ─────────────────────────────────────────────────────────────────────────────
 // annotations.create
@@ -468,8 +488,12 @@ const AnnotationsCreateResponseSchema = z.object({
 		.optional(),
 });
 
-export type AnnotationsCreateInput = z.infer<typeof AnnotationsCreateInputSchema>;
-export type AnnotationsCreateResponse = z.infer<typeof AnnotationsCreateResponseSchema>;
+export type AnnotationsCreateInput = z.infer<
+	typeof AnnotationsCreateInputSchema
+>;
+export type AnnotationsCreateResponse = z.infer<
+	typeof AnnotationsCreateResponseSchema
+>;
 
 // ─────────────────────────────────────────────────────────────────────────────
 // exports.getData
@@ -487,7 +511,9 @@ const ExportsGetDataResponseSchema = z.object({
 });
 
 export type ExportsGetDataInput = z.infer<typeof ExportsGetDataInputSchema>;
-export type ExportsGetDataResponse = z.infer<typeof ExportsGetDataResponseSchema>;
+export type ExportsGetDataResponse = z.infer<
+	typeof ExportsGetDataResponseSchema
+>;
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Aggregated maps

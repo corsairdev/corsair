@@ -1,7 +1,7 @@
 import { logEventFromContext } from '../../utils/events';
 import type { SentryEndpoints } from '..';
-import type { SentryEndpointOutputs } from './types';
 import { makeSentryRequest } from '../client';
+import type { SentryEndpointOutputs } from './types';
 
 export const get: SentryEndpoints['teamsGet'] = async (ctx, input) => {
 	const response = await makeSentryRequest<SentryEndpointOutputs['teamsGet']>(
@@ -23,12 +23,7 @@ export const get: SentryEndpoints['teamsGet'] = async (ctx, input) => {
 		}
 	}
 
-	await logEventFromContext(
-		ctx,
-		'sentry.teams.get',
-		{ ...input },
-		'completed',
-	);
+	await logEventFromContext(ctx, 'sentry.teams.get', { ...input }, 'completed');
 	return response;
 };
 
@@ -49,9 +44,7 @@ export const list: SentryEndpoints['teamsList'] = async (ctx, input) => {
 			for (const team of response) {
 				await ctx.db.teams.upsertByEntityId(team.id, {
 					...team,
-					dateCreated: team.dateCreated
-						? new Date(team.dateCreated)
-						: null,
+					dateCreated: team.dateCreated ? new Date(team.dateCreated) : null,
 				});
 			}
 		} catch (error) {
@@ -74,7 +67,7 @@ export const create: SentryEndpoints['teamsCreate'] = async (ctx, input) => {
 		SentryEndpointOutputs['teamsCreate']
 	>(`organizations/${organizationSlug}/teams/`, ctx.key, {
 		method: 'POST',
-		body: createData
+		body: createData,
 	});
 
 	if (response && ctx.db.teams) {
@@ -105,7 +98,7 @@ export const update: SentryEndpoints['teamsUpdate'] = async (ctx, input) => {
 		SentryEndpointOutputs['teamsUpdate']
 	>(`teams/${organizationSlug}/${teamSlug}/`, ctx.key, {
 		method: 'PUT',
-		body: updateData
+		body: updateData,
 	});
 
 	if (response && ctx.db.teams) {
