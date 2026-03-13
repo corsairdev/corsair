@@ -1,5 +1,6 @@
 export { createBaseMcpServer } from './core/base.js';
 export { createMcpRouter } from './core/http.js';
+export { runStdioMcpServer } from './core/stdio.js';
 export type { OpenAIMcpConfig } from './adapters/openai.js';
 export { getOpenAIMcpConfig } from './adapters/openai.js';
 export type { VercelAiMcpClientOptions } from './adapters/vercel-ai.js';
