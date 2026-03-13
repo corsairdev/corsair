@@ -4,7 +4,7 @@ Your AI agent just became useful.
 
 Corsair gives your agent type-safe access to the tools you use. It natively handles credentials, token refresh, and webhooks. Your data never leaves your machine.
 
-<img src="https://cdn.simpleicons.org/slack" width="24" height="24" title="Slack" /> &nbsp;<img src="https://cdn.simpleicons.org/github" width="24" height="24" title="GitHub" /> &nbsp;<img src="https://cdn.simpleicons.org/gmail" width="24" height="24" title="Gmail" /> &nbsp;<img src="https://cdn.simpleicons.org/linear" width="24" height="24" title="Linear" /> &nbsp;<img src="https://cdn.simpleicons.org/googlecalendar" width="24" height="24" title="Google Calendar" /> &nbsp;<img src="https://cdn.simpleicons.org/notion" width="24" height="24" title="Notion" /> &nbsp;<img src="https://cdn.simpleicons.org/airtable" width="24" height="24" title="Airtable" /> &nbsp;<img src="https://cdn.simpleicons.org/discord" width="24" height="24" title="Discord" /> &nbsp;<img src="https://cdn.simpleicons.org/hubspot" width="24" height="24" title="HubSpot" /> &nbsp;<img src="https://cdn.simpleicons.org/todoist" width="24" height="24" title="Todoist" /> &nbsp;<img src="https://cdn.simpleicons.org/spotify" width="24" height="24" title="Spotify" /> &nbsp;<img src="https://cdn.simpleicons.org/resend" width="24" height="24" title="Resend" /> &nbsp;<img src="https://cdn.simpleicons.org/posthog" width="24" height="24" title="PostHog" /> &nbsp;<img src="https://cdn.simpleicons.org/sentry" width="24" height="24" title="Sentry" /> &nbsp;<img src="https://cdn.simpleicons.org/amplitude" width="24" height="24" title="Amplitude" />
+<!-- <img src="https://cdn.simpleicons.org/slack" width="24" height="24" title="Slack" /> &nbsp;<img src="https://cdn.simpleicons.org/github" width="24" height="24" title="GitHub" /> &nbsp;<img src="https://cdn.simpleicons.org/gmail" width="24" height="24" title="Gmail" /> &nbsp;<img src="https://cdn.simpleicons.org/linear" width="24" height="24" title="Linear" /> &nbsp;<img src="https://cdn.simpleicons.org/googlecalendar" width="24" height="24" title="Google Calendar" /> &nbsp;<img src="https://cdn.simpleicons.org/notion" width="24" height="24" title="Notion" /> &nbsp;<img src="https://cdn.simpleicons.org/airtable" width="24" height="24" title="Airtable" /> &nbsp;<img src="https://cdn.simpleicons.org/discord" width="24" height="24" title="Discord" /> &nbsp;<img src="https://cdn.simpleicons.org/hubspot" width="24" height="24" title="HubSpot" /> &nbsp;<img src="https://cdn.simpleicons.org/todoist" width="24" height="24" title="Todoist" /> &nbsp;<img src="https://cdn.simpleicons.org/spotify" width="24" height="24" title="Spotify" /> &nbsp;<img src="https://cdn.simpleicons.org/resend" width="24" height="24" title="Resend" /> &nbsp;<img src="https://cdn.simpleicons.org/posthog" width="24" height="24" title="PostHog" /> &nbsp;<img src="https://cdn.simpleicons.org/sentry" width="24" height="24" title="Sentry" /> &nbsp;<img src="https://cdn.simpleicons.org/amplitude" width="24" height="24" title="Amplitude" /> -->
 
 ---
 
@@ -91,7 +91,17 @@ This is a privacy-first architecture, and it means the whole thing is version-co
 
 ## Plugins
 
-<img src="https://cdn.simpleicons.org/slack" width="24" height="24" title="Slack" /> &nbsp;<img src="https://cdn.simpleicons.org/github" width="24" height="24" title="GitHub" /> &nbsp;<img src="https://cdn.simpleicons.org/gmail" width="24" height="24" title="Gmail" /> &nbsp;<img src="https://cdn.simpleicons.org/googlecalendar" width="24" height="24" title="Google Calendar" /> &nbsp;<img src="https://cdn.simpleicons.org/googledrive" width="24" height="24" title="Google Drive" /> &nbsp;<img src="https://cdn.simpleicons.org/googlesheets" width="24" height="24" title="Google Sheets" /> &nbsp;<img src="https://cdn.simpleicons.org/linear" width="24" height="24" title="Linear" /> &nbsp;<img src="https://cdn.simpleicons.org/notion" width="24" height="24" title="Notion" /> &nbsp;<img src="https://cdn.simpleicons.org/hubspot" width="24" height="24" title="HubSpot" /> &nbsp;<img src="https://cdn.simpleicons.org/discord" width="24" height="24" title="Discord" /> &nbsp;<img src="https://cdn.simpleicons.org/airtable" width="24" height="24" title="Airtable" /> &nbsp;<img src="https://cdn.simpleicons.org/todoist" width="24" height="24" title="Todoist" /> &nbsp;<img src="https://cdn.simpleicons.org/spotify" width="24" height="24" title="Spotify" /> &nbsp;<img src="https://cdn.simpleicons.org/resend" width="24" height="24" title="Resend" /> &nbsp;<img src="https://cdn.simpleicons.org/posthog" width="24" height="24" title="PostHog" /> &nbsp;<img src="https://cdn.simpleicons.org/sentry" width="24" height="24" title="Sentry" /> &nbsp;<img src="https://cdn.simpleicons.org/amplitude" width="24" height="24" title="Amplitude" />
+Slack
+Linear
+Hubspot
+Gmail
+Google Calendar
+Posthog
+Amplitude
+Airtable
+Google Drive
+Github
+... 100 more
 
 We're adding more every week. Request one if you don't see it here.
 
