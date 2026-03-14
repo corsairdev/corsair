@@ -50,9 +50,13 @@ export interface SetupCorsairOptions {
 	backfill?: boolean;
 }
 
+
 // ─────────────────────────────────────────────────────────────────────────────
 // Public API
 // ─────────────────────────────────────────────────────────────────────────────
+
+type SetupLog = (msg: string) => void;
+type SetupWarn = (msg: string) => void;
 
 /**
  * Initialises a corsair instance end-to-end:
@@ -66,13 +70,25 @@ export interface SetupCorsairOptions {
  *    `setup/backfill.yaml` for each plugin that has auth configured.
  *
  * Only single-tenant corsair instances are accepted.
+ *
+ * Returns a newline-separated string of all setup output (credential instructions, etc.).
+ * Use this when invoking from MCP tools so the agent receives the instructions.
  */
 export async function setupCorsair<
 	const Plugins extends readonly CorsairPlugin[],
 >(
 	corsair: CorsairSingleTenantClient<Plugins>,
 	options?: SetupCorsairOptions,
-): Promise<void> {
+): Promise<string> {
+	const messages: string[] = [];
+	const log: SetupLog = (msg) => {
+		messages.push(msg);
+		console.log(msg);
+	};
+	const warn: SetupWarn = (msg) => {
+		messages.push(msg);
+		console.warn(msg);
+	};
 	const internal = (corsair as unknown as Record<symbol, unknown>)[
 		CORSAIR_INTERNAL
 	] as CorsairInternalConfig | undefined;
@@ -105,7 +121,7 @@ export async function setupCorsair<
 	}) as unknown as CorsairSingleTenantClient<readonly CorsairPlugin[]>;
 
 	// 1. Verify schema
-	await checkTables(db);
+	await checkTables(db, warn);
 
 	// 2. Ensure integration + account rows and DEKs for every plugin,
 	//    then check auth status and log guidance for missing credentials.
@@ -113,14 +129,17 @@ export async function setupCorsair<
 		db,
 		instance,
 		internal.plugins,
+		log,
 	);
 
 	// 3. Optional backfill — only for plugins with auth configured
 	if (options?.backfill) {
-		console.log('[corsair:setup] Starting backfill...');
-		await runBackfill(instance, internal.plugins, authReadyPlugins);
-		console.log('[corsair:setup] Backfill complete.');
+		log('[corsair:setup] Starting backfill...');
+		await runBackfill(instance, internal.plugins, authReadyPlugins, log, warn);
+		log('[corsair:setup] Backfill complete.');
 	}
+
+	return messages.join('\n');
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -157,13 +176,16 @@ function describeZodSchema(schema: ZodTypeAny): unknown {
 	return 'unknown';
 }
 
-async function checkTables(db: Kysely<CorsairKyselyDatabase>): Promise<void> {
+async function checkTables(
+	db: Kysely<CorsairKyselyDatabase>,
+	warn: SetupWarn,
+): Promise<void> {
 	const existing = await db.introspection.getTables();
 	const existingNames = new Set(existing.map((t) => t.name));
 
 	for (const [table, schema] of Object.entries(REQUIRED_TABLES)) {
 		if (!existingNames.has(table)) {
-			console.warn(
+			warn(
 				`[corsair:setup] Table "${table}" does not exist. ` +
 					'Run your database migrations before calling setupCorsair.\n' +
 					`Schema: ${JSON.stringify(describeZodSchema(schema), null, 2)}`,
@@ -196,6 +218,7 @@ async function checkAuthStatus(
 	authType: string,
 	integrationKeyMgr: KeyManager,
 	accountKeyMgr: KeyManager,
+	log: SetupLog,
 ): Promise<boolean> {
 	const missingIntegration: string[] = [];
 	const missingAccount: string[] = [];
@@ -247,7 +270,7 @@ async function checkAuthStatus(
 		for (const field of missingAccount) {
 			lines.push(`  corsair.${pluginId}.keys.set_${field}(value)`);
 		}
-		console.log(lines.join('\n'));
+		log(lines.join('\n'));
 	}
 
 	return isReady;
@@ -263,6 +286,7 @@ async function ensurePluginRows(
 	db: Kysely<CorsairKyselyDatabase>,
 	instance: CorsairSingleTenantClient<readonly CorsairPlugin[]>,
 	plugins: readonly CorsairPlugin[],
+	log: SetupLog,
 ): Promise<Set<string>> {
 	const now = new Date();
 	const authReadyPlugins = new Set<string>();
@@ -309,7 +333,7 @@ async function ensurePluginRows(
 				.selectAll()
 				.where('id', '=', id)
 				.executeTakeFirst();
-			console.log(`[corsair:setup] Created integration: ${pluginId}`);
+			log(`[corsair:setup] Created integration: ${pluginId}`);
 		}
 
 		// ── Integration-level DEK ──────────────────────────────────────────────
@@ -320,7 +344,7 @@ async function ensurePluginRows(
 			await (
 				integrationKeyMgr as { issue_new_dek: () => Promise<void> }
 			).issue_new_dek();
-			console.log(`[corsair:setup] Issued integration DEK: ${pluginId}`);
+			log(`[corsair:setup] Issued integration DEK: ${pluginId}`);
 		}
 
 		if (!integration) continue;
@@ -352,7 +376,7 @@ async function ensurePluginRows(
 				.selectAll()
 				.where('id', '=', id)
 				.executeTakeFirst();
-			console.log(`[corsair:setup] Created account: ${pluginId}`);
+			log(`[corsair:setup] Created account: ${pluginId}`);
 		}
 
 		// ── Account-level DEK ─────────────────────────────────────────────────
@@ -363,7 +387,7 @@ async function ensurePluginRows(
 			await (
 				accountKeyMgr as { issue_new_dek: () => Promise<void> }
 			).issue_new_dek();
-			console.log(`[corsair:setup] Issued account DEK: ${pluginId}`);
+			log(`[corsair:setup] Issued account DEK: ${pluginId}`);
 		}
 
 		// ── Auth status check ─────────────────────────────────────────────────
@@ -374,6 +398,7 @@ async function ensurePluginRows(
 				authType,
 				integrationKeyMgr,
 				accountKeyMgr,
+				log,
 			);
 			if (isReady) authReadyPlugins.add(pluginId);
 		}
@@ -390,6 +415,8 @@ async function runBackfill(
 	instance: CorsairSingleTenantClient<readonly CorsairPlugin[]>,
 	plugins: readonly CorsairPlugin[],
 	authReadyPlugins: Set<string>,
+	log: SetupLog,
+	warn: SetupWarn,
 ): Promise<void> {
 	const config = backfillConfig as BackfillYaml;
 	const activePluginIds = new Set(plugins.map((p) => p.id));
@@ -408,7 +435,7 @@ async function runBackfill(
 		if (!activePluginIds.has(pluginId)) continue;
 
 		if (!authReadyPlugins.has(pluginId)) {
-			console.log(
+			log(
 				`[corsair:setup] Skipping backfill for '${pluginId}' — auth not configured.`,
 			);
 			continue;
@@ -419,15 +446,15 @@ async function runBackfill(
 
 		for (const [group, methods] of Object.entries(groups)) {
 			for (const [method, params] of Object.entries(methods)) {
-				console.log(
+				log(
 					`[corsair:setup] Backfilling ${pluginId} › ${group}.${method}...`,
 				);
 				try {
 					await api[group]?.[method]?.(params);
 				} catch (error) {
-					console.warn(
-						`[corsair:setup] ${pluginId} › ${group}.${method} failed:`,
-						error instanceof Error ? error.message : error,
+					warn(
+						`[corsair:setup] ${pluginId} › ${group}.${method} failed: ` +
+							(error instanceof Error ? error.message : String(error)),
 					);
 				}
 			}
