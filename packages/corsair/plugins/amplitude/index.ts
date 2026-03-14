@@ -14,8 +14,6 @@ import type {
 	RequiredPluginWebhookSchemas,
 } from '../../core';
 import type { AuthTypes, PickAuth } from '../../core/constants';
-import type { AmplitudeEndpointInputs, AmplitudeEndpointOutputs } from './endpoints/types';
-import { AmplitudeEndpointInputSchemas, AmplitudeEndpointOutputSchemas } from './endpoints/types';
 import {
 	Annotations,
 	Charts,
@@ -25,6 +23,16 @@ import {
 	Exports,
 	Users,
 } from './endpoints';
+import type {
+	AmplitudeEndpointInputs,
+	AmplitudeEndpointOutputs,
+} from './endpoints/types';
+import {
+	AmplitudeEndpointInputSchemas,
+	AmplitudeEndpointOutputSchemas,
+} from './endpoints/types';
+import { errorHandlers } from './error-handlers';
+import { AmplitudeSchema } from './schema';
 import {
 	AnnotationWebhooks,
 	CohortWebhooks,
@@ -52,8 +60,6 @@ import {
 	AmplitudeMonitorAlertEventSchema,
 	AmplitudeTrackEventSchema,
 } from './webhooks/types';
-import { AmplitudeSchema } from './schema';
-import { errorHandlers } from './error-handlers';
 
 export type AmplitudePluginOptions = {
 	authType?: PickAuth<'api_key'>;
@@ -70,9 +76,12 @@ export type AmplitudeContext = CorsairPluginContext<
 	AmplitudePluginOptions
 >;
 
-export type AmplitudeKeyBuilderContext = KeyBuilderContext<AmplitudePluginOptions>;
+export type AmplitudeKeyBuilderContext =
+	KeyBuilderContext<AmplitudePluginOptions>;
 
-export type AmplitudeBoundEndpoints = BindEndpoints<typeof amplitudeEndpointsNested>;
+export type AmplitudeBoundEndpoints = BindEndpoints<
+	typeof amplitudeEndpointsNested
+>;
 
 type AmplitudeEndpoint<
 	K extends keyof AmplitudeEndpointOutputs,
@@ -102,16 +111,32 @@ export type AmplitudeEndpoints = {
 type AmplitudeWebhook<
 	K extends keyof AmplitudeWebhookOutputs,
 	TEvent,
-> = CorsairWebhook<AmplitudeContext, AmplitudeWebhookPayload<TEvent>, AmplitudeWebhookOutputs[K]>;
+> = CorsairWebhook<
+	AmplitudeContext,
+	AmplitudeWebhookPayload<TEvent>,
+	AmplitudeWebhookOutputs[K]
+>;
 
 export type AmplitudeWebhooks = {
 	eventsTrack: AmplitudeWebhook<'eventsTrack', AmplitudeTrackEvent>;
 	eventsIdentify: AmplitudeWebhook<'eventsIdentify', AmplitudeIdentifyEvent>;
-	annotationsCreated: AmplitudeWebhook<'annotationsCreated', AmplitudeAnnotationCreatedEvent>;
-	annotationsUpdated: AmplitudeWebhook<'annotationsUpdated', AmplitudeAnnotationUpdatedEvent>;
+	annotationsCreated: AmplitudeWebhook<
+		'annotationsCreated',
+		AmplitudeAnnotationCreatedEvent
+	>;
+	annotationsUpdated: AmplitudeWebhook<
+		'annotationsUpdated',
+		AmplitudeAnnotationUpdatedEvent
+	>;
 	monitorsAlert: AmplitudeWebhook<'monitorsAlert', AmplitudeMonitorAlertEvent>;
-	cohortsComputed: AmplitudeWebhook<'cohortsComputed', AmplitudeCohortComputedEvent>;
-	experimentsExposure: AmplitudeWebhook<'experimentsExposure', AmplitudeExperimentExposureEvent>;
+	cohortsComputed: AmplitudeWebhook<
+		'cohortsComputed',
+		AmplitudeCohortComputedEvent
+	>;
+	experimentsExposure: AmplitudeWebhook<
+		'experimentsExposure',
+		AmplitudeExperimentExposureEvent
+	>;
 };
 
 export type AmplitudeBoundWebhooks = BindWebhooks<AmplitudeWebhooks>;
@@ -308,7 +333,8 @@ const amplitudeEndpointMeta = {
 	},
 	'exports.getData': {
 		riskLevel: 'read',
-		description: 'Export raw event data for a given time range as a zip archive',
+		description:
+			'Export raw event data for a given time range as a zip archive',
 	},
 } satisfies RequiredPluginEndpointMeta<typeof amplitudeEndpointsNested>;
 
@@ -358,22 +384,25 @@ export const amplitudeAuthConfig = {
 	},
 } as const satisfies PluginAuthConfig;
 
-export type BaseAmplitudePlugin<T extends AmplitudePluginOptions> = CorsairPlugin<
-	'amplitude',
-	typeof AmplitudeSchema,
-	typeof amplitudeEndpointsNested,
-	typeof amplitudeWebhooksNested,
-	T,
-	typeof defaultAuthType
->;
+export type BaseAmplitudePlugin<T extends AmplitudePluginOptions> =
+	CorsairPlugin<
+		'amplitude',
+		typeof AmplitudeSchema,
+		typeof amplitudeEndpointsNested,
+		typeof amplitudeWebhooksNested,
+		T,
+		typeof defaultAuthType
+	>;
 
-export type InternalAmplitudePlugin = BaseAmplitudePlugin<AmplitudePluginOptions>;
+export type InternalAmplitudePlugin =
+	BaseAmplitudePlugin<AmplitudePluginOptions>;
 
 export type ExternalAmplitudePlugin<T extends AmplitudePluginOptions> =
 	BaseAmplitudePlugin<T>;
 
 export function amplitude<const T extends AmplitudePluginOptions>(
-	incomingOptions: AmplitudePluginOptions & T = {} as AmplitudePluginOptions & T,
+	incomingOptions: AmplitudePluginOptions & T = {} as AmplitudePluginOptions &
+		T,
 ): ExternalAmplitudePlugin<T> {
 	const options = {
 		...incomingOptions,

@@ -1,16 +1,14 @@
 import { logEventFromContext } from '../../utils/events';
 import type { SentryEndpoints } from '..';
-import type { SentryEndpointOutputs } from './types';
 import { makeSentryRequest } from '../client';
+import type { SentryEndpointOutputs } from './types';
 
 export const get: SentryEndpoints['projectsGet'] = async (ctx, input) => {
 	const response = await makeSentryRequest<
 		SentryEndpointOutputs['projectsGet']
-	>(
-		`projects/${input.organizationSlug}/${input.projectSlug}/`,
-		ctx.key,
-		{ method: 'GET' },
-	);
+	>(`projects/${input.organizationSlug}/${input.projectSlug}/`, ctx.key, {
+		method: 'GET',
+	});
 
 	if (response && ctx.db.projects) {
 		try {
@@ -72,16 +70,13 @@ export const list: SentryEndpoints['projectsList'] = async (ctx, input) => {
 	return response;
 };
 
-export const create: SentryEndpoints['projectsCreate'] = async (
-	ctx,
-	input,
-) => {
+export const create: SentryEndpoints['projectsCreate'] = async (ctx, input) => {
 	const { organizationSlug, teamSlug, ...createData } = input;
 	const response = await makeSentryRequest<
 		SentryEndpointOutputs['projectsCreate']
 	>(`teams/${organizationSlug}/${teamSlug}/projects/`, ctx.key, {
 		method: 'POST',
-		body: createData
+		body: createData,
 	});
 
 	if (response && ctx.db.projects) {
@@ -108,16 +103,13 @@ export const create: SentryEndpoints['projectsCreate'] = async (
 	return response;
 };
 
-export const update: SentryEndpoints['projectsUpdate'] = async (
-	ctx,
-	input,
-) => {
+export const update: SentryEndpoints['projectsUpdate'] = async (ctx, input) => {
 	const { organizationSlug, projectSlug, ...updateData } = input;
 	const response = await makeSentryRequest<
 		SentryEndpointOutputs['projectsUpdate']
 	>(`projects/${organizationSlug}/${projectSlug}/`, ctx.key, {
 		method: 'PUT',
-		body: updateData
+		body: updateData,
 	});
 
 	if (response && ctx.db.projects) {

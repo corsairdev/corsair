@@ -1,4 +1,4 @@
-import type { PermissionActionCallback, PermissionLike } from '../../types';
+import type { GmailBoundEndpoints } from 'corsair/plugins';
 import {
 	actionsHtml,
 	buildActionDescriptors,
@@ -7,7 +7,7 @@ import {
 	parseArgs,
 	statusBannerHtml,
 } from '../../shared';
-import type { GmailBoundEndpoints } from 'corsair/plugins';
+import type { PermissionActionCallback, PermissionLike } from '../../types';
 
 type Args = Parameters<GmailBoundEndpoints['messages']['send']>[0];
 
@@ -35,17 +35,28 @@ function parseRawEmail(raw: string): ParsedEmail {
 			} else {
 				if (current) {
 					const colon = current.indexOf(':');
-					if (colon > 0) headers[current.slice(0, colon).toLowerCase().trim()] = current.slice(colon + 1).trim();
+					if (colon > 0)
+						headers[current.slice(0, colon).toLowerCase().trim()] = current
+							.slice(colon + 1)
+							.trim();
 				}
 				current = line;
 			}
 		}
 		if (current) {
 			const colon = current.indexOf(':');
-			if (colon > 0) headers[current.slice(0, colon).toLowerCase().trim()] = current.slice(colon + 1).trim();
+			if (colon > 0)
+				headers[current.slice(0, colon).toLowerCase().trim()] = current
+					.slice(colon + 1)
+					.trim();
 		}
 
-		return { to: headers['to'], from: headers['from'], subject: headers['subject'], body };
+		return {
+			to: headers['to'],
+			from: headers['from'],
+			subject: headers['subject'],
+			body,
+		};
 	} catch {
 		return {};
 	}
@@ -115,12 +126,12 @@ export function renderGmailMessagesSend(
 
       <!-- Body -->
       ${
-		email.body
-			? `<div style="padding:16px;border-top:1px solid #1e293b">
+				email.body
+					? `<div style="padding:16px;border-top:1px solid #1e293b">
           <div style="font-size:14px;color:#cbd5e1;line-height:1.7;white-space:pre-wrap;word-break:break-word">${escapeHtml(email.body)}</div>
         </div>`
-			: ''
-	}
+					: ''
+			}
     </div>
 
     ${ts ? `<p style="font-size:11px;color:#475569;margin-bottom:16px">Requested ${escapeHtml(ts)}</p>` : ''}

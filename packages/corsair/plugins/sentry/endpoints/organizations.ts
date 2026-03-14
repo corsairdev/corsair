@@ -1,7 +1,7 @@
 import { logEventFromContext } from '../../utils/events';
 import type { SentryEndpoints } from '..';
-import type { SentryEndpointOutputs } from './types';
 import { makeSentryRequest } from '../client';
+import type { SentryEndpointOutputs } from './types';
 
 export const get: SentryEndpoints['organizationsGet'] = async (ctx, input) => {
 	const response = await makeSentryRequest<
@@ -83,7 +83,7 @@ export const create: SentryEndpoints['organizationsCreate'] = async (
 		SentryEndpointOutputs['organizationsCreate']
 	>('organizations/', ctx.key, {
 		method: 'POST',
-		body: input
+		body: input,
 	});
 
 	if (response && ctx.db.organizations) {
@@ -121,7 +121,7 @@ export const update: SentryEndpoints['organizationsUpdate'] = async (
 		SentryEndpointOutputs['organizationsUpdate']
 	>(`organizations/${organizationSlug}/`, ctx.key, {
 		method: 'PUT',
-		body: updateData
+		body: updateData,
 	});
 
 	if (response && ctx.db.organizations) {

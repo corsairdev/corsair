@@ -1,7 +1,7 @@
 {
   "name": "@corsair-dev/mcp",
-  "version": "0.1.1",
-  "description": "Base MCP server and SDK extensions for Corsair (workflows, cron, permissions)",
+  "version": "0.1.8",
+  "description": "MCP server and SDK adapters for Corsair — list operations, inspect schemas, run API calls",
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",

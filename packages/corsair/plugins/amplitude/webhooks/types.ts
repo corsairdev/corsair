@@ -62,7 +62,9 @@ export const AmplitudeIdentifyEventSchema = z.object({
 	insert_id: z.string().optional(),
 });
 
-export type AmplitudeIdentifyEvent = z.infer<typeof AmplitudeIdentifyEventSchema>;
+export type AmplitudeIdentifyEvent = z.infer<
+	typeof AmplitudeIdentifyEventSchema
+>;
 
 // ─────────────────────────────────────────────────────────────────────────────
 // annotations.created webhook
@@ -79,7 +81,9 @@ export const AmplitudeAnnotationCreatedEventSchema = z.object({
 	created_at: z.string(),
 });
 
-export type AmplitudeAnnotationCreatedEvent = z.infer<typeof AmplitudeAnnotationCreatedEventSchema>;
+export type AmplitudeAnnotationCreatedEvent = z.infer<
+	typeof AmplitudeAnnotationCreatedEventSchema
+>;
 
 // ─────────────────────────────────────────────────────────────────────────────
 // annotations.updated webhook
@@ -96,7 +100,9 @@ export const AmplitudeAnnotationUpdatedEventSchema = z.object({
 	updated_at: z.string(),
 });
 
-export type AmplitudeAnnotationUpdatedEvent = z.infer<typeof AmplitudeAnnotationUpdatedEventSchema>;
+export type AmplitudeAnnotationUpdatedEvent = z.infer<
+	typeof AmplitudeAnnotationUpdatedEventSchema
+>;
 
 // ─────────────────────────────────────────────────────────────────────────────
 // monitors.alert webhook
@@ -117,7 +123,9 @@ export const AmplitudeMonitorAlertEventSchema = z.object({
 	recipients: z.array(z.string()).optional(),
 });
 
-export type AmplitudeMonitorAlertEvent = z.infer<typeof AmplitudeMonitorAlertEventSchema>;
+export type AmplitudeMonitorAlertEvent = z.infer<
+	typeof AmplitudeMonitorAlertEventSchema
+>;
 
 // ─────────────────────────────────────────────────────────────────────────────
 // cohorts.computed webhook
@@ -133,7 +141,9 @@ export const AmplitudeCohortComputedEventSchema = z.object({
 	published: z.boolean().optional(),
 });
 
-export type AmplitudeCohortComputedEvent = z.infer<typeof AmplitudeCohortComputedEventSchema>;
+export type AmplitudeCohortComputedEvent = z.infer<
+	typeof AmplitudeCohortComputedEventSchema
+>;
 
 // ─────────────────────────────────────────────────────────────────────────────
 // experiments.exposure webhook
@@ -154,7 +164,9 @@ export const AmplitudeExperimentExposureEventSchema = z.object({
 		.optional(),
 });
 
-export type AmplitudeExperimentExposureEvent = z.infer<typeof AmplitudeExperimentExposureEventSchema>;
+export type AmplitudeExperimentExposureEvent = z.infer<
+	typeof AmplitudeExperimentExposureEventSchema
+>;
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Payload wrapper — Amplitude sends events inside a top-level envelope
@@ -208,7 +220,10 @@ export function verifyAmplitudeWebhookSignature(
 
 	const rawBody = request.rawBody;
 	if (!rawBody) {
-		return { valid: false, error: 'Missing raw body for signature verification' };
+		return {
+			valid: false,
+			error: 'Missing raw body for signature verification',
+		};
 	}
 
 	const headers = request.headers;
