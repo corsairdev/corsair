@@ -26,5 +26,6 @@ export { spotify } from './plugins/spotify';
 export { todoist } from './plugins/todoist';
 export { amplitude } from './plugins/amplitude';
 export { sentry } from './plugins/sentry';
+export {oura} from './plugins/oura';
 
 export { type SetupCorsairOptions, setupCorsair } from './setup/index';
