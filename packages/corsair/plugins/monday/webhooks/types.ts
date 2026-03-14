@@ -83,9 +83,15 @@ export type MondayWebhookOutputs = {
 // ── Match Helpers ─────────────────────────────────────────────────────────────
 
 function parseBody(body: unknown): unknown {
-	return typeof body === 'string' ? JSON.parse(body) : body;
+	if (typeof body === 'string') {
+		try {
+			return JSON.parse(body);
+		} catch {
+			return undefined;
+		}
+	}
+	return body;
 }
-
 export function createMondayChallengeMatch(): CorsairWebhookMatcher {
 	return (request: RawWebhookRequest) => {
 		// any: raw body is unknown until parsed
