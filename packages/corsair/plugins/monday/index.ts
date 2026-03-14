@@ -23,13 +23,14 @@ import {
 } from './endpoints/types';
 import type {
 	MondayWebhookOutputs,
+	MondayChallengePayload,
 	ItemCreatedEvent,
 	ColumnValueChangedEvent,
 	StatusChangedEvent,
 } from './webhooks/types';
-import { Boards, Columns, Groups, Items, Updates, Users, Workspaces } from './endpoints';
+import { Boards, Columns, Groups, Items, Updates, Users, Webhooks, Workspaces } from './endpoints';
 import { MondaySchema } from './schema';
-import { ColumnWebhooks, ItemWebhooks, StatusWebhooks } from './webhooks';
+import { ChallengeWebhooks, ColumnWebhooks, ItemWebhooks, StatusWebhooks } from './webhooks';
 import { errorHandlers } from './error-handlers';
 
 export type MondayPluginOptions = {
@@ -89,6 +90,9 @@ export type MondayEndpoints = {
 	usersList: MondayEndpoint<'usersList', MondayEndpointInputs['usersList']>;
 	usersGet: MondayEndpoint<'usersGet', MondayEndpointInputs['usersGet']>;
 	workspacesList: MondayEndpoint<'workspacesList', MondayEndpointInputs['workspacesList']>;
+	webhooksList: MondayEndpoint<'webhooksList', MondayEndpointInputs['webhooksList']>;
+	webhooksCreate: MondayEndpoint<'webhooksCreate', MondayEndpointInputs['webhooksCreate']>;
+	webhooksDelete: MondayEndpoint<'webhooksDelete', MondayEndpointInputs['webhooksDelete']>;
 };
 
 type MondayWebhook<
@@ -97,6 +101,7 @@ type MondayWebhook<
 > = CorsairWebhook<MondayContext, TEvent, MondayWebhookOutputs[K]>;
 
 export type MondayWebhooks = {
+	challenge: MondayWebhook<'challenge', MondayChallengePayload>;
 	itemCreated: MondayWebhook<'itemCreated', ItemCreatedEvent>;
 	columnValueChanged: MondayWebhook<'columnValueChanged', ColumnValueChangedEvent>;
 	statusChanged: MondayWebhook<'statusChanged', StatusChangedEvent>;
@@ -146,9 +151,17 @@ const mondayEndpointsNested = {
 	workspaces: {
 		list: Workspaces.list,
 	},
+	webhooks: {
+		list: Webhooks.list,
+		create: Webhooks.create,
+		delete: Webhooks.delete,
+	},
 } as const;
 
 const mondayWebhooksNested = {
+	verification: {
+		challenge: ChallengeWebhooks.challenge,
+	},
 	items: {
 		itemCreated: ItemWebhooks.itemCreated,
 	},
@@ -269,6 +282,18 @@ export const mondayEndpointSchemas = {
 		input: MondayEndpointInputSchemas.workspacesList,
 		output: MondayEndpointOutputSchemas.workspacesList,
 	},
+	'webhooks.list': {
+		input: MondayEndpointInputSchemas.webhooksList,
+		output: MondayEndpointOutputSchemas.webhooksList,
+	},
+	'webhooks.create': {
+		input: MondayEndpointInputSchemas.webhooksCreate,
+		output: MondayEndpointOutputSchemas.webhooksCreate,
+	},
+	'webhooks.delete': {
+		input: MondayEndpointInputSchemas.webhooksDelete,
+		output: MondayEndpointOutputSchemas.webhooksDelete,
+	},
 } satisfies RequiredPluginEndpointSchemas<typeof mondayEndpointsNested>;
 
 const defaultAuthType: AuthTypes = 'api_key' as const;
@@ -301,6 +326,9 @@ const mondayEndpointMeta = {
 	'users.list': { riskLevel: 'read', description: 'List all users in the account' },
 	'users.get': { riskLevel: 'read', description: 'Get a user by ID' },
 	'workspaces.list': { riskLevel: 'read', description: 'List all workspaces' },
+	'webhooks.list': { riskLevel: 'read', description: 'List all webhooks for a board' },
+	'webhooks.create': { riskLevel: 'write', description: 'Subscribe to a board event via webhook' },
+	'webhooks.delete': { riskLevel: 'destructive', description: 'Unsubscribe a webhook by ID' },
 } satisfies RequiredPluginEndpointMeta<typeof mondayEndpointsNested>;
 
 export const mondayAuthConfig = {
@@ -342,7 +370,25 @@ export function monday<const T extends MondayPluginOptions>(
 		endpointSchemas: mondayEndpointSchemas,
 		pluginWebhookMatcher: (request) => {
 			const headers = request.headers;
-			return 'x-monday-signature' in headers || 'authorization' in headers;
+			if ('x-monday-signature' in headers || 'authorization' in headers) {
+				return true;
+			}
+			// Accept Monday.com challenge and event requests which may carry no auth header
+			// when no signing secret is configured on the webhook
+			try {
+				const body =
+					typeof request.body === 'string'
+						? JSON.parse(request.body)
+						: request.body;
+				if (typeof body !== 'object' || body === null) return false;
+				const b = body as Record<string, unknown>;
+				return (
+					(typeof b.challenge === 'string') ||
+					(typeof b.event === 'object' && b.event !== null)
+				);
+			} catch {
+				return false;
+			}
 		},
 		errorHandlers: {
 			...errorHandlers,
@@ -420,4 +466,7 @@ export type {
 	UsersListInput,
 	UsersGetInput,
 	WorkspacesListInput,
+	WebhooksListInput,
+	WebhooksCreateInput,
+	WebhooksDeleteInput,
 } from './endpoints/types';

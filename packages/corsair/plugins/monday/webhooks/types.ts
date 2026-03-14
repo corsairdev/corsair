@@ -30,7 +30,7 @@ export const MondayChallengePayloadSchema = z.object({
 
 export const MondayItemCreatedPayloadSchema = z.object({
 	event: MondayBaseEventSchema.extend({
-		type: z.literal('create_item'),
+		type: z.literal('create_pulse'),
 	}),
 });
 
@@ -74,15 +74,24 @@ export type StatusChangedEvent = z.infer<typeof MondayStatusChangedPayloadSchema
 // ── Webhook Outputs Type ──────────────────────────────────────────────────────
 
 export type MondayWebhookOutputs = {
+	challenge: MondayChallengePayload;
 	itemCreated: ItemCreatedEvent;
 	columnValueChanged: ColumnValueChangedEvent;
 	statusChanged: StatusChangedEvent;
 };
 
-// ── Match Helper ──────────────────────────────────────────────────────────────
+// ── Match Helpers ─────────────────────────────────────────────────────────────
 
 function parseBody(body: unknown): unknown {
 	return typeof body === 'string' ? JSON.parse(body) : body;
+}
+
+export function createMondayChallengeMatch(): CorsairWebhookMatcher {
+	return (request: RawWebhookRequest) => {
+		// any: raw body is unknown until parsed
+		const parsedBody = parseBody(request.body) as Record<string, unknown>;
+		return typeof parsedBody.challenge === 'string';
+	};
 }
 
 export function createMondayMatch(eventType: string): CorsairWebhookMatcher {

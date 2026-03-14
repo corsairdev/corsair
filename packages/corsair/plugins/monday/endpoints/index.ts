@@ -34,6 +34,11 @@ import {
 } from './updates';
 import { list as usersList, get as usersGet } from './users';
 import { list as workspacesList } from './workspaces';
+import {
+	list as webhooksList,
+	create as webhooksCreate,
+	deletewebhook as webhooksDelete,
+} from './webhooks';
 
 export const Boards = {
 	list: boardsList,
@@ -81,6 +86,12 @@ export const Users = {
 
 export const Workspaces = {
 	list: workspacesList,
+};
+
+export const Webhooks = {
+	list: webhooksList,
+	create: webhooksCreate,
+	delete: webhooksDelete,
 };
 
 export * from './types';

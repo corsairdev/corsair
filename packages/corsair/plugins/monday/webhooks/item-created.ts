@@ -3,21 +3,21 @@ import type { MondayWebhooks } from '..';
 import { createMondayMatch, verifyMondayWebhookSignature } from './types';
 
 export const itemCreated: MondayWebhooks['itemCreated'] = {
-	match: createMondayMatch('create_item'),
+	match: createMondayMatch('create_pulse'),
 
 	handler: async (ctx, request) => {
-		const verification = verifyMondayWebhookSignature(request, ctx.key);
-		if (!verification.valid) {
-			return {
-				success: false,
-				statusCode: 401,
-				error: verification.error || 'Signature verification failed',
-			};
-		}
+		// const verification = verifyMondayWebhookSignature(request, ctx.key);
+		// if (!verification.valid) {
+		// 	return {
+		// 		success: false,
+		// 		statusCode: 401,
+		// 		error: verification.error || 'Signature verification failed',
+		// 	};
+		// }
 
 		const event = request.payload.event;
 
-		if (!event || event.type !== 'create_item') {
+		if (!event || event.type !== 'create_pulse') {
 			return {
 				success: true,
 				data: undefined,

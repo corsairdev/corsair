@@ -275,6 +275,33 @@ const WorkspacesListInputSchema = z.object({
 	state: z.enum(['active', 'deleted', 'all']).optional(),
 });
 
+const WebhooksListInputSchema = z.object({
+	board_id: z.string(),
+});
+
+const WebhooksCreateInputSchema = z.object({
+	board_id: z.string(),
+	url: z.string(),
+	event: z.enum([
+		'change_column_value',
+		'change_specific_column_value',
+		'change_status_column_value',
+		'create_item',
+		'create_update',
+		'delete_update',
+		'item_archived',
+		'item_deleted',
+		'item_moved_to_board',
+		'item_restored',
+		'when_date_arrived',
+	]),
+	config: z.string().optional(),
+});
+
+const WebhooksDeleteInputSchema = z.object({
+	webhook_id: z.string(),
+});
+
 // ── Output Schemas ───────────────────────────────────────────────────────────
 
 const BoardsListResponseSchema = z
@@ -447,6 +474,30 @@ const WorkspacesListResponseSchema = z
 	.object({ workspaces: z.array(MondayWorkspaceSchema) })
 	.passthrough();
 
+const MondayWebhookObjectSchema = z
+	.object({
+		id: z.string(),
+		board_id: z.string().optional(),
+		event: z.string().optional(),
+	})
+	.passthrough();
+
+const WebhooksListResponseSchema = z
+	.object({ webhooks: z.array(MondayWebhookObjectSchema) })
+	.passthrough();
+
+const WebhooksCreateResponseSchema = z
+	.object({
+		create_webhook: MondayWebhookObjectSchema,
+	})
+	.passthrough();
+
+const WebhooksDeleteResponseSchema = z
+	.object({
+		delete_webhook: z.object({ id: z.string(), board_id: z.string().optional() }).passthrough(),
+	})
+	.passthrough();
+
 // ── Endpoint I/O Maps ────────────────────────────────────────────────────────
 
 export type BoardsListInput = z.infer<typeof BoardsListInputSchema>;
@@ -478,6 +529,9 @@ export type UpdatesDeleteInput = z.infer<typeof UpdatesDeleteInputSchema>;
 export type UsersListInput = z.infer<typeof UsersListInputSchema>;
 export type UsersGetInput = z.infer<typeof UsersGetInputSchema>;
 export type WorkspacesListInput = z.infer<typeof WorkspacesListInputSchema>;
+export type WebhooksListInput = z.infer<typeof WebhooksListInputSchema>;
+export type WebhooksCreateInput = z.infer<typeof WebhooksCreateInputSchema>;
+export type WebhooksDeleteInput = z.infer<typeof WebhooksDeleteInputSchema>;
 
 export type MondayEndpointInputs = {
 	boardsList: BoardsListInput;
@@ -507,6 +561,9 @@ export type MondayEndpointInputs = {
 	usersList: UsersListInput;
 	usersGet: UsersGetInput;
 	workspacesList: WorkspacesListInput;
+	webhooksList: WebhooksListInput;
+	webhooksCreate: WebhooksCreateInput;
+	webhooksDelete: WebhooksDeleteInput;
 };
 
 export type MondayEndpointOutputs = {
@@ -537,6 +594,9 @@ export type MondayEndpointOutputs = {
 	usersList: z.infer<typeof UsersListResponseSchema>;
 	usersGet: z.infer<typeof UsersGetResponseSchema>;
 	workspacesList: z.infer<typeof WorkspacesListResponseSchema>;
+	webhooksList: z.infer<typeof WebhooksListResponseSchema>;
+	webhooksCreate: z.infer<typeof WebhooksCreateResponseSchema>;
+	webhooksDelete: z.infer<typeof WebhooksDeleteResponseSchema>;
 };
 
 export const MondayEndpointInputSchemas = {
@@ -567,6 +627,9 @@ export const MondayEndpointInputSchemas = {
 	usersList: UsersListInputSchema,
 	usersGet: UsersGetInputSchema,
 	workspacesList: WorkspacesListInputSchema,
+	webhooksList: WebhooksListInputSchema,
+	webhooksCreate: WebhooksCreateInputSchema,
+	webhooksDelete: WebhooksDeleteInputSchema,
 } as const;
 
 export const MondayEndpointOutputSchemas = {
@@ -597,4 +660,7 @@ export const MondayEndpointOutputSchemas = {
 	usersList: UsersListResponseSchema,
 	usersGet: UsersGetResponseSchema,
 	workspacesList: WorkspacesListResponseSchema,
+	webhooksList: WebhooksListResponseSchema,
+	webhooksCreate: WebhooksCreateResponseSchema,
+	webhooksDelete: WebhooksDeleteResponseSchema,
 } as const;
