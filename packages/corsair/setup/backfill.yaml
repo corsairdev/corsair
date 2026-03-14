@@ -1,0 +1,92 @@
+# Backfill configuration for setupCorsair({ backfill: true }).
+#
+# Structure:  pluginId → apiGroup → methodName: params
+# The runner calls:  instance[pluginId].api[group][method](params)
+#
+# Add a new plugin block here when a new plugin is added to corsair.
+# The TypeScript runner in setup/index.ts never needs to change.
+# If a plugin in this file is not present on the corsair instance, it is skipped.
+# If a call fails (e.g. missing credentials), a warning is logged and the run continues.
+
+slack:
+  channels:
+    list: {}
+  users:
+    list: {}
+
+linear:
+  projects:
+    list: {}
+  issues:
+    list: {}
+  users:
+    list: {}
+
+github:
+  issues:
+    list: {}
+  pullRequests:
+    list: {}
+  repositories:
+    list: {}
+
+discord:
+  guilds:
+    list: {}
+  channels:
+    list: {}
+  # members.list requires a guildId — fill it in if needed:
+  # members:
+  #   list: { guildId: "your-guild-id" }
+
+hubspot:
+  contacts:
+    getMany: {}
+  companies:
+    getMany: {}
+  deals:
+    getMany: {}
+
+gmail:
+  messages:
+    list: {}
+  labels:
+    list: {}
+  drafts:
+    list: {}
+  threads:
+    list: {}
+
+googlecalendar:
+  events:
+    getMany: {}
+
+googledrive:
+  files:
+    list: {}
+  folders:
+    list: {}
+  sharedDrives:
+    list: {}
+
+notion:
+  databases:
+    getManyDatabases: {}
+  databasePages:
+    getManyDatabasePages: {}
+  users:
+    getManyUsers: {}
+
+airtable:
+  bases:
+    getMany: {}
+
+todoist:
+  projects:
+    getMany: {}
+  tasks:
+    getMany: {}
+
+cal:
+  bookings:
+    list: {}

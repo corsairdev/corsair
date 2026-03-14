@@ -1,6 +1,6 @@
 {
   "name": "corsair",
-  "version": "0.1.26",
+  "version": "0.1.33",
   "description": "",
   "type": "module",
   "main": "./dist/index.js",
@@ -32,25 +32,30 @@
       "types": "./dist/plugins/index.d.ts",
       "default": "./dist/plugins/index.js"
     },
-    "./plugins/slack": {
-      "dev-source": "./plugins/slack/index.ts",
-      "types": "./dist/plugins/slack/index.d.ts",
-      "default": "./dist/plugins/slack/index.js"
+    "./setup": {
+      "dev-source": "./setup.ts",
+      "types": "./dist/setup.d.ts",
+      "default": "./dist/setup.js"
     },
-    "./plugins/linear": {
-      "dev-source": "./plugins/linear/index.ts",
-      "types": "./dist/plugins/linear/index.d.ts",
-      "default": "./dist/plugins/linear/index.js"
+    "./plugins/airtable": {
+      "dev-source": "./plugins/airtable/index.ts",
+      "types": "./dist/plugins/airtable/index.d.ts",
+      "default": "./dist/plugins/airtable/index.js"
     },
-    "./plugins/resend": {
-      "dev-source": "./plugins/resend/index.ts",
-      "types": "./dist/plugins/resend/index.d.ts",
-      "default": "./dist/plugins/resend/index.js"
+    "./plugins/amplitude": {
+      "dev-source": "./plugins/amplitude/index.ts",
+      "types": "./dist/plugins/amplitude/index.d.ts",
+      "default": "./dist/plugins/amplitude/index.js"
     },
-    "./plugins/posthog": {
-      "dev-source": "./plugins/posthog/index.ts",
-      "types": "./dist/plugins/posthog/index.d.ts",
-      "default": "./dist/plugins/posthog/index.js"
+    "./plugins/cal": {
+      "dev-source": "./plugins/cal/index.ts",
+      "types": "./dist/plugins/cal/index.d.ts",
+      "default": "./dist/plugins/cal/index.js"
+    },
+    "./plugins/discord": {
+      "dev-source": "./plugins/discord/index.ts",
+      "types": "./dist/plugins/discord/index.d.ts",
+      "default": "./dist/plugins/discord/index.js"
     },
     "./plugins/github": {
       "dev-source": "./plugins/github/index.ts",
@@ -92,15 +97,50 @@
       "types": "./dist/plugins/telegram/index.d.ts",
       "default": "./dist/plugins/telegram/index.js"
     },
+    "./plugins/linear": {
+      "dev-source": "./plugins/linear/index.ts",
+      "types": "./dist/plugins/linear/index.d.ts",
+      "default": "./dist/plugins/linear/index.js"
+    },
+    "./plugins/notion": {
+      "dev-source": "./plugins/notion/index.ts",
+      "types": "./dist/plugins/notion/index.d.ts",
+      "default": "./dist/plugins/notion/index.js"
+    },
+    "./plugins/pagerduty": {
+      "dev-source": "./plugins/pagerduty/index.ts",
+      "types": "./dist/plugins/pagerduty/index.d.ts",
+      "default": "./dist/plugins/pagerduty/index.js"
+    },
+    "./plugins/posthog": {
+      "dev-source": "./plugins/posthog/index.ts",
+      "types": "./dist/plugins/posthog/index.d.ts",
+      "default": "./dist/plugins/posthog/index.js"
+    },
+    "./plugins/resend": {
+      "dev-source": "./plugins/resend/index.ts",
+      "types": "./dist/plugins/resend/index.d.ts",
+      "default": "./dist/plugins/resend/index.js"
+    },
+    "./plugins/sentry": {
+      "dev-source": "./plugins/sentry/index.ts",
+      "types": "./dist/plugins/sentry/index.d.ts",
+      "default": "./dist/plugins/sentry/index.js"
+    },
+    "./plugins/slack": {
+      "dev-source": "./plugins/slack/index.ts",
+      "types": "./dist/plugins/slack/index.d.ts",
+      "default": "./dist/plugins/slack/index.js"
+    },
     "./plugins/spotify": {
       "dev-source": "./plugins/spotify/index.ts",
       "types": "./dist/plugins/spotify/index.d.ts",
       "default": "./dist/plugins/spotify/index.js"
     },
-    "./plugins/discord": {
-      "dev-source": "./plugins/discord/index.ts",
-      "types": "./dist/plugins/discord/index.d.ts",
-      "default": "./dist/plugins/discord/index.js"
+    "./plugins/todoist": {
+      "dev-source": "./plugins/todoist/index.ts",
+      "types": "./dist/plugins/todoist/index.d.ts",
+      "default": "./dist/plugins/todoist/index.js"
     }
   },
   "scripts": {
@@ -121,10 +161,12 @@
   },
   "devDependencies": {
     "@types/jest": "^29.5.14",
+    "@types/js-yaml": "^4.0.9",
     "@types/node": "^24.10.1",
     "@types/pg": "^8.15.6",
     "better-sqlite3": "^12.0.0",
     "dotenv": "^17.2.3",
+    "js-yaml": "^4.1.0",
     "jest": "^29.7.0",
     "ts-jest": "^29.1.1",
     "ts-node": "^10.9.2",

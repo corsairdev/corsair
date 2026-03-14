@@ -1,0 +1,58 @@
+{
+  "name": "@corsair-dev/mcp",
+  "version": "0.1.8",
+  "description": "MCP server and SDK adapters for Corsair — list operations, inspect schemas, run API calls",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "publishConfig": {
+    "access": "public"
+  },
+  "exports": {
+    ".": {
+      "dev-source": "./src/index.ts",
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsup && tsc -p tsconfig.build.json",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.27.1",
+    "corsair": "workspace:*",
+    "express": "^4.21.0",
+    "zod": "^3.25.0"
+  },
+  "peerDependencies": {
+    "@ai-sdk/mcp": ">=0.0.1",
+    "@anthropic-ai/claude-agent-sdk": ">=0.2.0",
+    "@mastra/core": ">=1.0.0",
+    "@openai/agents": ">=0.5.0"
+  },
+  "peerDependenciesMeta": {
+    "@ai-sdk/mcp": {
+      "optional": true
+    },
+    "@anthropic-ai/claude-agent-sdk": {
+      "optional": true
+    },
+    "@mastra/core": {
+      "optional": true
+    },
+    "@openai/agents": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/node": "^22.0.0",
+    "tsup": "^8.0.1",
+    "typescript": "^5.8.0"
+  },
+  "files": [
+    "dist"
+  ]
+}

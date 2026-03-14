@@ -5,9 +5,7 @@ import {
 	googlecalendar,
 	googledrive,
 	googlesheets,
-	hubspot,
 	linear,
-	posthog,
 	resend,
 	slack,
 	telegram,
@@ -23,7 +21,6 @@ export const corsair = createCorsair({
 		onTimeout: 'deny',
 	},
 	plugins: [
-		linear(),
 		googlecalendar({
 			permissions: {
 				mode: 'cautious',
@@ -123,8 +120,7 @@ export const corsair = createCorsair({
 				},
 			},
 		}),
-		hubspot(),
-		posthog(),
-		telegram()
+		telegram(),
+		linear(),
 	],
 });
