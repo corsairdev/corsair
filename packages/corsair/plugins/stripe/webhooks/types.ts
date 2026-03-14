@@ -217,7 +217,7 @@ export type StripeCouponDeletedEvent = z.infer<
 >;
 
 export const StripePingEventSchema = StripeEventBaseSchema.extend({
-	type: z.literal('ping'),
+	type: z.literal('v2.core.event_destination.ping'),
 	data: z.object({ object: z.record(z.unknown()) }),
 });
 export type StripePingEvent = z.infer<typeof StripePingEventSchema>;
@@ -240,6 +240,9 @@ export type StripeWebhookOutputs = {
 
 // ── Utilities ─────────────────────────────────────────────────────────────────
 
+// Using 'unknown' because the webhook body can be a raw Buffer, string, or
+// already-parsed object depending on the HTTP framework in use; the caller
+// is responsible for narrowing the type after calling this helper.
 function parseBody(body: unknown): unknown {
 	return typeof body === 'string' ? JSON.parse(body) : body;
 }

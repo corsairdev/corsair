@@ -67,17 +67,8 @@ export const get: StripeEndpoints['customersGet'] = async (ctx, input) => {
 	if (result.id && ctx.db.customers) {
 		try {
 			await ctx.db.customers.upsertByEntityId(result.id, {
-				id: result.id,
-				email: result.email ?? undefined,
-				name: result.name ?? undefined,
-				phone: result.phone ?? undefined,
-				description: result.description ?? undefined,
-				currency: result.currency ?? undefined,
-				balance: result.balance,
-				created: result.created,
+				...result,
 				createdAt: result.created ? new Date(result.created * 1000) : undefined,
-				livemode: result.livemode,
-				metadata: result.metadata,
 			});
 		} catch (error) {
 			console.warn('Failed to save customer to database:', error);

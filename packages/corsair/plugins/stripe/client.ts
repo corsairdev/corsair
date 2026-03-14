@@ -35,6 +35,7 @@ function toFormEncoded(
 				);
 			}
 		} else if (typeof value === 'object') {
+			// Type assertion is safe because we know value is an object
 			const nested = toFormEncoded(value as Record<string, unknown>, fullKey);
 			if (nested) parts.push(nested);
 		} else {

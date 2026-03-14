@@ -136,6 +136,7 @@ const SourcesCreateInputSchema = z.object({
 	owner: z.record(z.unknown()).optional(),
 	redirect: z.record(z.unknown()).optional(),
 	metadata: z.record(z.string()).optional(),
+	token: z.string().optional(),
 });
 
 const SourcesGetInputSchema = z.object({
