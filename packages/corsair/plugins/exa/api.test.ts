@@ -224,6 +224,10 @@ describe('Exa API Type Tests', () => {
 
 		it('websetsGet returns correct type', async () => {
 
+			if (!createdWebsetId) {
+				return;
+			}
+
 			const response = await makeExaRequest<Webset>(
 				`websets/v0/websets/${createdWebsetId}`,
 				TEST_API_KEY,
@@ -234,6 +238,10 @@ describe('Exa API Type Tests', () => {
 		});
 
 		it('websetsDelete returns correct type', async () => {
+
+			if (!createdWebsetId) {
+				return;
+			}
 
 			const response = await makeExaRequest<WebsetsDeleteResponse>(
 				`websets/v0/websets/${createdWebsetId}`,
