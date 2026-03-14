@@ -199,7 +199,8 @@ describe('setupCorsair', () => {
 		const warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
 
 		// Should not throw even though some tables are missing
-		await expect(setupCorsair(corsair)).resolves.toBeUndefined();
+		const result = await setupCorsair(corsair);
+		expect(typeof result).toBe('string');
 
 		expect(warnSpy).toHaveBeenCalledWith(
 			expect.stringContaining('corsair_entities'),

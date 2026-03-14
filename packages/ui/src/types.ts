@@ -1,10 +1,10 @@
-import type { CorsairPermission } from 'corsair/db'
+import type { CorsairPermission } from 'corsair/db';
 
-type p = CorsairPermission
+type p = CorsairPermission;
 
-export type PermissionStatus = CorsairPermission['status']
+export type PermissionStatus = CorsairPermission['status'];
 
-export type PermissionLike = CorsairPermission & { description?: string }
+export type PermissionLike = CorsairPermission & { description?: string };
 
 export type PermissionAction = 'approve' | 'decline';
 

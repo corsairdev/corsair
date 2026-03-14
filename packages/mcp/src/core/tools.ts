@@ -1,7 +1,7 @@
 import type { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
+import { setupCorsair } from 'corsair';
 import { z } from 'zod';
 import type { BaseMcpOptions } from './adapters.js';
-
 
 export type CorsairToolDef = {
 	name: string;
@@ -10,7 +10,9 @@ export type CorsairToolDef = {
 	handler: (args: Record<string, unknown>) => Promise<CallToolResult>;
 };
 
-export function buildCorsairToolDefs(options: BaseMcpOptions): CorsairToolDef[] {
+export function buildCorsairToolDefs(
+	options: BaseMcpOptions,
+): CorsairToolDef[] {
 	const { corsair, permissions, basePermissionUrl } = options;
 
 	const defs: CorsairToolDef[] = [
@@ -106,7 +108,9 @@ export function buildCorsairToolDefs(options: BaseMcpOptions): CorsairToolDef[] 
 				}
 
 				try {
-					const result = await (fn as (args: unknown) => Promise<unknown>)(args);
+					const result = await (fn as (args: unknown) => Promise<unknown>)(
+						args,
+					);
 					return {
 						content: [{ type: 'text', text: JSON.stringify(result, null, 2) }],
 					};
@@ -125,6 +129,30 @@ export function buildCorsairToolDefs(options: BaseMcpOptions): CorsairToolDef[] 
 								text: `Error running "${path}": ${message}${extra}\n${full}`,
 							},
 						],
+					};
+				}
+			},
+		},
+		{
+			name: 'corsair_setup',
+			description:
+				'Helps the user configure Corsair. Call this to see if any keys or tokens need to be set up. It will also provide the instructions to set them up.',
+			shape: {},
+			handler: async () => {
+				try {
+					if (Object.keys(corsair).includes('withTenant')) {
+						throw new Error("Cannot setup Corsair if it multiTenancy is enabled.")
+					}
+
+					const text = await setupCorsair(corsair as Parameters<typeof setupCorsair>[0]);
+					return {
+						content: [{ type: 'text', text: text || 'Corsair setup complete.' }],
+					};
+				} catch (err) {
+					const message = err instanceof Error ? err.message : String(err);
+					return {
+						isError: true,
+						content: [{ type: 'text', text: `Setup failed: ${message}` }],
 					};
 				}
 			},
