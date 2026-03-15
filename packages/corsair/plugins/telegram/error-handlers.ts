@@ -56,6 +56,7 @@ export const errorHandlers = {
 				return true;
 			}
 			if (error instanceof TelegramAPIError) {
+				const code = error.code;
 			return (
 				code === '401' ||
 				error.message.toLowerCase().includes('unauthorized')
