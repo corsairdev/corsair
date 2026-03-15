@@ -8,6 +8,7 @@ import {
 	linear,
 	resend,
 	slack,
+	telegram,
 } from 'corsair';
 import { pool } from '../db';
 
@@ -119,6 +120,7 @@ export const corsair = createCorsair({
 				},
 			},
 		}),
+		telegram(),
 		linear(),
 	],
 });
