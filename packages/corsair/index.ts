@@ -26,5 +26,6 @@ export { sentry } from './plugins/sentry';
 export { slack } from './plugins/slack';
 export { spotify } from './plugins/spotify';
 export { todoist } from './plugins/todoist';
+export { twitterapiio } from './plugins/twitterapiio';
 
 export { type SetupCorsairOptions, setupCorsair } from './setup/index';

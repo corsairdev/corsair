@@ -33,6 +33,7 @@ export const BaseProviders = [
 	'spotify',
 	'tavily',
 	'todoist',
+	'twitterapiio',
 ] as const;
 
 export type AllProviders =
@@ -56,6 +57,7 @@ export type AllProviders =
 	| 'spotify'
 	| 'tavily'
 	| 'todoist'
+	| 'twitterapiio'
 	| (string & {});
 
 export type AuthTypes = 'oauth_2' | 'api_key' | 'bot_token';
