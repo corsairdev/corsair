@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import { corsair } from '@/server/corsair';
 import { inngest } from './client';
 

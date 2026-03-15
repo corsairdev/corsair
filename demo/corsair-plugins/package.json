@@ -2,6 +2,11 @@
   "name": "@corsair/demo-plugins",
   "private": true,
   "type": "module",
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "better-sqlite3"
+    ]
+  },
   "scripts": {
     "db:up": "docker compose up -d",
     "db:down": "docker compose down",
@@ -26,14 +31,14 @@
     "drizzle-orm": "^0.44.5",
     "inngest": "^3.31.0",
     "next": "^14.2.24",
-    "pg": "^8.12.0",
+    "better-sqlite3": "^11.0.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "zod": "^3.24.1"
   },
   "devDependencies": {
     "@types/node": "^24.10.1",
-    "@types/pg": "^8.15.2",
+    "@types/better-sqlite3": "^7.6.13",
     "@types/react": "^18.3.18",
     "@types/react-dom": "^18.3.5",
     "drizzle-kit": "^0.31.8",
