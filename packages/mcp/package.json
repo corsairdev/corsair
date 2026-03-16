@@ -24,7 +24,8 @@
     "@modelcontextprotocol/sdk": "^1.27.1",
     "corsair": "workspace:*",
     "express": "^4.21.0",
-    "zod": "^3.25.0"
+    "zod": "^3.25.0",
+    "zod-to-json-schema": "^3.25.0"
   },
   "peerDependencies": {
     "@ai-sdk/mcp": ">=0.0.1",
