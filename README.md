@@ -68,14 +68,68 @@ The same setup scales to multi-tenant SaaS. Set `multiTenancy: true`, call `cors
 
 You should choose the best integration solution for your use case. Here's a quick comparison, in an effort to demonstrate why we think Corsair is the best integration solution for any use case:
 
-|                     | Corsair | cURL / CLI | SDK | Vibe code it yourself | Pay for a no-code platform |
-|---------------------|------|------|-----|-----------|---------|
-| Compatible with coding agents        | ✓    | ✓ | ✗ | inconsistent | via plugins |
-| Strongly typed           | ✓    | ✗ | dependent on SDK | ✗ | ✗ |
-| Automatically refreshes data (minimal staleness) | ✓    | ✗ | ✗ | ✗ | inconsistent |
-| Webhook support        | ✓    | ✗ | manual | ✗ | ✓ |
-| Data is seen only by you    | ✓    | ✓ | ✓ | ✓ | ✗ |
-| Updates with breaking API changes | ✓    | ✗ | manual | ✗ | ✓ |
+<table>
+<thead>
+<tr>
+<th></th>
+<th style="background-color: #e8f5e9">Corsair</th>
+<th>cURL / CLI</th>
+<th>SDK</th>
+<th>Vibe code it yourself</th>
+<th>Pay for a no-code platform</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Compatible with coding agents</td>
+<td style="background-color: #e8f5e9">✓</td>
+<td style="background-color: #f1f8e9">✓</td>
+<td style="background-color: #ffebee">✗</td>
+<td style="background-color: #fffde7">inconsistent</td>
+<td style="background-color: #f1f8e9">via plugins</td>
+</tr>
+<tr>
+<td>Strongly typed</td>
+<td style="background-color: #e8f5e9">✓</td>
+<td style="background-color: #ffebee">✗</td>
+<td style="background-color: #fffde7">dependent on SDK</td>
+<td style="background-color: #ffebee">✗</td>
+<td style="background-color: #ffebee">✗</td>
+</tr>
+<tr>
+<td>Automatically refreshes data (minimal staleness)</td>
+<td style="background-color: #e8f5e9">✓</td>
+<td style="background-color: #ffebee">✗</td>
+<td style="background-color: #ffebee">✗</td>
+<td style="background-color: #ffebee">✗</td>
+<td style="background-color: #fffde7">inconsistent</td>
+</tr>
+<tr>
+<td>Webhook support</td>
+<td style="background-color: #e8f5e9">✓</td>
+<td style="background-color: #ffebee">✗</td>
+<td style="background-color: #fffde7">manual</td>
+<td style="background-color: #ffebee">✗</td>
+<td style="background-color: #f1f8e9">✓</td>
+</tr>
+<tr>
+<td>Data is seen only by you</td>
+<td style="background-color: #e8f5e9">✓</td>
+<td style="background-color: #f1f8e9">✓</td>
+<td style="background-color: #f1f8e9">✓</td>
+<td style="background-color: #f1f8e9">✓</td>
+<td style="background-color: #ffebee">✗</td>
+</tr>
+<tr>
+<td>Updates with breaking API changes</td>
+<td style="background-color: #e8f5e9">✓</td>
+<td style="background-color: #ffebee">✗</td>
+<td style="background-color: #fffde7">manual</td>
+<td style="background-color: #ffebee">✗</td>
+<td style="background-color: #f1f8e9">✓</td>
+</tr>
+</tbody>
+</table>
 
 ## License
 
