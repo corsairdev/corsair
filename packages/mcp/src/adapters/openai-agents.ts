@@ -27,7 +27,7 @@ export class OpenAIAgentsProvider {
 			return tool({
 				name: def.name,
 				description: def.description,
-				parameters: jsonSchema as Record<string, unknown>,
+				parameters: jsonSchema,
 				strict: false,
 				execute: async (input) => {
 					const raw = (typeof input === 'string' ? JSON.parse(input) : input) as Record<string, unknown>;
@@ -43,12 +43,11 @@ export class OpenAIAgentsProvider {
 					}
 
 					const args = z.object(def.shape).parse(raw);
-					const result = await def.handler(args as Record<string, unknown>);
-					const textItems = result.content.filter((c) => c.type === 'text');
-					if (result.isError) {
-						throw new Error(textItems.map((c) => c.text).join('\n'));
-					}
-					return textItems[0]?.text ?? '';
+					const result = await def.handler(args);
+					return result.content
+						.filter((c) => c.type === 'text')
+						.map((c) => ('text' in c ? c.text : ''))
+						.join('\n');
 				},
 			});
 		});
