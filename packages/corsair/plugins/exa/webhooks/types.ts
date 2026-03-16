@@ -141,7 +141,7 @@ export function verifyExaWebhookSignature(
 	secret: string | undefined,
 ): { valid: boolean; error?: string } {
 	if (!secret) {
-		return { valid: true };
+		return { valid: false, error: 'Missing webhook secret' };
 	}
 
 	const rawBody = request.rawBody;

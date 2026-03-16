@@ -44,7 +44,6 @@ export async function makeExaRequest<T>(
 		HEADERS: {
 			'Content-Type': 'application/json',
 			'x-api-key': apiKey,
-			'Authorization': `Bearer ${apiKey}`,
 		},
 	};
 
