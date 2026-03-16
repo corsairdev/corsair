@@ -25,9 +25,11 @@ export default defineConfig({
 	target: 'esnext',
 	platform: 'node',
 	bundle: true,
-	splitting: false,
+	splitting: true,
 	outDir: 'dist',
 	external: [
+		'kysely',
+		'zod',
 		'dotenv',
 		'@modelcontextprotocol/sdk',
 		'@ngrok/ngrok',
