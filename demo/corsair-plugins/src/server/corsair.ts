@@ -1,5 +1,7 @@
 import {
 	createCorsair,
+	linear,
+	slack,
 	twitterapiio
 } from 'corsair';
 import { sqlite } from '../db';
@@ -13,6 +15,8 @@ export const corsair = createCorsair({
 		onTimeout: 'deny',
 	},
 	plugins: [
-		twitterapiio()
+		twitterapiio(),
+		slack(),
+		linear(),
 	],
 });
