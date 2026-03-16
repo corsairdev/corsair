@@ -25,7 +25,7 @@ export default defineConfig({
 	target: 'esnext',
 	platform: 'node',
 	bundle: true,
-	splitting: true,
+	splitting: false,
 	outDir: 'dist',
 	external: [
 		'kysely',
