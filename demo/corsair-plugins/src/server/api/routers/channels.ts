@@ -13,40 +13,12 @@ export const channelsRouter: ReturnType<typeof createTRPCRouter> =
 					.optional(),
 			)
 			.query(async ({ ctx, input }) => {
-				const { tenantId, corsair } = ctx;
-				const { limit = 20, offset = 0 } = input ?? {};
-
-				const channels = await corsair
-					.withTenant(tenantId)
-					.slack.db.channels.list({
-						limit,
-						offset,
-					});
-
-				return {
-					channels,
-					pagination: {
-						limit,
-						offset,
-						total: channels.length,
-					},
-				};
+				return []
 			}),
 
 		getById: publicProcedure
 			.input(z.object({ channelId: z.string() }))
 			.query(async ({ ctx, input }) => {
-				const { tenantId, corsair } = ctx;
-				const { channelId } = input;
-
-				const channel = await corsair
-					.withTenant(tenantId)
-					.slack.db.channels.findById(channelId);
-
-				if (!channel) {
-					throw new Error(`Channel ${channelId} not found`);
-				}
-
-				return channel;
+				return []
 			}),
 	});
