@@ -52,8 +52,14 @@ export type OuraWebhookOutputs = {
 // Utilities
 // ─────────────────────────────────────────────────────────────────────────────
 
+// Body is unknown because it comes directly from the HTTP request payload
 function parseBody(body: unknown): unknown {
-	return typeof body === 'string' ? JSON.parse(body) : body;
+	if (typeof body !== 'string') return body;
+	try {
+		return JSON.parse(body);
+	} catch {
+		return {};
+	}
 }
 
 export function createOuraMatch(dataType: OuraDataType): CorsairWebhookMatcher {
@@ -91,14 +97,16 @@ export function verifyOuraWebhookSignature(
 		.update(rawBody)
 		.digest('hex');
 
-	const isValid = crypto.timingSafeEqual(
-		Buffer.from(signature),
-		Buffer.from(expectedSignature),
-	);
-
-	if (!isValid) {
+	try {
+		const isValid = crypto.timingSafeEqual(
+			Buffer.from(signature),
+			Buffer.from(expectedSignature),
+		);
+		if (!isValid) {
+			return { valid: false, error: 'Invalid signature' };
+		}
+		return { valid: true };
+	} catch {
 		return { valid: false, error: 'Invalid signature' };
 	}
-
-	return { valid: true };
 }

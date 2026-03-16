@@ -12,8 +12,8 @@ dotenv.config();
 
 const TEST_TOKEN = process.env.OURA_PERSONAL_ACCESS_TOKEN!;
 
-const DEFAULT_START_DATE = '2024-01-01';
-const DEFAULT_END_DATE = '2024-01-07';
+const DEFAULT_START_DATE = '2026-03-01';
+const DEFAULT_END_DATE = '2026-03-15';
 
 describe('Oura API Type Tests', () => {
 	describe('profile', () => {
