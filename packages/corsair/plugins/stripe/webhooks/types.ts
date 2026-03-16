@@ -291,6 +291,13 @@ export function verifyStripeWebhookSignature(
 		return { valid: false, error: 'Malformed stripe-signature header' };
 	}
 
+	const STRIPE_TIMESTAMP_TOLERANCE_MS = 300_000; // 5 minutes
+
+	const webhookTime = parseInt(timestamp, 10) * 1000;
+	if (Math.abs(Date.now() - webhookTime) > STRIPE_TIMESTAMP_TOLERANCE_MS) {
+		return { valid: false, error: 'Webhook timestamp is too old (possible replay attack)' };
+	}
+
 	// Stripe sends pretty-printed JSON (2-space indent). If the body was parsed
 	// and re-stringified to compact form, the lengths won't match and the HMAC
 	// will fail. Detect this via content-length and retry with pretty formatting.
