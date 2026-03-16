@@ -96,6 +96,9 @@ export function createMondayChallengeMatch(): CorsairWebhookMatcher {
 	return (request: RawWebhookRequest) => {
 		// any: raw body is unknown until parsed
 		const parsedBody = parseBody(request.body) as Record<string, unknown>;
+		if (!parsedBody || typeof parsedBody !== 'object') {
+			return false;
+		}
 		return typeof parsedBody.challenge === 'string';
 	};
 }
@@ -104,6 +107,9 @@ export function createMondayMatch(eventType: string): CorsairWebhookMatcher {
 	return (request: RawWebhookRequest) => {
 		// any: raw body is unknown until parsed
 		const parsedBody = parseBody(request.body) as Record<string, unknown>;
+		if (!parsedBody || typeof parsedBody !== 'object') {
+			return false;
+		}
 		const event = parsedBody.event;
 		if (event && typeof event === 'object' && 'type' in event) {
 			return (event as Record<string, unknown>).type === eventType;
