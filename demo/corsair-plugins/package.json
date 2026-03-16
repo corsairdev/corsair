@@ -18,7 +18,8 @@
     "build": "next build",
     "start": "next start",
     "test": "tsx src/scripts/test-channels.ts",
-    "inngest:dev": "npx inngest-cli@latest dev"
+    "inngest:dev": "npx inngest-cli@latest dev",
+    "agent": "tsx src/scripts/agent.ts"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.62.14",
@@ -27,6 +28,8 @@
     "@trpc/server": "^11.0.0",
     "corsair": "workspace:*",
     "@corsair-ai/cli": "workspace:*",
+    "@corsair-dev/mcp": "workspace:*",
+    "@anthropic-ai/claude-agent-sdk": "^0.2.0",
     "dotenv": "^17.2.3",
     "drizzle-orm": "^0.44.5",
     "inngest": "^3.31.0",
