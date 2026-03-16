@@ -249,7 +249,7 @@ function parseBody(body: unknown): unknown {
 
 /**
  * Verifies a Stripe webhook signature.
- * Stripe sends: x-stripe-signature: t=TIMESTAMP,v1=SIGNATURE
+ * Stripe sends: stripe-signature: t=TIMESTAMP,v1=SIGNATURE
  * Signed payload format: `${timestamp}.${rawBody}`
  */
 export function verifyStripeWebhookSignature(
@@ -266,33 +266,53 @@ export function verifyStripeWebhookSignature(
 	}
 
 	const headers = request.headers;
-	const sigHeader = Array.isArray(headers['x-stripe-signature'])
-		? headers['x-stripe-signature'][0]
-		: headers['x-stripe-signature'];
+	const sigHeader = Array.isArray(headers['stripe-signature'])
+		? headers['stripe-signature'][0]
+		: headers['stripe-signature'];
 
 	if (!sigHeader) {
-		return { valid: false, error: 'Missing x-stripe-signature header' };
+		return { valid: false, error: 'Missing stripe-signature header' };
 	}
 
 	// Parse t=TIMESTAMP,v1=SIGNATURE from the header
 	const parts = sigHeader.split(',');
 	let timestamp: string | undefined;
-	let v1Signature: string | undefined;
+	const v1Signatures: string[] = [];
 
 	for (const part of parts) {
 		if (part.startsWith('t=')) {
 			timestamp = part.slice(2);
 		} else if (part.startsWith('v1=')) {
-			v1Signature = part.slice(3);
+			v1Signatures.push(part.slice(3));
 		}
 	}
 
-	if (!timestamp || !v1Signature) {
-		return { valid: false, error: 'Malformed x-stripe-signature header' };
+	if (!timestamp || v1Signatures.length === 0) {
+		return { valid: false, error: 'Malformed stripe-signature header' };
 	}
 
-	const signedPayload = `${timestamp}.${rawBody}`;
-	const isValid = verifyHmacSignature(signedPayload, secret, v1Signature);
+	// Stripe sends pretty-printed JSON (2-space indent). If the body was parsed
+	// and re-stringified to compact form, the lengths won't match and the HMAC
+	// will fail. Detect this via content-length and retry with pretty formatting.
+	const contentLength = request.headers['content-length']
+		? parseInt(request.headers['content-length'] as string, 10)
+		: null;
+
+	const candidates: string[] = [rawBody];
+	if (contentLength && rawBody.length !== contentLength) {
+		try {
+			const pretty = JSON.stringify(JSON.parse(rawBody), null, 2);
+			if (pretty.length === contentLength) {
+				candidates.push(pretty);
+			}
+		} catch {
+			// rawBody is not valid JSON — keep only the original candidate
+		}
+	}
+
+	const isValid = candidates.some(body =>
+		v1Signatures.some(sig => verifyHmacSignature(`${timestamp}.${body}`, secret, sig)),
+	);
 
 	if (!isValid) {
 		return { valid: false, error: 'Invalid signature' };
