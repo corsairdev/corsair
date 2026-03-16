@@ -1,7 +1,5 @@
-export { AnthropicProvider } from './adapters/anthropic-api.js';
 export { ClaudeProvider } from './adapters/claude.js';
 export { MastraProvider } from './adapters/mastra.js';
-export { OpenAIAgentsProvider } from './adapters/openai-agents.js';
 export type { OpenAIMcpConfig } from './adapters/openai.js';
 export { getOpenAIMcpConfig } from './adapters/openai.js';
 export type { VercelAiMcpClientOptions } from './adapters/vercel-ai.js';
