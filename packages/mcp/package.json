@@ -18,6 +18,7 @@
   },
   "scripts": {
     "build": "tsup && tsc -p tsconfig.build.json",
+    "build:watch": "tsup --watch",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
