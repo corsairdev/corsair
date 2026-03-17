@@ -1,6 +1,6 @@
 import { logEventFromContext } from '../../utils/events';
 import type { BoxBoundEndpoints, BoxEndpoints } from '..';
-import { makeBoxRequest } from '../client';
+import { makeBoxRequest, makeBoxUploadRequest } from '../client';
 import type { BoxEndpointOutputs } from './types';
 
 function toFileDbRecord(file: BoxEndpointOutputs['filesGet']) {
@@ -162,20 +162,13 @@ export const share: BoxEndpoints['filesShare'] = async (ctx, input) => {
 
 export const upload: BoxEndpoints['filesUpload'] = async (ctx, input) => {
 	const { name, parent_id, content, ...rest } = input;
-	const result = await makeBoxRequest<BoxEndpointOutputs['filesUpload']>(
+	const result = await makeBoxUploadRequest<BoxEndpointOutputs['filesUpload']>(
 		'files/content',
 		ctx.key,
 		{
-			method: 'POST',
-			body: {
-				attributes: {
-					name,
-					parent: { id: parent_id },
-					...rest,
-				},
-				// content is file data; actual multipart upload handled by API layer
-				content,
-			} as Record<string, unknown>,
+			attributes: { name, parent: { id: parent_id }, ...rest },
+			content: content ?? '',
+			fileName: name,
 		},
 	);
 

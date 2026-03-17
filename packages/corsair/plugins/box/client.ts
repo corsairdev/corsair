@@ -14,6 +14,7 @@ export class BoxAPIError extends Error {
 }
 
 const BOX_API_BASE = 'https://api.box.com/2.0';
+const BOX_UPLOAD_BASE = 'https://upload.box.com/api/2.0';
 
 const BOX_RATE_LIMIT_CONFIG: RateLimitConfig = {
 	enabled: true,
@@ -70,4 +71,40 @@ export async function makeBoxRequest<T>(
 		}
 		throw new BoxAPIError('Unknown error');
 	}
+}
+
+export async function makeBoxUploadRequest<T>(
+	endpoint: string,
+	accessToken: string,
+	options: {
+		attributes: Record<string, unknown>;
+		content: string | Uint8Array;
+		fileName: string;
+	},
+): Promise<T> {
+	const { attributes, content, fileName } = options;
+
+	const blob =
+		typeof content === 'string'
+			? new Blob([content], { type: 'application/octet-stream' })
+			: new Blob([new Uint8Array(content)]);
+
+	const formData = new FormData();
+	formData.append('attributes', JSON.stringify(attributes));
+	formData.append('file', blob, fileName);
+
+	const response = await fetch(`${BOX_UPLOAD_BASE}/${endpoint}`, {
+		method: 'POST',
+		headers: { Authorization: `Bearer ${accessToken}` },
+		body: formData,
+	});
+
+	if (!response.ok) {
+		const text = await response.text();
+		throw new BoxAPIError(
+			`Generic Error: status: ${response.status}; status text: ${response.statusText}; body: "${text}"`,
+		);
+	}
+
+	return response.json() as Promise<T>;
 }

@@ -25,7 +25,7 @@ export const BoxFolder = z.object({
 	type: z.string().optional(),
 	name: z.string().optional(),
 	description: z.string().optional(),
-	etag: z.string().optional(),
+	etag: z.string().nullable().optional(),
 	sequence_id: z.string().nullable().optional(),
 	created_at: z.string().nullable().optional(),
 	modified_at: z.string().nullable().optional(),

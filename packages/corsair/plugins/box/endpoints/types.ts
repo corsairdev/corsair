@@ -245,10 +245,7 @@ const FilesDeleteResponseSchema = z.object({
 	success: z.boolean(),
 });
 
-const FilesDownloadResponseSchema = z.object({
-	download_url: z.string().optional(),
-	content: z.string().optional(),
-});
+const FilesDownloadResponseSchema = z.string();
 
 const FilesSearchResponseSchema = z.object({
 	total_count: z.number().optional(),
