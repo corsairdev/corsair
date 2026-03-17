@@ -26,6 +26,7 @@ export const BaseProviders = [
 	'hubspot',
 	'linear',
 	'notion',
+	'oura',
 	'pagerduty',
 	'posthog',
 	'resend',
@@ -33,6 +34,7 @@ export const BaseProviders = [
 	'slack',
 	'spotify',
 	'tavily',
+	'teams',
 	'todoist',
 	'twitterapiio',
 ] as const;
@@ -51,6 +53,7 @@ export type AllProviders =
 	| 'hubspot'
 	| 'linear'
 	| 'notion'
+	| 'oura'
 	| 'pagerduty'
 	| 'posthog'
 	| 'resend'
@@ -58,6 +61,7 @@ export type AllProviders =
 	| 'slack'
 	| 'spotify'
 	| 'tavily'
+	| 'teams'
 	| 'todoist'
 	| 'twitterapiio'
 	| (string & {});

@@ -108,12 +108,18 @@ export function buildCorsairToolDefs(
 			handler: async () => {
 				try {
 					if (Object.keys(corsair).includes('withTenant')) {
-						throw new Error("Cannot setup Corsair if it multiTenancy is enabled.")
+						throw new Error(
+							'Cannot setup Corsair if it multiTenancy is enabled.',
+						);
 					}
 
-					const text = await setupCorsair(corsair as Parameters<typeof setupCorsair>[0]);
+					const text = await setupCorsair(
+						corsair as Parameters<typeof setupCorsair>[0],
+					);
 					return {
-						content: [{ type: 'text', text: text || 'Corsair setup complete.' }],
+						content: [
+							{ type: 'text', text: text || 'Corsair setup complete.' },
+						],
 					};
 				} catch (err) {
 					const message = err instanceof Error ? err.message : String(err);

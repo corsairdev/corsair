@@ -1,8 +1,8 @@
+import * as Communities from './communities';
+import * as Lists from './lists';
+import * as Trends from './trends';
 import * as Tweets from './tweets';
 import * as Users from './users';
-import * as Lists from './lists';
-import * as Communities from './communities';
-import * as Trends from './trends';
 
 export const TweetsEndpoints = {
 	getByIds: Tweets.getByIds,

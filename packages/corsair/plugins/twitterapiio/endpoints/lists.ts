@@ -1,10 +1,13 @@
-import type { TwitterApiIOEndpoints } from '..';
 import { logEventFromContext } from '../../utils/events';
+import type { TwitterApiIOEndpoints } from '..';
 import { makeTwitterApiIORequest } from '../client';
 import { persistTweetWithAuthor } from '../utils';
 import type { TwitterApiIOEndpointOutputs } from './types';
 
-export const getFollowers: TwitterApiIOEndpoints['listsGetFollowers'] = async (ctx, input) => {
+export const getFollowers: TwitterApiIOEndpoints['listsGetFollowers'] = async (
+	ctx,
+	input,
+) => {
 	const response = await makeTwitterApiIORequest<
 		TwitterApiIOEndpointOutputs['listsGetFollowers']
 	>('/twitter/list/followers', ctx.key, {
@@ -31,7 +34,10 @@ export const getFollowers: TwitterApiIOEndpoints['listsGetFollowers'] = async (c
 	return response;
 };
 
-export const getMembers: TwitterApiIOEndpoints['listsGetMembers'] = async (ctx, input) => {
+export const getMembers: TwitterApiIOEndpoints['listsGetMembers'] = async (
+	ctx,
+	input,
+) => {
 	const response = await makeTwitterApiIORequest<
 		TwitterApiIOEndpointOutputs['listsGetMembers']
 	>('/twitter/list/members', ctx.key, {
@@ -49,11 +55,19 @@ export const getMembers: TwitterApiIOEndpoints['listsGetMembers'] = async (ctx, 
 		}
 	}
 
-	await logEventFromContext(ctx, 'twitterapiio.lists.getMembers', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'twitterapiio.lists.getMembers',
+		{ ...input },
+		'completed',
+	);
 	return response;
 };
 
-export const getTweets: TwitterApiIOEndpoints['listsGetTweets'] = async (ctx, input) => {
+export const getTweets: TwitterApiIOEndpoints['listsGetTweets'] = async (
+	ctx,
+	input,
+) => {
 	const response = await makeTwitterApiIORequest<
 		TwitterApiIOEndpointOutputs['listsGetTweets']
 	>('/twitter/list/tweets', ctx.key, {
@@ -71,6 +85,11 @@ export const getTweets: TwitterApiIOEndpoints['listsGetTweets'] = async (ctx, in
 		}
 	}
 
-	await logEventFromContext(ctx, 'twitterapiio.lists.getTweets', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'twitterapiio.lists.getTweets',
+		{ ...input },
+		'completed',
+	);
 	return response;
 };

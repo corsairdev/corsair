@@ -1,20 +1,31 @@
 import type { ApiRequestOptions } from '../../async-core/ApiRequestOptions';
 import type { OpenAPIConfig } from '../../async-core/OpenAPI';
+import type { RateLimitConfig } from '../../async-core/rate-limit';
 import { request } from '../../async-core/request';
 
-export class TwitterApiIOAPIError extends Error {
+export class OuraAPIError extends Error {
 	constructor(
 		message: string,
 		public readonly code?: string,
 	) {
 		super(message);
-		this.name = 'TwitterApiIOAPIError';
+		this.name = 'OuraAPIError';
 	}
 }
 
-const TWITTERAPIIO_API_BASE = 'https://api.twitterapi.io';
+const OURA_API_BASE = 'https://api.ouraring.com/v2';
 
-export async function makeTwitterApiIORequest<T>(
+const OURA_RATE_LIMIT_CONFIG: RateLimitConfig = {
+	enabled: true,
+	maxRetries: 3,
+	initialRetryDelay: 1000,
+	backoffMultiplier: 2,
+	headerNames: {
+		retryAfter: 'Retry-After',
+	},
+};
+
+export async function makeOuraRequest<T>(
 	endpoint: string,
 	apiKey: string,
 	options: {
@@ -26,14 +37,14 @@ export async function makeTwitterApiIORequest<T>(
 	const { method = 'GET', body, query } = options;
 
 	const config: OpenAPIConfig = {
-		BASE: TWITTERAPIIO_API_BASE,
-		VERSION: '1.0.0',
+		BASE: OURA_API_BASE,
+		VERSION: '2.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
 		TOKEN: undefined,
 		HEADERS: {
 			'Content-Type': 'application/json',
-			'X-API-Key': apiKey,
+			Authorization: `Bearer ${apiKey}`,
 		},
 	};
 
@@ -48,13 +59,9 @@ export async function makeTwitterApiIORequest<T>(
 		query: method === 'GET' ? query : undefined,
 	};
 
-	try {
-		const response = await request<T>(config, requestOptions);
-		return response;
-	} catch (error) {
-		if (error instanceof Error) {
-			throw new TwitterApiIOAPIError(error.message);
-		}
-		throw new TwitterApiIOAPIError('Unknown error');
-	}
+	const response = await request<T>(config, requestOptions, {
+		rateLimitConfig: OURA_RATE_LIMIT_CONFIG,
+	});
+
+	return response;
 }

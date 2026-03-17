@@ -46,9 +46,8 @@ describe('TwitterApiIO plugin integration', () => {
 
 		// getByUsername
 		const getByUsernameInput = { userName: TEST_USERNAME };
-		const userResult = await corsair.twitterapiio.api.users.getByUsername(
-			getByUsernameInput,
-		);
+		const userResult =
+			await corsair.twitterapiio.api.users.getByUsername(getByUsernameInput);
 
 		expect(userResult).toBeDefined();
 
@@ -138,7 +137,10 @@ describe('TwitterApiIO plugin integration', () => {
 		const orm = createCorsairOrm(testDb.database);
 
 		// search
-		const searchInput = { query: 'AI from:openai', queryType: 'Latest' as const };
+		const searchInput = {
+			query: 'AI from:openai',
+			queryType: 'Latest' as const,
+		};
 		const searchResult =
 			await corsair.twitterapiio.api.tweets.search(searchInput);
 
@@ -239,9 +241,8 @@ describe('TwitterApiIO plugin integration', () => {
 			expect(getByIdsEventPayload).toMatchObject(getByIdsInput);
 
 			if (getByIdsResult.tweets && getByIdsResult.tweets.length > 0) {
-				const tweetFromDb = await corsair.twitterapiio.db.tweets.findByEntityId(
-					TEST_TWEET_ID,
-				);
+				const tweetFromDb =
+					await corsair.twitterapiio.db.tweets.findByEntityId(TEST_TWEET_ID);
 				expect(tweetFromDb).not.toBeNull();
 			}
 
@@ -284,7 +285,9 @@ describe('TwitterApiIO plugin integration', () => {
 			// getThreadContext
 			const threadContextInput = { tweetId: TEST_TWEET_ID };
 			const threadContextResult =
-				await corsair.twitterapiio.api.tweets.getThreadContext(threadContextInput);
+				await corsair.twitterapiio.api.tweets.getThreadContext(
+					threadContextInput,
+				);
 
 			expect(threadContextResult).toBeDefined();
 
