@@ -157,7 +157,7 @@ const pages = {
 		Component: IntroductionDoc,
 		title: 'Introduction',
 		description:
-			'The Vibe Coding SDK - Build type-safe full-stack TypeScript apps with natural language',
+			'The Integration Layer for AI Agents',
 	},
 	installation: {
 		Component: InstallationDoc,
