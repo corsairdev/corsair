@@ -24,6 +24,7 @@ export const BaseProviders = [
 	'googledrive',
 	'googlesheets',
 	'hubspot',
+	'intercom',
 	'linear',
 	'monday',
 	'notion',
@@ -52,6 +53,7 @@ export type AllProviders =
 	| 'googledrive'
 	| 'googlesheets'
 	| 'hubspot'
+	| 'intercom'
 	| 'linear'
 	| 'monday'
 	| 'notion'
