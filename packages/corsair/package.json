@@ -102,6 +102,11 @@
       "types": "./dist/plugins/linear/index.d.ts",
       "default": "./dist/plugins/linear/index.js"
     },
+    "./plugins/monday": {
+      "dev-source": "./plugins/monday/index.ts",
+      "types": "./dist/plugins/monday/index.d.ts",
+      "default": "./dist/plugins/monday/index.js"
+    },
     "./plugins/notion": {
       "dev-source": "./plugins/notion/index.ts",
       "types": "./dist/plugins/notion/index.d.ts",
