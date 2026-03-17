@@ -9,16 +9,18 @@ export class MastraProvider {
 
 	async build(options: BaseMcpOptions) {
 		const { createTool } = await import('@mastra/core/tools');
-		return buildCorsairToolDefs(options).map(def =>
+		return buildCorsairToolDefs(options).map((def) =>
 			createTool({
 				id: def.name,
 				description: def.description,
 				inputSchema: z.object(def.shape),
-				execute: async inputData => {
-					const result = await def.handler(inputData as Record<string, unknown>);
-					const textItems = result.content.filter(c => c.type === 'text');
+				execute: async (inputData) => {
+					const result = await def.handler(
+						inputData as Record<string, unknown>,
+					);
+					const textItems = result.content.filter((c) => c.type === 'text');
 					if (result.isError) {
-						throw new Error(textItems.map(c => c.text).join('\n'));
+						throw new Error(textItems.map((c) => c.text).join('\n'));
 					}
 					const text = textItems[0]?.text ?? '';
 					try {

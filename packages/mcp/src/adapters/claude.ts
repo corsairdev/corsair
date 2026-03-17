@@ -1,5 +1,5 @@
 import type { SdkMcpToolDefinition } from '@anthropic-ai/claude-agent-sdk';
-import { z } from 'zod';
+import type { z } from 'zod';
 import type { BaseMcpOptions } from '../core/adapters.js';
 import { buildCorsairToolDefs } from '../core/tools.js';
 
@@ -8,11 +8,12 @@ import { buildCorsairToolDefs } from '../core/tools.js';
 export class ClaudeProvider {
 	readonly name = 'claude';
 
-	async build(options: BaseMcpOptions): Promise<SdkMcpToolDefinition<z.ZodRawShape>[]> {
+	async build(
+		options: BaseMcpOptions,
+	): Promise<SdkMcpToolDefinition<z.ZodRawShape>[]> {
 		const { tool } = await import('@anthropic-ai/claude-agent-sdk');
-		return buildCorsairToolDefs(options).map(def =>
+		return buildCorsairToolDefs(options).map((def) =>
 			tool(def.name, def.description, def.shape, def.handler),
 		);
 	}
 }
-

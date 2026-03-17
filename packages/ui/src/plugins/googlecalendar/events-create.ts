@@ -1,4 +1,4 @@
-import type { PermissionActionCallback, PermissionLike } from '../../types';
+import type { GoogleCalendarBoundEndpoints } from 'corsair/plugins';
 import {
 	actionsHtml,
 	buildActionDescriptors,
@@ -7,7 +7,7 @@ import {
 	parseArgs,
 	statusBannerHtml,
 } from '../../shared';
-import type { GoogleCalendarBoundEndpoints } from 'corsair/plugins';
+import type { PermissionActionCallback, PermissionLike } from '../../types';
 
 type Args = Parameters<GoogleCalendarBoundEndpoints['events']['create']>[0];
 
@@ -21,7 +21,9 @@ function formatEventDateTime(dt: Args['event']['start']): string {
 function formatAttendees(attendees: Args['event']['attendees']): string {
 	if (!attendees?.length) return '';
 	return attendees
-		.map((a) => a.displayName ? `${a.displayName} <${a.email ?? ''}>` : (a.email ?? ''))
+		.map((a) =>
+			a.displayName ? `${a.displayName} <${a.email ?? ''}>` : (a.email ?? ''),
+		)
 		.join(', ');
 }
 
@@ -81,34 +83,34 @@ export function renderGoogleCalendarEventsCreate(
       <div style="padding:14px 18px;display:flex;flex-direction:column;gap:12px">
 
         ${
-			startDisplay || endDisplay
-				? `<div style="display:flex;align-items:flex-start;gap:10px">
+					startDisplay || endDisplay
+						? `<div style="display:flex;align-items:flex-start;gap:10px">
             <span style="font-size:16px;width:20px;flex-shrink:0">&#x1f550;</span>
             <div style="font-size:13px;color:#cbd5e1">
               ${startDisplay ? `<div>${escapeHtml(startDisplay)}</div>` : ''}
               ${endDisplay ? `<div style="color:#64748b">&#x2192; ${escapeHtml(endDisplay)}</div>` : ''}
             </div>
           </div>`
-				: ''
-		}
+						: ''
+				}
 
         ${
-			event.location
-				? `<div style="display:flex;align-items:flex-start;gap:10px">
+					event.location
+						? `<div style="display:flex;align-items:flex-start;gap:10px">
             <span style="font-size:16px;width:20px;flex-shrink:0">&#x1f4cd;</span>
             <div style="font-size:13px;color:#cbd5e1">${escapeHtml(event.location)}</div>
           </div>`
-				: ''
-		}
+						: ''
+				}
 
         ${
-			attendees
-				? `<div style="display:flex;align-items:flex-start;gap:10px">
+					attendees
+						? `<div style="display:flex;align-items:flex-start;gap:10px">
             <span style="font-size:16px;width:20px;flex-shrink:0">&#x1f465;</span>
             <div style="font-size:13px;color:#cbd5e1">${escapeHtml(attendees)}</div>
           </div>`
-				: ''
-		}
+						: ''
+				}
 
       </div>
     </div>

@@ -33,7 +33,9 @@ export const BaseProviders = [
 	'slack',
 	'spotify',
 	'tavily',
+	'teams',
 	'todoist',
+	'twitterapiio',
 ] as const;
 
 export type AllProviders =
@@ -57,7 +59,9 @@ export type AllProviders =
 	| 'slack'
 	| 'spotify'
 	| 'tavily'
+	| 'teams'
 	| 'todoist'
+	| 'twitterapiio'
 	| (string & {});
 
 export type AuthTypes = 'oauth_2' | 'api_key' | 'bot_token';

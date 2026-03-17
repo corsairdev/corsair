@@ -14,7 +14,9 @@ export const PagerdutyWebhookReferenceSchema = z.object({
 	summary: z.string().optional(),
 	html_url: z.string().nullable().optional(),
 });
-export type PagerdutyWebhookReference = z.infer<typeof PagerdutyWebhookReferenceSchema>;
+export type PagerdutyWebhookReference = z.infer<
+	typeof PagerdutyWebhookReferenceSchema
+>;
 
 export const PagerdutyWebhookIncidentDataSchema = z.object({
 	id: z.string(),
@@ -32,7 +34,9 @@ export const PagerdutyWebhookIncidentDataSchema = z.object({
 	teams: z.array(PagerdutyWebhookReferenceSchema).optional(),
 	assignees: z.array(PagerdutyWebhookReferenceSchema).optional(),
 });
-export type PagerdutyWebhookIncidentData = z.infer<typeof PagerdutyWebhookIncidentDataSchema>;
+export type PagerdutyWebhookIncidentData = z.infer<
+	typeof PagerdutyWebhookIncidentDataSchema
+>;
 
 export const PagerdutyWebhookAgentSchema = z.object({
 	id: z.string().optional(),
@@ -61,14 +65,18 @@ export const IncidentTriggeredEventSchema = PagerdutyEventBaseSchema.extend({
 	resource_type: z.literal('incident'),
 	data: PagerdutyWebhookIncidentDataSchema,
 });
-export type IncidentTriggeredEvent = z.infer<typeof IncidentTriggeredEventSchema>;
+export type IncidentTriggeredEvent = z.infer<
+	typeof IncidentTriggeredEventSchema
+>;
 
 export const IncidentAcknowledgedEventSchema = PagerdutyEventBaseSchema.extend({
 	event_type: z.literal('incident.acknowledged'),
 	resource_type: z.literal('incident'),
 	data: PagerdutyWebhookIncidentDataSchema,
 });
-export type IncidentAcknowledgedEvent = z.infer<typeof IncidentAcknowledgedEventSchema>;
+export type IncidentAcknowledgedEvent = z.infer<
+	typeof IncidentAcknowledgedEventSchema
+>;
 
 export const IncidentResolvedEventSchema = PagerdutyEventBaseSchema.extend({
 	event_type: z.literal('incident.resolved'),
@@ -102,7 +110,9 @@ export const PagerdutyWebhookPayloadSchema = z.object({
 	]),
 });
 
-export type PagerdutyWebhookPayload = z.infer<typeof PagerdutyWebhookPayloadSchema>;
+export type PagerdutyWebhookPayload = z.infer<
+	typeof PagerdutyWebhookPayloadSchema
+>;
 
 export type PagerdutyWebhookPayloadFor<TEvent> = {
 	event: TEvent;
@@ -148,7 +158,10 @@ export function verifyPagerdutyWebhookSignature(
 
 	const rawBody = request.rawBody;
 	if (!rawBody) {
-		return { valid: false, error: 'Missing raw body for signature verification' };
+		return {
+			valid: false,
+			error: 'Missing raw body for signature verification',
+		};
 	}
 
 	const headers = request.headers;

@@ -45,9 +45,9 @@ export async function makePagerdutyRequest<T>(
 		TOKEN: undefined,
 		HEADERS: {
 			'Content-Type': 'application/json',
-			'Accept': 'application/vnd.pagerduty+json;version=2',
-			'Authorization': `Token token=${apiKey}`,
-			...(from && { 'From': from }),
+			Accept: 'application/vnd.pagerduty+json;version=2',
+			Authorization: `Token token=${apiKey}`,
+			...(from && { From: from }),
 		},
 	};
 

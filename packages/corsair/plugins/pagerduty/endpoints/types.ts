@@ -125,7 +125,9 @@ const IncidentsGetInputSchema = z.object({
 const IncidentsListInputSchema = z.object({
 	limit: z.number().optional(),
 	offset: z.number().optional(),
-	statuses: z.array(z.enum(['triggered', 'acknowledged', 'resolved'])).optional(),
+	statuses: z
+		.array(z.enum(['triggered', 'acknowledged', 'resolved']))
+		.optional(),
 	since: z.string().optional(),
 	until: z.string().optional(),
 	urgencies: z.array(z.enum(['high', 'low'])).optional(),
@@ -240,20 +242,34 @@ export type IncidentsCreateInput = z.infer<typeof IncidentsCreateInputSchema>;
 export type IncidentsGetInput = z.infer<typeof IncidentsGetInputSchema>;
 export type IncidentsListInput = z.infer<typeof IncidentsListInputSchema>;
 export type IncidentsUpdateInput = z.infer<typeof IncidentsUpdateInputSchema>;
-export type IncidentNotesCreateInput = z.infer<typeof IncidentNotesCreateInputSchema>;
-export type IncidentNotesListInput = z.infer<typeof IncidentNotesListInputSchema>;
+export type IncidentNotesCreateInput = z.infer<
+	typeof IncidentNotesCreateInputSchema
+>;
+export type IncidentNotesListInput = z.infer<
+	typeof IncidentNotesListInputSchema
+>;
 export type LogEntriesGetInput = z.infer<typeof LogEntriesGetInputSchema>;
 export type LogEntriesListInput = z.infer<typeof LogEntriesListInputSchema>;
 export type UsersGetInput = z.infer<typeof UsersGetInputSchema>;
 
-export type IncidentsCreateResponse = z.infer<typeof IncidentsCreateResponseSchema>;
+export type IncidentsCreateResponse = z.infer<
+	typeof IncidentsCreateResponseSchema
+>;
 export type IncidentsGetResponse = z.infer<typeof IncidentsGetResponseSchema>;
 export type IncidentsListResponse = z.infer<typeof IncidentsListResponseSchema>;
-export type IncidentsUpdateResponse = z.infer<typeof IncidentsUpdateResponseSchema>;
-export type IncidentNotesCreateResponse = z.infer<typeof IncidentNotesCreateResponseSchema>;
-export type IncidentNotesListResponse = z.infer<typeof IncidentNotesListResponseSchema>;
+export type IncidentsUpdateResponse = z.infer<
+	typeof IncidentsUpdateResponseSchema
+>;
+export type IncidentNotesCreateResponse = z.infer<
+	typeof IncidentNotesCreateResponseSchema
+>;
+export type IncidentNotesListResponse = z.infer<
+	typeof IncidentNotesListResponseSchema
+>;
 export type LogEntriesGetResponse = z.infer<typeof LogEntriesGetResponseSchema>;
-export type LogEntriesListResponse = z.infer<typeof LogEntriesListResponseSchema>;
+export type LogEntriesListResponse = z.infer<
+	typeof LogEntriesListResponseSchema
+>;
 export type UsersGetResponse = z.infer<typeof UsersGetResponseSchema>;
 
 // ── Endpoint I/O Maps ─────────────────────────────────────────────────────────

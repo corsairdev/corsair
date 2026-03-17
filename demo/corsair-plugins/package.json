@@ -2,6 +2,11 @@
   "name": "@corsair/demo-plugins",
   "private": true,
   "type": "module",
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "better-sqlite3"
+    ]
+  },
   "scripts": {
     "db:up": "docker compose up -d",
     "db:down": "docker compose down",
@@ -13,7 +18,8 @@
     "build": "next build",
     "start": "next start",
     "test": "tsx src/scripts/test-channels.ts",
-    "inngest:dev": "npx inngest-cli@latest dev"
+    "inngest:dev": "npx inngest-cli@latest dev",
+    "agent": "tsx src/scripts/agent.ts"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.62.14",
@@ -22,18 +28,20 @@
     "@trpc/server": "^11.0.0",
     "corsair": "workspace:*",
     "@corsair-ai/cli": "workspace:*",
+    "@corsair-dev/mcp": "workspace:*",
+    "@anthropic-ai/claude-agent-sdk": "^0.2.0",
     "dotenv": "^17.2.3",
     "drizzle-orm": "^0.44.5",
     "inngest": "^3.31.0",
     "next": "^14.2.24",
-    "pg": "^8.12.0",
+    "better-sqlite3": "^11.0.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "zod": "^3.24.1"
   },
   "devDependencies": {
     "@types/node": "^24.10.1",
-    "@types/pg": "^8.15.2",
+    "@types/better-sqlite3": "^7.6.13",
     "@types/react": "^18.3.18",
     "@types/react-dom": "^18.3.5",
     "drizzle-kit": "^0.31.8",

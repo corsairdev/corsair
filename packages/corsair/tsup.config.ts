@@ -28,6 +28,8 @@ export default defineConfig({
 	splitting: false,
 	outDir: 'dist',
 	external: [
+		'kysely',
+		'zod',
 		'dotenv',
 		'@modelcontextprotocol/sdk',
 		'@ngrok/ngrok',

@@ -1,5 +1,13 @@
-import { create as incidentsCreate, get as incidentsGet, list as incidentsList, update as incidentsUpdate } from './incidents';
-import { create as incidentNotesCreate, list as incidentNotesList } from './incident-notes';
+import {
+	create as incidentNotesCreate,
+	list as incidentNotesList,
+} from './incident-notes';
+import {
+	create as incidentsCreate,
+	get as incidentsGet,
+	list as incidentsList,
+	update as incidentsUpdate,
+} from './incidents';
 import { get as logEntriesGet, list as logEntriesList } from './log-entries';
 import { get as usersGet } from './users';
 

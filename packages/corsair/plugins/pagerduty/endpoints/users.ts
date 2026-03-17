@@ -4,15 +4,13 @@ import { makePagerdutyRequest } from '../client';
 import type { PagerdutyEndpointOutputs } from './types';
 
 export const get: PagerdutyEndpoints['usersGet'] = async (ctx, input) => {
-	const result = await makePagerdutyRequest<PagerdutyEndpointOutputs['usersGet']>(
-		`users/${input.id}`,
-		ctx.key,
-		{
-			query: {
-				...(input.include && { 'include[]': input.include.join(',') }),
-			},
+	const result = await makePagerdutyRequest<
+		PagerdutyEndpointOutputs['usersGet']
+	>(`users/${input.id}`, ctx.key, {
+		query: {
+			...(input.include && { 'include[]': input.include.join(',') }),
 		},
-	);
+	});
 
 	await logEventFromContext(
 		ctx,

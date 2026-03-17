@@ -25,7 +25,8 @@ export const track: AmplitudeWebhooks['eventsTrack'] = {
 
 		if (ctx.db.events) {
 			try {
-				const entityId = event.event_id ?? event.insert_id ?? String(event.time);
+				const entityId =
+					event.event_id ?? event.insert_id ?? String(event.time);
 				const entity = await ctx.db.events.upsertByEntityId(entityId, {
 					...event,
 					id: entityId,
@@ -37,7 +38,12 @@ export const track: AmplitudeWebhooks['eventsTrack'] = {
 			}
 		}
 
-		await logEventFromContext(ctx, 'amplitude.webhook.events.track', { ...event }, 'completed');
+		await logEventFromContext(
+			ctx,
+			'amplitude.webhook.events.track',
+			{ ...event },
+			'completed',
+		);
 
 		return { success: true, corsairEntityId, data: event };
 	},
@@ -67,7 +73,10 @@ export const identify: AmplitudeWebhooks['eventsIdentify'] = {
 		if (ctx.db.users) {
 			try {
 				const userId =
-					event.user_id ?? event.device_id ?? event.insert_id ?? String(event.time);
+					event.user_id ??
+					event.device_id ??
+					event.insert_id ??
+					String(event.time);
 				const entity = await ctx.db.users.upsertByEntityId(userId, {
 					id: userId,
 					user_id: event.user_id,
@@ -81,7 +90,12 @@ export const identify: AmplitudeWebhooks['eventsIdentify'] = {
 			}
 		}
 
-		await logEventFromContext(ctx, 'amplitude.webhook.events.identify', { ...event }, 'completed');
+		await logEventFromContext(
+			ctx,
+			'amplitude.webhook.events.identify',
+			{ ...event },
+			'completed',
+		);
 
 		return { success: true, corsairEntityId, data: event };
 	},

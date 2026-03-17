@@ -1,10 +1,18 @@
-import { upload, uploadBatch, identifyUser, getList } from './events';
-import { search as usersSearch, getProfile, getActivity } from './users';
-import { list as cohortsList, get as cohortsGet, create as cohortsCreate, getMembers } from './cohorts';
+import {
+	create as annotationsCreate,
+	list as annotationsList,
+} from './annotations';
 import { get as chartsGet } from './charts';
-import { list as dashboardsList, get as dashboardsGet } from './dashboards';
-import { list as annotationsList, create as annotationsCreate } from './annotations';
+import {
+	create as cohortsCreate,
+	get as cohortsGet,
+	list as cohortsList,
+	getMembers,
+} from './cohorts';
+import { get as dashboardsGet, list as dashboardsList } from './dashboards';
+import { getList, identifyUser, upload, uploadBatch } from './events';
 import { getData } from './exports';
+import { getActivity, getProfile, search as usersSearch } from './users';
 
 export const Events = {
 	upload,
