@@ -101,6 +101,16 @@ export const deleted: BoxWebhooks['folderDeleted'] = {
 		}
 
 		const event = request.payload;
+		const source = event.source;
+		const folderId = typeof source?.id === 'string' ? source.id : undefined;
+
+		if (folderId && ctx.db.folders) {
+			try {
+				await ctx.db.folders.deleteByEntityId(folderId);
+			} catch (error) {
+				console.warn('Failed to delete folder from database:', error);
+			}
+		}
 
 		await logEventFromContext(
 			ctx,
@@ -127,6 +137,20 @@ export const downloaded: BoxWebhooks['folderDownloaded'] = {
 		}
 
 		const event = request.payload;
+		const source = event.source;
+		const folderId = typeof source?.id === 'string' ? source.id : undefined;
+
+		if (folderId && ctx.db.folders) {
+			try {
+				await ctx.db.folders.upsertByEntityId(folderId, {
+					id: folderId,
+					// any: source is a passthrough record from Box webhook payload
+					...source,
+				});
+			} catch (error) {
+				console.warn('Failed to update downloaded folder in database:', error);
+			}
+		}
 
 		await logEventFromContext(
 			ctx,
@@ -273,6 +297,20 @@ export const trashed: BoxWebhooks['folderTrashed'] = {
 		}
 
 		const event = request.payload;
+		const source = event.source;
+		const folderId = typeof source?.id === 'string' ? source.id : undefined;
+
+		if (folderId && ctx.db.folders) {
+			try {
+				await ctx.db.folders.upsertByEntityId(folderId, {
+					id: folderId,
+					// any: source is a passthrough record from Box webhook payload
+					...source,
+				});
+			} catch (error) {
+				console.warn('Failed to update trashed folder in database:', error);
+			}
+		}
 
 		await logEventFromContext(
 			ctx,

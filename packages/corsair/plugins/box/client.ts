@@ -33,9 +33,10 @@ export async function makeBoxRequest<T>(
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 		body?: Record<string, unknown>;
 		query?: Record<string, string | number | boolean | undefined>;
+		headers?: Record<string, string>;
 	} = {},
 ): Promise<T> {
-	const { method = 'GET', body, query } = options;
+	const { method = 'GET', body, query, headers } = options;
 
 	const config: OpenAPIConfig = {
 		BASE: BOX_API_BASE,
@@ -52,6 +53,7 @@ export async function makeBoxRequest<T>(
 	const requestOptions: ApiRequestOptions = {
 		method,
 		url: endpoint,
+		headers,
 		body:
 			method === 'POST' || method === 'PUT' || method === 'PATCH'
 				? body

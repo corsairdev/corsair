@@ -99,6 +99,14 @@ export const deleteFolder: BoxEndpoints['foldersDelete'] = async (
 		query: { recursive },
 	});
 
+	if (ctx.db.folders) {
+		try {
+			await ctx.db.folders.deleteByEntityId(folder_id);
+		} catch (error) {
+			console.warn('Failed to delete folder from database:', error);
+		}
+	}
+
 	await logEventFromContext(
 		ctx,
 		'box.folders.delete',

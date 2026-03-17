@@ -72,10 +72,19 @@ export const copy: BoxEndpoints['filesCopy'] = async (ctx, input) => {
 };
 
 export const deleteFile: BoxEndpoints['filesDelete'] = async (ctx, input) => {
-	const { file_id } = input;
+	const { file_id, if_match } = input;
 	await makeBoxRequest<void>(`files/${file_id}`, ctx.key, {
 		method: 'DELETE',
+		headers: if_match ? { 'If-Match': if_match } : undefined,
 	});
+
+	if (ctx.db.files) {
+		try {
+			await ctx.db.files.deleteByEntityId(file_id);
+		} catch (error) {
+			console.warn('Failed to delete file from database:', error);
+		}
+	}
 
 	await logEventFromContext(ctx, 'box.files.delete', { ...input }, 'completed');
 	return { success: true };

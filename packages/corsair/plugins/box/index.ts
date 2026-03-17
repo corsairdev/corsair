@@ -573,9 +573,8 @@ export function box<const T extends BoxPluginOptions>(
 		webhookSchemas: boxWebhookSchemas,
 		pluginWebhookMatcher: (request) => {
 			const headers = request.headers;
-			const hasSignature = 'box-signature-primary' in headers;
 			const hasTimestamp = 'box-delivery-timestamp' in headers;
-			return hasSignature && hasTimestamp;
+			return hasTimestamp;
 		},
 		errorHandlers: {
 			...errorHandlers,

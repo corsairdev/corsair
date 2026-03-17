@@ -64,6 +64,16 @@ export const deleted: BoxWebhooks['fileDeleted'] = {
 		}
 
 		const event = request.payload;
+		const source = event.source;
+		const fileId = typeof source?.id === 'string' ? source.id : undefined;
+
+		if (fileId && ctx.db.files) {
+			try {
+				await ctx.db.files.deleteByEntityId(fileId);
+			} catch (error) {
+				console.warn('Failed to delete file from database:', error);
+			}
+		}
 
 		await logEventFromContext(
 			ctx,
@@ -90,6 +100,20 @@ export const downloaded: BoxWebhooks['fileDownloaded'] = {
 		}
 
 		const event = request.payload;
+		const source = event.source;
+		const fileId = typeof source?.id === 'string' ? source.id : undefined;
+
+		if (fileId && ctx.db.files) {
+			try {
+				await ctx.db.files.upsertByEntityId(fileId, {
+					id: fileId,
+					// any: source is a passthrough record from Box webhook payload
+					...source,
+				});
+			} catch (error) {
+				console.warn('Failed to update downloaded file in database:', error);
+			}
+		}
 
 		await logEventFromContext(
 			ctx,
@@ -196,6 +220,20 @@ export const previewed: BoxWebhooks['filePreviewed'] = {
 		}
 
 		const event = request.payload;
+		const source = event.source;
+		const fileId = typeof source?.id === 'string' ? source.id : undefined;
+
+		if (fileId && ctx.db.files) {
+			try {
+				await ctx.db.files.upsertByEntityId(fileId, {
+					id: fileId,
+					// any: source is a passthrough record from Box webhook payload
+					...source,
+				});
+			} catch (error) {
+				console.warn('Failed to update previewed file in database:', error);
+			}
+		}
 
 		await logEventFromContext(
 			ctx,
@@ -302,6 +340,20 @@ export const trashed: BoxWebhooks['fileTrashed'] = {
 		}
 
 		const event = request.payload;
+		const source = event.source;
+		const fileId = typeof source?.id === 'string' ? source.id : undefined;
+
+		if (fileId && ctx.db.files) {
+			try {
+				await ctx.db.files.upsertByEntityId(fileId, {
+					id: fileId,
+					// any: source is a passthrough record from Box webhook payload
+					...source,
+				});
+			} catch (error) {
+				console.warn('Failed to update trashed file in database:', error);
+			}
+		}
 
 		await logEventFromContext(
 			ctx,
@@ -373,6 +425,7 @@ export const uploaded: BoxWebhooks['fileUploaded'] = {
 
 		if (fileId && ctx.db.files) {
 			try {
+				console.log(source, 'source');
 				await ctx.db.files.upsertByEntityId(fileId, {
 					id: fileId,
 					// any: source is a passthrough record from Box webhook payload

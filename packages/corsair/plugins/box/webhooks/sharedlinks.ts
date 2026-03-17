@@ -68,6 +68,32 @@ export const deleted: BoxWebhooks['sharedLinkDeleted'] = {
 		}
 
 		const event = request.payload;
+		const source = event.source;
+		const itemId = typeof source?.id === 'string' ? source.id : undefined;
+		const itemType =
+			typeof source?.type === 'string' ? source.type : undefined;
+
+		if (itemId && itemType === 'file' && ctx.db.files) {
+			try {
+				await ctx.db.files.upsertByEntityId(itemId, {
+					id: itemId,
+					// any: source is a passthrough record from Box webhook payload
+					...source,
+				});
+			} catch (error) {
+				console.warn('Failed to update file after shared link deletion in database:', error);
+			}
+		} else if (itemId && itemType === 'folder' && ctx.db.folders) {
+			try {
+				await ctx.db.folders.upsertByEntityId(itemId, {
+					id: itemId,
+					// any: source is a passthrough record from Box webhook payload
+					...source,
+				});
+			} catch (error) {
+				console.warn('Failed to update folder after shared link deletion in database:', error);
+			}
+		}
 
 		await logEventFromContext(
 			ctx,
