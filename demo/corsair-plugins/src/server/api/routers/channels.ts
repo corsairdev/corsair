@@ -13,12 +13,12 @@ export const channelsRouter: ReturnType<typeof createTRPCRouter> =
 					.optional(),
 			)
 			.query(async ({ ctx, input }) => {
-				return []
+				return [];
 			}),
 
 		getById: publicProcedure
 			.input(z.object({ channelId: z.string() }))
 			.query(async ({ ctx, input }) => {
-				return []
+				return [];
 			}),
 	});

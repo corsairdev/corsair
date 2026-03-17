@@ -1,6 +1,6 @@
 import { z } from 'zod';
-import type { RawWebhookRequest, WebhookRequest } from '../../../core';
 import { verifyHmacSignature } from '../../../async-core/webhook-utils';
+import type { RawWebhookRequest, WebhookRequest } from '../../../core';
 import { RawApiTweet, TwitterApiIOUser } from '../schema/database';
 
 // ── Event Schemas ─────────────────────────────────────────────────────────────
@@ -38,7 +38,9 @@ export const TweetFilterMatchEventSchema = z.object({
 export type TweetCreatedEvent = z.infer<typeof TweetCreatedEventSchema>;
 export type TweetFilterMatchEvent = z.infer<typeof TweetFilterMatchEventSchema>;
 
-export type TwitterApiIOWebhookEvent = TweetCreatedEvent | TweetFilterMatchEvent;
+export type TwitterApiIOWebhookEvent =
+	| TweetCreatedEvent
+	| TweetFilterMatchEvent;
 
 // ── Webhook Outputs Map ───────────────────────────────────────────────────────
 
@@ -78,7 +80,9 @@ export function verifyTwitterApiIOWebhookSignature(
 	request: WebhookRequest<unknown>,
 	secret: string,
 ): { valid: boolean; error?: string } {
-	const signature = (request.headers['x-twitterapiio-signature'] as string | undefined);
+	const signature = request.headers['x-twitterapiio-signature'] as
+		| string
+		| undefined;
 
 	if (!signature) {
 		// If no secret is configured, treat as valid
@@ -88,7 +92,10 @@ export function verifyTwitterApiIOWebhookSignature(
 
 	const rawBody = request.rawBody;
 	if (!rawBody) {
-		return { valid: false, error: 'Missing raw body for signature verification' };
+		return {
+			valid: false,
+			error: 'Missing raw body for signature verification',
+		};
 	}
 
 	const isValid = verifyHmacSignature(rawBody, secret, signature, 'sha256');

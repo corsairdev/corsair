@@ -50,7 +50,6 @@ export interface SetupCorsairOptions {
 	backfill?: boolean;
 }
 
-
 // ─────────────────────────────────────────────────────────────────────────────
 // Public API
 // ─────────────────────────────────────────────────────────────────────────────
@@ -446,9 +445,7 @@ async function runBackfill(
 
 		for (const [group, methods] of Object.entries(groups)) {
 			for (const [method, params] of Object.entries(methods)) {
-				log(
-					`[corsair:setup] Backfilling ${pluginId} › ${group}.${method}...`,
-				);
+				log(`[corsair:setup] Backfilling ${pluginId} › ${group}.${method}...`);
 				try {
 					await api[group]?.[method]?.(params);
 				} catch (error) {

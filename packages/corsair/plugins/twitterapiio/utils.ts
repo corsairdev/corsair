@@ -1,8 +1,15 @@
-import type { RawApiTweet, TwitterApiIOTweet, TwitterApiIOUser } from './schema/database';
+import type {
+	RawApiTweet,
+	TwitterApiIOTweet,
+	TwitterApiIOUser,
+} from './schema/database';
 
 type PluginDb = {
 	tweets?: {
-		upsertByEntityId: (id: string, data: TwitterApiIOTweet) => Promise<{ id?: string } | undefined>;
+		upsertByEntityId: (
+			id: string,
+			data: TwitterApiIOTweet,
+		) => Promise<{ id?: string } | undefined>;
 	};
 	users?: {
 		upsertByEntityId: (id: string, data: TwitterApiIOUser) => Promise<unknown>;

@@ -27,19 +27,18 @@ import type {
 	TwitterApiIOEndpointInputs,
 	TwitterApiIOEndpointOutputs,
 } from './endpoints/types';
+import { errorHandlers } from './error-handlers';
 import { TwitterApiIOSchema } from './schema';
-import type { TwitterApiIOCredentials } from './schema';
 import { TweetWebhooks } from './webhooks';
-import {
-	TweetCreatedEventSchema,
-	TweetFilterMatchEventSchema,
-} from './webhooks/types';
 import type {
 	TweetCreatedEvent,
 	TweetFilterMatchEvent,
 	TwitterApiIOWebhookOutputs,
 } from './webhooks/types';
-import { errorHandlers } from './error-handlers';
+import {
+	TweetCreatedEventSchema,
+	TweetFilterMatchEventSchema,
+} from './webhooks/types';
 
 // ── Context & Key Builder ─────────────────────────────────────────────────────
 
@@ -48,15 +47,17 @@ export type TwitterApiIOContext = CorsairPluginContext<
 	TwitterApiIOPluginOptions
 >;
 
-export type TwitterApiIOKeyBuilderContext = KeyBuilderContext<TwitterApiIOPluginOptions>;
+export type TwitterApiIOKeyBuilderContext =
+	KeyBuilderContext<TwitterApiIOPluginOptions>;
 
 // ── Endpoint Types ────────────────────────────────────────────────────────────
 
-type TwitterApiIOEndpoint<K extends keyof TwitterApiIOEndpointOutputs> = CorsairEndpoint<
-	TwitterApiIOContext,
-	TwitterApiIOEndpointInputs[K],
-	TwitterApiIOEndpointOutputs[K]
->;
+type TwitterApiIOEndpoint<K extends keyof TwitterApiIOEndpointOutputs> =
+	CorsairEndpoint<
+		TwitterApiIOContext,
+		TwitterApiIOEndpointInputs[K],
+		TwitterApiIOEndpointOutputs[K]
+	>;
 
 export type TwitterApiIOEndpoints = {
 	tweetsGetByIds: TwitterApiIOEndpoint<'tweetsGetByIds'>;
@@ -98,7 +99,9 @@ export type TwitterApiIOEndpoints = {
 	trendsGet: TwitterApiIOEndpoint<'trendsGet'>;
 };
 
-export type TwitterApiIOBoundEndpoints = BindEndpoints<typeof twitterApiIOEndpointsNested>;
+export type TwitterApiIOBoundEndpoints = BindEndpoints<
+	typeof twitterApiIOEndpointsNested
+>;
 
 // ── Webhook Types ─────────────────────────────────────────────────────────────
 
@@ -109,7 +112,10 @@ type TwitterApiIOWebhook<
 
 export type TwitterApiIOWebhooks = {
 	tweetCreated: TwitterApiIOWebhook<'tweetCreated', TweetCreatedEvent>;
-	tweetFilterMatch: TwitterApiIOWebhook<'tweetFilterMatch', TweetFilterMatchEvent>;
+	tweetFilterMatch: TwitterApiIOWebhook<
+		'tweetFilterMatch',
+		TweetFilterMatchEvent
+	>;
 };
 
 export type TwitterApiIOBoundWebhooks = BindWebhooks<TwitterApiIOWebhooks>;
@@ -373,43 +379,141 @@ const twitterApiIOWebhookSchemas = {
 // ── Endpoint Meta ─────────────────────────────────────────────────────────────
 
 const twitterApiIOEndpointMeta = {
-	'tweets.getByIds': { riskLevel: 'read', description: 'Fetch tweets by their IDs' },
-	'tweets.search': { riskLevel: 'read', description: 'Search tweets with a query' },
-	'tweets.getUserTimeline': { riskLevel: 'read', description: "Retrieve a user's tweet timeline by user ID" },
-	'tweets.getUserLastTweets': { riskLevel: 'read', description: "Retrieve a user's most recent tweets by username" },
-	'tweets.getUserMentions': { riskLevel: 'read', description: "Get tweets that mention a user" },
-	'tweets.getReplies': { riskLevel: 'read', description: 'Get replies to a tweet' },
-	'tweets.getQuotations': { riskLevel: 'read', description: 'Get quote tweets for a tweet' },
-	'tweets.getRetweeters': { riskLevel: 'read', description: 'Get users who retweeted a tweet' },
-	'tweets.getThreadContext': { riskLevel: 'read', description: 'Get the full thread context for a tweet' },
-	'tweets.create': { riskLevel: 'write', description: 'Post a new tweet or reply' },
-	'tweets.delete': { riskLevel: 'destructive', description: 'Delete a tweet', irreversible: true },
+	'tweets.getByIds': {
+		riskLevel: 'read',
+		description: 'Fetch tweets by their IDs',
+	},
+	'tweets.search': {
+		riskLevel: 'read',
+		description: 'Search tweets with a query',
+	},
+	'tweets.getUserTimeline': {
+		riskLevel: 'read',
+		description: "Retrieve a user's tweet timeline by user ID",
+	},
+	'tweets.getUserLastTweets': {
+		riskLevel: 'read',
+		description: "Retrieve a user's most recent tweets by username",
+	},
+	'tweets.getUserMentions': {
+		riskLevel: 'read',
+		description: 'Get tweets that mention a user',
+	},
+	'tweets.getReplies': {
+		riskLevel: 'read',
+		description: 'Get replies to a tweet',
+	},
+	'tweets.getQuotations': {
+		riskLevel: 'read',
+		description: 'Get quote tweets for a tweet',
+	},
+	'tweets.getRetweeters': {
+		riskLevel: 'read',
+		description: 'Get users who retweeted a tweet',
+	},
+	'tweets.getThreadContext': {
+		riskLevel: 'read',
+		description: 'Get the full thread context for a tweet',
+	},
+	'tweets.create': {
+		riskLevel: 'write',
+		description: 'Post a new tweet or reply',
+	},
+	'tweets.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete a tweet',
+		irreversible: true,
+	},
 	'tweets.like': { riskLevel: 'write', description: 'Like a tweet' },
-	'tweets.unlike': { riskLevel: 'write', description: 'Remove a like from a tweet' },
+	'tweets.unlike': {
+		riskLevel: 'write',
+		description: 'Remove a like from a tweet',
+	},
 	'tweets.retweet': { riskLevel: 'write', description: 'Retweet a tweet' },
-	'users.getByUsername': { riskLevel: 'read', description: 'Get user profile by username' },
-	'users.batchGetByIds': { riskLevel: 'read', description: 'Batch fetch user profiles by user IDs' },
+	'users.getByUsername': {
+		riskLevel: 'read',
+		description: 'Get user profile by username',
+	},
+	'users.batchGetByIds': {
+		riskLevel: 'read',
+		description: 'Batch fetch user profiles by user IDs',
+	},
 	'users.search': { riskLevel: 'read', description: 'Search users by keyword' },
-	'users.getFollowers': { riskLevel: 'read', description: "Get a user's followers" },
-	'users.getVerifiedFollowers': { riskLevel: 'read', description: "Get a user's verified (blue-check) followers" },
-	'users.getFollowings': { riskLevel: 'read', description: "Get users that a user is following" },
-	'users.checkFollowRelationship': { riskLevel: 'read', description: 'Check if two users follow each other' },
+	'users.getFollowers': {
+		riskLevel: 'read',
+		description: "Get a user's followers",
+	},
+	'users.getVerifiedFollowers': {
+		riskLevel: 'read',
+		description: "Get a user's verified (blue-check) followers",
+	},
+	'users.getFollowings': {
+		riskLevel: 'read',
+		description: 'Get users that a user is following',
+	},
+	'users.checkFollowRelationship': {
+		riskLevel: 'read',
+		description: 'Check if two users follow each other',
+	},
 	'users.follow': { riskLevel: 'write', description: 'Follow a user' },
 	'users.unfollow': { riskLevel: 'write', description: 'Unfollow a user' },
-	'users.getMe': { riskLevel: 'read', description: 'Get the authenticated account info' },
-	'lists.getFollowers': { riskLevel: 'read', description: 'Get followers of a Twitter list' },
-	'lists.getMembers': { riskLevel: 'read', description: 'Get members of a Twitter list' },
-	'lists.getTweets': { riskLevel: 'read', description: 'Get tweets from a Twitter list timeline' },
-	'communities.getById': { riskLevel: 'read', description: 'Get community info by ID' },
-	'communities.getMembers': { riskLevel: 'read', description: 'Get members of a community' },
-	'communities.getModerators': { riskLevel: 'read', description: 'Get moderators of a community' },
-	'communities.getTweets': { riskLevel: 'read', description: 'Get tweets posted in a community' },
-	'communities.searchTweets': { riskLevel: 'read', description: 'Search tweets across all communities' },
-	'communities.create': { riskLevel: 'write', description: 'Create a new Twitter community' },
-	'communities.delete': { riskLevel: 'destructive', description: 'Delete a Twitter community', irreversible: true },
-	'communities.join': { riskLevel: 'write', description: 'Join a Twitter community' },
-	'communities.leave': { riskLevel: 'write', description: 'Leave a Twitter community' },
-	'trends.get': { riskLevel: 'read', description: 'Get trending topics by location (woeid)' },
+	'users.getMe': {
+		riskLevel: 'read',
+		description: 'Get the authenticated account info',
+	},
+	'lists.getFollowers': {
+		riskLevel: 'read',
+		description: 'Get followers of a Twitter list',
+	},
+	'lists.getMembers': {
+		riskLevel: 'read',
+		description: 'Get members of a Twitter list',
+	},
+	'lists.getTweets': {
+		riskLevel: 'read',
+		description: 'Get tweets from a Twitter list timeline',
+	},
+	'communities.getById': {
+		riskLevel: 'read',
+		description: 'Get community info by ID',
+	},
+	'communities.getMembers': {
+		riskLevel: 'read',
+		description: 'Get members of a community',
+	},
+	'communities.getModerators': {
+		riskLevel: 'read',
+		description: 'Get moderators of a community',
+	},
+	'communities.getTweets': {
+		riskLevel: 'read',
+		description: 'Get tweets posted in a community',
+	},
+	'communities.searchTweets': {
+		riskLevel: 'read',
+		description: 'Search tweets across all communities',
+	},
+	'communities.create': {
+		riskLevel: 'write',
+		description: 'Create a new Twitter community',
+	},
+	'communities.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete a Twitter community',
+		irreversible: true,
+	},
+	'communities.join': {
+		riskLevel: 'write',
+		description: 'Join a Twitter community',
+	},
+	'communities.leave': {
+		riskLevel: 'write',
+		description: 'Leave a Twitter community',
+	},
+	'trends.get': {
+		riskLevel: 'read',
+		description: 'Get trending topics by location (woeid)',
+	},
 } satisfies RequiredPluginEndpointMeta<typeof twitterApiIOEndpointsNested>;
 
 // ── Auth Config ───────────────────────────────────────────────────────────────
@@ -424,16 +528,18 @@ export const twitterApiIOAuthConfig = {
 
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
-export type BaseTwitterApiIOPlugin<T extends TwitterApiIOPluginOptions> = CorsairPlugin<
-	'twitterapiio',
-	typeof TwitterApiIOSchema,
-	typeof twitterApiIOEndpointsNested,
-	typeof twitterApiIOWebhooksNested,
-	T,
-	typeof defaultAuthType
->;
+export type BaseTwitterApiIOPlugin<T extends TwitterApiIOPluginOptions> =
+	CorsairPlugin<
+		'twitterapiio',
+		typeof TwitterApiIOSchema,
+		typeof twitterApiIOEndpointsNested,
+		typeof twitterApiIOWebhooksNested,
+		T,
+		typeof defaultAuthType
+	>;
 
-export type InternalTwitterApiIOPlugin = BaseTwitterApiIOPlugin<TwitterApiIOPluginOptions>;
+export type InternalTwitterApiIOPlugin =
+	BaseTwitterApiIOPlugin<TwitterApiIOPluginOptions>;
 
 export type ExternalTwitterApiIOPlugin<T extends TwitterApiIOPluginOptions> =
 	BaseTwitterApiIOPlugin<T>;
@@ -441,7 +547,8 @@ export type ExternalTwitterApiIOPlugin<T extends TwitterApiIOPluginOptions> =
 // ── Plugin Factory ────────────────────────────────────────────────────────────
 
 export function twitterapiio<const T extends TwitterApiIOPluginOptions>(
-	incomingOptions: TwitterApiIOPluginOptions & T = {} as TwitterApiIOPluginOptions & T,
+	incomingOptions: TwitterApiIOPluginOptions &
+		T = {} as TwitterApiIOPluginOptions & T,
 ): ExternalTwitterApiIOPlugin<T> {
 	const options = {
 		...incomingOptions,
@@ -472,12 +579,15 @@ export function twitterapiio<const T extends TwitterApiIOPluginOptions>(
 				typeof request.body === 'string'
 					? (() => {
 							try {
-								return JSON.parse(request.body as string) as Record<string, unknown>;
+								return JSON.parse(request.body as string) as Record<
+									string,
+									unknown
+								>;
 							} catch {
 								return {};
 							}
 						})()
-					: (request.body as Record<string, unknown> | undefined) ?? {};
+					: ((request.body as Record<string, unknown> | undefined) ?? {});
 			const hasKnownType =
 				body?.type === 'tweet.created' || body?.type === 'tweet.filter_match';
 			return hasSignature || hasKnownType;
@@ -508,15 +618,13 @@ export function twitterapiio<const T extends TwitterApiIOPluginOptions>(
 
 // ── Type Exports ──────────────────────────────────────────────────────────────
 
+export type {
+	TwitterApiIOEndpointInputs,
+	TwitterApiIOEndpointOutputs,
+} from './endpoints/types';
 export type { TwitterApiIOCredentials } from './schema';
-
 export type {
 	TweetCreatedEvent,
 	TweetFilterMatchEvent,
 	TwitterApiIOWebhookOutputs,
 } from './webhooks/types';
-
-export type {
-	TwitterApiIOEndpointInputs,
-	TwitterApiIOEndpointOutputs,
-} from './endpoints/types';

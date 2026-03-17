@@ -191,7 +191,10 @@ export function createIntegrationKeyManager<T extends AuthTypes>(
 		try {
 			currentConfig = await getDecryptedConfig();
 		} catch (err) {
-			console.error(`[corsair] Failed to decrypt config for integration "${integrationName}", starting fresh:`, err);
+			console.error(
+				`[corsair] Failed to decrypt config for integration "${integrationName}", starting fresh:`,
+				err,
+			);
 			currentConfig = {};
 		}
 
@@ -437,7 +440,10 @@ export function createAccountKeyManager<T extends AuthTypes>(
 		try {
 			currentConfig = await getDecryptedConfig();
 		} catch (err) {
-			console.error(`[corsair] Failed to decrypt config for account (tenant: "${tenantId}", integration: "${integrationName}"), starting fresh:`, err);
+			console.error(
+				`[corsair] Failed to decrypt config for account (tenant: "${tenantId}", integration: "${integrationName}"), starting fresh:`,
+				err,
+			);
 			currentConfig = {};
 		}
 

@@ -1,6 +1,6 @@
+import type { tool as AgentsTool, Tool } from '@openai/agents';
 import { z } from 'zod';
 import { zodToJsonSchema } from 'zod-to-json-schema';
-import type { tool as AgentsTool, Tool } from '@openai/agents';
 import type { BaseMcpOptions } from '../core/adapters.js';
 import { buildCorsairToolDefs } from '../core/tools.js';
 
@@ -27,7 +27,9 @@ export class OpenAIAgentsProvider {
 				strict: false,
 				execute: async (input) => {
 					try {
-						const raw = (typeof input === 'string' ? JSON.parse(input) : input) as Record<string, unknown>;
+						const raw = (
+							typeof input === 'string' ? JSON.parse(input) : input
+						) as Record<string, unknown>;
 
 						// Models sometimes flatten nested args to top-level.
 						// Collect unknown keys and merge them into `args` if the shape has one.

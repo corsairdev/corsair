@@ -1,5 +1,5 @@
-import type { TwitterApiIOWebhooks } from '..';
 import { logEventFromContext } from '../../utils/events';
+import type { TwitterApiIOWebhooks } from '..';
 import { persistTweetWithAuthor } from '../utils';
 import {
 	createTwitterApiIOMatch,
@@ -46,7 +46,10 @@ export const tweetCreated: TwitterApiIOWebhooks['tweetCreated'] = {
 
 		if (event.data.user && ctx.db.users) {
 			try {
-				await ctx.db.users.upsertByEntityId(event.data.user.id, event.data.user);
+				await ctx.db.users.upsertByEntityId(
+					event.data.user.id,
+					event.data.user,
+				);
 			} catch (error) {
 				console.warn('[twitterapiio] Failed to save user to database:', error);
 			}
@@ -106,7 +109,10 @@ export const tweetFilterMatch: TwitterApiIOWebhooks['tweetFilterMatch'] = {
 
 		if (event.data.user && ctx.db.users) {
 			try {
-				await ctx.db.users.upsertByEntityId(event.data.user.id, event.data.user);
+				await ctx.db.users.upsertByEntityId(
+					event.data.user.id,
+					event.data.user,
+				);
 			} catch (error) {
 				console.warn('[twitterapiio] Failed to save user to database:', error);
 			}

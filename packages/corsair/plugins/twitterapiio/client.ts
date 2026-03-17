@@ -40,7 +40,10 @@ export async function makeTwitterApiIORequest<T>(
 	const requestOptions: ApiRequestOptions = {
 		method,
 		url: endpoint,
-		body: method === 'POST' || method === 'PUT' || method === 'PATCH' ? body : undefined,
+		body:
+			method === 'POST' || method === 'PUT' || method === 'PATCH'
+				? body
+				: undefined,
 		mediaType: 'application/json; charset=utf-8',
 		query: method === 'GET' ? query : undefined,
 	};

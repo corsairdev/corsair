@@ -5,8 +5,8 @@ import type {
 	TrendsGetResponse,
 	TweetsGetByIdsResponse,
 	TweetsSearchResponse,
-	UsersGetByUsernameResponse,
 	UsersBatchGetByIdsResponse,
+	UsersGetByUsernameResponse,
 } from './endpoints/types';
 import { TwitterApiIOEndpointOutputSchemas } from './endpoints/types';
 
@@ -24,11 +24,12 @@ describe('TwitterApiIO API Type Tests', () => {
 		it('usersGetByUsername returns correct type', async () => {
 			if (!TEST_API_KEY) return;
 
-			const response = await makeTwitterApiIORequest<UsersGetByUsernameResponse>(
-				'/twitter/user/info',
-				TEST_API_KEY,
-				{ query: { userName: TEST_USERNAME } },
-			);
+			const response =
+				await makeTwitterApiIORequest<UsersGetByUsernameResponse>(
+					'/twitter/user/info',
+					TEST_API_KEY,
+					{ query: { userName: TEST_USERNAME } },
+				);
 
 			TwitterApiIOEndpointOutputSchemas.usersGetByUsername.parse(response);
 		});
@@ -36,11 +37,12 @@ describe('TwitterApiIO API Type Tests', () => {
 		it('usersBatchGetByIds returns correct type', async () => {
 			if (!TEST_API_KEY || !TEST_USER_ID) return;
 
-			const response = await makeTwitterApiIORequest<UsersBatchGetByIdsResponse>(
-				'/twitter/user/batch_info_by_ids',
-				TEST_API_KEY,
-				{ query: { userIds: TEST_USER_ID } },
-			);
+			const response =
+				await makeTwitterApiIORequest<UsersBatchGetByIdsResponse>(
+					'/twitter/user/batch_info_by_ids',
+					TEST_API_KEY,
+					{ query: { userIds: TEST_USER_ID } },
+				);
 
 			TwitterApiIOEndpointOutputSchemas.usersBatchGetByIds.parse(response);
 		});
@@ -95,7 +97,9 @@ describe('TwitterApiIO API Type Tests', () => {
 				},
 			});
 
-			TwitterApiIOEndpointOutputSchemas.usersCheckFollowRelationship.parse(response);
+			TwitterApiIOEndpointOutputSchemas.usersCheckFollowRelationship.parse(
+				response,
+			);
 		});
 	});
 
@@ -251,11 +255,12 @@ describe('TwitterApiIO API Type Tests', () => {
 		it('communitiesGetById returns correct type', async () => {
 			if (!TEST_API_KEY || !TEST_COMMUNITY_ID) return;
 
-			const response = await makeTwitterApiIORequest<CommunitiesGetByIdResponse>(
-				'/twitter/community/info',
-				TEST_API_KEY,
-				{ query: { communityId: TEST_COMMUNITY_ID } },
-			);
+			const response =
+				await makeTwitterApiIORequest<CommunitiesGetByIdResponse>(
+					'/twitter/community/info',
+					TEST_API_KEY,
+					{ query: { communityId: TEST_COMMUNITY_ID } },
+				);
 
 			TwitterApiIOEndpointOutputSchemas.communitiesGetById.parse(response);
 		});

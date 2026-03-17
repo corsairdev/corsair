@@ -22,11 +22,11 @@ export type TwitterApiIOCredentials = {
 };
 
 export type {
+	RawApiTweet,
 	TwitterApiIOCommunity,
 	TwitterApiIOList,
 	TwitterApiIOTrend,
 	TwitterApiIOTweet,
 	TwitterApiIOTweetMedia,
 	TwitterApiIOUser,
-	RawApiTweet,
 } from './database';

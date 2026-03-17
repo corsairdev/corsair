@@ -128,6 +128,8 @@ export {
 
 // TwitterApiIO Plugin
 export {
+	type TweetCreatedEvent,
+	type TweetFilterMatchEvent,
 	type TwitterApiIOBoundEndpoints,
 	type TwitterApiIOBoundWebhooks,
 	type TwitterApiIOContext,
@@ -137,9 +139,7 @@ export {
 	type TwitterApiIOEndpoints,
 	type TwitterApiIOPluginOptions,
 	type TwitterApiIOWebhooks,
-	type TweetCreatedEvent,
-	type TweetFilterMatchEvent,
-	twitterapiio,
 	twitterApiIOAuthConfig,
 	twitterApiIOEndpointSchemas,
+	twitterapiio,
 } from './twitterapiio';

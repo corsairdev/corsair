@@ -1,5 +1,5 @@
-import type { TwitterApiIOEndpoints } from '..';
 import { logEventFromContext } from '../../utils/events';
+import type { TwitterApiIOEndpoints } from '..';
 import { makeTwitterApiIORequest } from '../client';
 import type { TwitterApiIOEndpointOutputs } from './types';
 
@@ -21,6 +21,11 @@ export const get: TwitterApiIOEndpoints['trendsGet'] = async (ctx, input) => {
 		}
 	}
 
-	await logEventFromContext(ctx, 'twitterapiio.trends.get', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'twitterapiio.trends.get',
+		{ ...input },
+		'completed',
+	);
 	return response;
 };

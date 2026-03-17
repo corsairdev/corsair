@@ -1,67 +1,66 @@
-import type { TwitterApiIOEndpoints } from '..';
 import { logEventFromContext } from '../../utils/events';
+import type { TwitterApiIOEndpoints } from '..';
 import { makeTwitterApiIORequest } from '../client';
 import type { TwitterApiIOEndpointOutputs } from './types';
 
-export const getByUsername: TwitterApiIOEndpoints['usersGetByUsername'] = async (
-	ctx,
-	input,
-) => {
-	const response = await makeTwitterApiIORequest<
-		TwitterApiIOEndpointOutputs['usersGetByUsername']
-	>('/twitter/user/info', ctx.key, {
-		method: 'GET',
-		query: { userName: input.userName },
-	});
+export const getByUsername: TwitterApiIOEndpoints['usersGetByUsername'] =
+	async (ctx, input) => {
+		const response = await makeTwitterApiIORequest<
+			TwitterApiIOEndpointOutputs['usersGetByUsername']
+		>('/twitter/user/info', ctx.key, {
+			method: 'GET',
+			query: { userName: input.userName },
+		});
 
-	if (response.data && ctx.db.users) {
-		try {
-			await ctx.db.users.upsertByEntityId(response.data.id, response.data);
-		} catch (error) {
-			console.warn('[twitterapiio] Failed to save user to database:', error);
-		}
-	}
-
-	await logEventFromContext(
-		ctx,
-		'twitterapiio.users.getByUsername',
-		{ ...input },
-		'completed',
-	);
-	return response;
-};
-
-export const batchGetByIds: TwitterApiIOEndpoints['usersBatchGetByIds'] = async (
-	ctx,
-	input,
-) => {
-	const response = await makeTwitterApiIORequest<
-		TwitterApiIOEndpointOutputs['usersBatchGetByIds']
-	>('/twitter/user/batch_info_by_ids', ctx.key, {
-		method: 'GET',
-		query: { userIds: input.userIds },
-	});
-
-	if (response.data && ctx.db.users) {
-		try {
-			for (const user of response.data) {
-				await ctx.db.users.upsertByEntityId(user.id, user);
+		if (response.data && ctx.db.users) {
+			try {
+				await ctx.db.users.upsertByEntityId(response.data.id, response.data);
+			} catch (error) {
+				console.warn('[twitterapiio] Failed to save user to database:', error);
 			}
-		} catch (error) {
-			console.warn('[twitterapiio] Failed to save users to database:', error);
 		}
-	}
 
-	await logEventFromContext(
-		ctx,
-		'twitterapiio.users.batchGetByIds',
-		{ ...input },
-		'completed',
-	);
-	return response;
-};
+		await logEventFromContext(
+			ctx,
+			'twitterapiio.users.getByUsername',
+			{ ...input },
+			'completed',
+		);
+		return response;
+	};
 
-export const search: TwitterApiIOEndpoints['usersSearch'] = async (ctx, input) => {
+export const batchGetByIds: TwitterApiIOEndpoints['usersBatchGetByIds'] =
+	async (ctx, input) => {
+		const response = await makeTwitterApiIORequest<
+			TwitterApiIOEndpointOutputs['usersBatchGetByIds']
+		>('/twitter/user/batch_info_by_ids', ctx.key, {
+			method: 'GET',
+			query: { userIds: input.userIds },
+		});
+
+		if (response.data && ctx.db.users) {
+			try {
+				for (const user of response.data) {
+					await ctx.db.users.upsertByEntityId(user.id, user);
+				}
+			} catch (error) {
+				console.warn('[twitterapiio] Failed to save users to database:', error);
+			}
+		}
+
+		await logEventFromContext(
+			ctx,
+			'twitterapiio.users.batchGetByIds',
+			{ ...input },
+			'completed',
+		);
+		return response;
+	};
+
+export const search: TwitterApiIOEndpoints['usersSearch'] = async (
+	ctx,
+	input,
+) => {
 	const response = await makeTwitterApiIORequest<
 		TwitterApiIOEndpointOutputs['usersSearch']
 	>('/twitter/user/search', ctx.key, {
@@ -79,11 +78,19 @@ export const search: TwitterApiIOEndpoints['usersSearch'] = async (ctx, input) =
 		}
 	}
 
-	await logEventFromContext(ctx, 'twitterapiio.users.search', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'twitterapiio.users.search',
+		{ ...input },
+		'completed',
+	);
 	return response;
 };
 
-export const getFollowers: TwitterApiIOEndpoints['usersGetFollowers'] = async (ctx, input) => {
+export const getFollowers: TwitterApiIOEndpoints['usersGetFollowers'] = async (
+	ctx,
+	input,
+) => {
 	const response = await makeTwitterApiIORequest<
 		TwitterApiIOEndpointOutputs['usersGetFollowers']
 	>('/twitter/user/followers', ctx.key, {
@@ -101,7 +108,12 @@ export const getFollowers: TwitterApiIOEndpoints['usersGetFollowers'] = async (c
 		}
 	}
 
-	await logEventFromContext(ctx, 'twitterapiio.users.getFollowers', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'twitterapiio.users.getFollowers',
+		{ ...input },
+		'completed',
+	);
 	return response;
 };
 
@@ -133,35 +145,33 @@ export const getVerifiedFollowers: TwitterApiIOEndpoints['usersGetVerifiedFollow
 		return response;
 	};
 
-export const getFollowings: TwitterApiIOEndpoints['usersGetFollowings'] = async (
-	ctx,
-	input,
-) => {
-	const response = await makeTwitterApiIORequest<
-		TwitterApiIOEndpointOutputs['usersGetFollowings']
-	>('/twitter/user/followings', ctx.key, {
-		method: 'GET',
-		query: { userName: input.userName, cursor: input.cursor },
-	});
+export const getFollowings: TwitterApiIOEndpoints['usersGetFollowings'] =
+	async (ctx, input) => {
+		const response = await makeTwitterApiIORequest<
+			TwitterApiIOEndpointOutputs['usersGetFollowings']
+		>('/twitter/user/followings', ctx.key, {
+			method: 'GET',
+			query: { userName: input.userName, cursor: input.cursor },
+		});
 
-	if (response.users && ctx.db.users) {
-		try {
-			for (const user of response.users) {
-				await ctx.db.users.upsertByEntityId(user.id, user);
+		if (response.users && ctx.db.users) {
+			try {
+				for (const user of response.users) {
+					await ctx.db.users.upsertByEntityId(user.id, user);
+				}
+			} catch (error) {
+				console.warn('[twitterapiio] Failed to save users to database:', error);
 			}
-		} catch (error) {
-			console.warn('[twitterapiio] Failed to save users to database:', error);
 		}
-	}
 
-	await logEventFromContext(
-		ctx,
-		'twitterapiio.users.getFollowings',
-		{ ...input },
-		'completed',
-	);
-	return response;
-};
+		await logEventFromContext(
+			ctx,
+			'twitterapiio.users.getFollowings',
+			{ ...input },
+			'completed',
+		);
+		return response;
+	};
 
 export const checkFollowRelationship: TwitterApiIOEndpoints['usersCheckFollowRelationship'] =
 	async (ctx, input) => {
@@ -184,7 +194,10 @@ export const checkFollowRelationship: TwitterApiIOEndpoints['usersCheckFollowRel
 		return response;
 	};
 
-export const follow: TwitterApiIOEndpoints['usersFollow'] = async (ctx, input) => {
+export const follow: TwitterApiIOEndpoints['usersFollow'] = async (
+	ctx,
+	input,
+) => {
 	const response = await makeTwitterApiIORequest<
 		TwitterApiIOEndpointOutputs['usersFollow']
 	>('/twitter/user/follow', ctx.key, {
@@ -201,7 +214,10 @@ export const follow: TwitterApiIOEndpoints['usersFollow'] = async (ctx, input) =
 	return response;
 };
 
-export const unfollow: TwitterApiIOEndpoints['usersUnfollow'] = async (ctx, input) => {
+export const unfollow: TwitterApiIOEndpoints['usersUnfollow'] = async (
+	ctx,
+	input,
+) => {
 	const response = await makeTwitterApiIORequest<
 		TwitterApiIOEndpointOutputs['usersUnfollow']
 	>('/twitter/user/unfollow', ctx.key, {
@@ -218,7 +234,10 @@ export const unfollow: TwitterApiIOEndpoints['usersUnfollow'] = async (ctx, inpu
 	return response;
 };
 
-export const getMe: TwitterApiIOEndpoints['usersGetMe'] = async (ctx, input) => {
+export const getMe: TwitterApiIOEndpoints['usersGetMe'] = async (
+	ctx,
+	input,
+) => {
 	const response = await makeTwitterApiIORequest<
 		TwitterApiIOEndpointOutputs['usersGetMe']
 	>('/twitter/user/me', ctx.key, {

@@ -2,7 +2,9 @@ import 'dotenv/config';
 import { query } from '@anthropic-ai/claude-agent-sdk';
 import { fileURLToPath } from 'url';
 
-const mcpServerPath = fileURLToPath(new URL('./mcp-server.ts', import.meta.url));
+const mcpServerPath = fileURLToPath(
+	new URL('./mcp-server.ts', import.meta.url),
+);
 
 const prompt = process.argv[2];
 if (!prompt) {
@@ -17,7 +19,11 @@ async function main() {
 			model: 'claude-sonnet-4-6',
 			permissionMode: 'bypassPermissions',
 			mcpServers: {
-				corsair: { type: 'stdio', command: 'npx', args: ['tsx', mcpServerPath] },
+				corsair: {
+					type: 'stdio',
+					command: 'npx',
+					args: ['tsx', mcpServerPath],
+				},
 			},
 		},
 	})) {

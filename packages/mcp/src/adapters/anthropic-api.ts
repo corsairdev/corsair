@@ -1,6 +1,6 @@
+import type { Tool } from '@anthropic-ai/sdk/resources';
 import { z } from 'zod';
 import { zodToJsonSchema } from 'zod-to-json-schema';
-import type { Tool } from '@anthropic-ai/sdk/resources';
 import { BaseProvider } from '../core/provider.js';
 import type { CorsairToolDef } from '../core/tools.js';
 
