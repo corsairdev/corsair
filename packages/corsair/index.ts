@@ -27,5 +27,8 @@ export { slack } from './plugins/slack';
 export { spotify } from './plugins/spotify';
 export { todoist } from './plugins/todoist';
 export { monday } from './plugins/monday';
+export { exa } from './plugins/exa';
+export { oura } from './plugins/oura';
+export { twitterapiio } from './plugins/twitterapiio';
 
 export { type SetupCorsairOptions, setupCorsair } from './setup/index';

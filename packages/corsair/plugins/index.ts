@@ -125,3 +125,21 @@ export {
 	type SlackWebhooks,
 	slack,
 } from './slack';
+
+// TwitterApiIO Plugin
+export {
+	type TweetCreatedEvent,
+	type TweetFilterMatchEvent,
+	type TwitterApiIOBoundEndpoints,
+	type TwitterApiIOBoundWebhooks,
+	type TwitterApiIOContext,
+	type TwitterApiIOCredentials,
+	type TwitterApiIOEndpointInputs,
+	type TwitterApiIOEndpointOutputs,
+	type TwitterApiIOEndpoints,
+	type TwitterApiIOPluginOptions,
+	type TwitterApiIOWebhooks,
+	twitterApiIOAuthConfig,
+	twitterApiIOEndpointSchemas,
+	twitterapiio,
+} from './twitterapiio';

@@ -17,6 +17,7 @@ export const BaseProviders = [
 	'amplitude',
 	'cal',
 	'discord',
+	'exa',
 	'github',
 	'gmail',
 	'googlecalendar',
@@ -26,6 +27,7 @@ export const BaseProviders = [
 	'linear',
 	'monday',
 	'notion',
+	'oura',
 	'pagerduty',
 	'posthog',
 	'resend',
@@ -33,7 +35,9 @@ export const BaseProviders = [
 	'slack',
 	'spotify',
 	'tavily',
+	'teams',
 	'todoist',
+	'twitterapiio',
 ] as const;
 
 export type AllProviders =
@@ -41,6 +45,7 @@ export type AllProviders =
 	| 'amplitude'
 	| 'cal'
 	| 'discord'
+	| 'exa'
 	| 'github'
 	| 'gmail'
 	| 'googlecalendar'
@@ -50,6 +55,7 @@ export type AllProviders =
 	| 'linear'
 	| 'monday'
 	| 'notion'
+	| 'oura'
 	| 'pagerduty'
 	| 'posthog'
 	| 'resend'
@@ -57,7 +63,9 @@ export type AllProviders =
 	| 'slack'
 	| 'spotify'
 	| 'tavily'
+	| 'teams'
 	| 'todoist'
+	| 'twitterapiio'
 	| (string & {});
 
 export type AuthTypes = 'oauth_2' | 'api_key' | 'bot_token';

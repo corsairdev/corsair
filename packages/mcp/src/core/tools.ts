@@ -59,57 +59,24 @@ export function buildCorsairToolDefs(
 			},
 		},
 		{
-			name: 'corsair_run',
+			name: 'run_script',
 			description:
-				"Execute any Corsair API endpoint by its dot-path. Use list_operations to discover paths and get_schema to understand required args. Example path: 'slack.api.channels.list'.",
+				'Run a JavaScript script with `corsair` as the only variable in scope. Call Corsair operations, filter or transform the results inline, and return only what you need. The return value becomes the tool output.',
 			shape: {
-				path: z
+				code: z
 					.string()
-					.describe("Full API dot-path, e.g. 'slack.api.messages.post'"),
-				args: z
-					.record(z.unknown())
-					.default({})
-					.describe('Arguments object for the operation'),
+					.describe(
+						'Async JS script with `corsair` in scope. Return the value you want. Example:\nconst result = await corsair.slack.api.channels.list({});\nconst channel = result.channels?.find(c => c.name === "general");\nreturn channel?.id;',
+					),
 			},
-			handler: async ({ path, args }) => {
-				const parts = (path as string).split('.');
-
-				if (parts.length < 3) {
-					return {
-						isError: true,
-						content: [
-							{
-								type: 'text',
-								text: `Invalid path "${path}". Expected format: "plugin.api.group.method". Use list_operations to see valid paths.`,
-							},
-						],
-					};
-				}
-
-				let fn: unknown = corsair;
-				for (const part of parts) {
-					if (typeof fn !== 'object' || fn === null) {
-						fn = undefined;
-						break;
-					}
-					fn = (fn as Record<string, unknown>)[part];
-				}
-
-				if (typeof fn !== 'function') {
-					return {
-						isError: true,
-						content: [
-							{
-								type: 'text',
-								text: `Path "${path}" is not a callable operation. Use list_operations to see valid paths.`,
-							},
-						],
-					};
-				}
-
+			handler: async ({ code }) => {
 				try {
-					const result = await (fn as (args: unknown) => Promise<unknown>)(
-						args,
+					const fn = new Function(
+						'corsair',
+						`return (async () => { ${code} })()`,
+					);
+					const result = await (fn as (c: unknown) => Promise<unknown>)(
+						corsair,
 					);
 					return {
 						content: [{ type: 'text', text: JSON.stringify(result, null, 2) }],
@@ -126,7 +93,7 @@ export function buildCorsairToolDefs(
 						content: [
 							{
 								type: 'text',
-								text: `Error running "${path}": ${message}${extra}\n${full}`,
+								text: `Error running snippet: ${message}${extra}\n${full}`,
 							},
 						],
 					};
@@ -141,12 +108,18 @@ export function buildCorsairToolDefs(
 			handler: async () => {
 				try {
 					if (Object.keys(corsair).includes('withTenant')) {
-						throw new Error("Cannot setup Corsair if it multiTenancy is enabled.")
+						throw new Error(
+							'Cannot setup Corsair if it multiTenancy is enabled.',
+						);
 					}
 
-					await setupCorsair(corsair as Parameters<typeof setupCorsair>[0]);
+					const text = await setupCorsair(
+						corsair as Parameters<typeof setupCorsair>[0],
+					);
 					return {
-						content: [{ type: 'text', text: 'Corsair setup complete.' }],
+						content: [
+							{ type: 'text', text: text || 'Corsair setup complete.' },
+						],
 					};
 				} catch (err) {
 					const message = err instanceof Error ? err.message : String(err);
