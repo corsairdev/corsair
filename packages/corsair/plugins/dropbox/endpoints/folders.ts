@@ -8,24 +8,15 @@ export const copy: DropboxEndpoints['foldersCopy'] = async (ctx, input) => {
 		DropboxEndpointOutputs['foldersCopy']
 	>('files/copy_v2', ctx.key, {
 		method: 'POST',
-		body: {
-			from_path: input.from_path,
-			to_path: input.to_path,
-			allow_shared_folder: input.allow_shared_folder,
-			autorename: input.autorename,
-			allow_ownership_transfer: input.allow_ownership_transfer,
-		},
+		body: input,
 	});
 
 	if (result.metadata && ctx.db.folders) {
 		try {
 			const meta = result.metadata;
-			if (!('size' in meta) && meta.id) {
+			if (meta['.tag'] === 'folder') {
 				await ctx.db.folders.upsertByEntityId(meta.id, {
-					id: meta.id,
-					name: meta.name,
-					path_lower: meta.path_lower,
-					path_display: meta.path_display,
+					...meta,
 				});
 			}
 		} catch (error) {
@@ -58,10 +49,7 @@ export const create: DropboxEndpoints['foldersCreate'] = async (ctx, input) => {
 			const meta = result.metadata;
 			if (meta.id) {
 				await ctx.db.folders.upsertByEntityId(meta.id, {
-					id: meta.id,
-					name: meta.name,
-					path_lower: meta.path_lower,
-					path_display: meta.path_display,
+					...meta,
 				});
 			}
 		} catch (error) {
@@ -92,7 +80,7 @@ export const deleteFolder: DropboxEndpoints['foldersDelete'] = async (
 	if (ctx.db.folders) {
 		try {
 			const meta = result.metadata;
-			if (!('size' in meta) && meta.id) {
+			if (meta['.tag'] === 'folder') {
 				await ctx.db.folders.deleteByEntityId(meta.id);
 			}
 		} catch (error) {
@@ -114,52 +102,36 @@ export const list: DropboxEndpoints['foldersList'] = async (ctx, input) => {
 		DropboxEndpointOutputs['foldersList']
 	>('files/list_folder', ctx.key, {
 		method: 'POST',
-		body: {
-			path: input.path,
-			recursive: input.recursive,
-			include_deleted: input.include_deleted,
-			include_mounted_folders: input.include_mounted_folders,
-			limit: input.limit,
-		},
+		body: input,
 	});
 
 	if (result.entries && ctx.db.files && ctx.db.folders) {
 		try {
 			for (const entry of result.entries) {
-				// Dropbox uses .passthrough() so '.tag' is present at runtime
-				const tag = (entry as { '.tag'?: string })['.tag'];
-
-				console.log(entry, tag, 'entry');
-
-				if (tag === 'deleted') {
+				if (entry['.tag'] === 'deleted') {
 					// Deleted entries have no id — look up by path_lower to get the entity_id
 					if (!entry.path_lower) continue;
 					const [allFiles, allFolders] = await Promise.all([
 						ctx.db.files.list(),
 						ctx.db.folders.list(),
 					]);
-					// any cast needed because TypedEntity data is typed as ZodTypeAny inferred shape
+					// TypedEntity.data is typed as ZodTypeAny inferred shape — cast to known schema
 					const fileMatch = allFiles.find(f => (f.data as { path_lower?: string }).path_lower === entry.path_lower);
 					const folderMatch = allFolders.find(f => (f.data as { path_lower?: string }).path_lower === entry.path_lower);
 					await Promise.allSettled([
 						fileMatch ? ctx.db.files.deleteByEntityId(fileMatch.entity_id) : Promise.resolve(),
 						folderMatch ? ctx.db.folders.deleteByEntityId(folderMatch.entity_id) : Promise.resolve(),
 					]);
-				} else if (tag === 'folder') {
-					if (!entry.id) continue;
+				} else if (entry['.tag'] === 'folder') {
 					await ctx.db.folders.upsertByEntityId(entry.id, {
-						id: entry.id,
-						name: entry.name,
-						path_lower: entry.path_lower,
-						path_display: entry.path_display,
+						...entry,
 					});
 				} else {
-					if (!entry.id) continue;
+					// entry is narrowed to FileMetadata — size is typed
 					await ctx.db.files.upsertByEntityId(entry.id, {
-						id: entry.id,
-						name: entry.name,
-						path_lower: entry.path_lower,
-						path_display: entry.path_display,
+						...entry,
+						server_modified: entry.server_modified ? new Date(entry.server_modified) : null,
+						client_modified: entry.client_modified ? new Date(entry.client_modified) : null,
 					});
 				}
 			}
@@ -191,40 +163,30 @@ export const listContinue: DropboxEndpoints['foldersListContinue'] = async (
 	if (result.entries && ctx.db.files && ctx.db.folders) {
 		try {
 			for (const entry of result.entries) {
-				// Dropbox uses .passthrough() so '.tag' is present at runtime
-				const tag = (entry as { '.tag'?: string })['.tag'];
-
-				if (tag === 'deleted') {
+				if (entry['.tag'] === 'deleted') {
 					// Deleted entries have no id — look up by path_lower to get the entity_id
 					if (!entry.path_lower) continue;
 					const [allFiles, allFolders] = await Promise.all([
 						ctx.db.files.list(),
 						ctx.db.folders.list(),
 					]);
-					// any cast needed because TypedEntity data is typed as ZodTypeAny inferred shape
+					// TypedEntity.data is typed as ZodTypeAny inferred shape — cast to known schema
 					const fileMatch = allFiles.find(f => (f.data as { path_lower?: string }).path_lower === entry.path_lower);
 					const folderMatch = allFolders.find(f => (f.data as { path_lower?: string }).path_lower === entry.path_lower);
 					await Promise.allSettled([
 						fileMatch ? ctx.db.files.deleteByEntityId(fileMatch.entity_id) : Promise.resolve(),
 						folderMatch ? ctx.db.folders.deleteByEntityId(folderMatch.entity_id) : Promise.resolve(),
 					]);
-				} else if (tag === 'folder') {
-					if (!entry.id) continue;
+				} else if (entry['.tag'] === 'folder') {
 					await ctx.db.folders.upsertByEntityId(entry.id, {
-						id: entry.id,
-						name: entry.name,
-						path_lower: entry.path_lower,
-						path_display: entry.path_display,
+						...entry,
 					});
 				} else {
-					if (!entry.id) continue;
-					// any cast needed because entry is a union type at runtime
+					// entry is narrowed to FileMetadata — size is typed
 					await ctx.db.files.upsertByEntityId(entry.id, {
-						id: entry.id,
-						name: entry.name,
-						path_lower: entry.path_lower,
-						path_display: entry.path_display,
-						size: (entry as { size?: number }).size,
+						...entry,
+						server_modified: entry.server_modified ? new Date(entry.server_modified) : null,
+						client_modified: entry.client_modified ? new Date(entry.client_modified) : null,
 					});
 				}
 			}
@@ -247,24 +209,15 @@ export const move: DropboxEndpoints['foldersMove'] = async (ctx, input) => {
 		DropboxEndpointOutputs['foldersMove']
 	>('files/move_v2', ctx.key, {
 		method: 'POST',
-		body: {
-			from_path: input.from_path,
-			to_path: input.to_path,
-			allow_shared_folder: input.allow_shared_folder,
-			autorename: input.autorename,
-			allow_ownership_transfer: input.allow_ownership_transfer,
-		},
+		body: input,
 	});
 
 	if (result.metadata && ctx.db.folders) {
 		try {
 			const meta = result.metadata;
-			if (!('size' in meta) && meta.id) {
+			if (meta['.tag'] === 'folder') {
 				await ctx.db.folders.upsertByEntityId(meta.id, {
-					id: meta.id,
-					name: meta.name,
-					path_lower: meta.path_lower,
-					path_display: meta.path_display,
+					...meta,
 				});
 			}
 		} catch (error) {

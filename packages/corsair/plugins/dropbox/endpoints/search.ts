@@ -10,11 +10,7 @@ export const query: DropboxEndpoints['searchQuery'] = async (ctx, input) => {
 		method: 'POST',
 		body: {
 			query: input.query,
-			options: {
-				path: input.path,
-				max_results: input.max_results,
-				filename_only: input.filename_only,
-			},
+			options: input,
 		},
 	});
 
@@ -22,23 +18,17 @@ export const query: DropboxEndpoints['searchQuery'] = async (ctx, input) => {
 		try {
 			for (const match of result.matches) {
 				const meta = match.metadata?.metadata;
-				if (!meta || !meta.id) continue;
+				if (!meta) continue;
 
-				if ('size' in meta) {
+				if (meta['.tag'] === 'file') {
 					await ctx.db.files.upsertByEntityId(meta.id, {
-						id: meta.id,
-						name: meta.name,
-						path_lower: meta.path_lower,
-						path_display: meta.path_display,
-						// any cast needed because metadata is a union type at runtime
-						size: (meta as { size?: number }).size,
+						...meta,
+						client_modified: meta.client_modified ? new Date(meta.client_modified) : null,
+						server_modified: meta.server_modified ? new Date(meta.server_modified) : null,
 					});
-				} else if (ctx.db.folders) {
+				} else if (meta['.tag'] === 'folder' && ctx.db.folders) {
 					await ctx.db.folders.upsertByEntityId(meta.id, {
-						id: meta.id,
-						name: meta.name,
-						path_lower: meta.path_lower,
-						path_display: meta.path_display,
+						...meta,
 					});
 				}
 			}

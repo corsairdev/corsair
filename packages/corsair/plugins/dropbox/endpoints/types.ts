@@ -4,6 +4,7 @@ import { z } from 'zod';
 
 const FileMetadataSchema = z
 	.object({
+		'.tag': z.literal('file'),
 		id: z.string(),
 		name: z.string(),
 		path_lower: z.string().optional(),
@@ -19,6 +20,7 @@ const FileMetadataSchema = z
 
 const FolderMetadataSchema = z
 	.object({
+		'.tag': z.literal('folder'),
 		id: z.string(),
 		name: z.string(),
 		path_lower: z.string().optional(),
@@ -26,7 +28,21 @@ const FolderMetadataSchema = z
 	})
 	.passthrough();
 
-const EntryMetadataSchema = z.union([FileMetadataSchema, FolderMetadataSchema]);
+// Returned by list_folder when include_deleted: true; has no id field
+const DeletedMetadataSchema = z
+	.object({
+		'.tag': z.literal('deleted'),
+		name: z.string(),
+		path_lower: z.string().optional(),
+		path_display: z.string().optional(),
+	})
+	.passthrough();
+
+const EntryMetadataSchema = z.discriminatedUnion('.tag', [
+	FileMetadataSchema,
+	FolderMetadataSchema,
+	DeletedMetadataSchema,
+]);
 
 // ── Input Schemas ─────────────────────────────────────────────────────────────
 
@@ -274,4 +290,10 @@ export const DropboxEndpointOutputSchemas = {
 export type {
 	FileMetadataSchema,
 	FolderMetadataSchema,
+	DeletedMetadataSchema,
 };
+
+export type FileMetadata = z.infer<typeof FileMetadataSchema>;
+export type FolderMetadata = z.infer<typeof FolderMetadataSchema>;
+export type DeletedMetadata = z.infer<typeof DeletedMetadataSchema>;
+export type EntryMetadata = z.infer<typeof EntryMetadataSchema>;

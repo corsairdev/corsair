@@ -9,27 +9,18 @@ export const copy: DropboxEndpoints['filesCopy'] = async (ctx, input) => {
 		ctx.key,
 		{
 			method: 'POST',
-			body: {
-				from_path: input.from_path,
-				to_path: input.to_path,
-				allow_shared_folder: input.allow_shared_folder,
-				autorename: input.autorename,
-				allow_ownership_transfer: input.allow_ownership_transfer,
-			},
+			body: input,
 		},
 	);
 
 	if (result.metadata && ctx.db.files) {
 		try {
 			const meta = result.metadata;
-			if ('size' in meta && meta.id) {
+			if (meta['.tag'] === 'file') {
 				await ctx.db.files.upsertByEntityId(meta.id, {
-					id: meta.id,
-					name: meta.name,
-					path_lower: meta.path_lower,
-					path_display: meta.path_display,
-					// any cast needed because metadata is a union type
-					size: (meta as { size?: number }).size,
+					...meta,
+					client_modified: meta.client_modified ? new Date(meta.client_modified) : null,
+					server_modified: meta.server_modified ? new Date(meta.server_modified) : null,
 				});
 			}
 		} catch (error) {
@@ -60,7 +51,7 @@ export const deleteFile: DropboxEndpoints['filesDelete'] = async (
 	if (ctx.db.files) {
 		try {
 			const meta = result.metadata;
-			if ('size' in meta && meta.id) {
+			if (meta['.tag'] === 'file') {
 				await ctx.db.files.deleteByEntityId(meta.id);
 			}
 		} catch (error) {
@@ -108,27 +99,18 @@ export const move: DropboxEndpoints['filesMove'] = async (ctx, input) => {
 		ctx.key,
 		{
 			method: 'POST',
-			body: {
-				from_path: input.from_path,
-				to_path: input.to_path,
-				allow_shared_folder: input.allow_shared_folder,
-				autorename: input.autorename,
-				allow_ownership_transfer: input.allow_ownership_transfer,
-			},
+			body: input,
 		},
 	);
 
 	if (result.metadata && ctx.db.files) {
 		try {
 			const meta = result.metadata;
-			if ('size' in meta && meta.id) {
+			if (meta['.tag'] === 'file') {
 				await ctx.db.files.upsertByEntityId(meta.id, {
-					id: meta.id,
-					name: meta.name,
-					path_lower: meta.path_lower,
-					path_display: meta.path_display,
-					// any cast needed because metadata is a union type
-					size: (meta as { size?: number }).size,
+					...meta,
+					client_modified: meta.client_modified ? new Date(meta.client_modified) : null,
+					server_modified: meta.server_modified ? new Date(meta.server_modified) : null,
 				});
 			}
 		} catch (error) {
@@ -169,20 +151,9 @@ export const upload: DropboxEndpoints['filesUpload'] = async (ctx, input) => {
 	if (result.id && ctx.db.files) {
 		try {
 			await ctx.db.files.upsertByEntityId(result.id, {
-				id: result.id,
-				name: result.name,
-				path_lower: result.path_lower,
-				path_display: result.path_display,
-				size: result.size,
-				is_downloadable: result.is_downloadable,
-				server_modified: result.server_modified
-					? new Date(result.server_modified)
-					: undefined,
-				client_modified: result.client_modified
-					? new Date(result.client_modified)
-					: undefined,
-				rev: result.rev,
-				content_hash: result.content_hash,
+				...result,
+				client_modified: result.client_modified ? new Date(result.client_modified) : null,
+				server_modified: result.server_modified ? new Date(result.server_modified) : null,
 			});
 		} catch (error) {
 			console.warn('Failed to save uploaded file to database:', error);
