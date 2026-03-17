@@ -593,12 +593,25 @@ const GetFileOutputSchema = z.object({
 	file_path: z.string().optional(),
 });
 
+const SendPhotoOutputSchema = z.object({
+	message_id: z.number(),
+	from: TelegramUserSchema.optional(),
+	date: z.number(),
+	chat: z.object({
+		id: z.number(),
+		type: z.string(),
+	}),
+	photo: z.array(TelegramPhotoSizeSchema).optional(),
+	caption: z.string().optional(),
+});
+
 export {
 	GetMeOutputSchema,
 	GetChatOutputSchema,
 	SendMessageOutputSchema,
 	GetUpdatesOutputSchema,
 	GetFileOutputSchema,
+	SendPhotoOutputSchema,
 };
 
 export type TelegramEndpointInputs = {

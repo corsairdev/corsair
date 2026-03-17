@@ -30,6 +30,10 @@ const TELEGRAM_RATE_LIMIT_CONFIG: RateLimitConfig = {
 	},
 };
 
+const hasFileValues = (body: Record<string, unknown>): boolean => {
+	return Object.values(body).some((v) => v instanceof File || v instanceof Blob);
+};
+
 export async function makeTelegramRequest<T>(
 	endpoint: string,
 	botToken: string,
@@ -48,9 +52,10 @@ export async function makeTelegramRequest<T>(
 	}
 
 	const { method = 'POST', body, query } = options;
+	const isWriteMethod = method === 'POST' || method === 'PUT' || method === 'PATCH';
+	const isFileUpload = isWriteMethod && body != null && hasFileValues(body);
 
 	const baseUrl = `${TELEGRAM_API_BASE}/bot${botToken}`;
-	const url = `${baseUrl}/${endpoint}`;
 
 	const config: OpenAPIConfig = {
 		BASE: baseUrl,
@@ -58,16 +63,18 @@ export async function makeTelegramRequest<T>(
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
 		TOKEN: '',
-		HEADERS: {
-			'Content-Type': 'application/json',
-		},
+		HEADERS: isFileUpload ? {} : { 'Content-Type': 'application/json' },
 	};
 
 	const requestOptions: ApiRequestOptions = {
 		method,
 		url: endpoint,
-		body: method === 'POST' || method === 'PUT' || method === 'PATCH' ? body : undefined,
-		mediaType: 'application/json; charset=utf-8',
+		...(isFileUpload
+			? { formData: body as Record<string, any> }
+			: {
+					body: isWriteMethod ? body : undefined,
+					mediaType: 'application/json; charset=utf-8',
+				}),
 		query: method === 'GET' ? query : undefined,
 	};
 

@@ -7,6 +7,7 @@ import {
 	SendMessageOutputSchema,
 	GetUpdatesOutputSchema,
 	GetFileOutputSchema,
+	SendPhotoOutputSchema,
 } from './endpoints/types';
 
 dotenv.config();
@@ -230,6 +231,28 @@ describe('Telegram API Type Tests', () => {
 
 					expect(typeof response === 'boolean').toBe(true);
 				}
+			}
+		});
+
+		it('sendPhoto returns correct type (URL string)', async () => {
+			if (TEST_CHAT_ID) {
+				const response = await makeTelegramRequest<TelegramEndpointOutputs['sendPhoto']>(
+					'sendPhoto',
+					TEST_BOT_TOKEN,
+					{
+						method: 'POST',
+						body: {
+							chat_id: TEST_CHAT_ID,
+							photo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/PNG_transparency_demonstration_1.png/280px-PNG_transparency_demonstration_1.png',
+							caption: `Test photo ${Date.now()}`,
+						},
+					},
+				);
+
+				SendPhotoOutputSchema.parse(response);
+				expect(response.message_id).toBeDefined();
+				expect(response.photo).toBeDefined();
+				expect(Array.isArray(response.photo)).toBe(true);
 			}
 		});
 
