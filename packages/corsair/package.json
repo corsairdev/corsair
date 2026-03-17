@@ -57,6 +57,11 @@
       "types": "./dist/plugins/discord/index.d.ts",
       "default": "./dist/plugins/discord/index.js"
     },
+    "./plugins/exa": {
+      "dev-source": "./plugins/exa/index.ts",
+      "types": "./dist/plugins/exa/index.d.ts",
+      "default": "./dist/plugins/exa/index.js"
+    },
     "./plugins/github": {
       "dev-source": "./plugins/github/index.ts",
       "types": "./dist/plugins/github/index.d.ts",
