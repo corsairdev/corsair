@@ -400,7 +400,9 @@ export function intercom<const T extends IntercomPluginOptions>(
 		webhookSchemas: intercomWebhookSchemas,
 		pluginWebhookMatcher: (request) => {
 			const headers = request.headers;
-			return 'x-hub-signature' in headers;
+			const hasSignature = 'x-hub-signature' in headers;
+			const hasSubscriptionId = 'intercom-webhook-subscription-id' in headers;
+			return hasSignature && hasSubscriptionId;
 		},
 		errorHandlers: {
 			...errorHandlers,
