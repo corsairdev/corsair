@@ -84,7 +84,7 @@ export const setAway: IntercomEndpoints['adminsSetAway'] = async (ctx, input) =>
 		ctx.key,
 		{
 			method: 'PUT',
-			body: body as Record<string, unknown>,
+			body: body
 		},
 	);
 

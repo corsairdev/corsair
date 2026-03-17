@@ -238,7 +238,6 @@ export function verifyIntercomWebhookSignature(
 	request: WebhookRequest<unknown>,
 	secret: string,
 ): { valid: boolean; error?: string } {
-	console.log(request, 'request', secret, 'secret');
 	// Use rawBody for signature verification to match the original hashed bytes
 	const body = request.rawBody ?? JSON.stringify(request.payload);
 	const signatureHeader = request.headers['x-hub-signature'];

@@ -29,13 +29,7 @@ export const list: IntercomEndpoints['conversationsList'] = async (ctx, input) =
 		'conversations',
 		ctx.key,
 		{
-			query: {
-				page: input.page,
-				per_page: input.per_page,
-				sort: input.sort,
-				order: input.order,
-				starting_after: input.starting_after,
-			},
+			query: input,
 		},
 	);
 
@@ -59,10 +53,7 @@ export const create: IntercomEndpoints['conversationsCreate'] = async (ctx, inpu
 		ctx.key,
 		{
 			method: 'POST',
-			body: {
-				from: input.from,
-				body: input.body,
-			},
+			body: input,
 		},
 	);
 
@@ -84,7 +75,7 @@ export const search: IntercomEndpoints['conversationsSearch'] = async (ctx, inpu
 		ctx.key,
 		{
 			method: 'POST',
-			body: input as Record<string, unknown>,
+			body: input
 		},
 	);
 
@@ -187,7 +178,7 @@ export const reply: IntercomEndpoints['conversationsReply'] = async (ctx, input)
 		ctx.key,
 		{
 			method: 'POST',
-			body: body as Record<string, unknown>,
+			body: body
 		},
 	);
 

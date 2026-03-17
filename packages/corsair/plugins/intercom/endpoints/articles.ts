@@ -26,11 +26,7 @@ export const list: IntercomEndpoints['articlesList'] = async (ctx, input) => {
 		'articles',
 		ctx.key,
 		{
-			query: {
-				page: input.page,
-				per_page: input.per_page,
-				state: input.state,
-			},
+			query: input,
 		},
 	);
 
@@ -54,7 +50,7 @@ export const create: IntercomEndpoints['articlesCreate'] = async (ctx, input) =>
 		ctx.key,
 		{
 			method: 'POST',
-			body: input as Record<string, unknown>,
+			body: input
 		},
 	);
 
@@ -77,7 +73,7 @@ export const update: IntercomEndpoints['articlesUpdate'] = async (ctx, input) =>
 		ctx.key,
 		{
 			method: 'PUT',
-			body: body as Record<string, unknown>,
+			body: body
 		},
 	);
 
@@ -109,12 +105,7 @@ export const search: IntercomEndpoints['articlesSearch'] = async (ctx, input) =>
 		'articles/search',
 		ctx.key,
 		{
-			query: {
-				phrase: input.phrase,
-				// number type param
-				help_center_id: input.help_center_id,
-				state: input.state,
-			},
+			query: input,
 		},
 	);
 

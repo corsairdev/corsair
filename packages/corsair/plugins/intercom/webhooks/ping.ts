@@ -9,7 +9,6 @@ export const ping: IntercomWebhooks['ping'] = {
 	match: createIntercomMatch('ping'),
 
 	handler: async (ctx, request) => {
-		// Payload is typed as unknown by the webhook runtime; cast to PingEvent after topic match
 		const event = request.payload
 
 		await logEventFromContext(ctx, 'intercom.webhook.ping', { app_id: event.app_id }, 'completed');

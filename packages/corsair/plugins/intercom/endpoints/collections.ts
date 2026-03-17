@@ -18,11 +18,7 @@ export const list: IntercomEndpoints['collectionsList'] = async (ctx, input) => 
 		'help_center/collections',
 		ctx.key,
 		{
-			query: {
-				page: input.page,
-				per_page: input.per_page,
-				help_center_id: input.help_center_id,
-			},
+			query: input,
 		},
 	);
 
@@ -36,7 +32,7 @@ export const create: IntercomEndpoints['collectionsCreate'] = async (ctx, input)
 		ctx.key,
 		{
 			method: 'POST',
-			body: input as Record<string, unknown>,
+			body: input
 		},
 	);
 
@@ -51,7 +47,7 @@ export const update: IntercomEndpoints['collectionsUpdate'] = async (ctx, input)
 		ctx.key,
 		{
 			method: 'PUT',
-			body: body as Record<string, unknown>,
+			body: body
 		},
 	);
 

@@ -9,7 +9,7 @@ export const createOrUpdate: IntercomEndpoints['companiesCreateOrUpdate'] = asyn
 		ctx.key,
 		{
 			method: 'POST',
-			body: input as Record<string, unknown>,
+			body: input
 		},
 	);
 
@@ -48,13 +48,7 @@ export const list: IntercomEndpoints['companiesList'] = async (ctx, input) => {
 		'companies',
 		ctx.key,
 		{
-			query: {
-				page: input.page,
-				per_page: input.per_page,
-				order: input.order,
-				tag_id: input.tag_id,
-				segment_id: input.segment_id,
-			},
+			query: input,
 		},
 	);
 
@@ -77,7 +71,7 @@ export const scroll: IntercomEndpoints['companiesScroll'] = async (ctx, input) =
 		'companies/scroll',
 		ctx.key,
 		{
-			query: { scroll_param: input.scroll_param },
+			query: input,
 		},
 	);
 
@@ -111,10 +105,7 @@ export const retrieve: IntercomEndpoints['companiesRetrieve'] = async (ctx, inpu
 		'companies',
 		ctx.key,
 		{
-			query: {
-				company_id: input.company_id,
-				name: input.name,
-			},
+			query: input,
 		},
 	);
 
@@ -135,10 +126,7 @@ export const listAttachedContacts: IntercomEndpoints['companiesListAttachedConta
 		`companies/${input.id}/contacts`,
 		ctx.key,
 		{
-			query: {
-				page: input.page,
-				per_page: input.per_page,
-			},
+			query: input,
 		},
 	);
 

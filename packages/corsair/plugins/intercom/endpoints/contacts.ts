@@ -26,11 +26,7 @@ export const list: IntercomEndpoints['contactsList'] = async (ctx, input) => {
 		'contacts',
 		ctx.key,
 		{
-			query: {
-				page: input.page,
-				per_page: input.per_page,
-				starting_after: input.starting_after,
-			},
+			query: input,
 		},
 	);
 
@@ -55,7 +51,7 @@ export const update: IntercomEndpoints['contactsUpdate'] = async (ctx, input) =>
 		ctx.key,
 		{
 			method: 'PUT',
-			body: body as Record<string, unknown>,
+			body: body
 		},
 	);
 
@@ -190,10 +186,7 @@ export const listAttachedCompanies: IntercomEndpoints['contactsListAttachedCompa
 		`contacts/${input.contact_id}/companies`,
 		ctx.key,
 		{
-			query: {
-				page: input.page,
-				per_page: input.per_page,
-			},
+			query: input,
 		},
 	);
 
@@ -243,10 +236,7 @@ export const listNotes: IntercomEndpoints['contactsListNotes'] = async (ctx, inp
 		`contacts/${input.contact_id}/notes`,
 		ctx.key,
 		{
-			query: {
-				page: input.page,
-				per_page: input.per_page,
-			},
+			query: input,
 		},
 	);
 
@@ -260,29 +250,13 @@ export const merge: IntercomEndpoints['contactsMerge'] = async (ctx, input) => {
 		ctx.key,
 		{
 			method: 'POST',
-			body: {
-				from: input.lead_id,
-				into: input.user_id,
-			},
+			body: input,
 		},
 	);
 
 	if (result && ctx.db.contacts) {
 		try {
-			await ctx.db.contacts.upsertByEntityId(result.id, {
-				id: result.id,
-				type: result.type,
-				email: result.email,
-				name: result.name,
-				phone: result.phone,
-				role: result.role,
-				external_id: result.external_id,
-				user_id: result.user_id,
-				created_at: result.created_at,
-				updated_at: result.updated_at,
-				last_seen_at: result.last_seen_at,
-				unsubscribed_from_emails: result.unsubscribed_from_emails,
-			});
+			await ctx.db.contacts.upsertByEntityId(result.id, result);
 		} catch (error) {
 			console.warn('Failed to save merged contact to database:', error);
 		}
