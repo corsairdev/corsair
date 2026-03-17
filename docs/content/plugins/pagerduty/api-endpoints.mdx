@@ -1,0 +1,219 @@
+---
+title: PagerDuty API Endpoints
+description: Complete reference for all PagerDuty API endpoints available in the Corsair PagerDuty plugin.
+---
+
+The PagerDuty plugin provides access to PagerDuty's incident management API through a typed interface.
+
+<Callout type="info">
+**New to Corsair?** Learn about core concepts like [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Callout>
+
+<Callout>
+**Full Implementation:** For the complete, up-to-date list, see the [PagerDuty plugin source code](https://github.com/corsairdev/corsair/tree/main/packages/corsair/plugins/pagerduty).
+</Callout>
+
+## Incidents
+
+### create
+`incidents.create`
+
+Create a new incident.
+
+```ts
+const incident = await corsair.pagerduty.api.incidents.create({
+    title: "Production database is down", // [!code highlight]
+    serviceId: "SERVICE123",
+    urgency: "high",
+    from: "engineer@example.com",
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `title` | `string` | Yes | Incident title |
+| `serviceId` | `string` | Yes | Service ID to create incident against |
+| `urgency` | `string` | No | `high` or `low` |
+| `from` | `string` | Yes | Email of the user creating the incident |
+| `body` | `object` | No | Incident body with details |
+
+---
+
+### get
+`incidents.get`
+
+Get a single incident by ID.
+
+```ts
+const incident = await corsair.pagerduty.api.incidents.get({
+    id: "INC123", // [!code highlight]
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Incident ID |
+
+---
+
+### list
+`incidents.list`
+
+List incidents with optional filters.
+
+```ts
+const incidents = await corsair.pagerduty.api.incidents.list({
+    statuses: ["triggered", "acknowledged"], // [!code highlight]
+    limit: 25,
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `statuses` | `string[]` | No | Filter by status (`triggered`, `acknowledged`, `resolved`) |
+| `service_ids` | `string[]` | No | Filter by service IDs |
+| `urgencies` | `string[]` | No | Filter by urgency (`high`, `low`) |
+| `limit` | `number` | No | Max results to return |
+| `offset` | `number` | No | Pagination offset |
+
+---
+
+### update
+`incidents.update`
+
+Update an incident (acknowledge, resolve, reassign).
+
+```ts
+await corsair.pagerduty.api.incidents.update({
+    id: "INC123",
+    status: "resolved", // [!code highlight]
+    resolution: "Fixed the database connection issue",
+    from: "engineer@example.com",
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Incident ID |
+| `status` | `string` | No | New status (`acknowledged`, `resolved`) |
+| `resolution` | `string` | No | Resolution message |
+| `from` | `string` | Yes | Email of the user making the update |
+| `assignments` | `array` | No | New assignments |
+
+---
+
+## Incident Notes
+
+### create
+`incidentNotes.create`
+
+Add a note to an incident.
+
+```ts
+await corsair.pagerduty.api.incidentNotes.create({
+    incidentId: "INC123", // [!code highlight]
+    content: "Identified root cause: connection pool exhaustion",
+    from: "engineer@example.com",
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `incidentId` | `string` | Yes | Incident ID |
+| `content` | `string` | Yes | Note text |
+| `from` | `string` | Yes | Email of the note author |
+
+---
+
+### list
+`incidentNotes.list`
+
+List notes for an incident.
+
+```ts
+const notes = await corsair.pagerduty.api.incidentNotes.list({
+    incidentId: "INC123", // [!code highlight]
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `incidentId` | `string` | Yes | Incident ID |
+
+---
+
+## Log Entries
+
+### get
+`logEntries.get`
+
+Get a single log entry by ID.
+
+```ts
+const entry = await corsair.pagerduty.api.logEntries.get({
+    id: "LOG123", // [!code highlight]
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Log entry ID |
+
+---
+
+### list
+`logEntries.list`
+
+List log entries.
+
+```ts
+const entries = await corsair.pagerduty.api.logEntries.list({
+    is_overview: true,
+    limit: 25,
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `is_overview` | `boolean` | No | Return only overview entries |
+| `limit` | `number` | No | Max results |
+| `offset` | `number` | No | Pagination offset |
+
+---
+
+## Users
+
+### get
+`users.get`
+
+Get a user by ID.
+
+```ts
+const user = await corsair.pagerduty.api.users.get({
+    id: "USER123", // [!code highlight]
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | User ID |
+
+---

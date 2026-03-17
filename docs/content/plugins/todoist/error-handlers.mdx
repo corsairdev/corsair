@@ -1,0 +1,107 @@
+---
+title: Todoist Error Handlers
+description: Built-in and custom error handling for the Todoist plugin.
+---
+
+The Todoist plugin includes built-in error handlers for common Todoist API error scenarios.
+
+<Callout type="info">
+**New to Corsair?** Learn about [error handling](/concepts/error-handling) before customizing error handlers.
+</Callout>
+
+<Callout>
+**Full Implementation:** See the [Todoist plugin source code](https://github.com/corsairdev/corsair/tree/main/packages/corsair/plugins/todoist).
+</Callout>
+
+## Built-in Error Handlers
+
+### Rate Limit Errors
+
+**Triggers:** HTTP 429 status
+
+**Behavior:**
+- Maximum retries: **5**
+- Respects `Retry-After` header
+
+**Example:**
+
+```ts
+// Corsair handles rate limits automatically
+const tasks = await corsair.todoist.api.tasks.getMany({ // [!code highlight]
+    projectId: "project-id",
+});
+```
+
+---
+
+### Authentication Errors
+
+**Triggers:** HTTP 401 status, invalid API token
+
+**Behavior:**
+- Maximum retries: **0** (no retries)
+- Fails immediately
+
+**How to Fix:**
+1. Verify your Todoist API token is correct
+2. Generate a new token from Todoist Settings → Integrations → API token
+
+---
+
+### Not Found Errors
+
+**Triggers:** HTTP 404 status, task or project does not exist
+
+**Behavior:**
+- Maximum retries: **0** (no retries)
+
+**How to Fix:**
+1. Verify the task ID, project ID, or other resource ID is correct
+2. Check that the resource has not been deleted
+
+---
+
+### Forbidden Errors
+
+**Triggers:** HTTP 403 status, operation not permitted
+
+**Behavior:**
+- Maximum retries: **0** (no retries)
+
+**How to Fix:**
+1. Verify you have permission to modify the requested resource
+2. Shared projects may restrict certain operations
+
+---
+
+### Network Errors
+
+**Triggers:** Connection errors, timeouts
+
+**Behavior:**
+- Maximum retries: **3**
+- Uses exponential backoff
+
+---
+
+## Custom Error Handlers
+
+```ts title="corsair.ts"
+todoist({
+    errorHandlers: {
+        TASK_ALREADY_COMPLETED: {
+            match: (error) => {
+                return error.message.includes("already completed"); // [!code highlight]
+            },
+            handler: async (error, context) => {
+                console.log("Task is already completed");
+                return {
+                    maxRetries: 0,
+                };
+            },
+        },
+    },
+})
+```
+
+For comprehensive error handling strategies, patterns, and best practices, see the [Error Handling](/concepts/error-handling) concepts page.

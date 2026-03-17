@@ -12,7 +12,15 @@ import TypescriptDoc from '@/content/concepts/typescript.mdx';
 import WebhooksDoc from '@/content/concepts/webhooks.mdx';
 import ComparisonDoc from '@/content/getting-started/comparison.mdx';
 // Getting Started
+import InstallationDoc from '@/content/getting-started/installation.mdx';
 import IntroductionDoc from '@/content/getting-started/introduction.mdx';
+// MCP Adapters
+import McpAnthropicSdkDoc from '@/content/mcp-adapters/anthropic-sdk.mdx';
+import McpClaudeSdkDoc from '@/content/mcp-adapters/claude-sdk.mdx';
+import McpMastraDoc from '@/content/mcp-adapters/mastra.mdx';
+import McpOpenAIAgentsDoc from '@/content/mcp-adapters/openai-agents.mdx';
+import McpOpenAIDoc from '@/content/mcp-adapters/openai.mdx';
+import McpVercelAiDoc from '@/content/mcp-adapters/vercel-ai.mdx';
 // Guides
 import CreateYourOwnPlugin from '@/content/guides/create-your-own-plugin.mdx';
 import PluginCredentialsGuide from '@/content/guides/plugin-credentials.mdx';
@@ -77,6 +85,66 @@ import SlackGetCredentialsDoc from '@/content/plugins/slack/get-credentials.mdx'
 // Plugins
 import SlackDoc from '@/content/plugins/slack/main.mdx';
 import SlackWebhooksDoc from '@/content/plugins/slack/webhooks.mdx';
+import DiscordDoc from '@/content/plugins/discord/main.mdx';
+import DiscordApiEndpointsDoc from '@/content/plugins/discord/api-endpoints.mdx';
+import DiscordWebhooksDoc from '@/content/plugins/discord/webhooks.mdx';
+import DiscordDatabaseDoc from '@/content/plugins/discord/database.mdx';
+import DiscordErrorHandlersDoc from '@/content/plugins/discord/error-handlers.mdx';
+import PagerDutyDoc from '@/content/plugins/pagerduty/main.mdx';
+import PagerDutyApiEndpointsDoc from '@/content/plugins/pagerduty/api-endpoints.mdx';
+import PagerDutyWebhooksDoc from '@/content/plugins/pagerduty/webhooks.mdx';
+import PagerDutyDatabaseDoc from '@/content/plugins/pagerduty/database.mdx';
+import PagerDutyErrorHandlersDoc from '@/content/plugins/pagerduty/error-handlers.mdx';
+import OuraDoc from '@/content/plugins/oura/main.mdx';
+import OuraApiEndpointsDoc from '@/content/plugins/oura/api-endpoints.mdx';
+import OuraWebhooksDoc from '@/content/plugins/oura/webhooks.mdx';
+import OuraDatabaseDoc from '@/content/plugins/oura/database.mdx';
+import OuraErrorHandlersDoc from '@/content/plugins/oura/error-handlers.mdx';
+import TavilyDoc from '@/content/plugins/tavily/main.mdx';
+import TavilyApiEndpointsDoc from '@/content/plugins/tavily/api-endpoints.mdx';
+import TavilyWebhooksDoc from '@/content/plugins/tavily/webhooks.mdx';
+import TavilyDatabaseDoc from '@/content/plugins/tavily/database.mdx';
+import TavilyErrorHandlersDoc from '@/content/plugins/tavily/error-handlers.mdx';
+import SpotifyDoc from '@/content/plugins/spotify/main.mdx';
+import SpotifyApiEndpointsDoc from '@/content/plugins/spotify/api-endpoints.mdx';
+import SpotifyWebhooksDoc from '@/content/plugins/spotify/webhooks.mdx';
+import SpotifyDatabaseDoc from '@/content/plugins/spotify/database.mdx';
+import SpotifyErrorHandlersDoc from '@/content/plugins/spotify/error-handlers.mdx';
+import AmplitudeDoc from '@/content/plugins/amplitude/main.mdx';
+import AmplitudeApiEndpointsDoc from '@/content/plugins/amplitude/api-endpoints.mdx';
+import AmplitudeWebhooksDoc from '@/content/plugins/amplitude/webhooks.mdx';
+import AmplitudeDatabaseDoc from '@/content/plugins/amplitude/database.mdx';
+import AmplitudeErrorHandlersDoc from '@/content/plugins/amplitude/error-handlers.mdx';
+import CalDoc from '@/content/plugins/cal/main.mdx';
+import CalApiEndpointsDoc from '@/content/plugins/cal/api-endpoints.mdx';
+import CalWebhooksDoc from '@/content/plugins/cal/webhooks.mdx';
+import CalDatabaseDoc from '@/content/plugins/cal/database.mdx';
+import CalErrorHandlersDoc from '@/content/plugins/cal/error-handlers.mdx';
+import NotionDoc from '@/content/plugins/notion/main.mdx';
+import NotionApiEndpointsDoc from '@/content/plugins/notion/api-endpoints.mdx';
+import NotionWebhooksDoc from '@/content/plugins/notion/webhooks.mdx';
+import NotionDatabaseDoc from '@/content/plugins/notion/database.mdx';
+import NotionErrorHandlersDoc from '@/content/plugins/notion/error-handlers.mdx';
+import AirtableDoc from '@/content/plugins/airtable/main.mdx';
+import AirtableApiEndpointsDoc from '@/content/plugins/airtable/api-endpoints.mdx';
+import AirtableWebhooksDoc from '@/content/plugins/airtable/webhooks.mdx';
+import AirtableDatabaseDoc from '@/content/plugins/airtable/database.mdx';
+import AirtableErrorHandlersDoc from '@/content/plugins/airtable/error-handlers.mdx';
+import TodoistDoc from '@/content/plugins/todoist/main.mdx';
+import TodoistApiEndpointsDoc from '@/content/plugins/todoist/api-endpoints.mdx';
+import TodoistWebhooksDoc from '@/content/plugins/todoist/webhooks.mdx';
+import TodoistDatabaseDoc from '@/content/plugins/todoist/database.mdx';
+import TodoistErrorHandlersDoc from '@/content/plugins/todoist/error-handlers.mdx';
+import TwitterApiIODoc from '@/content/plugins/twitterapiio/main.mdx';
+import TwitterApiIOApiEndpointsDoc from '@/content/plugins/twitterapiio/api-endpoints.mdx';
+import TwitterApiIOWebhooksDoc from '@/content/plugins/twitterapiio/webhooks.mdx';
+import TwitterApiIODatabaseDoc from '@/content/plugins/twitterapiio/database.mdx';
+import TwitterApiIOErrorHandlersDoc from '@/content/plugins/twitterapiio/error-handlers.mdx';
+import SentryDoc from '@/content/plugins/sentry/main.mdx';
+import SentryApiEndpointsDoc from '@/content/plugins/sentry/api-endpoints.mdx';
+import SentryWebhooksDoc from '@/content/plugins/sentry/webhooks.mdx';
+import SentryDatabaseDoc from '@/content/plugins/sentry/database.mdx';
+import SentryErrorHandlersDoc from '@/content/plugins/sentry/error-handlers.mdx';
 import { extractTOC } from '@/lib/toc';
 import { useMDXComponents } from '@/mdx-components';
 
@@ -91,10 +159,45 @@ const pages = {
 		description:
 			'The Vibe Coding SDK - Build type-safe full-stack TypeScript apps with natural language',
 	},
+	installation: {
+		Component: InstallationDoc,
+		title: 'Installation',
+		description: 'Install Corsair, migrate your database, and run your first prompt',
+	},
 	comparison: {
 		Component: ComparisonDoc,
 		title: 'Comparison',
 		description: 'How Corsair compares to other solutions',
+	},
+	'mcp-adapters/claude-sdk': {
+		Component: McpClaudeSdkDoc,
+		title: 'Claude Agent SDK',
+		description: 'Connect Corsair to the Anthropic Claude Agent SDK',
+	},
+	'mcp-adapters/anthropic-sdk': {
+		Component: McpAnthropicSdkDoc,
+		title: 'Anthropic SDK',
+		description: 'Connect Corsair to the Anthropic SDK using tool use',
+	},
+	'mcp-adapters/openai-agents': {
+		Component: McpOpenAIAgentsDoc,
+		title: 'OpenAI Agents',
+		description: 'Connect Corsair to the OpenAI Agents SDK',
+	},
+	'mcp-adapters/vercel-ai': {
+		Component: McpVercelAiDoc,
+		title: 'Vercel AI SDK',
+		description: 'Connect Corsair to the Vercel AI SDK over HTTP',
+	},
+	'mcp-adapters/openai': {
+		Component: McpOpenAIDoc,
+		title: 'OpenAI',
+		description: 'Connect Corsair to the OpenAI API over HTTP',
+	},
+	'mcp-adapters/mastra': {
+		Component: McpMastraDoc,
+		title: 'Mastra',
+		description: 'Connect Corsair to the Mastra agent framework',
 	},
 	api: {
 		Component: ApiDoc,
@@ -445,6 +548,306 @@ const pages = {
 		Component: ResendErrorHandlersDoc,
 		title: 'Resend Error Handlers',
 		description: 'Built-in and custom error handling for Resend',
+	},
+	'plugins/discord': {
+		Component: DiscordDoc,
+		title: 'Discord',
+		description: 'Integrate Discord messages, threads, reactions, and interactions',
+	},
+	'plugins/discord/api-endpoints': {
+		Component: DiscordApiEndpointsDoc,
+		title: 'Discord API Endpoints',
+		description: 'Complete reference for all Discord API endpoints',
+	},
+	'plugins/discord/webhooks': {
+		Component: DiscordWebhooksDoc,
+		title: 'Discord Webhooks',
+		description: 'All available Discord webhook events',
+	},
+	'plugins/discord/database': {
+		Component: DiscordDatabaseDoc,
+		title: 'Discord Database Schema',
+		description: 'Database entities and querying synced Discord data',
+	},
+	'plugins/discord/error-handlers': {
+		Component: DiscordErrorHandlersDoc,
+		title: 'Discord Error Handlers',
+		description: 'Built-in and custom error handling for Discord',
+	},
+	'plugins/pagerduty': {
+		Component: PagerDutyDoc,
+		title: 'PagerDuty',
+		description: 'Integrate PagerDuty incidents, alerts, and on-call management',
+	},
+	'plugins/pagerduty/api-endpoints': {
+		Component: PagerDutyApiEndpointsDoc,
+		title: 'PagerDuty API Endpoints',
+		description: 'Complete reference for all PagerDuty API endpoints',
+	},
+	'plugins/pagerduty/webhooks': {
+		Component: PagerDutyWebhooksDoc,
+		title: 'PagerDuty Webhooks',
+		description: 'All available PagerDuty webhook events',
+	},
+	'plugins/pagerduty/database': {
+		Component: PagerDutyDatabaseDoc,
+		title: 'PagerDuty Database Schema',
+		description: 'Database entities and querying synced PagerDuty data',
+	},
+	'plugins/pagerduty/error-handlers': {
+		Component: PagerDutyErrorHandlersDoc,
+		title: 'PagerDuty Error Handlers',
+		description: 'Built-in and custom error handling for PagerDuty',
+	},
+	'plugins/oura': {
+		Component: OuraDoc,
+		title: 'Oura Ring',
+		description: 'Integrate Oura Ring health and sleep tracking data',
+	},
+	'plugins/oura/api-endpoints': {
+		Component: OuraApiEndpointsDoc,
+		title: 'Oura API Endpoints',
+		description: 'Complete reference for all Oura API endpoints',
+	},
+	'plugins/oura/webhooks': {
+		Component: OuraWebhooksDoc,
+		title: 'Oura Webhooks',
+		description: 'All available Oura webhook events',
+	},
+	'plugins/oura/database': {
+		Component: OuraDatabaseDoc,
+		title: 'Oura Database Schema',
+		description: 'Database entities and querying synced Oura data',
+	},
+	'plugins/oura/error-handlers': {
+		Component: OuraErrorHandlersDoc,
+		title: 'Oura Error Handlers',
+		description: 'Built-in and custom error handling for Oura',
+	},
+	'plugins/tavily': {
+		Component: TavilyDoc,
+		title: 'Tavily',
+		description: 'Integrate Tavily AI-powered web search',
+	},
+	'plugins/tavily/api-endpoints': {
+		Component: TavilyApiEndpointsDoc,
+		title: 'Tavily API Endpoints',
+		description: 'Complete reference for all Tavily API endpoints',
+	},
+	'plugins/tavily/webhooks': {
+		Component: TavilyWebhooksDoc,
+		title: 'Tavily Webhooks',
+		description: 'Webhooks for the Tavily plugin',
+	},
+	'plugins/tavily/database': {
+		Component: TavilyDatabaseDoc,
+		title: 'Tavily Database Schema',
+		description: 'Database schema for the Tavily plugin',
+	},
+	'plugins/tavily/error-handlers': {
+		Component: TavilyErrorHandlersDoc,
+		title: 'Tavily Error Handlers',
+		description: 'Built-in and custom error handling for Tavily',
+	},
+	'plugins/spotify': {
+		Component: SpotifyDoc,
+		title: 'Spotify',
+		description: 'Integrate Spotify music playback, library, and playlists',
+	},
+	'plugins/spotify/api-endpoints': {
+		Component: SpotifyApiEndpointsDoc,
+		title: 'Spotify API Endpoints',
+		description: 'Complete reference for all Spotify API endpoints',
+	},
+	'plugins/spotify/webhooks': {
+		Component: SpotifyWebhooksDoc,
+		title: 'Spotify Webhooks',
+		description: 'All available Spotify webhook events',
+	},
+	'plugins/spotify/database': {
+		Component: SpotifyDatabaseDoc,
+		title: 'Spotify Database Schema',
+		description: 'Database entities and querying synced Spotify data',
+	},
+	'plugins/spotify/error-handlers': {
+		Component: SpotifyErrorHandlersDoc,
+		title: 'Spotify Error Handlers',
+		description: 'Built-in and custom error handling for Spotify',
+	},
+	'plugins/amplitude': {
+		Component: AmplitudeDoc,
+		title: 'Amplitude',
+		description: 'Integrate Amplitude analytics, events, and cohorts',
+	},
+	'plugins/amplitude/api-endpoints': {
+		Component: AmplitudeApiEndpointsDoc,
+		title: 'Amplitude API Endpoints',
+		description: 'Complete reference for all Amplitude API endpoints',
+	},
+	'plugins/amplitude/webhooks': {
+		Component: AmplitudeWebhooksDoc,
+		title: 'Amplitude Webhooks',
+		description: 'All available Amplitude webhook events',
+	},
+	'plugins/amplitude/database': {
+		Component: AmplitudeDatabaseDoc,
+		title: 'Amplitude Database Schema',
+		description: 'Database entities and querying synced Amplitude data',
+	},
+	'plugins/amplitude/error-handlers': {
+		Component: AmplitudeErrorHandlersDoc,
+		title: 'Amplitude Error Handlers',
+		description: 'Built-in and custom error handling for Amplitude',
+	},
+	'plugins/cal': {
+		Component: CalDoc,
+		title: 'Cal.com',
+		description: 'Integrate Cal.com scheduling and booking management',
+	},
+	'plugins/cal/api-endpoints': {
+		Component: CalApiEndpointsDoc,
+		title: 'Cal.com API Endpoints',
+		description: 'Complete reference for all Cal.com API endpoints',
+	},
+	'plugins/cal/webhooks': {
+		Component: CalWebhooksDoc,
+		title: 'Cal.com Webhooks',
+		description: 'All available Cal.com webhook events',
+	},
+	'plugins/cal/database': {
+		Component: CalDatabaseDoc,
+		title: 'Cal.com Database Schema',
+		description: 'Database entities and querying synced Cal.com data',
+	},
+	'plugins/cal/error-handlers': {
+		Component: CalErrorHandlersDoc,
+		title: 'Cal.com Error Handlers',
+		description: 'Built-in and custom error handling for Cal.com',
+	},
+	'plugins/notion': {
+		Component: NotionDoc,
+		title: 'Notion',
+		description: 'Integrate Notion pages, databases, and workspace content',
+	},
+	'plugins/notion/api-endpoints': {
+		Component: NotionApiEndpointsDoc,
+		title: 'Notion API Endpoints',
+		description: 'Complete reference for all Notion API endpoints',
+	},
+	'plugins/notion/webhooks': {
+		Component: NotionWebhooksDoc,
+		title: 'Notion Webhooks',
+		description: 'All available Notion webhook events',
+	},
+	'plugins/notion/database': {
+		Component: NotionDatabaseDoc,
+		title: 'Notion Database Schema',
+		description: 'Database entities and querying synced Notion data',
+	},
+	'plugins/notion/error-handlers': {
+		Component: NotionErrorHandlersDoc,
+		title: 'Notion Error Handlers',
+		description: 'Built-in and custom error handling for Notion',
+	},
+	'plugins/airtable': {
+		Component: AirtableDoc,
+		title: 'Airtable',
+		description: 'Integrate Airtable bases, tables, and records',
+	},
+	'plugins/airtable/api-endpoints': {
+		Component: AirtableApiEndpointsDoc,
+		title: 'Airtable API Endpoints',
+		description: 'Complete reference for all Airtable API endpoints',
+	},
+	'plugins/airtable/webhooks': {
+		Component: AirtableWebhooksDoc,
+		title: 'Airtable Webhooks',
+		description: 'All available Airtable webhook events',
+	},
+	'plugins/airtable/database': {
+		Component: AirtableDatabaseDoc,
+		title: 'Airtable Database Schema',
+		description: 'Database entities and querying synced Airtable data',
+	},
+	'plugins/airtable/error-handlers': {
+		Component: AirtableErrorHandlersDoc,
+		title: 'Airtable Error Handlers',
+		description: 'Built-in and custom error handling for Airtable',
+	},
+	'plugins/todoist': {
+		Component: TodoistDoc,
+		title: 'Todoist',
+		description: 'Integrate Todoist tasks, projects, and productivity workflows',
+	},
+	'plugins/todoist/api-endpoints': {
+		Component: TodoistApiEndpointsDoc,
+		title: 'Todoist API Endpoints',
+		description: 'Complete reference for all Todoist API endpoints',
+	},
+	'plugins/todoist/webhooks': {
+		Component: TodoistWebhooksDoc,
+		title: 'Todoist Webhooks',
+		description: 'All available Todoist webhook events',
+	},
+	'plugins/todoist/database': {
+		Component: TodoistDatabaseDoc,
+		title: 'Todoist Database Schema',
+		description: 'Database entities and querying synced Todoist data',
+	},
+	'plugins/todoist/error-handlers': {
+		Component: TodoistErrorHandlersDoc,
+		title: 'Todoist Error Handlers',
+		description: 'Built-in and custom error handling for Todoist',
+	},
+	'plugins/twitterapiio': {
+		Component: TwitterApiIODoc,
+		title: 'Twitter API IO',
+		description: 'Integrate Twitter via twitterapi.io for tweets, users, and communities',
+	},
+	'plugins/twitterapiio/api-endpoints': {
+		Component: TwitterApiIOApiEndpointsDoc,
+		title: 'Twitter API IO Endpoints',
+		description: 'Complete reference for all Twitter API IO endpoints',
+	},
+	'plugins/twitterapiio/webhooks': {
+		Component: TwitterApiIOWebhooksDoc,
+		title: 'Twitter API IO Webhooks',
+		description: 'All available Twitter API IO webhook events',
+	},
+	'plugins/twitterapiio/database': {
+		Component: TwitterApiIODatabaseDoc,
+		title: 'Twitter API IO Database Schema',
+		description: 'Database entities and querying synced Twitter data',
+	},
+	'plugins/twitterapiio/error-handlers': {
+		Component: TwitterApiIOErrorHandlersDoc,
+		title: 'Twitter API IO Error Handlers',
+		description: 'Built-in and custom error handling for Twitter API IO',
+	},
+	'plugins/sentry': {
+		Component: SentryDoc,
+		title: 'Sentry',
+		description: 'Integrate Sentry error monitoring, issues, and releases',
+	},
+	'plugins/sentry/api-endpoints': {
+		Component: SentryApiEndpointsDoc,
+		title: 'Sentry API Endpoints',
+		description: 'Complete reference for all Sentry API endpoints',
+	},
+	'plugins/sentry/webhooks': {
+		Component: SentryWebhooksDoc,
+		title: 'Sentry Webhooks',
+		description: 'All available Sentry webhook events',
+	},
+	'plugins/sentry/database': {
+		Component: SentryDatabaseDoc,
+		title: 'Sentry Database Schema',
+		description: 'Database entities and querying synced Sentry data',
+	},
+	'plugins/sentry/error-handlers': {
+		Component: SentryErrorHandlersDoc,
+		title: 'Sentry Error Handlers',
+		description: 'Built-in and custom error handling for Sentry',
 	},
 	'guides/create-your-own-plugin': {
 		Component: CreateYourOwnPlugin,

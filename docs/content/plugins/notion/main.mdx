@@ -1,0 +1,271 @@
+---
+title: Notion
+description: Integrate Notion databases, pages, and blocks into your application with Corsair.
+---
+
+## Quick Start
+
+Add the Notion plugin to your Corsair instance:
+
+```ts title="corsair.ts"
+import { createCorsair } from "corsair";
+import { notion } from "corsair/plugins";
+
+export const corsair = createCorsair({
+    plugins: [
+        notion(),
+    ],
+});
+```
+
+Once configured, you can work with Notion content:
+
+```ts
+// Create a page in a database
+await corsair.notion.api.databasePages.createDatabasePage({
+    parent: { database_id: "database-id-here" },
+    properties: {
+        Name: { title: [{ text: { content: "New Task" } }] },
+    },
+});
+```
+
+## Authentication
+
+### Supported Auth Types
+
+The Notion plugin supports:
+- **`api_key`** (default) - Use a Notion integration token
+
+### Default Auth Type
+
+If no `authType` is specified, the plugin defaults to **`api_key`**.
+
+### Configuring API Key Authentication
+
+```ts title="corsair.ts"
+notion({
+    key: process.env.NOTION_TOKEN, // [!code highlight]
+})
+```
+
+For webhook signature verification:
+
+```ts title="corsair.ts"
+notion({
+    key: process.env.NOTION_TOKEN,
+    webhookSecret: process.env.NOTION_WEBHOOK_SECRET, // [!code highlight]
+})
+```
+
+See [Authentication](/concepts/auth) for details on managing credentials.
+
+## Options
+
+| Option | Type | Description |
+|--------|------|-------------|
+| `authType` | `'api_key'` | Authentication method (defaults to `'api_key'`) |
+| `key` | `string` | Integration token (optional, uses database if not provided) |
+| `webhookSecret` | `string` | Webhook secret for `x-notion-signature` verification |
+| `hooks` | `object` | Endpoint hooks for custom logic |
+| `webhookHooks` | `object` | Webhook hooks for event handling |
+| `errorHandlers` | `object` | Custom error handlers |
+| `permissions` | `object` | Permission configuration for AI agent access |
+
+### Hooks
+
+```ts
+notion({
+    hooks: {
+        pages: {
+            createPage: {
+                before: async (ctx, input) => {
+                    console.log("Creating page:", input.properties?.Name);
+                    return { ctx, input };
+                },
+            },
+        },
+    },
+})
+```
+
+See [Hooks](/concepts/hooks) for complete documentation.
+
+### Error Handling
+
+The plugin includes built-in error handlers for common scenarios. For complete documentation, see the [Error Handlers reference](/plugins/notion/error-handlers).
+
+## Usage
+
+### Accessing the API
+
+```ts
+// Search pages
+const pages = await corsair.notion.api.pages.searchPage({
+    query: "Meeting Notes",
+});
+
+// Get a database
+const database = await corsair.notion.api.databases.getDatabase({
+    database_id: "database-id",
+});
+
+// Query database pages
+const rows = await corsair.notion.api.databasePages.getManyDatabasePages({
+    database_id: "database-id",
+    filter: {
+        property: "Status",
+        select: { equals: "In Progress" },
+    },
+});
+
+// Append blocks to a page
+await corsair.notion.api.blocks.appendBlock({
+    block_id: "page-id",
+    children: [{
+        type: "paragraph",
+        paragraph: { rich_text: [{ text: { content: "Hello from Corsair!" } }] },
+    }],
+});
+```
+
+See [API Endpoints](/plugins/notion/api-endpoints) for the complete reference.
+
+### Webhooks
+
+Notion sends page lifecycle events to your webhook endpoint:
+
+```ts title="app/api/webhook/route.ts"
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    const body = await request.json();
+
+    const result = await processWebhook(corsair, headers, body);
+    return result.response;
+}
+```
+
+See [Webhooks](/plugins/notion/webhooks) for all available events.
+
+### Database Access
+
+```ts
+const pages = await corsair.notion.db.pages.search({
+    data: { title: "Meeting Notes" },
+});
+```
+
+See [Database](/plugins/notion/database) for the complete schema.
+
+### Multi-Tenancy
+
+```ts
+const tenant = corsair.withTenant("workspace-123");
+
+await tenant.notion.api.databasePages.createDatabasePage({
+    parent: { database_id: "db-id" },
+    properties: { Name: { title: [{ text: { content: "New Item" } }] } },
+});
+```
+
+## Examples
+
+### Example 1: Create a Task on New GitHub Issue
+
+```ts title="corsair.ts"
+import { inngest } from "./inngest";
+
+export const corsair = createCorsair({
+    plugins: [
+        github({
+            webhookHooks: {
+                issues: {
+                    opened: {
+                        after: async (ctx, result) => {
+                            await inngest.send({
+                                name: "github/issue-opened",
+                                data: {
+                                    tenantId: ctx.tenantId,
+                                    title: result.data.issue?.title,
+                                    url: result.data.issue?.html_url,
+                                    number: result.data.issue?.number,
+                                },
+                            });
+                        },
+                    },
+                },
+            },
+        }),
+        notion(),
+    ],
+});
+```
+
+```ts title="inngest/functions.ts"
+export const createNotionTask = inngest.createFunction(
+    { id: "create-notion-task-from-issue" },
+    { event: "github/issue-opened" },
+    async ({ event }) => {
+        const tenant = corsair.withTenant(event.data.tenantId);
+
+        await tenant.notion.api.databasePages.createDatabasePage({
+            parent: { database_id: process.env.NOTION_TASKS_DB_ID! },
+            properties: {
+                Name: { title: [{ text: { content: event.data.title } }] }, // [!code highlight]
+                URL: { url: event.data.url }, // [!code highlight]
+                Status: { select: { name: "Todo" } },
+            },
+        });
+    }
+);
+```
+
+### Example 2: Update Notion on Page Created Webhook
+
+```ts title="corsair.ts"
+export const corsair = createCorsair({
+    plugins: [
+        notion({
+            webhookHooks: {
+                databasePages: {
+                    pageCreated: {
+                        after: async (ctx, result) => {
+                            await inngest.send({
+                                name: "notion/page-created",
+                                data: {
+                                    tenantId: ctx.tenantId,
+                                    pageId: result.data.id, // [!code highlight]
+                                    databaseId: result.data.parent?.database_id,
+                                },
+                            });
+                        },
+                    },
+                },
+            },
+        }),
+    ],
+});
+```
+
+```ts title="inngest/functions.ts"
+export const processNewPage = inngest.createFunction(
+    { id: "process-new-notion-page" },
+    { event: "notion/page-created" },
+    async ({ event }) => {
+        const tenant = corsair.withTenant(event.data.tenantId);
+
+        await tenant.notion.api.blocks.appendBlock({
+            block_id: event.data.pageId,
+            children: [{
+                type: "paragraph",
+                paragraph: {
+                    rich_text: [{ text: { content: "Auto-created by Corsair" } }], // [!code highlight]
+                },
+            }],
+        });
+    }
+);
+```

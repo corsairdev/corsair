@@ -1,0 +1,55 @@
+---
+title: OpenAI
+description: Connect Corsair to the OpenAI API over HTTP.
+---
+
+Use `getOpenAIMcpConfig` to connect Corsair to the [OpenAI API](https://platform.openai.com/docs) via HTTP transport.
+
+Like Vercel AI, OpenAI's MCP support connects over HTTP — you expose Corsair as an MCP server endpoint and pass the config to the OpenAI client.
+
+## Install
+
+```bash
+npm install openai
+```
+
+## Server
+
+Expose Corsair as an MCP HTTP endpoint using `createBaseMcpServer` and `createMcpRouter`.
+
+```ts title="server.ts"
+import express from 'express';
+import { createBaseMcpServer, createMcpRouter } from '@corsair-dev/mcp';
+import { corsair } from './corsair';
+
+const app = express();
+app.use(express.json());
+
+app.use('/mcp', createMcpRouter(() => createBaseMcpServer({ corsair })));
+
+app.listen(3000, () => console.log('MCP server running on :3000'));
+```
+
+## Client
+
+```ts title="agent.ts"
+import OpenAI from 'openai';
+import { getOpenAIMcpConfig } from '@corsair-dev/mcp';
+
+const client = new OpenAI();
+
+const response = await client.responses.create({
+    model: 'gpt-4.1',
+    tools: [
+        {
+            type: 'mcp',
+            ...getOpenAIMcpConfig('http://localhost:3000/mcp'),
+        },
+    ],
+    input: 'Setup corsair, then list all Slack channels.',
+});
+
+console.log(response.output_text);
+```
+
+`getOpenAIMcpConfig` returns the `serverLabel` and `serverUrl` fields expected by OpenAI's `mcp` tool type.
