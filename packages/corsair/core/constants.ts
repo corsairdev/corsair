@@ -32,6 +32,7 @@ export const BaseProviders = [
 	'slack',
 	'spotify',
 	'tavily',
+	'teams',
 	'todoist',
 	'twitterapiio',
 ] as const;
@@ -56,6 +57,7 @@ export type AllProviders =
 	| 'slack'
 	| 'spotify'
 	| 'tavily'
+	| 'teams'
 	| 'todoist'
 	| 'twitterapiio'
 	| (string & {});

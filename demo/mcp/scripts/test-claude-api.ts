@@ -11,7 +11,10 @@ const message = await client.beta.messages.toolRunner({
 	max_tokens: 4096,
 	tools,
 	messages: [
-		{ role: 'user', content: 'list all slack channels, send test message to sdk-test channel' },
+		{
+			role: 'user',
+			content: 'list all slack channels, send test message to sdk-test channel',
+		},
 	],
 });
 

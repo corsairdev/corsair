@@ -1,10 +1,9 @@
 import { z } from 'zod';
 import {
+	RawApiTweet,
 	TwitterApiIOCommunity,
 	TwitterApiIOTrend,
-	TwitterApiIOTweet,
 	TwitterApiIOUser,
-	RawApiTweet,
 } from '../schema/database';
 
 // ── Shared ───────────────────────────────────────────────────────────────────
@@ -83,14 +82,8 @@ const TweetsGetThreadContextInputSchema = z.object({
 const TweetsCreateInputSchema = z.object({
 	tweet: z.string().describe('Tweet text content'),
 	loginCookie: z.string().describe('Twitter login cookie from user_login_v2'),
-	replyToTweetId: z
-		.string()
-		.optional()
-		.describe('Tweet ID to reply to'),
-	mediaIds: z
-		.array(z.string())
-		.optional()
-		.describe('Media IDs to attach'),
+	replyToTweetId: z.string().optional().describe('Tweet ID to reply to'),
+	mediaIds: z.array(z.string()).optional().describe('Media IDs to attach'),
 });
 
 const TweetsDeleteInputSchema = z.object({
@@ -229,10 +222,7 @@ const CommunitiesLeaveInputSchema = z.object({
 // ── Trend Input Schemas ───────────────────────────────────────────────────────
 
 const TrendsGetInputSchema = z.object({
-	woeid: z
-		.number()
-		.optional()
-		.describe('Where On Earth ID. 1 = worldwide'),
+	woeid: z.number().optional().describe('Where On Earth ID. 1 = worldwide'),
 });
 
 // ── Output Schemas ────────────────────────────────────────────────────────────
@@ -370,10 +360,15 @@ export type TwitterApiIOEndpointOutputs = {
 };
 
 // Named response types
-export type TweetsGetByIdsResponse = TwitterApiIOEndpointOutputs['tweetsGetByIds'];
+export type TweetsGetByIdsResponse =
+	TwitterApiIOEndpointOutputs['tweetsGetByIds'];
 export type TweetsSearchResponse = TwitterApiIOEndpointOutputs['tweetsSearch'];
-export type TweetsGetUserTimelineResponse = TwitterApiIOEndpointOutputs['tweetsGetUserTimeline'];
-export type UsersGetByUsernameResponse = TwitterApiIOEndpointOutputs['usersGetByUsername'];
-export type UsersBatchGetByIdsResponse = TwitterApiIOEndpointOutputs['usersBatchGetByIds'];
+export type TweetsGetUserTimelineResponse =
+	TwitterApiIOEndpointOutputs['tweetsGetUserTimeline'];
+export type UsersGetByUsernameResponse =
+	TwitterApiIOEndpointOutputs['usersGetByUsername'];
+export type UsersBatchGetByIdsResponse =
+	TwitterApiIOEndpointOutputs['usersBatchGetByIds'];
 export type TrendsGetResponse = TwitterApiIOEndpointOutputs['trendsGet'];
-export type CommunitiesGetByIdResponse = TwitterApiIOEndpointOutputs['communitiesGetById'];
+export type CommunitiesGetByIdResponse =
+	TwitterApiIOEndpointOutputs['communitiesGetById'];

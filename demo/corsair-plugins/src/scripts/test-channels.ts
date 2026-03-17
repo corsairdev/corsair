@@ -1,9 +1,5 @@
-import { corsair } from '@/server/corsair';
-import { setupCorsair } from 'corsair';
 import 'dotenv/config';
 
-const main = async () => {
-
-};
+const main = async () => {};
 
 main();
