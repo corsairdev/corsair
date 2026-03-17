@@ -57,6 +57,11 @@
       "types": "./dist/plugins/discord/index.d.ts",
       "default": "./dist/plugins/discord/index.js"
     },
+    "./plugins/exa": {
+      "dev-source": "./plugins/exa/index.ts",
+      "types": "./dist/plugins/exa/index.d.ts",
+      "default": "./dist/plugins/exa/index.js"
+    },
     "./plugins/github": {
       "dev-source": "./plugins/github/index.ts",
       "types": "./dist/plugins/github/index.d.ts",
@@ -97,10 +102,20 @@
       "types": "./dist/plugins/linear/index.d.ts",
       "default": "./dist/plugins/linear/index.js"
     },
+    "./plugins/monday": {
+      "dev-source": "./plugins/monday/index.ts",
+      "types": "./dist/plugins/monday/index.d.ts",
+      "default": "./dist/plugins/monday/index.js"
+    },
     "./plugins/notion": {
       "dev-source": "./plugins/notion/index.ts",
       "types": "./dist/plugins/notion/index.d.ts",
       "default": "./dist/plugins/notion/index.js"
+    },
+    "./plugins/oura": {
+      "dev-source": "./plugins/oura/index.ts",
+      "types": "./dist/plugins/oura/index.d.ts",
+      "default": "./dist/plugins/oura/index.js"
     },
     "./plugins/pagerduty": {
       "dev-source": "./plugins/pagerduty/index.ts",

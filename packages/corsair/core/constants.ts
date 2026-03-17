@@ -17,6 +17,7 @@ export const BaseProviders = [
 	'amplitude',
 	'cal',
 	'discord',
+	'exa',
 	'github',
 	'gmail',
 	'googlecalendar',
@@ -24,7 +25,9 @@ export const BaseProviders = [
 	'googlesheets',
 	'hubspot',
 	'linear',
+	'monday',
 	'notion',
+	'oura',
 	'pagerduty',
 	'posthog',
 	'resend',
@@ -42,6 +45,7 @@ export type AllProviders =
 	| 'amplitude'
 	| 'cal'
 	| 'discord'
+	| 'exa'
 	| 'github'
 	| 'gmail'
 	| 'googlecalendar'
@@ -49,7 +53,9 @@ export type AllProviders =
 	| 'googlesheets'
 	| 'hubspot'
 	| 'linear'
+	| 'monday'
 	| 'notion'
+	| 'oura'
 	| 'pagerduty'
 	| 'posthog'
 	| 'resend'
