@@ -1,0 +1,379 @@
+---
+title: Discord API Endpoints
+description: Complete reference for all Discord API endpoints available in the Corsair Discord plugin.
+---
+
+The Discord plugin provides access to Discord's REST API through a typed interface. All endpoints automatically handle authentication and error handling.
+
+<Callout type="info">
+**New to Corsair?** Learn about core concepts like [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Callout>
+
+<Callout>
+**Full Implementation:** For the complete, up-to-date list, see the [Discord plugin source code](https://github.com/corsairdev/corsair/tree/main/packages/corsair/plugins/discord).
+</Callout>
+
+## Messages
+
+### send
+`messages.send`
+
+Send a message to a channel.
+
+```ts
+const result = await corsair.discord.api.messages.send({
+    channelId: "1234567890", // [!code highlight]
+    content: "Hello from Corsair!",
+    embeds: [{ title: "Embed Title", description: "Embed body" }],
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channelId` | `string` | Yes | ID of the channel to send to |
+| `content` | `string` | No | Text content of the message |
+| `embeds` | `array` | No | Rich embed objects |
+| `components` | `array` | No | Interactive components (buttons, menus) |
+
+---
+
+### reply
+`messages.reply`
+
+Reply to a message in a channel.
+
+```ts
+await corsair.discord.api.messages.reply({
+    channelId: "1234567890",
+    messageId: "0987654321", // [!code highlight]
+    content: "This is a reply!",
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channelId` | `string` | Yes | Channel ID |
+| `messageId` | `string` | Yes | ID of the message to reply to |
+| `content` | `string` | No | Text content of the reply |
+
+---
+
+### get
+`messages.get`
+
+Get a specific message by ID.
+
+```ts
+const message = await corsair.discord.api.messages.get({
+    channelId: "1234567890",
+    messageId: "0987654321", // [!code highlight]
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channelId` | `string` | Yes | Channel ID |
+| `messageId` | `string` | Yes | Message ID |
+
+---
+
+### list
+`messages.list`
+
+List recent messages in a channel.
+
+```ts
+const messages = await corsair.discord.api.messages.list({
+    channelId: "1234567890",
+    limit: 50, // [!code highlight]
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channelId` | `string` | Yes | Channel ID |
+| `limit` | `number` | No | Max messages to return (1-100) |
+| `before` | `string` | No | Get messages before this message ID |
+| `after` | `string` | No | Get messages after this message ID |
+
+---
+
+### edit
+`messages.edit`
+
+Edit an existing message.
+
+```ts
+await corsair.discord.api.messages.edit({
+    channelId: "1234567890",
+    messageId: "0987654321",
+    content: "Updated content", // [!code highlight]
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channelId` | `string` | Yes | Channel ID |
+| `messageId` | `string` | Yes | Message ID to edit |
+| `content` | `string` | No | New text content |
+| `embeds` | `array` | No | Updated embeds |
+
+---
+
+### delete
+`messages.delete`
+
+Permanently delete a message.
+
+```ts
+await corsair.discord.api.messages.delete({
+    channelId: "1234567890",
+    messageId: "0987654321", // [!code highlight]
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channelId` | `string` | Yes | Channel ID |
+| `messageId` | `string` | Yes | Message ID to delete |
+
+---
+
+## Threads
+
+### create
+`threads.create`
+
+Create a new thread in a channel.
+
+```ts
+await corsair.discord.api.threads.create({
+    channelId: "1234567890",
+    name: "Discussion Thread", // [!code highlight]
+    autoArchiveDuration: 1440,
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channelId` | `string` | Yes | Parent channel ID |
+| `name` | `string` | Yes | Thread name |
+| `autoArchiveDuration` | `number` | No | Minutes until auto-archive (60, 1440, 4320, 10080) |
+
+---
+
+### createFromMessage
+`threads.createFromMessage`
+
+Create a thread from an existing message.
+
+```ts
+await corsair.discord.api.threads.createFromMessage({
+    channelId: "1234567890",
+    messageId: "0987654321", // [!code highlight]
+    name: "Thread from message",
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channelId` | `string` | Yes | Channel ID |
+| `messageId` | `string` | Yes | Message to start thread from |
+| `name` | `string` | Yes | Thread name |
+
+---
+
+## Reactions
+
+### add
+`reactions.add`
+
+Add a reaction to a message.
+
+```ts
+await corsair.discord.api.reactions.add({
+    channelId: "1234567890",
+    messageId: "0987654321",
+    emoji: "👍", // [!code highlight]
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channelId` | `string` | Yes | Channel ID |
+| `messageId` | `string` | Yes | Message ID |
+| `emoji` | `string` | Yes | Emoji to react with (unicode or `name:id`) |
+
+---
+
+### remove
+`reactions.remove`
+
+Remove a reaction from a message.
+
+```ts
+await corsair.discord.api.reactions.remove({
+    channelId: "1234567890",
+    messageId: "0987654321",
+    emoji: "👍", // [!code highlight]
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channelId` | `string` | Yes | Channel ID |
+| `messageId` | `string` | Yes | Message ID |
+| `emoji` | `string` | Yes | Emoji to remove |
+
+---
+
+### list
+`reactions.list`
+
+List reactions on a message.
+
+```ts
+const reactions = await corsair.discord.api.reactions.list({
+    channelId: "1234567890",
+    messageId: "0987654321",
+    emoji: "👍", // [!code highlight]
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channelId` | `string` | Yes | Channel ID |
+| `messageId` | `string` | Yes | Message ID |
+| `emoji` | `string` | Yes | Emoji to list users for |
+
+---
+
+## Guilds
+
+### list
+`guilds.list`
+
+List guilds the bot is a member of.
+
+```ts
+const guilds = await corsair.discord.api.guilds.list({
+    limit: 100,
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | Max guilds to return |
+| `before` | `string` | No | Get guilds before this ID |
+| `after` | `string` | No | Get guilds after this ID |
+
+---
+
+### get
+`guilds.get`
+
+Get info about a specific guild.
+
+```ts
+const guild = await corsair.discord.api.guilds.get({
+    guildId: "9876543210", // [!code highlight]
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `guildId` | `string` | Yes | Guild (server) ID |
+
+---
+
+## Channels
+
+### list
+`channels.list`
+
+List channels in a guild.
+
+```ts
+const channels = await corsair.discord.api.channels.list({
+    guildId: "9876543210", // [!code highlight]
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `guildId` | `string` | Yes | Guild ID |
+
+---
+
+## Members
+
+### list
+`members.list`
+
+List members of a guild.
+
+```ts
+const members = await corsair.discord.api.members.list({
+    guildId: "9876543210", // [!code highlight]
+    limit: 100,
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `guildId` | `string` | Yes | Guild ID |
+| `limit` | `number` | No | Max members to return (1-1000) |
+| `after` | `string` | No | Get members after this user ID |
+
+---
+
+### get
+`members.get`
+
+Get info about a specific guild member.
+
+```ts
+const member = await corsair.discord.api.members.get({
+    guildId: "9876543210",
+    userId: "1234567890", // [!code highlight]
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `guildId` | `string` | Yes | Guild ID |
+| `userId` | `string` | Yes | User ID |
+
+---

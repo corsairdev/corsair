@@ -1,0 +1,222 @@
+---
+title: Oura
+description: Integrate Oura Ring health and fitness data into your application with Corsair.
+---
+
+## Quick Start
+
+Add the Oura plugin to your Corsair instance:
+
+```ts title="corsair.ts"
+import { createCorsair } from "corsair";
+import { oura } from "corsair/plugins";
+
+export const corsair = createCorsair({
+    plugins: [
+        oura(),
+    ],
+});
+```
+
+Once configured, you can access Oura health data:
+
+```ts
+// Get sleep data for a date range
+const sleep = await corsair.oura.api.summary.getSleep({
+    start_date: "2024-01-01",
+    end_date: "2024-01-07",
+});
+```
+
+## Authentication
+
+### Supported Auth Types
+
+The Oura plugin supports:
+- **`api_key`** (default) - Use an Oura personal access token
+
+### Default Auth Type
+
+If no `authType` is specified, the plugin defaults to **`api_key`**.
+
+### Configuring API Key Authentication
+
+```ts title="corsair.ts"
+oura({
+    key: process.env.OURA_ACCESS_TOKEN, // [!code highlight]
+})
+```
+
+For webhook signature verification:
+
+```ts title="corsair.ts"
+oura({
+    key: process.env.OURA_ACCESS_TOKEN,
+    webhookSecret: process.env.OURA_WEBHOOK_SECRET, // [!code highlight]
+})
+```
+
+See [Authentication](/concepts/auth) for details on managing credentials.
+
+## Options
+
+| Option | Type | Description |
+|--------|------|-------------|
+| `authType` | `'api_key'` | Authentication method (defaults to `'api_key'`) |
+| `key` | `string` | Personal access token (optional, uses database if not provided) |
+| `webhookSecret` | `string` | Webhook secret for `x-oura-signature` HMAC verification |
+| `hooks` | `object` | Endpoint hooks for custom logic |
+| `webhookHooks` | `object` | Webhook hooks for event handling |
+| `errorHandlers` | `object` | Custom error handlers |
+| `permissions` | `object` | Permission configuration for AI agent access |
+
+### Hooks
+
+```ts
+oura({
+    hooks: {
+        summary: {
+            getSleep: {
+                before: async (ctx, input) => {
+                    console.log("Fetching sleep data:", input.start_date);
+                    return { ctx, input };
+                },
+            },
+        },
+    },
+})
+```
+
+See [Hooks](/concepts/hooks) for complete documentation.
+
+### Error Handling
+
+The plugin includes built-in error handlers for common scenarios. For complete documentation, see the [Error Handlers reference](/plugins/oura/error-handlers).
+
+## Usage
+
+### Accessing the API
+
+```ts
+// Get user profile
+const profile = await corsair.oura.api.profile.get({});
+
+// Get activity data
+const activity = await corsair.oura.api.summary.getActivity({
+    start_date: "2024-01-01",
+    end_date: "2024-01-07",
+});
+
+// Get readiness scores
+const readiness = await corsair.oura.api.summary.getReadiness({
+    start_date: "2024-01-01",
+    end_date: "2024-01-07",
+});
+```
+
+See [API Endpoints](/plugins/oura/api-endpoints) for the complete reference.
+
+### Webhooks
+
+Oura sends daily health summary events to your webhook endpoint:
+
+```ts title="app/api/webhook/route.ts"
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    const body = await request.json();
+
+    const result = await processWebhook(corsair, headers, body);
+    return result.response;
+}
+```
+
+See [Webhooks](/plugins/oura/webhooks) for all available events.
+
+### Database Access
+
+```ts
+const sleepData = await corsair.oura.db.dailySleep.search({
+    data: { score: { gte: 80 } },
+});
+```
+
+See [Database](/plugins/oura/database) for the complete schema.
+
+### Multi-Tenancy
+
+```ts
+const tenant = corsair.withTenant("user-123");
+
+const sleep = await tenant.oura.api.summary.getSleep({
+    start_date: "2024-01-01",
+    end_date: "2024-01-07",
+});
+```
+
+## Examples
+
+### Example 1: Daily Health Report
+
+```ts title="inngest/functions.ts"
+export const dailyHealthReport = inngest.createFunction(
+    { id: "oura-daily-report" },
+    { cron: "0 8 * * *" },
+    async () => {
+        const today = new Date().toISOString().split("T")[0];
+        const yesterday = new Date(Date.now() - 86400000).toISOString().split("T")[0];
+
+        const [sleep, readiness, activity] = await Promise.all([
+            corsair.oura.api.summary.getSleep({ start_date: yesterday, end_date: today }), // [!code highlight]
+            corsair.oura.api.summary.getReadiness({ start_date: yesterday, end_date: today }), // [!code highlight]
+            corsair.oura.api.summary.getActivity({ start_date: yesterday, end_date: today }), // [!code highlight]
+        ]);
+
+        console.log("Sleep score:", sleep.data[0]?.score);
+        console.log("Readiness score:", readiness.data[0]?.score);
+        console.log("Activity score:", activity.data[0]?.score);
+    }
+);
+```
+
+### Example 2: Alert on Low Readiness
+
+```ts title="corsair.ts"
+export const corsair = createCorsair({
+    plugins: [
+        oura({
+            webhookHooks: {
+                summary: {
+                    dailyReadiness: {
+                        after: async (ctx, result) => {
+                            await inngest.send({
+                                name: "oura/readiness-updated",
+                                data: {
+                                    tenantId: ctx.tenantId,
+                                    score: result.data.score, // [!code highlight]
+                                    userId: result.data.user_id,
+                                },
+                            });
+                        },
+                    },
+                },
+            },
+        }),
+    ],
+});
+```
+
+```ts title="inngest/functions.ts"
+export const alertOnLowReadiness = inngest.createFunction(
+    { id: "alert-low-readiness" },
+    { event: "oura/readiness-updated" },
+    async ({ event }) => {
+        if (event.data.score < 50) {
+            // Send notification that user should rest
+            console.log(`Low readiness (${event.data.score}) for user ${event.data.userId}`);
+        }
+    }
+);
+```

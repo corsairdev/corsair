@@ -1,0 +1,144 @@
+---
+title: Todoist Database Schema
+description: Database entities and querying synced Todoist data.
+---
+
+The Todoist plugin syncs task management data to your database for fast queries.
+
+<Callout type="info">
+**New to Corsair?** Learn about [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Callout>
+
+<Callout>
+**Full Implementation:** See the [Todoist plugin source code](https://github.com/corsairdev/corsair/tree/main/packages/corsair/plugins/todoist).
+</Callout>
+
+## Synced Entities
+
+- **tasks** - Task records
+- **projects** - Project metadata
+- **sections** - Project sections
+- **labels** - User-defined labels
+
+## Database API
+
+```ts
+const tasks = await corsair.todoist.db.tasks.search({
+    data: { project_id: "project-id" },
+});
+```
+
+---
+
+## Tasks
+
+### Schema
+
+```ts
+{
+    id: string;
+    content: string;
+    description?: string;
+    project_id?: string;
+    section_id?: string;
+    parent_id?: string;
+    priority: number;           // 1-4, 4 = urgent
+    labels: string[];
+    is_completed: boolean;
+    creator_id: string;
+    created_at: string;         // ISO timestamp
+    due?: {
+        date: string;
+        datetime?: string;
+        is_recurring: boolean;
+    };
+    url: string;
+}
+```
+
+### Querying Tasks
+
+**Search by project:**
+
+```ts
+const tasks = await corsair.todoist.db.tasks.search({
+    data: { project_id: "project-id" }, // [!code highlight]
+});
+```
+
+**Search incomplete tasks:**
+
+```ts
+const tasks = await corsair.todoist.db.tasks.search({
+    data: { is_completed: false }, // [!code highlight]
+});
+```
+
+---
+
+## Projects
+
+### Schema
+
+```ts
+{
+    id: string;
+    name: string;
+    color: string;
+    parent_id?: string;
+    order: number;
+    is_favorite: boolean;
+    is_archived: boolean;
+    is_shared: boolean;
+    url: string;
+}
+```
+
+### Querying Projects
+
+```ts
+const projects = await corsair.todoist.db.projects.search({
+    data: { is_favorite: true }, // [!code highlight]
+});
+```
+
+---
+
+## Sections
+
+### Schema
+
+```ts
+{
+    id: string;
+    name: string;
+    project_id: string;
+    order: number;
+}
+```
+
+---
+
+## Labels
+
+### Schema
+
+```ts
+{
+    id: string;
+    name: string;
+    color: string;
+    order: number;
+    is_favorite: boolean;
+}
+```
+
+### Example: Multi-Tenancy Query
+
+```ts
+const tenant = corsair.withTenant("user-123");
+
+const tasks = await tenant.todoist.db.tasks.search({
+    data: { is_completed: false }, // [!code highlight]
+});
+```

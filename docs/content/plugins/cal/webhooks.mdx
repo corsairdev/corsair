@@ -1,0 +1,133 @@
+---
+title: Cal.com Webhooks
+description: Cal.com webhook event handling in Corsair.
+---
+
+The Cal plugin includes webhook handlers for Cal.com booking lifecycle events.
+
+<Callout type="info">
+**New to Corsair?** Learn about [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
+</Callout>
+
+<Callout>
+**Full Implementation:** See the [Cal plugin source code](https://github.com/corsairdev/corsair/tree/main/packages/corsair/plugins/cal).
+</Callout>
+
+## Setup
+
+```ts title="app/api/webhook/route.ts"
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    const body = await request.json();
+
+    const result = await processWebhook(corsair, headers, body);
+    return result.response;
+}
+```
+
+Cal.com webhooks are identified by the `x-cal-signature-256` header.
+
+## Available Webhooks
+
+### bookings.bookingCreated
+
+Fires when a new booking is created.
+
+**Example:**
+
+```ts title="corsair.ts"
+cal({
+    webhookHooks: {
+        "bookings.bookingCreated": async (event) => {
+            console.log("New booking:", event.uid);
+            // Send confirmation email, add to calendar, etc.
+        },
+    },
+})
+```
+
+**Key fields:** `uid`, `title`, `startTime`, `endTime`, `attendees`, `organizer`, `eventType`, `status`
+
+---
+
+### bookings.bookingCancelled
+
+Fires when a booking is cancelled.
+
+**Example:**
+
+```ts title="corsair.ts"
+cal({
+    webhookHooks: {
+        "bookings.bookingCancelled": async (event) => {
+            console.log("Booking cancelled:", event.uid);
+            // Send cancellation notification, free up resources, etc.
+        },
+    },
+})
+```
+
+**Key fields:** `uid`, `title`, `startTime`, `endTime`, `cancellationReason`, `organizer`, `attendees`
+
+---
+
+### bookings.bookingRescheduled
+
+Fires when a booking is rescheduled to a new time.
+
+**Example:**
+
+```ts title="corsair.ts"
+cal({
+    webhookHooks: {
+        "bookings.bookingRescheduled": async (event) => {
+            console.log("Booking rescheduled:", event.uid);
+            console.log("New time:", event.startTime);
+        },
+    },
+})
+```
+
+**Key fields:** `uid`, `title`, `startTime`, `endTime`, `rescheduleReason`, `organizer`, `attendees`
+
+---
+
+### bookings.meetingEnded
+
+Fires when a meeting ends.
+
+**Example:**
+
+```ts title="corsair.ts"
+cal({
+    webhookHooks: {
+        "bookings.meetingEnded": async (event) => {
+            console.log("Meeting ended:", event.uid);
+            // Log meeting duration, trigger follow-up, etc.
+        },
+    },
+})
+```
+
+**Key fields:** `uid`, `title`, `startTime`, `endTime`, `organizer`, `attendees`
+
+---
+
+### system.ping
+
+Fires as a test to verify your webhook endpoint is reachable.
+
+**Example:**
+
+```ts title="corsair.ts"
+cal({
+    webhookHooks: {
+        "system.ping": async (event) => {
+            console.log("Webhook ping received");
+        },
+    },
+})
+```

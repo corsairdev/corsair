@@ -1,0 +1,159 @@
+---
+title: Oura Webhooks
+description: All available Oura Ring webhook events for health data updates.
+---
+
+The Oura plugin handles incoming webhook events from Oura. Webhooks are identified by the `x-oura-signature` header (HMAC-SHA256).
+
+<Callout type="info">
+**New to Corsair?** Learn about [webhooks](/concepts/webhooks), [hooks](/concepts/hooks), and [multi-tenancy](/concepts/multi-tenancy).
+</Callout>
+
+<Callout>
+**Full Implementation:** See the [Oura plugin source code](https://github.com/corsairdev/corsair/tree/main/packages/corsair/plugins/oura).
+</Callout>
+
+## Setup
+
+```ts title="app/api/webhook/route.ts"
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    const body = await request.json();
+
+    const result = await processWebhook(corsair, headers, body);
+    return result.response;
+}
+```
+
+Configure your webhook secret:
+
+```ts title="corsair.ts"
+oura({
+    webhookSecret: process.env.OURA_WEBHOOK_SECRET, // [!code highlight]
+})
+```
+
+## Available Webhooks
+
+### dailyActivity
+`summary.dailyActivity`
+
+**Event Type:** Daily Activity
+
+Fires when a user's daily activity data is updated.
+
+**When it fires:**
+- End of day activity summary is computed
+- Activity data is backfilled
+
+**Payload:**
+
+```ts
+{
+    event_type: "create" | "update",
+    data_type: "daily_activity",
+    object_id: "activity-id", // [!code highlight]
+    user_id: "user-id",
+    timestamp: "2024-01-01T00:00:00Z",
+}
+```
+
+**Example Usage:**
+
+```ts
+oura({
+    webhookHooks: {
+        summary: {
+            dailyActivity: {
+                after: async (ctx, result) => {
+                    await inngest.send({
+                        name: "oura/activity-updated",
+                        data: {
+                            tenantId: ctx.tenantId,
+                            objectId: result.data.object_id,
+                            userId: result.data.user_id,
+                        },
+                    });
+                },
+            },
+        },
+    },
+})
+```
+
+**Key Fields:**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `event_type` | `string` | `create` or `update` |
+| `data_type` | `string` | Always `daily_activity` |
+| `object_id` | `string` | ID of the activity record |
+| `user_id` | `string` | Oura user ID |
+
+---
+
+### dailyReadiness
+`summary.dailyReadiness`
+
+**Event Type:** Daily Readiness
+
+Fires when a user's daily readiness score is computed.
+
+**When it fires:**
+- Daily readiness is calculated (typically after waking)
+
+**Payload:**
+
+```ts
+{
+    event_type: "create" | "update",
+    data_type: "daily_readiness",
+    object_id: "readiness-id", // [!code highlight]
+    user_id: "user-id",
+    timestamp: "2024-01-01T08:00:00Z",
+}
+```
+
+**Key Fields:**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `event_type` | `string` | `create` or `update` |
+| `object_id` | `string` | ID of the readiness record |
+
+---
+
+### dailySleep
+`summary.dailySleep`
+
+**Event Type:** Daily Sleep
+
+Fires when a user's sleep data is processed.
+
+**When it fires:**
+- Sleep session is processed and scored
+- Sleep data is backfilled
+
+**Payload:**
+
+```ts
+{
+    event_type: "create" | "update",
+    data_type: "daily_sleep",
+    object_id: "sleep-id", // [!code highlight]
+    user_id: "user-id",
+    timestamp: "2024-01-01T07:00:00Z",
+}
+```
+
+**Key Fields:**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `event_type` | `string` | `create` or `update` |
+| `object_id` | `string` | ID of the sleep record |
+
+---

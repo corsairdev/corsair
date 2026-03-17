@@ -1,0 +1,213 @@
+---
+title: Sentry Webhooks
+description: Sentry webhook event handling in Corsair.
+---
+
+The Sentry plugin includes webhook handlers for Sentry issue, error, alert, and comment events.
+
+<Callout type="info">
+**New to Corsair?** Learn about [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
+</Callout>
+
+<Callout>
+**Full Implementation:** See the [Sentry plugin source code](https://github.com/corsairdev/corsair/tree/main/packages/corsair/plugins/sentry).
+</Callout>
+
+## Setup
+
+```ts title="app/api/webhook/route.ts"
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    const body = await request.json();
+
+    const result = await processWebhook(corsair, headers, body);
+    return result.response;
+}
+```
+
+Sentry webhooks are identified by both the `sentry-hook-signature` and `sentry-hook-resource` headers.
+
+## Available Webhooks
+
+### issues.created
+
+Fires when a new issue is created in Sentry.
+
+**Example:**
+
+```ts title="corsair.ts"
+sentry({
+    webhookHooks: {
+        "issues.created": async (event) => {
+            console.log("New issue:", event.data?.issue?.title);
+            console.log("Project:", event.data?.issue?.project?.slug);
+        },
+    },
+})
+```
+
+**Key fields:** `data.issue.id`, `data.issue.title`, `data.issue.culprit`, `data.issue.status`, `data.issue.project`, `actor`
+
+---
+
+### issues.resolved
+
+Fires when an issue is resolved.
+
+**Example:**
+
+```ts title="corsair.ts"
+sentry({
+    webhookHooks: {
+        "issues.resolved": async (event) => {
+            console.log("Issue resolved:", event.data?.issue?.id);
+            console.log("Resolved by:", event.actor?.name);
+        },
+    },
+})
+```
+
+**Key fields:** `data.issue.id`, `data.issue.title`, `data.issue.status`, `actor`
+
+---
+
+### issues.assigned
+
+Fires when an issue is assigned to a user or team.
+
+**Example:**
+
+```ts title="corsair.ts"
+sentry({
+    webhookHooks: {
+        "issues.assigned": async (event) => {
+            console.log("Issue assigned:", event.data?.issue?.id);
+            console.log("Assigned to:", event.data?.assignee);
+        },
+    },
+})
+```
+
+**Key fields:** `data.issue.id`, `data.issue.title`, `data.assignee`, `actor`
+
+---
+
+### errors.created
+
+Fires when a new error event is captured in Sentry.
+
+**Example:**
+
+```ts title="corsair.ts"
+sentry({
+    webhookHooks: {
+        "errors.created": async (event) => {
+            console.log("Error captured:", event.data?.error?.title);
+            console.log("Level:", event.data?.error?.level);
+        },
+    },
+})
+```
+
+**Key fields:** `data.error.id`, `data.error.title`, `data.error.level`, `data.error.culprit`, `data.error.project`
+
+---
+
+### alerts.eventAlert
+
+Fires when an issue alert rule is triggered.
+
+**Example:**
+
+```ts title="corsair.ts"
+sentry({
+    webhookHooks: {
+        "alerts.eventAlert": async (event) => {
+            console.log("Alert triggered:", event.data?.rule?.name);
+        },
+    },
+})
+```
+
+**Key fields:** `data.rule.id`, `data.rule.name`, `data.issue`, `triggered_at`
+
+---
+
+### alerts.metricAlert
+
+Fires when a metric alert threshold is crossed.
+
+**Example:**
+
+```ts title="corsair.ts"
+sentry({
+    webhookHooks: {
+        "alerts.metricAlert": async (event) => {
+            console.log("Metric alert:", event.data?.metric_alert?.title);
+            console.log("Status:", event.data?.description_text);
+        },
+    },
+})
+```
+
+**Key fields:** `data.metric_alert.id`, `data.metric_alert.title`, `data.description_text`, `triggered_at`
+
+---
+
+### comments.created
+
+Fires when a comment is added to an issue.
+
+**Example:**
+
+```ts title="corsair.ts"
+sentry({
+    webhookHooks: {
+        "comments.created": async (event) => {
+            console.log("Comment on issue:", event.data?.issue_id);
+            console.log("By:", event.actor?.name);
+        },
+    },
+})
+```
+
+**Key fields:** `data.comment`, `data.comment_id`, `data.issue_id`, `actor`
+
+---
+
+### comments.updated
+
+Fires when a comment is updated.
+
+**Example:**
+
+```ts title="corsair.ts"
+sentry({
+    webhookHooks: {
+        "comments.updated": async (event) => {
+            console.log("Comment updated:", event.data?.comment_id);
+        },
+    },
+})
+```
+
+---
+
+### comments.deleted
+
+Fires when a comment is deleted.
+
+**Example:**
+
+```ts title="corsair.ts"
+sentry({
+    webhookHooks: {
+        "comments.deleted": async (event) => {
+            console.log("Comment deleted:", event.data?.comment_id);
+        },
+    },
+})
+```

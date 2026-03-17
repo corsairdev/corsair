@@ -1,0 +1,281 @@
+---
+title: Amplitude API Endpoints
+description: Complete reference for all Amplitude API endpoints available in the Corsair Amplitude plugin.
+---
+
+The Amplitude plugin provides access to Amplitude's analytics APIs for event tracking, user management, cohorts, charts, dashboards, annotations, and data exports.
+
+<Callout type="info">
+**New to Corsair?** Learn about core concepts like [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Callout>
+
+<Callout>
+**Full Implementation:** For the complete, up-to-date list, see the [Amplitude plugin source code](https://github.com/corsairdev/corsair/tree/main/packages/corsair/plugins/amplitude).
+</Callout>
+
+## Events
+
+### upload
+`events.upload`
+
+Upload one or more events to Amplitude via HTTP API v2.
+
+```ts
+await corsair.amplitude.api.events.upload({
+    events: [{ // [!code highlight]
+        event_type: "page_view",
+        user_id: "user-123",
+    }],
+});
+```
+
+---
+
+### uploadBatch
+`events.uploadBatch`
+
+Batch upload events to Amplitude.
+
+```ts
+await corsair.amplitude.api.events.uploadBatch({
+    events: [{ // [!code highlight]
+        event_type: "purchase",
+        user_id: "user-123",
+        event_properties: { amount: 49.99 },
+    }],
+});
+```
+
+---
+
+### identifyUser
+`events.identifyUser`
+
+Set or update user properties via the Identify API.
+
+```ts
+await corsair.amplitude.api.events.identifyUser({
+    user_id: "user-123", // [!code highlight]
+    user_properties: {
+        plan: "pro",
+        country: "US",
+    },
+});
+```
+
+---
+
+### getList
+`events.getList`
+
+List all event types tracked in the project.
+
+```ts
+const events = await corsair.amplitude.api.events.getList({});
+```
+
+---
+
+## Users
+
+### search
+`users.search`
+
+Search for users by user ID or device ID.
+
+```ts
+const results = await corsair.amplitude.api.users.search({
+    user_id: "user-123", // [!code highlight]
+});
+```
+
+---
+
+### getProfile
+`users.getProfile`
+
+Get the profile and properties for a specific user.
+
+```ts
+const profile = await corsair.amplitude.api.users.getProfile({
+    user_id: "user-123", // [!code highlight]
+});
+```
+
+---
+
+### getActivity
+`users.getActivity`
+
+Get recent event activity for a specific user.
+
+```ts
+const activity = await corsair.amplitude.api.users.getActivity({
+    user_id: "user-123", // [!code highlight]
+    limit: 50,
+});
+```
+
+---
+
+## Cohorts
+
+### list
+`cohorts.list`
+
+List all cohorts in the project.
+
+```ts
+const cohorts = await corsair.amplitude.api.cohorts.list({});
+```
+
+---
+
+### get
+`cohorts.get`
+
+Get details for a specific cohort by ID.
+
+```ts
+const cohort = await corsair.amplitude.api.cohorts.get({
+    cohort_id: "cohort-id", // [!code highlight]
+});
+```
+
+---
+
+### create
+`cohorts.create`
+
+Create a new static cohort from a list of user or device IDs.
+
+```ts
+const cohort = await corsair.amplitude.api.cohorts.create({
+    name: "Power Users", // [!code highlight]
+    app_id: 12345,
+    id_type: "BY_USER_ID",
+    ids: ["user-1", "user-2", "user-3"],
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Cohort name |
+| `app_id` | `number` | Yes | Amplitude app ID |
+| `id_type` | `string` | Yes | `BY_USER_ID` or `BY_DEVICE_ID` |
+| `ids` | `string[]` | Yes | List of user or device IDs |
+
+---
+
+### getMembers
+`cohorts.getMembers`
+
+Retrieve the member list for a cohort export request.
+
+```ts
+const members = await corsair.amplitude.api.cohorts.getMembers({
+    cohort_id: "cohort-id", // [!code highlight]
+});
+```
+
+---
+
+## Charts
+
+### get
+`charts.get`
+
+Get the data results for a specific chart by ID.
+
+```ts
+const chart = await corsair.amplitude.api.charts.get({
+    chart_id: "chart-id", // [!code highlight]
+});
+```
+
+---
+
+## Dashboards
+
+### list
+`dashboards.list`
+
+List all dashboards in the project.
+
+```ts
+const dashboards = await corsair.amplitude.api.dashboards.list({});
+```
+
+---
+
+### get
+`dashboards.get`
+
+Get details and chart list for a specific dashboard.
+
+```ts
+const dashboard = await corsair.amplitude.api.dashboards.get({
+    dashboard_id: "dashboard-id", // [!code highlight]
+});
+```
+
+---
+
+## Annotations
+
+### list
+`annotations.list`
+
+List all chart annotations for the project.
+
+```ts
+const annotations = await corsair.amplitude.api.annotations.list({});
+```
+
+---
+
+### create
+`annotations.create`
+
+Create a new chart annotation on a specific date.
+
+```ts
+const annotation = await corsair.amplitude.api.annotations.create({
+    date: "2024-01-15", // [!code highlight]
+    label: "Product launch",
+    description: "Launched v2.0",
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `date` | `string` | Yes | Date for the annotation (YYYY-MM-DD) |
+| `label` | `string` | Yes | Short annotation label |
+| `description` | `string` | No | Longer annotation description |
+
+---
+
+## Exports
+
+### getData
+`exports.getData`
+
+Export raw event data for a given time range as a zip archive.
+
+```ts
+const exportData = await corsair.amplitude.api.exports.getData({
+    start: "20240101T00", // [!code highlight]
+    end: "20240102T00",
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `start` | `string` | Yes | Start datetime (YYYYMMDDThh format) |
+| `end` | `string` | Yes | End datetime (YYYYMMDDThh format) |

@@ -1,0 +1,44 @@
+---
+title: Anthropic SDK
+description: Connect Corsair to the Anthropic SDK using tool use.
+---
+
+Use `AnthropicProvider` to connect Corsair to the [Anthropic SDK](https://github.com/anthropics/anthropic-sdk-typescript) via native tool use.
+
+## Install
+
+```bash
+npm install @anthropic-ai/sdk
+```
+
+## Usage
+
+```ts title="agent.ts"
+import Anthropic from '@anthropic-ai/sdk';
+import { AnthropicProvider } from '@corsair-dev/mcp';
+import { corsair } from './corsair';
+
+const provider = new AnthropicProvider();
+const tools = provider.build({ corsair });
+const client = new Anthropic();
+
+const message = await client.beta.messages.toolRunner({
+    model: 'claude-sonnet-4-6',
+    max_tokens: 4096,
+    tools,
+    messages: [
+        {
+            role: 'user',
+            content: 'Setup corsair, then list all Slack channels.',
+        },
+    ],
+});
+
+for (const block of message.content) {
+    if (block.type === 'text') console.log(block.text);
+}
+```
+
+`AnthropicProvider.build()` is synchronous — it returns the tools array directly, ready to pass to any Anthropic API call.
+
+`toolRunner` handles the tool call loop automatically, invoking each tool and feeding results back until the model produces a final response.

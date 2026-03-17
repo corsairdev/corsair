@@ -1,0 +1,226 @@
+---
+title: Airtable API Endpoints
+description: Complete reference for all Airtable API endpoints available in the Corsair Airtable plugin.
+---
+
+The Airtable plugin provides access to Airtable's API for managing bases, records, and webhooks.
+
+<Callout type="info">
+**New to Corsair?** Learn about core concepts like [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Callout>
+
+<Callout>
+**Full Implementation:** For the complete, up-to-date list, see the [Airtable plugin source code](https://github.com/corsairdev/corsair/tree/main/packages/corsair/plugins/airtable).
+</Callout>
+
+## Bases
+
+### getMany
+`bases.getMany`
+
+List all accessible bases.
+
+```ts
+const bases = await corsair.airtable.api.bases.getMany({});
+```
+
+---
+
+### getSchema
+`bases.getSchema`
+
+Get the schema (tables, fields, views) of a base.
+
+```ts
+const schema = await corsair.airtable.api.bases.getSchema({
+    baseId: "appXXXXXXXXXXXXXX", // [!code highlight]
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `baseId` | `string` | Yes | Airtable base ID (starts with `app`) |
+
+---
+
+## Records
+
+### get
+`records.get`
+
+Get a single record by ID.
+
+```ts
+const record = await corsair.airtable.api.records.get({
+    baseId: "appXXXXXXXXXXXXXX", // [!code highlight]
+    tableIdOrName: "Tasks",
+    recordId: "recXXXXXXXXXXXXXX",
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `baseId` | `string` | Yes | Airtable base ID |
+| `tableIdOrName` | `string` | Yes | Table ID or name |
+| `recordId` | `string` | Yes | Record ID (starts with `rec`) |
+
+---
+
+### search
+`records.search`
+
+Search and list records with optional filters.
+
+```ts
+const records = await corsair.airtable.api.records.search({
+    baseId: "appXXXXXXXXXXXXXX", // [!code highlight]
+    tableIdOrName: "Tasks",
+    filterByFormula: "{Status} = 'In Progress'",
+    maxRecords: 50,
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `baseId` | `string` | Yes | Airtable base ID |
+| `tableIdOrName` | `string` | Yes | Table ID or name |
+| `filterByFormula` | `string` | No | Airtable formula to filter records |
+| `maxRecords` | `number` | No | Max records to return |
+| `sort` | `object[]` | No | Sort configuration |
+| `view` | `string` | No | View name or ID |
+
+---
+
+### create
+`records.create`
+
+Create a record in a table.
+
+```ts
+const record = await corsair.airtable.api.records.create({
+    baseId: "appXXXXXXXXXXXXXX", // [!code highlight]
+    tableIdOrName: "Tasks",
+    fields: {
+        Name: "Write documentation",
+        Status: "In Progress",
+        Priority: "High",
+    },
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `baseId` | `string` | Yes | Airtable base ID |
+| `tableIdOrName` | `string` | Yes | Table ID or name |
+| `fields` | `object` | Yes | Record field values |
+
+---
+
+### update
+`records.update`
+
+Update fields on an existing record.
+
+```ts
+await corsair.airtable.api.records.update({
+    baseId: "appXXXXXXXXXXXXXX", // [!code highlight]
+    tableIdOrName: "Tasks",
+    recordId: "recXXXXXXXXXXXXXX",
+    fields: {
+        Status: "Done",
+    },
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `baseId` | `string` | Yes | Airtable base ID |
+| `tableIdOrName` | `string` | Yes | Table ID or name |
+| `recordId` | `string` | Yes | Record ID |
+| `fields` | `object` | Yes | Fields to update |
+
+---
+
+### createOrUpdate
+`records.createOrUpdate`
+
+Create or update a record using upsert.
+
+```ts
+const record = await corsair.airtable.api.records.createOrUpdate({
+    baseId: "appXXXXXXXXXXXXXX", // [!code highlight]
+    tableIdOrName: "Tasks",
+    fields: {
+        Name: "Write documentation",
+        Status: "In Progress",
+    },
+    fieldsToMergeOn: ["Name"],
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `baseId` | `string` | Yes | Airtable base ID |
+| `tableIdOrName` | `string` | Yes | Table ID or name |
+| `fields` | `object` | Yes | Record field values |
+| `fieldsToMergeOn` | `string[]` | Yes | Fields used to match existing records |
+
+---
+
+### delete
+`records.delete`
+
+Delete a record from a table.
+
+```ts
+await corsair.airtable.api.records.delete({
+    baseId: "appXXXXXXXXXXXXXX", // [!code highlight]
+    tableIdOrName: "Tasks",
+    recordId: "recXXXXXXXXXXXXXX",
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `baseId` | `string` | Yes | Airtable base ID |
+| `tableIdOrName` | `string` | Yes | Table ID or name |
+| `recordId` | `string` | Yes | Record ID to delete |
+
+---
+
+## Webhooks
+
+### getPayloads
+`webhooks.getPayloads`
+
+Get pending webhook payloads for a base.
+
+```ts
+const payloads = await corsair.airtable.api.webhooks.getPayloads({
+    baseId: "appXXXXXXXXXXXXXX", // [!code highlight]
+    webhookId: "webhook-id",
+    cursor: 1,
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `baseId` | `string` | Yes | Airtable base ID |
+| `webhookId` | `string` | Yes | Webhook ID |
+| `cursor` | `number` | No | Cursor for pagination |

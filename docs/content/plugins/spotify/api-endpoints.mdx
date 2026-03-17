@@ -1,0 +1,357 @@
+---
+title: Spotify API Endpoints
+description: Complete reference for all Spotify API endpoints available in the Corsair Spotify plugin.
+---
+
+The Spotify plugin provides access to Spotify's Web API for music playback, library management, and search.
+
+<Callout type="info">
+**New to Corsair?** Learn about core concepts like [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Callout>
+
+<Callout>
+**Full Implementation:** For the complete, up-to-date list, see the [Spotify plugin source code](https://github.com/corsairdev/corsair/tree/main/packages/corsair/plugins/spotify).
+</Callout>
+
+## Albums
+
+### get
+`albums.get`
+
+Get info about an album.
+
+```ts
+const album = await corsair.spotify.api.albums.get({
+    id: "album-id", // [!code highlight]
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Spotify album ID |
+
+---
+
+### getNewReleases
+`albums.getNewReleases`
+
+Get newly released albums.
+
+```ts
+const releases = await corsair.spotify.api.albums.getNewReleases({
+    limit: 20,
+    offset: 0,
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | Max results (default: 20) |
+| `offset` | `number` | No | Pagination offset |
+
+---
+
+### getTracks
+`albums.getTracks`
+
+Get tracks from an album.
+
+```ts
+const tracks = await corsair.spotify.api.albums.getTracks({
+    id: "album-id", // [!code highlight]
+    limit: 50,
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Album ID |
+| `limit` | `number` | No | Max tracks to return |
+| `offset` | `number` | No | Pagination offset |
+
+---
+
+### search
+`albums.search`
+
+Search for albums.
+
+```ts
+const results = await corsair.spotify.api.albums.search({
+    q: "Dark Side of the Moon", // [!code highlight]
+    limit: 10,
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | Yes | Search query |
+| `limit` | `number` | No | Max results |
+| `offset` | `number` | No | Pagination offset |
+
+---
+
+## Artists
+
+### get
+`artists.get`
+
+Get info about an artist.
+
+```ts
+const artist = await corsair.spotify.api.artists.get({
+    id: "artist-id", // [!code highlight]
+});
+```
+
+---
+
+### getTopTracks
+`artists.getTopTracks`
+
+Get top tracks for an artist.
+
+```ts
+const tracks = await corsair.spotify.api.artists.getTopTracks({
+    id: "artist-id", // [!code highlight]
+    market: "US",
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Artist ID |
+| `market` | `string` | No | Market code (e.g., `US`) |
+
+---
+
+### search
+`artists.search`
+
+Search for artists.
+
+```ts
+const artists = await corsair.spotify.api.artists.search({
+    q: "Queen", // [!code highlight]
+    limit: 5,
+});
+```
+
+---
+
+## Library
+
+### getLikedTracks
+`library.getLikedTracks`
+
+Get the current user's liked (saved) tracks.
+
+```ts
+const liked = await corsair.spotify.api.library.getLikedTracks({
+    limit: 50, // [!code highlight]
+    offset: 0,
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | Max tracks to return (default: 20, max: 50) |
+| `offset` | `number` | No | Pagination offset |
+
+---
+
+## Player
+
+### getCurrentlyPlaying
+`player.getCurrentlyPlaying`
+
+Get the currently playing track.
+
+```ts
+const current = await corsair.spotify.api.player.getCurrentlyPlaying({}); // [!code highlight]
+```
+
+**Parameters:** None
+
+---
+
+### startPlayback
+`player.startPlayback`
+
+Start or resume playback.
+
+```ts
+await corsair.spotify.api.player.startPlayback({
+    context_uri: "spotify:album:album-id", // [!code highlight]
+    device_id: "device-id",
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `context_uri` | `string` | No | Spotify URI to play (album, playlist, artist) |
+| `uris` | `string[]` | No | Track URIs to play |
+| `device_id` | `string` | No | Device ID to play on |
+
+---
+
+### pause
+`player.pause`
+
+Pause playback.
+
+```ts
+await corsair.spotify.api.player.pause({});
+```
+
+---
+
+### resume
+`player.resume`
+
+Resume playback.
+
+```ts
+await corsair.spotify.api.player.resume({});
+```
+
+---
+
+### skipToNext
+`player.skipToNext`
+
+Skip to the next track.
+
+```ts
+await corsair.spotify.api.player.skipToNext({});
+```
+
+---
+
+### setVolume
+`player.setVolume`
+
+Set the playback volume.
+
+```ts
+await corsair.spotify.api.player.setVolume({
+    volume_percent: 75, // [!code highlight]
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `volume_percent` | `number` | Yes | Volume (0-100) |
+
+---
+
+### addToQueue
+`player.addToQueue`
+
+Add a track to the playback queue.
+
+```ts
+await corsair.spotify.api.player.addToQueue({
+    uri: "spotify:track:track-id", // [!code highlight]
+});
+```
+
+---
+
+## Playlists
+
+### create
+`playlists.create`
+
+Create a new playlist.
+
+```ts
+const playlist = await corsair.spotify.api.playlists.create({
+    name: "My Playlist", // [!code highlight]
+    description: "Created via Corsair",
+    public: false,
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Playlist name |
+| `description` | `string` | No | Playlist description |
+| `public` | `boolean` | No | Whether the playlist is public |
+
+---
+
+### addItem
+`playlists.addItem`
+
+Add a track to a playlist.
+
+```ts
+await corsair.spotify.api.playlists.addItem({
+    playlist_id: "playlist-id",
+    uris: ["spotify:track:track-id"], // [!code highlight]
+});
+```
+
+---
+
+### getTracks
+`playlists.getTracks`
+
+Get tracks in a playlist.
+
+```ts
+const tracks = await corsair.spotify.api.playlists.getTracks({
+    playlist_id: "playlist-id", // [!code highlight]
+    limit: 100,
+});
+```
+
+---
+
+## Tracks
+
+### search
+`tracks.search`
+
+Search for tracks.
+
+```ts
+const tracks = await corsair.spotify.api.tracks.search({
+    q: "Bohemian Rhapsody Queen", // [!code highlight]
+    limit: 10,
+});
+```
+
+---
+
+### getAudioFeatures
+`tracks.getAudioFeatures`
+
+Get audio features for a track (tempo, key, danceability, etc.).
+
+```ts
+const features = await corsair.spotify.api.tracks.getAudioFeatures({
+    id: "track-id", // [!code highlight]
+});
+```
+
+---

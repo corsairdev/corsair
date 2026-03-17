@@ -1,0 +1,254 @@
+---
+title: Twitter API IO
+description: Integrate Twitter/X data including tweets, users, lists, communities, and trends into your application with Corsair.
+---
+
+## Quick Start
+
+Add the Twitter API IO plugin to your Corsair instance:
+
+```ts title="corsair.ts"
+import { createCorsair } from "corsair";
+import { twitterapiio } from "corsair/plugins";
+
+export const corsair = createCorsair({
+    plugins: [
+        twitterapiio(),
+    ],
+});
+```
+
+Once configured, you can access Twitter data:
+
+```ts
+// Search tweets
+const tweets = await corsair.twitterapiio.api.tweets.search({
+    query: "Corsair AI",
+    max_results: 10,
+});
+```
+
+## Authentication
+
+### Supported Auth Types
+
+The Twitter API IO plugin supports:
+- **`api_key`** (default) - Use a twitterapi.io API key
+
+### Default Auth Type
+
+If no `authType` is specified, the plugin defaults to **`api_key`**.
+
+### Configuring API Key Authentication
+
+```ts title="corsair.ts"
+twitterapiio({
+    key: process.env.TWITTERAPIIO_API_KEY, // [!code highlight]
+})
+```
+
+For webhook signature verification:
+
+```ts title="corsair.ts"
+twitterapiio({
+    key: process.env.TWITTERAPIIO_API_KEY,
+    webhookSecret: process.env.TWITTERAPIIO_WEBHOOK_SECRET, // [!code highlight]
+})
+```
+
+See [Authentication](/concepts/auth) for details on managing credentials.
+
+## Options
+
+| Option | Type | Description |
+|--------|------|-------------|
+| `authType` | `'api_key'` | Authentication method (defaults to `'api_key'`) |
+| `key` | `string` | API key (optional, uses database if not provided) |
+| `webhookSecret` | `string` | Webhook secret for signature verification |
+| `hooks` | `object` | Endpoint hooks for custom logic |
+| `webhookHooks` | `object` | Webhook hooks for event handling |
+| `errorHandlers` | `object` | Custom error handlers |
+| `permissions` | `object` | Permission configuration for AI agent access |
+
+### Hooks
+
+```ts
+twitterapiio({
+    hooks: {
+        tweets: {
+            search: {
+                before: async (ctx, input) => {
+                    console.log("Searching tweets:", input.query);
+                    return { ctx, input };
+                },
+            },
+        },
+    },
+})
+```
+
+See [Hooks](/concepts/hooks) for complete documentation.
+
+### Error Handling
+
+The plugin includes built-in error handlers for common scenarios. For complete documentation, see the [Error Handlers reference](/plugins/twitterapiio/error-handlers).
+
+## Usage
+
+### Accessing the API
+
+```ts
+// Get user by username
+const user = await corsair.twitterapiio.api.users.getByUsername({
+    userName: "corsairai",
+});
+
+// Get user's recent tweets
+const tweets = await corsair.twitterapiio.api.tweets.getUserLastTweets({
+    userName: "corsairai",
+    maxResults: 20,
+});
+
+// Get trending topics
+const trends = await corsair.twitterapiio.api.trends.get({
+    woeid: 1, // worldwide
+});
+
+// Get tweet replies
+const replies = await corsair.twitterapiio.api.tweets.getReplies({
+    tweetId: "1234567890",
+});
+```
+
+See [API Endpoints](/plugins/twitterapiio/api-endpoints) for the complete reference.
+
+### Webhooks
+
+Receive real-time tweet events:
+
+```ts title="app/api/webhook/route.ts"
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    const body = await request.json();
+
+    const result = await processWebhook(corsair, headers, body);
+    return result.response;
+}
+```
+
+See [Webhooks](/plugins/twitterapiio/webhooks) for all available events.
+
+### Database Access
+
+```ts
+const tweets = await corsair.twitterapiio.db.tweets.search({
+    data: { author_id: "user-id" },
+});
+```
+
+See [Database](/plugins/twitterapiio/database) for the complete schema.
+
+### Multi-Tenancy
+
+```ts
+const tenant = corsair.withTenant("brand-123");
+
+const mentions = await tenant.twitterapiio.api.tweets.search({
+    query: "@mybrand",
+    max_results: 50,
+});
+```
+
+## Examples
+
+### Example 1: Monitor Brand Mentions
+
+```ts title="corsair.ts"
+import { inngest } from "./inngest";
+
+export const corsair = createCorsair({
+    plugins: [
+        twitterapiio({
+            webhookHooks: {
+                tweets: {
+                    filterMatch: {
+                        after: async (ctx, result) => {
+                            await inngest.send({ // [!code highlight]
+                                name: "twitter/mention-received", // [!code highlight]
+                                data: { // [!code highlight]
+                                    tenantId: ctx.tenantId, // [!code highlight]
+                                    tweetId: result.data.id, // [!code highlight]
+                                    text: result.data.text, // [!code highlight]
+                                    authorId: result.data.author_id, // [!code highlight]
+                                }, // [!code highlight]
+                            }); // [!code highlight]
+                        },
+                    },
+                },
+            },
+        }),
+    ],
+});
+```
+
+```ts title="inngest/functions.ts"
+export const handleMention = inngest.createFunction(
+    { id: "handle-twitter-mention" },
+    { event: "twitter/mention-received" },
+    async ({ event }) => {
+        const tenant = corsair.withTenant(event.data.tenantId);
+
+        const author = await tenant.twitterapiio.api.users.batchGetByIds({
+            userIds: [event.data.authorId],
+        });
+
+        console.log(`Mention from @${author.data[0]?.userName}: ${event.data.text}`);
+    }
+);
+```
+
+### Example 2: Daily Trends Report
+
+```ts title="inngest/functions.ts"
+export const dailyTrendsReport = inngest.createFunction(
+    { id: "daily-twitter-trends" },
+    { cron: "0 9 * * *" },
+    async () => {
+        const trends = await corsair.twitterapiio.api.trends.get({
+            woeid: 1, // [!code highlight]
+        });
+
+        const topTrends = trends.data.slice(0, 10); // [!code highlight]
+        console.log("Top 10 trends:", topTrends.map(t => t.name));
+
+        return { trends: topTrends };
+    }
+);
+```
+
+### Example 3: Competitor Analysis
+
+```ts title="inngest/functions.ts"
+export const analyzeCompetitor = inngest.createFunction(
+    { id: "analyze-competitor-tweets" },
+    { event: "app/analyze-competitor" },
+    async ({ event }) => {
+        const tenant = corsair.withTenant(event.data.tenantId);
+
+        const [profile, recentTweets, followers] = await Promise.all([
+            tenant.twitterapiio.api.users.getByUsername({ userName: event.data.handle }), // [!code highlight]
+            tenant.twitterapiio.api.tweets.getUserLastTweets({ userName: event.data.handle, maxResults: 20 }),
+            tenant.twitterapiio.api.users.getFollowers({ userId: event.data.userId, maxResults: 100 }),
+        ]);
+
+        return {
+            followerCount: profile.data.publicMetrics?.followersCount,
+            recentTweetCount: recentTweets.data.length,
+            topFollowers: followers.data.slice(0, 5).map(f => f.userName),
+        };
+    }
+);
+```

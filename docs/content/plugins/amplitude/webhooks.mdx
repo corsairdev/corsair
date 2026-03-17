@@ -1,0 +1,169 @@
+---
+title: Amplitude Webhooks
+description: Amplitude webhook event handling in Corsair.
+---
+
+The Amplitude plugin includes webhook handlers for Amplitude analytics events.
+
+<Callout type="info">
+**New to Corsair?** Learn about [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
+</Callout>
+
+<Callout>
+**Full Implementation:** See the [Amplitude plugin source code](https://github.com/corsairdev/corsair/tree/main/packages/corsair/plugins/amplitude).
+</Callout>
+
+## Setup
+
+```ts title="app/api/webhook/route.ts"
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    const body = await request.json();
+
+    const result = await processWebhook(corsair, headers, body);
+    return result.response;
+}
+```
+
+Amplitude webhooks are identified by the `x-amplitude-signature` header.
+
+## Available Webhooks
+
+### events.track
+
+Fires when an event is tracked by Amplitude.
+
+**Example:**
+
+```ts title="corsair.ts"
+amplitude({
+    webhookHooks: {
+        "events.track": async (event) => {
+            console.log("Event tracked:", event.event_type);
+        },
+    },
+})
+```
+
+**Key fields:** `event_type`, `user_id`, `device_id`, `event_properties`, `user_properties`, `time`
+
+---
+
+### events.identify
+
+Fires when a user identify call is received by Amplitude.
+
+**Example:**
+
+```ts title="corsair.ts"
+amplitude({
+    webhookHooks: {
+        "events.identify": async (event) => {
+            console.log("User identified:", event.user_id);
+        },
+    },
+})
+```
+
+**Key fields:** `user_id`, `device_id`, `user_properties`
+
+---
+
+### annotations.created
+
+Fires when a new chart annotation is created.
+
+**Example:**
+
+```ts title="corsair.ts"
+amplitude({
+    webhookHooks: {
+        "annotations.created": async (event) => {
+            console.log("Annotation created:", event.label);
+        },
+    },
+})
+```
+
+**Key fields:** `id`, `label`, `description`, `date`
+
+---
+
+### annotations.updated
+
+Fires when a chart annotation is updated.
+
+**Example:**
+
+```ts title="corsair.ts"
+amplitude({
+    webhookHooks: {
+        "annotations.updated": async (event) => {
+            console.log("Annotation updated:", event.id);
+        },
+    },
+})
+```
+
+---
+
+### monitors.alert
+
+Fires when an alert monitor threshold is triggered.
+
+**Example:**
+
+```ts title="corsair.ts"
+amplitude({
+    webhookHooks: {
+        "monitors.alert": async (event) => {
+            console.log("Monitor alert:", event.monitor_name);
+        },
+    },
+})
+```
+
+**Key fields:** `monitor_id`, `monitor_name`, `triggered_at`, `value`, `threshold`
+
+---
+
+### cohorts.computed
+
+Fires when a cohort finishes computing.
+
+**Example:**
+
+```ts title="corsair.ts"
+amplitude({
+    webhookHooks: {
+        "cohorts.computed": async (event) => {
+            console.log("Cohort computed:", event.cohort_id);
+        },
+    },
+})
+```
+
+**Key fields:** `cohort_id`, `cohort_name`, `size`, `computed_at`
+
+---
+
+### experiments.exposure
+
+Fires when an experiment exposure is tracked for a user.
+
+**Example:**
+
+```ts title="corsair.ts"
+amplitude({
+    webhookHooks: {
+        "experiments.exposure": async (event) => {
+            console.log("Experiment exposure:", event.flag_key, event.variant);
+        },
+    },
+})
+```
+
+**Key fields:** `flag_key`, `variant`, `user_id`, `device_id`

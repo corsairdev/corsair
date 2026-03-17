@@ -1,0 +1,106 @@
+---
+title: PagerDuty Error Handlers
+description: Built-in and custom error handling for the PagerDuty plugin.
+---
+
+The PagerDuty plugin includes built-in error handlers for common PagerDuty API error scenarios.
+
+<Callout type="info">
+**New to Corsair?** Learn about [error handling](/concepts/error-handling) before customizing error handlers.
+</Callout>
+
+<Callout>
+**Full Implementation:** See the [PagerDuty plugin source code](https://github.com/corsairdev/corsair/tree/main/packages/corsair/plugins/pagerduty).
+</Callout>
+
+## Built-in Error Handlers
+
+### Rate Limit Errors
+
+**Triggers:** HTTP 429 status
+
+**Behavior:**
+- Maximum retries: **5**
+- Respects `Retry-After` header
+
+**Example:**
+
+```ts
+// Corsair handles rate limits automatically
+await corsair.pagerduty.api.incidents.list({
+    limit: 100, // [!code highlight]
+});
+```
+
+---
+
+### Authentication Errors
+
+**Triggers:** HTTP 401 status or errors containing `invalid credentials`
+
+**Behavior:**
+- Maximum retries: **0** (no retries)
+- Fails immediately
+
+**How to Fix:**
+1. Verify your API key is valid and not expired
+2. Ensure the API key has the required permissions
+3. Check if the key was revoked in PagerDuty
+
+---
+
+### Permission Errors
+
+**Triggers:** HTTP 403 status
+
+**Behavior:**
+- Maximum retries: **0** (no retries)
+- Fails immediately
+
+**How to Fix:**
+1. Verify the API key has access to the requested resource
+2. Check user role permissions in PagerDuty
+
+---
+
+### Not Found Errors
+
+**Triggers:** HTTP 404 status
+
+**Behavior:**
+- Maximum retries: **0** (no retries)
+- Fails immediately
+
+---
+
+### Network Errors
+
+**Triggers:** Connection errors, timeouts
+
+**Behavior:**
+- Maximum retries: **3**
+- Uses exponential backoff
+
+---
+
+## Custom Error Handlers
+
+```ts title="corsair.ts"
+pagerduty({
+    errorHandlers: {
+        MAINTENANCE_WINDOW: {
+            match: (error) => {
+                return error.message.includes("maintenance"); // [!code highlight]
+            },
+            handler: async (error, context) => {
+                return {
+                    maxRetries: 5,
+                    headersRetryAfterMs: 60000, // [!code highlight]
+                };
+            },
+        },
+    },
+})
+```
+
+For comprehensive error handling strategies, patterns, and best practices, see the [Error Handling](/concepts/error-handling) concepts page.

@@ -1,0 +1,282 @@
+---
+title: Discord
+description: Integrate Discord messaging, channels, guilds, and interaction handling into your application with Corsair.
+---
+
+## Quick Start
+
+Add the Discord plugin to your Corsair instance:
+
+```ts title="corsair.ts"
+import { createCorsair } from "corsair";
+import { discord } from "corsair/plugins";
+
+export const corsair = createCorsair({
+    plugins: [
+        discord(),
+    ],
+});
+```
+
+Once configured, you can access the Discord API:
+
+```ts
+// Send a message to a channel
+await corsair.discord.api.messages.send({
+    channelId: "1234567890",
+    content: "Hello from Corsair!",
+});
+```
+
+## Authentication
+
+### Supported Auth Types
+
+The Discord plugin supports:
+- **`api_key`** (default) - Use a Discord bot token
+
+### Default Auth Type
+
+If no `authType` is specified, the plugin defaults to **`api_key`**.
+
+### Configuring API Key Authentication
+
+```ts title="corsair.ts"
+discord({
+    key: process.env.DISCORD_BOT_TOKEN, // [!code highlight]
+})
+```
+
+For webhook signature verification, provide your app's Ed25519 public key:
+
+```ts title="corsair.ts"
+discord({
+    key: process.env.DISCORD_BOT_TOKEN,
+    publicKey: process.env.DISCORD_PUBLIC_KEY, // [!code highlight]
+})
+```
+
+The `publicKey` is found in the Discord Developer Portal under **Application > General Information**.
+
+See [Authentication](/concepts/auth) for details on managing credentials.
+
+## Options
+
+The Discord plugin accepts the following configuration options:
+
+| Option | Type | Description |
+|--------|------|-------------|
+| `authType` | `'api_key'` | Authentication method (defaults to `'api_key'`) |
+| `key` | `string` | Bot token (optional, uses database if not provided) |
+| `publicKey` | `string` | Ed25519 public key for webhook signature verification |
+| `hooks` | `object` | Endpoint hooks for custom logic |
+| `webhookHooks` | `object` | Webhook hooks for event handling |
+| `errorHandlers` | `object` | Custom error handlers |
+| `permissions` | `object` | Permission configuration for AI agent access |
+
+### Hooks
+
+```ts
+discord({
+    hooks: {
+        messages: {
+            send: {
+                before: async (ctx, input) => {
+                    console.log("Sending message to channel:", input.channelId);
+                    return { ctx, input };
+                },
+            },
+        },
+    },
+})
+```
+
+See [Hooks](/concepts/hooks) for complete documentation.
+
+### Error Handling
+
+The plugin includes built-in error handlers for common scenarios. For complete documentation, see the [Error Handlers reference](/plugins/discord/error-handlers).
+
+## Usage
+
+### Accessing the API
+
+```ts
+// Send a message
+await corsair.discord.api.messages.send({
+    channelId: "1234567890",
+    content: "Hello!",
+});
+
+// List channels in a guild
+const channels = await corsair.discord.api.channels.list({
+    guildId: "9876543210",
+});
+
+// Get guild members
+const members = await corsair.discord.api.members.list({
+    guildId: "9876543210",
+});
+```
+
+See [API Endpoints](/plugins/discord/api-endpoints) for the complete reference.
+
+### Webhooks
+
+Discord sends interaction events (slash commands, buttons, modals) to your webhook URL:
+
+```ts title="app/api/webhook/route.ts"
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    const body = await request.json();
+
+    const result = await processWebhook(corsair, headers, body);
+    return result.response;
+}
+```
+
+Set your Discord app's Interactions Endpoint URL to `https://your-domain.com/api/webhook`.
+
+See [Webhooks](/plugins/discord/webhooks) for all available events.
+
+### Database Access
+
+```ts
+// Search synced guild data
+const guilds = await corsair.discord.db.guilds.search({
+    data: { name: "My Server" },
+});
+```
+
+See [Database](/plugins/discord/database) for the complete schema.
+
+### Multi-Tenancy
+
+```ts
+const tenant = corsair.withTenant("user-123");
+
+await tenant.discord.api.messages.send({
+    channelId: "1234567890",
+    content: "Hello from tenant user-123!",
+});
+```
+
+## Examples
+
+### Example 1: Respond to a Slash Command
+
+```ts title="corsair.ts"
+import { inngest } from "./inngest";
+
+export const corsair = createCorsair({
+    plugins: [
+        discord({
+            webhookHooks: {
+                interactions: {
+                    applicationCommand: {
+                        after: async (ctx, result) => {
+                            await inngest.send({ // [!code highlight]
+                                name: "discord/command-received", // [!code highlight]
+                                data: { // [!code highlight]
+                                    tenantId: ctx.tenantId, // [!code highlight]
+                                    commandName: result.data.data?.name, // [!code highlight]
+                                    userId: result.data.member?.user?.id, // [!code highlight]
+                                }, // [!code highlight]
+                            }); // [!code highlight]
+                        },
+                    },
+                },
+            },
+        }),
+    ],
+});
+```
+
+```ts title="inngest/functions.ts"
+export const handleDiscordCommand = inngest.createFunction(
+    { id: "handle-discord-command" },
+    { event: "discord/command-received" },
+    async ({ event }) => {
+        const tenant = corsair.withTenant(event.data.tenantId);
+
+        if (event.data.commandName === "ping") {
+            await tenant.discord.api.messages.send({
+                channelId: "1234567890",
+                content: `Pong! Command from user ${event.data.userId}`,
+            });
+        }
+    }
+);
+```
+
+### Example 2: Create a Thread on Important Messages
+
+```ts title="corsair.ts"
+export const corsair = createCorsair({
+    plugins: [
+        discord({
+            webhookHooks: {
+                interactions: {
+                    messageComponent: {
+                        after: async (ctx, result) => {
+                            await inngest.send({
+                                name: "discord/component-interaction",
+                                data: {
+                                    tenantId: ctx.tenantId,
+                                    customId: result.data.data?.custom_id, // [!code highlight]
+                                    messageId: result.data.message?.id,
+                                    channelId: result.data.channel_id,
+                                },
+                            });
+                        },
+                    },
+                },
+            },
+        }),
+    ],
+});
+```
+
+```ts title="inngest/functions.ts"
+export const handleComponentInteraction = inngest.createFunction(
+    { id: "handle-component-interaction" },
+    { event: "discord/component-interaction" },
+    async ({ event }) => {
+        const tenant = corsair.withTenant(event.data.tenantId);
+
+        if (event.data.customId === "create-thread") {
+            await tenant.discord.api.threads.createFromMessage({
+                channelId: event.data.channelId,
+                messageId: event.data.messageId,
+                name: "Discussion Thread",
+            });
+        }
+    }
+);
+```
+
+### Example 3: Post a Message with Reactions
+
+```ts title="inngest/functions.ts"
+export const postAnnouncement = inngest.createFunction(
+    { id: "post-announcement" },
+    { event: "app/announcement" },
+    async ({ event }) => {
+        const tenant = corsair.withTenant(event.data.tenantId);
+
+        const message = await tenant.discord.api.messages.send({
+            channelId: event.data.channelId,
+            content: event.data.text, // [!code highlight]
+        });
+
+        await tenant.discord.api.reactions.add({
+            channelId: event.data.channelId,
+            messageId: message.data.id,
+            emoji: "👍", // [!code highlight]
+        });
+    }
+);
+```

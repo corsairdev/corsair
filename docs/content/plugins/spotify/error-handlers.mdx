@@ -1,0 +1,104 @@
+---
+title: Spotify Error Handlers
+description: Built-in and custom error handling for the Spotify plugin.
+---
+
+The Spotify plugin includes built-in error handlers for common Spotify API error scenarios.
+
+<Callout type="info">
+**New to Corsair?** Learn about [error handling](/concepts/error-handling) before customizing error handlers.
+</Callout>
+
+<Callout>
+**Full Implementation:** See the [Spotify plugin source code](https://github.com/corsairdev/corsair/tree/main/packages/corsair/plugins/spotify).
+</Callout>
+
+## Built-in Error Handlers
+
+### Rate Limit Errors
+
+**Triggers:** HTTP 429 status
+
+**Behavior:**
+- Maximum retries: **5**
+- Respects `Retry-After` header
+
+**Example:**
+
+```ts
+// Corsair handles rate limits automatically
+const tracks = await corsair.spotify.api.tracks.search({
+    q: "Bohemian Rhapsody", // [!code highlight]
+});
+```
+
+---
+
+### Authentication Errors
+
+**Triggers:** HTTP 401 status, expired or invalid token
+
+**Behavior:**
+- Maximum retries: **0** (no retries)
+- The plugin automatically refreshes access tokens when possible
+
+**How to Fix:**
+1. Ensure your OAuth 2.0 refresh token is valid
+2. Re-authorize the user if the refresh token has expired
+3. Check your client ID and client secret are correct
+
+---
+
+### Permission Errors
+
+**Triggers:** HTTP 403 status, insufficient OAuth scopes
+
+**Behavior:**
+- Maximum retries: **0** (no retries)
+
+**How to Fix:**
+1. Check the required OAuth scopes for the endpoint
+2. Re-authorize the user with the necessary scopes
+3. Common scopes: `user-library-read`, `playlist-modify-private`, `user-modify-playback-state`
+
+---
+
+### Not Found Errors
+
+**Triggers:** HTTP 404 status
+
+**Behavior:**
+- Maximum retries: **0** (no retries)
+
+---
+
+### Network Errors
+
+**Triggers:** Connection errors, timeouts
+
+**Behavior:**
+- Maximum retries: **3**
+
+---
+
+## Custom Error Handlers
+
+```ts title="corsair.ts"
+spotify({
+    errorHandlers: {
+        NO_ACTIVE_DEVICE: {
+            match: (error) => {
+                return error.message.includes("NO_ACTIVE_DEVICE"); // [!code highlight]
+            },
+            handler: async (error, context) => {
+                console.log("No active Spotify device found");
+                return {
+                    maxRetries: 0,
+                };
+            },
+        },
+    },
+})
+```
+
+For comprehensive error handling strategies, patterns, and best practices, see the [Error Handling](/concepts/error-handling) concepts page.

@@ -1,0 +1,108 @@
+---
+title: Discord Error Handlers
+description: Built-in and custom error handling for the Discord plugin.
+---
+
+The Discord plugin includes built-in error handlers for common Discord API error scenarios.
+
+<Callout type="info">
+**New to Corsair?** Learn about [error handling](/concepts/error-handling) before customizing error handlers.
+</Callout>
+
+<Callout>
+**Full Implementation:** See the [Discord plugin source code](https://github.com/corsairdev/corsair/tree/main/packages/corsair/plugins/discord).
+</Callout>
+
+## Built-in Error Handlers
+
+### Rate Limit Errors
+
+**Triggers:** HTTP 429 status or error messages containing `rate limit`
+
+**Behavior:**
+- Maximum retries: **5**
+- Respects `Retry-After` header
+
+**Example:**
+
+```ts
+// Corsair handles rate limits automatically
+await corsair.discord.api.messages.send({
+    channelId: "1234567890",
+    content: "This will retry if rate limited", // [!code highlight]
+});
+```
+
+---
+
+### Authentication Errors
+
+**Triggers:** HTTP 401 status or errors containing `invalid token`, `unauthorized`
+
+**Behavior:**
+- Maximum retries: **0** (no retries)
+- Fails immediately for manual intervention
+
+**How to Fix:**
+1. Verify your bot token is valid
+2. Check the token hasn't been regenerated in the Discord Developer Portal
+3. Ensure the bot is still a member of the target guild
+
+---
+
+### Permission Errors
+
+**Triggers:** HTTP 403 status or errors containing `missing permissions`, `forbidden`
+
+**Behavior:**
+- Maximum retries: **0** (no retries)
+- Fails immediately
+
+**How to Fix:**
+1. Check the bot has the required permissions in the server
+2. Verify the bot role is above the roles it's trying to manage
+3. Ensure the bot has access to the channel
+
+---
+
+### Not Found Errors
+
+**Triggers:** HTTP 404 status
+
+**Behavior:**
+- Maximum retries: **0** (no retries)
+- Fails immediately
+
+---
+
+### Network Errors
+
+**Triggers:** Connection errors, timeouts
+
+**Behavior:**
+- Maximum retries: **3**
+- Uses exponential backoff
+
+---
+
+## Custom Error Handlers
+
+```ts title="corsair.ts"
+discord({
+    errorHandlers: {
+        SLOW_MODE_COOLDOWN: {
+            match: (error) => {
+                return error.message.includes("slowmode"); // [!code highlight]
+            },
+            handler: async (error, context) => {
+                return {
+                    maxRetries: 3,
+                    headersRetryAfterMs: 5000, // [!code highlight]
+                };
+            },
+        },
+    },
+})
+```
+
+For comprehensive error handling strategies, patterns, and best practices, see the [Error Handling](/concepts/error-handling) concepts page.

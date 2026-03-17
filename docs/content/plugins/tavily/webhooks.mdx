@@ -1,0 +1,36 @@
+---
+title: Tavily Webhooks
+description: Tavily does not currently support outgoing webhooks.
+---
+
+The Tavily plugin is a search API and does not support incoming webhook events.
+
+<Callout type="info">
+**New to Corsair?** Learn about [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
+</Callout>
+
+<Callout>
+**Full Implementation:** See the [Tavily plugin source code](https://github.com/corsairdev/corsair/tree/main/packages/corsair/plugins/tavily).
+</Callout>
+
+## No Webhook Events
+
+Tavily is a request/response API. All interactions are initiated by your application calling the search endpoint — Tavily does not push events to your server.
+
+If you need to run searches on a schedule or in response to other events, use a background job system:
+
+```ts title="inngest/functions.ts"
+// Run a search in response to an event
+export const searchOnDemand = inngest.createFunction(
+    { id: "tavily-search" },
+    { event: "app/search-requested" },
+    async ({ event }) => {
+        const results = await corsair.tavily.api.search({
+            query: event.data.query, // [!code highlight]
+            search_depth: "advanced",
+        });
+
+        return results.data;
+    }
+);
+```

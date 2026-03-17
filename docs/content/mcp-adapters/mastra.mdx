@@ -1,0 +1,39 @@
+---
+title: Mastra
+description: Connect Corsair to the Mastra agent framework.
+---
+
+Use `MastraProvider` to connect Corsair to [Mastra](https://mastra.ai).
+
+## Install
+
+```bash
+npm install @mastra/core
+```
+
+## Usage
+
+```ts title="agent.ts"
+import { Agent } from '@mastra/core/agent';
+import { anthropic } from '@ai-sdk/anthropic';
+import { MastraProvider } from '@corsair-dev/mcp';
+import { corsair } from './corsair';
+
+const provider = new MastraProvider();
+const tools = await provider.build({ corsair });
+
+const agent = new Agent({
+    name: 'corsair-agent',
+    model: anthropic('claude-sonnet-4-6'),
+    instructions:
+        'You have access to Corsair tools. Use list_operations to discover available APIs, get_schema to understand required arguments, and run_script to execute them.',
+    tools: Object.fromEntries(tools.map((t) => [t.id, t])),
+});
+
+const response = await agent.generate(
+    'Setup corsair, then list all Slack channels.',
+);
+console.log(response.text);
+```
+
+`MastraProvider.build()` is async — it dynamically imports `@mastra/core` as an optional peer dependency. The returned tools are standard Mastra `createTool` instances ready to pass to any Mastra agent.

@@ -1,0 +1,194 @@
+---
+title: Discord Database Schema
+description: Database entities and querying synced Discord data.
+---
+
+The Discord plugin syncs data from Discord to your database, enabling fast queries without making API calls.
+
+<Callout type="info">
+**New to Corsair?** Learn about [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Callout>
+
+<Callout>
+**Full Implementation:** See the [Discord plugin source code](https://github.com/corsairdev/corsair/tree/main/packages/corsair/plugins/discord).
+</Callout>
+
+## Synced Entities
+
+- **guilds** - Server information and metadata
+- **channels** - Channel information per guild
+- **members** - Guild member data
+- **messages** - Message history
+
+## Database API
+
+Access synced data through the `db` property:
+
+```ts
+const guilds = await corsair.discord.db.guilds.search({
+    data: { name: "My Server" },
+});
+```
+
+### Search Options
+
+```ts
+await corsair.discord.db.guilds.search({
+    data: { name: "My Server" },
+    limit: 100,
+    offset: 0,
+});
+```
+
+---
+
+## Guilds
+
+Guild data is synced when the bot joins a server or fetches guild info.
+
+### Schema
+
+```ts
+{
+    id: string;          // Discord guild (server) ID
+    name: string;        // Server name
+    icon?: string;       // Icon hash
+    owner_id?: string;   // Owner user ID
+    member_count?: number;
+}
+```
+
+### Querying Guilds
+
+**Search by name:**
+
+```ts
+const guilds = await corsair.discord.db.guilds.search({
+    data: { name: "My Server" }, // [!code highlight]
+});
+```
+
+**Get a specific guild:**
+
+```ts
+const guild = await corsair.discord.db.guilds.search({
+    data: { id: "9876543210" },
+});
+```
+
+---
+
+## Channels
+
+### Schema
+
+```ts
+{
+    id: string;           // Channel ID
+    guild_id: string;     // Parent guild ID
+    name: string;         // Channel name
+    type: number;         // Channel type (0=text, 2=voice, etc.)
+    topic?: string;       // Channel topic
+    position?: number;    // Channel order position
+    parent_id?: string;   // Category ID
+}
+```
+
+### Querying Channels
+
+**Search by guild:**
+
+```ts
+const channels = await corsair.discord.db.channels.search({
+    data: { guild_id: "9876543210" }, // [!code highlight]
+});
+```
+
+**Find text channels:**
+
+```ts
+const textChannels = await corsair.discord.db.channels.search({
+    data: { guild_id: "9876543210", type: 0 },
+});
+```
+
+---
+
+## Members
+
+### Schema
+
+```ts
+{
+    user_id: string;      // User ID
+    guild_id: string;     // Guild ID
+    username: string;     // Username
+    discriminator?: string;
+    nick?: string;        // Server nickname
+    roles: string[];      // Role IDs
+    joined_at?: string;   // When they joined
+}
+```
+
+### Querying Members
+
+**Search by guild:**
+
+```ts
+const members = await corsair.discord.db.members.search({
+    data: { guild_id: "9876543210" }, // [!code highlight]
+    limit: 100,
+});
+```
+
+### Example: Find Members with a Role
+
+```ts
+const mods = await corsair.discord.db.members.search({
+    data: { guild_id: "9876543210" },
+});
+
+const modRole = "MOD_ROLE_ID";
+const moderators = mods.data.filter(m => m.roles.includes(modRole)); // [!code highlight]
+```
+
+---
+
+## Messages
+
+### Schema
+
+```ts
+{
+    id: string;           // Message ID
+    channel_id: string;   // Channel ID
+    guild_id?: string;    // Guild ID
+    author_id: string;    // User ID of sender
+    content: string;      // Message text
+    timestamp: string;    // When message was sent
+    edited_timestamp?: string;
+    type: number;         // Message type
+}
+```
+
+### Querying Messages
+
+**Search by channel:**
+
+```ts
+const messages = await corsair.discord.db.messages.search({
+    data: { channel_id: "1234567890" }, // [!code highlight]
+    limit: 50,
+});
+```
+
+### Example: Multi-Tenancy Database Query
+
+```ts
+const tenant = corsair.withTenant("user-123");
+
+const recentMessages = await tenant.discord.db.messages.search({
+    data: { channel_id: "1234567890" },
+    limit: 10,
+});
+```

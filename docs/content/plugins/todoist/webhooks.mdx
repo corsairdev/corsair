@@ -1,0 +1,207 @@
+---
+title: Todoist Webhooks
+description: Todoist webhook event handling in Corsair.
+---
+
+The Todoist plugin includes webhook handlers for Todoist task, note, and project lifecycle events.
+
+<Callout type="info">
+**New to Corsair?** Learn about [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
+</Callout>
+
+<Callout>
+**Full Implementation:** See the [Todoist plugin source code](https://github.com/corsairdev/corsair/tree/main/packages/corsair/plugins/todoist).
+</Callout>
+
+## Setup
+
+```ts title="app/api/webhook/route.ts"
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    const body = await request.json();
+
+    const result = await processWebhook(corsair, headers, body);
+    return result.response;
+}
+```
+
+Todoist webhooks are identified by the `x-todoist-delivery-id` header.
+
+## Available Webhooks
+
+### items.added
+
+Fires when a new task is added.
+
+**Example:**
+
+```ts title="corsair.ts"
+todoist({
+    webhookHooks: {
+        "items.added": async (event) => {
+            console.log("Task added:", event.event_data?.content);
+        },
+    },
+})
+```
+
+**Key fields:** `event_data.id`, `event_data.content`, `event_data.project_id`, `event_data.due`, `event_data.priority`, `initiator`
+
+---
+
+### items.updated
+
+Fires when a task is updated.
+
+**Example:**
+
+```ts title="corsair.ts"
+todoist({
+    webhookHooks: {
+        "items.updated": async (event) => {
+            console.log("Task updated:", event.event_data?.id);
+        },
+    },
+})
+```
+
+---
+
+### items.completed
+
+Fires when a task is completed.
+
+**Example:**
+
+```ts title="corsair.ts"
+todoist({
+    webhookHooks: {
+        "items.completed": async (event) => {
+            console.log("Task completed:", event.event_data?.content);
+        },
+    },
+})
+```
+
+---
+
+### items.uncompleted
+
+Fires when a completed task is reopened.
+
+**Example:**
+
+```ts title="corsair.ts"
+todoist({
+    webhookHooks: {
+        "items.uncompleted": async (event) => {
+            console.log("Task reopened:", event.event_data?.id);
+        },
+    },
+})
+```
+
+---
+
+### items.deleted
+
+Fires when a task is deleted.
+
+**Example:**
+
+```ts title="corsair.ts"
+todoist({
+    webhookHooks: {
+        "items.deleted": async (event) => {
+            console.log("Task deleted:", event.event_data?.id);
+        },
+    },
+})
+```
+
+---
+
+### notes.added
+
+Fires when a comment is added to a task or project.
+
+**Example:**
+
+```ts title="corsair.ts"
+todoist({
+    webhookHooks: {
+        "notes.added": async (event) => {
+            console.log("Comment added:", event.event_data?.content);
+        },
+    },
+})
+```
+
+---
+
+### notes.updated
+
+Fires when a comment is updated.
+
+---
+
+### notes.deleted
+
+Fires when a comment is deleted.
+
+---
+
+### projects.added
+
+Fires when a new project is created.
+
+**Example:**
+
+```ts title="corsair.ts"
+todoist({
+    webhookHooks: {
+        "projects.added": async (event) => {
+            console.log("Project created:", event.event_data?.name);
+        },
+    },
+})
+```
+
+---
+
+### projects.updated
+
+Fires when a project is updated.
+
+---
+
+### projects.archived
+
+Fires when a project is archived.
+
+---
+
+### projects.unarchived
+
+Fires when a project is unarchived.
+
+---
+
+### projects.deleted
+
+Fires when a project is deleted.
+
+**Example:**
+
+```ts title="corsair.ts"
+todoist({
+    webhookHooks: {
+        "projects.deleted": async (event) => {
+            console.log("Project deleted:", event.event_data?.id);
+        },
+    },
+})
+```

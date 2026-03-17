@@ -1,0 +1,163 @@
+---
+title: Installation
+description: Install Corsair, migrate your database, and run your first prompt.
+---
+
+This guide walks through setting up Corsair from scratch — installing packages, migrating the database, creating your instance, and connecting an AI agent.
+
+## Install
+
+```bash
+npm install corsair @corsair-dev/mcp better-sqlite3
+```
+
+`corsair` is the core SDK. `@corsair-dev/mcp` adds MCP adapters for AI agent frameworks. `better-sqlite3` is the database driver — you can swap this for PostgreSQL later.
+
+## Environment Variables
+
+```bash title=".env"
+CORSAIR_KEK=your-32-character-encryption-key
+```
+
+`CORSAIR_KEK` is the Key Encryption Key used to protect credentials stored in your database. Generate one with:
+
+```bash
+openssl rand -base64 32
+```
+
+## Migrate the Database
+
+Corsair requires four tables. Run this migration once before starting:
+
+```sql title="migration.sql"
+CREATE TABLE IF NOT EXISTS corsair_integrations (
+    id TEXT PRIMARY KEY,
+    created_at INTEGER NOT NULL,
+    updated_at INTEGER NOT NULL,
+    name TEXT NOT NULL,
+    config TEXT NOT NULL,
+    dek TEXT NULL
+);
+
+CREATE TABLE IF NOT EXISTS corsair_accounts (
+    id TEXT PRIMARY KEY,
+    created_at INTEGER NOT NULL,
+    updated_at INTEGER NOT NULL,
+    tenant_id TEXT NOT NULL,
+    integration_id TEXT NOT NULL,
+    config TEXT NOT NULL,
+    dek TEXT NULL,
+    FOREIGN KEY (integration_id) REFERENCES corsair_integrations(id)
+);
+
+CREATE TABLE IF NOT EXISTS corsair_entities (
+    id TEXT PRIMARY KEY,
+    created_at INTEGER NOT NULL,
+    updated_at INTEGER NOT NULL,
+    account_id TEXT NOT NULL,
+    entity_id TEXT NOT NULL,
+    entity_type TEXT NOT NULL,
+    version TEXT NOT NULL,
+    data TEXT NOT NULL,
+    FOREIGN KEY (account_id) REFERENCES corsair_accounts(id)
+);
+
+CREATE TABLE IF NOT EXISTS corsair_events (
+    id TEXT PRIMARY KEY,
+    created_at INTEGER NOT NULL,
+    updated_at INTEGER NOT NULL,
+    account_id TEXT NOT NULL,
+    event_type TEXT NOT NULL,
+    payload TEXT NOT NULL,
+    status TEXT,
+    FOREIGN KEY (account_id) REFERENCES corsair_accounts(id)
+);
+```
+
+The full table schema types are defined in [`packages/corsair/db/index.ts`](https://github.com/corsair-dev/corsair/blob/main/packages/corsair/db/index.ts).
+
+## Create the Corsair Instance
+
+Create a `corsair.ts` file that configures your plugins and exports the instance.
+
+```ts title="corsair.ts"
+import 'dotenv/config';
+import Database from 'better-sqlite3';
+import { createCorsair, slack, linear, gmail } from 'corsair';
+
+const db = new Database('corsair.db');
+
+export const corsair = createCorsair({
+    plugins: [
+        slack(),
+        linear(),
+        gmail(),
+    ],
+    database: db,
+    kek: process.env.CORSAIR_KEK!,
+    multiTenancy: false,
+});
+```
+
+Pass any plugins you want to use. Each plugin corresponds to one integration.
+
+## Connect MCP
+
+`@corsair-dev/mcp` provides adapters for every major agent framework. Here's a quick example using the Anthropic SDK:
+
+```bash
+npm install @anthropic-ai/sdk
+```
+
+```ts title="agent.ts"
+import Anthropic from '@anthropic-ai/sdk';
+import { AnthropicProvider } from '@corsair-dev/mcp';
+import { corsair } from './corsair';
+
+const provider = new AnthropicProvider();
+const tools = provider.build({ corsair });
+const client = new Anthropic();
+
+const message = await client.beta.messages.toolRunner({
+    model: 'claude-sonnet-4-6',
+    max_tokens: 4096,
+    tools,
+    messages: [{ role: 'user', content: 'Setup corsair.' }],
+});
+
+for (const block of message.content) {
+    if (block.type === 'text') console.log(block.text);
+}
+```
+
+See [MCP Adapters](/mcp-adapters) for Claude Agent SDK, OpenAI Agents, Vercel AI, Mastra, and more.
+
+Once connected, the agent has four tools:
+
+- **`corsair_setup`** — check auth status and get credential instructions
+- **`list_operations`** — discover every available API endpoint
+- **`get_schema`** — inspect the parameters for a specific endpoint
+- **`run_script`** — execute a JavaScript snippet with `corsair` in scope
+
+## Your First Prompt
+
+Start with setup:
+
+```
+Setup corsair.
+```
+
+The agent will call `corsair_setup`, which checks if your database tables exist, creates the required rows, and tells you exactly which credentials are missing and how to store them. Once credentials are in place, run it again and it will confirm everything is ready.
+
+From there, try a real task:
+
+```
+List all Slack channels and send a message to #general.
+```
+
+## Next Steps
+
+- [MCP Adapters](/mcp-adapters) — Connect Claude, OpenAI, Vercel AI, and more
+- [Authentication](/auth) — OAuth, API keys, and envelope encryption
+- [Database](/database) — The four tables and how data flows through them
+- [Plugins](/plugins) — Available integrations and their endpoints

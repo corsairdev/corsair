@@ -1,0 +1,247 @@
+---
+title: Todoist
+description: Integrate Todoist task management into your application with Corsair.
+---
+
+## Quick Start
+
+Add the Todoist plugin to your Corsair instance:
+
+```ts title="corsair.ts"
+import { createCorsair } from "corsair";
+import { todoist } from "corsair/plugins";
+
+export const corsair = createCorsair({
+    plugins: [
+        todoist(),
+    ],
+});
+```
+
+Once configured, you can manage tasks:
+
+```ts
+// Create a task
+await corsair.todoist.api.tasks.create({
+    content: "Buy groceries",
+    due_string: "tomorrow",
+});
+```
+
+## Authentication
+
+### Supported Auth Types
+
+The Todoist plugin supports:
+- **`api_key`** (default) - Use a Todoist API token
+
+### Default Auth Type
+
+If no `authType` is specified, the plugin defaults to **`api_key`**.
+
+### Configuring API Key Authentication
+
+```ts title="corsair.ts"
+todoist({
+    key: process.env.TODOIST_API_TOKEN, // [!code highlight]
+})
+```
+
+For webhook signature verification:
+
+```ts title="corsair.ts"
+todoist({
+    key: process.env.TODOIST_API_TOKEN,
+    webhookSecret: process.env.TODOIST_WEBHOOK_SECRET, // [!code highlight]
+})
+```
+
+See [Authentication](/concepts/auth) for details on managing credentials.
+
+## Options
+
+| Option | Type | Description |
+|--------|------|-------------|
+| `authType` | `'api_key'` | Authentication method (defaults to `'api_key'`) |
+| `key` | `string` | API token (optional, uses database if not provided) |
+| `webhookSecret` | `string` | Webhook secret for verification |
+| `hooks` | `object` | Endpoint hooks for custom logic |
+| `webhookHooks` | `object` | Webhook hooks for event handling |
+| `errorHandlers` | `object` | Custom error handlers |
+| `permissions` | `object` | Permission configuration for AI agent access |
+
+### Hooks
+
+```ts
+todoist({
+    hooks: {
+        tasks: {
+            create: {
+                before: async (ctx, input) => {
+                    console.log("Creating task:", input.content);
+                    return { ctx, input };
+                },
+            },
+        },
+    },
+})
+```
+
+See [Hooks](/concepts/hooks) for complete documentation.
+
+### Error Handling
+
+The plugin includes built-in error handlers for common scenarios. For complete documentation, see the [Error Handlers reference](/plugins/todoist/error-handlers).
+
+## Usage
+
+### Accessing the API
+
+```ts
+// Get all active tasks
+const tasks = await corsair.todoist.api.tasks.getMany({
+    filter: "today | overdue",
+});
+
+// Complete a task
+await corsair.todoist.api.tasks.close({
+    id: "task-id",
+});
+
+// Move a task to a project
+await corsair.todoist.api.tasks.move({
+    id: "task-id",
+    project_id: "project-id",
+});
+
+// Create a project
+await corsair.todoist.api.projects.create({
+    name: "New Project",
+    color: "blue",
+});
+```
+
+See [API Endpoints](/plugins/todoist/api-endpoints) for the complete reference.
+
+### Webhooks
+
+Todoist sends task and project events to your webhook endpoint (identified by `x-todoist-delivery-id` header):
+
+```ts title="app/api/webhook/route.ts"
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    const body = await request.json();
+
+    const result = await processWebhook(corsair, headers, body);
+    return result.response;
+}
+```
+
+See [Webhooks](/plugins/todoist/webhooks) for all available events.
+
+### Database Access
+
+```ts
+const tasks = await corsair.todoist.db.tasks.search({
+    data: { project_id: "project-id" },
+});
+```
+
+See [Database](/plugins/todoist/database) for the complete schema.
+
+### Multi-Tenancy
+
+```ts
+const tenant = corsair.withTenant("user-123");
+
+await tenant.todoist.api.tasks.create({
+    content: "Review pull request",
+    project_id: "work-project-id",
+});
+```
+
+## Examples
+
+### Example 1: Create Tasks from Incoming Emails
+
+```ts title="inngest/functions.ts"
+export const createTaskFromEmail = inngest.createFunction(
+    { id: "email-to-todoist-task" },
+    { event: "app/email-received" },
+    async ({ event }) => {
+        const tenant = corsair.withTenant(event.data.tenantId);
+
+        await tenant.todoist.api.tasks.quickAdd({
+            text: event.data.subject, // [!code highlight]
+        });
+    }
+);
+```
+
+### Example 2: Notify on Task Completion
+
+```ts title="corsair.ts"
+import { inngest } from "./inngest";
+
+export const corsair = createCorsair({
+    plugins: [
+        todoist({
+            webhookHooks: {
+                items: {
+                    completed: {
+                        after: async (ctx, result) => {
+                            await inngest.send({ // [!code highlight]
+                                name: "todoist/task-completed", // [!code highlight]
+                                data: { // [!code highlight]
+                                    tenantId: ctx.tenantId, // [!code highlight]
+                                    taskId: result.data.id, // [!code highlight]
+                                    taskContent: result.data.content, // [!code highlight]
+                                    projectId: result.data.project_id, // [!code highlight]
+                                }, // [!code highlight]
+                            }); // [!code highlight]
+                        },
+                    },
+                },
+            },
+        }),
+    ],
+});
+```
+
+```ts title="inngest/functions.ts"
+export const onTaskCompleted = inngest.createFunction(
+    { id: "todoist-task-completed" },
+    { event: "todoist/task-completed" },
+    async ({ event }) => {
+        const tenant = corsair.withTenant(event.data.tenantId);
+
+        await tenant.todoist.api.tasks.create({
+            content: `Follow up: ${event.data.taskContent}`, // [!code highlight]
+            project_id: event.data.projectId,
+            due_string: "in 3 days",
+        });
+    }
+);
+```
+
+### Example 3: Sync GitHub Issues to Todoist
+
+```ts title="inngest/functions.ts"
+export const syncIssueToTodoist = inngest.createFunction(
+    { id: "sync-github-issue-to-todoist" },
+    { event: "github/issue-assigned" },
+    async ({ event }) => {
+        const tenant = corsair.withTenant(event.data.tenantId);
+
+        await tenant.todoist.api.tasks.create({
+            content: `[GitHub] ${event.data.issueTitle}`, // [!code highlight]
+            description: event.data.issueUrl,
+            labels: ["github"],
+            priority: event.data.isPriority ? 4 : 2, // [!code highlight]
+        });
+    }
+);
+```

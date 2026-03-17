@@ -1,0 +1,129 @@
+---
+title: Sentry Database Schema
+description: Database entities and querying synced Sentry data.
+---
+
+The Sentry plugin syncs error monitoring data to your database for fast queries.
+
+<Callout type="info">
+**New to Corsair?** Learn about [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Callout>
+
+<Callout>
+**Full Implementation:** See the [Sentry plugin source code](https://github.com/corsairdev/corsair/tree/main/packages/corsair/plugins/sentry).
+</Callout>
+
+## Synced Entities
+
+- **issues** - Sentry issue records
+- **projects** - Project metadata
+- **releases** - Release records
+
+## Database API
+
+```ts
+const issues = await corsair.sentry.db.issues.search({
+    data: { status: "unresolved" },
+});
+```
+
+---
+
+## Issues
+
+### Schema
+
+```ts
+{
+    id: string;
+    title: string;
+    culprit?: string;
+    status: string;             // unresolved | resolved | ignored
+    level: string;              // fatal | error | warning | info | debug
+    first_seen: string;         // ISO timestamp
+    last_seen: string;          // ISO timestamp
+    times_seen: number;
+    project_id?: string;
+    project_slug?: string;
+    assignee?: string;
+    is_bookmarked?: boolean;
+    has_seen?: boolean;
+    permalink?: string;
+}
+```
+
+### Querying Issues
+
+**Search unresolved issues:**
+
+```ts
+const issues = await corsair.sentry.db.issues.search({
+    data: { status: "unresolved" }, // [!code highlight]
+});
+```
+
+**Search by severity:**
+
+```ts
+const errors = await corsair.sentry.db.issues.search({
+    data: { level: "error" }, // [!code highlight]
+});
+```
+
+---
+
+## Projects
+
+### Schema
+
+```ts
+{
+    id: string;
+    slug: string;
+    name: string;
+    platform?: string;
+    status: string;
+    organization_slug?: string;
+    date_created: string;       // ISO timestamp
+    is_bookmarked?: boolean;
+}
+```
+
+### Querying Projects
+
+```ts
+const projects = await corsair.sentry.db.projects.search({
+    data: { organization_slug: "my-org" }, // [!code highlight]
+});
+```
+
+---
+
+## Releases
+
+### Schema
+
+```ts
+{
+    id?: string;
+    version: string;
+    ref?: string;
+    url?: string;
+    date_created: string;       // ISO timestamp
+    date_released?: string;     // ISO timestamp
+    organization_slug?: string;
+    project_slugs?: string[];
+    commit_count?: number;
+    authors?: Array<{ name: string; email: string }>;
+}
+```
+
+### Example: Multi-Tenancy Query
+
+```ts
+const tenant = corsair.withTenant("org-123");
+
+const issues = await tenant.sentry.db.issues.search({
+    data: { status: "unresolved" }, // [!code highlight]
+});
+```
