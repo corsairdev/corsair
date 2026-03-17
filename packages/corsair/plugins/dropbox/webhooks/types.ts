@@ -44,30 +44,14 @@ export type DropboxChangeNotification = z.infer<
 // Different handler names represent semantic subscriptions — they all respond
 // to the same event type since Dropbox does not differentiate in the payload.
 
-export type DropboxFileAddedEvent = DropboxChangeNotification;
-export type DropboxFileChangedEvent = DropboxChangeNotification;
-export type DropboxFileDeletedEvent = DropboxChangeNotification;
-export type DropboxFolderCreatedEvent = DropboxChangeNotification;
-export type DropboxFolderDeletedEvent = DropboxChangeNotification;
-export type DropboxShareLinkCreatedEvent = DropboxChangeNotification;
+export type DropboxFileSystemChangedEvent = DropboxChangeNotification;
 
-export const DropboxFileAddedEventSchema = DropboxChangeNotificationSchema;
-export const DropboxFileChangedEventSchema = DropboxChangeNotificationSchema;
-export const DropboxFileDeletedEventSchema = DropboxChangeNotificationSchema;
-export const DropboxFolderCreatedEventSchema = DropboxChangeNotificationSchema;
-export const DropboxFolderDeletedEventSchema = DropboxChangeNotificationSchema;
-export const DropboxShareLinkCreatedEventSchema = DropboxChangeNotificationSchema;
+export const DropboxFileSystemChangedEventSchema = DropboxChangeNotificationSchema;
 
 export type DropboxWebhookOutputs = {
-	fileAdded: DropboxFileAddedEvent;
-	fileChanged: DropboxFileChangedEvent;
-	fileDeleted: DropboxFileDeletedEvent;
-	folderCreated: DropboxFolderCreatedEvent;
-	folderDeleted: DropboxFolderDeletedEvent;
-	shareLinkCreated: DropboxShareLinkCreatedEvent;
+	fileSystemChanged: DropboxFileSystemChangedEvent;
 };
 
-// Legacy export kept for backwards compatibility with index.ts imports
 export type DropboxWebhookPayload = DropboxChangeNotification;
 
 // ── Utilities ─────────────────────────────────────────────────────────────────

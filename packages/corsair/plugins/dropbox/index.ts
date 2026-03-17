@@ -22,24 +22,12 @@ import {
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { DropboxSchema } from './schema';
-import { FileWebhooks, FolderWebhooks, SharingWebhooks } from './webhooks';
+import { FileSystemWebhooks } from './webhooks';
 import type {
-	DropboxFileAddedEvent,
-	DropboxFileChangedEvent,
-	DropboxFileDeletedEvent,
-	DropboxFolderCreatedEvent,
-	DropboxFolderDeletedEvent,
-	DropboxShareLinkCreatedEvent,
+	DropboxFileSystemChangedEvent,
 	DropboxWebhookOutputs,
 } from './webhooks/types';
-import {
-	DropboxFileAddedEventSchema,
-	DropboxFileChangedEventSchema,
-	DropboxFileDeletedEventSchema,
-	DropboxFolderCreatedEventSchema,
-	DropboxFolderDeletedEventSchema,
-	DropboxShareLinkCreatedEventSchema,
-} from './webhooks/types';
+import { DropboxFileSystemChangedEventSchema } from './webhooks/types';
 
 export type DropboxEndpoints = {
 	filesCopy: DropboxEndpoint<'filesCopy'>;
@@ -78,26 +66,12 @@ const dropboxEndpointsNested = {
 } as const;
 
 export type DropboxWebhooks = {
-	fileAdded: DropboxWebhook<'fileAdded', DropboxFileAddedEvent>;
-	fileChanged: DropboxWebhook<'fileChanged', DropboxFileChangedEvent>;
-	fileDeleted: DropboxWebhook<'fileDeleted', DropboxFileDeletedEvent>;
-	folderCreated: DropboxWebhook<'folderCreated', DropboxFolderCreatedEvent>;
-	folderDeleted: DropboxWebhook<'folderDeleted', DropboxFolderDeletedEvent>;
-	shareLinkCreated: DropboxWebhook<'shareLinkCreated', DropboxShareLinkCreatedEvent>;
+	fileSystemChanged: DropboxWebhook<'fileSystemChanged', DropboxFileSystemChangedEvent>;
 };
 
 const dropboxWebhooksNested = {
-	files: {
-		added: FileWebhooks.added,
-		changed: FileWebhooks.changed,
-		deleted: FileWebhooks.deleted,
-	},
-	folders: {
-		created: FolderWebhooks.created,
-		deleted: FolderWebhooks.deleted,
-	},
-	sharing: {
-		linkCreated: SharingWebhooks.linkCreated,
+	filesystem: {
+		changed: FileSystemWebhooks.changed,
 	},
 } as const;
 
@@ -153,35 +127,10 @@ export const dropboxEndpointSchemas = {
 } satisfies RequiredPluginEndpointSchemas<typeof dropboxEndpointsNested>;
 
 const dropboxWebhookSchemas = {
-	'files.added': {
-		description: 'A file was added to a Dropbox account',
-		payload: DropboxFileAddedEventSchema,
-		response: DropboxFileAddedEventSchema,
-	},
-	'files.changed': {
-		description: 'A file was modified in a Dropbox account',
-		payload: DropboxFileChangedEventSchema,
-		response: DropboxFileChangedEventSchema,
-	},
-	'files.deleted': {
-		description: 'A file was deleted from a Dropbox account',
-		payload: DropboxFileDeletedEventSchema,
-		response: DropboxFileDeletedEventSchema,
-	},
-	'folders.created': {
-		description: 'A folder was created in a Dropbox account',
-		payload: DropboxFolderCreatedEventSchema,
-		response: DropboxFolderCreatedEventSchema,
-	},
-	'folders.deleted': {
-		description: 'A folder was deleted from a Dropbox account',
-		payload: DropboxFolderDeletedEventSchema,
-		response: DropboxFolderDeletedEventSchema,
-	},
-	'sharing.linkCreated': {
-		description: 'A sharing link was created for a file or folder',
-		payload: DropboxShareLinkCreatedEventSchema,
-		response: DropboxShareLinkCreatedEventSchema,
+	'filesystem.changed': {
+		description: 'A file or folder was added, modified, deleted, or a share link was created',
+		payload: DropboxFileSystemChangedEventSchema,
+		response: DropboxFileSystemChangedEventSchema,
 	},
 } satisfies RequiredPluginWebhookSchemas<typeof dropboxWebhooksNested>;
 
@@ -297,7 +246,6 @@ export function dropbox<const T extends DropboxPluginOptions>(
 		webhookSchemas: dropboxWebhookSchemas,
 		pluginWebhookMatcher: (request) => {
 			const headers = request.headers;
-			console.log(headers, 'headers');
 			return 'x-dropbox-signature' in headers;
 		},
 		errorHandlers: {
@@ -339,12 +287,7 @@ export function dropbox<const T extends DropboxPluginOptions>(
 // ─────────────────────────────────────────────────────────────────────────────
 
 export type {
-	DropboxFileAddedEvent,
-	DropboxFileChangedEvent,
-	DropboxFileDeletedEvent,
-	DropboxFolderCreatedEvent,
-	DropboxFolderDeletedEvent,
-	DropboxShareLinkCreatedEvent,
+	DropboxFileSystemChangedEvent,
 	DropboxWebhookOutputs,
 	DropboxWebhookPayload,
 } from './webhooks/types';

@@ -74,7 +74,7 @@ export const errorHandlers = {
 	},
 	NOT_FOUND_ERROR: {
 		match: (error, context) => {
-			if (error instanceof ApiError && error.status === 409) {
+			if (error instanceof ApiError && error.status === 404) {
 				return true;
 			}
 			const errorMessage = error.message.toLowerCase();

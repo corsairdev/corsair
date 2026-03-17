@@ -122,24 +122,40 @@ export const list: DropboxEndpoints['foldersList'] = async (ctx, input) => {
 			limit: input.limit,
 		},
 	});
-	console.log(result, 'result');
 
 	if (result.entries && ctx.db.files && ctx.db.folders) {
 		try {
 			for (const entry of result.entries) {
-				if (!entry.id) continue;
+				// Dropbox uses .passthrough() so '.tag' is present at runtime
+				const tag = (entry as { '.tag'?: string })['.tag'];
 
-				if ('size' in entry) {
-					await ctx.db.files.upsertByEntityId(entry.id, {
+				console.log(entry, tag, 'entry');
+
+				if (tag === 'deleted') {
+					// Deleted entries have no id — look up by path_lower to get the entity_id
+					if (!entry.path_lower) continue;
+					const [allFiles, allFolders] = await Promise.all([
+						ctx.db.files.list(),
+						ctx.db.folders.list(),
+					]);
+					// any cast needed because TypedEntity data is typed as ZodTypeAny inferred shape
+					const fileMatch = allFiles.find(f => (f.data as { path_lower?: string }).path_lower === entry.path_lower);
+					const folderMatch = allFolders.find(f => (f.data as { path_lower?: string }).path_lower === entry.path_lower);
+					await Promise.allSettled([
+						fileMatch ? ctx.db.files.deleteByEntityId(fileMatch.entity_id) : Promise.resolve(),
+						folderMatch ? ctx.db.folders.deleteByEntityId(folderMatch.entity_id) : Promise.resolve(),
+					]);
+				} else if (tag === 'folder') {
+					if (!entry.id) continue;
+					await ctx.db.folders.upsertByEntityId(entry.id, {
 						id: entry.id,
 						name: entry.name,
 						path_lower: entry.path_lower,
 						path_display: entry.path_display,
-						// any cast needed because entry is a union type at runtime
-						size: (entry as { size?: number }).size,
 					});
 				} else {
-					await ctx.db.folders.upsertByEntityId(entry.id, {
+					if (!entry.id) continue;
+					await ctx.db.files.upsertByEntityId(entry.id, {
 						id: entry.id,
 						name: entry.name,
 						path_lower: entry.path_lower,
@@ -175,23 +191,40 @@ export const listContinue: DropboxEndpoints['foldersListContinue'] = async (
 	if (result.entries && ctx.db.files && ctx.db.folders) {
 		try {
 			for (const entry of result.entries) {
-				if (!entry.id) continue;
+				// Dropbox uses .passthrough() so '.tag' is present at runtime
+				const tag = (entry as { '.tag'?: string })['.tag'];
 
-				if ('size' in entry) {
-					await ctx.db.files.upsertByEntityId(entry.id, {
-						id: entry.id,
-						name: entry.name,
-						path_lower: entry.path_lower,
-						path_display: entry.path_display,
-						// any cast needed because entry is a union type at runtime
-						size: (entry as { size?: number }).size,
-					});
-				} else {
+				if (tag === 'deleted') {
+					// Deleted entries have no id — look up by path_lower to get the entity_id
+					if (!entry.path_lower) continue;
+					const [allFiles, allFolders] = await Promise.all([
+						ctx.db.files.list(),
+						ctx.db.folders.list(),
+					]);
+					// any cast needed because TypedEntity data is typed as ZodTypeAny inferred shape
+					const fileMatch = allFiles.find(f => (f.data as { path_lower?: string }).path_lower === entry.path_lower);
+					const folderMatch = allFolders.find(f => (f.data as { path_lower?: string }).path_lower === entry.path_lower);
+					await Promise.allSettled([
+						fileMatch ? ctx.db.files.deleteByEntityId(fileMatch.entity_id) : Promise.resolve(),
+						folderMatch ? ctx.db.folders.deleteByEntityId(folderMatch.entity_id) : Promise.resolve(),
+					]);
+				} else if (tag === 'folder') {
+					if (!entry.id) continue;
 					await ctx.db.folders.upsertByEntityId(entry.id, {
 						id: entry.id,
 						name: entry.name,
 						path_lower: entry.path_lower,
 						path_display: entry.path_display,
+					});
+				} else {
+					if (!entry.id) continue;
+					// any cast needed because entry is a union type at runtime
+					await ctx.db.files.upsertByEntityId(entry.id, {
+						id: entry.id,
+						name: entry.name,
+						path_lower: entry.path_lower,
+						path_display: entry.path_display,
+						size: (entry as { size?: number }).size,
 					});
 				}
 			}
