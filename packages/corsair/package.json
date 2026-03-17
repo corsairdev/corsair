@@ -102,6 +102,11 @@
       "types": "./dist/plugins/notion/index.d.ts",
       "default": "./dist/plugins/notion/index.js"
     },
+    "./plugins/oura": {
+      "dev-source": "./plugins/oura/index.ts",
+      "types": "./dist/plugins/oura/index.d.ts",
+      "default": "./dist/plugins/oura/index.js"
+    },
     "./plugins/pagerduty": {
       "dev-source": "./plugins/pagerduty/index.ts",
       "types": "./dist/plugins/pagerduty/index.d.ts",
