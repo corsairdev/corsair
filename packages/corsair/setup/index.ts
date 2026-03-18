@@ -171,7 +171,7 @@ function describeZodSchema(schema: ZodTypeAny): unknown {
 	if (schema instanceof ZodNumber) return 'number';
 	if (schema instanceof ZodBoolean) return 'boolean';
 	if (schema instanceof ZodDate) return 'date';
-	if (schema instanceof ZodRecord) return 'Record<string, unknown>';
+	if (schema instanceof ZodRecord) return 'jsonb';
 	return 'unknown';
 }
 

@@ -7,6 +7,7 @@ import * as Users from './users';
 export const TweetsEndpoints = {
 	getByIds: Tweets.getByIds,
 	search: Tweets.search,
+	advancedSearch: Tweets.advancedSearch,
 	getUserTimeline: Tweets.getUserTimeline,
 	getUserLastTweets: Tweets.getUserLastTweets,
 	getUserMentions: Tweets.getUserMentions,

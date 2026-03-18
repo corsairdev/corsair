@@ -2,7 +2,10 @@ import { logEventFromContext } from '../../utils/events';
 import type { TwitterApiIOEndpoints } from '..';
 import { makeTwitterApiIORequest } from '../client';
 import { persistTweetWithAuthor } from '../utils';
-import type { TwitterApiIOEndpointOutputs } from './types';
+import {
+	buildAdvancedSearchQuery,
+	type TwitterApiIOEndpointOutputs,
+} from './types';
 
 export const getByIds: TwitterApiIOEndpoints['tweetsGetByIds'] = async (
 	ctx,
@@ -64,6 +67,40 @@ export const search: TwitterApiIOEndpoints['tweetsSearch'] = async (
 	);
 	return response;
 };
+
+export const advancedSearch: TwitterApiIOEndpoints['tweetsAdvancedSearch'] =
+	async (ctx, input) => {
+		const { cursor, queryType, ...queryBuilderInput } = input;
+		const query = buildAdvancedSearchQuery(queryBuilderInput);
+
+		const response = await makeTwitterApiIORequest<
+			TwitterApiIOEndpointOutputs['tweetsAdvancedSearch']
+		>('/twitter/tweet/advanced_search', ctx.key, {
+			method: 'GET',
+			query: { query, queryType: queryType ?? 'Latest', cursor },
+		});
+
+		if (response.tweets) {
+			try {
+				for (const tweet of response.tweets) {
+					await persistTweetWithAuthor(tweet, ctx.db);
+				}
+			} catch (error) {
+				console.warn(
+					'[twitterapiio] Failed to save tweets to database:',
+					error,
+				);
+			}
+		}
+
+		await logEventFromContext(
+			ctx,
+			'twitterapiio.tweets.advancedSearch',
+			{ query, queryType, cursor },
+			'completed',
+		);
+		return response;
+	};
 
 export const getUserTimeline: TwitterApiIOEndpoints['tweetsGetUserTimeline'] =
 	async (ctx, input) => {

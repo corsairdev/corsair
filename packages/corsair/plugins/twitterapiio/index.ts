@@ -62,6 +62,7 @@ type TwitterApiIOEndpoint<K extends keyof TwitterApiIOEndpointOutputs> =
 export type TwitterApiIOEndpoints = {
 	tweetsGetByIds: TwitterApiIOEndpoint<'tweetsGetByIds'>;
 	tweetsSearch: TwitterApiIOEndpoint<'tweetsSearch'>;
+	tweetsAdvancedSearch: TwitterApiIOEndpoint<'tweetsAdvancedSearch'>;
 	tweetsGetUserTimeline: TwitterApiIOEndpoint<'tweetsGetUserTimeline'>;
 	tweetsGetUserLastTweets: TwitterApiIOEndpoint<'tweetsGetUserLastTweets'>;
 	tweetsGetUserMentions: TwitterApiIOEndpoint<'tweetsGetUserMentions'>;
@@ -155,6 +156,7 @@ const twitterApiIOEndpointsNested = {
 	tweets: {
 		getByIds: TweetsEndpoints.getByIds,
 		search: TweetsEndpoints.search,
+		advancedSearch: TweetsEndpoints.advancedSearch,
 		getUserTimeline: TweetsEndpoints.getUserTimeline,
 		getUserLastTweets: TweetsEndpoints.getUserLastTweets,
 		getUserMentions: TweetsEndpoints.getUserMentions,
@@ -218,6 +220,10 @@ export const twitterApiIOEndpointSchemas = {
 	'tweets.search': {
 		input: TwitterApiIOEndpointInputSchemas.tweetsSearch,
 		output: TwitterApiIOEndpointOutputSchemas.tweetsSearch,
+	},
+	'tweets.advancedSearch': {
+		input: TwitterApiIOEndpointInputSchemas.tweetsAdvancedSearch,
+		output: TwitterApiIOEndpointOutputSchemas.tweetsAdvancedSearch,
 	},
 	'tweets.getUserTimeline': {
 		input: TwitterApiIOEndpointInputSchemas.tweetsGetUserTimeline,
@@ -385,7 +391,12 @@ const twitterApiIOEndpointMeta = {
 	},
 	'tweets.search': {
 		riskLevel: 'read',
-		description: 'Search tweets with a query',
+		description: 'Search tweets with a raw query string',
+	},
+	'tweets.advancedSearch': {
+		riskLevel: 'read',
+		description:
+			'Search tweets using structured operators (keywords, users, dates, engagement thresholds, media filters, etc.)',
 	},
 	'tweets.getUserTimeline': {
 		riskLevel: 'read',
