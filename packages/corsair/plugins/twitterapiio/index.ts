@@ -17,6 +17,7 @@ import type { AuthTypes, PickAuth } from '../../core/constants';
 import {
 	CommunitiesEndpoints,
 	ListsEndpoints,
+	RepliesEndpoints,
 	StreamEndpoints,
 	TrendsEndpoints,
 	TweetsEndpoints,
@@ -68,7 +69,6 @@ export type TwitterApiIOEndpoints = {
 	tweetsGetUserTimeline: TwitterApiIOEndpoint<'tweetsGetUserTimeline'>;
 	tweetsGetUserLastTweets: TwitterApiIOEndpoint<'tweetsGetUserLastTweets'>;
 	tweetsGetUserMentions: TwitterApiIOEndpoint<'tweetsGetUserMentions'>;
-	tweetsGetReplies: TwitterApiIOEndpoint<'tweetsGetReplies'>;
 	tweetsGetQuotations: TwitterApiIOEndpoint<'tweetsGetQuotations'>;
 	tweetsGetRetweeters: TwitterApiIOEndpoint<'tweetsGetRetweeters'>;
 	tweetsGetThreadContext: TwitterApiIOEndpoint<'tweetsGetThreadContext'>;
@@ -108,6 +108,8 @@ export type TwitterApiIOEndpoints = {
 	communitiesJoin: TwitterApiIOEndpoint<'communitiesJoin'>;
 	communitiesLeave: TwitterApiIOEndpoint<'communitiesLeave'>;
 	trendsGet: TwitterApiIOEndpoint<'trendsGet'>;
+	repliesGet: TwitterApiIOEndpoint<'repliesGet'>;
+	repliesGetV2: TwitterApiIOEndpoint<'repliesGetV2'>;
 };
 
 export type TwitterApiIOBoundEndpoints = BindEndpoints<
@@ -170,7 +172,6 @@ const twitterApiIOEndpointsNested = {
 		getUserTimeline: TweetsEndpoints.getUserTimeline,
 		getUserLastTweets: TweetsEndpoints.getUserLastTweets,
 		getUserMentions: TweetsEndpoints.getUserMentions,
-		getReplies: TweetsEndpoints.getReplies,
 		getQuotations: TweetsEndpoints.getQuotations,
 		getRetweeters: TweetsEndpoints.getRetweeters,
 		getThreadContext: TweetsEndpoints.getThreadContext,
@@ -179,6 +180,10 @@ const twitterApiIOEndpointsNested = {
 		like: TweetsEndpoints.like,
 		unlike: TweetsEndpoints.unlike,
 		retweet: TweetsEndpoints.retweet,
+	},
+	replies: {
+		get: RepliesEndpoints.get,
+		getV2: RepliesEndpoints.getV2,
 	},
 	users: {
 		getByUsername: UsersEndpoints.getByUsername,
@@ -260,10 +265,6 @@ export const twitterApiIOEndpointSchemas = {
 	'tweets.getUserMentions': {
 		input: TwitterApiIOEndpointInputSchemas.tweetsGetUserMentions,
 		output: TwitterApiIOEndpointOutputSchemas.tweetsGetUserMentions,
-	},
-	'tweets.getReplies': {
-		input: TwitterApiIOEndpointInputSchemas.tweetsGetReplies,
-		output: TwitterApiIOEndpointOutputSchemas.tweetsGetReplies,
 	},
 	'tweets.getQuotations': {
 		input: TwitterApiIOEndpointInputSchemas.tweetsGetQuotations,
@@ -421,6 +422,14 @@ export const twitterApiIOEndpointSchemas = {
 		input: TwitterApiIOEndpointInputSchemas.trendsGet,
 		output: TwitterApiIOEndpointOutputSchemas.trendsGet,
 	},
+	'replies.get': {
+		input: TwitterApiIOEndpointInputSchemas.repliesGet,
+		output: TwitterApiIOEndpointOutputSchemas.repliesGet,
+	},
+	'replies.getV2': {
+		input: TwitterApiIOEndpointInputSchemas.repliesGetV2,
+		output: TwitterApiIOEndpointOutputSchemas.repliesGetV2,
+	},
 } satisfies RequiredPluginEndpointSchemas<typeof twitterApiIOEndpointsNested>;
 
 // ── Webhook Schemas ───────────────────────────────────────────────────────────
@@ -465,10 +474,6 @@ const twitterApiIOEndpointMeta = {
 	'tweets.getUserMentions': {
 		riskLevel: 'read',
 		description: 'Get tweets that mention a user',
-	},
-	'tweets.getReplies': {
-		riskLevel: 'read',
-		description: 'Get replies to a tweet',
 	},
 	'tweets.getQuotations': {
 		riskLevel: 'read',
@@ -615,6 +620,16 @@ const twitterApiIOEndpointMeta = {
 	'trends.get': {
 		riskLevel: 'read',
 		description: 'Get trending topics by location (woeid)',
+	},
+	'replies.get': {
+		riskLevel: 'read',
+		description:
+			'Get replies to a tweet, paginated by time range — stored independently in the replies table so engagement changes are tracked per reply',
+	},
+	'replies.getV2': {
+		riskLevel: 'read',
+		description:
+			'Get replies to a tweet (v2) with sort order control (Relevance, Latest, Likes) — stored independently in the replies table so engagement changes are tracked per reply',
 	},
 } satisfies RequiredPluginEndpointMeta<typeof twitterApiIOEndpointsNested>;
 

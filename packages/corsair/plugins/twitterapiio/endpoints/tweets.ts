@@ -195,37 +195,6 @@ export const getUserMentions: TwitterApiIOEndpoints['tweetsGetUserMentions'] =
 		return response;
 	};
 
-export const getReplies: TwitterApiIOEndpoints['tweetsGetReplies'] = async (
-	ctx,
-	input,
-) => {
-	const { tweetId, sinceTime, untilTime, cursor } = input;
-	const response = await makeTwitterApiIORequest<
-		TwitterApiIOEndpointOutputs['tweetsGetReplies']
-	>('/twitter/tweet/replies', ctx.key, {
-		method: 'GET',
-		query: { tweetId, sinceTime, untilTime, cursor },
-	});
-
-	if (response.tweets) {
-		try {
-			for (const tweet of response.tweets) {
-				await persistTweetWithAuthor(tweet, ctx.db);
-			}
-		} catch (error) {
-			console.warn('[twitterapiio] Failed to save tweets to database:', error);
-		}
-	}
-
-	await logEventFromContext(
-		ctx,
-		'twitterapiio.tweets.getReplies',
-		{ ...input },
-		'completed',
-	);
-	return response;
-};
-
 export const getQuotations: TwitterApiIOEndpoints['tweetsGetQuotations'] =
 	async (ctx, input) => {
 		const response = await makeTwitterApiIORequest<

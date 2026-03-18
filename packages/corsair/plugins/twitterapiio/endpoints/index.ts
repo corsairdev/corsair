@@ -1,5 +1,6 @@
 import * as Communities from './communities';
 import * as Lists from './lists';
+import * as Replies from './replies';
 import * as Stream from './stream';
 import * as Trends from './trends';
 import * as Tweets from './tweets';
@@ -13,7 +14,6 @@ export const TweetsEndpoints = {
 	getUserTimeline: Tweets.getUserTimeline,
 	getUserLastTweets: Tweets.getUserLastTweets,
 	getUserMentions: Tweets.getUserMentions,
-	getReplies: Tweets.getReplies,
 	getQuotations: Tweets.getQuotations,
 	getRetweeters: Tweets.getRetweeters,
 	getThreadContext: Tweets.getThreadContext,
@@ -22,6 +22,11 @@ export const TweetsEndpoints = {
 	like: Tweets.like,
 	unlike: Tweets.unlike,
 	retweet: Tweets.retweet,
+};
+
+export const RepliesEndpoints = {
+	get: Replies.get,
+	getV2: Replies.getV2,
 };
 
 export const UsersEndpoints = {
