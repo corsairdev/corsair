@@ -234,6 +234,30 @@ export const unfollow: TwitterApiIOEndpoints['usersUnfollow'] = async (
 	return response;
 };
 
+export const login: TwitterApiIOEndpoints['usersLogin'] = async (ctx, input) => {
+	const { userName, email, password, totpSecret, proxy } = input;
+	const response = await makeTwitterApiIORequest<
+		TwitterApiIOEndpointOutputs['usersLogin']
+	>('/twitter/user_login_v2', ctx.key, {
+		method: 'POST',
+		body: {
+			user_name: userName,
+			email,
+			password,
+			proxy,
+			...(totpSecret ? { totp_secret: totpSecret } : {}),
+		},
+	});
+
+	await logEventFromContext(
+		ctx,
+		'twitterapiio.users.login',
+		{ userName },
+		'completed',
+	);
+	return response;
+};
+
 export const getMe: TwitterApiIOEndpoints['usersGetMe'] = async (
 	ctx,
 	input,

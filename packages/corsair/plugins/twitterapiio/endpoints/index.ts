@@ -1,8 +1,10 @@
 import * as Communities from './communities';
 import * as Lists from './lists';
+import * as Stream from './stream';
 import * as Trends from './trends';
 import * as Tweets from './tweets';
 import * as Users from './users';
+import * as WebhookRules from './webhook-rules';
 
 export const TweetsEndpoints = {
 	getByIds: Tweets.getByIds,
@@ -33,6 +35,20 @@ export const UsersEndpoints = {
 	follow: Users.follow,
 	unfollow: Users.unfollow,
 	getMe: Users.getMe,
+	login: Users.login,
+};
+
+export const StreamEndpoints = {
+	addUser: Stream.addUser,
+	removeUser: Stream.removeUser,
+	listUsers: Stream.listUsers,
+};
+
+export const WebhookRulesEndpoints = {
+	addRule: WebhookRules.addRule,
+	getRules: WebhookRules.getRules,
+	updateRule: WebhookRules.updateRule,
+	deleteRule: WebhookRules.deleteRule,
 };
 
 export const ListsEndpoints = {

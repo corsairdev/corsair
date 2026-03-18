@@ -8,7 +8,7 @@ export class MastraProvider {
 	readonly name = 'mastra';
 
 	async build(options: BaseMcpOptions) {
-		const { createTool } = await import('@mastra/core/tools');
+		const { createTool } = await import(/* webpackIgnore: true */ /* turbopackIgnore: true */ '@mastra/core/tools');
 		return buildCorsairToolDefs(options).map((def) =>
 			createTool({
 				id: def.name,
