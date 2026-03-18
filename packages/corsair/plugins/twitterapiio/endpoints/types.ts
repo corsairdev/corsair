@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import {
+	RawApiReply,
 	RawApiTweet,
 	TwitterApiIOCommunity,
 	TwitterApiIOTrend,
@@ -270,10 +271,21 @@ const TweetsGetUserMentionsInputSchema = z.object({
 	cursor: z.string().optional(),
 });
 
-const TweetsGetRepliesInputSchema = z.object({
+// ── Replies Input Schemas ─────────────────────────────────────────────────────
+
+const RepliesGetInputSchema = z.object({
 	tweetId: z.string(),
 	sinceTime: z.string().optional().describe('Unix timestamp in seconds'),
 	untilTime: z.string().optional().describe('Unix timestamp in seconds'),
+	cursor: z.string().optional(),
+});
+
+const RepliesGetV2InputSchema = z.object({
+	tweetId: z.string(),
+	queryType: z
+		.enum(['Relevance', 'Latest', 'Likes'])
+		.optional()
+		.describe('Sort order for replies. Default is Relevance.'),
 	cursor: z.string().optional(),
 });
 
@@ -522,6 +534,14 @@ const TrendsGetInputSchema = z.object({
 
 // ── Output Schemas ────────────────────────────────────────────────────────────
 
+const PaginatedRepliesResponseSchema = z.object({
+	status: z.string().optional(),
+	replies: z.array(RawApiReply).optional(),
+	next_cursor: z.string().nullable().optional(),
+	has_next_page: z.boolean().optional(),
+	message: z.string().optional(),
+});
+
 const TweetsGetByIdsResponseSchema = z.object({
 	status: z.boolean().optional(),
 	tweets: z.array(RawApiTweet).optional(),
@@ -611,7 +631,6 @@ export const TwitterApiIOEndpointInputSchemas = {
 	tweetsGetUserTimeline: TweetsGetUserTimelineInputSchema,
 	tweetsGetUserLastTweets: TweetsGetUserLastTweetsInputSchema,
 	tweetsGetUserMentions: TweetsGetUserMentionsInputSchema,
-	tweetsGetReplies: TweetsGetRepliesInputSchema,
 	tweetsGetQuotations: TweetsGetQuotationsInputSchema,
 	tweetsGetRetweeters: TweetsGetRetweetersInputSchema,
 	tweetsGetThreadContext: TweetsGetThreadContextInputSchema,
@@ -651,6 +670,8 @@ export const TwitterApiIOEndpointInputSchemas = {
 	communitiesJoin: CommunitiesJoinInputSchema,
 	communitiesLeave: CommunitiesLeaveInputSchema,
 	trendsGet: TrendsGetInputSchema,
+	repliesGet: RepliesGetInputSchema,
+	repliesGetV2: RepliesGetV2InputSchema,
 } as const;
 
 export const TwitterApiIOEndpointOutputSchemas = {
@@ -660,7 +681,6 @@ export const TwitterApiIOEndpointOutputSchemas = {
 	tweetsGetUserTimeline: PaginatedTweetsResponseSchema,
 	tweetsGetUserLastTweets: PaginatedTweetsResponseSchema,
 	tweetsGetUserMentions: PaginatedTweetsResponseSchema,
-	tweetsGetReplies: PaginatedTweetsResponseSchema,
 	tweetsGetQuotations: PaginatedTweetsResponseSchema,
 	tweetsGetRetweeters: PaginatedUsersResponseSchema,
 	tweetsGetThreadContext: PaginatedTweetsResponseSchema,
@@ -700,6 +720,8 @@ export const TwitterApiIOEndpointOutputSchemas = {
 	communitiesJoin: ActionResponseSchema,
 	communitiesLeave: ActionResponseSchema,
 	trendsGet: TrendsGetResponseSchema,
+	repliesGet: PaginatedRepliesResponseSchema,
+	repliesGetV2: PaginatedRepliesResponseSchema,
 } as const;
 
 export type TwitterApiIOEndpointInputs = {

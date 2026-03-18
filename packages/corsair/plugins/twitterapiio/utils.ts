@@ -1,5 +1,7 @@
 import type {
+	RawApiReply,
 	RawApiTweet,
+	TwitterApiIOReply,
 	TwitterApiIOTweet,
 	TwitterApiIOUser,
 } from './schema/database';
@@ -9,6 +11,12 @@ type PluginDb = {
 		upsertByEntityId: (
 			id: string,
 			data: TwitterApiIOTweet,
+		) => Promise<{ id?: string } | undefined>;
+	};
+	replies?: {
+		upsertByEntityId: (
+			id: string,
+			data: TwitterApiIOReply,
 		) => Promise<{ id?: string } | undefined>;
 	};
 	users?: {
@@ -38,6 +46,33 @@ export async function persistTweetWithAuthor(
 			...(author ? { author: author.id } : {}),
 		};
 		return db.tweets.upsertByEntityId(tweet.id, normalizedTweet);
+	}
+
+	return undefined;
+}
+
+/**
+ * Extracts the embedded author from a raw API reply, upserts the author to the
+ * users table, and upserts the reply with `author` replaced by the Twitter user
+ * ID string into the dedicated `replies` table. This allows reply engagement
+ * metrics (likes, retweets, etc.) to be tracked independently from the parent tweet.
+ */
+export async function persistReplyWithAuthor(
+	reply: RawApiReply,
+	db: PluginDb,
+): Promise<{ id?: string } | undefined> {
+	const { author, ...replyData } = reply;
+
+	if (author && db.users) {
+		await db.users.upsertByEntityId(author.id, author);
+	}
+
+	if (db.replies) {
+		const normalizedReply: TwitterApiIOReply = {
+			...replyData,
+			...(author ? { author: author.id } : {}),
+		};
+		return db.replies.upsertByEntityId(reply.id, normalizedReply);
 	}
 
 	return undefined;

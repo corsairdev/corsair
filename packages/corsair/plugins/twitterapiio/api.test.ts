@@ -164,16 +164,16 @@ describe('TwitterApiIO API Type Tests', () => {
 			TwitterApiIOEndpointOutputSchemas.tweetsGetUserMentions.parse(response);
 		});
 
-		it('tweetsGetReplies returns correct type', async () => {
+		it('repliesGet returns correct type', async () => {
 			if (!TEST_API_KEY || !TEST_TWEET_ID) return;
 
 			const response = await makeTwitterApiIORequest<
-				typeof TwitterApiIOEndpointOutputSchemas.tweetsGetReplies._type
+				typeof TwitterApiIOEndpointOutputSchemas.repliesGet._type
 			>('/twitter/tweet/replies', TEST_API_KEY, {
 				query: { tweetId: TEST_TWEET_ID },
 			});
 
-			TwitterApiIOEndpointOutputSchemas.tweetsGetReplies.parse(response);
+			TwitterApiIOEndpointOutputSchemas.repliesGet.parse(response);
 		});
 
 		it('tweetsGetQuotations returns correct type', async () => {
