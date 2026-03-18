@@ -80,6 +80,7 @@ const ZoomRecordingObjectSchema = z
 
 const ZoomPayloadBaseSchema = z.object({
 	account_id: z.string().optional(),
+	// Use unknown for the object to allow for any properties
 	object: z.record(z.unknown()),
 });
 
@@ -186,6 +187,7 @@ function parseBody(body: unknown): unknown {
 
 export function createZoomEventMatch(eventType: string): CorsairWebhookMatcher {
 	return (request: RawWebhookRequest) => {
+		// Type assertion needed because parseBody returns unknown
 		const parsedBody = parseBody(request.body) as Record<string, unknown>;
 		return parsedBody.event === eventType;
 	};

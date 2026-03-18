@@ -304,7 +304,6 @@ export const participantLeft: ZoomWebhooks['meetingParticipantLeft'] = {
 					participant.user_id,
 					{
 						...participant,
-						leave_time: participant.leave_time,
 					},
 				);
 				corsairEntityId = entity?.id || '';
