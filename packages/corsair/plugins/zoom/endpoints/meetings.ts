@@ -9,24 +9,13 @@ export const create: ZoomEndpoints['meetingsCreate'] = async (ctx, input) => {
 		ctx.key,
 		{
 			method: 'POST',
-			body: {
-				topic: input.topic,
-				type: input.type,
-				start_time: input.start_time,
-				duration: input.duration,
-				timezone: input.timezone,
-				agenda: input.agenda,
-				password: input.password,
-				settings: input.settings,
-			},
+			body: input
 		},
 	);
 
 	if (result.id && ctx.db.meetings) {
 		try {
-			await ctx.db.meetings.upsertByEntityId(String(result.id), {
-				...result,
-			});
+			await ctx.db.meetings.upsertByEntityId(String(result.id), result);
 		} catch (error) {
 			console.warn('Failed to save meeting to database:', error);
 		}
@@ -75,12 +64,7 @@ export const list: ZoomEndpoints['meetingsList'] = async (ctx, input) => {
 		ctx.key,
 		{
 			method: 'GET',
-			query: {
-				type: input.type,
-				page_size: input.page_size,
-				next_page_token: input.next_page_token,
-				page_number: input.page_number,
-			},
+			query: input
 		},
 	);
 
@@ -113,16 +97,7 @@ export const update: ZoomEndpoints['meetingsUpdate'] = async (ctx, input) => {
 		ctx.key,
 		{
 			method: 'PATCH',
-			body: {
-				topic: input.topic,
-				type: input.type,
-				start_time: input.start_time,
-				duration: input.duration,
-				timezone: input.timezone,
-				agenda: input.agenda,
-				password: input.password,
-				settings: input.settings,
-			},
+			body: input
 		},
 	);
 
@@ -132,16 +107,7 @@ export const update: ZoomEndpoints['meetingsUpdate'] = async (ctx, input) => {
 				input.meetingId,
 			);
 			if (existing) {
-				await ctx.db.meetings.upsertByEntityId(input.meetingId, {
-					...existing.data,
-					topic: input.topic ?? existing.data.topic,
-					start_time: input.start_time ?? existing.data.start_time,
-					duration: input.duration ?? existing.data.duration,
-					timezone: input.timezone ?? existing.data.timezone,
-					agenda: input.agenda ?? existing.data.agenda,
-					password: input.password ?? existing.data.password,
-					settings: input.settings ?? existing.data.settings,
-				});
+				await ctx.db.meetings.upsertByEntityId(input.meetingId, existing.data);
 			}
 		} catch (error) {
 			console.warn('Failed to update meeting in database:', error);
@@ -165,12 +131,7 @@ export const addRegistrant: ZoomEndpoints['meetingsAddRegistrant'] = async (
 		ZoomEndpointOutputs['meetingsAddRegistrant']
 	>(`meetings/${input.meetingId}/registrants`, ctx.key, {
 		method: 'POST',
-		body: {
-			email: input.email,
-			first_name: input.first_name,
-			last_name: input.last_name,
-			auto_approve: input.auto_approve,
-		},
+		body: input
 	});
 
 	await logEventFromContext(

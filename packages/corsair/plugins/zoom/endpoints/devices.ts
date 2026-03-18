@@ -9,17 +9,23 @@ export const list: ZoomEndpoints['devicesList'] = async (ctx, input) => {
 		ctx.key,
 		{
 			method: 'GET',
-			query: {
-				page_size: input.page_size,
-				next_page_token: input.next_page_token,
-				search_text: input.search_text,
-				platform_os: input.platform_os,
-				device_vendor: input.device_vendor,
-				device_model: input.device_model,
-				device_status: input.device_status,
-			},
+			query: input
 		},
 	);
+
+	if (result.devices && ctx.db.devices) {
+		try {
+			for (const device of result.devices) {
+				const d = device
+				const deviceId = d.id
+				if (deviceId && typeof deviceId === 'string') {
+					await ctx.db.devices.upsertByEntityId(deviceId, d);
+				}
+			}
+		} catch (error) {
+			console.warn('Failed to save devices to database:', error);
+		}
+	}
 
 	await logEventFromContext(
 		ctx,

@@ -30,13 +30,8 @@ export const created: ZoomWebhooks['meetingCreated'] = {
 				const entity = await ctx.db.meetings.upsertByEntityId(
 					String(meeting.id),
 					{
-						uuid: meeting.uuid,
-						host_id: meeting.host_id,
-						topic: meeting.topic,
-						type: meeting.type,
-						start_time: meeting.start_time,
-						duration: meeting.duration,
-						timezone: meeting.timezone,
+						...meeting,
+						id: meeting.id ? Number(meeting.id) : undefined,
 					},
 				);
 				corsairEntityId = entity?.id || '';
@@ -139,13 +134,9 @@ export const started: ZoomWebhooks['meetingStarted'] = {
 				const entity = await ctx.db.meetings.upsertByEntityId(
 					String(meeting.id),
 					{
-						uuid: meeting.uuid,
-						host_id: meeting.host_id,
-						topic: meeting.topic,
-						type: meeting.type,
-						start_time: meeting.start_time,
-						duration: meeting.duration,
-						timezone: meeting.timezone,
+						...meeting,
+						id: meeting.id ? Number(meeting.id) : undefined,
+						status: 'started',
 					},
 				);
 				corsairEntityId = entity?.id || '';
@@ -200,13 +191,8 @@ export const ended: ZoomWebhooks['meetingEnded'] = {
 				const entity = await ctx.db.meetings.upsertByEntityId(
 					String(meeting.id),
 					{
-						uuid: meeting.uuid,
-						host_id: meeting.host_id,
-						topic: meeting.topic,
-						type: meeting.type,
-						start_time: meeting.start_time,
-						duration: meeting.duration,
-						timezone: meeting.timezone,
+						...meeting,
+						id: meeting.id ? Number(meeting.id) : undefined,
 						status: 'ended',
 					},
 				);

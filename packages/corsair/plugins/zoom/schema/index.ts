@@ -3,6 +3,8 @@ import {
 	ZoomParticipant,
 	ZoomRecording,
 	ZoomWebinar,
+	ZoomDevice,
+	ZoomArchiveFile,
 } from './database';
 
 export const ZoomSchema = {
@@ -12,5 +14,7 @@ export const ZoomSchema = {
 		recordings: ZoomRecording,
 		webinars: ZoomWebinar,
 		participants: ZoomParticipant,
+		devices: ZoomDevice,
+		archiveFiles: ZoomArchiveFile,
 	},
 } as const;

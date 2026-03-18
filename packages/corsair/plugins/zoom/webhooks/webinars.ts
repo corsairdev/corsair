@@ -33,13 +33,8 @@ export const started: ZoomWebhooks['webinarStarted'] = {
 				const entity = await ctx.db.webinars.upsertByEntityId(
 					String(webinar.id),
 					{
-						uuid: webinar.uuid,
-						host_id: webinar.host_id,
-						topic: webinar.topic,
-						type: webinar.type,
-						start_time: webinar.start_time,
-						duration: webinar.duration,
-						timezone: webinar.timezone,
+						...webinar,
+						id: webinar.id ? Number(webinar.id) : undefined,
 					},
 				);
 				corsairEntityId = entity?.id || '';

@@ -97,7 +97,35 @@ export const ZoomParticipant = z.object({
 	status: z.string().optional(),
 });
 
+export const ZoomDevice = z.object({
+	id: z.string().optional(),
+	device_name: z.string().optional(),
+	manufacturer: z.string().optional(),
+	model: z.string().optional(),
+	platform_os: z.string().optional(),
+	device_status: z.number().optional(),
+	mac_address: z.string().optional(),
+	serial_number: z.string().optional(),
+	last_online: z.string().optional(),
+	tag: z.string().optional(),
+	enrollment_token: z.string().optional(),
+});
+
+export const ZoomArchiveFile = z.object({
+	id: z.string().optional(),
+	meeting_id: z.string().optional(),
+	topic: z.string().optional(),
+	type: z.number().optional(),
+	start_time: z.string().optional(),
+	file_count: z.number().optional(),
+	file_size: z.number().optional(),
+	status: z.string().optional(),
+	archive_files: z.array(z.record(z.unknown())).optional(),
+});
+
 export type ZoomMeeting = z.infer<typeof ZoomMeeting>;
 export type ZoomRecording = z.infer<typeof ZoomRecording>;
 export type ZoomWebinar = z.infer<typeof ZoomWebinar>;
 export type ZoomParticipant = z.infer<typeof ZoomParticipant>;
+export type ZoomDevice = z.infer<typeof ZoomDevice>;
+export type ZoomArchiveFile = z.infer<typeof ZoomArchiveFile>;

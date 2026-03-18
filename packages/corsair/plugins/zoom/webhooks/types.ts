@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { verifySlackSignature } from '../../../async-core/webhook-utils';
+import { verifyHmacSha256Signature } from '../../../async-core/webhook-utils';
 import type {
 	CorsairWebhookMatcher,
 	RawWebhookRequest,
@@ -222,7 +222,7 @@ export function verifyZoomWebhookSignature(
 		};
 	}
 
-	const isValid = verifySlackSignature(rawBody, signingSecret, timestamp, signature);
+	const isValid = verifyHmacSha256Signature(rawBody, signingSecret, timestamp, signature);
 	if (!isValid) {
 		return { valid: false, error: 'Invalid signature' };
 	}

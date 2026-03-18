@@ -9,16 +9,23 @@ export const list: ZoomEndpoints['archiveFilesList'] = async (ctx, input) => {
 		ctx.key,
 		{
 			method: 'GET',
-			query: {
-				page_size: input.page_size,
-				next_page_token: input.next_page_token,
-				from: input.from,
-				to: input.to,
-				type: input.type,
-				query_date_type: input.query_date_type,
-			},
+			query: input
 		},
 	);
+
+	if (result.meetings && ctx.db.archiveFiles) {
+		try {
+			for (const meeting of result.meetings) {
+				const m = meeting
+				const meetingId = m.id
+				if (meetingId && typeof meetingId === 'string') {
+					await ctx.db.archiveFiles.upsertByEntityId(meetingId, m);
+				}
+			}
+		} catch (error) {
+			console.warn('Failed to save archive files to database:', error);
+		}
+	}
 
 	await logEventFromContext(
 		ctx,
