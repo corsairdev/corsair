@@ -20,13 +20,7 @@ export const get: CalendlyEndpoints['scheduledEventsGet'] = async (
 			const id = uriParts[uriParts.length - 1]!;
 			await ctx.db.scheduledEvents.upsertByEntityId(id, {
 				id,
-				uri: result.resource.uri,
-				name: result.resource.name,
-				status: result.resource.status,
-				start_time: result.resource.start_time,
-				end_time: result.resource.end_time,
-				event_type: result.resource.event_type,
-				location: result.resource.location,
+				...result.resource,
 				created_at: result.resource.created_at
 					? new Date(result.resource.created_at)
 					: null,
@@ -56,17 +50,7 @@ export const list: CalendlyEndpoints['scheduledEventsList'] = async (
 		CalendlyEndpointOutputs['scheduledEventsList']
 	>('scheduled_events', ctx.key, {
 		method: 'GET',
-		query: {
-			user: input.user,
-			organization: input.organization,
-			status: input.status,
-			min_start_time: input.min_start_time,
-			max_start_time: input.max_start_time,
-			count: input.count,
-			page_token: input.page_token,
-			sort: input.sort,
-			invitee_email: input.invitee_email,
-		},
+		query: input
 	});
 
 	if (result.collection && ctx.db.scheduledEvents) {
@@ -77,13 +61,7 @@ export const list: CalendlyEndpoints['scheduledEventsList'] = async (
 				const id = uriParts[uriParts.length - 1]!;
 				await ctx.db.scheduledEvents.upsertByEntityId(id, {
 					id,
-					uri: event.uri,
-					name: event.name,
-					status: event.status,
-					start_time: event.start_time,
-					end_time: event.end_time,
-					event_type: event.event_type,
-					location: event.location,
+					...event,
 					created_at: event.created_at ? new Date(event.created_at) : null,
 					updated_at: event.updated_at ? new Date(event.updated_at) : null,
 				});
@@ -110,9 +88,7 @@ export const cancel: CalendlyEndpoints['scheduledEventsCancel'] = async (
 		CalendlyEndpointOutputs['scheduledEventsCancel']
 	>(`scheduled_events/${input.uuid}/cancellation`, ctx.key, {
 		method: 'POST',
-		body: {
-			reason: input.reason,
-		},
+		body: input
 	});
 
 	if (ctx.db.scheduledEvents) {
@@ -144,10 +120,7 @@ export const deleteData: CalendlyEndpoints['scheduledEventsDeleteData'] =
 			CalendlyEndpointOutputs['scheduledEventsDeleteData']
 		>('data_compliance/deletion/scheduled_events', ctx.key, {
 			method: 'POST',
-			body: {
-				start_time: input.start_time,
-				end_time: input.end_time,
-			},
+			body: input
 		});
 
 		await logEventFromContext(

@@ -36,17 +36,8 @@ export const eventTypeUpdated: CalendlyWebhooks['eventTypeUpdated'] = {
 				if (existing) {
 					await ctx.db.eventTypes.upsertByEntityId(id, {
 						...existing.data,
-						name: eventType.name ?? existing.data.name,
-						active: eventType.active ?? existing.data.active,
-						slug: eventType.slug ?? existing.data.slug,
-						scheduling_url:
-							eventType.scheduling_url ?? existing.data.scheduling_url,
-						duration: eventType.duration ?? existing.data.duration,
-						kind: eventType.kind ?? existing.data.kind,
-						color: eventType.color ?? existing.data.color,
-						updated_at: eventType.updated_at
-							? new Date(eventType.updated_at)
-							: null,
+						...eventType,
+						updated_at: eventType.updated_at ? new Date(eventType.updated_at) : null,
 					});
 				}
 			} catch (error) {

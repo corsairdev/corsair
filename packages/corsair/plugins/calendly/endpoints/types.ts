@@ -589,7 +589,7 @@ const WebhookSubscriptionsCreateInputSchema = z.object({
 	organization: z.string(),
 	scope: z.string(),
 	user: z.string().optional(),
-	signing_key: z.string().optional(),
+	signature_secret: z.string().optional(),
 });
 
 const WebhookSubscriptionsGetInputSchema = z.object({
@@ -614,9 +614,6 @@ const ActivityLogListInputSchema = z.object({
 	sort: z.string().optional(),
 	count: z.number().optional(),
 	page_token: z.string().optional(),
-	action: z.array(z.string()).optional(),
-	actor: z.array(z.string()).optional(),
-	namespace: z.array(z.string()).optional(),
 	min_occurred_at: z.string().optional(),
 	max_occurred_at: z.string().optional(),
 	search_term: z.string().optional(),

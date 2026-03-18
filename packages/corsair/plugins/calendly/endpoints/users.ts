@@ -16,13 +16,8 @@ export const get: CalendlyEndpoints['usersGet'] = async (ctx, input) => {
 		try {
 			await ctx.db.users.upsertByEntityId(input.uuid, {
 				id: input.uuid,
-				uri: result.resource.uri,
-				name: result.resource.name,
-				slug: result.resource.slug,
-				email: result.resource.email,
-				scheduling_url: result.resource.scheduling_url,
-				timezone: result.resource.timezone,
-				avatar_url: result.resource.avatar_url,
+				...result.resource,
+				avatar_url: result.resource.avatar_url ?? undefined,
 				created_at: result.resource.created_at
 					? new Date(result.resource.created_at)
 					: null,
@@ -61,13 +56,8 @@ export const getCurrent: CalendlyEndpoints['usersGetCurrent'] = async (
 			const id = uriParts[uriParts.length - 1]!;
 			await ctx.db.users.upsertByEntityId(id, {
 				id,
-				uri: result.resource.uri,
-				name: result.resource.name,
-				slug: result.resource.slug,
-				email: result.resource.email,
-				scheduling_url: result.resource.scheduling_url,
-				timezone: result.resource.timezone,
-				avatar_url: result.resource.avatar_url,
+				...result.resource,
+				avatar_url: result.resource.avatar_url ?? undefined,
 				created_at: result.resource.created_at
 					? new Date(result.resource.created_at)
 					: null,
@@ -178,13 +168,7 @@ export const listEventTypes: CalendlyEndpoints['usersListEventTypes'] = async (
 		CalendlyEndpointOutputs['usersListEventTypes']
 	>('event_types', ctx.key, {
 		method: 'GET',
-		query: {
-			user: input.user,
-			organization: input.organization,
-			count: input.count,
-			page_token: input.page_token,
-			active: input.active,
-		},
+		query: input
 	});
 
 	if (result.collection && ctx.db.eventTypes) {
@@ -195,15 +179,8 @@ export const listEventTypes: CalendlyEndpoints['usersListEventTypes'] = async (
 			const id = uriParts[uriParts.length - 1]!;
 				await ctx.db.eventTypes.upsertByEntityId(id, {
 					id,
-					uri: eventType.uri,
-					name: eventType.name,
-					active: eventType.active,
-					slug: eventType.slug,
-					scheduling_url: eventType.scheduling_url,
-					duration: eventType.duration,
-					kind: eventType.kind,
-					color: eventType.color,
-					description_plain: eventType.description_plain,
+					...eventType,
+					description_plain: eventType.description_plain ?? '',
 					created_at: eventType.created_at
 						? new Date(eventType.created_at)
 						: null,

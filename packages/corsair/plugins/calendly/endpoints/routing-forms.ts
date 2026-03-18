@@ -10,6 +10,25 @@ export const get: CalendlyEndpoints['routingFormsGet'] = async (ctx, input) => {
 		method: 'GET',
 	});
 
+	if (result.resource && ctx.db.routingForms) {
+		try {
+			const uriParts = result.resource.uri.split('/');
+			const id = uriParts[uriParts.length - 1]!;
+			await ctx.db.routingForms.upsertByEntityId(id, {
+				id,
+				...result.resource,
+				created_at: result.resource.created_at
+					? new Date(result.resource.created_at)
+					: null,
+				updated_at: result.resource.updated_at
+					? new Date(result.resource.updated_at)
+					: null,
+			});
+		} catch (error) {
+			console.warn('Failed to save routing form to database:', error);
+		}
+	}
+
 	await logEventFromContext(
 		ctx,
 		'calendly.routingForms.get',
@@ -44,13 +63,25 @@ export const list: CalendlyEndpoints['routingFormsList'] = async (
 		CalendlyEndpointOutputs['routingFormsList']
 	>('routing_forms', ctx.key, {
 		method: 'GET',
-		query: {
-			organization: input.organization,
-			count: input.count,
-			page_token: input.page_token,
-			sort: input.sort,
-		},
+		query: input
 	});
+
+	if (result.collection && ctx.db.routingForms) {
+		try {
+			for (const form of result.collection) {
+				const uriParts = form.uri.split('/');
+				const id = uriParts[uriParts.length - 1]!;
+				await ctx.db.routingForms.upsertByEntityId(id, {
+					id,
+					...form,
+					created_at: form.created_at ? new Date(form.created_at) : null,
+					updated_at: form.updated_at ? new Date(form.updated_at) : null,
+				});
+			}
+		} catch (error) {
+			console.warn('Failed to save routing forms to database:', error);
+		}
+	}
 
 	await logEventFromContext(
 		ctx,
@@ -67,11 +98,7 @@ export const getSampleWebhookData: CalendlyEndpoints['routingFormsGetSampleWebho
 			CalendlyEndpointOutputs['routingFormsGetSampleWebhookData']
 		>('sample_webhook_data', ctx.key, {
 			method: 'GET',
-			query: {
-				organization: input.organization,
-				scope: input.scope,
-				event: input.event,
-			},
+			query: input
 		});
 
 		await logEventFromContext(

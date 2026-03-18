@@ -34,6 +34,26 @@ export const getInvitation: CalendlyEndpoints['organizationsGetInvitation'] =
 			},
 		);
 
+		if (result.resource && ctx.db.orgInvitations) {
+			try {
+				const uriParts = result.resource.uri.split('/');
+				const id = uriParts[uriParts.length - 1]!;
+				await ctx.db.orgInvitations.upsertByEntityId(id, {
+					id,
+					...result.resource,
+					user: result.resource.user ?? undefined,
+					created_at: result.resource.created_at
+						? new Date(result.resource.created_at)
+						: null,
+					updated_at: result.resource.updated_at
+						? new Date(result.resource.updated_at)
+						: null,
+				});
+			} catch (error) {
+				console.warn('Failed to save org invitation to database:', error);
+			}
+		}
+
 		await logEventFromContext(
 			ctx,
 			'calendly.organizations.getInvitation',
@@ -51,6 +71,56 @@ export const getMembership: CalendlyEndpoints['organizationsGetMembership'] =
 			method: 'GET',
 		});
 
+		if (result.resource) {
+			const membership = result.resource;
+			if (ctx.db.orgMemberships) {
+				try {
+					const uriParts = membership.uri.split('/');
+					const id = uriParts[uriParts.length - 1]!;
+					await ctx.db.orgMemberships.upsertByEntityId(id, {
+						id,
+						...membership,
+						created_at: membership.created_at
+							? new Date(membership.created_at)
+							: null,
+						updated_at: membership.updated_at
+							? new Date(membership.updated_at)
+							: null,
+					});
+				} catch (error) {
+					console.warn('Failed to save org membership to database:', error);
+				}
+			}
+
+			if (ctx.db.users && membership.user?.uri) {
+				try {
+					const uriParts = membership.user.uri.split('/');
+					const id = uriParts[uriParts.length - 1]!;
+					await ctx.db.users.upsertByEntityId(id, {
+						id,
+						uri: membership.user.uri,
+						name: membership.user.name,
+						slug: membership.user.slug,
+						email: membership.user.email,
+						scheduling_url: membership.user.scheduling_url,
+						timezone: membership.user.timezone,
+						avatar_url: membership.user.avatar_url ?? undefined,
+						created_at: membership.user.created_at
+							? new Date(membership.user.created_at)
+							: null,
+						updated_at: membership.user.updated_at
+							? new Date(membership.user.updated_at)
+							: null,
+					});
+				} catch (error) {
+					console.warn(
+						'Failed to save user from org membership to database:',
+						error,
+					);
+				}
+			}
+		}
+
 		await logEventFromContext(
 			ctx,
 			'calendly.organizations.getMembership',
@@ -66,14 +136,30 @@ export const listInvitations: CalendlyEndpoints['organizationsListInvitations'] 
 			CalendlyEndpointOutputs['organizationsListInvitations']
 		>(`organizations/${input.org_uuid}/invitations`, ctx.key, {
 			method: 'GET',
-			query: {
-				count: input.count,
-				page_token: input.page_token,
-				email: input.email,
-				status: input.status,
-				sort: input.sort,
-			},
+			query: input
 		});
+
+		if (result.collection && ctx.db.orgInvitations) {
+			try {
+				for (const invitation of result.collection) {
+					const uriParts = invitation.uri.split('/');
+					const id = uriParts[uriParts.length - 1]!;
+					await ctx.db.orgInvitations.upsertByEntityId(id, {
+						id,
+						...invitation,
+						user: invitation.user ?? undefined,
+						created_at: invitation.created_at
+							? new Date(invitation.created_at)
+							: null,
+						updated_at: invitation.updated_at
+							? new Date(invitation.updated_at)
+							: null,
+					});
+				}
+			} catch (error) {
+				console.warn('Failed to save org invitations to database:', error);
+			}
+		}
 
 		await logEventFromContext(
 			ctx,
@@ -90,14 +176,54 @@ export const listMemberships: CalendlyEndpoints['organizationsListMemberships'] 
 			CalendlyEndpointOutputs['organizationsListMemberships']
 		>('organization_memberships', ctx.key, {
 			method: 'GET',
-			query: {
-				organization: input.organization,
-				user: input.user,
-				count: input.count,
-				page_token: input.page_token,
-				email: input.email,
-			},
+			query: input
 		});
+
+		if (result.collection) {
+			for (const membership of result.collection) {
+				if (ctx.db.orgMemberships) {
+					try {
+						const uriParts = membership.uri.split('/');
+						const id = uriParts[uriParts.length - 1]!;
+						await ctx.db.orgMemberships.upsertByEntityId(id, {
+							id,
+							...membership,
+							created_at: membership.created_at
+								? new Date(membership.created_at)
+								: null,
+							updated_at: membership.updated_at
+								? new Date(membership.updated_at)
+								: null,
+						});
+					} catch (error) {
+						console.warn('Failed to save org membership to database:', error);
+					}
+				}
+
+				if (ctx.db.users && membership.user?.uri) {
+					try {
+						const uriParts = membership.user.uri.split('/');
+						const id = uriParts[uriParts.length - 1]!;
+						await ctx.db.users.upsertByEntityId(id, {
+							id,
+							...membership.user,
+							avatar_url: membership.user.avatar_url ?? undefined,
+							created_at: membership.user.created_at
+								? new Date(membership.user.created_at)
+								: null,
+							updated_at: membership.user.updated_at
+								? new Date(membership.user.updated_at)
+								: null,
+						});
+					} catch (error) {
+						console.warn(
+							'Failed to save user from org membership to database:',
+							error,
+						);
+					}
+				}
+			}
+		}
 
 		await logEventFromContext(
 			ctx,
@@ -116,6 +242,17 @@ export const deleteMembership: CalendlyEndpoints['organizationsDeleteMembership'
 			method: 'DELETE',
 		});
 
+		if (ctx.db.orgMemberships) {
+			try {
+				await ctx.db.orgMemberships.deleteByEntityId(input.uuid);
+			} catch (error) {
+				console.warn(
+					'Failed to delete org membership from database:',
+					error,
+				);
+			}
+		}
+
 		await logEventFromContext(
 			ctx,
 			'calendly.organizations.deleteMembership',
@@ -133,10 +270,28 @@ export const invite: CalendlyEndpoints['organizationsInvite'] = async (
 		CalendlyEndpointOutputs['organizationsInvite']
 	>(`organizations/${input.org_uuid}/invitations`, ctx.key, {
 		method: 'POST',
-		body: {
-			email: input.email,
-		},
+		body: input
 	});
+
+	if (result.resource && ctx.db.orgInvitations) {
+		try {
+			const uriParts = result.resource.uri.split('/');
+			const id = uriParts[uriParts.length - 1]!;
+			await ctx.db.orgInvitations.upsertByEntityId(id, {
+				id,
+				...result.resource,
+				user: result.resource.user ?? undefined,
+				created_at: result.resource.created_at
+					? new Date(result.resource.created_at)
+					: null,
+				updated_at: result.resource.updated_at
+					? new Date(result.resource.updated_at)
+					: null,
+			});
+		} catch (error) {
+			console.warn('Failed to save org invitation to database:', error);
+		}
+	}
 
 	await logEventFromContext(
 		ctx,
@@ -154,6 +309,17 @@ export const removeMember: CalendlyEndpoints['organizationsRemoveMember'] =
 		>(`organization_memberships/${input.uuid}`, ctx.key, {
 			method: 'DELETE',
 		});
+
+		if (ctx.db.orgMemberships) {
+			try {
+				await ctx.db.orgMemberships.deleteByEntityId(input.uuid);
+			} catch (error) {
+				console.warn(
+					'Failed to delete org membership from database:',
+					error,
+				);
+			}
+		}
 
 		await logEventFromContext(
 			ctx,
@@ -175,6 +341,17 @@ export const revokeInvitation: CalendlyEndpoints['organizationsRevokeInvitation'
 				method: 'DELETE',
 			},
 		);
+
+		if (ctx.db.orgInvitations) {
+			try {
+				await ctx.db.orgInvitations.deleteByEntityId(input.uuid);
+			} catch (error) {
+				console.warn(
+					'Failed to delete org invitation from database:',
+					error,
+				);
+			}
+		}
 
 		await logEventFromContext(
 			ctx,

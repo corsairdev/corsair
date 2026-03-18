@@ -34,12 +34,8 @@ export const inviteeCanceled: CalendlyWebhooks['inviteeCanceled'] = {
 			const id = uriParts[uriParts.length - 1]!;
 				await ctx.db.invitees.upsertByEntityId(id, {
 					id,
-					uri: invitee.uri,
-					email: invitee.email,
-					name: invitee.name,
+					...invitee,
 					status: 'canceled',
-					event: invitee.event,
-					timezone: invitee.timezone,
 					created_at: invitee.created_at ? new Date(invitee.created_at) : null,
 					updated_at: invitee.updated_at ? new Date(invitee.updated_at) : null,
 				});

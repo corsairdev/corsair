@@ -82,3 +82,87 @@ export const CalendlyWebhookSubscription = z.object({
 export type CalendlyWebhookSubscription = z.infer<
 	typeof CalendlyWebhookSubscription
 >;
+
+export const CalendlyOrganizationMembership = z.object({
+	id: z.string(),
+	uri: z.string().optional(),
+	role: z.string().optional(),
+	user_uri: z.string().optional(),
+	user_email: z.string().optional(),
+	user_name: z.string().optional(),
+	organization: z.string().optional(),
+	created_at: z.coerce.date().nullable().optional(),
+	updated_at: z.coerce.date().nullable().optional(),
+});
+
+export type CalendlyOrganizationMembership = z.infer<
+	typeof CalendlyOrganizationMembership
+>;
+
+export const CalendlyOrganizationInvitation = z.object({
+	id: z.string(),
+	uri: z.string().optional(),
+	organization: z.string().optional(),
+	email: z.string().optional(),
+	status: z.string().optional(),
+	last_sent_at: z.string().optional(),
+	user: z.string().optional(),
+	created_at: z.coerce.date().nullable().optional(),
+	updated_at: z.coerce.date().nullable().optional(),
+});
+
+export type CalendlyOrganizationInvitation = z.infer<
+	typeof CalendlyOrganizationInvitation
+>;
+
+export const CalendlyGroup = z.object({
+	id: z.string(),
+	uri: z.string().optional(),
+	name: z.string().optional(),
+	slug: z.string().optional(),
+	organization: z.string().optional(),
+	user_count: z.number().optional(),
+	scheduling_url: z.string().optional(),
+	created_at: z.coerce.date().nullable().optional(),
+	updated_at: z.coerce.date().nullable().optional(),
+});
+
+export type CalendlyGroup = z.infer<typeof CalendlyGroup>;
+
+export const CalendlyRoutingForm = z.object({
+	id: z.string(),
+	uri: z.string().optional(),
+	name: z.string().optional(),
+	organization: z.string().optional(),
+	status: z.string().optional(),
+	created_at: z.coerce.date().nullable().optional(),
+	updated_at: z.coerce.date().nullable().optional(),
+});
+
+export type CalendlyRoutingForm = z.infer<typeof CalendlyRoutingForm>;
+
+export const CalendlyActivityLogEntry = z.object({
+	id: z.string(),
+	uri: z.string().optional(),
+	action: z.string().optional(),
+	actor: z.record(z.unknown()).optional(),
+	details: z.record(z.unknown()).optional(),
+	organization: z.string().optional(),
+	occurred_at: z.string().optional(),
+	namespace: z.string().optional(),
+});
+
+export type CalendlyActivityLogEntry = z.infer<typeof CalendlyActivityLogEntry>;
+
+export const CalendlyOutgoingCommunication = z.object({
+	id: z.string(),
+	uri: z.string().optional(),
+	channel: z.string().optional(),
+	sent_at: z.string().optional(),
+	status: z.string().optional(),
+	to: z.string().optional(),
+});
+
+export type CalendlyOutgoingCommunication = z.infer<
+	typeof CalendlyOutgoingCommunication
+>;

@@ -32,6 +32,9 @@ export const inviteeNoShow: CalendlyWebhooks['inviteeNoShow'] = {
 			try {
 				const inviteeUriParts = noShow.invitee.split('/');
 				const inviteeId = inviteeUriParts[inviteeUriParts.length - 1];
+				if (!inviteeId) {
+					return { success: false, error: 'Invalid invitee URI' };
+				}
 				const existing = await ctx.db.invitees.findByEntityId(inviteeId);
 				if (existing) {
 					await ctx.db.invitees.upsertByEntityId(inviteeId, {

@@ -11,14 +11,7 @@ export const create: CalendlyEndpoints['webhookSubscriptionsCreate'] = async (
 		CalendlyEndpointOutputs['webhookSubscriptionsCreate']
 	>('webhook_subscriptions', ctx.key, {
 		method: 'POST',
-		body: {
-			url: input.url,
-			events: input.events,
-			organization: input.organization,
-			scope: input.scope,
-			user: input.user,
-			signing_key: input.signing_key,
-		},
+		body: input
 	});
 
 	if (result.resource && ctx.db.webhookSubscriptions) {
@@ -28,12 +21,8 @@ export const create: CalendlyEndpoints['webhookSubscriptionsCreate'] = async (
 			const id = uriParts[uriParts.length - 1]!;
 			await ctx.db.webhookSubscriptions.upsertByEntityId(id, {
 				id,
-				uri: result.resource.uri,
-				callback_url: result.resource.callback_url,
-				state: result.resource.state,
-				scope: result.resource.scope,
-				organization: result.resource.organization,
-				user: result.resource.user,
+				...result.resource,
+				user: result.resource.user ?? undefined,
 				created_at: result.resource.created_at
 					? new Date(result.resource.created_at)
 					: null,
@@ -69,12 +58,8 @@ export const get: CalendlyEndpoints['webhookSubscriptionsGet'] = async (
 		try {
 			await ctx.db.webhookSubscriptions.upsertByEntityId(input.uuid, {
 				id: input.uuid,
-				uri: result.resource.uri,
-				callback_url: result.resource.callback_url,
-				state: result.resource.state,
-				scope: result.resource.scope,
-				organization: result.resource.organization,
-				user: result.resource.user,
+				...result.resource,
+				user: result.resource.user ?? undefined,
 				created_at: result.resource.created_at
 					? new Date(result.resource.created_at)
 					: null,
@@ -104,13 +89,7 @@ export const list: CalendlyEndpoints['webhookSubscriptionsList'] = async (
 		CalendlyEndpointOutputs['webhookSubscriptionsList']
 	>('webhook_subscriptions', ctx.key, {
 		method: 'GET',
-		query: {
-			organization: input.organization,
-			scope: input.scope,
-			user: input.user,
-			count: input.count,
-			page_token: input.page_token,
-		},
+		query: input
 	});
 
 	if (result.collection && ctx.db.webhookSubscriptions) {
@@ -121,12 +100,8 @@ export const list: CalendlyEndpoints['webhookSubscriptionsList'] = async (
 			const id = uriParts[uriParts.length - 1]!;
 				await ctx.db.webhookSubscriptions.upsertByEntityId(id, {
 					id,
-					uri: sub.uri,
-					callback_url: sub.callback_url,
-					state: sub.state,
-					scope: sub.scope,
-					organization: sub.organization,
-					user: sub.user,
+					...sub,
+					user: sub.user ?? undefined,
 					created_at: sub.created_at ? new Date(sub.created_at) : null,
 					updated_at: sub.updated_at ? new Date(sub.updated_at) : null,
 				});
@@ -155,6 +130,17 @@ export const deleteSubscription: CalendlyEndpoints['webhookSubscriptionsDelete']
 		>(`webhook_subscriptions/${input.uuid}`, ctx.key, {
 			method: 'DELETE',
 		});
+
+		if (ctx.db.webhookSubscriptions) {
+			try {
+				await ctx.db.webhookSubscriptions.deleteByEntityId(input.uuid);
+			} catch (error) {
+				console.warn(
+					'Failed to delete webhook subscription from database:',
+					error,
+				);
+			}
+		}
 
 		await logEventFromContext(
 			ctx,

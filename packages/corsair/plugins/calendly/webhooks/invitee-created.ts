@@ -34,12 +34,7 @@ export const inviteeCreated: CalendlyWebhooks['inviteeCreated'] = {
 			const id = uriParts[uriParts.length - 1]!;
 				await ctx.db.invitees.upsertByEntityId(id, {
 					id,
-					uri: invitee.uri,
-					email: invitee.email,
-					name: invitee.name,
-					status: invitee.status,
-					event: invitee.event,
-					timezone: invitee.timezone,
+					...invitee,
 					created_at: invitee.created_at ? new Date(invitee.created_at) : null,
 					updated_at: invitee.updated_at ? new Date(invitee.updated_at) : null,
 				});
@@ -57,13 +52,8 @@ export const inviteeCreated: CalendlyWebhooks['inviteeCreated'] = {
 			const id = uriParts[uriParts.length - 1]!;
 				await ctx.db.scheduledEvents.upsertByEntityId(id, {
 					id,
-					uri: event.uri,
-					name: event.name,
-					status: event.status,
-					start_time: event.start_time,
-					end_time: event.end_time,
-					event_type: event.event_type,
-					location: event.location as { type: string; location?: string; join_url?: string } | undefined,
+					...event,
+					location: event.location,
 					created_at: event.created_at ? new Date(event.created_at) : null,
 					updated_at: event.updated_at ? new Date(event.updated_at) : null,
 				});

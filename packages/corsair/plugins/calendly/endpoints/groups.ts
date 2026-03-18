@@ -10,6 +10,25 @@ export const get: CalendlyEndpoints['groupsGet'] = async (ctx, input) => {
 		method: 'GET',
 	});
 
+	if (result.resource && ctx.db.groups) {
+		try {
+			const uriParts = result.resource.uri.split('/');
+			const id = uriParts[uriParts.length - 1]!;
+			await ctx.db.groups.upsertByEntityId(id, {
+				id,
+				...result.resource,
+				created_at: result.resource.created_at
+					? new Date(result.resource.created_at)
+					: null,
+				updated_at: result.resource.updated_at
+					? new Date(result.resource.updated_at)
+					: null,
+			});
+		} catch (error) {
+			console.warn('Failed to save group to database:', error);
+		}
+	}
+
 	await logEventFromContext(
 		ctx,
 		'calendly.groups.get',
@@ -41,13 +60,25 @@ export const list: CalendlyEndpoints['groupsList'] = async (ctx, input) => {
 		CalendlyEndpointOutputs['groupsList']
 	>('groups', ctx.key, {
 		method: 'GET',
-		query: {
-			organization: input.organization,
-			count: input.count,
-			page_token: input.page_token,
-			sort: input.sort,
-		},
+		query: input
 	});
+
+	if (result.collection && ctx.db.groups) {
+		try {
+			for (const group of result.collection) {
+				const uriParts = group.uri.split('/');
+				const id = uriParts[uriParts.length - 1]!;
+				await ctx.db.groups.upsertByEntityId(id, {
+					id,
+					...group,
+					created_at: group.created_at ? new Date(group.created_at) : null,
+					updated_at: group.updated_at ? new Date(group.updated_at) : null,
+				});
+			}
+		} catch (error) {
+			console.warn('Failed to save groups to database:', error);
+		}
+	}
 
 	await logEventFromContext(
 		ctx,
@@ -64,11 +95,7 @@ export const listRelationships: CalendlyEndpoints['groupsListRelationships'] =
 			CalendlyEndpointOutputs['groupsListRelationships']
 		>('group_relationships', ctx.key, {
 			method: 'GET',
-			query: {
-				group: input.group,
-				count: input.count,
-				page_token: input.page_token,
-			},
+			query: input
 		});
 
 		await logEventFromContext(

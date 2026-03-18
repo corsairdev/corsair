@@ -11,11 +11,7 @@ export const create: CalendlyEndpoints['schedulingLinksCreate'] = async (
 		CalendlyEndpointOutputs['schedulingLinksCreate']
 	>('scheduling_links', ctx.key, {
 		method: 'POST',
-		body: {
-			max_event_count: input.max_event_count,
-			owner: input.owner,
-			owner_type: input.owner_type,
-		},
+		body: input
 	});
 
 	await logEventFromContext(
@@ -33,11 +29,7 @@ export const createSingleUse: CalendlyEndpoints['schedulingLinksCreateSingleUse'
 			CalendlyEndpointOutputs['schedulingLinksCreateSingleUse']
 		>('scheduling_links', ctx.key, {
 			method: 'POST',
-			body: {
-				max_event_count: input.max_event_count,
-				owner: input.owner,
-				owner_type: input.owner_type,
-			},
+			body: input
 		});
 
 		await logEventFromContext(
@@ -55,9 +47,7 @@ export const createShare: CalendlyEndpoints['schedulingLinksCreateShare'] =
 			CalendlyEndpointOutputs['schedulingLinksCreateShare']
 		>('shares', ctx.key, {
 			method: 'POST',
-			body: {
-				event_type: input.event_type,
-			},
+			body: input
 		});
 
 		await logEventFromContext(

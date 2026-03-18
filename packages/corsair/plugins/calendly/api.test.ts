@@ -867,7 +867,7 @@ describe('webhookSubscriptions', () => {
 			{
 				method: 'POST',
 				body: {
-					url: 'https://229c-2401-4900-1c7b-7472-ccc2-67b1-8a4e-9bd9.ngrok-free.app/api/webhook?tenant_id=default',
+					url: process.env.CALENDLY_WEBHOOK_URL,
 					events: ['invitee.created', 'invitee.cancelled'],
 					organization: orgUri,
 					scope: 'organization',
@@ -878,7 +878,7 @@ describe('webhookSubscriptions', () => {
 		console.log(createResponse);
 
 		CalendlyEndpointOutputSchemas.webhookSubscriptionsCreate.parse(createResponse);
-		expect(createResponse.resource.callback_url).toBe('https://229c-2401-4900-1c7b-7472-ccc2-67b1-8a4e-9bd9.ngrok-free.app/api/webhook?tenant_id=default');
+		expect(createResponse.resource.callback_url).toBe(process.env.CALENDLY_WEBHOOK_URL);
 		createdWebhookUuid = createResponse.resource.uri.split('/').at(-1)!;
 
 		// Get

@@ -17,15 +17,8 @@ export const get: CalendlyEndpoints['eventTypesGet'] = async (ctx, input) => {
 			const id = uriParts[uriParts.length - 1]!;
 			await ctx.db.eventTypes.upsertByEntityId(id, {
 				id,
-				uri: result.resource.uri,
-				name: result.resource.name,
-				active: result.resource.active,
-				slug: result.resource.slug,
-				scheduling_url: result.resource.scheduling_url,
-				duration: result.resource.duration,
-				kind: result.resource.kind,
-				color: result.resource.color,
-				description_plain: result.resource.description_plain,
+				...result.resource,
+				description_plain: result.resource.description_plain ?? '',
 				created_at: result.resource.created_at
 					? new Date(result.resource.created_at)
 					: null,
@@ -70,15 +63,8 @@ export const list: CalendlyEndpoints['eventTypesList'] = async (ctx, input) => {
 			const id = uriParts[uriParts.length - 1]!;
 				await ctx.db.eventTypes.upsertByEntityId(id, {
 					id,
-					uri: eventType.uri,
-					name: eventType.name,
-					active: eventType.active,
-					slug: eventType.slug,
-					scheduling_url: eventType.scheduling_url,
-					duration: eventType.duration,
-					kind: eventType.kind,
-					color: eventType.color,
-					description_plain: eventType.description_plain,
+					...eventType,
+					description_plain: eventType.description_plain ?? '',
 					created_at: eventType.created_at
 						? new Date(eventType.created_at)
 						: null,
@@ -109,18 +95,7 @@ export const create: CalendlyEndpoints['eventTypesCreate'] = async (
 		CalendlyEndpointOutputs['eventTypesCreate']
 	>('event_types', ctx.key, {
 		method: 'POST',
-		body: {
-			name: input.name,
-			host: input.host,
-			co_hosts: input.co_hosts,
-			duration: input.duration,
-			timezone: input.timezone,
-			date_setting: input.date_setting,
-			location_configurations: input.location_configurations,
-			description_plain: input.description_plain,
-			color: input.color,
-			slug: input.slug,
-		},
+		body: input
 	});
 
 	if (result.resource && ctx.db.eventTypes) {
@@ -130,15 +105,8 @@ export const create: CalendlyEndpoints['eventTypesCreate'] = async (
 			const id = uriParts[uriParts.length - 1]!;
 			await ctx.db.eventTypes.upsertByEntityId(id, {
 				id,
-				uri: result.resource.uri,
-				name: result.resource.name,
-				active: result.resource.active,
-				slug: result.resource.slug,
-				scheduling_url: result.resource.scheduling_url,
-				duration: result.resource.duration,
-				kind: result.resource.kind,
-				color: result.resource.color,
-				description_plain: result.resource.description_plain,
+				...result.resource,
+				description_plain: result.resource.description_plain ?? '',
 				created_at: result.resource.created_at
 					? new Date(result.resource.created_at)
 					: null,
@@ -168,15 +136,23 @@ export const createOneOff: CalendlyEndpoints['eventTypesCreateOneOff'] = async (
 		CalendlyEndpointOutputs['eventTypesCreateOneOff']
 	>('one_off_event_types', ctx.key, {
 		method: 'POST',
-		body: {
-			name: input.name,
-			host: input.host,
-			duration: input.duration,
-			timezone: input.timezone,
-			date_setting: input.date_setting,
-			location_configuration: input.location_configuration,
-		},
+		body: input
 	});
+
+	if (result.resource?.uri && ctx.db.eventTypes) {
+		try {
+			const uriParts = result.resource.uri.split('/');
+			// URI always has at least one segment; last segment is the UUID
+			const id = uriParts[uriParts.length - 1]!;
+			await ctx.db.eventTypes.upsertByEntityId(id, {
+				id,
+				uri: result.resource.uri,
+				scheduling_url: result.resource.scheduling_url,
+			});
+		} catch (error) {
+			console.warn('Failed to save one-off event type to database:', error);
+		}
+	}
 
 	await logEventFromContext(
 		ctx,
@@ -195,28 +171,15 @@ export const update: CalendlyEndpoints['eventTypesUpdate'] = async (
 		CalendlyEndpointOutputs['eventTypesUpdate']
 	>(`event_types/${input.uuid}`, ctx.key, {
 		method: 'PATCH',
-		body: {
-			name: input.name,
-			description_plain: input.description_plain,
-			color: input.color,
-			duration: input.duration,
-			slug: input.slug,
-		},
+		body: input
 	});
 
 	if (result.resource && ctx.db.eventTypes) {
 		try {
 			await ctx.db.eventTypes.upsertByEntityId(input.uuid, {
 				id: input.uuid,
-				uri: result.resource.uri,
-				name: result.resource.name,
-				active: result.resource.active,
-				slug: result.resource.slug,
-				scheduling_url: result.resource.scheduling_url,
-				duration: result.resource.duration,
-				kind: result.resource.kind,
-				color: result.resource.color,
-				description_plain: result.resource.description_plain,
+				...result.resource,
+				description_plain: result.resource.description_plain ?? '',
 				created_at: result.resource.created_at
 					? new Date(result.resource.created_at)
 					: null,
@@ -244,12 +207,7 @@ export const getAvailability: CalendlyEndpoints['eventTypesGetAvailability'] =
 			CalendlyEndpointOutputs['eventTypesGetAvailability']
 		>('event_type_available_times', ctx.key, {
 			method: 'GET',
-			query: {
-				event_type: input.event_type,
-				start_time: input.start_time,
-				end_time: input.end_time,
-				timezone: input.timezone,
-			},
+			query: input
 		});
 
 		await logEventFromContext(
@@ -267,10 +225,7 @@ export const updateAvailability: CalendlyEndpoints['eventTypesUpdateAvailability
 			CalendlyEndpointOutputs['eventTypesUpdateAvailability']
 		>(`event_types/${input.uuid}/user_availability_schedule`, ctx.key, {
 			method: 'POST',
-			body: {
-				rules: input.rules,
-				timezone: input.timezone,
-			},
+			body: input
 		});
 
 		await logEventFromContext(
@@ -288,13 +243,7 @@ export const listAvailableTimes: CalendlyEndpoints['eventTypesListAvailableTimes
 			CalendlyEndpointOutputs['eventTypesListAvailableTimes']
 		>('event_type_available_times', ctx.key, {
 			method: 'GET',
-			query: {
-				event_type: input.event_type,
-				start_time: input.start_time,
-				end_time: input.end_time,
-				timezone: input.timezone,
-				diagnostics: input.diagnostics,
-			},
+			query: input
 		});
 
 		await logEventFromContext(
@@ -314,11 +263,7 @@ export const listHosts: CalendlyEndpoints['eventTypesListHosts'] = async (
 		CalendlyEndpointOutputs['eventTypesListHosts']
 	>('event_type_memberships', ctx.key, {
 		method: 'GET',
-		query: {
-			event_type: input.event_type,
-			count: input.count,
-			page_token: input.page_token,
-		},
+		query: input
 	});
 
 	await logEventFromContext(

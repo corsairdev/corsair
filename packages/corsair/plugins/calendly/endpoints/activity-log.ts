@@ -11,16 +11,27 @@ export const listEntries: CalendlyEndpoints['activityLogList'] = async (
 		CalendlyEndpointOutputs['activityLogList']
 	>('activity_log_entries', ctx.key, {
 		method: 'GET',
-		query: {
-			organization: input.organization,
-			sort: input.sort,
-			count: input.count,
-			page_token: input.page_token,
-			min_occurred_at: input.min_occurred_at,
-			max_occurred_at: input.max_occurred_at,
-			search_term: input.search_term,
-		},
+		query: input
 	});
+
+	if (result.collection && ctx.db.activityLogEntries) {
+		try {
+			for (const entry of result.collection) {
+				if (!entry.uri) continue;
+				const uriParts = entry.uri.split('/');
+				const id = uriParts[uriParts.length - 1]!;
+				await ctx.db.activityLogEntries.upsertByEntityId(id, {
+					id,
+					...entry,
+					actor: entry.actor ?? undefined,
+					details: entry.details ?? undefined,
+					occurred_at: entry.occurred_at ? new Date(entry.occurred_at).toISOString() : undefined,
+				});
+			}
+		} catch (error) {
+			console.warn('Failed to save activity log entries to database:', error);
+		}
+	}
 
 	await logEventFromContext(
 		ctx,
@@ -35,14 +46,30 @@ export const listOutgoingCommunications: CalendlyEndpoints['activityLogListOutgo
 	async (ctx, input) => {
 		const result = await makeCalendlyRequest<
 			CalendlyEndpointOutputs['activityLogListOutgoingCommunications']
-		>('outgoing_calls', ctx.key, {
+		>('scheduled_event_notifications', ctx.key, {
 			method: 'GET',
-			query: {
-				organization: input.organization,
-				count: input.count,
-				page_token: input.page_token,
-			},
+			query: input
 		});
+
+		if (result.collection && ctx.db.outgoingCommunications) {
+			try {
+				for (const comm of result.collection) {
+					if (!comm.uri) continue;
+					const uriParts = comm.uri.split('/');
+					const id = uriParts[uriParts.length - 1]!;
+					await ctx.db.outgoingCommunications.upsertByEntityId(id, {
+						id,
+						...comm,
+						sent_at: comm.sent_at ? new Date(comm.sent_at).toISOString() : undefined,
+					});
+				}
+			} catch (error) {
+				console.warn(
+					'Failed to save outgoing communications to database:',
+					error,
+				);
+			}
+		}
 
 		await logEventFromContext(
 			ctx,

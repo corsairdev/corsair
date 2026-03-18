@@ -32,7 +32,7 @@ const CalendlyEventPayloadSchema = z.object({
 	start_time: z.string(),
 	end_time: z.string(),
 	event_type: z.string(),
-	location: z.record(z.unknown()).optional(),
+	location: z.object({ type: z.string(), location: z.string().optional(), join_url: z.string().optional() }).optional(),
 	invitees_counter: z
 		.object({
 			total: z.number(),
@@ -198,63 +198,69 @@ export function verifyCalendlyWebhookSignature(
 	request: WebhookRequest<unknown>,
 	signingKey: string,
 ): { valid: boolean; error?: string } {
-	if (!signingKey) {
-		return { valid: false, error: 'Missing signing key' };
-	}
-
-	const rawBody = request.rawBody;
-	if (!rawBody) {
-		return { valid: false, error: 'Missing raw body for signature verification' };
-	}
-
-	const headers = request.headers;
-	// Calendly-Webhook-Signature header value
-	const signatureHeader = Array.isArray(
-		headers['calendly-webhook-signature'],
-	)
-		? headers['calendly-webhook-signature'][0]
-		: headers['calendly-webhook-signature'];
-
-	if (!signatureHeader) {
-		return {
-			valid: false,
-			error: 'Missing Calendly-Webhook-Signature header',
-		};
-	}
-
-	// Parse "t=<timestamp>,v1=<signature>"
-	const parts = signatureHeader.split(',');
-	let timestamp: string | undefined;
-	let signature: string | undefined;
-
-	for (const part of parts) {
-		if (part.startsWith('t=')) {
-			timestamp = part.slice(2);
-		} else if (part.startsWith('v1=')) {
-			signature = part.slice(3);
+	try {
+		if (!signingKey) {
+			return { valid: false, error: 'Missing signing key' };
 		}
+
+		const rawBody = request.rawBody;
+		if (!rawBody) {
+			return { valid: false, error: 'Missing raw body for signature verification' };
+		}
+
+		const headers = request.headers;
+		// Calendly-Webhook-Signature header value
+		const signatureHeader = Array.isArray(
+			headers['calendly-webhook-signature'],
+		)
+			? headers['calendly-webhook-signature'][0]
+			: headers['calendly-webhook-signature'];
+
+		if (!signatureHeader) {
+			return {
+				valid: false,
+				error: 'Missing Calendly-Webhook-Signature header',
+			};
+		}
+
+		// Parse "t=<timestamp>,v1=<signature>"
+		const parts = signatureHeader.split(',');
+		let timestamp: string | undefined;
+		let signature: string | undefined;
+
+		for (const part of parts) {
+			if (part.startsWith('t=')) {
+				timestamp = part.slice(2);
+			} else if (part.startsWith('v1=')) {
+				signature = part.slice(3);
+			}
+		}
+
+		if (!timestamp || !signature) {
+			return {
+				valid: false,
+				error: 'Malformed Calendly-Webhook-Signature header',
+			};
+		}
+
+		const expectedSignature = crypto
+			.createHmac('sha256', signingKey)
+			.update(`${timestamp}.${rawBody}`)
+			.digest('hex');
+
+		const isValid = crypto.timingSafeEqual(
+			Buffer.from(signature),
+			Buffer.from(expectedSignature),
+		);
+
+		if (!isValid) {
+			return { valid: false, error: 'Invalid signature' };
+		}
+
+		return { valid: true };
 	}
-
-	if (!timestamp || !signature) {
-		return {
-			valid: false,
-			error: 'Malformed Calendly-Webhook-Signature header',
-		};
+	catch (error) {
+		console.error('Signature verification failed:', error);
+		return { valid: false, error: `Signature verification failed: ${error instanceof Error ? error.message : 'unknown error'}` };
 	}
-
-	const expectedSignature = crypto
-		.createHmac('sha256', signingKey)
-		.update(`${timestamp}.${rawBody}`)
-		.digest('hex');
-
-	const isValid = crypto.timingSafeEqual(
-		Buffer.from(signature),
-		Buffer.from(expectedSignature),
-	);
-
-	if (!isValid) {
-		return { valid: false, error: 'Invalid signature' };
-	}
-
-	return { valid: true };
 }

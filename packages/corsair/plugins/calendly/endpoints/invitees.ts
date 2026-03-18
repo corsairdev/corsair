@@ -21,12 +21,7 @@ export const get: CalendlyEndpoints['inviteesGet'] = async (ctx, input) => {
 			const id = uriParts[uriParts.length - 1]!;
 			await ctx.db.invitees.upsertByEntityId(id, {
 				id,
-				uri: result.resource.uri,
-				email: result.resource.email,
-				name: result.resource.name,
-				status: result.resource.status,
-				event: result.resource.event,
-				timezone: result.resource.timezone,
+				...result.resource,
 				created_at: result.resource.created_at
 					? new Date(result.resource.created_at)
 					: null,
@@ -53,13 +48,7 @@ export const list: CalendlyEndpoints['inviteesList'] = async (ctx, input) => {
 		CalendlyEndpointOutputs['inviteesList']
 	>(`scheduled_events/${input.event_uuid}/invitees`, ctx.key, {
 		method: 'GET',
-		query: {
-			status: input.status,
-			count: input.count,
-			page_token: input.page_token,
-			sort: input.sort,
-			email: input.email,
-		},
+		query: input
 	});
 
 	if (result.collection && ctx.db.invitees) {
@@ -70,12 +59,7 @@ export const list: CalendlyEndpoints['inviteesList'] = async (ctx, input) => {
 			const id = uriParts[uriParts.length - 1]!;
 				await ctx.db.invitees.upsertByEntityId(id, {
 					id,
-					uri: invitee.uri,
-					email: invitee.email,
-					name: invitee.name,
-					status: invitee.status,
-					event: invitee.event,
-					timezone: invitee.timezone,
+					...invitee,
 					created_at: invitee.created_at ? new Date(invitee.created_at) : null,
 					updated_at: invitee.updated_at ? new Date(invitee.updated_at) : null,
 				});
@@ -105,13 +89,7 @@ export const create: CalendlyEndpoints['inviteesCreate'] = async (
 		ctx.key,
 		{
 			method: 'POST',
-			body: {
-				email: input.email,
-				name: input.name,
-				timezone: input.timezone,
-				additional_guests: input.additional_guests,
-				questions_and_answers: input.questions_and_answers,
-			},
+			body: input
 		},
 	);
 
@@ -122,12 +100,7 @@ export const create: CalendlyEndpoints['inviteesCreate'] = async (
 			const id = uriParts[uriParts.length - 1]!;
 			await ctx.db.invitees.upsertByEntityId(id, {
 				id,
-				uri: result.resource.uri,
-				email: result.resource.email,
-				name: result.resource.name,
-				status: result.resource.status,
-				event: result.resource.event,
-				timezone: result.resource.timezone,
+				...result.resource,
 				created_at: result.resource.created_at
 					? new Date(result.resource.created_at)
 					: null,
@@ -157,9 +130,7 @@ export const deleteData: CalendlyEndpoints['inviteesDeleteData'] = async (
 		CalendlyEndpointOutputs['inviteesDeleteData']
 	>('data_compliance/deletion/invitees', ctx.key, {
 		method: 'POST',
-		body: {
-			emails: input.emails,
-		},
+		body: input
 	});
 
 	await logEventFromContext(
@@ -181,6 +152,24 @@ export const getNoShow: CalendlyEndpoints['inviteesGetNoShow'] = async (
 		method: 'GET',
 	});
 
+	if (result.resource?.invitee && ctx.db.invitees) {
+		try {
+			const uriParts = result.resource.invitee.split('/');
+			const inviteeId = uriParts[uriParts.length - 1]!;
+			const existing = await ctx.db.invitees.findByEntityId(inviteeId);
+			if (existing) {
+				await ctx.db.invitees.upsertByEntityId(inviteeId, {
+					...existing.data,
+					updated_at: result.resource.updated_at
+						? new Date(result.resource.updated_at)
+						: null,
+				});
+			}
+		} catch (error) {
+			console.warn('Failed to update invitee from no-show record in database:', error);
+		}
+	}
+
 	await logEventFromContext(
 		ctx,
 		'calendly.invitees.getNoShow',
@@ -198,10 +187,26 @@ export const markNoShow: CalendlyEndpoints['inviteesMarkNoShow'] = async (
 		CalendlyEndpointOutputs['inviteesMarkNoShow']
 	>('invitee_no_shows', ctx.key, {
 		method: 'POST',
-		body: {
-			invitee: input.invitee,
-		},
+		body: input
 	});
+
+	if (result.resource?.invitee && ctx.db.invitees) {
+		try {
+			const uriParts = result.resource.invitee.split('/');
+			const inviteeId = uriParts[uriParts.length - 1]!;
+			const existing = await ctx.db.invitees.findByEntityId(inviteeId);
+			if (existing) {
+				await ctx.db.invitees.upsertByEntityId(inviteeId, {
+					...existing.data,
+					updated_at: result.resource.updated_at
+						? new Date(result.resource.updated_at)
+						: null,
+				});
+			}
+		} catch (error) {
+			console.warn('Failed to update invitee no-show in database:', error);
+		}
+	}
 
 	await logEventFromContext(
 		ctx,
