@@ -161,6 +161,11 @@
       "dev-source": "./plugins/twitterapiio/index.ts",
       "types": "./dist/plugins/twitterapiio/index.d.ts",
       "default": "./dist/plugins/twitterapiio/index.js"
+    },
+    "./plugins/zoom": {
+      "dev-source": "./plugins/zoom/index.ts",
+      "types": "./dist/plugins/zoom/index.d.ts",
+      "default": "./dist/plugins/zoom/index.js"
     }
   },
   "scripts": {

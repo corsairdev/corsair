@@ -1,0 +1,16 @@
+import {
+	ZoomMeeting,
+	ZoomParticipant,
+	ZoomRecording,
+	ZoomWebinar,
+} from './database';
+
+export const ZoomSchema = {
+	version: '1.0.0',
+	entities: {
+		meetings: ZoomMeeting,
+		recordings: ZoomRecording,
+		webinars: ZoomWebinar,
+		participants: ZoomParticipant,
+	},
+} as const;
