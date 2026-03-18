@@ -1,0 +1,57 @@
+import { logEventFromContext } from '../../utils/events';
+import type { TrelloWebhooks } from '..';
+import { createTrelloActionMatch, verifyTrelloWebhookSignature } from './types';
+
+export const listUpdated: TrelloWebhooks['listUpdated'] = {
+	match: createTrelloActionMatch('updateList'),
+
+	handler: async (ctx, request) => {
+		const verification = verifyTrelloWebhookSignature(
+			request,
+			ctx.key,
+			ctx.options.webhookCallbackUrl,
+		);
+		if (!verification.valid) {
+			return {
+				success: false,
+				statusCode: 401,
+				error: verification.error || 'Signature verification failed',
+			};
+		}
+
+		const payload = request.payload;
+		const action = payload.action;
+		const trelloList = action.data?.list;
+		let corsairEntityId = '';
+
+		if (trelloList?.id && ctx.db.lists) {
+			try {
+				const existing = await ctx.db.lists.findByEntityId(trelloList.id);
+				const existingData = existing?.data;
+				const entity = await ctx.db.lists.upsertByEntityId(trelloList.id, {
+					id: trelloList.id,
+					name: trelloList.name ?? existingData?.name,
+					idBoard: action.data?.board?.id ?? existingData?.idBoard,
+					closed: trelloList.closed !== undefined ? trelloList.closed : existingData?.closed,
+					pos: trelloList.pos !== undefined ? trelloList.pos : existingData?.pos,
+				});
+				corsairEntityId = entity?.id || '';
+			} catch (error) {
+				console.warn('Failed to update list in database from webhook:', error);
+			}
+		}
+
+		await logEventFromContext(
+			ctx,
+			'trello.webhook.list.updated',
+			{ listId: trelloList?.id, boardId: action.data?.board?.id },
+			'completed',
+		);
+
+		return {
+			success: true,
+			corsairEntityId,
+			data: payload,
+		};
+	},
+};

@@ -162,6 +162,21 @@ export const TrelloListCreatedPayloadSchema = z.object({
 	model: z.record(z.unknown()),
 });
 
+export const ListUpdatedDataSchema = z.object({
+	board: TrelloActionBoardSchema.optional(),
+	list: TrelloActionListSchema.optional(),
+	old: z.record(z.unknown()).optional(),
+});
+export type ListUpdatedData = z.infer<typeof ListUpdatedDataSchema>;
+
+export const TrelloListUpdatedPayloadSchema = z.object({
+	action: TrelloBaseActionSchema.extend({
+		type: z.literal('updateList'),
+		data: ListUpdatedDataSchema,
+	}),
+	model: z.record(z.unknown()),
+});
+
 export const TrelloCommentCreatedPayloadSchema = z.object({
 	action: TrelloBaseActionSchema.extend({
 		type: z.literal('commentCard'),
@@ -177,6 +192,7 @@ export type TrelloCardUpdatedEvent = z.infer<typeof TrelloCardUpdatedPayloadSche
 export type TrelloCardMovedEvent = z.infer<typeof TrelloCardMovedPayloadSchema>;
 export type TrelloMemberAddedToCardEvent = z.infer<typeof TrelloMemberAddedToCardPayloadSchema>;
 export type TrelloListCreatedEvent = z.infer<typeof TrelloListCreatedPayloadSchema>;
+export type TrelloListUpdatedEvent = z.infer<typeof TrelloListUpdatedPayloadSchema>;
 export type TrelloCommentCreatedEvent = z.infer<typeof TrelloCommentCreatedPayloadSchema>;
 
 // ── Webhook output map ────────────────────────────────────────────────────────
@@ -187,6 +203,7 @@ export type TrelloWebhookOutputs = {
 	cardMoved: TrelloCardMovedEvent;
 	memberAddedToCard: TrelloMemberAddedToCardEvent;
 	listCreated: TrelloListCreatedEvent;
+	listUpdated: TrelloListUpdatedEvent;
 	commentCreated: TrelloCommentCreatedEvent;
 };
 
@@ -239,11 +256,17 @@ export function verifyTrelloWebhookSignature(
 		return { valid: false, error: 'Missing x-trello-webhook header' };
 	}
 
+	// payload is unknown; extract callbackURL from the webhook object Trello includes in every payload
+	const payloadCallbackUrl =
+		((request.payload as Record<string, unknown>)?.webhook as Record<string, unknown>)
+			?.callbackURL as string | undefined;
+
+	const resolvedCallbackUrl = callbackUrl ?? payloadCallbackUrl;
+
 	try {
 		// Trello signs: HMAC SHA1(body + callbackURL, secret) -> base64
-		// callbackUrl is required for full Trello signature verification
 		const crypto = require('crypto') as typeof import('crypto');
-		const content = callbackUrl ? rawBody + callbackUrl : rawBody;
+		const content = resolvedCallbackUrl ? rawBody + resolvedCallbackUrl : rawBody;
 		const expected = crypto
 			.createHmac('sha1', secret)
 			.update(content)

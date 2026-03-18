@@ -22,6 +22,7 @@ import type {
 	TrelloCardUpdatedEvent,
 	TrelloCommentCreatedEvent,
 	TrelloListCreatedEvent,
+	TrelloListUpdatedEvent,
 	TrelloMemberAddedToCardEvent,
 	TrelloWebhookOutputs,
 } from './webhooks/types';
@@ -31,6 +32,7 @@ import {
 	TrelloCardUpdatedPayloadSchema,
 	TrelloCommentCreatedPayloadSchema,
 	TrelloListCreatedPayloadSchema,
+	TrelloListUpdatedPayloadSchema,
 	TrelloMemberAddedToCardPayloadSchema,
 } from './webhooks/types';
 import {
@@ -117,6 +119,7 @@ export type TrelloWebhooks = {
 	cardMoved: TrelloWebhook<'cardMoved', TrelloCardMovedEvent>;
 	memberAddedToCard: TrelloWebhook<'memberAddedToCard', TrelloMemberAddedToCardEvent>;
 	listCreated: TrelloWebhook<'listCreated', TrelloListCreatedEvent>;
+	listUpdated: TrelloWebhook<'listUpdated', TrelloListUpdatedEvent>;
 	commentCreated: TrelloWebhook<'commentCreated', TrelloCommentCreatedEvent>;
 };
 
@@ -173,6 +176,7 @@ const trelloWebhooksNested = {
 	},
 	lists: {
 		listCreated: ListWebhooks.listCreated,
+		listUpdated: ListWebhooks.listUpdated,
 	},
 	comments: {
 		commentCreated: CommentWebhooks.commentCreated,
@@ -308,6 +312,11 @@ const trelloWebhookSchemas = {
 		payload: TrelloListCreatedPayloadSchema,
 		response: TrelloListCreatedPayloadSchema,
 	},
+	'lists.listUpdated': {
+		description: 'A list was updated (name, closed status, etc.)',
+		payload: TrelloListUpdatedPayloadSchema,
+		response: TrelloListUpdatedPayloadSchema,
+	},
 	'comments.commentCreated': {
 		description: 'A comment was added to a card',
 		payload: TrelloCommentCreatedPayloadSchema,
@@ -430,6 +439,7 @@ export type {
 	TrelloCardMovedEvent,
 	TrelloMemberAddedToCardEvent,
 	TrelloListCreatedEvent,
+	TrelloListUpdatedEvent,
 	TrelloCommentCreatedEvent,
 	TrelloWebhookOutputs,
 	TrelloMemberCreator,
@@ -438,6 +448,7 @@ export type {
 	CardMovedData,
 	MemberAddedToCardData,
 	ListCreatedData,
+	ListUpdatedData,
 	CommentCreatedData,
 } from './webhooks/types';
 

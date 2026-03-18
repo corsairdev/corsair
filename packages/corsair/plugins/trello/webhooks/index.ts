@@ -3,6 +3,7 @@ import { cardUpdated } from './cardUpdated';
 import { cardMoved } from './cardMoved';
 import { memberAddedToCard } from './memberAddedToCard';
 import { listCreated } from './listCreated';
+import { listUpdated } from './listUpdated';
 import { commentCreated } from './commentCreated';
 
 export const CardWebhooks = {
@@ -17,6 +18,7 @@ export const MemberWebhooks = {
 
 export const ListWebhooks = {
 	listCreated,
+	listUpdated,
 };
 
 export const CommentWebhooks = {
