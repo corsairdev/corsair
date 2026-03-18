@@ -4,6 +4,7 @@ import type {
 	RawWebhookRequest,
 	WebhookRequest,
 } from '../../../core';
+import * as crypto from 'crypto';
 
 // ── Shared Trello action sub-schemas ─────────────────────────────────────────
 
@@ -74,18 +75,11 @@ export const CardUpdatedDataSchema = z.object({
 	board: TrelloActionBoardSchema.optional(),
 	list: TrelloActionListSchema.optional(),
 	card: TrelloActionCardSchema.optional(),
+	listBefore: TrelloActionListSchema.optional(),
+	listAfter: TrelloActionListSchema.optional(),
 	old: z.record(z.unknown()).optional(),
 });
 export type CardUpdatedData = z.infer<typeof CardUpdatedDataSchema>;
-
-export const CardMovedDataSchema = z.object({
-	board: TrelloActionBoardSchema.optional(),
-	card: TrelloActionCardSchema.optional(),
-	listBefore: TrelloActionListSchema.optional(),
-	listAfter: TrelloActionListSchema.optional(),
-	old: z.object({ idList: z.string() }).optional(),
-});
-export type CardMovedData = z.infer<typeof CardMovedDataSchema>;
 
 export const MemberAddedToCardDataSchema = z.object({
 	board: TrelloActionBoardSchema.optional(),
@@ -138,14 +132,6 @@ export const TrelloCardUpdatedPayloadSchema = z.object({
 	model: z.record(z.unknown()),
 });
 
-export const TrelloCardMovedPayloadSchema = z.object({
-	action: TrelloBaseActionSchema.extend({
-		type: z.literal('updateCard'),
-		data: CardMovedDataSchema,
-	}),
-	model: z.record(z.unknown()),
-});
-
 export const TrelloMemberAddedToCardPayloadSchema = z.object({
 	action: TrelloBaseActionSchema.extend({
 		type: z.literal('addMemberToCard'),
@@ -189,7 +175,6 @@ export const TrelloCommentCreatedPayloadSchema = z.object({
 
 export type TrelloCardCreatedEvent = z.infer<typeof TrelloCardCreatedPayloadSchema>;
 export type TrelloCardUpdatedEvent = z.infer<typeof TrelloCardUpdatedPayloadSchema>;
-export type TrelloCardMovedEvent = z.infer<typeof TrelloCardMovedPayloadSchema>;
 export type TrelloMemberAddedToCardEvent = z.infer<typeof TrelloMemberAddedToCardPayloadSchema>;
 export type TrelloListCreatedEvent = z.infer<typeof TrelloListCreatedPayloadSchema>;
 export type TrelloListUpdatedEvent = z.infer<typeof TrelloListUpdatedPayloadSchema>;
@@ -200,7 +185,6 @@ export type TrelloCommentCreatedEvent = z.infer<typeof TrelloCommentCreatedPaylo
 export type TrelloWebhookOutputs = {
 	cardCreated: TrelloCardCreatedEvent;
 	cardUpdated: TrelloCardUpdatedEvent;
-	cardMoved: TrelloCardMovedEvent;
 	memberAddedToCard: TrelloMemberAddedToCardEvent;
 	listCreated: TrelloListCreatedEvent;
 	listUpdated: TrelloListUpdatedEvent;
@@ -209,6 +193,8 @@ export type TrelloWebhookOutputs = {
 
 // ── Utilities ─────────────────────────────────────────────────────────────────
 
+// body is typed as unknown because request.body is unvalidated at this point;
+// returns unknown to avoid widening to any via JSON.parse
 function parseBody(body: unknown): unknown {
 	return typeof body === 'string' ? JSON.parse(body) : body;
 }
@@ -217,23 +203,15 @@ export function createTrelloActionMatch(actionType: string): CorsairWebhookMatch
 	return (request: RawWebhookRequest) => {
 		// parsedBody is typed as unknown because the raw webhook body is unvalidated
 		const parsedBody = parseBody(request.body) as Record<string, unknown>;
+		// Type assertion needed because parseBody returns unknown
 		const action = parsedBody?.action as Record<string, unknown> | undefined;
 		return action?.type === actionType;
 	};
 }
 
-export function createTrelloCardMovedMatch(): CorsairWebhookMatcher {
-	return (request: RawWebhookRequest) => {
-		// parsedBody is typed as unknown because the raw webhook body is unvalidated
-		const parsedBody = parseBody(request.body) as Record<string, unknown>;
-		const action = parsedBody?.action as Record<string, unknown> | undefined;
-		if (action?.type !== 'updateCard') return false;
-		const data = action?.data as Record<string, unknown> | undefined;
-		return typeof data?.listAfter !== 'undefined';
-	};
-}
-
 export function verifyTrelloWebhookSignature(
+	// WebhookRequest<unknown> because signature verification only needs raw bytes and headers,
+	// not a typed payload — the payload type is resolved by callers after verification
 	request: WebhookRequest<unknown>,
 	secret: string,
 	callbackUrl?: string,
@@ -264,8 +242,6 @@ export function verifyTrelloWebhookSignature(
 	const resolvedCallbackUrl = callbackUrl ?? payloadCallbackUrl;
 
 	try {
-		// Trello signs: HMAC SHA1(body + callbackURL, secret) -> base64
-		const crypto = require('crypto') as typeof import('crypto');
 		const content = resolvedCallbackUrl ? rawBody + resolvedCallbackUrl : rawBody;
 		const expected = crypto
 			.createHmac('sha1', secret)

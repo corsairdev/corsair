@@ -30,6 +30,7 @@ export async function makeTrelloRequest<T>(
 	token: string,
 	options: {
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+		// unknown values allow any JSON-serializable type without committing to specific field types
 		body?: Record<string, unknown>;
 		query?: Record<string, string | number | boolean | undefined>;
 	} = {},

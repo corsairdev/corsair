@@ -17,13 +17,7 @@ export const get: TrelloEndpoints['membersGet'] = async (ctx, input) => {
 	if (result && ctx.db.members) {
 		try {
 			await ctx.db.members.upsertByEntityId(result.id, {
-				id: result.id,
-				username: result.username,
-				fullName: result.fullName,
-				email: result.email,
-				avatarUrl: result.avatarUrl,
-				initials: result.initials,
-				memberType: result.memberType,
+				...result,
 			});
 		} catch (error) {
 			console.warn('Failed to save member to database:', error);
@@ -50,13 +44,7 @@ export const list: TrelloEndpoints['membersList'] = async (ctx, input) => {
 			for (const member of result) {
 				if (member.id) {
 					await ctx.db.members.upsertByEntityId(member.id, {
-						id: member.id,
-						username: member.username,
-						fullName: member.fullName,
-						email: member.email,
-						avatarUrl: member.avatarUrl,
-						initials: member.initials,
-						memberType: member.memberType,
+						...member,
 					});
 				}
 			}

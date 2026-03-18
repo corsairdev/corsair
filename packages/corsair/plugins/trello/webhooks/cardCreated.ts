@@ -28,15 +28,7 @@ export const cardCreated: TrelloWebhooks['cardCreated'] = {
 		if (card?.id && ctx.db.cards) {
 			try {
 				const entity = await ctx.db.cards.upsertByEntityId(card.id, {
-					id: card.id,
-					name: card.name,
-					desc: card.desc,
-					idBoard: card.idBoard ?? action.data?.board?.id,
-					idList: card.idList ?? action.data?.list?.id,
-					closed: card.closed ?? false,
-					pos: card.pos,
-					due: card.due,
-					dueComplete: card.dueComplete,
+					...card,
 					createdAt: new Date(action.date),
 				});
 				corsairEntityId = entity?.id || '';

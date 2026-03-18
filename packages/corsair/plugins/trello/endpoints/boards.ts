@@ -17,13 +17,7 @@ export const get: TrelloEndpoints['boardsGet'] = async (ctx, input) => {
 	if (result && ctx.db.boards) {
 		try {
 			await ctx.db.boards.upsertByEntityId(result.id, {
-				id: result.id,
-				name: result.name,
-				desc: result.desc,
-				closed: result.closed,
-				idOrganization: result.idOrganization,
-				url: result.url,
-				shortUrl: result.shortUrl,
+				...result,
 			});
 		} catch (error) {
 			console.warn('Failed to save board to database:', error);
@@ -55,13 +49,7 @@ export const list: TrelloEndpoints['boardsList'] = async (ctx, input) => {
 			for (const board of result) {
 				if (board.id) {
 					await ctx.db.boards.upsertByEntityId(board.id, {
-						id: board.id,
-						name: board.name,
-						desc: board.desc,
-						closed: board.closed,
-						idOrganization: board.idOrganization,
-						url: board.url,
-						shortUrl: board.shortUrl,
+						...board,
 					});
 				}
 			}
@@ -88,13 +76,7 @@ export const create: TrelloEndpoints['boardsCreate'] = async (ctx, input) => {
 	if (result && ctx.db.boards) {
 		try {
 			await ctx.db.boards.upsertByEntityId(result.id, {
-				id: result.id,
-				name: result.name,
-				desc: result.desc,
-				closed: result.closed,
-				idOrganization: result.idOrganization,
-				url: result.url,
-				shortUrl: result.shortUrl,
+				...result,
 			});
 		} catch (error) {
 			console.warn('Failed to save board to database:', error);
@@ -121,13 +103,7 @@ export const update: TrelloEndpoints['boardsUpdate'] = async (ctx, input) => {
 	if (result && ctx.db.boards) {
 		try {
 			await ctx.db.boards.upsertByEntityId(result.id, {
-				id: result.id,
-				name: result.name,
-				desc: result.desc,
-				closed: result.closed,
-				idOrganization: result.idOrganization,
-				url: result.url,
-				shortUrl: result.shortUrl,
+				...result,
 			});
 		} catch (error) {
 			console.warn('Failed to update board in database:', error);

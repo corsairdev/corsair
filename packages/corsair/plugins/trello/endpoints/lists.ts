@@ -17,11 +17,7 @@ export const get: TrelloEndpoints['listsGet'] = async (ctx, input) => {
 	if (result && ctx.db.lists) {
 		try {
 			await ctx.db.lists.upsertByEntityId(result.id, {
-				id: result.id,
-				name: result.name,
-				closed: result.closed,
-				idBoard: result.idBoard,
-				pos: result.pos,
+				...result,
 			});
 		} catch (error) {
 			console.warn('Failed to save list to database:', error);
@@ -48,11 +44,7 @@ export const list: TrelloEndpoints['listsList'] = async (ctx, input) => {
 			for (const trelloList of result) {
 				if (trelloList.id) {
 					await ctx.db.lists.upsertByEntityId(trelloList.id, {
-						id: trelloList.id,
-						name: trelloList.name,
-						closed: trelloList.closed,
-						idBoard: trelloList.idBoard,
-						pos: trelloList.pos,
+						...trelloList,
 					});
 				}
 			}
@@ -79,11 +71,7 @@ export const create: TrelloEndpoints['listsCreate'] = async (ctx, input) => {
 	if (result && ctx.db.lists) {
 		try {
 			await ctx.db.lists.upsertByEntityId(result.id, {
-				id: result.id,
-				name: result.name,
-				closed: result.closed,
-				idBoard: result.idBoard,
-				pos: result.pos,
+				...result,
 			});
 		} catch (error) {
 			console.warn('Failed to save list to database:', error);
@@ -110,11 +98,7 @@ export const update: TrelloEndpoints['listsUpdate'] = async (ctx, input) => {
 	if (result && ctx.db.lists) {
 		try {
 			await ctx.db.lists.upsertByEntityId(result.id, {
-				id: result.id,
-				name: result.name,
-				closed: result.closed,
-				idBoard: result.idBoard,
-				pos: result.pos,
+				...result,
 			});
 		} catch (error) {
 			console.warn('Failed to update list in database:', error);
@@ -139,11 +123,8 @@ export const archive: TrelloEndpoints['listsArchive'] = async (ctx, input) => {
 	if (result && ctx.db.lists) {
 		try {
 			await ctx.db.lists.upsertByEntityId(result.id, {
-				id: result.id,
-				name: result.name,
+				...result,
 				closed: true,
-				idBoard: result.idBoard,
-				pos: result.pos,
 			});
 		} catch (error) {
 			console.warn('Failed to update list in database after archive:', error);

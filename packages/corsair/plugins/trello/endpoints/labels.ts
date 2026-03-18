@@ -22,10 +22,7 @@ export const list: TrelloEndpoints['labelsList'] = async (ctx, input) => {
 			for (const label of result) {
 				if (label.id) {
 					await ctx.db.labels.upsertByEntityId(label.id, {
-						id: label.id,
-						name: label.name,
-						color: label.color,
-						idBoard: label.idBoard,
+						...label,
 					});
 				}
 			}
@@ -52,10 +49,7 @@ export const create: TrelloEndpoints['labelsCreate'] = async (ctx, input) => {
 	if (result && ctx.db.labels) {
 		try {
 			await ctx.db.labels.upsertByEntityId(result.id, {
-				id: result.id,
-				name: result.name,
-				color: result.color,
-				idBoard: result.idBoard,
+				...result,
 			});
 		} catch (error) {
 			console.warn('Failed to save label to database:', error);
@@ -82,10 +76,7 @@ export const update: TrelloEndpoints['labelsUpdate'] = async (ctx, input) => {
 	if (result && ctx.db.labels) {
 		try {
 			await ctx.db.labels.upsertByEntityId(result.id, {
-				id: result.id,
-				name: result.name,
-				color: result.color,
-				idBoard: result.idBoard,
+				...result,
 			});
 		} catch (error) {
 			console.warn('Failed to update label in database:', error);

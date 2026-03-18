@@ -18,7 +18,6 @@ import type { TrelloEndpointInputs, TrelloEndpointOutputs } from './endpoints/ty
 import { TrelloEndpointInputSchemas, TrelloEndpointOutputSchemas } from './endpoints/types';
 import type {
 	TrelloCardCreatedEvent,
-	TrelloCardMovedEvent,
 	TrelloCardUpdatedEvent,
 	TrelloCommentCreatedEvent,
 	TrelloListCreatedEvent,
@@ -28,7 +27,6 @@ import type {
 } from './webhooks/types';
 import {
 	TrelloCardCreatedPayloadSchema,
-	TrelloCardMovedPayloadSchema,
 	TrelloCardUpdatedPayloadSchema,
 	TrelloCommentCreatedPayloadSchema,
 	TrelloListCreatedPayloadSchema,
@@ -116,7 +114,6 @@ type TrelloWebhook<K extends keyof TrelloWebhookOutputs, TEvent> = CorsairWebhoo
 export type TrelloWebhooks = {
 	cardCreated: TrelloWebhook<'cardCreated', TrelloCardCreatedEvent>;
 	cardUpdated: TrelloWebhook<'cardUpdated', TrelloCardUpdatedEvent>;
-	cardMoved: TrelloWebhook<'cardMoved', TrelloCardMovedEvent>;
 	memberAddedToCard: TrelloWebhook<'memberAddedToCard', TrelloMemberAddedToCardEvent>;
 	listCreated: TrelloWebhook<'listCreated', TrelloListCreatedEvent>;
 	listUpdated: TrelloWebhook<'listUpdated', TrelloListUpdatedEvent>;
@@ -169,7 +166,6 @@ const trelloWebhooksNested = {
 	cards: {
 		cardCreated: CardWebhooks.cardCreated,
 		cardUpdated: CardWebhooks.cardUpdated,
-		cardMoved: CardWebhooks.cardMoved,
 	},
 	members: {
 		memberAddedToCard: MemberWebhooks.memberAddedToCard,
@@ -297,11 +293,6 @@ const trelloWebhookSchemas = {
 		payload: TrelloCardUpdatedPayloadSchema,
 		response: TrelloCardUpdatedPayloadSchema,
 	},
-	'cards.cardMoved': {
-		description: 'A card was moved to a different list',
-		payload: TrelloCardMovedPayloadSchema,
-		response: TrelloCardMovedPayloadSchema,
-	},
 	'members.memberAddedToCard': {
 		description: 'A member was added to a card',
 		payload: TrelloMemberAddedToCardPayloadSchema,
@@ -374,6 +365,8 @@ export type InternalTrelloPlugin = BaseTrelloPlugin<TrelloPluginOptions>;
 export type ExternalTrelloPlugin<T extends TrelloPluginOptions> = BaseTrelloPlugin<T>;
 
 export function trello<const T extends TrelloPluginOptions>(
+	// {} as TrelloPluginOptions & T: TypeScript cannot prove {} satisfies generic T without the
+	// assertion; safe because every field in TrelloPluginOptions is optional
 	incomingOptions: TrelloPluginOptions & T = {} as TrelloPluginOptions & T,
 ): ExternalTrelloPlugin<T> {
 	const options = {
@@ -436,7 +429,6 @@ export function trello<const T extends TrelloPluginOptions>(
 export type {
 	TrelloCardCreatedEvent,
 	TrelloCardUpdatedEvent,
-	TrelloCardMovedEvent,
 	TrelloMemberAddedToCardEvent,
 	TrelloListCreatedEvent,
 	TrelloListUpdatedEvent,
@@ -445,7 +437,6 @@ export type {
 	TrelloMemberCreator,
 	CardCreatedData,
 	CardUpdatedData,
-	CardMovedData,
 	MemberAddedToCardData,
 	ListCreatedData,
 	ListUpdatedData,

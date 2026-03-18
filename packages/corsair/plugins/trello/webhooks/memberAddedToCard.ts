@@ -38,7 +38,7 @@ export const memberAddedToCard: TrelloWebhooks['memberAddedToCard'] = {
 
 				const entity = await ctx.db.cards.upsertByEntityId(card.id, {
 					...(existing?.data ?? {}),
-					id: card.id,
+					...card,
 					idMembers: updatedMembers,
 				});
 				corsairEntityId = entity?.id || '';
@@ -50,11 +50,7 @@ export const memberAddedToCard: TrelloWebhooks['memberAddedToCard'] = {
 		if (member?.id && ctx.db.members) {
 			try {
 				await ctx.db.members.upsertByEntityId(member.id, {
-					id: member.id,
-					username: member.username,
-					fullName: member.fullName,
-					avatarUrl: member.avatarUrl,
-					initials: member.initials,
+					...member,
 				});
 			} catch (error) {
 				console.warn('Failed to save member to database from webhook:', error);

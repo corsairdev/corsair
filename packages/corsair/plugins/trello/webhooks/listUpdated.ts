@@ -29,11 +29,8 @@ export const listUpdated: TrelloWebhooks['listUpdated'] = {
 				const existing = await ctx.db.lists.findByEntityId(trelloList.id);
 				const existingData = existing?.data;
 				const entity = await ctx.db.lists.upsertByEntityId(trelloList.id, {
-					id: trelloList.id,
-					name: trelloList.name ?? existingData?.name,
-					idBoard: action.data?.board?.id ?? existingData?.idBoard,
-					closed: trelloList.closed !== undefined ? trelloList.closed : existingData?.closed,
-					pos: trelloList.pos !== undefined ? trelloList.pos : existingData?.pos,
+					...(existingData ?? {}),
+					...trelloList,
 				});
 				corsairEntityId = entity?.id || '';
 			} catch (error) {

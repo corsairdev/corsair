@@ -22,6 +22,8 @@ export const cardUpdated: TrelloWebhooks['cardUpdated'] = {
 		const payload = request.payload;
 		const action = payload.action;
 		const card = action.data?.card;
+		const listAfter = action.data?.listAfter;
+		const listBefore = action.data?.listBefore;
 		let corsairEntityId = '';
 
 		if (card?.id && ctx.db.cards) {
@@ -29,15 +31,7 @@ export const cardUpdated: TrelloWebhooks['cardUpdated'] = {
 				const existing = await ctx.db.cards.findByEntityId(card.id);
 				const entity = await ctx.db.cards.upsertByEntityId(card.id, {
 					...(existing?.data ?? {}),
-					id: card.id,
-					name: card.name ?? existing?.data?.name,
-					desc: card.desc ?? existing?.data?.desc,
-					idBoard: card.idBoard ?? action.data?.board?.id ?? existing?.data?.idBoard,
-					idList: card.idList ?? action.data?.list?.id ?? existing?.data?.idList,
-					closed: card.closed ?? existing?.data?.closed,
-					pos: card.pos ?? existing?.data?.pos,
-					due: card.due !== undefined ? card.due : existing?.data?.due,
-					dueComplete: card.dueComplete ?? existing?.data?.dueComplete,
+					...card,
 				});
 				corsairEntityId = entity?.id || '';
 			} catch (error) {
@@ -48,7 +42,14 @@ export const cardUpdated: TrelloWebhooks['cardUpdated'] = {
 		await logEventFromContext(
 			ctx,
 			'trello.webhook.card.updated',
-			{ cardId: card?.id, boardId: action.data?.board?.id },
+			{
+				cardId: card?.id,
+				boardId: action.data?.board?.id,
+				...(listAfter && {
+					listBeforeId: listBefore?.id,
+					listAfterId: listAfter.id,
+				}),
+			},
 			'completed',
 		);
 

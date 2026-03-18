@@ -9,11 +9,7 @@ export const get: TrelloEndpoints['checklistsGet'] = async (ctx, input) => {
 		ctx.key,
 		{
 			method: 'GET',
-			query: {
-				fields: input.fields,
-				checkItems: input.checkItems,
-				checkItem_fields: input.checkItem_fields,
-			},
+			query: input
 		},
 		ctx.options.trelloApiKey,
 	);

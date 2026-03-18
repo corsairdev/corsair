@@ -17,19 +17,7 @@ export const get: TrelloEndpoints['cardsGet'] = async (ctx, input) => {
 	if (result && ctx.db.cards) {
 		try {
 			await ctx.db.cards.upsertByEntityId(result.id, {
-				id: result.id,
-				name: result.name,
-				desc: result.desc,
-				closed: result.closed,
-				idBoard: result.idBoard,
-				idList: result.idList,
-				pos: result.pos,
-				due: result.due,
-				dueComplete: result.dueComplete,
-				url: result.url,
-				shortUrl: result.shortUrl,
-				idMembers: result.idMembers,
-				idLabels: result.idLabels,
+				...result,
 			});
 		} catch (error) {
 			console.warn('Failed to save card to database:', error);
@@ -62,19 +50,7 @@ export const list: TrelloEndpoints['cardsList'] = async (ctx, input) => {
 			for (const card of result) {
 				if (card.id) {
 					await ctx.db.cards.upsertByEntityId(card.id, {
-						id: card.id,
-						name: card.name,
-						desc: card.desc,
-						closed: card.closed,
-						idBoard: card.idBoard,
-						idList: card.idList,
-						pos: card.pos,
-						due: card.due,
-						dueComplete: card.dueComplete,
-						url: card.url,
-						shortUrl: card.shortUrl,
-						idMembers: card.idMembers,
-						idLabels: card.idLabels,
+						...card,
 					});
 				}
 			}
@@ -101,19 +77,7 @@ export const create: TrelloEndpoints['cardsCreate'] = async (ctx, input) => {
 	if (result && ctx.db.cards) {
 		try {
 			await ctx.db.cards.upsertByEntityId(result.id, {
-				id: result.id,
-				name: result.name,
-				desc: result.desc,
-				closed: result.closed,
-				idBoard: result.idBoard,
-				idList: result.idList,
-				pos: result.pos,
-				due: result.due,
-				dueComplete: result.dueComplete,
-				url: result.url,
-				shortUrl: result.shortUrl,
-				idMembers: result.idMembers,
-				idLabels: result.idLabels,
+				...result,
 			});
 		} catch (error) {
 			console.warn('Failed to save card to database:', error);
@@ -140,19 +104,7 @@ export const update: TrelloEndpoints['cardsUpdate'] = async (ctx, input) => {
 	if (result && ctx.db.cards) {
 		try {
 			await ctx.db.cards.upsertByEntityId(result.id, {
-				id: result.id,
-				name: result.name,
-				desc: result.desc,
-				closed: result.closed,
-				idBoard: result.idBoard,
-				idList: result.idList,
-				pos: result.pos,
-				due: result.due,
-				dueComplete: result.dueComplete,
-				url: result.url,
-				shortUrl: result.shortUrl,
-				idMembers: result.idMembers,
-				idLabels: result.idLabels,
+				...result,
 			});
 		} catch (error) {
 			console.warn('Failed to update card in database:', error);
@@ -207,19 +159,7 @@ export const move: TrelloEndpoints['cardsMove'] = async (ctx, input) => {
 	if (result && ctx.db.cards) {
 		try {
 			await ctx.db.cards.upsertByEntityId(result.id, {
-				id: result.id,
-				name: result.name,
-				desc: result.desc,
-				closed: result.closed,
-				idBoard: result.idBoard,
-				idList: result.idList,
-				pos: result.pos,
-				due: result.due,
-				dueComplete: result.dueComplete,
-				url: result.url,
-				shortUrl: result.shortUrl,
-				idMembers: result.idMembers,
-				idLabels: result.idLabels,
+				...result,
 			});
 		} catch (error) {
 			console.warn('Failed to update card in database after move:', error);
