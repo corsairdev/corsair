@@ -1,0 +1,101 @@
+import { ApiError } from '../../async-core/ApiError';
+import type { CorsairErrorHandler } from '../../core/errors';
+
+export const errorHandlers = {
+	RATE_LIMIT_ERROR: {
+		match: (error, context) => {
+			if (error instanceof ApiError && error.status === 429) {
+				return true;
+			}
+			const msg = error.message.toLowerCase();
+			return (
+				msg.includes('rate_limited') ||
+				msg.includes('ratelimited') ||
+				msg.includes('too many requests') ||
+				error.message.includes('429')
+			);
+		},
+		handler: async (error, context) => {
+			let retryAfterMs: number | undefined;
+			if (error instanceof ApiError && error.retryAfter !== undefined) {
+				retryAfterMs = error.retryAfter;
+			}
+			return {
+				maxRetries: 5,
+				headersRetryAfterMs: retryAfterMs,
+			};
+		},
+	},
+	AUTH_ERROR: {
+		match: (error, context) => {
+			if (error instanceof ApiError && error.status === 401) {
+				return true;
+			}
+			const msg = error.message.toLowerCase();
+			return (
+				msg.includes('invalid token') ||
+				msg.includes('invalid key') ||
+				msg.includes('unauthorized') ||
+				msg.includes('authentication failed')
+			);
+		},
+		handler: async (error, context) => {
+			console.log(
+				`[TRELLO:${context.operation}] Authentication failed - check your API key/token`,
+			);
+			return {
+				maxRetries: 0,
+			};
+		},
+	},
+	PERMISSION_ERROR: {
+		match: (error, context) => {
+			if (error instanceof ApiError && error.status === 403) {
+				return true;
+			}
+			const msg = error.message.toLowerCase();
+			return (
+				msg.includes('unauthorized permission') ||
+				msg.includes('forbidden') ||
+				msg.includes('access denied')
+			);
+		},
+		handler: async (error, context) => {
+			console.warn(
+				`[TRELLO:${context.operation}] Permission denied: ${error.message}`,
+			);
+			return {
+				maxRetries: 0,
+			};
+		},
+	},
+	NOT_FOUND_ERROR: {
+		match: (error, context) => {
+			if (error instanceof ApiError && error.status === 404) {
+				return true;
+			}
+			return error.message.toLowerCase().includes('not found');
+		},
+		handler: async (error, context) => {
+			console.warn(
+				`[TRELLO:${context.operation}] Resource not found: ${error.message}`,
+			);
+			return {
+				maxRetries: 0,
+			};
+		},
+	},
+	DEFAULT: {
+		match: (error, context) => {
+			return true;
+		},
+		handler: async (error, context) => {
+			console.error(
+				`[TRELLO:${context.operation}] Unhandled error: ${error.message}`,
+			);
+			return {
+				maxRetries: 0,
+			};
+		},
+	},
+} satisfies CorsairErrorHandler;
