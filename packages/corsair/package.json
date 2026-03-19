@@ -62,6 +62,11 @@
       "types": "./dist/plugins/exa/index.d.ts",
       "default": "./dist/plugins/exa/index.js"
     },
+    "./plugins/fireflies": {
+      "dev-source": "./plugins/fireflies/index.ts",
+      "types": "./dist/plugins/fireflies/index.d.ts",
+      "default": "./dist/plugins/fireflies/index.js"
+    },
     "./plugins/github": {
       "dev-source": "./plugins/github/index.ts",
       "types": "./dist/plugins/github/index.d.ts",
