@@ -387,6 +387,7 @@ export type ExternalZoomPlugin<PluginOptions extends ZoomPluginOptions> =
 	BaseZoomPlugin<PluginOptions>;
 
 export function zoom<const PluginOptions extends ZoomPluginOptions>(
+	// Default to empty object; callers that omit options satisfy the constraint at runtime
 	incomingOptions: ZoomPluginOptions &
 		PluginOptions = {} as ZoomPluginOptions & PluginOptions,
 ): ExternalZoomPlugin<PluginOptions> {

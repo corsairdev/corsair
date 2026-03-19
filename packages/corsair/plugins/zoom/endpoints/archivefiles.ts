@@ -16,10 +16,8 @@ export const list: ZoomEndpoints['archiveFilesList'] = async (ctx, input) => {
 	if (result.meetings && ctx.db.archiveFiles) {
 		try {
 			for (const meeting of result.meetings) {
-				const m = meeting
-				const meetingId = m.id
-				if (meetingId && typeof meetingId === 'string') {
-					await ctx.db.archiveFiles.upsertByEntityId(meetingId, m);
+				if (meeting.id && typeof meeting.id === 'string') {
+					await ctx.db.archiveFiles.upsertByEntityId(meeting.id, meeting);
 				}
 			}
 		} catch (error) {

@@ -120,6 +120,7 @@ export const ZoomArchiveFile = z.object({
 	file_count: z.number().optional(),
 	file_size: z.number().optional(),
 	status: z.string().optional(),
+	// Archive file entries have variable structure depending on file type
 	archive_files: z.array(z.record(z.unknown())).optional(),
 });
 

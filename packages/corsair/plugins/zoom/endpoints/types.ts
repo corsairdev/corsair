@@ -121,6 +121,37 @@ const ParticipantSchema = z
 	})
 	.passthrough();
 
+const DeviceSchema = z
+	.object({
+		id: z.string().optional(),
+		device_name: z.string().optional(),
+		manufacturer: z.string().optional(),
+		model: z.string().optional(),
+		platform_os: z.string().optional(),
+		device_status: z.number().optional(),
+		mac_address: z.string().optional(),
+		serial_number: z.string().optional(),
+		last_online: z.string().optional(),
+		tag: z.string().optional(),
+		enrollment_token: z.string().optional(),
+	})
+	.passthrough();
+
+const ArchiveMeetingSchema = z
+	.object({
+		id: z.string().optional(),
+		meeting_id: z.string().optional(),
+		topic: z.string().optional(),
+		type: z.number().optional(),
+		start_time: z.string().optional(),
+		file_count: z.number().optional(),
+		file_size: z.number().optional(),
+		status: z.string().optional(),
+		// Archive file entries have variable structure depending on file type
+		archive_files: z.array(z.record(z.unknown())).optional(),
+	})
+	.passthrough();
+
 const DailyReportSchema = z
 	.object({
 		date: z.string().optional(),
@@ -297,8 +328,10 @@ const MeetingsGetSummaryResponseSchema = z
 		summary_last_modified_time: z.string().optional(),
 		summary_title: z.string().optional(),
 		summary_overview: z.string().optional(),
+		// AI-generated summary detail items have an open-ended structure that Zoom may extend
 		summary_details: z.array(z.record(z.unknown())).optional(),
 		next_steps: z.array(z.string()).optional(),
+		// Edited summary is a freeform object whose shape is not constrained by Zoom's API schema
 		edited_summary: z.record(z.unknown()).optional(),
 	})
 	.passthrough();
@@ -404,7 +437,7 @@ const DevicesListResponseSchema = z
 		next_page_token: z.string().optional(),
 		page_size: z.number().optional(),
 		total_records: z.number().optional(),
-		devices: z.array(z.record(z.unknown())).optional(),
+		devices: z.array(DeviceSchema).optional(),
 	})
 	.passthrough();
 
@@ -415,7 +448,7 @@ const ArchiveFilesListResponseSchema = z
 		total_records: z.number().optional(),
 		from: z.string().optional(),
 		to: z.string().optional(),
-		meetings: z.array(z.record(z.unknown())).optional(),
+		meetings: z.array(ArchiveMeetingSchema).optional(),
 	})
 	.passthrough();
 

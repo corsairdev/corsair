@@ -16,10 +16,8 @@ export const list: ZoomEndpoints['devicesList'] = async (ctx, input) => {
 	if (result.devices && ctx.db.devices) {
 		try {
 			for (const device of result.devices) {
-				const d = device
-				const deviceId = d.id
-				if (deviceId && typeof deviceId === 'string') {
-					await ctx.db.devices.upsertByEntityId(deviceId, d);
+				if (device.id && typeof device.id === 'string') {
+					await ctx.db.devices.upsertByEntityId(device.id, device);
 				}
 			}
 		} catch (error) {
