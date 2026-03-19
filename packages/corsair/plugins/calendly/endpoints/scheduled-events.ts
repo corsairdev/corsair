@@ -86,13 +86,12 @@ export const cancel: CalendlyEndpoints['scheduledEventsCancel'] = async (
 	ctx,
 	input,
 ) => {
-	const { uuid, ...query } = input;
+	const { uuid, ...body } = input;
 	const result = await makeCalendlyRequest<
 		CalendlyEndpointOutputs['scheduledEventsCancel']
 	>(`scheduled_events/${uuid}/cancellation`, ctx.key, {
-		query,
 		method: 'POST',
-		body: input
+		body
 	});
 
 	if (ctx.db.scheduledEvents) {

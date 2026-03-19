@@ -162,17 +162,18 @@ export const update: CalendlyEndpoints['eventTypesUpdate'] = async (
 	ctx,
 	input,
 ) => {
+	const { uuid, ...body } = input;
 	const result = await makeCalendlyRequest<
 		CalendlyEndpointOutputs['eventTypesUpdate']
-	>(`event_types/${input.uuid}`, ctx.key, {
+	>(`event_types/${uuid}`, ctx.key, {
 		method: 'PATCH',
-		body: input
+		body
 	});
 
 	if (result.resource && ctx.db.eventTypes) {
 		try {
-			await ctx.db.eventTypes.upsertByEntityId(input.uuid, {
-				id: input.uuid,
+			await ctx.db.eventTypes.upsertByEntityId(uuid, {
+				id: uuid,
 				...result.resource,
 				description_plain: result.resource.description_plain ?? '',
 				created_at: result.resource.created_at

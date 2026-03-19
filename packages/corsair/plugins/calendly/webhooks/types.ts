@@ -286,7 +286,7 @@ export function verifyCalendlyWebhookSignature(
 		return { valid: true };
 	}
 	catch (error) {
-		console.error('Signature verification failed:', error);
-		return { valid: false, error: `Signature verification failed: ${error instanceof Error ? error.message : 'unknown error'}` };
+		console.error('Signature verification failed (internal):', error);
+		return { valid: false, error: 'Signature verification failed' };
 	}
 }
