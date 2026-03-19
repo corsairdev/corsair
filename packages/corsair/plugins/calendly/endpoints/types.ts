@@ -242,6 +242,7 @@ const AvailabilityScheduleSchema = z
 		name: z.string(),
 		user: z.string(),
 		timezone: z.string(),
+		// Availability rule objects vary in shape by type (wday, date, etc.); structure is not stable in the public API
 		rules: z.array(z.record(z.unknown())).optional(),
 		created_at: z.string().optional(),
 		updated_at: z.string().optional(),
@@ -696,6 +697,7 @@ const EventTypesUpdateAvailabilityResponseSchema = z.object({
 			uri: z.string(),
 			user: z.string(),
 			timezone: z.string(),
+			// Availability rule objects vary in shape by type (wday, date, etc.); structure is not stable in the public API
 			rules: z.array(z.record(z.unknown())).optional(),
 		})
 		.passthrough(),
@@ -910,10 +912,13 @@ const RoutingFormsGetSubmissionResponseSchema = z.object({
 		.object({
 			uri: z.string(),
 			routing_form: z.string(),
+			// Each Q&A entry differs by question type; no fixed schema in Calendly's docs
 			questions_and_answers: z.array(z.record(z.unknown())).optional(),
+			// UTM/source tracking fields vary by integration and campaign
 			tracking: z.record(z.unknown()).optional(),
 			created_at: z.string().optional(),
 			updated_at: z.string().optional(),
+			// Routing result structure depends on the form's routing rules configuration
 			result: z.record(z.unknown()).optional(),
 		})
 		.passthrough(),
@@ -925,6 +930,7 @@ const RoutingFormsListResponseSchema = z.object({
 });
 
 const RoutingFormsGetSampleWebhookDataResponseSchema = z.object({
+	// Sample webhook body mirrors live webhook payloads, which are open-ended by event type
 	body: z.record(z.unknown()),
 });
 
@@ -985,7 +991,9 @@ const ActivityLogListResponseSchema = z.object({
 			.object({
 				uri: z.string().optional(),
 				action: z.string(),
+				// Actor shape varies by actor type (user, system, API key, etc.)
 				actor: z.record(z.unknown()),
+				// Details are action-specific; each action type has a different payload shape
 				details: z.record(z.unknown()),
 				organization: z.string(),
 				occurred_at: z.string(),

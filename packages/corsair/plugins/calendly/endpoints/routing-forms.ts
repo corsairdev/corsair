@@ -4,9 +4,11 @@ import { makeCalendlyRequest } from '../client';
 import type { CalendlyEndpointOutputs } from './types';
 
 export const get: CalendlyEndpoints['routingFormsGet'] = async (ctx, input) => {
+	const { uuid, ...query } = input;
 	const result = await makeCalendlyRequest<
 		CalendlyEndpointOutputs['routingFormsGet']
-	>(`routing_forms/${input.uuid}`, ctx.key, {
+	>(`routing_forms/${uuid}`, ctx.key, {
+		query,
 		method: 'GET',
 	});
 
@@ -40,9 +42,11 @@ export const get: CalendlyEndpoints['routingFormsGet'] = async (ctx, input) => {
 
 export const getSubmission: CalendlyEndpoints['routingFormsGetSubmission'] =
 	async (ctx, input) => {
+		const { uuid, ...query } = input;
 		const result = await makeCalendlyRequest<
 			CalendlyEndpointOutputs['routingFormsGetSubmission']
-		>(`routing_form_submissions/${input.uuid}`, ctx.key, {
+		>(`routing_form_submissions/${uuid}`, ctx.key, {
+			query,
 			method: 'GET',
 		});
 

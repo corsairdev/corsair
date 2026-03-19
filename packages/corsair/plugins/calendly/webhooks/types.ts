@@ -15,8 +15,11 @@ const CalendlyInviteePayloadSchema = z.object({
 	updated_at: z.string(),
 	cancel_url: z.string().optional(),
 	reschedule_url: z.string().optional(),
+	// Tracking metadata shape varies by source (UTM params, custom fields, etc.)
 	tracking: z.record(z.unknown()).optional(),
+	// Each Q&A entry structure differs by question type (text, radio, checkbox, etc.)
 	questions_and_answers: z.array(z.record(z.unknown())).optional(),
+	// Payment details vary by processor and plan; no stable schema in Calendly's public API
 	payment: z.record(z.unknown()).nullable().optional(),
 	no_show: z.object({ uri: z.string() }).nullable().optional(),
 	rescheduled: z.boolean().optional(),
@@ -42,13 +45,16 @@ const CalendlyEventPayloadSchema = z.object({
 		.optional(),
 	created_at: z.string().optional(),
 	updated_at: z.string().optional(),
+	// Membership entries include plan-specific fields (host type, role, etc.) not in the public schema
 	event_memberships: z.array(z.record(z.unknown())).optional(),
+	// Guest entries vary; additional fields may appear without documentation
 	event_guests: z.array(z.record(z.unknown())).optional(),
 });
 
 const CalendlyWebhookBaseSchema = z.object({
 	event: z.string(),
 	time: z.string(),
+	// Base payload is open-ended; event-specific schemas narrow this via .extend()
 	payload: z.record(z.unknown()),
 });
 
@@ -61,6 +67,7 @@ export const InviteeCreatedPayloadSchema = CalendlyWebhookBaseSchema.extend({
 		invitee_scheduled_by: z.string().nullable().optional(),
 		first_name: z.string().nullable().optional(),
 		last_name: z.string().nullable().optional(),
+		// Reconfirmation object shape is undocumented in Calendly's public API
 		reconfirmation: z.record(z.unknown()).nullable().optional(),
 		scheduling_method: z.string().nullable().optional(),
 		text_reminder_number: z.string().nullable().optional(),
@@ -76,6 +83,7 @@ export const InviteeCanceledPayloadSchema = CalendlyWebhookBaseSchema.extend({
 		invitee_scheduled_by: z.string().nullable().optional(),
 		first_name: z.string().nullable().optional(),
 		last_name: z.string().nullable().optional(),
+		// Reconfirmation object shape is undocumented in Calendly's public API
 		reconfirmation: z.record(z.unknown()).nullable().optional(),
 		scheduling_method: z.string().nullable().optional(),
 		text_reminder_number: z.string().nullable().optional(),
@@ -113,8 +121,11 @@ export const RoutingFormSubmissionCreatedPayloadSchema =
 		payload: z.object({
 			uri: z.string(),
 			routing_form: z.string(),
+			// Each Q&A entry differs by question type; no fixed schema in Calendly's docs
 			questions_and_answers: z.array(z.record(z.unknown())).optional(),
+			// UTM/source tracking fields vary by integration and campaign
 			tracking: z.record(z.unknown()).optional(),
+			// Routing result structure depends on the form's routing rules configuration
 			result: z.record(z.unknown()).optional(),
 			created_at: z.string().optional(),
 			updated_at: z.string().optional(),
@@ -172,6 +183,7 @@ export type CalendlyWebhookOutputs = {
 
 // ── Utilities ─────────────────────────────────────────────────────────────────
 
+// body arrives as either a raw JSON string (from HTTP middleware) or a pre-parsed object
 function parseBody(body: unknown): unknown {
 	return typeof body === 'string' ? JSON.parse(body) : body;
 }
@@ -184,8 +196,14 @@ export function createCalendlyEventMatch(
 	eventType: string,
 ): CorsairWebhookMatcher {
 	return (request: RawWebhookRequest) => {
-		const parsedBody = parseBody(request.body) as Record<string, unknown>;
-		return parsedBody.event === eventType;
+		try {
+			// parseBody returns unknown; cast is safe because valid Calendly payloads are always JSON objects
+			const parsedBody = parseBody(request.body) as Record<string, unknown>;
+			return parsedBody.event === eventType;
+		} catch {
+			// Malformed body cannot match any event type
+			return false;
+		}
 	};
 }
 
@@ -194,6 +212,7 @@ export function createCalendlyEventMatch(
  * The Calendly-Webhook-Signature header is in the format: t=timestamp,v1=signature
  * The signature is HMAC-SHA256 of `timestamp.rawBody` using the signing key.
  */
+// WebhookRequest<unknown>: signature verification only reads rawBody/headers; the typed body is irrelevant here
 export function verifyCalendlyWebhookSignature(
 	request: WebhookRequest<unknown>,
 	signingKey: string,
@@ -241,6 +260,13 @@ export function verifyCalendlyWebhookSignature(
 				valid: false,
 				error: 'Malformed Calendly-Webhook-Signature header',
 			};
+		}
+
+		// Reject requests whose timestamp is more than 5 minutes old to prevent replay attacks.
+		// Calendly embeds the Unix timestamp (seconds) in the signature header so we can validate freshness.
+		const timestampMs = parseInt(timestamp, 10) * 1000;
+		if (isNaN(timestampMs) || Math.abs(Date.now() - timestampMs) > 5 * 60 * 1000) {
+			return { valid: false, error: 'Webhook timestamp is too old or invalid' };
 		}
 
 		const expectedSignature = crypto

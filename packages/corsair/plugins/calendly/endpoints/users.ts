@@ -4,18 +4,20 @@ import { makeCalendlyRequest } from '../client';
 import type { CalendlyEndpointOutputs } from './types';
 
 export const get: CalendlyEndpoints['usersGet'] = async (ctx, input) => {
+	const { uuid, ...query } = input;
 	const result = await makeCalendlyRequest<CalendlyEndpointOutputs['usersGet']>(
-		`users/${input.uuid}`,
+		`users/${uuid}`,
 		ctx.key,
 		{
 			method: 'GET',
+			query,
 		},
 	);
 
 	if (result.resource && ctx.db.users) {
 		try {
-			await ctx.db.users.upsertByEntityId(input.uuid, {
-				id: input.uuid,
+			await ctx.db.users.upsertByEntityId(uuid, {
+				id: uuid,
 				...result.resource,
 				avatar_url: result.resource.avatar_url ?? undefined,
 				created_at: result.resource.created_at
@@ -81,10 +83,12 @@ export const getCurrent: CalendlyEndpoints['usersGetCurrent'] = async (
 
 export const getAvailabilitySchedule: CalendlyEndpoints['usersGetAvailabilitySchedule'] =
 	async (ctx, input) => {
+		const { uuid, ...query } = input;
 		const result = await makeCalendlyRequest<
 			CalendlyEndpointOutputs['usersGetAvailabilitySchedule']
-		>(`user_availability_schedules/${input.uuid}`, ctx.key, {
+		>(`user_availability_schedules/${uuid}`, ctx.key, {
 			method: 'GET',
+			query,
 		});
 
 		await logEventFromContext(
@@ -102,9 +106,7 @@ export const listAvailabilitySchedules: CalendlyEndpoints['usersListAvailability
 			CalendlyEndpointOutputs['usersListAvailabilitySchedules']
 		>('user_availability_schedules', ctx.key, {
 			method: 'GET',
-			query: {
-				user: input.user,
-			},
+			query: input
 		});
 
 		await logEventFromContext(
@@ -124,11 +126,7 @@ export const listBusyTimes: CalendlyEndpoints['usersListBusyTimes'] = async (
 		CalendlyEndpointOutputs['usersListBusyTimes']
 	>('user_busy_times', ctx.key, {
 		method: 'GET',
-		query: {
-			user: input.user,
-			start_time: input.start_time,
-			end_time: input.end_time,
-		},
+		query: input
 	});
 
 	await logEventFromContext(
@@ -146,9 +144,7 @@ export const listMeetingLocations: CalendlyEndpoints['usersListMeetingLocations'
 			CalendlyEndpointOutputs['usersListMeetingLocations']
 		>('user_meeting_locations', ctx.key, {
 			method: 'GET',
-			query: {
-				user: input.user,
-			},
+			query: input
 		});
 
 		await logEventFromContext(

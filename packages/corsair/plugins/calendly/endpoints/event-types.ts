@@ -4,9 +4,11 @@ import { makeCalendlyRequest } from '../client';
 import type { CalendlyEndpointOutputs } from './types';
 
 export const get: CalendlyEndpoints['eventTypesGet'] = async (ctx, input) => {
+	const { uuid, ...query } = input;
 	const result = await makeCalendlyRequest<
 		CalendlyEndpointOutputs['eventTypesGet']
-	>(`event_types/${input.uuid}`, ctx.key, {
+	>(`event_types/${uuid}`, ctx.key, {
+		query,
 		method: 'GET',
 	});
 
@@ -45,14 +47,7 @@ export const list: CalendlyEndpoints['eventTypesList'] = async (ctx, input) => {
 		CalendlyEndpointOutputs['eventTypesList']
 	>('event_types', ctx.key, {
 		method: 'GET',
-		query: {
-			user: input.user,
-			organization: input.organization,
-			active: input.active,
-			count: input.count,
-			page_token: input.page_token,
-			sort: input.sort,
-		},
+		query: input
 	});
 
 	if (result.collection && ctx.db.eventTypes) {

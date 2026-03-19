@@ -4,9 +4,11 @@ import { makeCalendlyRequest } from '../client';
 import type { CalendlyEndpointOutputs } from './types';
 
 export const get: CalendlyEndpoints['groupsGet'] = async (ctx, input) => {
+	const { uuid, ...query } = input;
 	const result = await makeCalendlyRequest<
 		CalendlyEndpointOutputs['groupsGet']
-	>(`groups/${input.uuid}`, ctx.key, {
+	>(`groups/${uuid}`, ctx.key, {
+		query,
 		method: 'GET',
 	});
 
@@ -40,9 +42,11 @@ export const get: CalendlyEndpoints['groupsGet'] = async (ctx, input) => {
 
 export const getRelationship: CalendlyEndpoints['groupsGetRelationship'] =
 	async (ctx, input) => {
+		const { uuid, ...query } = input;
 		const result = await makeCalendlyRequest<
 			CalendlyEndpointOutputs['groupsGetRelationship']
-		>(`group_relationships/${input.uuid}`, ctx.key, {
+		>(`group_relationships/${uuid}`, ctx.key, {
+			query,
 			method: 'GET',
 		});
 

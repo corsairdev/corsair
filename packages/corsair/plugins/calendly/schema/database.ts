@@ -145,7 +145,9 @@ export const CalendlyActivityLogEntry = z.object({
 	id: z.string(),
 	uri: z.string().optional(),
 	action: z.string().optional(),
+	// Actor shape varies by actor type (user, system, API key, etc.)
 	actor: z.record(z.unknown()).optional(),
+	// Details are action-specific; each action type has a different payload shape
 	details: z.record(z.unknown()).optional(),
 	organization: z.string().optional(),
 	occurred_at: z.string().optional(),

@@ -48,16 +48,18 @@ export const get: CalendlyEndpoints['webhookSubscriptionsGet'] = async (
 	ctx,
 	input,
 ) => {
+	const { uuid, ...query } = input;
 	const result = await makeCalendlyRequest<
 		CalendlyEndpointOutputs['webhookSubscriptionsGet']
-	>(`webhook_subscriptions/${input.uuid}`, ctx.key, {
+	>(`webhook_subscriptions/${uuid}`, ctx.key, {
+		query,
 		method: 'GET',
 	});
 
 	if (result.resource && ctx.db.webhookSubscriptions) {
 		try {
-			await ctx.db.webhookSubscriptions.upsertByEntityId(input.uuid, {
-				id: input.uuid,
+			await ctx.db.webhookSubscriptions.upsertByEntityId(uuid, {
+				id: uuid,
 				...result.resource,
 				user: result.resource.user ?? undefined,
 				created_at: result.resource.created_at
@@ -125,15 +127,17 @@ export const list: CalendlyEndpoints['webhookSubscriptionsList'] = async (
 
 export const deleteSubscription: CalendlyEndpoints['webhookSubscriptionsDelete'] =
 	async (ctx, input) => {
+		const { uuid, ...query } = input;
 		const result = await makeCalendlyRequest<
 			CalendlyEndpointOutputs['webhookSubscriptionsDelete']
-		>(`webhook_subscriptions/${input.uuid}`, ctx.key, {
+		>(`webhook_subscriptions/${uuid}`, ctx.key, {
+			query,
 			method: 'DELETE',
 		});
 
 		if (ctx.db.webhookSubscriptions) {
 			try {
-				await ctx.db.webhookSubscriptions.deleteByEntityId(input.uuid);
+				await ctx.db.webhookSubscriptions.deleteByEntityId(uuid);
 			} catch (error) {
 				console.warn(
 					'Failed to delete webhook subscription from database:',

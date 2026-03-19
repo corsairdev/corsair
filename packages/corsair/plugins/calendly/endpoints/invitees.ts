@@ -4,13 +4,15 @@ import { makeCalendlyRequest } from '../client';
 import type { CalendlyEndpointOutputs } from './types';
 
 export const get: CalendlyEndpoints['inviteesGet'] = async (ctx, input) => {
+	const { event_uuid, invitee_uuid, ...query } = input;
 	const result = await makeCalendlyRequest<
 		CalendlyEndpointOutputs['inviteesGet']
 	>(
-		`scheduled_events/${input.event_uuid}/invitees/${input.invitee_uuid}`,
+		`scheduled_events/${event_uuid}/invitees/${invitee_uuid}`,
 		ctx.key,
 		{
 			method: 'GET',
+			query,
 		},
 	);
 
@@ -148,9 +150,11 @@ export const getNoShow: CalendlyEndpoints['inviteesGetNoShow'] = async (
 	ctx,
 	input,
 ) => {
+	const { uuid, ...query } = input;
 	const result = await makeCalendlyRequest<
 		CalendlyEndpointOutputs['inviteesGetNoShow']
-	>(`invitee_no_shows/${input.uuid}`, ctx.key, {
+	>(`invitee_no_shows/${uuid}`, ctx.key, {
+		query,
 		method: 'GET',
 	});
 
@@ -223,9 +227,11 @@ export const deleteNoShow: CalendlyEndpoints['inviteesDeleteNoShow'] = async (
 	ctx,
 	input,
 ) => {
+	const { uuid, ...query } = input;
 	const result = await makeCalendlyRequest<
 		CalendlyEndpointOutputs['inviteesDeleteNoShow']
-	>(`invitee_no_shows/${input.uuid}`, ctx.key, {
+	>(`invitee_no_shows/${uuid}`, ctx.key, {
+		query,
 		method: 'DELETE',
 	});
 

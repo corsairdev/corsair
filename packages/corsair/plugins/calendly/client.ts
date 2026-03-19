@@ -19,6 +19,8 @@ export async function makeCalendlyRequest<T>(
 	apiKey: string,
 	options: {
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+		// Record<string, unknown> to accept any JSON-serializable shape; callers are
+		// responsible for passing only API-accepted fields (enforced at the endpoint level)
 		body?: Record<string, unknown>;
 		query?: Record<string, string | number | boolean | undefined>;
 	} = {},

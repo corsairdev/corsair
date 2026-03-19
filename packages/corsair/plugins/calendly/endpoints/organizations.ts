@@ -305,33 +305,10 @@ export const invite: CalendlyEndpoints['organizationsInvite'] = async (
 	return result;
 };
 
+// removeMember and deleteMembership are identical operations (DELETE /organization_memberships/{uuid});
+// delegate to avoid duplicating the implementation.
 export const removeMember: CalendlyEndpoints['organizationsRemoveMember'] =
-	async (ctx, input) => {
-		const result = await makeCalendlyRequest<
-			CalendlyEndpointOutputs['organizationsRemoveMember']
-		>(`organization_memberships/${input.uuid}`, ctx.key, {
-			method: 'DELETE',
-		});
-
-		if (ctx.db.orgMemberships) {
-			try {
-				await ctx.db.orgMemberships.deleteByEntityId(input.uuid);
-			} catch (error) {
-				console.warn(
-					'Failed to delete org membership from database:',
-					error,
-				);
-			}
-		}
-
-		await logEventFromContext(
-			ctx,
-			'calendly.organizations.removeMember',
-			{ ...input },
-			'completed',
-		);
-		return result;
-	};
+	(ctx, input) => deleteMembership(ctx, input);
 
 export const revokeInvitation: CalendlyEndpoints['organizationsRevokeInvitation'] =
 	async (ctx, input) => {

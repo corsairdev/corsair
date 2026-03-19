@@ -7,9 +7,11 @@ export const get: CalendlyEndpoints['scheduledEventsGet'] = async (
 	ctx,
 	input,
 ) => {
+	const { uuid, ...query } = input;
 	const result = await makeCalendlyRequest<
 		CalendlyEndpointOutputs['scheduledEventsGet']
-	>(`scheduled_events/${input.uuid}`, ctx.key, {
+	>(`scheduled_events/${uuid}`, ctx.key, {
+		query,
 		method: 'GET',
 	});
 
@@ -84,18 +86,20 @@ export const cancel: CalendlyEndpoints['scheduledEventsCancel'] = async (
 	ctx,
 	input,
 ) => {
+	const { uuid, ...query } = input;
 	const result = await makeCalendlyRequest<
 		CalendlyEndpointOutputs['scheduledEventsCancel']
-	>(`scheduled_events/${input.uuid}/cancellation`, ctx.key, {
+	>(`scheduled_events/${uuid}/cancellation`, ctx.key, {
+		query,
 		method: 'POST',
 		body: input
 	});
 
 	if (ctx.db.scheduledEvents) {
 		try {
-			const existing = await ctx.db.scheduledEvents.findByEntityId(input.uuid);
+			const existing = await ctx.db.scheduledEvents.findByEntityId(uuid);
 			if (existing) {
-				await ctx.db.scheduledEvents.upsertByEntityId(input.uuid, {
+				await ctx.db.scheduledEvents.upsertByEntityId(uuid, {
 					...existing.data,
 					status: 'canceled',
 				});

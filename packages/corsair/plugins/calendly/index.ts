@@ -578,6 +578,7 @@ export type ExternalCalendlyPlugin<T extends CalendlyPluginOptions> =
 	BaseCalendlyPlugin<T>;
 
 export function calendly<const T extends CalendlyPluginOptions>(
+	// Default to empty object when no options are supplied; required fields (e.g. authType) are set below
 	incomingOptions: CalendlyPluginOptions & T = {} as CalendlyPluginOptions & T,
 ): ExternalCalendlyPlugin<T> {
 	const options = {
