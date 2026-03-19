@@ -23,6 +23,7 @@ export const BaseProviders = [
 	'googlecalendar',
 	'googledrive',
 	'googlesheets',
+	'granola',
 	'hubspot',
 	'linear',
 	'monday',
@@ -51,6 +52,7 @@ export type AllProviders =
 	| 'googlecalendar'
 	| 'googledrive'
 	| 'googlesheets'
+	| 'granola'
 	| 'hubspot'
 	| 'linear'
 	| 'monday'

@@ -92,6 +92,11 @@
       "types": "./dist/plugins/googlesheets/index.d.ts",
       "default": "./dist/plugins/googlesheets/index.js"
     },
+    "./plugins/granola": {
+      "dev-source": "./plugins/granola/index.ts",
+      "types": "./dist/plugins/granola/index.d.ts",
+      "default": "./dist/plugins/granola/index.js"
+    },
     "./plugins/hubspot": {
       "dev-source": "./plugins/hubspot/index.ts",
       "types": "./dist/plugins/hubspot/index.d.ts",
