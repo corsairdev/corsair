@@ -26,11 +26,10 @@ export const commentCreated: TrelloWebhooks['commentCreated'] = {
 		if (card?.id && ctx.db.cards) {
 			try {
 				const existing = await ctx.db.cards.findByEntityId(card.id);
-				if (existing) {
-					await ctx.db.cards.upsertByEntityId(card.id, {
-						...existing.data,
-					});
-				}
+				await ctx.db.cards.upsertByEntityId(card.id, {
+					...(existing?.data ?? {}),
+					...card,
+				});
 			} catch (error) {
 				console.warn('Failed to update card in database from comment webhook:', error);
 			}

@@ -31,6 +31,16 @@ let boardId: string;
 let listId: string;
 let cardId: string;
 
+// Track resources created by this test suite for teardown
+let setupCreatedBoardId: string | undefined;
+let setupCreatedListId: string | undefined;
+let setupCreatedCardId: string | undefined;
+let testCreatedBoardId: string | undefined;
+let testCreatedListId: string | undefined;
+let testCreatedCardId: string | undefined;
+let testCreatedChecklistId: string | undefined;
+let testCreatedLabelId: string | undefined;
+
 beforeAll(async () => {
 	// ── board ──────────────────────────────────────────────────────────────────
 	const boards = await makeTrelloRequest<BoardsListResponse>(
@@ -49,6 +59,7 @@ beforeAll(async () => {
 			TEST_API_KEY,
 		);
 		boardId = newBoard.id;
+		setupCreatedBoardId = newBoard.id;
 	}
 
 	// ── list ───────────────────────────────────────────────────────────────────
@@ -69,6 +80,7 @@ beforeAll(async () => {
 				TEST_API_KEY,
 			);
 			listId = newList.id;
+			setupCreatedListId = newList.id;
 		}
 	}
 
@@ -90,8 +102,40 @@ beforeAll(async () => {
 				TEST_API_KEY,
 			);
 			cardId = newCard.id;
+			setupCreatedCardId = newCard.id;
 		}
 	}
+});
+
+afterAll(async () => {
+	const del = async (path: string) => {
+		try {
+			await makeTrelloRequest(`${path}`, TEST_TOKEN, { method: 'DELETE' }, TEST_API_KEY);
+		} catch (e) {
+			console.warn(`Teardown: failed to delete ${path}`, e);
+		}
+	};
+	const archive = async (listId: string) => {
+		try {
+			await makeTrelloRequest(
+				`lists/${listId}/closed`,
+				TEST_TOKEN,
+				{ method: 'PUT', body: { value: true } },
+				TEST_API_KEY,
+			);
+		} catch (e) {
+			console.warn(`Teardown: failed to archive list ${listId}`, e);
+		}
+	};
+
+	if (testCreatedChecklistId) await del(`checklists/${testCreatedChecklistId}`);
+	if (testCreatedLabelId) await del(`labels/${testCreatedLabelId}`);
+	if (testCreatedCardId) await del(`cards/${testCreatedCardId}`);
+	if (testCreatedListId) await archive(testCreatedListId);
+	if (testCreatedBoardId) await del(`boards/${testCreatedBoardId}`);
+	if (setupCreatedCardId) await del(`cards/${setupCreatedCardId}`);
+	if (setupCreatedListId) await archive(setupCreatedListId);
+	if (setupCreatedBoardId) await del(`boards/${setupCreatedBoardId}`);
 });
 
 describe('Trello API Type Tests', () => {
@@ -128,6 +172,7 @@ describe('Trello API Type Tests', () => {
 				},
 				TEST_API_KEY,
 			);
+			testCreatedBoardId = response.id;
 
 			TrelloEndpointOutputSchemas.boardsCreate.parse(response);
 		});
@@ -180,6 +225,7 @@ describe('Trello API Type Tests', () => {
 				},
 				TEST_API_KEY,
 			);
+			testCreatedListId = response.id;
 
 			TrelloEndpointOutputSchemas.listsCreate.parse(response);
 		});
@@ -244,6 +290,7 @@ describe('Trello API Type Tests', () => {
 				},
 				TEST_API_KEY,
 			);
+			testCreatedCardId = response.id;
 
 			TrelloEndpointOutputSchemas.cardsCreate.parse(response);
 		});
@@ -313,6 +360,7 @@ describe('Trello API Type Tests', () => {
 				},
 				TEST_API_KEY,
 			);
+			testCreatedLabelId = response.id;
 
 			TrelloEndpointOutputSchemas.labelsCreate.parse(response);
 		});
@@ -329,6 +377,7 @@ describe('Trello API Type Tests', () => {
 				},
 				TEST_API_KEY,
 			);
+			testCreatedChecklistId = response.id;
 
 			TrelloEndpointOutputSchemas.checklistsCreate.parse(response);
 		});

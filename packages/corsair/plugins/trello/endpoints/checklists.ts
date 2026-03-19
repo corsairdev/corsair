@@ -4,12 +4,13 @@ import { makeTrelloRequest } from '../client';
 import type { TrelloEndpointOutputs } from './types';
 
 export const get: TrelloEndpoints['checklistsGet'] = async (ctx, input) => {
+	const { checklistId, ...queryParams } = input;
 	const result = await makeTrelloRequest<TrelloEndpointOutputs['checklistsGet']>(
-		`checklists/${input.checklistId}`,
+		`checklists/${checklistId}`,
 		ctx.key,
 		{
 			method: 'GET',
-			query: input
+			query: queryParams,
 		},
 		ctx.options.trelloApiKey,
 	);
