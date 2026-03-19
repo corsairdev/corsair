@@ -39,7 +39,7 @@ export const errorHandlers = {
 			);
 		},
 		handler: async (error, context) => {
-			console.log(
+			console.warn(
 				`[ZOOM:${context.operation}] Authentication failed - check your access token`,
 			);
 

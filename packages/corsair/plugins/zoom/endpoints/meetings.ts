@@ -107,7 +107,11 @@ export const update: ZoomEndpoints['meetingsUpdate'] = async (ctx, input) => {
 				input.meetingId,
 			);
 			if (existing) {
-				await ctx.db.meetings.upsertByEntityId(input.meetingId, existing.data);
+				const { meetingId: _, ...updates } = input;
+				await ctx.db.meetings.upsertByEntityId(input.meetingId, {
+					...existing.data,
+					...updates,
+				});
 			}
 		} catch (error) {
 			console.warn('Failed to update meeting in database:', error);
@@ -131,7 +135,12 @@ export const addRegistrant: ZoomEndpoints['meetingsAddRegistrant'] = async (
 		ZoomEndpointOutputs['meetingsAddRegistrant']
 	>(`meetings/${input.meetingId}/registrants`, ctx.key, {
 		method: 'POST',
-		body: input
+		body: {
+			email: input.email,
+			first_name: input.first_name,
+			last_name: input.last_name,
+			auto_approve: input.auto_approve,
+		},
 	});
 
 	await logEventFromContext(

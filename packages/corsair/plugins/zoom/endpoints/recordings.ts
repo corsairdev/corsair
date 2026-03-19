@@ -52,9 +52,14 @@ export const deleteMeeting: ZoomEndpoints['recordingsDeleteMeeting'] = async (
 
 	if (ctx.db.recordings) {
 		try {
-			await ctx.db.recordings.deleteByEntityId(input.meetingId);
+			const stored = await ctx.db.recordings.search({
+				data: { meeting_id: String(input.meetingId) },
+			});
+			for (const recording of stored) {
+				await ctx.db.recordings.deleteByEntityId(recording.entity_id);
+			}
 		} catch (error) {
-			console.warn('Failed to find recordings in database:', error);
+			console.warn('Failed to delete recordings from database:', error);
 		}
 	}
 
