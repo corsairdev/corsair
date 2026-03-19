@@ -120,6 +120,20 @@ const TweetsAdvancedSearchInputSchema = z.object({
 		.regex(/^\d{4}-\d{2}-\d{2}$/, 'Must be YYYY-MM-DD')
 		.optional()
 		.describe('Only tweets posted before this date (YYYY-MM-DD)'),
+	/** Return tweets posted on or after this Unix timestamp (seconds) */
+	sinceTime: z
+		.number()
+		.int()
+		.nonnegative()
+		.optional()
+		.describe('Only tweets posted on or after this Unix timestamp (seconds)'),
+	/** Return tweets posted before this Unix timestamp (seconds) */
+	untilTime: z
+		.number()
+		.int()
+		.nonnegative()
+		.optional()
+		.describe('Only tweets posted before this Unix timestamp (seconds)'),
 
 	// ── Tweet-type filters ─────────────────────────────────────────────────
 	/** Whether to include or exclude replies */
@@ -220,6 +234,12 @@ export function buildAdvancedSearchQuery(
 	}
 	if (input.until) {
 		parts.push(`until:${input.until}`);
+	}
+	if (input.sinceTime !== undefined) {
+		parts.push(`since_time:${input.sinceTime}`);
+	}
+	if (input.untilTime !== undefined) {
+		parts.push(`until_time:${input.untilTime}`);
 	}
 	if (input.replies === 'only') {
 		parts.push('filter:replies');
