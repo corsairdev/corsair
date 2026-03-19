@@ -87,13 +87,13 @@ export const deleteContact: IntercomEndpoints['contactsDelete'] = async (ctx, in
 };
 
 export const addTag: IntercomEndpoints['contactsAddTag'] = async (ctx, input) => {
-	const { contact_id, ...body } = input;
+	const { contact_id } = input;
 	const result = await makeIntercomRequest<IntercomEndpointOutputs['contactsAddTag']>(
 		`contacts/${contact_id}/tags`,
 		ctx.key,
 		{
 			method: 'POST',
-			body: { id: input.tag_id ,...body},
+			body: { id: input.tag_id},
 		},
 	);
 

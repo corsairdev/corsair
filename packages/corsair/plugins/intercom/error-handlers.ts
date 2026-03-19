@@ -39,7 +39,7 @@ export const errorHandlers = {
 			);
 		},
 		handler: async (error, context) => {
-			console.log(
+			console.warn(
 				`[INTERCOM:${context.operation}] Authentication failed - check your API key`,
 			);
 			return {
