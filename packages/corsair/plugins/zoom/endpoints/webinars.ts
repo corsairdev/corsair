@@ -70,11 +70,12 @@ export const addRegistrant: ZoomEndpoints['webinarsAddRegistrant'] = async (
 	ctx,
 	input,
 ) => {
+	const { webinarId, ...body } = input;
 	const result = await makeZoomRequest<
 		ZoomEndpointOutputs['webinarsAddRegistrant']
-	>(`webinars/${input.webinarId}/registrants`, ctx.key, {
+	>(`webinars/${webinarId}/registrants`, ctx.key, {
+		body,
 		method: 'POST',
-		body: input
 	});
 
 	await logEventFromContext(
@@ -88,11 +89,12 @@ export const addRegistrant: ZoomEndpoints['webinarsAddRegistrant'] = async (
 
 export const listParticipants: ZoomEndpoints['webinarsListParticipants'] =
 	async (ctx, input) => {
+		const { webinarId, ...query } = input;
 		const result = await makeZoomRequest<
 			ZoomEndpointOutputs['webinarsListParticipants']
-		>(`past_webinars/${input.webinarId}/participants`, ctx.key, {
+		>(`past_webinars/${webinarId}/participants`, ctx.key, {
+			query,
 			method: 'GET',
-			query: input
 		});
 
 		if (result.participants && ctx.db.participants) {

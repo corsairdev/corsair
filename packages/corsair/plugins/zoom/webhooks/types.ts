@@ -182,14 +182,19 @@ export type ZoomWebhookOutputs = {
 };
 
 function parseBody(body: unknown): unknown {
-	return typeof body === 'string' ? JSON.parse(body) : body;
+	if (typeof body !== 'string') return body;
+	try {
+		return JSON.parse(body);
+	} catch {
+		return null;
+	}
 }
 
 export function createZoomEventMatch(eventType: string): CorsairWebhookMatcher {
 	return (request: RawWebhookRequest) => {
 		// Type assertion needed because parseBody returns unknown
 		const parsedBody = parseBody(request.body) as Record<string, unknown>;
-		return parsedBody.event === eventType;
+		return parsedBody != null && parsedBody.event === eventType;
 	};
 }
 
