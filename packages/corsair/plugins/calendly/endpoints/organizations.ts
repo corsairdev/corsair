@@ -132,11 +132,12 @@ export const getMembership: CalendlyEndpoints['organizationsGetMembership'] =
 
 export const listInvitations: CalendlyEndpoints['organizationsListInvitations'] =
 	async (ctx, input) => {
+		const { org_uuid: _, ...query } = input;
 		const result = await makeCalendlyRequest<
 			CalendlyEndpointOutputs['organizationsListInvitations']
 		>(`organizations/${input.org_uuid}/invitations`, ctx.key, {
 			method: 'GET',
-			query: input
+			query,
 		});
 
 		if (result.collection && ctx.db.orgInvitations) {
@@ -270,7 +271,9 @@ export const invite: CalendlyEndpoints['organizationsInvite'] = async (
 		CalendlyEndpointOutputs['organizationsInvite']
 	>(`organizations/${input.org_uuid}/invitations`, ctx.key, {
 		method: 'POST',
-		body: input
+		body: {
+			email: input.email,
+		},
 	});
 
 	if (result.resource && ctx.db.orgInvitations) {

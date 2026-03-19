@@ -44,11 +44,12 @@ export const get: CalendlyEndpoints['inviteesGet'] = async (ctx, input) => {
 };
 
 export const list: CalendlyEndpoints['inviteesList'] = async (ctx, input) => {
+	const { event_uuid, ...query } = input;
 	const result = await makeCalendlyRequest<
 		CalendlyEndpointOutputs['inviteesList']
-	>(`scheduled_events/${input.event_uuid}/invitees`, ctx.key, {
+	>(`scheduled_events/${event_uuid}/invitees`, ctx.key, {
 		method: 'GET',
-		query: input
+		query,
 	});
 
 	if (result.collection && ctx.db.invitees) {
@@ -82,14 +83,15 @@ export const create: CalendlyEndpoints['inviteesCreate'] = async (
 	ctx,
 	input,
 ) => {
+	const { event_type_uuid, ...body } = input;
 	const result = await makeCalendlyRequest<
 		CalendlyEndpointOutputs['inviteesCreate']
 	>(
-		`one_off_event_types/${input.event_type_uuid}/invitees`,
+		`one_off_event_types/${event_type_uuid}/invitees`,
 		ctx.key,
 		{
 			method: 'POST',
-			body: input
+			body,
 		},
 	);
 

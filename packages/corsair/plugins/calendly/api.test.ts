@@ -875,7 +875,6 @@ describe('webhookSubscriptions', () => {
 				},
 			},
 		);
-		console.log(createResponse);
 
 		CalendlyEndpointOutputSchemas.webhookSubscriptionsCreate.parse(createResponse);
 		expect(createResponse.resource.callback_url).toBe(process.env.CALENDLY_WEBHOOK_URL);
@@ -887,7 +886,6 @@ describe('webhookSubscriptions', () => {
 			TEST_TOKEN,
 			{ method: 'GET' },
 		);
-		console.log(getResponse);
 		CalendlyEndpointOutputSchemas.webhookSubscriptionsGet.parse(getResponse);
 		// any: getResponse is untyped generic result
 		expect((getResponse as { resource: { uri: string } }).resource.uri).toBe(createResponse.resource.uri);

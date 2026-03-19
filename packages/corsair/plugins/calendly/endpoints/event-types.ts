@@ -221,11 +221,12 @@ export const getAvailability: CalendlyEndpoints['eventTypesGetAvailability'] =
 
 export const updateAvailability: CalendlyEndpoints['eventTypesUpdateAvailability'] =
 	async (ctx, input) => {
+		const { uuid: _, ...body } = input;
 		const result = await makeCalendlyRequest<
 			CalendlyEndpointOutputs['eventTypesUpdateAvailability']
 		>(`event_types/${input.uuid}/user_availability_schedule`, ctx.key, {
 			method: 'POST',
-			body: input
+			body,
 		});
 
 		await logEventFromContext(
