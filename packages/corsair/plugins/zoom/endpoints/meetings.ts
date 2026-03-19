@@ -107,15 +107,18 @@ export const update: ZoomEndpoints['meetingsUpdate'] = async (ctx, input) => {
 
 	if (ctx.db.meetings) {
 		try {
-			const existing = await ctx.db.meetings.findByEntityId(
-				meetingId,
-			);
+			// Meetings are stored under String(result.id) (numeric); normalise the
+			// caller-supplied string to the same canonical form to avoid a silent miss
+			const canonicalId = String(Number(meetingId));
+			const existing = await ctx.db.meetings.findByEntityId(canonicalId);
 			if (existing) {
 				const { meetingId: _, ...updates } = input;
-				await ctx.db.meetings.upsertByEntityId(meetingId, {
+				await ctx.db.meetings.upsertByEntityId(canonicalId, {
 					...existing.data,
 					...updates,
 				});
+			} else {
+				console.warn(`Meeting ${meetingId} not found in local DB; skipping update`);
 			}
 		} catch (error) {
 			console.warn('Failed to update meeting in database:', error);

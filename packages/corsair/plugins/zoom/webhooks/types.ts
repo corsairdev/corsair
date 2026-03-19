@@ -229,7 +229,8 @@ export function verifyZoomWebhookSignature(
 		};
 	}
 
-	const isValid = verifyHmacSha256Signature(rawBody, signingSecret, timestamp, signature);
+	// Zoom recommends a 30-second replay window; the utility default of 5 minutes is too wide
+	const isValid = verifyHmacSha256Signature(rawBody, signingSecret, timestamp, signature, 30);
 	if (!isValid) {
 		return { valid: false, error: 'Invalid signature' };
 	}
