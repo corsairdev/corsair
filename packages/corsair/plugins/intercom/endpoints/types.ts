@@ -228,6 +228,7 @@ const ContactsUpdateInputSchema = z.object({
 	role: z.enum(['user', 'lead']).optional(),
 	external_id: z.string().optional(),
 	unsubscribed_from_emails: z.boolean().optional(),
+	// Unknwon type because the custom attributes are dynamic and depend on the contact.
 	custom_attributes: z.record(z.unknown()).optional(),
 });
 export type ContactsUpdateInput = z.infer<typeof ContactsUpdateInputSchema>;
@@ -725,6 +726,7 @@ const AdminsListActivityLogsResponseSchema = z.object({
 					email: z.string().optional(),
 				})
 				.optional(),
+			// Unknown type because the metadata is dynamic and depend on the activity.
 			metadata: z.record(z.unknown()).optional(),
 			created_at: z.number().optional(),
 			activity_type: z.string().optional(),

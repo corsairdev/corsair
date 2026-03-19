@@ -101,7 +101,6 @@ export const deleteArticle: IntercomEndpoints['articlesDelete'] = async (ctx, in
 		ctx.key,
 		{
 			method: 'DELETE',
-			body: input,
 		},
 	);
 

@@ -68,7 +68,6 @@ export const deleteCollection: IntercomEndpoints['collectionsDelete'] = async (c
 		ctx.key,
 		{
 			method: 'DELETE',
-			body: input,
 		},
 	);
 

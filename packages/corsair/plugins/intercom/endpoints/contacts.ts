@@ -108,7 +108,6 @@ export const removeTag: IntercomEndpoints['contactsRemoveTag'] = async (ctx, inp
 		ctx.key,
 		{
 			method: 'DELETE',
-			body,
 		},
 	);
 

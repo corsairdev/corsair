@@ -103,7 +103,6 @@ export const deleteCompany: IntercomEndpoints['companiesDelete'] = async (ctx, i
 		ctx.key,
 		{
 			method: 'DELETE',
-			body: input,
 		},
 	);
 
@@ -133,11 +132,12 @@ export const retrieve: IntercomEndpoints['companiesRetrieve'] = async (ctx, inpu
 };
 
 export const listAttachedContacts: IntercomEndpoints['companiesListAttachedContacts'] = async (ctx, input) => {
+	const { id, ...query } = input;
 	const result = await makeIntercomRequest<IntercomEndpointOutputs['companiesListAttachedContacts']>(
-		`companies/${input.id}/contacts`,
+		`companies/${id}/contacts`,
 		ctx.key,
 		{
-			query: input,
+			query,
 		},
 	);
 
