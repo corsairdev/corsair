@@ -234,15 +234,8 @@ export function verifyTrelloWebhookSignature(
 		return { valid: false, error: 'Missing x-trello-webhook header' };
 	}
 
-	// payload is unknown; extract callbackURL from the webhook object Trello includes in every payload
-	const payloadCallbackUrl =
-		((request.payload as Record<string, unknown>)?.webhook as Record<string, unknown>)
-			?.callbackURL as string | undefined;
-
-	const resolvedCallbackUrl = callbackUrl ?? payloadCallbackUrl;
-
 	try {
-		const content = resolvedCallbackUrl ? rawBody + resolvedCallbackUrl : rawBody;
+		const content = callbackUrl ? rawBody + callbackUrl : rawBody;
 		const expected = crypto
 			.createHmac('sha1', secret)
 			.update(content)
