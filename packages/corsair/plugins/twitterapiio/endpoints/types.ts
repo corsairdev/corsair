@@ -218,13 +218,25 @@ export function buildAdvancedSearchQuery(
 		);
 	}
 	if (input.fromUsers?.length) {
-		parts.push(...input.fromUsers.map((u) => `from:${u}`));
+		if (input.fromUsers.length === 1) {
+			parts.push(`from:${input.fromUsers[0]}`);
+		} else {
+			parts.push(`(${input.fromUsers.map((u) => `from:${u}`).join(' OR ')})`);
+		}
 	}
 	if (input.toUsers?.length) {
-		parts.push(...input.toUsers.map((u) => `to:${u}`));
+		if (input.toUsers.length === 1) {
+			parts.push(`to:${input.toUsers[0]}`);
+		} else {
+			parts.push(`(${input.toUsers.map((u) => `to:${u}`).join(' OR ')})`);
+		}
 	}
 	if (input.mentioningUsers?.length) {
-		parts.push(...input.mentioningUsers.map((u) => `@${u}`));
+		if (input.mentioningUsers.length === 1) {
+			parts.push(`@${input.mentioningUsers[0]}`);
+		} else {
+			parts.push(`(${input.mentioningUsers.map((u) => `@${u}`).join(' OR ')})`);
+		}
 	}
 	if (input.language) {
 		parts.push(`lang:${input.language}`);
