@@ -101,6 +101,7 @@ export const CommentCreatedDataSchema = z.object({
 	card: TrelloActionCardSchema.optional(),
 	list: TrelloActionListSchema.optional(),
 	text: z.string().optional(),
+	// Unknown type because the textData is dynamic and depend on the comment.
 	textData: z.unknown().nullable().optional(),
 });
 export type CommentCreatedData = z.infer<typeof CommentCreatedDataSchema>;
