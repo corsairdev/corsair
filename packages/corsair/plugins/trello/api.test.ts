@@ -392,8 +392,7 @@ describe('Trello API Type Tests', () => {
 
 			const checklistId = cardResponse.idChecklists?.[0];
 			if (!checklistId) {
-				console.warn('No checklists on test card — skipping');
-				return;
+				throw new Error('No checklist found for card');
 			}
 
 			const response = await makeTrelloRequest<ChecklistsGetResponse>(

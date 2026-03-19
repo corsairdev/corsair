@@ -55,6 +55,7 @@ const TrelloBoardSchema = z
 		id: z.string(),
 		name: z.string().optional(),
 		desc: z.string().optional(),
+		// Opaque nested object; Trello's API docs leave this structure undocumented and no callers need it
 		descData: z.unknown().nullable().optional(),
 		closed: z.boolean().optional(),
 		idOrganization: z.string().nullable().optional(),
@@ -65,6 +66,7 @@ const TrelloBoardSchema = z
 		prefs: TrelloBoardPrefsSchema.optional(),
 		labelNames: z.record(z.string()).optional(),
 		starred: z.boolean().optional(),
+		// Membership entries have dynamic role/deactivated fields not needed by any endpoint
 		memberships: z.array(z.unknown()).optional(),
 	})
 	.passthrough();
@@ -77,6 +79,7 @@ const TrelloListSchema = z
 		idBoard: z.string().optional(),
 		pos: z.number().optional(),
 		subscribed: z.boolean().optional(),
+		// Trello documents this as a nullable integer but returns mixed types (number | object) in practice
 		softLimit: z.unknown().nullable().optional(),
 	})
 	.passthrough();
@@ -85,10 +88,12 @@ const TrelloCardSchema = z
 	.object({
 		id: z.string(),
 		badges: TrelloBadgesSchema.optional(),
+		// Per-item check state shape varies across Trello API versions and is not consumed by callers
 		checkItemStates: z.array(z.unknown()).nullable().optional(),
 		closed: z.boolean().optional(),
 		dateLastActivity: z.string().optional(),
 		desc: z.string().optional(),
+		// Opaque emoji/formatting metadata on the card description; structure undocumented by Trello
 		descData: z.unknown().nullable().optional(),
 		due: z.string().nullable().optional(),
 		dueComplete: z.boolean().optional(),
@@ -111,6 +116,7 @@ const TrelloCardSchema = z
 		start: z.string().nullable().optional(),
 		subscribed: z.boolean().optional(),
 		url: z.string().optional(),
+		// Cover object has many optional, version-specific attachment/color fields not needed by callers
 		cover: z.unknown().nullable().optional(),
 	})
 	.passthrough();
@@ -130,6 +136,7 @@ const TrelloMemberSchema = z
 		idOrganizations: z.array(z.string()).optional(),
 		initials: z.string().optional(),
 		memberType: z.string().optional(),
+		// Intentionally opaque private member data; Trello intentionally omits the schema from docs
 		nonPublic: z.unknown().optional(),
 		nonPublicAvailable: z.boolean().optional(),
 		products: z.array(z.number()).optional(),
@@ -143,10 +150,12 @@ const TrelloCheckItemSchema = z
 		id: z.string(),
 		idChecklist: z.string().optional(),
 		name: z.string().optional(),
+		// Opaque emoji/formatting metadata attached to the checklist item name; structure undocumented
 		nameData: z.unknown().nullable().optional(),
 		pos: z.number().optional(),
 		state: z.enum(['incomplete', 'complete']).optional(),
 		due: z.string().nullable().optional(),
+		// Trello returns a number (minutes before due) or null, but older API versions may return an object
 		dueReminder: z.unknown().nullable().optional(),
 		idMember: z.string().nullable().optional(),
 	})

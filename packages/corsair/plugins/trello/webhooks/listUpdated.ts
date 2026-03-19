@@ -9,7 +9,6 @@ export const listUpdated: TrelloWebhooks['listUpdated'] = {
 		const verification = verifyTrelloWebhookSignature(
 			request,
 			ctx.key,
-			ctx.options.webhookCallbackUrl,
 		);
 		if (!verification.valid) {
 			return {

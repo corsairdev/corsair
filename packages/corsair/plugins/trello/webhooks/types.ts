@@ -77,6 +77,7 @@ export const CardUpdatedDataSchema = z.object({
 	card: TrelloActionCardSchema.optional(),
 	listBefore: TrelloActionListSchema.optional(),
 	listAfter: TrelloActionListSchema.optional(),
+	// Sparse map of only the changed fields and their previous values; keys are dynamic per update
 	old: z.record(z.unknown()).optional(),
 });
 export type CardUpdatedData = z.infer<typeof CardUpdatedDataSchema>;
@@ -121,6 +122,7 @@ export const TrelloCardCreatedPayloadSchema = z.object({
 		type: z.literal('createCard'),
 		data: CardCreatedDataSchema,
 	}),
+	// The full board/resource snapshot Trello sends alongside every action; shape varies by event type
 	model: z.record(z.unknown()),
 });
 
@@ -129,6 +131,7 @@ export const TrelloCardUpdatedPayloadSchema = z.object({
 		type: z.literal('updateCard'),
 		data: CardUpdatedDataSchema,
 	}),
+	// The full board/resource snapshot Trello sends alongside every action; shape varies by event type
 	model: z.record(z.unknown()),
 });
 
@@ -137,6 +140,7 @@ export const TrelloMemberAddedToCardPayloadSchema = z.object({
 		type: z.literal('addMemberToCard'),
 		data: MemberAddedToCardDataSchema,
 	}),
+	// The full board/resource snapshot Trello sends alongside every action; shape varies by event type
 	model: z.record(z.unknown()),
 });
 
@@ -145,12 +149,14 @@ export const TrelloListCreatedPayloadSchema = z.object({
 		type: z.literal('createList'),
 		data: ListCreatedDataSchema,
 	}),
+	// The full board/resource snapshot Trello sends alongside every action; shape varies by event type
 	model: z.record(z.unknown()),
 });
 
 export const ListUpdatedDataSchema = z.object({
 	board: TrelloActionBoardSchema.optional(),
 	list: TrelloActionListSchema.optional(),
+	// Sparse map of only the changed fields and their previous values; keys are dynamic per update
 	old: z.record(z.unknown()).optional(),
 });
 export type ListUpdatedData = z.infer<typeof ListUpdatedDataSchema>;
@@ -160,6 +166,7 @@ export const TrelloListUpdatedPayloadSchema = z.object({
 		type: z.literal('updateList'),
 		data: ListUpdatedDataSchema,
 	}),
+	// The full board/resource snapshot Trello sends alongside every action; shape varies by event type
 	model: z.record(z.unknown()),
 });
 
@@ -168,6 +175,7 @@ export const TrelloCommentCreatedPayloadSchema = z.object({
 		type: z.literal('commentCard'),
 		data: CommentCreatedDataSchema,
 	}),
+	// The full board/resource snapshot Trello sends alongside every action; shape varies by event type
 	model: z.record(z.unknown()),
 });
 
@@ -214,7 +222,6 @@ export function verifyTrelloWebhookSignature(
 	// not a typed payload — the payload type is resolved by callers after verification
 	request: WebhookRequest<unknown>,
 	secret: string,
-	callbackUrl?: string,
 ): { valid: boolean; error?: string } {
 	if (!secret) {
 		return { valid: false, error: 'Missing webhook secret' };
@@ -233,9 +240,13 @@ export function verifyTrelloWebhookSignature(
 	if (!signature) {
 		return { valid: false, error: 'Missing x-trello-webhook header' };
 	}
+	// payload is unknown; extract callbackURL from the webhook object Trello includes in every payload
+	const payloadCallbackUrl =
+		((request.payload as Record<string, unknown>)?.webhook as Record<string, unknown>)
+			?.callbackURL;
 
 	try {
-		const content = callbackUrl ? rawBody + callbackUrl : rawBody;
+		const content = payloadCallbackUrl ? rawBody + payloadCallbackUrl : rawBody;
 		const expected = crypto
 			.createHmac('sha1', secret)
 			.update(content)

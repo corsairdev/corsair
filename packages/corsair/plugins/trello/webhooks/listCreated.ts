@@ -9,7 +9,6 @@ export const listCreated: TrelloWebhooks['listCreated'] = {
 		const verification = verifyTrelloWebhookSignature(
 			request,
 			ctx.key,
-			ctx.options.webhookCallbackUrl,
 		);
 		if (!verification.valid) {
 			return {
