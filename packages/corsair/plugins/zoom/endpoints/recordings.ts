@@ -7,9 +7,11 @@ export const getMeeting: ZoomEndpoints['recordingsGetMeeting'] = async (
 	ctx,
 	input,
 ) => {
+	const { meetingId, ...query } = input;
 	const result = await makeZoomRequest<
 		ZoomEndpointOutputs['recordingsGetMeeting']
-	>(`meetings/${input.meetingId}/recordings`, ctx.key, {
+	>(`meetings/${meetingId}/recordings`, ctx.key, {
+		query,
 		method: 'GET',
 	});
 
@@ -19,7 +21,7 @@ export const getMeeting: ZoomEndpoints['recordingsGetMeeting'] = async (
 				if (recording.id) {
 					await ctx.db.recordings.upsertByEntityId(recording.id, {
 						...recording,
-						meeting_id: String(result.id ?? input.meetingId),
+						meeting_id: String(result.id ?? meetingId),
 					});
 				}
 			}
@@ -41,13 +43,12 @@ export const deleteMeeting: ZoomEndpoints['recordingsDeleteMeeting'] = async (
 	ctx,
 	input,
 ) => {
+	const { meetingId, ...query } = input;
 	const result = await makeZoomRequest<
 		ZoomEndpointOutputs['recordingsDeleteMeeting']
 	>(`meetings/${input.meetingId}/recordings`, ctx.key, {
 		method: 'DELETE',
-		query: {
-			action: input.action,
-		},
+		query
 	});
 
 	if (ctx.db.recordings) {
@@ -81,14 +82,7 @@ export const listAll: ZoomEndpoints['recordingsListAll'] = async (
 		ctx.key,
 		{
 			method: 'GET',
-			query: {
-				from: input.from,
-				to: input.to,
-				page_size: input.page_size,
-				next_page_token: input.next_page_token,
-				mc: input.mc,
-				trash: input.trash,
-			},
+			query: input
 		},
 	);
 

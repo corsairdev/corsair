@@ -5,14 +5,12 @@ import type { ZoomEndpointOutputs } from './types';
 
 export const getPastMeeting: ZoomEndpoints['participantsGetPastMeeting'] =
 	async (ctx, input) => {
+		const { meetingId, ...query } = input;
 		const result = await makeZoomRequest<
 			ZoomEndpointOutputs['participantsGetPastMeeting']
-		>(`past_meetings/${input.meetingId}/participants`, ctx.key, {
+		>(`past_meetings/${meetingId}/participants`, ctx.key, {
 			method: 'GET',
-			query: {
-				page_size: input.page_size,
-				next_page_token: input.next_page_token,
-			},
+			query
 		});
 
 		if (result.participants && ctx.db.participants) {

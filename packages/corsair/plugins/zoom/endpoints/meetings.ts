@@ -4,12 +4,13 @@ import { makeZoomRequest } from '../client';
 import type { ZoomEndpointOutputs } from './types';
 
 export const create: ZoomEndpoints['meetingsCreate'] = async (ctx, input) => {
+	const { ...body } = input;
 	const result = await makeZoomRequest<ZoomEndpointOutputs['meetingsCreate']>(
 		'users/me/meetings',
 		ctx.key,
 		{
 			method: 'POST',
-			body: input
+			body,
 		},
 	);
 
@@ -31,11 +32,13 @@ export const create: ZoomEndpoints['meetingsCreate'] = async (ctx, input) => {
 };
 
 export const get: ZoomEndpoints['meetingsGet'] = async (ctx, input) => {
+	const { meetingId, ...query } = input;
 	const result = await makeZoomRequest<ZoomEndpointOutputs['meetingsGet']>(
-		`meetings/${input.meetingId}`,
+		`meetings/${meetingId}`,
 		ctx.key,
 		{
 			method: 'GET',
+			query,
 		},
 	);
 
@@ -92,23 +95,24 @@ export const list: ZoomEndpoints['meetingsList'] = async (ctx, input) => {
 };
 
 export const update: ZoomEndpoints['meetingsUpdate'] = async (ctx, input) => {
+	const { meetingId, ...body } = input;
 	const result = await makeZoomRequest<ZoomEndpointOutputs['meetingsUpdate']>(
-		`meetings/${input.meetingId}`,
+		`meetings/${meetingId}`,
 		ctx.key,
 		{
 			method: 'PATCH',
-			body: input
+			body,
 		},
 	);
 
 	if (ctx.db.meetings) {
 		try {
 			const existing = await ctx.db.meetings.findByEntityId(
-				input.meetingId,
+				meetingId,
 			);
 			if (existing) {
 				const { meetingId: _, ...updates } = input;
-				await ctx.db.meetings.upsertByEntityId(input.meetingId, {
+				await ctx.db.meetings.upsertByEntityId(meetingId, {
 					...existing.data,
 					...updates,
 				});
@@ -131,16 +135,12 @@ export const addRegistrant: ZoomEndpoints['meetingsAddRegistrant'] = async (
 	ctx,
 	input,
 ) => {
+	const { meetingId, ...body } = input;
 	const result = await makeZoomRequest<
 		ZoomEndpointOutputs['meetingsAddRegistrant']
-	>(`meetings/${input.meetingId}/registrants`, ctx.key, {
+	>(`meetings/${meetingId}/registrants`, ctx.key, {
 		method: 'POST',
-		body: {
-			email: input.email,
-			first_name: input.first_name,
-			last_name: input.last_name,
-			auto_approve: input.auto_approve,
-		},
+		body,
 	});
 
 	await logEventFromContext(
@@ -156,9 +156,11 @@ export const getSummary: ZoomEndpoints['meetingsGetSummary'] = async (
 	ctx,
 	input,
 ) => {
+	const { meetingId, ...query } = input;
 	const result = await makeZoomRequest<
 		ZoomEndpointOutputs['meetingsGetSummary']
-	>(`meetings/${input.meetingId}/summary`, ctx.key, {
+	>(`meetings/${meetingId}/summary`, ctx.key, {
+		query,
 		method: 'GET',
 	});
 

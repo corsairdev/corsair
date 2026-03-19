@@ -12,10 +12,7 @@ export const dailyUsage: ZoomEndpoints['reportsDailyUsage'] = async (
 		ctx.key,
 		{
 			method: 'GET',
-			query: {
-				year: input.year,
-				month: input.month,
-			},
+			query: input
 		},
 	);
 

@@ -4,11 +4,13 @@ import { makeZoomRequest } from '../client';
 import type { ZoomEndpointOutputs } from './types';
 
 export const get: ZoomEndpoints['webinarsGet'] = async (ctx, input) => {
+	const { webinarId, ...query } = input;
 	const result = await makeZoomRequest<ZoomEndpointOutputs['webinarsGet']>(
-		`webinars/${input.webinarId}`,
+		`webinars/${webinarId}`,
 		ctx.key,
 		{
 			method: 'GET',
+			query,
 		},
 	);
 
@@ -37,10 +39,7 @@ export const list: ZoomEndpoints['webinarsList'] = async (ctx, input) => {
 		ctx.key,
 		{
 			method: 'GET',
-			query: {
-				page_size: input.page_size,
-				page_number: input.page_number,
-			},
+			query: input
 		},
 	);
 
@@ -75,12 +74,7 @@ export const addRegistrant: ZoomEndpoints['webinarsAddRegistrant'] = async (
 		ZoomEndpointOutputs['webinarsAddRegistrant']
 	>(`webinars/${input.webinarId}/registrants`, ctx.key, {
 		method: 'POST',
-		body: {
-			email: input.email,
-			first_name: input.first_name,
-			last_name: input.last_name,
-			auto_approve: input.auto_approve,
-		},
+		body: input
 	});
 
 	await logEventFromContext(
@@ -98,10 +92,7 @@ export const listParticipants: ZoomEndpoints['webinarsListParticipants'] =
 			ZoomEndpointOutputs['webinarsListParticipants']
 		>(`past_webinars/${input.webinarId}/participants`, ctx.key, {
 			method: 'GET',
-			query: {
-				page_size: input.page_size,
-				next_page_token: input.next_page_token,
-			},
+			query: input
 		});
 
 		if (result.participants && ctx.db.participants) {
