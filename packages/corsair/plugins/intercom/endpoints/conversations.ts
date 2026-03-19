@@ -4,11 +4,12 @@ import { makeIntercomRequest } from '../client';
 import type { IntercomEndpointOutputs } from './types';
 
 export const get: IntercomEndpoints['conversationsGet'] = async (ctx, input) => {
+	const { id, ...query } = input;
 	const result = await makeIntercomRequest<IntercomEndpointOutputs['conversationsGet']>(
-		`conversations/${input.id}`,
+		`conversations/${id}`,
 		ctx.key,
 		{
-			query: { display_as: input.display_as },
+			query
 		},
 	);
 

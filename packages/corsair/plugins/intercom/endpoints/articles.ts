@@ -4,9 +4,13 @@ import { makeIntercomRequest } from '../client';
 import type { IntercomEndpointOutputs } from './types';
 
 export const get: IntercomEndpoints['articlesGet'] = async (ctx, input) => {
+	const { id, ...query } = input;
 	const result = await makeIntercomRequest<IntercomEndpointOutputs['articlesGet']>(
-		`articles/${input.id}`,
+		`articles/${id}`,
 		ctx.key,
+		{
+			query,
+		},
 	);
 
 	if (result && ctx.db.articles) {
@@ -26,6 +30,7 @@ export const list: IntercomEndpoints['articlesList'] = async (ctx, input) => {
 		'articles',
 		ctx.key,
 		{
+			method: 'GET',
 			query: input,
 		},
 	);
@@ -90,10 +95,14 @@ export const update: IntercomEndpoints['articlesUpdate'] = async (ctx, input) =>
 };
 
 export const deleteArticle: IntercomEndpoints['articlesDelete'] = async (ctx, input) => {
+	const { id } = input;
 	const result = await makeIntercomRequest<IntercomEndpointOutputs['articlesDelete']>(
-		`articles/${input.id}`,
+		`articles/${id}`,
 		ctx.key,
-		{ method: 'DELETE' },
+		{
+			method: 'DELETE',
+			body: input,
+		},
 	);
 
 	await logEventFromContext(ctx, 'intercom.articles.delete', { ...input }, 'completed');

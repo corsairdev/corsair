@@ -26,9 +26,14 @@ export const createOrUpdate: IntercomEndpoints['companiesCreateOrUpdate'] = asyn
 };
 
 export const get: IntercomEndpoints['companiesGet'] = async (ctx, input) => {
+	const { id, ...query } = input;
 	const result = await makeIntercomRequest<IntercomEndpointOutputs['companiesGet']>(
-		`companies/${input.id}`,
+		`companies/${id}`,
 		ctx.key,
+		{
+			query,
+			method: 'GET',
+		},
 	);
 
 	if (result && ctx.db.companies) {
@@ -44,11 +49,13 @@ export const get: IntercomEndpoints['companiesGet'] = async (ctx, input) => {
 };
 
 export const list: IntercomEndpoints['companiesList'] = async (ctx, input) => {
+	const { ...query } = input;
 	const result = await makeIntercomRequest<IntercomEndpointOutputs['companiesList']>(
 		'companies',
 		ctx.key,
 		{
-			query: input,
+			query,
+			method: 'GET',
 		},
 	);
 
@@ -90,10 +97,14 @@ export const scroll: IntercomEndpoints['companiesScroll'] = async (ctx, input) =
 };
 
 export const deleteCompany: IntercomEndpoints['companiesDelete'] = async (ctx, input) => {
+	const { id } = input;
 	const result = await makeIntercomRequest<IntercomEndpointOutputs['companiesDelete']>(
-		`companies/${input.id}`,
+		`companies/${id}`,
 		ctx.key,
-		{ method: 'DELETE' },
+		{
+			method: 'DELETE',
+			body: input,
+		},
 	);
 
 	await logEventFromContext(ctx, 'intercom.companies.delete', { ...input }, 'completed');

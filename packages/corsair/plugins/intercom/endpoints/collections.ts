@@ -4,9 +4,14 @@ import { makeIntercomRequest } from '../client';
 import type { IntercomEndpointOutputs } from './types';
 
 export const get: IntercomEndpoints['collectionsGet'] = async (ctx, input) => {
+	const { id, ...query } = input;
 	const result = await makeIntercomRequest<IntercomEndpointOutputs['collectionsGet']>(
-		`help_center/collections/${input.id}`,
+		`help_center/collections/${id}`,
 		ctx.key,
+		{
+			query,
+			method: 'GET',
+		},
 	);
 
 	await logEventFromContext(ctx, 'intercom.collections.get', { ...input }, 'completed');
@@ -18,6 +23,7 @@ export const list: IntercomEndpoints['collectionsList'] = async (ctx, input) => 
 		'help_center/collections',
 		ctx.key,
 		{
+			method: 'GET',
 			query: input,
 		},
 	);
@@ -56,10 +62,14 @@ export const update: IntercomEndpoints['collectionsUpdate'] = async (ctx, input)
 };
 
 export const deleteCollection: IntercomEndpoints['collectionsDelete'] = async (ctx, input) => {
+	const { id } = input;
 	const result = await makeIntercomRequest<IntercomEndpointOutputs['collectionsDelete']>(
-		`help_center/collections/${input.id}`,
+		`help_center/collections/${id}`,
 		ctx.key,
-		{ method: 'DELETE' },
+		{
+			method: 'DELETE',
+			body: input,
+		},
 	);
 
 	await logEventFromContext(ctx, 'intercom.collections.delete', { ...input }, 'completed');

@@ -4,9 +4,13 @@ import { makeIntercomRequest } from '../client';
 import type { IntercomEndpointOutputs } from './types';
 
 export const get: IntercomEndpoints['contactsGet'] = async (ctx, input) => {
+	const { id, ...query } = input;
 	const result = await makeIntercomRequest<IntercomEndpointOutputs['contactsGet']>(
-		`contacts/${input.id}`,
+		`contacts/${id}`,
 		ctx.key,
+		{
+			query,
+		},
 	);
 
 	if (result && ctx.db.contacts) {
@@ -68,10 +72,14 @@ export const update: IntercomEndpoints['contactsUpdate'] = async (ctx, input) =>
 };
 
 export const deleteContact: IntercomEndpoints['contactsDelete'] = async (ctx, input) => {
+	const { id } = input;
 	const result = await makeIntercomRequest<IntercomEndpointOutputs['contactsDelete']>(
-		`contacts/${input.id}`,
+		`contacts/${id}`,
 		ctx.key,
-		{ method: 'DELETE' },
+		{
+			method: 'DELETE',
+			body: input,
+		},
 	);
 
 	await logEventFromContext(ctx, 'intercom.contacts.delete', { ...input }, 'completed');
@@ -79,12 +87,13 @@ export const deleteContact: IntercomEndpoints['contactsDelete'] = async (ctx, in
 };
 
 export const addTag: IntercomEndpoints['contactsAddTag'] = async (ctx, input) => {
+	const { contact_id, ...body } = input;
 	const result = await makeIntercomRequest<IntercomEndpointOutputs['contactsAddTag']>(
-		`contacts/${input.contact_id}/tags`,
+		`contacts/${contact_id}/tags`,
 		ctx.key,
 		{
 			method: 'POST',
-			body: { id: input.tag_id },
+			body: { id: input.tag_id ,...body},
 		},
 	);
 
@@ -93,10 +102,14 @@ export const addTag: IntercomEndpoints['contactsAddTag'] = async (ctx, input) =>
 };
 
 export const removeTag: IntercomEndpoints['contactsRemoveTag'] = async (ctx, input) => {
+	const { contact_id, tag_id, ...body } = input;
 	const result = await makeIntercomRequest<IntercomEndpointOutputs['contactsRemoveTag']>(
-		`contacts/${input.contact_id}/tags/${input.tag_id}`,
+		`contacts/${contact_id}/tags/${tag_id}`,
 		ctx.key,
-		{ method: 'DELETE' },
+		{
+			method: 'DELETE',
+			body,
+		},
 	);
 
 	await logEventFromContext(ctx, 'intercom.contacts.removeTag', { ...input }, 'completed');
@@ -104,9 +117,13 @@ export const removeTag: IntercomEndpoints['contactsRemoveTag'] = async (ctx, inp
 };
 
 export const listTags: IntercomEndpoints['contactsListTags'] = async (ctx, input) => {
+	const { contact_id, ...query } = input;
 	const result = await makeIntercomRequest<IntercomEndpointOutputs['contactsListTags']>(
-		`contacts/${input.contact_id}/tags`,
+		`contacts/${contact_id}/tags`,
 		ctx.key,
+		{
+			query,
+		},
 	);
 
 	await logEventFromContext(ctx, 'intercom.contacts.listTags', { ...input }, 'completed');
@@ -114,12 +131,13 @@ export const listTags: IntercomEndpoints['contactsListTags'] = async (ctx, input
 };
 
 export const addSubscription: IntercomEndpoints['contactsAddSubscription'] = async (ctx, input) => {
+	const { contact_id, ...body } = input;
 	const result = await makeIntercomRequest<IntercomEndpointOutputs['contactsAddSubscription']>(
-		`contacts/${input.contact_id}/subscriptions`,
+		`contacts/${contact_id}/subscriptions`,
 		ctx.key,
 		{
 			method: 'POST',
-			body: { id: input.id, consent_type: input.consent_type },
+			body
 		},
 	);
 
@@ -149,12 +167,13 @@ export const listSubscriptions: IntercomEndpoints['contactsListSubscriptions'] =
 };
 
 export const attachToCompany: IntercomEndpoints['contactsAttachToCompany'] = async (ctx, input) => {
+	const { contact_id, ...body } = input;
 	const result = await makeIntercomRequest<IntercomEndpointOutputs['contactsAttachToCompany']>(
-		`contacts/${input.contact_id}/companies`,
+		`contacts/${contact_id}/companies`,
 		ctx.key,
 		{
 			method: 'POST',
-			body: { id: input.company_id },
+			body,
 		},
 	);
 
@@ -171,10 +190,11 @@ export const attachToCompany: IntercomEndpoints['contactsAttachToCompany'] = asy
 };
 
 export const detachFromCompany: IntercomEndpoints['contactsDetachFromCompany'] = async (ctx, input) => {
+	const { contact_id, company_id, ...body } = input;
 	const result = await makeIntercomRequest<IntercomEndpointOutputs['contactsDetachFromCompany']>(
-		`contacts/${input.contact_id}/companies/${input.company_id}`,
+		`contacts/${contact_id}/companies/${company_id}`,
 		ctx.key,
-		{ method: 'DELETE' },
+		{ method: 'DELETE', body },
 	);
 
 	await logEventFromContext(ctx, 'intercom.contacts.detachFromCompany', { ...input }, 'completed');
@@ -182,11 +202,12 @@ export const detachFromCompany: IntercomEndpoints['contactsDetachFromCompany'] =
 };
 
 export const listAttachedCompanies: IntercomEndpoints['contactsListAttachedCompanies'] = async (ctx, input) => {
+	const { contact_id, ...query } = input;
 	const result = await makeIntercomRequest<IntercomEndpointOutputs['contactsListAttachedCompanies']>(
-		`contacts/${input.contact_id}/companies`,
+		`contacts/${contact_id}/companies`,
 		ctx.key,
 		{
-			query: input,
+			query,
 		},
 	);
 
@@ -215,15 +236,13 @@ export const listAttachedSegments: IntercomEndpoints['contactsListAttachedSegmen
 };
 
 export const createNote: IntercomEndpoints['contactsCreateNote'] = async (ctx, input) => {
+	const { contact_id, ...body } = input;
 	const result = await makeIntercomRequest<IntercomEndpointOutputs['contactsCreateNote']>(
-		`contacts/${input.contact_id}/notes`,
+		`contacts/${contact_id}/notes`,
 		ctx.key,
 		{
 			method: 'POST',
-			body: {
-				body: input.body,
-				admin_id: input.admin_id,
-			},
+			body,
 		},
 	);
 
@@ -232,11 +251,12 @@ export const createNote: IntercomEndpoints['contactsCreateNote'] = async (ctx, i
 };
 
 export const listNotes: IntercomEndpoints['contactsListNotes'] = async (ctx, input) => {
+	const { contact_id, ...query } = input;
 	const result = await makeIntercomRequest<IntercomEndpointOutputs['contactsListNotes']>(
-		`contacts/${input.contact_id}/notes`,
+		`contacts/${contact_id}/notes`,
 		ctx.key,
 		{
-			query: input,
+			query,
 		},
 	);
 

@@ -14,9 +14,13 @@ export const list: IntercomEndpoints['helpCentersList'] = async (ctx, input) => 
 };
 
 export const get: IntercomEndpoints['helpCentersGet'] = async (ctx, input) => {
+	const { id, ...query } = input;
 	const result = await makeIntercomRequest<IntercomEndpointOutputs['helpCentersGet']>(
-		`help_center/help_centers/${input.id}`,
+		`help_center/help_centers/${id}`,
 		ctx.key,
+		{
+			query,
+		},
 	);
 
 	await logEventFromContext(ctx, 'intercom.helpCenters.get', { ...input }, 'completed');

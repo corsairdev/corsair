@@ -7,6 +7,10 @@ export const identify: IntercomEndpoints['adminsIdentify'] = async (ctx, input) 
 	const result = await makeIntercomRequest<IntercomEndpointOutputs['adminsIdentify']>(
 		'me',
 		ctx.key,
+		{
+			method: 'GET',
+			query: input,
+		},
 	);
 
 	if (result && ctx.db.admins) {
@@ -42,9 +46,13 @@ export const list: IntercomEndpoints['adminsList'] = async (ctx, input) => {
 };
 
 export const get: IntercomEndpoints['adminsGet'] = async (ctx, input) => {
+	const { id, ...query } = input;
 	const result = await makeIntercomRequest<IntercomEndpointOutputs['adminsGet']>(
-		`admins/${input.id}`,
+		`admins/${id}`,
 		ctx.key,
+		{
+			query,
+		},
 	);
 
 	if (result && ctx.db.admins) {
@@ -64,12 +72,8 @@ export const listActivityLogs: IntercomEndpoints['adminsListActivityLogs'] = asy
 		'admins/activity_log',
 		ctx.key,
 		{
-			query: {
-				created_at_after: input.created_at_after,
-				created_at_before: input.created_at_before,
-				page: input.page,
-				per_page: input.per_page,
-			},
+			method: 'GET',
+			query: input,
 		},
 	);
 
@@ -84,7 +88,7 @@ export const setAway: IntercomEndpoints['adminsSetAway'] = async (ctx, input) =>
 		ctx.key,
 		{
 			method: 'PUT',
-			body: body
+			body,
 		},
 	);
 
