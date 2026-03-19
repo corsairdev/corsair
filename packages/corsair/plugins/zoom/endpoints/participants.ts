@@ -18,8 +18,9 @@ export const getPastMeeting: ZoomEndpoints['participantsGetPastMeeting'] =
 		if (result.participants && ctx.db.participants) {
 			try {
 				for (const participant of result.participants) {
-					if (participant.id) {
-						await ctx.db.participants.upsertByEntityId(participant.id, {
+					const entityKey = participant.user_id || participant.id;
+					if (entityKey) {
+						await ctx.db.participants.upsertByEntityId(entityKey, {
 							...participant,
 						});
 					}
