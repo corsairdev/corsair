@@ -274,10 +274,15 @@ export function verifyCalendlyWebhookSignature(
 			.update(`${timestamp}.${rawBody}`)
 			.digest('hex');
 
-		const isValid = crypto.timingSafeEqual(
-			Buffer.from(signature),
-			Buffer.from(expectedSignature),
-		);
+		// Decode from hex so we compare raw bytes, not UTF-8 representations of hex digits.
+		// timingSafeEqual requires equal-length buffers; a length mismatch means the signature
+		// is structurally invalid and we treat it as a failure.
+		const sigBuf = Buffer.from(signature, 'hex');
+		const expectedBuf = Buffer.from(expectedSignature, 'hex');
+		if (sigBuf.length !== expectedBuf.length) {
+			return { valid: false, error: 'Invalid signature' };
+		}
+		const isValid = crypto.timingSafeEqual(sigBuf, expectedBuf);
 
 		if (!isValid) {
 			return { valid: false, error: 'Invalid signature' };
