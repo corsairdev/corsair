@@ -21,12 +21,14 @@ export const listCreated: TrelloWebhooks['listCreated'] = {
 		const payload = request.payload;
 		const action = payload.action;
 		const trelloList = action.data?.list;
+		const board = action.data?.board;
 		let corsairEntityId = '';
 
 		if (trelloList?.id && ctx.db.lists) {
 			try {
 				const entity = await ctx.db.lists.upsertByEntityId(trelloList.id, {
 					...trelloList,
+					idBoard: board?.id,
 					createdAt: new Date(action.date),
 				});
 				corsairEntityId = entity?.id || '';
