@@ -13,7 +13,7 @@ export class GranolaAPIError extends Error {
 	}
 }
 
-const GRANOLA_API_BASE = 'https://api.granola.so';
+const GRANOLA_API_BASE = 'https://public-api.granola.ai';
 
 const GRANOLA_RATE_LIMIT_CONFIG: RateLimitConfig = {
 	enabled: true,
