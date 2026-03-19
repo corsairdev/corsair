@@ -43,18 +43,17 @@ export const deleteMeeting: ZoomEndpoints['recordingsDeleteMeeting'] = async (
 	ctx,
 	input,
 ) => {
-	const { meetingId, ...query } = input;
+	const { meetingId } = input;
 	const result = await makeZoomRequest<
 		ZoomEndpointOutputs['recordingsDeleteMeeting']
-	>(`meetings/${input.meetingId}/recordings`, ctx.key, {
+	>(`meetings/${meetingId}/recordings`, ctx.key, {
 		method: 'DELETE',
-		query
 	});
 
 	if (ctx.db.recordings) {
 		try {
 			const stored = await ctx.db.recordings.search({
-				data: { meeting_id: String(input.meetingId) },
+				data: { meeting_id: String(meetingId) },
 			});
 			for (const recording of stored) {
 				await ctx.db.recordings.deleteByEntityId(recording.entity_id);

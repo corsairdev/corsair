@@ -13,7 +13,7 @@ import { ZoomEndpointOutputSchemas } from './endpoints/types';
 
 dotenv.config();
 
-const TEST_TOKEN = process.env.ZOOM_ACCESS_TOKEN;
+const TEST_TOKEN: string | undefined = process.env.ZOOM_ACCESS_TOKEN;
 if (!TEST_TOKEN) {
 	throw new Error('ZOOM_ACCESS_TOKEN env var is not set — integration tests cannot run');
 }
@@ -21,7 +21,8 @@ if (!TEST_TOKEN) {
 async function getFirstMeetingId(): Promise<number | undefined> {
 	const response = await makeZoomRequest<MeetingListResponse>(
 		'users/me/meetings',
-		TEST_TOKEN,
+		// Type assertion because the token is defined in the env var
+		TEST_TOKEN as string,
 		{ query: { page_size: 1 } },
 	);
 	return response.meetings?.[0]?.id;

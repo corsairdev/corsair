@@ -21,7 +21,7 @@ export const errorHandlers = {
 			}
 
 			return {
-				maxRetries: 5,
+				maxRetries: 3,
 				headersRetryAfterMs: retryAfterMs,
 			};
 		},
