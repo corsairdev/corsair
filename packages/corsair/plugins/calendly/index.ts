@@ -96,7 +96,6 @@ export type CalendlyEndpoints = {
 	eventTypesCreate: CalendlyEndpoint<'eventTypesCreate'>;
 	eventTypesCreateOneOff: CalendlyEndpoint<'eventTypesCreateOneOff'>;
 	eventTypesUpdate: CalendlyEndpoint<'eventTypesUpdate'>;
-	eventTypesGetAvailability: CalendlyEndpoint<'eventTypesGetAvailability'>;
 	eventTypesUpdateAvailability: CalendlyEndpoint<'eventTypesUpdateAvailability'>;
 	eventTypesListAvailableTimes: CalendlyEndpoint<'eventTypesListAvailableTimes'>;
 	eventTypesListHosts: CalendlyEndpoint<'eventTypesListHosts'>;
@@ -171,7 +170,6 @@ const calendlyEndpointsNested = {
 		create: EventTypes.create,
 		createOneOff: EventTypes.createOneOff,
 		update: EventTypes.update,
-		getAvailability: EventTypes.getAvailability,
 		updateAvailability: EventTypes.updateAvailability,
 		listAvailableTimes: EventTypes.listAvailableTimes,
 		listHosts: EventTypes.listHosts,
@@ -287,10 +285,6 @@ export const calendlyEndpointSchemas = {
 	'eventTypes.update': {
 		input: CalendlyEndpointInputSchemas.eventTypesUpdate,
 		output: CalendlyEndpointOutputSchemas.eventTypesUpdate,
-	},
-	'eventTypes.getAvailability': {
-		input: CalendlyEndpointInputSchemas.eventTypesGetAvailability,
-		output: CalendlyEndpointOutputSchemas.eventTypesGetAvailability,
 	},
 	'eventTypes.updateAvailability': {
 		input: CalendlyEndpointInputSchemas.eventTypesUpdateAvailability,
@@ -478,7 +472,6 @@ const calendlyEndpointMeta = {
 	'eventTypes.create': { riskLevel: 'write', description: 'Create a new event type' },
 	'eventTypes.createOneOff': { riskLevel: 'write', description: 'Create a one-off event type' },
 	'eventTypes.update': { riskLevel: 'write', description: 'Update an event type' },
-	'eventTypes.getAvailability': { riskLevel: 'read', description: 'Get availability for an event type' },
 	'eventTypes.updateAvailability': { riskLevel: 'write', description: 'Update availability for an event type' },
 	'eventTypes.listAvailableTimes': { riskLevel: 'read', description: 'List available times for an event type' },
 	'eventTypes.listHosts': { riskLevel: 'read', description: 'List hosts for an event type' },

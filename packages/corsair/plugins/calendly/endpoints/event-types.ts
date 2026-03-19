@@ -197,24 +197,6 @@ export const update: CalendlyEndpoints['eventTypesUpdate'] = async (
 	return result;
 };
 
-export const getAvailability: CalendlyEndpoints['eventTypesGetAvailability'] =
-	async (ctx, input) => {
-		const result = await makeCalendlyRequest<
-			CalendlyEndpointOutputs['eventTypesGetAvailability']
-		>('event_type_available_times', ctx.key, {
-			method: 'GET',
-			query: input
-		});
-
-		await logEventFromContext(
-			ctx,
-			'calendly.eventTypes.getAvailability',
-			{ ...input },
-			'completed',
-		);
-		return result;
-	};
-
 export const updateAvailability: CalendlyEndpoints['eventTypesUpdateAvailability'] =
 	async (ctx, input) => {
 		const { uuid: _, ...body } = input;

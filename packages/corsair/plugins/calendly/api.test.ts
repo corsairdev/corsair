@@ -374,26 +374,6 @@ describe('eventTypes', () => {
 		CalendlyEndpointOutputSchemas.eventTypesCreateOneOff.parse(response);
 	});
 
-	// event_type_available_times returns 400 when the event type has no availability
-	// schedule configured — requires an active event type with scheduling enabled
-	it.skip('eventTypesGetAvailability returns correct type', async () => {
-		const now = new Date();
-		const start = now.toISOString().replace(/\.\d{3}Z$/, 'Z');
-		const end = new Date(now.getTime() + 5 * 24 * 60 * 60 * 1000)
-			.toISOString()
-			.replace(/\.\d{3}Z$/, 'Z');
-
-		const response = await makeCalendlyRequest(
-			'event_type_available_times',
-			TEST_TOKEN,
-			{
-				method: 'GET',
-				query: { event_type: eventTypeUri!, start_time: start, end_time: end },
-			},
-		);
-		CalendlyEndpointOutputSchemas.eventTypesGetAvailability.parse(response);
-	});
-
 	it.skip('eventTypesListAvailableTimes returns correct type', async () => {
 		const now = new Date();
 		const start = now.toISOString().replace(/\.\d{3}Z$/, 'Z');

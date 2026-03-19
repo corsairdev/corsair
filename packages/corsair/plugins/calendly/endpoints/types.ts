@@ -345,13 +345,6 @@ const EventTypesUpdateInputSchema = z.object({
 	slug: z.string().optional(),
 });
 
-const EventTypesGetAvailabilityInputSchema = z.object({
-	event_type: z.string(),
-	start_time: z.string(),
-	end_time: z.string(),
-	timezone: z.string().optional(),
-});
-
 const EventTypesUpdateAvailabilityInputSchema = z.object({
 	uuid: z.string(),
 	rules: z
@@ -676,19 +669,6 @@ const EventTypesCreateOneOffResponseSchema = z.object({
 
 const EventTypesUpdateResponseSchema = z.object({
 	resource: EventTypeSchema,
-});
-
-const EventTypesGetAvailabilityResponseSchema = z.object({
-	collection: z.array(
-		z
-			.object({
-				status: z.string(),
-				invitees_remaining: z.number(),
-				start_time: z.string(),
-				scheduling_url: z.string(),
-			})
-			.passthrough(),
-	),
 });
 
 const EventTypesUpdateAvailabilityResponseSchema = z.object({
@@ -1031,7 +1011,6 @@ export const CalendlyEndpointInputSchemas = {
 	eventTypesCreate: EventTypesCreateInputSchema,
 	eventTypesCreateOneOff: EventTypesCreateOneOffInputSchema,
 	eventTypesUpdate: EventTypesUpdateInputSchema,
-	eventTypesGetAvailability: EventTypesGetAvailabilityInputSchema,
 	eventTypesUpdateAvailability: EventTypesUpdateAvailabilityInputSchema,
 	eventTypesListAvailableTimes: EventTypesListAvailableTimesInputSchema,
 	eventTypesListHosts: EventTypesListHostsInputSchema,
@@ -1094,7 +1073,6 @@ export const CalendlyEndpointOutputSchemas = {
 	eventTypesCreate: EventTypesCreateResponseSchema,
 	eventTypesCreateOneOff: EventTypesCreateOneOffResponseSchema,
 	eventTypesUpdate: EventTypesUpdateResponseSchema,
-	eventTypesGetAvailability: EventTypesGetAvailabilityResponseSchema,
 	eventTypesUpdateAvailability: EventTypesUpdateAvailabilityResponseSchema,
 	eventTypesListAvailableTimes: EventTypesListAvailableTimesResponseSchema,
 	eventTypesListHosts: EventTypesListHostsResponseSchema,
