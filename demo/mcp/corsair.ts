@@ -1,12 +1,6 @@
 import 'dotenv/config';
 import { createCorsair, gmail, linear, slack } from 'corsair';
-import { Pool } from 'pg';
-
-const pool = new Pool({
-	connectionString:
-		process.env.DATABASE_URL ??
-		'postgres://postgres:secret@localhost:5432/corsair',
-});
+import sqlite from './db.js';
 
 export const corsair = createCorsair({
 	plugins: [
@@ -21,7 +15,7 @@ export const corsair = createCorsair({
 			},
 		}),
 	],
-	database: pool,
+	database: sqlite,
 	kek: process.env.CORSAIR_KEK!,
 	multiTenancy: false,
 });
