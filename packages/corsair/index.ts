@@ -30,6 +30,7 @@ export { monday } from './plugins/monday';
 export { exa } from './plugins/exa';
 export { oura } from './plugins/oura';
 export { twitterapiio } from './plugins/twitterapiio';
+export { calendly } from './plugins/calendly';
 export { zoom } from './plugins/zoom';
 export { trello } from './plugins/trello';
 
