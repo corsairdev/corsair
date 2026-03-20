@@ -24,6 +24,7 @@ export { posthog } from './plugins/posthog';
 export { resend } from './plugins/resend';
 export { sentry } from './plugins/sentry';
 export { slack } from './plugins/slack';
+export { telegram } from './plugins/telegram';
 export { spotify } from './plugins/spotify';
 export { todoist } from './plugins/todoist';
 export { monday } from './plugins/monday';
