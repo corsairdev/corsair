@@ -47,6 +47,11 @@
       "types": "./dist/plugins/amplitude/index.d.ts",
       "default": "./dist/plugins/amplitude/index.js"
     },
+    "./plugins/box": {
+      "dev-source": "./plugins/box/index.ts",
+      "types": "./dist/plugins/box/index.d.ts",
+      "default": "./dist/plugins/box/index.js"
+    },
     "./plugins/cal": {
       "dev-source": "./plugins/cal/index.ts",
       "types": "./dist/plugins/cal/index.d.ts",
