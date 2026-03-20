@@ -19,6 +19,7 @@ export const BaseProviders = [
 	'calendly',
 	'discord',
 	'exa',
+	'fireflies',
 	'github',
 	'gmail',
 	'googlecalendar',
@@ -51,6 +52,7 @@ export type AllProviders =
 	| 'calendly'
 	| 'discord'
 	| 'exa'
+	| 'fireflies'
 	| 'github'
 	| 'gmail'
 	| 'googlecalendar'
