@@ -157,6 +157,11 @@
       "types": "./dist/plugins/todoist/index.d.ts",
       "default": "./dist/plugins/todoist/index.js"
     },
+    "./plugins/trello": {
+      "dev-source": "./plugins/trello/index.ts",
+      "types": "./dist/plugins/trello/index.d.ts",
+      "default": "./dist/plugins/trello/index.js"
+    },
     "./plugins/twitterapiio": {
       "dev-source": "./plugins/twitterapiio/index.ts",
       "types": "./dist/plugins/twitterapiio/index.d.ts",

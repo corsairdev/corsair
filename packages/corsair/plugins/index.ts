@@ -143,3 +143,14 @@ export {
 	twitterApiIOEndpointSchemas,
 	twitterapiio,
 } from './twitterapiio';
+
+// Trello Plugin
+export {
+	type TrelloBoundEndpoints,
+	type TrelloBoundWebhooks,
+	type TrelloContext,
+	type TrelloEndpoints,
+	type TrelloPluginOptions,
+	type TrelloWebhooks,
+	trello,
+} from './trello';
