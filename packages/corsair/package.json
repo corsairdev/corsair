@@ -52,6 +52,11 @@
       "types": "./dist/plugins/cal/index.d.ts",
       "default": "./dist/plugins/cal/index.js"
     },
+    "./plugins/calendly": {
+      "dev-source": "./plugins/calendly/index.ts",
+      "types": "./dist/plugins/calendly/index.d.ts",
+      "default": "./dist/plugins/calendly/index.js"
+    },
     "./plugins/discord": {
       "dev-source": "./plugins/discord/index.ts",
       "types": "./dist/plugins/discord/index.d.ts",
