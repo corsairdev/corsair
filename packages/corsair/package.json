@@ -1,6 +1,6 @@
 {
   "name": "corsair",
-  "version": "0.1.33",
+  "version": "0.1.41",
   "description": "",
   "type": "module",
   "main": "./dist/index.js",
@@ -47,15 +47,40 @@
       "types": "./dist/plugins/amplitude/index.d.ts",
       "default": "./dist/plugins/amplitude/index.js"
     },
+    "./plugins/box": {
+      "dev-source": "./plugins/box/index.ts",
+      "types": "./dist/plugins/box/index.d.ts",
+      "default": "./dist/plugins/box/index.js"
+    },
     "./plugins/cal": {
       "dev-source": "./plugins/cal/index.ts",
       "types": "./dist/plugins/cal/index.d.ts",
       "default": "./dist/plugins/cal/index.js"
     },
+    "./plugins/calendly": {
+      "dev-source": "./plugins/calendly/index.ts",
+      "types": "./dist/plugins/calendly/index.d.ts",
+      "default": "./dist/plugins/calendly/index.js"
+    },
     "./plugins/discord": {
       "dev-source": "./plugins/discord/index.ts",
       "types": "./dist/plugins/discord/index.d.ts",
       "default": "./dist/plugins/discord/index.js"
+    },
+    "./plugins/dropbox": {
+      "dev-source": "./plugins/dropbox/index.ts",
+      "types": "./dist/plugins/dropbox/index.d.ts",
+      "default": "./dist/plugins/dropbox/index.js"
+    },
+    "./plugins/exa": {
+      "dev-source": "./plugins/exa/index.ts",
+      "types": "./dist/plugins/exa/index.d.ts",
+      "default": "./dist/plugins/exa/index.js"
+    },
+    "./plugins/fireflies": {
+      "dev-source": "./plugins/fireflies/index.ts",
+      "types": "./dist/plugins/fireflies/index.d.ts",
+      "default": "./dist/plugins/fireflies/index.js"
     },
     "./plugins/github": {
       "dev-source": "./plugins/github/index.ts",
@@ -92,15 +117,35 @@
       "types": "./dist/plugins/hubspot/index.d.ts",
       "default": "./dist/plugins/hubspot/index.js"
     },
+    "./plugins/telegram": {
+      "dev-source": "./plugins/telegram/index.ts",
+      "types": "./dist/plugins/telegram/index.d.ts",
+      "default": "./dist/plugins/telegram/index.js"
+    },
+    "./plugins/intercom": {
+      "dev-source": "./plugins/intercom/index.ts",
+      "types": "./dist/plugins/intercom/index.d.ts",
+      "default": "./dist/plugins/intercom/index.js"
+    },
     "./plugins/linear": {
       "dev-source": "./plugins/linear/index.ts",
       "types": "./dist/plugins/linear/index.d.ts",
       "default": "./dist/plugins/linear/index.js"
     },
+    "./plugins/monday": {
+      "dev-source": "./plugins/monday/index.ts",
+      "types": "./dist/plugins/monday/index.d.ts",
+      "default": "./dist/plugins/monday/index.js"
+    },
     "./plugins/notion": {
       "dev-source": "./plugins/notion/index.ts",
       "types": "./dist/plugins/notion/index.d.ts",
       "default": "./dist/plugins/notion/index.js"
+    },
+    "./plugins/oura": {
+      "dev-source": "./plugins/oura/index.ts",
+      "types": "./dist/plugins/oura/index.d.ts",
+      "default": "./dist/plugins/oura/index.js"
     },
     "./plugins/pagerduty": {
       "dev-source": "./plugins/pagerduty/index.ts",
@@ -137,10 +182,30 @@
       "types": "./dist/plugins/stripe/index.d.ts",
       "default": "./dist/plugins/stripe/index.js"
     },
+    "./plugins/teams": {
+      "dev-source": "./plugins/teams/index.ts",
+      "types": "./dist/plugins/teams/index.d.ts",
+      "default": "./dist/plugins/teams/index.js"
+    },
     "./plugins/todoist": {
       "dev-source": "./plugins/todoist/index.ts",
       "types": "./dist/plugins/todoist/index.d.ts",
       "default": "./dist/plugins/todoist/index.js"
+    },
+    "./plugins/trello": {
+      "dev-source": "./plugins/trello/index.ts",
+      "types": "./dist/plugins/trello/index.d.ts",
+      "default": "./dist/plugins/trello/index.js"
+    },
+    "./plugins/twitterapiio": {
+      "dev-source": "./plugins/twitterapiio/index.ts",
+      "types": "./dist/plugins/twitterapiio/index.d.ts",
+      "default": "./dist/plugins/twitterapiio/index.js"
+    },
+    "./plugins/zoom": {
+      "dev-source": "./plugins/zoom/index.ts",
+      "types": "./dist/plugins/zoom/index.d.ts",
+      "default": "./dist/plugins/zoom/index.js"
     }
   },
   "scripts": {

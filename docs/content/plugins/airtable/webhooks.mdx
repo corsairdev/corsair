@@ -1,0 +1,85 @@
+---
+title: Airtable Webhooks
+description: Airtable webhook event handling in Corsair.
+---
+
+The Airtable plugin includes webhook handlers for Airtable change events.
+
+<Callout type="info">
+**New to Corsair?** Learn about [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
+</Callout>
+
+<Callout>
+**Full Implementation:** See the [Airtable plugin source code](https://github.com/corsairdev/corsair/tree/main/packages/corsair/plugins/airtable).
+</Callout>
+
+## Setup
+
+```ts title="app/api/webhook/route.ts"
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    const body = await request.json();
+
+    const result = await processWebhook(corsair, headers, body);
+    return result.response;
+}
+```
+
+Airtable webhooks are identified by the `x-airtable-content-mac` header.
+
+## Available Webhooks
+
+### events.event
+
+Fires when records or tables change in Airtable. This is a general-purpose event that covers all table and record changes.
+
+**Example:**
+
+```ts title="corsair.ts"
+airtable({
+    webhookHooks: {
+        "events.event": async (event) => {
+            console.log("Airtable event:", event.actionMetadata?.source);
+            console.log("Created records:", event.createdRecordsById);
+            console.log("Updated records:", event.changedRecordsById);
+            console.log("Destroyed records:", event.destroyedRecordIds);
+        },
+    },
+})
+```
+
+**Key fields:**
+- `createdRecordsById` — Map of newly created records
+- `changedRecordsById` — Map of updated records with previous and current values
+- `destroyedRecordIds` — Array of deleted record IDs
+- `changedTablesById` — Map of table schema changes
+- `actionMetadata` — Source metadata (`source`, `sourceMetadata`)
+- `timestamp` — When the event occurred
+- `baseTransactionNumber` — Sequence number for ordering events
+
+---
+
+## Polling Payloads
+
+Airtable's webhook system requires polling for payloads rather than real-time push. Use `webhooks.getPayloads` to retrieve pending events:
+
+```ts title="inngest/functions.ts"
+// Poll Airtable webhook payloads every minute
+export const pollAirtableWebhooks = inngest.createFunction(
+    { id: "poll-airtable-webhooks" },
+    { cron: "* * * * *" },
+    async () => {
+        const payloads = await corsair.airtable.api.webhooks.getPayloads({ // [!code highlight]
+            baseId: "appXXXXXXXXXXXXXX",
+            webhookId: "webhook-id",
+        });
+
+        for (const payload of payloads.payloads ?? []) {
+            console.log("Processing payload:", payload.timestamp);
+        }
+    }
+);
+```

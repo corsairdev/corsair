@@ -50,7 +50,6 @@ export interface SetupCorsairOptions {
 	backfill?: boolean;
 }
 
-
 // ─────────────────────────────────────────────────────────────────────────────
 // Public API
 // ─────────────────────────────────────────────────────────────────────────────
@@ -172,7 +171,7 @@ function describeZodSchema(schema: ZodTypeAny): unknown {
 	if (schema instanceof ZodNumber) return 'number';
 	if (schema instanceof ZodBoolean) return 'boolean';
 	if (schema instanceof ZodDate) return 'date';
-	if (schema instanceof ZodRecord) return 'Record<string, unknown>';
+	if (schema instanceof ZodRecord) return 'jsonb';
 	return 'unknown';
 }
 
@@ -446,9 +445,7 @@ async function runBackfill(
 
 		for (const [group, methods] of Object.entries(groups)) {
 			for (const [method, params] of Object.entries(methods)) {
-				log(
-					`[corsair:setup] Backfilling ${pluginId} › ${group}.${method}...`,
-				);
+				log(`[corsair:setup] Backfilling ${pluginId} › ${group}.${method}...`);
 				try {
 					await api[group]?.[method]?.(params);
 				} catch (error) {
