@@ -62,6 +62,11 @@
       "types": "./dist/plugins/discord/index.d.ts",
       "default": "./dist/plugins/discord/index.js"
     },
+    "./plugins/dropbox": {
+      "dev-source": "./plugins/dropbox/index.ts",
+      "types": "./dist/plugins/dropbox/index.d.ts",
+      "default": "./dist/plugins/dropbox/index.js"
+    },
     "./plugins/exa": {
       "dev-source": "./plugins/exa/index.ts",
       "types": "./dist/plugins/exa/index.d.ts",

@@ -126,15 +126,15 @@ importers:
       '@openai/agents':
         specifier: ^0.6.0
         version: 0.6.0(ws@8.19.0)(zod@3.25.76)
+      better-sqlite3:
+        specifier: ^11.0.0
+        version: 11.10.0
       corsair:
         specifier: 0.1.26
         version: 0.1.26
       dotenv:
         specifier: ^16.4.0
         version: 16.6.1
-      pg:
-        specifier: ^8.13.0
-        version: 8.16.3
       tsx:
         specifier: ^4.19.0
         version: 4.20.6
@@ -142,12 +142,12 @@ importers:
         specifier: ^3.25.0
         version: 3.25.76
     devDependencies:
+      '@types/better-sqlite3':
+        specifier: ^7.6.0
+        version: 7.6.13
       '@types/node':
         specifier: ^22.0.0
         version: 22.19.7
-      '@types/pg':
-        specifier: ^8.11.0
-        version: 8.15.6
       typescript:
         specifier: ^5.8.0
         version: 5.9.3
