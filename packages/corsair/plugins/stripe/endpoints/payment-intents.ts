@@ -34,8 +34,9 @@ export const create: StripeEndpoints['paymentIntentsCreate'] = async (ctx, input
 };
 
 export const get: StripeEndpoints['paymentIntentsGet'] = async (ctx, input) => {
+	const { id } = input;
 	const result = await makeStripeRequest<StripeEndpointOutputs['paymentIntentsGet']>(
-		`payment_intents/${input.id}`,
+		`payment_intents/${id}`,
 		ctx.key,
 		{ method: 'GET' },
 	);

@@ -34,8 +34,9 @@ export const create: StripeEndpoints['sourcesCreate'] = async (ctx, input) => {
 };
 
 export const get: StripeEndpoints['sourcesGet'] = async (ctx, input) => {
+	const { id } = input;
 	const result = await makeStripeRequest<StripeEndpointOutputs['sourcesGet']>(
-		`sources/${input.id}`,
+		`sources/${id}`,
 		ctx.key,
 		{ method: 'GET' },
 	);

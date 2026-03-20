@@ -20,6 +20,7 @@ const STRIPE_API_BASE = 'https://api.stripe.com/v1';
  * The request utility's getRequestBody JSON-stringifies plain objects even with
  * x-www-form-urlencoded mediaType, so we pre-encode to a string here.
  */
+// unknown: values can be primitives, arrays, or nested objects; narrowed below via typeof/Array.isArray guards
 function toFormEncoded(
 	params: Record<string, unknown>,
 	prefix?: string,
@@ -86,6 +87,7 @@ export async function makeStripeRequest<T>(
 	} catch (error) {
 		if (error instanceof Error) {
 			// Surface the real Stripe error message and code from the response body
+			// Type assertion: ApiError exposes no typed body property; asserting to access Stripe's error envelope fields
 			const apiErr = error as { body?: { error?: { message?: string; code?: string } } };
 			const stripeMsg = apiErr.body?.error?.message;
 			const stripeCode = apiErr.body?.error?.code;

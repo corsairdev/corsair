@@ -34,15 +34,16 @@ export const create: StripeEndpoints['customersCreate'] = async (ctx, input) => 
 };
 
 export const deleteCustomer: StripeEndpoints['customersDelete'] = async (ctx, input) => {
+	const { id } = input;
 	const result = await makeStripeRequest<StripeEndpointOutputs['customersDelete']>(
-		`customers/${input.id}`,
+		`customers/${id}`,
 		ctx.key,
 		{ method: 'DELETE' },
 	);
 
 	if (ctx.db.customers) {
 		try {
-			await ctx.db.customers.deleteByEntityId(input.id);
+			await ctx.db.customers.deleteByEntityId(id);
 		} catch (error) {
 			console.warn('Failed to delete customer from database:', error);
 		}
@@ -58,8 +59,9 @@ export const deleteCustomer: StripeEndpoints['customersDelete'] = async (ctx, in
 };
 
 export const get: StripeEndpoints['customersGet'] = async (ctx, input) => {
+	const { id } = input;
 	const result = await makeStripeRequest<StripeEndpointOutputs['customersGet']>(
-		`customers/${input.id}`,
+		`customers/${id}`,
 		ctx.key,
 		{ method: 'GET' },
 	);

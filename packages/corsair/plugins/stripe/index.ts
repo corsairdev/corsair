@@ -406,6 +406,7 @@ export type ExternalStripePlugin<T extends StripePluginOptions> =
 	BaseStripePlugin<T>;
 
 export function stripe<const T extends StripePluginOptions>(
+	// Type assertion: empty object is a safe default because all StripePluginOptions fields are optional
 	incomingOptions: StripePluginOptions & T = {} as StripePluginOptions & T,
 ): ExternalStripePlugin<T> {
 	const options = {

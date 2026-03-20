@@ -218,6 +218,7 @@ export type StripeCouponDeletedEvent = z.infer<
 
 export const StripePingEventSchema = StripeEventBaseSchema.extend({
 	type: z.literal('v2.core.event_destination.ping'),
+	// unknown: ping event data.object is unstructured; Stripe does not document its shape
 	data: z.object({ object: z.record(z.unknown()) }),
 });
 export type StripePingEvent = z.infer<typeof StripePingEventSchema>;
@@ -252,6 +253,7 @@ function parseBody(body: unknown): unknown {
  * Stripe sends: stripe-signature: t=TIMESTAMP,v1=SIGNATURE
  * Signed payload format: `${timestamp}.${rawBody}`
  */
+// unknown: the webhook payload type is generic at this layer; callers receive a typed payload after schema parsing
 export function verifyStripeWebhookSignature(
 	request: WebhookRequest<unknown>,
 	secret?: string,
@@ -301,6 +303,7 @@ export function verifyStripeWebhookSignature(
 	// Stripe sends pretty-printed JSON (2-space indent). If the body was parsed
 	// and re-stringified to compact form, the lengths won't match and the HMAC
 	// will fail. Detect this via content-length and retry with pretty formatting.
+	// Type assertion: headers['content-length'] is string | string[] | undefined; undefined is guarded by the ternary
 	const contentLength = request.headers['content-length']
 		? parseInt(request.headers['content-length'] as string, 10)
 		: null;
@@ -337,6 +340,7 @@ export function createStripeEventMatch(eventType: string): CorsairWebhookMatcher
 		if (!('stripe-signature' in request.headers)) {
 			return false;
 		}
+		// Type assertion: parseBody returns unknown; asserting to Record<string, unknown> to access body.type for event matching
 		const body = parseBody(request.body) as Record<string, unknown>;
 		return body.type === eventType;
 	};

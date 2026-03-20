@@ -30,6 +30,7 @@ const ChargesUpdateInputSchema = z.object({
 	description: z.string().optional(),
 	metadata: z.record(z.string()).optional(),
 	receipt_email: z.string().optional(),
+	// unknown: shipping is a freeform Stripe object (address, tracking, etc.) with no fixed schema
 	shipping: z.record(z.unknown()).optional(),
 });
 
@@ -133,7 +134,9 @@ const SourcesCreateInputSchema = z.object({
 	amount: z.number().optional(),
 	currency: z.string().optional(),
 	flow: z.string().optional(),
+	// unknown: owner is a freeform address/contact object whose fields vary by source type
 	owner: z.record(z.unknown()).optional(),
+	// unknown: redirect params (return_url, etc.) vary by source type and payment flow
 	redirect: z.record(z.unknown()).optional(),
 	metadata: z.record(z.string()).optional(),
 	token: z.string().optional(),
@@ -146,7 +149,9 @@ const SourcesGetInputSchema = z.object({
 const TokensCreateInputSchema = z.object({
 	// card details are sensitive — passthrough allows arbitrary card token data
 	card: z.object({}).passthrough().optional(),
+	// unknown: bank account token fields vary by country and account type (routing/account numbers, etc.)
 	bank_account: z.record(z.unknown()).optional(),
+	// unknown: PII token data has no fixed shape in the Stripe API
 	pii: z.record(z.unknown()).optional(),
 });
 
