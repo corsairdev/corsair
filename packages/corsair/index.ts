@@ -30,5 +30,6 @@ export { monday } from './plugins/monday';
 export { exa } from './plugins/exa';
 export { oura } from './plugins/oura';
 export { twitterapiio } from './plugins/twitterapiio';
+export { trello } from './plugins/trello';
 
 export { type SetupCorsairOptions, setupCorsair } from './setup/index';
