@@ -177,6 +177,11 @@
       "types": "./dist/plugins/spotify/index.d.ts",
       "default": "./dist/plugins/spotify/index.js"
     },
+    "./plugins/stripe": {
+      "dev-source": "./plugins/stripe/index.ts",
+      "types": "./dist/plugins/stripe/index.d.ts",
+      "default": "./dist/plugins/stripe/index.js"
+    },
     "./plugins/teams": {
       "dev-source": "./plugins/teams/index.ts",
       "types": "./dist/plugins/teams/index.d.ts",
