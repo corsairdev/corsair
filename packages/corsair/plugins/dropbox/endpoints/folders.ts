@@ -107,14 +107,17 @@ export const list: DropboxEndpoints['foldersList'] = async (ctx, input) => {
 
 	if (result.entries && ctx.db.files && ctx.db.folders) {
 		try {
+			// Hoist the full-table reads outside the loop — fetch once if any deleted
+			// entry is present rather than issuing 2×N scans for N deleted entries.
+			const hasDeleted = result.entries.some(e => e['.tag'] === 'deleted');
+			const [allFiles, allFolders] = hasDeleted
+				? await Promise.all([ctx.db.files.list(), ctx.db.folders.list()])
+				: [[], []];
+
 			for (const entry of result.entries) {
 				if (entry['.tag'] === 'deleted') {
 					// Deleted entries have no id — look up by path_lower to get the entity_id
 					if (!entry.path_lower) continue;
-					const [allFiles, allFolders] = await Promise.all([
-						ctx.db.files.list(),
-						ctx.db.folders.list(),
-					]);
 					// TypedEntity.data is typed as ZodTypeAny inferred shape — cast to known schema
 					const fileMatch = allFiles.find(f => (f.data as { path_lower?: string }).path_lower === entry.path_lower);
 					const folderMatch = allFolders.find(f => (f.data as { path_lower?: string }).path_lower === entry.path_lower);
@@ -162,14 +165,17 @@ export const listContinue: DropboxEndpoints['foldersListContinue'] = async (
 
 	if (result.entries && ctx.db.files && ctx.db.folders) {
 		try {
+			// Hoist the full-table reads outside the loop — fetch once if any deleted
+			// entry is present rather than issuing 2×N scans for N deleted entries.
+			const hasDeleted = result.entries.some(e => e['.tag'] === 'deleted');
+			const [allFiles, allFolders] = hasDeleted
+				? await Promise.all([ctx.db.files.list(), ctx.db.folders.list()])
+				: [[], []];
+
 			for (const entry of result.entries) {
 				if (entry['.tag'] === 'deleted') {
 					// Deleted entries have no id — look up by path_lower to get the entity_id
 					if (!entry.path_lower) continue;
-					const [allFiles, allFolders] = await Promise.all([
-						ctx.db.files.list(),
-						ctx.db.folders.list(),
-					]);
 					// TypedEntity.data is typed as ZodTypeAny inferred shape — cast to known schema
 					const fileMatch = allFiles.find(f => (f.data as { path_lower?: string }).path_lower === entry.path_lower);
 					const folderMatch = allFolders.find(f => (f.data as { path_lower?: string }).path_lower === entry.path_lower);
