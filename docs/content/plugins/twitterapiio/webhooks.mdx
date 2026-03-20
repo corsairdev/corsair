@@ -1,0 +1,73 @@
+---
+title: Twitter API IO Webhooks
+description: Twitter API IO webhook event handling in Corsair.
+---
+
+The TwitterApiIO plugin includes webhook handlers for tweet creation and filter match events.
+
+<Callout type="info">
+**New to Corsair?** Learn about [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
+</Callout>
+
+<Callout>
+**Full Implementation:** See the [TwitterApiIO plugin source code](https://github.com/corsairdev/corsair/tree/main/packages/corsair/plugins/twitterapiio).
+</Callout>
+
+## Setup
+
+```ts title="app/api/webhook/route.ts"
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    const body = await request.json();
+
+    const result = await processWebhook(corsair, headers, body);
+    return result.response;
+}
+```
+
+TwitterApiIO webhooks are identified by the `x-twitterapiio-signature` header or a `tweet.created` / `tweet.filter_match` body type field.
+
+## Available Webhooks
+
+### tweets.created
+
+Fires when a monitored user posts a new tweet.
+
+**Example:**
+
+```ts title="corsair.ts"
+twitterapiio({
+    webhookHooks: {
+        "tweets.created": async (event) => {
+            console.log("New tweet:", event.tweet?.text);
+            console.log("Author:", event.tweet?.author_id);
+        },
+    },
+})
+```
+
+**Key fields:** `tweet.id`, `tweet.text`, `tweet.author_id`, `tweet.created_at`, `tweet.public_metrics`
+
+---
+
+### tweets.filterMatch
+
+Fires when a tweet matches a configured filter rule.
+
+**Example:**
+
+```ts title="corsair.ts"
+twitterapiio({
+    webhookHooks: {
+        "tweets.filterMatch": async (event) => {
+            console.log("Filter match:", event.tweet?.text);
+            console.log("Matched rule:", event.matching_rules);
+        },
+    },
+})
+```
+
+**Key fields:** `tweet.id`, `tweet.text`, `tweet.author_id`, `tweet.created_at`, `matching_rules`

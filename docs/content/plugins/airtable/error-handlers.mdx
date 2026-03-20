@@ -1,0 +1,110 @@
+---
+title: Airtable Error Handlers
+description: Built-in and custom error handling for the Airtable plugin.
+---
+
+The Airtable plugin includes built-in error handlers for common Airtable API error scenarios.
+
+<Callout type="info">
+**New to Corsair?** Learn about [error handling](/concepts/error-handling) before customizing error handlers.
+</Callout>
+
+<Callout>
+**Full Implementation:** See the [Airtable plugin source code](https://github.com/corsairdev/corsair/tree/main/packages/corsair/plugins/airtable).
+</Callout>
+
+## Built-in Error Handlers
+
+### Rate Limit Errors
+
+**Triggers:** HTTP 429 status
+
+**Behavior:**
+- Maximum retries: **5**
+- Respects `Retry-After` header
+
+**Example:**
+
+```ts
+// Corsair handles rate limits automatically
+const records = await corsair.airtable.api.records.search({
+    baseId: "appXXXXXXXXXXXXXX", // [!code highlight]
+    tableIdOrName: "Tasks",
+});
+```
+
+---
+
+### Authentication Errors
+
+**Triggers:** HTTP 401 status, invalid API key
+
+**Behavior:**
+- Maximum retries: **0** (no retries)
+- Fails immediately
+
+**How to Fix:**
+1. Verify your Airtable personal access token is valid
+2. Ensure the token has the required scopes (`data.records:read`, `data.records:write`, etc.)
+3. Regenerate the token if it has been revoked
+
+---
+
+### Permission Errors
+
+**Triggers:** HTTP 403 status, token lacks required scope
+
+**Behavior:**
+- Maximum retries: **0** (no retries)
+
+**How to Fix:**
+1. Check the required scopes for the endpoint you're calling
+2. Regenerate the token with the necessary scopes
+3. Common scopes: `data.records:read`, `data.records:write`, `schema.bases:read`
+
+---
+
+### Not Found Errors
+
+**Triggers:** HTTP 404 status, base, table, or record does not exist
+
+**Behavior:**
+- Maximum retries: **0** (no retries)
+
+**How to Fix:**
+1. Verify the base ID, table name, and record ID are correct
+2. Check that the resource has not been deleted
+
+---
+
+### Network Errors
+
+**Triggers:** Connection errors, timeouts
+
+**Behavior:**
+- Maximum retries: **3**
+- Uses exponential backoff
+
+---
+
+## Custom Error Handlers
+
+```ts title="corsair.ts"
+airtable({
+    errorHandlers: {
+        INVALID_FILTER_FORMULA: {
+            match: (error) => {
+                return error.message.includes("Invalid formula"); // [!code highlight]
+            },
+            handler: async (error, context) => {
+                console.log("Invalid Airtable filter formula");
+                return {
+                    maxRetries: 0,
+                };
+            },
+        },
+    },
+})
+```
+
+For comprehensive error handling strategies, patterns, and best practices, see the [Error Handling](/concepts/error-handling) concepts page.

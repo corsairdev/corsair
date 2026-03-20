@@ -1,16 +1,19 @@
 import * as Communities from './communities';
 import * as Lists from './lists';
+import * as Replies from './replies';
+import * as Stream from './stream';
 import * as Trends from './trends';
 import * as Tweets from './tweets';
 import * as Users from './users';
+import * as WebhookRules from './webhook-rules';
 
 export const TweetsEndpoints = {
 	getByIds: Tweets.getByIds,
 	search: Tweets.search,
+	advancedSearch: Tweets.advancedSearch,
 	getUserTimeline: Tweets.getUserTimeline,
 	getUserLastTweets: Tweets.getUserLastTweets,
 	getUserMentions: Tweets.getUserMentions,
-	getReplies: Tweets.getReplies,
 	getQuotations: Tweets.getQuotations,
 	getRetweeters: Tweets.getRetweeters,
 	getThreadContext: Tweets.getThreadContext,
@@ -19,6 +22,11 @@ export const TweetsEndpoints = {
 	like: Tweets.like,
 	unlike: Tweets.unlike,
 	retweet: Tweets.retweet,
+};
+
+export const RepliesEndpoints = {
+	get: Replies.get,
+	getV2: Replies.getV2,
 };
 
 export const UsersEndpoints = {
@@ -32,6 +40,20 @@ export const UsersEndpoints = {
 	follow: Users.follow,
 	unfollow: Users.unfollow,
 	getMe: Users.getMe,
+	login: Users.login,
+};
+
+export const StreamEndpoints = {
+	addUser: Stream.addUser,
+	removeUser: Stream.removeUser,
+	listUsers: Stream.listUsers,
+};
+
+export const WebhookRulesEndpoints = {
+	addRule: WebhookRules.addRule,
+	getRules: WebhookRules.getRules,
+	updateRule: WebhookRules.updateRule,
+	deleteRule: WebhookRules.deleteRule,
 };
 
 export const ListsEndpoints = {

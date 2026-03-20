@@ -1,0 +1,110 @@
+---
+title: Twitter API IO Database Schema
+description: Database entities and querying synced Twitter data.
+---
+
+The TwitterApiIO plugin syncs tweet and user data to your database for fast queries.
+
+<Callout type="info">
+**New to Corsair?** Learn about [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Callout>
+
+<Callout>
+**Full Implementation:** See the [TwitterApiIO plugin source code](https://github.com/corsairdev/corsair/tree/main/packages/corsair/plugins/twitterapiio).
+</Callout>
+
+## Synced Entities
+
+- **tweets** - Tweet records
+- **users** - Twitter user profiles
+
+## Database API
+
+```ts
+const tweets = await corsair.twitterapiio.db.tweets.search({
+    data: { author_id: "user-id" },
+});
+```
+
+---
+
+## Tweets
+
+### Schema
+
+```ts
+{
+    id: string;                 // Tweet ID
+    text: string;
+    author_id: string;
+    created_at: string;         // ISO timestamp
+    conversation_id?: string;
+    in_reply_to_user_id?: string;
+    lang?: string;
+    public_metrics?: {
+        retweet_count: number;
+        like_count: number;
+        reply_count: number;
+        quote_count: number;
+    };
+    entities?: {
+        hashtags?: Array<{ tag: string }>;
+        mentions?: Array<{ username: string }>;
+        urls?: Array<{ url: string; expanded_url: string }>;
+    };
+}
+```
+
+### Querying Tweets
+
+**Search by author:**
+
+```ts
+const tweets = await corsair.twitterapiio.db.tweets.search({
+    data: { author_id: "user-id" }, // [!code highlight]
+});
+```
+
+---
+
+## Users
+
+### Schema
+
+```ts
+{
+    id: string;                 // Twitter user ID
+    username: string;
+    name: string;
+    description?: string;
+    profile_image_url?: string;
+    verified?: boolean;
+    created_at?: string;        // ISO timestamp
+    public_metrics?: {
+        followers_count: number;
+        following_count: number;
+        tweet_count: number;
+        listed_count: number;
+    };
+}
+```
+
+### Querying Users
+
+```ts
+const users = await corsair.twitterapiio.db.users.search({
+    data: { verified: true }, // [!code highlight]
+});
+```
+
+---
+
+### Example: Multi-Tenancy Query
+
+```ts
+const tenant = corsair.withTenant("user-123");
+
+const tweets = await tenant.twitterapiio.db.tweets.search({
+    data: { lang: "en" }, // [!code highlight]
+});
+```
