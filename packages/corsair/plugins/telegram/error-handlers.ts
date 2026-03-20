@@ -56,11 +56,9 @@ export const errorHandlers = {
 				return true;
 			}
 			if (error instanceof TelegramAPIError) {
-				const code = error.code;
-			return (
-				code === '401' ||
-				error.message.toLowerCase().includes('unauthorized')
-			);
+				// Match only on explicit 401 code — message text like "Unauthorized" can also
+				// appear on 403 responses and would misclassify them as auth failures
+				return error.code === '401';
 			}
 			const errorMessage = error.message.toLowerCase();
 			return (
@@ -116,9 +114,9 @@ export const errorHandlers = {
 				return true;
 			}
 			if (error instanceof TelegramAPIError) {
-				const code = error.code;
+				// Do not match on code '400' — that is a generic bad-request code and would
+				// intercept validation errors, wrong-parameter errors, etc.
 				return (
-					code === '400' ||
 					error.message.toLowerCase().includes('not found') ||
 					error.message.toLowerCase().includes('chat not found') ||
 					error.message.toLowerCase().includes('message not found')

@@ -13,10 +13,12 @@ export const setWebhook: TelegramEndpoints['setWebhook'] = async (ctx, input) =>
 		},
 	);
 
+	// Exclude secret_token from the event log to avoid persisting credentials
+	const { secret_token: _secret, ...loggableInput } = input;
 	await logEventFromContext(
 		ctx,
 		'telegram.webhook.setWebhook',
-		{ ...input },
+		loggableInput,
 		'completed',
 	);
 	return result;

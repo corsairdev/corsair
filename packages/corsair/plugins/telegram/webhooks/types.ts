@@ -237,7 +237,12 @@ import type {
 
 // Body can be string or object from webhook request - unknown ensures type safety before parsing
 function parseBody(body: unknown): unknown {
-	return typeof body === 'string' ? JSON.parse(body) : body;
+	if (typeof body !== 'string') return body;
+	try {
+		return JSON.parse(body);
+	} catch {
+		return null;
+	}
 }
 
 export function createTelegramMatch(eventType: keyof TelegramUpdate): CorsairWebhookMatcher {
@@ -258,7 +263,8 @@ export function verifyTelegramWebhookSignature(
 	secretToken: string,
 ): { valid: boolean; error?: string } {
 	if (!secretToken) {
-		return { valid: false, error: 'Missing secret token' };
+		// No secret configured — skip verification (valid deployment scenario)
+		return { valid: true };
 	}
 
 	const headers = request.headers;
