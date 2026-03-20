@@ -38,6 +38,7 @@ export const BaseProviders = [
 	'resend',
 	'sentry',
 	'slack',
+	'telegram',
 	'spotify',
 	'tavily',
 	'teams',
@@ -73,6 +74,7 @@ export type AllProviders =
 	| 'resend'
 	| 'sentry'
 	| 'slack'
+	| 'telegram'
 	| 'spotify'
 	| 'tavily'
 	| 'teams'
