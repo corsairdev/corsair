@@ -1,6 +1,6 @@
 {
   "name": "corsair",
-  "version": "0.1.39",
+  "version": "0.1.41",
   "description": "",
   "type": "module",
   "main": "./dist/index.js",
@@ -52,6 +52,11 @@
       "types": "./dist/plugins/cal/index.d.ts",
       "default": "./dist/plugins/cal/index.js"
     },
+    "./plugins/calendly": {
+      "dev-source": "./plugins/calendly/index.ts",
+      "types": "./dist/plugins/calendly/index.d.ts",
+      "default": "./dist/plugins/calendly/index.js"
+    },
     "./plugins/discord": {
       "dev-source": "./plugins/discord/index.ts",
       "types": "./dist/plugins/discord/index.d.ts",
@@ -101,6 +106,11 @@
       "dev-source": "./plugins/hubspot/index.ts",
       "types": "./dist/plugins/hubspot/index.d.ts",
       "default": "./dist/plugins/hubspot/index.js"
+    },
+    "./plugins/intercom": {
+      "dev-source": "./plugins/intercom/index.ts",
+      "types": "./dist/plugins/intercom/index.d.ts",
+      "default": "./dist/plugins/intercom/index.js"
     },
     "./plugins/linear": {
       "dev-source": "./plugins/linear/index.ts",
@@ -162,10 +172,20 @@
       "types": "./dist/plugins/todoist/index.d.ts",
       "default": "./dist/plugins/todoist/index.js"
     },
+    "./plugins/trello": {
+      "dev-source": "./plugins/trello/index.ts",
+      "types": "./dist/plugins/trello/index.d.ts",
+      "default": "./dist/plugins/trello/index.js"
+    },
     "./plugins/twitterapiio": {
       "dev-source": "./plugins/twitterapiio/index.ts",
       "types": "./dist/plugins/twitterapiio/index.d.ts",
       "default": "./dist/plugins/twitterapiio/index.js"
+    },
+    "./plugins/zoom": {
+      "dev-source": "./plugins/zoom/index.ts",
+      "types": "./dist/plugins/zoom/index.d.ts",
+      "default": "./dist/plugins/zoom/index.js"
     }
   },
   "scripts": {
