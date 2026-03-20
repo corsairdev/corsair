@@ -95,12 +95,17 @@ const AskFredMessageSchema = z.object({
 	updated_at: z.string().nullable().optional(),
 });
 
-const AskFredThreadSchema = z.object({
+// AskFredThreadSummary: returned by askfred_threads list query (no messages field)
+const AskFredThreadSummarySchema = z.object({
 	id: z.string(),
 	title: z.string(),
 	transcript_id: z.string().nullable().optional(),
 	user_id: z.string(),
 	created_at: z.string(),
+});
+
+// AskFredThread: returned by askfred_thread single query and deleteAskFredThread
+const AskFredThreadSchema = AskFredThreadSummarySchema.extend({
 	messages: z.array(AskFredMessageSchema).nullable().optional(),
 });
 
@@ -281,7 +286,7 @@ const UsersListResponseSchema = z.object({
 
 // Fireflies uses snake_case query names: askfred_threads, askfred_thread
 const AskFredGetThreadsResponseSchema = z.object({
-	askfred_threads: z.array(AskFredThreadSchema),
+	askfred_threads: z.array(AskFredThreadSummarySchema),
 });
 
 const AskFredGetThreadResponseSchema = z.object({

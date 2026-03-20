@@ -105,13 +105,16 @@ const USERS_LIST_QUERY = `
   }
 `;
 
+// askfred_threads returns AskFredThreadSummary (no messages field)
+const THREAD_SUMMARY_FIELDS = `id title transcript_id user_id created_at`;
+// askfred_thread returns AskFredThread (has messages field)
 const THREAD_FIELDS = `id title transcript_id user_id created_at messages { id thread_id query answer status created_at updated_at }`;
 
 // Fireflies uses snake_case query names: askfred_threads, askfred_thread
 const ASK_FRED_THREADS_QUERY = `
   query AskFredThreads($transcript_id: String) {
     askfred_threads(transcript_id: $transcript_id) {
-      ${THREAD_FIELDS}
+      ${THREAD_SUMMARY_FIELDS}
     }
   }
 `;
@@ -190,7 +193,6 @@ describe('Fireflies API Type Tests', () => {
 			`;
 			// type: unknown - GraphQL introspection has no static TypeScript type
 			const schema = await makeFirefliesRequest<unknown>(SCHEMA_QUERY, TEST_API_KEY);
-			console.log('Schema:', JSON.stringify(schema, null, 2));
 		});
 
 		it('lists Transcript type fields', async () => {
@@ -206,7 +208,6 @@ describe('Fireflies API Type Tests', () => {
 			`;
 			// type: unknown - GraphQL introspection has no static TypeScript type
 			const typeInfo = await makeFirefliesRequest<unknown>(TYPE_QUERY, TEST_API_KEY);
-			console.log('Transcript fields:', JSON.stringify(typeInfo, null, 2));
 		});
 
 		it('lists MeetingAnalytics, Summary, Sentence, AskFredThread type fields', async () => {
@@ -231,7 +232,6 @@ describe('Fireflies API Type Tests', () => {
 			`;
 			// type: unknown - GraphQL introspection has no static TypeScript type
 			const typeInfo = await makeFirefliesRequest<unknown>(TYPES_QUERY, TEST_API_KEY);
-			console.log('Types:', JSON.stringify(typeInfo, null, 2));
 		});
 	});
 

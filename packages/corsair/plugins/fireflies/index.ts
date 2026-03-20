@@ -317,6 +317,7 @@ export type ExternalFirefliesPlugin<T extends FirefliesPluginOptions> =
 	BaseFirefliesPlugin<T>;
 
 export function fireflies<const T extends FirefliesPluginOptions>(
+	// {} as FirefliesPluginOptions & T: default to empty options; T extends FirefliesPluginOptions so the cast is safe
 	incomingOptions: FirefliesPluginOptions & T = {} as FirefliesPluginOptions & T,
 ): ExternalFirefliesPlugin<T> {
 	const options = {

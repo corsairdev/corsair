@@ -23,6 +23,7 @@ interface GraphQLResponse<T> {
 export async function makeFirefliesRequest<T>(
 	gqlQuery: string,
 	apiKey: string,
+	// unknown: GraphQL variables are caller-defined; shape depends on each query/mutation
 	variables?: Record<string, unknown>,
 ): Promise<T> {
 	const config: OpenAPIConfig = {

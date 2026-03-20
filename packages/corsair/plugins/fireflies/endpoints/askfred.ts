@@ -3,13 +3,16 @@ import type { FirefliesEndpoints } from '..';
 import { makeFirefliesRequest } from '../client';
 import type { FirefliesEndpointOutputs } from './types';
 
+// askfred_threads returns AskFredThreadSummary (no messages field)
+const THREAD_SUMMARY_FIELDS = `id title transcript_id user_id created_at`;
+// askfred_thread returns AskFredThread (has messages field)
 const THREAD_FIELDS = `id title transcript_id user_id created_at messages { id thread_id query answer status created_at updated_at }`;
 
 // Fireflies uses snake_case query names: askfred_threads, askfred_thread
 const ASK_FRED_THREADS_QUERY = `
   query AskFredThreads($transcript_id: String) {
     askfred_threads(transcript_id: $transcript_id) {
-      ${THREAD_FIELDS}
+      ${THREAD_SUMMARY_FIELDS}
     }
   }
 `;

@@ -57,6 +57,7 @@ export type FirefliesWebhookOutputs = {
 	meetingDeleted: MeetingDeletedEvent;
 };
 
+// unknown: webhook body arrives as string | object | undefined at runtime; return is unknown until narrowed
 function parseBody(body: unknown): unknown {
 	if (typeof body === 'string') {
 		try {
@@ -70,6 +71,7 @@ function parseBody(body: unknown): unknown {
 
 export function createFirefliesMatch(eventType: string): CorsairWebhookMatcher {
 	return (request: RawWebhookRequest) => {
+		// as Record<string, unknown>: parseBody always returns a plain object after parsing; eventType is read as unknown and compared by value
 		const parsedBody = parseBody(request.body) as Record<string, unknown>;
 		return parsedBody.eventType === eventType;
 	};
