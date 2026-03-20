@@ -102,6 +102,11 @@
       "types": "./dist/plugins/hubspot/index.d.ts",
       "default": "./dist/plugins/hubspot/index.js"
     },
+    "./plugins/intercom": {
+      "dev-source": "./plugins/intercom/index.ts",
+      "types": "./dist/plugins/intercom/index.d.ts",
+      "default": "./dist/plugins/intercom/index.js"
+    },
     "./plugins/linear": {
       "dev-source": "./plugins/linear/index.ts",
       "types": "./dist/plugins/linear/index.d.ts",
