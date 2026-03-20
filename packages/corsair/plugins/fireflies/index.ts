@@ -35,7 +35,6 @@ import type {
 	TranscriptProcessingEvent,
 } from './webhooks/types';
 import {
-	FirefliesWebhookPayloadSchema,
 	InMeetingPayloadSchema,
 	MeetingDeletedPayloadSchema,
 	NewMeetingPayloadSchema,

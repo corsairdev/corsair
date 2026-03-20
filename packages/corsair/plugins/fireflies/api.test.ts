@@ -192,7 +192,7 @@ describe('Fireflies API Type Tests', () => {
 				}
 			`;
 			// type: unknown - GraphQL introspection has no static TypeScript type
-			const schema = await makeFirefliesRequest<unknown>(SCHEMA_QUERY, TEST_API_KEY);
+			await makeFirefliesRequest<unknown>(SCHEMA_QUERY, TEST_API_KEY);
 		});
 
 		it('lists Transcript type fields', async () => {
@@ -207,7 +207,7 @@ describe('Fireflies API Type Tests', () => {
 				}
 			`;
 			// type: unknown - GraphQL introspection has no static TypeScript type
-			const typeInfo = await makeFirefliesRequest<unknown>(TYPE_QUERY, TEST_API_KEY);
+			await makeFirefliesRequest<unknown>(TYPE_QUERY, TEST_API_KEY);
 		});
 
 		it('lists MeetingAnalytics, Summary, Sentence, AskFredThread type fields', async () => {
@@ -231,7 +231,7 @@ describe('Fireflies API Type Tests', () => {
 				}
 			`;
 			// type: unknown - GraphQL introspection has no static TypeScript type
-			const typeInfo = await makeFirefliesRequest<unknown>(TYPES_QUERY, TEST_API_KEY);
+			await makeFirefliesRequest<unknown>(TYPES_QUERY, TEST_API_KEY);
 		});
 	});
 

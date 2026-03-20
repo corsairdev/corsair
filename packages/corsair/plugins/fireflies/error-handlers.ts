@@ -40,7 +40,7 @@ export const errorHandlers = {
 			);
 		},
 		handler: async (error, context) => {
-			console.log(
+			console.warn(
 				`[FIREFLIES:${context.operation}] Authentication failed - check your API key`,
 			);
 
