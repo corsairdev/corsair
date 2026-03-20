@@ -40,6 +40,7 @@ export const BaseProviders = [
 	'slack',
 	'telegram',
 	'spotify',
+	'stripe',
 	'tavily',
 	'teams',
 	'todoist',
@@ -76,6 +77,7 @@ export type AllProviders =
 	| 'slack'
 	| 'telegram'
 	| 'spotify'
+	| 'stripe'
 	| 'tavily'
 	| 'teams'
 	| 'todoist'

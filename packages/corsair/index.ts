@@ -27,6 +27,7 @@ export { slack } from './plugins/slack';
 export { telegram } from './plugins/telegram';
 export { spotify } from './plugins/spotify';
 export { todoist } from './plugins/todoist';
+export { stripe } from './plugins/stripe';
 export { monday } from './plugins/monday';
 export { exa } from './plugins/exa';
 export { oura } from './plugins/oura';
