@@ -17,11 +17,14 @@ import type { AuthTypes, PickAuth } from '../../core/constants';
 import {
 	CommunitiesEndpoints,
 	ListsEndpoints,
+	RepliesEndpoints,
+	StreamEndpoints,
 	TrendsEndpoints,
 	TweetsEndpoints,
 	TwitterApiIOEndpointInputSchemas,
 	TwitterApiIOEndpointOutputSchemas,
 	UsersEndpoints,
+	WebhookRulesEndpoints,
 } from './endpoints';
 import type {
 	TwitterApiIOEndpointInputs,
@@ -66,7 +69,6 @@ export type TwitterApiIOEndpoints = {
 	tweetsGetUserTimeline: TwitterApiIOEndpoint<'tweetsGetUserTimeline'>;
 	tweetsGetUserLastTweets: TwitterApiIOEndpoint<'tweetsGetUserLastTweets'>;
 	tweetsGetUserMentions: TwitterApiIOEndpoint<'tweetsGetUserMentions'>;
-	tweetsGetReplies: TwitterApiIOEndpoint<'tweetsGetReplies'>;
 	tweetsGetQuotations: TwitterApiIOEndpoint<'tweetsGetQuotations'>;
 	tweetsGetRetweeters: TwitterApiIOEndpoint<'tweetsGetRetweeters'>;
 	tweetsGetThreadContext: TwitterApiIOEndpoint<'tweetsGetThreadContext'>;
@@ -85,6 +87,14 @@ export type TwitterApiIOEndpoints = {
 	usersFollow: TwitterApiIOEndpoint<'usersFollow'>;
 	usersUnfollow: TwitterApiIOEndpoint<'usersUnfollow'>;
 	usersGetMe: TwitterApiIOEndpoint<'usersGetMe'>;
+	usersLogin: TwitterApiIOEndpoint<'usersLogin'>;
+	streamAddUser: TwitterApiIOEndpoint<'streamAddUser'>;
+	streamRemoveUser: TwitterApiIOEndpoint<'streamRemoveUser'>;
+	streamListUsers: TwitterApiIOEndpoint<'streamListUsers'>;
+	apiWebhooksAddRule: TwitterApiIOEndpoint<'apiWebhooksAddRule'>;
+	apiWebhooksGetRules: TwitterApiIOEndpoint<'apiWebhooksGetRules'>;
+	apiWebhooksUpdateRule: TwitterApiIOEndpoint<'apiWebhooksUpdateRule'>;
+	apiWebhooksDeleteRule: TwitterApiIOEndpoint<'apiWebhooksDeleteRule'>;
 	listsGetFollowers: TwitterApiIOEndpoint<'listsGetFollowers'>;
 	listsGetMembers: TwitterApiIOEndpoint<'listsGetMembers'>;
 	listsGetTweets: TwitterApiIOEndpoint<'listsGetTweets'>;
@@ -98,6 +108,8 @@ export type TwitterApiIOEndpoints = {
 	communitiesJoin: TwitterApiIOEndpoint<'communitiesJoin'>;
 	communitiesLeave: TwitterApiIOEndpoint<'communitiesLeave'>;
 	trendsGet: TwitterApiIOEndpoint<'trendsGet'>;
+	repliesGet: TwitterApiIOEndpoint<'repliesGet'>;
+	repliesGetV2: TwitterApiIOEndpoint<'repliesGetV2'>;
 };
 
 export type TwitterApiIOBoundEndpoints = BindEndpoints<
@@ -160,7 +172,6 @@ const twitterApiIOEndpointsNested = {
 		getUserTimeline: TweetsEndpoints.getUserTimeline,
 		getUserLastTweets: TweetsEndpoints.getUserLastTweets,
 		getUserMentions: TweetsEndpoints.getUserMentions,
-		getReplies: TweetsEndpoints.getReplies,
 		getQuotations: TweetsEndpoints.getQuotations,
 		getRetweeters: TweetsEndpoints.getRetweeters,
 		getThreadContext: TweetsEndpoints.getThreadContext,
@@ -169,6 +180,10 @@ const twitterApiIOEndpointsNested = {
 		like: TweetsEndpoints.like,
 		unlike: TweetsEndpoints.unlike,
 		retweet: TweetsEndpoints.retweet,
+	},
+	replies: {
+		get: RepliesEndpoints.get,
+		getV2: RepliesEndpoints.getV2,
 	},
 	users: {
 		getByUsername: UsersEndpoints.getByUsername,
@@ -181,6 +196,20 @@ const twitterApiIOEndpointsNested = {
 		follow: UsersEndpoints.follow,
 		unfollow: UsersEndpoints.unfollow,
 		getMe: UsersEndpoints.getMe,
+		login: UsersEndpoints.login,
+	},
+	stream: {
+		addUser: StreamEndpoints.addUser,
+		removeUser: StreamEndpoints.removeUser,
+		listUsers: StreamEndpoints.listUsers,
+	},
+	api: {
+		webhooks: {
+			addRule: WebhookRulesEndpoints.addRule,
+			getRules: WebhookRulesEndpoints.getRules,
+			updateRule: WebhookRulesEndpoints.updateRule,
+			deleteRule: WebhookRulesEndpoints.deleteRule,
+		},
 	},
 	lists: {
 		getFollowers: ListsEndpoints.getFollowers,
@@ -236,10 +265,6 @@ export const twitterApiIOEndpointSchemas = {
 	'tweets.getUserMentions': {
 		input: TwitterApiIOEndpointInputSchemas.tweetsGetUserMentions,
 		output: TwitterApiIOEndpointOutputSchemas.tweetsGetUserMentions,
-	},
-	'tweets.getReplies': {
-		input: TwitterApiIOEndpointInputSchemas.tweetsGetReplies,
-		output: TwitterApiIOEndpointOutputSchemas.tweetsGetReplies,
 	},
 	'tweets.getQuotations': {
 		input: TwitterApiIOEndpointInputSchemas.tweetsGetQuotations,
@@ -313,6 +338,38 @@ export const twitterApiIOEndpointSchemas = {
 		input: TwitterApiIOEndpointInputSchemas.usersGetMe,
 		output: TwitterApiIOEndpointOutputSchemas.usersGetMe,
 	},
+	'users.login': {
+		input: TwitterApiIOEndpointInputSchemas.usersLogin,
+		output: TwitterApiIOEndpointOutputSchemas.usersLogin,
+	},
+	'stream.addUser': {
+		input: TwitterApiIOEndpointInputSchemas.streamAddUser,
+		output: TwitterApiIOEndpointOutputSchemas.streamAddUser,
+	},
+	'stream.removeUser': {
+		input: TwitterApiIOEndpointInputSchemas.streamRemoveUser,
+		output: TwitterApiIOEndpointOutputSchemas.streamRemoveUser,
+	},
+	'stream.listUsers': {
+		input: TwitterApiIOEndpointInputSchemas.streamListUsers,
+		output: TwitterApiIOEndpointOutputSchemas.streamListUsers,
+	},
+	'api.webhooks.addRule': {
+		input: TwitterApiIOEndpointInputSchemas.apiWebhooksAddRule,
+		output: TwitterApiIOEndpointOutputSchemas.apiWebhooksAddRule,
+	},
+	'api.webhooks.getRules': {
+		input: TwitterApiIOEndpointInputSchemas.apiWebhooksGetRules,
+		output: TwitterApiIOEndpointOutputSchemas.apiWebhooksGetRules,
+	},
+	'api.webhooks.updateRule': {
+		input: TwitterApiIOEndpointInputSchemas.apiWebhooksUpdateRule,
+		output: TwitterApiIOEndpointOutputSchemas.apiWebhooksUpdateRule,
+	},
+	'api.webhooks.deleteRule': {
+		input: TwitterApiIOEndpointInputSchemas.apiWebhooksDeleteRule,
+		output: TwitterApiIOEndpointOutputSchemas.apiWebhooksDeleteRule,
+	},
 	'lists.getFollowers': {
 		input: TwitterApiIOEndpointInputSchemas.listsGetFollowers,
 		output: TwitterApiIOEndpointOutputSchemas.listsGetFollowers,
@@ -365,6 +422,14 @@ export const twitterApiIOEndpointSchemas = {
 		input: TwitterApiIOEndpointInputSchemas.trendsGet,
 		output: TwitterApiIOEndpointOutputSchemas.trendsGet,
 	},
+	'replies.get': {
+		input: TwitterApiIOEndpointInputSchemas.repliesGet,
+		output: TwitterApiIOEndpointOutputSchemas.repliesGet,
+	},
+	'replies.getV2': {
+		input: TwitterApiIOEndpointInputSchemas.repliesGetV2,
+		output: TwitterApiIOEndpointOutputSchemas.repliesGetV2,
+	},
 } satisfies RequiredPluginEndpointSchemas<typeof twitterApiIOEndpointsNested>;
 
 // ── Webhook Schemas ───────────────────────────────────────────────────────────
@@ -409,10 +474,6 @@ const twitterApiIOEndpointMeta = {
 	'tweets.getUserMentions': {
 		riskLevel: 'read',
 		description: 'Get tweets that mention a user',
-	},
-	'tweets.getReplies': {
-		riskLevel: 'read',
-		description: 'Get replies to a tweet',
 	},
 	'tweets.getQuotations': {
 		riskLevel: 'read',
@@ -472,6 +533,41 @@ const twitterApiIOEndpointMeta = {
 		riskLevel: 'read',
 		description: 'Get the authenticated account info',
 	},
+	'users.login': {
+		riskLevel: 'write',
+		description:
+			'Authenticate a Twitter account via credentials and obtain a login cookie for v2 endpoints',
+	},
+	'stream.addUser': {
+		riskLevel: 'write',
+		description: 'Add a Twitter user to the real-time tweet monitor stream',
+	},
+	'stream.removeUser': {
+		riskLevel: 'write',
+		description: 'Remove a Twitter user from the real-time tweet monitor stream',
+	},
+	'stream.listUsers': {
+		riskLevel: 'read',
+		description: 'List all Twitter users currently in the monitor stream',
+	},
+	'api.webhooks.addRule': {
+		riskLevel: 'write',
+		description:
+			'Create a new tweet filter rule for the webhook stream (inactive by default — call updateRule to activate)',
+	},
+	'api.webhooks.getRules': {
+		riskLevel: 'read',
+		description: 'List all existing tweet filter rules',
+	},
+	'api.webhooks.updateRule': {
+		riskLevel: 'write',
+		description: 'Update a tweet filter rule, including activating or deactivating it',
+	},
+	'api.webhooks.deleteRule': {
+		riskLevel: 'destructive',
+		description: 'Permanently delete a tweet filter rule',
+		irreversible: true,
+	},
 	'lists.getFollowers': {
 		riskLevel: 'read',
 		description: 'Get followers of a Twitter list',
@@ -524,6 +620,16 @@ const twitterApiIOEndpointMeta = {
 	'trends.get': {
 		riskLevel: 'read',
 		description: 'Get trending topics by location (woeid)',
+	},
+	'replies.get': {
+		riskLevel: 'read',
+		description:
+			'Get replies to a tweet, paginated by time range — stored independently in the replies table so engagement changes are tracked per reply',
+	},
+	'replies.getV2': {
+		riskLevel: 'read',
+		description:
+			'Get replies to a tweet (v2) with sort order control (Relevance, Latest, Likes) — stored independently in the replies table so engagement changes are tracked per reply',
 	},
 } satisfies RequiredPluginEndpointMeta<typeof twitterApiIOEndpointsNested>;
 

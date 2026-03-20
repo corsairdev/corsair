@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import {
+	RawApiReply,
 	RawApiTweet,
 	TwitterApiIOCommunity,
 	TwitterApiIOTrend,
@@ -119,6 +120,20 @@ const TweetsAdvancedSearchInputSchema = z.object({
 		.regex(/^\d{4}-\d{2}-\d{2}$/, 'Must be YYYY-MM-DD')
 		.optional()
 		.describe('Only tweets posted before this date (YYYY-MM-DD)'),
+	/** Return tweets posted on or after this Unix timestamp (seconds) */
+	sinceTime: z
+		.number()
+		.int()
+		.nonnegative()
+		.optional()
+		.describe('Only tweets posted on or after this Unix timestamp (seconds)'),
+	/** Return tweets posted before this Unix timestamp (seconds) */
+	untilTime: z
+		.number()
+		.int()
+		.nonnegative()
+		.optional()
+		.describe('Only tweets posted before this Unix timestamp (seconds)'),
 
 	// ── Tweet-type filters ─────────────────────────────────────────────────
 	/** Whether to include or exclude replies */
@@ -203,13 +218,25 @@ export function buildAdvancedSearchQuery(
 		);
 	}
 	if (input.fromUsers?.length) {
-		parts.push(...input.fromUsers.map((u) => `from:${u}`));
+		if (input.fromUsers.length === 1) {
+			parts.push(`from:${input.fromUsers[0]}`);
+		} else {
+			parts.push(`(${input.fromUsers.map((u) => `from:${u}`).join(' OR ')})`);
+		}
 	}
 	if (input.toUsers?.length) {
-		parts.push(...input.toUsers.map((u) => `to:${u}`));
+		if (input.toUsers.length === 1) {
+			parts.push(`to:${input.toUsers[0]}`);
+		} else {
+			parts.push(`(${input.toUsers.map((u) => `to:${u}`).join(' OR ')})`);
+		}
 	}
 	if (input.mentioningUsers?.length) {
-		parts.push(...input.mentioningUsers.map((u) => `@${u}`));
+		if (input.mentioningUsers.length === 1) {
+			parts.push(`@${input.mentioningUsers[0]}`);
+		} else {
+			parts.push(`(${input.mentioningUsers.map((u) => `@${u}`).join(' OR ')})`);
+		}
 	}
 	if (input.language) {
 		parts.push(`lang:${input.language}`);
@@ -219,6 +246,12 @@ export function buildAdvancedSearchQuery(
 	}
 	if (input.until) {
 		parts.push(`until:${input.until}`);
+	}
+	if (input.sinceTime !== undefined) {
+		parts.push(`since_time:${input.sinceTime}`);
+	}
+	if (input.untilTime !== undefined) {
+		parts.push(`until_time:${input.untilTime}`);
 	}
 	if (input.replies === 'only') {
 		parts.push('filter:replies');
@@ -270,10 +303,21 @@ const TweetsGetUserMentionsInputSchema = z.object({
 	cursor: z.string().optional(),
 });
 
-const TweetsGetRepliesInputSchema = z.object({
+// ── Replies Input Schemas ─────────────────────────────────────────────────────
+
+const RepliesGetInputSchema = z.object({
 	tweetId: z.string(),
 	sinceTime: z.string().optional().describe('Unix timestamp in seconds'),
 	untilTime: z.string().optional().describe('Unix timestamp in seconds'),
+	cursor: z.string().optional(),
+});
+
+const RepliesGetV2InputSchema = z.object({
+	tweetId: z.string(),
+	queryType: z
+		.enum(['Relevance', 'Latest', 'Likes'])
+		.optional()
+		.describe('Sort order for replies. Default is Relevance.'),
 	cursor: z.string().optional(),
 });
 
@@ -432,6 +476,88 @@ const CommunitiesLeaveInputSchema = z.object({
 	loginCookie: z.string().describe('Twitter login cookie from user_login_v2'),
 });
 
+// ── Login Input Schema ────────────────────────────────────────────────────────
+
+const UsersLoginInputSchema = z.object({
+	userName: z.string().describe('Twitter username'),
+	email: z.string().email().describe('Account email address'),
+	password: z.string().describe('Account password'),
+	totpSecret: z
+		.string()
+		.optional()
+		.describe('TOTP secret for 2FA (from the account profile page)'),
+	proxy: z
+		.string()
+		.describe(
+			'High-quality residential proxy URL (e.g. http://user:pass@host:port)',
+		),
+});
+
+// ── Stream Input Schemas ──────────────────────────────────────────────────────
+
+const StreamAddUserInputSchema = z.object({
+	userName: z
+		.string()
+		.describe('Twitter/X handle to add to the real-time monitor stream'),
+});
+
+const StreamRemoveUserInputSchema = z.object({
+	userName: z
+		.string()
+		.describe('Twitter/X handle to remove from the monitor stream'),
+});
+
+const StreamListUsersInputSchema = z.object({});
+
+// ── Webhook Rules Input Schemas ───────────────────────────────────────────────
+
+/** A single tweet filter rule as returned by the API */
+export const TweetFilterRuleSchema = z.object({
+	rule_id: z.string(),
+	tag: z.string().max(255),
+	value: z.string().max(255),
+	interval_seconds: z.number().min(100).max(86400),
+});
+
+export type TweetFilterRule = z.infer<typeof TweetFilterRuleSchema>;
+
+const WebhookRulesAddInputSchema = z.object({
+	tag: z.string().max(255).describe('Custom label to identify this rule'),
+	value: z
+		.string()
+		.max(255)
+		.describe(
+			'Filter expression (e.g. "from:elonmusk OR from:kaitoeasyapi"). Rules are inactive until updated with isActive: true.',
+		),
+	intervalSeconds: z
+		.number()
+		.min(100)
+		.max(86400)
+		.describe(
+			'How often to check for new tweets matching this rule (seconds, 100–86400)',
+		),
+});
+
+const WebhookRulesGetInputSchema = z.object({});
+
+const WebhookRulesUpdateInputSchema = z.object({
+	ruleId: z.string().describe('ID of the rule to update'),
+	tag: z.string().max(255).describe('Custom label'),
+	value: z.string().max(255).describe('Filter expression'),
+	intervalSeconds: z
+		.number()
+		.min(100)
+		.max(86400)
+		.describe('Check interval in seconds (100–86400)'),
+	isActive: z
+		.boolean()
+		.describe('true to activate the rule, false to deactivate'),
+});
+
+const WebhookRulesDeleteInputSchema = z.object({
+	ruleId: z.string().describe('ID of the rule to delete'),
+});
+
 // ── Trend Input Schemas ───────────────────────────────────────────────────────
 
 const TrendsGetInputSchema = z.object({
@@ -439,6 +565,14 @@ const TrendsGetInputSchema = z.object({
 });
 
 // ── Output Schemas ────────────────────────────────────────────────────────────
+
+const PaginatedRepliesResponseSchema = z.object({
+	status: z.string().optional(),
+	replies: z.array(RawApiReply).optional(),
+	next_cursor: z.string().nullable().optional(),
+	has_next_page: z.boolean().optional(),
+	message: z.string().optional(),
+});
 
 const TweetsGetByIdsResponseSchema = z.object({
 	status: z.boolean().optional(),
@@ -478,6 +612,48 @@ const TrendsGetResponseSchema = z.object({
 	trends: z.array(TwitterApiIOTrend).optional(),
 });
 
+// ── Login / Stream / Webhook Rules Output Schemas ─────────────────────────────
+
+const UsersLoginResponseSchema = z.object({
+	login_cookie: z.string().optional(),
+	status: z.string().optional(),
+	msg: z.string().optional(),
+});
+
+const StreamStatusResponseSchema = z.object({
+	status: z.enum(['success', 'error']).optional(),
+	msg: z.string().optional(),
+});
+
+const StreamListUsersResponseSchema = z.object({
+	users: z.array(z.string()).optional().describe('Monitored Twitter usernames'),
+	status: z.string().optional(),
+	msg: z.string().optional(),
+});
+
+const WebhookRulesAddResponseSchema = z.object({
+	rule_id: z.string().optional(),
+	status: z.string().optional(),
+	msg: z.string().optional(),
+});
+
+const WebhookRulesGetResponseSchema = z.object({
+	rules: z.array(TweetFilterRuleSchema).optional(),
+	status: z.string().optional(),
+	msg: z.string().optional(),
+});
+
+const WebhookRulesUpdateResponseSchema = z.object({
+	rule_id: z.string().optional(),
+	status: z.string().optional(),
+	msg: z.string().optional(),
+});
+
+const WebhookRulesDeleteResponseSchema = z.object({
+	status: z.string().optional(),
+	msg: z.string().optional(),
+});
+
 // ── Input/Output Maps ─────────────────────────────────────────────────────────
 
 export const TwitterApiIOEndpointInputSchemas = {
@@ -487,7 +663,6 @@ export const TwitterApiIOEndpointInputSchemas = {
 	tweetsGetUserTimeline: TweetsGetUserTimelineInputSchema,
 	tweetsGetUserLastTweets: TweetsGetUserLastTweetsInputSchema,
 	tweetsGetUserMentions: TweetsGetUserMentionsInputSchema,
-	tweetsGetReplies: TweetsGetRepliesInputSchema,
 	tweetsGetQuotations: TweetsGetQuotationsInputSchema,
 	tweetsGetRetweeters: TweetsGetRetweetersInputSchema,
 	tweetsGetThreadContext: TweetsGetThreadContextInputSchema,
@@ -506,6 +681,14 @@ export const TwitterApiIOEndpointInputSchemas = {
 	usersFollow: UsersFollowInputSchema,
 	usersUnfollow: UsersUnfollowInputSchema,
 	usersGetMe: UsersGetMeInputSchema,
+	usersLogin: UsersLoginInputSchema,
+	streamAddUser: StreamAddUserInputSchema,
+	streamRemoveUser: StreamRemoveUserInputSchema,
+	streamListUsers: StreamListUsersInputSchema,
+	apiWebhooksAddRule: WebhookRulesAddInputSchema,
+	apiWebhooksGetRules: WebhookRulesGetInputSchema,
+	apiWebhooksUpdateRule: WebhookRulesUpdateInputSchema,
+	apiWebhooksDeleteRule: WebhookRulesDeleteInputSchema,
 	listsGetFollowers: ListsGetFollowersInputSchema,
 	listsGetMembers: ListsGetMembersInputSchema,
 	listsGetTweets: ListsGetTweetsInputSchema,
@@ -519,6 +702,8 @@ export const TwitterApiIOEndpointInputSchemas = {
 	communitiesJoin: CommunitiesJoinInputSchema,
 	communitiesLeave: CommunitiesLeaveInputSchema,
 	trendsGet: TrendsGetInputSchema,
+	repliesGet: RepliesGetInputSchema,
+	repliesGetV2: RepliesGetV2InputSchema,
 } as const;
 
 export const TwitterApiIOEndpointOutputSchemas = {
@@ -528,7 +713,6 @@ export const TwitterApiIOEndpointOutputSchemas = {
 	tweetsGetUserTimeline: PaginatedTweetsResponseSchema,
 	tweetsGetUserLastTweets: PaginatedTweetsResponseSchema,
 	tweetsGetUserMentions: PaginatedTweetsResponseSchema,
-	tweetsGetReplies: PaginatedTweetsResponseSchema,
 	tweetsGetQuotations: PaginatedTweetsResponseSchema,
 	tweetsGetRetweeters: PaginatedUsersResponseSchema,
 	tweetsGetThreadContext: PaginatedTweetsResponseSchema,
@@ -547,6 +731,14 @@ export const TwitterApiIOEndpointOutputSchemas = {
 	usersFollow: ActionResponseSchema,
 	usersUnfollow: ActionResponseSchema,
 	usersGetMe: UserGetResponseSchema,
+	usersLogin: UsersLoginResponseSchema,
+	streamAddUser: StreamStatusResponseSchema,
+	streamRemoveUser: StreamStatusResponseSchema,
+	streamListUsers: StreamListUsersResponseSchema,
+	apiWebhooksAddRule: WebhookRulesAddResponseSchema,
+	apiWebhooksGetRules: WebhookRulesGetResponseSchema,
+	apiWebhooksUpdateRule: WebhookRulesUpdateResponseSchema,
+	apiWebhooksDeleteRule: WebhookRulesDeleteResponseSchema,
 	listsGetFollowers: PaginatedUsersResponseSchema,
 	listsGetMembers: PaginatedUsersResponseSchema,
 	listsGetTweets: PaginatedTweetsResponseSchema,
@@ -560,6 +752,8 @@ export const TwitterApiIOEndpointOutputSchemas = {
 	communitiesJoin: ActionResponseSchema,
 	communitiesLeave: ActionResponseSchema,
 	trendsGet: TrendsGetResponseSchema,
+	repliesGet: PaginatedRepliesResponseSchema,
+	repliesGetV2: PaginatedRepliesResponseSchema,
 } as const;
 
 export type TwitterApiIOEndpointInputs = {
@@ -589,3 +783,6 @@ export type UsersBatchGetByIdsResponse =
 export type TrendsGetResponse = TwitterApiIOEndpointOutputs['trendsGet'];
 export type CommunitiesGetByIdResponse =
 	TwitterApiIOEndpointOutputs['communitiesGetById'];
+export type UsersLoginResponse = TwitterApiIOEndpointOutputs['usersLogin'];
+export type WebhookRulesGetResponse =
+	TwitterApiIOEndpointOutputs['apiWebhooksGetRules'];
