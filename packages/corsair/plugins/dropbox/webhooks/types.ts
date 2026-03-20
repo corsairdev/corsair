@@ -56,6 +56,7 @@ export type DropboxWebhookPayload = DropboxChangeNotification;
 
 // ── Utilities ─────────────────────────────────────────────────────────────────
 
+// unknown used because this receives raw webhook bodies of any type before parsing/validation
 function parseBody(body: unknown): unknown {
 	return typeof body === 'string' ? JSON.parse(body) : body;
 }

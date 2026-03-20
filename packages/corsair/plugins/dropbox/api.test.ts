@@ -5,11 +5,30 @@ import { DropboxEndpointOutputSchemas } from './endpoints/types';
 
 dotenv.config();
 
-const TEST_TOKEN = process.env.DROPBOX_ACCESS_TOKEN!;
+const TEST_TOKEN = process.env.DROPBOX_ACCESS_TOKEN ?? '';
 const TEST_FOLDER_PATH = process.env.TEST_DROPBOX_FOLDER ?? '';
 
 describe('Dropbox API Type Tests', () => {
+	beforeAll(() => {
+		if (!process.env.DROPBOX_ACCESS_TOKEN) {
+			throw new Error('DROPBOX_ACCESS_TOKEN environment variable is required to run integration tests');
+		}
+	});
+
 	describe('folders', () => {
+		const createdPaths: string[] = [];
+
+		afterAll(async () => {
+			await Promise.allSettled(
+				createdPaths.map(path =>
+					makeDropboxRequest('files/delete_v2', TEST_TOKEN, {
+						method: 'POST',
+						body: { path },
+					}),
+				),
+			);
+		});
+
 		it('foldersList returns correct type', async () => {
 			const result = await makeDropboxRequest<
 				DropboxEndpointOutputs['foldersList']
@@ -28,6 +47,7 @@ describe('Dropbox API Type Tests', () => {
 
 		it('foldersCreate returns correct type', async () => {
 			const folderPath = `/test-corsair-folder-${Date.now()}`;
+			createdPaths.push(folderPath);
 
 			const result = await makeDropboxRequest<
 				DropboxEndpointOutputs['foldersCreate']
@@ -46,6 +66,7 @@ describe('Dropbox API Type Tests', () => {
 		it('foldersCopy returns correct type', async () => {
 			const fromPath = `/test-corsair-copy-src-${Date.now()}`;
 			const toPath = `/test-corsair-copy-dst-${Date.now()}`;
+			createdPaths.push(fromPath, toPath);
 
 			await makeDropboxRequest('files/create_folder_v2', TEST_TOKEN, {
 				method: 'POST',
@@ -67,6 +88,9 @@ describe('Dropbox API Type Tests', () => {
 		it('foldersMove returns correct type', async () => {
 			const fromPath = `/test-corsair-move-src-${Date.now()}`;
 			const toPath = `/test-corsair-move-dst-${Date.now()}`;
+			// Push both: if the move fails midway fromPath still exists; if it
+			// succeeds only toPath exists. allSettled silently ignores not-found.
+			createdPaths.push(fromPath, toPath);
 
 			await makeDropboxRequest('files/create_folder_v2', TEST_TOKEN, {
 				method: 'POST',
@@ -108,9 +132,11 @@ describe('Dropbox API Type Tests', () => {
 
 	describe('files', () => {
 		let testFilePath: string;
+		const createdPaths: string[] = [];
 
 		beforeAll(async () => {
 			testFilePath = `/test-corsair-file-${Date.now()}.txt`;
+			createdPaths.push(testFilePath);
 			await makeDropboxRequest('files/upload', TEST_TOKEN, {
 				method: 'POST',
 				baseUrl: DROPBOX_CONTENT_BASE,
@@ -125,8 +151,20 @@ describe('Dropbox API Type Tests', () => {
 			});
 		});
 
+		afterAll(async () => {
+			await Promise.allSettled(
+				createdPaths.map(path =>
+					makeDropboxRequest('files/delete_v2', TEST_TOKEN, {
+						method: 'POST',
+						body: { path },
+					}),
+				),
+			);
+		});
+
 		it('filesUpload returns correct type', async () => {
 			const uploadPath = `/test-corsair-upload-${Date.now()}.txt`;
+			createdPaths.push(uploadPath);
 
 			const result = await makeDropboxRequest<
 				DropboxEndpointOutputs['filesUpload']
@@ -152,6 +190,7 @@ describe('Dropbox API Type Tests', () => {
 
 		it('filesCopy returns correct type', async () => {
 			const toPath = `/test-corsair-copy-${Date.now()}.txt`;
+			createdPaths.push(toPath);
 
 			const result = await makeDropboxRequest<
 				DropboxEndpointOutputs['filesCopy']
@@ -168,6 +207,8 @@ describe('Dropbox API Type Tests', () => {
 		it('filesMove returns correct type', async () => {
 			const srcPath = `/test-corsair-move-file-${Date.now()}.txt`;
 			const dstPath = `/test-corsair-moved-file-${Date.now()}.txt`;
+			// Push both: allSettled silently ignores not-found if the move succeeded
+			createdPaths.push(srcPath, dstPath);
 
 			await makeDropboxRequest('files/upload', TEST_TOKEN, {
 				method: 'POST',

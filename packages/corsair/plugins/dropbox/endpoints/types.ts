@@ -213,6 +213,7 @@ const SearchMatchSchema = z
 			})
 			.passthrough()
 			.optional(),
+		// unknown used because Dropbox's match_type object has an undocumented/variable structure
 		match_type: z.record(z.unknown()).optional(),
 	})
 	.passthrough();

@@ -43,6 +43,7 @@ function extractDropboxError(error: ApiError): string {
 	// Dropbox wraps structured errors in an `error` object with `.tag`
 	const errObj = body.error;
 	if (errObj && typeof errObj === 'object') {
+		// unknown cast needed because body.error is typed as `unknown` (value of Record<string, unknown>)
 		const tag = (errObj as Record<string, unknown>)['.tag'];
 		if (typeof tag === 'string') return `[${error.status}] ${tag}`;
 	}

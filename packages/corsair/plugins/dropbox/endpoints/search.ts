@@ -10,7 +10,11 @@ export const query: DropboxEndpoints['searchQuery'] = async (ctx, input) => {
 		method: 'POST',
 		body: {
 			query: input.query,
-			options: input,
+			options: {
+				path: input.path,
+				max_results: input.max_results,
+				filename_only: input.filename_only,
+			},
 		},
 	});
 
