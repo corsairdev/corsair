@@ -41,12 +41,11 @@ export const create: BoxEndpoints['foldersCreate'] = async (ctx, input) => {
 		ctx.key,
 		{
 			method: 'POST',
-			// any: spread of typed input fields into the Box API body; TS can't infer the merged shape as Record<string, unknown> without a cast
 		body: {
 				name,
 				parent: { id: parent_id },
 				...rest,
-			} as Record<string, unknown>,
+			}
 		},
 	);
 
@@ -140,8 +139,7 @@ export const share: BoxEndpoints['foldersShare'] = async (ctx, input) => {
 		ctx.key,
 		{
 			method: 'PUT',
-			// any: Box PUT body for shared_link must be Record<string, unknown>; the narrowed input type doesn't satisfy it without a cast
-			body: { shared_link } as Record<string, unknown>,
+			body: { shared_link },
 			query: { fields: 'shared_link' },
 		},
 	);

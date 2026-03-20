@@ -33,8 +33,7 @@ export const copy: BoxEndpoints['filesCopy'] = async (ctx, input) => {
 		ctx.key,
 		{
 			method: 'POST',
-			// any: body is the rest of the typed input object; TS can't widen the intersection to Record<string, unknown> without a cast
-			body: body as Record<string, unknown>,
+			body: body
 		},
 	);
 
