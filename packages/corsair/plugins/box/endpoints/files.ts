@@ -3,28 +3,6 @@ import type { BoxBoundEndpoints, BoxEndpoints } from '..';
 import { makeBoxRequest, makeBoxUploadRequest } from '../client';
 import type { BoxEndpointOutputs } from './types';
 
-function toFileDbRecord(file: BoxEndpointOutputs['filesGet']) {
-	return {
-		id: file.id,
-		type: file.type,
-		name: file.name,
-		size: file.size,
-		description: file.description,
-		etag: file.etag,
-		sha1: file.sha1,
-		sequence_id: file.sequence_id,
-		extension: file.extension,
-		is_package: file.is_package,
-		created_at: file.created_at,
-		modified_at: file.modified_at,
-		trashed_at: file.trashed_at,
-		purged_at: file.purged_at,
-		content_created_at: file.content_created_at,
-		content_modified_at: file.content_modified_at,
-		item_status: file.item_status,
-	};
-}
-
 export const get: BoxEndpoints['filesGet'] = async (ctx, input) => {
 	const { file_id, ...query } = input;
 	const result = await makeBoxRequest<BoxEndpointOutputs['filesGet']>(
@@ -38,7 +16,7 @@ export const get: BoxEndpoints['filesGet'] = async (ctx, input) => {
 
 	if (result.id && ctx.db.files) {
 		try {
-			await ctx.db.files.upsertByEntityId(result.id, toFileDbRecord(result));
+			await ctx.db.files.upsertByEntityId(result.id, result);
 		} catch (error) {
 			console.warn('Failed to save file to database:', error);
 		}
@@ -55,13 +33,14 @@ export const copy: BoxEndpoints['filesCopy'] = async (ctx, input) => {
 		ctx.key,
 		{
 			method: 'POST',
+			// any: body is the rest of the typed input object; TS can't widen the intersection to Record<string, unknown> without a cast
 			body: body as Record<string, unknown>,
 		},
 	);
 
 	if (result.id && ctx.db.files) {
 		try {
-			await ctx.db.files.upsertByEntityId(result.id, toFileDbRecord(result));
+			await ctx.db.files.upsertByEntityId(result.id, result);
 		} catch (error) {
 			console.warn('Failed to save copied file to database:', error);
 		}
@@ -127,6 +106,7 @@ export const search: BoxEndpoints['filesSearch'] = async (ctx, input) => {
 		try {
 			for (const entry of result.entries) {
 				if (entry.id) {
+					// any: ctx.endpoints is typed as the generic plugin context; cast needed to access Box-specific bound methods
 					const endpoints = ctx.endpoints as BoxBoundEndpoints;
 					await endpoints.files.get({ file_id: entry.id });
 				}
@@ -152,14 +132,14 @@ export const share: BoxEndpoints['filesShare'] = async (ctx, input) => {
 		ctx.key,
 		{
 			method: 'PUT',
-			body: { shared_link } as Record<string, unknown>,
+			body: { shared_link },
 			query: { fields: 'shared_link' },
 		},
 	);
 
 	if (result.id && ctx.db.files) {
 		try {
-			await ctx.db.files.upsertByEntityId(result.id, toFileDbRecord(result));
+			await ctx.db.files.upsertByEntityId(result.id, result);
 		} catch (error) {
 			console.warn('Failed to save shared file to database:', error);
 		}
@@ -185,6 +165,7 @@ export const upload: BoxEndpoints['filesUpload'] = async (ctx, input) => {
 		try {
 			for (const file of result.entries) {
 				if (file.id) {
+					// any: ctx.endpoints is typed as the generic plugin context; cast needed to access Box-specific bound methods
 					const endpoints = ctx.endpoints as BoxBoundEndpoints;
 					await endpoints.files.get({ file_id: file.id });
 				}

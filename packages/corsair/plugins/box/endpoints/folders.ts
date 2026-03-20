@@ -3,26 +3,6 @@ import type { BoxBoundEndpoints, BoxEndpoints } from '..';
 import { makeBoxRequest } from '../client';
 import type { BoxEndpointOutputs } from './types';
 
-function toFolderDbRecord(folder: BoxEndpointOutputs['foldersGet']) {
-	return {
-		id: folder.id,
-		type: folder.type,
-		name: folder.name,
-		description: folder.description,
-		etag: folder.etag,
-		sequence_id: folder.sequence_id,
-		created_at: folder.created_at,
-		modified_at: folder.modified_at,
-		trashed_at: folder.trashed_at,
-		purged_at: folder.purged_at,
-		content_created_at: folder.content_created_at,
-		content_modified_at: folder.content_modified_at,
-		is_externally_owned: folder.is_externally_owned,
-		has_collaborations: folder.has_collaborations,
-		item_status: folder.item_status,
-	};
-}
-
 export const get: BoxEndpoints['foldersGet'] = async (ctx, input) => {
 	const { folder_id, ...query } = input;
 	const result = await makeBoxRequest<BoxEndpointOutputs['foldersGet']>(
@@ -38,7 +18,7 @@ export const get: BoxEndpoints['foldersGet'] = async (ctx, input) => {
 		try {
 			await ctx.db.folders.upsertByEntityId(
 				result.id,
-				toFolderDbRecord(result),
+				result,
 			);
 		} catch (error) {
 			console.warn('Failed to save folder to database:', error);
@@ -61,7 +41,8 @@ export const create: BoxEndpoints['foldersCreate'] = async (ctx, input) => {
 		ctx.key,
 		{
 			method: 'POST',
-			body: {
+			// any: spread of typed input fields into the Box API body; TS can't infer the merged shape as Record<string, unknown> without a cast
+		body: {
 				name,
 				parent: { id: parent_id },
 				...rest,
@@ -73,7 +54,7 @@ export const create: BoxEndpoints['foldersCreate'] = async (ctx, input) => {
 		try {
 			await ctx.db.folders.upsertByEntityId(
 				result.id,
-				toFolderDbRecord(result),
+				result,
 			);
 		} catch (error) {
 			console.warn('Failed to save created folder to database:', error);
@@ -133,6 +114,7 @@ export const search: BoxEndpoints['foldersSearch'] = async (ctx, input) => {
 		try {
 			for (const entry of result.entries) {
 				if (entry.id) {
+					// any: ctx.endpoints is typed as the generic plugin context; cast needed to access Box-specific bound methods
 					const endpoints = ctx.endpoints as BoxBoundEndpoints;
 					await endpoints.folders.get({ folder_id: entry.id });
 				}
@@ -158,6 +140,7 @@ export const share: BoxEndpoints['foldersShare'] = async (ctx, input) => {
 		ctx.key,
 		{
 			method: 'PUT',
+			// any: Box PUT body for shared_link must be Record<string, unknown>; the narrowed input type doesn't satisfy it without a cast
 			body: { shared_link } as Record<string, unknown>,
 			query: { fields: 'shared_link' },
 		},
@@ -167,7 +150,7 @@ export const share: BoxEndpoints['foldersShare'] = async (ctx, input) => {
 		try {
 			await ctx.db.folders.upsertByEntityId(
 				result.id,
-				toFolderDbRecord(result),
+				result,
 			);
 		} catch (error) {
 			console.warn('Failed to save shared folder to database:', error);
@@ -190,6 +173,7 @@ export const update: BoxEndpoints['foldersUpdate'] = async (ctx, input) => {
 		ctx.key,
 		{
 			method: 'PUT',
+			// any: body is the rest of the typed input object; TS can't widen the intersection to Record<string, unknown> without a cast
 			body: body as Record<string, unknown>,
 			query: fields ? { fields } : undefined,
 		},
@@ -199,7 +183,7 @@ export const update: BoxEndpoints['foldersUpdate'] = async (ctx, input) => {
 		try {
 			await ctx.db.folders.upsertByEntityId(
 				result.id,
-				toFolderDbRecord(result),
+				result,
 			);
 		} catch (error) {
 			console.warn('Failed to save updated folder to database:', error);

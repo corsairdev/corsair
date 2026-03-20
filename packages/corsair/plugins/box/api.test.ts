@@ -33,7 +33,6 @@ beforeAll(async () => {
 
 	TEST_FILE_ID = rootItems.entries?.find((e) => e.type === 'file')?.id;
 	const folder = rootItems.entries?.find((e) => e.type === 'folder');
-	console.log(folder, 'folder');
 	if (folder?.id) {
 		TEST_FOLDER_ID = folder.id;
 	}

@@ -39,7 +39,7 @@ export const errorHandlers = {
 			);
 		},
 		handler: async (error, context) => {
-			console.log(
+			console.warn(
 				`[BOX:${context.operation}] Authentication failed - check your access token`,
 			);
 

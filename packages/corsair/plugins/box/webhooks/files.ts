@@ -425,7 +425,6 @@ export const uploaded: BoxWebhooks['fileUploaded'] = {
 
 		if (fileId && ctx.db.files) {
 			try {
-				console.log(source, 'source');
 				await ctx.db.files.upsertByEntityId(fileId, {
 					id: fileId,
 					// any: source is a passthrough record from Box webhook payload

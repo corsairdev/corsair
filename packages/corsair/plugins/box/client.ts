@@ -31,6 +31,7 @@ export async function makeBoxRequest<T>(
 	accessToken: string,
 	options: {
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+		// unknown: Box API request bodies vary in shape per endpoint; callers provide their own typed objects
 		body?: Record<string, unknown>;
 		query?: Record<string, string | number | boolean | undefined>;
 		headers?: Record<string, string>;
@@ -79,6 +80,7 @@ export async function makeBoxUploadRequest<T>(
 	endpoint: string,
 	accessToken: string,
 	options: {
+		// unknown: upload attributes vary per file type and are serialised to JSON; callers provide their own typed object
 		attributes: Record<string, unknown>;
 		content: string | Uint8Array;
 		fileName: string;
@@ -108,5 +110,6 @@ export async function makeBoxUploadRequest<T>(
 		);
 	}
 
+	// any: fetch().json() returns Promise<any>; T is asserted by the caller at the call site
 	return response.json() as Promise<T>;
 }
