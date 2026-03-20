@@ -37,7 +37,7 @@ export const errorHandlers = {
 			);
 		},
 		handler: async (error, context) => {
-			console.log(
+			console.warn(
 				`[SLACK:${context.operation}] Authentication failed - check your bot token`,
 			);
 
