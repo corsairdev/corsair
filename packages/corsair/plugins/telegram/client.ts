@@ -70,7 +70,8 @@ export async function makeTelegramRequest<T>(
 		method,
 		url: endpoint,
 		...(isFileUpload
-			? { formData: body as Record<string, any> }
+			? // FormData API requires `any` because file entries can be File, Blob, or string - no common typed alternative
+			  { formData: body as Record<string, any> }
 			: {
 					body: isWriteMethod ? body : undefined,
 					mediaType: 'application/json; charset=utf-8',
@@ -89,6 +90,7 @@ export async function makeTelegramRequest<T>(
 			'ok' in response &&
 			!response.ok
 		) {
+			// Telegram error responses follow a known shape not reflected in the generic T parameter
 			const errorResponse = response as {
 				error_code?: number;
 				description?: string;
@@ -102,13 +104,16 @@ export async function makeTelegramRequest<T>(
 			throw new TelegramAPIError(description, errorCode, errorResponse.parameters);
 		}
 
+		// Telegram API wraps successful payloads in a `result` field; T represents the unwrapped value
 		const result = response as { result?: T };
+		// Fall back to the raw response when `result` is absent (e.g. boolean responses)
 		return (result.result ?? response) as T;
 	} catch (error) {
 		if (error instanceof TelegramAPIError) {
 			throw error;
 		}
 		if (error instanceof ApiError) {
+			// ApiError.body is typed as unknown; cast to the Telegram error shape to access structured fields
 			const errorBody = error.body as
 				| {
 						ok?: boolean;

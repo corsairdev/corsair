@@ -242,6 +242,7 @@ function parseBody(body: unknown): unknown {
 
 export function createTelegramMatch(eventType: keyof TelegramUpdate): CorsairWebhookMatcher {
 	return (request: RawWebhookRequest) => {
+		// parseBody returns unknown; cast is safe because Telegram only sends TelegramUpdate objects to this endpoint
 		const parsedBody = parseBody(request.body) as TelegramUpdate;
 		
 		if (!parsedBody || typeof parsedBody !== 'object') {

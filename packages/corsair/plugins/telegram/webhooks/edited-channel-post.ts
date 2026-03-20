@@ -17,6 +17,7 @@ export const editedChannelPost: TelegramWebhooks['editedChannelPost'] = {
 			};
 		}
 
+		// payload arrives as unknown from the generic webhook handler; structure is guaranteed by verifyTelegramWebhookSignature above
 		const update = request.payload as TelegramUpdate;
 
 		if (!update || !update.edited_channel_post) {

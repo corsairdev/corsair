@@ -80,6 +80,7 @@ const TelegramKeyboardButtonPollTypeSchema = z.object({
 	type: z.string().optional(),
 });
 
+// z.ZodType<any> required for mutually recursive schemas (TelegramChat references TelegramMessage and vice versa)
 const TelegramChatSchema: z.ZodType<any> = z.object({
 	id: z.number(),
 	type: z.enum(['private', 'group', 'supergroup', 'channel']),
@@ -201,6 +202,7 @@ const TelegramLocationSchema = z.object({
 	proximity_alert_radius: z.number().optional(),
 });
 
+// z.ZodType<any> required for mutually recursive schemas (TelegramMessage references TelegramChat and vice versa)
 const TelegramMessageSchema: z.ZodType<any> = z.object({
 	message_id: z.number(),
 	from: TelegramUserSchema.optional(),

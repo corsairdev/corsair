@@ -219,6 +219,7 @@ export type ExternalTelegramPlugin<T extends TelegramPluginOptions> =
 	BaseTelegramPlugin<T>;
 
 export function telegram<const T extends TelegramPluginOptions>(
+	// Default to empty object; cast required because TS cannot verify {} satisfies the generic constraint T at compile time
 	incomingOptions: TelegramPluginOptions & T = {} as TelegramPluginOptions & T,
 ): ExternalTelegramPlugin<T> {
 	const options = {
