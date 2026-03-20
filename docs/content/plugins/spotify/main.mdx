@@ -1,0 +1,206 @@
+---
+title: Spotify
+description: Integrate Spotify music playback, playlists, and search into your application with Corsair.
+---
+
+## Quick Start
+
+Add the Spotify plugin to your Corsair instance:
+
+```ts title="corsair.ts"
+import { createCorsair } from "corsair";
+import { spotify } from "corsair/plugins";
+
+export const corsair = createCorsair({
+    plugins: [
+        spotify(),
+    ],
+});
+```
+
+Once configured, you can access the Spotify API:
+
+```ts
+// Search for tracks
+const results = await corsair.spotify.api.tracks.search({
+    q: "Bohemian Rhapsody",
+    limit: 5,
+});
+```
+
+## Authentication
+
+### Supported Auth Types
+
+The Spotify plugin supports:
+- **`oauth_2`** (default) - Use OAuth 2.0 for user authentication
+
+### Default Auth Type
+
+If no `authType` is specified, the plugin defaults to **`oauth_2`**.
+
+### Configuring OAuth 2.0 Authentication
+
+```ts title="corsair.ts"
+spotify()
+// No authType needed - oauth_2 is the default
+```
+
+See [Authentication](/concepts/auth) for details on setting up OAuth 2.0 credentials.
+
+## Options
+
+| Option | Type | Description |
+|--------|------|-------------|
+| `authType` | `'oauth_2'` | Authentication method (defaults to `'oauth_2'`) |
+| `key` | `string` | Access token (optional, uses database if not provided) |
+| `hooks` | `object` | Endpoint hooks for custom logic |
+| `webhookHooks` | `object` | Webhook hooks for event handling |
+| `errorHandlers` | `object` | Custom error handlers |
+| `permissions` | `object` | Permission configuration for AI agent access |
+
+### Hooks
+
+```ts
+spotify({
+    hooks: {
+        player: {
+            startPlayback: {
+                before: async (ctx, input) => {
+                    console.log("Starting playback:", input.context_uri);
+                    return { ctx, input };
+                },
+            },
+        },
+    },
+})
+```
+
+See [Hooks](/concepts/hooks) for complete documentation.
+
+### Error Handling
+
+The plugin includes built-in error handlers for common scenarios. For complete documentation, see the [Error Handlers reference](/plugins/spotify/error-handlers).
+
+## Usage
+
+### Accessing the API
+
+```ts
+// Get currently playing track
+const current = await corsair.spotify.api.player.getCurrentlyPlaying({});
+
+// Create a playlist
+const playlist = await corsair.spotify.api.playlists.create({
+    name: "My Corsair Playlist",
+    description: "Created via Corsair",
+    public: false,
+});
+
+// Add tracks to playlist
+await corsair.spotify.api.playlists.addItem({
+    playlist_id: playlist.data.id,
+    uris: ["spotify:track:4uLU6hMCjMI75M1A2tKUQC"],
+});
+```
+
+See [API Endpoints](/plugins/spotify/api-endpoints) for the complete reference.
+
+### Database Access
+
+```ts
+const tracks = await corsair.spotify.db.tracks.search({
+    data: { name: "Bohemian Rhapsody" },
+});
+```
+
+See [Database](/plugins/spotify/database) for the complete schema.
+
+### Multi-Tenancy
+
+```ts
+const tenant = corsair.withTenant("user-123");
+
+await tenant.spotify.api.player.resume({});
+```
+
+## Examples
+
+### Example 1: Build a Playlist from Search Results
+
+```ts title="inngest/functions.ts"
+export const buildPlaylist = inngest.createFunction(
+    { id: "build-spotify-playlist" },
+    { event: "app/playlist-requested" },
+    async ({ event }) => {
+        const tenant = corsair.withTenant(event.data.tenantId);
+
+        const tracks = await tenant.spotify.api.tracks.search({
+            q: event.data.genre, // [!code highlight]
+            limit: 20,
+        });
+
+        const playlist = await tenant.spotify.api.playlists.create({
+            name: `${event.data.genre} Mix`, // [!code highlight]
+            public: false,
+        });
+
+        await tenant.spotify.api.playlists.addItem({
+            playlist_id: playlist.data.id,
+            uris: tracks.data.tracks.items.map(t => t.uri), // [!code highlight]
+        });
+
+        return { playlistId: playlist.data.id };
+    }
+);
+```
+
+### Example 2: Morning Playlist Auto-Play
+
+```ts title="inngest/functions.ts"
+export const morningPlaylist = inngest.createFunction(
+    { id: "morning-playlist" },
+    { cron: "0 7 * * *" },
+    async () => {
+        const playlists = await corsair.spotify.api.playlists.getUserPlaylists({});
+
+        const morningPlaylist = playlists.data.items.find(
+            p => p.name.toLowerCase().includes("morning") // [!code highlight]
+        );
+
+        if (morningPlaylist) {
+            await corsair.spotify.api.player.startPlayback({
+                context_uri: morningPlaylist.uri,
+            });
+        }
+    }
+);
+```
+
+### Example 3: Get Liked Tracks for Recommendations
+
+```ts title="inngest/functions.ts"
+export const analyzeListeningHistory = inngest.createFunction(
+    { id: "analyze-listening-history" },
+    { event: "app/analyze-music" },
+    async ({ event }) => {
+        const tenant = corsair.withTenant(event.data.tenantId);
+
+        const liked = await tenant.spotify.api.library.getLikedTracks({
+            limit: 50, // [!code highlight]
+        });
+
+        const topArtistIds = [...new Set(
+            liked.data.items.map(item => item.track.artists[0].id)
+        )].slice(0, 5);
+
+        const relatedArtists = await Promise.all(
+            topArtistIds.map(id =>
+                tenant.spotify.api.artists.getRelatedArtists({ id })
+            )
+        );
+
+        return { relatedArtists: relatedArtists.flatMap(r => r.data.artists) };
+    }
+);
+```

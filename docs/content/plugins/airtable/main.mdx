@@ -1,0 +1,268 @@
+---
+title: Airtable
+description: Integrate Airtable databases and records into your application with Corsair.
+---
+
+## Quick Start
+
+Add the Airtable plugin to your Corsair instance:
+
+```ts title="corsair.ts"
+import { createCorsair } from "corsair";
+import { airtable } from "corsair/plugins";
+
+export const corsair = createCorsair({
+    plugins: [
+        airtable(),
+    ],
+});
+```
+
+Once configured, you can work with Airtable records:
+
+```ts
+// Search records in a table
+const records = await corsair.airtable.api.records.search({
+    baseId: "appXXXXXXXXXXXXXX",
+    tableIdOrName: "Tasks",
+    filterByFormula: "{Status} = 'In Progress'",
+});
+```
+
+## Authentication
+
+### Supported Auth Types
+
+The Airtable plugin supports:
+- **`api_key`** (default) - Use an Airtable personal access token
+
+### Default Auth Type
+
+If no `authType` is specified, the plugin defaults to **`api_key`**.
+
+### Configuring API Key Authentication
+
+```ts title="corsair.ts"
+airtable({
+    key: process.env.AIRTABLE_API_KEY, // [!code highlight]
+})
+```
+
+For webhook signature verification:
+
+```ts title="corsair.ts"
+airtable({
+    key: process.env.AIRTABLE_API_KEY,
+    webhookSecret: process.env.AIRTABLE_WEBHOOK_SECRET, // [!code highlight]
+})
+```
+
+See [Authentication](/concepts/auth) for details on managing credentials.
+
+## Options
+
+| Option | Type | Description |
+|--------|------|-------------|
+| `authType` | `'api_key'` | Authentication method (defaults to `'api_key'`) |
+| `key` | `string` | Personal access token (optional, uses database if not provided) |
+| `webhookSecret` | `string` | Webhook secret for `x-airtable-content-mac` verification |
+| `hooks` | `object` | Endpoint hooks for custom logic |
+| `webhookHooks` | `object` | Webhook hooks for event handling |
+| `errorHandlers` | `object` | Custom error handlers |
+| `permissions` | `object` | Permission configuration for AI agent access |
+
+### Hooks
+
+```ts
+airtable({
+    hooks: {
+        records: {
+            create: {
+                before: async (ctx, input) => {
+                    console.log("Creating record in:", input.tableIdOrName);
+                    return { ctx, input };
+                },
+            },
+        },
+    },
+})
+```
+
+See [Hooks](/concepts/hooks) for complete documentation.
+
+### Error Handling
+
+The plugin includes built-in error handlers for common scenarios. For complete documentation, see the [Error Handlers reference](/plugins/airtable/error-handlers).
+
+## Usage
+
+### Accessing the API
+
+```ts
+// Create a record
+await corsair.airtable.api.records.create({
+    baseId: "appXXXXXXXXXXXXXX",
+    tableIdOrName: "Tasks",
+    fields: {
+        Name: "New Task",
+        Status: "Todo",
+        Assignee: "user@example.com",
+    },
+});
+
+// Update a record
+await corsair.airtable.api.records.update({
+    baseId: "appXXXXXXXXXXXXXX",
+    tableIdOrName: "Tasks",
+    recordId: "recXXXXXXXXXXXXXX",
+    fields: { Status: "Done" },
+});
+
+// Delete a record
+await corsair.airtable.api.records.delete({
+    baseId: "appXXXXXXXXXXXXXX",
+    tableIdOrName: "Tasks",
+    recordId: "recXXXXXXXXXXXXXX",
+});
+```
+
+See [API Endpoints](/plugins/airtable/api-endpoints) for the complete reference.
+
+### Webhooks
+
+Airtable sends record change events to your webhook endpoint:
+
+```ts title="app/api/webhook/route.ts"
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    const body = await request.json();
+
+    const result = await processWebhook(corsair, headers, body);
+    return result.response;
+}
+```
+
+See [Webhooks](/plugins/airtable/webhooks) for all available events.
+
+### Database Access
+
+```ts
+const records = await corsair.airtable.db.records.search({
+    data: { tableId: "tblXXXXXXXXXXXXXX" },
+});
+```
+
+See [Database](/plugins/airtable/database) for the complete schema.
+
+### Multi-Tenancy
+
+```ts
+const tenant = corsair.withTenant("org-123");
+
+await tenant.airtable.api.records.create({
+    baseId: "appXXXXXXXXXXXXXX",
+    tableIdOrName: "CRM",
+    fields: { Name: "New Lead", Source: "Website" },
+});
+```
+
+## Examples
+
+### Example 1: Sync Form Submissions to Airtable
+
+```ts title="inngest/functions.ts"
+export const syncFormSubmission = inngest.createFunction(
+    { id: "sync-form-to-airtable" },
+    { event: "app/form-submitted" },
+    async ({ event }) => {
+        const tenant = corsair.withTenant(event.data.tenantId);
+
+        await tenant.airtable.api.records.create({
+            baseId: process.env.AIRTABLE_BASE_ID!,
+            tableIdOrName: "Leads",
+            fields: {
+                Name: event.data.name, // [!code highlight]
+                Email: event.data.email, // [!code highlight]
+                Message: event.data.message, // [!code highlight]
+                Source: "Web Form",
+                Submitted: new Date().toISOString(),
+            },
+        });
+    }
+);
+```
+
+### Example 2: React to Record Changes
+
+```ts title="corsair.ts"
+export const corsair = createCorsair({
+    plugins: [
+        airtable({
+            webhookHooks: {
+                events: {
+                    event: {
+                        after: async (ctx, result) => {
+                            await inngest.send({
+                                name: "airtable/record-changed",
+                                data: {
+                                    tenantId: ctx.tenantId,
+                                    tableId: result.data.tableId, // [!code highlight]
+                                    recordId: result.data.recordId,
+                                    changeType: result.data.changedFieldsById ? "update" : "create",
+                                },
+                            });
+                        },
+                    },
+                },
+            },
+        }),
+    ],
+});
+```
+
+```ts title="inngest/functions.ts"
+export const processAirtableChange = inngest.createFunction(
+    { id: "process-airtable-change" },
+    { event: "airtable/record-changed" },
+    async ({ event }) => {
+        const tenant = corsair.withTenant(event.data.tenantId);
+
+        const record = await tenant.airtable.api.records.get({
+            baseId: process.env.AIRTABLE_BASE_ID!,
+            tableIdOrName: event.data.tableId,
+            recordId: event.data.recordId,
+        });
+
+        console.log("Changed record:", record.data.fields);
+    }
+);
+```
+
+### Example 3: Upsert Records on External Events
+
+```ts title="inngest/functions.ts"
+export const upsertContact = inngest.createFunction(
+    { id: "upsert-airtable-contact" },
+    { event: "crm/contact-updated" },
+    async ({ event }) => {
+        const tenant = corsair.withTenant(event.data.tenantId);
+
+        await tenant.airtable.api.records.createOrUpdate({
+            baseId: process.env.AIRTABLE_BASE_ID!,
+            tableIdOrName: "Contacts",
+            performUpsert: {
+                fieldsToMergeOn: ["Email"], // [!code highlight]
+            },
+            fields: {
+                Email: event.data.email,
+                Name: event.data.name,
+                Company: event.data.company,
+                LastUpdated: new Date().toISOString(),
+            },
+        });
+    }
+);
+```

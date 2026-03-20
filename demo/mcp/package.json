@@ -1,0 +1,27 @@
+{
+  "name": "corsair-mcp-demo",
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "set-keys": "tsx scripts/set-keys.ts",
+    "test:claude-sdk": "tsx scripts/test-claude-sdk.ts",
+    "test:claude-api": "tsx scripts/test-claude-api.ts",
+    "test:openai-agents": "tsx scripts/test-openai-agents.ts"
+  },
+  "dependencies": {
+    "@anthropic-ai/claude-agent-sdk": "^0.2.52",
+    "@anthropic-ai/sdk": "^0.78.0",
+    "@corsair-dev/mcp": "workspace:*",
+    "@openai/agents": "^0.6.0",
+    "corsair": "0.1.26",
+    "dotenv": "^16.4.0",
+    "better-sqlite3": "^11.0.0",
+    "tsx": "^4.19.0",
+    "zod": "^3.25.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@types/better-sqlite3": "^7.6.0",
+    "typescript": "^5.8.0"
+  }
+}

@@ -1,0 +1,109 @@
+---
+title: Sentry Error Handlers
+description: Built-in and custom error handling for the Sentry plugin.
+---
+
+The Sentry plugin includes built-in error handlers for common Sentry API error scenarios.
+
+<Callout type="info">
+**New to Corsair?** Learn about [error handling](/concepts/error-handling) before customizing error handlers.
+</Callout>
+
+<Callout>
+**Full Implementation:** See the [Sentry plugin source code](https://github.com/corsairdev/corsair/tree/main/packages/corsair/plugins/sentry).
+</Callout>
+
+## Built-in Error Handlers
+
+### Rate Limit Errors
+
+**Triggers:** HTTP 429 status
+
+**Behavior:**
+- Maximum retries: **5**
+- Respects `Retry-After` header
+
+**Example:**
+
+```ts
+// Corsair handles rate limits automatically
+const issues = await corsair.sentry.api.issues.list({
+    organizationSlug: "my-org", // [!code highlight]
+    query: "is:unresolved",
+});
+```
+
+---
+
+### Authentication Errors
+
+**Triggers:** HTTP 401 status, invalid or expired API token
+
+**Behavior:**
+- Maximum retries: **0** (no retries)
+- Fails immediately
+
+**How to Fix:**
+1. Verify your Sentry API token is valid
+2. Check that the token has not expired (tokens can be set with expiry)
+3. Ensure the token has the required scopes for the operation
+
+---
+
+### Permission Errors
+
+**Triggers:** HTTP 403 status, token lacks required scope
+
+**Behavior:**
+- Maximum retries: **0** (no retries)
+
+**How to Fix:**
+1. Check the required scopes for the endpoint (e.g., `project:read`, `event:read`, `org:write`)
+2. Generate a new token with the necessary scopes in Sentry Settings → API → Auth Tokens
+
+---
+
+### Not Found Errors
+
+**Triggers:** HTTP 404 status, resource does not exist
+
+**Behavior:**
+- Maximum retries: **0** (no retries)
+
+**How to Fix:**
+1. Verify the organization slug, project slug, and resource ID are correct
+2. Check that the resource has not been deleted
+
+---
+
+### Network Errors
+
+**Triggers:** Connection errors, timeouts
+
+**Behavior:**
+- Maximum retries: **3**
+- Uses exponential backoff
+
+---
+
+## Custom Error Handlers
+
+```ts title="corsair.ts"
+sentry({
+    errorHandlers: {
+        MEMBER_ALREADY_EXISTS: {
+            match: (error) => {
+                return error.message.includes("already exists"); // [!code highlight]
+            },
+            handler: async (error, context) => {
+                console.log("Resource already exists — skipping creation");
+                return {
+                    maxRetries: 0,
+                };
+            },
+        },
+    },
+})
+```
+
+For comprehensive error handling strategies, patterns, and best practices, see the [Error Handling](/concepts/error-handling) concepts page.

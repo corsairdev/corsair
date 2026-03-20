@@ -15,16 +15,24 @@ export type AllErrors =
 export const BaseProviders = [
 	'airtable',
 	'amplitude',
+	'box',
 	'cal',
+	'calendly',
 	'discord',
+	'dropbox',
+	'exa',
+	'fireflies',
 	'github',
 	'gmail',
 	'googlecalendar',
 	'googledrive',
 	'googlesheets',
 	'hubspot',
+	'intercom',
 	'linear',
+	'monday',
 	'notion',
+	'oura',
 	'pagerduty',
 	'posthog',
 	'resend',
@@ -33,22 +41,34 @@ export const BaseProviders = [
 	'telegram',
 	'spotify',
 	'tavily',
+	'teams',
 	'todoist',
+	'trello',
+	'twitterapiio',
+	'zoom',
 ] as const;
 
 export type AllProviders =
 	| 'airtable'
 	| 'amplitude'
+	| 'box'
 	| 'cal'
+	| 'calendly'
 	| 'discord'
+	| 'dropbox'
+	| 'exa'
+	| 'fireflies'
 	| 'github'
 	| 'gmail'
 	| 'googlecalendar'
 	| 'googledrive'
 	| 'googlesheets'
 	| 'hubspot'
+	| 'intercom'
 	| 'linear'
+	| 'monday'
 	| 'notion'
+	| 'oura'
 	| 'pagerduty'
 	| 'posthog'
 	| 'resend'
@@ -57,7 +77,11 @@ export type AllProviders =
 	| 'telegram'
 	| 'spotify'
 	| 'tavily'
+	| 'teams'
 	| 'todoist'
+	| 'trello'
+	| 'twitterapiio'
+	| 'zoom'
 	| (string & {});
 
 export type AuthTypes = 'oauth_2' | 'api_key' | 'bot_token';

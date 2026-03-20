@@ -27,5 +27,16 @@ export { slack } from './plugins/slack';
 export { telegram } from './plugins/telegram';
 export { spotify } from './plugins/spotify';
 export { todoist } from './plugins/todoist';
+export { monday } from './plugins/monday';
+export { exa } from './plugins/exa';
+export { oura } from './plugins/oura';
+export { twitterapiio } from './plugins/twitterapiio';
+export { box } from './plugins/box';
+export { dropbox } from './plugins/dropbox';
+export { fireflies } from './plugins/fireflies';
+export { intercom } from './plugins/intercom';
+export { calendly } from './plugins/calendly';
+export { zoom } from './plugins/zoom';
+export { trello } from './plugins/trello';
 
 export { type SetupCorsairOptions, setupCorsair } from './setup/index';

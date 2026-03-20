@@ -56,7 +56,7 @@ export function verifyHmacSignatureWithPrefix(
 	}
 }
 
-export function verifySlackSignature(
+export function verifyHmacSha256Signature(
 	payload: string,
 	secret: string,
 	timestamp: string,
@@ -91,4 +91,14 @@ export function verifySlackSignature(
 	} catch {
 		return false;
 	}
+}
+
+export function verifySlackSignature(
+	payload: string,
+	secret: string,
+	timestamp: string,
+	signature: string,
+	maxAgeSeconds: number = 60 * 5,
+): boolean {
+	return verifyHmacSha256Signature(payload, secret, timestamp, signature, maxAgeSeconds);
 }

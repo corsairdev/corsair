@@ -1,82 +1,77 @@
 ---
 title: Introduction
-description: The integration layer for your application.
+description: The integration layer for AI agents.
 ---
 
-Corsair is a unified SDK for integrating third-party services into TypeScript applications. Corsair provides credential security, tenant data isolation, and rate limiting out of the box. You can work with hundreds of integrations like Slack or Github. Use the same syntax, same types, and the same four database tables. Focus on building your product instead of writing the same boilerplate integration code.
+Corsair gives your agent safe access to hundreds of integrations. It handles all of the plumbing — auth, data storage, webhooks, token refresh, rate limiting — so the only code you write is the part specific to your use case.
 
 ```ts title="corsair.ts"
-import { createCorsair } from "corsair";
-import { Pool } from "pg";
-import { slack, linear, github, gmail, resend } from "corsair/plugins";
+import { createCorsair, slack, github, gmail, linear, googlecalendar } from 'corsair';
 
 export const corsair = createCorsair({
-    multiTenancy: true,
-    database: new Pool({ connectionString: process.env.DATABASE_URL }),
-    plugins: [
-        slack(),
-        linear(),
-        github(),
-        gmail(),
-        resend(),
-    ],
+    plugins: [slack(), github(), gmail(), linear(), googlecalendar()],
+    database: db,
     kek: process.env.CORSAIR_KEK!,
 });
 ```
 
-## Quick Example
+Connect it to your agent and start prompting:
 
-Once set up, calling APIs is straightforward:
-
-```ts title="example.ts"
-const tenant = corsair.withTenant("tenant_123");
-
-// Send a Slack message
-await tenant.slack.api.messages.post({
-    channel: "C01234567",
-    text: "Hello from Corsair!",
-});
-
-// Create a Linear issue
-await tenant.linear.api.issues.create({
-    title: "New feature request",
-    teamId: "TEAM_ABC",
-});
 ```
+Invite Jim to next Thursday's sales call. Tell him over Slack too so he
+can accept it. Let me know when he does.
+```
+
+Corsair exposes four MCP tools to your agent — no matter how many plugins you have:
+
+- **`corsair_setup`** — check auth and get credential instructions
+- **`list_operations`** — discover every available API endpoint
+- **`get_schema`** — inspect the parameters for a specific endpoint
+- **`run_script`** — execute a script with `corsair` in scope
+
+## What your agent can do
+
+Once connected, your agent can reason across all your integrations at once:
+
+> *"Summarize my unread emails from customers, open a Linear issue for anything that looks urgent, and post the digest to #standup."*
+
+> *"When a new GitHub issue is labeled `bug`, create a matching Linear ticket and notify the on-call engineer in Slack."*
+
+The second one is a live webhook workflow. Corsair handles the event routing and your agent handles the logic.
 
 ## Why Corsair?
 
-### One SDK, Many Integrations
+### Integrations are 95% plumbing
 
-Learn one syntax, use it everywhere. No need to master each service's unique SDK quirks.
+If you look at any codebase with integrations, 95% of the code is identical across every project. OAuth flows, token refresh, webhook verification, data normalization — it's all the same. Corsair handles the 95% so you write only the part that's actually unique to your use case.
 
-### Multi-Tenant by Default
+### Your data, your database
 
-Every operation is scoped to a tenant. Data isolation is automatic — no cross-contamination possible.
+Everything stays in your own database. No data leaving to a third-party service, no vendor lock-in, no per-seat pricing on your users' data.
 
-### Always Fresh Data
+### Built for agents
 
-API responses are stored and automatically updated through webhooks. Your data is never stale.
+Corsair is designed around how agents actually work — discover, inspect, execute. The four MCP tools work the same way regardless of which framework you use.
 
-### Four Tables Forever
+### Scales to multi-tenant SaaS
 
-Add 100 integrations — still just four database tables. No schema bloat.
+The same setup works for building products. Set `multiTenancy: true`, call `corsair.withTenant(teamId)`, and every API call is automatically scoped to the right credentials.
 
-### Fully Typed
-
-Every API call, every response, every database query is fully typed. Your editor knows everything.
-
-## Installation
-
-```bash
-npm install corsair
+```ts
+const tenant = corsair.withTenant("team_abc");
+await tenant.slack.api.messages.post({ channel: "C01234567", text: "Hello!" });
 ```
 
-## Next Steps
+## Supported integrations
 
-- [Multi-Tenancy](/multi-tenancy) — Isolate tenant data automatically
-- [Error Handling](/error-handling) — Graceful failures and retries
-- [Webhooks](/webhooks) — One endpoint for all webhooks
-- [Database](/database) — Four tables, unlimited integrations
-- [Hooks](/hooks) — Customize API and webhook behavior
+Slack · Linear · HubSpot · Gmail · Google Calendar · GitHub · Google Drive · Google Sheets · PostHog · Resend · and more
 
+## Supported frameworks
+
+Claude Agent SDK · Anthropic SDK · OpenAI Agents · Vercel AI SDK · Mastra · OpenAI · and more
+
+## Get started
+
+- [Installation](/installation) — Install, migrate, and run your first prompt
+- [MCP Adapters](/mcp-adapters/claude-sdk) — Connect your agent framework
+- [Plugins](/plugins/slack) — Available integrations and their endpoints
