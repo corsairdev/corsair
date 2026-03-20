@@ -9,5 +9,5 @@ export const corsair = createCorsair({
 		timeout: '10m',
 		onTimeout: 'deny',
 	},
-	plugins: [twitterapiio(), slack(), linear(), calendly({ webhookSecret: process.env.CALENDLY_WEBHOOK_SECRET })],
+	plugins: [twitterapiio(), slack(), linear(), calendly()],
 });

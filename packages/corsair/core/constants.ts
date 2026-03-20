@@ -38,7 +38,9 @@ export const BaseProviders = [
 	'tavily',
 	'teams',
 	'todoist',
+	'trello',
 	'twitterapiio',
+	'zoom',
 ] as const;
 
 export type AllProviders =
@@ -67,7 +69,9 @@ export type AllProviders =
 	| 'tavily'
 	| 'teams'
 	| 'todoist'
+	| 'trello'
 	| 'twitterapiio'
+	| 'zoom'
 	| (string & {});
 
 export type AuthTypes = 'oauth_2' | 'api_key' | 'bot_token';

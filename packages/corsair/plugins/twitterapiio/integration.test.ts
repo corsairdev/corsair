@@ -246,15 +246,15 @@ describe('TwitterApiIO plugin integration', () => {
 				expect(tweetFromDb).not.toBeNull();
 			}
 
-			// getReplies
+			// replies.get
 			const repliesInput = { tweetId: TEST_TWEET_ID };
 			const repliesResult =
-				await corsair.twitterapiio.api.tweets.getReplies(repliesInput);
+				await corsair.twitterapiio.api.replies.get(repliesInput);
 
 			expect(repliesResult).toBeDefined();
 
 			const eventsReplies = await orm.events.findMany({
-				where: { event_type: 'twitterapiio.tweets.getReplies' },
+				where: { event_type: 'twitterapiio.replies.get' },
 			});
 			expect(eventsReplies.length).toBeGreaterThan(0);
 
