@@ -1,0 +1,96 @@
+---
+title: Amplitude Error Handlers
+description: Built-in and custom error handling for the Amplitude plugin.
+---
+
+The Amplitude plugin includes built-in error handlers for common Amplitude API error scenarios.
+
+<Callout type="info">
+**New to Corsair?** Learn about [error handling](/concepts/error-handling) before customizing error handlers.
+</Callout>
+
+<Callout>
+**Full Implementation:** See the [Amplitude plugin source code](https://github.com/corsairdev/corsair/tree/main/packages/corsair/plugins/amplitude).
+</Callout>
+
+## Built-in Error Handlers
+
+### Rate Limit Errors
+
+**Triggers:** HTTP 429 status
+
+**Behavior:**
+- Maximum retries: **5**
+- Respects `Retry-After` header
+
+**Example:**
+
+```ts
+// Corsair handles rate limits automatically
+await corsair.amplitude.api.events.upload({
+    events: [{ event_type: "page_view", user_id: "user-123" }], // [!code highlight]
+});
+```
+
+---
+
+### Authentication Errors
+
+**Triggers:** HTTP 401 status, invalid API key
+
+**Behavior:**
+- Maximum retries: **0** (no retries)
+- Fails immediately
+
+**How to Fix:**
+1. Verify your Amplitude API key is correct
+2. Check the key has not been revoked in your Amplitude project settings
+3. Ensure you're using the correct project's API key
+
+---
+
+### Invalid Request Errors
+
+**Triggers:** HTTP 400 status, malformed event data
+
+**Behavior:**
+- Maximum retries: **0** (no retries)
+
+**How to Fix:**
+1. Verify required fields are present on each event object
+2. Check event property types match expected formats
+3. Ensure `user_id` or `device_id` is present on each event
+
+---
+
+### Network Errors
+
+**Triggers:** Connection errors, timeouts
+
+**Behavior:**
+- Maximum retries: **3**
+- Uses exponential backoff
+
+---
+
+## Custom Error Handlers
+
+```ts title="corsair.ts"
+amplitude({
+    errorHandlers: {
+        INVALID_EVENT_SCHEMA: {
+            match: (error) => {
+                return error.message.includes("invalid_uploadtime"); // [!code highlight]
+            },
+            handler: async (error, context) => {
+                console.log("Invalid event timestamp detected");
+                return {
+                    maxRetries: 0,
+                };
+            },
+        },
+    },
+})
+```
+
+For comprehensive error handling strategies, patterns, and best practices, see the [Error Handling](/concepts/error-handling) concepts page.

@@ -1,0 +1,88 @@
+---
+title: Airtable Database Schema
+description: Database entities and querying synced Airtable data.
+---
+
+The Airtable plugin syncs base and record metadata to your database for fast queries.
+
+<Callout type="info">
+**New to Corsair?** Learn about [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Callout>
+
+<Callout>
+**Full Implementation:** See the [Airtable plugin source code](https://github.com/corsairdev/corsair/tree/main/packages/corsair/plugins/airtable).
+</Callout>
+
+## Synced Entities
+
+- **bases** - Airtable base metadata
+- **records** - Synced record data per table
+
+## Database API
+
+```ts
+const bases = await corsair.airtable.db.bases.search({
+    data: { name: "Project Tracker" },
+});
+```
+
+---
+
+## Bases
+
+### Schema
+
+```ts
+{
+    id: string;                 // Airtable base ID (appXXX...)
+    name: string;
+    permission_level: string;   // owner | create | editor | commenter | read
+}
+```
+
+### Querying Bases
+
+```ts
+const bases = await corsair.airtable.db.bases.search({
+    data: { permission_level: "owner" }, // [!code highlight]
+});
+```
+
+---
+
+## Records
+
+### Schema
+
+```ts
+{
+    id: string;                 // Airtable record ID (recXXX...)
+    base_id: string;            // Parent base ID
+    table_id: string;           // Parent table ID
+    table_name?: string;
+    created_time: string;       // ISO timestamp
+    fields: Record<string, unknown>;  // All record field values
+}
+```
+
+### Querying Records
+
+**Search by table:**
+
+```ts
+const records = await corsair.airtable.db.records.search({
+    data: { table_name: "Tasks" }, // [!code highlight]
+});
+```
+
+---
+
+### Example: Multi-Tenancy Query
+
+```ts
+const tenant = corsair.withTenant("user-123");
+
+const records = await tenant.airtable.db.records.search({
+    data: { base_id: "appXXXXXXXXXXXXXX" }, // [!code highlight]
+});
+```

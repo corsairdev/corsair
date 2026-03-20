@@ -1,0 +1,100 @@
+---
+title: Tavily API Endpoints
+description: Complete reference for all Tavily API endpoints available in the Corsair Tavily plugin.
+---
+
+The Tavily plugin provides AI-powered web search capabilities through a single search endpoint.
+
+<Callout type="info">
+**New to Corsair?** Learn about core concepts like [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Callout>
+
+<Callout>
+**Full Implementation:** For the complete, up-to-date list, see the [Tavily plugin source code](https://github.com/corsairdev/corsair/tree/main/packages/corsair/plugins/tavily).
+</Callout>
+
+## Search
+
+### search
+`search`
+
+Search the web using Tavily's AI-powered search engine.
+
+```ts
+const results = await corsair.tavily.api.search({
+    query: "latest TypeScript features 2024", // [!code highlight]
+    max_results: 5,
+});
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | Search query |
+| `search_depth` | `string` | No | `basic` (default) or `advanced` for deeper search |
+| `topic` | `string` | No | `general` (default) or `news` |
+| `max_results` | `number` | No | Max results to return (1-20, default: 5) |
+| `include_answer` | `boolean \| string` | No | Include AI-generated answer (`true`, `false`, or `basic`/`advanced`) |
+| `include_raw_content` | `boolean \| string` | No | Include raw page content |
+| `include_images` | `boolean` | No | Include image results |
+| `include_domains` | `string[]` | No | Only include results from these domains |
+| `exclude_domains` | `string[]` | No | Exclude results from these domains |
+| `time_range` | `string` | No | Filter by time: `day`, `week`, `month`, `year` |
+
+**Returns:**
+
+```ts
+{
+    query: string;
+    answer?: string;      // AI-generated answer if requested
+    results: Array<{
+        title: string;
+        url: string;
+        content: string;  // Extracted page content
+        score: number;    // Relevance score
+        published_date?: string;
+    }>;
+    images?: Array<{
+        url: string;
+        description?: string;
+    }>;
+    response_time: number;
+}
+```
+
+**Example — Advanced search with answer:**
+
+```ts
+const result = await corsair.tavily.api.search({
+    query: "How does React Server Components work?",
+    search_depth: "advanced", // [!code highlight]
+    include_answer: true,     // [!code highlight]
+    max_results: 10,
+});
+
+console.log("Answer:", result.data.answer);
+console.log("Sources:", result.data.results.map(r => r.url));
+```
+
+**Example — News search:**
+
+```ts
+const news = await corsair.tavily.api.search({
+    query: "AI funding news",
+    topic: "news",       // [!code highlight]
+    time_range: "week",  // [!code highlight]
+    max_results: 10,
+});
+```
+
+**Example — Domain-filtered search:**
+
+```ts
+const docs = await corsair.tavily.api.search({
+    query: "useState hook",
+    include_domains: ["react.dev", "developer.mozilla.org"], // [!code highlight]
+});
+```
+
+---

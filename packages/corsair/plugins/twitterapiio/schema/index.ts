@@ -1,6 +1,7 @@
 import {
 	TwitterApiIOCommunity,
 	TwitterApiIOList,
+	TwitterApiIOReply,
 	TwitterApiIOTrend,
 	TwitterApiIOTweet,
 	TwitterApiIOUser,
@@ -11,6 +12,7 @@ export const TwitterApiIOSchema = {
 	entities: {
 		users: TwitterApiIOUser,
 		tweets: TwitterApiIOTweet,
+		replies: TwitterApiIOReply,
 		lists: TwitterApiIOList,
 		communities: TwitterApiIOCommunity,
 		trends: TwitterApiIOTrend,
@@ -22,9 +24,11 @@ export type TwitterApiIOCredentials = {
 };
 
 export type {
+	RawApiReply,
 	RawApiTweet,
 	TwitterApiIOCommunity,
 	TwitterApiIOList,
+	TwitterApiIOReply,
 	TwitterApiIOTrend,
 	TwitterApiIOTweet,
 	TwitterApiIOTweetMedia,
