@@ -1,0 +1,110 @@
+---
+title: Notion Database Schema
+description: Database entities and querying synced Notion data.
+---
+
+The Notion plugin syncs workspace data to your database for fast queries.
+
+<Callout type="info">
+**New to Corsair?** Learn about [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Callout>
+
+<Callout>
+**Full Implementation:** See the [Notion plugin source code](https://github.com/corsairdev/corsair/tree/main/packages/corsair/plugins/notion).
+</Callout>
+
+## Synced Entities
+
+- **databases** - Notion database definitions
+- **pages** - Page metadata and properties
+- **users** - Workspace user profiles
+
+## Database API
+
+```ts
+const pages = await corsair.notion.db.pages.search({
+    data: { title: "Meeting Notes" },
+});
+```
+
+---
+
+## Databases
+
+### Schema
+
+```ts
+{
+    id: string;                 // Notion database ID
+    title: string;
+    description?: string;
+    url: string;
+    created_time: string;       // ISO timestamp
+    last_edited_time: string;   // ISO timestamp
+    is_inline: boolean;
+    archived: boolean;
+    properties_schema?: Record<string, unknown>;
+}
+```
+
+### Querying Databases
+
+```ts
+const databases = await corsair.notion.db.databases.search({
+    data: { archived: false }, // [!code highlight]
+});
+```
+
+---
+
+## Pages
+
+### Schema
+
+```ts
+{
+    id: string;                 // Notion page ID
+    title?: string;
+    url: string;
+    created_time: string;       // ISO timestamp
+    last_edited_time: string;   // ISO timestamp
+    parent_type: string;        // database | page | workspace
+    parent_id?: string;
+    archived: boolean;
+    properties?: Record<string, unknown>;
+}
+```
+
+### Querying Pages
+
+```ts
+const pages = await corsair.notion.db.pages.search({
+    data: { parent_type: "database" }, // [!code highlight]
+});
+```
+
+---
+
+## Users
+
+### Schema
+
+```ts
+{
+    id: string;                 // Notion user ID
+    name: string;
+    avatar_url?: string;
+    type: string;               // person | bot
+    email?: string;             // Only for person type
+}
+```
+
+### Example: Multi-Tenancy Query
+
+```ts
+const tenant = corsair.withTenant("workspace-123");
+
+const users = await tenant.notion.db.users.search({
+    data: { type: "person" }, // [!code highlight]
+});
+```

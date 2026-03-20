@@ -16,6 +16,7 @@ export const BaseProviders = [
 	'airtable',
 	'amplitude',
 	'cal',
+	'calendly',
 	'discord',
 	'exa',
 	'github',
@@ -38,13 +39,16 @@ export const BaseProviders = [
 	'tavily',
 	'teams',
 	'todoist',
+	'trello',
 	'twitterapiio',
+	'zoom',
 ] as const;
 
 export type AllProviders =
 	| 'airtable'
 	| 'amplitude'
 	| 'cal'
+	| 'calendly'
 	| 'discord'
 	| 'exa'
 	| 'github'
@@ -67,7 +71,9 @@ export type AllProviders =
 	| 'tavily'
 	| 'teams'
 	| 'todoist'
+	| 'trello'
 	| 'twitterapiio'
+	| 'zoom'
 	| (string & {});
 
 export type AuthTypes = 'oauth_2' | 'api_key' | 'bot_token';

@@ -125,10 +125,31 @@ export const RawApiTweet = TwitterApiIOTweet.extend({
 	author: TwitterApiIOUser.optional(),
 });
 
+// Reply entity — extends TwitterApiIOTweet with reply-specific fields returned
+// by the /twitter/tweet/replies and /twitter/tweet/replies_v2 endpoints.
+// Stored independently in the `replies` table so engagement metrics (likes, etc.)
+// can be updated without touching the parent tweet.
+export const TwitterApiIOReply = TwitterApiIOTweet.extend({
+	/** Direct link to the reply tweet on Twitter */
+	url: z.string().optional(),
+	/** Username of the user being replied to */
+	inReplyToUsername: z.string().nullable().optional(),
+	/** Whether the reply has been limited/hidden by Twitter */
+	isLimitedReply: z.boolean().optional(),
+});
+
+// Raw reply as returned by the API — author is a full user object.
+// After normalization for DB storage, author becomes the Twitter user ID string.
+export const RawApiReply = TwitterApiIOReply.extend({
+	author: TwitterApiIOUser.optional(),
+});
+
 export type TwitterApiIOUser = z.infer<typeof TwitterApiIOUser>;
 export type TwitterApiIOTweet = z.infer<typeof TwitterApiIOTweet>;
+export type TwitterApiIOReply = z.infer<typeof TwitterApiIOReply>;
 export type TwitterApiIOList = z.infer<typeof TwitterApiIOList>;
 export type TwitterApiIOCommunity = z.infer<typeof TwitterApiIOCommunity>;
 export type TwitterApiIOTrend = z.infer<typeof TwitterApiIOTrend>;
 export type TwitterApiIOTweetMedia = z.infer<typeof TwitterApiIOTweetMedia>;
 export type RawApiTweet = z.infer<typeof RawApiTweet>;
+export type RawApiReply = z.infer<typeof RawApiReply>;

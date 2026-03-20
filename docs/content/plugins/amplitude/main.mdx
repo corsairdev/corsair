@@ -1,0 +1,239 @@
+---
+title: Amplitude
+description: Integrate Amplitude analytics event tracking, user management, and cohorts into your application with Corsair.
+---
+
+## Quick Start
+
+Add the Amplitude plugin to your Corsair instance:
+
+```ts title="corsair.ts"
+import { createCorsair } from "corsair";
+import { amplitude } from "corsair/plugins";
+
+export const corsair = createCorsair({
+    plugins: [
+        amplitude(),
+    ],
+});
+```
+
+Once configured, you can track events and manage analytics data:
+
+```ts
+// Track an event
+await corsair.amplitude.api.events.upload({
+    api_key: "your-api-key",
+    events: [{
+        event_type: "page_view",
+        user_id: "user-123",
+    }],
+});
+```
+
+## Authentication
+
+### Supported Auth Types
+
+The Amplitude plugin supports:
+- **`api_key`** (default) - Use an Amplitude API key
+
+### Default Auth Type
+
+If no `authType` is specified, the plugin defaults to **`api_key`**.
+
+### Configuring API Key Authentication
+
+```ts title="corsair.ts"
+amplitude({
+    key: process.env.AMPLITUDE_API_KEY, // [!code highlight]
+})
+```
+
+For webhook signature verification:
+
+```ts title="corsair.ts"
+amplitude({
+    key: process.env.AMPLITUDE_API_KEY,
+    webhookSecret: process.env.AMPLITUDE_WEBHOOK_SECRET, // [!code highlight]
+})
+```
+
+See [Authentication](/concepts/auth) for details on managing credentials.
+
+## Options
+
+| Option | Type | Description |
+|--------|------|-------------|
+| `authType` | `'api_key'` | Authentication method (defaults to `'api_key'`) |
+| `key` | `string` | API key (optional, uses database if not provided) |
+| `webhookSecret` | `string` | Webhook secret for signature verification |
+| `hooks` | `object` | Endpoint hooks for custom logic |
+| `webhookHooks` | `object` | Webhook hooks for event handling |
+| `errorHandlers` | `object` | Custom error handlers |
+| `permissions` | `object` | Permission configuration for AI agent access |
+
+### Hooks
+
+```ts
+amplitude({
+    hooks: {
+        events: {
+            upload: {
+                before: async (ctx, input) => {
+                    console.log("Uploading events:", input.events.length);
+                    return { ctx, input };
+                },
+            },
+        },
+    },
+})
+```
+
+See [Hooks](/concepts/hooks) for complete documentation.
+
+### Error Handling
+
+The plugin includes built-in error handlers for common scenarios. For complete documentation, see the [Error Handlers reference](/plugins/amplitude/error-handlers).
+
+## Usage
+
+### Accessing the API
+
+```ts
+// Upload events
+await corsair.amplitude.api.events.upload({
+    api_key: "your-api-key",
+    events: [{
+        event_type: "purchase",
+        user_id: "user-123",
+        event_properties: { item: "Pro Plan", price: 99 },
+    }],
+});
+
+// Search for a user
+const user = await corsair.amplitude.api.users.search({
+    user_id: "user-123",
+});
+
+// Create a cohort
+await corsair.amplitude.api.cohorts.create({
+    name: "Power Users",
+    app_id: 12345,
+    id_type: "BY_USER_ID",
+    ids: ["user-1", "user-2", "user-3"],
+});
+```
+
+See [API Endpoints](/plugins/amplitude/api-endpoints) for the complete reference.
+
+### Webhooks
+
+```ts title="app/api/webhook/route.ts"
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    const body = await request.json();
+
+    const result = await processWebhook(corsair, headers, body);
+    return result.response;
+}
+```
+
+See [Webhooks](/plugins/amplitude/webhooks) for all available events.
+
+### Database Access
+
+```ts
+const events = await corsair.amplitude.db.events.search({
+    data: { event_type: "purchase" },
+});
+```
+
+See [Database](/plugins/amplitude/database) for the complete schema.
+
+### Multi-Tenancy
+
+```ts
+const tenant = corsair.withTenant("org-123");
+
+await tenant.amplitude.api.events.upload({
+    api_key: "tenant-api-key",
+    events: [{ event_type: "page_view", user_id: "u1" }],
+});
+```
+
+## Examples
+
+### Example 1: Track User Actions
+
+```ts title="inngest/functions.ts"
+export const trackUserAction = inngest.createFunction(
+    { id: "track-amplitude-event" },
+    { event: "app/user-action" },
+    async ({ event }) => {
+        const tenant = corsair.withTenant(event.data.tenantId);
+
+        await tenant.amplitude.api.events.upload({
+            api_key: event.data.apiKey,
+            events: [{
+                event_type: event.data.action, // [!code highlight]
+                user_id: event.data.userId, // [!code highlight]
+                time: Date.now(),
+                event_properties: event.data.properties,
+            }],
+        });
+    }
+);
+```
+
+### Example 2: Build a Cohort from Recent Signups
+
+```ts title="inngest/functions.ts"
+export const buildSignupCohort = inngest.createFunction(
+    { id: "build-signup-cohort" },
+    { cron: "0 0 * * 1" },
+    async () => {
+        const recentSignups = await corsair.amplitude.db.users.search({
+            data: { createdAt: { gte: new Date(Date.now() - 7 * 86400000) } }, // [!code highlight]
+            limit: 1000,
+        });
+
+        await corsair.amplitude.api.cohorts.create({
+            name: "Last 7 Day Signups",
+            app_id: 12345,
+            id_type: "BY_USER_ID",
+            ids: recentSignups.data.map(u => u.user_id), // [!code highlight]
+        });
+    }
+);
+```
+
+### Example 3: Monitor Alert Webhook
+
+```ts title="corsair.ts"
+export const corsair = createCorsair({
+    plugins: [
+        amplitude({
+            webhookHooks: {
+                monitors: {
+                    alert: {
+                        after: async (ctx, result) => {
+                            await inngest.send({
+                                name: "amplitude/monitor-alert",
+                                data: {
+                                    tenantId: ctx.tenantId,
+                                    monitorId: result.data.monitor_id, // [!code highlight]
+                                    metricValue: result.data.metric_value,
+                                },
+                            });
+                        },
+                    },
+                },
+            },
+        }),
+    ],
+});
+```

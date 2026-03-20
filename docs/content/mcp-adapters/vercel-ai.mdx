@@ -1,0 +1,59 @@
+---
+title: Vercel AI SDK
+description: Connect Corsair to the Vercel AI SDK over HTTP.
+---
+
+Use `createVercelAiMcpClient` to connect Corsair to the [Vercel AI SDK](https://sdk.vercel.ai) via HTTP transport.
+
+Unlike the direct SDK adapters, Vercel AI connects over HTTP — you expose Corsair as an MCP server endpoint and the client connects to it.
+
+## Install
+
+```bash
+npm install ai @ai-sdk/mcp
+```
+
+## Server
+
+Expose Corsair as an MCP HTTP endpoint using `createBaseMcpServer` and `createMcpRouter`.
+
+```ts title="server.ts"
+import express from 'express';
+import { createBaseMcpServer, createMcpRouter } from '@corsair-dev/mcp';
+import { corsair } from './corsair';
+
+const app = express();
+app.use(express.json());
+
+app.use('/mcp', createMcpRouter(() => createBaseMcpServer({ corsair })));
+
+app.listen(3000, () => console.log('MCP server running on :3000'));
+```
+
+## Client
+
+Connect from your Vercel AI application using `createVercelAiMcpClient`.
+
+```ts title="agent.ts"
+import { generateText } from 'ai';
+import { anthropic } from '@ai-sdk/anthropic';
+import { createVercelAiMcpClient } from '@corsair-dev/mcp';
+
+const client = await createVercelAiMcpClient({
+    url: 'http://localhost:3000/mcp',
+});
+
+const tools = await client.tools();
+
+const { text } = await generateText({
+    model: anthropic('claude-sonnet-4-6'),
+    tools,
+    prompt: 'Setup corsair, then list all Slack channels.',
+    maxSteps: 10,
+});
+
+console.log(text);
+await client.close();
+```
+
+`createVercelAiMcpClient` returns a client that speaks the MCP protocol over HTTP. Call `client.tools()` to retrieve the tool definitions, then pass them to any Vercel AI `generateText` or `streamText` call.
