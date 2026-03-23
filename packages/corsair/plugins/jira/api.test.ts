@@ -14,7 +14,7 @@ import type {
 	UsersGetCurrentResponse,
 	UsersFindResponse,
 } from './endpoints/types';
-import { JiraEndpointOutputSchemas } from './endpoints/types';
+import { JiraEndpointOutputSchemas, makeAdf } from './endpoints/types';
 
 dotenv.config();
 
@@ -135,7 +135,6 @@ describe('Jira API Type Tests', () => {
 							project: { key: testProjectKey },
 							summary: `Test issue from API test ${Date.now()}`,
 							issuetype: { name: 'Task' },
-							assignee: undefined
 						},
 					},
 				},
@@ -295,23 +294,7 @@ describe('Jira API Type Tests', () => {
 				CLOUD_URL,
 				{
 					method: 'POST',
-					body: {
-						body: {
-							version: 1,
-							type: 'doc',
-							content: [
-								{
-									type: 'paragraph',
-									content: [
-										{
-											type: 'text',
-											text: 'Test comment from API test',
-										},
-									],
-								},
-							],
-						},
-					},
+					body: { body: makeAdf('Test comment from API test') },
 				},
 			);
 

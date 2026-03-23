@@ -1,38 +1,21 @@
 import { logEventFromContext } from '../../utils/events';
 import type { JiraEndpoints } from '..';
 import { makeJiraRequest } from '../client';
-import type { JiraEndpointOutputs } from './types';
+import { makeAdf, type JiraEndpointOutputs } from './types';
 
 export const add: JiraEndpoints['commentsAdd'] = async (ctx, input) => {
-	// Build ADF body for the comment text
-	// Record<string, unknown>: comment body is an ADF document plus an optional visibility object; shape varies by request
-	const body: Record<string, unknown> = {
-		body: {
-			version: 1,
-			type: 'doc',
-			content: [
-				{
-					type: 'paragraph',
-					content: [{ type: 'text', text: input.comment }],
-				},
-			],
-		},
-	};
-	
-	if (input.visibility_type && input.visibility_value) {
-		body.visibility = {
-			type: input.visibility_type,
-			value: input.visibility_value,
-		};
-	}
-
 	const result = await makeJiraRequest<JiraEndpointOutputs['commentsAdd']>(
 		`issue/${input.issue_id_or_key}/comment`,
 		ctx.key,
 		(await ctx.keys.get_cloud_url()) ?? '',
 		{
 			method: 'POST',
-			body,
+			body: {
+				body: makeAdf(input.comment),
+				...(input.visibility_type && input.visibility_value && {
+					visibility: { type: input.visibility_type, value: input.visibility_value },
+				}),
+			},
 		},
 	);
 
@@ -129,18 +112,7 @@ export const update: JiraEndpoints['commentsUpdate'] = async (ctx, input) => {
 		(await ctx.keys.get_cloud_url()) ?? '',
 		{
 			method: 'PUT',
-			body: {
-				body: {
-					version: 1,
-					type: 'doc',
-					content: [
-						{
-							type: 'paragraph',
-							content: [{ type: 'text', text: input.comment }],
-						},
-					],
-				},
-			},
+			body: { body: makeAdf(input.comment) },
 		},
 	);
 

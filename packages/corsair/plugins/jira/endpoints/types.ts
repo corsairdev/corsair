@@ -1,5 +1,18 @@
 import { z } from 'zod';
 
+// ── ADF (Atlassian Document Format) ───────────────────────────────────────────
+
+export type AdfTextNode = { type: 'text'; text: string };
+export type AdfParagraphNode = { type: 'paragraph'; content: AdfTextNode[] };
+export type AdfDoc = { version: 1; type: 'doc'; content: AdfParagraphNode[] };
+
+/** Wraps plain text into the minimal ADF document structure Jira expects. */
+export const makeAdf = (text: string): AdfDoc => ({
+	version: 1,
+	type: 'doc',
+	content: [{ type: 'paragraph', content: [{ type: 'text', text }] }],
+});
+
 // ── Shared sub-schemas ────────────────────────────────────────────────────────
 
 const JiraUserSchema = z.object({

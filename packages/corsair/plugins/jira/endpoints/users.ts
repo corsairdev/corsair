@@ -11,6 +11,22 @@ export const getCurrent: JiraEndpoints['usersGetCurrent'] = async (ctx, _input) 
 		{ method: 'GET' },
 	);
 
+	if (result.accountId && ctx.db.users) {
+		try {
+			await ctx.db.users.upsertByEntityId(result.accountId, {
+				accountId: result.accountId,
+				...(result.displayName && { displayName: result.displayName }),
+				...(result.emailAddress && { emailAddress: result.emailAddress }),
+				...(result.active !== undefined && { active: result.active }),
+				...(result.timeZone && { timeZone: result.timeZone }),
+				...(result.locale && { locale: result.locale }),
+				createdAt: new Date(),
+			});
+		} catch (error) {
+			console.warn('Failed to save current user to database:', error);
+		}
+	}
+
 	await logEventFromContext(ctx, 'jira.users.getCurrent', {}, 'completed');
 	return result;
 };
@@ -23,13 +39,30 @@ export const find: JiraEndpoints['usersFind'] = async (ctx, input) => {
 		{
 			method: 'GET',
 			query: {
-				query: input.query,
-				accountId: input.account_id,
-				startAt: input.start_at,
-				maxResults: input.max_results,
+				...(input.query && { query: input.query }),
+				...(input.account_id && { accountId: input.account_id }),
+				...(input.start_at !== undefined && { startAt: input.start_at }),
+				...(input.max_results !== undefined && { maxResults: input.max_results }),
 			},
 		},
 	);
+
+	if (ctx.db.users) {
+		for (const user of result) {
+			if (!user.accountId) continue;
+			try {
+				await ctx.db.users.upsertByEntityId(user.accountId, {
+					accountId: user.accountId,
+					...(user.displayName && { displayName: user.displayName }),
+					...(user.emailAddress && { emailAddress: user.emailAddress }),
+					...(user.active !== undefined && { active: user.active }),
+					createdAt: new Date(),
+				});
+			} catch (error) {
+				console.warn('Failed to save user to database:', error);
+			}
+		}
+	}
 
 	await logEventFromContext(ctx, 'jira.users.find', { ...input }, 'completed');
 	return result;
@@ -43,11 +76,28 @@ export const getAll: JiraEndpoints['usersGetAll'] = async (ctx, input) => {
 		{
 			method: 'GET',
 			query: {
-				startAt: input.start_at,
-				maxResults: input.max_results,
+				...(input.start_at !== undefined && { startAt: input.start_at }),
+				...(input.max_results !== undefined && { maxResults: input.max_results }),
 			},
 		},
 	);
+
+	if (ctx.db.users) {
+		for (const user of result) {
+			if (!user.accountId) continue;
+			try {
+				await ctx.db.users.upsertByEntityId(user.accountId, {
+					accountId: user.accountId,
+					...(user.displayName && { displayName: user.displayName }),
+					...(user.emailAddress && { emailAddress: user.emailAddress }),
+					...(user.active !== undefined && { active: user.active }),
+					createdAt: new Date(),
+				});
+			} catch (error) {
+				console.warn('Failed to save user to database:', error);
+			}
+		}
+	}
 
 	await logEventFromContext(ctx, 'jira.users.getAll', { ...input }, 'completed');
 	return result;
@@ -61,8 +111,8 @@ export const groupsGetAll: JiraEndpoints['groupsGetAll'] = async (ctx, input) =>
 		{
 			method: 'GET',
 			query: {
-				startAt: input.start_at,
-				maxResults: input.max_results,
+				...(input.start_at !== undefined && { startAt: input.start_at }),
+				...(input.max_results !== undefined && { maxResults: input.max_results }),
 			},
 		},
 	);

@@ -53,7 +53,29 @@ export const JiraSprint = z.object({
 	createdAt: z.coerce.date().nullable().optional(),
 });
 
+export const JiraUser = z.object({
+	accountId: z.string(),
+	displayName: z.string().optional(),
+	emailAddress: z.string().optional(),
+	active: z.boolean().optional(),
+	timeZone: z.string().optional(),
+	locale: z.string().optional(),
+	createdAt: z.coerce.date().nullable().optional(),
+});
+
+export const JiraBoard = z.object({
+	id: z.number(),
+	name: z.string().optional(),
+	type: z.string().optional(),
+	projectId: z.number().optional(),
+	projectKey: z.string().optional(),
+	projectName: z.string().optional(),
+	createdAt: z.coerce.date().nullable().optional(),
+});
+
 export type JiraIssue = z.infer<typeof JiraIssue>;
 export type JiraProject = z.infer<typeof JiraProject>;
 export type JiraComment = z.infer<typeof JiraComment>;
 export type JiraSprint = z.infer<typeof JiraSprint>;
+export type JiraUser = z.infer<typeof JiraUser>;
+export type JiraBoard = z.infer<typeof JiraBoard>;

@@ -17,25 +17,38 @@ export const updatedIssue: JiraWebhooks['updatedIssue'] = {
 
 		const event = request.payload;
 
-		if (ctx.db.issues && event.issue?.id && event.issue?.key) {
+		if (event.issue?.id && event.issue?.key && ctx.db.issues) {
 			try {
 				await ctx.db.issues.upsertByEntityId(event.issue.id, {
 					id: event.issue.id,
 					key: event.issue.key,
-					summary: event.issue.fields?.summary,
-					status: event.issue.fields?.status?.name,
-					assigneeAccountId: event.issue.fields?.assignee?.accountId,
-					assigneeDisplayName: event.issue.fields?.assignee?.displayName,
-					priority: event.issue.fields?.priority?.name ?? undefined,
-					issueType: event.issue.fields?.issuetype?.name,
-					projectKey: event.issue.fields?.project?.key,
-					projectId: event.issue.fields?.project?.id,
-					labels: event.issue.fields?.labels,
-					updated: event.issue.fields?.updated,
+					...(event.issue.fields?.summary && { summary: event.issue.fields.summary }),
+					...(event.issue.fields?.status?.name && { status: event.issue.fields.status.name }),
+					...(event.issue.fields?.assignee?.accountId && { assigneeAccountId: event.issue.fields.assignee.accountId }),
+					...(event.issue.fields?.assignee?.displayName && { assigneeDisplayName: event.issue.fields.assignee.displayName }),
+					...(event.issue.fields?.priority?.name && { priority: event.issue.fields.priority.name }),
+					...(event.issue.fields?.issuetype?.name && { issueType: event.issue.fields.issuetype.name }),
+					...(event.issue.fields?.project?.key && { projectKey: event.issue.fields.project.key }),
+					...(event.issue.fields?.project?.id && { projectId: event.issue.fields.project.id }),
+					...(event.issue.fields?.labels && { labels: event.issue.fields.labels }),
+					...(event.issue.fields?.updated && { updated: event.issue.fields.updated }),
 					createdAt: new Date(),
 				});
 			} catch (error) {
 				console.warn('Failed to update issue in database:', error);
+			}
+		}
+
+		if (event.user?.accountId && ctx.db.users) {
+			try {
+				await ctx.db.users.upsertByEntityId(event.user.accountId, {
+					accountId: event.user.accountId,
+					...(event.user.displayName && { displayName: event.user.displayName }),
+					...(event.user.emailAddress && { emailAddress: event.user.emailAddress }),
+					createdAt: new Date(),
+				});
+			} catch (error) {
+				console.warn('Failed to save user to database:', error);
 			}
 		}
 
@@ -46,9 +59,6 @@ export const updatedIssue: JiraWebhooks['updatedIssue'] = {
 			'completed',
 		);
 
-		return {
-			success: true,
-			data: event,
-		};
+		return { success: true, data: event };
 	},
 };
