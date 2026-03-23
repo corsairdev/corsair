@@ -405,10 +405,7 @@ export function jira<const T extends JiraPluginOptions>(
 		webhookSchemas: jiraWebhookSchemas,
 		pluginWebhookMatcher: (request) => {
 			const headers = request.headers;
-			// Jira webhooks send 'x-atlassian-webhook-identifier' or a user-agent containing 'Atlassian'
-			const hasAtlassianHeader = 'x-atlassian-webhook-identifier' in headers;
-			const hasHubSignature = 'x-hub-signature' in headers;
-			return hasAtlassianHeader || hasHubSignature;
+			return 'x-atlassian-webhook-identifier' in headers;
 		},
 		errorHandlers: {
 			...errorHandlers,

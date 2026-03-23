@@ -175,10 +175,7 @@ export function createJiraMatch(webhookEvent: string): CorsairWebhookMatcher {
  * Verifies a Jira webhook signature using HMAC SHA256.
  * Jira sends the signature in the 'x-hub-signature' header as 'sha256={hash}'.
  */
-/**
- * Verifies a Jira webhook signature using HMAC SHA256.
- * Jira sends the signature in the 'x-hub-signature' header as 'sha256={hash}'.
- */
+
 export function verifyJiraWebhookSignature(
 	request: WebhookRequest<unknown>,
 	secret: string,
@@ -190,8 +187,11 @@ export function verifyJiraWebhookSignature(
 		: (headers['x-hub-signature'] as string | undefined);
 
 	if (!signatureHeader) {
-		// Jira may not always send signatures; treat as valid if no secret configured
-		return { valid: true };
+		// Only allow unsigned requests when no secret has been configured
+		if (!secret) {
+			return { valid: true };
+		}
+		return { valid: false, error: 'Missing x-hub-signature header' };
 	}
 
 	const rawBody = request.rawBody ?? JSON.stringify(request.payload);

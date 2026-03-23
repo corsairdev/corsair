@@ -32,7 +32,6 @@ export const updatedIssue: JiraWebhooks['updatedIssue'] = {
 					...(event.issue.fields?.project?.id && { projectId: event.issue.fields.project.id }),
 					...(event.issue.fields?.labels && { labels: event.issue.fields.labels }),
 					...(event.issue.fields?.updated && { updated: event.issue.fields.updated }),
-					createdAt: new Date(),
 				});
 			} catch (error) {
 				console.warn('Failed to update issue in database:', error);
