@@ -19,6 +19,7 @@ export async function makeTwitterRequest<T>(
 	accessToken: string,
 	options: {
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+		// Values are untyped because this client sends arbitrary JSON bodies whose shape varies per endpoint
 		body?: Record<string, unknown>;
 		query?: Record<string, string | number | boolean | undefined>;
 	} = {},

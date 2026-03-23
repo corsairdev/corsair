@@ -188,24 +188,8 @@ export function twitter<const T extends TwitterPluginOptions>(
 			...options.errorHandlers,
 		},
 		pluginWebhookMatcher: (request) => {
-			const headers = request.headers;
-			const hasSignature = 'x-twitter-webhooks-signature' in headers;
-			// body can be string or object depending on middleware; attempt string parse
-			const body =
-				typeof request.body === 'string'
-					? (() => {
-							try {
-								return JSON.parse(request.body as string) as Record<
-									string,
-									unknown
-								>;
-							} catch {
-								return {};
-							}
-						})()
-					: ((request.body as Record<string, unknown> | undefined) ?? {});
-			const hasEvents = 'tweet_create_events' in body;
-			return hasSignature || hasEvents;
+			// Webhooks implemented yet
+			return false;
 		},
 		keyBuilder: async (ctx: TwitterKeyBuilderContext, source) => {
 			if (source === 'webhook' && options.webhookSecret) {

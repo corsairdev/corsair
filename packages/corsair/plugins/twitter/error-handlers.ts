@@ -38,7 +38,7 @@ export const errorHandlers = {
 			);
 		},
 		handler: async (error, context) => {
-			console.log(
+			console.warn(
 				`[TWITTER:${context.operation}] Authentication failed - check your access token`,
 			);
 			return {
