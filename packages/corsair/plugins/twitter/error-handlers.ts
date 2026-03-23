@@ -1,10 +1,10 @@
-import { ApiError } from '../../async-core/ApiError';
 import type { CorsairErrorHandler } from '../../core/errors';
+import { TwitterAPIError } from './client';
 
 export const errorHandlers = {
 	RATE_LIMIT_ERROR: {
 		match: (error, context) => {
-			if (error instanceof ApiError && error.status === 429) {
+			if (error instanceof TwitterAPIError && error.status === 429) {
 				return true;
 			}
 			const errorMessage = error.message.toLowerCase();
@@ -16,7 +16,7 @@ export const errorHandlers = {
 		},
 		handler: async (error, context) => {
 			let retryAfterMs: number | undefined;
-			if (error instanceof ApiError && error.retryAfter !== undefined) {
+			if (error instanceof TwitterAPIError && error.retryAfter !== undefined) {
 				retryAfterMs = error.retryAfter;
 			}
 			return {
@@ -27,7 +27,7 @@ export const errorHandlers = {
 	},
 	AUTH_ERROR: {
 		match: (error, context) => {
-			if (error instanceof ApiError && error.status === 401) {
+			if (error instanceof TwitterAPIError && error.status === 401) {
 				return true;
 			}
 			const errorMessage = error.message.toLowerCase();
@@ -48,7 +48,7 @@ export const errorHandlers = {
 	},
 	PERMISSION_ERROR: {
 		match: (error, context) => {
-			if (error instanceof ApiError && error.status === 403) {
+			if (error instanceof TwitterAPIError && error.status === 403) {
 				return true;
 			}
 			const errorMessage = error.message.toLowerCase();

@@ -1,3 +1,4 @@
+import { ApiError } from '../../async-core/ApiError';
 import type { ApiRequestOptions } from '../../async-core/ApiRequestOptions';
 import type { OpenAPIConfig } from '../../async-core/OpenAPI';
 import { request } from '../../async-core/request';
@@ -5,6 +6,8 @@ import { request } from '../../async-core/request';
 export class TwitterAPIError extends Error {
 	constructor(
 		message: string,
+		public readonly status?: number,
+		public readonly retryAfter?: number,
 		public readonly code?: string,
 	) {
 		super(message);
@@ -53,6 +56,9 @@ export async function makeTwitterRequest<T>(
 		const response = await request<T>(config, requestOptions);
 		return response;
 	} catch (error) {
+		if (error instanceof ApiError) {
+			throw new TwitterAPIError(error.message, error.status, error.retryAfter);
+		}
 		if (error instanceof Error) {
 			throw new TwitterAPIError(error.message);
 		}
