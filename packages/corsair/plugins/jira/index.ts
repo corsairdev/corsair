@@ -50,12 +50,25 @@ export type JiraPluginOptions = {
 	permissions?: PluginPermissionsConfig<typeof jiraEndpointsNested>;
 };
 
+/**
+ * Extends the base api_key auth config with a `cloud_url` account field.
+ * This allows the Jira Cloud URL (e.g. https://your-domain.atlassian.net) to be
+ * stored in the database and set via `corsair auth`, rather than hard-coded in options.
+ */
+export const jiraAuthConfig = {
+	api_key: {
+		account: ['cloud_url'] as const,
+	},
+} as const satisfies PluginAuthConfig;
+
 export type JiraContext = CorsairPluginContext<
 	typeof JiraSchema,
-	JiraPluginOptions
+	JiraPluginOptions,
+	undefined,
+	typeof jiraAuthConfig
 >;
 
-export type JiraKeyBuilderContext = KeyBuilderContext<JiraPluginOptions>;
+export type JiraKeyBuilderContext = KeyBuilderContext<JiraPluginOptions, typeof jiraAuthConfig>;
 
 export type JiraBoundEndpoints = BindEndpoints<typeof jiraEndpointsNested>;
 
@@ -339,12 +352,6 @@ const jiraEndpointMeta = {
 	'groups.create': { riskLevel: 'write', description: 'Create a new Jira group' },
 } satisfies RequiredPluginEndpointMeta<typeof jiraEndpointsNested>;
 
-export const jiraAuthConfig = {
-	api_key: {
-		account: ['one'] as const,
-	},
-} as const satisfies PluginAuthConfig;
-
 const jiraWebhookSchemas = {
 	'issues.newIssue': {
 		description: 'Triggered when a new issue is created in Jira',
@@ -369,7 +376,8 @@ export type BaseJiraPlugin<T extends JiraPluginOptions> = CorsairPlugin<
 	typeof jiraEndpointsNested,
 	typeof jiraWebhooksNested,
 	T,
-	typeof defaultAuthType
+	typeof defaultAuthType,
+	typeof jiraAuthConfig
 >;
 
 export type InternalJiraPlugin = BaseJiraPlugin<JiraPluginOptions>;
@@ -391,6 +399,7 @@ export function jira<const T extends JiraPluginOptions>(
 		webhookHooks: options.webhookHooks,
 		endpoints: jiraEndpointsNested,
 		webhooks: jiraWebhooksNested,
+		authConfig: jiraAuthConfig,
 		endpointMeta: jiraEndpointMeta,
 		endpointSchemas: jiraEndpointSchemas,
 		webhookSchemas: jiraWebhookSchemas,

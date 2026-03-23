@@ -5,6 +5,7 @@ import type { JiraEndpointOutputs } from './types';
 
 export const add: JiraEndpoints['commentsAdd'] = async (ctx, input) => {
 	// Build ADF body for the comment text
+	// Record<string, unknown>: comment body is an ADF document plus an optional visibility object; shape varies by request
 	const body: Record<string, unknown> = {
 		body: {
 			version: 1,
@@ -17,7 +18,7 @@ export const add: JiraEndpoints['commentsAdd'] = async (ctx, input) => {
 			],
 		},
 	};
-
+	
 	if (input.visibility_type && input.visibility_value) {
 		body.visibility = {
 			type: input.visibility_type,
@@ -28,7 +29,7 @@ export const add: JiraEndpoints['commentsAdd'] = async (ctx, input) => {
 	const result = await makeJiraRequest<JiraEndpointOutputs['commentsAdd']>(
 		`issue/${input.issue_id_or_key}/comment`,
 		ctx.key,
-		ctx.options.cloudUrl ?? '',
+		(await ctx.keys.get_cloud_url()) ?? '',
 		{
 			method: 'POST',
 			body,
@@ -59,7 +60,7 @@ export const get: JiraEndpoints['commentsGet'] = async (ctx, input) => {
 	const result = await makeJiraRequest<JiraEndpointOutputs['commentsGet']>(
 		`issue/${input.issue_id_or_key}/comment/${input.comment_id}`,
 		ctx.key,
-		ctx.options.cloudUrl ?? '',
+		(await ctx.keys.get_cloud_url()) ?? '',
 		{ method: 'GET' },
 	);
 
@@ -87,7 +88,7 @@ export const list: JiraEndpoints['commentsList'] = async (ctx, input) => {
 	const result = await makeJiraRequest<JiraEndpointOutputs['commentsList']>(
 		`issue/${input.issue_id_or_key}/comment`,
 		ctx.key,
-		ctx.options.cloudUrl ?? '',
+		(await ctx.keys.get_cloud_url()) ?? '',
 		{
 			method: 'GET',
 			query: {
@@ -125,7 +126,7 @@ export const update: JiraEndpoints['commentsUpdate'] = async (ctx, input) => {
 	const result = await makeJiraRequest<JiraEndpointOutputs['commentsUpdate']>(
 		`issue/${input.issue_id_or_key}/comment/${input.comment_id}`,
 		ctx.key,
-		ctx.options.cloudUrl ?? '',
+		(await ctx.keys.get_cloud_url()) ?? '',
 		{
 			method: 'PUT',
 			body: {
@@ -164,7 +165,7 @@ export const deleteComment: JiraEndpoints['commentsDelete'] = async (ctx, input)
 	await makeJiraRequest<void>(
 		`issue/${input.issue_id_or_key}/comment/${input.comment_id}`,
 		ctx.key,
-		ctx.options.cloudUrl ?? '',
+		(await ctx.keys.get_cloud_url()) ?? '',
 		{ method: 'DELETE' },
 	);
 

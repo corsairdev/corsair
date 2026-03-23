@@ -5,6 +5,7 @@ import type { JiraEndpointOutputs } from './types';
 
 export const create: JiraEndpoints['issuesCreate'] = async (ctx, input) => {
 	// Build ADF description if plain text provided
+	// any is used here because Jira issue fields are highly dynamic and not fully typed
 	const descriptionAdf = input.description
 		? {
 				version: 1,
@@ -34,7 +35,7 @@ export const create: JiraEndpoints['issuesCreate'] = async (ctx, input) => {
 	const result = await makeJiraRequest<JiraEndpointOutputs['issuesCreate']>(
 		'issue',
 		ctx.key,
-		ctx.options.cloudUrl ?? '',
+		(await ctx.keys.get_cloud_url()) ?? '',
 		{
 			method: 'POST',
 			body: { fields },
@@ -64,7 +65,7 @@ export const get: JiraEndpoints['issuesGet'] = async (ctx, input) => {
 	const result = await makeJiraRequest<JiraEndpointOutputs['issuesGet']>(
 		`issue/${input.issue_id_or_key}`,
 		ctx.key,
-		ctx.options.cloudUrl ?? '',
+		(await ctx.keys.get_cloud_url()) ?? '',
 		{
 			method: 'GET',
 			query: {
@@ -104,8 +105,9 @@ export const get: JiraEndpoints['issuesGet'] = async (ctx, input) => {
 };
 
 export const edit: JiraEndpoints['issuesEdit'] = async (ctx, input) => {
-	// any is used here because Jira issue field update structure is highly dynamic
+	// Record<string, unknown>: Jira issue field update payload is open-ended; keys depend on the project's field configuration
 	const fields: Record<string, unknown> = {};
+	// Record<string, unknown>: the update object uses field-specific operation arrays (e.g. add/set/remove) with no fixed shape
 	const update: Record<string, unknown> = {};
 
 	if (input.summary !== undefined) fields.summary = input.summary;
@@ -130,7 +132,7 @@ export const edit: JiraEndpoints['issuesEdit'] = async (ctx, input) => {
 	await makeJiraRequest<void>(
 		`issue/${input.issue_id_or_key}`,
 		ctx.key,
-		ctx.options.cloudUrl ?? '',
+		(await ctx.keys.get_cloud_url()) ?? '',
 		{
 			method: 'PUT',
 			body: {
@@ -152,7 +154,7 @@ export const deleteIssue: JiraEndpoints['issuesDelete'] = async (ctx, input) => 
 	await makeJiraRequest<void>(
 		`issue/${input.issue_id_or_key}`,
 		ctx.key,
-		ctx.options.cloudUrl ?? '',
+		(await ctx.keys.get_cloud_url()) ?? '',
 		{
 			method: 'DELETE',
 			query: {
@@ -169,7 +171,7 @@ export const search: JiraEndpoints['issuesSearch'] = async (ctx, input) => {
 	const result = await makeJiraRequest<JiraEndpointOutputs['issuesSearch']>(
 		'search/jql',
 		ctx.key,
-		ctx.options.cloudUrl ?? '',
+		(await ctx.keys.get_cloud_url()) ?? '',
 		{
 			method: 'GET',
 			query: {
@@ -212,7 +214,7 @@ export const assign: JiraEndpoints['issuesAssign'] = async (ctx, input) => {
 	await makeJiraRequest<void>(
 		`issue/${input.issue_id_or_key}/assignee`,
 		ctx.key,
-		ctx.options.cloudUrl ?? '',
+		(await ctx.keys.get_cloud_url()) ?? '',
 		{
 			method: 'PUT',
 			body: { accountId: input.account_id ?? null },
@@ -230,7 +232,7 @@ export const getTransitions: JiraEndpoints['issuesGetTransitions'] = async (ctx,
 	const result = await makeJiraRequest<JiraEndpointOutputs['issuesGetTransitions']>(
 		`issue/${input.issue_id_or_key}/transitions`,
 		ctx.key,
-		ctx.options.cloudUrl ?? '',
+		(await ctx.keys.get_cloud_url()) ?? '',
 		{ method: 'GET' },
 	);
 
@@ -239,7 +241,7 @@ export const getTransitions: JiraEndpoints['issuesGetTransitions'] = async (ctx,
 };
 
 export const transition: JiraEndpoints['issuesTransition'] = async (ctx, input) => {
-	// any is used here because the transition body shape is dynamic and comment may be ADF or plain text
+	// Record<string, unknown>: transition body is dynamic — optionally includes an ADF comment update block
 	const body: Record<string, unknown> = {
 		transition: { id: input.transition_id },
 	};
@@ -268,7 +270,7 @@ export const transition: JiraEndpoints['issuesTransition'] = async (ctx, input) 
 	await makeJiraRequest<void>(
 		`issue/${input.issue_id_or_key}/transitions`,
 		ctx.key,
-		ctx.options.cloudUrl ?? '',
+		(await ctx.keys.get_cloud_url()) ?? '',
 		{
 			method: 'POST',
 			body,
@@ -307,7 +309,7 @@ export const bulkCreate: JiraEndpoints['issuesBulkCreate'] = async (ctx, input) 
 	const result = await makeJiraRequest<JiraEndpointOutputs['issuesBulkCreate']>(
 		'issue/bulk',
 		ctx.key,
-		ctx.options.cloudUrl ?? '',
+		(await ctx.keys.get_cloud_url()) ?? '',
 		{
 			method: 'POST',
 			body: { issueUpdates },
@@ -343,7 +345,7 @@ export const bulkFetch: JiraEndpoints['issuesBulkFetch'] = async (ctx, input) =>
 	const result = await makeJiraRequest<JiraEndpointOutputs['issuesBulkFetch']>(
 		'issue/bulkfetch',
 		ctx.key,
-		ctx.options.cloudUrl ?? '',
+		(await ctx.keys.get_cloud_url()) ?? '',
 		{
 			method: 'POST',
 			body: {
@@ -385,7 +387,7 @@ export const addAttachment: JiraEndpoints['issuesAddAttachment'] = async (ctx, i
 	const result = await makeJiraRequest<JiraEndpointOutputs['issuesAddAttachment']>(
 		`issue/${input.issue_id_or_key}/attachments`,
 		ctx.key,
-		ctx.options.cloudUrl ?? '',
+		(await ctx.keys.get_cloud_url()) ?? '',
 		{
 			method: 'POST',
 			body: {
@@ -404,10 +406,11 @@ export const addWatcher: JiraEndpoints['issuesAddWatcher'] = async (ctx, input) 
 	await makeJiraRequest<void>(
 		`issue/${input.issue_id_or_key}/watchers`,
 		ctx.key,
-		ctx.options.cloudUrl ?? '',
+		(await ctx.keys.get_cloud_url()) ?? '',
 		{
 			method: 'POST',
-			body: input.account_id as unknown as Record<string, unknown>,
+			// unknown → Record<string, unknown>: Jira's add-watcher endpoint expects the raw accountId string as the body, but makeJiraRequest types body as Record
+		body: input.account_id as unknown as Record<string, unknown>,
 		},
 	);
 
@@ -419,7 +422,7 @@ export const removeWatcher: JiraEndpoints['issuesRemoveWatcher'] = async (ctx, i
 	await makeJiraRequest<void>(
 		`issue/${input.issue_id_or_key}/watchers`,
 		ctx.key,
-		ctx.options.cloudUrl ?? '',
+		(await ctx.keys.get_cloud_url()) ?? '',
 		{
 			method: 'DELETE',
 			query: { accountId: input.account_id },
@@ -431,7 +434,7 @@ export const removeWatcher: JiraEndpoints['issuesRemoveWatcher'] = async (ctx, i
 };
 
 export const linkIssues: JiraEndpoints['issuesLinkIssues'] = async (ctx, input) => {
-	// any is used here because comment body structure varies and is optional
+	// Record<string, unknown>: issue link body optionally includes an ADF comment block; shape varies by whether comment is provided
 	const body: Record<string, unknown> = {
 		type: { name: input.link_type },
 		inwardIssue: { key: input.inward_issue_key },
@@ -456,7 +459,7 @@ export const linkIssues: JiraEndpoints['issuesLinkIssues'] = async (ctx, input) 
 	await makeJiraRequest<void>(
 		'issueLink',
 		ctx.key,
-		ctx.options.cloudUrl ?? '',
+		(await ctx.keys.get_cloud_url()) ?? '',
 		{
 			method: 'POST',
 			body,

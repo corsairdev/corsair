@@ -43,6 +43,7 @@ const JiraProjectRefSchema = z.object({
 
 const JiraIssueFieldsSchema = z.object({
 	summary: z.string().optional(),
+	// unknown: Jira description uses Atlassian Document Format (ADF) — a deeply nested object with no fixed schema
 	description: z.unknown().optional(),
 	status: JiraStatusSchema.optional(),
 	assignee: JiraUserSchema.nullable().optional(),
@@ -56,6 +57,7 @@ const JiraIssueFieldsSchema = z.object({
 	comment: z
 		.object({
 			total: z.number().optional(),
+			// unknown: each comment body is ADF and varies in structure
 			comments: z.array(z.unknown()).optional(),
 		})
 		.optional(),
@@ -73,7 +75,7 @@ const JiraCommentSchema = z.object({
 	id: z.string().optional(),
 	self: z.string().optional(),
 	author: JiraUserSchema.optional(),
-	// ADF body is an arbitrary object structure
+	// unknown: comment body is Atlassian Document Format (ADF) — arbitrary nested structure with no fixed shape
 	body: z.unknown().optional(),
 	renderedBody: z.string().optional(),
 	created: z.string().optional(),
@@ -265,6 +267,7 @@ const IssuesBulkCreateResponseSchema = z.object({
 			}),
 		)
 		.optional(),
+	// unknown: bulk create error objects are unstructured and vary per validation failure
 	errors: z.array(z.unknown()).optional(),
 });
 export type IssuesBulkCreateResponse = z.infer<
@@ -280,6 +283,7 @@ export type IssuesBulkFetchInput = z.infer<typeof IssuesBulkFetchInputSchema>;
 
 const IssuesBulkFetchResponseSchema = z.object({
 	issues: z.array(JiraIssueSchema).optional(),
+	// unknown: bulk fetch issue error objects have no fixed schema across Jira versions
 	issueErrors: z.array(z.unknown()).optional(),
 });
 export type IssuesBulkFetchResponse = z.infer<

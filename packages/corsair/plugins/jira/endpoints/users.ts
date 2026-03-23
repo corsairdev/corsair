@@ -7,7 +7,7 @@ export const getCurrent: JiraEndpoints['usersGetCurrent'] = async (ctx, _input) 
 	const result = await makeJiraRequest<JiraEndpointOutputs['usersGetCurrent']>(
 		'myself',
 		ctx.key,
-		ctx.options.cloudUrl ?? '',
+		(await ctx.keys.get_cloud_url()) ?? '',
 		{ method: 'GET' },
 	);
 
@@ -19,7 +19,7 @@ export const find: JiraEndpoints['usersFind'] = async (ctx, input) => {
 	const result = await makeJiraRequest<JiraEndpointOutputs['usersFind']>(
 		'users/search',
 		ctx.key,
-		ctx.options.cloudUrl ?? '',
+		(await ctx.keys.get_cloud_url()) ?? '',
 		{
 			method: 'GET',
 			query: {
@@ -39,7 +39,7 @@ export const getAll: JiraEndpoints['usersGetAll'] = async (ctx, input) => {
 	const result = await makeJiraRequest<JiraEndpointOutputs['usersGetAll']>(
 		'users',
 		ctx.key,
-		ctx.options.cloudUrl ?? '',
+		(await ctx.keys.get_cloud_url()) ?? '',
 		{
 			method: 'GET',
 			query: {
@@ -57,7 +57,7 @@ export const groupsGetAll: JiraEndpoints['groupsGetAll'] = async (ctx, input) =>
 	const result = await makeJiraRequest<JiraEndpointOutputs['groupsGetAll']>(
 		'groups/picker',
 		ctx.key,
-		ctx.options.cloudUrl ?? '',
+		(await ctx.keys.get_cloud_url()) ?? '',
 		{
 			method: 'GET',
 			query: {
@@ -75,7 +75,7 @@ export const groupsCreate: JiraEndpoints['groupsCreate'] = async (ctx, input) =>
 	const result = await makeJiraRequest<JiraEndpointOutputs['groupsCreate']>(
 		'group',
 		ctx.key,
-		ctx.options.cloudUrl ?? '',
+		(await ctx.keys.get_cloud_url()) ?? '',
 		{
 			method: 'POST',
 			body: { name: input.name },

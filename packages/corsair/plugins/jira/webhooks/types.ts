@@ -156,6 +156,7 @@ export type JiraWebhookOutputs = {
 
 // ── Matcher helper ────────────────────────────────────────────────────────────
 
+// unknown: raw webhook body may arrive as a pre-parsed object or a JSON string; type is resolved after parsing
 function parseBody(body: unknown): unknown {
 	return typeof body === 'string' ? JSON.parse(body) : body;
 }

@@ -7,7 +7,7 @@ export const create: JiraEndpoints['sprintsCreate'] = async (ctx, input) => {
 	const result = await makeJiraAgileRequest<JiraEndpointOutputs['sprintsCreate']>(
 		'sprint',
 		ctx.key,
-		ctx.options.cloudUrl ?? '',
+		(await ctx.keys.get_cloud_url()) ?? '',
 		{
 			method: 'POST',
 			body: {
@@ -45,7 +45,7 @@ export const list: JiraEndpoints['sprintsList'] = async (ctx, input) => {
 	const result = await makeJiraAgileRequest<JiraEndpointOutputs['sprintsList']>(
 		`board/${input.board_id}/sprint`,
 		ctx.key,
-		ctx.options.cloudUrl ?? '',
+		(await ctx.keys.get_cloud_url()) ?? '',
 		{
 			method: 'GET',
 			query: {
@@ -84,7 +84,7 @@ export const moveIssues: JiraEndpoints['sprintsMoveIssues'] = async (ctx, input)
 	await makeJiraAgileRequest<void>(
 		`sprint/${input.sprint_id}/issue`,
 		ctx.key,
-		ctx.options.cloudUrl ?? '',
+		(await ctx.keys.get_cloud_url()) ?? '',
 		{
 			method: 'POST',
 			body: { issues: input.issue_keys },
@@ -99,7 +99,7 @@ export const listBoards: JiraEndpoints['sprintsListBoards'] = async (ctx, input)
 	const result = await makeJiraAgileRequest<JiraEndpointOutputs['sprintsListBoards']>(
 		'board',
 		ctx.key,
-		ctx.options.cloudUrl ?? '',
+		(await ctx.keys.get_cloud_url()) ?? '',
 		{
 			method: 'GET',
 			query: {

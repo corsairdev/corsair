@@ -135,6 +135,7 @@ describe('Jira API Type Tests', () => {
 							project: { key: testProjectKey },
 							summary: `Test issue from API test ${Date.now()}`,
 							issuetype: { name: 'Task' },
+							assignee: undefined
 						},
 					},
 				},

@@ -7,7 +7,7 @@ export const create: JiraEndpoints['projectsCreate'] = async (ctx, input) => {
 	const result = await makeJiraRequest<JiraEndpointOutputs['projectsCreate']>(
 		'project',
 		ctx.key,
-		ctx.options.cloudUrl ?? '',
+		(await ctx.keys.get_cloud_url()) ?? '',
 		{
 			method: 'POST',
 			body: {
@@ -47,7 +47,7 @@ export const get: JiraEndpoints['projectsGet'] = async (ctx, input) => {
 	const result = await makeJiraRequest<JiraEndpointOutputs['projectsGet']>(
 		`project/${input.project_id_or_key}`,
 		ctx.key,
-		ctx.options.cloudUrl ?? '',
+		(await ctx.keys.get_cloud_url()) ?? '',
 		{
 			method: 'GET',
 			query: { expand: input.expand },
@@ -79,7 +79,7 @@ export const list: JiraEndpoints['projectsList'] = async (ctx, input) => {
 	const result = await makeJiraRequest<JiraEndpointOutputs['projectsList']>(
 		'project/search',
 		ctx.key,
-		ctx.options.cloudUrl ?? '',
+		(await ctx.keys.get_cloud_url()) ?? '',
 		{
 			method: 'GET',
 			query: {
@@ -120,7 +120,7 @@ export const getRoles: JiraEndpoints['projectsGetRoles'] = async (ctx, input) =>
 	const result = await makeJiraRequest<JiraEndpointOutputs['projectsGetRoles']>(
 		`project/${input.project_id_or_key}/role`,
 		ctx.key,
-		ctx.options.cloudUrl ?? '',
+		(await ctx.keys.get_cloud_url()) ?? '',
 		{ method: 'GET' },
 	);
 
