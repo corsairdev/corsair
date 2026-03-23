@@ -6,7 +6,7 @@ import { makeHackerNewsFirebaseRequest, makeHackerNewsAlgoliaRequest } from '../
 // Raw Algolia item shape returned by the /items/{id} endpoint
 type AlgoliaRawItem = {
 	id: number;
-	type?: string;
+	type?: 'job' | 'story' | 'comment' | 'poll' | 'pollopt';
 	author?: string;
 	title?: string | null;
 	url?: string | null;
@@ -16,8 +16,7 @@ type AlgoliaRawItem = {
 	story_id?: number | null;
 	created_at?: string;
 	created_at_i?: number;
-	// children is typed as unknown[] because the structure is deeply recursive
-	children?: unknown[];
+	children?: AlgoliaRawItem[];
 };
 
 function truncate(text: string | null | undefined, maxLen: number): string | null | undefined {
@@ -25,25 +24,20 @@ function truncate(text: string | null | undefined, maxLen: number): string | nul
 	return text.slice(0, maxLen) + '...';
 }
 
+type TransformedItem = NonNullable<HackerNewsEndpointOutputs['itemsGetWithId']['item']>;
+
 function transformAlgoliaItem(
-	// item is typed as unknown because it comes from a recursive Algolia response
-	item: unknown,
+	raw: AlgoliaRawItem,
 	depth: number,
 	maxDepth: number,
 	maxChildren: number,
 	truncateText: boolean,
-// Record<string, unknown> because this function is called recursively and children share the same shape
-): Record<string, unknown> {
-	// Cast to AlgoliaRawItem after checking it's an object
-	const raw = item as AlgoliaRawItem;
-	const totalChildren = Array.isArray(raw.children) ? raw.children.length : 0;
+): TransformedItem {
+	const totalChildren = raw.children ? raw.children.length : 0;
 	const childrenTruncated = totalChildren > maxChildren;
-	const slicedChildren = Array.isArray(raw.children)
-		? raw.children.slice(0, maxChildren)
-		: [];
+	const slicedChildren = raw.children ? raw.children.slice(0, maxChildren) : [];
 
-	// Record<string, unknown>[] because children are produced by this same recursive function
-	let processedChildren: Record<string, unknown>[] = [];
+	let processedChildren: TransformedItem[] = [];
 	let maxDepthReached = false;
 
 	if (depth >= maxDepth) {
@@ -125,8 +119,7 @@ export const getWithId: HackerNewsEndpoints['itemsGetWithId'] = async (ctx, inpu
 		try {
 			await ctx.db.items.upsertByEntityId(String(raw.id), {
 				id: raw.id,
-				// Algolia returns type as a plain string; cast to the Firebase enum union for DB storage
-			type: raw.type as HackerNewsEndpointOutputs['itemsGet']['type'] | undefined,
+				type: raw.type,
 				by: raw.author,
 				title: raw.title ?? undefined,
 				url: raw.url ?? undefined,
@@ -141,8 +134,7 @@ export const getWithId: HackerNewsEndpoints['itemsGetWithId'] = async (ctx, inpu
 	await logEventFromContext(ctx, 'hackernews.items.getWithId', { ...input }, 'completed');
 	return {
 		found: true,
-		// transformed is Record<string, unknown> from the recursive helper; cast to the typed output shape
-		item: transformed as HackerNewsEndpointOutputs['itemsGetWithId']['item'],
+		item: transformed,
 	};
 };
 

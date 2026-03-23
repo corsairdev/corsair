@@ -33,7 +33,7 @@ export const get: HackerNewsEndpoints['usersGet'] = async (ctx, input) => {
 				// spread raw to capture all Algolia user fields; override id with resolved username
 				...raw,
 				id: username,
-				karma: raw.karma ?? 0,
+				...(raw.karma !== undefined && { karma: raw.karma }),
 			});
 		} catch (error) {
 			console.warn('Failed to save user to database:', error);
@@ -43,8 +43,8 @@ export const get: HackerNewsEndpoints['usersGet'] = async (ctx, input) => {
 	await logEventFromContext(ctx, 'hackernews.users.get', { ...input }, 'completed');
 	return {
 		username,
-		karma: raw.karma ?? 0,
 		about: raw.about,
+		karma: raw.karma ?? 0,
 	};
 };
 
