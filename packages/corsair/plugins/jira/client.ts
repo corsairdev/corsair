@@ -126,7 +126,8 @@ export async function uploadJiraAttachment<T>(
 		const text = await response.text();
 		throw new JiraAPIError(`Failed to upload attachment: ${response.status} ${text}`, String(response.status));
 	}
-
+	// response.json() returns Promise<any> from the Fetch API; cast to Promise<T> here
+	// because the caller is responsible for validating the shape via JiraEndpointOutputSchemas.
 	return response.json() as Promise<T>;
 }
 
