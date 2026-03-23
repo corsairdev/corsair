@@ -38,7 +38,7 @@ export const errorHandlers = {
 			);
 		},
 		handler: async (error, context) => {
-			console.log(
+			console.warn(
 				`[HACKERNEWS:${context.operation}] Authentication failed`,
 			);
 			return { maxRetries: 0 };

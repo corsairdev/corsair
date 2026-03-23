@@ -83,7 +83,7 @@ const GetBestStoriesInputSchema = z.object({
 });
 
 const GetNewStoriesInputSchema = z.object({
-	print_format: z.string().optional(),
+	print: z.enum(['pretty']).optional(),
 });
 
 const GetAskStoriesInputSchema = z.object({
@@ -91,11 +91,11 @@ const GetAskStoriesInputSchema = z.object({
 });
 
 const GetShowStoriesInputSchema = z.object({
-	print_format: z.string().optional(),
+	print: z.enum(['pretty']).optional(),
 });
 
 const GetJobStoriesInputSchema = z.object({
-	print_format: z.string().optional(),
+	print: z.enum(['pretty']).optional(),
 });
 
 const GetUserInputSchema = z.object({
@@ -125,6 +125,8 @@ const GetFrontpageInputSchema = z.object({
 
 const GetTodaysPostsInputSchema = z.object({
 	min_points: z.number().optional(),
+	page: z.number().optional(),
+	size: z.number().optional(),
 });
 
 const GetUpdatesInputSchema = z.object({

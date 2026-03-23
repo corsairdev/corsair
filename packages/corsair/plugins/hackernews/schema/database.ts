@@ -21,7 +21,7 @@ export const HackerNewsItem = z.object({
 
 export const HackerNewsUser = z.object({
 	id: z.string(),
-	karma: z.number(),
+	karma: z.number().optional(),
 	about: z.string().optional(),
 	created: z.number().optional(),
 	submitted: z.array(z.number()).optional(),

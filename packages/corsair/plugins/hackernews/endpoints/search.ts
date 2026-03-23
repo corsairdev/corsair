@@ -144,7 +144,8 @@ export const getTodays: HackerNewsEndpoints['searchGetTodays'] = async (ctx, inp
 		query: {
 			tags: 'story',
 			numericFilters,
-			hitsPerPage: 1000,
+			page: input.page,
+			hitsPerPage: input.size,
 		},
 	});
 

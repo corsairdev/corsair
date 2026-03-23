@@ -43,7 +43,7 @@ export const getBest: HackerNewsEndpoints['storiesGetBest'] = async (ctx, input)
 
 export const getNew: HackerNewsEndpoints['storiesGetNew'] = async (ctx, input) => {
 	const ids = await makeHackerNewsFirebaseRequest<number[]>('newstories.json', {
-		query: { print: input.print_format },
+		query: { print: input.print },
 	});
 
 	if (ctx.db.items) {
@@ -81,7 +81,7 @@ export const getAsk: HackerNewsEndpoints['storiesGetAsk'] = async (ctx, input) =
 
 export const getShow: HackerNewsEndpoints['storiesGetShow'] = async (ctx, input) => {
 	const ids = await makeHackerNewsFirebaseRequest<number[]>('showstories.json', {
-		query: { print: input.print_format },
+		query: { print: input.print },
 	});
 
 	if (ctx.db.items) {
@@ -100,7 +100,7 @@ export const getShow: HackerNewsEndpoints['storiesGetShow'] = async (ctx, input)
 
 export const getJobs: HackerNewsEndpoints['storiesGetJobs'] = async (ctx, input) => {
 	const ids = await makeHackerNewsFirebaseRequest<number[]>('jobstories.json', {
-		query: { print: input.print_format },
+		query: { print: input.print },
 	});
 
 	if (ctx.db.items) {

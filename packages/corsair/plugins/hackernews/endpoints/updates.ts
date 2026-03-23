@@ -24,7 +24,7 @@ export const get: HackerNewsEndpoints['updatesGet'] = async (ctx, input) => {
 	if (ctx.db.users) {
 		try {
 			for (const username of result.profiles) {
-				await ctx.db.users.upsertByEntityId(username, { id: username, karma: 0 });
+				await ctx.db.users.upsertByEntityId(username, { id: username });
 			}
 		} catch (error) {
 			console.warn('Failed to save updated profile IDs to database:', error);
