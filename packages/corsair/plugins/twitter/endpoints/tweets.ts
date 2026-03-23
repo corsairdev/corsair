@@ -5,7 +5,6 @@ import type { TwitterEndpointOutputs } from './types';
 
 export const create: TwitterEndpoints['tweetsCreate'] = async (ctx, input) => {
 	const { text, quoteTweetId, mediaIds, replySettings } = input;
-	console.log('create tweet', input, ctx.key);
 
 	const response = await makeTwitterRequest<
 		TwitterEndpointOutputs['tweetsCreate']

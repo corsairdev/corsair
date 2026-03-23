@@ -97,9 +97,7 @@ const twitterEndpointsNested = {
 } as const;
 
 const twitterWebhooksNested = {
-	tweets: {
-		create: TweetWebhooks.create,
-	},
+	
 } as const;
 
 // ── Endpoint Schemas ──────────────────────────────────────────────────────────

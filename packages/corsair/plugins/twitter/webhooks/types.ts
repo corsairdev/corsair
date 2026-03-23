@@ -48,6 +48,8 @@ export type TwitterWebhookOutputs = {
 
 // ── Matcher Helpers ───────────────────────────────────────────────────────────
 
+// body is untyped at the call site because it can be a raw string (pre-middleware)
+// or an already-parsed object, depending on the framework execution path
 function parseBody(body: unknown): Record<string, unknown> {
 	if (typeof body === 'string') {
 		try {
@@ -73,12 +75,13 @@ export function createTwitterMatch(
 	};
 }
 
-// ── Signature Verification ────────────────────────────────────────────────────
-
+// WebhookRequest is generic; payload type is unknown here because signature
+// verification must happen before the payload can be safely typed
 export function verifyTwitterWebhookSignature(
 	request: WebhookRequest<unknown>,
 	secret: string,
 ): { valid: boolean; error?: string } {
+	// headers typing is Record<string, string | string[] | undefined>; normalise to scalar string | undefined
 	const signature = request.headers['x-twitter-webhooks-signature'] as
 		| string
 		| undefined;
