@@ -303,31 +303,34 @@ export type IssuesBulkFetchResponse = z.infer<
 	typeof IssuesBulkFetchResponseSchema
 >;
 
-const IssuesAddAttachmentInputSchema = z.object({
-	issue_id_or_key: z.string(),
-	file_name: z.string(),
-	file_content: z.string(),
-	mime_type: z.string().optional(),
-});
+const IssuesAddAttachmentInputSchema = z
+	.object({
+		issue_id_or_key: z.string(),
+		file_name: z.string(),
+		/** Base64-encoded file content. Provide this OR file_url. */
+		file_content: z.string().optional(),
+		/** URL to fetch the file from (images, PDFs, etc.). Provide this OR file_content. */
+		file_url: z.string().url().optional(),
+		mime_type: z.string().optional(),
+	})
+	.refine((d) => d.file_content !== undefined || d.file_url !== undefined, {
+		message: 'Either file_content (base64) or file_url must be provided',
+	});
 export type IssuesAddAttachmentInput = z.infer<
 	typeof IssuesAddAttachmentInputSchema
 >;
 
-const IssuesAddAttachmentResponseSchema = z.object({
-	attachments: z
-		.array(
-			z.object({
-				id: z.string().optional(),
-				self: z.string().optional(),
-				filename: z.string().optional(),
-				mimeType: z.string().optional(),
-				size: z.number().optional(),
-				content: z.string().optional(),
-				created: z.string().optional(),
-			}),
-		)
-		.optional(),
-});
+const IssuesAddAttachmentResponseSchema = z.array(
+	z.object({
+		id: z.string().optional(),
+		self: z.string().optional(),
+		filename: z.string().optional(),
+		mimeType: z.string().optional(),
+		size: z.number().optional(),
+		content: z.string().optional(),
+		created: z.string().optional(),
+	}),
+);
 export type IssuesAddAttachmentResponse = z.infer<
 	typeof IssuesAddAttachmentResponseSchema
 >;

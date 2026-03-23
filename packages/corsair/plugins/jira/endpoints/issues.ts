@@ -1,6 +1,6 @@
 import { logEventFromContext } from '../../utils/events';
 import type { JiraEndpoints } from '..';
-import { makeJiraRequest } from '../client';
+import { makeJiraRequest, uploadJiraAttachment } from '../client';
 import { makeAdf, type JiraEndpointOutputs } from './types';
 
 export const create: JiraEndpoints['issuesCreate'] = async (ctx, input) => {
@@ -326,17 +326,14 @@ export const bulkFetch: JiraEndpoints['issuesBulkFetch'] = async (ctx, input) =>
 };
 
 export const addAttachment: JiraEndpoints['issuesAddAttachment'] = async (ctx, input) => {
-	const result = await makeJiraRequest<JiraEndpointOutputs['issuesAddAttachment']>(
-		`issue/${input.issue_id_or_key}/attachments`,
+	const result = await uploadJiraAttachment<JiraEndpointOutputs['issuesAddAttachment']>(
+		input.issue_id_or_key,
 		ctx.key,
 		(await ctx.keys.get_cloud_url()) ?? '',
 		{
-			method: 'POST',
-			body: {
-				filename: input.file_name,
-				content: input.file_content,
-				mimeType: input.mime_type ?? 'application/octet-stream',
-			},
+			name: input.file_name,
+			mimeType: input.mime_type,
+			...(input.file_url ? { url: input.file_url } : { content: input.file_content! }),
 		},
 	);
 

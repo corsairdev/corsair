@@ -1,8 +1,11 @@
+import { readFileSync } from 'fs';
+import { join } from 'path';
 import dotenv from 'dotenv';
-import { makeJiraRequest, makeJiraAgileRequest } from './client';
+import { makeJiraRequest, makeJiraAgileRequest, uploadJiraAttachment } from './client';
 import type {
 	CommentsAddResponse,
 	CommentsListResponse,
+	IssuesAddAttachmentResponse,
 	IssuesCreateResponse,
 	IssuesGetResponse,
 	IssuesGetTransitionsResponse,
@@ -224,6 +227,41 @@ describe('Jira API Type Tests', () => {
 			);
 
 			JiraEndpointOutputSchemas.issuesGetTransitions.parse(result);
+		});
+
+		it('issuesAddAttachment returns correct type', async () => {
+			if (!testIssueKey) {
+				const searchResult = await makeJiraRequest<IssuesSearchResponse>(
+					'search/jql',
+					API_KEY,
+					CLOUD_URL,
+					{
+						method: 'GET',
+						query: {
+							jql: `project = ${testProjectKey} ORDER BY created DESC`,
+							maxResults: 1,
+						},
+					},
+				);
+				const issueKey = searchResult.issues?.[0]?.key;
+				if (!issueKey) {
+					throw new Error('No issues found for attachment test');
+				}
+				testIssueKey = issueKey;
+			}
+
+			// Upload via URL — mime type is auto-detected from the response Content-Type header
+			const urlResult = await uploadJiraAttachment<IssuesAddAttachmentResponse>(
+				testIssueKey,
+				API_KEY,
+				CLOUD_URL,
+				{
+					name: 'url-attachment.svg',
+					url: 'https://www.w3.org/Icons/w3c_home.png',
+				},
+			);
+
+			JiraEndpointOutputSchemas.issuesAddAttachment.parse(urlResult);
 		});
 	});
 
