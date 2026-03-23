@@ -29,6 +29,7 @@ export const BaseProviders = [
 	'googlesheets',
 	'hubspot',
 	'intercom',
+	'jira',
 	'linear',
 	'monday',
 	'notion',
@@ -38,11 +39,11 @@ export const BaseProviders = [
 	'resend',
 	'sentry',
 	'slack',
-	'telegram',
 	'spotify',
 	'stripe',
 	'tavily',
 	'teams',
+	'telegram',
 	'todoist',
 	'trello',
 	'twitterapiio',
@@ -66,6 +67,7 @@ export type AllProviders =
 	| 'googlesheets'
 	| 'hubspot'
 	| 'intercom'
+	| 'jira'
 	| 'linear'
 	| 'monday'
 	| 'notion'
@@ -75,11 +77,11 @@ export type AllProviders =
 	| 'resend'
 	| 'sentry'
 	| 'slack'
-	| 'telegram'
 	| 'spotify'
 	| 'stripe'
 	| 'tavily'
 	| 'teams'
+	| 'telegram'
 	| 'todoist'
 	| 'trello'
 	| 'twitterapiio'

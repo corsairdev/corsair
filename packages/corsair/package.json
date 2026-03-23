@@ -117,15 +117,15 @@
       "types": "./dist/plugins/hubspot/index.d.ts",
       "default": "./dist/plugins/hubspot/index.js"
     },
-    "./plugins/telegram": {
-      "dev-source": "./plugins/telegram/index.ts",
-      "types": "./dist/plugins/telegram/index.d.ts",
-      "default": "./dist/plugins/telegram/index.js"
-    },
     "./plugins/intercom": {
       "dev-source": "./plugins/intercom/index.ts",
       "types": "./dist/plugins/intercom/index.d.ts",
       "default": "./dist/plugins/intercom/index.js"
+    },
+    "./plugins/jira": {
+      "dev-source": "./plugins/jira/index.ts",
+      "types": "./dist/plugins/jira/index.d.ts",
+      "default": "./dist/plugins/jira/index.js"
     },
     "./plugins/linear": {
       "dev-source": "./plugins/linear/index.ts",
@@ -186,6 +186,11 @@
       "dev-source": "./plugins/teams/index.ts",
       "types": "./dist/plugins/teams/index.d.ts",
       "default": "./dist/plugins/teams/index.js"
+    },
+    "./plugins/telegram": {
+      "dev-source": "./plugins/telegram/index.ts",
+      "types": "./dist/plugins/telegram/index.d.ts",
+      "default": "./dist/plugins/telegram/index.js"
     },
     "./plugins/todoist": {
       "dev-source": "./plugins/todoist/index.ts",

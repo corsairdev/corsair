@@ -1,4 +1,4 @@
-import { createCorsair, linear, slack, twitterapiio, fireflies } from 'corsair';
+import { createCorsair, linear, slack, twitterapiio, fireflies, jira } from 'corsair';
 import { sqlite } from '../db';
 
 export const corsair = createCorsair({
@@ -9,5 +9,5 @@ export const corsair = createCorsair({
 		timeout: '10m',
 		onTimeout: 'deny',
 	},
-	plugins: [twitterapiio(), slack(), linear(), fireflies()],
+	plugins: [twitterapiio(), slack(), linear(), fireflies(), jira()],
 });
