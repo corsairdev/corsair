@@ -21,6 +21,7 @@ export const create: TwitterEndpoints['tweetsCreate'] = async (ctx, input) => {
 	if (response.data?.id && ctx.db.tweets) {
 		try {
 			await ctx.db.tweets.upsertByEntityId(response.data.id, {
+				...response.data,
 				id: response.data.id,
 				text: response.data.text,
 			});
@@ -62,6 +63,7 @@ export const createReply: TwitterEndpoints['tweetsCreateReply'] = async (
 	if (response.data?.id && ctx.db.tweets) {
 		try {
 			await ctx.db.tweets.upsertByEntityId(response.data.id, {
+				...response.data,
 				id: response.data.id,
 				text: response.data.text,
 				referencedTweets: [{ type: 'replied_to', id: inReplyToTweetId }],
