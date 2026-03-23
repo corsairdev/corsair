@@ -1,16 +1,13 @@
 import type {
 	BindEndpoints,
-	BindWebhooks,
 	CorsairEndpoint,
 	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
-	CorsairWebhook,
 	KeyBuilderContext,
 	PluginAuthConfig,
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
-	RequiredPluginWebhookSchemas,
 	PluginPermissionsConfig,
 } from '../../core';
 import type { AuthTypes, PickAuth } from '../../core/constants';
@@ -25,11 +22,6 @@ import type {
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { TwitterSchema } from './schema';
-import { TweetWebhooks, TweetCreateEventSchema } from './webhooks';
-import type {
-	TweetCreateEvent,
-	TwitterWebhookOutputs,
-} from './webhooks/types';
 
 // ── Context & Key Builder ─────────────────────────────────────────────────────
 
@@ -54,19 +46,6 @@ export type TwitterEndpoints = {
 };
 
 export type TwitterBoundEndpoints = BindEndpoints<typeof twitterEndpointsNested>;
-
-// ── Webhook Types ─────────────────────────────────────────────────────────────
-
-type TwitterWebhook<
-	K extends keyof TwitterWebhookOutputs,
-	TEvent,
-> = CorsairWebhook<TwitterContext, TEvent, TwitterWebhookOutputs[K]>;
-
-export type TwitterWebhooks = {
-	tweetCreate: TwitterWebhook<'tweetCreate', TweetCreateEvent>;
-};
-
-export type TwitterBoundWebhooks = BindWebhooks<TwitterWebhooks>;
 
 // ── Plugin Options ────────────────────────────────────────────────────────────
 
@@ -112,16 +91,6 @@ export const twitterEndpointSchemas = {
 		output: TwitterEndpointOutputSchemas.tweetsCreateReply,
 	},
 } satisfies RequiredPluginEndpointSchemas<typeof twitterEndpointsNested>;
-
-// ── Webhook Schemas ───────────────────────────────────────────────────────────
-
-const twitterWebhookSchemas = {
-	'tweets.create': {
-		description: 'A tweet was created by a subscribed user',
-		payload: TweetCreateEventSchema,
-		response: TweetCreateEventSchema,
-	},
-} satisfies RequiredPluginWebhookSchemas<typeof twitterWebhooksNested>;
 
 // ── Endpoint Meta ─────────────────────────────────────────────────────────────
 
@@ -182,13 +151,12 @@ export function twitter<const T extends TwitterPluginOptions>(
 		webhooks: twitterWebhooksNested,
 		endpointMeta: twitterEndpointMeta,
 		endpointSchemas: twitterEndpointSchemas,
-		webhookSchemas: twitterWebhookSchemas,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
 		},
 		pluginWebhookMatcher: (request) => {
-			// Webhooks implemented yet
+			// Webhooks not implemented yet
 			return false;
 		},
 		keyBuilder: async (ctx: TwitterKeyBuilderContext, source) => {
@@ -227,7 +195,3 @@ export type {
 	TweetsCreateReplyResponse,
 } from './endpoints/types';
 export type { TwitterCredentials } from './schema';
-export type {
-	TweetCreateEvent,
-	TwitterWebhookOutputs,
-} from './webhooks/types';
