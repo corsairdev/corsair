@@ -30,6 +30,7 @@ export const BaseProviders = [
 	'hackernews',
 	'hubspot',
 	'intercom',
+	'jira',
 	'linear',
 	'monday',
 	'notion',
@@ -69,6 +70,7 @@ export type AllProviders =
 	| 'hackernews'
 	| 'hubspot'
 	| 'intercom'
+	| 'jira'
 	| 'linear'
 	| 'monday'
 	| 'notion'

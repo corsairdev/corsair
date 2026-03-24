@@ -127,6 +127,11 @@
       "types": "./dist/plugins/intercom/index.d.ts",
       "default": "./dist/plugins/intercom/index.js"
     },
+    "./plugins/jira": {
+      "dev-source": "./plugins/jira/index.ts",
+      "types": "./dist/plugins/jira/index.d.ts",
+      "default": "./dist/plugins/jira/index.js"
+    },
     "./plugins/linear": {
       "dev-source": "./plugins/linear/index.ts",
       "types": "./dist/plugins/linear/index.d.ts",
