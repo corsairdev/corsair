@@ -15,6 +15,7 @@ export type AllErrors =
 export const BaseProviders = [
 	'airtable',
 	'amplitude',
+	'asana',
 	'box',
 	'cal',
 	'calendly',
@@ -38,11 +39,11 @@ export const BaseProviders = [
 	'resend',
 	'sentry',
 	'slack',
-	'telegram',
 	'spotify',
 	'stripe',
 	'tavily',
 	'teams',
+	'telegram',
 	'todoist',
 	'trello',
 	'twitterapiio',
@@ -52,6 +53,7 @@ export const BaseProviders = [
 export type AllProviders =
 	| 'airtable'
 	| 'amplitude'
+	| 'asana'
 	| 'box'
 	| 'cal'
 	| 'calendly'
@@ -75,11 +77,11 @@ export type AllProviders =
 	| 'resend'
 	| 'sentry'
 	| 'slack'
-	| 'telegram'
 	| 'spotify'
 	| 'stripe'
 	| 'tavily'
 	| 'teams'
+	| 'telegram'
 	| 'todoist'
 	| 'trello'
 	| 'twitterapiio'

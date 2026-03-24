@@ -47,6 +47,11 @@
       "types": "./dist/plugins/amplitude/index.d.ts",
       "default": "./dist/plugins/amplitude/index.js"
     },
+    "./plugins/asana": {
+      "dev-source": "./plugins/asana/index.ts",
+      "types": "./dist/plugins/asana/index.d.ts",
+      "default": "./dist/plugins/asana/index.js"
+    },
     "./plugins/box": {
       "dev-source": "./plugins/box/index.ts",
       "types": "./dist/plugins/box/index.d.ts",
@@ -117,11 +122,6 @@
       "types": "./dist/plugins/hubspot/index.d.ts",
       "default": "./dist/plugins/hubspot/index.js"
     },
-    "./plugins/telegram": {
-      "dev-source": "./plugins/telegram/index.ts",
-      "types": "./dist/plugins/telegram/index.d.ts",
-      "default": "./dist/plugins/telegram/index.js"
-    },
     "./plugins/intercom": {
       "dev-source": "./plugins/intercom/index.ts",
       "types": "./dist/plugins/intercom/index.d.ts",
@@ -186,6 +186,11 @@
       "dev-source": "./plugins/teams/index.ts",
       "types": "./dist/plugins/teams/index.d.ts",
       "default": "./dist/plugins/teams/index.js"
+    },
+    "./plugins/telegram": {
+      "dev-source": "./plugins/telegram/index.ts",
+      "types": "./dist/plugins/telegram/index.d.ts",
+      "default": "./dist/plugins/telegram/index.js"
     },
     "./plugins/todoist": {
       "dev-source": "./plugins/todoist/index.ts",
