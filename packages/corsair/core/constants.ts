@@ -21,6 +21,7 @@ export const BaseProviders = [
 	'discord',
 	'dropbox',
 	'exa',
+	'figma',
 	'fireflies',
 	'github',
 	'gmail',
@@ -38,11 +39,11 @@ export const BaseProviders = [
 	'resend',
 	'sentry',
 	'slack',
-	'telegram',
 	'spotify',
 	'stripe',
 	'tavily',
 	'teams',
+	'telegram',
 	'todoist',
 	'trello',
 	'twitterapiio',
@@ -58,6 +59,7 @@ export type AllProviders =
 	| 'discord'
 	| 'dropbox'
 	| 'exa'
+	| 'figma'
 	| 'fireflies'
 	| 'github'
 	| 'gmail'
@@ -75,11 +77,11 @@ export type AllProviders =
 	| 'resend'
 	| 'sentry'
 	| 'slack'
-	| 'telegram'
 	| 'spotify'
 	| 'stripe'
 	| 'tavily'
 	| 'teams'
+	| 'telegram'
 	| 'todoist'
 	| 'trello'
 	| 'twitterapiio'

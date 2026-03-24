@@ -77,6 +77,11 @@
       "types": "./dist/plugins/exa/index.d.ts",
       "default": "./dist/plugins/exa/index.js"
     },
+    "./plugins/figma": {
+      "dev-source": "./plugins/figma/index.ts",
+      "types": "./dist/plugins/figma/index.d.ts",
+      "default": "./dist/plugins/figma/index.js"
+    },
     "./plugins/fireflies": {
       "dev-source": "./plugins/fireflies/index.ts",
       "types": "./dist/plugins/fireflies/index.d.ts",
@@ -116,11 +121,6 @@
       "dev-source": "./plugins/hubspot/index.ts",
       "types": "./dist/plugins/hubspot/index.d.ts",
       "default": "./dist/plugins/hubspot/index.js"
-    },
-    "./plugins/telegram": {
-      "dev-source": "./plugins/telegram/index.ts",
-      "types": "./dist/plugins/telegram/index.d.ts",
-      "default": "./dist/plugins/telegram/index.js"
     },
     "./plugins/intercom": {
       "dev-source": "./plugins/intercom/index.ts",
@@ -186,6 +186,11 @@
       "dev-source": "./plugins/teams/index.ts",
       "types": "./dist/plugins/teams/index.d.ts",
       "default": "./dist/plugins/teams/index.js"
+    },
+    "./plugins/telegram": {
+      "dev-source": "./plugins/telegram/index.ts",
+      "types": "./dist/plugins/telegram/index.d.ts",
+      "default": "./dist/plugins/telegram/index.js"
     },
     "./plugins/todoist": {
       "dev-source": "./plugins/todoist/index.ts",
