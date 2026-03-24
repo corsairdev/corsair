@@ -112,6 +112,11 @@
       "types": "./dist/plugins/googlesheets/index.d.ts",
       "default": "./dist/plugins/googlesheets/index.js"
     },
+    "./plugins/hackernews": {
+      "dev-source": "./plugins/hackernews/index.ts",
+      "types": "./dist/plugins/hackernews/index.d.ts",
+      "default": "./dist/plugins/hackernews/index.js"
+    },
     "./plugins/hubspot": {
       "dev-source": "./plugins/hubspot/index.ts",
       "types": "./dist/plugins/hubspot/index.d.ts",
