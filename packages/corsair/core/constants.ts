@@ -38,13 +38,14 @@ export const BaseProviders = [
 	'resend',
 	'sentry',
 	'slack',
-	'telegram',
 	'spotify',
 	'stripe',
 	'tavily',
 	'teams',
+	'telegram',
 	'todoist',
 	'trello',
+	'twitter',
 	'twitterapiio',
 	'zoom',
 ] as const;
@@ -75,13 +76,14 @@ export type AllProviders =
 	| 'resend'
 	| 'sentry'
 	| 'slack'
-	| 'telegram'
 	| 'spotify'
 	| 'stripe'
 	| 'tavily'
 	| 'teams'
+	| 'telegram'
 	| 'todoist'
 	| 'trello'
+	| 'twitter'
 	| 'twitterapiio'
 	| 'zoom'
 	| (string & {});

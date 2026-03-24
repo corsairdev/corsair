@@ -117,11 +117,6 @@
       "types": "./dist/plugins/hubspot/index.d.ts",
       "default": "./dist/plugins/hubspot/index.js"
     },
-    "./plugins/telegram": {
-      "dev-source": "./plugins/telegram/index.ts",
-      "types": "./dist/plugins/telegram/index.d.ts",
-      "default": "./dist/plugins/telegram/index.js"
-    },
     "./plugins/intercom": {
       "dev-source": "./plugins/intercom/index.ts",
       "types": "./dist/plugins/intercom/index.d.ts",
@@ -187,6 +182,11 @@
       "types": "./dist/plugins/teams/index.d.ts",
       "default": "./dist/plugins/teams/index.js"
     },
+    "./plugins/telegram": {
+      "dev-source": "./plugins/telegram/index.ts",
+      "types": "./dist/plugins/telegram/index.d.ts",
+      "default": "./dist/plugins/telegram/index.js"
+    },
     "./plugins/todoist": {
       "dev-source": "./plugins/todoist/index.ts",
       "types": "./dist/plugins/todoist/index.d.ts",
@@ -196,6 +196,11 @@
       "dev-source": "./plugins/trello/index.ts",
       "types": "./dist/plugins/trello/index.d.ts",
       "default": "./dist/plugins/trello/index.js"
+    },
+    "./plugins/twitter": {
+      "dev-source": "./plugins/twitter/index.ts",
+      "types": "./dist/plugins/twitter/index.d.ts",
+      "default": "./dist/plugins/twitter/index.js"
     },
     "./plugins/twitterapiio": {
       "dev-source": "./plugins/twitterapiio/index.ts",
