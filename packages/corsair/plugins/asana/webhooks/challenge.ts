@@ -26,6 +26,8 @@ export const challenge: AsanaWebhooks['challenge'] = {
 			};
 		}
 
+        _ctx.keys.set_webhook_signature(hookSecret);
+
 		return {
 			success: true,
 			// Asana requires X-Hook-Secret echoed back as a response header, not in the body.

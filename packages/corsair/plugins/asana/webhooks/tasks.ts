@@ -7,22 +7,16 @@ export const taskEvent: AsanaWebhooks['taskEvent'] = {
 
 	handler: async (ctx, request) => {
 		const signingSecret = ctx.key;
-		if (signingSecret) {
-			// request.rawBody is the raw request body string used for signature verification
-			const rawBody = typeof request.payload === 'string'
-				? request.payload
-				: JSON.stringify(request.payload);
-			const verification = verifyAsanaWebhookSignature(
-				{ rawBody, headers: request.headers as Record<string, string> },
-				signingSecret,
-			);
-			if (!verification.valid) {
-				return {
-					success: false,
-					statusCode: 401,
-					error: verification.error || 'Signature verification failed',
-				};
-			}
+		const verification = verifyAsanaWebhookSignature(
+			{ payload: request.payload, headers: request.headers },
+			signingSecret,
+		);
+		if (!verification.valid) {
+			return {
+				success: false,
+				statusCode: 401,
+				error: verification.error || 'Signature verification failed',
+			};
 		}
 
 		const payload = request.payload;

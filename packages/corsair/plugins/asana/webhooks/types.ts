@@ -30,6 +30,7 @@ export const AsanaWebhookEventSchema = z.object({
 	change: z.object({
 		field: z.string().optional(),
 		action: z.string().optional(),
+		// any/unknown for change values since Asana returns varying types depending on field being changed
 		new_value: z.unknown().optional(),
 		added_value: z.unknown().optional(),
 		removed_value: z.unknown().optional(),
@@ -82,6 +83,7 @@ export type AsanaWebhookOutputs = {
 
 // ── Event Matcher ─────────────────────────────────────────────────────────────
 
+// any/unknown for body since raw webhook payload is untyped before parsing
 function parseBody(body: unknown): unknown {
 	return typeof body === 'string' ? JSON.parse(body) : body;
 }
@@ -97,10 +99,12 @@ export function createAsanaEventMatch(
 		if (!Array.isArray(events)) {
 			return false;
 		}
-		return events.some((event: unknown) => {
+		// any/unknown for event array elements since they come from parsed raw JSON
+	return events.some((event: unknown) => {
 			if (!event || typeof event !== 'object') return false;
 			// any/unknown for event since it's parsed from raw JSON
 			const e = event as Record<string, unknown>;
+			// any/unknown for resource since it's nested parsed JSON with no static type
 			const resource = e.resource as Record<string, unknown> | undefined;
 			return (
 				resource?.resource_type === resourceType &&
@@ -115,17 +119,23 @@ export function createAsanaEventMatch(
 // The signature is sent in the X-Hook-Signature header.
 
 export function verifyAsanaWebhookSignature(
-	request: { rawBody: string; headers: Record<string, string> },
+	// any/unknown for payload and headers since they come from raw webhook request before parsing
+	request: { payload: unknown; headers: unknown },
 	secret: string,
 ): { valid: boolean; error?: string } {
-	const signature = request.headers['x-hook-signature'];
+	const rawBody = typeof request.payload === 'string'
+		? request.payload
+		: JSON.stringify(request.payload);
+	// any/unknown cast: headers are untyped from raw request; narrowing to string map for header lookup
+	const headers = request.headers as Record<string, string>;
+	const signature = headers['x-hook-signature'];
 	if (!signature) {
 		return { valid: false, error: 'Missing x-hook-signature header' };
 	}
 
 	const expectedSignature = crypto
 		.createHmac('sha256', secret)
-		.update(request.rawBody)
+		.update(rawBody)
 		.digest('hex');
 
 	let isValid: boolean;
