@@ -87,7 +87,7 @@ describe('Asana API Type Tests', () => {
 
 		it('usersGet returns correct type', async () => {
 			if (!TEST_USER_GID) {
-				console.warn('Skipping usersGet — no user GID');
+				return console.warn('Skipping usersGet — no user GID');
 			}
 			const response = await makeAsanaRequest<unknown>(
 				`users/${TEST_USER_GID}`,
@@ -99,7 +99,7 @@ describe('Asana API Type Tests', () => {
 
 		it('usersList returns correct type', async () => {
 			if (!TEST_WORKSPACE_GID) {
-				console.warn('Skipping usersList — no workspace GID');
+				return console.warn('Skipping usersList — no workspace GID');
 			}
 			const response = await makeAsanaRequest<unknown>(
 				`workspaces/${TEST_WORKSPACE_GID}/users`,
@@ -122,7 +122,7 @@ describe('Asana API Type Tests', () => {
 
 		it('workspacesGet returns correct type', async () => {
 			if (!TEST_WORKSPACE_GID) {
-				console.warn('Skipping workspacesGet — no workspace GID');
+				return console.warn('Skipping workspacesGet — no workspace GID');
 			}
 			const response = await makeAsanaRequest<unknown>(
 				`workspaces/${TEST_WORKSPACE_GID}`,
@@ -138,7 +138,7 @@ describe('Asana API Type Tests', () => {
 
 		it('workspaceProjectsList returns correct type', async () => {
 			if (!TEST_WORKSPACE_GID) {
-				console.warn('Skipping workspaceProjectsList — no workspace GID');
+				return console.warn('Skipping workspaceProjectsList — no workspace GID');
 			}
 			const response = await makeAsanaRequest<unknown>(
 				`workspaces/${TEST_WORKSPACE_GID}/projects`,
@@ -150,7 +150,7 @@ describe('Asana API Type Tests', () => {
 
 		it('projectsCreate returns correct type', async () => {
 			if (!TEST_WORKSPACE_GID) {
-				console.warn('Skipping projectsCreate — no workspace GID');
+				return console.warn('Skipping projectsCreate — no workspace GID');
 			}
 			const bodyData: Record<string, unknown> = { name: `test-project-${Date.now()}`, workspace: TEST_WORKSPACE_GID };
 			if (TEST_TEAM_GID) {
@@ -170,7 +170,7 @@ describe('Asana API Type Tests', () => {
 
 		it('projectsGet returns correct type', async () => {
 			if (!TEST_PROJECT_GID) {
-				console.warn('Skipping projectsGet — no project GID');
+				return console.warn('Skipping projectsGet — no project GID');
 			}
 			const response = await makeAsanaRequest<unknown>(
 				`projects/${TEST_PROJECT_GID}`,
@@ -183,7 +183,7 @@ describe('Asana API Type Tests', () => {
 		it('projectsUpdate returns correct type', async () => {
 			const gid = createdProjectGid ?? TEST_PROJECT_GID;
 			if (!gid) {
-				console.warn('Skipping projectsUpdate — no project GID');
+				return console.warn('Skipping projectsUpdate — no project GID');
 			}
 			const response = await makeAsanaRequest<unknown>(
 				`projects/${gid}`,
@@ -198,7 +198,7 @@ describe('Asana API Type Tests', () => {
 
 		it('projectsGetTaskCounts returns correct type', async () => {
 			if (!TEST_PROJECT_GID) {
-				console.warn('Skipping projectsGetTaskCounts — no project GID');
+				return console.warn('Skipping projectsGetTaskCounts — no project GID');
 			}
 			const response = await makeAsanaRequest<unknown>(
 				`projects/${TEST_PROJECT_GID}/task_counts`,
@@ -210,7 +210,7 @@ describe('Asana API Type Tests', () => {
 
 		it('projectsDelete returns correct type', async () => {
 			if (!createdProjectGid) {
-				console.warn('Skipping projectsDelete — no created project to clean up');
+				return console.warn('Skipping projectsDelete — no created project to clean up');
 			}
 			const response = await makeAsanaRequest<unknown>(
 				`projects/${createdProjectGid}`,
@@ -226,7 +226,7 @@ describe('Asana API Type Tests', () => {
 
 		it('sectionsList returns correct type', async () => {
 			if (!TEST_PROJECT_GID) {
-				console.warn('Skipping sectionsList — no project GID');
+				return console.warn('Skipping sectionsList — no project GID');
 			}
 			const response = await makeAsanaRequest<unknown>(
 				`projects/${TEST_PROJECT_GID}/sections`,
@@ -238,7 +238,7 @@ describe('Asana API Type Tests', () => {
 
 		it('sectionsCreate returns correct type', async () => {
 			if (!TEST_PROJECT_GID) {
-				console.warn('Skipping sectionsCreate — no project GID');
+				return console.warn('Skipping sectionsCreate — no project GID');
 			}
 			const response = await makeAsanaRequest<{ data: { gid: string } }>(
 				`projects/${TEST_PROJECT_GID}/sections`,
@@ -255,7 +255,7 @@ describe('Asana API Type Tests', () => {
 		it('sectionsGet returns correct type', async () => {
 			const gid = createdSectionGid ?? TEST_SECTION_GID;
 			if (!gid) {
-				console.warn('Skipping sectionsGet — no section GID');
+				return console.warn('Skipping sectionsGet — no section GID');
 			}
 			const response = await makeAsanaRequest<unknown>(
 				`sections/${gid}`,
@@ -267,7 +267,7 @@ describe('Asana API Type Tests', () => {
 
 		it('sectionsUpdate returns correct type', async () => {
 			if (!createdSectionGid) {
-				console.warn('Skipping sectionsUpdate — no created section to update');
+				return console.warn('Skipping sectionsUpdate — no created section to update');
 			}
 			const response = await makeAsanaRequest<unknown>(
 				`sections/${createdSectionGid}`,
@@ -282,7 +282,7 @@ describe('Asana API Type Tests', () => {
 
 		it('sectionsDelete returns correct type', async () => {
 			if (!createdSectionGid) {
-				console.warn('Skipping sectionsDelete — no created section to clean up');
+				return console.warn('Skipping sectionsDelete — no created section to clean up');
 			}
 			const response = await makeAsanaRequest<unknown>(
 				`sections/${createdSectionGid}`,
@@ -298,7 +298,7 @@ describe('Asana API Type Tests', () => {
 
 		it('tasksList returns correct type', async () => {
 			if (!TEST_PROJECT_GID) {
-				console.warn('Skipping tasksList — no project GID');
+				return console.warn('Skipping tasksList — no project GID');
 			}
 			const response = await makeAsanaRequest<unknown>(
 				`projects/${TEST_PROJECT_GID}/tasks`,
@@ -310,7 +310,7 @@ describe('Asana API Type Tests', () => {
 
 		it('tasksCreate returns correct type', async () => {
 			if (!TEST_WORKSPACE_GID) {
-				console.warn('Skipping tasksCreate — no workspace GID');
+				return console.warn('Skipping tasksCreate — no workspace GID');
 			}
 			const body: Record<string, unknown> = {
 				data: {
@@ -319,6 +319,7 @@ describe('Asana API Type Tests', () => {
 				},
 			};
 			if (TEST_PROJECT_GID) {
+				// any/unknown cast: body.data is typed as a specific shape, but we need to add an optional field dynamically
 				(body.data as Record<string, unknown>).projects = [TEST_PROJECT_GID];
 			}
 			const response = await makeAsanaRequest<{ data: { gid: string } }>(
@@ -333,7 +334,7 @@ describe('Asana API Type Tests', () => {
 		it('tasksGet returns correct type', async () => {
 			const gid = createdTaskGid ?? TEST_TASK_GID;
 			if (!gid) {
-				console.warn('Skipping tasksGet — no task GID');
+				return console.warn('Skipping tasksGet — no task GID');
 			}
 			const response = await makeAsanaRequest<unknown>(
 				`tasks/${gid}`,
@@ -346,7 +347,7 @@ describe('Asana API Type Tests', () => {
 		it('tasksUpdate returns correct type', async () => {
 			const gid = createdTaskGid ?? TEST_TASK_GID;
 			if (!gid) {
-				console.warn('Skipping tasksUpdate — no task GID');
+				return console.warn('Skipping tasksUpdate — no task GID');
 			}
 			const response = await makeAsanaRequest<unknown>(
 				`tasks/${gid}`,
@@ -362,7 +363,7 @@ describe('Asana API Type Tests', () => {
 		it('tasksGetSubtasks returns correct type', async () => {
 			const gid = createdTaskGid ?? TEST_TASK_GID;
 			if (!gid) {
-				console.warn('Skipping tasksGetSubtasks — no task GID');
+				return console.warn('Skipping tasksGetSubtasks — no task GID');
 			}
 			const response = await makeAsanaRequest<unknown>(
 				`tasks/${gid}/subtasks`,
@@ -375,7 +376,7 @@ describe('Asana API Type Tests', () => {
 		it('tasksGetStories returns correct type', async () => {
 			const gid = createdTaskGid ?? TEST_TASK_GID;
 			if (!gid) {
-				console.warn('Skipping tasksGetStories — no task GID');
+				return console.warn('Skipping tasksGetStories — no task GID');
 			}
 			const response = await makeAsanaRequest<unknown>(
 				`tasks/${gid}/stories`,
@@ -388,7 +389,7 @@ describe('Asana API Type Tests', () => {
 		it('tasksGetAttachments returns correct type', async () => {
 			const gid = createdTaskGid ?? TEST_TASK_GID;
 			if (!gid) {
-				console.warn('Skipping tasksGetAttachments — no task GID');
+				return console.warn('Skipping tasksGetAttachments — no task GID');
 			}
 			const response = await makeAsanaRequest<unknown>(
 				`tasks/${gid}/attachments`,
@@ -400,7 +401,7 @@ describe('Asana API Type Tests', () => {
 
 		it('tasksDelete returns correct type', async () => {
 			if (!createdTaskGid) {
-				console.warn('Skipping tasksDelete — no created task to clean up');
+				return console.warn('Skipping tasksDelete — no created task to clean up');
 			}
 			const response = await makeAsanaRequest<unknown>(
 				`tasks/${createdTaskGid}`,
@@ -414,7 +415,7 @@ describe('Asana API Type Tests', () => {
 	describe('teams', () => {
 		it('teamsListForWorkspace returns correct type', async () => {
 			if (!TEST_WORKSPACE_GID) {
-				console.warn('Skipping teamsListForWorkspace — no workspace GID');
+				return console.warn('Skipping teamsListForWorkspace — no workspace GID');
 			}
 			const response = await makeAsanaRequest<unknown>(
 				`workspaces/${TEST_WORKSPACE_GID}/teams`,
@@ -426,7 +427,7 @@ describe('Asana API Type Tests', () => {
 
 		it('teamsGet returns correct type', async () => {
 			if (!TEST_TEAM_GID) {
-				console.warn('Skipping teamsGet — no team GID');
+				return console.warn('Skipping teamsGet — no team GID');
 			}
 			const response = await makeAsanaRequest<unknown>(
 				`teams/${TEST_TEAM_GID}`,
@@ -438,7 +439,7 @@ describe('Asana API Type Tests', () => {
 
 		it('teamsListForUser returns correct type', async () => {
 			if (!TEST_USER_GID || !TEST_WORKSPACE_GID) {
-				console.warn('Skipping teamsListForUser — missing user or workspace GID');
+				return console.warn('Skipping teamsListForUser — missing user or workspace GID');
 			}
 			const response = await makeAsanaRequest<unknown>(
 				`users/${TEST_USER_GID}/teams`,
@@ -450,7 +451,7 @@ describe('Asana API Type Tests', () => {
 
 		it('teamMembershipsListForTeam returns correct type', async () => {
 			if (!TEST_TEAM_GID) {
-				console.warn('Skipping teamMembershipsListForTeam — no team GID');
+				return console.warn('Skipping teamMembershipsListForTeam — no team GID');
 			}
 			const response = await makeAsanaRequest<unknown>(
 				`teams/${TEST_TEAM_GID}/team_memberships`,
@@ -466,7 +467,7 @@ describe('Asana API Type Tests', () => {
 
 		it('tagsListForWorkspace returns correct type', async () => {
 			if (!TEST_WORKSPACE_GID) {
-				console.warn('Skipping tagsListForWorkspace — no workspace GID');
+				return console.warn('Skipping tagsListForWorkspace — no workspace GID');
 			}
 			const response = await makeAsanaRequest<unknown>(
 				`workspaces/${TEST_WORKSPACE_GID}/tags`,
@@ -478,7 +479,7 @@ describe('Asana API Type Tests', () => {
 
 		it('tagsCreate returns correct type', async () => {
 			if (!TEST_WORKSPACE_GID) {
-				console.warn('Skipping tagsCreate — no workspace GID');
+				return console.warn('Skipping tagsCreate — no workspace GID');
 			}
 			const response = await makeAsanaRequest<{ data: { gid: string } }>(
 				`workspaces/${TEST_WORKSPACE_GID}/tags`,
@@ -495,7 +496,7 @@ describe('Asana API Type Tests', () => {
 		it('tagsGet returns correct type', async () => {
 			const gid = createdTagGid ?? TEST_TAG_GID;
 			if (!gid) {
-				console.warn('Skipping tagsGet — no tag GID');
+				return console.warn('Skipping tagsGet — no tag GID');
 			}
 			const response = await makeAsanaRequest<unknown>(
 				`tags/${gid}`,
@@ -507,7 +508,7 @@ describe('Asana API Type Tests', () => {
 
 		it('tagsUpdate returns correct type', async () => {
 			if (!createdTagGid) {
-				console.warn('Skipping tagsUpdate — no created tag to update');
+				return console.warn('Skipping tagsUpdate — no created tag to update');
 			}
 			const response = await makeAsanaRequest<unknown>(
 				`tags/${createdTagGid}`,
@@ -522,7 +523,7 @@ describe('Asana API Type Tests', () => {
 
 		it('tagsDelete returns correct type', async () => {
 			if (!createdTagGid) {
-				console.warn('Skipping tagsDelete — no created tag to clean up');
+				return console.warn('Skipping tagsDelete — no created tag to clean up');
 			}
 			const response = await makeAsanaRequest<unknown>(
 				`tags/${createdTagGid}`,
@@ -538,7 +539,7 @@ describe('Asana API Type Tests', () => {
 
 		it('storiesListForTask returns correct type', async () => {
 			if (!TEST_TASK_GID) {
-				console.warn('Skipping storiesListForTask — no task GID');
+				return console.warn('Skipping storiesListForTask — no task GID');
 			}
 			const response = await makeAsanaRequest<unknown>(
 				`tasks/${TEST_TASK_GID}/stories`,
@@ -550,7 +551,7 @@ describe('Asana API Type Tests', () => {
 
 		it('storiesCreateComment returns correct type', async () => {
 			if (!TEST_TASK_GID) {
-				console.warn('Skipping storiesCreateComment — no task GID');
+				return console.warn('Skipping storiesCreateComment — no task GID');
 			}
 			const response = await makeAsanaRequest<{ data: { gid: string } }>(
 				`tasks/${TEST_TASK_GID}/stories`,
@@ -567,7 +568,7 @@ describe('Asana API Type Tests', () => {
 		it('storiesGet returns correct type', async () => {
 			const gid = createdCommentGid ?? TEST_STORY_GID;
 			if (!gid) {
-				console.warn('Skipping storiesGet — no story GID');
+				return console.warn('Skipping storiesGet — no story GID');
 			}
 			const response = await makeAsanaRequest<unknown>(
 				`stories/${gid}`,
@@ -579,7 +580,7 @@ describe('Asana API Type Tests', () => {
 
 		it('storiesUpdate returns correct type', async () => {
 			if (!createdCommentGid) {
-				console.warn('Skipping storiesUpdate — no created comment to update');
+				return console.warn('Skipping storiesUpdate — no created comment to update');
 			}
 			const response = await makeAsanaRequest<unknown>(
 				`stories/${createdCommentGid}`,
@@ -594,7 +595,7 @@ describe('Asana API Type Tests', () => {
 
 		it('storiesDelete returns correct type', async () => {
 			if (!createdCommentGid) {
-				console.warn('Skipping storiesDelete — no created comment to clean up');
+				return console.warn('Skipping storiesDelete — no created comment to clean up');
 			}
 			const response = await makeAsanaRequest<unknown>(
 				`stories/${createdCommentGid}`,
@@ -608,7 +609,7 @@ describe('Asana API Type Tests', () => {
 	describe('webhooks management', () => {
 		it('webhooksGetList returns correct type', async () => {
 			if (!TEST_WORKSPACE_GID) {
-				console.warn('Skipping webhooksGetList — no workspace GID');
+				return console.warn('Skipping webhooksGetList — no workspace GID');
 			}
 			const response = await makeAsanaRequest<unknown>(
 				'webhooks',
