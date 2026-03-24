@@ -1,13 +1,13 @@
-import { createCorsair, linear, slack, twitterapiio, fireflies, twitter } from 'corsair';
+import { createCorsair, linear, slack, twitterapiio, fireflies, jira } from 'corsair';
 import { sqlite } from '../db';
 
 export const corsair = createCorsair({
-	multiTenancy: false,
+	multiTenancy: true,
 	database: sqlite,
 	kek: process.env.CORSAIR_KEK!,
 	approval: {
 		timeout: '10m',
 		onTimeout: 'deny',
 	},
-	plugins: [twitterapiio(), slack(), linear(), fireflies(), twitter()],
+	plugins: [twitterapiio(), slack(), linear(), fireflies(), jira()],
 });
