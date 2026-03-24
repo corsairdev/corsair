@@ -39,5 +39,6 @@ export { intercom } from './plugins/intercom';
 export { calendly } from './plugins/calendly';
 export { zoom } from './plugins/zoom';
 export { trello } from './plugins/trello';
+export { asana } from './plugins/asana';
 
 export { type SetupCorsairOptions, setupCorsair } from './setup/index';

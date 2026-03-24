@@ -31,12 +31,16 @@ import {
 	Workspaces,
 } from './endpoints';
 import { AsanaSchema } from './schema';
-import { TaskWebhooks } from './webhooks';
+import { ChallengeWebhooks, TaskWebhooks } from './webhooks';
 import type {
+	AsanaChallengePayload,
+	AsanaChallengeResponse,
 	AsanaTaskWebhookPayload,
 	AsanaWebhookOutputs,
 } from './webhooks/types';
 import {
+	AsanaChallengePayloadSchema,
+	AsanaChallengeResponseSchema,
 	AsanaTaskWebhookPayloadSchema,
 	AsanaWebhookEventSchema,
 } from './webhooks/types';
@@ -243,6 +247,9 @@ const asanaWebhooksNested = {
 	tasks: {
 		taskEvent: TaskWebhooks.taskEvent,
 	},
+	challenge: {
+		challenge: ChallengeWebhooks.challenge,
+	},
 } as const;
 
 export const asanaEndpointSchemas = {
@@ -344,6 +351,11 @@ const asanaWebhookSchemas = {
 		description: 'A task event occurred — task was added, changed, or removed',
 		payload: AsanaTaskWebhookPayloadSchema,
 		response: AsanaWebhookEventSchema,
+	},
+	'challenge.challenge': {
+		description: 'Asana initial webhook verification handshake via X-Hook-Secret header',
+		payload: AsanaChallengePayloadSchema,
+		response: AsanaChallengeResponseSchema,
 	},
 } satisfies RequiredPluginWebhookSchemas<typeof asanaWebhooksNested>;
 
@@ -465,6 +477,7 @@ type AsanaWebhook<K extends keyof AsanaWebhookOutputs, TPayload> = CorsairWebhoo
 
 export type AsanaWebhooks = {
 	taskEvent: AsanaWebhook<'taskEvent', AsanaTaskWebhookPayload>;
+	challenge: AsanaWebhook<'challenge', AsanaChallengePayload>;
 };
 
 export type AsanaBoundWebhooks = BindWebhooks<AsanaWebhooks>;
@@ -521,7 +534,7 @@ export function asana<const PluginOptions extends AsanaPluginOptions>(
 		webhookSchemas: asanaWebhookSchemas,
 		pluginWebhookMatcher: (request) => {
 			const headers = request.headers;
-			return 'x-hook-signature' in headers;
+			return 'x-hook-signature' in headers || 'x-hook-secret' in headers;
 		},
 		errorHandlers: {
 			...errorHandlers,
@@ -567,6 +580,8 @@ export type {
 	AsanaWebhookPayload,
 	AsanaTaskEvent,
 	AsanaTaskWebhookPayload,
+	AsanaChallengePayload,
+	AsanaChallengeResponse,
 } from './webhooks/types';
 
 export { createAsanaEventMatch, verifyAsanaWebhookSignature } from './webhooks/types';

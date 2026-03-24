@@ -1,5 +1,5 @@
 import { logEventFromContext } from '../../utils/events';
-import type { AsanaWebhooks } from '..';
+import type { AsanaBoundEndpoints, AsanaWebhooks } from '..';
 import { createAsanaEventMatch, verifyAsanaWebhookSignature } from './types';
 
 export const taskEvent: AsanaWebhooks['taskEvent'] = {
@@ -38,20 +38,20 @@ export const taskEvent: AsanaWebhooks['taskEvent'] = {
 		);
 
 		if (ctx.db.tasks) {
+			// Type assertion to ensure endpoints are the correct type
+			const endpoints = ctx.endpoints as AsanaBoundEndpoints;
+
 			for (const event of taskEvents) {
 				if (
 					event.resource?.gid &&
 					(event.action === 'added' || event.action === 'changed')
 				) {
 					try {
-						await ctx.db.tasks.upsertByEntityId(event.resource.gid, {
-							gid: event.resource.gid,
-							name: event.resource.name,
-							resource_type: event.resource.resource_type,
-							modified_at: event.created_at,
-						});
+						// Fetch full task data via bound endpoint (handles auth automatically)
+						await endpoints.tasks.get({ task_gid: event.resource.gid });
+						
 					} catch (error) {
-						console.warn('Failed to update task in database from webhook event:', error);
+						console.warn('asana webhook: failed to fetch/upsert task', event.resource.gid, error);
 					}
 				}
 			}

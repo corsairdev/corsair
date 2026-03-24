@@ -67,8 +67,17 @@ export type AsanaTaskWebhookPayload = z.infer<typeof AsanaTaskWebhookPayloadSche
 
 // ── Webhook Outputs ───────────────────────────────────────────────────────────
 
+export const AsanaChallengePayloadSchema = z.object({});
+export type AsanaChallengePayload = z.infer<typeof AsanaChallengePayloadSchema>;
+
+export const AsanaChallengeResponseSchema = z.object({
+	hookSecret: z.string(),
+});
+export type AsanaChallengeResponse = z.infer<typeof AsanaChallengeResponseSchema>;
+
 export type AsanaWebhookOutputs = {
 	taskEvent: AsanaTaskWebhookPayload;
+	challenge: AsanaChallengeResponse;
 };
 
 // ── Event Matcher ─────────────────────────────────────────────────────────────
