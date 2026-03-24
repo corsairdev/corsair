@@ -46,6 +46,7 @@ export const BaseProviders = [
 	'todoist',
 	'trello',
 	'twitterapiio',
+	'typeform',
 	'zoom',
 ] as const;
 
@@ -83,6 +84,7 @@ export type AllProviders =
 	| 'todoist'
 	| 'trello'
 	| 'twitterapiio'
+	| 'typeform'
 	| 'zoom'
 	| (string & {});
 
