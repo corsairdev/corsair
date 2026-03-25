@@ -11,5 +11,13 @@ export const get: StravaEndpoints['gearGet'] = async (ctx, input) => {
 		},
 	);
 
+	if (result.id && ctx.db.gears) {
+		try {
+			await ctx.db.gears.upsertByEntityId(result.id, { ...result });
+		} catch (error) {
+			console.warn('Failed to save gear to database:', error);
+		}
+	}
+
 	return result;
 };

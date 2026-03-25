@@ -18,6 +18,19 @@ export const explore: StravaEndpoints['segmentsExplore'] = async (ctx, input) =>
 		},
 	);
 
+	if (result.segments && ctx.db.segments) {
+		try {
+			for (const segment of result.segments) {
+				if (segment.id) {
+					const id = segment.id;
+					await ctx.db.segments.upsertByEntityId(String(id), { ...segment, id });
+				}
+			}
+		} catch (error) {
+			console.warn('Failed to save explored segments to database:', error);
+		}
+	}
+
 	return result;
 };
 

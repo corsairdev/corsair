@@ -174,6 +174,30 @@ export const StravaLap = z.object({
 	total_elevation_gain: z.number().optional(),
 });
 
+export const StravaGear = z.object({
+	id: z.string(),
+	primary: z.boolean().optional(),
+	name: z.string().optional(),
+	distance: z.number().optional(),
+	brand_name: z.string().nullable().optional(),
+	model_name: z.string().nullable().optional(),
+	frame_type: z.number().nullable().optional(),
+	description: z.string().nullable().optional(),
+	athlete_id: z.number().optional(),
+	resource_state: z.number().optional(),
+	retired: z.boolean().optional(),
+	converted_distance: z.number().optional(),
+	notification_distance: z.number().optional(),
+});
+
+export const StravaUpload = z.object({
+	id: z.number(),
+	external_id: z.string().nullable().optional(),
+	error: z.string().nullable().optional(),
+	status: z.string().optional(),
+	activity_id: z.number().nullable().optional(),
+});
+
 export type StravaActivity = z.infer<typeof StravaActivity>;
 export type StravaAthlete = z.infer<typeof StravaAthlete>;
 export type StravaSegment = z.infer<typeof StravaSegment>;
@@ -181,3 +205,5 @@ export type StravaSegmentEffort = z.infer<typeof StravaSegmentEffort>;
 export type StravaRoute = z.infer<typeof StravaRoute>;
 export type StravaClub = z.infer<typeof StravaClub>;
 export type StravaLap = z.infer<typeof StravaLap>;
+export type StravaGear = z.infer<typeof StravaGear>;
+export type StravaUpload = z.infer<typeof StravaUpload>;

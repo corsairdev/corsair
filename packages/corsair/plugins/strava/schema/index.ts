@@ -2,10 +2,12 @@ import {
 	StravaActivity,
 	StravaAthlete,
 	StravaClub,
+	StravaGear,
 	StravaLap,
 	StravaRoute,
 	StravaSegment,
 	StravaSegmentEffort,
+	StravaUpload,
 } from './database';
 
 export const StravaSchema = {
@@ -18,5 +20,7 @@ export const StravaSchema = {
 		routes: StravaRoute,
 		clubs: StravaClub,
 		laps: StravaLap,
+		gears: StravaGear,
+		uploads: StravaUpload,
 	},
 } as const;

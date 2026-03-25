@@ -10,19 +10,19 @@ const ActivitiesCreateInputSchema = z.object({
 	trainer: z.number().optional(),
 	distance: z.number().optional(),
 	description: z.string().optional(),
-});
+}).passthrough();
 
 const ActivitiesGetInputSchema = z.object({
 	id: z.number(),
 	include_all_efforts: z.boolean().optional(),
-});
+}).passthrough();
 
 const ActivitiesListInputSchema = z.object({
 	before: z.number().optional(),
 	after: z.number().optional(),
 	page: z.number().optional(),
 	per_page: z.number().optional(),
-});
+}).passthrough();
 
 const StreamKeySchema = z.enum([
 	'time',
@@ -42,100 +42,100 @@ const ActivitiesGetStreamsInputSchema = z.object({
 	id: z.number(),
 	keys: z.array(StreamKeySchema),
 	key_by_type: z.boolean().optional(),
-});
+}).passthrough();
 
 const ActivitiesGetZonesInputSchema = z.object({
 	id: z.number(),
-});
+}).passthrough();
 
 const ActivitiesListCommentsInputSchema = z.object({
 	id: z.number(),
 	page: z.number().optional(),
 	per_page: z.number().optional(),
-});
+}).passthrough();
 
 const ActivitiesListKudoersInputSchema = z.object({
 	id: z.number(),
 	page: z.number().optional(),
 	per_page: z.number().optional(),
-});
+}).passthrough();
 
 const ActivitiesListLapsInputSchema = z.object({
 	id: z.number(),
-});
+}).passthrough();
 
-const AthleteGetInputSchema = z.object({});
+const AthleteGetInputSchema = z.object({}).passthrough();
 
 const AthleteUpdateInputSchema = z.object({
 	weight: z.number().optional(),
-});
+}).passthrough();
 
 const AthleteGetStatsInputSchema = z.object({
 	id: z.number(),
-});
+}).passthrough();
 
-const AthleteGetZonesInputSchema = z.object({});
+const AthleteGetZonesInputSchema = z.object({}).passthrough();
 
 const SegmentsExploreInputSchema = z.object({
 	bounds: z.string(),
 	activity_type: z.enum(['running', 'riding']).optional(),
 	min_cat: z.number().optional(),
 	max_cat: z.number().optional(),
-});
+}).passthrough();
 
 const SegmentsGetInputSchema = z.object({
 	id: z.number(),
-});
+}).passthrough();
 
 const SegmentsGetStreamsInputSchema = z.object({
 	id: z.number(),
 	keys: z.array(StreamKeySchema),
 	key_by_type: z.boolean().optional(),
-});
+}).passthrough();
 
 const SegmentsListInputSchema = z.object({
 	page: z.number().optional(),
 	per_page: z.number().optional(),
-});
+}).passthrough();
 
 const SegmentsStarInputSchema = z.object({
 	id: z.number(),
 	starred: z.boolean(),
-});
+}).passthrough();
 
 const SegmentEffortsGetInputSchema = z.object({
 	id: z.number(),
-});
+}).passthrough();
 
 const SegmentEffortsGetStreamsInputSchema = z.object({
 	id: z.number(),
 	keys: z.array(StreamKeySchema),
 	key_by_type: z.boolean().optional(),
-});
+}).passthrough();
 
 const RoutesGetInputSchema = z.object({
 	id: z.number(),
-});
+}).passthrough();
 
 const RoutesGetStreamsInputSchema = z.object({
 	id: z.number(),
-});
+}).passthrough();
 
 const RoutesExportGpxInputSchema = z.object({
 	id: z.number(),
-});
+}).passthrough();
 
 const RoutesExportTcxInputSchema = z.object({
 	id: z.number(),
-});
+}).passthrough();
 
 const GearGetInputSchema = z.object({
 	id: z.string(),
-});
+}).passthrough();
 
 const ClubsGetInputSchema = z.object({
 	id: z.number(),
-});
+}).passthrough();
 
 const UploadsCreateInputSchema = z.object({
 	file: z.string(),
@@ -145,11 +145,11 @@ const UploadsCreateInputSchema = z.object({
 	trainer: z.string().optional(),
 	commute: z.string().optional(),
 	external_id: z.string().optional(),
-});
+}).passthrough();
 
 const UploadsGetInputSchema = z.object({
 	id: z.number(),
-});
+}).passthrough();
 
 export const StravaEndpointInputSchemas = {
 	activitiesCreate: ActivitiesCreateInputSchema,
@@ -206,8 +206,9 @@ const ActivityResponseSchema = z.object({
 			polyline: z.string().nullable().optional(),
 			summary_polyline: z.string().nullable().optional(),
 		})
+		.passthrough()
 		.optional(),
-	athlete: z.object({ id: z.number() }).optional(),
+	athlete: z.object({ id: z.number() }).passthrough().optional(),
 	gear_id: z.string().nullable().optional(),
 	commute: z.boolean().optional(),
 	trainer: z.boolean().optional(),
@@ -239,7 +240,7 @@ const ActivityResponseSchema = z.object({
 	has_kudoed: z.boolean().optional(),
 	average_cadence: z.number().optional(),
 	device_name: z.string().optional(),
-});
+}).passthrough();
 
 const GearSummarySchema = z.object({
 	id: z.string(),
@@ -250,7 +251,7 @@ const GearSummarySchema = z.object({
 	converted_distance: z.number().optional(),
 	resource_state: z.number().optional(),
 	retired: z.boolean().optional(),
-});
+}).passthrough();
 
 const AthleteResponseSchema = z.object({
 	id: z.number(),
@@ -275,7 +276,7 @@ const AthleteResponseSchema = z.object({
 	resource_state: z.number().optional(),
 	bikes: z.array(GearSummarySchema).optional(),
 	shoes: z.array(GearSummarySchema).optional(),
-});
+}).passthrough();
 
 const SegmentResponseSchema = z.object({
 	id: z.number(),
@@ -302,18 +303,19 @@ const SegmentResponseSchema = z.object({
 			id: z.string().optional(),
 			polyline: z.string().nullable().optional(),
 		})
+		.passthrough()
 		.optional(),
 	effort_count: z.number().optional(),
 	athlete_count: z.number().optional(),
 	hazardous: z.boolean().optional(),
 	star_count: z.number().optional(),
-});
+}).passthrough();
 
 const SegmentEffortResponseSchema = z.object({
 	id: z.number(),
 	activity_id: z.number().optional(),
 	athlete_id: z.number().optional(),
-	segment: z.object({ id: z.number().optional() }).optional(),
+	segment: z.object({ id: z.number().optional() }).passthrough().optional(),
 	name: z.string().optional(),
 	elapsed_time: z.number().optional(),
 	moving_time: z.number().optional(),
@@ -332,11 +334,11 @@ const SegmentEffortResponseSchema = z.object({
 	max_heartrate: z.number().optional(),
 	average_cadence: z.number().optional(),
 	resource_state: z.number().optional(),
-});
+}).passthrough();
 
 const RouteResponseSchema = z.object({
 	id: z.number(),
-	athlete: z.object({ id: z.number().optional() }).optional(),
+	athlete: z.object({ id: z.number().optional() }).passthrough().optional(),
 	description: z.string().nullable().optional(),
 	distance: z.number().optional(),
 	elevation_gain: z.number().optional(),
@@ -345,6 +347,7 @@ const RouteResponseSchema = z.object({
 			id: z.string().optional(),
 			polyline: z.string().nullable().optional(),
 		})
+		.passthrough()
 		.optional(),
 	name: z.string().optional(),
 	private: z.boolean().optional(),
@@ -357,7 +360,7 @@ const RouteResponseSchema = z.object({
 	estimated_moving_time: z.number().optional(),
 	// Strava route segments vary widely in structure
 	segments: z.array(z.unknown()).optional(),
-});
+}).passthrough();
 
 const ClubResponseSchema = z.object({
 	id: z.number(),
@@ -375,12 +378,12 @@ const ClubResponseSchema = z.object({
 	featured: z.boolean().optional(),
 	verified: z.boolean().optional(),
 	url: z.string().optional(),
-});
+}).passthrough();
 
 const LapResponseSchema = z.object({
 	id: z.number(),
-	activity: z.object({ id: z.number().optional() }).optional(),
-	athlete: z.object({ id: z.number().optional() }).optional(),
+	activity: z.object({ id: z.number().optional() }).passthrough().optional(),
+	athlete: z.object({ id: z.number().optional() }).passthrough().optional(),
 	average_cadence: z.number().optional(),
 	average_speed: z.number().optional(),
 	average_heartrate: z.number().optional(),
@@ -401,7 +404,7 @@ const LapResponseSchema = z.object({
 	start_date_local: z.string().optional(),
 	start_index: z.number().optional(),
 	total_elevation_gain: z.number().optional(),
-});
+}).passthrough();
 
 const StreamItemSchema = z.object({
 	type: z.string().optional(),
@@ -410,7 +413,7 @@ const StreamItemSchema = z.object({
 	series_type: z.string().optional(),
 	original_size: z.number().optional(),
 	resolution: z.string().optional(),
-});
+}).passthrough();
 
 const StreamSetResponseSchema = z.object({
 	time: StreamItemSchema.optional(),
@@ -424,7 +427,7 @@ const StreamSetResponseSchema = z.object({
 	temp: StreamItemSchema.optional(),
 	moving: StreamItemSchema.optional(),
 	grade_smooth: StreamItemSchema.optional(),
-});
+}).passthrough();
 
 const UploadResponseSchema = z.object({
 	id: z.number(),
@@ -432,7 +435,7 @@ const UploadResponseSchema = z.object({
 	error: z.string().nullable().optional(),
 	status: z.string().optional(),
 	activity_id: z.number().nullable().optional(),
-});
+}).passthrough();
 
 const ActivityZoneSchema = z.object({
 	type: z.string().optional(),
@@ -443,14 +446,14 @@ const ActivityZoneSchema = z.object({
 				min: z.number().optional(),
 				max: z.number().optional(),
 				time: z.number().optional(),
-			}),
+			}).passthrough(),
 		)
 		.optional(),
 	resource_state: z.number().optional(),
 	sensor_based: z.boolean().optional(),
 	points: z.number().optional(),
 	custom_zones: z.boolean().optional(),
-});
+}).passthrough();
 
 const ActivityZonesResponseSchema = z.array(ActivityZoneSchema);
 
@@ -461,7 +464,7 @@ const ActivityTotalsSchema = z.object({
 	elapsed_time: z.number().optional(),
 	elevation_gain: z.number().optional(),
 	achievement_count: z.number().optional(),
-});
+}).passthrough();
 
 const AthleteStatsResponseSchema = z.object({
 	biggest_ride_distance: z.number().optional(),
@@ -475,12 +478,12 @@ const AthleteStatsResponseSchema = z.object({
 	all_ride_totals: ActivityTotalsSchema.optional(),
 	all_run_totals: ActivityTotalsSchema.optional(),
 	all_swim_totals: ActivityTotalsSchema.optional(),
-});
+}).passthrough();
 
 const ZoneBucketSchema = z.object({
 	min: z.number().optional(),
 	max: z.number().optional(),
-});
+}).passthrough();
 
 const AthleteZonesResponseSchema = z.object({
 	heart_rate: z
@@ -488,13 +491,15 @@ const AthleteZonesResponseSchema = z.object({
 			custom_zones: z.boolean().optional(),
 			zones: z.array(ZoneBucketSchema).optional(),
 		})
+		.passthrough()
 		.optional(),
 	power: z
 		.object({
 			zones: z.array(ZoneBucketSchema).optional(),
 		})
+		.passthrough()
 		.optional(),
-});
+}).passthrough();
 
 const ExploreSegmentSchema = z.object({
 	id: z.number().optional(),
@@ -510,11 +515,11 @@ const ExploreSegmentSchema = z.object({
 	starred: z.boolean().optional(),
 	resource_state: z.number().optional(),
 	starred_date: z.string().nullable().optional(),
-});
+}).passthrough();
 
 const ExploreSegmentsResponseSchema = z.object({
 	segments: z.array(ExploreSegmentSchema).optional(),
-});
+}).passthrough();
 
 const ActivityCommentSchema = z.object({
 	id: z.number().optional(),
@@ -522,7 +527,7 @@ const ActivityCommentSchema = z.object({
 	text: z.string().optional(),
 	athlete: AthleteResponseSchema.optional(),
 	created_at: z.string().optional(),
-});
+}).passthrough();
 
 const AthleteSummarySchema = z.object({
 	id: z.number().optional(),
@@ -532,7 +537,7 @@ const AthleteSummarySchema = z.object({
 	profile_medium: z.string().optional(),
 	profile: z.string().optional(),
 	resource_state: z.number().optional(),
-});
+}).passthrough();
 
 const GearResponseSchema = z.object({
 	id: z.string(),
@@ -548,7 +553,7 @@ const GearResponseSchema = z.object({
 	retired: z.boolean().optional(),
 	converted_distance: z.number().optional(),
 	notification_distance: z.number().optional(),
-});
+}).passthrough();
 
 const ActivitiesListResponseSchema = z.array(ActivityResponseSchema);
 const ActivitiesListCommentsResponseSchema = z.array(ActivityCommentSchema);

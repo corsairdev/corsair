@@ -15,7 +15,7 @@ import type {
 	ActivitiesListKudoersResponse,
 	UploadResponse,
 } from './endpoints/types';
-import { StravaEndpointOutputSchemas } from './endpoints/types';
+import { StravaEndpointInputSchemas, StravaEndpointOutputSchemas } from './endpoints/types';
 
 dotenv.config();
 
@@ -297,6 +297,52 @@ describe('Strava API Type Tests', () => {
 				ACCESS_TOKEN,
 			);
 			StravaEndpointOutputSchemas.uploadsGet.parse(response);
+		});
+	});
+
+	describe('schema passthrough', () => {
+		it('activity response preserves unknown fields after parse', () => {
+			const raw = {
+				id: 123456,
+				name: 'Morning Run',
+				sport_type: 'Run',
+				future_strava_field: 'some_value',
+				nested_new: { key: 'value' },
+			};
+			const parsed = StravaEndpointOutputSchemas.activitiesGet.parse(raw);
+			expect((parsed as Record<string, unknown>).future_strava_field).toBe('some_value');
+			expect((parsed as Record<string, unknown>).nested_new).toEqual({ key: 'value' });
+		});
+
+		it('athlete response preserves unknown fields after parse', () => {
+			const raw = {
+				id: 789,
+				firstname: 'Test',
+				lastname: 'User',
+				new_strava_feature: true,
+			};
+			const parsed = StravaEndpointOutputSchemas.athleteGet.parse(raw);
+			expect((parsed as Record<string, unknown>).new_strava_feature).toBe(true);
+		});
+
+		it('segment response preserves unknown fields after parse', () => {
+			const raw = {
+				id: 111,
+				name: 'Test Segment',
+				extra_segment_field: 42,
+			};
+			const parsed = StravaEndpointOutputSchemas.segmentsGet.parse(raw);
+			expect((parsed as Record<string, unknown>).extra_segment_field).toBe(42);
+		});
+
+		it('input schemas preserve unknown fields after parse', () => {
+			const raw = {
+				id: 1,
+				include_all_efforts: true,
+				client_custom_field: 'tracking_id_123',
+			};
+			const parsed = StravaEndpointInputSchemas.activitiesGet.parse(raw);
+			expect((parsed as Record<string, unknown>).client_custom_field).toBe('tracking_id_123');
 		});
 	});
 });

@@ -1,4 +1,5 @@
 import type { StravaEndpoints } from '..';
+import { logEventFromContext } from '../../utils/events';
 import { makeStravaRequest } from '../client';
 import type { StravaEndpointOutputs } from './types';
 
@@ -20,6 +21,15 @@ export const create: StravaEndpoints['uploadsCreate'] = async (ctx, input) => {
 		},
 	);
 
+	if (result.id && ctx.db.uploads) {
+		try {
+			await ctx.db.uploads.upsertByEntityId(String(result.id), { ...result });
+		} catch (error) {
+			console.warn('Failed to save upload to database:', error);
+		}
+	}
+
+	await logEventFromContext(ctx, 'strava.uploads.create', { ...input }, 'completed');
 	return result;
 };
 
@@ -31,6 +41,14 @@ export const get: StravaEndpoints['uploadsGet'] = async (ctx, input) => {
 			method: 'GET',
 		},
 	);
+
+	if (result.id && ctx.db.uploads) {
+		try {
+			await ctx.db.uploads.upsertByEntityId(String(result.id), { ...result });
+		} catch (error) {
+			console.warn('Failed to save upload to database:', error);
+		}
+	}
 
 	return result;
 };

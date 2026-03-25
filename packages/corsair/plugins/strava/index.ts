@@ -30,21 +30,10 @@ import {
 	Uploads,
 } from './endpoints';
 import { StravaSchema } from './schema';
-import { StravaWebhooks } from './webhooks';
 import type {
-	ActivityCreateEvent,
-	ActivityDeleteEvent,
-	ActivityUpdateEvent,
-	AthleteUpdateEvent,
 	StravaWebhookOutputs,
-	StravaWebhookPayload,
 } from './webhooks/types';
-import {
-	ActivityCreateEventSchema,
-	ActivityDeleteEventSchema,
-	ActivityUpdateEventSchema,
-	AthleteUpdateEventSchema,
-} from './webhooks/types';
+
 import { errorHandlers } from './error-handlers';
 
 export type StravaPluginOptions = {
@@ -107,10 +96,7 @@ type StravaWebhook<
 > = CorsairWebhook<StravaContext, TEvent, StravaWebhookOutputs[K]>;
 
 export type StravaWebhooks = {
-	activityCreate: StravaWebhook<'activityCreate', ActivityCreateEvent>;
-	activityUpdate: StravaWebhook<'activityUpdate', ActivityUpdateEvent>;
-	activityDelete: StravaWebhook<'activityDelete', ActivityDeleteEvent>;
-	athleteUpdate: StravaWebhook<'athleteUpdate', AthleteUpdateEvent>;
+	
 };
 
 export type StravaBoundWebhooks = BindWebhooks<StravaWebhooks>;
@@ -162,14 +148,7 @@ const stravaEndpointsNested = {
 } as const;
 
 const stravaWebhooksNested = {
-	activities: {
-		create: StravaWebhooks.activityCreate,
-		update: StravaWebhooks.activityUpdate,
-		delete: StravaWebhooks.activityDelete,
-	},
-	athletes: {
-		update: StravaWebhooks.athleteUpdate,
-	},
+	
 } as const;
 
 export const stravaEndpointSchemas = {
@@ -403,26 +382,7 @@ export const stravaAuthConfig = {
 } as const satisfies PluginAuthConfig;
 
 const stravaWebhookSchemas = {
-	'activities.create': {
-		description: 'A new Strava activity was created',
-		payload: ActivityCreateEventSchema,
-		response: ActivityCreateEventSchema,
-	},
-	'activities.update': {
-		description: 'A Strava activity was updated',
-		payload: ActivityUpdateEventSchema,
-		response: ActivityUpdateEventSchema,
-	},
-	'activities.delete': {
-		description: 'A Strava activity was deleted',
-		payload: ActivityDeleteEventSchema,
-		response: ActivityDeleteEventSchema,
-	},
-	'athletes.update': {
-		description: 'A Strava athlete profile was updated',
-		payload: AthleteUpdateEventSchema,
-		response: AthleteUpdateEventSchema,
-	},
+	
 } satisfies RequiredPluginWebhookSchemas<typeof stravaWebhooksNested>;
 
 export type BaseStravaPlugin<T extends StravaPluginOptions> = CorsairPlugin<
@@ -440,6 +400,7 @@ export type ExternalStravaPlugin<T extends StravaPluginOptions> =
 	BaseStravaPlugin<T>;
 
 export function strava<const T extends StravaPluginOptions>(
+	// Default empty object cast to satisfy the generic constraint when no options are provided
 	incomingOptions: StravaPluginOptions & T = {} as StravaPluginOptions & T,
 ): ExternalStravaPlugin<T> {
 	const options = {
@@ -495,12 +456,7 @@ export function strava<const T extends StravaPluginOptions>(
 // ─────────────────────────────────────────────────────────────────────────────
 
 export type {
-	ActivityCreateEvent,
-	ActivityDeleteEvent,
-	ActivityUpdateEvent,
-	AthleteUpdateEvent,
 	StravaWebhookOutputs,
-	StravaWebhookPayload,
 } from './webhooks/types';
 
 // ─────────────────────────────────────────────────────────────────────────────

@@ -145,6 +145,19 @@ export const listKudoers: StravaEndpoints['activitiesListKudoers'] = async (ctx,
 		},
 	);
 
+	if (Array.isArray(result) && ctx.db.athletes) {
+		try {
+			for (const kudoer of result) {
+				if (kudoer.id) {
+					const id = kudoer.id;
+					await ctx.db.athletes.upsertByEntityId(String(id), { ...kudoer, id });
+				}
+			}
+		} catch (error) {
+			console.warn('Failed to save kudoers to database:', error);
+		}
+	}
+
 	return result;
 };
 
