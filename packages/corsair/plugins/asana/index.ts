@@ -131,6 +131,8 @@ export type AsanaEndpoints = {
 	storiesDelete: AsanaEndpoint<'storiesDelete'>;
 	// Webhook management
 	webhooksGetList: AsanaEndpoint<'webhooksGetList'>;
+	webhooksCreate: AsanaEndpoint<'webhooksCreate'>;
+	webhooksDelete: AsanaEndpoint<'webhooksDelete'>;
 	webhooksUpdate: AsanaEndpoint<'webhooksUpdate'>;
 	// Workspaces
 	workspacesGet: AsanaEndpoint<'workspacesGet'>;
@@ -231,6 +233,8 @@ const asanaEndpointsNested = {
 		delete: Stories.delete,
 	},
 	webhookManagement: {
+		create: WebhookManagement.create,
+		delete: WebhookManagement.delete,
 		getList: WebhookManagement.getList,
 		update: WebhookManagement.update,
 	},
@@ -336,6 +340,8 @@ export const asanaEndpointSchemas = {
 	'stories.update': { input: AsanaEndpointInputSchemas.storiesUpdate, output: AsanaEndpointOutputSchemas.storiesUpdate },
 	'stories.delete': { input: AsanaEndpointInputSchemas.storiesDelete, output: AsanaEndpointOutputSchemas.storiesDelete },
 	// Webhook management
+	'webhookManagement.create': { input: AsanaEndpointInputSchemas.webhooksCreate, output: AsanaEndpointOutputSchemas.webhooksCreate },
+	'webhookManagement.delete': { input: AsanaEndpointInputSchemas.webhooksDelete, output: AsanaEndpointOutputSchemas.webhooksDelete },
 	'webhookManagement.getList': { input: AsanaEndpointInputSchemas.webhooksGetList, output: AsanaEndpointOutputSchemas.webhooksGetList },
 	'webhookManagement.update': { input: AsanaEndpointInputSchemas.webhooksUpdate, output: AsanaEndpointOutputSchemas.webhooksUpdate },
 	// Workspaces
@@ -443,6 +449,8 @@ const asanaEndpointMeta = {
 	'stories.update': { riskLevel: 'write', description: 'Update a story' },
 	'stories.delete': { riskLevel: 'destructive', description: 'Delete a story [DESTRUCTIVE]' },
 	// Webhook management
+	'webhookManagement.create': { riskLevel: 'write', description: 'Register a new webhook' },
+	'webhookManagement.delete': { riskLevel: 'destructive', description: 'Delete a webhook [DESTRUCTIVE]' },
 	'webhookManagement.getList': { riskLevel: 'read', description: 'List webhooks' },
 	'webhookManagement.update': { riskLevel: 'write', description: 'Update a webhook' },
 	// Workspaces

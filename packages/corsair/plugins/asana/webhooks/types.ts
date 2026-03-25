@@ -85,7 +85,12 @@ export type AsanaWebhookOutputs = {
 
 // any/unknown for body since raw webhook payload is untyped before parsing
 function parseBody(body: unknown): unknown {
-	return typeof body === 'string' ? JSON.parse(body) : body;
+	if (typeof body !== 'string') return body;
+	try {
+		return JSON.parse(body);
+	} catch {
+		return null;
+	}
 }
 
 export function createAsanaEventMatch(
@@ -94,7 +99,9 @@ export function createAsanaEventMatch(
 ): CorsairWebhookMatcher {
 	return (request: RawWebhookRequest) => {
 		// any/unknown for parsed body since raw webhook body is untyped
-		const body = parseBody(request.body) as Record<string, unknown>;
+		const parsed = parseBody(request.body);
+		if (!parsed || typeof parsed !== 'object') return false;
+		const body = parsed as Record<string, unknown>;
 		const events = body.events;
 		if (!Array.isArray(events)) {
 			return false;

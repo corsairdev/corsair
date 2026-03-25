@@ -88,6 +88,8 @@ import {
 	deleteStory,
 } from './stories';
 import {
+	create as webhooksCreate,
+	deleteWebhook,
 	getList as webhooksGetList,
 	update as webhooksUpdate,
 } from './webhooks-management';
@@ -196,6 +198,8 @@ export const Stories = {
 };
 
 export const WebhookManagement = {
+	create: webhooksCreate,
+	delete: deleteWebhook,
 	getList: webhooksGetList,
 	update: webhooksUpdate,
 };

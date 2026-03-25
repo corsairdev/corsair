@@ -648,28 +648,28 @@ const ProjectsDuplicateInputSchema = z.object({
 
 const ProjectsAddFollowersInputSchema = z.object({
 	project_gid: z.string(),
-	followers: z.string(),
+	followers: z.array(z.string()),
 	opt_fields: z.array(z.string()).optional(),
 	opt_pretty: z.boolean().optional(),
 });
 
 const ProjectsRemoveFollowersInputSchema = z.object({
 	project_gid: z.string(),
-	followers: z.string(),
+	followers: z.array(z.string()),
 	opt_fields: z.array(z.string()).optional(),
 	opt_pretty: z.boolean().optional(),
 });
 
 const ProjectsAddMembersInputSchema = z.object({
 	project_gid: z.string(),
-	members: z.string(),
+	members: z.array(z.string()),
 	opt_fields: z.array(z.string()).optional(),
 	opt_pretty: z.boolean().optional(),
 });
 
 const ProjectsRemoveMembersInputSchema = z.object({
 	project_gid: z.string(),
-	members: z.string(),
+	members: z.array(z.string()),
 	opt_fields: z.array(z.string()).optional(),
 	opt_pretty: z.boolean().optional(),
 });
@@ -1247,12 +1247,38 @@ const WebhooksUpdateInputSchema = z.object({
 	opt_pretty: z.boolean().optional(),
 });
 
+const WebhooksCreateInputSchema = z.object({
+	data: z.object({
+		resource: z.string(),
+		target: z.string(),
+		filters: z.array(z.object({
+			resource_type: z.string().optional(),
+			resource_subtype: z.string().optional(),
+			action: z.string().optional(),
+			fields: z.array(z.string()).optional(),
+		})).optional(),
+	}),
+	opt_fields: z.array(z.string()).optional(),
+	opt_pretty: z.boolean().optional(),
+});
+
+const WebhooksDeleteInputSchema = z.object({
+	webhook_gid: z.string(),
+	opt_pretty: z.boolean().optional(),
+});
+
 // ── Webhook Management Output Schemas ────────────────────────────────────────
 
 const WebhooksGetListResponseSchema = z.object({
 	data: z.array(WebhookFullSchema).optional(),
 	next_page: NextPageSchema,
 });
+
+const WebhooksCreateResponseSchema = z.object({
+	data: WebhookFullSchema.optional(),
+});
+
+const WebhooksDeleteResponseSchema = z.object({});
 
 const WebhooksUpdateResponseSchema = z.object({
 	data: WebhookFullSchema.optional(),
@@ -1411,6 +1437,8 @@ export type AsanaEndpointInputs = {
 	storiesDelete: z.infer<typeof StoriesDeleteInputSchema>;
 	// Webhook management
 	webhooksGetList: z.infer<typeof WebhooksGetListInputSchema>;
+	webhooksCreate: z.infer<typeof WebhooksCreateInputSchema>;
+	webhooksDelete: z.infer<typeof WebhooksDeleteInputSchema>;
 	webhooksUpdate: z.infer<typeof WebhooksUpdateInputSchema>;
 	// Workspaces
 	workspacesGet: z.infer<typeof WorkspacesGetInputSchema>;
@@ -1505,6 +1533,8 @@ export type AsanaEndpointOutputs = {
 	storiesDelete: z.infer<typeof StoriesDeleteResponseSchema>;
 	// Webhook management
 	webhooksGetList: z.infer<typeof WebhooksGetListResponseSchema>;
+	webhooksCreate: z.infer<typeof WebhooksCreateResponseSchema>;
+	webhooksDelete: z.infer<typeof WebhooksDeleteResponseSchema>;
 	webhooksUpdate: z.infer<typeof WebhooksUpdateResponseSchema>;
 	// Workspaces
 	workspacesGet: z.infer<typeof WorkspacesGetResponseSchema>;
@@ -1599,6 +1629,8 @@ export const AsanaEndpointInputSchemas = {
 	storiesDelete: StoriesDeleteInputSchema,
 	// Webhook management
 	webhooksGetList: WebhooksGetListInputSchema,
+	webhooksCreate: WebhooksCreateInputSchema,
+	webhooksDelete: WebhooksDeleteInputSchema,
 	webhooksUpdate: WebhooksUpdateInputSchema,
 	// Workspaces
 	workspacesGet: WorkspacesGetInputSchema,
@@ -1693,6 +1725,8 @@ export const AsanaEndpointOutputSchemas = {
 	storiesDelete: StoriesDeleteResponseSchema,
 	// Webhook management
 	webhooksGetList: WebhooksGetListResponseSchema,
+	webhooksCreate: WebhooksCreateResponseSchema,
+	webhooksDelete: WebhooksDeleteResponseSchema,
 	webhooksUpdate: WebhooksUpdateResponseSchema,
 	// Workspaces
 	workspacesGet: WorkspacesGetResponseSchema,
@@ -1741,6 +1775,8 @@ export type StoriesGetResponse = z.infer<typeof StoriesGetResponseSchema>;
 export type StoriesListForTaskResponse = z.infer<typeof StoriesListForTaskResponseSchema>;
 export type StoriesCreateCommentResponse = z.infer<typeof StoriesCreateCommentResponseSchema>;
 export type WebhooksGetListResponse = z.infer<typeof WebhooksGetListResponseSchema>;
+export type WebhooksCreateResponse = z.infer<typeof WebhooksCreateResponseSchema>;
+export type WebhooksDeleteResponse = z.infer<typeof WebhooksDeleteResponseSchema>;
 export type WebhooksUpdateResponse = z.infer<typeof WebhooksUpdateResponseSchema>;
 export type WorkspacesGetResponse = z.infer<typeof WorkspacesGetResponseSchema>;
 export type WorkspacesListResponse = z.infer<typeof WorkspacesListResponseSchema>;
