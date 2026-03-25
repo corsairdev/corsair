@@ -12,8 +12,8 @@ export const list: YoutubeEndpoints['playlistsList'] = async (ctx, input) => {
 			query: {
 				mine: 'true',
 				part: input.part ?? 'snippet,status,contentDetails',
-				...(input.pageToken ? { pageToken: input.pageToken } : {}),
-				...(input.maxResults ? { maxResults: input.maxResults } : {}),
+				...(input.pageToken && { pageToken: input.pageToken }),
+				...(input.maxResults && { maxResults: input.maxResults }),
 			},
 		},
 	);
@@ -23,13 +23,10 @@ export const list: YoutubeEndpoints['playlistsList'] = async (ctx, input) => {
 			if (!item.id) continue;
 			try {
 				await ctx.db.playlists.upsertByEntityId(item.id, {
+					...item.snippet,
+					...item.status,
+					...item.contentDetails,
 					id: item.id,
-					title: item.snippet?.title,
-					description: item.snippet?.description,
-					channelId: item.snippet?.channelId,
-					privacyStatus: item.status?.privacyStatus,
-					itemCount: item.contentDetails?.itemCount,
-					publishedAt: item.snippet?.publishedAt,
 				});
 			} catch (error) {
 				console.warn('[youtube] Failed to save playlist to database:', error);
@@ -49,13 +46,8 @@ export const create: YoutubeEndpoints['playlistsCreate'] = async (ctx, input) =>
 			method: 'POST',
 			query: { part: 'snippet,status' },
 			body: {
-				snippet: {
-					title: input.title,
-					description: input.description,
-				},
-				status: {
-					privacyStatus: input.privacyStatus ?? 'private',
-				},
+				snippet: { title: input.title, description: input.description },
+				status: { privacyStatus: input.privacyStatus ?? 'private' },
 			},
 		},
 	);
@@ -63,12 +55,9 @@ export const create: YoutubeEndpoints['playlistsCreate'] = async (ctx, input) =>
 	if (response.id && ctx.db.playlists) {
 		try {
 			await ctx.db.playlists.upsertByEntityId(response.id, {
+				...response.snippet,
+				...response.status,
 				id: response.id,
-				title: response.snippet?.title,
-				description: response.snippet?.description,
-				channelId: response.snippet?.channelId,
-				privacyStatus: response.status?.privacyStatus,
-				publishedAt: response.snippet?.publishedAt,
 			});
 		} catch (error) {
 			console.warn('[youtube] Failed to save playlist to database:', error);
@@ -89,7 +78,7 @@ export const update: YoutubeEndpoints['playlistsUpdate'] = async (ctx, input) =>
 			body: {
 				id: input.id,
 				snippet: input.snippet,
-				...(input.status ? { status: input.status } : {}),
+				...(input.status && { status: input.status }),
 			},
 		},
 	);
@@ -97,12 +86,9 @@ export const update: YoutubeEndpoints['playlistsUpdate'] = async (ctx, input) =>
 	if (response.id && ctx.db.playlists) {
 		try {
 			await ctx.db.playlists.upsertByEntityId(response.id, {
+				...response.snippet,
+				...response.status,
 				id: response.id,
-				title: response.snippet?.title,
-				description: response.snippet?.description,
-				channelId: response.snippet?.channelId,
-				privacyStatus: response.status?.privacyStatus,
-				publishedAt: response.snippet?.publishedAt,
 			});
 		} catch (error) {
 			console.warn('[youtube] Failed to update playlist in database:', error);
@@ -120,9 +106,5 @@ export const del: YoutubeEndpoints['playlistsDelete'] = async (ctx, input) => {
 	});
 
 	await logEventFromContext(ctx, 'youtube.playlists.delete', { id: input.id }, 'completed');
-	return {
-		deleted: true,
-		playlist_id: input.id,
-		http_status: 204,
-	};
+	return { deleted: true, playlist_id: input.id, http_status: 204 };
 };

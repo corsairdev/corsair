@@ -52,6 +52,29 @@ describe('YouTube API Type Tests', () => {
 			const parsed = YoutubeEndpointOutputSchemas.playlistsList.parse(empty);
 			expect(parsed.items).toHaveLength(0);
 		});
+
+		it('playlistsList schema spreads all snippet and status fields', () => {
+			const snippet = {
+				title: 'Test Playlist',
+				description: 'A test playlist',
+				channelId: 'UC123',
+				publishedAt: '2024-01-01T00:00:00Z',
+				defaultLanguage: 'en',
+				localized: { title: 'Test Playlist', description: 'A test playlist' },
+			};
+			const status = { privacyStatus: 'public' };
+			const contentDetails = { itemCount: 10 };
+			const mock: PlaylistsListResponse = {
+				kind: 'youtube#playlistListResponse',
+				etag: 'abc',
+				items: [{ id: 'PL123', kind: 'youtube#playlist', etag: 'xyz', snippet, status, contentDetails }],
+				pageInfo: { totalResults: 1, resultsPerPage: 5 },
+			};
+			const parsed = YoutubeEndpointOutputSchemas.playlistsList.parse(mock);
+			expect(parsed.items![0]?.snippet?.title).toBe('Test Playlist');
+			expect(parsed.items![0]?.status?.privacyStatus).toBe('public');
+			expect(parsed.items![0]?.contentDetails?.itemCount).toBe(10);
+		});
 	});
 
 	describe('playlistItems', () => {
@@ -109,7 +132,6 @@ describe('YouTube API Type Tests', () => {
 				},
 			);
 			const parsed = YoutubeEndpointOutputSchemas.videosGet.parse(result);
-			console.log(result, 'test')
 			expect(parsed).toBeDefined();
 			expect(parsed.items).toBeDefined();
 			expect(parsed.items!.length).toBeGreaterThan(0);
@@ -150,7 +172,19 @@ describe('YouTube API Type Tests', () => {
 			expect(Array.isArray(parsed.items) || parsed.items === undefined).toBe(true);
 		});
 
-		it('videosGet schema validates item structure', () => {
+		it('videosGet schema validates spread snippet and statistics fields', () => {
+			const snippet = {
+				title: 'Test Video',
+				description: 'A test video',
+				channelId: 'UC123',
+				publishedAt: '2024-01-01T00:00:00Z',
+				tags: ['typescript', 'tutorial'],
+				categoryId: '28',
+				defaultLanguage: 'en',
+			};
+			const statistics = { viewCount: '1000', likeCount: '50', commentCount: '10' };
+			const status = { privacyStatus: 'public', uploadStatus: 'processed' };
+			const contentDetails = { duration: 'PT10M30S', dimension: '2d', definition: 'hd' };
 			const mockResponse: VideosGetResponse = {
 				kind: 'youtube#videoListResponse',
 				etag: 'abc123',
@@ -158,18 +192,19 @@ describe('YouTube API Type Tests', () => {
 					id: 'dQw4w9WgXcQ',
 					kind: 'youtube#video',
 					etag: 'xyz',
-					snippet: {
-						title: 'Test Video',
-						description: 'A test video',
-						channelId: 'UC123',
-						publishedAt: '2024-01-01T00:00:00Z',
-					},
+					snippet,
+					statistics,
+					status,
+					contentDetails,
 				}],
 				pageInfo: { totalResults: 1, resultsPerPage: 5 },
 			};
 			const parsed = YoutubeEndpointOutputSchemas.videosGet.parse(mockResponse);
 			expect(parsed.items![0]?.id).toBe('dQw4w9WgXcQ');
 			expect(parsed.items![0]?.snippet?.title).toBe('Test Video');
+			expect(parsed.items![0]?.statistics?.viewCount).toBe('1000');
+			expect(parsed.items![0]?.contentDetails?.duration).toBe('PT10M30S');
+			expect(parsed.items![0]?.status?.privacyStatus).toBe('public');
 		});
 	});
 
@@ -238,6 +273,31 @@ describe('YouTube API Type Tests', () => {
 			const parsed = YoutubeEndpointOutputSchemas.channelsGetActivities.parse(result);
 			expect(parsed).toBeDefined();
 		});
+
+		it('channelsGetStatistics schema spreads snippet and statistics fields', () => {
+			const snippet = {
+				title: 'Test Channel',
+				description: 'A test channel',
+				customUrl: '@testchannel',
+				publishedAt: '2020-01-01T00:00:00Z',
+				country: 'US',
+			};
+			const statistics = {
+				viewCount: '1000000',
+				subscriberCount: '5000',
+				videoCount: '100',
+				hiddenSubscriberCount: false,
+			};
+			const mock: ChannelsGetStatisticsResponse = {
+				kind: 'youtube#channelListResponse',
+				etag: 'abc',
+				items: [{ id: 'UC123', kind: 'youtube#channel', etag: 'xyz', snippet, statistics }],
+				pageInfo: { totalResults: 1, resultsPerPage: 5 },
+			};
+			const parsed = YoutubeEndpointOutputSchemas.channelsGetStatistics.parse(mock);
+			expect(parsed.items![0]?.snippet?.title).toBe('Test Channel');
+			expect(parsed.items![0]?.statistics?.subscriberCount).toBe('5000');
+		});
 	});
 
 	describe('search', () => {
@@ -256,7 +316,15 @@ describe('YouTube API Type Tests', () => {
 			expect(Array.isArray(parsed.items) || parsed.items === undefined).toBe(true);
 		});
 
-		it('searchYouTube schema validates result structure', () => {
+		it('searchYouTube schema validates result structure with all snippet fields', () => {
+			const snippet = {
+				title: 'Test Result',
+				channelId: 'UC123',
+				channelTitle: 'Test Channel',
+				publishedAt: '2024-01-01T00:00:00Z',
+				description: 'A test search result',
+				liveBroadcastContent: 'none',
+			};
 			const mockResponse: SearchYouTubeResponse = {
 				kind: 'youtube#searchListResponse',
 				etag: 'abc',
@@ -266,16 +334,30 @@ describe('YouTube API Type Tests', () => {
 					kind: 'youtube#searchResult',
 					etag: 'xyz',
 					id: { kind: 'youtube#video', videoId: 'abc123' },
-					snippet: {
-						title: 'Test Result',
-						channelId: 'UC123',
-						channelTitle: 'Test Channel',
-						publishedAt: '2024-01-01T00:00:00Z',
-					},
+					snippet,
 				}],
 			};
 			const parsed = YoutubeEndpointOutputSchemas.searchYouTube.parse(mockResponse);
 			expect(parsed.items![0]?.id?.videoId).toBe('abc123');
+			expect(parsed.items![0]?.snippet?.channelTitle).toBe('Test Channel');
+		});
+
+		it('searchYouTube video results have videoId for DB persistence', () => {
+			const mock: SearchYouTubeResponse = {
+				kind: 'youtube#searchListResponse',
+				etag: 'abc',
+				pageInfo: { totalResults: 2, resultsPerPage: 5 },
+				items: [
+					{ kind: 'youtube#searchResult', etag: 'e1', id: { kind: 'youtube#video', videoId: 'vid1' }, snippet: { title: 'Video 1', channelId: 'UC1' } },
+					{ kind: 'youtube#searchResult', etag: 'e2', id: { kind: 'youtube#channel', channelId: 'ch1' }, snippet: { title: 'Channel 1' } },
+				],
+			};
+			const parsed = YoutubeEndpointOutputSchemas.searchYouTube.parse(mock);
+			const videoItems = (parsed.items ?? []).filter((i: { id?: { videoId?: string } }) => i.id?.videoId);
+			const channelItems = (parsed.items ?? []).filter((i: { id?: { channelId?: string; videoId?: string } }) => i.id?.channelId && !i.id?.videoId);
+			expect(videoItems).toHaveLength(1);
+			expect(channelItems).toHaveLength(1);
+			expect(videoItems[0]?.id?.videoId).toBe('vid1');
 		});
 	});
 
@@ -293,6 +375,25 @@ describe('YouTube API Type Tests', () => {
 			const parsed = YoutubeEndpointOutputSchemas.subscriptionsList.parse(result);
 			expect(parsed).toBeDefined();
 			expect(Array.isArray(parsed.items) || parsed.items === undefined).toBe(true);
+		});
+
+		it('subscriptionsList schema captures channelId from resourceId', () => {
+			const snippet = {
+				publishedAt: '2024-01-01T00:00:00Z',
+				title: 'Test Channel',
+				description: 'A subscribed channel',
+				channelId: 'UC_subscriber',
+				resourceId: { kind: 'youtube#channel', channelId: 'UC_subscribed' },
+			};
+			const mock: SubscriptionsListResponse = {
+				kind: 'youtube#subscriptionListResponse',
+				etag: 'abc',
+				items: [{ id: 'sub123', kind: 'youtube#subscription', etag: 'xyz', snippet }],
+				pageInfo: { totalResults: 1, resultsPerPage: 5 },
+			};
+			const parsed = YoutubeEndpointOutputSchemas.subscriptionsList.parse(mock);
+			// snippet.channelId is the subscriber's channel; resourceId.channelId is the subscribed channel
+			expect(parsed.items![0]?.snippet?.resourceId?.channelId).toBe('UC_subscribed');
 		});
 	});
 
@@ -334,6 +435,32 @@ describe('YouTube API Type Tests', () => {
 			);
 			const parsed = YoutubeEndpointOutputSchemas.captionsList.parse(result);
 			expect(parsed).toBeDefined();
+		});
+
+		it('captionsList schema spreads all snippet fields', () => {
+			const snippet = {
+				videoId: 'vid123',
+				lastUpdated: '2024-01-01T00:00:00Z',
+				trackKind: 'standard',
+				language: 'en',
+				name: 'English',
+				audioTrackType: 'unknown',
+				isCC: false,
+				isLarge: false,
+				isEasyReader: false,
+				isDraft: false,
+				isAutoSynced: false,
+				status: 'serving',
+			};
+			const mock: CaptionsListResponse = {
+				kind: 'youtube#captionListResponse',
+				etag: 'abc',
+				items: [{ id: 'cap123', kind: 'youtube#caption', etag: 'xyz', snippet }],
+			};
+			const parsed = YoutubeEndpointOutputSchemas.captionsList.parse(mock);
+			expect(parsed.items![0]?.id).toBe('cap123');
+			expect(parsed.items![0]?.snippet?.language).toBe('en');
+			expect(parsed.items![0]?.snippet?.isDraft).toBe(false);
 		});
 	});
 
@@ -404,15 +531,39 @@ describe('YouTube API Type Tests', () => {
 			// passthrough() ensures unknown fields survive schema parsing
 			expect((parsed as Record<string, unknown>).custom_field).toBe('preserved');
 		});
+
+		it('preserves extra snippet fields spread into DB upsert payload', () => {
+			// Simulate the spread pattern: extra fields from snippet survive passthrough
+			const mockVideo = {
+				kind: 'youtube#videoListResponse',
+				etag: 'abc',
+				items: [{
+					id: 'vid123',
+					snippet: {
+						title: 'Test',
+						channelId: 'UC123',
+						defaultLanguage: 'en',
+						liveBroadcastContent: 'none',
+					},
+					statistics: { viewCount: '100', likeCount: '5' },
+					status: { privacyStatus: 'public', uploadStatus: 'processed' },
+					contentDetails: { duration: 'PT5M', definition: 'hd' },
+				}],
+				pageInfo: { totalResults: 1, resultsPerPage: 5 },
+			};
+			const parsed = YoutubeEndpointOutputSchemas.videosGet.parse(mockVideo);
+			const item = parsed.items![0]!;
+			// Verify all nested objects are accessible for spread
+			expect(item.snippet?.defaultLanguage).toBe('en');
+			expect(item.statistics?.viewCount).toBe('100');
+			expect(item.status?.uploadStatus).toBe('processed');
+			expect(item.contentDetails?.definition).toBe('hd');
+		});
 	});
 
 	describe('delete response schemas', () => {
 		it('playlistsDelete schema is valid', () => {
-			const response = {
-				deleted: true,
-				playlist_id: 'PLtest123',
-				http_status: 204,
-			};
+			const response = { deleted: true, playlist_id: 'PLtest123', http_status: 204 };
 			const parsed = YoutubeEndpointOutputSchemas.playlistsDelete.parse(response);
 			expect(parsed.deleted).toBe(true);
 			expect(parsed.playlist_id).toBe('PLtest123');
@@ -420,33 +571,21 @@ describe('YouTube API Type Tests', () => {
 		});
 
 		it('videosDelete schema is valid', () => {
-			const response = {
-				deleted: true,
-				video_id: 'dQw4w9WgXcQ',
-				http_status: 204,
-			};
+			const response = { deleted: true, video_id: 'dQw4w9WgXcQ', http_status: 204 };
 			const parsed = YoutubeEndpointOutputSchemas.videosDelete.parse(response);
 			expect(parsed.deleted).toBe(true);
 			expect(parsed.video_id).toBe('dQw4w9WgXcQ');
 		});
 
 		it('commentsDelete schema is valid', () => {
-			const response = {
-				deleted: true,
-				comment_id: 'comment123',
-				http_status: 204,
-			};
+			const response = { deleted: true, comment_id: 'comment123', http_status: 204 };
 			const parsed = YoutubeEndpointOutputSchemas.commentsDelete.parse(response);
 			expect(parsed.deleted).toBe(true);
 			expect(parsed.comment_id).toBe('comment123');
 		});
 
 		it('subscriptionsUnsubscribe schema is valid', () => {
-			const response = {
-				unsubscribed: true,
-				subscription_id: 'sub123',
-				http_status: 204,
-			};
+			const response = { unsubscribed: true, subscription_id: 'sub123', http_status: 204 };
 			const parsed = YoutubeEndpointOutputSchemas.subscriptionsUnsubscribe.parse(response);
 			expect(parsed.unsubscribed).toBe(true);
 		});

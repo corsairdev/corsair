@@ -31,18 +31,8 @@ import {
 	YoutubeEndpointOutputSchemas,
 } from './endpoints';
 import type { YoutubeEndpointInputs, YoutubeEndpointOutputs } from './endpoints/types';
-import {
-	ActivitiesWebhooks,
-	PlaylistItemsWebhooks,
-	PlaylistsWebhooks,
-	SubscriptionsWebhooks,
-} from './webhooks';
 import type {
 	YoutubeWebhookOutputs,
-	NewActivityEvent,
-	NewPlaylistItemEvent,
-	NewPlaylistEvent,
-	NewSubscriptionEvent,
 } from './webhooks/types';
 import { YoutubeSchema } from './schema';
 import { errorHandlers } from './error-handlers';
@@ -138,10 +128,6 @@ type YoutubeWebhook<
 > = CorsairWebhook<YoutubeContext, TEvent, YoutubeWebhookOutputs[K]>;
 
 export type YoutubeWebhooks = {
-	newActivity: YoutubeWebhook<'newActivity', NewActivityEvent>;
-	newPlaylistItem: YoutubeWebhook<'newPlaylistItem', NewPlaylistItemEvent>;
-	newPlaylist: YoutubeWebhook<'newPlaylist', NewPlaylistEvent>;
-	newSubscription: YoutubeWebhook<'newSubscription', NewSubscriptionEvent>;
 };
 
 export type YoutubeBoundEndpoints = BindEndpoints<typeof youtubeEndpointsNested>;
@@ -251,18 +237,6 @@ const youtubeEndpointsNested = {
 } as const;
 
 const youtubeWebhooksNested = {
-	activities: {
-		newActivity: ActivitiesWebhooks.newActivity,
-	},
-	playlistItems: {
-		newPlaylistItem: PlaylistItemsWebhooks.newPlaylistItem,
-	},
-	playlists: {
-		newPlaylist: PlaylistsWebhooks.newPlaylist,
-	},
-	subscriptions: {
-		newSubscription: SubscriptionsWebhooks.newSubscription,
-	},
 } as const;
 
 // ── Endpoint Schemas ──────────────────────────────────────────────────────────
@@ -407,6 +381,7 @@ export type ExternalYoutubePlugin<T extends YoutubePluginOptions> =
 // ── Plugin Factory ────────────────────────────────────────────────────────────
 
 export function youtube<const T extends YoutubePluginOptions>(
+	// default parameter asserted to satisfy the generic constraint when no options are provided
 	incomingOptions: YoutubePluginOptions & T = {} as YoutubePluginOptions & T,
 ): ExternalYoutubePlugin<T> {
 	const options = {
@@ -463,10 +438,6 @@ export function youtube<const T extends YoutubePluginOptions>(
 
 export type {
 	YoutubeWebhookOutputs,
-	NewActivityEvent,
-	NewPlaylistItemEvent,
-	NewPlaylistEvent,
-	NewSubscriptionEvent,
 } from './webhooks/types';
 
 export type {

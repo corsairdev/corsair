@@ -10,12 +10,7 @@ export const rate: YoutubeEndpoints['videoActionsRate'] = async (ctx, input) => 
 	});
 
 	await logEventFromContext(ctx, 'youtube.videoActions.rate', { id: input.id, rating: input.rating }, 'completed');
-	return {
-		rating: input.rating,
-		success: true,
-		video_id: input.id,
-		http_status: 204,
-	};
+	return { rating: input.rating, success: true, video_id: input.id, http_status: 204 };
 };
 
 export const getRating: YoutubeEndpoints['videoActionsGetRating'] = async (ctx, input) => {
@@ -26,10 +21,25 @@ export const getRating: YoutubeEndpoints['videoActionsGetRating'] = async (ctx, 
 			method: 'GET',
 			query: {
 				id: input.id,
-				...(input.onBehalfOfContentOwner ? { onBehalfOfContentOwner: input.onBehalfOfContentOwner } : {}),
+				...(input.onBehalfOfContentOwner && { onBehalfOfContentOwner: input.onBehalfOfContentOwner }),
 			},
 		},
 	);
+
+	// Persist rating info per video in the videos store
+	if (response.items && ctx.db.videos) {
+		for (const item of response.items) {
+			if (!item.videoId) continue;
+			try {
+				await ctx.db.videos.upsertByEntityId(item.videoId, {
+					...item,
+					id: item.videoId,
+				});
+			} catch (error) {
+				console.warn('[youtube] Failed to save video rating to database:', error);
+			}
+		}
+	}
 
 	await logEventFromContext(ctx, 'youtube.videoActions.getRating', { id: input.id }, 'completed');
 	return response;
@@ -41,18 +51,14 @@ export const reportAbuse: YoutubeEndpoints['videoActionsReportAbuse'] = async (c
 		query: { videoId: input.videoId },
 		body: {
 			reasonId: input.reasonId,
-			...(input.secondaryReasonId ? { secondaryReasonId: input.secondaryReasonId } : {}),
-			...(input.comments ? { comments: input.comments } : {}),
-			...(input.language ? { language: input.language } : {}),
+			...(input.secondaryReasonId && { secondaryReasonId: input.secondaryReasonId }),
+			...(input.comments && { comments: input.comments }),
+			...(input.language && { language: input.language }),
 		},
 	});
 
 	await logEventFromContext(ctx, 'youtube.videoActions.reportAbuse', { videoId: input.videoId }, 'completed');
-	return {
-		success: true,
-		message: `Video ${input.videoId} reported for abuse`,
-		http_status: 204,
-	};
+	return { success: true, message: `Video ${input.videoId} reported for abuse`, http_status: 204 };
 };
 
 export const listAbuseReasons: YoutubeEndpoints['videoActionsListAbuseReasons'] = async (ctx, input) => {
@@ -63,7 +69,7 @@ export const listAbuseReasons: YoutubeEndpoints['videoActionsListAbuseReasons'] 
 			method: 'GET',
 			query: {
 				part: input.part ?? 'snippet',
-				...(input.hl ? { hl: input.hl } : {}),
+				...(input.hl && { hl: input.hl }),
 			},
 		},
 	);
@@ -84,6 +90,18 @@ export const updateThumbnail: YoutubeEndpoints['videoActionsUpdateThumbnail'] = 
 			body: { thumbnailUrl: input.thumbnailUrl },
 		},
 	);
+
+	// Reflect the updated thumbnail URL in the videos store
+	if (ctx.db.videos) {
+		try {
+			await ctx.db.videos.upsertByEntityId(input.videoId, {
+				...response,
+				id: input.videoId,
+			});
+		} catch (error) {
+			console.warn('[youtube] Failed to update video thumbnail in database:', error);
+		}
+	}
 
 	await logEventFromContext(ctx, 'youtube.videoActions.updateThumbnail', { videoId: input.videoId }, 'completed');
 	return response;

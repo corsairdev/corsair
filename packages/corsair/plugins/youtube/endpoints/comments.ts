@@ -11,11 +11,11 @@ export const list: YoutubeEndpoints['commentsList'] = async (ctx, input) => {
 			method: 'GET',
 			query: {
 				part: input.part ?? 'snippet',
-				...(input.id ? { id: input.id } : {}),
-				...(input.parentId ? { parentId: input.parentId } : {}),
-				...(input.pageToken ? { pageToken: input.pageToken } : {}),
-				...(input.maxResults ? { maxResults: input.maxResults } : {}),
-				...(input.textFormat ? { textFormat: input.textFormat } : {}),
+				...(input.id && { id: input.id }),
+				...(input.parentId && { parentId: input.parentId }),
+				...(input.pageToken && { pageToken: input.pageToken }),
+				...(input.maxResults && { maxResults: input.maxResults }),
+				...(input.textFormat && { textFormat: input.textFormat }),
 			},
 		},
 	);
@@ -25,16 +25,10 @@ export const list: YoutubeEndpoints['commentsList'] = async (ctx, input) => {
 			if (!item.id) continue;
 			try {
 				await ctx.db.comments.upsertByEntityId(item.id, {
-					id: item.id,
-					videoId: item.snippet?.videoId,
-					parentId: item.snippet?.parentId,
-					textDisplay: item.snippet?.textDisplay,
-					textOriginal: item.snippet?.textOriginal,
-					authorDisplayName: item.snippet?.authorDisplayName,
+					...item.snippet,
+					// authorChannelId in the API is an object { value: string }; extract the string
 					authorChannelId: item.snippet?.authorChannelId?.value,
-					likeCount: item.snippet?.likeCount,
-					publishedAt: item.snippet?.publishedAt,
-					updatedAt: item.snippet?.updatedAt,
+					id: item.id,
 				});
 			} catch (error) {
 				console.warn('[youtube] Failed to save comment to database:', error);
@@ -54,14 +48,14 @@ export const threadsList: YoutubeEndpoints['commentThreadsList'] = async (ctx, i
 			method: 'GET',
 			query: {
 				part: input.part ?? 'snippet,replies',
-				...(input.id ? { id: input.id } : {}),
-				...(input.order ? { order: input.order } : {}),
-				...(input.videoId ? { videoId: input.videoId } : {}),
-				...(input.pageToken ? { pageToken: input.pageToken } : {}),
-				...(input.maxResults ? { maxResults: input.maxResults } : {}),
-				...(input.textFormat ? { textFormat: input.textFormat } : {}),
-				...(input.searchTerms ? { searchTerms: input.searchTerms } : {}),
-				...(input.allThreadsRelatedToChannelId ? { allThreadsRelatedToChannelId: input.allThreadsRelatedToChannelId } : {}),
+				...(input.id && { id: input.id }),
+				...(input.order && { order: input.order }),
+				...(input.videoId && { videoId: input.videoId }),
+				...(input.pageToken && { pageToken: input.pageToken }),
+				...(input.maxResults && { maxResults: input.maxResults }),
+				...(input.textFormat && { textFormat: input.textFormat }),
+				...(input.searchTerms && { searchTerms: input.searchTerms }),
+				...(input.allThreadsRelatedToChannelId && { allThreadsRelatedToChannelId: input.allThreadsRelatedToChannelId }),
 			},
 		},
 	);
@@ -72,15 +66,11 @@ export const threadsList: YoutubeEndpoints['commentThreadsList'] = async (ctx, i
 			if (!topComment?.id) continue;
 			try {
 				await ctx.db.comments.upsertByEntityId(topComment.id, {
-					id: topComment.id,
-					videoId: thread.snippet?.videoId,
-					textDisplay: topComment.snippet?.textDisplay,
-					textOriginal: topComment.snippet?.textOriginal,
-					authorDisplayName: topComment.snippet?.authorDisplayName,
+					...topComment.snippet,
+					// authorChannelId in the API is an object { value: string }; extract the string
 					authorChannelId: topComment.snippet?.authorChannelId?.value,
-					likeCount: topComment.snippet?.likeCount,
-					publishedAt: topComment.snippet?.publishedAt,
-					updatedAt: topComment.snippet?.updatedAt,
+					videoId: thread.snippet?.videoId,
+					id: topComment.id,
 				});
 			} catch (error) {
 				console.warn('[youtube] Failed to save comment thread to database:', error);
@@ -100,16 +90,16 @@ export const threadsList2: YoutubeEndpoints['commentThreadsList2'] = async (ctx,
 			method: 'GET',
 			query: {
 				part: input.part,
-				...(input.id ? { id: input.id } : {}),
-				...(input.order ? { order: input.order } : {}),
-				...(input.videoId ? { videoId: input.videoId } : {}),
-				...(input.channelId ? { channelId: input.channelId } : {}),
-				...(input.pageToken ? { pageToken: input.pageToken } : {}),
-				...(input.maxResults ? { maxResults: input.maxResults } : {}),
-				...(input.textFormat ? { textFormat: input.textFormat } : {}),
-				...(input.searchTerms ? { searchTerms: input.searchTerms } : {}),
-				...(input.moderationStatus ? { moderationStatus: input.moderationStatus } : {}),
-				...(input.allThreadsRelatedToChannelId ? { allThreadsRelatedToChannelId: input.allThreadsRelatedToChannelId } : {}),
+				...(input.id && { id: input.id }),
+				...(input.order && { order: input.order }),
+				...(input.videoId && { videoId: input.videoId }),
+				...(input.channelId && { channelId: input.channelId }),
+				...(input.pageToken && { pageToken: input.pageToken }),
+				...(input.maxResults && { maxResults: input.maxResults }),
+				...(input.textFormat && { textFormat: input.textFormat }),
+				...(input.searchTerms && { searchTerms: input.searchTerms }),
+				...(input.moderationStatus && { moderationStatus: input.moderationStatus }),
+				...(input.allThreadsRelatedToChannelId && { allThreadsRelatedToChannelId: input.allThreadsRelatedToChannelId }),
 			},
 		},
 	);
@@ -120,15 +110,11 @@ export const threadsList2: YoutubeEndpoints['commentThreadsList2'] = async (ctx,
 			if (!topComment?.id) continue;
 			try {
 				await ctx.db.comments.upsertByEntityId(topComment.id, {
-					id: topComment.id,
-					videoId: thread.snippet?.videoId,
-					textDisplay: topComment.snippet?.textDisplay,
-					textOriginal: topComment.snippet?.textOriginal,
-					authorDisplayName: topComment.snippet?.authorDisplayName,
+					...topComment.snippet,
+					// authorChannelId in the API is an object { value: string }; extract the string
 					authorChannelId: topComment.snippet?.authorChannelId?.value,
-					likeCount: topComment.snippet?.likeCount,
-					publishedAt: topComment.snippet?.publishedAt,
-					updatedAt: topComment.snippet?.updatedAt,
+					videoId: thread.snippet?.videoId,
+					id: topComment.id,
 				});
 			} catch (error) {
 				console.warn('[youtube] Failed to save comment thread to database:', error);
@@ -151,11 +137,7 @@ export const post: YoutubeEndpoints['commentsPost'] = async (ctx, input) => {
 				snippet: {
 					channelId: input.channelId,
 					videoId: input.videoId,
-					topLevelComment: {
-						snippet: {
-							textOriginal: input.textOriginal,
-						},
-					},
+					topLevelComment: { snippet: { textOriginal: input.textOriginal } },
 				},
 			},
 		},
@@ -165,13 +147,11 @@ export const post: YoutubeEndpoints['commentsPost'] = async (ctx, input) => {
 	if (topComment?.id && ctx.db.comments) {
 		try {
 			await ctx.db.comments.upsertByEntityId(topComment.id, {
-				id: topComment.id,
-				videoId: input.videoId,
-				textOriginal: input.textOriginal,
-				textDisplay: topComment.snippet?.textDisplay,
-				authorDisplayName: topComment.snippet?.authorDisplayName,
+				...topComment.snippet,
+				// authorChannelId in the API is an object { value: string }; extract the string
 				authorChannelId: topComment.snippet?.authorChannelId?.value,
-				publishedAt: topComment.snippet?.publishedAt,
+				videoId: input.videoId,
+				id: topComment.id,
 			});
 		} catch (error) {
 			console.warn('[youtube] Failed to save comment to database:', error);
@@ -201,13 +181,10 @@ export const createReply: YoutubeEndpoints['commentsCreateReply'] = async (ctx, 
 	if (response.id && ctx.db.comments) {
 		try {
 			await ctx.db.comments.upsertByEntityId(response.id, {
-				id: response.id,
-				parentId: input.parentId,
-				textOriginal: input.textOriginal,
-				textDisplay: response.snippet?.textDisplay,
-				authorDisplayName: response.snippet?.authorDisplayName,
+				...response.snippet,
+				// authorChannelId in the API is an object { value: string }; extract the string
 				authorChannelId: response.snippet?.authorChannelId?.value,
-				publishedAt: response.snippet?.publishedAt,
+				id: response.id,
 			});
 		} catch (error) {
 			console.warn('[youtube] Failed to save comment reply to database:', error);
@@ -227,9 +204,7 @@ export const update: YoutubeEndpoints['commentsUpdate'] = async (ctx, input) => 
 			query: { part: 'snippet' },
 			body: {
 				id: input.id,
-				snippet: {
-					textOriginal: input.textOriginal,
-				},
+				snippet: { textOriginal: input.textOriginal },
 			},
 		},
 	);
@@ -237,10 +212,10 @@ export const update: YoutubeEndpoints['commentsUpdate'] = async (ctx, input) => 
 	if (response.id && ctx.db.comments) {
 		try {
 			await ctx.db.comments.upsertByEntityId(response.id, {
+				...response.snippet,
+				// authorChannelId in the API is an object { value: string }; extract the string
+				authorChannelId: response.snippet?.authorChannelId?.value,
 				id: response.id,
-				textOriginal: input.textOriginal,
-				textDisplay: response.snippet?.textDisplay,
-				updatedAt: response.snippet?.updatedAt,
 			});
 		} catch (error) {
 			console.warn('[youtube] Failed to update comment in database:', error);
@@ -258,11 +233,7 @@ export const del: YoutubeEndpoints['commentsDelete'] = async (ctx, input) => {
 	});
 
 	await logEventFromContext(ctx, 'youtube.comments.delete', { id: input.id }, 'completed');
-	return {
-		deleted: true,
-		comment_id: input.id,
-		http_status: 204,
-	};
+	return { deleted: true, comment_id: input.id, http_status: 204 };
 };
 
 export const markSpam: YoutubeEndpoints['commentsMarkSpam'] = async (ctx, input) => {
@@ -272,11 +243,7 @@ export const markSpam: YoutubeEndpoints['commentsMarkSpam'] = async (ctx, input)
 	});
 
 	await logEventFromContext(ctx, 'youtube.comments.markSpam', { id: input.id }, 'completed');
-	return {
-		success: true,
-		comment_ids: [input.id],
-		http_status: 204,
-	};
+	return { success: true, comment_ids: [input.id], http_status: 204 };
 };
 
 export const setModerationStatus: YoutubeEndpoints['commentsSetModerationStatus'] = async (ctx, input) => {
@@ -285,7 +252,7 @@ export const setModerationStatus: YoutubeEndpoints['commentsSetModerationStatus'
 		query: {
 			id: input.id,
 			moderationStatus: input.moderationStatus,
-			...(input.banAuthor !== undefined ? { banAuthor: input.banAuthor } : {}),
+			...(input.banAuthor !== undefined && { banAuthor: input.banAuthor }),
 		},
 	});
 

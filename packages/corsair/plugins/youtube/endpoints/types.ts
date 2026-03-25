@@ -341,6 +341,7 @@ const VideosUploadInputSchema = z.object({
 });
 
 const VideosUploadResponseSchema = z.object({
+	// Upload response structure varies by resumable upload state and YouTube API version
 	response_data: z.unknown().optional(),
 }).passthrough();
 
@@ -455,6 +456,7 @@ const ChannelsGetActivitiesResponseSchema = z.object({
 			type: z.string().optional(),
 			thumbnails: ThumbnailsSchema.optional(),
 		}).optional(),
+		// contentDetails varies per activity type (upload, like, favorite, etc.) — no fixed shape
 		contentDetails: z.record(z.unknown()).optional(),
 	}).passthrough()).optional(),
 	pageInfo: PageInfoSchema.optional(),
@@ -473,6 +475,7 @@ const ChannelsUpdateInputSchema = z.object({
 			country: z.string().optional(),
 		}).optional(),
 	}).optional(),
+	// localizations is a map of language code to localized strings — shape varies per channel
 	localizations: z.record(z.unknown()).optional(),
 	onBehalfOfContentOwner: z.string().optional(),
 });
@@ -483,7 +486,9 @@ const ChannelsUpdateResponseSchema = z.object({
 	kind: z.string().optional(),
 	snippet: ChannelSnippetSchema.optional(),
 	statistics: z.object({ viewCount: z.string().optional(), subscriberCount: z.string().optional(), videoCount: z.string().optional() }).optional(),
+	// brandingSettings and localizations have deeply nested arbitrary structures not fully documented
 	brandingSettings: z.record(z.unknown()).optional(),
+	// localizations is a map of BCP-47 language tags to localized channel metadata
 	localizations: z.record(z.unknown()).optional(),
 }).passthrough();
 
@@ -1002,6 +1007,7 @@ const LiveChatListMessagesResponseSchema = z.object({
 	pageInfo: PageInfoSchema.optional(),
 	offlineAt: z.string().optional(),
 	nextPageToken: z.string().optional(),
+	// activePollItem shape is undocumented and varies depending on active poll configuration
 	activePollItem: z.unknown().optional(),
 	pollingIntervalMillis: z.number().optional(),
 }).passthrough();
@@ -1256,6 +1262,7 @@ export type YoutubeEndpointOutputs = {
 };
 
 // Schema maps annotated with Record<> to avoid "inferred type exceeds serialization limit" with 51 schemas
+// ZodTypeAny used here to prevent TypeScript from serializing the full union type across all 51 schemas
 export const YoutubeEndpointInputSchemas: Record<keyof YoutubeEndpointInputs, z.ZodTypeAny> = {
 	// Playlists
 	playlistsList: PlaylistsListInputSchema,
@@ -1322,6 +1329,7 @@ export const YoutubeEndpointInputSchemas: Record<keyof YoutubeEndpointInputs, z.
 	playlistImagesList: PlaylistImagesListInputSchema,
 };
 
+// ZodTypeAny used here to prevent TypeScript from serializing the full union type across all 51 schemas
 export const YoutubeEndpointOutputSchemas: Record<keyof YoutubeEndpointOutputs, z.ZodTypeAny> = {
 	// Playlists
 	playlistsList: PlaylistsListResponseSchema,

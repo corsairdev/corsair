@@ -21,12 +21,8 @@ export const list: YoutubeEndpoints['captionsList'] = async (ctx, input) => {
 			if (!item.id) continue;
 			try {
 				await ctx.db.captions.upsertByEntityId(item.id, {
+					...item.snippet,
 					id: item.id,
-					videoId: item.snippet?.videoId ?? input.video_id,
-					language: item.snippet?.language,
-					name: item.snippet?.name,
-					isDraft: item.snippet?.isDraft,
-					trackKind: item.snippet?.trackKind,
 				});
 			} catch (error) {
 				console.warn('[youtube] Failed to save caption to database:', error);
@@ -55,12 +51,8 @@ export const update: YoutubeEndpoints['captionsUpdate'] = async (ctx, input) => 
 	if (response.id && ctx.db.captions) {
 		try {
 			await ctx.db.captions.upsertByEntityId(response.id, {
+				...response.snippet,
 				id: response.id,
-				videoId: response.snippet?.videoId,
-				language: response.snippet?.language,
-				name: response.snippet?.name,
-				isDraft: response.snippet?.isDraft,
-				trackKind: response.snippet?.trackKind,
 			});
 		} catch (error) {
 			console.warn('[youtube] Failed to update caption in database:', error);
@@ -78,7 +70,7 @@ export const load: YoutubeEndpoints['captionsLoad'] = async (ctx, input) => {
 		{
 			method: 'GET',
 			query: {
-				...(input.tfmt ? { tfmt: input.tfmt } : {}),
+				...(input.tfmt && { tfmt: input.tfmt }),
 			},
 		},
 	);

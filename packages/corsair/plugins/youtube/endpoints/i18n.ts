@@ -11,7 +11,7 @@ export const listLanguages: YoutubeEndpoints['i18nListLanguages'] = async (ctx, 
 			method: 'GET',
 			query: {
 				part: input.part ?? 'snippet',
-				...(input.hl ? { hl: input.hl } : {}),
+				...(input.hl && { hl: input.hl }),
 			},
 		},
 	);
@@ -28,7 +28,7 @@ export const listRegions: YoutubeEndpoints['i18nListRegions'] = async (ctx, inpu
 			method: 'GET',
 			query: {
 				part: input.part ?? 'snippet',
-				...(input.hl ? { hl: input.hl } : {}),
+				...(input.hl && { hl: input.hl }),
 			},
 		},
 	);
@@ -45,9 +45,9 @@ export const videoCategoriesList: YoutubeEndpoints['videoCategoriesList'] = asyn
 			method: 'GET',
 			query: {
 				part: input.part ?? 'snippet',
-				...(input.hl ? { hl: input.hl } : {}),
-				...(input.id ? { id: input.id } : {}),
-				...(input.regionCode ? { regionCode: input.regionCode } : {}),
+				...(input.hl && { hl: input.hl }),
+				...(input.id && { id: input.id }),
+				...(input.regionCode && { regionCode: input.regionCode }),
 			},
 		},
 	);

@@ -13,11 +13,8 @@ export const add: YoutubeEndpoints['playlistItemsAdd'] = async (ctx, input) => {
 			body: {
 				snippet: {
 					playlistId: input.playlistId,
-					resourceId: {
-						kind: 'youtube#video',
-						videoId: input.videoId,
-					},
-					...(input.position !== undefined ? { position: input.position } : {}),
+					resourceId: { kind: 'youtube#video', videoId: input.videoId },
+					...(input.position !== undefined && { position: input.position }),
 				},
 			},
 		},
@@ -26,14 +23,9 @@ export const add: YoutubeEndpoints['playlistItemsAdd'] = async (ctx, input) => {
 	if (response.id && ctx.db.playlistItems) {
 		try {
 			await ctx.db.playlistItems.upsertByEntityId(response.id, {
-				id: response.id,
-				playlistId: response.snippet?.playlistId ?? input.playlistId,
+				...response.snippet,
 				videoId: response.snippet?.resourceId?.videoId ?? input.videoId,
-				title: response.snippet?.title,
-				description: response.snippet?.description,
-				position: response.snippet?.position,
-				publishedAt: response.snippet?.publishedAt,
-				channelId: response.snippet?.channelId,
+				id: response.id,
 			});
 		} catch (error) {
 			console.warn('[youtube] Failed to save playlist item to database:', error);
@@ -53,11 +45,11 @@ export const list: YoutubeEndpoints['playlistItemsList'] = async (ctx, input) =>
 			query: {
 				playlistId: input.playlistId,
 				part: input.part ?? 'snippet,contentDetails,status',
-				...(input.fields ? { fields: input.fields } : {}),
-				...(input.videoId ? { videoId: input.videoId } : {}),
-				...(input.pageToken ? { pageToken: input.pageToken } : {}),
-				...(input.maxResults ? { maxResults: input.maxResults } : {}),
-				...(input.onBehalfOfContentOwner ? { onBehalfOfContentOwner: input.onBehalfOfContentOwner } : {}),
+				...(input.fields && { fields: input.fields }),
+				...(input.videoId && { videoId: input.videoId }),
+				...(input.pageToken && { pageToken: input.pageToken }),
+				...(input.maxResults && { maxResults: input.maxResults }),
+				...(input.onBehalfOfContentOwner && { onBehalfOfContentOwner: input.onBehalfOfContentOwner }),
 			},
 		},
 	);
@@ -67,14 +59,9 @@ export const list: YoutubeEndpoints['playlistItemsList'] = async (ctx, input) =>
 			if (!item.id) continue;
 			try {
 				await ctx.db.playlistItems.upsertByEntityId(item.id, {
+					...item.snippet,
+					videoId: item.snippet?.resourceId?.videoId ?? item.contentDetails?.videoId,
 					id: item.id,
-					playlistId: item.snippet?.playlistId ?? input.playlistId,
-					videoId: item.snippet?.resourceId?.videoId,
-					title: item.snippet?.title,
-					description: item.snippet?.description,
-					position: item.snippet?.position,
-					publishedAt: item.snippet?.publishedAt,
-					channelId: item.snippet?.channelId,
 				});
 			} catch (error) {
 				console.warn('[youtube] Failed to save playlist item to database:', error);
@@ -96,7 +83,7 @@ export const update: YoutubeEndpoints['playlistItemsUpdate'] = async (ctx, input
 			body: {
 				id: input.id,
 				snippet: input.snippet,
-				...(input.contentDetails ? { contentDetails: input.contentDetails } : {}),
+				...(input.contentDetails && { contentDetails: input.contentDetails }),
 			},
 		},
 	);
@@ -104,13 +91,9 @@ export const update: YoutubeEndpoints['playlistItemsUpdate'] = async (ctx, input
 	if (response.id && ctx.db.playlistItems) {
 		try {
 			await ctx.db.playlistItems.upsertByEntityId(response.id, {
-				id: response.id,
-				playlistId: response.snippet?.playlistId,
+				...response.snippet,
 				videoId: response.snippet?.resourceId?.videoId,
-				title: response.snippet?.title,
-				position: response.snippet?.position,
-				publishedAt: response.snippet?.publishedAt,
-				channelId: response.snippet?.channelId,
+				id: response.id,
 			});
 		} catch (error) {
 			console.warn('[youtube] Failed to update playlist item in database:', error);
@@ -128,9 +111,5 @@ export const del: YoutubeEndpoints['playlistItemsDelete'] = async (ctx, input) =
 	});
 
 	await logEventFromContext(ctx, 'youtube.playlistItems.delete', { id: input.id }, 'completed');
-	return {
-		deleted: true,
-		playlist_item_id: input.id,
-		http_status: 204,
-	};
+	return { deleted: true, playlist_item_id: input.id, http_status: 204 };
 };

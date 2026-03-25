@@ -11,10 +11,10 @@ export const getStatistics: YoutubeEndpoints['channelsGetStatistics'] = async (c
 			method: 'GET',
 			query: {
 				part: input.part ?? 'snippet,statistics,contentDetails',
-				...(input.id ? { id: input.id } : {}),
-				...(input.mine ? { mine: 'true' } : {}),
-				...(input.forHandle ? { forHandle: input.forHandle } : {}),
-				...(input.forUsername ? { forUsername: input.forUsername } : {}),
+				...(input.id && { id: input.id }),
+				...(input.mine && { mine: 'true' }),
+				...(input.forHandle && { forHandle: input.forHandle }),
+				...(input.forUsername && { forUsername: input.forUsername }),
 			},
 		},
 	);
@@ -24,15 +24,9 @@ export const getStatistics: YoutubeEndpoints['channelsGetStatistics'] = async (c
 			if (!item.id) continue;
 			try {
 				await ctx.db.channels.upsertByEntityId(item.id, {
+					...item.snippet,
+					...item.statistics,
 					id: item.id,
-					title: item.snippet?.title,
-					description: item.snippet?.description,
-					customUrl: item.snippet?.customUrl,
-					publishedAt: item.snippet?.publishedAt,
-					country: item.snippet?.country,
-					subscriberCount: item.statistics?.subscriberCount,
-					videoCount: item.statistics?.videoCount,
-					viewCount: item.statistics?.viewCount,
 				});
 			} catch (error) {
 				console.warn('[youtube] Failed to save channel to database:', error);
@@ -62,15 +56,9 @@ export const getIdByHandle: YoutubeEndpoints['channelsGetIdByHandle'] = async (c
 			if (!item.id) continue;
 			try {
 				await ctx.db.channels.upsertByEntityId(item.id, {
+					...item.snippet,
+					...item.statistics,
 					id: item.id,
-					title: item.snippet?.title,
-					description: item.snippet?.description,
-					customUrl: item.snippet?.customUrl,
-					publishedAt: item.snippet?.publishedAt,
-					country: item.snippet?.country,
-					subscriberCount: item.statistics?.subscriberCount,
-					videoCount: item.statistics?.videoCount,
-					viewCount: item.statistics?.viewCount,
 				});
 			} catch (error) {
 				console.warn('[youtube] Failed to save channel to database:', error);
@@ -91,10 +79,10 @@ export const getActivities: YoutubeEndpoints['channelsGetActivities'] = async (c
 			query: {
 				channelId: input.channelId,
 				part: input.part ?? 'snippet,contentDetails',
-				...(input.pageToken ? { pageToken: input.pageToken } : {}),
-				...(input.maxResults ? { maxResults: input.maxResults } : {}),
-				...(input.publishedAfter ? { publishedAfter: input.publishedAfter } : {}),
-				...(input.publishedBefore ? { publishedBefore: input.publishedBefore } : {}),
+				...(input.pageToken && { pageToken: input.pageToken }),
+				...(input.maxResults && { maxResults: input.maxResults }),
+				...(input.publishedAfter && { publishedAfter: input.publishedAfter }),
+				...(input.publishedBefore && { publishedBefore: input.publishedBefore }),
 			},
 		},
 	);
@@ -104,12 +92,8 @@ export const getActivities: YoutubeEndpoints['channelsGetActivities'] = async (c
 			if (!item.id) continue;
 			try {
 				await ctx.db.activities.upsertByEntityId(item.id, {
+					...item.snippet,
 					id: item.id,
-					channelId: item.snippet?.channelId ?? input.channelId,
-					type: item.snippet?.type,
-					publishedAt: item.snippet?.publishedAt,
-					title: item.snippet?.title,
-					description: item.snippet?.description,
 				});
 			} catch (error) {
 				console.warn('[youtube] Failed to save activity to database:', error);
@@ -130,8 +114,8 @@ export const channelUpdate: YoutubeEndpoints['channelsUpdate'] = async (ctx, inp
 			query: { part: input.part ?? 'brandingSettings' },
 			body: {
 				id: input.id,
-				...(input.brandingSettings ? { brandingSettings: input.brandingSettings } : {}),
-				...(input.localizations ? { localizations: input.localizations } : {}),
+				...(input.brandingSettings && { brandingSettings: input.brandingSettings }),
+				...(input.localizations && { localizations: input.localizations }),
 			},
 		},
 	);
@@ -139,13 +123,9 @@ export const channelUpdate: YoutubeEndpoints['channelsUpdate'] = async (ctx, inp
 	if (response.id && ctx.db.channels) {
 		try {
 			await ctx.db.channels.upsertByEntityId(response.id, {
+				...response.snippet,
+				...response.statistics,
 				id: response.id,
-				title: response.snippet?.title,
-				description: response.snippet?.description,
-				customUrl: response.snippet?.customUrl,
-				subscriberCount: response.statistics?.subscriberCount,
-				videoCount: response.statistics?.videoCount,
-				viewCount: response.statistics?.viewCount,
 			});
 		} catch (error) {
 			console.warn('[youtube] Failed to update channel in database:', error);
@@ -164,11 +144,11 @@ export const sectionsList: YoutubeEndpoints['channelSectionsList'] = async (ctx,
 			method: 'GET',
 			query: {
 				part: input.part,
-				...(input.hl ? { hl: input.hl } : {}),
-				...(input.id ? { id: input.id } : {}),
-				...(input.mine ? { mine: 'true' } : {}),
-				...(input.channelId ? { channelId: input.channelId } : {}),
-				...(input.onBehalfOfContentOwner ? { onBehalfOfContentOwner: input.onBehalfOfContentOwner } : {}),
+				...(input.hl && { hl: input.hl }),
+				...(input.id && { id: input.id }),
+				...(input.mine && { mine: 'true' }),
+				...(input.channelId && { channelId: input.channelId }),
+				...(input.onBehalfOfContentOwner && { onBehalfOfContentOwner: input.onBehalfOfContentOwner }),
 			},
 		},
 	);
@@ -186,7 +166,7 @@ export const sectionsCreate: YoutubeEndpoints['channelSectionsCreate'] = async (
 			query: { part: 'snippet,contentDetails' },
 			body: {
 				snippet: input.snippet,
-				...(input.contentDetails ? { contentDetails: input.contentDetails } : {}),
+				...(input.contentDetails && { contentDetails: input.contentDetails }),
 			},
 		},
 	);
@@ -204,8 +184,8 @@ export const sectionsUpdate: YoutubeEndpoints['channelSectionsUpdate'] = async (
 			query: { part: 'snippet,contentDetails' },
 			body: {
 				id: input.id,
-				...(input.snippet ? { snippet: input.snippet } : {}),
-				...(input.contentDetails ? { contentDetails: input.contentDetails } : {}),
+				...(input.snippet && { snippet: input.snippet }),
+				...(input.contentDetails && { contentDetails: input.contentDetails }),
 			},
 		},
 	);
@@ -219,14 +199,10 @@ export const sectionsDelete: YoutubeEndpoints['channelSectionsDelete'] = async (
 		method: 'DELETE',
 		query: {
 			id: input.id,
-			...(input.onBehalfOfContentOwner ? { onBehalfOfContentOwner: input.onBehalfOfContentOwner } : {}),
+			...(input.onBehalfOfContentOwner && { onBehalfOfContentOwner: input.onBehalfOfContentOwner }),
 		},
 	});
 
 	await logEventFromContext(ctx, 'youtube.channelSections.delete', { id: input.id }, 'completed');
-	return {
-		deleted: true,
-		channel_section_id: input.id,
-		http_status: 204,
-	};
+	return { deleted: true, channel_section_id: input.id, http_status: 204 };
 };

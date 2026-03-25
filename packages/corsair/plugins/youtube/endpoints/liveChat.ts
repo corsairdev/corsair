@@ -12,10 +12,10 @@ export const listMessages: YoutubeEndpoints['liveChatListMessages'] = async (ctx
 			query: {
 				liveChatId: input.liveChatId,
 				part: input.part ?? 'snippet,authorDetails',
-				...(input.hl ? { hl: input.hl } : {}),
-				...(input.pageToken ? { pageToken: input.pageToken } : {}),
-				...(input.maxResults ? { maxResults: input.maxResults } : {}),
-				...(input.profileImageSize ? { profileImageSize: input.profileImageSize } : {}),
+				...(input.hl && { hl: input.hl }),
+				...(input.pageToken && { pageToken: input.pageToken }),
+				...(input.maxResults && { maxResults: input.maxResults }),
+				...(input.profileImageSize && { profileImageSize: input.profileImageSize }),
 			},
 		},
 	);
@@ -32,9 +32,9 @@ export const listSuperChatEvents: YoutubeEndpoints['liveChatListSuperChatEvents'
 			method: 'GET',
 			query: {
 				part: input.part ?? 'snippet',
-				...(input.hl ? { hl: input.hl } : {}),
-				...(input.pageToken ? { pageToken: input.pageToken } : {}),
-				...(input.maxResults ? { maxResults: input.maxResults } : {}),
+				...(input.hl && { hl: input.hl }),
+				...(input.pageToken && { pageToken: input.pageToken }),
+				...(input.maxResults && { maxResults: input.maxResults }),
 			},
 		},
 	);

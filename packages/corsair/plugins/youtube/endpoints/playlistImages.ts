@@ -11,12 +11,12 @@ export const list: YoutubeEndpoints['playlistImagesList'] = async (ctx, input) =
 			method: 'GET',
 			query: {
 				part: input.part ?? 'snippet',
-				...(input.id ? { id: input.id } : {}),
-				...(input.parent ? { parent: input.parent } : {}),
-				...(input.pageToken ? { pageToken: input.pageToken } : {}),
-				...(input.maxResults ? { maxResults: input.maxResults } : {}),
-				...(input.onBehalfOfContentOwner ? { onBehalfOfContentOwner: input.onBehalfOfContentOwner } : {}),
-				...(input.onBehalfOfContentOwnerChannel ? { onBehalfOfContentOwnerChannel: input.onBehalfOfContentOwnerChannel } : {}),
+				...(input.id && { id: input.id }),
+				...(input.parent && { parent: input.parent }),
+				...(input.pageToken && { pageToken: input.pageToken }),
+				...(input.maxResults && { maxResults: input.maxResults }),
+				...(input.onBehalfOfContentOwner && { onBehalfOfContentOwner: input.onBehalfOfContentOwner }),
+				...(input.onBehalfOfContentOwnerChannel && { onBehalfOfContentOwnerChannel: input.onBehalfOfContentOwnerChannel }),
 			},
 		},
 	);

@@ -12,8 +12,8 @@ export const list: YoutubeEndpoints['subscriptionsList'] = async (ctx, input) =>
 			query: {
 				mine: 'true',
 				part: input.part ?? 'snippet,contentDetails',
-				...(input.pageToken ? { pageToken: input.pageToken } : {}),
-				...(input.maxResults ? { maxResults: input.maxResults } : {}),
+				...(input.pageToken && { pageToken: input.pageToken }),
+				...(input.maxResults && { maxResults: input.maxResults }),
 			},
 		},
 	);
@@ -23,11 +23,10 @@ export const list: YoutubeEndpoints['subscriptionsList'] = async (ctx, input) =>
 			if (!item.id) continue;
 			try {
 				await ctx.db.subscriptions.upsertByEntityId(item.id, {
-					id: item.id,
+					...item.snippet,
+					// snippet.channelId is the subscriber's channel; resourceId.channelId is the subscribed channel
 					channelId: item.snippet?.resourceId?.channelId,
-					title: item.snippet?.title,
-					description: item.snippet?.description,
-					publishedAt: item.snippet?.publishedAt,
+					id: item.id,
 				});
 			} catch (error) {
 				console.warn('[youtube] Failed to save subscription to database:', error);
@@ -48,10 +47,7 @@ export const subscribe: YoutubeEndpoints['subscriptionsSubscribe'] = async (ctx,
 			query: { part: 'snippet,contentDetails,subscriberSnippet' },
 			body: {
 				snippet: {
-					resourceId: {
-						kind: 'youtube#channel',
-						channelId: input.channelId,
-					},
+					resourceId: { kind: 'youtube#channel', channelId: input.channelId },
 				},
 			},
 		},
@@ -60,11 +56,10 @@ export const subscribe: YoutubeEndpoints['subscriptionsSubscribe'] = async (ctx,
 	if (response.id && ctx.db.subscriptions) {
 		try {
 			await ctx.db.subscriptions.upsertByEntityId(response.id, {
-				id: response.id,
+				...response.snippet,
+				// override channelId with the subscribed channel, not the subscriber's channel
 				channelId: input.channelId,
-				title: response.snippet?.title,
-				description: response.snippet?.description,
-				publishedAt: response.snippet?.publishedAt,
+				id: response.id,
 			});
 		} catch (error) {
 			console.warn('[youtube] Failed to save subscription to database:', error);
@@ -82,9 +77,5 @@ export const unsubscribe: YoutubeEndpoints['subscriptionsUnsubscribe'] = async (
 	});
 
 	await logEventFromContext(ctx, 'youtube.subscriptions.unsubscribe', { subscriptionId: input.subscriptionId }, 'completed');
-	return {
-		unsubscribed: true,
-		subscription_id: input.subscriptionId,
-		http_status: 204,
-	};
+	return { unsubscribed: true, subscription_id: input.subscriptionId, http_status: 204 };
 };

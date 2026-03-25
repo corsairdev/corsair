@@ -21,18 +21,11 @@ export const get: YoutubeEndpoints['videosGet'] = async (ctx, input) => {
 			if (!item.id) continue;
 			try {
 				await ctx.db.videos.upsertByEntityId(item.id, {
+					...item.snippet,
+					...item.statistics,
+					...item.status,
+					...item.contentDetails,
 					id: item.id,
-					title: item.snippet?.title,
-					description: item.snippet?.description,
-					channelId: item.snippet?.channelId,
-					publishedAt: item.snippet?.publishedAt,
-					privacyStatus: item.status?.privacyStatus,
-					duration: item.contentDetails?.duration,
-					viewCount: item.statistics?.viewCount,
-					likeCount: item.statistics?.likeCount,
-					commentCount: item.statistics?.commentCount,
-					categoryId: item.snippet?.categoryId,
-					tags: item.snippet?.tags,
 				});
 			} catch (error) {
 				console.warn('[youtube] Failed to save video to database:', error);
@@ -53,7 +46,7 @@ export const getBatch: YoutubeEndpoints['videosGetBatch'] = async (ctx, input) =
 			query: {
 				id: input.id.join(','),
 				part: (input.parts ?? ['snippet', 'status', 'statistics', 'contentDetails']).join(','),
-				...(input.hl ? { hl: input.hl } : {}),
+				...(input.hl && { hl: input.hl }),
 			},
 		},
 	);
@@ -63,17 +56,11 @@ export const getBatch: YoutubeEndpoints['videosGetBatch'] = async (ctx, input) =
 			if (!item.id) continue;
 			try {
 				await ctx.db.videos.upsertByEntityId(item.id, {
+					...item.snippet,
+					...item.statistics,
+					...item.status,
+					...item.contentDetails,
 					id: item.id,
-					title: item.snippet?.title,
-					description: item.snippet?.description,
-					channelId: item.snippet?.channelId,
-					publishedAt: item.snippet?.publishedAt,
-					privacyStatus: item.status?.privacyStatus,
-					duration: item.contentDetails?.duration,
-					viewCount: item.statistics?.viewCount,
-					likeCount: item.statistics?.likeCount,
-					categoryId: item.snippet?.categoryId,
-					tags: item.snippet?.tags,
 				});
 			} catch (error) {
 				console.warn('[youtube] Failed to save video to database:', error);
@@ -94,10 +81,10 @@ export const list: YoutubeEndpoints['videosList'] = async (ctx, input) => {
 			query: {
 				type: 'video',
 				part: input.part ?? 'snippet',
-				...(input.mine ? { forMine: 'true' } : {}),
-				...(input.channelId ? { channelId: input.channelId } : {}),
-				...(input.pageToken ? { pageToken: input.pageToken } : {}),
-				...(input.maxResults ? { maxResults: input.maxResults } : {}),
+				...(input.mine && { forMine: 'true' }),
+				...(input.channelId && { channelId: input.channelId }),
+				...(input.pageToken && { pageToken: input.pageToken }),
+				...(input.maxResults && { maxResults: input.maxResults }),
 			},
 		},
 	);
@@ -107,11 +94,8 @@ export const list: YoutubeEndpoints['videosList'] = async (ctx, input) => {
 			if (!item.id) continue;
 			try {
 				await ctx.db.videos.upsertByEntityId(item.id, {
+					...item.snippet,
 					id: item.id,
-					title: item.snippet?.title,
-					description: item.snippet?.description,
-					channelId: item.snippet?.channelId,
-					publishedAt: item.snippet?.publishedAt,
 				});
 			} catch (error) {
 				console.warn('[youtube] Failed to save video to database:', error);
@@ -132,10 +116,10 @@ export const listMostPopular: YoutubeEndpoints['videosListMostPopular'] = async 
 			query: {
 				chart: input.chart ?? 'mostPopular',
 				part: input.part ?? 'snippet,statistics',
-				...(input.pageToken ? { pageToken: input.pageToken } : {}),
-				...(input.maxResults ? { maxResults: input.maxResults } : {}),
-				...(input.regionCode ? { regionCode: input.regionCode } : {}),
-				...(input.videoCategoryId ? { videoCategoryId: input.videoCategoryId } : {}),
+				...(input.pageToken && { pageToken: input.pageToken }),
+				...(input.maxResults && { maxResults: input.maxResults }),
+				...(input.regionCode && { regionCode: input.regionCode }),
+				...(input.videoCategoryId && { videoCategoryId: input.videoCategoryId }),
 			},
 		},
 	);
@@ -145,14 +129,9 @@ export const listMostPopular: YoutubeEndpoints['videosListMostPopular'] = async 
 			if (!item.id) continue;
 			try {
 				await ctx.db.videos.upsertByEntityId(item.id, {
+					...item.snippet,
+					...item.statistics,
 					id: item.id,
-					title: item.snippet?.title,
-					description: item.snippet?.description,
-					channelId: item.snippet?.channelId,
-					publishedAt: item.snippet?.publishedAt,
-					viewCount: item.statistics?.viewCount,
-					likeCount: item.statistics?.likeCount,
-					categoryId: item.snippet?.categoryId,
 				});
 			} catch (error) {
 				console.warn('[youtube] Failed to save video to database:', error);
@@ -165,14 +144,12 @@ export const listMostPopular: YoutubeEndpoints['videosListMostPopular'] = async 
 };
 
 export const update: YoutubeEndpoints['videosUpdate'] = async (ctx, input) => {
-	const body: Record<string, unknown> = { id: input.video_id };
-	const snippetUpdate: Record<string, unknown> = {};
-	if (input.title !== undefined) snippetUpdate.title = input.title;
-	if (input.description !== undefined) snippetUpdate.description = input.description;
-	if (input.tags !== undefined) snippetUpdate.tags = input.tags;
-	if (input.categoryId !== undefined) snippetUpdate.categoryId = input.categoryId;
-	if (Object.keys(snippetUpdate).length > 0) body.snippet = snippetUpdate;
-	if (input.privacy_status !== undefined) body.status = { privacyStatus: input.privacy_status };
+	const snippet = {
+		...(input.title !== undefined && { title: input.title }),
+		...(input.description !== undefined && { description: input.description }),
+		...(input.tags !== undefined && { tags: input.tags }),
+		...(input.categoryId !== undefined && { categoryId: input.categoryId }),
+	};
 
 	const response = await makeYoutubeRequest<YoutubeEndpointOutputs['videosUpdate']>(
 		'/videos',
@@ -180,20 +157,20 @@ export const update: YoutubeEndpoints['videosUpdate'] = async (ctx, input) => {
 		{
 			method: 'PUT',
 			query: { part: 'snippet,status' },
-			body,
+			body: {
+				id: input.video_id,
+				...(Object.keys(snippet).length > 0 && { snippet }),
+				...(input.privacy_status !== undefined && { status: { privacyStatus: input.privacy_status } }),
+			},
 		},
 	);
 
 	if (response.id && ctx.db.videos) {
 		try {
 			await ctx.db.videos.upsertByEntityId(response.id, {
+				...response.snippet,
+				...response.status,
 				id: response.id,
-				title: response.snippet?.title,
-				description: response.snippet?.description,
-				channelId: response.snippet?.channelId,
-				privacyStatus: response.status?.privacyStatus,
-				tags: response.snippet?.tags,
-				categoryId: response.snippet?.categoryId,
 			});
 		} catch (error) {
 			console.warn('[youtube] Failed to update video in database:', error);
@@ -217,8 +194,8 @@ export const upload: YoutubeEndpoints['videosUpload'] = async (ctx, input) => {
 				snippet: {
 					title: input.title,
 					description: input.description,
-					tags: input.tags,
-					categoryId: input.categoryId,
+					...(input.tags && { tags: input.tags }),
+					...(input.categoryId && { categoryId: input.categoryId }),
 				},
 				status: { privacyStatus: input.privacyStatus },
 			},
@@ -241,8 +218,8 @@ export const uploadMultipart: YoutubeEndpoints['videosUploadMultipart'] = async 
 				snippet: {
 					title: input.title,
 					description: input.description,
-					tags: input.tags,
-					categoryId: input.categoryId,
+					...(input.tags && { tags: input.tags }),
+					...(input.categoryId && { categoryId: input.categoryId }),
 				},
 				status: { privacyStatus: input.privacyStatus },
 			},
@@ -252,11 +229,9 @@ export const uploadMultipart: YoutubeEndpoints['videosUploadMultipart'] = async 
 	if (response.video?.id && ctx.db.videos) {
 		try {
 			await ctx.db.videos.upsertByEntityId(response.video.id, {
+				...response.video.snippet,
+				...response.video.status,
 				id: response.video.id,
-				title: response.video.snippet?.title,
-				description: response.video.snippet?.description,
-				channelId: response.video.snippet?.channelId,
-				privacyStatus: response.video.status?.privacyStatus,
 			});
 		} catch (error) {
 			console.warn('[youtube] Failed to save uploaded video to database:', error);
@@ -274,9 +249,5 @@ export const del: YoutubeEndpoints['videosDelete'] = async (ctx, input) => {
 	});
 
 	await logEventFromContext(ctx, 'youtube.videos.delete', { videoId: input.videoId }, 'completed');
-	return {
-		deleted: true,
-		video_id: input.videoId,
-		http_status: 204,
-	};
+	return { deleted: true, video_id: input.videoId, http_status: 204 };
 };
