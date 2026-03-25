@@ -70,7 +70,7 @@ export const createOrUpdate: TypeformEndpoints['webhooksConfigCreateOrUpdate'] =
 			TypeformEndpointOutputs['webhooksConfigCreateOrUpdate']
 		>(`/forms/${form_id}/webhooks/${tag}`, ctx.key, {
 			method: 'PUT',
-			body: body as Record<string, unknown>,
+			body: body
 		});
 
 		const id = response.id;

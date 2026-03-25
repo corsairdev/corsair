@@ -151,8 +151,7 @@ export const update: TypeformEndpoints['workspacesUpdate'] = async (
 		TypeformEndpointOutputs['workspacesUpdate']
 	>(`/workspaces/${workspace_id}`, ctx.key, {
 		method: 'PATCH',
-		// Typeform PATCH /workspaces expects the JSON Patch operations array as the body directly (RFC 6902)
-		body: operations as unknown as unknown[],
+		body: operations
 	});
 
 	// PATCH /workspaces returns 204 No Content; re-fetch to sync DB

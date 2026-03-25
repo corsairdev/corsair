@@ -8,14 +8,7 @@ export const list: TypeformEndpoints['formsList'] = async (ctx, input) => {
 		TypeformEndpointOutputs['formsList']
 	>('/forms', ctx.key, {
 		method: 'GET',
-		query: {
-			page: input.page,
-			search: input.search,
-			sort_by: input.sort_by,
-			order_by: input.order_by,
-			page_size: input.page_size,
-			workspace_id: input.workspace_id,
-		},
+		query: { ...input },
 	});
 
 	if (response.items && ctx.db.forms) {
@@ -73,8 +66,7 @@ export const create: TypeformEndpoints['formsCreate'] = async (ctx, input) => {
 		TypeformEndpointOutputs['formsCreate']
 	>('/forms', ctx.key, {
 		method: 'POST',
-		// body cast needed because form field types include z.unknown() sub-schemas
-		body: body as Record<string, unknown>,
+		body: body
 	});
 
 	const createId = response.id;
@@ -103,8 +95,7 @@ export const update: TypeformEndpoints['formsUpdate'] = async (ctx, input) => {
 		TypeformEndpointOutputs['formsUpdate']
 	>(`/forms/${form_id}`, ctx.key, {
 		method: 'PUT',
-		// body cast needed because form field types include z.unknown() sub-schemas
-		body: body as Record<string, unknown>,
+		body: body
 	});
 
 	const updateId = response.id;
@@ -133,8 +124,7 @@ export const patch: TypeformEndpoints['formsPatch'] = async (ctx, input) => {
 		TypeformEndpointOutputs['formsPatch']
 	>(`/forms/${form_id}`, ctx.key, {
 		method: 'PATCH',
-		// Typeform PATCH /forms expects the JSON Patch operations array as the body directly (RFC 6902)
-		body: operations as unknown as unknown[],
+		body: operations
 	});
 
 	// PATCH /forms returns 204 No Content; re-fetch to sync DB

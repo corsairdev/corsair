@@ -280,7 +280,6 @@ const FormsListInputSchema = z
 		page_size: z.number().optional(),
 		workspace_id: z.string().optional(),
 	})
-	.passthrough();
 
 const FormsGetInputSchema = z
 	.object({

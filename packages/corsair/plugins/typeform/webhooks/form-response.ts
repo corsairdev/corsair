@@ -38,8 +38,7 @@ export const formResponse: TypeformWebhooks['formResponse'] = {
 					form_id,
 					submitted_at,
 					landed_at: event.form_response.landed_at,
-					// answers from webhook have dynamic shape per field type
-					answers: event.form_response.answers as Array<Record<string, unknown>>,
+					answers: event.form_response.answers,
 					calculated: event.form_response.calculated,
 					metadata: event.form_response.metadata,
 					hidden: event.form_response.hidden,

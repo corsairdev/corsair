@@ -112,6 +112,7 @@ export function createTypeformMatch(eventType: string): CorsairWebhookMatcher {
 		// Parse raw body to check event_type before full payload parsing
 		const body =
 			typeof request.body === 'string'
+				// Type assertion needed because JSON.parse returns unknown
 				? (JSON.parse(request.body) as Record<string, unknown>)
 				: (request.body as Record<string, unknown>);
 		return body?.event_type === eventType;
@@ -162,7 +163,7 @@ export function verifyTypeformWebhookSignature(
 			candidates.push(pretty);
 		}
 	} catch {
-		// not valid JSON — keep only the compact candidates
+		// not valid JSON; keep only the compact candidates
 	}
 
 	const computeSignature = (body: string) =>
