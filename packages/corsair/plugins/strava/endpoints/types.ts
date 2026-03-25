@@ -241,6 +241,17 @@ const ActivityResponseSchema = z.object({
 	device_name: z.string().optional(),
 });
 
+const GearSummarySchema = z.object({
+	id: z.string(),
+	primary: z.boolean().optional(),
+	name: z.string().optional(),
+	nickname: z.string().optional(),
+	distance: z.number().optional(),
+	converted_distance: z.number().optional(),
+	resource_state: z.number().optional(),
+	retired: z.boolean().optional(),
+});
+
 const AthleteResponseSchema = z.object({
 	id: z.number(),
 	username: z.string().nullable().optional(),
@@ -262,6 +273,8 @@ const AthleteResponseSchema = z.object({
 	profile: z.string().optional(),
 	profile_medium: z.string().optional(),
 	resource_state: z.number().optional(),
+	bikes: z.array(GearSummarySchema).optional(),
+	shoes: z.array(GearSummarySchema).optional(),
 });
 
 const SegmentResponseSchema = z.object({
