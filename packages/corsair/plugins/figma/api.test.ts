@@ -33,7 +33,11 @@ import { FigmaEndpointOutputSchemas } from './endpoints/types';
 
 dotenv.config();
 
-const TEST_API_KEY = process.env.FIGMA_API_KEY!;
+const _FIGMA_API_KEY = process.env.FIGMA_API_KEY;
+if (!_FIGMA_API_KEY) {
+	throw new Error('FIGMA_API_KEY environment variable is required to run Figma API tests');
+}
+const TEST_API_KEY: string = _FIGMA_API_KEY;
 const TEST_FILE_KEY = process.env.TEST_FIGMA_FILE_KEY;
 const TEST_TEAM_ID = process.env.TEST_FIGMA_TEAM_ID;
 const TEST_PROJECT_ID = process.env.TEST_FIGMA_PROJECT_ID;
@@ -203,6 +207,20 @@ describe('Figma API Type Tests', () => {
 
 	describe('comments', () => {
 		let testCommentId: string | undefined;
+
+		afterAll(async () => {
+			if (testCommentId && TEST_FILE_KEY) {
+				try {
+					await makeFigmaRequest(
+						`v1/files/${TEST_FILE_KEY}/comments/${testCommentId}`,
+						TEST_API_KEY,
+						{ method: 'DELETE' },
+					);
+				} catch (error) {
+					console.warn('Failed to clean up test comment:', error);
+				}
+			}
+		});
 
 		it('commentsAdd returns correct type', async () => {
 			if (!TEST_FILE_KEY) {

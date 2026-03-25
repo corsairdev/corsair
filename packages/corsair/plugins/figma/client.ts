@@ -1,11 +1,14 @@
 import type { ApiRequestOptions } from '../../async-core/ApiRequestOptions';
 import type { OpenAPIConfig } from '../../async-core/OpenAPI';
 import type { RateLimitConfig } from '../../async-core/rate-limit';
+import { ApiError } from '../../async-core/ApiError';
 import { request } from '../../async-core/request';
 
 export class FigmaAPIError extends Error {
 	constructor(
 		message: string,
+		public readonly status?: number,
+		public readonly retryAfter?: number,
 		public readonly code?: string,
 	) {
 		super(message);
@@ -72,6 +75,9 @@ export async function makeFigmaRequest<T>(
 		});
 		return response;
 	} catch (error) {
+		if (error instanceof ApiError) {
+			throw new FigmaAPIError(error.message, error.status, error.retryAfter);
+		}
 		if (error instanceof Error) {
 			throw new FigmaAPIError(error.message);
 		}
