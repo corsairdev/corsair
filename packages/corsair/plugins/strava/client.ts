@@ -31,10 +31,11 @@ export async function makeStravaRequest<T>(
 	options: {
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 		body?: Record<string, unknown>;
+		formData?: Record<string, unknown>;
 		query?: Record<string, string | number | boolean | undefined>;
 	} = {},
 ): Promise<T> {
-	const { method = 'GET', body, query } = options;
+	const { method = 'GET', body, formData, query } = options;
 
 	const config: OpenAPIConfig = {
 		BASE: STRAVA_API_BASE,
@@ -44,18 +45,17 @@ export async function makeStravaRequest<T>(
 		TOKEN: undefined,
 		HEADERS: {
 			Authorization: `Bearer ${accessToken}`,
-			'Content-Type': 'application/json',
 		},
 	};
+
+	const isWrite = method === 'POST' || method === 'PUT' || method === 'PATCH';
 
 	const requestOptions: ApiRequestOptions = {
 		method,
 		url: endpoint,
-		body:
-			method === 'POST' || method === 'PUT' || method === 'PATCH'
-				? body
-				: undefined,
-		mediaType: 'application/json',
+		body: isWrite && !formData ? body : undefined,
+		formData: isWrite && formData ? formData : undefined,
+		mediaType: isWrite && !formData ? 'application/json' : undefined,
 		query: method === 'GET' ? query : undefined,
 	};
 

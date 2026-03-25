@@ -138,7 +138,8 @@ const ClubsGetInputSchema = z.object({
 }).passthrough();
 
 const UploadsCreateInputSchema = z.object({
-	file: z.string(),
+	// Strava POST /uploads is multipart/form-data; file must be a Blob or File object
+	file: z.instanceof(Blob),
 	data_type: z.enum(['fit', 'fit.gz', 'tcx', 'tcx.gz', 'gpx', 'gpx.gz']),
 	name: z.string().optional(),
 	description: z.string().optional(),

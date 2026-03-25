@@ -4,19 +4,20 @@ import { makeStravaRequest } from '../client';
 import type { StravaEndpointOutputs } from './types';
 
 export const create: StravaEndpoints['uploadsCreate'] = async (ctx, input) => {
+	// Strava POST /uploads requires multipart/form-data — use formData, not JSON body
 	const result = await makeStravaRequest<StravaEndpointOutputs['uploadsCreate']>(
 		'uploads',
 		ctx.key,
 		{
 			method: 'POST',
-			body: {
+			formData: {
 				file: input.file,
 				data_type: input.data_type,
-				name: input.name,
-				description: input.description,
-				trainer: input.trainer,
-				commute: input.commute,
-				external_id: input.external_id,
+				...(input.name !== undefined && { name: input.name }),
+				...(input.description !== undefined && { description: input.description }),
+				...(input.trainer !== undefined && { trainer: input.trainer }),
+				...(input.commute !== undefined && { commute: input.commute }),
+				...(input.external_id !== undefined && { external_id: input.external_id }),
 			},
 		},
 	);

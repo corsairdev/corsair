@@ -419,13 +419,8 @@ export function strava<const T extends StravaPluginOptions>(
 		endpointSchemas: stravaEndpointSchemas,
 		webhookSchemas: stravaWebhookSchemas,
 		pluginWebhookMatcher: (request) => {
-			// request.body can be a raw string or parsed object; cast to record for property access
-			const body =
-				typeof request.body === 'string'
-					? (JSON.parse(request.body) as Record<string, unknown>)
-					: (request.body as Record<string, unknown>);
-			const objectType = body?.object_type;
-			return objectType === 'activity' || objectType === 'athlete';
+			// Webhooks are not implemented yet
+			return false
 		},
 		errorHandlers: {
 			...errorHandlers,
