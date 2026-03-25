@@ -72,26 +72,26 @@ const JsonWebKeySchema = z.object({
 
 const LogsCreateOtlpInputSchema = z.object({
 	resourceLogs: z.array(ResourceLogSchema),
-});
+}).passthrough();
 
-const HealthGetInputSchema = z.object({});
+const HealthGetInputSchema = z.object({}).passthrough();
 
-const StatusGetInputSchema = z.object({});
+const StatusGetInputSchema = z.object({}).passthrough();
 
-const RingGetDistributorHaTrackerInputSchema = z.object({});
+const RingGetDistributorHaTrackerInputSchema = z.object({}).passthrough();
 
-const RingGetIndexGatewayInputSchema = z.object({});
+const RingGetIndexGatewayInputSchema = z.object({}).passthrough();
 
-const RingGetOverridesExporterInputSchema = z.object({});
+const RingGetOverridesExporterInputSchema = z.object({}).passthrough();
 
-const RingGetRulerInputSchema = z.object({});
+const RingGetRulerInputSchema = z.object({}).passthrough();
 
-const StoreGatewayGetTenantsInputSchema = z.object({});
+const StoreGatewayGetTenantsInputSchema = z.object({}).passthrough();
 
 const SamlPostAcsInputSchema = z.object({
 	saml_response: z.string(),
 	relay_state: z.string().optional(),
-});
+}).passthrough();
 
 const DashboardsQueryPublicInputSchema = z.object({
 	access_token: z.string(),
@@ -101,9 +101,9 @@ const DashboardsQueryPublicInputSchema = z.object({
 	intervalMs: z.number().optional(),
 	maxDataPoints: z.number().optional(),
 	base_url_override: z.string().optional(),
-});
+}).passthrough();
 
-const JwksRetrieveInputSchema = z.object({});
+const JwksRetrieveInputSchema = z.object({}).passthrough();
 
 // ── Output Schemas ────────────────────────────────────────────────────────────
 
@@ -112,10 +112,10 @@ const LogsCreateOtlpOutputSchema = z.object({
 		success: z.boolean(),
 		status_code: z.number(),
 		message: z.string(),
-	}),
+	}).passthrough(),
 	error: z.string().optional(),
 	successful: z.boolean(),
-});
+}).passthrough();
 
 const HealthGetOutputSchema = z.object({
 	data: z.object({
@@ -123,72 +123,72 @@ const HealthGetOutputSchema = z.object({
 		commit: z.string().optional(),
 		database: z.string().optional(),
 		enterpriseCommit: z.string().optional(),
-	}),
+	}).passthrough(),
 	error: z.string().optional(),
 	successful: z.boolean(),
-});
+}).passthrough();
 
 const StatusGetOutputSchema = z.object({
 	data: z.object({
 		license_available: z.boolean(),
-	}),
+	}).passthrough(),
 	error: z.string().optional(),
 	successful: z.boolean(),
-});
+}).passthrough();
 
 const RingGetDistributorHaTrackerOutputSchema = z.object({
 	data: z.object({
 		html_content: z.string(),
 		status_code: z.number(),
-	}),
+	}).passthrough(),
 	error: z.string().optional(),
 	successful: z.boolean(),
-});
+}).passthrough();
 
 const RingGetIndexGatewayOutputSchema = z.object({
 	data: z.object({
 		content: z.string(),
 		content_type: z.string(),
-	}),
+	}).passthrough(),
 	error: z.string().optional(),
 	successful: z.boolean(),
-});
+}).passthrough();
 
 const RingGetOverridesExporterOutputSchema = z.object({
 	data: z.object({
 		html_content: z.string(),
-	}),
+	}).passthrough(),
 	error: z.string().optional(),
 	successful: z.boolean(),
-});
+}).passthrough();
 
 const RingGetRulerOutputSchema = z.object({
 	data: z.object({
 		content: z.string(),
 		content_type: z.string(),
-	}),
+	}).passthrough(),
 	error: z.string().optional(),
 	successful: z.boolean(),
-});
+}).passthrough();
 
 const StoreGatewayGetTenantsOutputSchema = z.object({
 	data: z.object({
 		content: z.string(),
 		content_type: z.string().optional(),
-	}),
+	}).passthrough(),
 	error: z.string().optional(),
 	successful: z.boolean(),
-});
+}).passthrough();
 
 const SamlPostAcsOutputSchema = z.object({
 	data: z.object({
 		status_code: z.number(),
 		message: z.string(),
 		location: z.string().optional(),
-	}),
+	}).passthrough(),
 	error: z.string().optional(),
 	successful: z.boolean(),
-});
+}).passthrough();
 
 const DashboardsQueryPublicOutputSchema = z.object({
 	data: z.object({
@@ -196,18 +196,18 @@ const DashboardsQueryPublicOutputSchema = z.object({
 		message: z.string().optional(),
 		// results is z.record(z.unknown()) because its keys are RefIDs and values vary by panel type
 		results: z.record(z.unknown()).optional(),
-	}),
+	}).passthrough(),
 	error: z.string().optional(),
 	successful: z.boolean(),
-});
+}).passthrough();
 
 const JwksRetrieveOutputSchema = z.object({
 	data: z.object({
 		keys: z.array(JsonWebKeySchema).optional(),
-	}),
+	}).passthrough(),
 	error: z.string().optional(),
 	successful: z.boolean(),
-});
+}).passthrough();
 
 // ── Schema Maps ───────────────────────────────────────────────────────────────
 

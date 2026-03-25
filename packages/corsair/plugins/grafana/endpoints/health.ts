@@ -17,12 +17,7 @@ export const get: GrafanaEndpoints['healthGet'] = async (ctx, _input) => {
 		}>('/api/health', ctx.key, grafanaUrl);
 
 		result = {
-			data: {
-				version: raw.version,
-				commit: raw.commit,
-				database: raw.database,
-				enterpriseCommit: raw.enterpriseCommit,
-			},
+			data: { ...raw },
 			successful: true,
 		};
 	} catch (error) {
@@ -37,10 +32,7 @@ export const get: GrafanaEndpoints['healthGet'] = async (ctx, _input) => {
 		try {
 			await ctx.db.healthStatus.upsertByEntityId('health', {
 				id: 'health',
-				version: result.data.version,
-				commit: result.data.commit,
-				database: result.data.database,
-				enterpriseCommit: result.data.enterpriseCommit,
+				...result.data,
 				checkedAt: new Date(),
 			});
 		} catch (err) {

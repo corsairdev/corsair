@@ -14,8 +14,7 @@ export const createOtlp: GrafanaEndpoints['logsCreateOtlp'] = async (
 	try {
 		const raw = await makeGrafanaRawRequest('/otlp/v1/logs', ctx.key, grafanaUrl, {
 			method: 'POST',
-			// resourceLogs is cast to unknown here because makeGrafanaRawRequest accepts unknown body
-			body: { resourceLogs: input.resourceLogs } as unknown as Record<string, unknown>,
+			body: { resourceLogs: input.resourceLogs },
 			contentType: 'application/json',
 		});
 
@@ -65,37 +64,33 @@ async function _persistLogRecords(
 	if (!ctx.db.logs) return;
 
 	for (const resourceLog of input.resourceLogs) {
+		// Build a flat resource map for DB storage; values are stringified from their AnyValue shape
+		const resourceAttrs: Record<string, string> = {};
+		for (const attr of resourceLog.resource?.attributes ?? []) {
+			if (attr.key) {
+				resourceAttrs[attr.key] = String(
+					attr.value?.stringValue ??
+						attr.value?.intValue ??
+						attr.value?.boolValue ??
+						attr.value?.doubleValue ??
+						'',
+				);
+			}
+		}
+
 		for (const scopeLog of resourceLog.scopeLogs ?? []) {
 			for (const record of scopeLog.logRecords ?? []) {
 				// Generate a unique log ID from timestamp + traceId to deduplicate on upsert
 				const logId = `${record.timeUnixNano ?? Date.now()}-${record.traceId ?? Math.random().toString(36).slice(2)}`;
 
-				// Build a flat resource map for DB storage; values are stringified from their AnyValue shape
-				const resourceAttrs: Record<string, string> = {};
-				for (const attr of resourceLog.resource?.attributes ?? []) {
-					if (attr.key) {
-						resourceAttrs[attr.key] = String(
-							attr.value?.stringValue ??
-								attr.value?.intValue ??
-								attr.value?.boolValue ??
-								attr.value?.doubleValue ??
-								'',
-						);
-					}
-				}
-
 				await ctx.db.logs.upsertByEntityId(logId, {
+					...record,
 					id: logId,
-					timeUnixNano: record.timeUnixNano,
-					severityText: record.severityText,
-					severityNumber: record.severityNumber,
 					// body.stringValue is the most common log body type; fallback to stringify the whole body
 					body: record.body?.stringValue ?? JSON.stringify(record.body),
-					traceId: record.traceId,
-					spanId: record.spanId,
-					flags: record.flags,
 					resource: Object.keys(resourceAttrs).length > 0 ? resourceAttrs : undefined,
 					scope: scopeLog.scope?.name,
+					scopeVersion: scopeLog.scope?.version,
 					createdAt: new Date(),
 				});
 			}

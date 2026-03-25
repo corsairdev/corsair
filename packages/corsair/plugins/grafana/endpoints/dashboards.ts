@@ -17,28 +17,23 @@ export const queryPublic: GrafanaEndpoints['dashboardsQueryPublic'] = async (
 		const body: Record<string, unknown> = {
 			from: input.from,
 			to: input.to,
+			...(input.intervalMs !== undefined && { intervalMs: input.intervalMs }),
+			...(input.maxDataPoints !== undefined && { maxDataPoints: input.maxDataPoints }),
 		};
-		if (input.intervalMs !== undefined) {
-			body.intervalMs = input.intervalMs;
-		}
-		if (input.maxDataPoints !== undefined) {
-			body.maxDataPoints = input.maxDataPoints;
-		}
 
 		const raw = await makeGrafanaRawRequest(path, ctx.key, grafanaUrl, {
 			method: 'POST',
-			body: body as unknown as Record<string, unknown>,
+			body,
 			contentType: 'application/json',
 		});
 
 		const success = raw.status_code >= 200 && raw.status_code < 300;
 
 		// Attempt to parse response as JSON; fall back to storing raw content in message
-		let results: Record<string, unknown> | undefined;
+		let results;
 		try {
-			// results shape is z.record(z.unknown()) — keys are RefIDs from the panel queries
-			const parsed = JSON.parse(raw.content) as Record<string, unknown>;
-			results = parsed.results as Record<string, unknown> | undefined ?? parsed;
+			const parsed = JSON.parse(raw.content)
+			results = (parsed.results) ?? parsed;
 		} catch {
 			// JSON parse failed — content is not valid JSON (e.g. HTML error page)
 		}
@@ -66,11 +61,10 @@ export const queryPublic: GrafanaEndpoints['dashboardsQueryPublic'] = async (
 		try {
 			const queryId = `${input.access_token}-${input.panel_id}`;
 			await ctx.db.dashboardQueries.upsertByEntityId(queryId, {
+				...input,
 				id: queryId,
 				accessToken: input.access_token,
 				panelId: input.panel_id,
-				from: input.from,
-				to: input.to,
 				results: result.data.results,
 				queriedAt: new Date(),
 			});

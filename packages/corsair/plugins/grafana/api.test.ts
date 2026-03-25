@@ -35,12 +35,8 @@ describe('Grafana API Type Tests', () => {
 			}>('/api/health', BEARER_TOKEN, GRAFANA_URL);
 
 			const result: HealthGetResponse = {
-				data: {
-					version: raw.version,
-					commit: raw.commit,
-					database: raw.database,
-					enterpriseCommit: raw.enterpriseCommit,
-				},
+				// Spread all raw API fields so unknown Grafana response fields pass through
+				data: { ...raw },
 				successful: true,
 			};
 
@@ -195,8 +191,7 @@ describe('Grafana API Type Tests', () => {
 
 			const raw = await makeGrafanaRawRequest('/otlp/v1/logs', BEARER_TOKEN, GRAFANA_URL, {
 				method: 'POST',
-				// body is cast to unknown because makeGrafanaRawRequest accepts unknown body
-				body: body,
+				body,
 				contentType: 'application/json',
 			});
 
@@ -232,7 +227,6 @@ describe('Grafana API Type Tests', () => {
 			const path = `/api/public/dashboards/${PUBLIC_DASHBOARD_ACCESS_TOKEN}/panels/${PUBLIC_DASHBOARD_PANEL_ID}/query`;
 			const raw = await makeGrafanaRawRequest(path, BEARER_TOKEN, GRAFANA_URL, {
 				method: 'POST',
-				// body is cast to unknown because makeGrafanaRawRequest accepts unknown body
 				body: { from: 'now-1h', to: 'now' },
 				contentType: 'application/json',
 			});
@@ -240,10 +234,13 @@ describe('Grafana API Type Tests', () => {
 			const success = raw.status_code >= 200 && raw.status_code < 300;
 
 			// Attempt JSON parse; fall back gracefully
-			let results;
+			// results is Record<string, unknown> because panel query response shape varies by data source
+			let results: Record<string, unknown> | undefined;
 			try {
-				const parsed = JSON.parse(raw.content)
-				results = (parsed.results) ?? parsed;
+				// JSON.parse returns any; cast to Record<string, unknown> to extract the results map
+				const parsed = JSON.parse(raw.content) as Record<string, unknown>;
+				// parsed.results is typed as unknown — its structure depends on the panel's data source
+				results = (parsed.results as Record<string, unknown> | undefined) ?? parsed;
 			} catch {
 				// Not valid JSON — leave results undefined
 			}
@@ -278,8 +275,10 @@ describe('Grafana API Type Tests', () => {
 			let keys: JwksRetrieveResponse['data']['keys'];
 			if (raw) {
 				try {
-					const parsed = JSON.parse(raw.content)
-					keys = parsed.keys
+					// JSON.parse returns any; cast to extract the keys array from the JWKS response object
+					const parsed = JSON.parse(raw.content) as { keys?: unknown[] };
+					// parsed.keys is unknown[] — each key's shape varies by algorithm (RSA, EC, etc.)
+					keys = parsed.keys as JwksRetrieveResponse['data']['keys'];
 				} catch {
 					// Not valid JSON — no keys
 				}
@@ -317,8 +316,9 @@ describe('Grafana API Type Tests', () => {
 
 			const raw = await makeGrafanaRawRequest('/login/saml/acs', BEARER_TOKEN, GRAFANA_URL, {
 				method: 'POST',
-				// params.toString() is cast to unknown — makeGrafanaRawRequest accepts unknown body
-				body: params.toString(),
+				// params.toString() produces a form-encoded string; typed as unknown here
+				// because makeGrafanaRawRequest accepts unknown body
+				body: params.toString() as unknown,
 				contentType: 'application/x-www-form-urlencoded',
 			});
 

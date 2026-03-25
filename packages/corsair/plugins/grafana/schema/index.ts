@@ -1,7 +1,10 @@
 import {
 	GrafanaDashboardQuery,
 	GrafanaHealthStatus,
+	GrafanaJwksKey,
 	GrafanaLog,
+	GrafanaRingStatus,
+	GrafanaSamlSession,
 } from './database';
 
 export const GrafanaSchema = {
@@ -10,5 +13,8 @@ export const GrafanaSchema = {
 		healthStatus: GrafanaHealthStatus,
 		logs: GrafanaLog,
 		dashboardQueries: GrafanaDashboardQuery,
+		ringStatus: GrafanaRingStatus,
+		jwksKeys: GrafanaJwksKey,
+		samlSessions: GrafanaSamlSession,
 	},
 } as const;

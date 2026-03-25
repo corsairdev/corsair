@@ -33,6 +33,21 @@ export const getDistributorHaTracker: GrafanaEndpoints['ringGetDistributorHaTrac
 		};
 	}
 
+	if (result.successful && ctx.db.ringStatus) {
+		try {
+			const ringId = 'distributor-ha-tracker';
+			await ctx.db.ringStatus.upsertByEntityId(ringId, {
+				id: ringId,
+				content: result.data.html_content,
+				contentType: 'text/html',
+				statusCode: result.data.status_code,
+				fetchedAt: new Date(),
+			});
+		} catch (err) {
+			console.warn('Failed to save distributor ha-tracker ring status to database:', err);
+		}
+	}
+
 	await logEventFromContext(
 		ctx,
 		'grafana.ring.getDistributorHaTracker',
@@ -72,6 +87,20 @@ export const getIndexGateway: GrafanaEndpoints['ringGetIndexGateway'] = async (
 		};
 	}
 
+	if (result.successful && ctx.db.ringStatus) {
+		try {
+			const ringId = 'index-gateway';
+			await ctx.db.ringStatus.upsertByEntityId(ringId, {
+				id: ringId,
+				content: result.data.content,
+				contentType: result.data.content_type,
+				fetchedAt: new Date(),
+			});
+		} catch (err) {
+			console.warn('Failed to save index gateway ring status to database:', err);
+		}
+	}
+
 	await logEventFromContext(
 		ctx,
 		'grafana.ring.getIndexGateway',
@@ -106,6 +135,20 @@ export const getOverridesExporter: GrafanaEndpoints['ringGetOverridesExporter'] 
 			error: error instanceof Error ? error.message : 'Unknown error',
 			successful: false,
 		};
+	}
+
+	if (result.successful && ctx.db.ringStatus) {
+		try {
+			const ringId = 'overrides-exporter';
+			await ctx.db.ringStatus.upsertByEntityId(ringId, {
+				id: ringId,
+				content: result.data.html_content,
+				contentType: 'text/html',
+				fetchedAt: new Date(),
+			});
+		} catch (err) {
+			console.warn('Failed to save overrides exporter ring status to database:', err);
+		}
 	}
 
 	await logEventFromContext(
@@ -144,6 +187,20 @@ export const getRuler: GrafanaEndpoints['ringGetRuler'] = async (ctx, _input) =>
 		};
 	}
 
+	if (result.successful && ctx.db.ringStatus) {
+		try {
+			const ringId = 'ruler';
+			await ctx.db.ringStatus.upsertByEntityId(ringId, {
+				id: ringId,
+				content: result.data.content,
+				contentType: result.data.content_type,
+				fetchedAt: new Date(),
+			});
+		} catch (err) {
+			console.warn('Failed to save ruler ring status to database:', err);
+		}
+	}
+
 	await logEventFromContext(ctx, 'grafana.ring.getRuler', {}, 'completed');
 	return result;
 };
@@ -176,6 +233,20 @@ export const getTenants: GrafanaEndpoints['storeGatewayGetTenants'] = async (
 			error: error instanceof Error ? error.message : 'Unknown error',
 			successful: false,
 		};
+	}
+
+	if (result.successful && ctx.db.ringStatus) {
+		try {
+			const ringId = 'store-gateway-tenants';
+			await ctx.db.ringStatus.upsertByEntityId(ringId, {
+				id: ringId,
+				content: result.data.content,
+				contentType: result.data.content_type,
+				fetchedAt: new Date(),
+			});
+		} catch (err) {
+			console.warn('Failed to save store gateway tenants to database:', err);
+		}
 	}
 
 	await logEventFromContext(
