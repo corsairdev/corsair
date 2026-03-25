@@ -8,7 +8,7 @@ export const taskEvent: AsanaWebhooks['taskEvent'] = {
 	handler: async (ctx, request) => {
 		const signingSecret = ctx.key;
 		const verification = verifyAsanaWebhookSignature(
-			{ payload: request.payload, headers: request.headers },
+			{ payload: request.rawBody, headers: request.headers },
 			signingSecret,
 		);
 		if (!verification.valid) {
@@ -32,7 +32,7 @@ export const taskEvent: AsanaWebhooks['taskEvent'] = {
 		);
 
 		if (ctx.db.tasks) {
-			// Type assertion to ensure endpoints are the correct type
+			// Type assertion so that the endpoints are the correct type
 			const endpoints = ctx.endpoints as AsanaBoundEndpoints;
 
 			for (const event of taskEvents) {
