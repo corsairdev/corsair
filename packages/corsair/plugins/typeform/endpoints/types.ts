@@ -2,512 +2,635 @@ import { z } from 'zod';
 
 // ── Shared Sub-schemas ────────────────────────────────────────────────────────
 
-const ThemeColorsSchema = z.object({
-	answer: z.string().optional(),
-	button: z.string().optional(),
-	question: z.string().optional(),
-	background: z.string().optional(),
-});
+const ThemeColorsSchema = z
+	.object({
+		answer: z.string().optional(),
+		button: z.string().optional(),
+		question: z.string().optional(),
+		background: z.string().optional(),
+	})
+	.passthrough();
 
-const ThemeFieldsSchema = z.object({
-	alignment: z.enum(['left', 'center']).optional(),
-	font_size: z.enum(['small', 'medium', 'large']).optional(),
-});
+const ThemeFieldsSchema = z
+	.object({
+		alignment: z.enum(['left', 'center']).optional(),
+		font_size: z.enum(['small', 'medium', 'large']).optional(),
+	})
+	.passthrough();
 
-const ThemeBackgroundSchema = z.object({
-	href: z.string().optional(),
-	layout: z.enum(['fullscreen', 'repeat', 'no-repeat']).optional(),
-	brightness: z.number().optional(),
-});
+const ThemeBackgroundSchema = z
+	.object({
+		href: z.string().optional(),
+		layout: z.enum(['fullscreen', 'repeat', 'no-repeat']).optional(),
+		brightness: z.number().optional(),
+	})
+	.passthrough();
 
-const ThemeScreensSchema = z.object({
-	// screens config is freeform per Typeform's schema
-	font_size: z.string().optional(),
-	alignment: z.string().optional(),
-});
+const ThemeScreensSchema = z
+	.object({
+		// screens config is freeform per Typeform's schema
+		font_size: z.string().optional(),
+		alignment: z.string().optional(),
+	})
+	.passthrough();
 
-const WorkspaceMemberSchema = z.object({
-	name: z.string().optional(),
-	role: z.string().optional(),
-	email: z.string().optional(),
-});
+const WorkspaceMemberSchema = z
+	.object({
+		name: z.string().optional(),
+		role: z.string().optional(),
+		email: z.string().optional(),
+	})
+	.passthrough();
 
-const WorkspaceFormsInfoSchema = z.object({
-	href: z.string().optional(),
-	count: z.number().optional(),
-});
+const WorkspaceFormsInfoSchema = z
+	.object({
+		href: z.string().optional(),
+		count: z.number().optional(),
+	})
+	.passthrough();
 
-const ImageResponseSchema = z.object({
-	id: z.string().optional(),
-	src: z.string().optional(),
-	width: z.number().optional(),
-	height: z.number().optional(),
-	avg_color: z.string().optional(),
-	file_name: z.string().optional(),
-	has_alpha: z.boolean().optional(),
-	media_type: z.string().optional(),
-});
+const ImageResponseSchema = z
+	.object({
+		id: z.string().optional(),
+		src: z.string().optional(),
+		width: z.number().optional(),
+		height: z.number().optional(),
+		avg_color: z.string().optional(),
+		file_name: z.string().optional(),
+		has_alpha: z.boolean().optional(),
+		media_type: z.string().optional(),
+	})
+	.passthrough();
 
-const WebhookConfigSchema = z.object({
-	id: z.string().optional(),
-	tag: z.string().optional(),
-	url: z.string().optional(),
-	secret: z.string().optional(),
-	enabled: z.boolean().optional(),
-	form_id: z.string().optional(),
-	created_at: z.string().optional(),
-	updated_at: z.string().optional(),
-	verify_ssl: z.boolean().optional(),
-	event_types: z.array(z.string()).optional(),
-});
+const WebhookConfigSchema = z
+	.object({
+		id: z.string().optional(),
+		tag: z.string().optional(),
+		url: z.string().optional(),
+		secret: z.string().optional(),
+		enabled: z.boolean().optional(),
+		form_id: z.string().optional(),
+		created_at: z.string().optional(),
+		updated_at: z.string().optional(),
+		verify_ssl: z.boolean().optional(),
+		event_types: z.array(z.string()).optional(),
+	})
+	.passthrough();
 
-const FormFieldSchema = z.object({
-	id: z.string().optional(),
-	ref: z.string().optional(),
-	type: z.string().optional(),
-	title: z.string().optional(),
-	attachment: z
-		.object({
-			href: z.string().optional(),
-			type: z.string().optional(),
-			scale: z.number().optional(),
-			// properties is freeform per field type
-			properties: z.record(z.unknown()).optional(),
-		})
-		.optional(),
-	properties: z
-		.object({
-			// sub-fields for group/matrix fields have dynamic nested structure
-			fields: z.array(z.unknown()).optional(),
-			// choices have various sub-types depending on field
-			choices: z.array(z.unknown()).optional(),
-			randomize: z.boolean().optional(),
-			hide_marks: z.boolean().optional(),
-			button_text: z.string().optional(),
-			description: z.string().optional(),
-			allow_other_choice: z.boolean().optional(),
-			alphabetical_order: z.boolean().optional(),
-			vertical_alignment: z.boolean().optional(),
-			allow_multiple_selection: z.boolean().optional(),
-		})
-		.optional(),
-	validations: z
-		.object({
-			required: z.boolean().optional(),
-			max_value: z.number().optional(),
-			min_value: z.number().optional(),
-			max_length: z.number().optional(),
-			min_length: z.number().optional(),
-		})
-		.optional(),
-});
+const FormFieldSchema = z
+	.object({
+		id: z.string().optional(),
+		ref: z.string().optional(),
+		type: z.string().optional(),
+		title: z.string().optional(),
+		attachment: z
+			.object({
+				href: z.string().optional(),
+				type: z.string().optional(),
+				scale: z.number().optional(),
+				// properties is freeform per field type
+				properties: z.record(z.unknown()).optional(),
+			})
+			.passthrough()
+			.optional(),
+		properties: z
+			.object({
+				// sub-fields for group/matrix fields have dynamic nested structure
+				fields: z.array(z.unknown()).optional(),
+				// choices have various sub-types depending on field
+				choices: z.array(z.unknown()).optional(),
+				randomize: z.boolean().optional(),
+				hide_marks: z.boolean().optional(),
+				button_text: z.string().optional(),
+				description: z.string().optional(),
+				allow_other_choice: z.boolean().optional(),
+				alphabetical_order: z.boolean().optional(),
+				vertical_alignment: z.boolean().optional(),
+				allow_multiple_selection: z.boolean().optional(),
+			})
+			.passthrough()
+			.optional(),
+		validations: z
+			.object({
+				required: z.boolean().optional(),
+				max_value: z.number().optional(),
+				min_value: z.number().optional(),
+				max_length: z.number().optional(),
+				min_length: z.number().optional(),
+			})
+			.passthrough()
+			.optional(),
+	})
+	.passthrough();
 
-const FormSettingsSchema = z.object({
-	is_trial: z.boolean().optional(),
-	language: z.string().optional(),
-	is_public: z.boolean().optional(),
-	progress_bar: z.string().optional(),
-	facebook_pixel: z.string().optional(),
-	hide_navigation: z.boolean().optional(),
-	google_analytics: z.string().optional(),
-	autosave_progress: z.boolean().optional(),
-	show_progress_bar: z.boolean().optional(),
-	are_uploads_public: z.boolean().optional(),
-	google_tag_manager: z.string().optional(),
-	show_cookie_consent: z.boolean().optional(),
-	free_form_navigation: z.boolean().optional(),
-	show_question_number: z.boolean().optional(),
-	pro_subdomain_enabled: z.boolean().optional(),
-	show_time_to_complete: z.boolean().optional(),
-	show_typeform_branding: z.boolean().optional(),
-	show_key_hint_on_choices: z.boolean().optional(),
-	redirect_after_submit_url: z.string().optional(),
-	show_number_of_submissions: z.boolean().optional(),
-	// capabilities and notifications have dynamic sub-structures
-	capabilities: z.record(z.unknown()).optional(),
-	notifications: z.record(z.unknown()).optional(),
-});
+const FormSettingsSchema = z
+	.object({
+		is_trial: z.boolean().optional(),
+		language: z.string().optional(),
+		is_public: z.boolean().optional(),
+		progress_bar: z.string().optional(),
+		facebook_pixel: z.string().optional(),
+		hide_navigation: z.boolean().optional(),
+		google_analytics: z.string().optional(),
+		autosave_progress: z.boolean().optional(),
+		show_progress_bar: z.boolean().optional(),
+		are_uploads_public: z.boolean().optional(),
+		google_tag_manager: z.string().optional(),
+		show_cookie_consent: z.boolean().optional(),
+		free_form_navigation: z.boolean().optional(),
+		show_question_number: z.boolean().optional(),
+		pro_subdomain_enabled: z.boolean().optional(),
+		show_time_to_complete: z.boolean().optional(),
+		show_typeform_branding: z.boolean().optional(),
+		show_key_hint_on_choices: z.boolean().optional(),
+		redirect_after_submit_url: z.string().optional(),
+		show_number_of_submissions: z.boolean().optional(),
+		// capabilities and notifications have dynamic sub-structures
+		capabilities: z.record(z.unknown()).optional(),
+		notifications: z.record(z.unknown()).optional(),
+	})
+	.passthrough();
 
-const WelcomeScreenSchema = z.object({
-	ref: z.string().optional(),
-	title: z.string().optional(),
-	attachment: z
-		.object({
-			href: z.string().optional(),
-			type: z.string().optional(),
-			scale: z.number().optional(),
-			properties: z.record(z.unknown()).optional(),
-		})
-		.optional(),
-	properties: z
-		.object({
-			button_text: z.string().optional(),
-			show_button: z.boolean().optional(),
-			description: z.string().optional(),
-		})
-		.optional(),
-});
+const WelcomeScreenSchema = z
+	.object({
+		ref: z.string().optional(),
+		title: z.string().optional(),
+		attachment: z
+			.object({
+				href: z.string().optional(),
+				type: z.string().optional(),
+				scale: z.number().optional(),
+				properties: z.record(z.unknown()).optional(),
+			})
+			.passthrough()
+			.optional(),
+		properties: z
+			.object({
+				button_text: z.string().optional(),
+				show_button: z.boolean().optional(),
+				description: z.string().optional(),
+			})
+			.passthrough()
+			.optional(),
+	})
+	.passthrough();
 
-const ThankyouScreenSchema = z.object({
-	ref: z.string().optional(),
-	title: z.string().optional(),
-	attachment: z
-		.object({
-			href: z.string().optional(),
-			type: z.string().optional(),
-			scale: z.number().optional(),
-			properties: z.record(z.unknown()).optional(),
-		})
-		.optional(),
-	properties: z
-		.object({
-			button_text: z.string().optional(),
-			button_mode: z.string().optional(),
-			redirect_url: z.string().optional(),
-			show_button: z.boolean().optional(),
-			description: z.string().optional(),
-			share_icons: z.boolean().optional(),
-		})
-		.optional(),
-});
+const ThankyouScreenSchema = z
+	.object({
+		ref: z.string().optional(),
+		title: z.string().optional(),
+		attachment: z
+			.object({
+				href: z.string().optional(),
+				type: z.string().optional(),
+				scale: z.number().optional(),
+				properties: z.record(z.unknown()).optional(),
+			})
+			.passthrough()
+			.optional(),
+		properties: z
+			.object({
+				button_text: z.string().optional(),
+				button_mode: z.string().optional(),
+				redirect_url: z.string().optional(),
+				show_button: z.boolean().optional(),
+				description: z.string().optional(),
+				share_icons: z.boolean().optional(),
+			})
+			.passthrough()
+			.optional(),
+	})
+	.passthrough();
 
-const LogicJumpSchema = z.object({
-	ref: z.string().optional(),
-	type: z.string().optional(),
-	// actions have dynamic condition trees per Typeform's logic system
-	actions: z.array(z.unknown()).optional(),
-});
+const LogicJumpSchema = z
+	.object({
+		ref: z.string().optional(),
+		type: z.string().optional(),
+		// actions have dynamic condition trees per Typeform's logic system
+		actions: z.array(z.unknown()).optional(),
+	})
+	.passthrough();
 
-const JsonPatchOperationSchema = z.object({
-	op: z.enum(['add', 'remove', 'replace', 'move', 'copy', 'test']),
-	path: z.string(),
-	// value can be any JSON type depending on the path being patched
-	value: z.unknown().optional(),
-	from: z.string().optional(),
-});
+const JsonPatchOperationSchema = z
+	.object({
+		op: z.enum(['add', 'remove', 'replace', 'move', 'copy', 'test']),
+		path: z.string(),
+		// value can be any JSON type depending on the path being patched
+		value: z.unknown().optional(),
+		from: z.string().optional(),
+	})
+	.passthrough();
 
-const ResponseAnswerSchema = z.object({
-	type: z.string().optional(),
-	text: z.string().optional(),
-	email: z.string().optional(),
-	url: z.string().optional(),
-	date: z.string().optional(),
-	number: z.number().optional(),
-	boolean: z.boolean().optional(),
-	phone_number: z.string().optional(),
-	file_url: z.string().optional(),
-	choice: z
-		.object({
-			id: z.string().optional(),
-			ref: z.string().optional(),
-			label: z.string().optional(),
-			other: z.string().optional(),
-		})
-		.optional(),
-	choices: z
-		.object({
-			ids: z.array(z.string()).optional(),
-			refs: z.array(z.string()).optional(),
-			labels: z.array(z.string()).optional(),
-			other: z.string().optional(),
-		})
-		.optional(),
-	field: z
-		.object({
-			id: z.string().optional(),
-			ref: z.string().optional(),
-			type: z.string().optional(),
-		})
-		.optional(),
-	// payment details vary and have no fixed schema
-	payment: z.record(z.unknown()).optional(),
-	// multi_format (audio/video) has provider-specific structure
-	multi_format: z.record(z.unknown()).optional(),
-});
+const ResponseAnswerSchema = z
+	.object({
+		type: z.string().optional(),
+		text: z.string().optional(),
+		email: z.string().optional(),
+		url: z.string().optional(),
+		date: z.string().optional(),
+		number: z.number().optional(),
+		boolean: z.boolean().optional(),
+		phone_number: z.string().optional(),
+		file_url: z.string().optional(),
+		choice: z
+			.object({
+				id: z.string().optional(),
+				ref: z.string().optional(),
+				label: z.string().optional(),
+				other: z.string().optional(),
+			})
+			.passthrough()
+			.optional(),
+		choices: z
+			.object({
+				ids: z.array(z.string()).optional(),
+				refs: z.array(z.string()).optional(),
+				labels: z.array(z.string()).optional(),
+				other: z.string().optional(),
+			})
+			.passthrough()
+			.optional(),
+		field: z
+			.object({
+				id: z.string().optional(),
+				ref: z.string().optional(),
+				type: z.string().optional(),
+			})
+			.passthrough()
+			.optional(),
+		// payment details vary and have no fixed schema
+		payment: z.record(z.unknown()).optional(),
+		// multi_format (audio/video) has provider-specific structure
+		multi_format: z.record(z.unknown()).optional(),
+	})
+	.passthrough();
 
 // ── Input Schemas ─────────────────────────────────────────────────────────────
 
 // Me
-const MeGetInputSchema = z.object({});
+const MeGetInputSchema = z.object({}).passthrough();
 
 // Forms
-const FormsListInputSchema = z.object({
-	page: z.number().optional(),
-	search: z.string().optional(),
-	sort_by: z.enum(['created_at', 'last_updated_at']).optional(),
-	order_by: z.enum(['asc', 'desc']).optional(),
-	page_size: z.number().optional(),
-	workspace_id: z.string().optional(),
-});
+const FormsListInputSchema = z
+	.object({
+		page: z.number().optional(),
+		search: z.string().optional(),
+		sort_by: z.enum(['created_at', 'last_updated_at']).optional(),
+		order_by: z.enum(['asc', 'desc']).optional(),
+		page_size: z.number().optional(),
+		workspace_id: z.string().optional(),
+	})
+	.passthrough();
 
-const FormsGetInputSchema = z.object({
-	form_id: z.string(),
-});
+const FormsGetInputSchema = z
+	.object({
+		form_id: z.string(),
+	})
+	.passthrough();
 
-const FormsCreateInputSchema = z.object({
-	title: z.string(),
-	type: z.string().optional(),
-	fields: z.array(FormFieldSchema).optional(),
-	logic: z.array(LogicJumpSchema).optional(),
-	theme: z.object({ href: z.string() }).optional(),
-	settings: FormSettingsSchema.optional(),
-	workspace: z.object({ href: z.string() }).optional(),
-	welcome_screens: z.array(WelcomeScreenSchema).optional(),
-	thankyou_screens: z.array(ThankyouScreenSchema).optional(),
-});
+const FormsCreateInputSchema = z
+	.object({
+		title: z.string(),
+		type: z.string().optional(),
+		fields: z.array(FormFieldSchema).optional(),
+		logic: z.array(LogicJumpSchema).optional(),
+		theme: z.object({ href: z.string() }).passthrough().optional(),
+		settings: FormSettingsSchema.optional(),
+		workspace: z.object({ href: z.string() }).passthrough().optional(),
+		welcome_screens: z.array(WelcomeScreenSchema).optional(),
+		thankyou_screens: z.array(ThankyouScreenSchema).optional(),
+	})
+	.passthrough();
 
-const FormsUpdateInputSchema = z.object({
-	form_id: z.string(),
-	title: z.string().optional(),
-	type: z.string().optional(),
-	fields: z.array(FormFieldSchema).optional(),
-	logic: z.array(LogicJumpSchema).optional(),
-	theme: z.object({ href: z.string() }).optional(),
-	hidden: z.array(z.string()).optional(),
-	settings: FormSettingsSchema.optional(),
-	variables: z.record(z.unknown()).optional(),
-	workspace: z.object({ href: z.string() }).optional(),
-	welcome_screens: z.array(WelcomeScreenSchema).optional(),
-	thankyou_screens: z.array(ThankyouScreenSchema).optional(),
-});
+const FormsUpdateInputSchema = z
+	.object({
+		form_id: z.string(),
+		title: z.string().optional(),
+		type: z.string().optional(),
+		fields: z.array(FormFieldSchema).optional(),
+		logic: z.array(LogicJumpSchema).optional(),
+		theme: z.object({ href: z.string() }).passthrough().optional(),
+		hidden: z.array(z.string()).optional(),
+		settings: FormSettingsSchema.optional(),
+		variables: z.record(z.unknown()).optional(),
+		workspace: z.object({ href: z.string() }).passthrough().optional(),
+		welcome_screens: z.array(WelcomeScreenSchema).optional(),
+		thankyou_screens: z.array(ThankyouScreenSchema).optional(),
+	})
+	.passthrough();
 
-const FormsPatchInputSchema = z.object({
-	form_id: z.string(),
-	operations: z.array(JsonPatchOperationSchema),
-});
+const FormsPatchInputSchema = z
+	.object({
+		form_id: z.string(),
+		operations: z.array(JsonPatchOperationSchema),
+	})
+	.passthrough();
 
-const FormsDeleteInputSchema = z.object({
-	form_id: z.string(),
-});
+const FormsDeleteInputSchema = z
+	.object({
+		form_id: z.string(),
+	})
+	.passthrough();
 
-const FormsGetMessagesInputSchema = z.object({
-	form_id: z.string(),
-});
+const FormsGetMessagesInputSchema = z
+	.object({
+		form_id: z.string(),
+	})
+	.passthrough();
 
-const FormsUpdateMessagesInputSchema = z.object({
-	form_id: z.string(),
-	label_button_submit: z.string().optional(),
-	label_error_required: z.string().optional(),
-	label_buttonHint_default: z.string().optional(),
-	block_shortText_placeholder: z.string().optional(),
-	label_buttonNoAnswer_default: z.string().optional(),
-});
+const FormsUpdateMessagesInputSchema = z
+	.object({
+		form_id: z.string(),
+		label_button_submit: z.string().optional(),
+		label_error_required: z.string().optional(),
+		label_buttonHint_default: z.string().optional(),
+		block_shortText_placeholder: z.string().optional(),
+		label_buttonNoAnswer_default: z.string().optional(),
+	})
+	.passthrough();
 
 // Responses
-const ResponsesListInputSchema = z.object({
-	form_id: z.string(),
-	sort: z.string().optional(),
-	after: z.string().optional(),
-	query: z.string().optional(),
-	since: z.string().optional(),
-	until: z.string().optional(),
-	before: z.string().optional(),
-	fields: z.array(z.string()).optional(),
-	page_size: z.number().optional(),
-	response_type: z.array(z.string()).optional(),
-	answered_fields: z.array(z.string()).optional(),
-	excluded_response_ids: z.string().optional(),
-	included_response_ids: z.string().optional(),
-});
+const ResponsesListInputSchema = z
+	.object({
+		form_id: z.string(),
+		sort: z.string().optional(),
+		after: z.string().optional(),
+		query: z.string().optional(),
+		since: z.string().optional(),
+		until: z.string().optional(),
+		before: z.string().optional(),
+		fields: z.array(z.string()).optional(),
+		page_size: z.number().optional(),
+		response_type: z.array(z.string()).optional(),
+		answered_fields: z.array(z.string()).optional(),
+		excluded_response_ids: z.string().optional(),
+		included_response_ids: z.string().optional(),
+	})
+	.passthrough();
 
-const ResponsesDeleteInputSchema = z.object({
-	form_id: z.string(),
-	included_response_ids: z.string(),
-});
+const ResponsesDeleteInputSchema = z
+	.object({
+		form_id: z.string(),
+		included_response_ids: z.string(),
+	})
+	.passthrough();
 
-const ResponsesGetAllFilesInputSchema = z.object({
-	form_id: z.string(),
-});
+const ResponsesGetAllFilesInputSchema = z
+	.object({
+		form_id: z.string(),
+	})
+	.passthrough();
 
 // Workspaces
-const WorkspacesListInputSchema = z.object({
-	page: z.number().optional(),
-	search: z.string().optional(),
-	page_size: z.number().optional(),
-});
+const WorkspacesListInputSchema = z
+	.object({
+		page: z.number().optional(),
+		search: z.string().optional(),
+		page_size: z.number().optional(),
+	})
+	.passthrough();
 
-const WorkspacesGetInputSchema = z.object({
-	workspace_id: z.string(),
-});
+const WorkspacesGetInputSchema = z
+	.object({
+		workspace_id: z.string(),
+	})
+	.passthrough();
 
-const WorkspacesCreateInputSchema = z.object({
-	name: z.string(),
-});
+const WorkspacesCreateInputSchema = z
+	.object({
+		name: z.string(),
+	})
+	.passthrough();
 
-const WorkspacesCreateForAccountInputSchema = z.object({
-	name: z.string(),
-	account_id: z.string(),
-});
+const WorkspacesCreateForAccountInputSchema = z
+	.object({
+		name: z.string(),
+		account_id: z.string(),
+	})
+	.passthrough();
 
-const WorkspacesUpdateInputSchema = z.object({
-	workspace_id: z.string(),
-	operations: z.array(JsonPatchOperationSchema),
-});
+const WorkspacesUpdateInputSchema = z
+	.object({
+		workspace_id: z.string(),
+		operations: z.array(JsonPatchOperationSchema),
+	})
+	.passthrough();
 
-const WorkspacesDeleteInputSchema = z.object({
-	workspace_id: z.string(),
-});
+const WorkspacesDeleteInputSchema = z
+	.object({
+		workspace_id: z.string(),
+	})
+	.passthrough();
 
 // Images
-const ImagesListInputSchema = z.object({});
+const ImagesListInputSchema = z.object({}).passthrough();
 
-const ImagesCreateInputSchema = z.object({
-	file_name: z.string(),
-	url: z.string().optional(),
-	image: z.string().optional(),
-});
+const ImagesCreateInputSchema = z
+	.object({
+		file_name: z.string(),
+		url: z.string().optional(),
+		image: z.string().optional(),
+	})
+	.passthrough();
 
-const ImagesDeleteInputSchema = z.object({
-	image_id: z.string(),
-});
+const ImagesDeleteInputSchema = z
+	.object({
+		image_id: z.string(),
+	})
+	.passthrough();
 
-const ImagesGetBySizeInputSchema = z.object({
-	image_id: z.string(),
-	size: z.string(),
-});
+const ImagesGetBySizeInputSchema = z
+	.object({
+		image_id: z.string(),
+		size: z.string(),
+	})
+	.passthrough();
 
-const ImagesGetBackgroundBySizeInputSchema = z.object({
-	image_id: z.string(),
-	size: z.string(),
-});
+const ImagesGetBackgroundBySizeInputSchema = z
+	.object({
+		image_id: z.string(),
+		size: z.string(),
+	})
+	.passthrough();
 
-const ImagesGetChoiceImageBySizeInputSchema = z.object({
-	image_id: z.string(),
-	size: z.string(),
-});
+const ImagesGetChoiceImageBySizeInputSchema = z
+	.object({
+		image_id: z.string(),
+		size: z.string(),
+	})
+	.passthrough();
 
 // Themes
-const ThemesListInputSchema = z.object({
-	page: z.number().optional(),
-	page_size: z.number().optional(),
-});
+const ThemesListInputSchema = z
+	.object({
+		page: z.number().optional(),
+		page_size: z.number().optional(),
+	})
+	.passthrough();
 
-const ThemesGetInputSchema = z.object({
-	theme_id: z.string(),
-});
+const ThemesGetInputSchema = z
+	.object({
+		theme_id: z.string(),
+	})
+	.passthrough();
 
-const ThemesCreateInputSchema = z.object({
-	font: z.string(),
-	colors: ThemeColorsSchema,
-	fields: ThemeFieldsSchema,
-	name: z.string().optional(),
-	background: ThemeBackgroundSchema.optional(),
-	rounded_corners: z.string().optional(),
-	has_transparent_button: z.boolean().optional(),
-});
+const ThemesCreateInputSchema = z
+	.object({
+		font: z.string(),
+		colors: ThemeColorsSchema,
+		fields: ThemeFieldsSchema,
+		name: z.string().optional(),
+		background: ThemeBackgroundSchema.optional(),
+		rounded_corners: z.string().optional(),
+		has_transparent_button: z.boolean().optional(),
+	})
+	.passthrough();
 
-const ThemesUpdateInputSchema = z.object({
-	theme_id: z.string(),
-	font: z.string(),
-	name: z.string(),
-	colors: ThemeColorsSchema,
-	fields: ThemeFieldsSchema.optional(),
-	screens: ThemeScreensSchema.optional(),
-	background: ThemeBackgroundSchema.optional(),
-	rounded_corners: z.string().optional(),
-	has_transparent_button: z.boolean().optional(),
-});
+const ThemesUpdateInputSchema = z
+	.object({
+		theme_id: z.string(),
+		font: z.string(),
+		name: z.string(),
+		colors: ThemeColorsSchema,
+		fields: ThemeFieldsSchema.optional(),
+		screens: ThemeScreensSchema.optional(),
+		background: ThemeBackgroundSchema.optional(),
+		rounded_corners: z.string().optional(),
+		has_transparent_button: z.boolean().optional(),
+	})
+	.passthrough();
 
-const ThemesPatchInputSchema = z.object({
-	theme_id: z.string(),
-	font: z.string().optional(),
-	name: z.string().optional(),
-	colors: ThemeColorsSchema.optional(),
-	fields: ThemeFieldsSchema.optional(),
-	screens: ThemeScreensSchema.optional(),
-	background: ThemeBackgroundSchema.optional(),
-	rounded_corners: z.string().optional(),
-	has_transparent_button: z.boolean().optional(),
-});
+const ThemesPatchInputSchema = z
+	.object({
+		theme_id: z.string(),
+		font: z.string().optional(),
+		name: z.string().optional(),
+		colors: ThemeColorsSchema.optional(),
+		fields: ThemeFieldsSchema.optional(),
+		screens: ThemeScreensSchema.optional(),
+		background: ThemeBackgroundSchema.optional(),
+		rounded_corners: z.string().optional(),
+		has_transparent_button: z.boolean().optional(),
+	})
+	.passthrough();
 
-const ThemesDeleteInputSchema = z.object({
-	theme_id: z.string(),
-});
+const ThemesDeleteInputSchema = z
+	.object({
+		theme_id: z.string(),
+	})
+	.passthrough();
 
 // Webhooks Config
-const WebhooksConfigListInputSchema = z.object({
-	form_id: z.string(),
-});
+const WebhooksConfigListInputSchema = z
+	.object({
+		form_id: z.string(),
+	})
+	.passthrough();
 
-const WebhooksConfigGetInputSchema = z.object({
-	form_id: z.string(),
-	tag: z.string(),
-});
+const WebhooksConfigGetInputSchema = z
+	.object({
+		form_id: z.string(),
+		tag: z.string(),
+	})
+	.passthrough();
 
-const WebhooksConfigCreateOrUpdateInputSchema = z.object({
-	form_id: z.string(),
-	tag: z.string(),
-	url: z.string(),
-	enabled: z.boolean().optional(),
-	secret: z.string().optional(),
-	verify_ssl: z.boolean().optional(),
-	event_types: z.array(z.string()).optional(),
-});
+const WebhooksConfigCreateOrUpdateInputSchema = z
+	.object({
+		form_id: z.string(),
+		tag: z.string(),
+		url: z.string(),
+		enabled: z.boolean().optional(),
+		secret: z.string().optional(),
+		verify_ssl: z.boolean().optional(),
+		event_types: z.array(z.string()).optional(),
+	})
+	.passthrough();
 
-const WebhooksConfigDeleteInputSchema = z.object({
-	form_id: z.string(),
-	tag: z.string(),
-});
+const WebhooksConfigDeleteInputSchema = z
+	.object({
+		form_id: z.string(),
+		tag: z.string(),
+	})
+	.passthrough();
 
 // Videos
-const VideosUploadInputSchema = z.object({
-	form_id: z.string(),
-	field_id: z.string(),
-	language: z.string(),
-});
+const VideosUploadInputSchema = z
+	.object({
+		form_id: z.string(),
+		field_id: z.string(),
+		language: z.string(),
+	})
+	.passthrough();
 
 // ── Output Schemas ─────────────────────────────────────────────────────────────
 
-const MeGetResponseSchema = z.object({
-	// owner_info has no fixed structure in Typeform's schema
-	owner_info: z.record(z.unknown()).optional(),
-});
+const MeGetResponseSchema = z
+	.object({
+		// owner_info has no fixed structure in Typeform's schema
+		owner_info: z.record(z.unknown()).optional(),
+	})
+	.passthrough();
 
-const FormsListResponseSchema = z.object({
-	items: z
-		.array(
-			z.object({
-				id: z.string().optional(),
-				title: z.string().optional(),
-				created_at: z.string().optional(),
-				last_updated_at: z.string().optional(),
-				settings: z.object({ is_public: z.boolean().optional() }).optional(),
-				theme: z.object({ href: z.string().optional() }).optional(),
-				// _links contains href refs whose keys vary by form
-				_links: z.record(z.unknown()).optional(),
-			}),
-		)
-		.optional(),
-	page_count: z.number().optional(),
-	total_items: z.number().optional(),
-});
+const FormsListResponseSchema = z
+	.object({
+		items: z
+			.array(
+				z
+					.object({
+						id: z.string().optional(),
+						title: z.string().optional(),
+						created_at: z.string().optional(),
+						last_updated_at: z.string().optional(),
+						settings: z
+							.object({ is_public: z.boolean().optional() })
+							.passthrough()
+							.optional(),
+						theme: z
+							.object({ href: z.string().optional() })
+							.passthrough()
+							.optional(),
+						// _links contains href refs whose keys vary by form
+						_links: z.record(z.unknown()).optional(),
+					})
+					.passthrough(),
+			)
+			.optional(),
+		page_count: z.number().optional(),
+		total_items: z.number().optional(),
+	})
+	.passthrough();
 
-const FormsGetResponseSchema = z.object({
-	id: z.string().optional(),
-	title: z.string().optional(),
-	type: z.string().optional(),
-	created_at: z.string().optional(),
-	last_updated_at: z.string().optional(),
-	fields: z.array(FormFieldSchema).optional(),
-	logic: z.array(LogicJumpSchema).optional(),
-	theme: z.object({ href: z.string().optional() }).optional(),
-	hidden: z.array(z.string()).optional(),
-	settings: FormSettingsSchema.optional(),
-	// variables have dynamic keys keyed by variable name
-	variables: z.record(z.unknown()).optional(),
-	workspace: z.object({ href: z.string().optional() }).optional(),
-	welcome_screens: z.array(WelcomeScreenSchema).optional(),
-	thankyou_screens: z.array(ThankyouScreenSchema).optional(),
-	// _links structure varies and cannot be fully typed statically
-	_links: z.record(z.unknown()).optional(),
-	// cui_settings and captcha have no fixed public schema
-	cui_settings: z.record(z.unknown()).optional(),
-	captcha: z.record(z.unknown()).optional(),
-	meta: z.record(z.unknown()).optional(),
-	links: z.record(z.unknown()).optional(),
-	language: z.string().optional(),
-	duplicate_prevention: z.boolean().optional(),
-});
+const FormsGetResponseSchema = z
+	.object({
+		id: z.string().optional(),
+		title: z.string().optional(),
+		type: z.string().optional(),
+		created_at: z.string().optional(),
+		last_updated_at: z.string().optional(),
+		fields: z.array(FormFieldSchema).optional(),
+		logic: z.array(LogicJumpSchema).optional(),
+		theme: z.object({ href: z.string().optional() }).passthrough().optional(),
+		hidden: z.array(z.string()).optional(),
+		settings: FormSettingsSchema.optional(),
+		// variables have dynamic keys keyed by variable name
+		variables: z.record(z.unknown()).optional(),
+		workspace: z
+			.object({ href: z.string().optional() })
+			.passthrough()
+			.optional(),
+		welcome_screens: z.array(WelcomeScreenSchema).optional(),
+		thankyou_screens: z.array(ThankyouScreenSchema).optional(),
+		// _links structure varies and cannot be fully typed statically
+		_links: z.record(z.unknown()).optional(),
+		// cui_settings and captcha have no fixed public schema
+		cui_settings: z.record(z.unknown()).optional(),
+		captcha: z.record(z.unknown()).optional(),
+		meta: z.record(z.unknown()).optional(),
+		links: z.record(z.unknown()).optional(),
+		language: z.string().optional(),
+		duplicate_prevention: z.boolean().optional(),
+	})
+	.passthrough();
 
 const FormsCreateResponseSchema = FormsGetResponseSchema;
 
@@ -519,93 +642,113 @@ const FormsPatchResponseSchema = z.unknown();
 // Typeform DELETE /forms returns 204 No Content (no body)
 const FormsDeleteResponseSchema = z.unknown();
 
-const FormsGetMessagesResponseSchema = z.object({
-	// messages are keyed by message key (e.g. "block.shortText.placeholder")
-	block: z.string().optional(),
-	label: z.string().optional(),
-});
+const FormsGetMessagesResponseSchema = z
+	.object({
+		// messages are keyed by message key (e.g. "block.shortText.placeholder")
+		block: z.string().optional(),
+		label: z.string().optional(),
+	})
+	.passthrough();
 
-const FormsUpdateMessagesResponseSchema = z.object({
-	message: z.string().optional(),
-	success: z.boolean().optional(),
-});
+const FormsUpdateMessagesResponseSchema = z
+	.object({
+		message: z.string().optional(),
+		success: z.boolean().optional(),
+	})
+	.passthrough();
 
-const ResponsesListResponseSchema = z.object({
-	items: z
-		.array(
-			z.object({
-				token: z.string().optional(),
-				response_id: z.string().optional(),
-				submitted_at: z.string().optional(),
-				landed_at: z.string().optional(),
-				answers: z.array(ResponseAnswerSchema).optional(),
-				calculated: z
-					.object({ score: z.number().optional() })
-					.optional(),
-				metadata: z
+const ResponsesListResponseSchema = z
+	.object({
+		items: z
+			.array(
+				z
 					.object({
-						browser: z.string().optional(),
-						referer: z.string().optional(),
-						platform: z.string().optional(),
-						network_id: z.string().optional(),
-						user_agent: z.string().optional(),
+						token: z.string().optional(),
+						response_id: z.string().optional(),
+						submitted_at: z.string().optional(),
+						landed_at: z.string().optional(),
+						answers: z.array(ResponseAnswerSchema).optional(),
+						calculated: z
+							.object({ score: z.number().optional() })
+							.passthrough()
+							.optional(),
+						metadata: z
+							.object({
+								browser: z.string().optional(),
+								referer: z.string().optional(),
+								platform: z.string().optional(),
+								network_id: z.string().optional(),
+								user_agent: z.string().optional(),
+							})
+							.passthrough()
+							.optional(),
+						// hidden fields have dynamic string keys set by form creator
+						hidden: z.record(z.string()).optional(),
+						variables: z
+							.array(
+								z
+									.object({
+										key: z.string().optional(),
+										type: z.string().optional(),
+										text: z.string().optional(),
+										number: z.number().optional(),
+									})
+									.passthrough(),
+							)
+							.optional(),
 					})
-					.optional(),
-				// hidden fields have dynamic string keys set by form creator
-				hidden: z.record(z.string()).optional(),
-				variables: z
-					.array(
-						z.object({
-							key: z.string().optional(),
-							type: z.string().optional(),
-							text: z.string().optional(),
-							number: z.number().optional(),
-						}),
-					)
-					.optional(),
-			}),
-		)
-		.optional(),
-	page_count: z.number().optional(),
-	total_items: z.number().optional(),
-});
+					.passthrough(),
+			)
+			.optional(),
+		page_count: z.number().optional(),
+		total_items: z.number().optional(),
+	})
+	.passthrough();
 
-const ResponsesDeleteResponseSchema = z.object({
-	status: z.string().optional(),
-	description: z.string().optional(),
-});
+const ResponsesDeleteResponseSchema = z
+	.object({
+		status: z.string().optional(),
+		description: z.string().optional(),
+	})
+	.passthrough();
 
 // GET /responses/files returns a ZIP binary or empty body when no files exist
 const ResponsesGetAllFilesResponseSchema = z.unknown();
 
-const WorkspaceItemSchema = z.object({
-	id: z.string().optional(),
-	href: z.string().optional(),
-	name: z.string().optional(),
-	forms: WorkspaceFormsInfoSchema.optional(),
-	// members list items have no guaranteed sub-structure
-	members: z.array(WorkspaceMemberSchema).optional(),
-	shared: z.boolean().optional(),
-	default: z.boolean().optional(),
-	account_id: z.string().optional(),
-});
+const WorkspaceItemSchema = z
+	.object({
+		id: z.string().optional(),
+		href: z.string().optional(),
+		name: z.string().optional(),
+		forms: WorkspaceFormsInfoSchema.optional(),
+		// members list items have no guaranteed sub-structure
+		members: z.array(WorkspaceMemberSchema).optional(),
+		shared: z.boolean().optional(),
+		default: z.boolean().optional(),
+		account_id: z.string().optional(),
+	})
+	.passthrough();
 
-const WorkspacesListResponseSchema = z.object({
-	workspaces: z.array(WorkspaceItemSchema).optional(),
-});
+const WorkspacesListResponseSchema = z
+	.object({
+		workspaces: z.array(WorkspaceItemSchema).optional(),
+	})
+	.passthrough();
 
 const WorkspacesGetResponseSchema = WorkspaceItemSchema;
 
-const WorkspacesCreateResponseSchema = z.object({
-	id: z.string().optional(),
-	name: z.string().optional(),
-	self: z.object({ href: z.string().optional() }).optional(),
-	forms: WorkspaceFormsInfoSchema.optional(),
-	shared: z.boolean().optional(),
-	default: z.boolean().optional(),
-	members: z.array(WorkspaceMemberSchema).optional(),
-	account_id: z.string().optional(),
-});
+const WorkspacesCreateResponseSchema = z
+	.object({
+		id: z.string().optional(),
+		name: z.string().optional(),
+		self: z.object({ href: z.string().optional() }).passthrough().optional(),
+		forms: WorkspaceFormsInfoSchema.optional(),
+		shared: z.boolean().optional(),
+		default: z.boolean().optional(),
+		members: z.array(WorkspaceMemberSchema).optional(),
+		account_id: z.string().optional(),
+	})
+	.passthrough();
 
 const WorkspacesCreateForAccountResponseSchema =
 	WorkspacesCreateResponseSchema;
@@ -630,25 +773,29 @@ const ImagesGetBackgroundBySizeResponseSchema = ImageResponseSchema;
 
 const ImagesGetChoiceImageBySizeResponseSchema = ImageResponseSchema;
 
-const ThemeResponseSchema = z.object({
-	id: z.string().optional(),
-	name: z.string().optional(),
-	font: z.string().optional(),
-	visibility: z.string().optional(),
-	rounded_corners: z.string().optional(),
-	has_transparent_button: z.boolean().optional(),
-	colors: ThemeColorsSchema.optional(),
-	background: ThemeBackgroundSchema.optional(),
-	fields: ThemeFieldsSchema.optional(),
-	// screens styling has no fixed public schema
-	screens: z.record(z.unknown()).optional(),
-});
+const ThemeResponseSchema = z
+	.object({
+		id: z.string().optional(),
+		name: z.string().optional(),
+		font: z.string().optional(),
+		visibility: z.string().optional(),
+		rounded_corners: z.string().optional(),
+		has_transparent_button: z.boolean().optional(),
+		colors: ThemeColorsSchema.optional(),
+		background: ThemeBackgroundSchema.optional(),
+		fields: ThemeFieldsSchema.optional(),
+		// screens styling has no fixed public schema
+		screens: z.record(z.unknown()).optional(),
+	})
+	.passthrough();
 
-const ThemesListResponseSchema = z.object({
-	items: z.array(ThemeResponseSchema).optional(),
-	page_count: z.number().optional(),
-	total_items: z.number().optional(),
-});
+const ThemesListResponseSchema = z
+	.object({
+		items: z.array(ThemeResponseSchema).optional(),
+		page_count: z.number().optional(),
+		total_items: z.number().optional(),
+	})
+	.passthrough();
 
 const ThemesGetResponseSchema = ThemeResponseSchema;
 
@@ -661,23 +808,29 @@ const ThemesPatchResponseSchema = ThemeResponseSchema;
 // Typeform DELETE /themes returns 204 No Content (no body)
 const ThemesDeleteResponseSchema = z.unknown();
 
-const WebhooksConfigListResponseSchema = z.object({
-	webhooks: z.array(WebhookConfigSchema).optional(),
-});
+const WebhooksConfigListResponseSchema = z
+	.object({
+		webhooks: z.array(WebhookConfigSchema).optional(),
+	})
+	.passthrough();
 
 const WebhooksConfigGetResponseSchema = WebhookConfigSchema;
 
 const WebhooksConfigCreateOrUpdateResponseSchema = WebhookConfigSchema;
 
-const WebhooksConfigDeleteResponseSchema = z.object({
-	success: z.boolean().optional(),
-});
+const WebhooksConfigDeleteResponseSchema = z
+	.object({
+		success: z.boolean().optional(),
+	})
+	.passthrough();
 
-const VideosUploadResponseSchema = z.object({
-	id: z.string().optional(),
-	upload_url: z.string().optional(),
-	transcode_status: z.string().optional(),
-});
+const VideosUploadResponseSchema = z
+	.object({
+		id: z.string().optional(),
+		upload_url: z.string().optional(),
+		transcode_status: z.string().optional(),
+	})
+	.passthrough();
 
 // ── Type Exports ──────────────────────────────────────────────────────────────
 

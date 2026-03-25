@@ -155,7 +155,20 @@ export const update: TypeformEndpoints['workspacesUpdate'] = async (
 		body: operations as unknown as unknown[],
 	});
 
-	// PATCH /workspaces returns 204 No Content; no response body to upsert
+	// PATCH /workspaces returns 204 No Content; re-fetch to sync DB
+	if (ctx.db.workspaces) {
+		try {
+			const updated = await makeTypeformRequest<
+				TypeformEndpointOutputs['workspacesGet']
+			>(`/workspaces/${workspace_id}`, ctx.key);
+			const id = updated.id;
+			if (id) {
+				await ctx.db.workspaces.upsertByEntityId(id, { ...updated, id });
+			}
+		} catch (error) {
+			console.warn('Failed to re-fetch workspace after update for database sync:', error);
+		}
+	}
 
 	await logEventFromContext(
 		ctx,
@@ -176,6 +189,14 @@ export const deleteWorkspace: TypeformEndpoints['workspacesDelete'] = async (
 	>(`/workspaces/${input.workspace_id}`, ctx.key, {
 		method: 'DELETE',
 	});
+
+	if (ctx.db.workspaces) {
+		try {
+			await ctx.db.workspaces.deleteByEntityId(input.workspace_id);
+		} catch (error) {
+			console.warn('Failed to delete workspace from database:', error);
+		}
+	}
 
 	await logEventFromContext(
 		ctx,

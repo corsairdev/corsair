@@ -14,13 +14,16 @@ export const TypeformForm = z.object({
 			show_progress_bar: z.boolean().optional(),
 			show_typeform_branding: z.boolean().optional(),
 			redirect_after_submit_url: z.string().optional(),
-			// Remaining settings fields are numerous and optional
 			autosave_progress: z.boolean().optional(),
 			hide_navigation: z.boolean().optional(),
 			are_uploads_public: z.boolean().optional(),
 		})
+		.passthrough()
 		.optional(),
-	workspace: z.object({ href: z.string().optional() }).optional(),
+	workspace: z
+		.object({ href: z.string().optional() })
+		.passthrough()
+		.optional(),
 	// _links varies by context
 	_links: z.record(z.unknown()).optional(),
 });
@@ -34,7 +37,10 @@ export const TypeformResponse = z.object({
 	landed_at: z.string().optional(),
 	// Answers vary dynamically per field type; typed as array of records
 	answers: z.array(z.record(z.unknown())).optional(),
-	calculated: z.object({ score: z.number().optional() }).optional(),
+	calculated: z
+		.object({ score: z.number().optional() })
+		.passthrough()
+		.optional(),
 	metadata: z
 		.object({
 			browser: z.string().optional(),
@@ -43,6 +49,7 @@ export const TypeformResponse = z.object({
 			network_id: z.string().optional(),
 			user_agent: z.string().optional(),
 		})
+		.passthrough()
 		.optional(),
 	// hidden fields have dynamic string keys
 	hidden: z.record(z.string()).optional(),
@@ -62,14 +69,17 @@ export const TypeformWorkspace = z.object({
 			href: z.string().optional(),
 			count: z.number().optional(),
 		})
+		.passthrough()
 		.optional(),
 	members: z
 		.array(
-			z.object({
-				name: z.string().optional(),
-				role: z.string().optional(),
-				email: z.string().optional(),
-			}),
+			z
+				.object({
+					name: z.string().optional(),
+					role: z.string().optional(),
+					email: z.string().optional(),
+				})
+				.passthrough(),
 		)
 		.optional(),
 });
@@ -103,6 +113,7 @@ export const TypeformTheme = z.object({
 			question: z.string().optional(),
 			background: z.string().optional(),
 		})
+		.passthrough()
 		.optional(),
 	background: z
 		.object({
@@ -110,12 +121,14 @@ export const TypeformTheme = z.object({
 			layout: z.string().optional(),
 			brightness: z.number().optional(),
 		})
+		.passthrough()
 		.optional(),
 	fields: z
 		.object({
 			alignment: z.string().optional(),
 			font_size: z.string().optional(),
 		})
+		.passthrough()
 		.optional(),
 	// screens has no fixed structure in Typeform's schema
 	screens: z.record(z.unknown()).optional(),

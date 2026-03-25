@@ -56,6 +56,20 @@ export const deleteResponses: TypeformEndpoints['responsesDelete'] = async (
 		query: { included_response_ids: input.included_response_ids },
 	});
 
+	if (ctx.db.responses) {
+		const ids = input.included_response_ids
+			.split(',')
+			.map(id => id.trim())
+			.filter(Boolean);
+		for (const id of ids) {
+			try {
+				await ctx.db.responses.deleteByEntityId(id);
+			} catch (error) {
+				console.warn('Failed to delete response from database:', error);
+			}
+		}
+	}
+
 	await logEventFromContext(
 		ctx,
 		'typeform.responses.delete',

@@ -70,6 +70,14 @@ export const deleteImage: TypeformEndpoints['imagesDelete'] = async (
 		method: 'DELETE',
 	});
 
+	if (ctx.db.images) {
+		try {
+			await ctx.db.images.deleteByEntityId(input.image_id);
+		} catch (error) {
+			console.warn('Failed to delete image from database:', error);
+		}
+	}
+
 	await logEventFromContext(
 		ctx,
 		'typeform.images.delete',
@@ -88,6 +96,15 @@ export const getBySize: TypeformEndpoints['imagesGetBySize'] = async (
 		TypeformEndpointOutputs['imagesGetBySize']
 	>(`/images/${input.image_id}/${input.size}`, ctx.key);
 
+	const id = response.id;
+	if (id && ctx.db.images) {
+		try {
+			await ctx.db.images.upsertByEntityId(id, { ...response, id });
+		} catch (error) {
+			console.warn('Failed to save image to database:', error);
+		}
+	}
+
 	await logEventFromContext(
 		ctx,
 		'typeform.images.getBySize',
@@ -104,6 +121,15 @@ export const getBackgroundBySize: TypeformEndpoints['imagesGetBackgroundBySize']
 			TypeformEndpointOutputs['imagesGetBackgroundBySize']
 		>(`/images/${input.image_id}/background/${input.size}`, ctx.key);
 
+		const id = response.id;
+		if (id && ctx.db.images) {
+			try {
+				await ctx.db.images.upsertByEntityId(id, { ...response, id });
+			} catch (error) {
+				console.warn('Failed to save image to database:', error);
+			}
+		}
+
 		await logEventFromContext(
 			ctx,
 			'typeform.images.getBackgroundBySize',
@@ -119,6 +145,15 @@ export const getChoiceImageBySize: TypeformEndpoints['imagesGetChoiceImageBySize
 		const response = await makeTypeformRequest<
 			TypeformEndpointOutputs['imagesGetChoiceImageBySize']
 		>(`/images/${input.image_id}/choice/${input.size}`, ctx.key);
+
+		const id = response.id;
+		if (id && ctx.db.images) {
+			try {
+				await ctx.db.images.upsertByEntityId(id, { ...response, id });
+			} catch (error) {
+				console.warn('Failed to save image to database:', error);
+			}
+		}
 
 		await logEventFromContext(
 			ctx,

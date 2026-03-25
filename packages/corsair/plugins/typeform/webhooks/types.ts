@@ -49,48 +49,59 @@ export type TypeformWebhookOutputs = {
 
 // ── Zod Schemas for Webhook Payloads ─────────────────────────────────────────
 
-export const TypeformFormResponsePayloadSchema = z.object({
-	event_id: z.string(),
-	event_type: z.string(),
-	form_response: z.object({
-		form_id: z.string(),
-		token: z.string(),
-		submitted_at: z.string(),
-		landed_at: z.string(),
-		// hidden fields have dynamic keys; typed as string record
-		hidden: z.record(z.string()).optional(),
-		calculated: z.object({ score: z.number().optional() }).optional(),
-		definition: z
+export const TypeformFormResponsePayloadSchema = z
+	.object({
+		event_id: z.string(),
+		event_type: z.string(),
+		form_response: z
 			.object({
-				id: z.string().optional(),
-				title: z.string().optional(),
-				// fields within definition have variable shape per form
-				fields: z.array(z.record(z.unknown())).optional(),
+				form_id: z.string(),
+				token: z.string(),
+				submitted_at: z.string(),
+				landed_at: z.string(),
+				// hidden fields have dynamic keys; typed as string record
+				hidden: z.record(z.string()).optional(),
+				calculated: z
+					.object({ score: z.number().optional() })
+					.passthrough()
+					.optional(),
+				definition: z
+					.object({
+						id: z.string().optional(),
+						title: z.string().optional(),
+						// fields within definition have variable shape per form
+						fields: z.array(z.record(z.unknown())).optional(),
+					})
+					.passthrough()
+					.optional(),
+				// answers have dynamic shape depending on each field's type
+				answers: z.array(z.record(z.unknown())).optional(),
+				variables: z
+					.array(
+						z
+							.object({
+								key: z.string().optional(),
+								type: z.string().optional(),
+								text: z.string().optional(),
+								number: z.number().optional(),
+							})
+							.passthrough(),
+					)
+					.optional(),
+				metadata: z
+					.object({
+						browser: z.string().optional(),
+						referer: z.string().optional(),
+						platform: z.string().optional(),
+						network_id: z.string().optional(),
+						user_agent: z.string().optional(),
+					})
+					.passthrough()
+					.optional(),
 			})
-			.optional(),
-		// answers have dynamic shape depending on each field's type
-		answers: z.array(z.record(z.unknown())).optional(),
-		variables: z
-			.array(
-				z.object({
-					key: z.string().optional(),
-					type: z.string().optional(),
-					text: z.string().optional(),
-					number: z.number().optional(),
-				}),
-			)
-			.optional(),
-		metadata: z
-			.object({
-				browser: z.string().optional(),
-				referer: z.string().optional(),
-				platform: z.string().optional(),
-				network_id: z.string().optional(),
-				user_agent: z.string().optional(),
-			})
-			.optional(),
-	}),
-});
+			.passthrough(),
+	})
+	.passthrough();
 
 export const TypeformFormResponseEventSchema = TypeformFormResponsePayloadSchema;
 

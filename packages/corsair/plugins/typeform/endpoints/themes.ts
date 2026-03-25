@@ -159,6 +159,14 @@ export const deleteTheme: TypeformEndpoints['themesDelete'] = async (
 		method: 'DELETE',
 	});
 
+	if (ctx.db.themes) {
+		try {
+			await ctx.db.themes.deleteByEntityId(input.theme_id);
+		} catch (error) {
+			console.warn('Failed to delete theme from database:', error);
+		}
+	}
+
 	await logEventFromContext(
 		ctx,
 		'typeform.themes.delete',

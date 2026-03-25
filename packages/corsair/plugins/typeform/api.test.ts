@@ -338,14 +338,13 @@ describe('Typeform API Type Tests', () => {
 
 		it('workspacesCreateForAccount returns correct type', async () => {
 			// Fetch account_id from /me (the actual API returns it as a top-level field)
-			// MeGetResponseSchema uses z.record so extra fields pass through
-			const meResponse = await makeTypeformRequest<MeGetResponse & Record<string, unknown>>(
+			// MeGetResponseSchema uses passthrough so extra fields are preserved in the inferred type
+			const meResponse = await makeTypeformRequest<MeGetResponse>(
 				'/me',
 				TEST_ACCESS_TOKEN,
 			);
 
-			// account_id is not in the typed schema but present in the actual response
-			const accountId = (meResponse as Record<string, unknown>).account_id as string | undefined;
+			const accountId = meResponse.account_id as string | undefined;
 			if (!accountId) return;
 
 			const response = await makeTypeformRequest<WorkspacesCreateForAccountResponse>(

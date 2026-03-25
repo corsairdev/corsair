@@ -95,11 +95,32 @@ export const createOrUpdate: TypeformEndpoints['webhooksConfigCreateOrUpdate'] =
 
 export const deleteWebhookConfig: TypeformEndpoints['webhooksConfigDelete'] =
 	async (ctx, input) => {
+		// Look up DB entity ID before deletion so we can remove it from the local store
+		let webhookEntityId: string | undefined;
+		if (ctx.db.webhookConfigs) {
+			try {
+				const existing = await ctx.db.webhookConfigs.search({
+					data: { tag: input.tag, form_id: input.form_id },
+				});
+				webhookEntityId = existing[0]?.id;
+			} catch {
+				// ignore — best-effort pre-fetch
+			}
+		}
+
 		const response = await makeTypeformRequest<
 			TypeformEndpointOutputs['webhooksConfigDelete']
 		>(`/forms/${input.form_id}/webhooks/${input.tag}`, ctx.key, {
 			method: 'DELETE',
 		});
+
+		if (webhookEntityId && ctx.db.webhookConfigs) {
+			try {
+				await ctx.db.webhookConfigs.deleteByEntityId(webhookEntityId);
+			} catch (error) {
+				console.warn('Failed to delete webhook config from database:', error);
+			}
+		}
 
 		await logEventFromContext(
 			ctx,

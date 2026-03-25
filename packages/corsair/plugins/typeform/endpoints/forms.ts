@@ -137,6 +137,21 @@ export const patch: TypeformEndpoints['formsPatch'] = async (ctx, input) => {
 		body: operations as unknown as unknown[],
 	});
 
+	// PATCH /forms returns 204 No Content; re-fetch to sync DB
+	if (ctx.db.forms) {
+		try {
+			const updated = await makeTypeformRequest<
+				TypeformEndpointOutputs['formsGet']
+			>(`/forms/${form_id}`, ctx.key);
+			const id = updated.id;
+			if (id) {
+				await ctx.db.forms.upsertByEntityId(id, { ...updated, id });
+			}
+		} catch (error) {
+			console.warn('Failed to re-fetch form after patch for database sync:', error);
+		}
+	}
+
 	await logEventFromContext(
 		ctx,
 		'typeform.forms.patch',
@@ -156,6 +171,14 @@ export const deleteForm: TypeformEndpoints['formsDelete'] = async (
 	>(`/forms/${input.form_id}`, ctx.key, {
 		method: 'DELETE',
 	});
+
+	if (ctx.db.forms) {
+		try {
+			await ctx.db.forms.deleteByEntityId(input.form_id);
+		} catch (error) {
+			console.warn('Failed to delete form from database:', error);
+		}
+	}
 
 	await logEventFromContext(
 		ctx,
