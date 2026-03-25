@@ -182,6 +182,11 @@
       "types": "./dist/plugins/spotify/index.d.ts",
       "default": "./dist/plugins/spotify/index.js"
     },
+    "./plugins/strava": {
+      "dev-source": "./plugins/strava/index.ts",
+      "types": "./dist/plugins/strava/index.d.ts",
+      "default": "./dist/plugins/strava/index.js"
+    },
     "./plugins/stripe": {
       "dev-source": "./plugins/stripe/index.ts",
       "types": "./dist/plugins/stripe/index.d.ts",

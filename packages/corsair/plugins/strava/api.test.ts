@@ -1,0 +1,292 @@
+import dotenv from 'dotenv';
+import { makeStravaRequest } from './client';
+import type {
+	ActivitiesListResponse,
+	ActivityResponse,
+	AthleteResponse,
+	AthleteStatsResponse,
+	AthleteZonesResponse,
+	ExploreSegmentsResponse,
+	SegmentResponse,
+	SegmentsListResponse,
+	StreamSetResponse,
+	ActivitiesListLapsResponse,
+	ActivitiesListCommentsResponse,
+	ActivitiesListKudoersResponse,
+	ActivityZonesResponse,
+	UploadResponse,
+} from './endpoints/types';
+import { StravaEndpointOutputSchemas } from './endpoints/types';
+
+dotenv.config();
+
+const ACCESS_TOKEN = process.env.STRAVA_ACCESS_TOKEN!;
+const ATHLETE_ID = parseInt(process.env.STRAVA_ATHLETE_ID || '0');
+
+describe('Strava API Type Tests', () => {
+	describe('activities', () => {
+		let firstActivityId: number | undefined;
+
+		beforeAll(async () => {
+			const activities = await makeStravaRequest<ActivitiesListResponse>(
+				'athlete/activities',
+				ACCESS_TOKEN,
+				{ query: { per_page: 1 } },
+			);
+			firstActivityId = activities[0]?.id;
+		});
+
+		it('activitiesList returns correct type', async () => {
+			const response = await makeStravaRequest<ActivitiesListResponse>(
+				'athlete/activities',
+				ACCESS_TOKEN,
+				{ query: { per_page: 5 } },
+			);
+			StravaEndpointOutputSchemas.activitiesList.parse(response);
+		});
+
+		it('activitiesGet returns correct type', async () => {
+			if (!firstActivityId) {
+				console.warn('No activities found, skipping activitiesGet test');
+				return;
+			}
+
+			const response = await makeStravaRequest<ActivityResponse>(
+				`activities/${firstActivityId}`,
+				ACCESS_TOKEN,
+			);
+			StravaEndpointOutputSchemas.activitiesGet.parse(response);
+		});
+
+		it('activitiesGetStreams returns correct type', async () => {
+			if (!firstActivityId) {
+				console.warn('No activities found, skipping activitiesGetStreams test');
+				return;
+			}
+
+			const response = await makeStravaRequest<StreamSetResponse>(
+				`activities/${firstActivityId}/streams`,
+				ACCESS_TOKEN,
+				{ query: { keys: 'time,distance', key_by_type: true } },
+			);
+			StravaEndpointOutputSchemas.activitiesGetStreams.parse(response);
+		});
+
+		it('activitiesListComments returns correct type', async () => {
+			if (!firstActivityId) {
+				console.warn(
+					'No activities found, skipping activitiesListComments test',
+				);
+				return;
+			}
+
+			const response = await makeStravaRequest<ActivitiesListCommentsResponse>(
+				`activities/${firstActivityId}/comments`,
+				ACCESS_TOKEN,
+				{ query: { per_page: 10 } },
+			);
+			StravaEndpointOutputSchemas.activitiesListComments.parse(response);
+		});
+
+		it('activitiesListKudoers returns correct type', async () => {
+			if (!firstActivityId) {
+				console.warn(
+					'No activities found, skipping activitiesListKudoers test',
+				);
+				return;
+			}
+
+			const response = await makeStravaRequest<ActivitiesListKudoersResponse>(
+				`activities/${firstActivityId}/kudos`,
+				ACCESS_TOKEN,
+				{ query: { per_page: 10 } },
+			);
+			StravaEndpointOutputSchemas.activitiesListKudoers.parse(response);
+		});
+
+		it('activitiesListLaps returns correct type', async () => {
+			if (!firstActivityId) {
+				console.warn('No activities found, skipping activitiesListLaps test');
+				return;
+			}
+
+			const response = await makeStravaRequest<ActivitiesListLapsResponse>(
+				`activities/${firstActivityId}/laps`,
+				ACCESS_TOKEN,
+			);
+			StravaEndpointOutputSchemas.activitiesListLaps.parse(response);
+		});
+	});
+
+	describe('athlete', () => {
+		let athleteId: number | undefined;
+
+		beforeAll(async () => {
+			const athlete = await makeStravaRequest<AthleteResponse>(
+				'athlete',
+				ACCESS_TOKEN,
+			);
+			athleteId = athlete.id;
+		});
+
+		it('athleteGet returns correct type', async () => {
+			const response = await makeStravaRequest<AthleteResponse>(
+				'athlete',
+				ACCESS_TOKEN,
+			);
+			StravaEndpointOutputSchemas.athleteGet.parse(response);
+		});
+
+		it('athleteGetStats returns correct type', async () => {
+			const id = athleteId ?? ATHLETE_ID;
+			if (!id) {
+				console.warn('No athlete ID available, skipping athleteGetStats test');
+				return;
+			}
+
+			const response = await makeStravaRequest<AthleteStatsResponse>(
+				`athletes/${id}/stats`,
+				ACCESS_TOKEN,
+			);
+			StravaEndpointOutputSchemas.athleteGetStats.parse(response);
+		});
+
+		it('athleteGetZones returns correct type', async () => {
+			const response = await makeStravaRequest<AthleteZonesResponse>(
+				'athlete/zones',
+				ACCESS_TOKEN,
+			);
+			StravaEndpointOutputSchemas.athleteGetZones.parse(response);
+		});
+	});
+
+	describe('segments', () => {
+		let firstSegmentId: number | undefined;
+
+		beforeAll(async () => {
+			const segments = await makeStravaRequest<SegmentsListResponse>(
+				'segments/starred',
+				ACCESS_TOKEN,
+				{ query: { per_page: 1 } },
+			);
+			firstSegmentId = segments[0]?.id;
+		});
+
+		it('segmentsList returns correct type', async () => {
+			const response = await makeStravaRequest<SegmentsListResponse>(
+				'segments/starred',
+				ACCESS_TOKEN,
+				{ query: { per_page: 5 } },
+			);
+			StravaEndpointOutputSchemas.segmentsList.parse(response);
+		});
+
+		it('segmentsGet returns correct type', async () => {
+			if (!firstSegmentId) {
+				console.warn('No starred segments found, skipping segmentsGet test');
+				return;
+			}
+
+			const response = await makeStravaRequest<SegmentResponse>(
+				`segments/${firstSegmentId}`,
+				ACCESS_TOKEN,
+			);
+			StravaEndpointOutputSchemas.segmentsGet.parse(response);
+		});
+
+		it('segmentsExplore returns correct type', async () => {
+			const response = await makeStravaRequest<ExploreSegmentsResponse>(
+				'segments/explore',
+				ACCESS_TOKEN,
+				{
+					query: {
+						bounds: '37.821362,-122.505373,37.842038,-122.465977',
+						activity_type: 'riding',
+					},
+				},
+			);
+			StravaEndpointOutputSchemas.segmentsExplore.parse(response);
+		});
+	});
+
+	describe('routes', () => {
+		const routeId = process.env.STRAVA_ROUTE_ID
+			? parseInt(process.env.STRAVA_ROUTE_ID)
+			: undefined;
+
+		it('routesGet returns correct type', async () => {
+			if (!routeId) {
+				console.warn('STRAVA_ROUTE_ID not set, skipping routesGet test');
+				return;
+			}
+
+			const response = await makeStravaRequest(
+				`routes/${routeId}`,
+				ACCESS_TOKEN,
+			);
+			StravaEndpointOutputSchemas.routesGet.parse(response);
+		});
+	});
+
+	describe('gear', () => {
+		it('gearGet returns correct type', async () => {
+			const athlete = await makeStravaRequest<AthleteResponse>(
+				'athlete',
+				ACCESS_TOKEN,
+			);
+
+			// Strava athlete response includes bikes/shoes arrays not in the base schema; cast to access them
+			const gearId =
+				(athlete as Record<string, unknown> & { bikes?: { id: string }[]; shoes?: { id: string }[] })
+					?.bikes?.[0]?.id ??
+				(athlete as Record<string, unknown> & { bikes?: { id: string }[]; shoes?: { id: string }[] })
+					?.shoes?.[0]?.id;
+
+			if (!gearId) {
+				console.warn('No gear found in athlete profile, skipping gearGet test');
+				return;
+			}
+
+			const response = await makeStravaRequest(
+				`gear/${gearId}`,
+				ACCESS_TOKEN,
+			);
+			StravaEndpointOutputSchemas.gearGet.parse(response);
+		});
+	});
+
+	describe('clubs', () => {
+		it('clubsGet returns correct type', async () => {
+			const clubId = process.env.STRAVA_CLUB_ID
+				? parseInt(process.env.STRAVA_CLUB_ID)
+				: undefined;
+
+			if (!clubId) {
+				console.warn('STRAVA_CLUB_ID not set, skipping clubsGet test');
+				return;
+			}
+
+			const response = await makeStravaRequest(`clubs/${clubId}`, ACCESS_TOKEN);
+			StravaEndpointOutputSchemas.clubsGet.parse(response);
+		});
+	});
+
+	describe('uploads', () => {
+		it('uploadsGet returns correct type', async () => {
+			const uploadId = process.env.STRAVA_UPLOAD_ID
+				? parseInt(process.env.STRAVA_UPLOAD_ID)
+				: undefined;
+
+			if (!uploadId) {
+				console.warn('STRAVA_UPLOAD_ID not set, skipping uploadsGet test');
+				return;
+			}
+
+			const response = await makeStravaRequest<UploadResponse>(
+				`uploads/${uploadId}`,
+				ACCESS_TOKEN,
+			);
+			StravaEndpointOutputSchemas.uploadsGet.parse(response);
+		});
+	});
+});

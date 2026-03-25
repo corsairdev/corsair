@@ -41,6 +41,7 @@ export const BaseProviders = [
 	'sentry',
 	'slack',
 	'spotify',
+	'strava',
 	'stripe',
 	'tavily',
 	'teams',
@@ -81,6 +82,7 @@ export type AllProviders =
 	| 'sentry'
 	| 'slack'
 	| 'spotify'
+	| 'strava'
 	| 'stripe'
 	| 'tavily'
 	| 'teams'
