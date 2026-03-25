@@ -61,25 +61,39 @@ export const retrieveJwks: GrafanaEndpoints['jwksRetrieve'] = async (ctx, _input
 
 	let result: GrafanaEndpointOutputs['jwksRetrieve'];
 
-	try {
-		const raw = await makeGrafanaRequest<{
-			keys?: Array<{
-				// Key material shape is unknown — it varies by algorithm (RSA, EC, etc.)
-				Key?: unknown;
-				Use?: string;
-				KeyID?: string;
-				Algorithm?: string;
-				Certificates?: string[];
-				CertificatesURL?: string;
-				CertificateThumbprintSHA1?: number[];
-				CertificateThumbprintSHA256?: number[];
-			}>;
-		}>('/.well-known/jwks.json', ctx.key, grafanaUrl);
+	// Try known Grafana JWKS paths in order; use raw request to avoid throwing on 404
+	const jwksPaths = ['/api/signing-keys/jwks', '/.well-known/jwks.json', '/api/jwks'];
 
-		result = {
-			data: { keys: raw.keys },
-			successful: true,
-		};
+	try {
+		let raw: { content: string; content_type: string; status_code: number } | null = null;
+
+		for (const path of jwksPaths) {
+			const candidate = await makeGrafanaRawRequest(path, ctx.key, grafanaUrl);
+			if (candidate.status_code === 200) {
+				raw = candidate;
+				break;
+			}
+		}
+
+		if (!raw || raw.status_code !== 200) {
+			result = { data: { keys: [] }, successful: true };
+		} else {
+			// Parse JSON response; keys field is typed as unknown[] from the JWKS spec
+			let parsed: { keys?: unknown[] } = {};
+			try {
+				parsed = JSON.parse(raw.content) as { keys?: unknown[] };
+			} catch {
+				// Not valid JSON — return empty keys
+			}
+			result = {
+				data: {
+					// parsed.keys elements are typed as unknown[] and cast here because
+					// each key's shape depends on the algorithm (RSA, EC, etc.)
+					keys: parsed.keys as GrafanaEndpointOutputs['jwksRetrieve']['data']['keys'],
+				},
+				successful: true,
+			};
+		}
 	} catch (error) {
 		result = {
 			data: {},

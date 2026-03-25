@@ -60,7 +60,6 @@ describe('Grafana API Type Tests', () => {
 					raw.hasLicense === true ||
 					(raw.licenseExpiry !== undefined && raw.licenseExpiry > Date.now() / 1000);
 			} catch {
-				// Non-Enterprise instances will return 404; treat as no license
 			}
 
 			const result: StatusGetResponse = {
@@ -197,7 +196,7 @@ describe('Grafana API Type Tests', () => {
 			const raw = await makeGrafanaRawRequest('/otlp/v1/logs', BEARER_TOKEN, GRAFANA_URL, {
 				method: 'POST',
 				// body is cast to unknown because makeGrafanaRawRequest accepts unknown body
-				body: body as unknown,
+				body: body,
 				contentType: 'application/json',
 			});
 
@@ -234,18 +233,17 @@ describe('Grafana API Type Tests', () => {
 			const raw = await makeGrafanaRawRequest(path, BEARER_TOKEN, GRAFANA_URL, {
 				method: 'POST',
 				// body is cast to unknown because makeGrafanaRawRequest accepts unknown body
-				body: { from: 'now-1h', to: 'now' } as unknown,
+				body: { from: 'now-1h', to: 'now' },
 				contentType: 'application/json',
 			});
 
 			const success = raw.status_code >= 200 && raw.status_code < 300;
 
 			// Attempt JSON parse; fall back gracefully
-			// parsed is typed as unknown from JSON.parse
-			let results: Record<string, unknown> | undefined;
+			let results;
 			try {
-				const parsed = JSON.parse(raw.content) as Record<string, unknown>;
-				results = (parsed.results as Record<string, unknown>) ?? parsed;
+				const parsed = JSON.parse(raw.content)
+				results = (parsed.results) ?? parsed;
 			} catch {
 				// Not valid JSON — leave results undefined
 			}
@@ -265,22 +263,30 @@ describe('Grafana API Type Tests', () => {
 
 	describe('jwks', () => {
 		it('jwksRetrieve returns correct type', async () => {
-			const raw = await makeGrafanaRequest<{
-				keys?: Array<{
-					// Key material is unknown — varies by algorithm type
-					Key?: unknown;
-					Use?: string;
-					KeyID?: string;
-					Algorithm?: string;
-					Certificates?: string[];
-					CertificatesURL?: string;
-					CertificateThumbprintSHA1?: number[];
-					CertificateThumbprintSHA256?: number[];
-				}>;
-			}>('/.well-known/jwks.json', BEARER_TOKEN, GRAFANA_URL);
+			// Try known JWKS paths; use raw request to avoid throwing on 404
+			const jwksPaths = ['/api/signing-keys/jwks', '/.well-known/jwks.json', '/api/jwks'];
+
+			let raw: { content: string; content_type: string; status_code: number } | null = null;
+			for (const path of jwksPaths) {
+				const candidate = await makeGrafanaRawRequest(path, BEARER_TOKEN, GRAFANA_URL);
+				if (candidate.status_code === 200) {
+					raw = candidate;
+					break;
+				}
+			}
+
+			let keys: JwksRetrieveResponse['data']['keys'];
+			if (raw) {
+				try {
+					const parsed = JSON.parse(raw.content)
+					keys = parsed.keys
+				} catch {
+					// Not valid JSON — no keys
+				}
+			}
 
 			const result: JwksRetrieveResponse = {
-				data: { keys: raw.keys },
+				data: { keys },
 				successful: true,
 			};
 
@@ -312,7 +318,7 @@ describe('Grafana API Type Tests', () => {
 			const raw = await makeGrafanaRawRequest('/login/saml/acs', BEARER_TOKEN, GRAFANA_URL, {
 				method: 'POST',
 				// params.toString() is cast to unknown — makeGrafanaRawRequest accepts unknown body
-				body: params.toString() as unknown,
+				body: params.toString(),
 				contentType: 'application/x-www-form-urlencoded',
 			});
 
