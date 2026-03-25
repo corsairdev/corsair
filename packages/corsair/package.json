@@ -87,6 +87,11 @@
       "types": "./dist/plugins/github/index.d.ts",
       "default": "./dist/plugins/github/index.js"
     },
+    "./plugins/grafana": {
+      "dev-source": "./plugins/grafana/index.ts",
+      "types": "./dist/plugins/grafana/index.d.ts",
+      "default": "./dist/plugins/grafana/index.js"
+    },
     "./plugins/gmail": {
       "dev-source": "./plugins/gmail/index.ts",
       "types": "./dist/plugins/gmail/index.d.ts",

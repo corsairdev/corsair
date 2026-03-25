@@ -18,6 +18,14 @@ export {
 	type GithubWebhooks,
 	github,
 } from './github';
+// Grafana Plugin
+export {
+	type GrafanaBoundEndpoints,
+	type GrafanaContext,
+	type GrafanaEndpoints,
+	type GrafanaPluginOptions,
+	grafana,
+} from './grafana';
 // Gmail Plugin
 export {
 	type GmailBoundEndpoints,
