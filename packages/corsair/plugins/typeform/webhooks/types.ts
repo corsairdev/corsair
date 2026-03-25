@@ -111,14 +111,21 @@ export function createTypeformMatch(eventType: string): CorsairWebhookMatcher {
  * Verifies a Typeform webhook signature.
  * Typeform signs the raw request body using HMAC-SHA256 and base64-encodes the result.
  * The signature is sent in the `Typeform-Signature` header as `sha256=<base64_hmac>`.
- * Uses rawBody from the WebhookRequest for accurate HMAC computation.
+ *
+ * Typeform signs compact JSON with a trailing newline (`body\n`). The webhook pipeline
+ * re-serialises the parsed body without that newline, so the HMAC is computed over
+ * several candidates (compact, compact+LF, compact+CRLF, 2-space pretty) until one
+ * matches.
  */
 export function verifyTypeformWebhookSignature(
 	request: WebhookRequest<unknown>,
 	secret: string,
 ): { valid: boolean; error?: string } {
+	if (!secret) {
+		return { valid: false, error: 'Missing webhook secret' };
+	}
+
 	const headers = request.headers;
-	// Headers can be string | string[] | undefined; normalize to string
 	const signatureHeaderRaw =
 		headers['typeform-signature'] ?? headers['Typeform-Signature'];
 	const signatureHeader = Array.isArray(signatureHeaderRaw)
@@ -135,22 +142,32 @@ export function verifyTypeformWebhookSignature(
 
 	const receivedSignature = signatureHeader.slice('sha256='.length);
 
-	// Prefer rawBody for exact bytes; fall back to re-serializing the payload
-	const bodyToSign =
-		request.rawBody ?? JSON.stringify(request.payload);
+	const rawBody = request.rawBody ?? JSON.stringify(request.payload);
 
-	const expectedSignature = crypto
-		.createHmac('sha256', secret)
-		.update(bodyToSign)
-		.digest('base64');
-
+	const candidates: string[] = [rawBody, rawBody + '\n', rawBody + '\r\n'];
 	try {
-		const isValid = crypto.timingSafeEqual(
-			Buffer.from(receivedSignature),
-			Buffer.from(expectedSignature),
-		);
-		return { valid: isValid, error: isValid ? undefined : 'Invalid signature' };
+		const pretty = JSON.stringify(JSON.parse(rawBody), null, 2);
+		if (pretty !== rawBody) {
+			candidates.push(pretty);
+		}
 	} catch {
-		return { valid: false, error: 'Signature comparison failed' };
+		// not valid JSON — keep only the compact candidates
 	}
+
+	const computeSignature = (body: string) =>
+		crypto.createHmac('sha256', secret).update(body).digest('base64');
+
+	const isValid = candidates.some(body => {
+		const expected = computeSignature(body);
+		try {
+			return crypto.timingSafeEqual(
+				Buffer.from(receivedSignature),
+				Buffer.from(expected),
+			);
+		} catch {
+			return false;
+		}
+	});
+
+	return { valid: isValid, error: isValid ? undefined : 'Invalid signature' };
 }
