@@ -217,6 +217,11 @@
       "types": "./dist/plugins/twitterapiio/index.d.ts",
       "default": "./dist/plugins/twitterapiio/index.js"
     },
+    "./plugins/youtube": {
+      "dev-source": "./plugins/youtube/index.ts",
+      "types": "./dist/plugins/youtube/index.d.ts",
+      "default": "./dist/plugins/youtube/index.js"
+    },
     "./plugins/zoom": {
       "dev-source": "./plugins/zoom/index.ts",
       "types": "./dist/plugins/zoom/index.d.ts",
