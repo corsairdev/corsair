@@ -42,6 +42,19 @@ export const fileVersionUpdate: FigmaWebhooks['fileVersionUpdate'] = {
 			}
 		}
 
+		if (ctx.db.fileMetadata) {
+			try {
+				await ctx.db.fileMetadata.upsertByEntityId(event.file_key, {
+					id: event.file_key,
+					name: event.file_name,
+					last_modified: event.timestamp,
+					version: event.version_id,
+				});
+			} catch (error) {
+				console.warn('Failed to save file metadata from version update to database:', error);
+			}
+		}
+
 		await logEventFromContext(
 			ctx,
 			'figma.webhook.fileVersionUpdate',

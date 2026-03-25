@@ -14,6 +14,8 @@ import type {
 	FilesGetNodesResponse,
 	FilesRenderImagesResponse,
 	FilesGetProjectFilesResponse,
+	ComponentsGetResponse,
+	ComponentSetsGetResponse,
 	ComponentsGetForFileResponse,
 	ComponentSetsGetForFileResponse,
 	ComponentsGetForTeamResponse,
@@ -67,6 +69,7 @@ describe('Figma API Type Tests', () => {
 			}
 
 			// filesGetMetadata shares the same Figma endpoint as filesGetJSON; use cached data
+			// type assertion: FilesGetJSONResponse has compatible shape with FilesGetMetadataResponse
 			const result = cachedFileData as FilesGetMetadataResponse;
 			FigmaEndpointOutputSchemas.filesGetMetadata.parse(result);
 		});
@@ -104,6 +107,7 @@ describe('Figma API Type Tests', () => {
 			}
 
 			// Use cached file data to avoid a redundant slow API call
+			// type assertion: reusing the already-fetched FilesGetJSONResponse for schema validation
 			const result = cachedFileData as FilesGetJSONResponse;
 			FigmaEndpointOutputSchemas.filesGetJSON.parse(result);
 		});
@@ -128,6 +132,7 @@ describe('Figma API Type Tests', () => {
 
 			// any: document is typed as unknown due to recursive Figma node tree structure
 			const doc = cachedFileData?.document as Record<string, unknown> | undefined;
+			// type assertion: id property on Figma document nodes is always a string
 			const nodeId = doc?.id as string | undefined;
 			if (!nodeId) {
 				console.warn('No document node ID found - skipping filesGetNodes test');
@@ -150,7 +155,9 @@ describe('Figma API Type Tests', () => {
 
 			// any: document is typed as unknown due to recursive Figma node tree structure
 			const doc = cachedFileData?.document as Record<string, unknown> | undefined;
+			// type assertion: children on Figma document nodes are an array with id properties
 			const children = doc?.children as Array<{ id?: string }> | undefined;
+			// type assertion: fallback to doc.id which is a string on Figma document nodes
 			const nodeId = children?.[0]?.id ?? (doc?.id as string | undefined);
 			if (!nodeId) {
 				console.warn('No node ID found - skipping filesRenderImages test');
@@ -432,6 +439,9 @@ describe('Figma API Type Tests', () => {
 	});
 
 	describe('components', () => {
+		let testComponentKey: string | undefined;
+		let testComponentSetKey: string | undefined;
+
 		it('componentsGetForFile returns correct type', async () => {
 			if (!TEST_FILE_KEY) {
 				throw new Error('TEST_FIGMA_FILE_KEY env var is required');
@@ -443,6 +453,7 @@ describe('Figma API Type Tests', () => {
 					TEST_API_KEY,
 				);
 
+				testComponentKey = result.meta?.components?.[0]?.key;
 				FigmaEndpointOutputSchemas.componentsGetForFile.parse(result);
 			} catch (error) {
 				if (
@@ -470,6 +481,7 @@ describe('Figma API Type Tests', () => {
 					TEST_API_KEY,
 				);
 
+				testComponentSetKey = result.meta?.component_sets?.[0]?.key;
 				FigmaEndpointOutputSchemas.componentSetsGetForFile.parse(result);
 			} catch (error) {
 				if (
@@ -536,6 +548,61 @@ describe('Figma API Type Tests', () => {
 						error.message.includes('Not Found'))
 				) {
 					console.warn('componentSetsGetForTeam: access denied - skipping');
+					return;
+				}
+				throw error;
+			}
+		});
+		it('componentsGet returns correct type', async () => {
+			if (!testComponentKey) {
+				console.warn('No component key available from componentsGetForFile - skipping');
+				return;
+			}
+
+			try {
+				const result = await makeFigmaRequest<ComponentsGetResponse>(
+					`v1/components/${testComponentKey}`,
+					TEST_API_KEY,
+				);
+
+				FigmaEndpointOutputSchemas.componentsGet.parse(result);
+			} catch (error) {
+				if (
+					error instanceof Error &&
+					(error.message.includes('403') ||
+						error.message.includes('Forbidden') ||
+						error.message.includes('404') ||
+						error.message.includes('Not Found'))
+				) {
+					console.warn('componentsGet: access denied - skipping');
+					return;
+				}
+				throw error;
+			}
+		});
+
+		it('componentSetsGet returns correct type', async () => {
+			if (!testComponentSetKey) {
+				console.warn('No component set key available from componentSetsGetForFile - skipping');
+				return;
+			}
+
+			try {
+				const result = await makeFigmaRequest<ComponentSetsGetResponse>(
+					`v1/component_sets/${testComponentSetKey}`,
+					TEST_API_KEY,
+				);
+
+				FigmaEndpointOutputSchemas.componentSetsGet.parse(result);
+			} catch (error) {
+				if (
+					error instanceof Error &&
+					(error.message.includes('403') ||
+						error.message.includes('Forbidden') ||
+						error.message.includes('404') ||
+						error.message.includes('Not Found'))
+				) {
+					console.warn('componentSetsGet: access denied - skipping');
 					return;
 				}
 				throw error;

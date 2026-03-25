@@ -31,6 +31,7 @@ export const discoverResources: FigmaEndpoints['designToolsDiscoverResources'] =
 		try {
 			const projectResult = await makeFigmaRequest<{
 				name?: string;
+				// unknown: project file list items have dynamic structure per Figma API response
 				files?: unknown[];
 			}>(`v1/projects/${input.project_id}/files`, ctx.key, { method: 'GET' });
 			projects.push({ id: input.project_id, ...projectResult });
@@ -46,6 +47,7 @@ export const discoverResources: FigmaEndpoints['designToolsDiscoverResources'] =
 		try {
 			const teamResult = await makeFigmaRequest<{
 				name?: string;
+				// unknown: team project list items have dynamic structure per Figma API response
 				projects?: unknown[];
 			}>(`v1/teams/${input.team_id}/projects`, ctx.key, { method: 'GET' });
 			teams.push({ id: input.team_id, ...teamResult });
@@ -98,7 +100,8 @@ export const extractDesignTokens: FigmaEndpoints['designToolsExtractDesignTokens
 	if (input.include_local_styles) {
 		try {
 			const stylesResult = await makeFigmaRequest<{
-				meta?: { styles?: unknown[] };
+				// unknown: style items within meta have dynamic properties not fully typed by Figma API
+			meta?: { styles?: unknown[] };
 			}>(`v1/files/${input.file_key}/styles`, ctx.key, { method: 'GET' });
 			if (stylesResult.meta?.styles) {
 				tokens['styles'] = stylesResult.meta.styles;
@@ -148,6 +151,7 @@ export const extractPrototypeInteractions: FigmaEndpoints['designToolsExtractPro
 				document?: unknown;
 				// any: prototype flow data is deeply nested within document nodes
 				prototype_start_node_id?: string;
+				// unknown: flow items have dynamic nested structure with prototype interaction data
 				flows?: unknown[];
 			}>(`v1/files/${input.file_key}`, ctx.key, {
 				method: 'GET',

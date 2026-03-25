@@ -25,6 +25,18 @@ export const libraryPublish: FigmaWebhooks['libraryPublish'] = {
 			};
 		}
 
+		if (ctx.db.fileMetadata) {
+			try {
+				await ctx.db.fileMetadata.upsertByEntityId(event.file_key, {
+					id: event.file_key,
+					name: event.file_name,
+					last_modified: event.timestamp,
+				});
+			} catch (error) {
+				console.warn('Failed to save library publish event to database:', error);
+			}
+		}
+
 		await logEventFromContext(
 			ctx,
 			'figma.webhook.libraryPublish',

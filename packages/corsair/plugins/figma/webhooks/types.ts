@@ -6,6 +6,7 @@ import type {
 	WebhookRequest,
 } from '../../../core';
 
+// unknown: body may be a raw JSON string or an already-parsed object depending on the request source
 function parseBody(body: unknown): unknown {
 	return typeof body === 'string' ? JSON.parse(body) : body;
 }
@@ -79,15 +80,18 @@ export type FigmaWebhookOutputs = {
 
 export function createFigmaEventMatch(eventType: string): CorsairWebhookMatcher {
 	return (request: RawWebhookRequest) => {
+		// type assertion: parsed body shape is unknown at runtime; narrowed to Record to access event_type
 		const parsedBody = parseBody(request.body) as Record<string, unknown>;
 		return parsedBody.event_type === eventType;
 	};
 }
 
 export function verifyFigmaWebhookPasscode(
+	// unknown: webhook payload type is not known at parse time; callers narrow to specific event types after verification
 	request: WebhookRequest<unknown>,
 	passcode: string,
 ): { valid: boolean; error?: string } {
+	// type assertion: parsed payload shape is unknown at runtime; narrowed to Record to access passcode field
 	const parsedBody = parseBody(request.payload) as Record<string, unknown>;
 	const payloadPasscode = parsedBody.passcode;
 

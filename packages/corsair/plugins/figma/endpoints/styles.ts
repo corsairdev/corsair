@@ -15,17 +15,11 @@ export const get: FigmaEndpoints['stylesGet'] = async (ctx, input) => {
 };
 
 export const getForTeam: FigmaEndpoints['stylesGetForTeam'] = async (ctx, input) => {
+	const { team_id, ...queryParams } = input;
 	const result = await makeFigmaRequest<FigmaEndpointOutputs['stylesGetForTeam']>(
-		`v1/teams/${input.team_id}/styles`,
+		`v1/teams/${team_id}/styles`,
 		ctx.key,
-		{
-			method: 'GET',
-			query: {
-				page_size: input.page_size,
-				after: input.after,
-				before: input.before,
-			},
-		},
+		{ method: 'GET', query: { ...queryParams } },
 	);
 
 	await logEventFromContext(ctx, 'figma.styles.getForTeam', { ...input }, 'completed');

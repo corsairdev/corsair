@@ -4,33 +4,28 @@ import { makeFigmaRequest } from '../client';
 import type { FigmaEndpointOutputs } from './types';
 
 export const add: FigmaEndpoints['commentsAdd'] = async (ctx, input) => {
+	const { file_key, ...commentBody } = input;
 	const result = await makeFigmaRequest<FigmaEndpointOutputs['commentsAdd']>(
-		`v1/files/${input.file_key}/comments`,
+		`v1/files/${file_key}/comments`,
 		ctx.key,
 		{
 			method: 'POST',
 			body: {
-				message: input.message,
-				comment_id: input.comment_id,
+				...commentBody,
 				// any: client_meta can be absolute coords, node-relative, or region object
-				client_meta: input.client_meta as Record<string, unknown> | undefined,
+				client_meta: commentBody.client_meta as Record<string, unknown> | undefined,
 			},
 		},
 	);
 
 	if (result.id && ctx.db.comments) {
 		try {
+			const { user, ...commentData } = result;
 			await ctx.db.comments.upsertByEntityId(result.id, {
-				id: result.id,
-				uuid: result.uuid,
-				message: result.message,
-				file_key: result.file_key,
-				order_id: result.order_id,
-				parent_id: result.parent_id,
-				created_at: result.created_at,
-				resolved_at: result.resolved_at,
-				user_id: result.user?.id,
-				user_handle: result.user?.handle,
+				...commentData,
+				file_key: commentData.file_key ?? file_key,
+				user_id: user?.id,
+				user_handle: user?.handle,
 			});
 		} catch (error) {
 			console.warn('Failed to save comment to database:', error);
@@ -70,27 +65,19 @@ export const list: FigmaEndpoints['commentsList'] = async (ctx, input) => {
 	const result = await makeFigmaRequest<FigmaEndpointOutputs['commentsList']>(
 		`v1/files/${input.file_key}/comments`,
 		ctx.key,
-		{
-			method: 'GET',
-			query: { as_md: input.as_md },
-		},
+		{ method: 'GET', query: { as_md: input.as_md } },
 	);
 
 	if (result.comments && ctx.db.comments) {
 		try {
 			for (const comment of result.comments) {
 				if (comment.id) {
+					const { user, ...commentData } = comment;
 					await ctx.db.comments.upsertByEntityId(comment.id, {
-						id: comment.id,
-						uuid: comment.uuid,
-						message: comment.message,
-						file_key: input.file_key,
-						order_id: comment.order_id,
-						parent_id: comment.parent_id,
-						created_at: comment.created_at,
-						resolved_at: comment.resolved_at,
-						user_id: comment.user?.id,
-						user_handle: comment.user?.handle,
+						...commentData,
+						file_key: commentData.file_key ?? input.file_key,
+						user_id: user?.id,
+						user_handle: user?.handle,
 					});
 				}
 			}

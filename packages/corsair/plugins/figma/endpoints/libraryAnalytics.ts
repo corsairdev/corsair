@@ -7,20 +7,13 @@ export const componentActions: FigmaEndpoints['libraryAnalyticsComponentActions'
 	ctx,
 	input,
 ) => {
+	const { file_key, ...queryParams } = input;
 	const result = await makeFigmaRequest<
 		FigmaEndpointOutputs['libraryAnalyticsComponentActions']
 	>(
-		`v1/analytics/libraries/${input.file_key}/component/actions`,
+		`v1/analytics/libraries/${file_key}/component/actions`,
 		ctx.key,
-		{
-			method: 'GET',
-			query: {
-				start_date: input.start_date,
-				end_date: input.end_date,
-				group_by: input.group_by,
-				cursor: input.cursor,
-			},
-		},
+		{ method: 'GET', query: { ...queryParams } },
 	);
 
 	await logEventFromContext(
@@ -36,18 +29,13 @@ export const componentUsages: FigmaEndpoints['libraryAnalyticsComponentUsages'] 
 	ctx,
 	input,
 ) => {
+	const { file_key, ...queryParams } = input;
 	const result = await makeFigmaRequest<
 		FigmaEndpointOutputs['libraryAnalyticsComponentUsages']
 	>(
-		`v1/analytics/libraries/${input.file_key}/component/usages`,
+		`v1/analytics/libraries/${file_key}/component/usages`,
 		ctx.key,
-		{
-			method: 'GET',
-			query: {
-				group_by: input.group_by,
-				cursor: input.cursor,
-			},
-		},
+		{ method: 'GET', query: { ...queryParams } },
 	);
 
 	await logEventFromContext(
@@ -63,18 +51,11 @@ export const styleActions: FigmaEndpoints['libraryAnalyticsStyleActions'] = asyn
 	ctx,
 	input,
 ) => {
+	const { file_key, ...queryParams } = input;
 	const result = await makeFigmaRequest<FigmaEndpointOutputs['libraryAnalyticsStyleActions']>(
-		`v1/analytics/libraries/${input.file_key}/style/actions`,
+		`v1/analytics/libraries/${file_key}/style/actions`,
 		ctx.key,
-		{
-			method: 'GET',
-			query: {
-				start_date: input.start_date,
-				end_date: input.end_date,
-				group_by: input.group_by,
-				cursor: input.cursor,
-			},
-		},
+		{ method: 'GET', query: { ...queryParams } },
 	);
 
 	await logEventFromContext(
@@ -87,16 +68,11 @@ export const styleActions: FigmaEndpoints['libraryAnalyticsStyleActions'] = asyn
 };
 
 export const styleUsages: FigmaEndpoints['libraryAnalyticsStyleUsages'] = async (ctx, input) => {
+	const { file_key, ...queryParams } = input;
 	const result = await makeFigmaRequest<FigmaEndpointOutputs['libraryAnalyticsStyleUsages']>(
-		`v1/analytics/libraries/${input.file_key}/style/usages`,
+		`v1/analytics/libraries/${file_key}/style/usages`,
 		ctx.key,
-		{
-			method: 'GET',
-			query: {
-				group_by: input.group_by,
-				cursor: input.cursor,
-			},
-		},
+		{ method: 'GET', query: { ...queryParams } },
 	);
 
 	await logEventFromContext(
@@ -112,20 +88,13 @@ export const variableActions: FigmaEndpoints['libraryAnalyticsVariableActions'] 
 	ctx,
 	input,
 ) => {
+	const { file_key, ...queryParams } = input;
 	const result = await makeFigmaRequest<
 		FigmaEndpointOutputs['libraryAnalyticsVariableActions']
 	>(
-		`v1/analytics/libraries/${input.file_key}/variable/actions`,
+		`v1/analytics/libraries/${file_key}/variable/actions`,
 		ctx.key,
-		{
-			method: 'GET',
-			query: {
-				start_date: input.start_date,
-				end_date: input.end_date,
-				group_by: input.group_by,
-				cursor: input.cursor,
-			},
-		},
+		{ method: 'GET', query: { ...queryParams } },
 	);
 
 	await logEventFromContext(
@@ -141,18 +110,13 @@ export const variableUsages: FigmaEndpoints['libraryAnalyticsVariableUsages'] = 
 	ctx,
 	input,
 ) => {
+	const { file_key, ...queryParams } = input;
 	const result = await makeFigmaRequest<
 		FigmaEndpointOutputs['libraryAnalyticsVariableUsages']
 	>(
-		`v1/analytics/libraries/${input.file_key}/variable/usages`,
+		`v1/analytics/libraries/${file_key}/variable/usages`,
 		ctx.key,
-		{
-			method: 'GET',
-			query: {
-				group_by: input.group_by,
-				cursor: input.cursor,
-			},
-		},
+		{ method: 'GET', query: { ...queryParams } },
 	);
 
 	await logEventFromContext(

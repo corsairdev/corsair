@@ -12,17 +12,8 @@ export const get: FigmaEndpoints['componentsGet'] = async (ctx, input) => {
 
 	if (result.meta?.component?.key && ctx.db.components) {
 		try {
-			const component = result.meta.component;
-			await ctx.db.components.upsertByEntityId(component.key, {
-				key: component.key,
-				file_key: component.file_key,
-				node_id: component.node_id,
-				name: component.name,
-				description: component.description,
-				thumbnail_url: component.thumbnail_url,
-				created_at: component.created_at,
-				updated_at: component.updated_at,
-			});
+			const { containing_frame, user, ...componentData } = result.meta.component;
+			await ctx.db.components.upsertByEntityId(componentData.key, { ...componentData });
 		} catch (error) {
 			console.warn('Failed to save component to database:', error);
 		}
@@ -39,6 +30,16 @@ export const getComponentSet: FigmaEndpoints['componentSetsGet'] = async (ctx, i
 		{ method: 'GET' },
 	);
 
+	if (result.meta?.component_set?.key && ctx.db.components) {
+		try {
+			await ctx.db.components.upsertByEntityId(result.meta.component_set.key, {
+				...result.meta.component_set,
+			});
+		} catch (error) {
+			console.warn('Failed to save component set to database:', error);
+		}
+	}
+
 	await logEventFromContext(ctx, 'figma.components.getComponentSet', { ...input }, 'completed');
 	return result;
 };
@@ -54,16 +55,8 @@ export const getForFile: FigmaEndpoints['componentsGetForFile'] = async (ctx, in
 		try {
 			for (const component of result.meta.components) {
 				if (component.key) {
-					await ctx.db.components.upsertByEntityId(component.key, {
-						key: component.key,
-						file_key: component.file_key,
-						node_id: component.node_id,
-						name: component.name,
-						description: component.description,
-						thumbnail_url: component.thumbnail_url,
-						created_at: component.created_at,
-						updated_at: component.updated_at,
-					});
+					const { containing_frame, user, ...componentData } = component;
+					await ctx.db.components.upsertByEntityId(componentData.key, { ...componentData });
 				}
 			}
 		} catch (error) {
@@ -85,6 +78,18 @@ export const getComponentSetsForFile: FigmaEndpoints['componentSetsGetForFile'] 
 		{ method: 'GET' },
 	);
 
+	if (result.meta?.component_sets && ctx.db.components) {
+		try {
+			for (const componentSet of result.meta.component_sets) {
+				if (componentSet.key) {
+					await ctx.db.components.upsertByEntityId(componentSet.key, { ...componentSet });
+				}
+			}
+		} catch (error) {
+			console.warn('Failed to save component sets to database:', error);
+		}
+	}
+
 	await logEventFromContext(
 		ctx,
 		'figma.components.getComponentSetsForFile',
@@ -95,33 +100,19 @@ export const getComponentSetsForFile: FigmaEndpoints['componentSetsGetForFile'] 
 };
 
 export const getForTeam: FigmaEndpoints['componentsGetForTeam'] = async (ctx, input) => {
+	const { team_id, ...queryParams } = input;
 	const result = await makeFigmaRequest<FigmaEndpointOutputs['componentsGetForTeam']>(
-		`v1/teams/${input.team_id}/components`,
+		`v1/teams/${team_id}/components`,
 		ctx.key,
-		{
-			method: 'GET',
-			query: {
-				page_size: input.page_size,
-				after: input.after,
-				before: input.before,
-			},
-		},
+		{ method: 'GET', query: { ...queryParams } },
 	);
 
 	if (result.meta?.components && ctx.db.components) {
 		try {
 			for (const component of result.meta.components) {
 				if (component.key) {
-					await ctx.db.components.upsertByEntityId(component.key, {
-						key: component.key,
-						file_key: component.file_key,
-						node_id: component.node_id,
-						name: component.name,
-						description: component.description,
-						thumbnail_url: component.thumbnail_url,
-						created_at: component.created_at,
-						updated_at: component.updated_at,
-					});
+					const { containing_frame, user, ...componentData } = component;
+					await ctx.db.components.upsertByEntityId(componentData.key, { ...componentData });
 				}
 			}
 		} catch (error) {
@@ -137,18 +128,24 @@ export const getComponentSetsForTeam: FigmaEndpoints['componentSetsGetForTeam'] 
 	ctx,
 	input,
 ) => {
+	const { team_id, ...queryParams } = input;
 	const result = await makeFigmaRequest<FigmaEndpointOutputs['componentSetsGetForTeam']>(
-		`v1/teams/${input.team_id}/component_sets`,
+		`v1/teams/${team_id}/component_sets`,
 		ctx.key,
-		{
-			method: 'GET',
-			query: {
-				page_size: input.page_size,
-				after: input.after,
-				before: input.before,
-			},
-		},
+		{ method: 'GET', query: { ...queryParams } },
 	);
+
+	if (result.meta?.component_sets && ctx.db.components) {
+		try {
+			for (const componentSet of result.meta.component_sets) {
+				if (componentSet.key) {
+					await ctx.db.components.upsertByEntityId(componentSet.key, { ...componentSet });
+				}
+			}
+		} catch (error) {
+			console.warn('Failed to save team component sets to database:', error);
+		}
+	}
 
 	await logEventFromContext(
 		ctx,

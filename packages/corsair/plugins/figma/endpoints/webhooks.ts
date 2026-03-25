@@ -7,35 +7,12 @@ export const create: FigmaEndpoints['webhooksCreate'] = async (ctx, input) => {
 	const result = await makeFigmaRequest<FigmaEndpointOutputs['webhooksCreate']>(
 		`v2/webhooks`,
 		ctx.key,
-		{
-			method: 'POST',
-			body: {
-				event_type: input.event_type,
-				endpoint: input.endpoint,
-				passcode: input.passcode,
-				status: input.status,
-				context: input.context,
-				context_id: input.context_id,
-				team_id: input.team_id,
-				description: input.description,
-			},
-		},
+		{ method: 'POST', body: { ...input } },
 	);
 
 	if (result.id && ctx.db.webhookConfigs) {
 		try {
-			await ctx.db.webhookConfigs.upsertByEntityId(result.id, {
-				id: result.id,
-				status: result.status,
-				context: result.context,
-				team_id: result.team_id,
-				endpoint: result.endpoint,
-				passcode: result.passcode,
-				client_id: result.client_id,
-				context_id: result.context_id,
-				event_type: result.event_type,
-				description: result.description,
-			});
+			await ctx.db.webhookConfigs.upsertByEntityId(result.id, { ...result });
 		} catch (error) {
 			console.warn('Failed to save webhook config to database:', error);
 		}
@@ -52,6 +29,14 @@ export const deleteWebhook: FigmaEndpoints['webhooksDelete'] = async (ctx, input
 		{ method: 'DELETE' },
 	);
 
+	if (result.id && ctx.db.webhookConfigs) {
+		try {
+			await ctx.db.webhookConfigs.upsertByEntityId(result.id, { ...result });
+		} catch (error) {
+			console.warn('Failed to update deleted webhook config in database:', error);
+		}
+	}
+
 	await logEventFromContext(ctx, 'figma.webhooks.delete', { ...input }, 'completed');
 	return result;
 };
@@ -65,18 +50,7 @@ export const get: FigmaEndpoints['webhooksGet'] = async (ctx, input) => {
 
 	if (result.id && ctx.db.webhookConfigs) {
 		try {
-			await ctx.db.webhookConfigs.upsertByEntityId(result.id, {
-				id: result.id,
-				status: result.status,
-				context: result.context,
-				team_id: result.team_id,
-				endpoint: result.endpoint,
-				passcode: result.passcode,
-				client_id: result.client_id,
-				context_id: result.context_id,
-				event_type: result.event_type,
-				description: result.description,
-			});
+			await ctx.db.webhookConfigs.upsertByEntityId(result.id, { ...result });
 		} catch (error) {
 			console.warn('Failed to save webhook config to database:', error);
 		}
@@ -90,28 +64,14 @@ export const list: FigmaEndpoints['webhooksList'] = async (ctx, input) => {
 	const result = await makeFigmaRequest<FigmaEndpointOutputs['webhooksList']>(
 		`v2/webhooks`,
 		ctx.key,
-		{
-			method: 'GET',
-			query: { context: input.context, context_id: input.context_id },
-		},
+		{ method: 'GET', query: { ...input } },
 	);
 
 	if (result.webhooks && ctx.db.webhookConfigs) {
 		try {
 			for (const webhook of result.webhooks) {
 				if (webhook.id) {
-					await ctx.db.webhookConfigs.upsertByEntityId(webhook.id, {
-						id: webhook.id,
-						status: webhook.status,
-						context: webhook.context,
-						team_id: webhook.team_id,
-						endpoint: webhook.endpoint,
-						passcode: webhook.passcode,
-						client_id: webhook.client_id,
-						context_id: webhook.context_id,
-						event_type: webhook.event_type,
-						description: webhook.description,
-					});
+					await ctx.db.webhookConfigs.upsertByEntityId(webhook.id, { ...webhook });
 				}
 			}
 		} catch (error) {
@@ -135,35 +95,16 @@ export const getRequests: FigmaEndpoints['webhooksGetRequests'] = async (ctx, in
 };
 
 export const update: FigmaEndpoints['webhooksUpdate'] = async (ctx, input) => {
+	const { webhook_id, ...body } = input;
 	const result = await makeFigmaRequest<FigmaEndpointOutputs['webhooksUpdate']>(
-		`v2/webhooks/${input.webhook_id}`,
+		`v2/webhooks/${webhook_id}`,
 		ctx.key,
-		{
-			method: 'PUT',
-			body: {
-				event_type: input.event_type,
-				endpoint: input.endpoint,
-				passcode: input.passcode,
-				status: input.status,
-				description: input.description,
-			},
-		},
+		{ method: 'PUT', body: { ...body } },
 	);
 
 	if (result.id && ctx.db.webhookConfigs) {
 		try {
-			await ctx.db.webhookConfigs.upsertByEntityId(result.id, {
-				id: result.id,
-				status: result.status,
-				context: result.context,
-				team_id: result.team_id,
-				endpoint: result.endpoint,
-				passcode: result.passcode,
-				client_id: result.client_id,
-				context_id: result.context_id,
-				event_type: result.event_type,
-				description: result.description,
-			});
+			await ctx.db.webhookConfigs.upsertByEntityId(result.id, { ...result });
 		} catch (error) {
 			console.warn('Failed to update webhook config in database:', error);
 		}

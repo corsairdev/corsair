@@ -691,6 +691,7 @@ export type InternalFigmaPlugin = BaseFigmaPlugin<FigmaPluginOptions>;
 export type ExternalFigmaPlugin<T extends FigmaPluginOptions> = BaseFigmaPlugin<T>;
 
 export function figma<const T extends FigmaPluginOptions>(
+	// type assertion: default to empty object cast to the options intersection type when no options are provided
 	incomingOptions: FigmaPluginOptions & T = {} as FigmaPluginOptions & T,
 ): ExternalFigmaPlugin<T> {
 	const options = {

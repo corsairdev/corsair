@@ -25,6 +25,19 @@ export const fileDelete: FigmaWebhooks['fileDelete'] = {
 			};
 		}
 
+		if (ctx.db.fileMetadata) {
+			try {
+				const existing = await ctx.db.fileMetadata.findByEntityId(event.file_key);
+				await ctx.db.fileMetadata.upsertByEntityId(event.file_key, {
+					...(existing?.data ?? {}),
+					id: event.file_key,
+					name: event.file_name,
+				});
+			} catch (error) {
+				console.warn('Failed to record file deletion in database:', error);
+			}
+		}
+
 		await logEventFromContext(
 			ctx,
 			'figma.webhook.fileDelete',

@@ -7,18 +7,11 @@ export const createModifyDelete: FigmaEndpoints['variablesCreateModifyDelete'] =
 	ctx,
 	input,
 ) => {
+	const { file_key, ...body } = input;
 	const result = await makeFigmaRequest<FigmaEndpointOutputs['variablesCreateModifyDelete']>(
-		`v1/files/${input.file_key}/variables`,
+		`v1/files/${file_key}/variables`,
 		ctx.key,
-		{
-			method: 'POST',
-			body: {
-				variables: input.variables,
-				variableModes: input.variableModes,
-				variableModeValues: input.variableModeValues,
-				variableCollections: input.variableCollections,
-			},
-		},
+		{ method: 'POST', body: { ...body } },
 	);
 
 	await logEventFromContext(
@@ -37,6 +30,14 @@ export const getLocal: FigmaEndpoints['variablesGetLocal'] = async (ctx, input) 
 		{ method: 'GET' },
 	);
 
+	if (ctx.db.fileMetadata) {
+		try {
+			await ctx.db.fileMetadata.upsertByEntityId(input.file_key, { id: input.file_key });
+		} catch (error) {
+			console.warn('Failed to save file metadata to database:', error);
+		}
+	}
+
 	await logEventFromContext(ctx, 'figma.variables.getLocal', { ...input }, 'completed');
 	return result;
 };
@@ -47,6 +48,14 @@ export const getPublished: FigmaEndpoints['variablesGetPublished'] = async (ctx,
 		ctx.key,
 		{ method: 'GET' },
 	);
+
+	if (ctx.db.fileMetadata) {
+		try {
+			await ctx.db.fileMetadata.upsertByEntityId(input.file_key, { id: input.file_key });
+		} catch (error) {
+			console.warn('Failed to save file metadata to database:', error);
+		}
+	}
 
 	await logEventFromContext(ctx, 'figma.variables.getPublished', { ...input }, 'completed');
 	return result;
