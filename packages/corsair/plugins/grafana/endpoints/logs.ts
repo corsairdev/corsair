@@ -81,7 +81,7 @@ async function _persistLogRecords(
 		for (const scopeLog of resourceLog.scopeLogs ?? []) {
 			for (const record of scopeLog.logRecords ?? []) {
 				// Generate a unique log ID from timestamp + traceId to deduplicate on upsert
-				const logId = `${record.timeUnixNano ?? Date.now()}-${record.traceId ?? Math.random().toString(36).slice(2)}`;
+				const logId = crypto.randomUUID()
 
 				await ctx.db.logs.upsertByEntityId(logId, {
 					...record,

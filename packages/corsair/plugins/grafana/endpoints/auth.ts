@@ -119,7 +119,7 @@ export const retrieveJwks: GrafanaEndpoints['jwksRetrieve'] = async (ctx, _input
 	if (result.successful && ctx.db.jwksKeys && result.data.keys?.length) {
 		try {
 			for (const key of result.data.keys) {
-				const keyId = key?.KeyID ?? key?.Use ?? `jwks-${Math.random().toString(36).slice(2)}`;
+				const keyId = crypto.randomUUID()
 				await ctx.db.jwksKeys.upsertByEntityId(String(keyId), {
 					...key,
 					id: String(keyId),
