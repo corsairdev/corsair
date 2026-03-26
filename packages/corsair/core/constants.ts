@@ -22,6 +22,7 @@ export const BaseProviders = [
 	'discord',
 	'dropbox',
 	'exa',
+	'figma',
 	'fireflies',
 	'github',
 	'gmail',
@@ -64,6 +65,7 @@ export type AllProviders =
 	| 'discord'
 	| 'dropbox'
 	| 'exa'
+	| 'figma'
 	| 'fireflies'
 	| 'github'
 	| 'gmail'
