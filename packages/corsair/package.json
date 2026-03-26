@@ -47,6 +47,11 @@
       "types": "./dist/plugins/amplitude/index.d.ts",
       "default": "./dist/plugins/amplitude/index.js"
     },
+    "./plugins/asana": {
+      "dev-source": "./plugins/asana/index.ts",
+      "types": "./dist/plugins/asana/index.d.ts",
+      "default": "./dist/plugins/asana/index.js"
+    },
     "./plugins/box": {
       "dev-source": "./plugins/box/index.ts",
       "types": "./dist/plugins/box/index.d.ts",

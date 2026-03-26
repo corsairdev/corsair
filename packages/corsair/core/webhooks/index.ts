@@ -46,6 +46,8 @@ export type WebhookResponse<TData = unknown> = {
 	error?: string;
 	/** HTTP status code to return (defaults to 200 on success, 500 on error) */
 	statusCode?: number;
+	/** HTTP response headers to set on the outgoing response. Used for header-based handshakes (e.g. Asana X-Hook-Secret). */
+	responseHeaders?: Record<string, string>;
 };
 
 // ─────────────────────────────────────────────────────────────────────────────

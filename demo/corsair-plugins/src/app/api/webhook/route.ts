@@ -31,6 +31,16 @@ export async function POST(request: NextRequest) {
 
 	console.info('Plugin Processed:', result.plugin, result.action);
 
+	// Build response headers (e.g. Asana X-Hook-Secret handshake)
+	// any/unknown cast needed since responseHeaders is a newer field not yet in the installed type definitions
+	const responseHeaders = (result as Record<string, unknown>).responseHeaders as Record<string, string> | undefined;
+	const nextHeaders = new Headers();
+	if (responseHeaders) {
+		for (const [key, value] of Object.entries(responseHeaders)) {
+			nextHeaders.set(key, value);
+		}
+	}
+
 	// Handle case where no webhook matched
 	if (!result.response) {
 		return NextResponse.json(
@@ -43,11 +53,11 @@ export async function POST(request: NextRequest) {
 	}
 
 	if (result.response !== undefined) {
-		return NextResponse.json(result.response);
+		return NextResponse.json(result.response, { headers: nextHeaders });
 	}
 
 	// Webhook processed successfully, but no data to return to sender
-	return new NextResponse(null, { status: 200 });
+	return new NextResponse(null, { status: 200, headers: nextHeaders });
 }
 
 export async function GET() {
