@@ -157,6 +157,11 @@
       "types": "./dist/plugins/oura/index.d.ts",
       "default": "./dist/plugins/oura/index.js"
     },
+    "./plugins/outlook": {
+      "dev-source": "./plugins/outlook/index.ts",
+      "types": "./dist/plugins/outlook/index.d.ts",
+      "default": "./dist/plugins/outlook/index.js"
+    },
     "./plugins/pagerduty": {
       "dev-source": "./plugins/pagerduty/index.ts",
       "types": "./dist/plugins/pagerduty/index.d.ts",

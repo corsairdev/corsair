@@ -43,5 +43,6 @@ export { trello } from './plugins/trello';
 export { asana } from './plugins/asana';
 export { typeform } from './plugins/typeform';
 export { jira } from './plugins/jira';
+export { outlook } from './plugins/outlook';
 
 export { type SetupCorsairOptions, setupCorsair } from './setup/index';
