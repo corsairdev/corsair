@@ -41,6 +41,7 @@ export { calendly } from './plugins/calendly';
 export { zoom } from './plugins/zoom';
 export { trello } from './plugins/trello';
 export { figma } from './plugins/figma';
+export { asana } from './plugins/asana';
 export { typeform } from './plugins/typeform';
 export { jira } from './plugins/jira';
 
