@@ -61,6 +61,18 @@ const OAUTH_PROVIDER_CONFIG: Record<string, OAuthProviderConfig> = {
 		tokenUrl: 'https://oauth2.googleapis.com/token',
 		scopes: ['https://www.googleapis.com/auth/calendar'],
 	},
+	outlook: {
+		providerName: 'Microsoft',
+		authUrl: 'https://login.microsoftonline.com/common/oauth2/v2.0/authorize',
+		tokenUrl: 'https://login.microsoftonline.com/common/oauth2/v2.0/token',
+		scopes: [
+			'https://graph.microsoft.com/Mail.ReadWrite',
+			'https://graph.microsoft.com/Mail.Send',
+			'https://graph.microsoft.com/Calendars.ReadWrite',
+			'https://graph.microsoft.com/Contacts.ReadWrite',
+			'offline_access',
+		],
+	},
 	spotify: {
 		providerName: 'Spotify',
 		authUrl: 'https://accounts.spotify.com/authorize',
