@@ -31,7 +31,7 @@ export const deleteWebhook: FigmaEndpoints['webhooksDelete'] = async (ctx, input
 
 	if (result.id && ctx.db.webhookConfigs) {
 		try {
-			await ctx.db.webhookConfigs.upsertByEntityId(result.id, { ...result });
+			await ctx.db.webhookConfigs.upsertByEntityId(result.id, { ...result, id: result.id });
 		} catch (error) {
 			console.warn('Failed to update deleted webhook config in database:', error);
 		}
