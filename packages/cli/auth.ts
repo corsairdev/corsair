@@ -462,6 +462,16 @@ const OAUTH2_ACTIONS: ActionDef[] = [
 		method: 'set_webhook_signature',
 	},
 	{
+		value: 'setup-webhooks',
+		label: 'Setup Webhooks (Graph Subscriptions)',
+		hint: 'Create Microsoft Graph API subscriptions for real-time notifications',
+		description:
+			'Creates Microsoft Graph API subscriptions for the resources you select.\n\n' +
+			'Requires a publicly accessible HTTPS URL (e.g. ngrok) pointing to your Corsair webhook endpoint.',
+		level: 'account',
+		type: 'confirm',
+	},
+	{
 		value: 'get-credentials',
 		label: 'Get Credentials',
 		hint: 'Display current credentials',
@@ -1568,6 +1578,169 @@ async function viewStatus(
 	}
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Webhook Setup (Microsoft Graph Subscriptions)
+// ─────────────────────────────────────────────────────────────────────────────
+
+const OUTLOOK_WEBHOOK_SUBSCRIPTIONS = [
+	{
+		value: 'inbox-messages',
+		label: 'Inbox Messages — new messages received',
+		resource: 'me/mailFolders/inbox/messages',
+		changeType: 'created',
+	},
+	{
+		value: 'sent-messages',
+		label: 'Sent Items — messages sent',
+		resource: 'me/mailFolders/sentItems/messages',
+		changeType: 'created',
+	},
+	{
+		value: 'calendar-events-new',
+		label: 'Calendar Events — new events created',
+		resource: 'me/events',
+		changeType: 'created',
+	},
+	{
+		value: 'calendar-events-changes',
+		label: 'Calendar Events — updates & deletions',
+		resource: 'me/events',
+		changeType: 'created,updated,deleted',
+	},
+	{
+		value: 'contacts-new',
+		label: 'Contacts — new contacts created',
+		resource: 'me/contacts',
+		changeType: 'created',
+	},
+] as const;
+
+function graphPost(
+	path: string,
+	accessToken: string,
+	body: Record<string, unknown>,
+): Promise<Record<string, unknown>> {
+	return new Promise((resolve, reject) => {
+		const payload = JSON.stringify(body);
+		const options = {
+			hostname: 'graph.microsoft.com',
+			path: `/v1.0${path}`,
+			method: 'POST',
+			headers: {
+				Authorization: `Bearer ${accessToken}`,
+				'Content-Type': 'application/json',
+				'Content-Length': Buffer.byteLength(payload),
+			},
+		};
+		const req = https.request(options, (res) => {
+			let data = '';
+			res.on('data', (chunk) => { data += chunk; });
+			res.on('end', () => {
+				if (res.statusCode && res.statusCode >= 400) {
+					reject(new Error(`Graph API error ${res.statusCode}: ${data}`));
+					return;
+				}
+				resolve(data ? (JSON.parse(data) as Record<string, unknown>) : {});
+			});
+		});
+		req.on('error', (err) => reject(err));
+		req.write(payload);
+		req.end();
+	});
+}
+
+async function executeSetupWebhooks(
+	database: CorsairDatabase,
+	pluginId: string,
+	kek: string,
+	tenantId: string,
+	plugin?: CorsairPlugin,
+): Promise<void> {
+	// Retrieve the stored access token
+	const extraAccountFields = plugin ? getCustomAccountFields(plugin, 'oauth_2') : [];
+	const accountKm = createAccountKeyManager({
+		authType: 'oauth_2',
+		integrationName: pluginId,
+		tenantId,
+		kek,
+		database,
+		extraAccountFields,
+	});
+
+	const accessToken = await accountKm.get_access_token();
+	if (!accessToken) {
+		p.log.error('No access token found. Run "Setup OAuth & Get Tokens" first.');
+		return;
+	}
+
+	// Prompt: notification URL
+	const notificationUrl = await p.text({
+		message: 'Enter your webhook notification URL (e.g. https://abc.ngrok.io/api/webhooks/outlook):',
+		placeholder: 'https://your-server.com/api/webhooks/outlook',
+		validate: (v) => {
+			if (!v || !v.startsWith('https://')) return 'URL must start with https://';
+		},
+	});
+	if (p.isCancel(notificationUrl)) handleCancel();
+
+	// Prompt: which resources to subscribe to
+	const selected = await p.multiselect({
+		message: 'Select resources to watch:',
+		options: OUTLOOK_WEBHOOK_SUBSCRIPTIONS.map((s) => ({
+			value: s.value,
+			label: s.label,
+			hint: `${s.resource} [${s.changeType}]`,
+		})),
+		required: true,
+	});
+	if (p.isCancel(selected)) handleCancel();
+
+	// Prompt: optional clientState (webhook secret for signature verification)
+	const clientState = await p.text({
+		message: 'Enter a clientState secret for webhook verification (or leave blank to skip):',
+		placeholder: 'my-secret-string',
+	});
+	if (p.isCancel(clientState)) handleCancel();
+
+	// Expiration: 3 days from now (safe for all Graph resource types)
+	const expirationDateTime = new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString();
+
+	const results: string[] = [];
+	let hasError = false;
+
+	for (const value of selected as string[]) {
+		const sub = OUTLOOK_WEBHOOK_SUBSCRIPTIONS.find((s) => s.value === value)!;
+		const spin = p.spinner();
+		spin.start(`Creating subscription: ${sub.label}...`);
+		try {
+			const body: Record<string, unknown> = {
+				changeType: sub.changeType,
+				notificationUrl,
+				resource: sub.resource,
+				expirationDateTime,
+			};
+			if (clientState) body.clientState = clientState;
+
+			const result = await graphPost('/subscriptions', accessToken, body);
+			spin.stop(`Created: ${sub.label}`);
+			results.push(`${sub.label}\n  ID: ${result.id}\n  Expires: ${result.expirationDateTime}`);
+		} catch (error) {
+			spin.stop(`Failed: ${sub.label}`);
+			p.log.error(error instanceof Error ? error.message : String(error));
+			hasError = true;
+		}
+	}
+
+	if (results.length > 0) {
+		p.note(results.join('\n\n'), 'Subscriptions created');
+	}
+	if (!hasError) {
+		p.log.success('Webhook subscriptions set up successfully.');
+	} else {
+		p.log.warn('Some subscriptions failed. Check errors above.');
+	}
+}
+
 async function executeAction(
 	action: ActionDef,
 	database: CorsairDatabase,
@@ -1579,6 +1752,11 @@ async function executeAction(
 ): Promise<void> {
 	if (action.value === 'view-status') {
 		await viewStatus(database, pluginId);
+		return;
+	}
+
+	if (action.value === 'setup-webhooks') {
+		await executeSetupWebhooks(database, pluginId, kek, tenantId, plugin);
 		return;
 	}
 
