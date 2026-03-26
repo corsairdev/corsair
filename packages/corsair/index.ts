@@ -40,6 +40,7 @@ export { intercom } from './plugins/intercom';
 export { calendly } from './plugins/calendly';
 export { zoom } from './plugins/zoom';
 export { trello } from './plugins/trello';
+export { typeform } from './plugins/typeform';
 export { jira } from './plugins/jira';
 
 export { type SetupCorsairOptions, setupCorsair } from './setup/index';
