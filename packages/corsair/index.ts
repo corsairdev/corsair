@@ -35,10 +35,12 @@ export { twitterapiio } from './plugins/twitterapiio';
 export { box } from './plugins/box';
 export { dropbox } from './plugins/dropbox';
 export { fireflies } from './plugins/fireflies';
+export { hackernews } from './plugins/hackernews';
 export { intercom } from './plugins/intercom';
 export { calendly } from './plugins/calendly';
 export { zoom } from './plugins/zoom';
 export { trello } from './plugins/trello';
 export { figma } from './plugins/figma';
+export { jira } from './plugins/jira';
 
 export { type SetupCorsairOptions, setupCorsair } from './setup/index';

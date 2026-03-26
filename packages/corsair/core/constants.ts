@@ -28,8 +28,10 @@ export const BaseProviders = [
 	'googlecalendar',
 	'googledrive',
 	'googlesheets',
+	'hackernews',
 	'hubspot',
 	'intercom',
+	'jira',
 	'linear',
 	'monday',
 	'notion',
@@ -46,6 +48,7 @@ export const BaseProviders = [
 	'telegram',
 	'todoist',
 	'trello',
+	'twitter',
 	'twitterapiio',
 	'zoom',
 ] as const;
@@ -66,8 +69,10 @@ export type AllProviders =
 	| 'googlecalendar'
 	| 'googledrive'
 	| 'googlesheets'
+	| 'hackernews'
 	| 'hubspot'
 	| 'intercom'
+	| 'jira'
 	| 'linear'
 	| 'monday'
 	| 'notion'
@@ -84,6 +89,7 @@ export type AllProviders =
 	| 'telegram'
 	| 'todoist'
 	| 'trello'
+	| 'twitter'
 	| 'twitterapiio'
 	| 'zoom'
 	| (string & {});
