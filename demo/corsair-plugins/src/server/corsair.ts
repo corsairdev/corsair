@@ -2,7 +2,7 @@ import { createCorsair, linear, slack, twitterapiio, fireflies, asana } from 'co
 import { sqlite } from '../db';
 
 export const corsair = createCorsair({
-	multiTenancy: false,
+	multiTenancy: true,
 	database: sqlite,
 	kek: process.env.CORSAIR_KEK!,
 	approval: {
