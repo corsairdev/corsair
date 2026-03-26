@@ -21,7 +21,7 @@ import {
 } from './endpoints/types';
 import { Calendars, Contacts, Events, Folders, Messages } from './endpoints';
 import { OutlookSchema } from './schema';
-import { ContactWebhooks, EventWebhooks, MessageWebhooks } from './webhooks';
+import { ContactWebhooks, EventWebhooks, MessageWebhooks, ValidationWebhooks } from './webhooks';
 import type {
 	OutlookWebhookOutputs,
 	OutlookWebhookPayload,
@@ -30,6 +30,7 @@ import type {
 	EventCreatedEvent,
 	EventChangedEvent,
 	ContactCreatedEvent,
+	SubscriptionValidationPayload,
 } from './webhooks/types';
 import {
 	ContactCreatedEventSchema,
@@ -38,6 +39,7 @@ import {
 	MessageReceivedEventSchema,
 	MessageSentEventSchema,
 	OutlookWebhookPayloadSchema,
+	SubscriptionValidationPayloadSchema,
 } from './webhooks/types';
 import { errorHandlers } from './error-handlers';
 
@@ -121,6 +123,7 @@ export type OutlookWebhooks = {
 	eventCreated: OutlookWebhook<'eventCreated', EventCreatedEvent>;
 	eventChanged: OutlookWebhook<'eventChanged', EventChangedEvent>;
 	contactCreated: OutlookWebhook<'contactCreated', ContactCreatedEvent>;
+	subscriptionValidation: CorsairWebhook<OutlookContext, SubscriptionValidationPayload, SubscriptionValidationPayload>;
 };
 
 export type OutlookBoundWebhooks = BindWebhooks<OutlookWebhooks>;
@@ -187,6 +190,7 @@ const outlookWebhooksNested = {
 	contacts: {
 		newContact: ContactWebhooks.newContact,
 	},
+	subscriptionValidation: ValidationWebhooks.subscriptionValidation,
 } as const;
 
 export const outlookEndpointSchemas = {
@@ -408,6 +412,11 @@ const outlookWebhookSchemas = {
 		payload: OutlookWebhookPayloadSchema,
 		response: ContactCreatedEventSchema,
 	},
+	subscriptionValidation: {
+		description: 'Microsoft Graph subscription validation handshake',
+		payload: SubscriptionValidationPayloadSchema,
+		response: SubscriptionValidationPayloadSchema,
+	},
 } satisfies RequiredPluginWebhookSchemas<typeof outlookWebhooksNested>;
 
 export const outlookAuthConfig = {
@@ -450,10 +459,13 @@ export function outlook<const T extends OutlookPluginOptions>(
 		webhookSchemas: outlookWebhookSchemas,
 		pluginWebhookMatcher: (request) => {
 			const headers = request.headers;
-			// Microsoft Graph change notifications use Content-Type application/json
-			// and a client state for verification; match by checking for the 'value' array payload
-			return 'content-type' in headers &&
-				headers['content-type']?.includes('application/json') === true;
+			const contentType = headers['content-type'];
+			// Microsoft Graph change notifications use application/json
+			// Subscription validation requests use text/plain with an empty body
+			return (
+				(typeof contentType === 'string' && contentType.includes('application/json')) ||
+				(typeof contentType === 'string' && contentType.includes('text/plain'))
+			);
 		},
 		errorHandlers: {
 			...errorHandlers,

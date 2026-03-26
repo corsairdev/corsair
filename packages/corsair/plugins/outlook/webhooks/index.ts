@@ -1,6 +1,7 @@
 import { newMessage, sentMessage } from './messages';
 import { newEvent, eventChange } from './events';
 import { newContact } from './contacts';
+import { subscriptionValidation } from './validation';
 
 export const MessageWebhooks = {
 	newMessage,
@@ -14,6 +15,10 @@ export const EventWebhooks = {
 
 export const ContactWebhooks = {
 	newContact,
+};
+
+export const ValidationWebhooks = {
+	subscriptionValidation,
 };
 
 export * from './types';

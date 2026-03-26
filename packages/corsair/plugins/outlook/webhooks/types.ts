@@ -65,6 +65,13 @@ export const ContactCreatedEventSchema = OutlookChangeNotificationSchema.extend(
 );
 export type ContactCreatedEvent = z.infer<typeof ContactCreatedEventSchema>;
 
+// ── Subscription validation (Microsoft Graph handshake) ───────────────────────
+
+export const SubscriptionValidationPayloadSchema = z.object({
+	validationToken: z.string(),
+});
+export type SubscriptionValidationPayload = z.infer<typeof SubscriptionValidationPayloadSchema>;
+
 // ── Webhook output map ────────────────────────────────────────────────────────
 
 export type OutlookWebhookOutputs = {
@@ -73,6 +80,7 @@ export type OutlookWebhookOutputs = {
 	eventCreated: EventCreatedEvent;
 	eventChanged: EventChangedEvent;
 	contactCreated: ContactCreatedEvent;
+	subscriptionValidation: SubscriptionValidationPayload;
 };
 
 // ── Match helpers ─────────────────────────────────────────────────────────────
