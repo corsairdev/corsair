@@ -32,8 +32,8 @@ export const createFolder: OnedriveEndpoints['filesCreateFolder'] = async (ctx, 
 
 	if (result.id && ctx.db.driveItems) {
 		try {
-			// any/unknown cast: upsert requires the full DB schema shape; response may have optional required fields
-			await ctx.db.driveItems.upsertByEntityId(result.id, result as Parameters<typeof ctx.db.driveItems.upsertByEntityId>[1]);
+			// DB schema requires name:string but API returns name as optional; cast after spread to satisfy types while capturing passthrough fields
+			await ctx.db.driveItems.upsertByEntityId(result.id, { ...result } as Parameters<typeof ctx.db.driveItems.upsertByEntityId>[1]);
 		} catch (error) {
 			console.warn('Failed to save created folder to database:', error);
 		}
@@ -69,8 +69,8 @@ export const createTextFile: OnedriveEndpoints['filesCreateTextFile'] = async (c
 
 	if (result.id && ctx.db.driveItems) {
 		try {
-			// any/unknown cast: upsert requires the full DB schema shape; response may have optional required fields
-			await ctx.db.driveItems.upsertByEntityId(result.id, result as Parameters<typeof ctx.db.driveItems.upsertByEntityId>[1]);
+			// DB schema requires name:string but API returns name as optional; cast after spread to satisfy types while capturing passthrough fields
+			await ctx.db.driveItems.upsertByEntityId(result.id, { ...result } as Parameters<typeof ctx.db.driveItems.upsertByEntityId>[1]);
 		} catch (error) {
 			console.warn('Failed to save created text file to database:', error);
 		}
@@ -96,6 +96,19 @@ export const findFile: OnedriveEndpoints['filesFindFile'] = async (ctx, input) =
 		ctx.key,
 		{ method: 'GET', query },
 	);
+
+	if (result.value?.length && ctx.db.driveItems) {
+		try {
+			for (const item of result.value) {
+				if (item.id && typeof item.id === 'string') {
+					// DB schema requires name:string but API returns name as optional; cast after spread to satisfy types while capturing passthrough fields
+					await ctx.db.driveItems.upsertByEntityId(item.id, { ...item } as Parameters<typeof ctx.db.driveItems.upsertByEntityId>[1]);
+				}
+			}
+		} catch (error) {
+			console.warn('Failed to save found files to database:', error);
+		}
+	}
 
 	await logEventFromContext(ctx, 'onedrive.files.findFile', { name }, 'completed');
 	return {
@@ -137,6 +150,21 @@ export const findFolder: OnedriveEndpoints['filesFindFolder'] = async (ctx, inpu
 		{ method: 'GET', query },
 	);
 
+	if (result.value?.length && ctx.db.driveItems) {
+		try {
+			for (const item of result.value) {
+				// any/unknown for item since folder search results are untyped array elements
+				const driveItem = item as Record<string, unknown>;
+				if (driveItem.id && typeof driveItem.id === 'string') {
+					// DB schema requires name:string but API returns name as optional; cast after spread to satisfy types while capturing passthrough fields
+					await ctx.db.driveItems.upsertByEntityId(driveItem.id, { ...driveItem } as Parameters<typeof ctx.db.driveItems.upsertByEntityId>[1]);
+				}
+			}
+		} catch (error) {
+			console.warn('Failed to save found folders to database:', error);
+		}
+	}
+
 	await logEventFromContext(ctx, 'onedrive.files.findFolder', { name }, 'completed');
 	return result;
 };
@@ -157,6 +185,21 @@ export const list: OnedriveEndpoints['filesList'] = async (ctx, input) => {
 		ctx.key,
 		{ method: 'GET', query },
 	);
+
+	if (result.value?.length && ctx.db.driveItems) {
+		try {
+			for (const item of result.value) {
+				// any/unknown for item since file list results are untyped array elements
+				const driveItem = item as Record<string, unknown>;
+				if (driveItem.id && typeof driveItem.id === 'string') {
+					// DB schema requires name:string but API returns name as optional; cast after spread to satisfy types while capturing passthrough fields
+					await ctx.db.driveItems.upsertByEntityId(driveItem.id, { ...driveItem } as Parameters<typeof ctx.db.driveItems.upsertByEntityId>[1]);
+				}
+			}
+		} catch (error) {
+			console.warn('Failed to save file list to database:', error);
+		}
+	}
 
 	await logEventFromContext(ctx, 'onedrive.files.list', {}, 'completed');
 	return result;
@@ -205,9 +248,8 @@ export const upload: OnedriveEndpoints['filesUpload'] = async (ctx, input) => {
 
 	if (result.id && ctx.db.driveItems) {
 		try {
-			const itemData: Record<string, unknown> = { ...result };
-			if (file_system_info) itemData.fileSystemInfo = file_system_info;
-			// any/unknown cast: upsert requires the full DB schema shape; upload result may have optional required fields
+			const itemData = { ...result, ...(file_system_info && { fileSystemInfo: file_system_info }) };
+			// DB schema requires name:string but API returns name as optional; cast after spread to satisfy types while capturing passthrough fields
 			await ctx.db.driveItems.upsertByEntityId(result.id, itemData as Parameters<typeof ctx.db.driveItems.upsertByEntityId>[1]);
 		} catch (error) {
 			console.warn('Failed to save uploaded file to database:', error);

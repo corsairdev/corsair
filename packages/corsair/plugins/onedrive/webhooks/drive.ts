@@ -44,7 +44,8 @@ export const driveNotification: OnedriveWebhooks['driveNotification'] = {
 						}
 						await ctx.db.driveItems.upsertByEntityId(
 							itemId,
-							driveItem as Parameters<typeof ctx.db.driveItems.upsertByEntityId>[1],
+							// DB schema requires name:string but delta item has name as optional; cast after spread to satisfy types while capturing passthrough fields
+					{ ...driveItem } as Parameters<typeof ctx.db.driveItems.upsertByEntityId>[1],
 						);
 					}
 				} catch (error) {

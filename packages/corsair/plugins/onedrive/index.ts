@@ -30,7 +30,6 @@ import {
 import { OnedriveSchema } from './schema';
 import { DriveWebhooks } from './webhooks';
 import type {
-	OnedriveNotification,
 	OnedriveValidationPayload,
 	OnedriveWebhookOutputs,
 	OnedriveWebhookPayload,
@@ -39,7 +38,6 @@ import {
 	OnedriveNotificationSchema,
 	OnedriveValidationPayloadSchema,
 	OnedriveWebhookPayloadSchema,
-	createOnedriveMatch,
 	createOnedriveValidationMatch,
 } from './webhooks/types';
 import { errorHandlers } from './error-handlers';

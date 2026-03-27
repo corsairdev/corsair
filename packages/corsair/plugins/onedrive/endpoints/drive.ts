@@ -18,8 +18,8 @@ export const get: OnedriveEndpoints['driveGet'] = async (ctx, input) => {
 
 	if (result.id && ctx.db.drives) {
 		try {
-			// any/unknown cast: upsert requires the full DB schema shape; response may have optional required fields
-			await ctx.db.drives.upsertByEntityId(result.id, result as Parameters<typeof ctx.db.drives.upsertByEntityId>[1]);
+			// DB schema requires several fields (name, driveType, etc.) that are optional in the API response; cast after spread to satisfy types while capturing passthrough fields
+			await ctx.db.drives.upsertByEntityId(result.id, { ...result } as Parameters<typeof ctx.db.drives.upsertByEntityId>[1]);
 		} catch (error) {
 			console.warn('Failed to save drive to database:', error);
 		}
@@ -43,8 +43,8 @@ export const getGroup: OnedriveEndpoints['driveGetGroup'] = async (ctx, input) =
 
 	if (result.id && ctx.db.drives) {
 		try {
-			// any/unknown cast: upsert requires the full DB schema shape; response may have optional required fields
-			await ctx.db.drives.upsertByEntityId(result.id, result as Parameters<typeof ctx.db.drives.upsertByEntityId>[1]);
+			// DB schema requires several fields (name, driveType, etc.) that are optional in the API response; cast after spread to satisfy types while capturing passthrough fields
+			await ctx.db.drives.upsertByEntityId(result.id, { ...result } as Parameters<typeof ctx.db.drives.upsertByEntityId>[1]);
 		} catch (error) {
 			console.warn('Failed to save group drive to database:', error);
 		}
@@ -87,8 +87,8 @@ export const list: OnedriveEndpoints['driveList'] = async (ctx, input) => {
 				// any/unknown for drive since drive list items are untyped array elements
 				const driveObj = drive as Record<string, unknown>;
 				if (driveObj.id && typeof driveObj.id === 'string') {
-					// any/unknown cast: upsert requires the full DB schema shape; list items are loosely typed
-					await ctx.db.drives.upsertByEntityId(driveObj.id, driveObj as Parameters<typeof ctx.db.drives.upsertByEntityId>[1]);
+					// DB schema requires several fields that are optional in the API response; cast after spread to satisfy types while capturing passthrough fields
+					await ctx.db.drives.upsertByEntityId(driveObj.id, { ...driveObj } as Parameters<typeof ctx.db.drives.upsertByEntityId>[1]);
 				}
 			}
 		} catch (error) {
@@ -112,6 +112,15 @@ export const getRoot: OnedriveEndpoints['driveGetRoot'] = async (ctx, input) => 
 		{ method: 'GET', query },
 	);
 
+	if (result.id && ctx.db.driveItems) {
+		try {
+			// DB schema requires name:string but API returns name as optional; cast after spread to satisfy types while capturing passthrough fields
+			await ctx.db.driveItems.upsertByEntityId(result.id, { ...result } as Parameters<typeof ctx.db.driveItems.upsertByEntityId>[1]);
+		} catch (error) {
+			console.warn('Failed to save drive root to database:', error);
+		}
+	}
+
 	await logEventFromContext(ctx, 'onedrive.drive.getRoot', {}, 'completed');
 	return result;
 };
@@ -129,6 +138,15 @@ export const getSpecialFolder: OnedriveEndpoints['driveGetSpecialFolder'] = asyn
 		{ method: 'GET', query },
 	);
 
+	if (result.id && ctx.db.driveItems) {
+		try {
+			// DB schema requires name:string but API returns name as optional; cast after spread to satisfy types while capturing passthrough fields
+			await ctx.db.driveItems.upsertByEntityId(result.id, { ...result } as Parameters<typeof ctx.db.driveItems.upsertByEntityId>[1]);
+		} catch (error) {
+			console.warn('Failed to save special folder to database:', error);
+		}
+	}
+
 	await logEventFromContext(ctx, 'onedrive.drive.getSpecialFolder', { special_folder_name }, 'completed');
 	return result;
 };
@@ -144,6 +162,15 @@ export const getQuota: OnedriveEndpoints['driveGetQuota'] = async (ctx, input) =
 		ctx.key,
 		{ method: 'GET', query },
 	);
+
+	if (result.id && ctx.db.drives) {
+		try {
+			// DB schema requires several fields (name, driveType, etc.) that are optional in the API response; cast after spread to satisfy types while capturing passthrough fields
+			await ctx.db.drives.upsertByEntityId(result.id, { ...result } as Parameters<typeof ctx.db.drives.upsertByEntityId>[1]);
+		} catch (error) {
+			console.warn('Failed to save drive quota to database:', error);
+		}
+	}
 
 	await logEventFromContext(ctx, 'onedrive.drive.getQuota', {}, 'completed');
 	return result;
@@ -162,6 +189,21 @@ export const getRecentItems: OnedriveEndpoints['driveGetRecentItems'] = async (c
 		{ method: 'GET', query },
 	);
 
+	if (result.value?.length && ctx.db.driveItems) {
+		try {
+			for (const item of result.value) {
+				// any/unknown for item since recent items are untyped array elements
+				const driveItem = item as Record<string, unknown>;
+				if (driveItem.id && typeof driveItem.id === 'string') {
+					// DB schema requires name:string but API returns name as optional; cast after spread to satisfy types while capturing passthrough fields
+					await ctx.db.driveItems.upsertByEntityId(driveItem.id, { ...driveItem } as Parameters<typeof ctx.db.driveItems.upsertByEntityId>[1]);
+				}
+			}
+		} catch (error) {
+			console.warn('Failed to save recent items to database:', error);
+		}
+	}
+
 	await logEventFromContext(ctx, 'onedrive.drive.getRecentItems', {}, 'completed');
 	return result;
 };
@@ -177,6 +219,21 @@ export const getSharedItems: OnedriveEndpoints['driveGetSharedItems'] = async (c
 		ctx.key,
 		{ method: 'GET', query },
 	);
+
+	if (result.value?.length && ctx.db.driveItems) {
+		try {
+			for (const item of result.value) {
+				// any/unknown for item since shared items are untyped array elements
+				const driveItem = item as Record<string, unknown>;
+				if (driveItem.id && typeof driveItem.id === 'string') {
+					// DB schema requires name:string but API returns name as optional; cast after spread to satisfy types while capturing passthrough fields
+					await ctx.db.driveItems.upsertByEntityId(driveItem.id, { ...driveItem } as Parameters<typeof ctx.db.driveItems.upsertByEntityId>[1]);
+				}
+			}
+		} catch (error) {
+			console.warn('Failed to save shared items to database:', error);
+		}
+	}
 
 	await logEventFromContext(ctx, 'onedrive.drive.getSharedItems', {}, 'completed');
 	return result;
@@ -213,6 +270,21 @@ export const listChanges: OnedriveEndpoints['driveListChanges'] = async (ctx, in
 		{ method: 'GET', query },
 	);
 
+	if (result.value?.length && ctx.db.driveItems) {
+		try {
+			for (const item of result.value) {
+				// any/unknown for item since delta items are untyped array elements
+				const driveItem = item as Record<string, unknown>;
+				if (driveItem.id && typeof driveItem.id === 'string' && !driveItem.deleted) {
+					// DB schema requires name:string but API returns name as optional; cast after spread to satisfy types while capturing passthrough fields
+					await ctx.db.driveItems.upsertByEntityId(driveItem.id, { ...driveItem } as Parameters<typeof ctx.db.driveItems.upsertByEntityId>[1]);
+				}
+			}
+		} catch (error) {
+			console.warn('Failed to save drive changes to database:', error);
+		}
+	}
+
 	await logEventFromContext(ctx, 'onedrive.drive.listChanges', {}, 'completed');
 	return result;
 };
@@ -233,6 +305,21 @@ export const listBundles: OnedriveEndpoints['driveListBundles'] = async (ctx, in
 		ctx.key,
 		{ method: 'GET', query },
 	);
+
+	if (result.value?.length && ctx.db.driveItems) {
+		try {
+			for (const item of result.value) {
+				// any/unknown for item since bundle items are untyped array elements
+				const driveItem = item as Record<string, unknown>;
+				if (driveItem.id && typeof driveItem.id === 'string') {
+					// DB schema requires name:string but API returns name as optional; cast after spread to satisfy types while capturing passthrough fields
+					await ctx.db.driveItems.upsertByEntityId(driveItem.id, { ...driveItem } as Parameters<typeof ctx.db.driveItems.upsertByEntityId>[1]);
+				}
+			}
+		} catch (error) {
+			console.warn('Failed to save bundles to database:', error);
+		}
+	}
 
 	await logEventFromContext(ctx, 'onedrive.drive.listBundles', { drive_id }, 'completed');
 	return result;

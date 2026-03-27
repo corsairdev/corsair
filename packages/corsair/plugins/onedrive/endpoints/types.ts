@@ -20,19 +20,19 @@ const DriveItemSchema = z.object({
 		id: z.string().optional(),
 		path: z.string().optional(),
 		name: z.string().optional(),
-	}).optional(),
+	}).passthrough().optional(),
 	file: z.object({
 		mimeType: z.string().optional(),
-	}).optional(),
+	}).passthrough().optional(),
 	folder: z.object({
 		childCount: z.number().optional(),
-	}).optional(),
+	}).passthrough().optional(),
 	deleted: z.object({
 		state: z.string().optional(),
-	}).optional(),
+	}).passthrough().optional(),
 	// any/unknown for children since it's a recursive driveItem array
 	children: z.array(z.record(z.unknown())).optional(),
-});
+}).passthrough();
 
 const DriveSchema = z.object({
 	id: z.string().optional(),
@@ -50,8 +50,8 @@ const DriveSchema = z.object({
 		total: z.number().optional(),
 		used: z.number().optional(),
 		state: z.string().optional(),
-	}).optional(),
-});
+	}).passthrough().optional(),
+}).passthrough();
 
 const PermissionSchema = z.object({
 	id: z.string().optional(),
@@ -64,7 +64,7 @@ const PermissionSchema = z.object({
 	grantedToV2: z.record(z.unknown()).optional(),
 	hasPassword: z.boolean().optional(),
 	expirationDateTime: z.string().optional(),
-});
+}).passthrough();
 
 // ── Items Input Schemas ───────────────────────────────────────────────────────
 
