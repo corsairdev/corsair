@@ -1,5 +1,5 @@
 import { logEventFromContext } from '../../utils/events';
-import type { OutlookWebhooks } from '..';
+import type { OutlookBoundEndpoints, OutlookWebhooks } from '..';
 import type { ContactCreatedEvent, OutlookWebhookPayload } from './types';
 import { createOutlookMatch, verifyOutlookWebhookSignature } from './types';
 import type { WebhookRequest } from '../../../core';
@@ -46,11 +46,13 @@ export const newContact: OutlookWebhooks['contactCreated'] = {
 			return { success: true, data: undefined };
 		}
 
-		if (entityId && ctx.db.contacts) {
+		if (entityId) {
 			try {
-				await ctx.db.contacts.upsertByEntityId(entityId, { id: entityId });
+				const endpoints = ctx.endpoints as OutlookBoundEndpoints;
+				const escapedEntityId = entityId.replace(/'/g, "''");
+				await endpoints.contacts.list({ top: 1, filter: `id eq '${escapedEntityId}'` });
 			} catch (error) {
-				console.warn('Failed to save new contact to database:', error);
+				console.warn('Failed to fetch new contact details:', error);
 			}
 		}
 

@@ -1,5 +1,5 @@
 import { logEventFromContext } from '../../utils/events';
-import type { OutlookWebhooks } from '..';
+import type { OutlookBoundEndpoints, OutlookWebhooks } from '..';
 import type { MessageReceivedEvent, MessageSentEvent, OutlookWebhookPayload } from './types';
 import { createOutlookMatch, verifyOutlookWebhookSignature } from './types';
 import type { WebhookRequest } from '../../../core';
@@ -45,11 +45,12 @@ export const newMessage: OutlookWebhooks['messageReceived'] = {
 
 		const { notification, entityId } = extracted;
 
-		if (entityId && ctx.db.messages) {
+		if (entityId) {
 			try {
-				await ctx.db.messages.upsertByEntityId(entityId, { id: entityId });
+				const endpoints = ctx.endpoints as OutlookBoundEndpoints;
+				await endpoints.messages.get({ message_id: entityId });
 			} catch (error) {
-				console.warn('Failed to save received message to database:', error);
+				console.warn('Failed to fetch received message details:', error);
 			}
 		}
 
@@ -78,14 +79,12 @@ export const sentMessage: OutlookWebhooks['messageSent'] = {
 
 		const { notification, entityId } = extracted;
 
-		if (entityId && ctx.db.messages) {
+		if (entityId) {
 			try {
-				await ctx.db.messages.upsertByEntityId(entityId, {
-					id: entityId,
-					isDraft: false,
-				});
+				const endpoints = ctx.endpoints as OutlookBoundEndpoints;
+				await endpoints.messages.get({ message_id: entityId });
 			} catch (error) {
-				console.warn('Failed to save sent message to database:', error);
+				console.warn('Failed to fetch sent message details:', error);
 			}
 		}
 

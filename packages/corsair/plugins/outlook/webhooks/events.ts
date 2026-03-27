@@ -1,5 +1,5 @@
 import { logEventFromContext } from '../../utils/events';
-import type { OutlookWebhooks } from '..';
+import type { OutlookBoundEndpoints, OutlookWebhooks } from '..';
 import type { EventCreatedEvent, EventChangedEvent, OutlookWebhookPayload } from './types';
 import { createOutlookMatch, verifyOutlookWebhookSignature } from './types';
 import type { WebhookRequest } from '../../../core';
@@ -46,11 +46,13 @@ export const newEvent: OutlookWebhooks['eventCreated'] = {
 			return { success: true, data: undefined };
 		}
 
-		if (entityId && ctx.db.events) {
+		if (entityId) {
 			try {
-				await ctx.db.events.upsertByEntityId(entityId, { id: entityId });
+				const endpoints = ctx.endpoints as OutlookBoundEndpoints;
+				const escapedEntityId = entityId.replace(/'/g, "''");
+				await endpoints.events.list({ top: 1, filter: `id eq '${escapedEntityId}'` });
 			} catch (error) {
-				console.warn('Failed to save new event to database:', error);
+				console.warn('Failed to fetch new event details:', error);
 			}
 		}
 
@@ -79,12 +81,14 @@ export const eventChange: OutlookWebhooks['eventChanged'] = {
 
 		const { notification, entityId } = extracted;
 
-		if (entityId && ctx.db.events) {
+		if (entityId) {
 			try {
 				if (notification.changeType === 'deleted') {
 					await ctx.db.events.deleteByEntityId(entityId);
 				} else {
-					await ctx.db.events.upsertByEntityId(entityId, { id: entityId });
+					const endpoints = ctx.endpoints as OutlookBoundEndpoints;
+					const escapedEntityId = entityId.replace(/'/g, "''");
+					await endpoints.events.list({ top: 1, filter: `id eq '${escapedEntityId}'` });
 				}
 			} catch (error) {
 				console.warn('Failed to update event in database:', error);
