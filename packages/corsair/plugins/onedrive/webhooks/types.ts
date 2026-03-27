@@ -34,21 +34,51 @@ function parseBody(body: unknown): unknown {
 	}
 }
 
+function isOnedriveResource(resource: unknown): boolean {
+	if (typeof resource !== 'string') return false;
+	const normalized = resource.toLowerCase();
+	return (
+		normalized.includes('/drive') ||
+		normalized.includes('/drives') ||
+		normalized.includes('/me/drive') ||
+		normalized.includes('/users/') ||
+		normalized.includes('/groups/') ||
+		normalized.includes('/sites/')
+	);
+}
+
+function isOnedriveNotificationShape(notification: unknown): boolean {
+	if (!notification || typeof notification !== 'object') return false;
+	const record = notification as Record<string, unknown>;
+	return (
+		typeof record.subscriptionId === 'string' &&
+		record.subscriptionId.trim().length > 0 &&
+		typeof record.changeType === 'string' &&
+		record.changeType.trim().length > 0 &&
+		isOnedriveResource(record.resource)
+	);
+}
+
+function parseOnedriveNotifications(body: unknown): Record<string, unknown>[] | null {
+	const parsed = parseBody(body);
+	if (!parsed || typeof parsed !== 'object') return null;
+	const value = (parsed as Record<string, unknown>).value;
+	if (!Array.isArray(value) || value.length === 0) return null;
+	const notifications = value.filter(
+		(item): item is Record<string, unknown> => !!item && typeof item === 'object',
+	);
+	if (notifications.length === 0) return null;
+	return notifications;
+}
+
 export function createOnedriveMatch(changeType?: string): CorsairWebhookMatcher {
 	return (request: RawWebhookRequest) => {
-		// any/unknown cast: raw webhook body is untyped before parsing
-		const parsed = parseBody(request.body);
-		if (!parsed || typeof parsed !== 'object') return false;
-		const body = parsed as Record<string, unknown>;
-		const value = body.value;
-		if (!Array.isArray(value) || value.length === 0) return false;
+		const notifications = parseOnedriveNotifications(request.body);
+		if (!notifications) return false;
+		const onedriveNotifications = notifications.filter(isOnedriveNotificationShape);
+		if (onedriveNotifications.length === 0) return false;
 		if (!changeType) return true;
-		// any/unknown for notification items from raw parsed JSON
-		return value.some((n: unknown) => {
-			if (!n || typeof n !== 'object') return false;
-			const notification = n as Record<string, unknown>;
-			return notification.changeType === changeType;
-		});
+		return onedriveNotifications.some((notification) => notification.changeType === changeType);
 	};
 }
 
@@ -114,14 +144,6 @@ export function extractOnedriveValidationToken(
 	if (!parsed || typeof parsed !== 'object') return null;
 	const token = (parsed as Record<string, unknown>).validationToken;
 	if (typeof token === 'string' && token.trim()) return token.trim();
-
-	const clientRequestIdHeader = headers['client-request-id'];
-	const clientRequestId = Array.isArray(clientRequestIdHeader)
-		? clientRequestIdHeader[0]
-		: clientRequestIdHeader;
-	if (typeof clientRequestId === 'string' && clientRequestId.trim()) {
-		return `Validation: Testing client application reachability for subscription Request-Id:${clientRequestId.trim()}`;
-	}
 
 	return null;
 }

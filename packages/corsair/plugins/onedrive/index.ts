@@ -38,9 +38,11 @@ import {
 	OnedriveNotificationSchema,
 	OnedriveValidationPayloadSchema,
 	OnedriveWebhookPayloadSchema,
+	createOnedriveMatch,
 	createOnedriveValidationMatch,
 } from './webhooks/types';
 import { errorHandlers } from './error-handlers';
+import { getValidAccessToken } from './client';
 
 export type OnedrivePluginOptions = {
 	authType?: PickAuth<'oauth_2'>;
@@ -430,21 +432,7 @@ export function onedrive<const PluginOptions extends OnedrivePluginOptions>(
 			if (createOnedriveValidationMatch()(request)) {
 				return true;
 			}
-			// Microsoft Graph webhooks send a JSON body with a 'value' array of notifications
-			// any/unknown for request.body since raw webhook body is untyped before parsing
-			const body = request.body;
-			if (typeof body === 'string') {
-				try {
-					const parsed = JSON.parse(body) as Record<string, unknown>;
-					return Array.isArray(parsed.value);
-				} catch {
-					return false;
-				}
-			}
-			if (body && typeof body === 'object') {
-				return Array.isArray((body as Record<string, unknown>).value);
-			}
-			return false;
+			return createOnedriveMatch()(request);
 		},
 		errorHandlers: {
 			...errorHandlers,
@@ -456,11 +444,37 @@ export function onedrive<const PluginOptions extends OnedrivePluginOptions>(
 			}
 
 			if (ctx.authType === 'oauth_2') {
-				const res = await ctx.keys.get_access_token();
-				if (!res) {
-					return '';
+				const [accessToken, expiresAt, refreshToken, integrationCreds] =
+					await Promise.all([
+						ctx.keys.get_access_token(),
+						ctx.keys.get_expires_at?.(),
+						ctx.keys.get_refresh_token?.(),
+						ctx.keys.get_integration_credentials?.(),
+					]);
+
+				if (!refreshToken || !integrationCreds?.client_id || !integrationCreds?.client_secret) {
+					if (!accessToken) {
+						return '';
+					}
+					return accessToken;
 				}
-				return res;
+
+				const result = await getValidAccessToken({
+					accessToken,
+					expiresAt: expiresAt ?? null,
+					refreshToken,
+					clientId: integrationCreds.client_id,
+					clientSecret: integrationCreds.client_secret,
+				});
+
+				if (result.refreshed) {
+					await Promise.all([
+						ctx.keys.set_access_token?.(result.accessToken),
+						ctx.keys.set_expires_at?.(String(result.expiresAt)),
+					]);
+				}
+
+				return result.accessToken;
 			}
 
 			return '';
