@@ -13,6 +13,7 @@ export const driveNotification: OnedriveWebhooks['driveNotification'] = {
 		if (ctx.db.driveItems) {
 			// Type assertion so that the endpoints are the correct type
 			const endpoints = ctx.endpoints as OnedriveBoundEndpoints;
+			let shouldRunDeltaSync = false;
 			for (const notification of payload.value) {
 				if (
 					notification.resourceData?.id &&
@@ -25,6 +26,29 @@ export const driveNotification: OnedriveWebhooks['driveNotification'] = {
 					} catch (error) {
 						console.warn('onedrive webhook: failed to fetch drive item', error);
 					}
+				} else if (notification.changeType === 'updated' || notification.changeType === 'created') {
+					shouldRunDeltaSync = true;
+				}
+			}
+			if (shouldRunDeltaSync) {
+				try {
+					const changes = await endpoints.drive.listChanges({ top: 200 });
+					for (const item of changes.value || []) {
+						const driveItem = item as Record<string, unknown>;
+						const itemId = driveItem.id;
+						if (!itemId || typeof itemId !== 'string') {
+							continue;
+						}
+						if (driveItem.deleted) {
+							continue;
+						}
+						await ctx.db.driveItems.upsertByEntityId(
+							itemId,
+							driveItem as Parameters<typeof ctx.db.driveItems.upsertByEntityId>[1],
+						);
+					}
+				} catch (error) {
+					console.warn('onedrive webhook: delta sync failed', error);
 				}
 			}
 		}
