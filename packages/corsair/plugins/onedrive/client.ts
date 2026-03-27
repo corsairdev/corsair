@@ -66,7 +66,7 @@ export async function getValidAccessToken({
 	clientId: string;
 	clientSecret: string;
 	accessToken?: string | null;
-	expiresAt?: string | null;
+	expiresAt?: string | number | null;
 	refreshToken: string;
 }): Promise<{ accessToken: string; expiresAt: number; refreshed: boolean }> {
 	const now = Math.floor(Date.now() / 1000);
@@ -80,7 +80,15 @@ export async function getValidAccessToken({
 				: Math.floor(rawExpiresAt)
 			: null;
 
-	if (accessToken && normalizedExpiresAt && normalizedExpiresAt > now + bufferSeconds) {
+	const hasJwtShape =
+		typeof accessToken === 'string' && accessToken.split('.').length === 3;
+
+	if (
+		accessToken &&
+		hasJwtShape &&
+		normalizedExpiresAt &&
+		normalizedExpiresAt > now + bufferSeconds
+	) {
 		return {
 			accessToken,
 			expiresAt: normalizedExpiresAt,

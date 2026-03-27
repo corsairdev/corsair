@@ -51,6 +51,7 @@ export type OnedrivePluginOptions = {
 	webhookHooks?: InternalOnedrivePlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof onedriveEndpointsNested>;
+	webhookSecret?: string;
 };
 
 export type OnedriveContext = CorsairPluginContext<
@@ -439,6 +440,16 @@ export function onedrive<const PluginOptions extends OnedrivePluginOptions>(
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: OnedriveKeyBuilderContext, source) => {
+			if (source === 'webhook' && options.webhookSecret) {
+				return options.webhookSecret;
+			}
+
+			if (source === 'webhook') {
+				const res = await ctx.keys.get_webhook_signature();
+				if (!res) return '';
+				return res;
+			}
+
 			if (source === 'endpoint' && options.key) {
 				return options.key;
 			}

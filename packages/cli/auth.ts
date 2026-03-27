@@ -100,7 +100,6 @@ const OAUTH_PROVIDER_CONFIG: Record<string, OAuthProviderConfig> = {
 			'Files.ReadWrite.All',
 			'Sites.Read.All',
 			'Subscription.Read.All',
-			'Subscription.ReadWrite.All',
 		],
 	},
 };

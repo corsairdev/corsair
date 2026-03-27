@@ -1,13 +1,24 @@
 import { logEventFromContext } from '../../utils/events';
 import type { OnedriveBoundEndpoints, OnedriveWebhooks } from '..';
-import { createOnedriveMatch } from './types';
+import { createOnedriveMatch, verifyOnedriveClientState } from './types';
 
 export const driveNotification: OnedriveWebhooks['driveNotification'] = {
 	match: createOnedriveMatch(),
 	handler: async (ctx, request) => {
+
 		const payload = request.payload;
 		if (!payload?.value?.length) {
 			return { success: true, data: { value: [] } };
+		}
+		for (const notification of payload.value) {
+			const verification = verifyOnedriveClientState(notification, ctx.key);
+			if (!verification.valid) {
+				return {
+					success: false,
+					statusCode: 401,
+					error: verification.error || 'OneDrive clientState verification failed',
+				};
+			}
 		}
 
 		if (ctx.db.driveItems) {
@@ -45,7 +56,7 @@ export const driveNotification: OnedriveWebhooks['driveNotification'] = {
 						await ctx.db.driveItems.upsertByEntityId(
 							itemId,
 							// DB schema requires name:string but delta item has name as optional; cast after spread to satisfy types while capturing passthrough fields
-					{ ...driveItem } as Parameters<typeof ctx.db.driveItems.upsertByEntityId>[1],
+							{ ...driveItem } as Parameters<typeof ctx.db.driveItems.upsertByEntityId>[1],
 						);
 					}
 				} catch (error) {
