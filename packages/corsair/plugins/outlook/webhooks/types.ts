@@ -120,7 +120,7 @@ export function verifyOutlookWebhookSignature(
 	clientState: string,
 ): { valid: boolean; error?: string } {
 	if (!clientState) {
-		return { valid: true };
+		return { valid: false, error: 'Missing client state' };
 	}
 
 	const notifications = request.payload?.value ?? [];
