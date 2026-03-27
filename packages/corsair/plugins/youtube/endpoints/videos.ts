@@ -73,21 +73,59 @@ export const getBatch: YoutubeEndpoints['videosGetBatch'] = async (ctx, input) =
 };
 
 export const list: YoutubeEndpoints['videosList'] = async (ctx, input) => {
-	const response = await makeYoutubeRequest<YoutubeEndpointOutputs['videosList']>(
-		'/search',
-		ctx.key,
-		{
+	const part = input.part ?? 'snippet';
+	let nextPageToken: string | undefined;
+	let prevPageToken: string | undefined;
+	let pageInfo: YoutubeEndpointOutputs['videosList']['pageInfo'] | undefined;
+	let videoIds: string[] | undefined;
+
+	if (input.channelId || input.mine) {
+		const searchResponse = await makeYoutubeRequest<{
+			items?: Array<{ id?: { videoId?: string } }>;
+			nextPageToken?: string;
+			prevPageToken?: string;
+			pageInfo?: YoutubeEndpointOutputs['videosList']['pageInfo'];
+		}>('/search', ctx.key, {
 			method: 'GET',
 			query: {
 				type: 'video',
-				part: input.part ?? 'snippet',
-				...(input.mine && { forMine: 'true' }),
+				part: 'id',
+				...(input.mine && { forMine: true }),
 				...(input.channelId && { channelId: input.channelId }),
 				...(input.pageToken && { pageToken: input.pageToken }),
 				...(input.maxResults && { maxResults: input.maxResults }),
 			},
-		},
-	);
+		});
+
+		videoIds = (searchResponse.items ?? [])
+			.map((item) => item.id?.videoId)
+			.filter((id): id is string => Boolean(id));
+		nextPageToken = searchResponse.nextPageToken;
+		prevPageToken = searchResponse.prevPageToken;
+		pageInfo = searchResponse.pageInfo;
+	}
+
+	const response =
+		videoIds && videoIds.length === 0
+			? {
+					items: [],
+					nextPageToken,
+					prevPageToken,
+					pageInfo,
+				}
+			: await makeYoutubeRequest<YoutubeEndpointOutputs['videosList']>(
+					'/videos',
+					ctx.key,
+					{
+						method: 'GET',
+						query: {
+							part,
+							...(videoIds && { id: videoIds.join(',') }),
+							...(videoIds ? {} : input.pageToken ? { pageToken: input.pageToken } : {}),
+							...(videoIds ? {} : input.maxResults ? { maxResults: input.maxResults } : {}),
+						},
+					},
+				);
 
 	if (response.items && ctx.db.videos) {
 		for (const item of response.items) {
@@ -185,11 +223,12 @@ export const upload: YoutubeEndpoints['videosUpload'] = async (ctx, input) => {
 	// YouTube resumable upload requires multipart/form-data with the actual video bytes.
 	// This endpoint passes the file reference to the API which handles the upload flow.
 	const response = await makeYoutubeRequest<YoutubeEndpointOutputs['videosUpload']>(
-		'/upload/youtube/v3/videos',
+		'/videos',
 		ctx.key,
 		{
 			method: 'POST',
 			query: { part: 'snippet,status', uploadType: 'resumable' },
+			upload: true,
 			body: {
 				snippet: {
 					title: input.title,
@@ -209,11 +248,12 @@ export const upload: YoutubeEndpoints['videosUpload'] = async (ctx, input) => {
 export const uploadMultipart: YoutubeEndpoints['videosUploadMultipart'] = async (ctx, input) => {
 	// YouTube multipart upload passes video metadata; the actual file upload is handled separately.
 	const response = await makeYoutubeRequest<YoutubeEndpointOutputs['videosUploadMultipart']>(
-		'/upload/youtube/v3/videos',
+		'/videos',
 		ctx.key,
 		{
 			method: 'POST',
 			query: { part: 'snippet,status', uploadType: 'multipart' },
+			upload: true,
 			body: {
 				snippet: {
 					title: input.title,

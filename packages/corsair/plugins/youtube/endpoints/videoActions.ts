@@ -79,15 +79,22 @@ export const listAbuseReasons: YoutubeEndpoints['videoActionsListAbuseReasons'] 
 };
 
 export const updateThumbnail: YoutubeEndpoints['videoActionsUpdateThumbnail'] = async (ctx, input) => {
-	// Thumbnail update requires multipart upload with the image data.
-	// This implementation passes the thumbnail URL reference to the API.
+	const thumbnailResponse = await fetch(input.thumbnailUrl);
+	if (!thumbnailResponse.ok) {
+		throw new Error(`Failed to download thumbnail image: ${thumbnailResponse.status} ${thumbnailResponse.statusText}`);
+	}
+	const thumbnailBytes = await thumbnailResponse.arrayBuffer();
+	const thumbnailContentType = thumbnailResponse.headers.get('content-type') || 'application/octet-stream';
+
 	const response = await makeYoutubeRequest<YoutubeEndpointOutputs['videoActionsUpdateThumbnail']>(
 		'/thumbnails/set',
 		ctx.key,
 		{
 			method: 'POST',
 			query: { videoId: input.videoId },
-			body: { thumbnailUrl: input.thumbnailUrl },
+			body: new Blob([thumbnailBytes], { type: thumbnailContentType }),
+			mediaType: thumbnailContentType,
+			upload: true,
 		},
 	);
 

@@ -404,10 +404,8 @@ export function youtube<const T extends YoutubePluginOptions>(
 			...options.errorHandlers,
 		},
 		pluginWebhookMatcher: (request) => {
-			const headers = request.headers;
-			// YouTube polling triggers don't use a dedicated signature header;
-			// match by the presence of a YouTube-specific payload field instead
-			return 'x-youtube-resource-state' in headers || 'x-goog-resource-state' in headers;
+			// Webhooks not implemented yet
+			return false
 		},
 		keyBuilder: async (ctx: YoutubeKeyBuilderContext, source) => {
 			if (source === 'webhook' && options.webhookSecret) {

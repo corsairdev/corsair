@@ -16,40 +16,40 @@ export class YoutubeAPIError extends Error {
 }
 
 const YOUTUBE_API_BASE = 'https://www.googleapis.com/youtube/v3';
+const YOUTUBE_UPLOAD_API_BASE = 'https://www.googleapis.com/upload/youtube/v3';
 
 export async function makeYoutubeRequest<T>(
 	endpoint: string,
 	accessToken: string,
 	options: {
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
-		// Values are untyped because this client sends arbitrary JSON bodies whose shape varies per endpoint
-		body?: Record<string, unknown>;
+		body?: unknown;
 		query?: Record<string, string | number | boolean | undefined>;
+		headers?: Record<string, string>;
+		mediaType?: string;
+		upload?: boolean;
 	} = {},
 ): Promise<T> {
-	const { method = 'GET', body, query } = options;
+	const { method = 'GET', body, query, headers, mediaType, upload } = options;
 
 	const config: OpenAPIConfig = {
-		BASE: YOUTUBE_API_BASE,
+		BASE: upload ? YOUTUBE_UPLOAD_API_BASE : YOUTUBE_API_BASE,
 		VERSION: '1.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
 		TOKEN: undefined,
 		HEADERS: {
-			'Content-Type': 'application/json',
 			Authorization: `Bearer ${accessToken}`,
+			...headers,
 		},
 	};
 
 	const requestOptions: ApiRequestOptions = {
 		method,
 		url: endpoint,
-		body:
-			method === 'POST' || method === 'PUT' || method === 'PATCH'
-				? body
-				: undefined,
-		mediaType: 'application/json; charset=utf-8',
-		query: method === 'GET' || method === 'DELETE' ? query : undefined,
+		body: method === 'POST' || method === 'PUT' || method === 'PATCH' ? body : undefined,
+		mediaType: mediaType ?? 'application/json; charset=utf-8',
+		query,
 	};
 
 	try {
