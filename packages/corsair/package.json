@@ -157,6 +157,11 @@
       "types": "./dist/plugins/notion/index.d.ts",
       "default": "./dist/plugins/notion/index.js"
     },
+    "./plugins/onedrive": {
+      "dev-source": "./plugins/onedrive/index.ts",
+      "types": "./dist/plugins/onedrive/index.d.ts",
+      "default": "./dist/plugins/onedrive/index.js"
+    },
     "./plugins/oura": {
       "dev-source": "./plugins/oura/index.ts",
       "types": "./dist/plugins/oura/index.d.ts",
