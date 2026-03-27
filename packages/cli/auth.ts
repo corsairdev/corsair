@@ -82,6 +82,18 @@ const OAUTH_PROVIDER_CONFIG: Record<string, OAuthProviderConfig> = {
 			'playlist-modify-private',
 		],
 	},
+	onedrive: {
+		providerName: 'Microsoft',
+		authUrl: 'https://login.microsoftonline.com/common/oauth2/v2.0/authorize',
+		tokenUrl: 'https://login.microsoftonline.com/common/oauth2/v2.0/token',
+		scopes: [
+			'offline_access',
+			'User.Read',
+			'Files.ReadWrite.All',
+			'Sites.Read.All',
+			'Subscription.Read.All',
+		],
+	},
 };
 
 function getOAuthConfigForPlugin(
