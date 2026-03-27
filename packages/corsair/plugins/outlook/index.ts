@@ -14,6 +14,7 @@ import type {
 	PluginPermissionsConfig,
 } from '../../core';
 import type { AuthTypes, PickAuth } from '../../core/constants';
+import type { RawWebhookRequest } from '../../core';
 import type { OutlookEndpointInputs, OutlookEndpointOutputs } from './endpoints/types';
 import {
 	OutlookEndpointInputSchemas,
@@ -442,6 +443,23 @@ export type ExternalOutlookPlugin<T extends OutlookPluginOptions> =
 export function outlook<const T extends OutlookPluginOptions>(
 	incomingOptions: OutlookPluginOptions & T = {} as OutlookPluginOptions & T,
 ): ExternalOutlookPlugin<T> {
+	const isOutlookGraphNotificationBody = (body: unknown): boolean => {
+		if (body === null || typeof body !== 'object') return false;
+		const value = (body as { value?: unknown }).value;
+		if (!Array.isArray(value) || value.length === 0) return false;
+		return value.some((notification) => {
+			if (notification === null || typeof notification !== 'object') return false;
+			const resource = (notification as { resource?: unknown }).resource;
+			return typeof resource === 'string' && resource.length > 0;
+		});
+	};
+
+	const hasValidationTokenBody = (body: unknown): boolean => {
+		if (body === null || typeof body !== 'object') return false;
+		const validationToken = (body as { validationToken?: unknown }).validationToken;
+		return typeof validationToken === 'string' && validationToken.length > 0;
+	};
+
 	const options = {
 		...incomingOptions,
 		authType: incomingOptions.authType ?? defaultAuthType,
@@ -457,15 +475,17 @@ export function outlook<const T extends OutlookPluginOptions>(
 		endpointMeta: outlookEndpointMeta,
 		endpointSchemas: outlookEndpointSchemas,
 		webhookSchemas: outlookWebhookSchemas,
-		pluginWebhookMatcher: (request) => {
+		pluginWebhookMatcher: (request: RawWebhookRequest) => {
 			const headers = request.headers;
 			const contentType = headers['content-type'];
-			// Microsoft Graph change notifications use application/json
-			// Subscription validation requests use text/plain with an empty body
-			return (
-				(typeof contentType === 'string' && contentType.includes('application/json')) ||
-				(typeof contentType === 'string' && contentType.includes('text/plain'))
-			);
+			if (typeof contentType !== 'string') return false;
+			if (contentType.includes('application/json')) {
+				return isOutlookGraphNotificationBody(request.body);
+			}
+			if (contentType.includes('text/plain')) {
+				return hasValidationTokenBody(request.body);
+			}
+			return false;
 		},
 		errorHandlers: {
 			...errorHandlers,

@@ -76,8 +76,10 @@ export const createEvent: OutlookEndpoints['eventsCreate'] = async (ctx, input) 
 };
 
 export const getEvent: OutlookEndpoints['eventsGet'] = async (ctx, input) => {
+	const base = userPath(input.user_id);
+	const calendarPath = input.calendar_id ? `/calendars/${input.calendar_id}` : '';
 	const result = await makeOutlookRequest<OutlookEndpointOutputs['eventsGet']>(
-		`/me/calendars/${input.calendar_id}/events/${input.event_id}`,
+		`${base}${calendarPath}/events/${input.event_id}`,
 		ctx.key,
 	);
 

@@ -88,21 +88,24 @@ export type OutlookWebhookOutputs = {
 export function createOutlookMatch(
 	resourcePattern: RegExp,
 	changeTypes: string[] = ['created', 'updated', 'deleted'],
+	options?: { excludeResourcePatterns?: RegExp[] },
 ): CorsairWebhookMatcher {
 	return (request: RawWebhookRequest) => {
-		// body may be a raw string or already parsed — normalize before checking
-		const body = typeof request.body === 'string'
-			// JSON.parse returns `any`; cast to `unknown` first to force explicit narrowing below
-			? (JSON.parse(request.body) as unknown)
-			: request.body;
-		// Payload shape is validated at runtime by the Zod schema in the webhook handler;
-		// the cast here is safe because the match function is only called with Outlook-sourced bodies
+		const body =
+			typeof request.body === 'string'
+				? (JSON.parse(request.body) as unknown)
+				: request.body;
 		const payload = body as OutlookWebhookPayload;
 		return (
 			payload?.value?.some(
 				(notification) =>
 					notification.resource !== undefined &&
 					resourcePattern.test(notification.resource) &&
+					!(
+						options?.excludeResourcePatterns?.some((pattern) =>
+							pattern.test(notification.resource as string),
+						) ?? false
+					) &&
 					(notification.changeType === undefined ||
 						changeTypes.includes(notification.changeType)),
 			) ?? false
@@ -122,7 +125,7 @@ export function verifyOutlookWebhookSignature(
 
 	const notifications = request.payload?.value ?? [];
 	const allMatch = notifications.every(
-		(n) => !n.clientState || n.clientState === clientState,
+		(n) => typeof n.clientState === 'string' && n.clientState === clientState,
 	);
 
 	if (!allMatch) {
@@ -137,13 +140,15 @@ export function verifyOutlookLifecycleSignature(
 	secret: string,
 ): boolean {
 	if (!secret) return true;
-	// Microsoft Graph sends HMAC SHA256 of the validationToken signed with the client secret
 	const expected = crypto
 		.createHmac('sha256', secret)
 		.update(validationToken)
 		.digest('base64');
+	const received = Buffer.from(validationToken);
+	const expectedBuffer = Buffer.from(expected);
+	if (received.length !== expectedBuffer.length) return false;
 	return crypto.timingSafeEqual(
-		Buffer.from(validationToken),
-		Buffer.from(expected),
+		received,
+		expectedBuffer,
 	);
 }

@@ -5,10 +5,8 @@ import { createOutlookMatch, verifyOutlookWebhookSignature } from './types';
 import type { WebhookRequest } from '../../../core';
 import type { OutlookContext } from '..';
 
-// Matches inbox/message resources: Users/{id}/Messages/{id} or me/Messages/{id}
 const MESSAGE_RESOURCE_PATTERN = /[Mm]essages\//;
 
-// Matches sentItems resources
 const SENT_ITEMS_RESOURCE_PATTERN = /[Mm]ailFolders\/[Ss]entItems\/[Mm]essages\//;
 
 // ── Shared verification helper ────────────────────────────────────────────────
@@ -37,7 +35,9 @@ function verifyAndExtract(ctx: OutlookContext, request: WebhookRequest<OutlookWe
 // ── Webhook handlers ──────────────────────────────────────────────────────────
 
 export const newMessage: OutlookWebhooks['messageReceived'] = {
-	match: createOutlookMatch(MESSAGE_RESOURCE_PATTERN, ['created']),
+	match: createOutlookMatch(MESSAGE_RESOURCE_PATTERN, ['created'], {
+		excludeResourcePatterns: [SENT_ITEMS_RESOURCE_PATTERN],
+	}),
 
 	handler: async (ctx, request) => {
 		const extracted = verifyAndExtract(ctx, request);

@@ -8,6 +8,25 @@ import type { OutlookContext } from '..';
 // Matches calendar event resources: Users/{id}/Events/{id} or Calendars/{id}/Events/{id}
 const EVENT_RESOURCE_PATTERN = /[Ee]vents\//;
 
+function extractEventPathIdentifiers(resource: string | undefined): {
+	userId?: string;
+	calendarId?: string;
+	eventId?: string;
+} {
+	if (!resource) return {};
+	const segments = resource.split('/').filter(Boolean);
+	const usersIndex = segments.findIndex((segment) => segment.toLowerCase() === 'users');
+	const calendarsIndex = segments.findIndex(
+		(segment) => segment.toLowerCase() === 'calendars',
+	);
+	const eventsIndex = segments.findIndex((segment) => segment.toLowerCase() === 'events');
+	return {
+		userId: usersIndex >= 0 ? segments[usersIndex + 1] : undefined,
+		calendarId: calendarsIndex >= 0 ? segments[calendarsIndex + 1] : undefined,
+		eventId: eventsIndex >= 0 ? segments[eventsIndex + 1] : undefined,
+	};
+}
+
 // ── Shared verification helper ────────────────────────────────────────────────
 
 function verifyAndExtract(ctx: OutlookContext, request: WebhookRequest<OutlookWebhookPayload>) {
@@ -49,8 +68,20 @@ export const newEvent: OutlookWebhooks['eventCreated'] = {
 		if (entityId) {
 			try {
 				const endpoints = ctx.endpoints as OutlookBoundEndpoints;
-				const escapedEntityId = entityId.replace(/'/g, "''");
-				await endpoints.events.list({ top: 1, filter: `id eq '${escapedEntityId}'` });
+				const ids = extractEventPathIdentifiers(notification.resource);
+				if (ids.eventId) {
+					const input = ids.calendarId
+						? {
+								event_id: ids.eventId,
+								calendar_id: ids.calendarId,
+								...(ids.userId ? { user_id: ids.userId } : {}),
+							}
+						: {
+								event_id: ids.eventId,
+								...(ids.userId ? { user_id: ids.userId } : {}),
+							};
+					await endpoints.events.get(input);
+				}
 			} catch (error) {
 				console.warn('Failed to fetch new event details:', error);
 			}
@@ -87,8 +118,20 @@ export const eventChange: OutlookWebhooks['eventChanged'] = {
 					await ctx.db.events.deleteByEntityId(entityId);
 				} else {
 					const endpoints = ctx.endpoints as OutlookBoundEndpoints;
-					const escapedEntityId = entityId.replace(/'/g, "''");
-					await endpoints.events.list({ top: 1, filter: `id eq '${escapedEntityId}'` });
+					const ids = extractEventPathIdentifiers(notification.resource);
+					if (ids.eventId) {
+						const input = ids.calendarId
+							? {
+									event_id: ids.eventId,
+									calendar_id: ids.calendarId,
+									...(ids.userId ? { user_id: ids.userId } : {}),
+								}
+							: {
+									event_id: ids.eventId,
+									...(ids.userId ? { user_id: ids.userId } : {}),
+								};
+						await endpoints.events.get(input);
+					}
 				}
 			} catch (error) {
 				console.warn('Failed to update event in database:', error);

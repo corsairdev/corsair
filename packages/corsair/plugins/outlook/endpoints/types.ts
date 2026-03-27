@@ -440,7 +440,8 @@ const EventsCreateInputSchema = z.object({
 
 const EventsGetInputSchema = z.object({
 	event_id: z.string(),
-	calendar_id: z.string(),
+	user_id: z.string().optional(),
+	calendar_id: z.string().optional(),
 });
 
 const EventsListInputSchema = z.object({
