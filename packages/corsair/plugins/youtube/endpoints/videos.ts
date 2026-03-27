@@ -77,36 +77,32 @@ export const list: YoutubeEndpoints['videosList'] = async (ctx, input) => {
 	let nextPageToken: string | undefined;
 	let prevPageToken: string | undefined;
 	let pageInfo: YoutubeEndpointOutputs['videosList']['pageInfo'] | undefined;
-	let videoIds: string[] | undefined;
+	const searchResponse = await makeYoutubeRequest<{
+		items?: Array<{ id?: { videoId?: string } }>;
+		nextPageToken?: string;
+		prevPageToken?: string;
+		pageInfo?: YoutubeEndpointOutputs['videosList']['pageInfo'];
+	}>('/search', ctx.key, {
+		method: 'GET',
+		query: {
+			type: 'video',
+			part: 'id',
+			...(input.mine && { forMine: true }),
+			...(input.channelId && { channelId: input.channelId }),
+			...(input.pageToken && { pageToken: input.pageToken }),
+			...(input.maxResults && { maxResults: input.maxResults }),
+		},
+	});
 
-	if (input.channelId || input.mine) {
-		const searchResponse = await makeYoutubeRequest<{
-			items?: Array<{ id?: { videoId?: string } }>;
-			nextPageToken?: string;
-			prevPageToken?: string;
-			pageInfo?: YoutubeEndpointOutputs['videosList']['pageInfo'];
-		}>('/search', ctx.key, {
-			method: 'GET',
-			query: {
-				type: 'video',
-				part: 'id',
-				...(input.mine && { forMine: true }),
-				...(input.channelId && { channelId: input.channelId }),
-				...(input.pageToken && { pageToken: input.pageToken }),
-				...(input.maxResults && { maxResults: input.maxResults }),
-			},
-		});
-
-		videoIds = (searchResponse.items ?? [])
-			.map((item) => item.id?.videoId)
-			.filter((id): id is string => Boolean(id));
-		nextPageToken = searchResponse.nextPageToken;
-		prevPageToken = searchResponse.prevPageToken;
-		pageInfo = searchResponse.pageInfo;
-	}
+	const videoIds = (searchResponse.items ?? [])
+		.map((item) => item.id?.videoId)
+		.filter((id): id is string => Boolean(id));
+	nextPageToken = searchResponse.nextPageToken;
+	prevPageToken = searchResponse.prevPageToken;
+	pageInfo = searchResponse.pageInfo;
 
 	const response =
-		videoIds && videoIds.length === 0
+		videoIds.length === 0
 			? {
 					items: [],
 					nextPageToken,
@@ -120,9 +116,7 @@ export const list: YoutubeEndpoints['videosList'] = async (ctx, input) => {
 						method: 'GET',
 						query: {
 							part,
-							...(videoIds && { id: videoIds.join(',') }),
-							...(videoIds ? {} : input.pageToken ? { pageToken: input.pageToken } : {}),
-							...(videoIds ? {} : input.maxResults ? { maxResults: input.maxResults } : {}),
+							id: videoIds.join(','),
 						},
 					},
 				);
