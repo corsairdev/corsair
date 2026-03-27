@@ -19,6 +19,11 @@ export const OnedriveWebhookPayloadSchema = z.object({
 export type OnedriveWebhookPayload = z.infer<typeof OnedriveWebhookPayloadSchema>;
 export type OnedriveNotification = z.infer<typeof OnedriveNotificationSchema>;
 
+export const OnedriveValidationPayloadSchema = z.object({
+	validationToken: z.string(),
+});
+export type OnedriveValidationPayload = z.infer<typeof OnedriveValidationPayloadSchema>;
+
 // any/unknown for body since raw webhook body is untyped before parsing
 function parseBody(body: unknown): unknown {
 	if (typeof body !== 'string') return body;
@@ -47,6 +52,80 @@ export function createOnedriveMatch(changeType?: string): CorsairWebhookMatcher 
 	};
 }
 
+export function createOnedriveValidationMatch(): CorsairWebhookMatcher {
+	return (request: RawWebhookRequest) => {
+		if (extractOnedriveValidationToken(request)) return true;
+		const acceptHeader = request.headers['accept'] || '';
+		if (typeof acceptHeader === 'string' && acceptHeader.includes('text/plain')) {
+			const parsed = parseBody(request.body);
+			if (!parsed || (typeof parsed === 'object' && Object.keys(parsed).length === 0)) {
+				return true;
+			}
+		}
+		return false;
+	};
+}
+
+export function extractOnedriveValidationToken(
+	request: RawWebhookRequest | { payload?: unknown; headers?: Record<string, string | string[] | undefined> },
+): string | null {
+	const headers = request.headers || {};
+	const candidates = [
+		headers.validationtoken,
+		headers['validation-token'],
+		headers['ms-validation-token'],
+	];
+	for (const candidate of candidates) {
+		if (typeof candidate === 'string' && candidate.trim()) {
+			return decodeURIComponent(candidate.trim());
+		}
+		if (Array.isArray(candidate) && typeof candidate[0] === 'string' && candidate[0].trim()) {
+			return decodeURIComponent(candidate[0].trim());
+		}
+	}
+
+	const pathLikeHeaderKeys = [
+		'x-forwarded-uri',
+		'x-original-uri',
+		'x-rewrite-url',
+		'x-envoy-original-path',
+		'referer',
+	];
+	for (const key of pathLikeHeaderKeys) {
+		const headerValue = headers[key];
+		const asString = Array.isArray(headerValue) ? headerValue[0] : headerValue;
+		if (!asString || typeof asString !== 'string') continue;
+		try {
+			const fullUrl = asString.startsWith('http')
+				? new URL(asString)
+				: new URL(`https://example.invalid${asString.startsWith('/') ? asString : `/${asString}`}`);
+			const queryToken = fullUrl.searchParams.get('validationToken');
+			if (queryToken && queryToken.trim()) return queryToken.trim();
+		} catch {}
+	}
+
+	const bodySource =
+		'payload' in request
+			? request.payload
+			: 'body' in request
+				? request.body
+				: undefined;
+	const parsed = parseBody(bodySource);
+	if (!parsed || typeof parsed !== 'object') return null;
+	const token = (parsed as Record<string, unknown>).validationToken;
+	if (typeof token === 'string' && token.trim()) return token.trim();
+
+	const clientRequestIdHeader = headers['client-request-id'];
+	const clientRequestId = Array.isArray(clientRequestIdHeader)
+		? clientRequestIdHeader[0]
+		: clientRequestIdHeader;
+	if (typeof clientRequestId === 'string' && clientRequestId.trim()) {
+		return `Validation: Testing client application reachability for subscription Request-Id:${clientRequestId.trim()}`;
+	}
+
+	return null;
+}
+
 export function verifyOnedriveClientState(
 	notification: { clientState?: string | null },
 	expectedClientState: string,
@@ -59,5 +138,6 @@ export function verifyOnedriveClientState(
 }
 
 export type OnedriveWebhookOutputs = {
+	validation: OnedriveValidationPayload;
 	driveNotification: OnedriveWebhookPayload;
 };

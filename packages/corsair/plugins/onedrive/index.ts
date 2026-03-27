@@ -31,13 +31,16 @@ import { OnedriveSchema } from './schema';
 import { DriveWebhooks } from './webhooks';
 import type {
 	OnedriveNotification,
+	OnedriveValidationPayload,
 	OnedriveWebhookOutputs,
 	OnedriveWebhookPayload,
 } from './webhooks/types';
 import {
 	OnedriveNotificationSchema,
+	OnedriveValidationPayloadSchema,
 	OnedriveWebhookPayloadSchema,
 	createOnedriveMatch,
+	createOnedriveValidationMatch,
 } from './webhooks/types';
 import { errorHandlers } from './error-handlers';
 
@@ -142,6 +145,7 @@ type OnedriveWebhook<K extends keyof OnedriveWebhookOutputs, TPayload> = Corsair
 >;
 
 export type OnedriveWebhooks = {
+	validation: OnedriveWebhook<'validation', OnedriveValidationPayload>;
 	driveNotification: OnedriveWebhook<'driveNotification', OnedriveWebhookPayload>;
 };
 
@@ -225,6 +229,7 @@ const onedriveEndpointsNested = {
 
 const onedriveWebhooksNested = {
 	drive: {
+		validation: DriveWebhooks.validation,
 		driveNotification: DriveWebhooks.driveNotification,
 	},
 } as const;
@@ -300,6 +305,11 @@ export const onedriveEndpointSchemas = {
 } satisfies RequiredPluginEndpointSchemas<typeof onedriveEndpointsNested>;
 
 const onedriveWebhookSchemas = {
+	'drive.validation': {
+		description: 'Microsoft Graph OneDrive webhook validation handshake',
+		payload: OnedriveValidationPayloadSchema,
+		response: OnedriveValidationPayloadSchema,
+	},
 	'drive.driveNotification': {
 		description: 'Microsoft Graph drive change notification — item created, updated, or deleted',
 		payload: OnedriveWebhookPayloadSchema,
@@ -419,6 +429,9 @@ export function onedrive<const PluginOptions extends OnedrivePluginOptions>(
 		endpointSchemas: onedriveEndpointSchemas,
 		webhookSchemas: onedriveWebhookSchemas,
 		pluginWebhookMatcher: (request) => {
+			if (createOnedriveValidationMatch()(request)) {
+				return true;
+			}
 			// Microsoft Graph webhooks send a JSON body with a 'value' array of notifications
 			// any/unknown for request.body since raw webhook body is untyped before parsing
 			const body = request.body;
@@ -463,14 +476,17 @@ export function onedrive<const PluginOptions extends OnedrivePluginOptions>(
 
 export type {
 	OnedriveNotification,
+	OnedriveValidationPayload,
 	OnedriveWebhookOutputs,
 	OnedriveWebhookPayload,
 } from './webhooks/types';
 
 export {
 	OnedriveNotificationSchema,
+	OnedriveValidationPayloadSchema,
 	OnedriveWebhookPayloadSchema,
 	createOnedriveMatch,
+	createOnedriveValidationMatch,
 	verifyOnedriveClientState,
 } from './webhooks/types';
 

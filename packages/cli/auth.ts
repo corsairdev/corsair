@@ -31,6 +31,14 @@ type OAuthProviderConfig = {
 	scopes?: string[];
 };
 
+type GraphSubscriptionResponse = {
+	id: string;
+	resource?: string;
+	changeType?: string;
+	expirationDateTime?: string;
+	notificationUrl?: string;
+};
+
 const OAUTH_PROVIDER_CONFIG: Record<string, OAuthProviderConfig> = {
 	gmail: {
 		providerName: 'Google',
@@ -92,9 +100,148 @@ const OAUTH_PROVIDER_CONFIG: Record<string, OAuthProviderConfig> = {
 			'Files.ReadWrite.All',
 			'Sites.Read.All',
 			'Subscription.Read.All',
+			'Subscription.ReadWrite.All',
 		],
 	},
 };
+
+function createGraphSubscription(
+	accessToken: string,
+	payload: {
+		changeType: string;
+		notificationUrl: string;
+		resource: string;
+		expirationDateTime: string;
+		clientState: string;
+	},
+): Promise<GraphSubscriptionResponse> {
+	const postData = JSON.stringify(payload);
+	return new Promise((resolve, reject) => {
+		const req = https.request(
+			{
+				hostname: 'graph.microsoft.com',
+				path: '/v1.0/subscriptions',
+				method: 'POST',
+				headers: {
+					Authorization: `Bearer ${accessToken}`,
+					'Content-Type': 'application/json',
+					'Content-Length': Buffer.byteLength(postData).toString(),
+				},
+			},
+			(res) => {
+				let data = '';
+				res.on('data', (chunk) => {
+					data += chunk;
+				});
+				res.on('end', () => {
+					const parsed = JSON.parse(data || '{}') as Record<string, unknown>;
+					if (!res.statusCode || res.statusCode < 200 || res.statusCode >= 300) {
+						reject(
+							new Error(
+								`Subscription creation failed (${res.statusCode ?? 'unknown'}): ${JSON.stringify(parsed)}`,
+							),
+						);
+						return;
+					}
+					resolve(parsed as GraphSubscriptionResponse);
+				});
+			},
+		);
+		req.on('error', (error) => {
+			reject(new Error(`Subscription request failed: ${error.message}`));
+		});
+		req.write(postData);
+		req.end();
+	});
+}
+
+async function setupOnedriveWebhookFlow(accessToken: string): Promise<void> {
+	const notificationUrl = await p.text({
+		message: 'Enter webhook notification URL:',
+		placeholder: 'https://your-ngrok-url.ngrok-free.app/api/webhook?tenantId=default',
+		validate: (value) => {
+			const trimmed = value?.trim();
+			if (!trimmed) return 'Notification URL is required';
+			if (!trimmed.startsWith('https://')) return 'Notification URL must start with https://';
+		},
+	});
+	if (p.isCancel(notificationUrl)) handleCancel();
+
+	const resource = await p.text({
+		message: 'Enter Graph resource to subscribe:',
+		placeholder: 'me/drive/root',
+		initialValue: 'me/drive/root',
+		validate: (value) => {
+			if (!value || value.trim().length === 0) return 'Resource is required';
+		},
+	});
+	if (p.isCancel(resource)) handleCancel();
+
+	const changeType = await p.text({
+		message: 'Enter change type:',
+		placeholder: 'updated',
+		initialValue: 'updated',
+		validate: (value) => {
+			if (!value || value.trim().length === 0) return 'Change type is required';
+		},
+	});
+	if (p.isCancel(changeType)) handleCancel();
+
+	const clientState = await p.text({
+		message: 'Enter client state secret:',
+		placeholder: 'random-secret',
+		validate: (value) => {
+			if (!value || value.trim().length === 0) return 'Client state is required';
+		},
+	});
+	if (p.isCancel(clientState)) handleCancel();
+
+	const expirationDate = new Date(Date.now() + 45 * 60 * 1000).toISOString();
+	const spin = p.spinner();
+	spin.start('Creating OneDrive webhook subscription...');
+	try {
+		const subscription = await createGraphSubscription(accessToken, {
+			changeType: (changeType as string).trim(),
+			notificationUrl: (notificationUrl as string).trim(),
+			resource: (resource as string).trim(),
+			expirationDateTime: expirationDate,
+			clientState: (clientState as string).trim(),
+		});
+		spin.stop('Webhook subscription created.');
+		p.note(
+			[
+				`Subscription ID: ${subscription.id}`,
+				`Resource: ${subscription.resource ?? (resource as string).trim()}`,
+				`Change Type: ${subscription.changeType ?? (changeType as string).trim()}`,
+				`Expires At: ${subscription.expirationDateTime ?? expirationDate}`,
+			].join('\n'),
+			'OneDrive Webhook',
+		);
+	} catch (error) {
+		spin.stop('Webhook setup failed.');
+		p.log.error(
+			`Webhook setup error: ${error instanceof Error ? error.message : String(error)}`,
+		);
+	}
+}
+
+function getPluginSpecificActions(
+	pluginId: string,
+	authType: AuthTypes,
+): ActionDef[] {
+	if (authType === 'oauth_2' && pluginId === 'onedrive') {
+		return [
+			{
+				value: 'setup-onedrive-webhook',
+				label: 'Setup OneDrive Webhook Subscription',
+				hint: 'Create Graph /subscriptions webhook',
+				level: 'account',
+				type: 'display',
+			},
+		];
+	}
+	return [];
+}
 
 function getOAuthConfigForPlugin(
 	pluginId: string,
@@ -531,6 +678,20 @@ function getActionsForAuthType(
 			return NO_AUTH_ACTIONS;
 	}
 
+	const actions = [...baseActions];
+
+	if (plugin && authType) {
+		const pluginSpecificActions = getPluginSpecificActions(plugin.id, authType);
+		if (pluginSpecificActions.length > 0) {
+			const viewStatusIndex = actions.findIndex((a) => a.value === 'view-status');
+			if (viewStatusIndex >= 0) {
+				actions.splice(viewStatusIndex, 0, ...pluginSpecificActions);
+			} else {
+				actions.push(...pluginSpecificActions);
+			}
+		}
+	}
+
 	// If plugin is provided, add custom field actions
 	if (plugin && authType) {
 		const customIntegrationFields = getCustomIntegrationFields(
@@ -560,13 +721,13 @@ function getActionsForAuthType(
 			(a) => a.value === 'view-status',
 		);
 		if (viewStatusIndex >= 0) {
-			baseActions.splice(viewStatusIndex, 0, ...customActions);
+			actions.splice(viewStatusIndex, 0, ...customActions);
 		} else {
-			baseActions.push(...customActions);
+			actions.push(...customActions);
 		}
 	}
 
-	return baseActions;
+	return actions;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -1250,6 +1411,7 @@ async function executeGetTokens(
 		}
 
 		saveSpin.stop('Tokens saved to corsair.');
+
 		p.log.success(
 			`Tokens saved for tenant '${tenantId}'. You can now use the integration.`,
 		);
@@ -1259,6 +1421,47 @@ async function executeGetTokens(
 			`Error: ${error instanceof Error ? error.message : String(error)}`,
 		);
 	}
+}
+
+async function executeOnedriveWebhookSetup(
+	database: CorsairDatabase,
+	pluginId: string,
+	kek: string,
+	tenantId: string,
+	plugin?: CorsairPlugin,
+): Promise<void> {
+	const extraAccountFields = plugin
+		? getCustomAccountFields(plugin, 'oauth_2')
+		: [];
+	const accountKm = createAccountKeyManager({
+		authType: 'oauth_2',
+		integrationName: pluginId,
+		tenantId,
+		kek,
+		database,
+		extraAccountFields,
+	});
+
+	let accessToken: string | null = null;
+	try {
+		accessToken = await accountKm.get_access_token();
+	} catch {}
+
+	if (!accessToken) {
+		const inputToken = await p.password({
+			message: 'Enter Microsoft Graph access token (not found in corsair):',
+			mask: '*',
+		});
+		if (p.isCancel(inputToken)) handleCancel();
+		accessToken = (inputToken as string).trim();
+	}
+
+	if (!accessToken) {
+		p.log.error('Access token is required to create OneDrive webhook subscriptions.');
+		return;
+	}
+
+	await setupOnedriveWebhookFlow(accessToken);
 }
 
 async function executeConfirmAction(
@@ -1592,6 +1795,17 @@ async function executeAction(
 			pluginId,
 			kek,
 			authType,
+			tenantId,
+			plugin,
+		);
+		return;
+	}
+
+	if (action.value === 'setup-onedrive-webhook') {
+		await executeOnedriveWebhookSetup(
+			database,
+			pluginId,
+			kek,
 			tenantId,
 			plugin,
 		);
