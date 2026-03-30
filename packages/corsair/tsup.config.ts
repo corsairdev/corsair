@@ -47,6 +47,7 @@ export default defineConfig({
 		'setup.ts',
 		'plugins/airtable/index.ts',
 		'plugins/amplitude/index.ts',
+		'plugins/asana/index.ts',
 		'plugins/box/index.ts',
 		'plugins/cal/index.ts',
 		'plugins/calendly/index.ts',

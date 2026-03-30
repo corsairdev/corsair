@@ -367,6 +367,13 @@ export function googledrive<const T extends GoogleDrivePluginOptions>(
 		id: 'googledrive',
 		schema: GoogleDriveSchema,
 		options: options,
+		oauthConfig: {
+			providerName: 'Google',
+			authUrl: 'https://accounts.google.com/o/oauth2/v2/auth',
+			tokenUrl: 'https://oauth2.googleapis.com/token',
+			scopes: ['https://www.googleapis.com/auth/drive'],
+			authParams: { access_type: 'offline', prompt: 'consent' },
+		},
 		hooks: options.hooks,
 		webhookHooks: options.webhookHooks,
 		endpoints: googleDriveEndpointsNested,
