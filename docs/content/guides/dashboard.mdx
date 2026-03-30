@@ -1,0 +1,199 @@
+---
+title: Vibe Code Your Dashboard
+description: Scaffold a Next.js + tRPC + SQLite project and build a live GitHub dashboard in minutes.
+---
+
+You've got Corsair pulling data from GitHub. Now build a dashboard that actually displays it — channels, repos, open issues, recent PRs — all queried from your local database, no GitHub API calls at runtime.
+
+**The plan:** scaffold a barebones Next.js project, wire in Corsair, then give this page to your AI and let it build the UI.
+
+---
+
+## Scaffold the project
+
+<Steps>
+
+<Step>
+
+### Create a Next.js app
+
+```bash
+npx create-next-app@latest my-dashboard --typescript --tailwind --app --no-src-dir
+cd my-dashboard
+```
+
+</Step>
+
+<Step>
+
+### Install dependencies
+
+```bash
+npm install corsair better-sqlite3 @trpc/server @trpc/client @trpc/next @trpc/react-query @tanstack/react-query zod
+npm install -D @types/better-sqlite3
+```
+
+</Step>
+
+<Step>
+
+### Set up your environment
+
+```bash title=".env.local"
+CORSAIR_KEK="paste-your-key-here"
+GITHUB_TOKEN="ghp_your_token_here"
+```
+
+Generate a KEK if you don't have one:
+
+```bash
+openssl rand -base64 32
+```
+
+</Step>
+
+<Step>
+
+### Create `lib/corsair.ts`
+
+```ts title="lib/corsair.ts"
+import Database from 'better-sqlite3';
+import { createCorsair, github } from 'corsair';
+
+const db = new Database('corsair.db');
+
+export const corsair = createCorsair({
+    plugins: [github()],
+    database: db,
+    kek: process.env.CORSAIR_KEK!,
+});
+```
+
+</Step>
+
+<Step>
+
+### Run the database migration
+
+Copy the SQLite migration from the [Quick Start](/quick-start#migrate-the-database) and run it:
+
+```bash
+sqlite3 corsair.db < migration.sql
+```
+
+</Step>
+
+<Step>
+
+### Seed your credentials and backfill
+
+```ts title="scripts/setup.ts"
+import 'dotenv/config';
+import { setupCorsair } from 'corsair';
+import { corsair } from '../lib/corsair';
+
+await corsair.github.keys.set_api_key(process.env.GITHUB_TOKEN!);
+const output = await setupCorsair(corsair, { backfill: true });
+console.log(output);
+```
+
+```bash
+npx tsx scripts/setup.ts
+```
+
+This fetches your GitHub repos, issues, and PRs into the local database. Your dashboard reads from there — instant, no API calls needed.
+
+</Step>
+
+<Step>
+
+### Create a tRPC router
+
+```ts title="server/router.ts"
+import { initTRPC } from '@trpc/server';
+import { z } from 'zod';
+import { corsair } from '@/lib/corsair';
+
+const t = initTRPC.create();
+
+export const appRouter = t.router({
+    repositories: t.procedure.query(async () => {
+        return corsair.github.db.repositories.findAll();
+    }),
+
+    topRepos: t.procedure
+        .input(z.object({ limit: z.number().default(10) }))
+        .query(async ({ input }) => {
+            const repos = await corsair.github.db.repositories.findAll();
+            return repos
+                .sort((a, b) => b.data.open_issues_count - a.data.open_issues_count)
+                .slice(0, input.limit);
+        }),
+});
+
+export type AppRouter = typeof appRouter;
+```
+
+</Step>
+
+</Steps>
+
+---
+
+## Vibe code the UI
+
+Your project is wired up. Now hand this prompt to Cursor, Claude, or your editor of choice:
+
+```
+I have a Next.js + tRPC + Corsair project. Corsair is a GitHub integration layer
+that caches data locally in SQLite. I have a tRPC router at server/router.ts with:
+- repositories: returns all GitHub repos
+- topRepos({ limit }): returns repos sorted by open_issues_count descending
+
+Build me a dashboard at app/page.tsx that:
+1. Shows a header with "My GitHub Dashboard" and a last-synced timestamp
+2. Displays a grid of repo cards — each showing repo name, description,
+   open issue count (highlighted if > 10), and a link to GitHub
+3. Highlights the top 3 repos with the most open issues
+4. Uses Tailwind CSS, dark mode, clean minimal design
+
+Use the tRPC client from @/lib/trpc to call the endpoints.
+```
+
+---
+
+## What you'll get
+
+A live dashboard pulling from your local SQLite database — no GitHub API rate limits, sub-millisecond queries, works offline after the initial backfill.
+
+From here you can:
+- Add more plugins (`slack()`, `linear()`) and show cross-service data
+- Set up webhooks so the database updates automatically as new events come in
+- Add multi-tenancy so each user sees their own data
+
+---
+
+## What's next
+
+<Cards>
+  <Card
+    title="Webhooks"
+    description="Auto-update your dashboard when GitHub events happen in real time."
+    href="/webhooks"
+  />
+  <Card
+    title="Multi-Tenancy"
+    description="Show each user their own repos and issues."
+    href="/multi-tenancy"
+  />
+  <Card
+    title="Workflows"
+    description="Chain events into automations — PR opened → Slack notification."
+    href="/guides/workflows"
+  />
+  <Card
+    title="More Plugins"
+    description="Add Slack, Linear, Gmail and pull their data into the same dashboard."
+    href="/plugins/slack"
+  />
+</Cards>

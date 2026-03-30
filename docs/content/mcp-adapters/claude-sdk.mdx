@@ -1,17 +1,76 @@
 ---
-title: Claude Agent SDK
-description: Connect Corsair to the Anthropic Claude Agent SDK.
+title: MCP Adapters
+description: Connect Corsair to any AI framework — Anthropic, OpenAI, Vercel AI, Mastra, and more.
 ---
 
-Use `ClaudeProvider` to connect Corsair to the [Claude Agent SDK](https://github.com/anthropics/claude-agent-sdk).
+Corsair ships a single package — `@corsair-dev/mcp` — that adapts to every major AI framework. Pick your framework and get four tools automatically:
+
+| Tool | What it does |
+|---|---|
+| `corsair_setup` | Check auth status and get credential instructions |
+| `list_operations` | Discover every available API endpoint |
+| `get_schema` | Inspect parameters for a specific endpoint |
+| `run_script` | Execute a JS snippet with `corsair` in scope |
+
+Your agent calls `corsair_setup` first, then `list_operations` to discover what's available, then `run_script` to execute. No code changes needed as you add plugins.
+
+---
 
 ## Install
 
 ```bash
-npm install @anthropic-ai/claude-agent-sdk
+npm install @corsair-dev/mcp
 ```
 
-## Usage
+---
+
+## Choose your framework
+
+<Tabs items={['Anthropic SDK', 'Claude Agent SDK', 'OpenAI Agents', 'Vercel AI SDK', 'Mastra', 'OpenAI']}>
+
+<Tab value="Anthropic SDK">
+
+Uses native tool use via the Anthropic TypeScript SDK. `toolRunner` handles the tool-call loop automatically.
+
+```bash
+npm install @anthropic-ai/sdk
+```
+
+```ts title="agent.ts"
+import Anthropic from '@anthropic-ai/sdk';
+import { AnthropicProvider } from '@corsair-dev/mcp';
+import { corsair } from './corsair';
+
+const provider = new AnthropicProvider();
+const tools = provider.build({ corsair });  // synchronous
+const client = new Anthropic();
+
+const message = await client.beta.messages.toolRunner({
+    model: 'claude-sonnet-4-6',
+    max_tokens: 4096,
+    tools,
+    messages: [{
+        role: 'user',
+        content: 'List my GitHub repos with the most open issues.',
+    }],
+});
+
+for (const block of message.content) {
+    if (block.type === 'text') console.log(block.text);
+}
+```
+
+`AnthropicProvider.build()` is **synchronous** — returns tools directly, ready to pass to any Anthropic API call.
+
+</Tab>
+
+<Tab value="Claude Agent SDK">
+
+Uses the Claude Agent SDK with an in-process MCP server. No HTTP transport needed.
+
+```bash
+npm install @anthropic-ai/claude-agent-sdk
+```
 
 ```ts title="agent.ts"
 import { createSdkMcpServer, query } from '@anthropic-ai/claude-agent-sdk';
@@ -19,11 +78,11 @@ import { ClaudeProvider } from '@corsair-dev/mcp';
 import { corsair } from './corsair';
 
 const provider = new ClaudeProvider();
-const tools = await provider.build({ corsair });
+const tools = await provider.build({ corsair });  // async
 const server = createSdkMcpServer({ name: 'corsair', tools });
 
 const stream = query({
-    prompt: 'Setup corsair, then list all Slack channels.',
+    prompt: 'List my GitHub repos with the most open issues.',
     options: {
         model: 'claude-opus-4-6',
         mcpServers: { corsair: server },
@@ -35,6 +94,206 @@ for await (const event of stream) {
 }
 ```
 
-`ClaudeProvider.build()` is async — it dynamically imports the Claude Agent SDK as an optional peer dependency.
+`ClaudeProvider.build()` is **async** — dynamically imports the SDK as an optional peer dependency.
 
-The MCP server is passed directly to `query()` via `mcpServers`. No HTTP transport is needed.
+</Tab>
+
+<Tab value="OpenAI Agents">
+
+Uses the OpenAI Agents SDK. Pass the `tool` function from `@openai/agents` so the provider wraps each Corsair tool in the correct format.
+
+```bash
+npm install @openai/agents
+```
+
+```ts title="agent.ts"
+import { OpenAIAgentsProvider } from '@corsair-dev/mcp';
+import { Agent, run, tool } from '@openai/agents';
+import { corsair } from './corsair';
+
+const provider = new OpenAIAgentsProvider();
+const tools = provider.build({ corsair, tool });
+
+const agent = new Agent({
+    name: 'corsair-agent',
+    model: 'gpt-4.1',
+    instructions:
+        'You have access to Corsair tools. Use list_operations to discover ' +
+        'available APIs, get_schema to understand arguments, and run_script ' +
+        'to execute them.',
+    tools,
+});
+
+const result = await run(agent, 'List my GitHub repos with the most open issues.');
+console.log(result.finalOutput);
+```
+
+</Tab>
+
+<Tab value="Vercel AI SDK">
+
+Vercel AI connects over HTTP — you run Corsair as an MCP server and the client connects to it.
+
+```bash
+npm install ai @ai-sdk/mcp @ai-sdk/anthropic
+```
+
+**Server** — expose Corsair as an HTTP endpoint:
+
+```ts title="server.ts"
+import express from 'express';
+import { createBaseMcpServer, createMcpRouter } from '@corsair-dev/mcp';
+import { corsair } from './corsair';
+
+const app = express();
+app.use(express.json());
+app.use('/mcp', createMcpRouter(() => createBaseMcpServer({ corsair })));
+app.listen(3000, () => console.log('MCP server on :3000'));
+```
+
+**Client** — connect from your Vercel AI app:
+
+```ts title="agent.ts"
+import { generateText } from 'ai';
+import { anthropic } from '@ai-sdk/anthropic';
+import { createVercelAiMcpClient } from '@corsair-dev/mcp';
+
+const client = await createVercelAiMcpClient({
+    url: 'http://localhost:3000/mcp',
+});
+
+const tools = await client.tools();
+
+const { text } = await generateText({
+    model: anthropic('claude-sonnet-4-6'),
+    tools,
+    prompt: 'List my GitHub repos with the most open issues.',
+    maxSteps: 10,
+});
+
+console.log(text);
+await client.close();
+```
+
+</Tab>
+
+<Tab value="Mastra">
+
+Uses standard Mastra `createTool` instances.
+
+```bash
+npm install @mastra/core @ai-sdk/anthropic
+```
+
+```ts title="agent.ts"
+import { Agent } from '@mastra/core/agent';
+import { anthropic } from '@ai-sdk/anthropic';
+import { MastraProvider } from '@corsair-dev/mcp';
+import { corsair } from './corsair';
+
+const provider = new MastraProvider();
+const tools = await provider.build({ corsair });  // async
+
+const agent = new Agent({
+    name: 'corsair-agent',
+    model: anthropic('claude-sonnet-4-6'),
+    instructions:
+        'You have access to Corsair tools. Use list_operations to discover available APIs, ' +
+        'get_schema to understand required arguments, and run_script to execute them.',
+    tools: Object.fromEntries(tools.map((t) => [t.id, t])),
+});
+
+const response = await agent.generate('List my GitHub repos with the most open issues.');
+console.log(response.text);
+```
+
+`MastraProvider.build()` is **async** — dynamically imports `@mastra/core` as an optional peer dependency.
+
+</Tab>
+
+<Tab value="OpenAI">
+
+OpenAI's MCP support also connects over HTTP. Run the same Express server as Vercel AI and pass the config to the OpenAI client.
+
+```bash
+npm install openai
+```
+
+**Server** — same as Vercel AI:
+
+```ts title="server.ts"
+import express from 'express';
+import { createBaseMcpServer, createMcpRouter } from '@corsair-dev/mcp';
+import { corsair } from './corsair';
+
+const app = express();
+app.use(express.json());
+app.use('/mcp', createMcpRouter(() => createBaseMcpServer({ corsair })));
+app.listen(3000);
+```
+
+**Client:**
+
+```ts title="agent.ts"
+import OpenAI from 'openai';
+import { getOpenAIMcpConfig } from '@corsair-dev/mcp';
+
+const client = new OpenAI();
+
+const response = await client.responses.create({
+    model: 'gpt-4.1',
+    tools: [{
+        type: 'mcp',
+        ...getOpenAIMcpConfig('http://localhost:3000/mcp'),
+    }],
+    input: 'List my GitHub repos with the most open issues.',
+});
+
+console.log(response.output_text);
+```
+
+</Tab>
+
+</Tabs>
+
+---
+
+## How the agent uses Corsair
+
+Once connected, your agent follows this pattern automatically:
+
+```
+1. corsair_setup          → check auth, get instructions for missing credentials
+2. list_operations        → discover available endpoints (github.repositories.list, slack.messages.post, ...)
+3. get_schema             → inspect parameters for a specific endpoint
+4. run_script             → execute: const repos = await corsair.github.api.repositories.list({ type: 'owner' })
+```
+
+No hard-coding required. As you add plugins, the agent discovers the new endpoints automatically.
+
+---
+
+## What's next
+
+<Cards>
+  <Card
+    title="Quick Start"
+    description="Full walkthrough — install, credentials, first agent prompt."
+    href="/quick-start"
+  />
+  <Card
+    title="More Plugins"
+    description="Slack, Linear, Gmail, HubSpot, and 30+ more. Same pattern, just add to plugins[]."
+    href="/plugins/slack"
+  />
+  <Card
+    title="Webhooks"
+    description="React to real-time events from GitHub, Slack, and more."
+    href="/webhooks"
+  />
+  <Card
+    title="Multi-Tenancy"
+    description="Building a SaaS product? Scope every call per user with withTenant()."
+    href="/multi-tenancy"
+  />
+</Cards>
