@@ -6,9 +6,6 @@
   "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
-  "bin": {
-    "corsair": "./dist/bin.js"
-  },
   "exports": {
     ".": {
       "dev-source": "./index.ts",
@@ -248,10 +245,6 @@
     "generate:plugin": "tsx templates/plugin/generate.ts"
   },
   "dependencies": {
-    "@babel/core": "^7.28.6",
-    "@babel/preset-react": "^7.28.5",
-    "@babel/preset-typescript": "^7.28.5",
-    "c12": "^3.3.3",
     "kysely": "^0.28.5",
     "uuid": "^13.0.0",
     "zod": "^3.25.76"
@@ -263,7 +256,6 @@
     "@types/pg": "^8.15.6",
     "better-sqlite3": "^12.0.0",
     "dotenv": "^17.2.3",
-    "jiti": "^2.6.1",
     "js-yaml": "^4.1.0",
     "jest": "^29.7.0",
     "ts-jest": "^29.1.1",
