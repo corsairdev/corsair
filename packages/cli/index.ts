@@ -322,11 +322,17 @@ export async function getCorsairInstance({
 						);
 						process.exit(1);
 					}
+					// c12 returns empty config (no throw) when a file doesn't exist,
+					// so any exception here means the file was found but failed to load.
 					if (shouldThrowOnError) {
 						throw e;
 					}
-					// Continue to next path if this one fails
-					continue;
+					const msg =
+						typeof e === 'object' && e && 'message' in e && typeof e.message === 'string'
+							? e.message
+							: String(e);
+					console.error(`[#corsair]: Error loading ${possiblePath}:`, msg);
+					process.exit(1);
 				}
 			}
 		}
@@ -375,7 +381,77 @@ export async function getCorsairInstance({
 	}
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Arg parsing
+// ─────────────────────────────────────────────────────────────────────────────
+
+const RESERVED_FLAGS = new Set(['backfill', 'help', 'h']);
+
+function parseAuthArgs(args: string[]): {
+	pluginId?: string;
+	tenantId?: string;
+	code?: string;
+	credentials?: boolean;
+} {
+	let pluginId: string | undefined;
+	let tenantId: string | undefined;
+	let code: string | undefined;
+	let credentials = false;
+
+	for (const arg of args) {
+		if (arg === '--credentials') { credentials = true; continue; }
+
+		const eqIdx = arg.indexOf('=');
+		if (arg.startsWith('--') && eqIdx !== -1) {
+			const key = arg.slice(2, eqIdx);
+			const value = arg.slice(eqIdx + 1);
+			if (key === 'plugin') { pluginId = value; continue; }
+			if (key === 'tenant') { tenantId = value; continue; }
+			if (key === 'code') { code = value; continue; }
+		}
+	}
+
+	return { pluginId, tenantId, code, credentials };
+}
+
+function parseSetupArgs(args: string[]): {
+	backfill: boolean;
+	credentials: Record<string, Record<string, string>>;
+} {
+	let backfill = false;
+	const credentials: Record<string, Record<string, string>> = {};
+	let currentPlugin: string | null = null;
+
+	for (const arg of args) {
+		if (arg === '--backfill' || arg === '-backfill') {
+			backfill = true;
+			currentPlugin = null;
+			continue;
+		}
+
+		if (arg.startsWith('--')) {
+			const name = arg.slice(2);
+			if (RESERVED_FLAGS.has(name)) continue;
+			currentPlugin = name;
+			credentials[currentPlugin] = {};
+			continue;
+		}
+
+		if (currentPlugin && arg.includes('=')) {
+			const eqIdx = arg.indexOf('=');
+			const field = arg.slice(0, eqIdx);
+			const value = arg.slice(eqIdx + 1);
+			credentials[currentPlugin]![field] = value;
+		}
+	}
+
+	return { backfill, credentials };
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 // CLI entry point
+// ─────────────────────────────────────────────────────────────────────────────
+
 async function main() {
 	const cwd = process.cwd();
 	const args = process.argv.slice(2);
@@ -384,8 +460,12 @@ async function main() {
 	if (command === 'help' || command === '--help' || command === '-h') {
 		console.log('[#corsair]: Corsair CLI\n');
 		console.log('Commands:');
-		console.log('  corsair                    Inspect your Corsair instance');
-		console.log('  corsair auth               Manage integration credentials');
+		console.log('  corsair setup                               Initialize your Corsair instance');
+		console.log('  corsair setup -backfill                     Initialize and backfill initial data');
+		console.log('  corsair setup --<plugin> <field>=VALUE ...  Set credentials for a plugin');
+		console.log('  corsair auth --plugin=<id>                 Start OAuth flow (outputs auth URL as JSON)');
+		console.log('  corsair auth --plugin=<id> --code=<code>   Exchange OAuth code for tokens');
+		console.log('  corsair auth --plugin=<id> --credentials   Show current credential status');
 		console.log(
 			'  corsair watch-renew        Renew Google webhook watch (Gmail/Drive/Calendar)',
 		);
@@ -394,9 +474,22 @@ async function main() {
 		return;
 	}
 
+	if (command === 'setup') {
+		const { backfill, credentials } = parseSetupArgs(args.slice(1));
+		const { setupCorsair } = await import('corsair/setup');
+		const instance = await getCorsairInstance({ cwd });
+		await setupCorsair(instance as Parameters<typeof setupCorsair>[0], {
+			backfill,
+			credentials,
+			caller: 'cli',
+		});
+		return;
+	}
+
 	if (command === 'auth') {
 		const { runAuth } = await import('./auth');
-		await runAuth({ cwd });
+		const authArgs = parseAuthArgs(args.slice(1));
+		await runAuth({ cwd, ...authArgs });
 		return;
 	}
 

@@ -197,6 +197,7 @@ export type {
 	CorsairKeyBuilder,
 	CorsairKeyBuilderBase,
 	CorsairPlugin,
+	OAuthConfig,
 	CorsairPluginContext,
 	EndpointHooks,
 	EndpointMetaEntry,

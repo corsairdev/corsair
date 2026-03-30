@@ -548,6 +548,44 @@ export type CorsairPlugin<
 		string,
 		{ description?: string; payload?: ZodTypeAny; response?: ZodTypeAny }
 	>;
+	/**
+	 * OAuth 2.0 configuration for this plugin.
+	 * When set, the CLI uses these values to drive the authorization flow
+	 * instead of a hardcoded lookup table — so any OAuth provider works
+	 * without changes to the CLI itself.
+	 */
+	oauthConfig?: OAuthConfig;
+};
+
+/**
+ * OAuth 2.0 provider configuration, declared on the plugin so the CLI can
+ * drive the authorization flow for any provider generically.
+ */
+export type OAuthConfig = {
+	/** Human-readable provider name shown in CLI prompts, e.g. "Google". */
+	providerName: string;
+	/** Authorization endpoint URL, e.g. "https://accounts.google.com/o/oauth2/v2/auth". */
+	authUrl: string;
+	/** Token exchange endpoint URL. */
+	tokenUrl: string;
+	/** OAuth scopes to request. */
+	scopes: string[];
+	/**
+	 * How client credentials are sent to the token endpoint.
+	 * - `'body'` (default): client_id + client_secret sent as form body params (Google, etc.)
+	 * - `'basic'`: Base64-encoded "client_id:client_secret" sent as an Authorization header (Spotify, etc.)
+	 */
+	tokenAuthMethod?: 'body' | 'basic';
+	/**
+	 * When true, the user must supply a pre-registered redirect URI rather than
+	 * using an auto-generated localhost URL. Defaults to false.
+	 */
+	requiresRegisteredRedirect?: boolean;
+	/**
+	 * Extra query params merged into the authorization URL.
+	 * e.g. `{ access_type: 'offline', prompt: 'consent' }` for Google offline access.
+	 */
+	authParams?: Record<string, string>;
 };
 
 /**

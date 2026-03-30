@@ -41,13 +41,26 @@ export interface SetupCorsairOptions {
 	/**
 	 * When true, calls list endpoints for every plugin defined in
 	 * setup/backfill.yaml to seed the local database with initial data.
-	 *
-	 * Requires credentials to already be stored in the database. Typical flow:
-	 *   1. `setupCorsair(corsair)`                    — creates plugin rows + DEKs
-	 *   2. Store API keys / OAuth tokens
-	 *   3. `setupCorsair(corsair, { backfill: true })` — seeds initial data
 	 */
 	backfill?: boolean;
+
+	/**
+	 * Credentials to store before checking auth status.
+	 * Map of pluginId → { fieldName: value }.
+	 * The system automatically determines whether each field belongs to the
+	 * integration level (corsair.keys.plugin) or account level (corsair.plugin.keys).
+	 *
+	 * @example
+	 * { github: { api_key: 'ghp_...' }, googlecalendar: { client_id: '...', client_secret: '...' } }
+	 */
+	credentials?: Record<string, Record<string, string>>;
+
+	/**
+	 * Whether setupCorsair is being called from the CLI or from a script.
+	 * Defaults to 'script'. When 'cli', missing-credential messages are printed
+	 * as runnable CLI flags instead of JS method calls.
+	 */
+	caller?: 'cli' | 'script';
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -62,16 +75,16 @@ type SetupWarn = (msg: string) => void;
  *
  * 1. Checks that all required corsair_* tables exist (warns if any are missing).
  * 2. Ensures every configured plugin has rows in `corsair_integrations` and
- *    `corsair_accounts` (tenant_id = 'default').
- * 3. Issues DEKs for any plugin that does not yet have one at either level.
+ *    `corsair_accounts` (tenant_id = 'default') and issues DEKs where needed.
+ * 3. Applies any credentials passed via `options.credentials`.
  * 4. Checks auth status for each plugin and logs guidance for any missing credentials.
+ *    When `caller` is 'cli', guidance is printed as CLI flags instead of JS calls.
  * 5. If `{ backfill: true }`, calls the list endpoints defined in
  *    `setup/backfill.yaml` for each plugin that has auth configured.
  *
  * Only single-tenant corsair instances are accepted.
  *
- * Returns a newline-separated string of all setup output (credential instructions, etc.).
- * Use this when invoking from MCP tools so the agent receives the instructions.
+ * Returns a newline-separated string of all setup output.
  */
 export async function setupCorsair<
 	const Plugins extends readonly CorsairPlugin[],
@@ -88,6 +101,9 @@ export async function setupCorsair<
 		messages.push(msg);
 		console.warn(msg);
 	};
+
+	const caller = options?.caller ?? 'script';
+
 	const internal = (corsair as unknown as Record<symbol, unknown>)[
 		CORSAIR_INTERNAL
 	] as CorsairInternalConfig | undefined;
@@ -95,14 +111,12 @@ export async function setupCorsair<
 	if (!internal) {
 		throw new Error('setupCorsair: invalid corsair instance');
 	}
-
 	if (internal.multiTenancy) {
 		throw new Error(
 			'setupCorsair: multi-tenancy instances are not supported. ' +
 				'Create your corsair instance without multiTenancy: true.',
 		);
 	}
-
 	if (!internal.database) {
 		throw new Error(
 			'setupCorsair: a database must be configured on the corsair instance',
@@ -111,8 +125,6 @@ export async function setupCorsair<
 
 	const db = internal.database.db as Kysely<CorsairKyselyDatabase>;
 
-	// Re-create a typed instance from the extracted config so operations go
-	// through corsair's strongly-typed API rather than raw record access.
 	const instance = createCorsair({
 		plugins: internal.plugins as unknown as Plugins,
 		database: internal.database.db,
@@ -122,16 +134,23 @@ export async function setupCorsair<
 	// 1. Verify schema
 	await checkTables(db, warn);
 
-	// 2. Ensure integration + account rows and DEKs for every plugin,
-	//    then check auth status and log guidance for missing credentials.
-	const authReadyPlugins = await ensurePluginRows(
-		db,
+	// 2. Create integration + account rows and issue DEKs for every plugin.
+	await ensurePluginRowsAndDeks(db, instance, internal.plugins, log);
+
+	// 3. Apply any credentials provided by the caller (CLI flags or programmatic).
+	if (options?.credentials && Object.keys(options.credentials).length > 0) {
+		await applyCredentials(instance, options.credentials, log, warn);
+	}
+
+	// 4. Check auth status for each plugin and log guidance for missing credentials.
+	const authReadyPlugins = await checkAllPluginsAuthStatus(
 		instance,
 		internal.plugins,
 		log,
+		caller,
 	);
 
-	// 3. Optional backfill — only for plugins with auth configured
+	// 5. Optional backfill — only for plugins with auth configured.
 	if (options?.backfill) {
 		log('[corsair:setup] Starting backfill...');
 		await runBackfill(instance, internal.plugins, authReadyPlugins, log, warn);
@@ -194,103 +213,19 @@ async function checkTables(
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Auth status check
-// ─────────────────────────────────────────────────────────────────────────────
-
-// Fields that are optional or system-managed — don't require manual user input.
-const OPTIONAL_FIELDS = new Set([
-	'webhook_signature',
-	'expires_at',
-	'scope',
-	'redirect_url',
-]);
-
-/**
- * Inspects the key managers for a plugin via Object.keys(), finds all set_*
- * methods, and calls the corresponding get_* to see if credentials are present.
- *
- * Returns true when all required credentials are in place, false otherwise.
- * When false, logs actionable guidance so the agent knows exactly what to call.
- */
-async function checkAuthStatus(
-	pluginId: string,
-	authType: string,
-	integrationKeyMgr: KeyManager,
-	accountKeyMgr: KeyManager,
-	log: SetupLog,
-): Promise<boolean> {
-	const missingIntegration: string[] = [];
-	const missingAccount: string[] = [];
-
-	for (const key of Object.keys(integrationKeyMgr)) {
-		if (!key.startsWith('set_')) continue;
-		const field = key.slice(4);
-		if (OPTIONAL_FIELDS.has(field)) continue;
-		const getter = integrationKeyMgr[`get_${field}`] as
-			| (() => Promise<string | null>)
-			| undefined;
-		if (!getter) continue;
-		let value: string | null = null;
-		try {
-			value = await getter();
-		} catch {
-			// Treat decryption failures as missing
-		}
-		if (!value) missingIntegration.push(field);
-	}
-
-	for (const key of Object.keys(accountKeyMgr)) {
-		if (!key.startsWith('set_')) continue;
-		const field = key.slice(4);
-		if (OPTIONAL_FIELDS.has(field)) continue;
-		const getter = accountKeyMgr[`get_${field}`] as
-			| (() => Promise<string | null>)
-			| undefined;
-		if (!getter) continue;
-		let value: string | null = null;
-		try {
-			value = await getter();
-		} catch {
-			// Treat decryption failures as missing
-		}
-		if (!value) missingAccount.push(field);
-	}
-
-	const isReady =
-		missingIntegration.length === 0 && missingAccount.length === 0;
-
-	if (!isReady) {
-		const lines: string[] = [
-			`[corsair:setup] '${pluginId}' (${authType}) needs credentials. Call:`,
-		];
-		for (const field of missingIntegration) {
-			lines.push(`  corsair.keys.${pluginId}.set_${field}(value)`);
-		}
-		for (const field of missingAccount) {
-			lines.push(`  corsair.${pluginId}.keys.set_${field}(value)`);
-		}
-		log(lines.join('\n'));
-	}
-
-	return isReady;
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Integration + account row provisioning
+// Row + DEK provisioning (no auth check)
 // ─────────────────────────────────────────────────────────────────────────────
 
 const TENANT_ID = 'default';
 
-async function ensurePluginRows(
+async function ensurePluginRowsAndDeks(
 	db: Kysely<CorsairKyselyDatabase>,
 	instance: CorsairSingleTenantClient<readonly CorsairPlugin[]>,
 	plugins: readonly CorsairPlugin[],
 	log: SetupLog,
-): Promise<Set<string>> {
+): Promise<void> {
 	const now = new Date();
-	const authReadyPlugins = new Set<string>();
 
-	// Cast to plain records for dynamic plugin-id access.
 	const integrationKeys = instance.keys as unknown as Record<
 		string,
 		KeyManager | undefined
@@ -302,13 +237,8 @@ async function ensurePluginRows(
 
 	for (const plugin of plugins) {
 		const pluginId = plugin.id;
-		const authType =
-			((plugin.options as Record<string, unknown>)?.authType as
-				| string
-				| undefined) ?? 'unknown';
 
 		// ── Integration row ────────────────────────────────────────────────────
-
 		let integration = await db
 			.selectFrom('corsair_integrations')
 			.selectAll()
@@ -319,13 +249,7 @@ async function ensurePluginRows(
 			const id = crypto.randomUUID();
 			await db
 				.insertInto('corsair_integrations')
-				.values({
-					id,
-					name: pluginId,
-					config: {},
-					created_at: now,
-					updated_at: now,
-				})
+				.values({ id, name: pluginId, config: {}, created_at: now, updated_at: now })
 				.execute();
 			integration = await db
 				.selectFrom('corsair_integrations')
@@ -336,20 +260,15 @@ async function ensurePluginRows(
 		}
 
 		// ── Integration-level DEK ──────────────────────────────────────────────
-
 		const integrationKeyMgr = integrationKeys[pluginId];
-
 		if (integration && !integration.dek && integrationKeyMgr) {
-			await (
-				integrationKeyMgr as { issue_new_dek: () => Promise<void> }
-			).issue_new_dek();
+			await (integrationKeyMgr as { issue_new_dek: () => Promise<void> }).issue_new_dek();
 			log(`[corsair:setup] Issued integration DEK: ${pluginId}`);
 		}
 
 		if (!integration) continue;
 
 		// ── Account row ───────────────────────────────────────────────────────
-
 		let account = await db
 			.selectFrom('corsair_accounts')
 			.selectAll()
@@ -379,17 +298,142 @@ async function ensurePluginRows(
 		}
 
 		// ── Account-level DEK ─────────────────────────────────────────────────
-
 		const accountKeyMgr = pluginNamespaces[pluginId]?.keys;
-
 		if (account && !account.dek && accountKeyMgr) {
-			await (
-				accountKeyMgr as { issue_new_dek: () => Promise<void> }
-			).issue_new_dek();
+			await (accountKeyMgr as { issue_new_dek: () => Promise<void> }).issue_new_dek();
 			log(`[corsair:setup] Issued account DEK: ${pluginId}`);
 		}
+	}
+}
 
-		// ── Auth status check ─────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────────
+// Credential application
+// ─────────────────────────────────────────────────────────────────────────────
+
+async function applyCredentials(
+	instance: CorsairSingleTenantClient<readonly CorsairPlugin[]>,
+	credentials: Record<string, Record<string, string>>,
+	log: SetupLog,
+	warn: SetupWarn,
+): Promise<void> {
+	const integrationKeys = instance.keys as unknown as Record<string, KeyManager | undefined>;
+	const pluginNamespaces = instance as unknown as Record<string, { keys?: KeyManager } | undefined>;
+
+	for (const [pluginId, fields] of Object.entries(credentials)) {
+		const integrationKeyMgr = integrationKeys[pluginId];
+		const accountKeyMgr = pluginNamespaces[pluginId]?.keys as KeyManager | undefined;
+
+		for (const [field, value] of Object.entries(fields)) {
+			const setter = `set_${field}`;
+
+			if (integrationKeyMgr && typeof integrationKeyMgr[setter] === 'function') {
+				await (integrationKeyMgr[setter] as (v: string) => Promise<void>)(value);
+				log(`[corsair:setup] Set integration credential: ${pluginId}.${field}`);
+			} else if (accountKeyMgr && typeof accountKeyMgr[setter] === 'function') {
+				await (accountKeyMgr[setter] as (v: string) => Promise<void>)(value);
+				log(`[corsair:setup] Set account credential: ${pluginId}.${field}`);
+			} else {
+				warn(`[corsair:setup] No setter found for '${pluginId}.${field}' — skipping.`);
+			}
+		}
+	}
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Auth status check
+// ─────────────────────────────────────────────────────────────────────────────
+
+// Fields that are optional or system-managed — don't require manual user input.
+const OPTIONAL_FIELDS = new Set([
+	'webhook_signature',
+	'expires_at',
+	'scope',
+	'redirect_url',
+]);
+
+async function checkAuthStatus(
+	pluginId: string,
+	authType: string,
+	integrationKeyMgr: KeyManager,
+	accountKeyMgr: KeyManager,
+	log: SetupLog,
+	caller: 'cli' | 'script',
+): Promise<boolean> {
+	const missingIntegration: string[] = [];
+	const missingAccount: string[] = [];
+
+	for (const key of Object.keys(integrationKeyMgr)) {
+		if (!key.startsWith('set_')) continue;
+		const field = key.slice(4);
+		if (OPTIONAL_FIELDS.has(field)) continue;
+		const getter = integrationKeyMgr[`get_${field}`] as
+			| (() => Promise<string | null>)
+			| undefined;
+		if (!getter) continue;
+		let value: string | null = null;
+		try { value = await getter(); } catch { /* treat as missing */ }
+		if (!value) missingIntegration.push(field);
+	}
+
+	for (const key of Object.keys(accountKeyMgr)) {
+		if (!key.startsWith('set_')) continue;
+		const field = key.slice(4);
+		if (OPTIONAL_FIELDS.has(field)) continue;
+		const getter = accountKeyMgr[`get_${field}`] as
+			| (() => Promise<string | null>)
+			| undefined;
+		if (!getter) continue;
+		let value: string | null = null;
+		try { value = await getter(); } catch { /* treat as missing */ }
+		if (!value) missingAccount.push(field);
+	}
+
+	const isReady = missingIntegration.length === 0 && missingAccount.length === 0;
+
+	if (!isReady) {
+		const allMissing = [...missingIntegration, ...missingAccount];
+
+		if (caller === 'cli') {
+			const pairs = allMissing.map((f) => `${f}=VALUE`).join(' ');
+			log(
+				`[corsair:setup] '${pluginId}' (${authType}) needs credentials. Run:\n` +
+				`  corsair setup --${pluginId} ${pairs}`,
+			);
+		} else {
+			const lines: string[] = [
+				`[corsair:setup] '${pluginId}' (${authType}) needs credentials. Call:`,
+			];
+			for (const field of missingIntegration) {
+				lines.push(`  await corsair.keys.${pluginId}.set_${field}(value)`);
+			}
+			for (const field of missingAccount) {
+				lines.push(`  await corsair.${pluginId}.keys.set_${field}(value)`);
+			}
+			log(lines.join('\n'));
+		}
+	}
+
+	return isReady;
+}
+
+async function checkAllPluginsAuthStatus(
+	instance: CorsairSingleTenantClient<readonly CorsairPlugin[]>,
+	plugins: readonly CorsairPlugin[],
+	log: SetupLog,
+	caller: 'cli' | 'script',
+): Promise<Set<string>> {
+	const authReadyPlugins = new Set<string>();
+
+	const integrationKeys = instance.keys as unknown as Record<string, KeyManager | undefined>;
+	const pluginNamespaces = instance as unknown as Record<string, { keys?: KeyManager } | undefined>;
+
+	for (const plugin of plugins) {
+		const pluginId = plugin.id;
+		const authType =
+			((plugin.options as Record<string, unknown>)?.authType as string | undefined) ?? 'unknown';
+
+		const integrationKeyMgr = integrationKeys[pluginId];
+		const accountKeyMgr = pluginNamespaces[pluginId]?.keys as KeyManager | undefined;
 
 		if (integrationKeyMgr && accountKeyMgr) {
 			const isReady = await checkAuthStatus(
@@ -398,6 +442,7 @@ async function ensurePluginRows(
 				integrationKeyMgr,
 				accountKeyMgr,
 				log,
+				caller,
 			);
 			if (isReady) authReadyPlugins.add(pluginId);
 		}
@@ -434,9 +479,7 @@ async function runBackfill(
 		if (!activePluginIds.has(pluginId)) continue;
 
 		if (!authReadyPlugins.has(pluginId)) {
-			log(
-				`[corsair:setup] Skipping backfill for '${pluginId}' — auth not configured.`,
-			);
+			log(`[corsair:setup] Skipping backfill for '${pluginId}' — auth not configured.`);
 			continue;
 		}
 
