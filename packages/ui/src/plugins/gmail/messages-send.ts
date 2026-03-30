@@ -1,4 +1,4 @@
-import type { GmailBoundEndpoints } from 'corsair/plugins';
+import type { GmailBoundEndpoints } from 'corsair/plugins/gmail';
 import {
 	actionsHtml,
 	buildActionDescriptors,

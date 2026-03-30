@@ -1,4 +1,4 @@
-import type { LinearBoundEndpoints } from 'corsair/plugins';
+import type { LinearBoundEndpoints } from 'corsair/plugins/linear';
 import {
 	actionsHtml,
 	buildActionDescriptors,
