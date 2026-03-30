@@ -1,4 +1,9 @@
-import { createCorsair, linear, slack, twitterapiio, fireflies, jira } from 'corsair';
+import { createCorsair } from 'corsair';
+import { slack } from 'corsair/plugins/slack';
+import { linear } from 'corsair/plugins/linear';
+import { jira } from 'corsair/plugins/jira';
+import { fireflies } from 'corsair/plugins/fireflies';
+import { twitterapiio } from 'corsair/plugins/twitterapiio';
 import { sqlite } from '../db';
 
 export const corsair = createCorsair({

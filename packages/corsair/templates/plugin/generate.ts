@@ -1064,13 +1064,45 @@ export const ${pascalName}Schema = {
 		}
 	}
 
+	// Update tsup.config.ts
+	const tsupConfigPath = join(baseDir, 'tsup.config.ts');
+	if (existsSync(tsupConfigPath)) {
+		const tsupContent = readFileSync(tsupConfigPath, 'utf-8');
+		const newEntryLine = `\t\t'plugins/${lowerName}/index.ts',`;
+
+		if (tsupContent.includes(`'plugins/${lowerName}/index.ts'`)) {
+			console.log(`⚠️  Entry already exists in tsup.config.ts`);
+		} else {
+			const lines = tsupContent.split('\n');
+			const pluginLineIndices: number[] = [];
+
+			lines.forEach((line, idx) => {
+				if (/^\t\t'plugins\/[^']+\/index\.ts',/.test(line)) {
+					pluginLineIndices.push(idx);
+				}
+			});
+
+			if (pluginLineIndices.length > 0) {
+				const pluginEntryLines = pluginLineIndices.map((i) => lines[i]);
+				pluginEntryLines.push(newEntryLine);
+				pluginEntryLines.sort();
+
+				lines.splice(
+					pluginLineIndices[0],
+					pluginLineIndices.length,
+					...pluginEntryLines,
+				);
+
+				writeFileSync(tsupConfigPath, lines.join('\n'));
+				console.log(`✅ Updated tsup.config.ts`);
+			}
+		}
+	}
+
 	console.log(`✅ Created plugin "${lowerName}" at ${pluginDir}`);
 	console.log(`\n📝 Next steps:`);
 	console.log(`   1. Update the plugin files with your API implementation`);
-	console.log(
-		`   2. Add the plugin export to packages/corsair/plugins/index.ts`,
-	);
-	console.log(`   3. Update package.json exports if needed`);
+	console.log(`   2. Update the API base URL and authentication in client.ts`);
 }
 
 // Main execution
