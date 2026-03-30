@@ -29,11 +29,11 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
-      - name: Build packages
-        run: pnpm run build
-
       - name: Run type check
         run: pnpm run typecheck
+
+      - name: Build packages
+        run: pnpm run build
 
       - name: Publish corsair to NPM
         run: pnpm --filter corsair publish --provenance --no-git-checks
