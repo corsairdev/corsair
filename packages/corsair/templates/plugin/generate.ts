@@ -1083,12 +1083,12 @@ export const ${pascalName}Schema = {
 			});
 
 			if (pluginLineIndices.length > 0) {
-				const pluginEntryLines = pluginLineIndices.map((i) => lines[i]);
+				const pluginEntryLines = pluginLineIndices.map((i) => lines[i]!);
 				pluginEntryLines.push(newEntryLine);
 				pluginEntryLines.sort();
 
 				lines.splice(
-					pluginLineIndices[0],
+					pluginLineIndices[0]!,
 					pluginLineIndices.length,
 					...pluginEntryLines,
 				);
