@@ -11,12 +11,9 @@ description: Go from zero to a working GitHub integration in five minutes.
 
 ### Install
 
-```bash 
-pnpm install corsair better-sqlite3 dotenv
-pnpm install --save-dev @types/better-sqlite3 @types/dotenv     
+```bash
+pnpm install corsair
 ```
-
-`better-sqlite3` is the quickest way to get started. Swap to PostgreSQL any time — same API, just a different driver.
 
 </Step>
 
@@ -39,6 +36,29 @@ If you lose it, you lose access to all stored credentials. Treat it like a root 
 ### Migrate the database
 
 Corsair needs five tables. Run this once, then you're done.
+
+<Tabs items={['SQLite', 'PostgreSQL']}>
+  <Tab value="SQLite">
+
+Install the driver, then run the migration:
+
+```bash
+pnpm install better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+
+</Tab>
+  <Tab value="PostgreSQL">
+
+Install the driver, then run the migration:
+
+```bash
+pnpm install pg
+pnpm install --save-dev @types/pg
+```
+
+</Tab>
+</Tabs>
 
 <Tabs items={['SQLite', 'PostgreSQL']}>
   <Tab value="SQLite">
@@ -192,8 +212,10 @@ psql $DATABASE_URL -f migration.sql
 
 This is the one file that wires everything together. Create it at your project root:
 
+<Tabs items={['SQLite', 'PostgreSQL']}>
+<Tab value="SQLite">
+
 ```ts title="corsair.ts"
-import 'dotenv/config';
 import Database from 'better-sqlite3';
 import { createCorsair, github } from 'corsair';
 
@@ -206,7 +228,44 @@ export const corsair = createCorsair({
 });
 ```
 
+</Tab>
+<Tab value="PostgreSQL">
+
+```ts title="corsair.ts"
+import { Pool } from 'pg';
+import { createCorsair, github } from 'corsair';
+
+const db = new Pool({ connectionString: process.env.DATABASE_URL });
+
+export const corsair = createCorsair({
+    plugins: [github()],
+    database: db,
+    kek: process.env.CORSAIR_KEK!,
+});
+```
+
+</Tab>
+</Tabs>
+
 You'll add more plugins here later — `slack()`, `linear()`, `gmail()` — same pattern, just append to the array.
+
+<Accordions>
+<Accordion title="CORSAIR_KEK not loading?">
+
+If `process.env.CORSAIR_KEK` is `undefined` at runtime, your `.env` file isn't being picked up. Install dotenv and add one line at the top of `corsair.ts`:
+
+```bash
+pnpm install dotenv
+```
+
+```ts title="corsair.ts"
+import 'dotenv/config'; // add this line
+import Database from 'better-sqlite3';
+// ...
+```
+
+</Accordion>
+</Accordions>
 
 </Step>
 
@@ -219,27 +278,10 @@ You'll add more plugins here later — `slack()`, `linear()`, `gmail()` — same
 3. Select scopes: `repo`, `read:org`, `read:user`
 4. Copy the token — it starts with `ghp_`
 
-Add it to your `.env`:
+Run setup once with the Corsair CLI:
 
-```bash title=".env"
-CORSAIR_KEK="paste-your-generated-key-here"
-GITHUB_TOKEN="ghp_your_token_here"
-```
-
-Create `setup.ts` and run it once:
-
-```ts title="setup.ts"
-import { setupCorsair } from 'corsair';
-import { corsair } from './corsair';
-
-async function main() {
-    await corsair.github.keys.set_api_key(process.env.GITHUB_TOKEN!);
-    // Backfill seeds your local DB with repos, issues, PRs, and more
-    const output = await setupCorsair(corsair, { backfill: true });
-    console.log(output);
-}
-
-main().catch(console.error);
+```bash
+npx corsair setup --github api_key=$GITHUB_TOKEN --backfill
 ```
 
 Corsair stores your token, creates the database rows, and fetches your GitHub data locally. Your agent can now query it instantly — no API call needed every time.
