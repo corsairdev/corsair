@@ -3,7 +3,7 @@ title: Quick Start
 description: Go from zero to a working GitHub integration in five minutes.
 ---
 
-## Setup
+<SetupPromptBanner />
 
 <Steps>
 
@@ -37,8 +37,8 @@ If you lose it, you lose access to all stored credentials. Treat it like a root 
 
 Corsair needs five tables. Run this once, then you're done.
 
-<Tabs items={['SQLite', 'PostgreSQL']}>
-  <Tab value="SQLite">
+<DbTabs>
+  <DbPanel value="SQLite">
 
 Install the driver, then run the migration:
 
@@ -47,8 +47,8 @@ pnpm install better-sqlite3
 pnpm install --save-dev @types/better-sqlite3
 ```
 
-</Tab>
-  <Tab value="PostgreSQL">
+  </DbPanel>
+  <DbPanel value="PostgreSQL">
 
 Install the driver, then run the migration:
 
@@ -57,11 +57,11 @@ pnpm install pg
 pnpm install --save-dev @types/pg
 ```
 
-</Tab>
-</Tabs>
+  </DbPanel>
+</DbTabs>
 
-<Tabs items={['SQLite', 'PostgreSQL']}>
-  <Tab value="SQLite">
+<DbTabs>
+  <DbPanel value="SQLite">
 
 <Accordions>
 <Accordion title="View migration SQL">
@@ -132,8 +132,8 @@ CREATE TABLE IF NOT EXISTS corsair_permissions (
 sqlite3 corsair.db < migration.sql
 ```
 
-  </Tab>
-  <Tab value="PostgreSQL">
+  </DbPanel>
+  <DbPanel value="PostgreSQL">
 
 <Accordions>
 <Accordion title="View migration SQL">
@@ -201,8 +201,8 @@ CREATE TABLE IF NOT EXISTS corsair_permissions (
 psql $DATABASE_URL -f migration.sql
 ```
 
-  </Tab>
-</Tabs>
+  </DbPanel>
+</DbTabs>
 
 </Step>
 
@@ -212,8 +212,8 @@ psql $DATABASE_URL -f migration.sql
 
 This is the one file that wires everything together. Create it at your project root:
 
-<Tabs items={['SQLite', 'PostgreSQL']}>
-<Tab value="SQLite">
+<DbTabs>
+<DbPanel value="SQLite">
 
 ```ts title="corsair.ts"
 import Database from 'better-sqlite3';
@@ -228,8 +228,8 @@ export const corsair = createCorsair({
 });
 ```
 
-</Tab>
-<Tab value="PostgreSQL">
+</DbPanel>
+<DbPanel value="PostgreSQL">
 
 ```ts title="corsair.ts"
 import { Pool } from 'pg';
@@ -244,8 +244,8 @@ export const corsair = createCorsair({
 });
 ```
 
-</Tab>
-</Tabs>
+</DbPanel>
+</DbTabs>
 
 You'll add more plugins here later — `slack()`, `linear()`, `gmail()` — same pattern, just append to the array.
 
@@ -304,9 +304,10 @@ Let the agent discover and call endpoints on its own. You prompt in plain Englis
 
 Install the MCP adapter alongside your preferred framework:
 
-<Tabs items={['Anthropic SDK', 'Claude Agent SDK', 'OpenAI Agents']}>
+<FrameworkTabs>
 
-<Tab value="Anthropic SDK">
+<FrameworkPanel value="Anthropic SDK">
+
 ```bash
 pnpm install @corsair-dev/mcp @anthropic-ai/sdk
 ```
@@ -339,9 +340,9 @@ async function main() {
 main().catch(console.error);
 ```
 
-</Tab>
+</FrameworkPanel>
 
-<Tab value="Claude Agent SDK">
+<FrameworkPanel value="Claude Agent SDK">
 
 ```bash
 pnpm install @corsair-dev/mcp @anthropic-ai/claude-agent-sdk
@@ -373,9 +374,9 @@ async function main() {
 main().catch(console.error);
 ```
 
-</Tab>
+</FrameworkPanel>
 
-<Tab value="OpenAI Agents">
+<FrameworkPanel value="OpenAI Agents">
 
 ```bash
 pnpm install @corsair-dev/mcp @openai/agents
@@ -407,9 +408,9 @@ async function main() {
 main().catch(console.error);
 ```
 
-</Tab>
+</FrameworkPanel>
 
-</Tabs>
+</FrameworkTabs>
 
 Your agent gets four tools automatically — regardless of which framework you use:
 

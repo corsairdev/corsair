@@ -1,11 +1,9 @@
 ---
 title: Vibe Code Your Dashboard
-description: Scaffold a Next.js + tRPC + SQLite project and build a live GitHub dashboard in minutes.
+description: Scaffold a T3 app and build a live GitHub dashboard in minutes.
 ---
 
-You've got Corsair pulling data from GitHub. Now build a dashboard that actually displays it — channels, repos, open issues, recent PRs — all queried from your local database, no GitHub API calls at runtime.
-
-**The plan:** scaffold a barebones Next.js project, wire in Corsair, then give this page to your AI and let it build the UI.
+You've got Corsair pulling data from GitHub. Now build a dashboard that displays it — repos, open issues, recent PRs — all queried from your local database, no API calls at runtime.
 
 ---
 
@@ -15,48 +13,21 @@ You've got Corsair pulling data from GitHub. Now build a dashboard that actually
 
 <Step>
 
-### Create a Next.js app
+### Create a T3 app and install Corsair
 
 ```bash
-npx create-next-app@latest my-dashboard --typescript --tailwind --app --no-src-dir
+pnpm create t3-app@latest my-dashboard --CI --trpc --tailwind --noGit
 cd my-dashboard
+pnpm install corsair
 ```
 
 </Step>
 
 <Step>
 
-### Install dependencies
+### Create `src/lib/corsair.ts`
 
-```bash
-npm install corsair better-sqlite3 @trpc/server @trpc/client @trpc/next @trpc/react-query @tanstack/react-query zod
-npm install -D @types/better-sqlite3
-```
-
-</Step>
-
-<Step>
-
-### Set up your environment
-
-```bash title=".env.local"
-CORSAIR_KEK="paste-your-key-here"
-GITHUB_TOKEN="ghp_your_token_here"
-```
-
-Generate a KEK if you don't have one:
-
-```bash
-openssl rand -base64 32
-```
-
-</Step>
-
-<Step>
-
-### Create `lib/corsair.ts`
-
-```ts title="lib/corsair.ts"
+```ts title="src/lib/corsair.ts"
 import Database from 'better-sqlite3';
 import { createCorsair, github } from 'corsair';
 
@@ -69,13 +40,88 @@ export const corsair = createCorsair({
 });
 ```
 
+
+Generate your KEK and add it to `.env`:
+
+<KekGenerator />
+
 </Step>
 
 <Step>
 
-### Run the database migration
+### Migrate the database
 
-Copy the SQLite migration from the [Quick Start](/quick-start#migrate-the-database) and run it:
+Install the driver and run the migration:
+
+```bash
+pnpm install better-sqlite3
+pnpm install -D @types/better-sqlite3
+```
+
+<Accordions>
+<Accordion title="View migration SQL">
+
+```sql title="migration.sql"
+CREATE TABLE IF NOT EXISTS corsair_integrations (
+    id TEXT PRIMARY KEY,
+    created_at INTEGER NOT NULL,
+    updated_at INTEGER NOT NULL,
+    name TEXT NOT NULL,
+    config TEXT NOT NULL DEFAULT '{}',
+    dek TEXT NULL
+);
+
+CREATE TABLE IF NOT EXISTS corsair_accounts (
+    id TEXT PRIMARY KEY,
+    created_at INTEGER NOT NULL,
+    updated_at INTEGER NOT NULL,
+    tenant_id TEXT NOT NULL,
+    integration_id TEXT NOT NULL,
+    config TEXT NOT NULL DEFAULT '{}',
+    dek TEXT NULL,
+    FOREIGN KEY (integration_id) REFERENCES corsair_integrations(id)
+);
+
+CREATE TABLE IF NOT EXISTS corsair_entities (
+    id TEXT PRIMARY KEY,
+    created_at INTEGER NOT NULL,
+    updated_at INTEGER NOT NULL,
+    account_id TEXT NOT NULL,
+    entity_id TEXT NOT NULL,
+    entity_type TEXT NOT NULL,
+    version TEXT NOT NULL,
+    data TEXT NOT NULL DEFAULT '{}',
+    FOREIGN KEY (account_id) REFERENCES corsair_accounts(id)
+);
+
+CREATE TABLE IF NOT EXISTS corsair_events (
+    id TEXT PRIMARY KEY,
+    created_at INTEGER NOT NULL,
+    updated_at INTEGER NOT NULL,
+    account_id TEXT NOT NULL,
+    event_type TEXT NOT NULL,
+    payload TEXT NOT NULL DEFAULT '{}',
+    status TEXT,
+    FOREIGN KEY (account_id) REFERENCES corsair_accounts(id)
+);
+
+CREATE TABLE IF NOT EXISTS corsair_permissions (
+    id TEXT PRIMARY KEY,
+    created_at INTEGER NOT NULL,
+    updated_at INTEGER NOT NULL,
+    token TEXT NOT NULL,
+    plugin TEXT NOT NULL,
+    endpoint TEXT NOT NULL,
+    args TEXT NOT NULL,
+    tenant_id TEXT NOT NULL DEFAULT 'default',
+    status TEXT NOT NULL DEFAULT 'pending',
+    expires_at TEXT NOT NULL,
+    error TEXT NULL
+);
+```
+
+</Accordion>
+</Accordions>
 
 ```bash
 sqlite3 corsair.db < migration.sql
@@ -85,50 +131,51 @@ sqlite3 corsair.db < migration.sql
 
 <Step>
 
-### Seed your credentials and backfill
+### Run setup
 
-```ts title="scripts/setup.ts"
-import 'dotenv/config';
-import { setupCorsair } from 'corsair';
-import { corsair } from '../lib/corsair';
-
-await corsair.github.keys.set_api_key(process.env.GITHUB_TOKEN!);
-const output = await setupCorsair(corsair, { backfill: true });
-console.log(output);
-```
+Add your GitHub token to `.env`, then run:
 
 ```bash
-npx tsx scripts/setup.ts
+npx corsair setup --github api_key=$GITHUB_TOKEN --backfill
 ```
 
-This fetches your GitHub repos, issues, and PRs into the local database. Your dashboard reads from there — instant, no API calls needed.
+This stores your token, creates the database rows, and backfills your repos, issues, and PRs locally.
 
 </Step>
 
 <Step>
 
-### Create a tRPC router
+### Add a GitHub router
 
-```ts title="server/router.ts"
-import { initTRPC } from '@trpc/server';
+```ts title="src/server/api/routers/github.ts"
 import { z } from 'zod';
+import { createTRPCRouter, publicProcedure } from '@/server/api/trpc';
 import { corsair } from '@/lib/corsair';
 
-const t = initTRPC.create();
-
-export const appRouter = t.router({
-    repositories: t.procedure.query(async () => {
-        return corsair.github.db.repositories.findAll();
+export const githubRouter = createTRPCRouter({
+    repositories: publicProcedure.query(async () => {
+        return corsair.github.db.repositories.search({});
     }),
 
-    topRepos: t.procedure
+    topRepos: publicProcedure
         .input(z.object({ limit: z.number().default(10) }))
         .query(async ({ input }) => {
-            const repos = await corsair.github.db.repositories.findAll();
+            const repos = await corsair.github.db.repositories.search({});
             return repos
-                .sort((a, b) => b.data.open_issues_count - a.data.open_issues_count)
+                .sort((a, b) => Number(b.data?.openIssuesCount ?? 0) - Number(a.data?.openIssuesCount ?? 0))
                 .slice(0, input.limit);
         }),
+});
+```
+
+Register it in `src/server/api/root.ts`:
+
+```ts title="src/server/api/root.ts"
+import { createTRPCRouter } from '@/server/api/trpc';
+import { githubRouter } from '@/server/api/routers/github';
+
+export const appRouter = createTRPCRouter({
+    github: githubRouter,
 });
 
 export type AppRouter = typeof appRouter;
@@ -142,34 +189,23 @@ export type AppRouter = typeof appRouter;
 
 ## Vibe code the UI
 
-Your project is wired up. Now hand this prompt to Cursor, Claude, or your editor of choice:
+Your project is wired up. Hand this prompt to Cursor, Claude, or your editor of choice:
 
 ```
-I have a Next.js + tRPC + Corsair project. Corsair is a GitHub integration layer
-that caches data locally in SQLite. I have a tRPC router at server/router.ts with:
-- repositories: returns all GitHub repos
-- topRepos({ limit }): returns repos sorted by open_issues_count descending
+I have a Next.js T3 app with tRPC and Corsair (a GitHub integration layer that
+caches data locally in SQLite). I have a tRPC router at src/server/api/routers/github.ts with:
+- github.repositories: returns all GitHub repos
+- github.topRepos({ limit }): returns repos sorted by open issues descending
 
-Build me a dashboard at app/page.tsx that:
+Build me a dashboard at src/app/page.tsx that:
 1. Shows a header with "My GitHub Dashboard" and a last-synced timestamp
 2. Displays a grid of repo cards — each showing repo name, description,
-   open issue count (highlighted if > 10), and a link to GitHub
-3. Highlights the top 3 repos with the most open issues
+   open issue count (highlighted in red if > 10), and a link to GitHub
+3. Highlights the top 3 repos with the most open issues in a separate section
 4. Uses Tailwind CSS, dark mode, clean minimal design
 
-Use the tRPC client from @/lib/trpc to call the endpoints.
+Use the tRPC server client from @/trpc/server to call the endpoints server-side.
 ```
-
----
-
-## What you'll get
-
-A live dashboard pulling from your local SQLite database — no GitHub API rate limits, sub-millisecond queries, works offline after the initial backfill.
-
-From here you can:
-- Add more plugins (`slack()`, `linear()`) and show cross-service data
-- Set up webhooks so the database updates automatically as new events come in
-- Add multi-tenancy so each user sees their own data
 
 ---
 
