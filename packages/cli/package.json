@@ -52,5 +52,8 @@
   "packageManager": "pnpm@10.20.0",
   "files": [
     "dist"
-  ]
+  ],
+  "publishConfig": {
+    "access": "public"
+  }
 }
