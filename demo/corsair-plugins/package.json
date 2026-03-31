@@ -27,7 +27,6 @@
     "@trpc/react-query": "^11.0.0",
     "@trpc/server": "^11.0.0",
     "corsair": "workspace:*",
-    "@corsair-ai/cli": "workspace:*",
     "@corsair-dev/mcp": "workspace:*",
     "@anthropic-ai/claude-agent-sdk": "^0.2.0",
     "dotenv": "^17.2.3",
@@ -46,6 +45,7 @@
     "@types/react-dom": "^18.3.5",
     "drizzle-kit": "^0.31.8",
     "tsx": "^4.20.6",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "@corsair-ai/cli": "workspace:*"
   }
 }
