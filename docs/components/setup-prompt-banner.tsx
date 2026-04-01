@@ -272,15 +272,11 @@ ${migrationCmd}
 ${corsairTs}
 
 ## 6. Store your GitHub token and run setup
-Go to GitHub → Settings → Developer settings → Personal access tokens (classic).
-Generate a token with scopes: repo, read:org, read:user.
-Export it in your terminal:
+Stop here and ask the user: "Please go to https://github.com/settings/tokens, generate a classic token with scopes: repo, read:org, read:user, and paste it here." Wait for their response before continuing.
 
-export GITHUB_TOKEN=ghp_your_token_here
-
-Install the CLI and run:
+Once you have the token, export it and run:
 ${pmInstall(pm, '@corsair-dev/cli')}
-${pmRun(pm, 'corsair setup --github api_key=$GITHUB_TOKEN --backfill')}
+${pmRun(pm, 'corsair setup --github api_key=<token-from-user> --backfill')}
 
 ## 7. Create the agent (${framework})
 ${agentSetup}
@@ -289,18 +285,30 @@ ${agentSetup}
 ${pmRun(pm, 'tsx agent.ts')}`;
 }
 
+function getTokenHints(framework: string): string[] {
+    const hints = ['GitHub token'];
+    if (framework === 'Anthropic SDK' || framework === 'Claude Agent SDK') {
+        hints.push('Anthropic API key');
+    } else if (framework === 'OpenAI Agents') {
+        hints.push('OpenAI API key');
+    }
+    return hints;
+}
+
 export function SetupPromptBanner() {
     const { db, framework, pm } = useSyncExternalStore(subscribe, getState, getState);
     const [copied, setCopied] = useState(false);
+    const [showToast, setShowToast] = useState(false);
 
     function handleCopy() {
         navigator.clipboard.writeText(buildPrompt(db, framework, pm));
         setCopied(true);
+        setShowToast(true);
         setTimeout(() => setCopied(false), 800);
-        setTimeout(() => {
-            document.getElementById('step-github-setup')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }, 1000);
+        setTimeout(() => setShowToast(false), 5000);
     }
+
+    const hints = getTokenHints(framework);
 
     return (
         <>
@@ -329,6 +337,38 @@ export function SetupPromptBanner() {
                 </button>
             </div>
 
+            {showToast && (
+                <div
+                    style={{
+                        position: 'fixed',
+                        bottom: '1.5rem',
+                        right: '1.5rem',
+                        zIndex: 9999,
+                        background: 'var(--color-fd-card, #18181b)',
+                        border: '1px solid var(--color-fd-border, #27272a)',
+                        borderRadius: '0.75rem',
+                        padding: '1rem 1.125rem',
+                        boxShadow: '0 8px 32px rgba(0,0,0,0.35)',
+                        minWidth: '15rem',
+                        fontSize: '0.8125rem',
+                        lineHeight: 1.5,
+                    }}
+                >
+                    <div style={{ marginBottom: '0.625rem' }}>
+                        <span style={{ fontWeight: 600, fontSize: '0.8125rem', color: 'var(--color-fd-foreground, #fafafa)' }}>
+                            You'll need these tokens
+                        </span>
+                    </div>
+                    <ul style={{ margin: 0, padding: 0, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
+                        {hints.map((h) => (
+                            <li key={h} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--color-fd-muted-foreground, #a1a1aa)' }}>
+                                <span style={{ width: '4px', height: '4px', borderRadius: '50%', background: 'var(--color-fd-muted-foreground, #52525b)', flexShrink: 0 }} />
+                                {h}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )}
         </>
     );
 }
