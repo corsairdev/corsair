@@ -202,14 +202,14 @@ psql $DATABASE_URL -f migration.sql
 
 <Step>
 
-### Create `corsair.ts`
+### Create `src/server/corsair.ts`
 
-This is the one file that wires everything together. Create it at your project root:
+This is the one file that wires everything together. Create it at `src/server/corsair.ts`:
 
 <DbTabs>
 <DbPanel value="SQLite">
 
-```ts title="corsair.ts"
+```ts title="src/server/corsair.ts"
 import Database from 'better-sqlite3';
 import { createCorsair } from 'corsair';
 import { github } from 'corsair/plugins/github';
@@ -226,7 +226,7 @@ export const corsair = createCorsair({
 </DbPanel>
 <DbPanel value="PostgreSQL">
 
-```ts title="corsair.ts"
+```ts title="src/server/corsair.ts"
 import { Pool } from 'pg';
 import { createCorsair } from 'corsair';
 import { github } from 'corsair/plugins/github';
@@ -248,11 +248,11 @@ You'll add more plugins here later — `slack()`, `linear()`, `gmail()` — same
 <Accordions>
 <Accordion title="CORSAIR_KEK not loading?">
 
-If `process.env.CORSAIR_KEK` is `undefined` at runtime, your `.env` file isn't being picked up. Install dotenv and add one line at the top of `corsair.ts`:
+If `process.env.CORSAIR_KEK` is `undefined` at runtime, your `.env` file isn't being picked up. Install dotenv and add one line at the top of `src/server/corsair.ts`:
 
 <PmTabs install="dotenv" />
 
-```ts title="corsair.ts"
+```ts title="src/server/corsair.ts"
 import 'dotenv/config'; // add this line
 import Database from 'better-sqlite3';
 // ...
@@ -265,12 +265,18 @@ import Database from 'better-sqlite3';
 
 <Step>
 
+<span id="step-github-setup" />
+
 ### Add your GitHub token and run setup (optional)
 
 1. Go to **[GitHub → Settings → Developer settings → Personal access tokens (classic)](https://github.com/settings/tokens)**
 2. Click **Generate new token (classic)**
 3. Select scopes: `repo`, `read:org`, `read:user`
 4. Copy the token — it starts with `ghp_`
+
+```bash
+export GITHUB_TOKEN=ghp_...
+```
 
 Run setup once with the Corsair CLI:
 
@@ -325,7 +331,7 @@ Install the MCP adapter alongside your preferred framework:
 ```ts title="agent.ts"
 import Anthropic from '@anthropic-ai/sdk';
 import { AnthropicProvider } from '@corsair-dev/mcp';
-import { corsair } from './corsair';
+import { corsair } from './src/server/corsair';
 
 async function main() {
     const provider = new AnthropicProvider();
@@ -338,7 +344,7 @@ async function main() {
         tools,
         messages: [{
             role: 'user',
-            content: 'List my GitHub repos with the most open issues.',
+            content: 'Use Corsair. List my GitHub repos with the most open issues.',
         }],
     });
 
@@ -359,7 +365,7 @@ main().catch(console.error);
 ```ts title="agent.ts"
 import { createSdkMcpServer, query } from '@anthropic-ai/claude-agent-sdk';
 import { ClaudeProvider } from '@corsair-dev/mcp';
-import { corsair } from './corsair';
+import { corsair } from './src/server/corsair';
 
 async function main() {
     const provider = new ClaudeProvider();
@@ -367,10 +373,11 @@ async function main() {
     const server = createSdkMcpServer({ name: 'corsair', tools });
 
     const stream = query({
-        prompt: 'List my GitHub repos with the most open issues.',
+        prompt: 'Use Corsair. List my GitHub repos with the most open issues.',
         options: {
             model: 'claude-opus-4-6',
             mcpServers: { corsair: server },
+            allowedTools: [{ type: 'mcp', serverName: 'corsair' }],
         },
     });
 
@@ -391,7 +398,7 @@ main().catch(console.error);
 ```ts title="agent.ts"
 import { OpenAIAgentsProvider } from '@corsair-dev/mcp';
 import { Agent, run, tool } from '@openai/agents';
-import { corsair } from './corsair';
+import { corsair } from './src/server/corsair';
 
 async function main() {
     const provider = new OpenAIAgentsProvider();
@@ -407,7 +414,7 @@ async function main() {
         tools,
     });
 
-    const result = await run(agent, 'List my GitHub repos with the most open issues.');
+    const result = await run(agent, 'Use Corsair. List my GitHub repos with the most open issues.');
     console.log(result.finalOutput);
 }
 

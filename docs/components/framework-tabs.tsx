@@ -1,7 +1,7 @@
 'use client';
 
-import { Children, createContext, useContext, useState, type ReactNode } from 'react';
-import { setState } from '@/lib/quick-start-store';
+import { Children, createContext, useContext, useState, useSyncExternalStore, type ReactNode } from 'react';
+import { getState, setState, subscribe } from '@/lib/quick-start-store';
 
 const FrameworkContext = createContext<{ active: string; setActive: (v: string) => void } | null>(null);
 
@@ -27,57 +27,77 @@ const FRAMEWORK_LOGOS: Record<string, () => ReactNode> = {
     'OpenAI Agents': OpenAILogo,
 };
 
-const PROMPTS: Record<string, string> = {
-    'Anthropic SDK': `Set up a Corsair GitHub agent using the Anthropic SDK.
+function pmInstall(pm: string, pkg: string): string {
+    if (pm === 'yarn') return `yarn add ${pkg}`;
+    if (pm === 'bun') return `bun add ${pkg}`;
+    return `${pm} install ${pkg}`;
+}
+
+function pmRun(pm: string, cmd: string): string {
+    if (pm === 'npm') return `npx ${cmd}`;
+    if (pm === 'yarn') return `yarn ${cmd}`;
+    if (pm === 'bun') return `bunx ${cmd}`;
+    return `pnpm ${cmd}`;
+}
+
+function buildFrameworkPrompt(framework: string, pm: string): string {
+    const setupCmd = pmRun(pm, 'corsair setup');
+    const runCmd = pmRun(pm, 'tsx agent.ts');
+
+    if (framework === 'Anthropic SDK') {
+        return `Set up a Corsair GitHub agent using the Anthropic SDK.
 
 I already have:
-- corsair.ts set up with the GitHub plugin
-- The database migrated and GitHub token stored via \`npx corsair setup\`
+- src/server/corsair.ts set up with the GitHub plugin
+- The database migrated and GitHub token stored via \`${setupCmd}\`
 
 Create agent.ts:
-- Install: pnpm install @corsair-dev/mcp @anthropic-ai/sdk
-- Import AnthropicProvider from @corsair-dev/mcp, Anthropic from @anthropic-ai/sdk, and corsair from ./corsair
+- Install: ${pmInstall(pm, '@corsair-dev/mcp @anthropic-ai/sdk')}
+- Import AnthropicProvider from @corsair-dev/mcp, Anthropic from @anthropic-ai/sdk, and corsair from ./src/server/corsair
 - Build tools: new AnthropicProvider().build({ corsair })
-- Call client.beta.messages.toolRunner with model claude-sonnet-4-6, max_tokens 4096, the tools, and prompt: "List my GitHub repos with the most open issues."
+- Call client.beta.messages.toolRunner with model claude-sonnet-4-6, max_tokens 4096, the tools, and prompt: "Use Corsair. List my GitHub repos with the most open issues."
 - Print any text blocks from the response
 - Wrap everything in async function main() and call main().catch(console.error)
 
-Run it with: npx tsx agent.ts`,
+Run it with: ${runCmd}`;
+    }
 
-    'Claude Agent SDK': `Set up a Corsair GitHub agent using the Claude Agent SDK.
+    if (framework === 'Claude Agent SDK') {
+        return `Set up a Corsair GitHub agent using the Claude Agent SDK.
 
 I already have:
-- corsair.ts set up with the GitHub plugin
-- The database migrated and GitHub token stored via \`npx corsair setup\`
+- src/server/corsair.ts set up with the GitHub plugin
+- The database migrated and GitHub token stored via \`${setupCmd}\`
 
 Create agent.ts:
-- Install: pnpm install @corsair-dev/mcp @anthropic-ai/claude-agent-sdk
-- Import ClaudeProvider from @corsair-dev/mcp, createSdkMcpServer and query from @anthropic-ai/claude-agent-sdk, and corsair from ./corsair
+- Install: ${pmInstall(pm, '@corsair-dev/mcp @anthropic-ai/claude-agent-sdk')}
+- Import ClaudeProvider from @corsair-dev/mcp, createSdkMcpServer and query from @anthropic-ai/claude-agent-sdk, and corsair from ./src/server/corsair
 - Build tools: await new ClaudeProvider().build({ corsair })
 - Wrap in MCP server: createSdkMcpServer({ name: 'corsair', tools })
-- Call query with prompt "List my GitHub repos with the most open issues." and options: { model: 'claude-opus-4-6', mcpServers: { corsair: server } }
+- Call query with prompt "Use Corsair. List my GitHub repos with the most open issues." and options: { model: 'claude-opus-4-6', mcpServers: { corsair: server }, allowedTools: [{ type: 'mcp', serverName: 'corsair' }] }
 - Stream the result and print any text events
 - Wrap everything in async function main() and call main().catch(console.error)
 
-Run it with: npx tsx agent.ts`,
+Run it with: ${runCmd}`;
+    }
 
-    'OpenAI Agents': `Set up a Corsair GitHub agent using the OpenAI Agents SDK.
+    return `Set up a Corsair GitHub agent using the OpenAI Agents SDK.
 
 I already have:
-- corsair.ts set up with the GitHub plugin
-- The database migrated and GitHub token stored via \`npx corsair setup\`
+- src/server/corsair.ts set up with the GitHub plugin
+- The database migrated and GitHub token stored via \`${setupCmd}\`
 
 Create agent.ts:
-- Install: pnpm install @corsair-dev/mcp @openai/agents
-- Import OpenAIAgentsProvider from @corsair-dev/mcp, Agent, run, tool from @openai/agents, and corsair from ./corsair
+- Install: ${pmInstall(pm, '@corsair-dev/mcp @openai/agents')}
+- Import OpenAIAgentsProvider from @corsair-dev/mcp, Agent, run, tool from @openai/agents, and corsair from ./src/server/corsair
 - Build tools: new OpenAIAgentsProvider().build({ corsair, tool })
 - Create an Agent with name 'corsair-agent', model 'gpt-4.1', instructions to use list_operations, get_schema, and run_script tools, and the tools array
-- Run with: run(agent, "List my GitHub repos with the most open issues.")
+- Run with: run(agent, "Use Corsair. List my GitHub repos with the most open issues.")
 - Log result.finalOutput
 - Wrap everything in async function main() and call main().catch(console.error)
 
-Run it with: npx tsx agent.ts`,
-};
+Run it with: ${runCmd}`;
+}
 
 interface FrameworkTabsProps {
     children: ReactNode;
@@ -92,6 +112,7 @@ export function FrameworkTabs({ children, defaultValue }: FrameworkTabsProps) {
 
     const [active, setActive] = useState(defaultValue ?? (panels[0] as any)?.props?.value ?? '');
     const [copied, setCopied] = useState(false);
+    const { pm } = useSyncExternalStore(subscribe, getState, getState);
 
     function handleSelect(value: string) {
         setActive(value);
@@ -99,8 +120,7 @@ export function FrameworkTabs({ children, defaultValue }: FrameworkTabsProps) {
     }
 
     function handleCopyPrompt() {
-        const prompt = PROMPTS[active];
-        if (!prompt) return;
+        const prompt = buildFrameworkPrompt(active, pm);
         navigator.clipboard.writeText(prompt);
         setCopied(true);
         setTimeout(() => setCopied(false), 2000);

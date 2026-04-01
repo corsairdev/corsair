@@ -106,12 +106,30 @@ CREATE TABLE IF NOT EXISTS corsair_permissions (
     error TEXT NULL
 );`;
 
-function buildPrompt(db: string, framework: string): string {
+function pmInstall(pm: string, pkg: string, dev = false): string {
+    if (dev) {
+        if (pm === 'yarn') return `yarn add --dev ${pkg}`;
+        if (pm === 'bun') return `bun add --dev ${pkg}`;
+        return `${pm} install --save-dev ${pkg}`;
+    }
+    if (pm === 'yarn') return `yarn add ${pkg}`;
+    if (pm === 'bun') return `bun add ${pkg}`;
+    return `${pm} install ${pkg}`;
+}
+
+function pmRun(pm: string, cmd: string): string {
+    if (pm === 'npm') return `npx ${cmd}`;
+    if (pm === 'yarn') return `yarn ${cmd}`;
+    if (pm === 'bun') return `bunx ${cmd}`;
+    return `pnpm ${cmd}`;
+}
+
+function buildPrompt(db: string, framework: string, pm: string): string {
     const isSQLite = db === 'SQLite';
 
     const dbInstall = isSQLite
-        ? `pnpm install better-sqlite3\npnpm install --save-dev @types/better-sqlite3`
-        : `pnpm install pg\npnpm install --save-dev @types/pg`;
+        ? `${pmInstall(pm, 'better-sqlite3')}\n${pmInstall(pm, '@types/better-sqlite3', true)}`
+        : `${pmInstall(pm, 'pg')}\n${pmInstall(pm, '@types/pg', true)}`;
 
     const migrationCmd = isSQLite
         ? `sqlite3 corsair.db < migration.sql`
@@ -119,7 +137,8 @@ function buildPrompt(db: string, framework: string): string {
 
     const corsairTs = isSQLite
         ? `import Database from 'better-sqlite3';
-import { createCorsair, github } from 'corsair';
+import { createCorsair } from 'corsair';
+import { github } from 'corsair/plugins/github';
 
 const db = new Database('corsair.db');
 
@@ -129,7 +148,8 @@ export const corsair = createCorsair({
     kek: process.env.CORSAIR_KEK!,
 });`
         : `import { Pool } from 'pg';
-import { createCorsair, github } from 'corsair';
+import { createCorsair } from 'corsair';
+import { github } from 'corsair/plugins/github';
 
 const db = new Pool({ connectionString: process.env.DATABASE_URL });
 
@@ -145,13 +165,13 @@ export const corsair = createCorsair({
 
     const agentSetup =
         framework === 'Anthropic SDK'
-            ? `pnpm install @corsair-dev/mcp @anthropic-ai/sdk
+            ? `${pmInstall(pm, '@corsair-dev/mcp @anthropic-ai/sdk')}
 
 Create agent.ts:
 
 import Anthropic from '@anthropic-ai/sdk';
 import { AnthropicProvider } from '@corsair-dev/mcp';
-import { corsair } from './corsair';
+import { corsair } from './src/server/corsair';
 
 async function main() {
     const provider = new AnthropicProvider();
@@ -162,7 +182,7 @@ async function main() {
         model: 'claude-sonnet-4-6',
         max_tokens: 4096,
         tools,
-        messages: [{ role: 'user', content: 'List my GitHub repos with the most open issues.' }],
+        messages: [{ role: 'user', content: 'Use Corsair. List my GitHub repos with the most open issues.' }],
     });
 
     for (const block of message.content) {
@@ -172,13 +192,13 @@ async function main() {
 
 main().catch(console.error);`
             : framework === 'Claude Agent SDK'
-              ? `pnpm install @corsair-dev/mcp @anthropic-ai/claude-agent-sdk
+              ? `${pmInstall(pm, '@corsair-dev/mcp @anthropic-ai/claude-agent-sdk')}
 
 Create agent.ts:
 
 import { createSdkMcpServer, query } from '@anthropic-ai/claude-agent-sdk';
 import { ClaudeProvider } from '@corsair-dev/mcp';
-import { corsair } from './corsair';
+import { corsair } from './src/server/corsair';
 
 async function main() {
     const provider = new ClaudeProvider();
@@ -186,8 +206,12 @@ async function main() {
     const server = createSdkMcpServer({ name: 'corsair', tools });
 
     const stream = query({
-        prompt: 'List my GitHub repos with the most open issues.',
-        options: { model: 'claude-opus-4-6', mcpServers: { corsair: server } },
+        prompt: 'Use Corsair. List my GitHub repos with the most open issues.',
+        options: {
+            model: 'claude-opus-4-6',
+            mcpServers: { corsair: server },
+            allowedTools: [{ type: 'mcp', serverName: 'corsair' }],
+        },
     });
 
     for await (const event of stream) {
@@ -196,13 +220,13 @@ async function main() {
 }
 
 main().catch(console.error);`
-              : `pnpm install @corsair-dev/mcp @openai/agents
+              : `${pmInstall(pm, '@corsair-dev/mcp @openai/agents')}
 
 Create agent.ts:
 
 import { OpenAIAgentsProvider } from '@corsair-dev/mcp';
 import { Agent, run, tool } from '@openai/agents';
-import { corsair } from './corsair';
+import { corsair } from './src/server/corsair';
 
 async function main() {
     const provider = new OpenAIAgentsProvider();
@@ -215,7 +239,7 @@ async function main() {
         tools,
     });
 
-    const result = await run(agent, 'List my GitHub repos with the most open issues.');
+    const result = await run(agent, 'Use Corsair. List my GitHub repos with the most open issues.');
     console.log(result.finalOutput);
 }
 
@@ -224,7 +248,7 @@ main().catch(console.error);`;
     return `Set up Corsair from scratch with ${db} and ${framework}, then run a GitHub agent.
 
 ## 1. Install
-pnpm install corsair
+${pmInstall(pm, 'corsair')}
 ${dbInstall}
 
 ## 2. Generate a KEK
@@ -242,57 +266,66 @@ ${isSQLite ? MIGRATION_SQL_SQLITE : MIGRATION_SQL_PG}
 Then run:
 ${migrationCmd}
 
-## 5. Create corsair.ts
+## 5. Create src/server/corsair.ts
 ${corsairTs}
 
 ## 6. Store your GitHub token and run setup
 Go to GitHub → Settings → Developer settings → Personal access tokens (classic).
 Generate a token with scopes: repo, read:org, read:user.
-Add GITHUB_TOKEN to .env, then run:
+Export it in your terminal:
 
-npx corsair setup --github api_key=$GITHUB_TOKEN --backfill
+export GITHUB_TOKEN=ghp_your_token_here
+
+Then run:
+${pmRun(pm, 'corsair setup --github api_key=$GITHUB_TOKEN --backfill')}
 
 ## 7. Create the agent (${framework})
 ${agentSetup}
 
 ## Run it
-npx tsx agent.ts`;
+${pmRun(pm, 'tsx agent.ts')}`;
 }
 
 export function SetupPromptBanner() {
-    const { db, framework } = useSyncExternalStore(subscribe, getState, getState);
+    const { db, framework, pm } = useSyncExternalStore(subscribe, getState, getState);
     const [copied, setCopied] = useState(false);
 
     function handleCopy() {
-        navigator.clipboard.writeText(buildPrompt(db, framework));
+        navigator.clipboard.writeText(buildPrompt(db, framework, pm));
         setCopied(true);
-        setTimeout(() => setCopied(false), 2000);
+        setTimeout(() => setCopied(false), 800);
+        setTimeout(() => {
+            document.getElementById('step-github-setup')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 1000);
     }
 
     return (
-        <div className="flex items-center justify-between mb-6" style={{ margin: '0 0 1.5rem 0' }}>
-            <div style={{ fontSize: '1.5rem', fontWeight: 600, letterSpacing: '-0.025em', lineHeight: 1.2, margin: 0 }}>Setup</div>
-            <button
-                onClick={handleCopy}
-                className="flex items-center gap-2 px-4 py-2 rounded-lg bg-fd-primary text-fd-primary-foreground text-sm font-medium hover:opacity-90 transition-opacity cursor-pointer"
-            >
-                {copied ? (
-                    <>
-                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
-                            <polyline points="20 6 9 17 4 12" />
-                        </svg>
-                        Copied!
-                    </>
-                ) : (
-                    <>
-                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
-                            <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
-                            <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
-                        </svg>
-                        Copy prompt
-                    </>
-                )}
-            </button>
-        </div>
+        <>
+            <div className="flex items-center justify-between mb-6" style={{ margin: '0 0 1.5rem 0' }}>
+                <div style={{ fontSize: '1.5rem', fontWeight: 600, letterSpacing: '-0.025em', lineHeight: 1.2, margin: 0 }}>Setup</div>
+                <button
+                    onClick={handleCopy}
+                    className="flex items-center gap-2 px-4 py-2 rounded-lg bg-fd-primary text-fd-primary-foreground text-sm font-medium hover:opacity-90 transition-opacity cursor-pointer"
+                >
+                    {copied ? (
+                        <>
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+                                <polyline points="20 6 9 17 4 12" />
+                            </svg>
+                            Copied!
+                        </>
+                    ) : (
+                        <>
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+                                <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
+                                <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
+                            </svg>
+                            Copy prompt
+                        </>
+                    )}
+                </button>
+            </div>
+
+        </>
     );
 }

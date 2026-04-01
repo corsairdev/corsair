@@ -195,20 +195,19 @@ I have a Next.js T3 app. The Google Calendar plugin is connected via Corsair.
 
 Build me a Google Calendar dashboard on the home page. I want to see:
 
-- A stats row showing: how many events I have today, how many this week,
-  what my next meeting is, and how many hours are blocked today
+- A stats row showing: how many events I have today, how many this week, what my next meeting is, and how many hours are blocked
+today
 - Today's full agenda — all my events for today in order with times and titles
 - An upcoming events panel — my next couple weeks of events grouped by day
 - A Create Meeting button that opens a form to schedule a new event
-- A notes field on each meeting card where I can save and edit private notes
-  per event (store these in a local table, not on Google Calendar)
+- A notes field on each meeting card where I can save and edit private notes per event (store these in a local table, not on Google
+Calendar)
+- A Refresh button in the header that fetches the latest events from Google Calendar and updates what's shown on screen, including
+removing any events the user has deleted from Google Calendar
 
-Corsair caches fetched data in `corsair.db` (the `corsair_entities` table).
-When building server actions or API routes, always query that local table first
-before making a live API call. Only call out to Google Calendar when the local
-cache is missing the data or you're writing a mutation (creating/updating an event).
-Use the `corsair` instance from `src/server/corsair.ts` for all reads and writes.
-
+The app should use Corsair's local database as a cache — load from there first, and only call Google Calendar when the data isn't
+cached yet, when creating an event, or when the user clicks Refresh. The page should not make any live API calls on its own after
+the first load.
 ```
 
 Run `pnpm dev` when it's done.
