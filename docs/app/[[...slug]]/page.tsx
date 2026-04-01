@@ -27,6 +27,7 @@ import CreateYourOwnPlugin from '@/content/guides/create-your-own-plugin.mdx';
 import PluginCredentialsGuide from '@/content/guides/plugin-credentials.mdx';
 import DashboardGuide from '@/content/guides/dashboard.mdx';
 import WorkflowsGuide from '@/content/guides/workflows.mdx';
+import WebhooksGuide from '@/content/guides/webhooks.mdx';
 import GithubApiEndpointsDoc from '@/content/plugins/github/api-endpoints.mdx';
 import GithubDatabaseDoc from '@/content/plugins/github/database.mdx';
 import GithubErrorHandlersDoc from '@/content/plugins/github/error-handlers.mdx';
@@ -877,6 +878,11 @@ const pages = {
 		Component: WorkflowsGuide,
 		title: 'Workflows',
 		description: 'Chain webhook events into multi-step automations across any plugin',
+	},
+	'guides/webhooks': {
+		Component: WebhooksGuide,
+		title: 'Webhooks',
+		description: 'Handling webhooks in Corsair',
 	},
 } as const;
 

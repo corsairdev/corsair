@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 function generateKek(): string {
     const array = new Uint8Array(32);
@@ -9,8 +9,12 @@ function generateKek(): string {
 }
 
 export function KekGenerator() {
-    const [kek, setKek] = useState<string | null>(null);
+    const [kek, setKek] = useState('');
     const [copied, setCopied] = useState(false);
+
+    useEffect(() => {
+        setKek(generateKek());
+    }, []);
 
     function handleGenerate() {
         setKek(generateKek());
@@ -29,26 +33,24 @@ export function KekGenerator() {
             <div className="flex items-center justify-between px-4 py-3 border-b border-fd-border bg-fd-muted/40">
                 <span className="text-sm font-medium text-fd-muted-foreground">.env</span>
                 <div className="flex items-center gap-2">
-                    {kek && (
-                        <button
-                            onClick={handleCopy}
-                            className="text-xs px-2 py-1 rounded border border-fd-border bg-fd-muted hover:bg-fd-accent transition-colors text-fd-muted-foreground"
-                        >
-                            {copied ? 'Copied!' : 'Copy'}
-                        </button>
-                    )}
+                    <button
+                        onClick={handleCopy}
+                        className="text-xs px-2 py-1 rounded border border-fd-border bg-fd-muted hover:bg-fd-accent transition-colors text-fd-muted-foreground"
+                    >
+                        {copied ? 'Copied!' : 'Copy'}
+                    </button>
                     <button
                         onClick={handleGenerate}
                         className="text-xs px-3 py-1.5 rounded-md bg-fd-primary text-fd-primary-foreground font-medium hover:opacity-90 transition-opacity"
                     >
-                        {kek ? 'Regenerate' : 'Generate key'}
+                        Regenerate
                     </button>
                 </div>
             </div>
             <div className="px-4 py-3 font-mono text-sm text-fd-muted-foreground">
                 {'CORSAIR_KEK='}
-                <span className={kek ? 'text-fd-foreground' : 'italic'}>
-                    {kek ? `"${kek}"` : '"click Generate key above"'}
+                <span className="text-fd-foreground">
+                    {`"${kek}"`}
                 </span>
             </div>
         </div>

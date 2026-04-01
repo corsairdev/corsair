@@ -11,9 +11,7 @@ description: Go from zero to a working GitHub integration in five minutes.
 
 ### Install
 
-```bash
-pnpm install corsair
-```
+<PmTabs install="corsair" />
 
 </Step>
 
@@ -42,20 +40,16 @@ Corsair needs five tables. Run this once, then you're done.
 
 Install the driver, then run the migration:
 
-```bash
-pnpm install better-sqlite3
-pnpm install --save-dev @types/better-sqlite3
-```
+<PmTabs install="better-sqlite3" />
+<PmTabs install="@types/better-sqlite3" dev />
 
   </DbPanel>
   <DbPanel value="PostgreSQL">
 
 Install the driver, then run the migration:
 
-```bash
-pnpm install pg
-pnpm install --save-dev @types/pg
-```
+<PmTabs install="pg" />
+<PmTabs install="@types/pg" dev />
 
   </DbPanel>
 </DbTabs>
@@ -217,7 +211,8 @@ This is the one file that wires everything together. Create it at your project r
 
 ```ts title="corsair.ts"
 import Database from 'better-sqlite3';
-import { createCorsair, github } from 'corsair';
+import { createCorsair } from 'corsair';
+import { github } from 'corsair/plugins/github';
 
 const db = new Database('corsair.db');
 
@@ -233,7 +228,8 @@ export const corsair = createCorsair({
 
 ```ts title="corsair.ts"
 import { Pool } from 'pg';
-import { createCorsair, github } from 'corsair';
+import { createCorsair } from 'corsair';
+import { github } from 'corsair/plugins/github';
 
 const db = new Pool({ connectionString: process.env.DATABASE_URL });
 
@@ -254,9 +250,7 @@ You'll add more plugins here later — `slack()`, `linear()`, `gmail()` — same
 
 If `process.env.CORSAIR_KEK` is `undefined` at runtime, your `.env` file isn't being picked up. Install dotenv and add one line at the top of `corsair.ts`:
 
-```bash
-pnpm install dotenv
-```
+<PmTabs install="dotenv" />
 
 ```ts title="corsair.ts"
 import 'dotenv/config'; // add this line
@@ -271,7 +265,7 @@ import Database from 'better-sqlite3';
 
 <Step>
 
-### Add your GitHub token and run setup
+### Add your GitHub token and run setup (optional)
 
 1. Go to **[GitHub → Settings → Developer settings → Personal access tokens (classic)](https://github.com/settings/tokens)**
 2. Click **Generate new token (classic)**
@@ -280,9 +274,27 @@ import Database from 'better-sqlite3';
 
 Run setup once with the Corsair CLI:
 
-```bash
-npx corsair setup --github api_key=$GITHUB_TOKEN --backfill
+<PmTabs run="corsair setup --github api_key=$GITHUB_TOKEN --backfill" />
+
+<Accordions>
+<Accordion title="pnpm: command not found or setup fails?">
+
+If `pnpm corsair` isn't found, add this to your `package.json` so pnpm builds the native dependency correctly:
+
+```json title="package.json"
+{
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "better-sqlite3"
+    ]
+  }
+}
 ```
+
+Then re-run `pnpm install` and retry the setup command.
+
+</Accordion>
+</Accordions>
 
 Corsair stores your token, creates the database rows, and fetches your GitHub data locally. Your agent can now query it instantly — no API call needed every time.
 
@@ -308,9 +320,7 @@ Install the MCP adapter alongside your preferred framework:
 
 <FrameworkPanel value="Anthropic SDK">
 
-```bash
-pnpm install @corsair-dev/mcp @anthropic-ai/sdk
-```
+<PmTabs install="@corsair-dev/mcp @anthropic-ai/sdk" />
 
 ```ts title="agent.ts"
 import Anthropic from '@anthropic-ai/sdk';
@@ -344,9 +354,7 @@ main().catch(console.error);
 
 <FrameworkPanel value="Claude Agent SDK">
 
-```bash
-pnpm install @corsair-dev/mcp @anthropic-ai/claude-agent-sdk
-```
+<PmTabs install="@corsair-dev/mcp @anthropic-ai/claude-agent-sdk" />
 
 ```ts title="agent.ts"
 import { createSdkMcpServer, query } from '@anthropic-ai/claude-agent-sdk';
@@ -378,9 +386,7 @@ main().catch(console.error);
 
 <FrameworkPanel value="OpenAI Agents">
 
-```bash
-pnpm install @corsair-dev/mcp @openai/agents
-```
+<PmTabs install="@corsair-dev/mcp @openai/agents" />
 
 ```ts title="agent.ts"
 import { OpenAIAgentsProvider } from '@corsair-dev/mcp';

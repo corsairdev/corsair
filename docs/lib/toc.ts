@@ -127,6 +127,7 @@ const slugToFilePath: Record<string, string> = {
 	'guides/plugin-credentials': 'guides/plugin-credentials.mdx',
 	'guides/dashboard': 'guides/dashboard.mdx',
 	'guides/workflows': 'guides/workflows.mdx',
+	'guides/webhooks': 'guides/webhooks.mdx',
 	// getting-started (additional)
 	'quick-start': 'getting-started/quick-start.mdx',
 };

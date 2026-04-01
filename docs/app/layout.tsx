@@ -220,6 +220,12 @@ const tree = {
 					url: '/guides/workflows',
 					icon: <Zap className="size-4" />,
 				},
+				{
+					type: 'page' as const,
+					name: 'Webhooks',
+					url: '/guides/webhooks',
+					icon: <Webhook className="size-4" />,
+				},
 			],
 		},
 		{

@@ -10,6 +10,7 @@ import { KekGenerator } from '@/components/kek-generator';
 import { FrameworkTabs, FrameworkPanel } from '@/components/framework-tabs';
 import { DbTabs, DbPanel } from '@/components/db-tabs';
 import { SetupPromptBanner } from '@/components/setup-prompt-banner';
+import { PmTabs } from '@/components/pm-tabs';
 
 export function useMDXComponents(components?: MDXComponents): MDXComponents {
 	return {
@@ -33,6 +34,7 @@ export function useMDXComponents(components?: MDXComponents): MDXComponents {
 		DbTabs,
 		DbPanel,
 		SetupPromptBanner,
+		PmTabs,
 		...components,
 	};
 }

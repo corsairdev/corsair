@@ -1,7 +1,7 @@
-type State = { db: string; framework: string };
+type State = { db: string; framework: string; pm: string };
 type Listener = () => void;
 
-let state: State = { db: 'SQLite', framework: 'Anthropic SDK' };
+let state: State = { db: 'SQLite', framework: 'Anthropic SDK', pm: 'npm' };
 const listeners = new Set<Listener>();
 
 export function getState(): State {
