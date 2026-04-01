@@ -16,6 +16,12 @@
     "bumpp": "bumpp",
     "typecheck": "tsc --build"
   },
+  "pnpm": {
+    "overrides": {
+      "@types/react": "^19",
+      "@types/react-dom": "^19"
+    }
+  },
   "devDependencies": {
     "@biomejs/biome": "2.3.5",
     "@total-typescript/ts-reset": "^0.5.1",
