@@ -127,7 +127,7 @@ export function FrameworkTabs({ children, defaultValue }: FrameworkTabsProps) {
     }
 
     return (
-        <FrameworkContext.Provider value={{ active, setActive }}>
+        <FrameworkContext value={{ active, setActive }}>
             <div className="flex flex-wrap items-center justify-between gap-2 mt-4 mb-0">
                 <div className="flex flex-wrap gap-2">
                     {panels.map((panel) => {
@@ -153,7 +153,7 @@ export function FrameworkTabs({ children, defaultValue }: FrameworkTabsProps) {
                 </div>
             </div>
             {children}
-        </FrameworkContext.Provider>
+        </FrameworkContext>
     );
 }
 
