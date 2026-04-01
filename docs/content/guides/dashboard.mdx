@@ -205,7 +205,7 @@ Calendar)
 - A Refresh button in the header that fetches the latest events from Google Calendar and updates what's shown on screen, including
 removing any events the user has deleted from Google Calendar
 
-The app should use Corsair's local database as a cache — load from there first, and only call Google Calendar when the data isn't
+The app should use await corsair.googlecalendar.db as a cache — load from there first, and only call Google Calendar when the data isn't
 cached yet, when creating an event, or when the user clicks Refresh. The page should not make any live API calls on its own after
 the first load.
 ```
