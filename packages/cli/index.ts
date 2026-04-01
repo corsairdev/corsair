@@ -324,13 +324,32 @@ export async function getCorsairInstance({
 					}
 					// c12 returns empty config (no throw) when a file doesn't exist,
 					// so any exception here means the file was found but failed to load.
-					if (shouldThrowOnError) {
-						throw e;
-					}
 					const msg =
 						typeof e === 'object' && e && 'message' in e && typeof e.message === 'string'
 							? e.message
 							: String(e);
+					if (
+						msg.includes('Could not locate the bindings file') ||
+						msg.includes('NODE_MODULE_VERSION') ||
+						msg.includes('.node')
+					) {
+						if (shouldThrowOnError) {
+							throw new Error(
+								`Native module error in ${possiblePath}: ${msg}\n\nThis is likely because a native Node.js addon (e.g. better-sqlite3) needs to be rebuilt for your current Node.js version. Try running:\n  npm rebuild\nor reinstall your dependencies:\n  rm -rf node_modules && npm install`,
+							);
+						}
+						console.error(`[#corsair]: Error loading ${possiblePath}: Native module binding not found.`);
+						console.log('');
+						console.log('[#corsair]: A native Node.js addon (e.g. better-sqlite3) needs to be rebuilt for your current Node.js version.');
+						console.log('[#corsair]: Try running:');
+						console.log('  npm rebuild');
+						console.log('[#corsair]: Or reinstall your dependencies:');
+						console.log('  rm -rf node_modules && npm install');
+						process.exit(1);
+					}
+					if (shouldThrowOnError) {
+						throw e;
+					}
 					console.error(`[#corsair]: Error loading ${possiblePath}:`, msg);
 					process.exit(1);
 				}
