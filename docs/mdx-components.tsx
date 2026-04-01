@@ -15,7 +15,6 @@ import { PmTabs } from '@/components/pm-tabs';
 export function useMDXComponents(components?: MDXComponents): MDXComponents {
 	return {
 		...defaultComponents,
-		// @ts-expect-error react version mismatch causing errors
 		Callout,
 		Tabs,
 		Tab,
@@ -24,9 +23,7 @@ export function useMDXComponents(components?: MDXComponents): MDXComponents {
 		Step,
 		Cards,
 		Card,
-		// @ts-expect-error react version mismatch causing errors
 		Accordions,
-		// @ts-expect-error react version mismatch causing errors
 		Accordion,
 		KekGenerator,
 		FrameworkTabs,
