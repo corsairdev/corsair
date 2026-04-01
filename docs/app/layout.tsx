@@ -66,6 +66,12 @@ const tree = {
 				},
 				{
 					type: 'page' as const,
+					name: 'Quick Start',
+					url: '/quick-start',
+					icon: <Rocket className="size-4" />,
+				},
+				{
+					type: 'page' as const,
 					name: 'Installation',
 					url: '/installation',
 					icon: <Download className="size-4" />,
@@ -201,6 +207,24 @@ const tree = {
 					name: 'Plugin Credentials Guide',
 					url: '/guides/plugin-credentials',
 					icon: <Key className="size-4" />,
+				},
+				{
+					type: 'page' as const,
+					name: 'Vibe Code Your Dashboard',
+					url: '/guides/dashboard',
+					icon: <Grid3x3 className="size-4" />,
+				},
+				{
+					type: 'page' as const,
+					name: 'Workflows',
+					url: '/guides/workflows',
+					icon: <Zap className="size-4" />,
+				},
+				{
+					type: 'page' as const,
+					name: 'Webhooks',
+					url: '/guides/webhooks',
+					icon: <Webhook className="size-4" />,
 				},
 			],
 		},

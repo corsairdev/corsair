@@ -1,61 +1,102 @@
 ---
 title: Multi-Tenancy
-description: Isolate tenant data with zero cross-contamination.
+description: One flag. Every user gets their own credentials, their own data, zero overlap.
 ---
 
-Corsair is built for multi-tenant applications. When enabled, every database operation is automatically scoped to a specific tenant — no data can leak between tenants.
+Multi-tenancy means each user of your app connects their own accounts. User A connects their GitHub. User B connects theirs. They never see each other's data.
+
+Enable it with one flag. Then scope every operation to a user with `withTenant()`.
+
+---
+
+## Enable it
 
 ```ts title="corsair.ts"
-import { createCorsair } from "corsair";
-import { Pool } from "pg";
-import { slack } from "corsair/plugins";
-
 export const corsair = createCorsair({
-    multiTenancy: true,
+    multiTenancy: true,   // ← this is all it takes
+    plugins: [github(), slack()],
     database: new Pool({ connectionString: process.env.DATABASE_URL }),
-    plugins: [slack({ ... })],
+    kek: process.env.CORSAIR_KEK!,
 });
 ```
 
-## Using `withTenant`
+With `multiTenancy: true`, Corsair won't let you call plugins directly — every operation must go through `withTenant()`. This is enforced at the type level, so you'll get a compile error if you forget.
 
-With multi-tenancy enabled, use `withTenant()` to scope all operations to a specific tenant.
+---
 
-```ts title="example.ts"
-const tenant = corsair.withTenant("tenant_abc123");
+## Use `withTenant()`
 
-// All operations are now scoped to tenant_abc123
-await tenant.slack.api.messages.post({
-    channel: "C01234567",
-    text: "Hello from tenant_abc123!",
-});
+Pass any stable user identifier — database ID, auth provider ID, anything:
 
-// Database queries are automatically filtered
-const channels = await tenant.slack.db.channels.list();
+```ts
+const tenant = corsair.withTenant('user_abc123');
+
+// API calls use that user's credentials
+await tenant.github.api.repositories.list({ type: 'owner' });
+
+// Database queries return only that user's data
+const repos = await tenant.github.db.repositories.findAll();
+
+// Credentials are stored per-user
+await tenant.github.keys.set_api_key(userGithubToken);
 ```
 
-## What Gets Scoped
+Every read, write, and API call is automatically scoped. There is no way to accidentally query another user's data through the normal API.
 
-When you call `withTenant(tenantId)`:
+---
 
-- **Database queries** automatically filter by `tenant_id`
-- **Created records** are tagged with the tenant ID
-- **API credentials** are retrieved only for that tenant
-- **Webhook data** is associated with the correct tenant
+## How Corsair scopes it
 
-This guarantees complete isolation between tenants — you're secure by default.
+When you call `withTenant('user_abc123')`, Corsair:
 
-## Opting Out
+1. **Adds `tenant_id = 'user_abc123'` to every `INSERT`** — all data written is tagged
+2. **Adds `WHERE tenant_id = 'user_abc123'` to every `SELECT`** — you only ever read your own data
+3. **Retrieves credentials scoped to that tenant** — API calls use that user's token, not yours
+4. **Routes incoming webhooks** to the correct tenant via `?tenantId=user_abc123` in the URL
 
-If you don't need multi-tenancy, set it to `false` and access plugins directly on the Corsair instance.
+No middleware, no manual filtering. Corsair handles it inside the database adapter.
 
-```ts title="corsair.ts"
-export const corsair = createCorsair({
-    multiTenancy: false,
-    plugins: [slack({ ... })],
-});
+---
 
-// Access plugins directly
-await corsair.slack.api.channels.list();
+## Per-user credential setup
+
+Each user connects their own accounts. Store credentials when they authenticate:
+
+```ts title="auth-callback.ts"
+// Called after GitHub OAuth or when user pastes their token
+export async function saveUserCredentials(userId: string, githubToken: string) {
+    const tenant = corsair.withTenant(userId);
+    await tenant.github.keys.set_api_key(githubToken);
+}
 ```
 
+Credentials are encrypted with your KEK and stored per-tenant. One user's token can never be decrypted by another tenant's context.
+
+---
+
+## Webhooks
+
+When registering webhooks, include the user's ID in the URL:
+
+```
+https://your-app.com/api/webhook?tenantId=user_abc123
+```
+
+Corsair reads `tenantId` from the query string and automatically scopes the database write to that user. No routing logic on your end.
+
+---
+
+## What's next
+
+<Cards>
+  <Card
+    title="Webhooks"
+    description="How to scope incoming events per tenant using the ?tenantId= param."
+    href="/webhooks"
+  />
+  <Card
+    title="Vibe Code Your Dashboard"
+    description="Scaffold a Next.js app that uses Corsair with multi-tenancy."
+    href="/guides/dashboard"
+  />
+</Cards>

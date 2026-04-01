@@ -1,0 +1,518 @@
+---
+title: Quick Start
+description: Go from zero to a working GitHub integration in five minutes.
+---
+
+<SetupPromptBanner />
+
+<Steps>
+
+<Step>
+
+### Install
+
+<PmTabs install="corsair" />
+
+</Step>
+
+<Step>
+
+### Generate your encryption key
+
+Corsair encrypts every stored credential with a Key Encryption Key (KEK). Click to generate one and copy it into your `.env`:
+
+<KekGenerator />
+
+<Callout type="warn" title="Keep this key safe">
+If you lose it, you lose access to all stored credentials. Treat it like a root password.
+</Callout>
+
+</Step>
+
+<Step>
+
+### Migrate the database
+
+Corsair needs five tables. Run this once, then you're done.
+
+<DbTabs>
+  <DbPanel value="SQLite">
+
+Install the driver, then run the migration:
+
+<PmTabs install="better-sqlite3" />
+<PmTabs install="@types/better-sqlite3" dev />
+
+  </DbPanel>
+  <DbPanel value="PostgreSQL">
+
+Install the driver, then run the migration:
+
+<PmTabs install="pg" />
+<PmTabs install="@types/pg" dev />
+
+  </DbPanel>
+</DbTabs>
+
+<DbTabs>
+  <DbPanel value="SQLite">
+
+<Accordions>
+<Accordion title="View migration SQL">
+
+```sql title="migration.sql"
+CREATE TABLE IF NOT EXISTS corsair_integrations (
+    id TEXT PRIMARY KEY,
+    created_at INTEGER NOT NULL,
+    updated_at INTEGER NOT NULL,
+    name TEXT NOT NULL,
+    config TEXT NOT NULL DEFAULT '{}',
+    dek TEXT NULL
+);
+
+CREATE TABLE IF NOT EXISTS corsair_accounts (
+    id TEXT PRIMARY KEY,
+    created_at INTEGER NOT NULL,
+    updated_at INTEGER NOT NULL,
+    tenant_id TEXT NOT NULL,
+    integration_id TEXT NOT NULL,
+    config TEXT NOT NULL DEFAULT '{}',
+    dek TEXT NULL,
+    FOREIGN KEY (integration_id) REFERENCES corsair_integrations(id)
+);
+
+CREATE TABLE IF NOT EXISTS corsair_entities (
+    id TEXT PRIMARY KEY,
+    created_at INTEGER NOT NULL,
+    updated_at INTEGER NOT NULL,
+    account_id TEXT NOT NULL,
+    entity_id TEXT NOT NULL,
+    entity_type TEXT NOT NULL,
+    version TEXT NOT NULL,
+    data TEXT NOT NULL DEFAULT '{}',
+    FOREIGN KEY (account_id) REFERENCES corsair_accounts(id)
+);
+
+CREATE TABLE IF NOT EXISTS corsair_events (
+    id TEXT PRIMARY KEY,
+    created_at INTEGER NOT NULL,
+    updated_at INTEGER NOT NULL,
+    account_id TEXT NOT NULL,
+    event_type TEXT NOT NULL,
+    payload TEXT NOT NULL DEFAULT '{}',
+    status TEXT,
+    FOREIGN KEY (account_id) REFERENCES corsair_accounts(id)
+);
+
+CREATE TABLE IF NOT EXISTS corsair_permissions (
+    id TEXT PRIMARY KEY,
+    created_at INTEGER NOT NULL,
+    updated_at INTEGER NOT NULL,
+    token TEXT NOT NULL,
+    plugin TEXT NOT NULL,
+    endpoint TEXT NOT NULL,
+    args TEXT NOT NULL,
+    tenant_id TEXT NOT NULL DEFAULT 'default',
+    status TEXT NOT NULL DEFAULT 'pending',
+    expires_at TEXT NOT NULL,
+    error TEXT NULL
+);
+```
+
+</Accordion>
+</Accordions>
+
+```bash
+sqlite3 corsair.db < migration.sql
+```
+
+  </DbPanel>
+  <DbPanel value="PostgreSQL">
+
+<Accordions>
+<Accordion title="View migration SQL">
+
+```sql title="migration.sql"
+CREATE TABLE IF NOT EXISTS corsair_integrations (
+    id TEXT PRIMARY KEY,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    name TEXT NOT NULL,
+    config JSONB NOT NULL DEFAULT '{}',
+    dek TEXT NULL
+);
+
+CREATE TABLE IF NOT EXISTS corsair_accounts (
+    id TEXT PRIMARY KEY,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    tenant_id TEXT NOT NULL,
+    integration_id TEXT NOT NULL REFERENCES corsair_integrations(id),
+    config JSONB NOT NULL DEFAULT '{}',
+    dek TEXT NULL
+);
+
+CREATE TABLE IF NOT EXISTS corsair_entities (
+    id TEXT PRIMARY KEY,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    account_id TEXT NOT NULL REFERENCES corsair_accounts(id),
+    entity_id TEXT NOT NULL,
+    entity_type TEXT NOT NULL,
+    version TEXT NOT NULL,
+    data JSONB NOT NULL DEFAULT '{}'
+);
+
+CREATE TABLE IF NOT EXISTS corsair_events (
+    id TEXT PRIMARY KEY,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    account_id TEXT NOT NULL REFERENCES corsair_accounts(id),
+    event_type TEXT NOT NULL,
+    payload JSONB NOT NULL DEFAULT '{}',
+    status TEXT
+);
+
+CREATE TABLE IF NOT EXISTS corsair_permissions (
+    id TEXT PRIMARY KEY,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    token TEXT NOT NULL,
+    plugin TEXT NOT NULL,
+    endpoint TEXT NOT NULL,
+    args TEXT NOT NULL,
+    tenant_id TEXT NOT NULL DEFAULT 'default',
+    status TEXT NOT NULL DEFAULT 'pending',
+    expires_at TEXT NOT NULL,
+    error TEXT NULL
+);
+```
+
+</Accordion>
+</Accordions>
+
+```bash
+psql $DATABASE_URL -f migration.sql
+```
+
+  </DbPanel>
+</DbTabs>
+
+</Step>
+
+<Step>
+
+### Create `src/server/corsair.ts`
+
+This is the one file that wires everything together. Create it at `src/server/corsair.ts`:
+
+<DbTabs>
+<DbPanel value="SQLite">
+
+```ts title="src/server/corsair.ts"
+import 'dotenv/config';
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { github } from 'corsair/plugins/github';
+
+const db = new Database('corsair.db');
+
+export const corsair = createCorsair({
+    plugins: [github()],
+    database: db,
+    kek: process.env.CORSAIR_KEK!,
+});
+```
+
+</DbPanel>
+<DbPanel value="PostgreSQL">
+
+```ts title="src/server/corsair.ts"
+import 'dotenv/config';
+import { Pool } from 'pg';
+import { createCorsair } from 'corsair';
+import { github } from 'corsair/plugins/github';
+
+const db = new Pool({ connectionString: process.env.DATABASE_URL });
+
+export const corsair = createCorsair({
+    plugins: [github()],
+    database: db,
+    kek: process.env.CORSAIR_KEK!,
+});
+```
+
+</DbPanel>
+</DbTabs>
+
+You'll add more plugins here later — `slack()`, `linear()`, `gmail()` — same pattern, just append to the array.
+
+<Accordions>
+<Accordion title="CORSAIR_KEK not loading?">
+
+If `process.env.CORSAIR_KEK` is `undefined` at runtime, your `.env` file isn't being picked up. Install dotenv and add one line at the top of `src/server/corsair.ts`:
+
+<PmTabs install="dotenv" />
+
+```ts title="src/server/corsair.ts"
+import 'dotenv/config'; // add this line
+import Database from 'better-sqlite3';
+// ...
+```
+
+</Accordion>
+</Accordions>
+
+</Step>
+
+<Step>
+
+<span id="step-github-setup" />
+
+### Add your GitHub token and run setup (optional)
+
+1. Go to **[GitHub → Settings → Developer settings → Personal access tokens (classic)](https://github.com/settings/tokens)**
+2. Click **Generate new token (classic)**
+3. Select scopes: `repo`, `read:org`, `read:user`
+4. Copy the token — it starts with `ghp_`
+
+```bash
+export GITHUB_TOKEN=ghp_...
+```
+
+Run setup once with the Corsair CLI:
+
+<PmTabs install="@corsair-dev/cli" /> 
+
+<PmTabs run="corsair setup --github api_key=$GITHUB_TOKEN --backfill" />
+
+<Accordions>
+<Accordion title="pnpm: command not found or setup fails?">
+
+If `pnpm corsair` isn't found, add this to your `package.json` so pnpm builds the native dependency correctly:
+
+```json title="package.json"
+{
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "better-sqlite3"
+    ]
+  }
+}
+```
+
+Then re-run `pnpm install` and retry the setup command.
+
+</Accordion>
+</Accordions>
+
+Corsair stores your token, creates the database rows, and fetches your GitHub data locally. Your agent can now query it instantly — no API call needed every time.
+
+</Step>
+
+</Steps>
+
+---
+
+## Interact with Corsair
+
+Two ways to use it — pick one.
+
+<Tabs items={['MCP / Agent', 'Direct (Hardcode)']}>
+
+<Tab value="MCP / Agent">
+
+Let the agent discover and call endpoints on its own. You prompt in plain English — Corsair handles the rest.
+
+Install the MCP adapter alongside your preferred framework:
+
+<FrameworkTabs>
+
+<FrameworkPanel value="Anthropic SDK">
+
+<PmTabs install="@corsair-dev/mcp @anthropic-ai/sdk" />
+
+```ts title="agent.ts"
+import Anthropic from '@anthropic-ai/sdk';
+import { AnthropicProvider } from '@corsair-dev/mcp';
+import { corsair } from './src/server/corsair';
+
+async function main() {
+    const provider = new AnthropicProvider();
+    const tools = provider.build({ corsair });
+    const client = new Anthropic();
+
+    const message = await client.beta.messages.toolRunner({
+        model: 'claude-sonnet-4-6',
+        max_tokens: 4096,
+        tools,
+        messages: [{
+            role: 'user',
+            content: 'Use Corsair. List my GitHub repos with the most open issues.',
+        }],
+    });
+
+    for (const block of message.content) {
+        if (block.type === 'text') console.log(block.text);
+    }
+}
+
+main().catch(console.error);
+```
+
+</FrameworkPanel>
+
+<FrameworkPanel value="Claude Agent SDK">
+
+<PmTabs install="@corsair-dev/mcp @anthropic-ai/claude-agent-sdk" />
+
+```ts title="agent.ts"
+import { createSdkMcpServer, query } from '@anthropic-ai/claude-agent-sdk';
+import { ClaudeProvider } from '@corsair-dev/mcp';
+import { corsair } from './src/server/corsair';
+
+async function main() {
+    const provider = new ClaudeProvider();
+    const tools = await provider.build({ corsair });
+    const server = createSdkMcpServer({ name: 'corsair', tools });
+
+    const stream = query({
+        prompt: 'Use Corsair. List my GitHub repos with the most open issues.',
+        options: {
+            model: 'claude-opus-4-6',
+            mcpServers: { corsair: server },
+            allowedTools: ['mcp__corsair__corsair_setup', 'mcp__corsair__list_operations', 'mcp__corsair__get_schema', 'mcp__corsair__run_script'],
+        },
+    });
+
+    for await (const event of stream) {
+        if ('result' in event) process.stdout.write(event.result);
+    }
+}
+
+main().catch(console.error);
+```
+
+</FrameworkPanel>
+
+<FrameworkPanel value="OpenAI Agents">
+
+<PmTabs install="@corsair-dev/mcp @openai/agents" />
+
+```ts title="agent.ts"
+import { OpenAIAgentsProvider } from '@corsair-dev/mcp';
+import { Agent, run, tool } from '@openai/agents';
+import { corsair } from './src/server/corsair';
+
+async function main() {
+    const provider = new OpenAIAgentsProvider();
+    const tools = provider.build({ corsair, tool });
+
+    const agent = new Agent({
+        name: 'corsair-agent',
+        model: 'gpt-4.1',
+        instructions:
+            'You have access to Corsair tools. Use list_operations to discover ' +
+            'available APIs, get_schema to understand arguments, and run_script ' +
+            'to execute them.',
+        tools,
+    });
+
+    const result = await run(agent, 'Use Corsair. List my GitHub repos with the most open issues.');
+    console.log(result.finalOutput);
+}
+
+main().catch(console.error);
+```
+
+</FrameworkPanel>
+
+</FrameworkTabs>
+
+Your agent gets four tools automatically — regardless of which framework you use:
+
+| Tool | What it does |
+|---|---|
+| `corsair_setup` | Check auth and get credential instructions |
+| `list_operations` | Discover every available API endpoint |
+| `get_schema` | Inspect parameters for a specific endpoint |
+| `run_script` | Execute a JS snippet with `corsair` in scope |
+
+**Copy this prompt and run it:**
+
+```
+Setup corsair. Then fetch my GitHub repositories, find the ones with the
+most open issues, and give me a summary of the top 3 — what they're about,
+how many issues each has, and what the most common issue types look like.
+```
+
+The agent calls `corsair_setup` to verify auth, `list_operations` to discover GitHub endpoints, then `run_script` to fetch and summarize. No code changes needed on your end.
+
+See [MCP Adapters](/mcp-adapters/claude-sdk) for Vercel AI SDK, Mastra, and more.
+
+</Tab>
+
+<Tab value="Direct (Hardcode)">
+
+Call any endpoint from plain TypeScript — no agent, no framework required.
+
+The pattern is always: **`corsair.[plugin].[api | db].[group].[method]()`**
+
+**API — live calls to GitHub:**
+
+```ts
+// Get a specific repo
+const repo = await corsair.github.api.repositories.get({
+    owner: 'octocat',
+    repo: 'hello-world',
+});
+
+console.log(repo.name); // "hello-world"
+```
+
+**DB — query what's already cached locally:**
+
+After backfill runs (or after any API call), data lives in your database. Query it without touching the GitHub API:
+
+```ts
+// Every repo you've fetched — instant, no network
+const repos = await corsair.github.db.repositories.search({});
+
+// Filter in JS using camelCase data fields
+const withIssues = repos.filter((r) => Number(r.data?.openIssuesCount ?? 0) > 0);
+
+for (const repo of withIssues) {
+    console.log(`${repo.data?.name} — ${repo.data?.openIssuesCount} open issues`);
+}
+```
+
+</Tab>
+
+</Tabs>
+
+---
+
+## What's next
+
+<Cards>
+  <Card
+    title="Set up Webhooks"
+    description="Get ngrok running, register your endpoint, and react to GitHub stars and PR events in real time."
+    href="/webhooks"
+  />
+  <Card
+    title="Vibe Code Your Dashboard"
+    description="Scaffold a Next.js + tRPC + SQLite project and build a live GitHub dashboard — just copy the prompt."
+    href="/guides/dashboard"
+  />
+  <Card
+    title="Multi-Tenancy"
+    description="Building a product? Flip one flag and every user gets their own data and credentials."
+    href="/multi-tenancy"
+  />
+  <Card
+    title="Workflows"
+    description="Chain events across plugins — PR merged → Slack notification → Linear issue, all in TypeScript."
+    href="/guides/workflows"
+  />
+</Cards>

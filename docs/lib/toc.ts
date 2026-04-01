@@ -125,6 +125,11 @@ const slugToFilePath: Record<string, string> = {
 	// guides
 	'guides/create-your-own-plugin': 'guides/create-your-own-plugin.mdx',
 	'guides/plugin-credentials': 'guides/plugin-credentials.mdx',
+	'guides/dashboard': 'guides/dashboard.mdx',
+	'guides/workflows': 'guides/workflows.mdx',
+	'guides/webhooks': 'guides/webhooks.mdx',
+	// getting-started (additional)
+	'quick-start': 'getting-started/quick-start.mdx',
 };
 
 export function extractTOC(mdxPath: string): TOCItem[] {
@@ -140,11 +145,17 @@ export function extractTOC(mdxPath: string): TOCItem[] {
 	const toc: TOCItem[] = [];
 
 	let inFrontmatter = false;
+	let frontmatterDone = false;
 	let inCodeBlock = false;
 
 	for (const line of lines) {
-		if (line.trim() === '---') {
-			inFrontmatter = !inFrontmatter;
+		if (!frontmatterDone && line.trim() === '---') {
+			if (!inFrontmatter) {
+				inFrontmatter = true;
+			} else {
+				inFrontmatter = false;
+				frontmatterDone = true;
+			}
 			continue;
 		}
 
