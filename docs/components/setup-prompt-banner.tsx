@@ -136,7 +136,8 @@ function buildPrompt(db: string, framework: string, pm: string): string {
         : `psql $DATABASE_URL -f migration.sql`;
 
     const corsairTs = isSQLite
-        ? `import Database from 'better-sqlite3';
+        ? `import 'dotenv/config';
+import Database from 'better-sqlite3';
 import { createCorsair } from 'corsair';
 import { github } from 'corsair/plugins/github';
 
@@ -147,7 +148,8 @@ export const corsair = createCorsair({
     database: db,
     kek: process.env.CORSAIR_KEK!,
 });`
-        : `import { Pool } from 'pg';
+        : `import 'dotenv/config';
+import { Pool } from 'pg';
 import { createCorsair } from 'corsair';
 import { github } from 'corsair/plugins/github';
 
@@ -210,7 +212,7 @@ async function main() {
         options: {
             model: 'claude-opus-4-6',
             mcpServers: { corsair: server },
-            allowedTools: [{ type: 'mcp', serverName: 'corsair' }],
+            allowedTools: ['mcp__corsair__corsair_setup', 'mcp__corsair__list_operations', 'mcp__corsair__get_schema', 'mcp__corsair__run_script'],
         },
     });
 
@@ -276,7 +278,8 @@ Export it in your terminal:
 
 export GITHUB_TOKEN=ghp_your_token_here
 
-Then run:
+Install the CLI and run:
+${pmInstall(pm, '@corsair-dev/cli')}
 ${pmRun(pm, 'corsair setup --github api_key=$GITHUB_TOKEN --backfill')}
 
 ## 7. Create the agent (${framework})

@@ -210,6 +210,7 @@ This is the one file that wires everything together. Create it at `src/server/co
 <DbPanel value="SQLite">
 
 ```ts title="src/server/corsair.ts"
+import 'dotenv/config';
 import Database from 'better-sqlite3';
 import { createCorsair } from 'corsair';
 import { github } from 'corsair/plugins/github';
@@ -227,6 +228,7 @@ export const corsair = createCorsair({
 <DbPanel value="PostgreSQL">
 
 ```ts title="src/server/corsair.ts"
+import 'dotenv/config';
 import { Pool } from 'pg';
 import { createCorsair } from 'corsair';
 import { github } from 'corsair/plugins/github';
@@ -279,6 +281,8 @@ export GITHUB_TOKEN=ghp_...
 ```
 
 Run setup once with the Corsair CLI:
+
+<PmTabs install="@corsair-dev/cli" /> 
 
 <PmTabs run="corsair setup --github api_key=$GITHUB_TOKEN --backfill" />
 
@@ -377,7 +381,7 @@ async function main() {
         options: {
             model: 'claude-opus-4-6',
             mcpServers: { corsair: server },
-            allowedTools: [{ type: 'mcp', serverName: 'corsair' }],
+            allowedTools: ['mcp__corsair__corsair_setup', 'mcp__corsair__list_operations', 'mcp__corsair__get_schema', 'mcp__corsair__run_script'],
         },
     });
 
