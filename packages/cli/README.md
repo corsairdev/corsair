@@ -1,4 +1,4 @@
-# @corsair-ai/cli
+# @corsair-dev/cli
 
 The Corsair CLI handles everything needed to get a Corsair instance running: database setup, credential storage, and OAuth token acquisition. The intention is that a developer (or an agent) can go from a blank project to a fully authorized integration with a minimal number of commands, without ever needing to manually touch a database or manage encryption keys.
 
@@ -11,7 +11,7 @@ All output is JSON, so both humans and agents can consume it the same way.
 The CLI is included when you install `corsair`:
 
 ```bash
-pnpm add corsair @corsair-ai/cli
+pnpm add corsair @corsair-dev/cli
 ```
 
 The `corsair` binary is available immediately after install via `pnpm exec corsair <command>` or `npx corsair <command>`. No additional configuration needed.
