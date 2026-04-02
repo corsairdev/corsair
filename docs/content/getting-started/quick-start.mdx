@@ -1,6 +1,6 @@
 ---
 title: Quick Start
-description: Go from zero to a working GitHub integration in five minutes.
+description: Get a working integration in a few steps.
 ---
 
 <SetupPromptBanner />
@@ -202,7 +202,7 @@ psql $DATABASE_URL -f migration.sql
 
 <Step>
 
-### Create `src/server/corsair.ts`
+### Create `corsair.ts`
 
 This is the one file that wires everything together. Create it at `src/server/corsair.ts`:
 
@@ -269,7 +269,9 @@ import Database from 'better-sqlite3';
 
 <span id="step-github-setup" />
 
-### Add your GitHub token and run setup (optional)
+#### Optional: Add your GitHub token and run setup
+
+Use Corsair with any integration. Here's an example of how to get started with Github.
 
 1. Go to **[GitHub → Settings → Developer settings → Personal access tokens (classic)](https://github.com/settings/tokens)**
 2. Click **Generate new token (classic)**
@@ -310,13 +312,11 @@ Corsair stores your token, creates the database rows, and fetches your GitHub da
 
 </Step>
 
-</Steps>
+<Step>
 
----
+### Interact with Corsair
 
-## Interact with Corsair
-
-Two ways to use it — pick one.
+There's multiple ways to use Corsair. Here's two easy ways:
 
 <Tabs items={['MCP / Agent', 'Direct (Hardcode)']}>
 
@@ -348,7 +348,7 @@ async function main() {
         tools,
         messages: [{
             role: 'user',
-            content: 'Use Corsair. List my GitHub repos with the most open issues.',
+            content: 'Use Corsair to list my GitHub repos with the most open issues.',
         }],
     });
 
@@ -377,7 +377,7 @@ async function main() {
     const server = createSdkMcpServer({ name: 'corsair', tools });
 
     const stream = query({
-        prompt: 'Use Corsair. List my GitHub repos with the most open issues.',
+        prompt: 'Use Corsair to list my GitHub repos with the most open issues.',
         options: {
             model: 'claude-opus-4-6',
             mcpServers: { corsair: server },
@@ -438,16 +438,6 @@ Your agent gets four tools automatically — regardless of which framework you u
 | `get_schema` | Inspect parameters for a specific endpoint |
 | `run_script` | Execute a JS snippet with `corsair` in scope |
 
-**Copy this prompt and run it:**
-
-```
-Setup corsair. Then fetch my GitHub repositories, find the ones with the
-most open issues, and give me a summary of the top 3 — what they're about,
-how many issues each has, and what the most common issue types look like.
-```
-
-The agent calls `corsair_setup` to verify auth, `list_operations` to discover GitHub endpoints, then `run_script` to fetch and summarize. No code changes needed on your end.
-
 See [MCP Adapters](/mcp-adapters/claude-sdk) for Vercel AI SDK, Mastra, and more.
 
 </Tab>
@@ -489,6 +479,10 @@ for (const repo of withIssues) {
 </Tab>
 
 </Tabs>
+
+</Step>
+
+</Steps>
 
 ---
 

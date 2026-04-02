@@ -70,12 +70,12 @@ const tree = {
 					url: '/quick-start',
 					icon: <Rocket className="size-4" />,
 				},
-				{
-					type: 'page' as const,
-					name: 'Installation',
-					url: '/installation',
-					icon: <Download className="size-4" />,
-				},
+				// {
+				// 	type: 'page' as const,
+				// 	name: 'Installation',
+				// 	url: '/installation',
+				// 	icon: <Download className="size-4" />,
+				// },
 				{
 					type: 'page' as const,
 					name: 'Comparison',
