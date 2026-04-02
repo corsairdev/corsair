@@ -45,6 +45,7 @@ export default defineConfig({
 		'mcp.ts',
 		'orm.ts',
 		'setup.ts',
+		'plugins/ahrefs/index.ts',
 		'plugins/airtable/index.ts',
 		'plugins/amplitude/index.ts',
 		'plugins/asana/index.ts',

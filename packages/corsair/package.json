@@ -32,6 +32,11 @@
       "types": "./dist/setup.d.ts",
       "default": "./dist/setup.js"
     },
+    "./plugins/ahrefs": {
+      "dev-source": "./plugins/ahrefs/index.ts",
+      "types": "./dist/plugins/ahrefs/index.d.ts",
+      "default": "./dist/plugins/ahrefs/index.js"
+    },
     "./plugins/airtable": {
       "dev-source": "./plugins/airtable/index.ts",
       "types": "./dist/plugins/airtable/index.d.ts",
