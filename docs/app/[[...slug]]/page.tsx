@@ -14,6 +14,7 @@ import ComparisonDoc from '@/content/getting-started/comparison.mdx';
 // Getting Started
 import InstallationDoc from '@/content/getting-started/installation.mdx';
 import IntroductionDoc from '@/content/getting-started/introduction.mdx';
+import QuickStartDoc from '@/content/getting-started/quick-start.mdx';
 // MCP Adapters
 import McpAnthropicSdkDoc from '@/content/mcp-adapters/anthropic-sdk.mdx';
 import McpClaudeSdkDoc from '@/content/mcp-adapters/claude-sdk.mdx';
@@ -24,6 +25,9 @@ import McpVercelAiDoc from '@/content/mcp-adapters/vercel-ai.mdx';
 // Guides
 import CreateYourOwnPlugin from '@/content/guides/create-your-own-plugin.mdx';
 import PluginCredentialsGuide from '@/content/guides/plugin-credentials.mdx';
+import DashboardGuide from '@/content/guides/dashboard.mdx';
+import WorkflowsGuide from '@/content/guides/workflows.mdx';
+import WebhooksGuide from '@/content/guides/webhooks.mdx';
 import GithubApiEndpointsDoc from '@/content/plugins/github/api-endpoints.mdx';
 import GithubDatabaseDoc from '@/content/plugins/github/database.mdx';
 import GithubErrorHandlersDoc from '@/content/plugins/github/error-handlers.mdx';
@@ -158,6 +162,11 @@ const pages = {
 		title: 'Introduction',
 		description:
 			'The Integration Layer for AI Agents',
+	},
+	'quick-start': {
+		Component: QuickStartDoc,
+		title: 'Quick Start',
+		description: 'Go from zero to a working GitHub integration in five minutes',
 	},
 	installation: {
 		Component: InstallationDoc,
@@ -860,6 +869,21 @@ const pages = {
 		description:
 			'Step-by-step instructions for obtaining credentials for all plugins',
 	},
+	'guides/dashboard': {
+		Component: DashboardGuide,
+		title: 'Vibe Code Your Dashboard',
+		description: 'Scaffold a Next.js + tRPC + SQLite project and build a live GitHub dashboard',
+	},
+	'guides/workflows': {
+		Component: WorkflowsGuide,
+		title: 'Workflows',
+		description: 'Chain webhook events into multi-step automations across any plugin',
+	},
+	'guides/webhooks': {
+		Component: WebhooksGuide,
+		title: 'Webhooks',
+		description: 'Handling webhooks in Corsair',
+	},
 } as const;
 
 const mdxComponents = useMDXComponents();
@@ -889,7 +913,6 @@ export default async function Page(props: PageProps) {
 			{page.description && (
 				<p className="text-lg text-muted-foreground mb-8">{page.description}</p>
 			)}
-			{/* @ts-expect-error - React types version mismatch */}
 			<DocsBody>
 				<MDX components={mdxComponents} />
 			</DocsBody>
