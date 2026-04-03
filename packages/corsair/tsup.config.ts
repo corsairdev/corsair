@@ -76,6 +76,7 @@ export default defineConfig({
 		'plugins/spotify/index.ts',
 		'plugins/stripe/index.ts',
 		'plugins/tavily/index.ts',
+		'plugins/teams/index.ts',
 		'plugins/telegram/index.ts',
 		'plugins/todoist/index.ts',
 		'plugins/trello/index.ts',

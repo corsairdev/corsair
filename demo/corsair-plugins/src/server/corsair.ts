@@ -1,3 +1,5 @@
+import 'dotenv/config';
+
 import { createCorsair } from 'corsair';
 import { slack } from 'corsair/plugins/slack';
 import { linear } from 'corsair/plugins/linear';

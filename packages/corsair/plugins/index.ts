@@ -154,3 +154,13 @@ export {
 	type TrelloWebhooks,
 	trello,
 } from './trello';
+
+export {
+	type TeamsBoundEndpoints,
+	type TeamsBoundWebhooks,
+	type TeamsContext,
+	type TeamsEndpoints,
+	type TeamsPluginOptions,
+	type TeamsWebhooks,
+	teams,
+} from './teams';
