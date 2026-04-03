@@ -33,6 +33,7 @@ import {
 	TeamsChannelCreatedEventSchema,
 	TeamsMembershipChangedEventSchema,
 } from './webhooks/types';
+import { getValidAccessToken } from './client';
 import { Teams, Channels, Messages, Members, Chats } from './endpoints';
 import { TeamsSchema } from './schema';
 import { ChannelWebhooks, ChatWebhooks, MemberWebhooks } from './webhooks';
@@ -396,11 +397,38 @@ export function teams<const T extends TeamsPluginOptions>(
 			}
 
 			if (ctx.authType === 'oauth_2') {
-				const res = await ctx.keys.get_access_token();
-				if (!res) {
-					return '';
+				const [accessToken, expiresAt, refreshToken] = await Promise.all([
+					ctx.keys.get_access_token(),
+					ctx.keys.get_expires_at(),
+					ctx.keys.get_refresh_token(),
+				]);
+
+				if (!refreshToken) {
+					throw new Error('No refresh token. Cannot get access token.');
 				}
-				return res;
+
+				const creds = await ctx.keys.get_integration_credentials();
+				if (!creds.client_id || !creds.client_secret) {
+					throw new Error('No client id or client secret.');
+				}
+
+				const result = await getValidAccessToken({
+					accessToken,
+					expiresAt,
+					refreshToken,
+					clientId: creds.client_id,
+					clientSecret: creds.client_secret,
+				});
+
+				if (result.refreshed) {
+					await Promise.all([
+						ctx.keys.set_access_token(result.accessToken),
+						ctx.keys.set_expires_at(String(result.expiresAt)),
+					]);
+				}
+				console.log('result', result);
+
+				return result.accessToken;
 			}
 
 			return '';

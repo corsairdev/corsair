@@ -93,7 +93,7 @@ export const create: TeamsEndpoints['teamsCreate'] = async (ctx, input) => {
 		}
 	}
 
-	await logEventFromContext(ctx, 'teams.teams.create', { displayName: input.displayName }, 'completed');
+	await logEventFromContext(ctx, 'teams.teams.create', { ...input }, 'completed');
 	return result ?? {};
 };
 
@@ -120,7 +120,7 @@ export const update: TeamsEndpoints['teamsUpdate'] = async (ctx, input) => {
 		}
 	}
 
-	await logEventFromContext(ctx, 'teams.teams.update', { teamId }, 'completed');
+	await logEventFromContext(ctx, 'teams.teams.update', { ...input }, 'completed');
 	return result;
 };
 

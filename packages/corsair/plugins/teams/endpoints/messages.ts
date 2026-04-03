@@ -96,7 +96,7 @@ export const send: TeamsEndpoints['messagesSend'] = async (ctx, input) => {
 		}
 	}
 
-	await logEventFromContext(ctx, 'teams.messages.send', { teamId, channelId }, 'completed');
+	await logEventFromContext(ctx, 'teams.messages.send', { ...input }, 'completed');
 	return result;
 };
 
@@ -123,7 +123,7 @@ export const reply: TeamsEndpoints['messagesReply'] = async (ctx, input) => {
 		}
 	}
 
-	await logEventFromContext(ctx, 'teams.messages.reply', { teamId, channelId, messageId }, 'completed');
+	await logEventFromContext(ctx, 'teams.messages.reply', { ...input }, 'completed');
 	return result;
 };
 

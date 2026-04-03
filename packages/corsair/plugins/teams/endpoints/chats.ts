@@ -103,7 +103,7 @@ export const create: TeamsEndpoints['chatsCreate'] = async (ctx, input) => {
 		}
 	}
 
-	await logEventFromContext(ctx, 'teams.chats.create', { chatType }, 'completed');
+	await logEventFromContext(ctx, 'teams.chats.create', { ...input }, 'completed');
 	return result;
 };
 
@@ -154,6 +154,6 @@ export const sendMessage: TeamsEndpoints['chatsSendMessage'] = async (ctx, input
 		}
 	}
 
-	await logEventFromContext(ctx, 'teams.chats.sendMessage', { chatId }, 'completed');
+	await logEventFromContext(ctx, 'teams.chats.sendMessage', { ...input }, 'completed');
 	return result;
 };
