@@ -7,7 +7,6 @@ const main = async () => {
         body: 'Test',
         to: 'mukulydv15@gmail.com',
     });
-    console.log(res);
 };
 
 main();
