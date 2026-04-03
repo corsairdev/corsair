@@ -1,6 +1,6 @@
 {
   "name": "corsair",
-  "version": "0.1.42",
+  "version": "0.1.46",
   "description": "",
   "type": "module",
   "main": "./dist/index.js",
@@ -26,11 +26,6 @@
       "dev-source": "./orm.ts",
       "types": "./dist/orm.d.ts",
       "default": "./dist/orm.js"
-    },
-    "./plugins": {
-      "dev-source": "./plugins/index.ts",
-      "types": "./dist/plugins/index.d.ts",
-      "default": "./dist/plugins/index.js"
     },
     "./setup": {
       "dev-source": "./setup.ts",
@@ -248,7 +243,7 @@
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
     "test:api": "jest --testPathPattern=api\\.test\\.ts",
-    "build": "tsup && tsc -p tsconfig.build.json",
+    "build": "NODE_OPTIONS=--max-old-space-size=8192 tsup",
     "build:watch": "tsup --watch",
     "typecheck": "tsc --noEmit",
     "ind": "tsx index.ts",

@@ -1,4 +1,4 @@
-name: Deploy Corsair to NPM
+name: Deploy Corsair CLI to NPM
 
 on:
   workflow_dispatch:
@@ -29,13 +29,13 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
-      - name: Run type check
-        run: pnpm run typecheck
-
       - name: Build packages
         run: pnpm run build
 
-      - name: Publish corsair to NPM
-        run: pnpm --filter corsair publish --provenance --no-git-checks
+      - name: Run type check
+        run: pnpm run typecheck
+
+      - name: Publish @corsair-dev/cli to NPM
+        run: pnpm --filter @corsair-dev/cli publish --provenance --no-git-checks
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_CORSAIR_DEV_TOKEN }}

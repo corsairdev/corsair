@@ -211,6 +211,13 @@ export function googlecalendar<const T extends GoogleCalendarPluginOptions>(
 		id: 'googlecalendar',
 		schema: GoogleCalendarSchema,
 		options: options,
+		oauthConfig: {
+			providerName: 'Google',
+			authUrl: 'https://accounts.google.com/o/oauth2/v2/auth',
+			tokenUrl: 'https://oauth2.googleapis.com/token',
+			scopes: ['https://www.googleapis.com/auth/calendar'],
+			authParams: { access_type: 'offline', prompt: 'consent' },
+		},
 		hooks: options.hooks,
 		webhookHooks: options.webhookHooks,
 		endpoints: googleCalendarEndpointsNested,

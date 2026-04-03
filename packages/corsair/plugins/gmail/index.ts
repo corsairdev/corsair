@@ -408,6 +408,18 @@ export function gmail<const T extends GmailPluginOptions>(
 		schema: GmailSchema,
 		options: options,
 		authConfig: gmailAuthConfig,
+		oauthConfig: {
+			providerName: 'Google',
+			authUrl: 'https://accounts.google.com/o/oauth2/v2/auth',
+			tokenUrl: 'https://oauth2.googleapis.com/token',
+			scopes: [
+				'https://www.googleapis.com/auth/gmail.modify',
+				'https://www.googleapis.com/auth/gmail.labels',
+				'https://www.googleapis.com/auth/gmail.send',
+				'https://www.googleapis.com/auth/gmail.compose',
+			],
+			authParams: { access_type: 'offline', prompt: 'consent' },
+		},
 		hooks: options.hooks,
 		webhookHooks: options.webhookHooks,
 		endpoints: gmailEndpointsNested,
