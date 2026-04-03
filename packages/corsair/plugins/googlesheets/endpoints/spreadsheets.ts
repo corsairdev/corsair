@@ -1,15 +1,15 @@
 import { logEventFromContext } from '../../utils/events';
 import type { GoogleSheetsEndpoints } from '..';
-import { makeSheetsRequest } from '../client';
+import { makeAuthenticatedSheetsRequest } from '../client';
 import type { GoogleSheetsEndpointOutputs } from './types';
 
 export const create: GoogleSheetsEndpoints['spreadsheetsCreate'] = async (
 	ctx,
 	input,
 ) => {
-	const result = await makeSheetsRequest<
+	const result = await makeAuthenticatedSheetsRequest<
 		GoogleSheetsEndpointOutputs['spreadsheetsCreate']
-	>('/spreadsheets', ctx.key, {
+	>('/spreadsheets', ctx, {
 		method: 'POST',
 		body: {
 			properties: input.properties,

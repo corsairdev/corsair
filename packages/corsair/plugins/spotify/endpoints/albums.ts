@@ -1,6 +1,6 @@
 import { logEventFromContext } from '../../utils/events';
 import type { SpotifyEndpoints } from '..';
-import { makeSpotifyRequest } from '../client';
+import { makeAuthenticatedSpotifyRequest } from '../client';
 import type { SpotifyEndpointOutputs } from './types';
 
 export const get: SpotifyEndpoints['albumsGet'] = async (ctx, input) => {
@@ -9,9 +9,9 @@ export const get: SpotifyEndpoints['albumsGet'] = async (ctx, input) => {
 		query.market = input.market;
 	}
 
-	const result = await makeSpotifyRequest<SpotifyEndpointOutputs['albumsGet']>(
+	const result = await makeAuthenticatedSpotifyRequest<SpotifyEndpointOutputs['albumsGet']>(
 		`albums/${input.id}`,
-		ctx.key,
+		ctx,
 		{
 			method: 'GET',
 			query,
@@ -43,9 +43,9 @@ export const getNewReleases: SpotifyEndpoints['albumsGetNewReleases'] = async (
 ) => {
 	const query: Record<string, string | number | undefined> = { ...input };
 
-	const result = await makeSpotifyRequest<
+	const result = await makeAuthenticatedSpotifyRequest<
 		SpotifyEndpointOutputs['albumsGetNewReleases']
-	>('browse/new-releases', ctx.key, {
+	>('browse/new-releases', ctx, {
 		method: 'GET',
 		query,
 	});
@@ -65,9 +65,9 @@ export const getTracks: SpotifyEndpoints['albumsGetTracks'] = async (
 ) => {
 	const query: Record<string, string | number | undefined> = { ...input };
 
-	const result = await makeSpotifyRequest<
+	const result = await makeAuthenticatedSpotifyRequest<
 		SpotifyEndpointOutputs['albumsGetTracks']
-	>(`albums/${input.id}/tracks`, ctx.key, {
+	>(`albums/${input.id}/tracks`, ctx, {
 		method: 'GET',
 		query,
 	});
@@ -96,9 +96,9 @@ export const search: SpotifyEndpoints['albumsSearch'] = async (ctx, input) => {
 		query.offset = input.offset;
 	}
 
-	const result = await makeSpotifyRequest<
+	const result = await makeAuthenticatedSpotifyRequest<
 		SpotifyEndpointOutputs['albumsSearch']
-	>('search', ctx.key, {
+	>('search', ctx, {
 		method: 'GET',
 		query,
 	});

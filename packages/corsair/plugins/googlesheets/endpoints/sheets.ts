@@ -1,6 +1,6 @@
 import { logEventFromContext } from '../../utils/events';
 import type { GoogleSheetsEndpoints } from '..';
-import { makeSheetsRequest } from '../client';
+import { makeAuthenticatedSheetsRequest } from '../client';
 import type { ValueRange } from '../types';
 import type { GoogleSheetsEndpointOutputs } from './types';
 
@@ -11,9 +11,9 @@ export const appendRow: GoogleSheetsEndpoints['sheetsAppendRow'] = async (
 	const range = input.range || `${input.sheetName || 'Sheet1'}!A:Z`;
 	const values = input.values ? [input.values] : [];
 
-	const result = await makeSheetsRequest<
+	const result = await makeAuthenticatedSheetsRequest<
 		GoogleSheetsEndpointOutputs['sheetsAppendRow']
-	>(`/spreadsheets/${input.spreadsheetId}/values/${range}:append`, ctx.key, {
+	>(`/spreadsheets/${input.spreadsheetId}/values/${range}:append`, ctx, {
 		method: 'POST',
 		query: {
 			valueInputOption: input.valueInputOption || 'USER_ENTERED',
@@ -66,9 +66,9 @@ export const appendOrUpdateRow: GoogleSheetsEndpoints['sheetsAppendOrUpdateRow']
 		}
 
 		const getRange = `${sheetName}!${keyColumn}:${keyColumn}`;
-		const existingRows = await makeSheetsRequest<ValueRange>(
+		const existingRows = await makeAuthenticatedSheetsRequest<ValueRange>(
 			`/spreadsheets/${input.spreadsheetId}/values/${getRange}`,
-			ctx.key,
+			ctx,
 			{
 				method: 'GET',
 			},
@@ -91,9 +91,9 @@ export const appendOrUpdateRow: GoogleSheetsEndpoints['sheetsAppendOrUpdateRow']
 				: `${sheetName}!A:Z`;
 
 		if (rowIndex >= 0) {
-			const result = await makeSheetsRequest<
+			const result = await makeAuthenticatedSheetsRequest<
 				GoogleSheetsEndpointOutputs['sheetsAppendOrUpdateRow']
-			>(`/spreadsheets/${input.spreadsheetId}/values/${updateRange}`, ctx.key, {
+			>(`/spreadsheets/${input.spreadsheetId}/values/${updateRange}`, ctx, {
 				method: 'PUT',
 				query: {
 					valueInputOption: input.valueInputOption || 'USER_ENTERED',
@@ -132,11 +132,11 @@ export const appendOrUpdateRow: GoogleSheetsEndpoints['sheetsAppendOrUpdateRow']
 			);
 			return result;
 		} else {
-			const result = await makeSheetsRequest<
+			const result = await makeAuthenticatedSheetsRequest<
 				GoogleSheetsEndpointOutputs['sheetsAppendOrUpdateRow']
 			>(
 				`/spreadsheets/${input.spreadsheetId}/values/${updateRange}:append`,
-				ctx.key,
+				ctx,
 				{
 					method: 'POST',
 					query: {
@@ -186,9 +186,9 @@ export const getRows: GoogleSheetsEndpoints['sheetsGetRows'] = async (
 ) => {
 	const range = input.range || `${input.sheetName || 'Sheet1'}!A:Z`;
 
-	const result = await makeSheetsRequest<
+	const result = await makeAuthenticatedSheetsRequest<
 		GoogleSheetsEndpointOutputs['sheetsGetRows']
-	>(`/spreadsheets/${input.spreadsheetId}/values/${range}`, ctx.key, {
+	>(`/spreadsheets/${input.spreadsheetId}/values/${range}`, ctx, {
 		method: 'GET',
 		query: {
 			valueRenderOption: input.valueRenderOption || 'FORMATTED_VALUE',
@@ -238,9 +238,9 @@ export const updateRow: GoogleSheetsEndpoints['sheetsUpdateRow'] = async (
 		`${input.sheetName || 'Sheet1'}!${input.rowIndex || 1}:${input.rowIndex || 1}`;
 	const values = input.values ? [input.values] : [];
 
-	const result = await makeSheetsRequest<
+	const result = await makeAuthenticatedSheetsRequest<
 		GoogleSheetsEndpointOutputs['sheetsUpdateRow']
-	>(`/spreadsheets/${input.spreadsheetId}/values/${range}`, ctx.key, {
+	>(`/spreadsheets/${input.spreadsheetId}/values/${range}`, ctx, {
 		method: 'PUT',
 		query: {
 			valueInputOption: input.valueInputOption || 'USER_ENTERED',
@@ -287,9 +287,9 @@ export const clearSheet: GoogleSheetsEndpoints['sheetsClearSheet'] = async (
 ) => {
 	const range = input.range || input.sheetName || 'Sheet1';
 
-	const result = await makeSheetsRequest<
+	const result = await makeAuthenticatedSheetsRequest<
 		GoogleSheetsEndpointOutputs['sheetsClearSheet']
-	>(`/spreadsheets/${input.spreadsheetId}/values/${range}:clear`, ctx.key, {
+	>(`/spreadsheets/${input.spreadsheetId}/values/${range}:clear`, ctx, {
 		method: 'POST',
 	});
 
@@ -317,9 +317,9 @@ export const createSheet: GoogleSheetsEndpoints['sheetsCreateSheet'] = async (
 	ctx,
 	input,
 ) => {
-	const result = await makeSheetsRequest<
+	const result = await makeAuthenticatedSheetsRequest<
 		GoogleSheetsEndpointOutputs['sheetsCreateSheet']
-	>(`/spreadsheets/${input.spreadsheetId}:batchUpdate`, ctx.key, {
+	>(`/spreadsheets/${input.spreadsheetId}:batchUpdate`, ctx, {
 		method: 'POST',
 		body: {
 			requests: [
@@ -365,9 +365,9 @@ export const deleteSheet: GoogleSheetsEndpoints['sheetsDeleteSheet'] = async (
 	ctx,
 	input,
 ) => {
-	const result = await makeSheetsRequest<
+	const result = await makeAuthenticatedSheetsRequest<
 		GoogleSheetsEndpointOutputs['sheetsDeleteSheet']
-	>(`/spreadsheets/${input.spreadsheetId}:batchUpdate`, ctx.key, {
+	>(`/spreadsheets/${input.spreadsheetId}:batchUpdate`, ctx, {
 		method: 'POST',
 		body: {
 			requests: [
@@ -403,9 +403,9 @@ export const deleteRowsOrColumns: GoogleSheetsEndpoints['sheetsDeleteRowsOrColum
 		const startIndex = input.startIndex || 0;
 		const endIndex = input.endIndex || startIndex + 1;
 
-		const result = await makeSheetsRequest<
+		const result = await makeAuthenticatedSheetsRequest<
 			GoogleSheetsEndpointOutputs['sheetsDeleteRowsOrColumns']
-		>(`/spreadsheets/${input.spreadsheetId}:batchUpdate`, ctx.key, {
+		>(`/spreadsheets/${input.spreadsheetId}:batchUpdate`, ctx, {
 			method: 'POST',
 			body: {
 				requests: [

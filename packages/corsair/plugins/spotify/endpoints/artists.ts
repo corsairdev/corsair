@@ -1,12 +1,12 @@
 import { logEventFromContext } from '../../utils/events';
 import type { SpotifyEndpoints } from '..';
-import { makeSpotifyRequest } from '../client';
+import { makeAuthenticatedSpotifyRequest } from '../client';
 import type { SpotifyEndpointOutputs } from './types';
 
 export const get: SpotifyEndpoints['artistsGet'] = async (ctx, input) => {
-	const result = await makeSpotifyRequest<SpotifyEndpointOutputs['artistsGet']>(
+	const result = await makeAuthenticatedSpotifyRequest<SpotifyEndpointOutputs['artistsGet']>(
 		`artists/${input.id}`,
-		ctx.key,
+		ctx,
 		{
 			method: 'GET',
 		},
@@ -37,9 +37,9 @@ export const getAlbums: SpotifyEndpoints['artistsGetAlbums'] = async (
 ) => {
 	const query: Record<string, string | number | undefined> = { ...input };
 
-	const result = await makeSpotifyRequest<
+	const result = await makeAuthenticatedSpotifyRequest<
 		SpotifyEndpointOutputs['artistsGetAlbums']
-	>(`artists/${input.id}/albums`, ctx.key, {
+	>(`artists/${input.id}/albums`, ctx, {
 		method: 'GET',
 		query,
 	});
@@ -55,9 +55,9 @@ export const getAlbums: SpotifyEndpoints['artistsGetAlbums'] = async (
 
 export const getRelatedArtists: SpotifyEndpoints['artistsGetRelatedArtists'] =
 	async (ctx, input) => {
-		const result = await makeSpotifyRequest<
+		const result = await makeAuthenticatedSpotifyRequest<
 			SpotifyEndpointOutputs['artistsGetRelatedArtists']
-		>(`artists/${input.id}/related-artists`, ctx.key, {
+		>(`artists/${input.id}/related-artists`, ctx, {
 			method: 'GET',
 		});
 
@@ -76,9 +76,9 @@ export const getTopTracks: SpotifyEndpoints['artistsGetTopTracks'] = async (
 ) => {
 	const query: Record<string, string | undefined> = { ...input };
 
-	const result = await makeSpotifyRequest<
+	const result = await makeAuthenticatedSpotifyRequest<
 		SpotifyEndpointOutputs['artistsGetTopTracks']
-	>(`artists/${input.id}/top-tracks`, ctx.key, {
+	>(`artists/${input.id}/top-tracks`, ctx, {
 		method: 'GET',
 		query,
 	});
@@ -95,9 +95,9 @@ export const getTopTracks: SpotifyEndpoints['artistsGetTopTracks'] = async (
 export const search: SpotifyEndpoints['artistsSearch'] = async (ctx, input) => {
 	const query: Record<string, string | number | undefined> = { ...input };
 
-	const result = await makeSpotifyRequest<
+	const result = await makeAuthenticatedSpotifyRequest<
 		SpotifyEndpointOutputs['artistsSearch']
-	>('search', ctx.key, {
+	>('search', ctx, {
 		method: 'GET',
 		query,
 	});

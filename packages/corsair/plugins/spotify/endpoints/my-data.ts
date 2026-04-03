@@ -1,6 +1,6 @@
 import { logEventFromContext } from '../../utils/events';
 import type { SpotifyEndpoints } from '..';
-import { makeSpotifyRequest } from '../client';
+import { makeAuthenticatedSpotifyRequest } from '../client';
 import type { SpotifyEndpointOutputs } from './types';
 
 export const getFollowedArtists: SpotifyEndpoints['myDataGetFollowedArtists'] =
@@ -15,9 +15,9 @@ export const getFollowedArtists: SpotifyEndpoints['myDataGetFollowedArtists'] =
 			query.after = input.after;
 		}
 
-		const result = await makeSpotifyRequest<
+		const result = await makeAuthenticatedSpotifyRequest<
 			SpotifyEndpointOutputs['myDataGetFollowedArtists']
-		>('me/following', ctx.key, {
+		>('me/following', ctx, {
 			method: 'GET',
 			query,
 		});

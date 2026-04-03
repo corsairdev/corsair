@@ -1,6 +1,6 @@
 import { logEventFromContext } from '../../utils/events';
 import type { GoogleCalendarEndpoints } from '..';
-import { makeCalendarRequest } from '../client';
+import { makeAuthenticatedCalendarRequest } from '../client';
 import type { GoogleCalendarEndpointOutputs } from './types';
 
 export const create: GoogleCalendarEndpoints['eventsCreate'] = async (
@@ -8,9 +8,9 @@ export const create: GoogleCalendarEndpoints['eventsCreate'] = async (
 	input,
 ) => {
 	const calendarId = input.calendarId || 'primary';
-	const result = await makeCalendarRequest<
+	const result = await makeAuthenticatedCalendarRequest<
 		GoogleCalendarEndpointOutputs['eventsCreate']
-	>(`/calendars/${calendarId}/events`, ctx.key, {
+	>(`/calendars/${calendarId}/events`, ctx, {
 		method: 'POST',
 		body: input.event,
 	});
@@ -39,9 +39,9 @@ export const create: GoogleCalendarEndpoints['eventsCreate'] = async (
 
 export const get: GoogleCalendarEndpoints['eventsGet'] = async (ctx, input) => {
 	const calendarId = input.calendarId || 'primary';
-	const result = await makeCalendarRequest<
+	const result = await makeAuthenticatedCalendarRequest<
 		GoogleCalendarEndpointOutputs['eventsGet']
-	>(`/calendars/${calendarId}/events/${input.id}`, ctx.key, {
+	>(`/calendars/${calendarId}/events/${input.id}`, ctx, {
 		method: 'GET',
 		query: {
 			timeZone: input.timeZone,
@@ -76,9 +76,9 @@ export const getMany: GoogleCalendarEndpoints['eventsGetMany'] = async (
 	input,
 ) => {
 	const calendarId = input.calendarId || 'primary';
-	const result = await makeCalendarRequest<
+	const result = await makeAuthenticatedCalendarRequest<
 		GoogleCalendarEndpointOutputs['eventsGetMany']
-	>(`/calendars/${calendarId}/events`, ctx.key, {
+	>(`/calendars/${calendarId}/events`, ctx, {
 		method: 'GET',
 		query: input,
 	});
@@ -114,9 +114,9 @@ export const update: GoogleCalendarEndpoints['eventsUpdate'] = async (
 	input,
 ) => {
 	const calendarId = input.calendarId || 'primary';
-	const result = await makeCalendarRequest<
+	const result = await makeAuthenticatedCalendarRequest<
 		GoogleCalendarEndpointOutputs['eventsUpdate']
-	>(`/calendars/${calendarId}/events/${input.id}`, ctx.key, {
+	>(`/calendars/${calendarId}/events/${input.id}`, ctx, {
 		method: 'PUT',
 		body: input.event,
 		query: {
@@ -155,9 +155,9 @@ export const deleteEvent: GoogleCalendarEndpoints['eventsDelete'] = async (
 	input,
 ) => {
 	const calendarId = input.calendarId || 'primary';
-	await makeCalendarRequest<GoogleCalendarEndpointOutputs['eventsDelete']>(
+	await makeAuthenticatedCalendarRequest<GoogleCalendarEndpointOutputs['eventsDelete']>(
 		`/calendars/${calendarId}/events/${input.id}`,
-		ctx.key,
+		ctx,
 		{
 			method: 'DELETE',
 			query: {

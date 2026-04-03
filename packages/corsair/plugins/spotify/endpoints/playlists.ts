@@ -1,6 +1,6 @@
 import { logEventFromContext } from '../../utils/events';
 import type { SpotifyEndpoints } from '..';
-import { makeSpotifyRequest } from '../client';
+import { makeAuthenticatedSpotifyRequest } from '../client';
 import type { SpotifyEndpointOutputs } from './types';
 
 export const addItem: SpotifyEndpoints['playlistsAddItem'] = async (
@@ -12,9 +12,9 @@ export const addItem: SpotifyEndpoints['playlistsAddItem'] = async (
 		query.position = input.position;
 	}
 
-	const result = await makeSpotifyRequest<
+	const result = await makeAuthenticatedSpotifyRequest<
 		SpotifyEndpointOutputs['playlistsAddItem']
-	>(`playlists/${input.playlist_id}/tracks`, ctx.key, {
+	>(`playlists/${input.playlist_id}/tracks`, ctx, {
 		method: 'POST',
 		query,
 		body: {
@@ -35,9 +35,9 @@ export const create: SpotifyEndpoints['playlistsCreate'] = async (
 	ctx,
 	input,
 ) => {
-	const result = await makeSpotifyRequest<
+	const result = await makeAuthenticatedSpotifyRequest<
 		SpotifyEndpointOutputs['playlistsCreate']
-	>(`users/${input.user_id}/playlists`, ctx.key, {
+	>(`users/${input.user_id}/playlists`, ctx, {
 		method: 'POST',
 		body: input,
 	});
@@ -64,9 +64,9 @@ export const create: SpotifyEndpoints['playlistsCreate'] = async (
 export const get: SpotifyEndpoints['playlistsGet'] = async (ctx, input) => {
 	const query: Record<string, string | undefined> = { ...input };
 
-	const result = await makeSpotifyRequest<
+	const result = await makeAuthenticatedSpotifyRequest<
 		SpotifyEndpointOutputs['playlistsGet']
-	>(`playlists/${input.playlist_id}`, ctx.key, {
+	>(`playlists/${input.playlist_id}`, ctx, {
 		method: 'GET',
 		query,
 	});
@@ -95,9 +95,9 @@ export const getUserPlaylists: SpotifyEndpoints['playlistsGetUserPlaylists'] =
 		const userId = input.user_id || 'me';
 		const query: Record<string, string | number | undefined> = { ...input };
 
-		const result = await makeSpotifyRequest<
+		const result = await makeAuthenticatedSpotifyRequest<
 			SpotifyEndpointOutputs['playlistsGetUserPlaylists']
-		>(`users/${userId}/playlists`, ctx.key, {
+		>(`users/${userId}/playlists`, ctx, {
 			method: 'GET',
 			query,
 		});
@@ -117,9 +117,9 @@ export const getTracks: SpotifyEndpoints['playlistsGetTracks'] = async (
 ) => {
 	const query: Record<string, string | number | undefined> = { ...input };
 
-	const result = await makeSpotifyRequest<
+	const result = await makeAuthenticatedSpotifyRequest<
 		SpotifyEndpointOutputs['playlistsGetTracks']
-	>(`playlists/${input.playlist_id}/tracks`, ctx.key, {
+	>(`playlists/${input.playlist_id}/tracks`, ctx, {
 		method: 'GET',
 		query,
 	});
@@ -137,9 +137,9 @@ export const removeItem: SpotifyEndpoints['playlistsRemoveItem'] = async (
 	ctx,
 	input,
 ) => {
-	const result = await makeSpotifyRequest<
+	const result = await makeAuthenticatedSpotifyRequest<
 		SpotifyEndpointOutputs['playlistsRemoveItem']
-	>(`playlists/${input.playlist_id}/tracks`, ctx.key, {
+	>(`playlists/${input.playlist_id}/tracks`, ctx, {
 		method: 'DELETE',
 		body: input,
 	});
@@ -159,9 +159,9 @@ export const search: SpotifyEndpoints['playlistsSearch'] = async (
 ) => {
 	const query: Record<string, string | number | undefined> = { ...input };
 
-	const result = await makeSpotifyRequest<
+	const result = await makeAuthenticatedSpotifyRequest<
 		SpotifyEndpointOutputs['playlistsSearch']
-	>('search', ctx.key, {
+	>('search', ctx, {
 		method: 'GET',
 		query,
 	});

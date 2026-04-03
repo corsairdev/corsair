@@ -1,15 +1,15 @@
 import { logEventFromContext } from '../../utils/events';
 import type { GoogleDriveEndpoints } from '..';
-import { makeGoogleDriveRequest } from '../client';
+import { makeAuthenticatedGoogleDriveRequest } from '../client';
 import type { GoogleDriveEndpointOutputs } from './types';
 
 export const create: GoogleDriveEndpoints['foldersCreate'] = async (
 	ctx,
 	input,
 ) => {
-	const result = await makeGoogleDriveRequest<
+	const result = await makeAuthenticatedGoogleDriveRequest<
 		GoogleDriveEndpointOutputs['foldersCreate']
-	>('/files', ctx.key, {
+	>('/files', ctx, {
 		method: 'POST',
 		body: {
 			name: input.name,
@@ -41,9 +41,9 @@ export const create: GoogleDriveEndpoints['foldersCreate'] = async (
 };
 
 export const get: GoogleDriveEndpoints['foldersGet'] = async (ctx, input) => {
-	const result = await makeGoogleDriveRequest<
+	const result = await makeAuthenticatedGoogleDriveRequest<
 		GoogleDriveEndpointOutputs['foldersGet']
-	>(`/files/${input.folderId}`, ctx.key, {
+	>(`/files/${input.folderId}`, ctx, {
 		method: 'GET',
 		query: {
 			supportsAllDrives: input.supportsAllDrives,
@@ -75,9 +75,9 @@ export const get: GoogleDriveEndpoints['foldersGet'] = async (ctx, input) => {
 
 export const list: GoogleDriveEndpoints['foldersList'] = async (ctx, input) => {
 	const q = `mimeType='application/vnd.google-apps.folder'${input.q ? ` and ${input.q}` : ''}`;
-	const result = await makeGoogleDriveRequest<
+	const result = await makeAuthenticatedGoogleDriveRequest<
 		GoogleDriveEndpointOutputs['foldersList']
-	>('/files', ctx.key, {
+	>('/files', ctx, {
 		method: 'GET',
 		query: {
 			q,
@@ -124,9 +124,9 @@ export const deleteFolder: GoogleDriveEndpoints['foldersDelete'] = async (
 	ctx,
 	input,
 ) => {
-	await makeGoogleDriveRequest<GoogleDriveEndpointOutputs['foldersDelete']>(
+	await makeAuthenticatedGoogleDriveRequest<GoogleDriveEndpointOutputs['foldersDelete']>(
 		`/files/${input.folderId}`,
-		ctx.key,
+		ctx,
 		{
 			method: 'DELETE',
 			query: {
@@ -156,9 +156,9 @@ export const share: GoogleDriveEndpoints['foldersShare'] = async (
 	ctx,
 	input,
 ) => {
-	const result = await makeGoogleDriveRequest<
+	const result = await makeAuthenticatedGoogleDriveRequest<
 		GoogleDriveEndpointOutputs['foldersShare']
-	>(`/files/${input.folderId}/permissions`, ctx.key, {
+	>(`/files/${input.folderId}/permissions`, ctx, {
 		method: 'POST',
 		body: {
 			type: input.type,

@@ -1,13 +1,13 @@
 import { logEventFromContext } from '../../utils/events';
 import type { GoogleDriveEndpoints } from '..';
-import { makeGoogleDriveRequest } from '../client';
+import { makeAuthenticatedGoogleDriveRequest } from '../client';
 import type { GoogleDriveEndpointOutputs } from './types';
 
 export const filesAndFolders: GoogleDriveEndpoints['searchFilesAndFolders'] =
 	async (ctx, input) => {
-		const result = await makeGoogleDriveRequest<
+		const result = await makeAuthenticatedGoogleDriveRequest<
 			GoogleDriveEndpointOutputs['searchFilesAndFolders']
-		>('/files', ctx.key, {
+		>('/files', ctx, {
 			method: 'GET',
 			query: {
 				q: input.q,

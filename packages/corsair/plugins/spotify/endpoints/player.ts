@@ -1,6 +1,6 @@
 import { logEventFromContext } from '../../utils/events';
 import type { SpotifyEndpoints } from '..';
-import { makeSpotifyRequest } from '../client';
+import { makeAuthenticatedSpotifyRequest } from '../client';
 import type { SpotifyEndpointOutputs } from './types';
 
 export const addToQueue: SpotifyEndpoints['playerAddToQueue'] = async (
@@ -14,9 +14,9 @@ export const addToQueue: SpotifyEndpoints['playerAddToQueue'] = async (
 		query.device_id = input.device_id;
 	}
 
-	const result = await makeSpotifyRequest<
+	const result = await makeAuthenticatedSpotifyRequest<
 		SpotifyEndpointOutputs['playerAddToQueue']
-	>('me/player/queue', ctx.key, {
+	>('me/player/queue', ctx, {
 		method: 'POST',
 		query,
 	});
@@ -40,9 +40,9 @@ export const getCurrentlyPlaying: SpotifyEndpoints['playerGetCurrentlyPlaying'] 
 			query.additional_types = input.additional_types;
 		}
 
-		const result = await makeSpotifyRequest<
+		const result = await makeAuthenticatedSpotifyRequest<
 			SpotifyEndpointOutputs['playerGetCurrentlyPlaying']
-		>('me/player/currently-playing', ctx.key, {
+		>('me/player/currently-playing', ctx, {
 			method: 'GET',
 			query,
 		});
@@ -65,9 +65,9 @@ export const skipToNext: SpotifyEndpoints['playerSkipToNext'] = async (
 		query.device_id = input.device_id;
 	}
 
-	const result = await makeSpotifyRequest<
+	const result = await makeAuthenticatedSpotifyRequest<
 		SpotifyEndpointOutputs['playerSkipToNext']
-	>('me/player/next', ctx.key, {
+	>('me/player/next', ctx, {
 		method: 'POST',
 		query,
 	});
@@ -87,9 +87,9 @@ export const pause: SpotifyEndpoints['playerPause'] = async (ctx, input) => {
 		query.device_id = input.device_id;
 	}
 
-	const result = await makeSpotifyRequest<
+	const result = await makeAuthenticatedSpotifyRequest<
 		SpotifyEndpointOutputs['playerPause']
-	>('me/player/pause', ctx.key, {
+	>('me/player/pause', ctx, {
 		method: 'PUT',
 		query,
 	});
@@ -112,9 +112,9 @@ export const skipToPrevious: SpotifyEndpoints['playerSkipToPrevious'] = async (
 		query.device_id = input.device_id;
 	}
 
-	const result = await makeSpotifyRequest<
+	const result = await makeAuthenticatedSpotifyRequest<
 		SpotifyEndpointOutputs['playerSkipToPrevious']
-	>('me/player/previous', ctx.key, {
+	>('me/player/previous', ctx, {
 		method: 'POST',
 		query,
 	});
@@ -141,9 +141,9 @@ export const getRecentlyPlayed: SpotifyEndpoints['playerGetRecentlyPlayed'] =
 			query.before = input.before;
 		}
 
-		const result = await makeSpotifyRequest<
+		const result = await makeAuthenticatedSpotifyRequest<
 			SpotifyEndpointOutputs['playerGetRecentlyPlayed']
-		>('me/player/recently-played', ctx.key, {
+		>('me/player/recently-played', ctx, {
 			method: 'GET',
 			query,
 		});
@@ -163,9 +163,9 @@ export const resume: SpotifyEndpoints['playerResume'] = async (ctx, input) => {
 		query.device_id = input.device_id;
 	}
 
-	const result = await makeSpotifyRequest<
+	const result = await makeAuthenticatedSpotifyRequest<
 		SpotifyEndpointOutputs['playerResume']
-	>('me/player/play', ctx.key, {
+	>('me/player/play', ctx, {
 		method: 'PUT',
 		query,
 	});
@@ -190,9 +190,9 @@ export const setVolume: SpotifyEndpoints['playerSetVolume'] = async (
 		query.device_id = input.device_id;
 	}
 
-	const result = await makeSpotifyRequest<
+	const result = await makeAuthenticatedSpotifyRequest<
 		SpotifyEndpointOutputs['playerSetVolume']
-	>('me/player/volume', ctx.key, {
+	>('me/player/volume', ctx, {
 		method: 'PUT',
 		query,
 	});
@@ -215,9 +215,9 @@ export const startPlayback: SpotifyEndpoints['playerStartPlayback'] = async (
 		query.device_id = input.device_id;
 	}
 
-	const result = await makeSpotifyRequest<
+	const result = await makeAuthenticatedSpotifyRequest<
 		SpotifyEndpointOutputs['playerStartPlayback']
-	>('me/player/play', ctx.key, {
+	>('me/player/play', ctx, {
 		method: 'PUT',
 		query,
 		body: input,

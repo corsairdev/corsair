@@ -49,17 +49,19 @@ export async function getValidAccessToken({
 	clientId,
 	clientSecret,
 	refreshToken,
+	forceRefresh = false,
 }: {
 	clientId: string;
 	clientSecret: string;
 	accessToken?: string | null;
 	expiresAt?: string | null;
 	refreshToken: string;
+	forceRefresh?: boolean;
 }): Promise<{ accessToken: string; expiresAt: number; refreshed: boolean }> {
 	const now = Math.floor(Date.now() / 1000);
 	const bufferSeconds = 5 * 60;
 
-	if (accessToken && expiresAt && Number(expiresAt) > now + bufferSeconds) {
+	if (!forceRefresh && accessToken && expiresAt && Number(expiresAt) > now + bufferSeconds) {
 		return { accessToken, expiresAt: Number(expiresAt), refreshed: false };
 	}
 
@@ -75,14 +77,16 @@ export async function getValidAccessToken({
 	};
 }
 
+type GoogleDriveRequestOptions = {
+	method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+	body?: Record<string, unknown>;
+	query?: Record<string, string | number | boolean | undefined>;
+};
+
 export async function makeGoogleDriveRequest<T>(
 	endpoint: string,
 	credentials: string,
-	options: {
-		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
-		body?: Record<string, unknown>;
-		query?: Record<string, string | number | boolean | undefined>;
-	} = {},
+	options: GoogleDriveRequestOptions = {},
 ): Promise<T> {
 	const { method = 'GET', body, query } = options;
 
@@ -110,4 +114,28 @@ export async function makeGoogleDriveRequest<T>(
 
 	const response = await request<T>(config, requestOptions);
 	return response;
+}
+
+function isUnauthorizedError(error: unknown): boolean {
+	return (
+		error instanceof Error &&
+		'status' in error &&
+		(error as { status: number }).status === 401
+	);
+}
+
+export async function makeAuthenticatedGoogleDriveRequest<T>(
+	endpoint: string,
+	ctx: { key: string; _refreshAuth?: () => Promise<string> },
+	options: GoogleDriveRequestOptions = {},
+): Promise<T> {
+	try {
+		return await makeGoogleDriveRequest<T>(endpoint, ctx.key, options);
+	} catch (error) {
+		if (isUnauthorizedError(error) && ctx._refreshAuth) {
+			const freshToken = await ctx._refreshAuth();
+			return await makeGoogleDriveRequest<T>(endpoint, freshToken, options);
+		}
+		throw error;
+	}
 }

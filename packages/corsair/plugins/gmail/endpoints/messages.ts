@@ -1,6 +1,6 @@
 import { logEventFromContext } from '../../utils/events';
 import type { GmailBoundEndpoints, GmailEndpoints } from '..';
-import { makeGmailRequest } from '../client';
+import { makeAuthenticatedGmailRequest } from '../client';
 import type { Message, MessagePart } from '../types';
 import type { GmailEndpointOutputs } from './types';
 
@@ -81,9 +81,9 @@ function extractBody(message: Message): string | undefined {
 }
 
 export const list: GmailEndpoints['messagesList'] = async (ctx, input) => {
-	const result = await makeGmailRequest<GmailEndpointOutputs['messagesList']>(
+	const result = await makeAuthenticatedGmailRequest<GmailEndpointOutputs['messagesList']>(
 		`/users/${input.userId || 'me'}/messages`,
-		ctx.key,
+		ctx,
 		{
 			method: 'GET',
 			query: {
@@ -122,9 +122,9 @@ export const list: GmailEndpoints['messagesList'] = async (ctx, input) => {
 };
 
 export const get: GmailEndpoints['messagesGet'] = async (ctx, input) => {
-	const result = await makeGmailRequest<GmailEndpointOutputs['messagesGet']>(
+	const result = await makeAuthenticatedGmailRequest<GmailEndpointOutputs['messagesGet']>(
 		`/users/${input.userId || 'me'}/messages/${input.id}`,
-		ctx.key,
+		ctx,
 		{
 			method: 'GET',
 			query: {
@@ -164,9 +164,9 @@ export const get: GmailEndpoints['messagesGet'] = async (ctx, input) => {
 };
 
 export const send: GmailEndpoints['messagesSend'] = async (ctx, input) => {
-	const result = await makeGmailRequest<GmailEndpointOutputs['messagesSend']>(
+	const result = await makeAuthenticatedGmailRequest<GmailEndpointOutputs['messagesSend']>(
 		`/users/${input.userId || 'me'}/messages/send`,
-		ctx.key,
+		ctx,
 		{
 			method: 'POST',
 			body: {
@@ -194,9 +194,9 @@ export const deleteMessage: GmailEndpoints['messagesDelete'] = async (
 	ctx,
 	input,
 ) => {
-	await makeGmailRequest<GmailEndpointOutputs['messagesDelete']>(
+	await makeAuthenticatedGmailRequest<GmailEndpointOutputs['messagesDelete']>(
 		`/users/${input.userId || 'me'}/messages/${input.id}`,
-		ctx.key,
+		ctx,
 		{
 			method: 'DELETE',
 		},
@@ -232,9 +232,9 @@ export const modify: GmailEndpoints['messagesModify'] = async (ctx, input) => {
 		body.removeLabelIds = input.removeLabelIds;
 	}
 
-	const result = await makeGmailRequest<GmailEndpointOutputs['messagesModify']>(
+	const result = await makeAuthenticatedGmailRequest<GmailEndpointOutputs['messagesModify']>(
 		`/users/${input.userId || 'me'}/messages/${input.id}/modify`,
-		ctx.key,
+		ctx,
 		{
 			method: 'POST',
 			body,
@@ -275,9 +275,9 @@ export const batchModify: GmailEndpoints['messagesBatchModify'] = async (
 		body.removeLabelIds = input.removeLabelIds;
 	}
 
-	await makeGmailRequest<GmailEndpointOutputs['messagesBatchModify']>(
+	await makeAuthenticatedGmailRequest<GmailEndpointOutputs['messagesBatchModify']>(
 		`/users/${input.userId || 'me'}/messages/batchModify`,
-		ctx.key,
+		ctx,
 		{
 			method: 'POST',
 			body,
@@ -293,9 +293,9 @@ export const batchModify: GmailEndpoints['messagesBatchModify'] = async (
 };
 
 export const trash: GmailEndpoints['messagesTrash'] = async (ctx, input) => {
-	const result = await makeGmailRequest<GmailEndpointOutputs['messagesTrash']>(
+	const result = await makeAuthenticatedGmailRequest<GmailEndpointOutputs['messagesTrash']>(
 		`/users/${input.userId || 'me'}/messages/${input.id}/trash`,
-		ctx.key,
+		ctx,
 		{
 			method: 'POST',
 		},
@@ -319,9 +319,9 @@ export const untrash: GmailEndpoints['messagesUntrash'] = async (
 	ctx,
 	input,
 ) => {
-	const result = await makeGmailRequest<
+	const result = await makeAuthenticatedGmailRequest<
 		GmailEndpointOutputs['messagesUntrash']
-	>(`/users/${input.userId || 'me'}/messages/${input.id}/untrash`, ctx.key, {
+	>(`/users/${input.userId || 'me'}/messages/${input.id}/untrash`, ctx, {
 		method: 'POST',
 	});
 

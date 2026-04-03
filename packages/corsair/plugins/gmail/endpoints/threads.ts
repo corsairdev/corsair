@@ -1,12 +1,12 @@
 import { logEventFromContext } from '../../utils/events';
 import type { GmailBoundEndpoints, GmailEndpoints } from '..';
-import { makeGmailRequest } from '../client';
+import { makeAuthenticatedGmailRequest } from '../client';
 import type { GmailEndpointOutputs } from './types';
 
 export const list: GmailEndpoints['threadsList'] = async (ctx, input) => {
-	const result = await makeGmailRequest<GmailEndpointOutputs['threadsList']>(
+	const result = await makeAuthenticatedGmailRequest<GmailEndpointOutputs['threadsList']>(
 		`/users/${input.userId || 'me'}/threads`,
-		ctx.key,
+		ctx,
 		{
 			method: 'GET',
 			query: {
@@ -45,9 +45,9 @@ export const list: GmailEndpoints['threadsList'] = async (ctx, input) => {
 };
 
 export const get: GmailEndpoints['threadsGet'] = async (ctx, input) => {
-	const result = await makeGmailRequest<GmailEndpointOutputs['threadsGet']>(
+	const result = await makeAuthenticatedGmailRequest<GmailEndpointOutputs['threadsGet']>(
 		`/users/${input.userId || 'me'}/threads/${input.id}`,
-		ctx.key,
+		ctx,
 		{
 			method: 'GET',
 			query: {
@@ -92,9 +92,9 @@ export const modify: GmailEndpoints['threadsModify'] = async (ctx, input) => {
 		body.removeLabelIds = input.removeLabelIds;
 	}
 
-	const result = await makeGmailRequest<GmailEndpointOutputs['threadsModify']>(
+	const result = await makeAuthenticatedGmailRequest<GmailEndpointOutputs['threadsModify']>(
 		`/users/${input.userId || 'me'}/threads/${input.id}/modify`,
-		ctx.key,
+		ctx,
 		{
 			method: 'POST',
 			body,
@@ -119,9 +119,9 @@ export const deleteThread: GmailEndpoints['threadsDelete'] = async (
 	ctx,
 	input,
 ) => {
-	await makeGmailRequest<GmailEndpointOutputs['threadsDelete']>(
+	await makeAuthenticatedGmailRequest<GmailEndpointOutputs['threadsDelete']>(
 		`/users/${input.userId || 'me'}/threads/${input.id}`,
-		ctx.key,
+		ctx,
 		{
 			method: 'DELETE',
 		},
@@ -144,9 +144,9 @@ export const deleteThread: GmailEndpoints['threadsDelete'] = async (
 };
 
 export const trash: GmailEndpoints['threadsTrash'] = async (ctx, input) => {
-	const result = await makeGmailRequest<GmailEndpointOutputs['threadsTrash']>(
+	const result = await makeAuthenticatedGmailRequest<GmailEndpointOutputs['threadsTrash']>(
 		`/users/${input.userId || 'me'}/threads/${input.id}/trash`,
-		ctx.key,
+		ctx,
 		{
 			method: 'POST',
 		},
@@ -167,9 +167,9 @@ export const trash: GmailEndpoints['threadsTrash'] = async (ctx, input) => {
 };
 
 export const untrash: GmailEndpoints['threadsUntrash'] = async (ctx, input) => {
-	const result = await makeGmailRequest<GmailEndpointOutputs['threadsUntrash']>(
+	const result = await makeAuthenticatedGmailRequest<GmailEndpointOutputs['threadsUntrash']>(
 		`/users/${input.userId || 'me'}/threads/${input.id}/untrash`,
-		ctx.key,
+		ctx,
 		{
 			method: 'POST',
 		},

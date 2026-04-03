@@ -1,12 +1,12 @@
 import { logEventFromContext } from '../../utils/events';
 import type { GmailBoundEndpoints, GmailEndpoints } from '..';
-import { makeGmailRequest } from '../client';
+import { makeAuthenticatedGmailRequest } from '../client';
 import type { GmailEndpointOutputs } from './types';
 
 export const list: GmailEndpoints['labelsList'] = async (ctx, input) => {
-	const result = await makeGmailRequest<GmailEndpointOutputs['labelsList']>(
+	const result = await makeAuthenticatedGmailRequest<GmailEndpointOutputs['labelsList']>(
 		`/users/${input.userId || 'me'}/labels`,
-		ctx.key,
+		ctx,
 		{
 			method: 'GET',
 		},
@@ -38,9 +38,9 @@ export const list: GmailEndpoints['labelsList'] = async (ctx, input) => {
 };
 
 export const get: GmailEndpoints['labelsGet'] = async (ctx, input) => {
-	const result = await makeGmailRequest<GmailEndpointOutputs['labelsGet']>(
+	const result = await makeAuthenticatedGmailRequest<GmailEndpointOutputs['labelsGet']>(
 		`/users/${input.userId || 'me'}/labels/${input.id}`,
-		ctx.key,
+		ctx,
 		{
 			method: 'GET',
 		},
@@ -70,9 +70,9 @@ export const get: GmailEndpoints['labelsGet'] = async (ctx, input) => {
 };
 
 export const create: GmailEndpoints['labelsCreate'] = async (ctx, input) => {
-	const result = await makeGmailRequest<GmailEndpointOutputs['labelsCreate']>(
+	const result = await makeAuthenticatedGmailRequest<GmailEndpointOutputs['labelsCreate']>(
 		`/users/${input.userId || 'me'}/labels`,
-		ctx.key,
+		ctx,
 		{
 			method: 'POST',
 			body: input.label,
@@ -94,9 +94,9 @@ export const create: GmailEndpoints['labelsCreate'] = async (ctx, input) => {
 };
 
 export const update: GmailEndpoints['labelsUpdate'] = async (ctx, input) => {
-	const result = await makeGmailRequest<GmailEndpointOutputs['labelsUpdate']>(
+	const result = await makeAuthenticatedGmailRequest<GmailEndpointOutputs['labelsUpdate']>(
 		`/users/${input.userId || 'me'}/labels/${input.id}`,
-		ctx.key,
+		ctx,
 		{
 			method: 'PUT',
 			body: input.label,
@@ -121,9 +121,9 @@ export const deleteLabel: GmailEndpoints['labelsDelete'] = async (
 	ctx,
 	input,
 ) => {
-	await makeGmailRequest<GmailEndpointOutputs['labelsDelete']>(
+	await makeAuthenticatedGmailRequest<GmailEndpointOutputs['labelsDelete']>(
 		`/users/${input.userId || 'me'}/labels/${input.id}`,
-		ctx.key,
+		ctx,
 		{
 			method: 'DELETE',
 		},
