@@ -623,6 +623,7 @@ function printHelp() {
 	console.log('  # --code "const r = await corsair.slack.api.channels.list(); return r.channels.find(c => c.name === \'general\')?.id"');
 	console.log('');
 	console.log('  corsair watch-renew                             Renew Google webhook watch (Gmail/Drive/Calendar)');
+	console.log('  corsair subscribe --plugin=outlook              Create Microsoft Graph subscriptions for Outlook webhooks');
 	console.log('  corsair help                                    Show this help message\n');
 }
 
@@ -663,6 +664,18 @@ async function main() {
 		const { runWatchRenew } = await import('./watch-renew');
 		await runWatchRenew({ cwd });
 		return;
+	}
+
+	if (command === 'subscribe') {
+		const pluginArg = args.slice(1).find((a) => a.startsWith('--plugin='));
+		const pluginId = pluginArg ? pluginArg.slice('--plugin='.length) : undefined;
+		if (pluginId === 'outlook') {
+			const { runOutlookSubscribe } = await import('./subscribe-outlook');
+			await runOutlookSubscribe({ cwd });
+			return;
+		}
+		console.error(`[#corsair]: Unknown plugin for subscribe: '${pluginId ?? '(none)'}'. Supported: outlook`);
+		process.exit(1);
 	}
 
 	if (command === 'list') {
