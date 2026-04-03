@@ -106,7 +106,7 @@ npx corsair auth --plugin=gmail --credentials
     "client_secret": "***",
     "access_token": "ya29.A...abc",
     "refresh_token": "1//0g...xyz",
-    "expires_at": "1234567890000"
+    "expires_at": "1234567890"
   }
 }
 ```

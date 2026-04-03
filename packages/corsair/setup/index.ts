@@ -390,7 +390,9 @@ async function checkAuthStatus(
 
 	const isReady = missingIntegration.length === 0 && missingAccount.length === 0;
 
-	if (!isReady) {
+	if (isReady) {
+		log(`[corsair:setup] '${pluginId}' (${authType}) is configured ✓`);
+	} else {
 		const allMissing = [...missingIntegration, ...missingAccount];
 
 		if (caller === 'cli') {
