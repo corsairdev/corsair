@@ -51,6 +51,7 @@ export default defineConfig({
 		'plugins/box/index.ts',
 		'plugins/cal/index.ts',
 		'plugins/calendly/index.ts',
+		'plugins/cursor/index.ts',
 		'plugins/discord/index.ts',
 		'plugins/dropbox/index.ts',
 		'plugins/exa/index.ts',
