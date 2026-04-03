@@ -154,3 +154,15 @@ export {
 	type TrelloWebhooks,
 	trello,
 } from './trello';
+
+
+// OneDrive Plugin
+export {
+	type OnedriveBoundEndpoints,
+	type OnedriveBoundWebhooks,
+	type OnedriveContext,
+	type OnedriveEndpoints,
+	type OnedrivePluginOptions,
+	type OnedriveWebhooks,
+	onedrive,
+} from './onedrive';

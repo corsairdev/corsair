@@ -5,6 +5,7 @@ import { asana } from 'corsair/plugins/asana';
 import { fireflies } from 'corsair/plugins/fireflies';
 import { twitterapiio } from 'corsair/plugins/twitterapiio';
 import { gmail } from 'corsair/plugins/gmail';
+import { onedrive } from 'corsair/plugins/onedrive';
 import { sqlite } from '../db';
 
 export const corsair = createCorsair({
@@ -15,5 +16,5 @@ export const corsair = createCorsair({
 		timeout: '10m',
 		onTimeout: 'deny',
 	},
-	plugins: [twitterapiio(), slack(), linear(), fireflies(), asana(), gmail()],
+	plugins: [twitterapiio(), slack(), linear(), fireflies(), asana(), gmail(), onedrive()],
 });
