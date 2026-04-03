@@ -154,3 +154,14 @@ export {
 	type TrelloWebhooks,
 	trello,
 } from './trello';
+
+// Outlook Plugin
+export {
+	type OutlookBoundEndpoints,
+	type OutlookBoundWebhooks,
+	type OutlookContext,
+	type OutlookEndpoints,
+	type OutlookPluginOptions,
+	type OutlookWebhooks,
+	outlook,
+} from './outlook';

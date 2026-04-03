@@ -82,5 +82,6 @@ export default defineConfig({
 		'plugins/twitter/index.ts',
 		'plugins/twitterapiio/index.ts',
 		'plugins/zoom/index.ts',
+		'plugins/outlook/index.ts',
 	],
 });
