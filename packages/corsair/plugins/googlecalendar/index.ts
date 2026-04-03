@@ -238,31 +238,57 @@ export function googlecalendar<const T extends GoogleCalendarPluginOptions>(
 				]);
 
 				if (!refreshToken) {
-					throw new Error('No refresh token. Cannot get access token.');
+					throw new Error(
+						'[corsair:googlecalendar] No refresh token. Cannot get access token.',
+					);
 				}
 
 				const res = await ctx.keys.get_integration_credentials();
 
 				if (!res.client_id || !res.client_secret) {
-					throw new Error('No client id or client secret');
+					throw new Error(
+						'[corsair:googlecalendar] No client id or client secret',
+					);
 				}
 
-				const result = await getValidAccessToken({
-					accessToken,
-					expiresAt,
-					refreshToken,
-					clientId: res.client_id,
-					clientSecret: res.client_secret,
-				});
+				try {
+					const result = await getValidAccessToken({
+						accessToken,
+						expiresAt,
+						refreshToken,
+						clientId: res.client_id,
+						clientSecret: res.client_secret,
+					});
 
-				if (result.refreshed) {
-					await Promise.all([
-						ctx.keys.set_access_token(result.accessToken),
-						ctx.keys.set_expires_at(String(result.expiresAt)),
-					]);
+					if (result.refreshed) {
+						await Promise.all([
+							ctx.keys.set_access_token(result.accessToken),
+							ctx.keys.set_expires_at(String(result.expiresAt)),
+						]);
+					}
+
+					(ctx as Record<string, unknown>)._refreshAuth = async () => {
+						const freshResult = await getValidAccessToken({
+							accessToken: null,
+							expiresAt: null,
+							refreshToken,
+							clientId: res.client_id!,
+							clientSecret: res.client_secret!,
+							forceRefresh: true,
+						});
+						await ctx.keys.set_access_token(freshResult.accessToken);
+						await ctx.keys.set_expires_at(String(freshResult.expiresAt));
+						return freshResult.accessToken;
+					};
+
+					return result.accessToken;
+				} catch (error) {
+					console.error(
+						'[corsair:googlecalendar] Failed to get valid access token:',
+						error,
+					);
+					throw error;
 				}
-
-				return result.accessToken;
 			}
 
 			return '';

@@ -1,13 +1,13 @@
 import { logEventFromContext } from '../../utils/events';
 import type { GoogleCalendarEndpoints } from '..';
-import { makeCalendarRequest } from '../client';
+import { makeAuthenticatedCalendarRequest } from '../client';
 import type { GoogleCalendarEndpointOutputs } from './types';
 
 export const getAvailability: GoogleCalendarEndpoints['calendarGetAvailability'] =
 	async (ctx, input) => {
-		const result = await makeCalendarRequest<
+		const result = await makeAuthenticatedCalendarRequest<
 			GoogleCalendarEndpointOutputs['calendarGetAvailability']
-		>('/freeBusy', ctx.key, {
+		>('/freeBusy', ctx, {
 			method: 'POST',
 			body: {
 				timeMin: input.timeMin,

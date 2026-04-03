@@ -1,6 +1,6 @@
 import { logEventFromContext } from '../../utils/events';
 import type { GoogleDriveEndpoints } from '..';
-import { makeGoogleDriveRequest } from '../client';
+import { makeAuthenticatedGoogleDriveRequest } from '../client';
 import type { GoogleDriveEndpointOutputs } from './types';
 
 export const create: GoogleDriveEndpoints['sharedDrivesCreate'] = async (
@@ -8,9 +8,9 @@ export const create: GoogleDriveEndpoints['sharedDrivesCreate'] = async (
 	input,
 ) => {
 	const requestId = input.requestId || `req_${Date.now()}`;
-	const result = await makeGoogleDriveRequest<
+	const result = await makeAuthenticatedGoogleDriveRequest<
 		GoogleDriveEndpointOutputs['sharedDrivesCreate']
-	>('/drives', ctx.key, {
+	>('/drives', ctx, {
 		method: 'POST',
 		body: {
 			name: input.name,
@@ -48,9 +48,9 @@ export const get: GoogleDriveEndpoints['sharedDrivesGet'] = async (
 	ctx,
 	input,
 ) => {
-	const result = await makeGoogleDriveRequest<
+	const result = await makeAuthenticatedGoogleDriveRequest<
 		GoogleDriveEndpointOutputs['sharedDrivesGet']
-	>(`/drives/${input.driveId}`, ctx.key, {
+	>(`/drives/${input.driveId}`, ctx, {
 		method: 'GET',
 		query: {
 			useDomainAdminAccess: input.useDomainAdminAccess,
@@ -82,9 +82,9 @@ export const list: GoogleDriveEndpoints['sharedDrivesList'] = async (
 	ctx,
 	input,
 ) => {
-	const result = await makeGoogleDriveRequest<
+	const result = await makeAuthenticatedGoogleDriveRequest<
 		GoogleDriveEndpointOutputs['sharedDrivesList']
-	>('/drives', ctx.key, {
+	>('/drives', ctx, {
 		method: 'GET',
 		query: {
 			pageSize: input.pageSize,
@@ -123,9 +123,9 @@ export const update: GoogleDriveEndpoints['sharedDrivesUpdate'] = async (
 	ctx,
 	input,
 ) => {
-	const result = await makeGoogleDriveRequest<
+	const result = await makeAuthenticatedGoogleDriveRequest<
 		GoogleDriveEndpointOutputs['sharedDrivesUpdate']
-	>(`/drives/${input.driveId}`, ctx.key, {
+	>(`/drives/${input.driveId}`, ctx, {
 		method: 'PATCH',
 		body: {
 			name: input.name,
@@ -161,9 +161,9 @@ export const update: GoogleDriveEndpoints['sharedDrivesUpdate'] = async (
 
 export const deleteSharedDrive: GoogleDriveEndpoints['sharedDrivesDelete'] =
 	async (ctx, input) => {
-		await makeGoogleDriveRequest<
+		await makeAuthenticatedGoogleDriveRequest<
 			GoogleDriveEndpointOutputs['sharedDrivesDelete']
-		>(`/drives/${input.driveId}`, ctx.key, {
+		>(`/drives/${input.driveId}`, ctx, {
 			method: 'DELETE',
 		});
 

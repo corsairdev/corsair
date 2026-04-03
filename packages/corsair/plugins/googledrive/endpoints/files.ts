@@ -1,12 +1,12 @@
 import { logEventFromContext } from '../../utils/events';
 import type { GoogleDriveBoundEndpoints, GoogleDriveEndpoints } from '..';
-import { makeGoogleDriveRequest } from '../client';
+import { makeAuthenticatedGoogleDriveRequest } from '../client';
 import type { GoogleDriveEndpointOutputs } from './types';
 
 export const list: GoogleDriveEndpoints['filesList'] = async (ctx, input) => {
-	const result = await makeGoogleDriveRequest<
+	const result = await makeAuthenticatedGoogleDriveRequest<
 		GoogleDriveEndpointOutputs['filesList']
-	>('/files', ctx.key, {
+	>('/files', ctx, {
 		method: 'GET',
 		query: input,
 	});
@@ -47,9 +47,9 @@ export const list: GoogleDriveEndpoints['filesList'] = async (ctx, input) => {
 };
 
 export const get: GoogleDriveEndpoints['filesGet'] = async (ctx, input) => {
-	const result = await makeGoogleDriveRequest<
+	const result = await makeAuthenticatedGoogleDriveRequest<
 		GoogleDriveEndpointOutputs['filesGet']
-	>(`/files/${input.fileId}`, ctx.key, {
+	>(`/files/${input.fileId}`, ctx, {
 		method: 'GET',
 		query: input,
 	});
@@ -86,9 +86,9 @@ export const get: GoogleDriveEndpoints['filesGet'] = async (ctx, input) => {
 
 export const createFromText: GoogleDriveEndpoints['filesCreateFromText'] =
 	async (ctx, input) => {
-		const result = await makeGoogleDriveRequest<
+		const result = await makeAuthenticatedGoogleDriveRequest<
 			GoogleDriveEndpointOutputs['filesCreateFromText']
-		>('/files', ctx.key, {
+		>('/files', ctx, {
 			method: 'POST',
 			body: {
 				...input,
@@ -116,9 +116,9 @@ export const upload: GoogleDriveEndpoints['filesUpload'] = async (
 	ctx,
 	input,
 ) => {
-	const result = await makeGoogleDriveRequest<
+	const result = await makeAuthenticatedGoogleDriveRequest<
 		GoogleDriveEndpointOutputs['filesUpload']
-	>('/files', ctx.key, {
+	>('/files', ctx, {
 		method: 'POST',
 		body: {
 			...input,
@@ -146,9 +146,9 @@ export const update: GoogleDriveEndpoints['filesUpdate'] = async (
 	ctx,
 	input,
 ) => {
-	const result = await makeGoogleDriveRequest<
+	const result = await makeAuthenticatedGoogleDriveRequest<
 		GoogleDriveEndpointOutputs['filesUpdate']
-	>(`/files/${input.fileId}`, ctx.key, {
+	>(`/files/${input.fileId}`, ctx, {
 		method: 'PATCH',
 		body: {
 			name: input.name,
@@ -185,9 +185,9 @@ export const deleteFile: GoogleDriveEndpoints['filesDelete'] = async (
 	ctx,
 	input,
 ) => {
-	await makeGoogleDriveRequest<GoogleDriveEndpointOutputs['filesDelete']>(
+	await makeAuthenticatedGoogleDriveRequest<GoogleDriveEndpointOutputs['filesDelete']>(
 		`/files/${input.fileId}`,
-		ctx.key,
+		ctx,
 		{
 			method: 'DELETE',
 			query: {
@@ -214,9 +214,9 @@ export const deleteFile: GoogleDriveEndpoints['filesDelete'] = async (
 };
 
 export const copy: GoogleDriveEndpoints['filesCopy'] = async (ctx, input) => {
-	const result = await makeGoogleDriveRequest<
+	const result = await makeAuthenticatedGoogleDriveRequest<
 		GoogleDriveEndpointOutputs['filesCopy']
-	>(`/files/${input.fileId}/copy`, ctx.key, {
+	>(`/files/${input.fileId}/copy`, ctx, {
 		method: 'POST',
 		body: {
 			name: input.name,
@@ -243,9 +243,9 @@ export const copy: GoogleDriveEndpoints['filesCopy'] = async (ctx, input) => {
 };
 
 export const move: GoogleDriveEndpoints['filesMove'] = async (ctx, input) => {
-	const result = await makeGoogleDriveRequest<
+	const result = await makeAuthenticatedGoogleDriveRequest<
 		GoogleDriveEndpointOutputs['filesMove']
-	>(`/files/${input.fileId}`, ctx.key, {
+	>(`/files/${input.fileId}`, ctx, {
 		method: 'PATCH',
 		body: {},
 		query: input,
@@ -269,9 +269,9 @@ export const download: GoogleDriveEndpoints['filesDownload'] = async (
 	ctx,
 	input,
 ) => {
-	const result = await makeGoogleDriveRequest<
+	const result = await makeAuthenticatedGoogleDriveRequest<
 		GoogleDriveEndpointOutputs['filesDownload']
-	>(`/files/${input.fileId}`, ctx.key, {
+	>(`/files/${input.fileId}`, ctx, {
 		method: 'GET',
 		query: {
 			alt: 'media',
@@ -289,9 +289,9 @@ export const download: GoogleDriveEndpoints['filesDownload'] = async (
 };
 
 export const share: GoogleDriveEndpoints['filesShare'] = async (ctx, input) => {
-	const result = await makeGoogleDriveRequest<
+	const result = await makeAuthenticatedGoogleDriveRequest<
 		GoogleDriveEndpointOutputs['filesShare']
-	>(`/files/${input.fileId}/permissions`, ctx.key, {
+	>(`/files/${input.fileId}/permissions`, ctx, {
 		method: 'POST',
 		body: {
 			type: input.type,

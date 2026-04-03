@@ -99,15 +99,17 @@ export async function getValidAccessToken({
 	}
 }
 
+export type SpotifyRequestOptions = {
+	method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+	// Using 'unknown' because request body structure varies by endpoint and is validated by the Spotify API
+	body?: Record<string, unknown>;
+	query?: Record<string, string | number | boolean | undefined>;
+};
+
 export async function makeSpotifyRequest<T>(
 	endpoint: string,
 	accessToken: string,
-	options: {
-		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
-		// Using 'unknown' because request body structure varies by endpoint and is validated by the Spotify API
-		body?: Record<string, unknown>;
-		query?: Record<string, string | number | boolean | undefined>;
-	} = {},
+	options: SpotifyRequestOptions = {},
 ): Promise<T> {
 	const { method = 'GET', body, query } = options;
 
@@ -165,5 +167,30 @@ export async function makeSpotifyRequest<T>(
 			throw new SpotifyAPIError(error.message);
 		}
 		throw new SpotifyAPIError('Unknown error');
+	}
+}
+
+function isUnauthorizedError(error: unknown): boolean {
+	return (
+		(error instanceof Error &&
+			'status' in error &&
+			(error as { status: number }).status === 401) ||
+		(error instanceof SpotifyAPIError && error.status === 401)
+	);
+}
+
+export async function makeAuthenticatedSpotifyRequest<T>(
+	endpoint: string,
+	ctx: { key: string; _refreshAuth?: () => Promise<string> },
+	options: SpotifyRequestOptions = {},
+): Promise<T> {
+	try {
+		return await makeSpotifyRequest<T>(endpoint, ctx.key, options);
+	} catch (error) {
+		if (isUnauthorizedError(error) && ctx._refreshAuth) {
+			const freshToken = await ctx._refreshAuth();
+			return await makeSpotifyRequest<T>(endpoint, freshToken, options);
+		}
+		throw error;
 	}
 }

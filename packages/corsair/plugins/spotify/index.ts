@@ -546,20 +546,25 @@ export function spotify<const T extends SpotifyPluginOptions>(
 				return options.key;
 			}
 
-			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
-				const accessToken = await ctx.keys.get_access_token();
-				const refreshToken = await ctx.keys.get_refresh_token();
+		if (source === 'endpoint' && ctx.authType === 'oauth_2') {
+			const accessToken = await ctx.keys.get_access_token();
+			const refreshToken = await ctx.keys.get_refresh_token();
 
-				if (!refreshToken) {
-					throw new Error('No refresh token. Cannot get access token.');
-				}
+			if (!refreshToken) {
+				throw new Error(
+					'[corsair:spotify] No refresh token. Cannot get access token.',
+				);
+			}
 
-				const res = await ctx.keys.get_integration_credentials();
+			const res = await ctx.keys.get_integration_credentials();
 
-				if (!res.client_id || !res.client_secret) {
-					throw new Error('No client id or client secret');
-				}
+			if (!res.client_id || !res.client_secret) {
+				throw new Error(
+					'[corsair:spotify] No client id or client secret',
+				);
+			}
 
+			try {
 				const key = await getValidAccessToken({
 					accessToken,
 					refreshToken,
@@ -568,11 +573,31 @@ export function spotify<const T extends SpotifyPluginOptions>(
 				});
 
 				if (!key) {
-					throw new Error('Access token cannot be created.');
+					throw new Error(
+						'[corsair:spotify] Access token cannot be created.',
+					);
 				}
 
+				(ctx as Record<string, unknown>)._refreshAuth = async () => {
+					const freshToken = await getValidAccessToken({
+						accessToken: null,
+						refreshToken,
+						clientId: res.client_id!,
+						clientSecret: res.client_secret!,
+					});
+					if (freshToken) {
+						await ctx.keys.set_access_token(freshToken);
+					}
+					return freshToken || '';
+				};
+
 				return key;
+			} catch (error) {
+				throw new Error(
+					`[corsair:spotify] Failed to get access token: ${error instanceof Error ? error.message : String(error)}`,
+				);
 			}
+		}
 
 			return '';
 		},

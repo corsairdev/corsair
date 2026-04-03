@@ -440,29 +440,60 @@ export function gmail<const T extends GmailPluginOptions>(
 				]);
 
 				if (!refreshToken) {
-					throw new Error('No refresh token. Cannot get access token.');
+					throw new Error(
+						'[corsair:gmail] No refresh token found. Run `corsair auth --plugin=gmail` to re-authenticate.',
+					);
 				}
 
 				const res = await ctx.keys.get_integration_credentials();
 
 				if (!res.client_id || !res.client_secret) {
-					throw new Error('No client id or client secret');
+					throw new Error(
+						'[corsair:gmail] Missing client_id or client_secret. Run `corsair setup --gmail` to configure credentials.',
+					);
 				}
 
-				const result = await getValidAccessToken({
-					accessToken,
-					expiresAt,
-					refreshToken,
-					clientId: res.client_id,
-					clientSecret: res.client_secret,
-				});
+				let result: Awaited<ReturnType<typeof getValidAccessToken>>;
+				try {
+					result = await getValidAccessToken({
+						accessToken,
+						expiresAt,
+						refreshToken,
+						clientId: res.client_id,
+						clientSecret: res.client_secret,
+					});
+				} catch (error) {
+					throw new Error(
+						`[corsair:gmail] Failed to obtain valid access token: ${error instanceof Error ? error.message : String(error)}`,
+					);
+				}
 
 				if (result.refreshed) {
-					await Promise.all([
-						ctx.keys.set_access_token(result.accessToken),
-						ctx.keys.set_expires_at(String(result.expiresAt)),
-					]);
+					try {
+						await ctx.keys.set_access_token(result.accessToken);
+						await ctx.keys.set_expires_at(String(result.expiresAt));
+					} catch (error) {
+						throw new Error(
+							`[corsair:gmail] Token was refreshed but failed to persist new credentials: ${error instanceof Error ? error.message : String(error)}`,
+						);
+					}
 				}
+
+				// Expose a force-refresh function on the context so endpoints can
+				// retry on 401 without waiting for `expires_at` to lapse.
+				(ctx as Record<string, unknown>)._refreshAuth = async () => {
+					const freshResult = await getValidAccessToken({
+						accessToken: null,
+						expiresAt: null,
+						refreshToken,
+						clientId: res.client_id!,
+						clientSecret: res.client_secret!,
+						forceRefresh: true,
+					});
+					await ctx.keys.set_access_token(freshResult.accessToken);
+					await ctx.keys.set_expires_at(String(freshResult.expiresAt));
+					return freshResult.accessToken;
+				};
 
 				return result.accessToken;
 			}
