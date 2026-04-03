@@ -334,6 +334,7 @@ export type ExternalTeamsPlugin<T extends TeamsPluginOptions> =
 	BaseTeamsPlugin<T>;
 
 export function teams<const T extends TeamsPluginOptions>(
+	// {} is a valid empty options object at runtime; cast needed because {} doesn't statically satisfy the generic T constraint
 	incomingOptions: TeamsPluginOptions & T = {} as TeamsPluginOptions & T,
 ): ExternalTeamsPlugin<T> {
 	const options = {

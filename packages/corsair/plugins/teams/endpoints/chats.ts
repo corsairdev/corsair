@@ -142,6 +142,7 @@ export const sendMessage: TeamsEndpoints['chatsSendMessage'] = async (ctx, input
 		ctx.key,
 		{
 			method: 'POST',
+			// Zod-inferred body type (input minus chatId) isn't assignable to Record<string, unknown> without a cast
 			body: { ...body } as Record<string, unknown>,
 		},
 	);

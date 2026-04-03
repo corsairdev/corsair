@@ -87,6 +87,7 @@ export async function makeTeamsRequest<T>(
 	accessToken: string,
 	options: {
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+		// Values are typed per-endpoint by callers; unknown keeps this helper generic across all Graph API bodies
 		body?: Record<string, unknown>;
 		query?: Record<string, string | number | boolean | undefined>;
 	} = {},

@@ -7,6 +7,7 @@ import { teams } from './index';
 
 dotenv.config();
 
+// DB event payloads are stored as JSON strings or objects; unknown enforces narrowing before use
 function parsePayload(payload: unknown): unknown {
 	return typeof payload === 'string' ? JSON.parse(payload) : payload;
 }

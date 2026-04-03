@@ -84,6 +84,7 @@ export const send: TeamsEndpoints['messagesSend'] = async (ctx, input) => {
 		ctx.key,
 		{
 			method: 'POST',
+			// Zod-inferred body type (input minus teamId/channelId) isn't assignable to Record<string, unknown> without a cast
 			body: { ...body } as Record<string, unknown>,
 		},
 	);
@@ -108,6 +109,7 @@ export const reply: TeamsEndpoints['messagesReply'] = async (ctx, input) => {
 		ctx.key,
 		{
 			method: 'POST',
+			// Zod-inferred body type (input minus teamId/channelId/messageId) isn't assignable to Record<string, unknown> without a cast
 			body: { ...body } as Record<string, unknown>,
 		},
 	);

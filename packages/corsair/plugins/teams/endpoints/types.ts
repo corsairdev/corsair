@@ -63,14 +63,10 @@ const TeamsMessageBodySchema = z.object({
 }).passthrough();
 
 const TeamsMessageFromSchema = z.object({
-	application: z.record(
-		// application identity fields are dynamic
-		z.unknown(),
-	).nullable().optional(),
-	device: z.record(
-		// device identity fields are dynamic
-		z.unknown(),
-	).nullable().optional(),
+	// Application identity fields are dynamic and vary per Graph API version/context
+	application: z.record(z.unknown()).nullable().optional(),
+	// Device identity fields are dynamic and vary per Graph API version/context
+	device: z.record(z.unknown()).nullable().optional(),
 	user: z.object({
 		id: z.string().optional(),
 		displayName: z.string().nullable().optional(),
@@ -98,18 +94,12 @@ const TeamsMessageObjectSchema = z.object({
 		teamId: z.string().optional(),
 		channelId: z.string().optional(),
 	}).nullable().optional(),
-	attachments: z.array(
-		// attachment shape varies by type
-		z.record(z.unknown()),
-	).optional(),
-	mentions: z.array(
-		// mention shape varies
-		z.record(z.unknown()),
-	).optional(),
-	reactions: z.array(
-		// reaction shape varies
-		z.record(z.unknown()),
-	).optional(),
+	// Attachment shape varies by attachment type (file, image, card, etc.)
+	attachments: z.array(z.record(z.unknown())).optional(),
+	// Mention shape varies depending on whether user, team, tag, or channel is mentioned
+	mentions: z.array(z.record(z.unknown())).optional(),
+	// Reaction shape varies by emoji/reaction type
+	reactions: z.array(z.record(z.unknown())).optional(),
 }).passthrough();
 
 const TeamsMemberObjectSchema = z.object({

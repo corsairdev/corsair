@@ -108,6 +108,7 @@ export type TeamsWebhookOutputs = {
 
 // ── Match Helpers ─────────────────────────────────────────────────────────────
 
+// body arrives as an opaque value from the raw HTTP request; unknown forces callers to narrow before use
 function parseBody(body: unknown): unknown {
 	if (typeof body === 'string') {
 		try {
@@ -134,20 +135,23 @@ export function createTeamsNotificationMatch(
 	odataType?: string,
 ): CorsairWebhookMatcher {
 	return (request: RawWebhookRequest) => {
-		// any cast needed because body is unknown until parsed
+		// parseBody returns unknown; cast to access top-level keys before array validation below
 		const parsed = parseBody(request.body) as Record<string, unknown>;
 		const value = parsed['value'];
 		if (!Array.isArray(value)) {
 			return false;
 		}
+		// Array elements from parsed JSON are unknown until individually type-narrowed
 		return value.some((n: unknown) => {
 			if (!n || typeof n !== 'object') return false;
+			// Safe after the null + typeof object guard above
 			const notification = n as Record<string, unknown>;
 			const resource = typeof notification['resource'] === 'string' ? notification['resource'] : '';
 			if (!resourcePattern.test(resource)) return false;
 			if (odataType === undefined) return true;
 			const resourceData = notification['resourceData'];
 			if (!resourceData || typeof resourceData !== 'object') return false;
+			// Safe after the null + typeof object guard above
 			return (resourceData as Record<string, unknown>)['@odata.type'] === odataType;
 		});
 	};
