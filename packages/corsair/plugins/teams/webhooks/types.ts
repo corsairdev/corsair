@@ -160,7 +160,7 @@ export function verifyTeamsClientState(
 	expectedClientState: string,
 ): { valid: boolean; error?: string } {
 	if (!expectedClientState) {
-		return { valid: true };
+		return { valid: false, error: 'clientState is required' };
 	}
 	const allMatch = payload.value.every(
 		(n) => n.clientState === expectedClientState,

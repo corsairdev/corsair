@@ -1,5 +1,6 @@
 import type { TeamsWebhooks } from '..';
 import { makeTeamsRequest } from '../client';
+import { toChannelRecord } from '../endpoints/channels';
 import type { TeamsEndpointOutputs } from '../endpoints/types';
 import { logEventFromContext } from '../../utils/events';
 import { createTeamsNotificationMatch, extractODataId, verifyTeamsClientState } from './types';
@@ -42,18 +43,10 @@ export const channelCreated: TeamsWebhooks['channelCreated'] = {
 							`teams/${teamId}/channels/${channelId}`,
 							accessToken,
 						);
-						const entity = await ctx.db.channels.upsertByEntityId(channelId, {
-							id: channelId,
-							teamId,
-							displayName: fullChannel.displayName,
-							description: fullChannel.description,
-							email: fullChannel.email ?? undefined,
-							webUrl: fullChannel.webUrl ?? undefined,
-							membershipType: fullChannel.membershipType ?? undefined,
-							isFavoriteByDefault: fullChannel.isFavoriteByDefault,
-							createdDateTime: fullChannel.createdDateTime ?? undefined,
-							createdAt: fullChannel.createdDateTime ? new Date(fullChannel.createdDateTime) : undefined,
-						});
+						const entity = await ctx.db.channels.upsertByEntityId(
+							channelId,
+							toChannelRecord(fullChannel, teamId),
+						);
 						corsairEntityId = entity?.id || '';
 					}
 				}

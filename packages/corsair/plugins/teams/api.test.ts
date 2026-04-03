@@ -4,17 +4,23 @@ import type {
 	TeamsListResponse,
 	TeamsGetResponse,
 	TeamsCreateResponse,
+	TeamsUpdateResponse,
+	TeamsDeleteResponse,
 	ChannelsListResponse,
 	ChannelsGetResponse,
 	ChannelsCreateResponse,
+	ChannelsUpdateResponse,
+	ChannelsDeleteResponse,
 	MessagesListResponse,
 	MessagesGetResponse,
 	MessagesSendResponse,
 	MessagesReplyResponse,
 	MessagesListRepliesResponse,
+	MessagesDeleteResponse,
 	MembersListResponse,
 	MembersGetResponse,
 	MembersAddResponse,
+	MembersRemoveResponse,
 	ChatsListResponse,
 	ChatsGetResponse,
 	ChatsCreateResponse,
@@ -72,6 +78,40 @@ describe('Teams API Type Tests', () => {
 			});
 
 			TeamsEndpointOutputSchemas.teamsCreate.parse(result);
+		});
+
+		it('teamsUpdate returns correct type', async () => {
+			let teamId = TEST_TEAM_ID;
+			if (!teamId) {
+				const listResult = await makeTeamsRequest<TeamsListResponse>('teams', ACCESS_TOKEN, {
+					method: 'GET',
+					query: { '$top': 1 },
+				});
+				teamId = listResult.value?.[0]?.id;
+				if (!teamId) throw new Error('No teams found');
+			}
+
+			const result = await makeTeamsRequest<TeamsUpdateResponse>(`teams/${teamId}`, ACCESS_TOKEN, {
+				method: 'PATCH',
+				body: {
+					description: `Updated by API test at ${new Date().toISOString()}`,
+				},
+			});
+
+			TeamsEndpointOutputSchemas.teamsUpdate.parse(result);
+		});
+
+		it('teamsDelete returns correct type', async () => {
+			if (!TEST_TEAM_ID) {
+				console.warn('teamsDelete: set TEST_TEAMS_TEAM_ID to test deletion against a disposable team');
+				return;
+			}
+
+			const result = await makeTeamsRequest<TeamsDeleteResponse>(`teams/${TEST_TEAM_ID}`, ACCESS_TOKEN, {
+				method: 'DELETE',
+			});
+
+			TeamsEndpointOutputSchemas.teamsDelete.parse(result);
 		});
 	});
 
@@ -139,6 +179,56 @@ describe('Teams API Type Tests', () => {
 			);
 
 			TeamsEndpointOutputSchemas.channelsCreate.parse(result);
+		});
+
+		it('channelsUpdate returns correct type', async () => {
+			let channelId = TEST_CHANNEL_ID;
+			if (!channelId) {
+				const listResult = await makeTeamsRequest<ChannelsListResponse>(
+					`teams/${teamId}/channels`,
+					ACCESS_TOKEN,
+				);
+				channelId = listResult.value?.[0]?.id;
+				if (!channelId) throw new Error('No channels found');
+			}
+
+			const result = await makeTeamsRequest<ChannelsUpdateResponse>(
+				`teams/${teamId}/channels/${channelId}`,
+				ACCESS_TOKEN,
+				{
+					method: 'PATCH',
+					body: {
+						description: `Updated by API test at ${new Date().toISOString()}`,
+					},
+				},
+			);
+
+			TeamsEndpointOutputSchemas.channelsUpdate.parse(result);
+		});
+
+		it('channelsDelete returns correct type', async () => {
+			// Create a disposable channel to delete
+			const created = await makeTeamsRequest<ChannelsCreateResponse>(
+				`teams/${teamId}/channels`,
+				ACCESS_TOKEN,
+				{
+					method: 'POST',
+					body: {
+						displayName: `Delete Test ${Date.now()}`,
+						description: 'Created for delete test',
+						membershipType: 'standard',
+					},
+				},
+			);
+			if (!created.id) throw new Error('Failed to create channel for delete test');
+
+			const result = await makeTeamsRequest<ChannelsDeleteResponse>(
+				`teams/${teamId}/channels/${created.id}`,
+				ACCESS_TOKEN,
+				{ method: 'DELETE' },
+			);
+
+			TeamsEndpointOutputSchemas.channelsDelete.parse(result);
 		});
 	});
 
@@ -280,6 +370,29 @@ describe('Teams API Type Tests', () => {
 
 			TeamsEndpointOutputSchemas.messagesListReplies.parse(result);
 		});
+
+		it('messagesDelete returns correct type', async () => {
+			// Create a disposable message to delete
+			const created = await makeTeamsRequest<MessagesSendResponse>(
+				`teams/${teamId}/channels/${channelId}/messages`,
+				ACCESS_TOKEN,
+				{
+					method: 'POST',
+					body: {
+						body: { content: 'Test message to delete', contentType: 'text' },
+					},
+				},
+			);
+			if (!created.id) throw new Error('Failed to create message for delete test');
+
+			const result = await makeTeamsRequest<MessagesDeleteResponse>(
+				`teams/${teamId}/channels/${channelId}/messages/${created.id}`,
+				ACCESS_TOKEN,
+				{ method: 'DELETE' },
+			);
+
+			TeamsEndpointOutputSchemas.messagesDelete.parse(result);
+		});
 	});
 
 	describe('members', () => {
@@ -360,6 +473,44 @@ describe('Teams API Type Tests', () => {
 			);
 
 			TeamsEndpointOutputSchemas.membersAdd.parse(result);
+		});
+
+		it('membersRemove returns correct type', async () => {
+			// Find a non-member user to add temporarily, then remove
+			const [orgUsers, existingMembers] = await Promise.all([
+				makeTeamsRequest<{ value: Array<{ id: string }> }>('users', ACCESS_TOKEN, {
+					query: { '$top': 999, '$select': 'id' },
+				}),
+				makeTeamsRequest<MembersListResponse>(`teams/${teamId}/members`, ACCESS_TOKEN),
+			]);
+			const memberUserIds = new Set(existingMembers.value.map(m => m.userId).filter(Boolean));
+			const userId = TEST_USER_ID ?? orgUsers.value.find(u => !memberUserIds.has(u.id))?.id;
+			if (!userId) {
+				console.warn('membersRemove: no available non-member users, skipping');
+				return;
+			}
+
+			const added = await makeTeamsRequest<MembersAddResponse>(
+				`teams/${teamId}/members`,
+				ACCESS_TOKEN,
+				{
+					method: 'POST',
+					body: {
+						'@odata.type': '#microsoft.graph.aadUserConversationMember',
+						roles: ['member'],
+						'user@odata.bind': `https://graph.microsoft.com/v1.0/users('${userId}')`,
+					},
+				},
+			);
+			if (!added.id) throw new Error('Failed to add member for remove test');
+
+			const result = await makeTeamsRequest<MembersRemoveResponse>(
+				`teams/${teamId}/members/${added.id}`,
+				ACCESS_TOKEN,
+				{ method: 'DELETE' },
+			);
+
+			TeamsEndpointOutputSchemas.membersRemove.parse(result);
 		});
 	});
 

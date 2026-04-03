@@ -370,10 +370,9 @@ export function teams<const T extends TeamsPluginOptions>(
 			const headers = request.headers;
 			// Microsoft Graph sends notifications as POST with application/json
 			// We match on a custom header that a proxy/middleware should set,
-			// or fall back to checking Content-Type for Teams notification shape.
 			const hasTeamsHeader = 'x-ms-teams-client-state' in headers;
 			const isJsonPost = headers['content-type']?.includes('application/json') ?? false;
-			return hasTeamsHeader || isJsonPost;
+			return hasTeamsHeader && isJsonPost;
 		},
 		errorHandlers: {
 			...errorHandlers,
@@ -426,8 +425,6 @@ export function teams<const T extends TeamsPluginOptions>(
 						ctx.keys.set_expires_at(String(result.expiresAt)),
 					]);
 				}
-				console.log('result', result);
-
 				return result.accessToken;
 			}
 

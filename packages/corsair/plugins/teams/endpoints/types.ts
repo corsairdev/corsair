@@ -139,11 +139,11 @@ const TeamsListInputSchema = z.object({
 	select: z.string().optional(),
 	top: z.number().optional(),
 	skipToken: z.string().optional(),
-});
+}).passthrough();
 
 const TeamsGetInputSchema = z.object({
 	teamId: z.string(),
-});
+}).passthrough();
 
 const TeamsCreateInputSchema = z.object({
 	displayName: z.string(),
@@ -153,7 +153,7 @@ const TeamsCreateInputSchema = z.object({
 	guestSettings: TeamsGuestSettingsSchema.optional(),
 	messagingSettings: TeamsMessagingSettingsSchema.optional(),
 	funSettings: TeamsFunSettingsSchema.optional(),
-});
+}).passthrough();
 
 const TeamsUpdateInputSchema = z.object({
 	teamId: z.string(),
@@ -164,23 +164,23 @@ const TeamsUpdateInputSchema = z.object({
 	guestSettings: TeamsGuestSettingsSchema.optional(),
 	messagingSettings: TeamsMessagingSettingsSchema.optional(),
 	funSettings: TeamsFunSettingsSchema.optional(),
-});
+}).passthrough();
 
 const TeamsDeleteInputSchema = z.object({
 	teamId: z.string(),
-});
+}).passthrough();
 
 // ── Channel Input Schemas ─────────────────────────────────────────────────────
 
 const ChannelsListInputSchema = z.object({
 	teamId: z.string(),
 	filter: z.string().optional(),
-});
+}).passthrough();
 
 const ChannelsGetInputSchema = z.object({
 	teamId: z.string(),
 	channelId: z.string(),
-});
+}).passthrough();
 
 const ChannelsCreateInputSchema = z.object({
 	teamId: z.string(),
@@ -188,7 +188,7 @@ const ChannelsCreateInputSchema = z.object({
 	description: z.string().optional(),
 	membershipType: z.enum(['standard', 'private', 'shared']).optional(),
 	isFavoriteByDefault: z.boolean().optional(),
-});
+}).passthrough();
 
 const ChannelsUpdateInputSchema = z.object({
 	teamId: z.string(),
@@ -196,12 +196,12 @@ const ChannelsUpdateInputSchema = z.object({
 	displayName: z.string().optional(),
 	description: z.string().optional(),
 	isFavoriteByDefault: z.boolean().optional(),
-});
+}).passthrough();
 
 const ChannelsDeleteInputSchema = z.object({
 	teamId: z.string(),
 	channelId: z.string(),
-});
+}).passthrough();
 
 // ── Message Input Schemas ─────────────────────────────────────────────────────
 
@@ -210,13 +210,13 @@ const MessagesListInputSchema = z.object({
 	channelId: z.string(),
 	top: z.number().optional(),
 	skipToken: z.string().optional(),
-});
+}).passthrough();
 
 const MessagesGetInputSchema = z.object({
 	teamId: z.string(),
 	channelId: z.string(),
 	messageId: z.string(),
-});
+}).passthrough();
 
 const MessagesSendInputSchema = z.object({
 	teamId: z.string(),
@@ -224,10 +224,10 @@ const MessagesSendInputSchema = z.object({
 	body: z.object({
 		content: z.string(),
 		contentType: z.enum(['text', 'html']).optional(),
-	}),
+	}).passthrough(),
 	subject: z.string().optional(),
 	importance: z.enum(['normal', 'high', 'urgent']).optional(),
-});
+}).passthrough();
 
 const MessagesReplyInputSchema = z.object({
 	teamId: z.string(),
@@ -236,56 +236,56 @@ const MessagesReplyInputSchema = z.object({
 	body: z.object({
 		content: z.string(),
 		contentType: z.enum(['text', 'html']).optional(),
-	}),
+	}).passthrough(),
 	importance: z.enum(['normal', 'high', 'urgent']).optional(),
-});
+}).passthrough();
 
 const MessagesListRepliesInputSchema = z.object({
 	teamId: z.string(),
 	channelId: z.string(),
 	messageId: z.string(),
 	top: z.number().optional(),
-});
+}).passthrough();
 
 const MessagesDeleteInputSchema = z.object({
 	teamId: z.string(),
 	channelId: z.string(),
 	messageId: z.string(),
-});
+}).passthrough();
 
 // ── Member Input Schemas ──────────────────────────────────────────────────────
 
 const MembersListInputSchema = z.object({
 	teamId: z.string(),
 	filter: z.string().optional(),
-});
+}).passthrough();
 
 const MembersGetInputSchema = z.object({
 	teamId: z.string(),
 	membershipId: z.string(),
-});
+}).passthrough();
 
 const MembersAddInputSchema = z.object({
 	teamId: z.string(),
 	userId: z.string(),
 	roles: z.array(z.enum(['owner', 'member'])).optional(),
-});
+}).passthrough();
 
 const MembersRemoveInputSchema = z.object({
 	teamId: z.string(),
 	membershipId: z.string(),
-});
+}).passthrough();
 
 // ── Chat Input Schemas ────────────────────────────────────────────────────────
 
 const ChatsListInputSchema = z.object({
 	filter: z.string().optional(),
 	top: z.number().optional(),
-});
+}).passthrough();
 
 const ChatsGetInputSchema = z.object({
 	chatId: z.string(),
-});
+}).passthrough();
 
 const ChatsCreateInputSchema = z.object({
 	chatType: z.enum(['oneOnOne', 'group']),
@@ -293,23 +293,23 @@ const ChatsCreateInputSchema = z.object({
 	members: z.array(z.object({
 		userId: z.string(),
 		roles: z.array(z.string()).optional(),
-	})),
-});
+	}).passthrough()),
+}).passthrough();
 
 const ChatsListMessagesInputSchema = z.object({
 	chatId: z.string(),
 	top: z.number().optional(),
 	skipToken: z.string().optional(),
-});
+}).passthrough();
 
 const ChatsSendMessageInputSchema = z.object({
 	chatId: z.string(),
 	body: z.object({
 		content: z.string(),
 		contentType: z.enum(['text', 'html']).optional(),
-	}),
+	}).passthrough(),
 	importance: z.enum(['normal', 'high', 'urgent']).optional(),
-});
+}).passthrough();
 
 // ── Team Response Schemas ─────────────────────────────────────────────────────
 

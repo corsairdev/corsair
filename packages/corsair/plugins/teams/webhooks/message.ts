@@ -13,7 +13,6 @@ export const channelMessage: TeamsWebhooks['channelMessage'] = {
 
 	handler: async (ctx, request) => {
 		const { valid, error } = verifyTeamsClientState(request.payload, ctx.key);
-		console.log('verification', valid, error);
 		if (!valid) {
 			return {
 				success: false,
