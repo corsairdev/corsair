@@ -34,27 +34,27 @@ const TeamsTeamObjectSchema = z.object({
 	id: z.string(),
 	displayName: z.string().optional(),
 	description: z.string().nullable().optional(),
-	internalId: z.string().optional(),
+	internalId: z.string().nullable().optional(),
 	classification: z.string().nullable().optional(),
-	specialization: z.string().optional(),
-	visibility: z.string().optional(),
-	webUrl: z.string().optional(),
-	isArchived: z.boolean().optional(),
-	memberSettings: TeamsMemberSettingsSchema.optional(),
-	guestSettings: TeamsGuestSettingsSchema.optional(),
-	messagingSettings: TeamsMessagingSettingsSchema.optional(),
-	funSettings: TeamsFunSettingsSchema.optional(),
+	specialization: z.string().nullable().optional(),
+	visibility: z.string().nullable().optional(),
+	webUrl: z.string().nullable().optional(),
+	isArchived: z.boolean().nullable().optional(),
+	memberSettings: TeamsMemberSettingsSchema.nullable().optional(),
+	guestSettings: TeamsGuestSettingsSchema.nullable().optional(),
+	messagingSettings: TeamsMessagingSettingsSchema.nullable().optional(),
+	funSettings: TeamsFunSettingsSchema.nullable().optional(),
 }).passthrough();
 
 const TeamsChannelObjectSchema = z.object({
 	id: z.string(),
 	displayName: z.string().optional(),
 	description: z.string().nullable().optional(),
-	email: z.string().optional(),
-	webUrl: z.string().optional(),
-	membershipType: z.string().optional(),
+	email: z.string().nullable().optional(),
+	webUrl: z.string().nullable().optional(),
+	membershipType: z.string().nullable().optional(),
 	isFavoriteByDefault: z.boolean().nullable().optional(),
-	createdDateTime: z.string().optional(),
+	createdDateTime: z.string().nullable().optional(),
 }).passthrough();
 
 const TeamsMessageBodySchema = z.object({
@@ -322,11 +322,12 @@ const TeamsListResponseSchema = z.object({
 
 const TeamsGetResponseSchema = TeamsTeamObjectSchema;
 
+// Team creation via template is async (202 Accepted, no body)
 const TeamsCreateResponseSchema = z.object({
-	id: z.string(),
+	id: z.string().optional(),
 	displayName: z.string().optional(),
 	description: z.string().nullable().optional(),
-}).passthrough();
+}).passthrough().optional();
 
 const TeamsUpdateResponseSchema = z.object({}).passthrough();
 

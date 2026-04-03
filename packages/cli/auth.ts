@@ -61,6 +61,45 @@ const OAUTH_PROVIDER_CONFIG: Record<string, OAuthProviderConfig> = {
 		tokenUrl: 'https://oauth2.googleapis.com/token',
 		scopes: ['https://www.googleapis.com/auth/calendar'],
 	},
+	teams: {
+		providerName: 'Microsoft',
+		authUrl: 'https://login.microsoftonline.com/common/oauth2/v2.0/authorize',
+		tokenUrl: 'https://login.microsoftonline.com/common/oauth2/v2.0/token',
+		scopes: [
+			'offline_access',
+			'https://graph.microsoft.com/Team.ReadBasic.All',
+			'https://graph.microsoft.com/Channel.ReadBasic.All',
+			'https://graph.microsoft.com/ChannelMessage.Read.All',
+			'https://graph.microsoft.com/ChannelMessage.Send',
+			'https://graph.microsoft.com/Chat.ReadWrite',
+			'https://graph.microsoft.com/ChatMessage.Read',
+			'https://graph.microsoft.com/ChatMessage.Send',
+			'https://graph.microsoft.com/TeamMember.ReadWrite.All',
+			'https://graph.microsoft.com/Subscription.Read.All',
+		],
+	},
+	onedrive: {
+		providerName: 'Microsoft',
+		authUrl: 'https://login.microsoftonline.com/common/oauth2/v2.0/authorize',
+		tokenUrl: 'https://login.microsoftonline.com/common/oauth2/v2.0/token',
+		scopes: [
+			'offline_access',
+			'https://graph.microsoft.com/Files.ReadWrite.All',
+			'https://graph.microsoft.com/Sites.ReadWrite.All',
+		],
+	},
+	outlook: {
+		providerName: 'Microsoft',
+		authUrl: 'https://login.microsoftonline.com/common/oauth2/v2.0/authorize',
+		tokenUrl: 'https://login.microsoftonline.com/common/oauth2/v2.0/token',
+		scopes: [
+			'offline_access',
+			'https://graph.microsoft.com/Mail.ReadWrite',
+			'https://graph.microsoft.com/Mail.Send',
+			'https://graph.microsoft.com/MailboxSettings.ReadWrite',
+			'https://graph.microsoft.com/Calendars.ReadWrite',
+		],
+	},
 	spotify: {
 		providerName: 'Spotify',
 		authUrl: 'https://accounts.spotify.com/authorize',
@@ -1131,6 +1170,7 @@ async function executeGetTokens(
 		return;
 	}
 
+	const isMicrosoft = oauthConfig.providerName === 'Microsoft';
 	const port = await findFreePort();
 
 	const redirectUri = isSpotify ? redirectUrl : getRedirectUri(port);
@@ -1142,8 +1182,11 @@ async function executeGetTokens(
 		scope: scopes.join(' '),
 	};
 
-	if (pluginId === 'spotify') {
+	if (isSpotify) {
 		authParams.show_dialog = 'true';
+	} else if (isMicrosoft) {
+		// Microsoft uses offline_access in scopes for refresh tokens — no access_type param
+		authParams.prompt = 'consent';
 	} else {
 		authParams.access_type = 'offline';
 		authParams.prompt = 'consent';

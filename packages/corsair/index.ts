@@ -44,5 +44,6 @@ export { figma } from './plugins/figma';
 export { asana } from './plugins/asana';
 export { typeform } from './plugins/typeform';
 export { jira } from './plugins/jira';
+export { teams } from './plugins/teams';
 
 export { type SetupCorsairOptions, setupCorsair } from './setup/index';

@@ -64,6 +64,7 @@ describe('Teams API Type Tests', () => {
 			const result = await makeTeamsRequest<TeamsCreateResponse>('teams', ACCESS_TOKEN, {
 				method: 'POST',
 				body: {
+					'template@odata.bind': "https://graph.microsoft.com/v1.0/teamsTemplates('standard')",
 					displayName: `Test Team ${Date.now()}`,
 					description: 'Created by API test',
 					visibility: 'private',
@@ -328,9 +329,21 @@ describe('Teams API Type Tests', () => {
 		});
 
 		it('membersAdd returns correct type', async () => {
-			const userId = TEST_USER_ID;
+			let userId = TEST_USER_ID;
 			if (!userId) {
-				throw new Error('TEST_TEAMS_USER_ID env var required for membersAdd test');
+				const [orgUsers, existingMembers] = await Promise.all([
+					makeTeamsRequest<{ value: Array<{ id: string }> }>('users', ACCESS_TOKEN, {
+						query: { '$top': 999, '$select': 'id' },
+					}),
+					makeTeamsRequest<MembersListResponse>(`teams/${teamId}/members`, ACCESS_TOKEN),
+				]);
+				const memberUserIds = new Set(existingMembers.value.map(m => m.userId).filter(Boolean));
+				const candidate = orgUsers.value.find(u => !memberUserIds.has(u.id));
+				if (!candidate) {
+					console.warn('membersAdd: all org users are already team members, skipping');
+					return;
+				}
+				userId = candidate.id;
 			}
 
 			const result = await makeTeamsRequest<MembersAddResponse>(
@@ -391,9 +404,19 @@ describe('Teams API Type Tests', () => {
 		});
 
 		it('chatsCreate returns correct type', async () => {
-			const userId = TEST_USER_ID;
-			if (!userId) {
-				throw new Error('TEST_TEAMS_USER_ID env var required for chatsCreate test');
+			let myId: string;
+			let otherUserId = TEST_USER_ID;
+			const me = await makeTeamsRequest<{ id: string }>('me', ACCESS_TOKEN);
+			myId = me.id;
+			if (!otherUserId) {
+				const orgUsers = await makeTeamsRequest<{ value: Array<{ id: string }> }>('users', ACCESS_TOKEN, {
+					query: { '$top': 5, '$select': 'id' },
+				});
+				const other = orgUsers.value.find(u => u.id !== myId);
+				if (!other) {
+					throw new Error('No other user found to create chat with');
+				}
+				otherUserId = other.id;
 			}
 
 			const result = await makeTeamsRequest<ChatsCreateResponse>('chats', ACCESS_TOKEN, {
@@ -404,7 +427,12 @@ describe('Teams API Type Tests', () => {
 						{
 							'@odata.type': '#microsoft.graph.aadUserConversationMember',
 							roles: ['owner'],
-							'user@odata.bind': `https://graph.microsoft.com/v1.0/users('${userId}')`,
+							'user@odata.bind': `https://graph.microsoft.com/v1.0/users('${myId}')`,
+						},
+						{
+							'@odata.type': '#microsoft.graph.aadUserConversationMember',
+							roles: ['owner'],
+							'user@odata.bind': `https://graph.microsoft.com/v1.0/users('${otherUserId}')`,
 						},
 					],
 				},
