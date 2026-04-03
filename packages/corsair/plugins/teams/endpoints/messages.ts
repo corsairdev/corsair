@@ -3,7 +3,7 @@ import { logEventFromContext } from '../../utils/events';
 import { makeTeamsRequest } from '../client';
 import type { TeamsEndpointOutputs } from './types';
 
-function toMessageRecord(
+export function toMessageRecord(
 	msg: TeamsEndpointOutputs['messagesGet'],
 	overrides: {
 		teamId?: string;

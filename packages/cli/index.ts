@@ -623,6 +623,7 @@ function printHelp() {
 	console.log('  # --code "const r = await corsair.slack.api.channels.list(); return r.channels.find(c => c.name === \'general\')?.id"');
 	console.log('');
 	console.log('  corsair watch-renew                             Renew Google webhook watch (Gmail/Drive/Calendar)');
+	console.log('  corsair teams-subscribe                         Create a Microsoft Graph subscription (Teams webhooks)');
 	console.log('  corsair help                                    Show this help message\n');
 }
 
@@ -662,6 +663,12 @@ async function main() {
 	if (command === 'watch-renew') {
 		const { runWatchRenew } = await import('./watch-renew');
 		await runWatchRenew({ cwd });
+		return;
+	}
+
+	if (command === 'teams-subscribe') {
+		const { runTeamsSubscribe } = await import('./watch-renew');
+		await runTeamsSubscribe({ cwd });
 		return;
 	}
 

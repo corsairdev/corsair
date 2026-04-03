@@ -119,6 +119,16 @@ function parseBody(body: unknown): unknown {
 	return body ?? {};
 }
 
+/**
+ * Extracts the ID from a Microsoft Graph OData path segment.
+ * e.g. "teams('bffe3fd3-...')" → "bffe3fd3-..."
+ * Falls back to the raw segment if it doesn't match the OData pattern.
+ */
+export function extractODataId(segment: string): string {
+	const match = segment.match(/\('([^']+)'\)/);
+	return match?.[1] ?? segment;
+}
+
 export function createTeamsNotificationMatch(
 	resourcePattern: RegExp,
 	odataType?: string,

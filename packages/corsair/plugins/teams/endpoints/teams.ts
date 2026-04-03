@@ -22,8 +22,15 @@ export const list: TeamsEndpoints['teamsList'] = async (ctx, input) => {
 		try {
 			for (const team of result.value) {
 				await ctx.db.teams.upsertByEntityId(team.id, {
-					...team,
 					id: team.id,
+					displayName: team.displayName,
+					description: team.description,
+					internalId: team.internalId ?? undefined,
+					classification: team.classification,
+					specialization: team.specialization ?? undefined,
+					visibility: team.visibility ?? undefined,
+					webUrl: team.webUrl ?? undefined,
+					isArchived: team.isArchived ?? undefined,
 				});
 			}
 		} catch (error) {
@@ -45,8 +52,15 @@ export const get: TeamsEndpoints['teamsGet'] = async (ctx, input) => {
 	if (result.id && ctx.db.teams) {
 		try {
 			await ctx.db.teams.upsertByEntityId(result.id, {
-				...result,
 				id: result.id,
+				displayName: result.displayName,
+				description: result.description,
+				internalId: result.internalId ?? undefined,
+				classification: result.classification,
+				specialization: result.specialization ?? undefined,
+				visibility: result.visibility ?? undefined,
+				webUrl: result.webUrl ?? undefined,
+				isArchived: result.isArchived ?? undefined,
 			});
 		} catch (error) {
 			console.warn('Failed to save team to database:', error);
@@ -67,11 +81,12 @@ export const create: TeamsEndpoints['teamsCreate'] = async (ctx, input) => {
 		},
 	);
 
-	if (result.id && ctx.db.teams) {
+	if (result?.id && ctx.db.teams) {
 		try {
 			await ctx.db.teams.upsertByEntityId(result.id, {
-				...result,
 				id: result.id,
+				displayName: result.displayName,
+				description: result.description,
 			});
 		} catch (error) {
 			console.warn('Failed to save new team to database:', error);
@@ -79,7 +94,7 @@ export const create: TeamsEndpoints['teamsCreate'] = async (ctx, input) => {
 	}
 
 	await logEventFromContext(ctx, 'teams.teams.create', { displayName: input.displayName }, 'completed');
-	return result;
+	return result ?? {};
 };
 
 export const update: TeamsEndpoints['teamsUpdate'] = async (ctx, input) => {

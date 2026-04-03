@@ -1,10 +1,13 @@
 import type { TeamsWebhooks } from '..';
+import { makeTeamsRequest } from '../client';
+import { toMessageRecord } from '../endpoints/messages';
+import type { TeamsEndpointOutputs } from '../endpoints/types';
 import { logEventFromContext } from '../../utils/events';
-import { createTeamsNotificationMatch, verifyTeamsClientState } from './types';
+import { createTeamsNotificationMatch, extractODataId, verifyTeamsClientState } from './types';
 
 export const chatMessage: TeamsWebhooks['chatMessage'] = {
 	match: createTeamsNotificationMatch(
-		/chats\/[^/]+\/messages/,
+		/chats\([^)]+\)\/messages/,
 		'#Microsoft.Graph.chatMessage',
 	),
 
@@ -21,24 +24,28 @@ export const chatMessage: TeamsWebhooks['chatMessage'] = {
 		const { value: notifications } = request.payload;
 		let corsairEntityId = '';
 
+		const accessToken = await ctx.keys.get_access_token();
+
 		if (ctx.db.messages) {
 			try {
-				for (const { resourceData, resource, changeType, ...notificationMeta } of notifications) {
+				for (const { resourceData, resource, changeType } of notifications) {
 					const messageId = resourceData?.id;
 					if (!messageId) continue;
 
-					// resource format: chats/{chatId}/messages/{messageId}
-					const [, chatId = ''] = resource.split('/');
+					// resource format: chats('chatId')/messages('messageId')
+					const chatId = extractODataId(resource.split('/')[0] ?? '');
 
 					if (changeType === 'deleted') {
 						await ctx.db.messages.deleteByEntityId(messageId);
-					} else {
-						const entity = await ctx.db.messages.upsertByEntityId(messageId, {
-							...notificationMeta,
-							id: messageId,
-							chatId,
-							createdAt: new Date(),
-						});
+					} else if (accessToken) {
+						const fullMsg = await makeTeamsRequest<TeamsEndpointOutputs['messagesGet']>(
+							`chats/${chatId}/messages/${messageId}`,
+							accessToken,
+						);
+						const entity = await ctx.db.messages.upsertByEntityId(
+							messageId,
+							toMessageRecord(fullMsg, { chatId }),
+						);
 						corsairEntityId = entity?.id || '';
 					}
 				}

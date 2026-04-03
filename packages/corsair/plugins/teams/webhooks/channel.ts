@@ -1,10 +1,12 @@
 import type { TeamsWebhooks } from '..';
+import { makeTeamsRequest } from '../client';
+import type { TeamsEndpointOutputs } from '../endpoints/types';
 import { logEventFromContext } from '../../utils/events';
-import { createTeamsNotificationMatch, verifyTeamsClientState } from './types';
+import { createTeamsNotificationMatch, extractODataId, verifyTeamsClientState } from './types';
 
 export const channelCreated: TeamsWebhooks['channelCreated'] = {
 	match: createTeamsNotificationMatch(
-		/teams\/[^/]+\/channels/,
+		/teams\([^)]+\)\/channels/,
 		'#Microsoft.Graph.channel',
 	),
 
@@ -22,24 +24,35 @@ export const channelCreated: TeamsWebhooks['channelCreated'] = {
 		const notifications = request.payload.value;
 		let corsairEntityId = '';
 
+		const accessToken = await ctx.keys.get_access_token();
+
 		if (ctx.db.channels) {
 			try {
 				for (const notification of notifications) {
 					const channelId = notification.resourceData?.id;
 					if (!channelId) continue;
 
-					// Extract teamId from the resource path
-					// resource format: teams/{teamId}/channels/{channelId}
-					const resourceParts = notification.resource.split('/');
-					const teamId = resourceParts[1] ?? '';
+					// resource format: teams('teamId')/channels('channelId')
+					const teamId = extractODataId(notification.resource.split('/')[0] ?? '');
 
 					if (notification.changeType === 'deleted') {
 						await ctx.db.channels.deleteByEntityId(channelId);
-					} else {
+					} else if (accessToken) {
+						const fullChannel = await makeTeamsRequest<TeamsEndpointOutputs['channelsGet']>(
+							`teams/${teamId}/channels/${channelId}`,
+							accessToken,
+						);
 						const entity = await ctx.db.channels.upsertByEntityId(channelId, {
 							id: channelId,
 							teamId,
-							createdAt: new Date(),
+							displayName: fullChannel.displayName,
+							description: fullChannel.description,
+							email: fullChannel.email ?? undefined,
+							webUrl: fullChannel.webUrl ?? undefined,
+							membershipType: fullChannel.membershipType ?? undefined,
+							isFavoriteByDefault: fullChannel.isFavoriteByDefault,
+							createdDateTime: fullChannel.createdDateTime ?? undefined,
+							createdAt: fullChannel.createdDateTime ? new Date(fullChannel.createdDateTime) : undefined,
 						});
 						corsairEntityId = entity?.id || '';
 					}

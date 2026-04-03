@@ -1,10 +1,12 @@
 import type { TeamsWebhooks } from '..';
+import { makeTeamsRequest } from '../client';
+import type { TeamsEndpointOutputs } from '../endpoints/types';
 import { logEventFromContext } from '../../utils/events';
-import { createTeamsNotificationMatch, verifyTeamsClientState } from './types';
+import { createTeamsNotificationMatch, extractODataId, verifyTeamsClientState } from './types';
 
 export const membershipChanged: TeamsWebhooks['membershipChanged'] = {
 	match: createTeamsNotificationMatch(
-		/teams\/[^/]+\/members/,
+		/teams\([^)]+\)\/members/,
 		'#Microsoft.Graph.aadUserConversationMember',
 	),
 
@@ -22,21 +24,26 @@ export const membershipChanged: TeamsWebhooks['membershipChanged'] = {
 		const notifications = request.payload.value;
 		let corsairEntityId = '';
 
+		const accessToken = await ctx.keys.get_access_token();
+
 		if (ctx.db.members) {
 			try {
 				for (const notification of notifications) {
 					const membershipId = notification.resourceData?.id;
 					if (!membershipId) continue;
 
-					// Extract teamId from the resource path
-					// resource format: teams/{teamId}/members/{membershipId}
-					const resourceParts = notification.resource.split('/');
-					const teamId = resourceParts[1] ?? '';
+					// resource format: teams('teamId')/members('membershipId')
+					const teamId = extractODataId(notification.resource.split('/')[0] ?? '');
 
 					if (notification.changeType === 'deleted') {
 						await ctx.db.members.deleteByEntityId(membershipId);
-					} else {
+					} else if (accessToken) {
+						const fullMember = await makeTeamsRequest<TeamsEndpointOutputs['membersGet']>(
+							`teams/${teamId}/members/${membershipId}`,
+							accessToken,
+						);
 						const entity = await ctx.db.members.upsertByEntityId(membershipId, {
+							...fullMember,
 							id: membershipId,
 							teamId,
 						});

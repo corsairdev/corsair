@@ -19,9 +19,15 @@ export const list: TeamsEndpoints['channelsList'] = async (ctx, input) => {
 		try {
 			for (const channel of result.value) {
 				await ctx.db.channels.upsertByEntityId(channel.id, {
-					...channel,
 					id: channel.id,
 					teamId,
+					displayName: channel.displayName,
+					description: channel.description,
+					email: channel.email ?? undefined,
+					webUrl: channel.webUrl ?? undefined,
+					membershipType: channel.membershipType ?? undefined,
+					isFavoriteByDefault: channel.isFavoriteByDefault,
+					createdDateTime: channel.createdDateTime ?? undefined,
 					createdAt: channel.createdDateTime ? new Date(channel.createdDateTime) : undefined,
 				});
 			}
@@ -46,9 +52,15 @@ export const get: TeamsEndpoints['channelsGet'] = async (ctx, input) => {
 	if (result.id && ctx.db.channels) {
 		try {
 			await ctx.db.channels.upsertByEntityId(result.id, {
-				...result,
 				id: result.id,
 				teamId,
+				displayName: result.displayName,
+				description: result.description,
+				email: result.email ?? undefined,
+				webUrl: result.webUrl ?? undefined,
+				membershipType: result.membershipType ?? undefined,
+				isFavoriteByDefault: result.isFavoriteByDefault,
+				createdDateTime: result.createdDateTime ?? undefined,
 				createdAt: result.createdDateTime ? new Date(result.createdDateTime) : undefined,
 			});
 		} catch (error) {
@@ -75,9 +87,15 @@ export const create: TeamsEndpoints['channelsCreate'] = async (ctx, input) => {
 	if (result.id && ctx.db.channels) {
 		try {
 			await ctx.db.channels.upsertByEntityId(result.id, {
-				...result,
 				id: result.id,
 				teamId,
+				displayName: result.displayName,
+				description: result.description,
+				email: result.email ?? undefined,
+				webUrl: result.webUrl ?? undefined,
+				membershipType: result.membershipType ?? undefined,
+				isFavoriteByDefault: result.isFavoriteByDefault,
+				createdDateTime: result.createdDateTime ?? undefined,
 				createdAt: result.createdDateTime ? new Date(result.createdDateTime) : undefined,
 			});
 		} catch (error) {
