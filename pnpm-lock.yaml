@@ -48,9 +48,27 @@ importers:
       '@anthropic-ai/claude-agent-sdk':
         specifier: ^0.2.0
         version: 0.2.71(zod@3.25.76)
+      '@corsair-dev/github':
+        specifier: workspace:*
+        version: link:../../packages/github
+      '@corsair-dev/gmail':
+        specifier: workspace:*
+        version: link:../../packages/gmail
+      '@corsair-dev/googlecalendar':
+        specifier: workspace:*
+        version: link:../../packages/googlecalendar
+      '@corsair-dev/googlesheets':
+        specifier: workspace:*
+        version: link:../../packages/googlesheets
+      '@corsair-dev/linear':
+        specifier: workspace:*
+        version: link:../../packages/linear
       '@corsair-dev/mcp':
         specifier: workspace:*
         version: link:../../packages/mcp
+      '@corsair-dev/slack':
+        specifier: workspace:*
+        version: link:../../packages/slack
       '@tanstack/react-query':
         specifier: ^5.62.14
         version: 5.90.20(react@18.3.1)
@@ -239,6 +257,96 @@ importers:
         specifier: ^5
         version: 5.9.3
 
+  packages/airtable:
+    devDependencies:
+      corsair:
+        specifier: workspace:*
+        version: link:../corsair
+      tsup:
+        specifier: ^8.0.1
+        version: 8.5.1(jiti@2.6.1)(postcss@8.5.6)(tsx@4.20.6)(typescript@5.9.3)(yaml@2.8.1)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+      zod:
+        specifier: ^3.25.76
+        version: 3.25.76
+
+  packages/amplitude:
+    devDependencies:
+      corsair:
+        specifier: workspace:*
+        version: link:../corsair
+      tsup:
+        specifier: ^8.0.1
+        version: 8.5.1(jiti@2.6.1)(postcss@8.5.6)(tsx@4.20.6)(typescript@5.9.3)(yaml@2.8.1)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+      zod:
+        specifier: ^3.25.76
+        version: 3.25.76
+
+  packages/asana:
+    devDependencies:
+      corsair:
+        specifier: workspace:*
+        version: link:../corsair
+      tsup:
+        specifier: ^8.0.1
+        version: 8.5.1(jiti@2.6.1)(postcss@8.5.6)(tsx@4.20.6)(typescript@5.9.3)(yaml@2.8.1)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+      zod:
+        specifier: ^3.25.76
+        version: 3.25.76
+
+  packages/box:
+    devDependencies:
+      corsair:
+        specifier: workspace:*
+        version: link:../corsair
+      tsup:
+        specifier: ^8.0.1
+        version: 8.5.1(jiti@2.6.1)(postcss@8.5.6)(tsx@4.20.6)(typescript@5.9.3)(yaml@2.8.1)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+      zod:
+        specifier: ^3.25.76
+        version: 3.25.76
+
+  packages/cal:
+    devDependencies:
+      corsair:
+        specifier: workspace:*
+        version: link:../corsair
+      tsup:
+        specifier: ^8.0.1
+        version: 8.5.1(jiti@2.6.1)(postcss@8.5.6)(tsx@4.20.6)(typescript@5.9.3)(yaml@2.8.1)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+      zod:
+        specifier: ^3.25.76
+        version: 3.25.76
+
+  packages/calendly:
+    devDependencies:
+      corsair:
+        specifier: workspace:*
+        version: link:../corsair
+      tsup:
+        specifier: ^8.0.1
+        version: 8.5.1(jiti@2.6.1)(postcss@8.5.6)(tsx@4.20.6)(typescript@5.9.3)(yaml@2.8.1)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+      zod:
+        specifier: ^3.25.76
+        version: 3.25.76
+
   packages/cli:
     dependencies:
       '@babel/core':
@@ -280,7 +388,7 @@ importers:
         version: 2.6.1
       ts-jest:
         specifier: ^29.1.1
-        version: 29.4.6(@babel/core@7.28.6)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.28.6))(esbuild@0.27.0)(jest-util@29.7.0)(jest@29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3)))(typescript@5.9.3)
+        version: 29.4.6(@babel/core@7.28.6)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.28.6))(jest-util@29.7.0)(jest@29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3)))(typescript@5.9.3)
       ts-node:
         specifier: ^10.9.2
         version: 10.9.2(@types/node@24.10.1)(typescript@5.9.3)
@@ -332,7 +440,7 @@ importers:
         version: 4.1.1
       ts-jest:
         specifier: ^29.1.1
-        version: 29.4.6(@babel/core@7.28.6)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.28.6))(esbuild@0.27.0)(jest-util@29.7.0)(jest@29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3)))(typescript@5.9.3)
+        version: 29.4.6(@babel/core@7.28.6)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.28.6))(jest-util@29.7.0)(jest@29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3)))(typescript@5.9.3)
       ts-node:
         specifier: ^10.9.2
         version: 10.9.2(@types/node@24.10.1)(typescript@5.9.3)
@@ -345,6 +453,231 @@ importers:
       typescript:
         specifier: ^5.3.3
         version: 5.9.3
+
+  packages/discord:
+    devDependencies:
+      corsair:
+        specifier: workspace:*
+        version: link:../corsair
+      tsup:
+        specifier: ^8.0.1
+        version: 8.5.1(jiti@2.6.1)(postcss@8.5.6)(tsx@4.20.6)(typescript@5.9.3)(yaml@2.8.1)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+      zod:
+        specifier: ^3.25.76
+        version: 3.25.76
+
+  packages/dropbox:
+    devDependencies:
+      corsair:
+        specifier: workspace:*
+        version: link:../corsair
+      tsup:
+        specifier: ^8.0.1
+        version: 8.5.1(jiti@2.6.1)(postcss@8.5.6)(tsx@4.20.6)(typescript@5.9.3)(yaml@2.8.1)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+      zod:
+        specifier: ^3.25.76
+        version: 3.25.76
+
+  packages/exa:
+    devDependencies:
+      corsair:
+        specifier: workspace:*
+        version: link:../corsair
+      tsup:
+        specifier: ^8.0.1
+        version: 8.5.1(jiti@2.6.1)(postcss@8.5.6)(tsx@4.20.6)(typescript@5.9.3)(yaml@2.8.1)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+      zod:
+        specifier: ^3.25.76
+        version: 3.25.76
+
+  packages/figma:
+    devDependencies:
+      corsair:
+        specifier: workspace:*
+        version: link:../corsair
+      tsup:
+        specifier: ^8.0.1
+        version: 8.5.1(jiti@2.6.1)(postcss@8.5.6)(tsx@4.20.6)(typescript@5.9.3)(yaml@2.8.1)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+      zod:
+        specifier: ^3.25.76
+        version: 3.25.76
+
+  packages/fireflies:
+    devDependencies:
+      corsair:
+        specifier: workspace:*
+        version: link:../corsair
+      tsup:
+        specifier: ^8.0.1
+        version: 8.5.1(jiti@2.6.1)(postcss@8.5.6)(tsx@4.20.6)(typescript@5.9.3)(yaml@2.8.1)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+      zod:
+        specifier: ^3.25.76
+        version: 3.25.76
+
+  packages/github:
+    devDependencies:
+      corsair:
+        specifier: workspace:*
+        version: link:../corsair
+      tsup:
+        specifier: ^8.0.1
+        version: 8.5.1(jiti@2.6.1)(postcss@8.5.6)(tsx@4.20.6)(typescript@5.9.3)(yaml@2.8.1)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+      zod:
+        specifier: ^3.25.76
+        version: 3.25.76
+
+  packages/gmail:
+    devDependencies:
+      corsair:
+        specifier: workspace:*
+        version: link:../corsair
+      tsup:
+        specifier: ^8.0.1
+        version: 8.5.1(jiti@2.6.1)(postcss@8.5.6)(tsx@4.20.6)(typescript@5.9.3)(yaml@2.8.1)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+      zod:
+        specifier: ^3.25.76
+        version: 3.25.76
+
+  packages/googlecalendar:
+    devDependencies:
+      corsair:
+        specifier: workspace:*
+        version: link:../corsair
+      tsup:
+        specifier: ^8.0.1
+        version: 8.5.1(jiti@2.6.1)(postcss@8.5.6)(tsx@4.20.6)(typescript@5.9.3)(yaml@2.8.1)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+      zod:
+        specifier: ^3.25.76
+        version: 3.25.76
+
+  packages/googledrive:
+    devDependencies:
+      corsair:
+        specifier: workspace:*
+        version: link:../corsair
+      tsup:
+        specifier: ^8.0.1
+        version: 8.5.1(jiti@2.6.1)(postcss@8.5.6)(tsx@4.20.6)(typescript@5.9.3)(yaml@2.8.1)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+      zod:
+        specifier: ^3.25.76
+        version: 3.25.76
+
+  packages/googlesheets:
+    devDependencies:
+      corsair:
+        specifier: workspace:*
+        version: link:../corsair
+      tsup:
+        specifier: ^8.0.1
+        version: 8.5.1(jiti@2.6.1)(postcss@8.5.6)(tsx@4.20.6)(typescript@5.9.3)(yaml@2.8.1)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+      zod:
+        specifier: ^3.25.76
+        version: 3.25.76
+
+  packages/hackernews:
+    devDependencies:
+      corsair:
+        specifier: workspace:*
+        version: link:../corsair
+      tsup:
+        specifier: ^8.0.1
+        version: 8.5.1(jiti@2.6.1)(postcss@8.5.6)(tsx@4.20.6)(typescript@5.9.3)(yaml@2.8.1)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+      zod:
+        specifier: ^3.25.76
+        version: 3.25.76
+
+  packages/hubspot:
+    devDependencies:
+      corsair:
+        specifier: workspace:*
+        version: link:../corsair
+      tsup:
+        specifier: ^8.0.1
+        version: 8.5.1(jiti@2.6.1)(postcss@8.5.6)(tsx@4.20.6)(typescript@5.9.3)(yaml@2.8.1)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+      zod:
+        specifier: ^3.25.76
+        version: 3.25.76
+
+  packages/intercom:
+    devDependencies:
+      corsair:
+        specifier: workspace:*
+        version: link:../corsair
+      tsup:
+        specifier: ^8.0.1
+        version: 8.5.1(jiti@2.6.1)(postcss@8.5.6)(tsx@4.20.6)(typescript@5.9.3)(yaml@2.8.1)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+      zod:
+        specifier: ^3.25.76
+        version: 3.25.76
+
+  packages/jira:
+    devDependencies:
+      corsair:
+        specifier: workspace:*
+        version: link:../corsair
+      tsup:
+        specifier: ^8.0.1
+        version: 8.5.1(jiti@2.6.1)(postcss@8.5.6)(tsx@4.20.6)(typescript@5.9.3)(yaml@2.8.1)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+      zod:
+        specifier: ^3.25.76
+        version: 3.25.76
+
+  packages/linear:
+    devDependencies:
+      corsair:
+        specifier: workspace:*
+        version: link:../corsair
+      tsup:
+        specifier: ^8.0.1
+        version: 8.5.1(jiti@2.6.1)(postcss@8.5.6)(tsx@4.20.6)(typescript@5.9.3)(yaml@2.8.1)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+      zod:
+        specifier: ^3.25.76
+        version: 3.25.76
 
   packages/mcp:
     dependencies:
@@ -392,8 +725,285 @@ importers:
         specifier: ^5.8.0
         version: 5.9.3
 
+  packages/monday:
+    devDependencies:
+      corsair:
+        specifier: workspace:*
+        version: link:../corsair
+      tsup:
+        specifier: ^8.0.1
+        version: 8.5.1(jiti@2.6.1)(postcss@8.5.6)(tsx@4.20.6)(typescript@5.9.3)(yaml@2.8.1)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+      zod:
+        specifier: ^3.25.76
+        version: 3.25.76
+
+  packages/notion:
+    devDependencies:
+      corsair:
+        specifier: workspace:*
+        version: link:../corsair
+      tsup:
+        specifier: ^8.0.1
+        version: 8.5.1(jiti@2.6.1)(postcss@8.5.6)(tsx@4.20.6)(typescript@5.9.3)(yaml@2.8.1)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+      zod:
+        specifier: ^3.25.76
+        version: 3.25.76
+
+  packages/oura:
+    devDependencies:
+      corsair:
+        specifier: workspace:*
+        version: link:../corsair
+      tsup:
+        specifier: ^8.0.1
+        version: 8.5.1(jiti@2.6.1)(postcss@8.5.6)(tsx@4.20.6)(typescript@5.9.3)(yaml@2.8.1)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+      zod:
+        specifier: ^3.25.76
+        version: 3.25.76
+
+  packages/pagerduty:
+    devDependencies:
+      corsair:
+        specifier: workspace:*
+        version: link:../corsair
+      tsup:
+        specifier: ^8.0.1
+        version: 8.5.1(jiti@2.6.1)(postcss@8.5.6)(tsx@4.20.6)(typescript@5.9.3)(yaml@2.8.1)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+      zod:
+        specifier: ^3.25.76
+        version: 3.25.76
+
+  packages/posthog:
+    dependencies:
+      uuid:
+        specifier: ^11.1.0
+        version: 11.1.0
+    devDependencies:
+      '@types/uuid':
+        specifier: ^10.0.0
+        version: 10.0.0
+      corsair:
+        specifier: workspace:*
+        version: link:../corsair
+      tsup:
+        specifier: ^8.0.1
+        version: 8.5.1(jiti@2.6.1)(postcss@8.5.6)(tsx@4.20.6)(typescript@5.9.3)(yaml@2.8.1)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+      zod:
+        specifier: ^3.25.76
+        version: 3.25.76
+
+  packages/resend:
+    devDependencies:
+      corsair:
+        specifier: workspace:*
+        version: link:../corsair
+      tsup:
+        specifier: ^8.0.1
+        version: 8.5.1(jiti@2.6.1)(postcss@8.5.6)(tsx@4.20.6)(typescript@5.9.3)(yaml@2.8.1)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+      zod:
+        specifier: ^3.25.76
+        version: 3.25.76
+
+  packages/sentry:
+    devDependencies:
+      corsair:
+        specifier: workspace:*
+        version: link:../corsair
+      tsup:
+        specifier: ^8.0.1
+        version: 8.5.1(jiti@2.6.1)(postcss@8.5.6)(tsx@4.20.6)(typescript@5.9.3)(yaml@2.8.1)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+      zod:
+        specifier: ^3.25.76
+        version: 3.25.76
+
+  packages/slack:
+    devDependencies:
+      corsair:
+        specifier: workspace:*
+        version: link:../corsair
+      tsup:
+        specifier: ^8.0.1
+        version: 8.5.1(jiti@2.6.1)(postcss@8.5.6)(tsx@4.20.6)(typescript@5.9.3)(yaml@2.8.1)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+      zod:
+        specifier: ^3.25.76
+        version: 3.25.76
+
+  packages/spotify:
+    devDependencies:
+      corsair:
+        specifier: workspace:*
+        version: link:../corsair
+      tsup:
+        specifier: ^8.0.1
+        version: 8.5.1(jiti@2.6.1)(postcss@8.5.6)(tsx@4.20.6)(typescript@5.9.3)(yaml@2.8.1)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+      zod:
+        specifier: ^3.25.76
+        version: 3.25.76
+
+  packages/stripe:
+    devDependencies:
+      corsair:
+        specifier: workspace:*
+        version: link:../corsair
+      tsup:
+        specifier: ^8.0.1
+        version: 8.5.1(jiti@2.6.1)(postcss@8.5.6)(tsx@4.20.6)(typescript@5.9.3)(yaml@2.8.1)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+      zod:
+        specifier: ^3.25.76
+        version: 3.25.76
+
+  packages/tavily:
+    devDependencies:
+      corsair:
+        specifier: workspace:*
+        version: link:../corsair
+      tsup:
+        specifier: ^8.0.1
+        version: 8.5.1(jiti@2.6.1)(postcss@8.5.6)(tsx@4.20.6)(typescript@5.9.3)(yaml@2.8.1)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+      zod:
+        specifier: ^3.25.76
+        version: 3.25.76
+
+  packages/telegram:
+    devDependencies:
+      corsair:
+        specifier: workspace:*
+        version: link:../corsair
+      tsup:
+        specifier: ^8.0.1
+        version: 8.5.1(jiti@2.6.1)(postcss@8.5.6)(tsx@4.20.6)(typescript@5.9.3)(yaml@2.8.1)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+      zod:
+        specifier: ^3.25.76
+        version: 3.25.76
+
+  packages/todoist:
+    devDependencies:
+      corsair:
+        specifier: workspace:*
+        version: link:../corsair
+      tsup:
+        specifier: ^8.0.1
+        version: 8.5.1(jiti@2.6.1)(postcss@8.5.6)(tsx@4.20.6)(typescript@5.9.3)(yaml@2.8.1)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+      zod:
+        specifier: ^3.25.76
+        version: 3.25.76
+
+  packages/trello:
+    devDependencies:
+      corsair:
+        specifier: workspace:*
+        version: link:../corsair
+      tsup:
+        specifier: ^8.0.1
+        version: 8.5.1(jiti@2.6.1)(postcss@8.5.6)(tsx@4.20.6)(typescript@5.9.3)(yaml@2.8.1)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+      zod:
+        specifier: ^3.25.76
+        version: 3.25.76
+
+  packages/twitter:
+    devDependencies:
+      corsair:
+        specifier: workspace:*
+        version: link:../corsair
+      tsup:
+        specifier: ^8.0.1
+        version: 8.5.1(jiti@2.6.1)(postcss@8.5.6)(tsx@4.20.6)(typescript@5.9.3)(yaml@2.8.1)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+      zod:
+        specifier: ^3.25.76
+        version: 3.25.76
+
+  packages/twitterapiio:
+    devDependencies:
+      corsair:
+        specifier: workspace:*
+        version: link:../corsair
+      tsup:
+        specifier: ^8.0.1
+        version: 8.5.1(jiti@2.6.1)(postcss@8.5.6)(tsx@4.20.6)(typescript@5.9.3)(yaml@2.8.1)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+      zod:
+        specifier: ^3.25.76
+        version: 3.25.76
+
+  packages/typeform:
+    devDependencies:
+      corsair:
+        specifier: workspace:*
+        version: link:../corsair
+      tsup:
+        specifier: ^8.0.1
+        version: 8.5.1(jiti@2.6.1)(postcss@8.5.6)(tsx@4.20.6)(typescript@5.9.3)(yaml@2.8.1)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+      zod:
+        specifier: ^3.25.76
+        version: 3.25.76
+
   packages/ui:
     dependencies:
+      '@corsair-dev/cal':
+        specifier: workspace:*
+        version: link:../cal
+      '@corsair-dev/gmail':
+        specifier: workspace:*
+        version: link:../gmail
+      '@corsair-dev/googlecalendar':
+        specifier: workspace:*
+        version: link:../googlecalendar
+      '@corsair-dev/linear':
+        specifier: workspace:*
+        version: link:../linear
+      '@corsair-dev/slack':
+        specifier: workspace:*
+        version: link:../slack
       corsair:
         specifier: workspace:*
         version: link:../corsair
@@ -407,6 +1017,21 @@ importers:
       typescript:
         specifier: ^5.9.3
         version: 5.9.3
+
+  packages/zoom:
+    devDependencies:
+      corsair:
+        specifier: workspace:*
+        version: link:../corsair
+      tsup:
+        specifier: ^8.0.1
+        version: 8.5.1(jiti@2.6.1)(postcss@8.5.6)(tsx@4.20.6)(typescript@5.9.3)(yaml@2.8.1)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+      zod:
+        specifier: ^3.25.76
+        version: 3.25.76
 
 packages:
 
@@ -3189,6 +3814,9 @@ packages:
 
   '@types/unist@3.0.3':
     resolution: {integrity: sha512-ko/gIFJRv177XgZsZcBwnqJN5x/Gien8qNOn0D5bQU/zAzVf9Zt3BlcUiLqhV9y4ARk0GbT3tnUiPNgnTXzc/Q==}
+
+  '@types/uuid@10.0.0':
+    resolution: {integrity: sha512-7gqG38EyHgyP1S+7+xomFtL+ZNHcKv6DwNaCZmJmo1vgMugyF3TCnXVg4t1uk89mLNwnLtnY3TpOpCOyp1/xHQ==}
 
   '@types/ws@8.18.1':
     resolution: {integrity: sha512-ThVF6DCVhA8kUGy+aazFQ4kXQ7E1Ty7A3ypFOe0IcJV8O/M511G99AW24irKrW56Wt44yG9+ij8FaqoBGkuBXg==}
@@ -10356,6 +10984,8 @@ snapshots:
 
   '@types/unist@3.0.3': {}
 
+  '@types/uuid@10.0.0': {}
+
   '@types/ws@8.18.1':
     dependencies:
       '@types/node': 24.10.1
@@ -15171,7 +15801,7 @@ snapshots:
 
   ts-interface-checker@0.1.13: {}
 
-  ts-jest@29.4.6(@babel/core@7.28.6)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.28.6))(esbuild@0.27.0)(jest-util@29.7.0)(jest@29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3)))(typescript@5.9.3):
+  ts-jest@29.4.6(@babel/core@7.28.6)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.28.6))(jest-util@29.7.0)(jest@29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3)))(typescript@5.9.3):
     dependencies:
       bs-logger: 0.2.6
       fast-json-stable-stringify: 2.1.0
@@ -15189,7 +15819,6 @@ snapshots:
       '@jest/transform': 29.7.0
       '@jest/types': 29.6.3
       babel-jest: 29.7.0(@babel/core@7.28.6)
-      esbuild: 0.27.0
       jest-util: 29.7.0
 
   ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3):

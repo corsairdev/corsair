@@ -1,11 +1,11 @@
 import { createCorsair } from 'corsair';
-import { slack } from 'corsair/plugins/slack';
-import { linear } from 'corsair/plugins/linear';
-import { asana } from 'corsair/plugins/asana';
-import { fireflies } from 'corsair/plugins/fireflies';
-import { twitterapiio } from 'corsair/plugins/twitterapiio';
-import { gmail } from 'corsair/plugins/gmail';
 import { sqlite } from '../db';
+import { github } from '@corsair-dev/github';
+import { slack } from '@corsair-dev/slack';
+import { googlesheets } from '@corsair-dev/googlesheets';
+import { googlecalendar } from '@corsair-dev/googlecalendar';
+import { gmail } from '@corsair-dev/gmail';
+import { linear } from '@corsair-dev/linear';
 
 export const corsair = createCorsair({
 	multiTenancy: false,
@@ -15,5 +15,5 @@ export const corsair = createCorsair({
 		timeout: '10m',
 		onTimeout: 'deny',
 	},
-	plugins: [twitterapiio(), slack(), linear(), fireflies(), asana(), gmail()],
+	plugins: [github(), slack(), googlesheets(), googlecalendar(), gmail(), linear()],
 });
