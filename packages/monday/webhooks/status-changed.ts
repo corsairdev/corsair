@@ -1,0 +1,39 @@
+import { logEventFromContext } from 'corsair/core';
+import type { MondayWebhooks } from '..';
+import { createMondayMatch, verifyMondayWebhookSignature } from './types';
+
+export const statusChanged: MondayWebhooks['statusChanged'] = {
+	match: createMondayMatch('change_status_column_value'),
+
+	handler: async (ctx, request) => {
+		// const verification = verifyMondayWebhookSignature(request, ctx.key);
+		// if (!verification.valid) {
+		// 	return {
+		// 		success: false,
+		// 		statusCode: 401,
+		// 		error: verification.error || 'Signature verification failed',
+		// 	};
+		// }
+
+		const event = request.payload.event;
+
+		if (!event || event.type !== 'change_status_column_value') {
+			return {
+				success: true,
+				data: undefined,
+			};
+		}
+
+		await logEventFromContext(
+			ctx,
+			'monday.webhook.status_changed',
+			{ ...event },
+			'completed',
+		);
+
+		return {
+			success: true,
+			data: request.payload,
+		};
+	},
+};

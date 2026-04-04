@@ -1,0 +1,38 @@
+name: Deploy Packages to NPM
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'packages/*/package.json'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.20.0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.x'
+          cache: 'pnpm'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Publish changed packages
+        run: node scripts/publish-changed.mjs
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_CORSAIR_DEV_TOKEN: ${{ secrets.NPM_CORSAIR_DEV_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_CORSAIR_DEV_TOKEN }}

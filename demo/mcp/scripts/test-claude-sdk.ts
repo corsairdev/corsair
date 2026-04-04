@@ -9,7 +9,7 @@ const server = createSdkMcpServer({ name: 'corsair', tools });
 const stream = query({
 	prompt: 'list all slack channels, send test message to sdk-test channel',
 	options: {
-		model: 'claude-opus-4-6',
+		model: 'claude-sonnet-4-6',
 		permissionMode: 'bypassPermissions',
 		allowDangerouslySkipPermissions: false,
 		mcpServers: { corsair: server },

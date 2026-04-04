@@ -1,4 +1,4 @@
-import type { CalBoundEndpoints } from 'corsair/plugins/cal';
+import type { CalBoundEndpoints } from '@corsair-dev/cal'
 import {
 	actionsHtml,
 	buildActionDescriptors,
