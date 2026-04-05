@@ -497,7 +497,7 @@ function listOperations(
 		if (!found.endpoints) return [];
 		const paths: string[] = [];
 		walkEndpointTree(found.endpoints as Record<string, unknown>, [], paths);
-		return paths.map((path) => `${found.id}.api.${path.toLowerCase()}`);
+		return paths.map((path) => `${found.id}.api.${path}`);
 	}
 
 	const result: Record<string, string[]> = {};
@@ -523,7 +523,7 @@ function listOperations(
 			if (!p.endpoints) continue;
 			const paths: string[] = [];
 			walkEndpointTree(p.endpoints as Record<string, unknown>, [], paths);
-			result[p.id] = paths.map((path) => `${p.id}.api.${path.toLowerCase()}`);
+			result[p.id] = paths.map((path) => `${p.id}.api.${path}`);
 		}
 	}
 	return result;
