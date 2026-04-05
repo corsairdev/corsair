@@ -23,7 +23,7 @@ cd my-cal-dashboard
 
 ### Install
 
-<PmTabs install="corsair" />
+<PmTabs install="corsair @corsair-dev/googlecalendar" />
 
 </Step>
 
@@ -129,7 +129,7 @@ sqlite3 corsair.db < migration.sql
 import 'dotenv/config';
 import Database from 'better-sqlite3';
 import { createCorsair } from 'corsair';
-import { googlecalendar } from "corsair/plugins/googlecalendar";
+import { googlecalendar } from "@corsair-dev/googlecalendar";
 
 const db = new Database('corsair.db');
 
