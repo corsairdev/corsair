@@ -54,7 +54,7 @@ export function buildCorsairToolDefs(
 			handler: async ({ path }) => {
 				const result = corsair.get_schema(path as string);
 				return {
-					content: [{ type: 'text', text: JSON.stringify(result, null, 2) }],
+					content: [{ type: 'text', text: result as string }],
 				};
 			},
 		},

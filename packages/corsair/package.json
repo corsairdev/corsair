@@ -1,6 +1,6 @@
 {
   "name": "corsair",
-  "version": "0.1.48",
+  "version": "0.1.49",
   "description": "",
   "type": "module",
   "main": "./dist/index.js",
@@ -46,8 +46,7 @@
     "build": "NODE_OPTIONS=--max-old-space-size=8192 tsup",
     "build:watch": "tsup --watch",
     "typecheck": "tsc --noEmit",
-    "ind": "tsx index.ts",
-    "generate:plugin": "tsx templates/plugin/generate.ts"
+    "ind": "tsx index.ts"
   },
   "dependencies": {
     "kysely": "^0.28.5",
