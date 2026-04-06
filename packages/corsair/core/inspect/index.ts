@@ -4,82 +4,118 @@ import { BaseProviders } from '../constants';
 import type { CorsairPlugin, EndpointMetaEntry } from '../plugins';
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Zod → JSON Schema Converter
+// Zod → TypeScript-style type string converters
 // ─────────────────────────────────────────────────────────────────────────────
 
+const INDENT = '  ';
+
 /**
- * Converts a Zod schema to a plain JSON Schema-compatible object.
- * Used to produce human-readable type information for get_schema().
+ * Produces a compact single-line TypeScript-like type string.
+ * Used for array item types, union members, and simple inline fields.
+ *
+ * Optional fields in objects are rendered with a "?" suffix on the key.
+ * Enums render as pipe-separated values: full | none
  */
-function zodToJsonSchema(schema: ZodTypeAny): unknown {
-	// Access Zod internals via a generic cast — avoids importing internal Zod types
+function zodToInlineType(schema: ZodTypeAny): string {
 	const def = (schema as { _def: Record<string, unknown> })._def;
 	const typeName = def.typeName as string | undefined;
 
 	switch (typeName) {
 		case 'ZodString':
-			return { type: 'string' };
+			return 'string';
 		case 'ZodNumber':
-			return { type: 'number' };
+			return 'number';
 		case 'ZodBoolean':
-			return { type: 'boolean' };
+			return 'boolean';
 		case 'ZodNull':
-			return { type: 'null' };
+			return 'null';
 		case 'ZodUnknown':
 		case 'ZodAny':
-			return {};
+			return 'any';
 		case 'ZodLiteral':
-			return { const: def.value };
+			return String(def.value);
 		case 'ZodEnum':
-			return { enum: def.values as unknown[] };
+			return (def.values as unknown[]).map((v) => String(v)).join(' | ');
 		case 'ZodOptional':
-			// Optional is reflected in the parent object's required[] array, not here
-			return zodToJsonSchema(def.innerType as ZodTypeAny);
-		case 'ZodNullable': {
-			const inner = zodToJsonSchema(def.innerType as ZodTypeAny);
-			return { anyOf: [inner, { type: 'null' }] };
-		}
+			return zodToInlineType(def.innerType as ZodTypeAny);
+		case 'ZodNullable':
+			return `${zodToInlineType(def.innerType as ZodTypeAny)} | null`;
 		case 'ZodArray':
-			return { type: 'array', items: zodToJsonSchema(def.type as ZodTypeAny) };
+			return `${zodToInlineType(def.type as ZodTypeAny)}[]`;
 		case 'ZodRecord':
-			return {
-				type: 'object',
-				additionalProperties: zodToJsonSchema(def.valueType as ZodTypeAny),
-			};
+			return '{}';
 		case 'ZodObject': {
 			const shape = (def.shape as () => Record<string, ZodTypeAny>)();
-			const properties: Record<string, unknown> = {};
-			const required: string[] = [];
-			for (const [key, val] of Object.entries(shape)) {
-				properties[key] = zodToJsonSchema(val);
-				const fieldTypeName = (val as { _def: Record<string, unknown> })._def
+			const entries = Object.entries(shape);
+			if (entries.length === 0) return '{}';
+			const fields = entries.map(([key, val]) => {
+				const ft = (val as { _def: Record<string, unknown> })._def
 					.typeName as string | undefined;
-				if (
-					fieldTypeName !== 'ZodOptional' &&
-					fieldTypeName !== 'ZodNullable'
-				) {
-					required.push(key);
-				}
-			}
-			const result: Record<string, unknown> = { type: 'object', properties };
-			if (required.length > 0) result.required = required;
-			return result;
+				const optional = ft === 'ZodOptional' || ft === 'ZodNullable';
+				return `${optional ? key + '?' : key}: ${zodToInlineType(val)}`;
+			});
+			return `{ ${fields.join(', ')} }`;
 		}
 		case 'ZodUnion':
-			return { anyOf: (def.options as ZodTypeAny[]).map(zodToJsonSchema) };
+			return (def.options as ZodTypeAny[]).map(zodToInlineType).join(' | ');
 		case 'ZodIntersection':
-			return {
-				allOf: [
-					zodToJsonSchema(def.left as ZodTypeAny),
-					zodToJsonSchema(def.right as ZodTypeAny),
-				],
-			};
+			return `${zodToInlineType(def.left as ZodTypeAny)} & ${zodToInlineType(def.right as ZodTypeAny)}`;
 		case 'ZodEffects':
-			// .refine(), .transform(), etc. — unwrap to the inner schema
-			return zodToJsonSchema(def.schema as ZodTypeAny);
+			return zodToInlineType(def.schema as ZodTypeAny);
 		default:
-			return { type: (typeName ?? 'unknown').replace('Zod', '').toLowerCase() };
+			return (typeName ?? 'unknown').replace('Zod', '').toLowerCase();
 	}
+}
+
+/**
+ * Produces a multi-line, indented TypeScript-like type block for objects.
+ * Non-object schemas fall back to zodToInlineType.
+ * Direct object-valued fields are expanded recursively; everything else is inlined.
+ */
+function zodToExpandedType(schema: ZodTypeAny, depth: number): string {
+	const def = (schema as { _def: Record<string, unknown> })._def;
+	const typeName = def.typeName as string | undefined;
+
+	if (typeName === 'ZodOptional' || typeName === 'ZodEffects') {
+		return zodToExpandedType(
+			(typeName === 'ZodOptional'
+				? def.innerType
+				: def.schema) as ZodTypeAny,
+			depth,
+		);
+	}
+	if (typeName !== 'ZodObject') return zodToInlineType(schema);
+
+	const shape = (def.shape as () => Record<string, ZodTypeAny>)();
+	const entries = Object.entries(shape);
+	if (entries.length === 0) return '{}';
+
+	const pad = INDENT.repeat(depth + 1);
+	const closePad = INDENT.repeat(depth);
+	const lines: string[] = [];
+
+	for (const [key, val] of entries) {
+		const valDef = (val as { _def: Record<string, unknown> })._def;
+		const ft = valDef.typeName as string | undefined;
+		const optional = ft === 'ZodOptional' || ft === 'ZodNullable';
+		const k = optional ? `${key}?` : key;
+
+		// Unwrap optional/nullable to check whether the inner type is an object worth expanding
+		const innerVal =
+			ft === 'ZodOptional' || ft === 'ZodNullable'
+				? (valDef.innerType as ZodTypeAny)
+				: val;
+		const innerTypeName = (innerVal as { _def: Record<string, unknown> })?._def
+			?.typeName as string | undefined;
+
+		if (innerTypeName === 'ZodObject') {
+			lines.push(`${pad}${k}: ${zodToExpandedType(innerVal, depth + 1)}`);
+		} else {
+			lines.push(`${pad}${k}: ${zodToInlineType(val)}`);
+		}
+	}
+
+	return `{\n${lines.join('\n')}\n${closePad}}`;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -180,65 +216,14 @@ function findEntityCaseInsensitive(
 // Public API Types
 // ─────────────────────────────────────────────────────────────────────────────
 
+/** @deprecated get_schema now returns a plain string. This type is kept for backwards compatibility. */
 export type EndpointSchemaResult = {
-	/** Human-readable description of what this endpoint does. */
 	description?: string;
-	/** Risk classification: 'read' | 'write' | 'destructive' */
 	riskLevel?: 'read' | 'write' | 'destructive';
-	/** Whether this action cannot be undone. */
 	irreversible?: boolean;
-	/** JSON Schema representation of the input arguments object. */
 	input?: unknown;
-	/** JSON Schema representation of the response object. */
 	output?: unknown;
-	/**
-	 * Present when the requested method was not found.
-	 * Lists all available full-form paths so the caller can pick a valid one.
-	 */
 	availableMethods?: Record<string, string[]>;
-};
-
-export type WebhookSchemaResult = {
-	/** Human-readable description of what triggers this webhook. */
-	description?: string;
-	/** JSON Schema for the webhook payload — the type of `request.payload` in the before hook. */
-	payload?: unknown;
-	/** JSON Schema for the webhook response data — the type of `response.data` in the after hook. */
-	response?: unknown;
-	/**
-	 * Ready-to-copy code example showing exactly how to configure this webhook,
-	 * including response.data type as an inline comment.
-	 */
-	usage?: string;
-	/**
-	 * Present when the requested webhook path was not found.
-	 * Lists all available webhook dot-paths per plugin so the caller can self-correct.
-	 */
-	availableWebhooks?: Record<string, string[]>;
-};
-
-export type DbSearchSchemaResult = {
-	/**
-	 * What this entity type represents and how to search it.
-	 * Pass `limit` and `offset` as numbers for pagination.
-	 */
-	description: string;
-	/**
-	 * Filterable fields for the search() call.
-	 * All active filters are AND-combined. Omit a field to skip filtering on it.
-	 *
-	 * Each operator shorthand: passing a raw value (string/number/boolean/Date) is
-	 * equivalent to `{ equals: value }`.
-	 */
-	filters: {
-		/** Filter by the entity's external platform ID (e.g. a Slack channel ID). */
-		entity_id: { type: 'string'; operators: string[] };
-		/**
-		 * Filter by fields inside the entity's data payload.
-		 * Only flat primitive fields are listed — nested objects are not filterable.
-		 */
-		data: Record<string, { type: DbFieldType; operators: string[] }>;
-	};
 };
 
 export type ListOperationsOptions = {
@@ -295,31 +280,23 @@ export type CorsairInspectMethods = {
 		options?: ListOperationsOptions,
 	): Record<string, string[]> | string[] | string;
 	/**
-	 * Returns schema and metadata for a specific API endpoint, webhook, or database entity search.
+	 * Returns a plain-text TypeScript-style type declaration for a specific operation path.
 	 * The path format determines which kind of schema is returned:
-	 * - API path (`plugin.api.group.method`) → `EndpointSchemaResult`
-	 * - Webhook path (`plugin.webhooks.group.event`) → `WebhookSchemaResult`
-	 * - DB path (`plugin.db.entityType.search`) → `DbSearchSchemaResult`
+	 * - API path (`plugin.api.group.method`) → description, risk level, input/output types
+	 * - Webhook path (`plugin.webhooks.group.event`) → description, payload/response types, usage snippet
+	 * - DB path (`plugin.db.entityType.search`) → description, filterable fields with operators
 	 *
 	 * Casing is ignored — the path is lowercased before lookup.
-	 * If the path is not found, returns an object with available paths for self-correction.
+	 * If the path is not found, returns a list of available paths for self-correction.
 	 *
 	 * @example
-	 * corsair.get_schema('slack.api.channels.list')
-	 * // { description: '...', riskLevel: 'read', input: { type: 'object', ... }, output: { ... } }
-	 *
-	 * corsair.get_schema('slack.webhooks.messages.message')
-	 * // { description: '...', usage: '...', payload: { ... }, response: { ... } }
-	 *
-	 * corsair.get_schema('slack.db.messages.search')
-	 * // { description: '...', filters: { entity_id: { ... }, data: { text: { type: 'string', operators: [...] }, ... } } }
+	 * corsair.get_schema('slack.api.messages.post')
+	 * // "Post a message to a channel  [write]\n\ninput {\n  channel: string\n  text?: string\n  ..."
 	 *
 	 * corsair.get_schema('slack.api.invalid')
-	 * // { availableMethods: { slack: ['slack.api.channels.list', ...], ... } }
+	 * // "Path not found. Available operations:\n  slack: slack.api.channels.list, ..."
 	 */
-	get_schema(
-		path: string,
-	): EndpointSchemaResult | WebhookSchemaResult | DbSearchSchemaResult;
+	get_schema(path: string): string;
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -420,14 +397,14 @@ function resolveWebhookPathOriginalCase(
  * Builds a ready-to-copy code snippet showing how to configure a specific webhook.
  * The response.data type (if available) is embedded as an inline comment inside the after hook.
  *
- * @param pluginId       Plugin ID (e.g. 'slack')
- * @param pathParts      Original-cased path segments (e.g. ['messages', 'message'])
- * @param responseSchema JSON Schema for response.data, or null if no schema registered
+ * @param pluginId         Plugin ID (e.g. 'slack')
+ * @param pathParts        Original-cased path segments (e.g. ['messages', 'message'])
+ * @param responseTypeStr  Inline type string for response.data, or null if no schema registered
  */
 function buildWebhookUsageExample(
 	pluginId: string,
 	pathParts: string[],
-	responseSchema: unknown | null,
+	responseTypeStr: string | null,
 ): string {
 	const lines: string[] = [];
 
@@ -449,21 +426,11 @@ function buildWebhookUsageExample(
 	lines.push(`${hookIndent}},`);
 
 	lines.push(`${hookIndent}after(ctx, response) {`);
-	if (responseSchema !== null) {
-		const json = JSON.stringify(responseSchema, null, 2);
-		const commentLines = json
-			.split('\n')
-			.map((l, i) =>
-				i === 0
-					? `${bodyIndent}// response.data: ${l}`
-					: `${bodyIndent}// ${l}`,
-			);
-		lines.push(...commentLines);
-	} else {
-		lines.push(
-			`${bodyIndent}// response.data: unknown (register webhookSchemas to see the type)`,
-		);
-	}
+	lines.push(
+		responseTypeStr !== null
+			? `${bodyIndent}// response.data: ${responseTypeStr}`
+			: `${bodyIndent}// response.data: unknown (register webhookSchemas to see the type)`,
+	);
 	lines.push(`${hookIndent}},`);
 
 	// Close nested key blocks (innermost first)
@@ -530,7 +497,7 @@ function listOperations(
 		if (!found.endpoints) return [];
 		const paths: string[] = [];
 		walkEndpointTree(found.endpoints as Record<string, unknown>, [], paths);
-		return paths.map((path) => `${found.id}.api.${path.toLowerCase()}`);
+		return paths.map((path) => `${found.id}.api.${path}`);
 	}
 
 	const result: Record<string, string[]> = {};
@@ -556,7 +523,7 @@ function listOperations(
 			if (!p.endpoints) continue;
 			const paths: string[] = [];
 			walkEndpointTree(p.endpoints as Record<string, unknown>, [], paths);
-			result[p.id] = paths.map((path) => `${p.id}.api.${path.toLowerCase()}`);
+			result[p.id] = paths.map((path) => `${p.id}.api.${path}`);
 		}
 	}
 	return result;
@@ -578,10 +545,22 @@ function findEndpointCaseInsensitive<T>(
 	return undefined;
 }
 
-function getSchema(
-	plugins: readonly CorsairPlugin[],
-	path: string,
-): EndpointSchemaResult | WebhookSchemaResult | DbSearchSchemaResult {
+function formatAvailablePaths(
+	paths: Record<string, string[]> | string[] | string,
+	label: string,
+): string {
+	if (typeof paths === 'string') return paths;
+	if (Array.isArray(paths))
+		return `${label}:\n  ${paths.join(', ')}`;
+	return (
+		`${label}:\n` +
+		Object.entries(paths)
+			.map(([plugin, list]) => `  ${plugin}: ${list.join(', ')}`)
+			.join('\n')
+	);
+}
+
+function getSchema(plugins: readonly CorsairPlugin[], path: string): string {
 	// Normalise casing so the agent can call with any capitalisation
 	const normalised = path.toLowerCase();
 	const dotIndex = normalised.indexOf('.');
@@ -607,25 +586,28 @@ function getSchema(
 						const entry = findEntityCaseInsensitive(entities, entityNameLower);
 						if (entry) {
 							const [entityName, entitySchema] = entry;
-							return {
-								description: `Search ${pluginId} ${entityName} stored in the local database. Returns an array of matching records. Pass limit and offset (numbers) for pagination.`,
-								filters: {
-									entity_id: {
-										type: 'string',
-										operators: STRING_OPERATORS,
-									},
-									data: buildFilterableFields(entitySchema),
-								},
-							};
+							const fields = buildFilterableFields(entitySchema);
+							const lines: string[] = [
+								`Search ${pluginId} ${entityName} stored in the local database.`,
+								`Pass limit and offset as numbers for pagination.`,
+								'',
+								'filters {',
+								`  entity_id: string  [${STRING_OPERATORS.join(', ')}]`,
+							];
+							for (const [field, info] of Object.entries(fields)) {
+								lines.push(
+									`  ${field}?: ${info.type}  [${info.operators.join(', ')}]`,
+								);
+							}
+							lines.push('}');
+							return lines.join('\n');
 						}
 					}
 				}
-				// Invalid db path — return available db operations for self-correction
-				return {
-					availableMethods: listOperations(plugins, {
-						type: 'db',
-					}) as Record<string, string[]>,
-				};
+				return formatAvailablePaths(
+					listOperations(plugins, { type: 'db' }),
+					'Path not found. Available db operations',
+				);
 			}
 
 			// ── Webhook path: plugin.webhooks.group.event ──────────────────────────
@@ -645,31 +627,31 @@ function getSchema(
 							originalPath.toLowerCase(),
 						);
 
-						const responseSchema = schemas?.response
-							? zodToJsonSchema(schemas.response)
+						const responseTypeStr = schemas?.response
+							? zodToInlineType(schemas.response)
 							: null;
 
-						return {
-							description: schemas?.description,
-							payload: schemas?.payload
-								? zodToJsonSchema(schemas.payload)
-								: undefined,
-							response: responseSchema ?? undefined,
-							usage: buildWebhookUsageExample(
-								pluginId,
-								originalPathParts,
-								responseSchema,
-							),
-						};
+						const parts: string[] = [];
+						if (schemas?.description) parts.push(schemas.description);
+						if (schemas?.payload) {
+							parts.push(
+								`payload ${zodToExpandedType(schemas.payload, 0)}`,
+							);
+						}
+						if (responseTypeStr) {
+							parts.push(`response: ${responseTypeStr}`);
+						}
+						parts.push(
+							`usage:\n${buildWebhookUsageExample(pluginId, originalPathParts, responseTypeStr)}`,
+						);
+						return parts.join('\n\n');
 					}
 				}
 
-				// Invalid webhook path — return available webhooks for self-correction
-				return {
-					availableWebhooks: listOperations(plugins, {
-						type: 'webhooks',
-					}) as Record<string, string[]>,
-				};
+				return formatAvailablePaths(
+					listOperations(plugins, { type: 'webhooks' }),
+					'Path not found. Available webhooks',
+				);
 			}
 
 			// ── API endpoint path: plugin.api.group.method ─────────────────────────
@@ -688,21 +670,34 @@ function getSchema(
 			);
 
 			if (meta || schemas) {
-				return {
-					description: meta?.description,
-					riskLevel: meta?.riskLevel,
-					irreversible: meta?.irreversible,
-					input: schemas?.input ? zodToJsonSchema(schemas.input) : undefined,
-					output: schemas?.output ? zodToJsonSchema(schemas.output) : undefined,
-				};
+				const parts: string[] = [];
+
+				// Header: description + risk tags
+				const tags = [
+					meta?.riskLevel ? `[${meta.riskLevel}]` : '',
+					meta?.irreversible ? '[irreversible]' : '',
+				]
+					.filter(Boolean)
+					.join(' ');
+				const header = [meta?.description, tags].filter(Boolean).join('  ');
+				if (header) parts.push(header);
+
+				if (schemas?.input) {
+					parts.push(`input ${zodToExpandedType(schemas.input, 0)}`);
+				}
+				if (schemas?.output) {
+					parts.push(`output ${zodToExpandedType(schemas.output, 0)}`);
+				}
+				return parts.join('\n\n');
 			}
 		}
 	}
 
-	// Invalid or unknown path — return all available API methods for self-correction
-	return {
-		availableMethods: listOperations(plugins) as Record<string, string[]>,
-	};
+	// Invalid or unknown path — list all available API methods for self-correction
+	return formatAvailablePaths(
+		listOperations(plugins),
+		'Path not found. Available operations',
+	);
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -720,9 +715,7 @@ export function buildInspectMethods(
 		list_operations(options?: ListOperationsOptions) {
 			return listOperations(plugins, options);
 		},
-		get_schema(
-			path: string,
-		): EndpointSchemaResult | WebhookSchemaResult | DbSearchSchemaResult {
+		get_schema(path: string): string {
 			return getSchema(plugins, path);
 		},
 	};

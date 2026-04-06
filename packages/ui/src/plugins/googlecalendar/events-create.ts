@@ -1,4 +1,4 @@
-import type { GoogleCalendarBoundEndpoints } from 'corsair/plugins/googlecalendar';
+import type { GoogleCalendarBoundEndpoints } from '@corsair-dev/googlecalendar';
 import {
 	actionsHtml,
 	buildActionDescriptors,

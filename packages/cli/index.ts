@@ -779,8 +779,8 @@ async function main() {
 			console.error('[#corsair]: get_schema not available on this Corsair instance.');
 			process.exit(1);
 		}
-		const result = corsair.get_schema(schemaPath) as unknown;
-		console.log(JSON.stringify(result, null, 2));
+		const result = corsair.get_schema(schemaPath) as string;
+		console.log(result);
 		return;
 	}
 
