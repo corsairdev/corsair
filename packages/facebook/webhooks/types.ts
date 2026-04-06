@@ -18,6 +18,7 @@ const FacebookParticipantSchema = z
 const FacebookMessageAttachmentSchema = z
 	.object({
 		type: z.string().optional(),
+		// unknown: Messenger attachment payloads vary across media, template, and fallback payload shapes.
 		payload: z.unknown().optional(),
 	})
 	.passthrough();
@@ -29,7 +30,9 @@ export const FacebookMessageEventSchema = z
 		is_echo: z.boolean().optional(),
 		app_id: z.number().optional(),
 		metadata: z.string().optional(),
+		// unknown: quick reply payloads are application-defined and may carry arbitrary nested metadata.
 		quick_reply: z.unknown().optional(),
+		// unknown: reply metadata differs across Messenger reply surfaces and is passed through verbatim.
 		reply_to: z.unknown().optional(),
 		attachments: z.array(FacebookMessageAttachmentSchema).optional(),
 	})
@@ -58,8 +61,11 @@ export const FacebookMessagingEventSchema = z
 		message: FacebookMessageEventSchema.optional(),
 		delivery: FacebookDeliveryEventSchema.optional(),
 		read: FacebookReadEventSchema.optional(),
+		// unknown: postback payloads are page-defined and may contain arbitrary nested fields.
 		postback: z.unknown().optional(),
+		// unknown: referral payloads vary by entry surface and campaign configuration.
 		referral: z.unknown().optional(),
+		// unknown: opt-in payloads differ by plugin and integration flow.
 		optin: z.unknown().optional(),
 	})
 	.passthrough();

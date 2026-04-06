@@ -1,11 +1,8 @@
 import type { FacebookWebhooks } from '..';
-import { extractFacebookChallenge } from './types';
+import { createFacebookChallengeMatch, extractFacebookChallenge } from './types';
 
 export const challenge: FacebookWebhooks['challenge'] = {
-	match: (request) => {
-		const payload = extractFacebookChallenge(request.body);
-		return Boolean(payload?.challenge);
-	},
+	match: createFacebookChallengeMatch(),
 
 	handler: async (ctx, request) => {
 		const challengePayload = extractFacebookChallenge(request.payload);
@@ -16,6 +13,7 @@ export const challenge: FacebookWebhooks['challenge'] = {
 			};
 		}
 
+		// Payload type is not inferred narrowly enough to expose the optional hub verify-token fields on the parsed webhook request.
 		const body = request.payload as {
 			['hub.verify_token']?: string;
 			hub?: { verify_token?: string };

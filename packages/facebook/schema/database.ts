@@ -12,6 +12,7 @@ export const FacebookParticipant = z
 export const FacebookMessageAttachment = z
 	.object({
 		type: z.string().optional(),
+		// unknown: Messenger attachment payloads vary by attachment type and are not stable enough for a stricter shared schema.
 		payload: z.unknown().optional(),
 	})
 	.passthrough();
@@ -29,6 +30,7 @@ export const FacebookConversation = z
 		senders: z.array(FacebookParticipant).optional(),
 		participants: z.array(FacebookParticipant).optional(),
 		createdAt: z.coerce.date().nullable().optional(),
+		// unknown: the conversations endpoint returns evolving Graph API fields that are preserved verbatim for debugging and replay.
 		raw: z.unknown().optional(),
 	})
 	.passthrough();
@@ -48,8 +50,10 @@ export const FacebookPage = z
 		is_verified: z.boolean().optional(),
 		link: z.string().optional(),
 		username: z.string().optional(),
+		// unknown: the Page picture object can contain nested variant-specific fields that differ across Graph API responses.
 		picture: z.unknown().optional(),
 		createdAt: z.coerce.date().nullable().optional(),
+		// unknown: the raw page response is stored as-is because Graph API page fields are caller-dependent and extensible.
 		raw: z.unknown().optional(),
 	})
 	.passthrough();
@@ -66,7 +70,9 @@ export const FacebookMessage = z
 		sender_id: z.string().optional(),
 		text: z.string().optional(),
 		attachments: z.array(FacebookMessageAttachment).optional(),
+		// unknown: quick reply payloads are application-defined and may include arbitrary nested metadata.
 		quick_reply: z.unknown().optional(),
+		// unknown: reply_to payloads are passed through from Messenger and can vary across message reply surfaces.
 		reply_to: z.unknown().optional(),
 		is_echo: z.boolean().optional(),
 		app_id: z.number().optional(),
@@ -91,6 +97,7 @@ export const FacebookMessage = z
 		timestamp: z.number().optional(),
 		authorId: z.string().optional(),
 		createdAt: z.coerce.date().nullable().optional(),
+		// unknown: the raw Messenger webhook event is preserved because event payloads differ by subtype and Meta can add fields over time.
 		raw: z.unknown().optional(),
 	})
 	.passthrough();

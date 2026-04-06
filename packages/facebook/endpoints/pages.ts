@@ -23,6 +23,10 @@ const DEFAULT_PAGE_FIELDS = [
 	'username',
 ].join(',');
 
+function isRecord(value: unknown): value is Record<string, unknown> {
+	return typeof value === 'object' && value !== null;
+}
+
 export const getPageDetails: FacebookEndpoints['getPageDetails'] = async (
 	ctx,
 	input,
@@ -122,10 +126,29 @@ export const listConversations: FacebookEndpoints['listConversations'] = async (
 		}
 	}
 
+	const pagingRecord = isRecord(response.paging) ? response.paging : undefined;
+	const cursorsRecord = isRecord(pagingRecord?.cursors) ? pagingRecord.cursors : undefined;
+
+	const paging = pagingRecord
+		? {
+			cursors: cursorsRecord
+				? {
+					before:
+						typeof cursorsRecord.before === 'string' ? cursorsRecord.before : undefined,
+					after:
+						typeof cursorsRecord.after === 'string' ? cursorsRecord.after : undefined,
+				}
+				: undefined,
+			next: typeof pagingRecord.next === 'string' ? pagingRecord.next : undefined,
+			previous:
+				typeof pagingRecord.previous === 'string' ? pagingRecord.previous : undefined,
+		}
+		: undefined;
+
 	const result: ListConversationsResponse = {
 		conversations,
 		count: conversations.length,
-		paging: response.paging as ListConversationsResponse['paging'],
+		paging,
 	};
 
 	await logEventFromContext(

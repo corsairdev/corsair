@@ -1,33 +1,16 @@
 import { logEventFromContext } from 'corsair/core';
 import type { FacebookWebhooks } from '..';
 import type { FacebookWebhookPayload } from './types';
-import { verifyFacebookWebhookSignature } from './types';
+import {
+	createFacebookMessagingMatch,
+	verifyFacebookWebhookSignature,
+} from './types';
 
 export const delivery: FacebookWebhooks['delivery'] = {
-	match: (request) => {
-		const body = request.body as {
-			object?: string;
-			entry?: Array<{
-				messaging?: Array<{ delivery?: unknown; read?: unknown }>;
-				standby?: Array<{ delivery?: unknown; read?: unknown }>;
-			}>;
-		};
-
-		if (body.object !== 'page' || !Array.isArray(body.entry)) {
-			return false;
-		}
-
-		return body.entry.some((entry) => {
-			const events = Array.isArray(entry.messaging)
-				? entry.messaging
-				: Array.isArray(entry.standby)
-					? entry.standby
-					: [];
-			return events.some((event) => Boolean(event.delivery) || Boolean(event.read));
-		});
-	},
+	match: createFacebookMessagingMatch('delivery'),
 
 	handler: async (ctx, request) => {
+		// Payload type is not inferred from the generic webhook request, so narrow it to the validated Facebook Messenger payload shape.
 		const messengerRequest = request as typeof request & {
 			payload: FacebookWebhookPayload;
 		};
