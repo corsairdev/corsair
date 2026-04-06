@@ -1,6 +1,6 @@
 {
   "name": "corsair",
-  "version": "0.1.46",
+  "version": "0.1.50",
   "description": "",
   "type": "module",
   "main": "./dist/index.js",
@@ -32,210 +32,10 @@
       "types": "./dist/setup.d.ts",
       "default": "./dist/setup.js"
     },
-    "./plugins/airtable": {
-      "dev-source": "./plugins/airtable/index.ts",
-      "types": "./dist/plugins/airtable/index.d.ts",
-      "default": "./dist/plugins/airtable/index.js"
-    },
-    "./plugins/amplitude": {
-      "dev-source": "./plugins/amplitude/index.ts",
-      "types": "./dist/plugins/amplitude/index.d.ts",
-      "default": "./dist/plugins/amplitude/index.js"
-    },
-    "./plugins/asana": {
-      "dev-source": "./plugins/asana/index.ts",
-      "types": "./dist/plugins/asana/index.d.ts",
-      "default": "./dist/plugins/asana/index.js"
-    },
-    "./plugins/box": {
-      "dev-source": "./plugins/box/index.ts",
-      "types": "./dist/plugins/box/index.d.ts",
-      "default": "./dist/plugins/box/index.js"
-    },
-    "./plugins/cal": {
-      "dev-source": "./plugins/cal/index.ts",
-      "types": "./dist/plugins/cal/index.d.ts",
-      "default": "./dist/plugins/cal/index.js"
-    },
-    "./plugins/calendly": {
-      "dev-source": "./plugins/calendly/index.ts",
-      "types": "./dist/plugins/calendly/index.d.ts",
-      "default": "./dist/plugins/calendly/index.js"
-    },
-    "./plugins/discord": {
-      "dev-source": "./plugins/discord/index.ts",
-      "types": "./dist/plugins/discord/index.d.ts",
-      "default": "./dist/plugins/discord/index.js"
-    },
-    "./plugins/dropbox": {
-      "dev-source": "./plugins/dropbox/index.ts",
-      "types": "./dist/plugins/dropbox/index.d.ts",
-      "default": "./dist/plugins/dropbox/index.js"
-    },
-    "./plugins/exa": {
-      "dev-source": "./plugins/exa/index.ts",
-      "types": "./dist/plugins/exa/index.d.ts",
-      "default": "./dist/plugins/exa/index.js"
-    },
-    "./plugins/figma": {
-      "dev-source": "./plugins/figma/index.ts",
-      "types": "./dist/plugins/figma/index.d.ts",
-      "default": "./dist/plugins/figma/index.js"
-    },
-    "./plugins/fireflies": {
-      "dev-source": "./plugins/fireflies/index.ts",
-      "types": "./dist/plugins/fireflies/index.d.ts",
-      "default": "./dist/plugins/fireflies/index.js"
-    },
-    "./plugins/github": {
-      "dev-source": "./plugins/github/index.ts",
-      "types": "./dist/plugins/github/index.d.ts",
-      "default": "./dist/plugins/github/index.js"
-    },
-    "./plugins/gmail": {
-      "dev-source": "./plugins/gmail/index.ts",
-      "types": "./dist/plugins/gmail/index.d.ts",
-      "default": "./dist/plugins/gmail/index.js"
-    },
-    "./plugins/googlecalendar": {
-      "dev-source": "./plugins/googlecalendar/index.ts",
-      "types": "./dist/plugins/googlecalendar/index.d.ts",
-      "default": "./dist/plugins/googlecalendar/index.js"
-    },
-    "./plugins/googlecalendar/setup": {
-      "dev-source": "./plugins/googlecalendar/setup.ts",
-      "types": "./dist/plugins/googlecalendar/setup.d.ts",
-      "default": "./dist/plugins/googlecalendar/setup.js"
-    },
-    "./plugins/googledrive": {
-      "dev-source": "./plugins/googledrive/index.ts",
-      "types": "./dist/plugins/googledrive/index.d.ts",
-      "default": "./dist/plugins/googledrive/index.js"
-    },
-    "./plugins/googlesheets": {
-      "dev-source": "./plugins/googlesheets/index.ts",
-      "types": "./dist/plugins/googlesheets/index.d.ts",
-      "default": "./dist/plugins/googlesheets/index.js"
-    },
-    "./plugins/hackernews": {
-      "dev-source": "./plugins/hackernews/index.ts",
-      "types": "./dist/plugins/hackernews/index.d.ts",
-      "default": "./dist/plugins/hackernews/index.js"
-    },
-    "./plugins/hubspot": {
-      "dev-source": "./plugins/hubspot/index.ts",
-      "types": "./dist/plugins/hubspot/index.d.ts",
-      "default": "./dist/plugins/hubspot/index.js"
-    },
-    "./plugins/intercom": {
-      "dev-source": "./plugins/intercom/index.ts",
-      "types": "./dist/plugins/intercom/index.d.ts",
-      "default": "./dist/plugins/intercom/index.js"
-    },
-    "./plugins/jira": {
-      "dev-source": "./plugins/jira/index.ts",
-      "types": "./dist/plugins/jira/index.d.ts",
-      "default": "./dist/plugins/jira/index.js"
-    },
-    "./plugins/linear": {
-      "dev-source": "./plugins/linear/index.ts",
-      "types": "./dist/plugins/linear/index.d.ts",
-      "default": "./dist/plugins/linear/index.js"
-    },
-    "./plugins/monday": {
-      "dev-source": "./plugins/monday/index.ts",
-      "types": "./dist/plugins/monday/index.d.ts",
-      "default": "./dist/plugins/monday/index.js"
-    },
-    "./plugins/notion": {
-      "dev-source": "./plugins/notion/index.ts",
-      "types": "./dist/plugins/notion/index.d.ts",
-      "default": "./dist/plugins/notion/index.js"
-    },
-    "./plugins/onedrive": {
-      "dev-source": "./plugins/onedrive/index.ts",
-      "types": "./dist/plugins/onedrive/index.d.ts",
-      "default": "./dist/plugins/onedrive/index.js"
-    },
-    "./plugins/oura": {
-      "dev-source": "./plugins/oura/index.ts",
-      "types": "./dist/plugins/oura/index.d.ts",
-      "default": "./dist/plugins/oura/index.js"
-    },
-    "./plugins/pagerduty": {
-      "dev-source": "./plugins/pagerduty/index.ts",
-      "types": "./dist/plugins/pagerduty/index.d.ts",
-      "default": "./dist/plugins/pagerduty/index.js"
-    },
-    "./plugins/posthog": {
-      "dev-source": "./plugins/posthog/index.ts",
-      "types": "./dist/plugins/posthog/index.d.ts",
-      "default": "./dist/plugins/posthog/index.js"
-    },
-    "./plugins/resend": {
-      "dev-source": "./plugins/resend/index.ts",
-      "types": "./dist/plugins/resend/index.d.ts",
-      "default": "./dist/plugins/resend/index.js"
-    },
-    "./plugins/sentry": {
-      "dev-source": "./plugins/sentry/index.ts",
-      "types": "./dist/plugins/sentry/index.d.ts",
-      "default": "./dist/plugins/sentry/index.js"
-    },
-    "./plugins/slack": {
-      "dev-source": "./plugins/slack/index.ts",
-      "types": "./dist/plugins/slack/index.d.ts",
-      "default": "./dist/plugins/slack/index.js"
-    },
-    "./plugins/spotify": {
-      "dev-source": "./plugins/spotify/index.ts",
-      "types": "./dist/plugins/spotify/index.d.ts",
-      "default": "./dist/plugins/spotify/index.js"
-    },
-    "./plugins/stripe": {
-      "dev-source": "./plugins/stripe/index.ts",
-      "types": "./dist/plugins/stripe/index.d.ts",
-      "default": "./dist/plugins/stripe/index.js"
-    },
-    "./plugins/teams": {
-      "dev-source": "./plugins/teams/index.ts",
-      "types": "./dist/plugins/teams/index.d.ts",
-      "default": "./dist/plugins/teams/index.js"
-    },
-    "./plugins/telegram": {
-      "dev-source": "./plugins/telegram/index.ts",
-      "types": "./dist/plugins/telegram/index.d.ts",
-      "default": "./dist/plugins/telegram/index.js"
-    },
-    "./plugins/todoist": {
-      "dev-source": "./plugins/todoist/index.ts",
-      "types": "./dist/plugins/todoist/index.d.ts",
-      "default": "./dist/plugins/todoist/index.js"
-    },
-    "./plugins/trello": {
-      "dev-source": "./plugins/trello/index.ts",
-      "types": "./dist/plugins/trello/index.d.ts",
-      "default": "./dist/plugins/trello/index.js"
-    },
-    "./plugins/twitter": {
-      "dev-source": "./plugins/twitter/index.ts",
-      "types": "./dist/plugins/twitter/index.d.ts",
-      "default": "./dist/plugins/twitter/index.js"
-    },
-    "./plugins/twitterapiio": {
-      "dev-source": "./plugins/twitterapiio/index.ts",
-      "types": "./dist/plugins/twitterapiio/index.d.ts",
-      "default": "./dist/plugins/twitterapiio/index.js"
-    },
-    "./plugins/typeform": {
-      "dev-source": "./plugins/typeform/index.ts",
-      "types": "./dist/plugins/typeform/index.d.ts",
-      "default": "./dist/plugins/typeform/index.js"
-    },
-    "./plugins/zoom": {
-      "dev-source": "./plugins/zoom/index.ts",
-      "types": "./dist/plugins/zoom/index.d.ts",
-      "default": "./dist/plugins/zoom/index.js"
+    "./http": {
+      "dev-source": "./http.ts",
+      "types": "./dist/http.d.ts",
+      "default": "./dist/http.js"
     }
   },
   "scripts": {
@@ -246,8 +46,7 @@
     "build": "NODE_OPTIONS=--max-old-space-size=8192 tsup",
     "build:watch": "tsup --watch",
     "typecheck": "tsc --noEmit",
-    "ind": "tsx index.ts",
-    "generate:plugin": "tsx templates/plugin/generate.ts"
+    "ind": "tsx index.ts"
   },
   "dependencies": {
     "kysely": "^0.28.5",
