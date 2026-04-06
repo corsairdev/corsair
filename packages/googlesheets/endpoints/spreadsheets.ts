@@ -1,7 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import type { GoogleSheetsEndpoints } from '..';
 import { makeAuthenticatedSheetsRequest } from '../client';
-import type { GoogleSheetsEndpointOutputs } from './types';
+import type { GoogleSheetsEndpointOutputs, ListSpreadsheetsResponse } from './types';
 
 export const create: GoogleSheetsEndpoints['spreadsheetsCreate'] = async (
 	ctx,
@@ -72,3 +72,41 @@ export const deleteSpreadsheet: GoogleSheetsEndpoints['spreadsheetsDelete'] =
 			'completed',
 		);
 	};
+
+export const listSpreadsheets: GoogleSheetsEndpoints['spreadsheetsList'] = async (
+	ctx,
+	input,
+) => {
+	const params = new URLSearchParams({
+		q: input.query || "mimeType='application/vnd.google-apps.spreadsheet'",
+		fields: 'files(id,name,createdTime,modifiedTime,webViewLink),nextPageToken',
+	});
+	if (input.pageSize) params.set('pageSize', String(input.pageSize));
+	if (input.pageToken) params.set('pageToken', input.pageToken);
+
+	const response = await fetch(
+		`https://www.googleapis.com/drive/v3/files?${params.toString()}`,
+		{
+			headers: {
+				Authorization: `Bearer ${ctx.key}`,
+			},
+		},
+	);
+
+	if (!response.ok) {
+		const errorText = await response.text();
+		throw new Error(
+			`Failed to list spreadsheets: ${response.status} ${errorText}`,
+		);
+	}
+
+	const result = (await response.json()) as ListSpreadsheetsResponse;
+
+	await logEventFromContext(
+		ctx,
+		'googlesheets.spreadsheets.list',
+		{ ...input },
+		'completed',
+	);
+	return result;
+};
