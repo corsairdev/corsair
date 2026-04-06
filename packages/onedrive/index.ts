@@ -12,8 +12,8 @@ import type {
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
 	RequiredPluginWebhookSchemas,
-} from '../../core';
-import type { PickAuth } from '../../core/constants';
+	PickAuth,
+} from 'corsair/core';
 import type { OnedriveEndpointInputs, OnedriveEndpointOutputs } from './endpoints/types';
 import {
 	OnedriveEndpointInputSchemas,

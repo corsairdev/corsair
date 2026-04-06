@@ -1,4 +1,4 @@
-import { logEventFromContext } from '../../utils/events';
+import { logEventFromContext } from 'corsair/core';
 import type { OnedriveBoundEndpoints, OnedriveWebhooks } from '..';
 import { createOnedriveMatch, verifyOnedriveClientState } from './types';
 

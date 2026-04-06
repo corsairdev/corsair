@@ -1,4 +1,4 @@
-import { logEventFromContext } from '../../utils/events';
+import { logEventFromContext } from 'corsair/core';
 import type { OnedriveEndpoints } from '..';
 import { makeOnedriveRequest } from '../client';
 import type { OnedriveEndpointOutputs } from './types';

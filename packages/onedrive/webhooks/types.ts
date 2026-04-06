@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import type { CorsairWebhookMatcher, RawWebhookRequest } from '../../../core';
+import type { CorsairWebhookMatcher, RawWebhookRequest } from 'corsair/core';
 
 export const OnedriveNotificationSchema = z.object({
 	subscriptionId: z.string(),
