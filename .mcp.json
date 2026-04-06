@@ -3,7 +3,7 @@
     "corsair": {
       "command": "pnpm",
       "args": ["tsx", "src/scripts/mcp-server.ts"],
-      "cwd": "/Users/devjain/Projects/corsair/main/corsair/demo/corsair-plugins"
+      "cwd": "/Users/devjain/Projects/corsair/main/corsair/demo/testing"
     }
   }
 }

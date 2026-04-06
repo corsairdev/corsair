@@ -17,7 +17,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "test": "tsx src/scripts/test-channels.ts",
+    "test": "tsx src/scripts/test-script.ts",
     "inngest:dev": "npx inngest-cli@latest dev",
     "agent": "tsx src/scripts/agent.ts"
   },
