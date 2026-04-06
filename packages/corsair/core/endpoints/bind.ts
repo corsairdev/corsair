@@ -82,7 +82,7 @@ export function bindEndpointsRecursively({
 
 			const operationPath = [...currentPath, key].join('.');
 
-			const boundFn = async (args: unknown) => {
+			const boundFn = async (args: unknown = {}) => {
 				// ── Permission guard ────────────────────────────────────────────────────────────────
 				let onPermissionComplete: (() => Promise<void>) | undefined;
 				if (permissionsConfig) {

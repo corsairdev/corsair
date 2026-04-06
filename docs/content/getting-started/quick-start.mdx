@@ -213,7 +213,7 @@ This is the one file that wires everything together. Create it at `src/server/co
 import 'dotenv/config';
 import Database from 'better-sqlite3';
 import { createCorsair } from 'corsair';
-import { github } from 'corsair/plugins/github';
+import { github } from '@corsair-dev/github';
 
 const db = new Database('corsair.db');
 
@@ -231,7 +231,7 @@ export const corsair = createCorsair({
 import 'dotenv/config';
 import { Pool } from 'pg';
 import { createCorsair } from 'corsair';
-import { github } from 'corsair/plugins/github';
+import { github } from '@corsair-dev/github';
 
 const db = new Pool({ connectionString: process.env.DATABASE_URL });
 
@@ -284,7 +284,7 @@ export GITHUB_TOKEN=ghp_...
 
 Run setup once with the Corsair CLI:
 
-<PmTabs install="@corsair-dev/cli" /> 
+<PmTabs install="@corsair-dev/cli @corsair-dev/github" /> 
 
 <PmTabs run="corsair setup --github api_key=$GITHUB_TOKEN --backfill" />
 

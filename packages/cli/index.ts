@@ -406,6 +406,75 @@ export async function getCorsairInstance({
 
 const RESERVED_FLAGS = new Set(['backfill', 'help', 'h']);
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Instance helpers
+// ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Resolves a corsair instance to a concrete client.
+ * For multi-tenant instances, requires a tenant ID.
+ */
+function resolveClient(
+	instance: unknown,
+	tenant: string | undefined,
+): Record<string, unknown> {
+	const obj = instance as Record<string, unknown>;
+	if ('withTenant' in obj && typeof obj.withTenant === 'function') {
+		if (!tenant) {
+			console.error('[#corsair]: This is a multi-tenant instance. Pass --tenant=<id>.');
+			process.exit(1);
+		}
+		return obj.withTenant(tenant) as Record<string, unknown>;
+	}
+	return obj;
+}
+
+/**
+ * Navigates a dot-notation path on the corsair client and returns the function.
+ * Strips the 'api' namespace marker that list_operations adds (e.g. slack.api.messages.post → slack.messages.post).
+ */
+function navigateToEndpoint(
+	client: Record<string, unknown>,
+	path: string,
+): ((...args: unknown[]) => Promise<unknown>) | undefined {
+	const parts = path.split('.');
+	let current: unknown = client;
+	for (const part of parts) {
+		if (current === null || typeof current !== 'object') return undefined;
+		current = (current as Record<string, unknown>)[part];
+	}
+	return typeof current === 'function'
+		? (current as (...args: unknown[]) => Promise<unknown>)
+		: undefined;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Arg parsers
+// ─────────────────────────────────────────────────────────────────────────────
+
+function parseListArgs(args: string[]): {
+	plugin?: string;
+	type?: 'api' | 'webhooks' | 'db';
+} {
+	let plugin: string | undefined;
+	let type: 'api' | 'webhooks' | 'db' | undefined;
+
+	for (const arg of args) {
+		const eqIdx = arg.indexOf('=');
+		if (arg.startsWith('--') && eqIdx !== -1) {
+			const key = arg.slice(2, eqIdx);
+			const value = arg.slice(eqIdx + 1);
+			if (key === 'plugin') { plugin = value; continue; }
+			if (key === 'type' && (value === 'api' || value === 'webhooks' || value === 'db')) {
+				type = value;
+				continue;
+			}
+		}
+	}
+
+	return { plugin, type };
+}
+
 function parseAuthArgs(args: string[]): {
 	pluginId?: string;
 	tenantId?: string;
@@ -467,6 +536,96 @@ function parseSetupArgs(args: string[]): {
 	return { backfill, credentials };
 }
 
+function parseRunArgs(args: string[]): {
+	path: string | undefined;
+	input: string | undefined;
+	tenant: string | undefined;
+} {
+	let endpointPath: string | undefined;
+	let input: string | undefined;
+	let tenant: string | undefined;
+
+	for (let i = 0; i < args.length; i++) {
+		const arg = args[i]!;
+		if (arg === '--tenant' && args[i + 1]) {
+			tenant = args[++i];
+		} else if (arg.startsWith('--tenant=')) {
+			tenant = arg.slice('--tenant='.length);
+		} else if (arg === '--input' && args[i + 1]) {
+			input = args[++i];
+		} else if (arg.startsWith('--input=')) {
+			input = arg.slice('--input='.length);
+		} else if (!arg.startsWith('-')) {
+			if (!endpointPath) endpointPath = arg;
+			else if (!input) input = arg;
+		}
+	}
+
+	return { path: endpointPath, input, tenant };
+}
+
+function parseScriptArgs(args: string[]): {
+	code: string | undefined;
+	tenant: string | undefined;
+} {
+	let code: string | undefined;
+	let tenant: string | undefined;
+
+	for (let i = 0; i < args.length; i++) {
+		const arg = args[i]!;
+		if (arg === '--code' && args[i + 1]) {
+			code = args[++i];
+		} else if (arg.startsWith('--code=')) {
+			code = arg.slice('--code='.length);
+		} else if (arg === '--tenant' && args[i + 1]) {
+			tenant = args[++i];
+		} else if (arg.startsWith('--tenant=')) {
+			tenant = arg.slice('--tenant='.length);
+		}
+	}
+
+	return { code, tenant };
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Help
+// ─────────────────────────────────────────────────────────────────────────────
+
+function printHelp() {
+	console.log('[#corsair]: Corsair CLI\n');
+	console.log('Commands:');
+	console.log('  corsair setup                                   Initialize your Corsair instance');
+	console.log('  corsair setup -backfill                         Initialize and backfill initial data');
+	console.log('  corsair setup --<plugin> <field>=VALUE ...      Set credentials for a plugin');
+	console.log('');
+	console.log('  corsair auth --plugin=<id>                      Start OAuth flow (outputs auth URL as JSON)');
+	console.log('  corsair auth --plugin=<id> --code=<code>        Exchange OAuth code for tokens');
+	console.log('  corsair auth --plugin=<id> --credentials        Show current credential status');
+	console.log('');
+	console.log('  corsair list                                     List all API endpoint paths across all plugins');
+	console.log('  corsair list --plugin=<id>                      List paths for a specific plugin');
+	console.log('  corsair list --type=api|webhooks|db             Filter by operation type (default: api)');
+	console.log('  corsair list --plugin=<id> --type=<type>        Combine plugin + type filters');
+	console.log('');
+	console.log('  corsair schema <path>                           Show schema for an endpoint, webhook, or DB entity');
+	console.log('  corsair schema slack.api.messages.post          Example: API endpoint schema');
+	console.log('  corsair schema slack.webhooks.messages.message  Example: webhook schema');
+	console.log('  corsair schema slack.db.messages.search         Example: DB search schema');
+	console.log('');
+	console.log('  corsair run <path> [input-json]                 Call an API endpoint and print the result');
+	console.log('  corsair run slack.api.channels.list             Example: no input needed');
+	console.log('  corsair run slack.api.messages.post \'{"channel":"C123","text":"hi"}\'');
+	console.log('  corsair run <path> [input-json] --tenant=<id>   Multi-tenant variant');
+	console.log('');
+	console.log('  corsair script --code "<js>"                    Run a sandboxed script with corsair injected');
+	console.log('  corsair script --code "<js>" --tenant=<id>      Multi-tenant variant');
+	console.log('  # corsair is pre-injected; use return to output a value:');
+	console.log('  # --code "const r = await corsair.slack.api.channels.list(); return r.channels.find(c => c.name === \'general\')?.id"');
+	console.log('');
+	console.log('  corsair watch-renew                             Renew Google webhook watch (Gmail/Drive/Calendar)');
+	console.log('  corsair help                                    Show this help message\n');
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
 // CLI entry point
 // ─────────────────────────────────────────────────────────────────────────────
@@ -477,19 +636,7 @@ async function main() {
 	const command = args[0];
 
 	if (command === 'help' || command === '--help' || command === '-h') {
-		console.log('[#corsair]: Corsair CLI\n');
-		console.log('Commands:');
-		console.log('  corsair setup                               Initialize your Corsair instance');
-		console.log('  corsair setup -backfill                     Initialize and backfill initial data');
-		console.log('  corsair setup --<plugin> <field>=VALUE ...  Set credentials for a plugin');
-		console.log('  corsair auth --plugin=<id>                 Start OAuth flow (outputs auth URL as JSON)');
-		console.log('  corsair auth --plugin=<id> --code=<code>   Exchange OAuth code for tokens');
-		console.log('  corsair auth --plugin=<id> --credentials   Show current credential status');
-		console.log(
-			'  corsair watch-renew        Renew Google webhook watch (Gmail/Drive/Calendar)',
-		);
-		console.log('  corsair migrate            Create a data migration script');
-		console.log('  corsair migrate help       Show migration help\n');
+		printHelp();
 		return;
 	}
 
@@ -518,7 +665,121 @@ async function main() {
 		return;
 	}
 
-	// Default behavior: inspect corsair instance
+	if (command === 'list') {
+		const { plugin, type } = parseListArgs(args.slice(1));
+		const instance = await getCorsairInstance({ cwd });
+		const corsair = instance as Record<string, unknown>;
+		if (typeof corsair.list_operations !== 'function') {
+			console.error('[#corsair]: list_operations not available on this Corsair instance.');
+			process.exit(1);
+		}
+		const result = corsair.list_operations({ plugin, type }) as unknown;
+		if (typeof result === 'string') {
+			console.log(result);
+		} else if (Array.isArray(result)) {
+			for (const path of result) {
+				console.log(path);
+			}
+			console.log('');
+			console.log('Run `pnpm corsair schema <path>` to get the schema for any of the above.');
+		} else if (result && typeof result === 'object') {
+			const grouped = result as Record<string, string[]>;
+			for (const [pluginId, paths] of Object.entries(grouped)) {
+				console.log(`${pluginId}:`);
+				for (const path of paths) {
+					console.log(`  ${path}`);
+				}
+			}
+			console.log('');
+			console.log('Run `pnpm corsair schema <path>` to get the schema for any of the above.');
+		}
+		return;
+	}
+
+	if (command === 'run') {
+		const { path: endpointPath, input, tenant } = parseRunArgs(args.slice(1));
+		if (!endpointPath) {
+			console.error('[#corsair]: Usage: corsair run <path> [input-json]');
+			console.error('[#corsair]: Example: corsair run slack.api.messages.post \'{"channel":"C123","text":"hi"}\'');
+			process.exit(1);
+		}
+		const instance = await getCorsairInstance({ cwd });
+		const client = resolveClient(instance, tenant);
+		const fn = navigateToEndpoint(client, endpointPath);
+		if (!fn) {
+			console.error(`[#corsair]: Could not find endpoint "${endpointPath}".`);
+			console.error('[#corsair]: Run `pnpm corsair list` to see available paths.');
+			process.exit(1);
+		}
+		let parsedInput: unknown = {};
+		if (input) {
+			try {
+				parsedInput = JSON.parse(input);
+			} catch {
+				console.error('[#corsair]: Invalid JSON input. Make sure to quote the JSON string.');
+				process.exit(1);
+			}
+		}
+		try {
+			const result = await fn(parsedInput);
+			console.log(JSON.stringify(result, null, 2));
+		} catch (e) {
+			const msg = e instanceof Error ? e.message : String(e);
+			console.error(`[#corsair]: ${msg.slice(0, 500)}`);
+			process.exit(1);
+		}
+		return;
+	}
+
+	if (command === 'script') {
+		const { code, tenant } = parseScriptArgs(args.slice(1));
+		if (!code) {
+			console.error('[#corsair]: Usage: corsair script --code "<js>"');
+			console.error('[#corsair]: Example: corsair script --code "const r = await corsair.slack.channels.list(); return r.channels.find(c => c.name === \'general\')?.id"');
+			process.exit(1);
+		}
+		const instance = await getCorsairInstance({ cwd });
+		const client = resolveClient(instance, tenant);
+		// Run the script body as an async function with `corsair` injected
+		// eslint-disable-next-line @typescript-eslint/no-implied-eval
+		const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor as new (
+			...args: string[]
+		) => (...fnArgs: unknown[]) => Promise<unknown>;
+		const fn = new AsyncFunction('corsair', code);
+		try {
+			const result = await fn(client);
+			if (result !== undefined) {
+				console.log(JSON.stringify(result, null, 2));
+			}
+		} catch (e) {
+			const msg = e instanceof Error ? e.message : String(e);
+			console.error(`[#corsair]: ${msg.slice(0, 500)}`);
+			process.exit(1);
+		}
+		return;
+	}
+
+	if (command === 'schema') {
+		const schemaPath = args[1];
+		if (!schemaPath) {
+			console.error('[#corsair]: Usage: corsair schema <path>');
+			console.error('[#corsair]: Example: corsair schema slack.api.messages.post');
+			process.exit(1);
+		}
+		const instance = await getCorsairInstance({ cwd });
+		const corsair = instance as Record<string, unknown>;
+		if (typeof corsair.get_schema !== 'function') {
+			console.error('[#corsair]: get_schema not available on this Corsair instance.');
+			process.exit(1);
+		}
+		const result = corsair.get_schema(schemaPath) as string;
+		console.log(result);
+		return;
+	}
+
+	// Default behavior: print help + inspect corsair instance
+	printHelp();
+	console.log('');
 	console.log(`[#corsair]: Looking for Corsair instance in ${cwd}...\n`);
 
 	try {
