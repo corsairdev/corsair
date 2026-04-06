@@ -987,8 +987,13 @@ type EntityFieldsFilter = {
  *   }
  * }
  */
+type SchemaDefinedKeys<DataSchema extends ZodTypeAny> =
+	DataSchema extends z.ZodObject<infer Shape, any, any, any, any>
+		? keyof Shape
+		: keyof z.infer<DataSchema>;
+
 export type DataSearchFilter<DataSchema extends ZodTypeAny> = {
-	[K in keyof z.infer<DataSchema>]?: z.infer<DataSchema>[K] extends
+	[K in SchemaDefinedKeys<DataSchema>]?: z.infer<DataSchema>[K] extends
 		| string
 		| number
 		| boolean
@@ -1201,8 +1206,13 @@ export type PluginEntityClient<DataSchema extends ZodTypeAny> = {
 	/** Delete by external entity ID. */
 	deleteByEntityId: (entityId: string) => Promise<boolean>;
 
-	/** Count entities for this entity type. */
-	count: () => Promise<number>;
+	/**
+	 * Count entities for this entity type.
+	 * Supports the same filters as `search`, excluding pagination fields.
+	 */
+	count: (
+		options?: Omit<EntitySearchOptions<DataSchema>, 'limit' | 'offset'>,
+	) => Promise<number>;
 };
 
 /**

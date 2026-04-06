@@ -55,17 +55,24 @@ export async function makeWhatsAppRequest<T>(
 			typeof error === 'object' &&
 			'body' in error &&
 			error.body &&
-			typeof error.body === 'object'
+			typeof error.body === 'object' &&
+			'error' in error.body &&
+			error.body.error &&
+			typeof error.body.error === 'object'
 		) {
-			const body = error.body as {
-				error?: { message?: string; code?: string | number; type?: string };
-			};
-			if (body.error) {
-				throw new WhatsAppAPIError(
-					body.error.message ?? 'WhatsApp API request failed',
-					body.error.code ? String(body.error.code) : body.error.type,
-				);
-			}
+			const apiError = error.body.error;
+			const message =
+				'message' in apiError && typeof apiError.message === 'string'
+					? apiError.message
+					: 'WhatsApp API request failed';
+			const code =
+				'code' in apiError &&
+				(typeof apiError.code === 'string' || typeof apiError.code === 'number')
+					? String(apiError.code)
+					: 'type' in apiError && typeof apiError.type === 'string'
+						? apiError.type
+						: undefined;
+			throw new WhatsAppAPIError(message, code);
 		}
 
 		if (error instanceof Error) {

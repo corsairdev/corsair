@@ -31,10 +31,7 @@ export const message: WhatsAppWebhooks['message'] = {
 						id: incomingMessage.id,
 						messaging_product: change.value.messaging_product,
 						from: incomingMessage.from,
-						wa_id:
-							change.value.contacts?.find(
-								(contact) => contact.wa_id === incomingMessage.from,
-							)?.wa_id ?? incomingMessage.from,
+						wa_id: incomingMessage.from,
 						phone_number_id: change.value.metadata?.phone_number_id,
 						display_phone_number: change.value.metadata?.display_phone_number,
 						contacts: change.value.contacts,
@@ -44,6 +41,7 @@ export const message: WhatsAppWebhooks['message'] = {
 						createdAt: incomingMessage.timestamp
 							? new Date(Number(incomingMessage.timestamp) * 1000)
 							: new Date(),
+						// raw preserves the original inbound message payload because interactive and media message variants differ across WhatsApp webhook events.
 						raw: incomingMessage,
 					};
 

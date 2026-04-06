@@ -23,8 +23,8 @@ export const WhatsAppConversation = z
 			})
 			.passthrough()
 			.optional(),
-			category: z.string().optional(),
-			createdAt: z.coerce.date().nullable().optional(),
+		category: z.string().optional(),
+		createdAt: z.coerce.date().nullable().optional(),
 	})
 	.passthrough();
 
@@ -74,6 +74,7 @@ export const WhatsAppMessage = z
 		direction: z.enum(['inbound', 'outbound']).optional(),
 		authorId: z.string().optional(),
 		createdAt: z.coerce.date().nullable().optional(),
+		// raw stores the original webhook or API payload because Meta message shapes vary by event type and API version.
 		raw: z.unknown().optional(),
 	})
 	.passthrough();

@@ -1,4 +1,5 @@
 import type {
+	AuthTypes,
 	BindEndpoints,
 	BindWebhooks,
 	CorsairEndpoint,
@@ -14,12 +15,14 @@ import type {
 	RequiredPluginEndpointSchemas,
 	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
-import type { AuthTypes } from 'corsair/core';
 import type { WhatsAppEndpointInputs, WhatsAppEndpointOutputs } from './endpoints/types';
 import {
 	WhatsAppEndpointInputSchemas,
 	WhatsAppEndpointOutputSchemas,
 } from './endpoints/types';
+import { Messages } from './endpoints';
+import { errorHandlers } from './error-handlers';
+import { WhatsAppSchema } from './schema';
 import type {
 	MessageEvent,
 	StatusEvent,
@@ -28,11 +31,26 @@ import type {
 import {
 	WhatsAppMessageEventSchema,
 	WhatsAppStatusEventSchema,
+	WhatsAppWebhookPayloadSchema,
 } from './webhooks/types';
-import { Messages } from './endpoints';
-import { WhatsAppSchema } from './schema';
 import { MessageWebhooks, StatusWebhooks } from './webhooks';
-import { errorHandlers } from './error-handlers';
+
+const whatsAppEndpointsNested = {
+	messages: {
+		sendMessage: Messages.sendMessage,
+		getMessages: Messages.getMessages,
+		listConversations: Messages.listConversations,
+	},
+} as const;
+
+const whatsAppWebhooksNested = {
+	message: {
+		message: MessageWebhooks.message,
+	},
+	status: {
+		status: StatusWebhooks.status,
+	},
+} as const;
 
 export type WhatsAppPluginOptions = {
 	authType?: PickAuth<'api_key'>;
@@ -50,8 +68,18 @@ export type WhatsAppContext = CorsairPluginContext<
 >;
 
 export type WhatsAppKeyBuilderContext = KeyBuilderContext<WhatsAppPluginOptions>;
-
 export type WhatsAppBoundEndpoints = BindEndpoints<typeof whatsAppEndpointsNested>;
+
+export type BaseWhatsAppPlugin<T extends WhatsAppPluginOptions> = CorsairPlugin<
+	'whatsapp',
+	typeof WhatsAppSchema,
+	typeof whatsAppEndpointsNested,
+	typeof whatsAppWebhooksNested,
+	T,
+	typeof defaultAuthType
+>;
+
+export type InternalWhatsAppPlugin = BaseWhatsAppPlugin<WhatsAppPluginOptions>;
 
 type WhatsAppEndpoint<K extends keyof WhatsAppEndpointOutputs> = CorsairEndpoint<
 	WhatsAppContext,
@@ -76,23 +104,6 @@ export type WhatsAppWebhooks = {
 };
 
 export type WhatsAppBoundWebhooks = BindWebhooks<WhatsAppWebhooks>;
-
-const whatsAppEndpointsNested = {
-	messages: {
-		sendMessage: Messages.sendMessage,
-		getMessages: Messages.getMessages,
-		listConversations: Messages.listConversations,
-	},
-} as const;
-
-const whatsAppWebhooksNested = {
-	message: {
-		message: MessageWebhooks.message,
-	},
-	status: {
-		status: StatusWebhooks.status,
-	},
-} as const;
 
 export const whatsAppEndpointSchemas = {
 	'messages.sendMessage': {
@@ -124,7 +135,7 @@ export const whatsAppWebhookSchemas: RequiredPluginWebhookSchemas<
 	},
 };
 
-const defaultAuthType: AuthTypes = 'api_key' as const;
+const defaultAuthType = 'api_key' as const;
 
 const whatsAppEndpointMeta = {
 	'messages.sendMessage': {
@@ -147,26 +158,12 @@ export const whatsAppAuthConfig = {
 	},
 } as const satisfies PluginAuthConfig;
 
-export type BaseWhatsAppPlugin<T extends WhatsAppPluginOptions> = CorsairPlugin<
-	'whatsapp',
-	typeof WhatsAppSchema,
-	typeof whatsAppEndpointsNested,
-	typeof whatsAppWebhooksNested,
-	T,
-	typeof defaultAuthType
->;
-
-export type InternalWhatsAppPlugin = BaseWhatsAppPlugin<WhatsAppPluginOptions>;
-
-export type ExternalWhatsAppPlugin<T extends WhatsAppPluginOptions> =
-	BaseWhatsAppPlugin<T>;
-
-export function whatsapp<const T extends WhatsAppPluginOptions>(
-	incomingOptions: WhatsAppPluginOptions & T = {} as WhatsAppPluginOptions & T,
-): ExternalWhatsAppPlugin<T> {
+export function whatsapp(
+	incomingOptions?: WhatsAppPluginOptions,
+): InternalWhatsAppPlugin {
 	const options = {
-		...incomingOptions,
-		authType: incomingOptions.authType ?? defaultAuthType,
+		...(incomingOptions ?? {}),
+		authType: incomingOptions?.authType ?? defaultAuthType,
 	};
 
 	return {
@@ -182,24 +179,17 @@ export function whatsapp<const T extends WhatsAppPluginOptions>(
 		webhookSchemas: whatsAppWebhookSchemas,
 		pluginWebhookMatcher: (request) => {
 			try {
-				const body = typeof request.body === 'string'
-					? JSON.parse(request.body)
-					: request.body;
-
-				if (!body || typeof body !== 'object' || !('object' in body)) {
+				const body: unknown =
+					typeof request.body === 'string'
+						? JSON.parse(request.body)
+						: request.body;
+				const parsed = WhatsAppWebhookPayloadSchema.safeParse(body);
+				if (!parsed.success) {
 					return false;
 				}
 
-				if (body.object !== 'whatsapp_business_account') {
-					return false;
-				}
-
-				if (!Array.isArray((body as { entry?: unknown[] }).entry)) {
-					return false;
-				}
-
-				return (body as { entry: Array<{ changes?: Array<{ field?: string }> }> }).entry.some(
-					(entry) => entry.changes?.some((change) => change.field === 'messages'),
+				return parsed.data.entry.some((entry) =>
+					entry.changes.some((change) => change.field === 'messages'),
 				);
 			} catch {
 				return false;
@@ -235,15 +225,6 @@ export function whatsapp<const T extends WhatsAppPluginOptions>(
 }
 
 export type {
-	MessageEvent,
-	StatusEvent,
-	WhatsAppIncomingMessage,
-	WhatsAppStatus,
-	WhatsAppWebhookOutputs,
-	WhatsAppWebhookPayload,
-} from './webhooks/types';
-
-export type {
 	GetMessagesInput,
 	GetMessagesResponse,
 	ListConversationsInput,
@@ -253,3 +234,12 @@ export type {
 	WhatsAppEndpointInputs,
 	WhatsAppEndpointOutputs,
 } from './endpoints/types';
+
+export type {
+	MessageEvent,
+	StatusEvent,
+	WhatsAppIncomingMessage,
+	WhatsAppStatus,
+	WhatsAppWebhookOutputs,
+	WhatsAppWebhookPayload,
+} from './webhooks/types';

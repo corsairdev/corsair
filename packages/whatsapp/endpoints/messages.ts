@@ -74,35 +74,41 @@ export const getMessages: WhatsAppEndpoints['getMessages'] = async (ctx, input) 
 		return empty;
 	}
 
-	const persisted = await ctx.db.messages.list({
+	const searchOptions: Parameters<typeof ctx.db.messages.search>[0] = {
 		limit: input.limit,
 		offset: input.offset,
-	});
+	};
+	const countOptions: Parameters<typeof ctx.db.messages.count>[0] = {};
 
-	const messages = persisted
-		.map((entity) => entity.data)
-		.filter((message) => {
-			if (input.phoneNumberId && message.phone_number_id !== input.phoneNumberId) {
-				return false;
-			}
-			if (input.contactWaId) {
-				const waId = message.wa_id ?? message.from ?? message.recipient_id;
-				if (waId !== input.contactWaId) {
-					return false;
-				}
-			}
-			if (input.direction && message.direction !== input.direction) {
-				return false;
-			}
-			if (input.status && message.status !== input.status) {
-				return false;
-			}
-			return true;
-		});
+	if (input.phoneNumberId || input.contactWaId || input.direction || input.status) {
+		searchOptions.data = {};
+		countOptions.data = {};
+		if (input.phoneNumberId) {
+			searchOptions.data.phone_number_id = input.phoneNumberId;
+			countOptions.data.phone_number_id = input.phoneNumberId;
+		}
+		if (input.contactWaId) {
+			searchOptions.data.wa_id = input.contactWaId;
+			countOptions.data.wa_id = input.contactWaId;
+		}
+		if (input.direction) {
+			searchOptions.data.direction = input.direction;
+			countOptions.data.direction = input.direction;
+		}
+		if (input.status) {
+			searchOptions.data.status = input.status;
+			countOptions.data.status = input.status;
+		}
+	}
+
+	const [persisted, count] = await Promise.all([
+		ctx.db.messages.search(searchOptions),
+		ctx.db.messages.count(countOptions),
+	]);
 
 	const response: GetMessagesResponse = {
-		messages,
-		count: messages.length,
+		messages: persisted.map((entity) => entity.data),
+		count,
 	};
 
 	await logEventFromContext(
@@ -127,23 +133,25 @@ export const listConversations: WhatsAppEndpoints['listConversations'] = async (
 		return empty;
 	}
 
-	const persisted = await ctx.db.conversations.list({
+	const searchOptions: Parameters<typeof ctx.db.conversations.search>[0] = {
 		limit: input.limit,
 		offset: input.offset,
-	});
+	};
+	const countOptions: Parameters<typeof ctx.db.conversations.count>[0] = {};
 
-	const conversations = persisted
-		.map((entity) => entity.data)
-		.filter((conversation) => {
-			if (input.category && conversation.category !== input.category) {
-				return false;
-			}
-			return true;
-		});
+	if (input.category) {
+		searchOptions.data = { category: input.category };
+		countOptions.data = { category: input.category };
+	}
+
+	const [persisted, count] = await Promise.all([
+		ctx.db.conversations.search(searchOptions),
+		ctx.db.conversations.count(countOptions),
+	]);
 
 	const response: ListConversationsResponse = {
-		conversations,
-		count: conversations.length,
+		conversations: persisted.map((entity) => entity.data),
+		count,
 	};
 
 	await logEventFromContext(

@@ -79,6 +79,7 @@ const WhatsAppChangeValueSchema = z
 		contacts: z.array(WhatsAppContactSchema).optional(),
 		messages: z.array(WhatsAppIncomingMessageSchema).optional(),
 		statuses: z.array(WhatsAppStatusSchema).optional(),
+		// Meta error objects vary across message types and delivery contexts, so the original payload is preserved without narrowing.
 		errors: z.array(z.unknown()).optional(),
 	})
 	.passthrough();
@@ -105,106 +106,97 @@ export const WhatsAppWebhookPayloadSchema = z
 	.passthrough();
 
 export type WhatsAppWebhookPayload = z.infer<typeof WhatsAppWebhookPayloadSchema>;
+export type WhatsAppIncomingMessage = z.infer<typeof WhatsAppIncomingMessageSchema>;
+export type WhatsAppStatus = z.infer<typeof WhatsAppStatusSchema>;
 export type MessageEvent = WhatsAppWebhookPayload;
 export type StatusEvent = WhatsAppWebhookPayload;
 
-export const WhatsAppMessageEventSchema: z.ZodType<MessageEvent> =
-	WhatsAppWebhookPayloadSchema.refine(
-		(payload) =>
-			payload.entry.some((entry) =>
-				entry.changes.some(
-					(change) =>
-						change.field === 'messages' &&
-						Array.isArray(change.value.messages) &&
-						change.value.messages.length > 0,
-				),
-			),
-		{
-			message: 'Payload does not contain incoming WhatsApp messages',
-		},
+function hasExclusiveMessageChanges(payload: WhatsAppWebhookPayload): boolean {
+	return payload.entry.some((entry) =>
+		entry.changes.some((change) => {
+			if (change.field !== 'messages') {
+				return false;
+			}
+
+			const hasMessages = Boolean(change.value.messages?.length);
+			const hasStatuses = Boolean(change.value.statuses?.length);
+			return hasMessages && !hasStatuses;
+		}),
 	);
+}
+
+function hasExclusiveStatusChanges(payload: WhatsAppWebhookPayload): boolean {
+	return payload.entry.some((entry) =>
+		entry.changes.some((change) => {
+			if (change.field !== 'messages') {
+				return false;
+			}
+
+			const hasMessages = Boolean(change.value.messages?.length);
+			const hasStatuses = Boolean(change.value.statuses?.length);
+			return hasStatuses && !hasMessages;
+		}),
+	);
+}
+
+export const WhatsAppMessageEventSchema: z.ZodType<MessageEvent> =
+	WhatsAppWebhookPayloadSchema.refine(hasExclusiveMessageChanges, {
+		message: 'Payload does not contain exclusive incoming WhatsApp messages',
+	});
 
 export const WhatsAppStatusEventSchema: z.ZodType<StatusEvent> =
-	WhatsAppWebhookPayloadSchema.refine(
-		(payload) =>
-			payload.entry.some((entry) =>
-				entry.changes.some(
-					(change) =>
-						change.field === 'messages' &&
-						Array.isArray(change.value.statuses) &&
-						change.value.statuses.length > 0,
-				),
-			),
-		{
-			message: 'Payload does not contain WhatsApp status updates',
-		},
-	);
-export type WhatsAppIncomingMessage = z.infer<typeof WhatsAppIncomingMessageSchema>;
-export type WhatsAppStatus = z.infer<typeof WhatsAppStatusSchema>;
+	WhatsAppWebhookPayloadSchema.refine(hasExclusiveStatusChanges, {
+		message: 'Payload does not contain exclusive WhatsApp status updates',
+	});
 
 export type WhatsAppWebhookOutputs = {
 	message: MessageEvent;
 	status: StatusEvent;
 };
 
-function parseBody(body: unknown): Record<string, unknown> {
-	if (typeof body === 'string') {
-		return JSON.parse(body) as Record<string, unknown>;
-	}
-	return (body ?? {}) as Record<string, unknown>;
+function isRecord(value: unknown): value is Record<string, unknown> {
+	return Boolean(value) && typeof value === 'object' && !Array.isArray(value);
 }
 
-function hasMessagesPayload(body: Record<string, unknown>): boolean {
-	if (body.object !== 'whatsapp_business_account' || !Array.isArray(body.entry)) {
-		return false;
+function parseBody(body: unknown): Record<string, unknown> {
+	if (typeof body === 'string') {
+		const parsed: unknown = JSON.parse(body);
+		return isRecord(parsed) ? parsed : {};
 	}
 
-	return body.entry.some((entry: unknown) => {
-		if (!entry || typeof entry !== 'object' || !('changes' in entry)) {
-			return false;
-		}
+	return isRecord(body) ? body : {};
+}
 
-		const changes = (entry as { changes?: unknown }).changes;
-		if (!Array.isArray(changes)) {
-			return false;
-		}
+function extractMessageChanges(body: Record<string, unknown>) {
+	const parsed = WhatsAppWebhookPayloadSchema.safeParse(body);
+	if (!parsed.success) {
+		return [];
+	}
 
-		return changes.some((change: unknown) => {
-			if (!change || typeof change !== 'object' || !('field' in change)) {
-				return false;
-			}
-
-			if ((change as { field?: unknown }).field !== 'messages') {
-				return false;
-			}
-
-			const value = (change as { value?: unknown }).value;
-			return !!value && typeof value === 'object';
-		});
-	});
+	return parsed.data.entry.flatMap((entry) =>
+		entry.changes.filter((change) => change.field === 'messages'),
+	);
 }
 
 export function createWhatsAppMatch(
 	eventType: keyof WhatsAppWebhookOutputs,
 ): CorsairWebhookMatcher {
 	return (request: RawWebhookRequest) => {
-		const parsedBody = parseBody(request.body);
-		if (!hasMessagesPayload(parsedBody)) {
+		const changes = extractMessageChanges(parseBody(request.body));
+		if (changes.length === 0) {
 			return false;
 		}
 
-		const body = parsedBody as WhatsAppWebhookPayload;
-		return body.entry.some((entry) =>
-			entry.changes.some((change) => {
-				if (change.field !== 'messages') {
-					return false;
-				}
-				if (eventType === 'message') {
-					return !!change.value.messages?.length;
-				}
-				return !!change.value.statuses?.length;
-			}),
-		);
+		return changes.some((change) => {
+			const hasMessages = Boolean(change.value.messages?.length);
+			const hasStatuses = Boolean(change.value.statuses?.length);
+
+			if (eventType === 'message') {
+				return hasMessages && !hasStatuses;
+			}
+
+			return hasStatuses && !hasMessages;
+		});
 	};
 }
 
