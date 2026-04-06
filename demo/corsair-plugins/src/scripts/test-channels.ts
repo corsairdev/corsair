@@ -3,10 +3,8 @@ import 'dotenv/config';
 
 const main = async () => {
     
-    const res = await corsair.slack.api.messages.post({
-        channel: "sdk-test",
-        text: "hello!"
-    })
+    const res = await corsair.cursor.api.agents.list({
+    });
 
         console.log(res)
 
