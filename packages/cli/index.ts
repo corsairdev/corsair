@@ -611,7 +611,9 @@ function printHelp() {
 		'  pnpm corsair schema <path>                      Show schema for an endpoint/webhook/DB entity',
 		'  pnpm corsair script --code "<js>" [--tenant=<id>]',
 		'    corsair is injected; use return to output a value.',
-		'    Ex: return (await corsair.slack.api.channels.list()).channels.find(c=>c.name===\'general\')?.id',
+		'    IMPORTANT: Always filter results inline — you are the consumer of the return value, so returning full list responses wastes tokens.',
+		'    Bad:  return await corsair.slack.api.users.list({})',
+		'    Good: return (await corsair.slack.api.users.list({})).members.find(u => u.name === \'bob\')?.id',
 		...(SHOW_RUN ? [
 			'  run <path> [input-json] [--tenant=<id>]  Call an endpoint directly',
 		] : []),
