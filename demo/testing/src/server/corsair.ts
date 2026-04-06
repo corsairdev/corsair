@@ -17,3 +17,4 @@ export const corsair = createCorsair({
 	},
 	plugins: [github(), slack(), googlesheets(), googlecalendar(), gmail(), linear()],
 });
+
