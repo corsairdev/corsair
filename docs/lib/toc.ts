@@ -196,12 +196,12 @@ export function extractTOC(mdxPath: string): TOCItem[] {
 				.replace(/[^a-z0-9]+/g, '-')
 				.replace(/^-|-$/g, '');
 
-			if (slugCounts[urlSlug] !== undefined) {
-				slugCounts[urlSlug]++;
-				urlSlug = `${urlSlug}-${slugCounts[urlSlug]}`;
-			} else {
-				slugCounts[urlSlug] = 0;
+			const originalSlug = urlSlug;
+			while (slugCounts[urlSlug] !== undefined) {
+				slugCounts[originalSlug]++;
+				urlSlug = `${originalSlug}-${slugCounts[originalSlug]}`;
 			}
+			slugCounts[urlSlug] = 0;
 			const url = `#${urlSlug}`;
 			toc.push({
 				title,
