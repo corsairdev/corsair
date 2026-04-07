@@ -202,7 +202,9 @@ psql $DATABASE_URL -f migration.sql
 
 <Step>
 
-### Create `corsair.ts`
+### Install GitHub plugin and create `corsair.ts` 
+
+<PmTabs install="@corsair-dev/github" /> 
 
 This is the one file that wires everything together. Create it at `src/server/corsair.ts`:
 
@@ -284,7 +286,7 @@ export GITHUB_TOKEN=ghp_...
 
 Run setup once with the Corsair CLI:
 
-<PmTabs install="@corsair-dev/cli @corsair-dev/github" /> 
+<PmTabs install="@corsair-dev/cli" /> 
 
 <PmTabs run="corsair setup --github api_key=$GITHUB_TOKEN --backfill" />
 
