@@ -1,8 +1,8 @@
-import { logEventFromContext } from '../../utils/events';
+import { logEventFromContext } from 'corsair/core';
 import type { OutlookBoundEndpoints, OutlookWebhooks } from '..';
 import type { EventCreatedEvent, EventChangedEvent, OutlookWebhookPayload } from './types';
 import { createOutlookMatch, verifyOutlookWebhookSignature } from './types';
-import type { WebhookRequest } from '../../../core';
+import type { WebhookRequest } from 'corsair/core';
 import type { OutlookContext } from '..';
 
 // Matches calendar event resources: Users/{id}/Events/{id} or Calendars/{id}/Events/{id}

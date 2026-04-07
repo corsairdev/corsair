@@ -1,7 +1,7 @@
-import type { ApiRequestOptions } from '../../async-core/ApiRequestOptions';
-import type { OpenAPIConfig } from '../../async-core/OpenAPI';
-import type { RateLimitConfig } from '../../async-core/rate-limit';
-import { request } from '../../async-core/request';
+import type { ApiRequestOptions } from 'corsair/http';
+import type { OpenAPIConfig } from 'corsair/http';
+import type { RateLimitConfig } from 'corsair/http';
+import { request } from 'corsair/http';
 
 export class OutlookAPIError extends Error {
 	constructor(
@@ -52,7 +52,7 @@ async function refreshAccessToken(
 		);
 	}
 
-	return await response.json();
+	return await response.json() as { access_token: string; expires_in: number };
 }
 
 export async function getValidAccessToken({

@@ -12,9 +12,9 @@ import type {
 	RequiredPluginEndpointSchemas,
 	RequiredPluginWebhookSchemas,
 	PluginPermissionsConfig,
-} from '../../core';
-import type { AuthTypes, PickAuth } from '../../core/constants';
-import type { RawWebhookRequest } from '../../core';
+} from 'corsair/core';
+import type { AuthTypes, PickAuth } from 'corsair/core';
+import type { RawWebhookRequest } from 'corsair/core';
 import type { OutlookEndpointInputs, OutlookEndpointOutputs } from './endpoints/types';
 import {
 	OutlookEndpointInputSchemas,

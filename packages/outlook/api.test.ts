@@ -1,4 +1,4 @@
-import dotenv from 'dotenv';
+import 'dotenv/config'
 import { makeOutlookRequest } from './client';
 import type {
 	CalendarsCreateResponse,
@@ -25,8 +25,6 @@ import type {
 	MessagesUpdateResponse,
 } from './endpoints/types';
 import { OutlookEndpointOutputSchemas } from './endpoints/types';
-
-dotenv.config();
 
 const ACCESS_TOKEN = process.env.OUTLOOK_ACCESS_TOKEN!;
 

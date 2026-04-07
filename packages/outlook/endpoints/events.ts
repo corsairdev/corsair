@@ -1,4 +1,4 @@
-import { logEventFromContext } from '../../utils/events';
+import { logEventFromContext } from 'corsair/core';
 import type { OutlookEndpoints } from '..';
 import { makeOutlookRequest } from '../client';
 import type { OutlookEndpointOutputs } from './types';

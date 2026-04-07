@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import crypto from 'crypto';
-import type { CorsairWebhookMatcher, RawWebhookRequest, WebhookRequest } from '../../../core';
+import type { CorsairWebhookMatcher, RawWebhookRequest, WebhookRequest } from 'corsair/core';
 
 // ── Microsoft Graph change notification payload ───────────────────────────────
 
