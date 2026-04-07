@@ -105,13 +105,15 @@ function zodToExpandedType(schema: ZodTypeAny, depth: number): string {
 			ft === 'ZodOptional' || ft === 'ZodNullable'
 				? (valDef.innerType as ZodTypeAny)
 				: val;
-		const innerTypeName = (innerVal as { _def: Record<string, unknown> })?._def
-			?.typeName as string | undefined;
+		const innerDef = (innerVal as { _def: Record<string, unknown> })?._def;
+		const innerTypeName = innerDef?.typeName as string | undefined;
+		const description = innerDef?.description as string | undefined;
+		const comment = description ? `  // ${description}` : '';
 
 		if (innerTypeName === 'ZodObject') {
-			lines.push(`${pad}${k}: ${zodToExpandedType(innerVal, depth + 1)}`);
+			lines.push(`${pad}${k}: ${zodToExpandedType(innerVal, depth + 1)}${comment}`);
 		} else {
-			lines.push(`${pad}${k}: ${zodToInlineType(val)}`);
+			lines.push(`${pad}${k}: ${zodToInlineType(val)}${comment}`);
 		}
 	}
 
