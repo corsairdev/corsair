@@ -647,6 +647,12 @@ export type UpdateValuesResponse = {
 	updatedData?: ValueRange;
 };
 
+export type AppendValuesResponse = {
+	spreadsheetId?: string;
+	tableRange?: string;
+	updates?: UpdateValuesResponse;
+};
+
 export type ClearValuesRequest = {
 	spreadsheetId?: string;
 	range?: string;

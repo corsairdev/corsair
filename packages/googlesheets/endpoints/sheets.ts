@@ -1,7 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import type { GoogleSheetsEndpoints } from '..';
 import { makeAuthenticatedSheetsRequest } from '../client';
-import type { ValueRange } from '../types';
+import type { AppendValuesResponse, UpdateValuesResponse, ValueRange } from '../types';
 import type { GoogleSheetsEndpointOutputs } from './types';
 
 export const appendRow: GoogleSheetsEndpoints['sheetsAppendRow'] = async (
@@ -91,34 +91,33 @@ export const appendOrUpdateRow: GoogleSheetsEndpoints['sheetsAppendOrUpdateRow']
 				: `${sheetName}!A:Z`;
 
 		if (rowIndex >= 0) {
-			const result = await makeAuthenticatedSheetsRequest<
-				GoogleSheetsEndpointOutputs['sheetsAppendOrUpdateRow']
-			>(`/spreadsheets/${input.spreadsheetId}/values/${updateRange}`, ctx, {
-				method: 'PUT',
-				query: {
-					valueInputOption: input.valueInputOption || 'USER_ENTERED',
+			const result = await makeAuthenticatedSheetsRequest<UpdateValuesResponse>(
+				`/spreadsheets/${input.spreadsheetId}/values/${updateRange}`,
+				ctx,
+				{
+					method: 'PUT',
+					query: {
+						valueInputOption: input.valueInputOption || 'USER_ENTERED',
+					},
+					body: {
+						values,
+						majorDimension: 'ROWS',
+					},
 				},
-				body: {
-					values,
-					majorDimension: 'ROWS',
-				},
-			});
+			);
 
-			if (result.responses && result.responses.length > 0 && ctx.db.rows) {
+			if (ctx.db.rows) {
 				try {
-					const response = result.responses[0];
-					if (response) {
-						const updatedRange = response.updatedRange || updateRange;
-						const rowId = `${input.spreadsheetId}_${sheetName}_${updatedRange}`;
-						await ctx.db.rows.upsertByEntityId(rowId, {
-							rowId,
-							spreadsheetId: input.spreadsheetId,
-							sheetName,
-							range: updatedRange,
-							values: input.values,
-							createdAt: new Date(),
-						});
-					}
+					const updatedRange = result.updatedRange || updateRange;
+					const rowId = `${input.spreadsheetId}_${sheetName}_${updatedRange}`;
+					await ctx.db.rows.upsertByEntityId(rowId, {
+						rowId,
+						spreadsheetId: input.spreadsheetId,
+						sheetName,
+						range: updatedRange,
+						values: input.values,
+						createdAt: new Date(),
+					});
 				} catch (error) {
 					console.warn('Failed to update row in database:', error);
 				}
@@ -132,9 +131,7 @@ export const appendOrUpdateRow: GoogleSheetsEndpoints['sheetsAppendOrUpdateRow']
 			);
 			return result;
 		} else {
-			const result = await makeAuthenticatedSheetsRequest<
-				GoogleSheetsEndpointOutputs['sheetsAppendOrUpdateRow']
-			>(
+			const result = await makeAuthenticatedSheetsRequest<AppendValuesResponse>(
 				`/spreadsheets/${input.spreadsheetId}/values/${updateRange}:append`,
 				ctx,
 				{
@@ -150,21 +147,18 @@ export const appendOrUpdateRow: GoogleSheetsEndpoints['sheetsAppendOrUpdateRow']
 				},
 			);
 
-			if (result.responses && result.responses.length > 0 && ctx.db.rows) {
+			if (ctx.db.rows) {
 				try {
-					const response = result.responses[0];
-					if (response) {
-						const updatedRange = response.updatedRange || updateRange;
-						const rowId = `${input.spreadsheetId}_${sheetName}_${updatedRange}`;
-						await ctx.db.rows.upsertByEntityId(rowId, {
-							rowId,
-							spreadsheetId: input.spreadsheetId,
-							sheetName,
-							range: updatedRange,
-							values: input.values,
-							createdAt: new Date(),
-						});
-					}
+					const updatedRange = result.updates?.updatedRange || updateRange;
+					const rowId = `${input.spreadsheetId}_${sheetName}_${updatedRange}`;
+					await ctx.db.rows.upsertByEntityId(rowId, {
+						rowId,
+						spreadsheetId: input.spreadsheetId,
+						sheetName,
+						range: updatedRange,
+						values: input.values,
+						createdAt: new Date(),
+					});
 				} catch (error) {
 					console.warn('Failed to save row to database:', error);
 				}
