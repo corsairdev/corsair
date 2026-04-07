@@ -44,23 +44,60 @@ const slugToFilePath: Record<string, string> = {
 	'plugins/linear/get-credentials': 'plugins/linear/get-credentials.mdx',
 	'plugins/github': 'plugins/github/main.mdx',
 	'plugins/github/get-credentials': 'plugins/github/get-credentials.mdx',
+	'plugins/github/api-endpoints': 'plugins/github/api-endpoints.mdx',
+	'plugins/github/webhooks': 'plugins/github/webhooks.mdx',
+	'plugins/github/database': 'plugins/github/database.mdx',
+	'plugins/github/error-handlers': 'plugins/github/error-handlers.mdx',
 	'plugins/gmail': 'plugins/gmail/main.mdx',
 	'plugins/gmail/get-credentials': 'plugins/gmail/get-credentials.mdx',
+	'plugins/gmail/api-endpoints': 'plugins/gmail/api-endpoints.mdx',
+	'plugins/gmail/webhooks': 'plugins/gmail/webhooks.mdx',
+	'plugins/gmail/database': 'plugins/gmail/database.mdx',
+	'plugins/gmail/error-handlers': 'plugins/gmail/error-handlers.mdx',
 	'plugins/googlesheets': 'plugins/googlesheets/main.mdx',
 	'plugins/googlesheets/get-credentials':
 		'plugins/googlesheets/get-credentials.mdx',
+	'plugins/googlesheets/api-endpoints':
+		'plugins/googlesheets/api-endpoints.mdx',
+	'plugins/googlesheets/webhooks': 'plugins/googlesheets/webhooks.mdx',
+	'plugins/googlesheets/database': 'plugins/googlesheets/database.mdx',
+	'plugins/googlesheets/error-handlers':
+		'plugins/googlesheets/error-handlers.mdx',
 	'plugins/googledrive': 'plugins/googledrive/main.mdx',
 	'plugins/googledrive/get-credentials':
 		'plugins/googledrive/get-credentials.mdx',
+	'plugins/googledrive/api-endpoints': 'plugins/googledrive/api-endpoints.mdx',
+	'plugins/googledrive/webhooks': 'plugins/googledrive/webhooks.mdx',
+	'plugins/googledrive/database': 'plugins/googledrive/database.mdx',
+	'plugins/googledrive/error-handlers':
+		'plugins/googledrive/error-handlers.mdx',
 	'plugins/googlecalendar': 'plugins/googlecalendar/main.mdx',
 	'plugins/googlecalendar/get-credentials':
 		'plugins/googlecalendar/get-credentials.mdx',
+	'plugins/googlecalendar/api-endpoints':
+		'plugins/googlecalendar/api-endpoints.mdx',
+	'plugins/googlecalendar/webhooks': 'plugins/googlecalendar/webhooks.mdx',
+	'plugins/googlecalendar/database': 'plugins/googlecalendar/database.mdx',
+	'plugins/googlecalendar/error-handlers':
+		'plugins/googlecalendar/error-handlers.mdx',
 	'plugins/hubspot': 'plugins/hubspot/main.mdx',
 	'plugins/hubspot/get-credentials': 'plugins/hubspot/get-credentials.mdx',
+	'plugins/hubspot/api-endpoints': 'plugins/hubspot/api-endpoints.mdx',
+	'plugins/hubspot/webhooks': 'plugins/hubspot/webhooks.mdx',
+	'plugins/hubspot/database': 'plugins/hubspot/database.mdx',
+	'plugins/hubspot/error-handlers': 'plugins/hubspot/error-handlers.mdx',
 	'plugins/posthog': 'plugins/posthog/main.mdx',
 	'plugins/posthog/get-credentials': 'plugins/posthog/get-credentials.mdx',
+	'plugins/posthog/api-endpoints': 'plugins/posthog/api-endpoints.mdx',
+	'plugins/posthog/webhooks': 'plugins/posthog/webhooks.mdx',
+	'plugins/posthog/database': 'plugins/posthog/database.mdx',
+	'plugins/posthog/error-handlers': 'plugins/posthog/error-handlers.mdx',
 	'plugins/resend': 'plugins/resend/main.mdx',
 	'plugins/resend/get-credentials': 'plugins/resend/get-credentials.mdx',
+	'plugins/resend/api-endpoints': 'plugins/resend/api-endpoints.mdx',
+	'plugins/resend/webhooks': 'plugins/resend/webhooks.mdx',
+	'plugins/resend/database': 'plugins/resend/database.mdx',
+	'plugins/resend/error-handlers': 'plugins/resend/error-handlers.mdx',
 	// new plugins
 	'plugins/discord': 'plugins/discord/main.mdx',
 	'plugins/discord/api-endpoints': 'plugins/discord/api-endpoints.mdx',
@@ -113,10 +150,12 @@ const slugToFilePath: Record<string, string> = {
 	'plugins/todoist/database': 'plugins/todoist/database.mdx',
 	'plugins/todoist/error-handlers': 'plugins/todoist/error-handlers.mdx',
 	'plugins/twitterapiio': 'plugins/twitterapiio/main.mdx',
-	'plugins/twitterapiio/api-endpoints': 'plugins/twitterapiio/api-endpoints.mdx',
+	'plugins/twitterapiio/api-endpoints':
+		'plugins/twitterapiio/api-endpoints.mdx',
 	'plugins/twitterapiio/webhooks': 'plugins/twitterapiio/webhooks.mdx',
 	'plugins/twitterapiio/database': 'plugins/twitterapiio/database.mdx',
-	'plugins/twitterapiio/error-handlers': 'plugins/twitterapiio/error-handlers.mdx',
+	'plugins/twitterapiio/error-handlers':
+		'plugins/twitterapiio/error-handlers.mdx',
 	'plugins/sentry': 'plugins/sentry/main.mdx',
 	'plugins/sentry/api-endpoints': 'plugins/sentry/api-endpoints.mdx',
 	'plugins/sentry/webhooks': 'plugins/sentry/webhooks.mdx',
@@ -141,42 +180,29 @@ export function extractTOC(mdxPath: string): TOCItem[] {
 	const fullPath = path.join(process.cwd(), 'content', filePath);
 	const content = fs.readFileSync(fullPath, 'utf-8');
 
-	const lines = content.split('\n');
-	const toc: TOCItem[] = [];
+	const cleanedContent = content.replace(/```[\s\S]*?```/g, '');
+	const lines = cleanedContent.split('\n');
 
-	let inFrontmatter = false;
-	let frontmatterDone = false;
-	let inCodeBlock = false;
+	const toc: TOCItem[] = [];
+	const slugCounts: Record<string, number> = {};
 
 	for (const line of lines) {
-		if (!frontmatterDone && line.trim() === '---') {
-			if (!inFrontmatter) {
-				inFrontmatter = true;
-			} else {
-				inFrontmatter = false;
-				frontmatterDone = true;
-			}
-			continue;
-		}
-
-		if (inFrontmatter) continue;
-
-		if (line.trim().startsWith('```')) {
-			inCodeBlock = !inCodeBlock;
-			continue;
-		}
-
-		if (inCodeBlock) continue;
-
 		const match = line.match(/^(#{2,6})\s+(.+)$/);
 		if (match) {
 			const depth = match[1].length;
 			const title = match[2].trim();
-			const url = `#${title
+			let urlSlug = title
 				.toLowerCase()
 				.replace(/[^a-z0-9]+/g, '-')
-				.replace(/^-|-$/g, '')}`;
+				.replace(/^-|-$/g, '');
 
+			if (slugCounts[urlSlug] !== undefined) {
+				slugCounts[urlSlug]++;
+				urlSlug = `${urlSlug}-${slugCounts[urlSlug]}`;
+			} else {
+				slugCounts[urlSlug] = 0;
+			}
+			const url = `#${urlSlug}`;
 			toc.push({
 				title,
 				url,
