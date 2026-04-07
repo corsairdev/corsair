@@ -1,4 +1,4 @@
-import { logEventFromContext } from '../../utils/events';
+import { logEventFromContext } from 'corsair/core';
 import type { AhrefsEndpoints } from '..';
 import { makeAhrefsRequest } from '../client';
 import type { AhrefsEndpointOutputs } from './types';

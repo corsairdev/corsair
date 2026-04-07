@@ -1,4 +1,4 @@
-import dotenv from 'dotenv';
+import 'dotenv/config'
 import { makeAhrefsRequest } from './client';
 import type {
 	CrawlerIpRangesResponse,
@@ -43,8 +43,6 @@ import type {
 	SubscriptionLimitsAndUsageResponse,
 } from './endpoints/types';
 import { AhrefsEndpointOutputSchemas } from './endpoints/types';
-
-dotenv.config();
 
 const TEST_API_KEY = process.env.AHREFS_API_KEY!;
 

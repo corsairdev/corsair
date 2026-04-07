@@ -9,8 +9,8 @@ import type {
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
 	PluginPermissionsConfig,
-} from '../../core';
-import type { AuthTypes, PickAuth } from '../../core/constants';
+} from 'corsair/core';
+import type { AuthTypes, PickAuth } from 'corsair/core';
 import type { AhrefsEndpointInputs, AhrefsEndpointOutputs } from './endpoints/types';
 import { AhrefsEndpointInputSchemas, AhrefsEndpointOutputSchemas } from './endpoints/types';
 import {

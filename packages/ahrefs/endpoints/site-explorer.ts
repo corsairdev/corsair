@@ -1,4 +1,4 @@
-import { logEventFromContext } from '../../utils/events';
+import { logEventFromContext } from 'corsair/core';
 import type { AhrefsEndpoints } from '..';
 import { makeAhrefsRequest } from '../client';
 import type { AhrefsEndpointOutputs } from './types';
@@ -54,7 +54,7 @@ export const batchUrlAnalysis: AhrefsEndpoints['siteExplorerBatchUrlAnalysis'] =
 					await ctx.db.domainRatings.upsertByEntityId(`batch:${url}`, {
 						id: `batch:${url}`,
 						target: url,
-						date: new Date().toISOString().split('T')[0],
+						date: new Date().toISOString().split('T')[0]!,
 						...(domain_rating !== undefined ? { domain_rating } : {}),
 						...(ahrefs_rank !== undefined ? { ahrefs_rank } : {}),
 						fetchedAt: new Date(),
@@ -141,7 +141,7 @@ export const getAllBacklinks: AhrefsEndpoints['siteExplorerAllBacklinks'] = asyn
 			await ctx.db.backlinksStats.upsertByEntityId(`allBacklinks:${input.target}`, {
 				id: `allBacklinks:${input.target}`,
 				target: input.target,
-				date: new Date().toISOString().split('T')[0],
+				date: new Date().toISOString().split('T')[0]!,
 				backlinks: result.data?.refpages?.length,
 				fetchedAt: new Date(),
 			});
@@ -167,7 +167,7 @@ export const getBrokenBacklinks: AhrefsEndpoints['siteExplorerBrokenBacklinks'] 
 			await ctx.db.backlinksStats.upsertByEntityId(`brokenBacklinks:${input.target}`, {
 				id: `brokenBacklinks:${input.target}`,
 				target: input.target,
-				date: new Date().toISOString().split('T')[0],
+				date: new Date().toISOString().split('T')[0]!,
 				// Store count of broken backlinks for this target
 				refpages: result.data?.refpages?.length,
 				fetchedAt: new Date(),
@@ -194,7 +194,7 @@ export const getReferringDomains: AhrefsEndpoints['siteExplorerReferringDomains'
 			await ctx.db.backlinksStats.upsertByEntityId(`refdomains:${input.target}`, {
 				id: `refdomains:${input.target}`,
 				target: input.target,
-				date: new Date().toISOString().split('T')[0],
+				date: new Date().toISOString().split('T')[0]!,
 				refdomains: result.data?.refdomains?.length,
 				// Spread any scalar stats fields from the summary object
 				...(typeof result.data?.stats === 'object' && result.data.stats !== null
@@ -249,7 +249,7 @@ export const getLinkedAnchorsExternal: AhrefsEndpoints['siteExplorerLinkedAnchor
 					{
 						id: `linkedAnchorsExternal:${input.target}`,
 						target: input.target,
-						date: new Date().toISOString().split('T')[0],
+						date: new Date().toISOString().split('T')[0]!,
 						backlinks: result.data?.anchors?.length,
 						fetchedAt: new Date(),
 					},
@@ -308,7 +308,7 @@ export const getLinkedAnchors: AhrefsEndpoints['siteExplorerLinkedAnchors'] = as
 			await ctx.db.backlinksStats.upsertByEntityId(`linkedAnchors:${input.target}`, {
 				id: `linkedAnchors:${input.target}`,
 				target: input.target,
-				date: new Date().toISOString().split('T')[0],
+				date: new Date().toISOString().split('T')[0]!,
 				backlinks: result.data?.anchors?.length,
 				fetchedAt: new Date(),
 			});
@@ -332,7 +332,7 @@ export const getBestByExternalLinks: AhrefsEndpoints['siteExplorerBestByExternal
 				await ctx.db.backlinksStats.upsertByEntityId(`bestByExternalLinks:${input.target}`, {
 					id: `bestByExternalLinks:${input.target}`,
 					target: input.target,
-					date: new Date().toISOString().split('T')[0],
+					date: new Date().toISOString().split('T')[0]!,
 					pages: result.data?.pages?.length,
 					fetchedAt: new Date(),
 				});
@@ -358,7 +358,7 @@ export const getPagesByTraffic: AhrefsEndpoints['siteExplorerPagesByTraffic'] = 
 			await ctx.db.backlinksStats.upsertByEntityId(`pagesByTraffic:${input.target}`, {
 				id: `pagesByTraffic:${input.target}`,
 				target: input.target,
-				date: new Date().toISOString().split('T')[0],
+				date: new Date().toISOString().split('T')[0]!,
 				pages: result.data?.pages?.length,
 				fetchedAt: new Date(),
 			});
@@ -384,7 +384,7 @@ export const getAnchorData: AhrefsEndpoints['siteExplorerAnchorData'] = async (
 			await ctx.db.backlinksStats.upsertByEntityId(`anchorData:${input.target}`, {
 				id: `anchorData:${input.target}`,
 				target: input.target,
-				date: new Date().toISOString().split('T')[0],
+				date: new Date().toISOString().split('T')[0]!,
 				backlinks: result.data?.anchors?.length,
 				// Spread any scalar stats fields from the summary object
 				...(typeof result.data?.stats === 'object' && result.data.stats !== null
@@ -412,7 +412,7 @@ export const getBestByInternalLinks: AhrefsEndpoints['siteExplorerBestByInternal
 				await ctx.db.backlinksStats.upsertByEntityId(`bestByInternalLinks:${input.target}`, {
 					id: `bestByInternalLinks:${input.target}`,
 					target: input.target,
-					date: new Date().toISOString().split('T')[0],
+					date: new Date().toISOString().split('T')[0]!,
 					pages: result.data?.pages?.length,
 					fetchedAt: new Date(),
 				});
@@ -513,7 +513,7 @@ export const getOutlinksStats: AhrefsEndpoints['siteExplorerOutlinksStats'] = as
 			await ctx.db.backlinksStats.upsertByEntityId(`outlinksStats:${input.target}`, {
 				id: `outlinksStats:${input.target}`,
 				target: input.target,
-				date: new Date().toISOString().split('T')[0],
+				date: new Date().toISOString().split('T')[0]!,
 				// Spread the outlinks stats object (links_external, links_internal, etc.)
 				...(typeof result.data.outlinks === 'object' ? result.data.outlinks : {}),
 				fetchedAt: new Date(),
@@ -782,7 +782,7 @@ export const getLinkedDomains: AhrefsEndpoints['siteExplorerLinkedDomains'] = as
 						{
 							id: `linkedDomain:${input.target}:${domainName}`,
 							target: domainName,
-							date: new Date().toISOString().split('T')[0],
+							date: new Date().toISOString().split('T')[0]!,
 							...(domain_rating !== undefined ? { domain_rating } : {}),
 							fetchedAt: new Date(),
 						},

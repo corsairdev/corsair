@@ -1,4 +1,4 @@
-import { logEventFromContext } from '../../utils/events';
+import { logEventFromContext } from 'corsair/core';
 import type { AhrefsEndpoints } from '..';
 import { makeAhrefsRequest } from '../client';
 import type { AhrefsEndpointOutputs } from './types';
@@ -16,7 +16,7 @@ export const getProjects: AhrefsEndpoints['siteAuditProjects'] = async (ctx, inp
 				if (project.project_id) {
 					await ctx.db.siteAuditProjects.upsertByEntityId(project.project_id, {
 						id: project.project_id,
-						// Spread all project fields (project_id, domain, crawl_id, health_score, etc.)
+						project_id: project.project_id,
 						...project,
 						fetchedAt: new Date(),
 					});
