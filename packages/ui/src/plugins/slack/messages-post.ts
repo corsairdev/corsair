@@ -1,4 +1,4 @@
-import type { SlackBoundEndpoints } from 'corsair/plugins';
+import type { SlackBoundEndpoints } from '@corsair-dev/slack';
 import {
 	actionsHtml,
 	buildActionDescriptors,

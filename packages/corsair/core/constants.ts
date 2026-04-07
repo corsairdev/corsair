@@ -15,12 +15,14 @@ export type AllErrors =
 export const BaseProviders = [
 	'airtable',
 	'amplitude',
+	'asana',
 	'box',
 	'cal',
 	'calendly',
 	'discord',
 	'dropbox',
 	'exa',
+	'figma',
 	'fireflies',
 	'github',
 	'gmail',
@@ -50,18 +52,21 @@ export const BaseProviders = [
 	'twitter',
 	'twitterapiio',
 	'youtube',
+	'typeform',
 	'zoom',
 ] as const;
 
 export type AllProviders =
 	| 'airtable'
 	| 'amplitude'
+	| 'asana'
 	| 'box'
 	| 'cal'
 	| 'calendly'
 	| 'discord'
 	| 'dropbox'
 	| 'exa'
+	| 'figma'
 	| 'fireflies'
 	| 'github'
 	| 'gmail'
@@ -91,6 +96,7 @@ export type AllProviders =
 	| 'twitter'
 	| 'twitterapiio'
 	| 'youtube'
+	| 'typeform'
 	| 'zoom'
 	| (string & {});
 

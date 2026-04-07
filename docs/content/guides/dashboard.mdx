@@ -1,0 +1,244 @@
+---
+title: Vibe Code Your Dashboard
+description: Scaffold a T3 app, wire in Google Calendar with Corsair, then let an AI agent build the whole dashboard from a single prompt.
+---
+
+By the end of this guide you'll have a working Next.js app with a live Google Calendar dashboard — and you'll have written almost none of the UI yourself.
+
+<Steps>
+
+<Step>
+
+### Scaffold the T3 app
+
+<PmTabs create="t3-app@latest my-cal-dashboard -- --CI --trpc --tailwind --appRouter" />
+
+```bash
+cd my-cal-dashboard
+```
+
+</Step>
+
+<Step>
+
+### Install
+
+<PmTabs install="corsair @corsair-dev/googlecalendar" />
+
+</Step>
+
+<Step>
+
+### Generate your encryption key
+
+Corsair encrypts stored credentials with a Key Encryption Key. Generate one and add it to `.env`:
+
+<KekGenerator />
+
+<Callout type="warn" title="Keep this key safe">
+If you lose it, you lose access to all stored credentials. Treat it like a root password.
+</Callout>
+
+</Step>
+
+<Step>
+
+### Migrate the database
+
+Corsair needs five tables. Install the driver, then run the migration:
+
+<PmTabs install="better-sqlite3" />
+<PmTabs install="@types/better-sqlite3" dev />
+
+<Accordions>
+<Accordion title="View migration SQL">
+
+```sql title="migration.sql"
+CREATE TABLE IF NOT EXISTS corsair_integrations (
+    id TEXT PRIMARY KEY,
+    created_at INTEGER NOT NULL,
+    updated_at INTEGER NOT NULL,
+    name TEXT NOT NULL,
+    config TEXT NOT NULL DEFAULT '{}',
+    dek TEXT NULL
+);
+
+CREATE TABLE IF NOT EXISTS corsair_accounts (
+    id TEXT PRIMARY KEY,
+    created_at INTEGER NOT NULL,
+    updated_at INTEGER NOT NULL,
+    tenant_id TEXT NOT NULL,
+    integration_id TEXT NOT NULL,
+    config TEXT NOT NULL DEFAULT '{}',
+    dek TEXT NULL,
+    FOREIGN KEY (integration_id) REFERENCES corsair_integrations(id)
+);
+
+CREATE TABLE IF NOT EXISTS corsair_entities (
+    id TEXT PRIMARY KEY,
+    created_at INTEGER NOT NULL,
+    updated_at INTEGER NOT NULL,
+    account_id TEXT NOT NULL,
+    entity_id TEXT NOT NULL,
+    entity_type TEXT NOT NULL,
+    version TEXT NOT NULL,
+    data TEXT NOT NULL DEFAULT '{}',
+    FOREIGN KEY (account_id) REFERENCES corsair_accounts(id)
+);
+
+CREATE TABLE IF NOT EXISTS corsair_events (
+    id TEXT PRIMARY KEY,
+    created_at INTEGER NOT NULL,
+    updated_at INTEGER NOT NULL,
+    account_id TEXT NOT NULL,
+    event_type TEXT NOT NULL,
+    payload TEXT NOT NULL DEFAULT '{}',
+    status TEXT,
+    FOREIGN KEY (account_id) REFERENCES corsair_accounts(id)
+);
+
+CREATE TABLE IF NOT EXISTS corsair_permissions (
+    id TEXT PRIMARY KEY,
+    created_at INTEGER NOT NULL,
+    updated_at INTEGER NOT NULL,
+    token TEXT NOT NULL,
+    plugin TEXT NOT NULL,
+    endpoint TEXT NOT NULL,
+    args TEXT NOT NULL,
+    tenant_id TEXT NOT NULL DEFAULT 'default',
+    status TEXT NOT NULL DEFAULT 'pending',
+    expires_at TEXT NOT NULL,
+    error TEXT NULL
+);
+```
+
+</Accordion>
+</Accordions>
+
+```bash
+sqlite3 corsair.db < migration.sql
+```
+
+</Step>
+
+<Step>
+
+### Create `src/server/corsair.ts`
+
+```ts title="src/server/corsair.ts"
+import 'dotenv/config';
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { googlecalendar } from "@corsair-dev/googlecalendar";
+
+const db = new Database('corsair.db');
+
+export const corsair = createCorsair({
+    plugins: [googlecalendar()],
+    database: db,
+    kek: process.env.CORSAIR_KEK!,
+});
+```
+
+</Step>
+
+<Step>
+
+### Connect Google Calendar (optional)
+
+Google Calendar uses OAuth2. You'll need a GCP OAuth app first:
+
+1. Go to the [Google Cloud Console](https://console.cloud.google.com/), create a project, and enable the **Google Calendar API**.
+2. Under **APIs & Services → Credentials**, create an **OAuth 2.0 Client ID** (Application type: Web application). No redirect URI needed — Corsair handles it locally.
+3. Copy your Client ID and Client Secret, then store them:
+
+<PmTabs install="@corsair-dev/cli" /> 
+
+<PmTabs run="corsair setup --googlecalendar client_id=YOUR_CLIENT_ID client_secret=YOUR_CLIENT_SECRET" />
+
+<Accordions>
+<Accordion title="pnpm: command not found or setup fails?">
+
+If `pnpm corsair` isn't found, add this to your `package.json` so pnpm builds the native dependency correctly:
+
+```json title="package.json"
+{
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "better-sqlite3"
+    ]
+  }
+}
+```
+
+Then re-run `pnpm install` and retry the setup command.
+
+</Accordion>
+</Accordions>
+
+4. Start the OAuth flow:
+
+<PmTabs run="corsair auth --plugin=googlecalendar" />
+
+Open the `authUrl` printed in the terminal. Once you authorize in the browser, tokens are saved automatically and the command exits.
+
+</Step>
+
+<Step>
+
+### Vibe code the dashboard (optional)
+
+Paste this prompt into Claude, Cursor, or any AI coding agent:
+
+```
+I have a Next.js T3 app. The Google Calendar plugin is connected via Corsair.
+
+Build me a Google Calendar dashboard on the home page. I want to see:
+
+- A stats row showing: how many events I have today, how many this week, what my next meeting is, and how many hours are blocked
+today
+- Today's full agenda — all my events for today in order with times and titles
+- An upcoming events panel — my next couple weeks of events grouped by day
+- A Create Meeting button that opens a form to schedule a new event
+- A notes field on each meeting card where I can save and edit private notes per event (store these in a local table, not on Google
+Calendar)
+- A Refresh button in the header that fetches the latest events from Google Calendar and updates what's shown on screen, including
+removing any events the user has deleted from Google Calendar
+
+The app should use await corsair.googlecalendar.db as a cache — load from there first, and only call Google Calendar when the data isn't
+cached yet, when creating an event, or when the user clicks Refresh. The page should not make any live API calls on its own after
+the first load.
+```
+
+Run `pnpm dev` when it's done.
+
+</Step>
+
+</Steps>
+
+---
+
+## What's next
+
+<Cards>
+  <Card
+    title="Google Calendar Plugin"
+    description="Full API reference — create events, check availability, and handle webhook notifications."
+    href="/plugins/googlecalendar/api-endpoints"
+  />
+  <Card
+    title="Webhooks"
+    description="React to calendar changes in real time — new events, updates, and deletions pushed to your server."
+    href="/plugins/googlecalendar/webhooks"
+  />
+  <Card
+    title="Workflows"
+    description="Chain calendar events to other plugins — meeting created → Slack notification → Linear task."
+    href="/guides/workflows"
+  />
+  <Card
+    title="Multi-Tenancy"
+    description="Building a product? Each user gets their own calendar credentials and isolated data."
+    href="/multi-tenancy"
+  />
+</Cards>
