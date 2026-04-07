@@ -54,7 +54,7 @@ export const listChanged: SharepointWebhooks['listChanged'] = {
 
 		// Use the first notification as the representative event
 		const first = notifications[0]!;
-		let corsairEntityId = '';
+		const corsairEntityId = first.subscriptionId;
 
 		await logEventFromContext(
 			ctx,
