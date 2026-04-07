@@ -305,6 +305,7 @@ async function oauthExchangeCode(
 	let tokens: { access_token?: string; refresh_token?: string; expires_in?: number };
 	try {
 		tokens = await exchangeCodeForTokens(code, clientId, clientSecret, oauthCfg, redirectUri);
+		console.log('tokens', tokens)
 	} catch (err) {
 		out({ error: `Token exchange failed: ${err instanceof Error ? err.message : String(err)}` });
 		return;

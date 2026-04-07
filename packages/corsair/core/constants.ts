@@ -41,6 +41,7 @@ export const BaseProviders = [
 	'posthog',
 	'resend',
 	'sentry',
+	'sharepoint',
 	'slack',
 	'spotify',
 	'stripe',
@@ -84,6 +85,7 @@ export type AllProviders =
 	| 'posthog'
 	| 'resend'
 	| 'sentry'
+	| 'sharepoint'
 	| 'slack'
 	| 'spotify'
 	| 'stripe'
