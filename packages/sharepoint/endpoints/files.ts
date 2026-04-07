@@ -10,8 +10,7 @@ export const upload: SharepointEndpoints['filesUpload'] = async (ctx, input) => 
 	);
 	const folderPath = input.folder_server_relative_url.replace(/^\/+/, '');
 	const content = input.content_text ?? input.content_base64 ?? '';
-	// File content is a raw string/base64 value; cast through unknown to satisfy the generic Record body type
-	const fileBody = content as unknown as Record<string, unknown>;
+	const fileBody = content
 
 	const result = await makeGraphRequest<SharepointEndpointOutputs['filesUpload']>(
 		`/sites/${siteId}/drive/root:/${folderPath}/${encodeURIComponent(input.file_name)}:/content`,
