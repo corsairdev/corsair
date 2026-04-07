@@ -8,10 +8,10 @@ import type {
 	CorsairWebhook,
 	KeyBuilderContext,
 	PickAuth,
-	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
+	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
 import type { AuthTypes } from 'corsair/core';
 import { Orders, Payments, Refunds } from './endpoints';
@@ -33,10 +33,22 @@ import {
 	RazorpayEndpointInputSchemas,
 	RazorpayEndpointOutputSchemas,
 } from './endpoints/types';
-import type { ExampleEvent, RazorpayWebhookOutputs } from './webhooks/types';
-import { ExampleWebhooks } from './webhooks';
-import { RazorpaySchema } from './schema';
 import { errorHandlers } from './error-handlers';
+import { RazorpaySchema } from './schema';
+import { OrderWebhooks, PaymentWebhooks, RefundWebhooks } from './webhooks';
+import type {
+	RazorpayOrderPaidEvent,
+	RazorpayPaymentCapturedEvent,
+	RazorpayPaymentFailedEvent,
+	RazorpayRefundProcessedEvent,
+	RazorpayWebhookOutputs,
+} from './webhooks/types';
+import {
+	RazorpayOrderPaidEventSchema,
+	RazorpayPaymentCapturedEventSchema,
+	RazorpayPaymentFailedEventSchema,
+	RazorpayRefundProcessedEventSchema,
+} from './webhooks/types';
 
 export type RazorpayPluginOptions = {
 	authType?: PickAuth<'api_key'>;
@@ -49,17 +61,12 @@ export type RazorpayPluginOptions = {
 	permissions?: PluginPermissionsConfig<typeof razorpayEndpointsNested>;
 };
 
- export type RazorpayContext = CorsairPluginContext<
-        typeof RazorpaySchema,
-        RazorpayPluginOptions,
-        undefined,
-        typeof razorpayAuthConfig
+export type RazorpayContext = CorsairPluginContext<
+	typeof RazorpaySchema,
+	RazorpayPluginOptions
 >;
 
- export type RazorpayKeyBuilderContext = KeyBuilderContext<
-        RazorpayPluginOptions,
-	 typeof razorpayAuthConfig
->;
+export type RazorpayKeyBuilderContext = KeyBuilderContext<RazorpayPluginOptions>;
 
 export type RazorpayBoundEndpoints = BindEndpoints<typeof razorpayEndpointsNested>;
 
@@ -80,10 +87,19 @@ type RazorpayWebhook<
 > = CorsairWebhook<RazorpayContext, TEvent, RazorpayWebhookOutputs[K]>;
 
 export type RazorpayWebhooks = {
-	example: RazorpayWebhook<'example', ExampleEvent>;
+	paymentCaptured: RazorpayWebhook<
+		'paymentCaptured',
+		RazorpayPaymentCapturedEvent
+	>;
+	paymentFailed: RazorpayWebhook<'paymentFailed', RazorpayPaymentFailedEvent>;
+	orderPaid: RazorpayWebhook<'orderPaid', RazorpayOrderPaidEvent>;
+	refundProcessed: RazorpayWebhook<
+		'refundProcessed',
+		RazorpayRefundProcessedEvent
+	>;
 };
 
-export type RazorpayBoundWebhooks = BindWebhooks<RazorpayWebhooks>;
+export type RazorpayBoundWebhooks = BindWebhooks<typeof razorpayWebhooksNested>;
 
 const razorpayEndpointsNested = {
 	orders: {
@@ -100,8 +116,15 @@ const razorpayEndpointsNested = {
 } as const;
 
 const razorpayWebhooksNested = {
-	example: {
-		example: ExampleWebhooks.example,
+	payments: {
+		captured: PaymentWebhooks.captured,
+		failed: PaymentWebhooks.failed,
+	},
+	orders: {
+		paid: OrderWebhooks.paid,
+	},
+	refunds: {
+		processed: RefundWebhooks.processed,
 	},
 } as const;
 
@@ -128,6 +151,29 @@ export const razorpayEndpointSchemas = {
 	},
 } as const satisfies RequiredPluginEndpointSchemas<typeof razorpayEndpointsNested>;
 
+const razorpayWebhookSchemas = {
+	'payments.captured': {
+		description: 'A Razorpay payment was captured',
+		payload: RazorpayPaymentCapturedEventSchema,
+		response: RazorpayPaymentCapturedEventSchema,
+	},
+	'payments.failed': {
+		description: 'A Razorpay payment failed',
+		payload: RazorpayPaymentFailedEventSchema,
+		response: RazorpayPaymentFailedEventSchema,
+	},
+	'orders.paid': {
+		description: 'A Razorpay order was paid',
+		payload: RazorpayOrderPaidEventSchema,
+		response: RazorpayOrderPaidEventSchema,
+	},
+	'refunds.processed': {
+		description: 'A Razorpay refund was processed',
+		payload: RazorpayRefundProcessedEventSchema,
+		response: RazorpayRefundProcessedEventSchema,
+	},
+} as const satisfies RequiredPluginWebhookSchemas<typeof razorpayWebhooksNested>;
+
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
 const razorpayEndpointMeta = {
@@ -152,12 +198,6 @@ const razorpayEndpointMeta = {
 		description: 'Create a refund for a Razorpay payment',
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof razorpayEndpointsNested>;
-
-export const razorpayAuthConfig = {
-	api_key: {
-		account: ['key_id', 'key_secret'] as const,
-	},
-} as const satisfies PluginAuthConfig;
 
 export type BaseRazorpayPlugin<T extends RazorpayPluginOptions> = CorsairPlugin<
 	'razorpay',
@@ -190,9 +230,9 @@ export function razorpay<const T extends RazorpayPluginOptions>(
 		webhooks: razorpayWebhooksNested,
 		endpointMeta: razorpayEndpointMeta,
 		endpointSchemas: razorpayEndpointSchemas,
+		webhookSchemas: razorpayWebhookSchemas,
 		pluginWebhookMatcher: (request) => {
-			const headers = request.headers;
-			return 'x-razorpay-signature' in headers;
+			return 'x-razorpay-signature' in request.headers;
 		},
 		errorHandlers: {
 			...errorHandlers,
@@ -209,17 +249,12 @@ export function razorpay<const T extends RazorpayPluginOptions>(
 			}
 
 			if (source === 'endpoint' && options.keyId && options.keySecret) {
+				return `${options.keyId}:${options.keySecret}`;
 			}
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
-				const keyId = await ctx.keys.get_key_id();
-				const keySecret = await ctx.keys.get_key_secret();
-
-				if (!keyId || !keySecret) {
-					return '';
-				}
-
-				return `${keyId}:${keySecret}`;
+				const res = await ctx.keys.get_api_key();
+				return res ?? '';
 			}
 
 			return '';
@@ -227,7 +262,15 @@ export function razorpay<const T extends RazorpayPluginOptions>(
 	} satisfies InternalRazorpayPlugin;
 }
 
-export type { ExampleEvent, RazorpayWebhookOutputs } from './webhooks/types';
+export type {
+	RazorpayOrderPaidEvent,
+	RazorpayPaymentCapturedEvent,
+	RazorpayPaymentFailedEvent,
+	RazorpayRefundProcessedEvent,
+	RazorpayWebhookOutputs,
+} from './webhooks/types';
+
+export { createRazorpayMatch } from './webhooks/types';
 
 export type {
 	OrdersCreateInput,

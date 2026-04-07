@@ -1,61 +1,10 @@
 import { z } from 'zod';
-
-const RazorpayNotesSchema = z.union([
-	z.record(z.string()),
-	z.array(z.unknown()),
-]);
-
-const RazorpayOrderSchema = z
-	.object({
-		id: z.string(),
-		entity: z.literal('order'),
-		amount: z.number(),
-		amount_paid: z.number().optional(),
-		amount_due: z.number().optional(),
-		currency: z.string(),
-		receipt: z.string().nullable().optional(),
-		offer_id: z.string().nullable().optional(),
-		status: z.string(),
-		attempts: z.number().optional(),
-		notes: RazorpayNotesSchema.optional(),
-		created_at: z.number().optional(),
-	})
-	.passthrough();
-
-const RazorpayPaymentSchema = z
-	.object({
-		id: z.string(),
-		entity: z.literal('payment'),
-		amount: z.number(),
-		currency: z.string(),
-		status: z.string(),
-		order_id: z.string().nullable().optional(),
-		invoice_id: z.string().nullable().optional(),
-		method: z.string().nullable().optional(),
-		captured: z.boolean().optional(),
-		description: z.string().nullable().optional(),
-		email: z.string().nullable().optional(),
-		contact: z.string().nullable().optional(),
-		notes: RazorpayNotesSchema.optional(),
-		created_at: z.number().optional(),
-	})
-	.passthrough();
-
-const RazorpayRefundSchema = z
-	.object({
-		id: z.string(),
-		entity: z.literal('refund'),
-		payment_id: z.string(),
-		amount: z.number(),
-		currency: z.string().nullable().optional(),
-		notes: RazorpayNotesSchema.optional(),
-		receipt: z.string().nullable().optional(),
-		speed_processed: z.string().nullable().optional(),
-		speed_requested: z.string().nullable().optional(),
-		status: z.string(),
-		created_at: z.number().optional(),
-	})
-	.passthrough();
+import {
+	RazorpayNotesSchema,
+	RazorpayOrderSchema,
+	RazorpayPaymentSchema,
+	RazorpayRefundSchema,
+} from '../schema/database';
 
 const OrdersCreateInputSchema = z.object({
 	amount: z.number().int().positive(),
