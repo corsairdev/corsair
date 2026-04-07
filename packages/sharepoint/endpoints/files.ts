@@ -10,11 +10,13 @@ export const upload: SharepointEndpoints['filesUpload'] = async (ctx, input) => 
 	);
 	const folderPath = input.folder_server_relative_url.replace(/^\/+/, '');
 	const content = input.content_text ?? input.content_base64 ?? '';
+	// File content is a raw string/base64 value; cast through unknown to satisfy the generic Record body type
+	const fileBody = content as unknown as Record<string, unknown>;
 
 	const result = await makeGraphRequest<SharepointEndpointOutputs['filesUpload']>(
 		`/sites/${siteId}/drive/root:/${folderPath}/${encodeURIComponent(input.file_name)}:/content`,
 		ctx.key,
-		{ method: 'PUT', body: content as unknown as Record<string, unknown>, mediaType: 'text/plain' },
+		{ method: 'PUT', body: fileBody, mediaType: 'text/plain' },
 	);
 
 	if (result.id && ctx.db.files) {
@@ -98,11 +100,26 @@ export const recycle: SharepointEndpoints['filesRecycle'] = async (ctx, input) =
 	);
 	const drivePath = input.server_relative_url.replace(/^\/+/, '');
 
+	// Resolve file ID before deletion so we can remove the DB record by entity ID
+	const file = await makeGraphRequest<{ id?: string }>(
+		`/sites/${siteId}/drive/root:/${drivePath}`,
+		ctx.key,
+		{ method: 'GET', query: { $select: 'id' } },
+	);
+
 	await makeGraphRequest<Record<string, unknown>>(
 		`/sites/${siteId}/drive/root:/${drivePath}`,
 		ctx.key,
 		{ method: 'DELETE' },
 	);
+
+	if (ctx.db.files && file.id) {
+		try {
+			await ctx.db.files.deleteByEntityId(file.id);
+		} catch (error) {
+			console.warn('Failed to delete file from database:', error);
+		}
+	}
 
 	await logEventFromContext(ctx, 'sharepoint.files.recycle', { ...input }, 'completed');
 	return { value: undefined };
@@ -133,6 +150,20 @@ export const checkIn: SharepointEndpoints['filesCheckIn'] = async (ctx, input) =
 		},
 	);
 
+	if (item.id && ctx.db.files) {
+		try {
+			const existing = await ctx.db.files.findByEntityId(item.id);
+			await ctx.db.files.upsertByEntityId(item.id, {
+				...(existing?.data ?? {}),
+				id: item.id,
+				checkOutType: 0, // 0 = checked in
+				modifiedAt: new Date(),
+			});
+		} catch (error) {
+			console.warn('Failed to update file check-in status in database:', error);
+		}
+	}
+
 	await logEventFromContext(ctx, 'sharepoint.files.checkIn', { ...input }, 'completed');
 	return {
 		status: 200,
@@ -160,6 +191,20 @@ export const checkOut: SharepointEndpoints['filesCheckOut'] = async (ctx, input)
 		{ method: 'POST' },
 	);
 
+	if (item.id && ctx.db.files) {
+		try {
+			const existing = await ctx.db.files.findByEntityId(item.id);
+			await ctx.db.files.upsertByEntityId(item.id, {
+				...(existing?.data ?? {}),
+				id: item.id,
+				checkOutType: 1, // 1 = exclusive check out
+				modifiedAt: new Date(),
+			});
+		} catch (error) {
+			console.warn('Failed to update file check-out status in database:', error);
+		}
+	}
+
 	await logEventFromContext(ctx, 'sharepoint.files.checkOut', { ...input }, 'completed');
 	return {
 		message: 'File checked out successfully',
@@ -185,6 +230,20 @@ export const undoCheckout: SharepointEndpoints['filesUndoCheckout'] = async (ctx
 		ctx.key,
 		{ method: 'POST', body: { comment: 'undo checkout', checkInAs: 'unspecified' } },
 	);
+
+	if (item.id && ctx.db.files) {
+		try {
+			const existing = await ctx.db.files.findByEntityId(item.id);
+			await ctx.db.files.upsertByEntityId(item.id, {
+				...(existing?.data ?? {}),
+				id: item.id,
+				checkOutType: 0, // 0 = checked in (undo restores to checked-in state)
+				modifiedAt: new Date(),
+			});
+		} catch (error) {
+			console.warn('Failed to update file undo-checkout status in database:', error);
+		}
+	}
 
 	await logEventFromContext(ctx, 'sharepoint.files.undoCheckout', { ...input }, 'completed');
 	return {

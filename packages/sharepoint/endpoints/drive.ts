@@ -23,6 +23,24 @@ export const listRecentItems: SharepointEndpoints['driveListRecentItems'] = asyn
 		{ method: 'GET' },
 	);
 
+	if (result.value && ctx.db.files) {
+		try {
+			for (const item of result.value) {
+				if (item.id && item.file) {
+					await ctx.db.files.upsertByEntityId(item.id, {
+						id: item.id,
+						name: item.name,
+						serverRelativeUrl: item.webUrl,
+						timeCreated: item.createdDateTime,
+						timeLastModified: item.lastModifiedDateTime,
+					});
+				}
+			}
+		} catch (error) {
+			console.warn('Failed to save recent drive items to database:', error);
+		}
+	}
+
 	await logEventFromContext(ctx, 'sharepoint.drive.listRecentItems', { ...input }, 'completed');
 	return result;
 };
@@ -55,10 +73,10 @@ export const createSharingLink: SharepointEndpoints['driveCreateSharingLink'] = 
 	// Uses Microsoft Graph API
 	const body: Record<string, unknown> = {
 		type: input.type,
+		...(input.scope !== undefined && { scope: input.scope }),
+		...(input.expiration_date_time !== undefined && { expirationDateTime: input.expiration_date_time }),
+		...(input.password !== undefined && { password: input.password }),
 	};
-	if (input.scope) body.scope = input.scope;
-	if (input.expiration_date_time) body.expirationDateTime = input.expiration_date_time;
-	if (input.password) body.password = input.password;
 
 	const result = await makeGraphRequest<SharepointEndpointOutputs['driveCreateSharingLink']>(
 		`/sites/${encodeURIComponent(input.site_id)}/drive/items/${encodeURIComponent(input.item_id)}/createLink`,
@@ -72,16 +90,33 @@ export const createSharingLink: SharepointEndpoints['driveCreateSharingLink'] = 
 
 export const updateItem: SharepointEndpoints['driveUpdateItem'] = async (ctx, input) => {
 	// Uses Microsoft Graph API
-	const body: Record<string, unknown> = {};
-	if (input.name !== undefined) body.name = input.name;
-	if (input.description !== undefined) body.description = input.description;
-	if (input.parent_reference !== undefined) body.parentReference = input.parent_reference;
+	const body: Record<string, unknown> = {
+		...(input.name !== undefined && { name: input.name }),
+		...(input.description !== undefined && { description: input.description }),
+		...(input.parent_reference !== undefined && { parentReference: input.parent_reference }),
+	};
 
 	const result = await makeGraphRequest<SharepointEndpointOutputs['driveUpdateItem']>(
 		`/sites/${encodeURIComponent(input.site_id)}/drive/items/${encodeURIComponent(input.item_id)}`,
 		ctx.key,
 		{ method: 'PATCH', body },
 	);
+
+	if (result.id && ctx.db.files) {
+		try {
+			const existing = await ctx.db.files.findByEntityId(result.id);
+			await ctx.db.files.upsertByEntityId(result.id, {
+				...(existing?.data ?? {}),
+				id: result.id,
+				name: result.name ?? input.name,
+				serverRelativeUrl: result.webUrl,
+				timeLastModified: result.lastModifiedDateTime,
+				modifiedAt: new Date(),
+			});
+		} catch (error) {
+			console.warn('Failed to update drive item in database:', error);
+		}
+	}
 
 	await logEventFromContext(ctx, 'sharepoint.drive.updateItem', { ...input }, 'completed');
 	return result;

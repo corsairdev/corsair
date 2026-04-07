@@ -44,8 +44,10 @@ export type SharepointWebhookOutputs = {
 function parseBody(body: unknown): Record<string, unknown> {
 	if (typeof body === 'string') {
 		// Body may be a JSON string that needs to be parsed
+		// JSON.parse returns unknown at runtime; cast to the expected record shape
 		return JSON.parse(body) as Record<string, unknown>;
 	}
+	// body is unknown from the framework; cast to a generic record for property access
 	return (body ?? {}) as Record<string, unknown>;
 }
 
@@ -57,7 +59,7 @@ function parseBody(body: unknown): Record<string, unknown> {
 export function createSharepointMatch(eventType: string): CorsairWebhookMatcher {
 	return (request: RawWebhookRequest) => {
 		// Subscription validation handshake — SharePoint sends a GET/POST with validationtoken
-		// RawWebhookRequest does not include url; the framework may extend it at runtime
+		// RawWebhookRequest does not include url; cast through unknown to access the framework-extended url field
 		const url = (request as unknown as { url?: string }).url ?? '';
 		if (url.includes('validationtoken')) {
 			return true;
@@ -71,6 +73,7 @@ export function createSharepointMatch(eventType: string): CorsairWebhookMatcher 
 
 		if (eventType === 'listChanged') {
 			// All SharePoint list webhook notifications match this type
+			// parsedBody.value is unknown[]; cast to a typed array to access subscriptionId
 			const first = (parsedBody.value as Record<string, unknown>[])[0];
 			return first != null && typeof first.subscriptionId === 'string';
 		}

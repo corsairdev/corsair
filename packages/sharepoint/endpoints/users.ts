@@ -108,6 +108,7 @@ export const listSite: SharepointEndpoints['usersListSite'] = async (ctx, input)
 	const siteId = (await ctx.keys.get_site_id()) ?? ctx.options?.siteId ?? '';
 
 	// Use Graph API site permissions as the closest equivalent to site users
+	// Graph API permissions response type; inline to capture the nested grantedToIdentitiesV2 structure
 	const result = await makeGraphRequest<{ value?: Array<{ id?: string; roles?: string[]; grantedToIdentitiesV2?: Array<{ user?: { id?: string; displayName?: string; email?: string; userPrincipalName?: string } }> }>}>(
 		`/sites/${siteId}/permissions`,
 		ctx.key,
@@ -128,6 +129,23 @@ export const listSite: SharepointEndpoints['usersListSite'] = async (ctx, input)
 					});
 				}
 			}
+		}
+	}
+
+	if (users.length > 0 && ctx.db.users) {
+		try {
+			for (const user of users) {
+				if (user.id) {
+					await ctx.db.users.upsertByEntityId(user.id, {
+						id: user.id,
+						loginName: user.userPrincipalName,
+						email: user.mail,
+						title: user.displayName,
+					});
+				}
+			}
+		} catch (error) {
+			console.warn('Failed to save site users to database:', error);
 		}
 	}
 

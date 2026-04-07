@@ -93,8 +93,8 @@ export const create: SharepointEndpoints['listsCreate'] = async (ctx, input) => 
 	const body: Record<string, unknown> = {
 		displayName: input.title,
 		list: { template: 'genericList' },
+		...(input.description !== undefined && { description: input.description }),
 	};
-	if (input.description) body.description = input.description;
 
 	const result = await makeGraphRequest<SharepointEndpointOutputs['listsCreate']>(
 		`/sites/${siteId}/lists`,
@@ -124,9 +124,10 @@ export const create: SharepointEndpoints['listsCreate'] = async (ctx, input) => 
 export const update: SharepointEndpoints['listsUpdate'] = async (ctx, input) => {
 	const siteId = (await ctx.keys.get_site_id()) ?? ctx.options?.siteId ?? '';
 
-	const body: Record<string, unknown> = {};
-	if (input.title !== undefined) body.displayName = input.title;
-	if (input.description !== undefined) body.description = input.description;
+	const body: Record<string, unknown> = {
+		...(input.title !== undefined && { displayName: input.title }),
+		...(input.description !== undefined && { description: input.description }),
+	};
 
 	// Look up list by title to get ID for the PATCH
 	const list = await makeGraphRequest<{ id?: string }>(
@@ -144,14 +145,12 @@ export const update: SharepointEndpoints['listsUpdate'] = async (ctx, input) => 
 	if (ctx.db.lists && list.id) {
 		try {
 			const existing = await ctx.db.lists.findByEntityId(list.id);
-			if (existing) {
-				await ctx.db.lists.upsertByEntityId(list.id, {
-					...existing.data,
-					title: input.title ?? existing.data.title,
-					description: input.description ?? existing.data.description,
-					modifiedAt: new Date(),
-				});
-			}
+			await ctx.db.lists.upsertByEntityId(list.id, {
+				...(existing?.data ?? {}),
+				title: input.title ?? existing?.data?.title,
+				description: input.description ?? existing?.data?.description,
+				modifiedAt: new Date(),
+			});
 		} catch (error) {
 			console.warn('Failed to update list in database:', error);
 		}
@@ -183,11 +182,27 @@ export const deleteList: SharepointEndpoints['listsDelete'] = async (ctx, input)
 
 export const deleteByTitle: SharepointEndpoints['listsDeleteByTitle'] = async (ctx, input) => {
 	const siteId = (await ctx.keys.get_site_id()) ?? ctx.options?.siteId ?? '';
+
+	// Resolve list GUID before deletion so we can remove the DB record by entity ID
+	const list = await makeGraphRequest<{ id?: string }>(
+		`/sites/${siteId}/lists/${encodeURIComponent(input.list_title)}`,
+		ctx.key,
+		{ method: 'GET', query: { $select: 'id' } },
+	);
+
 	await makeGraphRequest<Record<string, unknown>>(
 		`/sites/${siteId}/lists/${encodeURIComponent(input.list_title)}`,
 		ctx.key,
 		{ method: 'DELETE' },
 	);
+
+	if (ctx.db.lists && list.id) {
+		try {
+			await ctx.db.lists.deleteByEntityId(list.id);
+		} catch (error) {
+			console.warn('Failed to delete list from database:', error);
+		}
+	}
 
 	await logEventFromContext(ctx, 'sharepoint.lists.deleteByTitle', { ...input }, 'completed');
 	return { success: true };
@@ -241,5 +256,6 @@ export const renderDataAsStream: SharepointEndpoints['listsRenderDataAsStream'] 
 	);
 
 	await logEventFromContext(ctx, 'sharepoint.lists.renderDataAsStream', { ...input }, 'completed');
+	// Graph API items response is compatible but TypeScript cannot infer the exact shape; cast to expected output
 	return result as SharepointEndpointOutputs['listsRenderDataAsStream'];
 };

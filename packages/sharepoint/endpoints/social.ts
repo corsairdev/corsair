@@ -24,8 +24,9 @@ export const getFollowed: SharepointEndpoints['socialGetFollowed'] = async (ctx,
 		{ method: 'GET' },
 	);
 
-	// Map Graph followed sites to the expected actor format
+	// Map Graph followed sites to the expected actor format; spread site first so explicit fields take precedence
 	const actors = (result.value ?? []).map((site) => ({
+		...site,
 		Id: site.id,
 		Name: site.displayName,
 		Uri: site.webUrl,
@@ -34,6 +35,7 @@ export const getFollowed: SharepointEndpoints['socialGetFollowed'] = async (ctx,
 	}));
 
 	await logEventFromContext(ctx, 'sharepoint.social.getFollowed', { ...input }, 'completed');
+	// Mapped actor shape differs from Graph site shape; cast to satisfy the expected output type
 	return { value: actors } as SharepointEndpointOutputs['socialGetFollowed'];
 };
 

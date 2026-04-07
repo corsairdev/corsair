@@ -319,12 +319,14 @@ describe('folders', () => {
 describe('files', () => {
 	it('upload – uploads a text file', async () => {
 		const fileName = `${TEST_PREFIX}_test.txt`;
+		// File content is a raw string; cast through unknown to satisfy the generic Record body type
+		const fileContent = 'Hello from Corsair test' as unknown as Record<string, unknown>;
 		const result = await makeGraphRequest<Record<string, unknown>>(
 			`/sites/${SITE_GUID}/drive/root:/${testFolderPath}/${fileName}:/content`,
 			ACCESS_TOKEN,
 			{
 				method: 'PUT',
-				body: 'Hello from Corsair test' as unknown as Record<string, unknown>,
+				body: fileContent,
 				mediaType: 'text/plain',
 			},
 		);
@@ -511,12 +513,18 @@ describe('social', () => {
 		);
 
 		const mapped = {
-			value: ((result as { value?: unknown[] }).value ?? []).map((site: unknown) => ({
-				Id: (site as Record<string, unknown>).id,
-				Name: (site as Record<string, unknown>).displayName,
-				Uri: (site as Record<string, unknown>).webUrl,
-				ActorType: 2,
-			})),
+			value: ((result as { value?: unknown[] }).value ?? []).map((site: unknown) => {
+				// Graph API site object is unknown at runtime; cast to a record for property access
+				const siteItem = site as Record<string, unknown>;
+				return {
+					// Spread siteItem first to forward any unknown fields, then override with explicit mappings
+					...siteItem,
+					Id: siteItem.id,
+					Name: siteItem.displayName,
+					Uri: siteItem.webUrl,
+					ActorType: 2,
+				};
+			}),
 		};
 		SharepointEndpointOutputSchemas.socialGetFollowed.parse(mapped);
 	});

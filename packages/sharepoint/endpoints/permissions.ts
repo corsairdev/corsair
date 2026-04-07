@@ -51,5 +51,6 @@ export const getRoleDefinitions: SharepointEndpoints['permissionsGetRoleDefiniti
 	}));
 
 	await logEventFromContext(ctx, 'sharepoint.permissions.getRoleDefinitions', { ...input }, 'completed');
+	// Graph permissions map to a different shape than SP role definitions; cast to satisfy the expected output type
 	return { value: roleDefinitions } as SharepointEndpointOutputs['permissionsGetRoleDefinitions'];
 };

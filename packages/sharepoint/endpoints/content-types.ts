@@ -55,10 +55,10 @@ export const create: SharepointEndpoints['contentTypesCreate'] = async (ctx, inp
 	const siteId = (await ctx.keys.get_site_id()) ?? ctx.options?.siteId ?? '';
 	const body: Record<string, unknown> = {
 		name: input.name,
+		...(input.description !== undefined && { description: input.description }),
+		...(input.group !== undefined && { group: input.group }),
+		...(input.id !== undefined && { id: input.id }),
 	};
-	if (input.description) body.description = input.description;
-	if (input.group) body.group = input.group;
-	if (input.id) body.id = input.id;
 
 	const result = await makeGraphRequest<SharepointEndpointOutputs['contentTypesCreate']>(
 		`/sites/${siteId}/contentTypes`,
@@ -72,10 +72,11 @@ export const create: SharepointEndpoints['contentTypesCreate'] = async (ctx, inp
 
 export const update: SharepointEndpoints['contentTypesUpdate'] = async (ctx, input) => {
 	const siteId = (await ctx.keys.get_site_id()) ?? ctx.options?.siteId ?? '';
-	const body: Record<string, unknown> = {};
-	if (input.name !== undefined) body.name = input.name;
-	if (input.description !== undefined) body.description = input.description;
-	if (input.group !== undefined) body.group = input.group;
+	const body: Record<string, unknown> = {
+		...(input.name !== undefined && { name: input.name }),
+		...(input.description !== undefined && { description: input.description }),
+		...(input.group !== undefined && { group: input.group }),
+	};
 
 	await makeGraphRequest<Record<string, unknown>>(
 		`/sites/${siteId}/contentTypes/${encodeURIComponent(input.content_type_id)}`,
@@ -89,12 +90,6 @@ export const update: SharepointEndpoints['contentTypesUpdate'] = async (ctx, inp
 
 export const addFieldLink: SharepointEndpoints['contentTypesAddFieldLink'] = async (ctx, input) => {
 	const siteId = (await ctx.keys.get_site_id()) ?? ctx.options?.siteId ?? '';
-
-	const body: Record<string, unknown> = {
-		name: input.field_internal_name,
-	};
-	if (input.hidden !== undefined) body.hidden = input.hidden;
-	if (input.required !== undefined) body.required = input.required;
 
 	const result = await makeGraphRequest<SharepointEndpointOutputs['contentTypesAddFieldLink']>(
 		`/sites/${siteId}/contentTypes/${encodeURIComponent(input.contenttypeid)}/columns`,
@@ -121,12 +116,10 @@ export const createListField: SharepointEndpoints['contentTypesCreateListField']
 	const body: Record<string, unknown> = {
 		name: input.internal_name,
 		displayName: input.display_name,
+		...(input.required !== undefined && { required: input.required }),
+		...(input.default_value !== undefined && { defaultValue: input.default_value }),
+		...(input.choices?.length && { choice: { choices: input.choices } }),
 	};
-	if (input.required !== undefined) body.required = input.required;
-	if (input.default_value !== undefined) body.defaultValue = input.default_value;
-	if (input.choices?.length) {
-		body.choice = { choices: input.choices };
-	}
 	// Map field type to Graph column type
 	const fieldTypeMap: Record<string, string> = {
 		Text: 'text',

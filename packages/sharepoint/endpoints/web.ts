@@ -38,6 +38,19 @@ export const getSiteCollectionInfo: SharepointEndpoints['webGetSiteCollectionInf
 		{ method: 'GET', query: { $select: 'id,displayName,webUrl,description,siteCollection' } },
 	);
 
+	if (result.id && ctx.db.sites) {
+		try {
+			await ctx.db.sites.upsertByEntityId(result.id, {
+				id: result.id,
+				title: result.displayName,
+				description: result.description,
+				url: result.webUrl,
+			});
+		} catch (error) {
+			console.warn('Failed to save site collection info to database:', error);
+		}
+	}
+
 	await logEventFromContext(ctx, 'sharepoint.web.getSiteCollectionInfo', { ...input }, 'completed');
 	return result;
 };
@@ -68,15 +81,29 @@ export const createSubsite: SharepointEndpoints['webCreateSubsite'] = async (ctx
 
 export const updateSite: SharepointEndpoints['webUpdateSite'] = async (ctx, input) => {
 	const siteId = (await ctx.keys.get_site_id()) ?? ctx.options?.siteId ?? '';
-	const body: Record<string, unknown> = {};
-	if (input.title !== undefined) body.displayName = input.title;
-	if (input.description !== undefined) body.description = input.description;
+	const body: Record<string, unknown> = {
+		...(input.title !== undefined && { displayName: input.title }),
+		...(input.description !== undefined && { description: input.description }),
+	};
 
 	await makeGraphRequest<Record<string, unknown>>(
 		`/sites/${siteId}`,
 		ctx.key,
 		{ method: 'PATCH', body },
 	);
+
+	if (ctx.db.sites) {
+		try {
+			const existing = await ctx.db.sites.findByEntityId(siteId);
+			await ctx.db.sites.upsertByEntityId(siteId, {
+				...(existing?.data ?? {}),
+				title: input.title ?? existing?.data?.title,
+				description: input.description ?? existing?.data?.description,
+			});
+		} catch (error) {
+			console.warn('Failed to update site in database:', error);
+		}
+	}
 
 	await logEventFromContext(ctx, 'sharepoint.web.updateSite', { ...input }, 'completed');
 	return { success: true };

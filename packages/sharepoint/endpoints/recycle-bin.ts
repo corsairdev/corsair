@@ -5,6 +5,7 @@ import type { SharepointEndpointOutputs } from './types';
 export const list: SharepointEndpoints['recycleBinList'] = async (ctx, input) => {
 	// Microsoft Graph API does not expose the SharePoint recycle bin
 	await logEventFromContext(ctx, 'sharepoint.recycleBin.list', { ...input }, 'completed');
+	// Empty stub; cast to satisfy the output type since Graph API has no recycle bin endpoint
 	return { value: [] } as SharepointEndpointOutputs['recycleBinList'];
 };
 

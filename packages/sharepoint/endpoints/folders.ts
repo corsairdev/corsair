@@ -160,11 +160,26 @@ export const deleteFolder: SharepointEndpoints['foldersDelete'] = async (ctx, in
 	);
 	const drivePath = input.server_relative_url.replace(/^\/+/, '');
 
+	// Resolve folder ID before deletion so we can remove the DB record by entity ID
+	const folder = await makeGraphRequest<{ id?: string }>(
+		`/sites/${siteId}/drive/root:/${drivePath}`,
+		ctx.key,
+		{ method: 'GET', query: { $select: 'id' } },
+	);
+
 	await makeGraphRequest<Record<string, unknown>>(
 		`/sites/${siteId}/drive/root:/${drivePath}`,
 		ctx.key,
 		{ method: 'DELETE' },
 	);
+
+	if (ctx.db.folders && folder.id) {
+		try {
+			await ctx.db.folders.deleteByEntityId(folder.id);
+		} catch (error) {
+			console.warn('Failed to delete folder from database:', error);
+		}
+	}
 
 	await logEventFromContext(ctx, 'sharepoint.folders.delete', { ...input }, 'completed');
 	return { success: true };
@@ -177,7 +192,7 @@ export const rename: SharepointEndpoints['foldersRename'] = async (ctx, input) =
 	);
 	const drivePath = input.server_relative_url.replace(/^\/+/, '');
 
-	await makeGraphRequest<Record<string, unknown>>(
+	const result = await makeGraphRequest<{ id?: string; webUrl?: string }>(
 		`/sites/${siteId}/drive/root:/${drivePath}`,
 		ctx.key,
 		{ method: 'PATCH', body: { name: input.new_name } },
@@ -186,6 +201,21 @@ export const rename: SharepointEndpoints['foldersRename'] = async (ctx, input) =
 	const parts = input.server_relative_url.split('/');
 	parts[parts.length - 1] = input.new_name;
 	const newServerRelativeUrl = parts.join('/');
+
+	if (result.id && ctx.db.folders) {
+		try {
+			const existing = await ctx.db.folders.findByEntityId(result.id);
+			await ctx.db.folders.upsertByEntityId(result.id, {
+				...(existing?.data ?? {}),
+				id: result.id,
+				name: input.new_name,
+				serverRelativeUrl: newServerRelativeUrl,
+				modifiedAt: new Date(),
+			});
+		} catch (error) {
+			console.warn('Failed to update renamed folder in database:', error);
+		}
+	}
 
 	await logEventFromContext(ctx, 'sharepoint.folders.rename', { ...input }, 'completed');
 	return { success: true, new_server_relative_url: newServerRelativeUrl };

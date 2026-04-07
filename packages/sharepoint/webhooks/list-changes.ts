@@ -11,6 +11,7 @@ export const listChanged: SharepointWebhooks['listChanged'] = {
 	handler: async (ctx, request) => {
 		// SharePoint subscription validation handshake:
 		// Respond with the validationtoken to confirm the endpoint
+		// RawWebhookRequest does not include url; cast through unknown to access the framework-extended url field
 		const url = (request as unknown as { url?: string }).url ?? '';
 		if (url.includes('validationtoken')) {
 			const params = new URLSearchParams(url.split('?')[1] ?? '');
@@ -29,7 +30,7 @@ export const listChanged: SharepointWebhooks['listChanged'] = {
 				// Return raw validation token text — the framework forwards this to SharePoint
 				headers: { 'Content-Type': 'text/plain' },
 				rawBody: token,
-			// Cast through unknown: the framework reads rawBody/headers as extensions on WebhookResponse
+			// rawBody and headers are framework extensions not in the base WebhookResponse type; cast through unknown
 			} as unknown as ReturnType<typeof listChanged.handler>;
 		}
 

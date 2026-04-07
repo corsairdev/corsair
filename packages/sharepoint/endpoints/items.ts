@@ -24,10 +24,12 @@ export const list: SharepointEndpoints['itemsList'] = async (ctx, input) => {
 		try {
 			for (const item of result.value) {
 				if (item.id) {
+					// Graph API fields response is untyped at runtime; cast to access the dynamic Title property
+					const fields = item.fields as Record<string, unknown>;
 					await ctx.db.items.upsertByEntityId(item.id, {
 						id: item.id,
 						listTitle: input.list_title,
-						title: (item.fields as Record<string, unknown>)?.Title as string | undefined,
+						title: fields?.Title as string | undefined,
 						created: item.createdDateTime,
 						modified: item.lastModifiedDateTime,
 					});
@@ -62,10 +64,12 @@ export const listByGuid: SharepointEndpoints['itemsListByGuid'] = async (ctx, in
 		try {
 			for (const item of result.value) {
 				if (item.id) {
+					// Graph API fields response is untyped at runtime; cast to access the dynamic Title property
+					const fields = item.fields as Record<string, unknown>;
 					await ctx.db.items.upsertByEntityId(item.id, {
 						id: item.id,
 						listId: input.list_guid,
-						title: (item.fields as Record<string, unknown>)?.Title as string | undefined,
+						title: fields?.Title as string | undefined,
 						created: item.createdDateTime,
 						modified: item.lastModifiedDateTime,
 					});
@@ -95,10 +99,12 @@ export const get: SharepointEndpoints['itemsGet'] = async (ctx, input) => {
 
 	if (result.id && ctx.db.items) {
 		try {
+			// Graph API fields response is untyped at runtime; cast to access the dynamic Title property
+			const fields = result.fields as Record<string, unknown>;
 			await ctx.db.items.upsertByEntityId(result.id, {
 				id: result.id,
 				listTitle: input.list_title,
-				title: (result.fields as Record<string, unknown>)?.Title as string | undefined,
+				title: fields?.Title as string | undefined,
 				created: result.createdDateTime,
 				modified: result.lastModifiedDateTime,
 			});
@@ -113,6 +119,7 @@ export const get: SharepointEndpoints['itemsGet'] = async (ctx, input) => {
 
 export const create: SharepointEndpoints['itemsCreate'] = async (ctx, input) => {
 	const siteId = (await ctx.keys.get_site_id()) ?? ctx.options?.siteId ?? '';
+	// input.fields is a user-provided dynamic object; cast to satisfy the generic body type
 	const result = await makeGraphRequest<SharepointEndpointOutputs['itemsCreate']>(
 		`/sites/${siteId}/lists/${encodeURIComponent(input.list_title)}/items`,
 		ctx.key,
@@ -121,10 +128,12 @@ export const create: SharepointEndpoints['itemsCreate'] = async (ctx, input) => 
 
 	if (result.id && ctx.db.items) {
 		try {
+			// Graph API fields response is untyped at runtime; cast to access the dynamic Title property
+			const fields = result.fields as Record<string, unknown>;
 			await ctx.db.items.upsertByEntityId(result.id, {
 				id: result.id,
 				listTitle: input.list_title,
-				title: (result.fields as Record<string, unknown>)?.Title as string | undefined,
+				title: fields?.Title as string | undefined,
 				created: result.createdDateTime,
 				createdAt: new Date(),
 			});
@@ -139,6 +148,7 @@ export const create: SharepointEndpoints['itemsCreate'] = async (ctx, input) => 
 
 export const createByGuid: SharepointEndpoints['itemsCreateByGuid'] = async (ctx, input) => {
 	const siteId = (await ctx.keys.get_site_id()) ?? ctx.options?.siteId ?? '';
+	// input.fields is a user-provided dynamic object; cast to satisfy the generic body type
 	const result = await makeGraphRequest<SharepointEndpointOutputs['itemsCreateByGuid']>(
 		`/sites/${siteId}/lists/${input.list_guid}/items`,
 		ctx.key,
@@ -147,10 +157,12 @@ export const createByGuid: SharepointEndpoints['itemsCreateByGuid'] = async (ctx
 
 	if (result.id && ctx.db.items) {
 		try {
+			// Graph API fields response is untyped at runtime; cast to access the dynamic Title property
+			const fields = result.fields as Record<string, unknown>;
 			await ctx.db.items.upsertByEntityId(result.id, {
 				id: result.id,
 				listId: input.list_guid,
-				title: (result.fields as Record<string, unknown>)?.Title as string | undefined,
+				title: fields?.Title as string | undefined,
 				created: result.createdDateTime,
 				createdAt: new Date(),
 			});
@@ -165,6 +177,7 @@ export const createByGuid: SharepointEndpoints['itemsCreateByGuid'] = async (ctx
 
 export const createInFolder: SharepointEndpoints['itemsCreateInFolder'] = async (ctx, input) => {
 	const siteId = (await ctx.keys.get_site_id()) ?? ctx.options?.siteId ?? '';
+	// input.fields is a user-provided dynamic object; cast to satisfy the generic body type
 	const result = await makeGraphRequest<SharepointEndpointOutputs['itemsCreateInFolder']>(
 		`/sites/${siteId}/lists/${encodeURIComponent(input.list_title)}/items`,
 		ctx.key,
@@ -173,10 +186,13 @@ export const createInFolder: SharepointEndpoints['itemsCreateInFolder'] = async 
 
 	if (result.id && ctx.db.items) {
 		try {
+			// Graph API fields response is untyped at runtime; cast to access the dynamic Title property
+			const fields = result.fields as Record<string, unknown>;
 			await ctx.db.items.upsertByEntityId(result.id, {
 				id: result.id,
 				listTitle: input.list_title,
-				title: (result.fields as Record<string, unknown>)?.Title as string | undefined,
+				title: fields?.Title as string | undefined,
+				created: result.createdDateTime,
 				createdAt: new Date(),
 			});
 		} catch (error) {
@@ -191,6 +207,7 @@ export const createInFolder: SharepointEndpoints['itemsCreateInFolder'] = async 
 export const update: SharepointEndpoints['itemsUpdate'] = async (ctx, input) => {
 	const siteId = (await ctx.keys.get_site_id()) ?? ctx.options?.siteId ?? '';
 
+	// input.fields is a user-provided dynamic object; cast to satisfy the generic body type
 	await makeGraphRequest<Record<string, unknown>>(
 		`/sites/${siteId}/lists/${encodeURIComponent(input.list_title)}/items/${input.item_id}/fields`,
 		ctx.key,
@@ -201,12 +218,10 @@ export const update: SharepointEndpoints['itemsUpdate'] = async (ctx, input) => 
 		try {
 			const itemId = String(input.item_id);
 			const existing = await ctx.db.items.findByEntityId(itemId);
-			if (existing) {
-				await ctx.db.items.upsertByEntityId(itemId, {
-					...existing.data,
-					modifiedAt: new Date(),
-				});
-			}
+			await ctx.db.items.upsertByEntityId(itemId, {
+				...(existing?.data ?? {}),
+				modifiedAt: new Date(),
+			});
 		} catch (error) {
 			console.warn('Failed to update item in database:', error);
 		}
