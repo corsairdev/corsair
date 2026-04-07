@@ -1,20 +1,16 @@
 {
-  "extends": "../../tsconfig.base.json",
+  "extends": "./tsconfig.base.json",
   "compilerOptions": {
-    "lib": ["esnext"],
-    "types": ["node"],
-    "module": "ESNext",
-    "moduleResolution": "Bundler",
-    "outDir": "./dist",
-    "rootDir": "./",
-    "composite": true,
-    "incremental": true,
-    "emitDeclarationOnly": true,
-    "declaration": true,
-    "declarationMap": true,
-    "skipLibCheck": true
+    "composite": true
   },
-  "include": ["./**/*"],
-  "exclude": ["dist", "node_modules"],
-  "references": []
+  "include": [
+    // Only include files that are in the root directory. All other files are included by the references.
+    "./*.ts",
+    "./*.js"
+  ],
+  "references": [
+    {
+      "path": "./packages/corsair/tsconfig.json"
+    }
+  ]
 }
