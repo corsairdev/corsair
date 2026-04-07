@@ -1,7 +1,7 @@
 {
-  "name": "@corsair-dev/sharepoint",
+  "name": "@corsair-dev/youtube",
   "version": "0.1.0",
-  "description": "Sharepoint plugin for Corsair",
+  "description": "Youtube plugin for Corsair",
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
@@ -32,7 +32,7 @@
   },
   "keywords": [
     "corsair",
-    "sharepoint",
+    "youtube",
     "plugin"
   ],
   "author": "",
