@@ -202,7 +202,9 @@ psql $DATABASE_URL -f migration.sql
 
 <Step>
 
-### Create `corsair.ts`
+### Install GitHub plugin and create `corsair.ts` 
+
+<PmTabs install="@corsair-dev/github" /> 
 
 This is the one file that wires everything together. Create it at `src/server/corsair.ts`:
 
@@ -213,7 +215,7 @@ This is the one file that wires everything together. Create it at `src/server/co
 import 'dotenv/config';
 import Database from 'better-sqlite3';
 import { createCorsair } from 'corsair';
-import { github } from 'corsair/plugins/github';
+import { github } from '@corsair-dev/github';
 
 const db = new Database('corsair.db');
 
@@ -231,7 +233,7 @@ export const corsair = createCorsair({
 import 'dotenv/config';
 import { Pool } from 'pg';
 import { createCorsair } from 'corsair';
-import { github } from 'corsair/plugins/github';
+import { github } from '@corsair-dev/github';
 
 const db = new Pool({ connectionString: process.env.DATABASE_URL });
 
