@@ -1,7 +1,7 @@
 {
-  "name": "@corsair-dev/spotify",
+  "name": "@corsair-dev/strava",
   "version": "0.1.0",
-  "description": "Spotify plugin for Corsair",
+  "description": "Strava plugin for Corsair",
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
@@ -33,7 +33,7 @@
   },
   "keywords": [
     "corsair",
-    "spotify",
+    "strava",
     "plugin"
   ],
   "author": "",
