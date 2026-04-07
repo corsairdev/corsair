@@ -1,5 +1,5 @@
 import 'dotenv/config'
-import { ApiError } from '../../async-core/ApiError';
+import { ApiError } from 'corsair/http';
 import { makeGoogleDriveRequest } from './client';
 import { GoogleDriveEndpointOutputSchemas } from './endpoints/types';
 import type {

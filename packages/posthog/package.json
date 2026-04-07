@@ -41,6 +41,7 @@
     "dist"
   ],
   "dependencies": {
-    "jest": "^29.7.0"
+    "jest": "^29.7.0",
+    "uuid": "^13.0.0"
   }
 }

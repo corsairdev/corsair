@@ -1,4 +1,4 @@
-import dotenv from 'dotenv';
+import 'dotenv/config';
 import { makeTelegramRequest } from './client';
 import type { TelegramEndpointOutputs } from './endpoints/types';
 import {
@@ -9,8 +9,6 @@ import {
 	GetFileOutputSchema,
 	SendPhotoOutputSchema,
 } from './endpoints/types';
-
-dotenv.config();
 
 const TEST_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN!;
 const TEST_CHAT_ID = '-1003750192801';

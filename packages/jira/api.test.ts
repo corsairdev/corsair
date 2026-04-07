@@ -19,7 +19,6 @@ import type {
 } from './endpoints/types';
 import { JiraEndpointOutputSchemas, makeAdf } from './endpoints/types';
 
-dotenv.config();
 
 const API_KEY = process.env.JIRA_API_KEY!;
 const CLOUD_URL = process.env.JIRA_CLOUD_URL!;

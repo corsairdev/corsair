@@ -34,7 +34,8 @@ async function listSpreadsheets(accessToken: string): Promise<string | null> {
 			return null;
 		}
 
-		const data = await response.json();
+		// any type because it's not a makeSheetsRequest
+		const data:any = await response.json();
 		if (data.files && data.files.length > 0 && data.files[0]?.id) {
 			return data.files[0].id;
 		}

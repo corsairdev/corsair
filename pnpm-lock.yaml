@@ -1040,6 +1040,9 @@ importers:
       jest:
         specifier: ^29.7.0
         version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
+      uuid:
+        specifier: ^13.0.0
+        version: 13.0.0
     devDependencies:
       '@types/jest':
         specifier: ^29.5.14
