@@ -1,4 +1,4 @@
-import dotenv from 'dotenv';
+import 'dotenv/config';
 import { makeGmailRequest } from './client';
 import { GmailEndpointOutputSchemas } from './endpoints/types';
 import type {
@@ -12,8 +12,6 @@ import type {
 	Thread,
 	ThreadListResponse,
 } from './types';
-
-dotenv.config();
 
 const TEST_TOKEN = process.env.GOOGLE_ACCESS_TOKEN!;
 const TEST_EMAIL = 'mukulydv15@gmail.com';
