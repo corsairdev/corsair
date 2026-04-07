@@ -1,4 +1,4 @@
-import dotenv from 'dotenv';
+import 'dotenv/config';
 import { makeCursorRequest } from './client';
 import type {
 	AccountGetMeResponse,
@@ -8,8 +8,6 @@ import type {
 	RepositoriesListResponse,
 } from './endpoints/types';
 import { CursorEndpointOutputSchemas } from './endpoints/types';
-
-dotenv.config();
 
 const CURSOR_API_KEY = process.env.CURSOR_API_KEY!;
 
