@@ -14,7 +14,10 @@ export const message: FacebookWebhooks['message'] = {
 		const messengerRequest = request as typeof request & {
 			payload: FacebookWebhookPayload;
 		};
-		const verification = verifyFacebookWebhookSignature(messengerRequest, ctx.key);
+		const verification = verifyFacebookWebhookSignature(
+			messengerRequest,
+			ctx.key,
+		);
 		if (!verification.valid) {
 			return {
 				success: false,
@@ -39,7 +42,8 @@ export const message: FacebookWebhooks['message'] = {
 					continue;
 				}
 
-				const messageId = event.message.mid ?? `${entry.id}:${event.timestamp ?? Date.now()}`;
+				const messageId =
+					event.message.mid ?? `${entry.id}:${event.timestamp ?? Date.now()}`;
 				const normalizedMessage = {
 					id: messageId,
 					mid: event.message.mid,
@@ -56,7 +60,9 @@ export const message: FacebookWebhooks['message'] = {
 					app_id: event.message.app_id,
 					metadata: event.message.metadata,
 					status: 'received' as const,
-					direction: event.message.is_echo ? 'outbound' as const : 'inbound' as const,
+					direction: event.message.is_echo
+						? ('outbound' as const)
+						: ('inbound' as const),
 					timestamp: event.timestamp,
 					authorId: event.sender?.id,
 					createdAt: event.timestamp ? new Date(event.timestamp) : new Date(),
@@ -67,7 +73,10 @@ export const message: FacebookWebhooks['message'] = {
 
 				if (ctx.db.messages) {
 					try {
-						const entity = await ctx.db.messages.upsertByEntityId(messageId, normalizedMessage);
+						const entity = await ctx.db.messages.upsertByEntityId(
+							messageId,
+							normalizedMessage,
+						);
 						corsairEntityId = entity?.id || corsairEntityId;
 					} catch (error) {
 						console.warn('Failed to save Facebook webhook message:', error);

@@ -103,7 +103,9 @@ export const FacebookMessage = z
 	.passthrough();
 
 export type FacebookParticipant = z.infer<typeof FacebookParticipant>;
-export type FacebookMessageAttachment = z.infer<typeof FacebookMessageAttachment>;
+export type FacebookMessageAttachment = z.infer<
+	typeof FacebookMessageAttachment
+>;
 export type FacebookConversation = z.infer<typeof FacebookConversation>;
 export type FacebookPage = z.infer<typeof FacebookPage>;
 export type FacebookMessage = z.infer<typeof FacebookMessage>;

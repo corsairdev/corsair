@@ -1,10 +1,10 @@
-import crypto from 'crypto';
-import { z } from 'zod';
 import type {
 	CorsairWebhookMatcher,
 	RawWebhookRequest,
 	WebhookRequest,
 } from 'corsair/core';
+import crypto from 'crypto';
+import { z } from 'zod';
 
 const FacebookParticipantSchema = z
 	.object({
@@ -124,10 +124,18 @@ export const FacebookDeliveryWebhookResponseSchema = z
 	})
 	.passthrough();
 
-export type FacebookWebhookPayload = z.infer<typeof FacebookWebhookPayloadSchema>;
-export type FacebookChallengePayload = z.infer<typeof FacebookChallengePayloadSchema>;
-export type FacebookChallengeResponse = z.infer<typeof FacebookChallengeResponseSchema>;
-export type FacebookInboundMessage = z.infer<typeof FacebookInboundMessageSchema>;
+export type FacebookWebhookPayload = z.infer<
+	typeof FacebookWebhookPayloadSchema
+>;
+export type FacebookChallengePayload = z.infer<
+	typeof FacebookChallengePayloadSchema
+>;
+export type FacebookChallengeResponse = z.infer<
+	typeof FacebookChallengeResponseSchema
+>;
+export type FacebookInboundMessage = z.infer<
+	typeof FacebookInboundMessageSchema
+>;
 export type FacebookDeliveryWebhookResponse = z.infer<
 	typeof FacebookDeliveryWebhookResponseSchema
 >;
@@ -165,21 +173,24 @@ function getHubFields(body: unknown): {
 
 	const nestedHub = isRecord(body.hub) ? body.hub : undefined;
 
-	const mode = typeof body['hub.mode'] === 'string'
-		? body['hub.mode']
-		: typeof nestedHub?.mode === 'string'
-			? nestedHub.mode
-			: undefined;
-	const verifyToken = typeof body['hub.verify_token'] === 'string'
-		? body['hub.verify_token']
-		: typeof nestedHub?.verify_token === 'string'
-			? nestedHub.verify_token
-			: undefined;
-	const challenge = typeof body['hub.challenge'] === 'string'
-		? body['hub.challenge']
-		: typeof nestedHub?.challenge === 'string'
-			? nestedHub.challenge
-			: undefined;
+	const mode =
+		typeof body['hub.mode'] === 'string'
+			? body['hub.mode']
+			: typeof nestedHub?.mode === 'string'
+				? nestedHub.mode
+				: undefined;
+	const verifyToken =
+		typeof body['hub.verify_token'] === 'string'
+			? body['hub.verify_token']
+			: typeof nestedHub?.verify_token === 'string'
+				? nestedHub.verify_token
+				: undefined;
+	const challenge =
+		typeof body['hub.challenge'] === 'string'
+			? body['hub.challenge']
+			: typeof nestedHub?.challenge === 'string'
+				? nestedHub.challenge
+				: undefined;
 
 	return { mode, verifyToken, challenge };
 }
@@ -242,7 +253,10 @@ export function verifyFacebookWebhookSignature(
 
 	const rawBody = request.rawBody;
 	if (!rawBody) {
-		return { valid: false, error: 'Missing raw body for signature verification' };
+		return {
+			valid: false,
+			error: 'Missing raw body for signature verification',
+		};
 	}
 
 	const signatureHeader = Array.isArray(request.headers['x-hub-signature-256'])
@@ -264,13 +278,17 @@ export function verifyFacebookWebhookSignature(
 			Buffer.from(expected),
 		);
 
-		return valid ? { valid: true } : { valid: false, error: 'Invalid signature' };
+		return valid
+			? { valid: true }
+			: { valid: false, error: 'Invalid signature' };
 	} catch {
 		return { valid: false, error: 'Signature comparison failed' };
 	}
 }
 
-export function extractFacebookChallenge(body: unknown): FacebookChallengeResponse | null {
+export function extractFacebookChallenge(
+	body: unknown,
+): FacebookChallengeResponse | null {
 	const { challenge } = getHubFields(body);
 	if (!challenge) {
 		return null;

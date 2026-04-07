@@ -75,9 +75,15 @@ const GetMessagesResponseSchema = z.object({
 export type SendMessageInput = z.infer<typeof SendMessageInputSchema>;
 export type SendMessageResponse = z.infer<typeof SendMessageResponseSchema>;
 export type GetPageDetailsInput = z.infer<typeof GetPageDetailsInputSchema>;
-export type GetPageDetailsResponse = z.infer<typeof GetPageDetailsResponseSchema>;
-export type ListConversationsInput = z.infer<typeof ListConversationsInputSchema>;
-export type ListConversationsResponse = z.infer<typeof ListConversationsResponseSchema>;
+export type GetPageDetailsResponse = z.infer<
+	typeof GetPageDetailsResponseSchema
+>;
+export type ListConversationsInput = z.infer<
+	typeof ListConversationsInputSchema
+>;
+export type ListConversationsResponse = z.infer<
+	typeof ListConversationsResponseSchema
+>;
 export type GetMessagesInput = z.infer<typeof GetMessagesInputSchema>;
 export type GetMessagesResponse = z.infer<typeof GetMessagesResponseSchema>;
 

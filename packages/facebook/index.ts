@@ -1,4 +1,5 @@
 import type {
+	AuthTypes,
 	BindEndpoints,
 	BindWebhooks,
 	CorsairEndpoint,
@@ -14,15 +15,24 @@ import type {
 	RequiredPluginEndpointSchemas,
 	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
-import type { AuthTypes } from 'corsair/core';
-import type { FacebookEndpointInputs, FacebookEndpointOutputs } from './endpoints/types';
+import { Messages, Pages } from './endpoints';
+import type {
+	FacebookEndpointInputs,
+	FacebookEndpointOutputs,
+} from './endpoints/types';
 import {
 	FacebookEndpointInputSchemas,
 	FacebookEndpointOutputSchemas,
 } from './endpoints/types';
+import { errorHandlers } from './error-handlers';
+import { FacebookSchema } from './schema';
+import {
+	ChallengeWebhooks,
+	DeliveryWebhooks,
+	MessageWebhooks,
+} from './webhooks';
 import type {
 	FacebookChallengePayload,
-	FacebookChallengeResponse,
 	FacebookWebhookOutputs,
 	FacebookWebhookPayload,
 } from './webhooks/types';
@@ -31,10 +41,6 @@ import {
 	FacebookChallengeResponseSchema,
 	FacebookWebhookPayloadSchema,
 } from './webhooks/types';
-import { Messages, Pages } from './endpoints';
-import { FacebookSchema } from './schema';
-import { ChallengeWebhooks, DeliveryWebhooks, MessageWebhooks } from './webhooks';
-import { errorHandlers } from './error-handlers';
 
 export type FacebookPluginOptions = {
 	authType?: PickAuth<'api_key'>;
@@ -52,15 +58,19 @@ export type FacebookContext = CorsairPluginContext<
 	FacebookPluginOptions
 >;
 
-export type FacebookKeyBuilderContext = KeyBuilderContext<FacebookPluginOptions>;
+export type FacebookKeyBuilderContext =
+	KeyBuilderContext<FacebookPluginOptions>;
 
-export type FacebookBoundEndpoints = BindEndpoints<typeof facebookEndpointsNested>;
-
-type FacebookEndpoint<K extends keyof FacebookEndpointOutputs> = CorsairEndpoint<
-	FacebookContext,
-	FacebookEndpointInputs[K],
-	FacebookEndpointOutputs[K]
+export type FacebookBoundEndpoints = BindEndpoints<
+	typeof facebookEndpointsNested
 >;
+
+type FacebookEndpoint<K extends keyof FacebookEndpointOutputs> =
+	CorsairEndpoint<
+		FacebookContext,
+		FacebookEndpointInputs[K],
+		FacebookEndpointOutputs[K]
+	>;
 
 export type FacebookEndpoints = {
 	sendMessage: FacebookEndpoint<'sendMessage'>;
@@ -122,23 +132,28 @@ export const facebookEndpointSchemas = {
 		input: FacebookEndpointInputSchemas.listConversations,
 		output: FacebookEndpointOutputSchemas.listConversations,
 	},
-} as const satisfies RequiredPluginEndpointSchemas<typeof facebookEndpointsNested>;
+} as const satisfies RequiredPluginEndpointSchemas<
+	typeof facebookEndpointsNested
+>;
 
 export const facebookWebhookSchemas: RequiredPluginWebhookSchemas<
 	typeof facebookWebhooksNested
 > = {
 	'challenge.challenge': {
-		description: 'Responds to the Facebook Messenger webhook verification challenge.',
+		description:
+			'Responds to the Facebook Messenger webhook verification challenge.',
 		payload: FacebookChallengePayloadSchema,
 		response: FacebookChallengeResponseSchema,
 	},
 	'message.message': {
-		description: 'Fires when an inbound Facebook Messenger message event is received.',
+		description:
+			'Fires when an inbound Facebook Messenger message event is received.',
 		payload: FacebookWebhookPayloadSchema,
 		response: FacebookWebhookPayloadSchema,
 	},
 	'delivery.delivery': {
-		description: 'Fires when Facebook Messenger sends delivery or read status events.',
+		description:
+			'Fires when Facebook Messenger sends delivery or read status events.',
 		payload: FacebookWebhookPayloadSchema,
 		response: FacebookWebhookPayloadSchema,
 	},
@@ -153,7 +168,8 @@ const facebookEndpointMeta = {
 	},
 	'messages.getMessages': {
 		riskLevel: 'read',
-		description: 'List Facebook Messenger messages previously persisted by endpoints or webhooks.',
+		description:
+			'List Facebook Messenger messages previously persisted by endpoints or webhooks.',
 	},
 	'pages.getPageDetails': {
 		riskLevel: 'read',
@@ -161,7 +177,8 @@ const facebookEndpointMeta = {
 	},
 	'pages.listConversations': {
 		riskLevel: 'read',
-		description: 'List Facebook Page conversations from the Graph API and optionally persist them.',
+		description:
+			'List Facebook Page conversations from the Graph API and optionally persist them.',
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof facebookEndpointsNested>;
 
@@ -181,7 +198,8 @@ export type BaseFacebookPlugin<T extends FacebookPluginOptions> = CorsairPlugin<
 >;
 
 export type InternalFacebookPlugin = BaseFacebookPlugin<FacebookPluginOptions>;
-export type ExternalFacebookPlugin<T extends FacebookPluginOptions> = BaseFacebookPlugin<T>;
+export type ExternalFacebookPlugin<T extends FacebookPluginOptions> =
+	BaseFacebookPlugin<T>;
 
 export function facebook<const T extends FacebookPluginOptions>(
 	incomingOptions: FacebookPluginOptions & T = {} as FacebookPluginOptions & T,
@@ -203,24 +221,42 @@ export function facebook<const T extends FacebookPluginOptions>(
 		endpointSchemas: facebookEndpointSchemas,
 		webhookSchemas: facebookWebhookSchemas,
 		pluginWebhookMatcher: (request) => {
+			// Primary discriminator: Facebook signs all Messenger event webhooks with
+			// the x-hub-signature-256 header derived from the app secret.
+			if ('x-hub-signature-256' in request.headers) {
+				return true;
+			}
+
+			// Secondary discriminator: Facebook's webhook verification (challenge)
+			// request arrives without a signature header. Detect it by the presence
+			// of hub.mode, hub.verify_token, and hub.challenge fields in the body.
 			try {
-				const body = typeof request.body === 'string'
-					? JSON.parse(request.body)
-					: request.body;
+				const body =
+					typeof request.body === 'string'
+						? JSON.parse(request.body)
+						: request.body;
 
 				if (!body || typeof body !== 'object') {
 					return false;
 				}
 
-				if ('object' in body && body.object === 'page') {
-					return Array.isArray((body as { entry?: unknown[] }).entry);
-				}
+				const b = body as Record<string, unknown>;
+				const nestedHub =
+					typeof b.hub === 'object' && b.hub !== null
+						? (b.hub as Record<string, unknown>)
+						: undefined;
 
-				if ('hub.challenge' in body || 'hub' in body) {
-					return true;
-				}
+				const hasMode =
+					typeof b['hub.mode'] === 'string' ||
+					typeof nestedHub?.mode === 'string';
+				const hasVerifyToken =
+					typeof b['hub.verify_token'] === 'string' ||
+					typeof nestedHub?.verify_token === 'string';
+				const hasChallenge =
+					typeof b['hub.challenge'] === 'string' ||
+					typeof nestedHub?.challenge === 'string';
 
-				return false;
+				return hasMode && hasVerifyToken && hasChallenge;
 			} catch {
 				return false;
 			}
@@ -255,15 +291,6 @@ export function facebook<const T extends FacebookPluginOptions>(
 }
 
 export type {
-	FacebookChallengePayload,
-	FacebookChallengeResponse,
-	FacebookDeliveryWebhookResponse,
-	FacebookInboundMessage,
-	FacebookWebhookOutputs,
-	FacebookWebhookPayload,
-} from './webhooks/types';
-
-export type {
 	FacebookEndpointInputs,
 	FacebookEndpointOutputs,
 	GetMessagesInput,
@@ -275,3 +302,11 @@ export type {
 	SendMessageInput,
 	SendMessageResponse,
 } from './endpoints/types';
+export type {
+	FacebookChallengePayload,
+	FacebookChallengeResponse,
+	FacebookDeliveryWebhookResponse,
+	FacebookInboundMessage,
+	FacebookWebhookOutputs,
+	FacebookWebhookPayload,
+} from './webhooks/types';

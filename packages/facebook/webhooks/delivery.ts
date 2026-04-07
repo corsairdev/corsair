@@ -14,7 +14,10 @@ export const delivery: FacebookWebhooks['delivery'] = {
 		const messengerRequest = request as typeof request & {
 			payload: FacebookWebhookPayload;
 		};
-		const verification = verifyFacebookWebhookSignature(messengerRequest, ctx.key);
+		const verification = verifyFacebookWebhookSignature(
+			messengerRequest,
+			ctx.key,
+		);
 		if (!verification.valid) {
 			return {
 				success: false,

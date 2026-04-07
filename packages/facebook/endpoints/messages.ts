@@ -1,33 +1,28 @@
 import { logEventFromContext } from 'corsair/core';
 import type { FacebookEndpoints } from '..';
 import { makeFacebookRequest } from '../client';
-import type {
-	FacebookEndpointOutputs,
-	GetMessagesResponse,
-} from './types';
+import type { FacebookEndpointOutputs, GetMessagesResponse } from './types';
 
 export const sendMessage: FacebookEndpoints['sendMessage'] = async (
 	ctx,
 	input,
 ) => {
-	const result = await makeFacebookRequest<FacebookEndpointOutputs['sendMessage']>(
-		'/me/messages',
-		ctx.key,
-		{
-			method: 'POST',
-			body: {
-				recipient: {
-					id: input.recipientId,
-				},
-				messaging_type: input.messagingType ?? 'RESPONSE',
-				...(input.tag ? { tag: input.tag } : {}),
-				...(input.personaId ? { persona_id: input.personaId } : {}),
-				message: {
-					text: input.text,
-				},
+	const result = await makeFacebookRequest<
+		FacebookEndpointOutputs['sendMessage']
+	>('/me/messages', ctx.key, {
+		method: 'POST',
+		body: {
+			recipient: {
+				id: input.recipientId,
+			},
+			messaging_type: input.messagingType ?? 'RESPONSE',
+			...(input.tag ? { tag: input.tag } : {}),
+			...(input.personaId ? { persona_id: input.personaId } : {}),
+			message: {
+				text: input.text,
 			},
 		},
-	);
+	});
 
 	const messageId = result.message_id;
 	if (messageId && ctx.db.messages) {
@@ -84,7 +79,10 @@ export const getMessages: FacebookEndpoints['getMessages'] = async (
 	const messages = persisted
 		.map((entity) => entity.data)
 		.filter((message) => {
-			if (input.conversationId && message.conversation_id !== input.conversationId) {
+			if (
+				input.conversationId &&
+				message.conversation_id !== input.conversationId
+			) {
 				return false;
 			}
 			if (input.recipientId) {

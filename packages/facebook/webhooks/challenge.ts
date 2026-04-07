@@ -1,5 +1,8 @@
 import type { FacebookWebhooks } from '..';
-import { createFacebookChallengeMatch, extractFacebookChallenge } from './types';
+import {
+	createFacebookChallengeMatch,
+	extractFacebookChallenge,
+} from './types';
 
 export const challenge: FacebookWebhooks['challenge'] = {
 	match: createFacebookChallengeMatch(),
@@ -19,11 +22,16 @@ export const challenge: FacebookWebhooks['challenge'] = {
 			hub?: { verify_token?: string };
 		};
 
-		const providedVerifyToken = body['hub.verify_token'] ?? body.hub?.verify_token;
+		const providedVerifyToken =
+			body['hub.verify_token'] ?? body.hub?.verify_token;
 		const configuredVerifyToken =
-			ctx.options.webhookVerifyToken ?? (await ctx.keys.get_webhook_signature());
+			ctx.options.webhookVerifyToken ??
+			(await ctx.keys.get_webhook_signature());
 
-		if (configuredVerifyToken && providedVerifyToken !== configuredVerifyToken) {
+		if (
+			configuredVerifyToken &&
+			providedVerifyToken !== configuredVerifyToken
+		) {
 			return {
 				success: false,
 				statusCode: 403,
