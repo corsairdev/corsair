@@ -1,4 +1,4 @@
-import type { CorsairErrorHandler } from '../../core/errors';
+import type { CorsairErrorHandler } from 'corsair/core';
 import { YoutubeAPIError } from './client';
 
 export const errorHandlers = {

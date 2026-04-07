@@ -1,4 +1,4 @@
-import { logEventFromContext } from '../../utils/events';
+import { logEventFromContext } from 'corsair/core';
 import type { YoutubeEndpoints } from '..';
 import { makeYoutubeRequest } from '../client';
 import type { YoutubeEndpointOutputs } from './types';

@@ -1,7 +1,7 @@
-import { ApiError } from '../../async-core/ApiError';
-import type { ApiRequestOptions } from '../../async-core/ApiRequestOptions';
-import type { OpenAPIConfig } from '../../async-core/OpenAPI';
-import { request } from '../../async-core/request';
+import { ApiError } from 'corsair/http';
+import type { ApiRequestOptions } from 'corsair/http';
+import type { OpenAPIConfig } from 'corsair/http';
+import { request } from 'corsair/http';
 
 export class YoutubeAPIError extends Error {
 	constructor(

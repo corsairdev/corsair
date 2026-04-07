@@ -1,4 +1,4 @@
-import dotenv from 'dotenv';
+import 'dotenv/config'
 import { makeYoutubeRequest } from './client';
 import { YoutubeEndpointOutputSchemas } from './endpoints/types';
 import type {
@@ -15,8 +15,6 @@ import type {
 	CaptionsListResponse,
 	PlaylistItemsListResponse,
 } from './endpoints/types';
-
-dotenv.config();
 
 const ACCESS_TOKEN = process.env.YOUTUBE_ACCESS_TOKEN ?? '';
 const TEST_VIDEO_ID = process.env.YOUTUBE_VIDEO_ID;
