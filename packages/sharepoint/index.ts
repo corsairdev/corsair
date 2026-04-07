@@ -45,6 +45,7 @@ import {
 	SharepointListChangedPayloadSchema,
 } from './webhooks/types';
 import { errorHandlers } from './error-handlers';
+import { getValidSharepointAccessToken } from './client';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Auth config — must be declared before SharepointContext so typeof resolves
@@ -578,13 +579,76 @@ export function sharepoint<const T extends SharepointPluginOptions>(
 			}
 
 			if (ctx.authType === 'oauth_2') {
-				const res = await ctx.keys.get_access_token();
+				const [accessToken, expiresAt, refreshToken] = await Promise.all([
+					ctx.keys.get_access_token(),
+					ctx.keys.get_expires_at(),
+					ctx.keys.get_refresh_token(),
+				]);
 
-				if (!res) {
-					return '';
+				if (!refreshToken) {
+					throw new Error(
+						'[corsair:sharepoint] No refresh token found. Run `corsair auth --plugin=sharepoint` to re-authenticate.',
+					);
 				}
 
-				return res;
+				const creds = await ctx.keys.get_integration_credentials();
+
+				if (!creds.client_id || !creds.client_secret) {
+					throw new Error(
+						'[corsair:sharepoint] Missing client_id or client_secret. Run `corsair setup --sharepoint` to configure credentials.',
+					);
+				}
+
+				let result: Awaited<ReturnType<typeof getValidSharepointAccessToken>>;
+				try {
+					result = await getValidSharepointAccessToken({
+						accessToken,
+						expiresAt,
+						refreshToken,
+						clientId: creds.client_id,
+						clientSecret: creds.client_secret,
+					});
+				} catch (error) {
+					throw new Error(
+						`[corsair:sharepoint] Failed to obtain valid access token: ${error instanceof Error ? error.message : String(error)}`,
+					);
+				}
+
+				if (result.refreshed) {
+					try {
+						await ctx.keys.set_access_token(result.accessToken);
+						await ctx.keys.set_expires_at(String(result.expiresAt));
+						// Microsoft issues a new refresh token on each refresh — persist it
+						if (result.newRefreshToken) {
+							await ctx.keys.set_refresh_token(result.newRefreshToken);
+						}
+					} catch (error) {
+						throw new Error(
+							`[corsair:sharepoint] Token was refreshed but failed to persist new credentials: ${error instanceof Error ? error.message : String(error)}`,
+						);
+					}
+				}
+
+				// Expose a force-refresh function so endpoints can retry on 401
+				// without waiting for expires_at to lapse
+				(ctx as Record<string, unknown>)._refreshAuth = async () => {
+					const freshResult = await getValidSharepointAccessToken({
+						accessToken: null,
+						expiresAt: null,
+						refreshToken,
+						clientId: creds.client_id!,
+						clientSecret: creds.client_secret!,
+						forceRefresh: true,
+					});
+					await ctx.keys.set_access_token(freshResult.accessToken);
+					await ctx.keys.set_expires_at(String(freshResult.expiresAt));
+					if (freshResult.newRefreshToken) {
+						await ctx.keys.set_refresh_token(freshResult.newRefreshToken);
+					}
+					return freshResult.accessToken;
+				};
+
+				return result.accessToken;
 			}
 
 			return '';

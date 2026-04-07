@@ -4,6 +4,17 @@ import { NextResponse } from 'next/server';
 import { corsair } from '@/server/corsair';
 
 export async function POST(request: NextRequest) {
+	const url = new URL(request.url);
+	const validationToken = url.searchParams.get('validationtoken');
+
+	if (validationToken) {
+		return new NextResponse(validationToken, {
+			status: 200,
+			headers: {
+				'Content-Type': 'text/plain; charset=utf-8',
+			},
+		});
+	}
 	const headers: Record<string, string> = {};
 	request.headers.forEach((value, key) => {
 		headers[key] = value;
@@ -19,8 +30,6 @@ export async function POST(request: NextRequest) {
 		const text = await request.text();
 		body = text && text.trim() ? text : {};
 	}
-
-	const url = new URL(request.url);
 
 	const tenantId =
 		url.searchParams.get('tenantId') ||

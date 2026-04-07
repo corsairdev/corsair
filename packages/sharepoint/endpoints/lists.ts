@@ -147,6 +147,7 @@ export const update: SharepointEndpoints['listsUpdate'] = async (ctx, input) => 
 			const existing = await ctx.db.lists.findByEntityId(list.id);
 			await ctx.db.lists.upsertByEntityId(list.id, {
 				...(existing?.data ?? {}),
+				id: list.id,
 				title: input.title ?? existing?.data?.title,
 				description: input.description ?? existing?.data?.description,
 				modifiedAt: new Date(),

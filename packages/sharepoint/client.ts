@@ -3,6 +3,80 @@ import type { OpenAPIConfig } from 'corsair/http';
 import type { RateLimitConfig } from 'corsair/http';
 import { request } from 'corsair/http';
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Token refresh
+// ─────────────────────────────────────────────────────────────────────────────
+
+const MICROSOFT_TOKEN_URL = 'https://login.microsoftonline.com/common/oauth2/v2.0/token';
+
+async function refreshSharepointAccessToken(
+	clientId: string,
+	clientSecret: string,
+	refreshToken: string,
+): Promise<{ access_token: string; refresh_token?: string; expires_in: number }> {
+	const response = await fetch(MICROSOFT_TOKEN_URL, {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+		body: new URLSearchParams({
+			client_id: clientId,
+			client_secret: clientSecret,
+			refresh_token: refreshToken,
+			grant_type: 'refresh_token',
+		}),
+	});
+
+	if (!response.ok) {
+		const error = await response.text();
+		throw new Error(`Failed to refresh SharePoint access token: ${error}`);
+	}
+
+	// Microsoft token response is untyped; cast to extract the expected fields
+	return response.json() as Promise<{ access_token: string; refresh_token?: string; expires_in: number }>;
+}
+
+/**
+ * Returns a valid access token, refreshing via the refresh token if the stored
+ * token is missing or within 5 minutes of expiry. Microsoft issues a new refresh
+ * token on each refresh — callers should persist both the new access token and
+ * the new refresh token when `refreshed` is true.
+ */
+export async function getValidSharepointAccessToken({
+	accessToken,
+	expiresAt,
+	refreshToken,
+	clientId,
+	clientSecret,
+	forceRefresh = false,
+}: {
+	accessToken?: string | null;
+	expiresAt?: string | null;
+	refreshToken: string;
+	clientId: string;
+	clientSecret: string;
+	forceRefresh?: boolean;
+}): Promise<{ accessToken: string; newRefreshToken?: string; expiresAt: number; refreshed: boolean }> {
+	const now = Math.floor(Date.now() / 1000);
+	const bufferSeconds = 5 * 60;
+
+	if (
+		!forceRefresh &&
+		accessToken &&
+		expiresAt &&
+		Number(expiresAt) > now + bufferSeconds
+	) {
+		return { accessToken, expiresAt: Number(expiresAt), refreshed: false };
+	}
+
+	const tokenData = await refreshSharepointAccessToken(clientId, clientSecret, refreshToken);
+	return {
+		accessToken: tokenData.access_token,
+		// Microsoft issues a new refresh token on each refresh; propagate it if present
+		newRefreshToken: tokenData.refresh_token,
+		expiresAt: now + tokenData.expires_in,
+		refreshed: true,
+	};
+}
+
 const SHAREPOINT_RATE_LIMIT_CONFIG: RateLimitConfig = {
 	enabled: true,
 	maxRetries: 3,

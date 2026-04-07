@@ -97,6 +97,7 @@ export const updateSite: SharepointEndpoints['webUpdateSite'] = async (ctx, inpu
 			const existing = await ctx.db.sites.findByEntityId(siteId);
 			await ctx.db.sites.upsertByEntityId(siteId, {
 				...(existing?.data ?? {}),
+				id: siteId,
 				title: input.title ?? existing?.data?.title,
 				description: input.description ?? existing?.data?.description,
 			});

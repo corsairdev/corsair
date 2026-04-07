@@ -220,6 +220,7 @@ export const update: SharepointEndpoints['itemsUpdate'] = async (ctx, input) => 
 			const existing = await ctx.db.items.findByEntityId(itemId);
 			await ctx.db.items.upsertByEntityId(itemId, {
 				...(existing?.data ?? {}),
+				id: itemId,
 				modifiedAt: new Date(),
 			});
 		} catch (error) {
