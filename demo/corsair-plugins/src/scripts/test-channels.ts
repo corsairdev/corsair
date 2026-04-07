@@ -3,7 +3,7 @@ import 'dotenv/config';
 
 const main = async () => {
     
-    const res = await corsair.sharepoint.api.lists.listAll({})
+    const res = await corsair.sharepoint.api.folders.getAll({})
         console.log(res)
 
     // const res = await corsair.gmail.keys.get_expires_at();
