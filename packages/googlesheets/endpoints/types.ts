@@ -1,9 +1,11 @@
 import { z } from 'zod';
 import type {
+	AppendValuesResponse,
 	BatchUpdateSpreadsheetResponse,
 	BatchUpdateValuesResponse,
 	ClearValuesResponse,
 	Spreadsheet,
+	UpdateValuesResponse,
 	ValueRange,
 } from '../types';
 
@@ -182,7 +184,7 @@ export type GoogleSheetsEndpointOutputs = {
 	spreadsheetsCreate: Spreadsheet;
 	spreadsheetsDelete: void;
 	sheetsAppendRow: BatchUpdateValuesResponse;
-	sheetsAppendOrUpdateRow: BatchUpdateValuesResponse;
+	sheetsAppendOrUpdateRow: UpdateValuesResponse | AppendValuesResponse;
 	sheetsGetRows: ValueRange;
 	sheetsUpdateRow: BatchUpdateValuesResponse;
 	sheetsClearSheet: ClearValuesResponse;
