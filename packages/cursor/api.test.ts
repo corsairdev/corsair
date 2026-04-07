@@ -75,7 +75,6 @@ describe('Cursor API Type Tests', () => {
 			);
 
 			const result = CursorEndpointOutputSchemas.agentsList.parse(response);
-			console.log(result);
 
 			expect(result.agents).toBeDefined();
 			expect(Array.isArray(result.agents)).toBe(true);
