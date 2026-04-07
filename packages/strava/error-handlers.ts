@@ -1,5 +1,5 @@
-import { ApiError } from '../../async-core/ApiError';
-import type { CorsairErrorHandler } from '../../core/errors';
+import { ApiError } from 'corsair/http';
+import type { CorsairErrorHandler } from 'corsair/core';
 
 export const errorHandlers = {
 	RATE_LIMIT_ERROR: {

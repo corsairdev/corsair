@@ -1,5 +1,5 @@
 import type { StravaEndpoints } from '..';
-import { logEventFromContext } from '../../utils/events';
+import { logEventFromContext } from 'corsair/core';
 import { makeStravaRequest } from '../client';
 import type { StravaEndpointOutputs } from './types';
 

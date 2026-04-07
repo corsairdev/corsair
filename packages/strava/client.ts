@@ -1,7 +1,5 @@
-import type { ApiRequestOptions } from '../../async-core/ApiRequestOptions';
-import type { OpenAPIConfig } from '../../async-core/OpenAPI';
-import type { RateLimitConfig } from '../../async-core/rate-limit';
-import { request } from '../../async-core/request';
+import type { ApiRequestOptions, OpenAPIConfig, RateLimitConfig } from 'corsair/http';
+import { request } from 'corsair/http'
 
 export class StravaAPIError extends Error {
 	constructor(

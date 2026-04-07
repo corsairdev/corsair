@@ -1,4 +1,4 @@
-import dotenv from 'dotenv';
+import 'dotenv/config'
 import { makeStravaRequest } from './client';
 import type {
 	ActivitiesListResponse,
@@ -16,8 +16,6 @@ import type {
 	UploadResponse,
 } from './endpoints/types';
 import { StravaEndpointInputSchemas, StravaEndpointOutputSchemas } from './endpoints/types';
-
-dotenv.config();
 
 const ACCESS_TOKEN = process.env.STRAVA_ACCESS_TOKEN!;
 const ATHLETE_ID = parseInt(process.env.STRAVA_ATHLETE_ID || '0');
