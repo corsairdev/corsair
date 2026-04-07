@@ -14,7 +14,15 @@
     "release:no-build": "bumpp && pnpm -r publish --access public --no-git-checks --tag next",
     "release:canary": "turbo --filter \"./packages/*\" build && bumpp && pnpm -r publish --access public --tag canary --no-git-checks",
     "bumpp": "bumpp",
-    "typecheck": "tsc --build"
+    "typecheck": "tsc --build",
+    "generate:plugin": "node --experimental-strip-types scripts/generate-plugin.ts",
+    "generate:plugin-from-json": "node --experimental-strip-types scripts/generate-plugin-from-json.ts"
+  },
+  "pnpm": {
+    "overrides": {
+      "@types/react": "^19",
+      "@types/react-dom": "^19"
+    }
   },
   "devDependencies": {
     "@biomejs/biome": "2.3.5",

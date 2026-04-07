@@ -1,0 +1,41 @@
+import { logEventFromContext } from 'corsair/core';
+import type { SlackWebhooks } from '..';
+import { createSlackEventMatch, verifySlackWebhookSignature } from './types';
+
+export const added: SlackWebhooks['reactionAdded'] = {
+	match: createSlackEventMatch('reaction_added'),
+
+	handler: async (ctx, request) => {
+		const signingSecret = ctx.key;
+		const verification = verifySlackWebhookSignature(request, signingSecret);
+		if (!verification.valid) {
+			return {
+				success: false,
+				statusCode: 401,
+				error: verification.error || 'Signature verification failed',
+			};
+		}
+
+		const event =
+			request.payload.type === 'event_callback' ? request.payload.event : null;
+
+		if (!event || event.type !== 'reaction_added') {
+			return {
+				success: true,
+				data: undefined,
+			};
+		}
+
+		await logEventFromContext(
+			ctx,
+			'slack.webhook.reactionAdded',
+			{ ...event },
+			'completed',
+		);
+
+		return {
+			success: true,
+			data: event,
+		};
+	},
+};

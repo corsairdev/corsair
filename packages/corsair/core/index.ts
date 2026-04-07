@@ -161,7 +161,7 @@ export type {
 	CorsairTenantWrapper,
 } from './client';
 // Constants
-export type { AllProviders, AuthTypes, BaseProviders } from './constants';
+export type { AllProviders, AuthTypes, BaseProviders, PickAuth } from './constants';
 // Endpoint types
 export type {
 	BindEndpoints,
@@ -197,6 +197,7 @@ export type {
 	CorsairKeyBuilder,
 	CorsairKeyBuilderBase,
 	CorsairPlugin,
+	OAuthConfig,
 	CorsairPluginContext,
 	EndpointHooks,
 	EndpointMetaEntry,
@@ -214,6 +215,10 @@ export type {
 
 // Utility types
 export type { Bivariant, UnionToIntersection } from './utils';
+
+// Event logging utilities for plugins
+export { logEvent, logEventFromContext } from '../plugins/utils/events';
+export type { EventLoggingContext } from '../plugins/utils/events';
 // Webhook types
 export type {
 	BindWebhooks,
