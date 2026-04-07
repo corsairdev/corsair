@@ -9,8 +9,8 @@ import type {
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
-} from '../../core';
-import type { AuthTypes, PickAuth } from '../../core/constants';
+} from 'corsair/core';
+import type { AuthTypes, PickAuth } from 'corsair/core';
 import type { GrafanaEndpointInputs, GrafanaEndpointOutputs } from './endpoints/types';
 import { GrafanaEndpointInputSchemas, GrafanaEndpointOutputSchemas } from './endpoints/types';
 import {

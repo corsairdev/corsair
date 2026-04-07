@@ -1,4 +1,4 @@
-import { logEventFromContext } from '../../utils/events';
+import { logEventFromContext } from 'corsair/core';
 import type { GrafanaEndpoints } from '..';
 import { makeGrafanaRawRequest } from '../client';
 import type { GrafanaEndpointOutputs } from './types';

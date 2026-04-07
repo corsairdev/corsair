@@ -1,4 +1,4 @@
-import dotenv from 'dotenv';
+import 'dotenv/config'
 import { makeGrafanaRequest, makeGrafanaRawRequest } from './client';
 import type {
 	DashboardsQueryPublicResponse,
@@ -14,8 +14,6 @@ import type {
 	StoreGatewayGetTenantsResponse,
 } from './endpoints/types';
 import { GrafanaEndpointOutputSchemas } from './endpoints/types';
-
-dotenv.config();
 
 const BEARER_TOKEN = process.env.GRAFANA_BEARER_TOKEN!;
 const GRAFANA_URL = process.env.GRAFANA_URL!;
