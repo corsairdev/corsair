@@ -38,6 +38,7 @@ export const BaseProviders = [
 	'notion',
 	'onedrive',
 	'oura',
+	'outlook',
 	'pagerduty',
 	'posthog',
 	'resend',
@@ -84,6 +85,7 @@ export type AllProviders =
 	| 'notion'
 	| 'onedrive'
 	| 'oura'
+	| 'outlook'
 	| 'pagerduty'
 	| 'posthog'
 	| 'resend'

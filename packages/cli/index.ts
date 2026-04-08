@@ -655,6 +655,18 @@ async function main() {
 		return;
 	}
 
+	if (command === 'subscribe') {
+		const pluginArg = args.slice(1).find((a) => a.startsWith('--plugin='));
+		const pluginId = pluginArg ? pluginArg.slice('--plugin='.length) : undefined;
+		if (pluginId === 'outlook') {
+			const { runOutlookSubscribe } = await import('./subscribe-outlook');
+			await runOutlookSubscribe({ cwd });
+			return;
+		}
+		console.error(`[#corsair]: Unknown plugin for subscribe: '${pluginId ?? '(none)'}'. Supported: outlook`);
+		process.exit(1);
+	}
+	
 	if (command === 'teams-subscribe') {
 		const { runTeamsSubscribe } = await import('./watch-renew');
 		await runTeamsSubscribe({ cwd });
