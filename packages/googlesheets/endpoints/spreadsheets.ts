@@ -93,6 +93,7 @@ export const listSpreadsheets: GoogleSheetsEndpoints['spreadsheetsList'] = async
 		);
 	}
 
+	// Drive request is invoked in sheets plugin, so type assertion is required
 	const result = (await response.json()) as ListSpreadsheetsResponse;
 
 	await logEventFromContext(
