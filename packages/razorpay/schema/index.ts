@@ -1,4 +1,5 @@
 import {
+	RazorpayCustomer,
 	RazorpayOrder,
 	RazorpayPayment,
 	RazorpayRefund,
@@ -10,5 +11,6 @@ export const RazorpaySchema = {
 		orders: RazorpayOrder,
 		payments: RazorpayPayment,
 		refunds: RazorpayRefund,
+		customers: RazorpayCustomer,
 	},
 } as const;

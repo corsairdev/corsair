@@ -14,8 +14,12 @@ import type {
 	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
 import type { AuthTypes } from 'corsair/core';
-import { Orders, Payments, Refunds } from './endpoints';
+import { Customers, Orders, Payments, Refunds } from './endpoints';
 import type {
+	CustomersCreateInput,
+	CustomersCreateResponse,
+	CustomersGetInput,
+	CustomersGetResponse,
 	OrdersCreateInput,
 	OrdersCreateResponse,
 	OrdersGetInput,
@@ -79,6 +83,8 @@ export type RazorpayEndpoints = {
 	paymentsGet: RazorpayEndpoint<'paymentsGet', PaymentsGetInput>;
 	paymentsList: RazorpayEndpoint<'paymentsList', PaymentsListInput>;
 	refundsCreate: RazorpayEndpoint<'refundsCreate', RefundsCreateInput>;
+	customersCreate: RazorpayEndpoint<'customersCreate', CustomersCreateInput>;
+	customersGet: RazorpayEndpoint<'customersGet', CustomersGetInput>;
 };
 
 type RazorpayWebhook<
@@ -112,6 +118,10 @@ const razorpayEndpointsNested = {
 	},
 	refunds: {
 		create: Refunds.create,
+	},
+	customers: {
+		create: Customers.create,
+		get: Customers.get,
 	},
 } as const;
 
@@ -148,6 +158,14 @@ export const razorpayEndpointSchemas = {
 	'refunds.create': {
 		input: RazorpayEndpointInputSchemas.refundsCreate,
 		output: RazorpayEndpointOutputSchemas.refundsCreate,
+	},
+	'customers.create': {
+		input: RazorpayEndpointInputSchemas.customersCreate,
+		output: RazorpayEndpointOutputSchemas.customersCreate,
+	},
+	'customers.get': {
+		input: RazorpayEndpointInputSchemas.customersGet,
+		output: RazorpayEndpointOutputSchemas.customersGet,
 	},
 } as const satisfies RequiredPluginEndpointSchemas<typeof razorpayEndpointsNested>;
 
@@ -196,6 +214,14 @@ const razorpayEndpointMeta = {
 	'refunds.create': {
 		riskLevel: 'write',
 		description: 'Create a refund for a Razorpay payment',
+	},
+	'customers.create': {
+		riskLevel: 'write',
+		description: 'Create a Razorpay customer',
+	},
+	'customers.get': {
+		riskLevel: 'read',
+		description: 'Fetch a Razorpay customer by ID',
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof razorpayEndpointsNested>;
 
@@ -273,6 +299,10 @@ export type {
 export { createRazorpayMatch } from './webhooks/types';
 
 export type {
+	CustomersCreateInput,
+	CustomersCreateResponse,
+	CustomersGetInput,
+	CustomersGetResponse,
 	OrdersCreateInput,
 	OrdersCreateResponse,
 	OrdersGetInput,
