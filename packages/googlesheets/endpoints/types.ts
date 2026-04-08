@@ -1,10 +1,12 @@
 import { z } from 'zod';
 import type {
+	AppendValuesResponse,
 	BatchUpdateSpreadsheetResponse,
 	BatchUpdateValuesResponse,
 	ClearValuesResponse,
 	SheetProperties,
 	Spreadsheet,
+	UpdateValuesResponse,
 	ValueRange,
 } from '../types';
 
@@ -36,7 +38,10 @@ const SheetsAppendRowInputSchema = z.object({
 const SheetsAppendOrUpdateRowInputSchema = z.object({
 	spreadsheetId: z.string(),
 	sheetName: z.string().optional(),
-	keyColumn: z.string().optional(),
+	keyColumn: z
+		.string()
+		.describe('Column letter (e.g. "A"), not a header name (e.g. "Company Name")')
+		.optional(),
 	keyValue: z.union([z.string(), z.number()]).optional(),
 	values: z
 		.array(z.union([z.string(), z.number(), z.boolean(), z.null()]))
@@ -234,7 +239,7 @@ export type GoogleSheetsEndpointOutputs = {
 	spreadsheetsDelete: void;
 	spreadsheetsList: ListSpreadsheetsResponse;
 	sheetsAppendRow: BatchUpdateValuesResponse;
-	sheetsAppendOrUpdateRow: BatchUpdateValuesResponse;
+	sheetsAppendOrUpdateRow: UpdateValuesResponse | AppendValuesResponse;
 	sheetsGetRows: ValueRange;
 	sheetsUpdateRow: BatchUpdateValuesResponse;
 	sheetsClearSheet: ClearValuesResponse;
