@@ -7,7 +7,7 @@ dotenv.config();
 
 const CLIENT_ID = process.env.GMAIL_CLIENT_ID;
 const CLIENT_SECRET = process.env.GMAIL_CLIENT_SECRET;
-const REDIRECT_URI = 'urn:ietf:wg:oauth:2.0:oob';
+const REDIRECT_URI = 'http://localhost:3000/oauth/callback';
 
 if (!CLIENT_ID || !CLIENT_SECRET) {
 	console.error(
@@ -24,6 +24,7 @@ const scopes = [
 	'https://www.googleapis.com/auth/spreadsheets',
 	'https://www.googleapis.com/auth/drive',
 	'https://www.googleapis.com/auth/calendar',
+	'https://www.googleapis.com/auth/youtube',
 ];
 
 // Build authorization URL manually
