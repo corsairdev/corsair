@@ -40,8 +40,13 @@ function zodToInlineType(schema: ZodTypeAny): string {
 			return zodToInlineType(def.innerType as ZodTypeAny);
 		case 'ZodNullable':
 			return `${zodToInlineType(def.innerType as ZodTypeAny)} | null`;
-		case 'ZodArray':
-			return `${zodToInlineType(def.type as ZodTypeAny)}[]`;
+		case 'ZodArray': {
+			const itemType = def.type as ZodTypeAny;
+			const itemDef = (itemType as { _def: Record<string, unknown> })._def;
+			const isUnion = itemDef.typeName === 'ZodUnion';
+			const inner = zodToInlineType(itemType);
+			return `${isUnion ? `(${inner})` : inner}[]`;
+		}
 		case 'ZodRecord':
 			return '{}';
 		case 'ZodObject': {
