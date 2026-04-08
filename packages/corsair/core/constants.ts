@@ -15,6 +15,7 @@ export type AllErrors =
 export const BaseProviders = [
 	'airtable',
 	'amplitude',
+	'apify',
 	'asana',
 	'box',
 	'cal',
@@ -58,6 +59,7 @@ export const BaseProviders = [
 export type AllProviders =
 	| 'airtable'
 	| 'amplitude'
+	| 'apify'
 	| 'asana'
 	| 'box'
 	| 'cal'
