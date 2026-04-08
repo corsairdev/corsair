@@ -1,0 +1,82 @@
+---
+title: Hacker News
+description: Read Hacker News stories, items, users, and search results from your app or agent.
+---
+
+## Quick Start
+
+Install the plugin:
+
+```bash
+pnpm install @corsair-dev/hackernews
+```
+
+Add the Hacker News plugin to your Corsair instance:
+
+```ts title="corsair.ts"
+import { createCorsair } from "corsair";
+import { hackernews } from "@corsair-dev/hackernews";
+
+export const corsair = createCorsair({
+    plugins: [hackernews()],
+    database: db,
+    kek: process.env.CORSAIR_KEK!,
+});
+```
+
+## Authentication
+
+The Hacker News API is public — no credentials required for read access.
+
+## Options
+
+| Option | Type | Description |
+|--------|------|-------------|
+| `hooks` | `object` | Endpoint hooks for custom logic |
+| `errorHandlers` | `object` | Custom error handlers |
+
+## Usage
+
+```ts
+// Get top stories
+const topStories = await corsair.hackernews.api.stories.getTop({});
+
+// Get a specific item (story, comment, job, etc.)
+const item = await corsair.hackernews.api.items.get({ id: 12345 });
+
+// Get new stories
+const newStories = await corsair.hackernews.api.stories.getNew({});
+
+// Get best stories
+const bestStories = await corsair.hackernews.api.stories.getBest({});
+
+// Get Ask HN stories
+const askStories = await corsair.hackernews.api.stories.getAsk({});
+
+// Get Show HN stories
+const showStories = await corsair.hackernews.api.stories.getShow({});
+
+// Get a user profile
+const user = await corsair.hackernews.api.users.get({ id: "pg" });
+
+// Search stories
+const results = await corsair.hackernews.api.search.search({
+    query: "Corsair AI",
+});
+```
+
+### Query cached data
+
+```ts
+const items = await corsair.hackernews.db.items.search({
+    data: { type: "story" },
+});
+```
+
+### Multi-Tenancy
+
+```ts
+const tenant = corsair.withTenant("user-123");
+
+const stories = await tenant.hackernews.api.stories.getTop({});
+```

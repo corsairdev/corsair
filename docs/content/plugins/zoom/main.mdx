@@ -1,0 +1,102 @@
+---
+title: Zoom
+description: Manage Zoom meetings, recordings, webinars, and participants from your app or agent.
+---
+
+## Quick Start
+
+Install the plugin:
+
+```bash
+pnpm install @corsair-dev/zoom
+```
+
+Add the Zoom plugin to your Corsair instance:
+
+```ts title="corsair.ts"
+import { createCorsair } from "corsair";
+import { zoom } from "@corsair-dev/zoom";
+
+export const corsair = createCorsair({
+    plugins: [zoom()],
+    database: db,
+    kek: process.env.CORSAIR_KEK!,
+});
+```
+
+## Authentication
+
+### Supported Auth Types
+
+- **`oauth_2`** (default) - OAuth 2.0
+
+### OAuth Setup
+
+```bash
+pnpm corsair setup --zoom client_id=your-client-id client_secret=your-client-secret
+pnpm corsair auth --plugin=zoom
+```
+
+For webhook signature verification:
+
+```bash
+pnpm corsair setup --zoom webhook_signature=your-webhook-secret-token
+```
+
+See [Get Credentials](/plugins/zoom/get-credentials) for step-by-step instructions.
+
+## Options
+
+| Option | Type | Description |
+|--------|------|-------------|
+| `authType` | `'oauth_2'` | Authentication method |
+| `key` | `string` | OAuth token (optional, uses database if not provided) |
+| `webhookSecret` | `string` | Webhook secret token (optional) |
+| `hooks` | `object` | Endpoint hooks for custom logic |
+| `webhookHooks` | `object` | Webhook hooks for event handling |
+| `errorHandlers` | `object` | Custom error handlers |
+
+## Usage
+
+```ts
+// Create a meeting
+const meeting = await corsair.zoom.api.meetings.create({
+    topic: "Team Sync",
+    type: 2,
+    start_time: "2024-01-15T10:00:00Z",
+    duration: 60,
+});
+
+// List meetings
+const meetings = await corsair.zoom.api.meetings.list({});
+
+// Get meeting recordings
+const recordings = await corsair.zoom.api.recordings.getMeeting({
+    meetingId: "meeting-id",
+});
+
+// List webinars
+const webinars = await corsair.zoom.api.webinars.list({});
+
+// Get daily usage report
+const report = await corsair.zoom.api.reports.dailyUsage({
+    year: 2024,
+    month: 1,
+});
+```
+
+### Query cached data
+
+```ts
+const meetings = await corsair.zoom.db.meetings.search({
+    data: { status: "waiting" },
+});
+```
+
+### Multi-Tenancy
+
+```ts
+const tenant = corsair.withTenant("user-123");
+
+const meetings = await tenant.zoom.api.meetings.list({});
+```

@@ -1,3 +1,5 @@
+import 'dotenv/config';
+
 import { createCorsair } from 'corsair';
 import { sqlite } from '../db';
 import { github } from '@corsair-dev/github';
@@ -7,6 +9,7 @@ import { googlecalendar } from '@corsair-dev/googlecalendar';
 import { gmail } from '@corsair-dev/gmail';
 import { linear } from '@corsair-dev/linear';
 import { apify } from '@corsair-dev/apify';
+import { onedrive } from '@corsair-dev/onedrive';
 
 export const corsair = createCorsair({
 	multiTenancy: false,
@@ -16,6 +19,6 @@ export const corsair = createCorsair({
 		timeout: '10m',
 		onTimeout: 'deny',
 	},
-	plugins: [github(), slack(), googlesheets(), googlecalendar(), gmail(), linear(), apify()],
+	plugins: [github(), slack(), googlesheets(), googlecalendar(), gmail(), linear(), onedrive(), apify()],
 });
 
