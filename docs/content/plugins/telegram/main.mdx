@@ -1,0 +1,91 @@
+---
+title: Telegram
+description: Send messages, manage chats, and handle Telegram bot events from your app or agent.
+---
+
+## Quick Start
+
+Install the plugin:
+
+```bash
+pnpm install @corsair-dev/telegram
+```
+
+Add the Telegram plugin to your Corsair instance:
+
+```ts title="corsair.ts"
+import { createCorsair } from "corsair";
+import { telegram } from "@corsair-dev/telegram";
+
+export const corsair = createCorsair({
+    plugins: [telegram()],
+    database: db,
+    kek: process.env.CORSAIR_KEK!,
+});
+```
+
+## Authentication
+
+### Supported Auth Types
+
+- **`bot_token`** (default) - Telegram bot token
+
+### Bot Token Setup
+
+```bash
+pnpm corsair setup --telegram bot_token=your-bot-token
+```
+
+See [Get Credentials](/plugins/telegram/get-credentials) for step-by-step instructions.
+
+## Options
+
+| Option | Type | Description |
+|--------|------|-------------|
+| `authType` | `'bot_token'` | Authentication method |
+| `key` | `string` | Bot token (optional, uses database if not provided) |
+| `webhookSecret` | `string` | Webhook secret token (optional) |
+| `hooks` | `object` | Endpoint hooks for custom logic |
+| `webhookHooks` | `object` | Webhook hooks for event handling |
+| `errorHandlers` | `object` | Custom error handlers |
+
+## Usage
+
+```ts
+// Send a message
+await corsair.telegram.api.messages.sendMessage({
+    chat_id: "@mychannel",
+    text: "Hello from Corsair!",
+});
+
+// Send a photo
+await corsair.telegram.api.messages.sendPhoto({
+    chat_id: "123456789",
+    photo: "https://example.com/image.png",
+    caption: "Check this out",
+});
+
+// Get chat info
+const chat = await corsair.telegram.api.chat.getChat({
+    chat_id: "@mychannel",
+});
+
+// Get bot info
+const me = await corsair.telegram.api.updates.getMe({});
+
+// Get updates (polling)
+const updates = await corsair.telegram.api.updates.getUpdates({
+    limit: 10,
+});
+```
+
+### Multi-Tenancy
+
+```ts
+const tenant = corsair.withTenant("user-123");
+
+await tenant.telegram.api.messages.sendMessage({
+    chat_id: "123456789",
+    text: "Message for this tenant",
+});
+```

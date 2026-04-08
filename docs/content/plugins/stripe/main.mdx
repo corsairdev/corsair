@@ -1,0 +1,109 @@
+---
+title: Stripe
+description: Manage Stripe payments, customers, charges, and subscriptions from your app or agent.
+---
+
+## Quick Start
+
+Install the plugin:
+
+```bash
+pnpm install @corsair-dev/stripe
+```
+
+Add the Stripe plugin to your Corsair instance:
+
+```ts title="corsair.ts"
+import { createCorsair } from "corsair";
+import { stripe } from "@corsair-dev/stripe";
+
+export const corsair = createCorsair({
+    plugins: [stripe()],
+    database: db,
+    kek: process.env.CORSAIR_KEK!,
+});
+```
+
+## Authentication
+
+### Supported Auth Types
+
+- **`api_key`** (default) - Stripe secret key
+
+### API Key Setup
+
+```bash
+pnpm corsair setup --stripe api_key=sk_live_your-secret-key
+```
+
+For webhook signature verification:
+
+```bash
+pnpm corsair setup --stripe webhook_signature=whsec_your-webhook-secret
+```
+
+See [Get Credentials](/plugins/stripe/get-credentials) for step-by-step instructions.
+
+## Options
+
+| Option | Type | Description |
+|--------|------|-------------|
+| `authType` | `'api_key'` | Authentication method |
+| `key` | `string` | Secret key (optional, uses database if not provided) |
+| `webhookSecret` | `string` | Webhook signing secret (optional) |
+| `hooks` | `object` | Endpoint hooks for custom logic |
+| `webhookHooks` | `object` | Webhook hooks for event handling |
+| `errorHandlers` | `object` | Custom error handlers |
+
+## Usage
+
+```ts
+// Get account balance
+const balance = await corsair.stripe.api.balance.get({});
+
+// Create a customer
+const customer = await corsair.stripe.api.customers.create({
+    email: "user@example.com",
+    name: "Jane Doe",
+});
+
+// Create a payment intent
+const intent = await corsair.stripe.api.paymentIntents.create({
+    amount: 2000,
+    currency: "usd",
+    customer: customer.id,
+});
+
+// List charges
+const charges = await corsair.stripe.api.charges.list({
+    limit: 20,
+});
+
+// Create a price
+const price = await corsair.stripe.api.prices.create({
+    unit_amount: 1999,
+    currency: "usd",
+    recurring: { interval: "month" },
+    product: "prod-id",
+});
+```
+
+### Query cached data
+
+```ts
+const customers = await corsair.stripe.db.customers.search({
+    data: {},
+});
+
+const charges = await corsair.stripe.db.charges.search({
+    data: { status: "succeeded" },
+});
+```
+
+### Multi-Tenancy
+
+```ts
+const tenant = corsair.withTenant("account-123");
+
+const charges = await tenant.stripe.api.charges.list({});
+```
