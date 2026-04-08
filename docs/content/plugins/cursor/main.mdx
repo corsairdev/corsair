@@ -1,0 +1,79 @@
+---
+title: Cursor
+description: Access Cursor AI agent data, models, and repositories from your app or agent.
+---
+
+## Quick Start
+
+Install the plugin:
+
+```bash
+pnpm install @corsair-dev/cursor
+```
+
+Add the Cursor plugin to your Corsair instance:
+
+```ts title="corsair.ts"
+import { createCorsair } from "corsair";
+import { cursor } from "@corsair-dev/cursor";
+
+export const corsair = createCorsair({
+    plugins: [cursor()],
+    database: db,
+    kek: process.env.CORSAIR_KEK!,
+});
+```
+
+## Authentication
+
+### Supported Auth Types
+
+- **`api_key`** (default) - Cursor API key
+
+### API Key Setup
+
+```bash
+pnpm corsair setup --cursor api_key=your-api-key
+```
+
+See [Get Credentials](/plugins/cursor/get-credentials) for step-by-step instructions.
+
+## Options
+
+| Option | Type | Description |
+|--------|------|-------------|
+| `authType` | `'api_key'` | Authentication method |
+| `key` | `string` | API key (optional, uses database if not provided) |
+| `hooks` | `object` | Endpoint hooks for custom logic |
+| `errorHandlers` | `object` | Custom error handlers |
+
+## Usage
+
+```ts
+// List agents
+const agents = await corsair.cursor.api.agents.list({
+    limit: 20,
+});
+
+// Get agent conversation
+const conversation = await corsair.cursor.api.agents.getConversation({
+    id: "agent-id",
+});
+
+// Get account info
+const me = await corsair.cursor.api.account.getMe({});
+
+// List available models
+const models = await corsair.cursor.api.models.list({});
+
+// List repositories
+const repos = await corsair.cursor.api.repositories.list({});
+```
+
+### Multi-Tenancy
+
+```ts
+const tenant = corsair.withTenant("user-123");
+
+const agents = await tenant.cursor.api.agents.list({});
+```

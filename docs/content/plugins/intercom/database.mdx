@@ -1,0 +1,132 @@
+---
+title: Intercom Database Schema
+description: Database entities and querying synced Intercom data.
+---
+
+The Intercom plugin syncs data to your local database when API calls are made.
+
+## Synced Entities
+
+- **contacts** - Leads and users
+- **conversations** - Support conversations
+- **companies** - Companies/organizations
+- **articles** - Help center articles
+- **admins** - Team members/admins
+
+## Database API
+
+```ts
+const contacts = await corsair.intercom.db.contacts.search({
+    data: { email: "user@example.com" },
+});
+```
+
+---
+
+## Contacts
+
+### Schema
+
+```ts
+{
+    id: string;
+    role?: "user" | "lead";
+    email?: string;
+    name?: string;
+    phone?: string;
+    avatar?: string;
+    createdAt?: number;
+    updatedAt?: number;
+    lastSeenAt?: number;
+    signedUpAt?: number;
+    externalId?: string;
+    unsubscribedFromEmails?: boolean;
+}
+```
+
+### Querying Contacts
+
+```ts
+const contacts = await corsair.intercom.db.contacts.search({
+    data: { email: "user@example.com" },
+});
+
+const leads = await corsair.intercom.db.contacts.search({
+    data: { role: "lead" },
+});
+```
+
+---
+
+## Conversations
+
+### Schema
+
+```ts
+{
+    id: string;
+    state?: "open" | "closed" | "snoozed";
+    open?: boolean;
+    read?: boolean;
+    createdAt?: number;
+    updatedAt?: number;
+    waitingSince?: number;
+    contactId?: string;
+    assigneeId?: string;
+    source?: {
+        type: string;
+        subject?: string;
+        body?: string;
+    };
+}
+```
+
+### Querying Conversations
+
+```ts
+const open = await corsair.intercom.db.conversations.search({
+    data: { state: "open" },
+});
+```
+
+---
+
+## Companies
+
+### Schema
+
+```ts
+{
+    id: string;
+    name?: string;
+    companyId?: string;
+    plan?: string;
+    monthlySpend?: number;
+    sessionCount?: number;
+    userCount?: number;
+    createdAt?: number;
+    updatedAt?: number;
+    industryId?: number;
+    websiteUrl?: string;
+}
+```
+
+### Querying Companies
+
+```ts
+const companies = await corsair.intercom.db.companies.search({
+    data: { name: "Acme Corp" },
+});
+```
+
+---
+
+## Multi-Tenancy
+
+```ts
+const tenant = corsair.withTenant("workspace-123");
+
+const contacts = await tenant.intercom.db.contacts.search({ data: {} });
+```
+
+See [Database](/concepts/database) for more information about querying patterns.

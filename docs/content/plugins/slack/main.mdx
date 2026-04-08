@@ -23,7 +23,7 @@ Connect Slack to your agent or app. Corsair handles auth, data syncing, and webh
 ### Install
 
 ```bash
-npm install corsair better-sqlite3
+pnpm install @corsair-dev/slack
 ```
 
 </Step>
@@ -34,7 +34,7 @@ npm install corsair better-sqlite3
 
 ```ts title="corsair.ts"
 import { createCorsair } from 'corsair';
-import { slack } from 'corsair/plugins';
+import { slack } from '@corsair-dev/slack';
 import Database from 'better-sqlite3';
 
 export const corsair = createCorsair({
@@ -60,11 +60,8 @@ See [Get Credentials](/plugins/slack/get-credentials) for step-by-step instructi
 
 ### Store credentials
 
-```ts title="setup.ts"
-import { corsair } from './corsair';
-
-await corsair.slack.keys.setBotToken(process.env.SLACK_BOT_TOKEN!);
-await corsair.slack.keys.setWebhookSignature(process.env.SLACK_SIGNING_SECRET!);
+```bash
+pnpm corsair setup --slack bot_token=xoxb-your-bot-token webhook_signature=your-signing-secret
 ```
 
 Run this once. Credentials are encrypted with your KEK and stored in your database.
@@ -93,8 +90,8 @@ slack({
 
 Store the token:
 
-```ts
-await corsair.slack.keys.setBotToken('xoxb-your-bot-token');
+```bash
+pnpm corsair setup --slack bot_token=xoxb-your-bot-token
 ```
 
 See [Get Credentials](/plugins/slack/get-credentials) for where to find this in the Slack dashboard.
@@ -111,15 +108,14 @@ slack({
 })
 ```
 
-Store credentials after your OAuth app is configured:
+Store your OAuth app credentials, then start the flow:
 
-```ts
-await corsair.slack.keys.setClientId(process.env.SLACK_CLIENT_ID!);
-await corsair.slack.keys.setClientSecret(process.env.SLACK_CLIENT_SECRET!);
-await corsair.slack.keys.setRedirectUrl('https://yourapp.com/auth/slack/callback');
+```bash
+pnpm corsair setup --slack client_id=your-client-id client_secret=your-client-secret
+pnpm corsair auth --plugin=slack
 ```
 
-After users complete the OAuth flow, access tokens are stored automatically per tenant. See [Multi-Tenancy](/multi-tenancy) for the full setup.
+The CLI will print an authorization URL. Once the user approves, tokens are stored automatically per tenant. See [Multi-Tenancy](/multi-tenancy) for the full setup.
 
 </Tab>
 

@@ -149,6 +149,72 @@ import SentryApiEndpointsDoc from '@/content/plugins/sentry/api-endpoints.mdx';
 import SentryWebhooksDoc from '@/content/plugins/sentry/webhooks.mdx';
 import SentryDatabaseDoc from '@/content/plugins/sentry/database.mdx';
 import SentryErrorHandlersDoc from '@/content/plugins/sentry/error-handlers.mdx';
+import TwitterDoc from '@/content/plugins/twitter/main.mdx';
+import TwitterGetCredentialsDoc from '@/content/plugins/twitter/get-credentials.mdx';
+import TwitterDatabaseDoc from '@/content/plugins/twitter/database.mdx';
+import MondayDoc from '@/content/plugins/monday/main.mdx';
+import MondayGetCredentialsDoc from '@/content/plugins/monday/get-credentials.mdx';
+import MondayDatabaseDoc from '@/content/plugins/monday/database.mdx';
+import HackerNewsDoc from '@/content/plugins/hackernews/main.mdx';
+import HackerNewsGetCredentialsDoc from '@/content/plugins/hackernews/get-credentials.mdx';
+import HackerNewsDatabaseDoc from '@/content/plugins/hackernews/database.mdx';
+import BoxDoc from '@/content/plugins/box/main.mdx';
+import BoxGetCredentialsDoc from '@/content/plugins/box/get-credentials.mdx';
+import BoxDatabaseDoc from '@/content/plugins/box/database.mdx';
+import ExaDoc from '@/content/plugins/exa/main.mdx';
+import ExaGetCredentialsDoc from '@/content/plugins/exa/get-credentials.mdx';
+import ExaDatabaseDoc from '@/content/plugins/exa/database.mdx';
+import IntercomDoc from '@/content/plugins/intercom/main.mdx';
+import IntercomGetCredentialsDoc from '@/content/plugins/intercom/get-credentials.mdx';
+import IntercomDatabaseDoc from '@/content/plugins/intercom/database.mdx';
+import TypeformDoc from '@/content/plugins/typeform/main.mdx';
+import TypeformGetCredentialsDoc from '@/content/plugins/typeform/get-credentials.mdx';
+import TypeformDatabaseDoc from '@/content/plugins/typeform/database.mdx';
+import FirefliesDoc from '@/content/plugins/fireflies/main.mdx';
+import FirefliesGetCredentialsDoc from '@/content/plugins/fireflies/get-credentials.mdx';
+import FirefliesDatabaseDoc from '@/content/plugins/fireflies/database.mdx';
+import JiraDoc from '@/content/plugins/jira/main.mdx';
+import JiraGetCredentialsDoc from '@/content/plugins/jira/get-credentials.mdx';
+import JiraDatabaseDoc from '@/content/plugins/jira/database.mdx';
+import FigmaDoc from '@/content/plugins/figma/main.mdx';
+import FigmaGetCredentialsDoc from '@/content/plugins/figma/get-credentials.mdx';
+import FigmaDatabaseDoc from '@/content/plugins/figma/database.mdx';
+import TelegramDoc from '@/content/plugins/telegram/main.mdx';
+import TelegramGetCredentialsDoc from '@/content/plugins/telegram/get-credentials.mdx';
+import TelegramDatabaseDoc from '@/content/plugins/telegram/database.mdx';
+import ZoomDoc from '@/content/plugins/zoom/main.mdx';
+import ZoomGetCredentialsDoc from '@/content/plugins/zoom/get-credentials.mdx';
+import ZoomDatabaseDoc from '@/content/plugins/zoom/database.mdx';
+import DropboxDoc from '@/content/plugins/dropbox/main.mdx';
+import DropboxGetCredentialsDoc from '@/content/plugins/dropbox/get-credentials.mdx';
+import DropboxDatabaseDoc from '@/content/plugins/dropbox/database.mdx';
+import TrelloDoc from '@/content/plugins/trello/main.mdx';
+import TrelloGetCredentialsDoc from '@/content/plugins/trello/get-credentials.mdx';
+import TrelloDatabaseDoc from '@/content/plugins/trello/database.mdx';
+import CalendlyDoc from '@/content/plugins/calendly/main.mdx';
+import CalendlyGetCredentialsDoc from '@/content/plugins/calendly/get-credentials.mdx';
+import CalendlyDatabaseDoc from '@/content/plugins/calendly/database.mdx';
+import AsanaDoc from '@/content/plugins/asana/main.mdx';
+import AsanaGetCredentialsDoc from '@/content/plugins/asana/get-credentials.mdx';
+import AsanaDatabaseDoc from '@/content/plugins/asana/database.mdx';
+import StripeDoc from '@/content/plugins/stripe/main.mdx';
+import StripeGetCredentialsDoc from '@/content/plugins/stripe/get-credentials.mdx';
+import StripeDatabaseDoc from '@/content/plugins/stripe/database.mdx';
+import AhrefsDoc from '@/content/plugins/ahrefs/main.mdx';
+import AhrefsGetCredentialsDoc from '@/content/plugins/ahrefs/get-credentials.mdx';
+import AhrefsDatabaseDoc from '@/content/plugins/ahrefs/database.mdx';
+import CursorDoc from '@/content/plugins/cursor/main.mdx';
+import CursorGetCredentialsDoc from '@/content/plugins/cursor/get-credentials.mdx';
+import CursorDatabaseDoc from '@/content/plugins/cursor/database.mdx';
+import OnedriveDoc from '@/content/plugins/onedrive/main.mdx';
+import OnedriveGetCredentialsDoc from '@/content/plugins/onedrive/get-credentials.mdx';
+import OnedriveDatabaseDoc from '@/content/plugins/onedrive/database.mdx';
+import OutlookDoc from '@/content/plugins/outlook/main.mdx';
+import OutlookGetCredentialsDoc from '@/content/plugins/outlook/get-credentials.mdx';
+import OutlookDatabaseDoc from '@/content/plugins/outlook/database.mdx';
+import StravaDoc from '@/content/plugins/strava/main.mdx';
+import StravaGetCredentialsDoc from '@/content/plugins/strava/get-credentials.mdx';
+import StravaDatabaseDoc from '@/content/plugins/strava/database.mdx';
 import { extractTOC } from '@/lib/toc';
 import { useMDXComponents } from '@/mdx-components';
 
@@ -857,6 +923,336 @@ const pages = {
 		Component: SentryErrorHandlersDoc,
 		title: 'Sentry Error Handlers',
 		description: 'Built-in and custom error handling for Sentry',
+	},
+	'plugins/twitter': {
+		Component: TwitterDoc,
+		title: 'Twitter',
+		description: 'Manage Twitter tweets, users, and timelines',
+	},
+	'plugins/twitter/get-credentials': {
+		Component: TwitterGetCredentialsDoc,
+		title: 'Get Credentials',
+		description: 'Step-by-step instructions for obtaining Twitter credentials',
+	},
+	'plugins/twitter/database': {
+		Component: TwitterDatabaseDoc,
+		title: 'Twitter Database Schema',
+		description: 'Database entities and querying synced Twitter data',
+	},
+	'plugins/monday': {
+		Component: MondayDoc,
+		title: 'Monday',
+		description: 'Manage Monday.com boards, items, groups, and updates',
+	},
+	'plugins/monday/get-credentials': {
+		Component: MondayGetCredentialsDoc,
+		title: 'Get Credentials',
+		description: 'Step-by-step instructions for obtaining Monday.com credentials',
+	},
+	'plugins/monday/database': {
+		Component: MondayDatabaseDoc,
+		title: 'Monday Database Schema',
+		description: 'Database entities and querying synced Monday.com data',
+	},
+	'plugins/hackernews': {
+		Component: HackerNewsDoc,
+		title: 'Hacker News',
+		description: 'Access Hacker News stories, comments, and user data',
+	},
+	'plugins/hackernews/get-credentials': {
+		Component: HackerNewsGetCredentialsDoc,
+		title: 'Get Credentials',
+		description: 'Hacker News is a public API — no credentials required',
+	},
+	'plugins/hackernews/database': {
+		Component: HackerNewsDatabaseDoc,
+		title: 'Hacker News Database Schema',
+		description: 'Database entities and querying synced Hacker News data',
+	},
+	'plugins/box': {
+		Component: BoxDoc,
+		title: 'Box',
+		description: 'Manage Box files, folders, and collaborations',
+	},
+	'plugins/box/get-credentials': {
+		Component: BoxGetCredentialsDoc,
+		title: 'Get Credentials',
+		description: 'Step-by-step instructions for obtaining Box credentials',
+	},
+	'plugins/box/database': {
+		Component: BoxDatabaseDoc,
+		title: 'Box Database Schema',
+		description: 'Database entities and querying synced Box data',
+	},
+	'plugins/exa': {
+		Component: ExaDoc,
+		title: 'Exa',
+		description: 'AI-powered web search, content extraction, and websets',
+	},
+	'plugins/exa/get-credentials': {
+		Component: ExaGetCredentialsDoc,
+		title: 'Get Credentials',
+		description: 'Step-by-step instructions for obtaining Exa credentials',
+	},
+	'plugins/exa/database': {
+		Component: ExaDatabaseDoc,
+		title: 'Exa Database Schema',
+		description: 'Database entities and querying synced Exa data',
+	},
+	'plugins/intercom': {
+		Component: IntercomDoc,
+		title: 'Intercom',
+		description: 'Manage Intercom contacts, conversations, and companies',
+	},
+	'plugins/intercom/get-credentials': {
+		Component: IntercomGetCredentialsDoc,
+		title: 'Get Credentials',
+		description: 'Step-by-step instructions for obtaining Intercom credentials',
+	},
+	'plugins/intercom/database': {
+		Component: IntercomDatabaseDoc,
+		title: 'Intercom Database Schema',
+		description: 'Database entities and querying synced Intercom data',
+	},
+	'plugins/typeform': {
+		Component: TypeformDoc,
+		title: 'Typeform',
+		description: 'Manage Typeform forms, responses, and workspaces',
+	},
+	'plugins/typeform/get-credentials': {
+		Component: TypeformGetCredentialsDoc,
+		title: 'Get Credentials',
+		description: 'Step-by-step instructions for obtaining Typeform credentials',
+	},
+	'plugins/typeform/database': {
+		Component: TypeformDatabaseDoc,
+		title: 'Typeform Database Schema',
+		description: 'Database entities and querying synced Typeform data',
+	},
+	'plugins/fireflies': {
+		Component: FirefliesDoc,
+		title: 'Fireflies',
+		description: 'Access Fireflies meeting transcripts and summaries',
+	},
+	'plugins/fireflies/get-credentials': {
+		Component: FirefliesGetCredentialsDoc,
+		title: 'Get Credentials',
+		description: 'Step-by-step instructions for obtaining Fireflies credentials',
+	},
+	'plugins/fireflies/database': {
+		Component: FirefliesDatabaseDoc,
+		title: 'Fireflies Database Schema',
+		description: 'Database entities and querying synced Fireflies data',
+	},
+	'plugins/jira': {
+		Component: JiraDoc,
+		title: 'Jira',
+		description: 'Manage Jira issues, projects, sprints, and comments',
+	},
+	'plugins/jira/get-credentials': {
+		Component: JiraGetCredentialsDoc,
+		title: 'Get Credentials',
+		description: 'Step-by-step instructions for obtaining Jira credentials',
+	},
+	'plugins/jira/database': {
+		Component: JiraDatabaseDoc,
+		title: 'Jira Database Schema',
+		description: 'Database entities and querying synced Jira data',
+	},
+	'plugins/figma': {
+		Component: FigmaDoc,
+		title: 'Figma',
+		description: 'Manage Figma files, comments, components, and variables',
+	},
+	'plugins/figma/get-credentials': {
+		Component: FigmaGetCredentialsDoc,
+		title: 'Get Credentials',
+		description: 'Step-by-step instructions for obtaining Figma credentials',
+	},
+	'plugins/figma/database': {
+		Component: FigmaDatabaseDoc,
+		title: 'Figma Database Schema',
+		description: 'Database entities and querying synced Figma data',
+	},
+	'plugins/telegram': {
+		Component: TelegramDoc,
+		title: 'Telegram',
+		description: 'Send messages and manage Telegram bot interactions',
+	},
+	'plugins/telegram/get-credentials': {
+		Component: TelegramGetCredentialsDoc,
+		title: 'Get Credentials',
+		description: 'Step-by-step instructions for obtaining Telegram bot credentials',
+	},
+	'plugins/telegram/database': {
+		Component: TelegramDatabaseDoc,
+		title: 'Telegram Database Schema',
+		description: 'Database entities and querying synced Telegram data',
+	},
+	'plugins/zoom': {
+		Component: ZoomDoc,
+		title: 'Zoom',
+		description: 'Manage Zoom meetings, recordings, and webinars',
+	},
+	'plugins/zoom/get-credentials': {
+		Component: ZoomGetCredentialsDoc,
+		title: 'Get Credentials',
+		description: 'Step-by-step instructions for obtaining Zoom credentials',
+	},
+	'plugins/zoom/database': {
+		Component: ZoomDatabaseDoc,
+		title: 'Zoom Database Schema',
+		description: 'Database entities and querying synced Zoom data',
+	},
+	'plugins/dropbox': {
+		Component: DropboxDoc,
+		title: 'Dropbox',
+		description: 'Manage Dropbox files, folders, and file search',
+	},
+	'plugins/dropbox/get-credentials': {
+		Component: DropboxGetCredentialsDoc,
+		title: 'Get Credentials',
+		description: 'Step-by-step instructions for obtaining Dropbox credentials',
+	},
+	'plugins/dropbox/database': {
+		Component: DropboxDatabaseDoc,
+		title: 'Dropbox Database Schema',
+		description: 'Database entities and querying synced Dropbox data',
+	},
+	'plugins/trello': {
+		Component: TrelloDoc,
+		title: 'Trello',
+		description: 'Manage Trello boards, lists, cards, and checklists',
+	},
+	'plugins/trello/get-credentials': {
+		Component: TrelloGetCredentialsDoc,
+		title: 'Get Credentials',
+		description: 'Step-by-step instructions for obtaining Trello credentials',
+	},
+	'plugins/trello/database': {
+		Component: TrelloDatabaseDoc,
+		title: 'Trello Database Schema',
+		description: 'Database entities and querying synced Trello data',
+	},
+	'plugins/calendly': {
+		Component: CalendlyDoc,
+		title: 'Calendly',
+		description: 'Manage Calendly events, event types, and invitees',
+	},
+	'plugins/calendly/get-credentials': {
+		Component: CalendlyGetCredentialsDoc,
+		title: 'Get Credentials',
+		description: 'Step-by-step instructions for obtaining Calendly credentials',
+	},
+	'plugins/calendly/database': {
+		Component: CalendlyDatabaseDoc,
+		title: 'Calendly Database Schema',
+		description: 'Database entities and querying synced Calendly data',
+	},
+	'plugins/asana': {
+		Component: AsanaDoc,
+		title: 'Asana',
+		description: 'Manage Asana tasks, projects, sections, and teams',
+	},
+	'plugins/asana/get-credentials': {
+		Component: AsanaGetCredentialsDoc,
+		title: 'Get Credentials',
+		description: 'Step-by-step instructions for obtaining Asana credentials',
+	},
+	'plugins/asana/database': {
+		Component: AsanaDatabaseDoc,
+		title: 'Asana Database Schema',
+		description: 'Database entities and querying synced Asana data',
+	},
+	'plugins/stripe': {
+		Component: StripeDoc,
+		title: 'Stripe',
+		description: 'Manage Stripe payments, customers, charges, and subscriptions',
+	},
+	'plugins/stripe/get-credentials': {
+		Component: StripeGetCredentialsDoc,
+		title: 'Get Credentials',
+		description: 'Step-by-step instructions for obtaining Stripe credentials',
+	},
+	'plugins/stripe/database': {
+		Component: StripeDatabaseDoc,
+		title: 'Stripe Database Schema',
+		description: 'Database entities and querying synced Stripe data',
+	},
+	'plugins/ahrefs': {
+		Component: AhrefsDoc,
+		title: 'Ahrefs',
+		description: 'Access Ahrefs SEO data, backlinks, and keyword rankings',
+	},
+	'plugins/ahrefs/get-credentials': {
+		Component: AhrefsGetCredentialsDoc,
+		title: 'Get Credentials',
+		description: 'Step-by-step instructions for obtaining Ahrefs credentials',
+	},
+	'plugins/ahrefs/database': {
+		Component: AhrefsDatabaseDoc,
+		title: 'Ahrefs Database Schema',
+		description: 'Database entities and querying synced Ahrefs data',
+	},
+	'plugins/cursor': {
+		Component: CursorDoc,
+		title: 'Cursor',
+		description: 'Access Cursor AI agent data, models, and repositories',
+	},
+	'plugins/cursor/get-credentials': {
+		Component: CursorGetCredentialsDoc,
+		title: 'Get Credentials',
+		description: 'Step-by-step instructions for obtaining Cursor credentials',
+	},
+	'plugins/cursor/database': {
+		Component: CursorDatabaseDoc,
+		title: 'Cursor Database Schema',
+		description: 'Database entities and querying synced Cursor data',
+	},
+	'plugins/onedrive': {
+		Component: OnedriveDoc,
+		title: 'OneDrive',
+		description: 'Manage OneDrive files, folders, permissions, and SharePoint',
+	},
+	'plugins/onedrive/get-credentials': {
+		Component: OnedriveGetCredentialsDoc,
+		title: 'Get Credentials',
+		description: 'Step-by-step instructions for obtaining OneDrive credentials',
+	},
+	'plugins/onedrive/database': {
+		Component: OnedriveDatabaseDoc,
+		title: 'OneDrive Database Schema',
+		description: 'Database entities and querying synced OneDrive data',
+	},
+	'plugins/outlook': {
+		Component: OutlookDoc,
+		title: 'Outlook',
+		description: 'Manage Outlook messages, calendars, contacts, and folders',
+	},
+	'plugins/outlook/get-credentials': {
+		Component: OutlookGetCredentialsDoc,
+		title: 'Get Credentials',
+		description: 'Step-by-step instructions for obtaining Outlook credentials',
+	},
+	'plugins/outlook/database': {
+		Component: OutlookDatabaseDoc,
+		title: 'Outlook Database Schema',
+		description: 'Database entities and querying synced Outlook data',
+	},
+	'plugins/strava': {
+		Component: StravaDoc,
+		title: 'Strava',
+		description: 'Access Strava activities, athlete data, segments, and routes',
+	},
+	'plugins/strava/get-credentials': {
+		Component: StravaGetCredentialsDoc,
+		title: 'Get Credentials',
+		description: 'Step-by-step instructions for obtaining Strava credentials',
+	},
+	'plugins/strava/database': {
+		Component: StravaDatabaseDoc,
+		title: 'Strava Database Schema',
+		description: 'Database entities and querying synced Strava data',
 	},
 	'guides/create-your-own-plugin': {
 		Component: CreateYourOwnPlugin,

@@ -1,0 +1,98 @@
+---
+title: Strava
+description: Access Strava activities, athlete data, segments, and routes from your app or agent.
+---
+
+## Quick Start
+
+Install the plugin:
+
+```bash
+pnpm install @corsair-dev/strava
+```
+
+Add the Strava plugin to your Corsair instance:
+
+```ts title="corsair.ts"
+import { createCorsair } from "corsair";
+import { strava } from "@corsair-dev/strava";
+
+export const corsair = createCorsair({
+    plugins: [strava()],
+    database: db,
+    kek: process.env.CORSAIR_KEK!,
+});
+```
+
+## Authentication
+
+### Supported Auth Types
+
+- **`oauth_2`** (default) - OAuth 2.0
+
+### OAuth Setup
+
+```bash
+pnpm corsair setup --strava client_id=your-client-id client_secret=your-client-secret
+pnpm corsair auth --plugin=strava
+```
+
+See [Get Credentials](/plugins/strava/get-credentials) for step-by-step instructions.
+
+## Options
+
+| Option | Type | Description |
+|--------|------|-------------|
+| `authType` | `'oauth_2'` | Authentication method |
+| `key` | `string` | OAuth token (optional, uses database if not provided) |
+| `hooks` | `object` | Endpoint hooks for custom logic |
+| `errorHandlers` | `object` | Custom error handlers |
+
+## Usage
+
+```ts
+// Get athlete profile
+const athlete = await corsair.strava.api.athletes.get({});
+
+// List activities
+const activities = await corsair.strava.api.activities.list({
+    per_page: 30,
+});
+
+// Get activity details
+const activity = await corsair.strava.api.activities.get({
+    id: 123456,
+});
+
+// Get athlete stats
+const stats = await corsair.strava.api.athletes.getStats({
+    id: "athlete-id",
+});
+
+// Explore segments in a region
+const segments = await corsair.strava.api.segments.explore({
+    bounds: "37.83,-122.27,37.83,-122.0",
+    activity_type: "running",
+});
+
+// Get a route
+const route = await corsair.strava.api.routes.get({
+    id: "route-id",
+});
+```
+
+### Query cached data
+
+```ts
+const activities = await corsair.strava.db.activities.search({
+    data: { sport_type: "Run" },
+});
+```
+
+### Multi-Tenancy
+
+```ts
+const tenant = corsair.withTenant("user-123");
+
+const activities = await tenant.strava.api.activities.list({});
+```

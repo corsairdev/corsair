@@ -1,0 +1,103 @@
+---
+title: Calendly
+description: Manage Calendly scheduled events, event types, invitees, and organizations from your app or agent.
+---
+
+## Quick Start
+
+Install the plugin:
+
+```bash
+pnpm install @corsair-dev/calendly
+```
+
+Add the Calendly plugin to your Corsair instance:
+
+```ts title="corsair.ts"
+import { createCorsair } from "corsair";
+import { calendly } from "@corsair-dev/calendly";
+
+export const corsair = createCorsair({
+    plugins: [calendly()],
+    database: db,
+    kek: process.env.CORSAIR_KEK!,
+});
+```
+
+## Authentication
+
+### Supported Auth Types
+
+- **`api_key`** (default) - Personal access token
+
+### API Key Setup
+
+```bash
+pnpm corsair setup --calendly api_key=your-personal-access-token
+```
+
+For webhook signature verification:
+
+```bash
+pnpm corsair setup --calendly webhook_signature=your-signing-key
+```
+
+See [Get Credentials](/plugins/calendly/get-credentials) for step-by-step instructions.
+
+## Options
+
+| Option | Type | Description |
+|--------|------|-------------|
+| `authType` | `'api_key'` | Authentication method |
+| `key` | `string` | API key (optional, uses database if not provided) |
+| `webhookSecret` | `string` | Webhook signing key (optional) |
+| `hooks` | `object` | Endpoint hooks for custom logic |
+| `webhookHooks` | `object` | Webhook hooks for event handling |
+| `errorHandlers` | `object` | Custom error handlers |
+
+## Usage
+
+```ts
+// Get current user
+const me = await corsair.calendly.api.users.getCurrent({});
+
+// List scheduled events
+const events = await corsair.calendly.api.scheduledEvents.list({
+    organization: "https://api.calendly.com/organizations/org-id",
+});
+
+// List event types
+const eventTypes = await corsair.calendly.api.eventTypes.list({
+    user: "https://api.calendly.com/users/user-id",
+});
+
+// Get invitees for an event
+const invitees = await corsair.calendly.api.invitees.list({
+    uuid: "event-uuid",
+});
+
+// Create a scheduling link
+const link = await corsair.calendly.api.schedulingLinks.create({
+    max_event_count: 1,
+    owner: "https://api.calendly.com/event_types/type-id",
+    owner_type: "EventType",
+});
+```
+
+### Query cached data
+
+```ts
+const events = await corsair.calendly.db.scheduledEvents.search({
+    data: { status: "active" },
+});
+```
+
+### Multi-Tenancy
+
+```ts
+const tenant = corsair.withTenant("user-123");
+
+const events = await tenant.calendly.api.scheduledEvents.list({
+    user: "https://api.calendly.com/users/user-id",
+});
+```

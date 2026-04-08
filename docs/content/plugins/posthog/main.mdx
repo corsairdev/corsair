@@ -5,11 +5,17 @@ description: Integrate PostHog analytics and event tracking into your applicatio
 
 ## Quick Start
 
+Install the plugin:
+
+```bash
+pnpm install @corsair-dev/posthog
+```
+
 Add the PostHog plugin to your Corsair instance:
 
 ```ts title="corsair.ts"
 import { createCorsair } from "corsair";
-import { posthog } from "corsair/plugins";
+import { posthog } from "@corsair-dev/posthog";
 
 export const corsair = createCorsair({
     plugins: [
@@ -38,42 +44,20 @@ The PostHog plugin uses API key authentication.
 
 ### API Key Setup
 
-```ts title="corsair.ts"
-Store the API key in the database using the keys API:
+Store credentials with the CLI:
 
-```ts
-await corsair
-    .withTenant('default')
-    .posthog.keys.setApiKey('your-api-key');
-```
-
-Alternatively, you can provide it directly:
-
-```ts title="corsair.ts"
-posthog({
-    authType: "api_key",
-    key: process.env.POSTHOG_API_KEY,
-})
+```bash
+pnpm corsair setup --posthog api_key=your-api-key
 ```
 
 See [Get Credentials](/plugins/posthog/get-credentials) for step-by-step instructions on obtaining an API key.
 
 ### Webhook Secret
 
-Store the webhook secret in the database using the keys API:
+Store the webhook secret with the CLI:
 
-```ts
-await corsair
-    .withTenant('default')
-    .posthog.keys.setWebhookSignature('your-webhook-secret');
-```
-
-Alternatively, you can provide it directly:
-
-```ts title="corsair.ts"
-posthog({
-    webhookSecret: process.env.POSTHOG_WEBHOOK_SECRET,
-})
+```bash
+pnpm corsair setup --posthog webhook_signature=your-webhook-secret
 ```
 
 See [Get Credentials](/plugins/posthog/get-credentials) for step-by-step instructions on setting up webhooks.

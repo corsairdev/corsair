@@ -36,7 +36,9 @@ export const BaseProviders = [
 	'linear',
 	'monday',
 	'notion',
+	'onedrive',
 	'oura',
+	'outlook',
 	'pagerduty',
 	'posthog',
 	'razorpay',
@@ -44,6 +46,7 @@ export const BaseProviders = [
 	'sentry',
 	'slack',
 	'spotify',
+	'strava',
 	'stripe',
 	'tavily',
 	'teams',
@@ -52,6 +55,7 @@ export const BaseProviders = [
 	'trello',
 	'twitter',
 	'twitterapiio',
+	'youtube',
 	'typeform',
 	'zoom',
 ] as const;
@@ -80,7 +84,9 @@ export type AllProviders =
 	| 'linear'
 	| 'monday'
 	| 'notion'
+	| 'onedrive'
 	| 'oura'
+	| 'outlook'
 	| 'pagerduty'
 	| 'posthog'
 	| 'razorpay'
@@ -88,6 +94,7 @@ export type AllProviders =
 	| 'sentry'
 	| 'slack'
 	| 'spotify'
+	| 'strava'
 	| 'stripe'
 	| 'tavily'
 	| 'teams'
@@ -96,6 +103,7 @@ export type AllProviders =
 	| 'trello'
 	| 'twitter'
 	| 'twitterapiio'
+	| 'youtube'
 	| 'typeform'
 	| 'zoom'
 	| (string & {});
