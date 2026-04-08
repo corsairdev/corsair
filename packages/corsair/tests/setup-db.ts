@@ -5,6 +5,7 @@ import type {
 	CorsairDatabase,
 	CorsairKyselyDatabase,
 } from '../db/kysely/database';
+import { SqliteDatePlugin } from '../db/kysely/sqlite-date-plugin.js';
 
 export function createTestDatabase(): {
 	db: Kysely<CorsairKyselyDatabase>;
@@ -58,6 +59,7 @@ export function createTestDatabase(): {
 
 	const db = new Kysely<CorsairKyselyDatabase>({
 		dialect: new SqliteDialect({ database: sqlite }),
+		plugins: [new SqliteDatePlugin()],
 	});
 
 	return {

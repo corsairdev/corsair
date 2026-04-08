@@ -649,6 +649,18 @@ async function main() {
 		return;
 	}
 
+	if (command === 'watch-renew') {
+		const { runWatchRenew } = await import('./watch-renew');
+		await runWatchRenew({ cwd });
+		return;
+	}
+
+	if (command === 'teams-subscribe') {
+		const { runTeamsSubscribe } = await import('./watch-renew');
+		await runTeamsSubscribe({ cwd });
+		return;
+	}
+
 	if (command === 'list') {
 		const { plugin, type } = parseListArgs(args.slice(1));
 		const instance = await getCorsairInstance({ cwd });
