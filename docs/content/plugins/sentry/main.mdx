@@ -5,11 +5,17 @@ description: Integrate Sentry error tracking, issue management, and performance 
 
 ## Quick Start
 
+Install the plugin:
+
+```bash
+pnpm install @corsair-dev/sentry
+```
+
 Add the Sentry plugin to your Corsair instance:
 
 ```ts title="corsair.ts"
 import { createCorsair } from "corsair";
-import { sentry } from "corsair/plugins";
+import { sentry } from "@corsair-dev/sentry";
 
 export const corsair = createCorsair({
     plugins: [
@@ -41,18 +47,24 @@ If no `authType` is specified, the plugin defaults to **`api_key`**.
 
 ### Configuring API Key Authentication
 
-```ts title="corsair.ts"
-sentry({
-    key: process.env.SENTRY_AUTH_TOKEN, // [!code highlight]
-})
+Store credentials with the CLI:
+
+```bash
+pnpm corsair setup --sentry api_key=your-auth-token
 ```
 
 For webhook signature verification:
 
+```bash
+pnpm corsair setup --sentry webhook_signature=your-webhook-secret
+```
+
+Alternatively, provide credentials directly in the config:
+
 ```ts title="corsair.ts"
 sentry({
     key: process.env.SENTRY_AUTH_TOKEN,
-    webhookSecret: process.env.SENTRY_WEBHOOK_SECRET, // [!code highlight]
+    webhookSecret: process.env.SENTRY_WEBHOOK_SECRET,
 })
 ```
 

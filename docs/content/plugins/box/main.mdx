@@ -1,0 +1,97 @@
+---
+title: Box
+description: Manage files and folders in Box cloud storage from your app or agent.
+---
+
+## Quick Start
+
+Install the plugin:
+
+```bash
+pnpm install @corsair-dev/box
+```
+
+Add the Box plugin to your Corsair instance:
+
+```ts title="corsair.ts"
+import { createCorsair } from "corsair";
+import { box } from "@corsair-dev/box";
+
+export const corsair = createCorsair({
+    plugins: [box()],
+    database: db,
+    kek: process.env.CORSAIR_KEK!,
+});
+```
+
+## Authentication
+
+### Supported Auth Types
+
+- **`oauth_2`** (default) - OAuth 2.0 user authentication
+
+### OAuth 2.0 Setup
+
+Store your Box OAuth app credentials, then start the flow:
+
+```bash
+pnpm corsair setup --box client_id=your-client-id client_secret=your-client-secret
+pnpm corsair auth --plugin=box
+```
+
+The CLI will print an authorization URL — open it in a browser. Once you approve, tokens are saved automatically.
+
+See [Get Credentials](/plugins/box/get-credentials) for step-by-step instructions.
+
+## Options
+
+| Option | Type | Description |
+|--------|------|-------------|
+| `authType` | `'oauth_2'` | Authentication method |
+| `webhookSecret` | `string` | Webhook signing secret (optional) |
+| `hooks` | `object` | Endpoint hooks for custom logic |
+| `webhookHooks` | `object` | Webhook hooks for event handling |
+| `errorHandlers` | `object` | Custom error handlers |
+
+## Usage
+
+```ts
+// List files in a folder (root = "0")
+const files = await corsair.box.api.files.list({
+    folderId: "0",
+});
+
+// Get a specific file
+const file = await corsair.box.api.files.get({
+    fileId: "file-id",
+});
+
+// Create a folder
+await corsair.box.api.folders.create({
+    name: "New Folder",
+    parentId: "0",
+});
+
+// Upload a file
+await corsair.box.api.files.upload({
+    name: "document.pdf",
+    parentId: "0",
+    content: fileBuffer,
+});
+```
+
+### Query cached data
+
+```ts
+const files = await corsair.box.db.files.search({
+    data: { name: "document.pdf" },
+});
+```
+
+### Multi-Tenancy
+
+```ts
+const tenant = corsair.withTenant("user-123");
+
+const files = await tenant.box.api.files.list({ folderId: "0" });
+```

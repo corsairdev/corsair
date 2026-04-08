@@ -1,0 +1,86 @@
+---
+title: Exa Database Schema
+description: Database entities and querying synced Exa search data.
+---
+
+The Exa plugin syncs search results and websets to your local database.
+
+## Synced Entities
+
+- **searches** - Search results and metadata
+- **websets** - Webset configurations and results
+
+## Database API
+
+```ts
+const searches = await corsair.exa.db.searches.search({
+    data: {},
+    limit: 50,
+});
+```
+
+---
+
+## Searches
+
+### Schema
+
+```ts
+{
+    id: string;
+    query: string;
+    results?: Array<{
+        id: string;
+        url: string;
+        title?: string;
+        score?: number;
+        publishedDate?: string;
+        author?: string;
+        text?: string;
+    }>;
+    createdAt?: string;
+}
+```
+
+### Querying Searches
+
+```ts
+const searches = await corsair.exa.db.searches.search({ data: {} });
+```
+
+---
+
+## Websets
+
+### Schema
+
+```ts
+{
+    id: string;
+    status?: string;
+    search?: {
+        query: string;
+        count: number;
+    };
+    createdAt?: string;
+    updatedAt?: string;
+}
+```
+
+### Querying Websets
+
+```ts
+const websets = await corsair.exa.db.websets.search({ data: {} });
+```
+
+---
+
+## Multi-Tenancy
+
+```ts
+const tenant = corsair.withTenant("user-123");
+
+const searches = await tenant.exa.db.searches.search({ data: {} });
+```
+
+See [Database](/concepts/database) for more information about querying patterns.

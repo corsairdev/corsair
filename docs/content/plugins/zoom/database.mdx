@@ -1,0 +1,95 @@
+---
+title: Zoom Database Schema
+description: Database entities and querying synced Zoom data.
+---
+
+The Zoom plugin syncs meetings and recordings to your local database.
+
+## Synced Entities
+
+- **meetings** - Zoom meeting details
+- **recordings** - Cloud recording information
+
+## Database API
+
+```ts
+const meetings = await corsair.zoom.db.meetings.search({
+    data: {},
+});
+```
+
+---
+
+## Meetings
+
+### Schema
+
+```ts
+{
+    id?: number;
+    uuid?: string;
+    host_id?: string;
+    topic?: string;
+    type?: number;
+    status?: string;
+    start_time?: string;
+    duration?: number;
+    timezone?: string;
+    agenda?: string;
+    created_at?: string;
+    join_url?: string;
+}
+```
+
+### Querying Meetings
+
+```ts
+// Get all meetings
+const meetings = await corsair.zoom.db.meetings.search({ data: {} });
+
+// Filter by status
+const scheduled = await corsair.zoom.db.meetings.search({
+    data: { status: "waiting" },
+});
+
+// Filter by host
+const myMeetings = await corsair.zoom.db.meetings.search({
+    data: { host_id: "host-user-id" },
+});
+```
+
+---
+
+## Recordings
+
+### Schema
+
+```ts
+{
+    id: string;
+    meeting_id?: string;
+    topic?: string;
+    start_time?: string;
+    duration?: number;
+    total_size?: number;
+    recording_count?: number;
+}
+```
+
+### Querying Recordings
+
+```ts
+const recordings = await corsair.zoom.db.recordings.search({ data: {} });
+```
+
+---
+
+## Multi-Tenancy
+
+```ts
+const tenant = corsair.withTenant("user-123");
+
+const meetings = await tenant.zoom.db.meetings.search({ data: {} });
+```
+
+See [Database](/concepts/database) for more information about querying patterns.

@@ -1,0 +1,91 @@
+---
+title: Cursor Database Schema
+description: Database entities and querying synced Cursor data.
+---
+
+The Cursor plugin syncs agent and repository data to your local database.
+
+## Synced Entities
+
+- **agents** - Cursor AI agent runs
+- **repositories** - Connected repositories
+
+## Database API
+
+```ts
+const agents = await corsair.cursor.db.agents.search({ data: {} });
+```
+
+---
+
+## Agents
+
+### Schema
+
+```ts
+{
+    id: string;
+    name?: string;
+    status?: "RUNNING" | "FINISHED" | "ERROR" | "CREATING" | "EXPIRED";
+    source?: {
+        ref?: string;
+        repository?: string;
+    };
+    target?: {
+        branch?: string;
+        repository?: string;
+    };
+    createdAt?: Date;
+}
+```
+
+### Querying Agents
+
+```ts
+// Get all agents
+const agents = await corsair.cursor.db.agents.search({ data: {} });
+
+// Get running agents
+const running = await corsair.cursor.db.agents.search({
+    data: { status: "RUNNING" },
+});
+
+// Get finished agents
+const finished = await corsair.cursor.db.agents.search({
+    data: { status: "FINISHED" },
+});
+```
+
+---
+
+## Repositories
+
+### Schema
+
+```ts
+{
+    id: string;
+    name?: string;
+    owner?: string;
+    url?: string;
+    defaultBranch?: string;
+}
+```
+
+### Querying Repositories
+
+```ts
+const repos = await corsair.cursor.db.repositories.search({ data: {} });
+```
+
+---
+
+## Multi-Tenancy
+
+```ts
+const tenant = corsair.withTenant("user-123");
+
+const agents = await tenant.cursor.db.agents.search({ data: {} });
+```
+
+See [Database](/concepts/database) for more information about querying patterns.

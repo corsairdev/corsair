@@ -1,0 +1,126 @@
+---
+title: Asana Database Schema
+description: Database entities and querying synced Asana data.
+---
+
+The Asana plugin syncs tasks, projects, and sections to your local database.
+
+## Synced Entities
+
+- **tasks** - Asana tasks and subtasks
+- **projects** - Project information
+- **sections** - Project sections
+
+## Database API
+
+```ts
+const tasks = await corsair.asana.db.tasks.search({
+    data: { completed: false },
+});
+```
+
+---
+
+## Tasks
+
+### Schema
+
+```ts
+{
+    id: string;
+    gid?: string;
+    name?: string;
+    notes?: string;
+    completed?: boolean;
+    due_on?: string;
+    due_at?: string;
+    assignee?: string;
+    assignee_status?: string;
+    workspace?: string;
+    parent?: string;
+    created_at?: string;
+    modified_at?: string;
+}
+```
+
+### Querying Tasks
+
+```ts
+// Get incomplete tasks
+const tasks = await corsair.asana.db.tasks.search({
+    data: { completed: false },
+});
+
+// Get tasks by assignee
+const assigned = await corsair.asana.db.tasks.search({
+    data: { assignee: "user-gid" },
+});
+```
+
+---
+
+## Projects
+
+### Schema
+
+```ts
+{
+    id: string;
+    gid?: string;
+    name?: string;
+    archived?: boolean;
+    color?: string;
+    notes?: string;
+    workspace?: string;
+    team?: string;
+    owner?: string;
+    created_at?: string;
+    modified_at?: string;
+}
+```
+
+### Querying Projects
+
+```ts
+const projects = await corsair.asana.db.projects.search({ data: {} });
+
+const active = await corsair.asana.db.projects.search({
+    data: { archived: false },
+});
+```
+
+---
+
+## Sections
+
+### Schema
+
+```ts
+{
+    id: string;
+    gid?: string;
+    name?: string;
+    project?: string;
+    created_at?: string;
+}
+```
+
+### Querying Sections
+
+```ts
+const sections = await corsair.asana.db.sections.search({
+    data: { project: "project-gid" },
+});
+```
+
+---
+
+## Multi-Tenancy
+
+```ts
+const tenant = corsair.withTenant("user-123");
+
+const tasks = await tenant.asana.db.tasks.search({ data: {} });
+```
+
+See [Database](/concepts/database) for more information about querying patterns.

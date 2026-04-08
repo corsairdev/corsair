@@ -1,0 +1,107 @@
+---
+title: OneDrive
+description: Manage OneDrive files, folders, permissions, and SharePoint data from your app or agent.
+---
+
+## Quick Start
+
+Install the plugin:
+
+```bash
+pnpm install @corsair-dev/onedrive
+```
+
+Add the OneDrive plugin to your Corsair instance:
+
+```ts title="corsair.ts"
+import { createCorsair } from "corsair";
+import { onedrive } from "@corsair-dev/onedrive";
+
+export const corsair = createCorsair({
+    plugins: [onedrive()],
+    database: db,
+    kek: process.env.CORSAIR_KEK!,
+});
+```
+
+## Authentication
+
+### Supported Auth Types
+
+- **`oauth_2`** (default) - OAuth 2.0 (Microsoft)
+
+### OAuth Setup
+
+```bash
+pnpm corsair setup --onedrive client_id=your-client-id client_secret=your-client-secret
+pnpm corsair auth --plugin=onedrive
+```
+
+See [Get Credentials](/plugins/onedrive/get-credentials) for step-by-step instructions.
+
+## Options
+
+| Option | Type | Description |
+|--------|------|-------------|
+| `authType` | `'oauth_2'` | Authentication method |
+| `key` | `string` | OAuth token (optional, uses database if not provided) |
+| `webhookSecret` | `string` | Webhook verification secret (optional) |
+| `hooks` | `object` | Endpoint hooks for custom logic |
+| `webhookHooks` | `object` | Webhook hooks for event handling |
+| `errorHandlers` | `object` | Custom error handlers |
+
+## Usage
+
+```ts
+// List files
+const files = await corsair.onedrive.api.files.list({});
+
+// Find a file
+const file = await corsair.onedrive.api.files.findFile({
+    name: "report.docx",
+});
+
+// Upload a file
+await corsair.onedrive.api.files.upload({
+    path: "/Documents/report.txt",
+    content: "file content",
+});
+
+// Create a folder
+await corsair.onedrive.api.files.createFolder({
+    name: "New Folder",
+    parent_path: "/Documents",
+});
+
+// Get drive info
+const drive = await corsair.onedrive.api.drive.get({});
+
+// Share an item
+await corsair.onedrive.api.permissions.createLink({
+    item_id: "item-id",
+    type: "view",
+    scope: "anonymous",
+});
+
+// Access SharePoint
+const site = await corsair.onedrive.api.sharepoint.getSite({
+    site_id: "site-id",
+});
+```
+
+### Query cached data
+
+```ts
+const files = await corsair.onedrive.db.files.search({
+    data: {},
+    limit: 20,
+});
+```
+
+### Multi-Tenancy
+
+```ts
+const tenant = corsair.withTenant("user-123");
+
+const files = await tenant.onedrive.api.files.list({});
+```

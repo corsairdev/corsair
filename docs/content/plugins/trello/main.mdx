@@ -1,0 +1,105 @@
+---
+title: Trello
+description: Manage Trello boards, lists, cards, members, and checklists from your app or agent.
+---
+
+## Quick Start
+
+Install the plugin:
+
+```bash
+pnpm install @corsair-dev/trello
+```
+
+Add the Trello plugin to your Corsair instance:
+
+```ts title="corsair.ts"
+import { createCorsair } from "corsair";
+import { trello } from "@corsair-dev/trello";
+
+export const corsair = createCorsair({
+    plugins: [trello()],
+    database: db,
+    kek: process.env.CORSAIR_KEK!,
+});
+```
+
+## Authentication
+
+### Supported Auth Types
+
+- **`api_key`** (default) - API key + token
+
+### API Key Setup
+
+```bash
+pnpm corsair setup --trello api_key=your-api-key-and-token
+```
+
+For webhook verification:
+
+```bash
+pnpm corsair setup --trello webhook_signature=your-webhook-secret
+```
+
+See [Get Credentials](/plugins/trello/get-credentials) for step-by-step instructions.
+
+## Options
+
+| Option | Type | Description |
+|--------|------|-------------|
+| `authType` | `'api_key'` | Authentication method |
+| `key` | `string` | API key (optional, uses database if not provided) |
+| `webhookSecret` | `string` | Webhook secret (optional) |
+| `hooks` | `object` | Endpoint hooks for custom logic |
+| `webhookHooks` | `object` | Webhook hooks for event handling |
+| `errorHandlers` | `object` | Custom error handlers |
+
+## Usage
+
+```ts
+// List boards
+const boards = await corsair.trello.api.boards.list({});
+
+// Create a card
+await corsair.trello.api.cards.create({
+    name: "Fix login bug",
+    idList: "list-id",
+    desc: "Users can't log in with SSO",
+});
+
+// Move a card to another list
+await corsair.trello.api.cards.move({
+    id: "card-id",
+    idList: "done-list-id",
+});
+
+// List cards in a list
+const cards = await corsair.trello.api.cards.list({
+    id: "list-id",
+});
+
+// Create a checklist
+await corsair.trello.api.checklists.create({
+    idCard: "card-id",
+    name: "Acceptance Criteria",
+});
+```
+
+### Query cached data
+
+```ts
+const boards = await corsair.trello.db.boards.search({ data: {} });
+
+const cards = await corsair.trello.db.cards.search({
+    data: { idBoard: "board-id" },
+});
+```
+
+### Multi-Tenancy
+
+```ts
+const tenant = corsair.withTenant("user-123");
+
+const boards = await tenant.trello.api.boards.list({});
+```

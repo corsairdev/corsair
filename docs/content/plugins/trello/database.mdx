@@ -1,0 +1,116 @@
+---
+title: Trello Database Schema
+description: Database entities and querying synced Trello data.
+---
+
+The Trello plugin syncs boards, lists, and cards to your local database.
+
+## Synced Entities
+
+- **boards** - Trello boards
+- **lists** - Lists within boards
+- **cards** - Cards within lists
+
+## Database API
+
+```ts
+const boards = await corsair.trello.db.boards.search({ data: {} });
+```
+
+---
+
+## Boards
+
+### Schema
+
+```ts
+{
+    id: string;
+    name?: string;
+    desc?: string;
+    closed?: boolean;
+    idOrganization?: string;
+    url?: string;
+    shortUrl?: string;
+}
+```
+
+### Querying Boards
+
+```ts
+const boards = await corsair.trello.db.boards.search({ data: {} });
+
+const openBoards = await corsair.trello.db.boards.search({
+    data: { closed: false },
+});
+```
+
+---
+
+## Lists
+
+### Schema
+
+```ts
+{
+    id: string;
+    name?: string;
+    closed?: boolean;
+    idBoard?: string;
+    pos?: number;
+}
+```
+
+### Querying Lists
+
+```ts
+const lists = await corsair.trello.db.lists.search({
+    data: { idBoard: "board-id" },
+});
+```
+
+---
+
+## Cards
+
+### Schema
+
+```ts
+{
+    id: string;
+    name?: string;
+    desc?: string;
+    closed?: boolean;
+    idBoard?: string;
+    idList?: string;
+    due?: string;
+    dueComplete?: boolean;
+    labels?: Array<{ id: string; name: string; color: string }>;
+}
+```
+
+### Querying Cards
+
+```ts
+// Get cards in a list
+const cards = await corsair.trello.db.cards.search({
+    data: { idList: "list-id" },
+});
+
+// Get overdue cards
+const overdue = await corsair.trello.db.cards.search({
+    data: { dueComplete: false },
+});
+```
+
+---
+
+## Multi-Tenancy
+
+```ts
+const tenant = corsair.withTenant("user-123");
+
+const boards = await tenant.trello.db.boards.search({ data: {} });
+```
+
+See [Database](/concepts/database) for more information about querying patterns.

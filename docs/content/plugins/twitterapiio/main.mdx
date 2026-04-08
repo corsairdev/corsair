@@ -5,11 +5,17 @@ description: Integrate Twitter/X data including tweets, users, lists, communitie
 
 ## Quick Start
 
+Install the plugin:
+
+```bash
+pnpm install @corsair-dev/twitterapiio
+```
+
 Add the Twitter API IO plugin to your Corsair instance:
 
 ```ts title="corsair.ts"
 import { createCorsair } from "corsair";
-import { twitterapiio } from "corsair/plugins";
+import { twitterapiio } from "@corsair-dev/twitterapiio";
 
 export const corsair = createCorsair({
     plugins: [
@@ -41,18 +47,24 @@ If no `authType` is specified, the plugin defaults to **`api_key`**.
 
 ### Configuring API Key Authentication
 
-```ts title="corsair.ts"
-twitterapiio({
-    key: process.env.TWITTERAPIIO_API_KEY, // [!code highlight]
-})
+Store credentials with the CLI:
+
+```bash
+pnpm corsair setup --twitterapiio api_key=your-api-key
 ```
 
 For webhook signature verification:
 
+```bash
+pnpm corsair setup --twitterapiio webhook_signature=your-webhook-secret
+```
+
+Alternatively, provide credentials directly in the config:
+
 ```ts title="corsair.ts"
 twitterapiio({
     key: process.env.TWITTERAPIIO_API_KEY,
-    webhookSecret: process.env.TWITTERAPIIO_WEBHOOK_SECRET, // [!code highlight]
+    webhookSecret: process.env.TWITTERAPIIO_WEBHOOK_SECRET,
 })
 ```
 

@@ -5,11 +5,17 @@ description: Integrate Todoist task management into your application with Corsai
 
 ## Quick Start
 
+Install the plugin:
+
+```bash
+pnpm install @corsair-dev/todoist
+```
+
 Add the Todoist plugin to your Corsair instance:
 
 ```ts title="corsair.ts"
 import { createCorsair } from "corsair";
-import { todoist } from "corsair/plugins";
+import { todoist } from "@corsair-dev/todoist";
 
 export const corsair = createCorsair({
     plugins: [
@@ -41,18 +47,24 @@ If no `authType` is specified, the plugin defaults to **`api_key`**.
 
 ### Configuring API Key Authentication
 
-```ts title="corsair.ts"
-todoist({
-    key: process.env.TODOIST_API_TOKEN, // [!code highlight]
-})
+Store credentials with the CLI:
+
+```bash
+pnpm corsair setup --todoist api_key=your-api-token
 ```
 
 For webhook signature verification:
 
+```bash
+pnpm corsair setup --todoist webhook_signature=your-webhook-secret
+```
+
+Alternatively, provide credentials directly in the config:
+
 ```ts title="corsair.ts"
 todoist({
     key: process.env.TODOIST_API_TOKEN,
-    webhookSecret: process.env.TODOIST_WEBHOOK_SECRET, // [!code highlight]
+    webhookSecret: process.env.TODOIST_WEBHOOK_SECRET,
 })
 ```
 

@@ -5,11 +5,17 @@ description: Integrate Spotify music playback, playlists, and search into your a
 
 ## Quick Start
 
+Install the plugin:
+
+```bash
+pnpm install @corsair-dev/spotify
+```
+
 Add the Spotify plugin to your Corsair instance:
 
 ```ts title="corsair.ts"
 import { createCorsair } from "corsair";
-import { spotify } from "corsair/plugins";
+import { spotify } from "@corsair-dev/spotify";
 
 export const corsair = createCorsair({
     plugins: [
@@ -41,9 +47,21 @@ If no `authType` is specified, the plugin defaults to **`oauth_2`**.
 
 ### Configuring OAuth 2.0 Authentication
 
+Store your Spotify app credentials, then start the OAuth flow:
+
+```bash
+pnpm corsair setup --spotify client_id=your-client-id client_secret=your-client-secret
+pnpm corsair auth --plugin=spotify
+```
+
+The CLI will print an authorization URL — open it in a browser. Once you approve, tokens are saved automatically.
+
+Alternatively, provide credentials directly in the config:
+
 ```ts title="corsair.ts"
-spotify()
-// No authType needed - oauth_2 is the default
+spotify({
+    key: process.env.SPOTIFY_ACCESS_TOKEN,
+})
 ```
 
 See [Authentication](/concepts/auth) for details on setting up OAuth 2.0 credentials.

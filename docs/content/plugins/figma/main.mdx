@@ -1,0 +1,109 @@
+---
+title: Figma
+description: Manage Figma files, comments, components, webhooks, and variables from your app or agent.
+---
+
+## Quick Start
+
+Install the plugin:
+
+```bash
+pnpm install @corsair-dev/figma
+```
+
+Add the Figma plugin to your Corsair instance:
+
+```ts title="corsair.ts"
+import { createCorsair } from "corsair";
+import { figma } from "@corsair-dev/figma";
+
+export const corsair = createCorsair({
+    plugins: [figma()],
+    database: db,
+    kek: process.env.CORSAIR_KEK!,
+});
+```
+
+## Authentication
+
+### Supported Auth Types
+
+- **`api_key`** (default) - Personal access token
+
+### API Key Setup
+
+```bash
+pnpm corsair setup --figma api_key=your-personal-access-token
+```
+
+For webhook signature verification:
+
+```bash
+pnpm corsair setup --figma webhook_signature=your-webhook-passcode
+```
+
+See [Get Credentials](/plugins/figma/get-credentials) for step-by-step instructions.
+
+## Options
+
+| Option | Type | Description |
+|--------|------|-------------|
+| `authType` | `'api_key'` | Authentication method |
+| `key` | `string` | API key (optional, uses database if not provided) |
+| `webhookSecret` | `string` | Webhook passcode for verification (optional) |
+| `hooks` | `object` | Endpoint hooks for custom logic |
+| `webhookHooks` | `object` | Webhook hooks for event handling |
+| `errorHandlers` | `object` | Custom error handlers |
+
+## Usage
+
+```ts
+// Get file JSON
+const file = await corsair.figma.api.files.getJSON({
+    file_key: "abc123",
+});
+
+// List comments on a file
+const comments = await corsair.figma.api.comments.list({
+    file_key: "abc123",
+});
+
+// Add a comment
+await corsair.figma.api.comments.add({
+    file_key: "abc123",
+    message: "Looks great!",
+});
+
+// Get components for a file
+const components = await corsair.figma.api.components.getForFile({
+    file_key: "abc123",
+});
+
+// Get local variables
+const variables = await corsair.figma.api.variables.getLocal({
+    file_key: "abc123",
+});
+
+// Get team projects
+const projects = await corsair.figma.api.projects.getTeamProjects({
+    team_id: "team-id",
+});
+```
+
+### Query cached data
+
+```ts
+const comments = await corsair.figma.db.comments.search({
+    data: { file_key: "abc123" },
+});
+```
+
+### Multi-Tenancy
+
+```ts
+const tenant = corsair.withTenant("workspace-123");
+
+const file = await tenant.figma.api.files.getJSON({
+    file_key: "abc123",
+});
+```

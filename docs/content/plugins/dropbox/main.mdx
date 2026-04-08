@@ -1,0 +1,99 @@
+---
+title: Dropbox
+description: Manage Dropbox files and folders from your app or agent.
+---
+
+## Quick Start
+
+Install the plugin:
+
+```bash
+pnpm install @corsair-dev/dropbox
+```
+
+Add the Dropbox plugin to your Corsair instance:
+
+```ts title="corsair.ts"
+import { createCorsair } from "corsair";
+import { dropbox } from "@corsair-dev/dropbox";
+
+export const corsair = createCorsair({
+    plugins: [dropbox()],
+    database: db,
+    kek: process.env.CORSAIR_KEK!,
+});
+```
+
+## Authentication
+
+### Supported Auth Types
+
+- **`oauth_2`** (default) - OAuth 2.0
+
+### OAuth Setup
+
+```bash
+pnpm corsair setup --dropbox client_id=your-app-key client_secret=your-app-secret
+pnpm corsair auth --plugin=dropbox
+```
+
+See [Get Credentials](/plugins/dropbox/get-credentials) for step-by-step instructions.
+
+## Options
+
+| Option | Type | Description |
+|--------|------|-------------|
+| `authType` | `'oauth_2'` | Authentication method |
+| `key` | `string` | OAuth token (optional, uses database if not provided) |
+| `webhookSecret` | `string` | Webhook verification secret (optional) |
+| `hooks` | `object` | Endpoint hooks for custom logic |
+| `webhookHooks` | `object` | Webhook hooks for event handling |
+| `errorHandlers` | `object` | Custom error handlers |
+
+## Usage
+
+```ts
+// List folder contents
+const contents = await corsair.dropbox.api.folders.list({
+    path: "/Documents",
+});
+
+// Upload a file
+await corsair.dropbox.api.files.upload({
+    path: "/Documents/report.txt",
+    contents: "file contents here",
+});
+
+// Download a file
+const file = await corsair.dropbox.api.files.download({
+    path: "/Documents/report.txt",
+});
+
+// Copy a file
+await corsair.dropbox.api.files.copy({
+    from_path: "/Documents/report.txt",
+    to_path: "/Archive/report.txt",
+});
+
+// Search files
+const results = await corsair.dropbox.api.search.query({
+    query: "quarterly report",
+    path: "/Documents",
+});
+```
+
+### Query cached data
+
+```ts
+const files = await corsair.dropbox.db.files.search({
+    data: { path_lower: "/documents" },
+});
+```
+
+### Multi-Tenancy
+
+```ts
+const tenant = corsair.withTenant("user-123");
+
+const files = await tenant.dropbox.api.folders.list({ path: "" });
+```

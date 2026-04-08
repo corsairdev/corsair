@@ -1,0 +1,81 @@
+---
+title: Twitter / X
+description: Post tweets and replies to Twitter/X from your app or agent.
+---
+
+## Quick Start
+
+Install the plugin:
+
+```bash
+pnpm install @corsair-dev/twitter
+```
+
+Add the Twitter plugin to your Corsair instance:
+
+```ts title="corsair.ts"
+import { createCorsair } from "corsair";
+import { twitter } from "@corsair-dev/twitter";
+
+export const corsair = createCorsair({
+    plugins: [twitter()],
+    database: db,
+    kek: process.env.CORSAIR_KEK!,
+});
+```
+
+## Authentication
+
+### Supported Auth Types
+
+- **`oauth_2`** (default) - OAuth 2.0 user authentication
+
+### OAuth 2.0 Setup
+
+Store your Twitter OAuth app credentials, then start the flow:
+
+```bash
+pnpm corsair setup --twitter client_id=your-client-id client_secret=your-client-secret
+pnpm corsair auth --plugin=twitter
+```
+
+The CLI will print an authorization URL — open it in a browser. Once you approve, tokens are saved automatically.
+
+See [Get Credentials](/plugins/twitter/get-credentials) for step-by-step instructions.
+
+## Options
+
+| Option | Type | Description |
+|--------|------|-------------|
+| `authType` | `'oauth_2'` | Authentication method (defaults to `'oauth_2'`) |
+| `hooks` | `object` | Endpoint hooks for custom logic |
+| `errorHandlers` | `object` | Custom error handlers |
+
+## Usage
+
+### Post a tweet
+
+```ts
+await corsair.twitter.api.tweets.create({
+    text: "Hello from Corsair!",
+});
+```
+
+### Reply to a tweet
+
+```ts
+await corsair.twitter.api.tweets.createReply({
+    text: "Thanks for the mention!",
+    reply: { in_reply_to_tweet_id: "1234567890" },
+});
+```
+
+### Multi-Tenancy
+
+```ts
+const tenant = corsair.withTenant("user-123");
+
+await tenant.twitter.api.tweets.create({
+    text: "Posted on behalf of user-123",
+});
+```

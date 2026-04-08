@@ -7,11 +7,17 @@ The Linear plugin allows you to manage issues, projects, teams, and comments in 
 
 ## Quick Start
 
+Install the plugin:
+
+```bash
+pnpm install @corsair-dev/linear
+```
+
 Add the Linear plugin to your Corsair instance:
 
 ```ts title="corsair.ts"
 import { createCorsair } from "corsair";
-import { linear } from "corsair/plugins";
+import { linear } from "@corsair-dev/linear";
 
 export const corsair = createCorsair({
     plugins: [
@@ -43,41 +49,20 @@ If no `authType` is specified, the plugin defaults to **`api_key`**.
 
 ### Configuring API Key Authentication
 
-Store the API key in the database using the keys API:
+Store credentials with the CLI:
 
-```ts
-await corsair
-    .withTenant('default')
-    .linear.keys.setApiKey('your-api-key');
-```
-
-The plugin will automatically retrieve the API key from your database. Alternatively, you can provide it directly:
-
-```ts title="corsair.ts"
-linear({
-    authType: "api_key",
-    key: process.env.LINEAR_API_KEY,
-})
+```bash
+pnpm corsair setup --linear api_key=your-api-key
 ```
 
 See [Get Credentials](/plugins/linear/get-credentials) for step-by-step instructions on obtaining an API key.
 
 ### Webhook Signature Verification
 
-Linear webhooks can be secured using HMAC signature verification. Store the webhook secret in the database using the keys API:
+Linear webhooks can be secured using HMAC signature verification. Store the secret with the CLI:
 
-```ts
-await corsair
-    .withTenant('default')
-    .linear.keys.setWebhookSignature('your-webhook-secret');
-```
-
-The plugin will automatically verify webhook signatures when a secret is provided. Alternatively, you can provide the secret directly:
-
-```ts title="corsair.ts"
-linear({
-    webhookSecret: process.env.LINEAR_WEBHOOK_SECRET,
-})
+```bash
+pnpm corsair setup --linear webhook_signature=your-webhook-secret
 ```
 
 See [Get Credentials](/plugins/linear/get-credentials) for step-by-step instructions on setting up webhooks.
@@ -215,7 +200,8 @@ See [Multi-Tenancy](/concepts/multi-tenancy) for more details.
 ```ts title="corsair.ts"
 import { inngest } from "./inngest";
 import { createCorsair } from "corsair";
-import { slack, linear } from "corsair/plugins";
+import { slack } from "@corsair-dev/slack";
+import { linear } from "@corsair-dev/linear";
 
 export const corsair = createCorsair({
     plugins: [
@@ -269,7 +255,8 @@ export const handleSupportMessage = inngest.createFunction(
 ```ts title="corsair.ts"
 import { inngest } from "./inngest";
 import { createCorsair } from "corsair";
-import { slack, linear } from "corsair/plugins";
+import { slack } from "@corsair-dev/slack";
+import { linear } from "@corsair-dev/linear";
 
 export const corsair = createCorsair({
     plugins: [

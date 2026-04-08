@@ -1,0 +1,106 @@
+---
+title: Outlook
+description: Manage Outlook messages, calendars, contacts, and folders from your app or agent.
+---
+
+## Quick Start
+
+Install the plugin:
+
+```bash
+pnpm install @corsair-dev/outlook
+```
+
+Add the Outlook plugin to your Corsair instance:
+
+```ts title="corsair.ts"
+import { createCorsair } from "corsair";
+import { outlook } from "@corsair-dev/outlook";
+
+export const corsair = createCorsair({
+    plugins: [outlook()],
+    database: db,
+    kek: process.env.CORSAIR_KEK!,
+});
+```
+
+## Authentication
+
+### Supported Auth Types
+
+- **`oauth_2`** (default) - OAuth 2.0 (Microsoft)
+
+### OAuth Setup
+
+```bash
+pnpm corsair setup --outlook client_id=your-client-id client_secret=your-client-secret
+pnpm corsair auth --plugin=outlook
+```
+
+See [Get Credentials](/plugins/outlook/get-credentials) for step-by-step instructions.
+
+## Options
+
+| Option | Type | Description |
+|--------|------|-------------|
+| `authType` | `'oauth_2'` | Authentication method |
+| `key` | `string` | OAuth token (optional, uses database if not provided) |
+| `webhookSecret` | `string` | Webhook secret (optional) |
+| `hooks` | `object` | Endpoint hooks for custom logic |
+| `webhookHooks` | `object` | Webhook hooks for event handling |
+| `errorHandlers` | `object` | Custom error handlers |
+
+## Usage
+
+```ts
+// Send an email
+await corsair.outlook.api.messages.send({
+    subject: "Hello from Corsair",
+    body: "This is a test email.",
+    to: "recipient@example.com",
+});
+
+// List messages
+const messages = await corsair.outlook.api.messages.list({
+    folder: "inbox",
+});
+
+// Reply to a message
+await corsair.outlook.api.messages.reply({
+    message_id: "message-id",
+    body: "Thanks for reaching out!",
+});
+
+// Create a calendar event
+await corsair.outlook.api.events.create({
+    subject: "Team Meeting",
+    start: { dateTime: "2024-01-15T10:00:00", timeZone: "UTC" },
+    end: { dateTime: "2024-01-15T11:00:00", timeZone: "UTC" },
+});
+
+// List calendars
+const calendars = await corsair.outlook.api.calendars.list({});
+
+// Create a contact
+await corsair.outlook.api.contacts.create({
+    givenName: "Jane",
+    surname: "Doe",
+    emailAddresses: [{ address: "jane@example.com" }],
+});
+```
+
+### Query cached data
+
+```ts
+const messages = await corsair.outlook.db.messages.search({
+    data: { isRead: false },
+});
+```
+
+### Multi-Tenancy
+
+```ts
+const tenant = corsair.withTenant("user-123");
+
+const messages = await tenant.outlook.api.messages.list({ folder: "inbox" });
+```

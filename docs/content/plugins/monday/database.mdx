@@ -1,0 +1,124 @@
+---
+title: Monday.com Database Schema
+description: Database entities and querying synced Monday.com data.
+---
+
+The Monday.com plugin syncs data to your local database when API calls are made.
+
+## Synced Entities
+
+- **boards** - Board information and settings
+- **items** - Board items (rows)
+- **groups** - Groups within boards
+- **users** - Workspace users
+- **updates** - Item updates and comments
+
+## Database API
+
+```ts
+const items = await corsair.monday.db.items.search({
+    data: { boardId: "board-id" },
+});
+```
+
+---
+
+## Boards
+
+### Schema
+
+```ts
+{
+    id: string;
+    name: string;
+    description?: string;
+    state?: string;
+    boardKind?: string;
+    createdAt?: string;
+    updatedAt?: string;
+    workspaceId?: string;
+    ownerId?: string;
+}
+```
+
+### Querying Boards
+
+```ts
+const boards = await corsair.monday.db.boards.search({ data: {} });
+
+const activeBoards = await corsair.monday.db.boards.search({
+    data: { state: "active" },
+});
+```
+
+---
+
+## Items
+
+### Schema
+
+```ts
+{
+    id: string;
+    name: string;
+    boardId: string;
+    groupId?: string;
+    state?: string;
+    createdAt?: string;
+    updatedAt?: string;
+    creatorId?: string;
+    columnValues?: Record<string, unknown>;
+}
+```
+
+### Querying Items
+
+```ts
+const items = await corsair.monday.db.items.search({
+    data: { boardId: "board-id" },
+});
+
+const itemsByGroup = await corsair.monday.db.items.search({
+    data: { boardId: "board-id", groupId: "group-id" },
+});
+```
+
+---
+
+## Groups
+
+### Schema
+
+```ts
+{
+    id: string;
+    title: string;
+    boardId: string;
+    color?: string;
+    position?: string;
+    archived?: boolean;
+    deleted?: boolean;
+}
+```
+
+### Querying Groups
+
+```ts
+const groups = await corsair.monday.db.groups.search({
+    data: { boardId: "board-id" },
+});
+```
+
+---
+
+## Multi-Tenancy
+
+```ts
+const tenant = corsair.withTenant("org-123");
+
+const items = await tenant.monday.db.items.search({
+    data: { boardId: "board-id" },
+});
+```
+
+See [Database](/concepts/database) for more information about querying patterns.

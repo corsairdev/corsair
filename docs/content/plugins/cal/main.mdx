@@ -5,11 +5,17 @@ description: Integrate Cal.com scheduling and booking management into your appli
 
 ## Quick Start
 
+Install the plugin:
+
+```bash
+pnpm install @corsair-dev/cal
+```
+
 Add the Cal.com plugin to your Corsair instance:
 
 ```ts title="corsair.ts"
 import { createCorsair } from "corsair";
-import { cal } from "corsair/plugins";
+import { cal } from "@corsair-dev/cal";
 
 export const corsair = createCorsair({
     plugins: [
@@ -38,18 +44,24 @@ If no `authType` is specified, the plugin defaults to **`api_key`**.
 
 ### Configuring API Key Authentication
 
-```ts title="corsair.ts"
-cal({
-    key: process.env.CAL_API_KEY, // [!code highlight]
-})
+Store credentials with the CLI:
+
+```bash
+pnpm corsair setup --cal api_key=your-api-key
 ```
 
 For webhook signature verification:
 
+```bash
+pnpm corsair setup --cal webhook_signature=your-webhook-secret
+```
+
+Alternatively, provide credentials directly in the config:
+
 ```ts title="corsair.ts"
 cal({
     key: process.env.CAL_API_KEY,
-    webhookSecret: process.env.CAL_WEBHOOK_SECRET, // [!code highlight]
+    webhookSecret: process.env.CAL_WEBHOOK_SECRET,
 })
 ```
 

@@ -1,0 +1,94 @@
+---
+title: Hacker News Database Schema
+description: Database entities and querying synced Hacker News data.
+---
+
+The Hacker News plugin syncs data to your local database when API calls are made.
+
+## Synced Entities
+
+- **items** - Stories, comments, jobs, polls, and poll options
+- **users** - User profiles
+
+## Database API
+
+```ts
+const stories = await corsair.hackernews.db.items.search({
+    data: { type: "story" },
+});
+```
+
+---
+
+## Items
+
+### Schema
+
+```ts
+{
+    id: number;
+    type: "story" | "comment" | "job" | "poll" | "pollopt";
+    by?: string;
+    time?: number;
+    text?: string;
+    dead?: boolean;
+    parent?: number;
+    kids?: number[];
+    url?: string;
+    score?: number;
+    title?: string;
+    descendants?: number;
+}
+```
+
+### Querying Items
+
+```ts
+// Get stories
+const stories = await corsair.hackernews.db.items.search({
+    data: { type: "story" },
+});
+
+// Get items by author
+const byAuthor = await corsair.hackernews.db.items.search({
+    data: { by: "pg" },
+});
+```
+
+---
+
+## Users
+
+### Schema
+
+```ts
+{
+    id: string;
+    created?: number;
+    karma?: number;
+    about?: string;
+    submitted?: number[];
+}
+```
+
+### Querying Users
+
+```ts
+const user = await corsair.hackernews.db.users.search({
+    data: { id: "pg" },
+});
+```
+
+---
+
+## Multi-Tenancy
+
+```ts
+const tenant = corsair.withTenant("user-123");
+
+const stories = await tenant.hackernews.db.items.search({
+    data: { type: "story" },
+});
+```
+
+See [Database](/concepts/database) for more information about querying patterns.

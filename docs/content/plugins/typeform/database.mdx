@@ -1,0 +1,100 @@
+---
+title: Typeform Database Schema
+description: Database entities and querying synced Typeform data.
+---
+
+The Typeform plugin syncs data to your local database when API calls are made.
+
+## Synced Entities
+
+- **forms** - Form definitions and settings
+- **responses** - Form submission responses
+
+## Database API
+
+```ts
+const forms = await corsair.typeform.db.forms.search({ data: {} });
+```
+
+---
+
+## Forms
+
+### Schema
+
+```ts
+{
+    id: string;
+    title: string;
+    type?: string;
+    createdAt?: string;
+    lastUpdatedAt?: string;
+    _links?: {
+        display?: string;
+    };
+    settings?: {
+        language?: string;
+        isPublic?: boolean;
+        progressBar?: string;
+    };
+}
+```
+
+### Querying Forms
+
+```ts
+const forms = await corsair.typeform.db.forms.search({ data: {} });
+
+const form = await corsair.typeform.db.forms.search({
+    data: { title: "Customer Feedback" },
+});
+```
+
+---
+
+## Responses
+
+### Schema
+
+```ts
+{
+    id: string;
+    formId: string;
+    landedAt?: string;
+    submittedAt?: string;
+    token?: string;
+    answers?: Array<{
+        field: { id: string; ref: string; type: string };
+        type: string;
+        text?: string;
+        choice?: { id: string; label: string };
+        number?: number;
+        boolean?: boolean;
+        email?: string;
+        url?: string;
+    }>;
+    hidden?: Record<string, string>;
+}
+```
+
+### Querying Responses
+
+```ts
+const responses = await corsair.typeform.db.responses.search({
+    data: { formId: "form-id" },
+});
+```
+
+---
+
+## Multi-Tenancy
+
+```ts
+const tenant = corsair.withTenant("user-123");
+
+const responses = await tenant.typeform.db.responses.search({
+    data: { formId: "form-id" },
+});
+```
+
+See [Database](/concepts/database) for more information about querying patterns.

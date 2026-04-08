@@ -5,11 +5,17 @@ description: Integrate Tavily AI-powered web search into your application with C
 
 ## Quick Start
 
+Install the plugin:
+
+```bash
+pnpm install @corsair-dev/tavily
+```
+
 Add the Tavily plugin to your Corsair instance:
 
 ```ts title="corsair.ts"
 import { createCorsair } from "corsair";
-import { tavily } from "corsair/plugins";
+import { tavily } from "@corsair-dev/tavily";
 
 export const corsair = createCorsair({
     plugins: [
@@ -40,9 +46,17 @@ If no `authType` is specified, the plugin defaults to **`api_key`**.
 
 ### Configuring API Key Authentication
 
+Store credentials with the CLI:
+
+```bash
+pnpm corsair setup --tavily api_key=your-api-key
+```
+
+Alternatively, provide credentials directly in the config:
+
 ```ts title="corsair.ts"
 tavily({
-    key: process.env.TAVILY_API_KEY, // [!code highlight]
+    key: process.env.TAVILY_API_KEY,
 })
 ```
 

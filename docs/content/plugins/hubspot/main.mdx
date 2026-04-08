@@ -5,11 +5,17 @@ description: Integrate HubSpot CRM contacts, companies, deals, and tickets into 
 
 ## Quick Start
 
+Install the plugin:
+
+```bash
+pnpm install @corsair-dev/hubspot
+```
+
 Add the HubSpot plugin to your Corsair instance:
 
 ```ts title="corsair.ts"
 import { createCorsair } from "corsair";
-import { hubspot } from "corsair/plugins";
+import { hubspot } from "@corsair-dev/hubspot";
 
 export const corsair = createCorsair({
     plugins: [
@@ -37,67 +43,33 @@ The HubSpot plugin supports both API key and OAuth 2.0 authentication methods.
 
 ### API Key Authentication (Private App)
 
-Store the API key in the database using the keys API:
+Store credentials with the CLI:
 
-```ts
-await corsair
-    .withTenant('default')
-    .hubspot.keys.setApiKey('your-api-key');
-```
-
-Alternatively, you can provide it directly:
-
-```ts title="corsair.ts"
-hubspot({
-    authType: "api_key",
-    credentials: {
-        apiKey: process.env.HUBSPOT_API_KEY,
-    },
-})
+```bash
+pnpm corsair setup --hubspot api_key=your-api-key
 ```
 
 See [Get Credentials](/plugins/hubspot/get-credentials) for step-by-step instructions on obtaining an API key.
 
 ### OAuth 2.0 Authentication
 
-Store OAuth credentials in the database using the keys API:
+Store your OAuth app credentials, then start the flow:
 
-```ts
-await corsair.hubspot.keys.setClientId('your-client-id');
-await corsair.hubspot.keys.setClientSecret('your-client-secret');
-await corsair.hubspot.keys.setRedirectUrl('https://yourapp.com/auth/hubspot/callback');
+```bash
+pnpm corsair setup --hubspot client_id=your-client-id client_secret=your-client-secret
+pnpm corsair auth --plugin=hubspot
 ```
 
-After users complete the OAuth flow, access tokens are automatically stored. Alternatively, you can provide credentials directly:
-
-```ts title="corsair.ts"
-hubspot({
-    authType: "oauth_2",
-    credentials: {
-        clientId: process.env.HUBSPOT_CLIENT_ID,
-        clientSecret: process.env.HUBSPOT_CLIENT_SECRET,
-    },
-})
-```
+The CLI will print an authorization URL — open it in a browser. Once you approve, tokens are saved automatically.
 
 See [Get Credentials](/plugins/hubspot/get-credentials) for step-by-step instructions on setting up OAuth 2.0.
 
 ### Webhook Secret
 
-Store the webhook secret in the database using the keys API:
+Store the webhook secret with the CLI:
 
-```ts
-await corsair
-    .withTenant('default')
-    .hubspot.keys.setWebhookSignature('your-webhook-secret');
-```
-
-Alternatively, you can provide it directly:
-
-```ts title="corsair.ts"
-hubspot({
-    webhookSecret: process.env.HUBSPOT_WEBHOOK_SECRET,
-})
+```bash
+pnpm corsair setup --hubspot webhook_signature=your-webhook-secret
 ```
 
 See [Get Credentials](/plugins/hubspot/get-credentials) for step-by-step instructions on setting up webhooks.

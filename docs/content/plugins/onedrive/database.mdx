@@ -1,0 +1,103 @@
+---
+title: OneDrive Database Schema
+description: Database entities and querying synced OneDrive data.
+---
+
+The OneDrive plugin syncs files and drive metadata to your local database.
+
+## Synced Entities
+
+- **files** - Files and folders in OneDrive
+- **drives** - Drive information
+
+## Database API
+
+```ts
+const files = await corsair.onedrive.db.files.search({
+    data: {},
+    limit: 20,
+});
+```
+
+---
+
+## Files
+
+### Schema
+
+```ts
+{
+    id: string;
+    name?: string;
+    size?: number;
+    createdDateTime?: string;
+    lastModifiedDateTime?: string;
+    webUrl?: string;
+    parentReference?: {
+        driveId?: string;
+        id?: string;
+        path?: string;
+    };
+    file?: {
+        mimeType?: string;
+    };
+    folder?: {
+        childCount?: number;
+    };
+}
+```
+
+### Querying Files
+
+```ts
+// Get all files
+const files = await corsair.onedrive.db.files.search({ data: {} });
+
+// Search by name
+const docs = await corsair.onedrive.db.files.search({
+    data: { name: "report.docx" },
+});
+```
+
+---
+
+## Drives
+
+### Schema
+
+```ts
+{
+    id: string;
+    name?: string;
+    driveType?: string;
+    owner?: {
+        user?: {
+            displayName?: string;
+            email?: string;
+        };
+    };
+    quota?: {
+        used?: number;
+        remaining?: number;
+        total?: number;
+    };
+}
+```
+
+### Querying Drives
+
+```ts
+const drives = await corsair.onedrive.db.drives.search({ data: {} });
+```
+
+---
+
+## Multi-Tenancy
+
+```ts
+const tenant = corsair.withTenant("user-123");
+
+const files = await tenant.onedrive.db.files.search({ data: {} });
+```
+
+See [Database](/concepts/database) for more information about querying patterns.
