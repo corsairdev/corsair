@@ -319,58 +319,9 @@ async function applyCredentials(
 	const integrationKeys = instance.keys as unknown as Record<string, KeyManager | undefined>;
 	const pluginNamespaces = instance as unknown as Record<string, { keys?: KeyManager } | undefined>;
 
-	for (const [pluginId, rawFields] of Object.entries(credentials)) {
+	for (const [pluginId, fields] of Object.entries(credentials)) {
 		const integrationKeyMgr = integrationKeys[pluginId];
 		const accountKeyMgr = pluginNamespaces[pluginId]?.keys as KeyManager | undefined;
-		const fields = { ...rawFields };
-
-		if (pluginId === 'razorpay' && accountKeyMgr) {
-			const keyId = fields.key_id;
-			const keySecret = fields.key_secret;
-			const webhookSecret = fields.webhook_secret;
-
-			if (keyId || keySecret) {
-				if (!keyId || !keySecret) {
-					warn(
-						"[corsair:setup] Razorpay credentials require both 'key_id' and 'key_secret' — skipping combined api_key.",
-					);
-				} else if (typeof accountKeyMgr.set_api_key === 'function') {
-					// Type assertion: KeyManager is Record<string, unknown>; we've confirmed
-					// set_api_key is a function via the typeof check above.
-					await (accountKeyMgr.set_api_key as (v: string) => Promise<void>)(
-						`${keyId}:${keySecret}`,
-					);
-					log('[corsair:setup] Set account credential: razorpay.api_key');
-				} else {
-					warn(
-						"[corsair:setup] No setter found for 'razorpay.api_key' — skipping combined key storage.",
-					);
-				}
-			}
-
-			if (webhookSecret) {
-				if (typeof accountKeyMgr.set_webhook_signature === 'function') {
-					// Type assertion: KeyManager is Record<string, unknown>; we've confirmed
-					// set_webhook_signature is a function via the typeof check above.
-					await (
-						accountKeyMgr.set_webhook_signature as (
-							v: string,
-						) => Promise<void>
-					)(webhookSecret);
-					log(
-						'[corsair:setup] Set account credential: razorpay.webhook_signature',
-					);
-				} else {
-					warn(
-						"[corsair:setup] No setter found for 'razorpay.webhook_signature' — skipping.",
-					);
-				}
-			}
-
-			delete fields.key_id;
-			delete fields.key_secret;
-			delete fields.webhook_secret;
-		}
 
 		for (const [field, value] of Object.entries(fields)) {
 			const setter = `set_${field}`;

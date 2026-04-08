@@ -1,18 +1,11 @@
-import type { CorsairWebhook } from 'corsair/core';
 import { logEventFromContext } from 'corsair/core';
-import type { RazorpayContext } from '..';
+import type { RazorpayWebhooks } from '..';
 import {
 	createRazorpayMatch,
-	type RazorpayPaymentCapturedEvent,
-	type RazorpayPaymentFailedEvent,
 	verifyRazorpayWebhookSignature,
 } from './types';
 
-export const captured: CorsairWebhook<
-	RazorpayContext,
-	RazorpayPaymentCapturedEvent,
-	RazorpayPaymentCapturedEvent
-> = {
+export const captured: RazorpayWebhooks['paymentCaptured'] = {
 	match: createRazorpayMatch('payment.captured'),
 
 	handler: async (ctx, request) => {
@@ -32,6 +25,7 @@ export const captured: CorsairWebhook<
 			try {
 				await ctx.db.payments.upsertByEntityId(payment.id, {
 					...payment,
+					// created_at is a Unix timestamp in seconds; multiply by 1000 for ms
 					createdAt: payment.created_at
 						? new Date(payment.created_at * 1000)
 						: undefined,
@@ -59,11 +53,7 @@ export const captured: CorsairWebhook<
 	},
 };
 
-export const failed: CorsairWebhook<
-	RazorpayContext,
-	RazorpayPaymentFailedEvent,
-	RazorpayPaymentFailedEvent
-> = {
+export const failed: RazorpayWebhooks['paymentFailed'] = {
 	match: createRazorpayMatch('payment.failed'),
 
 	handler: async (ctx, request) => {
@@ -83,6 +73,7 @@ export const failed: CorsairWebhook<
 			try {
 				await ctx.db.payments.upsertByEntityId(payment.id, {
 					...payment,
+					// created_at is a Unix timestamp in seconds; multiply by 1000 for ms
 					createdAt: payment.created_at
 						? new Date(payment.created_at * 1000)
 						: undefined,
