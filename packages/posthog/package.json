@@ -15,18 +15,17 @@
   },
   "scripts": {
     "build": "rm -rf dist && tsc --build --force && tsup",
-    "typecheck": "tsc --noEmit"
-  },
-  "dependencies": {
-    "uuid": "^11.1.0"
+    "typecheck": "tsc --noEmit",
+    "test": "jest"
   },
   "peerDependencies": {
     "corsair": ">=0.1.0",
     "zod": "^3.0.0"
   },
   "devDependencies": {
-    "@types/uuid": "^10.0.0",
+    "@types/jest": "^29.5.14",
     "corsair": "workspace:*",
+    "ts-jest": "^29.4.6",
     "tsup": "^8.0.1",
     "typescript": "catalog:",
     "zod": "^3.25.76"
@@ -40,5 +39,9 @@
   "license": "Apache-2.0",
   "files": [
     "dist"
-  ]
+  ],
+  "dependencies": {
+    "jest": "^29.7.0",
+    "uuid": "^13.0.0"
+  }
 }

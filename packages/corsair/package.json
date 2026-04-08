@@ -36,6 +36,11 @@
       "dev-source": "./http.ts",
       "types": "./dist/http.d.ts",
       "default": "./dist/http.js"
+    },
+    "./tests": {
+      "dev-source": "./tests.ts",
+      "types": "./dist/tests.d.ts",
+      "default": "./dist/tests.js"
     }
   },
   "scripts": {
