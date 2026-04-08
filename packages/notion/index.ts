@@ -332,7 +332,7 @@ export function notion<const T extends NotionPluginOptions>(
 			providerName: 'Notion',
 			authUrl: 'https://api.notion.com/v1/oauth/authorize',
 			tokenUrl: 'https://api.notion.com/v1/oauth/token',
-			scopes: [],
+			scopes: [], // Notion OAuth does not use traditional OAuth scopes; access level is determined by workspace permissions
 			tokenAuthMethod: 'basic',
 			requiresRegisteredRedirect: true,
 		},
