@@ -1,7 +1,7 @@
 import 'dotenv/config';
 
 import { createCorsair } from 'corsair';
-import { sqlite } from '../db';
+import { ConvexDatabaseAdapter } from './convex-adapter';
 import { github } from '@corsair-dev/github';
 import { slack } from '@corsair-dev/slack';
 import { googlesheets } from '@corsair-dev/googlesheets';
@@ -10,9 +10,11 @@ import { gmail } from '@corsair-dev/gmail';
 import { linear } from '@corsair-dev/linear';
 import { onedrive } from '@corsair-dev/onedrive';
 
+const convexAdapter = new ConvexDatabaseAdapter(process.env.CONVEX_URL!);
+
 export const corsair = createCorsair({
 	multiTenancy: false,
-	database: sqlite,
+	database: convexAdapter,
 	kek: process.env.CORSAIR_KEK!,
 	approval: {
 		timeout: '10m',
@@ -20,4 +22,3 @@ export const corsair = createCorsair({
 	},
 	plugins: [github(), slack(), googlesheets(), googlecalendar(), gmail(), linear(), onedrive()],
 });
-
