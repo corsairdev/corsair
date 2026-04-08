@@ -18,6 +18,7 @@
     "build": "next build",
     "start": "next start",
     "test": "tsx src/scripts/test-script.ts",
+    "rebuild:sqlite": "pnpm rebuild better-sqlite3",
     "inngest:dev": "npx inngest-cli@latest dev",
     "agent": "tsx src/scripts/agent.ts"
   },
@@ -37,6 +38,7 @@
     "@corsair-dev/gmail": "workspace:*",
     "@corsair-dev/linear": "workspace:*",
     "@corsair-dev/onedrive": "workspace:*",
+    "@corsair-dev/firecrawl": "workspace:*",
     "@corsair-dev/teams": "workspace:*",
     "dotenv": "^17.2.3",
     "drizzle-orm": "^0.44.5",

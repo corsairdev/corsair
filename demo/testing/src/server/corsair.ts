@@ -1,14 +1,15 @@
 import 'dotenv/config';
 
-import { createCorsair } from 'corsair';
-import { sqlite } from '../db';
+import { firecrawl } from '@corsair-dev/firecrawl';
 import { github } from '@corsair-dev/github';
-import { slack } from '@corsair-dev/slack';
-import { googlesheets } from '@corsair-dev/googlesheets';
-import { googlecalendar } from '@corsair-dev/googlecalendar';
 import { gmail } from '@corsair-dev/gmail';
+import { googlecalendar } from '@corsair-dev/googlecalendar';
+import { googlesheets } from '@corsair-dev/googlesheets';
 import { linear } from '@corsair-dev/linear';
 import { onedrive } from '@corsair-dev/onedrive';
+import { slack } from '@corsair-dev/slack';
+import { createCorsair } from 'corsair';
+import { sqlite } from '../db';
 
 export const corsair = createCorsair({
 	multiTenancy: false,
@@ -18,6 +19,16 @@ export const corsair = createCorsair({
 		timeout: '10m',
 		onTimeout: 'deny',
 	},
-	plugins: [github(), slack(), googlesheets(), googlecalendar(), gmail(), linear(), onedrive()],
+	plugins: [
+		github(),
+		slack(),
+		googlesheets(),
+		googlecalendar(),
+		gmail(),
+		linear(),
+		onedrive(),
+		firecrawl({
+			key: process.env.FIRECRAWL_API_KEY,
+		}),
+	],
 });
-
