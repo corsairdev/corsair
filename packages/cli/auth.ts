@@ -268,26 +268,25 @@ async function oauthGetUrl(
 
 	const authUrl = `${oauthCfg.authUrl}?${querystring.stringify(authParams)}`;
 
-	// If the redirect is a localhost URL we own, spin up the server and wait for the code,
-	// then immediately exchange it — the caller just needs to open the URL.
-	if (!oauthCfg.requiresRegisteredRedirect) {
-		const portMatch = redirectUri.match(/:(\d+)$/);
-		const port = portMatch?.[1] ? parseInt(portMatch[1], 10) : null;
-		if (port) {
-			out({ status: 'pending_oauth', authUrl, redirectUri, plugin: plugin.id, tenant: tenantId, note: 'Open authUrl in a browser. Tokens will be saved automatically once authorized.' });
-			let code: string;
-			try {
-				code = await waitForOAuthCode(port);
-			} catch (err) {
-				out({ error: `Authorization failed: ${err instanceof Error ? err.message : String(err)}` });
-				return;
-			}
-			await oauthExchangeCode(database, plugin, kek, tenantId, code, redirectUri, clientId, clientSecret, oauthCfg);
+	// If the redirect is a localhost URL with a port, spin up a local server and wait for the code.
+	// This works whether the redirect is dynamic (requiresRegisteredRedirect: false) or a
+	// pre-registered localhost:PORT URL (requiresRegisteredRedirect: true, e.g. Notion).
+	const localhostPortMatch = redirectUri.match(/^https?:\/\/(?:localhost|127\.0\.0\.1):(\d+)/);
+	const localhostPort = localhostPortMatch?.[1] ? parseInt(localhostPortMatch[1], 10) : null;
+	if (localhostPort) {
+		out({ status: 'pending_oauth', authUrl, redirectUri, plugin: plugin.id, tenant: tenantId, note: 'Open authUrl in a browser. Tokens will be saved automatically once authorized.' });
+		let code: string;
+		try {
+			code = await waitForOAuthCode(localhostPort);
+		} catch (err) {
+			out({ error: `Authorization failed: ${err instanceof Error ? err.message : String(err)}` });
 			return;
 		}
+		await oauthExchangeCode(database, plugin, kek, tenantId, code, redirectUri, clientId, clientSecret, oauthCfg);
+		return;
 	}
 
-	// Provider requires a registered redirect — can't auto-capture, output the URL
+	// Registered redirect is not a localhost:PORT URL — can't auto-capture, output the URL
 	out({ status: 'needs_code', authUrl, redirectUri, plugin: plugin.id, tenant: tenantId, note: 'Open authUrl, complete auth, then run: corsair auth --plugin=<id> --code=CODE' });
 }
 

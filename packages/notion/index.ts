@@ -40,7 +40,7 @@ import {
 } from './webhooks/types';
 
 export type NotionPluginOptions = {
-	authType?: PickAuth<'api_key'>;
+	authType?: PickAuth<'api_key' | 'oauth_2'>;
 	key?: string;
 	webhookSecret?: string;
 	hooks?: InternalNotionPlugin['hooks'];
@@ -56,10 +56,12 @@ export type NotionPluginOptions = {
 
 export type NotionContext = CorsairPluginContext<
 	typeof NotionSchema,
-	NotionPluginOptions
+	NotionPluginOptions,
+	undefined,
+	typeof notionAuthConfig
 >;
 
-export type NotionKeyBuilderContext = KeyBuilderContext<NotionPluginOptions>;
+export type NotionKeyBuilderContext = KeyBuilderContext<NotionPluginOptions, typeof notionAuthConfig>;
 
 export type NotionBoundEndpoints = BindEndpoints<typeof notionEndpointsNested>;
 
@@ -281,6 +283,7 @@ export const notionAuthConfig = {
 	api_key: {
 		account: ['one'] as const,
 	},
+	oauth_2: {},
 } as const satisfies PluginAuthConfig;
 
 export type BaseNotionPlugin<T extends NotionPluginOptions> = CorsairPlugin<
@@ -289,7 +292,8 @@ export type BaseNotionPlugin<T extends NotionPluginOptions> = CorsairPlugin<
 	typeof notionEndpointsNested,
 	typeof notionWebhooksNested,
 	T,
-	typeof defaultAuthType
+	typeof defaultAuthType,
+	typeof notionAuthConfig
 >;
 
 /**
@@ -320,9 +324,18 @@ export function notion<const T extends NotionPluginOptions>(
 		webhookHooks: options.webhookHooks,
 		endpoints: notionEndpointsNested,
 		webhooks: notionWebhooksNested,
+		authConfig: notionAuthConfig,
 		endpointMeta: notionEndpointMeta,
 		endpointSchemas: notionEndpointSchemas,
 		webhookSchemas: notionWebhookSchemas,
+		oauthConfig: {
+			providerName: 'Notion',
+			authUrl: 'https://api.notion.com/v1/oauth/authorize',
+			tokenUrl: 'https://api.notion.com/v1/oauth/token',
+			scopes: [],
+			tokenAuthMethod: 'basic',
+			requiresRegisteredRedirect: true,
+		},
 		pluginWebhookMatcher: (request) => {
 			const headers = request.headers;
 			const hasSignature = 'x-notion-signature' in headers;
@@ -359,6 +372,16 @@ export function notion<const T extends NotionPluginOptions>(
 				}
 
 				return res;
+			}
+
+			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
+				const accessToken = await ctx.keys.get_access_token();
+
+				if (!accessToken) {
+					return '';
+				}
+
+				return accessToken;
 			}
 
 			return '';

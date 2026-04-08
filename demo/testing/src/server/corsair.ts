@@ -6,6 +6,7 @@ import { googlesheets } from '@corsair-dev/googlesheets';
 import { googlecalendar } from '@corsair-dev/googlecalendar';
 import { gmail } from '@corsair-dev/gmail';
 import { linear } from '@corsair-dev/linear';
+import { notion } from '@corsair-dev/notion'
 
 export const corsair = createCorsair({
 	multiTenancy: false,
@@ -15,6 +16,6 @@ export const corsair = createCorsair({
 		timeout: '10m',
 		onTimeout: 'deny',
 	},
-	plugins: [github(), slack(), googlesheets(), googlecalendar(), gmail(), linear()],
+	plugins: [github(), slack(), googlesheets(), googlecalendar(), gmail(), linear(), notion({authType: 'oauth_2'})],
 });
 
