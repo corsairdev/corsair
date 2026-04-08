@@ -1,0 +1,47 @@
+{
+  "name": "@corsair-dev/teams",
+  "version": "0.1.0",
+  "description": "Microsoft Teams plugin for Corsair",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "dev-source": "./index.ts",
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "rm -rf dist && tsc --build --force && tsup",
+    "typecheck": "tsc --noEmit",
+    "test": "jest"
+  },
+  "peerDependencies": {
+    "corsair": ">=0.1.0",
+    "zod": "^3.0.0"
+  },
+  "devDependencies": {
+    "corsair": "workspace:*",
+    "@types/jest": "^29.5.14",
+    "ts-jest": "^29.1.1",
+    "tsup": "^8.0.1",
+    "typescript": "catalog:",
+    "zod": "^3.25.76"
+  },
+  "keywords": [
+    "corsair",
+    "teams",
+    "microsoft",
+    "plugin"
+  ],
+  "author": "",
+  "license": "Apache-2.0",
+  "files": [
+    "dist"
+  ],
+  "dependencies": {
+    "jest": "^29.7.0"
+  }
+}
