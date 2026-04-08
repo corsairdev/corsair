@@ -33,7 +33,7 @@ export async function makeApifyRequest<T>(
 	apiKey: string,
 	options: {
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
-		body?: Record<string, unknown>;
+		body?: unknown;
 		query?: Record<string, string | number | boolean | undefined>;
 	} = {},
 ): Promise<T> {

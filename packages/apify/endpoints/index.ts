@@ -1,4 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
+import type { ApifyContext } from '..';
 import { makeApifyRequest } from '../client';
 import { ApifyEndpointInputSchemas, ApifyEndpointOutputSchemas } from './types';
 
@@ -15,7 +16,7 @@ const interpolatePath = (template: string, params?: Record<string, string>) =>
 const makeEndpoint =
 	(pathTemplate: string, method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE' | 'HEAD' | 'OPTIONS',
 	 eventName: string) =>
-	async (ctx: any, input: ApifyEndpointInput = {}) => {
+	async (ctx: ApifyContext, input: ApifyEndpointInput = {}) => {
 		const corsairMethod =
 			method === 'HEAD' || method === 'OPTIONS' ? 'GET' : method;
 		const path = interpolatePath(pathTemplate, input.path);
@@ -24,7 +25,7 @@ const makeEndpoint =
 		const response = await makeApifyRequest<unknown>(relativePath, ctx.key, {
 			method: corsairMethod,
 			query: input.query,
-			body: input.body as Record<string, unknown> | undefined,
+			body: input.body,
 		});
 		await logEventFromContext(ctx, eventName, input ?? {}, 'completed');
 		return response;

@@ -62,7 +62,27 @@ export function apify<const T extends ApifyPluginOptions>(incomingOptions: Apify
 		webhooks: apifyWebhooksNested,
 		endpointMeta: apifyEndpointMeta,
 		endpointSchemas: apifyEndpointSchemas,
-		pluginWebhookMatcher: (request) => 'x-apify-webhook' in request.headers,
+		pluginWebhookMatcher: (request) => {
+			const body = request.body;
+			if (!body) return false;
+			try {
+				const parsed =
+					typeof body === 'string'
+						? (JSON.parse(body) as Record<string, unknown>)
+						: (body as Record<string, unknown>);
+				return (
+					typeof parsed.eventType === 'string' &&
+					typeof parsed.userId === 'string' &&
+					typeof parsed.createdAt === 'string' &&
+					typeof parsed.eventData === 'object' &&
+					parsed.eventData !== null &&
+					typeof parsed.resource === 'object' &&
+					parsed.resource !== null
+				);
+			} catch {
+				return false;
+			}
+		},
 		errorHandlers: { ...errorHandlers, ...options.errorHandlers },
 		keyBuilder: async (ctx: ApifyKeyBuilderContext, source) => {
 			if (source === 'webhook' && options.webhookSecret) return options.webhookSecret;

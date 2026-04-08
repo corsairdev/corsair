@@ -57,7 +57,11 @@ export function verifyApifyWebhookSignature(
 	// (e.g. `x-apify-webhook-signature`), we can verify it against the raw body.
 
 	if (!secret) {
-		return { valid: true };
+		return {
+			valid: false,
+			error:
+				'No webhook secret configured. Set plugin option `webhookSecret` or store `webhook_signature` key.',
+		};
 	}
 
 	const headers = request.headers;
