@@ -1,4 +1,3 @@
-import type { Kysely } from 'kysely';
 import type { ZodTypeAny } from 'zod';
 import {
 	ZodBoolean,
@@ -18,7 +17,7 @@ import type {
 	CorsairSingleTenantClient,
 } from '../core';
 import { CORSAIR_INTERNAL, createCorsair } from '../core';
-import type { CorsairKyselyDatabase } from '../db/kysely/database';
+import type { CorsairDatabaseAdapter } from '../db/adapter';
 import { TABLE_SCHEMAS } from '../db/orm';
 
 // Inlined at build time by the esbuild YAML plugin in tsup.config.ts.
@@ -123,19 +122,19 @@ export async function setupCorsair<
 		);
 	}
 
-	const db = internal.database.db as Kysely<CorsairKyselyDatabase>;
+	const adapter = internal.database;
 
 	const instance = createCorsair({
 		plugins: internal.plugins as unknown as Plugins,
-		database: internal.database.db,
+		database: adapter,
 		kek: internal.kek,
 	}) as unknown as CorsairSingleTenantClient<readonly CorsairPlugin[]>;
 
 	// 1. Verify schema
-	await checkTables(db, warn);
+	await checkTables(adapter, warn);
 
 	// 2. Create integration + account rows and issue DEKs for every plugin.
-	await ensurePluginRowsAndDeks(db, instance, internal.plugins, log);
+	await ensurePluginRowsAndDeks(adapter, instance, internal.plugins, log);
 
 	// 3. Apply any credentials provided by the caller (CLI flags or programmatic).
 	if (options?.credentials && Object.keys(options.credentials).length > 0) {
@@ -195,11 +194,13 @@ function describeZodSchema(schema: ZodTypeAny): unknown {
 }
 
 async function checkTables(
-	db: Kysely<CorsairKyselyDatabase>,
+	adapter: CorsairDatabaseAdapter,
 	warn: SetupWarn,
 ): Promise<void> {
-	const existing = await db.introspection.getTables();
-	const existingNames = new Set(existing.map((t) => t.name));
+	if (!adapter.introspect) return;
+
+	const { tables } = await adapter.introspect();
+	const existingNames = new Set(tables);
 
 	for (const [table, schema] of Object.entries(REQUIRED_TABLES)) {
 		if (!existingNames.has(table)) {
@@ -219,13 +220,11 @@ async function checkTables(
 const TENANT_ID = 'default';
 
 async function ensurePluginRowsAndDeks(
-	db: Kysely<CorsairKyselyDatabase>,
+	adapter: CorsairDatabaseAdapter,
 	instance: CorsairSingleTenantClient<readonly CorsairPlugin[]>,
 	plugins: readonly CorsairPlugin[],
 	log: SetupLog,
 ): Promise<void> {
-	const now = new Date();
-
 	const integrationKeys = instance.keys as unknown as Record<
 		string,
 		KeyManager | undefined
@@ -239,23 +238,15 @@ async function ensurePluginRowsAndDeks(
 		const pluginId = plugin.id;
 
 		// ── Integration row ────────────────────────────────────────────────────
-		let integration = await db
-			.selectFrom('corsair_integrations')
-			.selectAll()
-			.where('name', '=', pluginId)
-			.executeTakeFirst();
+		let integration = await adapter.orm.integrations.findOne({
+			name: pluginId,
+		});
 
 		if (!integration) {
-			const id = crypto.randomUUID();
-			await db
-				.insertInto('corsair_integrations')
-				.values({ id, name: pluginId, config: {}, created_at: now, updated_at: now })
-				.execute();
-			integration = await db
-				.selectFrom('corsair_integrations')
-				.selectAll()
-				.where('id', '=', id)
-				.executeTakeFirst();
+			integration = await adapter.orm.integrations.create({
+				name: pluginId,
+				config: {},
+			});
 			log(`[corsair:setup] Created integration: ${pluginId}`);
 		}
 
@@ -269,31 +260,17 @@ async function ensurePluginRowsAndDeks(
 		if (!integration) continue;
 
 		// ── Account row ───────────────────────────────────────────────────────
-		let account = await db
-			.selectFrom('corsair_accounts')
-			.selectAll()
-			.where('tenant_id', '=', TENANT_ID)
-			.where('integration_id', '=', integration.id)
-			.executeTakeFirst();
+		let account = await adapter.orm.accounts.findOne({
+			tenant_id: TENANT_ID,
+			integration_id: integration.id,
+		});
 
 		if (!account) {
-			const id = crypto.randomUUID();
-			await db
-				.insertInto('corsair_accounts')
-				.values({
-					id,
-					tenant_id: TENANT_ID,
-					integration_id: integration.id,
-					config: {},
-					created_at: now,
-					updated_at: now,
-				})
-				.execute();
-			account = await db
-				.selectFrom('corsair_accounts')
-				.selectAll()
-				.where('id', '=', id)
-				.executeTakeFirst();
+			account = await adapter.orm.accounts.create({
+				tenant_id: TENANT_ID,
+				integration_id: integration.id,
+				config: {},
+			});
 			log(`[corsair:setup] Created account: ${pluginId}`);
 		}
 

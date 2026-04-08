@@ -8,6 +8,7 @@ import type {
 	PermissionMode,
 	PermissionPolicy,
 } from '../plugins';
+// CorsairDatabase is now CorsairDatabaseAdapter — permission queries go through adapter.permissions
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Permission Matrix
@@ -108,35 +109,19 @@ export function buildPermissionsNamespace(
 	return {
 		async find_by_permission_id(id: string) {
 			if (!db) return undefined;
-			return db.db
-				.selectFrom('corsair_permissions')
-				.selectAll()
-				.where('id', '=', id)
-				.executeTakeFirst();
+			return db.permissions.findById(id);
 		},
 		async find_by_token(token: string) {
 			if (!db) return undefined;
-			return db.db
-				.selectFrom('corsair_permissions')
-				.selectAll()
-				.where('token', '=', token)
-				.executeTakeFirst();
+			return db.permissions.findByToken(token);
 		},
 		async set_executing(id: string) {
 			if (!db) return;
-			await db.db
-				.updateTable('corsair_permissions')
-				.set({ status: 'executing', updated_at: new Date() })
-				.where('id', '=', id)
-				.execute();
+			await db.permissions.updateStatus(id, 'executing');
 		},
 		async set_completed(id: string) {
 			if (!db) return;
-			await db.db
-				.updateTable('corsair_permissions')
-				.set({ status: 'completed', updated_at: new Date() })
-				.where('id', '=', id)
-				.execute();
+			await db.permissions.updateStatus(id, 'completed');
 		},
 	};
 }
@@ -209,44 +194,30 @@ export async function enforcePermission(
 	const now = new Date().toISOString();
 	const tenantId = opts.tenantId ?? 'default';
 
-	// Check for an existing, non-expired permission record for this plugin + endpoint + args + tenant
-	const existing = await opts.db.db
-		.selectFrom('corsair_permissions')
-		.selectAll()
-		.where('plugin', '=', opts.pluginId)
-		.where('endpoint', '=', opts.endpointPath)
-		.where('args', '=', argsJson)
-		.where('tenant_id', '=', tenantId)
-		.where('expires_at', '>', now)
-		.where('status', 'in', ['pending', 'approved', 'executing'])
-		.orderBy('created_at', 'desc')
-		.limit(1)
-		.executeTakeFirst();
+	const existing = await opts.db.permissions.findActiveForEndpoint({
+		plugin: opts.pluginId,
+		endpoint: opts.endpointPath,
+		args: argsJson,
+		tenantId,
+		now,
+	});
 
 	if (existing) {
 		if (existing.status === 'approved') {
-			// Single-use: let the call through; onComplete will mark it 'completed'
 			const db = opts.db;
 			const permissionId = existing.id;
 			return {
 				result: 'allow',
 				onComplete: async () => {
-					await db.db
-						.updateTable('corsair_permissions')
-						.set({ status: 'completed', updated_at: new Date() })
-						.where('id', '=', permissionId)
-						.execute();
+					await db.permissions.updateStatus(permissionId, 'completed');
 				},
 			};
 		}
 
 		if (existing.status === 'executing') {
-			// executePermission is actively running this — let the endpoint body proceed.
-			// Completion is handled by executePermission itself, not via onComplete here.
 			return { result: 'allow' };
 		}
 
-		// status === 'pending': already waiting for approval, don't create a duplicate
 		console.log(
 			`[corsair/${opts.pluginId}] '${opts.endpointPath}' blocked — approval already pending.`,
 			`\n  Action: ${description}`,
@@ -256,27 +227,23 @@ export async function enforcePermission(
 		return { result: 'blocked' };
 	}
 
-	// No existing actionable record — create a new pending approval request
 	const id = uuidv4();
 	const token = randomBytes(32).toString('hex');
 	const timeoutMs = opts.timeoutMs ?? 10 * 60 * 1_000;
 	const expiresAt = new Date(Date.now() + timeoutMs).toISOString();
 
-	await opts.db.db
-		.insertInto('corsair_permissions')
-		.values({
-			id,
-			created_at: new Date(),
-			updated_at: new Date(),
-			token,
-			plugin: opts.pluginId,
-			endpoint: opts.endpointPath,
-			args: argsJson,
-			tenant_id: tenantId,
-			status: 'pending',
-			expires_at: expiresAt,
-		})
-		.execute();
+	await opts.db.permissions.create({
+		id,
+		created_at: new Date(),
+		updated_at: new Date(),
+		token,
+		plugin: opts.pluginId,
+		endpoint: opts.endpointPath,
+		args: argsJson,
+		tenant_id: tenantId,
+		status: 'pending',
+		expires_at: expiresAt,
+	});
 
 	console.log(
 		`[corsair/${opts.pluginId}] '${opts.endpointPath}' blocked — approval required.`,

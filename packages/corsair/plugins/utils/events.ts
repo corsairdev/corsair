@@ -30,21 +30,13 @@ export async function logEvent(
 		return null;
 	}
 	try {
-		const eventId = generateUUID();
-		const now = new Date();
-		await database.db
-			.insertInto('corsair_events')
-			.values({
-				id: eventId,
-				created_at: now,
-				updated_at: now,
-				account_id: accountId,
-				event_type: eventType,
-				payload,
-				status,
-			})
-			.execute();
-		return eventId;
+		const event = await database.orm.events.create({
+			account_id: accountId,
+			event_type: eventType,
+			payload,
+			status,
+		});
+		return event.id;
 	} catch (error) {
 		console.warn('Failed to log event:', error);
 		return null;

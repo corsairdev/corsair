@@ -1,6 +1,5 @@
 import type { ZodTypeAny } from 'zod';
 import type { CorsairDatabase } from '../../db/kysely/database';
-import { createKyselyEntityClient } from '../../db/kysely/orm';
 import type {
 	CorsairPluginSchema,
 	PluginEntityClient,
@@ -238,6 +237,7 @@ export type CorsairSingleTenantClient<
 /**
  * Creates a cached account ID resolver for a specific tenant and integration.
  * The account ID is lazily fetched on first access and cached for subsequent calls.
+ * Uses the adapter ORM so it works with any database backend.
  */
 function createAccountIdResolver(
 	database: CorsairDatabase | undefined,
@@ -253,12 +253,9 @@ function createAccountIdResolver(
 			throw new Error('Database not configured');
 		}
 
-		// Find the integration by name
-		const integration = await database.db
-			.selectFrom('corsair_integrations')
-			.selectAll()
-			.where('name', '=', integrationName)
-			.executeTakeFirst();
+		const integration = await database.orm.integrations.findOne({
+			name: integrationName,
+		});
 
 		if (!integration) {
 			throw new Error(
@@ -266,13 +263,10 @@ function createAccountIdResolver(
 			);
 		}
 
-		// Find the account for this tenant and integration
-		const account = await database.db
-			.selectFrom('corsair_accounts')
-			.selectAll()
-			.where('tenant_id', '=', tenantId)
-			.where('integration_id', '=', integration.id)
-			.executeTakeFirst();
+		const account = await database.orm.accounts.findOne({
+			tenant_id: tenantId,
+			integration_id: integration.id,
+		});
 
 		if (!account) {
 			throw new Error(
@@ -286,32 +280,10 @@ function createAccountIdResolver(
 }
 
 /**
- * Creates an entity client for a specific plugin and entity type with database operations.
- * The client lazily resolves the account ID when operations are performed.
- * @param database - The database adapter instance
- * @param getAccountId - Function to get the account ID
- * @param entityTypeName - The name of the entity type
- * @param version - The schema version for data validation
- * @param dataSchema - The Zod schema for data validation
- * @returns An entity client with CRUD operations
+ * Creates a no-op entity client returned when no database is configured.
+ * Read operations return empty results; writes throw.
  */
-function createEntityClient(
-	database: CorsairDatabase | undefined,
-	getAccountId: () => Promise<string>,
-	entityTypeName: string,
-	version: string,
-	dataSchema: ZodTypeAny,
-): PluginEntityClient<ZodTypeAny> {
-	if (database) {
-		return createKyselyEntityClient(
-			database.db,
-			getAccountId,
-			entityTypeName,
-			version,
-			dataSchema,
-		);
-	}
-
+function createNullEntityClient(): PluginEntityClient<ZodTypeAny> {
 	return {
 		findByEntityId: async () => null,
 		findById: async () => null,
@@ -385,20 +357,13 @@ export function buildCorsairClient<
 				schema.entities,
 			)) {
 				const entityClient = database
-					? createKyselyEntityClient(
-							database.db,
+					? database.createEntityClient(
 							getAccountId,
 							entityTypeName,
 							schema.version,
 							dataSchema,
 						)
-					: createEntityClient(
-							undefined,
-							getAccountId,
-							entityTypeName,
-							schema.version,
-							dataSchema,
-						);
+					: createNullEntityClient();
 				dbClients[entityTypeName] = entityClient;
 			}
 			pluginEntitiesUnsafe[plugin.id]!.db = dbClients;

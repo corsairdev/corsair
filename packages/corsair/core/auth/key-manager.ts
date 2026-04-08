@@ -1,4 +1,5 @@
 import type { CorsairDatabase } from '../../db/kysely/database';
+// CorsairDatabase is now CorsairDatabaseAdapter — all queries go through adapter.orm
 import type { AuthTypes } from '../constants';
 import {
 	decryptConfig,
@@ -116,11 +117,9 @@ export function createIntegrationKeyManager<T extends AuthTypes>(
 		getIntegration: async () => {
 			if (cachedIntegration) return cachedIntegration;
 
-			const integration = await database.db
-				.selectFrom('corsair_integrations')
-				.selectAll()
-				.where('name', '=', integrationName)
-				.executeTakeFirst();
+			const integration = await database.orm.integrations.findOne({
+				name: integrationName,
+			});
 
 			if (!integration) {
 				throw new Error(
@@ -139,17 +138,11 @@ export function createIntegrationKeyManager<T extends AuthTypes>(
 
 		updateIntegration: async (data) => {
 			const integration = await ctx.getIntegration();
-			await database.db
-				.updateTable('corsair_integrations')
-				.set({
-					...(data.config !== undefined ? { config: data.config } : {}),
-					...(data.dek !== undefined ? { dek: data.dek } : {}),
-					updated_at: new Date(),
-				})
-				.where('id', '=', integration.id)
-				.execute();
+			await database.orm.integrations.update(integration.id, {
+				...(data.config !== undefined ? { config: data.config } : {}),
+				...(data.dek !== undefined ? { dek: data.dek } : {}),
+			});
 
-			// Invalidate cache
 			cachedIntegration = null;
 		},
 	};
@@ -302,11 +295,9 @@ export function createAccountKeyManager<T extends AuthTypes>(
 	const getIntegration = async () => {
 		if (cachedIntegration) return cachedIntegration;
 
-		const integration = await database.db
-			.selectFrom('corsair_integrations')
-			.selectAll()
-			.where('name', '=', integrationName)
-			.executeTakeFirst();
+		const integration = await database.orm.integrations.findOne({
+			name: integrationName,
+		});
 
 		if (!integration) {
 			throw new Error(
@@ -335,12 +326,10 @@ export function createAccountKeyManager<T extends AuthTypes>(
 
 			const integration = await getIntegration();
 
-			const account = await database.db
-				.selectFrom('corsair_accounts')
-				.selectAll()
-				.where('tenant_id', '=', tenantId)
-				.where('integration_id', '=', integration.id)
-				.executeTakeFirst();
+			const account = await database.orm.accounts.findOne({
+				tenant_id: tenantId,
+				integration_id: integration.id,
+			});
 
 			if (!account) {
 				throw new Error(
@@ -359,17 +348,11 @@ export function createAccountKeyManager<T extends AuthTypes>(
 
 		updateAccount: async (data) => {
 			const account = await ctx.getAccount();
-			await database.db
-				.updateTable('corsair_accounts')
-				.set({
-					...(data.config !== undefined ? { config: data.config } : {}),
-					...(data.dek !== undefined ? { dek: data.dek } : {}),
-					updated_at: new Date(),
-				})
-				.where('id', '=', account.id)
-				.execute();
+			await database.orm.accounts.update(account.id, {
+				...(data.config !== undefined ? { config: data.config } : {}),
+				...(data.dek !== undefined ? { dek: data.dek } : {}),
+			});
 
-			// Invalidate cache
 			cachedAccount = null;
 		},
 	};
@@ -523,11 +506,9 @@ export async function initializeIntegrationDEK(
 	integrationName: string,
 	kek: string,
 ): Promise<string> {
-	const integration = await database.db
-		.selectFrom('corsair_integrations')
-		.selectAll()
-		.where('name', '=', integrationName)
-		.executeTakeFirst();
+	const integration = await database.orm.integrations.findOne({
+		name: integrationName,
+	});
 
 	if (!integration) {
 		throw new Error(`Integration "${integrationName}" not found.`);
@@ -536,14 +517,9 @@ export async function initializeIntegrationDEK(
 	const dek = generateDEK();
 	const encryptedDek = await encryptDEK(dek, kek);
 
-	await database.db
-		.updateTable('corsair_integrations')
-		.set({
-			dek: encryptedDek,
-			updated_at: new Date(),
-		})
-		.where('id', '=', integration.id)
-		.execute();
+	await database.orm.integrations.update(integration.id, {
+		dek: encryptedDek,
+	});
 
 	return dek;
 }
@@ -558,22 +534,18 @@ export async function initializeAccountDEK(
 	tenantId: string,
 	kek: string,
 ): Promise<string> {
-	const integration = await database.db
-		.selectFrom('corsair_integrations')
-		.selectAll()
-		.where('name', '=', integrationName)
-		.executeTakeFirst();
+	const integration = await database.orm.integrations.findOne({
+		name: integrationName,
+	});
 
 	if (!integration) {
 		throw new Error(`Integration "${integrationName}" not found.`);
 	}
 
-	const account = await database.db
-		.selectFrom('corsair_accounts')
-		.selectAll()
-		.where('tenant_id', '=', tenantId)
-		.where('integration_id', '=', integration.id)
-		.executeTakeFirst();
+	const account = await database.orm.accounts.findOne({
+		tenant_id: tenantId,
+		integration_id: integration.id,
+	});
 
 	if (!account) {
 		throw new Error(
@@ -584,14 +556,9 @@ export async function initializeAccountDEK(
 	const dek = generateDEK();
 	const encryptedDek = await encryptDEK(dek, kek);
 
-	await database.db
-		.updateTable('corsair_accounts')
-		.set({
-			dek: encryptedDek,
-			updated_at: new Date(),
-		})
-		.where('id', '=', account.id)
-		.execute();
+	await database.orm.accounts.update(account.id, {
+		dek: encryptedDek,
+	});
 
 	return dek;
 }

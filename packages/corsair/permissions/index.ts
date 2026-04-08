@@ -128,11 +128,7 @@ export async function executePermission(
 	if (permission.expires_at < now) {
 		const db = getInternalDb(corsair);
 		if (db) {
-			await db.db
-				.updateTable('corsair_permissions')
-				.set({ status: 'expired', updated_at: new Date() })
-				.where('id', '=', permission.id)
-				.execute();
+			await db.permissions.updateStatus(permission.id, 'expired');
 		}
 		console.error(
 			`executePermission: permission '${permission.id}' has expired.`,
@@ -202,11 +198,9 @@ export async function executePermission(
 		const errorMessage = error instanceof Error ? error.message : String(error);
 		const db = getInternalDb(corsair);
 		if (db) {
-			await db.db
-				.updateTable('corsair_permissions')
-				.set({ status: 'failed', error: errorMessage, updated_at: new Date() })
-				.where('id', '=', permission.id)
-				.execute();
+			await db.permissions.updateStatus(permission.id, 'failed', {
+				error: errorMessage,
+			});
 		}
 		return {
 			plugin: permission.plugin,

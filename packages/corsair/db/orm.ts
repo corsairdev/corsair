@@ -1,4 +1,4 @@
-import type { ExpressionBuilder, Insertable, Updateable } from 'kysely';
+import type { ExpressionBuilder, Insertable, Kysely, Updateable } from 'kysely';
 import type { ZodTypeAny, z } from 'zod';
 import { generateUUID } from '../core/utils';
 import type {
@@ -13,8 +13,15 @@ import {
 	CorsairEventsSchema,
 	CorsairIntegrationsSchema,
 } from './';
-import type { CorsairDatabase, CorsairKyselyDatabase } from './kysely/database';
-import { createKyselyEntityClient } from './kysely/orm';
+import type { CorsairDatabaseAdapter } from './adapter';
+import type { CorsairKyselyDatabase } from './kysely/database';
+
+/**
+ * Internal type for functions that need direct Kysely access.
+ * The `KyselyDatabaseAdapter` class satisfies this structurally
+ * via its `.db` property.
+ */
+type KyselyDatabase = { db: Kysely<CorsairKyselyDatabase> };
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Core Table Types
@@ -70,9 +77,19 @@ function parseJsonLike(value: unknown): unknown {
 	return value;
 }
 
-function assertDatabaseConfigured(
-	database: CorsairDatabase | undefined,
-): asserts database is CorsairDatabase {
+function assertKyselyDatabaseConfigured(
+	database: KyselyDatabase | undefined,
+): asserts database is KyselyDatabase {
+	if (!database) {
+		throw new Error(
+			'Corsair database is not configured. Pass `database` to createCorsair(...) to enable ORM.',
+		);
+	}
+}
+
+function assertAdapterConfigured(
+	database: CorsairDatabaseAdapter | undefined,
+): asserts database is CorsairDatabaseAdapter {
 	if (!database) {
 		throw new Error(
 			'Corsair database is not configured. Pass `database` to createCorsair(...) to enable ORM.',
@@ -285,7 +302,7 @@ function parseCountValue(countVal: unknown): number {
 function createBaseTableClient<
 	TName extends keyof CorsairKyselyDatabase & CorsairOrmTableName,
 >(
-	database: CorsairDatabase | undefined,
+	database: KyselyDatabase | undefined,
 	tableName: TName,
 ): CorsairTableClient<CorsairOrmDatabase[TName]> {
 	type TableRow = CorsairKyselyDatabase[TName];
@@ -338,7 +355,7 @@ function createBaseTableClient<
 	};
 
 	const getDb = () => {
-		assertDatabaseConfigured(database);
+		assertKyselyDatabaseConfigured(database);
 		return database;
 	};
 	const selectFromTable = () =>
@@ -368,7 +385,7 @@ function createBaseTableClient<
 
 	return {
 		findById: async (id: string) => {
-			assertDatabaseConfigured(database);
+			assertKyselyDatabaseConfigured(database);
 			let q = selectFromTable().selectAll();
 			q = applyCorsairWhere(q, [{ field: 'id', value: id }]);
 			const row = (await q.executeTakeFirst()) as TableRow | undefined;
@@ -376,7 +393,7 @@ function createBaseTableClient<
 		},
 
 		findOne: async (where: WhereClause<RowType>) => {
-			assertDatabaseConfigured(database);
+			assertKyselyDatabaseConfigured(database);
 			let q = selectFromTable().selectAll();
 			q = applyCorsairWhere(q, buildWhere(where));
 			const row = (await q.executeTakeFirst()) as TableRow | undefined;
@@ -384,7 +401,7 @@ function createBaseTableClient<
 		},
 
 		findMany: async (options) => {
-			assertDatabaseConfigured(database);
+			assertKyselyDatabaseConfigured(database);
 			let q = selectFromTable().selectAll();
 			q = applyCorsairWhere(q, buildWhere(options?.where));
 			if (typeof options?.limit === 'number') q = q.limit(options.limit);
@@ -394,7 +411,7 @@ function createBaseTableClient<
 		},
 
 		create: async (data: CreateInput<RowType>) => {
-			assertDatabaseConfigured(database);
+			assertKyselyDatabaseConfigured(database);
 			const now = new Date();
 			const insert = {
 				id: data.id ?? generateUUID(),
@@ -410,7 +427,7 @@ function createBaseTableClient<
 		},
 
 		update: async (id: string, data: UpdateInput<RowType>) => {
-			assertDatabaseConfigured(database);
+			assertKyselyDatabaseConfigured(database);
 			const update = {
 				...data,
 				updated_at: new Date(),
@@ -425,7 +442,7 @@ function createBaseTableClient<
 			where: WhereClause<RowType>,
 			data: UpdateInput<RowType>,
 		) => {
-			assertDatabaseConfigured(database);
+			assertKyselyDatabaseConfigured(database);
 			const update = {
 				...data,
 				updated_at: new Date(),
@@ -444,7 +461,7 @@ function createBaseTableClient<
 		},
 
 		delete: async (id: string) => {
-			assertDatabaseConfigured(database);
+			assertKyselyDatabaseConfigured(database);
 			let q = deleteFromTable();
 			q = applyCorsairWhere(q, [{ field: 'id', value: id }]);
 			const res = await q.executeTakeFirst();
@@ -452,7 +469,7 @@ function createBaseTableClient<
 		},
 
 		deleteMany: async (where: WhereClause<RowType>) => {
-			assertDatabaseConfigured(database);
+			assertKyselyDatabaseConfigured(database);
 			let q = deleteFromTable();
 			q = applyCorsairWhere(q, buildWhere(where));
 			const res = await q.executeTakeFirst();
@@ -460,7 +477,7 @@ function createBaseTableClient<
 		},
 
 		count: async (where) => {
-			assertDatabaseConfigured(database);
+			assertKyselyDatabaseConfigured(database);
 			let q = selectFromTable().select(
 				(eb: ExpressionBuilder<CorsairKyselyDatabase, TName>) =>
 					eb.fn.countAll().as('count'),
@@ -475,7 +492,7 @@ function createBaseTableClient<
 }
 
 function createIntegrationsClient(
-	database: CorsairDatabase | undefined,
+	database: KyselyDatabase | undefined,
 ): CorsairIntegrationsClient {
 	const base = createBaseTableClient(database, 'corsair_integrations');
 
@@ -493,14 +510,14 @@ function createIntegrationsClient(
 }
 
 function createAccountsClient(
-	database: CorsairDatabase | undefined,
+	database: KyselyDatabase | undefined,
 ): CorsairAccountsClient {
 	const base = createBaseTableClient(database, 'corsair_accounts');
 
 	return {
 		...base,
 		findByTenantAndIntegration: async (tenantId, integrationName) => {
-			assertDatabaseConfigured(database);
+			assertKyselyDatabaseConfigured(database);
 			// First find the integration by name
 			const integration = await database.db
 				.selectFrom('corsair_integrations')
@@ -537,7 +554,7 @@ function createAccountsClient(
 }
 
 function createEntitiesClient(
-	database: CorsairDatabase | undefined,
+	database: KyselyDatabase | undefined,
 ): CorsairEntitiesClient {
 	const base = createBaseTableClient(database, 'corsair_entities');
 
@@ -551,7 +568,7 @@ function createEntitiesClient(
 			}),
 		findManyByEntityIds: async ({ accountId, entityType, entityIds }) => {
 			if (entityIds.length === 0) return [];
-			assertDatabaseConfigured(database);
+			assertKyselyDatabaseConfigured(database);
 			const rows = await database.db
 				.selectFrom('corsair_entities')
 				.selectAll()
@@ -574,7 +591,7 @@ function createEntitiesClient(
 			limit,
 			offset,
 		}) => {
-			assertDatabaseConfigured(database);
+			assertKyselyDatabaseConfigured(database);
 			let q = database.db
 				.selectFrom('corsair_entities')
 				.selectAll()
@@ -609,7 +626,7 @@ function createEntitiesClient(
 			});
 		},
 		deleteByEntityId: async ({ accountId, entityType, entityId }) => {
-			assertDatabaseConfigured(database);
+			assertKyselyDatabaseConfigured(database);
 			const res = await database.db
 				.deleteFrom('corsair_entities')
 				.where('account_id', '=', accountId)
@@ -624,7 +641,7 @@ function createEntitiesClient(
 }
 
 function createEventsClient(
-	database: CorsairDatabase | undefined,
+	database: KyselyDatabase | undefined,
 ): CorsairEventsClient {
 	const base = createBaseTableClient(database, 'corsair_events');
 
@@ -656,15 +673,28 @@ function createEventsClient(
 
 /**
  * Creates the base Corsair ORM with all table clients.
+ *
+ * Accepts either:
+ * - A `CorsairDatabaseAdapter` — delegates to `adapter.orm` (works for any backend).
+ * - An object with a `.db` Kysely instance — builds ORM clients from Kysely queries.
+ *   The `KyselyDatabaseAdapter` satisfies both paths (has `.db` and is an adapter).
+ *
+ * When called from `KyselyDatabaseAdapter.orm`, the adapter passes `this`
+ * which has `.db`, so we take the Kysely path directly (no recursion).
  */
 export function createCorsairOrm(
-	database: CorsairDatabase | undefined,
+	database: CorsairDatabaseAdapter | KyselyDatabase | undefined,
 ): CorsairOrm {
+	if (database && !('db' in database)) {
+		return database.orm;
+	}
+
+	const kyselyDb = database as KyselyDatabase | undefined;
 	return {
-		integrations: createIntegrationsClient(database),
-		accounts: createAccountsClient(database),
-		entities: createEntitiesClient(database),
-		events: createEventsClient(database),
+		integrations: createIntegrationsClient(kyselyDb),
+		accounts: createAccountsClient(kyselyDb),
+		entities: createEntitiesClient(kyselyDb),
+		events: createEventsClient(kyselyDb),
 	};
 }
 
@@ -1286,29 +1316,21 @@ export type TenantScopedOrm = {
 };
 
 /**
- * Creates an entity client for a specific plugin entity type.
- * The client lazily resolves the account ID when operations are performed.
+ * Builds a cached `getAccountId` function that resolves the account ID
+ * for a (tenant, integration) pair via the adapter ORM.
  */
-function createPluginEntityClient<DataSchema extends ZodTypeAny>(
-	database: CorsairDatabase | undefined,
+function buildAccountIdResolver(
+	database: CorsairDatabaseAdapter,
 	context: PluginContext,
-	entityTypeName: string,
-	version: string,
-	dataSchema: DataSchema,
-): PluginEntityClient<DataSchema> {
-	// Cache for account ID lookup
+): () => Promise<string> {
 	let cachedAccountId: string | null = null;
 
-	async function getAccountId(): Promise<string> {
+	return async () => {
 		if (cachedAccountId !== null) return cachedAccountId;
 
-		assertDatabaseConfigured(database);
-
-		const integration = await database.db
-			.selectFrom('corsair_integrations')
-			.selectAll()
-			.where('name', '=', context.integrationName)
-			.executeTakeFirst();
+		const integration = await database.orm.integrations.findOne({
+			name: context.integrationName,
+		});
 
 		if (!integration) {
 			throw new Error(
@@ -1316,12 +1338,10 @@ function createPluginEntityClient<DataSchema extends ZodTypeAny>(
 			);
 		}
 
-		const account = await database.db
-			.selectFrom('corsair_accounts')
-			.selectAll()
-			.where('tenant_id', '=', context.tenantId)
-			.where('integration_id', '=', integration.id)
-			.executeTakeFirst();
+		const account = await database.orm.accounts.findOne({
+			tenant_id: context.tenantId,
+			integration_id: integration.id,
+		});
 
 		if (!account) {
 			throw new Error(
@@ -1331,20 +1351,13 @@ function createPluginEntityClient<DataSchema extends ZodTypeAny>(
 
 		cachedAccountId = account.id;
 		return cachedAccountId;
-	}
-
-	assertDatabaseConfigured(database);
-	return createKyselyEntityClient(
-		database.db,
-		getAccountId,
-		entityTypeName,
-		version,
-		dataSchema,
-	);
+	};
 }
 
 /**
  * Creates a plugin ORM with typed entity clients.
+ *
+ * Works with any `CorsairDatabaseAdapter` — SQL or NoSQL.
  *
  * @example
  * ```ts
@@ -1380,58 +1393,22 @@ function createPluginEntityClient<DataSchema extends ZodTypeAny>(
 export function createPluginOrm<
 	Entities extends Record<string, ZodTypeAny>,
 >(config: {
-	database: CorsairDatabase | undefined;
+	database: CorsairDatabaseAdapter | undefined;
 	integrationName: string;
 	schema: CorsairPluginSchema<Entities>;
 	tenantId: string;
 }): CorsairPluginOrm<Entities> {
 	const { database, integrationName, schema, tenantId } = config;
-	const baseOrm = createCorsairOrm(database);
+	assertAdapterConfigured(database);
 
+	const baseOrm = database.orm;
 	const context: PluginContext = { tenantId, integrationName };
-
-	// Cache for account ID lookup
-	let cachedAccountId: string | null = null;
-
-	async function getAccountId(): Promise<string> {
-		if (cachedAccountId !== null) return cachedAccountId;
-
-		assertDatabaseConfigured(database);
-
-		const integration = await database.db
-			.selectFrom('corsair_integrations')
-			.selectAll()
-			.where('name', '=', integrationName)
-			.executeTakeFirst();
-
-		if (!integration) {
-			throw new Error(
-				`Integration "${integrationName}" not found. Make sure to create the integration first.`,
-			);
-		}
-
-		const account = await database.db
-			.selectFrom('corsair_accounts')
-			.selectAll()
-			.where('tenant_id', '=', tenantId)
-			.where('integration_id', '=', integration.id)
-			.executeTakeFirst();
-
-		if (!account) {
-			throw new Error(
-				`Account not found for tenant "${tenantId}" and integration "${integrationName}". Make sure to create the account first.`,
-			);
-		}
-
-		cachedAccountId = account.id;
-		return cachedAccountId;
-	}
+	const getAccountId = buildAccountIdResolver(database, context);
 
 	const entityClients: Record<string, PluginEntityClient<ZodTypeAny>> = {};
 	for (const [entityTypeName, dataSchema] of Object.entries(schema.entities)) {
-		entityClients[entityTypeName] = createPluginEntityClient(
-			database,
-			context,
+		entityClients[entityTypeName] = database.createEntityClient(
+			getAccountId,
 			entityTypeName,
 			schema.version,
 			dataSchema,
@@ -1449,8 +1426,7 @@ export function createPluginOrm<
 
 /**
  * Creates a tenant-scoped ORM that filters all operations by tenant.
- * This is a synchronous operation - the tenant context is just stored
- * and used when actual database operations are performed.
+ * Works with any `CorsairDatabaseAdapter` — SQL or NoSQL.
  *
  * @example
  * ```ts
@@ -1470,10 +1446,12 @@ export function createPluginOrm<
  * ```
  */
 export function createTenantScopedOrm(
-	database: CorsairDatabase | undefined,
+	database: CorsairDatabaseAdapter | undefined,
 	tenantId: string,
 ): TenantScopedOrm {
-	const baseOrm = createCorsairOrm(database);
+	assertAdapterConfigured(database);
+
+	const baseOrm = database.orm;
 
 	return {
 		$tenantId: tenantId,
@@ -1485,55 +1463,47 @@ export function createTenantScopedOrm(
 			baseOrm.accounts.findByTenantAndIntegration(tenantId, integrationName),
 
 		listEntities: async (options) => {
-			assertDatabaseConfigured(database);
-
-			// Get all account IDs for this tenant
-			const accounts = await database.db
-				.selectFrom('corsair_accounts')
-				.select('id')
-				.where('tenant_id', '=', tenantId)
-				.execute();
-
+			const accounts = await baseOrm.accounts.findMany({
+				where: { tenant_id: tenantId },
+			});
 			if (accounts.length === 0) return [];
 
 			const accountIds = accounts.map((a) => a.id);
 
-			let q = database.db
-				.selectFrom('corsair_entities')
-				.selectAll()
-				.where('account_id', 'in', accountIds);
+			const where: Record<string, unknown> = {
+				account_id: { in: accountIds },
+			};
 			if (options?.entityType) {
-				q = q.where('entity_type', '=', options.entityType);
+				where.entity_type = options.entityType;
 			}
-			if (typeof options?.limit === 'number') q = q.limit(options.limit);
-			if (typeof options?.offset === 'number') q = q.offset(options.offset);
-			return (await q.execute()) as CorsairEntity[];
+
+			return baseOrm.entities.findMany({
+				where: where as any,
+				limit: options?.limit,
+				offset: options?.offset,
+			});
 		},
 
 		listEvents: async (options) => {
-			assertDatabaseConfigured(database);
-
-			// Get all account IDs for this tenant
-			const accounts = await database.db
-				.selectFrom('corsair_accounts')
-				.select('id')
-				.where('tenant_id', '=', tenantId)
-				.execute();
-
+			const accounts = await baseOrm.accounts.findMany({
+				where: { tenant_id: tenantId },
+			});
 			if (accounts.length === 0) return [];
 
 			const accountIds = accounts.map((a) => a.id);
 
-			let q = database.db
-				.selectFrom('corsair_events')
-				.selectAll()
-				.where('account_id', 'in', accountIds);
+			const where: Record<string, unknown> = {
+				account_id: { in: accountIds },
+			};
 			if (options?.status) {
-				q = q.where('status', '=', options.status);
+				where.status = options.status;
 			}
-			if (typeof options?.limit === 'number') q = q.limit(options.limit);
-			if (typeof options?.offset === 'number') q = q.offset(options.offset);
-			return (await q.execute()) as CorsairEvent[];
+
+			return baseOrm.events.findMany({
+				where: where as any,
+				limit: options?.limit,
+				offset: options?.offset,
+			});
 		},
 
 		forIntegration: <Entities extends Record<string, ZodTypeAny>>(config: {
@@ -1567,7 +1537,7 @@ export function createTenantScopedOrm(
 export function createPluginOrmFactory<
 	Entities extends Record<string, ZodTypeAny>,
 >(
-	database: CorsairDatabase | undefined,
+	database: CorsairDatabaseAdapter | undefined,
 	config: {
 		integrationName: string;
 		schema: CorsairPluginSchema<Entities>;

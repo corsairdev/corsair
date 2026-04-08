@@ -8,6 +8,8 @@ import type {
 	CorsairIntegration,
 	CorsairPermission,
 } from '../index';
+import type { CorsairDatabaseAdapter } from '../adapter';
+import { KyselyDatabaseAdapter } from './adapter';
 import { SqliteDatePlugin } from './sqlite-date-plugin.js';
 
 export type CorsairKyselyDatabase = {
@@ -18,9 +20,13 @@ export type CorsairKyselyDatabase = {
 	corsair_permissions: CorsairPermission;
 };
 
-export type CorsairDatabase = {
-	db: Kysely<CorsairKyselyDatabase>;
-};
+/**
+ * The database handle passed throughout Corsair.
+ *
+ * Previously `{ db: Kysely<...> }` — now an alias for the backend-agnostic
+ * adapter interface so that SQL and NoSQL backends are interchangeable.
+ */
+export type CorsairDatabase = CorsairDatabaseAdapter;
 
 /**
  * better-sqlite3 Database instance.
@@ -30,10 +36,25 @@ export type BetterSqlite3Database = NonNullable<
 	SqliteDialectConfig['database']
 >;
 
+/**
+ * Accepted input types for `createCorsair({ database: ... })`.
+ * Includes SQL drivers (pg Pool, better-sqlite3, raw Kysely) and
+ * pre-built adapters for NoSQL backends.
+ */
 export type CorsairDatabaseInput =
 	| Pool
 	| BetterSqlite3Database
-	| Kysely<CorsairKyselyDatabase>;
+	| Kysely<CorsairKyselyDatabase>
+	| CorsairDatabaseAdapter;
+
+function isAdapter(input: CorsairDatabaseInput): input is CorsairDatabaseAdapter {
+	return (
+		typeof input === 'object' &&
+		input !== null &&
+		'createEntityClient' in input &&
+		typeof (input as CorsairDatabaseAdapter).createEntityClient === 'function'
+	);
+}
 
 function isPgPool(input: CorsairDatabaseInput): input is Pool {
 	return (
@@ -65,8 +86,12 @@ function isKysely(
 export function createCorsairDatabase(
 	input: CorsairDatabaseInput,
 ): CorsairDatabase {
+	if (isAdapter(input)) {
+		return input;
+	}
+
 	if (isKysely(input)) {
-		return { db: input };
+		return new KyselyDatabaseAdapter(input);
 	}
 
 	if (isBetterSqlite3(input)) {
@@ -74,17 +99,17 @@ export function createCorsairDatabase(
 			dialect: new SqliteDialect({ database: input }),
 			plugins: [new SqliteDatePlugin()],
 		});
-		return { db };
+		return new KyselyDatabaseAdapter(db);
 	}
 
 	if (isPgPool(input)) {
 		const db = new Kysely<CorsairKyselyDatabase>({
 			dialect: new PostgresDialect({ pool: input }),
 		});
-		return { db };
+		return new KyselyDatabaseAdapter(db);
 	}
 
 	throw new Error(
-		'Unsupported database input. Expected a pg Pool, better-sqlite3 Database, or a Kysely instance.',
+		'Unsupported database input. Expected a pg Pool, better-sqlite3 Database, Kysely instance, or a CorsairDatabaseAdapter.',
 	);
 }
