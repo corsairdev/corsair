@@ -1,7 +1,9 @@
-const { exec } = require('child_process');
-const path = require('path');
-const { promisify } = require('util');
+import { exec } from 'child_process';
+import path from 'path';
+import { promisify } from 'util';
+import { fileURLToPath } from 'url';
 
+const __dirname = fileURLToPath(new URL('.', import.meta.url));
 const execPromise = promisify(exec);
 
 describe('Build Command', () => {
