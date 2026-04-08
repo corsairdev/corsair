@@ -1,11 +1,8 @@
-import dotenv from 'dotenv';
-import { createCorsair } from '../../core';
-import { createCorsairOrm } from '../../db/orm';
-import { createIntegrationAndAccount } from '../../tests/plugins-test-utils';
-import { createTestDatabase } from '../../tests/setup-db';
+import 'dotenv/config';
+import { createCorsair } from 'corsair/core';
+import { createCorsairOrm } from 'corsair/orm';
+import { createIntegrationAndAccount, createTestDatabase } from 'corsair/tests';
 import { teams } from './index';
-
-dotenv.config();
 
 // DB event payloads are stored as JSON strings or objects; unknown enforces narrowing before use
 function parsePayload(payload: unknown): unknown {
