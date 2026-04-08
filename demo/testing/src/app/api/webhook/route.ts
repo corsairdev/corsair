@@ -14,7 +14,6 @@ export async function POST(request: NextRequest) {
 			},
 		});
 	}
-
 	const headers: Record<string, string> = {};
 	request.headers.forEach((value, key) => {
 		headers[key] = value;

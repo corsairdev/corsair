@@ -666,6 +666,12 @@ async function main() {
 		console.error(`[#corsair]: Unknown plugin for subscribe: '${pluginId ?? '(none)'}'. Supported: outlook`);
 		process.exit(1);
 	}
+	
+	if (command === 'teams-subscribe') {
+		const { runTeamsSubscribe } = await import('./watch-renew');
+		await runTeamsSubscribe({ cwd });
+		return;
+	}
 
 	if (command === 'list') {
 		const { plugin, type } = parseListArgs(args.slice(1));
