@@ -1,0 +1,126 @@
+---
+title: Stripe Database Schema
+description: Database entities and querying synced Stripe data.
+---
+
+The Stripe plugin syncs customers, charges, and payment intents to your local database.
+
+## Synced Entities
+
+- **customers** - Stripe customer records
+- **charges** - Payment charges
+- **paymentIntents** - Payment intent objects
+
+## Database API
+
+```ts
+const customers = await corsair.stripe.db.customers.search({ data: {} });
+```
+
+---
+
+## Customers
+
+### Schema
+
+```ts
+{
+    id: string;
+    email?: string;
+    name?: string;
+    phone?: string;
+    currency?: string;
+    description?: string;
+    balance?: number;
+    delinquent?: boolean;
+    livemode?: boolean;
+    created?: number;
+}
+```
+
+### Querying Customers
+
+```ts
+// Get all customers
+const customers = await corsair.stripe.db.customers.search({ data: {} });
+
+// Find by email
+const customer = await corsair.stripe.db.customers.search({
+    data: { email: "user@example.com" },
+});
+```
+
+---
+
+## Charges
+
+### Schema
+
+```ts
+{
+    id: string;
+    amount: number;
+    currency: string;
+    status: string;
+    customer?: string;
+    description?: string;
+    paid?: boolean;
+    refunded?: boolean;
+    captured?: boolean;
+    livemode?: boolean;
+    created?: number;
+}
+```
+
+### Querying Charges
+
+```ts
+// Get successful charges
+const charges = await corsair.stripe.db.charges.search({
+    data: { status: "succeeded" },
+});
+
+// Get charges for a customer
+const customerCharges = await corsair.stripe.db.charges.search({
+    data: { customer: "cus_123" },
+});
+```
+
+---
+
+## Payment Intents
+
+### Schema
+
+```ts
+{
+    id: string;
+    amount?: number;
+    currency?: string;
+    status?: string;
+    customer?: string;
+    description?: string;
+    livemode?: boolean;
+    created?: number;
+}
+```
+
+### Querying Payment Intents
+
+```ts
+const intents = await corsair.stripe.db.paymentIntents.search({
+    data: { status: "succeeded" },
+});
+```
+
+---
+
+## Multi-Tenancy
+
+```ts
+const tenant = corsair.withTenant("account-123");
+
+const charges = await tenant.stripe.db.charges.search({ data: {} });
+```
+
+See [Database](/concepts/database) for more information about querying patterns.

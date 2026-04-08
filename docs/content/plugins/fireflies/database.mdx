@@ -1,0 +1,102 @@
+---
+title: Fireflies Database Schema
+description: Database entities and querying synced Fireflies data.
+---
+
+The Fireflies plugin syncs meeting transcripts and related data to your local database.
+
+## Synced Entities
+
+- **transcripts** - Meeting transcripts and summaries
+- **users** - Fireflies user accounts
+
+## Database API
+
+```ts
+const transcripts = await corsair.fireflies.db.transcripts.search({
+    data: {},
+    limit: 20,
+});
+```
+
+---
+
+## Transcripts
+
+### Schema
+
+```ts
+{
+    id: string;
+    title?: string;
+    date?: string;
+    duration?: number;
+    summary?: {
+        overview?: string;
+        action_items?: string;
+        keywords?: string[];
+        shorthand_bullet?: string;
+    };
+    sentences?: Array<{
+        index: number;
+        speaker_id?: string;
+        speaker_name?: string;
+        text: string;
+        start_time?: number;
+        end_time?: number;
+    }>;
+    attendees?: Array<{
+        displayName?: string;
+        email?: string;
+    }>;
+    meetingLink?: string;
+    videoUrl?: string;
+}
+```
+
+### Querying Transcripts
+
+```ts
+// Get all transcripts
+const transcripts = await corsair.fireflies.db.transcripts.search({ data: {} });
+
+// Search by title
+const results = await corsair.fireflies.db.transcripts.search({
+    data: { title: "Q1 Planning" },
+});
+```
+
+---
+
+## Users
+
+### Schema
+
+```ts
+{
+    id: string;
+    email?: string;
+    name?: string;
+    numTranscripts?: number;
+    recentMeeting?: string;
+    minutes_listened?: number;
+}
+```
+
+### Querying Users
+
+```ts
+const users = await corsair.fireflies.db.users.search({ data: {} });
+```
+
+---
+
+## Multi-Tenancy
+
+```ts
+const tenant = corsair.withTenant("user-123");
+
+const transcripts = await tenant.fireflies.db.transcripts.search({ data: {} });
+```
+
+See [Database](/concepts/database) for more information about querying patterns.

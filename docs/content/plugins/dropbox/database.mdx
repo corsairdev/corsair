@@ -1,0 +1,86 @@
+---
+title: Dropbox Database Schema
+description: Database entities and querying synced Dropbox data.
+---
+
+The Dropbox plugin syncs files and folders to your local database.
+
+## Synced Entities
+
+- **files** - File metadata
+- **folders** - Folder metadata
+
+## Database API
+
+```ts
+const files = await corsair.dropbox.db.files.search({
+    data: {},
+    limit: 20,
+});
+```
+
+---
+
+## Files
+
+### Schema
+
+```ts
+{
+    id: string;
+    name?: string;
+    path_lower?: string;
+    path_display?: string;
+    size?: number;
+    is_downloadable?: boolean;
+    server_modified?: Date;
+    client_modified?: Date;
+    rev?: string;
+    content_hash?: string;
+}
+```
+
+### Querying Files
+
+```ts
+// Get all files
+const files = await corsair.dropbox.db.files.search({ data: {} });
+
+// Search by path
+const docs = await corsair.dropbox.db.files.search({
+    data: { path_lower: "/documents" },
+});
+```
+
+---
+
+## Folders
+
+### Schema
+
+```ts
+{
+    id: string;
+    name?: string;
+    path_lower?: string;
+    path_display?: string;
+}
+```
+
+### Querying Folders
+
+```ts
+const folders = await corsair.dropbox.db.folders.search({ data: {} });
+```
+
+---
+
+## Multi-Tenancy
+
+```ts
+const tenant = corsair.withTenant("user-123");
+
+const files = await tenant.dropbox.db.files.search({ data: {} });
+```
+
+See [Database](/concepts/database) for more information about querying patterns.

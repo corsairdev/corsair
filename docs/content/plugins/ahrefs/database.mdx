@@ -1,0 +1,92 @@
+---
+title: Ahrefs Database Schema
+description: Database entities and querying synced Ahrefs data.
+---
+
+The Ahrefs plugin syncs SEO metrics and keyword data to your local database.
+
+## Synced Entities
+
+- **domainMetrics** - Domain-level SEO metrics
+- **keywords** - Keyword rankings and data
+
+## Database API
+
+```ts
+const metrics = await corsair.ahrefs.db.domainMetrics.search({
+    data: {},
+});
+```
+
+---
+
+## Domain Metrics
+
+### Schema
+
+```ts
+{
+    id: string;
+    target?: string;
+    domain_rating?: number;
+    ahrefs_rank?: number;
+    backlinks?: number;
+    referring_domains?: number;
+    organic_traffic?: number;
+    organic_keywords?: number;
+    date?: string;
+}
+```
+
+### Querying Domain Metrics
+
+```ts
+// Get metrics for a domain
+const metrics = await corsair.ahrefs.db.domainMetrics.search({
+    data: { target: "example.com" },
+});
+```
+
+---
+
+## Keywords
+
+### Schema
+
+```ts
+{
+    id: string;
+    keyword?: string;
+    country?: string;
+    volume?: number;
+    difficulty?: number;
+    cpc?: number;
+    position?: number;
+    url?: string;
+    date?: string;
+}
+```
+
+### Querying Keywords
+
+```ts
+// Get all tracked keywords
+const keywords = await corsair.ahrefs.db.keywords.search({ data: {} });
+
+// Filter by country
+const usKeywords = await corsair.ahrefs.db.keywords.search({
+    data: { country: "us" },
+});
+```
+
+---
+
+## Multi-Tenancy
+
+```ts
+const tenant = corsair.withTenant("workspace-123");
+
+const metrics = await tenant.ahrefs.db.domainMetrics.search({ data: {} });
+```
+
+See [Database](/concepts/database) for more information about querying patterns.

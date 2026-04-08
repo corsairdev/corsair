@@ -18,6 +18,7 @@ import {
 	CalendarDays,
 	CheckSquare,
 	Code2,
+	CreditCard,
 	Database,
 	Download,
 	FileSpreadsheet,
@@ -45,6 +46,7 @@ import {
 	TrendingUp,
 	Twitter,
 	Users,
+	Video,
 	Webhook,
 	Zap,
 } from 'lucide-react';
@@ -806,6 +808,226 @@ const tree = {
 						{ type: 'page' as const, name: 'Webhooks', url: '/plugins/sentry/webhooks', icon: <Webhook className="size-4" /> },
 						{ type: 'page' as const, name: 'Database', url: '/plugins/sentry/database', icon: <Table2 className="size-4" /> },
 						{ type: 'page' as const, name: 'Error Handlers', url: '/plugins/sentry/error-handlers', icon: <AlertTriangle className="size-4" /> },
+					],
+				},
+				{
+					type: 'folder' as const,
+					name: 'Twitter',
+					icon: <Twitter className="size-4" />,
+					children: [
+						{ type: 'page' as const, name: 'Basics', url: '/plugins/twitter', icon: <BookOpen className="size-4" /> },
+						{ type: 'page' as const, name: 'Get Credentials', url: '/plugins/twitter/get-credentials', icon: <Key className="size-4" /> },
+						{ type: 'page' as const, name: 'Database', url: '/plugins/twitter/database', icon: <Table2 className="size-4" /> },
+					],
+				},
+				{
+					type: 'folder' as const,
+					name: 'Monday',
+					icon: <Grid3x3 className="size-4" />,
+					children: [
+						{ type: 'page' as const, name: 'Basics', url: '/plugins/monday', icon: <BookOpen className="size-4" /> },
+						{ type: 'page' as const, name: 'Get Credentials', url: '/plugins/monday/get-credentials', icon: <Key className="size-4" /> },
+						{ type: 'page' as const, name: 'Database', url: '/plugins/monday/database', icon: <Table2 className="size-4" /> },
+					],
+				},
+				{
+					type: 'folder' as const,
+					name: 'Hacker News',
+					icon: <Activity className="size-4" />,
+					children: [
+						{ type: 'page' as const, name: 'Basics', url: '/plugins/hackernews', icon: <BookOpen className="size-4" /> },
+						{ type: 'page' as const, name: 'Get Credentials', url: '/plugins/hackernews/get-credentials', icon: <Key className="size-4" /> },
+						{ type: 'page' as const, name: 'Database', url: '/plugins/hackernews/database', icon: <Table2 className="size-4" /> },
+					],
+				},
+				{
+					type: 'folder' as const,
+					name: 'Box',
+					icon: <Folder className="size-4" />,
+					children: [
+						{ type: 'page' as const, name: 'Basics', url: '/plugins/box', icon: <BookOpen className="size-4" /> },
+						{ type: 'page' as const, name: 'Get Credentials', url: '/plugins/box/get-credentials', icon: <Key className="size-4" /> },
+						{ type: 'page' as const, name: 'Database', url: '/plugins/box/database', icon: <Table2 className="size-4" /> },
+					],
+				},
+				{
+					type: 'folder' as const,
+					name: 'Exa',
+					icon: <Search className="size-4" />,
+					children: [
+						{ type: 'page' as const, name: 'Basics', url: '/plugins/exa', icon: <BookOpen className="size-4" /> },
+						{ type: 'page' as const, name: 'Get Credentials', url: '/plugins/exa/get-credentials', icon: <Key className="size-4" /> },
+						{ type: 'page' as const, name: 'Database', url: '/plugins/exa/database', icon: <Table2 className="size-4" /> },
+					],
+				},
+				{
+					type: 'folder' as const,
+					name: 'Intercom',
+					icon: <MessageCircle className="size-4" />,
+					children: [
+						{ type: 'page' as const, name: 'Basics', url: '/plugins/intercom', icon: <BookOpen className="size-4" /> },
+						{ type: 'page' as const, name: 'Get Credentials', url: '/plugins/intercom/get-credentials', icon: <Key className="size-4" /> },
+						{ type: 'page' as const, name: 'Database', url: '/plugins/intercom/database', icon: <Table2 className="size-4" /> },
+					],
+				},
+				{
+					type: 'folder' as const,
+					name: 'Typeform',
+					icon: <FileText className="size-4" />,
+					children: [
+						{ type: 'page' as const, name: 'Basics', url: '/plugins/typeform', icon: <BookOpen className="size-4" /> },
+						{ type: 'page' as const, name: 'Get Credentials', url: '/plugins/typeform/get-credentials', icon: <Key className="size-4" /> },
+						{ type: 'page' as const, name: 'Database', url: '/plugins/typeform/database', icon: <Table2 className="size-4" /> },
+					],
+				},
+				{
+					type: 'folder' as const,
+					name: 'Fireflies',
+					icon: <Activity className="size-4" />,
+					children: [
+						{ type: 'page' as const, name: 'Basics', url: '/plugins/fireflies', icon: <BookOpen className="size-4" /> },
+						{ type: 'page' as const, name: 'Get Credentials', url: '/plugins/fireflies/get-credentials', icon: <Key className="size-4" /> },
+						{ type: 'page' as const, name: 'Database', url: '/plugins/fireflies/database', icon: <Table2 className="size-4" /> },
+					],
+				},
+				{
+					type: 'folder' as const,
+					name: 'Jira',
+					icon: <Bug className="size-4" />,
+					children: [
+						{ type: 'page' as const, name: 'Basics', url: '/plugins/jira', icon: <BookOpen className="size-4" /> },
+						{ type: 'page' as const, name: 'Get Credentials', url: '/plugins/jira/get-credentials', icon: <Key className="size-4" /> },
+						{ type: 'page' as const, name: 'Database', url: '/plugins/jira/database', icon: <Table2 className="size-4" /> },
+					],
+				},
+				{
+					type: 'folder' as const,
+					name: 'Figma',
+					icon: <Layers className="size-4" />,
+					children: [
+						{ type: 'page' as const, name: 'Basics', url: '/plugins/figma', icon: <BookOpen className="size-4" /> },
+						{ type: 'page' as const, name: 'Get Credentials', url: '/plugins/figma/get-credentials', icon: <Key className="size-4" /> },
+						{ type: 'page' as const, name: 'Database', url: '/plugins/figma/database', icon: <Table2 className="size-4" /> },
+					],
+				},
+				{
+					type: 'folder' as const,
+					name: 'Telegram',
+					icon: <Send className="size-4" />,
+					children: [
+						{ type: 'page' as const, name: 'Basics', url: '/plugins/telegram', icon: <BookOpen className="size-4" /> },
+						{ type: 'page' as const, name: 'Get Credentials', url: '/plugins/telegram/get-credentials', icon: <Key className="size-4" /> },
+						{ type: 'page' as const, name: 'Database', url: '/plugins/telegram/database', icon: <Table2 className="size-4" /> },
+					],
+				},
+				{
+					type: 'folder' as const,
+					name: 'Zoom',
+					icon: <Video className="size-4" />,
+					children: [
+						{ type: 'page' as const, name: 'Basics', url: '/plugins/zoom', icon: <BookOpen className="size-4" /> },
+						{ type: 'page' as const, name: 'Get Credentials', url: '/plugins/zoom/get-credentials', icon: <Key className="size-4" /> },
+						{ type: 'page' as const, name: 'Database', url: '/plugins/zoom/database', icon: <Table2 className="size-4" /> },
+					],
+				},
+				{
+					type: 'folder' as const,
+					name: 'Dropbox',
+					icon: <Folder className="size-4" />,
+					children: [
+						{ type: 'page' as const, name: 'Basics', url: '/plugins/dropbox', icon: <BookOpen className="size-4" /> },
+						{ type: 'page' as const, name: 'Get Credentials', url: '/plugins/dropbox/get-credentials', icon: <Key className="size-4" /> },
+						{ type: 'page' as const, name: 'Database', url: '/plugins/dropbox/database', icon: <Table2 className="size-4" /> },
+					],
+				},
+				{
+					type: 'folder' as const,
+					name: 'Trello',
+					icon: <CheckSquare className="size-4" />,
+					children: [
+						{ type: 'page' as const, name: 'Basics', url: '/plugins/trello', icon: <BookOpen className="size-4" /> },
+						{ type: 'page' as const, name: 'Get Credentials', url: '/plugins/trello/get-credentials', icon: <Key className="size-4" /> },
+						{ type: 'page' as const, name: 'Database', url: '/plugins/trello/database', icon: <Table2 className="size-4" /> },
+					],
+				},
+				{
+					type: 'folder' as const,
+					name: 'Calendly',
+					icon: <CalendarDays className="size-4" />,
+					children: [
+						{ type: 'page' as const, name: 'Basics', url: '/plugins/calendly', icon: <BookOpen className="size-4" /> },
+						{ type: 'page' as const, name: 'Get Credentials', url: '/plugins/calendly/get-credentials', icon: <Key className="size-4" /> },
+						{ type: 'page' as const, name: 'Database', url: '/plugins/calendly/database', icon: <Table2 className="size-4" /> },
+					],
+				},
+				{
+					type: 'folder' as const,
+					name: 'Asana',
+					icon: <CheckSquare className="size-4" />,
+					children: [
+						{ type: 'page' as const, name: 'Basics', url: '/plugins/asana', icon: <BookOpen className="size-4" /> },
+						{ type: 'page' as const, name: 'Get Credentials', url: '/plugins/asana/get-credentials', icon: <Key className="size-4" /> },
+						{ type: 'page' as const, name: 'Database', url: '/plugins/asana/database', icon: <Table2 className="size-4" /> },
+					],
+				},
+				{
+					type: 'folder' as const,
+					name: 'Stripe',
+					icon: <CreditCard className="size-4" />,
+					children: [
+						{ type: 'page' as const, name: 'Basics', url: '/plugins/stripe', icon: <BookOpen className="size-4" /> },
+						{ type: 'page' as const, name: 'Get Credentials', url: '/plugins/stripe/get-credentials', icon: <Key className="size-4" /> },
+						{ type: 'page' as const, name: 'Database', url: '/plugins/stripe/database', icon: <Table2 className="size-4" /> },
+					],
+				},
+				{
+					type: 'folder' as const,
+					name: 'Ahrefs',
+					icon: <TrendingUp className="size-4" />,
+					children: [
+						{ type: 'page' as const, name: 'Basics', url: '/plugins/ahrefs', icon: <BookOpen className="size-4" /> },
+						{ type: 'page' as const, name: 'Get Credentials', url: '/plugins/ahrefs/get-credentials', icon: <Key className="size-4" /> },
+						{ type: 'page' as const, name: 'Database', url: '/plugins/ahrefs/database', icon: <Table2 className="size-4" /> },
+					],
+				},
+				{
+					type: 'folder' as const,
+					name: 'Cursor',
+					icon: <Bot className="size-4" />,
+					children: [
+						{ type: 'page' as const, name: 'Basics', url: '/plugins/cursor', icon: <BookOpen className="size-4" /> },
+						{ type: 'page' as const, name: 'Get Credentials', url: '/plugins/cursor/get-credentials', icon: <Key className="size-4" /> },
+						{ type: 'page' as const, name: 'Database', url: '/plugins/cursor/database', icon: <Table2 className="size-4" /> },
+					],
+				},
+				{
+					type: 'folder' as const,
+					name: 'OneDrive',
+					icon: <Folder className="size-4" />,
+					children: [
+						{ type: 'page' as const, name: 'Basics', url: '/plugins/onedrive', icon: <BookOpen className="size-4" /> },
+						{ type: 'page' as const, name: 'Get Credentials', url: '/plugins/onedrive/get-credentials', icon: <Key className="size-4" /> },
+						{ type: 'page' as const, name: 'Database', url: '/plugins/onedrive/database', icon: <Table2 className="size-4" /> },
+					],
+				},
+				{
+					type: 'folder' as const,
+					name: 'Outlook',
+					icon: <Mail className="size-4" />,
+					children: [
+						{ type: 'page' as const, name: 'Basics', url: '/plugins/outlook', icon: <BookOpen className="size-4" /> },
+						{ type: 'page' as const, name: 'Get Credentials', url: '/plugins/outlook/get-credentials', icon: <Key className="size-4" /> },
+						{ type: 'page' as const, name: 'Database', url: '/plugins/outlook/database', icon: <Table2 className="size-4" /> },
+					],
+				},
+				{
+					type: 'folder' as const,
+					name: 'Strava',
+					icon: <Activity className="size-4" />,
+					children: [
+						{ type: 'page' as const, name: 'Basics', url: '/plugins/strava', icon: <BookOpen className="size-4" /> },
+						{ type: 'page' as const, name: 'Get Credentials', url: '/plugins/strava/get-credentials', icon: <Key className="size-4" /> },
+						{ type: 'page' as const, name: 'Database', url: '/plugins/strava/database', icon: <Table2 className="size-4" /> },
 					],
 				},
 			],

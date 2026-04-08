@@ -1,0 +1,100 @@
+---
+title: Box Database Schema
+description: Database entities and querying synced Box data.
+---
+
+The Box plugin syncs data to your local database when API calls are made.
+
+## Synced Entities
+
+- **files** - File metadata
+- **folders** - Folder metadata
+
+## Database API
+
+```ts
+const files = await corsair.box.db.files.search({
+    data: { name: "document.pdf" },
+});
+```
+
+---
+
+## Files
+
+### Schema
+
+```ts
+{
+    id: string;
+    name: string;
+    type: "file";
+    size?: number;
+    sha1?: string;
+    etag?: string;
+    sequenceId?: string;
+    description?: string;
+    parentId?: string;
+    createdAt?: string;
+    modifiedAt?: string;
+    ownedById?: string;
+    extension?: string;
+    contentCreatedAt?: string;
+    contentModifiedAt?: string;
+}
+```
+
+### Querying Files
+
+```ts
+// Search by name
+const files = await corsair.box.db.files.search({
+    data: { name: "report.pdf" },
+});
+
+// Search by parent folder
+const folderFiles = await corsair.box.db.files.search({
+    data: { parentId: "folder-id" },
+});
+```
+
+---
+
+## Folders
+
+### Schema
+
+```ts
+{
+    id: string;
+    name: string;
+    type: "folder";
+    etag?: string;
+    sequenceId?: string;
+    description?: string;
+    parentId?: string;
+    createdAt?: string;
+    modifiedAt?: string;
+    itemStatus?: string;
+}
+```
+
+### Querying Folders
+
+```ts
+const folders = await corsair.box.db.folders.search({
+    data: { parentId: "0" },
+});
+```
+
+---
+
+## Multi-Tenancy
+
+```ts
+const tenant = corsair.withTenant("user-123");
+
+const files = await tenant.box.db.files.search({ data: {} });
+```
+
+See [Database](/concepts/database) for more information about querying patterns.
