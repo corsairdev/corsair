@@ -22,7 +22,8 @@
     "test:ci": "jest --ci --coverage",
     "webhook-server": "ts-node tests/webhook-server.ts",
     "start-watch": "ts-node start-watch.ts",
-    "trigger-events": "ts-node trigger-events.ts"
+    "trigger-events": "ts-node trigger-events.ts",
+    "get-token": "ts-node get-tokens.ts"
   },
   "dependencies": {
     "express": "^4.18.2",
