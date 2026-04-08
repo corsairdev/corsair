@@ -1,17 +1,11 @@
-import type { CorsairWebhook } from 'corsair/core';
 import { logEventFromContext } from 'corsair/core';
-import type { RazorpayContext } from '..';
+import type { RazorpayWebhooks } from '..';
 import {
 	createRazorpayMatch,
-	type RazorpayRefundProcessedEvent,
 	verifyRazorpayWebhookSignature,
 } from './types';
 
-export const processed: CorsairWebhook<
-	RazorpayContext,
-	RazorpayRefundProcessedEvent,
-	RazorpayRefundProcessedEvent
-> = {
+export const processed: RazorpayWebhooks['refundProcessed'] = {
 	match: createRazorpayMatch('refund.processed'),
 
 	handler: async (ctx, request) => {
@@ -32,6 +26,7 @@ export const processed: CorsairWebhook<
 			try {
 				await ctx.db.refunds.upsertByEntityId(refund.id, {
 					...refund,
+					// created_at is a Unix timestamp in seconds; multiply by 1000 for ms
 					createdAt: refund.created_at
 						? new Date(refund.created_at * 1000)
 						: undefined,
@@ -48,6 +43,7 @@ export const processed: CorsairWebhook<
 			try {
 				await ctx.db.payments.upsertByEntityId(payment.id, {
 					...payment,
+					// created_at is a Unix timestamp in seconds; multiply by 1000 for ms
 					createdAt: payment.created_at
 						? new Date(payment.created_at * 1000)
 						: undefined,
