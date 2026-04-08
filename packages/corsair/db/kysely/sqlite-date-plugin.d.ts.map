@@ -1,0 +1,1 @@
+{"version":3,"file":"sqlite-date-plugin.d.ts","sourceRoot":"","sources":["sqlite-date-plugin.ts"],"names":[],"mappings":"AAAA,OAAO,KAAK,EACX,YAAY,EACZ,wBAAwB,EACxB,yBAAyB,EAEzB,WAAW,EACX,iBAAiB,EACjB,UAAU,EAEV,MAAM,QAAQ,CAAC;AAyChB,qBAAa,gBAAiB,YAAW,YAAY;IACpD,cAAc,CAAC,IAAI,EAAE,wBAAwB,GAAG,iBAAiB;IAI3D,eAAe,CACpB,IAAI,EAAE,yBAAyB,GAC7B,OAAO,CAAC,WAAW,CAAC,UAAU,CAAC,CAAC;CAGnC"}
