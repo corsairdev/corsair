@@ -123,13 +123,42 @@ export type FirecrawlWebhookOutputs = {
 	agentCancelled: AgentCancelledEvent;
 };
 
-function parseBody(body: unknown): unknown {
-	return typeof body === 'string' ? JSON.parse(body) : body;
+/**
+ * Best-effort parse of webhook body for matching. Never throws — malformed JSON
+ * or non-object bodies yield `null` so the matcher returns false instead of
+ * crashing webhook routing.
+ */
+function parseBodySafe(body: unknown): Record<string, unknown> | null {
+	if (body === null || body === undefined) {
+		return null;
+	}
+	if (typeof body === 'object' && !Array.isArray(body)) {
+		return body as Record<string, unknown>;
+	}
+	if (typeof body === 'string') {
+		try {
+			const parsed: unknown = JSON.parse(body);
+			if (
+				parsed !== null &&
+				typeof parsed === 'object' &&
+				!Array.isArray(parsed)
+			) {
+				return parsed as Record<string, unknown>;
+			}
+			return null;
+		} catch {
+			return null;
+		}
+	}
+	return null;
 }
 
 export function createFirecrawlMatch(eventType: string): CorsairWebhookMatcher {
 	return (request: RawWebhookRequest) => {
-		const parsedBody = parseBody(request.body) as Record<string, unknown>;
+		const parsedBody = parseBodySafe(request.body);
+		if (!parsedBody) {
+			return false;
+		}
 		return typeof parsedBody.type === 'string' && parsedBody.type === eventType;
 	};
 }

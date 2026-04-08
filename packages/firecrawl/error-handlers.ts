@@ -1,6 +1,67 @@
 import type { CorsairErrorHandler } from 'corsair/core';
 import { ApiError } from 'corsair/http';
 
+/** Keys whose values must not appear in logs (credentials, tokens, etc.). */
+const SENSITIVE_INPUT_KEYS = new Set([
+	'api_key',
+	'apiKey',
+	'authorization',
+	'password',
+	'token',
+	'secret',
+	'webhookSecret',
+	'client_secret',
+	'clientSecret',
+	'access_token',
+	'accessToken',
+	'refresh_token',
+	'refreshToken',
+	'webhook_signature',
+	'headers',
+]);
+
+function isSensitiveKey(key: string): boolean {
+	const lower = key.toLowerCase();
+	if (SENSITIVE_INPUT_KEYS.has(key) || SENSITIVE_INPUT_KEYS.has(lower)) {
+		return true;
+	}
+	if (
+		lower.endsWith('_token') ||
+		lower.endsWith('_secret') ||
+		lower.endsWith('password')
+	) {
+		return true;
+	}
+	if (lower.includes('apikey') || lower === 'bearer') {
+		return true;
+	}
+	return false;
+}
+
+/** Shallow + nested object redaction for error logging (avoids leaking secrets). */
+function redactSensitiveInput(input: unknown): unknown {
+	if (input === null || input === undefined) {
+		return input;
+	}
+	if (Array.isArray(input)) {
+		return input.map((item) => redactSensitiveInput(item));
+	}
+	if (typeof input !== 'object') {
+		return input;
+	}
+	const out: Record<string, unknown> = {};
+	for (const [key, val] of Object.entries(input as Record<string, unknown>)) {
+		if (isSensitiveKey(key)) {
+			out[key] = '[redacted]';
+		} else if (val !== null && typeof val === 'object') {
+			out[key] = redactSensitiveInput(val);
+		} else {
+			out[key] = val;
+		}
+	}
+	return out;
+}
+
 export const errorHandlers = {
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) => {
@@ -45,7 +106,7 @@ export const errorHandlers = {
 		handler: async (error: Error, context) => {
 			console.error(`[corsair:${context.pluginId}:${context.operation}]`, {
 				error: error.message,
-				input: context.input,
+				input: redactSensitiveInput(context.input),
 			});
 			return { maxRetries: 0 };
 		},
