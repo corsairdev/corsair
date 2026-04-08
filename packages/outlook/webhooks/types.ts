@@ -134,21 +134,3 @@ export function verifyOutlookWebhookSignature(
 
 	return { valid: true };
 }
-
-export function verifyOutlookLifecycleSignature(
-	validationToken: string,
-	secret: string,
-): boolean {
-	if (!secret) return true;
-	const expected = crypto
-		.createHmac('sha256', secret)
-		.update(validationToken)
-		.digest('base64');
-	const received = Buffer.from(validationToken);
-	const expectedBuffer = Buffer.from(expected);
-	if (received.length !== expectedBuffer.length) return false;
-	return crypto.timingSafeEqual(
-		received,
-		expectedBuffer,
-	);
-}

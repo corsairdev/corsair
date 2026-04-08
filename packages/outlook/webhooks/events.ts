@@ -56,7 +56,9 @@ export const newEvent: OutlookWebhooks['eventCreated'] = {
 	match: createOutlookMatch(EVENT_RESOURCE_PATTERN, ['created']),
 
 	handler: async (ctx, request) => {
+		console.log('newEvent')
 		const extracted = verifyAndExtract(ctx, request);
+		console.log(extracted)
 		if (!extracted.ok) return extracted.result;
 
 		const { notification, entityId } = extracted;
@@ -104,10 +106,12 @@ export const newEvent: OutlookWebhooks['eventCreated'] = {
 };
 
 export const eventChange: OutlookWebhooks['eventChanged'] = {
-	match: createOutlookMatch(EVENT_RESOURCE_PATTERN, ['created', 'updated', 'deleted']),
+	match: createOutlookMatch(EVENT_RESOURCE_PATTERN, ['updated', 'deleted']),
 
 	handler: async (ctx, request) => {
+		console.log('eventChange')
 		const extracted = verifyAndExtract(ctx, request);
+		console.log(extracted)
 		if (!extracted.ok) return extracted.result;
 
 		const { notification, entityId } = extracted;
