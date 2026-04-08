@@ -1,0 +1,85 @@
+---
+title: Telegram Database Schema
+description: Database entities and querying synced Telegram data.
+---
+
+The Telegram plugin syncs messages and chats to your local database.
+
+## Synced Entities
+
+- **messages** - Bot messages sent and received
+- **chats** - Chat information
+
+## Database API
+
+```ts
+const messages = await corsair.telegram.db.messages.search({
+    data: {},
+    limit: 20,
+});
+```
+
+---
+
+## Messages
+
+### Schema
+
+```ts
+{
+    id: string;
+    chat_id?: string | number;
+    text?: string;
+    from_id?: string;
+    from_username?: string;
+    date?: number;
+    reply_to_message_id?: number;
+}
+```
+
+### Querying Messages
+
+```ts
+// Get all messages
+const messages = await corsair.telegram.db.messages.search({ data: {} });
+
+// Filter by chat
+const chatMessages = await corsair.telegram.db.messages.search({
+    data: { chat_id: "123456789" },
+});
+```
+
+---
+
+## Chats
+
+### Schema
+
+```ts
+{
+    id: string;
+    type?: string;
+    title?: string;
+    username?: string;
+    first_name?: string;
+    last_name?: string;
+}
+```
+
+### Querying Chats
+
+```ts
+const chats = await corsair.telegram.db.chats.search({ data: {} });
+```
+
+---
+
+## Multi-Tenancy
+
+```ts
+const tenant = corsair.withTenant("user-123");
+
+const messages = await tenant.telegram.db.messages.search({ data: {} });
+```
+
+See [Database](/concepts/database) for more information about querying patterns.

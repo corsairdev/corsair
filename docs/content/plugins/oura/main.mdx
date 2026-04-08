@@ -5,11 +5,17 @@ description: Integrate Oura Ring health and fitness data into your application w
 
 ## Quick Start
 
+Install the plugin:
+
+```bash
+pnpm install @corsair-dev/oura
+```
+
 Add the Oura plugin to your Corsair instance:
 
 ```ts title="corsair.ts"
 import { createCorsair } from "corsair";
-import { oura } from "corsair/plugins";
+import { oura } from "@corsair-dev/oura";
 
 export const corsair = createCorsair({
     plugins: [
@@ -41,18 +47,24 @@ If no `authType` is specified, the plugin defaults to **`api_key`**.
 
 ### Configuring API Key Authentication
 
-```ts title="corsair.ts"
-oura({
-    key: process.env.OURA_ACCESS_TOKEN, // [!code highlight]
-})
+Store credentials with the CLI:
+
+```bash
+pnpm corsair setup --oura api_key=your-access-token
 ```
 
 For webhook signature verification:
 
+```bash
+pnpm corsair setup --oura webhook_signature=your-webhook-secret
+```
+
+Alternatively, provide credentials directly in the config:
+
 ```ts title="corsair.ts"
 oura({
     key: process.env.OURA_ACCESS_TOKEN,
-    webhookSecret: process.env.OURA_WEBHOOK_SECRET, // [!code highlight]
+    webhookSecret: process.env.OURA_WEBHOOK_SECRET,
 })
 ```
 

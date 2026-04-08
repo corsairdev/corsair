@@ -5,11 +5,17 @@ description: Integrate Gmail messaging, labels, drafts, and threads into your ap
 
 ## Quick Start
 
+Install the plugin:
+
+```bash
+pnpm install @corsair-dev/gmail
+```
+
 Add the Gmail plugin to your Corsair instance:
 
 ```ts title="corsair.ts"
 import { createCorsair } from "corsair";
-import { gmail } from "corsair/plugins";
+import { gmail } from "@corsair-dev/gmail";
 
 export const corsair = createCorsair({
     plugins: [
@@ -38,25 +44,14 @@ The Gmail plugin uses OAuth 2.0 authentication exclusively.
 
 ### OAuth 2.0 Setup
 
-Store OAuth credentials in the database using the keys API:
+Store your OAuth app credentials, then start the flow:
 
-```ts
-await corsair.gmail.keys.setClientId('your-client-id');
-await corsair.gmail.keys.setClientSecret('your-client-secret');
-await corsair.gmail.keys.setRedirectUrl('https://yourapp.com/auth/gmail/callback');
+```bash
+pnpm corsair setup --gmail client_id=your-client-id client_secret=your-client-secret
+pnpm corsair auth --plugin=gmail
 ```
 
-After users complete the OAuth flow, access tokens are automatically stored. Alternatively, you can provide credentials directly:
-
-```ts title="corsair.ts"
-gmail({
-    authType: "oauth_2",
-    credentials: {
-        clientId: process.env.GMAIL_CLIENT_ID,
-        clientSecret: process.env.GMAIL_CLIENT_SECRET,
-    },
-})
-```
+The CLI will print an authorization URL — open it in a browser. Once you approve, tokens are saved automatically.
 
 See [Get Credentials](/plugins/gmail/get-credentials) for step-by-step instructions on setting up OAuth 2.0.
 
