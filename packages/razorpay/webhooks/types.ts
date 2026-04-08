@@ -90,9 +90,12 @@ export type RazorpayWebhookOutputs = {
 };
 
 function parseBody(body: unknown): Record<string, unknown> {
-	return typeof body === 'string'
-		? (JSON.parse(body) as Record<string, unknown>)
-		: ((body ?? {}) as Record<string, unknown>);
+	if (typeof body !== 'string') return (body ?? {}) as Record<string, unknown>;
+	try {
+		return JSON.parse(body) as Record<string, unknown>;
+	} catch {
+		return {};
+	}
 }
 
 export function createRazorpayMatch(eventType: string): CorsairWebhookMatcher {
@@ -105,6 +108,7 @@ export function createRazorpayMatch(eventType: string): CorsairWebhookMatcher {
 	};
 }
 
+// unknown is intentional: the generic webhook request body is not yet validated at this point
 export function verifyRazorpayWebhookSignature(
 	request: WebhookRequest<unknown>,
 	secret?: string,

@@ -60,7 +60,9 @@ export async function makeRazorpayRequest<T>(
 		return await request<T>(config, requestOptions);
 	} catch (error) {
 		if (error instanceof Error) {
-			// Parse Razorpay's error response: { error: { code, description, reason, source } }
+			// Type assertion: corsair/http's `request` throws a generic Error, but Razorpay
+			// error responses carry a `body` property with structured error details that are
+			// not exposed by the Error base class.
 			const apiErr = error as {
 				body?: {
 					error?: {

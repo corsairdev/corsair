@@ -1,6 +1,9 @@
 import { z } from 'zod';
 
-// Shared notes schema used across all entities
+// Shared notes schema used across all entities.
+// z.unknown() is used for array items because the Razorpay API does not
+// document a fixed element type for array-style notes; elements can be
+// arbitrary values.
 export const RazorpayNotesSchema = z.union([
 	z.record(z.string()),
 	z.array(z.unknown()),

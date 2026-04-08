@@ -335,6 +335,8 @@ async function applyCredentials(
 						"[corsair:setup] Razorpay credentials require both 'key_id' and 'key_secret' — skipping combined api_key.",
 					);
 				} else if (typeof accountKeyMgr.set_api_key === 'function') {
+					// Type assertion: KeyManager is Record<string, unknown>; we've confirmed
+					// set_api_key is a function via the typeof check above.
 					await (accountKeyMgr.set_api_key as (v: string) => Promise<void>)(
 						`${keyId}:${keySecret}`,
 					);
@@ -348,6 +350,8 @@ async function applyCredentials(
 
 			if (webhookSecret) {
 				if (typeof accountKeyMgr.set_webhook_signature === 'function') {
+					// Type assertion: KeyManager is Record<string, unknown>; we've confirmed
+					// set_webhook_signature is a function via the typeof check above.
 					await (
 						accountKeyMgr.set_webhook_signature as (
 							v: string,
