@@ -126,6 +126,32 @@ function isUnauthorizedError(error: unknown): boolean {
 	);
 }
 
+const GOOGLE_DRIVE_API_BASE = 'https://www.googleapis.com/drive/v3';
+
+async function makeDriveRequest(
+	endpoint: string,
+	token: string,
+	options: RequestInit = {},
+): Promise<Response> {
+	return fetch(`${GOOGLE_DRIVE_API_BASE}${endpoint}`, {
+		...options,
+		headers: { ...options.headers, Authorization: `Bearer ${token}` },
+	});
+}
+
+export async function makeAuthenticatedDriveRequest(
+	endpoint: string,
+	ctx: { key: string; _refreshAuth?: () => Promise<string> },
+	options: RequestInit = {},
+): Promise<Response> {
+	const response = await makeDriveRequest(endpoint, ctx.key, options);
+	if (response.status === 401 && ctx._refreshAuth) {
+		const freshToken = await ctx._refreshAuth();
+		return makeDriveRequest(endpoint, freshToken, options);
+	}
+	return response;
+}
+
 export async function makeAuthenticatedSheetsRequest<T>(
 	endpoint: string,
 	ctx: { key: string; _refreshAuth?: () => Promise<string> },

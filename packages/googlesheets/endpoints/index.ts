@@ -4,6 +4,7 @@ import * as Spreadsheets from './spreadsheets';
 export const SpreadsheetsEndpoints = {
 	create: Spreadsheets.create,
 	delete: Spreadsheets.deleteSpreadsheet,
+	list: Spreadsheets.listSpreadsheets,
 };
 
 export const SheetsEndpoints = {
@@ -15,6 +16,7 @@ export const SheetsEndpoints = {
 	createSheet: Sheets.createSheet,
 	deleteSheet: Sheets.deleteSheet,
 	deleteRowsOrColumns: Sheets.deleteRowsOrColumns,
+	listSheetsInSpreadsheet: Sheets.listSheetsInSpreadsheet,
 };
 
 export * from './types';
