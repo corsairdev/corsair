@@ -1,0 +1,107 @@
+---
+title: Intercom
+description: Manage contacts, conversations, and support articles with Intercom.
+---
+
+## Quick Start
+
+Install the plugin:
+
+```bash
+pnpm install @corsair-dev/intercom
+```
+
+Add the Intercom plugin to your Corsair instance:
+
+```ts title="corsair.ts"
+import { createCorsair } from "corsair";
+import { intercom } from "@corsair-dev/intercom";
+
+export const corsair = createCorsair({
+    plugins: [intercom()],
+    database: db,
+    kek: process.env.CORSAIR_KEK!,
+});
+```
+
+## Authentication
+
+### Supported Auth Types
+
+- **`api_key`** (default) - Access token
+
+### API Key Setup
+
+```bash
+pnpm corsair setup --intercom api_key=your-access-token
+```
+
+For webhook signature verification:
+
+```bash
+pnpm corsair setup --intercom webhook_signature=your-client-secret
+```
+
+See [Get Credentials](/plugins/intercom/get-credentials) for step-by-step instructions.
+
+## Options
+
+| Option | Type | Description |
+|--------|------|-------------|
+| `authType` | `'api_key'` | Authentication method |
+| `key` | `string` | Access token (optional, uses database if not provided) |
+| `webhookSecret` | `string` | Client secret for webhook verification (optional) |
+| `hooks` | `object` | Endpoint hooks for custom logic |
+| `webhookHooks` | `object` | Webhook hooks for event handling |
+| `errorHandlers` | `object` | Custom error handlers |
+
+## Usage
+
+```ts
+// List contacts
+const contacts = await corsair.intercom.api.contacts.list({});
+
+// Search contacts
+const results = await corsair.intercom.api.contacts.search({
+    query: {
+        field: "email",
+        operator: "=",
+        value: "user@example.com",
+    },
+});
+
+// List open conversations
+const conversations = await corsair.intercom.api.conversations.list({
+    open: true,
+});
+
+// Reply to a conversation
+await corsair.intercom.api.conversations.reply({
+    conversationId: "conv-id",
+    body: "Thanks for reaching out!",
+    type: "admin",
+});
+
+// Create an article
+await corsair.intercom.api.articles.create({
+    title: "Getting Started",
+    body: "<p>Welcome to our product...</p>",
+    state: "published",
+});
+```
+
+### Query cached data
+
+```ts
+const contacts = await corsair.intercom.db.contacts.search({
+    data: { email: "user@example.com" },
+});
+```
+
+### Multi-Tenancy
+
+```ts
+const tenant = corsair.withTenant("workspace-123");
+
+const conversations = await tenant.intercom.api.conversations.list({});
+```

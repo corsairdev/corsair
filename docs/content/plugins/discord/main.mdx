@@ -5,11 +5,17 @@ description: Integrate Discord messaging, channels, guilds, and interaction hand
 
 ## Quick Start
 
+Install the plugin:
+
+```bash
+pnpm install @corsair-dev/discord
+```
+
 Add the Discord plugin to your Corsair instance:
 
 ```ts title="corsair.ts"
 import { createCorsair } from "corsair";
-import { discord } from "corsair/plugins";
+import { discord } from "@corsair-dev/discord";
 
 export const corsair = createCorsair({
     plugins: [
@@ -41,22 +47,28 @@ If no `authType` is specified, the plugin defaults to **`api_key`**.
 
 ### Configuring API Key Authentication
 
-```ts title="corsair.ts"
-discord({
-    key: process.env.DISCORD_BOT_TOKEN, // [!code highlight]
-})
+Store credentials with the CLI:
+
+```bash
+pnpm corsair setup --discord api_key=your-bot-token
 ```
 
-For webhook signature verification, provide your app's Ed25519 public key:
+For webhook signature verification, also store your app's Ed25519 public key:
+
+```bash
+pnpm corsair setup --discord public_key=your-public-key
+```
+
+The public key is found in the Discord Developer Portal under **Application > General Information**.
+
+Alternatively, provide credentials directly in the config:
 
 ```ts title="corsair.ts"
 discord({
     key: process.env.DISCORD_BOT_TOKEN,
-    publicKey: process.env.DISCORD_PUBLIC_KEY, // [!code highlight]
+    publicKey: process.env.DISCORD_PUBLIC_KEY,
 })
 ```
-
-The `publicKey` is found in the Discord Developer Portal under **Application > General Information**.
 
 See [Authentication](/concepts/auth) for details on managing credentials.
 

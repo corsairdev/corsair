@@ -1,8 +1,8 @@
 import { logEventFromContext } from 'corsair/core';
 import type { GoogleSheetsEndpoints } from '..';
 import { makeAuthenticatedSheetsRequest } from '../client';
-import type { AppendValuesResponse, UpdateValuesResponse, ValueRange } from '../types';
-import type { GoogleSheetsEndpointOutputs } from './types';
+import type { GoogleSheetsEndpointOutputs, ListSheetsResponse } from './types';
+import type { AppendValuesResponse, UpdateValuesResponse, ValueRange, SheetProperties} from '../types';
 
 export const appendRow: GoogleSheetsEndpoints['sheetsAppendRow'] = async (
 	ctx,
@@ -389,6 +389,36 @@ export const deleteSheet: GoogleSheetsEndpoints['sheetsDeleteSheet'] = async (
 		'completed',
 	);
 	return result;
+};
+
+export const listSheetsInSpreadsheet: GoogleSheetsEndpoints['sheetsListSheetsInSpreadsheet'] = async (
+	ctx,
+	input,
+) => {
+	const result = await makeAuthenticatedSheetsRequest<{
+		spreadsheetId?: string;
+		sheets?: { properties?: SheetProperties }[];
+	}>(`/spreadsheets/${input.spreadsheetId}`, ctx, {
+		method: 'GET',
+		query: {
+			fields: 'spreadsheetId,sheets.properties',
+		},
+	});
+
+	const response: ListSheetsResponse = {
+		spreadsheetId: result.spreadsheetId,
+		sheets: result.sheets
+			?.map((s) => s.properties)
+			.filter((p): p is NonNullable<typeof p> => p != null),
+	};
+
+	await logEventFromContext(
+		ctx,
+		'googlesheets.sheets.listSheets',
+		{ ...input },
+		'completed',
+	);
+	return response;
 };
 
 export const deleteRowsOrColumns: GoogleSheetsEndpoints['sheetsDeleteRowsOrColumns'] =

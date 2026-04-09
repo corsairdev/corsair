@@ -1,3 +1,5 @@
+import 'dotenv/config';
+
 import { createCorsair } from 'corsair';
 import { sqlite } from '../db';
 import { github } from '@corsair-dev/github';
@@ -6,7 +8,7 @@ import { googlesheets } from '@corsair-dev/googlesheets';
 import { googlecalendar } from '@corsair-dev/googlecalendar';
 import { gmail } from '@corsair-dev/gmail';
 import { linear } from '@corsair-dev/linear';
-import { notion } from '@corsair-dev/notion'
+import { notion } from '@corsair-dev/notion';
 
 export const corsair = createCorsair({
 	multiTenancy: false,
