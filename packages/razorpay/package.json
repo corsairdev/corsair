@@ -1,0 +1,40 @@
+{
+  "name": "@corsair-dev/razorpay",
+  "version": "0.1.0",
+  "description": "Razorpay plugin for Corsair",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "dev-source": "./index.ts",
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "rm -rf dist && tsc --build --force && tsup",
+    "typecheck": "tsc --noEmit"
+  },
+  "peerDependencies": {
+    "corsair": ">=0.1.0",
+    "zod": "^3.0.0"
+  },
+  "devDependencies": {
+    "corsair": "workspace:*",
+    "tsup": "^8.0.1",
+    "typescript": "catalog:",
+    "zod": "^3.25.76"
+  },
+  "keywords": [
+    "corsair",
+    "razorpay",
+    "plugin"
+  ],
+  "author": "",
+  "license": "Apache-2.0",
+  "files": [
+    "dist"
+  ]
+}
