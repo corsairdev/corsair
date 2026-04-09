@@ -137,8 +137,11 @@ importers:
       '@corsair-dev/mcp':
         specifier: workspace:*
         version: link:../../packages/mcp
+      '@corsair-dev/notion':
+        specifier: workspace:*
+        version: link:../../packages/notion
       '@corsair-dev/sharepoint':
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:../../packages/sharepoint
       '@corsair-dev/slack':
         specifier: workspace:*
