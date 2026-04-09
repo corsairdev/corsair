@@ -20,6 +20,7 @@ export const BaseProviders = [
 	'box',
 	'cal',
 	'calendly',
+	'cursor',
 	'discord',
 	'dropbox',
 	'exa',
@@ -42,8 +43,10 @@ export const BaseProviders = [
 	'outlook',
 	'pagerduty',
 	'posthog',
+	'razorpay',
 	'resend',
 	'sentry',
+	'sharepoint',
 	'slack',
 	'spotify',
 	'strava',
@@ -68,6 +71,7 @@ export type AllProviders =
 	| 'box'
 	| 'cal'
 	| 'calendly'
+	| 'cursor'
 	| 'discord'
 	| 'dropbox'
 	| 'exa'
@@ -90,8 +94,10 @@ export type AllProviders =
 	| 'outlook'
 	| 'pagerduty'
 	| 'posthog'
+	| 'razorpay'
 	| 'resend'
 	| 'sentry'
+	| 'sharepoint'
 	| 'slack'
 	| 'spotify'
 	| 'strava'

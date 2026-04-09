@@ -30,12 +30,15 @@ export const fileComment: FigmaWebhooks['fileComment'] = {
 		if (ctx.db.comments && event.comment?.id) {
 			try {
 				const { user, ...commentData } = event.comment;
-				const entity = await ctx.db.comments.upsertByEntityId(event.comment.id, {
-					...commentData,
-					file_key: event.file_key,
-					user_id: user?.id,
-					user_handle: user?.handle,
-				});
+				const entity = await ctx.db.comments.upsertByEntityId(
+					event.comment.id,
+					{
+						...commentData,
+						file_key: event.file_key,
+						user_id: user?.id,
+						user_handle: user?.handle,
+					},
+				);
 				corsairEntityId = entity?.id || '';
 			} catch (error) {
 				console.warn('Failed to save comment from webhook to database:', error);

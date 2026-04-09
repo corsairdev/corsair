@@ -1,9 +1,13 @@
+import { logEventFromContext } from 'corsair/core';
 import type { TeamsWebhooks } from '..';
 import { makeTeamsRequest } from '../client';
 import { toMessageRecord } from '../endpoints/messages';
 import type { TeamsEndpointOutputs } from '../endpoints/types';
-import { logEventFromContext } from 'corsair/core';
-import { createTeamsNotificationMatch, extractODataId, verifyTeamsClientState } from './types';
+import {
+	createTeamsNotificationMatch,
+	extractODataId,
+	verifyTeamsClientState,
+} from './types';
 
 export const channelMessage: TeamsWebhooks['channelMessage'] = {
 	match: createTeamsNotificationMatch(
@@ -40,7 +44,9 @@ export const channelMessage: TeamsWebhooks['channelMessage'] = {
 					if (changeType === 'deleted') {
 						await ctx.db.messages.deleteByEntityId(messageId);
 					} else if (accessToken) {
-						const fullMsg = await makeTeamsRequest<TeamsEndpointOutputs['messagesGet']>(
+						const fullMsg = await makeTeamsRequest<
+							TeamsEndpointOutputs['messagesGet']
+						>(
 							`teams/${teamId}/channels/${channelId}/messages/${messageId}`,
 							accessToken,
 						);
@@ -52,7 +58,10 @@ export const channelMessage: TeamsWebhooks['channelMessage'] = {
 					}
 				}
 			} catch (error) {
-				console.warn('Failed to process channel message webhook in database:', error);
+				console.warn(
+					'Failed to process channel message webhook in database:',
+					error,
+				);
 			}
 		}
 

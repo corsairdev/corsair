@@ -1,14 +1,16 @@
 import { execSync } from 'node:child_process';
-import { readdirSync, readFileSync, existsSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 const PACKAGES_DIR = 'packages';
 
 function getPublishedVersion(name) {
 	try {
-		return execSync(`npm view ${name} version 2>/dev/null`, {
-			encoding: 'utf-8',
-		}).trim() || null;
+		return (
+			execSync(`npm view ${name} version 2>/dev/null`, {
+				encoding: 'utf-8',
+			}).trim() || null
+		);
 	} catch {
 		return null;
 	}
@@ -58,7 +60,9 @@ const corsairDevToken = process.env.NPM_CORSAIR_DEV_TOKEN;
 for (const { name } of toPublish) {
 	const token = name === 'corsair' ? npmToken : corsairDevToken;
 	if (!token) {
-		console.error(`  SKIP ${name} — missing token (${name === 'corsair' ? 'NPM_TOKEN' : 'NPM_CORSAIR_DEV_TOKEN'})`);
+		console.error(
+			`  SKIP ${name} — missing token (${name === 'corsair' ? 'NPM_TOKEN' : 'NPM_CORSAIR_DEV_TOKEN'})`,
+		);
 		continue;
 	}
 

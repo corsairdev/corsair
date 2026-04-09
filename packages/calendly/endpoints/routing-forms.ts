@@ -67,7 +67,7 @@ export const list: CalendlyEndpoints['routingFormsList'] = async (
 		CalendlyEndpointOutputs['routingFormsList']
 	>('routing_forms', ctx.key, {
 		method: 'GET',
-		query: input
+		query: input,
 	});
 
 	if (result.collection && ctx.db.routingForms) {
@@ -102,7 +102,7 @@ export const getSampleWebhookData: CalendlyEndpoints['routingFormsGetSampleWebho
 			CalendlyEndpointOutputs['routingFormsGetSampleWebhookData']
 		>('sample_webhook_data', ctx.key, {
 			method: 'GET',
-			query: input
+			query: input,
 		});
 
 		await logEventFromContext(

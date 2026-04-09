@@ -1,9 +1,6 @@
-import type { StripeWebhooks } from '..';
 import { logEventFromContext } from 'corsair/core';
-import {
-	createStripeEventMatch,
-	verifyStripeWebhookSignature,
-} from './types';
+import type { StripeWebhooks } from '..';
+import { createStripeEventMatch, verifyStripeWebhookSignature } from './types';
 
 export const created: StripeWebhooks['customerCreated'] = {
 	match: createStripeEventMatch('customer.created'),
@@ -25,7 +22,9 @@ export const created: StripeWebhooks['customerCreated'] = {
 				const customer = event.data.object;
 				await ctx.db.customers.upsertByEntityId(customer.id, {
 					...customer,
-					createdAt: customer.created ? new Date(customer.created * 1000) : undefined,
+					createdAt: customer.created
+						? new Date(customer.created * 1000)
+						: undefined,
 				});
 			} catch (error) {
 				console.warn('Failed to save customer (created) to database:', error);
@@ -105,7 +104,9 @@ export const updated: StripeWebhooks['customerUpdated'] = {
 				const customer = event.data.object;
 				await ctx.db.customers.upsertByEntityId(customer.id, {
 					...customer,
-					createdAt: customer.created ? new Date(customer.created * 1000) : undefined,
+					createdAt: customer.created
+						? new Date(customer.created * 1000)
+						: undefined,
 				});
 			} catch (error) {
 				console.warn('Failed to update customer in database:', error);

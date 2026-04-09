@@ -4,6 +4,7 @@ import type {
 	BatchUpdateSpreadsheetResponse,
 	BatchUpdateValuesResponse,
 	ClearValuesResponse,
+	SheetProperties,
 	Spreadsheet,
 	UpdateValuesResponse,
 	ValueRange,
@@ -39,7 +40,9 @@ const SheetsAppendOrUpdateRowInputSchema = z.object({
 	sheetName: z.string().optional(),
 	keyColumn: z
 		.string()
-		.describe('Column letter (e.g. "A"), not a header name (e.g. "Company Name")')
+		.describe(
+			'Column letter (e.g. "A"), not a header name (e.g. "Company Name")',
+		)
 		.optional(),
 	keyValue: z.union([z.string(), z.number()]).optional(),
 	values: z
@@ -96,9 +99,20 @@ const SheetsDeleteRowsOrColumnsInputSchema = z.object({
 	endIndex: z.number().optional(),
 });
 
+const SheetsListSheetsInputSchema = z.object({
+	spreadsheetId: z.string(),
+});
+
+const SpreadsheetsListInputSchema = z.object({
+	pageSize: z.number().optional(),
+	pageToken: z.string().optional(),
+	query: z.string().optional(),
+});
+
 export const GoogleSheetsEndpointInputSchemas = {
 	spreadsheetsCreate: SpreadsheetsCreateInputSchema,
 	spreadsheetsDelete: SpreadsheetsDeleteInputSchema,
+	spreadsheetsList: SpreadsheetsListInputSchema,
 	sheetsAppendRow: SheetsAppendRowInputSchema,
 	sheetsAppendOrUpdateRow: SheetsAppendOrUpdateRowInputSchema,
 	sheetsGetRows: SheetsGetRowsInputSchema,
@@ -107,6 +121,7 @@ export const GoogleSheetsEndpointInputSchemas = {
 	sheetsCreateSheet: SheetsCreateSheetInputSchema,
 	sheetsDeleteSheet: SheetsDeleteSheetInputSchema,
 	sheetsDeleteRowsOrColumns: SheetsDeleteRowsOrColumnsInputSchema,
+	sheetsListSheetsInSpreadsheet: SheetsListSheetsInputSchema,
 } as const;
 
 export type GoogleSheetsEndpointInputs = {
@@ -170,9 +185,28 @@ const BatchUpdateSpreadsheetResponseSchema = z.object({
 	updatedSpreadsheet: SpreadsheetSchema.optional(),
 });
 
+const ListSheetsResponseSchema = z.object({
+	spreadsheetId: z.string().optional(),
+	sheets: z.array(SheetPropertiesSchema).optional(),
+});
+
+const SpreadsheetFileSchema = z.object({
+	id: z.string().optional(),
+	name: z.string().optional(),
+	createdTime: z.string().optional(),
+	modifiedTime: z.string().optional(),
+	webViewLink: z.string().optional(),
+});
+
+const ListSpreadsheetsResponseSchema = z.object({
+	files: z.array(SpreadsheetFileSchema).optional(),
+	nextPageToken: z.string().optional(),
+});
+
 export const GoogleSheetsEndpointOutputSchemas = {
 	spreadsheetsCreate: SpreadsheetSchema,
 	spreadsheetsDelete: z.void(),
+	spreadsheetsList: ListSpreadsheetsResponseSchema,
 	sheetsAppendRow: BatchUpdateValuesResponseSchema,
 	sheetsAppendOrUpdateRow: BatchUpdateValuesResponseSchema,
 	sheetsGetRows: ValueRangeSchema,
@@ -181,11 +215,31 @@ export const GoogleSheetsEndpointOutputSchemas = {
 	sheetsCreateSheet: BatchUpdateSpreadsheetResponseSchema,
 	sheetsDeleteSheet: BatchUpdateSpreadsheetResponseSchema,
 	sheetsDeleteRowsOrColumns: BatchUpdateSpreadsheetResponseSchema,
+	sheetsListSheetsInSpreadsheet: ListSheetsResponseSchema,
 } as const;
+
+export type ListSheetsResponse = {
+	spreadsheetId?: string;
+	sheets?: SheetProperties[];
+};
+
+export type SpreadsheetFile = {
+	id?: string;
+	name?: string;
+	createdTime?: string;
+	modifiedTime?: string;
+	webViewLink?: string;
+};
+
+export type ListSpreadsheetsResponse = {
+	files?: SpreadsheetFile[];
+	nextPageToken?: string;
+};
 
 export type GoogleSheetsEndpointOutputs = {
 	spreadsheetsCreate: Spreadsheet;
 	spreadsheetsDelete: void;
+	spreadsheetsList: ListSpreadsheetsResponse;
 	sheetsAppendRow: BatchUpdateValuesResponse;
 	sheetsAppendOrUpdateRow: UpdateValuesResponse | AppendValuesResponse;
 	sheetsGetRows: ValueRange;
@@ -194,4 +248,5 @@ export type GoogleSheetsEndpointOutputs = {
 	sheetsCreateSheet: BatchUpdateSpreadsheetResponse;
 	sheetsDeleteSheet: BatchUpdateSpreadsheetResponse;
 	sheetsDeleteRowsOrColumns: BatchUpdateSpreadsheetResponse;
+	sheetsListSheetsInSpreadsheet: ListSheetsResponse;
 };

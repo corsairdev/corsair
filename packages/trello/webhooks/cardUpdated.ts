@@ -6,10 +6,7 @@ export const cardUpdated: TrelloWebhooks['cardUpdated'] = {
 	match: createTrelloActionMatch('updateCard'),
 
 	handler: async (ctx, request) => {
-		const verification = verifyTrelloWebhookSignature(
-			request,
-			ctx.key,
-		);
+		const verification = verifyTrelloWebhookSignature(request, ctx.key);
 		if (!verification.valid) {
 			return {
 				success: false,

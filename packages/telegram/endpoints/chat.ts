@@ -64,7 +64,7 @@ export const getChatMember: TelegramEndpoints['getChatMember'] = async (
 		TelegramEndpointOutputs['getChatMember']
 	>('getChatMember', ctx.key, {
 		method: 'POST',
-		body: input
+		body: input,
 	});
 
 	await logEventFromContext(

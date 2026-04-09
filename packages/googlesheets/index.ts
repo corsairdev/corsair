@@ -6,13 +6,11 @@ import type {
 	CorsairPluginContext,
 	CorsairWebhook,
 	KeyBuilderContext,
+	PickAuth,
 	PluginPermissionsConfig,
 	RawWebhookRequest,
 	RequiredPluginEndpointMeta,
-	RequiredPluginEndpointSchemas,
-	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
-import type { PickAuth } from 'corsair/core';
 import { getValidAccessToken } from './client';
 import type {
 	GoogleSheetsEndpointInputs,
@@ -50,6 +48,7 @@ type GoogleSheetsEndpoint<K extends keyof GoogleSheetsEndpointOutputs> =
 export type GoogleSheetsEndpoints = {
 	spreadsheetsCreate: GoogleSheetsEndpoint<'spreadsheetsCreate'>;
 	spreadsheetsDelete: GoogleSheetsEndpoint<'spreadsheetsDelete'>;
+	spreadsheetsList: GoogleSheetsEndpoint<'spreadsheetsList'>;
 	sheetsAppendRow: GoogleSheetsEndpoint<'sheetsAppendRow'>;
 	sheetsAppendOrUpdateRow: GoogleSheetsEndpoint<'sheetsAppendOrUpdateRow'>;
 	sheetsGetRows: GoogleSheetsEndpoint<'sheetsGetRows'>;
@@ -58,6 +57,7 @@ export type GoogleSheetsEndpoints = {
 	sheetsCreateSheet: GoogleSheetsEndpoint<'sheetsCreateSheet'>;
 	sheetsDeleteSheet: GoogleSheetsEndpoint<'sheetsDeleteSheet'>;
 	sheetsDeleteRowsOrColumns: GoogleSheetsEndpoint<'sheetsDeleteRowsOrColumns'>;
+	sheetsListSheetsInSpreadsheet: GoogleSheetsEndpoint<'sheetsListSheetsInSpreadsheet'>;
 };
 
 export type GoogleSheetsBoundEndpoints = BindEndpoints<
@@ -85,6 +85,7 @@ const googleSheetsEndpointsNested = {
 	spreadsheets: {
 		create: SpreadsheetsEndpoints.create,
 		delete: SpreadsheetsEndpoints.delete,
+		list: SpreadsheetsEndpoints.list,
 	},
 	sheets: {
 		appendRow: SheetsEndpoints.appendRow,
@@ -95,6 +96,7 @@ const googleSheetsEndpointsNested = {
 		createSheet: SheetsEndpoints.createSheet,
 		deleteSheet: SheetsEndpoints.deleteSheet,
 		deleteRowsOrColumns: SheetsEndpoints.deleteRowsOrColumns,
+		listSheetsInSpreadsheet: SheetsEndpoints.listSheetsInSpreadsheet,
 	},
 } as const;
 
@@ -106,6 +108,10 @@ export const googlesheetsEndpointSchemas = {
 	'spreadsheets.delete': {
 		input: GoogleSheetsEndpointInputSchemas.spreadsheetsDelete,
 		output: GoogleSheetsEndpointOutputSchemas.spreadsheetsDelete,
+	},
+	'spreadsheets.list': {
+		input: GoogleSheetsEndpointInputSchemas.spreadsheetsList,
+		output: GoogleSheetsEndpointOutputSchemas.spreadsheetsList,
 	},
 	'sheets.appendRow': {
 		input: GoogleSheetsEndpointInputSchemas.sheetsAppendRow,
@@ -138,6 +144,10 @@ export const googlesheetsEndpointSchemas = {
 	'sheets.deleteRowsOrColumns': {
 		input: GoogleSheetsEndpointInputSchemas.sheetsDeleteRowsOrColumns,
 		output: GoogleSheetsEndpointOutputSchemas.sheetsDeleteRowsOrColumns,
+	},
+	'sheets.listSheetsInSpreadsheet': {
+		input: GoogleSheetsEndpointInputSchemas.sheetsListSheetsInSpreadsheet,
+		output: GoogleSheetsEndpointOutputSchemas.sheetsListSheetsInSpreadsheet,
 	},
 } as const;
 
@@ -186,6 +196,10 @@ const googleSheetsEndpointMeta = {
 		description:
 			'Permanently delete a spreadsheet [DESTRUCTIVE · IRREVERSIBLE]',
 	},
+	'spreadsheets.list': {
+		riskLevel: 'read',
+		description: 'List all spreadsheets in Google Drive',
+	},
 	'sheets.appendRow': {
 		riskLevel: 'write',
 		description: 'Append a new row to a sheet',
@@ -219,6 +233,10 @@ const googleSheetsEndpointMeta = {
 	'sheets.deleteRowsOrColumns': {
 		riskLevel: 'destructive',
 		description: 'Delete rows or columns from a sheet [DESTRUCTIVE]',
+	},
+	'sheets.listSheetsInSpreadsheet': {
+		riskLevel: 'read',
+		description: 'List all sheet tabs in a spreadsheet',
 	},
 } satisfies RequiredPluginEndpointMeta<typeof googleSheetsEndpointsNested>;
 
@@ -254,7 +272,10 @@ export function googlesheets<const T extends GoogleSheetsPluginOptions>(
 			providerName: 'Google',
 			authUrl: 'https://accounts.google.com/o/oauth2/v2/auth',
 			tokenUrl: 'https://oauth2.googleapis.com/token',
-			scopes: ['https://www.googleapis.com/auth/spreadsheets'],
+			scopes: [
+				'https://www.googleapis.com/auth/spreadsheets',
+				'https://www.googleapis.com/auth/drive.readonly',
+			],
 			authParams: { access_type: 'offline', prompt: 'consent' },
 		},
 		hooks: options.hooks,
@@ -277,13 +298,17 @@ export function googlesheets<const T extends GoogleSheetsPluginOptions>(
 				]);
 
 				if (!refreshToken) {
-					throw new Error('[corsair:googlesheets] No refresh token. Cannot get access token.');
+					throw new Error(
+						'[corsair:googlesheets] No refresh token. Cannot get access token.',
+					);
 				}
 
 				const res = await ctx.keys.get_integration_credentials();
 
 				if (!res.client_id || !res.client_secret) {
-					throw new Error('[corsair:googlesheets] No client id or client secret');
+					throw new Error(
+						'[corsair:googlesheets] No client id or client secret',
+					);
 				}
 
 				try {

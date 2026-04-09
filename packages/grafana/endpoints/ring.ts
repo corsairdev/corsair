@@ -3,59 +3,60 @@ import type { GrafanaEndpoints } from '..';
 import { makeGrafanaRawRequest } from '../client';
 import type { GrafanaEndpointOutputs } from './types';
 
-export const getDistributorHaTracker: GrafanaEndpoints['ringGetDistributorHaTracker'] = async (
-	ctx,
-	_input,
-) => {
-	const grafanaUrl = (await ctx.keys.get_grafana_url()) ?? '';
+export const getDistributorHaTracker: GrafanaEndpoints['ringGetDistributorHaTracker'] =
+	async (ctx, _input) => {
+		const grafanaUrl = (await ctx.keys.get_grafana_url()) ?? '';
 
-	let result: GrafanaEndpointOutputs['ringGetDistributorHaTracker'];
+		let result: GrafanaEndpointOutputs['ringGetDistributorHaTracker'];
 
-	try {
-		const raw = await makeGrafanaRawRequest(
-			'/distributor/ha-tracker',
-			ctx.key,
-			grafanaUrl,
-		);
-
-		result = {
-			data: {
-				html_content: raw.content,
-				status_code: raw.status_code,
-			},
-			successful: true,
-		};
-	} catch (error) {
-		result = {
-			data: { html_content: '', status_code: 0 },
-			error: error instanceof Error ? error.message : 'Unknown error',
-			successful: false,
-		};
-	}
-
-	if (result.successful && ctx.db.ringStatus) {
 		try {
-			const ringId = 'distributor-ha-tracker';
-			await ctx.db.ringStatus.upsertByEntityId(ringId, {
-				id: ringId,
-				content: result.data.html_content,
-				contentType: 'text/html',
-				statusCode: result.data.status_code,
-				fetchedAt: new Date(),
-			});
-		} catch (err) {
-			console.warn('Failed to save distributor ha-tracker ring status to database:', err);
-		}
-	}
+			const raw = await makeGrafanaRawRequest(
+				'/distributor/ha-tracker',
+				ctx.key,
+				grafanaUrl,
+			);
 
-	await logEventFromContext(
-		ctx,
-		'grafana.ring.getDistributorHaTracker',
-		{},
-		'completed',
-	);
-	return result;
-};
+			result = {
+				data: {
+					html_content: raw.content,
+					status_code: raw.status_code,
+				},
+				successful: true,
+			};
+		} catch (error) {
+			result = {
+				data: { html_content: '', status_code: 0 },
+				error: error instanceof Error ? error.message : 'Unknown error',
+				successful: false,
+			};
+		}
+
+		if (result.successful && ctx.db.ringStatus) {
+			try {
+				const ringId = 'distributor-ha-tracker';
+				await ctx.db.ringStatus.upsertByEntityId(ringId, {
+					id: ringId,
+					content: result.data.html_content,
+					contentType: 'text/html',
+					statusCode: result.data.status_code,
+					fetchedAt: new Date(),
+				});
+			} catch (err) {
+				console.warn(
+					'Failed to save distributor ha-tracker ring status to database:',
+					err,
+				);
+			}
+		}
+
+		await logEventFromContext(
+			ctx,
+			'grafana.ring.getDistributorHaTracker',
+			{},
+			'completed',
+		);
+		return result;
+	};
 
 export const getIndexGateway: GrafanaEndpoints['ringGetIndexGateway'] = async (
 	ctx,
@@ -97,7 +98,10 @@ export const getIndexGateway: GrafanaEndpoints['ringGetIndexGateway'] = async (
 				fetchedAt: new Date(),
 			});
 		} catch (err) {
-			console.warn('Failed to save index gateway ring status to database:', err);
+			console.warn(
+				'Failed to save index gateway ring status to database:',
+				err,
+			);
 		}
 	}
 
@@ -110,67 +114,67 @@ export const getIndexGateway: GrafanaEndpoints['ringGetIndexGateway'] = async (
 	return result;
 };
 
-export const getOverridesExporter: GrafanaEndpoints['ringGetOverridesExporter'] = async (
+export const getOverridesExporter: GrafanaEndpoints['ringGetOverridesExporter'] =
+	async (ctx, _input) => {
+		const grafanaUrl = (await ctx.keys.get_grafana_url()) ?? '';
+
+		let result: GrafanaEndpointOutputs['ringGetOverridesExporter'];
+
+		try {
+			const raw = await makeGrafanaRawRequest(
+				'/overrides-exporter/ring',
+				ctx.key,
+				grafanaUrl,
+			);
+
+			result = {
+				data: { html_content: raw.content },
+				successful: true,
+			};
+		} catch (error) {
+			result = {
+				data: { html_content: '' },
+				error: error instanceof Error ? error.message : 'Unknown error',
+				successful: false,
+			};
+		}
+
+		if (result.successful && ctx.db.ringStatus) {
+			try {
+				const ringId = 'overrides-exporter';
+				await ctx.db.ringStatus.upsertByEntityId(ringId, {
+					id: ringId,
+					content: result.data.html_content,
+					contentType: 'text/html',
+					fetchedAt: new Date(),
+				});
+			} catch (err) {
+				console.warn(
+					'Failed to save overrides exporter ring status to database:',
+					err,
+				);
+			}
+		}
+
+		await logEventFromContext(
+			ctx,
+			'grafana.ring.getOverridesExporter',
+			{},
+			'completed',
+		);
+		return result;
+	};
+
+export const getRuler: GrafanaEndpoints['ringGetRuler'] = async (
 	ctx,
 	_input,
 ) => {
 	const grafanaUrl = (await ctx.keys.get_grafana_url()) ?? '';
 
-	let result: GrafanaEndpointOutputs['ringGetOverridesExporter'];
-
-	try {
-		const raw = await makeGrafanaRawRequest(
-			'/overrides-exporter/ring',
-			ctx.key,
-			grafanaUrl,
-		);
-
-		result = {
-			data: { html_content: raw.content },
-			successful: true,
-		};
-	} catch (error) {
-		result = {
-			data: { html_content: '' },
-			error: error instanceof Error ? error.message : 'Unknown error',
-			successful: false,
-		};
-	}
-
-	if (result.successful && ctx.db.ringStatus) {
-		try {
-			const ringId = 'overrides-exporter';
-			await ctx.db.ringStatus.upsertByEntityId(ringId, {
-				id: ringId,
-				content: result.data.html_content,
-				contentType: 'text/html',
-				fetchedAt: new Date(),
-			});
-		} catch (err) {
-			console.warn('Failed to save overrides exporter ring status to database:', err);
-		}
-	}
-
-	await logEventFromContext(
-		ctx,
-		'grafana.ring.getOverridesExporter',
-		{},
-		'completed',
-	);
-	return result;
-};
-
-export const getRuler: GrafanaEndpoints['ringGetRuler'] = async (ctx, _input) => {
-	const grafanaUrl = (await ctx.keys.get_grafana_url()) ?? '';
-
 	let result: GrafanaEndpointOutputs['ringGetRuler'];
 
 	try {
-		const raw = await makeGrafanaRawRequest(
-			'/ruler/ring',
-			ctx.key,
-			grafanaUrl,
-		);
+		const raw = await makeGrafanaRawRequest('/ruler/ring', ctx.key, grafanaUrl);
 
 		result = {
 			data: {

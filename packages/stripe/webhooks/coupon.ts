@@ -1,9 +1,6 @@
-import type { StripeWebhooks } from '..';
 import { logEventFromContext } from 'corsair/core';
-import {
-	createStripeEventMatch,
-	verifyStripeWebhookSignature,
-} from './types';
+import type { StripeWebhooks } from '..';
+import { createStripeEventMatch, verifyStripeWebhookSignature } from './types';
 
 export const created: StripeWebhooks['couponCreated'] = {
 	match: createStripeEventMatch('coupon.created'),
@@ -25,7 +22,9 @@ export const created: StripeWebhooks['couponCreated'] = {
 				const coupon = event.data.object;
 				await ctx.db.coupons.upsertByEntityId(coupon.id, {
 					...coupon,
-					createdAt: coupon.created ? new Date(coupon.created * 1000) : undefined,
+					createdAt: coupon.created
+						? new Date(coupon.created * 1000)
+						: undefined,
 				});
 			} catch (error) {
 				console.warn('Failed to save coupon (created) to database:', error);

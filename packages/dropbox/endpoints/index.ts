@@ -1,11 +1,17 @@
-import { copy as filesCopy, deleteFile, download, move as filesMove, upload } from './files';
 import {
-	copy as foldersCopy,
+	deleteFile,
+	download,
+	copy as filesCopy,
+	move as filesMove,
+	upload,
+} from './files';
+import {
 	create,
 	deleteFolder,
+	copy as foldersCopy,
+	move as foldersMove,
 	list,
 	listContinue,
-	move as foldersMove,
 } from './folders';
 import { query } from './search';
 

@@ -4,20 +4,18 @@ import { makeAuthenticatedGmailRequest } from '../client';
 import type { GmailEndpointOutputs } from './types';
 
 export const list: GmailEndpoints['threadsList'] = async (ctx, input) => {
-	const result = await makeAuthenticatedGmailRequest<GmailEndpointOutputs['threadsList']>(
-		`/users/${input.userId || 'me'}/threads`,
-		ctx,
-		{
-			method: 'GET',
-			query: {
-				q: input.q,
-				maxResults: input.maxResults,
-				pageToken: input.pageToken,
-				labelIds: input.labelIds?.join(','),
-				includeSpamTrash: input.includeSpamTrash,
-			},
+	const result = await makeAuthenticatedGmailRequest<
+		GmailEndpointOutputs['threadsList']
+	>(`/users/${input.userId || 'me'}/threads`, ctx, {
+		method: 'GET',
+		query: {
+			q: input.q,
+			maxResults: input.maxResults,
+			pageToken: input.pageToken,
+			labelIds: input.labelIds?.join(','),
+			includeSpamTrash: input.includeSpamTrash,
 		},
-	);
+	});
 
 	if (result.threads && ctx.db.threads) {
 		try {
@@ -45,17 +43,15 @@ export const list: GmailEndpoints['threadsList'] = async (ctx, input) => {
 };
 
 export const get: GmailEndpoints['threadsGet'] = async (ctx, input) => {
-	const result = await makeAuthenticatedGmailRequest<GmailEndpointOutputs['threadsGet']>(
-		`/users/${input.userId || 'me'}/threads/${input.id}`,
-		ctx,
-		{
-			method: 'GET',
-			query: {
-				format: input.format,
-				metadataHeaders: input.metadataHeaders?.join(','),
-			},
+	const result = await makeAuthenticatedGmailRequest<
+		GmailEndpointOutputs['threadsGet']
+	>(`/users/${input.userId || 'me'}/threads/${input.id}`, ctx, {
+		method: 'GET',
+		query: {
+			format: input.format,
+			metadataHeaders: input.metadataHeaders?.join(','),
 		},
-	);
+	});
 
 	if (result.id && ctx.db.threads) {
 		try {
@@ -92,14 +88,12 @@ export const modify: GmailEndpoints['threadsModify'] = async (ctx, input) => {
 		body.removeLabelIds = input.removeLabelIds;
 	}
 
-	const result = await makeAuthenticatedGmailRequest<GmailEndpointOutputs['threadsModify']>(
-		`/users/${input.userId || 'me'}/threads/${input.id}/modify`,
-		ctx,
-		{
-			method: 'POST',
-			body,
-		},
-	);
+	const result = await makeAuthenticatedGmailRequest<
+		GmailEndpointOutputs['threadsModify']
+	>(`/users/${input.userId || 'me'}/threads/${input.id}/modify`, ctx, {
+		method: 'POST',
+		body,
+	});
 
 	if (result.id) {
 		const endpoints = ctx.endpoints as GmailBoundEndpoints;
@@ -144,13 +138,11 @@ export const deleteThread: GmailEndpoints['threadsDelete'] = async (
 };
 
 export const trash: GmailEndpoints['threadsTrash'] = async (ctx, input) => {
-	const result = await makeAuthenticatedGmailRequest<GmailEndpointOutputs['threadsTrash']>(
-		`/users/${input.userId || 'me'}/threads/${input.id}/trash`,
-		ctx,
-		{
-			method: 'POST',
-		},
-	);
+	const result = await makeAuthenticatedGmailRequest<
+		GmailEndpointOutputs['threadsTrash']
+	>(`/users/${input.userId || 'me'}/threads/${input.id}/trash`, ctx, {
+		method: 'POST',
+	});
 
 	if (result.id) {
 		const endpoints = ctx.endpoints as GmailBoundEndpoints;
@@ -167,13 +159,11 @@ export const trash: GmailEndpoints['threadsTrash'] = async (ctx, input) => {
 };
 
 export const untrash: GmailEndpoints['threadsUntrash'] = async (ctx, input) => {
-	const result = await makeAuthenticatedGmailRequest<GmailEndpointOutputs['threadsUntrash']>(
-		`/users/${input.userId || 'me'}/threads/${input.id}/untrash`,
-		ctx,
-		{
-			method: 'POST',
-		},
-	);
+	const result = await makeAuthenticatedGmailRequest<
+		GmailEndpointOutputs['threadsUntrash']
+	>(`/users/${input.userId || 'me'}/threads/${input.id}/untrash`, ctx, {
+		method: 'POST',
+	});
 
 	if (result.id) {
 		const endpoints = ctx.endpoints as GmailBoundEndpoints;

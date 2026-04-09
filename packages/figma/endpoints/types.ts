@@ -889,7 +889,9 @@ export type FigmaEndpointInputs = {
 	devResourcesDelete: z.infer<typeof DevResourcesDeleteInputSchema>;
 	devResourcesGet: z.infer<typeof DevResourcesGetInputSchema>;
 	devResourcesUpdate: z.infer<typeof DevResourcesUpdateInputSchema>;
-	variablesCreateModifyDelete: z.infer<typeof VariablesCreateModifyDeleteInputSchema>;
+	variablesCreateModifyDelete: z.infer<
+		typeof VariablesCreateModifyDeleteInputSchema
+	>;
 	variablesGetLocal: z.infer<typeof VariablesGetLocalInputSchema>;
 	variablesGetPublished: z.infer<typeof VariablesGetPublishedInputSchema>;
 	componentsGet: z.infer<typeof ComponentsGetInputSchema>;
@@ -910,19 +912,41 @@ export type FigmaEndpointInputs = {
 	stylesGetForTeam: z.infer<typeof StylesGetForTeamInputSchema>;
 	projectsGetTeamProjects: z.infer<typeof ProjectsGetTeamProjectsInputSchema>;
 	usersGetCurrent: z.infer<typeof UsersGetCurrentInputSchema>;
-	libraryAnalyticsComponentActions: z.infer<typeof LibraryAnalyticsComponentActionsInputSchema>;
-	libraryAnalyticsComponentUsages: z.infer<typeof LibraryAnalyticsComponentUsagesInputSchema>;
-	libraryAnalyticsStyleActions: z.infer<typeof LibraryAnalyticsStyleActionsInputSchema>;
-	libraryAnalyticsStyleUsages: z.infer<typeof LibraryAnalyticsStyleUsagesInputSchema>;
-	libraryAnalyticsVariableActions: z.infer<typeof LibraryAnalyticsVariableActionsInputSchema>;
-	libraryAnalyticsVariableUsages: z.infer<typeof LibraryAnalyticsVariableUsagesInputSchema>;
+	libraryAnalyticsComponentActions: z.infer<
+		typeof LibraryAnalyticsComponentActionsInputSchema
+	>;
+	libraryAnalyticsComponentUsages: z.infer<
+		typeof LibraryAnalyticsComponentUsagesInputSchema
+	>;
+	libraryAnalyticsStyleActions: z.infer<
+		typeof LibraryAnalyticsStyleActionsInputSchema
+	>;
+	libraryAnalyticsStyleUsages: z.infer<
+		typeof LibraryAnalyticsStyleUsagesInputSchema
+	>;
+	libraryAnalyticsVariableActions: z.infer<
+		typeof LibraryAnalyticsVariableActionsInputSchema
+	>;
+	libraryAnalyticsVariableUsages: z.infer<
+		typeof LibraryAnalyticsVariableUsagesInputSchema
+	>;
 	activityLogsList: z.infer<typeof ActivityLogsListInputSchema>;
 	paymentsGet: z.infer<typeof PaymentsGetInputSchema>;
-	designToolsDiscoverResources: z.infer<typeof DesignToolsDiscoverResourcesInputSchema>;
-	designToolsExtractDesignTokens: z.infer<typeof DesignToolsExtractDesignTokensInputSchema>;
-	designToolsExtractPrototypeInteractions: z.infer<typeof DesignToolsExtractPrototypeInteractionsInputSchema>;
-	designToolsDownloadImages: z.infer<typeof DesignToolsDownloadImagesInputSchema>;
-	designToolsDesignTokensToTailwind: z.infer<typeof DesignToolsDesignTokensToTailwindInputSchema>;
+	designToolsDiscoverResources: z.infer<
+		typeof DesignToolsDiscoverResourcesInputSchema
+	>;
+	designToolsExtractDesignTokens: z.infer<
+		typeof DesignToolsExtractDesignTokensInputSchema
+	>;
+	designToolsExtractPrototypeInteractions: z.infer<
+		typeof DesignToolsExtractPrototypeInteractionsInputSchema
+	>;
+	designToolsDownloadImages: z.infer<
+		typeof DesignToolsDownloadImagesInputSchema
+	>;
+	designToolsDesignTokensToTailwind: z.infer<
+		typeof DesignToolsDesignTokensToTailwindInputSchema
+	>;
 };
 
 export type FigmaEndpointOutputs = {
@@ -942,15 +966,21 @@ export type FigmaEndpointOutputs = {
 	devResourcesDelete: z.infer<typeof DevResourcesDeleteResponseSchema>;
 	devResourcesGet: z.infer<typeof DevResourcesGetResponseSchema>;
 	devResourcesUpdate: z.infer<typeof DevResourcesUpdateResponseSchema>;
-	variablesCreateModifyDelete: z.infer<typeof VariablesCreateModifyDeleteResponseSchema>;
+	variablesCreateModifyDelete: z.infer<
+		typeof VariablesCreateModifyDeleteResponseSchema
+	>;
 	variablesGetLocal: z.infer<typeof VariablesGetLocalResponseSchema>;
 	variablesGetPublished: z.infer<typeof VariablesGetPublishedResponseSchema>;
 	componentsGet: z.infer<typeof ComponentsGetResponseSchema>;
 	componentSetsGet: z.infer<typeof ComponentSetsGetResponseSchema>;
 	componentsGetForFile: z.infer<typeof ComponentsGetForFileResponseSchema>;
-	componentSetsGetForFile: z.infer<typeof ComponentSetsGetForFileResponseSchema>;
+	componentSetsGetForFile: z.infer<
+		typeof ComponentSetsGetForFileResponseSchema
+	>;
 	componentsGetForTeam: z.infer<typeof ComponentsGetForTeamResponseSchema>;
-	componentSetsGetForTeam: z.infer<typeof ComponentSetsGetForTeamResponseSchema>;
+	componentSetsGetForTeam: z.infer<
+		typeof ComponentSetsGetForTeamResponseSchema
+	>;
 	filesGetJSON: z.infer<typeof FilesGetJSONResponseSchema>;
 	filesGetMetadata: z.infer<typeof FilesGetMetadataResponseSchema>;
 	filesGetNodes: z.infer<typeof FilesGetNodesResponseSchema>;
@@ -961,21 +991,45 @@ export type FigmaEndpointOutputs = {
 	filesGetProjectFiles: z.infer<typeof FilesGetProjectFilesResponseSchema>;
 	stylesGet: z.infer<typeof StylesGetResponseSchema>;
 	stylesGetForTeam: z.infer<typeof StylesGetForTeamResponseSchema>;
-	projectsGetTeamProjects: z.infer<typeof ProjectsGetTeamProjectsResponseSchema>;
+	projectsGetTeamProjects: z.infer<
+		typeof ProjectsGetTeamProjectsResponseSchema
+	>;
 	usersGetCurrent: z.infer<typeof UsersGetCurrentResponseSchema>;
-	libraryAnalyticsComponentActions: z.infer<typeof LibraryAnalyticsComponentActionsResponseSchema>;
-	libraryAnalyticsComponentUsages: z.infer<typeof LibraryAnalyticsComponentUsagesResponseSchema>;
-	libraryAnalyticsStyleActions: z.infer<typeof LibraryAnalyticsStyleActionsResponseSchema>;
-	libraryAnalyticsStyleUsages: z.infer<typeof LibraryAnalyticsStyleUsagesResponseSchema>;
-	libraryAnalyticsVariableActions: z.infer<typeof LibraryAnalyticsVariableActionsResponseSchema>;
-	libraryAnalyticsVariableUsages: z.infer<typeof LibraryAnalyticsVariableUsagesResponseSchema>;
+	libraryAnalyticsComponentActions: z.infer<
+		typeof LibraryAnalyticsComponentActionsResponseSchema
+	>;
+	libraryAnalyticsComponentUsages: z.infer<
+		typeof LibraryAnalyticsComponentUsagesResponseSchema
+	>;
+	libraryAnalyticsStyleActions: z.infer<
+		typeof LibraryAnalyticsStyleActionsResponseSchema
+	>;
+	libraryAnalyticsStyleUsages: z.infer<
+		typeof LibraryAnalyticsStyleUsagesResponseSchema
+	>;
+	libraryAnalyticsVariableActions: z.infer<
+		typeof LibraryAnalyticsVariableActionsResponseSchema
+	>;
+	libraryAnalyticsVariableUsages: z.infer<
+		typeof LibraryAnalyticsVariableUsagesResponseSchema
+	>;
 	activityLogsList: z.infer<typeof ActivityLogsListResponseSchema>;
 	paymentsGet: z.infer<typeof PaymentsGetResponseSchema>;
-	designToolsDiscoverResources: z.infer<typeof DesignToolsDiscoverResourcesResponseSchema>;
-	designToolsExtractDesignTokens: z.infer<typeof DesignToolsExtractDesignTokensResponseSchema>;
-	designToolsExtractPrototypeInteractions: z.infer<typeof DesignToolsExtractPrototypeInteractionsResponseSchema>;
-	designToolsDownloadImages: z.infer<typeof DesignToolsDownloadImagesResponseSchema>;
-	designToolsDesignTokensToTailwind: z.infer<typeof DesignToolsDesignTokensToTailwindResponseSchema>;
+	designToolsDiscoverResources: z.infer<
+		typeof DesignToolsDiscoverResourcesResponseSchema
+	>;
+	designToolsExtractDesignTokens: z.infer<
+		typeof DesignToolsExtractDesignTokensResponseSchema
+	>;
+	designToolsExtractPrototypeInteractions: z.infer<
+		typeof DesignToolsExtractPrototypeInteractionsResponseSchema
+	>;
+	designToolsDownloadImages: z.infer<
+		typeof DesignToolsDownloadImagesResponseSchema
+	>;
+	designToolsDesignTokensToTailwind: z.infer<
+		typeof DesignToolsDesignTokensToTailwindResponseSchema
+	>;
 };
 
 export const FigmaEndpointInputSchemas = {
@@ -1026,9 +1080,11 @@ export const FigmaEndpointInputSchemas = {
 	paymentsGet: PaymentsGetInputSchema,
 	designToolsDiscoverResources: DesignToolsDiscoverResourcesInputSchema,
 	designToolsExtractDesignTokens: DesignToolsExtractDesignTokensInputSchema,
-	designToolsExtractPrototypeInteractions: DesignToolsExtractPrototypeInteractionsInputSchema,
+	designToolsExtractPrototypeInteractions:
+		DesignToolsExtractPrototypeInteractionsInputSchema,
 	designToolsDownloadImages: DesignToolsDownloadImagesInputSchema,
-	designToolsDesignTokensToTailwind: DesignToolsDesignTokensToTailwindInputSchema,
+	designToolsDesignTokensToTailwind:
+		DesignToolsDesignTokensToTailwindInputSchema,
 } as const;
 
 export const FigmaEndpointOutputSchemas = {
@@ -1069,19 +1125,24 @@ export const FigmaEndpointOutputSchemas = {
 	stylesGetForTeam: StylesGetForTeamResponseSchema,
 	projectsGetTeamProjects: ProjectsGetTeamProjectsResponseSchema,
 	usersGetCurrent: UsersGetCurrentResponseSchema,
-	libraryAnalyticsComponentActions: LibraryAnalyticsComponentActionsResponseSchema,
-	libraryAnalyticsComponentUsages: LibraryAnalyticsComponentUsagesResponseSchema,
+	libraryAnalyticsComponentActions:
+		LibraryAnalyticsComponentActionsResponseSchema,
+	libraryAnalyticsComponentUsages:
+		LibraryAnalyticsComponentUsagesResponseSchema,
 	libraryAnalyticsStyleActions: LibraryAnalyticsStyleActionsResponseSchema,
 	libraryAnalyticsStyleUsages: LibraryAnalyticsStyleUsagesResponseSchema,
-	libraryAnalyticsVariableActions: LibraryAnalyticsVariableActionsResponseSchema,
+	libraryAnalyticsVariableActions:
+		LibraryAnalyticsVariableActionsResponseSchema,
 	libraryAnalyticsVariableUsages: LibraryAnalyticsVariableUsagesResponseSchema,
 	activityLogsList: ActivityLogsListResponseSchema,
 	paymentsGet: PaymentsGetResponseSchema,
 	designToolsDiscoverResources: DesignToolsDiscoverResourcesResponseSchema,
 	designToolsExtractDesignTokens: DesignToolsExtractDesignTokensResponseSchema,
-	designToolsExtractPrototypeInteractions: DesignToolsExtractPrototypeInteractionsResponseSchema,
+	designToolsExtractPrototypeInteractions:
+		DesignToolsExtractPrototypeInteractionsResponseSchema,
 	designToolsDownloadImages: DesignToolsDownloadImagesResponseSchema,
-	designToolsDesignTokensToTailwind: DesignToolsDesignTokensToTailwindResponseSchema,
+	designToolsDesignTokensToTailwind:
+		DesignToolsDesignTokensToTailwindResponseSchema,
 } as const;
 
 // ── Named Response Type Exports ───────────────────────────────────────────────
@@ -1089,50 +1150,79 @@ export const FigmaEndpointOutputSchemas = {
 export type CommentsAddResponse = FigmaEndpointOutputs['commentsAdd'];
 export type CommentsDeleteResponse = FigmaEndpointOutputs['commentsDelete'];
 export type CommentsListResponse = FigmaEndpointOutputs['commentsList'];
-export type CommentsGetReactionsResponse = FigmaEndpointOutputs['commentsGetReactions'];
-export type CommentsAddReactionResponse = FigmaEndpointOutputs['commentsAddReaction'];
-export type CommentsDeleteReactionResponse = FigmaEndpointOutputs['commentsDeleteReaction'];
+export type CommentsGetReactionsResponse =
+	FigmaEndpointOutputs['commentsGetReactions'];
+export type CommentsAddReactionResponse =
+	FigmaEndpointOutputs['commentsAddReaction'];
+export type CommentsDeleteReactionResponse =
+	FigmaEndpointOutputs['commentsDeleteReaction'];
 export type WebhooksCreateResponse = FigmaEndpointOutputs['webhooksCreate'];
 export type WebhooksDeleteResponse = FigmaEndpointOutputs['webhooksDelete'];
 export type WebhooksGetResponse = FigmaEndpointOutputs['webhooksGet'];
 export type WebhooksListResponse = FigmaEndpointOutputs['webhooksList'];
-export type WebhooksGetRequestsResponse = FigmaEndpointOutputs['webhooksGetRequests'];
+export type WebhooksGetRequestsResponse =
+	FigmaEndpointOutputs['webhooksGetRequests'];
 export type WebhooksUpdateResponse = FigmaEndpointOutputs['webhooksUpdate'];
-export type DevResourcesCreateResponse = FigmaEndpointOutputs['devResourcesCreate'];
-export type DevResourcesDeleteResponse = FigmaEndpointOutputs['devResourcesDelete'];
+export type DevResourcesCreateResponse =
+	FigmaEndpointOutputs['devResourcesCreate'];
+export type DevResourcesDeleteResponse =
+	FigmaEndpointOutputs['devResourcesDelete'];
 export type DevResourcesGetResponse = FigmaEndpointOutputs['devResourcesGet'];
-export type DevResourcesUpdateResponse = FigmaEndpointOutputs['devResourcesUpdate'];
-export type VariablesCreateModifyDeleteResponse = FigmaEndpointOutputs['variablesCreateModifyDelete'];
-export type VariablesGetLocalResponse = FigmaEndpointOutputs['variablesGetLocal'];
-export type VariablesGetPublishedResponse = FigmaEndpointOutputs['variablesGetPublished'];
+export type DevResourcesUpdateResponse =
+	FigmaEndpointOutputs['devResourcesUpdate'];
+export type VariablesCreateModifyDeleteResponse =
+	FigmaEndpointOutputs['variablesCreateModifyDelete'];
+export type VariablesGetLocalResponse =
+	FigmaEndpointOutputs['variablesGetLocal'];
+export type VariablesGetPublishedResponse =
+	FigmaEndpointOutputs['variablesGetPublished'];
 export type ComponentsGetResponse = FigmaEndpointOutputs['componentsGet'];
 export type ComponentSetsGetResponse = FigmaEndpointOutputs['componentSetsGet'];
-export type ComponentsGetForFileResponse = FigmaEndpointOutputs['componentsGetForFile'];
-export type ComponentSetsGetForFileResponse = FigmaEndpointOutputs['componentSetsGetForFile'];
-export type ComponentsGetForTeamResponse = FigmaEndpointOutputs['componentsGetForTeam'];
-export type ComponentSetsGetForTeamResponse = FigmaEndpointOutputs['componentSetsGetForTeam'];
+export type ComponentsGetForFileResponse =
+	FigmaEndpointOutputs['componentsGetForFile'];
+export type ComponentSetsGetForFileResponse =
+	FigmaEndpointOutputs['componentSetsGetForFile'];
+export type ComponentsGetForTeamResponse =
+	FigmaEndpointOutputs['componentsGetForTeam'];
+export type ComponentSetsGetForTeamResponse =
+	FigmaEndpointOutputs['componentSetsGetForTeam'];
 export type FilesGetJSONResponse = FigmaEndpointOutputs['filesGetJSON'];
 export type FilesGetMetadataResponse = FigmaEndpointOutputs['filesGetMetadata'];
 export type FilesGetNodesResponse = FigmaEndpointOutputs['filesGetNodes'];
 export type FilesGetStylesResponse = FigmaEndpointOutputs['filesGetStyles'];
-export type FilesGetImageFillsResponse = FigmaEndpointOutputs['filesGetImageFills'];
+export type FilesGetImageFillsResponse =
+	FigmaEndpointOutputs['filesGetImageFills'];
 export type FilesGetVersionsResponse = FigmaEndpointOutputs['filesGetVersions'];
-export type FilesRenderImagesResponse = FigmaEndpointOutputs['filesRenderImages'];
-export type FilesGetProjectFilesResponse = FigmaEndpointOutputs['filesGetProjectFiles'];
+export type FilesRenderImagesResponse =
+	FigmaEndpointOutputs['filesRenderImages'];
+export type FilesGetProjectFilesResponse =
+	FigmaEndpointOutputs['filesGetProjectFiles'];
 export type StylesGetResponse = FigmaEndpointOutputs['stylesGet'];
 export type StylesGetForTeamResponse = FigmaEndpointOutputs['stylesGetForTeam'];
-export type ProjectsGetTeamProjectsResponse = FigmaEndpointOutputs['projectsGetTeamProjects'];
+export type ProjectsGetTeamProjectsResponse =
+	FigmaEndpointOutputs['projectsGetTeamProjects'];
 export type UsersGetCurrentResponse = FigmaEndpointOutputs['usersGetCurrent'];
-export type LibraryAnalyticsComponentActionsResponse = FigmaEndpointOutputs['libraryAnalyticsComponentActions'];
-export type LibraryAnalyticsComponentUsagesResponse = FigmaEndpointOutputs['libraryAnalyticsComponentUsages'];
-export type LibraryAnalyticsStyleActionsResponse = FigmaEndpointOutputs['libraryAnalyticsStyleActions'];
-export type LibraryAnalyticsStyleUsagesResponse = FigmaEndpointOutputs['libraryAnalyticsStyleUsages'];
-export type LibraryAnalyticsVariableActionsResponse = FigmaEndpointOutputs['libraryAnalyticsVariableActions'];
-export type LibraryAnalyticsVariableUsagesResponse = FigmaEndpointOutputs['libraryAnalyticsVariableUsages'];
+export type LibraryAnalyticsComponentActionsResponse =
+	FigmaEndpointOutputs['libraryAnalyticsComponentActions'];
+export type LibraryAnalyticsComponentUsagesResponse =
+	FigmaEndpointOutputs['libraryAnalyticsComponentUsages'];
+export type LibraryAnalyticsStyleActionsResponse =
+	FigmaEndpointOutputs['libraryAnalyticsStyleActions'];
+export type LibraryAnalyticsStyleUsagesResponse =
+	FigmaEndpointOutputs['libraryAnalyticsStyleUsages'];
+export type LibraryAnalyticsVariableActionsResponse =
+	FigmaEndpointOutputs['libraryAnalyticsVariableActions'];
+export type LibraryAnalyticsVariableUsagesResponse =
+	FigmaEndpointOutputs['libraryAnalyticsVariableUsages'];
 export type ActivityLogsListResponse = FigmaEndpointOutputs['activityLogsList'];
 export type PaymentsGetResponse = FigmaEndpointOutputs['paymentsGet'];
-export type DesignToolsDiscoverResourcesResponse = FigmaEndpointOutputs['designToolsDiscoverResources'];
-export type DesignToolsExtractDesignTokensResponse = FigmaEndpointOutputs['designToolsExtractDesignTokens'];
-export type DesignToolsExtractPrototypeInteractionsResponse = FigmaEndpointOutputs['designToolsExtractPrototypeInteractions'];
-export type DesignToolsDownloadImagesResponse = FigmaEndpointOutputs['designToolsDownloadImages'];
-export type DesignToolsDesignTokensToTailwindResponse = FigmaEndpointOutputs['designToolsDesignTokensToTailwind'];
+export type DesignToolsDiscoverResourcesResponse =
+	FigmaEndpointOutputs['designToolsDiscoverResources'];
+export type DesignToolsExtractDesignTokensResponse =
+	FigmaEndpointOutputs['designToolsExtractDesignTokens'];
+export type DesignToolsExtractPrototypeInteractionsResponse =
+	FigmaEndpointOutputs['designToolsExtractPrototypeInteractions'];
+export type DesignToolsDownloadImagesResponse =
+	FigmaEndpointOutputs['designToolsDownloadImages'];
+export type DesignToolsDesignTokensToTailwindResponse =
+	FigmaEndpointOutputs['designToolsDesignTokensToTailwind'];

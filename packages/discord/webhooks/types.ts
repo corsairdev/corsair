@@ -1,10 +1,10 @@
-import * as crypto from 'crypto';
-import { z } from 'zod';
 import type {
 	CorsairWebhookMatcher,
 	RawWebhookRequest,
 	WebhookRequest,
 } from 'corsair/core';
+import * as crypto from 'crypto';
+import { z } from 'zod';
 import { DiscordUserSchema, EmbedSchema } from '../endpoints/types';
 
 // ── Discord Interaction Types ──────────────────────────────────────────────────

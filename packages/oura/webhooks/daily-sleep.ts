@@ -1,5 +1,5 @@
-import type { OuraWebhooks } from '..';
 import { logEventFromContext } from 'corsair/core';
+import type { OuraWebhooks } from '..';
 import { createOuraMatch, verifyOuraWebhookSignature } from './types';
 
 export const dailySleep: OuraWebhooks['dailySleep'] = {

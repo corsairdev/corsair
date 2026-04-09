@@ -1,21 +1,18 @@
 import {
-	succeeded as chargeSucceeded,
 	failed as chargeFailed,
 	refunded as chargeRefunded,
+	succeeded as chargeSucceeded,
 } from './charge';
+import { created as couponCreated, deleted as couponDeleted } from './coupon';
 import {
 	created as customerCreated,
 	deleted as customerDeleted,
 	updated as customerUpdated,
 } from './customer';
 import {
-	succeeded as paymentIntentSucceeded,
 	failed as paymentIntentFailed,
+	succeeded as paymentIntentSucceeded,
 } from './payment-intent';
-import {
-	created as couponCreated,
-	deleted as couponDeleted,
-} from './coupon';
 import { ping } from './ping';
 
 export const ChargeWebhooks = {

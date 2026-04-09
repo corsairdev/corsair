@@ -3,15 +3,16 @@ import type { IntercomEndpoints } from '..';
 import { makeIntercomRequest } from '../client';
 import type { IntercomEndpointOutputs } from './types';
 
-export const identify: IntercomEndpoints['adminsIdentify'] = async (ctx, input) => {
-	const result = await makeIntercomRequest<IntercomEndpointOutputs['adminsIdentify']>(
-		'me',
-		ctx.key,
-		{
-			method: 'GET',
-			query: input,
-		},
-	);
+export const identify: IntercomEndpoints['adminsIdentify'] = async (
+	ctx,
+	input,
+) => {
+	const result = await makeIntercomRequest<
+		IntercomEndpointOutputs['adminsIdentify']
+	>('me', ctx.key, {
+		method: 'GET',
+		query: input,
+	});
 
 	if (result && ctx.db.admins) {
 		try {
@@ -26,10 +27,9 @@ export const identify: IntercomEndpoints['adminsIdentify'] = async (ctx, input) 
 };
 
 export const list: IntercomEndpoints['adminsList'] = async (ctx, input) => {
-	const result = await makeIntercomRequest<IntercomEndpointOutputs['adminsList']>(
-		'admins',
-		ctx.key,
-	);
+	const result = await makeIntercomRequest<
+		IntercomEndpointOutputs['adminsList']
+	>('admins', ctx.key);
 
 	if (result?.admins && ctx.db.admins) {
 		try {
@@ -47,13 +47,11 @@ export const list: IntercomEndpoints['adminsList'] = async (ctx, input) => {
 
 export const get: IntercomEndpoints['adminsGet'] = async (ctx, input) => {
 	const { id, ...query } = input;
-	const result = await makeIntercomRequest<IntercomEndpointOutputs['adminsGet']>(
-		`admins/${id}`,
-		ctx.key,
-		{
-			query,
-		},
-	);
+	const result = await makeIntercomRequest<
+		IntercomEndpointOutputs['adminsGet']
+	>(`admins/${id}`, ctx.key, {
+		query,
+	});
 
 	if (result && ctx.db.admins) {
 		try {
@@ -63,34 +61,44 @@ export const get: IntercomEndpoints['adminsGet'] = async (ctx, input) => {
 		}
 	}
 
-	await logEventFromContext(ctx, 'intercom.admins.get', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'intercom.admins.get',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
-export const listActivityLogs: IntercomEndpoints['adminsListActivityLogs'] = async (ctx, input) => {
-	const result = await makeIntercomRequest<IntercomEndpointOutputs['adminsListActivityLogs']>(
-		'admins/activity_log',
-		ctx.key,
-		{
+export const listActivityLogs: IntercomEndpoints['adminsListActivityLogs'] =
+	async (ctx, input) => {
+		const result = await makeIntercomRequest<
+			IntercomEndpointOutputs['adminsListActivityLogs']
+		>('admins/activity_log', ctx.key, {
 			method: 'GET',
 			query: input,
-		},
-	);
+		});
 
-	await logEventFromContext(ctx, 'intercom.admins.listActivityLogs', {}, 'completed');
-	return result;
-};
+		await logEventFromContext(
+			ctx,
+			'intercom.admins.listActivityLogs',
+			{},
+			'completed',
+		);
+		return result;
+	};
 
-export const setAway: IntercomEndpoints['adminsSetAway'] = async (ctx, input) => {
+export const setAway: IntercomEndpoints['adminsSetAway'] = async (
+	ctx,
+	input,
+) => {
 	const { id, ...body } = input;
-	const result = await makeIntercomRequest<IntercomEndpointOutputs['adminsSetAway']>(
-		`admins/${id}/away`,
-		ctx.key,
-		{
-			method: 'PUT',
-			body,
-		},
-	);
+	const result = await makeIntercomRequest<
+		IntercomEndpointOutputs['adminsSetAway']
+	>(`admins/${id}/away`, ctx.key, {
+		method: 'PUT',
+		body,
+	});
 
 	if (result && ctx.db.admins) {
 		try {
@@ -100,6 +108,11 @@ export const setAway: IntercomEndpoints['adminsSetAway'] = async (ctx, input) =>
 		}
 	}
 
-	await logEventFromContext(ctx, 'intercom.admins.setAway', { id }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'intercom.admins.setAway',
+		{ id },
+		'completed',
+	);
 	return result;
 };

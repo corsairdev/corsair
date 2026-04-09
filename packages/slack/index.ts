@@ -10,8 +10,6 @@ import type {
 	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
-	RequiredPluginEndpointSchemas,
-	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
 import type { SlackEndpointInputs, SlackEndpointOutputs } from './endpoints';
 import {

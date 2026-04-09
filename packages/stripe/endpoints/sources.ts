@@ -1,17 +1,15 @@
-import type { StripeEndpoints } from '..';
 import { logEventFromContext } from 'corsair/core';
+import type { StripeEndpoints } from '..';
 import { makeStripeRequest } from '../client';
 import type { StripeEndpointOutputs } from './types';
 
 export const create: StripeEndpoints['sourcesCreate'] = async (ctx, input) => {
-	const result = await makeStripeRequest<StripeEndpointOutputs['sourcesCreate']>(
-		'sources',
-		ctx.key,
-		{
-			method: 'POST',
-			body: { ...input },
-		},
-	);
+	const result = await makeStripeRequest<
+		StripeEndpointOutputs['sourcesCreate']
+	>('sources', ctx.key, {
+		method: 'POST',
+		body: { ...input },
+	});
 
 	if (result.id && ctx.db.sources) {
 		try {

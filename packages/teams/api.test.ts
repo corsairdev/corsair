@@ -1,31 +1,31 @@
-import 'dotenv/config'
+import 'dotenv/config';
 import { makeTeamsRequest } from './client';
 import type {
-	TeamsListResponse,
-	TeamsGetResponse,
-	TeamsCreateResponse,
-	TeamsUpdateResponse,
-	TeamsDeleteResponse,
-	ChannelsListResponse,
-	ChannelsGetResponse,
 	ChannelsCreateResponse,
-	ChannelsUpdateResponse,
 	ChannelsDeleteResponse,
-	MessagesListResponse,
-	MessagesGetResponse,
-	MessagesSendResponse,
-	MessagesReplyResponse,
-	MessagesListRepliesResponse,
-	MessagesDeleteResponse,
-	MembersListResponse,
-	MembersGetResponse,
-	MembersAddResponse,
-	MembersRemoveResponse,
-	ChatsListResponse,
-	ChatsGetResponse,
+	ChannelsGetResponse,
+	ChannelsListResponse,
+	ChannelsUpdateResponse,
 	ChatsCreateResponse,
+	ChatsGetResponse,
 	ChatsListMessagesResponse,
+	ChatsListResponse,
 	ChatsSendMessageResponse,
+	MembersAddResponse,
+	MembersGetResponse,
+	MembersListResponse,
+	MembersRemoveResponse,
+	MessagesDeleteResponse,
+	MessagesGetResponse,
+	MessagesListRepliesResponse,
+	MessagesListResponse,
+	MessagesReplyResponse,
+	MessagesSendResponse,
+	TeamsCreateResponse,
+	TeamsDeleteResponse,
+	TeamsGetResponse,
+	TeamsListResponse,
+	TeamsUpdateResponse,
 } from './endpoints/types';
 import { TeamsEndpointOutputSchemas } from './endpoints/types';
 
@@ -38,10 +38,14 @@ const TEST_CHAT_ID = process.env.TEST_TEAMS_CHAT_ID;
 describe('Teams API Type Tests', () => {
 	describe('teams', () => {
 		it('teamsList returns correct type', async () => {
-			const result = await makeTeamsRequest<TeamsListResponse>('teams', ACCESS_TOKEN, {
-				method: 'GET',
-				query: { '$top': 5 },
-			});
+			const result = await makeTeamsRequest<TeamsListResponse>(
+				'teams',
+				ACCESS_TOKEN,
+				{
+					method: 'GET',
+					query: { $top: 5 },
+				},
+			);
 
 			TeamsEndpointOutputSchemas.teamsList.parse(result);
 		});
@@ -49,31 +53,43 @@ describe('Teams API Type Tests', () => {
 		it('teamsGet returns correct type', async () => {
 			let teamId = TEST_TEAM_ID;
 			if (!teamId) {
-				const listResult = await makeTeamsRequest<TeamsListResponse>('teams', ACCESS_TOKEN, {
-					method: 'GET',
-					query: { '$top': 1 },
-				});
+				const listResult = await makeTeamsRequest<TeamsListResponse>(
+					'teams',
+					ACCESS_TOKEN,
+					{
+						method: 'GET',
+						query: { $top: 1 },
+					},
+				);
 				teamId = listResult.value?.[0]?.id;
 				if (!teamId) {
 					throw new Error('No teams found');
 				}
 			}
 
-			const result = await makeTeamsRequest<TeamsGetResponse>(`teams/${teamId}`, ACCESS_TOKEN);
+			const result = await makeTeamsRequest<TeamsGetResponse>(
+				`teams/${teamId}`,
+				ACCESS_TOKEN,
+			);
 
 			TeamsEndpointOutputSchemas.teamsGet.parse(result);
 		});
 
 		it('teamsCreate returns correct type', async () => {
-			const result = await makeTeamsRequest<TeamsCreateResponse>('teams', ACCESS_TOKEN, {
-				method: 'POST',
-				body: {
-					'template@odata.bind': "https://graph.microsoft.com/v1.0/teamsTemplates('standard')",
-					displayName: `Test Team ${Date.now()}`,
-					description: 'Created by API test',
-					visibility: 'private',
+			const result = await makeTeamsRequest<TeamsCreateResponse>(
+				'teams',
+				ACCESS_TOKEN,
+				{
+					method: 'POST',
+					body: {
+						'template@odata.bind':
+							"https://graph.microsoft.com/v1.0/teamsTemplates('standard')",
+						displayName: `Test Team ${Date.now()}`,
+						description: 'Created by API test',
+						visibility: 'private',
+					},
 				},
-			});
+			);
 
 			TeamsEndpointOutputSchemas.teamsCreate.parse(result);
 		});
@@ -81,33 +97,47 @@ describe('Teams API Type Tests', () => {
 		it('teamsUpdate returns correct type', async () => {
 			let teamId = TEST_TEAM_ID;
 			if (!teamId) {
-				const listResult = await makeTeamsRequest<TeamsListResponse>('teams', ACCESS_TOKEN, {
-					method: 'GET',
-					query: { '$top': 1 },
-				});
+				const listResult = await makeTeamsRequest<TeamsListResponse>(
+					'teams',
+					ACCESS_TOKEN,
+					{
+						method: 'GET',
+						query: { $top: 1 },
+					},
+				);
 				teamId = listResult.value?.[0]?.id;
 				if (!teamId) throw new Error('No teams found');
 			}
 
-			const result = await makeTeamsRequest<TeamsUpdateResponse>(`teams/${teamId}`, ACCESS_TOKEN, {
-				method: 'PATCH',
-				body: {
-					description: `Updated by API test at ${new Date().toISOString()}`,
+			const result = await makeTeamsRequest<TeamsUpdateResponse>(
+				`teams/${teamId}`,
+				ACCESS_TOKEN,
+				{
+					method: 'PATCH',
+					body: {
+						description: `Updated by API test at ${new Date().toISOString()}`,
+					},
 				},
-			});
+			);
 
 			TeamsEndpointOutputSchemas.teamsUpdate.parse(result);
 		});
 
 		it('teamsDelete returns correct type', async () => {
 			if (!TEST_TEAM_ID) {
-				console.warn('teamsDelete: set TEST_TEAMS_TEAM_ID to test deletion against a disposable team');
+				console.warn(
+					'teamsDelete: set TEST_TEAMS_TEAM_ID to test deletion against a disposable team',
+				);
 				return;
 			}
 
-			const result = await makeTeamsRequest<TeamsDeleteResponse>(`teams/${TEST_TEAM_ID}`, ACCESS_TOKEN, {
-				method: 'DELETE',
-			});
+			const result = await makeTeamsRequest<TeamsDeleteResponse>(
+				`teams/${TEST_TEAM_ID}`,
+				ACCESS_TOKEN,
+				{
+					method: 'DELETE',
+				},
+			);
 
 			TeamsEndpointOutputSchemas.teamsDelete.parse(result);
 		});
@@ -120,10 +150,14 @@ describe('Teams API Type Tests', () => {
 			if (TEST_TEAM_ID) {
 				teamId = TEST_TEAM_ID;
 			} else {
-				const listResult = await makeTeamsRequest<TeamsListResponse>('teams', ACCESS_TOKEN, {
-					method: 'GET',
-					query: { '$top': 1 },
-				});
+				const listResult = await makeTeamsRequest<TeamsListResponse>(
+					'teams',
+					ACCESS_TOKEN,
+					{
+						method: 'GET',
+						query: { $top: 1 },
+					},
+				);
 				const id = listResult.value?.[0]?.id;
 				if (!id) {
 					throw new Error('No teams found');
@@ -218,7 +252,8 @@ describe('Teams API Type Tests', () => {
 					},
 				},
 			);
-			if (!created.id) throw new Error('Failed to create channel for delete test');
+			if (!created.id)
+				throw new Error('Failed to create channel for delete test');
 
 			const result = await makeTeamsRequest<ChannelsDeleteResponse>(
 				`teams/${teamId}/channels/${created.id}`,
@@ -240,10 +275,14 @@ describe('Teams API Type Tests', () => {
 				teamId = TEST_TEAM_ID;
 				channelId = TEST_CHANNEL_ID;
 			} else {
-				const teamsResult = await makeTeamsRequest<TeamsListResponse>('teams', ACCESS_TOKEN, {
-					method: 'GET',
-					query: { '$top': 1 },
-				});
+				const teamsResult = await makeTeamsRequest<TeamsListResponse>(
+					'teams',
+					ACCESS_TOKEN,
+					{
+						method: 'GET',
+						query: { $top: 1 },
+					},
+				);
 				const tId = teamsResult.value?.[0]?.id;
 				if (!tId) {
 					throw new Error('No teams found');
@@ -267,7 +306,10 @@ describe('Teams API Type Tests', () => {
 				{
 					method: 'POST',
 					body: {
-						body: { content: 'Test message for API tests', contentType: 'text' },
+						body: {
+							content: 'Test message for API tests',
+							contentType: 'text',
+						},
 					},
 				},
 			);
@@ -280,7 +322,7 @@ describe('Teams API Type Tests', () => {
 			const result = await makeTeamsRequest<MessagesListResponse>(
 				`teams/${teamId}/channels/${channelId}/messages`,
 				ACCESS_TOKEN,
-				{ query: { '$top': 5 } },
+				{ query: { $top: 5 } },
 			);
 
 			TeamsEndpointOutputSchemas.messagesList.parse(result);
@@ -291,7 +333,7 @@ describe('Teams API Type Tests', () => {
 				const listResult = await makeTeamsRequest<MessagesListResponse>(
 					`teams/${teamId}/channels/${channelId}/messages`,
 					ACCESS_TOKEN,
-					{ query: { '$top': 1 } },
+					{ query: { $top: 1 } },
 				);
 				testMessageId = listResult.value?.[0]?.id;
 				if (!testMessageId) {
@@ -314,7 +356,10 @@ describe('Teams API Type Tests', () => {
 				{
 					method: 'POST',
 					body: {
-						body: { content: 'Test message from API test', contentType: 'text' },
+						body: {
+							content: 'Test message from API test',
+							contentType: 'text',
+						},
 					},
 				},
 			);
@@ -333,7 +378,9 @@ describe('Teams API Type Tests', () => {
 					ACCESS_TOKEN,
 					{
 						method: 'POST',
-						body: { body: { content: 'Test message for reply', contentType: 'text' } },
+						body: {
+							body: { content: 'Test message for reply', contentType: 'text' },
+						},
 					},
 				);
 				if (!sendResult.id) {
@@ -381,7 +428,8 @@ describe('Teams API Type Tests', () => {
 					},
 				},
 			);
-			if (!created.id) throw new Error('Failed to create message for delete test');
+			if (!created.id)
+				throw new Error('Failed to create message for delete test');
 
 			const result = await makeTeamsRequest<MessagesDeleteResponse>(
 				`teams/${teamId}/channels/${channelId}/messages/${created.id}`,
@@ -400,10 +448,14 @@ describe('Teams API Type Tests', () => {
 			if (TEST_TEAM_ID) {
 				teamId = TEST_TEAM_ID;
 			} else {
-				const teamsResult = await makeTeamsRequest<TeamsListResponse>('teams', ACCESS_TOKEN, {
-					method: 'GET',
-					query: { '$top': 1 },
-				});
+				const teamsResult = await makeTeamsRequest<TeamsListResponse>(
+					'teams',
+					ACCESS_TOKEN,
+					{
+						method: 'GET',
+						query: { $top: 1 },
+					},
+				);
 				const id = teamsResult.value?.[0]?.id;
 				if (!id) {
 					throw new Error('No teams found');
@@ -443,15 +495,26 @@ describe('Teams API Type Tests', () => {
 			let userId = TEST_USER_ID;
 			if (!userId) {
 				const [orgUsers, existingMembers] = await Promise.all([
-					makeTeamsRequest<{ value: Array<{ id: string }> }>('users', ACCESS_TOKEN, {
-						query: { '$top': 999, '$select': 'id' },
-					}),
-					makeTeamsRequest<MembersListResponse>(`teams/${teamId}/members`, ACCESS_TOKEN),
+					makeTeamsRequest<{ value: Array<{ id: string }> }>(
+						'users',
+						ACCESS_TOKEN,
+						{
+							query: { $top: 999, $select: 'id' },
+						},
+					),
+					makeTeamsRequest<MembersListResponse>(
+						`teams/${teamId}/members`,
+						ACCESS_TOKEN,
+					),
 				]);
-				const memberUserIds = new Set(existingMembers.value.map(m => m.userId).filter(Boolean));
-				const candidate = orgUsers.value.find(u => !memberUserIds.has(u.id));
+				const memberUserIds = new Set(
+					existingMembers.value.map((m) => m.userId).filter(Boolean),
+				);
+				const candidate = orgUsers.value.find((u) => !memberUserIds.has(u.id));
 				if (!candidate) {
-					console.warn('membersAdd: all org users are already team members, skipping');
+					console.warn(
+						'membersAdd: all org users are already team members, skipping',
+					);
 					return;
 				}
 				userId = candidate.id;
@@ -476,13 +539,24 @@ describe('Teams API Type Tests', () => {
 		it('membersRemove returns correct type', async () => {
 			// Find a non-member user to add temporarily, then remove
 			const [orgUsers, existingMembers] = await Promise.all([
-				makeTeamsRequest<{ value: Array<{ id: string }> }>('users', ACCESS_TOKEN, {
-					query: { '$top': 999, '$select': 'id' },
-				}),
-				makeTeamsRequest<MembersListResponse>(`teams/${teamId}/members`, ACCESS_TOKEN),
+				makeTeamsRequest<{ value: Array<{ id: string }> }>(
+					'users',
+					ACCESS_TOKEN,
+					{
+						query: { $top: 999, $select: 'id' },
+					},
+				),
+				makeTeamsRequest<MembersListResponse>(
+					`teams/${teamId}/members`,
+					ACCESS_TOKEN,
+				),
 			]);
-			const memberUserIds = new Set(existingMembers.value.map(m => m.userId).filter(Boolean));
-			const userId = TEST_USER_ID ?? orgUsers.value.find(u => !memberUserIds.has(u.id))?.id;
+			const memberUserIds = new Set(
+				existingMembers.value.map((m) => m.userId).filter(Boolean),
+			);
+			const userId =
+				TEST_USER_ID ??
+				orgUsers.value.find((u) => !memberUserIds.has(u.id))?.id;
 			if (!userId) {
 				console.warn('membersRemove: no available non-member users, skipping');
 				return;
@@ -520,10 +594,14 @@ describe('Teams API Type Tests', () => {
 				testChatId = TEST_CHAT_ID;
 				return;
 			}
-			const listResult = await makeTeamsRequest<ChatsListResponse>('chats', ACCESS_TOKEN, {
-				method: 'GET',
-				query: { '$top': 1 },
-			});
+			const listResult = await makeTeamsRequest<ChatsListResponse>(
+				'chats',
+				ACCESS_TOKEN,
+				{
+					method: 'GET',
+					query: { $top: 1 },
+				},
+			);
 			const id = listResult.value?.[0]?.id;
 			if (id) {
 				testChatId = id;
@@ -531,17 +609,23 @@ describe('Teams API Type Tests', () => {
 		});
 
 		it('chatsList returns correct type', async () => {
-			const result = await makeTeamsRequest<ChatsListResponse>('chats', ACCESS_TOKEN, {
-				method: 'GET',
-				query: { '$top': 5 },
-			});
+			const result = await makeTeamsRequest<ChatsListResponse>(
+				'chats',
+				ACCESS_TOKEN,
+				{
+					method: 'GET',
+					query: { $top: 5 },
+				},
+			);
 
 			TeamsEndpointOutputSchemas.chatsList.parse(result);
 		});
 
 		it('chatsGet returns correct type', async () => {
 			if (!testChatId) {
-				throw new Error('No chat available — set TEST_TEAMS_CHAT_ID or ensure chatsList returns results');
+				throw new Error(
+					'No chat available — set TEST_TEAMS_CHAT_ID or ensure chatsList returns results',
+				);
 			}
 
 			const result = await makeTeamsRequest<ChatsGetResponse>(
@@ -558,34 +642,40 @@ describe('Teams API Type Tests', () => {
 			const me = await makeTeamsRequest<{ id: string }>('me', ACCESS_TOKEN);
 			myId = me.id;
 			if (!otherUserId) {
-				const orgUsers = await makeTeamsRequest<{ value: Array<{ id: string }> }>('users', ACCESS_TOKEN, {
-					query: { '$top': 5, '$select': 'id' },
+				const orgUsers = await makeTeamsRequest<{
+					value: Array<{ id: string }>;
+				}>('users', ACCESS_TOKEN, {
+					query: { $top: 5, $select: 'id' },
 				});
-				const other = orgUsers.value.find(u => u.id !== myId);
+				const other = orgUsers.value.find((u) => u.id !== myId);
 				if (!other) {
 					throw new Error('No other user found to create chat with');
 				}
 				otherUserId = other.id;
 			}
 
-			const result = await makeTeamsRequest<ChatsCreateResponse>('chats', ACCESS_TOKEN, {
-				method: 'POST',
-				body: {
-					chatType: 'oneOnOne',
-					members: [
-						{
-							'@odata.type': '#microsoft.graph.aadUserConversationMember',
-							roles: ['owner'],
-							'user@odata.bind': `https://graph.microsoft.com/v1.0/users('${myId}')`,
-						},
-						{
-							'@odata.type': '#microsoft.graph.aadUserConversationMember',
-							roles: ['owner'],
-							'user@odata.bind': `https://graph.microsoft.com/v1.0/users('${otherUserId}')`,
-						},
-					],
+			const result = await makeTeamsRequest<ChatsCreateResponse>(
+				'chats',
+				ACCESS_TOKEN,
+				{
+					method: 'POST',
+					body: {
+						chatType: 'oneOnOne',
+						members: [
+							{
+								'@odata.type': '#microsoft.graph.aadUserConversationMember',
+								roles: ['owner'],
+								'user@odata.bind': `https://graph.microsoft.com/v1.0/users('${myId}')`,
+							},
+							{
+								'@odata.type': '#microsoft.graph.aadUserConversationMember',
+								roles: ['owner'],
+								'user@odata.bind': `https://graph.microsoft.com/v1.0/users('${otherUserId}')`,
+							},
+						],
+					},
 				},
-			});
+			);
 
 			if (result.id) {
 				testChatId = result.id;
@@ -602,7 +692,7 @@ describe('Teams API Type Tests', () => {
 			const result = await makeTeamsRequest<ChatsListMessagesResponse>(
 				`chats/${testChatId}/messages`,
 				ACCESS_TOKEN,
-				{ query: { '$top': 5 } },
+				{ query: { $top: 5 } },
 			);
 
 			TeamsEndpointOutputSchemas.chatsListMessages.parse(result);
@@ -619,7 +709,10 @@ describe('Teams API Type Tests', () => {
 				{
 					method: 'POST',
 					body: {
-						body: { content: 'Test message from API test', contentType: 'text' },
+						body: {
+							content: 'Test message from API test',
+							contentType: 'text',
+						},
 					},
 				},
 			);

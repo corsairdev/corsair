@@ -1,4 +1,4 @@
-import { OnedriveDriveItem, OnedriveDrive } from './database';
+import { OnedriveDrive, OnedriveDriveItem } from './database';
 
 export const OnedriveSchema = {
 	version: '1.0.0',

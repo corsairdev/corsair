@@ -7,14 +7,12 @@ export const dailyUsage: ZoomEndpoints['reportsDailyUsage'] = async (
 	ctx,
 	input,
 ) => {
-	const result = await makeZoomRequest<ZoomEndpointOutputs['reportsDailyUsage']>(
-		'report/daily',
-		ctx.key,
-		{
-			method: 'GET',
-			query: input
-		},
-	);
+	const result = await makeZoomRequest<
+		ZoomEndpointOutputs['reportsDailyUsage']
+	>('report/daily', ctx.key, {
+		method: 'GET',
+		query: input,
+	});
 
 	await logEventFromContext(
 		ctx,

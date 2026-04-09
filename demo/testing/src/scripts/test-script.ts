@@ -15,6 +15,9 @@ const main = async () => {
 
 	const me = await corsair.apify.api.users.usersMeGet({});
 	console.log('Apify user:', me);
+	// write any test scripts here
+	// const res = await corsair -> fill in the rest
+	const res = await corsair.googlesheets.api.spreadsheets.list({});
 };
 
 main();

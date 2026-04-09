@@ -1,18 +1,17 @@
 import type {
+	AuthTypes,
 	BindEndpoints,
 	CorsairEndpoint,
 	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
 	KeyBuilderContext,
+	PickAuth,
 	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
-import type { AuthTypes, PickAuth } from 'corsair/core';
-import type { GrafanaEndpointInputs, GrafanaEndpointOutputs } from './endpoints/types';
-import { GrafanaEndpointInputSchemas, GrafanaEndpointOutputSchemas } from './endpoints/types';
 import {
 	Dashboards,
 	Health,
@@ -23,8 +22,16 @@ import {
 	Status,
 	StoreGateway,
 } from './endpoints';
-import { GrafanaSchema } from './schema';
+import type {
+	GrafanaEndpointInputs,
+	GrafanaEndpointOutputs,
+} from './endpoints/types';
+import {
+	GrafanaEndpointInputSchemas,
+	GrafanaEndpointOutputSchemas,
+} from './endpoints/types';
 import { errorHandlers } from './error-handlers';
+import { GrafanaSchema } from './schema';
 
 export type GrafanaPluginOptions = {
 	authType?: PickAuth<'api_key'>;
@@ -65,7 +72,9 @@ export type GrafanaKeyBuilderContext = KeyBuilderContext<
 	typeof grafanaAuthConfig
 >;
 
-export type GrafanaBoundEndpoints = BindEndpoints<typeof grafanaEndpointsNested>;
+export type GrafanaBoundEndpoints = BindEndpoints<
+	typeof grafanaEndpointsNested
+>;
 
 type GrafanaEndpoint<K extends keyof GrafanaEndpointOutputs> = CorsairEndpoint<
 	GrafanaContext,
@@ -204,7 +213,8 @@ const grafanaEndpointMeta = {
 	},
 	'saml.postAcs': {
 		riskLevel: 'write',
-		description: 'Process a SAML Assertion Consumer Service authentication response',
+		description:
+			'Process a SAML Assertion Consumer Service authentication response',
 	},
 	'dashboards.queryPublic': {
 		riskLevel: 'read',
@@ -283,14 +293,16 @@ export function grafana<const T extends GrafanaPluginOptions>(
 // ─────────────────────────────────────────────────────────────────────────────
 
 export type {
+	DashboardsQueryPublicInput,
+	DashboardsQueryPublicResponse,
 	GrafanaEndpointInputs,
 	GrafanaEndpointOutputs,
-	LogsCreateOtlpInput,
-	LogsCreateOtlpResponse,
 	HealthGetInput,
 	HealthGetResponse,
-	StatusGetInput,
-	StatusGetResponse,
+	JwksRetrieveInput,
+	JwksRetrieveResponse,
+	LogsCreateOtlpInput,
+	LogsCreateOtlpResponse,
 	RingGetDistributorHaTrackerInput,
 	RingGetDistributorHaTrackerResponse,
 	RingGetIndexGatewayInput,
@@ -299,14 +311,12 @@ export type {
 	RingGetOverridesExporterResponse,
 	RingGetRulerInput,
 	RingGetRulerResponse,
-	StoreGatewayGetTenantsInput,
-	StoreGatewayGetTenantsResponse,
 	SamlPostAcsInput,
 	SamlPostAcsResponse,
-	DashboardsQueryPublicInput,
-	DashboardsQueryPublicResponse,
-	JwksRetrieveInput,
-	JwksRetrieveResponse,
+	StatusGetInput,
+	StatusGetResponse,
+	StoreGatewayGetTenantsInput,
+	StoreGatewayGetTenantsResponse,
 } from './endpoints/types';
 
 export type { GrafanaWebhookOutputs } from './webhooks/types';

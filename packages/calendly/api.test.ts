@@ -1,19 +1,19 @@
-import 'dotenv/config'
+import 'dotenv/config';
 import { makeCalendlyRequest } from './client';
 import type {
-	ScheduledEventsGetResponse,
-	ScheduledEventsListResponse,
+	EventTypesCreateResponse,
 	EventTypesGetResponse,
 	EventTypesListResponse,
-	EventTypesCreateResponse,
 	EventTypesUpdateResponse,
 	InviteesGetResponse,
 	InviteesListResponse,
-	UsersGetResponse,
+	OrganizationsListMembershipsResponse,
+	ScheduledEventsGetResponse,
+	ScheduledEventsListResponse,
 	UsersGetCurrentResponse,
+	UsersGetResponse,
 	WebhookSubscriptionsCreateResponse,
 	WebhookSubscriptionsListResponse,
-	OrganizationsListMembershipsResponse,
 } from './endpoints/types';
 import { CalendlyEndpointOutputSchemas } from './endpoints/types';
 
@@ -31,7 +31,7 @@ let eventTypeUuid: string | undefined;
 let scheduledEventUri: string | undefined;
 let scheduledEventUuid: string | undefined;
 let activeScheduledEventUuid: string | undefined; // active event for cancel test
-let activeInviteeUri: string | undefined;          // invitee on the active event
+let activeInviteeUri: string | undefined; // invitee on the active event
 let membershipUuid: string | undefined;
 let availabilityScheduleUuid: string | undefined;
 let pastInviteeUri: string | undefined;
@@ -71,11 +71,12 @@ beforeAll(async () => {
 	}
 
 	// Fetch any scheduled event for read-only get test
-	const scheduledEventsList = await makeCalendlyRequest<ScheduledEventsListResponse>(
-		'scheduled_events',
-		TEST_TOKEN,
-		{ method: 'GET', query: { user: userUri, count: 1 } },
-	);
+	const scheduledEventsList =
+		await makeCalendlyRequest<ScheduledEventsListResponse>(
+			'scheduled_events',
+			TEST_TOKEN,
+			{ method: 'GET', query: { user: userUri, count: 1 } },
+		);
 	if (scheduledEventsList.collection.length > 0) {
 		scheduledEventUri = scheduledEventsList.collection[0]!.uri;
 		scheduledEventUuid = scheduledEventUri.split('/').at(-1)!;
@@ -107,11 +108,12 @@ beforeAll(async () => {
 	}
 
 	// Fetch first membership
-	const memberships = await makeCalendlyRequest<OrganizationsListMembershipsResponse>(
-		'organization_memberships',
-		TEST_TOKEN,
-		{ method: 'GET', query: { organization: orgUri, count: 1 } },
-	);
+	const memberships =
+		await makeCalendlyRequest<OrganizationsListMembershipsResponse>(
+			'organization_memberships',
+			TEST_TOKEN,
+			{ method: 'GET', query: { organization: orgUri, count: 1 } },
+		);
 	if (memberships.collection.length > 0) {
 		membershipUuid = memberships.collection[0]!.uri.split('/').at(-1)!;
 	}
@@ -125,14 +127,18 @@ beforeAll(async () => {
 	// any: Calendly availability schedule list has no strongly typed collection key in all plan levels
 	const schedulesTyped = schedules as { collection: { uri: string }[] };
 	if (schedulesTyped.collection?.length > 0) {
-		availabilityScheduleUuid = schedulesTyped.collection[0]!.uri.split('/').at(-1)!;
+		availabilityScheduleUuid =
+			schedulesTyped.collection[0]!.uri.split('/').at(-1)!;
 	}
 
 	// Find a past event's invitee for the no-show lifecycle test
 	const pastEvents = await makeCalendlyRequest<ScheduledEventsListResponse>(
 		'scheduled_events',
 		TEST_TOKEN,
-		{ method: 'GET', query: { user: userUri, count: 20, max_start_time: nowISO } },
+		{
+			method: 'GET',
+			query: { user: userUri, count: 20, max_start_time: nowISO },
+		},
 	);
 	for (const evt of pastEvents.collection) {
 		const evtUuid = evt.uri.split('/').at(-1)!;
@@ -157,7 +163,9 @@ afterAll(async () => {
 				TEST_TOKEN,
 				{ method: 'POST', body: { reason: 'Cleanup after api.test.ts' } },
 			);
-		} catch { /* already canceled by the cancel test — ignore */ }
+		} catch {
+			/* already canceled by the cancel test — ignore */
+		}
 	}
 	if (createdWebhookUuid) {
 		try {
@@ -166,7 +174,9 @@ afterAll(async () => {
 				TEST_TOKEN,
 				{ method: 'DELETE' },
 			);
-		} catch { /* best-effort */ }
+		} catch {
+			/* best-effort */
+		}
 	}
 	if (createdNoShowUri) {
 		try {
@@ -174,7 +184,9 @@ afterAll(async () => {
 			await makeCalendlyRequest(`invitee_no_shows/${uuid}`, TEST_TOKEN, {
 				method: 'DELETE',
 			});
-		} catch { /* best-effort */ }
+		} catch {
+			/* best-effort */
+		}
 	}
 	if (createdOrgInvitationUuid) {
 		try {
@@ -183,7 +195,9 @@ afterAll(async () => {
 				TEST_TOKEN,
 				{ method: 'DELETE' },
 			);
-		} catch { /* best-effort */ }
+		} catch {
+			/* best-effort */
+		}
 	}
 });
 
@@ -220,7 +234,9 @@ describe('users', () => {
 			{ method: 'GET', query: { user: userUri } },
 		);
 
-		CalendlyEndpointOutputSchemas.usersListAvailabilitySchedules.parse(response);
+		CalendlyEndpointOutputSchemas.usersListAvailabilitySchedules.parse(
+			response,
+		);
 	});
 
 	it('usersGetAvailabilitySchedule returns correct type', async () => {
@@ -245,14 +261,10 @@ describe('users', () => {
 		const future = new Date(now.getTime() + 6 * 24 * 60 * 60 * 1000);
 		const end = future.toISOString().replace(/\.\d{3}Z$/, 'Z');
 
-		const response = await makeCalendlyRequest(
-			'user_busy_times',
-			TEST_TOKEN,
-			{
-				method: 'GET',
-				query: { user: userUri, start_time: start, end_time: end },
-			},
-		);
+		const response = await makeCalendlyRequest('user_busy_times', TEST_TOKEN, {
+			method: 'GET',
+			query: { user: userUri, start_time: start, end_time: end },
+		});
 
 		CalendlyEndpointOutputSchemas.usersListBusyTimes.parse(response);
 	});
@@ -343,7 +355,9 @@ describe('eventTypes', () => {
 		);
 
 		CalendlyEndpointOutputSchemas.eventTypesUpdate.parse(updateResponse);
-		expect(updateResponse.resource.description_plain).toBe('Updated by api.test.ts');
+		expect(updateResponse.resource.description_plain).toBe(
+			'Updated by api.test.ts',
+		);
 	});
 
 	it('eventTypesCreateOneOff returns correct type', async () => {
@@ -446,7 +460,10 @@ describe('scheduledEvents', () => {
 		const response = await makeCalendlyRequest(
 			`scheduled_events/${activeScheduledEventUuid}/cancellation`,
 			TEST_TOKEN,
-			{ method: 'POST', body: { reason: 'Canceled by api.test.ts automated test' } },
+			{
+				method: 'POST',
+				body: { reason: 'Canceled by api.test.ts automated test' },
+			},
 		);
 
 		CalendlyEndpointOutputSchemas.scheduledEventsCancel.parse(response);
@@ -506,7 +523,8 @@ describe('invitees', () => {
 
 		CalendlyEndpointOutputSchemas.inviteesMarkNoShow.parse(markResponse);
 		// any: no_show resource has a uri field
-		const noShowUri = (markResponse as { resource: { uri: string } }).resource.uri;
+		const noShowUri = (markResponse as { resource: { uri: string } }).resource
+			.uri;
 		createdNoShowUri = noShowUri;
 		const noShowUuid = noShowUri.split('/').at(-1)!;
 
@@ -519,11 +537,9 @@ describe('invitees', () => {
 		CalendlyEndpointOutputSchemas.inviteesGetNoShow.parse(getResponse);
 
 		// Delete no-show record — returns 204 No Content
-		await makeCalendlyRequest(
-			`invitee_no_shows/${noShowUuid}`,
-			TEST_TOKEN,
-			{ method: 'DELETE' },
-		);
+		await makeCalendlyRequest(`invitee_no_shows/${noShowUuid}`, TEST_TOKEN, {
+			method: 'DELETE',
+		});
 		createdNoShowUri = undefined; // cleaned up, skip afterAll
 	});
 });
@@ -542,11 +558,12 @@ describe('organizations', () => {
 	});
 
 	it('organizationsListMemberships returns correct type', async () => {
-		const response = await makeCalendlyRequest<OrganizationsListMembershipsResponse>(
-			'organization_memberships',
-			TEST_TOKEN,
-			{ method: 'GET', query: { organization: orgUri, count: 10 } },
-		);
+		const response =
+			await makeCalendlyRequest<OrganizationsListMembershipsResponse>(
+				'organization_memberships',
+				TEST_TOKEN,
+				{ method: 'GET', query: { organization: orgUri, count: 10 } },
+			);
 
 		CalendlyEndpointOutputSchemas.organizationsListMemberships.parse(response);
 		expect(Array.isArray(response.collection)).toBe(true);
@@ -580,7 +597,8 @@ describe('organizations', () => {
 
 		CalendlyEndpointOutputSchemas.organizationsInvite.parse(inviteResponse);
 		// any: invitation resource has uri
-		const invUri = (inviteResponse as { resource: { uri: string } }).resource.uri;
+		const invUri = (inviteResponse as { resource: { uri: string } }).resource
+			.uri;
 		createdOrgInvitationUuid = invUri.split('/').at(-1)!;
 
 		// List invitations
@@ -590,7 +608,9 @@ describe('organizations', () => {
 			{ method: 'GET', query: { count: 10 } },
 		);
 
-		CalendlyEndpointOutputSchemas.organizationsListInvitations.parse(listResponse);
+		CalendlyEndpointOutputSchemas.organizationsListInvitations.parse(
+			listResponse,
+		);
 
 		// Get single invitation
 		const getResponse = await makeCalendlyRequest(
@@ -615,24 +635,23 @@ describe('organizations', () => {
 
 describe('groups', () => {
 	it('groupsList returns correct type', async () => {
-		const response = await makeCalendlyRequest(
-			'groups',
-			TEST_TOKEN,
-			{ method: 'GET', query: { organization: orgUri, count: 10 } },
-		);
+		const response = await makeCalendlyRequest('groups', TEST_TOKEN, {
+			method: 'GET',
+			query: { organization: orgUri, count: 10 },
+		});
 
 		CalendlyEndpointOutputSchemas.groupsList.parse(response);
 	});
 
 	it('groupsGet returns correct type', async () => {
-		const listResponse = await makeCalendlyRequest(
-			'groups',
-			TEST_TOKEN,
-			{ method: 'GET', query: { organization: orgUri, count: 1 } },
-		);
+		const listResponse = await makeCalendlyRequest('groups', TEST_TOKEN, {
+			method: 'GET',
+			query: { organization: orgUri, count: 1 },
+		});
 
 		// any: groups collection array
-		const groups = (listResponse as { collection: { uri: string }[] }).collection;
+		const groups = (listResponse as { collection: { uri: string }[] })
+			.collection;
 		if (!groups?.length) {
 			console.warn('No groups — skipping get test');
 			return;
@@ -649,14 +668,14 @@ describe('groups', () => {
 	});
 
 	it('groupsListRelationships returns correct type', async () => {
-		const listResponse = await makeCalendlyRequest(
-			'groups',
-			TEST_TOKEN,
-			{ method: 'GET', query: { organization: orgUri, count: 1 } },
-		);
+		const listResponse = await makeCalendlyRequest('groups', TEST_TOKEN, {
+			method: 'GET',
+			query: { organization: orgUri, count: 1 },
+		});
 
 		// any: groups collection array
-		const groups = (listResponse as { collection: { uri: string }[] }).collection;
+		const groups = (listResponse as { collection: { uri: string }[] })
+			.collection;
 		if (!groups?.length) {
 			console.warn('No groups — skipping relationships test');
 			return;
@@ -673,14 +692,14 @@ describe('groups', () => {
 	});
 
 	it('groupsGetRelationship returns correct type', async () => {
-		const listResponse = await makeCalendlyRequest(
-			'groups',
-			TEST_TOKEN,
-			{ method: 'GET', query: { organization: orgUri, count: 1 } },
-		);
+		const listResponse = await makeCalendlyRequest('groups', TEST_TOKEN, {
+			method: 'GET',
+			query: { organization: orgUri, count: 1 },
+		});
 
 		// any: groups collection array
-		const groups = (listResponse as { collection: { uri: string }[] }).collection;
+		const groups = (listResponse as { collection: { uri: string }[] })
+			.collection;
 		if (!groups?.length) {
 			console.warn('No groups — skipping relationship get test');
 			return;
@@ -715,11 +734,10 @@ describe('groups', () => {
 
 describe('routingForms', () => {
 	it('routingFormsList returns correct type', async () => {
-		const response = await makeCalendlyRequest(
-			'routing_forms',
-			TEST_TOKEN,
-			{ method: 'GET', query: { organization: orgUri, count: 10 } },
-		);
+		const response = await makeCalendlyRequest('routing_forms', TEST_TOKEN, {
+			method: 'GET',
+			query: { organization: orgUri, count: 10 },
+		});
 
 		CalendlyEndpointOutputSchemas.routingFormsList.parse(response);
 	});
@@ -732,7 +750,8 @@ describe('routingForms', () => {
 		);
 
 		// any: routing_forms collection array
-		const forms = (listResponse as { collection: { uri: string }[] }).collection;
+		const forms = (listResponse as { collection: { uri: string }[] })
+			.collection;
 		if (!forms?.length) {
 			console.warn('No routing forms — skipping get test');
 			return;
@@ -762,7 +781,9 @@ describe('routingForms', () => {
 				},
 			},
 		);
-		CalendlyEndpointOutputSchemas.routingFormsGetSampleWebhookData.parse(response);
+		CalendlyEndpointOutputSchemas.routingFormsGetSampleWebhookData.parse(
+			response,
+		);
 	});
 });
 
@@ -775,22 +796,20 @@ describe('schedulingLinks', () => {
 			return;
 		}
 
-		const response = await makeCalendlyRequest(
-			'scheduling_links',
-			TEST_TOKEN,
-			{
-				method: 'POST',
-				body: {
-					max_event_count: 1,
-					owner: eventTypeUri,
-					owner_type: 'EventType',
-				},
+		const response = await makeCalendlyRequest('scheduling_links', TEST_TOKEN, {
+			method: 'POST',
+			body: {
+				max_event_count: 1,
+				owner: eventTypeUri,
+				owner_type: 'EventType',
 			},
-		);
+		});
 
 		CalendlyEndpointOutputSchemas.schedulingLinksCreate.parse(response);
 		// any: booking_url is in resource
-		expect((response as { resource: { booking_url: string } }).resource.booking_url).toBeDefined();
+		expect(
+			(response as { resource: { booking_url: string } }).resource.booking_url,
+		).toBeDefined();
 	});
 
 	it('schedulingLinksCreateSingleUse returns correct type', async () => {
@@ -799,20 +818,18 @@ describe('schedulingLinks', () => {
 			return;
 		}
 
-		const response = await makeCalendlyRequest(
-			'scheduling_links',
-			TEST_TOKEN,
-			{
-				method: 'POST',
-				body: {
-					max_event_count: 1,
-					owner: eventTypeUri,
-					owner_type: 'EventType',
-				},
+		const response = await makeCalendlyRequest('scheduling_links', TEST_TOKEN, {
+			method: 'POST',
+			body: {
+				max_event_count: 1,
+				owner: eventTypeUri,
+				owner_type: 'EventType',
 			},
-		);
+		});
 
-		CalendlyEndpointOutputSchemas.schedulingLinksCreateSingleUse.parse(response);
+		CalendlyEndpointOutputSchemas.schedulingLinksCreateSingleUse.parse(
+			response,
+		);
 	});
 
 	it('schedulingLinksCreateShare returns correct type', async () => {
@@ -821,14 +838,10 @@ describe('schedulingLinks', () => {
 			return;
 		}
 
-		const response = await makeCalendlyRequest(
-			'shares',
-			TEST_TOKEN,
-			{
-				method: 'POST',
-				body: { event_type: eventTypeUri },
-			},
-		);
+		const response = await makeCalendlyRequest('shares', TEST_TOKEN, {
+			method: 'POST',
+			body: { event_type: eventTypeUri },
+		});
 
 		CalendlyEndpointOutputSchemas.schedulingLinksCreateShare.parse(response);
 	});
@@ -839,23 +852,28 @@ describe('schedulingLinks', () => {
 describe('webhookSubscriptions', () => {
 	it('webhookSubscriptionsCreate, get, list, delete lifecycle', async () => {
 		// Create
-		const createResponse = await makeCalendlyRequest<WebhookSubscriptionsCreateResponse>(
-			'webhook_subscriptions',
-			TEST_TOKEN,
-			{
-				method: 'POST',
-				body: {
-					url: process.env.CALENDLY_WEBHOOK_URL,
-					events: ['invitee.created', 'invitee.cancelled'],
-					organization: orgUri,
-					scope: 'organization',
-					signature_secret: 'test-secret',
+		const createResponse =
+			await makeCalendlyRequest<WebhookSubscriptionsCreateResponse>(
+				'webhook_subscriptions',
+				TEST_TOKEN,
+				{
+					method: 'POST',
+					body: {
+						url: process.env.CALENDLY_WEBHOOK_URL,
+						events: ['invitee.created', 'invitee.cancelled'],
+						organization: orgUri,
+						scope: 'organization',
+						signature_secret: 'test-secret',
+					},
 				},
-			},
-		);
+			);
 
-		CalendlyEndpointOutputSchemas.webhookSubscriptionsCreate.parse(createResponse);
-		expect(createResponse.resource.callback_url).toBe(process.env.CALENDLY_WEBHOOK_URL);
+		CalendlyEndpointOutputSchemas.webhookSubscriptionsCreate.parse(
+			createResponse,
+		);
+		expect(createResponse.resource.callback_url).toBe(
+			process.env.CALENDLY_WEBHOOK_URL,
+		);
 		createdWebhookUuid = createResponse.resource.uri.split('/').at(-1)!;
 
 		// Get
@@ -866,17 +884,20 @@ describe('webhookSubscriptions', () => {
 		);
 		CalendlyEndpointOutputSchemas.webhookSubscriptionsGet.parse(getResponse);
 		// any: getResponse is untyped generic result
-		expect((getResponse as { resource: { uri: string } }).resource.uri).toBe(createResponse.resource.uri);
+		expect((getResponse as { resource: { uri: string } }).resource.uri).toBe(
+			createResponse.resource.uri,
+		);
 
 		// List
-		const listResponse = await makeCalendlyRequest<WebhookSubscriptionsListResponse>(
-			'webhook_subscriptions',
-			TEST_TOKEN,
-			{
-				method: 'GET',
-				query: { organization: orgUri, scope: 'organization' },
-			},
-		);
+		const listResponse =
+			await makeCalendlyRequest<WebhookSubscriptionsListResponse>(
+				'webhook_subscriptions',
+				TEST_TOKEN,
+				{
+					method: 'GET',
+					query: { organization: orgUri, scope: 'organization' },
+				},
+			);
 
 		CalendlyEndpointOutputSchemas.webhookSubscriptionsList.parse(listResponse);
 		expect(listResponse.collection.length).toBeGreaterThan(0);
@@ -911,7 +932,9 @@ describe('activityLog', () => {
 			TEST_TOKEN,
 			{ method: 'GET', query: { organization: orgUri, count: 10 } },
 		);
-		CalendlyEndpointOutputSchemas.activityLogListOutgoingCommunications.parse(response);
+		CalendlyEndpointOutputSchemas.activityLogListOutgoingCommunications.parse(
+			response,
+		);
 	});
 });
 
@@ -926,7 +949,10 @@ describe('dataCompliance', () => {
 			TEST_TOKEN,
 			{
 				method: 'POST',
-				body: { start_time: '2020-01-01T00:00:00Z', end_time: '2020-01-02T00:00:00Z' },
+				body: {
+					start_time: '2020-01-01T00:00:00Z',
+					end_time: '2020-01-02T00:00:00Z',
+				},
 			},
 		);
 		// 204 No Content — no body to parse

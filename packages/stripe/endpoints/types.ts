@@ -112,10 +112,12 @@ const PricesCreateInputSchema = z.object({
 	product: z.string().optional(),
 	product_data: z.object({ name: z.string() }).passthrough().optional(),
 	nickname: z.string().optional(),
-	recurring: z.object({
-		interval: z.enum(['day', 'week', 'month', 'year']),
-		interval_count: z.number().optional(),
-	}).optional(),
+	recurring: z
+		.object({
+			interval: z.enum(['day', 'week', 'month', 'year']),
+			interval_count: z.number().optional(),
+		})
+		.optional(),
 	metadata: z.record(z.string()).optional(),
 });
 
@@ -161,12 +163,16 @@ const StripeBalanceSchema = z
 	.object({
 		object: z.literal('balance'),
 		livemode: z.boolean().optional(),
-		available: z.array(
-			z.object({ amount: z.number(), currency: z.string() }).passthrough(),
-		).optional(),
-		pending: z.array(
-			z.object({ amount: z.number(), currency: z.string() }).passthrough(),
-		).optional(),
+		available: z
+			.array(
+				z.object({ amount: z.number(), currency: z.string() }).passthrough(),
+			)
+			.optional(),
+		pending: z
+			.array(
+				z.object({ amount: z.number(), currency: z.string() }).passthrough(),
+			)
+			.optional(),
 	})
 	.passthrough();
 
@@ -393,10 +399,13 @@ export type CustomersCreateInput = StripeEndpointInputs['customersCreate'];
 export type CustomersDeleteInput = StripeEndpointInputs['customersDelete'];
 export type CustomersGetInput = StripeEndpointInputs['customersGet'];
 export type CustomersListInput = StripeEndpointInputs['customersList'];
-export type PaymentIntentsCreateInput = StripeEndpointInputs['paymentIntentsCreate'];
+export type PaymentIntentsCreateInput =
+	StripeEndpointInputs['paymentIntentsCreate'];
 export type PaymentIntentsGetInput = StripeEndpointInputs['paymentIntentsGet'];
-export type PaymentIntentsListInput = StripeEndpointInputs['paymentIntentsList'];
-export type PaymentIntentsUpdateInput = StripeEndpointInputs['paymentIntentsUpdate'];
+export type PaymentIntentsListInput =
+	StripeEndpointInputs['paymentIntentsList'];
+export type PaymentIntentsUpdateInput =
+	StripeEndpointInputs['paymentIntentsUpdate'];
 export type PricesCreateInput = StripeEndpointInputs['pricesCreate'];
 export type PricesListInput = StripeEndpointInputs['pricesList'];
 export type SourcesCreateInput = StripeEndpointInputs['sourcesCreate'];
@@ -416,10 +425,14 @@ export type CustomersCreateResponse = StripeEndpointOutputs['customersCreate'];
 export type CustomersDeleteResponse = StripeEndpointOutputs['customersDelete'];
 export type CustomersGetResponse = StripeEndpointOutputs['customersGet'];
 export type CustomersListResponse = StripeEndpointOutputs['customersList'];
-export type PaymentIntentsCreateResponse = StripeEndpointOutputs['paymentIntentsCreate'];
-export type PaymentIntentsGetResponse = StripeEndpointOutputs['paymentIntentsGet'];
-export type PaymentIntentsListResponse = StripeEndpointOutputs['paymentIntentsList'];
-export type PaymentIntentsUpdateResponse = StripeEndpointOutputs['paymentIntentsUpdate'];
+export type PaymentIntentsCreateResponse =
+	StripeEndpointOutputs['paymentIntentsCreate'];
+export type PaymentIntentsGetResponse =
+	StripeEndpointOutputs['paymentIntentsGet'];
+export type PaymentIntentsListResponse =
+	StripeEndpointOutputs['paymentIntentsList'];
+export type PaymentIntentsUpdateResponse =
+	StripeEndpointOutputs['paymentIntentsUpdate'];
 export type PricesCreateResponse = StripeEndpointOutputs['pricesCreate'];
 export type PricesListResponse = StripeEndpointOutputs['pricesList'];
 export type SourcesCreateResponse = StripeEndpointOutputs['sourcesCreate'];

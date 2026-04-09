@@ -259,9 +259,7 @@ const UpdatesDeleteInputSchema = z.object({
 const UsersListInputSchema = z.object({
 	limit: z.number().optional(),
 	page: z.number().optional(),
-	kind: z
-		.enum(['all', 'non_guests', 'guests', 'non_pending'])
-		.optional(),
+	kind: z.enum(['all', 'non_guests', 'guests', 'non_pending']).optional(),
 });
 
 const UsersGetInputSchema = z.object({
@@ -494,7 +492,9 @@ const WebhooksCreateResponseSchema = z
 
 const WebhooksDeleteResponseSchema = z
 	.object({
-		delete_webhook: z.object({ id: z.string(), board_id: z.string().optional() }).passthrough(),
+		delete_webhook: z
+			.object({ id: z.string(), board_id: z.string().optional() })
+			.passthrough(),
 	})
 	.passthrough();
 

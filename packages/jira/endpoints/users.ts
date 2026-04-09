@@ -3,7 +3,10 @@ import type { JiraEndpoints } from '..';
 import { makeJiraRequest } from '../client';
 import type { JiraEndpointOutputs } from './types';
 
-export const getCurrent: JiraEndpoints['usersGetCurrent'] = async (ctx, _input) => {
+export const getCurrent: JiraEndpoints['usersGetCurrent'] = async (
+	ctx,
+	_input,
+) => {
 	const result = await makeJiraRequest<JiraEndpointOutputs['usersGetCurrent']>(
 		'myself',
 		ctx.key,
@@ -42,7 +45,9 @@ export const find: JiraEndpoints['usersFind'] = async (ctx, input) => {
 				...(input.query && { query: input.query }),
 				...(input.account_id && { accountId: input.account_id }),
 				...(input.start_at !== undefined && { startAt: input.start_at }),
-				...(input.max_results !== undefined && { maxResults: input.max_results }),
+				...(input.max_results !== undefined && {
+					maxResults: input.max_results,
+				}),
 			},
 		},
 	);
@@ -77,7 +82,9 @@ export const getAll: JiraEndpoints['usersGetAll'] = async (ctx, input) => {
 			method: 'GET',
 			query: {
 				...(input.start_at !== undefined && { startAt: input.start_at }),
-				...(input.max_results !== undefined && { maxResults: input.max_results }),
+				...(input.max_results !== undefined && {
+					maxResults: input.max_results,
+				}),
 			},
 		},
 	);
@@ -99,11 +106,19 @@ export const getAll: JiraEndpoints['usersGetAll'] = async (ctx, input) => {
 		}
 	}
 
-	await logEventFromContext(ctx, 'jira.users.getAll', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'jira.users.getAll',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
-export const groupsGetAll: JiraEndpoints['groupsGetAll'] = async (ctx, input) => {
+export const groupsGetAll: JiraEndpoints['groupsGetAll'] = async (
+	ctx,
+	input,
+) => {
 	const result = await makeJiraRequest<JiraEndpointOutputs['groupsGetAll']>(
 		'groups/picker',
 		ctx.key,
@@ -112,16 +127,26 @@ export const groupsGetAll: JiraEndpoints['groupsGetAll'] = async (ctx, input) =>
 			method: 'GET',
 			query: {
 				...(input.start_at !== undefined && { startAt: input.start_at }),
-				...(input.max_results !== undefined && { maxResults: input.max_results }),
+				...(input.max_results !== undefined && {
+					maxResults: input.max_results,
+				}),
 			},
 		},
 	);
 
-	await logEventFromContext(ctx, 'jira.groups.getAll', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'jira.groups.getAll',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
-export const groupsCreate: JiraEndpoints['groupsCreate'] = async (ctx, input) => {
+export const groupsCreate: JiraEndpoints['groupsCreate'] = async (
+	ctx,
+	input,
+) => {
 	const result = await makeJiraRequest<JiraEndpointOutputs['groupsCreate']>(
 		'group',
 		ctx.key,
@@ -132,6 +157,11 @@ export const groupsCreate: JiraEndpoints['groupsCreate'] = async (ctx, input) =>
 		},
 	);
 
-	await logEventFromContext(ctx, 'jira.groups.create', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'jira.groups.create',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };

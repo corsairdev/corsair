@@ -1,4 +1,5 @@
 import type {
+	AuthTypes,
 	BindEndpoints,
 	BindWebhooks,
 	CorsairEndpoint,
@@ -7,23 +8,23 @@ import type {
 	CorsairPluginContext,
 	CorsairWebhook,
 	KeyBuilderContext,
+	PickAuth,
 	PluginAuthConfig,
 } from 'corsair/core';
-import type { AuthTypes, PickAuth } from 'corsair/core';
-import type { TelegramEndpointInputs, TelegramEndpointOutputs } from './endpoints/types';
+import {
+	Callback,
+	Chat,
+	File,
+	Me,
+	Messages,
+	Updates,
+	Webhook,
+} from './endpoints';
 import type {
-	TelegramWebhookOutputs,
-	CallbackQueryEvent,
-	ChannelPostEvent,
-	EditedChannelPostEvent,
-	EditedMessageEvent,
-	InlineQueryEvent,
-	MessageEvent,
-	PollEvent,
-	PreCheckoutQueryEvent,
-	ShippingQueryEvent,
-} from './webhooks/types';
-import { Chat, Callback, File, Messages, Webhook, Updates, Me } from './endpoints';
+	TelegramEndpointInputs,
+	TelegramEndpointOutputs,
+} from './endpoints/types';
+import { errorHandlers } from './error-handlers';
 import { TelegramSchema } from './schema';
 import {
 	CallbackQueryWebhooks,
@@ -36,11 +37,22 @@ import {
 	PreCheckoutQueryWebhooks,
 	ShippingQueryWebhooks,
 } from './webhooks';
-import { errorHandlers } from './error-handlers';
+import type {
+	CallbackQueryEvent,
+	ChannelPostEvent,
+	EditedChannelPostEvent,
+	EditedMessageEvent,
+	InlineQueryEvent,
+	MessageEvent,
+	PollEvent,
+	PreCheckoutQueryEvent,
+	ShippingQueryEvent,
+	TelegramWebhookOutputs,
+} from './webhooks/types';
 
 /**
  * Plugin options type - configure authentication and behavior
- * 
+ *
  * AUTH CONFIGURATION:
  * - authType: The authentication method to use. Options:
  *   - 'api_key': For API key authentication (most common)
@@ -48,7 +60,7 @@ import { errorHandlers } from './error-handlers';
  *   - 'bot_token': For bot token authentication
  *   Update PickAuth<'api_key'> to include all auth types your plugin supports.
  *   Example: PickAuth<'api_key' | 'oauth_2'> for plugins that support both.
- * 
+ *
  * - key: Optional API key to use directly (bypasses key manager)
  * - webhookSecret: Optional webhook secret for signature verification
  */
@@ -66,13 +78,19 @@ export type TelegramContext = CorsairPluginContext<
 	TelegramPluginOptions
 >;
 
-export type TelegramKeyBuilderContext = KeyBuilderContext<TelegramPluginOptions>;
+export type TelegramKeyBuilderContext =
+	KeyBuilderContext<TelegramPluginOptions>;
 
-export type TelegramBoundEndpoints = BindEndpoints<typeof telegramEndpointsNested>;
+export type TelegramBoundEndpoints = BindEndpoints<
+	typeof telegramEndpointsNested
+>;
 
-type TelegramEndpoint<
-	K extends keyof TelegramEndpointOutputs,
-> = CorsairEndpoint<TelegramContext, TelegramEndpointInputs[K], TelegramEndpointOutputs[K]>;
+type TelegramEndpoint<K extends keyof TelegramEndpointOutputs> =
+	CorsairEndpoint<
+		TelegramContext,
+		TelegramEndpointInputs[K],
+		TelegramEndpointOutputs[K]
+	>;
 
 export type TelegramEndpoints = {
 	getChat: TelegramEndpoint<'getChat'>;
@@ -109,7 +127,10 @@ type TelegramWebhook<
 export type TelegramWebhooks = {
 	callbackQuery: TelegramWebhook<'callbackQuery', CallbackQueryEvent>;
 	channelPost: TelegramWebhook<'channelPost', ChannelPostEvent>;
-	editedChannelPost: TelegramWebhook<'editedChannelPost', EditedChannelPostEvent>;
+	editedChannelPost: TelegramWebhook<
+		'editedChannelPost',
+		EditedChannelPostEvent
+	>;
 	editedMessage: TelegramWebhook<'editedMessage', EditedMessageEvent>;
 	inlineQuery: TelegramWebhook<'inlineQuery', InlineQueryEvent>;
 	message: TelegramWebhook<'message', MessageEvent>;
@@ -235,17 +256,18 @@ export function telegram<const T extends TelegramPluginOptions>(
 		endpoints: telegramEndpointsNested,
 		webhooks: telegramWebhooksNested,
 		pluginWebhookMatcher: (request) => {
-			const body = typeof request.body === 'string' 
-				? JSON.parse(request.body) 
-				: request.body;
-			
+			const body =
+				typeof request.body === 'string'
+					? JSON.parse(request.body)
+					: request.body;
+
 			if (!body || typeof body !== 'object') {
 				return false;
 			}
 
 			const hasSignature = 'x-telegram-bot-api-secret-token' in request.headers;
-			
-			return hasSignature && 'update_id' in body
+
+			return hasSignature && 'update_id' in body;
 		},
 		errorHandlers: {
 			...errorHandlers,
@@ -286,6 +308,10 @@ export function telegram<const T extends TelegramPluginOptions>(
 // ─────────────────────────────────────────────────────────────────────────────
 
 export type {
+	TelegramEndpointInputs,
+	TelegramEndpointOutputs,
+} from './endpoints/types';
+export type {
 	CallbackQueryEvent,
 	ChannelPostEvent,
 	EditedChannelPostEvent,
@@ -295,14 +321,9 @@ export type {
 	PollEvent,
 	PreCheckoutQueryEvent,
 	ShippingQueryEvent,
-	TelegramUpdate,
-	TelegramMessage,
-	TelegramUser,
 	TelegramChat,
+	TelegramMessage,
+	TelegramUpdate,
+	TelegramUser,
 	TelegramWebhookOutputs,
 } from './webhooks/types';
-
-export type {
-	TelegramEndpointInputs,
-	TelegramEndpointOutputs,
-} from './endpoints/types';

@@ -19,8 +19,12 @@ export const copy: DropboxEndpoints['filesCopy'] = async (ctx, input) => {
 			if (meta['.tag'] === 'file') {
 				await ctx.db.files.upsertByEntityId(meta.id, {
 					...meta,
-					client_modified: meta.client_modified ? new Date(meta.client_modified) : null,
-					server_modified: meta.server_modified ? new Date(meta.server_modified) : null,
+					client_modified: meta.client_modified
+						? new Date(meta.client_modified)
+						: null,
+					server_modified: meta.server_modified
+						? new Date(meta.server_modified)
+						: null,
 				});
 			}
 		} catch (error) {
@@ -109,8 +113,12 @@ export const move: DropboxEndpoints['filesMove'] = async (ctx, input) => {
 			if (meta['.tag'] === 'file') {
 				await ctx.db.files.upsertByEntityId(meta.id, {
 					...meta,
-					client_modified: meta.client_modified ? new Date(meta.client_modified) : null,
-					server_modified: meta.server_modified ? new Date(meta.server_modified) : null,
+					client_modified: meta.client_modified
+						? new Date(meta.client_modified)
+						: null,
+					server_modified: meta.server_modified
+						? new Date(meta.server_modified)
+						: null,
 				});
 			}
 		} catch (error) {
@@ -152,8 +160,12 @@ export const upload: DropboxEndpoints['filesUpload'] = async (ctx, input) => {
 		try {
 			await ctx.db.files.upsertByEntityId(result.id, {
 				...result,
-				client_modified: result.client_modified ? new Date(result.client_modified) : null,
-				server_modified: result.server_modified ? new Date(result.server_modified) : null,
+				client_modified: result.client_modified
+					? new Date(result.client_modified)
+					: null,
+				server_modified: result.server_modified
+					? new Date(result.server_modified)
+					: null,
 			});
 		} catch (error) {
 			console.warn('Failed to save uploaded file to database:', error);

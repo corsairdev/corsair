@@ -81,20 +81,18 @@ function extractBody(message: Message): string | undefined {
 }
 
 export const list: GmailEndpoints['messagesList'] = async (ctx, input) => {
-	const result = await makeAuthenticatedGmailRequest<GmailEndpointOutputs['messagesList']>(
-		`/users/${input.userId || 'me'}/messages`,
-		ctx,
-		{
-			method: 'GET',
-			query: {
-				q: input.q,
-				maxResults: input.maxResults,
-				pageToken: input.pageToken,
-				labelIds: input.labelIds?.join(','),
-				includeSpamTrash: input.includeSpamTrash,
-			},
+	const result = await makeAuthenticatedGmailRequest<
+		GmailEndpointOutputs['messagesList']
+	>(`/users/${input.userId || 'me'}/messages`, ctx, {
+		method: 'GET',
+		query: {
+			q: input.q,
+			maxResults: input.maxResults,
+			pageToken: input.pageToken,
+			labelIds: input.labelIds?.join(','),
+			includeSpamTrash: input.includeSpamTrash,
 		},
-	);
+	});
 
 	if (result.messages && ctx.db.messages) {
 		try {
@@ -122,17 +120,15 @@ export const list: GmailEndpoints['messagesList'] = async (ctx, input) => {
 };
 
 export const get: GmailEndpoints['messagesGet'] = async (ctx, input) => {
-	const result = await makeAuthenticatedGmailRequest<GmailEndpointOutputs['messagesGet']>(
-		`/users/${input.userId || 'me'}/messages/${input.id}`,
-		ctx,
-		{
-			method: 'GET',
-			query: {
-				format: input.format,
-				metadataHeaders: input.metadataHeaders?.join(','),
-			},
+	const result = await makeAuthenticatedGmailRequest<
+		GmailEndpointOutputs['messagesGet']
+	>(`/users/${input.userId || 'me'}/messages/${input.id}`, ctx, {
+		method: 'GET',
+		query: {
+			format: input.format,
+			metadataHeaders: input.metadataHeaders?.join(','),
 		},
-	);
+	});
 
 	if (result.id && ctx.db.messages) {
 		try {
@@ -164,17 +160,15 @@ export const get: GmailEndpoints['messagesGet'] = async (ctx, input) => {
 };
 
 export const send: GmailEndpoints['messagesSend'] = async (ctx, input) => {
-	const result = await makeAuthenticatedGmailRequest<GmailEndpointOutputs['messagesSend']>(
-		`/users/${input.userId || 'me'}/messages/send`,
-		ctx,
-		{
-			method: 'POST',
-			body: {
-				raw: input.raw,
-				threadId: input.threadId,
-			},
+	const result = await makeAuthenticatedGmailRequest<
+		GmailEndpointOutputs['messagesSend']
+	>(`/users/${input.userId || 'me'}/messages/send`, ctx, {
+		method: 'POST',
+		body: {
+			raw: input.raw,
+			threadId: input.threadId,
 		},
-	);
+	});
 
 	if (result.id) {
 		const endpoints = ctx.endpoints as GmailBoundEndpoints;
@@ -232,14 +226,12 @@ export const modify: GmailEndpoints['messagesModify'] = async (ctx, input) => {
 		body.removeLabelIds = input.removeLabelIds;
 	}
 
-	const result = await makeAuthenticatedGmailRequest<GmailEndpointOutputs['messagesModify']>(
-		`/users/${input.userId || 'me'}/messages/${input.id}/modify`,
-		ctx,
-		{
-			method: 'POST',
-			body,
-		},
-	);
+	const result = await makeAuthenticatedGmailRequest<
+		GmailEndpointOutputs['messagesModify']
+	>(`/users/${input.userId || 'me'}/messages/${input.id}/modify`, ctx, {
+		method: 'POST',
+		body,
+	});
 
 	if (result.id) {
 		const endpoints = ctx.endpoints as GmailBoundEndpoints;
@@ -275,14 +267,12 @@ export const batchModify: GmailEndpoints['messagesBatchModify'] = async (
 		body.removeLabelIds = input.removeLabelIds;
 	}
 
-	await makeAuthenticatedGmailRequest<GmailEndpointOutputs['messagesBatchModify']>(
-		`/users/${input.userId || 'me'}/messages/batchModify`,
-		ctx,
-		{
-			method: 'POST',
-			body,
-		},
-	);
+	await makeAuthenticatedGmailRequest<
+		GmailEndpointOutputs['messagesBatchModify']
+	>(`/users/${input.userId || 'me'}/messages/batchModify`, ctx, {
+		method: 'POST',
+		body,
+	});
 
 	await logEventFromContext(
 		ctx,
@@ -293,13 +283,11 @@ export const batchModify: GmailEndpoints['messagesBatchModify'] = async (
 };
 
 export const trash: GmailEndpoints['messagesTrash'] = async (ctx, input) => {
-	const result = await makeAuthenticatedGmailRequest<GmailEndpointOutputs['messagesTrash']>(
-		`/users/${input.userId || 'me'}/messages/${input.id}/trash`,
-		ctx,
-		{
-			method: 'POST',
-		},
-	);
+	const result = await makeAuthenticatedGmailRequest<
+		GmailEndpointOutputs['messagesTrash']
+	>(`/users/${input.userId || 'me'}/messages/${input.id}/trash`, ctx, {
+		method: 'POST',
+	});
 
 	if (result.id) {
 		const endpoints = ctx.endpoints as GmailBoundEndpoints;

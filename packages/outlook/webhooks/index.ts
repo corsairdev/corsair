@@ -1,6 +1,6 @@
-import { newMessage, sentMessage } from './messages';
-import { newEvent, eventChange } from './events';
 import { newContact } from './contacts';
+import { eventChange, newEvent } from './events';
+import { newMessage, sentMessage } from './messages';
 import { subscriptionValidation } from './validation';
 
 export const MessageWebhooks = {

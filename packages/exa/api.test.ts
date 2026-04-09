@@ -1,4 +1,4 @@
-import 'dotenv/config'
+import 'dotenv/config';
 import { makeExaRequest } from './client';
 import type {
 	EventsListResponse,
@@ -8,8 +8,8 @@ import type {
 	ImportsDeleteResponse,
 	ImportsListResponse,
 	SearchResponse,
-	Webset,
 	WebhooksApiListResponse,
+	Webset,
 	WebsetEvent,
 	WebsetImport,
 	WebsetMonitor,
@@ -22,45 +22,57 @@ const TEST_API_KEY = process.env.EXA_API_KEY!;
 describe('Exa API Type Tests', () => {
 	describe('search', () => {
 		it('searchSearch returns correct type', async () => {
-			const response = await makeExaRequest<SearchResponse>('search', TEST_API_KEY, {
-				method: 'POST',
-				body: {
-					query: 'latest AI research papers',
-					numResults: 5,
-					type: 'neural',
+			const response = await makeExaRequest<SearchResponse>(
+				'search',
+				TEST_API_KEY,
+				{
+					method: 'POST',
+					body: {
+						query: 'latest AI research papers',
+						numResults: 5,
+						type: 'neural',
+					},
 				},
-			});
+			);
 
 			ExaEndpointOutputSchemas.searchSearch.parse(response);
 		});
 
 		it('searchSearch with contents returns correct type', async () => {
-			const response = await makeExaRequest<SearchResponse>('search', TEST_API_KEY, {
-				method: 'POST',
-				body: {
-					query: 'open source LLM models 2024',
-					numResults: 3,
-					type: 'auto',
-					contents: {
-						text: { maxCharacters: 500 },
-						highlights: { numSentences: 2, highlightsPerUrl: 2 },
+			const response = await makeExaRequest<SearchResponse>(
+				'search',
+				TEST_API_KEY,
+				{
+					method: 'POST',
+					body: {
+						query: 'open source LLM models 2024',
+						numResults: 3,
+						type: 'auto',
+						contents: {
+							text: { maxCharacters: 500 },
+							highlights: { numSentences: 2, highlightsPerUrl: 2 },
+						},
 					},
 				},
-			});
+			);
 
 			ExaEndpointOutputSchemas.searchSearch.parse(response);
 		});
 
 		it('searchSearch with domain filters returns correct type', async () => {
-			const response = await makeExaRequest<SearchResponse>('search', TEST_API_KEY, {
-				method: 'POST',
-				body: {
-					query: 'machine learning tutorials',
-					numResults: 5,
-					includeDomains: ['arxiv.org', 'github.com'],
-					useAutoprompt: true,
+			const response = await makeExaRequest<SearchResponse>(
+				'search',
+				TEST_API_KEY,
+				{
+					method: 'POST',
+					body: {
+						query: 'machine learning tutorials',
+						numResults: 5,
+						includeDomains: ['arxiv.org', 'github.com'],
+						useAutoprompt: true,
+					},
 				},
-			});
+			);
 
 			ExaEndpointOutputSchemas.searchSearch.parse(response);
 		});
@@ -203,25 +215,28 @@ describe('Exa API Type Tests', () => {
 		let createdWebsetId: string;
 
 		it('websetsCreate returns correct type', async () => {
-			const response = await makeExaRequest<Webset>('websets/v0/websets', TEST_API_KEY, {
-				method: 'POST',
-				body: {
-					searches: [
-						{
-							query: 'top AI startups 2024',
-							count: 5,
-							entity: { type: 'company' },
-						},
-					],
+			const response = await makeExaRequest<Webset>(
+				'websets/v0/websets',
+				TEST_API_KEY,
+				{
+					method: 'POST',
+					body: {
+						searches: [
+							{
+								query: 'top AI startups 2024',
+								count: 5,
+								entity: { type: 'company' },
+							},
+						],
+					},
 				},
-			});
+			);
 
 			ExaEndpointOutputSchemas.websetsCreate.parse(response);
 			createdWebsetId = response.id;
 		});
 
 		it('websetsGet returns correct type', async () => {
-
 			if (!createdWebsetId) {
 				return;
 			}
@@ -236,7 +251,6 @@ describe('Exa API Type Tests', () => {
 		});
 
 		it('websetsDelete returns correct type', async () => {
-
 			if (!createdWebsetId) {
 				return;
 			}
@@ -256,18 +270,26 @@ describe('Exa API Type Tests', () => {
 		let createdImportId: string;
 
 		beforeAll(async () => {
-			const webset = await makeExaRequest<Webset>('websets/v0/websets', TEST_API_KEY, {
-				method: 'POST',
-				body: { searches: [{ query: 'import test webset', count: 3 }] },
-			});
+			const webset = await makeExaRequest<Webset>(
+				'websets/v0/websets',
+				TEST_API_KEY,
+				{
+					method: 'POST',
+					body: { searches: [{ query: 'import test webset', count: 3 }] },
+				},
+			);
 			testWebsetId = webset.id;
 		});
 
 		afterAll(async () => {
 			if (testWebsetId) {
-				await makeExaRequest(`websets/v0/websets/${testWebsetId}`, TEST_API_KEY, {
-					method: 'DELETE',
-				});
+				await makeExaRequest(
+					`websets/v0/websets/${testWebsetId}`,
+					TEST_API_KEY,
+					{
+						method: 'DELETE',
+					},
+				);
 			}
 		});
 
@@ -322,18 +344,26 @@ describe('Exa API Type Tests', () => {
 		let testWebsetId: string;
 
 		beforeAll(async () => {
-			const webset = await makeExaRequest<Webset>('websets/v0/websets', TEST_API_KEY, {
-				method: 'POST',
-				body: { searches: [{ query: 'monitor test webset', count: 3 }] },
-			});
+			const webset = await makeExaRequest<Webset>(
+				'websets/v0/websets',
+				TEST_API_KEY,
+				{
+					method: 'POST',
+					body: { searches: [{ query: 'monitor test webset', count: 3 }] },
+				},
+			);
 			testWebsetId = webset.id;
 		});
 
 		afterAll(async () => {
 			if (testWebsetId) {
-				await makeExaRequest(`websets/v0/websets/${testWebsetId}`, TEST_API_KEY, {
-					method: 'DELETE',
-				});
+				await makeExaRequest(
+					`websets/v0/websets/${testWebsetId}`,
+					TEST_API_KEY,
+					{
+						method: 'DELETE',
+					},
+				);
 			}
 		});
 
@@ -359,18 +389,26 @@ describe('Exa API Type Tests', () => {
 		let testWebsetId: string;
 
 		beforeAll(async () => {
-			const webset = await makeExaRequest<Webset>('websets/v0/websets', TEST_API_KEY, {
-				method: 'POST',
-				body: { searches: [{ query: 'events test webset', count: 3 }] },
-			});
+			const webset = await makeExaRequest<Webset>(
+				'websets/v0/websets',
+				TEST_API_KEY,
+				{
+					method: 'POST',
+					body: { searches: [{ query: 'events test webset', count: 3 }] },
+				},
+			);
 			testWebsetId = webset.id;
 		});
 
 		afterAll(async () => {
 			if (testWebsetId) {
-				await makeExaRequest(`websets/v0/websets/${testWebsetId}`, TEST_API_KEY, {
-					method: 'DELETE',
-				});
+				await makeExaRequest(
+					`websets/v0/websets/${testWebsetId}`,
+					TEST_API_KEY,
+					{
+						method: 'DELETE',
+					},
+				);
 			}
 		});
 
