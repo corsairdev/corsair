@@ -6,7 +6,7 @@ export const findById = query({
 	handler: async (ctx, args) => {
 		return ctx.db
 			.query('corsair_events')
-			.withIndex('by_id', (q) => q.eq('id', args.id))
+			.withIndex('by_corsair_id', (q) => q.eq('id', args.id))
 			.first();
 	},
 });
@@ -18,7 +18,7 @@ export const findOne = query({
 		if (where.id) {
 			return ctx.db
 				.query('corsair_events')
-				.withIndex('by_id', (q) => q.eq('id', where.id as string))
+				.withIndex('by_corsair_id', (q) => q.eq('id', where.id as string))
 				.first();
 		}
 		const results = await ctx.db.query('corsair_events').collect();
@@ -92,7 +92,7 @@ export const update = mutation({
 	handler: async (ctx, args) => {
 		const existing = await ctx.db
 			.query('corsair_events')
-			.withIndex('by_id', (q) => q.eq('id', args.id))
+			.withIndex('by_corsair_id', (q) => q.eq('id', args.id))
 			.first();
 		if (!existing) return null;
 		await ctx.db.patch(existing._id, {
@@ -108,7 +108,7 @@ export const remove = mutation({
 	handler: async (ctx, args) => {
 		const existing = await ctx.db
 			.query('corsair_events')
-			.withIndex('by_id', (q) => q.eq('id', args.id))
+			.withIndex('by_corsair_id', (q) => q.eq('id', args.id))
 			.first();
 		if (!existing) return false;
 		await ctx.db.delete(existing._id);

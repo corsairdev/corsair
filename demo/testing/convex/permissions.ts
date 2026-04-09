@@ -6,7 +6,7 @@ export const findById = query({
 	handler: async (ctx, args) => {
 		return ctx.db
 			.query('corsair_permissions')
-			.withIndex('by_id', (q) => q.eq('id', args.id))
+			.withIndex('by_corsair_id', (q) => q.eq('id', args.id))
 			.first();
 	},
 });
@@ -71,7 +71,7 @@ export const updateStatus = mutation({
 	handler: async (ctx, args) => {
 		const existing = await ctx.db
 			.query('corsair_permissions')
-			.withIndex('by_id', (q) => q.eq('id', args.id))
+			.withIndex('by_corsair_id', (q) => q.eq('id', args.id))
 			.first();
 		if (!existing) return;
 		const patch: Record<string, unknown> = {

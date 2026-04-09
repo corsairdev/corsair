@@ -10,7 +10,7 @@ export default defineSchema({
 		config: v.any(),
 		dek: v.optional(v.union(v.string(), v.null())),
 	})
-		.index('by_id', ['id'])
+		.index('by_corsair_id', ['id'])
 		.index('by_name', ['name']),
 
 	corsair_accounts: defineTable({
@@ -22,7 +22,7 @@ export default defineSchema({
 		config: v.any(),
 		dek: v.optional(v.union(v.string(), v.null())),
 	})
-		.index('by_id', ['id'])
+		.index('by_corsair_id', ['id'])
 		.index('by_tenant_integration', ['tenant_id', 'integration_id']),
 
 	corsair_entities: defineTable({
@@ -35,7 +35,7 @@ export default defineSchema({
 		version: v.string(),
 		data: v.any(),
 	})
-		.index('by_id', ['id'])
+		.index('by_corsair_id', ['id'])
 		.index('by_account_type_entity', ['account_id', 'entity_type', 'entity_id'])
 		.index('by_account_type', ['account_id', 'entity_type']),
 
@@ -48,7 +48,7 @@ export default defineSchema({
 		payload: v.any(),
 		status: v.optional(v.string()),
 	})
-		.index('by_id', ['id'])
+		.index('by_corsair_id', ['id'])
 		.index('by_account', ['account_id'])
 		.index('by_status', ['status']),
 
@@ -65,7 +65,7 @@ export default defineSchema({
 		expires_at: v.string(),
 		error: v.optional(v.union(v.string(), v.null())),
 	})
-		.index('by_id', ['id'])
+		.index('by_corsair_id', ['id'])
 		.index('by_token', ['token'])
 		.index('by_plugin_endpoint_tenant', ['plugin', 'endpoint', 'tenant_id']),
 });
