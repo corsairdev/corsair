@@ -1,6 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import type { FirecrawlEndpoints } from '..';
 import { makeFirecrawlRequest } from '../client';
+import { persistJob } from './persist';
 import type { FirecrawlEndpointOutputs } from './types';
 
 export const start: FirecrawlEndpoints['agentStart'] = async (ctx, input) => {
@@ -10,6 +11,11 @@ export const start: FirecrawlEndpoints['agentStart'] = async (ctx, input) => {
 		method: 'POST',
 		body: input as Record<string, unknown>,
 	});
+
+	const jobId = (response as { id?: string }).id;
+	if (typeof jobId === 'string') {
+		await persistJob(ctx, 'agent', jobId, response);
+	}
 
 	await logEventFromContext(
 		ctx,
@@ -27,6 +33,8 @@ export const get: FirecrawlEndpoints['agentGet'] = async (ctx, input) => {
 		method: 'GET',
 	});
 
+	await persistJob(ctx, 'agent', input.id, response);
+
 	await logEventFromContext(
 		ctx,
 		'firecrawl.agent.get',
@@ -42,6 +50,8 @@ export const cancel: FirecrawlEndpoints['agentCancel'] = async (ctx, input) => {
 	>(`v2/agent/${input.id}`, ctx.key, {
 		method: 'DELETE',
 	});
+
+	await persistJob(ctx, 'agent', input.id, response);
 
 	await logEventFromContext(
 		ctx,

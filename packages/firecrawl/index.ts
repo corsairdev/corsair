@@ -4,7 +4,6 @@ import type {
 	CorsairEndpoint,
 	CorsairErrorHandler,
 	CorsairPlugin,
-	CorsairPluginContext,
 	KeyBuilderContext,
 	PickAuth,
 	PluginPermissionsConfig,
@@ -26,6 +25,7 @@ import {
 	FirecrawlEndpointOutputSchemas,
 } from './endpoints/types';
 import { errorHandlers as defaultErrorHandlers } from './error-handlers';
+import type { FirecrawlContext } from './plugin-context';
 import { FirecrawlSchema } from './schema';
 import * as Wh from './webhooks';
 import {
@@ -45,6 +45,28 @@ import {
 	ExtractStartedEventSchema,
 } from './webhooks/types';
 
+const firecrawlEndpointsNested = {
+	scrape: {
+		run: ScrapeEndpoints.run,
+	},
+	map: {
+		run: MapEndpoints.run,
+	},
+	search: {
+		run: SearchEndpoints.run,
+	},
+	crawl: {
+		start: CrawlEndpoints.start,
+		get: CrawlEndpoints.get,
+		cancel: CrawlEndpoints.cancel,
+	},
+	agent: {
+		start: AgentEndpoints.start,
+		get: AgentEndpoints.get,
+		cancel: AgentEndpoints.cancel,
+	},
+} as const;
+
 export type FirecrawlPluginOptions = {
 	authType?: PickAuth<'api_key'>;
 	key?: string;
@@ -55,10 +77,7 @@ export type FirecrawlPluginOptions = {
 	permissions?: PluginPermissionsConfig<typeof firecrawlEndpointsNested>;
 };
 
-export type FirecrawlContext = CorsairPluginContext<
-	typeof FirecrawlSchema,
-	FirecrawlPluginOptions
->;
+export type { FirecrawlContext };
 
 export type FirecrawlKeyBuilderContext =
 	KeyBuilderContext<FirecrawlPluginOptions>;
@@ -85,28 +104,6 @@ export type FirecrawlEndpoints = {
 	agentGet: FirecrawlEndpoint<'agentGet'>;
 	agentCancel: FirecrawlEndpoint<'agentCancel'>;
 };
-
-const firecrawlEndpointsNested = {
-	scrape: {
-		run: ScrapeEndpoints.run,
-	},
-	map: {
-		run: MapEndpoints.run,
-	},
-	search: {
-		run: SearchEndpoints.run,
-	},
-	crawl: {
-		start: CrawlEndpoints.start,
-		get: CrawlEndpoints.get,
-		cancel: CrawlEndpoints.cancel,
-	},
-	agent: {
-		start: AgentEndpoints.start,
-		get: AgentEndpoints.get,
-		cancel: AgentEndpoints.cancel,
-	},
-} as const;
 
 const firecrawlWebhooksNested = {
 	crawl: {
