@@ -35,7 +35,7 @@ const OUTLOOK_RESOURCES: Record<
 	},
 	eventChanges: {
 		resource: 'me/events',
-		changeType: 'created,updated,deleted',
+		changeType: 'updated,deleted',
 		label: 'Calendar Events — updates & deletions',
 		expiryMinutes: 4230,
 	},
