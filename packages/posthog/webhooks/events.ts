@@ -1,5 +1,5 @@
-import { v7 } from 'uuid';
 import { logEventFromContext } from 'corsair/core';
+import { v7 } from 'uuid';
 import type { PostHogWebhooks } from '..';
 import { createPostHogMatch, verifyPostHogWebhookSignature } from './types';
 

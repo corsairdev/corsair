@@ -155,7 +155,10 @@ export const AsanaStory = z.object({
 	num_likes: z.number().optional(),
 	is_edited: z.boolean().optional(),
 	is_pinned: z.boolean().optional(),
-	target: z.object({ gid: z.string(), name: z.string().optional() }).nullable().optional(),
+	target: z
+		.object({ gid: z.string(), name: z.string().optional() })
+		.nullable()
+		.optional(),
 });
 
 export type AsanaTask = z.infer<typeof AsanaTask>;

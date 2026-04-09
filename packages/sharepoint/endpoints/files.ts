@@ -3,16 +3,21 @@ import type { SharepointEndpoints } from '..';
 import { makeGraphRequest, resolveSiteGuid } from '../client';
 import type { SharepointEndpointOutputs } from './types';
 
-export const upload: SharepointEndpoints['filesUpload'] = async (ctx, input) => {
+export const upload: SharepointEndpoints['filesUpload'] = async (
+	ctx,
+	input,
+) => {
 	const siteId = await resolveSiteGuid(
 		(await ctx.keys.get_site_id()) ?? ctx.options?.siteId ?? '',
 		ctx.key,
 	);
 	const folderPath = input.folder_server_relative_url.replace(/^\/+/, '');
 	const content = input.content_text ?? input.content_base64 ?? '';
-	const fileBody = content
+	const fileBody = content;
 
-	const result = await makeGraphRequest<SharepointEndpointOutputs['filesUpload']>(
+	const result = await makeGraphRequest<
+		SharepointEndpointOutputs['filesUpload']
+	>(
 		`/sites/${siteId}/drive/root:/${folderPath}/${encodeURIComponent(input.file_name)}:/content`,
 		ctx.key,
 		{ method: 'PUT', body: fileBody, mediaType: 'text/plain' },
@@ -33,28 +38,44 @@ export const upload: SharepointEndpoints['filesUpload'] = async (ctx, input) => 
 		}
 	}
 
-	await logEventFromContext(ctx, 'sharepoint.files.upload', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'sharepoint.files.upload',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
-export const download: SharepointEndpoints['filesDownload'] = async (ctx, input) => {
+export const download: SharepointEndpoints['filesDownload'] = async (
+	ctx,
+	input,
+) => {
 	const siteId = await resolveSiteGuid(
 		(await ctx.keys.get_site_id()) ?? ctx.options?.siteId ?? '',
 		ctx.key,
 	);
 	const drivePath = input.server_relative_url.replace(/^\/+/, '');
 
-	const result = await makeGraphRequest<SharepointEndpointOutputs['filesDownload']>(
-		`/sites/${siteId}/drive/root:/${drivePath}:/content`,
-		ctx.key,
-		{ method: 'GET' },
-	);
+	const result = await makeGraphRequest<
+		SharepointEndpointOutputs['filesDownload']
+	>(`/sites/${siteId}/drive/root:/${drivePath}:/content`, ctx.key, {
+		method: 'GET',
+	});
 
-	await logEventFromContext(ctx, 'sharepoint.files.download', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'sharepoint.files.download',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
-export const listInFolder: SharepointEndpoints['filesListInFolder'] = async (ctx, input) => {
+export const listInFolder: SharepointEndpoints['filesListInFolder'] = async (
+	ctx,
+	input,
+) => {
 	const siteId = await resolveSiteGuid(
 		(await ctx.keys.get_site_id()) ?? ctx.options?.siteId ?? '',
 		ctx.key,
@@ -64,11 +85,12 @@ export const listInFolder: SharepointEndpoints['filesListInFolder'] = async (ctx
 	if (input.filter) query['$filter'] = input.filter;
 	if (input.select) query['$select'] = input.select;
 
-	const result = await makeGraphRequest<SharepointEndpointOutputs['filesListInFolder']>(
-		`/sites/${siteId}/drive/root:/${folderPath}:/children`,
-		ctx.key,
-		{ method: 'GET', query },
-	);
+	const result = await makeGraphRequest<
+		SharepointEndpointOutputs['filesListInFolder']
+	>(`/sites/${siteId}/drive/root:/${folderPath}:/children`, ctx.key, {
+		method: 'GET',
+		query,
+	});
 
 	if (result.value && ctx.db.files) {
 		try {
@@ -88,11 +110,19 @@ export const listInFolder: SharepointEndpoints['filesListInFolder'] = async (ctx
 		}
 	}
 
-	await logEventFromContext(ctx, 'sharepoint.files.listInFolder', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'sharepoint.files.listInFolder',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
-export const recycle: SharepointEndpoints['filesRecycle'] = async (ctx, input) => {
+export const recycle: SharepointEndpoints['filesRecycle'] = async (
+	ctx,
+	input,
+) => {
 	const siteId = await resolveSiteGuid(
 		(await ctx.keys.get_site_id()) ?? ctx.options?.siteId ?? '',
 		ctx.key,
@@ -120,11 +150,19 @@ export const recycle: SharepointEndpoints['filesRecycle'] = async (ctx, input) =
 		}
 	}
 
-	await logEventFromContext(ctx, 'sharepoint.files.recycle', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'sharepoint.files.recycle',
+		{ ...input },
+		'completed',
+	);
 	return { value: undefined };
 };
 
-export const checkIn: SharepointEndpoints['filesCheckIn'] = async (ctx, input) => {
+export const checkIn: SharepointEndpoints['filesCheckIn'] = async (
+	ctx,
+	input,
+) => {
 	const siteId = await resolveSiteGuid(
 		(await ctx.keys.get_site_id()) ?? ctx.options?.siteId ?? '',
 		ctx.key,
@@ -163,7 +201,12 @@ export const checkIn: SharepointEndpoints['filesCheckIn'] = async (ctx, input) =
 		}
 	}
 
-	await logEventFromContext(ctx, 'sharepoint.files.checkIn', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'sharepoint.files.checkIn',
+		{ ...input },
+		'completed',
+	);
 	return {
 		status: 200,
 		message: 'File checked in successfully',
@@ -171,7 +214,10 @@ export const checkIn: SharepointEndpoints['filesCheckIn'] = async (ctx, input) =
 	};
 };
 
-export const checkOut: SharepointEndpoints['filesCheckOut'] = async (ctx, input) => {
+export const checkOut: SharepointEndpoints['filesCheckOut'] = async (
+	ctx,
+	input,
+) => {
 	const siteId = await resolveSiteGuid(
 		(await ctx.keys.get_site_id()) ?? ctx.options?.siteId ?? '',
 		ctx.key,
@@ -200,18 +246,29 @@ export const checkOut: SharepointEndpoints['filesCheckOut'] = async (ctx, input)
 				modifiedAt: new Date(),
 			});
 		} catch (error) {
-			console.warn('Failed to update file check-out status in database:', error);
+			console.warn(
+				'Failed to update file check-out status in database:',
+				error,
+			);
 		}
 	}
 
-	await logEventFromContext(ctx, 'sharepoint.files.checkOut', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'sharepoint.files.checkOut',
+		{ ...input },
+		'completed',
+	);
 	return {
 		message: 'File checked out successfully',
 		server_relative_path: input.server_relative_path,
 	};
 };
 
-export const undoCheckout: SharepointEndpoints['filesUndoCheckout'] = async (ctx, input) => {
+export const undoCheckout: SharepointEndpoints['filesUndoCheckout'] = async (
+	ctx,
+	input,
+) => {
 	const siteId = await resolveSiteGuid(
 		(await ctx.keys.get_site_id()) ?? ctx.options?.siteId ?? '',
 		ctx.key,
@@ -240,11 +297,19 @@ export const undoCheckout: SharepointEndpoints['filesUndoCheckout'] = async (ctx
 				modifiedAt: new Date(),
 			});
 		} catch (error) {
-			console.warn('Failed to update file undo-checkout status in database:', error);
+			console.warn(
+				'Failed to update file undo-checkout status in database:',
+				error,
+			);
 		}
 	}
 
-	await logEventFromContext(ctx, 'sharepoint.files.undoCheckout', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'sharepoint.files.undoCheckout',
+		{ ...input },
+		'completed',
+	);
 	return {
 		message: 'File checkout undone successfully',
 		server_relative_path: input.server_relative_path,
@@ -278,6 +343,11 @@ export const getFile: SharepointEndpoints['filesGet'] = async (ctx, input) => {
 		}
 	}
 
-	await logEventFromContext(ctx, 'sharepoint.files.get', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'sharepoint.files.get',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };

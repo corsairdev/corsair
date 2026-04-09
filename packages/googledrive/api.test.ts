@@ -1,4 +1,4 @@
-import 'dotenv/config'
+import 'dotenv/config';
 import { ApiError } from 'corsair/http';
 import { makeGoogleDriveRequest } from './client';
 import { GoogleDriveEndpointOutputSchemas } from './endpoints/types';

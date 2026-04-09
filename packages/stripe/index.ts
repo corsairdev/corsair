@@ -1,4 +1,5 @@
 import type {
+	AuthTypes,
 	BindEndpoints,
 	BindWebhooks,
 	CorsairEndpoint,
@@ -7,13 +8,11 @@ import type {
 	CorsairPluginContext,
 	CorsairWebhook,
 	KeyBuilderContext,
+	PickAuth,
 	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
-	RequiredPluginEndpointSchemas,
-	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
-import type { AuthTypes, PickAuth } from 'corsair/core';
 import {
 	Balance,
 	Charges,
@@ -24,11 +23,15 @@ import {
 	Sources,
 	Tokens,
 } from './endpoints';
+import type {
+	StripeEndpointInputs,
+	StripeEndpointOutputs,
+} from './endpoints/types';
 import {
 	StripeEndpointInputSchemas,
 	StripeEndpointOutputSchemas,
 } from './endpoints/types';
-import type { StripeEndpointInputs, StripeEndpointOutputs } from './endpoints/types';
+import { errorHandlers } from './error-handlers';
 import { StripeSchema } from './schema';
 import {
 	ChargeWebhooks,
@@ -64,7 +67,6 @@ import {
 	StripePaymentIntentSucceededEventSchema,
 	StripePingEventSchema,
 } from './webhooks/types';
-import { errorHandlers } from './error-handlers';
 
 export type StripePluginOptions = {
 	authType?: PickAuth<'api_key'>;
@@ -131,8 +133,14 @@ export type StripeWebhooks = {
 	customerCreated: StripeWebhook<'customerCreated', StripeCustomerCreatedEvent>;
 	customerDeleted: StripeWebhook<'customerDeleted', StripeCustomerDeletedEvent>;
 	customerUpdated: StripeWebhook<'customerUpdated', StripeCustomerUpdatedEvent>;
-	paymentIntentSucceeded: StripeWebhook<'paymentIntentSucceeded', StripePaymentIntentSucceededEvent>;
-	paymentIntentFailed: StripeWebhook<'paymentIntentFailed', StripePaymentIntentFailedEvent>;
+	paymentIntentSucceeded: StripeWebhook<
+		'paymentIntentSucceeded',
+		StripePaymentIntentSucceededEvent
+	>;
+	paymentIntentFailed: StripeWebhook<
+		'paymentIntentFailed',
+		StripePaymentIntentFailedEvent
+	>;
 	couponCreated: StripeWebhook<'couponCreated', StripeCouponCreatedEvent>;
 	couponDeleted: StripeWebhook<'couponDeleted', StripeCouponDeletedEvent>;
 	ping: StripeWebhook<'ping', StripePingEvent>;
@@ -142,19 +150,45 @@ export type StripeBoundWebhooks = BindWebhooks<StripeWebhooks>;
 
 const stripeEndpointsNested = {
 	balance: { get: Balance.get },
-	charges: { create: Charges.create, get: Charges.get, list: Charges.list, update: Charges.update },
+	charges: {
+		create: Charges.create,
+		get: Charges.get,
+		list: Charges.list,
+		update: Charges.update,
+	},
 	coupons: { create: Coupons.create, list: Coupons.list },
-	customers: { create: Customers.create, delete: Customers.delete, get: Customers.get, list: Customers.list },
-	paymentIntents: { create: PaymentIntents.create, get: PaymentIntents.get, list: PaymentIntents.list, update: PaymentIntents.update },
+	customers: {
+		create: Customers.create,
+		delete: Customers.delete,
+		get: Customers.get,
+		list: Customers.list,
+	},
+	paymentIntents: {
+		create: PaymentIntents.create,
+		get: PaymentIntents.get,
+		list: PaymentIntents.list,
+		update: PaymentIntents.update,
+	},
 	prices: { create: Prices.create, list: Prices.list },
 	sources: { create: Sources.create, get: Sources.get },
 	tokens: { create: Tokens.create },
 } as const;
 
 const stripeWebhooksNested = {
-	charge: { succeeded: ChargeWebhooks.succeeded, failed: ChargeWebhooks.failed, refunded: ChargeWebhooks.refunded },
-	customer: { created: CustomerWebhooks.created, deleted: CustomerWebhooks.deleted, updated: CustomerWebhooks.updated },
-	paymentIntent: { succeeded: PaymentIntentWebhooks.succeeded, failed: PaymentIntentWebhooks.failed },
+	charge: {
+		succeeded: ChargeWebhooks.succeeded,
+		failed: ChargeWebhooks.failed,
+		refunded: ChargeWebhooks.refunded,
+	},
+	customer: {
+		created: CustomerWebhooks.created,
+		deleted: CustomerWebhooks.deleted,
+		updated: CustomerWebhooks.updated,
+	},
+	paymentIntent: {
+		succeeded: PaymentIntentWebhooks.succeeded,
+		failed: PaymentIntentWebhooks.failed,
+	},
 	coupon: { created: CouponWebhooks.created, deleted: CouponWebhooks.deleted },
 	ping: { ping: PingWebhooks.ping },
 } as const;
@@ -470,18 +504,18 @@ export function stripe<const T extends StripePluginOptions>(
 // ─────────────────────────────────────────────────────────────────────────────
 
 export type {
-	StripeWebhookOutputs,
-	StripeChargeSucceededEvent,
 	StripeChargeFailedEvent,
 	StripeChargeRefundedEvent,
+	StripeChargeSucceededEvent,
+	StripeCouponCreatedEvent,
+	StripeCouponDeletedEvent,
 	StripeCustomerCreatedEvent,
 	StripeCustomerDeletedEvent,
 	StripeCustomerUpdatedEvent,
-	StripePaymentIntentSucceededEvent,
 	StripePaymentIntentFailedEvent,
-	StripeCouponCreatedEvent,
-	StripeCouponDeletedEvent,
+	StripePaymentIntentSucceededEvent,
 	StripePingEvent,
+	StripeWebhookOutputs,
 } from './webhooks/types';
 
 export { createStripeEventMatch } from './webhooks/types';
@@ -491,8 +525,6 @@ export { createStripeEventMatch } from './webhooks/types';
 // ─────────────────────────────────────────────────────────────────────────────
 
 export type {
-	StripeEndpointInputs,
-	StripeEndpointOutputs,
 	BalanceGetInput,
 	BalanceGetResponse,
 	ChargesCreateInput,
@@ -531,6 +563,8 @@ export type {
 	SourcesCreateResponse,
 	SourcesGetInput,
 	SourcesGetResponse,
+	StripeEndpointInputs,
+	StripeEndpointOutputs,
 	TokensCreateInput,
 	TokensCreateResponse,
 } from './endpoints/types';

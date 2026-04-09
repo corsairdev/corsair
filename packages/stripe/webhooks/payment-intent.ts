@@ -1,9 +1,6 @@
-import type { StripeWebhooks } from '..';
 import { logEventFromContext } from 'corsair/core';
-import {
-	createStripeEventMatch,
-	verifyStripeWebhookSignature,
-} from './types';
+import type { StripeWebhooks } from '..';
+import { createStripeEventMatch, verifyStripeWebhookSignature } from './types';
 
 export const succeeded: StripeWebhooks['paymentIntentSucceeded'] = {
 	match: createStripeEventMatch('payment_intent.succeeded'),

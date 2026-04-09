@@ -12,19 +12,33 @@ export const query: SharepointEndpoints['searchQuery'] = async (ctx, input) => {
 	if (input.start_row !== undefined) request.from = input.start_row;
 	if (input.select_properties?.length) request.fields = input.select_properties;
 
-	const result = await makeGraphRequest<SharepointEndpointOutputs['searchQuery']>(
-		'/search/query',
-		ctx.key,
-		{ method: 'POST', body: { requests: [request] } },
-	);
+	const result = await makeGraphRequest<
+		SharepointEndpointOutputs['searchQuery']
+	>('/search/query', ctx.key, {
+		method: 'POST',
+		body: { requests: [request] },
+	});
 
-	await logEventFromContext(ctx, 'sharepoint.search.query', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'sharepoint.search.query',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
-export const suggest: SharepointEndpoints['searchSuggest'] = async (ctx, input) => {
+export const suggest: SharepointEndpoints['searchSuggest'] = async (
+	ctx,
+	input,
+) => {
 	// Microsoft Graph does not have a direct equivalent to SharePoint search suggestions
 	// Return an empty stub for backwards compatibility
-	await logEventFromContext(ctx, 'sharepoint.search.suggest', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'sharepoint.search.suggest',
+		{ ...input },
+		'completed',
+	);
 	return { value: [] };
 };

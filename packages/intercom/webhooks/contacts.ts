@@ -16,7 +16,7 @@ export const created: IntercomWebhooks['contactCreated'] = {
 			};
 		}
 
-		const event = request.payload
+		const event = request.payload;
 
 		if (event.topic !== 'contact.user.created') {
 			return { success: true, data: undefined };
@@ -43,7 +43,12 @@ export const created: IntercomWebhooks['contactCreated'] = {
 			}
 		}
 
-		await logEventFromContext(ctx, 'intercom.webhook.contactCreated', { id: item.id }, 'completed');
+		await logEventFromContext(
+			ctx,
+			'intercom.webhook.contactCreated',
+			{ id: item.id },
+			'completed',
+		);
 
 		return {
 			success: true,
@@ -66,7 +71,7 @@ export const deleted: IntercomWebhooks['contactDeleted'] = {
 			};
 		}
 
-		const event = request.payload
+		const event = request.payload;
 
 		if (event.topic !== 'contact.user.deleted') {
 			return { success: true, data: undefined };
@@ -74,7 +79,12 @@ export const deleted: IntercomWebhooks['contactDeleted'] = {
 
 		const item = event.data.item;
 
-		await logEventFromContext(ctx, 'intercom.webhook.contactDeleted', { id: item.id }, 'completed');
+		await logEventFromContext(
+			ctx,
+			'intercom.webhook.contactDeleted',
+			{ id: item.id },
+			'completed',
+		);
 
 		return {
 			success: true,
@@ -96,7 +106,7 @@ export const tagCreated: IntercomWebhooks['contactTagCreated'] = {
 			};
 		}
 
-		const event = request.payload
+		const event = request.payload;
 
 		if (event.topic !== 'contact.user.tag.created') {
 			return { success: true, data: undefined };

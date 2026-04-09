@@ -1,4 +1,4 @@
-import 'dotenv/config'
+import 'dotenv/config';
 import { makeOnedriveRequest } from './client';
 import { OnedriveEndpointOutputSchemas } from './endpoints/types';
 
@@ -15,19 +15,18 @@ beforeAll(async () => {
 	);
 	TEST_DRIVE_ID = driveResult.id;
 
-	const rootResult = await makeOnedriveRequest<{ value: Array<{ id: string }> }>(
-		'me/drive/root/children',
-		TEST_TOKEN,
-		{ method: 'GET', query: { $top: 1 } },
-	);
+	const rootResult = await makeOnedriveRequest<{
+		value: Array<{ id: string }>;
+	}>('me/drive/root/children', TEST_TOKEN, {
+		method: 'GET',
+		query: { $top: 1 },
+	});
 	TEST_ITEM_ID = rootResult.value?.[0]?.id;
 
 	try {
-		const sitesResult = await makeOnedriveRequest<{ value: Array<{ id: string }> }>(
-			'sites',
-			TEST_TOKEN,
-			{ method: 'GET', query: { search: '*', $top: 1 } },
-		);
+		const sitesResult = await makeOnedriveRequest<{
+			value: Array<{ id: string }>;
+		}>('sites', TEST_TOKEN, { method: 'GET', query: { search: '*', $top: 1 } });
 		TEST_SITE_ID = sitesResult.value?.[0]?.id;
 	} catch {
 		// SharePoint may not be available for all users
@@ -125,18 +124,18 @@ describe('OneDrive API Type Tests', () => {
 		});
 
 		it('filesCreateFolder returns correct type', async () => {
-			const response = await makeOnedriveRequest<{ id: string; name: string; webUrl?: string }>(
-				'me/drive/root/children',
-				TEST_TOKEN,
-				{
-					method: 'POST',
-					body: {
-						name: `test-folder-${Date.now()}`,
-						folder: {},
-						'@microsoft.graph.conflictBehavior': 'rename',
-					},
+			const response = await makeOnedriveRequest<{
+				id: string;
+				name: string;
+				webUrl?: string;
+			}>('me/drive/root/children', TEST_TOKEN, {
+				method: 'POST',
+				body: {
+					name: `test-folder-${Date.now()}`,
+					folder: {},
+					'@microsoft.graph.conflictBehavior': 'rename',
 				},
-			);
+			});
 			OnedriveEndpointOutputSchemas.filesCreateFolder.parse(response);
 			createdFolderId = response.id;
 		});
@@ -203,7 +202,9 @@ describe('OneDrive API Type Tests', () => {
 				TEST_TOKEN,
 				{ method: 'DELETE' },
 			);
-			const result = OnedriveEndpointOutputSchemas.itemsDelete.parse({ message: `Item ${createdFolderId} deleted successfully` });
+			const result = OnedriveEndpointOutputSchemas.itemsDelete.parse({
+				message: `Item ${createdFolderId} deleted successfully`,
+			});
 			expect(result.message).toBeTruthy();
 		});
 	});
@@ -231,43 +232,46 @@ describe('OneDrive API Type Tests', () => {
 		});
 
 		it('filesCreateFolder returns correct type', async () => {
-			const response = await makeOnedriveRequest<{ id: string; name: string; webUrl?: string }>(
-				'me/drive/root/children',
-				TEST_TOKEN,
-				{
-					method: 'POST',
-					body: {
-						name: `api-test-folder-${Date.now()}`,
-						folder: {},
-						'@microsoft.graph.conflictBehavior': 'rename',
-					},
+			const response = await makeOnedriveRequest<{
+				id: string;
+				name: string;
+				webUrl?: string;
+			}>('me/drive/root/children', TEST_TOKEN, {
+				method: 'POST',
+				body: {
+					name: `api-test-folder-${Date.now()}`,
+					folder: {},
+					'@microsoft.graph.conflictBehavior': 'rename',
 				},
-			);
+			});
 			OnedriveEndpointOutputSchemas.filesCreateFolder.parse(response);
 			createdFolderId = response.id;
 		});
 
 		it('filesCreateTextFile returns correct type', async () => {
 			const fileName = `api-test-file-${Date.now()}.txt`;
-			const response = await makeOnedriveRequest<{ id: string; name: string; size?: number; file?: Record<string, unknown> }>(
-				`me/drive/root:/${fileName}:/content`,
-				TEST_TOKEN,
-				{
-					method: 'PUT',
-					// any/unknown for file content string treated as body
-					body: 'Hello from api.test.ts' as unknown as Record<string, unknown>,
-				},
-			);
+			const response = await makeOnedriveRequest<{
+				id: string;
+				name: string;
+				size?: number;
+				file?: Record<string, unknown>;
+			}>(`me/drive/root:/${fileName}:/content`, TEST_TOKEN, {
+				method: 'PUT',
+				// any/unknown for file content string treated as body
+				body: 'Hello from api.test.ts' as unknown as Record<string, unknown>,
+			});
 			OnedriveEndpointOutputSchemas.filesCreateTextFile.parse(response);
 			createdFileId = response.id;
 		});
 
 		it('filesFindFile returns correct type', async () => {
-			const response = await makeOnedriveRequest<{ value: Array<Record<string, unknown>>; '@odata.context'?: string }>(
-				`me/drive/root/search(q='api-test')`,
-				TEST_TOKEN,
-				{ method: 'GET', query: { $filter: 'file ne null', $top: 5 } },
-			);
+			const response = await makeOnedriveRequest<{
+				value: Array<Record<string, unknown>>;
+				'@odata.context'?: string;
+			}>(`me/drive/root/search(q='api-test')`, TEST_TOKEN, {
+				method: 'GET',
+				query: { $filter: 'file ne null', $top: 5 },
+			});
 			OnedriveEndpointOutputSchemas.filesFindFile.parse({
 				value: response.value ?? [],
 				odata_context: response['@odata.context'],
@@ -275,14 +279,14 @@ describe('OneDrive API Type Tests', () => {
 		});
 
 		it('cleanup: delete created items', async () => {
-			const idsToDelete = [createdFolderId, createdFileId].filter(Boolean) as string[];
+			const idsToDelete = [createdFolderId, createdFileId].filter(
+				Boolean,
+			) as string[];
 			for (const id of idsToDelete) {
 				try {
-					await makeOnedriveRequest<void>(
-						`me/drive/items/${id}`,
-						TEST_TOKEN,
-						{ method: 'DELETE' },
-					);
+					await makeOnedriveRequest<void>(`me/drive/items/${id}`, TEST_TOKEN, {
+						method: 'DELETE',
+					});
 				} catch (error) {
 					console.warn(`Failed to delete test item ${id}:`, error);
 				}
@@ -364,4 +368,4 @@ describe('OneDrive API Type Tests', () => {
 			OnedriveEndpointOutputSchemas.subscriptionsList.parse(response);
 		});
 	});
-})
+});

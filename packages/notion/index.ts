@@ -1,4 +1,5 @@
 import type {
+	AuthTypes,
 	BindEndpoints,
 	BindWebhooks,
 	CorsairEndpoint,
@@ -7,13 +8,11 @@ import type {
 	CorsairPluginContext,
 	CorsairWebhook,
 	KeyBuilderContext,
+	PickAuth,
 	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
-	RequiredPluginEndpointSchemas,
-	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
-import type { AuthTypes, PickAuth } from 'corsair/core';
 import { Blocks, DatabasePages, Databases, Pages, Users } from './endpoints';
 import type {
 	NotionEndpointInputs,
@@ -61,7 +60,10 @@ export type NotionContext = CorsairPluginContext<
 	typeof notionAuthConfig
 >;
 
-export type NotionKeyBuilderContext = KeyBuilderContext<NotionPluginOptions, typeof notionAuthConfig>;
+export type NotionKeyBuilderContext = KeyBuilderContext<
+	NotionPluginOptions,
+	typeof notionAuthConfig
+>;
 
 export type NotionBoundEndpoints = BindEndpoints<typeof notionEndpointsNested>;
 

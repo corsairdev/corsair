@@ -46,48 +46,44 @@ export const getRules: TwitterApiIOEndpoints['apiWebhooksGetRules'] = async (
 	return response;
 };
 
-export const updateRule: TwitterApiIOEndpoints['apiWebhooksUpdateRule'] = async (
-	ctx,
-	input,
-) => {
-	const response = await makeTwitterApiIORequest<
-		TwitterApiIOEndpointOutputs['apiWebhooksUpdateRule']
-	>('/oapi/tweet_filter/update_rule', ctx.key, {
-		method: 'POST',
-		body: {
-			rule_id: input.ruleId,
-			tag: input.tag,
-			value: input.value,
-			interval_seconds: input.intervalSeconds,
-			is_effect: input.isActive ? 1 : 0,
-		},
-	});
+export const updateRule: TwitterApiIOEndpoints['apiWebhooksUpdateRule'] =
+	async (ctx, input) => {
+		const response = await makeTwitterApiIORequest<
+			TwitterApiIOEndpointOutputs['apiWebhooksUpdateRule']
+		>('/oapi/tweet_filter/update_rule', ctx.key, {
+			method: 'POST',
+			body: {
+				rule_id: input.ruleId,
+				tag: input.tag,
+				value: input.value,
+				interval_seconds: input.intervalSeconds,
+				is_effect: input.isActive ? 1 : 0,
+			},
+		});
 
-	await logEventFromContext(
-		ctx,
-		'twitterapiio.api.webhooks.updateRule',
-		{ ruleId: input.ruleId },
-		'completed',
-	);
-	return response;
-};
+		await logEventFromContext(
+			ctx,
+			'twitterapiio.api.webhooks.updateRule',
+			{ ruleId: input.ruleId },
+			'completed',
+		);
+		return response;
+	};
 
-export const deleteRule: TwitterApiIOEndpoints['apiWebhooksDeleteRule'] = async (
-	ctx,
-	input,
-) => {
-	const response = await makeTwitterApiIORequest<
-		TwitterApiIOEndpointOutputs['apiWebhooksDeleteRule']
-	>('/oapi/tweet_filter/delete_rule', ctx.key, {
-		method: 'DELETE',
-		body: { rule_id: input.ruleId },
-	});
+export const deleteRule: TwitterApiIOEndpoints['apiWebhooksDeleteRule'] =
+	async (ctx, input) => {
+		const response = await makeTwitterApiIORequest<
+			TwitterApiIOEndpointOutputs['apiWebhooksDeleteRule']
+		>('/oapi/tweet_filter/delete_rule', ctx.key, {
+			method: 'DELETE',
+			body: { rule_id: input.ruleId },
+		});
 
-	await logEventFromContext(
-		ctx,
-		'twitterapiio.api.webhooks.deleteRule',
-		{ ruleId: input.ruleId },
-		'completed',
-	);
-	return response;
-};
+		await logEventFromContext(
+			ctx,
+			'twitterapiio.api.webhooks.deleteRule',
+			{ ruleId: input.ruleId },
+			'completed',
+		);
+		return response;
+	};

@@ -1,6 +1,6 @@
 import { newIssue } from './newIssue';
-import { updatedIssue } from './updatedIssue';
 import { newProject } from './newProject';
+import { updatedIssue } from './updatedIssue';
 
 export const IssueWebhooks = {
 	newIssue,

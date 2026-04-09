@@ -128,6 +128,9 @@ export function createCorsair<const Plugins extends readonly CorsairPlugin[]>(
 // Re-exports
 // ─────────────────────────────────────────────────────────────────────────────
 
+export type { EventLoggingContext } from '../plugins/utils/events';
+// Event logging utilities for plugins
+export { logEvent, logEventFromContext } from '../plugins/utils/events';
 export type {
 	AccountFieldNames,
 	AccountKeyManagerFor,
@@ -161,7 +164,12 @@ export type {
 	CorsairTenantWrapper,
 } from './client';
 // Constants
-export type { AllProviders, AuthTypes, BaseProviders, PickAuth } from './constants';
+export type {
+	AllProviders,
+	AuthTypes,
+	BaseProviders,
+	PickAuth,
+} from './constants';
 // Endpoint types
 export type {
 	BindEndpoints,
@@ -189,7 +197,6 @@ export type {
 	EnforcePermissionOptions,
 	EnforcePermissionResult,
 } from './permissions';
-
 // Plugin types
 export type {
 	BeforeHookResult,
@@ -197,12 +204,12 @@ export type {
 	CorsairKeyBuilder,
 	CorsairKeyBuilderBase,
 	CorsairPlugin,
-	OAuthConfig,
 	CorsairPluginContext,
 	EndpointHooks,
 	EndpointMetaEntry,
 	EndpointRiskLevel,
 	KeyBuilderContext,
+	OAuthConfig,
 	PermissionMode,
 	PermissionPolicy,
 	PluginEndpointMeta,
@@ -212,13 +219,8 @@ export type {
 	RequiredPluginWebhookSchemas,
 	WebhookHooks,
 } from './plugins';
-
 // Utility types
 export type { Bivariant, UnionToIntersection } from './utils';
-
-// Event logging utilities for plugins
-export { logEvent, logEventFromContext } from '../plugins/utils/events';
-export type { EventLoggingContext } from '../plugins/utils/events';
 // Webhook types
 export type {
 	BindWebhooks,

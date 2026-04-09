@@ -1,4 +1,5 @@
 import type {
+	AuthTypes,
 	BindEndpoints,
 	BindWebhooks,
 	CorsairEndpoint,
@@ -7,11 +8,10 @@ import type {
 	CorsairPluginContext,
 	CorsairWebhook,
 	KeyBuilderContext,
+	PickAuth,
 	PluginAuthConfig,
 	PluginPermissionsConfig,
-	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
-import type { AuthTypes, PickAuth } from 'corsair/core';
 import { Bases, Records, Webhooks } from './endpoints';
 import type {
 	AirtableEndpointInputs,

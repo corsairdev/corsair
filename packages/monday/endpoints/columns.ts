@@ -20,12 +20,19 @@ export const list: MondayEndpoints['columnsList'] = async (ctx, input) => {
 		{ boardId: input.board_id },
 	);
 
-	await logEventFromContext(ctx, 'monday.columns.list', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'monday.columns.list',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
 export const create: MondayEndpoints['columnsCreate'] = async (ctx, input) => {
-	const result = await makeMondayRequest<MondayEndpointOutputs['columnsCreate']>(
+	const result = await makeMondayRequest<
+		MondayEndpointOutputs['columnsCreate']
+	>(
 		`mutation($boardId: ID!, $title: String!, $columnType: ColumnType, $description: String) {
 			create_column(board_id: $boardId, title: $title, column_type: $columnType, description: $description) {
 				id
@@ -41,12 +48,22 @@ export const create: MondayEndpoints['columnsCreate'] = async (ctx, input) => {
 		},
 	);
 
-	await logEventFromContext(ctx, 'monday.columns.create', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'monday.columns.create',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
-export const changeValue: MondayEndpoints['columnsChangeValue'] = async (ctx, input) => {
-	const result = await makeMondayRequest<MondayEndpointOutputs['columnsChangeValue']>(
+export const changeValue: MondayEndpoints['columnsChangeValue'] = async (
+	ctx,
+	input,
+) => {
+	const result = await makeMondayRequest<
+		MondayEndpointOutputs['columnsChangeValue']
+	>(
 		`mutation($boardId: ID!, $itemId: ID!, $columnId: String!, $value: JSON!) {
 			change_column_value(board_id: $boardId, item_id: $itemId, column_id: $columnId, value: $value) {
 				id
@@ -61,6 +78,11 @@ export const changeValue: MondayEndpoints['columnsChangeValue'] = async (ctx, in
 		},
 	);
 
-	await logEventFromContext(ctx, 'monday.columns.changeValue', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'monday.columns.changeValue',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };

@@ -7,15 +7,28 @@ import type {
 	CorsairPluginContext,
 	CorsairWebhook,
 	KeyBuilderContext,
+	PickAuth,
 	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
-	RequiredPluginEndpointSchemas,
-	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
-import type { PickAuth } from 'corsair/core';
-import type { TrelloEndpointInputs, TrelloEndpointOutputs } from './endpoints/types';
-import { TrelloEndpointInputSchemas, TrelloEndpointOutputSchemas } from './endpoints/types';
+import { Boards, Cards, Checklists, Labels, Lists, Members } from './endpoints';
+import type {
+	TrelloEndpointInputs,
+	TrelloEndpointOutputs,
+} from './endpoints/types';
+import {
+	TrelloEndpointInputSchemas,
+	TrelloEndpointOutputSchemas,
+} from './endpoints/types';
+import { errorHandlers } from './error-handlers';
+import { TrelloSchema } from './schema';
+import {
+	CardWebhooks,
+	CommentWebhooks,
+	ListWebhooks,
+	MemberWebhooks,
+} from './webhooks';
 import type {
 	TrelloCardCreatedEvent,
 	TrelloCardUpdatedEvent,
@@ -33,22 +46,6 @@ import {
 	TrelloListUpdatedPayloadSchema,
 	TrelloMemberAddedToCardPayloadSchema,
 } from './webhooks/types';
-import {
-	Boards,
-	Cards,
-	Checklists,
-	Labels,
-	Lists,
-	Members,
-} from './endpoints';
-import { TrelloSchema } from './schema';
-import {
-	CardWebhooks,
-	CommentWebhooks,
-	ListWebhooks,
-	MemberWebhooks,
-} from './webhooks';
-import { errorHandlers } from './error-handlers';
 
 export type TrelloPluginOptions = {
 	authType?: PickAuth<'api_key'>;
@@ -105,16 +102,18 @@ export type TrelloEndpoints = {
 	checklistsDelete: TrelloEndpoint<'checklistsDelete'>;
 };
 
-type TrelloWebhook<K extends keyof TrelloWebhookOutputs, TEvent> = CorsairWebhook<
-	TrelloContext,
+type TrelloWebhook<
+	K extends keyof TrelloWebhookOutputs,
 	TEvent,
-	TrelloWebhookOutputs[K]
->;
+> = CorsairWebhook<TrelloContext, TEvent, TrelloWebhookOutputs[K]>;
 
 export type TrelloWebhooks = {
 	cardCreated: TrelloWebhook<'cardCreated', TrelloCardCreatedEvent>;
 	cardUpdated: TrelloWebhook<'cardUpdated', TrelloCardUpdatedEvent>;
-	memberAddedToCard: TrelloWebhook<'memberAddedToCard', TrelloMemberAddedToCardEvent>;
+	memberAddedToCard: TrelloWebhook<
+		'memberAddedToCard',
+		TrelloMemberAddedToCardEvent
+	>;
 	listCreated: TrelloWebhook<'listCreated', TrelloListCreatedEvent>;
 	listUpdated: TrelloWebhook<'listUpdated', TrelloListUpdatedEvent>;
 	commentCreated: TrelloWebhook<'commentCreated', TrelloCommentCreatedEvent>;
@@ -320,27 +319,57 @@ const trelloEndpointMeta = {
 	'boards.list': { riskLevel: 'read', description: 'List boards for a member' },
 	'boards.create': { riskLevel: 'write', description: 'Create a new board' },
 	'boards.update': { riskLevel: 'write', description: 'Update a board' },
-	'boards.delete': { riskLevel: 'destructive', description: 'Delete a board [DESTRUCTIVE]' },
+	'boards.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete a board [DESTRUCTIVE]',
+	},
 	'lists.get': { riskLevel: 'read', description: 'Get a list by ID' },
 	'lists.list': { riskLevel: 'read', description: 'List all lists on a board' },
-	'lists.create': { riskLevel: 'write', description: 'Create a new list on a board' },
+	'lists.create': {
+		riskLevel: 'write',
+		description: 'Create a new list on a board',
+	},
 	'lists.update': { riskLevel: 'write', description: 'Update a list' },
-	'lists.archive': { riskLevel: 'write', description: 'Archive (close) a list' },
+	'lists.archive': {
+		riskLevel: 'write',
+		description: 'Archive (close) a list',
+	},
 	'cards.get': { riskLevel: 'read', description: 'Get a card by ID' },
 	'cards.list': { riskLevel: 'read', description: 'List cards in a list' },
 	'cards.create': { riskLevel: 'write', description: 'Create a new card' },
 	'cards.update': { riskLevel: 'write', description: 'Update a card' },
-	'cards.delete': { riskLevel: 'destructive', description: 'Delete a card [DESTRUCTIVE]' },
-	'cards.move': { riskLevel: 'write', description: 'Move a card to a different list or board' },
-	'members.get': { riskLevel: 'read', description: 'Get a member by ID or username' },
+	'cards.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete a card [DESTRUCTIVE]',
+	},
+	'cards.move': {
+		riskLevel: 'write',
+		description: 'Move a card to a different list or board',
+	},
+	'members.get': {
+		riskLevel: 'read',
+		description: 'Get a member by ID or username',
+	},
 	'members.list': { riskLevel: 'read', description: 'List members of a board' },
 	'labels.list': { riskLevel: 'read', description: 'List labels on a board' },
-	'labels.create': { riskLevel: 'write', description: 'Create a label on a board' },
+	'labels.create': {
+		riskLevel: 'write',
+		description: 'Create a label on a board',
+	},
 	'labels.update': { riskLevel: 'write', description: 'Update a label' },
-	'labels.delete': { riskLevel: 'destructive', description: 'Delete a label [DESTRUCTIVE]' },
+	'labels.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete a label [DESTRUCTIVE]',
+	},
 	'checklists.get': { riskLevel: 'read', description: 'Get a checklist by ID' },
-	'checklists.create': { riskLevel: 'write', description: 'Create a checklist on a card' },
-	'checklists.delete': { riskLevel: 'destructive', description: 'Delete a checklist [DESTRUCTIVE]' },
+	'checklists.create': {
+		riskLevel: 'write',
+		description: 'Create a checklist on a card',
+	},
+	'checklists.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete a checklist [DESTRUCTIVE]',
+	},
 } satisfies RequiredPluginEndpointMeta<typeof trelloEndpointsNested>;
 
 const defaultAuthType = 'api_key' as const;
@@ -362,7 +391,8 @@ export type BaseTrelloPlugin<T extends TrelloPluginOptions> = CorsairPlugin<
 
 export type InternalTrelloPlugin = BaseTrelloPlugin<TrelloPluginOptions>;
 
-export type ExternalTrelloPlugin<T extends TrelloPluginOptions> = BaseTrelloPlugin<T>;
+export type ExternalTrelloPlugin<T extends TrelloPluginOptions> =
+	BaseTrelloPlugin<T>;
 
 export function trello<const T extends TrelloPluginOptions>(
 	// {} as TrelloPluginOptions & T: TypeScript cannot prove {} satisfies generic T without the
@@ -427,20 +457,20 @@ export function trello<const T extends TrelloPluginOptions>(
 // ─────────────────────────────────────────────────────────────────────────────
 
 export type {
-	TrelloCardCreatedEvent,
-	TrelloCardUpdatedEvent,
-	TrelloMemberAddedToCardEvent,
-	TrelloListCreatedEvent,
-	TrelloListUpdatedEvent,
-	TrelloCommentCreatedEvent,
-	TrelloWebhookOutputs,
-	TrelloMemberCreator,
 	CardCreatedData,
 	CardUpdatedData,
-	MemberAddedToCardData,
+	CommentCreatedData,
 	ListCreatedData,
 	ListUpdatedData,
-	CommentCreatedData,
+	MemberAddedToCardData,
+	TrelloCardCreatedEvent,
+	TrelloCardUpdatedEvent,
+	TrelloCommentCreatedEvent,
+	TrelloListCreatedEvent,
+	TrelloListUpdatedEvent,
+	TrelloMemberAddedToCardEvent,
+	TrelloMemberCreator,
+	TrelloWebhookOutputs,
 } from './webhooks/types';
 
 export { createTrelloActionMatch } from './webhooks/types';
@@ -450,56 +480,56 @@ export { createTrelloActionMatch } from './webhooks/types';
 // ─────────────────────────────────────────────────────────────────────────────
 
 export type {
+	BoardsCreateInput,
+	BoardsCreateResponse,
+	BoardsDeleteInput,
+	BoardsDeleteResponse,
+	BoardsGetInput,
+	BoardsGetResponse,
+	BoardsListInput,
+	BoardsListResponse,
+	BoardsUpdateInput,
+	BoardsUpdateResponse,
+	CardsCreateInput,
+	CardsCreateResponse,
+	CardsDeleteInput,
+	CardsDeleteResponse,
+	CardsGetInput,
+	CardsGetResponse,
+	CardsListInput,
+	CardsListResponse,
+	CardsMoveInput,
+	CardsMoveResponse,
+	CardsUpdateInput,
+	CardsUpdateResponse,
+	ChecklistsCreateInput,
+	ChecklistsCreateResponse,
+	ChecklistsDeleteInput,
+	ChecklistsDeleteResponse,
+	ChecklistsGetInput,
+	ChecklistsGetResponse,
+	LabelsCreateInput,
+	LabelsCreateResponse,
+	LabelsDeleteInput,
+	LabelsDeleteResponse,
+	LabelsListInput,
+	LabelsListResponse,
+	LabelsUpdateInput,
+	LabelsUpdateResponse,
+	ListsArchiveInput,
+	ListsArchiveResponse,
+	ListsCreateInput,
+	ListsCreateResponse,
+	ListsGetInput,
+	ListsGetResponse,
+	ListsListInput,
+	ListsListResponse,
+	ListsUpdateInput,
+	ListsUpdateResponse,
+	MembersGetInput,
+	MembersGetResponse,
+	MembersListInput,
+	MembersListResponse,
 	TrelloEndpointInputs,
 	TrelloEndpointOutputs,
-	BoardsGetInput,
-	BoardsListInput,
-	BoardsCreateInput,
-	BoardsUpdateInput,
-	BoardsDeleteInput,
-	ListsGetInput,
-	ListsListInput,
-	ListsCreateInput,
-	ListsUpdateInput,
-	ListsArchiveInput,
-	CardsGetInput,
-	CardsListInput,
-	CardsCreateInput,
-	CardsUpdateInput,
-	CardsDeleteInput,
-	CardsMoveInput,
-	MembersGetInput,
-	MembersListInput,
-	LabelsListInput,
-	LabelsCreateInput,
-	LabelsUpdateInput,
-	LabelsDeleteInput,
-	ChecklistsGetInput,
-	ChecklistsCreateInput,
-	ChecklistsDeleteInput,
-	BoardsGetResponse,
-	BoardsListResponse,
-	BoardsCreateResponse,
-	BoardsUpdateResponse,
-	BoardsDeleteResponse,
-	ListsGetResponse,
-	ListsListResponse,
-	ListsCreateResponse,
-	ListsUpdateResponse,
-	ListsArchiveResponse,
-	CardsGetResponse,
-	CardsListResponse,
-	CardsCreateResponse,
-	CardsUpdateResponse,
-	CardsDeleteResponse,
-	CardsMoveResponse,
-	MembersGetResponse,
-	MembersListResponse,
-	LabelsListResponse,
-	LabelsCreateResponse,
-	LabelsUpdateResponse,
-	LabelsDeleteResponse,
-	ChecklistsGetResponse,
-	ChecklistsCreateResponse,
-	ChecklistsDeleteResponse,
 } from './endpoints/types';

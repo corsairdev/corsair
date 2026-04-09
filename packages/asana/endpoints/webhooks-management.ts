@@ -15,11 +15,19 @@ export const create: AsanaEndpoints['webhooksCreate'] = async (ctx, input) => {
 		{ method: 'POST', body: { data }, query },
 	);
 
-	await logEventFromContext(ctx, 'asana.webhooks.create', { resource: data.resource }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'asana.webhooks.create',
+		{ resource: data.resource },
+		'completed',
+	);
 	return result;
 };
 
-export const deleteWebhook: AsanaEndpoints['webhooksDelete'] = async (ctx, input) => {
+export const deleteWebhook: AsanaEndpoints['webhooksDelete'] = async (
+	ctx,
+	input,
+) => {
 	const { webhook_gid, opt_pretty } = input;
 	const result = await makeAsanaRequest<AsanaEndpointOutputs['webhooksDelete']>(
 		`webhooks/${webhook_gid}`,
@@ -27,11 +35,19 @@ export const deleteWebhook: AsanaEndpoints['webhooksDelete'] = async (ctx, input
 		{ method: 'DELETE', query: { opt_pretty } },
 	);
 
-	await logEventFromContext(ctx, 'asana.webhooks.delete', { webhook_gid }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'asana.webhooks.delete',
+		{ webhook_gid },
+		'completed',
+	);
 	return result;
 };
 
-export const getList: AsanaEndpoints['webhooksGetList'] = async (ctx, input) => {
+export const getList: AsanaEndpoints['webhooksGetList'] = async (
+	ctx,
+	input,
+) => {
 	const { workspace, resource, limit, offset, opt_fields, opt_pretty } = input;
 	const query: Record<string, string | number | boolean | undefined> = {
 		workspace,
@@ -43,13 +59,16 @@ export const getList: AsanaEndpoints['webhooksGetList'] = async (ctx, input) => 
 	if (opt_fields?.length) {
 		query.opt_fields = opt_fields.join(',');
 	}
-	const result = await makeAsanaRequest<AsanaEndpointOutputs['webhooksGetList']>(
-		'webhooks',
-		ctx.key,
-		{ method: 'GET', query },
-	);
+	const result = await makeAsanaRequest<
+		AsanaEndpointOutputs['webhooksGetList']
+	>('webhooks', ctx.key, { method: 'GET', query });
 
-	await logEventFromContext(ctx, 'asana.webhooks.getList', { workspace }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'asana.webhooks.getList',
+		{ workspace },
+		'completed',
+	);
 	return result;
 };
 
@@ -65,6 +84,11 @@ export const update: AsanaEndpoints['webhooksUpdate'] = async (ctx, input) => {
 		{ method: 'PUT', body: { data }, query },
 	);
 
-	await logEventFromContext(ctx, 'asana.webhooks.update', { webhook_gid }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'asana.webhooks.update',
+		{ webhook_gid },
+		'completed',
+	);
 	return result;
 };

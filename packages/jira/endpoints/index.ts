@@ -1,5 +1,5 @@
-import * as IssueEndpoints from './issues';
 import * as CommentEndpoints from './comments';
+import * as IssueEndpoints from './issues';
 import * as ProjectEndpoints from './projects';
 import * as SprintEndpoints from './sprints';
 import * as UserEndpoints from './users';

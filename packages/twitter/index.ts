@@ -1,16 +1,16 @@
 import type {
+	AuthTypes,
 	BindEndpoints,
 	CorsairEndpoint,
 	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
 	KeyBuilderContext,
+	PickAuth,
 	PluginAuthConfig,
-	RequiredPluginEndpointMeta,
-	RequiredPluginEndpointSchemas,
 	PluginPermissionsConfig,
+	RequiredPluginEndpointMeta,
 } from 'corsair/core';
-import type { AuthTypes, PickAuth } from 'corsair/core';
 import {
 	TweetsEndpoints,
 	TwitterEndpointInputSchemas,
@@ -45,7 +45,9 @@ export type TwitterEndpoints = {
 	tweetsCreateReply: TwitterEndpoint<'tweetsCreateReply'>;
 };
 
-export type TwitterBoundEndpoints = BindEndpoints<typeof twitterEndpointsNested>;
+export type TwitterBoundEndpoints = BindEndpoints<
+	typeof twitterEndpointsNested
+>;
 
 // ── Plugin Options ────────────────────────────────────────────────────────────
 
@@ -75,9 +77,7 @@ const twitterEndpointsNested = {
 	},
 } as const;
 
-const twitterWebhooksNested = {
-	
-} as const;
+const twitterWebhooksNested = {} as const;
 
 // ── Endpoint Schemas ──────────────────────────────────────────────────────────
 
@@ -187,11 +187,11 @@ export function twitter<const T extends TwitterPluginOptions>(
 // ── Type Exports ──────────────────────────────────────────────────────────────
 
 export type {
-	TwitterEndpointInputs,
-	TwitterEndpointOutputs,
 	TweetsCreateInput,
-	TweetsCreateResponse,
 	TweetsCreateReplyInput,
 	TweetsCreateReplyResponse,
+	TweetsCreateResponse,
+	TwitterEndpointInputs,
+	TwitterEndpointOutputs,
 } from './endpoints/types';
 export type { TwitterCredentials } from './schema';

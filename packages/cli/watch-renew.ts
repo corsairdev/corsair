@@ -26,9 +26,16 @@ type GooglePlugin = (typeof GOOGLE_PLUGINS)[number];
 // Teams subscription
 // ─────────────────────────────────────────────────────────────────────────────
 
-type TeamsResourceType = 'channelMessage' | 'chatMessage' | 'channelCreated' | 'membershipChanged';
+type TeamsResourceType =
+	| 'channelMessage'
+	| 'chatMessage'
+	| 'channelCreated'
+	| 'membershipChanged';
 
-function buildTeamsResource(resourceType: TeamsResourceType, ids: Record<string, string>): string {
+function buildTeamsResource(
+	resourceType: TeamsResourceType,
+	ids: Record<string, string>,
+): string {
 	switch (resourceType) {
 		case 'channelMessage':
 			return `teams/${ids.teamId}/channels/${ids.channelId}/messages`;
@@ -56,7 +63,9 @@ async function createTeamsSubscription(
 	clientState: string,
 	expiryMinutes: number,
 ): Promise<{ id: string; expirationDateTime: string }> {
-	const expirationDateTime = new Date(Date.now() + expiryMinutes * 60 * 1000).toISOString();
+	const expirationDateTime = new Date(
+		Date.now() + expiryMinutes * 60 * 1000,
+	).toISOString();
 
 	const response = await fetch(`${GRAPH_API_BASE}/subscriptions`, {
 		method: 'POST',
@@ -81,7 +90,11 @@ async function createTeamsSubscription(
 	return response.json() as Promise<{ id: string; expirationDateTime: string }>;
 }
 
-export async function runTeamsSubscribe({ cwd }: { cwd: string }): Promise<void> {
+export async function runTeamsSubscribe({
+	cwd,
+}: {
+	cwd: string;
+}): Promise<void> {
 	p.intro('Corsair — Microsoft Teams Webhook Subscribe');
 
 	const spin = p.spinner();
@@ -109,7 +122,7 @@ export async function runTeamsSubscribe({ cwd }: { cwd: string }): Promise<void>
 	const teamsPlugin = plugins.find((pl) => pl.id === 'teams');
 	if (!teamsPlugin) {
 		spin.stop('Teams plugin not found.');
-		p.log.error("Add the teams plugin to your corsair instance first.");
+		p.log.error('Add the teams plugin to your corsair instance first.');
 		p.outro('');
 		process.exit(1);
 	}
@@ -121,7 +134,10 @@ export async function runTeamsSubscribe({ cwd }: { cwd: string }): Promise<void>
 		defaultValue: 'default',
 		placeholder: 'default',
 	});
-	if (p.isCancel(tenantId)) { p.cancel('Operation cancelled.'); process.exit(0); }
+	if (p.isCancel(tenantId)) {
+		p.cancel('Operation cancelled.');
+		process.exit(0);
+	}
 
 	const credSpin = p.spinner();
 	credSpin.start('Fetching Teams credentials...');
@@ -152,22 +168,41 @@ export async function runTeamsSubscribe({ cwd }: { cwd: string }): Promise<void>
 		placeholder: 'https://abc123.ngrok-free.app/api/webhook',
 		validate: (v) => {
 			if (!v || v.trim().length === 0) return 'Webhook URL is required';
-			if (!v.startsWith('https://')) return 'URL must start with https:// (Microsoft Graph requires HTTPS)';
+			if (!v.startsWith('https://'))
+				return 'URL must start with https:// (Microsoft Graph requires HTTPS)';
 		},
 	});
-	if (p.isCancel(webhookUrl)) { p.cancel('Operation cancelled.'); process.exit(0); }
+	if (p.isCancel(webhookUrl)) {
+		p.cancel('Operation cancelled.');
+		process.exit(0);
+	}
 
 	// Resource type
 	const resourceType = await p.select<TeamsResourceType>({
 		message: 'Select resource type to subscribe to:',
 		options: [
-			{ value: 'channelMessage', label: 'Channel Messages  (teams/{id}/channels/{id}/messages)' },
-			{ value: 'chatMessage',    label: 'Chat Messages     (chats/{id}/messages)' },
-			{ value: 'channelCreated', label: 'Channel Created   (teams/{id}/channels)' },
-			{ value: 'membershipChanged', label: 'Membership Changed (teams/{id}/members)' },
+			{
+				value: 'channelMessage',
+				label: 'Channel Messages  (teams/{id}/channels/{id}/messages)',
+			},
+			{
+				value: 'chatMessage',
+				label: 'Chat Messages     (chats/{id}/messages)',
+			},
+			{
+				value: 'channelCreated',
+				label: 'Channel Created   (teams/{id}/channels)',
+			},
+			{
+				value: 'membershipChanged',
+				label: 'Membership Changed (teams/{id}/members)',
+			},
 		],
 	});
-	if (p.isCancel(resourceType)) { p.cancel('Operation cancelled.'); process.exit(0); }
+	if (p.isCancel(resourceType)) {
+		p.cancel('Operation cancelled.');
+		process.exit(0);
+	}
 
 	const ids: Record<string, string> = {};
 
@@ -175,26 +210,41 @@ export async function runTeamsSubscribe({ cwd }: { cwd: string }): Promise<void>
 		const chatId = await p.text({
 			message: 'Enter chat ID:',
 			placeholder: '19:abc123@thread.v2',
-			validate: (v) => { if (!v || !v.trim()) return 'Chat ID is required'; },
+			validate: (v) => {
+				if (!v || !v.trim()) return 'Chat ID is required';
+			},
 		});
-		if (p.isCancel(chatId)) { p.cancel('Operation cancelled.'); process.exit(0); }
+		if (p.isCancel(chatId)) {
+			p.cancel('Operation cancelled.');
+			process.exit(0);
+		}
 		ids.chatId = chatId as string;
 	} else {
 		const teamId = await p.text({
 			message: 'Enter team ID:',
 			placeholder: 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx',
-			validate: (v) => { if (!v || !v.trim()) return 'Team ID is required'; },
+			validate: (v) => {
+				if (!v || !v.trim()) return 'Team ID is required';
+			},
 		});
-		if (p.isCancel(teamId)) { p.cancel('Operation cancelled.'); process.exit(0); }
+		if (p.isCancel(teamId)) {
+			p.cancel('Operation cancelled.');
+			process.exit(0);
+		}
 		ids.teamId = teamId as string;
 
 		if (resourceType === 'channelMessage') {
 			const channelId = await p.text({
 				message: 'Enter channel ID:',
 				placeholder: '19:abc123@thread.skype',
-				validate: (v) => { if (!v || !v.trim()) return 'Channel ID is required'; },
+				validate: (v) => {
+					if (!v || !v.trim()) return 'Channel ID is required';
+				},
 			});
-			if (p.isCancel(channelId)) { p.cancel('Operation cancelled.'); process.exit(0); }
+			if (p.isCancel(channelId)) {
+				p.cancel('Operation cancelled.');
+				process.exit(0);
+			}
 			ids.channelId = channelId as string;
 		}
 	}
@@ -206,10 +256,14 @@ export async function runTeamsSubscribe({ cwd }: { cwd: string }): Promise<void>
 		defaultValue: autoSecret,
 		placeholder: autoSecret,
 	});
-	if (p.isCancel(clientState)) { p.cancel('Operation cancelled.'); process.exit(0); }
+	if (p.isCancel(clientState)) {
+		p.cancel('Operation cancelled.');
+		process.exit(0);
+	}
 
 	const resource = buildTeamsResource(resourceType as TeamsResourceType, ids);
-	const expiryMinutes = TEAMS_MAX_EXPIRY_MINUTES[resourceType as TeamsResourceType];
+	const expiryMinutes =
+		TEAMS_MAX_EXPIRY_MINUTES[resourceType as TeamsResourceType];
 
 	const subSpin = p.spinner();
 	subSpin.start('Creating Microsoft Graph subscription...');

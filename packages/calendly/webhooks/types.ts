@@ -1,6 +1,10 @@
-import { z } from 'zod';
+import type {
+	CorsairWebhookMatcher,
+	RawWebhookRequest,
+	WebhookRequest,
+} from 'corsair/core';
 import crypto from 'crypto';
-import type { CorsairWebhookMatcher, RawWebhookRequest, WebhookRequest } from 'corsair/core';
+import { z } from 'zod';
 
 // ── Shared sub-schemas ────────────────────────────────────────────────────────
 
@@ -35,7 +39,13 @@ const CalendlyEventPayloadSchema = z.object({
 	start_time: z.string(),
 	end_time: z.string(),
 	event_type: z.string(),
-	location: z.object({ type: z.string(), location: z.string().optional(), join_url: z.string().optional() }).optional(),
+	location: z
+		.object({
+			type: z.string(),
+			location: z.string().optional(),
+			join_url: z.string().optional(),
+		})
+		.optional(),
 	invitees_counter: z
 		.object({
 			total: z.number(),
@@ -98,7 +108,9 @@ export const InviteeCanceledPayloadSchema = CalendlyWebhookBaseSchema.extend({
 	}),
 });
 
-export type InviteeCanceledPayload = z.infer<typeof InviteeCanceledPayloadSchema>;
+export type InviteeCanceledPayload = z.infer<
+	typeof InviteeCanceledPayloadSchema
+>;
 
 export const InviteeNoShowCreatedPayloadSchema =
 	CalendlyWebhookBaseSchema.extend({
@@ -224,14 +236,15 @@ export function verifyCalendlyWebhookSignature(
 
 		const rawBody = request.rawBody;
 		if (!rawBody) {
-			return { valid: false, error: 'Missing raw body for signature verification' };
+			return {
+				valid: false,
+				error: 'Missing raw body for signature verification',
+			};
 		}
 
 		const headers = request.headers;
 		// Calendly-Webhook-Signature header value
-		const signatureHeader = Array.isArray(
-			headers['calendly-webhook-signature'],
-		)
+		const signatureHeader = Array.isArray(headers['calendly-webhook-signature'])
 			? headers['calendly-webhook-signature'][0]
 			: headers['calendly-webhook-signature'];
 
@@ -265,7 +278,10 @@ export function verifyCalendlyWebhookSignature(
 		// Reject requests whose timestamp is more than 5 minutes old to prevent replay attacks.
 		// Calendly embeds the Unix timestamp (seconds) in the signature header so we can validate freshness.
 		const timestampMs = parseInt(timestamp, 10) * 1000;
-		if (isNaN(timestampMs) || Math.abs(Date.now() - timestampMs) > 5 * 60 * 1000) {
+		if (
+			isNaN(timestampMs) ||
+			Math.abs(Date.now() - timestampMs) > 5 * 60 * 1000
+		) {
 			return { valid: false, error: 'Webhook timestamp is too old or invalid' };
 		}
 
@@ -289,8 +305,7 @@ export function verifyCalendlyWebhookSignature(
 		}
 
 		return { valid: true };
-	}
-	catch (error) {
+	} catch (error) {
 		console.error('Signature verification failed (internal):', error);
 		return { valid: false, error: 'Signature verification failed' };
 	}

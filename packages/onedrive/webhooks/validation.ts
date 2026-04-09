@@ -1,5 +1,8 @@
 import type { OnedriveWebhooks } from '..';
-import { extractOnedriveValidationToken, createOnedriveValidationMatch } from './types';
+import {
+	createOnedriveValidationMatch,
+	extractOnedriveValidationToken,
+} from './types';
 
 export const validation: OnedriveWebhooks['validation'] = {
 	match: createOnedriveValidationMatch(),

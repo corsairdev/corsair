@@ -1,7 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import type { TelegramWebhooks } from '..';
-import { createTelegramMatch, verifyTelegramWebhookSignature } from './types';
 import type { TelegramUpdate } from './types';
+import { createTelegramMatch, verifyTelegramWebhookSignature } from './types';
 
 export const channelPost: TelegramWebhooks['channelPost'] = {
 	match: createTelegramMatch('channel_post'),

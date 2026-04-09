@@ -1,39 +1,41 @@
-import 'dotenv/config'
+import 'dotenv/config';
 import { makeFigmaRequest } from './client';
 import type {
+	ActivityLogsListResponse,
 	CommentsAddResponse,
-	CommentsListResponse,
 	CommentsGetReactionsResponse,
-	DevResourcesGetResponse,
-	VariablesGetLocalResponse,
-	FilesGetMetadataResponse,
-	FilesGetVersionsResponse,
-	FilesGetStylesResponse,
-	FilesGetJSONResponse,
-	FilesGetImageFillsResponse,
-	FilesGetNodesResponse,
-	FilesRenderImagesResponse,
-	FilesGetProjectFilesResponse,
-	ComponentsGetResponse,
+	CommentsListResponse,
+	ComponentSetsGetForFileResponse,
+	ComponentSetsGetForTeamResponse,
 	ComponentSetsGetResponse,
 	ComponentsGetForFileResponse,
-	ComponentSetsGetForFileResponse,
 	ComponentsGetForTeamResponse,
-	ComponentSetsGetForTeamResponse,
-	StylesGetForTeamResponse,
-	ActivityLogsListResponse,
+	ComponentsGetResponse,
+	DevResourcesGetResponse,
+	FilesGetImageFillsResponse,
+	FilesGetJSONResponse,
+	FilesGetMetadataResponse,
+	FilesGetNodesResponse,
+	FilesGetProjectFilesResponse,
+	FilesGetStylesResponse,
+	FilesGetVersionsResponse,
+	FilesRenderImagesResponse,
 	LibraryAnalyticsComponentActionsResponse,
 	LibraryAnalyticsComponentUsagesResponse,
 	LibraryAnalyticsStyleActionsResponse,
 	LibraryAnalyticsStyleUsagesResponse,
 	ProjectsGetTeamProjectsResponse,
+	StylesGetForTeamResponse,
 	UsersGetCurrentResponse,
+	VariablesGetLocalResponse,
 } from './endpoints/types';
 import { FigmaEndpointOutputSchemas } from './endpoints/types';
 
 const _FIGMA_API_KEY = process.env.FIGMA_API_KEY;
 if (!_FIGMA_API_KEY) {
-	throw new Error('FIGMA_API_KEY environment variable is required to run Figma API tests');
+	throw new Error(
+		'FIGMA_API_KEY environment variable is required to run Figma API tests',
+	);
 }
 const TEST_API_KEY: string = _FIGMA_API_KEY;
 const TEST_FILE_KEY = process.env.TEST_FIGMA_FILE_KEY;
@@ -133,7 +135,9 @@ describe('Figma API Type Tests', () => {
 			}
 
 			// any: document is typed as unknown due to recursive Figma node tree structure
-			const doc = cachedFileData?.document as Record<string, unknown> | undefined;
+			const doc = cachedFileData?.document as
+				| Record<string, unknown>
+				| undefined;
 			// type assertion: id property on Figma document nodes is always a string
 			const nodeId = doc?.id as string | undefined;
 			if (!nodeId) {
@@ -156,7 +160,9 @@ describe('Figma API Type Tests', () => {
 			}
 
 			// any: document is typed as unknown due to recursive Figma node tree structure
-			const doc = cachedFileData?.document as Record<string, unknown> | undefined;
+			const doc = cachedFileData?.document as
+				| Record<string, unknown>
+				| undefined;
 			// type assertion: children on Figma document nodes are an array with id properties
 			const children = doc?.children as Array<{ id?: string }> | undefined;
 			// type assertion: fallback to doc.id which is a string on Figma document nodes
@@ -479,7 +485,9 @@ describe('Figma API Type Tests', () => {
 						error.message.includes('404') ||
 						error.message.includes('Not Found'))
 				) {
-					console.warn('componentsGetForFile: access denied or no components - skipping');
+					console.warn(
+						'componentsGetForFile: access denied or no components - skipping',
+					);
 					return;
 				}
 				throw error;
@@ -507,7 +515,9 @@ describe('Figma API Type Tests', () => {
 						error.message.includes('404') ||
 						error.message.includes('Not Found'))
 				) {
-					console.warn('componentSetsGetForFile: access denied or no component sets - skipping');
+					console.warn(
+						'componentSetsGetForFile: access denied or no component sets - skipping',
+					);
 					return;
 				}
 				throw error;
@@ -571,7 +581,9 @@ describe('Figma API Type Tests', () => {
 		});
 		it('componentsGet returns correct type', async () => {
 			if (!testComponentKey) {
-				console.warn('No component key available from componentsGetForFile - skipping');
+				console.warn(
+					'No component key available from componentsGetForFile - skipping',
+				);
 				return;
 			}
 
@@ -599,7 +611,9 @@ describe('Figma API Type Tests', () => {
 
 		it('componentSetsGet returns correct type', async () => {
 			if (!testComponentSetKey) {
-				console.warn('No component set key available from componentSetsGetForFile - skipping');
+				console.warn(
+					'No component set key available from componentSetsGetForFile - skipping',
+				);
 				return;
 			}
 
@@ -677,7 +691,9 @@ describe('Figma API Type Tests', () => {
 						error.message.includes('Enterprise') ||
 						error.message.includes('404'))
 				) {
-					console.warn('activityLogsList: requires Figma Enterprise plan - skipping');
+					console.warn(
+						'activityLogsList: requires Figma Enterprise plan - skipping',
+					);
 					return;
 				}
 				throw error;
@@ -692,13 +708,16 @@ describe('Figma API Type Tests', () => {
 			}
 
 			try {
-				const result = await makeFigmaRequest<LibraryAnalyticsComponentActionsResponse>(
-					`v1/analytics/libraries/${TEST_FILE_KEY}/component/actions`,
-					TEST_API_KEY,
-					{ query: { group_by: 'component' } },
-				);
+				const result =
+					await makeFigmaRequest<LibraryAnalyticsComponentActionsResponse>(
+						`v1/analytics/libraries/${TEST_FILE_KEY}/component/actions`,
+						TEST_API_KEY,
+						{ query: { group_by: 'component' } },
+					);
 
-				FigmaEndpointOutputSchemas.libraryAnalyticsComponentActions.parse(result);
+				FigmaEndpointOutputSchemas.libraryAnalyticsComponentActions.parse(
+					result,
+				);
 			} catch (error) {
 				if (
 					error instanceof Error &&
@@ -724,12 +743,15 @@ describe('Figma API Type Tests', () => {
 			}
 
 			try {
-				const result = await makeFigmaRequest<LibraryAnalyticsComponentUsagesResponse>(
-					`v1/analytics/libraries/${TEST_FILE_KEY}/component/usages`,
-					TEST_API_KEY,
-				);
+				const result =
+					await makeFigmaRequest<LibraryAnalyticsComponentUsagesResponse>(
+						`v1/analytics/libraries/${TEST_FILE_KEY}/component/usages`,
+						TEST_API_KEY,
+					);
 
-				FigmaEndpointOutputSchemas.libraryAnalyticsComponentUsages.parse(result);
+				FigmaEndpointOutputSchemas.libraryAnalyticsComponentUsages.parse(
+					result,
+				);
 			} catch (error) {
 				if (
 					error instanceof Error &&
@@ -755,11 +777,12 @@ describe('Figma API Type Tests', () => {
 			}
 
 			try {
-				const result = await makeFigmaRequest<LibraryAnalyticsStyleActionsResponse>(
-					`v1/analytics/libraries/${TEST_FILE_KEY}/style/actions`,
-					TEST_API_KEY,
-					{ query: { group_by: 'style' } },
-				);
+				const result =
+					await makeFigmaRequest<LibraryAnalyticsStyleActionsResponse>(
+						`v1/analytics/libraries/${TEST_FILE_KEY}/style/actions`,
+						TEST_API_KEY,
+						{ query: { group_by: 'style' } },
+					);
 
 				FigmaEndpointOutputSchemas.libraryAnalyticsStyleActions.parse(result);
 			} catch (error) {
@@ -787,10 +810,11 @@ describe('Figma API Type Tests', () => {
 			}
 
 			try {
-				const result = await makeFigmaRequest<LibraryAnalyticsStyleUsagesResponse>(
-					`v1/analytics/libraries/${TEST_FILE_KEY}/style/usages`,
-					TEST_API_KEY,
-				);
+				const result =
+					await makeFigmaRequest<LibraryAnalyticsStyleUsagesResponse>(
+						`v1/analytics/libraries/${TEST_FILE_KEY}/style/usages`,
+						TEST_API_KEY,
+					);
 
 				FigmaEndpointOutputSchemas.libraryAnalyticsStyleUsages.parse(result);
 			} catch (error) {

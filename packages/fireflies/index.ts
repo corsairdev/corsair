@@ -7,14 +7,15 @@ import type {
 	CorsairPluginContext,
 	CorsairWebhook,
 	KeyBuilderContext,
+	PickAuth,
 	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
-	RequiredPluginEndpointSchemas,
-	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
-import type { PickAuth } from 'corsair/core';
-import type { FirefliesEndpointInputs, FirefliesEndpointOutputs } from './endpoints';
+import type {
+	FirefliesEndpointInputs,
+	FirefliesEndpointOutputs,
+} from './endpoints';
 import {
 	AiApp,
 	AskFred,
@@ -24,6 +25,7 @@ import {
 	Transcripts,
 	Users,
 } from './endpoints';
+import { errorHandlers } from './error-handlers';
 import { FirefliesSchema } from './schema';
 import { MeetingWebhooks, TranscriptionWebhooks } from './webhooks';
 import type {
@@ -41,29 +43,79 @@ import {
 	TranscriptionCompletePayloadSchema,
 	TranscriptProcessingPayloadSchema,
 } from './webhooks/types';
-import { errorHandlers } from './error-handlers';
 
 export type FirefliesEndpoints = {
-	transcriptsList: FirefliesEndpoint<'transcriptsList', FirefliesEndpointInputs['transcriptsList']>;
-	transcriptsGet: FirefliesEndpoint<'transcriptsGet', FirefliesEndpointInputs['transcriptsGet']>;
-	transcriptsGetAnalytics: FirefliesEndpoint<'transcriptsGetAnalytics', FirefliesEndpointInputs['transcriptsGetAnalytics']>;
-	transcriptsGetAudioUrl: FirefliesEndpoint<'transcriptsGetAudioUrl', FirefliesEndpointInputs['transcriptsGetAudioUrl']>;
-	transcriptsGetVideoUrl: FirefliesEndpoint<'transcriptsGetVideoUrl', FirefliesEndpointInputs['transcriptsGetVideoUrl']>;
-	transcriptsGetSummary: FirefliesEndpoint<'transcriptsGetSummary', FirefliesEndpointInputs['transcriptsGetSummary']>;
-	usersGetCurrent: FirefliesEndpoint<'usersGetCurrent', FirefliesEndpointInputs['usersGetCurrent']>;
-	usersList: FirefliesEndpoint<'usersList', FirefliesEndpointInputs['usersList']>;
-	askFredGetThreads: FirefliesEndpoint<'askFredGetThreads', FirefliesEndpointInputs['askFredGetThreads']>;
-	askFredGetThread: FirefliesEndpoint<'askFredGetThread', FirefliesEndpointInputs['askFredGetThread']>;
-	askFredCreateThread: FirefliesEndpoint<'askFredCreateThread', FirefliesEndpointInputs['askFredCreateThread']>;
-	askFredContinueThread: FirefliesEndpoint<'askFredContinueThread', FirefliesEndpointInputs['askFredContinueThread']>;
-	askFredDeleteThread: FirefliesEndpoint<'askFredDeleteThread', FirefliesEndpointInputs['askFredDeleteThread']>;
-	audioUpload: FirefliesEndpoint<'audioUpload', FirefliesEndpointInputs['audioUpload']>;
-	aiAppGetOutputs: FirefliesEndpoint<'aiAppGetOutputs', FirefliesEndpointInputs['aiAppGetOutputs']>;
+	transcriptsList: FirefliesEndpoint<
+		'transcriptsList',
+		FirefliesEndpointInputs['transcriptsList']
+	>;
+	transcriptsGet: FirefliesEndpoint<
+		'transcriptsGet',
+		FirefliesEndpointInputs['transcriptsGet']
+	>;
+	transcriptsGetAnalytics: FirefliesEndpoint<
+		'transcriptsGetAnalytics',
+		FirefliesEndpointInputs['transcriptsGetAnalytics']
+	>;
+	transcriptsGetAudioUrl: FirefliesEndpoint<
+		'transcriptsGetAudioUrl',
+		FirefliesEndpointInputs['transcriptsGetAudioUrl']
+	>;
+	transcriptsGetVideoUrl: FirefliesEndpoint<
+		'transcriptsGetVideoUrl',
+		FirefliesEndpointInputs['transcriptsGetVideoUrl']
+	>;
+	transcriptsGetSummary: FirefliesEndpoint<
+		'transcriptsGetSummary',
+		FirefliesEndpointInputs['transcriptsGetSummary']
+	>;
+	usersGetCurrent: FirefliesEndpoint<
+		'usersGetCurrent',
+		FirefliesEndpointInputs['usersGetCurrent']
+	>;
+	usersList: FirefliesEndpoint<
+		'usersList',
+		FirefliesEndpointInputs['usersList']
+	>;
+	askFredGetThreads: FirefliesEndpoint<
+		'askFredGetThreads',
+		FirefliesEndpointInputs['askFredGetThreads']
+	>;
+	askFredGetThread: FirefliesEndpoint<
+		'askFredGetThread',
+		FirefliesEndpointInputs['askFredGetThread']
+	>;
+	askFredCreateThread: FirefliesEndpoint<
+		'askFredCreateThread',
+		FirefliesEndpointInputs['askFredCreateThread']
+	>;
+	askFredContinueThread: FirefliesEndpoint<
+		'askFredContinueThread',
+		FirefliesEndpointInputs['askFredContinueThread']
+	>;
+	askFredDeleteThread: FirefliesEndpoint<
+		'askFredDeleteThread',
+		FirefliesEndpointInputs['askFredDeleteThread']
+	>;
+	audioUpload: FirefliesEndpoint<
+		'audioUpload',
+		FirefliesEndpointInputs['audioUpload']
+	>;
+	aiAppGetOutputs: FirefliesEndpoint<
+		'aiAppGetOutputs',
+		FirefliesEndpointInputs['aiAppGetOutputs']
+	>;
 };
 
 export type FirefliesWebhooks = {
-	transcriptionComplete: FirefliesWebhook<'transcriptionComplete', TranscriptionCompleteEvent>;
-	transcriptProcessing: FirefliesWebhook<'transcriptProcessing', TranscriptProcessingEvent>;
+	transcriptionComplete: FirefliesWebhook<
+		'transcriptionComplete',
+		TranscriptionCompleteEvent
+	>;
+	transcriptProcessing: FirefliesWebhook<
+		'transcriptProcessing',
+		TranscriptProcessingEvent
+	>;
 	newMeeting: FirefliesWebhook<'newMeeting', NewMeetingEvent>;
 	inMeeting: FirefliesWebhook<'inMeeting', InMeetingEvent>;
 	meetingDeleted: FirefliesWebhook<'meetingDeleted', MeetingDeletedEvent>;
@@ -281,7 +333,9 @@ export const firefliesAuthConfig = {
 	},
 } as const satisfies PluginAuthConfig;
 
-export type FirefliesBoundEndpoints = BindEndpoints<typeof firefliesEndpointsNested>;
+export type FirefliesBoundEndpoints = BindEndpoints<
+	typeof firefliesEndpointsNested
+>;
 export type FirefliesBoundWebhooks = BindWebhooks<FirefliesWebhooks>;
 
 export type FirefliesPluginOptions = {
@@ -299,25 +353,29 @@ export type FirefliesContext = CorsairPluginContext<
 	FirefliesPluginOptions
 >;
 
-export type FirefliesKeyBuilderContext = KeyBuilderContext<FirefliesPluginOptions>;
+export type FirefliesKeyBuilderContext =
+	KeyBuilderContext<FirefliesPluginOptions>;
 
-export type BaseFirefliesPlugin<T extends FirefliesPluginOptions> = CorsairPlugin<
-	'fireflies',
-	typeof FirefliesSchema,
-	typeof firefliesEndpointsNested,
-	typeof firefliesWebhooksNested,
-	T,
-	typeof defaultAuthType
->;
+export type BaseFirefliesPlugin<T extends FirefliesPluginOptions> =
+	CorsairPlugin<
+		'fireflies',
+		typeof FirefliesSchema,
+		typeof firefliesEndpointsNested,
+		typeof firefliesWebhooksNested,
+		T,
+		typeof defaultAuthType
+	>;
 
-export type InternalFirefliesPlugin = BaseFirefliesPlugin<FirefliesPluginOptions>;
+export type InternalFirefliesPlugin =
+	BaseFirefliesPlugin<FirefliesPluginOptions>;
 
 export type ExternalFirefliesPlugin<T extends FirefliesPluginOptions> =
 	BaseFirefliesPlugin<T>;
 
 export function fireflies<const T extends FirefliesPluginOptions>(
 	// {} as FirefliesPluginOptions & T: default to empty options; T extends FirefliesPluginOptions so the cast is safe
-	incomingOptions: FirefliesPluginOptions & T = {} as FirefliesPluginOptions & T,
+	incomingOptions: FirefliesPluginOptions & T = {} as FirefliesPluginOptions &
+		T,
 ): ExternalFirefliesPlugin<T> {
 	const options = {
 		...incomingOptions,

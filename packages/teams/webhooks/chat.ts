@@ -1,9 +1,13 @@
+import { logEventFromContext } from 'corsair/core';
 import type { TeamsWebhooks } from '..';
 import { makeTeamsRequest } from '../client';
 import { toMessageRecord } from '../endpoints/messages';
 import type { TeamsEndpointOutputs } from '../endpoints/types';
-import { logEventFromContext } from 'corsair/core';
-import { createTeamsNotificationMatch, extractODataId, verifyTeamsClientState } from './types';
+import {
+	createTeamsNotificationMatch,
+	extractODataId,
+	verifyTeamsClientState,
+} from './types';
 
 export const chatMessage: TeamsWebhooks['chatMessage'] = {
 	match: createTeamsNotificationMatch(
@@ -38,10 +42,9 @@ export const chatMessage: TeamsWebhooks['chatMessage'] = {
 					if (changeType === 'deleted') {
 						await ctx.db.messages.deleteByEntityId(messageId);
 					} else if (accessToken) {
-						const fullMsg = await makeTeamsRequest<TeamsEndpointOutputs['messagesGet']>(
-							`chats/${chatId}/messages/${messageId}`,
-							accessToken,
-						);
+						const fullMsg = await makeTeamsRequest<
+							TeamsEndpointOutputs['messagesGet']
+						>(`chats/${chatId}/messages/${messageId}`, accessToken);
 						const entity = await ctx.db.messages.upsertByEntityId(
 							messageId,
 							toMessageRecord(fullMsg, { chatId }),
@@ -50,7 +53,10 @@ export const chatMessage: TeamsWebhooks['chatMessage'] = {
 					}
 				}
 			} catch (error) {
-				console.warn('Failed to process chat message webhook in database:', error);
+				console.warn(
+					'Failed to process chat message webhook in database:',
+					error,
+				);
 			}
 		}
 

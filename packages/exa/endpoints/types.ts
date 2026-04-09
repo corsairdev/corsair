@@ -71,9 +71,7 @@ const WebsetSearchConfigSchema = z.object({
 
 const WebsetEnrichmentConfigSchema = z.object({
 	description: z.string(),
-	format: z
-		.enum(['text', 'date', 'number', 'options', 'boolean'])
-		.optional(),
+	format: z.enum(['text', 'date', 'number', 'options', 'boolean']).optional(),
 	options: z.array(z.string()).optional(),
 });
 
@@ -316,7 +314,9 @@ export type WebsetsDeleteResponse = z.infer<typeof WebsetsDeleteResponseSchema>;
 export type ImportsDeleteResponse = z.infer<typeof ImportsDeleteResponseSchema>;
 export type ImportsListResponse = z.infer<typeof ImportsListResponseSchema>;
 export type EventsListResponse = z.infer<typeof EventsListResponseSchema>;
-export type WebhooksApiListResponse = z.infer<typeof WebhooksApiListResponseSchema>;
+export type WebhooksApiListResponse = z.infer<
+	typeof WebhooksApiListResponseSchema
+>;
 
 // ── Endpoint I/O Maps ─────────────────────────────────────────────────────────
 

@@ -7,18 +7,11 @@ import type {
 	CorsairPluginContext,
 	CorsairWebhook,
 	KeyBuilderContext,
+	PickAuth,
 	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
-	RequiredPluginEndpointSchemas,
-	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
-import type { PickAuth } from 'corsair/core';
-import type { ZoomEndpointInputs, ZoomEndpointOutputs } from './endpoints/types';
-import {
-	ZoomEndpointInputSchemas,
-	ZoomEndpointOutputSchemas,
-} from './endpoints/types';
 import {
 	ArchiveFiles,
 	Devices,
@@ -28,6 +21,15 @@ import {
 	Reports,
 	Webinars,
 } from './endpoints';
+import type {
+	ZoomEndpointInputs,
+	ZoomEndpointOutputs,
+} from './endpoints/types';
+import {
+	ZoomEndpointInputSchemas,
+	ZoomEndpointOutputSchemas,
+} from './endpoints/types';
+import { errorHandlers } from './error-handlers';
 import { ZoomSchema } from './schema';
 import {
 	MeetingWebhooks,
@@ -35,8 +37,8 @@ import {
 	WebinarWebhooks,
 } from './webhooks';
 import type {
-	MeetingCreatedEvent,
 	MeetingCancelledEvent,
+	MeetingCreatedEvent,
 	MeetingEndedEvent,
 	MeetingParticipantJoinedEvent,
 	MeetingParticipantLeftEvent,
@@ -46,8 +48,8 @@ import type {
 	ZoomWebhookOutputs,
 } from './webhooks/types';
 import {
-	MeetingCreatedPayloadSchema,
 	MeetingCancelledPayloadSchema,
+	MeetingCreatedPayloadSchema,
 	MeetingEndedPayloadSchema,
 	MeetingParticipantJoinedPayloadSchema,
 	MeetingParticipantLeftPayloadSchema,
@@ -55,7 +57,6 @@ import {
 	RecordingCompletedPayloadSchema,
 	WebinarStartedPayloadSchema,
 } from './webhooks/types';
-import { errorHandlers } from './error-handlers';
 
 export type ZoomPluginOptions = {
 	authType?: PickAuth<'oauth_2'>;
@@ -121,7 +122,10 @@ export type ZoomWebhooks = {
 		'meetingParticipantLeft',
 		MeetingParticipantLeftEvent
 	>;
-	recordingCompleted: ZoomWebhook<'recordingCompleted', RecordingCompletedEvent>;
+	recordingCompleted: ZoomWebhook<
+		'recordingCompleted',
+		RecordingCompletedEvent
+	>;
 	webinarStarted: ZoomWebhook<'webinarStarted', WebinarStartedEvent>;
 };
 
@@ -388,8 +392,8 @@ export type ExternalZoomPlugin<PluginOptions extends ZoomPluginOptions> =
 
 export function zoom<const PluginOptions extends ZoomPluginOptions>(
 	// Default to empty object; callers that omit options satisfy the constraint at runtime
-	incomingOptions: ZoomPluginOptions &
-		PluginOptions = {} as ZoomPluginOptions & PluginOptions,
+	incomingOptions: ZoomPluginOptions & PluginOptions = {} as ZoomPluginOptions &
+		PluginOptions,
 ): ExternalZoomPlugin<PluginOptions> {
 	const options = {
 		...incomingOptions,
@@ -449,37 +453,35 @@ export function zoom<const PluginOptions extends ZoomPluginOptions>(
 }
 
 export type {
-	MeetingCreatedEvent,
+	ArchiveFileListResponse,
+	DeviceListResponse,
+	MeetingAddRegistrantResponse,
+	MeetingCreateResponse,
+	MeetingGetResponse,
+	MeetingGetSummaryResponse,
+	MeetingListResponse,
+	MeetingUpdateResponse,
+	ParticipantGetPastMeetingResponse,
+	RecordingDeleteMeetingResponse,
+	RecordingGetMeetingResponse,
+	RecordingListAllResponse,
+	ReportDailyUsageResponse,
+	WebinarAddRegistrantResponse,
+	WebinarGetResponse,
+	WebinarListParticipantsResponse,
+	WebinarListResponse,
+	ZoomEndpointInputs,
+	ZoomEndpointOutputs,
+} from './endpoints/types';
+export type {
 	MeetingCancelledEvent,
-	MeetingStartedEvent,
+	MeetingCreatedEvent,
 	MeetingEndedEvent,
 	MeetingParticipantJoinedEvent,
 	MeetingParticipantLeftEvent,
+	MeetingStartedEvent,
 	RecordingCompletedEvent,
 	WebinarStartedEvent,
 	ZoomWebhookOutputs,
 } from './webhooks/types';
-
 export { createZoomEventMatch } from './webhooks/types';
-
-export type {
-	MeetingCreateResponse,
-	MeetingGetResponse,
-	MeetingListResponse,
-	MeetingUpdateResponse,
-	MeetingAddRegistrantResponse,
-	MeetingGetSummaryResponse,
-	RecordingGetMeetingResponse,
-	RecordingDeleteMeetingResponse,
-	RecordingListAllResponse,
-	WebinarGetResponse,
-	WebinarListResponse,
-	WebinarAddRegistrantResponse,
-	WebinarListParticipantsResponse,
-	ReportDailyUsageResponse,
-	ParticipantGetPastMeetingResponse,
-	DeviceListResponse,
-	ArchiveFileListResponse,
-	ZoomEndpointInputs,
-	ZoomEndpointOutputs,
-} from './endpoints/types';

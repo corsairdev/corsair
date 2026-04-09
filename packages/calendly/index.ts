@@ -1,4 +1,5 @@
 import type {
+	AuthTypes,
 	BindEndpoints,
 	BindWebhooks,
 	CorsairEndpoint,
@@ -7,35 +8,11 @@ import type {
 	CorsairPluginContext,
 	CorsairWebhook,
 	KeyBuilderContext,
+	PickAuth,
 	PluginAuthConfig,
-	RequiredPluginEndpointMeta,
-	RequiredPluginEndpointSchemas,
-	RequiredPluginWebhookSchemas,
 	PluginPermissionsConfig,
+	RequiredPluginEndpointMeta,
 } from 'corsair/core';
-import type { AuthTypes, PickAuth } from 'corsair/core';
-import type { CalendlyEndpointInputs, CalendlyEndpointOutputs } from './endpoints/types';
-import {
-	CalendlyEndpointInputSchemas,
-	CalendlyEndpointOutputSchemas,
-} from './endpoints/types';
-import type {
-	CalendlyWebhookOutputs,
-	InviteeCreatedPayload,
-	InviteeCanceledPayload,
-	InviteeNoShowCreatedPayload,
-	RoutingFormSubmissionCreatedPayload,
-	EventTypeUpdatedPayload,
-	UserUpdatedPayload,
-} from './webhooks/types';
-import {
-	InviteeCreatedPayloadSchema,
-	InviteeCanceledPayloadSchema,
-	InviteeNoShowCreatedPayloadSchema,
-	RoutingFormSubmissionCreatedPayloadSchema,
-	EventTypeUpdatedPayloadSchema,
-	UserUpdatedPayloadSchema,
-} from './webhooks/types';
 import {
 	ActivityLog,
 	EventTypes,
@@ -48,6 +25,15 @@ import {
 	Users,
 	WebhookSubscriptions,
 } from './endpoints';
+import type {
+	CalendlyEndpointInputs,
+	CalendlyEndpointOutputs,
+} from './endpoints/types';
+import {
+	CalendlyEndpointInputSchemas,
+	CalendlyEndpointOutputSchemas,
+} from './endpoints/types';
+import { errorHandlers } from './error-handlers';
 import { CalendlySchema } from './schema';
 import {
 	EventTypeWebhooks,
@@ -55,7 +41,23 @@ import {
 	RoutingFormWebhooks,
 	UserWebhooks,
 } from './webhooks';
-import { errorHandlers } from './error-handlers';
+import type {
+	CalendlyWebhookOutputs,
+	EventTypeUpdatedPayload,
+	InviteeCanceledPayload,
+	InviteeCreatedPayload,
+	InviteeNoShowCreatedPayload,
+	RoutingFormSubmissionCreatedPayload,
+	UserUpdatedPayload,
+} from './webhooks/types';
+import {
+	EventTypeUpdatedPayloadSchema,
+	InviteeCanceledPayloadSchema,
+	InviteeCreatedPayloadSchema,
+	InviteeNoShowCreatedPayloadSchema,
+	RoutingFormSubmissionCreatedPayloadSchema,
+	UserUpdatedPayloadSchema,
+} from './webhooks/types';
 
 export type CalendlyPluginOptions = {
 	authType?: PickAuth<'api_key'>;
@@ -77,9 +79,12 @@ export type CalendlyContext = CorsairPluginContext<
 	CalendlyPluginOptions
 >;
 
-export type CalendlyKeyBuilderContext = KeyBuilderContext<CalendlyPluginOptions>;
+export type CalendlyKeyBuilderContext =
+	KeyBuilderContext<CalendlyPluginOptions>;
 
-export type CalendlyBoundEndpoints = BindEndpoints<typeof calendlyEndpointsNested>;
+export type CalendlyBoundEndpoints = BindEndpoints<
+	typeof calendlyEndpointsNested
+>;
 
 type CalendlyEndpoint<
 	K extends keyof CalendlyEndpointOutputs,
@@ -150,8 +155,14 @@ export type CalendlyWebhooks = {
 	inviteeCreated: CalendlyWebhook<'inviteeCreated', InviteeCreatedPayload>;
 	inviteeCanceled: CalendlyWebhook<'inviteeCanceled', InviteeCanceledPayload>;
 	inviteeNoShow: CalendlyWebhook<'inviteeNoShow', InviteeNoShowCreatedPayload>;
-	routingFormSubmission: CalendlyWebhook<'routingFormSubmission', RoutingFormSubmissionCreatedPayload>;
-	eventTypeUpdated: CalendlyWebhook<'eventTypeUpdated', EventTypeUpdatedPayload>;
+	routingFormSubmission: CalendlyWebhook<
+		'routingFormSubmission',
+		RoutingFormSubmissionCreatedPayload
+	>;
+	eventTypeUpdated: CalendlyWebhook<
+		'eventTypeUpdated',
+		EventTypeUpdatedPayload
+	>;
 	userUpdated: CalendlyWebhook<'userUpdated', UserUpdatedPayload>;
 };
 
@@ -463,58 +474,206 @@ export const calendlyEndpointSchemas = {
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
 const calendlyEndpointMeta = {
-	'scheduledEvents.get': { riskLevel: 'read', description: 'Get a scheduled event by UUID' },
-	'scheduledEvents.list': { riskLevel: 'read', description: 'List all scheduled events' },
-	'scheduledEvents.cancel': { riskLevel: 'destructive', description: 'Cancel a scheduled event [DESTRUCTIVE]' },
-	'scheduledEvents.deleteData': { riskLevel: 'destructive', description: 'Delete all scheduled event data in a time range [DESTRUCTIVE]' },
-	'eventTypes.get': { riskLevel: 'read', description: 'Get an event type by UUID' },
+	'scheduledEvents.get': {
+		riskLevel: 'read',
+		description: 'Get a scheduled event by UUID',
+	},
+	'scheduledEvents.list': {
+		riskLevel: 'read',
+		description: 'List all scheduled events',
+	},
+	'scheduledEvents.cancel': {
+		riskLevel: 'destructive',
+		description: 'Cancel a scheduled event [DESTRUCTIVE]',
+	},
+	'scheduledEvents.deleteData': {
+		riskLevel: 'destructive',
+		description:
+			'Delete all scheduled event data in a time range [DESTRUCTIVE]',
+	},
+	'eventTypes.get': {
+		riskLevel: 'read',
+		description: 'Get an event type by UUID',
+	},
 	'eventTypes.list': { riskLevel: 'read', description: 'List all event types' },
-	'eventTypes.create': { riskLevel: 'write', description: 'Create a new event type' },
-	'eventTypes.createOneOff': { riskLevel: 'write', description: 'Create a one-off event type' },
-	'eventTypes.update': { riskLevel: 'write', description: 'Update an event type' },
-	'eventTypes.updateAvailability': { riskLevel: 'write', description: 'Update availability for an event type' },
-	'eventTypes.listAvailableTimes': { riskLevel: 'read', description: 'List available times for an event type' },
-	'eventTypes.listHosts': { riskLevel: 'read', description: 'List hosts for an event type' },
-	'invitees.get': { riskLevel: 'read', description: 'Get an event invitee by UUID' },
-	'invitees.list': { riskLevel: 'read', description: 'List invitees for a scheduled event' },
-	'invitees.create': { riskLevel: 'write', description: 'Create an invitee for a one-off event type' },
-	'invitees.deleteData': { riskLevel: 'destructive', description: 'Delete all data for specified invitee emails [DESTRUCTIVE]' },
-	'invitees.getNoShow': { riskLevel: 'read', description: 'Get an invitee no-show record' },
-	'invitees.markNoShow': { riskLevel: 'write', description: 'Mark an invitee as a no-show' },
-	'invitees.deleteNoShow': { riskLevel: 'destructive', description: 'Delete an invitee no-show record [DESTRUCTIVE]' },
+	'eventTypes.create': {
+		riskLevel: 'write',
+		description: 'Create a new event type',
+	},
+	'eventTypes.createOneOff': {
+		riskLevel: 'write',
+		description: 'Create a one-off event type',
+	},
+	'eventTypes.update': {
+		riskLevel: 'write',
+		description: 'Update an event type',
+	},
+	'eventTypes.updateAvailability': {
+		riskLevel: 'write',
+		description: 'Update availability for an event type',
+	},
+	'eventTypes.listAvailableTimes': {
+		riskLevel: 'read',
+		description: 'List available times for an event type',
+	},
+	'eventTypes.listHosts': {
+		riskLevel: 'read',
+		description: 'List hosts for an event type',
+	},
+	'invitees.get': {
+		riskLevel: 'read',
+		description: 'Get an event invitee by UUID',
+	},
+	'invitees.list': {
+		riskLevel: 'read',
+		description: 'List invitees for a scheduled event',
+	},
+	'invitees.create': {
+		riskLevel: 'write',
+		description: 'Create an invitee for a one-off event type',
+	},
+	'invitees.deleteData': {
+		riskLevel: 'destructive',
+		description: 'Delete all data for specified invitee emails [DESTRUCTIVE]',
+	},
+	'invitees.getNoShow': {
+		riskLevel: 'read',
+		description: 'Get an invitee no-show record',
+	},
+	'invitees.markNoShow': {
+		riskLevel: 'write',
+		description: 'Mark an invitee as a no-show',
+	},
+	'invitees.deleteNoShow': {
+		riskLevel: 'destructive',
+		description: 'Delete an invitee no-show record [DESTRUCTIVE]',
+	},
 	'users.get': { riskLevel: 'read', description: 'Get a user by UUID' },
-	'users.getCurrent': { riskLevel: 'read', description: 'Get the currently authenticated user (deprecated)' },
-	'users.getAvailabilitySchedule': { riskLevel: 'read', description: 'Get a user availability schedule' },
-	'users.listAvailabilitySchedules': { riskLevel: 'read', description: 'List all availability schedules for a user' },
-	'users.listBusyTimes': { riskLevel: 'read', description: 'List busy times for a user' },
-	'users.listMeetingLocations': { riskLevel: 'read', description: 'List meeting locations for a user' },
-	'users.listEventTypes': { riskLevel: 'read', description: 'List event types for a user (deprecated)' },
-	'organizations.get': { riskLevel: 'read', description: 'Get an organization by UUID' },
-	'organizations.getInvitation': { riskLevel: 'read', description: 'Get an organization invitation' },
-	'organizations.getMembership': { riskLevel: 'read', description: 'Get an organization membership' },
-	'organizations.listInvitations': { riskLevel: 'read', description: 'List organization invitations' },
-	'organizations.listMemberships': { riskLevel: 'read', description: 'List organization memberships' },
-	'organizations.deleteMembership': { riskLevel: 'destructive', description: 'Delete an organization membership [DESTRUCTIVE]' },
-	'organizations.invite': { riskLevel: 'write', description: 'Invite a user to an organization' },
-	'organizations.removeMember': { riskLevel: 'destructive', description: 'Remove a user from the organization [DESTRUCTIVE]' },
-	'organizations.revokeInvitation': { riskLevel: 'destructive', description: "Revoke a user's organization invitation [DESTRUCTIVE]" },
+	'users.getCurrent': {
+		riskLevel: 'read',
+		description: 'Get the currently authenticated user (deprecated)',
+	},
+	'users.getAvailabilitySchedule': {
+		riskLevel: 'read',
+		description: 'Get a user availability schedule',
+	},
+	'users.listAvailabilitySchedules': {
+		riskLevel: 'read',
+		description: 'List all availability schedules for a user',
+	},
+	'users.listBusyTimes': {
+		riskLevel: 'read',
+		description: 'List busy times for a user',
+	},
+	'users.listMeetingLocations': {
+		riskLevel: 'read',
+		description: 'List meeting locations for a user',
+	},
+	'users.listEventTypes': {
+		riskLevel: 'read',
+		description: 'List event types for a user (deprecated)',
+	},
+	'organizations.get': {
+		riskLevel: 'read',
+		description: 'Get an organization by UUID',
+	},
+	'organizations.getInvitation': {
+		riskLevel: 'read',
+		description: 'Get an organization invitation',
+	},
+	'organizations.getMembership': {
+		riskLevel: 'read',
+		description: 'Get an organization membership',
+	},
+	'organizations.listInvitations': {
+		riskLevel: 'read',
+		description: 'List organization invitations',
+	},
+	'organizations.listMemberships': {
+		riskLevel: 'read',
+		description: 'List organization memberships',
+	},
+	'organizations.deleteMembership': {
+		riskLevel: 'destructive',
+		description: 'Delete an organization membership [DESTRUCTIVE]',
+	},
+	'organizations.invite': {
+		riskLevel: 'write',
+		description: 'Invite a user to an organization',
+	},
+	'organizations.removeMember': {
+		riskLevel: 'destructive',
+		description: 'Remove a user from the organization [DESTRUCTIVE]',
+	},
+	'organizations.revokeInvitation': {
+		riskLevel: 'destructive',
+		description: "Revoke a user's organization invitation [DESTRUCTIVE]",
+	},
 	'groups.get': { riskLevel: 'read', description: 'Get a group by UUID' },
-	'groups.getRelationship': { riskLevel: 'read', description: 'Get a group relationship by UUID' },
-	'groups.list': { riskLevel: 'read', description: 'List groups in an organization' },
-	'groups.listRelationships': { riskLevel: 'read', description: 'List relationships for a group' },
-	'routingForms.get': { riskLevel: 'read', description: 'Get a routing form by UUID' },
-	'routingForms.getSubmission': { riskLevel: 'read', description: 'Get a routing form submission by UUID' },
-	'routingForms.list': { riskLevel: 'read', description: 'List routing forms in an organization' },
-	'routingForms.getSampleWebhookData': { riskLevel: 'read', description: 'Get sample webhook data for an event type' },
-	'schedulingLinks.create': { riskLevel: 'write', description: 'Create a scheduling link' },
-	'schedulingLinks.createSingleUse': { riskLevel: 'write', description: 'Create a single-use scheduling link' },
-	'schedulingLinks.createShare': { riskLevel: 'write', description: 'Create a share link for an event type' },
-	'webhookSubscriptions.create': { riskLevel: 'write', description: 'Create a webhook subscription' },
-	'webhookSubscriptions.get': { riskLevel: 'read', description: 'Get a webhook subscription by UUID' },
-	'webhookSubscriptions.list': { riskLevel: 'read', description: 'List webhook subscriptions' },
-	'webhookSubscriptions.delete': { riskLevel: 'destructive', description: 'Delete a webhook subscription [DESTRUCTIVE]' },
-	'activityLog.list': { riskLevel: 'read', description: 'List activity log entries for an organization' },
-	'activityLog.listOutgoingCommunications': { riskLevel: 'read', description: 'List outgoing communications for an organization' },
+	'groups.getRelationship': {
+		riskLevel: 'read',
+		description: 'Get a group relationship by UUID',
+	},
+	'groups.list': {
+		riskLevel: 'read',
+		description: 'List groups in an organization',
+	},
+	'groups.listRelationships': {
+		riskLevel: 'read',
+		description: 'List relationships for a group',
+	},
+	'routingForms.get': {
+		riskLevel: 'read',
+		description: 'Get a routing form by UUID',
+	},
+	'routingForms.getSubmission': {
+		riskLevel: 'read',
+		description: 'Get a routing form submission by UUID',
+	},
+	'routingForms.list': {
+		riskLevel: 'read',
+		description: 'List routing forms in an organization',
+	},
+	'routingForms.getSampleWebhookData': {
+		riskLevel: 'read',
+		description: 'Get sample webhook data for an event type',
+	},
+	'schedulingLinks.create': {
+		riskLevel: 'write',
+		description: 'Create a scheduling link',
+	},
+	'schedulingLinks.createSingleUse': {
+		riskLevel: 'write',
+		description: 'Create a single-use scheduling link',
+	},
+	'schedulingLinks.createShare': {
+		riskLevel: 'write',
+		description: 'Create a share link for an event type',
+	},
+	'webhookSubscriptions.create': {
+		riskLevel: 'write',
+		description: 'Create a webhook subscription',
+	},
+	'webhookSubscriptions.get': {
+		riskLevel: 'read',
+		description: 'Get a webhook subscription by UUID',
+	},
+	'webhookSubscriptions.list': {
+		riskLevel: 'read',
+		description: 'List webhook subscriptions',
+	},
+	'webhookSubscriptions.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete a webhook subscription [DESTRUCTIVE]',
+	},
+	'activityLog.list': {
+		riskLevel: 'read',
+		description: 'List activity log entries for an organization',
+	},
+	'activityLog.listOutgoingCommunications': {
+		riskLevel: 'read',
+		description: 'List outgoing communications for an organization',
+	},
 } satisfies RequiredPluginEndpointMeta<typeof calendlyEndpointsNested>;
 
 export const calendlyAuthConfig = {
@@ -627,11 +786,11 @@ export function calendly<const T extends CalendlyPluginOptions>(
 
 export type {
 	CalendlyWebhookOutputs,
-	InviteeCreatedPayload,
+	EventTypeUpdatedPayload,
 	InviteeCanceledPayload,
+	InviteeCreatedPayload,
 	InviteeNoShowCreatedPayload,
 	RoutingFormSubmissionCreatedPayload,
-	EventTypeUpdatedPayload,
 	UserUpdatedPayload,
 } from './webhooks/types';
 
@@ -640,18 +799,18 @@ export type {
 export type {
 	CalendlyEndpointInputs,
 	CalendlyEndpointOutputs,
-	ScheduledEventsGetResponse,
-	ScheduledEventsListResponse,
+	EventTypesCreateResponse,
 	EventTypesGetResponse,
 	EventTypesListResponse,
-	EventTypesCreateResponse,
 	EventTypesUpdateResponse,
+	InviteesCreateResponse,
 	InviteesGetResponse,
 	InviteesListResponse,
-	InviteesCreateResponse,
-	UsersGetResponse,
+	OrganizationsListMembershipsResponse,
+	ScheduledEventsGetResponse,
+	ScheduledEventsListResponse,
 	UsersGetCurrentResponse,
+	UsersGetResponse,
 	WebhookSubscriptionsCreateResponse,
 	WebhookSubscriptionsListResponse,
-	OrganizationsListMembershipsResponse,
 } from './endpoints/types';

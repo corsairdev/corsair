@@ -1,5 +1,5 @@
-import type { TypeformEndpoints } from '..';
 import { logEventFromContext } from 'corsair/core';
+import type { TypeformEndpoints } from '..';
 import { makeTypeformRequest } from '../client';
 import type { TypeformEndpointOutputs } from './types';
 

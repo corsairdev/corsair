@@ -1,17 +1,15 @@
-import type { StripeEndpoints } from '..';
 import { logEventFromContext } from 'corsair/core';
+import type { StripeEndpoints } from '..';
 import { makeStripeRequest } from '../client';
 import type { StripeEndpointOutputs } from './types';
 
 export const create: StripeEndpoints['chargesCreate'] = async (ctx, input) => {
-	const result = await makeStripeRequest<StripeEndpointOutputs['chargesCreate']>(
-		'charges',
-		ctx.key,
-		{
-			method: 'POST',
-			body: { ...input },
-		},
-	);
+	const result = await makeStripeRequest<
+		StripeEndpointOutputs['chargesCreate']
+	>('charges', ctx.key, {
+		method: 'POST',
+		body: { ...input },
+	});
 
 	if (result.id && ctx.db.charges) {
 		try {
@@ -76,7 +74,9 @@ export const list: StripeEndpoints['chargesList'] = async (ctx, input) => {
 			for (const charge of result.data) {
 				await ctx.db.charges.upsertByEntityId(charge.id, {
 					...charge,
-					createdAt: charge.created ? new Date(charge.created * 1000) : undefined,
+					createdAt: charge.created
+						? new Date(charge.created * 1000)
+						: undefined,
 				});
 			}
 		} catch (error) {
@@ -95,14 +95,12 @@ export const list: StripeEndpoints['chargesList'] = async (ctx, input) => {
 
 export const update: StripeEndpoints['chargesUpdate'] = async (ctx, input) => {
 	const { id, ...body } = input;
-	const result = await makeStripeRequest<StripeEndpointOutputs['chargesUpdate']>(
-		`charges/${id}`,
-		ctx.key,
-		{
-			method: 'POST',
-			body: { ...body },
-		},
-	);
+	const result = await makeStripeRequest<
+		StripeEndpointOutputs['chargesUpdate']
+	>(`charges/${id}`, ctx.key, {
+		method: 'POST',
+		body: { ...body },
+	});
 
 	if (result.id && ctx.db.charges) {
 		try {

@@ -67,7 +67,7 @@ export const list: ZoomEndpoints['meetingsList'] = async (ctx, input) => {
 		ctx.key,
 		{
 			method: 'GET',
-			query: input
+			query: input,
 		},
 	);
 
@@ -118,7 +118,9 @@ export const update: ZoomEndpoints['meetingsUpdate'] = async (ctx, input) => {
 					...updates,
 				});
 			} else {
-				console.warn(`Meeting ${meetingId} not found in local DB; skipping update`);
+				console.warn(
+					`Meeting ${meetingId} not found in local DB; skipping update`,
+				);
 			}
 		} catch (error) {
 			console.warn('Failed to update meeting in database:', error);

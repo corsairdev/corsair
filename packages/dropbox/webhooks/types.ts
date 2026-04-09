@@ -1,10 +1,10 @@
-import { z } from 'zod';
-import { verifyHmacSignature } from 'corsair/http';
 import type {
 	CorsairWebhookMatcher,
 	RawWebhookRequest,
 	WebhookRequest,
 } from 'corsair/core';
+import { verifyHmacSignature } from 'corsair/http';
+import { z } from 'zod';
 
 // ── Real Dropbox Webhook Payload ──────────────────────────────────────────────
 //
@@ -46,7 +46,8 @@ export type DropboxChangeNotification = z.infer<
 
 export type DropboxFileSystemChangedEvent = DropboxChangeNotification;
 
-export const DropboxFileSystemChangedEventSchema = DropboxChangeNotificationSchema;
+export const DropboxFileSystemChangedEventSchema =
+	DropboxChangeNotificationSchema;
 
 export type DropboxWebhookOutputs = {
 	fileSystemChanged: DropboxFileSystemChangedEvent;
@@ -106,7 +107,12 @@ export function verifyDropboxWebhookSignature(
 	// style) so the HMAC is computed over the same bytes Dropbox signed.
 	// Using request.payload (already parsed) avoids any encoding ambiguity.
 	const bodyToSign = dropboxJsonSerialize(request.payload);
-	const isValid = verifyHmacSignature(bodyToSign, appSecret, signature, 'sha256');
+	const isValid = verifyHmacSignature(
+		bodyToSign,
+		appSecret,
+		signature,
+		'sha256',
+	);
 	if (!isValid) {
 		return { valid: false, error: 'Invalid signature' };
 	}
@@ -122,7 +128,9 @@ export function verifyDropboxWebhookSignature(
  * The `_eventTag` parameter is accepted for API consistency but not used for
  * matching — all Dropbox notifications look identical.
  */
-export function createDropboxEventMatch(_eventTag: string): CorsairWebhookMatcher {
+export function createDropboxEventMatch(
+	_eventTag: string,
+): CorsairWebhookMatcher {
 	return (request: RawWebhookRequest) => {
 		// any cast needed because request.body is an untyped raw webhook payload
 		const parsedBody = parseBody(request.body) as Record<string, unknown>;

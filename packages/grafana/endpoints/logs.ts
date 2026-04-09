@@ -12,11 +12,16 @@ export const createOtlp: GrafanaEndpoints['logsCreateOtlp'] = async (
 	let result: GrafanaEndpointOutputs['logsCreateOtlp'];
 
 	try {
-		const raw = await makeGrafanaRawRequest('/otlp/v1/logs', ctx.key, grafanaUrl, {
-			method: 'POST',
-			body: { resourceLogs: input.resourceLogs },
-			contentType: 'application/json',
-		});
+		const raw = await makeGrafanaRawRequest(
+			'/otlp/v1/logs',
+			ctx.key,
+			grafanaUrl,
+			{
+				method: 'POST',
+				body: { resourceLogs: input.resourceLogs },
+				contentType: 'application/json',
+			},
+		);
 
 		const success = raw.status_code >= 200 && raw.status_code < 300;
 
@@ -81,14 +86,15 @@ async function _persistLogRecords(
 		for (const scopeLog of resourceLog.scopeLogs ?? []) {
 			for (const record of scopeLog.logRecords ?? []) {
 				// Generate a unique log ID from timestamp + traceId to deduplicate on upsert
-				const logId = crypto.randomUUID()
+				const logId = crypto.randomUUID();
 
 				await ctx.db.logs.upsertByEntityId(logId, {
 					...record,
 					id: logId,
 					// body.stringValue is the most common log body type; fallback to stringify the whole body
 					body: record.body?.stringValue ?? JSON.stringify(record.body),
-					resource: Object.keys(resourceAttrs).length > 0 ? resourceAttrs : undefined,
+					resource:
+						Object.keys(resourceAttrs).length > 0 ? resourceAttrs : undefined,
 					scope: scopeLog.scope?.name,
 					scopeVersion: scopeLog.scope?.version,
 					createdAt: new Date(),

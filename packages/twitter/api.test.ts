@@ -1,10 +1,10 @@
 import 'dotenv/config';
 import { makeTwitterRequest } from './client';
-import { TwitterEndpointOutputSchemas } from './endpoints/types';
 import type {
-	TweetsCreateResponse,
 	TweetsCreateReplyResponse,
+	TweetsCreateResponse,
 } from './endpoints/types';
+import { TwitterEndpointOutputSchemas } from './endpoints/types';
 
 const TEST_ACCESS_TOKEN = process.env.TWITTER_ACCESS_TOKEN!;
 

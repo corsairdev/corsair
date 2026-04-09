@@ -62,7 +62,11 @@ function createGraphSubscription(
 				});
 				res.on('end', () => {
 					const parsed = JSON.parse(data || '{}') as Record<string, unknown>;
-					if (!res.statusCode || res.statusCode < 200 || res.statusCode >= 300) {
+					if (
+						!res.statusCode ||
+						res.statusCode < 200 ||
+						res.statusCode >= 300
+					) {
 						reject(
 							new Error(
 								`Subscription creation failed (${res.statusCode ?? 'unknown'}): ${JSON.stringify(parsed)}`,
@@ -136,7 +140,9 @@ function waitForOAuthCode(port: number): Promise<string> {
 
 			if (error) {
 				res.writeHead(400, { 'Content-Type': 'text/html' });
-				res.end(`<html><body><h2>Authorization failed: ${error}</h2><p>You can close this tab.</p></body></html>`);
+				res.end(
+					`<html><body><h2>Authorization failed: ${error}</h2><p>You can close this tab.</p></body></html>`,
+				);
 				server.close();
 				reject(new Error(`OAuth error: ${error}`));
 				return;
@@ -144,12 +150,16 @@ function waitForOAuthCode(port: number): Promise<string> {
 
 			if (code) {
 				res.writeHead(200, { 'Content-Type': 'text/html' });
-				res.end('<html><body><h2>Authorization successful!</h2><p>You can close this tab and return to the terminal.</p></body></html>');
+				res.end(
+					'<html><body><h2>Authorization successful!</h2><p>You can close this tab and return to the terminal.</p></body></html>',
+				);
 				server.close();
 				resolve(code);
 			} else {
 				res.writeHead(400, { 'Content-Type': 'text/html' });
-				res.end('<html><body><h2>No code received.</h2><p>You can close this tab.</p></body></html>');
+				res.end(
+					'<html><body><h2>No code received.</h2><p>You can close this tab.</p></body></html>',
+				);
 			}
 		});
 
@@ -196,10 +206,17 @@ function exchangeCodeForTokens(
 		}
 
 		const req = https.request(
-			{ hostname: tokenUrl.hostname, path: tokenUrl.pathname, method: 'POST', headers },
+			{
+				hostname: tokenUrl.hostname,
+				path: tokenUrl.pathname,
+				method: 'POST',
+				headers,
+			},
 			(res) => {
 				let data = '';
-				res.on('data', (chunk) => { data += chunk; });
+				res.on('data', (chunk) => {
+					data += chunk;
+				});
 				res.on('end', () => {
 					if (res.statusCode !== 200) {
 						reject(new Error(`Token exchange failed: ${data}`));
@@ -209,7 +226,9 @@ function exchangeCodeForTokens(
 				});
 			},
 		);
-		req.on('error', (error) => reject(new Error(`Request failed: ${error.message}`)));
+		req.on('error', (error) =>
+			reject(new Error(`Request failed: ${error.message}`)),
+		);
 		req.write(postData);
 		req.end();
 	});
@@ -219,11 +238,13 @@ function exchangeCodeForTokens(
 // Internal config loader
 // ─────────────────────────────────────────────────────────────────────────────
 
-async function extractInternalConfig(cwd: string): Promise<CorsairInternalConfig> {
+async function extractInternalConfig(
+	cwd: string,
+): Promise<CorsairInternalConfig> {
 	const instance = await getCorsairInstance({ cwd, shouldThrowOnError: true });
-	const internal = (instance as Record<string | symbol, unknown>)[CORSAIR_INTERNAL] as
-		| CorsairInternalConfig
-		| undefined;
+	const internal = (instance as Record<string | symbol, unknown>)[
+		CORSAIR_INTERNAL
+	] as CorsairInternalConfig | undefined;
 	if (!internal) {
 		throw new Error(
 			'Could not read internal config from Corsair instance. Make sure you are using the latest version of corsair.',
@@ -247,7 +268,11 @@ async function ensureIntegration(
 
 	const dek = generateDEK();
 	const encryptedDek = await encryptDEK(dek, kek);
-	const row = await orm.integrations.create({ name: pluginId, config: {}, dek: encryptedDek });
+	const row = await orm.integrations.create({
+		name: pluginId,
+		config: {},
+		dek: encryptedDek,
+	});
 	return { id: row.id };
 }
 
@@ -258,12 +283,20 @@ async function ensureAccount(
 	kek: string,
 ): Promise<void> {
 	const orm = createCorsairOrm(database);
-	const existing = await orm.accounts.findOne({ tenant_id: tenantId, integration_id: integrationId });
+	const existing = await orm.accounts.findOne({
+		tenant_id: tenantId,
+		integration_id: integrationId,
+	});
 	if (existing) return;
 
 	const dek = generateDEK();
 	const encryptedDek = await encryptDEK(dek, kek);
-	await orm.accounts.create({ tenant_id: tenantId, integration_id: integrationId, config: {}, dek: encryptedDek });
+	await orm.accounts.create({
+		tenant_id: tenantId,
+		integration_id: integrationId,
+		config: {},
+		dek: encryptedDek,
+	});
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -293,13 +326,17 @@ async function oauthGetUrl(
 
 	const clientId = await integrationKm.get_client_id();
 	if (!clientId) {
-		out({ error: `client_id not set for '${plugin.id}'. Run: corsair setup --${plugin.id} client_id=YOUR_CLIENT_ID` });
+		out({
+			error: `client_id not set for '${plugin.id}'. Run: corsair setup --${plugin.id} client_id=YOUR_CLIENT_ID`,
+		});
 		return;
 	}
 
 	const clientSecret = await integrationKm.get_client_secret();
 	if (!clientSecret) {
-		out({ error: `client_secret not set for '${plugin.id}'. Run: corsair setup --${plugin.id} client_secret=YOUR_CLIENT_SECRET` });
+		out({
+			error: `client_secret not set for '${plugin.id}'. Run: corsair setup --${plugin.id} client_secret=YOUR_CLIENT_SECRET`,
+		});
 		return;
 	}
 
@@ -307,7 +344,9 @@ async function oauthGetUrl(
 	if (oauthCfg.requiresRegisteredRedirect) {
 		const stored = await integrationKm.get_redirect_url();
 		if (!stored) {
-			out({ error: `redirect_url required for '${plugin.id}'. Run: corsair setup --${plugin.id} redirect_url=YOUR_REDIRECT_URI` });
+			out({
+				error: `redirect_url required for '${plugin.id}'. Run: corsair setup --${plugin.id} redirect_url=YOUR_REDIRECT_URI`,
+			});
 			return;
 		}
 		redirectUri = stored;
@@ -329,23 +368,53 @@ async function oauthGetUrl(
 	// If the redirect is a localhost URL with a port, spin up a local server and wait for the code.
 	// This works whether the redirect is dynamic (requiresRegisteredRedirect: false) or a
 	// pre-registered localhost:PORT URL (requiresRegisteredRedirect: true, e.g. Notion).
-	const localhostPortMatch = redirectUri.match(/^https?:\/\/(?:localhost|127\.0\.0\.1):(\d+)/);
-	const localhostPort = localhostPortMatch?.[1] ? parseInt(localhostPortMatch[1], 10) : null;
+	const localhostPortMatch = redirectUri.match(
+		/^https?:\/\/(?:localhost|127\.0\.0\.1):(\d+)/,
+	);
+	const localhostPort = localhostPortMatch?.[1]
+		? parseInt(localhostPortMatch[1], 10)
+		: null;
 	if (localhostPort) {
-		out({ status: 'pending_oauth', authUrl, redirectUri, plugin: plugin.id, tenant: tenantId, note: 'Open authUrl in a browser. Tokens will be saved automatically once authorized.' });
+		out({
+			status: 'pending_oauth',
+			authUrl,
+			redirectUri,
+			plugin: plugin.id,
+			tenant: tenantId,
+			note: 'Open authUrl in a browser. Tokens will be saved automatically once authorized.',
+		});
 		let code: string;
 		try {
 			code = await waitForOAuthCode(localhostPort);
 		} catch (err) {
-			out({ error: `Authorization failed: ${err instanceof Error ? err.message : String(err)}` });
+			out({
+				error: `Authorization failed: ${err instanceof Error ? err.message : String(err)}`,
+			});
 			return;
 		}
-		await oauthExchangeCode(database, plugin, kek, tenantId, code, redirectUri, clientId, clientSecret, oauthCfg);
+		await oauthExchangeCode(
+			database,
+			plugin,
+			kek,
+			tenantId,
+			code,
+			redirectUri,
+			clientId,
+			clientSecret,
+			oauthCfg,
+		);
 		return;
 	}
 
 	// Registered redirect is not a localhost:PORT URL — can't auto-capture, output the URL
-	out({ status: 'needs_code', authUrl, redirectUri, plugin: plugin.id, tenant: tenantId, note: 'Open authUrl, complete auth, then run: corsair auth --plugin=<id> --code=CODE' });
+	out({
+		status: 'needs_code',
+		authUrl,
+		redirectUri,
+		plugin: plugin.id,
+		tenant: tenantId,
+		note: 'Open authUrl, complete auth, then run: corsair auth --plugin=<id> --code=CODE',
+	});
 }
 
 async function oauthExchangeCode(
@@ -359,16 +428,30 @@ async function oauthExchangeCode(
 	clientSecret: string,
 	oauthCfg: OAuthConfig,
 ): Promise<void> {
-	let tokens: { access_token?: string; refresh_token?: string; expires_in?: number };
+	let tokens: {
+		access_token?: string;
+		refresh_token?: string;
+		expires_in?: number;
+	};
 	try {
-		tokens = await exchangeCodeForTokens(code, clientId, clientSecret, oauthCfg, redirectUri);
+		tokens = await exchangeCodeForTokens(
+			code,
+			clientId,
+			clientSecret,
+			oauthCfg,
+			redirectUri,
+		);
 	} catch (err) {
-		out({ error: `Token exchange failed: ${err instanceof Error ? err.message : String(err)}` });
+		out({
+			error: `Token exchange failed: ${err instanceof Error ? err.message : String(err)}`,
+		});
 		return;
 	}
 
 	if (!tokens.access_token) {
-		out({ error: `No access_token in response from ${oauthCfg.providerName}.` });
+		out({
+			error: `No access_token in response from ${oauthCfg.providerName}.`,
+		});
 		return;
 	}
 
@@ -383,8 +466,12 @@ async function oauthExchangeCode(
 	});
 
 	await accountKm.set_access_token(tokens.access_token);
-	if (tokens.refresh_token) await accountKm.set_refresh_token(tokens.refresh_token);
-	if (tokens.expires_in) await accountKm.set_expires_at((Math.floor(Date.now() / 1000) + tokens.expires_in).toString());
+	if (tokens.refresh_token)
+		await accountKm.set_refresh_token(tokens.refresh_token);
+	if (tokens.expires_in)
+		await accountKm.set_expires_at(
+			(Math.floor(Date.now() / 1000) + tokens.expires_in).toString(),
+		);
 
 	out({ status: 'success', plugin: plugin.id, tenant: tenantId });
 }
@@ -416,11 +503,23 @@ async function oauthWithCode(
 	const redirectUri = (await integrationKm.get_redirect_url()) ?? '';
 
 	if (!clientId || !clientSecret) {
-		out({ error: `client_id and client_secret must be set before exchanging a code.` });
+		out({
+			error: `client_id and client_secret must be set before exchanging a code.`,
+		});
 		return;
 	}
 
-	await oauthExchangeCode(database, plugin, kek, tenantId, code, redirectUri, clientId, clientSecret, oauthCfg);
+	await oauthExchangeCode(
+		database,
+		plugin,
+		kek,
+		tenantId,
+		code,
+		redirectUri,
+		clientId,
+		clientSecret,
+		oauthCfg,
+	);
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -450,7 +549,8 @@ async function getCredentials(
 		result.redirect_url = await integrationKm.get_redirect_url();
 		for (const field of extraIntegrationFields) {
 			const fn = (integrationKm as Record<string, unknown>)[`get_${field}`];
-			if (typeof fn === 'function') result[field] = await (fn as () => Promise<string | null>)();
+			if (typeof fn === 'function')
+				result[field] = await (fn as () => Promise<string | null>)();
 		}
 
 		const extraAccountFields = getCustomAccountFields(plugin, authType);
@@ -468,7 +568,8 @@ async function getCredentials(
 		result.webhook_signature = await accountKm.get_webhook_signature();
 		for (const field of extraAccountFields) {
 			const fn = (accountKm as Record<string, unknown>)[`get_${field}`];
-			if (typeof fn === 'function') result[field] = await (fn as () => Promise<string | null>)();
+			if (typeof fn === 'function')
+				result[field] = await (fn as () => Promise<string | null>)();
 		}
 	} else if (authType === 'api_key') {
 		const extraAccountFields = getCustomAccountFields(plugin, authType);
@@ -499,7 +600,10 @@ async function getCredentials(
 	// Mask values for display
 	const masked: Record<string, string | null> = {};
 	for (const [k, v] of Object.entries(result)) {
-		if (!v) { masked[k] = null; continue; }
+		if (!v) {
+			masked[k] = null;
+			continue;
+		}
 		masked[k] = v.length <= 9 ? '***' : `${v.slice(0, 6)}...${v.slice(-3)}`;
 	}
 
@@ -543,14 +647,20 @@ export async function runAuth({
 	if (!pluginIdArg) {
 		out({
 			error: 'No plugin specified. Use --plugin=<id>.',
-			available: plugins.map((pl) => ({ id: pl.id, authType: getAuthType(pl) })),
+			available: plugins.map((pl) => ({
+				id: pl.id,
+				authType: getAuthType(pl),
+			})),
 		});
 		process.exit(1);
 	}
 
 	const plugin = plugins.find((pl) => pl.id === pluginIdArg);
 	if (!plugin) {
-		out({ error: `Plugin '${pluginIdArg}' not found.`, available: plugins.map((pl) => pl.id) });
+		out({
+			error: `Plugin '${pluginIdArg}' not found.`,
+			available: plugins.map((pl) => pl.id),
+		});
 		process.exit(1);
 	}
 
@@ -566,7 +676,9 @@ export async function runAuth({
 	const authType = getAuthType(plugin);
 
 	if (authType !== 'oauth_2') {
-		out({ error: `'corsair auth' is for OAuth flows. Plugin '${plugin.id}' uses '${authType}'. Set credentials via: corsair setup --${plugin.id} <field>=<value>` });
+		out({
+			error: `'corsair auth' is for OAuth flows. Plugin '${plugin.id}' uses '${authType}'. Set credentials via: corsair setup --${plugin.id} <field>=<value>`,
+		});
 		return;
 	}
 

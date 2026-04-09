@@ -19,11 +19,13 @@ const USERS_LIST_QUERY = `
   }
 `;
 
-export const getCurrent: FirefliesEndpoints['usersGetCurrent'] = async (ctx, input) => {
-	const response = await makeFirefliesRequest<FirefliesEndpointOutputs['usersGetCurrent']>(
-		USER_QUERY,
-		ctx.key,
-	);
+export const getCurrent: FirefliesEndpoints['usersGetCurrent'] = async (
+	ctx,
+	input,
+) => {
+	const response = await makeFirefliesRequest<
+		FirefliesEndpointOutputs['usersGetCurrent']
+	>(USER_QUERY, ctx.key);
 
 	if (ctx.db.users && response.user) {
 		try {
@@ -35,15 +37,19 @@ export const getCurrent: FirefliesEndpoints['usersGetCurrent'] = async (ctx, inp
 		}
 	}
 
-	await logEventFromContext(ctx, 'fireflies.users.getCurrent', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'fireflies.users.getCurrent',
+		{ ...input },
+		'completed',
+	);
 	return response;
 };
 
 export const list: FirefliesEndpoints['usersList'] = async (ctx, input) => {
-	const response = await makeFirefliesRequest<FirefliesEndpointOutputs['usersList']>(
-		USERS_LIST_QUERY,
-		ctx.key,
-	);
+	const response = await makeFirefliesRequest<
+		FirefliesEndpointOutputs['usersList']
+	>(USERS_LIST_QUERY, ctx.key);
 
 	if (ctx.db.users) {
 		for (const user of response.users) {
@@ -55,6 +61,11 @@ export const list: FirefliesEndpoints['usersList'] = async (ctx, input) => {
 		}
 	}
 
-	await logEventFromContext(ctx, 'fireflies.users.list', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'fireflies.users.list',
+		{ ...input },
+		'completed',
+	);
 	return response;
 };

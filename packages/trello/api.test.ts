@@ -53,7 +53,10 @@ beforeAll(async () => {
 		const newBoard = await makeTrelloRequest<BoardsCreateResponse>(
 			'boards',
 			TEST_TOKEN,
-			{ method: 'POST', body: { name: 'Corsair Test Board', defaultLists: true } },
+			{
+				method: 'POST',
+				body: { name: 'Corsair Test Board', defaultLists: true },
+			},
 			TEST_API_KEY,
 		);
 		boardId = newBoard.id;
@@ -74,7 +77,10 @@ beforeAll(async () => {
 			const newList = await makeTrelloRequest<ListsCreateResponse>(
 				'lists',
 				TEST_TOKEN,
-				{ method: 'POST', body: { name: 'Corsair Test List', idBoard: boardId } },
+				{
+					method: 'POST',
+					body: { name: 'Corsair Test List', idBoard: boardId },
+				},
 				TEST_API_KEY,
 			);
 			listId = newList.id;
@@ -108,7 +114,12 @@ beforeAll(async () => {
 afterAll(async () => {
 	const del = async (path: string) => {
 		try {
-			await makeTrelloRequest(`${path}`, TEST_TOKEN, { method: 'DELETE' }, TEST_API_KEY);
+			await makeTrelloRequest(
+				`${path}`,
+				TEST_TOKEN,
+				{ method: 'DELETE' },
+				TEST_API_KEY,
+			);
 		} catch (e) {
 			console.warn(`Teardown: failed to delete ${path}`, e);
 		}
@@ -142,7 +153,10 @@ describe('Trello API Type Tests', () => {
 			const response = await makeTrelloRequest<BoardsListResponse>(
 				'members/me/boards',
 				TEST_TOKEN,
-				{ method: 'GET', query: { filter: 'all', fields: 'id,name,closed,url' } },
+				{
+					method: 'GET',
+					query: { filter: 'all', fields: 'id,name,closed,url' },
+				},
 				TEST_API_KEY,
 			);
 

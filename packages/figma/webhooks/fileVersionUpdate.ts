@@ -29,13 +29,16 @@ export const fileVersionUpdate: FigmaWebhooks['fileVersionUpdate'] = {
 
 		if (ctx.db.versions && event.version_id) {
 			try {
-				const entity = await ctx.db.versions.upsertByEntityId(event.version_id, {
-					id: event.version_id,
-					file_key: event.file_key,
-					label: event.label,
-					description: event.description,
-					created_at: event.timestamp,
-				});
+				const entity = await ctx.db.versions.upsertByEntityId(
+					event.version_id,
+					{
+						id: event.version_id,
+						file_key: event.file_key,
+						label: event.label,
+						description: event.description,
+						created_at: event.timestamp,
+					},
+				);
 				corsairEntityId = entity?.id || '';
 			} catch (error) {
 				console.warn('Failed to save version from webhook to database:', error);
@@ -51,7 +54,10 @@ export const fileVersionUpdate: FigmaWebhooks['fileVersionUpdate'] = {
 					version: event.version_id,
 				});
 			} catch (error) {
-				console.warn('Failed to save file metadata from version update to database:', error);
+				console.warn(
+					'Failed to save file metadata from version update to database:',
+					error,
+				);
 			}
 		}
 

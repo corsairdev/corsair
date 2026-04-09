@@ -1,8 +1,9 @@
-import { ApiError } from 'corsair/http';
-import type { ApiRequestOptions } from 'corsair/http';
-import type { OpenAPIConfig } from 'corsair/http';
-import type { RateLimitConfig } from 'corsair/http';
-import { request } from 'corsair/http';
+import type {
+	ApiRequestOptions,
+	OpenAPIConfig,
+	RateLimitConfig,
+} from 'corsair/http';
+import { ApiError, request } from 'corsair/http';
 
 export class DropboxAPIError extends Error {
 	constructor(
@@ -29,7 +30,11 @@ const DROPBOX_RATE_LIMIT_CONFIG: RateLimitConfig = {
 
 function extractDropboxError(error: ApiError): string {
 	// any cast needed because ApiError.body is typed as `any` (untyped API response)
-	const body = error.body as Record<string, unknown> | string | undefined | null;
+	const body = error.body as
+		| Record<string, unknown>
+		| string
+		| undefined
+		| null;
 	if (!body) return `[${error.status}] ${error.message}`;
 
 	// Dropbox error responses with a string body (e.g. HTML error pages from gateway)
@@ -38,7 +43,8 @@ function extractDropboxError(error: ApiError): string {
 		return `[${error.status}] ${preview}`;
 	}
 
-	if (typeof body.error_summary === 'string') return `[${error.status}] ${body.error_summary}`;
+	if (typeof body.error_summary === 'string')
+		return `[${error.status}] ${body.error_summary}`;
 
 	// Dropbox wraps structured errors in an `error` object with `.tag`
 	const errObj = body.error;

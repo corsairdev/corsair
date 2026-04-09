@@ -1,4 +1,5 @@
 import type {
+	AuthTypes,
 	BindEndpoints,
 	BindWebhooks,
 	CorsairEndpoint,
@@ -7,13 +8,11 @@ import type {
 	CorsairPluginContext,
 	CorsairWebhook,
 	KeyBuilderContext,
+	PickAuth,
 	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
-	RequiredPluginEndpointSchemas,
-	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
-import type { AuthTypes, PickAuth } from 'corsair/core';
 import {
 	Annotations,
 	Charts,

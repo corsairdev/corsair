@@ -1,7 +1,10 @@
-import type { HackerNewsEndpoints } from '..';
-import type { HackerNewsEndpointOutputs } from './types';
 import { logEventFromContext } from 'corsair/core';
-import { makeHackerNewsFirebaseRequest, makeHackerNewsAlgoliaRequest } from '../client';
+import type { HackerNewsEndpoints } from '..';
+import {
+	makeHackerNewsAlgoliaRequest,
+	makeHackerNewsFirebaseRequest,
+} from '../client';
+import type { HackerNewsEndpointOutputs } from './types';
 
 // Raw Algolia item shape returned by the /items/{id} endpoint
 type AlgoliaRawItem = {
@@ -19,12 +22,17 @@ type AlgoliaRawItem = {
 	children?: AlgoliaRawItem[];
 };
 
-function truncate(text: string | null | undefined, maxLen: number): string | null | undefined {
+function truncate(
+	text: string | null | undefined,
+	maxLen: number,
+): string | null | undefined {
 	if (!text || text.length <= maxLen) return text;
 	return text.slice(0, maxLen) + '...';
 }
 
-type TransformedItem = NonNullable<HackerNewsEndpointOutputs['itemsGetWithId']['item']>;
+type TransformedItem = NonNullable<
+	HackerNewsEndpointOutputs['itemsGetWithId']['item']
+>;
 
 function transformAlgoliaItem(
 	raw: AlgoliaRawItem,
@@ -45,7 +53,13 @@ function transformAlgoliaItem(
 		processedChildren = [];
 	} else {
 		processedChildren = slicedChildren.map((child) =>
-			transformAlgoliaItem(child, depth + 1, maxDepth, maxChildren, truncateText),
+			transformAlgoliaItem(
+				child,
+				depth + 1,
+				maxDepth,
+				maxChildren,
+				truncateText,
+			),
 		);
 	}
 
@@ -71,9 +85,9 @@ function transformAlgoliaItem(
 
 export const get: HackerNewsEndpoints['itemsGet'] = async (ctx, input) => {
 	// Firebase returns the raw item object or null if deleted/not found
-	const raw = await makeHackerNewsFirebaseRequest<HackerNewsEndpointOutputs['itemsGet'] | null>(
-		`item/${input.id}.json`,
-	);
+	const raw = await makeHackerNewsFirebaseRequest<
+		HackerNewsEndpointOutputs['itemsGet'] | null
+	>(`item/${input.id}.json`);
 
 	if (!raw) {
 		throw new Error(`Item ${input.id} not found`);
@@ -87,11 +101,19 @@ export const get: HackerNewsEndpoints['itemsGet'] = async (ctx, input) => {
 		}
 	}
 
-	await logEventFromContext(ctx, 'hackernews.items.get', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'hackernews.items.get',
+		{ ...input },
+		'completed',
+	);
 	return raw;
 };
 
-export const getWithId: HackerNewsEndpoints['itemsGetWithId'] = async (ctx, input) => {
+export const getWithId: HackerNewsEndpoints['itemsGetWithId'] = async (
+	ctx,
+	input,
+) => {
 	const maxDepth = input.max_depth ?? 2;
 	const maxChildren = input.max_children ?? 10;
 	const truncateText = input.truncate_text ?? true;
@@ -99,9 +121,16 @@ export const getWithId: HackerNewsEndpoints['itemsGetWithId'] = async (ctx, inpu
 	let raw: AlgoliaRawItem | null = null;
 	try {
 		// Algolia items endpoint returns nested item with children
-		raw = await makeHackerNewsAlgoliaRequest<AlgoliaRawItem>(`items/${input.item_id}`);
+		raw = await makeHackerNewsAlgoliaRequest<AlgoliaRawItem>(
+			`items/${input.item_id}`,
+		);
 	} catch (error) {
-		await logEventFromContext(ctx, 'hackernews.items.getWithId', { ...input }, 'completed');
+		await logEventFromContext(
+			ctx,
+			'hackernews.items.getWithId',
+			{ ...input },
+			'completed',
+		);
 		return {
 			found: false,
 			error_message: error instanceof Error ? error.message : 'Unknown error',
@@ -109,11 +138,22 @@ export const getWithId: HackerNewsEndpoints['itemsGetWithId'] = async (ctx, inpu
 	}
 
 	if (!raw || !raw.id) {
-		await logEventFromContext(ctx, 'hackernews.items.getWithId', { ...input }, 'completed');
+		await logEventFromContext(
+			ctx,
+			'hackernews.items.getWithId',
+			{ ...input },
+			'completed',
+		);
 		return { found: false, error_message: 'Item not found' };
 	}
 
-	const transformed = transformAlgoliaItem(raw, 0, maxDepth, maxChildren, truncateText);
+	const transformed = transformAlgoliaItem(
+		raw,
+		0,
+		maxDepth,
+		maxChildren,
+		truncateText,
+	);
 
 	if (ctx.db.items) {
 		try {
@@ -131,19 +171,32 @@ export const getWithId: HackerNewsEndpoints['itemsGetWithId'] = async (ctx, inpu
 		}
 	}
 
-	await logEventFromContext(ctx, 'hackernews.items.getWithId', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'hackernews.items.getWithId',
+		{ ...input },
+		'completed',
+	);
 	return {
 		found: true,
 		item: transformed,
 	};
 };
 
-export const getMaxId: HackerNewsEndpoints['itemsGetMaxId'] = async (ctx, input) => {
+export const getMaxId: HackerNewsEndpoints['itemsGetMaxId'] = async (
+	ctx,
+	input,
+) => {
 	// Firebase returns a plain integer for maxitem
 	const maxId = await makeHackerNewsFirebaseRequest<number>('maxitem.json', {
 		query: { print: input.print },
 	});
 
-	await logEventFromContext(ctx, 'hackernews.items.getMaxId', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'hackernews.items.getMaxId',
+		{ ...input },
+		'completed',
+	);
 	return { max_item_id: maxId };
 };

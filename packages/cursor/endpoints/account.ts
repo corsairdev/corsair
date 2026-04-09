@@ -1,7 +1,7 @@
-import type { CursorEndpoints } from '..';
-import type { CursorEndpointOutputs } from './types';
 import { logEventFromContext } from 'corsair/core';
+import type { CursorEndpoints } from '..';
 import { makeCursorRequest } from '../client';
+import type { CursorEndpointOutputs } from './types';
 
 export const getMe: CursorEndpoints['accountGetMe'] = async (ctx, _input) => {
 	const response = await makeCursorRequest<

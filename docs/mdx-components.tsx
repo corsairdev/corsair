@@ -6,12 +6,12 @@ import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
 import { TypeTable } from 'fumadocs-ui/components/type-table';
 import defaultComponents from 'fumadocs-ui/mdx';
 import type { MDXComponents } from 'mdx/types';
+import { DbPanel, DbTabs } from '@/components/db-tabs';
+import { FrameworkPanel, FrameworkTabs } from '@/components/framework-tabs';
 import { KekGenerator } from '@/components/kek-generator';
-import { FrameworkTabs, FrameworkPanel } from '@/components/framework-tabs';
-import { DbTabs, DbPanel } from '@/components/db-tabs';
-import { SetupPromptBanner } from '@/components/setup-prompt-banner';
 import { PluginPromptBanner } from '@/components/plugin-prompt-banner';
 import { PmTabs } from '@/components/pm-tabs';
+import { SetupPromptBanner } from '@/components/setup-prompt-banner';
 
 export function useMDXComponents(components?: MDXComponents): MDXComponents {
 	return {

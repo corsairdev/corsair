@@ -1,15 +1,15 @@
-import type { TeamsEndpoints } from '..';
 import { logEventFromContext } from 'corsair/core';
+import type { TeamsEndpoints } from '..';
 import { makeTeamsRequest } from '../client';
 import type { TeamsEndpointOutputs } from './types';
 
 export const list: TeamsEndpoints['teamsList'] = async (ctx, input) => {
 	const { filter, select, top, skipToken } = input;
 	const query = {
-		...(filter && { '$filter': filter }),
-		...(select && { '$select': select }),
-		...(top && { '$top': top }),
-		...(skipToken && { '$skiptoken': skipToken }),
+		...(filter && { $filter: filter }),
+		...(select && { $select: select }),
+		...(top && { $top: top }),
+		...(skipToken && { $skiptoken: skipToken }),
 	};
 
 	const result = await makeTeamsRequest<TeamsEndpointOutputs['teamsList']>(
@@ -89,7 +89,12 @@ export const create: TeamsEndpoints['teamsCreate'] = async (ctx, input) => {
 		}
 	}
 
-	await logEventFromContext(ctx, 'teams.teams.create', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'teams.teams.create',
+		{ ...input },
+		'completed',
+	);
 	return result ?? {};
 };
 
@@ -117,7 +122,12 @@ export const update: TeamsEndpoints['teamsUpdate'] = async (ctx, input) => {
 		}
 	}
 
-	await logEventFromContext(ctx, 'teams.teams.update', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'teams.teams.update',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
@@ -136,6 +146,11 @@ export const remove: TeamsEndpoints['teamsDelete'] = async (ctx, input) => {
 		}
 	}
 
-	await logEventFromContext(ctx, 'teams.teams.delete', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'teams.teams.delete',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };

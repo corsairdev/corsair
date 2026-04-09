@@ -4,11 +4,9 @@ import { makeRazorpayRequest } from '../client';
 import type { RazorpayEndpointOutputs } from './types';
 
 export const get: RazorpayEndpoints['paymentsGet'] = async (ctx, input) => {
-	const result = await makeRazorpayRequest<RazorpayEndpointOutputs['paymentsGet']>(
-		`payments/${input.id}`,
-		ctx.key,
-		{ method: 'GET' },
-	);
+	const result = await makeRazorpayRequest<
+		RazorpayEndpointOutputs['paymentsGet']
+	>(`payments/${input.id}`, ctx.key, { method: 'GET' });
 
 	if (result.id && ctx.db.payments) {
 		try {
@@ -24,22 +22,23 @@ export const get: RazorpayEndpoints['paymentsGet'] = async (ctx, input) => {
 		}
 	}
 
-	await logEventFromContext(ctx, 'razorpay.payments.get', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'razorpay.payments.get',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
 export const list: RazorpayEndpoints['paymentsList'] = async (ctx, input) => {
-	const result = await makeRazorpayRequest<RazorpayEndpointOutputs['paymentsList']>(
-		'payments',
-		ctx.key,
-		{
-			method: 'GET',
-			query: input,
-		},
-	);
+	const result = await makeRazorpayRequest<
+		RazorpayEndpointOutputs['paymentsList']
+	>('payments', ctx.key, {
+		method: 'GET',
+		query: input,
+	});
 
-	if (ctx.db.payments) {
-		try {
 	if (ctx.db.payments) {
 		for (const payment of result.items) {
 			try {
@@ -54,7 +53,6 @@ export const list: RazorpayEndpoints['paymentsList'] = async (ctx, input) => {
 				console.warn('Failed to save Razorpay payment to database:', error);
 			}
 		}
-	}
 	}
 
 	await logEventFromContext(

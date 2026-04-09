@@ -6,10 +6,7 @@ export const listUpdated: TrelloWebhooks['listUpdated'] = {
 	match: createTrelloActionMatch('updateList'),
 
 	handler: async (ctx, request) => {
-		const verification = verifyTrelloWebhookSignature(
-			request,
-			ctx.key,
-		);
+		const verification = verifyTrelloWebhookSignature(request, ctx.key);
 		if (!verification.valid) {
 			return {
 				success: false,

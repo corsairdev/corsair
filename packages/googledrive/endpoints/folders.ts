@@ -124,17 +124,15 @@ export const deleteFolder: GoogleDriveEndpoints['foldersDelete'] = async (
 	ctx,
 	input,
 ) => {
-	await makeAuthenticatedGoogleDriveRequest<GoogleDriveEndpointOutputs['foldersDelete']>(
-		`/files/${input.folderId}`,
-		ctx,
-		{
-			method: 'DELETE',
-			query: {
-				supportsAllDrives: input.supportsAllDrives,
-				supportsTeamDrives: input.supportsTeamDrives,
-			},
+	await makeAuthenticatedGoogleDriveRequest<
+		GoogleDriveEndpointOutputs['foldersDelete']
+	>(`/files/${input.folderId}`, ctx, {
+		method: 'DELETE',
+		query: {
+			supportsAllDrives: input.supportsAllDrives,
+			supportsTeamDrives: input.supportsTeamDrives,
 		},
-	);
+	});
 
 	if (ctx.db.folders) {
 		try {

@@ -1,12 +1,12 @@
-import type { TeamsEndpoints } from '..';
 import { logEventFromContext } from 'corsair/core';
+import type { TeamsEndpoints } from '..';
 import { makeTeamsRequest } from '../client';
 import type { TeamsEndpointOutputs } from './types';
 
 export const list: TeamsEndpoints['membersList'] = async (ctx, input) => {
 	const { teamId, filter } = input;
 	const query = {
-		...(filter && { '$filter': filter }),
+		...(filter && { $filter: filter }),
 	};
 
 	const result = await makeTeamsRequest<TeamsEndpointOutputs['membersList']>(
@@ -54,7 +54,12 @@ export const get: TeamsEndpoints['membersGet'] = async (ctx, input) => {
 		}
 	}
 
-	await logEventFromContext(ctx, 'teams.members.get', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'teams.members.get',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
@@ -88,7 +93,12 @@ export const add: TeamsEndpoints['membersAdd'] = async (ctx, input) => {
 		}
 	}
 
-	await logEventFromContext(ctx, 'teams.members.add', { teamId, userId }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'teams.members.add',
+		{ teamId, userId },
+		'completed',
+	);
 	return result;
 };
 
@@ -109,6 +119,11 @@ export const remove: TeamsEndpoints['membersRemove'] = async (ctx, input) => {
 		}
 	}
 
-	await logEventFromContext(ctx, 'teams.members.remove', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'teams.members.remove',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };

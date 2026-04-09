@@ -9,7 +9,8 @@ import {
 import { getCorsairInstance } from './index';
 
 const GRAPH_API_BASE = 'https://graph.microsoft.com/v1.0';
-const MICROSOFT_TOKEN_URL = 'https://login.microsoftonline.com/common/oauth2/v2.0/token';
+const MICROSOFT_TOKEN_URL =
+	'https://login.microsoftonline.com/common/oauth2/v2.0/token';
 
 // SharePoint webhook subscriptions expire after a maximum of 180 days
 const SHAREPOINT_MAX_EXPIRY_DAYS = 180;
@@ -22,7 +23,11 @@ async function refreshToken(
 	clientId: string,
 	clientSecret: string,
 	refreshToken: string,
-): Promise<{ access_token: string; refresh_token?: string; expires_in: number }> {
+): Promise<{
+	access_token: string;
+	refresh_token?: string;
+	expires_in: number;
+}> {
 	const response = await fetch(MICROSOFT_TOKEN_URL, {
 		method: 'POST',
 		headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -40,14 +45,20 @@ async function refreshToken(
 	}
 
 	// Microsoft token response is untyped; cast to extract the expected fields
-	return response.json() as Promise<{ access_token: string; refresh_token?: string; expires_in: number }>;
+	return response.json() as Promise<{
+		access_token: string;
+		refresh_token?: string;
+		expires_in: number;
+	}>;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Internal helpers
 // ─────────────────────────────────────────────────────────────────────────────
 
-async function extractInternalConfig(cwd: string): Promise<CorsairInternalConfig> {
+async function extractInternalConfig(
+	cwd: string,
+): Promise<CorsairInternalConfig> {
 	const instance = await getCorsairInstance({ cwd, shouldThrowOnError: true });
 
 	// CORSAIR_INTERNAL is a well-known symbol; cast to access it on the instance
@@ -103,7 +114,9 @@ async function fetchSiteLists(
 	}
 
 	// Graph API response is untyped; cast to extract the value array
-	const data = (await response.json()) as { value?: Array<{ id: string; displayName: string; webUrl?: string }> };
+	const data = (await response.json()) as {
+		value?: Array<{ id: string; displayName: string; webUrl?: string }>;
+	};
 	return data.value ?? [];
 }
 
@@ -151,7 +164,11 @@ async function createSharepointSubscription(
 // CLI command
 // ─────────────────────────────────────────────────────────────────────────────
 
-export async function runSharepointSubscribe({ cwd }: { cwd: string }): Promise<void> {
+export async function runSharepointSubscribe({
+	cwd,
+}: {
+	cwd: string;
+}): Promise<void> {
 	p.intro('Corsair — SharePoint Webhook Subscribe');
 
 	const spin = p.spinner();
@@ -191,7 +208,10 @@ export async function runSharepointSubscribe({ cwd }: { cwd: string }): Promise<
 		defaultValue: 'default',
 		placeholder: 'default',
 	});
-	if (p.isCancel(tenantId)) { p.cancel('Operation cancelled.'); process.exit(0); }
+	if (p.isCancel(tenantId)) {
+		p.cancel('Operation cancelled.');
+		process.exit(0);
+	}
 
 	const credSpin = p.spinner();
 	credSpin.start('Fetching SharePoint credentials...');
@@ -211,7 +231,13 @@ export async function runSharepointSubscribe({ cwd }: { cwd: string }): Promise<
 		database,
 	});
 
-	const [clientId, clientSecret, storedAccessToken, expiresAt, storedRefreshToken] = await Promise.all([
+	const [
+		clientId,
+		clientSecret,
+		storedAccessToken,
+		expiresAt,
+		storedRefreshToken,
+	] = await Promise.all([
 		integrationKm.get_client_id(),
 		integrationKm.get_client_secret(),
 		accountKm.get_access_token(),
@@ -221,14 +247,18 @@ export async function runSharepointSubscribe({ cwd }: { cwd: string }): Promise<
 
 	if (!storedRefreshToken) {
 		credSpin.stop('Missing credentials.');
-		p.log.error('No refresh token found. Run: pnpm corsair auth --plugin=sharepoint');
+		p.log.error(
+			'No refresh token found. Run: pnpm corsair auth --plugin=sharepoint',
+		);
 		p.outro('');
 		process.exit(1);
 	}
 
 	if (!clientId || !clientSecret) {
 		credSpin.stop('Missing credentials.');
-		p.log.error('Client ID/Secret not configured. Run: pnpm corsair setup --sharepoint');
+		p.log.error(
+			'Client ID/Secret not configured. Run: pnpm corsair setup --sharepoint',
+		);
 		p.outro('');
 		process.exit(1);
 	}
@@ -236,12 +266,17 @@ export async function runSharepointSubscribe({ cwd }: { cwd: string }): Promise<
 	// Refresh if the stored token is missing or expired
 	let accessToken = storedAccessToken;
 	const now = Math.floor(Date.now() / 1000);
-	const needsRefresh = !accessToken || !expiresAt || Number(expiresAt) <= now + 5 * 60;
+	const needsRefresh =
+		!accessToken || !expiresAt || Number(expiresAt) <= now + 5 * 60;
 
 	if (needsRefresh) {
 		credSpin.message('Refreshing access token...');
 		try {
-			const tokenData = await refreshToken(clientId, clientSecret, storedRefreshToken);
+			const tokenData = await refreshToken(
+				clientId,
+				clientSecret,
+				storedRefreshToken,
+			);
 			accessToken = tokenData.access_token;
 			await accountKm.set_access_token(tokenData.access_token);
 			await accountKm.set_expires_at(String(now + tokenData.expires_in));
@@ -259,7 +294,9 @@ export async function runSharepointSubscribe({ cwd }: { cwd: string }): Promise<
 
 	if (!accessToken) {
 		credSpin.stop('Missing credentials.');
-		p.log.error('Could not obtain a valid access token. Run: pnpm corsair auth --plugin=sharepoint');
+		p.log.error(
+			'Could not obtain a valid access token. Run: pnpm corsair auth --plugin=sharepoint',
+		);
 		p.outro('');
 		process.exit(1);
 	}
@@ -267,27 +304,36 @@ export async function runSharepointSubscribe({ cwd }: { cwd: string }): Promise<
 	credSpin.stop('Credentials loaded.');
 
 	// Site ID — pre-filled from plugin options if available
-	const pluginOptions = sharepointPlugin.options as Record<string, unknown> | undefined;
+	const pluginOptions = sharepointPlugin.options as
+		| Record<string, unknown>
+		| undefined;
 	const defaultSiteId = (pluginOptions?.siteId as string | undefined) ?? '';
 
 	const siteId = await p.text({
 		message: 'Enter SharePoint site ID:',
 		defaultValue: defaultSiteId,
-		placeholder: 'corsairdev.sharepoint.com:/sites/MySite  or  tenant.sharepoint.com,siteGuid,webGuid',
+		placeholder:
+			'corsairdev.sharepoint.com:/sites/MySite  or  tenant.sharepoint.com,siteGuid,webGuid',
 		validate: (v) => {
 			if (!v || v.trim().length === 0) return 'Site ID is required';
 		},
 	});
-	if (p.isCancel(siteId)) { p.cancel('Operation cancelled.'); process.exit(0); }
+	if (p.isCancel(siteId)) {
+		p.cancel('Operation cancelled.');
+		process.exit(0);
+	}
 
 	// Fetch lists from the site so the user can pick by name rather than entering a raw GUID
 	const listSpin = p.spinner();
 	listSpin.start('Fetching lists from site...');
 
-	let siteLists: Array<{ id: string; displayName: string; webUrl?: string }> = [];
+	let siteLists: Array<{ id: string; displayName: string; webUrl?: string }> =
+		[];
 	try {
 		siteLists = await fetchSiteLists(accessToken, siteId as string);
-		listSpin.stop(`Found ${siteLists.length} list${siteLists.length === 1 ? '' : 's'}.`);
+		listSpin.stop(
+			`Found ${siteLists.length} list${siteLists.length === 1 ? '' : 's'}.`,
+		);
 	} catch (error) {
 		listSpin.stop('Could not fetch lists.');
 		p.log.warn(error instanceof Error ? error.message : String(error));
@@ -304,7 +350,10 @@ export async function runSharepointSubscribe({ cwd }: { cwd: string }): Promise<
 				hint: l.id,
 			})),
 		});
-		if (p.isCancel(picked)) { p.cancel('Operation cancelled.'); process.exit(0); }
+		if (p.isCancel(picked)) {
+			p.cancel('Operation cancelled.');
+			process.exit(0);
+		}
 		listId = picked as string;
 	} else {
 		// Fallback: manual GUID entry if list fetch failed or returned nothing
@@ -315,7 +364,10 @@ export async function runSharepointSubscribe({ cwd }: { cwd: string }): Promise<
 				if (!v || v.trim().length === 0) return 'List ID is required';
 			},
 		});
-		if (p.isCancel(manualId)) { p.cancel('Operation cancelled.'); process.exit(0); }
+		if (p.isCancel(manualId)) {
+			p.cancel('Operation cancelled.');
+			process.exit(0);
+		}
 		listId = manualId as string;
 	}
 
@@ -325,10 +377,14 @@ export async function runSharepointSubscribe({ cwd }: { cwd: string }): Promise<
 		placeholder: 'https://abc123.ngrok-free.app/api/webhook',
 		validate: (v) => {
 			if (!v || v.trim().length === 0) return 'Webhook URL is required';
-			if (!v.startsWith('https://')) return 'URL must start with https:// (SharePoint requires HTTPS)';
+			if (!v.startsWith('https://'))
+				return 'URL must start with https:// (SharePoint requires HTTPS)';
 		},
 	});
-	if (p.isCancel(webhookUrl)) { p.cancel('Operation cancelled.'); process.exit(0); }
+	if (p.isCancel(webhookUrl)) {
+		p.cancel('Operation cancelled.');
+		process.exit(0);
+	}
 
 	// Expiry days
 	const expiryInput = await p.text({
@@ -338,10 +394,14 @@ export async function runSharepointSubscribe({ cwd }: { cwd: string }): Promise<
 		validate: (v) => {
 			const n = Number(v);
 			if (isNaN(n) || n < 1) return 'Must be a positive number';
-			if (n > SHAREPOINT_MAX_EXPIRY_DAYS) return `Max expiry is ${SHAREPOINT_MAX_EXPIRY_DAYS} days`;
+			if (n > SHAREPOINT_MAX_EXPIRY_DAYS)
+				return `Max expiry is ${SHAREPOINT_MAX_EXPIRY_DAYS} days`;
 		},
 	});
-	if (p.isCancel(expiryInput)) { p.cancel('Operation cancelled.'); process.exit(0); }
+	if (p.isCancel(expiryInput)) {
+		p.cancel('Operation cancelled.');
+		process.exit(0);
+	}
 
 	// clientState (webhook secret used to verify incoming payloads)
 	const autoSecret = crypto.randomBytes(16).toString('hex');
@@ -350,7 +410,10 @@ export async function runSharepointSubscribe({ cwd }: { cwd: string }): Promise<
 		defaultValue: autoSecret,
 		placeholder: autoSecret,
 	});
-	if (p.isCancel(clientState)) { p.cancel('Operation cancelled.'); process.exit(0); }
+	if (p.isCancel(clientState)) {
+		p.cancel('Operation cancelled.');
+		process.exit(0);
+	}
 
 	const expiryDays = Number(expiryInput);
 

@@ -6,13 +6,11 @@ import type {
 	CorsairPluginContext,
 	CorsairWebhook,
 	KeyBuilderContext,
+	PickAuth,
 	PluginPermissionsConfig,
 	RawWebhookRequest,
 	RequiredPluginEndpointMeta,
-	RequiredPluginEndpointSchemas,
-	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
-import type { PickAuth } from 'corsair/core';
 import { getValidAccessToken } from './client';
 import type {
 	GoogleDriveEndpointInputs,
@@ -394,13 +392,17 @@ export function googledrive<const T extends GoogleDrivePluginOptions>(
 				]);
 
 				if (!refreshToken) {
-					throw new Error('[corsair:googledrive] No refresh token. Cannot get access token.');
+					throw new Error(
+						'[corsair:googledrive] No refresh token. Cannot get access token.',
+					);
 				}
 
 				const res = await ctx.keys.get_integration_credentials();
 
 				if (!res.client_id || !res.client_secret) {
-					throw new Error('[corsair:googledrive] No client id or client secret');
+					throw new Error(
+						'[corsair:googledrive] No client id or client secret',
+					);
 				}
 
 				try {

@@ -26,13 +26,9 @@ export const getInvitation: CalendlyEndpoints['organizationsGetInvitation'] =
 	async (ctx, input) => {
 		const result = await makeCalendlyRequest<
 			CalendlyEndpointOutputs['organizationsGetInvitation']
-		>(
-			`organizations/${input.org_uuid}/invitations/${input.uuid}`,
-			ctx.key,
-			{
-				method: 'GET',
-			},
-		);
+		>(`organizations/${input.org_uuid}/invitations/${input.uuid}`, ctx.key, {
+			method: 'GET',
+		});
 
 		if (result.resource && ctx.db.orgInvitations) {
 			try {
@@ -177,7 +173,7 @@ export const listMemberships: CalendlyEndpoints['organizationsListMemberships'] 
 			CalendlyEndpointOutputs['organizationsListMemberships']
 		>('organization_memberships', ctx.key, {
 			method: 'GET',
-			query: input
+			query: input,
 		});
 
 		if (result.collection) {
@@ -247,10 +243,7 @@ export const deleteMembership: CalendlyEndpoints['organizationsDeleteMembership'
 			try {
 				await ctx.db.orgMemberships.deleteByEntityId(input.uuid);
 			} catch (error) {
-				console.warn(
-					'Failed to delete org membership from database:',
-					error,
-				);
+				console.warn('Failed to delete org membership from database:', error);
 			}
 		}
 
@@ -307,29 +300,24 @@ export const invite: CalendlyEndpoints['organizationsInvite'] = async (
 
 // removeMember and deleteMembership are identical operations (DELETE /organization_memberships/{uuid});
 // delegate to avoid duplicating the implementation.
-export const removeMember: CalendlyEndpoints['organizationsRemoveMember'] =
-	(ctx, input) => deleteMembership(ctx, input);
+export const removeMember: CalendlyEndpoints['organizationsRemoveMember'] = (
+	ctx,
+	input,
+) => deleteMembership(ctx, input);
 
 export const revokeInvitation: CalendlyEndpoints['organizationsRevokeInvitation'] =
 	async (ctx, input) => {
 		const result = await makeCalendlyRequest<
 			CalendlyEndpointOutputs['organizationsRevokeInvitation']
-		>(
-			`organizations/${input.org_uuid}/invitations/${input.uuid}`,
-			ctx.key,
-			{
-				method: 'DELETE',
-			},
-		);
+		>(`organizations/${input.org_uuid}/invitations/${input.uuid}`, ctx.key, {
+			method: 'DELETE',
+		});
 
 		if (ctx.db.orgInvitations) {
 			try {
 				await ctx.db.orgInvitations.deleteByEntityId(input.uuid);
 			} catch (error) {
-				console.warn(
-					'Failed to delete org invitation from database:',
-					error,
-				);
+				console.warn('Failed to delete org invitation from database:', error);
 			}
 		}
 

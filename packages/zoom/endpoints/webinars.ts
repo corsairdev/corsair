@@ -39,7 +39,7 @@ export const list: ZoomEndpoints['webinarsList'] = async (ctx, input) => {
 		ctx.key,
 		{
 			method: 'GET',
-			query: input
+			query: input,
 		},
 	);
 

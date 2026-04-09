@@ -7,12 +7,10 @@ import type {
 	CorsairPluginContext,
 	CorsairWebhook,
 	KeyBuilderContext,
+	PickAuth,
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
-	RequiredPluginEndpointSchemas,
-	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
-import type { PickAuth } from 'corsair/core';
 import { Domains, Emails } from './endpoints';
 import type {
 	ResendEndpointInputs,

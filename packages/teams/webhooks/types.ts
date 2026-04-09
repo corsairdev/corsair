@@ -1,14 +1,16 @@
-import { z } from 'zod';
 import type { CorsairWebhookMatcher, RawWebhookRequest } from 'corsair/core';
+import { z } from 'zod';
 
 // ── Graph API Notification Schemas ────────────────────────────────────────────
 
-export const TeamsResourceDataSchema = z.object({
-	'@odata.type': z.string().optional(),
-	'@odata.id': z.string().optional(),
-	'@odata.etag': z.string().optional(),
-	id: z.string(),
-}).passthrough();
+export const TeamsResourceDataSchema = z
+	.object({
+		'@odata.type': z.string().optional(),
+		'@odata.id': z.string().optional(),
+		'@odata.etag': z.string().optional(),
+		id: z.string(),
+	})
+	.passthrough();
 
 export const TeamsNotificationSchema = z.object({
 	subscriptionId: z.string(),
@@ -25,7 +27,9 @@ export const TeamsWebhookNotificationPayloadSchema = z.object({
 });
 
 export type TeamsNotification = z.infer<typeof TeamsNotificationSchema>;
-export type TeamsWebhookNotificationPayload = z.infer<typeof TeamsWebhookNotificationPayloadSchema>;
+export type TeamsWebhookNotificationPayload = z.infer<
+	typeof TeamsWebhookNotificationPayloadSchema
+>;
 
 // ── Channel Message Event ─────────────────────────────────────────────────────
 
@@ -35,13 +39,18 @@ export const TeamsChannelMessageEventSchema = z.object({
 	resource: z.string(),
 	tenantId: z.string().optional(),
 	clientState: z.string().optional(),
-	resourceData: z.object({
-		'@odata.type': z.literal('#Microsoft.Graph.chatMessage').optional(),
-		'@odata.id': z.string().optional(),
-		id: z.string(),
-	}).passthrough().optional(),
+	resourceData: z
+		.object({
+			'@odata.type': z.literal('#Microsoft.Graph.chatMessage').optional(),
+			'@odata.id': z.string().optional(),
+			id: z.string(),
+		})
+		.passthrough()
+		.optional(),
 });
-export type TeamsChannelMessageEvent = z.infer<typeof TeamsChannelMessageEventSchema>;
+export type TeamsChannelMessageEvent = z.infer<
+	typeof TeamsChannelMessageEventSchema
+>;
 
 // ── Chat Message Event ────────────────────────────────────────────────────────
 
@@ -51,11 +60,14 @@ export const TeamsChatMessageEventSchema = z.object({
 	resource: z.string(),
 	tenantId: z.string().optional(),
 	clientState: z.string().optional(),
-	resourceData: z.object({
-		'@odata.type': z.literal('#Microsoft.Graph.chatMessage').optional(),
-		'@odata.id': z.string().optional(),
-		id: z.string(),
-	}).passthrough().optional(),
+	resourceData: z
+		.object({
+			'@odata.type': z.literal('#Microsoft.Graph.chatMessage').optional(),
+			'@odata.id': z.string().optional(),
+			id: z.string(),
+		})
+		.passthrough()
+		.optional(),
 });
 export type TeamsChatMessageEvent = z.infer<typeof TeamsChatMessageEventSchema>;
 
@@ -67,13 +79,18 @@ export const TeamsChannelCreatedEventSchema = z.object({
 	resource: z.string(),
 	tenantId: z.string().optional(),
 	clientState: z.string().optional(),
-	resourceData: z.object({
-		'@odata.type': z.literal('#Microsoft.Graph.channel').optional(),
-		'@odata.id': z.string().optional(),
-		id: z.string(),
-	}).passthrough().optional(),
+	resourceData: z
+		.object({
+			'@odata.type': z.literal('#Microsoft.Graph.channel').optional(),
+			'@odata.id': z.string().optional(),
+			id: z.string(),
+		})
+		.passthrough()
+		.optional(),
 });
-export type TeamsChannelCreatedEvent = z.infer<typeof TeamsChannelCreatedEventSchema>;
+export type TeamsChannelCreatedEvent = z.infer<
+	typeof TeamsChannelCreatedEventSchema
+>;
 
 // ── Membership Changed Event ──────────────────────────────────────────────────
 
@@ -83,13 +100,20 @@ export const TeamsMembershipChangedEventSchema = z.object({
 	resource: z.string(),
 	tenantId: z.string().optional(),
 	clientState: z.string().optional(),
-	resourceData: z.object({
-		'@odata.type': z.literal('#Microsoft.Graph.aadUserConversationMember').optional(),
-		'@odata.id': z.string().optional(),
-		id: z.string(),
-	}).passthrough().optional(),
+	resourceData: z
+		.object({
+			'@odata.type': z
+				.literal('#Microsoft.Graph.aadUserConversationMember')
+				.optional(),
+			'@odata.id': z.string().optional(),
+			id: z.string(),
+		})
+		.passthrough()
+		.optional(),
 });
-export type TeamsMembershipChangedEvent = z.infer<typeof TeamsMembershipChangedEventSchema>;
+export type TeamsMembershipChangedEvent = z.infer<
+	typeof TeamsMembershipChangedEventSchema
+>;
 
 // ── Webhook Payload Wrapper ───────────────────────────────────────────────────
 
@@ -146,13 +170,18 @@ export function createTeamsNotificationMatch(
 			if (!n || typeof n !== 'object') return false;
 			// Safe after the null + typeof object guard above
 			const notification = n as Record<string, unknown>;
-			const resource = typeof notification['resource'] === 'string' ? notification['resource'] : '';
+			const resource =
+				typeof notification['resource'] === 'string'
+					? notification['resource']
+					: '';
 			if (!resourcePattern.test(resource)) return false;
 			if (odataType === undefined) return true;
 			const resourceData = notification['resourceData'];
 			if (!resourceData || typeof resourceData !== 'object') return false;
 			// Safe after the null + typeof object guard above
-			return (resourceData as Record<string, unknown>)['@odata.type'] === odataType;
+			return (
+				(resourceData as Record<string, unknown>)['@odata.type'] === odataType
+			);
 		});
 	};
 }

@@ -3,8 +3,7 @@ import type { OutlookEndpoints } from '..';
 import { makeOutlookRequest } from '../client';
 import type { OutlookEndpointOutputs } from './types';
 
-const userPath = (userId?: string) =>
-	userId ? `/users/${userId}` : '/me';
+const userPath = (userId?: string) => (userId ? `/users/${userId}` : '/me');
 
 // ── DB record helper ──────────────────────────────────────────────────────────
 
@@ -22,70 +21,93 @@ const toCalendarRecord = (cal: OutlookEndpointOutputs['calendarsGet']) => ({
 
 // ── Endpoints ─────────────────────────────────────────────────────────────────
 
-export const createCalendar: OutlookEndpoints['calendarsCreate'] = async (ctx, input) => {
-	const result = await makeOutlookRequest<OutlookEndpointOutputs['calendarsCreate']>(
-		`${userPath(input.user_id)}/calendars`,
-		ctx.key,
-		{
-			method: 'POST',
-			body: {
-				name: input.name,
-				...(input.color && { color: input.color }),
-				...(input.hexColor && { hexColor: input.hexColor }),
-			},
+export const createCalendar: OutlookEndpoints['calendarsCreate'] = async (
+	ctx,
+	input,
+) => {
+	const result = await makeOutlookRequest<
+		OutlookEndpointOutputs['calendarsCreate']
+	>(`${userPath(input.user_id)}/calendars`, ctx.key, {
+		method: 'POST',
+		body: {
+			name: input.name,
+			...(input.color && { color: input.color }),
+			...(input.hexColor && { hexColor: input.hexColor }),
 		},
-	);
+	});
 
 	if (result.id && ctx.db.calendars) {
 		try {
-			await ctx.db.calendars.upsertByEntityId(result.id, toCalendarRecord(result));
+			await ctx.db.calendars.upsertByEntityId(
+				result.id,
+				toCalendarRecord(result),
+			);
 		} catch (error) {
 			console.warn('Failed to save calendar to database:', error);
 		}
 	}
 
-	await logEventFromContext(ctx, 'outlook.calendars.create', { name: input.name }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'outlook.calendars.create',
+		{ name: input.name },
+		'completed',
+	);
 	return result;
 };
 
-export const getCalendar: OutlookEndpoints['calendarsGet'] = async (ctx, input) => {
-	const result = await makeOutlookRequest<OutlookEndpointOutputs['calendarsGet']>(
-		`/me/calendars/${input.calendar_id}`,
-		ctx.key,
-	);
+export const getCalendar: OutlookEndpoints['calendarsGet'] = async (
+	ctx,
+	input,
+) => {
+	const result = await makeOutlookRequest<
+		OutlookEndpointOutputs['calendarsGet']
+	>(`/me/calendars/${input.calendar_id}`, ctx.key);
 
 	if (result.id && ctx.db.calendars) {
 		try {
-			await ctx.db.calendars.upsertByEntityId(result.id, toCalendarRecord(result));
+			await ctx.db.calendars.upsertByEntityId(
+				result.id,
+				toCalendarRecord(result),
+			);
 		} catch (error) {
 			console.warn('Failed to save calendar to database:', error);
 		}
 	}
 
-	await logEventFromContext(ctx, 'outlook.calendars.get', { calendar_id: input.calendar_id }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'outlook.calendars.get',
+		{ calendar_id: input.calendar_id },
+		'completed',
+	);
 	return result;
 };
 
-export const listCalendars: OutlookEndpoints['calendarsList'] = async (ctx, input) => {
-	const result = await makeOutlookRequest<OutlookEndpointOutputs['calendarsList']>(
-		`${userPath(input.user_id)}/calendars`,
-		ctx.key,
-		{
-			query: {
-				...(input.top && { $top: input.top }),
-				...(input.skip && { $skip: input.skip }),
-				...(input.filter && { $filter: input.filter }),
-				...(input.select?.length && { $select: input.select.join(',') }),
-				...(input.orderby?.length && { $orderby: input.orderby.join(',') }),
-			},
+export const listCalendars: OutlookEndpoints['calendarsList'] = async (
+	ctx,
+	input,
+) => {
+	const result = await makeOutlookRequest<
+		OutlookEndpointOutputs['calendarsList']
+	>(`${userPath(input.user_id)}/calendars`, ctx.key, {
+		query: {
+			...(input.top && { $top: input.top }),
+			...(input.skip && { $skip: input.skip }),
+			...(input.filter && { $filter: input.filter }),
+			...(input.select?.length && { $select: input.select.join(',') }),
+			...(input.orderby?.length && { $orderby: input.orderby.join(',') }),
 		},
-	);
+	});
 
 	if (result.value?.length && ctx.db.calendars) {
 		try {
 			for (const cal of result.value) {
 				if (cal.id) {
-					await ctx.db.calendars.upsertByEntityId(cal.id, toCalendarRecord(cal));
+					await ctx.db.calendars.upsertByEntityId(
+						cal.id,
+						toCalendarRecord(cal),
+					);
 				}
 			}
 		} catch (error) {
@@ -93,11 +115,19 @@ export const listCalendars: OutlookEndpoints['calendarsList'] = async (ctx, inpu
 		}
 	}
 
-	await logEventFromContext(ctx, 'outlook.calendars.list', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'outlook.calendars.list',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
-export const deleteCalendar: OutlookEndpoints['calendarsDelete'] = async (ctx, input) => {
+export const deleteCalendar: OutlookEndpoints['calendarsDelete'] = async (
+	ctx,
+	input,
+) => {
 	await makeOutlookRequest<void>(
 		`${userPath(input.user_id)}/calendars/${input.calendar_id}`,
 		ctx.key,
@@ -112,6 +142,11 @@ export const deleteCalendar: OutlookEndpoints['calendarsDelete'] = async (ctx, i
 		}
 	}
 
-	await logEventFromContext(ctx, 'outlook.calendars.delete', { calendar_id: input.calendar_id }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'outlook.calendars.delete',
+		{ calendar_id: input.calendar_id },
+		'completed',
+	);
 	return { success: true };
 };

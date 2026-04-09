@@ -44,7 +44,10 @@ export const listImports: ExaEndpoints['importsList'] = async (ctx, input) => {
 		ctx.key,
 		{
 			method: 'GET',
-			query: queryParams as Record<string, string | number | boolean | undefined>,
+			query: queryParams as Record<
+				string,
+				string | number | boolean | undefined
+			>,
 		},
 	);
 
@@ -62,12 +65,7 @@ export const listImports: ExaEndpoints['importsList'] = async (ctx, input) => {
 		}
 	}
 
-	await logEventFromContext(
-		ctx,
-		'exa.imports.list',
-		{ websetId },
-		'completed',
-	);
+	await logEventFromContext(ctx, 'exa.imports.list', { websetId }, 'completed');
 	return result;
 };
 

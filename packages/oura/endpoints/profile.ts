@@ -1,5 +1,5 @@
-import type { OuraEndpoints } from '..';
 import { logEventFromContext } from 'corsair/core';
+import type { OuraEndpoints } from '..';
 import { makeOuraRequest } from '../client';
 import type { OuraEndpointOutputs } from './types';
 

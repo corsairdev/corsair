@@ -1,7 +1,5 @@
-import { ApiError } from 'corsair/http';
-import type { ApiRequestOptions } from 'corsair/http';
-import type { OpenAPIConfig } from 'corsair/http';
-import { request } from 'corsair/http';
+import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
+import { ApiError, request } from 'corsair/http';
 
 export class FirefliesAPIError extends Error {
 	constructor(
@@ -33,7 +31,7 @@ export async function makeFirefliesRequest<T>(
 		CREDENTIALS: 'omit',
 		HEADERS: {
 			'Content-Type': 'application/json',
-			'Authorization': `Bearer ${apiKey}`,
+			Authorization: `Bearer ${apiKey}`,
 		},
 	};
 
@@ -51,7 +49,10 @@ export async function makeFirefliesRequest<T>(
 		if (response.errors && response.errors.length > 0) {
 			// non-null assertion safe: length > 0 check above
 			const firstError = response.errors[0]!;
-			throw new FirefliesAPIError(firstError.message, firstError.extensions?.code);
+			throw new FirefliesAPIError(
+				firstError.message,
+				firstError.extensions?.code,
+			);
 		}
 
 		if (response.data === undefined || response.data === null) {

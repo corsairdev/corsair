@@ -1,4 +1,4 @@
-import 'dotenv/config'
+import 'dotenv/config';
 import { makeDiscordRequest } from './client';
 import type {
 	Channel,

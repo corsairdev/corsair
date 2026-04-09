@@ -1,10 +1,10 @@
 import {
+	ZoomArchiveFile,
+	ZoomDevice,
 	ZoomMeeting,
 	ZoomParticipant,
 	ZoomRecording,
 	ZoomWebinar,
-	ZoomDevice,
-	ZoomArchiveFile,
 } from './database';
 
 export const ZoomSchema = {

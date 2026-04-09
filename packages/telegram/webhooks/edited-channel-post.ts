@@ -1,7 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import type { TelegramWebhooks } from '..';
-import { createTelegramMatch, verifyTelegramWebhookSignature } from './types';
 import type { TelegramUpdate } from './types';
+import { createTelegramMatch, verifyTelegramWebhookSignature } from './types';
 
 export const editedChannelPost: TelegramWebhooks['editedChannelPost'] = {
 	match: createTelegramMatch('edited_channel_post'),
@@ -44,7 +44,10 @@ export const editedChannelPost: TelegramWebhooks['editedChannelPost'] = {
 					},
 				);
 			} catch (error) {
-				console.warn('Failed to update edited channel post in database:', error);
+				console.warn(
+					'Failed to update edited channel post in database:',
+					error,
+				);
 			}
 		}
 

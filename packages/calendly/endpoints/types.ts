@@ -779,7 +779,10 @@ const UsersListBusyTimesResponseSchema = z.object({
 				buffered_start_time: z.string().optional(),
 				buffered_end_time: z.string().optional(),
 				// event can be a nested object (event details) or a URI string
-				event: z.union([z.string(), z.record(z.unknown())]).nullable().optional(),
+				event: z
+					.union([z.string(), z.record(z.unknown())])
+					.nullable()
+					.optional(),
 			})
 			.passthrough(),
 	),

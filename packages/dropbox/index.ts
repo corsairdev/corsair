@@ -7,15 +7,16 @@ import type {
 	CorsairPluginContext,
 	CorsairWebhook,
 	KeyBuilderContext,
+	PickAuth,
 	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
-	RequiredPluginEndpointSchemas,
-	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
-import type { PickAuth } from 'corsair/core';
 import { Files, Folders, Search } from './endpoints';
-import type { DropboxEndpointInputs, DropboxEndpointOutputs } from './endpoints/types';
+import type {
+	DropboxEndpointInputs,
+	DropboxEndpointOutputs,
+} from './endpoints/types';
 import {
 	DropboxEndpointInputSchemas,
 	DropboxEndpointOutputSchemas,
@@ -66,7 +67,10 @@ const dropboxEndpointsNested = {
 } as const;
 
 export type DropboxWebhooks = {
-	fileSystemChanged: DropboxWebhook<'fileSystemChanged', DropboxFileSystemChangedEvent>;
+	fileSystemChanged: DropboxWebhook<
+		'fileSystemChanged',
+		DropboxFileSystemChangedEvent
+	>;
 };
 
 const dropboxWebhooksNested = {
@@ -128,7 +132,8 @@ export const dropboxEndpointSchemas = {
 
 const dropboxWebhookSchemas = {
 	'filesystem.changed': {
-		description: 'A file or folder was added, modified, deleted, or a share link was created',
+		description:
+			'A file or folder was added, modified, deleted, or a share link was created',
 		payload: DropboxFileSystemChangedEventSchema,
 		response: DropboxFileSystemChangedEventSchema,
 	},
@@ -137,15 +142,24 @@ const dropboxWebhookSchemas = {
 const defaultAuthType = 'api_key' as const;
 
 const dropboxEndpointMeta = {
-	'files.copy': { riskLevel: 'write', description: 'Copy a file to a new location' },
+	'files.copy': {
+		riskLevel: 'write',
+		description: 'Copy a file to a new location',
+	},
 	'files.delete': {
 		riskLevel: 'destructive',
 		description: 'Delete a file [DESTRUCTIVE]',
 	},
 	'files.download': { riskLevel: 'read', description: 'Download a file' },
-	'files.move': { riskLevel: 'write', description: 'Move a file to a new location' },
+	'files.move': {
+		riskLevel: 'write',
+		description: 'Move a file to a new location',
+	},
 	'files.upload': { riskLevel: 'write', description: 'Upload a file' },
-	'folders.copy': { riskLevel: 'write', description: 'Copy a folder to a new location' },
+	'folders.copy': {
+		riskLevel: 'write',
+		description: 'Copy a folder to a new location',
+	},
 	'folders.create': { riskLevel: 'write', description: 'Create a new folder' },
 	'folders.delete': {
 		riskLevel: 'destructive',
@@ -197,7 +211,9 @@ export type DropboxContext = CorsairPluginContext<
 
 export type DropboxKeyBuilderContext = KeyBuilderContext<DropboxPluginOptions>;
 
-export type DropboxBoundEndpoints = BindEndpoints<typeof dropboxEndpointsNested>;
+export type DropboxBoundEndpoints = BindEndpoints<
+	typeof dropboxEndpointsNested
+>;
 
 type DropboxEndpoint<K extends keyof DropboxEndpointOutputs> = CorsairEndpoint<
 	DropboxContext,

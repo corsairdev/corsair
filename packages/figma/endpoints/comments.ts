@@ -13,7 +13,9 @@ export const add: FigmaEndpoints['commentsAdd'] = async (ctx, input) => {
 			body: {
 				...commentBody,
 				// any: client_meta can be absolute coords, node-relative, or region object
-				client_meta: commentBody.client_meta as Record<string, unknown> | undefined,
+				client_meta: commentBody.client_meta as
+					| Record<string, unknown>
+					| undefined,
 			},
 		},
 	);
@@ -32,11 +34,19 @@ export const add: FigmaEndpoints['commentsAdd'] = async (ctx, input) => {
 		}
 	}
 
-	await logEventFromContext(ctx, 'figma.comments.add', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'figma.comments.add',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
-export const deleteComment: FigmaEndpoints['commentsDelete'] = async (ctx, input) => {
+export const deleteComment: FigmaEndpoints['commentsDelete'] = async (
+	ctx,
+	input,
+) => {
 	const result = await makeFigmaRequest<FigmaEndpointOutputs['commentsDelete']>(
 		`v1/files/${input.file_key}/comments/${input.comment_id}`,
 		ctx.key,
@@ -57,7 +67,12 @@ export const deleteComment: FigmaEndpoints['commentsDelete'] = async (ctx, input
 		}
 	}
 
-	await logEventFromContext(ctx, 'figma.comments.delete', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'figma.comments.delete',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
@@ -86,39 +101,74 @@ export const list: FigmaEndpoints['commentsList'] = async (ctx, input) => {
 		}
 	}
 
-	await logEventFromContext(ctx, 'figma.comments.list', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'figma.comments.list',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
-export const getReactions: FigmaEndpoints['commentsGetReactions'] = async (ctx, input) => {
-	const result = await makeFigmaRequest<FigmaEndpointOutputs['commentsGetReactions']>(
+export const getReactions: FigmaEndpoints['commentsGetReactions'] = async (
+	ctx,
+	input,
+) => {
+	const result = await makeFigmaRequest<
+		FigmaEndpointOutputs['commentsGetReactions']
+	>(
 		`v1/files/${input.file_key}/comments/${input.comment_id}/reactions`,
 		ctx.key,
 		{ method: 'GET', query: { cursor: input.cursor } },
 	);
 
-	await logEventFromContext(ctx, 'figma.comments.getReactions', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'figma.comments.getReactions',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
-export const addReaction: FigmaEndpoints['commentsAddReaction'] = async (ctx, input) => {
-	const result = await makeFigmaRequest<FigmaEndpointOutputs['commentsAddReaction']>(
+export const addReaction: FigmaEndpoints['commentsAddReaction'] = async (
+	ctx,
+	input,
+) => {
+	const result = await makeFigmaRequest<
+		FigmaEndpointOutputs['commentsAddReaction']
+	>(
 		`v1/files/${input.file_key}/comments/${input.comment_id}/reactions`,
 		ctx.key,
 		{ method: 'POST', body: { emoji: input.emoji } },
 	);
 
-	await logEventFromContext(ctx, 'figma.comments.addReaction', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'figma.comments.addReaction',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
-export const deleteReaction: FigmaEndpoints['commentsDeleteReaction'] = async (ctx, input) => {
-	const result = await makeFigmaRequest<FigmaEndpointOutputs['commentsDeleteReaction']>(
+export const deleteReaction: FigmaEndpoints['commentsDeleteReaction'] = async (
+	ctx,
+	input,
+) => {
+	const result = await makeFigmaRequest<
+		FigmaEndpointOutputs['commentsDeleteReaction']
+	>(
 		`v1/files/${input.file_key}/comments/${input.comment_id}/reactions`,
 		ctx.key,
 		{ method: 'DELETE', query: { emoji: input.emoji } },
 	);
 
-	await logEventFromContext(ctx, 'figma.comments.deleteReaction', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'figma.comments.deleteReaction',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };

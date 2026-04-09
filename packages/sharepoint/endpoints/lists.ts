@@ -3,13 +3,20 @@ import type { SharepointEndpoints } from '..';
 import { makeGraphRequest } from '../client';
 import type { SharepointEndpointOutputs } from './types';
 
-export const listAll: SharepointEndpoints['listsListAll'] = async (ctx, input) => {
+export const listAll: SharepointEndpoints['listsListAll'] = async (
+	ctx,
+	input,
+) => {
 	const siteId = (await ctx.keys.get_site_id()) ?? ctx.options?.siteId ?? '';
-	const result = await makeGraphRequest<SharepointEndpointOutputs['listsListAll']>(
-		`/sites/${siteId}/lists`,
-		ctx.key,
-		{ method: 'GET', query: { $select: 'id,displayName,description,createdDateTime,lastModifiedDateTime,list,webUrl' } },
-	);
+	const result = await makeGraphRequest<
+		SharepointEndpointOutputs['listsListAll']
+	>(`/sites/${siteId}/lists`, ctx.key, {
+		method: 'GET',
+		query: {
+			$select:
+				'id,displayName,description,createdDateTime,lastModifiedDateTime,list,webUrl',
+		},
+	});
 
 	if (result.value && ctx.db.lists) {
 		try {
@@ -30,17 +37,25 @@ export const listAll: SharepointEndpoints['listsListAll'] = async (ctx, input) =
 		}
 	}
 
-	await logEventFromContext(ctx, 'sharepoint.lists.listAll', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'sharepoint.lists.listAll',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
-export const getByTitle: SharepointEndpoints['listsGetByTitle'] = async (ctx, input) => {
+export const getByTitle: SharepointEndpoints['listsGetByTitle'] = async (
+	ctx,
+	input,
+) => {
 	const siteId = (await ctx.keys.get_site_id()) ?? ctx.options?.siteId ?? '';
-	const result = await makeGraphRequest<SharepointEndpointOutputs['listsGetByTitle']>(
-		`/sites/${siteId}/lists/${encodeURIComponent(input.list_title)}`,
-		ctx.key,
-		{ method: 'GET' },
-	);
+	const result = await makeGraphRequest<
+		SharepointEndpointOutputs['listsGetByTitle']
+	>(`/sites/${siteId}/lists/${encodeURIComponent(input.list_title)}`, ctx.key, {
+		method: 'GET',
+	});
 
 	if (result.id && ctx.db.lists) {
 		try {
@@ -57,17 +72,23 @@ export const getByTitle: SharepointEndpoints['listsGetByTitle'] = async (ctx, in
 		}
 	}
 
-	await logEventFromContext(ctx, 'sharepoint.lists.getByTitle', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'sharepoint.lists.getByTitle',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
-export const getByGuid: SharepointEndpoints['listsGetByGuid'] = async (ctx, input) => {
+export const getByGuid: SharepointEndpoints['listsGetByGuid'] = async (
+	ctx,
+	input,
+) => {
 	const siteId = (await ctx.keys.get_site_id()) ?? ctx.options?.siteId ?? '';
-	const result = await makeGraphRequest<SharepointEndpointOutputs['listsGetByGuid']>(
-		`/sites/${siteId}/lists/${input.list_guid}`,
-		ctx.key,
-		{ method: 'GET' },
-	);
+	const result = await makeGraphRequest<
+		SharepointEndpointOutputs['listsGetByGuid']
+	>(`/sites/${siteId}/lists/${input.list_guid}`, ctx.key, { method: 'GET' });
 
 	if (result.id && ctx.db.lists) {
 		try {
@@ -84,11 +105,19 @@ export const getByGuid: SharepointEndpoints['listsGetByGuid'] = async (ctx, inpu
 		}
 	}
 
-	await logEventFromContext(ctx, 'sharepoint.lists.getByGuid', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'sharepoint.lists.getByGuid',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
-export const create: SharepointEndpoints['listsCreate'] = async (ctx, input) => {
+export const create: SharepointEndpoints['listsCreate'] = async (
+	ctx,
+	input,
+) => {
 	const siteId = (await ctx.keys.get_site_id()) ?? ctx.options?.siteId ?? '';
 	const body: Record<string, unknown> = {
 		displayName: input.title,
@@ -96,11 +125,9 @@ export const create: SharepointEndpoints['listsCreate'] = async (ctx, input) => 
 		...(input.description !== undefined && { description: input.description }),
 	};
 
-	const result = await makeGraphRequest<SharepointEndpointOutputs['listsCreate']>(
-		`/sites/${siteId}/lists`,
-		ctx.key,
-		{ method: 'POST', body },
-	);
+	const result = await makeGraphRequest<
+		SharepointEndpointOutputs['listsCreate']
+	>(`/sites/${siteId}/lists`, ctx.key, { method: 'POST', body });
 
 	if (result.id && ctx.db.lists) {
 		try {
@@ -117,11 +144,19 @@ export const create: SharepointEndpoints['listsCreate'] = async (ctx, input) => 
 		}
 	}
 
-	await logEventFromContext(ctx, 'sharepoint.lists.create', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'sharepoint.lists.create',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
-export const update: SharepointEndpoints['listsUpdate'] = async (ctx, input) => {
+export const update: SharepointEndpoints['listsUpdate'] = async (
+	ctx,
+	input,
+) => {
 	const siteId = (await ctx.keys.get_site_id()) ?? ctx.options?.siteId ?? '';
 
 	const body: Record<string, unknown> = {
@@ -157,11 +192,19 @@ export const update: SharepointEndpoints['listsUpdate'] = async (ctx, input) => 
 		}
 	}
 
-	await logEventFromContext(ctx, 'sharepoint.lists.update', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'sharepoint.lists.update',
+		{ ...input },
+		'completed',
+	);
 	return { success: true };
 };
 
-export const deleteList: SharepointEndpoints['listsDelete'] = async (ctx, input) => {
+export const deleteList: SharepointEndpoints['listsDelete'] = async (
+	ctx,
+	input,
+) => {
 	const siteId = (await ctx.keys.get_site_id()) ?? ctx.options?.siteId ?? '';
 	await makeGraphRequest<Record<string, unknown>>(
 		`/sites/${siteId}/lists/${input.list_guid}`,
@@ -177,11 +220,19 @@ export const deleteList: SharepointEndpoints['listsDelete'] = async (ctx, input)
 		}
 	}
 
-	await logEventFromContext(ctx, 'sharepoint.lists.delete', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'sharepoint.lists.delete',
+		{ ...input },
+		'completed',
+	);
 	return { success: true };
 };
 
-export const deleteByTitle: SharepointEndpoints['listsDeleteByTitle'] = async (ctx, input) => {
+export const deleteByTitle: SharepointEndpoints['listsDeleteByTitle'] = async (
+	ctx,
+	input,
+) => {
 	const siteId = (await ctx.keys.get_site_id()) ?? ctx.options?.siteId ?? '';
 
 	// Resolve list GUID before deletion so we can remove the DB record by entity ID
@@ -205,23 +256,41 @@ export const deleteByTitle: SharepointEndpoints['listsDeleteByTitle'] = async (c
 		}
 	}
 
-	await logEventFromContext(ctx, 'sharepoint.lists.deleteByTitle', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'sharepoint.lists.deleteByTitle',
+		{ ...input },
+		'completed',
+	);
 	return { success: true };
 };
 
-export const listColumns: SharepointEndpoints['listsListColumns'] = async (ctx, input) => {
+export const listColumns: SharepointEndpoints['listsListColumns'] = async (
+	ctx,
+	input,
+) => {
 	const siteId = (await ctx.keys.get_site_id()) ?? ctx.options?.siteId ?? '';
-	const result = await makeGraphRequest<SharepointEndpointOutputs['listsListColumns']>(
+	const result = await makeGraphRequest<
+		SharepointEndpointOutputs['listsListColumns']
+	>(
 		`/sites/${siteId}/lists/${encodeURIComponent(input.list_title)}/columns`,
 		ctx.key,
 		{ method: 'GET' },
 	);
 
-	await logEventFromContext(ctx, 'sharepoint.lists.listColumns', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'sharepoint.lists.listColumns',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
-export const getChanges: SharepointEndpoints['listsGetChanges'] = async (ctx, input) => {
+export const getChanges: SharepointEndpoints['listsGetChanges'] = async (
+	ctx,
+	input,
+) => {
 	const siteId = (await ctx.keys.get_site_id()) ?? ctx.options?.siteId ?? '';
 
 	// Use Graph delta API as the equivalent of SharePoint change log
@@ -233,30 +302,45 @@ export const getChanges: SharepointEndpoints['listsGetChanges'] = async (ctx, in
 		query.$deltatoken = input.change_token;
 	}
 
-	const result = await makeGraphRequest<SharepointEndpointOutputs['listsGetChanges']>(
+	const result = await makeGraphRequest<
+		SharepointEndpointOutputs['listsGetChanges']
+	>(
 		`/sites/${siteId}/lists/${encodeURIComponent(input.list_title)}/items/delta`,
 		ctx.key,
 		{ method: 'GET', query },
 	);
 
-	await logEventFromContext(ctx, 'sharepoint.lists.getChanges', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'sharepoint.lists.getChanges',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
-export const renderDataAsStream: SharepointEndpoints['listsRenderDataAsStream'] = async (ctx, input) => {
-	const siteId = (await ctx.keys.get_site_id()) ?? ctx.options?.siteId ?? '';
-	const query: Record<string, string | number | boolean | undefined> = {
-		$expand: 'fields',
+export const renderDataAsStream: SharepointEndpoints['listsRenderDataAsStream'] =
+	async (ctx, input) => {
+		const siteId = (await ctx.keys.get_site_id()) ?? ctx.options?.siteId ?? '';
+		const query: Record<string, string | number | boolean | undefined> = {
+			$expand: 'fields',
+		};
+		if (input.row_limit) query.$top = input.row_limit;
+
+		const result = await makeGraphRequest<
+			SharepointEndpointOutputs['listsRenderDataAsStream']
+		>(
+			`/sites/${siteId}/lists/${encodeURIComponent(input.list_title)}/items`,
+			ctx.key,
+			{ method: 'GET', query },
+		);
+
+		await logEventFromContext(
+			ctx,
+			'sharepoint.lists.renderDataAsStream',
+			{ ...input },
+			'completed',
+		);
+		// Graph API items response is compatible but TypeScript cannot infer the exact shape; cast to expected output
+		return result as SharepointEndpointOutputs['listsRenderDataAsStream'];
 	};
-	if (input.row_limit) query.$top = input.row_limit;
-
-	const result = await makeGraphRequest<SharepointEndpointOutputs['listsRenderDataAsStream']>(
-		`/sites/${siteId}/lists/${encodeURIComponent(input.list_title)}/items`,
-		ctx.key,
-		{ method: 'GET', query },
-	);
-
-	await logEventFromContext(ctx, 'sharepoint.lists.renderDataAsStream', { ...input }, 'completed');
-	// Graph API items response is compatible but TypeScript cannot infer the exact shape; cast to expected output
-	return result as SharepointEndpointOutputs['listsRenderDataAsStream'];
-};

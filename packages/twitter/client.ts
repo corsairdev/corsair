@@ -1,7 +1,5 @@
-import { ApiError } from 'corsair/http';
-import type { ApiRequestOptions } from 'corsair/http';
-import type { OpenAPIConfig } from 'corsair/http';
-import { request } from 'corsair/http';
+import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
+import { ApiError, request } from 'corsair/http';
 
 export class TwitterAPIError extends Error {
 	constructor(

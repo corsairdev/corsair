@@ -1,48 +1,17 @@
 import {
-	get as scheduledEventsGet,
-	list as scheduledEventsList,
-	cancel as scheduledEventsCancel,
-	deleteData as scheduledEventsDeleteData,
-} from './scheduled-events';
+	listEntries as activityLogList,
+	listOutgoingCommunications as activityLogListOutgoingCommunications,
+} from './activity-log';
 import {
-	get as eventTypesGet,
-	list as eventTypesList,
 	create as eventTypesCreate,
 	createOneOff as eventTypesCreateOneOff,
-	update as eventTypesUpdate,
-	updateAvailability as eventTypesUpdateAvailability,
+	get as eventTypesGet,
+	list as eventTypesList,
 	listAvailableTimes as eventTypesListAvailableTimes,
 	listHosts as eventTypesListHosts,
+	update as eventTypesUpdate,
+	updateAvailability as eventTypesUpdateAvailability,
 } from './event-types';
-import {
-	get as inviteesGet,
-	list as inviteesList,
-	create as inviteesCreate,
-	deleteData as inviteesDeleteData,
-	getNoShow as inviteesGetNoShow,
-	markNoShow as inviteesMarkNoShow,
-	deleteNoShow as inviteesDeleteNoShow,
-} from './invitees';
-import {
-	get as usersGet,
-	getCurrent as usersGetCurrent,
-	getAvailabilitySchedule as usersGetAvailabilitySchedule,
-	listAvailabilitySchedules as usersListAvailabilitySchedules,
-	listBusyTimes as usersListBusyTimes,
-	listMeetingLocations as usersListMeetingLocations,
-	listEventTypes as usersListEventTypes,
-} from './users';
-import {
-	get as organizationsGet,
-	getInvitation as organizationsGetInvitation,
-	getMembership as organizationsGetMembership,
-	listInvitations as organizationsListInvitations,
-	listMemberships as organizationsListMemberships,
-	deleteMembership as organizationsDeleteMembership,
-	invite as organizationsInvite,
-	removeMember as organizationsRemoveMember,
-	revokeInvitation as organizationsRevokeInvitation,
-} from './organizations';
 import {
 	get as groupsGet,
 	getRelationship as groupsGetRelationship,
@@ -50,26 +19,57 @@ import {
 	listRelationships as groupsListRelationships,
 } from './groups';
 import {
+	create as inviteesCreate,
+	deleteData as inviteesDeleteData,
+	deleteNoShow as inviteesDeleteNoShow,
+	get as inviteesGet,
+	getNoShow as inviteesGetNoShow,
+	list as inviteesList,
+	markNoShow as inviteesMarkNoShow,
+} from './invitees';
+import {
+	deleteMembership as organizationsDeleteMembership,
+	get as organizationsGet,
+	getInvitation as organizationsGetInvitation,
+	getMembership as organizationsGetMembership,
+	invite as organizationsInvite,
+	listInvitations as organizationsListInvitations,
+	listMemberships as organizationsListMemberships,
+	removeMember as organizationsRemoveMember,
+	revokeInvitation as organizationsRevokeInvitation,
+} from './organizations';
+import {
 	get as routingFormsGet,
+	getSampleWebhookData as routingFormsGetSampleWebhookData,
 	getSubmission as routingFormsGetSubmission,
 	list as routingFormsList,
-	getSampleWebhookData as routingFormsGetSampleWebhookData,
 } from './routing-forms';
 import {
+	cancel as scheduledEventsCancel,
+	deleteData as scheduledEventsDeleteData,
+	get as scheduledEventsGet,
+	list as scheduledEventsList,
+} from './scheduled-events';
+import {
 	create as schedulingLinksCreate,
-	createSingleUse as schedulingLinksCreateSingleUse,
 	createShare as schedulingLinksCreateShare,
+	createSingleUse as schedulingLinksCreateSingleUse,
 } from './scheduling-links';
 import {
+	get as usersGet,
+	getAvailabilitySchedule as usersGetAvailabilitySchedule,
+	getCurrent as usersGetCurrent,
+	listAvailabilitySchedules as usersListAvailabilitySchedules,
+	listBusyTimes as usersListBusyTimes,
+	listEventTypes as usersListEventTypes,
+	listMeetingLocations as usersListMeetingLocations,
+} from './users';
+import {
 	create as webhookSubscriptionsCreate,
+	deleteSubscription as webhookSubscriptionsDelete,
 	get as webhookSubscriptionsGet,
 	list as webhookSubscriptionsList,
-	deleteSubscription as webhookSubscriptionsDelete,
 } from './webhook-subscriptions';
-import {
-	listEntries as activityLogList,
-	listOutgoingCommunications as activityLogListOutgoingCommunications,
-} from './activity-log';
 
 export const ScheduledEvents = {
 	get: scheduledEventsGet,

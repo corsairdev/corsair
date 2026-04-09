@@ -22,38 +22,41 @@ export const get: StravaEndpoints['routesGet'] = async (ctx, input) => {
 	return result;
 };
 
-export const getStreams: StravaEndpoints['routesGetStreams'] = async (ctx, input) => {
-	const result = await makeStravaRequest<StravaEndpointOutputs['routesGetStreams']>(
-		`routes/${input.id}/streams`,
-		ctx.key,
-		{
-			method: 'GET',
-		},
-	);
+export const getStreams: StravaEndpoints['routesGetStreams'] = async (
+	ctx,
+	input,
+) => {
+	const result = await makeStravaRequest<
+		StravaEndpointOutputs['routesGetStreams']
+	>(`routes/${input.id}/streams`, ctx.key, {
+		method: 'GET',
+	});
 
 	return result;
 };
 
-export const exportGpx: StravaEndpoints['routesExportGpx'] = async (ctx, input) => {
-	const result = await makeStravaRequest<StravaEndpointOutputs['routesExportGpx']>(
-		`routes/${input.id}/export_gpx`,
-		ctx.key,
-		{
-			method: 'GET',
-		},
-	);
+export const exportGpx: StravaEndpoints['routesExportGpx'] = async (
+	ctx,
+	input,
+) => {
+	const result = await makeStravaRequest<
+		StravaEndpointOutputs['routesExportGpx']
+	>(`routes/${input.id}/export_gpx`, ctx.key, {
+		method: 'GET',
+	});
 
 	return result;
 };
 
-export const exportTcx: StravaEndpoints['routesExportTcx'] = async (ctx, input) => {
-	const result = await makeStravaRequest<StravaEndpointOutputs['routesExportTcx']>(
-		`routes/${input.id}/export_tcx`,
-		ctx.key,
-		{
-			method: 'GET',
-		},
-	);
+export const exportTcx: StravaEndpoints['routesExportTcx'] = async (
+	ctx,
+	input,
+) => {
+	const result = await makeStravaRequest<
+		StravaEndpointOutputs['routesExportTcx']
+	>(`routes/${input.id}/export_tcx`, ctx.key, {
+		method: 'GET',
+	});
 
 	return result;
 };

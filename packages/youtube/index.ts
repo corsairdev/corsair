@@ -1,4 +1,5 @@
 import type {
+	AuthTypes,
 	BindEndpoints,
 	BindWebhooks,
 	CorsairEndpoint,
@@ -7,35 +8,36 @@ import type {
 	CorsairPluginContext,
 	CorsairWebhook,
 	KeyBuilderContext,
+	PickAuth,
 	PluginAuthConfig,
+	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
-	PluginPermissionsConfig,
 } from 'corsair/core';
-import type { AuthTypes, PickAuth } from 'corsair/core';
 import {
-	PlaylistsEndpoints,
-	PlaylistItemsEndpoints,
-	VideosEndpoints,
+	CaptionsEndpoints,
 	ChannelsEndpoints,
 	CommentsEndpoints,
+	I18nEndpoints,
+	LiveChatEndpoints,
+	PlaylistImagesEndpoints,
+	PlaylistItemsEndpoints,
+	PlaylistsEndpoints,
 	SearchEndpoints,
 	SubscriptionsEndpoints,
 	VideoActionsEndpoints,
-	CaptionsEndpoints,
-	LiveChatEndpoints,
-	I18nEndpoints,
 	VideoCategoriesEndpoints,
-	PlaylistImagesEndpoints,
+	VideosEndpoints,
 	YoutubeEndpointInputSchemas,
 	YoutubeEndpointOutputSchemas,
 } from './endpoints';
-import type { YoutubeEndpointInputs, YoutubeEndpointOutputs } from './endpoints/types';
 import type {
-	YoutubeWebhookOutputs,
-} from './webhooks/types';
-import { YoutubeSchema } from './schema';
+	YoutubeEndpointInputs,
+	YoutubeEndpointOutputs,
+} from './endpoints/types';
 import { errorHandlers } from './error-handlers';
+import { YoutubeSchema } from './schema';
+import type { YoutubeWebhookOutputs } from './webhooks/types';
 
 // ── Context & Key Builder ─────────────────────────────────────────────────────
 
@@ -127,10 +129,11 @@ type YoutubeWebhook<
 	TEvent,
 > = CorsairWebhook<YoutubeContext, TEvent, YoutubeWebhookOutputs[K]>;
 
-export type YoutubeWebhooks = {
-};
+export type YoutubeWebhooks = {};
 
-export type YoutubeBoundEndpoints = BindEndpoints<typeof youtubeEndpointsNested>;
+export type YoutubeBoundEndpoints = BindEndpoints<
+	typeof youtubeEndpointsNested
+>;
 export type YoutubeBoundWebhooks = BindWebhooks<YoutubeWebhooks>;
 
 // ── Plugin Options ────────────────────────────────────────────────────────────
@@ -236,120 +239,412 @@ const youtubeEndpointsNested = {
 	},
 } as const;
 
-const youtubeWebhooksNested = {
-} as const;
+const youtubeWebhooksNested = {} as const;
 
 // ── Endpoint Schemas ──────────────────────────────────────────────────────────
 
 // Explicitly typed to avoid "inferred type exceeds serialization limit" TS error with 51 schemas
-export const youtubeEndpointSchemas: RequiredPluginEndpointSchemas<typeof youtubeEndpointsNested> = {
-	'playlists.list': { input: YoutubeEndpointInputSchemas.playlistsList, output: YoutubeEndpointOutputSchemas.playlistsList },
-	'playlists.create': { input: YoutubeEndpointInputSchemas.playlistsCreate, output: YoutubeEndpointOutputSchemas.playlistsCreate },
-	'playlists.update': { input: YoutubeEndpointInputSchemas.playlistsUpdate, output: YoutubeEndpointOutputSchemas.playlistsUpdate },
-	'playlists.delete': { input: YoutubeEndpointInputSchemas.playlistsDelete, output: YoutubeEndpointOutputSchemas.playlistsDelete },
-	'playlistItems.add': { input: YoutubeEndpointInputSchemas.playlistItemsAdd, output: YoutubeEndpointOutputSchemas.playlistItemsAdd },
-	'playlistItems.list': { input: YoutubeEndpointInputSchemas.playlistItemsList, output: YoutubeEndpointOutputSchemas.playlistItemsList },
-	'playlistItems.update': { input: YoutubeEndpointInputSchemas.playlistItemsUpdate, output: YoutubeEndpointOutputSchemas.playlistItemsUpdate },
-	'playlistItems.delete': { input: YoutubeEndpointInputSchemas.playlistItemsDelete, output: YoutubeEndpointOutputSchemas.playlistItemsDelete },
-	'videos.get': { input: YoutubeEndpointInputSchemas.videosGet, output: YoutubeEndpointOutputSchemas.videosGet },
-	'videos.getBatch': { input: YoutubeEndpointInputSchemas.videosGetBatch, output: YoutubeEndpointOutputSchemas.videosGetBatch },
-	'videos.list': { input: YoutubeEndpointInputSchemas.videosList, output: YoutubeEndpointOutputSchemas.videosList },
-	'videos.listMostPopular': { input: YoutubeEndpointInputSchemas.videosListMostPopular, output: YoutubeEndpointOutputSchemas.videosListMostPopular },
-	'videos.update': { input: YoutubeEndpointInputSchemas.videosUpdate, output: YoutubeEndpointOutputSchemas.videosUpdate },
-	'videos.upload': { input: YoutubeEndpointInputSchemas.videosUpload, output: YoutubeEndpointOutputSchemas.videosUpload },
-	'videos.uploadMultipart': { input: YoutubeEndpointInputSchemas.videosUploadMultipart, output: YoutubeEndpointOutputSchemas.videosUploadMultipart },
-	'videos.delete': { input: YoutubeEndpointInputSchemas.videosDelete, output: YoutubeEndpointOutputSchemas.videosDelete },
-	'channels.getStatistics': { input: YoutubeEndpointInputSchemas.channelsGetStatistics, output: YoutubeEndpointOutputSchemas.channelsGetStatistics },
-	'channels.getIdByHandle': { input: YoutubeEndpointInputSchemas.channelsGetIdByHandle, output: YoutubeEndpointOutputSchemas.channelsGetIdByHandle },
-	'channels.getActivities': { input: YoutubeEndpointInputSchemas.channelsGetActivities, output: YoutubeEndpointOutputSchemas.channelsGetActivities },
-	'channels.update': { input: YoutubeEndpointInputSchemas.channelsUpdate, output: YoutubeEndpointOutputSchemas.channelsUpdate },
-	'channelSections.list': { input: YoutubeEndpointInputSchemas.channelSectionsList, output: YoutubeEndpointOutputSchemas.channelSectionsList },
-	'channelSections.create': { input: YoutubeEndpointInputSchemas.channelSectionsCreate, output: YoutubeEndpointOutputSchemas.channelSectionsCreate },
-	'channelSections.update': { input: YoutubeEndpointInputSchemas.channelSectionsUpdate, output: YoutubeEndpointOutputSchemas.channelSectionsUpdate },
-	'channelSections.delete': { input: YoutubeEndpointInputSchemas.channelSectionsDelete, output: YoutubeEndpointOutputSchemas.channelSectionsDelete },
-	'comments.list': { input: YoutubeEndpointInputSchemas.commentsList, output: YoutubeEndpointOutputSchemas.commentsList },
-	'comments.threadsList': { input: YoutubeEndpointInputSchemas.commentThreadsList, output: YoutubeEndpointOutputSchemas.commentThreadsList },
-	'comments.threadsList2': { input: YoutubeEndpointInputSchemas.commentThreadsList2, output: YoutubeEndpointOutputSchemas.commentThreadsList2 },
-	'comments.post': { input: YoutubeEndpointInputSchemas.commentsPost, output: YoutubeEndpointOutputSchemas.commentsPost },
-	'comments.createReply': { input: YoutubeEndpointInputSchemas.commentsCreateReply, output: YoutubeEndpointOutputSchemas.commentsCreateReply },
-	'comments.update': { input: YoutubeEndpointInputSchemas.commentsUpdate, output: YoutubeEndpointOutputSchemas.commentsUpdate },
-	'comments.delete': { input: YoutubeEndpointInputSchemas.commentsDelete, output: YoutubeEndpointOutputSchemas.commentsDelete },
-	'comments.markSpam': { input: YoutubeEndpointInputSchemas.commentsMarkSpam, output: YoutubeEndpointOutputSchemas.commentsMarkSpam },
-	'comments.setModerationStatus': { input: YoutubeEndpointInputSchemas.commentsSetModerationStatus, output: YoutubeEndpointOutputSchemas.commentsSetModerationStatus },
-	'search.youtube': { input: YoutubeEndpointInputSchemas.searchYouTube, output: YoutubeEndpointOutputSchemas.searchYouTube },
-	'subscriptions.list': { input: YoutubeEndpointInputSchemas.subscriptionsList, output: YoutubeEndpointOutputSchemas.subscriptionsList },
-	'subscriptions.subscribe': { input: YoutubeEndpointInputSchemas.subscriptionsSubscribe, output: YoutubeEndpointOutputSchemas.subscriptionsSubscribe },
-	'subscriptions.unsubscribe': { input: YoutubeEndpointInputSchemas.subscriptionsUnsubscribe, output: YoutubeEndpointOutputSchemas.subscriptionsUnsubscribe },
-	'videoActions.rate': { input: YoutubeEndpointInputSchemas.videoActionsRate, output: YoutubeEndpointOutputSchemas.videoActionsRate },
-	'videoActions.getRating': { input: YoutubeEndpointInputSchemas.videoActionsGetRating, output: YoutubeEndpointOutputSchemas.videoActionsGetRating },
-	'videoActions.reportAbuse': { input: YoutubeEndpointInputSchemas.videoActionsReportAbuse, output: YoutubeEndpointOutputSchemas.videoActionsReportAbuse },
-	'videoActions.listAbuseReasons': { input: YoutubeEndpointInputSchemas.videoActionsListAbuseReasons, output: YoutubeEndpointOutputSchemas.videoActionsListAbuseReasons },
-	'videoActions.updateThumbnail': { input: YoutubeEndpointInputSchemas.videoActionsUpdateThumbnail, output: YoutubeEndpointOutputSchemas.videoActionsUpdateThumbnail },
-	'captions.list': { input: YoutubeEndpointInputSchemas.captionsList, output: YoutubeEndpointOutputSchemas.captionsList },
-	'captions.update': { input: YoutubeEndpointInputSchemas.captionsUpdate, output: YoutubeEndpointOutputSchemas.captionsUpdate },
-	'captions.load': { input: YoutubeEndpointInputSchemas.captionsLoad, output: YoutubeEndpointOutputSchemas.captionsLoad },
-	'liveChat.listMessages': { input: YoutubeEndpointInputSchemas.liveChatListMessages, output: YoutubeEndpointOutputSchemas.liveChatListMessages },
-	'liveChat.listSuperChatEvents': { input: YoutubeEndpointInputSchemas.liveChatListSuperChatEvents, output: YoutubeEndpointOutputSchemas.liveChatListSuperChatEvents },
-	'i18n.listLanguages': { input: YoutubeEndpointInputSchemas.i18nListLanguages, output: YoutubeEndpointOutputSchemas.i18nListLanguages },
-	'i18n.listRegions': { input: YoutubeEndpointInputSchemas.i18nListRegions, output: YoutubeEndpointOutputSchemas.i18nListRegions },
-	'videoCategories.list': { input: YoutubeEndpointInputSchemas.videoCategoriesList, output: YoutubeEndpointOutputSchemas.videoCategoriesList },
-	'playlistImages.list': { input: YoutubeEndpointInputSchemas.playlistImagesList, output: YoutubeEndpointOutputSchemas.playlistImagesList },
+export const youtubeEndpointSchemas: RequiredPluginEndpointSchemas<
+	typeof youtubeEndpointsNested
+> = {
+	'playlists.list': {
+		input: YoutubeEndpointInputSchemas.playlistsList,
+		output: YoutubeEndpointOutputSchemas.playlistsList,
+	},
+	'playlists.create': {
+		input: YoutubeEndpointInputSchemas.playlistsCreate,
+		output: YoutubeEndpointOutputSchemas.playlistsCreate,
+	},
+	'playlists.update': {
+		input: YoutubeEndpointInputSchemas.playlistsUpdate,
+		output: YoutubeEndpointOutputSchemas.playlistsUpdate,
+	},
+	'playlists.delete': {
+		input: YoutubeEndpointInputSchemas.playlistsDelete,
+		output: YoutubeEndpointOutputSchemas.playlistsDelete,
+	},
+	'playlistItems.add': {
+		input: YoutubeEndpointInputSchemas.playlistItemsAdd,
+		output: YoutubeEndpointOutputSchemas.playlistItemsAdd,
+	},
+	'playlistItems.list': {
+		input: YoutubeEndpointInputSchemas.playlistItemsList,
+		output: YoutubeEndpointOutputSchemas.playlistItemsList,
+	},
+	'playlistItems.update': {
+		input: YoutubeEndpointInputSchemas.playlistItemsUpdate,
+		output: YoutubeEndpointOutputSchemas.playlistItemsUpdate,
+	},
+	'playlistItems.delete': {
+		input: YoutubeEndpointInputSchemas.playlistItemsDelete,
+		output: YoutubeEndpointOutputSchemas.playlistItemsDelete,
+	},
+	'videos.get': {
+		input: YoutubeEndpointInputSchemas.videosGet,
+		output: YoutubeEndpointOutputSchemas.videosGet,
+	},
+	'videos.getBatch': {
+		input: YoutubeEndpointInputSchemas.videosGetBatch,
+		output: YoutubeEndpointOutputSchemas.videosGetBatch,
+	},
+	'videos.list': {
+		input: YoutubeEndpointInputSchemas.videosList,
+		output: YoutubeEndpointOutputSchemas.videosList,
+	},
+	'videos.listMostPopular': {
+		input: YoutubeEndpointInputSchemas.videosListMostPopular,
+		output: YoutubeEndpointOutputSchemas.videosListMostPopular,
+	},
+	'videos.update': {
+		input: YoutubeEndpointInputSchemas.videosUpdate,
+		output: YoutubeEndpointOutputSchemas.videosUpdate,
+	},
+	'videos.upload': {
+		input: YoutubeEndpointInputSchemas.videosUpload,
+		output: YoutubeEndpointOutputSchemas.videosUpload,
+	},
+	'videos.uploadMultipart': {
+		input: YoutubeEndpointInputSchemas.videosUploadMultipart,
+		output: YoutubeEndpointOutputSchemas.videosUploadMultipart,
+	},
+	'videos.delete': {
+		input: YoutubeEndpointInputSchemas.videosDelete,
+		output: YoutubeEndpointOutputSchemas.videosDelete,
+	},
+	'channels.getStatistics': {
+		input: YoutubeEndpointInputSchemas.channelsGetStatistics,
+		output: YoutubeEndpointOutputSchemas.channelsGetStatistics,
+	},
+	'channels.getIdByHandle': {
+		input: YoutubeEndpointInputSchemas.channelsGetIdByHandle,
+		output: YoutubeEndpointOutputSchemas.channelsGetIdByHandle,
+	},
+	'channels.getActivities': {
+		input: YoutubeEndpointInputSchemas.channelsGetActivities,
+		output: YoutubeEndpointOutputSchemas.channelsGetActivities,
+	},
+	'channels.update': {
+		input: YoutubeEndpointInputSchemas.channelsUpdate,
+		output: YoutubeEndpointOutputSchemas.channelsUpdate,
+	},
+	'channelSections.list': {
+		input: YoutubeEndpointInputSchemas.channelSectionsList,
+		output: YoutubeEndpointOutputSchemas.channelSectionsList,
+	},
+	'channelSections.create': {
+		input: YoutubeEndpointInputSchemas.channelSectionsCreate,
+		output: YoutubeEndpointOutputSchemas.channelSectionsCreate,
+	},
+	'channelSections.update': {
+		input: YoutubeEndpointInputSchemas.channelSectionsUpdate,
+		output: YoutubeEndpointOutputSchemas.channelSectionsUpdate,
+	},
+	'channelSections.delete': {
+		input: YoutubeEndpointInputSchemas.channelSectionsDelete,
+		output: YoutubeEndpointOutputSchemas.channelSectionsDelete,
+	},
+	'comments.list': {
+		input: YoutubeEndpointInputSchemas.commentsList,
+		output: YoutubeEndpointOutputSchemas.commentsList,
+	},
+	'comments.threadsList': {
+		input: YoutubeEndpointInputSchemas.commentThreadsList,
+		output: YoutubeEndpointOutputSchemas.commentThreadsList,
+	},
+	'comments.threadsList2': {
+		input: YoutubeEndpointInputSchemas.commentThreadsList2,
+		output: YoutubeEndpointOutputSchemas.commentThreadsList2,
+	},
+	'comments.post': {
+		input: YoutubeEndpointInputSchemas.commentsPost,
+		output: YoutubeEndpointOutputSchemas.commentsPost,
+	},
+	'comments.createReply': {
+		input: YoutubeEndpointInputSchemas.commentsCreateReply,
+		output: YoutubeEndpointOutputSchemas.commentsCreateReply,
+	},
+	'comments.update': {
+		input: YoutubeEndpointInputSchemas.commentsUpdate,
+		output: YoutubeEndpointOutputSchemas.commentsUpdate,
+	},
+	'comments.delete': {
+		input: YoutubeEndpointInputSchemas.commentsDelete,
+		output: YoutubeEndpointOutputSchemas.commentsDelete,
+	},
+	'comments.markSpam': {
+		input: YoutubeEndpointInputSchemas.commentsMarkSpam,
+		output: YoutubeEndpointOutputSchemas.commentsMarkSpam,
+	},
+	'comments.setModerationStatus': {
+		input: YoutubeEndpointInputSchemas.commentsSetModerationStatus,
+		output: YoutubeEndpointOutputSchemas.commentsSetModerationStatus,
+	},
+	'search.youtube': {
+		input: YoutubeEndpointInputSchemas.searchYouTube,
+		output: YoutubeEndpointOutputSchemas.searchYouTube,
+	},
+	'subscriptions.list': {
+		input: YoutubeEndpointInputSchemas.subscriptionsList,
+		output: YoutubeEndpointOutputSchemas.subscriptionsList,
+	},
+	'subscriptions.subscribe': {
+		input: YoutubeEndpointInputSchemas.subscriptionsSubscribe,
+		output: YoutubeEndpointOutputSchemas.subscriptionsSubscribe,
+	},
+	'subscriptions.unsubscribe': {
+		input: YoutubeEndpointInputSchemas.subscriptionsUnsubscribe,
+		output: YoutubeEndpointOutputSchemas.subscriptionsUnsubscribe,
+	},
+	'videoActions.rate': {
+		input: YoutubeEndpointInputSchemas.videoActionsRate,
+		output: YoutubeEndpointOutputSchemas.videoActionsRate,
+	},
+	'videoActions.getRating': {
+		input: YoutubeEndpointInputSchemas.videoActionsGetRating,
+		output: YoutubeEndpointOutputSchemas.videoActionsGetRating,
+	},
+	'videoActions.reportAbuse': {
+		input: YoutubeEndpointInputSchemas.videoActionsReportAbuse,
+		output: YoutubeEndpointOutputSchemas.videoActionsReportAbuse,
+	},
+	'videoActions.listAbuseReasons': {
+		input: YoutubeEndpointInputSchemas.videoActionsListAbuseReasons,
+		output: YoutubeEndpointOutputSchemas.videoActionsListAbuseReasons,
+	},
+	'videoActions.updateThumbnail': {
+		input: YoutubeEndpointInputSchemas.videoActionsUpdateThumbnail,
+		output: YoutubeEndpointOutputSchemas.videoActionsUpdateThumbnail,
+	},
+	'captions.list': {
+		input: YoutubeEndpointInputSchemas.captionsList,
+		output: YoutubeEndpointOutputSchemas.captionsList,
+	},
+	'captions.update': {
+		input: YoutubeEndpointInputSchemas.captionsUpdate,
+		output: YoutubeEndpointOutputSchemas.captionsUpdate,
+	},
+	'captions.load': {
+		input: YoutubeEndpointInputSchemas.captionsLoad,
+		output: YoutubeEndpointOutputSchemas.captionsLoad,
+	},
+	'liveChat.listMessages': {
+		input: YoutubeEndpointInputSchemas.liveChatListMessages,
+		output: YoutubeEndpointOutputSchemas.liveChatListMessages,
+	},
+	'liveChat.listSuperChatEvents': {
+		input: YoutubeEndpointInputSchemas.liveChatListSuperChatEvents,
+		output: YoutubeEndpointOutputSchemas.liveChatListSuperChatEvents,
+	},
+	'i18n.listLanguages': {
+		input: YoutubeEndpointInputSchemas.i18nListLanguages,
+		output: YoutubeEndpointOutputSchemas.i18nListLanguages,
+	},
+	'i18n.listRegions': {
+		input: YoutubeEndpointInputSchemas.i18nListRegions,
+		output: YoutubeEndpointOutputSchemas.i18nListRegions,
+	},
+	'videoCategories.list': {
+		input: YoutubeEndpointInputSchemas.videoCategoriesList,
+		output: YoutubeEndpointOutputSchemas.videoCategoriesList,
+	},
+	'playlistImages.list': {
+		input: YoutubeEndpointInputSchemas.playlistImagesList,
+		output: YoutubeEndpointOutputSchemas.playlistImagesList,
+	},
 };
 
 // ── Endpoint Meta ─────────────────────────────────────────────────────────────
 
 const youtubeEndpointMeta = {
-	'playlists.list': { riskLevel: 'read', description: 'List the authenticated user\'s playlists' },
-	'playlists.create': { riskLevel: 'write', description: 'Create a new playlist' },
-	'playlists.update': { riskLevel: 'write', description: 'Update an existing playlist' },
-	'playlists.delete': { riskLevel: 'destructive', description: 'Delete a playlist' },
-	'playlistItems.add': { riskLevel: 'write', description: 'Add a video to a playlist' },
-	'playlistItems.list': { riskLevel: 'read', description: 'List items in a playlist' },
-	'playlistItems.update': { riskLevel: 'write', description: 'Update a playlist item' },
-	'playlistItems.delete': { riskLevel: 'destructive', description: 'Remove an item from a playlist' },
-	'videos.get': { riskLevel: 'read', description: 'Get details for a single video' },
-	'videos.getBatch': { riskLevel: 'read', description: 'Get details for multiple videos in one request' },
-	'videos.list': { riskLevel: 'read', description: 'List videos for a channel' },
-	'videos.listMostPopular': { riskLevel: 'read', description: 'List most popular videos on YouTube' },
+	'playlists.list': {
+		riskLevel: 'read',
+		description: "List the authenticated user's playlists",
+	},
+	'playlists.create': {
+		riskLevel: 'write',
+		description: 'Create a new playlist',
+	},
+	'playlists.update': {
+		riskLevel: 'write',
+		description: 'Update an existing playlist',
+	},
+	'playlists.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete a playlist',
+	},
+	'playlistItems.add': {
+		riskLevel: 'write',
+		description: 'Add a video to a playlist',
+	},
+	'playlistItems.list': {
+		riskLevel: 'read',
+		description: 'List items in a playlist',
+	},
+	'playlistItems.update': {
+		riskLevel: 'write',
+		description: 'Update a playlist item',
+	},
+	'playlistItems.delete': {
+		riskLevel: 'destructive',
+		description: 'Remove an item from a playlist',
+	},
+	'videos.get': {
+		riskLevel: 'read',
+		description: 'Get details for a single video',
+	},
+	'videos.getBatch': {
+		riskLevel: 'read',
+		description: 'Get details for multiple videos in one request',
+	},
+	'videos.list': {
+		riskLevel: 'read',
+		description: 'List videos for a channel',
+	},
+	'videos.listMostPopular': {
+		riskLevel: 'read',
+		description: 'List most popular videos on YouTube',
+	},
 	'videos.update': { riskLevel: 'write', description: 'Update video metadata' },
 	'videos.upload': { riskLevel: 'write', description: 'Upload a new video' },
-	'videos.uploadMultipart': { riskLevel: 'write', description: 'Upload a new video using multipart upload' },
+	'videos.uploadMultipart': {
+		riskLevel: 'write',
+		description: 'Upload a new video using multipart upload',
+	},
 	'videos.delete': { riskLevel: 'destructive', description: 'Delete a video' },
-	'channels.getStatistics': { riskLevel: 'read', description: 'Get channel statistics and details' },
-	'channels.getIdByHandle': { riskLevel: 'read', description: 'Get channel ID by handle' },
-	'channels.getActivities': { riskLevel: 'read', description: 'Get a channel\'s activity feed' },
-	'channels.update': { riskLevel: 'write', description: 'Update channel branding settings' },
-	'channelSections.list': { riskLevel: 'read', description: 'List channel sections' },
-	'channelSections.create': { riskLevel: 'write', description: 'Create a new channel section' },
-	'channelSections.update': { riskLevel: 'write', description: 'Update a channel section' },
-	'channelSections.delete': { riskLevel: 'destructive', description: 'Delete a channel section' },
+	'channels.getStatistics': {
+		riskLevel: 'read',
+		description: 'Get channel statistics and details',
+	},
+	'channels.getIdByHandle': {
+		riskLevel: 'read',
+		description: 'Get channel ID by handle',
+	},
+	'channels.getActivities': {
+		riskLevel: 'read',
+		description: "Get a channel's activity feed",
+	},
+	'channels.update': {
+		riskLevel: 'write',
+		description: 'Update channel branding settings',
+	},
+	'channelSections.list': {
+		riskLevel: 'read',
+		description: 'List channel sections',
+	},
+	'channelSections.create': {
+		riskLevel: 'write',
+		description: 'Create a new channel section',
+	},
+	'channelSections.update': {
+		riskLevel: 'write',
+		description: 'Update a channel section',
+	},
+	'channelSections.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete a channel section',
+	},
 	'comments.list': { riskLevel: 'read', description: 'List comments' },
-	'comments.threadsList': { riskLevel: 'read', description: 'List comment threads (deprecated)' },
-	'comments.threadsList2': { riskLevel: 'read', description: 'List comment threads' },
-	'comments.post': { riskLevel: 'write', description: 'Post a comment on a video' },
-	'comments.createReply': { riskLevel: 'write', description: 'Post a reply to a comment' },
+	'comments.threadsList': {
+		riskLevel: 'read',
+		description: 'List comment threads (deprecated)',
+	},
+	'comments.threadsList2': {
+		riskLevel: 'read',
+		description: 'List comment threads',
+	},
+	'comments.post': {
+		riskLevel: 'write',
+		description: 'Post a comment on a video',
+	},
+	'comments.createReply': {
+		riskLevel: 'write',
+		description: 'Post a reply to a comment',
+	},
 	'comments.update': { riskLevel: 'write', description: 'Update a comment' },
-	'comments.delete': { riskLevel: 'destructive', description: 'Delete a comment' },
-	'comments.markSpam': { riskLevel: 'write', description: 'Mark a comment as spam' },
-	'comments.setModerationStatus': { riskLevel: 'write', description: 'Set moderation status for a comment' },
-	'search.youtube': { riskLevel: 'read', description: 'Search YouTube for videos, channels, and playlists' },
-	'subscriptions.list': { riskLevel: 'read', description: 'List the authenticated user\'s subscriptions' },
-	'subscriptions.subscribe': { riskLevel: 'write', description: 'Subscribe to a YouTube channel' },
-	'subscriptions.unsubscribe': { riskLevel: 'destructive', description: 'Unsubscribe from a YouTube channel' },
-	'videoActions.rate': { riskLevel: 'write', description: 'Rate a video (like, dislike, or remove rating)' },
-	'videoActions.getRating': { riskLevel: 'read', description: 'Get the authenticated user\'s rating for a video' },
-	'videoActions.reportAbuse': { riskLevel: 'write', description: 'Report a video for abuse' },
-	'videoActions.listAbuseReasons': { riskLevel: 'read', description: 'List available video abuse report reasons' },
-	'videoActions.updateThumbnail': { riskLevel: 'write', description: 'Update the thumbnail for a video' },
-	'captions.list': { riskLevel: 'read', description: 'List caption tracks for a video' },
-	'captions.update': { riskLevel: 'write', description: 'Update a caption track' },
-	'captions.load': { riskLevel: 'read', description: 'Download a caption track' },
-	'liveChat.listMessages': { riskLevel: 'read', description: 'List messages in a live chat' },
-	'liveChat.listSuperChatEvents': { riskLevel: 'read', description: 'List Super Chat events' },
-	'i18n.listLanguages': { riskLevel: 'read', description: 'List supported i18n languages' },
-	'i18n.listRegions': { riskLevel: 'read', description: 'List supported i18n regions' },
-	'videoCategories.list': { riskLevel: 'read', description: 'List video categories' },
-	'playlistImages.list': { riskLevel: 'read', description: 'List playlist images' },
+	'comments.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete a comment',
+	},
+	'comments.markSpam': {
+		riskLevel: 'write',
+		description: 'Mark a comment as spam',
+	},
+	'comments.setModerationStatus': {
+		riskLevel: 'write',
+		description: 'Set moderation status for a comment',
+	},
+	'search.youtube': {
+		riskLevel: 'read',
+		description: 'Search YouTube for videos, channels, and playlists',
+	},
+	'subscriptions.list': {
+		riskLevel: 'read',
+		description: "List the authenticated user's subscriptions",
+	},
+	'subscriptions.subscribe': {
+		riskLevel: 'write',
+		description: 'Subscribe to a YouTube channel',
+	},
+	'subscriptions.unsubscribe': {
+		riskLevel: 'destructive',
+		description: 'Unsubscribe from a YouTube channel',
+	},
+	'videoActions.rate': {
+		riskLevel: 'write',
+		description: 'Rate a video (like, dislike, or remove rating)',
+	},
+	'videoActions.getRating': {
+		riskLevel: 'read',
+		description: "Get the authenticated user's rating for a video",
+	},
+	'videoActions.reportAbuse': {
+		riskLevel: 'write',
+		description: 'Report a video for abuse',
+	},
+	'videoActions.listAbuseReasons': {
+		riskLevel: 'read',
+		description: 'List available video abuse report reasons',
+	},
+	'videoActions.updateThumbnail': {
+		riskLevel: 'write',
+		description: 'Update the thumbnail for a video',
+	},
+	'captions.list': {
+		riskLevel: 'read',
+		description: 'List caption tracks for a video',
+	},
+	'captions.update': {
+		riskLevel: 'write',
+		description: 'Update a caption track',
+	},
+	'captions.load': {
+		riskLevel: 'read',
+		description: 'Download a caption track',
+	},
+	'liveChat.listMessages': {
+		riskLevel: 'read',
+		description: 'List messages in a live chat',
+	},
+	'liveChat.listSuperChatEvents': {
+		riskLevel: 'read',
+		description: 'List Super Chat events',
+	},
+	'i18n.listLanguages': {
+		riskLevel: 'read',
+		description: 'List supported i18n languages',
+	},
+	'i18n.listRegions': {
+		riskLevel: 'read',
+		description: 'List supported i18n regions',
+	},
+	'videoCategories.list': {
+		riskLevel: 'read',
+		description: 'List video categories',
+	},
+	'playlistImages.list': {
+		riskLevel: 'read',
+		description: 'List playlist images',
+	},
 } satisfies RequiredPluginEndpointMeta<typeof youtubeEndpointsNested>;
 
 // ── Auth Config ───────────────────────────────────────────────────────────────
@@ -405,7 +700,7 @@ export function youtube<const T extends YoutubePluginOptions>(
 		},
 		pluginWebhookMatcher: (request) => {
 			// Webhooks not implemented yet
-			return false
+			return false;
 		},
 		keyBuilder: async (ctx: YoutubeKeyBuilderContext, source) => {
 			if (source === 'webhook' && options.webhookSecret) {
@@ -435,78 +730,72 @@ export function youtube<const T extends YoutubePluginOptions>(
 // ── Type Exports ──────────────────────────────────────────────────────────────
 
 export type {
-	YoutubeWebhookOutputs,
-} from './webhooks/types';
-
-export type {
-	YoutubeEndpointInputs,
-	YoutubeEndpointOutputs,
-	PlaylistsListInput,
-	PlaylistsListResponse,
-	PlaylistsCreateInput,
-	PlaylistsCreateResponse,
-	PlaylistsUpdateInput,
-	PlaylistsUpdateResponse,
-	PlaylistsDeleteInput,
-	PlaylistsDeleteResponse,
+	CaptionsListInput,
+	CaptionsListResponse,
+	CaptionsLoadInput,
+	CaptionsLoadResponse,
+	CaptionsUpdateInput,
+	CaptionsUpdateResponse,
+	ChannelSectionsCreateInput,
+	ChannelSectionsCreateResponse,
+	ChannelSectionsDeleteInput,
+	ChannelSectionsDeleteResponse,
+	ChannelSectionsListInput,
+	ChannelSectionsListResponse,
+	ChannelSectionsUpdateInput,
+	ChannelSectionsUpdateResponse,
+	ChannelsGetActivitiesInput,
+	ChannelsGetActivitiesResponse,
+	ChannelsGetIdByHandleInput,
+	ChannelsGetIdByHandleResponse,
+	ChannelsGetStatisticsInput,
+	ChannelsGetStatisticsResponse,
+	ChannelsUpdateInput,
+	ChannelsUpdateResponse,
+	CommentsCreateReplyInput,
+	CommentsCreateReplyResponse,
+	CommentsDeleteInput,
+	CommentsDeleteResponse,
+	CommentsListInput,
+	CommentsListResponse,
+	CommentsMarkSpamInput,
+	CommentsMarkSpamResponse,
+	CommentsPostInput,
+	CommentsPostResponse,
+	CommentsSetModerationStatusInput,
+	CommentsSetModerationStatusResponse,
+	CommentsUpdateInput,
+	CommentsUpdateResponse,
+	CommentThreadsList2Input,
+	CommentThreadsList2Response,
+	CommentThreadsListInput,
+	CommentThreadsListResponse,
+	I18nListLanguagesInput,
+	I18nListLanguagesResponse,
+	I18nListRegionsInput,
+	I18nListRegionsResponse,
+	LiveChatListMessagesInput,
+	LiveChatListMessagesResponse,
+	LiveChatListSuperChatEventsInput,
+	LiveChatListSuperChatEventsResponse,
+	PlaylistImagesListInput,
+	PlaylistImagesListResponse,
 	PlaylistItemsAddInput,
 	PlaylistItemsAddResponse,
+	PlaylistItemsDeleteInput,
+	PlaylistItemsDeleteResponse,
 	PlaylistItemsListInput,
 	PlaylistItemsListResponse,
 	PlaylistItemsUpdateInput,
 	PlaylistItemsUpdateResponse,
-	PlaylistItemsDeleteInput,
-	PlaylistItemsDeleteResponse,
-	VideosGetInput,
-	VideosGetResponse,
-	VideosGetBatchInput,
-	VideosGetBatchResponse,
-	VideosListInput,
-	VideosListResponse,
-	VideosListMostPopularInput,
-	VideosListMostPopularResponse,
-	VideosUpdateInput,
-	VideosUpdateResponse,
-	VideosUploadInput,
-	VideosUploadResponse,
-	VideosUploadMultipartInput,
-	VideosUploadMultipartResponse,
-	VideosDeleteInput,
-	VideosDeleteResponse,
-	ChannelsGetStatisticsInput,
-	ChannelsGetStatisticsResponse,
-	ChannelsGetIdByHandleInput,
-	ChannelsGetIdByHandleResponse,
-	ChannelsGetActivitiesInput,
-	ChannelsGetActivitiesResponse,
-	ChannelsUpdateInput,
-	ChannelsUpdateResponse,
-	ChannelSectionsListInput,
-	ChannelSectionsListResponse,
-	ChannelSectionsCreateInput,
-	ChannelSectionsCreateResponse,
-	ChannelSectionsUpdateInput,
-	ChannelSectionsUpdateResponse,
-	ChannelSectionsDeleteInput,
-	ChannelSectionsDeleteResponse,
-	CommentsListInput,
-	CommentsListResponse,
-	CommentThreadsListInput,
-	CommentThreadsListResponse,
-	CommentThreadsList2Input,
-	CommentThreadsList2Response,
-	CommentsPostInput,
-	CommentsPostResponse,
-	CommentsCreateReplyInput,
-	CommentsCreateReplyResponse,
-	CommentsUpdateInput,
-	CommentsUpdateResponse,
-	CommentsDeleteInput,
-	CommentsDeleteResponse,
-	CommentsMarkSpamInput,
-	CommentsMarkSpamResponse,
-	CommentsSetModerationStatusInput,
-	CommentsSetModerationStatusResponse,
+	PlaylistsCreateInput,
+	PlaylistsCreateResponse,
+	PlaylistsDeleteInput,
+	PlaylistsDeleteResponse,
+	PlaylistsListInput,
+	PlaylistsListResponse,
+	PlaylistsUpdateInput,
+	PlaylistsUpdateResponse,
 	SearchYouTubeInput,
 	SearchYouTubeResponse,
 	SubscriptionsListInput,
@@ -515,34 +804,36 @@ export type {
 	SubscriptionsSubscribeResponse,
 	SubscriptionsUnsubscribeInput,
 	SubscriptionsUnsubscribeResponse,
-	VideoActionsRateInput,
-	VideoActionsRateResponse,
 	VideoActionsGetRatingInput,
 	VideoActionsGetRatingResponse,
-	VideoActionsReportAbuseInput,
-	VideoActionsReportAbuseResponse,
 	VideoActionsListAbuseReasonsInput,
 	VideoActionsListAbuseReasonsResponse,
+	VideoActionsRateInput,
+	VideoActionsRateResponse,
+	VideoActionsReportAbuseInput,
+	VideoActionsReportAbuseResponse,
 	VideoActionsUpdateThumbnailInput,
 	VideoActionsUpdateThumbnailResponse,
-	CaptionsListInput,
-	CaptionsListResponse,
-	CaptionsUpdateInput,
-	CaptionsUpdateResponse,
-	CaptionsLoadInput,
-	CaptionsLoadResponse,
-	LiveChatListMessagesInput,
-	LiveChatListMessagesResponse,
-	LiveChatListSuperChatEventsInput,
-	LiveChatListSuperChatEventsResponse,
-	I18nListLanguagesInput,
-	I18nListLanguagesResponse,
-	I18nListRegionsInput,
-	I18nListRegionsResponse,
 	VideoCategoriesListInput,
 	VideoCategoriesListResponse,
-	PlaylistImagesListInput,
-	PlaylistImagesListResponse,
+	VideosDeleteInput,
+	VideosDeleteResponse,
+	VideosGetBatchInput,
+	VideosGetBatchResponse,
+	VideosGetInput,
+	VideosGetResponse,
+	VideosListInput,
+	VideosListMostPopularInput,
+	VideosListMostPopularResponse,
+	VideosListResponse,
+	VideosUpdateInput,
+	VideosUpdateResponse,
+	VideosUploadInput,
+	VideosUploadMultipartInput,
+	VideosUploadMultipartResponse,
+	VideosUploadResponse,
+	YoutubeEndpointInputs,
+	YoutubeEndpointOutputs,
 } from './endpoints/types';
-
 export type { YoutubeCredentials } from './schema';
+export type { YoutubeWebhookOutputs } from './webhooks/types';

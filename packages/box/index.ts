@@ -7,15 +7,27 @@ import type {
 	CorsairPluginContext,
 	CorsairWebhook,
 	KeyBuilderContext,
+	PickAuth,
 	PluginAuthConfig,
-	RequiredPluginEndpointMeta,
-	RequiredPluginEndpointSchemas,
-	RequiredPluginWebhookSchemas,
 	PluginPermissionsConfig,
+	RequiredPluginEndpointMeta,
 } from 'corsair/core';
-import type { PickAuth } from 'corsair/core';
+import { Files, Folders } from './endpoints';
 import type { BoxEndpointInputs, BoxEndpointOutputs } from './endpoints/types';
-import { BoxEndpointInputSchemas, BoxEndpointOutputSchemas } from './endpoints/types';
+import {
+	BoxEndpointInputSchemas,
+	BoxEndpointOutputSchemas,
+} from './endpoints/types';
+import { errorHandlers } from './error-handlers';
+import { BoxSchema } from './schema';
+import {
+	CollaborationWebhooks,
+	CommentWebhooks,
+	FileWebhooks,
+	FolderWebhooks,
+	MetadataWebhooks,
+	SharedLinkWebhooks,
+} from './webhooks';
 import type { BoxWebhookOutputs, BoxWebhookPayload } from './webhooks/types';
 import {
 	CollaborationAcceptedPayloadSchema,
@@ -52,52 +64,6 @@ import {
 	SharedLinkDeletedPayloadSchema,
 	SharedLinkUpdatedPayloadSchema,
 } from './webhooks/types';
-import type {
-	CollaborationAcceptedEvent,
-	CollaborationCreatedEvent,
-	CollaborationRejectedEvent,
-	CollaborationRemovedEvent,
-	CollaborationUpdatedEvent,
-	CommentCreatedEvent,
-	CommentDeletedEvent,
-	CommentUpdatedEvent,
-	FileCopiedEvent,
-	FileDeletedEvent,
-	FileDownloadedEvent,
-	FileLockedEvent,
-	FileMovedEvent,
-	FilePreviewedEvent,
-	FileRenamedEvent,
-	FileRestoredEvent,
-	FileTrashedEvent,
-	FileUnlockedEvent,
-	FileUploadedEvent,
-	FolderCopiedEvent,
-	FolderCreatedEvent,
-	FolderDeletedEvent,
-	FolderDownloadedEvent,
-	FolderMovedEvent,
-	FolderRenamedEvent,
-	FolderRestoredEvent,
-	FolderTrashedEvent,
-	MetadataInstanceCreatedEvent,
-	MetadataInstanceDeletedEvent,
-	MetadataInstanceUpdatedEvent,
-	SharedLinkCreatedEvent,
-	SharedLinkDeletedEvent,
-	SharedLinkUpdatedEvent,
-} from './webhooks/types';
-import { Files, Folders } from './endpoints';
-import { BoxSchema } from './schema';
-import {
-	CollaborationWebhooks,
-	CommentWebhooks,
-	FileWebhooks,
-	FolderWebhooks,
-	MetadataWebhooks,
-	SharedLinkWebhooks,
-} from './webhooks';
-import { errorHandlers } from './error-handlers';
 
 export type BoxPluginOptions = {
 	authType?: PickAuth<'oauth_2'>;
@@ -114,7 +80,10 @@ export type BoxPluginOptions = {
 	permissions?: PluginPermissionsConfig<typeof boxEndpointsNested>;
 };
 
-export type BoxContext = CorsairPluginContext<typeof BoxSchema, BoxPluginOptions>;
+export type BoxContext = CorsairPluginContext<
+	typeof BoxSchema,
+	BoxPluginOptions
+>;
 
 export type BoxKeyBuilderContext = KeyBuilderContext<BoxPluginOptions>;
 
@@ -659,26 +628,26 @@ export type {
 export type {
 	BoxEndpointInputs,
 	BoxEndpointOutputs,
-	FilesGetInput,
-	FilesGetResponse,
 	FilesCopyInput,
 	FilesCopyResponse,
 	FilesDeleteInput,
 	FilesDeleteResponse,
 	FilesDownloadInput,
 	FilesDownloadResponse,
+	FilesGetInput,
+	FilesGetResponse,
 	FilesSearchInput,
 	FilesSearchResponse,
 	FilesShareInput,
 	FilesShareResponse,
 	FilesUploadInput,
 	FilesUploadResponse,
-	FoldersGetInput,
-	FoldersGetResponse,
 	FoldersCreateInput,
 	FoldersCreateResponse,
 	FoldersDeleteInput,
 	FoldersDeleteResponse,
+	FoldersGetInput,
+	FoldersGetResponse,
 	FoldersSearchInput,
 	FoldersSearchResponse,
 	FoldersShareInput,

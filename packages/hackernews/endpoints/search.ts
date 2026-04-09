@@ -1,7 +1,7 @@
-import type { HackerNewsEndpoints } from '..';
-import type { HackerNewsEndpointOutputs } from './types';
 import { logEventFromContext } from 'corsair/core';
+import type { HackerNewsEndpoints } from '..';
 import { makeHackerNewsAlgoliaRequest } from '../client';
+import type { HackerNewsEndpointOutputs } from './types';
 
 // Algolia search response envelope
 type AlgoliaSearchRaw<T> = {
@@ -14,9 +14,8 @@ type AlgoliaSearchRaw<T> = {
 };
 
 export const posts: HackerNewsEndpoints['searchPosts'] = async (ctx, input) => {
-	const tagsParam = input.tags && input.tags.length > 0
-		? input.tags.join(',')
-		: undefined;
+	const tagsParam =
+		input.tags && input.tags.length > 0 ? input.tags.join(',') : undefined;
 
 	const result = await makeHackerNewsAlgoliaRequest<
 		AlgoliaSearchRaw<HackerNewsEndpointOutputs['searchPosts']['hits'][number]>
@@ -46,20 +45,29 @@ export const posts: HackerNewsEndpoints['searchPosts'] = async (ctx, input) => {
 		}
 	}
 
-	await logEventFromContext(ctx, 'hackernews.search.posts', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'hackernews.search.posts',
+		{ ...input },
+		'completed',
+	);
 	return {
 		...result,
 		query: result.query ?? input.query,
 	};
 };
 
-export const getLatest: HackerNewsEndpoints['searchGetLatest'] = async (ctx, input) => {
-	const tagsParam = input.tags && input.tags.length > 0
-		? input.tags.join(',')
-		: undefined;
+export const getLatest: HackerNewsEndpoints['searchGetLatest'] = async (
+	ctx,
+	input,
+) => {
+	const tagsParam =
+		input.tags && input.tags.length > 0 ? input.tags.join(',') : undefined;
 
 	const result = await makeHackerNewsAlgoliaRequest<
-		AlgoliaSearchRaw<HackerNewsEndpointOutputs['searchGetLatest']['hits'][number]>
+		AlgoliaSearchRaw<
+			HackerNewsEndpointOutputs['searchGetLatest']['hits'][number]
+		>
 	>('search_by_date', {
 		query: {
 			tags: tagsParam,
@@ -85,16 +93,26 @@ export const getLatest: HackerNewsEndpoints['searchGetLatest'] = async (ctx, inp
 		}
 	}
 
-	await logEventFromContext(ctx, 'hackernews.search.getLatest', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'hackernews.search.getLatest',
+		{ ...input },
+		'completed',
+	);
 	return { ...result };
 };
 
-export const getFrontpage: HackerNewsEndpoints['searchGetFrontpage'] = async (ctx, input) => {
+export const getFrontpage: HackerNewsEndpoints['searchGetFrontpage'] = async (
+	ctx,
+	input,
+) => {
 	const minPoints = input.min_points ?? 40;
 	const numericFilters = `points>=${minPoints}`;
 
 	const result = await makeHackerNewsAlgoliaRequest<
-		AlgoliaSearchRaw<HackerNewsEndpointOutputs['searchGetFrontpage']['posts'][number]>
+		AlgoliaSearchRaw<
+			HackerNewsEndpointOutputs['searchGetFrontpage']['posts'][number]
+		>
 	>('search', {
 		query: {
 			tags: 'front_page',
@@ -120,26 +138,37 @@ export const getFrontpage: HackerNewsEndpoints['searchGetFrontpage'] = async (ct
 		}
 	}
 
-	await logEventFromContext(ctx, 'hackernews.search.getFrontpage', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'hackernews.search.getFrontpage',
+		{ ...input },
+		'completed',
+	);
 	return {
 		posts: result.hits,
 		total_hits: result.nbHits,
 	};
 };
 
-export const getTodays: HackerNewsEndpoints['searchGetTodays'] = async (ctx, input) => {
+export const getTodays: HackerNewsEndpoints['searchGetTodays'] = async (
+	ctx,
+	input,
+) => {
 	// Calculate midnight UTC for today
 	const now = new Date();
 	const todayStart = Math.floor(
 		Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()) / 1000,
 	);
 
-	const numericFilters = input.min_points !== undefined
-		? `created_at_i>=${todayStart},points>=${input.min_points}`
-		: `created_at_i>=${todayStart}`;
+	const numericFilters =
+		input.min_points !== undefined
+			? `created_at_i>=${todayStart},points>=${input.min_points}`
+			: `created_at_i>=${todayStart}`;
 
 	const result = await makeHackerNewsAlgoliaRequest<
-		AlgoliaSearchRaw<HackerNewsEndpointOutputs['searchGetTodays']['hits'][number]>
+		AlgoliaSearchRaw<
+			HackerNewsEndpointOutputs['searchGetTodays']['hits'][number]
+		>
 	>('search_by_date', {
 		query: {
 			tags: 'story',
@@ -162,10 +191,15 @@ export const getTodays: HackerNewsEndpoints['searchGetTodays'] = async (ctx, inp
 				}
 			}
 		} catch (error) {
-			console.warn('Failed to save today\'s hits to database:', error);
+			console.warn("Failed to save today's hits to database:", error);
 		}
 	}
 
-	await logEventFromContext(ctx, 'hackernews.search.getTodays', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'hackernews.search.getTodays',
+		{ ...input },
+		'completed',
+	);
 	return { ...result };
 };

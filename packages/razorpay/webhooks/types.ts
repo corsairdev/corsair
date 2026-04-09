@@ -1,17 +1,19 @@
-import { verifyHmacSignature } from 'corsair/http';
 import type {
 	CorsairWebhookMatcher,
 	RawWebhookRequest,
 	WebhookRequest,
 } from 'corsair/core';
+import { verifyHmacSignature } from 'corsair/http';
 import { z } from 'zod';
+import type {
+	RazorpayOrderData,
+	RazorpayPaymentData,
+	RazorpayRefundData,
+} from '../schema/database';
 import {
 	RazorpayOrderSchema,
 	RazorpayPaymentSchema,
 	RazorpayRefundSchema,
-	type RazorpayOrderData,
-	type RazorpayPaymentData,
-	type RazorpayRefundData,
 } from '../schema/database';
 
 // Re-export data types for consumers
@@ -25,14 +27,15 @@ const RazorpayEventBaseSchema = z.object({
 	created_at: z.number(),
 });
 
-export const RazorpayPaymentCapturedEventSchema = RazorpayEventBaseSchema.extend({
-	event: z.literal('payment.captured'),
-	payload: z.object({
-		payment: z.object({
-			entity: RazorpayPaymentSchema,
+export const RazorpayPaymentCapturedEventSchema =
+	RazorpayEventBaseSchema.extend({
+		event: z.literal('payment.captured'),
+		payload: z.object({
+			payment: z.object({
+				entity: RazorpayPaymentSchema,
+			}),
 		}),
-	}),
-});
+	});
 export type RazorpayPaymentCapturedEvent = z.infer<
 	typeof RazorpayPaymentCapturedEventSchema
 >;
@@ -62,7 +65,9 @@ export const RazorpayOrderPaidEventSchema = RazorpayEventBaseSchema.extend({
 			.optional(),
 	}),
 });
-export type RazorpayOrderPaidEvent = z.infer<typeof RazorpayOrderPaidEventSchema>;
+export type RazorpayOrderPaidEvent = z.infer<
+	typeof RazorpayOrderPaidEventSchema
+>;
 
 export const RazorpayRefundProcessedEventSchema =
 	RazorpayEventBaseSchema.extend({
@@ -104,7 +109,9 @@ export function createRazorpayMatch(eventType: string): CorsairWebhookMatcher {
 			return false;
 		}
 		const parsedBody = parseBody(request.body);
-		return typeof parsedBody.event === 'string' && parsedBody.event === eventType;
+		return (
+			typeof parsedBody.event === 'string' && parsedBody.event === eventType
+		);
 	};
 }
 
@@ -119,7 +126,10 @@ export function verifyRazorpayWebhookSignature(
 
 	const rawBody = request.rawBody;
 	if (!rawBody) {
-		return { valid: false, error: 'Missing raw body for signature verification' };
+		return {
+			valid: false,
+			error: 'Missing raw body for signature verification',
+		};
 	}
 
 	const sigHeader = Array.isArray(request.headers['x-razorpay-signature'])

@@ -1,26 +1,28 @@
-import type { StravaEndpoints } from '..';
 import { logEventFromContext } from 'corsair/core';
+import type { StravaEndpoints } from '..';
 import { makeStravaRequest } from '../client';
 import type { StravaEndpointOutputs } from './types';
 
 export const create: StravaEndpoints['uploadsCreate'] = async (ctx, input) => {
 	// Strava POST /uploads requires multipart/form-data — use formData, not JSON body
-	const result = await makeStravaRequest<StravaEndpointOutputs['uploadsCreate']>(
-		'uploads',
-		ctx.key,
-		{
-			method: 'POST',
-			formData: {
-				file: input.file,
-				data_type: input.data_type,
-				...(input.name !== undefined && { name: input.name }),
-				...(input.description !== undefined && { description: input.description }),
-				...(input.trainer !== undefined && { trainer: input.trainer }),
-				...(input.commute !== undefined && { commute: input.commute }),
-				...(input.external_id !== undefined && { external_id: input.external_id }),
-			},
+	const result = await makeStravaRequest<
+		StravaEndpointOutputs['uploadsCreate']
+	>('uploads', ctx.key, {
+		method: 'POST',
+		formData: {
+			file: input.file,
+			data_type: input.data_type,
+			...(input.name !== undefined && { name: input.name }),
+			...(input.description !== undefined && {
+				description: input.description,
+			}),
+			...(input.trainer !== undefined && { trainer: input.trainer }),
+			...(input.commute !== undefined && { commute: input.commute }),
+			...(input.external_id !== undefined && {
+				external_id: input.external_id,
+			}),
 		},
-	);
+	});
 
 	if (result.id && ctx.db.uploads) {
 		try {
@@ -30,7 +32,12 @@ export const create: StravaEndpoints['uploadsCreate'] = async (ctx, input) => {
 		}
 	}
 
-	await logEventFromContext(ctx, 'strava.uploads.create', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'strava.uploads.create',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 

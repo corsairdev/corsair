@@ -16,12 +16,19 @@ export const list: MondayEndpoints['webhooksList'] = async (ctx, input) => {
 		{ boardId: input.board_id },
 	);
 
-	await logEventFromContext(ctx, 'monday.webhooks.list', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'monday.webhooks.list',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
 export const create: MondayEndpoints['webhooksCreate'] = async (ctx, input) => {
-	const result = await makeMondayRequest<MondayEndpointOutputs['webhooksCreate']>(
+	const result = await makeMondayRequest<
+		MondayEndpointOutputs['webhooksCreate']
+	>(
 		`mutation($boardId: ID!, $url: String!, $event: WebhookEventType!, $config: JSON) {
 			create_webhook(board_id: $boardId, url: $url, event: $event, config: $config) {
 				id
@@ -38,12 +45,22 @@ export const create: MondayEndpoints['webhooksCreate'] = async (ctx, input) => {
 		},
 	);
 
-	await logEventFromContext(ctx, 'monday.webhooks.create', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'monday.webhooks.create',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
-export const deletewebhook: MondayEndpoints['webhooksDelete'] = async (ctx, input) => {
-	const result = await makeMondayRequest<MondayEndpointOutputs['webhooksDelete']>(
+export const deletewebhook: MondayEndpoints['webhooksDelete'] = async (
+	ctx,
+	input,
+) => {
+	const result = await makeMondayRequest<
+		MondayEndpointOutputs['webhooksDelete']
+	>(
 		`mutation($webhookId: ID!) {
 			delete_webhook(id: $webhookId) {
 				id
@@ -54,6 +71,11 @@ export const deletewebhook: MondayEndpoints['webhooksDelete'] = async (ctx, inpu
 		{ webhookId: input.webhook_id },
 	);
 
-	await logEventFromContext(ctx, 'monday.webhooks.delete', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'monday.webhooks.delete',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };

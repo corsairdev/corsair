@@ -1,4 +1,4 @@
-import 'dotenv/config' 
+import 'dotenv/config';
 import { DROPBOX_CONTENT_BASE, makeDropboxRequest } from './client';
 import type { DropboxEndpointOutputs } from './endpoints/types';
 import { DropboxEndpointOutputSchemas } from './endpoints/types';
@@ -9,7 +9,9 @@ const TEST_FOLDER_PATH = process.env.TEST_DROPBOX_FOLDER ?? '';
 describe('Dropbox API Type Tests', () => {
 	beforeAll(() => {
 		if (!process.env.DROPBOX_ACCESS_TOKEN) {
-			throw new Error('DROPBOX_ACCESS_TOKEN environment variable is required to run integration tests');
+			throw new Error(
+				'DROPBOX_ACCESS_TOKEN environment variable is required to run integration tests',
+			);
 		}
 	});
 
@@ -18,7 +20,7 @@ describe('Dropbox API Type Tests', () => {
 
 		afterAll(async () => {
 			await Promise.allSettled(
-				createdPaths.map(path =>
+				createdPaths.map((path) =>
 					makeDropboxRequest('files/delete_v2', TEST_TOKEN, {
 						method: 'POST',
 						body: { path },
@@ -151,7 +153,7 @@ describe('Dropbox API Type Tests', () => {
 
 		afterAll(async () => {
 			await Promise.allSettled(
-				createdPaths.map(path =>
+				createdPaths.map((path) =>
 					makeDropboxRequest('files/delete_v2', TEST_TOKEN, {
 						method: 'POST',
 						body: { path },

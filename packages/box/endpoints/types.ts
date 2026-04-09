@@ -105,7 +105,7 @@ const BoxFolderSchema = z
 			.object({
 				total_count: z.number().optional(),
 				// unknown: item_collection.entries contains mixed file/folder/web_link objects with no fixed schema
-			entries: z.array(z.record(z.unknown())).optional(),
+				entries: z.array(z.record(z.unknown())).optional(),
 			})
 			.optional(),
 	})

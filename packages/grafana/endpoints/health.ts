@@ -59,7 +59,9 @@ export const getStatus: GrafanaEndpoints['statusGet'] = async (ctx, _input) => {
 
 		// hasLicense or licenseExpiry presence indicates a valid license
 		const license_available =
-			raw.hasLicense === true || (raw.licenseExpiry !== undefined && raw.licenseExpiry > Date.now() / 1000);
+			raw.hasLicense === true ||
+			(raw.licenseExpiry !== undefined &&
+				raw.licenseExpiry > Date.now() / 1000);
 
 		result = {
 			data: { license_available },

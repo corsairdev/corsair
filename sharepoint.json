@@ -24,9 +24,7 @@
       "slug": "SHARE_POINT_ADD_ATTACHMENT_TO_LIST_ITEM",
       "name": "Add Attachment to List Item",
       "description": "Tool to add an attachment to a SharePoint list item. Use when you need to upload a binary file as an attachment to a specified list item.",
-      "tags": [
-        "openWorldHint"
-      ],
+      "tags": ["openWorldHint"],
       "is_deprecated": false,
       "input_parameters": {
         "item_id": {
@@ -53,11 +51,7 @@
           "type": "object",
           "description": "File to attach. Alternatively, omit this and provide either 'content_text' for UTF-8 text or 'content_base64' for arbitrary bytes.",
           "required": false,
-          "requiredFields": [
-            "name",
-            "mimetype",
-            "s3key"
-          ],
+          "requiredFields": ["name", "mimetype", "s3key"],
           "properties": {
             "name": {
               "type": "string",
@@ -87,10 +81,7 @@
           "type": "object",
           "description": "Data from the action execution",
           "required": true,
-          "requiredFields": [
-            "FileName",
-            "ServerRelativeUrl"
-          ],
+          "requiredFields": ["FileName", "ServerRelativeUrl"],
           "properties": {
             "FileName": {
               "type": "string",
@@ -130,9 +121,7 @@
       "slug": "SHARE_POINT_ADD_FIELD_LINK_TO_CONTENT_TYPE",
       "name": "Add Field Link to Content Type",
       "description": "Tool to add a field link to a list content type. Use when you want to associate an existing list field with a content type.",
-      "tags": [
-        "openWorldHint"
-      ],
+      "tags": ["openWorldHint"],
       "is_deprecated": false,
       "input_parameters": {
         "hidden": {
@@ -166,9 +155,7 @@
           "type": "object",
           "description": "Data from the action execution",
           "required": true,
-          "requiredFields": [
-            "field_link"
-          ],
+          "requiredFields": ["field_link"],
           "properties": {
             "field_link": {
               "type": "object",
@@ -220,9 +207,7 @@
       "slug": "SHARE_POINT_ADD_ROLE_ASSIGNMENT_TO_ITEM",
       "name": "Add Role Assignment to List Item",
       "description": "Tool to add a role assignment to a list item. Use when granting specific permissions to a user or group after breaking inheritance if needed. This action is externally visible and permanently alters item permissions; obtain explicit human approval for the target item and `role_definition_id` before executing.",
-      "tags": [
-        "openWorldHint"
-      ],
+      "tags": ["openWorldHint"],
       "is_deprecated": false,
       "input_parameters": {
         "item_id": {
@@ -302,9 +287,7 @@
       "slug": "SHARE_POINT_ADD_ROLE_ASSIGNMENT_TO_LIST",
       "name": "Add Role Assignment to SharePoint List",
       "description": "Tool to add a role assignment to a SharePoint list. Requires the list to have broken role inheritance first via SHARE_POINT_BREAK_ROLE_INHERITANCE_ON_LIST; inheriting lists will reject unique role assignments. Use when granting permissions to a user or group on a specific list.",
-      "tags": [
-        "openWorldHint"
-      ],
+      "tags": ["openWorldHint"],
       "is_deprecated": false,
       "input_parameters": {
         "list_title": {
@@ -328,10 +311,7 @@
           "type": "object",
           "description": "Data from the action execution",
           "required": true,
-          "requiredFields": [
-            "success",
-            "status_code"
-          ],
+          "requiredFields": ["success", "status_code"],
           "properties": {
             "success": {
               "type": "boolean",
@@ -361,9 +341,7 @@
       "slug": "SHARE_POINT_BREAK_ROLE_INHERITANCE_ON_ITEM",
       "name": "Break Role Inheritance on List Item",
       "description": "Tool to break permission inheritance on a list item. Call this before adding new role assignments; adding assignments prior leaves the item still inheriting parent permissions, causing unexpected access behavior. Use when you need to uniquely set permissions on an item after copying or clearing parent assignments.",
-      "tags": [
-        "openWorldHint"
-      ],
+      "tags": ["openWorldHint"],
       "is_deprecated": false,
       "input_parameters": {
         "item_id": {
@@ -392,9 +370,7 @@
           "type": "object",
           "description": "Data from the action execution",
           "required": true,
-          "requiredFields": [
-            "message"
-          ],
+          "requiredFields": ["message"],
           "properties": {
             "message": {
               "type": "string",
@@ -419,9 +395,7 @@
       "slug": "SHARE_POINT_BREAK_ROLE_INHERITANCE_ON_LIST",
       "name": "Break Role Inheritance on List",
       "description": "Breaks permission inheritance on a SharePoint list, allowing you to set unique permissions. When you break inheritance, you can choose to: - Copy parent permissions as a starting point (copy_role_assignments=true) - Start fresh with no inherited permissions (copy_role_assignments=false) - Clear unique permissions on child items to re-inherit from this list (clear_subscopes=true) Use this when you need to manage list-level permissions independently from the site. Must be called before SHARE_POINT_ADD_ROLE_ASSIGNMENT_TO_LIST, which fails on lists still inheriting from the parent site.",
-      "tags": [
-        "openWorldHint"
-      ],
+      "tags": ["openWorldHint"],
       "is_deprecated": false,
       "input_parameters": {
         "list_title": {
@@ -445,9 +419,7 @@
           "type": "object",
           "description": "Data from the action execution",
           "required": true,
-          "requiredFields": [
-            "message"
-          ],
+          "requiredFields": ["message"],
           "properties": {
             "message": {
               "type": "string",
@@ -472,10 +444,7 @@
       "slug": "SHARE_POINT_CHECK_IN_FILE",
       "name": "Check In SharePoint File",
       "description": "Tool to check in a file. Use after uploading or editing a document and you're ready to finalize changes.",
-      "tags": [
-        "openWorldHint",
-        "readOnlyHint"
-      ],
+      "tags": ["openWorldHint", "readOnlyHint"],
       "is_deprecated": false,
       "input_parameters": {
         "comment": {
@@ -487,11 +456,7 @@
           "type": "integer",
           "description": "Check-in type: 0=MinorCheckIn (draft/minor version), 1=MajorCheckIn (published/major version), 2=OverwriteCheckIn (overwrite current version without creating new version). Defaults to 1 (Major version).",
           "required": false,
-          "enum": [
-            0,
-            1,
-            2
-          ]
+          "enum": [0, 1, 2]
         },
         "server_relative_path": {
           "type": "string",
@@ -504,11 +469,7 @@
           "type": "object",
           "description": "Data from the action execution",
           "required": true,
-          "requiredFields": [
-            "status",
-            "message",
-            "server_relative_path"
-          ],
+          "requiredFields": ["status", "message", "server_relative_path"],
           "properties": {
             "status": {
               "type": "integer",
@@ -543,19 +504,14 @@
       "slug": "SHARE_POINT_CREATE_CONTENT_TYPE",
       "name": "Create Content Type",
       "description": "Tool to create a new content type in SharePoint. Use when you need to define a custom content type with specific metadata structure for lists or libraries.",
-      "tags": [
-        "openWorldHint",
-        "create"
-      ],
+      "tags": ["openWorldHint", "create"],
       "is_deprecated": false,
       "input_parameters": {
         "id": {
           "type": "object",
           "description": "Model for the content type ID value object.",
           "required": false,
-          "requiredFields": [
-            "StringValue"
-          ],
+          "requiredFields": ["StringValue"],
           "properties": {
             "StringValue": {
               "type": "string",
@@ -585,10 +541,7 @@
           "type": "object",
           "description": "Data from the action execution",
           "required": true,
-          "requiredFields": [
-            "Id",
-            "Name"
-          ],
+          "requiredFields": ["Id", "Name"],
           "properties": {
             "Id": {
               "type": "object",
@@ -655,31 +608,20 @@
       "slug": "SHARE_POINT_CREATE_DRIVE_ITEM_SHARING_LINK",
       "name": "Create Drive Item Sharing Link",
       "description": "Tool to create a sharing link for a drive item in SharePoint or OneDrive. Use when you need to generate a shareable link with specific permissions (view/edit/embed) and scope (anonymous/organization/users). The link can optionally include password protection and expiration date.",
-      "tags": [
-        "openWorldHint",
-        "create"
-      ],
+      "tags": ["openWorldHint", "create"],
       "is_deprecated": false,
       "input_parameters": {
         "type": {
           "type": "string",
           "description": "The type of sharing link to create. 'view' creates read-only access, 'edit' creates read-write access, 'embed' creates embeddable link (OneDrive Personal only).",
           "required": true,
-          "enum": [
-            "view",
-            "edit",
-            "embed"
-          ]
+          "enum": ["view", "edit", "embed"]
         },
         "scope": {
           "type": "string",
           "description": "Scope of the sharing link.",
           "required": false,
-          "enum": [
-            "anonymous",
-            "organization",
-            "users"
-          ]
+          "enum": ["anonymous", "organization", "users"]
         },
         "drive_id": {
           "type": "string",
@@ -808,9 +750,7 @@
       "slug": "SHARE_POINT_CREATE_LIST_FIELD",
       "name": "Create SharePoint List Field",
       "description": "Tool to create a new field (column) in a SharePoint list. Use when you need to programmatically add a column after confirming the list GUID.",
-      "tags": [
-        "openWorldHint"
-      ],
+      "tags": ["openWorldHint"],
       "is_deprecated": false,
       "input_parameters": {
         "title": {
@@ -906,12 +846,7 @@
       "slug": "SHARE_POINT_CREATE_LIST_ITEM_BY_ID",
       "name": "Create SharePoint List Item by GUID",
       "description": "Tool to create a new item in a SharePoint list using the list's GUID. Use when you have the list GUID rather than the list title.",
-      "tags": [
-        "important",
-        "openWorldHint",
-        "createHint",
-        "create"
-      ],
+      "tags": ["important", "openWorldHint", "createHint", "create"],
       "is_deprecated": false,
       "input_parameters": {
         "fields": {
@@ -935,12 +870,7 @@
           "type": "object",
           "description": "Data from the action execution",
           "required": true,
-          "requiredFields": [
-            "success",
-            "item_id",
-            "item_data",
-            "message"
-          ],
+          "requiredFields": ["success", "item_id", "item_data", "message"],
           "properties": {
             "item_id": {
               "type": "integer",
@@ -985,9 +915,7 @@
       "slug": "SHARE_POINT_CREATE_LIST_ITEM_IN_FOLDER",
       "name": "Create List Item in Folder",
       "description": "Tool to create a list item in a specific folder within a SharePoint list. IMPORTANT: This action works ONLY with SharePoint lists (not document libraries). The folder_url can be either a server-relative URL (e.g., '/Lists/MyList') or an absolute URL (e.g., 'https://site.sharepoint.com/sites/sitename/Lists/MyList'). To create files in document libraries, use a different action like upload_file.",
-      "tags": [
-        "openWorldHint"
-      ],
+      "tags": ["openWorldHint"],
       "is_deprecated": false,
       "input_parameters": {
         "values": {
@@ -1033,9 +961,7 @@
           "type": "object",
           "description": "Data from the action execution",
           "required": true,
-          "requiredFields": [
-            "value"
-          ],
+          "requiredFields": ["value"],
           "properties": {
             "value": {
               "type": "array",
@@ -1096,10 +1022,7 @@
       "slug": "SHARE_POINT_CREATE_WEB",
       "name": "Create SharePoint Subsite",
       "description": "Tool to create a new SharePoint subsite under the current site. Use when you need to create a new subsite with specific settings for permissions, language, and template.",
-      "tags": [
-        "openWorldHint",
-        "create"
-      ],
+      "tags": ["openWorldHint", "create"],
       "is_deprecated": false,
       "input_parameters": {
         "url": {
@@ -1207,10 +1130,7 @@
       "slug": "SHARE_POINT_DELETE_DRIVE_ITEM_VERSION_CONTENT",
       "name": "Delete Drive Item Version Content",
       "description": "Tool to delete content for a specific version of a drive item in SharePoint. Use when you need to remove the binary content associated with a particular version of a file while keeping the version metadata.",
-      "tags": [
-        "destructiveHint",
-        "files"
-      ],
+      "tags": ["destructiveHint", "files"],
       "is_deprecated": false,
       "input_parameters": {
         "drive_id": {
@@ -1279,11 +1199,7 @@
       "slug": "SHARE_POINT_DELETE_FOLDER",
       "name": "Delete SharePoint Folder",
       "description": "Deletes a folder from a SharePoint document library. This action permanently removes the specified folder and moves it to the site's recycle bin. Use this when you need to remove folders that are no longer needed. The operation is idempotent - attempting to delete a non-existent folder will succeed without error. Requires the server-relative path of the folder (e.g., '/Shared Documents/FolderName').",
-      "tags": [
-        "destructiveHint",
-        "idempotentHint",
-        "openWorldHint"
-      ],
+      "tags": ["destructiveHint", "idempotentHint", "openWorldHint"],
       "is_deprecated": false,
       "input_parameters": {
         "etag": {
@@ -1302,10 +1218,7 @@
           "type": "object",
           "description": "Data from the action execution",
           "required": true,
-          "requiredFields": [
-            "message",
-            "server_relative_url"
-          ],
+          "requiredFields": ["message", "server_relative_url"],
           "properties": {
             "message": {
               "type": "string",
@@ -1335,11 +1248,7 @@
       "slug": "SHARE_POINT_DELETE_LIST",
       "name": "Delete SharePoint List",
       "description": "Tool to delete a SharePoint list. Use when you need to remove a list by its GUID after confirming the correct list identifier.",
-      "tags": [
-        "destructiveHint",
-        "idempotentHint",
-        "openWorldHint"
-      ],
+      "tags": ["destructiveHint", "idempotentHint", "openWorldHint"],
       "is_deprecated": false,
       "input_parameters": {
         "if_match": {
@@ -1358,9 +1267,7 @@
           "type": "object",
           "description": "Data from the action execution",
           "required": true,
-          "requiredFields": [
-            "message"
-          ],
+          "requiredFields": ["message"],
           "properties": {
             "message": {
               "type": "string",
@@ -1385,11 +1292,7 @@
       "slug": "SHARE_POINT_DELETE_LIST_BY_TITLE",
       "name": "Delete SharePoint List By Title",
       "description": "Tool to delete a SharePoint list by its title. Use when you need to permanently remove a list and all its contents by specifying the list name.",
-      "tags": [
-        "destructiveHint",
-        "idempotentHint",
-        "delete"
-      ],
+      "tags": ["destructiveHint", "idempotentHint", "delete"],
       "is_deprecated": false,
       "input_parameters": {
         "if_match": {
@@ -1408,9 +1311,7 @@
           "type": "object",
           "description": "Data from the action execution",
           "required": true,
-          "requiredFields": [
-            "message"
-          ],
+          "requiredFields": ["message"],
           "properties": {
             "message": {
               "type": "string",
@@ -1435,11 +1336,7 @@
       "slug": "SHARE_POINT_DELETE_LIST_ITEM",
       "name": "Delete SharePoint List Item",
       "description": "Tool to delete a SharePoint list item. Use when you need to permanently remove an item by its ID. Use after obtaining the item's ETag to ensure concurrency control.",
-      "tags": [
-        "list",
-        "delete",
-        "destructiveHint"
-      ],
+      "tags": ["list", "delete", "destructiveHint"],
       "is_deprecated": false,
       "input_parameters": {
         "item_id": {
@@ -1463,9 +1360,7 @@
           "type": "object",
           "description": "Data from the action execution",
           "required": true,
-          "requiredFields": [
-            "message"
-          ],
+          "requiredFields": ["message"],
           "properties": {
             "message": {
               "type": "string",
@@ -1490,11 +1385,7 @@
       "slug": "SHARE_POINT_DELETE_RECYCLE_BIN_ITEM_PERMANENT",
       "name": "Delete Recycle Bin Item Permanently",
       "description": "Tool to permanently delete a SharePoint Recycle Bin item. Use after confirming the item's GUID to remove it irrevocably.",
-      "tags": [
-        "destructiveHint",
-        "idempotentHint",
-        "openWorldHint"
-      ],
+      "tags": ["destructiveHint", "idempotentHint", "openWorldHint"],
       "is_deprecated": false,
       "input_parameters": {
         "recyclebinitemid": {
@@ -1508,9 +1399,7 @@
           "type": "object",
           "description": "Data from the action execution",
           "required": true,
-          "requiredFields": [
-            "message"
-          ],
+          "requiredFields": ["message"],
           "properties": {
             "message": {
               "type": "string",
@@ -1535,10 +1424,7 @@
       "slug": "SHARE_POINT_DOWNLOAD_FILE_BY_SERVER_RELATIVE_URL",
       "name": "Download File by Server-relative URL",
       "description": "Tool to download a file by server-relative URL. Use when you need to fetch the raw bytes of a SharePoint file by its server-relative path.",
-      "tags": [
-        "openWorldHint",
-        "readOnlyHint"
-      ],
+      "tags": ["openWorldHint", "readOnlyHint"],
       "is_deprecated": false,
       "input_parameters": {
         "site": {
@@ -1557,9 +1443,7 @@
           "type": "object",
           "description": "Data from the action execution",
           "required": true,
-          "requiredFields": [
-            "content"
-          ],
+          "requiredFields": ["content"],
           "properties": {
             "content": {
               "type": "object",
@@ -1601,9 +1485,7 @@
       "slug": "SHARE_POINT_ENSURE_USER",
       "name": "Ensure SharePoint User",
       "description": "Ensures a user exists in a SharePoint site by their login name. If the user already exists, returns their info; if not, adds them to the site — this is a write operation with a provisioning side effect, not a read-only presence check. Use when you need to add a user or get their user ID for permissions. The login name must be in SharePoint claims format (e.g., 'i:0#.f|membership|user@domain.com'). This action only registers the user in the site collection and does not grant any permissions. To assign list-level access, pass the returned Id field as principal_id to SHARE_POINT_ADD_ROLE_ASSIGNMENT_TO_LIST.",
-      "tags": [
-        "openWorldHint"
-      ],
+      "tags": ["openWorldHint"],
       "is_deprecated": false,
       "input_parameters": {
         "login_name": {
@@ -1712,9 +1594,7 @@
       "slug": "SHARE_POINT_FOLLOW",
       "name": "Follow SharePoint Actor",
       "description": "Follow a SharePoint user, document, site, or tag. Use to make the authenticated user follow a specified actor. Supports following users (actor_type=0), documents (actor_type=1), sites (actor_type=2), or tags (actor_type=3).",
-      "tags": [
-        "openWorldHint"
-      ],
+      "tags": ["openWorldHint"],
       "is_deprecated": false,
       "input_parameters": {
         "tag_guid": {
@@ -1726,12 +1606,7 @@
           "type": "integer",
           "description": "Type of the actor to follow: 0=user, 1=document, 2=site, 3=tag.",
           "required": true,
-          "enum": [
-            0,
-            1,
-            2,
-            3
-          ]
+          "enum": [0, 1, 2, 3]
         },
         "content_uri": {
           "type": "string",
@@ -1749,20 +1624,13 @@
           "type": "object",
           "description": "Data from the action execution",
           "required": true,
-          "requiredFields": [
-            "follow"
-          ],
+          "requiredFields": ["follow"],
           "properties": {
             "follow": {
               "type": "integer",
               "description": "Result of follow operation: 0=OK; 1=AlreadyFollowing; 2=LimitReached; 3=InternalError.",
               "title": "Follow",
-              "enum": [
-                0,
-                1,
-                2,
-                3
-              ]
+              "enum": [0, 1, 2, 3]
             }
           }
         },
@@ -1782,11 +1650,7 @@
       "slug": "SHARE_POINT_GET_ALL_FOLDERS",
       "name": "Get All SharePoint Folders",
       "description": "Tool to retrieve all folders in the SharePoint web. Use when you need to discover all available folders across the site. Supports OData query parameters for filtering, selecting specific fields, sorting, and pagination.",
-      "tags": [
-        "readOnlyHint",
-        "openWorldHint",
-        "folders"
-      ],
+      "tags": ["readOnlyHint", "openWorldHint", "folders"],
       "is_deprecated": false,
       "input_parameters": {
         "top": {
@@ -1820,9 +1684,7 @@
           "type": "object",
           "description": "Data from the action execution",
           "required": true,
-          "requiredFields": [
-            "folders"
-          ],
+          "requiredFields": ["folders"],
           "properties": {
             "folders": {
               "type": "array",
@@ -1894,11 +1756,7 @@
       "slug": "SHARE_POINT_GET_CHANGES",
       "name": "Get SharePoint List Changes",
       "description": "Tool to retrieve changes from SharePoint list change log. Use when processing webhook notifications to get actual changes that occurred. Set boolean flags in query (Add, Item, Update, etc.) to filter change types. Store the ChangeToken from the last change and use as ChangeTokenStart in subsequent calls to track only new changes.",
-      "tags": [
-        "readOnlyHint",
-        "idempotentHint",
-        "openWorldHint"
-      ],
+      "tags": ["readOnlyHint", "idempotentHint", "openWorldHint"],
       "is_deprecated": false,
       "input_parameters": {
         "query": {
@@ -2094,9 +1952,7 @@
           "type": "object",
           "description": "Data from the action execution",
           "required": true,
-          "requiredFields": [
-            "changes"
-          ],
+          "requiredFields": ["changes"],
           "properties": {
             "changes": {
               "type": "array",
@@ -2188,11 +2044,7 @@
       "slug": "SHARE_POINT_GET_CONTENT_TYPE",
       "name": "Get Content Type",
       "description": "Tool to retrieve a single SharePoint content type by its ID. Use when you need detailed information about a specific content type including its fields, forms, and metadata.",
-      "tags": [
-        "readOnlyHint",
-        "idempotentHint",
-        "openWorldHint"
-      ],
+      "tags": ["readOnlyHint", "idempotentHint", "openWorldHint"],
       "is_deprecated": false,
       "input_parameters": {
         "content_type_id": {
@@ -2206,10 +2058,7 @@
           "type": "object",
           "description": "Data from the action execution",
           "required": true,
-          "requiredFields": [
-            "Id",
-            "Name"
-          ],
+          "requiredFields": ["Id", "Name"],
           "properties": {
             "Id": {
               "type": "object",
@@ -2346,11 +2195,7 @@
       "slug": "SHARE_POINT_GET_CONTENT_TYPES",
       "name": "Get Site Content Types",
       "description": "Retrieves all content types from the current SharePoint site. Use this action to discover available content types on a SharePoint site. Returns metadata for each content type including Id, Name, Description, Group, and other properties. Supports OData query parameters for filtering, selecting specific fields, sorting, and pagination.",
-      "tags": [
-        "readOnlyHint",
-        "idempotentHint",
-        "openWorldHint"
-      ],
+      "tags": ["readOnlyHint", "idempotentHint", "openWorldHint"],
       "is_deprecated": false,
       "input_parameters": {
         "top": {
@@ -2389,9 +2234,7 @@
           "type": "object",
           "description": "Data from the action execution",
           "required": true,
-          "requiredFields": [
-            "content_types"
-          ],
+          "requiredFields": ["content_types"],
           "properties": {
             "content_types": {
               "type": "array",
@@ -2470,11 +2313,7 @@
       "slug": "SHARE_POINT_GET_CONTENT_TYPES_FOR_LIST",
       "name": "Get Content Types for List",
       "description": "Tool to retrieve all content types for a specific SharePoint list by GUID. Use when you need the content type IDs, names, and descriptions of every content type in a list.",
-      "tags": [
-        "readOnlyHint",
-        "idempotentHint",
-        "openWorldHint"
-      ],
+      "tags": ["readOnlyHint", "idempotentHint", "openWorldHint"],
       "is_deprecated": false,
       "input_parameters": {
         "list_guid": {
@@ -2488,9 +2327,7 @@
           "type": "object",
           "description": "Data from the action execution",
           "required": true,
-          "requiredFields": [
-            "content_types"
-          ],
+          "requiredFields": ["content_types"],
           "properties": {
             "content_types": {
               "type": "array",
@@ -2569,10 +2406,7 @@
       "slug": "SHARE_POINT_GET_CONTEXT_INFO",
       "name": "Get SharePoint Context Info",
       "description": "Tool to retrieve SharePoint context information including the form digest value. Use when you need a form digest token for write operations (POST, PUT, DELETE).",
-      "tags": [
-        "readOnlyHint",
-        "openWorldHint"
-      ],
+      "tags": ["readOnlyHint", "openWorldHint"],
       "is_deprecated": false,
       "input_parameters": null,
       "output_parameters": {
@@ -2580,9 +2414,7 @@
           "type": "object",
           "description": "Data from the action execution",
           "required": true,
-          "requiredFields": [
-            "GetContextWebInformation"
-          ],
+          "requiredFields": ["GetContextWebInformation"],
           "properties": {
             "GetContextWebInformation": {
               "type": "object",
@@ -2642,10 +2474,7 @@
       "slug": "SHARE_POINT_GET_CURRENT_USER",
       "name": "Get Current SharePoint User",
       "description": "Tool to retrieve the current user for the site. Use after authenticating to get the current SharePoint user. A successful response confirms authentication only; access to specific sites, lists, or libraries depends on separate scopes and item-level permissions.",
-      "tags": [
-        "readOnlyHint",
-        "openWorldHint"
-      ],
+      "tags": ["readOnlyHint", "openWorldHint"],
       "is_deprecated": false,
       "input_parameters": null,
       "output_parameters": {
@@ -2793,11 +2622,7 @@
       "slug": "SHARE_POINT_GET_DRIVE_ITEM_ANALYTICS",
       "name": "Get Drive Item Analytics",
       "description": "Tool to get analytics for a SharePoint drive item. Use when you need to retrieve access statistics (view counts, unique viewers) for files or folders in SharePoint/OneDrive.",
-      "tags": [
-        "readOnlyHint",
-        "idempotentHint",
-        "analytics"
-      ],
+      "tags": ["readOnlyHint", "idempotentHint", "analytics"],
       "is_deprecated": false,
       "input_parameters": {
         "drive_id": {
@@ -2809,10 +2634,7 @@
           "type": "string",
           "description": "Time range for analytics data. Use 'allTime' for all-time statistics or 'lastSevenDays' for the last seven days.",
           "required": false,
-          "enum": [
-            "allTime",
-            "lastSevenDays"
-          ]
+          "enum": ["allTime", "lastSevenDays"]
         },
         "driveItem_id": {
           "type": "string",
@@ -2997,9 +2819,7 @@
           "type": "object",
           "description": "Data from the action execution",
           "required": true,
-          "requiredFields": [
-            "Exists"
-          ],
+          "requiredFields": ["Exists"],
           "properties": {
             "Name": {
               "type": "string",
@@ -3084,11 +2904,7 @@
       "slug": "SHARE_POINT_GET_FOLDER_BY_SERVER_RELATIVE_URL",
       "name": "Get SharePoint Folder by Server Relative URL",
       "description": "Tool to retrieve a folder by its server-relative URL. Use when you need to fetch folder metadata by path before further operations. Returns only the immediate folder; to traverse nested structures, iterate `Folders.results` and call this tool recursively for each subfolder.",
-      "tags": [
-        "readOnlyHint",
-        "idempotentHint",
-        "openWorldHint"
-      ],
+      "tags": ["readOnlyHint", "idempotentHint", "openWorldHint"],
       "is_deprecated": false,
       "input_parameters": {
         "expand": {
@@ -3166,10 +2982,7 @@
       "slug": "SHARE_POINT_GET_GROUP_USERS",
       "name": "Get Group Users",
       "description": "Retrieves all users who are members of a specified SharePoint group. This action returns user information including IDs, names, email addresses, login names, and permission details. Supports OData query parameters for filtering, sorting, field selection, and pagination. Use this when you need to audit group membership, check user permissions, or list members of a specific group.",
-      "tags": [
-        "readOnlyHint",
-        "idempotentHint"
-      ],
+      "tags": ["readOnlyHint", "idempotentHint"],
       "is_deprecated": false,
       "input_parameters": {
         "top": {
@@ -3213,9 +3026,7 @@
           "type": "object",
           "description": "Data from the action execution",
           "required": true,
-          "requiredFields": [
-            "value"
-          ],
+          "requiredFields": ["value"],
           "properties": {
             "value": {
               "type": "array",
@@ -3360,11 +3171,7 @@
       "slug": "SHARE_POINT_GET_GROUP_USERS_BY_ID",
       "name": "Get Group Users By ID",
       "description": "Tool to retrieve all users in a specific SharePoint site group by group ID. Use when you have the numeric group ID and need to list all members of that group, including their IDs, names, email addresses, and permission details. Supports OData query parameters for filtering, sorting, field selection, and pagination.",
-      "tags": [
-        "readOnlyHint",
-        "idempotentHint",
-        "list"
-      ],
+      "tags": ["readOnlyHint", "idempotentHint", "list"],
       "is_deprecated": false,
       "input_parameters": {
         "top": {
@@ -3408,9 +3215,7 @@
           "type": "object",
           "description": "Data from the action execution",
           "required": true,
-          "requiredFields": [
-            "value"
-          ],
+          "requiredFields": ["value"],
           "properties": {
             "value": {
               "type": "array",
@@ -3555,10 +3360,7 @@
       "slug": "SHARE_POINT_GET_ITEM_ATTACHMENT_CONTENT",
       "name": "Download List Item Attachment",
       "description": "Tool to download an attachment from a SharePoint list item. Use when retrieving the binary contents of a specific attachment after confirming the list title, item ID, and filename.",
-      "tags": [
-        "openWorldHint",
-        "readOnlyHint"
-      ],
+      "tags": ["openWorldHint", "readOnlyHint"],
       "is_deprecated": false,
       "input_parameters": {
         "item_id": {
@@ -3582,9 +3384,7 @@
           "type": "object",
           "description": "Data from the action execution",
           "required": true,
-          "requiredFields": [
-            "content"
-          ],
+          "requiredFields": ["content"],
           "properties": {
             "content": {
               "type": "object",
@@ -3626,11 +3426,7 @@
       "slug": "SHARE_POINT_GET_LIST_BY_GUID",
       "name": "Get SharePoint List by GUID",
       "description": "Tool to retrieve a SharePoint list by its GUID. Use when you need to fetch list metadata by its unique identifier. Prefer over name-based lookup tools when the GUID is known, as names may collide across similarly named lists.",
-      "tags": [
-        "readOnlyHint",
-        "idempotentHint",
-        "openWorldHint"
-      ],
+      "tags": ["readOnlyHint", "idempotentHint", "openWorldHint"],
       "is_deprecated": false,
       "input_parameters": {
         "list_guid": {
@@ -3885,10 +3681,7 @@
       "slug": "SHARE_POINT_GET_LIST_BY_TITLE",
       "name": "Get SharePoint List By Title",
       "description": "Tool to retrieve a SharePoint list by its title. Use when you need to fetch list metadata by title.",
-      "tags": [
-        "readOnlyHint",
-        "idempotentHint"
-      ],
+      "tags": ["readOnlyHint", "idempotentHint"],
       "is_deprecated": false,
       "input_parameters": {
         "site": {
@@ -4121,11 +3914,7 @@
       "slug": "SHARE_POINT_GET_LIST_CONTENT_TYPE_BY_ID",
       "name": "Get Content Type by ID",
       "description": "Tool to retrieve a specific content type from a SharePoint list by its ID. Use when you need detailed information about a particular content type including its fields, schema, and metadata.",
-      "tags": [
-        "readOnlyHint",
-        "idempotentHint",
-        "openWorldHint"
-      ],
+      "tags": ["readOnlyHint", "idempotentHint", "openWorldHint"],
       "is_deprecated": false,
       "input_parameters": {
         "list_id": {
@@ -4144,10 +3933,7 @@
           "type": "object",
           "description": "Data from the action execution",
           "required": true,
-          "requiredFields": [
-            "Id",
-            "Name"
-          ],
+          "requiredFields": ["Id", "Name"],
           "properties": {
             "Id": {
               "type": "object",
@@ -4224,10 +4010,7 @@
       "slug": "SHARE_POINT_GET_LIST_ITEM_BY_ID",
       "name": "Get List Item by ID",
       "description": "Tool to retrieve a SharePoint list item by ID. Use when you need to fetch a specific item after knowing its ID.",
-      "tags": [
-        "readOnlyHint",
-        "idempotentHint"
-      ],
+      "tags": ["readOnlyHint", "idempotentHint"],
       "is_deprecated": false,
       "input_parameters": {
         "expand": {
@@ -4330,10 +4113,7 @@
       "slug": "SHARE_POINT_GET_LIST_ITEM_ETAG",
       "name": "Get List Item ETag",
       "description": "Tool to fetch the ETag of a SharePoint list item. Use when you need the ETag for concurrency control before update or delete operations.",
-      "tags": [
-        "readOnlyHint",
-        "idempotentHint"
-      ],
+      "tags": ["readOnlyHint", "idempotentHint"],
       "is_deprecated": false,
       "input_parameters": {
         "item_id": {
@@ -4352,9 +4132,7 @@
           "type": "object",
           "description": "Data from the action execution",
           "required": true,
-          "requiredFields": [
-            "etag"
-          ],
+          "requiredFields": ["etag"],
           "properties": {
             "etag": {
               "type": "string",
@@ -4379,10 +4157,7 @@
       "slug": "SHARE_POINT_GET_LIST_ITEMS",
       "name": "Get SharePoint List Items",
       "description": "Tool to retrieve items from a SharePoint list. Use when you need to fetch list entries with optional OData parameters.",
-      "tags": [
-        "readOnlyHint",
-        "openWorldHint"
-      ],
+      "tags": ["readOnlyHint", "openWorldHint"],
       "is_deprecated": false,
       "input_parameters": {
         "top": {
@@ -4426,9 +4201,7 @@
           "type": "object",
           "description": "Data from the action execution",
           "required": true,
-          "requiredFields": [
-            "items"
-          ],
+          "requiredFields": ["items"],
           "properties": {
             "items": {
               "type": "array",
@@ -4592,11 +4365,7 @@
       "slug": "SHARE_POINT_GET_LIST_ITEMS_BY_GUID",
       "name": "Get SharePoint List Items by GUID",
       "description": "Tool to retrieve items from a SharePoint list using its GUID. Use when you have the list's unique identifier and need to fetch list entries with optional OData parameters.",
-      "tags": [
-        "readOnlyHint",
-        "openWorldHint",
-        "list"
-      ],
+      "tags": ["readOnlyHint", "openWorldHint", "list"],
       "is_deprecated": false,
       "input_parameters": {
         "top": {
@@ -4640,9 +4409,7 @@
           "type": "object",
           "description": "Data from the action execution",
           "required": true,
-          "requiredFields": [
-            "items"
-          ],
+          "requiredFields": ["items"],
           "properties": {
             "items": {
               "type": "array",
@@ -4670,10 +4437,7 @@
       "slug": "SHARE_POINT_GET_LIST_ITEM_VERSION",
       "name": "Get List Item Version",
       "description": "Tool to retrieve a specific version of a SharePoint list item. Use when you need to access historical versions of list items.",
-      "tags": [
-        "readOnlyHint",
-        "idempotentHint"
-      ],
+      "tags": ["readOnlyHint", "idempotentHint"],
       "is_deprecated": false,
       "input_parameters": {
         "item_id": {
@@ -4746,10 +4510,7 @@
       "slug": "SHARE_POINT_GET_MY_FOLLOWED",
       "name": "Get Followed Entities",
       "description": "Tool to get entities the current user is following. Use when you need to retrieve followed users, documents, sites, or tags after authentication.",
-      "tags": [
-        "readOnlyHint",
-        "openWorldHint"
-      ],
+      "tags": ["readOnlyHint", "openWorldHint"],
       "is_deprecated": false,
       "input_parameters": {
         "types": {
@@ -4763,9 +4524,7 @@
           "type": "object",
           "description": "Data from the action execution",
           "required": true,
-          "requiredFields": [
-            "results"
-          ],
+          "requiredFields": ["results"],
           "properties": {
             "results": {
               "type": "array",
@@ -4881,10 +4640,7 @@
       "slug": "SHARE_POINT_GET_MY_FOLLOWERS",
       "name": "Get My Followers",
       "description": "Retrieves the list of users who are following the authenticated user in SharePoint. Returns an array of SocialActor objects containing follower details like name, email, account name, and personal site URI. No parameters required - automatically retrieves followers for the current authenticated user.",
-      "tags": [
-        "readOnlyHint",
-        "openWorldHint"
-      ],
+      "tags": ["readOnlyHint", "openWorldHint"],
       "is_deprecated": false,
       "input_parameters": null,
       "output_parameters": {
@@ -4892,9 +4648,7 @@
           "type": "object",
           "description": "Data from the action execution",
           "required": true,
-          "requiredFields": [
-            "followers"
-          ],
+          "requiredFields": ["followers"],
           "properties": {
             "followers": {
               "type": "array",
@@ -5016,10 +4770,7 @@
       "slug": "SHARE_POINT_GET_ROLE_DEFINITIONS",
       "name": "Get Role Definitions",
       "description": "Tool to list role definitions at the web level. Role definition IDs and names are scoped per web/site collection — never hard-code them, as admins can modify role sets and IDs differ across site collections. Always resolve current values dynamically via this tool.",
-      "tags": [
-        "readOnlyHint",
-        "openWorldHint"
-      ],
+      "tags": ["readOnlyHint", "openWorldHint"],
       "is_deprecated": false,
       "input_parameters": {
         "top": {
@@ -5058,9 +4809,7 @@
           "type": "object",
           "description": "Data from the action execution",
           "required": true,
-          "requiredFields": [
-            "value"
-          ],
+          "requiredFields": ["value"],
           "properties": {
             "value": {
               "type": "array",
@@ -5127,11 +4876,7 @@
       "slug": "SHARE_POINT_GET_SITE_COLLECTION_INFO",
       "name": "Get SharePoint Site Collection Info",
       "description": "Tool to fetch site collection metadata (URL, ID, root web URI) only—not list item or document-level details. Use before subsequent calls to resolve correct API names. Requires SharePoint connection with site-collection-level scopes; may fail even when user-level tools succeed. Verify site_id before use—an incorrect site_id can silently return data for an unrelated site.",
-      "tags": [
-        "readOnlyHint",
-        "idempotentHint",
-        "openWorldHint"
-      ],
+      "tags": ["readOnlyHint", "idempotentHint", "openWorldHint"],
       "is_deprecated": false,
       "input_parameters": {
         "expand": {
@@ -5743,12 +5488,7 @@
       "slug": "SHARE_POINT_GET_SITE_PAGE_CONTENT",
       "name": "Get SharePoint Site Page Content",
       "description": "Tool to retrieve modern SharePoint Site Pages content by reading list item fields. Use when a .aspx page result cannot be downloaded as a file or when you need the structured content (CanvasContent1, LayoutWebpartsContent) of modern pages.",
-      "tags": [
-        "important",
-        "openWorldHint",
-        "readOnlyHint",
-        "site_pages"
-      ],
+      "tags": ["important", "openWorldHint", "readOnlyHint", "site_pages"],
       "is_deprecated": false,
       "input_parameters": {
         "site": {
@@ -5765,11 +5505,7 @@
           "type": "string",
           "description": "Format for retrieving content fields. 'raw' returns direct field values (CanvasContent1, LayoutWebpartsContent). 'text' uses FieldValuesAsText endpoint for plain text rendering. 'html' uses FieldValuesAsHtml endpoint for HTML rendering.",
           "required": false,
-          "enum": [
-            "raw",
-            "text",
-            "html"
-          ]
+          "enum": ["raw", "text", "html"]
         },
         "page_file_name": {
           "type": "string",
@@ -5831,10 +5567,7 @@
       "slug": "SHARE_POINT_GET_USER_EFFECTIVE_PERMISSIONS_ON_WEB",
       "name": "Get User Effective Permissions on Web",
       "description": "Get a user's effective permissions on the current SharePoint site (Web). This action retrieves the combined permissions a user has on the site, taking into account direct permissions, group memberships, and permission inheritance. Use this when you need to verify what permissions a user or group has before performing operations. The response contains permission masks as 64-bit integers split into high and low 32-bit values. A value of \"0\" for both means no permissions. Returns site-level permissions only; list-level or item-level grants and restrictions are not reflected.",
-      "tags": [
-        "readOnlyHint",
-        "openWorldHint"
-      ],
+      "tags": ["readOnlyHint", "openWorldHint"],
       "is_deprecated": false,
       "input_parameters": {
         "login_name": {
@@ -5848,10 +5581,7 @@
           "type": "object",
           "description": "Data from the action execution",
           "required": true,
-          "requiredFields": [
-            "high",
-            "low"
-          ],
+          "requiredFields": ["high", "low"],
           "properties": {
             "low": {
               "type": "string",
@@ -5881,10 +5611,7 @@
       "slug": "SHARE_POINT_GET_WEBHOOK_SUBSCRIPTION",
       "name": "Get SharePoint Webhook Subscription",
       "description": "Tool to retrieve a specific webhook subscription by ID from a SharePoint list. Use when you need to check subscription details like expiration date or notification URL.",
-      "tags": [
-        "readOnlyHint",
-        "idempotentHint"
-      ],
+      "tags": ["readOnlyHint", "idempotentHint"],
       "is_deprecated": false,
       "input_parameters": {
         "list_id": {
@@ -5953,12 +5680,7 @@
       "slug": "SHARE_POINT_GET_WEBHOOK_SUBSCRIPTIONS",
       "name": "Get SharePoint Webhook Subscriptions",
       "description": "Tool to retrieve all webhook subscriptions on a SharePoint list. Use when you need to view existing webhook configurations for a list.",
-      "tags": [
-        "readOnlyHint",
-        "idempotentHint",
-        "openWorldHint",
-        "list"
-      ],
+      "tags": ["readOnlyHint", "idempotentHint", "openWorldHint", "list"],
       "is_deprecated": false,
       "input_parameters": {
         "list_id": {
@@ -5972,9 +5694,7 @@
           "type": "object",
           "description": "Data from the action execution",
           "required": true,
-          "requiredFields": [
-            "value"
-          ],
+          "requiredFields": ["value"],
           "properties": {
             "value": {
               "type": "array",
@@ -6031,11 +5751,7 @@
       "slug": "SHARE_POINT_GET_WEB_INFO",
       "name": "Get SharePoint Web Info",
       "description": "Tool to retrieve information about the current SharePoint web (site) using REST API. Use when you need web metadata such as title, URL, language, or template information.",
-      "tags": [
-        "readOnlyHint",
-        "idempotentHint",
-        "openWorldHint"
-      ],
+      "tags": ["readOnlyHint", "idempotentHint", "openWorldHint"],
       "is_deprecated": false,
       "input_parameters": {
         "expand": {
@@ -6223,9 +5939,7 @@
       "slug": "SHARE_POINT_IS_FOLLOWED",
       "name": "Check Follow Status",
       "description": "Tool to check if the current user is following a specified actor. Use when verifying follow status before performing follow or unfollow operations.",
-      "tags": [
-        "readOnlyHint"
-      ],
+      "tags": ["readOnlyHint"],
       "is_deprecated": false,
       "input_parameters": {
         "tag_guid": {
@@ -6237,12 +5951,7 @@
           "type": "integer",
           "description": "Type of the actor to check: 0=user, 1=document, 2=site, 3=tag.",
           "required": true,
-          "enum": [
-            0,
-            1,
-            2,
-            3
-          ]
+          "enum": [0, 1, 2, 3]
         },
         "content_uri": {
           "type": "string",
@@ -6260,9 +5969,7 @@
           "type": "object",
           "description": "Data from the action execution",
           "required": true,
-          "requiredFields": [
-            "is_followed"
-          ],
+          "requiredFields": ["is_followed"],
           "properties": {
             "is_followed": {
               "type": "boolean",
@@ -6287,10 +5994,7 @@
       "slug": "SHARE_POINT_LIST_ALL_LISTS",
       "name": "List SharePoint Lists",
       "description": "Retrieves all lists in the current SharePoint web/site. Use this action to discover available lists and document libraries on a SharePoint site, or to pre-check for existing lists before creation (duplicate list names will fail). Returns metadata for each list including Title, Id, BaseType, ItemCount, and other properties. Supports OData query parameters for filtering, selecting specific fields, sorting, and pagination.",
-      "tags": [
-        "readOnlyHint",
-        "openWorldHint"
-      ],
+      "tags": ["readOnlyHint", "openWorldHint"],
       "is_deprecated": false,
       "input_parameters": {
         "top": {
@@ -6329,9 +6033,7 @@
           "type": "object",
           "description": "Data from the action execution",
           "required": true,
-          "requiredFields": [
-            "lists"
-          ],
+          "requiredFields": ["lists"],
           "properties": {
             "lists": {
               "type": "array",
@@ -6398,11 +6100,7 @@
       "slug": "SHARE_POINT_LIST_DRIVE_RECENT_ITEMS",
       "name": "List Recently Accessed Drive Items",
       "description": "Tool to list recently accessed items in a SharePoint drive. Returns files and folders recently accessed by the user, including items from other drives.",
-      "tags": [
-        "readOnlyHint",
-        "openWorldHint",
-        "list"
-      ],
+      "tags": ["readOnlyHint", "openWorldHint", "list"],
       "is_deprecated": false,
       "input_parameters": {
         "drive_id": {
@@ -6416,9 +6114,7 @@
           "type": "object",
           "description": "Data from the action execution",
           "required": true,
-          "requiredFields": [
-            "value"
-          ],
+          "requiredFields": ["value"],
           "properties": {
             "value": {
               "type": "array",
@@ -6777,10 +6473,7 @@
       "slug": "SHARE_POINT_LIST_FILES_IN_FOLDER",
       "name": "List Files in Folder",
       "description": "Tool to list files within a SharePoint folder (non-recursive; does not enumerate subfolders). Use when you need to enumerate all files in a folder by its server-relative URL. To cover nested structures, call the tool separately for each subfolder.",
-      "tags": [
-        "readOnlyHint",
-        "openWorldHint"
-      ],
+      "tags": ["readOnlyHint", "openWorldHint"],
       "is_deprecated": false,
       "input_parameters": {
         "top": {
@@ -6819,9 +6512,7 @@
           "type": "object",
           "description": "Data from the action execution",
           "required": true,
-          "requiredFields": [
-            "files"
-          ],
+          "requiredFields": ["files"],
           "properties": {
             "files": {
               "type": "array",
@@ -6898,10 +6589,7 @@
       "slug": "SHARE_POINT_LIST_ITEM_ATTACHMENTS",
       "name": "List Item Attachments",
       "description": "Tool to list all attachments for a SharePoint list item. Use when you need to retrieve filenames and server-relative URLs of each attachment after confirming the list title and item ID.",
-      "tags": [
-        "readOnlyHint",
-        "openWorldHint"
-      ],
+      "tags": ["readOnlyHint", "openWorldHint"],
       "is_deprecated": false,
       "input_parameters": {
         "item_id": {
@@ -6920,9 +6608,7 @@
           "type": "object",
           "description": "Data from the action execution",
           "required": true,
-          "requiredFields": [
-            "attachments"
-          ],
+          "requiredFields": ["attachments"],
           "properties": {
             "attachments": {
               "type": "array",
@@ -6964,12 +6650,7 @@
       "slug": "SHARE_POINT_LIST_LIST_COLUMNS",
       "name": "List SharePoint List Columns",
       "description": "Tool to list all column definitions in a SharePoint list. Use when you need to retrieve field metadata including column names, types, and properties.",
-      "tags": [
-        "readOnlyHint",
-        "idempotentHint",
-        "openWorldHint",
-        "list"
-      ],
+      "tags": ["readOnlyHint", "idempotentHint", "openWorldHint", "list"],
       "is_deprecated": false,
       "input_parameters": {
         "top": {
@@ -7003,9 +6684,7 @@
           "type": "object",
           "description": "Data from the action execution",
           "required": true,
-          "requiredFields": [
-            "columns"
-          ],
+          "requiredFields": ["columns"],
           "properties": {
             "columns": {
               "type": "array",
@@ -7107,11 +6786,7 @@
       "slug": "SHARE_POINT_LIST_RECYCLE_BIN_ITEMS",
       "name": "List Recycle Bin Items",
       "description": "Tool to list items in the SharePoint Recycle Bin. Use when you need to retrieve deleted items and page through results.",
-      "tags": [
-        "sharepoint",
-        "recyclebin",
-        "readOnlyHint"
-      ],
+      "tags": ["sharepoint", "recyclebin", "readOnlyHint"],
       "is_deprecated": false,
       "input_parameters": {
         "top": {
@@ -7150,9 +6825,7 @@
           "type": "object",
           "description": "Data from the action execution",
           "required": true,
-          "requiredFields": [
-            "items"
-          ],
+          "requiredFields": ["items"],
           "properties": {
             "items": {
               "type": "array",
@@ -7239,10 +6912,7 @@
       "slug": "SHARE_POINT_LIST_SITE_GROUPS",
       "name": "List Site Groups",
       "description": "Tool to list SharePoint site groups for a site collection. Use when you need to see all groups and their settings before managing permissions.",
-      "tags": [
-        "readOnlyHint",
-        "openWorldHint"
-      ],
+      "tags": ["readOnlyHint", "openWorldHint"],
       "is_deprecated": false,
       "input_parameters": {
         "top": {
@@ -7281,9 +6951,7 @@
           "type": "object",
           "description": "Data from the action execution",
           "required": true,
-          "requiredFields": [
-            "value"
-          ],
+          "requiredFields": ["value"],
           "properties": {
             "value": {
               "type": "array",
@@ -7577,10 +7245,7 @@
       "slug": "SHARE_POINT_LIST_SITE_USERS",
       "name": "List Site Users",
       "description": "Tool to list users in the site collection. Results include person users, groups, and system principals by default; use filter 'PrincipalType eq 1' to restrict to individual users.",
-      "tags": [
-        "readOnlyHint",
-        "openWorldHint"
-      ],
+      "tags": ["readOnlyHint", "openWorldHint"],
       "is_deprecated": false,
       "input_parameters": {
         "top": {
@@ -7619,9 +7284,7 @@
           "type": "object",
           "description": "Data from the action execution",
           "required": true,
-          "requiredFields": [
-            "users"
-          ],
+          "requiredFields": ["users"],
           "properties": {
             "users": {
               "type": "array",
@@ -7861,12 +7524,7 @@
       "slug": "SHARE_POINT_LIST_SUBFOLDERS_IN_FOLDER",
       "name": "List Subfolders in Folder",
       "description": "Tool to list immediate child folders within a SharePoint folder. Use when you need folder navigation or directory discovery by server-relative URL.",
-      "tags": [
-        "important",
-        "openWorldHint",
-        "readOnlyHint",
-        "folders"
-      ],
+      "tags": ["important", "openWorldHint", "readOnlyHint", "folders"],
       "is_deprecated": false,
       "input_parameters": {
         "top": {
@@ -7895,9 +7553,7 @@
           "type": "object",
           "description": "Data from the action execution",
           "required": true,
-          "requiredFields": [
-            "folders"
-          ],
+          "requiredFields": ["folders"],
           "properties": {
             "folders": {
               "type": "array",
@@ -7969,9 +7625,7 @@
       "slug": "SHARE_POINT_LOG_EVENT",
       "name": "Log SharePoint Event",
       "description": "Log custom usage analytics events in SharePoint for tracking user activities. Records usage events (views, edits, custom actions) to SharePoint's analytics system. Use this after performing actions to track usage patterns. The event will be logged to SharePoint's usage analytics database for reporting and analytics purposes. Common use cases: - Track document views or edits - Record custom user interactions - Log application-specific events for analytics Note: Obtain site/web GUIDs from GET /api/site or GET /api/web endpoints. Use consistent item_id, scope_id, and site GUIDs across related events for the same entity to ensure correct analytics grouping and correlation in reports.",
-      "tags": [
-        "openWorldHint"
-      ],
+      "tags": ["openWorldHint"],
       "is_deprecated": false,
       "input_parameters": {
         "site": {
@@ -8005,9 +7659,7 @@
           "type": "object",
           "description": "Data from the action execution",
           "required": true,
-          "requiredFields": [
-            "status"
-          ],
+          "requiredFields": ["status"],
           "properties": {
             "status": {
               "type": "integer",
@@ -8032,10 +7684,7 @@
       "slug": "SHARE_POINT_RECYCLE_FILE",
       "name": "Recycle SharePoint File",
       "description": "Tool to move a file to the Recycle Bin. Use when you need to recycle a file after confirming its folder and filename paths.",
-      "tags": [
-        "destructiveHint",
-        "idempotentHint"
-      ],
+      "tags": ["destructiveHint", "idempotentHint"],
       "is_deprecated": false,
       "input_parameters": {
         "file_relative_url": {
@@ -8054,9 +7703,7 @@
           "type": "object",
           "description": "Data from the action execution",
           "required": true,
-          "requiredFields": [
-            "recycled_item_id"
-          ],
+          "requiredFields": ["recycled_item_id"],
           "properties": {
             "recycled_item_id": {
               "type": "string",
@@ -8081,10 +7728,7 @@
       "slug": "SHARE_POINT_RECYCLE_LIST_ITEM",
       "name": "Recycle SharePoint List Item",
       "description": "Tool to move a list item to the Recycle Bin. Use when you need to soft-delete an item but preserve the ability to restore it.",
-      "tags": [
-        "list",
-        "recycle"
-      ],
+      "tags": ["list", "recycle"],
       "is_deprecated": false,
       "input_parameters": {
         "item_id": {
@@ -8103,9 +7747,7 @@
           "type": "object",
           "description": "Data from the action execution",
           "required": true,
-          "requiredFields": [
-            "recycle_bin_item_id"
-          ],
+          "requiredFields": ["recycle_bin_item_id"],
           "properties": {
             "recycle_bin_item_id": {
               "type": "string",
@@ -8130,10 +7772,7 @@
       "slug": "SHARE_POINT_RENAME_FOLDER",
       "name": "Rename SharePoint Folder",
       "description": "Renames a SharePoint folder by updating its list item metadata. To use this action: 1. First call GET_FOLDER_BY_SERVER_RELATIVE_URL with expand=ListItemAllFields to get the folder's metadata_type 2. Extract the '__metadata.type' value from the response's ListItemAllFields (e.g., 'SP.Data.Shared_x0020_DocumentsItem') 3. Call this action with the folder path, metadata_type, and new name The rename operation updates both the folder's display name (Title) and actual name (FileLeafRef). Note: This only changes the folder name, not its location in the hierarchy.",
-      "tags": [
-        "list",
-        "update"
-      ],
+      "tags": ["list", "update"],
       "is_deprecated": false,
       "input_parameters": {
         "new_name": {
@@ -8162,11 +7801,7 @@
           "type": "object",
           "description": "Data from the action execution",
           "required": true,
-          "requiredFields": [
-            "message",
-            "old_path",
-            "new_name"
-          ],
+          "requiredFields": ["message", "old_path", "new_name"],
           "properties": {
             "message": {
               "type": "string",
@@ -8201,10 +7836,7 @@
       "slug": "SHARE_POINT_RENDER_LIST_DATA_AS_STREAM",
       "name": "Render List Data As Stream",
       "description": "Retrieve list items from SharePoint with rich metadata and formatting. Returns items in the 'Row' array along with pagination info (FirstRow, LastRow, NextHref). Supports CAML queries via ViewXml for filtering and sorting. Use this when you need list data with properly formatted field values, lookup fields, or managed metadata - more capable than standard OData endpoints.",
-      "tags": [
-        "readOnlyHint",
-        "openWorldHint"
-      ],
+      "tags": ["readOnlyHint", "openWorldHint"],
       "is_deprecated": false,
       "input_parameters": {
         "site": {
@@ -8450,11 +8082,7 @@
       "slug": "SHARE_POINT_RESTORE_DRIVE_ITEM_VERSION",
       "name": "Restore Drive Item Version",
       "description": "Tool to restore a previous version of a SharePoint drive item. Use when you need to revert a file to an earlier version.",
-      "tags": [
-        "destructiveHint",
-        "openWorldHint",
-        "files"
-      ],
+      "tags": ["destructiveHint", "openWorldHint", "files"],
       "is_deprecated": false,
       "input_parameters": {
         "drive_id": {
@@ -8523,11 +8151,7 @@
       "slug": "SHARE_POINT_RESTORE_RECYCLE_BIN_ITEM",
       "name": "Restore Recycle Bin Item",
       "description": "Tool to restore a SharePoint Recycle Bin item. Use when you need to recover a deleted item by providing its GUID.",
-      "tags": [
-        "destructiveHint",
-        "idempotentHint",
-        "openWorldHint"
-      ],
+      "tags": ["destructiveHint", "idempotentHint", "openWorldHint"],
       "is_deprecated": false,
       "input_parameters": {
         "recyclebinitemid": {
@@ -8541,9 +8165,7 @@
           "type": "object",
           "description": "Data from the action execution",
           "required": true,
-          "requiredFields": [
-            "message"
-          ],
+          "requiredFields": ["message"],
           "properties": {
             "message": {
               "type": "string",
@@ -8568,10 +8190,7 @@
       "slug": "SHARE_POINT_SEARCH_QUERY",
       "name": "Search SharePoint Site",
       "description": "Search SharePoint content using Keyword Query Language (KQL). Returns documents, list items, folders, and other content matching your query. Supports filtering by properties (file type, author, date), pagination, and custom property selection. Results are nested under PrimaryQueryResult→RelevantResults→Table→Rows→Cells as Key/Value pairs requiring explicit extraction. Results are security-trimmed: inaccessible content never appears even if it exists. Use contentclass (e.g., STS_Site, STS_Web, STS_ListItem_DocumentLibrary) in querytext to isolate specific item types.",
-      "tags": [
-        "readOnlyHint",
-        "openWorldHint"
-      ],
+      "tags": ["readOnlyHint", "openWorldHint"],
       "is_deprecated": false,
       "input_parameters": {
         "rowlimit": {
@@ -8605,9 +8224,7 @@
           "type": "object",
           "description": "Data from the action execution",
           "required": true,
-          "requiredFields": [
-            "search_results"
-          ],
+          "requiredFields": ["search_results"],
           "properties": {
             "search_results": {
               "type": "object",
@@ -8888,10 +8505,7 @@
       "slug": "SHARE_POINT_SEARCH_SUGGEST",
       "name": "Search Suggest",
       "description": "Tool to get search query suggestions. Use when you need to provide autocomplete options for user search input.",
-      "tags": [
-        "readOnlyHint",
-        "idempotentHint"
-      ],
+      "tags": ["readOnlyHint", "idempotentHint"],
       "is_deprecated": false,
       "input_parameters": {
         "Culture": {
@@ -8955,9 +8569,7 @@
           "type": "object",
           "description": "Data from the action execution",
           "required": true,
-          "requiredFields": [
-            "query_suggestions"
-          ],
+          "requiredFields": ["query_suggestions"],
           "properties": {
             "query_suggestions": {
               "type": "array",
@@ -8993,9 +8605,7 @@
       "slug": "SHARE_POINT_SHAREPOINT_CHECK_OUT_FILE",
       "name": "Check Out SharePoint File",
       "description": "Tool to check out a file in a document library. Use when you need to lock a file before making changes.",
-      "tags": [
-        "openWorldHint"
-      ],
+      "tags": ["openWorldHint"],
       "is_deprecated": false,
       "input_parameters": {
         "server_relative_path": {
@@ -9009,10 +8619,7 @@
           "type": "object",
           "description": "Data from the action execution",
           "required": true,
-          "requiredFields": [
-            "message",
-            "server_relative_path"
-          ],
+          "requiredFields": ["message", "server_relative_path"],
           "properties": {
             "message": {
               "type": "string",
@@ -9042,9 +8649,7 @@
       "slug": "SHARE_POINT_SHAREPOINT_CREATE_FOLDER",
       "name": "Create SharePoint Folder",
       "description": "Creates a new folder in SharePoint using the REST API. Returns `server_relative_url`; use it for downstream operations instead of constructing paths manually. Does not configure sharing or permissions on the created folder.",
-      "tags": [
-        "openWorldHint"
-      ],
+      "tags": ["openWorldHint"],
       "is_deprecated": false,
       "input_parameters": {
         "folder_name": {
@@ -9113,9 +8718,7 @@
       "slug": "SHARE_POINT_SHAREPOINT_CREATE_LIST",
       "name": "Create SharePoint List",
       "description": "Creates a new list in SharePoint using the REST API. Custom columns cannot be added at creation time; use SHARE_POINT_CREATE_LIST_FIELD with the returned `list_id` to add them afterward. Check `success` and `error` fields in the response to confirm creation. Returns a `list_id` used by downstream tools; note SHARE_POINT_SHAREPOINT_CREATE_LIST_ITEM targets lists by `list_name` (title).",
-      "tags": [
-        "openWorldHint"
-      ],
+      "tags": ["openWorldHint"],
       "is_deprecated": false,
       "input_parameters": {
         "name": {
@@ -9139,12 +8742,7 @@
           "type": "object",
           "description": "Data from the action execution",
           "required": true,
-          "requiredFields": [
-            "message",
-            "list_id",
-            "title",
-            "description"
-          ],
+          "requiredFields": ["message", "list_id", "title", "description"],
           "properties": {
             "title": {
               "type": "string",
@@ -9184,9 +8782,7 @@
       "slug": "SHARE_POINT_SHAREPOINT_CREATE_LIST_ITEM",
       "name": "Create SharePoint List Item",
       "description": "Creates a new item in a SharePoint list. Returns an `item_data` object containing `item_id`, `Title`, and timestamps on success.",
-      "tags": [
-        "openWorldHint"
-      ],
+      "tags": ["openWorldHint"],
       "is_deprecated": false,
       "input_parameters": {
         "list_name": {
@@ -9205,12 +8801,7 @@
           "type": "object",
           "description": "Data from the action execution",
           "required": true,
-          "requiredFields": [
-            "message",
-            "item_id",
-            "created_at",
-            "item_data"
-          ],
+          "requiredFields": ["message", "item_id", "created_at", "item_data"],
           "properties": {
             "item_id": {
               "type": "integer",
@@ -9250,10 +8841,7 @@
       "slug": "SHARE_POINT_SHAREPOINT_CREATE_USER",
       "name": "Add Azure AD User to SharePoint Site",
       "description": "Adds an existing Azure AD user to the SharePoint site collection using the ensureuser endpoint. This action is idempotent - if the user is already in the site, it returns their existing details without error.",
-      "tags": [
-        "openWorldHint",
-        "idempotentHint"
-      ],
+      "tags": ["openWorldHint", "idempotentHint"],
       "is_deprecated": false,
       "input_parameters": {
         "email": {
@@ -9277,11 +8865,7 @@
           "type": "object",
           "description": "Data from the action execution",
           "required": true,
-          "requiredFields": [
-            "message",
-            "user_id",
-            "login_name"
-          ],
+          "requiredFields": ["message", "user_id", "login_name"],
           "properties": {
             "message": {
               "type": "string",
@@ -9316,11 +8900,7 @@
       "slug": "SHARE_POINT_SHAREPOINT_FIND_USER",
       "name": "Find SharePoint User",
       "description": "Searches for a user in the SharePoint site by email address and returns their profile information if found. Response includes `exists_in_graph`, `exists_in_sharepoint`, and `error_details` fields; inspect all three together — `successful=true` can coexist with Graph errors in `error_details`. When the two backends diverge, treat `exists_in_sharepoint` as authoritative for access decisions.",
-      "tags": [
-        "readOnlyHint",
-        "idempotentHint",
-        "openWorldHint"
-      ],
+      "tags": ["readOnlyHint", "idempotentHint", "openWorldHint"],
       "is_deprecated": false,
       "input_parameters": {
         "email": {
@@ -9334,9 +8914,7 @@
           "type": "object",
           "description": "Data from the action execution",
           "required": true,
-          "requiredFields": [
-            "user_exists"
-          ],
+          "requiredFields": ["user_exists"],
           "properties": {
             "user_exists": {
               "type": "boolean",
@@ -9408,11 +8986,7 @@
       "slug": "SHARE_POINT_SHAREPOINT_REMOVE_USER",
       "name": "Remove SharePoint User",
       "description": "Removes a user from SharePoint. Returns success even if user doesn't exist or was never a member; check response fields `was_removed` (bool) and `message` (str) to distinguish an actual removal from a no-op.",
-      "tags": [
-        "destructiveHint",
-        "idempotentHint",
-        "openWorldHint"
-      ],
+      "tags": ["destructiveHint", "idempotentHint", "openWorldHint"],
       "is_deprecated": false,
       "input_parameters": {
         "email": {
@@ -9426,11 +9000,7 @@
           "type": "object",
           "description": "Data from the action execution",
           "required": true,
-          "requiredFields": [
-            "message",
-            "was_removed",
-            "email"
-          ],
+          "requiredFields": ["message", "was_removed", "email"],
           "properties": {
             "email": {
               "type": "string",
@@ -9465,10 +9035,7 @@
       "slug": "SHARE_POINT_UNDO_CHECKOUT_FILE",
       "name": "Undo SharePoint File Checkout",
       "description": "Tool to undo a file checkout, discarding any changes made while checked out. Use when you need to cancel edits and unlock the file without saving.",
-      "tags": [
-        "openWorldHint",
-        "files"
-      ],
+      "tags": ["openWorldHint", "files"],
       "is_deprecated": false,
       "input_parameters": {
         "server_relative_path": {
@@ -9482,11 +9049,7 @@
           "type": "object",
           "description": "Data from the action execution",
           "required": true,
-          "requiredFields": [
-            "status",
-            "message",
-            "server_relative_path"
-          ],
+          "requiredFields": ["status", "message", "server_relative_path"],
           "properties": {
             "status": {
               "type": "integer",
@@ -9521,10 +9084,7 @@
       "slug": "SHARE_POINT_UPDATE_CONTENT_TYPE",
       "name": "Update SharePoint Content Type",
       "description": "Tool to update a SharePoint content type's properties such as name, description, group, or hidden status. Use when you need to modify content type metadata.",
-      "tags": [
-        "openWorldHint",
-        "update"
-      ],
+      "tags": ["openWorldHint", "update"],
       "is_deprecated": false,
       "input_parameters": {
         "name": {
@@ -9729,12 +9289,7 @@
       "slug": "SHARE_POINT_UPDATE_DRIVE_ITEM",
       "name": "Update Drive Item",
       "description": "Tool to update the properties of a drive item (file or folder) in SharePoint. Use when you need to rename, update description, or move items between folders.",
-      "tags": [
-        "update",
-        "openWorldHint",
-        "idempotentHint",
-        "files"
-      ],
+      "tags": ["update", "openWorldHint", "idempotentHint", "files"],
       "is_deprecated": false,
       "input_parameters": {
         "name": {
@@ -10004,11 +9559,7 @@
           "type": "object",
           "description": "Data from the action execution",
           "required": true,
-          "requiredFields": [
-            "success",
-            "list_guid",
-            "message"
-          ],
+          "requiredFields": ["success", "list_guid", "message"],
           "properties": {
             "message": {
               "type": "string",
@@ -10083,11 +9634,7 @@
           "type": "object",
           "description": "Data from the action execution",
           "required": true,
-          "requiredFields": [
-            "success",
-            "item_id",
-            "message"
-          ],
+          "requiredFields": ["success", "item_id", "message"],
           "properties": {
             "etag": {
               "type": "string",
@@ -10172,10 +9719,7 @@
           "type": "object",
           "description": "Data from the action execution",
           "required": true,
-          "requiredFields": [
-            "success",
-            "message"
-          ],
+          "requiredFields": ["success", "message"],
           "properties": {
             "message": {
               "type": "string",
@@ -10205,20 +9749,14 @@
       "slug": "SHARE_POINT_UPLOAD_FILE",
       "name": "Upload File to Folder",
       "description": "Tool to upload a file to a SharePoint document library or folder. Use when you need to programmatically add or update a file in a document library.",
-      "tags": [
-        "openWorldHint"
-      ],
+      "tags": ["openWorldHint"],
       "is_deprecated": false,
       "input_parameters": {
         "file": {
           "type": "object",
           "description": "File to upload. Alternatively, omit this and provide either 'content_text' for UTF-8 text or 'content_base64' for arbitrary bytes along with 'file_name' to set the filename.",
           "required": false,
-          "requiredFields": [
-            "name",
-            "mimetype",
-            "s3key"
-          ],
+          "requiredFields": ["name", "mimetype", "s3key"],
           "properties": {
             "name": {
               "type": "string",
@@ -10268,10 +9806,7 @@
           "type": "object",
           "description": "Data from the action execution",
           "required": true,
-          "requiredFields": [
-            "server_relative_path",
-            "name"
-          ],
+          "requiredFields": ["server_relative_path", "name"],
           "properties": {
             "name": {
               "type": "string",

@@ -1,6 +1,6 @@
+import type { CorsairWebhookMatcher, RawWebhookRequest } from 'corsair/core';
 import crypto from 'crypto';
 import { z } from 'zod';
-import type { CorsairWebhookMatcher, RawWebhookRequest } from 'corsair/core';
 
 // unknown: body may arrive as a raw string (from HTTP) or a pre-parsed object depending on the framework
 function parseBody(body: unknown): unknown {
@@ -311,7 +311,10 @@ export function verifyBoxWebhookSignature(
 	const now = Date.now();
 	const FIVE_MINUTES_MS = 5 * 60 * 1000;
 	if (Math.abs(now - deliveredAt) > FIVE_MINUTES_MS) {
-		return { valid: false, error: 'Webhook timestamp is too old or too far in the future' };
+		return {
+			valid: false,
+			error: 'Webhook timestamp is too old or too far in the future',
+		};
 	}
 	// Box signature: HMAC-SHA256( delivery_timestamp + raw_body, key ) encoded as base64
 	const body = request.rawBody ?? JSON.stringify(request.payload);

@@ -1,5 +1,5 @@
-import { z } from 'zod';
 import type { CorsairWebhookMatcher, RawWebhookRequest } from 'corsair/core';
+import { z } from 'zod';
 
 export const OnedriveNotificationSchema = z.object({
 	subscriptionId: z.string(),
@@ -16,13 +16,17 @@ export const OnedriveWebhookPayloadSchema = z.object({
 	value: z.array(OnedriveNotificationSchema),
 });
 
-export type OnedriveWebhookPayload = z.infer<typeof OnedriveWebhookPayloadSchema>;
+export type OnedriveWebhookPayload = z.infer<
+	typeof OnedriveWebhookPayloadSchema
+>;
 export type OnedriveNotification = z.infer<typeof OnedriveNotificationSchema>;
 
 export const OnedriveValidationPayloadSchema = z.object({
 	validationToken: z.string(),
 });
-export type OnedriveValidationPayload = z.infer<typeof OnedriveValidationPayloadSchema>;
+export type OnedriveValidationPayload = z.infer<
+	typeof OnedriveValidationPayloadSchema
+>;
 
 // any/unknown for body since raw webhook body is untyped before parsing
 function parseBody(body: unknown): unknown {
@@ -59,26 +63,35 @@ function isOnedriveNotificationShape(notification: unknown): boolean {
 	);
 }
 
-function parseOnedriveNotifications(body: unknown): Record<string, unknown>[] | null {
+function parseOnedriveNotifications(
+	body: unknown,
+): Record<string, unknown>[] | null {
 	const parsed = parseBody(body);
 	if (!parsed || typeof parsed !== 'object') return null;
 	const value = (parsed as Record<string, unknown>).value;
 	if (!Array.isArray(value) || value.length === 0) return null;
 	const notifications = value.filter(
-		(item): item is Record<string, unknown> => !!item && typeof item === 'object',
+		(item): item is Record<string, unknown> =>
+			!!item && typeof item === 'object',
 	);
 	if (notifications.length === 0) return null;
 	return notifications;
 }
 
-export function createOnedriveMatch(changeType?: string): CorsairWebhookMatcher {
+export function createOnedriveMatch(
+	changeType?: string,
+): CorsairWebhookMatcher {
 	return (request: RawWebhookRequest) => {
 		const notifications = parseOnedriveNotifications(request.body);
 		if (!notifications) return false;
-		const onedriveNotifications = notifications.filter(isOnedriveNotificationShape);
+		const onedriveNotifications = notifications.filter(
+			isOnedriveNotificationShape,
+		);
 		if (onedriveNotifications.length === 0) return false;
 		if (!changeType) return true;
-		return onedriveNotifications.some((notification) => notification.changeType === changeType);
+		return onedriveNotifications.some(
+			(notification) => notification.changeType === changeType,
+		);
 	};
 }
 
@@ -86,9 +99,15 @@ export function createOnedriveValidationMatch(): CorsairWebhookMatcher {
 	return (request: RawWebhookRequest) => {
 		if (extractOnedriveValidationToken(request)) return true;
 		const acceptHeader = request.headers['accept'] || '';
-		if (typeof acceptHeader === 'string' && acceptHeader.includes('text/plain')) {
+		if (
+			typeof acceptHeader === 'string' &&
+			acceptHeader.includes('text/plain')
+		) {
 			const parsed = parseBody(request.body);
-			if (!parsed || (typeof parsed === 'object' && Object.keys(parsed).length === 0)) {
+			if (
+				!parsed ||
+				(typeof parsed === 'object' && Object.keys(parsed).length === 0)
+			) {
 				return true;
 			}
 		}
@@ -97,7 +116,12 @@ export function createOnedriveValidationMatch(): CorsairWebhookMatcher {
 }
 
 export function extractOnedriveValidationToken(
-	request: RawWebhookRequest | { payload?: unknown; headers?: Record<string, string | string[] | undefined> },
+	request:
+		| RawWebhookRequest
+		| {
+				payload?: unknown;
+				headers?: Record<string, string | string[] | undefined>;
+		  },
 ): string | null {
 	const headers = request.headers || {};
 	const candidates = [
@@ -109,7 +133,11 @@ export function extractOnedriveValidationToken(
 		if (typeof candidate === 'string' && candidate.trim()) {
 			return decodeURIComponent(candidate.trim());
 		}
-		if (Array.isArray(candidate) && typeof candidate[0] === 'string' && candidate[0].trim()) {
+		if (
+			Array.isArray(candidate) &&
+			typeof candidate[0] === 'string' &&
+			candidate[0].trim()
+		) {
 			return decodeURIComponent(candidate[0].trim());
 		}
 	}
@@ -128,7 +156,9 @@ export function extractOnedriveValidationToken(
 		try {
 			const fullUrl = asString.startsWith('http')
 				? new URL(asString)
-				: new URL(`https://example.invalid${asString.startsWith('/') ? asString : `/${asString}`}`);
+				: new URL(
+						`https://example.invalid${asString.startsWith('/') ? asString : `/${asString}`}`,
+					);
 			const queryToken = fullUrl.searchParams.get('validationToken');
 			if (queryToken && queryToken.trim()) return queryToken.trim();
 		} catch {}
@@ -156,7 +186,10 @@ export function verifyOnedriveClientState(
 		return { valid: false, error: 'Missing clientState in notification' };
 	}
 	const isValid = notification.clientState === expectedClientState;
-	return { valid: isValid, error: isValid ? undefined : 'clientState mismatch' };
+	return {
+		valid: isValid,
+		error: isValid ? undefined : 'clientState mismatch',
+	};
 }
 
 export type OnedriveWebhookOutputs = {

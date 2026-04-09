@@ -4,13 +4,11 @@ import { makeAuthenticatedGmailRequest } from '../client';
 import type { GmailEndpointOutputs } from './types';
 
 export const list: GmailEndpoints['labelsList'] = async (ctx, input) => {
-	const result = await makeAuthenticatedGmailRequest<GmailEndpointOutputs['labelsList']>(
-		`/users/${input.userId || 'me'}/labels`,
-		ctx,
-		{
-			method: 'GET',
-		},
-	);
+	const result = await makeAuthenticatedGmailRequest<
+		GmailEndpointOutputs['labelsList']
+	>(`/users/${input.userId || 'me'}/labels`, ctx, {
+		method: 'GET',
+	});
 
 	if (result.labels && ctx.db.labels) {
 		try {
@@ -38,13 +36,11 @@ export const list: GmailEndpoints['labelsList'] = async (ctx, input) => {
 };
 
 export const get: GmailEndpoints['labelsGet'] = async (ctx, input) => {
-	const result = await makeAuthenticatedGmailRequest<GmailEndpointOutputs['labelsGet']>(
-		`/users/${input.userId || 'me'}/labels/${input.id}`,
-		ctx,
-		{
-			method: 'GET',
-		},
-	);
+	const result = await makeAuthenticatedGmailRequest<
+		GmailEndpointOutputs['labelsGet']
+	>(`/users/${input.userId || 'me'}/labels/${input.id}`, ctx, {
+		method: 'GET',
+	});
 
 	if (result.id && ctx.db.labels) {
 		try {
@@ -70,14 +66,12 @@ export const get: GmailEndpoints['labelsGet'] = async (ctx, input) => {
 };
 
 export const create: GmailEndpoints['labelsCreate'] = async (ctx, input) => {
-	const result = await makeAuthenticatedGmailRequest<GmailEndpointOutputs['labelsCreate']>(
-		`/users/${input.userId || 'me'}/labels`,
-		ctx,
-		{
-			method: 'POST',
-			body: input.label,
-		},
-	);
+	const result = await makeAuthenticatedGmailRequest<
+		GmailEndpointOutputs['labelsCreate']
+	>(`/users/${input.userId || 'me'}/labels`, ctx, {
+		method: 'POST',
+		body: input.label,
+	});
 
 	if (result.id) {
 		const endpoints = ctx.endpoints as GmailBoundEndpoints;
@@ -94,14 +88,12 @@ export const create: GmailEndpoints['labelsCreate'] = async (ctx, input) => {
 };
 
 export const update: GmailEndpoints['labelsUpdate'] = async (ctx, input) => {
-	const result = await makeAuthenticatedGmailRequest<GmailEndpointOutputs['labelsUpdate']>(
-		`/users/${input.userId || 'me'}/labels/${input.id}`,
-		ctx,
-		{
-			method: 'PUT',
-			body: input.label,
-		},
-	);
+	const result = await makeAuthenticatedGmailRequest<
+		GmailEndpointOutputs['labelsUpdate']
+	>(`/users/${input.userId || 'me'}/labels/${input.id}`, ctx, {
+		method: 'PUT',
+		body: input.label,
+	});
 
 	if (result.id) {
 		const endpoints = ctx.endpoints as GmailBoundEndpoints;

@@ -53,7 +53,12 @@ export const list: TrelloEndpoints['listsList'] = async (ctx, input) => {
 		}
 	}
 
-	await logEventFromContext(ctx, 'trello.lists.list', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'trello.lists.list',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
@@ -78,7 +83,12 @@ export const create: TrelloEndpoints['listsCreate'] = async (ctx, input) => {
 		}
 	}
 
-	await logEventFromContext(ctx, 'trello.lists.create', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'trello.lists.create',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
@@ -105,7 +115,12 @@ export const update: TrelloEndpoints['listsUpdate'] = async (ctx, input) => {
 		}
 	}
 
-	await logEventFromContext(ctx, 'trello.lists.update', { listId }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'trello.lists.update',
+		{ listId },
+		'completed',
+	);
 	return result;
 };
 
@@ -131,6 +146,11 @@ export const archive: TrelloEndpoints['listsArchive'] = async (ctx, input) => {
 		}
 	}
 
-	await logEventFromContext(ctx, 'trello.lists.archive', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'trello.lists.archive',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };

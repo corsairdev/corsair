@@ -1,4 +1,10 @@
-import { TrelloBoard, TrelloCard, TrelloLabel, TrelloList, TrelloMember } from './database';
+import {
+	TrelloBoard,
+	TrelloCard,
+	TrelloLabel,
+	TrelloList,
+	TrelloMember,
+} from './database';
 
 export const TrelloSchema = {
 	version: '1.0.0',

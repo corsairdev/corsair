@@ -1,8 +1,6 @@
-import { makeGraphRequest, graphSiteUrl } from './client';
-import {
-	SharepointEndpointOutputSchemas,
-} from './endpoints/types';
-import 'dotenv/config'
+import { graphSiteUrl, makeGraphRequest } from './client';
+import { SharepointEndpointOutputSchemas } from './endpoints/types';
+import 'dotenv/config';
 
 const ACCESS_TOKEN = process.env.SHAREPOINT_ACCESS_TOKEN!;
 const SITE_ID = process.env.SHAREPOINT_SITE_ID!;
@@ -47,8 +45,12 @@ beforeAll(async () => {
 afterAll(async () => {
 	if (testListId) {
 		try {
-			await makeGraphRequest(sg(`lists/${testListId}`), ACCESS_TOKEN, { method: 'DELETE' });
-		} catch { /* ignore */ }
+			await makeGraphRequest(sg(`lists/${testListId}`), ACCESS_TOKEN, {
+				method: 'DELETE',
+			});
+		} catch {
+			/* ignore */
+		}
 	}
 	if (testFolderPath && SITE_GUID) {
 		try {
@@ -57,7 +59,9 @@ afterAll(async () => {
 				ACCESS_TOKEN,
 				{ method: 'DELETE' },
 			);
-		} catch { /* ignore */ }
+		} catch {
+			/* ignore */
+		}
 	}
 });
 
@@ -81,7 +85,10 @@ describe('web', () => {
 		const result = await makeGraphRequest<Record<string, unknown>>(
 			`/sites/${SITE_ID}`,
 			ACCESS_TOKEN,
-			{ method: 'GET', query: { $select: 'id,displayName,webUrl,description,siteCollection' } },
+			{
+				method: 'GET',
+				query: { $select: 'id,displayName,webUrl,description,siteCollection' },
+			},
 		);
 
 		SharepointEndpointOutputSchemas.webGetSiteCollectionInfo.parse(result);
@@ -147,11 +154,10 @@ describe('lists', () => {
 	});
 
 	it('update – updates the list description', async () => {
-		await makeGraphRequest(
-			sg(`lists/${testListId}`),
-			ACCESS_TOKEN,
-			{ method: 'PATCH', body: { description: 'Updated by Corsair test' } },
-		);
+		await makeGraphRequest(sg(`lists/${testListId}`), ACCESS_TOKEN, {
+			method: 'PATCH',
+			body: { description: 'Updated by Corsair test' },
+		});
 	});
 
 	it('listColumns – returns array of fields', async () => {
@@ -320,7 +326,10 @@ describe('files', () => {
 	it('upload – uploads a text file', async () => {
 		const fileName = `${TEST_PREFIX}_test.txt`;
 		// File content is a raw string; cast through unknown to satisfy the generic Record body type
-		const fileContent = 'Hello from Corsair test' as unknown as Record<string, unknown>;
+		const fileContent = 'Hello from Corsair test' as unknown as Record<
+			string,
+			unknown
+		>;
 		const result = await makeGraphRequest<Record<string, unknown>>(
 			`/sites/${SITE_GUID}/drive/root:/${testFolderPath}/${fileName}:/content`,
 			ACCESS_TOKEN,
@@ -513,18 +522,20 @@ describe('social', () => {
 		);
 
 		const mapped = {
-			value: ((result as { value?: unknown[] }).value ?? []).map((site: unknown) => {
-				// Graph API site object is unknown at runtime; cast to a record for property access
-				const siteItem = site as Record<string, unknown>;
-				return {
-					// Spread siteItem first to forward any unknown fields, then override with explicit mappings
-					...siteItem,
-					Id: siteItem.id,
-					Name: siteItem.displayName,
-					Uri: siteItem.webUrl,
-					ActorType: 2,
-				};
-			}),
+			value: ((result as { value?: unknown[] }).value ?? []).map(
+				(site: unknown) => {
+					// Graph API site object is unknown at runtime; cast to a record for property access
+					const siteItem = site as Record<string, unknown>;
+					return {
+						// Spread siteItem first to forward any unknown fields, then override with explicit mappings
+						...siteItem,
+						Id: siteItem.id,
+						Name: siteItem.displayName,
+						Uri: siteItem.webUrl,
+						ActorType: 2,
+					};
+				},
+			),
 		};
 		SharepointEndpointOutputSchemas.socialGetFollowed.parse(mapped);
 	});

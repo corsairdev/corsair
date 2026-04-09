@@ -1,4 +1,1 @@
-
-export type StravaWebhookOutputs = {
-
-};
+export type StravaWebhookOutputs = {};

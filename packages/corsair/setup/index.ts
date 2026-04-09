@@ -249,7 +249,13 @@ async function ensurePluginRowsAndDeks(
 			const id = crypto.randomUUID();
 			await db
 				.insertInto('corsair_integrations')
-				.values({ id, name: pluginId, config: {}, created_at: now, updated_at: now })
+				.values({
+					id,
+					name: pluginId,
+					config: {},
+					created_at: now,
+					updated_at: now,
+				})
 				.execute();
 			integration = await db
 				.selectFrom('corsair_integrations')
@@ -262,7 +268,9 @@ async function ensurePluginRowsAndDeks(
 		// ── Integration-level DEK ──────────────────────────────────────────────
 		const integrationKeyMgr = integrationKeys[pluginId];
 		if (integration && !integration.dek && integrationKeyMgr) {
-			await (integrationKeyMgr as { issue_new_dek: () => Promise<void> }).issue_new_dek();
+			await (
+				integrationKeyMgr as { issue_new_dek: () => Promise<void> }
+			).issue_new_dek();
 			log(`[corsair:setup] Issued integration DEK: ${pluginId}`);
 		}
 
@@ -300,7 +308,9 @@ async function ensurePluginRowsAndDeks(
 		// ── Account-level DEK ─────────────────────────────────────────────────
 		const accountKeyMgr = pluginNamespaces[pluginId]?.keys;
 		if (account && !account.dek && accountKeyMgr) {
-			await (accountKeyMgr as { issue_new_dek: () => Promise<void> }).issue_new_dek();
+			await (
+				accountKeyMgr as { issue_new_dek: () => Promise<void> }
+			).issue_new_dek();
 			log(`[corsair:setup] Issued account DEK: ${pluginId}`);
 		}
 	}
@@ -316,24 +326,39 @@ async function applyCredentials(
 	log: SetupLog,
 	warn: SetupWarn,
 ): Promise<void> {
-	const integrationKeys = instance.keys as unknown as Record<string, KeyManager | undefined>;
-	const pluginNamespaces = instance as unknown as Record<string, { keys?: KeyManager } | undefined>;
+	const integrationKeys = instance.keys as unknown as Record<
+		string,
+		KeyManager | undefined
+	>;
+	const pluginNamespaces = instance as unknown as Record<
+		string,
+		{ keys?: KeyManager } | undefined
+	>;
 
 	for (const [pluginId, fields] of Object.entries(credentials)) {
 		const integrationKeyMgr = integrationKeys[pluginId];
-		const accountKeyMgr = pluginNamespaces[pluginId]?.keys as KeyManager | undefined;
+		const accountKeyMgr = pluginNamespaces[pluginId]?.keys as
+			| KeyManager
+			| undefined;
 
 		for (const [field, value] of Object.entries(fields)) {
 			const setter = `set_${field}`;
 
-			if (integrationKeyMgr && typeof integrationKeyMgr[setter] === 'function') {
-				await (integrationKeyMgr[setter] as (v: string) => Promise<void>)(value);
+			if (
+				integrationKeyMgr &&
+				typeof integrationKeyMgr[setter] === 'function'
+			) {
+				await (integrationKeyMgr[setter] as (v: string) => Promise<void>)(
+					value,
+				);
 				log(`[corsair:setup] Set integration credential: ${pluginId}.${field}`);
 			} else if (accountKeyMgr && typeof accountKeyMgr[setter] === 'function') {
 				await (accountKeyMgr[setter] as (v: string) => Promise<void>)(value);
 				log(`[corsair:setup] Set account credential: ${pluginId}.${field}`);
 			} else {
-				warn(`[corsair:setup] No setter found for '${pluginId}.${field}' — skipping.`);
+				warn(
+					`[corsair:setup] No setter found for '${pluginId}.${field}' — skipping.`,
+				);
 			}
 		}
 	}
@@ -371,7 +396,11 @@ async function checkAuthStatus(
 			| undefined;
 		if (!getter) continue;
 		let value: string | null = null;
-		try { value = await getter(); } catch { /* treat as missing */ }
+		try {
+			value = await getter();
+		} catch {
+			/* treat as missing */
+		}
 		if (!value) missingIntegration.push(field);
 	}
 
@@ -384,11 +413,16 @@ async function checkAuthStatus(
 			| undefined;
 		if (!getter) continue;
 		let value: string | null = null;
-		try { value = await getter(); } catch { /* treat as missing */ }
+		try {
+			value = await getter();
+		} catch {
+			/* treat as missing */
+		}
 		if (!value) missingAccount.push(field);
 	}
 
-	const isReady = missingIntegration.length === 0 && missingAccount.length === 0;
+	const isReady =
+		missingIntegration.length === 0 && missingAccount.length === 0;
 
 	if (isReady) {
 		log(`[corsair:setup] '${pluginId}' (${authType}) is configured ✓`);
@@ -399,7 +433,7 @@ async function checkAuthStatus(
 			const pairs = allMissing.map((f) => `${f}=VALUE`).join(' ');
 			log(
 				`[corsair:setup] '${pluginId}' (${authType}) needs credentials. Run:\n` +
-				`  corsair setup --${pluginId} ${pairs}`,
+					`  corsair setup --${pluginId} ${pairs}`,
 			);
 		} else {
 			const lines: string[] = [
@@ -426,16 +460,26 @@ async function checkAllPluginsAuthStatus(
 ): Promise<Set<string>> {
 	const authReadyPlugins = new Set<string>();
 
-	const integrationKeys = instance.keys as unknown as Record<string, KeyManager | undefined>;
-	const pluginNamespaces = instance as unknown as Record<string, { keys?: KeyManager } | undefined>;
+	const integrationKeys = instance.keys as unknown as Record<
+		string,
+		KeyManager | undefined
+	>;
+	const pluginNamespaces = instance as unknown as Record<
+		string,
+		{ keys?: KeyManager } | undefined
+	>;
 
 	for (const plugin of plugins) {
 		const pluginId = plugin.id;
 		const authType =
-			((plugin.options as Record<string, unknown>)?.authType as string | undefined) ?? 'unknown';
+			((plugin.options as Record<string, unknown>)?.authType as
+				| string
+				| undefined) ?? 'unknown';
 
 		const integrationKeyMgr = integrationKeys[pluginId];
-		const accountKeyMgr = pluginNamespaces[pluginId]?.keys as KeyManager | undefined;
+		const accountKeyMgr = pluginNamespaces[pluginId]?.keys as
+			| KeyManager
+			| undefined;
 
 		if (integrationKeyMgr && accountKeyMgr) {
 			const isReady = await checkAuthStatus(
@@ -481,7 +525,9 @@ async function runBackfill(
 		if (!activePluginIds.has(pluginId)) continue;
 
 		if (!authReadyPlugins.has(pluginId)) {
-			log(`[corsair:setup] Skipping backfill for '${pluginId}' — auth not configured.`);
+			log(
+				`[corsair:setup] Skipping backfill for '${pluginId}' — auth not configured.`,
+			);
 			continue;
 		}
 

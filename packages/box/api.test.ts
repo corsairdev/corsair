@@ -23,11 +23,9 @@ let TEST_FOLDER_ID = '0';
 
 beforeAll(async () => {
 	// Use folder listing instead of search — search requires indexing time and new files won't appear immediately
-	const rootItems = await makeBoxRequest<{ entries: Array<{ id: string; type: string }> }>(
-		'folders/0/items',
-		TEST_TOKEN,
-		{ method: 'GET', query: { limit: 10 } },
-	);
+	const rootItems = await makeBoxRequest<{
+		entries: Array<{ id: string; type: string }>;
+	}>('folders/0/items', TEST_TOKEN, { method: 'GET', query: { limit: 10 } });
 
 	TEST_FILE_ID = rootItems.entries?.find((e) => e.type === 'file')?.id;
 	const folder = rootItems.entries?.find((e) => e.type === 'folder');

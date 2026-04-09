@@ -7,18 +7,13 @@ import type {
 	CorsairPluginContext,
 	CorsairWebhook,
 	KeyBuilderContext,
+	PickAuth,
 	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
 	RequiredPluginWebhookSchemas,
-	PickAuth
 } from 'corsair/core';
-import type { StravaEndpointInputs, StravaEndpointOutputs } from './endpoints/types';
-import {
-	StravaEndpointInputSchemas,
-	StravaEndpointOutputSchemas,
-} from './endpoints/types';
 import {
 	Activities,
 	Athletes,
@@ -29,12 +24,17 @@ import {
 	Segments,
 	Uploads,
 } from './endpoints';
-import { StravaSchema } from './schema';
 import type {
-	StravaWebhookOutputs,
-} from './webhooks/types';
-
+	StravaEndpointInputs,
+	StravaEndpointOutputs,
+} from './endpoints/types';
+import {
+	StravaEndpointInputSchemas,
+	StravaEndpointOutputSchemas,
+} from './endpoints/types';
 import { errorHandlers } from './error-handlers';
+import { StravaSchema } from './schema';
+import type { StravaWebhookOutputs } from './webhooks/types';
 
 export type StravaPluginOptions = {
 	authType?: PickAuth<'oauth_2'>;
@@ -95,9 +95,7 @@ type StravaWebhook<
 	TEvent,
 > = CorsairWebhook<StravaContext, TEvent, StravaWebhookOutputs[K]>;
 
-export type StravaWebhooks = {
-	
-};
+export type StravaWebhooks = {};
 
 export type StravaBoundWebhooks = BindWebhooks<StravaWebhooks>;
 
@@ -147,9 +145,7 @@ const stravaEndpointsNested = {
 	},
 } as const;
 
-const stravaWebhooksNested = {
-	
-} as const;
+const stravaWebhooksNested = {} as const;
 
 export const stravaEndpointSchemas = {
 	'activities.create': {
@@ -381,9 +377,9 @@ export const stravaAuthConfig = {
 	},
 } as const satisfies PluginAuthConfig;
 
-const stravaWebhookSchemas = {
-	
-} satisfies RequiredPluginWebhookSchemas<typeof stravaWebhooksNested>;
+const stravaWebhookSchemas = {} satisfies RequiredPluginWebhookSchemas<
+	typeof stravaWebhooksNested
+>;
 
 export type BaseStravaPlugin<T extends StravaPluginOptions> = CorsairPlugin<
 	'strava',
@@ -420,7 +416,7 @@ export function strava<const T extends StravaPluginOptions>(
 		webhookSchemas: stravaWebhookSchemas,
 		pluginWebhookMatcher: (request) => {
 			// Webhooks are not implemented yet
-			return false
+			return false;
 		},
 		errorHandlers: {
 			...errorHandlers,
@@ -450,9 +446,7 @@ export function strava<const T extends StravaPluginOptions>(
 // Webhook Type Exports
 // ─────────────────────────────────────────────────────────────────────────────
 
-export type {
-	StravaWebhookOutputs,
-} from './webhooks/types';
+export type { StravaWebhookOutputs } from './webhooks/types';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Endpoint Type Exports
@@ -504,7 +498,7 @@ export type {
 	StravaEndpointInputs,
 	StravaEndpointOutputs,
 	StreamSetResponse,
+	UploadResponse,
 	UploadsCreateInput,
 	UploadsGetInput,
-	UploadResponse,
 } from './endpoints/types';

@@ -47,7 +47,7 @@ export const list: CalendlyEndpoints['eventTypesList'] = async (ctx, input) => {
 		CalendlyEndpointOutputs['eventTypesList']
 	>('event_types', ctx.key, {
 		method: 'GET',
-		query: input
+		query: input,
 	});
 
 	if (result.collection && ctx.db.eventTypes) {
@@ -55,7 +55,7 @@ export const list: CalendlyEndpoints['eventTypesList'] = async (ctx, input) => {
 			for (const eventType of result.collection) {
 				const uriParts = eventType.uri.split('/');
 				// URI always has at least one segment; last segment is the UUID
-			const id = uriParts[uriParts.length - 1]!;
+				const id = uriParts[uriParts.length - 1]!;
 				await ctx.db.eventTypes.upsertByEntityId(id, {
 					id,
 					...eventType,
@@ -90,7 +90,7 @@ export const create: CalendlyEndpoints['eventTypesCreate'] = async (
 		CalendlyEndpointOutputs['eventTypesCreate']
 	>('event_types', ctx.key, {
 		method: 'POST',
-		body: input
+		body: input,
 	});
 
 	if (result.resource && ctx.db.eventTypes) {
@@ -131,7 +131,7 @@ export const createOneOff: CalendlyEndpoints['eventTypesCreateOneOff'] = async (
 		CalendlyEndpointOutputs['eventTypesCreateOneOff']
 	>('one_off_event_types', ctx.key, {
 		method: 'POST',
-		body: input
+		body: input,
 	});
 
 	if (result.resource?.uri && ctx.db.eventTypes) {
@@ -167,7 +167,7 @@ export const update: CalendlyEndpoints['eventTypesUpdate'] = async (
 		CalendlyEndpointOutputs['eventTypesUpdate']
 	>(`event_types/${uuid}`, ctx.key, {
 		method: 'PATCH',
-		body
+		body,
 	});
 
 	if (result.resource && ctx.db.eventTypes) {
@@ -222,7 +222,7 @@ export const listAvailableTimes: CalendlyEndpoints['eventTypesListAvailableTimes
 			CalendlyEndpointOutputs['eventTypesListAvailableTimes']
 		>('event_type_available_times', ctx.key, {
 			method: 'GET',
-			query: input
+			query: input,
 		});
 
 		await logEventFromContext(
@@ -242,7 +242,7 @@ export const listHosts: CalendlyEndpoints['eventTypesListHosts'] = async (
 		CalendlyEndpointOutputs['eventTypesListHosts']
 	>('event_type_memberships', ctx.key, {
 		method: 'GET',
-		query: input
+		query: input,
 	});
 
 	await logEventFromContext(

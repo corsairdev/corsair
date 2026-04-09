@@ -3,38 +3,40 @@ import type { IntercomEndpoints } from '..';
 import { makeIntercomRequest } from '../client';
 import type { IntercomEndpointOutputs } from './types';
 
-export const createOrUpdate: IntercomEndpoints['companiesCreateOrUpdate'] = async (ctx, input) => {
-	const result = await makeIntercomRequest<IntercomEndpointOutputs['companiesCreateOrUpdate']>(
-		'companies',
-		ctx.key,
-		{
+export const createOrUpdate: IntercomEndpoints['companiesCreateOrUpdate'] =
+	async (ctx, input) => {
+		const result = await makeIntercomRequest<
+			IntercomEndpointOutputs['companiesCreateOrUpdate']
+		>('companies', ctx.key, {
 			method: 'POST',
-			body: input
-		},
-	);
+			body: input,
+		});
 
-	if (result && ctx.db.companies) {
-		try {
-			await ctx.db.companies.upsertByEntityId(result.id, result);
-		} catch (error) {
-			console.warn('Failed to save company to database:', error);
+		if (result && ctx.db.companies) {
+			try {
+				await ctx.db.companies.upsertByEntityId(result.id, result);
+			} catch (error) {
+				console.warn('Failed to save company to database:', error);
+			}
 		}
-	}
 
-	await logEventFromContext(ctx, 'intercom.companies.createOrUpdate', {}, 'completed');
-	return result;
-};
+		await logEventFromContext(
+			ctx,
+			'intercom.companies.createOrUpdate',
+			{},
+			'completed',
+		);
+		return result;
+	};
 
 export const get: IntercomEndpoints['companiesGet'] = async (ctx, input) => {
 	const { id, ...query } = input;
-	const result = await makeIntercomRequest<IntercomEndpointOutputs['companiesGet']>(
-		`companies/${id}`,
-		ctx.key,
-		{
-			query,
-			method: 'GET',
-		},
-	);
+	const result = await makeIntercomRequest<
+		IntercomEndpointOutputs['companiesGet']
+	>(`companies/${id}`, ctx.key, {
+		query,
+		method: 'GET',
+	});
 
 	if (result && ctx.db.companies) {
 		try {
@@ -44,20 +46,23 @@ export const get: IntercomEndpoints['companiesGet'] = async (ctx, input) => {
 		}
 	}
 
-	await logEventFromContext(ctx, 'intercom.companies.get', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'intercom.companies.get',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
 export const list: IntercomEndpoints['companiesList'] = async (ctx, input) => {
 	const { ...query } = input;
-	const result = await makeIntercomRequest<IntercomEndpointOutputs['companiesList']>(
-		'companies',
-		ctx.key,
-		{
-			query,
-			method: 'GET',
-		},
-	);
+	const result = await makeIntercomRequest<
+		IntercomEndpointOutputs['companiesList']
+	>('companies', ctx.key, {
+		query,
+		method: 'GET',
+	});
 
 	if (result?.data && ctx.db.companies) {
 		try {
@@ -69,18 +74,24 @@ export const list: IntercomEndpoints['companiesList'] = async (ctx, input) => {
 		}
 	}
 
-	await logEventFromContext(ctx, 'intercom.companies.list', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'intercom.companies.list',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
-export const scroll: IntercomEndpoints['companiesScroll'] = async (ctx, input) => {
-	const result = await makeIntercomRequest<IntercomEndpointOutputs['companiesScroll']>(
-		'companies/scroll',
-		ctx.key,
-		{
-			query: input,
-		},
-	);
+export const scroll: IntercomEndpoints['companiesScroll'] = async (
+	ctx,
+	input,
+) => {
+	const result = await makeIntercomRequest<
+		IntercomEndpointOutputs['companiesScroll']
+	>('companies/scroll', ctx.key, {
+		query: input,
+	});
 
 	if (result?.data && ctx.db.companies) {
 		try {
@@ -92,32 +103,44 @@ export const scroll: IntercomEndpoints['companiesScroll'] = async (ctx, input) =
 		}
 	}
 
-	await logEventFromContext(ctx, 'intercom.companies.scroll', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'intercom.companies.scroll',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
-export const deleteCompany: IntercomEndpoints['companiesDelete'] = async (ctx, input) => {
+export const deleteCompany: IntercomEndpoints['companiesDelete'] = async (
+	ctx,
+	input,
+) => {
 	const { id } = input;
-	const result = await makeIntercomRequest<IntercomEndpointOutputs['companiesDelete']>(
-		`companies/${id}`,
-		ctx.key,
-		{
-			method: 'DELETE',
-		},
-	);
+	const result = await makeIntercomRequest<
+		IntercomEndpointOutputs['companiesDelete']
+	>(`companies/${id}`, ctx.key, {
+		method: 'DELETE',
+	});
 
-	await logEventFromContext(ctx, 'intercom.companies.delete', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'intercom.companies.delete',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
-export const retrieve: IntercomEndpoints['companiesRetrieve'] = async (ctx, input) => {
-	const result = await makeIntercomRequest<IntercomEndpointOutputs['companiesRetrieve']>(
-		'companies',
-		ctx.key,
-		{
-			query: input,
-		},
-	);
+export const retrieve: IntercomEndpoints['companiesRetrieve'] = async (
+	ctx,
+	input,
+) => {
+	const result = await makeIntercomRequest<
+		IntercomEndpointOutputs['companiesRetrieve']
+	>('companies', ctx.key, {
+		query: input,
+	});
 
 	if (result && ctx.db.companies) {
 		try {
@@ -127,40 +150,54 @@ export const retrieve: IntercomEndpoints['companiesRetrieve'] = async (ctx, inpu
 		}
 	}
 
-	await logEventFromContext(ctx, 'intercom.companies.retrieve', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'intercom.companies.retrieve',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
-export const listAttachedContacts: IntercomEndpoints['companiesListAttachedContacts'] = async (ctx, input) => {
-	const { id, ...query } = input;
-	const result = await makeIntercomRequest<IntercomEndpointOutputs['companiesListAttachedContacts']>(
-		`companies/${id}/contacts`,
-		ctx.key,
-		{
+export const listAttachedContacts: IntercomEndpoints['companiesListAttachedContacts'] =
+	async (ctx, input) => {
+		const { id, ...query } = input;
+		const result = await makeIntercomRequest<
+			IntercomEndpointOutputs['companiesListAttachedContacts']
+		>(`companies/${id}/contacts`, ctx.key, {
 			query,
-		},
-	);
+		});
 
-	if (result?.data && ctx.db.contacts) {
-		try {
-			for (const contact of result.data) {
-				await ctx.db.contacts.upsertByEntityId(contact.id, contact);
+		if (result?.data && ctx.db.contacts) {
+			try {
+				for (const contact of result.data) {
+					await ctx.db.contacts.upsertByEntityId(contact.id, contact);
+				}
+			} catch (error) {
+				console.warn('Failed to save contacts to database:', error);
 			}
-		} catch (error) {
-			console.warn('Failed to save contacts to database:', error);
 		}
-	}
 
-	await logEventFromContext(ctx, 'intercom.companies.listAttachedContacts', { ...input }, 'completed');
-	return result;
-};
+		await logEventFromContext(
+			ctx,
+			'intercom.companies.listAttachedContacts',
+			{ ...input },
+			'completed',
+		);
+		return result;
+	};
 
-export const listAttachedSegments: IntercomEndpoints['companiesListAttachedSegments'] = async (ctx, input) => {
-	const result = await makeIntercomRequest<IntercomEndpointOutputs['companiesListAttachedSegments']>(
-		`companies/${input.id}/segments`,
-		ctx.key,
-	);
+export const listAttachedSegments: IntercomEndpoints['companiesListAttachedSegments'] =
+	async (ctx, input) => {
+		const result = await makeIntercomRequest<
+			IntercomEndpointOutputs['companiesListAttachedSegments']
+		>(`companies/${input.id}/segments`, ctx.key);
 
-	await logEventFromContext(ctx, 'intercom.companies.listAttachedSegments', { ...input }, 'completed');
-	return result;
-};
+		await logEventFromContext(
+			ctx,
+			'intercom.companies.listAttachedSegments',
+			{ ...input },
+			'completed',
+		);
+		return result;
+	};

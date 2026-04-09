@@ -1,19 +1,19 @@
 import {
+	addFieldLink as contentTypesAddFieldLink,
 	create as contentTypesCreate,
+	createListField as contentTypesCreateListField,
 	get as contentTypesGet,
 	getAll as contentTypesGetAll,
 	getById as contentTypesGetById,
 	getForList as contentTypesGetForList,
 	update as contentTypesUpdate,
-	addFieldLink as contentTypesAddFieldLink,
-	createListField as contentTypesCreateListField,
 } from './content-types';
 import {
+	createSharingLink as driveCreateSharingLink,
+	deleteVersion as driveDeleteVersion,
 	getAnalytics as driveGetAnalytics,
 	listRecentItems as driveListRecentItems,
 	restoreVersion as driveRestoreVersion,
-	deleteVersion as driveDeleteVersion,
-	createSharingLink as driveCreateSharingLink,
 	updateItem as driveUpdateItem,
 } from './drive';
 import {
@@ -51,15 +51,15 @@ import {
 	update as itemsUpdate,
 } from './items';
 import {
-	deleteByTitle as listsDeleteByTitle,
+	create as listsCreate,
 	deleteList as listsDelete,
+	deleteByTitle as listsDeleteByTitle,
 	getByGuid as listsGetByGuid,
 	getByTitle as listsGetByTitle,
 	getChanges as listsGetChanges,
 	listAll as listsListAll,
 	listColumns as listsListColumns,
 	renderDataAsStream as listsRenderDataAsStream,
-	create as listsCreate,
 	update as listsUpdate,
 } from './lists';
 import {
@@ -82,26 +82,26 @@ import {
 	isFollowed as socialIsFollowed,
 } from './social';
 import {
-	getCurrent as usersGetCurrent,
 	create as usersCreate,
-	find as usersFind,
-	remove as usersRemove,
 	ensure as usersEnsure,
-	listSite as usersListSite,
-	listGroups as usersListGroups,
+	find as usersFind,
+	getCurrent as usersGetCurrent,
+	getEffectivePermissions as usersGetEffectivePermissions,
 	getGroupUsers as usersGetGroupUsers,
 	getGroupUsersById as usersGetGroupUsersById,
-	getEffectivePermissions as usersGetEffectivePermissions,
+	listGroups as usersListGroups,
+	listSite as usersListSite,
+	remove as usersRemove,
 } from './users';
 import {
+	createSubsite as webCreateSubsite,
 	getContextInfo as webGetContextInfo,
 	getDriveItemByPath as webGetDriveItemByPath,
 	getInfo as webGetInfo,
 	getSiteCollectionInfo as webGetSiteCollectionInfo,
 	getSitePage as webGetSitePage,
-	createSubsite as webCreateSubsite,
-	updateSite as webUpdateSite,
 	logEvent as webLogEvent,
+	updateSite as webUpdateSite,
 } from './web';
 import {
 	get as webhookSubscriptionsGet,

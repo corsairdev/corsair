@@ -1,8 +1,8 @@
 import {
-	created as meetingCreated,
 	cancelled as meetingCancelled,
-	started as meetingStarted,
+	created as meetingCreated,
 	ended as meetingEnded,
+	started as meetingStarted,
 	participantJoined,
 	participantLeft,
 } from './meetings';

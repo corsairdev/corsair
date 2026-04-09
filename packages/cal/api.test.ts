@@ -1,4 +1,4 @@
-import 'dotenv/config'
+import 'dotenv/config';
 import { CalAPIError, makeCalRequest } from './client';
 import type {
 	BookingsCancelResponse,

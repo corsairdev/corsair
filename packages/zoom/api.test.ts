@@ -1,18 +1,20 @@
 import 'dotenv/config';
 import { makeZoomRequest } from './client';
 import type {
+	DeviceListResponse,
 	MeetingGetResponse,
 	MeetingListResponse,
 	RecordingListAllResponse,
-	WebinarListResponse,
 	ReportDailyUsageResponse,
-	DeviceListResponse,
+	WebinarListResponse,
 } from './endpoints/types';
 import { ZoomEndpointOutputSchemas } from './endpoints/types';
 
 const TEST_TOKEN: string | undefined = process.env.ZOOM_ACCESS_TOKEN;
 if (!TEST_TOKEN) {
-	throw new Error('ZOOM_ACCESS_TOKEN env var is not set — integration tests cannot run');
+	throw new Error(
+		'ZOOM_ACCESS_TOKEN env var is not set — integration tests cannot run',
+	);
 }
 
 async function getFirstMeetingId(): Promise<number | undefined> {
@@ -83,7 +85,6 @@ describe('Zoom API Type Tests', () => {
 			);
 
 			ZoomEndpointOutputSchemas.webinarsList.parse(response);
-		
 		});
 	});
 
@@ -105,7 +106,6 @@ describe('Zoom API Type Tests', () => {
 			);
 
 			ZoomEndpointOutputSchemas.reportsDailyUsage.parse(response);
-		
 		});
 	});
 

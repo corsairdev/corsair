@@ -245,11 +245,13 @@ function parseBody(body: unknown): unknown {
 	}
 }
 
-export function createTelegramMatch(eventType: keyof TelegramUpdate): CorsairWebhookMatcher {
+export function createTelegramMatch(
+	eventType: keyof TelegramUpdate,
+): CorsairWebhookMatcher {
 	return (request: RawWebhookRequest) => {
 		// parseBody returns unknown; cast is safe because Telegram only sends TelegramUpdate objects to this endpoint
 		const parsedBody = parseBody(request.body) as TelegramUpdate;
-		
+
 		if (!parsedBody || typeof parsedBody !== 'object') {
 			return false;
 		}
@@ -268,12 +270,17 @@ export function verifyTelegramWebhookSignature(
 	}
 
 	const headers = request.headers;
-	const providedToken = Array.isArray(headers['x-telegram-bot-api-secret-token'])
+	const providedToken = Array.isArray(
+		headers['x-telegram-bot-api-secret-token'],
+	)
 		? headers['x-telegram-bot-api-secret-token'][0]
 		: headers['x-telegram-bot-api-secret-token'];
 
 	if (!providedToken) {
-		return { valid: false, error: 'Missing x-telegram-bot-api-secret-token header' };
+		return {
+			valid: false,
+			error: 'Missing x-telegram-bot-api-secret-token header',
+		};
 	}
 
 	const isValid = providedToken === secretToken;

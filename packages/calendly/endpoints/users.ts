@@ -72,12 +72,7 @@ export const getCurrent: CalendlyEndpoints['usersGetCurrent'] = async (
 		}
 	}
 
-	await logEventFromContext(
-		ctx,
-		'calendly.users.getCurrent',
-		{},
-		'completed',
-	);
+	await logEventFromContext(ctx, 'calendly.users.getCurrent', {}, 'completed');
 	return result;
 };
 
@@ -106,7 +101,7 @@ export const listAvailabilitySchedules: CalendlyEndpoints['usersListAvailability
 			CalendlyEndpointOutputs['usersListAvailabilitySchedules']
 		>('user_availability_schedules', ctx.key, {
 			method: 'GET',
-			query: input
+			query: input,
 		});
 
 		await logEventFromContext(
@@ -126,7 +121,7 @@ export const listBusyTimes: CalendlyEndpoints['usersListBusyTimes'] = async (
 		CalendlyEndpointOutputs['usersListBusyTimes']
 	>('user_busy_times', ctx.key, {
 		method: 'GET',
-		query: input
+		query: input,
 	});
 
 	await logEventFromContext(
@@ -144,7 +139,7 @@ export const listMeetingLocations: CalendlyEndpoints['usersListMeetingLocations'
 			CalendlyEndpointOutputs['usersListMeetingLocations']
 		>('user_meeting_locations', ctx.key, {
 			method: 'GET',
-			query: input
+			query: input,
 		});
 
 		await logEventFromContext(
@@ -164,7 +159,7 @@ export const listEventTypes: CalendlyEndpoints['usersListEventTypes'] = async (
 		CalendlyEndpointOutputs['usersListEventTypes']
 	>('event_types', ctx.key, {
 		method: 'GET',
-		query: input
+		query: input,
 	});
 
 	if (result.collection && ctx.db.eventTypes) {
@@ -172,7 +167,7 @@ export const listEventTypes: CalendlyEndpoints['usersListEventTypes'] = async (
 			for (const eventType of result.collection) {
 				const uriParts = eventType.uri.split('/');
 				// URI always has at least one segment; last segment is the UUID
-			const id = uriParts[uriParts.length - 1]!;
+				const id = uriParts[uriParts.length - 1]!;
 				await ctx.db.eventTypes.upsertByEntityId(id, {
 					id,
 					...eventType,

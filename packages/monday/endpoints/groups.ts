@@ -20,7 +20,12 @@ export const list: MondayEndpoints['groupsList'] = async (ctx, input) => {
 		{ boardId: input.board_id },
 	);
 
-	await logEventFromContext(ctx, 'monday.groups.list', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'monday.groups.list',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
@@ -40,7 +45,12 @@ export const create: MondayEndpoints['groupsCreate'] = async (ctx, input) => {
 		},
 	);
 
-	await logEventFromContext(ctx, 'monday.groups.create', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'monday.groups.create',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
@@ -60,11 +70,19 @@ export const update: MondayEndpoints['groupsUpdate'] = async (ctx, input) => {
 		},
 	);
 
-	await logEventFromContext(ctx, 'monday.groups.update', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'monday.groups.update',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
-export const deletegroup: MondayEndpoints['groupsDelete'] = async (ctx, input) => {
+export const deletegroup: MondayEndpoints['groupsDelete'] = async (
+	ctx,
+	input,
+) => {
 	const result = await makeMondayRequest<MondayEndpointOutputs['groupsDelete']>(
 		`mutation($boardId: ID!, $groupId: String!) {
 			delete_group(board_id: $boardId, group_id: $groupId) {
@@ -78,6 +96,11 @@ export const deletegroup: MondayEndpoints['groupsDelete'] = async (ctx, input) =
 		},
 	);
 
-	await logEventFromContext(ctx, 'monday.groups.delete', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'monday.groups.delete',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };

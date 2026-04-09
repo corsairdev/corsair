@@ -57,11 +57,13 @@ const OUTLOOK_RESOURCES: Record<
 // Helpers
 // ─────────────────────────────────────────────────────────────────────────────
 
-async function extractInternalConfig(cwd: string): Promise<CorsairInternalConfig> {
+async function extractInternalConfig(
+	cwd: string,
+): Promise<CorsairInternalConfig> {
 	const instance = await getCorsairInstance({ cwd, shouldThrowOnError: true });
-	const internal = (instance as Record<string | symbol, unknown>)[CORSAIR_INTERNAL] as
-		| CorsairInternalConfig
-		| undefined;
+	const internal = (instance as Record<string | symbol, unknown>)[
+		CORSAIR_INTERNAL
+	] as CorsairInternalConfig | undefined;
 	if (!internal) {
 		throw new Error(
 			'Could not read internal config from Corsair instance. Make sure you are using the latest version of corsair.',
@@ -78,7 +80,9 @@ async function createGraphSubscription(
 	clientState: string,
 	expiryMinutes: number,
 ): Promise<{ id: string; expirationDateTime: string }> {
-	const expirationDateTime = new Date(Date.now() + expiryMinutes * 60 * 1000).toISOString();
+	const expirationDateTime = new Date(
+		Date.now() + expiryMinutes * 60 * 1000,
+	).toISOString();
 
 	const response = await fetch(`${GRAPH_API_BASE}/subscriptions`, {
 		method: 'POST',
@@ -107,7 +111,11 @@ async function createGraphSubscription(
 // Entry point
 // ─────────────────────────────────────────────────────────────────────────────
 
-export async function runOutlookSubscribe({ cwd }: { cwd: string }): Promise<void> {
+export async function runOutlookSubscribe({
+	cwd,
+}: {
+	cwd: string;
+}): Promise<void> {
 	p.intro('Corsair — Outlook Webhook Subscribe');
 
 	const spin = p.spinner();
@@ -147,7 +155,10 @@ export async function runOutlookSubscribe({ cwd }: { cwd: string }): Promise<voi
 		defaultValue: 'default',
 		placeholder: 'default',
 	});
-	if (p.isCancel(tenantId)) { p.cancel('Operation cancelled.'); process.exit(0); }
+	if (p.isCancel(tenantId)) {
+		p.cancel('Operation cancelled.');
+		process.exit(0);
+	}
 
 	const credSpin = p.spinner();
 	credSpin.start('Fetching Outlook credentials...');
@@ -178,24 +189,34 @@ export async function runOutlookSubscribe({ cwd }: { cwd: string }): Promise<voi
 		placeholder: 'https://abc123.ngrok-free.app/api/webhook',
 		validate: (v) => {
 			if (!v || v.trim().length === 0) return 'Webhook URL is required';
-			if (!v.startsWith('https://')) return 'URL must start with https:// (Microsoft Graph requires HTTPS)';
+			if (!v.startsWith('https://'))
+				return 'URL must start with https:// (Microsoft Graph requires HTTPS)';
 		},
 	});
-	if (p.isCancel(webhookUrl)) { p.cancel('Operation cancelled.'); process.exit(0); }
+	if (p.isCancel(webhookUrl)) {
+		p.cancel('Operation cancelled.');
+		process.exit(0);
+	}
 
 	// Resource selection (multiselect — Outlook subscriptions are per-resource)
 	const selected = await p.multiselect<OutlookResourceType>({
 		message: 'Select resources to subscribe to:',
-		options: (Object.entries(OUTLOOK_RESOURCES) as [OutlookResourceType, typeof OUTLOOK_RESOURCES[OutlookResourceType]][]).map(
-			([value, cfg]) => ({
-				value,
-				label: cfg.label,
-				hint: `${cfg.resource} [${cfg.changeType}]`,
-			}),
-		),
+		options: (
+			Object.entries(OUTLOOK_RESOURCES) as [
+				OutlookResourceType,
+				(typeof OUTLOOK_RESOURCES)[OutlookResourceType],
+			][]
+		).map(([value, cfg]) => ({
+			value,
+			label: cfg.label,
+			hint: `${cfg.resource} [${cfg.changeType}]`,
+		})),
 		required: true,
 	});
-	if (p.isCancel(selected)) { p.cancel('Operation cancelled.'); process.exit(0); }
+	if (p.isCancel(selected)) {
+		p.cancel('Operation cancelled.');
+		process.exit(0);
+	}
 
 	// clientState (webhook secret for signature verification)
 	const autoSecret = crypto.randomBytes(16).toString('hex');
@@ -204,7 +225,10 @@ export async function runOutlookSubscribe({ cwd }: { cwd: string }): Promise<voi
 		defaultValue: autoSecret,
 		placeholder: autoSecret,
 	});
-	if (p.isCancel(clientState)) { p.cancel('Operation cancelled.'); process.exit(0); }
+	if (p.isCancel(clientState)) {
+		p.cancel('Operation cancelled.');
+		process.exit(0);
+	}
 
 	// Create subscriptions
 	const results: string[] = [];

@@ -6,10 +6,7 @@ export const listCreated: TrelloWebhooks['listCreated'] = {
 	match: createTrelloActionMatch('createList'),
 
 	handler: async (ctx, request) => {
-		const verification = verifyTrelloWebhookSignature(
-			request,
-			ctx.key,
-		);
+		const verification = verifyTrelloWebhookSignature(request, ctx.key);
 		if (!verification.valid) {
 			return {
 				success: false,

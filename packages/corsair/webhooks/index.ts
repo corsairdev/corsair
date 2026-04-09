@@ -254,7 +254,9 @@ export async function processWebhook(
 				response: returnToSenderObjectExists
 					? { ...response?.returnToSender, success: true }
 					: { success: true },
-				...(response.responseHeaders && { responseHeaders: response.responseHeaders }),
+				...(response.responseHeaders && {
+					responseHeaders: response.responseHeaders,
+				}),
 			};
 		} catch (error) {
 			console.error(

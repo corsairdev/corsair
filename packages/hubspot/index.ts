@@ -1,4 +1,3 @@
-import { z } from 'zod';
 import type {
 	BindEndpoints,
 	BindWebhooks,
@@ -8,13 +7,12 @@ import type {
 	CorsairPluginContext,
 	CorsairWebhook,
 	KeyBuilderContext,
+	PickAuth,
 	PluginPermissionsConfig,
 	RawWebhookRequest,
 	RequiredPluginEndpointMeta,
-	RequiredPluginEndpointSchemas,
-	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
-import type { PickAuth } from 'corsair/core';
+import { z } from 'zod';
 import type {
 	HubSpotEndpointInputs,
 	HubSpotEndpointOutputs,

@@ -30,7 +30,11 @@ export const fileSystemChanged: DropboxWebhooks['fileSystemChanged'] = {
 		try {
 			// any cast needed because ctx.endpoints is untyped in webhook context
 			const endpoints = ctx.endpoints as DropboxBoundEndpoints;
-			const first = await endpoints.folders.list({ path: '', recursive: true, include_deleted: true });
+			const first = await endpoints.folders.list({
+				path: '',
+				recursive: true,
+				include_deleted: true,
+			});
 			let cursor = first.cursor;
 			let hasMore = first.has_more;
 			while (hasMore && cursor) {

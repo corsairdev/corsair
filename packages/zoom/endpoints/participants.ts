@@ -10,7 +10,7 @@ export const getPastMeeting: ZoomEndpoints['participantsGetPastMeeting'] =
 			ZoomEndpointOutputs['participantsGetPastMeeting']
 		>(`past_meetings/${meetingId}/participants`, ctx.key, {
 			method: 'GET',
-			query
+			query,
 		});
 
 		if (result.participants && ctx.db.participants) {

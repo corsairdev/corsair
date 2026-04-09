@@ -1,8 +1,38 @@
-import { list as teamsList, get as teamsGet, create as teamsCreate, update as teamsUpdate, remove as teamsDelete } from './teams';
-import { list as channelsList, get as channelsGet, create as channelsCreate, update as channelsUpdate, remove as channelsDelete } from './channels';
-import { list as messagesList, get as messagesGet, send as messagesSend, reply as messagesReply, listReplies as messagesListReplies, remove as messagesDelete } from './messages';
-import { list as membersList, get as membersGet, add as membersAdd, remove as membersRemove } from './members';
-import { list as chatsList, get as chatsGet, create as chatsCreate, listMessages as chatsListMessages, sendMessage as chatsSendMessage } from './chats';
+import {
+	create as channelsCreate,
+	remove as channelsDelete,
+	get as channelsGet,
+	list as channelsList,
+	update as channelsUpdate,
+} from './channels';
+import {
+	create as chatsCreate,
+	get as chatsGet,
+	list as chatsList,
+	listMessages as chatsListMessages,
+	sendMessage as chatsSendMessage,
+} from './chats';
+import {
+	add as membersAdd,
+	get as membersGet,
+	list as membersList,
+	remove as membersRemove,
+} from './members';
+import {
+	remove as messagesDelete,
+	get as messagesGet,
+	list as messagesList,
+	listReplies as messagesListReplies,
+	reply as messagesReply,
+	send as messagesSend,
+} from './messages';
+import {
+	create as teamsCreate,
+	remove as teamsDelete,
+	get as teamsGet,
+	list as teamsList,
+	update as teamsUpdate,
+} from './teams';
 
 export const Teams = {
 	list: teamsList,

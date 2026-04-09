@@ -2,69 +2,90 @@ import { z } from 'zod';
 
 // ── Shared Sub-Schemas ────────────────────────────────────────────────────────
 
-const DriveItemSchema = z.object({
-	id: z.string(),
-	name: z.string().optional(),
-	size: z.number().optional(),
-	webUrl: z.string().optional(),
-	eTag: z.string().optional(),
-	cTag: z.string().optional(),
-	createdDateTime: z.string().optional(),
-	lastModifiedDateTime: z.string().optional(),
-	// any/unknown for createdBy since user identity object shape varies by context
-	createdBy: z.record(z.unknown()).optional(),
-	// any/unknown for lastModifiedBy since user identity object shape varies by context
-	lastModifiedBy: z.record(z.unknown()).optional(),
-	parentReference: z.object({
-		driveId: z.string().optional(),
-		id: z.string().optional(),
-		path: z.string().optional(),
+const DriveItemSchema = z
+	.object({
+		id: z.string(),
 		name: z.string().optional(),
-	}).passthrough().optional(),
-	file: z.object({
-		mimeType: z.string().optional(),
-	}).passthrough().optional(),
-	folder: z.object({
-		childCount: z.number().optional(),
-	}).passthrough().optional(),
-	deleted: z.object({
-		state: z.string().optional(),
-	}).passthrough().optional(),
-	// any/unknown for children since it's a recursive driveItem array
-	children: z.array(z.record(z.unknown())).optional(),
-}).passthrough();
+		size: z.number().optional(),
+		webUrl: z.string().optional(),
+		eTag: z.string().optional(),
+		cTag: z.string().optional(),
+		createdDateTime: z.string().optional(),
+		lastModifiedDateTime: z.string().optional(),
+		// any/unknown for createdBy since user identity object shape varies by context
+		createdBy: z.record(z.unknown()).optional(),
+		// any/unknown for lastModifiedBy since user identity object shape varies by context
+		lastModifiedBy: z.record(z.unknown()).optional(),
+		parentReference: z
+			.object({
+				driveId: z.string().optional(),
+				id: z.string().optional(),
+				path: z.string().optional(),
+				name: z.string().optional(),
+			})
+			.passthrough()
+			.optional(),
+		file: z
+			.object({
+				mimeType: z.string().optional(),
+			})
+			.passthrough()
+			.optional(),
+		folder: z
+			.object({
+				childCount: z.number().optional(),
+			})
+			.passthrough()
+			.optional(),
+		deleted: z
+			.object({
+				state: z.string().optional(),
+			})
+			.passthrough()
+			.optional(),
+		// any/unknown for children since it's a recursive driveItem array
+		children: z.array(z.record(z.unknown())).optional(),
+	})
+	.passthrough();
 
-const DriveSchema = z.object({
-	id: z.string().optional(),
-	name: z.string().optional(),
-	driveType: z.string().optional(),
-	webUrl: z.string().optional(),
-	description: z.string().optional(),
-	createdDateTime: z.string().optional(),
-	lastModifiedDateTime: z.string().optional(),
-	// any/unknown for owner since it contains nested identity objects
-	owner: z.record(z.unknown()).optional(),
-	quota: z.object({
-		deleted: z.number().optional(),
-		remaining: z.number().optional(),
-		total: z.number().optional(),
-		used: z.number().optional(),
-		state: z.string().optional(),
-	}).passthrough().optional(),
-}).passthrough();
+const DriveSchema = z
+	.object({
+		id: z.string().optional(),
+		name: z.string().optional(),
+		driveType: z.string().optional(),
+		webUrl: z.string().optional(),
+		description: z.string().optional(),
+		createdDateTime: z.string().optional(),
+		lastModifiedDateTime: z.string().optional(),
+		// any/unknown for owner since it contains nested identity objects
+		owner: z.record(z.unknown()).optional(),
+		quota: z
+			.object({
+				deleted: z.number().optional(),
+				remaining: z.number().optional(),
+				total: z.number().optional(),
+				used: z.number().optional(),
+				state: z.string().optional(),
+			})
+			.passthrough()
+			.optional(),
+	})
+	.passthrough();
 
-const PermissionSchema = z.object({
-	id: z.string().optional(),
-	// any/unknown for link since sharing link shape varies
-	link: z.record(z.unknown()).optional(),
-	roles: z.array(z.string()).optional(),
-	// any/unknown for grantedTo since identity shape varies
-	grantedTo: z.record(z.unknown()).optional(),
-	// any/unknown for grantedToV2 since identity shape varies
-	grantedToV2: z.record(z.unknown()).optional(),
-	hasPassword: z.boolean().optional(),
-	expirationDateTime: z.string().optional(),
-}).passthrough();
+const PermissionSchema = z
+	.object({
+		id: z.string().optional(),
+		// any/unknown for link since sharing link shape varies
+		link: z.record(z.unknown()).optional(),
+		roles: z.array(z.string()).optional(),
+		// any/unknown for grantedTo since identity shape varies
+		grantedTo: z.record(z.unknown()).optional(),
+		// any/unknown for grantedToV2 since identity shape varies
+		grantedToV2: z.record(z.unknown()).optional(),
+		hasPassword: z.boolean().optional(),
+		expirationDateTime: z.string().optional(),
+	})
+	.passthrough();
 
 // ── Items Input Schemas ───────────────────────────────────────────────────────
 
@@ -86,18 +107,22 @@ const ItemsUpdateMetadataInputSchema = z.object({
 	name: z.string().optional(),
 	description: z.string().optional(),
 	ifMatch: z.string().optional(),
-	fileSystemInfo: z.object({
-		createdDateTime: z.string().optional(),
-		lastAccessedDateTime: z.string().optional(),
-		lastModifiedDateTime: z.string().optional(),
-	}).optional(),
+	fileSystemInfo: z
+		.object({
+			createdDateTime: z.string().optional(),
+			lastAccessedDateTime: z.string().optional(),
+			lastModifiedDateTime: z.string().optional(),
+		})
+		.optional(),
 	parent_reference_id: z.string().optional(),
 	parent_reference_drive_id: z.string().optional(),
 	// any/unknown for additional_properties since they are arbitrary key-value pairs
 	additional_properties: z.record(z.unknown()).optional(),
 });
 
-export type ItemsUpdateMetadataInput = z.infer<typeof ItemsUpdateMetadataInputSchema>;
+export type ItemsUpdateMetadataInput = z.infer<
+	typeof ItemsUpdateMetadataInputSchema
+>;
 
 const ItemsDeleteInputSchema = z.object({
 	item_id: z.string(),
@@ -111,7 +136,9 @@ const ItemsDeletePermanentlyInputSchema = z.object({
 	drive_id: z.string(),
 });
 
-export type ItemsDeletePermanentlyInput = z.infer<typeof ItemsDeletePermanentlyInputSchema>;
+export type ItemsDeletePermanentlyInput = z.infer<
+	typeof ItemsDeletePermanentlyInputSchema
+>;
 
 const ItemsCopyInputSchema = z.object({
 	item_id: z.string(),
@@ -121,10 +148,12 @@ const ItemsCopyInputSchema = z.object({
 	drive_id: z.string().optional(),
 	group_id: z.string().optional(),
 	children_only: z.boolean().optional(),
-	parent_reference: z.object({
-		id: z.string().optional(),
-		driveId: z.string().optional(),
-	}).optional(),
+	parent_reference: z
+		.object({
+			id: z.string().optional(),
+			driveId: z.string().optional(),
+		})
+		.optional(),
 	conflict_behavior: z.enum(['fail', 'replace', 'rename']).optional(),
 	include_all_version_history: z.boolean().optional(),
 });
@@ -194,7 +223,9 @@ const ItemsDiscardCheckoutInputSchema = z.object({
 	driveItem_id: z.string(),
 });
 
-export type ItemsDiscardCheckoutInput = z.infer<typeof ItemsDiscardCheckoutInputSchema>;
+export type ItemsDiscardCheckoutInput = z.infer<
+	typeof ItemsDiscardCheckoutInputSchema
+>;
 
 const ItemsFollowInputSchema = z.object({
 	drive_id: z.string(),
@@ -236,7 +267,9 @@ const ItemsGetThumbnailsInputSchema = z.object({
 	original_orientation: z.boolean().optional(),
 });
 
-export type ItemsGetThumbnailsInput = z.infer<typeof ItemsGetThumbnailsInputSchema>;
+export type ItemsGetThumbnailsInput = z.infer<
+	typeof ItemsGetThumbnailsInputSchema
+>;
 
 const ItemsDownloadInputSchema = z.object({
 	item_id: z.string(),
@@ -254,7 +287,9 @@ const ItemsDownloadByPathInputSchema = z.object({
 	file_name: z.string(),
 });
 
-export type ItemsDownloadByPathInput = z.infer<typeof ItemsDownloadByPathInputSchema>;
+export type ItemsDownloadByPathInput = z.infer<
+	typeof ItemsDownloadByPathInputSchema
+>;
 
 const ItemsDownloadAsFormatInputSchema = z.object({
 	path_and_filename: z.string(),
@@ -262,7 +297,9 @@ const ItemsDownloadAsFormatInputSchema = z.object({
 	format: z.enum(['pdf', 'html']),
 });
 
-export type ItemsDownloadAsFormatInput = z.infer<typeof ItemsDownloadAsFormatInputSchema>;
+export type ItemsDownloadAsFormatInput = z.infer<
+	typeof ItemsDownloadAsFormatInputSchema
+>;
 
 const ItemsDownloadVersionInputSchema = z.object({
 	item_id: z.string(),
@@ -271,7 +308,9 @@ const ItemsDownloadVersionInputSchema = z.object({
 	drive_id: z.string().optional(),
 });
 
-export type ItemsDownloadVersionInput = z.infer<typeof ItemsDownloadVersionInputSchema>;
+export type ItemsDownloadVersionInput = z.infer<
+	typeof ItemsDownloadVersionInputSchema
+>;
 
 const ItemsUpdateContentInputSchema = z.object({
 	item_id: z.string(),
@@ -283,24 +322,32 @@ const ItemsUpdateContentInputSchema = z.object({
 	file_size: z.number().optional(),
 	description: z.string().optional(),
 	defer_commit: z.boolean().optional(),
-	media_source: z.object({
-		contentCategory: z.string().optional(),
-	}).optional(),
+	media_source: z
+		.object({
+			contentCategory: z.string().optional(),
+		})
+		.optional(),
 	if_match_etag: z.string().optional(),
-	file_system_info: z.object({
-		createdDateTime: z.string().optional(),
-		lastAccessedDateTime: z.string().optional(),
-		lastModifiedDateTime: z.string().optional(),
-	}).optional(),
+	file_system_info: z
+		.object({
+			createdDateTime: z.string().optional(),
+			lastAccessedDateTime: z.string().optional(),
+			lastModifiedDateTime: z.string().optional(),
+		})
+		.optional(),
 	conflict_behavior: z.string().optional(),
-	drive_item_source: z.object({
-		externalId: z.string().optional(),
-		application: z.string().optional(),
-	}).optional(),
+	drive_item_source: z
+		.object({
+			externalId: z.string().optional(),
+			application: z.string().optional(),
+		})
+		.optional(),
 	if_none_match_etag: z.string().optional(),
 });
 
-export type ItemsUpdateContentInput = z.infer<typeof ItemsUpdateContentInputSchema>;
+export type ItemsUpdateContentInput = z.infer<
+	typeof ItemsUpdateContentInputSchema
+>;
 
 const ItemsPreviewInputSchema = z.object({
 	item_id: z.string(),
@@ -317,13 +364,17 @@ export type ItemsPreviewInput = z.infer<typeof ItemsPreviewInputSchema>;
 
 const ItemsGetDriveItemBySharingUrlInputSchema = z.object({
 	sharing_url: z.string().optional(),
-	prefer_redeem: z.enum(['redeemSharingLinkIfNecessary', 'redeemSharingLink']).optional(),
+	prefer_redeem: z
+		.enum(['redeemSharingLinkIfNecessary', 'redeemSharingLink'])
+		.optional(),
 	select_fields: z.array(z.string()).optional(),
 	expand_children: z.boolean().optional(),
 	share_id_or_encoded_url: z.string().optional(),
 });
 
-export type ItemsGetDriveItemBySharingUrlInput = z.infer<typeof ItemsGetDriveItemBySharingUrlInputSchema>;
+export type ItemsGetDriveItemBySharingUrlInput = z.infer<
+	typeof ItemsGetDriveItemBySharingUrlInputSchema
+>;
 
 const ItemsListFolderChildrenInputSchema = z.object({
 	top: z.number().optional(),
@@ -339,7 +390,9 @@ const ItemsListFolderChildrenInputSchema = z.object({
 	folder_item_id: z.string().optional(),
 });
 
-export type ItemsListFolderChildrenInput = z.infer<typeof ItemsListFolderChildrenInputSchema>;
+export type ItemsListFolderChildrenInput = z.infer<
+	typeof ItemsListFolderChildrenInputSchema
+>;
 
 const ItemsListActivitiesInputSchema = z.object({
 	item_id: z.string(),
@@ -352,7 +405,9 @@ const ItemsListActivitiesInputSchema = z.object({
 	orderby: z.string().optional(),
 });
 
-export type ItemsListActivitiesInput = z.infer<typeof ItemsListActivitiesInputSchema>;
+export type ItemsListActivitiesInput = z.infer<
+	typeof ItemsListActivitiesInputSchema
+>;
 
 // ── Items Output Schemas ──────────────────────────────────────────────────────
 
@@ -371,7 +426,9 @@ const ItemsUpdateMetadataResponseSchema = z.object({
 	createdDateTime: z.string().optional(),
 	lastModifiedDateTime: z.string().optional(),
 });
-export type ItemsUpdateMetadataResponse = z.infer<typeof ItemsUpdateMetadataResponseSchema>;
+export type ItemsUpdateMetadataResponse = z.infer<
+	typeof ItemsUpdateMetadataResponseSchema
+>;
 
 const ItemsDeleteResponseSchema = z.object({
 	message: z.string(),
@@ -381,7 +438,9 @@ export type ItemsDeleteResponse = z.infer<typeof ItemsDeleteResponseSchema>;
 const ItemsDeletePermanentlyResponseSchema = z.object({
 	message: z.string(),
 });
-export type ItemsDeletePermanentlyResponse = z.infer<typeof ItemsDeletePermanentlyResponseSchema>;
+export type ItemsDeletePermanentlyResponse = z.infer<
+	typeof ItemsDeletePermanentlyResponseSchema
+>;
 
 const ItemsCopyResponseSchema = z.object({
 	name: z.string().optional(),
@@ -398,11 +457,13 @@ const ItemsMoveResponseSchema = z.object({
 	name: z.string().optional(),
 	size: z.number().optional(),
 	webUrl: z.string().optional(),
-	parentReference: z.object({
-		driveId: z.string().optional(),
-		id: z.string().optional(),
-		path: z.string().optional(),
-	}).optional(),
+	parentReference: z
+		.object({
+			driveId: z.string().optional(),
+			id: z.string().optional(),
+			path: z.string().optional(),
+		})
+		.optional(),
 });
 export type ItemsMoveResponse = z.infer<typeof ItemsMoveResponseSchema>;
 
@@ -415,11 +476,13 @@ const ItemsRestoreResponseSchema = z.object({
 	webUrl: z.string().optional(),
 	deleted: z.object({ state: z.string().optional() }).optional(),
 	createdDateTime: z.string().optional(),
-	parentReference: z.object({
-		driveId: z.string().optional(),
-		id: z.string().optional(),
-		path: z.string().optional(),
-	}).optional(),
+	parentReference: z
+		.object({
+			driveId: z.string().optional(),
+			id: z.string().optional(),
+			path: z.string().optional(),
+		})
+		.optional(),
 	lastModifiedDateTime: z.string().optional(),
 });
 export type ItemsRestoreResponse = z.infer<typeof ItemsRestoreResponseSchema>;
@@ -443,7 +506,9 @@ export type ItemsCheckoutResponse = z.infer<typeof ItemsCheckoutResponseSchema>;
 const ItemsDiscardCheckoutResponseSchema = z.object({
 	message: z.string(),
 });
-export type ItemsDiscardCheckoutResponse = z.infer<typeof ItemsDiscardCheckoutResponseSchema>;
+export type ItemsDiscardCheckoutResponse = z.infer<
+	typeof ItemsDiscardCheckoutResponseSchema
+>;
 
 const ItemsFollowResponseSchema = z.object({
 	id: z.string(),
@@ -469,19 +534,25 @@ const ItemsGetFollowedResponseSchema = z.object({
 	webUrl: z.string().optional(),
 	followed: z.boolean().optional(),
 });
-export type ItemsGetFollowedResponse = z.infer<typeof ItemsGetFollowedResponseSchema>;
+export type ItemsGetFollowedResponse = z.infer<
+	typeof ItemsGetFollowedResponseSchema
+>;
 
 const ItemsGetVersionsResponseSchema = z.object({
 	// any/unknown for versions array since version shape varies
 	value: z.array(z.record(z.unknown())),
 });
-export type ItemsGetVersionsResponse = z.infer<typeof ItemsGetVersionsResponseSchema>;
+export type ItemsGetVersionsResponse = z.infer<
+	typeof ItemsGetVersionsResponseSchema
+>;
 
 const ItemsGetThumbnailsResponseSchema = z.object({
 	// any/unknown for thumbnail sets since thumbnail shape varies
 	value: z.array(z.record(z.unknown())),
 });
-export type ItemsGetThumbnailsResponse = z.infer<typeof ItemsGetThumbnailsResponseSchema>;
+export type ItemsGetThumbnailsResponse = z.infer<
+	typeof ItemsGetThumbnailsResponseSchema
+>;
 
 const ItemsDownloadResponseSchema = z.object({
 	content: z.string(),
@@ -491,24 +562,32 @@ export type ItemsDownloadResponse = z.infer<typeof ItemsDownloadResponseSchema>;
 const ItemsDownloadByPathResponseSchema = z.object({
 	content: z.string(),
 });
-export type ItemsDownloadByPathResponse = z.infer<typeof ItemsDownloadByPathResponseSchema>;
+export type ItemsDownloadByPathResponse = z.infer<
+	typeof ItemsDownloadByPathResponseSchema
+>;
 
 const ItemsDownloadAsFormatResponseSchema = z.object({
 	content: z.string(),
 });
-export type ItemsDownloadAsFormatResponse = z.infer<typeof ItemsDownloadAsFormatResponseSchema>;
+export type ItemsDownloadAsFormatResponse = z.infer<
+	typeof ItemsDownloadAsFormatResponseSchema
+>;
 
 const ItemsDownloadVersionResponseSchema = z.object({
 	content: z.string(),
 });
-export type ItemsDownloadVersionResponse = z.infer<typeof ItemsDownloadVersionResponseSchema>;
+export type ItemsDownloadVersionResponse = z.infer<
+	typeof ItemsDownloadVersionResponseSchema
+>;
 
 const ItemsUpdateContentResponseSchema = z.object({
 	uploadUrl: z.string().optional(),
 	expirationDateTime: z.string().optional(),
 	nextExpectedRanges: z.array(z.string()).optional(),
 });
-export type ItemsUpdateContentResponse = z.infer<typeof ItemsUpdateContentResponseSchema>;
+export type ItemsUpdateContentResponse = z.infer<
+	typeof ItemsUpdateContentResponseSchema
+>;
 
 const ItemsPreviewResponseSchema = z.object({
 	getUrl: z.string().optional(),
@@ -535,29 +614,37 @@ const ItemsGetDriveItemBySharingUrlResponseSchema = z.object({
 	// any/unknown for lastModifiedBy since user identity shape varies
 	lastModifiedBy: z.record(z.unknown()).optional(),
 	createdDateTime: z.string().optional(),
-	parentReference: z.object({
-		driveId: z.string().optional(),
-		id: z.string().optional(),
-		path: z.string().optional(),
-	}).optional(),
+	parentReference: z
+		.object({
+			driveId: z.string().optional(),
+			id: z.string().optional(),
+			path: z.string().optional(),
+		})
+		.optional(),
 	lastModifiedDateTime: z.string().optional(),
 	'@microsoft.graph.downloadUrl': z.string().optional(),
 });
-export type ItemsGetDriveItemBySharingUrlResponse = z.infer<typeof ItemsGetDriveItemBySharingUrlResponseSchema>;
+export type ItemsGetDriveItemBySharingUrlResponse = z.infer<
+	typeof ItemsGetDriveItemBySharingUrlResponseSchema
+>;
 
 const ItemsListFolderChildrenResponseSchema = z.object({
 	// any/unknown for value since drive items vary by context
 	value: z.array(z.record(z.unknown())),
 	'@odata.nextLink': z.string().optional(),
 });
-export type ItemsListFolderChildrenResponse = z.infer<typeof ItemsListFolderChildrenResponseSchema>;
+export type ItemsListFolderChildrenResponse = z.infer<
+	typeof ItemsListFolderChildrenResponseSchema
+>;
 
 const ItemsListActivitiesResponseSchema = z.object({
 	// any/unknown for activities since activity shape varies
 	value: z.array(z.record(z.unknown())),
 	'@odata.nextLink': z.string().optional(),
 });
-export type ItemsListActivitiesResponse = z.infer<typeof ItemsListActivitiesResponseSchema>;
+export type ItemsListActivitiesResponse = z.infer<
+	typeof ItemsListActivitiesResponseSchema
+>;
 
 // ── Drive Input Schemas ───────────────────────────────────────────────────────
 
@@ -596,7 +683,9 @@ const DriveGetSpecialFolderInputSchema = z.object({
 	select_fields: z.array(z.string()).optional(),
 	expand_relations: z.array(z.string()).optional(),
 });
-export type DriveGetSpecialFolderInput = z.infer<typeof DriveGetSpecialFolderInputSchema>;
+export type DriveGetSpecialFolderInput = z.infer<
+	typeof DriveGetSpecialFolderInputSchema
+>;
 
 const DriveGetQuotaInputSchema = z.object({
 	select_fields: z.array(z.string()).optional(),
@@ -607,17 +696,23 @@ const DriveGetRecentItemsInputSchema = z.object({
 	top: z.number().optional(),
 	select: z.string().optional(),
 });
-export type DriveGetRecentItemsInput = z.infer<typeof DriveGetRecentItemsInputSchema>;
+export type DriveGetRecentItemsInput = z.infer<
+	typeof DriveGetRecentItemsInputSchema
+>;
 
 const DriveGetSharedItemsInputSchema = z.object({
 	allow_external: z.boolean().optional(),
 });
-export type DriveGetSharedItemsInput = z.infer<typeof DriveGetSharedItemsInputSchema>;
+export type DriveGetSharedItemsInput = z.infer<
+	typeof DriveGetSharedItemsInputSchema
+>;
 
 const DriveListActivitiesInputSchema = z.object({
 	top: z.number().optional(),
 });
-export type DriveListActivitiesInput = z.infer<typeof DriveListActivitiesInputSchema>;
+export type DriveListActivitiesInput = z.infer<
+	typeof DriveListActivitiesInputSchema
+>;
 
 const DriveListChangesInputSchema = z.object({
 	top: z.number().optional(),
@@ -669,11 +764,13 @@ const DriveGetRootResponseSchema = z.object({
 	createdBy: z.record(z.unknown()).optional(),
 	// any/unknown for lastModifiedBy since user identity shape varies
 	lastModifiedBy: z.record(z.unknown()).optional(),
-	parentReference: z.object({
-		driveId: z.string().optional(),
-		id: z.string().optional(),
-		path: z.string().optional(),
-	}).optional(),
+	parentReference: z
+		.object({
+			driveId: z.string().optional(),
+			id: z.string().optional(),
+			path: z.string().optional(),
+		})
+		.optional(),
 	description: z.string().optional(),
 });
 export type DriveGetRootResponse = z.infer<typeof DriveGetRootResponseSchema>;
@@ -687,20 +784,24 @@ const DriveGetSpecialFolderResponseSchema = z.object({
 	// any/unknown for children since drive items vary by context
 	children: z.array(z.record(z.unknown())).optional(),
 });
-export type DriveGetSpecialFolderResponse = z.infer<typeof DriveGetSpecialFolderResponseSchema>;
+export type DriveGetSpecialFolderResponse = z.infer<
+	typeof DriveGetSpecialFolderResponseSchema
+>;
 
 const DriveGetQuotaResponseSchema = z.object({
 	id: z.string().optional(),
 	name: z.string().optional(),
 	// any/unknown for owner since identity shape varies
 	owner: z.record(z.unknown()).optional(),
-	quota: z.object({
-		deleted: z.number().optional(),
-		remaining: z.number().optional(),
-		total: z.number().optional(),
-		used: z.number().optional(),
-		state: z.string().optional(),
-	}).optional(),
+	quota: z
+		.object({
+			deleted: z.number().optional(),
+			remaining: z.number().optional(),
+			total: z.number().optional(),
+			used: z.number().optional(),
+			state: z.string().optional(),
+		})
+		.optional(),
 	driveType: z.string().optional(),
 	webUrl: z.string().optional(),
 	createdDateTime: z.string().optional(),
@@ -713,20 +814,26 @@ const DriveGetRecentItemsResponseSchema = z.object({
 	value: z.array(z.record(z.unknown())),
 	'@odata.nextLink': z.string().optional(),
 });
-export type DriveGetRecentItemsResponse = z.infer<typeof DriveGetRecentItemsResponseSchema>;
+export type DriveGetRecentItemsResponse = z.infer<
+	typeof DriveGetRecentItemsResponseSchema
+>;
 
 const DriveGetSharedItemsResponseSchema = z.object({
 	// any/unknown for shared items array since shape varies
 	value: z.array(z.record(z.unknown())),
 });
-export type DriveGetSharedItemsResponse = z.infer<typeof DriveGetSharedItemsResponseSchema>;
+export type DriveGetSharedItemsResponse = z.infer<
+	typeof DriveGetSharedItemsResponseSchema
+>;
 
 const DriveListActivitiesResponseSchema = z.object({
 	// any/unknown for activities array since activity shape varies
 	value: z.array(z.record(z.unknown())),
 	'@odata.nextLink': z.string().optional(),
 });
-export type DriveListActivitiesResponse = z.infer<typeof DriveListActivitiesResponseSchema>;
+export type DriveListActivitiesResponse = z.infer<
+	typeof DriveListActivitiesResponseSchema
+>;
 
 const DriveListChangesResponseSchema = z.object({
 	// any/unknown for delta items array since shape varies
@@ -734,14 +841,18 @@ const DriveListChangesResponseSchema = z.object({
 	'@odata.nextLink': z.string().optional(),
 	'@odata.deltaLink': z.string().optional(),
 });
-export type DriveListChangesResponse = z.infer<typeof DriveListChangesResponseSchema>;
+export type DriveListChangesResponse = z.infer<
+	typeof DriveListChangesResponseSchema
+>;
 
 const DriveListBundlesResponseSchema = z.object({
 	// any/unknown for bundles array since bundle shape varies
 	value: z.array(z.record(z.unknown())),
 	'@odata.nextLink': z.string().optional(),
 });
-export type DriveListBundlesResponse = z.infer<typeof DriveListBundlesResponseSchema>;
+export type DriveListBundlesResponse = z.infer<
+	typeof DriveListBundlesResponseSchema
+>;
 
 // ── Files Input Schemas ───────────────────────────────────────────────────────
 
@@ -751,7 +862,9 @@ const FilesCreateFolderInputSchema = z.object({
 	description: z.string().optional(),
 	parent_folder: z.string().optional(),
 });
-export type FilesCreateFolderInput = z.infer<typeof FilesCreateFolderInputSchema>;
+export type FilesCreateFolderInput = z.infer<
+	typeof FilesCreateFolderInputSchema
+>;
 
 const FilesCreateTextFileInputSchema = z.object({
 	name: z.string(),
@@ -760,7 +873,9 @@ const FilesCreateTextFileInputSchema = z.object({
 	user_id: z.string().optional(),
 	conflict_behavior: z.enum(['fail', 'replace', 'rename']).optional(),
 });
-export type FilesCreateTextFileInput = z.infer<typeof FilesCreateTextFileInputSchema>;
+export type FilesCreateTextFileInput = z.infer<
+	typeof FilesCreateTextFileInputSchema
+>;
 
 const FilesFindFileInputSchema = z.object({
 	name: z.string(),
@@ -802,11 +917,13 @@ const FilesUploadInputSchema = z.object({
 	description: z.string().optional(),
 	defer_commit: z.boolean().optional(),
 	if_match_etag: z.string().optional(),
-	file_system_info: z.object({
-		createdDateTime: z.string().optional(),
-		lastAccessedDateTime: z.string().optional(),
-		lastModifiedDateTime: z.string().optional(),
-	}).optional(),
+	file_system_info: z
+		.object({
+			createdDateTime: z.string().optional(),
+			lastAccessedDateTime: z.string().optional(),
+			lastModifiedDateTime: z.string().optional(),
+		})
+		.optional(),
 	conflict_behavior: z.enum(['rename', 'fail', 'replace']).optional(),
 });
 export type FilesUploadInput = z.infer<typeof FilesUploadInputSchema>;
@@ -818,7 +935,9 @@ const FilesCreateFolderResponseSchema = z.object({
 	name: z.string(),
 	webUrl: z.string().optional(),
 });
-export type FilesCreateFolderResponse = z.infer<typeof FilesCreateFolderResponseSchema>;
+export type FilesCreateFolderResponse = z.infer<
+	typeof FilesCreateFolderResponseSchema
+>;
 
 const FilesCreateTextFileResponseSchema = z.object({
 	id: z.string(),
@@ -826,7 +945,9 @@ const FilesCreateTextFileResponseSchema = z.object({
 	name: z.string(),
 	size: z.number().optional(),
 });
-export type FilesCreateTextFileResponse = z.infer<typeof FilesCreateTextFileResponseSchema>;
+export type FilesCreateTextFileResponse = z.infer<
+	typeof FilesCreateTextFileResponseSchema
+>;
 
 const FilesFindFileResponseSchema = z.object({
 	// any/unknown for found files array since shape varies
@@ -840,7 +961,9 @@ const FilesFindFolderResponseSchema = z.object({
 	value: z.array(z.record(z.unknown())),
 	'@odata.nextLink': z.string().optional(),
 });
-export type FilesFindFolderResponse = z.infer<typeof FilesFindFolderResponseSchema>;
+export type FilesFindFolderResponse = z.infer<
+	typeof FilesFindFolderResponseSchema
+>;
 
 const FilesListResponseSchema = z.object({
 	// any/unknown for files array since shape varies
@@ -869,7 +992,9 @@ const PermissionsGetForItemInputSchema = z.object({
 	select: z.string().optional(),
 	if_none_match: z.string().optional(),
 });
-export type PermissionsGetForItemInput = z.infer<typeof PermissionsGetForItemInputSchema>;
+export type PermissionsGetForItemInput = z.infer<
+	typeof PermissionsGetForItemInputSchema
+>;
 
 const PermissionsCreateForItemInputSchema = z.object({
 	drive_id: z.string(),
@@ -882,7 +1007,9 @@ const PermissionsCreateForItemInputSchema = z.object({
 		application: z.record(z.unknown()).optional(),
 	}),
 });
-export type PermissionsCreateForItemInput = z.infer<typeof PermissionsCreateForItemInputSchema>;
+export type PermissionsCreateForItemInput = z.infer<
+	typeof PermissionsCreateForItemInputSchema
+>;
 
 const PermissionsUpdateForItemInputSchema = z.object({
 	item_id: z.string(),
@@ -893,7 +1020,9 @@ const PermissionsUpdateForItemInputSchema = z.object({
 	user_id: z.string().optional(),
 	group_id: z.string().optional(),
 });
-export type PermissionsUpdateForItemInput = z.infer<typeof PermissionsUpdateForItemInputSchema>;
+export type PermissionsUpdateForItemInput = z.infer<
+	typeof PermissionsUpdateForItemInputSchema
+>;
 
 const PermissionsDeleteFromItemInputSchema = z.object({
 	item_id: z.string(),
@@ -903,7 +1032,9 @@ const PermissionsDeleteFromItemInputSchema = z.object({
 	user_id: z.string().optional(),
 	group_id: z.string().optional(),
 });
-export type PermissionsDeleteFromItemInput = z.infer<typeof PermissionsDeleteFromItemInputSchema>;
+export type PermissionsDeleteFromItemInput = z.infer<
+	typeof PermissionsDeleteFromItemInputSchema
+>;
 
 const PermissionsInviteUserInputSchema = z.object({
 	item_id: z.string(),
@@ -920,7 +1051,9 @@ const PermissionsInviteUserInputSchema = z.object({
 	expiration_date_time: z.string().optional(),
 	retain_inherited_permissions: z.boolean().optional(),
 });
-export type PermissionsInviteUserInput = z.infer<typeof PermissionsInviteUserInputSchema>;
+export type PermissionsInviteUserInput = z.infer<
+	typeof PermissionsInviteUserInputSchema
+>;
 
 const PermissionsCreateLinkInputSchema = z.object({
 	item_id: z.string(),
@@ -934,31 +1067,43 @@ const PermissionsCreateLinkInputSchema = z.object({
 	expiration_date_time: z.string().optional(),
 	retain_inherited_permissions: z.boolean().optional(),
 });
-export type PermissionsCreateLinkInput = z.infer<typeof PermissionsCreateLinkInputSchema>;
+export type PermissionsCreateLinkInput = z.infer<
+	typeof PermissionsCreateLinkInputSchema
+>;
 
 const PermissionsListSharePermissionsInputSchema = z.object({
 	shared_drive_item_id: z.string(),
 });
-export type PermissionsListSharePermissionsInput = z.infer<typeof PermissionsListSharePermissionsInputSchema>;
+export type PermissionsListSharePermissionsInput = z.infer<
+	typeof PermissionsListSharePermissionsInputSchema
+>;
 
 const PermissionsDeleteSharePermissionInputSchema = z.object({
 	shared_drive_item_id: z.string(),
 });
-export type PermissionsDeleteSharePermissionInput = z.infer<typeof PermissionsDeleteSharePermissionInputSchema>;
+export type PermissionsDeleteSharePermissionInput = z.infer<
+	typeof PermissionsDeleteSharePermissionInputSchema
+>;
 
 const PermissionsGrantSharePermissionInputSchema = z.object({
 	encoded_sharing_url: z.string(),
 	roles: z.array(z.string()),
 	recipients: z.array(z.record(z.string())),
 });
-export type PermissionsGrantSharePermissionInput = z.infer<typeof PermissionsGrantSharePermissionInputSchema>;
+export type PermissionsGrantSharePermissionInput = z.infer<
+	typeof PermissionsGrantSharePermissionInputSchema
+>;
 
 const PermissionsGetShareInputSchema = z.object({
 	share_id_or_encoded_sharing_url: z.string(),
-	prefer_redeem: z.enum(['redeemSharingLinkIfNecessary', 'redeemSharingLink']).optional(),
+	prefer_redeem: z
+		.enum(['redeemSharingLinkIfNecessary', 'redeemSharingLink'])
+		.optional(),
 	expand_children: z.boolean().optional(),
 });
-export type PermissionsGetShareInput = z.infer<typeof PermissionsGetShareInputSchema>;
+export type PermissionsGetShareInput = z.infer<
+	typeof PermissionsGetShareInputSchema
+>;
 
 // ── Permissions Output Schemas ────────────────────────────────────────────────
 
@@ -967,24 +1112,34 @@ const PermissionsGetForItemResponseSchema = z.object({
 	value: z.array(z.record(z.unknown())),
 	'@odata.nextLink': z.string().optional(),
 });
-export type PermissionsGetForItemResponse = z.infer<typeof PermissionsGetForItemResponseSchema>;
+export type PermissionsGetForItemResponse = z.infer<
+	typeof PermissionsGetForItemResponseSchema
+>;
 
 const PermissionsCreateForItemResponseSchema = PermissionSchema;
-export type PermissionsCreateForItemResponse = z.infer<typeof PermissionsCreateForItemResponseSchema>;
+export type PermissionsCreateForItemResponse = z.infer<
+	typeof PermissionsCreateForItemResponseSchema
+>;
 
 const PermissionsUpdateForItemResponseSchema = PermissionSchema;
-export type PermissionsUpdateForItemResponse = z.infer<typeof PermissionsUpdateForItemResponseSchema>;
+export type PermissionsUpdateForItemResponse = z.infer<
+	typeof PermissionsUpdateForItemResponseSchema
+>;
 
 const PermissionsDeleteFromItemResponseSchema = z.object({
 	message: z.string(),
 });
-export type PermissionsDeleteFromItemResponse = z.infer<typeof PermissionsDeleteFromItemResponseSchema>;
+export type PermissionsDeleteFromItemResponse = z.infer<
+	typeof PermissionsDeleteFromItemResponseSchema
+>;
 
 const PermissionsInviteUserResponseSchema = z.object({
 	// any/unknown for invited permissions array since shape varies
 	value: z.array(z.record(z.unknown())),
 });
-export type PermissionsInviteUserResponse = z.infer<typeof PermissionsInviteUserResponseSchema>;
+export type PermissionsInviteUserResponse = z.infer<
+	typeof PermissionsInviteUserResponseSchema
+>;
 
 const PermissionsCreateLinkResponseSchema = z.object({
 	id: z.string().optional(),
@@ -994,7 +1149,9 @@ const PermissionsCreateLinkResponseSchema = z.object({
 	shareId: z.string().optional(),
 	hasPassword: z.boolean().optional(),
 });
-export type PermissionsCreateLinkResponse = z.infer<typeof PermissionsCreateLinkResponseSchema>;
+export type PermissionsCreateLinkResponse = z.infer<
+	typeof PermissionsCreateLinkResponseSchema
+>;
 
 const PermissionsListSharePermissionsResponseSchema = z.object({
 	id: z.string().optional(),
@@ -1003,18 +1160,24 @@ const PermissionsListSharePermissionsResponseSchema = z.object({
 	roles: z.array(z.string()).optional(),
 	hasPassword: z.boolean().optional(),
 });
-export type PermissionsListSharePermissionsResponse = z.infer<typeof PermissionsListSharePermissionsResponseSchema>;
+export type PermissionsListSharePermissionsResponse = z.infer<
+	typeof PermissionsListSharePermissionsResponseSchema
+>;
 
 const PermissionsDeleteSharePermissionResponseSchema = z.object({
 	message: z.string(),
 });
-export type PermissionsDeleteSharePermissionResponse = z.infer<typeof PermissionsDeleteSharePermissionResponseSchema>;
+export type PermissionsDeleteSharePermissionResponse = z.infer<
+	typeof PermissionsDeleteSharePermissionResponseSchema
+>;
 
 const PermissionsGrantSharePermissionResponseSchema = z.object({
 	// any/unknown for granted permissions array since shape varies
 	value: z.array(z.record(z.unknown())),
 });
-export type PermissionsGrantSharePermissionResponse = z.infer<typeof PermissionsGrantSharePermissionResponseSchema>;
+export type PermissionsGrantSharePermissionResponse = z.infer<
+	typeof PermissionsGrantSharePermissionResponseSchema
+>;
 
 const PermissionsGetShareResponseSchema = z.object({
 	id: z.string().optional(),
@@ -1028,7 +1191,9 @@ const PermissionsGetShareResponseSchema = z.object({
 	// any/unknown for children array since drive item shape varies
 	children: z.array(z.record(z.unknown())).optional(),
 });
-export type PermissionsGetShareResponse = z.infer<typeof PermissionsGetShareResponseSchema>;
+export type PermissionsGetShareResponse = z.infer<
+	typeof PermissionsGetShareResponseSchema
+>;
 
 // ── SharePoint Input Schemas ──────────────────────────────────────────────────
 
@@ -1037,7 +1202,9 @@ const SharepointGetSiteInputSchema = z.object({
 	expand: z.string().optional(),
 	select: z.string().optional(),
 });
-export type SharepointGetSiteInput = z.infer<typeof SharepointGetSiteInputSchema>;
+export type SharepointGetSiteInput = z.infer<
+	typeof SharepointGetSiteInputSchema
+>;
 
 const SharepointGetSitePageInputSchema = z.object({
 	site_id: z.string(),
@@ -1045,7 +1212,9 @@ const SharepointGetSitePageInputSchema = z.object({
 	expand: z.string().optional(),
 	select: z.string().optional(),
 });
-export type SharepointGetSitePageInput = z.infer<typeof SharepointGetSitePageInputSchema>;
+export type SharepointGetSitePageInput = z.infer<
+	typeof SharepointGetSitePageInputSchema
+>;
 
 const SharepointGetListItemsInputSchema = z.object({
 	site_id: z.string(),
@@ -1058,7 +1227,9 @@ const SharepointGetListItemsInputSchema = z.object({
 	select: z.string().optional(),
 	orderby: z.string().optional(),
 });
-export type SharepointGetListItemsInput = z.infer<typeof SharepointGetListItemsInputSchema>;
+export type SharepointGetListItemsInput = z.infer<
+	typeof SharepointGetListItemsInputSchema
+>;
 
 const SharepointListSiteListsInputSchema = z.object({
 	site_id: z.string(),
@@ -1070,7 +1241,9 @@ const SharepointListSiteListsInputSchema = z.object({
 	select: z.string().optional(),
 	orderby: z.string().optional(),
 });
-export type SharepointListSiteListsInput = z.infer<typeof SharepointListSiteListsInputSchema>;
+export type SharepointListSiteListsInput = z.infer<
+	typeof SharepointListSiteListsInputSchema
+>;
 
 const SharepointListSiteColumnsInputSchema = z.object({
 	site_id: z.string(),
@@ -1082,7 +1255,9 @@ const SharepointListSiteColumnsInputSchema = z.object({
 	select: z.string().optional(),
 	orderby: z.string().optional(),
 });
-export type SharepointListSiteColumnsInput = z.infer<typeof SharepointListSiteColumnsInputSchema>;
+export type SharepointListSiteColumnsInput = z.infer<
+	typeof SharepointListSiteColumnsInputSchema
+>;
 
 const SharepointListSiteSubsitesInputSchema = z.object({
 	site_id: z.string(),
@@ -1094,7 +1269,9 @@ const SharepointListSiteSubsitesInputSchema = z.object({
 	select: z.string().optional(),
 	orderby: z.string().optional(),
 });
-export type SharepointListSiteSubsitesInput = z.infer<typeof SharepointListSiteSubsitesInputSchema>;
+export type SharepointListSiteSubsitesInput = z.infer<
+	typeof SharepointListSiteSubsitesInputSchema
+>;
 
 const SharepointListListItemsDeltaInputSchema = z.object({
 	site_id: z.string(),
@@ -1104,7 +1281,9 @@ const SharepointListListItemsDeltaInputSchema = z.object({
 	expand: z.string().optional(),
 	select: z.string().optional(),
 });
-export type SharepointListListItemsDeltaInput = z.infer<typeof SharepointListListItemsDeltaInputSchema>;
+export type SharepointListListItemsDeltaInput = z.infer<
+	typeof SharepointListListItemsDeltaInputSchema
+>;
 
 const SharepointListSiteItemsDeltaInputSchema = z.object({
 	site_id: z.string(),
@@ -1113,7 +1292,9 @@ const SharepointListSiteItemsDeltaInputSchema = z.object({
 	expand: z.string().optional(),
 	select: z.string().optional(),
 });
-export type SharepointListSiteItemsDeltaInput = z.infer<typeof SharepointListSiteItemsDeltaInputSchema>;
+export type SharepointListSiteItemsDeltaInput = z.infer<
+	typeof SharepointListSiteItemsDeltaInputSchema
+>;
 
 // ── SharePoint Output Schemas ─────────────────────────────────────────────────
 
@@ -1132,7 +1313,9 @@ const SharepointGetSiteResponseSchema = z.object({
 	createdDateTime: z.string().optional(),
 	lastModifiedDateTime: z.string().optional(),
 });
-export type SharepointGetSiteResponse = z.infer<typeof SharepointGetSiteResponseSchema>;
+export type SharepointGetSiteResponse = z.infer<
+	typeof SharepointGetSiteResponseSchema
+>;
 
 const SharepointGetSitePageResponseSchema = z.object({
 	id: z.string(),
@@ -1140,7 +1323,9 @@ const SharepointGetSitePageResponseSchema = z.object({
 	title: z.string().optional(),
 	webUrl: z.string().optional(),
 });
-export type SharepointGetSitePageResponse = z.infer<typeof SharepointGetSitePageResponseSchema>;
+export type SharepointGetSitePageResponse = z.infer<
+	typeof SharepointGetSitePageResponseSchema
+>;
 
 const SharepointGetListItemsResponseSchema = z.object({
 	// any/unknown for list items array since column values vary per list
@@ -1148,7 +1333,9 @@ const SharepointGetListItemsResponseSchema = z.object({
 	'@odata.count': z.number().optional(),
 	'@odata.nextLink': z.string().optional(),
 });
-export type SharepointGetListItemsResponse = z.infer<typeof SharepointGetListItemsResponseSchema>;
+export type SharepointGetListItemsResponse = z.infer<
+	typeof SharepointGetListItemsResponseSchema
+>;
 
 const SharepointListSiteListsResponseSchema = z.object({
 	// any/unknown for site lists array since list shape varies
@@ -1156,7 +1343,9 @@ const SharepointListSiteListsResponseSchema = z.object({
 	'@odata.count': z.number().optional(),
 	'@odata.nextLink': z.string().optional(),
 });
-export type SharepointListSiteListsResponse = z.infer<typeof SharepointListSiteListsResponseSchema>;
+export type SharepointListSiteListsResponse = z.infer<
+	typeof SharepointListSiteListsResponseSchema
+>;
 
 const SharepointListSiteColumnsResponseSchema = z.object({
 	// any/unknown for site columns array since column definition varies
@@ -1164,7 +1353,9 @@ const SharepointListSiteColumnsResponseSchema = z.object({
 	'@odata.count': z.number().optional(),
 	'@odata.nextLink': z.string().optional(),
 });
-export type SharepointListSiteColumnsResponse = z.infer<typeof SharepointListSiteColumnsResponseSchema>;
+export type SharepointListSiteColumnsResponse = z.infer<
+	typeof SharepointListSiteColumnsResponseSchema
+>;
 
 const SharepointListSiteSubsitesResponseSchema = z.object({
 	// any/unknown for subsites array since site shape varies
@@ -1172,7 +1363,9 @@ const SharepointListSiteSubsitesResponseSchema = z.object({
 	'@odata.count': z.number().optional(),
 	'@odata.nextLink': z.string().optional(),
 });
-export type SharepointListSiteSubsitesResponse = z.infer<typeof SharepointListSiteSubsitesResponseSchema>;
+export type SharepointListSiteSubsitesResponse = z.infer<
+	typeof SharepointListSiteSubsitesResponseSchema
+>;
 
 const SharepointListListItemsDeltaResponseSchema = z.object({
 	// any/unknown for delta items array since shape varies
@@ -1180,7 +1373,9 @@ const SharepointListListItemsDeltaResponseSchema = z.object({
 	'@odata.nextLink': z.string().optional(),
 	'@odata.deltaLink': z.string().optional(),
 });
-export type SharepointListListItemsDeltaResponse = z.infer<typeof SharepointListListItemsDeltaResponseSchema>;
+export type SharepointListListItemsDeltaResponse = z.infer<
+	typeof SharepointListListItemsDeltaResponseSchema
+>;
 
 const SharepointListSiteItemsDeltaResponseSchema = z.object({
 	// any/unknown for delta items array since shape varies
@@ -1188,12 +1383,16 @@ const SharepointListSiteItemsDeltaResponseSchema = z.object({
 	'@odata.nextLink': z.string().optional(),
 	'@odata.deltaLink': z.string().optional(),
 });
-export type SharepointListSiteItemsDeltaResponse = z.infer<typeof SharepointListSiteItemsDeltaResponseSchema>;
+export type SharepointListSiteItemsDeltaResponse = z.infer<
+	typeof SharepointListSiteItemsDeltaResponseSchema
+>;
 
 // ── Subscriptions Input Schemas ───────────────────────────────────────────────
 
 const SubscriptionsListInputSchema = z.object({});
-export type SubscriptionsListInput = z.infer<typeof SubscriptionsListInputSchema>;
+export type SubscriptionsListInput = z.infer<
+	typeof SubscriptionsListInputSchema
+>;
 
 // ── Subscriptions Output Schemas ──────────────────────────────────────────────
 
@@ -1202,7 +1401,9 @@ const SubscriptionsListResponseSchema = z.object({
 	value: z.array(z.record(z.unknown())),
 	'@odata.nextLink': z.string().optional(),
 });
-export type SubscriptionsListResponse = z.infer<typeof SubscriptionsListResponseSchema>;
+export type SubscriptionsListResponse = z.infer<
+	typeof SubscriptionsListResponseSchema
+>;
 
 // ── Endpoint I/O Maps ────────────────────────────────────────────────────────
 
@@ -1469,9 +1670,12 @@ export const OnedriveEndpointOutputSchemas = {
 	permissionsDeleteFromItem: PermissionsDeleteFromItemResponseSchema,
 	permissionsInviteUser: PermissionsInviteUserResponseSchema,
 	permissionsCreateLink: PermissionsCreateLinkResponseSchema,
-	permissionsListSharePermissions: PermissionsListSharePermissionsResponseSchema,
-	permissionsDeleteSharePermission: PermissionsDeleteSharePermissionResponseSchema,
-	permissionsGrantSharePermission: PermissionsGrantSharePermissionResponseSchema,
+	permissionsListSharePermissions:
+		PermissionsListSharePermissionsResponseSchema,
+	permissionsDeleteSharePermission:
+		PermissionsDeleteSharePermissionResponseSchema,
+	permissionsGrantSharePermission:
+		PermissionsGrantSharePermissionResponseSchema,
 	permissionsGetShare: PermissionsGetShareResponseSchema,
 	// SharePoint
 	sharepointGetSite: SharepointGetSiteResponseSchema,

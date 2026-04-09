@@ -39,15 +39,17 @@ export const inviteeNoShow: CalendlyWebhooks['inviteeNoShow'] = {
 						{ no_show_uri: noShow.uri, error: 'Invalid invitee URI' },
 						'failed',
 					);
-					return { success: false, statusCode: 400, error: 'Invalid invitee URI' };
+					return {
+						success: false,
+						statusCode: 400,
+						error: 'Invalid invitee URI',
+					};
 				}
 				const existing = await ctx.db.invitees.findByEntityId(inviteeId);
 				if (existing) {
 					await ctx.db.invitees.upsertByEntityId(inviteeId, {
 						...existing.data,
-						updated_at: noShow.updated_at
-							? new Date(noShow.updated_at)
-							: null,
+						updated_at: noShow.updated_at ? new Date(noShow.updated_at) : null,
 					});
 				}
 			} catch (error) {

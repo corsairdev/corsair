@@ -373,18 +373,44 @@ export type FirefliesEndpointOutputs = {
 	>;
 };
 
-export type TranscriptsListResponse = z.infer<typeof TranscriptsListResponseSchema>;
-export type TranscriptsGetResponse = z.infer<typeof TranscriptsGetResponseSchema>;
-export type TranscriptsGetAnalyticsResponse = z.infer<typeof TranscriptsGetAnalyticsResponseSchema>;
-export type TranscriptsGetAudioUrlResponse = z.infer<typeof TranscriptsGetAudioUrlResponseSchema>;
-export type TranscriptsGetVideoUrlResponse = z.infer<typeof TranscriptsGetVideoUrlResponseSchema>;
-export type TranscriptsGetSummaryResponse = z.infer<typeof TranscriptsGetSummaryResponseSchema>;
-export type UsersGetCurrentResponse = z.infer<typeof UsersGetCurrentResponseSchema>;
+export type TranscriptsListResponse = z.infer<
+	typeof TranscriptsListResponseSchema
+>;
+export type TranscriptsGetResponse = z.infer<
+	typeof TranscriptsGetResponseSchema
+>;
+export type TranscriptsGetAnalyticsResponse = z.infer<
+	typeof TranscriptsGetAnalyticsResponseSchema
+>;
+export type TranscriptsGetAudioUrlResponse = z.infer<
+	typeof TranscriptsGetAudioUrlResponseSchema
+>;
+export type TranscriptsGetVideoUrlResponse = z.infer<
+	typeof TranscriptsGetVideoUrlResponseSchema
+>;
+export type TranscriptsGetSummaryResponse = z.infer<
+	typeof TranscriptsGetSummaryResponseSchema
+>;
+export type UsersGetCurrentResponse = z.infer<
+	typeof UsersGetCurrentResponseSchema
+>;
 export type UsersListResponse = z.infer<typeof UsersListResponseSchema>;
-export type AskFredGetThreadsResponse = z.infer<typeof AskFredGetThreadsResponseSchema>;
-export type AskFredGetThreadResponse = z.infer<typeof AskFredGetThreadResponseSchema>;
-export type AskFredCreateThreadResponse = z.infer<typeof AskFredCreateThreadResponseSchema>;
-export type AskFredContinueThreadResponse = z.infer<typeof AskFredContinueThreadResponseSchema>;
-export type AskFredDeleteThreadResponse = z.infer<typeof AskFredDeleteThreadResponseSchema>;
+export type AskFredGetThreadsResponse = z.infer<
+	typeof AskFredGetThreadsResponseSchema
+>;
+export type AskFredGetThreadResponse = z.infer<
+	typeof AskFredGetThreadResponseSchema
+>;
+export type AskFredCreateThreadResponse = z.infer<
+	typeof AskFredCreateThreadResponseSchema
+>;
+export type AskFredContinueThreadResponse = z.infer<
+	typeof AskFredContinueThreadResponseSchema
+>;
+export type AskFredDeleteThreadResponse = z.infer<
+	typeof AskFredDeleteThreadResponseSchema
+>;
 export type AudioUploadResponse = z.infer<typeof AudioUploadResponseSchema>;
-export type AiAppGetOutputsResponse = z.infer<typeof AiAppGetOutputsResponseSchema>;
+export type AiAppGetOutputsResponse = z.infer<
+	typeof AiAppGetOutputsResponseSchema
+>;

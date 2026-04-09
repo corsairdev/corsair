@@ -1,7 +1,8 @@
 import { logEventFromContext } from 'corsair/core';
 import type { JiraEndpoints } from '..';
 import { makeJiraRequest } from '../client';
-import { makeAdf, type JiraEndpointOutputs } from './types';
+import type { JiraEndpointOutputs } from './types';
+import { makeAdf } from './types';
 
 export const add: JiraEndpoints['commentsAdd'] = async (ctx, input) => {
 	const result = await makeJiraRequest<JiraEndpointOutputs['commentsAdd']>(
@@ -12,9 +13,13 @@ export const add: JiraEndpoints['commentsAdd'] = async (ctx, input) => {
 			method: 'POST',
 			body: {
 				body: makeAdf(input.comment),
-				...(input.visibility_type && input.visibility_value && {
-					visibility: { type: input.visibility_type, value: input.visibility_value },
-				}),
+				...(input.visibility_type &&
+					input.visibility_value && {
+						visibility: {
+							type: input.visibility_type,
+							value: input.visibility_value,
+						},
+					}),
 			},
 		},
 	);
@@ -35,7 +40,12 @@ export const add: JiraEndpoints['commentsAdd'] = async (ctx, input) => {
 		}
 	}
 
-	await logEventFromContext(ctx, 'jira.comments.add', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'jira.comments.add',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
@@ -63,7 +73,12 @@ export const get: JiraEndpoints['commentsGet'] = async (ctx, input) => {
 		}
 	}
 
-	await logEventFromContext(ctx, 'jira.comments.get', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'jira.comments.get',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
@@ -101,7 +116,12 @@ export const list: JiraEndpoints['commentsList'] = async (ctx, input) => {
 		}
 	}
 
-	await logEventFromContext(ctx, 'jira.comments.list', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'jira.comments.list',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
@@ -129,11 +149,19 @@ export const update: JiraEndpoints['commentsUpdate'] = async (ctx, input) => {
 		}
 	}
 
-	await logEventFromContext(ctx, 'jira.comments.update', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'jira.comments.update',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
-export const deleteComment: JiraEndpoints['commentsDelete'] = async (ctx, input) => {
+export const deleteComment: JiraEndpoints['commentsDelete'] = async (
+	ctx,
+	input,
+) => {
 	await makeJiraRequest<void>(
 		`issue/${input.issue_id_or_key}/comment/${input.comment_id}`,
 		ctx.key,
@@ -141,6 +169,11 @@ export const deleteComment: JiraEndpoints['commentsDelete'] = async (ctx, input)
 		{ method: 'DELETE' },
 	);
 
-	await logEventFromContext(ctx, 'jira.comments.delete', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'jira.comments.delete',
+		{ ...input },
+		'completed',
+	);
 	return { success: true };
 };

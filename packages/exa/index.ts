@@ -7,13 +7,11 @@ import type {
 	CorsairPluginContext,
 	CorsairWebhook,
 	KeyBuilderContext,
+	PickAuth,
 	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
-	RequiredPluginEndpointSchemas,
-	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
-import type { PickAuth } from 'corsair/core';
 import {
 	Answer,
 	Contents,
@@ -24,11 +22,11 @@ import {
 	WebhooksApi,
 	Websets,
 } from './endpoints';
+import type { ExaEndpointInputs, ExaEndpointOutputs } from './endpoints/types';
 import {
 	ExaEndpointInputSchemas,
 	ExaEndpointOutputSchemas,
 } from './endpoints/types';
-import type { ExaEndpointInputs, ExaEndpointOutputs } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { ExaSchema } from './schema';
 import { ContentWebhooks, SearchWebhooks, WebsetWebhooks } from './webhooks';
@@ -163,7 +161,10 @@ export type ExaWebhooks = {
 	searchAlert: ExaWebhook<'searchAlert', SearchAlertEvent>;
 	contentIndexed: ExaWebhook<'contentIndexed', ContentIndexedEvent>;
 	websetItemsFound: ExaWebhook<'websetItemsFound', WebsetItemsFoundEvent>;
-	websetSearchCompleted: ExaWebhook<'websetSearchCompleted', WebsetSearchCompletedEvent>;
+	websetSearchCompleted: ExaWebhook<
+		'websetSearchCompleted',
+		WebsetSearchCompletedEvent
+	>;
 };
 
 const exaWebhooksNested = {
@@ -215,15 +216,18 @@ const exaEndpointMeta = {
 	},
 	'contents.get': {
 		riskLevel: 'read',
-		description: 'Retrieve full text, highlights, or summaries from URLs or document IDs',
+		description:
+			'Retrieve full text, highlights, or summaries from URLs or document IDs',
 	},
 	'answer.get': {
 		riskLevel: 'read',
-		description: 'Generate a direct, citation-backed answer to a natural language question',
+		description:
+			'Generate a direct, citation-backed answer to a natural language question',
 	},
 	'websets.create': {
 		riskLevel: 'write',
-		description: 'Create a new webset with search, import, and enrichment setup',
+		description:
+			'Create a new webset with search, import, and enrichment setup',
 	},
 	'websets.get': {
 		riskLevel: 'read',
@@ -277,10 +281,11 @@ type ExaEndpoint<K extends keyof ExaEndpointOutputs> = CorsairEndpoint<
 	ExaEndpointOutputs[K]
 >;
 
-type ExaWebhook<
-	K extends keyof ExaWebhookOutputs,
+type ExaWebhook<K extends keyof ExaWebhookOutputs, TEvent> = CorsairWebhook<
+	ExaContext,
 	TEvent,
-> = CorsairWebhook<ExaContext, TEvent, ExaWebhookOutputs[K]>;
+	ExaWebhookOutputs[K]
+>;
 
 export type ExaBoundWebhooks = BindWebhooks<ExaWebhooks>;
 
@@ -294,7 +299,10 @@ export type ExaPluginOptions = {
 	permissions?: PluginPermissionsConfig<typeof exaEndpointsNested>;
 };
 
-export type ExaContext = CorsairPluginContext<typeof ExaSchema, ExaPluginOptions>;
+export type ExaContext = CorsairPluginContext<
+	typeof ExaSchema,
+	ExaPluginOptions
+>;
 
 export type ExaKeyBuilderContext = KeyBuilderContext<ExaPluginOptions>;
 
@@ -410,10 +418,10 @@ export type {
 	SearchInput,
 	SearchResponse,
 	SearchResult,
-	Webset,
 	WebhookApi,
 	WebhooksApiListInput,
 	WebhooksApiListResponse,
+	Webset,
 	WebsetEvent,
 	WebsetImport,
 	WebsetMonitor,

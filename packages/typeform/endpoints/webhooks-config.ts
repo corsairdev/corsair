@@ -1,5 +1,5 @@
-import type { TypeformEndpoints } from '..';
 import { logEventFromContext } from 'corsair/core';
+import type { TypeformEndpoints } from '..';
 import { makeTypeformRequest } from '../client';
 import type { TypeformEndpointOutputs } from './types';
 
@@ -70,7 +70,7 @@ export const createOrUpdate: TypeformEndpoints['webhooksConfigCreateOrUpdate'] =
 			TypeformEndpointOutputs['webhooksConfigCreateOrUpdate']
 		>(`/forms/${form_id}/webhooks/${tag}`, ctx.key, {
 			method: 'PUT',
-			body: body
+			body: body,
 		});
 
 		const id = response.id;

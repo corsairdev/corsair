@@ -10,6 +10,11 @@ export const get: FigmaEndpoints['paymentsGet'] = async (ctx, input) => {
 		{ method: 'GET', query: { ...input } },
 	);
 
-	await logEventFromContext(ctx, 'figma.payments.get', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'figma.payments.get',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };

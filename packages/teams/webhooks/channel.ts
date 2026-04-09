@@ -1,9 +1,13 @@
+import { logEventFromContext } from 'corsair/core';
 import type { TeamsWebhooks } from '..';
 import { makeTeamsRequest } from '../client';
 import { toChannelRecord } from '../endpoints/channels';
 import type { TeamsEndpointOutputs } from '../endpoints/types';
-import { logEventFromContext } from 'corsair/core';
-import { createTeamsNotificationMatch, extractODataId, verifyTeamsClientState } from './types';
+import {
+	createTeamsNotificationMatch,
+	extractODataId,
+	verifyTeamsClientState,
+} from './types';
 
 export const channelCreated: TeamsWebhooks['channelCreated'] = {
 	match: createTeamsNotificationMatch(
@@ -34,15 +38,16 @@ export const channelCreated: TeamsWebhooks['channelCreated'] = {
 					if (!channelId) continue;
 
 					// resource format: teams('teamId')/channels('channelId')
-					const teamId = extractODataId(notification.resource.split('/')[0] ?? '');
+					const teamId = extractODataId(
+						notification.resource.split('/')[0] ?? '',
+					);
 
 					if (notification.changeType === 'deleted') {
 						await ctx.db.channels.deleteByEntityId(channelId);
 					} else if (accessToken) {
-						const fullChannel = await makeTeamsRequest<TeamsEndpointOutputs['channelsGet']>(
-							`teams/${teamId}/channels/${channelId}`,
-							accessToken,
-						);
+						const fullChannel = await makeTeamsRequest<
+							TeamsEndpointOutputs['channelsGet']
+						>(`teams/${teamId}/channels/${channelId}`, accessToken);
 						const entity = await ctx.db.channels.upsertByEntityId(
 							channelId,
 							toChannelRecord(fullChannel, teamId),

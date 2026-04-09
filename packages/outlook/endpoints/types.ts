@@ -900,7 +900,8 @@ export type OutlookEndpointOutputs = {
 };
 
 export type MessagesSendInput = OutlookEndpointInputs['messagesSend'];
-export type MessagesCreateDraftInput = OutlookEndpointInputs['messagesCreateDraft'];
+export type MessagesCreateDraftInput =
+	OutlookEndpointInputs['messagesCreateDraft'];
 export type MessagesGetInput = OutlookEndpointInputs['messagesGet'];
 export type MessagesListInput = OutlookEndpointInputs['messagesList'];
 export type MessagesQueryInput = OutlookEndpointInputs['messagesQuery'];
@@ -912,8 +913,10 @@ export type MessagesMoveInput = OutlookEndpointInputs['messagesMove'];
 export type MessagesUpdateInput = OutlookEndpointInputs['messagesUpdate'];
 export type MessagesSendDraftInput = OutlookEndpointInputs['messagesSendDraft'];
 export type MessagesBatchMoveInput = OutlookEndpointInputs['messagesBatchMove'];
-export type MessagesBatchUpdateInput = OutlookEndpointInputs['messagesBatchUpdate'];
-export type MessagesAddAttachmentInput = OutlookEndpointInputs['messagesAddAttachment'];
+export type MessagesBatchUpdateInput =
+	OutlookEndpointInputs['messagesBatchUpdate'];
+export type MessagesAddAttachmentInput =
+	OutlookEndpointInputs['messagesAddAttachment'];
 export type EventsCreateInput = OutlookEndpointInputs['eventsCreate'];
 export type EventsGetInput = OutlookEndpointInputs['eventsGet'];
 export type EventsListInput = OutlookEndpointInputs['eventsList'];
@@ -921,7 +924,8 @@ export type EventsUpdateInput = OutlookEndpointInputs['eventsUpdate'];
 export type EventsDeleteInput = OutlookEndpointInputs['eventsDelete'];
 export type EventsCancelInput = OutlookEndpointInputs['eventsCancel'];
 export type EventsDeclineInput = OutlookEndpointInputs['eventsDecline'];
-export type EventsFindMeetingTimesInput = OutlookEndpointInputs['eventsFindMeetingTimes'];
+export type EventsFindMeetingTimesInput =
+	OutlookEndpointInputs['eventsFindMeetingTimes'];
 export type EventsGetScheduleInput = OutlookEndpointInputs['eventsGetSchedule'];
 export type CalendarsCreateInput = OutlookEndpointInputs['calendarsCreate'];
 export type CalendarsGetInput = OutlookEndpointInputs['calendarsGet'];
@@ -938,7 +942,8 @@ export type FoldersUpdateInput = OutlookEndpointInputs['foldersUpdate'];
 export type FoldersDeleteInput = OutlookEndpointInputs['foldersDelete'];
 
 export type MessagesSendResponse = OutlookEndpointOutputs['messagesSend'];
-export type MessagesCreateDraftResponse = OutlookEndpointOutputs['messagesCreateDraft'];
+export type MessagesCreateDraftResponse =
+	OutlookEndpointOutputs['messagesCreateDraft'];
 export type MessagesGetResponse = OutlookEndpointOutputs['messagesGet'];
 export type MessagesListResponse = OutlookEndpointOutputs['messagesList'];
 export type MessagesQueryResponse = OutlookEndpointOutputs['messagesQuery'];
@@ -948,10 +953,14 @@ export type MessagesForwardResponse = OutlookEndpointOutputs['messagesForward'];
 export type MessagesDeleteResponse = OutlookEndpointOutputs['messagesDelete'];
 export type MessagesMoveResponse = OutlookEndpointOutputs['messagesMove'];
 export type MessagesUpdateResponse = OutlookEndpointOutputs['messagesUpdate'];
-export type MessagesSendDraftResponse = OutlookEndpointOutputs['messagesSendDraft'];
-export type MessagesBatchMoveResponse = OutlookEndpointOutputs['messagesBatchMove'];
-export type MessagesBatchUpdateResponse = OutlookEndpointOutputs['messagesBatchUpdate'];
-export type MessagesAddAttachmentResponse = OutlookEndpointOutputs['messagesAddAttachment'];
+export type MessagesSendDraftResponse =
+	OutlookEndpointOutputs['messagesSendDraft'];
+export type MessagesBatchMoveResponse =
+	OutlookEndpointOutputs['messagesBatchMove'];
+export type MessagesBatchUpdateResponse =
+	OutlookEndpointOutputs['messagesBatchUpdate'];
+export type MessagesAddAttachmentResponse =
+	OutlookEndpointOutputs['messagesAddAttachment'];
 export type EventsCreateResponse = OutlookEndpointOutputs['eventsCreate'];
 export type EventsGetResponse = OutlookEndpointOutputs['eventsGet'];
 export type EventsListResponse = OutlookEndpointOutputs['eventsList'];
@@ -959,8 +968,10 @@ export type EventsUpdateResponse = OutlookEndpointOutputs['eventsUpdate'];
 export type EventsDeleteResponse = OutlookEndpointOutputs['eventsDelete'];
 export type EventsCancelResponse = OutlookEndpointOutputs['eventsCancel'];
 export type EventsDeclineResponse = OutlookEndpointOutputs['eventsDecline'];
-export type EventsFindMeetingTimesResponse = OutlookEndpointOutputs['eventsFindMeetingTimes'];
-export type EventsGetScheduleResponse = OutlookEndpointOutputs['eventsGetSchedule'];
+export type EventsFindMeetingTimesResponse =
+	OutlookEndpointOutputs['eventsFindMeetingTimes'];
+export type EventsGetScheduleResponse =
+	OutlookEndpointOutputs['eventsGetSchedule'];
 export type CalendarsCreateResponse = OutlookEndpointOutputs['calendarsCreate'];
 export type CalendarsGetResponse = OutlookEndpointOutputs['calendarsGet'];
 export type CalendarsListResponse = OutlookEndpointOutputs['calendarsList'];

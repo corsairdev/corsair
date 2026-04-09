@@ -1,4 +1,10 @@
-import { TeamsChannel, TeamsChat, TeamsMember, TeamsMessage, TeamsTeam } from './database';
+import {
+	TeamsChannel,
+	TeamsChat,
+	TeamsMember,
+	TeamsMessage,
+	TeamsTeam,
+} from './database';
 
 export const TeamsSchema = {
 	version: '1.0.0',

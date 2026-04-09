@@ -1,15 +1,15 @@
-import * as Playlists from './playlists';
-import * as PlaylistItems from './playlistItems';
-import * as Videos from './videos';
+import * as Captions from './captions';
 import * as Channels from './channels';
 import * as Comments from './comments';
+import * as I18n from './i18n';
+import * as LiveChat from './liveChat';
+import * as PlaylistImages from './playlistImages';
+import * as PlaylistItems from './playlistItems';
+import * as Playlists from './playlists';
 import * as Search from './search';
 import * as Subscriptions from './subscriptions';
 import * as VideoActions from './videoActions';
-import * as Captions from './captions';
-import * as LiveChat from './liveChat';
-import * as I18n from './i18n';
-import * as PlaylistImages from './playlistImages';
+import * as Videos from './videos';
 
 export const PlaylistsEndpoints = {
 	list: Playlists.list,

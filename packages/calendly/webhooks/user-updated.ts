@@ -31,7 +31,7 @@ export const userUpdated: CalendlyWebhooks['userUpdated'] = {
 			try {
 				const uriParts = user.uri.split('/');
 				// URI always has at least one segment; last segment is the UUID
-			const id = uriParts[uriParts.length - 1]!;
+				const id = uriParts[uriParts.length - 1]!;
 				const existing = await ctx.db.users.findByEntityId(id);
 				if (existing) {
 					await ctx.db.users.upsertByEntityId(id, {
@@ -40,8 +40,7 @@ export const userUpdated: CalendlyWebhooks['userUpdated'] = {
 						email: user.email ?? existing.data.email,
 						slug: user.slug ?? existing.data.slug,
 						timezone: user.timezone ?? existing.data.timezone,
-						scheduling_url:
-							user.scheduling_url ?? existing.data.scheduling_url,
+						scheduling_url: user.scheduling_url ?? existing.data.scheduling_url,
 						updated_at: user.updated_at ? new Date(user.updated_at) : null,
 					});
 				}

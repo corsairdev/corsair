@@ -3,16 +3,17 @@ import type { RazorpayEndpoints } from '..';
 import { makeRazorpayRequest } from '../client';
 import type { RazorpayEndpointOutputs } from './types';
 
-export const create: RazorpayEndpoints['refundsCreate'] = async (ctx, input) => {
+export const create: RazorpayEndpoints['refundsCreate'] = async (
+	ctx,
+	input,
+) => {
 	const { paymentId, ...body } = input;
-	const result = await makeRazorpayRequest<RazorpayEndpointOutputs['refundsCreate']>(
-		`payments/${paymentId}/refund`,
-		ctx.key,
-		{
-			method: 'POST',
-			body,
-		},
-	);
+	const result = await makeRazorpayRequest<
+		RazorpayEndpointOutputs['refundsCreate']
+	>(`payments/${paymentId}/refund`, ctx.key, {
+		method: 'POST',
+		body,
+	});
 
 	if (result.id && ctx.db.refunds) {
 		try {

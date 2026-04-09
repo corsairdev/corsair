@@ -1,8 +1,7 @@
 import 'dotenv/config';
 import { createCorsair } from 'corsair/core';
 import { createCorsairOrm } from 'corsair/orm';
-import { createIntegrationAndAccount } from 'corsair/tests';
-import { createTestDatabase } from 'corsair/tests';
+import { createIntegrationAndAccount, createTestDatabase } from 'corsair/tests';
 import { telegram } from './index';
 
 async function createTelegramClient() {
@@ -112,7 +111,8 @@ describe('Telegram plugin integration', () => {
 				text: 'updated by corsair test',
 			};
 
-			const edited = await corsair.telegram.api.messages.editMessageText(editInput);
+			const edited =
+				await corsair.telegram.api.messages.editMessageText(editInput);
 
 			expect(edited).toBeDefined();
 
@@ -136,7 +136,8 @@ describe('Telegram plugin integration', () => {
 				message_id: sent.message_id,
 			};
 
-			const deleted = await corsair.telegram.api.messages.deleteMessage(deleteInput);
+			const deleted =
+				await corsair.telegram.api.messages.deleteMessage(deleteInput);
 
 			expect(deleted).toBeDefined();
 			expect(typeof deleted === 'boolean').toBe(true);
@@ -194,7 +195,9 @@ describe('Telegram plugin integration', () => {
 
 		// Check if chat was saved to database
 		if (corsair.telegram.db.chats) {
-			const chatFromDb = await corsair.telegram.db.chats.findByEntityId(chat.id.toString());
+			const chatFromDb = await corsair.telegram.db.chats.findByEntityId(
+				chat.id.toString(),
+			);
 			expect(chatFromDb).not.toBeNull();
 			if (chatFromDb) {
 				expect(chatFromDb.data.chat_id).toBe(chat.id);
@@ -207,7 +210,8 @@ describe('Telegram plugin integration', () => {
 			user_id: botInfo.id,
 		};
 
-		const chatMember = await corsair.telegram.api.chat.getChatMember(getChatMemberInput);
+		const chatMember =
+			await corsair.telegram.api.chat.getChatMember(getChatMemberInput);
 
 		expect(chatMember).toBeDefined();
 		expect(chatMember.status).toBeDefined();
@@ -235,7 +239,8 @@ describe('Telegram plugin integration', () => {
 			secret_token: 'test-secret-token',
 		};
 
-		const setResult = await corsair.telegram.api.webhook.setWebhook(setWebhookInput);
+		const setResult =
+			await corsair.telegram.api.webhook.setWebhook(setWebhookInput);
 
 		expect(setResult).toBeDefined();
 		expect(typeof setResult === 'boolean').toBe(true);
@@ -279,13 +284,16 @@ describe('Telegram plugin integration', () => {
 		const { corsair, testDb } = setup;
 
 		// Delete webhook first to allow getUpdates
-		await corsair.telegram.api.webhook.deleteWebhook({ drop_pending_updates: false });
+		await corsair.telegram.api.webhook.deleteWebhook({
+			drop_pending_updates: false,
+		});
 
 		const getUpdatesInput = {
 			limit: 10,
 		};
 
-		const updates = await corsair.telegram.api.updates.getUpdates(getUpdatesInput);
+		const updates =
+			await corsair.telegram.api.updates.getUpdates(getUpdatesInput);
 
 		expect(updates).toBeDefined();
 		expect(Array.isArray(updates)).toBe(true);
@@ -323,7 +331,8 @@ describe('Telegram plugin integration', () => {
 			action: 'typing' as const,
 		};
 
-		const result = await corsair.telegram.api.messages.sendChatAction(sendChatActionInput);
+		const result =
+			await corsair.telegram.api.messages.sendChatAction(sendChatActionInput);
 
 		expect(result).toBeDefined();
 		expect(typeof result === 'boolean').toBe(true);
@@ -336,7 +345,9 @@ describe('Telegram plugin integration', () => {
 		expect(events.length).toBeGreaterThan(0);
 		const event = events[events.length - 1]!;
 		const eventPayload =
-			typeof event.payload === 'string' ? JSON.parse(event.payload) : event.payload;
+			typeof event.payload === 'string'
+				? JSON.parse(event.payload)
+				: event.payload;
 		expect(eventPayload).toMatchObject(sendChatActionInput);
 
 		testDb.cleanup();

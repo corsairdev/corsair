@@ -1,16 +1,16 @@
-import * as CommentsEndpoints from './comments';
-import * as WebhooksEndpoints from './webhooks';
-import * as DevResourcesEndpoints from './devResources';
-import * as VariablesEndpoints from './variables';
-import * as ComponentsEndpoints from './components';
-import * as FilesEndpoints from './files';
-import * as StylesEndpoints from './styles';
-import * as ProjectsEndpoints from './projects';
-import * as UsersEndpoints from './users';
-import * as LibraryAnalyticsEndpoints from './libraryAnalytics';
 import * as ActivityLogsEndpoints from './activityLogs';
-import * as PaymentsEndpoints from './payments';
+import * as CommentsEndpoints from './comments';
+import * as ComponentsEndpoints from './components';
 import * as DesignToolsEndpoints from './designTools';
+import * as DevResourcesEndpoints from './devResources';
+import * as FilesEndpoints from './files';
+import * as LibraryAnalyticsEndpoints from './libraryAnalytics';
+import * as PaymentsEndpoints from './payments';
+import * as ProjectsEndpoints from './projects';
+import * as StylesEndpoints from './styles';
+import * as UsersEndpoints from './users';
+import * as VariablesEndpoints from './variables';
+import * as WebhooksEndpoints from './webhooks';
 
 export const Comments = {
 	add: CommentsEndpoints.add,
@@ -96,7 +96,8 @@ export const Payments = {
 export const DesignTools = {
 	discoverResources: DesignToolsEndpoints.discoverResources,
 	extractDesignTokens: DesignToolsEndpoints.extractDesignTokens,
-	extractPrototypeInteractions: DesignToolsEndpoints.extractPrototypeInteractions,
+	extractPrototypeInteractions:
+		DesignToolsEndpoints.extractPrototypeInteractions,
 	downloadImages: DesignToolsEndpoints.downloadImages,
 	designTokensToTailwind: DesignToolsEndpoints.designTokensToTailwind,
 };

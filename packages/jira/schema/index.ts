@@ -1,4 +1,11 @@
-import { JiraComment, JiraIssue, JiraProject, JiraSprint, JiraUser, JiraBoard } from './database';
+import {
+	JiraBoard,
+	JiraComment,
+	JiraIssue,
+	JiraProject,
+	JiraSprint,
+	JiraUser,
+} from './database';
 
 export const JiraSchema = {
 	version: '1.0.0',
@@ -12,4 +19,11 @@ export const JiraSchema = {
 	},
 } as const;
 
-export type { JiraComment, JiraIssue, JiraProject, JiraSprint, JiraUser, JiraBoard } from './database';
+export type {
+	JiraBoard,
+	JiraComment,
+	JiraIssue,
+	JiraProject,
+	JiraSprint,
+	JiraUser,
+} from './database';

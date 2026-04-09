@@ -1,4 +1,4 @@
-import 'dotenv/config'
+import 'dotenv/config';
 import { makeSlackRequest } from './client';
 import type {
 	ChatDeleteResponse,

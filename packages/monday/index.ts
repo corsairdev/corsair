@@ -1,4 +1,5 @@
 import type {
+	AuthTypes,
 	BindEndpoints,
 	BindWebhooks,
 	CorsairEndpoint,
@@ -7,12 +8,21 @@ import type {
 	CorsairPluginContext,
 	CorsairWebhook,
 	KeyBuilderContext,
+	PickAuth,
 	PluginAuthConfig,
-	RequiredPluginEndpointMeta,
-	RequiredPluginEndpointSchemas,
 	PluginPermissionsConfig,
+	RequiredPluginEndpointMeta,
 } from 'corsair/core';
-import type { AuthTypes, PickAuth } from 'corsair/core';
+import {
+	Boards,
+	Columns,
+	Groups,
+	Items,
+	Updates,
+	Users,
+	Webhooks,
+	Workspaces,
+} from './endpoints';
 import type {
 	MondayEndpointInputs,
 	MondayEndpointOutputs,
@@ -21,17 +31,21 @@ import {
 	MondayEndpointInputSchemas,
 	MondayEndpointOutputSchemas,
 } from './endpoints/types';
+import { errorHandlers } from './error-handlers';
+import { MondaySchema } from './schema';
+import {
+	ChallengeWebhooks,
+	ColumnWebhooks,
+	ItemWebhooks,
+	StatusWebhooks,
+} from './webhooks';
 import type {
-	MondayWebhookOutputs,
-	MondayChallengePayload,
-	ItemCreatedEvent,
 	ColumnValueChangedEvent,
+	ItemCreatedEvent,
+	MondayChallengePayload,
+	MondayWebhookOutputs,
 	StatusChangedEvent,
 } from './webhooks/types';
-import { Boards, Columns, Groups, Items, Updates, Users, Webhooks, Workspaces } from './endpoints';
-import { MondaySchema } from './schema';
-import { ChallengeWebhooks, ColumnWebhooks, ItemWebhooks, StatusWebhooks } from './webhooks';
-import { errorHandlers } from './error-handlers';
 
 export type MondayPluginOptions = {
 	authType?: PickAuth<'api_key'>;
@@ -65,34 +79,100 @@ type MondayEndpoint<
 export type MondayEndpoints = {
 	boardsList: MondayEndpoint<'boardsList', MondayEndpointInputs['boardsList']>;
 	boardsGet: MondayEndpoint<'boardsGet', MondayEndpointInputs['boardsGet']>;
-	boardsCreate: MondayEndpoint<'boardsCreate', MondayEndpointInputs['boardsCreate']>;
-	boardsUpdate: MondayEndpoint<'boardsUpdate', MondayEndpointInputs['boardsUpdate']>;
-	boardsArchive: MondayEndpoint<'boardsArchive', MondayEndpointInputs['boardsArchive']>;
-	boardsDelete: MondayEndpoint<'boardsDelete', MondayEndpointInputs['boardsDelete']>;
-	boardsDuplicate: MondayEndpoint<'boardsDuplicate', MondayEndpointInputs['boardsDuplicate']>;
+	boardsCreate: MondayEndpoint<
+		'boardsCreate',
+		MondayEndpointInputs['boardsCreate']
+	>;
+	boardsUpdate: MondayEndpoint<
+		'boardsUpdate',
+		MondayEndpointInputs['boardsUpdate']
+	>;
+	boardsArchive: MondayEndpoint<
+		'boardsArchive',
+		MondayEndpointInputs['boardsArchive']
+	>;
+	boardsDelete: MondayEndpoint<
+		'boardsDelete',
+		MondayEndpointInputs['boardsDelete']
+	>;
+	boardsDuplicate: MondayEndpoint<
+		'boardsDuplicate',
+		MondayEndpointInputs['boardsDuplicate']
+	>;
 	itemsList: MondayEndpoint<'itemsList', MondayEndpointInputs['itemsList']>;
 	itemsGet: MondayEndpoint<'itemsGet', MondayEndpointInputs['itemsGet']>;
-	itemsCreate: MondayEndpoint<'itemsCreate', MondayEndpointInputs['itemsCreate']>;
-	itemsUpdate: MondayEndpoint<'itemsUpdate', MondayEndpointInputs['itemsUpdate']>;
+	itemsCreate: MondayEndpoint<
+		'itemsCreate',
+		MondayEndpointInputs['itemsCreate']
+	>;
+	itemsUpdate: MondayEndpoint<
+		'itemsUpdate',
+		MondayEndpointInputs['itemsUpdate']
+	>;
 	itemsMove: MondayEndpoint<'itemsMove', MondayEndpointInputs['itemsMove']>;
-	itemsArchive: MondayEndpoint<'itemsArchive', MondayEndpointInputs['itemsArchive']>;
-	itemsDelete: MondayEndpoint<'itemsDelete', MondayEndpointInputs['itemsDelete']>;
+	itemsArchive: MondayEndpoint<
+		'itemsArchive',
+		MondayEndpointInputs['itemsArchive']
+	>;
+	itemsDelete: MondayEndpoint<
+		'itemsDelete',
+		MondayEndpointInputs['itemsDelete']
+	>;
 	groupsList: MondayEndpoint<'groupsList', MondayEndpointInputs['groupsList']>;
-	groupsCreate: MondayEndpoint<'groupsCreate', MondayEndpointInputs['groupsCreate']>;
-	groupsUpdate: MondayEndpoint<'groupsUpdate', MondayEndpointInputs['groupsUpdate']>;
-	groupsDelete: MondayEndpoint<'groupsDelete', MondayEndpointInputs['groupsDelete']>;
-	columnsList: MondayEndpoint<'columnsList', MondayEndpointInputs['columnsList']>;
-	columnsCreate: MondayEndpoint<'columnsCreate', MondayEndpointInputs['columnsCreate']>;
-	columnsChangeValue: MondayEndpoint<'columnsChangeValue', MondayEndpointInputs['columnsChangeValue']>;
-	updatesList: MondayEndpoint<'updatesList', MondayEndpointInputs['updatesList']>;
-	updatesCreate: MondayEndpoint<'updatesCreate', MondayEndpointInputs['updatesCreate']>;
-	updatesDelete: MondayEndpoint<'updatesDelete', MondayEndpointInputs['updatesDelete']>;
+	groupsCreate: MondayEndpoint<
+		'groupsCreate',
+		MondayEndpointInputs['groupsCreate']
+	>;
+	groupsUpdate: MondayEndpoint<
+		'groupsUpdate',
+		MondayEndpointInputs['groupsUpdate']
+	>;
+	groupsDelete: MondayEndpoint<
+		'groupsDelete',
+		MondayEndpointInputs['groupsDelete']
+	>;
+	columnsList: MondayEndpoint<
+		'columnsList',
+		MondayEndpointInputs['columnsList']
+	>;
+	columnsCreate: MondayEndpoint<
+		'columnsCreate',
+		MondayEndpointInputs['columnsCreate']
+	>;
+	columnsChangeValue: MondayEndpoint<
+		'columnsChangeValue',
+		MondayEndpointInputs['columnsChangeValue']
+	>;
+	updatesList: MondayEndpoint<
+		'updatesList',
+		MondayEndpointInputs['updatesList']
+	>;
+	updatesCreate: MondayEndpoint<
+		'updatesCreate',
+		MondayEndpointInputs['updatesCreate']
+	>;
+	updatesDelete: MondayEndpoint<
+		'updatesDelete',
+		MondayEndpointInputs['updatesDelete']
+	>;
 	usersList: MondayEndpoint<'usersList', MondayEndpointInputs['usersList']>;
 	usersGet: MondayEndpoint<'usersGet', MondayEndpointInputs['usersGet']>;
-	workspacesList: MondayEndpoint<'workspacesList', MondayEndpointInputs['workspacesList']>;
-	webhooksList: MondayEndpoint<'webhooksList', MondayEndpointInputs['webhooksList']>;
-	webhooksCreate: MondayEndpoint<'webhooksCreate', MondayEndpointInputs['webhooksCreate']>;
-	webhooksDelete: MondayEndpoint<'webhooksDelete', MondayEndpointInputs['webhooksDelete']>;
+	workspacesList: MondayEndpoint<
+		'workspacesList',
+		MondayEndpointInputs['workspacesList']
+	>;
+	webhooksList: MondayEndpoint<
+		'webhooksList',
+		MondayEndpointInputs['webhooksList']
+	>;
+	webhooksCreate: MondayEndpoint<
+		'webhooksCreate',
+		MondayEndpointInputs['webhooksCreate']
+	>;
+	webhooksDelete: MondayEndpoint<
+		'webhooksDelete',
+		MondayEndpointInputs['webhooksDelete']
+	>;
 };
 
 type MondayWebhook<
@@ -103,7 +183,10 @@ type MondayWebhook<
 export type MondayWebhooks = {
 	challenge: MondayWebhook<'challenge', MondayChallengePayload>;
 	itemCreated: MondayWebhook<'itemCreated', ItemCreatedEvent>;
-	columnValueChanged: MondayWebhook<'columnValueChanged', ColumnValueChangedEvent>;
+	columnValueChanged: MondayWebhook<
+		'columnValueChanged',
+		ColumnValueChangedEvent
+	>;
 	statusChanged: MondayWebhook<'statusChanged', StatusChangedEvent>;
 };
 
@@ -300,35 +383,101 @@ const defaultAuthType: AuthTypes = 'api_key' as const;
 
 const mondayEndpointMeta = {
 	'boards.list': { riskLevel: 'read', description: 'List all boards' },
-	'boards.get': { riskLevel: 'read', description: 'Get a board by ID with groups and columns' },
+	'boards.get': {
+		riskLevel: 'read',
+		description: 'Get a board by ID with groups and columns',
+	},
 	'boards.create': { riskLevel: 'write', description: 'Create a new board' },
-	'boards.update': { riskLevel: 'write', description: 'Update a board attribute' },
+	'boards.update': {
+		riskLevel: 'write',
+		description: 'Update a board attribute',
+	},
 	'boards.archive': { riskLevel: 'write', description: 'Archive a board' },
-	'boards.delete': { riskLevel: 'destructive', description: 'Permanently delete a board' },
+	'boards.delete': {
+		riskLevel: 'destructive',
+		description: 'Permanently delete a board',
+	},
 	'boards.duplicate': { riskLevel: 'write', description: 'Duplicate a board' },
 	'items.list': { riskLevel: 'read', description: 'List items in a board' },
-	'items.get': { riskLevel: 'read', description: 'Get an item by ID with column values' },
-	'items.create': { riskLevel: 'write', description: 'Create a new item in a board' },
-	'items.update': { riskLevel: 'write', description: 'Update a column value on an item' },
-	'items.move': { riskLevel: 'write', description: 'Move an item to a different group' },
+	'items.get': {
+		riskLevel: 'read',
+		description: 'Get an item by ID with column values',
+	},
+	'items.create': {
+		riskLevel: 'write',
+		description: 'Create a new item in a board',
+	},
+	'items.update': {
+		riskLevel: 'write',
+		description: 'Update a column value on an item',
+	},
+	'items.move': {
+		riskLevel: 'write',
+		description: 'Move an item to a different group',
+	},
 	'items.archive': { riskLevel: 'write', description: 'Archive an item' },
-	'items.delete': { riskLevel: 'destructive', description: 'Permanently delete an item' },
-	'groups.list': { riskLevel: 'read', description: 'List all groups in a board' },
-	'groups.create': { riskLevel: 'write', description: 'Create a new group in a board' },
-	'groups.update': { riskLevel: 'write', description: 'Update a group attribute' },
-	'groups.delete': { riskLevel: 'destructive', description: 'Delete a group from a board' },
-	'columns.list': { riskLevel: 'read', description: 'List all columns in a board' },
-	'columns.create': { riskLevel: 'write', description: 'Create a new column in a board' },
-	'columns.changeValue': { riskLevel: 'write', description: 'Change a column value on an item' },
-	'updates.list': { riskLevel: 'read', description: 'List updates (comments) on an item' },
-	'updates.create': { riskLevel: 'write', description: 'Create an update (comment) on an item' },
-	'updates.delete': { riskLevel: 'destructive', description: 'Delete an update (comment)' },
-	'users.list': { riskLevel: 'read', description: 'List all users in the account' },
+	'items.delete': {
+		riskLevel: 'destructive',
+		description: 'Permanently delete an item',
+	},
+	'groups.list': {
+		riskLevel: 'read',
+		description: 'List all groups in a board',
+	},
+	'groups.create': {
+		riskLevel: 'write',
+		description: 'Create a new group in a board',
+	},
+	'groups.update': {
+		riskLevel: 'write',
+		description: 'Update a group attribute',
+	},
+	'groups.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete a group from a board',
+	},
+	'columns.list': {
+		riskLevel: 'read',
+		description: 'List all columns in a board',
+	},
+	'columns.create': {
+		riskLevel: 'write',
+		description: 'Create a new column in a board',
+	},
+	'columns.changeValue': {
+		riskLevel: 'write',
+		description: 'Change a column value on an item',
+	},
+	'updates.list': {
+		riskLevel: 'read',
+		description: 'List updates (comments) on an item',
+	},
+	'updates.create': {
+		riskLevel: 'write',
+		description: 'Create an update (comment) on an item',
+	},
+	'updates.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete an update (comment)',
+	},
+	'users.list': {
+		riskLevel: 'read',
+		description: 'List all users in the account',
+	},
 	'users.get': { riskLevel: 'read', description: 'Get a user by ID' },
 	'workspaces.list': { riskLevel: 'read', description: 'List all workspaces' },
-	'webhooks.list': { riskLevel: 'read', description: 'List all webhooks for a board' },
-	'webhooks.create': { riskLevel: 'write', description: 'Subscribe to a board event via webhook' },
-	'webhooks.delete': { riskLevel: 'destructive', description: 'Unsubscribe a webhook by ID' },
+	'webhooks.list': {
+		riskLevel: 'read',
+		description: 'List all webhooks for a board',
+	},
+	'webhooks.create': {
+		riskLevel: 'write',
+		description: 'Subscribe to a board event via webhook',
+	},
+	'webhooks.delete': {
+		riskLevel: 'destructive',
+		description: 'Unsubscribe a webhook by ID',
+	},
 } satisfies RequiredPluginEndpointMeta<typeof mondayEndpointsNested>;
 
 export const mondayAuthConfig = {
@@ -383,7 +532,7 @@ export function monday<const T extends MondayPluginOptions>(
 				if (typeof body !== 'object' || body === null) return false;
 				const b = body as Record<string, unknown>;
 				return (
-					(typeof b.challenge === 'string') ||
+					typeof b.challenge === 'string' ||
 					(typeof b.event === 'object' && b.event !== null)
 				);
 			} catch {
@@ -425,11 +574,11 @@ export function monday<const T extends MondayPluginOptions>(
 // ─────────────────────────────────────────────────────────────────────────────
 
 export type {
-	MondayWebhookOutputs,
-	ItemCreatedEvent,
 	ColumnValueChangedEvent,
-	StatusChangedEvent,
+	ItemCreatedEvent,
 	MondayChallengePayload,
+	MondayWebhookOutputs,
+	StatusChangedEvent,
 } from './webhooks/types';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -437,36 +586,36 @@ export type {
 // ─────────────────────────────────────────────────────────────────────────────
 
 export type {
-	MondayEndpointInputs,
-	MondayEndpointOutputs,
-	BoardsListInput,
-	BoardsGetInput,
-	BoardsCreateInput,
-	BoardsUpdateInput,
 	BoardsArchiveInput,
+	BoardsCreateInput,
 	BoardsDeleteInput,
 	BoardsDuplicateInput,
-	ItemsListInput,
-	ItemsGetInput,
-	ItemsCreateInput,
-	ItemsUpdateInput,
-	ItemsMoveInput,
-	ItemsArchiveInput,
-	ItemsDeleteInput,
-	GroupsListInput,
-	GroupsCreateInput,
-	GroupsUpdateInput,
-	GroupsDeleteInput,
-	ColumnsListInput,
-	ColumnsCreateInput,
+	BoardsGetInput,
+	BoardsListInput,
+	BoardsUpdateInput,
 	ColumnsChangeValueInput,
-	UpdatesListInput,
+	ColumnsCreateInput,
+	ColumnsListInput,
+	GroupsCreateInput,
+	GroupsDeleteInput,
+	GroupsListInput,
+	GroupsUpdateInput,
+	ItemsArchiveInput,
+	ItemsCreateInput,
+	ItemsDeleteInput,
+	ItemsGetInput,
+	ItemsListInput,
+	ItemsMoveInput,
+	ItemsUpdateInput,
+	MondayEndpointInputs,
+	MondayEndpointOutputs,
 	UpdatesCreateInput,
 	UpdatesDeleteInput,
-	UsersListInput,
+	UpdatesListInput,
 	UsersGetInput,
-	WorkspacesListInput,
-	WebhooksListInput,
+	UsersListInput,
 	WebhooksCreateInput,
 	WebhooksDeleteInput,
+	WebhooksListInput,
+	WorkspacesListInput,
 } from './endpoints/types';

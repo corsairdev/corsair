@@ -182,7 +182,15 @@ const BoardsGetInputSchema = z.object({
 const BoardsListInputSchema = z.object({
 	memberId: z.string().optional(),
 	filter: z
-		.enum(['all', 'closed', 'members', 'open', 'organization', 'public', 'starred'])
+		.enum([
+			'all',
+			'closed',
+			'members',
+			'open',
+			'organization',
+			'public',
+			'starred',
+		])
 		.optional(),
 	fields: z.string().optional(),
 });
@@ -523,5 +531,7 @@ export type LabelsCreateResponse = TrelloEndpointOutputs['labelsCreate'];
 export type LabelsUpdateResponse = TrelloEndpointOutputs['labelsUpdate'];
 export type LabelsDeleteResponse = TrelloEndpointOutputs['labelsDelete'];
 export type ChecklistsGetResponse = TrelloEndpointOutputs['checklistsGet'];
-export type ChecklistsCreateResponse = TrelloEndpointOutputs['checklistsCreate'];
-export type ChecklistsDeleteResponse = TrelloEndpointOutputs['checklistsDelete'];
+export type ChecklistsCreateResponse =
+	TrelloEndpointOutputs['checklistsCreate'];
+export type ChecklistsDeleteResponse =
+	TrelloEndpointOutputs['checklistsDelete'];

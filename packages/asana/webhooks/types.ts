@@ -1,6 +1,6 @@
+import type { CorsairWebhookMatcher, RawWebhookRequest } from 'corsair/core';
 import crypto from 'crypto';
 import { z } from 'zod';
-import type { CorsairWebhookMatcher, RawWebhookRequest } from 'corsair/core';
 
 // ── Shared Sub-schemas ────────────────────────────────────────────────────────
 
@@ -27,14 +27,16 @@ export const AsanaWebhookEventSchema = z.object({
 	resource: ResourceSchema.optional(),
 	parent: ResourceSchema.nullable().optional(),
 	user: UserSchema.nullable().optional(),
-	change: z.object({
-		field: z.string().optional(),
-		action: z.string().optional(),
-		// any/unknown for change values since Asana returns varying types depending on field being changed
-		new_value: z.unknown().optional(),
-		added_value: z.unknown().optional(),
-		removed_value: z.unknown().optional(),
-	}).optional(),
+	change: z
+		.object({
+			field: z.string().optional(),
+			action: z.string().optional(),
+			// any/unknown for change values since Asana returns varying types depending on field being changed
+			new_value: z.unknown().optional(),
+			added_value: z.unknown().optional(),
+			removed_value: z.unknown().optional(),
+		})
+		.optional(),
 });
 
 export type AsanaWebhookEvent = z.infer<typeof AsanaWebhookEventSchema>;
@@ -64,7 +66,9 @@ export const AsanaTaskWebhookPayloadSchema = z.object({
 	events: z.array(AsanaTaskEventSchema),
 });
 
-export type AsanaTaskWebhookPayload = z.infer<typeof AsanaTaskWebhookPayloadSchema>;
+export type AsanaTaskWebhookPayload = z.infer<
+	typeof AsanaTaskWebhookPayloadSchema
+>;
 
 // ── Webhook Outputs ───────────────────────────────────────────────────────────
 
@@ -74,7 +78,9 @@ export type AsanaChallengePayload = z.infer<typeof AsanaChallengePayloadSchema>;
 export const AsanaChallengeResponseSchema = z.object({
 	hookSecret: z.string(),
 });
-export type AsanaChallengeResponse = z.infer<typeof AsanaChallengeResponseSchema>;
+export type AsanaChallengeResponse = z.infer<
+	typeof AsanaChallengeResponseSchema
+>;
 
 export type AsanaWebhookOutputs = {
 	taskEvent: AsanaTaskWebhookPayload;
@@ -107,7 +113,7 @@ export function createAsanaEventMatch(
 			return false;
 		}
 		// any/unknown for event array elements since they come from parsed raw JSON
-	return events.some((event: unknown) => {
+		return events.some((event: unknown) => {
 			if (!event || typeof event !== 'object') return false;
 			// any/unknown for event since it's parsed from raw JSON
 			const e = event as Record<string, unknown>;
@@ -130,9 +136,10 @@ export function verifyAsanaWebhookSignature(
 	request: { payload: unknown; headers: unknown },
 	secret: string,
 ): { valid: boolean; error?: string } {
-	const rawBody = typeof request.payload === 'string'
-		? request.payload
-		: JSON.stringify(request.payload);
+	const rawBody =
+		typeof request.payload === 'string'
+			? request.payload
+			: JSON.stringify(request.payload);
 	// any/unknown cast: headers are untyped from raw request; narrowing to string map for header lookup
 	const headers = request.headers as Record<string, string>;
 	const signature = headers['x-hook-signature'];

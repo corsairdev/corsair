@@ -63,6 +63,4 @@ export const slackEventHandler = inngest.createFunction(
 	},
 );
 
-export const functions = [
-	slackEventHandler,
-];
+export const functions = [slackEventHandler];

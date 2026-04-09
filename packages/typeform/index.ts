@@ -1,4 +1,5 @@
 import type {
+	AuthTypes,
 	BindEndpoints,
 	BindWebhooks,
 	CorsairEndpoint,
@@ -7,13 +8,11 @@ import type {
 	CorsairPluginContext,
 	CorsairWebhook,
 	KeyBuilderContext,
+	PickAuth,
 	PluginAuthConfig,
-	RequiredPluginEndpointMeta,
-	RequiredPluginEndpointSchemas,
-	RequiredPluginWebhookSchemas,
 	PluginPermissionsConfig,
+	RequiredPluginEndpointMeta,
 } from 'corsair/core';
-import type { AuthTypes, PickAuth } from 'corsair/core';
 import {
 	Forms,
 	Images,
@@ -38,7 +37,6 @@ import { FormWebhooks } from './webhooks';
 import type {
 	TypeformFormResponseEvent,
 	TypeformWebhookOutputs,
-	TypeformWebhookPayload,
 } from './webhooks/types';
 import {
 	TypeformFormResponseEventSchema,
@@ -52,15 +50,17 @@ export type TypeformContext = CorsairPluginContext<
 	TypeformPluginOptions
 >;
 
-export type TypeformKeyBuilderContext = KeyBuilderContext<TypeformPluginOptions>;
+export type TypeformKeyBuilderContext =
+	KeyBuilderContext<TypeformPluginOptions>;
 
 // ── Endpoint Types ────────────────────────────────────────────────────────────
 
-type TypeformEndpoint<K extends keyof TypeformEndpointOutputs> = CorsairEndpoint<
-	TypeformContext,
-	TypeformEndpointInputs[K],
-	TypeformEndpointOutputs[K]
->;
+type TypeformEndpoint<K extends keyof TypeformEndpointOutputs> =
+	CorsairEndpoint<
+		TypeformContext,
+		TypeformEndpointInputs[K],
+		TypeformEndpointOutputs[K]
+	>;
 
 export type TypeformEndpoints = {
 	meGet: TypeformEndpoint<'meGet'>;
@@ -100,18 +100,16 @@ export type TypeformEndpoints = {
 	videosUpload: TypeformEndpoint<'videosUpload'>;
 };
 
-export type TypeformBoundEndpoints = BindEndpoints<typeof typeformEndpointsNested>;
+export type TypeformBoundEndpoints = BindEndpoints<
+	typeof typeformEndpointsNested
+>;
 
 // ── Webhook Types ─────────────────────────────────────────────────────────────
 
 type TypeformWebhook<
 	K extends keyof TypeformWebhookOutputs,
 	TEvent,
-> = CorsairWebhook<
-	TypeformContext,
-	TEvent,
-	TypeformWebhookOutputs[K]
->;
+> = CorsairWebhook<TypeformContext, TEvent, TypeformWebhookOutputs[K]>;
 
 export type TypeformWebhooks = {
 	formResponse: TypeformWebhook<'formResponse', TypeformFormResponseEvent>;
@@ -348,48 +346,130 @@ export const typeformEndpointSchemas = {
 // ── Endpoint Meta ─────────────────────────────────────────────────────────────
 
 const typeformEndpointMeta = {
-	'me.get': { riskLevel: 'read', description: 'Get information about the authenticated Typeform account' },
-	'forms.list': { riskLevel: 'read', description: 'List all forms in the account' },
+	'me.get': {
+		riskLevel: 'read',
+		description: 'Get information about the authenticated Typeform account',
+	},
+	'forms.list': {
+		riskLevel: 'read',
+		description: 'List all forms in the account',
+	},
 	'forms.get': { riskLevel: 'read', description: 'Get a form by ID' },
 	'forms.create': { riskLevel: 'write', description: 'Create a new form' },
-	'forms.update': { riskLevel: 'write', description: 'Replace a form with a new version (PUT)' },
-	'forms.patch': { riskLevel: 'write', description: 'Partially update a form using JSON Patch operations' },
-	'forms.delete': { riskLevel: 'destructive', description: 'Permanently delete a form [DESTRUCTIVE]' },
-	'forms.getMessages': { riskLevel: 'read', description: 'Get custom messages for a form' },
-	'forms.updateMessages': { riskLevel: 'write', description: 'Update custom messages for a form' },
-	'responses.list': { riskLevel: 'read', description: 'List responses submitted to a form' },
-	'responses.delete': { riskLevel: 'destructive', description: 'Delete specific responses from a form [DESTRUCTIVE]' },
-	'responses.getAllFiles': { riskLevel: 'read', description: 'Get a ZIP archive of all files uploaded in responses' },
+	'forms.update': {
+		riskLevel: 'write',
+		description: 'Replace a form with a new version (PUT)',
+	},
+	'forms.patch': {
+		riskLevel: 'write',
+		description: 'Partially update a form using JSON Patch operations',
+	},
+	'forms.delete': {
+		riskLevel: 'destructive',
+		description: 'Permanently delete a form [DESTRUCTIVE]',
+	},
+	'forms.getMessages': {
+		riskLevel: 'read',
+		description: 'Get custom messages for a form',
+	},
+	'forms.updateMessages': {
+		riskLevel: 'write',
+		description: 'Update custom messages for a form',
+	},
+	'responses.list': {
+		riskLevel: 'read',
+		description: 'List responses submitted to a form',
+	},
+	'responses.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete specific responses from a form [DESTRUCTIVE]',
+	},
+	'responses.getAllFiles': {
+		riskLevel: 'read',
+		description: 'Get a ZIP archive of all files uploaded in responses',
+	},
 	'workspaces.list': { riskLevel: 'read', description: 'List all workspaces' },
 	'workspaces.get': { riskLevel: 'read', description: 'Get a workspace by ID' },
-	'workspaces.create': { riskLevel: 'write', description: 'Create a new workspace' },
-	'workspaces.createForAccount': { riskLevel: 'write', description: 'Create a new workspace within a specific account' },
-	'workspaces.update': { riskLevel: 'write', description: 'Update a workspace using JSON Patch operations' },
-	'workspaces.delete': { riskLevel: 'destructive', description: 'Permanently delete a workspace [DESTRUCTIVE]' },
-	'images.list': { riskLevel: 'read', description: 'List all images in the account' },
+	'workspaces.create': {
+		riskLevel: 'write',
+		description: 'Create a new workspace',
+	},
+	'workspaces.createForAccount': {
+		riskLevel: 'write',
+		description: 'Create a new workspace within a specific account',
+	},
+	'workspaces.update': {
+		riskLevel: 'write',
+		description: 'Update a workspace using JSON Patch operations',
+	},
+	'workspaces.delete': {
+		riskLevel: 'destructive',
+		description: 'Permanently delete a workspace [DESTRUCTIVE]',
+	},
+	'images.list': {
+		riskLevel: 'read',
+		description: 'List all images in the account',
+	},
 	'images.create': { riskLevel: 'write', description: 'Upload a new image' },
-	'images.delete': { riskLevel: 'destructive', description: 'Permanently delete an image [DESTRUCTIVE]' },
-	'images.getBySize': { riskLevel: 'read', description: 'Get an image at a specific size' },
-	'images.getBackgroundBySize': { riskLevel: 'read', description: 'Get a background image at a specific size' },
-	'images.getChoiceImageBySize': { riskLevel: 'read', description: 'Get a choice image at a specific size' },
+	'images.delete': {
+		riskLevel: 'destructive',
+		description: 'Permanently delete an image [DESTRUCTIVE]',
+	},
+	'images.getBySize': {
+		riskLevel: 'read',
+		description: 'Get an image at a specific size',
+	},
+	'images.getBackgroundBySize': {
+		riskLevel: 'read',
+		description: 'Get a background image at a specific size',
+	},
+	'images.getChoiceImageBySize': {
+		riskLevel: 'read',
+		description: 'Get a choice image at a specific size',
+	},
 	'themes.list': { riskLevel: 'read', description: 'List all themes' },
 	'themes.get': { riskLevel: 'read', description: 'Get a theme by ID' },
 	'themes.create': { riskLevel: 'write', description: 'Create a new theme' },
-	'themes.update': { riskLevel: 'write', description: 'Replace a theme with a new version (PUT)' },
-	'themes.patch': { riskLevel: 'write', description: 'Partially update a theme' },
-	'themes.delete': { riskLevel: 'destructive', description: 'Permanently delete a theme [DESTRUCTIVE]' },
-	'webhooksConfig.list': { riskLevel: 'read', description: 'List all webhook configurations for a form' },
-	'webhooksConfig.get': { riskLevel: 'read', description: 'Get a webhook configuration by tag' },
-	'webhooksConfig.createOrUpdate': { riskLevel: 'write', description: 'Create or update a webhook configuration' },
-	'webhooksConfig.delete': { riskLevel: 'destructive', description: 'Delete a webhook configuration [DESTRUCTIVE]' },
-	'videos.upload': { riskLevel: 'write', description: 'Get a signed URL to upload a video for a form field' },
+	'themes.update': {
+		riskLevel: 'write',
+		description: 'Replace a theme with a new version (PUT)',
+	},
+	'themes.patch': {
+		riskLevel: 'write',
+		description: 'Partially update a theme',
+	},
+	'themes.delete': {
+		riskLevel: 'destructive',
+		description: 'Permanently delete a theme [DESTRUCTIVE]',
+	},
+	'webhooksConfig.list': {
+		riskLevel: 'read',
+		description: 'List all webhook configurations for a form',
+	},
+	'webhooksConfig.get': {
+		riskLevel: 'read',
+		description: 'Get a webhook configuration by tag',
+	},
+	'webhooksConfig.createOrUpdate': {
+		riskLevel: 'write',
+		description: 'Create or update a webhook configuration',
+	},
+	'webhooksConfig.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete a webhook configuration [DESTRUCTIVE]',
+	},
+	'videos.upload': {
+		riskLevel: 'write',
+		description: 'Get a signed URL to upload a video for a form field',
+	},
 } satisfies RequiredPluginEndpointMeta<typeof typeformEndpointsNested>;
 
 // ── Webhook Schemas ───────────────────────────────────────────────────────────
 
 const typeformWebhookSchemas = {
 	'forms.formResponse': {
-		description: 'A form was submitted — Typeform delivers the full response payload',
+		description:
+			'A form was submitted — Typeform delivers the full response payload',
 		payload: TypeformFormResponsePayloadSchema,
 		response: TypeformFormResponseEventSchema,
 	},
@@ -442,10 +522,7 @@ export function typeform<const T extends TypeformPluginOptions>(
 		webhookSchemas: typeformWebhookSchemas,
 		pluginWebhookMatcher: (request) => {
 			const headers = request.headers;
-			return (
-				'typeform-signature' in headers ||
-				'Typeform-Signature' in headers
-			);
+			return 'typeform-signature' in headers || 'Typeform-Signature' in headers;
 		},
 		errorHandlers: {
 			...errorHandlers,
@@ -480,8 +557,8 @@ export function typeform<const T extends TypeformPluginOptions>(
 // ── Webhook Type Exports ──────────────────────────────────────────────────────
 
 export type {
-	TypeformFormResponseEvent,
 	TypeformFormResponseData,
+	TypeformFormResponseEvent,
 	TypeformWebhookOutputs,
 	TypeformWebhookPayload,
 } from './webhooks/types';
@@ -489,76 +566,76 @@ export type {
 // ── Endpoint Type Exports ─────────────────────────────────────────────────────
 
 export type {
-	TypeformEndpointInputs,
-	TypeformEndpointOutputs,
-	MeGetInput,
-	MeGetResponse,
-	FormsListInput,
-	FormsListResponse,
-	FormsGetInput,
-	FormsGetResponse,
 	FormsCreateInput,
 	FormsCreateResponse,
-	FormsUpdateInput,
-	FormsUpdateResponse,
-	FormsPatchInput,
-	FormsPatchResponse,
 	FormsDeleteInput,
 	FormsDeleteResponse,
+	FormsGetInput,
 	FormsGetMessagesInput,
 	FormsGetMessagesResponse,
+	FormsGetResponse,
+	FormsListInput,
+	FormsListResponse,
+	FormsPatchInput,
+	FormsPatchResponse,
+	FormsUpdateInput,
 	FormsUpdateMessagesInput,
 	FormsUpdateMessagesResponse,
-	ResponsesListInput,
-	ResponsesListResponse,
-	ResponsesDeleteInput,
-	ResponsesDeleteResponse,
-	ResponsesGetAllFilesInput,
-	ResponsesGetAllFilesResponse,
-	WorkspacesListInput,
-	WorkspacesListResponse,
-	WorkspacesGetInput,
-	WorkspacesGetResponse,
-	WorkspacesCreateInput,
-	WorkspacesCreateResponse,
-	WorkspacesCreateForAccountInput,
-	WorkspacesCreateForAccountResponse,
-	WorkspacesUpdateInput,
-	WorkspacesUpdateResponse,
-	WorkspacesDeleteInput,
-	WorkspacesDeleteResponse,
-	ImagesListInput,
-	ImagesListResponse,
+	FormsUpdateResponse,
 	ImagesCreateInput,
 	ImagesCreateResponse,
 	ImagesDeleteInput,
 	ImagesDeleteResponse,
-	ImagesGetBySizeInput,
-	ImagesGetBySizeResponse,
 	ImagesGetBackgroundBySizeInput,
 	ImagesGetBackgroundBySizeResponse,
+	ImagesGetBySizeInput,
+	ImagesGetBySizeResponse,
 	ImagesGetChoiceImageBySizeInput,
 	ImagesGetChoiceImageBySizeResponse,
-	ThemesListInput,
-	ThemesListResponse,
-	ThemesGetInput,
-	ThemesGetResponse,
+	ImagesListInput,
+	ImagesListResponse,
+	MeGetInput,
+	MeGetResponse,
+	ResponsesDeleteInput,
+	ResponsesDeleteResponse,
+	ResponsesGetAllFilesInput,
+	ResponsesGetAllFilesResponse,
+	ResponsesListInput,
+	ResponsesListResponse,
 	ThemesCreateInput,
 	ThemesCreateResponse,
-	ThemesUpdateInput,
-	ThemesUpdateResponse,
-	ThemesPatchInput,
-	ThemesPatchResponse,
 	ThemesDeleteInput,
 	ThemesDeleteResponse,
-	WebhooksConfigListInput,
-	WebhooksConfigListResponse,
-	WebhooksConfigGetInput,
-	WebhooksConfigGetResponse,
+	ThemesGetInput,
+	ThemesGetResponse,
+	ThemesListInput,
+	ThemesListResponse,
+	ThemesPatchInput,
+	ThemesPatchResponse,
+	ThemesUpdateInput,
+	ThemesUpdateResponse,
+	TypeformEndpointInputs,
+	TypeformEndpointOutputs,
+	VideosUploadInput,
+	VideosUploadResponse,
 	WebhooksConfigCreateOrUpdateInput,
 	WebhooksConfigCreateOrUpdateResponse,
 	WebhooksConfigDeleteInput,
 	WebhooksConfigDeleteResponse,
-	VideosUploadInput,
-	VideosUploadResponse,
+	WebhooksConfigGetInput,
+	WebhooksConfigGetResponse,
+	WebhooksConfigListInput,
+	WebhooksConfigListResponse,
+	WorkspacesCreateForAccountInput,
+	WorkspacesCreateForAccountResponse,
+	WorkspacesCreateInput,
+	WorkspacesCreateResponse,
+	WorkspacesDeleteInput,
+	WorkspacesDeleteResponse,
+	WorkspacesGetInput,
+	WorkspacesGetResponse,
+	WorkspacesListInput,
+	WorkspacesListResponse,
+	WorkspacesUpdateInput,
+	WorkspacesUpdateResponse,
 } from './endpoints/types';

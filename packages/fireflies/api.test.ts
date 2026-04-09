@@ -1,4 +1,4 @@
-import 'dotenv/config'
+import 'dotenv/config';
 import { makeFirefliesRequest } from './client';
 import type {
 	AiAppGetOutputsResponse,
@@ -277,11 +277,12 @@ describe('Fireflies API Type Tests', () => {
 				throw new Error('No transcripts found');
 			}
 
-			const response = await makeFirefliesRequest<TranscriptsGetAnalyticsResponse>(
-				TRANSCRIPT_GET_ANALYTICS_QUERY,
-				TEST_API_KEY,
-				{ id: transcriptId },
-			);
+			const response =
+				await makeFirefliesRequest<TranscriptsGetAnalyticsResponse>(
+					TRANSCRIPT_GET_ANALYTICS_QUERY,
+					TEST_API_KEY,
+					{ id: transcriptId },
+				);
 
 			FirefliesEndpointOutputSchemas.transcriptsGetAnalytics.parse(response);
 		});
@@ -298,11 +299,12 @@ describe('Fireflies API Type Tests', () => {
 				throw new Error('No transcripts found');
 			}
 
-			const response = await makeFirefliesRequest<TranscriptsGetAudioUrlResponse>(
-				TRANSCRIPT_GET_AUDIO_URL_QUERY,
-				TEST_API_KEY,
-				{ id: transcriptId },
-			);
+			const response =
+				await makeFirefliesRequest<TranscriptsGetAudioUrlResponse>(
+					TRANSCRIPT_GET_AUDIO_URL_QUERY,
+					TEST_API_KEY,
+					{ id: transcriptId },
+				);
 
 			FirefliesEndpointOutputSchemas.transcriptsGetAudioUrl.parse(response);
 		});
@@ -319,11 +321,12 @@ describe('Fireflies API Type Tests', () => {
 				throw new Error('No transcripts found');
 			}
 
-			const response = await makeFirefliesRequest<TranscriptsGetVideoUrlResponse>(
-				TRANSCRIPT_GET_VIDEO_URL_QUERY,
-				TEST_API_KEY,
-				{ id: transcriptId },
-			);
+			const response =
+				await makeFirefliesRequest<TranscriptsGetVideoUrlResponse>(
+					TRANSCRIPT_GET_VIDEO_URL_QUERY,
+					TEST_API_KEY,
+					{ id: transcriptId },
+				);
 
 			FirefliesEndpointOutputSchemas.transcriptsGetVideoUrl.parse(response);
 		});
@@ -340,11 +343,12 @@ describe('Fireflies API Type Tests', () => {
 				throw new Error('No transcripts found');
 			}
 
-			const response = await makeFirefliesRequest<TranscriptsGetSummaryResponse>(
-				TRANSCRIPT_GET_SUMMARY_QUERY,
-				TEST_API_KEY,
-				{ id: transcriptId },
-			);
+			const response =
+				await makeFirefliesRequest<TranscriptsGetSummaryResponse>(
+					TRANSCRIPT_GET_SUMMARY_QUERY,
+					TEST_API_KEY,
+					{ id: transcriptId },
+				);
 
 			FirefliesEndpointOutputSchemas.transcriptsGetSummary.parse(response);
 		});
@@ -393,11 +397,17 @@ describe('Fireflies API Type Tests', () => {
 				throw new Error('No transcripts found');
 			}
 
-			const createResponse = await makeFirefliesRequest<AskFredCreateThreadResponse>(
-				CREATE_ASK_FRED_THREAD_MUTATION,
-				TEST_API_KEY,
-				{ input: { transcript_id: transcriptId, query: 'What were the main topics discussed?' } },
-			);
+			const createResponse =
+				await makeFirefliesRequest<AskFredCreateThreadResponse>(
+					CREATE_ASK_FRED_THREAD_MUTATION,
+					TEST_API_KEY,
+					{
+						input: {
+							transcript_id: transcriptId,
+							query: 'What were the main topics discussed?',
+						},
+					},
+				);
 
 			FirefliesEndpointOutputSchemas.askFredCreateThread.parse(createResponse);
 
@@ -414,19 +424,28 @@ describe('Fireflies API Type Tests', () => {
 
 			FirefliesEndpointOutputSchemas.askFredGetThread.parse(getResponse);
 
-			const continueResponse = await makeFirefliesRequest<AskFredContinueThreadResponse>(
-				CONTINUE_ASK_FRED_THREAD_MUTATION,
-				TEST_API_KEY,
-				{ input: { thread_id: threadId, query: 'Can you summarize the action items?' } },
+			const continueResponse =
+				await makeFirefliesRequest<AskFredContinueThreadResponse>(
+					CONTINUE_ASK_FRED_THREAD_MUTATION,
+					TEST_API_KEY,
+					{
+						input: {
+							thread_id: threadId,
+							query: 'Can you summarize the action items?',
+						},
+					},
+				);
+
+			FirefliesEndpointOutputSchemas.askFredContinueThread.parse(
+				continueResponse,
 			);
 
-			FirefliesEndpointOutputSchemas.askFredContinueThread.parse(continueResponse);
-
-			const deleteResponse = await makeFirefliesRequest<AskFredDeleteThreadResponse>(
-				DELETE_ASK_FRED_THREAD_MUTATION,
-				TEST_API_KEY,
-				{ id: threadId },
-			);
+			const deleteResponse =
+				await makeFirefliesRequest<AskFredDeleteThreadResponse>(
+					DELETE_ASK_FRED_THREAD_MUTATION,
+					TEST_API_KEY,
+					{ id: threadId },
+				);
 
 			FirefliesEndpointOutputSchemas.askFredDeleteThread.parse(deleteResponse);
 		});

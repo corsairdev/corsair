@@ -56,12 +56,13 @@ const DELETE_ASK_FRED_THREAD_MUTATION = `
   }
 `;
 
-export const getThreads: FirefliesEndpoints['askFredGetThreads'] = async (ctx, input) => {
-	const response = await makeFirefliesRequest<FirefliesEndpointOutputs['askFredGetThreads']>(
-		ASK_FRED_THREADS_QUERY,
-		ctx.key,
-		{ transcript_id: input.transcriptId },
-	);
+export const getThreads: FirefliesEndpoints['askFredGetThreads'] = async (
+	ctx,
+	input,
+) => {
+	const response = await makeFirefliesRequest<
+		FirefliesEndpointOutputs['askFredGetThreads']
+	>(ASK_FRED_THREADS_QUERY, ctx.key, { transcript_id: input.transcriptId });
 
 	if (ctx.db.askFredThreads) {
 		for (const thread of response.askfred_threads) {
@@ -73,16 +74,22 @@ export const getThreads: FirefliesEndpoints['askFredGetThreads'] = async (ctx, i
 		}
 	}
 
-	await logEventFromContext(ctx, 'fireflies.askFred.getThreads', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'fireflies.askFred.getThreads',
+		{ ...input },
+		'completed',
+	);
 	return response;
 };
 
-export const getThread: FirefliesEndpoints['askFredGetThread'] = async (ctx, input) => {
-	const response = await makeFirefliesRequest<FirefliesEndpointOutputs['askFredGetThread']>(
-		ASK_FRED_THREAD_QUERY,
-		ctx.key,
-		{ id: input.threadId },
-	);
+export const getThread: FirefliesEndpoints['askFredGetThread'] = async (
+	ctx,
+	input,
+) => {
+	const response = await makeFirefliesRequest<
+		FirefliesEndpointOutputs['askFredGetThread']
+	>(ASK_FRED_THREAD_QUERY, ctx.key, { id: input.threadId });
 
 	if (ctx.db.askFredThreads && response.askfred_thread) {
 		try {
@@ -94,38 +101,58 @@ export const getThread: FirefliesEndpoints['askFredGetThread'] = async (ctx, inp
 		}
 	}
 
-	await logEventFromContext(ctx, 'fireflies.askFred.getThread', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'fireflies.askFred.getThread',
+		{ ...input },
+		'completed',
+	);
 	return response;
 };
 
-export const createThread: FirefliesEndpoints['askFredCreateThread'] = async (ctx, input) => {
-	const response = await makeFirefliesRequest<FirefliesEndpointOutputs['askFredCreateThread']>(
-		CREATE_ASK_FRED_THREAD_MUTATION,
-		ctx.key,
-		{ input: { transcript_id: input.transcriptId, query: input.query } },
-	);
+export const createThread: FirefliesEndpoints['askFredCreateThread'] = async (
+	ctx,
+	input,
+) => {
+	const response = await makeFirefliesRequest<
+		FirefliesEndpointOutputs['askFredCreateThread']
+	>(CREATE_ASK_FRED_THREAD_MUTATION, ctx.key, {
+		input: { transcript_id: input.transcriptId, query: input.query },
+	});
 
-	await logEventFromContext(ctx, 'fireflies.askFred.createThread', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'fireflies.askFred.createThread',
+		{ ...input },
+		'completed',
+	);
 	return response;
 };
 
-export const continueThread: FirefliesEndpoints['askFredContinueThread'] = async (ctx, input) => {
-	const response = await makeFirefliesRequest<FirefliesEndpointOutputs['askFredContinueThread']>(
-		CONTINUE_ASK_FRED_THREAD_MUTATION,
-		ctx.key,
-		{ input: { thread_id: input.threadId, query: input.query } },
-	);
+export const continueThread: FirefliesEndpoints['askFredContinueThread'] =
+	async (ctx, input) => {
+		const response = await makeFirefliesRequest<
+			FirefliesEndpointOutputs['askFredContinueThread']
+		>(CONTINUE_ASK_FRED_THREAD_MUTATION, ctx.key, {
+			input: { thread_id: input.threadId, query: input.query },
+		});
 
-	await logEventFromContext(ctx, 'fireflies.askFred.continueThread', { ...input }, 'completed');
-	return response;
-};
+		await logEventFromContext(
+			ctx,
+			'fireflies.askFred.continueThread',
+			{ ...input },
+			'completed',
+		);
+		return response;
+	};
 
-export const deleteThread: FirefliesEndpoints['askFredDeleteThread'] = async (ctx, input) => {
-	const response = await makeFirefliesRequest<FirefliesEndpointOutputs['askFredDeleteThread']>(
-		DELETE_ASK_FRED_THREAD_MUTATION,
-		ctx.key,
-		{ id: input.threadId },
-	);
+export const deleteThread: FirefliesEndpoints['askFredDeleteThread'] = async (
+	ctx,
+	input,
+) => {
+	const response = await makeFirefliesRequest<
+		FirefliesEndpointOutputs['askFredDeleteThread']
+	>(DELETE_ASK_FRED_THREAD_MUTATION, ctx.key, { id: input.threadId });
 
 	if (ctx.db.askFredThreads) {
 		try {
@@ -135,6 +162,11 @@ export const deleteThread: FirefliesEndpoints['askFredDeleteThread'] = async (ct
 		}
 	}
 
-	await logEventFromContext(ctx, 'fireflies.askFred.deleteThread', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'fireflies.askFred.deleteThread',
+		{ ...input },
+		'completed',
+	);
 	return response;
 };

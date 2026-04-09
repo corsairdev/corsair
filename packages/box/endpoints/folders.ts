@@ -16,21 +16,13 @@ export const get: BoxEndpoints['foldersGet'] = async (ctx, input) => {
 
 	if (result.id && ctx.db.folders) {
 		try {
-			await ctx.db.folders.upsertByEntityId(
-				result.id,
-				result,
-			);
+			await ctx.db.folders.upsertByEntityId(result.id, result);
 		} catch (error) {
 			console.warn('Failed to save folder to database:', error);
 		}
 	}
 
-	await logEventFromContext(
-		ctx,
-		'box.folders.get',
-		{ ...input },
-		'completed',
-	);
+	await logEventFromContext(ctx, 'box.folders.get', { ...input }, 'completed');
 	return result;
 };
 
@@ -41,20 +33,17 @@ export const create: BoxEndpoints['foldersCreate'] = async (ctx, input) => {
 		ctx.key,
 		{
 			method: 'POST',
-		body: {
+			body: {
 				name,
 				parent: { id: parent_id },
 				...rest,
-			}
+			},
 		},
 	);
 
 	if (result.id && ctx.db.folders) {
 		try {
-			await ctx.db.folders.upsertByEntityId(
-				result.id,
-				result,
-			);
+			await ctx.db.folders.upsertByEntityId(result.id, result);
 		} catch (error) {
 			console.warn('Failed to save created folder to database:', error);
 		}
@@ -146,10 +135,7 @@ export const share: BoxEndpoints['foldersShare'] = async (ctx, input) => {
 
 	if (result.id && ctx.db.folders) {
 		try {
-			await ctx.db.folders.upsertByEntityId(
-				result.id,
-				result,
-			);
+			await ctx.db.folders.upsertByEntityId(result.id, result);
 		} catch (error) {
 			console.warn('Failed to save shared folder to database:', error);
 		}
@@ -179,10 +165,7 @@ export const update: BoxEndpoints['foldersUpdate'] = async (ctx, input) => {
 
 	if (result.id && ctx.db.folders) {
 		try {
-			await ctx.db.folders.upsertByEntityId(
-				result.id,
-				result,
-			);
+			await ctx.db.folders.upsertByEntityId(result.id, result);
 		} catch (error) {
 			console.warn('Failed to save updated folder to database:', error);
 		}

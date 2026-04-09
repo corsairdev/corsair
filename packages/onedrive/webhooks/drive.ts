@@ -5,7 +5,6 @@ import { createOnedriveMatch, verifyOnedriveClientState } from './types';
 export const driveNotification: OnedriveWebhooks['driveNotification'] = {
 	match: createOnedriveMatch(),
 	handler: async (ctx, request) => {
-
 		const payload = request.payload;
 		if (!payload?.value?.length) {
 			return { success: true, data: { value: [] } };
@@ -16,7 +15,8 @@ export const driveNotification: OnedriveWebhooks['driveNotification'] = {
 				return {
 					success: false,
 					statusCode: 401,
-					error: verification.error || 'OneDrive clientState verification failed',
+					error:
+						verification.error || 'OneDrive clientState verification failed',
 				};
 			}
 		}
@@ -28,7 +28,8 @@ export const driveNotification: OnedriveWebhooks['driveNotification'] = {
 			for (const notification of payload.value) {
 				if (
 					notification.resourceData?.id &&
-					(notification.changeType === 'updated' || notification.changeType === 'created')
+					(notification.changeType === 'updated' ||
+						notification.changeType === 'created')
 				) {
 					try {
 						// any/unknown for resourceData.id since Microsoft Graph notification resourceData is untyped
@@ -37,7 +38,10 @@ export const driveNotification: OnedriveWebhooks['driveNotification'] = {
 					} catch (error) {
 						console.warn('onedrive webhook: failed to fetch drive item', error);
 					}
-				} else if (notification.changeType === 'updated' || notification.changeType === 'created') {
+				} else if (
+					notification.changeType === 'updated' ||
+					notification.changeType === 'created'
+				) {
 					shouldRunDeltaSync = true;
 				}
 			}
@@ -56,7 +60,9 @@ export const driveNotification: OnedriveWebhooks['driveNotification'] = {
 						await ctx.db.driveItems.upsertByEntityId(
 							itemId,
 							// DB schema requires name:string but delta item has name as optional; cast after spread to satisfy types while capturing passthrough fields
-							{ ...driveItem } as Parameters<typeof ctx.db.driveItems.upsertByEntityId>[1],
+							{ ...driveItem } as Parameters<
+								typeof ctx.db.driveItems.upsertByEntityId
+							>[1],
 						);
 					}
 				} catch (error) {

@@ -1,7 +1,9 @@
-import { readFileSync } from 'fs';
-import { join } from 'path';
-import 'dotenv/config'
-import { makeJiraRequest, makeJiraAgileRequest, uploadJiraAttachment } from './client';
+import 'dotenv/config';
+import {
+	makeJiraAgileRequest,
+	makeJiraRequest,
+	uploadJiraAttachment,
+} from './client';
 import type {
 	CommentsAddResponse,
 	CommentsListResponse,
@@ -14,11 +16,10 @@ import type {
 	ProjectsGetResponse,
 	ProjectsListResponse,
 	SprintsListBoardsResponse,
-	UsersGetCurrentResponse,
 	UsersFindResponse,
+	UsersGetCurrentResponse,
 } from './endpoints/types';
 import { JiraEndpointOutputSchemas, makeAdf } from './endpoints/types';
-
 
 const API_KEY = process.env.JIRA_API_KEY!;
 const CLOUD_URL = process.env.JIRA_CLOUD_URL!;
@@ -388,7 +389,8 @@ describe('Jira API Type Tests', () => {
 						key: uniqueKey,
 						name: `Test Project ${Date.now()}`,
 						projectTypeKey: 'software',
-						projectTemplateKey: 'com.pyxis.greenhopper.jira:gh-simplified-agility-scrum',
+						projectTemplateKey:
+							'com.pyxis.greenhopper.jira:gh-simplified-agility-scrum',
 						leadAccountId: currentUser.accountId,
 						assigneeType: 'UNASSIGNED',
 					},

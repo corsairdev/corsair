@@ -1,7 +1,5 @@
-import { ApiError } from 'corsair/http';
-import type { ApiRequestOptions } from 'corsair/http';
-import type { OpenAPIConfig } from 'corsair/http';
-import { request } from 'corsair/http';
+import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
+import { ApiError, request } from 'corsair/http';
 
 export class YoutubeAPIError extends Error {
 	constructor(
@@ -47,7 +45,10 @@ export async function makeYoutubeRequest<T>(
 	const requestOptions: ApiRequestOptions = {
 		method,
 		url: endpoint,
-		body: method === 'POST' || method === 'PUT' || method === 'PATCH' ? body : undefined,
+		body:
+			method === 'POST' || method === 'PUT' || method === 'PATCH'
+				? body
+				: undefined,
 		mediaType: mediaType ?? 'application/json; charset=utf-8',
 		query,
 	};

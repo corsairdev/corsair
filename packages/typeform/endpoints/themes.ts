@@ -1,5 +1,5 @@
-import type { TypeformEndpoints } from '..';
 import { logEventFromContext } from 'corsair/core';
+import type { TypeformEndpoints } from '..';
 import { makeTypeformRequest } from '../client';
 import type { TypeformEndpointOutputs } from './types';
 
@@ -68,7 +68,7 @@ export const create: TypeformEndpoints['themesCreate'] = async (ctx, input) => {
 		TypeformEndpointOutputs['themesCreate']
 	>('/themes', ctx.key, {
 		method: 'POST',
-		body: input
+		body: input,
 	});
 
 	const id = response.id;
@@ -97,7 +97,7 @@ export const update: TypeformEndpoints['themesUpdate'] = async (ctx, input) => {
 		TypeformEndpointOutputs['themesUpdate']
 	>(`/themes/${theme_id}`, ctx.key, {
 		method: 'PUT',
-		body: body
+		body: body,
 	});
 
 	const id = response.id;
@@ -126,7 +126,7 @@ export const patch: TypeformEndpoints['themesPatch'] = async (ctx, input) => {
 		TypeformEndpointOutputs['themesPatch']
 	>(`/themes/${theme_id}`, ctx.key, {
 		method: 'PATCH',
-		body: body
+		body: body,
 	});
 
 	const id = response.id;

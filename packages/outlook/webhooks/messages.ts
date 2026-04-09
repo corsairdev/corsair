@@ -1,17 +1,28 @@
-import { logEventFromContext } from 'corsair/core';
-import type { OutlookBoundEndpoints, OutlookWebhooks } from '..';
-import type { MessageReceivedEvent, MessageSentEvent, OutlookWebhookPayload } from './types';
-import { createOutlookMatch, verifyOutlookWebhookSignature } from './types';
 import type { WebhookRequest } from 'corsair/core';
-import type { OutlookContext } from '..';
+import { logEventFromContext } from 'corsair/core';
+import type {
+	OutlookBoundEndpoints,
+	OutlookContext,
+	OutlookWebhooks,
+} from '..';
+import type {
+	MessageReceivedEvent,
+	MessageSentEvent,
+	OutlookWebhookPayload,
+} from './types';
+import { createOutlookMatch, verifyOutlookWebhookSignature } from './types';
 
 const MESSAGE_RESOURCE_PATTERN = /[Mm]essages\//;
 
-const SENT_ITEMS_RESOURCE_PATTERN = /[Mm]ailFolders\/[Ss]entItems\/[Mm]essages\//;
+const SENT_ITEMS_RESOURCE_PATTERN =
+	/[Mm]ailFolders\/[Ss]entItems\/[Mm]essages\//;
 
 // ── Shared verification helper ────────────────────────────────────────────────
 
-function verifyAndExtract(ctx: OutlookContext, request: WebhookRequest<OutlookWebhookPayload>) {
+function verifyAndExtract(
+	ctx: OutlookContext,
+	request: WebhookRequest<OutlookWebhookPayload>,
+) {
 	const verification = verifyOutlookWebhookSignature(request, ctx.key);
 	if (!verification.valid) {
 		return {
@@ -26,10 +37,17 @@ function verifyAndExtract(ctx: OutlookContext, request: WebhookRequest<OutlookWe
 
 	const notification = request.payload.value?.[0];
 	if (!notification) {
-		return { ok: false as const, result: { success: true as const, data: undefined } };
+		return {
+			ok: false as const,
+			result: { success: true as const, data: undefined },
+		};
 	}
 
-	return { ok: true as const, notification, entityId: notification.resourceData?.id ?? '' };
+	return {
+		ok: true as const,
+		notification,
+		entityId: notification.resourceData?.id ?? '',
+	};
 }
 
 // ── Webhook handlers ──────────────────────────────────────────────────────────

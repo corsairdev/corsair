@@ -1,10 +1,10 @@
-import { z } from 'zod';
-import { verifyHmacSignature } from 'corsair/http';
 import type {
 	CorsairWebhookMatcher,
 	RawWebhookRequest,
 	WebhookRequest,
 } from 'corsair/core';
+import { verifyHmacSignature } from 'corsair/http';
+import { z } from 'zod';
 
 // ── Stripe resource sub-schemas ───────────────────────────────────────────────
 
@@ -264,7 +264,10 @@ export function verifyStripeWebhookSignature(
 
 	const rawBody = request.rawBody;
 	if (!rawBody) {
-		return { valid: false, error: 'Missing raw body for signature verification' };
+		return {
+			valid: false,
+			error: 'Missing raw body for signature verification',
+		};
 	}
 
 	const headers = request.headers;
@@ -297,7 +300,10 @@ export function verifyStripeWebhookSignature(
 
 	const webhookTime = parseInt(timestamp, 10) * 1000;
 	if (Math.abs(Date.now() - webhookTime) > STRIPE_TIMESTAMP_TOLERANCE_MS) {
-		return { valid: false, error: 'Webhook timestamp is too old (possible replay attack)' };
+		return {
+			valid: false,
+			error: 'Webhook timestamp is too old (possible replay attack)',
+		};
 	}
 
 	// Stripe sends pretty-printed JSON (2-space indent). If the body was parsed
@@ -320,8 +326,10 @@ export function verifyStripeWebhookSignature(
 		}
 	}
 
-	const isValid = candidates.some(body =>
-		v1Signatures.some(sig => verifyHmacSignature(`${timestamp}.${body}`, secret, sig)),
+	const isValid = candidates.some((body) =>
+		v1Signatures.some((sig) =>
+			verifyHmacSignature(`${timestamp}.${body}`, secret, sig),
+		),
 	);
 
 	if (!isValid) {
@@ -335,7 +343,9 @@ export function verifyStripeWebhookSignature(
  * Creates a webhook matcher that checks if an incoming request is a Stripe
  * event of the specified type.
  */
-export function createStripeEventMatch(eventType: string): CorsairWebhookMatcher {
+export function createStripeEventMatch(
+	eventType: string,
+): CorsairWebhookMatcher {
 	return (request: RawWebhookRequest) => {
 		if (!('stripe-signature' in request.headers)) {
 			return false;

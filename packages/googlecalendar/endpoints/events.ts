@@ -155,17 +155,15 @@ export const deleteEvent: GoogleCalendarEndpoints['eventsDelete'] = async (
 	input,
 ) => {
 	const calendarId = input.calendarId || 'primary';
-	await makeAuthenticatedCalendarRequest<GoogleCalendarEndpointOutputs['eventsDelete']>(
-		`/calendars/${calendarId}/events/${input.id}`,
-		ctx,
-		{
-			method: 'DELETE',
-			query: {
-				sendUpdates: input.sendUpdates,
-				sendNotifications: input.sendNotifications,
-			},
+	await makeAuthenticatedCalendarRequest<
+		GoogleCalendarEndpointOutputs['eventsDelete']
+	>(`/calendars/${calendarId}/events/${input.id}`, ctx, {
+		method: 'DELETE',
+		query: {
+			sendUpdates: input.sendUpdates,
+			sendNotifications: input.sendNotifications,
 		},
-	);
+	});
 
 	if (ctx.db.events) {
 		try {

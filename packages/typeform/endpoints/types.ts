@@ -271,15 +271,14 @@ const ResponseAnswerSchema = z
 const MeGetInputSchema = z.object({}).passthrough();
 
 // Forms
-const FormsListInputSchema = z
-	.object({
-		page: z.number().optional(),
-		search: z.string().optional(),
-		sort_by: z.enum(['created_at', 'last_updated_at']).optional(),
-		order_by: z.enum(['asc', 'desc']).optional(),
-		page_size: z.number().optional(),
-		workspace_id: z.string().optional(),
-	})
+const FormsListInputSchema = z.object({
+	page: z.number().optional(),
+	search: z.string().optional(),
+	sort_by: z.enum(['created_at', 'last_updated_at']).optional(),
+	order_by: z.enum(['asc', 'desc']).optional(),
+	page_size: z.number().optional(),
+	workspace_id: z.string().optional(),
+});
 
 const FormsGetInputSchema = z
 	.object({
@@ -749,8 +748,7 @@ const WorkspacesCreateResponseSchema = z
 	})
 	.passthrough();
 
-const WorkspacesCreateForAccountResponseSchema =
-	WorkspacesCreateResponseSchema;
+const WorkspacesCreateForAccountResponseSchema = WorkspacesCreateResponseSchema;
 
 // Typeform PATCH /workspaces returns 204 No Content (no body)
 const WorkspacesUpdateResponseSchema = z.unknown();
@@ -849,29 +847,53 @@ export type FormsPatchResponse = z.infer<typeof FormsPatchResponseSchema>;
 export type FormsDeleteInput = z.infer<typeof FormsDeleteInputSchema>;
 export type FormsDeleteResponse = z.infer<typeof FormsDeleteResponseSchema>;
 export type FormsGetMessagesInput = z.infer<typeof FormsGetMessagesInputSchema>;
-export type FormsGetMessagesResponse = z.infer<typeof FormsGetMessagesResponseSchema>;
-export type FormsUpdateMessagesInput = z.infer<typeof FormsUpdateMessagesInputSchema>;
-export type FormsUpdateMessagesResponse = z.infer<typeof FormsUpdateMessagesResponseSchema>;
+export type FormsGetMessagesResponse = z.infer<
+	typeof FormsGetMessagesResponseSchema
+>;
+export type FormsUpdateMessagesInput = z.infer<
+	typeof FormsUpdateMessagesInputSchema
+>;
+export type FormsUpdateMessagesResponse = z.infer<
+	typeof FormsUpdateMessagesResponseSchema
+>;
 
 export type ResponsesListInput = z.infer<typeof ResponsesListInputSchema>;
 export type ResponsesListResponse = z.infer<typeof ResponsesListResponseSchema>;
 export type ResponsesDeleteInput = z.infer<typeof ResponsesDeleteInputSchema>;
-export type ResponsesDeleteResponse = z.infer<typeof ResponsesDeleteResponseSchema>;
-export type ResponsesGetAllFilesInput = z.infer<typeof ResponsesGetAllFilesInputSchema>;
-export type ResponsesGetAllFilesResponse = z.infer<typeof ResponsesGetAllFilesResponseSchema>;
+export type ResponsesDeleteResponse = z.infer<
+	typeof ResponsesDeleteResponseSchema
+>;
+export type ResponsesGetAllFilesInput = z.infer<
+	typeof ResponsesGetAllFilesInputSchema
+>;
+export type ResponsesGetAllFilesResponse = z.infer<
+	typeof ResponsesGetAllFilesResponseSchema
+>;
 
 export type WorkspacesListInput = z.infer<typeof WorkspacesListInputSchema>;
-export type WorkspacesListResponse = z.infer<typeof WorkspacesListResponseSchema>;
+export type WorkspacesListResponse = z.infer<
+	typeof WorkspacesListResponseSchema
+>;
 export type WorkspacesGetInput = z.infer<typeof WorkspacesGetInputSchema>;
 export type WorkspacesGetResponse = z.infer<typeof WorkspacesGetResponseSchema>;
 export type WorkspacesCreateInput = z.infer<typeof WorkspacesCreateInputSchema>;
-export type WorkspacesCreateResponse = z.infer<typeof WorkspacesCreateResponseSchema>;
-export type WorkspacesCreateForAccountInput = z.infer<typeof WorkspacesCreateForAccountInputSchema>;
-export type WorkspacesCreateForAccountResponse = z.infer<typeof WorkspacesCreateForAccountResponseSchema>;
+export type WorkspacesCreateResponse = z.infer<
+	typeof WorkspacesCreateResponseSchema
+>;
+export type WorkspacesCreateForAccountInput = z.infer<
+	typeof WorkspacesCreateForAccountInputSchema
+>;
+export type WorkspacesCreateForAccountResponse = z.infer<
+	typeof WorkspacesCreateForAccountResponseSchema
+>;
 export type WorkspacesUpdateInput = z.infer<typeof WorkspacesUpdateInputSchema>;
-export type WorkspacesUpdateResponse = z.infer<typeof WorkspacesUpdateResponseSchema>;
+export type WorkspacesUpdateResponse = z.infer<
+	typeof WorkspacesUpdateResponseSchema
+>;
 export type WorkspacesDeleteInput = z.infer<typeof WorkspacesDeleteInputSchema>;
-export type WorkspacesDeleteResponse = z.infer<typeof WorkspacesDeleteResponseSchema>;
+export type WorkspacesDeleteResponse = z.infer<
+	typeof WorkspacesDeleteResponseSchema
+>;
 
 export type ImagesListInput = z.infer<typeof ImagesListInputSchema>;
 export type ImagesListResponse = z.infer<typeof ImagesListResponseSchema>;
@@ -880,11 +902,21 @@ export type ImagesCreateResponse = z.infer<typeof ImagesCreateResponseSchema>;
 export type ImagesDeleteInput = z.infer<typeof ImagesDeleteInputSchema>;
 export type ImagesDeleteResponse = z.infer<typeof ImagesDeleteResponseSchema>;
 export type ImagesGetBySizeInput = z.infer<typeof ImagesGetBySizeInputSchema>;
-export type ImagesGetBySizeResponse = z.infer<typeof ImagesGetBySizeResponseSchema>;
-export type ImagesGetBackgroundBySizeInput = z.infer<typeof ImagesGetBackgroundBySizeInputSchema>;
-export type ImagesGetBackgroundBySizeResponse = z.infer<typeof ImagesGetBackgroundBySizeResponseSchema>;
-export type ImagesGetChoiceImageBySizeInput = z.infer<typeof ImagesGetChoiceImageBySizeInputSchema>;
-export type ImagesGetChoiceImageBySizeResponse = z.infer<typeof ImagesGetChoiceImageBySizeResponseSchema>;
+export type ImagesGetBySizeResponse = z.infer<
+	typeof ImagesGetBySizeResponseSchema
+>;
+export type ImagesGetBackgroundBySizeInput = z.infer<
+	typeof ImagesGetBackgroundBySizeInputSchema
+>;
+export type ImagesGetBackgroundBySizeResponse = z.infer<
+	typeof ImagesGetBackgroundBySizeResponseSchema
+>;
+export type ImagesGetChoiceImageBySizeInput = z.infer<
+	typeof ImagesGetChoiceImageBySizeInputSchema
+>;
+export type ImagesGetChoiceImageBySizeResponse = z.infer<
+	typeof ImagesGetChoiceImageBySizeResponseSchema
+>;
 
 export type ThemesListInput = z.infer<typeof ThemesListInputSchema>;
 export type ThemesListResponse = z.infer<typeof ThemesListResponseSchema>;
@@ -899,14 +931,30 @@ export type ThemesPatchResponse = z.infer<typeof ThemesPatchResponseSchema>;
 export type ThemesDeleteInput = z.infer<typeof ThemesDeleteInputSchema>;
 export type ThemesDeleteResponse = z.infer<typeof ThemesDeleteResponseSchema>;
 
-export type WebhooksConfigListInput = z.infer<typeof WebhooksConfigListInputSchema>;
-export type WebhooksConfigListResponse = z.infer<typeof WebhooksConfigListResponseSchema>;
-export type WebhooksConfigGetInput = z.infer<typeof WebhooksConfigGetInputSchema>;
-export type WebhooksConfigGetResponse = z.infer<typeof WebhooksConfigGetResponseSchema>;
-export type WebhooksConfigCreateOrUpdateInput = z.infer<typeof WebhooksConfigCreateOrUpdateInputSchema>;
-export type WebhooksConfigCreateOrUpdateResponse = z.infer<typeof WebhooksConfigCreateOrUpdateResponseSchema>;
-export type WebhooksConfigDeleteInput = z.infer<typeof WebhooksConfigDeleteInputSchema>;
-export type WebhooksConfigDeleteResponse = z.infer<typeof WebhooksConfigDeleteResponseSchema>;
+export type WebhooksConfigListInput = z.infer<
+	typeof WebhooksConfigListInputSchema
+>;
+export type WebhooksConfigListResponse = z.infer<
+	typeof WebhooksConfigListResponseSchema
+>;
+export type WebhooksConfigGetInput = z.infer<
+	typeof WebhooksConfigGetInputSchema
+>;
+export type WebhooksConfigGetResponse = z.infer<
+	typeof WebhooksConfigGetResponseSchema
+>;
+export type WebhooksConfigCreateOrUpdateInput = z.infer<
+	typeof WebhooksConfigCreateOrUpdateInputSchema
+>;
+export type WebhooksConfigCreateOrUpdateResponse = z.infer<
+	typeof WebhooksConfigCreateOrUpdateResponseSchema
+>;
+export type WebhooksConfigDeleteInput = z.infer<
+	typeof WebhooksConfigDeleteInputSchema
+>;
+export type WebhooksConfigDeleteResponse = z.infer<
+	typeof WebhooksConfigDeleteResponseSchema
+>;
 
 export type VideosUploadInput = z.infer<typeof VideosUploadInputSchema>;
 export type VideosUploadResponse = z.infer<typeof VideosUploadResponseSchema>;

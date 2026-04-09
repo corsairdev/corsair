@@ -1,4 +1,5 @@
 import type {
+	AuthTypes,
 	BindEndpoints,
 	BindWebhooks,
 	CorsairEndpoint,
@@ -7,30 +8,40 @@ import type {
 	CorsairPluginContext,
 	CorsairWebhook,
 	KeyBuilderContext,
+	PickAuth,
 	PluginAuthConfig,
+	PluginPermissionsConfig,
+	RawWebhookRequest,
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
 	RequiredPluginWebhookSchemas,
-	PluginPermissionsConfig,
 } from 'corsair/core';
-import type { AuthTypes, PickAuth } from 'corsair/core';
-import type { RawWebhookRequest } from 'corsair/core';
-import type { OutlookEndpointInputs, OutlookEndpointOutputs } from './endpoints/types';
+import { getValidAccessToken } from './client';
+import { Calendars, Contacts, Events, Folders, Messages } from './endpoints';
+import type {
+	OutlookEndpointInputs,
+	OutlookEndpointOutputs,
+} from './endpoints/types';
 import {
 	OutlookEndpointInputSchemas,
 	OutlookEndpointOutputSchemas,
 } from './endpoints/types';
-import { Calendars, Contacts, Events, Folders, Messages } from './endpoints';
+import { errorHandlers } from './error-handlers';
 import { OutlookSchema } from './schema';
-import { ContactWebhooks, EventWebhooks, MessageWebhooks, ValidationWebhooks } from './webhooks';
+import {
+	ContactWebhooks,
+	EventWebhooks,
+	MessageWebhooks,
+	ValidationWebhooks,
+} from './webhooks';
 import type {
-	OutlookWebhookOutputs,
-	OutlookWebhookPayload,
+	ContactCreatedEvent,
+	EventChangedEvent,
+	EventCreatedEvent,
 	MessageReceivedEvent,
 	MessageSentEvent,
-	EventCreatedEvent,
-	EventChangedEvent,
-	ContactCreatedEvent,
+	OutlookWebhookOutputs,
+	OutlookWebhookPayload,
 	SubscriptionValidationPayload,
 } from './webhooks/types';
 import {
@@ -42,8 +53,6 @@ import {
 	OutlookWebhookPayloadSchema,
 	SubscriptionValidationPayloadSchema,
 } from './webhooks/types';
-import { errorHandlers } from './error-handlers';
-import { getValidAccessToken } from './client';
 
 export type OutlookPluginOptions = {
 	authType?: PickAuth<'oauth_2'>;
@@ -67,7 +76,9 @@ export type OutlookContext = CorsairPluginContext<
 
 export type OutlookKeyBuilderContext = KeyBuilderContext<OutlookPluginOptions>;
 
-export type OutlookBoundEndpoints = BindEndpoints<typeof outlookEndpointsNested>;
+export type OutlookBoundEndpoints = BindEndpoints<
+	typeof outlookEndpointsNested
+>;
 
 type OutlookEndpoint<
 	K extends keyof OutlookEndpointOutputs,
@@ -117,7 +128,11 @@ export type OutlookEndpoints = {
 type OutlookWebhook<
 	K extends keyof OutlookWebhookOutputs,
 	TEvent,
-> = CorsairWebhook<OutlookContext, OutlookWebhookPayload, OutlookWebhookOutputs[K]>;
+> = CorsairWebhook<
+	OutlookContext,
+	OutlookWebhookPayload,
+	OutlookWebhookOutputs[K]
+>;
 
 export type OutlookWebhooks = {
 	messageReceived: OutlookWebhook<'messageReceived', MessageReceivedEvent>;
@@ -125,7 +140,11 @@ export type OutlookWebhooks = {
 	eventCreated: OutlookWebhook<'eventCreated', EventCreatedEvent>;
 	eventChanged: OutlookWebhook<'eventChanged', EventChangedEvent>;
 	contactCreated: OutlookWebhook<'contactCreated', ContactCreatedEvent>;
-	subscriptionValidation: CorsairWebhook<OutlookContext, SubscriptionValidationPayload, SubscriptionValidationPayload>;
+	subscriptionValidation: CorsairWebhook<
+		OutlookContext,
+		SubscriptionValidationPayload,
+		SubscriptionValidationPayload
+	>;
 };
 
 export type OutlookBoundWebhooks = BindWebhooks<OutlookWebhooks>;
@@ -350,47 +369,132 @@ const defaultAuthType: AuthTypes = 'oauth_2' as const;
 
 const outlookEndpointMeta = {
 	'messages.send': { riskLevel: 'write', description: 'Send an email message' },
-	'messages.createDraft': { riskLevel: 'write', description: 'Create an email draft' },
-	'messages.get': { riskLevel: 'read', description: 'Get an email message by ID' },
-	'messages.list': { riskLevel: 'read', description: 'List email messages in a folder' },
-	'messages.query': { riskLevel: 'read', description: 'Query email messages with OData filters' },
-	'messages.search': { riskLevel: 'read', description: 'Search email messages' },
-	'messages.reply': { riskLevel: 'write', description: 'Reply to an email message' },
-	'messages.forward': { riskLevel: 'write', description: 'Forward an email message' },
-	'messages.delete': { riskLevel: 'destructive', description: 'Delete an email message [DESTRUCTIVE]' },
-	'messages.move': { riskLevel: 'write', description: 'Move a message to a different folder' },
-	'messages.update': { riskLevel: 'write', description: 'Update an email message (e.g. mark as read)' },
-	'messages.sendDraft': { riskLevel: 'write', description: 'Send a saved draft message' },
-	'messages.batchMove': { riskLevel: 'write', description: 'Batch move up to 20 messages to a folder' },
-	'messages.batchUpdate': { riskLevel: 'write', description: 'Batch update up to 20 messages' },
-	'messages.addAttachment': { riskLevel: 'write', description: 'Add an attachment to a message' },
-	'events.create': { riskLevel: 'write', description: 'Create a calendar event' },
-	'events.get': { riskLevel: 'read', description: 'Get a calendar event by ID' },
+	'messages.createDraft': {
+		riskLevel: 'write',
+		description: 'Create an email draft',
+	},
+	'messages.get': {
+		riskLevel: 'read',
+		description: 'Get an email message by ID',
+	},
+	'messages.list': {
+		riskLevel: 'read',
+		description: 'List email messages in a folder',
+	},
+	'messages.query': {
+		riskLevel: 'read',
+		description: 'Query email messages with OData filters',
+	},
+	'messages.search': {
+		riskLevel: 'read',
+		description: 'Search email messages',
+	},
+	'messages.reply': {
+		riskLevel: 'write',
+		description: 'Reply to an email message',
+	},
+	'messages.forward': {
+		riskLevel: 'write',
+		description: 'Forward an email message',
+	},
+	'messages.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete an email message [DESTRUCTIVE]',
+	},
+	'messages.move': {
+		riskLevel: 'write',
+		description: 'Move a message to a different folder',
+	},
+	'messages.update': {
+		riskLevel: 'write',
+		description: 'Update an email message (e.g. mark as read)',
+	},
+	'messages.sendDraft': {
+		riskLevel: 'write',
+		description: 'Send a saved draft message',
+	},
+	'messages.batchMove': {
+		riskLevel: 'write',
+		description: 'Batch move up to 20 messages to a folder',
+	},
+	'messages.batchUpdate': {
+		riskLevel: 'write',
+		description: 'Batch update up to 20 messages',
+	},
+	'messages.addAttachment': {
+		riskLevel: 'write',
+		description: 'Add an attachment to a message',
+	},
+	'events.create': {
+		riskLevel: 'write',
+		description: 'Create a calendar event',
+	},
+	'events.get': {
+		riskLevel: 'read',
+		description: 'Get a calendar event by ID',
+	},
 	'events.list': { riskLevel: 'read', description: 'List calendar events' },
-	'events.update': { riskLevel: 'write', description: 'Update a calendar event' },
-	'events.delete': { riskLevel: 'destructive', description: 'Delete a calendar event [DESTRUCTIVE]' },
-	'events.cancel': { riskLevel: 'write', description: 'Cancel a calendar event and notify attendees' },
-	'events.decline': { riskLevel: 'write', description: 'Decline a calendar event invitation' },
-	'events.findMeetingTimes': { riskLevel: 'read', description: 'Find available meeting times for attendees' },
-	'events.getSchedule': { riskLevel: 'read', description: 'Get free/busy schedule for a calendar' },
-	'calendars.create': { riskLevel: 'write', description: 'Create a new calendar' },
+	'events.update': {
+		riskLevel: 'write',
+		description: 'Update a calendar event',
+	},
+	'events.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete a calendar event [DESTRUCTIVE]',
+	},
+	'events.cancel': {
+		riskLevel: 'write',
+		description: 'Cancel a calendar event and notify attendees',
+	},
+	'events.decline': {
+		riskLevel: 'write',
+		description: 'Decline a calendar event invitation',
+	},
+	'events.findMeetingTimes': {
+		riskLevel: 'read',
+		description: 'Find available meeting times for attendees',
+	},
+	'events.getSchedule': {
+		riskLevel: 'read',
+		description: 'Get free/busy schedule for a calendar',
+	},
+	'calendars.create': {
+		riskLevel: 'write',
+		description: 'Create a new calendar',
+	},
 	'calendars.get': { riskLevel: 'read', description: 'Get a calendar by ID' },
 	'calendars.list': { riskLevel: 'read', description: 'List all calendars' },
-	'calendars.delete': { riskLevel: 'destructive', description: 'Delete a calendar [DESTRUCTIVE]' },
-	'contacts.create': { riskLevel: 'write', description: 'Create a new contact' },
+	'calendars.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete a calendar [DESTRUCTIVE]',
+	},
+	'contacts.create': {
+		riskLevel: 'write',
+		description: 'Create a new contact',
+	},
 	'contacts.list': { riskLevel: 'read', description: 'List contacts' },
 	'contacts.update': { riskLevel: 'write', description: 'Update a contact' },
-	'contacts.delete': { riskLevel: 'destructive', description: 'Delete a contact [DESTRUCTIVE]' },
-	'folders.create': { riskLevel: 'write', description: 'Create a new mail folder' },
+	'contacts.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete a contact [DESTRUCTIVE]',
+	},
+	'folders.create': {
+		riskLevel: 'write',
+		description: 'Create a new mail folder',
+	},
 	'folders.get': { riskLevel: 'read', description: 'Get a mail folder by ID' },
 	'folders.list': { riskLevel: 'read', description: 'List mail folders' },
 	'folders.update': { riskLevel: 'write', description: 'Rename a mail folder' },
-	'folders.delete': { riskLevel: 'destructive', description: 'Delete a mail folder [DESTRUCTIVE]' },
+	'folders.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete a mail folder [DESTRUCTIVE]',
+	},
 } satisfies RequiredPluginEndpointMeta<typeof outlookEndpointsNested>;
 
 const outlookWebhookSchemas = {
 	'messages.newMessage': {
-		description: 'Triggered when a new message is received in the Outlook mailbox',
+		description:
+			'Triggered when a new message is received in the Outlook mailbox',
 		payload: OutlookWebhookPayloadSchema,
 		response: MessageReceivedEventSchema,
 	},
@@ -405,7 +509,8 @@ const outlookWebhookSchemas = {
 		response: EventCreatedEventSchema,
 	},
 	'events.eventChange': {
-		description: 'Triggered when a calendar event is created, updated, or deleted',
+		description:
+			'Triggered when a calendar event is created, updated, or deleted',
 		payload: OutlookWebhookPayloadSchema,
 		response: EventChangedEventSchema,
 	},
@@ -449,7 +554,8 @@ export function outlook<const T extends OutlookPluginOptions>(
 		const value = (body as { value?: unknown }).value;
 		if (!Array.isArray(value) || value.length === 0) return false;
 		return value.some((notification) => {
-			if (notification === null || typeof notification !== 'object') return false;
+			if (notification === null || typeof notification !== 'object')
+				return false;
 			const resource = (notification as { resource?: unknown }).resource;
 			return typeof resource === 'string' && resource.length > 0;
 		});
@@ -457,7 +563,8 @@ export function outlook<const T extends OutlookPluginOptions>(
 
 	const hasValidationTokenBody = (body: unknown): boolean => {
 		if (body === null || typeof body !== 'object') return false;
-		const validationToken = (body as { validationToken?: unknown }).validationToken;
+		const validationToken = (body as { validationToken?: unknown })
+			.validationToken;
 		return typeof validationToken === 'string' && validationToken.length > 0;
 	};
 
@@ -564,14 +671,14 @@ export function outlook<const T extends OutlookPluginOptions>(
 // ─────────────────────────────────────────────────────────────────────────────
 
 export type {
-	OutlookWebhookOutputs,
-	OutlookWebhookPayload,
-	OutlookChangeNotification,
+	ContactCreatedEvent,
+	EventChangedEvent,
+	EventCreatedEvent,
 	MessageReceivedEvent,
 	MessageSentEvent,
-	EventCreatedEvent,
-	EventChangedEvent,
-	ContactCreatedEvent,
+	OutlookChangeNotification,
+	OutlookWebhookOutputs,
+	OutlookWebhookPayload,
 } from './webhooks/types';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -579,80 +686,80 @@ export type {
 // ─────────────────────────────────────────────────────────────────────────────
 
 export type {
+	CalendarsCreateInput,
+	CalendarsCreateResponse,
+	CalendarsDeleteInput,
+	CalendarsDeleteResponse,
+	CalendarsGetInput,
+	CalendarsGetResponse,
+	CalendarsListInput,
+	CalendarsListResponse,
+	ContactsCreateInput,
+	ContactsCreateResponse,
+	ContactsDeleteInput,
+	ContactsDeleteResponse,
+	ContactsListInput,
+	ContactsListResponse,
+	ContactsUpdateInput,
+	ContactsUpdateResponse,
+	EventsCancelInput,
+	EventsCancelResponse,
+	EventsCreateInput,
+	EventsCreateResponse,
+	EventsDeclineInput,
+	EventsDeclineResponse,
+	EventsDeleteInput,
+	EventsDeleteResponse,
+	EventsFindMeetingTimesInput,
+	EventsFindMeetingTimesResponse,
+	EventsGetInput,
+	EventsGetResponse,
+	EventsGetScheduleInput,
+	EventsGetScheduleResponse,
+	EventsListInput,
+	EventsListResponse,
+	EventsUpdateInput,
+	EventsUpdateResponse,
+	FoldersCreateInput,
+	FoldersCreateResponse,
+	FoldersDeleteInput,
+	FoldersDeleteResponse,
+	FoldersGetInput,
+	FoldersGetResponse,
+	FoldersListInput,
+	FoldersListResponse,
+	FoldersUpdateInput,
+	FoldersUpdateResponse,
+	MessagesAddAttachmentInput,
+	MessagesAddAttachmentResponse,
+	MessagesBatchMoveInput,
+	MessagesBatchMoveResponse,
+	MessagesBatchUpdateInput,
+	MessagesBatchUpdateResponse,
+	MessagesCreateDraftInput,
+	MessagesCreateDraftResponse,
+	MessagesDeleteInput,
+	MessagesDeleteResponse,
+	MessagesForwardInput,
+	MessagesForwardResponse,
+	MessagesGetInput,
+	MessagesGetResponse,
+	MessagesListInput,
+	MessagesListResponse,
+	MessagesMoveInput,
+	MessagesMoveResponse,
+	MessagesQueryInput,
+	MessagesQueryResponse,
+	MessagesReplyInput,
+	MessagesReplyResponse,
+	MessagesSearchInput,
+	MessagesSearchResponse,
+	MessagesSendDraftInput,
+	MessagesSendDraftResponse,
+	MessagesSendInput,
+	MessagesSendResponse,
+	MessagesUpdateInput,
+	MessagesUpdateResponse,
 	OutlookEndpointInputs,
 	OutlookEndpointOutputs,
-	MessagesSendInput,
-	MessagesCreateDraftInput,
-	MessagesGetInput,
-	MessagesListInput,
-	MessagesQueryInput,
-	MessagesSearchInput,
-	MessagesReplyInput,
-	MessagesForwardInput,
-	MessagesDeleteInput,
-	MessagesMoveInput,
-	MessagesUpdateInput,
-	MessagesSendDraftInput,
-	MessagesBatchMoveInput,
-	MessagesBatchUpdateInput,
-	MessagesAddAttachmentInput,
-	EventsCreateInput,
-	EventsGetInput,
-	EventsListInput,
-	EventsUpdateInput,
-	EventsDeleteInput,
-	EventsCancelInput,
-	EventsDeclineInput,
-	EventsFindMeetingTimesInput,
-	EventsGetScheduleInput,
-	CalendarsCreateInput,
-	CalendarsGetInput,
-	CalendarsListInput,
-	CalendarsDeleteInput,
-	ContactsCreateInput,
-	ContactsListInput,
-	ContactsUpdateInput,
-	ContactsDeleteInput,
-	FoldersCreateInput,
-	FoldersGetInput,
-	FoldersListInput,
-	FoldersUpdateInput,
-	FoldersDeleteInput,
-	MessagesSendResponse,
-	MessagesCreateDraftResponse,
-	MessagesGetResponse,
-	MessagesListResponse,
-	MessagesQueryResponse,
-	MessagesSearchResponse,
-	MessagesReplyResponse,
-	MessagesForwardResponse,
-	MessagesDeleteResponse,
-	MessagesMoveResponse,
-	MessagesUpdateResponse,
-	MessagesSendDraftResponse,
-	MessagesBatchMoveResponse,
-	MessagesBatchUpdateResponse,
-	MessagesAddAttachmentResponse,
-	EventsCreateResponse,
-	EventsGetResponse,
-	EventsListResponse,
-	EventsUpdateResponse,
-	EventsDeleteResponse,
-	EventsCancelResponse,
-	EventsDeclineResponse,
-	EventsFindMeetingTimesResponse,
-	EventsGetScheduleResponse,
-	CalendarsCreateResponse,
-	CalendarsGetResponse,
-	CalendarsListResponse,
-	CalendarsDeleteResponse,
-	ContactsCreateResponse,
-	ContactsListResponse,
-	ContactsUpdateResponse,
-	ContactsDeleteResponse,
-	FoldersCreateResponse,
-	FoldersGetResponse,
-	FoldersListResponse,
-	FoldersUpdateResponse,
-	FoldersDeleteResponse,
 } from './endpoints/types';

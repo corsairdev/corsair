@@ -4,17 +4,15 @@ import { makeYoutubeRequest } from '../client';
 import type { YoutubeEndpointOutputs } from './types';
 
 export const get: YoutubeEndpoints['videosGet'] = async (ctx, input) => {
-	const response = await makeYoutubeRequest<YoutubeEndpointOutputs['videosGet']>(
-		'/videos',
-		ctx.key,
-		{
-			method: 'GET',
-			query: {
-				id: input.video_id,
-				part: input.part ?? 'snippet,status,statistics,contentDetails',
-			},
+	const response = await makeYoutubeRequest<
+		YoutubeEndpointOutputs['videosGet']
+	>('/videos', ctx.key, {
+		method: 'GET',
+		query: {
+			id: input.video_id,
+			part: input.part ?? 'snippet,status,statistics,contentDetails',
 		},
-	);
+	});
 
 	if (response.items && ctx.db.videos) {
 		for (const item of response.items) {
@@ -33,23 +31,31 @@ export const get: YoutubeEndpoints['videosGet'] = async (ctx, input) => {
 		}
 	}
 
-	await logEventFromContext(ctx, 'youtube.videos.get', { video_id: input.video_id }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'youtube.videos.get',
+		{ video_id: input.video_id },
+		'completed',
+	);
 	return response;
 };
 
-export const getBatch: YoutubeEndpoints['videosGetBatch'] = async (ctx, input) => {
-	const response = await makeYoutubeRequest<YoutubeEndpointOutputs['videosGetBatch']>(
-		'/videos',
-		ctx.key,
-		{
-			method: 'GET',
-			query: {
-				id: input.id.join(','),
-				part: (input.parts ?? ['snippet', 'status', 'statistics', 'contentDetails']).join(','),
-				...(input.hl && { hl: input.hl }),
-			},
+export const getBatch: YoutubeEndpoints['videosGetBatch'] = async (
+	ctx,
+	input,
+) => {
+	const response = await makeYoutubeRequest<
+		YoutubeEndpointOutputs['videosGetBatch']
+	>('/videos', ctx.key, {
+		method: 'GET',
+		query: {
+			id: input.id.join(','),
+			part: (
+				input.parts ?? ['snippet', 'status', 'statistics', 'contentDetails']
+			).join(','),
+			...(input.hl && { hl: input.hl }),
 		},
-	);
+	});
 
 	if (response.items && ctx.db.videos) {
 		for (const item of response.items) {
@@ -68,7 +74,12 @@ export const getBatch: YoutubeEndpoints['videosGetBatch'] = async (ctx, input) =
 		}
 	}
 
-	await logEventFromContext(ctx, 'youtube.videos.getBatch', { count: input.id.length }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'youtube.videos.getBatch',
+		{ count: input.id.length },
+		'completed',
+	);
 	return response;
 };
 
@@ -135,15 +146,20 @@ export const list: YoutubeEndpoints['videosList'] = async (ctx, input) => {
 		}
 	}
 
-	await logEventFromContext(ctx, 'youtube.videos.list', { channelId: input.channelId }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'youtube.videos.list',
+		{ channelId: input.channelId },
+		'completed',
+	);
 	return response;
 };
 
-export const listMostPopular: YoutubeEndpoints['videosListMostPopular'] = async (ctx, input) => {
-	const response = await makeYoutubeRequest<YoutubeEndpointOutputs['videosListMostPopular']>(
-		'/videos',
-		ctx.key,
-		{
+export const listMostPopular: YoutubeEndpoints['videosListMostPopular'] =
+	async (ctx, input) => {
+		const response = await makeYoutubeRequest<
+			YoutubeEndpointOutputs['videosListMostPopular']
+		>('/videos', ctx.key, {
 			method: 'GET',
 			query: {
 				chart: input.chart ?? 'mostPopular',
@@ -151,29 +167,35 @@ export const listMostPopular: YoutubeEndpoints['videosListMostPopular'] = async 
 				...(input.pageToken && { pageToken: input.pageToken }),
 				...(input.maxResults && { maxResults: input.maxResults }),
 				...(input.regionCode && { regionCode: input.regionCode }),
-				...(input.videoCategoryId && { videoCategoryId: input.videoCategoryId }),
+				...(input.videoCategoryId && {
+					videoCategoryId: input.videoCategoryId,
+				}),
 			},
-		},
-	);
+		});
 
-	if (response.items && ctx.db.videos) {
-		for (const item of response.items) {
-			if (!item.id) continue;
-			try {
-				await ctx.db.videos.upsertByEntityId(item.id, {
-					...item.snippet,
-					...item.statistics,
-					id: item.id,
-				});
-			} catch (error) {
-				console.warn('[youtube] Failed to save video to database:', error);
+		if (response.items && ctx.db.videos) {
+			for (const item of response.items) {
+				if (!item.id) continue;
+				try {
+					await ctx.db.videos.upsertByEntityId(item.id, {
+						...item.snippet,
+						...item.statistics,
+						id: item.id,
+					});
+				} catch (error) {
+					console.warn('[youtube] Failed to save video to database:', error);
+				}
 			}
 		}
-	}
 
-	await logEventFromContext(ctx, 'youtube.videos.listMostPopular', {}, 'completed');
-	return response;
-};
+		await logEventFromContext(
+			ctx,
+			'youtube.videos.listMostPopular',
+			{},
+			'completed',
+		);
+		return response;
+	};
 
 export const update: YoutubeEndpoints['videosUpdate'] = async (ctx, input) => {
 	const snippet = {
@@ -183,19 +205,19 @@ export const update: YoutubeEndpoints['videosUpdate'] = async (ctx, input) => {
 		...(input.categoryId !== undefined && { categoryId: input.categoryId }),
 	};
 
-	const response = await makeYoutubeRequest<YoutubeEndpointOutputs['videosUpdate']>(
-		'/videos',
-		ctx.key,
-		{
-			method: 'PUT',
-			query: { part: 'snippet,status' },
-			body: {
-				id: input.video_id,
-				...(Object.keys(snippet).length > 0 && { snippet }),
-				...(input.privacy_status !== undefined && { status: { privacyStatus: input.privacy_status } }),
-			},
+	const response = await makeYoutubeRequest<
+		YoutubeEndpointOutputs['videosUpdate']
+	>('/videos', ctx.key, {
+		method: 'PUT',
+		query: { part: 'snippet,status' },
+		body: {
+			id: input.video_id,
+			...(Object.keys(snippet).length > 0 && { snippet }),
+			...(input.privacy_status !== undefined && {
+				status: { privacyStatus: input.privacy_status },
+			}),
 		},
-	);
+	});
 
 	if (response.id && ctx.db.videos) {
 		try {
@@ -209,42 +231,50 @@ export const update: YoutubeEndpoints['videosUpdate'] = async (ctx, input) => {
 		}
 	}
 
-	await logEventFromContext(ctx, 'youtube.videos.update', { video_id: input.video_id }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'youtube.videos.update',
+		{ video_id: input.video_id },
+		'completed',
+	);
 	return response;
 };
 
 export const upload: YoutubeEndpoints['videosUpload'] = async (ctx, input) => {
 	// YouTube resumable upload requires multipart/form-data with the actual video bytes.
 	// This endpoint passes the file reference to the API which handles the upload flow.
-	const response = await makeYoutubeRequest<YoutubeEndpointOutputs['videosUpload']>(
-		'/videos',
-		ctx.key,
-		{
-			method: 'POST',
-			query: { part: 'snippet,status', uploadType: 'resumable' },
-			upload: true,
-			body: {
-				snippet: {
-					title: input.title,
-					description: input.description,
-					...(input.tags && { tags: input.tags }),
-					...(input.categoryId && { categoryId: input.categoryId }),
-				},
-				status: { privacyStatus: input.privacyStatus },
+	const response = await makeYoutubeRequest<
+		YoutubeEndpointOutputs['videosUpload']
+	>('/videos', ctx.key, {
+		method: 'POST',
+		query: { part: 'snippet,status', uploadType: 'resumable' },
+		upload: true,
+		body: {
+			snippet: {
+				title: input.title,
+				description: input.description,
+				...(input.tags && { tags: input.tags }),
+				...(input.categoryId && { categoryId: input.categoryId }),
 			},
+			status: { privacyStatus: input.privacyStatus },
 		},
-	);
+	});
 
-	await logEventFromContext(ctx, 'youtube.videos.upload', { title: input.title }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'youtube.videos.upload',
+		{ title: input.title },
+		'completed',
+	);
 	return response;
 };
 
-export const uploadMultipart: YoutubeEndpoints['videosUploadMultipart'] = async (ctx, input) => {
-	// YouTube multipart upload passes video metadata; the actual file upload is handled separately.
-	const response = await makeYoutubeRequest<YoutubeEndpointOutputs['videosUploadMultipart']>(
-		'/videos',
-		ctx.key,
-		{
+export const uploadMultipart: YoutubeEndpoints['videosUploadMultipart'] =
+	async (ctx, input) => {
+		// YouTube multipart upload passes video metadata; the actual file upload is handled separately.
+		const response = await makeYoutubeRequest<
+			YoutubeEndpointOutputs['videosUploadMultipart']
+		>('/videos', ctx.key, {
 			method: 'POST',
 			query: { part: 'snippet,status', uploadType: 'multipart' },
 			upload: true,
@@ -257,24 +287,31 @@ export const uploadMultipart: YoutubeEndpoints['videosUploadMultipart'] = async 
 				},
 				status: { privacyStatus: input.privacyStatus },
 			},
-		},
-	);
+		});
 
-	if (response.video?.id && ctx.db.videos) {
-		try {
-			await ctx.db.videos.upsertByEntityId(response.video.id, {
-				...response.video.snippet,
-				...response.video.status,
-				id: response.video.id,
-			});
-		} catch (error) {
-			console.warn('[youtube] Failed to save uploaded video to database:', error);
+		if (response.video?.id && ctx.db.videos) {
+			try {
+				await ctx.db.videos.upsertByEntityId(response.video.id, {
+					...response.video.snippet,
+					...response.video.status,
+					id: response.video.id,
+				});
+			} catch (error) {
+				console.warn(
+					'[youtube] Failed to save uploaded video to database:',
+					error,
+				);
+			}
 		}
-	}
 
-	await logEventFromContext(ctx, 'youtube.videos.uploadMultipart', { title: input.title }, 'completed');
-	return response;
-};
+		await logEventFromContext(
+			ctx,
+			'youtube.videos.uploadMultipart',
+			{ title: input.title },
+			'completed',
+		);
+		return response;
+	};
 
 export const del: YoutubeEndpoints['videosDelete'] = async (ctx, input) => {
 	await makeYoutubeRequest<void>('/videos', ctx.key, {
@@ -282,6 +319,11 @@ export const del: YoutubeEndpoints['videosDelete'] = async (ctx, input) => {
 		query: { id: input.videoId },
 	});
 
-	await logEventFromContext(ctx, 'youtube.videos.delete', { videoId: input.videoId }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'youtube.videos.delete',
+		{ videoId: input.videoId },
+		'completed',
+	);
 	return { deleted: true, video_id: input.videoId, http_status: 204 };
 };

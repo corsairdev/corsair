@@ -11,7 +11,7 @@ export const listEntries: CalendlyEndpoints['activityLogList'] = async (
 		CalendlyEndpointOutputs['activityLogList']
 	>('activity_log_entries', ctx.key, {
 		method: 'GET',
-		query: input
+		query: input,
 	});
 
 	if (result.collection && ctx.db.activityLogEntries) {
@@ -25,7 +25,9 @@ export const listEntries: CalendlyEndpoints['activityLogList'] = async (
 					...entry,
 					actor: entry.actor ?? undefined,
 					details: entry.details ?? undefined,
-					occurred_at: entry.occurred_at ? new Date(entry.occurred_at).toISOString() : undefined,
+					occurred_at: entry.occurred_at
+						? new Date(entry.occurred_at).toISOString()
+						: undefined,
 				});
 			}
 		} catch (error) {
@@ -48,7 +50,7 @@ export const listOutgoingCommunications: CalendlyEndpoints['activityLogListOutgo
 			CalendlyEndpointOutputs['activityLogListOutgoingCommunications']
 		>('scheduled_event_notifications', ctx.key, {
 			method: 'GET',
-			query: input
+			query: input,
 		});
 
 		if (result.collection && ctx.db.outgoingCommunications) {
@@ -60,7 +62,9 @@ export const listOutgoingCommunications: CalendlyEndpoints['activityLogListOutgo
 					await ctx.db.outgoingCommunications.upsertByEntityId(id, {
 						id,
 						...comm,
-						sent_at: comm.sent_at ? new Date(comm.sent_at).toISOString() : undefined,
+						sent_at: comm.sent_at
+							? new Date(comm.sent_at).toISOString()
+							: undefined,
 					});
 				}
 			} catch (error) {

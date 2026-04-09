@@ -1,5 +1,5 @@
-import 'dotenv/config'
-import { makeGrafanaRequest, makeGrafanaRawRequest } from './client';
+import 'dotenv/config';
+import { makeGrafanaRawRequest, makeGrafanaRequest } from './client';
 import type {
 	DashboardsQueryPublicResponse,
 	HealthGetResponse,
@@ -17,7 +17,8 @@ import { GrafanaEndpointOutputSchemas } from './endpoints/types';
 
 const BEARER_TOKEN = process.env.GRAFANA_BEARER_TOKEN!;
 const GRAFANA_URL = process.env.GRAFANA_URL!;
-const PUBLIC_DASHBOARD_ACCESS_TOKEN = process.env.GRAFANA_PUBLIC_DASHBOARD_ACCESS_TOKEN;
+const PUBLIC_DASHBOARD_ACCESS_TOKEN =
+	process.env.GRAFANA_PUBLIC_DASHBOARD_ACCESS_TOKEN;
 const PUBLIC_DASHBOARD_PANEL_ID = process.env.GRAFANA_PUBLIC_DASHBOARD_PANEL_ID
 	? parseInt(process.env.GRAFANA_PUBLIC_DASHBOARD_PANEL_ID, 10)
 	: undefined;
@@ -52,9 +53,9 @@ describe('Grafana API Type Tests', () => {
 				}>('/api/licensing/check', BEARER_TOKEN, GRAFANA_URL);
 				license_available =
 					raw.hasLicense === true ||
-					(raw.licenseExpiry !== undefined && raw.licenseExpiry > Date.now() / 1000);
-			} catch {
-			}
+					(raw.licenseExpiry !== undefined &&
+						raw.licenseExpiry > Date.now() / 1000);
+			} catch {}
 
 			const result: StatusGetResponse = {
 				data: { license_available },
@@ -187,11 +188,16 @@ describe('Grafana API Type Tests', () => {
 				],
 			};
 
-			const raw = await makeGrafanaRawRequest('/otlp/v1/logs', BEARER_TOKEN, GRAFANA_URL, {
-				method: 'POST',
-				body,
-				contentType: 'application/json',
-			});
+			const raw = await makeGrafanaRawRequest(
+				'/otlp/v1/logs',
+				BEARER_TOKEN,
+				GRAFANA_URL,
+				{
+					method: 'POST',
+					body,
+					contentType: 'application/json',
+				},
+			);
 
 			const success = raw.status_code >= 200 && raw.status_code < 300;
 
@@ -238,7 +244,8 @@ describe('Grafana API Type Tests', () => {
 				// JSON.parse returns any; cast to Record<string, unknown> to extract the results map
 				const parsed = JSON.parse(raw.content) as Record<string, unknown>;
 				// parsed.results is typed as unknown — its structure depends on the panel's data source
-				results = (parsed.results as Record<string, unknown> | undefined) ?? parsed;
+				results =
+					(parsed.results as Record<string, unknown> | undefined) ?? parsed;
 			} catch {
 				// Not valid JSON — leave results undefined
 			}
@@ -259,11 +266,23 @@ describe('Grafana API Type Tests', () => {
 	describe('jwks', () => {
 		it('jwksRetrieve returns correct type', async () => {
 			// Try known JWKS paths; use raw request to avoid throwing on 404
-			const jwksPaths = ['/api/signing-keys/jwks', '/.well-known/jwks.json', '/api/jwks'];
+			const jwksPaths = [
+				'/api/signing-keys/jwks',
+				'/.well-known/jwks.json',
+				'/api/jwks',
+			];
 
-			let raw: { content: string; content_type: string; status_code: number } | null = null;
+			let raw: {
+				content: string;
+				content_type: string;
+				status_code: number;
+			} | null = null;
 			for (const path of jwksPaths) {
-				const candidate = await makeGrafanaRawRequest(path, BEARER_TOKEN, GRAFANA_URL);
+				const candidate = await makeGrafanaRawRequest(
+					path,
+					BEARER_TOKEN,
+					GRAFANA_URL,
+				);
 				if (candidate.status_code === 200) {
 					raw = candidate;
 					break;
@@ -312,13 +331,18 @@ describe('Grafana API Type Tests', () => {
 			const params = new URLSearchParams();
 			params.append('SAMLResponse', mockSamlResponse);
 
-			const raw = await makeGrafanaRawRequest('/login/saml/acs', BEARER_TOKEN, GRAFANA_URL, {
-				method: 'POST',
-				// params.toString() produces a form-encoded string; typed as unknown here
-				// because makeGrafanaRawRequest accepts unknown body
-				body: params.toString() as unknown,
-				contentType: 'application/x-www-form-urlencoded',
-			});
+			const raw = await makeGrafanaRawRequest(
+				'/login/saml/acs',
+				BEARER_TOKEN,
+				GRAFANA_URL,
+				{
+					method: 'POST',
+					// params.toString() produces a form-encoded string; typed as unknown here
+					// because makeGrafanaRawRequest accepts unknown body
+					body: params.toString() as unknown,
+					contentType: 'application/x-www-form-urlencoded',
+				},
+			);
 
 			const result: SamlPostAcsResponse = {
 				data: {

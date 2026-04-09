@@ -538,7 +538,9 @@ const SearchQueryInputSchema = z.object({
 	select_properties: z.array(z.string()).optional(),
 	refiners: z.string().optional(),
 	refinement_filters: z.string().optional(),
-	sort_list: z.array(z.object({ Property: z.string(), Direction: z.number() })).optional(),
+	sort_list: z
+		.array(z.object({ Property: z.string(), Direction: z.number() }))
+		.optional(),
 });
 
 const SearchHitSchema = z
@@ -790,7 +792,6 @@ const WebCreateSubsiteInputSchema = z.object({
 
 const WebCreateSubsiteResponseSchema = WebInfoSchema;
 
-
 const WebUpdateSiteInputSchema = z.object({
 	title: z.string().optional(),
 	description: z.string().optional(),
@@ -897,7 +898,12 @@ const DriveGetAnalyticsResponseSchema = z
 	.object({
 		allTime: z
 			.object({
-				access: z.object({ actionCount: z.number().optional(), actorCount: z.number().optional() }).optional(),
+				access: z
+					.object({
+						actionCount: z.number().optional(),
+						actorCount: z.number().optional(),
+					})
+					.optional(),
 			})
 			.optional(),
 	})
@@ -1113,8 +1119,10 @@ export const SharepointEndpointInputSchemas = {
 	contentTypesCreateListField: ContentTypesCreateListFieldInputSchema,
 	permissionsAddRoleToItem: PermissionsAddRoleToItemInputSchema,
 	permissionsAddRoleToList: PermissionsAddRoleToListInputSchema,
-	permissionsBreakInheritanceOnItem: PermissionsBreakInheritanceOnItemInputSchema,
-	permissionsBreakInheritanceOnList: PermissionsBreakInheritanceOnListInputSchema,
+	permissionsBreakInheritanceOnItem:
+		PermissionsBreakInheritanceOnItemInputSchema,
+	permissionsBreakInheritanceOnList:
+		PermissionsBreakInheritanceOnListInputSchema,
 	permissionsGetRoleDefinitions: PermissionsGetRoleDefinitionsInputSchema,
 	webGetInfo: WebGetInfoInputSchema,
 	webGetSiteCollectionInfo: WebGetSiteCollectionInfoInputSchema,
@@ -1208,8 +1216,10 @@ export const SharepointEndpointOutputSchemas = {
 	contentTypesCreateListField: ContentTypesCreateListFieldResponseSchema,
 	permissionsAddRoleToItem: PermissionsAddRoleToItemResponseSchema,
 	permissionsAddRoleToList: PermissionsAddRoleToListResponseSchema,
-	permissionsBreakInheritanceOnItem: PermissionsBreakInheritanceOnItemResponseSchema,
-	permissionsBreakInheritanceOnList: PermissionsBreakInheritanceOnListResponseSchema,
+	permissionsBreakInheritanceOnItem:
+		PermissionsBreakInheritanceOnItemResponseSchema,
+	permissionsBreakInheritanceOnList:
+		PermissionsBreakInheritanceOnListResponseSchema,
 	permissionsGetRoleDefinitions: PermissionsGetRoleDefinitionsResponseSchema,
 	webGetInfo: WebGetInfoResponseSchema,
 	webGetSiteCollectionInfo: WebGetSiteCollectionInfoResponseSchema,
@@ -1244,8 +1254,12 @@ export type SharepointEndpointOutputs = {
 
 // Named response type exports
 export type ListsListAllResponse = z.infer<typeof ListsListAllResponseSchema>;
-export type ListsGetByTitleResponse = z.infer<typeof ListsGetByTitleResponseSchema>;
-export type ListsGetByGuidResponse = z.infer<typeof ListsGetByGuidResponseSchema>;
+export type ListsGetByTitleResponse = z.infer<
+	typeof ListsGetByTitleResponseSchema
+>;
+export type ListsGetByGuidResponse = z.infer<
+	typeof ListsGetByGuidResponseSchema
+>;
 export type ListsCreateResponse = z.infer<typeof ListsCreateResponseSchema>;
 export type ItemsListResponse = z.infer<typeof ItemsListResponseSchema>;
 export type ItemsGetResponse = z.infer<typeof ItemsGetResponseSchema>;
@@ -1253,6 +1267,8 @@ export type ItemsCreateResponse = z.infer<typeof ItemsCreateResponseSchema>;
 export type FilesUploadResponse = z.infer<typeof FilesUploadResponseSchema>;
 export type FilesDownloadResponse = z.infer<typeof FilesDownloadResponseSchema>;
 export type FoldersCreateResponse = z.infer<typeof FoldersCreateResponseSchema>;
-export type UsersGetCurrentResponse = z.infer<typeof UsersGetCurrentResponseSchema>;
+export type UsersGetCurrentResponse = z.infer<
+	typeof UsersGetCurrentResponseSchema
+>;
 export type SearchQueryResponse = z.infer<typeof SearchQueryResponseSchema>;
 export type WebGetInfoResponse = z.infer<typeof WebGetInfoResponseSchema>;

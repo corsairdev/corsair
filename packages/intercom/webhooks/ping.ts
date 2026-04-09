@@ -9,9 +9,14 @@ export const ping: IntercomWebhooks['ping'] = {
 	match: createIntercomMatch('ping'),
 
 	handler: async (ctx, request) => {
-		const event = request.payload
+		const event = request.payload;
 
-		await logEventFromContext(ctx, 'intercom.webhook.ping', { app_id: event.app_id }, 'completed');
+		await logEventFromContext(
+			ctx,
+			'intercom.webhook.ping',
+			{ app_id: event.app_id },
+			'completed',
+		);
 
 		return {
 			success: true,

@@ -1,9 +1,6 @@
-import type { StripeWebhooks } from '..';
 import { logEventFromContext } from 'corsair/core';
-import {
-	createStripeEventMatch,
-	verifyStripeWebhookSignature,
-} from './types';
+import type { StripeWebhooks } from '..';
+import { createStripeEventMatch, verifyStripeWebhookSignature } from './types';
 
 export const succeeded: StripeWebhooks['chargeSucceeded'] = {
 	match: createStripeEventMatch('charge.succeeded'),
@@ -25,7 +22,9 @@ export const succeeded: StripeWebhooks['chargeSucceeded'] = {
 				const charge = event.data.object;
 				await ctx.db.charges.upsertByEntityId(charge.id, {
 					...charge,
-					createdAt: charge.created ? new Date(charge.created * 1000) : undefined,
+					createdAt: charge.created
+						? new Date(charge.created * 1000)
+						: undefined,
 				});
 			} catch (error) {
 				console.warn('Failed to save charge (succeeded) to database:', error);
@@ -67,7 +66,9 @@ export const failed: StripeWebhooks['chargeFailed'] = {
 				const charge = event.data.object;
 				await ctx.db.charges.upsertByEntityId(charge.id, {
 					...charge,
-					createdAt: charge.created ? new Date(charge.created * 1000) : undefined,
+					createdAt: charge.created
+						? new Date(charge.created * 1000)
+						: undefined,
 				});
 			} catch (error) {
 				console.warn('Failed to save charge (failed) to database:', error);
@@ -109,7 +110,9 @@ export const refunded: StripeWebhooks['chargeRefunded'] = {
 				const charge = event.data.object;
 				await ctx.db.charges.upsertByEntityId(charge.id, {
 					...charge,
-					createdAt: charge.created ? new Date(charge.created * 1000) : undefined,
+					createdAt: charge.created
+						? new Date(charge.created * 1000)
+						: undefined,
 				});
 			} catch (error) {
 				console.warn('Failed to save charge (refunded) to database:', error);

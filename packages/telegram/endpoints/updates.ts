@@ -3,10 +3,13 @@ import type { TelegramEndpoints } from '..';
 import { makeTelegramRequest } from '../client';
 import type { TelegramEndpointOutputs } from './types';
 
-export const getUpdates: TelegramEndpoints['getUpdates'] = async (ctx, input) => {
+export const getUpdates: TelegramEndpoints['getUpdates'] = async (
+	ctx,
+	input,
+) => {
 	// Request body for Telegram API can contain various parameter types - unknown ensures type safety
 	const body: Record<string, unknown> = {};
-	
+
 	if (input.offset !== undefined) {
 		body.offset = input.offset;
 	}
@@ -20,14 +23,12 @@ export const getUpdates: TelegramEndpoints['getUpdates'] = async (ctx, input) =>
 		body.allowed_updates = input.allowed_updates;
 	}
 
-	const result = await makeTelegramRequest<TelegramEndpointOutputs['getUpdates']>(
-		'getUpdates',
-		ctx.key,
-		{
-			method: 'POST',
-			body: Object.keys(body).length > 0 ? body : {},
-		},
-	);
+	const result = await makeTelegramRequest<
+		TelegramEndpointOutputs['getUpdates']
+	>('getUpdates', ctx.key, {
+		method: 'POST',
+		body: Object.keys(body).length > 0 ? body : {},
+	});
 
 	await logEventFromContext(
 		ctx,

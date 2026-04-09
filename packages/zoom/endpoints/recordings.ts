@@ -76,14 +76,12 @@ export const listAll: ZoomEndpoints['recordingsListAll'] = async (
 	ctx,
 	input,
 ) => {
-	const result = await makeZoomRequest<ZoomEndpointOutputs['recordingsListAll']>(
-		'users/me/recordings',
-		ctx.key,
-		{
-			method: 'GET',
-			query: input
-		},
-	);
+	const result = await makeZoomRequest<
+		ZoomEndpointOutputs['recordingsListAll']
+	>('users/me/recordings', ctx.key, {
+		method: 'GET',
+		query: input,
+	});
 
 	if (result.meetings && ctx.db.recordings) {
 		try {

@@ -7,7 +7,10 @@ export const newMeeting: FirefliesWebhooks['newMeeting'] = {
 
 	handler: async (ctx, request) => {
 		const webhookSecret = ctx.key;
-		const verification = verifyFirefliesWebhookSignature(request, webhookSecret);
+		const verification = verifyFirefliesWebhookSignature(
+			request,
+			webhookSecret,
+		);
 		if (!verification.valid) {
 			return {
 				success: false,
@@ -44,7 +47,10 @@ export const inMeeting: FirefliesWebhooks['inMeeting'] = {
 
 	handler: async (ctx, request) => {
 		const webhookSecret = ctx.key;
-		const verification = verifyFirefliesWebhookSignature(request, webhookSecret);
+		const verification = verifyFirefliesWebhookSignature(
+			request,
+			webhookSecret,
+		);
 		if (!verification.valid) {
 			return {
 				success: false,
@@ -81,7 +87,10 @@ export const meetingDeleted: FirefliesWebhooks['meetingDeleted'] = {
 
 	handler: async (ctx, request) => {
 		const webhookSecret = ctx.key;
-		const verification = verifyFirefliesWebhookSignature(request, webhookSecret);
+		const verification = verifyFirefliesWebhookSignature(
+			request,
+			webhookSecret,
+		);
 		if (!verification.valid) {
 			return {
 				success: false,

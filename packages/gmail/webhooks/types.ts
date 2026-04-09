@@ -1,8 +1,5 @@
+import type { CorsairWebhookMatcher, RawWebhookRequest } from 'corsair/core';
 import { z } from 'zod';
-import type {
-	CorsairWebhookMatcher,
-	RawWebhookRequest,
-} from 'corsair/core';
 import type { Message } from '../types';
 
 // ─────────────────────────────────────────────────────────────────────────────

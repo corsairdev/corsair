@@ -1,9 +1,6 @@
-import type { TypeformWebhooks } from '..';
 import { logEventFromContext } from 'corsair/core';
-import {
-	createTypeformMatch,
-	verifyTypeformWebhookSignature,
-} from './types';
+import type { TypeformWebhooks } from '..';
+import { createTypeformMatch, verifyTypeformWebhookSignature } from './types';
 
 export const formResponse: TypeformWebhooks['formResponse'] = {
 	match: createTypeformMatch('form_response'),

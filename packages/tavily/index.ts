@@ -1,15 +1,16 @@
 import type {
+	AuthTypes,
 	BindEndpoints,
 	CorsairEndpoint,
 	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
 	KeyBuilderContext,
+	PickAuth,
 	PluginAuthConfig,
 	PluginEndpointMeta,
 	PluginPermissionsConfig,
 } from 'corsair/core';
-import type { AuthTypes, PickAuth } from 'corsair/core';
 import { Search } from './endpoints';
 import type {
 	TavilyEndpointOutputs,

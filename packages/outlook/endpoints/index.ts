@@ -1,50 +1,50 @@
 import {
-	send,
-	createDraft,
-	getMessage,
-	listMessages,
-	queryEmails,
-	searchMessages,
-	replyEmail,
-	forwardMessage,
-	deleteMessage,
-	moveMessage,
-	updateEmail,
-	sendDraft,
-	batchMoveMessages,
-	batchUpdateMessages,
-	addMailAttachment,
-} from './messages';
-import {
-	createEvent,
-	getEvent,
-	listEvents,
-	updateEvent,
-	deleteEvent,
-	cancelEvent,
-	declineEvent,
-	findMeetingTimes,
-	getSchedule,
-} from './events';
-import {
 	createCalendar,
+	deleteCalendar,
 	getCalendar,
 	listCalendars,
-	deleteCalendar,
 } from './calendars';
 import {
 	createContact,
+	deleteContact,
 	listContacts,
 	updateContact,
-	deleteContact,
 } from './contacts';
 import {
+	cancelEvent,
+	createEvent,
+	declineEvent,
+	deleteEvent,
+	findMeetingTimes,
+	getEvent,
+	getSchedule,
+	listEvents,
+	updateEvent,
+} from './events';
+import {
 	createFolder,
+	deleteFolder,
 	getFolder,
 	listFolders,
 	updateFolder,
-	deleteFolder,
 } from './folders';
+import {
+	addMailAttachment,
+	batchMoveMessages,
+	batchUpdateMessages,
+	createDraft,
+	deleteMessage,
+	forwardMessage,
+	getMessage,
+	listMessages,
+	moveMessage,
+	queryEmails,
+	replyEmail,
+	searchMessages,
+	send,
+	sendDraft,
+	updateEmail,
+} from './messages';
 
 export const Messages = {
 	send,

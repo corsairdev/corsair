@@ -1,17 +1,18 @@
-import type { StripeEndpoints } from '..';
 import { logEventFromContext } from 'corsair/core';
+import type { StripeEndpoints } from '..';
 import { makeStripeRequest } from '../client';
 import type { StripeEndpointOutputs } from './types';
 
-export const create: StripeEndpoints['paymentIntentsCreate'] = async (ctx, input) => {
-	const result = await makeStripeRequest<StripeEndpointOutputs['paymentIntentsCreate']>(
-		'payment_intents',
-		ctx.key,
-		{
-			method: 'POST',
-			body: { ...input },
-		},
-	);
+export const create: StripeEndpoints['paymentIntentsCreate'] = async (
+	ctx,
+	input,
+) => {
+	const result = await makeStripeRequest<
+		StripeEndpointOutputs['paymentIntentsCreate']
+	>('payment_intents', ctx.key, {
+		method: 'POST',
+		body: { ...input },
+	});
 
 	if (result.id && ctx.db.paymentIntents) {
 		try {
@@ -35,11 +36,9 @@ export const create: StripeEndpoints['paymentIntentsCreate'] = async (ctx, input
 
 export const get: StripeEndpoints['paymentIntentsGet'] = async (ctx, input) => {
 	const { id } = input;
-	const result = await makeStripeRequest<StripeEndpointOutputs['paymentIntentsGet']>(
-		`payment_intents/${id}`,
-		ctx.key,
-		{ method: 'GET' },
-	);
+	const result = await makeStripeRequest<
+		StripeEndpointOutputs['paymentIntentsGet']
+	>(`payment_intents/${id}`, ctx.key, { method: 'GET' });
 
 	if (result.id && ctx.db.paymentIntents) {
 		try {
@@ -61,15 +60,16 @@ export const get: StripeEndpoints['paymentIntentsGet'] = async (ctx, input) => {
 	return result;
 };
 
-export const list: StripeEndpoints['paymentIntentsList'] = async (ctx, input) => {
-	const result = await makeStripeRequest<StripeEndpointOutputs['paymentIntentsList']>(
-		'payment_intents',
-		ctx.key,
-		{
-			method: 'GET',
-			query: { ...input },
-		},
-	);
+export const list: StripeEndpoints['paymentIntentsList'] = async (
+	ctx,
+	input,
+) => {
+	const result = await makeStripeRequest<
+		StripeEndpointOutputs['paymentIntentsList']
+	>('payment_intents', ctx.key, {
+		method: 'GET',
+		query: { ...input },
+	});
 
 	if (result.data && ctx.db.paymentIntents) {
 		try {
@@ -93,22 +93,23 @@ export const list: StripeEndpoints['paymentIntentsList'] = async (ctx, input) =>
 	return result;
 };
 
-export const update: StripeEndpoints['paymentIntentsUpdate'] = async (ctx, input) => {
+export const update: StripeEndpoints['paymentIntentsUpdate'] = async (
+	ctx,
+	input,
+) => {
 	const { id, ...body } = input;
-	const result = await makeStripeRequest<StripeEndpointOutputs['paymentIntentsUpdate']>(
-		`payment_intents/${id}`,
-		ctx.key,
-		{
-			method: 'POST',
-			body: { ...body },
-		},
-	);
+	const result = await makeStripeRequest<
+		StripeEndpointOutputs['paymentIntentsUpdate']
+	>(`payment_intents/${id}`, ctx.key, {
+		method: 'POST',
+		body: { ...body },
+	});
 
 	if (result.id && ctx.db.paymentIntents) {
 		try {
 			await ctx.db.paymentIntents.upsertByEntityId(result.id, {
 				...result,
-				createdAt: result.created ? new Date(result.created * 1000) : undefined,	
+				createdAt: result.created ? new Date(result.created * 1000) : undefined,
 			});
 		} catch (error) {
 			console.warn('Failed to update payment intent in database:', error);

@@ -1,6 +1,8 @@
-import type { ApiRequestOptions } from 'corsair/http';
-import type { OpenAPIConfig } from 'corsair/http';
-import type { RateLimitConfig } from 'corsair/http';
+import type {
+	ApiRequestOptions,
+	OpenAPIConfig,
+	RateLimitConfig,
+} from 'corsair/http';
 import { request } from 'corsair/http';
 
 export class OutlookAPIError extends Error {
@@ -14,7 +16,8 @@ export class OutlookAPIError extends Error {
 }
 
 const OUTLOOK_API_BASE = 'https://graph.microsoft.com/v1.0';
-const OUTLOOK_TOKEN_ENDPOINT = 'https://login.microsoftonline.com/common/oauth2/v2.0/token';
+const OUTLOOK_TOKEN_ENDPOINT =
+	'https://login.microsoftonline.com/common/oauth2/v2.0/token';
 
 const OUTLOOK_RATE_LIMIT_CONFIG: RateLimitConfig = {
 	enabled: true,
@@ -52,7 +55,10 @@ async function refreshAccessToken(
 		);
 	}
 
-	return await response.json() as { access_token: string; expires_in: number };
+	return (await response.json()) as {
+		access_token: string;
+		expires_in: number;
+	};
 }
 
 export async function getValidAccessToken({

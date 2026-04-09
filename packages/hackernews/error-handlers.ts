@@ -1,5 +1,5 @@
-import { ApiError } from 'corsair/http';
 import type { CorsairErrorHandler } from 'corsair/core';
+import { ApiError } from 'corsair/http';
 
 export const errorHandlers = {
 	RATE_LIMIT_ERROR: {
@@ -38,9 +38,7 @@ export const errorHandlers = {
 			);
 		},
 		handler: async (error, context) => {
-			console.warn(
-				`[HACKERNEWS:${context.operation}] Authentication failed`,
-			);
+			console.warn(`[HACKERNEWS:${context.operation}] Authentication failed`);
 			return { maxRetries: 0 };
 		},
 	},

@@ -1,8 +1,7 @@
 import 'dotenv/config';
 import { createCorsair } from 'corsair/core';
 import { createCorsairOrm } from 'corsair/orm';
-import { createIntegrationAndAccount } from 'corsair/tests';
-import { createTestDatabase } from 'corsair/tests';
+import { createIntegrationAndAccount, createTestDatabase } from 'corsair/tests';
 import { ResendAPIError } from './client';
 import { resend } from './index';
 

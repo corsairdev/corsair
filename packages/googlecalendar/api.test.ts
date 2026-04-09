@@ -1,4 +1,4 @@
-import 'dotenv/config'
+import 'dotenv/config';
 import { makeCalendarRequest } from './client';
 import { GoogleCalendarEndpointOutputSchemas } from './endpoints/types';
 import type { Event, EventListResponse, FreeBusyResponse } from './types';

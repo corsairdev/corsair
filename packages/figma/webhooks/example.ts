@@ -1,5 +1,5 @@
-import type { FigmaWebhooks } from '..';
 import { logEventFromContext } from 'corsair/core';
+import type { FigmaWebhooks } from '..';
 import { createFigmaEventMatch, verifyFigmaWebhookPasscode } from './types';
 
 // This file is kept for backwards compatibility with the template structure.

@@ -24,7 +24,12 @@ export const list: MondayEndpoints['usersList'] = async (ctx, input) => {
 		},
 	);
 
-	await logEventFromContext(ctx, 'monday.users.list', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'monday.users.list',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 

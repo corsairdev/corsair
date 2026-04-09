@@ -1,6 +1,10 @@
-import { z } from 'zod';
+import type {
+	CorsairWebhookMatcher,
+	RawWebhookRequest,
+	WebhookRequest,
+} from 'corsair/core';
 import crypto from 'crypto';
-import type { CorsairWebhookMatcher, RawWebhookRequest, WebhookRequest } from 'corsair/core';
+import { z } from 'zod';
 
 // ── Webhook Payload Types ─────────────────────────────────────────────────────
 
@@ -26,7 +30,12 @@ export interface TypeformFormResponseData {
 	};
 	// answers vary per field type and cannot be fully typed statically
 	answers?: Array<Record<string, unknown>>;
-	variables?: Array<{ key?: string; type?: string; text?: string; number?: number }>;
+	variables?: Array<{
+		key?: string;
+		type?: string;
+		text?: string;
+		number?: number;
+	}>;
 	metadata?: {
 		browser?: string;
 		referer?: string;
@@ -103,7 +112,8 @@ export const TypeformFormResponsePayloadSchema = z
 	})
 	.passthrough();
 
-export const TypeformFormResponseEventSchema = TypeformFormResponsePayloadSchema;
+export const TypeformFormResponseEventSchema =
+	TypeformFormResponsePayloadSchema;
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -112,8 +122,8 @@ export function createTypeformMatch(eventType: string): CorsairWebhookMatcher {
 		// Parse raw body to check event_type before full payload parsing
 		const body =
 			typeof request.body === 'string'
-				// Type assertion needed because JSON.parse returns unknown
-				? (JSON.parse(request.body) as Record<string, unknown>)
+				? // Type assertion needed because JSON.parse returns unknown
+					(JSON.parse(request.body) as Record<string, unknown>)
 				: (request.body as Record<string, unknown>);
 		return body?.event_type === eventType;
 	};
@@ -169,7 +179,7 @@ export function verifyTypeformWebhookSignature(
 	const computeSignature = (body: string) =>
 		crypto.createHmac('sha256', secret).update(body).digest('base64');
 
-	const isValid = candidates.some(body => {
+	const isValid = candidates.some((body) => {
 		const expected = computeSignature(body);
 		try {
 			return crypto.timingSafeEqual(

@@ -42,7 +42,9 @@ export async function POST(request: NextRequest) {
 
 	// Build response headers (e.g. Asana X-Hook-Secret handshake)
 	// any/unknown cast needed since responseHeaders is a newer field not yet in the installed type definitions
-	const responseHeaders = (result as Record<string, unknown>).responseHeaders as Record<string, string> | undefined;
+	const responseHeaders = (result as Record<string, unknown>).responseHeaders as
+		| Record<string, string>
+		| undefined;
 	const nextHeaders = new Headers();
 	if (responseHeaders) {
 		for (const [key, value] of Object.entries(responseHeaders)) {

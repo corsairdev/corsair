@@ -5,7 +5,8 @@ import type { NotionEndpointOutputs } from './types';
 
 export const getUser: NotionEndpoints['usersGetUser'] = async (ctx, input) => {
 	const result = await makeNotionRequest<NotionEndpointOutputs['usersGetUser']>(
-		`v1/users/${input.user_id}`, ctx.key,
+		`v1/users/${input.user_id}`,
+		ctx.key,
 		{
 			method: 'GET',
 		},

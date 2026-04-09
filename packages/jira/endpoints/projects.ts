@@ -41,7 +41,12 @@ export const create: JiraEndpoints['projectsCreate'] = async (ctx, input) => {
 		}
 	}
 
-	await logEventFromContext(ctx, 'jira.projects.create', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'jira.projects.create',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
@@ -67,7 +72,9 @@ export const get: JiraEndpoints['projectsGet'] = async (ctx, input) => {
 				...(result.description && { description: result.description }),
 				...(result.projectTypeKey && { projectTypeKey: result.projectTypeKey }),
 				...(result.lead?.accountId && { leadAccountId: result.lead.accountId }),
-				...(result.lead?.displayName && { leadDisplayName: result.lead.displayName }),
+				...(result.lead?.displayName && {
+					leadDisplayName: result.lead.displayName,
+				}),
 				createdAt: new Date(),
 			});
 		} catch (error) {
@@ -75,7 +82,12 @@ export const get: JiraEndpoints['projectsGet'] = async (ctx, input) => {
 		}
 	}
 
-	await logEventFromContext(ctx, 'jira.projects.get', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'jira.projects.get',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
@@ -92,7 +104,9 @@ export const list: JiraEndpoints['projectsList'] = async (ctx, input) => {
 				...(input.query && { query: input.query }),
 				...(input.order_by && { orderBy: input.order_by }),
 				...(input.start_at !== undefined && { startAt: input.start_at }),
-				...(input.max_results !== undefined && { maxResults: input.max_results }),
+				...(input.max_results !== undefined && {
+					maxResults: input.max_results,
+				}),
 				...(input.expand && { expand: input.expand }),
 			},
 		},
@@ -107,9 +121,15 @@ export const list: JiraEndpoints['projectsList'] = async (ctx, input) => {
 					key: project.key,
 					...(project.name && { name: project.name }),
 					...(project.description && { description: project.description }),
-					...(project.projectTypeKey && { projectTypeKey: project.projectTypeKey }),
-					...(project.lead?.accountId && { leadAccountId: project.lead.accountId }),
-					...(project.lead?.displayName && { leadDisplayName: project.lead.displayName }),
+					...(project.projectTypeKey && {
+						projectTypeKey: project.projectTypeKey,
+					}),
+					...(project.lead?.accountId && {
+						leadAccountId: project.lead.accountId,
+					}),
+					...(project.lead?.displayName && {
+						leadDisplayName: project.lead.displayName,
+					}),
 					createdAt: new Date(),
 				});
 			} catch (error) {
@@ -118,11 +138,19 @@ export const list: JiraEndpoints['projectsList'] = async (ctx, input) => {
 		}
 	}
 
-	await logEventFromContext(ctx, 'jira.projects.list', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'jira.projects.list',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
-export const getRoles: JiraEndpoints['projectsGetRoles'] = async (ctx, input) => {
+export const getRoles: JiraEndpoints['projectsGetRoles'] = async (
+	ctx,
+	input,
+) => {
 	const cloudUrl = (await ctx.keys.get_cloud_url()) ?? '';
 
 	const result = await makeJiraRequest<JiraEndpointOutputs['projectsGetRoles']>(
@@ -132,6 +160,11 @@ export const getRoles: JiraEndpoints['projectsGetRoles'] = async (ctx, input) =>
 		{ method: 'GET' },
 	);
 
-	await logEventFromContext(ctx, 'jira.projects.getRoles', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'jira.projects.getRoles',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };

@@ -38,7 +38,12 @@ export const list: MondayEndpoints['itemsList'] = async (ctx, input) => {
 		},
 	);
 
-	await logEventFromContext(ctx, 'monday.items.list', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'monday.items.list',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
@@ -92,7 +97,12 @@ export const create: MondayEndpoints['itemsCreate'] = async (ctx, input) => {
 		},
 	);
 
-	await logEventFromContext(ctx, 'monday.items.create', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'monday.items.create',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
@@ -112,7 +122,12 @@ export const update: MondayEndpoints['itemsUpdate'] = async (ctx, input) => {
 		},
 	);
 
-	await logEventFromContext(ctx, 'monday.items.update', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'monday.items.update',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
@@ -130,7 +145,12 @@ export const move: MondayEndpoints['itemsMove'] = async (ctx, input) => {
 		},
 	);
 
-	await logEventFromContext(ctx, 'monday.items.move', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'monday.items.move',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
@@ -145,11 +165,19 @@ export const archive: MondayEndpoints['itemsArchive'] = async (ctx, input) => {
 		{ itemId: input.item_id },
 	);
 
-	await logEventFromContext(ctx, 'monday.items.archive', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'monday.items.archive',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
-export const deleteitem: MondayEndpoints['itemsDelete'] = async (ctx, input) => {
+export const deleteitem: MondayEndpoints['itemsDelete'] = async (
+	ctx,
+	input,
+) => {
 	const result = await makeMondayRequest<MondayEndpointOutputs['itemsDelete']>(
 		`mutation($itemId: ID!) {
 			delete_item(item_id: $itemId) {
@@ -160,6 +188,11 @@ export const deleteitem: MondayEndpoints['itemsDelete'] = async (ctx, input) => 
 		{ itemId: input.item_id },
 	);
 
-	await logEventFromContext(ctx, 'monday.items.delete', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'monday.items.delete',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };

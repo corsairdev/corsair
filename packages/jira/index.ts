@@ -1,4 +1,5 @@
 import type {
+	AuthTypes,
 	BindEndpoints,
 	BindWebhooks,
 	CorsairEndpoint,
@@ -7,28 +8,44 @@ import type {
 	CorsairPluginContext,
 	CorsairWebhook,
 	KeyBuilderContext,
+	PickAuth,
 	PluginAuthConfig,
-	RequiredPluginEndpointMeta,
-	RequiredPluginEndpointSchemas,
-	RequiredPluginWebhookSchemas,
 	PluginPermissionsConfig,
+	RequiredPluginEndpointMeta,
 } from 'corsair/core';
-import type { AuthTypes, PickAuth } from 'corsair/core';
-import type { JiraEndpointInputs, JiraEndpointOutputs } from './endpoints/types';
-import { JiraEndpointInputSchemas, JiraEndpointOutputSchemas } from './endpoints/types';
-import type { JiraWebhookOutputs, NewIssueEvent, UpdatedIssueEvent, NewProjectEvent } from './webhooks/types';
 import {
-	JiraNewIssuePayloadSchema,
-	JiraUpdatedIssuePayloadSchema,
-	JiraNewProjectPayloadSchema,
-	NewIssueEventSchema,
-	UpdatedIssueEventSchema,
-	NewProjectEventSchema,
-} from './webhooks/types';
-import { Comments, Groups, Issues, Projects, Sprints, Users } from './endpoints';
+	Comments,
+	Groups,
+	Issues,
+	Projects,
+	Sprints,
+	Users,
+} from './endpoints';
+import type {
+	JiraEndpointInputs,
+	JiraEndpointOutputs,
+} from './endpoints/types';
+import {
+	JiraEndpointInputSchemas,
+	JiraEndpointOutputSchemas,
+} from './endpoints/types';
+import { errorHandlers } from './error-handlers';
 import { JiraSchema } from './schema';
 import { IssueWebhooks, ProjectWebhooks } from './webhooks';
-import { errorHandlers } from './error-handlers';
+import type {
+	JiraWebhookOutputs,
+	NewIssueEvent,
+	NewProjectEvent,
+	UpdatedIssueEvent,
+} from './webhooks/types';
+import {
+	JiraNewIssuePayloadSchema,
+	JiraNewProjectPayloadSchema,
+	JiraUpdatedIssuePayloadSchema,
+	NewIssueEventSchema,
+	NewProjectEventSchema,
+	UpdatedIssueEventSchema,
+} from './webhooks/types';
 
 export type JiraPluginOptions = {
 	authType?: PickAuth<'api_key'>;
@@ -68,7 +85,10 @@ export type JiraContext = CorsairPluginContext<
 	typeof jiraAuthConfig
 >;
 
-export type JiraKeyBuilderContext = KeyBuilderContext<JiraPluginOptions, typeof jiraAuthConfig>;
+export type JiraKeyBuilderContext = KeyBuilderContext<
+	JiraPluginOptions,
+	typeof jiraAuthConfig
+>;
 
 export type JiraBoundEndpoints = BindEndpoints<typeof jiraEndpointsNested>;
 
@@ -318,38 +338,119 @@ export const jiraEndpointSchemas = {
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
 const jiraEndpointMeta = {
-	'issues.create': { riskLevel: 'write', description: 'Create a new Jira issue' },
-	'issues.get': { riskLevel: 'read', description: 'Get a Jira issue by ID or key' },
-	'issues.edit': { riskLevel: 'write', description: 'Edit an existing Jira issue' },
-	'issues.delete': { riskLevel: 'destructive', description: 'Delete a Jira issue [DESTRUCTIVE]' },
-	'issues.search': { riskLevel: 'read', description: 'Search issues using JQL' },
-	'issues.assign': { riskLevel: 'write', description: 'Assign a Jira issue to a user' },
-	'issues.getTransitions': { riskLevel: 'read', description: 'Get available transitions for a Jira issue' },
-	'issues.transition': { riskLevel: 'write', description: 'Transition a Jira issue to a new status' },
-	'issues.bulkCreate': { riskLevel: 'write', description: 'Bulk create multiple Jira issues' },
-	'issues.bulkFetch': { riskLevel: 'read', description: 'Bulk fetch multiple Jira issues by ID or key' },
-	'issues.addAttachment': { riskLevel: 'write', description: 'Add an attachment to a Jira issue' },
-	'issues.addWatcher': { riskLevel: 'write', description: 'Add a watcher to a Jira issue' },
-	'issues.removeWatcher': { riskLevel: 'write', description: 'Remove a watcher from a Jira issue' },
-	'issues.linkIssues': { riskLevel: 'write', description: 'Link two Jira issues together' },
-	'comments.add': { riskLevel: 'write', description: 'Add a comment to a Jira issue' },
-	'comments.get': { riskLevel: 'read', description: 'Get a specific comment on a Jira issue' },
-	'comments.list': { riskLevel: 'read', description: 'List all comments on a Jira issue' },
-	'comments.update': { riskLevel: 'write', description: 'Update a comment on a Jira issue' },
-	'comments.delete': { riskLevel: 'destructive', description: 'Delete a comment from a Jira issue [DESTRUCTIVE]' },
-	'projects.create': { riskLevel: 'write', description: 'Create a new Jira project' },
-	'projects.get': { riskLevel: 'read', description: 'Get a Jira project by ID or key' },
+	'issues.create': {
+		riskLevel: 'write',
+		description: 'Create a new Jira issue',
+	},
+	'issues.get': {
+		riskLevel: 'read',
+		description: 'Get a Jira issue by ID or key',
+	},
+	'issues.edit': {
+		riskLevel: 'write',
+		description: 'Edit an existing Jira issue',
+	},
+	'issues.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete a Jira issue [DESTRUCTIVE]',
+	},
+	'issues.search': {
+		riskLevel: 'read',
+		description: 'Search issues using JQL',
+	},
+	'issues.assign': {
+		riskLevel: 'write',
+		description: 'Assign a Jira issue to a user',
+	},
+	'issues.getTransitions': {
+		riskLevel: 'read',
+		description: 'Get available transitions for a Jira issue',
+	},
+	'issues.transition': {
+		riskLevel: 'write',
+		description: 'Transition a Jira issue to a new status',
+	},
+	'issues.bulkCreate': {
+		riskLevel: 'write',
+		description: 'Bulk create multiple Jira issues',
+	},
+	'issues.bulkFetch': {
+		riskLevel: 'read',
+		description: 'Bulk fetch multiple Jira issues by ID or key',
+	},
+	'issues.addAttachment': {
+		riskLevel: 'write',
+		description: 'Add an attachment to a Jira issue',
+	},
+	'issues.addWatcher': {
+		riskLevel: 'write',
+		description: 'Add a watcher to a Jira issue',
+	},
+	'issues.removeWatcher': {
+		riskLevel: 'write',
+		description: 'Remove a watcher from a Jira issue',
+	},
+	'issues.linkIssues': {
+		riskLevel: 'write',
+		description: 'Link two Jira issues together',
+	},
+	'comments.add': {
+		riskLevel: 'write',
+		description: 'Add a comment to a Jira issue',
+	},
+	'comments.get': {
+		riskLevel: 'read',
+		description: 'Get a specific comment on a Jira issue',
+	},
+	'comments.list': {
+		riskLevel: 'read',
+		description: 'List all comments on a Jira issue',
+	},
+	'comments.update': {
+		riskLevel: 'write',
+		description: 'Update a comment on a Jira issue',
+	},
+	'comments.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete a comment from a Jira issue [DESTRUCTIVE]',
+	},
+	'projects.create': {
+		riskLevel: 'write',
+		description: 'Create a new Jira project',
+	},
+	'projects.get': {
+		riskLevel: 'read',
+		description: 'Get a Jira project by ID or key',
+	},
 	'projects.list': { riskLevel: 'read', description: 'List Jira projects' },
-	'projects.getRoles': { riskLevel: 'read', description: 'Get project roles for a Jira project' },
-	'sprints.create': { riskLevel: 'write', description: 'Create a new sprint on a Jira board' },
-	'sprints.list': { riskLevel: 'read', description: 'List sprints for a Jira board' },
-	'sprints.moveIssues': { riskLevel: 'write', description: 'Move issues to a sprint' },
+	'projects.getRoles': {
+		riskLevel: 'read',
+		description: 'Get project roles for a Jira project',
+	},
+	'sprints.create': {
+		riskLevel: 'write',
+		description: 'Create a new sprint on a Jira board',
+	},
+	'sprints.list': {
+		riskLevel: 'read',
+		description: 'List sprints for a Jira board',
+	},
+	'sprints.moveIssues': {
+		riskLevel: 'write',
+		description: 'Move issues to a sprint',
+	},
 	'sprints.listBoards': { riskLevel: 'read', description: 'List Jira boards' },
-	'users.getCurrent': { riskLevel: 'read', description: 'Get the currently authenticated Jira user' },
+	'users.getCurrent': {
+		riskLevel: 'read',
+		description: 'Get the currently authenticated Jira user',
+	},
 	'users.find': { riskLevel: 'read', description: 'Search for Jira users' },
 	'users.getAll': { riskLevel: 'read', description: 'Get all Jira users' },
 	'groups.getAll': { riskLevel: 'read', description: 'Get all Jira groups' },
-	'groups.create': { riskLevel: 'write', description: 'Create a new Jira group' },
+	'groups.create': {
+		riskLevel: 'write',
+		description: 'Create a new Jira group',
+	},
 } satisfies RequiredPluginEndpointMeta<typeof jiraEndpointsNested>;
 
 const jiraWebhookSchemas = {
@@ -520,10 +621,10 @@ export type {
 	SprintsListResponse,
 	SprintsMoveIssuesInput,
 	SprintsMoveIssuesResponse,
+	UsersFindInput,
+	UsersFindResponse,
 	UsersGetAllInput,
 	UsersGetAllResponse,
 	UsersGetCurrentInput,
 	UsersGetCurrentResponse,
-	UsersFindInput,
-	UsersFindResponse,
 } from './endpoints/types';

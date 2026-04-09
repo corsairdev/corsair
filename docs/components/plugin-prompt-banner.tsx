@@ -78,10 +78,24 @@ export function PluginPromptBanner() {
 				background: 'var(--color-fd-card, #18181b)',
 			}}
 		>
-			<div style={{ fontWeight: 600, fontSize: '0.875rem', marginBottom: '0.875rem', color: 'var(--color-fd-foreground)' }}>
+			<div
+				style={{
+					fontWeight: 600,
+					fontSize: '0.875rem',
+					marginBottom: '0.875rem',
+					color: 'var(--color-fd-foreground)',
+				}}
+			>
 				Copy a prompt for Claude Code
 			</div>
-			<div style={{ display: 'flex', flexDirection: 'column', gap: '0.625rem', marginBottom: '1rem' }}>
+			<div
+				style={{
+					display: 'flex',
+					flexDirection: 'column',
+					gap: '0.625rem',
+					marginBottom: '1rem',
+				}}
+			>
 				<input
 					type="text"
 					placeholder="Plugin name (e.g. Stripe, GoogleCalendar)"
@@ -137,14 +151,32 @@ export function PluginPromptBanner() {
 			>
 				{copied ? (
 					<>
-						<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+						<svg
+							width="13"
+							height="13"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							strokeWidth="2.5"
+							strokeLinecap="round"
+							strokeLinejoin="round"
+						>
 							<polyline points="20 6 9 17 4 12" />
 						</svg>
 						Copied!
 					</>
 				) : (
 					<>
-						<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+						<svg
+							width="13"
+							height="13"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							strokeWidth="2"
+							strokeLinecap="round"
+							strokeLinejoin="round"
+						>
 							<rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
 							<path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
 						</svg>

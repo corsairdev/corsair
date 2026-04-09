@@ -7,37 +7,43 @@ import type {
 	CorsairPluginContext,
 	CorsairWebhook,
 	KeyBuilderContext,
+	PickAuth,
 	PluginAuthConfig,
+	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
 	RequiredPluginWebhookSchemas,
-	PluginPermissionsConfig,
 } from 'corsair/core';
-import type { PickAuth } from 'corsair/core';
-import type { TeamsEndpointInputs, TeamsEndpointOutputs } from './endpoints/types';
-import { TeamsEndpointInputSchemas, TeamsEndpointOutputSchemas } from './endpoints/types';
-import type {
-	TeamsWebhookOutputs,
-	TeamsChannelMessageEvent,
-	TeamsChatMessageEvent,
-	TeamsChannelCreatedEvent,
-	TeamsMembershipChangedEvent,
-} from './webhooks/types';
-import {
-	TeamsChannelMessagePayloadSchema,
-	TeamsChatMessagePayloadSchema,
-	TeamsChannelCreatedPayloadSchema,
-	TeamsMembershipChangedPayloadSchema,
-	TeamsChannelMessageEventSchema,
-	TeamsChatMessageEventSchema,
-	TeamsChannelCreatedEventSchema,
-	TeamsMembershipChangedEventSchema,
-} from './webhooks/types';
 import { getValidAccessToken } from './client';
-import { Teams, Channels, Messages, Members, Chats } from './endpoints';
+import { Channels, Chats, Members, Messages, Teams } from './endpoints';
+import type {
+	TeamsEndpointInputs,
+	TeamsEndpointOutputs,
+} from './endpoints/types';
+import {
+	TeamsEndpointInputSchemas,
+	TeamsEndpointOutputSchemas,
+} from './endpoints/types';
+import { errorHandlers } from './error-handlers';
 import { TeamsSchema } from './schema';
 import { ChannelWebhooks, ChatWebhooks, MemberWebhooks } from './webhooks';
-import { errorHandlers } from './error-handlers';
+import type {
+	TeamsChannelCreatedEvent,
+	TeamsChannelMessageEvent,
+	TeamsChatMessageEvent,
+	TeamsMembershipChangedEvent,
+	TeamsWebhookOutputs,
+} from './webhooks/types';
+import {
+	TeamsChannelCreatedEventSchema,
+	TeamsChannelCreatedPayloadSchema,
+	TeamsChannelMessageEventSchema,
+	TeamsChannelMessagePayloadSchema,
+	TeamsChatMessageEventSchema,
+	TeamsChatMessagePayloadSchema,
+	TeamsMembershipChangedEventSchema,
+	TeamsMembershipChangedPayloadSchema,
+} from './webhooks/types';
 
 export type TeamsPluginOptions = {
 	authType?: PickAuth<'oauth_2'>;
@@ -98,10 +104,22 @@ type TeamsWebhookType<
 > = CorsairWebhook<TeamsContext, TEvent, TeamsWebhookOutputs[K]>;
 
 export type TeamsWebhooks = {
-	channelMessage: TeamsWebhookType<'channelMessage', { value: TeamsChannelMessageEvent[] }>;
-	chatMessage: TeamsWebhookType<'chatMessage', { value: TeamsChatMessageEvent[] }>;
-	channelCreated: TeamsWebhookType<'channelCreated', { value: TeamsChannelCreatedEvent[] }>;
-	membershipChanged: TeamsWebhookType<'membershipChanged', { value: TeamsMembershipChangedEvent[] }>;
+	channelMessage: TeamsWebhookType<
+		'channelMessage',
+		{ value: TeamsChannelMessageEvent[] }
+	>;
+	chatMessage: TeamsWebhookType<
+		'chatMessage',
+		{ value: TeamsChatMessageEvent[] }
+	>;
+	channelCreated: TeamsWebhookType<
+		'channelCreated',
+		{ value: TeamsChannelCreatedEvent[] }
+	>;
+	membershipChanged: TeamsWebhookType<
+		'membershipChanged',
+		{ value: TeamsMembershipChangedEvent[] }
+	>;
 };
 
 export type TeamsBoundWebhooks = BindWebhooks<TeamsWebhooks>;
@@ -263,31 +281,88 @@ export const teamsEndpointSchemas = {
 const defaultAuthType = 'oauth_2' as const;
 
 const teamsEndpointMeta = {
-	'teams.list': { riskLevel: 'read', description: 'List teams the current user is a member of' },
-	'teams.get': { riskLevel: 'read', description: 'Get details of a specific team' },
+	'teams.list': {
+		riskLevel: 'read',
+		description: 'List teams the current user is a member of',
+	},
+	'teams.get': {
+		riskLevel: 'read',
+		description: 'Get details of a specific team',
+	},
 	'teams.create': { riskLevel: 'write', description: 'Create a new team' },
 	'teams.update': { riskLevel: 'write', description: 'Update team settings' },
-	'teams.delete': { riskLevel: 'destructive', description: 'Delete a team [DESTRUCTIVE]' },
-	'channels.list': { riskLevel: 'read', description: 'List channels in a team' },
-	'channels.get': { riskLevel: 'read', description: 'Get details of a specific channel' },
-	'channels.create': { riskLevel: 'write', description: 'Create a new channel in a team' },
+	'teams.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete a team [DESTRUCTIVE]',
+	},
+	'channels.list': {
+		riskLevel: 'read',
+		description: 'List channels in a team',
+	},
+	'channels.get': {
+		riskLevel: 'read',
+		description: 'Get details of a specific channel',
+	},
+	'channels.create': {
+		riskLevel: 'write',
+		description: 'Create a new channel in a team',
+	},
 	'channels.update': { riskLevel: 'write', description: 'Update a channel' },
-	'channels.delete': { riskLevel: 'destructive', description: 'Delete a channel [DESTRUCTIVE]' },
-	'messages.list': { riskLevel: 'read', description: 'List messages in a channel' },
-	'messages.get': { riskLevel: 'read', description: 'Get a specific channel message' },
-	'messages.send': { riskLevel: 'write', description: 'Send a message to a channel' },
-	'messages.reply': { riskLevel: 'write', description: 'Reply to a message in a channel' },
-	'messages.listReplies': { riskLevel: 'read', description: 'List replies to a channel message' },
-	'messages.delete': { riskLevel: 'destructive', description: 'Delete a channel message [DESTRUCTIVE]' },
+	'channels.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete a channel [DESTRUCTIVE]',
+	},
+	'messages.list': {
+		riskLevel: 'read',
+		description: 'List messages in a channel',
+	},
+	'messages.get': {
+		riskLevel: 'read',
+		description: 'Get a specific channel message',
+	},
+	'messages.send': {
+		riskLevel: 'write',
+		description: 'Send a message to a channel',
+	},
+	'messages.reply': {
+		riskLevel: 'write',
+		description: 'Reply to a message in a channel',
+	},
+	'messages.listReplies': {
+		riskLevel: 'read',
+		description: 'List replies to a channel message',
+	},
+	'messages.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete a channel message [DESTRUCTIVE]',
+	},
 	'members.list': { riskLevel: 'read', description: 'List members of a team' },
-	'members.get': { riskLevel: 'read', description: 'Get a specific team member' },
+	'members.get': {
+		riskLevel: 'read',
+		description: 'Get a specific team member',
+	},
 	'members.add': { riskLevel: 'write', description: 'Add a member to a team' },
-	'members.remove': { riskLevel: 'destructive', description: 'Remove a member from a team [DESTRUCTIVE]' },
-	'chats.list': { riskLevel: 'read', description: 'List chats for the current user' },
-	'chats.get': { riskLevel: 'read', description: 'Get details of a specific chat' },
+	'members.remove': {
+		riskLevel: 'destructive',
+		description: 'Remove a member from a team [DESTRUCTIVE]',
+	},
+	'chats.list': {
+		riskLevel: 'read',
+		description: 'List chats for the current user',
+	},
+	'chats.get': {
+		riskLevel: 'read',
+		description: 'Get details of a specific chat',
+	},
 	'chats.create': { riskLevel: 'write', description: 'Create a new chat' },
-	'chats.listMessages': { riskLevel: 'read', description: 'List messages in a chat' },
-	'chats.sendMessage': { riskLevel: 'write', description: 'Send a message in a chat' },
+	'chats.listMessages': {
+		riskLevel: 'read',
+		description: 'List messages in a chat',
+	},
+	'chats.sendMessage': {
+		riskLevel: 'write',
+		description: 'Send a message in a chat',
+	},
 } satisfies RequiredPluginEndpointMeta<typeof teamsEndpointsNested>;
 
 const teamsWebhookSchemas = {
@@ -372,7 +447,8 @@ export function teams<const T extends TeamsPluginOptions>(
 			// Microsoft Graph sends notifications as POST with application/json
 			// We match on a custom header that a proxy/middleware should set,
 			const hasTeamsHeader = 'x-ms-teams-client-state' in headers;
-			const isJsonPost = headers['content-type']?.includes('application/json') ?? false;
+			const isJsonPost =
+				headers['content-type']?.includes('application/json') ?? false;
 			return hasTeamsHeader && isJsonPost;
 		},
 		errorHandlers: {
@@ -439,13 +515,13 @@ export function teams<const T extends TeamsPluginOptions>(
 // ─────────────────────────────────────────────────────────────────────────────
 
 export type {
+	TeamsChannelCreatedEvent,
 	TeamsChannelMessageEvent,
 	TeamsChatMessageEvent,
-	TeamsChannelCreatedEvent,
 	TeamsMembershipChangedEvent,
-	TeamsWebhookOutputs,
 	TeamsNotification,
 	TeamsWebhookNotificationPayload,
+	TeamsWebhookOutputs,
 } from './webhooks/types';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -453,50 +529,50 @@ export type {
 // ─────────────────────────────────────────────────────────────────────────────
 
 export type {
+	ChannelsCreateInput,
+	ChannelsCreateResponse,
+	ChannelsDeleteInput,
+	ChannelsGetInput,
+	ChannelsGetResponse,
+	ChannelsListInput,
+	ChannelsListResponse,
+	ChannelsUpdateInput,
+	ChatsCreateInput,
+	ChatsCreateResponse,
+	ChatsGetInput,
+	ChatsGetResponse,
+	ChatsListInput,
+	ChatsListMessagesInput,
+	ChatsListMessagesResponse,
+	ChatsListResponse,
+	ChatsSendMessageInput,
+	ChatsSendMessageResponse,
+	MembersAddInput,
+	MembersAddResponse,
+	MembersGetInput,
+	MembersGetResponse,
+	MembersListInput,
+	MembersListResponse,
+	MembersRemoveInput,
+	MessagesDeleteInput,
+	MessagesGetInput,
+	MessagesGetResponse,
+	MessagesListInput,
+	MessagesListRepliesInput,
+	MessagesListRepliesResponse,
+	MessagesListResponse,
+	MessagesReplyInput,
+	MessagesReplyResponse,
+	MessagesSendInput,
+	MessagesSendResponse,
+	TeamsCreateInput,
+	TeamsCreateResponse,
+	TeamsDeleteInput,
 	TeamsEndpointInputs,
 	TeamsEndpointOutputs,
-	TeamsListInput,
 	TeamsGetInput,
-	TeamsCreateInput,
-	TeamsUpdateInput,
-	TeamsDeleteInput,
-	ChannelsListInput,
-	ChannelsGetInput,
-	ChannelsCreateInput,
-	ChannelsUpdateInput,
-	ChannelsDeleteInput,
-	MessagesListInput,
-	MessagesGetInput,
-	MessagesSendInput,
-	MessagesReplyInput,
-	MessagesListRepliesInput,
-	MessagesDeleteInput,
-	MembersListInput,
-	MembersGetInput,
-	MembersAddInput,
-	MembersRemoveInput,
-	ChatsListInput,
-	ChatsGetInput,
-	ChatsCreateInput,
-	ChatsListMessagesInput,
-	ChatsSendMessageInput,
-	TeamsListResponse,
 	TeamsGetResponse,
-	TeamsCreateResponse,
-	ChannelsListResponse,
-	ChannelsGetResponse,
-	ChannelsCreateResponse,
-	MessagesListResponse,
-	MessagesGetResponse,
-	MessagesSendResponse,
-	MessagesReplyResponse,
-	MessagesListRepliesResponse,
-	MembersListResponse,
-	MembersGetResponse,
-	MembersAddResponse,
-	ChatsListResponse,
-	ChatsGetResponse,
-	ChatsCreateResponse,
-	ChatsListMessagesResponse,
-	ChatsSendMessageResponse,
+	TeamsListInput,
+	TeamsListResponse,
+	TeamsUpdateInput,
 } from './endpoints/types';

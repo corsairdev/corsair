@@ -1,5 +1,5 @@
-import type { TypeformEndpoints } from '..';
 import { logEventFromContext } from 'corsair/core';
+import type { TypeformEndpoints } from '..';
 import { makeTypeformRequest } from '../client';
 import type { TypeformEndpointOutputs } from './types';
 
@@ -59,7 +59,7 @@ export const deleteResponses: TypeformEndpoints['responsesDelete'] = async (
 	if (ctx.db.responses) {
 		const ids = input.included_response_ids
 			.split(',')
-			.map(id => id.trim())
+			.map((id) => id.trim())
 			.filter(Boolean);
 		for (const id of ids) {
 			try {

@@ -1,10 +1,10 @@
-import { z } from 'zod';
 import type {
 	CorsairWebhookMatcher,
 	RawWebhookRequest,
 	WebhookRequest,
 } from 'corsair/core';
 import * as crypto from 'crypto';
+import { z } from 'zod';
 
 // ── Shared Trello action sub-schemas ─────────────────────────────────────────
 
@@ -182,12 +182,24 @@ export const TrelloCommentCreatedPayloadSchema = z.object({
 
 // ── Inferred event types ──────────────────────────────────────────────────────
 
-export type TrelloCardCreatedEvent = z.infer<typeof TrelloCardCreatedPayloadSchema>;
-export type TrelloCardUpdatedEvent = z.infer<typeof TrelloCardUpdatedPayloadSchema>;
-export type TrelloMemberAddedToCardEvent = z.infer<typeof TrelloMemberAddedToCardPayloadSchema>;
-export type TrelloListCreatedEvent = z.infer<typeof TrelloListCreatedPayloadSchema>;
-export type TrelloListUpdatedEvent = z.infer<typeof TrelloListUpdatedPayloadSchema>;
-export type TrelloCommentCreatedEvent = z.infer<typeof TrelloCommentCreatedPayloadSchema>;
+export type TrelloCardCreatedEvent = z.infer<
+	typeof TrelloCardCreatedPayloadSchema
+>;
+export type TrelloCardUpdatedEvent = z.infer<
+	typeof TrelloCardUpdatedPayloadSchema
+>;
+export type TrelloMemberAddedToCardEvent = z.infer<
+	typeof TrelloMemberAddedToCardPayloadSchema
+>;
+export type TrelloListCreatedEvent = z.infer<
+	typeof TrelloListCreatedPayloadSchema
+>;
+export type TrelloListUpdatedEvent = z.infer<
+	typeof TrelloListUpdatedPayloadSchema
+>;
+export type TrelloCommentCreatedEvent = z.infer<
+	typeof TrelloCommentCreatedPayloadSchema
+>;
 
 // ── Webhook output map ────────────────────────────────────────────────────────
 
@@ -208,7 +220,9 @@ function parseBody(body: unknown): unknown {
 	return typeof body === 'string' ? JSON.parse(body) : body;
 }
 
-export function createTrelloActionMatch(actionType: string): CorsairWebhookMatcher {
+export function createTrelloActionMatch(
+	actionType: string,
+): CorsairWebhookMatcher {
 	return (request: RawWebhookRequest) => {
 		// parsedBody is typed as unknown because the raw webhook body is unvalidated
 		const parsedBody = parseBody(request.body) as Record<string, unknown>;
@@ -230,7 +244,10 @@ export function verifyTrelloWebhookSignature(
 
 	const rawBody = request.rawBody;
 	if (!rawBody) {
-		return { valid: false, error: 'Missing raw body for signature verification' };
+		return {
+			valid: false,
+			error: 'Missing raw body for signature verification',
+		};
 	}
 
 	const headers = request.headers;
@@ -242,9 +259,12 @@ export function verifyTrelloWebhookSignature(
 		return { valid: false, error: 'Missing x-trello-webhook header' };
 	}
 	// payload is unknown; extract callbackURL from the webhook object Trello includes in every payload
-	const payloadCallbackUrl =
-		((request.payload as Record<string, unknown>)?.webhook as Record<string, unknown>)
-			?.callbackURL;
+	const payloadCallbackUrl = (
+		(request.payload as Record<string, unknown>)?.webhook as Record<
+			string,
+			unknown
+		>
+	)?.callbackURL;
 
 	try {
 		const content = payloadCallbackUrl ? rawBody + payloadCallbackUrl : rawBody;
