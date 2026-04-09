@@ -1,0 +1,96 @@
+---
+title: Figma Database Schema
+description: Database entities and querying synced Figma data.
+---
+
+The Figma plugin syncs comments and webhook configurations to your local database.
+
+## Synced Entities
+
+- **comments** - File comments and replies
+- **webhookConfigs** - Registered webhook configurations
+
+## Database API
+
+```ts
+const comments = await corsair.figma.db.comments.search({
+    data: { file_key: "abc123" },
+});
+```
+
+---
+
+## Comments
+
+### Schema
+
+```ts
+{
+    id: string;
+    uuid?: string;
+    message?: string;
+    file_key?: string;
+    order_id?: string;
+    parent_id?: string;
+    created_at?: string;
+    resolved_at?: string;
+    user_id?: string;
+    user_handle?: string;
+}
+```
+
+### Querying Comments
+
+```ts
+// Get comments for a file
+const comments = await corsair.figma.db.comments.search({
+    data: { file_key: "abc123" },
+});
+
+// Get unresolved comments
+const unresolved = await corsair.figma.db.comments.search({
+    data: { resolved_at: null },
+});
+```
+
+---
+
+## Webhook Configs
+
+### Schema
+
+```ts
+{
+    id: string;
+    status?: "ACTIVE" | "PAUSED";
+    context?: "team" | "project" | "file";
+    team_id?: string;
+    endpoint?: string;
+    event_type?: string;
+    description?: string;
+}
+```
+
+### Querying Webhook Configs
+
+```ts
+const webhooks = await corsair.figma.db.webhookConfigs.search({ data: {} });
+
+const activeWebhooks = await corsair.figma.db.webhookConfigs.search({
+    data: { status: "ACTIVE" },
+});
+```
+
+---
+
+## Multi-Tenancy
+
+```ts
+const tenant = corsair.withTenant("workspace-123");
+
+const comments = await tenant.figma.db.comments.search({
+    data: { file_key: "abc123" },
+});
+```
+
+See [Database](/concepts/database) for more information about querying patterns.

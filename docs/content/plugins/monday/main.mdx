@@ -1,0 +1,105 @@
+---
+title: Monday.com
+description: Manage Monday.com boards, items, groups, and automations from your app or agent.
+---
+
+## Quick Start
+
+Install the plugin:
+
+```bash
+pnpm install @corsair-dev/monday
+```
+
+Add the Monday.com plugin to your Corsair instance:
+
+```ts title="corsair.ts"
+import { createCorsair } from "corsair";
+import { monday } from "@corsair-dev/monday";
+
+export const corsair = createCorsair({
+    plugins: [monday()],
+    database: db,
+    kek: process.env.CORSAIR_KEK!,
+});
+```
+
+## Authentication
+
+### Supported Auth Types
+
+- **`api_key`** (default) - Personal API token
+
+### API Key Setup
+
+Store credentials with the CLI:
+
+```bash
+pnpm corsair setup --monday api_key=your-api-token
+```
+
+Verify it was saved:
+
+```bash
+pnpm corsair auth --plugin=monday --credentials
+```
+
+See [Get Credentials](/plugins/monday/get-credentials) for step-by-step instructions.
+
+### Webhook Secret
+
+```bash
+pnpm corsair setup --monday webhook_signature=your-webhook-secret
+```
+
+## Options
+
+| Option | Type | Description |
+|--------|------|-------------|
+| `authType` | `'api_key'` | Authentication method (defaults to `'api_key'`) |
+| `key` | `string` | API token (optional, uses database if not provided) |
+| `webhookSecret` | `string` | Webhook signing secret (optional) |
+| `hooks` | `object` | Endpoint hooks for custom logic |
+| `webhookHooks` | `object` | Webhook hooks for event handling |
+| `errorHandlers` | `object` | Custom error handlers |
+
+## Usage
+
+```ts
+// List boards
+const boards = await corsair.monday.api.boards.list({});
+
+// Get board items
+const items = await corsair.monday.api.items.list({
+    boardId: "board-id",
+});
+
+// Create an item
+await corsair.monday.api.items.create({
+    boardId: "board-id",
+    groupId: "group-id",
+    itemName: "New Task",
+});
+
+// Add an update (comment) to an item
+await corsair.monday.api.updates.create({
+    itemId: "item-id",
+    body: "Status updated",
+});
+```
+
+### Query cached data
+
+```ts
+const items = await corsair.monday.db.items.search({
+    data: { boardId: "board-id" },
+});
+```
+
+### Multi-Tenancy
+
+```ts
+const tenant = corsair.withTenant("org-123");
+
+const boards = await tenant.monday.api.boards.list({});
+```

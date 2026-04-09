@@ -1,0 +1,112 @@
+---
+title: Jira Database Schema
+description: Database entities and querying synced Jira data.
+---
+
+The Jira plugin syncs issues, projects, and related data to your local database.
+
+## Synced Entities
+
+- **issues** - Jira issues and sub-tasks
+- **projects** - Project information
+- **sprints** - Sprint data
+- **users** - Jira users
+- **comments** - Issue comments
+
+## Database API
+
+```ts
+const issues = await corsair.jira.db.issues.search({
+    data: { project: "MYPROJ" },
+});
+```
+
+---
+
+## Issues
+
+### Schema
+
+```ts
+{
+    id: string;
+    key: string;
+    summary?: string;
+    description?: string;
+    status?: string;
+    priority?: string;
+    issuetype?: string;
+    project?: string;
+    assigneeId?: string;
+    reporterId?: string;
+    createdAt?: string;
+    updatedAt?: string;
+    resolvedAt?: string;
+    labels?: string[];
+    fixVersions?: string[];
+    storyPoints?: number;
+    sprint?: string;
+}
+```
+
+### Querying Issues
+
+```ts
+// Get issues by project
+const issues = await corsair.jira.db.issues.search({
+    data: { project: "MYPROJ" },
+});
+
+// Get open issues
+const open = await corsair.jira.db.issues.search({
+    data: { status: "In Progress" },
+});
+
+// Get by assignee
+const assigned = await corsair.jira.db.issues.search({
+    data: { assigneeId: "user-id" },
+});
+```
+
+---
+
+## Projects
+
+### Schema
+
+```ts
+{
+    id: string;
+    key: string;
+    name: string;
+    projectTypeKey?: string;
+    style?: string;
+    description?: string;
+    leadId?: string;
+    avatarUrl?: string;
+}
+```
+
+### Querying Projects
+
+```ts
+const projects = await corsair.jira.db.projects.search({ data: {} });
+
+const project = await corsair.jira.db.projects.search({
+    data: { key: "MYPROJ" },
+});
+```
+
+---
+
+## Multi-Tenancy
+
+```ts
+const tenant = corsair.withTenant("workspace-123");
+
+const issues = await tenant.jira.db.issues.search({
+    data: { project: "MYPROJ" },
+});
+```
+
+See [Database](/concepts/database) for more information about querying patterns.

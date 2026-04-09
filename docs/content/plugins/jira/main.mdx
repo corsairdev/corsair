@@ -1,0 +1,106 @@
+---
+title: Jira
+description: Manage Jira issues, projects, sprints, and comments from your app or agent.
+---
+
+## Quick Start
+
+Install the plugin:
+
+```bash
+pnpm install @corsair-dev/jira
+```
+
+Add the Jira plugin to your Corsair instance:
+
+```ts title="corsair.ts"
+import { createCorsair } from "corsair";
+import { jira } from "@corsair-dev/jira";
+
+export const corsair = createCorsair({
+    plugins: [jira()],
+    database: db,
+    kek: process.env.CORSAIR_KEK!,
+});
+```
+
+## Authentication
+
+### Supported Auth Types
+
+- **`api_key`** (default) - API token with email
+
+### API Key Setup
+
+```bash
+pnpm corsair setup --jira api_key=your-api-token
+```
+
+For webhook signature verification:
+
+```bash
+pnpm corsair setup --jira webhook_signature=your-webhook-secret
+```
+
+See [Get Credentials](/plugins/jira/get-credentials) for step-by-step instructions.
+
+## Options
+
+| Option | Type | Description |
+|--------|------|-------------|
+| `authType` | `'api_key'` | Authentication method |
+| `key` | `string` | API token (optional, uses database if not provided) |
+| `webhookSecret` | `string` | Webhook signing secret (optional) |
+| `hooks` | `object` | Endpoint hooks for custom logic |
+| `webhookHooks` | `object` | Webhook hooks for event handling |
+| `errorHandlers` | `object` | Custom error handlers |
+
+## Usage
+
+```ts
+// Search issues
+const issues = await corsair.jira.api.issues.search({
+    jql: "project = MYPROJ AND status = 'In Progress'",
+});
+
+// Create an issue
+await corsair.jira.api.issues.create({
+    fields: {
+        project: { key: "MYPROJ" },
+        summary: "Fix login bug",
+        issuetype: { name: "Bug" },
+    },
+});
+
+// Add a comment
+await corsair.jira.api.comments.add({
+    issueIdOrKey: "MYPROJ-123",
+    body: "Investigating the issue now.",
+});
+
+// List projects
+const projects = await corsair.jira.api.projects.list({});
+
+// Get sprint issues
+const sprintIssues = await corsair.jira.api.sprints.getIssues({
+    sprintId: "sprint-id",
+});
+```
+
+### Query cached data
+
+```ts
+const issues = await corsair.jira.db.issues.search({
+    data: { project: "MYPROJ" },
+});
+```
+
+### Multi-Tenancy
+
+```ts
+const tenant = corsair.withTenant("workspace-123");
+
+const issues = await tenant.jira.api.issues.search({
+    jql: "assignee = currentUser()",
+});
+```
