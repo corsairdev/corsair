@@ -5,7 +5,8 @@ import { corsair } from '@/server/corsair';
 
 export async function POST(request: NextRequest) {
 	const url = new URL(request.url);
-	const validationToken = url.searchParams.get('validationToken');
+	const validationToken = url.searchParams.get('validationtoken');
+
 	if (validationToken) {
 		return new NextResponse(validationToken, {
 			status: 200,

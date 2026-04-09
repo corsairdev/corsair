@@ -30,6 +30,7 @@
     "@corsair-dev/googlesheets": "workspace:*",
     "@corsair-dev/linear": "workspace:*",
     "@corsair-dev/mcp": "workspace:*",
+    "@corsair-dev/sharepoint": "workspace:*",
     "@corsair-dev/notion": "workspace:*",
     "@corsair-dev/slack": "workspace:*",
     "@tanstack/react-query": "^5.62.14",

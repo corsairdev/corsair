@@ -7,8 +7,8 @@ import { slack } from '@corsair-dev/slack';
 import { googlesheets } from '@corsair-dev/googlesheets';
 import { googlecalendar } from '@corsair-dev/googlecalendar';
 import { gmail } from '@corsair-dev/gmail';
-import { linear } from '@corsair-dev/linear';
-import { notion } from '@corsair-dev/notion';
+import { linear } from '@corsair-dev/linear'; 
+import { sharepoint } from '@corsair-dev/sharepoint'
 
 export const corsair = createCorsair({
 	multiTenancy: false,
@@ -18,6 +18,6 @@ export const corsair = createCorsair({
 		timeout: '10m',
 		onTimeout: 'deny',
 	},
-	plugins: [github(), slack(), googlesheets(), googlecalendar(), gmail(), linear(), notion({authType: 'oauth_2'})],
+	plugins: [github(), slack(), googlesheets(), googlecalendar(), gmail(), linear(), sharepoint()],
 });
 
