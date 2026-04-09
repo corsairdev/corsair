@@ -4,33 +4,37 @@ import { makeGraphRequest } from '../client';
 import type { SharepointEndpointOutputs } from './types';
 
 export const addRoleToItem: SharepointEndpoints['permissionsAddRoleToItem'] = async (ctx, input) => {
-	// Graph API uses a different permissions model; stub for backwards compatibility
-	await logEventFromContext(ctx, 'sharepoint.permissions.addRoleToItem', { ...input }, 'completed');
-	return {
-		message: 'Role assignment added successfully',
-		list_title: input.list_title,
-		item_id: input.item_id,
-		principal_id: input.principal_id,
-		role_definition_id: input.role_definition_id,
-	};
+	await logEventFromContext(ctx, 'sharepoint.permissions.addRoleToItem', { ...input }, 'failed');
+	throw new Error(
+		'addRoleToItem is not supported via Microsoft Graph API. ' +
+		'SharePoint principal_id and role_definition_id integers are not accepted by Graph API. ' +
+		'Use the SharePoint REST API (_api/web/lists/getbytitle/roleassignments/addroleassignment) instead.',
+	);
 };
 
 export const addRoleToList: SharepointEndpoints['permissionsAddRoleToList'] = async (ctx, input) => {
-	// Graph API uses a different permissions model; stub for backwards compatibility
-	await logEventFromContext(ctx, 'sharepoint.permissions.addRoleToList', { ...input }, 'completed');
-	return { success: true, status_code: 200 };
+	await logEventFromContext(ctx, 'sharepoint.permissions.addRoleToList', { ...input }, 'failed');
+	throw new Error(
+		'addRoleToList is not supported via Microsoft Graph API. ' +
+		'SharePoint principal_id and role_definition_id integers are not accepted by Graph API. ' +
+		'Use the SharePoint REST API (_api/web/lists/getbytitle/roleassignments/addroleassignment) instead.',
+	);
 };
 
 export const breakInheritanceOnItem: SharepointEndpoints['permissionsBreakInheritanceOnItem'] = async (ctx, input) => {
-	// Graph API does not have a direct break inheritance endpoint
-	await logEventFromContext(ctx, 'sharepoint.permissions.breakInheritanceOnItem', { ...input }, 'completed');
-	return { message: 'Role inheritance broken successfully on item' };
+	await logEventFromContext(ctx, 'sharepoint.permissions.breakInheritanceOnItem', { ...input }, 'failed');
+	throw new Error(
+		'breakInheritanceOnItem is not supported via Microsoft Graph API. ' +
+		'Use the SharePoint REST API (_api/web/lists/getbytitle/items/breakroleinheritance) instead.',
+	);
 };
 
 export const breakInheritanceOnList: SharepointEndpoints['permissionsBreakInheritanceOnList'] = async (ctx, input) => {
-	// Graph API does not have a direct break inheritance endpoint
-	await logEventFromContext(ctx, 'sharepoint.permissions.breakInheritanceOnList', { ...input }, 'completed');
-	return { message: 'Role inheritance broken successfully on list' };
+	await logEventFromContext(ctx, 'sharepoint.permissions.breakInheritanceOnList', { ...input }, 'failed');
+	throw new Error(
+		'breakInheritanceOnList is not supported via Microsoft Graph API. ' +
+		'Use the SharePoint REST API (_api/web/lists/getbytitle/breakroleinheritance) instead.',
+	);
 };
 
 export const getRoleDefinitions: SharepointEndpoints['permissionsGetRoleDefinitions'] = async (ctx, input) => {

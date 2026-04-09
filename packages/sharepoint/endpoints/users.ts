@@ -40,13 +40,15 @@ export const create: SharepointEndpoints['usersCreate'] = async (ctx, input) => 
 };
 
 export const find: SharepointEndpoints['usersFind'] = async (ctx, input) => {
+	// Escape single quotes to prevent OData injection
+	const safeSearch = input.search_value.replace(/'/g, "''");
 	const result = await makeGraphRequest<SharepointEndpointOutputs['usersFind']>(
 		'/users',
 		ctx.key,
 		{
 			method: 'GET',
 			query: {
-				$filter: `startsWith(displayName,'${input.search_value}') or startsWith(mail,'${input.search_value}')`,
+				$filter: `startsWith(displayName,'${safeSearch}') or startsWith(mail,'${safeSearch}')`,
 				$select: 'id,displayName,mail,userPrincipalName',
 			},
 		},

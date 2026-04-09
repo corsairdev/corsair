@@ -225,7 +225,7 @@ export const undoCheckout: SharepointEndpoints['filesUndoCheckout'] = async (ctx
 	);
 
 	await makeGraphRequest<Record<string, unknown>>(
-    `/sites/${siteId}/drive/items/${item.id}/discardCheckout`,
+		`/sites/${siteId}/drive/items/${item.id}/discardCheckout`,
 		ctx.key,
 		{ method: 'POST' },
 	);
