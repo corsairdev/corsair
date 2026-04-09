@@ -9,6 +9,7 @@ import { googlecalendar } from '@corsair-dev/googlecalendar';
 import { gmail } from '@corsair-dev/gmail';
 import { linear } from '@corsair-dev/linear'; 
 import { sharepoint } from '@corsair-dev/sharepoint'
+import { onedrive } from '@corsair-dev/onedrive'
 
 export const corsair = createCorsair({
 	multiTenancy: false,
@@ -18,6 +19,6 @@ export const corsair = createCorsair({
 		timeout: '10m',
 		onTimeout: 'deny',
 	},
-	plugins: [github(), slack(), googlesheets(), googlecalendar(), gmail(), linear(), sharepoint()],
+	plugins: [github(), slack(), googlesheets(), googlecalendar(), gmail(), linear(), sharepoint(), onedrive()],
 });
 
