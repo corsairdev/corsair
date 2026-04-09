@@ -1,6 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import type { ApifyContext } from '..';
 import { makeApifyRequest } from '../client';
+import { persistApifyEndpointResult } from './persist';
 import { ApifyEndpointInputSchemas, ApifyEndpointOutputSchemas } from './types';
 
 export type ApifyEndpointInput = {
@@ -28,6 +29,11 @@ const makeEndpoint =
 			body: input.body,
 		});
 		await logEventFromContext(ctx, eventName, input ?? {}, 'completed');
+		try {
+			await persistApifyEndpointResult(ctx, eventName, response, input.path);
+		} catch (error) {
+			console.warn('Failed to persist Apify API result to database:', error);
+		}
 		return response;
 	};
 

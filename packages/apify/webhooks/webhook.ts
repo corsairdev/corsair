@@ -1,6 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import type { CorsairWebhook, RawWebhookRequest, WebhookRequest } from 'corsair/core';
 import type { ApifyContext } from '..';
+import { persistApifyWebhookPayload } from '../endpoints/persist';
 import type { ApifyWebhookOutputs, ApifyWebhookPayload } from './types';
 import { verifyApifyWebhookSignature } from './types';
 
@@ -31,6 +32,11 @@ export const webhook: CorsairWebhook<
 
 		const event = request.payload;
 		await logEventFromContext(ctx, 'apify.webhook', { ...event }, 'completed');
+		try {
+			await persistApifyWebhookPayload(ctx, event);
+		} catch (error) {
+			console.warn('Failed to persist Apify webhook resource to database:', error);
+		}
 		return { success: true, data: event };
 	},
 };
