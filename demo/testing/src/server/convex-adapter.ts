@@ -22,6 +22,19 @@ import type {
 	TypedEntity,
 } from 'corsair/orm';
 
+function sanitizeForConvex(value: unknown): unknown {
+	if (value instanceof Date) return value.toISOString();
+	if (Array.isArray(value)) return value.map(sanitizeForConvex);
+	if (value !== null && typeof value === 'object') {
+		const result: Record<string, unknown> = {};
+		for (const [k, v] of Object.entries(value as Record<string, unknown>)) {
+			result[k] = sanitizeForConvex(v);
+		}
+		return result;
+	}
+	return value;
+}
+
 function ref<T extends 'query' | 'mutation'>(
 	type: T,
 	name: string,
@@ -369,7 +382,7 @@ export class ConvexDatabaseAdapter implements CorsairDatabaseAdapter {
 			}) => {
 				const doc = await client.mutation(
 					ref('mutation', 'entities:upsertByEntityId'),
-					options,
+					{ ...options, data: sanitizeForConvex(options.data) },
 				);
 				return toRow<CorsairEntity>(doc)!;
 			},
@@ -663,7 +676,7 @@ export class ConvexDatabaseAdapter implements CorsairDatabaseAdapter {
 						entityType: entityTypeName,
 						entityId,
 						version,
-						data,
+						data: sanitizeForConvex(data),
 					},
 				);
 				return parseData(doc)!;
