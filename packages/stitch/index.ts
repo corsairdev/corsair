@@ -1,9 +1,20 @@
+/**
+ * This is the main entry point for the Stitch plugin.
+ * It defines the plugin structure, endpoints, and configuration options.
+ *
+ * Note on Webhooks:
+ * Currently, the Stitch API does not support webhooks. The `pluginWebhookMatcher`
+ * returns `false` to indicate that no incoming requests should be treated as webhooks
+ * for this plugin. This can be revisited if the Stitch API adds webhook support in the future.
+ */
+
 import type {
   CorsairEndpoint,
   CorsairPlugin,
   CorsairPluginContext,
   KeyBuilderContext,
   RequiredPluginEndpointMeta,
+  RawWebhookRequest,
 } from 'corsair/core';
 import type { AuthTypes, PickAuth } from 'corsair/core';
 import { Projects, Screens, DesignSystems } from './endpoints';
@@ -107,6 +118,9 @@ export function stitch<const T extends StitchPluginOptions>(
     webhooks: {},
     endpointMeta: stitchEndpointMeta,
     errorHandlers: errorHandlers,
+    pluginWebhookMatcher: (_request: RawWebhookRequest) => {
+      return false;
+    },
     keyBuilder: async (ctx: StitchKeyBuilderContext) => {
       if (options.key) return options.key;
       const res = await ctx.keys.get_api_key();

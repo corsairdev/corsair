@@ -1,3 +1,12 @@
+/**
+ * This file defines the database schemas for Stitch entities using Zod.
+ * It ensures that data persisted to or retrieved from the database follows the expected structure.
+ *
+ * Note on Type Safety:
+ * Some fields use `z.unknown()` (previously `z.any()`) for complex, highly dynamic objects like design tokens
+ * where the structure is not strictly defined by the API or can vary significantly between projects.
+ */
+
 import { z } from 'zod';
 
 export const StitchProjectSchema = z.object({
@@ -24,7 +33,7 @@ export type StitchScreen = z.infer<typeof StitchScreenSchema>;
 export const StitchDesignSystemSchema = z.object({
   id: z.string().describe('Asset ID of the design system'),
   projectId: z.string().optional().describe('Associated project ID, if any'),
-  config: z.record(z.any()).describe('The design tokens and configuration'),
+  config: z.record(z.unknown()).describe('The design tokens and configuration'),
   createdAt: z.string().optional(),
   updatedAt: z.string().optional(),
 });
