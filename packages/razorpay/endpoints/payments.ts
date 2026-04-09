@@ -40,7 +40,9 @@ export const list: RazorpayEndpoints['paymentsList'] = async (ctx, input) => {
 
 	if (ctx.db.payments) {
 		try {
-			for (const payment of result.items) {
+	if (ctx.db.payments) {
+		for (const payment of result.items) {
+			try {
 				await ctx.db.payments.upsertByEntityId(payment.id, {
 					...payment,
 					// created_at is a Unix timestamp in seconds; multiply by 1000 for ms
@@ -48,10 +50,11 @@ export const list: RazorpayEndpoints['paymentsList'] = async (ctx, input) => {
 						? new Date(payment.created_at * 1000)
 						: undefined,
 				});
+			} catch (error) {
+				console.warn('Failed to save Razorpay payment to database:', error);
 			}
-		} catch (error) {
-			console.warn('Failed to save Razorpay payments to database:', error);
 		}
+	}
 	}
 
 	await logEventFromContext(
