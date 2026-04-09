@@ -1,16 +1,14 @@
-import { ConvexHttpClient } from 'convex/browser';
-import { type FunctionReference, makeFunctionReference } from 'convex/server';
 import type { ZodTypeAny, z } from 'zod';
+import { generateUUID } from '../../core/utils';
 import type {
-	CorsairDatabaseAdapter,
-	CorsairPermissionOps,
-	CorsairIntegration,
 	CorsairAccount,
 	CorsairEntity,
 	CorsairEvent,
+	CorsairIntegration,
 	CorsairPermission,
 	CorsairPermissionInsert,
-} from 'corsair/db';
+} from '../index';
+import type { CorsairDatabaseAdapter, CorsairPermissionOps } from '../adapter';
 import type {
 	CorsairOrm,
 	CorsairTableClient,
@@ -20,9 +18,17 @@ import type {
 	CorsairEventsClient,
 	PluginEntityClient,
 	TypedEntity,
-} from 'corsair/orm';
+} from '../orm';
 
-function sanitizeForConvex(value: unknown): unknown {
+// ---------------------------------------------------------------------------
+// Convex-specific helpers
+// ---------------------------------------------------------------------------
+
+/**
+ * Recursively converts Date objects to ISO strings for Convex storage.
+ * Convex doesn't support native Date objects.
+ */
+export function sanitizeForConvex(value: unknown): unknown {
 	if (value instanceof Date) return value.toISOString();
 	if (Array.isArray(value)) return value.map(sanitizeForConvex);
 	if (value !== null && typeof value === 'object') {
@@ -35,17 +41,6 @@ function sanitizeForConvex(value: unknown): unknown {
 	return value;
 }
 
-function ref<T extends 'query' | 'mutation'>(
-	type: T,
-	name: string,
-): FunctionReference<T, 'public', any, any> {
-	return makeFunctionReference<T>(name);
-}
-
-function generateUUID(): string {
-	return crypto.randomUUID();
-}
-
 function dateToEpoch(d: Date | undefined): number {
 	return d ? d.getTime() : Date.now();
 }
@@ -55,7 +50,7 @@ function epochToDate(epoch: number): Date {
 }
 
 /**
- * Strips Convex internal fields (_id, _creationTime) from a document
+ * Strips Convex internal fields (`_id`, `_creationTime`) from a document
  * and converts epoch timestamps back to Date objects.
  */
 function toRow<T>(doc: Record<string, unknown> | null): T | null {
@@ -89,11 +84,18 @@ function toRows<T>(docs: Record<string, unknown>[]): T[] {
 	return docs.map((d) => toRow<T>(d)!).filter(Boolean);
 }
 
-function whereToConvex(where: Record<string, unknown>): Record<string, unknown> {
+function whereToConvex(
+	where: Record<string, unknown>,
+): Record<string, unknown> {
 	const result: Record<string, unknown> = {};
 	for (const [key, val] of Object.entries(where)) {
 		if (val === undefined) continue;
-		if (typeof val === 'object' && val !== null && !Array.isArray(val) && !(val instanceof Date)) {
+		if (
+			typeof val === 'object' &&
+			val !== null &&
+			!Array.isArray(val) &&
+			!(val instanceof Date)
+		) {
 			const obj = val as { in?: unknown[]; like?: string };
 			if ('in' in obj) {
 				result[key] = val;
@@ -109,14 +111,72 @@ function whereToConvex(where: Record<string, unknown>): Record<string, unknown> 
 	return result;
 }
 
+// ---------------------------------------------------------------------------
+// Convex client abstraction
+// ---------------------------------------------------------------------------
+
+/**
+ * Minimal interface for a Convex HTTP client.
+ * This avoids a hard dependency on the `convex` package — any object that
+ * satisfies this shape (e.g. `ConvexHttpClient`) works.
+ */
+export interface ConvexClient {
+	query(functionReference: any, ...args: any[]): Promise<any>;
+	mutation(functionReference: any, ...args: any[]): Promise<any>;
+}
+
+/**
+ * Function to create a typed function reference for Convex.
+ * Users must supply this from their Convex setup (e.g. `makeFunctionReference`).
+ */
+export type ConvexFunctionRefFactory = <T extends 'query' | 'mutation'>(
+	type: T,
+	name: string,
+) => unknown;
+
+// ---------------------------------------------------------------------------
+// Adapter options
+// ---------------------------------------------------------------------------
+
+export type ConvexDatabaseAdapterOptions = {
+	/** A Convex HTTP client instance (e.g. `new ConvexHttpClient(url)`). */
+	client: ConvexClient;
+	/**
+	 * Factory to create typed function references.
+	 * Default: uses `makeFunctionReference` from `convex/server`.
+	 */
+	makeFunctionRef?: ConvexFunctionRefFactory;
+};
+
+// ---------------------------------------------------------------------------
+// Adapter implementation
+// ---------------------------------------------------------------------------
+
+/**
+ * Convex implementation of `CorsairDatabaseAdapter`.
+ *
+ * Talks to Convex backend functions via a `ConvexHttpClient` (or any object
+ * matching `ConvexClient`). Each table operation maps to a Convex query or
+ * mutation named `{tableName}:{methodName}`.
+ */
 export class ConvexDatabaseAdapter implements CorsairDatabaseAdapter {
-	private client: ConvexHttpClient;
+	private client: ConvexClient;
+	private ref: (type: 'query' | 'mutation', name: string) => any;
 	private _orm: CorsairOrm | undefined;
 	private _permissions: CorsairPermissionOps | undefined;
 
-	constructor(convexUrl: string) {
-		this.client = new ConvexHttpClient(convexUrl);
+	constructor(options: ConvexDatabaseAdapterOptions) {
+		this.client = options.client;
+		if (options.makeFunctionRef) {
+			this.ref = options.makeFunctionRef;
+		} else {
+			// Lazy-import fallback: build simple string references.
+			// The Convex runtime resolves `"tableName:method"` strings.
+			this.ref = (_type: string, name: string) => name;
+		}
 	}
+
+	// -- CorsairDatabaseAdapter interface ------------------------------------
 
 	createEntityClient<DataSchema extends ZodTypeAny>(
 		getAccountId: () => Promise<string>,
@@ -124,7 +184,12 @@ export class ConvexDatabaseAdapter implements CorsairDatabaseAdapter {
 		version: string,
 		dataSchema: DataSchema,
 	): PluginEntityClient<DataSchema> {
-		return this.buildEntityClient(getAccountId, entityTypeName, version, dataSchema);
+		return this.buildEntityClient(
+			getAccountId,
+			entityTypeName,
+			version,
+			dataSchema,
+		);
 	}
 
 	get orm(): CorsairOrm {
@@ -141,6 +206,8 @@ export class ConvexDatabaseAdapter implements CorsairDatabaseAdapter {
 		return this._permissions;
 	}
 
+	// -- ORM ----------------------------------------------------------------
+
 	private buildOrm(): CorsairOrm {
 		return {
 			integrations: this.buildIntegrationsClient(),
@@ -152,13 +219,13 @@ export class ConvexDatabaseAdapter implements CorsairDatabaseAdapter {
 
 	private buildBaseClient<T>(tableName: string): CorsairTableClient<T> {
 		const client = this.client;
+		const ref = this.ref.bind(this);
 
 		return {
 			findById: async (id: string) => {
-				const doc = await client.query(
-					ref('query', `${tableName}:findById`),
-					{ id },
-				);
+				const doc = await client.query(ref('query', `${tableName}:findById`), {
+					id,
+				});
 				return toRow<T>(doc);
 			},
 			findOne: async (where: Record<string, unknown>) => {
@@ -168,11 +235,17 @@ export class ConvexDatabaseAdapter implements CorsairDatabaseAdapter {
 				);
 				return toRow<T>(doc);
 			},
-			findMany: async (options?: { where?: Record<string, unknown>; limit?: number; offset?: number }) => {
+			findMany: async (options?: {
+				where?: Record<string, unknown>;
+				limit?: number;
+				offset?: number;
+			}) => {
 				const docs = await client.query(
 					ref('query', `${tableName}:findMany`),
 					{
-						where: options?.where ? whereToConvex(options.where) : undefined,
+						where: options?.where
+							? whereToConvex(options.where)
+							: undefined,
 						limit: options?.limit,
 						offset: options?.offset,
 					},
@@ -200,7 +273,10 @@ export class ConvexDatabaseAdapter implements CorsairDatabaseAdapter {
 				);
 				return toRow<T>(doc);
 			},
-			updateMany: async (where: Record<string, unknown>, data: Record<string, unknown>) => {
+			updateMany: async (
+				where: Record<string, unknown>,
+				data: Record<string, unknown>,
+			) => {
 				return client.mutation(
 					ref('mutation', `${tableName}:updateMany`),
 					{ where: whereToConvex(where), data },
@@ -227,9 +303,12 @@ export class ConvexDatabaseAdapter implements CorsairDatabaseAdapter {
 		};
 	}
 
+	// -- Table-specific clients ---------------------------------------------
+
 	private buildIntegrationsClient(): CorsairIntegrationsClient {
 		const base = this.buildBaseClient<CorsairIntegration>('integrations');
 		const client = this.client;
+		const ref = this.ref.bind(this);
 
 		return {
 			...base,
@@ -240,7 +319,10 @@ export class ConvexDatabaseAdapter implements CorsairDatabaseAdapter {
 				);
 				return toRow<CorsairIntegration>(doc);
 			},
-			upsertByName: async (name: string, data: Record<string, unknown>) => {
+			upsertByName: async (
+				name: string,
+				data: Record<string, unknown>,
+			) => {
 				const now = Date.now();
 				const doc = await client.mutation(
 					ref('mutation', 'integrations:upsertByName'),
@@ -262,6 +344,7 @@ export class ConvexDatabaseAdapter implements CorsairDatabaseAdapter {
 	private buildAccountsClient(): CorsairAccountsClient {
 		const base = this.buildBaseClient<CorsairAccount>('accounts');
 		const client = this.client;
+		const ref = this.ref.bind(this);
 
 		return {
 			...base,
@@ -286,7 +369,11 @@ export class ConvexDatabaseAdapter implements CorsairDatabaseAdapter {
 			) => {
 				const docs = await client.query(
 					ref('query', 'accounts:listByTenant'),
-					{ tenantId, limit: options?.limit, offset: options?.offset },
+					{
+						tenantId,
+						limit: options?.limit,
+						offset: options?.offset,
+					},
 				);
 				return toRows<CorsairAccount>(docs);
 			},
@@ -317,6 +404,7 @@ export class ConvexDatabaseAdapter implements CorsairDatabaseAdapter {
 	private buildEntitiesClient(): CorsairEntitiesClient {
 		const base = this.buildBaseClient<CorsairEntity>('entities');
 		const client = this.client;
+		const ref = this.ref.bind(this);
 
 		return {
 			...base,
@@ -402,6 +490,7 @@ export class ConvexDatabaseAdapter implements CorsairDatabaseAdapter {
 	private buildEventsClient(): CorsairEventsClient {
 		const base = this.buildBaseClient<CorsairEvent>('events');
 		const client = this.client;
+		const ref = this.ref.bind(this);
 
 		return {
 			...base,
@@ -411,13 +500,21 @@ export class ConvexDatabaseAdapter implements CorsairDatabaseAdapter {
 			) => {
 				const docs = await client.query(
 					ref('query', 'events:listByAccount'),
-					{ accountId, limit: options?.limit, offset: options?.offset },
+					{
+						accountId,
+						limit: options?.limit,
+						offset: options?.offset,
+					},
 				);
 				return toRows<CorsairEvent>(docs);
 			},
 			listByStatus: async (
 				status: string,
-				options?: { accountId?: string; limit?: number; offset?: number },
+				options?: {
+					accountId?: string;
+					limit?: number;
+					offset?: number;
+				},
 			) => {
 				const docs = await client.query(
 					ref('query', 'events:listByStatus'),
@@ -444,10 +541,7 @@ export class ConvexDatabaseAdapter implements CorsairDatabaseAdapter {
 				);
 				return toRows<CorsairEvent>(docs);
 			},
-			updateStatus: async (
-				id: string,
-				status: string,
-			) => {
+			updateStatus: async (id: string, status: string) => {
 				const doc = await client.mutation(
 					ref('mutation', 'events:update'),
 					{ id, data: { status } },
@@ -457,8 +551,11 @@ export class ConvexDatabaseAdapter implements CorsairDatabaseAdapter {
 		};
 	}
 
+	// -- Permissions --------------------------------------------------------
+
 	private buildPermissionOps(): CorsairPermissionOps {
 		const client = this.client;
+		const ref = this.ref.bind(this);
 
 		return {
 			findById: async (id: string) => {
@@ -476,7 +573,6 @@ export class ConvexDatabaseAdapter implements CorsairDatabaseAdapter {
 				return toRow<CorsairPermission>(doc) ?? undefined;
 			},
 			create: async (data: CorsairPermissionInsert) => {
-				const now = Date.now();
 				const row = {
 					id: data.id ?? generateUUID(),
 					created_at: dateToEpoch(data.created_at),
@@ -528,6 +624,8 @@ export class ConvexDatabaseAdapter implements CorsairDatabaseAdapter {
 		};
 	}
 
+	// -- Plugin entity client -----------------------------------------------
+
 	private buildEntityClient<DataSchema extends ZodTypeAny>(
 		getAccountId: () => Promise<string>,
 		entityTypeName: string,
@@ -536,14 +634,19 @@ export class ConvexDatabaseAdapter implements CorsairDatabaseAdapter {
 	): PluginEntityClient<DataSchema> {
 		type Entity = TypedEntity<DataSchema>;
 		const client = this.client;
+		const ref = this.ref.bind(this);
 
-		const parseData = (doc: Record<string, unknown> | null): Entity | null => {
+		const parseData = (
+			doc: Record<string, unknown> | null,
+		): Entity | null => {
 			if (!doc) return null;
 			const row = toRow<CorsairEntity>(doc);
 			if (!row) return null;
 			let data = row.data;
 			if (typeof data === 'string') {
-				try { data = JSON.parse(data); } catch {}
+				try {
+					data = JSON.parse(data);
+				} catch {}
 			}
 			const parsed = dataSchema.safeParse(data);
 			return {
@@ -603,12 +706,16 @@ export class ConvexDatabaseAdapter implements CorsairDatabaseAdapter {
 			},
 			search: async (options: Record<string, unknown>) => {
 				const accountId = await resolveAccountId();
-				const entityId = options.entity_id as string | { contains?: string; startsWith?: string } | undefined;
+				const entityId = options.entity_id as
+					| string
+					| { contains?: string; startsWith?: string }
+					| undefined;
 				let queryStr = '';
 				if (typeof entityId === 'string') {
 					queryStr = entityId;
 				} else if (entityId && typeof entityId === 'object') {
-					queryStr = entityId.contains ?? entityId.startsWith ?? '';
+					queryStr =
+						entityId.contains ?? entityId.startsWith ?? '';
 				}
 				if (queryStr) {
 					const docs = await client.query(
@@ -636,27 +743,89 @@ export class ConvexDatabaseAdapter implements CorsairDatabaseAdapter {
 				if (options.data && typeof options.data === 'object') {
 					const dataFilter = options.data as Record<string, unknown>;
 					results = results.filter((entity) => {
-						for (const [key, filterVal] of Object.entries(dataFilter)) {
-							const entityVal = (entity.data as Record<string, unknown>)?.[key];
-							if (typeof filterVal === 'object' && filterVal !== null) {
-								const filter = filterVal as Record<string, unknown>;
-								if ('contains' in filter && typeof entityVal === 'string') {
-									if (!entityVal.toLowerCase().includes((filter.contains as string).toLowerCase())) return false;
+						for (const [key, filterVal] of Object.entries(
+							dataFilter,
+						)) {
+							const entityVal = (
+								entity.data as Record<string, unknown>
+							)?.[key];
+							if (
+								typeof filterVal === 'object' &&
+								filterVal !== null
+							) {
+								const filter = filterVal as Record<
+									string,
+									unknown
+								>;
+								if (
+									'contains' in filter &&
+									typeof entityVal === 'string'
+								) {
+									if (
+										!entityVal
+											.toLowerCase()
+											.includes(
+												(
+													filter.contains as string
+												).toLowerCase(),
+											)
+									)
+										return false;
 								}
-								if ('startsWith' in filter && typeof entityVal === 'string') {
-									if (!entityVal.toLowerCase().startsWith((filter.startsWith as string).toLowerCase())) return false;
+								if (
+									'startsWith' in filter &&
+									typeof entityVal === 'string'
+								) {
+									if (
+										!entityVal
+											.toLowerCase()
+											.startsWith(
+												(
+													filter.startsWith as string
+												).toLowerCase(),
+											)
+									)
+										return false;
 								}
-								if ('gt' in filter && typeof entityVal === 'number') {
-									if (entityVal <= (filter.gt as number)) return false;
+								if (
+									'gt' in filter &&
+									typeof entityVal === 'number'
+								) {
+									if (
+										entityVal <=
+										(filter.gt as number)
+									)
+										return false;
 								}
-								if ('gte' in filter && typeof entityVal === 'number') {
-									if (entityVal < (filter.gte as number)) return false;
+								if (
+									'gte' in filter &&
+									typeof entityVal === 'number'
+								) {
+									if (
+										entityVal <
+										(filter.gte as number)
+									)
+										return false;
 								}
-								if ('lt' in filter && typeof entityVal === 'number') {
-									if (entityVal >= (filter.lt as number)) return false;
+								if (
+									'lt' in filter &&
+									typeof entityVal === 'number'
+								) {
+									if (
+										entityVal >=
+										(filter.lt as number)
+									)
+										return false;
 								}
-								if ('lte' in filter && typeof entityVal === 'number') {
-									if (entityVal > (filter.lte as number)) return false;
+								if (
+									'lte' in filter &&
+									typeof entityVal === 'number'
+								) {
+									if (
+										entityVal >
+										(filter.lte as number)
+									)
+										return false;
 								}
 							} else {
 								if (entityVal !== filterVal) return false;
@@ -667,7 +836,10 @@ export class ConvexDatabaseAdapter implements CorsairDatabaseAdapter {
 				}
 				return results;
 			},
-			upsertByEntityId: async (entityId: string, data: z.input<DataSchema>) => {
+			upsertByEntityId: async (
+				entityId: string,
+				data: z.input<DataSchema>,
+			) => {
 				const accountId = await resolveAccountId();
 				const doc = await client.mutation(
 					ref('mutation', 'entities:upsertByEntityId'),
@@ -700,15 +872,12 @@ export class ConvexDatabaseAdapter implements CorsairDatabaseAdapter {
 			},
 			count: async () => {
 				const accountId = await resolveAccountId();
-				return client.query(
-					ref('query', 'entities:count'),
-					{
-						where: {
-							account_id: accountId,
-							entity_type: entityTypeName,
-						},
+				return client.query(ref('query', 'entities:count'), {
+					where: {
+						account_id: accountId,
+						entity_type: entityTypeName,
 					},
-				);
+				});
 			},
 		};
 	}
