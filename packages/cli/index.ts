@@ -502,15 +502,21 @@ function parseAuthArgs(args: string[]): {
 	tenantId?: string;
 	code?: string;
 	credentials?: boolean;
+	webhook?: boolean;
 } {
 	let pluginId: string | undefined;
 	let tenantId: string | undefined;
 	let code: string | undefined;
 	let credentials = false;
+	let webhook = false;
 
 	for (const arg of args) {
 		if (arg === '--credentials') {
 			credentials = true;
+			continue;
+		}
+		if (arg === '--webhook') {
+			webhook = true;
 			continue;
 		}
 
@@ -533,7 +539,7 @@ function parseAuthArgs(args: string[]): {
 		}
 	}
 
-	return { pluginId, tenantId, code, credentials };
+	return { pluginId, tenantId, code, credentials, webhook };
 }
 
 function parseSetupArgs(args: string[]): {
@@ -634,6 +640,8 @@ function printHelp() {
 		'  pnpm corsair auth --plugin=<id>                 Start OAuth flow',
 		'  pnpm corsair auth --plugin=<id> --code=<code>   Exchange OAuth code for tokens',
 		'  pnpm corsair auth --plugin=<id> --credentials   Show credential status',
+		'  pnpm corsair auth --plugin=<id> --webhook       Set up webhook subscription',
+		'    Supported plugins: outlook, sharepoint, teams, onedrive, gmail, googledrive, googlecalendar, googlesheets',
 		'  pnpm corsair list [--plugin=<id>] [--type=api|webhooks|db]  List endpoint paths (tip: pipe to grep to filter)',
 		'  pnpm corsair schema <path>                      Show schema for an endpoint/webhook/DB entity',
 		'  pnpm corsair script --code "<js>" [--tenant=<id>]',
@@ -670,29 +678,71 @@ async function main() {
 	}
 
 	if (command === 'auth') {
-		const { runAuth } = await import('./auth');
 		const authArgs = parseAuthArgs(args.slice(1));
+
+		if (authArgs.webhook) {
+			const pluginId = authArgs.pluginId;
+			if (!pluginId) {
+				console.error('[#corsair]: --webhook requires --plugin=<id>.');
+				process.exit(1);
+			}
+			if (pluginId === 'outlook') {
+				const { runOutlookSubscribe } = await import('./subscribe-microsoft');
+				await runOutlookSubscribe({ cwd });
+			} else if (pluginId === 'sharepoint') {
+				const { runSharepointSubscribe } = await import(
+					'./subscribe-microsoft'
+				);
+				await runSharepointSubscribe({ cwd });
+			} else if (pluginId === 'teams') {
+				const { runTeamsSubscribe } = await import('./subscribe-microsoft');
+				await runTeamsSubscribe({ cwd });
+			} else if (pluginId === 'onedrive') {
+				const { runOnedriveSubscribe } = await import('./subscribe-microsoft');
+				await runOnedriveSubscribe({ cwd });
+			} else if (
+				['gmail', 'googledrive', 'googlecalendar', 'googlesheets'].includes(
+					pluginId,
+				)
+			) {
+				const { runGoogleSubscribe } = await import('./subscribe-google');
+				await runGoogleSubscribe({ cwd, pluginId });
+			} else {
+				console.error(
+					`[#corsair]: Webhook subscription not supported for plugin '${pluginId}'.`,
+				);
+				console.error(
+					'[#corsair]: Supported: outlook, sharepoint, teams, onedrive, gmail, googledrive, googlecalendar, googlesheets',
+				);
+				process.exit(1);
+			}
+			return;
+		}
+
+		const { runAuth } = await import('./auth');
 		await runAuth({ cwd, ...authArgs });
 		return;
 	}
 
 	if (command === 'watch-renew') {
-		const { runWatchRenew } = await import('./watch-renew');
-		await runWatchRenew({ cwd });
+		const { runGoogleSubscribe } = await import('./subscribe-google');
+		await runGoogleSubscribe({ cwd });
 		return;
 	}
 
 	if (command === 'sharepoint-subscribe') {
-		const { runSharepointSubscribe } = await import('./sharepoint-subscribe');
+		const { runSharepointSubscribe } = await import('./subscribe-microsoft');
 		await runSharepointSubscribe({ cwd });
+		return;
 	}
+
 	if (command === 'subscribe') {
 		const pluginArg = args.slice(1).find((a) => a.startsWith('--plugin='));
 		const pluginId = pluginArg
 			? pluginArg.slice('--plugin='.length)
 			: undefined;
 		if (pluginId === 'outlook') {
-			const { runOutlookSubscribe } = await import('./subscribe-outlook');
+			const { runOutlookSubscribe } = await import('./subscribe-microsoft');
 			await runOutlookSubscribe({ cwd });
 			return;
 		}
@@ -703,7 +753,7 @@ async function main() {
 	}
 
 	if (command === 'teams-subscribe') {
-		const { runTeamsSubscribe } = await import('./watch-renew');
+		const { runTeamsSubscribe } = await import('./subscribe-microsoft');
 		await runTeamsSubscribe({ cwd });
 		return;
 	}
