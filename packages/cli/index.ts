@@ -655,6 +655,10 @@ async function main() {
 		return;
 	}
 
+	if (command === 'sharepoint-subscribe') {
+		const { runSharepointSubscribe } = await import('./sharepoint-subscribe');
+		await runSharepointSubscribe({ cwd });
+	}
 	if (command === 'subscribe') {
 		const pluginArg = args.slice(1).find((a) => a.startsWith('--plugin='));
 		const pluginId = pluginArg ? pluginArg.slice('--plugin='.length) : undefined;
