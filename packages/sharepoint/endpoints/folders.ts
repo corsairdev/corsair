@@ -3,7 +3,10 @@ import type { SharepointEndpoints } from '..';
 import { makeGraphRequest, resolveSiteGuid } from '../client';
 import type { SharepointEndpointOutputs } from './types';
 
-export const create: SharepointEndpoints['foldersCreate'] = async (ctx, input) => {
+export const create: SharepointEndpoints['foldersCreate'] = async (
+	ctx,
+	input,
+) => {
 	const siteId = await resolveSiteGuid(
 		(await ctx.keys.get_site_id()) ?? ctx.options?.siteId ?? '',
 		ctx.key,
@@ -17,14 +20,16 @@ export const create: SharepointEndpoints['foldersCreate'] = async (ctx, input) =
 		? `/sites/${siteId}/drive/root:/${parentPath}:/children`
 		: `/sites/${siteId}/drive/root/children`;
 
-	const result = await makeGraphRequest<SharepointEndpointOutputs['foldersCreate']>(
-		parentEndpoint,
-		ctx.key,
-		{
-			method: 'POST',
-			body: { name: folderName, folder: {}, '@microsoft.graph.conflictBehavior': 'rename' },
+	const result = await makeGraphRequest<
+		SharepointEndpointOutputs['foldersCreate']
+	>(parentEndpoint, ctx.key, {
+		method: 'POST',
+		body: {
+			name: folderName,
+			folder: {},
+			'@microsoft.graph.conflictBehavior': 'rename',
 		},
-	);
+	});
 
 	if (result.id && ctx.db.folders) {
 		try {
@@ -41,7 +46,12 @@ export const create: SharepointEndpoints['foldersCreate'] = async (ctx, input) =
 		}
 	}
 
-	await logEventFromContext(ctx, 'sharepoint.folders.create', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'sharepoint.folders.create',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
@@ -52,11 +62,9 @@ export const get: SharepointEndpoints['foldersGet'] = async (ctx, input) => {
 	);
 	const drivePath = input.server_relative_url.replace(/^\/+/, '');
 
-	const result = await makeGraphRequest<SharepointEndpointOutputs['foldersGet']>(
-		`/sites/${siteId}/drive/root:/${drivePath}`,
-		ctx.key,
-		{ method: 'GET' },
-	);
+	const result = await makeGraphRequest<
+		SharepointEndpointOutputs['foldersGet']
+	>(`/sites/${siteId}/drive/root:/${drivePath}`, ctx.key, { method: 'GET' });
 
 	if (result.id && ctx.db.folders) {
 		try {
@@ -72,11 +80,19 @@ export const get: SharepointEndpoints['foldersGet'] = async (ctx, input) => {
 		}
 	}
 
-	await logEventFromContext(ctx, 'sharepoint.folders.get', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'sharepoint.folders.get',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
-export const getAll: SharepointEndpoints['foldersGetAll'] = async (ctx, input) => {
+export const getAll: SharepointEndpoints['foldersGetAll'] = async (
+	ctx,
+	input,
+) => {
 	const siteId = await resolveSiteGuid(
 		(await ctx.keys.get_site_id()) ?? ctx.options?.siteId ?? '',
 		ctx.key,
@@ -90,11 +106,9 @@ export const getAll: SharepointEndpoints['foldersGetAll'] = async (ctx, input) =
 		endpoint = `/sites/${siteId}/drive/root/children`;
 	}
 
-	const result = await makeGraphRequest<SharepointEndpointOutputs['foldersGetAll']>(
-		endpoint,
-		ctx.key,
-		{ method: 'GET', query: { $filter: 'folder ne null' } },
-	);
+	const result = await makeGraphRequest<
+		SharepointEndpointOutputs['foldersGetAll']
+	>(endpoint, ctx.key, { method: 'GET', query: { $filter: 'folder ne null' } });
 
 	if (result.value && ctx.db.folders) {
 		try {
@@ -114,46 +128,61 @@ export const getAll: SharepointEndpoints['foldersGetAll'] = async (ctx, input) =
 		}
 	}
 
-	await logEventFromContext(ctx, 'sharepoint.folders.getAll', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'sharepoint.folders.getAll',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
-export const listSubfolders: SharepointEndpoints['foldersListSubfolders'] = async (ctx, input) => {
-	const siteId = await resolveSiteGuid(
-		(await ctx.keys.get_site_id()) ?? ctx.options?.siteId ?? '',
-		ctx.key,
-	);
-	const drivePath = input.server_relative_url.replace(/^\/+/, '');
+export const listSubfolders: SharepointEndpoints['foldersListSubfolders'] =
+	async (ctx, input) => {
+		const siteId = await resolveSiteGuid(
+			(await ctx.keys.get_site_id()) ?? ctx.options?.siteId ?? '',
+			ctx.key,
+		);
+		const drivePath = input.server_relative_url.replace(/^\/+/, '');
 
-	const result = await makeGraphRequest<SharepointEndpointOutputs['foldersListSubfolders']>(
-		`/sites/${siteId}/drive/root:/${drivePath}:/children`,
-		ctx.key,
-		{ method: 'GET', query: { $filter: 'folder ne null' } },
-	);
+		const result = await makeGraphRequest<
+			SharepointEndpointOutputs['foldersListSubfolders']
+		>(`/sites/${siteId}/drive/root:/${drivePath}:/children`, ctx.key, {
+			method: 'GET',
+			query: { $filter: 'folder ne null' },
+		});
 
-	if (result.value && ctx.db.folders) {
-		try {
-			for (const folder of result.value) {
-				if (folder.id) {
-					await ctx.db.folders.upsertByEntityId(folder.id, {
-						id: folder.id,
-						name: folder.name,
-						serverRelativeUrl: folder.webUrl,
-						timeCreated: folder.createdDateTime,
-						timeLastModified: folder.lastModifiedDateTime,
-					});
+		if (result.value && ctx.db.folders) {
+			try {
+				for (const folder of result.value) {
+					if (folder.id) {
+						await ctx.db.folders.upsertByEntityId(folder.id, {
+							id: folder.id,
+							name: folder.name,
+							serverRelativeUrl: folder.webUrl,
+							timeCreated: folder.createdDateTime,
+							timeLastModified: folder.lastModifiedDateTime,
+						});
+					}
 				}
+			} catch (error) {
+				console.warn('Failed to save subfolders to database:', error);
 			}
-		} catch (error) {
-			console.warn('Failed to save subfolders to database:', error);
 		}
-	}
 
-	await logEventFromContext(ctx, 'sharepoint.folders.listSubfolders', { ...input }, 'completed');
-	return result;
-};
+		await logEventFromContext(
+			ctx,
+			'sharepoint.folders.listSubfolders',
+			{ ...input },
+			'completed',
+		);
+		return result;
+	};
 
-export const deleteFolder: SharepointEndpoints['foldersDelete'] = async (ctx, input) => {
+export const deleteFolder: SharepointEndpoints['foldersDelete'] = async (
+	ctx,
+	input,
+) => {
 	const siteId = await resolveSiteGuid(
 		(await ctx.keys.get_site_id()) ?? ctx.options?.siteId ?? '',
 		ctx.key,
@@ -181,11 +210,19 @@ export const deleteFolder: SharepointEndpoints['foldersDelete'] = async (ctx, in
 		}
 	}
 
-	await logEventFromContext(ctx, 'sharepoint.folders.delete', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'sharepoint.folders.delete',
+		{ ...input },
+		'completed',
+	);
 	return { success: true };
 };
 
-export const rename: SharepointEndpoints['foldersRename'] = async (ctx, input) => {
+export const rename: SharepointEndpoints['foldersRename'] = async (
+	ctx,
+	input,
+) => {
 	const siteId = await resolveSiteGuid(
 		(await ctx.keys.get_site_id()) ?? ctx.options?.siteId ?? '',
 		ctx.key,
@@ -217,6 +254,11 @@ export const rename: SharepointEndpoints['foldersRename'] = async (ctx, input) =
 		}
 	}
 
-	await logEventFromContext(ctx, 'sharepoint.folders.rename', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'sharepoint.folders.rename',
+		{ ...input },
+		'completed',
+	);
 	return { success: true, new_server_relative_url: newServerRelativeUrl };
 };

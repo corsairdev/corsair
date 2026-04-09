@@ -1,9 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import type { RazorpayWebhooks } from '..';
-import {
-	createRazorpayMatch,
-	verifyRazorpayWebhookSignature,
-} from './types';
+import { createRazorpayMatch, verifyRazorpayWebhookSignature } from './types';
 
 export const paid: RazorpayWebhooks['orderPaid'] = {
 	match: createRazorpayMatch('order.paid'),
@@ -32,7 +29,10 @@ export const paid: RazorpayWebhooks['orderPaid'] = {
 						: undefined,
 				});
 			} catch (error) {
-				console.warn('Failed to save Razorpay order (paid) to database:', error);
+				console.warn(
+					'Failed to save Razorpay order (paid) to database:',
+					error,
+				);
 			}
 		}
 

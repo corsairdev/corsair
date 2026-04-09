@@ -27,16 +27,22 @@ export const getJSON: FigmaEndpoints['filesGetJSON'] = async (ctx, input) => {
 		}
 	}
 
-	await logEventFromContext(ctx, 'figma.files.getJSON', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'figma.files.getJSON',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
-export const getMetadata: FigmaEndpoints['filesGetMetadata'] = async (ctx, input) => {
-	const result = await makeFigmaRequest<FigmaEndpointOutputs['filesGetMetadata']>(
-		`v1/files/${input.file_key}`,
-		ctx.key,
-		{ method: 'GET' },
-	);
+export const getMetadata: FigmaEndpoints['filesGetMetadata'] = async (
+	ctx,
+	input,
+) => {
+	const result = await makeFigmaRequest<
+		FigmaEndpointOutputs['filesGetMetadata']
+	>(`v1/files/${input.file_key}`, ctx.key, { method: 'GET' });
 
 	if (ctx.db.fileMetadata) {
 		try {
@@ -49,7 +55,12 @@ export const getMetadata: FigmaEndpoints['filesGetMetadata'] = async (ctx, input
 		}
 	}
 
-	await logEventFromContext(ctx, 'figma.files.getMetadata', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'figma.files.getMetadata',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
@@ -61,39 +72,62 @@ export const getNodes: FigmaEndpoints['filesGetNodes'] = async (ctx, input) => {
 		{ method: 'GET', query: { ...queryParams } },
 	);
 
-	await logEventFromContext(ctx, 'figma.files.getNodes', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'figma.files.getNodes',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
-export const getStyles: FigmaEndpoints['filesGetStyles'] = async (ctx, input) => {
+export const getStyles: FigmaEndpoints['filesGetStyles'] = async (
+	ctx,
+	input,
+) => {
 	const result = await makeFigmaRequest<FigmaEndpointOutputs['filesGetStyles']>(
 		`v1/files/${input.file_key}/styles`,
 		ctx.key,
 		{ method: 'GET' },
 	);
 
-	await logEventFromContext(ctx, 'figma.files.getStyles', { ...input }, 'completed');
-	return result;
-};
-
-export const getImageFills: FigmaEndpoints['filesGetImageFills'] = async (ctx, input) => {
-	const result = await makeFigmaRequest<FigmaEndpointOutputs['filesGetImageFills']>(
-		`v1/files/${input.file_key}/images`,
-		ctx.key,
-		{ method: 'GET' },
+	await logEventFromContext(
+		ctx,
+		'figma.files.getStyles',
+		{ ...input },
+		'completed',
 	);
-
-	await logEventFromContext(ctx, 'figma.files.getImageFills', { ...input }, 'completed');
 	return result;
 };
 
-export const getVersions: FigmaEndpoints['filesGetVersions'] = async (ctx, input) => {
+export const getImageFills: FigmaEndpoints['filesGetImageFills'] = async (
+	ctx,
+	input,
+) => {
+	const result = await makeFigmaRequest<
+		FigmaEndpointOutputs['filesGetImageFills']
+	>(`v1/files/${input.file_key}/images`, ctx.key, { method: 'GET' });
+
+	await logEventFromContext(
+		ctx,
+		'figma.files.getImageFills',
+		{ ...input },
+		'completed',
+	);
+	return result;
+};
+
+export const getVersions: FigmaEndpoints['filesGetVersions'] = async (
+	ctx,
+	input,
+) => {
 	const { file_key, ...queryParams } = input;
-	const result = await makeFigmaRequest<FigmaEndpointOutputs['filesGetVersions']>(
-		`v1/files/${file_key}/versions`,
-		ctx.key,
-		{ method: 'GET', query: { ...queryParams } },
-	);
+	const result = await makeFigmaRequest<
+		FigmaEndpointOutputs['filesGetVersions']
+	>(`v1/files/${file_key}/versions`, ctx.key, {
+		method: 'GET',
+		query: { ...queryParams },
+	});
 
 	if (result.versions && ctx.db.versions) {
 		try {
@@ -113,29 +147,47 @@ export const getVersions: FigmaEndpoints['filesGetVersions'] = async (ctx, input
 		}
 	}
 
-	await logEventFromContext(ctx, 'figma.files.getVersions', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'figma.files.getVersions',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
-export const renderImages: FigmaEndpoints['filesRenderImages'] = async (ctx, input) => {
+export const renderImages: FigmaEndpoints['filesRenderImages'] = async (
+	ctx,
+	input,
+) => {
 	const { file_key, ...queryParams } = input;
-	const result = await makeFigmaRequest<FigmaEndpointOutputs['filesRenderImages']>(
-		`v1/images/${file_key}`,
-		ctx.key,
-		{ method: 'GET', query: { ...queryParams } },
-	);
+	const result = await makeFigmaRequest<
+		FigmaEndpointOutputs['filesRenderImages']
+	>(`v1/images/${file_key}`, ctx.key, {
+		method: 'GET',
+		query: { ...queryParams },
+	});
 
-	await logEventFromContext(ctx, 'figma.files.renderImages', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'figma.files.renderImages',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
-export const getProjectFiles: FigmaEndpoints['filesGetProjectFiles'] = async (ctx, input) => {
+export const getProjectFiles: FigmaEndpoints['filesGetProjectFiles'] = async (
+	ctx,
+	input,
+) => {
 	const { project_id, ...queryParams } = input;
-	const result = await makeFigmaRequest<FigmaEndpointOutputs['filesGetProjectFiles']>(
-		`v1/projects/${project_id}/files`,
-		ctx.key,
-		{ method: 'GET', query: { ...queryParams } },
-	);
+	const result = await makeFigmaRequest<
+		FigmaEndpointOutputs['filesGetProjectFiles']
+	>(`v1/projects/${project_id}/files`, ctx.key, {
+		method: 'GET',
+		query: { ...queryParams },
+	});
 
 	if (result.files && ctx.db.fileMetadata) {
 		try {
@@ -152,6 +204,11 @@ export const getProjectFiles: FigmaEndpoints['filesGetProjectFiles'] = async (ct
 		}
 	}
 
-	await logEventFromContext(ctx, 'figma.files.getProjectFiles', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'figma.files.getProjectFiles',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };

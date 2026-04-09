@@ -11,7 +11,7 @@ export const create: CalendlyEndpoints['webhookSubscriptionsCreate'] = async (
 		CalendlyEndpointOutputs['webhookSubscriptionsCreate']
 	>('webhook_subscriptions', ctx.key, {
 		method: 'POST',
-		body: input
+		body: input,
 	});
 
 	if (result.resource && ctx.db.webhookSubscriptions) {
@@ -91,7 +91,7 @@ export const list: CalendlyEndpoints['webhookSubscriptionsList'] = async (
 		CalendlyEndpointOutputs['webhookSubscriptionsList']
 	>('webhook_subscriptions', ctx.key, {
 		method: 'GET',
-		query: input
+		query: input,
 	});
 
 	if (result.collection && ctx.db.webhookSubscriptions) {
@@ -99,7 +99,7 @@ export const list: CalendlyEndpoints['webhookSubscriptionsList'] = async (
 			for (const sub of result.collection) {
 				const uriParts = sub.uri.split('/');
 				// URI always has at least one segment; last segment is the UUID
-			const id = uriParts[uriParts.length - 1]!;
+				const id = uriParts[uriParts.length - 1]!;
 				await ctx.db.webhookSubscriptions.upsertByEntityId(id, {
 					id,
 					...sub,
@@ -109,10 +109,7 @@ export const list: CalendlyEndpoints['webhookSubscriptionsList'] = async (
 				});
 			}
 		} catch (error) {
-			console.warn(
-				'Failed to save webhook subscriptions to database:',
-				error,
-			);
+			console.warn('Failed to save webhook subscriptions to database:', error);
 		}
 	}
 

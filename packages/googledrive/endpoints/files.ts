@@ -185,17 +185,15 @@ export const deleteFile: GoogleDriveEndpoints['filesDelete'] = async (
 	ctx,
 	input,
 ) => {
-	await makeAuthenticatedGoogleDriveRequest<GoogleDriveEndpointOutputs['filesDelete']>(
-		`/files/${input.fileId}`,
-		ctx,
-		{
-			method: 'DELETE',
-			query: {
-				supportsAllDrives: input.supportsAllDrives,
-				supportsTeamDrives: input.supportsTeamDrives,
-			},
+	await makeAuthenticatedGoogleDriveRequest<
+		GoogleDriveEndpointOutputs['filesDelete']
+	>(`/files/${input.fileId}`, ctx, {
+		method: 'DELETE',
+		query: {
+			supportsAllDrives: input.supportsAllDrives,
+			supportsTeamDrives: input.supportsTeamDrives,
 		},
-	);
+	});
 
 	if (ctx.db.files) {
 		try {

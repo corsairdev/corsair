@@ -1,7 +1,6 @@
-import 'dotenv/config'
+import 'dotenv/config';
 import { createCorsair } from 'corsair/core';
-import { createIntegrationAndAccount } from 'corsair/tests';
-import { createTestDatabase } from 'corsair/tests';
+import { createIntegrationAndAccount, createTestDatabase } from 'corsair/tests';
 import { googlesheets } from './index';
 
 async function createGoogleSheetsClient() {

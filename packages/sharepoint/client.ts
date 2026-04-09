@@ -1,19 +1,26 @@
-import type { ApiRequestOptions } from 'corsair/http';
-import type { OpenAPIConfig } from 'corsair/http';
-import type { RateLimitConfig } from 'corsair/http';
+import type {
+	ApiRequestOptions,
+	OpenAPIConfig,
+	RateLimitConfig,
+} from 'corsair/http';
 import { request } from 'corsair/http';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Token refresh
 // ─────────────────────────────────────────────────────────────────────────────
 
-const MICROSOFT_TOKEN_URL = 'https://login.microsoftonline.com/common/oauth2/v2.0/token';
+const MICROSOFT_TOKEN_URL =
+	'https://login.microsoftonline.com/common/oauth2/v2.0/token';
 
 async function refreshSharepointAccessToken(
 	clientId: string,
 	clientSecret: string,
 	refreshToken: string,
-): Promise<{ access_token: string; refresh_token?: string; expires_in: number }> {
+): Promise<{
+	access_token: string;
+	refresh_token?: string;
+	expires_in: number;
+}> {
 	const response = await fetch(MICROSOFT_TOKEN_URL, {
 		method: 'POST',
 		headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -31,7 +38,11 @@ async function refreshSharepointAccessToken(
 	}
 
 	// Microsoft token response is untyped; cast to extract the expected fields
-	return response.json() as Promise<{ access_token: string; refresh_token?: string; expires_in: number }>;
+	return response.json() as Promise<{
+		access_token: string;
+		refresh_token?: string;
+		expires_in: number;
+	}>;
 }
 
 /**
@@ -54,7 +65,12 @@ export async function getValidSharepointAccessToken({
 	clientId: string;
 	clientSecret: string;
 	forceRefresh?: boolean;
-}): Promise<{ accessToken: string; newRefreshToken?: string; expiresAt: number; refreshed: boolean }> {
+}): Promise<{
+	accessToken: string;
+	newRefreshToken?: string;
+	expiresAt: number;
+	refreshed: boolean;
+}> {
 	const now = Math.floor(Date.now() / 1000);
 	const bufferSeconds = 5 * 60;
 
@@ -67,7 +83,11 @@ export async function getValidSharepointAccessToken({
 		return { accessToken, expiresAt: Number(expiresAt), refreshed: false };
 	}
 
-	const tokenData = await refreshSharepointAccessToken(clientId, clientSecret, refreshToken);
+	const tokenData = await refreshSharepointAccessToken(
+		clientId,
+		clientSecret,
+		refreshToken,
+	);
 	return {
 		accessToken: tokenData.access_token,
 		// Microsoft issues a new refresh token on each refresh; propagate it if present
@@ -99,7 +119,9 @@ export function graphSiteUrl(siteId: string, subpath?: string): string {
 	if (!subpath) return `/sites/${siteId}`;
 	// hostname:path format contains ':' but no ','
 	const isHostnamePath = siteId.includes(':') && !siteId.includes(',');
-	return isHostnamePath ? `/sites/${siteId}:/${subpath}` : `/sites/${siteId}/${subpath}`;
+	return isHostnamePath
+		? `/sites/${siteId}:/${subpath}`
+		: `/sites/${siteId}/${subpath}`;
 }
 
 export async function makeSharePointRequest<T>(
@@ -152,7 +174,10 @@ export async function makeSharePointRequest<T>(
  * with drive item colon-path syntax (root:/{path}) in a single URL.
  * If the ID is already in GUID format (contains ',') it is returned as-is.
  */
-export async function resolveSiteGuid(siteId: string, token: string): Promise<string> {
+export async function resolveSiteGuid(
+	siteId: string,
+	token: string,
+): Promise<string> {
 	if (siteId.includes(',')) return siteId;
 	const site = await makeGraphRequest<{ id?: string }>(
 		`/sites/${siteId}`,
@@ -175,7 +200,8 @@ export async function makeGraphRequest<T>(
 	const { method = 'GET', body, mediaType, query } = options;
 
 	const isRawBody = typeof body === 'string';
-	const effectiveMediaType = mediaType ?? (isRawBody ? 'text/plain' : 'application/json');
+	const effectiveMediaType =
+		mediaType ?? (isRawBody ? 'text/plain' : 'application/json');
 
 	const config: OpenAPIConfig = {
 		BASE: GRAPH_API_BASE,

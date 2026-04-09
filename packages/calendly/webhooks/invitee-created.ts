@@ -31,7 +31,7 @@ export const inviteeCreated: CalendlyWebhooks['inviteeCreated'] = {
 			try {
 				const uriParts = invitee.uri.split('/');
 				// URI always has at least one segment; last segment is the UUID
-			const id = uriParts[uriParts.length - 1]!;
+				const id = uriParts[uriParts.length - 1]!;
 				await ctx.db.invitees.upsertByEntityId(id, {
 					id,
 					...invitee,
@@ -49,7 +49,7 @@ export const inviteeCreated: CalendlyWebhooks['inviteeCreated'] = {
 			try {
 				const uriParts = event.uri.split('/');
 				// URI always has at least one segment; last segment is the UUID
-			const id = uriParts[uriParts.length - 1]!;
+				const id = uriParts[uriParts.length - 1]!;
 				await ctx.db.scheduledEvents.upsertByEntityId(id, {
 					id,
 					...event,

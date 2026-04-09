@@ -1,9 +1,12 @@
-import type { StravaEndpoints } from '..';
 import { logEventFromContext } from 'corsair/core';
+import type { StravaEndpoints } from '..';
 import { makeStravaRequest } from '../client';
 import type { StravaEndpointOutputs } from './types';
 
-export const getAthlete: StravaEndpoints['athleteGet'] = async (ctx, _input) => {
+export const getAthlete: StravaEndpoints['athleteGet'] = async (
+	ctx,
+	_input,
+) => {
 	const result = await makeStravaRequest<StravaEndpointOutputs['athleteGet']>(
 		'athlete',
 		ctx.key,
@@ -23,17 +26,18 @@ export const getAthlete: StravaEndpoints['athleteGet'] = async (ctx, _input) => 
 	return result;
 };
 
-export const updateAthlete: StravaEndpoints['athleteUpdate'] = async (ctx, input) => {
-	const result = await makeStravaRequest<StravaEndpointOutputs['athleteUpdate']>(
-		'athlete',
-		ctx.key,
-		{
-			method: 'PUT',
-			body: {
-				weight: input.weight,
-			},
+export const updateAthlete: StravaEndpoints['athleteUpdate'] = async (
+	ctx,
+	input,
+) => {
+	const result = await makeStravaRequest<
+		StravaEndpointOutputs['athleteUpdate']
+	>('athlete', ctx.key, {
+		method: 'PUT',
+		body: {
+			weight: input.weight,
 		},
-	);
+	});
 
 	if (result.id && ctx.db.athletes) {
 		try {
@@ -43,30 +47,37 @@ export const updateAthlete: StravaEndpoints['athleteUpdate'] = async (ctx, input
 		}
 	}
 
-	await logEventFromContext(ctx, 'strava.athletes.update', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'strava.athletes.update',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
-export const getStats: StravaEndpoints['athleteGetStats'] = async (ctx, input) => {
-	const result = await makeStravaRequest<StravaEndpointOutputs['athleteGetStats']>(
-		`athletes/${input.id}/stats`,
-		ctx.key,
-		{
-			method: 'GET',
-		},
-	);
+export const getStats: StravaEndpoints['athleteGetStats'] = async (
+	ctx,
+	input,
+) => {
+	const result = await makeStravaRequest<
+		StravaEndpointOutputs['athleteGetStats']
+	>(`athletes/${input.id}/stats`, ctx.key, {
+		method: 'GET',
+	});
 
 	return result;
 };
 
-export const getZones: StravaEndpoints['athleteGetZones'] = async (ctx, _input) => {
-	const result = await makeStravaRequest<StravaEndpointOutputs['athleteGetZones']>(
-		'athlete/zones',
-		ctx.key,
-		{
-			method: 'GET',
-		},
-	);
+export const getZones: StravaEndpoints['athleteGetZones'] = async (
+	ctx,
+	_input,
+) => {
+	const result = await makeStravaRequest<
+		StravaEndpointOutputs['athleteGetZones']
+	>('athlete/zones', ctx.key, {
+		method: 'GET',
+	});
 
 	return result;
 };

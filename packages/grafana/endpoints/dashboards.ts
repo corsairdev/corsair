@@ -7,7 +7,8 @@ export const queryPublic: GrafanaEndpoints['dashboardsQueryPublic'] = async (
 	ctx,
 	input,
 ) => {
-	const grafanaUrl = input.base_url_override ?? (await ctx.keys.get_grafana_url()) ?? '';
+	const grafanaUrl =
+		input.base_url_override ?? (await ctx.keys.get_grafana_url()) ?? '';
 
 	let result: GrafanaEndpointOutputs['dashboardsQueryPublic'];
 
@@ -18,7 +19,9 @@ export const queryPublic: GrafanaEndpoints['dashboardsQueryPublic'] = async (
 			from: input.from,
 			to: input.to,
 			...(input.intervalMs !== undefined && { intervalMs: input.intervalMs }),
-			...(input.maxDataPoints !== undefined && { maxDataPoints: input.maxDataPoints }),
+			...(input.maxDataPoints !== undefined && {
+				maxDataPoints: input.maxDataPoints,
+			}),
 		};
 
 		const raw = await makeGrafanaRawRequest(path, ctx.key, grafanaUrl, {
@@ -30,10 +33,10 @@ export const queryPublic: GrafanaEndpoints['dashboardsQueryPublic'] = async (
 		const success = raw.status_code >= 200 && raw.status_code < 300;
 
 		// Attempt to parse response as JSON; fall back to storing raw content in message
-		let results;
+		let results: any;
 		try {
-			const parsed = JSON.parse(raw.content)
-			results = (parsed.results) ?? parsed;
+			const parsed = JSON.parse(raw.content);
+			results = parsed.results ?? parsed;
 		} catch {
 			// JSON parse failed — content is not valid JSON (e.g. HTML error page)
 		}

@@ -1,5 +1,9 @@
+import type {
+	CorsairWebhookMatcher,
+	RawWebhookRequest,
+	WebhookRequest,
+} from 'corsair/core';
 import { z } from 'zod';
-import type { CorsairWebhookMatcher, RawWebhookRequest, WebhookRequest } from 'corsair/core';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // SharePoint webhook notification payload
@@ -16,12 +20,16 @@ export const SharepointWebhookNotificationSchema = z.object({
 	siteUrl: z.string(),
 	webId: z.string(),
 });
-export type SharepointWebhookNotification = z.infer<typeof SharepointWebhookNotificationSchema>;
+export type SharepointWebhookNotification = z.infer<
+	typeof SharepointWebhookNotificationSchema
+>;
 
 export const SharepointListChangedPayloadSchema = z.object({
 	value: z.array(SharepointWebhookNotificationSchema),
 });
-export type SharepointListChangedPayload = z.infer<typeof SharepointListChangedPayloadSchema>;
+export type SharepointListChangedPayload = z.infer<
+	typeof SharepointListChangedPayloadSchema
+>;
 
 export const ListChangedEventSchema = z.object({
 	subscriptionId: z.string(),
@@ -56,7 +64,9 @@ function parseBody(body: unknown): Record<string, unknown> {
  * SharePoint posts a JSON body with a "value" array of notification objects.
  * SharePoint also sends a validationtoken query param during subscription setup.
  */
-export function createSharepointMatch(eventType: string): CorsairWebhookMatcher {
+export function createSharepointMatch(
+	eventType: string,
+): CorsairWebhookMatcher {
 	return (request: RawWebhookRequest) => {
 		// Subscription validation handshake — SharePoint sends a GET/POST with validationtoken
 		// RawWebhookRequest does not include url; cast through unknown to access the framework-extended url field

@@ -1,7 +1,8 @@
 import { logEventFromContext } from 'corsair/core';
 import type { JiraEndpoints } from '..';
 import { makeJiraRequest, uploadJiraAttachment } from '../client';
-import { makeAdf, type JiraEndpointOutputs } from './types';
+import type { JiraEndpointOutputs } from './types';
+import { makeAdf } from './types';
 
 export const create: JiraEndpoints['issuesCreate'] = async (ctx, input) => {
 	const cloudUrl = (await ctx.keys.get_cloud_url()) ?? '';
@@ -43,7 +44,12 @@ export const create: JiraEndpoints['issuesCreate'] = async (ctx, input) => {
 		}
 	}
 
-	await logEventFromContext(ctx, 'jira.issues.create', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'jira.issues.create',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
@@ -104,9 +110,15 @@ export const edit: JiraEndpoints['issuesEdit'] = async (ctx, input) => {
 			body: {
 				fields: {
 					...(input.summary !== undefined && { summary: input.summary }),
-					...(input.description !== undefined && { description: makeAdf(input.description) }),
-					...(input.assignee !== undefined && { assignee: input.assignee ? { accountId: input.assignee } : null }),
-					...(input.priority !== undefined && { priority: { name: input.priority } }),
+					...(input.description !== undefined && {
+						description: makeAdf(input.description),
+					}),
+					...(input.assignee !== undefined && {
+						assignee: input.assignee ? { accountId: input.assignee } : null,
+					}),
+					...(input.priority !== undefined && {
+						priority: { name: input.priority },
+					}),
 					...(input.labels !== undefined && { labels: input.labels }),
 					...(input.due_date !== undefined && { duedate: input.due_date }),
 				},
@@ -123,7 +135,10 @@ export const edit: JiraEndpoints['issuesEdit'] = async (ctx, input) => {
 	return { success: true, issue_key: input.issue_id_or_key };
 };
 
-export const deleteIssue: JiraEndpoints['issuesDelete'] = async (ctx, input) => {
+export const deleteIssue: JiraEndpoints['issuesDelete'] = async (
+	ctx,
+	input,
+) => {
 	await makeJiraRequest<void>(
 		`issue/${input.issue_id_or_key}`,
 		ctx.key,
@@ -134,7 +149,12 @@ export const deleteIssue: JiraEndpoints['issuesDelete'] = async (ctx, input) => 
 		},
 	);
 
-	await logEventFromContext(ctx, 'jira.issues.delete', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'jira.issues.delete',
+		{ ...input },
+		'completed',
+	);
 	return { success: true, message: `Issue ${input.issue_id_or_key} deleted` };
 };
 
@@ -179,7 +199,12 @@ export const search: JiraEndpoints['issuesSearch'] = async (ctx, input) => {
 		}
 	}
 
-	await logEventFromContext(ctx, 'jira.issues.search', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'jira.issues.search',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
@@ -197,23 +222,41 @@ export const assign: JiraEndpoints['issuesAssign'] = async (ctx, input) => {
 	// DB update skipped: only issue_id_or_key is available (may be a key, not numeric id)
 	// The next issues.get call will refresh the DB with the updated data
 
-	await logEventFromContext(ctx, 'jira.issues.assign', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'jira.issues.assign',
+		{ ...input },
+		'completed',
+	);
 	return { success: true };
 };
 
-export const getTransitions: JiraEndpoints['issuesGetTransitions'] = async (ctx, input) => {
-	const result = await makeJiraRequest<JiraEndpointOutputs['issuesGetTransitions']>(
+export const getTransitions: JiraEndpoints['issuesGetTransitions'] = async (
+	ctx,
+	input,
+) => {
+	const result = await makeJiraRequest<
+		JiraEndpointOutputs['issuesGetTransitions']
+	>(
 		`issue/${input.issue_id_or_key}/transitions`,
 		ctx.key,
 		(await ctx.keys.get_cloud_url()) ?? '',
 		{ method: 'GET' },
 	);
 
-	await logEventFromContext(ctx, 'jira.issues.getTransitions', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'jira.issues.getTransitions',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
-export const transition: JiraEndpoints['issuesTransition'] = async (ctx, input) => {
+export const transition: JiraEndpoints['issuesTransition'] = async (
+	ctx,
+	input,
+) => {
 	await makeJiraRequest<void>(
 		`issue/${input.issue_id_or_key}/transitions`,
 		ctx.key,
@@ -229,11 +272,19 @@ export const transition: JiraEndpoints['issuesTransition'] = async (ctx, input) 
 		},
 	);
 
-	await logEventFromContext(ctx, 'jira.issues.transition', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'jira.issues.transition',
+		{ ...input },
+		'completed',
+	);
 	return { success: true };
 };
 
-export const bulkCreate: JiraEndpoints['issuesBulkCreate'] = async (ctx, input) => {
+export const bulkCreate: JiraEndpoints['issuesBulkCreate'] = async (
+	ctx,
+	input,
+) => {
 	const cloudUrl = (await ctx.keys.get_cloud_url()) ?? '';
 
 	const result = await makeJiraRequest<JiraEndpointOutputs['issuesBulkCreate']>(
@@ -250,7 +301,9 @@ export const bulkCreate: JiraEndpoints['issuesBulkCreate'] = async (ctx, input) 
 						issuetype: { name: issue.issue_type ?? 'Task' },
 						...(issue.assignee && { assignee: { accountId: issue.assignee } }),
 						...(issue.priority && { priority: { name: issue.priority } }),
-						...(issue.description && { description: makeAdf(issue.description) }),
+						...(issue.description && {
+							description: makeAdf(issue.description),
+						}),
 					},
 				})),
 			},
@@ -278,11 +331,19 @@ export const bulkCreate: JiraEndpoints['issuesBulkCreate'] = async (ctx, input) 
 		}
 	}
 
-	await logEventFromContext(ctx, 'jira.issues.bulkCreate', { count: input.issues.length }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'jira.issues.bulkCreate',
+		{ count: input.issues.length },
+		'completed',
+	);
 	return result;
 };
 
-export const bulkFetch: JiraEndpoints['issuesBulkFetch'] = async (ctx, input) => {
+export const bulkFetch: JiraEndpoints['issuesBulkFetch'] = async (
+	ctx,
+	input,
+) => {
 	const cloudUrl = (await ctx.keys.get_cloud_url()) ?? '';
 
 	const result = await makeJiraRequest<JiraEndpointOutputs['issuesBulkFetch']>(
@@ -321,27 +382,42 @@ export const bulkFetch: JiraEndpoints['issuesBulkFetch'] = async (ctx, input) =>
 		}
 	}
 
-	await logEventFromContext(ctx, 'jira.issues.bulkFetch', { count: input.issue_ids_or_keys.length }, 'completed');
-	return result;
-};
-
-export const addAttachment: JiraEndpoints['issuesAddAttachment'] = async (ctx, input) => {
-	const result = await uploadJiraAttachment<JiraEndpointOutputs['issuesAddAttachment']>(
-		input.issue_id_or_key,
-		ctx.key,
-		(await ctx.keys.get_cloud_url()) ?? '',
-		{
-			name: input.file_name,
-			mimeType: input.mime_type,
-			...(input.file_url ? { url: input.file_url } : { content: input.file_content! }),
-		},
+	await logEventFromContext(
+		ctx,
+		'jira.issues.bulkFetch',
+		{ count: input.issue_ids_or_keys.length },
+		'completed',
 	);
-
-	await logEventFromContext(ctx, 'jira.issues.addAttachment', { ...input }, 'completed');
 	return result;
 };
 
-export const addWatcher: JiraEndpoints['issuesAddWatcher'] = async (ctx, input) => {
+export const addAttachment: JiraEndpoints['issuesAddAttachment'] = async (
+	ctx,
+	input,
+) => {
+	const result = await uploadJiraAttachment<
+		JiraEndpointOutputs['issuesAddAttachment']
+	>(input.issue_id_or_key, ctx.key, (await ctx.keys.get_cloud_url()) ?? '', {
+		name: input.file_name,
+		mimeType: input.mime_type,
+		...(input.file_url
+			? { url: input.file_url }
+			: { content: input.file_content! }),
+	});
+
+	await logEventFromContext(
+		ctx,
+		'jira.issues.addAttachment',
+		{ ...input },
+		'completed',
+	);
+	return result;
+};
+
+export const addWatcher: JiraEndpoints['issuesAddWatcher'] = async (
+	ctx,
+	input,
+) => {
 	await makeJiraRequest<void>(
 		`issue/${input.issue_id_or_key}/watchers`,
 		ctx.key,
@@ -353,11 +429,19 @@ export const addWatcher: JiraEndpoints['issuesAddWatcher'] = async (ctx, input) 
 		},
 	);
 
-	await logEventFromContext(ctx, 'jira.issues.addWatcher', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'jira.issues.addWatcher',
+		{ ...input },
+		'completed',
+	);
 	return { success: true };
 };
 
-export const removeWatcher: JiraEndpoints['issuesRemoveWatcher'] = async (ctx, input) => {
+export const removeWatcher: JiraEndpoints['issuesRemoveWatcher'] = async (
+	ctx,
+	input,
+) => {
 	await makeJiraRequest<void>(
 		`issue/${input.issue_id_or_key}/watchers`,
 		ctx.key,
@@ -368,11 +452,19 @@ export const removeWatcher: JiraEndpoints['issuesRemoveWatcher'] = async (ctx, i
 		},
 	);
 
-	await logEventFromContext(ctx, 'jira.issues.removeWatcher', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'jira.issues.removeWatcher',
+		{ ...input },
+		'completed',
+	);
 	return { success: true };
 };
 
-export const linkIssues: JiraEndpoints['issuesLinkIssues'] = async (ctx, input) => {
+export const linkIssues: JiraEndpoints['issuesLinkIssues'] = async (
+	ctx,
+	input,
+) => {
 	await makeJiraRequest<void>(
 		'issueLink',
 		ctx.key,
@@ -388,6 +480,11 @@ export const linkIssues: JiraEndpoints['issuesLinkIssues'] = async (ctx, input) 
 		},
 	);
 
-	await logEventFromContext(ctx, 'jira.issues.linkIssues', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'jira.issues.linkIssues',
+		{ ...input },
+		'completed',
+	);
 	return { success: true };
 };

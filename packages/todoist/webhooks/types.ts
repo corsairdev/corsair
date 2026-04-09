@@ -1,9 +1,9 @@
-import * as crypto from 'crypto';
 import type {
 	CorsairWebhookMatcher,
 	RawWebhookRequest,
 	WebhookRequest,
 } from 'corsair/core';
+import * as crypto from 'crypto';
 
 export interface TodoistWebhookPayload<TData = { [key: string]: any }> {
 	event_name: string;

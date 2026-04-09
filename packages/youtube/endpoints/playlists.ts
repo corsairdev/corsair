@@ -4,19 +4,17 @@ import { makeYoutubeRequest } from '../client';
 import type { YoutubeEndpointOutputs } from './types';
 
 export const list: YoutubeEndpoints['playlistsList'] = async (ctx, input) => {
-	const response = await makeYoutubeRequest<YoutubeEndpointOutputs['playlistsList']>(
-		'/playlists',
-		ctx.key,
-		{
-			method: 'GET',
-			query: {
-				mine: 'true',
-				part: input.part ?? 'snippet,status,contentDetails',
-				...(input.pageToken && { pageToken: input.pageToken }),
-				...(input.maxResults && { maxResults: input.maxResults }),
-			},
+	const response = await makeYoutubeRequest<
+		YoutubeEndpointOutputs['playlistsList']
+	>('/playlists', ctx.key, {
+		method: 'GET',
+		query: {
+			mine: 'true',
+			part: input.part ?? 'snippet,status,contentDetails',
+			...(input.pageToken && { pageToken: input.pageToken }),
+			...(input.maxResults && { maxResults: input.maxResults }),
 		},
-	);
+	});
 
 	if (response.items && ctx.db.playlists) {
 		for (const item of response.items) {
@@ -38,19 +36,20 @@ export const list: YoutubeEndpoints['playlistsList'] = async (ctx, input) => {
 	return response;
 };
 
-export const create: YoutubeEndpoints['playlistsCreate'] = async (ctx, input) => {
-	const response = await makeYoutubeRequest<YoutubeEndpointOutputs['playlistsCreate']>(
-		'/playlists',
-		ctx.key,
-		{
-			method: 'POST',
-			query: { part: 'snippet,status' },
-			body: {
-				snippet: { title: input.title, description: input.description },
-				status: { privacyStatus: input.privacyStatus ?? 'private' },
-			},
+export const create: YoutubeEndpoints['playlistsCreate'] = async (
+	ctx,
+	input,
+) => {
+	const response = await makeYoutubeRequest<
+		YoutubeEndpointOutputs['playlistsCreate']
+	>('/playlists', ctx.key, {
+		method: 'POST',
+		query: { part: 'snippet,status' },
+		body: {
+			snippet: { title: input.title, description: input.description },
+			status: { privacyStatus: input.privacyStatus ?? 'private' },
 		},
-	);
+	});
 
 	if (response.id && ctx.db.playlists) {
 		try {
@@ -64,24 +63,30 @@ export const create: YoutubeEndpoints['playlistsCreate'] = async (ctx, input) =>
 		}
 	}
 
-	await logEventFromContext(ctx, 'youtube.playlists.create', { title: input.title }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'youtube.playlists.create',
+		{ title: input.title },
+		'completed',
+	);
 	return response;
 };
 
-export const update: YoutubeEndpoints['playlistsUpdate'] = async (ctx, input) => {
-	const response = await makeYoutubeRequest<YoutubeEndpointOutputs['playlistsUpdate']>(
-		'/playlists',
-		ctx.key,
-		{
-			method: 'PUT',
-			query: { part: input.part ?? 'snippet,status' },
-			body: {
-				id: input.id,
-				snippet: input.snippet,
-				...(input.status && { status: input.status }),
-			},
+export const update: YoutubeEndpoints['playlistsUpdate'] = async (
+	ctx,
+	input,
+) => {
+	const response = await makeYoutubeRequest<
+		YoutubeEndpointOutputs['playlistsUpdate']
+	>('/playlists', ctx.key, {
+		method: 'PUT',
+		query: { part: input.part ?? 'snippet,status' },
+		body: {
+			id: input.id,
+			snippet: input.snippet,
+			...(input.status && { status: input.status }),
 		},
-	);
+	});
 
 	if (response.id && ctx.db.playlists) {
 		try {
@@ -95,7 +100,12 @@ export const update: YoutubeEndpoints['playlistsUpdate'] = async (ctx, input) =>
 		}
 	}
 
-	await logEventFromContext(ctx, 'youtube.playlists.update', { id: input.id }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'youtube.playlists.update',
+		{ id: input.id },
+		'completed',
+	);
 	return response;
 };
 
@@ -105,6 +115,11 @@ export const del: YoutubeEndpoints['playlistsDelete'] = async (ctx, input) => {
 		query: { id: input.id },
 	});
 
-	await logEventFromContext(ctx, 'youtube.playlists.delete', { id: input.id }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'youtube.playlists.delete',
+		{ id: input.id },
+		'completed',
+	);
 	return { deleted: true, playlist_id: input.id, http_status: 204 };
 };

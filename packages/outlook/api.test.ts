@@ -1,4 +1,4 @@
-import 'dotenv/config'
+import 'dotenv/config';
 import { makeOutlookRequest } from './client';
 import type {
 	CalendarsCreateResponse,
@@ -30,7 +30,10 @@ const ACCESS_TOKEN = process.env.OUTLOOK_ACCESS_TOKEN!;
 
 // ── Shared test helpers ───────────────────────────────────────────────────────
 
-const toUTCSlot = (date: Date) => ({ dateTime: date.toISOString(), timeZone: 'UTC' });
+const toUTCSlot = (date: Date) => ({
+	dateTime: date.toISOString(),
+	timeZone: 'UTC',
+});
 
 const makeDraftBody = (label: string) => ({
 	subject: `Test Draft for ${label} ${Date.now()}`,
@@ -111,7 +114,7 @@ describe('Outlook API Type Tests', () => {
 			const result = await makeOutlookRequest<MessagesQueryResponse>(
 				'/me/messages',
 				ACCESS_TOKEN,
-				{ query: { $top: 5, $filter: "isRead eq false" } },
+				{ query: { $top: 5, $filter: 'isRead eq false' } },
 			);
 			OutlookEndpointOutputSchemas.messagesQuery.parse(result);
 		});
@@ -134,9 +137,7 @@ describe('Outlook API Type Tests', () => {
 					body: {
 						subject: `Test Draft ${Date.now()}`,
 						body: { contentType: 'Text', content: 'Test draft body' },
-						toRecipients: [
-							{ emailAddress: { address: 'test@example.com' } },
-						],
+						toRecipients: [{ emailAddress: { address: 'test@example.com' } }],
 					},
 				},
 			);
@@ -376,7 +377,10 @@ describe('Outlook API Type Tests', () => {
 						givenName: 'Test',
 						surname: `Contact ${Date.now()}`,
 						emailAddresses: [
-							{ address: `testcontact${Date.now()}@example.com`, name: 'Test Contact' },
+							{
+								address: `testcontact${Date.now()}@example.com`,
+								name: 'Test Contact',
+							},
 						],
 					},
 				},
@@ -471,7 +475,10 @@ describe('Outlook API Type Tests', () => {
 				const created = await makeOutlookRequest<FoldersCreateResponse>(
 					'/me/mailFolders',
 					ACCESS_TOKEN,
-					{ method: 'POST', body: { displayName: `Test Folder Update ${Date.now()}` } },
+					{
+						method: 'POST',
+						body: { displayName: `Test Folder Update ${Date.now()}` },
+					},
 				);
 				testFolderId = created.id;
 				if (!testFolderId) throw new Error('Failed to create folder');
@@ -497,7 +504,10 @@ describe('Outlook API Type Tests', () => {
 					body: {
 						message: {
 							subject: `Test Email ${Date.now()}`,
-							body: { contentType: 'Text', content: 'Test email body from API test' },
+							body: {
+								contentType: 'Text',
+								content: 'Test email body from API test',
+							},
 							toRecipients: [{ emailAddress: { address: 'test@example.com' } }],
 						},
 						saveToSentItems: false,

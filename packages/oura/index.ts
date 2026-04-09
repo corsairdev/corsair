@@ -1,4 +1,5 @@
 import type {
+	AuthTypes,
 	BindEndpoints,
 	BindWebhooks,
 	CorsairEndpoint,
@@ -7,24 +8,29 @@ import type {
 	CorsairPluginContext,
 	CorsairWebhook,
 	KeyBuilderContext,
+	PickAuth,
 	PluginAuthConfig,
-	RequiredPluginEndpointMeta,
-	RequiredPluginEndpointSchemas,
 	PluginPermissionsConfig,
+	RequiredPluginEndpointMeta,
 } from 'corsair/core';
-import type { AuthTypes, PickAuth } from 'corsair/core';
-import type { OuraEndpointInputs, OuraEndpointOutputs } from './endpoints/types';
-import { OuraEndpointInputSchemas, OuraEndpointOutputSchemas } from './endpoints/types';
+import { Profile, Summary } from './endpoints';
 import type {
-	OuraWebhookOutputs,
+	OuraEndpointInputs,
+	OuraEndpointOutputs,
+} from './endpoints/types';
+import {
+	OuraEndpointInputSchemas,
+	OuraEndpointOutputSchemas,
+} from './endpoints/types';
+import { errorHandlers } from './error-handlers';
+import { OuraSchema } from './schema';
+import { SummaryWebhooks } from './webhooks';
+import type {
 	DailyActivityWebhookEvent,
 	DailyReadinessWebhookEvent,
 	DailySleepWebhookEvent,
+	OuraWebhookOutputs,
 } from './webhooks/types';
-import { Profile, Summary } from './endpoints';
-import { OuraSchema } from './schema';
-import { SummaryWebhooks } from './webhooks';
-import { errorHandlers } from './error-handlers';
 
 export type OuraPluginOptions = {
 	authType?: PickAuth<'api_key'>;
@@ -50,10 +56,11 @@ export type OuraKeyBuilderContext = KeyBuilderContext<OuraPluginOptions>;
 
 export type OuraBoundEndpoints = BindEndpoints<typeof ouraEndpointsNested>;
 
-type OuraEndpoint<
-	K extends keyof OuraEndpointOutputs,
+type OuraEndpoint<K extends keyof OuraEndpointOutputs, Input> = CorsairEndpoint<
+	OuraContext,
 	Input,
-> = CorsairEndpoint<OuraContext, Input, OuraEndpointOutputs[K]>;
+	OuraEndpointOutputs[K]
+>;
 
 export type OuraEndpoints = {
 	profileGet: OuraEndpoint<'profileGet', OuraEndpointInputs['profileGet']>;
@@ -71,10 +78,11 @@ export type OuraEndpoints = {
 	>;
 };
 
-type OuraWebhook<
-	K extends keyof OuraWebhookOutputs,
+type OuraWebhook<K extends keyof OuraWebhookOutputs, TEvent> = CorsairWebhook<
+	OuraContext,
 	TEvent,
-> = CorsairWebhook<OuraContext, TEvent, OuraWebhookOutputs[K]>;
+	OuraWebhookOutputs[K]
+>;
 
 export type OuraWebhooks = {
 	dailyActivity: OuraWebhook<'dailyActivity', DailyActivityWebhookEvent>;
@@ -160,8 +168,7 @@ export type BaseOuraPlugin<T extends OuraPluginOptions> = CorsairPlugin<
 
 export type InternalOuraPlugin = BaseOuraPlugin<OuraPluginOptions>;
 
-export type ExternalOuraPlugin<T extends OuraPluginOptions> =
-	BaseOuraPlugin<T>;
+export type ExternalOuraPlugin<T extends OuraPluginOptions> = BaseOuraPlugin<T>;
 
 export function oura<const T extends OuraPluginOptions>(
 	incomingOptions: OuraPluginOptions & T = {} as OuraPluginOptions & T,
@@ -219,10 +226,10 @@ export function oura<const T extends OuraPluginOptions>(
 // ─────────────────────────────────────────────────────────────────────────────
 
 export type {
-	OuraWebhookOutputs,
 	DailyActivityWebhookEvent,
 	DailyReadinessWebhookEvent,
 	DailySleepWebhookEvent,
+	OuraWebhookOutputs,
 } from './webhooks/types';
 
 // ─────────────────────────────────────────────────────────────────────────────

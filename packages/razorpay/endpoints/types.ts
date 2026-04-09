@@ -77,7 +77,9 @@ export type OrdersGetResponse = z.infer<typeof OrdersGetResponseSchema>;
 export type PaymentsGetResponse = z.infer<typeof PaymentsGetResponseSchema>;
 export type PaymentsListResponse = z.infer<typeof PaymentsListResponseSchema>;
 export type RefundsCreateResponse = z.infer<typeof RefundsCreateResponseSchema>;
-export type CustomersCreateResponse = z.infer<typeof CustomersCreateResponseSchema>;
+export type CustomersCreateResponse = z.infer<
+	typeof CustomersCreateResponseSchema
+>;
 export type CustomersGetResponse = z.infer<typeof CustomersGetResponseSchema>;
 
 export type RazorpayEndpointInputs = {

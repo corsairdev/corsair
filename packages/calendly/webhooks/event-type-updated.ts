@@ -31,13 +31,15 @@ export const eventTypeUpdated: CalendlyWebhooks['eventTypeUpdated'] = {
 			try {
 				const uriParts = eventType.uri.split('/');
 				// URI always has at least one segment; last segment is the UUID
-			const id = uriParts[uriParts.length - 1]!;
+				const id = uriParts[uriParts.length - 1]!;
 				const existing = await ctx.db.eventTypes.findByEntityId(id);
 				if (existing) {
 					await ctx.db.eventTypes.upsertByEntityId(id, {
 						...existing.data,
 						...eventType,
-						updated_at: eventType.updated_at ? new Date(eventType.updated_at) : null,
+						updated_at: eventType.updated_at
+							? new Date(eventType.updated_at)
+							: null,
 					});
 				}
 			} catch (error) {

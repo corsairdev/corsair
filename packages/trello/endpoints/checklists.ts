@@ -5,7 +5,9 @@ import type { TrelloEndpointOutputs } from './types';
 
 export const get: TrelloEndpoints['checklistsGet'] = async (ctx, input) => {
 	const { checklistId, ...queryParams } = input;
-	const result = await makeTrelloRequest<TrelloEndpointOutputs['checklistsGet']>(
+	const result = await makeTrelloRequest<
+		TrelloEndpointOutputs['checklistsGet']
+	>(
 		`checklists/${checklistId}`,
 		ctx.key,
 		{
@@ -15,12 +17,22 @@ export const get: TrelloEndpoints['checklistsGet'] = async (ctx, input) => {
 		ctx.options.trelloApiKey,
 	);
 
-	await logEventFromContext(ctx, 'trello.checklists.get', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'trello.checklists.get',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
-export const create: TrelloEndpoints['checklistsCreate'] = async (ctx, input) => {
-	const result = await makeTrelloRequest<TrelloEndpointOutputs['checklistsCreate']>(
+export const create: TrelloEndpoints['checklistsCreate'] = async (
+	ctx,
+	input,
+) => {
+	const result = await makeTrelloRequest<
+		TrelloEndpointOutputs['checklistsCreate']
+	>(
 		'checklists',
 		ctx.key,
 		{
@@ -30,12 +42,19 @@ export const create: TrelloEndpoints['checklistsCreate'] = async (ctx, input) =>
 		ctx.options.trelloApiKey,
 	);
 
-	await logEventFromContext(ctx, 'trello.checklists.create', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'trello.checklists.create',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
 export const del: TrelloEndpoints['checklistsDelete'] = async (ctx, input) => {
-	const result = await makeTrelloRequest<TrelloEndpointOutputs['checklistsDelete']>(
+	const result = await makeTrelloRequest<
+		TrelloEndpointOutputs['checklistsDelete']
+	>(
 		`checklists/${input.checklistId}`,
 		ctx.key,
 		{
@@ -44,6 +63,11 @@ export const del: TrelloEndpoints['checklistsDelete'] = async (ctx, input) => {
 		ctx.options.trelloApiKey,
 	);
 
-	await logEventFromContext(ctx, 'trello.checklists.delete', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'trello.checklists.delete',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };

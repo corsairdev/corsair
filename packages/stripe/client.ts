@@ -1,5 +1,4 @@
-import type { ApiRequestOptions } from 'corsair/http';
-import type { OpenAPIConfig } from 'corsair/http';
+import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
 import { request } from 'corsair/http';
 
 export class StripeAPIError extends Error {
@@ -88,7 +87,9 @@ export async function makeStripeRequest<T>(
 		if (error instanceof Error) {
 			// Surface the real Stripe error message and code from the response body
 			// Type assertion: ApiError exposes no typed body property; asserting to access Stripe's error envelope fields
-			const apiErr = error as { body?: { error?: { message?: string; code?: string } } };
+			const apiErr = error as {
+				body?: { error?: { message?: string; code?: string } };
+			};
 			const stripeMsg = apiErr.body?.error?.message;
 			const stripeCode = apiErr.body?.error?.code;
 			throw new StripeAPIError(stripeMsg ?? error.message, stripeCode);

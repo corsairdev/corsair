@@ -6,10 +6,7 @@ export const commentCreated: TrelloWebhooks['commentCreated'] = {
 	match: createTrelloActionMatch('commentCard'),
 
 	handler: async (ctx, request) => {
-		const verification = verifyTrelloWebhookSignature(
-			request,
-			ctx.key,
-		);
+		const verification = verifyTrelloWebhookSignature(request, ctx.key);
 		if (!verification.valid) {
 			return {
 				success: false,
@@ -30,7 +27,10 @@ export const commentCreated: TrelloWebhooks['commentCreated'] = {
 					...card,
 				});
 			} catch (error) {
-				console.warn('Failed to update card in database from comment webhook:', error);
+				console.warn(
+					'Failed to update card in database from comment webhook:',
+					error,
+				);
 			}
 		}
 

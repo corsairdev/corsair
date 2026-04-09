@@ -1,6 +1,9 @@
-import type { HackerNewsEndpoints } from '..';
 import { logEventFromContext } from 'corsair/core';
-import { makeHackerNewsAlgoliaRequest, makeHackerNewsFirebaseRequest } from '../client';
+import type { HackerNewsEndpoints } from '..';
+import {
+	makeHackerNewsAlgoliaRequest,
+	makeHackerNewsFirebaseRequest,
+} from '../client';
 
 // Algolia users endpoint response shape
 type AlgoliaUserRaw = {
@@ -40,7 +43,12 @@ export const get: HackerNewsEndpoints['usersGet'] = async (ctx, input) => {
 		}
 	}
 
-	await logEventFromContext(ctx, 'hackernews.users.get', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'hackernews.users.get',
+		{ ...input },
+		'completed',
+	);
 	return {
 		username,
 		about: raw.about,
@@ -48,7 +56,10 @@ export const get: HackerNewsEndpoints['usersGet'] = async (ctx, input) => {
 	};
 };
 
-export const getByUsername: HackerNewsEndpoints['usersGetByUsername'] = async (ctx, input) => {
+export const getByUsername: HackerNewsEndpoints['usersGetByUsername'] = async (
+	ctx,
+	input,
+) => {
 	// Firebase user endpoint returns the user object directly or null if not found
 	const raw = await makeHackerNewsFirebaseRequest<FirebaseUserRaw | null>(
 		`user/${input.username}.json`,
@@ -66,6 +77,11 @@ export const getByUsername: HackerNewsEndpoints['usersGetByUsername'] = async (c
 		}
 	}
 
-	await logEventFromContext(ctx, 'hackernews.users.getByUsername', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'hackernews.users.getByUsername',
+		{ ...input },
+		'completed',
+	);
 	return { ...raw };
 };

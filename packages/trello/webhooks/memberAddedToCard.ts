@@ -6,10 +6,7 @@ export const memberAddedToCard: TrelloWebhooks['memberAddedToCard'] = {
 	match: createTrelloActionMatch('addMemberToCard'),
 
 	handler: async (ctx, request) => {
-		const verification = verifyTrelloWebhookSignature(
-			request,
-			ctx.key,
-		);
+		const verification = verifyTrelloWebhookSignature(request, ctx.key);
 		if (!verification.valid) {
 			return {
 				success: false,
@@ -42,7 +39,10 @@ export const memberAddedToCard: TrelloWebhooks['memberAddedToCard'] = {
 				});
 				corsairEntityId = entity?.id || '';
 			} catch (error) {
-				console.warn('Failed to update card members in database from webhook:', error);
+				console.warn(
+					'Failed to update card members in database from webhook:',
+					error,
+				);
 			}
 		}
 

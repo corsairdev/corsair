@@ -16,7 +16,7 @@ export const conversationCreated: IntercomWebhooks['conversationCreated'] = {
 			};
 		}
 
-		const event = request.payload
+		const event = request.payload;
 
 		if (event.topic !== 'conversation.admin.created') {
 			return { success: true, data: undefined };
@@ -69,7 +69,7 @@ export const conversationAssigned: IntercomWebhooks['conversationAssigned'] = {
 			};
 		}
 
-		const event = request.payload
+		const event = request.payload;
 
 		if (event.topic !== 'conversation.admin.assigned') {
 			return { success: true, data: undefined };
@@ -119,7 +119,7 @@ export const conversationClosed: IntercomWebhooks['conversationClosed'] = {
 			};
 		}
 
-		const event = request.payload
+		const event = request.payload;
 
 		if (event.topic !== 'conversation.admin.closed') {
 			return { success: true, data: undefined };

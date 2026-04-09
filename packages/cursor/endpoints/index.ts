@@ -1,5 +1,5 @@
-import { getConversation, list as agentsList } from './agents';
 import { getMe } from './account';
+import { list as agentsList, getConversation } from './agents';
 import { list as modelsList } from './models';
 import { list as repositoriesList } from './repositories';
 

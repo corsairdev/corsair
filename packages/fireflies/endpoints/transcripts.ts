@@ -69,42 +69,48 @@ const TRANSCRIPT_GET_SUMMARY_QUERY = `
   }
 `;
 
-export const list: FirefliesEndpoints['transcriptsList'] = async (ctx, input) => {
-	const response = await makeFirefliesRequest<FirefliesEndpointOutputs['transcriptsList']>(
-		TRANSCRIPTS_LIST_QUERY,
-		ctx.key,
-		{
-			title: input.title,
-			fromDate: input.fromDate,
-			toDate: input.toDate,
-			limit: input.limit,
-			skip: input.skip,
-			host_email: input.host_email,
-			participant_email: input.participant_email,
-			mine: input.mine,
-		},
-	);
+export const list: FirefliesEndpoints['transcriptsList'] = async (
+	ctx,
+	input,
+) => {
+	const response = await makeFirefliesRequest<
+		FirefliesEndpointOutputs['transcriptsList']
+	>(TRANSCRIPTS_LIST_QUERY, ctx.key, {
+		title: input.title,
+		fromDate: input.fromDate,
+		toDate: input.toDate,
+		limit: input.limit,
+		skip: input.skip,
+		host_email: input.host_email,
+		participant_email: input.participant_email,
+		mine: input.mine,
+	});
 
 	if (ctx.db.transcripts) {
 		for (const transcript of response.transcripts) {
 			try {
-				await ctx.db.transcripts.upsertByEntityId(transcript.id, { ...transcript });
+				await ctx.db.transcripts.upsertByEntityId(transcript.id, {
+					...transcript,
+				});
 			} catch (error) {
 				console.warn('Failed to save transcript to database:', error);
 			}
 		}
 	}
 
-	await logEventFromContext(ctx, 'fireflies.transcripts.list', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'fireflies.transcripts.list',
+		{ ...input },
+		'completed',
+	);
 	return response;
 };
 
 export const get: FirefliesEndpoints['transcriptsGet'] = async (ctx, input) => {
-	const response = await makeFirefliesRequest<FirefliesEndpointOutputs['transcriptsGet']>(
-		TRANSCRIPT_GET_QUERY,
-		ctx.key,
-		{ id: input.transcriptId },
-	);
+	const response = await makeFirefliesRequest<
+		FirefliesEndpointOutputs['transcriptsGet']
+	>(TRANSCRIPT_GET_QUERY, ctx.key, { id: input.transcriptId });
 
 	if (ctx.db.transcripts && response.transcript) {
 		try {
@@ -116,50 +122,77 @@ export const get: FirefliesEndpoints['transcriptsGet'] = async (ctx, input) => {
 		}
 	}
 
-	await logEventFromContext(ctx, 'fireflies.transcripts.get', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'fireflies.transcripts.get',
+		{ ...input },
+		'completed',
+	);
 	return response;
 };
 
-export const getAnalytics: FirefliesEndpoints['transcriptsGetAnalytics'] = async (ctx, input) => {
-	const response = await makeFirefliesRequest<FirefliesEndpointOutputs['transcriptsGetAnalytics']>(
-		TRANSCRIPT_GET_ANALYTICS_QUERY,
-		ctx.key,
-		{ id: input.transcriptId },
-	);
+export const getAnalytics: FirefliesEndpoints['transcriptsGetAnalytics'] =
+	async (ctx, input) => {
+		const response = await makeFirefliesRequest<
+			FirefliesEndpointOutputs['transcriptsGetAnalytics']
+		>(TRANSCRIPT_GET_ANALYTICS_QUERY, ctx.key, { id: input.transcriptId });
 
-	await logEventFromContext(ctx, 'fireflies.transcripts.getAnalytics', { ...input }, 'completed');
+		await logEventFromContext(
+			ctx,
+			'fireflies.transcripts.getAnalytics',
+			{ ...input },
+			'completed',
+		);
+		return response;
+	};
+
+export const getAudioUrl: FirefliesEndpoints['transcriptsGetAudioUrl'] = async (
+	ctx,
+	input,
+) => {
+	const response = await makeFirefliesRequest<
+		FirefliesEndpointOutputs['transcriptsGetAudioUrl']
+	>(TRANSCRIPT_GET_AUDIO_URL_QUERY, ctx.key, { id: input.transcriptId });
+
+	await logEventFromContext(
+		ctx,
+		'fireflies.transcripts.getAudioUrl',
+		{ ...input },
+		'completed',
+	);
 	return response;
 };
 
-export const getAudioUrl: FirefliesEndpoints['transcriptsGetAudioUrl'] = async (ctx, input) => {
-	const response = await makeFirefliesRequest<FirefliesEndpointOutputs['transcriptsGetAudioUrl']>(
-		TRANSCRIPT_GET_AUDIO_URL_QUERY,
-		ctx.key,
-		{ id: input.transcriptId },
-	);
+export const getVideoUrl: FirefliesEndpoints['transcriptsGetVideoUrl'] = async (
+	ctx,
+	input,
+) => {
+	const response = await makeFirefliesRequest<
+		FirefliesEndpointOutputs['transcriptsGetVideoUrl']
+	>(TRANSCRIPT_GET_VIDEO_URL_QUERY, ctx.key, { id: input.transcriptId });
 
-	await logEventFromContext(ctx, 'fireflies.transcripts.getAudioUrl', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'fireflies.transcripts.getVideoUrl',
+		{ ...input },
+		'completed',
+	);
 	return response;
 };
 
-export const getVideoUrl: FirefliesEndpoints['transcriptsGetVideoUrl'] = async (ctx, input) => {
-	const response = await makeFirefliesRequest<FirefliesEndpointOutputs['transcriptsGetVideoUrl']>(
-		TRANSCRIPT_GET_VIDEO_URL_QUERY,
-		ctx.key,
-		{ id: input.transcriptId },
+export const getSummary: FirefliesEndpoints['transcriptsGetSummary'] = async (
+	ctx,
+	input,
+) => {
+	const response = await makeFirefliesRequest<
+		FirefliesEndpointOutputs['transcriptsGetSummary']
+	>(TRANSCRIPT_GET_SUMMARY_QUERY, ctx.key, { id: input.transcriptId });
+
+	await logEventFromContext(
+		ctx,
+		'fireflies.transcripts.getSummary',
+		{ ...input },
+		'completed',
 	);
-
-	await logEventFromContext(ctx, 'fireflies.transcripts.getVideoUrl', { ...input }, 'completed');
-	return response;
-};
-
-export const getSummary: FirefliesEndpoints['transcriptsGetSummary'] = async (ctx, input) => {
-	const response = await makeFirefliesRequest<FirefliesEndpointOutputs['transcriptsGetSummary']>(
-		TRANSCRIPT_GET_SUMMARY_QUERY,
-		ctx.key,
-		{ id: input.transcriptId },
-	);
-
-	await logEventFromContext(ctx, 'fireflies.transcripts.getSummary', { ...input }, 'completed');
 	return response;
 };
