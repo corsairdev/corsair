@@ -2,6 +2,7 @@ import { create as customersCreate, get as customersGet } from './customers';
 import { create as ordersCreate, get as ordersGet } from './orders';
 import { get as paymentsGet, list as paymentsList } from './payments';
 import { create as refundsCreate } from './refunds';
+import { get as settlementsGet, list as settlementsList } from './settlements';
 
 export const Customers = {
 	create: customersCreate,
@@ -20,6 +21,11 @@ export const Payments = {
 
 export const Refunds = {
 	create: refundsCreate,
+};
+
+export const Settlements = {
+	list: settlementsList,
+	get: settlementsGet,
 };
 
 export * from './types';

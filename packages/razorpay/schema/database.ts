@@ -77,6 +77,18 @@ export const RazorpayCustomerSchema = z
 	})
 	.passthrough()
 
+
+export const RazorpaySettlementSchema = z.object({
+	id: z.string(),
+	entity: z.literal('settlement'),
+	amount: z.number().nullable().optional(),
+	status: z.enum(['created', 'processed', 'failed']),
+	fees: z.number().nullable().optional(),
+	tax: z.number().nullable().optional(),
+	utr: z.string().nullable().optional(),
+	created_at: z.number().optional(),
+})
+	.passthrough()
 // Database schemas (extend base schemas with createdAt for DB storage)
 export const RazorpayOrder = RazorpayOrderSchema.extend({
 	createdAt: z.coerce.date().nullable().optional(),
@@ -93,13 +105,20 @@ export const RazorpayRefund = RazorpayRefundSchema.extend({
 export const RazorpayCustomer = RazorpayCustomerSchema.extend({
 	createdAt: z.coerce.date().nullable().optional(),
 })
+
+export const RazorpaySettlement = RazorpaySettlementSchema.extend({
+	createdAt: z.coerce.date().nullable().optional(),
+})
+
 // Type exports
 export type RazorpayOrderData = z.infer<typeof RazorpayOrderSchema>
 export type RazorpayPaymentData = z.infer<typeof RazorpayPaymentSchema>
 export type RazorpayRefundData = z.infer<typeof RazorpayRefundSchema>
-export type RazorpayCustomerData = z.infer<typeof RazorpayCustomerSchema>;
+export type RazorpayCustomerData = z.infer<typeof RazorpayCustomerSchema>
+export type RazorpaySettlementData = z.infer<typeof RazorpaySettlementSchema>
 
 export type RazorpayOrder = z.infer<typeof RazorpayOrder>
 export type RazorpayPayment = z.infer<typeof RazorpayPayment>
 export type RazorpayRefund = z.infer<typeof RazorpayRefund>
 export type RazorpayCustomer = z.infer<typeof RazorpayCustomer>;
+export type RazorpaySettlement = z.infer<typeof RazorpaySettlement>;
