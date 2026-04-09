@@ -119,7 +119,7 @@ export const GoogleSheetsEndpointInputSchemas = {
 	sheetsCreateSheet: SheetsCreateSheetInputSchema,
 	sheetsDeleteSheet: SheetsDeleteSheetInputSchema,
 	sheetsDeleteRowsOrColumns: SheetsDeleteRowsOrColumnsInputSchema,
-	sheetsListSheets: SheetsListSheetsInputSchema,
+	sheetsListSheetsInSpreadsheet: SheetsListSheetsInputSchema,
 } as const;
 
 export type GoogleSheetsEndpointInputs = {
@@ -213,7 +213,7 @@ export const GoogleSheetsEndpointOutputSchemas = {
 	sheetsCreateSheet: BatchUpdateSpreadsheetResponseSchema,
 	sheetsDeleteSheet: BatchUpdateSpreadsheetResponseSchema,
 	sheetsDeleteRowsOrColumns: BatchUpdateSpreadsheetResponseSchema,
-	sheetsListSheets: ListSheetsResponseSchema,
+	sheetsListSheetsInSpreadsheet: ListSheetsResponseSchema,
 } as const;
 
 export type ListSheetsResponse = {
@@ -246,5 +246,5 @@ export type GoogleSheetsEndpointOutputs = {
 	sheetsCreateSheet: BatchUpdateSpreadsheetResponse;
 	sheetsDeleteSheet: BatchUpdateSpreadsheetResponse;
 	sheetsDeleteRowsOrColumns: BatchUpdateSpreadsheetResponse;
-	sheetsListSheets: ListSheetsResponse;
+	sheetsListSheetsInSpreadsheet: ListSheetsResponse;
 };

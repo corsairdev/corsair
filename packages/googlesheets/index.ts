@@ -9,8 +9,6 @@ import type {
 	PluginPermissionsConfig,
 	RawWebhookRequest,
 	RequiredPluginEndpointMeta,
-	RequiredPluginEndpointSchemas,
-	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
 import type { PickAuth } from 'corsair/core';
 import { getValidAccessToken } from './client';
@@ -59,7 +57,7 @@ export type GoogleSheetsEndpoints = {
 	sheetsCreateSheet: GoogleSheetsEndpoint<'sheetsCreateSheet'>;
 	sheetsDeleteSheet: GoogleSheetsEndpoint<'sheetsDeleteSheet'>;
 	sheetsDeleteRowsOrColumns: GoogleSheetsEndpoint<'sheetsDeleteRowsOrColumns'>;
-	sheetsListSheets: GoogleSheetsEndpoint<'sheetsListSheets'>;
+	sheetsListSheetsInSpreadsheet: GoogleSheetsEndpoint<'sheetsListSheetsInSpreadsheet'>;
 };
 
 export type GoogleSheetsBoundEndpoints = BindEndpoints<
@@ -98,7 +96,7 @@ const googleSheetsEndpointsNested = {
 		createSheet: SheetsEndpoints.createSheet,
 		deleteSheet: SheetsEndpoints.deleteSheet,
 		deleteRowsOrColumns: SheetsEndpoints.deleteRowsOrColumns,
-		listSheets: SheetsEndpoints.listSheets,
+		listSheetsInSpreadsheet: SheetsEndpoints.listSheetsInSpreadsheet,
 	},
 } as const;
 
@@ -147,9 +145,9 @@ export const googlesheetsEndpointSchemas = {
 		input: GoogleSheetsEndpointInputSchemas.sheetsDeleteRowsOrColumns,
 		output: GoogleSheetsEndpointOutputSchemas.sheetsDeleteRowsOrColumns,
 	},
-	'sheets.listSheets': {
-		input: GoogleSheetsEndpointInputSchemas.sheetsListSheets,
-		output: GoogleSheetsEndpointOutputSchemas.sheetsListSheets,
+	'sheets.listSheetsInSpreadsheet': {
+		input: GoogleSheetsEndpointInputSchemas.sheetsListSheetsInSpreadsheet,
+		output: GoogleSheetsEndpointOutputSchemas.sheetsListSheetsInSpreadsheet,
 	},
 } as const;
 
@@ -236,7 +234,7 @@ const googleSheetsEndpointMeta = {
 		riskLevel: 'destructive',
 		description: 'Delete rows or columns from a sheet [DESTRUCTIVE]',
 	},
-	'sheets.listSheets': {
+	'sheets.listSheetsInSpreadsheet': {
 		riskLevel: 'read',
 		description: 'List all sheet tabs in a spreadsheet',
 	},

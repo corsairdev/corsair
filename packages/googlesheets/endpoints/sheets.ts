@@ -391,7 +391,7 @@ export const deleteSheet: GoogleSheetsEndpoints['sheetsDeleteSheet'] = async (
 	return result;
 };
 
-export const listSheets: GoogleSheetsEndpoints['sheetsListSheets'] = async (
+export const listSheetsInSpreadsheet: GoogleSheetsEndpoints['sheetsListSheetsInSpreadsheet'] = async (
 	ctx,
 	input,
 ) => {

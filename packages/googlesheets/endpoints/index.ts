@@ -16,7 +16,7 @@ export const SheetsEndpoints = {
 	createSheet: Sheets.createSheet,
 	deleteSheet: Sheets.deleteSheet,
 	deleteRowsOrColumns: Sheets.deleteRowsOrColumns,
-	listSheets: Sheets.listSheets,
+	listSheetsInSpreadsheet: Sheets.listSheetsInSpreadsheet,
 };
 
 export * from './types';
