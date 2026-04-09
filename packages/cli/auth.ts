@@ -24,6 +24,64 @@ import { getCorsairInstance } from './index';
 // Helpers
 // ─────────────────────────────────────────────────────────────────────────────
 
+type GraphSubscriptionResponse = {
+	id: string;
+	resource?: string;
+	changeType?: string;
+	expirationDateTime?: string;
+	notificationUrl?: string;
+};
+
+function createGraphSubscription(
+	accessToken: string,
+	payload: {
+		changeType: string;
+		notificationUrl: string;
+		resource: string;
+		expirationDateTime: string;
+		clientState: string;
+	},
+): Promise<GraphSubscriptionResponse> {
+	const postData = JSON.stringify(payload);
+	return new Promise((resolve, reject) => {
+		const req = https.request(
+			{
+				hostname: 'graph.microsoft.com',
+				path: '/v1.0/subscriptions',
+				method: 'POST',
+				headers: {
+					Authorization: `Bearer ${accessToken}`,
+					'Content-Type': 'application/json',
+					'Content-Length': Buffer.byteLength(postData).toString(),
+				},
+			},
+			(res) => {
+				let data = '';
+				res.on('data', (chunk) => {
+					data += chunk;
+				});
+				res.on('end', () => {
+					const parsed = JSON.parse(data || '{}') as Record<string, unknown>;
+					if (!res.statusCode || res.statusCode < 200 || res.statusCode >= 300) {
+						reject(
+							new Error(
+								`Subscription creation failed (${res.statusCode ?? 'unknown'}): ${JSON.stringify(parsed)}`,
+							),
+						);
+						return;
+					}
+					resolve(parsed as GraphSubscriptionResponse);
+				});
+			},
+		);
+		req.on('error', (error) => {
+			reject(new Error(`Subscription request failed: ${error.message}`));
+		});
+		req.write(postData);
+		req.end();
+	});
+}
+
 function out(data: Record<string, unknown>): void {
 	console.log(JSON.stringify(data));
 }

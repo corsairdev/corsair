@@ -5,11 +5,17 @@ description: Integrate Notion databases, pages, and blocks into your application
 
 ## Quick Start
 
+Install the plugin:
+
+```bash
+pnpm install @corsair-dev/notion
+```
+
 Add the Notion plugin to your Corsair instance:
 
 ```ts title="corsair.ts"
 import { createCorsair } from "corsair";
-import { notion } from "corsair/plugins";
+import { notion } from "@corsair-dev/notion";
 
 export const corsair = createCorsair({
     plugins: [
@@ -43,18 +49,24 @@ If no `authType` is specified, the plugin defaults to **`api_key`**.
 
 ### Configuring API Key Authentication
 
-```ts title="corsair.ts"
-notion({
-    key: process.env.NOTION_TOKEN, // [!code highlight]
-})
+Store credentials with the CLI:
+
+```bash
+pnpm corsair setup --notion api_key=your-integration-token
 ```
 
 For webhook signature verification:
 
+```bash
+pnpm corsair setup --notion webhook_signature=your-webhook-secret
+```
+
+Alternatively, provide credentials directly in the config:
+
 ```ts title="corsair.ts"
 notion({
     key: process.env.NOTION_TOKEN,
-    webhookSecret: process.env.NOTION_WEBHOOK_SECRET, // [!code highlight]
+    webhookSecret: process.env.NOTION_WEBHOOK_SECRET,
 })
 ```
 

@@ -1,0 +1,129 @@
+---
+title: Calendly Database Schema
+description: Database entities and querying synced Calendly data.
+---
+
+The Calendly plugin syncs scheduled events, event types, and invitees to your local database.
+
+## Synced Entities
+
+- **scheduledEvents** - Booked meetings and appointments
+- **eventTypes** - Calendly event type configurations
+- **invitees** - People who have booked meetings
+
+## Database API
+
+```ts
+const events = await corsair.calendly.db.scheduledEvents.search({
+    data: { status: "active" },
+});
+```
+
+---
+
+## Scheduled Events
+
+### Schema
+
+```ts
+{
+    id: string;
+    uri?: string;
+    name?: string;
+    status?: "active" | "canceled";
+    start_time?: string;
+    end_time?: string;
+    event_type?: string;
+    location?: {
+        type?: string;
+        location?: string;
+        join_url?: string;
+    };
+    organizer_email?: string;
+    created_at?: string;
+    updated_at?: string;
+}
+```
+
+### Querying Scheduled Events
+
+```ts
+// Get active events
+const active = await corsair.calendly.db.scheduledEvents.search({
+    data: { status: "active" },
+});
+
+// Get canceled events
+const canceled = await corsair.calendly.db.scheduledEvents.search({
+    data: { status: "canceled" },
+});
+```
+
+---
+
+## Event Types
+
+### Schema
+
+```ts
+{
+    id: string;
+    uri?: string;
+    name?: string;
+    active?: boolean;
+    slug?: string;
+    duration?: number;
+    kind?: string;
+    color?: string;
+    description_plain?: string;
+}
+```
+
+### Querying Event Types
+
+```ts
+const eventTypes = await corsair.calendly.db.eventTypes.search({ data: {} });
+
+const active = await corsair.calendly.db.eventTypes.search({
+    data: { active: true },
+});
+```
+
+---
+
+## Invitees
+
+### Schema
+
+```ts
+{
+    id: string;
+    uri?: string;
+    email?: string;
+    name?: string;
+    status?: "active" | "canceled";
+    event?: string;
+    created_at?: string;
+    updated_at?: string;
+}
+```
+
+### Querying Invitees
+
+```ts
+const invitees = await corsair.calendly.db.invitees.search({
+    data: { status: "active" },
+});
+```
+
+---
+
+## Multi-Tenancy
+
+```ts
+const tenant = corsair.withTenant("user-123");
+
+const events = await tenant.calendly.db.scheduledEvents.search({ data: {} });
+```
+
+See [Database](/concepts/database) for more information about querying patterns.
