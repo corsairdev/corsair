@@ -1,3 +1,13 @@
+/**
+ * This file contains the core logic for making authenticated requests to the Stitch API.
+ * It handles authentication via API keys, request formatting, and error handling.
+ *
+ * Note on Type Safety:
+ * The `unknown` type is used in catch blocks to ensure safe error handling with proper type assertions.
+ * Dynamic request bodies are typed as `Record<string, unknown>` where possible, or `any` when
+ * interacting with legacy or highly dynamic data structures that don't have a fixed schema.
+ */
+
 import { request, type ApiRequestOptions, type OpenAPIConfig, type RateLimitConfig } from 'corsair/http';
 
 export class StitchAPIError extends Error {
@@ -36,18 +46,17 @@ export async function makeStitchRequest<T>(
     VERSION: '1.0.0',
     WITH_CREDENTIALS: false,
     CREDENTIALS: 'omit',
-    TOKEN: apiKey,
     HEADERS: {
       'Content-Type': 'application/json',
-      'X-API-Key': apiKey, // Stitch might expect it in a header too
+      'X-API-Key': apiKey,
     },
   };
 
   const requestOptions: ApiRequestOptions = {
     method,
     url: endpoint,
-    body: method !== 'GET' ? body : undefined,
-    query: method === 'GET' ? query : undefined,
+    body,
+    query,
     mediaType: 'application/json',
   };
 
@@ -56,11 +65,12 @@ export async function makeStitchRequest<T>(
       rateLimitConfig: STITCH_RATE_LIMIT_CONFIG,
     });
     return response;
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const err = error as { message?: string; status?: number; code?: string };
     throw new StitchAPIError(
-      error.message || 'Unknown Stitch API Error',
-      error.status,
-      error.code
+      err.message || 'Unknown Stitch API Error',
+      err.status,
+      err.code
     );
   }
 }
