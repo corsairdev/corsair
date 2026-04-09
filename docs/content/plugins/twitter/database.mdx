@@ -1,0 +1,63 @@
+---
+title: Twitter Database Schema
+description: Database entities and querying synced Twitter data.
+---
+
+The Twitter plugin syncs data to your local database when API calls are made.
+
+## Synced Entities
+
+- **tweets** - Tweets created or fetched
+
+## Database API
+
+```ts
+const tweets = await corsair.twitter.db.tweets.search({
+    data: {},
+    limit: 50,
+});
+```
+
+---
+
+## Tweets
+
+Tweets are synced when you create or fetch tweets.
+
+### Schema
+
+```ts
+{
+    id: string;
+    text: string;
+    authorId?: string;
+    createdAt?: string;
+    inReplyToUserId?: string;
+    referencedTweets?: Array<{
+        type: string;
+        id: string;
+    }>;
+}
+```
+
+### Querying Tweets
+
+**Search by author:**
+
+```ts
+const tweets = await corsair.twitter.db.tweets.search({
+    data: { authorId: "user-id" },
+});
+```
+
+---
+
+## Multi-Tenancy
+
+```ts
+const tenant = corsair.withTenant("user-123");
+
+const tweets = await tenant.twitter.db.tweets.search({ data: {} });
+```
+
+See [Database](/concepts/database) for more information about querying patterns.

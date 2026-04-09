@@ -430,6 +430,13 @@ function resolveClient(
 }
 
 /**
+ * Set to true to re-enable the `corsair run` command.
+ * Disabled by default — prefer `corsair script` to avoid dumping full API
+ * responses into the agent's context window.
+ */
+const SHOW_RUN = false;
+
+/**
  * Navigates a dot-notation path on the corsair client and returns the function.
  * Strips the 'api' namespace marker that list_operations adds (e.g. slack.api.messages.post → slack.messages.post).
  */
@@ -592,38 +599,26 @@ function parseScriptArgs(args: string[]): {
 // ─────────────────────────────────────────────────────────────────────────────
 
 function printHelp() {
-	console.log('[#corsair]: Corsair CLI\n');
-	console.log('Commands:');
-	console.log('  corsair setup                                   Initialize your Corsair instance');
-	console.log('  corsair setup -backfill                         Initialize and backfill initial data');
-	console.log('  corsair setup --<plugin> <field>=VALUE ...      Set credentials for a plugin');
-	console.log('');
-	console.log('  corsair auth --plugin=<id>                      Start OAuth flow (outputs auth URL as JSON)');
-	console.log('  corsair auth --plugin=<id> --code=<code>        Exchange OAuth code for tokens');
-	console.log('  corsair auth --plugin=<id> --credentials        Show current credential status');
-	console.log('');
-	console.log('  corsair list                                     List all API endpoint paths across all plugins');
-	console.log('  corsair list --plugin=<id>                      List paths for a specific plugin');
-	console.log('  corsair list --type=api|webhooks|db             Filter by operation type (default: api)');
-	console.log('  corsair list --plugin=<id> --type=<type>        Combine plugin + type filters');
-	console.log('');
-	console.log('  corsair schema <path>                           Show schema for an endpoint, webhook, or DB entity');
-	console.log('  corsair schema slack.api.messages.post          Example: API endpoint schema');
-	console.log('  corsair schema slack.webhooks.messages.message  Example: webhook schema');
-	console.log('  corsair schema slack.db.messages.search         Example: DB search schema');
-	console.log('');
-	console.log('  corsair run <path> [input-json]                 Call an API endpoint and print the result');
-	console.log('  corsair run slack.api.channels.list             Example: no input needed');
-	console.log('  corsair run slack.api.messages.post \'{"channel":"C123","text":"hi"}\'');
-	console.log('  corsair run <path> [input-json] --tenant=<id>   Multi-tenant variant');
-	console.log('');
-	console.log('  corsair script --code "<js>"                    Run a sandboxed script with corsair injected');
-	console.log('  corsair script --code "<js>" --tenant=<id>      Multi-tenant variant');
-	console.log('  # corsair is pre-injected; use return to output a value:');
-	console.log('  # --code "const r = await corsair.slack.api.channels.list(); return r.channels.find(c => c.name === \'general\')?.id"');
-	console.log('');
-	console.log('  corsair watch-renew                             Renew Google webhook watch (Gmail/Drive/Calendar)');
-	console.log('  corsair help                                    Show this help message\n');
+	const lines = [
+		'Corsair CLI',
+		'',
+		'  pnpm corsair setup                              Init (add -backfill to seed data)',
+		'  pnpm corsair setup --<plugin> <field>=VALUE     Set plugin credentials',
+		'  pnpm corsair auth --plugin=<id>                 Start OAuth flow',
+		'  pnpm corsair auth --plugin=<id> --code=<code>   Exchange OAuth code for tokens',
+		'  pnpm corsair auth --plugin=<id> --credentials   Show credential status',
+		'  pnpm corsair list [--plugin=<id>] [--type=api|webhooks|db]  List endpoint paths (tip: pipe to grep to filter)',
+		'  pnpm corsair schema <path>                      Show schema for an endpoint/webhook/DB entity',
+		'  pnpm corsair script --code "<js>" [--tenant=<id>]',
+		'    corsair is injected; use return to output a value.',
+		'    IMPORTANT: Always filter results inline — you are the consumer of the return value, so returning full list responses wastes tokens.',
+		'    Bad:  return await corsair.slack.api.users.list({})',
+		'    Good: return (await corsair.slack.api.users.list({})).members.find(u => u.name === \'bob\')?.id',
+		...(SHOW_RUN ? [
+			'  run <path> [input-json] [--tenant=<id>]  Call an endpoint directly',
+		] : []),
+	];
+	console.log(lines.join('\n'));
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -634,11 +629,6 @@ async function main() {
 	const cwd = process.cwd();
 	const args = process.argv.slice(2);
 	const command = args[0];
-
-	if (command === 'help' || command === '--help' || command === '-h') {
-		printHelp();
-		return;
-	}
 
 	if (command === 'setup') {
 		const { backfill, credentials } = parseSetupArgs(args.slice(1));
@@ -665,6 +655,24 @@ async function main() {
 		return;
 	}
 
+	if (command === 'subscribe') {
+		const pluginArg = args.slice(1).find((a) => a.startsWith('--plugin='));
+		const pluginId = pluginArg ? pluginArg.slice('--plugin='.length) : undefined;
+		if (pluginId === 'outlook') {
+			const { runOutlookSubscribe } = await import('./subscribe-outlook');
+			await runOutlookSubscribe({ cwd });
+			return;
+		}
+		console.error(`[#corsair]: Unknown plugin for subscribe: '${pluginId ?? '(none)'}'. Supported: outlook`);
+		process.exit(1);
+	}
+	
+	if (command === 'teams-subscribe') {
+		const { runTeamsSubscribe } = await import('./watch-renew');
+		await runTeamsSubscribe({ cwd });
+		return;
+	}
+
 	if (command === 'list') {
 		const { plugin, type } = parseListArgs(args.slice(1));
 		const instance = await getCorsairInstance({ cwd });
@@ -677,26 +685,16 @@ async function main() {
 		if (typeof result === 'string') {
 			console.log(result);
 		} else if (Array.isArray(result)) {
-			for (const path of result) {
-				console.log(path);
-			}
-			console.log('');
-			console.log('Run `pnpm corsair schema <path>` to get the schema for any of the above.');
+			console.log(result.join('\n'));
 		} else if (result && typeof result === 'object') {
 			const grouped = result as Record<string, string[]>;
-			for (const [pluginId, paths] of Object.entries(grouped)) {
-				console.log(`${pluginId}:`);
-				for (const path of paths) {
-					console.log(`  ${path}`);
-				}
-			}
-			console.log('');
-			console.log('Run `pnpm corsair schema <path>` to get the schema for any of the above.');
+			const all = Object.values(grouped).flat();
+			console.log(all.join('\n'));
 		}
 		return;
 	}
 
-	if (command === 'run') {
+	if (SHOW_RUN && command === 'run') {
 		const { path: endpointPath, input, tenant } = parseRunArgs(args.slice(1));
 		if (!endpointPath) {
 			console.error('[#corsair]: Usage: corsair run <path> [input-json]');
@@ -777,30 +775,7 @@ async function main() {
 		return;
 	}
 
-	// Default behavior: print help + inspect corsair instance
 	printHelp();
-	console.log('');
-	console.log(`[#corsair]: Looking for Corsair instance in ${cwd}...\n`);
-
-	try {
-		const instance = await getCorsairInstance({ cwd });
-		console.log('[#corsair]: ✅ Successfully loaded Corsair instance!');
-		if (instance && typeof instance === 'object' && 'withTenant' in instance) {
-			console.log(
-				'[#corsair]: Multi-tenant setup detected (has withTenant method)',
-			);
-		} else {
-			console.log('[#corsair]: Single-tenant setup detected (direct client)');
-		}
-		if (instance && typeof instance === 'object') {
-			console.log(
-				`[#corsair]: Instance keys: ${Object.keys(instance).join(', ')}`,
-			);
-		}
-	} catch (error) {
-		console.error('[#corsair]: Error:', error);
-		process.exit(1);
-	}
 }
 
 // Run if this file is executed directly

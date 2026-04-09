@@ -5,11 +5,17 @@ description: Integrate Airtable databases and records into your application with
 
 ## Quick Start
 
+Install the plugin:
+
+```bash
+pnpm install @corsair-dev/airtable
+```
+
 Add the Airtable plugin to your Corsair instance:
 
 ```ts title="corsair.ts"
 import { createCorsair } from "corsair";
-import { airtable } from "corsair/plugins";
+import { airtable } from "@corsair-dev/airtable";
 
 export const corsair = createCorsair({
     plugins: [
@@ -42,18 +48,24 @@ If no `authType` is specified, the plugin defaults to **`api_key`**.
 
 ### Configuring API Key Authentication
 
-```ts title="corsair.ts"
-airtable({
-    key: process.env.AIRTABLE_API_KEY, // [!code highlight]
-})
+Store credentials with the CLI:
+
+```bash
+pnpm corsair setup --airtable api_key=your-personal-access-token
 ```
 
 For webhook signature verification:
 
+```bash
+pnpm corsair setup --airtable webhook_signature=your-webhook-secret
+```
+
+Alternatively, provide credentials directly in the config:
+
 ```ts title="corsair.ts"
 airtable({
     key: process.env.AIRTABLE_API_KEY,
-    webhookSecret: process.env.AIRTABLE_WEBHOOK_SECRET, // [!code highlight]
+    webhookSecret: process.env.AIRTABLE_WEBHOOK_SECRET,
 })
 ```
 

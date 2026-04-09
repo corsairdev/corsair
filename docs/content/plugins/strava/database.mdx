@@ -1,0 +1,120 @@
+---
+title: Strava Database Schema
+description: Database entities and querying synced Strava data.
+---
+
+The Strava plugin syncs activities and athlete data to your local database.
+
+## Synced Entities
+
+- **activities** - Workout and activity records
+- **athletes** - Athlete profile data
+
+## Database API
+
+```ts
+const activities = await corsair.strava.db.activities.search({
+    data: {},
+    limit: 30,
+});
+```
+
+---
+
+## Activities
+
+### Schema
+
+```ts
+{
+    id: string;
+    name?: string;
+    sport_type?: string;
+    type?: string;
+    distance?: number;
+    moving_time?: number;
+    elapsed_time?: number;
+    total_elevation_gain?: number;
+    start_date?: string;
+    start_date_local?: string;
+    timezone?: string;
+    average_speed?: number;
+    max_speed?: number;
+    average_heartrate?: number;
+    max_heartrate?: number;
+    kudos_count?: number;
+    comment_count?: number;
+    athlete_count?: number;
+    achievement_count?: number;
+    trainer?: boolean;
+    commute?: boolean;
+    manual?: boolean;
+    private?: boolean;
+}
+```
+
+### Querying Activities
+
+```ts
+// Get all activities
+const activities = await corsair.strava.db.activities.search({ data: {} });
+
+// Get running activities
+const runs = await corsair.strava.db.activities.search({
+    data: { sport_type: "Run" },
+});
+
+// Get cycling activities
+const rides = await corsair.strava.db.activities.search({
+    data: { sport_type: "Ride" },
+});
+
+// Get non-private activities
+const public_activities = await corsair.strava.db.activities.search({
+    data: { private: false },
+});
+```
+
+---
+
+## Athletes
+
+### Schema
+
+```ts
+{
+    id: string;
+    username?: string;
+    firstname?: string;
+    lastname?: string;
+    city?: string;
+    state?: string;
+    country?: string;
+    sex?: string;
+    premium?: boolean;
+    created_at?: string;
+    updated_at?: string;
+    follower_count?: number;
+    friend_count?: number;
+    measurement_preference?: string;
+    weight?: number;
+}
+```
+
+### Querying Athletes
+
+```ts
+const athletes = await corsair.strava.db.athletes.search({ data: {} });
+```
+
+---
+
+## Multi-Tenancy
+
+```ts
+const tenant = corsair.withTenant("user-123");
+
+const activities = await tenant.strava.db.activities.search({ data: {} });
+```
+
+See [Database](/concepts/database) for more information about querying patterns.

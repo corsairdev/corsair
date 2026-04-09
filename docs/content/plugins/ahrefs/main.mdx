@@ -1,0 +1,101 @@
+---
+title: Ahrefs
+description: Access Ahrefs SEO data including backlinks, keyword rankings, and site audits from your app or agent.
+---
+
+## Quick Start
+
+Install the plugin:
+
+```bash
+pnpm install @corsair-dev/ahrefs
+```
+
+Add the Ahrefs plugin to your Corsair instance:
+
+```ts title="corsair.ts"
+import { createCorsair } from "corsair";
+import { ahrefs } from "@corsair-dev/ahrefs";
+
+export const corsair = createCorsair({
+    plugins: [ahrefs()],
+    database: db,
+    kek: process.env.CORSAIR_KEK!,
+});
+```
+
+## Authentication
+
+### Supported Auth Types
+
+- **`api_key`** (default) - Ahrefs API key
+
+### API Key Setup
+
+```bash
+pnpm corsair setup --ahrefs api_key=your-api-key
+```
+
+See [Get Credentials](/plugins/ahrefs/get-credentials) for step-by-step instructions.
+
+## Options
+
+| Option | Type | Description |
+|--------|------|-------------|
+| `authType` | `'api_key'` | Authentication method |
+| `key` | `string` | API key (optional, uses database if not provided) |
+| `hooks` | `object` | Endpoint hooks for custom logic |
+| `errorHandlers` | `object` | Custom error handlers |
+
+## Usage
+
+```ts
+// Get domain rating
+const rating = await corsair.ahrefs.api.siteExplorer.getDomainRating({
+    target: "example.com",
+    date: "2024-01-01",
+});
+
+// Get backlinks stats
+const stats = await corsair.ahrefs.api.siteExplorer.backlinksStats({
+    target: "example.com",
+    date: "2024-01-01",
+    mode: "domain",
+});
+
+// Get organic keywords
+const keywords = await corsair.ahrefs.api.siteExplorer.organicKeywords({
+    target: "example.com",
+    select: "keyword,volume,position",
+});
+
+// Keyword overview
+const overview = await corsair.ahrefs.api.keywordsExplorer.overview({
+    keywords: ["seo tools", "backlink checker"],
+    country: "us",
+    select: "keyword,volume,difficulty",
+});
+
+// Rank tracker overview
+const ranks = await corsair.ahrefs.api.rankTracker.overview({
+    campaign_id: 123,
+});
+
+// SERP overview
+const serp = await corsair.ahrefs.api.serp.overview({
+    keyword: "best seo tools",
+    country: "us",
+    select: "url,domain_rating,traffic",
+});
+```
+
+### Multi-Tenancy
+
+```ts
+const tenant = corsair.withTenant("workspace-123");
+
+const stats = await tenant.ahrefs.api.siteExplorer.backlinksStats({
+    target: "example.com",
+    date: "2024-01-01",
+});
+```

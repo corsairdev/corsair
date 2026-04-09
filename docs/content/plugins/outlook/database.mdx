@@ -1,0 +1,136 @@
+---
+title: Outlook Database Schema
+description: Database entities and querying synced Outlook data.
+---
+
+The Outlook plugin syncs messages, events, and contacts to your local database.
+
+## Synced Entities
+
+- **messages** - Email messages
+- **events** - Calendar events
+- **contacts** - Address book contacts
+
+## Database API
+
+```ts
+const messages = await corsair.outlook.db.messages.search({
+    data: { isRead: false },
+});
+```
+
+---
+
+## Messages
+
+### Schema
+
+```ts
+{
+    id: string;
+    subject?: string;
+    bodyPreview?: string;
+    from?: {
+        emailAddress?: { name?: string; address?: string };
+    };
+    toRecipients?: Array<{
+        emailAddress?: { name?: string; address?: string };
+    }>;
+    isRead?: boolean;
+    isDraft?: boolean;
+    receivedDateTime?: string;
+    sentDateTime?: string;
+    importance?: string;
+    hasAttachments?: boolean;
+}
+```
+
+### Querying Messages
+
+```ts
+// Get unread messages
+const unread = await corsair.outlook.db.messages.search({
+    data: { isRead: false },
+});
+
+// Get draft messages
+const drafts = await corsair.outlook.db.messages.search({
+    data: { isDraft: true },
+});
+```
+
+---
+
+## Events
+
+### Schema
+
+```ts
+{
+    id: string;
+    subject?: string;
+    bodyPreview?: string;
+    start?: { dateTime?: string; timeZone?: string };
+    end?: { dateTime?: string; timeZone?: string };
+    location?: { displayName?: string };
+    isAllDay?: boolean;
+    isCancelled?: boolean;
+    organizer?: {
+        emailAddress?: { name?: string; address?: string };
+    };
+    importance?: string;
+}
+```
+
+### Querying Events
+
+```ts
+// Get upcoming events
+const events = await corsair.outlook.db.events.search({ data: {} });
+
+const cancelled = await corsair.outlook.db.events.search({
+    data: { isCancelled: false },
+});
+```
+
+---
+
+## Contacts
+
+### Schema
+
+```ts
+{
+    id: string;
+    displayName?: string;
+    givenName?: string;
+    surname?: string;
+    emailAddresses?: Array<{ name?: string; address?: string }>;
+    businessPhones?: string[];
+    mobilePhone?: string;
+    jobTitle?: string;
+    companyName?: string;
+}
+```
+
+### Querying Contacts
+
+```ts
+const contacts = await corsair.outlook.db.contacts.search({ data: {} });
+
+const byCompany = await corsair.outlook.db.contacts.search({
+    data: { companyName: "Acme Inc" },
+});
+```
+
+---
+
+## Multi-Tenancy
+
+```ts
+const tenant = corsair.withTenant("user-123");
+
+const messages = await tenant.outlook.db.messages.search({ data: {} });
+```
+
+See [Database](/concepts/database) for more information about querying patterns.
