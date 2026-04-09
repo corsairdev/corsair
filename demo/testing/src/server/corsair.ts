@@ -21,16 +21,5 @@ export const corsair = createCorsair({
 		timeout: '10m',
 		onTimeout: 'deny',
 	},
-	plugins: [
-		github(),
-		slack(),
-		googlesheets(),
-		googlecalendar(),
-		gmail(),
-		linear(),
-		sharepoint(),
-		onedrive(),
-		outlook(),
-		teams()
-	],
+	plugins: [github(), slack(), googlesheets(), googlecalendar(), gmail(), linear(), sharepoint(), onedrive()],
 });
