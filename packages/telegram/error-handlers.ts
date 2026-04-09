@@ -1,5 +1,5 @@
-import { ApiError } from 'corsair/http';
 import type { CorsairErrorHandler } from 'corsair/core';
+import { ApiError } from 'corsair/http';
 import { TelegramAPIError } from './client';
 
 export const errorHandlers = {
@@ -142,7 +142,10 @@ export const errorHandlers = {
 	},
 	MIGRATE_CHAT_ERROR: {
 		match: (error, context) => {
-			if (error instanceof TelegramAPIError && error.parameters?.migrate_to_chat_id) {
+			if (
+				error instanceof TelegramAPIError &&
+				error.parameters?.migrate_to_chat_id
+			) {
 				return true;
 			}
 			const errorMessage = error.message.toLowerCase();

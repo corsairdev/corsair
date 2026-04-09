@@ -40,7 +40,9 @@ const SheetsAppendOrUpdateRowInputSchema = z.object({
 	sheetName: z.string().optional(),
 	keyColumn: z
 		.string()
-		.describe('Column letter (e.g. "A"), not a header name (e.g. "Company Name")')
+		.describe(
+			'Column letter (e.g. "A"), not a header name (e.g. "Company Name")',
+		)
 		.optional(),
 	keyValue: z.union([z.string(), z.number()]).optional(),
 	values: z

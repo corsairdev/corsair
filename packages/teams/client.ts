@@ -1,6 +1,8 @@
-import type { ApiRequestOptions } from 'corsair/http';
-import type { OpenAPIConfig } from 'corsair/http';
-import type { RateLimitConfig } from 'corsair/http';
+import type {
+	ApiRequestOptions,
+	OpenAPIConfig,
+	RateLimitConfig,
+} from 'corsair/http';
 import { request } from 'corsair/http';
 
 export class TeamsAPIError extends Error {
@@ -41,7 +43,10 @@ async function refreshAccessToken(
 		throw new TeamsAPIError(`Failed to refresh access token: ${error}`);
 	}
 
-	return await response.json() as { access_token: string; expires_in: number };
+	return (await response.json()) as {
+		access_token: string;
+		expires_in: number;
+	};
 }
 
 export async function getValidAccessToken({
@@ -64,7 +69,11 @@ export async function getValidAccessToken({
 		return { accessToken, expiresAt: Number(expiresAt), refreshed: false };
 	}
 
-	const tokenData = await refreshAccessToken(clientId, clientSecret, refreshToken);
+	const tokenData = await refreshAccessToken(
+		clientId,
+		clientSecret,
+		refreshToken,
+	);
 	return {
 		accessToken: tokenData.access_token,
 		expiresAt: now + tokenData.expires_in,

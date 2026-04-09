@@ -1,6 +1,5 @@
 import 'dotenv/config';
 import { makeTypeformRequest } from './client';
-import { TypeformEndpointOutputSchemas } from './endpoints/types';
 import type {
 	FormsCreateResponse,
 	FormsDeleteResponse,
@@ -38,6 +37,7 @@ import type {
 	WorkspacesListResponse,
 	WorkspacesUpdateResponse,
 } from './endpoints/types';
+import { TypeformEndpointOutputSchemas } from './endpoints/types';
 
 const TEST_ACCESS_TOKEN = process.env.TYPEFORM_ACCESS_TOKEN!;
 
@@ -137,7 +137,13 @@ describe('Typeform API Type Tests', () => {
 				TEST_ACCESS_TOKEN,
 				{
 					method: 'PATCH',
-					body: [{ op: 'replace', path: '/title', value: `Patched Form ${Date.now()}` }] as unknown as Record<string, unknown>,
+					body: [
+						{
+							op: 'replace',
+							path: '/title',
+							value: `Patched Form ${Date.now()}`,
+						},
+					] as unknown as Record<string, unknown>,
 				},
 			);
 
@@ -155,10 +161,9 @@ describe('Typeform API Type Tests', () => {
 
 		it('formsUpdateMessages returns correct type', async () => {
 			// GET current messages first to obtain the real dot-notation key format used by Typeform API
-			const existingMessages = await makeTypeformRequest<Record<string, string>>(
-				`/forms/${testFormId}/messages`,
-				TEST_ACCESS_TOKEN,
-			);
+			const existingMessages = await makeTypeformRequest<
+				Record<string, string>
+			>(`/forms/${testFormId}/messages`, TEST_ACCESS_TOKEN);
 
 			const [firstKey, firstValue] = Object.entries(existingMessages)[0] ?? [];
 			// Skip if no messages found (form has no custom messages)
@@ -327,7 +332,13 @@ describe('Typeform API Type Tests', () => {
 				TEST_ACCESS_TOKEN,
 				{
 					method: 'PATCH',
-					body: [{ op: 'replace', path: '/name', value: `Updated Workspace ${Date.now()}` }] as unknown as Record<string, unknown>,
+					body: [
+						{
+							op: 'replace',
+							path: '/name',
+							value: `Updated Workspace ${Date.now()}`,
+						},
+					] as unknown as Record<string, unknown>,
 				},
 			);
 
@@ -345,14 +356,15 @@ describe('Typeform API Type Tests', () => {
 			const accountId = meResponse.account_id as string | undefined;
 			if (!accountId) return;
 
-			const response = await makeTypeformRequest<WorkspacesCreateForAccountResponse>(
-				`/accounts/${accountId}/workspaces`,
-				TEST_ACCESS_TOKEN,
-				{
-					method: 'POST',
-					body: { name: `Test Account Workspace ${Date.now()}` },
-				},
-			);
+			const response =
+				await makeTypeformRequest<WorkspacesCreateForAccountResponse>(
+					`/accounts/${accountId}/workspaces`,
+					TEST_ACCESS_TOKEN,
+					{
+						method: 'POST',
+						body: { name: `Test Account Workspace ${Date.now()}` },
+					},
+				);
 
 			TypeformEndpointOutputSchemas.workspacesCreateForAccount.parse(response);
 
@@ -404,11 +416,9 @@ describe('Typeform API Type Tests', () => {
 
 		afterAll(async () => {
 			if (testImageId) {
-				await makeTypeformRequest(
-					`/images/${testImageId}`,
-					TEST_ACCESS_TOKEN,
-					{ method: 'DELETE' },
-				).catch(() => {});
+				await makeTypeformRequest(`/images/${testImageId}`, TEST_ACCESS_TOKEN, {
+					method: 'DELETE',
+				}).catch(() => {});
 			}
 		});
 
@@ -482,10 +492,11 @@ describe('Typeform API Type Tests', () => {
 			// Choice image size variants may not exist for all images; skip if the API returns 404
 			let response: ImagesGetChoiceImageBySizeResponse;
 			try {
-				response = await makeTypeformRequest<ImagesGetChoiceImageBySizeResponse>(
-					`/images/${testImageId}/choice/default`,
-					TEST_ACCESS_TOKEN,
-				);
+				response =
+					await makeTypeformRequest<ImagesGetChoiceImageBySizeResponse>(
+						`/images/${testImageId}/choice/default`,
+						TEST_ACCESS_TOKEN,
+					);
 			} catch {
 				return;
 			}
@@ -544,11 +555,9 @@ describe('Typeform API Type Tests', () => {
 
 		afterAll(async () => {
 			if (testThemeId) {
-				await makeTypeformRequest(
-					`/themes/${testThemeId}`,
-					TEST_ACCESS_TOKEN,
-					{ method: 'DELETE' },
-				).catch(() => {});
+				await makeTypeformRequest(`/themes/${testThemeId}`, TEST_ACCESS_TOKEN, {
+					method: 'DELETE',
+				}).catch(() => {});
 			}
 		});
 
@@ -624,7 +633,10 @@ describe('Typeform API Type Tests', () => {
 				TEST_ACCESS_TOKEN,
 				{
 					method: 'POST',
-					body: { ...baseThemeBody, name: `Test Theme To Delete ${Date.now()}` },
+					body: {
+						...baseThemeBody,
+						name: `Test Theme To Delete ${Date.now()}`,
+					},
 				},
 			);
 
@@ -706,7 +718,9 @@ describe('Typeform API Type Tests', () => {
 					},
 				);
 
-			TypeformEndpointOutputSchemas.webhooksConfigCreateOrUpdate.parse(response);
+			TypeformEndpointOutputSchemas.webhooksConfigCreateOrUpdate.parse(
+				response,
+			);
 
 			// clean up
 			await makeTypeformRequest(

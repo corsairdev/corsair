@@ -1,5 +1,5 @@
-import type { TeamsEndpoints } from '..';
 import { logEventFromContext } from 'corsair/core';
+import type { TeamsEndpoints } from '..';
 import { makeTeamsRequest } from '../client';
 import type { TeamsEndpointOutputs } from './types';
 
@@ -31,8 +31,8 @@ export function toMessageRecord(
 export const list: TeamsEndpoints['messagesList'] = async (ctx, input) => {
 	const { teamId, channelId, top, skipToken } = input;
 	const query = {
-		...(top && { '$top': top }),
-		...(skipToken && { '$skiptoken': skipToken }),
+		...(top && { $top: top }),
+		...(skipToken && { $skiptoken: skipToken }),
 	};
 
 	const result = await makeTeamsRequest<TeamsEndpointOutputs['messagesList']>(
@@ -44,14 +44,22 @@ export const list: TeamsEndpoints['messagesList'] = async (ctx, input) => {
 	if (result.value && ctx.db.messages) {
 		try {
 			for (const msg of result.value) {
-				await ctx.db.messages.upsertByEntityId(msg.id, toMessageRecord(msg, { teamId, channelId }));
+				await ctx.db.messages.upsertByEntityId(
+					msg.id,
+					toMessageRecord(msg, { teamId, channelId }),
+				);
 			}
 		} catch (error) {
 			console.warn('Failed to save messages to database:', error);
 		}
 	}
 
-	await logEventFromContext(ctx, 'teams.messages.list', { teamId, channelId }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'teams.messages.list',
+		{ teamId, channelId },
+		'completed',
+	);
 	return result;
 };
 
@@ -66,13 +74,21 @@ export const get: TeamsEndpoints['messagesGet'] = async (ctx, input) => {
 
 	if (result.id && ctx.db.messages) {
 		try {
-			await ctx.db.messages.upsertByEntityId(result.id, toMessageRecord(result, { teamId, channelId }));
+			await ctx.db.messages.upsertByEntityId(
+				result.id,
+				toMessageRecord(result, { teamId, channelId }),
+			);
 		} catch (error) {
 			console.warn('Failed to save message to database:', error);
 		}
 	}
 
-	await logEventFromContext(ctx, 'teams.messages.get', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'teams.messages.get',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
@@ -91,13 +107,21 @@ export const send: TeamsEndpoints['messagesSend'] = async (ctx, input) => {
 
 	if (result.id && ctx.db.messages) {
 		try {
-			await ctx.db.messages.upsertByEntityId(result.id, toMessageRecord(result, { teamId, channelId }));
+			await ctx.db.messages.upsertByEntityId(
+				result.id,
+				toMessageRecord(result, { teamId, channelId }),
+			);
 		} catch (error) {
 			console.warn('Failed to save sent message to database:', error);
 		}
 	}
 
-	await logEventFromContext(ctx, 'teams.messages.send', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'teams.messages.send',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
@@ -125,17 +149,27 @@ export const reply: TeamsEndpoints['messagesReply'] = async (ctx, input) => {
 		}
 	}
 
-	await logEventFromContext(ctx, 'teams.messages.reply', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'teams.messages.reply',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
-export const listReplies: TeamsEndpoints['messagesListReplies'] = async (ctx, input) => {
+export const listReplies: TeamsEndpoints['messagesListReplies'] = async (
+	ctx,
+	input,
+) => {
 	const { teamId, channelId, messageId, top } = input;
 	const query = {
-		...(top && { '$top': top }),
+		...(top && { $top: top }),
 	};
 
-	const result = await makeTeamsRequest<TeamsEndpointOutputs['messagesListReplies']>(
+	const result = await makeTeamsRequest<
+		TeamsEndpointOutputs['messagesListReplies']
+	>(
 		`teams/${teamId}/channels/${channelId}/messages/${messageId}/replies`,
 		ctx.key,
 		{ method: 'GET', query },
@@ -154,7 +188,12 @@ export const listReplies: TeamsEndpoints['messagesListReplies'] = async (ctx, in
 		}
 	}
 
-	await logEventFromContext(ctx, 'teams.messages.listReplies', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'teams.messages.listReplies',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
@@ -175,6 +214,11 @@ export const remove: TeamsEndpoints['messagesDelete'] = async (ctx, input) => {
 		}
 	}
 
-	await logEventFromContext(ctx, 'teams.messages.delete', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'teams.messages.delete',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };

@@ -3,8 +3,7 @@ import type { OutlookEndpoints } from '..';
 import { makeOutlookRequest } from '../client';
 import type { OutlookEndpointOutputs } from './types';
 
-const userPath = (userId?: string) =>
-	userId ? `/users/${userId}` : '/me';
+const userPath = (userId?: string) => (userId ? `/users/${userId}` : '/me');
 
 // ── DB record helper ──────────────────────────────────────────────────────────
 
@@ -21,18 +20,19 @@ const toFolderRecord = (folder: OutlookEndpointOutputs['foldersGet']) => ({
 
 // ── Endpoints ─────────────────────────────────────────────────────────────────
 
-export const createFolder: OutlookEndpoints['foldersCreate'] = async (ctx, input) => {
-	const result = await makeOutlookRequest<OutlookEndpointOutputs['foldersCreate']>(
-		`${userPath(input.user_id)}/mailFolders`,
-		ctx.key,
-		{
-			method: 'POST',
-			body: {
-				displayName: input.displayName,
-				...(input.isHidden !== undefined && { isHidden: input.isHidden }),
-			},
+export const createFolder: OutlookEndpoints['foldersCreate'] = async (
+	ctx,
+	input,
+) => {
+	const result = await makeOutlookRequest<
+		OutlookEndpointOutputs['foldersCreate']
+	>(`${userPath(input.user_id)}/mailFolders`, ctx.key, {
+		method: 'POST',
+		body: {
+			displayName: input.displayName,
+			...(input.isHidden !== undefined && { isHidden: input.isHidden }),
 		},
-	);
+	});
 
 	if (result.id && ctx.db.folders) {
 		try {
@@ -42,7 +42,12 @@ export const createFolder: OutlookEndpoints['foldersCreate'] = async (ctx, input
 		}
 	}
 
-	await logEventFromContext(ctx, 'outlook.folders.create', { displayName: input.displayName }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'outlook.folders.create',
+		{ displayName: input.displayName },
+		'completed',
+	);
 	return result;
 };
 
@@ -65,32 +70,43 @@ export const getFolder: OutlookEndpoints['foldersGet'] = async (ctx, input) => {
 		}
 	}
 
-	await logEventFromContext(ctx, 'outlook.folders.get', { mail_folder_id: input.mail_folder_id }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'outlook.folders.get',
+		{ mail_folder_id: input.mail_folder_id },
+		'completed',
+	);
 	return result;
 };
 
-export const listFolders: OutlookEndpoints['foldersList'] = async (ctx, input) => {
-	const result = await makeOutlookRequest<OutlookEndpointOutputs['foldersList']>(
-		`${userPath(input.user_id)}/mailFolders`,
-		ctx.key,
-		{
-			query: {
-				...(input.top && { $top: input.top }),
-				...(input.skip && { $skip: input.skip }),
-				...(input.filter && { $filter: input.filter }),
-				...(input.select && { $select: input.select }),
-				...(input.orderby && { $orderby: input.orderby }),
-				...(input.count !== undefined && { $count: input.count }),
-				...(input.include_hidden_folders && { includeHiddenFolders: input.include_hidden_folders }),
-			},
+export const listFolders: OutlookEndpoints['foldersList'] = async (
+	ctx,
+	input,
+) => {
+	const result = await makeOutlookRequest<
+		OutlookEndpointOutputs['foldersList']
+	>(`${userPath(input.user_id)}/mailFolders`, ctx.key, {
+		query: {
+			...(input.top && { $top: input.top }),
+			...(input.skip && { $skip: input.skip }),
+			...(input.filter && { $filter: input.filter }),
+			...(input.select && { $select: input.select }),
+			...(input.orderby && { $orderby: input.orderby }),
+			...(input.count !== undefined && { $count: input.count }),
+			...(input.include_hidden_folders && {
+				includeHiddenFolders: input.include_hidden_folders,
+			}),
 		},
-	);
+	});
 
 	if (result.value?.length && ctx.db.folders) {
 		try {
 			for (const folder of result.value) {
 				if (folder.id) {
-					await ctx.db.folders.upsertByEntityId(folder.id, toFolderRecord(folder));
+					await ctx.db.folders.upsertByEntityId(
+						folder.id,
+						toFolderRecord(folder),
+					);
 				}
 			}
 		} catch (error) {
@@ -98,19 +114,25 @@ export const listFolders: OutlookEndpoints['foldersList'] = async (ctx, input) =
 		}
 	}
 
-	await logEventFromContext(ctx, 'outlook.folders.list', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'outlook.folders.list',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
-export const updateFolder: OutlookEndpoints['foldersUpdate'] = async (ctx, input) => {
-	const result = await makeOutlookRequest<OutlookEndpointOutputs['foldersUpdate']>(
-		`${userPath(input.user_id)}/mailFolders/${input.mail_folder_id}`,
-		ctx.key,
-		{
-			method: 'PATCH',
-			body: { displayName: input.displayName },
-		},
-	);
+export const updateFolder: OutlookEndpoints['foldersUpdate'] = async (
+	ctx,
+	input,
+) => {
+	const result = await makeOutlookRequest<
+		OutlookEndpointOutputs['foldersUpdate']
+	>(`${userPath(input.user_id)}/mailFolders/${input.mail_folder_id}`, ctx.key, {
+		method: 'PATCH',
+		body: { displayName: input.displayName },
+	});
 
 	if (result.id && ctx.db.folders) {
 		try {
@@ -120,11 +142,19 @@ export const updateFolder: OutlookEndpoints['foldersUpdate'] = async (ctx, input
 		}
 	}
 
-	await logEventFromContext(ctx, 'outlook.folders.update', { mail_folder_id: input.mail_folder_id }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'outlook.folders.update',
+		{ mail_folder_id: input.mail_folder_id },
+		'completed',
+	);
 	return result;
 };
 
-export const deleteFolder: OutlookEndpoints['foldersDelete'] = async (ctx, input) => {
+export const deleteFolder: OutlookEndpoints['foldersDelete'] = async (
+	ctx,
+	input,
+) => {
 	await makeOutlookRequest<void>(
 		`${userPath(input.user_id)}/mailFolders/${input.folder_id}`,
 		ctx.key,
@@ -139,6 +169,11 @@ export const deleteFolder: OutlookEndpoints['foldersDelete'] = async (ctx, input
 		}
 	}
 
-	await logEventFromContext(ctx, 'outlook.folders.delete', { folder_id: input.folder_id }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'outlook.folders.delete',
+		{ folder_id: input.folder_id },
+		'completed',
+	);
 	return { success: true };
 };

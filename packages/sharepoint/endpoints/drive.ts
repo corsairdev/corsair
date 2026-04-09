@@ -3,61 +3,86 @@ import type { SharepointEndpoints } from '..';
 import { makeGraphRequest } from '../client';
 import type { SharepointEndpointOutputs } from './types';
 
-export const getAnalytics: SharepointEndpoints['driveGetAnalytics'] = async (ctx, input) => {
+export const getAnalytics: SharepointEndpoints['driveGetAnalytics'] = async (
+	ctx,
+	input,
+) => {
 	// Uses Microsoft Graph API
-	const result = await makeGraphRequest<SharepointEndpointOutputs['driveGetAnalytics']>(
+	const result = await makeGraphRequest<
+		SharepointEndpointOutputs['driveGetAnalytics']
+	>(
 		`/sites/${encodeURIComponent(input.site_id)}/drive/items/${encodeURIComponent(input.item_id)}/analytics`,
 		ctx.key,
 		{ method: 'GET' },
 	);
 
-	await logEventFromContext(ctx, 'sharepoint.drive.getAnalytics', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'sharepoint.drive.getAnalytics',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
-export const listRecentItems: SharepointEndpoints['driveListRecentItems'] = async (ctx, input) => {
-	// Uses Microsoft Graph API
-	const result = await makeGraphRequest<SharepointEndpointOutputs['driveListRecentItems']>(
-		`/sites/${encodeURIComponent(input.site_id)}/drive/recent`,
-		ctx.key,
-		{ method: 'GET' },
-	);
+export const listRecentItems: SharepointEndpoints['driveListRecentItems'] =
+	async (ctx, input) => {
+		// Uses Microsoft Graph API
+		const result = await makeGraphRequest<
+			SharepointEndpointOutputs['driveListRecentItems']
+		>(`/sites/${encodeURIComponent(input.site_id)}/drive/recent`, ctx.key, {
+			method: 'GET',
+		});
 
-	if (result.value && ctx.db.files) {
-		try {
-			for (const item of result.value) {
-				if (item.id && item.file) {
-					await ctx.db.files.upsertByEntityId(item.id, {
-						id: item.id,
-						name: item.name,
-						serverRelativeUrl: item.webUrl,
-						timeCreated: item.createdDateTime,
-						timeLastModified: item.lastModifiedDateTime,
-					});
+		if (result.value && ctx.db.files) {
+			try {
+				for (const item of result.value) {
+					if (item.id && item.file) {
+						await ctx.db.files.upsertByEntityId(item.id, {
+							id: item.id,
+							name: item.name,
+							serverRelativeUrl: item.webUrl,
+							timeCreated: item.createdDateTime,
+							timeLastModified: item.lastModifiedDateTime,
+						});
+					}
 				}
+			} catch (error) {
+				console.warn('Failed to save recent drive items to database:', error);
 			}
-		} catch (error) {
-			console.warn('Failed to save recent drive items to database:', error);
 		}
-	}
 
-	await logEventFromContext(ctx, 'sharepoint.drive.listRecentItems', { ...input }, 'completed');
-	return result;
-};
+		await logEventFromContext(
+			ctx,
+			'sharepoint.drive.listRecentItems',
+			{ ...input },
+			'completed',
+		);
+		return result;
+	};
 
-export const restoreVersion: SharepointEndpoints['driveRestoreVersion'] = async (ctx, input) => {
-	// Uses Microsoft Graph API
-	await makeGraphRequest<Record<string, unknown>>(
-		`/sites/${encodeURIComponent(input.site_id)}/drive/items/${encodeURIComponent(input.item_id)}/versions/${encodeURIComponent(input.version_id)}/restoreVersion`,
-		ctx.key,
-		{ method: 'POST' },
-	);
+export const restoreVersion: SharepointEndpoints['driveRestoreVersion'] =
+	async (ctx, input) => {
+		// Uses Microsoft Graph API
+		await makeGraphRequest<Record<string, unknown>>(
+			`/sites/${encodeURIComponent(input.site_id)}/drive/items/${encodeURIComponent(input.item_id)}/versions/${encodeURIComponent(input.version_id)}/restoreVersion`,
+			ctx.key,
+			{ method: 'POST' },
+		);
 
-	await logEventFromContext(ctx, 'sharepoint.drive.restoreVersion', { ...input }, 'completed');
-	return { success: true };
-};
+		await logEventFromContext(
+			ctx,
+			'sharepoint.drive.restoreVersion',
+			{ ...input },
+			'completed',
+		);
+		return { success: true };
+	};
 
-export const deleteVersion: SharepointEndpoints['driveDeleteVersion'] = async (ctx, input) => {
+export const deleteVersion: SharepointEndpoints['driveDeleteVersion'] = async (
+	ctx,
+	input,
+) => {
 	// Uses Microsoft Graph API
 	await makeGraphRequest<Record<string, unknown>>(
 		`/sites/${encodeURIComponent(input.site_id)}/drive/items/${encodeURIComponent(input.item_id)}/versions/${encodeURIComponent(input.version_id)}/content`,
@@ -65,38 +90,60 @@ export const deleteVersion: SharepointEndpoints['driveDeleteVersion'] = async (c
 		{ method: 'DELETE' },
 	);
 
-	await logEventFromContext(ctx, 'sharepoint.drive.deleteVersion', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'sharepoint.drive.deleteVersion',
+		{ ...input },
+		'completed',
+	);
 	return { success: true };
 };
 
-export const createSharingLink: SharepointEndpoints['driveCreateSharingLink'] = async (ctx, input) => {
-	// Uses Microsoft Graph API
-	const body: Record<string, unknown> = {
-		type: input.type,
-		...(input.scope !== undefined && { scope: input.scope }),
-		...(input.expiration_date_time !== undefined && { expirationDateTime: input.expiration_date_time }),
-		...(input.password !== undefined && { password: input.password }),
+export const createSharingLink: SharepointEndpoints['driveCreateSharingLink'] =
+	async (ctx, input) => {
+		// Uses Microsoft Graph API
+		const body: Record<string, unknown> = {
+			type: input.type,
+			...(input.scope !== undefined && { scope: input.scope }),
+			...(input.expiration_date_time !== undefined && {
+				expirationDateTime: input.expiration_date_time,
+			}),
+			...(input.password !== undefined && { password: input.password }),
+		};
+
+		const result = await makeGraphRequest<
+			SharepointEndpointOutputs['driveCreateSharingLink']
+		>(
+			`/sites/${encodeURIComponent(input.site_id)}/drive/items/${encodeURIComponent(input.item_id)}/createLink`,
+			ctx.key,
+			{ method: 'POST', body },
+		);
+
+		await logEventFromContext(
+			ctx,
+			'sharepoint.drive.createSharingLink',
+			{ ...input },
+			'completed',
+		);
+		return result;
 	};
 
-	const result = await makeGraphRequest<SharepointEndpointOutputs['driveCreateSharingLink']>(
-		`/sites/${encodeURIComponent(input.site_id)}/drive/items/${encodeURIComponent(input.item_id)}/createLink`,
-		ctx.key,
-		{ method: 'POST', body },
-	);
-
-	await logEventFromContext(ctx, 'sharepoint.drive.createSharingLink', { ...input }, 'completed');
-	return result;
-};
-
-export const updateItem: SharepointEndpoints['driveUpdateItem'] = async (ctx, input) => {
+export const updateItem: SharepointEndpoints['driveUpdateItem'] = async (
+	ctx,
+	input,
+) => {
 	// Uses Microsoft Graph API
 	const body: Record<string, unknown> = {
 		...(input.name !== undefined && { name: input.name }),
 		...(input.description !== undefined && { description: input.description }),
-		...(input.parent_reference !== undefined && { parentReference: input.parent_reference }),
+		...(input.parent_reference !== undefined && {
+			parentReference: input.parent_reference,
+		}),
 	};
 
-	const result = await makeGraphRequest<SharepointEndpointOutputs['driveUpdateItem']>(
+	const result = await makeGraphRequest<
+		SharepointEndpointOutputs['driveUpdateItem']
+	>(
 		`/sites/${encodeURIComponent(input.site_id)}/drive/items/${encodeURIComponent(input.item_id)}`,
 		ctx.key,
 		{ method: 'PATCH', body },
@@ -118,6 +165,11 @@ export const updateItem: SharepointEndpoints['driveUpdateItem'] = async (ctx, in
 		}
 	}
 
-	await logEventFromContext(ctx, 'sharepoint.drive.updateItem', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'sharepoint.drive.updateItem',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };

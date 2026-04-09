@@ -30,7 +30,7 @@ export const listChanged: SharepointWebhooks['listChanged'] = {
 				// Return raw validation token text — the framework forwards this to SharePoint
 				headers: { 'Content-Type': 'text/plain' },
 				rawBody: token,
-			// rawBody and headers are framework extensions not in the base WebhookResponse type; cast through unknown
+				// rawBody and headers are framework extensions not in the base WebhookResponse type; cast through unknown
 			} as unknown as ReturnType<typeof listChanged.handler>;
 		}
 
@@ -59,7 +59,11 @@ export const listChanged: SharepointWebhooks['listChanged'] = {
 		await logEventFromContext(
 			ctx,
 			'sharepoint.webhook.listChanged',
-			{ subscriptionId: first.subscriptionId, resource: first.resource, siteUrl: first.siteUrl },
+			{
+				subscriptionId: first.subscriptionId,
+				resource: first.resource,
+				siteUrl: first.siteUrl,
+			},
 			'completed',
 		);
 

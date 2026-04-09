@@ -52,7 +52,7 @@ export const list: CalendlyEndpoints['scheduledEventsList'] = async (
 		CalendlyEndpointOutputs['scheduledEventsList']
 	>('scheduled_events', ctx.key, {
 		method: 'GET',
-		query: input
+		query: input,
 	});
 
 	if (result.collection && ctx.db.scheduledEvents) {
@@ -91,7 +91,7 @@ export const cancel: CalendlyEndpoints['scheduledEventsCancel'] = async (
 		CalendlyEndpointOutputs['scheduledEventsCancel']
 	>(`scheduled_events/${uuid}/cancellation`, ctx.key, {
 		method: 'POST',
-		body
+		body,
 	});
 
 	if (ctx.db.scheduledEvents) {
@@ -123,7 +123,7 @@ export const deleteData: CalendlyEndpoints['scheduledEventsDeleteData'] =
 			CalendlyEndpointOutputs['scheduledEventsDeleteData']
 		>('data_compliance/deletion/scheduled_events', ctx.key, {
 			method: 'POST',
-			body: input
+			body: input,
 		});
 
 		await logEventFromContext(

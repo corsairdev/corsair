@@ -7,14 +7,12 @@ export const sendMessage: TelegramEndpoints['sendMessage'] = async (
 	ctx,
 	input,
 ) => {
-	const result = await makeTelegramRequest<TelegramEndpointOutputs['sendMessage']>(
-		'sendMessage',
-		ctx.key,
-		{
-			method: 'POST',
-			body: input,
-		},
-	);
+	const result = await makeTelegramRequest<
+		TelegramEndpointOutputs['sendMessage']
+	>('sendMessage', ctx.key, {
+		method: 'POST',
+		body: input,
+	});
 
 	if (result && result.message_id && ctx.db.messages) {
 		try {
@@ -49,7 +47,12 @@ export const editMessageText: TelegramEndpoints['editMessageText'] = async (
 		body: input,
 	});
 
-	if (result && typeof result === 'object' && result.message_id && ctx.db.messages) {
+	if (
+		result &&
+		typeof result === 'object' &&
+		result.message_id &&
+		ctx.db.messages
+	) {
 		try {
 			await ctx.db.messages.upsertByEntityId(result.message_id.toString(), {
 				id: result.message_id.toString(),
@@ -140,14 +143,12 @@ export const unpinChatMessage: TelegramEndpoints['unpinChatMessage'] = async (
 };
 
 export const sendPhoto: TelegramEndpoints['sendPhoto'] = async (ctx, input) => {
-	const result = await makeTelegramRequest<TelegramEndpointOutputs['sendPhoto']>(
-		'sendPhoto',
-		ctx.key,
-		{
-			method: 'POST',
-			body: input,
-		},
-	);
+	const result = await makeTelegramRequest<
+		TelegramEndpointOutputs['sendPhoto']
+	>('sendPhoto', ctx.key, {
+		method: 'POST',
+		body: input,
+	});
 
 	if (result && result.message_id && ctx.db.messages) {
 		try {
@@ -172,14 +173,12 @@ export const sendPhoto: TelegramEndpoints['sendPhoto'] = async (ctx, input) => {
 };
 
 export const sendVideo: TelegramEndpoints['sendVideo'] = async (ctx, input) => {
-	const result = await makeTelegramRequest<TelegramEndpointOutputs['sendVideo']>(
-		'sendVideo',
-		ctx.key,
-		{
-			method: 'POST',
-			body: input,
-		},
-	);
+	const result = await makeTelegramRequest<
+		TelegramEndpointOutputs['sendVideo']
+	>('sendVideo', ctx.key, {
+		method: 'POST',
+		body: input,
+	});
 
 	if (result && result.message_id && ctx.db.messages) {
 		try {
@@ -204,14 +203,12 @@ export const sendVideo: TelegramEndpoints['sendVideo'] = async (ctx, input) => {
 };
 
 export const sendAudio: TelegramEndpoints['sendAudio'] = async (ctx, input) => {
-	const result = await makeTelegramRequest<TelegramEndpointOutputs['sendAudio']>(
-		'sendAudio',
-		ctx.key,
-		{
-			method: 'POST',
-			body: input,
-		},
-	);
+	const result = await makeTelegramRequest<
+		TelegramEndpointOutputs['sendAudio']
+	>('sendAudio', ctx.key, {
+		method: 'POST',
+		body: input,
+	});
 
 	if (result && result.message_id && ctx.db.messages) {
 		try {
@@ -342,7 +339,7 @@ export const sendLocation: TelegramEndpoints['sendLocation'] = async (
 		TelegramEndpointOutputs['sendLocation']
 	>('sendLocation', ctx.key, {
 		method: 'POST',
-		body: input
+		body: input,
 	});
 
 	if (result && result.message_id && ctx.db.messages) {
@@ -382,12 +379,15 @@ export const sendMediaGroup: TelegramEndpoints['sendMediaGroup'] = async (
 		try {
 			for (const message of result) {
 				if (message.message_id) {
-					await ctx.db.messages.upsertByEntityId(message.message_id.toString(), {
-						id: message.message_id.toString(),
-						...message,
-						message_id: message.message_id,
-						chat_id: message.chat.id.toString(),
-					});
+					await ctx.db.messages.upsertByEntityId(
+						message.message_id.toString(),
+						{
+							id: message.message_id.toString(),
+							...message,
+							message_id: message.message_id,
+							chat_id: message.chat.id.toString(),
+						},
+					);
 				}
 			}
 		} catch (error) {

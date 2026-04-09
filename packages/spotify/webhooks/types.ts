@@ -1,9 +1,9 @@
-import { z } from 'zod';
 import type {
 	CorsairWebhookMatcher,
 	RawWebhookRequest,
 	WebhookRequest,
 } from 'corsair/core';
+import { z } from 'zod';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Schemas

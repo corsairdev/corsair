@@ -81,33 +81,35 @@ const TelegramKeyboardButtonPollTypeSchema = z.object({
 });
 
 // z.ZodType<any> required for mutually recursive schemas (TelegramChat references TelegramMessage and vice versa)
-const TelegramChatSchema: z.ZodType<any> = z.object({
-	id: z.number(),
-	type: z.enum(['private', 'group', 'supergroup', 'channel']),
-	title: z.string().optional(),
-	username: z.string().optional(),
-	first_name: z.string().optional(),
-	last_name: z.string().optional(),
-	is_forum: z.boolean().optional(),
-	active_usernames: z.array(z.string()).optional(),
-	emoji_status_custom_emoji_id: z.string().optional(),
-	bio: z.string().optional(),
-	has_private_forwards: z.boolean().optional(),
-	has_restricted_voice_and_video_messages: z.boolean().optional(),
-	join_to_send_messages: z.boolean().optional(),
-	join_by_request: z.boolean().optional(),
-	description: z.string().optional(),
-	invite_link: z.string().optional(),
-	pinned_message: z.lazy(() => TelegramMessageSchema).optional(),
-	slow_mode_delay: z.number().optional(),
-	message_auto_delete_time: z.number().optional(),
-	has_aggressive_anti_spam_enabled: z.boolean().optional(),
-	has_hidden_members: z.boolean().optional(),
-	has_protected_content: z.boolean().optional(),
-	sticker_set_name: z.string().optional(),
-	can_set_sticker_set: z.boolean().optional(),
-	linked_chat_id: z.number().optional(),
-}).passthrough();
+const TelegramChatSchema: z.ZodType<any> = z
+	.object({
+		id: z.number(),
+		type: z.enum(['private', 'group', 'supergroup', 'channel']),
+		title: z.string().optional(),
+		username: z.string().optional(),
+		first_name: z.string().optional(),
+		last_name: z.string().optional(),
+		is_forum: z.boolean().optional(),
+		active_usernames: z.array(z.string()).optional(),
+		emoji_status_custom_emoji_id: z.string().optional(),
+		bio: z.string().optional(),
+		has_private_forwards: z.boolean().optional(),
+		has_restricted_voice_and_video_messages: z.boolean().optional(),
+		join_to_send_messages: z.boolean().optional(),
+		join_by_request: z.boolean().optional(),
+		description: z.string().optional(),
+		invite_link: z.string().optional(),
+		pinned_message: z.lazy(() => TelegramMessageSchema).optional(),
+		slow_mode_delay: z.number().optional(),
+		message_auto_delete_time: z.number().optional(),
+		has_aggressive_anti_spam_enabled: z.boolean().optional(),
+		has_hidden_members: z.boolean().optional(),
+		has_protected_content: z.boolean().optional(),
+		sticker_set_name: z.string().optional(),
+		can_set_sticker_set: z.boolean().optional(),
+		linked_chat_id: z.number().optional(),
+	})
+	.passthrough();
 
 const TelegramMessageEntitySchema = z.object({
 	type: z.string(),
@@ -171,10 +173,12 @@ const TelegramStickerSchema = z.object({
 	thumb: TelegramPhotoSizeSchema.optional(),
 	emoji: z.string().optional(),
 	set_name: z.string().optional(),
-	premium_animation: z.object({
-		file_id: z.string(),
-		file_unique_id: z.string(),
-	}).optional(),
+	premium_animation: z
+		.object({
+			file_id: z.string(),
+			file_unique_id: z.string(),
+		})
+		.optional(),
 	mask_position: TelegramMaskPositionSchema.optional(),
 	custom_emoji_id: z.string().optional(),
 	needs_repainting: z.boolean().optional(),
@@ -246,7 +250,8 @@ const TelegramInlineKeyboardButtonSchema = z.object({
 	login_url: TelegramLoginUrlSchema.optional(),
 	switch_inline_query: z.string().optional(),
 	switch_inline_query_current_chat: z.string().optional(),
-	switch_inline_query_chosen_chat: TelegramSwitchInlineQueryChosenChatSchema.optional(),
+	switch_inline_query_chosen_chat:
+		TelegramSwitchInlineQueryChosenChatSchema.optional(),
 	callback_game: z.object({}).passthrough().optional(),
 	pay: z.boolean().optional(),
 });
@@ -303,10 +308,12 @@ const TelegramInputMediaSchema = z.object({
 	caption_entities: z.array(TelegramMessageEntitySchema).optional(),
 });
 
-const TelegramChatMemberSchema = z.object({
-	status: z.string(),
-	user: TelegramUserSchema,
-}).passthrough();
+const TelegramChatMemberSchema = z
+	.object({
+		status: z.string(),
+		user: TelegramUserSchema,
+	})
+	.passthrough();
 
 const GetChatInputSchema = z.object({
 	chat_id: z.union([z.string(), z.number()]),
@@ -576,15 +583,17 @@ const GetUpdatesOutputSchema = z.array(
 		message: TelegramMessageSchema.optional(),
 		edited_message: TelegramMessageSchema.optional(),
 		channel_post: TelegramMessageSchema.optional(),
-		callback_query: z.object({
-			id: z.string(),
-			from: TelegramUserSchema,
-			message: TelegramMessageSchema.optional(),
-			inline_message_id: z.string().optional(),
-			chat_instance: z.string(),
-			data: z.string().optional(),
-			game_short_name: z.string().optional(),
-		}).optional(),
+		callback_query: z
+			.object({
+				id: z.string(),
+				from: TelegramUserSchema,
+				message: TelegramMessageSchema.optional(),
+				inline_message_id: z.string().optional(),
+				chat_instance: z.string(),
+				data: z.string().optional(),
+				game_short_name: z.string().optional(),
+			})
+			.optional(),
 	}),
 );
 
@@ -710,20 +719,22 @@ export type TelegramEndpointOutputs = {
 		// Telegram send message response may include additional fields not explicitly typed - unknown allows for safe extension
 		[key: string]: unknown;
 	};
-	editMessageText: {
-		message_id?: number;
-		from?: z.infer<typeof TelegramUserSchema>;
-		date?: number;
-		chat?: {
-			id: number;
-			type: string;
-			// Telegram chat object in edit message response may include additional fields not explicitly typed - unknown allows for safe extension
-			[key: string]: unknown;
-		};
-		text?: string;
-		// Telegram edit message response may include additional fields not explicitly typed - unknown allows for safe extension
-		[key: string]: unknown;
-	} | boolean;
+	editMessageText:
+		| {
+				message_id?: number;
+				from?: z.infer<typeof TelegramUserSchema>;
+				date?: number;
+				chat?: {
+					id: number;
+					type: string;
+					// Telegram chat object in edit message response may include additional fields not explicitly typed - unknown allows for safe extension
+					[key: string]: unknown;
+				};
+				text?: string;
+				// Telegram edit message response may include additional fields not explicitly typed - unknown allows for safe extension
+				[key: string]: unknown;
+		  }
+		| boolean;
 	deleteMessage: boolean;
 	pinChatMessage: boolean;
 	unpinChatMessage: boolean;

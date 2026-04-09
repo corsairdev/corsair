@@ -6,11 +6,11 @@ import type {
 	CorsairPluginContext,
 	CorsairWebhook,
 	KeyBuilderContext,
+	PickAuth,
 	PluginPermissionsConfig,
 	RawWebhookRequest,
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
-import type { PickAuth } from 'corsair/core';
 import { getValidAccessToken } from './client';
 import type {
 	GoogleSheetsEndpointInputs,
@@ -272,7 +272,10 @@ export function googlesheets<const T extends GoogleSheetsPluginOptions>(
 			providerName: 'Google',
 			authUrl: 'https://accounts.google.com/o/oauth2/v2/auth',
 			tokenUrl: 'https://oauth2.googleapis.com/token',
-			scopes: ['https://www.googleapis.com/auth/spreadsheets', 'https://www.googleapis.com/auth/drive.readonly'],
+			scopes: [
+				'https://www.googleapis.com/auth/spreadsheets',
+				'https://www.googleapis.com/auth/drive.readonly',
+			],
 			authParams: { access_type: 'offline', prompt: 'consent' },
 		},
 		hooks: options.hooks,
@@ -295,13 +298,17 @@ export function googlesheets<const T extends GoogleSheetsPluginOptions>(
 				]);
 
 				if (!refreshToken) {
-					throw new Error('[corsair:googlesheets] No refresh token. Cannot get access token.');
+					throw new Error(
+						'[corsair:googlesheets] No refresh token. Cannot get access token.',
+					);
 				}
 
 				const res = await ctx.keys.get_integration_credentials();
 
 				if (!res.client_id || !res.client_secret) {
-					throw new Error('[corsair:googlesheets] No client id or client secret');
+					throw new Error(
+						'[corsair:googlesheets] No client id or client secret',
+					);
 				}
 
 				try {

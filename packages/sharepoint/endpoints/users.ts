@@ -3,12 +3,13 @@ import type { SharepointEndpoints } from '..';
 import { makeGraphRequest } from '../client';
 import type { SharepointEndpointOutputs } from './types';
 
-export const getCurrent: SharepointEndpoints['usersGetCurrent'] = async (ctx, input) => {
-	const result = await makeGraphRequest<SharepointEndpointOutputs['usersGetCurrent']>(
-		'/me',
-		ctx.key,
-		{ method: 'GET' },
-	);
+export const getCurrent: SharepointEndpoints['usersGetCurrent'] = async (
+	ctx,
+	input,
+) => {
+	const result = await makeGraphRequest<
+		SharepointEndpointOutputs['usersGetCurrent']
+	>('/me', ctx.key, { method: 'GET' });
 
 	if (result.id && ctx.db.users) {
 		try {
@@ -23,14 +24,27 @@ export const getCurrent: SharepointEndpoints['usersGetCurrent'] = async (ctx, in
 		}
 	}
 
-	await logEventFromContext(ctx, 'sharepoint.users.getCurrent', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'sharepoint.users.getCurrent',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
-export const create: SharepointEndpoints['usersCreate'] = async (ctx, input) => {
+export const create: SharepointEndpoints['usersCreate'] = async (
+	ctx,
+	input,
+) => {
 	// Graph API user creation is tenant-scoped and different from SP site users
 	// Return a stub for backwards compatibility
-	await logEventFromContext(ctx, 'sharepoint.users.create', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'sharepoint.users.create',
+		{ ...input },
+		'completed',
+	);
 	return {
 		id: '',
 		displayName: input.login_name,
@@ -71,23 +85,40 @@ export const find: SharepointEndpoints['usersFind'] = async (ctx, input) => {
 		}
 	}
 
-	await logEventFromContext(ctx, 'sharepoint.users.find', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'sharepoint.users.find',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
-export const remove: SharepointEndpoints['usersRemove'] = async (ctx, input) => {
+export const remove: SharepointEndpoints['usersRemove'] = async (
+	ctx,
+	input,
+) => {
 	// Graph API user deletion is admin-scoped; not supported for regular site operations
-	await logEventFromContext(ctx, 'sharepoint.users.remove', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'sharepoint.users.remove',
+		{ ...input },
+		'completed',
+	);
 	return { success: true };
 };
 
-export const ensure: SharepointEndpoints['usersEnsure'] = async (ctx, input) => {
+export const ensure: SharepointEndpoints['usersEnsure'] = async (
+	ctx,
+	input,
+) => {
 	// Look up the user by login name (UPN)
-	const result = await makeGraphRequest<SharepointEndpointOutputs['usersEnsure']>(
-		`/users/${encodeURIComponent(input.login_name)}`,
-		ctx.key,
-		{ method: 'GET', query: { $select: 'id,displayName,mail,userPrincipalName' } },
-	);
+	const result = await makeGraphRequest<
+		SharepointEndpointOutputs['usersEnsure']
+	>(`/users/${encodeURIComponent(input.login_name)}`, ctx.key, {
+		method: 'GET',
+		query: { $select: 'id,displayName,mail,userPrincipalName' },
+	});
 
 	if (result.id && ctx.db.users) {
 		try {
@@ -102,20 +133,37 @@ export const ensure: SharepointEndpoints['usersEnsure'] = async (ctx, input) => 
 		}
 	}
 
-	await logEventFromContext(ctx, 'sharepoint.users.ensure', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'sharepoint.users.ensure',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
-export const listSite: SharepointEndpoints['usersListSite'] = async (ctx, input) => {
+export const listSite: SharepointEndpoints['usersListSite'] = async (
+	ctx,
+	input,
+) => {
 	const siteId = (await ctx.keys.get_site_id()) ?? ctx.options?.siteId ?? '';
 
 	// Use Graph API site permissions as the closest equivalent to site users
 	// Graph API permissions response type; inline to capture the nested grantedToIdentitiesV2 structure
-	const result = await makeGraphRequest<{ value?: Array<{ id?: string; roles?: string[]; grantedToIdentitiesV2?: Array<{ user?: { id?: string; displayName?: string; email?: string; userPrincipalName?: string } }> }>}>(
-		`/sites/${siteId}/permissions`,
-		ctx.key,
-		{ method: 'GET' },
-	);
+	const result = await makeGraphRequest<{
+		value?: Array<{
+			id?: string;
+			roles?: string[];
+			grantedToIdentitiesV2?: Array<{
+				user?: {
+					id?: string;
+					displayName?: string;
+					email?: string;
+					userPrincipalName?: string;
+				};
+			}>;
+		}>;
+	}>(`/sites/${siteId}/permissions`, ctx.key, { method: 'GET' });
 
 	// Flatten permissions to a user list
 	const users: SharepointEndpointOutputs['usersListSite']['value'] = [];
@@ -151,28 +199,46 @@ export const listSite: SharepointEndpoints['usersListSite'] = async (ctx, input)
 		}
 	}
 
-	await logEventFromContext(ctx, 'sharepoint.users.listSite', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'sharepoint.users.listSite',
+		{ ...input },
+		'completed',
+	);
 	return { value: users };
 };
 
-export const listGroups: SharepointEndpoints['usersListGroups'] = async (ctx, input) => {
+export const listGroups: SharepointEndpoints['usersListGroups'] = async (
+	ctx,
+	input,
+) => {
 	// List Microsoft 365 groups associated with the site
-	const result = await makeGraphRequest<SharepointEndpointOutputs['usersListGroups']>(
-		'/groups',
-		ctx.key,
-		{ method: 'GET', query: { $select: 'id,displayName,description,mail' } },
-	);
+	const result = await makeGraphRequest<
+		SharepointEndpointOutputs['usersListGroups']
+	>('/groups', ctx.key, {
+		method: 'GET',
+		query: { $select: 'id,displayName,description,mail' },
+	});
 
-	await logEventFromContext(ctx, 'sharepoint.users.listGroups', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'sharepoint.users.listGroups',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
-export const getGroupUsers: SharepointEndpoints['usersGetGroupUsers'] = async (ctx, input) => {
-	const result = await makeGraphRequest<SharepointEndpointOutputs['usersGetGroupUsers']>(
-		`/groups/${encodeURIComponent(input.group_name)}/members`,
-		ctx.key,
-		{ method: 'GET', query: { $select: 'id,displayName,mail,userPrincipalName' } },
-	);
+export const getGroupUsers: SharepointEndpoints['usersGetGroupUsers'] = async (
+	ctx,
+	input,
+) => {
+	const result = await makeGraphRequest<
+		SharepointEndpointOutputs['usersGetGroupUsers']
+	>(`/groups/${encodeURIComponent(input.group_name)}/members`, ctx.key, {
+		method: 'GET',
+		query: { $select: 'id,displayName,mail,userPrincipalName' },
+	});
 
 	if (result.value && ctx.db.users) {
 		try {
@@ -191,45 +257,64 @@ export const getGroupUsers: SharepointEndpoints['usersGetGroupUsers'] = async (c
 		}
 	}
 
-	await logEventFromContext(ctx, 'sharepoint.users.getGroupUsers', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'sharepoint.users.getGroupUsers',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
-export const getGroupUsersById: SharepointEndpoints['usersGetGroupUsersById'] = async (ctx, input) => {
-	const result = await makeGraphRequest<SharepointEndpointOutputs['usersGetGroupUsersById']>(
-		`/groups/${input.group_id}/members`,
-		ctx.key,
-		{ method: 'GET', query: { $select: 'id,displayName,mail,userPrincipalName' } },
-	);
+export const getGroupUsersById: SharepointEndpoints['usersGetGroupUsersById'] =
+	async (ctx, input) => {
+		const result = await makeGraphRequest<
+			SharepointEndpointOutputs['usersGetGroupUsersById']
+		>(`/groups/${input.group_id}/members`, ctx.key, {
+			method: 'GET',
+			query: { $select: 'id,displayName,mail,userPrincipalName' },
+		});
 
-	if (result.value && ctx.db.users) {
-		try {
-			for (const user of result.value) {
-				if (user.id) {
-					await ctx.db.users.upsertByEntityId(user.id, {
-						id: user.id,
-						loginName: user.userPrincipalName,
-						email: user.mail,
-						title: user.displayName,
-					});
+		if (result.value && ctx.db.users) {
+			try {
+				for (const user of result.value) {
+					if (user.id) {
+						await ctx.db.users.upsertByEntityId(user.id, {
+							id: user.id,
+							loginName: user.userPrincipalName,
+							email: user.mail,
+							title: user.displayName,
+						});
+					}
 				}
+			} catch (error) {
+				console.warn('Failed to save group users to database:', error);
 			}
-		} catch (error) {
-			console.warn('Failed to save group users to database:', error);
 		}
-	}
 
-	await logEventFromContext(ctx, 'sharepoint.users.getGroupUsersById', { ...input }, 'completed');
-	return result;
-};
+		await logEventFromContext(
+			ctx,
+			'sharepoint.users.getGroupUsersById',
+			{ ...input },
+			'completed',
+		);
+		return result;
+	};
 
-export const getEffectivePermissions: SharepointEndpoints['usersGetEffectivePermissions'] = async (ctx, input) => {
-	const result = await makeGraphRequest<SharepointEndpointOutputs['usersGetEffectivePermissions']>(
-		`/users/${encodeURIComponent(input.user_login_name)}`,
-		ctx.key,
-		{ method: 'GET', query: { $select: 'id,displayName' } },
-	);
+export const getEffectivePermissions: SharepointEndpoints['usersGetEffectivePermissions'] =
+	async (ctx, input) => {
+		const result = await makeGraphRequest<
+			SharepointEndpointOutputs['usersGetEffectivePermissions']
+		>(`/users/${encodeURIComponent(input.user_login_name)}`, ctx.key, {
+			method: 'GET',
+			query: { $select: 'id,displayName' },
+		});
 
-	await logEventFromContext(ctx, 'sharepoint.users.getEffectivePermissions', { ...input }, 'completed');
-	return result;
-};
+		await logEventFromContext(
+			ctx,
+			'sharepoint.users.getEffectivePermissions',
+			{ ...input },
+			'completed',
+		);
+		return result;
+	};

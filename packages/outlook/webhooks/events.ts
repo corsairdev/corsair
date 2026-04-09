@@ -1,9 +1,16 @@
-import { logEventFromContext } from 'corsair/core';
-import type { OutlookBoundEndpoints, OutlookWebhooks } from '..';
-import type { EventCreatedEvent, EventChangedEvent, OutlookWebhookPayload } from './types';
-import { createOutlookMatch, verifyOutlookWebhookSignature } from './types';
 import type { WebhookRequest } from 'corsair/core';
-import type { OutlookContext } from '..';
+import { logEventFromContext } from 'corsair/core';
+import type {
+	OutlookBoundEndpoints,
+	OutlookContext,
+	OutlookWebhooks,
+} from '..';
+import type {
+	EventChangedEvent,
+	EventCreatedEvent,
+	OutlookWebhookPayload,
+} from './types';
+import { createOutlookMatch, verifyOutlookWebhookSignature } from './types';
 
 // Matches calendar event resources: Users/{id}/Events/{id} or Calendars/{id}/Events/{id}
 const EVENT_RESOURCE_PATTERN = /[Ee]vents\//;
@@ -15,11 +22,15 @@ function extractEventPathIdentifiers(resource: string | undefined): {
 } {
 	if (!resource) return {};
 	const segments = resource.split('/').filter(Boolean);
-	const usersIndex = segments.findIndex((segment) => segment.toLowerCase() === 'users');
+	const usersIndex = segments.findIndex(
+		(segment) => segment.toLowerCase() === 'users',
+	);
 	const calendarsIndex = segments.findIndex(
 		(segment) => segment.toLowerCase() === 'calendars',
 	);
-	const eventsIndex = segments.findIndex((segment) => segment.toLowerCase() === 'events');
+	const eventsIndex = segments.findIndex(
+		(segment) => segment.toLowerCase() === 'events',
+	);
 	return {
 		userId: usersIndex >= 0 ? segments[usersIndex + 1] : undefined,
 		calendarId: calendarsIndex >= 0 ? segments[calendarsIndex + 1] : undefined,
@@ -29,7 +40,10 @@ function extractEventPathIdentifiers(resource: string | undefined): {
 
 // ── Shared verification helper ────────────────────────────────────────────────
 
-function verifyAndExtract(ctx: OutlookContext, request: WebhookRequest<OutlookWebhookPayload>) {
+function verifyAndExtract(
+	ctx: OutlookContext,
+	request: WebhookRequest<OutlookWebhookPayload>,
+) {
 	const verification = verifyOutlookWebhookSignature(request, ctx.key);
 	if (!verification.valid) {
 		return {
@@ -44,10 +58,17 @@ function verifyAndExtract(ctx: OutlookContext, request: WebhookRequest<OutlookWe
 
 	const notification = request.payload.value?.[0];
 	if (!notification) {
-		return { ok: false as const, result: { success: true as const, data: undefined } };
+		return {
+			ok: false as const,
+			result: { success: true as const, data: undefined },
+		};
 	}
 
-	return { ok: true as const, notification, entityId: notification.resourceData?.id ?? '' };
+	return {
+		ok: true as const,
+		notification,
+		entityId: notification.resourceData?.id ?? '',
+	};
 }
 
 // ── Webhook handlers ──────────────────────────────────────────────────────────
@@ -56,9 +77,9 @@ export const newEvent: OutlookWebhooks['eventCreated'] = {
 	match: createOutlookMatch(EVENT_RESOURCE_PATTERN, ['created']),
 
 	handler: async (ctx, request) => {
-		console.log('newEvent')
+		console.log('newEvent');
 		const extracted = verifyAndExtract(ctx, request);
-		console.log(extracted)
+		console.log(extracted);
 		if (!extracted.ok) return extracted.result;
 
 		const { notification, entityId } = extracted;
@@ -109,9 +130,9 @@ export const eventChange: OutlookWebhooks['eventChanged'] = {
 	match: createOutlookMatch(EVENT_RESOURCE_PATTERN, ['updated', 'deleted']),
 
 	handler: async (ctx, request) => {
-		console.log('eventChange')
+		console.log('eventChange');
 		const extracted = verifyAndExtract(ctx, request);
-		console.log(extracted)
+		console.log(extracted);
 		if (!extracted.ok) return extracted.result;
 
 		const { notification, entityId } = extracted;

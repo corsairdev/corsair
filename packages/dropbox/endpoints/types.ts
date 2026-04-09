@@ -288,11 +288,7 @@ export const DropboxEndpointOutputSchemas = {
 	searchQuery: SearchQueryOutputSchema,
 } as const;
 
-export type {
-	FileMetadataSchema,
-	FolderMetadataSchema,
-	DeletedMetadataSchema,
-};
+export type { FileMetadataSchema, FolderMetadataSchema, DeletedMetadataSchema };
 
 export type FileMetadata = z.infer<typeof FileMetadataSchema>;
 export type FolderMetadata = z.infer<typeof FolderMetadataSchema>;

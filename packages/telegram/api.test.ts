@@ -2,11 +2,11 @@ import 'dotenv/config';
 import { makeTelegramRequest } from './client';
 import type { TelegramEndpointOutputs } from './endpoints/types';
 import {
-	GetMeOutputSchema,
 	GetChatOutputSchema,
-	SendMessageOutputSchema,
-	GetUpdatesOutputSchema,
 	GetFileOutputSchema,
+	GetMeOutputSchema,
+	GetUpdatesOutputSchema,
+	SendMessageOutputSchema,
 	SendPhotoOutputSchema,
 } from './endpoints/types';
 
@@ -16,13 +16,11 @@ const TEST_CHAT_ID = '-1003750192801';
 describe('Telegram API Type Tests', () => {
 	describe('me', () => {
 		it('getMe returns correct type', async () => {
-			const response = await makeTelegramRequest<TelegramEndpointOutputs['getMe']>(
-				'getMe',
-				TEST_BOT_TOKEN,
-				{
-					method: 'GET',
-				},
-			);
+			const response = await makeTelegramRequest<
+				TelegramEndpointOutputs['getMe']
+			>('getMe', TEST_BOT_TOKEN, {
+				method: 'GET',
+			});
 
 			GetMeOutputSchema.parse(response);
 		});
@@ -30,16 +28,14 @@ describe('Telegram API Type Tests', () => {
 
 	describe('updates', () => {
 		it('getUpdates returns correct type', async () => {
-			const response = await makeTelegramRequest<TelegramEndpointOutputs['getUpdates']>(
-				'getUpdates',
-				TEST_BOT_TOKEN,
-				{
-					method: 'POST',
-					body: {
-						limit: 10,
-					},
+			const response = await makeTelegramRequest<
+				TelegramEndpointOutputs['getUpdates']
+			>('getUpdates', TEST_BOT_TOKEN, {
+				method: 'POST',
+				body: {
+					limit: 10,
 				},
-			);
+			});
 
 			GetUpdatesOutputSchema.parse(response);
 		});
@@ -56,29 +52,25 @@ describe('Telegram API Type Tests', () => {
 				);
 				const chatId = me.id;
 
-				const response = await makeTelegramRequest<TelegramEndpointOutputs['getChat']>(
-					'getChat',
-					TEST_BOT_TOKEN,
-					{
-						method: 'POST',
-						body: {
-							chat_id: chatId,
-						},
+				const response = await makeTelegramRequest<
+					TelegramEndpointOutputs['getChat']
+				>('getChat', TEST_BOT_TOKEN, {
+					method: 'POST',
+					body: {
+						chat_id: chatId,
 					},
-				);
+				});
 
 				GetChatOutputSchema.parse(response);
 			} else {
-				const response = await makeTelegramRequest<TelegramEndpointOutputs['getChat']>(
-					'getChat',
-					TEST_BOT_TOKEN,
-					{
-						method: 'POST',
-						body: {
-							chat_id: TEST_CHAT_ID,
-						},
+				const response = await makeTelegramRequest<
+					TelegramEndpointOutputs['getChat']
+				>('getChat', TEST_BOT_TOKEN, {
+					method: 'POST',
+					body: {
+						chat_id: TEST_CHAT_ID,
 					},
-				);
+				});
 
 				GetChatOutputSchema.parse(response);
 			}
@@ -108,17 +100,15 @@ describe('Telegram API Type Tests', () => {
 					{ method: 'GET' },
 				);
 
-				const response = await makeTelegramRequest<TelegramEndpointOutputs['getChatMember']>(
-					'getChatMember',
-					TEST_BOT_TOKEN,
-					{
-						method: 'POST',
-						body: {
-							chat_id: TEST_CHAT_ID,
-							user_id: me.id,
-						},
+				const response = await makeTelegramRequest<
+					TelegramEndpointOutputs['getChatMember']
+				>('getChatMember', TEST_BOT_TOKEN, {
+					method: 'POST',
+					body: {
+						chat_id: TEST_CHAT_ID,
+						user_id: me.id,
 					},
-				);
+				});
 
 				expect(response).toBeDefined();
 				expect(response.status).toBeDefined();
@@ -137,31 +127,27 @@ describe('Telegram API Type Tests', () => {
 				);
 				const chatId = me.id;
 
-				const response = await makeTelegramRequest<TelegramEndpointOutputs['sendMessage']>(
-					'sendMessage',
-					TEST_BOT_TOKEN,
-					{
-						method: 'POST',
-						body: {
-							chat_id: chatId,
-							text: `Test message ${Date.now()}`,
-						},
+				const response = await makeTelegramRequest<
+					TelegramEndpointOutputs['sendMessage']
+				>('sendMessage', TEST_BOT_TOKEN, {
+					method: 'POST',
+					body: {
+						chat_id: chatId,
+						text: `Test message ${Date.now()}`,
 					},
-				);
+				});
 
 				SendMessageOutputSchema.parse(response);
 			} else {
-				const response = await makeTelegramRequest<TelegramEndpointOutputs['sendMessage']>(
-					'sendMessage',
-					TEST_BOT_TOKEN,
-					{
-						method: 'POST',
-						body: {
-							chat_id: TEST_CHAT_ID,
-							text: `Test message ${Date.now()}`,
-						},
+				const response = await makeTelegramRequest<
+					TelegramEndpointOutputs['sendMessage']
+				>('sendMessage', TEST_BOT_TOKEN, {
+					method: 'POST',
+					body: {
+						chat_id: TEST_CHAT_ID,
+						text: `Test message ${Date.now()}`,
 					},
-				);
+				});
 
 				SendMessageOutputSchema.parse(response);
 			}
@@ -170,17 +156,15 @@ describe('Telegram API Type Tests', () => {
 		it('editMessageText returns correct type', async () => {
 			if (TEST_CHAT_ID) {
 				// First send a message
-				const sent = await makeTelegramRequest<TelegramEndpointOutputs['sendMessage']>(
-					'sendMessage',
-					TEST_BOT_TOKEN,
-					{
-						method: 'POST',
-						body: {
-							chat_id: TEST_CHAT_ID,
-							text: `Original message ${Date.now()}`,
-						},
+				const sent = await makeTelegramRequest<
+					TelegramEndpointOutputs['sendMessage']
+				>('sendMessage', TEST_BOT_TOKEN, {
+					method: 'POST',
+					body: {
+						chat_id: TEST_CHAT_ID,
+						text: `Original message ${Date.now()}`,
 					},
-				);
+				});
 
 				if (sent.message_id) {
 					const response = await makeTelegramRequest<
@@ -202,30 +186,26 @@ describe('Telegram API Type Tests', () => {
 		it('deleteMessage returns correct type', async () => {
 			if (TEST_CHAT_ID) {
 				// First send a message
-				const sent = await makeTelegramRequest<TelegramEndpointOutputs['sendMessage']>(
-					'sendMessage',
-					TEST_BOT_TOKEN,
-					{
+				const sent = await makeTelegramRequest<
+					TelegramEndpointOutputs['sendMessage']
+				>('sendMessage', TEST_BOT_TOKEN, {
+					method: 'POST',
+					body: {
+						chat_id: TEST_CHAT_ID,
+						text: `Message to delete ${Date.now()}`,
+					},
+				});
+
+				if (sent.message_id) {
+					const response = await makeTelegramRequest<
+						TelegramEndpointOutputs['deleteMessage']
+					>('deleteMessage', TEST_BOT_TOKEN, {
 						method: 'POST',
 						body: {
 							chat_id: TEST_CHAT_ID,
-							text: `Message to delete ${Date.now()}`,
+							message_id: sent.message_id,
 						},
-					},
-				);
-
-				if (sent.message_id) {
-					const response = await makeTelegramRequest<TelegramEndpointOutputs['deleteMessage']>(
-						'deleteMessage',
-						TEST_BOT_TOKEN,
-						{
-							method: 'POST',
-							body: {
-								chat_id: TEST_CHAT_ID,
-								message_id: sent.message_id,
-							},
-						},
-					);
+					});
 
 					expect(typeof response === 'boolean').toBe(true);
 				}
@@ -234,18 +214,17 @@ describe('Telegram API Type Tests', () => {
 
 		it('sendPhoto returns correct type (URL string)', async () => {
 			if (TEST_CHAT_ID) {
-				const response = await makeTelegramRequest<TelegramEndpointOutputs['sendPhoto']>(
-					'sendPhoto',
-					TEST_BOT_TOKEN,
-					{
-						method: 'POST',
-						body: {
-							chat_id: TEST_CHAT_ID,
-							photo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/PNG_transparency_demonstration_1.png/280px-PNG_transparency_demonstration_1.png',
-							caption: `Test photo ${Date.now()}`,
-						},
+				const response = await makeTelegramRequest<
+					TelegramEndpointOutputs['sendPhoto']
+				>('sendPhoto', TEST_BOT_TOKEN, {
+					method: 'POST',
+					body: {
+						chat_id: TEST_CHAT_ID,
+						photo:
+							'https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/PNG_transparency_demonstration_1.png/280px-PNG_transparency_demonstration_1.png',
+						caption: `Test photo ${Date.now()}`,
 					},
-				);
+				});
 
 				SendPhotoOutputSchema.parse(response);
 				expect(response.message_id).toBeDefined();
@@ -256,17 +235,15 @@ describe('Telegram API Type Tests', () => {
 
 		it('sendChatAction returns correct type', async () => {
 			if (TEST_CHAT_ID) {
-				const response = await makeTelegramRequest<TelegramEndpointOutputs['sendChatAction']>(
-					'sendChatAction',
-					TEST_BOT_TOKEN,
-					{
-						method: 'POST',
-						body: {
-							chat_id: TEST_CHAT_ID,
-							action: 'typing',
-						},
+				const response = await makeTelegramRequest<
+					TelegramEndpointOutputs['sendChatAction']
+				>('sendChatAction', TEST_BOT_TOKEN, {
+					method: 'POST',
+					body: {
+						chat_id: TEST_CHAT_ID,
+						action: 'typing',
 					},
-				);
+				});
 
 				expect(typeof response === 'boolean').toBe(true);
 			}
@@ -275,30 +252,26 @@ describe('Telegram API Type Tests', () => {
 
 	describe('webhook', () => {
 		it('setWebhook returns correct type', async () => {
-			const response = await makeTelegramRequest<TelegramEndpointOutputs['setWebhook']>(
-				'setWebhook',
-				TEST_BOT_TOKEN,
-				{
-					method: 'POST',
-					body: {
-						url: 'https://example.com/webhook',
-					},
+			const response = await makeTelegramRequest<
+				TelegramEndpointOutputs['setWebhook']
+			>('setWebhook', TEST_BOT_TOKEN, {
+				method: 'POST',
+				body: {
+					url: 'https://example.com/webhook',
 				},
-			);
+			});
 
 			expect(response).toBeDefined();
 			expect(typeof response === 'boolean').toBe(true);
 		});
 
 		it('deleteWebhook returns correct type', async () => {
-			const response = await makeTelegramRequest<TelegramEndpointOutputs['deleteWebhook']>(
-				'deleteWebhook',
-				TEST_BOT_TOKEN,
-				{
-					method: 'POST',
-					body: {},
-				},
-			);
+			const response = await makeTelegramRequest<
+				TelegramEndpointOutputs['deleteWebhook']
+			>('deleteWebhook', TEST_BOT_TOKEN, {
+				method: 'POST',
+				body: {},
+			});
 
 			expect(response).toBeDefined();
 			expect(typeof response === 'boolean').toBe(true);
@@ -312,16 +285,14 @@ describe('Telegram API Type Tests', () => {
 			if (TEST_CHAT_ID) {
 				// Send a message first to get a file_id (if needed)
 				// For now, we'll just test the schema structure
-				const response = await makeTelegramRequest<TelegramEndpointOutputs['getFile']>(
-					'getFile',
-					TEST_BOT_TOKEN,
-					{
-						method: 'POST',
-						body: {
-							file_id: 'test-file-id',
-						},
+				const response = await makeTelegramRequest<
+					TelegramEndpointOutputs['getFile']
+				>('getFile', TEST_BOT_TOKEN, {
+					method: 'POST',
+					body: {
+						file_id: 'test-file-id',
 					},
-				).catch(() => null);
+				}).catch(() => null);
 
 				// File might not exist, but we can still validate the error response structure
 				if (response) {

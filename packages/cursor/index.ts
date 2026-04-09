@@ -1,4 +1,5 @@
 import type {
+	AuthTypes,
 	BindEndpoints,
 	BindWebhooks,
 	CorsairEndpoint,
@@ -6,26 +7,27 @@ import type {
 	CorsairPlugin,
 	CorsairPluginContext,
 	KeyBuilderContext,
+	PickAuth,
 	PluginAuthConfig,
+	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
-	PluginPermissionsConfig,
 } from 'corsair/core';
-import type { AuthTypes, PickAuth } from 'corsair/core';
+import { Account, Agents, Models, Repositories } from './endpoints';
 import type {
-	CursorEndpointInputs,
-	CursorEndpointOutputs,
-	AgentsListInput,
-	AgentsGetConversationInput,
 	AccountGetMeInput,
+	AgentsGetConversationInput,
+	AgentsListInput,
+	CursorEndpointOutputs,
 	ModelsListInput,
 	RepositoriesListInput,
 } from './endpoints/types';
-import { CursorEndpointInputSchemas, CursorEndpointOutputSchemas } from './endpoints/types';
-import type { CursorWebhookOutputs } from './webhooks/types';
-import { Agents, Account, Models, Repositories } from './endpoints';
-import { CursorSchema } from './schema';
+import {
+	CursorEndpointInputSchemas,
+	CursorEndpointOutputSchemas,
+} from './endpoints/types';
 import { errorHandlers } from './error-handlers';
+import { CursorSchema } from './schema';
 
 export type CursorPluginOptions = {
 	authType?: PickAuth<'api_key'>;
@@ -140,7 +142,8 @@ const cursorEndpointMeta = {
 	},
 	'repositories.list': {
 		riskLevel: 'read',
-		description: 'List GitHub repositories accessible to the authenticated user',
+		description:
+			'List GitHub repositories accessible to the authenticated user',
 	},
 } satisfies RequiredPluginEndpointMeta<typeof cursorEndpointsNested>;
 
@@ -228,14 +231,14 @@ export type { CursorWebhookOutputs } from './webhooks/types';
 // ─────────────────────────────────────────────────────────────────────────────
 
 export type {
-	CursorEndpointInputs,
-	CursorEndpointOutputs,
-	AgentsListInput,
-	AgentsListResponse,
-	AgentsGetConversationInput,
-	AgentsGetConversationResponse,
 	AccountGetMeInput,
 	AccountGetMeResponse,
+	AgentsGetConversationInput,
+	AgentsGetConversationResponse,
+	AgentsListInput,
+	AgentsListResponse,
+	CursorEndpointInputs,
+	CursorEndpointOutputs,
 	ModelsListInput,
 	ModelsListResponse,
 	RepositoriesListInput,

@@ -1,16 +1,22 @@
+import type { WebhookRequest } from 'corsair/core';
 import { logEventFromContext } from 'corsair/core';
-import type { OutlookBoundEndpoints, OutlookWebhooks } from '..';
+import type {
+	OutlookBoundEndpoints,
+	OutlookContext,
+	OutlookWebhooks,
+} from '..';
 import type { ContactCreatedEvent, OutlookWebhookPayload } from './types';
 import { createOutlookMatch, verifyOutlookWebhookSignature } from './types';
-import type { WebhookRequest } from 'corsair/core';
-import type { OutlookContext } from '..';
 
 // Matches contact resources: Users/{id}/Contacts/{id}
 const CONTACT_RESOURCE_PATTERN = /[Cc]ontacts\//;
 
 // ── Shared verification helper ────────────────────────────────────────────────
 
-function verifyAndExtract(ctx: OutlookContext, request: WebhookRequest<OutlookWebhookPayload>) {
+function verifyAndExtract(
+	ctx: OutlookContext,
+	request: WebhookRequest<OutlookWebhookPayload>,
+) {
 	const verification = verifyOutlookWebhookSignature(request, ctx.key);
 	if (!verification.valid) {
 		return {
@@ -25,10 +31,17 @@ function verifyAndExtract(ctx: OutlookContext, request: WebhookRequest<OutlookWe
 
 	const notification = request.payload.value?.[0];
 	if (!notification) {
-		return { ok: false as const, result: { success: true as const, data: undefined } };
+		return {
+			ok: false as const,
+			result: { success: true as const, data: undefined },
+		};
 	}
 
-	return { ok: true as const, notification, entityId: notification.resourceData?.id ?? '' };
+	return {
+		ok: true as const,
+		notification,
+		entityId: notification.resourceData?.id ?? '',
+	};
 }
 
 // ── Webhook handlers ──────────────────────────────────────────────────────────
@@ -50,7 +63,10 @@ export const newContact: OutlookWebhooks['contactCreated'] = {
 			try {
 				const endpoints = ctx.endpoints as OutlookBoundEndpoints;
 				const escapedEntityId = entityId.replace(/'/g, "''");
-				await endpoints.contacts.list({ top: 1, filter: `id eq '${escapedEntityId}'` });
+				await endpoints.contacts.list({
+					top: 1,
+					filter: `id eq '${escapedEntityId}'`,
+				});
 			} catch (error) {
 				console.warn('Failed to fetch new contact details:', error);
 			}

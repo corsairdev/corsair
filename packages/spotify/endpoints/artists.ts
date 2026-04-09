@@ -4,13 +4,11 @@ import { makeAuthenticatedSpotifyRequest } from '../client';
 import type { SpotifyEndpointOutputs } from './types';
 
 export const get: SpotifyEndpoints['artistsGet'] = async (ctx, input) => {
-	const result = await makeAuthenticatedSpotifyRequest<SpotifyEndpointOutputs['artistsGet']>(
-		`artists/${input.id}`,
-		ctx,
-		{
-			method: 'GET',
-		},
-	);
+	const result = await makeAuthenticatedSpotifyRequest<
+		SpotifyEndpointOutputs['artistsGet']
+	>(`artists/${input.id}`, ctx, {
+		method: 'GET',
+	});
 
 	if (result && ctx.db.artists) {
 		try {

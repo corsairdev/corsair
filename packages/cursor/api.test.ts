@@ -54,7 +54,7 @@ describe('Cursor API Type Tests', () => {
 
 			const result =
 				CursorEndpointOutputSchemas.repositoriesList.parse(response);
-			
+
 			expect(result.repositories).toBeDefined();
 			expect(Array.isArray(result.repositories)).toBe(true);
 			result.repositories.forEach((repo) => {
@@ -81,9 +81,13 @@ describe('Cursor API Type Tests', () => {
 			result.agents.forEach((agent) => {
 				if (agent.id !== undefined) expect(typeof agent.id).toBe('string');
 				if (agent.status !== undefined) {
-					expect(['RUNNING', 'FINISHED', 'ERROR', 'CREATING', 'EXPIRED']).toContain(
-						agent.status,
-					);
+					expect([
+						'RUNNING',
+						'FINISHED',
+						'ERROR',
+						'CREATING',
+						'EXPIRED',
+					]).toContain(agent.status);
 				}
 			});
 		});

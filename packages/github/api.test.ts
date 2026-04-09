@@ -1,4 +1,4 @@
-import 'dotenv/config'
+import 'dotenv/config';
 import { makeGithubRequest } from './client';
 import type {
 	IssueCommentCreateResponse,

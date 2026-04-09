@@ -1,9 +1,12 @@
-import type { TeamsEndpoints } from '..';
 import { logEventFromContext } from 'corsair/core';
+import type { TeamsEndpoints } from '..';
 import { makeTeamsRequest } from '../client';
 import type { TeamsEndpointOutputs } from './types';
 
-export function toChannelRecord(channel: TeamsEndpointOutputs['channelsGet'], teamId: string) {
+export function toChannelRecord(
+	channel: TeamsEndpointOutputs['channelsGet'],
+	teamId: string,
+) {
 	// Destructure nullable fields so the spread captures only non-null-coerced extras
 	const { email, webUrl, membershipType, createdDateTime, ...rest } = channel;
 	return {
@@ -21,7 +24,7 @@ export function toChannelRecord(channel: TeamsEndpointOutputs['channelsGet'], te
 export const list: TeamsEndpoints['channelsList'] = async (ctx, input) => {
 	const { teamId, filter } = input;
 	const query = {
-		...(filter && { '$filter': filter }),
+		...(filter && { $filter: filter }),
 	};
 
 	const result = await makeTeamsRequest<TeamsEndpointOutputs['channelsList']>(
@@ -33,14 +36,22 @@ export const list: TeamsEndpoints['channelsList'] = async (ctx, input) => {
 	if (result.value && ctx.db.channels) {
 		try {
 			for (const channel of result.value) {
-				await ctx.db.channels.upsertByEntityId(channel.id, toChannelRecord(channel, teamId));
+				await ctx.db.channels.upsertByEntityId(
+					channel.id,
+					toChannelRecord(channel, teamId),
+				);
 			}
 		} catch (error) {
 			console.warn('Failed to save channels to database:', error);
 		}
 	}
 
-	await logEventFromContext(ctx, 'teams.channels.list', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'teams.channels.list',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
@@ -55,13 +66,21 @@ export const get: TeamsEndpoints['channelsGet'] = async (ctx, input) => {
 
 	if (result.id && ctx.db.channels) {
 		try {
-			await ctx.db.channels.upsertByEntityId(result.id, toChannelRecord(result, teamId));
+			await ctx.db.channels.upsertByEntityId(
+				result.id,
+				toChannelRecord(result, teamId),
+			);
 		} catch (error) {
 			console.warn('Failed to save channel to database:', error);
 		}
 	}
 
-	await logEventFromContext(ctx, 'teams.channels.get', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'teams.channels.get',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
@@ -80,13 +99,21 @@ export const create: TeamsEndpoints['channelsCreate'] = async (ctx, input) => {
 
 	if (result.id && ctx.db.channels) {
 		try {
-			await ctx.db.channels.upsertByEntityId(result.id, toChannelRecord(result, teamId));
+			await ctx.db.channels.upsertByEntityId(
+				result.id,
+				toChannelRecord(result, teamId),
+			);
 		} catch (error) {
 			console.warn('Failed to save new channel to database:', error);
 		}
 	}
 
-	await logEventFromContext(ctx, 'teams.channels.create', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'teams.channels.create',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
@@ -115,7 +142,12 @@ export const update: TeamsEndpoints['channelsUpdate'] = async (ctx, input) => {
 		}
 	}
 
-	await logEventFromContext(ctx, 'teams.channels.update', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'teams.channels.update',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
@@ -136,6 +168,11 @@ export const remove: TeamsEndpoints['channelsDelete'] = async (ctx, input) => {
 		}
 	}
 
-	await logEventFromContext(ctx, 'teams.channels.delete', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'teams.channels.delete',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };

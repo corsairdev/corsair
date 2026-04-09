@@ -1,7 +1,7 @@
-import { channelMessage } from './message';
-import { chatMessage } from './chat';
 import { channelCreated } from './channel';
+import { chatMessage } from './chat';
 import { membershipChanged } from './member';
+import { channelMessage } from './message';
 
 export const ChannelWebhooks = {
 	message: channelMessage,

@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import type { MondayWebhooks } from '..';
-import { createMondayMatch, verifyMondayWebhookSignature } from './types';
+import { createMondayMatch } from './types';
 
 export const statusChanged: MondayWebhooks['statusChanged'] = {
 	match: createMondayMatch('change_status_column_value'),

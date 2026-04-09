@@ -4,8 +4,12 @@ export const StripeBalance = z.object({
 	id: z.string(), // fixed as 'balance' since there's only one per account
 	object: z.literal('balance').optional(),
 	livemode: z.boolean().optional(),
-	available: z.array(z.object({ amount: z.number(), currency: z.string() }).passthrough()).optional(),
-	pending: z.array(z.object({ amount: z.number(), currency: z.string() }).passthrough()).optional(),
+	available: z
+		.array(z.object({ amount: z.number(), currency: z.string() }).passthrough())
+		.optional(),
+	pending: z
+		.array(z.object({ amount: z.number(), currency: z.string() }).passthrough())
+		.optional(),
 	createdAt: z.coerce.date().nullable().optional(),
 });
 
@@ -81,10 +85,13 @@ export const StripePrice = z.object({
 	nickname: z.string().nullable().optional(),
 	product: z.string().optional(),
 	type: z.string().optional(),
-	recurring: z.object({
-		interval: z.string(),
-		interval_count: z.number(),
-	}).nullable().optional(),
+	recurring: z
+		.object({
+			interval: z.string(),
+			interval_count: z.number(),
+		})
+		.nullable()
+		.optional(),
 	created: z.number().optional(),
 	createdAt: z.coerce.date().nullable().optional(),
 	livemode: z.boolean().optional(),

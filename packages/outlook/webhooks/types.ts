@@ -1,6 +1,9 @@
+import type {
+	CorsairWebhookMatcher,
+	RawWebhookRequest,
+	WebhookRequest,
+} from 'corsair/core';
 import { z } from 'zod';
-import crypto from 'crypto';
-import type { CorsairWebhookMatcher, RawWebhookRequest, WebhookRequest } from 'corsair/core';
 
 // ── Microsoft Graph change notification payload ───────────────────────────────
 
@@ -36,11 +39,10 @@ export type OutlookWebhookPayload = z.infer<typeof OutlookWebhookPayloadSchema>;
 
 // ── Webhook event types ───────────────────────────────────────────────────────
 
-export const MessageReceivedEventSchema = OutlookChangeNotificationSchema.extend(
-	{
+export const MessageReceivedEventSchema =
+	OutlookChangeNotificationSchema.extend({
 		changeType: z.literal('created'),
-	},
-);
+	});
 export type MessageReceivedEvent = z.infer<typeof MessageReceivedEventSchema>;
 
 export const MessageSentEventSchema = OutlookChangeNotificationSchema.extend({
@@ -70,7 +72,9 @@ export type ContactCreatedEvent = z.infer<typeof ContactCreatedEventSchema>;
 export const SubscriptionValidationPayloadSchema = z.object({
 	validationToken: z.string(),
 });
-export type SubscriptionValidationPayload = z.infer<typeof SubscriptionValidationPayloadSchema>;
+export type SubscriptionValidationPayload = z.infer<
+	typeof SubscriptionValidationPayloadSchema
+>;
 
 // ── Webhook output map ────────────────────────────────────────────────────────
 

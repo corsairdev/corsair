@@ -1,8 +1,12 @@
+import { logEventFromContext } from 'corsair/core';
 import type { TeamsWebhooks } from '..';
 import { makeTeamsRequest } from '../client';
 import type { TeamsEndpointOutputs } from '../endpoints/types';
-import { logEventFromContext } from 'corsair/core';
-import { createTeamsNotificationMatch, extractODataId, verifyTeamsClientState } from './types';
+import {
+	createTeamsNotificationMatch,
+	extractODataId,
+	verifyTeamsClientState,
+} from './types';
 
 export const membershipChanged: TeamsWebhooks['membershipChanged'] = {
 	match: createTeamsNotificationMatch(
@@ -33,15 +37,16 @@ export const membershipChanged: TeamsWebhooks['membershipChanged'] = {
 					if (!membershipId) continue;
 
 					// resource format: teams('teamId')/members('membershipId')
-					const teamId = extractODataId(notification.resource.split('/')[0] ?? '');
+					const teamId = extractODataId(
+						notification.resource.split('/')[0] ?? '',
+					);
 
 					if (notification.changeType === 'deleted') {
 						await ctx.db.members.deleteByEntityId(membershipId);
 					} else if (accessToken) {
-						const fullMember = await makeTeamsRequest<TeamsEndpointOutputs['membersGet']>(
-							`teams/${teamId}/members/${membershipId}`,
-							accessToken,
-						);
+						const fullMember = await makeTeamsRequest<
+							TeamsEndpointOutputs['membersGet']
+						>(`teams/${teamId}/members/${membershipId}`, accessToken);
 						const entity = await ctx.db.members.upsertByEntityId(membershipId, {
 							...fullMember,
 							id: membershipId,
@@ -51,7 +56,10 @@ export const membershipChanged: TeamsWebhooks['membershipChanged'] = {
 					}
 				}
 			} catch (error) {
-				console.warn('Failed to process membership webhook in database:', error);
+				console.warn(
+					'Failed to process membership webhook in database:',
+					error,
+				);
 			}
 		}
 
