@@ -4,6 +4,7 @@ import { createCorsairOrm } from 'corsair/orm';
 import { createIntegrationAndAccount, createTestDatabase } from 'corsair/tests';
 import { onedrive } from './index';
 
+// Using `unknown` for both parameter and return because DB payloads may arrive as a raw JSON
 function parsePayload(payload: unknown): unknown {
 	return typeof payload === 'string' ? JSON.parse(payload) : payload;
 }
@@ -464,72 +465,4 @@ describe('OneDrive plugin integration', () => {
 		});
 	});
 
-	describe('sharepoint', () => {
-		it('sharepointListSiteLists interacts with API and DB', async () => {
-			const setup = await createOnedriveClient();
-			if (!setup) return;
-			const { corsair, testDb } = setup;
-
-			let siteId: string | undefined;
-			try {
-				const sites = await fetch(
-					'https://graph.microsoft.com/v1.0/sites?search=*&$top=1&$select=id',
-					{ headers: { Authorization: `Bearer ${process.env.ONEDRIVE_ACCESS_TOKEN}` } },
-				).then(r => r.json()) as { value: Array<{ id: string }> };
-				siteId = sites.value?.[0]?.id;
-			} catch {
-				// SharePoint may not be available — skip
-			}
-
-			if (!siteId) {
-				testDb.cleanup();
-				return;
-			}
-
-			const input = { site_id: siteId };
-			const result = await corsair.onedrive.api.sharepoint.listSiteLists(input);
-
-			expect(result).toBeDefined();
-
-			const orm = createCorsairOrm(testDb.database);
-			const events = await orm.events.findMany({ where: { event_type: 'onedrive.sharepoint.listSiteLists' } });
-			expect(events.length).toBeGreaterThan(0);
-
-			testDb.cleanup();
-		});
-
-		it('sharepointGetSite interacts with API and DB', async () => {
-			const setup = await createOnedriveClient();
-			if (!setup) return;
-			const { corsair, testDb } = setup;
-
-			let siteId: string | undefined;
-			try {
-				const sites = await fetch(
-					'https://graph.microsoft.com/v1.0/sites?search=*&$top=1&$select=id',
-					{ headers: { Authorization: `Bearer ${process.env.ONEDRIVE_ACCESS_TOKEN}` } },
-				).then(r => r.json()) as { value: Array<{ id: string }> };
-				siteId = sites.value?.[0]?.id;
-			} catch {
-				// SharePoint may not be available — skip
-			}
-
-			if (!siteId) {
-				testDb.cleanup();
-				return;
-			}
-
-			const input = { site_id: siteId };
-			const result = await corsair.onedrive.api.sharepoint.getSite(input);
-
-			expect(result).toBeDefined();
-
-			const orm = createCorsairOrm(testDb.database);
-			const events = await orm.events.findMany({ where: { event_type: 'onedrive.sharepoint.getSite' } });
-			expect(events.length).toBeGreaterThan(0);
-			expect(parsePayload(events[events.length - 1]!.payload)).toMatchObject(input);
-
-			testDb.cleanup();
-		});
-	});
 });

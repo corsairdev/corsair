@@ -5,6 +5,7 @@ import { createIntegrationAndAccount, createTestDatabase } from 'corsair/tests';
 import { sharepoint } from './index';
 import { resolveSiteGuid } from './client';
 
+// Using `unknown` for both parameter and return because DB payloads may arrive as a raw JSON
 function parsePayload(payload: unknown): unknown {
 	return typeof payload === 'string' ? JSON.parse(payload) : payload;
 }
