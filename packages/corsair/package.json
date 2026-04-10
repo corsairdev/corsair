@@ -41,6 +41,36 @@
       "dev-source": "./tests.ts",
       "types": "./dist/tests.d.ts",
       "default": "./dist/tests.js"
+    },
+    "./convex/schema": {
+      "dev-source": "./db/convex/schema.ts",
+      "types": "./dist/convex/schema.d.ts",
+      "default": "./dist/convex/schema.js"
+    },
+    "./convex/integrations": {
+      "dev-source": "./db/convex/functions/integrations.ts",
+      "types": "./dist/convex/integrations.d.ts",
+      "default": "./dist/convex/integrations.js"
+    },
+    "./convex/accounts": {
+      "dev-source": "./db/convex/functions/accounts.ts",
+      "types": "./dist/convex/accounts.d.ts",
+      "default": "./dist/convex/accounts.js"
+    },
+    "./convex/entities": {
+      "dev-source": "./db/convex/functions/entities.ts",
+      "types": "./dist/convex/entities.d.ts",
+      "default": "./dist/convex/entities.js"
+    },
+    "./convex/events": {
+      "dev-source": "./db/convex/functions/events.ts",
+      "types": "./dist/convex/events.d.ts",
+      "default": "./dist/convex/events.js"
+    },
+    "./convex/permissions": {
+      "dev-source": "./db/convex/functions/permissions.ts",
+      "types": "./dist/convex/permissions.d.ts",
+      "default": "./dist/convex/permissions.js"
     }
   },
   "scripts": {
@@ -72,6 +102,14 @@
     "tsup": "^8.0.1",
     "tsx": "^4.20.6",
     "typescript": "^5.3.3"
+  },
+  "peerDependencies": {
+    "convex": ">=1.0.0"
+  },
+  "peerDependenciesMeta": {
+    "convex": {
+      "optional": true
+    }
   },
   "keywords": [],
   "author": "",
