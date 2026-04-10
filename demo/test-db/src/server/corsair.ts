@@ -11,11 +11,15 @@ import { googlecalendar } from '@corsair-dev/googlecalendar';
 import { gmail } from '@corsair-dev/gmail';
 import { linear } from '@corsair-dev/linear';
 import { onedrive } from '@corsair-dev/onedrive';
-import { sqlite } from '../db';
+
+const convexAdapter = new ConvexDatabaseAdapter({
+	client: new ConvexHttpClient(process.env.CONVEX_URL!),
+	makeFunctionRef: (_type, name) => makeFunctionReference(name),
+});
 
 export const corsair = createCorsair({
 	multiTenancy: false,
-	database: sqlite,
+	database: convexAdapter,
 	kek: process.env.CORSAIR_KEK!,
 	approval: {
 		timeout: '10m',
