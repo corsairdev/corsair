@@ -9,6 +9,7 @@ import type {
 	CorsairPermissionInsert,
 } from '../index';
 import type { CorsairDatabaseAdapter, CorsairPermissionOps } from '../adapter';
+import { createAdapterTransforms } from '../adapter-factory';
 import type {
 	CorsairOrm,
 	CorsairTableClient,
@@ -21,68 +22,18 @@ import type {
 } from '../orm';
 
 // ---------------------------------------------------------------------------
-// Convex-specific helpers
+// Convex adapter transforms (declared once via capability flags)
 // ---------------------------------------------------------------------------
 
-/**
- * Recursively converts Date objects to ISO strings for Convex storage.
- * Convex doesn't support native Date objects.
- */
-export function sanitizeForConvex(value: unknown): unknown {
-	if (value instanceof Date) return value.toISOString();
-	if (Array.isArray(value)) return value.map(sanitizeForConvex);
-	if (value !== null && typeof value === 'object') {
-		const result: Record<string, unknown> = {};
-		for (const [k, v] of Object.entries(value as Record<string, unknown>)) {
-			result[k] = sanitizeForConvex(v);
-		}
-		return result;
-	}
-	return value;
-}
+const transforms = createAdapterTransforms({
+	dates: 'epoch',
+	json: 'native',
+	internalFields: ['_id', '_creationTime'],
+});
 
-function dateToEpoch(d: Date | undefined): number {
-	return d ? d.getTime() : Date.now();
-}
-
-function epochToDate(epoch: number): Date {
-	return new Date(epoch);
-}
-
-/**
- * Strips Convex internal fields (`_id`, `_creationTime`) from a document
- * and converts epoch timestamps back to Date objects.
- */
-function toRow<T>(doc: Record<string, unknown> | null): T | null {
-	if (!doc) return null;
-	const { _id, _creationTime, ...rest } = doc;
-	if (typeof rest.created_at === 'number') {
-		rest.created_at = epochToDate(rest.created_at);
-	}
-	if (typeof rest.updated_at === 'number') {
-		rest.updated_at = epochToDate(rest.updated_at);
-	}
-	if (rest.config && typeof rest.config === 'string') {
-		try {
-			rest.config = JSON.parse(rest.config);
-		} catch {}
-	}
-	if (rest.data && typeof rest.data === 'string') {
-		try {
-			rest.data = JSON.parse(rest.data);
-		} catch {}
-	}
-	if (rest.payload && typeof rest.payload === 'string') {
-		try {
-			rest.payload = JSON.parse(rest.payload);
-		} catch {}
-	}
-	return rest as T;
-}
-
-function toRows<T>(docs: Record<string, unknown>[]): T[] {
-	return docs.map((d) => toRow<T>(d)!).filter(Boolean);
-}
+// ---------------------------------------------------------------------------
+// Where-clause helper
+// ---------------------------------------------------------------------------
 
 function whereToConvex(
 	where: Record<string, unknown>,
@@ -90,23 +41,7 @@ function whereToConvex(
 	const result: Record<string, unknown> = {};
 	for (const [key, val] of Object.entries(where)) {
 		if (val === undefined) continue;
-		if (
-			typeof val === 'object' &&
-			val !== null &&
-			!Array.isArray(val) &&
-			!(val instanceof Date)
-		) {
-			const obj = val as { in?: unknown[]; like?: string };
-			if ('in' in obj) {
-				result[key] = val;
-			} else if ('like' in obj) {
-				result[key] = val;
-			} else {
-				result[key] = val;
-			}
-		} else {
-			result[key] = val;
-		}
+		result[key] = val;
 	}
 	return result;
 }
@@ -155,9 +90,10 @@ export type ConvexDatabaseAdapterOptions = {
 /**
  * Convex implementation of `CorsairDatabaseAdapter`.
  *
- * Talks to Convex backend functions via a `ConvexHttpClient` (or any object
- * matching `ConvexClient`). Each table operation maps to a Convex query or
- * mutation named `{tableName}:{methodName}`.
+ * Uses `createAdapterTransforms` with capability flags to declare that Convex
+ * stores dates as epoch milliseconds and handles JSON natively. All
+ * input/output type conversions are handled automatically by the factory
+ * transforms — this adapter only contains raw Convex CRUD logic.
  */
 export class ConvexDatabaseAdapter implements CorsairDatabaseAdapter {
 	private client: ConvexClient;
@@ -170,8 +106,6 @@ export class ConvexDatabaseAdapter implements CorsairDatabaseAdapter {
 		if (options.makeFunctionRef) {
 			this.ref = options.makeFunctionRef;
 		} else {
-			// Lazy-import fallback: build simple string references.
-			// The Convex runtime resolves `"tableName:method"` strings.
 			this.ref = (_type: string, name: string) => name;
 		}
 	}
@@ -226,14 +160,14 @@ export class ConvexDatabaseAdapter implements CorsairDatabaseAdapter {
 				const doc = await client.query(ref('query', `${tableName}:findById`), {
 					id,
 				});
-				return toRow<T>(doc);
+				return transforms.transformOutput<T>(doc);
 			},
 			findOne: async (where: Record<string, unknown>) => {
 				const doc = await client.query(
 					ref('query', `${tableName}:findOne`),
 					{ where: whereToConvex(where) },
 				);
-				return toRow<T>(doc);
+				return transforms.transformOutput<T>(doc);
 			},
 			findMany: async (options?: {
 				where?: Record<string, unknown>;
@@ -250,10 +184,10 @@ export class ConvexDatabaseAdapter implements CorsairDatabaseAdapter {
 						offset: options?.offset,
 					},
 				);
-				return toRows<T>(docs);
+				return transforms.transformOutputMany<T>(docs);
 			},
 			create: async (data: Record<string, unknown>) => {
-				const now = Date.now();
+				const now = transforms.dateForStorage(new Date());
 				const insertData: Record<string, unknown> = {
 					id: (data.id as string) ?? generateUUID(),
 					created_at: now,
@@ -264,14 +198,14 @@ export class ConvexDatabaseAdapter implements CorsairDatabaseAdapter {
 					ref('mutation', `${tableName}:create`),
 					{ data: insertData },
 				);
-				return toRow<T>(doc)!;
+				return transforms.transformOutput<T>(doc)!;
 			},
 			update: async (id: string, data: Record<string, unknown>) => {
 				const doc = await client.mutation(
 					ref('mutation', `${tableName}:update`),
 					{ id, data },
 				);
-				return toRow<T>(doc);
+				return transforms.transformOutput<T>(doc);
 			},
 			updateMany: async (
 				where: Record<string, unknown>,
@@ -317,13 +251,13 @@ export class ConvexDatabaseAdapter implements CorsairDatabaseAdapter {
 					ref('query', 'integrations:findByName'),
 					{ name },
 				);
-				return toRow<CorsairIntegration>(doc);
+				return transforms.transformOutput<CorsairIntegration>(doc);
 			},
 			upsertByName: async (
 				name: string,
 				data: Record<string, unknown>,
 			) => {
-				const now = Date.now();
+				const now = transforms.dateForStorage(new Date());
 				const doc = await client.mutation(
 					ref('mutation', 'integrations:upsertByName'),
 					{
@@ -336,7 +270,7 @@ export class ConvexDatabaseAdapter implements CorsairDatabaseAdapter {
 						},
 					},
 				);
-				return toRow<CorsairIntegration>(doc)!;
+				return transforms.transformOutput<CorsairIntegration>(doc)!;
 			},
 		};
 	}
@@ -361,7 +295,7 @@ export class ConvexDatabaseAdapter implements CorsairDatabaseAdapter {
 					ref('query', 'accounts:findByTenantAndIntegration'),
 					{ tenantId, integrationId: integration.id },
 				);
-				return toRow<CorsairAccount>(doc);
+				return transforms.transformOutput<CorsairAccount>(doc);
 			},
 			listByTenant: async (
 				tenantId: string,
@@ -375,14 +309,14 @@ export class ConvexDatabaseAdapter implements CorsairDatabaseAdapter {
 						offset: options?.offset,
 					},
 				);
-				return toRows<CorsairAccount>(docs);
+				return transforms.transformOutputMany<CorsairAccount>(docs);
 			},
 			upsertByTenantAndIntegration: async (
 				tenantId: string,
 				integrationId: string,
 				data: Record<string, unknown>,
 			) => {
-				const now = Date.now();
+				const now = transforms.dateForStorage(new Date());
 				const doc = await client.mutation(
 					ref('mutation', 'accounts:upsertByTenantAndIntegration'),
 					{
@@ -396,7 +330,7 @@ export class ConvexDatabaseAdapter implements CorsairDatabaseAdapter {
 						},
 					},
 				);
-				return toRow<CorsairAccount>(doc)!;
+				return transforms.transformOutput<CorsairAccount>(doc)!;
 			},
 		};
 	}
@@ -417,7 +351,7 @@ export class ConvexDatabaseAdapter implements CorsairDatabaseAdapter {
 					ref('query', 'entities:findByEntityId'),
 					options,
 				);
-				return toRow<CorsairEntity>(doc);
+				return transforms.transformOutput<CorsairEntity>(doc);
 			},
 			findManyByEntityIds: async (options: {
 				accountId: string;
@@ -428,7 +362,7 @@ export class ConvexDatabaseAdapter implements CorsairDatabaseAdapter {
 					ref('query', 'entities:findManyByEntityIds'),
 					options,
 				);
-				return toRows<CorsairEntity>(docs);
+				return transforms.transformOutputMany<CorsairEntity>(docs);
 			},
 			listByScope: async (options: {
 				accountId: string;
@@ -440,7 +374,7 @@ export class ConvexDatabaseAdapter implements CorsairDatabaseAdapter {
 					ref('query', 'entities:listByScope'),
 					options,
 				);
-				return toRows<CorsairEntity>(docs);
+				return transforms.transformOutputMany<CorsairEntity>(docs);
 			},
 			searchByEntityId: async (options: {
 				accountId: string;
@@ -459,7 +393,7 @@ export class ConvexDatabaseAdapter implements CorsairDatabaseAdapter {
 						offset: options.offset,
 					},
 				);
-				return toRows<CorsairEntity>(docs);
+				return transforms.transformOutputMany<CorsairEntity>(docs);
 			},
 			upsertByEntityId: async (options: {
 				accountId: string;
@@ -470,9 +404,9 @@ export class ConvexDatabaseAdapter implements CorsairDatabaseAdapter {
 			}) => {
 				const doc = await client.mutation(
 					ref('mutation', 'entities:upsertByEntityId'),
-					{ ...options, data: sanitizeForConvex(options.data) },
+					{ ...options, data: transforms.sanitizeValue(options.data) },
 				);
-				return toRow<CorsairEntity>(doc)!;
+				return transforms.transformOutput<CorsairEntity>(doc)!;
 			},
 			deleteByEntityId: async (options: {
 				accountId: string;
@@ -506,7 +440,7 @@ export class ConvexDatabaseAdapter implements CorsairDatabaseAdapter {
 						offset: options?.offset,
 					},
 				);
-				return toRows<CorsairEvent>(docs);
+				return transforms.transformOutputMany<CorsairEvent>(docs);
 			},
 			listByStatus: async (
 				status: string,
@@ -525,7 +459,7 @@ export class ConvexDatabaseAdapter implements CorsairDatabaseAdapter {
 						offset: options?.offset,
 					},
 				);
-				return toRows<CorsairEvent>(docs);
+				return transforms.transformOutputMany<CorsairEvent>(docs);
 			},
 			listPending: async (options?: {
 				accountId?: string;
@@ -539,14 +473,14 @@ export class ConvexDatabaseAdapter implements CorsairDatabaseAdapter {
 						limit: options?.limit,
 					},
 				);
-				return toRows<CorsairEvent>(docs);
+				return transforms.transformOutputMany<CorsairEvent>(docs);
 			},
 			updateStatus: async (id: string, status: string) => {
 				const doc = await client.mutation(
 					ref('mutation', 'events:update'),
 					{ id, data: { status } },
 				);
-				return toRow<CorsairEvent>(doc);
+				return transforms.transformOutput<CorsairEvent>(doc);
 			},
 		};
 	}
@@ -563,20 +497,20 @@ export class ConvexDatabaseAdapter implements CorsairDatabaseAdapter {
 					ref('query', 'permissions:findById'),
 					{ id },
 				);
-				return toRow<CorsairPermission>(doc) ?? undefined;
+				return transforms.transformOutput<CorsairPermission>(doc) ?? undefined;
 			},
 			findByToken: async (token: string) => {
 				const doc = await client.query(
 					ref('query', 'permissions:findByToken'),
 					{ token },
 				);
-				return toRow<CorsairPermission>(doc) ?? undefined;
+				return transforms.transformOutput<CorsairPermission>(doc) ?? undefined;
 			},
 			create: async (data: CorsairPermissionInsert) => {
 				const row = {
 					id: data.id ?? generateUUID(),
-					created_at: dateToEpoch(data.created_at),
-					updated_at: dateToEpoch(data.updated_at),
+					created_at: transforms.dateForStorage(data.created_at),
+					updated_at: transforms.dateForStorage(data.updated_at),
 					token: data.token,
 					plugin: data.plugin,
 					endpoint: data.endpoint,
@@ -590,7 +524,7 @@ export class ConvexDatabaseAdapter implements CorsairDatabaseAdapter {
 					ref('mutation', 'permissions:create'),
 					{ data: row },
 				);
-				return toRow<CorsairPermission>(doc)!;
+				return transforms.transformOutput<CorsairPermission>(doc)!;
 			},
 			updateStatus: async (
 				id: string,
@@ -619,7 +553,7 @@ export class ConvexDatabaseAdapter implements CorsairDatabaseAdapter {
 						now: opts.now,
 					},
 				);
-				return toRow<CorsairPermission>(doc) ?? undefined;
+				return transforms.transformOutput<CorsairPermission>(doc) ?? undefined;
 			},
 		};
 	}
@@ -640,7 +574,7 @@ export class ConvexDatabaseAdapter implements CorsairDatabaseAdapter {
 			doc: Record<string, unknown> | null,
 		): Entity | null => {
 			if (!doc) return null;
-			const row = toRow<CorsairEntity>(doc);
+			const row = transforms.transformOutput<CorsairEntity>(doc);
 			if (!row) return null;
 			let data = row.data;
 			if (typeof data === 'string') {
@@ -848,7 +782,7 @@ export class ConvexDatabaseAdapter implements CorsairDatabaseAdapter {
 						entityType: entityTypeName,
 						entityId,
 						version,
-						data: sanitizeForConvex(data),
+						data: transforms.sanitizeValue(data),
 					},
 				);
 				return parseData(doc)!;

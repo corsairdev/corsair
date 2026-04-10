@@ -24,10 +24,14 @@ export type {
 } from './db/kysely/database';
 export { createCorsairDatabase } from './db/kysely/database';
 export { KyselyDatabaseAdapter } from './db/kysely/adapter';
-export {
-	ConvexDatabaseAdapter,
-	sanitizeForConvex,
-} from './db/convex/adapter';
+export { createAdapterTransforms } from './db/adapter-factory';
+export type {
+	AdapterCapabilities,
+	AdapterTransforms,
+	DateStorageMode,
+	JsonStorageMode,
+} from './db/adapter-factory';
+export { ConvexDatabaseAdapter } from './db/convex/adapter';
 export type {
 	ConvexClient,
 	ConvexFunctionRefFactory,
