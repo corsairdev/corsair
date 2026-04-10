@@ -1,9 +1,6 @@
 import 'dotenv/config';
 
 import { createCorsair } from 'corsair';
-import { ConvexDatabaseAdapter } from 'corsair/db';
-import { ConvexHttpClient } from 'convex/browser';
-import { makeFunctionReference } from 'convex/server';
 import { github } from '@corsair-dev/github';
 import { slack } from '@corsair-dev/slack';
 import { googlesheets } from '@corsair-dev/googlesheets';
