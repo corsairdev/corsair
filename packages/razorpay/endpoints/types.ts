@@ -6,6 +6,7 @@ import {
 	RazorpayPaymentSchema,
 	RazorpayRefundSchema,
 	RazorpaySettlementSchema,
+	RazorpaySubscriptionSchema,
 } from '../schema/database';
 
 const OrdersCreateInputSchema = z.object({
@@ -62,6 +63,18 @@ const SettlementGetInputSchema = z.object({
 	id: z.string(),
 })
 
+const SubscriptionsListInputSchema = z.object({
+	from: z.number().optional(),
+	to: z.number().optional(),
+	count: z.number().optional(),
+	skip: z.number().optional(),
+	plan_id: z.string().optional(),
+});
+
+const SubscriptionsGetInputSchema = z.object({
+	id: z.string(),
+});
+
 const OrdersCreateResponseSchema = RazorpayOrderSchema;
 const OrdersGetResponseSchema = RazorpayOrderSchema;
 const PaymentsGetResponseSchema = RazorpayPaymentSchema;
@@ -77,6 +90,14 @@ const CustomersCreateResponseSchema = RazorpayCustomerSchema;
 const CustomersGetResponseSchema = RazorpayCustomerSchema;
 const SettlementsListResponseSchema = RazorpaySettlementSchema;
 const SettlementsGetResponseSchema = RazorpaySettlementSchema;
+const SubscriptionsListResponseSchema = z
+	.object({
+		entity: z.literal('collection').optional(),
+		count: z.number(),
+		items: z.array(RazorpaySubscriptionSchema),
+	})
+	.passthrough();
+const SubscriptionsGetResponseSchema = RazorpaySubscriptionSchema;
 
 export type OrdersCreateInput = z.infer<typeof OrdersCreateInputSchema>;
 export type OrdersGetInput = z.infer<typeof OrdersGetInputSchema>;
@@ -87,6 +108,8 @@ export type CustomersCreateInput = z.infer<typeof CustomersCreateInputSchema>;
 export type CustomersGetInput = z.infer<typeof CustomersGetInputSchema>;
 export type SettlementsListInput = z.infer<typeof SettlementsListInputSchema>;
 export type SettlementGetInput = z.infer<typeof SettlementGetInputSchema>;
+export type SubscriptionsListInput = z.infer<typeof SubscriptionsListInputSchema>;
+export type SubscriptionsGetInput = z.infer<typeof SubscriptionsGetInputSchema>;
 
 export type OrdersCreateResponse = z.infer<typeof OrdersCreateResponseSchema>;
 export type OrdersGetResponse = z.infer<typeof OrdersGetResponseSchema>;
@@ -97,6 +120,8 @@ export type CustomersCreateResponse = z.infer<typeof CustomersCreateResponseSche
 export type CustomersGetResponse = z.infer<typeof CustomersGetResponseSchema>;
 export type SettlementsListResponse = z.infer<typeof SettlementsListResponseSchema>;
 export type SettlementsGetResponse = z.infer<typeof SettlementsGetResponseSchema>;
+export type SubscriptionsListResponse = z.infer<typeof SubscriptionsListResponseSchema>;
+export type SubscriptionsGetResponse = z.infer<typeof SubscriptionsGetResponseSchema>;
 
 export type RazorpayEndpointInputs = {
 	ordersCreate: OrdersCreateInput;
@@ -108,6 +133,8 @@ export type RazorpayEndpointInputs = {
 	customersGet: CustomersGetInput;
 	settlementsList: SettlementsListInput;
 	settlementsGet: SettlementGetInput;
+	subscriptionsList: SubscriptionsListInput;
+	subscriptionsGet: SubscriptionsGetInput;
 };
 
 export type RazorpayEndpointOutputs = {
@@ -120,6 +147,8 @@ export type RazorpayEndpointOutputs = {
 	customersGet: CustomersGetResponse;
 	settlementsList: SettlementsListResponse;
 	settlementsGet: SettlementsGetResponse;
+	subscriptionsList: SubscriptionsListResponse;
+	subscriptionsGet: SubscriptionsGetResponse;
 };
 
 export const RazorpayEndpointInputSchemas = {
@@ -132,6 +161,8 @@ export const RazorpayEndpointInputSchemas = {
 	customersGet: CustomersGetInputSchema,
 	settlementsList: SettlementsListInputSchema,
 	settlementsGet: SettlementGetInputSchema,
+	subscriptionsList: SubscriptionsListInputSchema,
+	subscriptionsGet: SubscriptionsGetInputSchema,
 } as const;
 
 export const RazorpayEndpointOutputSchemas = {
@@ -144,4 +175,6 @@ export const RazorpayEndpointOutputSchemas = {
 	customersGet: CustomersGetResponseSchema,
 	settlementsList: SettlementsListResponseSchema,
 	settlementsGet: SettlementsGetResponseSchema,
+	subscriptionsList: SubscriptionsListResponseSchema,
+	subscriptionsGet: SubscriptionsGetResponseSchema,
 } as const;

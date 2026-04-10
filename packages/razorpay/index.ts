@@ -14,7 +14,7 @@ import type {
 	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
 import type { AuthTypes } from 'corsair/core';
-import { Customers, Orders, Payments, Refunds, Settlements } from './endpoints';
+import { Customers, Orders, Payments, Refunds, Settlements, Subscriptions } from './endpoints';
 import type {
 	CustomersCreateInput,
 	CustomersCreateResponse,
@@ -36,6 +36,10 @@ import type {
 	SettlementsListResponse,
 	SettlementGetInput,
 	SettlementsGetResponse,
+	SubscriptionsListInput,
+	SubscriptionsListResponse,
+	SubscriptionsGetInput,
+	SubscriptionsGetResponse,
 } from './endpoints/types';
 import {
 	RazorpayEndpointInputSchemas,
@@ -91,6 +95,8 @@ export type RazorpayEndpoints = {
 	customersGet: RazorpayEndpoint<'customersGet', CustomersGetInput>;
 	settlementsList: RazorpayEndpoint<'settlementsList', SettlementsListInput>;
 	settlementsGet: RazorpayEndpoint<'settlementsGet', SettlementGetInput>;
+	subscriptionsList: RazorpayEndpoint<'subscriptionsList', SubscriptionsListInput>;
+	subscriptionsGet: RazorpayEndpoint<'subscriptionsGet', SubscriptionsGetInput>;
 };
 
 type RazorpayWebhook<
@@ -132,6 +138,10 @@ const razorpayEndpointsNested = {
 	settlements: {
 		list: Settlements.list,
 		get: Settlements.get,
+	},
+	subscriptions: {
+		list: Subscriptions.list,
+		get: Subscriptions.get,
 	},
 } as const;
 
@@ -184,6 +194,14 @@ export const razorpayEndpointSchemas = {
 	'settlements.get': {
 		input: RazorpayEndpointInputSchemas.settlementsGet,
 		output: RazorpayEndpointOutputSchemas.settlementsGet,
+	},
+	'subscriptions.list': {
+		input: RazorpayEndpointInputSchemas.subscriptionsList,
+		output: RazorpayEndpointOutputSchemas.subscriptionsList,
+	},
+	'subscriptions.get': {
+		input: RazorpayEndpointInputSchemas.subscriptionsGet,
+		output: RazorpayEndpointOutputSchemas.subscriptionsGet,
 	},
 } as const satisfies RequiredPluginEndpointSchemas<typeof razorpayEndpointsNested>;
 
@@ -248,6 +266,14 @@ const razorpayEndpointMeta = {
 	'settlements.get': {
 		riskLevel: 'read',
 		description: 'Fetch a Razorpay settlement by ID',
+	},
+	'subscriptions.list': {
+		riskLevel: 'read',
+		description: 'List Razorpay subscriptions',
+	},
+	'subscriptions.get': {
+		riskLevel: 'read',
+		description: 'Fetch a Razorpay subscription by ID',
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof razorpayEndpointsNested>;
 
@@ -345,4 +371,8 @@ export type {
 	SettlementsListResponse,
 	SettlementGetInput,
 	SettlementsGetResponse,
+	SubscriptionsListInput,
+	SubscriptionsListResponse,
+	SubscriptionsGetInput,
+	SubscriptionsGetResponse,
 } from './endpoints/types';

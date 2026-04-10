@@ -89,6 +89,36 @@ export const RazorpaySettlementSchema = z.object({
 	created_at: z.number().optional(),
 })
 	.passthrough()
+export const RazorpaySubscriptionSchema = z
+	.object({
+		id: z.string(),
+		entity: z.literal('subscription'),
+		plan_id: z.string(),
+		customer_id: z.string().nullable().optional(),
+		status: z.string(),
+		current_start: z.number().nullable().optional(),
+		current_end: z.number().nullable().optional(),
+		ended_at: z.number().nullable().optional(),
+		charge_at: z.number().nullable().optional(),
+		offer_id: z.string().nullable().optional(),
+		start_at: z.number().nullable().optional(),
+		end_at: z.number().nullable().optional(),
+		auth_attempts: z.number().optional(),
+		quantity: z.number().optional(),
+		total_count: z.number().optional(),
+		paid_count: z.number().optional(),
+		remaining_count: z.number().optional(),
+		customer_notify: z.boolean().optional(),
+		expire_by: z.number().nullable().optional(),
+		short_url: z.string().nullable().optional(),
+		has_scheduled_changes: z.boolean().optional(),
+		change_scheduled_at: z.number().nullable().optional(),
+		source: z.string().nullable().optional(),
+		notes: RazorpayNotesSchema.optional(),
+		created_at: z.number().optional(),
+	})
+	.passthrough()
+
 // Database schemas (extend base schemas with createdAt for DB storage)
 export const RazorpayOrder = RazorpayOrderSchema.extend({
 	createdAt: z.coerce.date().nullable().optional(),
@@ -110,15 +140,21 @@ export const RazorpaySettlement = RazorpaySettlementSchema.extend({
 	createdAt: z.coerce.date().nullable().optional(),
 })
 
+export const RazorpaySubscription = RazorpaySubscriptionSchema.extend({
+	createdAt: z.coerce.date().nullable().optional(),
+})
+
 // Type exports
 export type RazorpayOrderData = z.infer<typeof RazorpayOrderSchema>
 export type RazorpayPaymentData = z.infer<typeof RazorpayPaymentSchema>
 export type RazorpayRefundData = z.infer<typeof RazorpayRefundSchema>
 export type RazorpayCustomerData = z.infer<typeof RazorpayCustomerSchema>
 export type RazorpaySettlementData = z.infer<typeof RazorpaySettlementSchema>
+export type RazorpaySubscriptionData = z.infer<typeof RazorpaySubscriptionSchema>
 
 export type RazorpayOrder = z.infer<typeof RazorpayOrder>
 export type RazorpayPayment = z.infer<typeof RazorpayPayment>
 export type RazorpayRefund = z.infer<typeof RazorpayRefund>
 export type RazorpayCustomer = z.infer<typeof RazorpayCustomer>;
 export type RazorpaySettlement = z.infer<typeof RazorpaySettlement>;
+export type RazorpaySubscription = z.infer<typeof RazorpaySubscription>;
