@@ -1,8 +1,7 @@
 /**
  * Adapter factory for Corsair database adapters.
  *
- * Inspired by better-auth's `createAdapterFactory`, this module centralizes
- * the input/output transformations that every adapter must perform (Date ↔
+ * This module centralizes the input/output transformations that every adapter must perform (Date ↔
  * epoch, JSON parse/stringify, internal-field stripping) so that individual
  * adapter implementations only need to declare their *capabilities* and
  * provide raw CRUD methods.
