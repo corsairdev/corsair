@@ -1,14 +1,14 @@
-import 'dotenv/config'
+import 'dotenv/config';
 import { makeMondayRequest } from './client';
 import type {
-	BoardsListInput,
-	BoardsGetInput,
 	BoardsCreateInput,
-	ItemsListInput,
-	ItemsGetInput,
-	ItemsCreateInput,
-	GroupsListInput,
+	BoardsGetInput,
+	BoardsListInput,
 	ColumnsListInput,
+	GroupsListInput,
+	ItemsCreateInput,
+	ItemsGetInput,
+	ItemsListInput,
 	UpdatesCreateInput,
 	UsersListInput,
 	WorkspacesListInput,
@@ -54,7 +54,8 @@ beforeAll(async () => {
 	);
 
 	const itemId = itemsResult.boards?.[0]?.items_page?.items?.[0]?.id;
-	if (!itemId) throw new Error('No items found in the first board — cannot run tests');
+	if (!itemId)
+		throw new Error('No items found in the first board — cannot run tests');
 	testItemId = itemId;
 });
 

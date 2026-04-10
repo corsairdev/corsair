@@ -1,4 +1,4 @@
-import 'dotenv/config'
+import 'dotenv/config';
 import { makeLinearRequest } from './client';
 import type {
 	CommentCreateResponse,

@@ -1,10 +1,10 @@
-import { z } from 'zod';
-import { verifyHmacSignature } from 'corsair/http';
 import type {
 	CorsairWebhookMatcher,
 	RawWebhookRequest,
 	WebhookRequest,
 } from 'corsair/core';
+import { verifyHmacSignature } from 'corsair/http';
+import { z } from 'zod';
 
 // ── Shared Sub-Schemas ────────────────────────────────────────────────────────
 
@@ -69,7 +69,9 @@ export type ItemCreatedEvent = z.infer<typeof MondayItemCreatedPayloadSchema>;
 export type ColumnValueChangedEvent = z.infer<
 	typeof MondayColumnValueChangedPayloadSchema
 >;
-export type StatusChangedEvent = z.infer<typeof MondayStatusChangedPayloadSchema>;
+export type StatusChangedEvent = z.infer<
+	typeof MondayStatusChangedPayloadSchema
+>;
 
 // ── Webhook Outputs Type ──────────────────────────────────────────────────────
 
@@ -130,7 +132,10 @@ export function verifyMondayWebhookSignature(
 
 	const rawBody = request.rawBody;
 	if (!rawBody) {
-		return { valid: false, error: 'Missing raw body for signature verification' };
+		return {
+			valid: false,
+			error: 'Missing raw body for signature verification',
+		};
 	}
 
 	const headers = request.headers;

@@ -1,7 +1,13 @@
 import { logEventFromContext } from 'corsair/core';
 import type { GoogleSheetsEndpoints } from '..';
-import { makeAuthenticatedSheetsRequest } from '../client';
-import type { GoogleSheetsEndpointOutputs } from './types';
+import {
+	makeAuthenticatedDriveRequest,
+	makeAuthenticatedSheetsRequest,
+} from '../client';
+import type {
+	GoogleSheetsEndpointOutputs,
+	ListSpreadsheetsResponse,
+} from './types';
 
 export const create: GoogleSheetsEndpoints['spreadsheetsCreate'] = async (
 	ctx,
@@ -40,14 +46,10 @@ export const create: GoogleSheetsEndpoints['spreadsheetsCreate'] = async (
 
 export const deleteSpreadsheet: GoogleSheetsEndpoints['spreadsheetsDelete'] =
 	async (ctx, input) => {
-		const response = await fetch(
-			`https://www.googleapis.com/drive/v3/files/${input.spreadsheetId}`,
-			{
-				method: 'DELETE',
-				headers: {
-					Authorization: `Bearer ${ctx.key}`,
-				},
-			},
+		const response = await makeAuthenticatedDriveRequest(
+			`/files/${input.spreadsheetId}`,
+			ctx,
+			{ method: 'DELETE' },
 		);
 
 		if (!response.ok && response.status !== 404) {
@@ -71,4 +73,39 @@ export const deleteSpreadsheet: GoogleSheetsEndpoints['spreadsheetsDelete'] =
 			{ ...input },
 			'completed',
 		);
+	};
+
+export const listSpreadsheets: GoogleSheetsEndpoints['spreadsheetsList'] =
+	async (ctx, input) => {
+		const mimeFilter = "mimeType='application/vnd.google-apps.spreadsheet'";
+		const params = new URLSearchParams({
+			q: input.query ? `${mimeFilter} AND ${input.query}` : mimeFilter,
+			fields:
+				'files(id,name,createdTime,modifiedTime,webViewLink),nextPageToken',
+		});
+		if (input.pageSize) params.set('pageSize', String(input.pageSize));
+		if (input.pageToken) params.set('pageToken', input.pageToken);
+
+		const response = await makeAuthenticatedDriveRequest(
+			`/files?${params.toString()}`,
+			ctx,
+		);
+
+		if (!response.ok) {
+			const errorText = await response.text();
+			throw new Error(
+				`Failed to list spreadsheets: ${response.status} ${errorText}`,
+			);
+		}
+
+		// Drive request is invoked in sheets plugin, so type assertion is required
+		const result = (await response.json()) as ListSpreadsheetsResponse;
+
+		await logEventFromContext(
+			ctx,
+			'googlesheets.spreadsheets.list',
+			{ ...input },
+			'completed',
+		);
+		return result;
 	};

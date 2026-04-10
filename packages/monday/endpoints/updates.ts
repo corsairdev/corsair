@@ -31,12 +31,19 @@ export const list: MondayEndpoints['updatesList'] = async (ctx, input) => {
 		},
 	);
 
-	await logEventFromContext(ctx, 'monday.updates.list', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'monday.updates.list',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
 export const create: MondayEndpoints['updatesCreate'] = async (ctx, input) => {
-	const result = await makeMondayRequest<MondayEndpointOutputs['updatesCreate']>(
+	const result = await makeMondayRequest<
+		MondayEndpointOutputs['updatesCreate']
+	>(
 		`mutation($itemId: ID!, $body: String!) {
 			create_update(item_id: $itemId, body: $body) {
 				id
@@ -50,12 +57,22 @@ export const create: MondayEndpoints['updatesCreate'] = async (ctx, input) => {
 		},
 	);
 
-	await logEventFromContext(ctx, 'monday.updates.create', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'monday.updates.create',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
-export const deleteupdate: MondayEndpoints['updatesDelete'] = async (ctx, input) => {
-	const result = await makeMondayRequest<MondayEndpointOutputs['updatesDelete']>(
+export const deleteupdate: MondayEndpoints['updatesDelete'] = async (
+	ctx,
+	input,
+) => {
+	const result = await makeMondayRequest<
+		MondayEndpointOutputs['updatesDelete']
+	>(
 		`mutation($updateId: ID!) {
 			delete_update(id: $updateId) {
 				id
@@ -65,6 +82,11 @@ export const deleteupdate: MondayEndpoints['updatesDelete'] = async (ctx, input)
 		{ updateId: input.update_id },
 	);
 
-	await logEventFromContext(ctx, 'monday.updates.delete', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'monday.updates.delete',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };

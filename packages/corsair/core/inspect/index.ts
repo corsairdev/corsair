@@ -54,8 +54,9 @@ function zodToInlineType(schema: ZodTypeAny): string {
 			const entries = Object.entries(shape);
 			if (entries.length === 0) return '{}';
 			const fields = entries.map(([key, val]) => {
-				const ft = (val as { _def: Record<string, unknown> })._def
-					.typeName as string | undefined;
+				const ft = (val as { _def: Record<string, unknown> })._def.typeName as
+					| string
+					| undefined;
 				const optional = ft === 'ZodOptional' || ft === 'ZodNullable';
 				return `${optional ? key + '?' : key}: ${zodToInlineType(val)}`;
 			});
@@ -83,9 +84,7 @@ function zodToExpandedType(schema: ZodTypeAny, depth: number): string {
 
 	if (typeName === 'ZodOptional' || typeName === 'ZodEffects') {
 		return zodToExpandedType(
-			(typeName === 'ZodOptional'
-				? def.innerType
-				: def.schema) as ZodTypeAny,
+			(typeName === 'ZodOptional' ? def.innerType : def.schema) as ZodTypeAny,
 			depth,
 		);
 	}
@@ -116,7 +115,9 @@ function zodToExpandedType(schema: ZodTypeAny, depth: number): string {
 		const comment = description ? `  // ${description}` : '';
 
 		if (innerTypeName === 'ZodObject') {
-			lines.push(`${pad}${k}: ${zodToExpandedType(innerVal, depth + 1)}${comment}`);
+			lines.push(
+				`${pad}${k}: ${zodToExpandedType(innerVal, depth + 1)}${comment}`,
+			);
 		} else {
 			lines.push(`${pad}${k}: ${zodToInlineType(val)}${comment}`);
 		}
@@ -557,8 +558,7 @@ function formatAvailablePaths(
 	label: string,
 ): string {
 	if (typeof paths === 'string') return paths;
-	if (Array.isArray(paths))
-		return `${label}:\n  ${paths.join(', ')}`;
+	if (Array.isArray(paths)) return `${label}:\n  ${paths.join(', ')}`;
 	return (
 		`${label}:\n` +
 		Object.entries(paths)
@@ -641,9 +641,7 @@ function getSchema(plugins: readonly CorsairPlugin[], path: string): string {
 						const parts: string[] = [];
 						if (schemas?.description) parts.push(schemas.description);
 						if (schemas?.payload) {
-							parts.push(
-								`payload ${zodToExpandedType(schemas.payload, 0)}`,
-							);
+							parts.push(`payload ${zodToExpandedType(schemas.payload, 0)}`);
 						}
 						if (responseTypeStr) {
 							parts.push(`response: ${responseTypeStr}`);

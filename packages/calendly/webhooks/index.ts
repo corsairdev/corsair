@@ -1,8 +1,8 @@
-import { inviteeCreated } from './invitee-created';
+import { eventTypeUpdated } from './event-type-updated';
 import { inviteeCanceled } from './invitee-canceled';
+import { inviteeCreated } from './invitee-created';
 import { inviteeNoShow } from './invitee-no-show';
 import { routingFormSubmission } from './routing-form-submission';
-import { eventTypeUpdated } from './event-type-updated';
 import { userUpdated } from './user-updated';
 
 export const InviteeWebhooks = {

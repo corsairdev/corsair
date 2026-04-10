@@ -1,32 +1,25 @@
-import {
-	getChat,
-	getChatAdministrators,
-	getChatMember,
-} from './chat';
-import {
-	answerCallbackQuery,
-	answerInlineQuery,
-} from './callback';
+import { answerCallbackQuery, answerInlineQuery } from './callback';
+import { getChat, getChatAdministrators, getChatMember } from './chat';
 import { getFile } from './file';
+import { getMe } from './me';
 import {
-	sendMessage,
-	editMessageText,
 	deleteMessage,
+	editMessageText,
 	pinChatMessage,
-	unpinChatMessage,
-	sendPhoto,
-	sendVideo,
-	sendAudio,
-	sendDocument,
-	sendSticker,
 	sendAnimation,
+	sendAudio,
+	sendChatAction,
+	sendDocument,
 	sendLocation,
 	sendMediaGroup,
-	sendChatAction,
+	sendMessage,
+	sendPhoto,
+	sendSticker,
+	sendVideo,
+	unpinChatMessage,
 } from './messages';
-import { setWebhook, deleteWebhook } from './webhook';
 import { getUpdates } from './updates';
-import { getMe } from './me';
+import { deleteWebhook, setWebhook } from './webhook';
 
 export const Chat = {
 	getChat,

@@ -11,7 +11,9 @@ export class ClaudeProvider {
 	async build(
 		options: BaseMcpOptions,
 	): Promise<SdkMcpToolDefinition<z.ZodRawShape>[]> {
-		const { tool } = await import(/* webpackIgnore: true */ /* turbopackIgnore: true */ '@anthropic-ai/claude-agent-sdk');
+		const { tool } = await import(
+			/* webpackIgnore: true */ /* turbopackIgnore: true */ '@anthropic-ai/claude-agent-sdk'
+		);
 		return buildCorsairToolDefs(options).map((def) =>
 			tool(def.name, def.description, def.shape, def.handler),
 		);

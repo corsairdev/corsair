@@ -9,14 +9,19 @@ import {
 	listLaps as activitiesListLaps,
 } from './activities';
 import {
-	getAthlete,
 	getStats as athleteGetStats,
 	getZones as athleteGetZones,
+	getAthlete,
 	updateAthlete,
 } from './athletes';
 import { get as clubsGet } from './clubs';
 import { get as gearGet } from './gear';
-import { exportGpx, exportTcx, get as routesGet, getStreams as routesGetStreams } from './routes';
+import {
+	exportGpx,
+	exportTcx,
+	get as routesGet,
+	getStreams as routesGetStreams,
+} from './routes';
 import {
 	effortsGet as segmentEffortsGet,
 	effortsGetStreams as segmentEffortsGetStreams,

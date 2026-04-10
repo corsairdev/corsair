@@ -6,21 +6,18 @@ import type { JiraEndpointOutputs } from './types';
 export const create: JiraEndpoints['sprintsCreate'] = async (ctx, input) => {
 	const cloudUrl = (await ctx.keys.get_cloud_url()) ?? '';
 
-	const result = await makeJiraAgileRequest<JiraEndpointOutputs['sprintsCreate']>(
-		'sprint',
-		ctx.key,
-		cloudUrl,
-		{
-			method: 'POST',
-			body: {
-				originBoardId: input.origin_board_id,
-				name: input.name,
-				...(input.goal && { goal: input.goal }),
-				...(input.start_date && { startDate: input.start_date }),
-				...(input.end_date && { endDate: input.end_date }),
-			},
+	const result = await makeJiraAgileRequest<
+		JiraEndpointOutputs['sprintsCreate']
+	>('sprint', ctx.key, cloudUrl, {
+		method: 'POST',
+		body: {
+			originBoardId: input.origin_board_id,
+			name: input.name,
+			...(input.goal && { goal: input.goal }),
+			...(input.start_date && { startDate: input.start_date }),
+			...(input.end_date && { endDate: input.end_date }),
 		},
-	);
+	});
 
 	if (result.id && ctx.db.sprints) {
 		try {
@@ -39,7 +36,12 @@ export const create: JiraEndpoints['sprintsCreate'] = async (ctx, input) => {
 		}
 	}
 
-	await logEventFromContext(ctx, 'jira.sprints.create', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'jira.sprints.create',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
@@ -55,7 +57,9 @@ export const list: JiraEndpoints['sprintsList'] = async (ctx, input) => {
 			query: {
 				...(input.state && { state: input.state }),
 				...(input.start_at !== undefined && { startAt: input.start_at }),
-				...(input.max_results !== undefined && { maxResults: input.max_results }),
+				...(input.max_results !== undefined && {
+					maxResults: input.max_results,
+				}),
 			},
 		},
 	);
@@ -80,11 +84,19 @@ export const list: JiraEndpoints['sprintsList'] = async (ctx, input) => {
 		}
 	}
 
-	await logEventFromContext(ctx, 'jira.sprints.list', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'jira.sprints.list',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
-export const moveIssues: JiraEndpoints['sprintsMoveIssues'] = async (ctx, input) => {
+export const moveIssues: JiraEndpoints['sprintsMoveIssues'] = async (
+	ctx,
+	input,
+) => {
 	await makeJiraAgileRequest<void>(
 		`sprint/${input.sprint_id}/issue`,
 		ctx.key,
@@ -95,28 +107,35 @@ export const moveIssues: JiraEndpoints['sprintsMoveIssues'] = async (ctx, input)
 		},
 	);
 
-	await logEventFromContext(ctx, 'jira.sprints.moveIssues', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'jira.sprints.moveIssues',
+		{ ...input },
+		'completed',
+	);
 	return { success: true };
 };
 
-export const listBoards: JiraEndpoints['sprintsListBoards'] = async (ctx, input) => {
+export const listBoards: JiraEndpoints['sprintsListBoards'] = async (
+	ctx,
+	input,
+) => {
 	const cloudUrl = (await ctx.keys.get_cloud_url()) ?? '';
 
-	const result = await makeJiraAgileRequest<JiraEndpointOutputs['sprintsListBoards']>(
-		'board',
-		ctx.key,
-		cloudUrl,
-		{
-			method: 'GET',
-			query: {
-				...(input.project_key_or_id && { projectKeyOrId: input.project_key_or_id }),
-				...(input.type && { type: input.type }),
-				...(input.name && { name: input.name }),
-				...(input.start_at !== undefined && { startAt: input.start_at }),
-				...(input.max_results !== undefined && { maxResults: input.max_results }),
-			},
+	const result = await makeJiraAgileRequest<
+		JiraEndpointOutputs['sprintsListBoards']
+	>('board', ctx.key, cloudUrl, {
+		method: 'GET',
+		query: {
+			...(input.project_key_or_id && {
+				projectKeyOrId: input.project_key_or_id,
+			}),
+			...(input.type && { type: input.type }),
+			...(input.name && { name: input.name }),
+			...(input.start_at !== undefined && { startAt: input.start_at }),
+			...(input.max_results !== undefined && { maxResults: input.max_results }),
 		},
-	);
+	});
 
 	if (result.values && ctx.db.boards) {
 		for (const board of result.values) {
@@ -126,9 +145,15 @@ export const listBoards: JiraEndpoints['sprintsListBoards'] = async (ctx, input)
 					id: board.id,
 					...(board.name && { name: board.name }),
 					...(board.type && { type: board.type }),
-					...(board.location?.projectId && { projectId: board.location.projectId }),
-					...(board.location?.projectKey && { projectKey: board.location.projectKey }),
-					...(board.location?.projectName && { projectName: board.location.projectName }),
+					...(board.location?.projectId && {
+						projectId: board.location.projectId,
+					}),
+					...(board.location?.projectKey && {
+						projectKey: board.location.projectKey,
+					}),
+					...(board.location?.projectName && {
+						projectName: board.location.projectName,
+					}),
 					createdAt: new Date(),
 				});
 			} catch (error) {
@@ -137,6 +162,11 @@ export const listBoards: JiraEndpoints['sprintsListBoards'] = async (ctx, input)
 		}
 	}
 
-	await logEventFromContext(ctx, 'jira.sprints.listBoards', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'jira.sprints.listBoards',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };

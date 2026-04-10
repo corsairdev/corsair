@@ -1,5 +1,5 @@
-import type { JiraWebhooks } from '..';
 import { logEventFromContext } from 'corsair/core';
+import type { JiraWebhooks } from '..';
 import { createJiraMatch, verifyJiraWebhookSignature } from './types';
 
 export const newProject: JiraWebhooks['newProject'] = {
@@ -23,10 +23,18 @@ export const newProject: JiraWebhooks['newProject'] = {
 					id: event.project.id,
 					key: event.project.key,
 					...(event.project.name && { name: event.project.name }),
-					...(event.project.description && { description: event.project.description }),
-					...(event.project.projectTypeKey && { projectTypeKey: event.project.projectTypeKey }),
-					...(event.project.lead?.accountId && { leadAccountId: event.project.lead.accountId }),
-					...(event.project.lead?.displayName && { leadDisplayName: event.project.lead.displayName }),
+					...(event.project.description && {
+						description: event.project.description,
+					}),
+					...(event.project.projectTypeKey && {
+						projectTypeKey: event.project.projectTypeKey,
+					}),
+					...(event.project.lead?.accountId && {
+						leadAccountId: event.project.lead.accountId,
+					}),
+					...(event.project.lead?.displayName && {
+						leadDisplayName: event.project.lead.displayName,
+					}),
 					createdAt: new Date(),
 				});
 			} catch (error) {
@@ -38,7 +46,9 @@ export const newProject: JiraWebhooks['newProject'] = {
 			try {
 				await ctx.db.users.upsertByEntityId(event.project.lead.accountId, {
 					accountId: event.project.lead.accountId,
-					...(event.project.lead.displayName && { displayName: event.project.lead.displayName }),
+					...(event.project.lead.displayName && {
+						displayName: event.project.lead.displayName,
+					}),
 					createdAt: new Date(),
 				});
 			} catch (error) {

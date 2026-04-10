@@ -45,7 +45,9 @@ function generatePlugin(pluginName: string) {
 	const pluginDir = join(packagesDir, lowerName);
 
 	if (existsSync(pluginDir)) {
-		console.error(`Plugin "${lowerName}" already exists at packages/${lowerName}`);
+		console.error(
+			`Plugin "${lowerName}" already exists at packages/${lowerName}`,
+		);
 		process.exit(1);
 	}
 

@@ -1,4 +1,5 @@
 import type {
+	AuthTypes,
 	BindEndpoints,
 	BindWebhooks,
 	CorsairEndpoint,
@@ -7,64 +8,67 @@ import type {
 	CorsairPluginContext,
 	CorsairWebhook,
 	KeyBuilderContext,
+	PickAuth,
 	PluginAuthConfig,
-	RequiredPluginEndpointMeta,
-	RequiredPluginEndpointSchemas,
-	RequiredPluginWebhookSchemas,
 	PluginPermissionsConfig,
+	RequiredPluginEndpointMeta,
 } from 'corsair/core';
-import type { AuthTypes, PickAuth } from 'corsair/core';
-import type { FigmaEndpointInputs, FigmaEndpointOutputs } from './endpoints/types';
-import { FigmaEndpointInputSchemas, FigmaEndpointOutputSchemas } from './endpoints/types';
-import type { FigmaWebhookOutputs } from './webhooks/types';
 import {
-	Comments,
-	Webhooks,
-	DevResources,
-	Variables,
-	Components,
-	Files,
-	Styles,
-	Projects,
-	Users,
-	LibraryAnalytics,
 	ActivityLogs,
-	Payments,
+	Comments,
+	Components,
 	DesignTools,
+	DevResources,
+	Files,
+	LibraryAnalytics,
+	Payments,
+	Projects,
+	Styles,
+	Users,
+	Variables,
+	Webhooks,
 } from './endpoints';
+import type {
+	FigmaEndpointInputs,
+	FigmaEndpointOutputs,
+} from './endpoints/types';
+import {
+	FigmaEndpointInputSchemas,
+	FigmaEndpointOutputSchemas,
+} from './endpoints/types';
+import { errorHandlers } from './error-handlers';
 import { FigmaSchema } from './schema';
 import {
 	FileCommentWebhooks,
-	FileUpdateWebhooks,
 	FileDeleteWebhooks,
+	FileUpdateWebhooks,
 	FileVersionUpdateWebhooks,
 	LibraryPublishWebhooks,
 	PingWebhooks,
 } from './webhooks';
 import type {
 	FigmaFileCommentEvent,
-	FigmaFileUpdateEvent,
 	FigmaFileDeleteEvent,
+	FigmaFileUpdateEvent,
 	FigmaFileVersionUpdateEvent,
 	FigmaLibraryPublishEvent,
 	FigmaPingEvent,
-	FigmaWebhookPayload,
+	FigmaWebhookOutputs,
 } from './webhooks/types';
 import {
-	FigmaFileCommentPayloadSchema,
-	FigmaFileUpdatePayloadSchema,
-	FigmaFileDeletePayloadSchema,
-	FigmaFileVersionUpdatePayloadSchema,
-	FigmaLibraryPublishPayloadSchema,
-	FigmaPingPayloadSchema,
 	FigmaFileCommentEventSchema,
-	FigmaFileUpdateEventSchema,
+	FigmaFileCommentPayloadSchema,
 	FigmaFileDeleteEventSchema,
+	FigmaFileDeletePayloadSchema,
+	FigmaFileUpdateEventSchema,
+	FigmaFileUpdatePayloadSchema,
 	FigmaFileVersionUpdateEventSchema,
+	FigmaFileVersionUpdatePayloadSchema,
 	FigmaLibraryPublishEventSchema,
+	FigmaLibraryPublishPayloadSchema,
 	FigmaPingEventSchema,
+	FigmaPingPayloadSchema,
 } from './webhooks/types';
-import { errorHandlers } from './error-handlers';
 
 export type FigmaPluginOptions = {
 	authType?: PickAuth<'api_key'>;
@@ -81,7 +85,10 @@ export type FigmaPluginOptions = {
 	permissions?: PluginPermissionsConfig<typeof figmaEndpointsNested>;
 };
 
-export type FigmaContext = CorsairPluginContext<typeof FigmaSchema, FigmaPluginOptions>;
+export type FigmaContext = CorsairPluginContext<
+	typeof FigmaSchema,
+	FigmaPluginOptions
+>;
 
 export type FigmaKeyBuilderContext = KeyBuilderContext<FigmaPluginOptions>;
 
@@ -156,7 +163,10 @@ export type FigmaWebhooks = {
 	fileComment: FigmaWebhook<'fileComment', FigmaFileCommentEvent>;
 	fileUpdate: FigmaWebhook<'fileUpdate', FigmaFileUpdateEvent>;
 	fileDelete: FigmaWebhook<'fileDelete', FigmaFileDeleteEvent>;
-	fileVersionUpdate: FigmaWebhook<'fileVersionUpdate', FigmaFileVersionUpdateEvent>;
+	fileVersionUpdate: FigmaWebhook<
+		'fileVersionUpdate',
+		FigmaFileVersionUpdateEvent
+	>;
 	libraryPublish: FigmaWebhook<'libraryPublish', FigmaLibraryPublishEvent>;
 	ping: FigmaWebhook<'ping', FigmaPingEvent>;
 };
@@ -463,12 +473,18 @@ export const figmaEndpointSchemas = {
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
 const figmaEndpointMeta = {
-	'comments.add': { riskLevel: 'write', description: 'Add a comment to a Figma file' },
+	'comments.add': {
+		riskLevel: 'write',
+		description: 'Add a comment to a Figma file',
+	},
 	'comments.delete': {
 		riskLevel: 'destructive',
 		description: 'Delete a comment from a Figma file [DESTRUCTIVE]',
 	},
-	'comments.list': { riskLevel: 'read', description: 'List comments on a Figma file' },
+	'comments.list': {
+		riskLevel: 'read',
+		description: 'List comments on a Figma file',
+	},
 	'comments.getReactions': {
 		riskLevel: 'read',
 		description: 'Get reactions on a comment',
@@ -481,18 +497,27 @@ const figmaEndpointMeta = {
 		riskLevel: 'write',
 		description: 'Delete a reaction from a comment',
 	},
-	'webhooks.create': { riskLevel: 'write', description: 'Create a Figma webhook' },
+	'webhooks.create': {
+		riskLevel: 'write',
+		description: 'Create a Figma webhook',
+	},
 	'webhooks.delete': {
 		riskLevel: 'destructive',
 		description: 'Delete a Figma webhook [DESTRUCTIVE]',
 	},
-	'webhooks.get': { riskLevel: 'read', description: 'Get a Figma webhook by ID' },
+	'webhooks.get': {
+		riskLevel: 'read',
+		description: 'Get a Figma webhook by ID',
+	},
 	'webhooks.list': { riskLevel: 'read', description: 'List Figma webhooks' },
 	'webhooks.getRequests': {
 		riskLevel: 'read',
 		description: 'Get webhook request history',
 	},
-	'webhooks.update': { riskLevel: 'write', description: 'Update a Figma webhook' },
+	'webhooks.update': {
+		riskLevel: 'write',
+		description: 'Update a Figma webhook',
+	},
 	'devResources.create': {
 		riskLevel: 'write',
 		description: 'Create dev resources on a Figma file',
@@ -545,8 +570,14 @@ const figmaEndpointMeta = {
 		riskLevel: 'read',
 		description: 'Get all component sets for a Figma team',
 	},
-	'files.getJSON': { riskLevel: 'read', description: 'Get full Figma file JSON' },
-	'files.getMetadata': { riskLevel: 'read', description: 'Get Figma file metadata' },
+	'files.getJSON': {
+		riskLevel: 'read',
+		description: 'Get full Figma file JSON',
+	},
+	'files.getMetadata': {
+		riskLevel: 'read',
+		description: 'Get Figma file metadata',
+	},
 	'files.getNodes': {
 		riskLevel: 'read',
 		description: 'Get specific nodes from a Figma file',
@@ -622,7 +653,8 @@ const figmaEndpointMeta = {
 	},
 	'designTools.extractDesignTokens': {
 		riskLevel: 'read',
-		description: 'Extract design tokens (variables and styles) from a Figma file',
+		description:
+			'Extract design tokens (variables and styles) from a Figma file',
 	},
 	'designTools.extractPrototypeInteractions': {
 		riskLevel: 'read',
@@ -688,7 +720,8 @@ export type BaseFigmaPlugin<T extends FigmaPluginOptions> = CorsairPlugin<
 
 export type InternalFigmaPlugin = BaseFigmaPlugin<FigmaPluginOptions>;
 
-export type ExternalFigmaPlugin<T extends FigmaPluginOptions> = BaseFigmaPlugin<T>;
+export type ExternalFigmaPlugin<T extends FigmaPluginOptions> =
+	BaseFigmaPlugin<T>;
 
 export function figma<const T extends FigmaPluginOptions>(
 	// type assertion: default to empty object cast to the options intersection type when no options are provided
@@ -757,8 +790,8 @@ export function figma<const T extends FigmaPluginOptions>(
 
 export type {
 	FigmaFileCommentEvent,
-	FigmaFileUpdateEvent,
 	FigmaFileDeleteEvent,
+	FigmaFileUpdateEvent,
 	FigmaFileVersionUpdateEvent,
 	FigmaLibraryPublishEvent,
 	FigmaPingEvent,
@@ -773,56 +806,56 @@ export { createFigmaEventMatch } from './webhooks/types';
 // ─────────────────────────────────────────────────────────────────────────────
 
 export type {
-	FigmaEndpointInputs,
-	FigmaEndpointOutputs,
-	CommentsAddResponse,
-	CommentsDeleteResponse,
-	CommentsListResponse,
-	CommentsGetReactionsResponse,
+	ActivityLogsListResponse,
 	CommentsAddReactionResponse,
+	CommentsAddResponse,
 	CommentsDeleteReactionResponse,
-	WebhooksCreateResponse,
-	WebhooksDeleteResponse,
-	WebhooksGetResponse,
-	WebhooksListResponse,
-	WebhooksGetRequestsResponse,
-	WebhooksUpdateResponse,
+	CommentsDeleteResponse,
+	CommentsGetReactionsResponse,
+	CommentsListResponse,
+	ComponentSetsGetForFileResponse,
+	ComponentSetsGetForTeamResponse,
+	ComponentSetsGetResponse,
+	ComponentsGetForFileResponse,
+	ComponentsGetForTeamResponse,
+	ComponentsGetResponse,
+	DesignToolsDesignTokensToTailwindResponse,
+	DesignToolsDiscoverResourcesResponse,
+	DesignToolsDownloadImagesResponse,
+	DesignToolsExtractDesignTokensResponse,
+	DesignToolsExtractPrototypeInteractionsResponse,
 	DevResourcesCreateResponse,
 	DevResourcesDeleteResponse,
 	DevResourcesGetResponse,
 	DevResourcesUpdateResponse,
-	VariablesCreateModifyDeleteResponse,
-	VariablesGetLocalResponse,
-	VariablesGetPublishedResponse,
-	ComponentsGetResponse,
-	ComponentSetsGetResponse,
-	ComponentsGetForFileResponse,
-	ComponentSetsGetForFileResponse,
-	ComponentsGetForTeamResponse,
-	ComponentSetsGetForTeamResponse,
+	FigmaEndpointInputs,
+	FigmaEndpointOutputs,
+	FilesGetImageFillsResponse,
 	FilesGetJSONResponse,
 	FilesGetMetadataResponse,
 	FilesGetNodesResponse,
+	FilesGetProjectFilesResponse,
 	FilesGetStylesResponse,
-	FilesGetImageFillsResponse,
 	FilesGetVersionsResponse,
 	FilesRenderImagesResponse,
-	FilesGetProjectFilesResponse,
-	StylesGetResponse,
-	StylesGetForTeamResponse,
-	ProjectsGetTeamProjectsResponse,
-	UsersGetCurrentResponse,
 	LibraryAnalyticsComponentActionsResponse,
 	LibraryAnalyticsComponentUsagesResponse,
 	LibraryAnalyticsStyleActionsResponse,
 	LibraryAnalyticsStyleUsagesResponse,
 	LibraryAnalyticsVariableActionsResponse,
 	LibraryAnalyticsVariableUsagesResponse,
-	ActivityLogsListResponse,
 	PaymentsGetResponse,
-	DesignToolsDiscoverResourcesResponse,
-	DesignToolsExtractDesignTokensResponse,
-	DesignToolsExtractPrototypeInteractionsResponse,
-	DesignToolsDownloadImagesResponse,
-	DesignToolsDesignTokensToTailwindResponse,
+	ProjectsGetTeamProjectsResponse,
+	StylesGetForTeamResponse,
+	StylesGetResponse,
+	UsersGetCurrentResponse,
+	VariablesCreateModifyDeleteResponse,
+	VariablesGetLocalResponse,
+	VariablesGetPublishedResponse,
+	WebhooksCreateResponse,
+	WebhooksDeleteResponse,
+	WebhooksGetRequestsResponse,
+	WebhooksGetResponse,
+	WebhooksListResponse,
+	WebhooksUpdateResponse,
 } from './endpoints/types';

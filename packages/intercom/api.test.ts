@@ -1,4 +1,4 @@
-import 'dotenv/config'
+import 'dotenv/config';
 import { makeIntercomRequest } from './client';
 import type {
 	AdminsGetResponse,
@@ -22,7 +22,6 @@ import type {
 	CompaniesListResponse,
 	ContactsAddTagResponse,
 	ContactsCreateNoteResponse,
-	ContactsDeleteResponse,
 	ContactsGetResponse,
 	ContactsListAttachedCompaniesResponse,
 	ContactsListAttachedSegmentsResponse,
@@ -31,7 +30,6 @@ import type {
 	ContactsListSubscriptionsResponse,
 	ContactsListTagsResponse,
 	ContactsUpdateResponse,
-	ConversationsCreateResponse,
 	ConversationsGetResponse,
 	ConversationsListResponse,
 	ConversationsSearchResponse,
@@ -51,49 +49,77 @@ let sharedArticleAuthorId: number;
 describe('Intercom API Type Tests', () => {
 	beforeAll(async () => {
 		// Fetch admin ID (also used as article author ID — admin numeric ID)
-		const adminsResult = await makeIntercomRequest<AdminsListResponse>('admins', TEST_TOKEN);
+		const adminsResult = await makeIntercomRequest<AdminsListResponse>(
+			'admins',
+			TEST_TOKEN,
+		);
 		const firstAdmin = adminsResult.admins?.[0];
 		if (!firstAdmin) throw new Error('No admins found — cannot run tests');
 		sharedAdminId = firstAdmin.id;
 		sharedArticleAuthorId = parseInt(firstAdmin.id, 10);
 
 		// Fetch a contact ID
-		const contactsResult = await makeIntercomRequest<ContactsListResponse>('contacts', TEST_TOKEN, {
-			query: { per_page: 1 },
-		});
+		const contactsResult = await makeIntercomRequest<ContactsListResponse>(
+			'contacts',
+			TEST_TOKEN,
+			{
+				query: { per_page: 1 },
+			},
+		);
 		const contactId = contactsResult.data?.[0]?.id;
 		if (!contactId) throw new Error('No contacts found — cannot run tests');
 		sharedContactId = contactId;
 
 		// Fetch or create a company ID
-		const companiesResult = await makeIntercomRequest<CompaniesListResponse>('companies', TEST_TOKEN, {
-			query: { per_page: 1 },
-		});
+		const companiesResult = await makeIntercomRequest<CompaniesListResponse>(
+			'companies',
+			TEST_TOKEN,
+			{
+				query: { per_page: 1 },
+			},
+		);
 		const companyId = companiesResult.data?.[0]?.id;
 		if (companyId) {
 			sharedCompanyId = companyId;
 		} else {
-			const created = await makeIntercomRequest<CompaniesCreateOrUpdateResponse>('companies', TEST_TOKEN, {
-				method: 'POST',
-				body: { name: `Test Company ${Date.now()}`, company_id: `test-${Date.now()}` },
-			});
+			const created =
+				await makeIntercomRequest<CompaniesCreateOrUpdateResponse>(
+					'companies',
+					TEST_TOKEN,
+					{
+						method: 'POST',
+						body: {
+							name: `Test Company ${Date.now()}`,
+							company_id: `test-${Date.now()}`,
+						},
+					},
+				);
 			sharedCompanyId = created.id;
 		}
 	});
 
 	describe('admins', () => {
 		it('adminsIdentify returns correct type', async () => {
-			const result = await makeIntercomRequest<AdminsIdentifyResponse>('me', TEST_TOKEN);
+			const result = await makeIntercomRequest<AdminsIdentifyResponse>(
+				'me',
+				TEST_TOKEN,
+			);
 			IntercomEndpointOutputSchemas.adminsIdentify.parse(result);
 		});
 
 		it('adminsList returns correct type', async () => {
-			const result = await makeIntercomRequest<AdminsListResponse>('admins', TEST_TOKEN);
+			const result = await makeIntercomRequest<AdminsListResponse>(
+				'admins',
+				TEST_TOKEN,
+			);
 			IntercomEndpointOutputSchemas.adminsList.parse(result);
 		});
 
 		it('adminsGet returns correct type', async () => {
-			const result = await makeIntercomRequest<AdminsGetResponse>(`admins/${sharedAdminId}`, TEST_TOKEN);
+			const result = await makeIntercomRequest<AdminsGetResponse>(
+				`admins/${sharedAdminId}`,
+				TEST_TOKEN,
+			);
 			IntercomEndpointOutputSchemas.adminsGet.parse(result);
 		});
 
@@ -116,9 +142,13 @@ describe('Intercom API Type Tests', () => {
 		});
 
 		it('contactsList returns correct type', async () => {
-			const result = await makeIntercomRequest<ContactsListResponse>('contacts', TEST_TOKEN, {
-				query: { per_page: 10 },
-			});
+			const result = await makeIntercomRequest<ContactsListResponse>(
+				'contacts',
+				TEST_TOKEN,
+				{
+					query: { per_page: 10 },
+				},
+			);
 			IntercomEndpointOutputSchemas.contactsList.parse(result);
 		});
 
@@ -151,26 +181,29 @@ describe('Intercom API Type Tests', () => {
 		});
 
 		it('contactsListSubscriptions returns correct type', async () => {
-			const result = await makeIntercomRequest<ContactsListSubscriptionsResponse>(
-				`contacts/${testContactId}/subscriptions`,
-				TEST_TOKEN,
-			);
+			const result =
+				await makeIntercomRequest<ContactsListSubscriptionsResponse>(
+					`contacts/${testContactId}/subscriptions`,
+					TEST_TOKEN,
+				);
 			IntercomEndpointOutputSchemas.contactsListSubscriptions.parse(result);
 		});
 
 		it('contactsListAttachedCompanies returns correct type', async () => {
-			const result = await makeIntercomRequest<ContactsListAttachedCompaniesResponse>(
-				`contacts/${testContactId}/companies`,
-				TEST_TOKEN,
-			);
+			const result =
+				await makeIntercomRequest<ContactsListAttachedCompaniesResponse>(
+					`contacts/${testContactId}/companies`,
+					TEST_TOKEN,
+				);
 			IntercomEndpointOutputSchemas.contactsListAttachedCompanies.parse(result);
 		});
 
 		it('contactsListAttachedSegments returns correct type', async () => {
-			const result = await makeIntercomRequest<ContactsListAttachedSegmentsResponse>(
-				`contacts/${testContactId}/segments`,
-				TEST_TOKEN,
-			);
+			const result =
+				await makeIntercomRequest<ContactsListAttachedSegmentsResponse>(
+					`contacts/${testContactId}/segments`,
+					TEST_TOKEN,
+				);
 			IntercomEndpointOutputSchemas.contactsListAttachedSegments.parse(result);
 		});
 
@@ -225,9 +258,13 @@ describe('Intercom API Type Tests', () => {
 		});
 
 		it('companiesList returns correct type', async () => {
-			const result = await makeIntercomRequest<CompaniesListResponse>('companies', TEST_TOKEN, {
-				query: { per_page: 10 },
-			});
+			const result = await makeIntercomRequest<CompaniesListResponse>(
+				'companies',
+				TEST_TOKEN,
+				{
+					query: { per_page: 10 },
+				},
+			);
 			IntercomEndpointOutputSchemas.companiesList.parse(result);
 		});
 
@@ -255,17 +292,18 @@ describe('Intercom API Type Tests', () => {
 		});
 
 		it('companiesDelete returns correct type', async () => {
-			const created = await makeIntercomRequest<CompaniesCreateOrUpdateResponse>(
-				'companies',
-				TEST_TOKEN,
-				{
-					method: 'POST',
-					body: {
-						company_id: `delete-test-${Date.now()}`,
-						name: `Delete Test Company ${Date.now()}`,
+			const created =
+				await makeIntercomRequest<CompaniesCreateOrUpdateResponse>(
+					'companies',
+					TEST_TOKEN,
+					{
+						method: 'POST',
+						body: {
+							company_id: `delete-test-${Date.now()}`,
+							name: `Delete Test Company ${Date.now()}`,
+						},
 					},
-				},
-			);
+				);
 
 			const result = await makeIntercomRequest<CompaniesDeleteResponse>(
 				`companies/${created.id}`,
@@ -280,18 +318,26 @@ describe('Intercom API Type Tests', () => {
 		let testConversationId: string;
 
 		beforeAll(async () => {
-			const listResult = await makeIntercomRequest<ConversationsListResponse>('conversations', TEST_TOKEN, {
-				query: { per_page: 1 },
-			});
+			const listResult = await makeIntercomRequest<ConversationsListResponse>(
+				'conversations',
+				TEST_TOKEN,
+				{
+					query: { per_page: 1 },
+				},
+			);
 			const conversationId = listResult.conversations?.[0]?.id;
 			if (!conversationId) throw new Error('No conversations found');
 			testConversationId = conversationId;
 		});
 
 		it('conversationsList returns correct type', async () => {
-			const result = await makeIntercomRequest<ConversationsListResponse>('conversations', TEST_TOKEN, {
-				query: { per_page: 10 },
-			});
+			const result = await makeIntercomRequest<ConversationsListResponse>(
+				'conversations',
+				TEST_TOKEN,
+				{
+					query: { per_page: 10 },
+				},
+			);
 			IntercomEndpointOutputSchemas.conversationsList.parse(result);
 		});
 
@@ -326,9 +372,13 @@ describe('Intercom API Type Tests', () => {
 		let testArticleId: string;
 
 		beforeAll(async () => {
-			const listResult = await makeIntercomRequest<ArticlesListResponse>('articles', TEST_TOKEN, {
-				query: { per_page: 1 },
-			});
+			const listResult = await makeIntercomRequest<ArticlesListResponse>(
+				'articles',
+				TEST_TOKEN,
+				{
+					query: { per_page: 1 },
+				},
+			);
 			const articleId = listResult.data?.[0]?.id;
 			if (articleId) {
 				testArticleId = articleId;
@@ -336,22 +386,30 @@ describe('Intercom API Type Tests', () => {
 		});
 
 		it('articlesList returns correct type', async () => {
-			const result = await makeIntercomRequest<ArticlesListResponse>('articles', TEST_TOKEN, {
-				query: { per_page: 10 },
-			});
+			const result = await makeIntercomRequest<ArticlesListResponse>(
+				'articles',
+				TEST_TOKEN,
+				{
+					query: { per_page: 10 },
+				},
+			);
 			IntercomEndpointOutputSchemas.articlesList.parse(result);
 		});
 
 		it('articlesCreate returns correct type', async () => {
-			const result = await makeIntercomRequest<ArticlesCreateResponse>('articles', TEST_TOKEN, {
-				method: 'POST',
-				body: {
-					title: `Test Article ${Date.now()}`,
-					author_id: sharedArticleAuthorId,
-					state: 'draft',
-					body: '<p>Test article body from API test</p>',
+			const result = await makeIntercomRequest<ArticlesCreateResponse>(
+				'articles',
+				TEST_TOKEN,
+				{
+					method: 'POST',
+					body: {
+						title: `Test Article ${Date.now()}`,
+						author_id: sharedArticleAuthorId,
+						state: 'draft',
+						body: '<p>Test article body from API test</p>',
+					},
 				},
-			});
+			);
 			testArticleId = result.id;
 			IntercomEndpointOutputSchemas.articlesCreate.parse(result);
 		});
@@ -394,14 +452,18 @@ describe('Intercom API Type Tests', () => {
 		});
 
 		it('articlesDelete returns correct type', async () => {
-			const created = await makeIntercomRequest<ArticlesCreateResponse>('articles', TEST_TOKEN, {
-				method: 'POST',
-				body: {
-					title: `Delete Test Article ${Date.now()}`,
-					author_id: sharedArticleAuthorId,
-					state: 'draft',
+			const created = await makeIntercomRequest<ArticlesCreateResponse>(
+				'articles',
+				TEST_TOKEN,
+				{
+					method: 'POST',
+					body: {
+						title: `Delete Test Article ${Date.now()}`,
+						author_id: sharedArticleAuthorId,
+						state: 'draft',
+					},
 				},
-			});
+			);
 			const result = await makeIntercomRequest<ArticlesDeleteResponse>(
 				`articles/${created.id}`,
 				TEST_TOKEN,
@@ -440,7 +502,9 @@ describe('Intercom API Type Tests', () => {
 
 		it('collectionsGet returns correct type', async () => {
 			if (!testCollectionId) {
-				console.warn('No collection ID available, skipping collectionsGet test');
+				console.warn(
+					'No collection ID available, skipping collectionsGet test',
+				);
 				return;
 			}
 			const result = await makeIntercomRequest<CollectionsGetResponse>(
@@ -452,7 +516,9 @@ describe('Intercom API Type Tests', () => {
 
 		it('collectionsUpdate returns correct type', async () => {
 			if (!testCollectionId) {
-				console.warn('No collection ID available, skipping collectionsUpdate test');
+				console.warn(
+					'No collection ID available, skipping collectionsUpdate test',
+				);
 				return;
 			}
 			const result = await makeIntercomRequest<CollectionsUpdateResponse>(

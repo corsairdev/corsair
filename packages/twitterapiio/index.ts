@@ -1,4 +1,5 @@
 import type {
+	AuthTypes,
 	BindEndpoints,
 	BindWebhooks,
 	CorsairEndpoint,
@@ -7,13 +8,11 @@ import type {
 	CorsairPluginContext,
 	CorsairWebhook,
 	KeyBuilderContext,
+	PickAuth,
 	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
-	RequiredPluginEndpointSchemas,
-	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
-import type { AuthTypes, PickAuth } from 'corsair/core';
 import {
 	CommunitiesEndpoints,
 	ListsEndpoints,
@@ -544,7 +543,8 @@ const twitterApiIOEndpointMeta = {
 	},
 	'stream.removeUser': {
 		riskLevel: 'write',
-		description: 'Remove a Twitter user from the real-time tweet monitor stream',
+		description:
+			'Remove a Twitter user from the real-time tweet monitor stream',
 	},
 	'stream.listUsers': {
 		riskLevel: 'read',
@@ -561,7 +561,8 @@ const twitterApiIOEndpointMeta = {
 	},
 	'api.webhooks.updateRule': {
 		riskLevel: 'write',
-		description: 'Update a tweet filter rule, including activating or deactivating it',
+		description:
+			'Update a tweet filter rule, including activating or deactivating it',
 	},
 	'api.webhooks.deleteRule': {
 		riskLevel: 'destructive',

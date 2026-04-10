@@ -26,7 +26,12 @@ export const list: MondayEndpoints['boardsList'] = async (ctx, input) => {
 		},
 	);
 
-	await logEventFromContext(ctx, 'monday.boards.list', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'monday.boards.list',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
@@ -60,7 +65,12 @@ export const get: MondayEndpoints['boardsGet'] = async (ctx, input) => {
 		{ boardId: input.board_id },
 	);
 
-	await logEventFromContext(ctx, 'monday.boards.get', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'monday.boards.get',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
@@ -81,7 +91,12 @@ export const create: MondayEndpoints['boardsCreate'] = async (ctx, input) => {
 		},
 	);
 
-	await logEventFromContext(ctx, 'monday.boards.create', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'monday.boards.create',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
@@ -100,12 +115,19 @@ export const update: MondayEndpoints['boardsUpdate'] = async (ctx, input) => {
 		},
 	);
 
-	await logEventFromContext(ctx, 'monday.boards.update', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'monday.boards.update',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
 export const archive: MondayEndpoints['boardsArchive'] = async (ctx, input) => {
-	const result = await makeMondayRequest<MondayEndpointOutputs['boardsArchive']>(
+	const result = await makeMondayRequest<
+		MondayEndpointOutputs['boardsArchive']
+	>(
 		`mutation($boardId: ID!) {
 			archive_board(board_id: $boardId) {
 				id
@@ -115,11 +137,19 @@ export const archive: MondayEndpoints['boardsArchive'] = async (ctx, input) => {
 		{ boardId: input.board_id },
 	);
 
-	await logEventFromContext(ctx, 'monday.boards.archive', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'monday.boards.archive',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
-export const deleteboard: MondayEndpoints['boardsDelete'] = async (ctx, input) => {
+export const deleteboard: MondayEndpoints['boardsDelete'] = async (
+	ctx,
+	input,
+) => {
 	const result = await makeMondayRequest<MondayEndpointOutputs['boardsDelete']>(
 		`mutation($boardId: ID!) {
 			delete_board(board_id: $boardId) {
@@ -130,12 +160,22 @@ export const deleteboard: MondayEndpoints['boardsDelete'] = async (ctx, input) =
 		{ boardId: input.board_id },
 	);
 
-	await logEventFromContext(ctx, 'monday.boards.delete', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'monday.boards.delete',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
-export const duplicate: MondayEndpoints['boardsDuplicate'] = async (ctx, input) => {
-	const result = await makeMondayRequest<MondayEndpointOutputs['boardsDuplicate']>(
+export const duplicate: MondayEndpoints['boardsDuplicate'] = async (
+	ctx,
+	input,
+) => {
+	const result = await makeMondayRequest<
+		MondayEndpointOutputs['boardsDuplicate']
+	>(
 		`mutation($boardId: ID!, $duplicateType: DuplicateBoardType, $boardName: String, $workspaceId: ID) {
 			duplicate_board(board_id: $boardId, duplicate_type: $duplicateType, board_name: $boardName, workspace_id: $workspaceId) {
 				board {
@@ -152,6 +192,11 @@ export const duplicate: MondayEndpoints['boardsDuplicate'] = async (ctx, input) 
 		},
 	);
 
-	await logEventFromContext(ctx, 'monday.boards.duplicate', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'monday.boards.duplicate',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };

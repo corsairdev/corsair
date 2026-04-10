@@ -45,12 +45,73 @@ const TweetsSearchInputSchema = z.object({
 
 // ISO 639-1 language codes supported by Twitter search
 const TwitterLanguageCode = z.enum([
-	'am', 'ar', 'bg', 'bn', 'bo', 'ca', 'cs', 'cy', 'da', 'de', 'dv', 'el',
-	'en', 'es', 'et', 'eu', 'fa', 'fi', 'fr', 'ga', 'gl', 'gu', 'he', 'hi',
-	'hr', 'hy', 'id', 'is', 'it', 'ja', 'ka', 'km', 'kn', 'ko', 'lo', 'lt',
-	'lv', 'ml', 'mr', 'my', 'ne', 'nl', 'no', 'or', 'pa', 'pl', 'ps', 'pt',
-	'ro', 'ru', 'si', 'sk', 'sl', 'sq', 'sr', 'sv', 'sw', 'ta', 'te', 'th',
-	'tl', 'tr', 'ug', 'uk', 'ur', 'vi', 'zh',
+	'am',
+	'ar',
+	'bg',
+	'bn',
+	'bo',
+	'ca',
+	'cs',
+	'cy',
+	'da',
+	'de',
+	'dv',
+	'el',
+	'en',
+	'es',
+	'et',
+	'eu',
+	'fa',
+	'fi',
+	'fr',
+	'ga',
+	'gl',
+	'gu',
+	'he',
+	'hi',
+	'hr',
+	'hy',
+	'id',
+	'is',
+	'it',
+	'ja',
+	'ka',
+	'km',
+	'kn',
+	'ko',
+	'lo',
+	'lt',
+	'lv',
+	'ml',
+	'mr',
+	'my',
+	'ne',
+	'nl',
+	'no',
+	'or',
+	'pa',
+	'pl',
+	'ps',
+	'pt',
+	'ro',
+	'ru',
+	'si',
+	'sk',
+	'sl',
+	'sq',
+	'sr',
+	'sv',
+	'sw',
+	'ta',
+	'te',
+	'th',
+	'tl',
+	'tr',
+	'ug',
+	'uk',
+	'ur',
+	'vi',
+	'zh',
 ]);
 
 export type TwitterLanguageCode = z.infer<typeof TwitterLanguageCode>;
@@ -72,7 +133,9 @@ const TweetsAdvancedSearchInputSchema = z.object({
 		.array(z.string().min(1))
 		.min(2)
 		.optional()
-		.describe('At least one of these words must appear (OR logic, minimum 2 items)'),
+		.describe(
+			'At least one of these words must appear (OR logic, minimum 2 items)',
+		),
 	/** Words that must NOT appear in the tweet */
 	excludeKeywords: z
 		.array(z.string().min(1))
@@ -213,9 +276,7 @@ export function buildAdvancedSearchQuery(
 		parts.push(...input.excludeKeywords.map((k) => `-${k}`));
 	}
 	if (input.hashtags?.length) {
-		parts.push(
-			...input.hashtags.map((h) => (h.startsWith('#') ? h : `#${h}`)),
-		);
+		parts.push(...input.hashtags.map((h) => (h.startsWith('#') ? h : `#${h}`)));
 	}
 	if (input.fromUsers?.length) {
 		if (input.fromUsers.length === 1) {

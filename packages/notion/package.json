@@ -1,6 +1,6 @@
 {
   "name": "@corsair-dev/notion",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Notion plugin for Corsair",
   "type": "module",
   "main": "./dist/index.js",
@@ -15,6 +15,7 @@
   },
   "scripts": {
     "build": "rm -rf dist && tsc --build --force && tsup",
+    "build:watch": "tsc --build --watch & tsup --watch",
     "typecheck": "tsc --noEmit",
     "test": "jest"
   },

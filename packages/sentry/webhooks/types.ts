@@ -1,10 +1,10 @@
-import crypto from 'crypto';
-import { z } from 'zod';
 import type {
 	CorsairWebhookMatcher,
 	RawWebhookRequest,
 	WebhookRequest,
 } from 'corsair/core';
+import crypto from 'crypto';
+import { z } from 'zod';
 
 // ── Shared sub-schemas ───────────────────────────────────────────────────────
 

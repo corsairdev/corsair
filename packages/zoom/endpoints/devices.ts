@@ -9,7 +9,7 @@ export const list: ZoomEndpoints['devicesList'] = async (ctx, input) => {
 		ctx.key,
 		{
 			method: 'GET',
-			query: input
+			query: input,
 		},
 	);
 

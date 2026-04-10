@@ -1,8 +1,11 @@
-import type { HackerNewsEndpoints } from '..';
 import { logEventFromContext } from 'corsair/core';
+import type { HackerNewsEndpoints } from '..';
 import { makeHackerNewsFirebaseRequest } from '../client';
 
-export const getTop: HackerNewsEndpoints['storiesGetTop'] = async (ctx, input) => {
+export const getTop: HackerNewsEndpoints['storiesGetTop'] = async (
+	ctx,
+	input,
+) => {
 	// Firebase returns a plain integer array for story feeds
 	const ids = await makeHackerNewsFirebaseRequest<number[]>('topstories.json', {
 		query: { print: input.print },
@@ -18,14 +21,25 @@ export const getTop: HackerNewsEndpoints['storiesGetTop'] = async (ctx, input) =
 		}
 	}
 
-	await logEventFromContext(ctx, 'hackernews.stories.getTop', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'hackernews.stories.getTop',
+		{ ...input },
+		'completed',
+	);
 	return { story_ids: ids, count: ids.length };
 };
 
-export const getBest: HackerNewsEndpoints['storiesGetBest'] = async (ctx, input) => {
-	const ids = await makeHackerNewsFirebaseRequest<number[]>('beststories.json', {
-		query: { print: input.print },
-	});
+export const getBest: HackerNewsEndpoints['storiesGetBest'] = async (
+	ctx,
+	input,
+) => {
+	const ids = await makeHackerNewsFirebaseRequest<number[]>(
+		'beststories.json',
+		{
+			query: { print: input.print },
+		},
+	);
 
 	if (ctx.db.items) {
 		try {
@@ -37,11 +51,19 @@ export const getBest: HackerNewsEndpoints['storiesGetBest'] = async (ctx, input)
 		}
 	}
 
-	await logEventFromContext(ctx, 'hackernews.stories.getBest', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'hackernews.stories.getBest',
+		{ ...input },
+		'completed',
+	);
 	return { story_ids: ids, count: ids.length };
 };
 
-export const getNew: HackerNewsEndpoints['storiesGetNew'] = async (ctx, input) => {
+export const getNew: HackerNewsEndpoints['storiesGetNew'] = async (
+	ctx,
+	input,
+) => {
 	const ids = await makeHackerNewsFirebaseRequest<number[]>('newstories.json', {
 		query: { print: input.print },
 	});
@@ -56,11 +78,19 @@ export const getNew: HackerNewsEndpoints['storiesGetNew'] = async (ctx, input) =
 		}
 	}
 
-	await logEventFromContext(ctx, 'hackernews.stories.getNew', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'hackernews.stories.getNew',
+		{ ...input },
+		'completed',
+	);
 	return { story_ids: ids };
 };
 
-export const getAsk: HackerNewsEndpoints['storiesGetAsk'] = async (ctx, input) => {
+export const getAsk: HackerNewsEndpoints['storiesGetAsk'] = async (
+	ctx,
+	input,
+) => {
 	const ids = await makeHackerNewsFirebaseRequest<number[]>('askstories.json', {
 		query: { print: input.print },
 	});
@@ -75,14 +105,25 @@ export const getAsk: HackerNewsEndpoints['storiesGetAsk'] = async (ctx, input) =
 		}
 	}
 
-	await logEventFromContext(ctx, 'hackernews.stories.getAsk', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'hackernews.stories.getAsk',
+		{ ...input },
+		'completed',
+	);
 	return { story_ids: ids };
 };
 
-export const getShow: HackerNewsEndpoints['storiesGetShow'] = async (ctx, input) => {
-	const ids = await makeHackerNewsFirebaseRequest<number[]>('showstories.json', {
-		query: { print: input.print },
-	});
+export const getShow: HackerNewsEndpoints['storiesGetShow'] = async (
+	ctx,
+	input,
+) => {
+	const ids = await makeHackerNewsFirebaseRequest<number[]>(
+		'showstories.json',
+		{
+			query: { print: input.print },
+		},
+	);
 
 	if (ctx.db.items) {
 		try {
@@ -94,11 +135,19 @@ export const getShow: HackerNewsEndpoints['storiesGetShow'] = async (ctx, input)
 		}
 	}
 
-	await logEventFromContext(ctx, 'hackernews.stories.getShow', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'hackernews.stories.getShow',
+		{ ...input },
+		'completed',
+	);
 	return { story_ids: ids };
 };
 
-export const getJobs: HackerNewsEndpoints['storiesGetJobs'] = async (ctx, input) => {
+export const getJobs: HackerNewsEndpoints['storiesGetJobs'] = async (
+	ctx,
+	input,
+) => {
 	const ids = await makeHackerNewsFirebaseRequest<number[]>('jobstories.json', {
 		query: { print: input.print },
 	});
@@ -113,6 +162,11 @@ export const getJobs: HackerNewsEndpoints['storiesGetJobs'] = async (ctx, input)
 		}
 	}
 
-	await logEventFromContext(ctx, 'hackernews.stories.getJobs', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'hackernews.stories.getJobs',
+		{ ...input },
+		'completed',
+	);
 	return { job_story_ids: ids };
 };

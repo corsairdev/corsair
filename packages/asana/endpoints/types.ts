@@ -38,11 +38,14 @@ const WorkspaceCompactSchema = z.object({
 	resource_type: z.string().optional(),
 });
 
-const NextPageSchema = z.object({
-	offset: z.string().optional(),
-	path: z.string().optional(),
-	uri: z.string().optional(),
-}).nullable().optional();
+const NextPageSchema = z
+	.object({
+		offset: z.string().optional(),
+		path: z.string().optional(),
+		uri: z.string().optional(),
+	})
+	.nullable()
+	.optional();
 
 const TaskCompactSchema = z.object({
 	gid: z.string(),
@@ -163,7 +166,10 @@ const StoryFullSchema = z.object({
 	num_likes: z.number().optional(),
 	is_edited: z.boolean().optional(),
 	is_pinned: z.boolean().optional(),
-	target: z.object({ gid: z.string(), name: z.string().optional() }).nullable().optional(),
+	target: z
+		.object({ gid: z.string(), name: z.string().optional() })
+		.nullable()
+		.optional(),
 });
 
 const TeamMembershipSchema = z.object({
@@ -184,7 +190,9 @@ const WorkspaceMembershipSchema = z.object({
 	is_guest: z.boolean().optional(),
 	workspace: WorkspaceCompactSchema.optional(),
 	user: UserCompactSchema.optional(),
-	user_task_list: z.object({ gid: z.string(), name: z.string().optional() }).optional(),
+	user_task_list: z
+		.object({ gid: z.string(), name: z.string().optional() })
+		.optional(),
 });
 
 const WebhookFullSchema = z.object({
@@ -193,13 +201,19 @@ const WebhookFullSchema = z.object({
 	active: z.boolean().optional(),
 	created_at: z.string().optional(),
 	target: z.string().optional(),
-	resource: z.object({ gid: z.string(), name: z.string().optional() }).optional(),
-	filters: z.array(z.object({
-		resource_type: z.string().optional(),
-		resource_subtype: z.string().optional(),
-		action: z.string().optional(),
-		fields: z.array(z.string()).optional(),
-	})).optional(),
+	resource: z
+		.object({ gid: z.string(), name: z.string().optional() })
+		.optional(),
+	filters: z
+		.array(
+			z.object({
+				resource_type: z.string().optional(),
+				resource_subtype: z.string().optional(),
+				action: z.string().optional(),
+				fields: z.array(z.string()).optional(),
+			}),
+		)
+		.optional(),
 });
 
 const JobSchema = z.object({
@@ -299,10 +313,12 @@ const TasksDeleteInputSchema = z.object({
 
 const TasksDuplicateInputSchema = z.object({
 	task_gid: z.string(),
-	data: z.object({
-		name: z.string().optional(),
-		include: z.string().optional(),
-	}).optional(),
+	data: z
+		.object({
+			name: z.string().optional(),
+			include: z.string().optional(),
+		})
+		.optional(),
 	opt_fields: z.array(z.string()).optional(),
 	opt_pretty: z.boolean().optional(),
 });
@@ -636,11 +652,13 @@ const ProjectsDuplicateInputSchema = z.object({
 		name: z.string(),
 		team: z.string().optional(),
 		include: z.string().optional(),
-		schedule_dates: z.object({
-			should_skip_weekends: z.boolean(),
-			due_on: z.string().optional(),
-			start_on: z.string().optional(),
-		}).optional(),
+		schedule_dates: z
+			.object({
+				should_skip_weekends: z.boolean(),
+				due_on: z.string().optional(),
+				start_on: z.string().optional(),
+			})
+			.optional(),
 	}),
 	opt_fields: z.array(z.string()).optional(),
 	opt_pretty: z.boolean().optional(),
@@ -726,7 +744,13 @@ const ProjectsDuplicateResponseSchema = z.object({
 });
 
 const ProjectsAddFollowersResponseSchema = z.object({
-	data: z.object({ gid: z.string(), name: z.string().optional(), followers: z.array(UserCompactSchema).optional() }).optional(),
+	data: z
+		.object({
+			gid: z.string(),
+			name: z.string().optional(),
+			followers: z.array(UserCompactSchema).optional(),
+		})
+		.optional(),
 });
 
 const ProjectsRemoveFollowersResponseSchema = z.object({
@@ -734,7 +758,13 @@ const ProjectsRemoveFollowersResponseSchema = z.object({
 });
 
 const ProjectsAddMembersResponseSchema = z.object({
-	data: z.object({ gid: z.string(), name: z.string().optional(), members: z.array(UserCompactSchema).optional() }).optional(),
+	data: z
+		.object({
+			gid: z.string(),
+			name: z.string().optional(),
+			members: z.array(UserCompactSchema).optional(),
+		})
+		.optional(),
 });
 
 const ProjectsRemoveMembersResponseSchema = z.object({
@@ -747,14 +777,16 @@ const ProjectsGetTasksResponseSchema = z.object({
 });
 
 const ProjectsGetTaskCountsResponseSchema = z.object({
-	data: z.object({
-		num_tasks: z.number().optional(),
-		num_completed_tasks: z.number().optional(),
-		num_incomplete_tasks: z.number().optional(),
-		num_milestones: z.number().optional(),
-		num_completed_milestones: z.number().optional(),
-		num_incomplete_milestones: z.number().optional(),
-	}).optional(),
+	data: z
+		.object({
+			num_tasks: z.number().optional(),
+			num_completed_tasks: z.number().optional(),
+			num_incomplete_tasks: z.number().optional(),
+			num_milestones: z.number().optional(),
+			num_completed_milestones: z.number().optional(),
+			num_incomplete_milestones: z.number().optional(),
+		})
+		.optional(),
 });
 
 // ── Section Input Schemas ─────────────────────────────────────────────────────
@@ -913,11 +945,15 @@ const UsersGetUserTaskListResponseSchema = z.object({
 });
 
 const UsersGetFavoritesResponseSchema = z.object({
-	data: z.array(z.object({
-		gid: z.string(),
-		name: z.string().optional(),
-		resource_type: z.string().optional(),
-	})).optional(),
+	data: z
+		.array(
+			z.object({
+				gid: z.string(),
+				name: z.string().optional(),
+				resource_type: z.string().optional(),
+			}),
+		)
+		.optional(),
 });
 
 // ── Team Input Schemas ────────────────────────────────────────────────────────
@@ -1236,12 +1272,16 @@ const WebhooksGetListInputSchema = z.object({
 const WebhooksUpdateInputSchema = z.object({
 	webhook_gid: z.string(),
 	data: z.object({
-		filters: z.array(z.object({
-			resource_type: z.string().optional(),
-			resource_subtype: z.string().optional(),
-			action: z.string().optional(),
-			fields: z.array(z.string()).optional(),
-		})).optional(),
+		filters: z
+			.array(
+				z.object({
+					resource_type: z.string().optional(),
+					resource_subtype: z.string().optional(),
+					action: z.string().optional(),
+					fields: z.array(z.string()).optional(),
+				}),
+			)
+			.optional(),
 	}),
 	opt_fields: z.array(z.string()).optional(),
 	opt_pretty: z.boolean().optional(),
@@ -1251,12 +1291,16 @@ const WebhooksCreateInputSchema = z.object({
 	data: z.object({
 		resource: z.string(),
 		target: z.string(),
-		filters: z.array(z.object({
-			resource_type: z.string().optional(),
-			resource_subtype: z.string().optional(),
-			action: z.string().optional(),
-			fields: z.array(z.string()).optional(),
-		})).optional(),
+		filters: z
+			.array(
+				z.object({
+					resource_type: z.string().optional(),
+					resource_subtype: z.string().optional(),
+					action: z.string().optional(),
+					fields: z.array(z.string()).optional(),
+				}),
+			)
+			.optional(),
 	}),
 	opt_fields: z.array(z.string()).optional(),
 	opt_pretty: z.boolean().optional(),
@@ -1380,7 +1424,9 @@ export type AsanaEndpointInputs = {
 	projectsList: z.infer<typeof ProjectsListInputSchema>;
 	projectsCreate: z.infer<typeof ProjectsCreateInputSchema>;
 	projectsCreateForTeam: z.infer<typeof ProjectsCreateForTeamInputSchema>;
-	projectsCreateForWorkspace: z.infer<typeof ProjectsCreateForWorkspaceInputSchema>;
+	projectsCreateForWorkspace: z.infer<
+		typeof ProjectsCreateForWorkspaceInputSchema
+	>;
 	projectsUpdate: z.infer<typeof ProjectsUpdateInputSchema>;
 	projectsDelete: z.infer<typeof ProjectsDeleteInputSchema>;
 	projectsDuplicate: z.infer<typeof ProjectsDuplicateInputSchema>;
@@ -1417,8 +1463,12 @@ export type AsanaEndpointInputs = {
 	teamsRemoveUser: z.infer<typeof TeamsRemoveUserInputSchema>;
 	teamMembershipsList: z.infer<typeof TeamMembershipsListInputSchema>;
 	teamMembershipsGet: z.infer<typeof TeamMembershipsGetInputSchema>;
-	teamMembershipsListForTeam: z.infer<typeof TeamMembershipsListForTeamInputSchema>;
-	teamMembershipsListForUser: z.infer<typeof TeamMembershipsListForUserInputSchema>;
+	teamMembershipsListForTeam: z.infer<
+		typeof TeamMembershipsListForTeamInputSchema
+	>;
+	teamMembershipsListForUser: z.infer<
+		typeof TeamMembershipsListForUserInputSchema
+	>;
 	// Tags
 	tagsGet: z.infer<typeof TagsGetInputSchema>;
 	tagsList: z.infer<typeof TagsListInputSchema>;
@@ -1445,7 +1495,9 @@ export type AsanaEndpointInputs = {
 	workspacesList: z.infer<typeof WorkspacesListInputSchema>;
 	workspaceMembershipsGet: z.infer<typeof WorkspaceMembershipsGetInputSchema>;
 	workspaceMembershipsList: z.infer<typeof WorkspaceMembershipsListInputSchema>;
-	workspaceMembershipsListForUser: z.infer<typeof WorkspaceMembershipsListForUserInputSchema>;
+	workspaceMembershipsListForUser: z.infer<
+		typeof WorkspaceMembershipsListForUserInputSchema
+	>;
 };
 
 export type AsanaEndpointOutputs = {
@@ -1481,7 +1533,9 @@ export type AsanaEndpointOutputs = {
 	projectsDelete: z.infer<typeof ProjectsDeleteResponseSchema>;
 	projectsDuplicate: z.infer<typeof ProjectsDuplicateResponseSchema>;
 	projectsAddFollowers: z.infer<typeof ProjectsAddFollowersResponseSchema>;
-	projectsRemoveFollowers: z.infer<typeof ProjectsRemoveFollowersResponseSchema>;
+	projectsRemoveFollowers: z.infer<
+		typeof ProjectsRemoveFollowersResponseSchema
+	>;
 	projectsAddMembers: z.infer<typeof ProjectsAddMembersResponseSchema>;
 	projectsRemoveMembers: z.infer<typeof ProjectsRemoveMembersResponseSchema>;
 	projectsGetTasks: z.infer<typeof ProjectsGetTasksResponseSchema>;
@@ -1539,9 +1593,15 @@ export type AsanaEndpointOutputs = {
 	// Workspaces
 	workspacesGet: z.infer<typeof WorkspacesGetResponseSchema>;
 	workspacesList: z.infer<typeof WorkspacesListResponseSchema>;
-	workspaceMembershipsGet: z.infer<typeof WorkspaceMembershipsGetResponseSchema>;
-	workspaceMembershipsList: z.infer<typeof WorkspaceMembershipsListResponseSchema>;
-	workspaceMembershipsListForUser: z.infer<typeof WorkspaceMembershipsListResponseSchema>;
+	workspaceMembershipsGet: z.infer<
+		typeof WorkspaceMembershipsGetResponseSchema
+	>;
+	workspaceMembershipsList: z.infer<
+		typeof WorkspaceMembershipsListResponseSchema
+	>;
+	workspaceMembershipsListForUser: z.infer<
+		typeof WorkspaceMembershipsListResponseSchema
+	>;
 };
 
 export const AsanaEndpointInputSchemas = {
@@ -1743,42 +1803,86 @@ export type TasksListResponse = z.infer<typeof TasksListResponseSchema>;
 export type TasksCreateResponse = z.infer<typeof TasksCreateResponseSchema>;
 export type TasksUpdateResponse = z.infer<typeof TasksUpdateResponseSchema>;
 export type TasksDeleteResponse = z.infer<typeof TasksDeleteResponseSchema>;
-export type TasksDuplicateResponse = z.infer<typeof TasksDuplicateResponseSchema>;
+export type TasksDuplicateResponse = z.infer<
+	typeof TasksDuplicateResponseSchema
+>;
 export type TasksSearchResponse = z.infer<typeof TasksSearchResponseSchema>;
-export type TasksGetSubtasksResponse = z.infer<typeof TasksGetSubtasksResponseSchema>;
-export type TasksGetStoriesResponse = z.infer<typeof TasksGetStoriesResponseSchema>;
+export type TasksGetSubtasksResponse = z.infer<
+	typeof TasksGetSubtasksResponseSchema
+>;
+export type TasksGetStoriesResponse = z.infer<
+	typeof TasksGetStoriesResponseSchema
+>;
 export type ProjectsGetResponse = z.infer<typeof ProjectsGetResponseSchema>;
 export type ProjectsListResponse = z.infer<typeof ProjectsListResponseSchema>;
-export type ProjectsCreateResponse = z.infer<typeof ProjectsCreateResponseSchema>;
-export type ProjectsUpdateResponse = z.infer<typeof ProjectsUpdateResponseSchema>;
-export type ProjectsDeleteResponse = z.infer<typeof ProjectsDeleteResponseSchema>;
-export type ProjectsDuplicateResponse = z.infer<typeof ProjectsDuplicateResponseSchema>;
-export type ProjectsGetTasksResponse = z.infer<typeof ProjectsGetTasksResponseSchema>;
-export type ProjectsGetTaskCountsResponse = z.infer<typeof ProjectsGetTaskCountsResponseSchema>;
+export type ProjectsCreateResponse = z.infer<
+	typeof ProjectsCreateResponseSchema
+>;
+export type ProjectsUpdateResponse = z.infer<
+	typeof ProjectsUpdateResponseSchema
+>;
+export type ProjectsDeleteResponse = z.infer<
+	typeof ProjectsDeleteResponseSchema
+>;
+export type ProjectsDuplicateResponse = z.infer<
+	typeof ProjectsDuplicateResponseSchema
+>;
+export type ProjectsGetTasksResponse = z.infer<
+	typeof ProjectsGetTasksResponseSchema
+>;
+export type ProjectsGetTaskCountsResponse = z.infer<
+	typeof ProjectsGetTaskCountsResponseSchema
+>;
 export type SectionsGetResponse = z.infer<typeof SectionsGetResponseSchema>;
 export type SectionsListResponse = z.infer<typeof SectionsListResponseSchema>;
-export type SectionsCreateResponse = z.infer<typeof SectionsCreateResponseSchema>;
-export type SectionsUpdateResponse = z.infer<typeof SectionsUpdateResponseSchema>;
+export type SectionsCreateResponse = z.infer<
+	typeof SectionsCreateResponseSchema
+>;
+export type SectionsUpdateResponse = z.infer<
+	typeof SectionsUpdateResponseSchema
+>;
 export type UsersGetResponse = z.infer<typeof UsersGetResponseSchema>;
 export type UsersListResponse = z.infer<typeof UsersListResponseSchema>;
 export type TeamsGetResponse = z.infer<typeof TeamsGetResponseSchema>;
 export type TeamsListResponse = z.infer<typeof TeamsListResponseSchema>;
 export type TeamsCreateResponse = z.infer<typeof TeamsCreateResponseSchema>;
 export type TeamsAddUserResponse = z.infer<typeof TeamsAddUserResponseSchema>;
-export type TeamMembershipsListResponse = z.infer<typeof TeamMembershipsListResponseSchema>;
-export type TeamMembershipsGetResponse = z.infer<typeof TeamMembershipsGetResponseSchema>;
+export type TeamMembershipsListResponse = z.infer<
+	typeof TeamMembershipsListResponseSchema
+>;
+export type TeamMembershipsGetResponse = z.infer<
+	typeof TeamMembershipsGetResponseSchema
+>;
 export type TagsGetResponse = z.infer<typeof TagsGetResponseSchema>;
 export type TagsListResponse = z.infer<typeof TagsListResponseSchema>;
 export type TagsCreateResponse = z.infer<typeof TagsCreateResponseSchema>;
 export type TagsGetTasksResponse = z.infer<typeof TagsGetTasksResponseSchema>;
 export type StoriesGetResponse = z.infer<typeof StoriesGetResponseSchema>;
-export type StoriesListForTaskResponse = z.infer<typeof StoriesListForTaskResponseSchema>;
-export type StoriesCreateCommentResponse = z.infer<typeof StoriesCreateCommentResponseSchema>;
-export type WebhooksGetListResponse = z.infer<typeof WebhooksGetListResponseSchema>;
-export type WebhooksCreateResponse = z.infer<typeof WebhooksCreateResponseSchema>;
-export type WebhooksDeleteResponse = z.infer<typeof WebhooksDeleteResponseSchema>;
-export type WebhooksUpdateResponse = z.infer<typeof WebhooksUpdateResponseSchema>;
+export type StoriesListForTaskResponse = z.infer<
+	typeof StoriesListForTaskResponseSchema
+>;
+export type StoriesCreateCommentResponse = z.infer<
+	typeof StoriesCreateCommentResponseSchema
+>;
+export type WebhooksGetListResponse = z.infer<
+	typeof WebhooksGetListResponseSchema
+>;
+export type WebhooksCreateResponse = z.infer<
+	typeof WebhooksCreateResponseSchema
+>;
+export type WebhooksDeleteResponse = z.infer<
+	typeof WebhooksDeleteResponseSchema
+>;
+export type WebhooksUpdateResponse = z.infer<
+	typeof WebhooksUpdateResponseSchema
+>;
 export type WorkspacesGetResponse = z.infer<typeof WorkspacesGetResponseSchema>;
-export type WorkspacesListResponse = z.infer<typeof WorkspacesListResponseSchema>;
-export type WorkspaceMembershipsGetResponse = z.infer<typeof WorkspaceMembershipsGetResponseSchema>;
-export type WorkspaceMembershipsListResponse = z.infer<typeof WorkspaceMembershipsListResponseSchema>;
+export type WorkspacesListResponse = z.infer<
+	typeof WorkspacesListResponseSchema
+>;
+export type WorkspaceMembershipsGetResponse = z.infer<
+	typeof WorkspaceMembershipsGetResponseSchema
+>;
+export type WorkspaceMembershipsListResponse = z.infer<
+	typeof WorkspaceMembershipsListResponseSchema
+>;

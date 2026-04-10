@@ -1,4 +1,7 @@
-import { get as healthGet, getStatus } from './health';
+import { postAcs, retrieveJwks } from './auth';
+import { queryPublic } from './dashboards';
+import { getStatus, get as healthGet } from './health';
+import { createOtlp } from './logs';
 import {
 	getDistributorHaTracker,
 	getIndexGateway,
@@ -6,9 +9,6 @@ import {
 	getRuler,
 	getTenants,
 } from './ring';
-import { createOtlp } from './logs';
-import { queryPublic } from './dashboards';
-import { postAcs, retrieveJwks } from './auth';
 
 export const Health = { get: healthGet };
 export const Status = { get: getStatus };

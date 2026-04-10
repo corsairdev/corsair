@@ -9,14 +9,12 @@ export const get: SpotifyEndpoints['albumsGet'] = async (ctx, input) => {
 		query.market = input.market;
 	}
 
-	const result = await makeAuthenticatedSpotifyRequest<SpotifyEndpointOutputs['albumsGet']>(
-		`albums/${input.id}`,
-		ctx,
-		{
-			method: 'GET',
-			query,
-		},
-	);
+	const result = await makeAuthenticatedSpotifyRequest<
+		SpotifyEndpointOutputs['albumsGet']
+	>(`albums/${input.id}`, ctx, {
+		method: 'GET',
+		query,
+	});
 
 	if (result && ctx.db.albums) {
 		try {
