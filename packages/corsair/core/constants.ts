@@ -43,6 +43,7 @@ export const BaseProviders = [
 	'pagerduty',
 	'posthog',
 	'razorpay',
+	'reddit',
 	'resend',
 	'sentry',
 	'sharepoint',
@@ -93,6 +94,7 @@ export type AllProviders =
 	| 'pagerduty'
 	| 'posthog'
 	| 'razorpay'
+	| 'reddit'
 	| 'resend'
 	| 'sentry'
 	| 'sharepoint'
