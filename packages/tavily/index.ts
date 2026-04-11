@@ -11,9 +11,12 @@ import type {
 	PluginEndpointMeta,
 	PluginPermissionsConfig,
 } from 'corsair/core';
-import { Search } from './endpoints';
+import { Crawl, Extract, Map, Search } from './endpoints';
 import type {
+	TavilyCrawlRequest,
 	TavilyEndpointOutputs,
+	TavilyExtractRequest,
+	TavilyMapRequest,
 	TavilySearchRequest,
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
@@ -71,10 +74,16 @@ type TavilyEndpoint<
 
 export type TavilyEndpoints = {
 	search: TavilyEndpoint<'search', TavilySearchRequest>;
+	extract: TavilyEndpoint<'extract', TavilyExtractRequest>;
+	crawl: TavilyEndpoint<'crawl', TavilyCrawlRequest>;
+	map: TavilyEndpoint<'map', TavilyMapRequest>;
 };
 
 const tavilyEndpointsNested = {
 	search: Search.search,
+	extract: Extract.extract,
+	crawl: Crawl.crawl,
+	map: Map.map,
 } as const;
 
 const tavilyWebhooksNested = {} as const;
@@ -82,9 +91,27 @@ const tavilyWebhooksNested = {} as const;
 /**
  * Risk-level metadata for each Tavily endpoint.
  * Used by the MCP server permission system to decide allow / deny / require_approval.
+ *
+ * All Tavily endpoints are read-only — they fetch public web data and never
+ * mutate state in the user's account, so none require write or destructive
+ * risk levels.
  */
 const tavilyEndpointMeta = {
 	search: { riskLevel: 'read', description: 'Search the web using Tavily' },
+	extract: {
+		riskLevel: 'read',
+		description: 'Extract clean content from one or more URLs',
+	},
+	crawl: {
+		riskLevel: 'read',
+		description:
+			'Crawl a website starting from a root URL and return extracted content (beta)',
+	},
+	map: {
+		riskLevel: 'read',
+		description:
+			'Map the structure of a website and return discovered URLs (beta)',
+	},
 } satisfies PluginEndpointMeta<typeof tavilyEndpointsNested>;
 
 /**
@@ -276,8 +303,20 @@ export function tavily<const T extends TavilyPluginOptions>(
 // ─────────────────────────────────────────────────────────────────────────────
 
 export type {
+	TavilyCrawlCategory,
+	TavilyCrawlRequest,
+	TavilyCrawlResponse,
+	TavilyCrawlResult,
 	TavilyEndpointOutputs,
+	TavilyExtractDepth,
+	TavilyExtractFailedResult,
+	TavilyExtractFormat,
+	TavilyExtractRequest,
+	TavilyExtractResponse,
+	TavilyExtractResult,
 	TavilyIncludeAnswerLevel,
+	TavilyMapRequest,
+	TavilyMapResponse,
 	TavilyRawContentFormat,
 	TavilySearchDepth,
 	TavilySearchImage,
@@ -289,9 +328,19 @@ export type {
 	TavilyTopic,
 } from './endpoints/types';
 export {
+	TAVILY_CRAWL_CATEGORY,
+	TAVILY_EXTRACT_DEPTH,
+	TAVILY_EXTRACT_FORMAT,
 	TAVILY_SEARCH_DEPTH,
 	TAVILY_TIME_RANGE,
 	TAVILY_TOPIC,
+	TavilyCrawlRequestSchema,
+	TavilyCrawlResponseSchema,
+	TavilyEndpointOutputSchemas,
+	TavilyExtractRequestSchema,
+	TavilyExtractResponseSchema,
+	TavilyMapRequestSchema,
+	TavilyMapResponseSchema,
 	TavilySearchRequestSchema,
 	TavilySearchResponseSchema,
 } from './endpoints/types';
