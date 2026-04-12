@@ -1,4 +1,5 @@
 import type { ZodTypeAny, z } from 'zod';
+import { makeFunctionReference } from 'convex/server';
 import { generateUUID } from '../../core/utils';
 import type {
 	CorsairAccount,
@@ -52,22 +53,12 @@ function whereToConvex(
 
 /**
  * Minimal interface for a Convex HTTP client.
- * This avoids a hard dependency on the `convex` package — any object that
- * satisfies this shape (e.g. `ConvexHttpClient`) works.
+ * Any object that satisfies this shape (e.g. `ConvexHttpClient`) works.
  */
 export interface ConvexClient {
 	query(functionReference: any, ...args: any[]): Promise<any>;
 	mutation(functionReference: any, ...args: any[]): Promise<any>;
 }
-
-/**
- * Function to create a typed function reference for Convex.
- * Users must supply this from their Convex setup (e.g. `makeFunctionReference`).
- */
-export type ConvexFunctionRefFactory = <T extends 'query' | 'mutation'>(
-	type: T,
-	name: string,
-) => unknown;
 
 // ---------------------------------------------------------------------------
 // Adapter options
@@ -76,11 +67,6 @@ export type ConvexFunctionRefFactory = <T extends 'query' | 'mutation'>(
 export type ConvexDatabaseAdapterOptions = {
 	/** A Convex HTTP client instance (e.g. `new ConvexHttpClient(url)`). */
 	client: ConvexClient;
-	/**
-	 * Factory to create typed function references.
-	 * Default: uses `makeFunctionReference` from `convex/server`.
-	 */
-	makeFunctionRef?: ConvexFunctionRefFactory;
 };
 
 // ---------------------------------------------------------------------------
@@ -97,17 +83,15 @@ export type ConvexDatabaseAdapterOptions = {
  */
 export class ConvexDatabaseAdapter implements CorsairDatabaseAdapter {
 	private client: ConvexClient;
-	private ref: (type: 'query' | 'mutation', name: string) => any;
 	private _orm: CorsairOrm | undefined;
 	private _permissions: CorsairPermissionOps | undefined;
 
 	constructor(options: ConvexDatabaseAdapterOptions) {
 		this.client = options.client;
-		if (options.makeFunctionRef) {
-			this.ref = options.makeFunctionRef;
-		} else {
-			this.ref = (_type: string, name: string) => name;
-		}
+	}
+
+	private ref(_type: string, name: string) {
+		return makeFunctionReference(name);
 	}
 
 	// -- CorsairDatabaseAdapter interface ------------------------------------

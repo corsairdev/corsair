@@ -6,7 +6,7 @@ export const findById = query({
 	handler: async (ctx, args) => {
 		return ctx.db
 			.query('corsair_accounts')
-			.withIndex('by_corsair_id', (q: any) => q.eq('id', args.id))
+			.withIndex('by_corsair_id', (q) => q.eq('id', args.id))
 			.first();
 	},
 });

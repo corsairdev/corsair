@@ -34,6 +34,5 @@ export type {
 export { ConvexDatabaseAdapter } from './db/convex/adapter';
 export type {
 	ConvexClient,
-	ConvexFunctionRefFactory,
 	ConvexDatabaseAdapterOptions,
 } from './db/convex/adapter';
