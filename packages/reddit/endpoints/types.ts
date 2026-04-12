@@ -6,9 +6,7 @@ const TimeFilterSchema = z
 	.enum(['hour', 'day', 'week', 'month', 'year', 'all'])
 	.optional();
 
-const nullToEmpty = z
-	.union([z.string(), z.null()])
-	.transform((v) => v ?? '');
+const nullToEmpty = z.union([z.string(), z.null()]).transform((v) => v ?? '');
 
 const nullToDeleted = z
 	.union([z.string(), z.null()])
@@ -177,37 +175,31 @@ const PostListingResponseSchema = z
 
 // ── 1. SUBREDDIT ENDPOINTS ───────────────────────────────────────────────────
 
-// 1.1 hot
 const GetHotPostsInputSchema = z
 	.object({ subreddit: z.string() })
 	.merge(ListingParamsSchema);
 const GetHotPostsResponseSchema = PostListingResponseSchema;
 
-// 1.2 new
 const GetNewPostsInputSchema = z
 	.object({ subreddit: z.string() })
 	.merge(ListingParamsSchema);
 const GetNewPostsResponseSchema = PostListingResponseSchema;
 
-// 1.3 top
 const GetTopPostsInputSchema = z
 	.object({ subreddit: z.string() })
 	.merge(TimeFilterListingParamsSchema);
 const GetTopPostsResponseSchema = PostListingResponseSchema;
 
-// 1.4 rising
 const GetRisingPostsInputSchema = z
 	.object({ subreddit: z.string() })
 	.merge(ListingParamsSchema);
 const GetRisingPostsResponseSchema = PostListingResponseSchema;
 
-// 1.5 controversial
 const GetControversialPostsInputSchema = z
 	.object({ subreddit: z.string() })
 	.merge(TimeFilterListingParamsSchema);
 const GetControversialPostsResponseSchema = PostListingResponseSchema;
 
-// 1.6 about
 const GetSubredditAboutInputSchema = z.object({
 	subreddit: z.string(),
 });
@@ -215,24 +207,16 @@ const GetSubredditAboutResponseSchema = SubredditDataSchema;
 
 // ── 2. POST & COMMENT ENDPOINTS ─────────────────────────────────────────────
 
-// 2.1 Post comments
 const GetPostCommentsInputSchema = z.object({
 	post_id: z.string(),
 	limit: z.number().min(1).max(100).optional(),
 	depth: z.number().optional(),
 	context: z.number().optional(),
 	sort: z
-		.enum([
-			'confidence',
-			'top',
-			'new',
-			'controversial',
-			'old',
-			'random',
-			'qa',
-		])
+		.enum(['confidence', 'top', 'new', 'controversial', 'old', 'random', 'qa'])
 		.optional(),
 });
+
 const GetPostCommentsResponseSchema = z
 	.object({
 		post: PostDataSchema,
@@ -242,7 +226,6 @@ const GetPostCommentsResponseSchema = z
 	})
 	.passthrough();
 
-// 2.2 By ID
 const GetByIdInputSchema = z.object({
 	names: z.string(),
 });
@@ -250,13 +233,11 @@ const GetByIdResponseSchema = PostListingResponseSchema;
 
 // ── 3. USER ENDPOINTS ───────────────────────────────────────────────────────
 
-// 3.1 User about
 const GetUserAboutInputSchema = z.object({
 	username: z.string(),
 });
 const GetUserAboutResponseSchema = UserDataSchema;
 
-// 3.2 User submitted
 const GetUserSubmittedInputSchema = z
 	.object({
 		username: z.string(),
@@ -265,7 +246,6 @@ const GetUserSubmittedInputSchema = z
 	.merge(TimeFilterListingParamsSchema);
 const GetUserSubmittedResponseSchema = PostListingResponseSchema;
 
-// 3.3 User comments
 const GetUserCommentsInputSchema = z
 	.object({
 		username: z.string(),
@@ -281,7 +261,6 @@ const GetUserCommentsResponseSchema = z
 	})
 	.passthrough();
 
-// 3.4 User overview
 const GetUserOverviewInputSchema = z
 	.object({
 		username: z.string(),
@@ -299,12 +278,9 @@ const GetUserOverviewResponseSchema = z
 
 // ── 4. SEARCH ENDPOINTS ─────────────────────────────────────────────────────
 
-// 4.1 Global search
 const SearchGlobalInputSchema = z.object({
 	q: z.string(),
-	sort: z
-		.enum(['relevance', 'hot', 'top', 'new', 'comments'])
-		.optional(),
+	sort: z.enum(['relevance', 'hot', 'top', 'new', 'comments']).optional(),
 	t: TimeFilterSchema,
 	limit: z.number().min(1).max(100).optional(),
 	after: z.string().optional(),
@@ -316,13 +292,10 @@ const SearchGlobalInputSchema = z.object({
 });
 const SearchGlobalResponseSchema = PostListingResponseSchema;
 
-// 4.2 Subreddit search
 const SearchSubredditInputSchema = z.object({
 	subreddit: z.string(),
 	q: z.string(),
-	sort: z
-		.enum(['relevance', 'hot', 'top', 'new', 'comments'])
-		.optional(),
+	sort: z.enum(['relevance', 'hot', 'top', 'new', 'comments']).optional(),
 	t: TimeFilterSchema,
 	limit: z.number().min(1).max(100).optional(),
 	after: z.string().optional(),
@@ -331,7 +304,6 @@ const SearchSubredditInputSchema = z.object({
 });
 const SearchSubredditResponseSchema = PostListingResponseSchema;
 
-// 4.3 Search subreddits
 const SearchSubredditsInputSchema = z.object({
 	q: z.string(),
 	limit: z.number().min(1).max(100).optional(),
@@ -350,17 +322,14 @@ const SearchSubredditsResponseSchema = z
 
 // ── 5. GLOBAL FEEDS ──────────────────────────────────────────────────────────
 
-// 5.2 /r/all
 const GetAllFeedInputSchema = ListingParamsSchema;
 const GetAllFeedResponseSchema = PostListingResponseSchema;
 
-// 5.3 /r/popular
 const GetPopularFeedInputSchema = ListingParamsSchema;
 const GetPopularFeedResponseSchema = PostListingResponseSchema;
 
 // ── 6. LISTING ENDPOINTS ─────────────────────────────────────────────────────
 
-// 6.1a subreddits/popular
 const GetSubredditsPopularInputSchema = ListingParamsSchema;
 const GetSubredditsPopularResponseSchema = z
 	.object({
@@ -371,7 +340,6 @@ const GetSubredditsPopularResponseSchema = z
 	})
 	.passthrough();
 
-// 6.1b subreddits/new
 const GetSubredditsNewInputSchema = ListingParamsSchema;
 const GetSubredditsNewResponseSchema = z
 	.object({
