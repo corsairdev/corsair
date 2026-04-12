@@ -1,5 +1,5 @@
-import type { CorsairDatabase } from '../db/kysely/database';
-import { createCorsairDatabase } from '../db/kysely/database';
+import type { CorsairDatabase } from '../db/database';
+import { createCorsairDatabase } from '../db/database';
 import { createMissingConfigProxy } from './auth/errors';
 import type { CorsairSingleTenantClient, CorsairTenantWrapper } from './client';
 import { buildCorsairClient, buildIntegrationKeys } from './client';

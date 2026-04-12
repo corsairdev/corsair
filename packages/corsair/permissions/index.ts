@@ -1,5 +1,5 @@
 import type { CorsairPermissionsNamespace } from '../core/permissions';
-import type { CorsairDatabase } from '../db/kysely/database';
+import type { CorsairDatabase } from '../db/database';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Types

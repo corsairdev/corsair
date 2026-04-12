@@ -1,4 +1,4 @@
-import type { CorsairDatabase } from '../../db/kysely/database';
+import type { CorsairDatabase } from '../../db/database';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Utility Types

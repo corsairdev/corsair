@@ -1,4 +1,4 @@
-import type { CorsairDatabase } from '../../db/kysely/database';
+import type { CorsairDatabase } from '../../db/database';
 // CorsairDatabase is now CorsairDatabaseAdapter — all queries go through adapter.orm
 import type { AuthTypes } from '../constants';
 import {
