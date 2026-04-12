@@ -19,9 +19,7 @@
     "start": "next start",
     "test": "tsx src/scripts/test-script.ts",
     "inngest:dev": "npx inngest-cli@latest dev",
-    "agent": "tsx src/scripts/agent.ts",
-    "convex:dev": "npx convex dev",
-    "convex:deploy": "npx convex deploy"
+    "agent": "tsx src/scripts/agent.ts"
   },
   "dependencies": {
     "@anthropic-ai/claude-agent-sdk": "^0.2.0",
@@ -39,7 +37,6 @@
     "@trpc/react-query": "^11.0.0",
     "@trpc/server": "^11.0.0",
     "better-sqlite3": "^11.0.0",
-    "convex": "^1.34.1",
     "corsair": "workspace:*",
     "dotenv": "^17.2.3",
     "drizzle-orm": "^0.44.5",

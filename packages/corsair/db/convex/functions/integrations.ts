@@ -1,19 +1,23 @@
+import { queryGeneric, mutationGeneric } from 'convex/server';
 import { v } from 'convex/values';
-import { mutation, query } from './_generated/server';
+import type { QueryCtx, MutationCtx } from './types';
+
+const query = queryGeneric as typeof queryGeneric;
+const mutation = mutationGeneric as typeof mutationGeneric;
 
 export const findById = query({
 	args: { id: v.string() },
-	handler: async (ctx, args) => {
+	handler: async (ctx: QueryCtx, args) => {
 		return ctx.db
 			.query('corsair_integrations')
-			.withIndex('by_id', (q) => q.eq('id', args.id))
+			.withIndex('by_corsair_id', (q) => q.eq('id', args.id))
 			.first();
 	},
 });
 
 export const findByName = query({
 	args: { name: v.string() },
-	handler: async (ctx, args) => {
+	handler: async (ctx: QueryCtx, args) => {
 		return ctx.db
 			.query('corsair_integrations')
 			.withIndex('by_name', (q) => q.eq('name', args.name))
@@ -23,8 +27,8 @@ export const findByName = query({
 
 export const findOne = query({
 	args: { where: v.any() },
-	handler: async (ctx, args) => {
-		let q = ctx.db.query('corsair_integrations');
+	handler: async (ctx: QueryCtx, args) => {
+		const q = ctx.db.query('corsair_integrations');
 		const where = args.where as Record<string, unknown>;
 		if (where.name) {
 			return q
@@ -33,7 +37,7 @@ export const findOne = query({
 		}
 		if (where.id) {
 			return q
-				.withIndex('by_id', (idx) => idx.eq('id', where.id as string))
+				.withIndex('by_corsair_id', (idx) => idx.eq('id', where.id as string))
 				.first();
 		}
 		const results = await q.collect();
@@ -49,7 +53,7 @@ export const findOne = query({
 
 export const findMany = query({
 	args: { where: v.optional(v.any()), limit: v.optional(v.float64()), offset: v.optional(v.float64()) },
-	handler: async (ctx, args) => {
+	handler: async (ctx: QueryCtx, args) => {
 		let results = await ctx.db.query('corsair_integrations').collect();
 		if (args.where) {
 			const where = args.where as Record<string, unknown>;
@@ -67,7 +71,7 @@ export const findMany = query({
 
 export const create = mutation({
 	args: { data: v.any() },
-	handler: async (ctx, args) => {
+	handler: async (ctx: MutationCtx, args) => {
 		const _id = await ctx.db.insert('corsair_integrations', args.data);
 		return ctx.db.get(_id);
 	},
@@ -75,10 +79,10 @@ export const create = mutation({
 
 export const update = mutation({
 	args: { id: v.string(), data: v.any() },
-	handler: async (ctx, args) => {
+	handler: async (ctx: MutationCtx, args) => {
 		const existing = await ctx.db
 			.query('corsair_integrations')
-			.withIndex('by_id', (q) => q.eq('id', args.id))
+			.withIndex('by_corsair_id', (q) => q.eq('id', args.id))
 			.first();
 		if (!existing) return null;
 		await ctx.db.patch(existing._id, {
@@ -91,10 +95,10 @@ export const update = mutation({
 
 export const remove = mutation({
 	args: { id: v.string() },
-	handler: async (ctx, args) => {
+	handler: async (ctx: MutationCtx, args) => {
 		const existing = await ctx.db
 			.query('corsair_integrations')
-			.withIndex('by_id', (q) => q.eq('id', args.id))
+			.withIndex('by_corsair_id', (q) => q.eq('id', args.id))
 			.first();
 		if (!existing) return false;
 		await ctx.db.delete(existing._id);
@@ -104,7 +108,7 @@ export const remove = mutation({
 
 export const count = query({
 	args: { where: v.optional(v.any()) },
-	handler: async (ctx, args) => {
+	handler: async (ctx: QueryCtx, args) => {
 		let results = await ctx.db.query('corsair_integrations').collect();
 		if (args.where) {
 			const where = args.where as Record<string, unknown>;
@@ -120,7 +124,7 @@ export const count = query({
 
 export const upsertByName = mutation({
 	args: { name: v.string(), data: v.any() },
-	handler: async (ctx, args) => {
+	handler: async (ctx: MutationCtx, args) => {
 		const existing = await ctx.db
 			.query('corsair_integrations')
 			.withIndex('by_name', (q) => q.eq('name', args.name))
@@ -132,10 +136,11 @@ export const upsertByName = mutation({
 			});
 			return ctx.db.get(existing._id);
 		}
+		// args.data contains all required fields (id, created_at, etc.) — set by the adapter at runtime
 		const _id = await ctx.db.insert('corsair_integrations', {
 			...(args.data as Record<string, unknown>),
 			name: args.name,
-		});
+		} as any);
 		return ctx.db.get(_id);
 	},
 });

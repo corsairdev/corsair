@@ -1,5 +1,5 @@
 import { generateUUID } from '../../core/utils';
-import type { CorsairDatabase } from '../../db/kysely/database';
+import type { CorsairDatabase } from '../../db/database';
 
 /**
  * Context interface with account ID resolver for logging events.

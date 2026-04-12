@@ -1,5 +1,5 @@
 import type { ZodTypeAny } from 'zod';
-import type { CorsairDatabase } from '../../db/kysely/database';
+import type { CorsairDatabase } from '../../db/database';
 import type {
 	CorsairPluginSchema,
 	PluginEntityClient,

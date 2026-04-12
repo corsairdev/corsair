@@ -1,0 +1,17 @@
+export {
+	findById,
+	findOne,
+	findMany,
+	findByEntityId,
+	findManyByEntityIds,
+	listByScope,
+	searchByEntityId,
+	create,
+	update,
+	upsertByEntityId,
+	remove,
+	removeByEntityId,
+	count,
+	updateMany,
+	deleteMany,
+} from 'corsair/convex/entities';

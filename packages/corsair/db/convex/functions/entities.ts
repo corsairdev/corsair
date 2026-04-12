@@ -1,19 +1,23 @@
+import { queryGeneric, mutationGeneric } from 'convex/server';
 import { v } from 'convex/values';
-import { mutation, query } from './_generated/server';
+import type { QueryCtx, MutationCtx } from './types';
+
+const query = queryGeneric as typeof queryGeneric;
+const mutation = mutationGeneric as typeof mutationGeneric;
 
 export const findById = query({
 	args: { id: v.string() },
-	handler: async (ctx, args) => {
+	handler: async (ctx: QueryCtx, args) => {
 		return ctx.db
 			.query('corsair_entities')
-			.withIndex('by_id', (q) => q.eq('id', args.id))
+			.withIndex('by_corsair_id', (q) => q.eq('id', args.id))
 			.first();
 	},
 });
 
 export const findOne = query({
 	args: { where: v.any() },
-	handler: async (ctx, args) => {
+	handler: async (ctx: QueryCtx, args) => {
 		const where = args.where as Record<string, unknown>;
 		if (where.account_id && where.entity_type && where.entity_id) {
 			return ctx.db
@@ -29,7 +33,7 @@ export const findOne = query({
 		if (where.id) {
 			return ctx.db
 				.query('corsair_entities')
-				.withIndex('by_id', (q) => q.eq('id', where.id as string))
+				.withIndex('by_corsair_id', (q) => q.eq('id', where.id as string))
 				.first();
 		}
 		const results = await ctx.db.query('corsair_entities').collect();
@@ -45,7 +49,7 @@ export const findOne = query({
 
 export const findMany = query({
 	args: { where: v.optional(v.any()), limit: v.optional(v.float64()), offset: v.optional(v.float64()) },
-	handler: async (ctx, args) => {
+	handler: async (ctx: QueryCtx, args) => {
 		let results = await ctx.db.query('corsair_entities').collect();
 		if (args.where) {
 			const where = args.where as Record<string, unknown>;
@@ -63,7 +67,7 @@ export const findMany = query({
 
 export const findByEntityId = query({
 	args: { accountId: v.string(), entityType: v.string(), entityId: v.string() },
-	handler: async (ctx, args) => {
+	handler: async (ctx: QueryCtx, args) => {
 		return ctx.db
 			.query('corsair_entities')
 			.withIndex('by_account_type_entity', (q) =>
@@ -78,7 +82,7 @@ export const findByEntityId = query({
 
 export const findManyByEntityIds = query({
 	args: { accountId: v.string(), entityType: v.string(), entityIds: v.array(v.string()) },
-	handler: async (ctx, args) => {
+	handler: async (ctx: QueryCtx, args) => {
 		const idSet = new Set(args.entityIds);
 		const results = await ctx.db
 			.query('corsair_entities')
@@ -92,7 +96,7 @@ export const findManyByEntityIds = query({
 
 export const listByScope = query({
 	args: { accountId: v.string(), entityType: v.string(), limit: v.optional(v.float64()), offset: v.optional(v.float64()) },
-	handler: async (ctx, args) => {
+	handler: async (ctx: QueryCtx, args) => {
 		const results = await ctx.db
 			.query('corsair_entities')
 			.withIndex('by_account_type', (q) =>
@@ -107,7 +111,7 @@ export const listByScope = query({
 
 export const searchByEntityId = query({
 	args: { accountId: v.string(), entityType: v.string(), queryStr: v.string(), limit: v.optional(v.float64()), offset: v.optional(v.float64()) },
-	handler: async (ctx, args) => {
+	handler: async (ctx: QueryCtx, args) => {
 		const results = await ctx.db
 			.query('corsair_entities')
 			.withIndex('by_account_type', (q) =>
@@ -125,7 +129,7 @@ export const searchByEntityId = query({
 
 export const create = mutation({
 	args: { data: v.any() },
-	handler: async (ctx, args) => {
+	handler: async (ctx: MutationCtx, args) => {
 		const _id = await ctx.db.insert('corsair_entities', args.data);
 		return ctx.db.get(_id);
 	},
@@ -133,10 +137,10 @@ export const create = mutation({
 
 export const update = mutation({
 	args: { id: v.string(), data: v.any() },
-	handler: async (ctx, args) => {
+	handler: async (ctx: MutationCtx, args) => {
 		const existing = await ctx.db
 			.query('corsair_entities')
-			.withIndex('by_id', (q) => q.eq('id', args.id))
+			.withIndex('by_corsair_id', (q) => q.eq('id', args.id))
 			.first();
 		if (!existing) return null;
 		await ctx.db.patch(existing._id, {
@@ -155,7 +159,7 @@ export const upsertByEntityId = mutation({
 		version: v.string(),
 		data: v.any(),
 	},
-	handler: async (ctx, args) => {
+	handler: async (ctx: MutationCtx, args) => {
 		const existing = await ctx.db
 			.query('corsair_entities')
 			.withIndex('by_account_type_entity', (q) =>
@@ -191,10 +195,10 @@ export const upsertByEntityId = mutation({
 
 export const remove = mutation({
 	args: { id: v.string() },
-	handler: async (ctx, args) => {
+	handler: async (ctx: MutationCtx, args) => {
 		const existing = await ctx.db
 			.query('corsair_entities')
-			.withIndex('by_id', (q) => q.eq('id', args.id))
+			.withIndex('by_corsair_id', (q) => q.eq('id', args.id))
 			.first();
 		if (!existing) return false;
 		await ctx.db.delete(existing._id);
@@ -204,7 +208,7 @@ export const remove = mutation({
 
 export const removeByEntityId = mutation({
 	args: { accountId: v.string(), entityType: v.string(), entityId: v.string() },
-	handler: async (ctx, args) => {
+	handler: async (ctx: MutationCtx, args) => {
 		const existing = await ctx.db
 			.query('corsair_entities')
 			.withIndex('by_account_type_entity', (q) =>
@@ -222,7 +226,7 @@ export const removeByEntityId = mutation({
 
 export const count = query({
 	args: { where: v.optional(v.any()) },
-	handler: async (ctx, args) => {
+	handler: async (ctx: QueryCtx, args) => {
 		let results = await ctx.db.query('corsair_entities').collect();
 		if (args.where) {
 			const where = args.where as Record<string, unknown>;
@@ -238,7 +242,7 @@ export const count = query({
 
 export const updateMany = mutation({
 	args: { where: v.any(), data: v.any() },
-	handler: async (ctx, args) => {
+	handler: async (ctx: MutationCtx, args) => {
 		const where = args.where as Record<string, unknown>;
 		const results = await ctx.db.query('corsair_entities').collect();
 		const matched = results.filter((row) =>
@@ -258,7 +262,7 @@ export const updateMany = mutation({
 
 export const deleteMany = mutation({
 	args: { where: v.any() },
-	handler: async (ctx, args) => {
+	handler: async (ctx: MutationCtx, args) => {
 		const where = args.where as Record<string, unknown>;
 		const results = await ctx.db.query('corsair_entities').collect();
 		const matched = results.filter((row) =>

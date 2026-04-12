@@ -1,0 +1,24 @@
+services:
+  db:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: corsair-demo-pg
+    environment:
+      POSTGRES_DB: corsair_demo
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - corsair_demo_pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d corsair_demo"]
+      interval: 2s
+      timeout: 5s
+      retries: 15
+
+volumes:
+  corsair_demo_pg_data:
+
+

@@ -1,4 +1,4 @@
-import type { CorsairDatabase } from '../../db/kysely/database';
+import type { CorsairDatabase } from '../../db/database';
 import type { CorsairErrorHandler } from '../errors';
 import { handleCorsairError } from '../errors/handler';
 import { enforcePermission, parseDurationMs } from '../permissions';

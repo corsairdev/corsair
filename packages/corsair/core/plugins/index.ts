@@ -1,5 +1,5 @@
 import type { ZodTypeAny } from 'zod';
-import type { CorsairDatabaseInput } from '../../db/kysely/database';
+import type { CorsairDatabaseInput } from '../../db/database';
 import type { CorsairPluginSchema } from '../../db/orm';
 import type { AccountKeyManagerFor, PluginAuthConfig } from '../auth/types';
 import type { ExtractAuthType, InferPluginEntities } from '../client';

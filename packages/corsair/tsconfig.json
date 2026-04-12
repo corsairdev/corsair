@@ -16,6 +16,6 @@
     "skipLibCheck": true
   },
   "include": ["./**/*"],
-  "exclude": ["dist", "node_modules", "sandbox/**/*"],
+  "exclude": ["dist", "node_modules", "sandbox/**/*", "db/convex/functions/**/*", "db/convex/schema.ts"],
   "references": []
 }

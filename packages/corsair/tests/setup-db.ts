@@ -1,10 +1,8 @@
 // @ts-expect-error - better-sqlite3 types may not be available
 import Database from 'better-sqlite3';
 import { Kysely, SqliteDialect } from 'kysely';
-import type {
-	CorsairDatabase,
-	CorsairKyselyDatabase,
-} from '../db/kysely/database';
+import type { CorsairDatabase } from '../db/database';
+import type { CorsairKyselyDatabase } from '../db/kysely/database';
 import { KyselyDatabaseAdapter } from '../db/kysely/adapter';
 import { SqliteDatePlugin } from '../db/kysely/sqlite-date-plugin.js';
 

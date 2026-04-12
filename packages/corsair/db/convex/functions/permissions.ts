@@ -1,19 +1,23 @@
+import { queryGeneric, mutationGeneric } from 'convex/server';
 import { v } from 'convex/values';
-import { mutation, query } from './_generated/server';
+import type { QueryCtx, MutationCtx } from './types';
+
+const query = queryGeneric as typeof queryGeneric;
+const mutation = mutationGeneric as typeof mutationGeneric;
 
 export const findById = query({
 	args: { id: v.string() },
-	handler: async (ctx, args) => {
+	handler: async (ctx: QueryCtx, args) => {
 		return ctx.db
 			.query('corsair_permissions')
-			.withIndex('by_id', (q) => q.eq('id', args.id))
+			.withIndex('by_corsair_id', (q) => q.eq('id', args.id))
 			.first();
 	},
 });
 
 export const findByToken = query({
 	args: { token: v.string() },
-	handler: async (ctx, args) => {
+	handler: async (ctx: QueryCtx, args) => {
 		return ctx.db
 			.query('corsair_permissions')
 			.withIndex('by_token', (q) => q.eq('token', args.token))
@@ -29,7 +33,7 @@ export const findActiveForEndpoint = query({
 		tenantId: v.string(),
 		now: v.string(),
 	},
-	handler: async (ctx, args) => {
+	handler: async (ctx: QueryCtx, args) => {
 		const results = await ctx.db
 			.query('corsair_permissions')
 			.withIndex('by_plugin_endpoint_tenant', (q) =>
@@ -56,7 +60,7 @@ export const findActiveForEndpoint = query({
 
 export const create = mutation({
 	args: { data: v.any() },
-	handler: async (ctx, args) => {
+	handler: async (ctx: MutationCtx, args) => {
 		const _id = await ctx.db.insert('corsair_permissions', args.data);
 		return ctx.db.get(_id);
 	},
@@ -68,10 +72,10 @@ export const updateStatus = mutation({
 		status: v.string(),
 		error: v.optional(v.union(v.string(), v.null())),
 	},
-	handler: async (ctx, args) => {
+	handler: async (ctx: MutationCtx, args) => {
 		const existing = await ctx.db
 			.query('corsair_permissions')
-			.withIndex('by_id', (q) => q.eq('id', args.id))
+			.withIndex('by_corsair_id', (q) => q.eq('id', args.id))
 			.first();
 		if (!existing) return;
 		const patch: Record<string, unknown> = {

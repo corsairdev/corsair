@@ -20,7 +20,19 @@ export type { CorsairDatabaseAdapter, CorsairPermissionOps } from './db/adapter'
 export type {
 	CorsairDatabase,
 	CorsairDatabaseInput,
-	CorsairKyselyDatabase,
-} from './db/kysely/database';
-export { createCorsairDatabase } from './db/kysely/database';
+} from './db/database';
+export { createCorsairDatabase } from './db/database';
+export type { CorsairKyselyDatabase } from './db/kysely/database';
 export { KyselyDatabaseAdapter } from './db/kysely/adapter';
+export { createAdapterTransforms } from './db/adapter-factory';
+export type {
+	AdapterCapabilities,
+	AdapterTransforms,
+	DateStorageMode,
+	JsonStorageMode,
+} from './db/adapter-factory';
+export { ConvexDatabaseAdapter } from './db/convex/adapter';
+export type {
+	ConvexClient,
+	ConvexDatabaseAdapterOptions,
+} from './db/convex/adapter';
