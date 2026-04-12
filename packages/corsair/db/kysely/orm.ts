@@ -13,10 +13,10 @@ import {
 	jsonbTimestampField,
 } from './postgres';
 
-type EntityQueryBuilder = SelectQueryBuilder<
+type EntityQueryBuilder<TResult = CorsairEntity> = SelectQueryBuilder<
 	CorsairKyselyDatabase,
 	'corsair_entities',
-	CorsairEntity
+	TResult
 >;
 
 function parseJsonLike(value: unknown): unknown {
@@ -73,11 +73,11 @@ function getDataFieldTypes(schema: ZodTypeAny): Record<string, DataFieldType> {
 	return fieldTypes;
 }
 
-function applyStringFilter(
-	q: EntityQueryBuilder,
+function applyStringFilter<TResult>(
+	q: EntityQueryBuilder<TResult>,
 	expr: ReturnType<typeof jsonbTextField>,
 	filterValue: unknown,
-) {
+): EntityQueryBuilder<TResult> {
 	if (typeof filterValue === 'string') {
 		return q.where(expr, '=', filterValue);
 	}
@@ -106,11 +106,11 @@ function applyStringFilter(
 	return q;
 }
 
-function applyNumberFilter(
-	q: EntityQueryBuilder,
+function applyNumberFilter<TResult>(
+	q: EntityQueryBuilder<TResult>,
 	expr: ReturnType<typeof jsonbNumberField>,
 	filterValue: unknown,
-) {
+): EntityQueryBuilder<TResult> {
 	if (typeof filterValue === 'number') {
 		return q.where(expr, '=', filterValue);
 	}
@@ -130,11 +130,11 @@ function applyNumberFilter(
 	return q;
 }
 
-function applyBooleanFilter(
-	q: EntityQueryBuilder,
+function applyBooleanFilter<TResult>(
+	q: EntityQueryBuilder<TResult>,
 	expr: ReturnType<typeof jsonbBooleanField>,
 	filterValue: unknown,
-) {
+): EntityQueryBuilder<TResult> {
 	if (typeof filterValue === 'boolean') {
 		return q.where(expr, '=', filterValue);
 	}
@@ -149,11 +149,11 @@ function applyBooleanFilter(
 	return q;
 }
 
-function applyDateFilter(
-	q: EntityQueryBuilder,
+function applyDateFilter<TResult>(
+	q: EntityQueryBuilder<TResult>,
 	expr: ReturnType<typeof jsonbTimestampField>,
 	filterValue: unknown,
-) {
+): EntityQueryBuilder<TResult> {
 	if (filterValue instanceof Date) {
 		return q.where(expr, '=', filterValue);
 	}
@@ -175,12 +175,12 @@ function applyDateFilter(
 	return q;
 }
 
-function applyDataFilter(
-	q: EntityQueryBuilder,
+function applyDataFilter<TResult>(
+	q: EntityQueryBuilder<TResult>,
 	key: string,
 	fieldType: DataFieldType,
 	filterValue: unknown,
-) {
+): EntityQueryBuilder<TResult> {
 	if (fieldType === 'number') {
 		return applyNumberFilter(q, jsonbNumberField(key), filterValue);
 	}
@@ -193,11 +193,11 @@ function applyDataFilter(
 	return applyStringFilter(q, jsonbTextField(key), filterValue);
 }
 
-function applyEntityFieldFilter(
-	q: EntityQueryBuilder,
+function applyEntityFieldFilter<TResult>(
+	q: EntityQueryBuilder<TResult>,
 	key: keyof CorsairEntity,
 	filterValue: unknown,
-) {
+): EntityQueryBuilder<TResult> {
 	if (
 		typeof filterValue === 'object' &&
 		filterValue !== null &&
@@ -390,14 +390,30 @@ export function createKyselyEntityClient<DataSchema extends ZodTypeAny>(
 			);
 		},
 
-		count: async () => {
+		count: async (options) => {
 			const accountId = await getAccountId();
-			const row = await db
+			let q = db
 				.selectFrom('corsair_entities')
 				.select((eb) => eb.fn.countAll().as('count'))
 				.where('account_id', '=', accountId)
-				.where('entity_type', '=', entityTypeName)
-				.executeTakeFirst();
+				.where('entity_type', '=', entityTypeName);
+
+			const reservedKeys = new Set(['data', 'limit', 'offset']);
+			for (const [key, filterValue] of Object.entries(options ?? {})) {
+				if (reservedKeys.has(key) || filterValue === undefined) continue;
+				q = applyEntityFieldFilter(q, key as keyof CorsairEntity, filterValue);
+			}
+
+			if (options?.data && typeof options.data === 'object') {
+				for (const [key, filterValue] of Object.entries(options.data)) {
+					if (filterValue === undefined) continue;
+					const fieldType = dataFieldTypes[key] ?? 'string';
+					q = applyDataFilter(q, key, fieldType, filterValue);
+				}
+			}
+
+			const row = await q.executeTakeFirst();
+			// Kysely count aggregation returns a driver-specific scalar shape.
 			return parseCountValue((row as { count?: unknown })?.count);
 		},
 	};

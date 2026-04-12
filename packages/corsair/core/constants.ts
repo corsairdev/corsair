@@ -59,6 +59,7 @@ export const BaseProviders = [
 	'twitterapiio',
 	'youtube',
 	'typeform',
+	'whatsapp',
 	'zoom',
 ] as const;
 
@@ -109,6 +110,7 @@ export type AllProviders =
 	| 'twitterapiio'
 	| 'youtube'
 	| 'typeform'
+	| 'whatsapp'
 	| 'zoom'
 	| (string & {});
 
