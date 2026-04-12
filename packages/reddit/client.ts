@@ -58,7 +58,6 @@ async function makeRequest<T>(
 
 /**
  * Makes a request to a subreddit endpoint.
- * e.g. makeRedditSubredditRequest('python', 'hot') → GET /r/python/hot.json
  */
 export async function makeRedditSubredditRequest<T>(
 	subreddit: string,
@@ -73,7 +72,6 @@ export async function makeRedditSubredditRequest<T>(
 
 /**
  * Makes a request to a user endpoint.
- * e.g. makeRedditUserRequest('spez', 'about') → GET /user/spez/about.json
  */
 export async function makeRedditUserRequest<T>(
 	username: string,
@@ -88,7 +86,6 @@ export async function makeRedditUserRequest<T>(
 
 /**
  * Makes a request to a post/comment endpoint.
- * e.g. makeRedditPostRequest('1h2x3y4') → GET /comments/1h2x3y4.json
  */
 export async function makeRedditPostRequest<T>(
 	postId: string,
@@ -102,10 +99,6 @@ export async function makeRedditPostRequest<T>(
 
 /**
  * Makes a request to a global Reddit endpoint (search, feeds, subreddit listings, by_id, etc.).
- * e.g. makeRedditGlobalRequest('/search.json') → GET /search.json
- * e.g. makeRedditGlobalRequest('/subreddits/popular.json') → GET /subreddits/popular.json
- * e.g. makeRedditGlobalRequest('/r/all.json') → GET /r/all.json
- * e.g. makeRedditGlobalRequest('/by_id/t3_abc,t3_def.json') → GET /by_id/t3_abc,t3_def.json
  */
 export async function makeRedditGlobalRequest<T>(
 	endpoint: string,
