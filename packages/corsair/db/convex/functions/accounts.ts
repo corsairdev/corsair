@@ -1,9 +1,13 @@
-import { queryGeneric as query, mutationGeneric as mutation } from 'convex/server';
+import { queryGeneric, mutationGeneric } from 'convex/server';
 import { v } from 'convex/values';
+import type { QueryCtx, MutationCtx } from './types';
+
+const query = queryGeneric as typeof queryGeneric;
+const mutation = mutationGeneric as typeof mutationGeneric;
 
 export const findById = query({
 	args: { id: v.string() },
-	handler: async (ctx, args) => {
+	handler: async (ctx: QueryCtx, args) => {
 		return ctx.db
 			.query('corsair_accounts')
 			.withIndex('by_corsair_id', (q) => q.eq('id', args.id))
@@ -13,12 +17,12 @@ export const findById = query({
 
 export const findOne = query({
 	args: { where: v.any() },
-	handler: async (ctx, args) => {
+	handler: async (ctx: QueryCtx, args) => {
 		const where = args.where as Record<string, unknown>;
 		if (where.tenant_id && where.integration_id) {
 			return ctx.db
 				.query('corsair_accounts')
-				.withIndex('by_tenant_integration', (q: any) =>
+				.withIndex('by_tenant_integration', (q) =>
 					q
 						.eq('tenant_id', where.tenant_id as string)
 						.eq('integration_id', where.integration_id as string),
@@ -28,12 +32,12 @@ export const findOne = query({
 		if (where.id) {
 			return ctx.db
 				.query('corsair_accounts')
-				.withIndex('by_corsair_id', (q: any) => q.eq('id', where.id as string))
+				.withIndex('by_corsair_id', (q) => q.eq('id', where.id as string))
 				.first();
 		}
 		const results = await ctx.db.query('corsair_accounts').collect();
 		return (
-			results.find((row: any) =>
+			results.find((row) =>
 				Object.entries(where).every(
 					([key, val]) => (row as Record<string, unknown>)[key] === val,
 				),
@@ -44,11 +48,11 @@ export const findOne = query({
 
 export const findMany = query({
 	args: { where: v.optional(v.any()), limit: v.optional(v.float64()), offset: v.optional(v.float64()) },
-	handler: async (ctx, args) => {
-		let results: any[] = await ctx.db.query('corsair_accounts').collect();
+	handler: async (ctx: QueryCtx, args) => {
+		let results = await ctx.db.query('corsair_accounts').collect();
 		if (args.where) {
 			const where = args.where as Record<string, unknown>;
-			results = results.filter((row: any) =>
+			results = results.filter((row) =>
 				Object.entries(where).every(
 					([key, val]) => (row as Record<string, unknown>)[key] === val,
 				),
@@ -62,10 +66,10 @@ export const findMany = query({
 
 export const findByTenantAndIntegration = query({
 	args: { tenantId: v.string(), integrationId: v.string() },
-	handler: async (ctx, args) => {
+	handler: async (ctx: QueryCtx, args) => {
 		return ctx.db
 			.query('corsair_accounts')
-			.withIndex('by_tenant_integration', (q: any) =>
+			.withIndex('by_tenant_integration', (q) =>
 				q
 					.eq('tenant_id', args.tenantId)
 					.eq('integration_id', args.integrationId),
@@ -76,10 +80,10 @@ export const findByTenantAndIntegration = query({
 
 export const listByTenant = query({
 	args: { tenantId: v.string(), limit: v.optional(v.float64()), offset: v.optional(v.float64()) },
-	handler: async (ctx, args) => {
+	handler: async (ctx: QueryCtx, args) => {
 		const results = await ctx.db
 			.query('corsair_accounts')
-			.filter((q: any) => q.eq(q.field('tenant_id'), args.tenantId))
+			.filter((q) => q.eq(q.field('tenant_id'), args.tenantId))
 			.collect();
 		const offset = args.offset ?? 0;
 		const limit = args.limit ?? results.length;
@@ -89,18 +93,18 @@ export const listByTenant = query({
 
 export const create = mutation({
 	args: { data: v.any() },
-	handler: async (ctx, args) => {
-		const _id = await ctx.db.insert('corsair_accounts' as any, args.data);
+	handler: async (ctx: MutationCtx, args) => {
+		const _id = await ctx.db.insert('corsair_accounts', args.data);
 		return ctx.db.get(_id);
 	},
 });
 
 export const update = mutation({
 	args: { id: v.string(), data: v.any() },
-	handler: async (ctx, args) => {
+	handler: async (ctx: MutationCtx, args) => {
 		const existing = await ctx.db
 			.query('corsair_accounts')
-			.withIndex('by_corsair_id', (q: any) => q.eq('id', args.id))
+			.withIndex('by_corsair_id', (q) => q.eq('id', args.id))
 			.first();
 		if (!existing) return null;
 		await ctx.db.patch(existing._id, {
@@ -113,10 +117,10 @@ export const update = mutation({
 
 export const remove = mutation({
 	args: { id: v.string() },
-	handler: async (ctx, args) => {
+	handler: async (ctx: MutationCtx, args) => {
 		const existing = await ctx.db
 			.query('corsair_accounts')
-			.withIndex('by_corsair_id', (q: any) => q.eq('id', args.id))
+			.withIndex('by_corsair_id', (q) => q.eq('id', args.id))
 			.first();
 		if (!existing) return false;
 		await ctx.db.delete(existing._id);
@@ -126,11 +130,11 @@ export const remove = mutation({
 
 export const count = query({
 	args: { where: v.optional(v.any()) },
-	handler: async (ctx, args) => {
-		let results: any[] = await ctx.db.query('corsair_accounts').collect();
+	handler: async (ctx: QueryCtx, args) => {
+		let results = await ctx.db.query('corsair_accounts').collect();
 		if (args.where) {
 			const where = args.where as Record<string, unknown>;
-			results = results.filter((row: any) =>
+			results = results.filter((row) =>
 				Object.entries(where).every(
 					([key, val]) => (row as Record<string, unknown>)[key] === val,
 				),
@@ -142,10 +146,10 @@ export const count = query({
 
 export const upsertByTenantAndIntegration = mutation({
 	args: { tenantId: v.string(), integrationId: v.string(), data: v.any() },
-	handler: async (ctx, args) => {
+	handler: async (ctx: MutationCtx, args) => {
 		const existing = await ctx.db
 			.query('corsair_accounts')
-			.withIndex('by_tenant_integration', (q: any) =>
+			.withIndex('by_tenant_integration', (q) =>
 				q
 					.eq('tenant_id', args.tenantId)
 					.eq('integration_id', args.integrationId),
@@ -158,7 +162,7 @@ export const upsertByTenantAndIntegration = mutation({
 			});
 			return ctx.db.get(existing._id);
 		}
-		const _id = await ctx.db.insert('corsair_accounts' as any, {
+		const _id = await ctx.db.insert('corsair_accounts', {
 			...(args.data as Record<string, unknown>),
 			tenant_id: args.tenantId,
 			integration_id: args.integrationId,

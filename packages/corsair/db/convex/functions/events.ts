@@ -1,29 +1,33 @@
-import { queryGeneric as query, mutationGeneric as mutation } from 'convex/server';
+import { queryGeneric, mutationGeneric } from 'convex/server';
 import { v } from 'convex/values';
+import type { QueryCtx, MutationCtx } from './types';
+
+const query = queryGeneric as typeof queryGeneric;
+const mutation = mutationGeneric as typeof mutationGeneric;
 
 export const findById = query({
 	args: { id: v.string() },
-	handler: async (ctx, args) => {
+	handler: async (ctx: QueryCtx, args) => {
 		return ctx.db
 			.query('corsair_events')
-			.withIndex('by_corsair_id', (q: any) => q.eq('id', args.id))
+			.withIndex('by_corsair_id', (q) => q.eq('id', args.id))
 			.first();
 	},
 });
 
 export const findOne = query({
 	args: { where: v.any() },
-	handler: async (ctx, args) => {
+	handler: async (ctx: QueryCtx, args) => {
 		const where = args.where as Record<string, unknown>;
 		if (where.id) {
 			return ctx.db
 				.query('corsair_events')
-				.withIndex('by_corsair_id', (q: any) => q.eq('id', where.id as string))
+				.withIndex('by_corsair_id', (q) => q.eq('id', where.id as string))
 				.first();
 		}
 		const results = await ctx.db.query('corsair_events').collect();
 		return (
-			results.find((row: any) =>
+			results.find((row) =>
 				Object.entries(where).every(
 					([key, val]) => (row as Record<string, unknown>)[key] === val,
 				),
@@ -34,11 +38,11 @@ export const findOne = query({
 
 export const findMany = query({
 	args: { where: v.optional(v.any()), limit: v.optional(v.float64()), offset: v.optional(v.float64()) },
-	handler: async (ctx, args) => {
-		let results: any[] = await ctx.db.query('corsair_events').collect();
+	handler: async (ctx: QueryCtx, args) => {
+		let results = await ctx.db.query('corsair_events').collect();
 		if (args.where) {
 			const where = args.where as Record<string, unknown>;
-			results = results.filter((row: any) =>
+			results = results.filter((row) =>
 				Object.entries(where).every(
 					([key, val]) => (row as Record<string, unknown>)[key] === val,
 				),
@@ -52,10 +56,10 @@ export const findMany = query({
 
 export const listByAccount = query({
 	args: { accountId: v.string(), limit: v.optional(v.float64()), offset: v.optional(v.float64()) },
-	handler: async (ctx, args) => {
+	handler: async (ctx: QueryCtx, args) => {
 		const results = await ctx.db
 			.query('corsair_events')
-			.withIndex('by_account', (q: any) => q.eq('account_id', args.accountId))
+			.withIndex('by_account', (q) => q.eq('account_id', args.accountId))
 			.collect();
 		const offset = args.offset ?? 0;
 		const limit = args.limit ?? results.length;
@@ -65,13 +69,13 @@ export const listByAccount = query({
 
 export const listByStatus = query({
 	args: { status: v.string(), accountId: v.optional(v.string()), limit: v.optional(v.float64()), offset: v.optional(v.float64()) },
-	handler: async (ctx, args) => {
-		let results: any[] = await ctx.db
+	handler: async (ctx: QueryCtx, args) => {
+		let results = await ctx.db
 			.query('corsair_events')
-			.withIndex('by_status', (q: any) => q.eq('status', args.status))
+			.withIndex('by_status', (q) => q.eq('status', args.status))
 			.collect();
 		if (args.accountId) {
-			results = results.filter((row: any) => row.account_id === args.accountId);
+			results = results.filter((row) => row.account_id === args.accountId);
 		}
 		const offset = args.offset ?? 0;
 		const limit = args.limit ?? results.length;
@@ -81,18 +85,18 @@ export const listByStatus = query({
 
 export const create = mutation({
 	args: { data: v.any() },
-	handler: async (ctx, args) => {
-		const _id = await ctx.db.insert('corsair_events' as any, args.data);
+	handler: async (ctx: MutationCtx, args) => {
+		const _id = await ctx.db.insert('corsair_events', args.data);
 		return ctx.db.get(_id);
 	},
 });
 
 export const update = mutation({
 	args: { id: v.string(), data: v.any() },
-	handler: async (ctx, args) => {
+	handler: async (ctx: MutationCtx, args) => {
 		const existing = await ctx.db
 			.query('corsair_events')
-			.withIndex('by_corsair_id', (q: any) => q.eq('id', args.id))
+			.withIndex('by_corsair_id', (q) => q.eq('id', args.id))
 			.first();
 		if (!existing) return null;
 		await ctx.db.patch(existing._id, {
@@ -105,10 +109,10 @@ export const update = mutation({
 
 export const remove = mutation({
 	args: { id: v.string() },
-	handler: async (ctx, args) => {
+	handler: async (ctx: MutationCtx, args) => {
 		const existing = await ctx.db
 			.query('corsair_events')
-			.withIndex('by_corsair_id', (q: any) => q.eq('id', args.id))
+			.withIndex('by_corsair_id', (q) => q.eq('id', args.id))
 			.first();
 		if (!existing) return false;
 		await ctx.db.delete(existing._id);
@@ -118,11 +122,11 @@ export const remove = mutation({
 
 export const count = query({
 	args: { where: v.optional(v.any()) },
-	handler: async (ctx, args) => {
-		let results: any[] = await ctx.db.query('corsair_events').collect();
+	handler: async (ctx: QueryCtx, args) => {
+		let results = await ctx.db.query('corsair_events').collect();
 		if (args.where) {
 			const where = args.where as Record<string, unknown>;
-			results = results.filter((row: any) =>
+			results = results.filter((row) =>
 				Object.entries(where).every(
 					([key, val]) => (row as Record<string, unknown>)[key] === val,
 				),
@@ -134,10 +138,10 @@ export const count = query({
 
 export const updateMany = mutation({
 	args: { where: v.any(), data: v.any() },
-	handler: async (ctx, args) => {
+	handler: async (ctx: MutationCtx, args) => {
 		const where = args.where as Record<string, unknown>;
-		const results: any[] = await ctx.db.query('corsair_events').collect();
-		const matched = results.filter((row: any) =>
+		const results = await ctx.db.query('corsair_events').collect();
+		const matched = results.filter((row) =>
 			Object.entries(where).every(
 				([key, val]) => (row as Record<string, unknown>)[key] === val,
 			),
@@ -154,10 +158,10 @@ export const updateMany = mutation({
 
 export const deleteMany = mutation({
 	args: { where: v.any() },
-	handler: async (ctx, args) => {
+	handler: async (ctx: MutationCtx, args) => {
 		const where = args.where as Record<string, unknown>;
-		const results: any[] = await ctx.db.query('corsair_events').collect();
-		const matched = results.filter((row: any) =>
+		const results = await ctx.db.query('corsair_events').collect();
+		const matched = results.filter((row) =>
 			Object.entries(where).every(
 				([key, val]) => (row as Record<string, unknown>)[key] === val,
 			),
