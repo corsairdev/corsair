@@ -53,7 +53,6 @@
           {
             "group": "MCP Adapters",
             "pages": [
-              "content/mcp-adapters/overview",
               "content/mcp-adapters/anthropic-sdk",
               "content/mcp-adapters/claude-sdk",
               "content/mcp-adapters/openai-agents",
@@ -70,72 +69,71 @@
           {
             "group": "Communication",
             "pages": [
-              "content/plugins/slack",
-              "content/plugins/discord",
-              "content/plugins/telegram",
-              "content/plugins/gmail",
-              "content/plugins/outlook"
+              "content/plugins/slack/main",
+              "content/plugins/discord/main",
+              "content/plugins/telegram/main",
+              "content/plugins/gmail/main",
+              "content/plugins/outlook/main"
             ]
           },
           {
             "group": "Project Management",
             "pages": [
-              "content/plugins/linear",
-              "content/plugins/github",
-              "content/plugins/jira",
-              "content/plugins/asana",
-              "content/plugins/notion",
-              "content/plugins/trello",
-              "content/plugins/monday"
+              "content/plugins/linear/main",
+              "content/plugins/github/main",
+              "content/plugins/jira/main",
+              "content/plugins/asana/main",
+              "content/plugins/notion/main",
+              "content/plugins/trello/main",
+              "content/plugins/monday/main"
             ]
           },
           {
             "group": "Google Workspace",
             "pages": [
-              "content/plugins/googlecalendar",
-              "content/plugins/googledrive",
-              "content/plugins/googlesheets"
+              "content/plugins/googlecalendar/main",
+              "content/plugins/googledrive/main",
+              "content/plugins/googlesheets/main"
             ]
           },
           {
             "group": "CRM & Marketing",
             "pages": [
-              "content/plugins/hubspot",
-              "content/plugins/intercom",
-              "content/plugins/typeform",
-              "content/plugins/resend"
+              "content/plugins/hubspot/main",
+              "content/plugins/intercom/main",
+              "content/plugins/typeform/main",
+              "content/plugins/resend/main"
             ]
           },
           {
             "group": "Analytics & Monitoring",
             "pages": [
-              "content/plugins/posthog",
-              "content/plugins/amplitude",
-              "content/plugins/sentry",
-              "content/plugins/grafana",
-              "content/plugins/pagerduty"
+              "content/plugins/posthog/main",
+              "content/plugins/amplitude/main",
+              "content/plugins/sentry/main",
+              "content/plugins/pagerduty/main"
             ]
           },
           {
             "group": "Productivity & Files",
             "pages": [
-              "content/plugins/airtable",
-              "content/plugins/dropbox",
-              "content/plugins/onedrive",
-              "content/plugins/box",
-              "content/plugins/todoist",
-              "content/plugins/calendly",
-              "content/plugins/cal",
-              "content/plugins/zoom"
+              "content/plugins/airtable/main",
+              "content/plugins/dropbox/main",
+              "content/plugins/onedrive/main",
+              "content/plugins/box/main",
+              "content/plugins/todoist/main",
+              "content/plugins/calendly/main",
+              "content/plugins/cal/main",
+              "content/plugins/zoom/main"
             ]
           },
           {
             "group": "Developer Tools",
             "pages": [
-              "content/plugins/stripe",
-              "content/plugins/tavily",
-              "content/plugins/exa",
-              "content/plugins/hackernews"
+              "content/plugins/stripe/main",
+              "content/plugins/tavily/main",
+              "content/plugins/exa/main",
+              "content/plugins/hackernews/main"
             ]
           }
         ]
