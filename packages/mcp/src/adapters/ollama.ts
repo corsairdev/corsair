@@ -29,18 +29,22 @@ export class OllamaProvider extends BaseProvider<CorsairOllamaTool> {
             type: 'function',
             function: {
                 name: def.name,
-                description: def.description,
-                parameters: schema as Record<string, unknown>,
-            },
             execute: async (args) => {
                 try {
-                    const result = await def.handler(args);
+                    const raw = (
+                        typeof args === 'string' ? JSON.parse(args) : args
+                    ) as Record<string, unknown>;
+                    const validated = z.object(def.shape).parse(raw);
+                    const result = await def.handler(validated);
                     return result.content
                         .filter((c) => c.type === 'text')
                         .map((c) => ('text' in c ? c.text : ''))
                         .join('\n');
                 } catch (err) {
                     const message = err instanceof Error ? err.message : String(err);
+                    return `Error: ${message}`;
+                }
+            },
                     return `Error: ${message}`;
                 }
             },
