@@ -281,8 +281,25 @@ export function dodopayments<const T extends DodoPaymentsPluginOptions>(
         endpointMeta: dodoPaymentsEndpointMeta,
         endpointSchemas: dodoPaymentsEndpointSchemas,
         webhookSchemas: dodoPaymentsWebhookSchemas,
-        pluginWebhookMatcher: (request) => {
-            return 'webhook-signature' in request.headers;
+        pluginWebhookMatcher: ({ headers, body }) => {
+            if (!('webhook-signature' in headers)) {
+                return false;
+            }
+
+            try {
+                const parsedBody =
+                    typeof body === 'string'
+                        ? (JSON.parse(body) as Record<string, unknown>)
+                        : (body as Record<string, unknown>);
+
+                return (
+                    typeof parsedBody === 'object' &&
+                    parsedBody !== null &&
+                    'business_id' in parsedBody
+                );
+            } catch {
+                return false;
+            }
         },
         errorHandlers: {
             ...errorHandlers,
