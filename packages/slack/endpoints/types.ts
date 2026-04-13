@@ -1,7 +1,5 @@
 import { z } from 'zod';
 
-const ChannelsRandomInputSchema = z.object({});
-
 const ChannelsArchiveInputSchema = z.object({
 	channel: z.string(),
 });
@@ -326,7 +324,6 @@ const StarsListInputSchema = z.object({
 });
 
 export const SlackEndpointInputSchemas = {
-	channelsRandom: ChannelsRandomInputSchema,
 	channelsArchive: ChannelsArchiveInputSchema,
 	channelsClose: ChannelsCloseInputSchema,
 	channelsCreate: ChannelsCreateInputSchema,
@@ -618,10 +615,6 @@ const PaginationSchema = z
 	})
 	.passthrough();
 
-const ChannelsRandomResponseSchema = z.object({
-	done: z.boolean(),
-});
-
 const ConversationsArchiveResponseSchema = SlackResponseSchema;
 const ConversationsCloseResponseSchema = SlackResponseSchema.extend({
 	no_op: z.boolean().optional(),
@@ -822,7 +815,6 @@ const StarsListResponseSchema = SlackResponseSchema.extend({
 }).passthrough();
 
 export const SlackEndpointOutputSchemas = {
-	channelsRandom: ChannelsRandomResponseSchema,
 	channelsArchive: ConversationsArchiveResponseSchema,
 	channelsClose: ConversationsCloseResponseSchema,
 	channelsCreate: ConversationsCreateResponseSchema,
@@ -872,9 +864,6 @@ export type SlackEndpointOutputs = {
 	>;
 };
 
-export type ChannelsRandomResponse = z.infer<
-	typeof SlackEndpointOutputSchemas.channelsRandom
->;
 export type ConversationsArchiveResponse = z.infer<
 	typeof SlackEndpointOutputSchemas.channelsArchive
 >;
