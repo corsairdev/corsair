@@ -51,6 +51,7 @@ import {
 } from 'lucide-react';
 
 const tree = {
+	$id: 'corsair-docs',
 	name: 'Documentation',
 	children: [
 		{
