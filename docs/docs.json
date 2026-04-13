@@ -1,0 +1,145 @@
+{
+  "$schema": "https://mintlify.com/docs.json",
+  "name": "Corsair",
+  "theme": "luma",
+  "favicon": "https://media.brand.dev/8ed05e1e-f117-4b64-9e04-53df4f1c0aa9.png",
+  "colors": {
+    "primary": "#2d7387",
+    "light": "#95cbcf"
+  },
+  "appearance": {
+    "default": "dark"
+  },
+  "navbar": {
+    "primary": {
+      "type": "github",
+      "href": "https://github.com/corsair-dev/corsair"
+    }
+  },
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Docs",
+        "groups": [
+          {
+            "group": "Get Started",
+            "pages": [
+              "content/getting-started/introduction",
+              "content/getting-started/quick-start",
+              "content/installation"
+            ]
+          },
+          {
+            "group": "Core Concepts",
+            "pages": [
+              "content/concepts/integrations",
+              "content/concepts/auth",
+              "content/concepts/database",
+              "content/concepts/webhooks",
+              "content/concepts/hooks",
+              "content/concepts/multi-tenancy"
+            ]
+          },
+          {
+            "group": "Guides",
+            "pages": [
+              "content/guides/webhooks",
+              "content/guides/workflows",
+              "content/guides/dashboard",
+              "content/guides/plugin-credentials",
+              "content/guides/create-your-own-plugin"
+            ]
+          },
+          {
+            "group": "MCP Adapters",
+            "pages": [
+              "content/mcp-adapters/overview",
+              "content/mcp-adapters/anthropic-sdk",
+              "content/mcp-adapters/claude-sdk",
+              "content/mcp-adapters/openai-agents",
+              "content/mcp-adapters/vercel-ai",
+              "content/mcp-adapters/mastra",
+              "content/mcp-adapters/openai"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Plugins",
+        "groups": [
+          {
+            "group": "Communication",
+            "pages": [
+              "content/plugins/slack",
+              "content/plugins/discord",
+              "content/plugins/telegram",
+              "content/plugins/gmail",
+              "content/plugins/outlook"
+            ]
+          },
+          {
+            "group": "Project Management",
+            "pages": [
+              "content/plugins/linear",
+              "content/plugins/github",
+              "content/plugins/jira",
+              "content/plugins/asana",
+              "content/plugins/notion",
+              "content/plugins/trello",
+              "content/plugins/monday"
+            ]
+          },
+          {
+            "group": "Google Workspace",
+            "pages": [
+              "content/plugins/googlecalendar",
+              "content/plugins/googledrive",
+              "content/plugins/googlesheets"
+            ]
+          },
+          {
+            "group": "CRM & Marketing",
+            "pages": [
+              "content/plugins/hubspot",
+              "content/plugins/intercom",
+              "content/plugins/typeform",
+              "content/plugins/resend"
+            ]
+          },
+          {
+            "group": "Analytics & Monitoring",
+            "pages": [
+              "content/plugins/posthog",
+              "content/plugins/amplitude",
+              "content/plugins/sentry",
+              "content/plugins/grafana",
+              "content/plugins/pagerduty"
+            ]
+          },
+          {
+            "group": "Productivity & Files",
+            "pages": [
+              "content/plugins/airtable",
+              "content/plugins/dropbox",
+              "content/plugins/onedrive",
+              "content/plugins/box",
+              "content/plugins/todoist",
+              "content/plugins/calendly",
+              "content/plugins/cal",
+              "content/plugins/zoom"
+            ]
+          },
+          {
+            "group": "Developer Tools",
+            "pages": [
+              "content/plugins/stripe",
+              "content/plugins/tavily",
+              "content/plugins/exa",
+              "content/plugins/hackernews"
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}
