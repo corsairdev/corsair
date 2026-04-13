@@ -249,9 +249,19 @@ export const TavilyCrawlResultSchema = z.object({
 
 export type TavilyCrawlResult = z.infer<typeof TavilyCrawlResultSchema>;
 
+export const TavilyCrawlFailedResultSchema = z.object({
+	url: z.string(),
+	error: z.string(),
+});
+
+export type TavilyCrawlFailedResult = z.infer<
+	typeof TavilyCrawlFailedResultSchema
+>;
+
 export const TavilyCrawlResponseSchema = z.object({
 	base_url: z.string(),
 	results: z.array(TavilyCrawlResultSchema),
+	failed_results: z.array(TavilyCrawlFailedResultSchema).optional(),
 	response_time: z.number(),
 	request_id: z.string().optional(),
 });

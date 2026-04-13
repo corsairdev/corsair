@@ -44,7 +44,7 @@ describe('Tavily API Type Tests', () => {
 			);
 
 			TavilyEndpointOutputSchemas.search.parse(response);
-			expect(typeof response.answer).toBe('string');
+			expect(response.answer).toEqual(expect.any(String));
 		});
 
 		it('search with domain filters returns correct type', async () => {
