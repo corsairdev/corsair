@@ -253,7 +253,8 @@ export function extractTOC(mdxPath: string): TOCItem[] {
 	const slugCounts: Record<string, number> = {};
 
 	for (const line of lines) {
-		const match = line.match(/^(#{2,6})\s+(.+)$/);
+		const trimmedLine = line.replace(/\r$/, '');
+		const match = trimmedLine.match(/^(#{2,6})\s+(.+)$/);
 		if (match) {
 			const depth = match[1].length;
 			const title = match[2].trim();
