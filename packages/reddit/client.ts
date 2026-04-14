@@ -12,8 +12,7 @@ export class RedditAPIError extends Error {
 }
 
 const REDDIT_BASE = 'https://www.reddit.com';
-const PACKAGE_VERSION = '0.1.0';
-const USER_AGENT = `corsair-reddit/${PACKAGE_VERSION}`;
+const USER_AGENT = 'corsair-reddit';
 
 export async function makeRedditRequest<T>(
 	endpoint: string,
