@@ -503,12 +503,37 @@ function parseAuthArgs(args: string[]): {
 	code?: string;
 	credentials?: boolean;
 	webhook?: boolean;
+	// webhook subscribe flags (non-interactive mode)
+	webhookUrl?: string;
+	clientState?: string;
+	resources?: string[];
+	topic?: string;
+	calendarId?: string;
+	siteId?: string;
+	listId?: string;
+	teamId?: string;
+	channelId?: string;
+	chatId?: string;
+	driveId?: string;
+	itemId?: string;
 } {
 	let pluginId: string | undefined;
 	let tenantId: string | undefined;
 	let code: string | undefined;
 	let credentials = false;
 	let webhook = false;
+	let webhookUrl: string | undefined;
+	let clientState: string | undefined;
+	let resources: string[] | undefined;
+	let topic: string | undefined;
+	let calendarId: string | undefined;
+	let siteId: string | undefined;
+	let listId: string | undefined;
+	let teamId: string | undefined;
+	let channelId: string | undefined;
+	let chatId: string | undefined;
+	let driveId: string | undefined;
+	let itemId: string | undefined;
 
 	for (const arg of args) {
 		if (arg === '--credentials') {
@@ -524,22 +549,32 @@ function parseAuthArgs(args: string[]): {
 		if (arg.startsWith('--') && eqIdx !== -1) {
 			const key = arg.slice(2, eqIdx);
 			const value = arg.slice(eqIdx + 1);
-			if (key === 'plugin') {
-				pluginId = value;
+			if (key === 'plugin') { pluginId = value; continue; }
+			if (key === 'tenant') { tenantId = value; continue; }
+			if (key === 'code') { code = value; continue; }
+			if (key === 'webhook-url') { webhookUrl = value; continue; }
+			if (key === 'client-state') { clientState = value; continue; }
+			if (key === 'resources') {
+				resources = value.split(',').map((s) => s.trim()).filter(Boolean);
 				continue;
 			}
-			if (key === 'tenant') {
-				tenantId = value;
-				continue;
-			}
-			if (key === 'code') {
-				code = value;
-				continue;
-			}
+			if (key === 'topic') { topic = value; continue; }
+			if (key === 'calendar-id') { calendarId = value; continue; }
+			if (key === 'site-id') { siteId = value; continue; }
+			if (key === 'list-id') { listId = value; continue; }
+			if (key === 'team-id') { teamId = value; continue; }
+			if (key === 'channel-id') { channelId = value; continue; }
+			if (key === 'chat-id') { chatId = value; continue; }
+			if (key === 'drive-id') { driveId = value; continue; }
+			if (key === 'item-id') { itemId = value; continue; }
 		}
 	}
 
-	return { pluginId, tenantId, code, credentials, webhook };
+	return {
+		pluginId, tenantId, code, credentials, webhook,
+		webhookUrl, clientState, resources, topic, calendarId,
+		siteId, listId, teamId, channelId, chatId, driveId, itemId,
+	};
 }
 
 function parseSetupArgs(args: string[]): {
@@ -640,8 +675,18 @@ function printHelp() {
 		'  pnpm corsair auth --plugin=<id>                 Start OAuth flow',
 		'  pnpm corsair auth --plugin=<id> --code=<code>   Exchange OAuth code for tokens',
 		'  pnpm corsair auth --plugin=<id> --credentials   Show credential status',
-		'  pnpm corsair auth --plugin=<id> --webhook       Set up webhook subscription',
+		'  pnpm corsair auth --plugin=<id> --webhook       Set up webhook subscription (interactive)',
 		'    Supported plugins: outlook, sharepoint, teams, onedrive, gmail, googledrive, googlecalendar, googlesheets',
+		'    Non-interactive flags (all plugins): --tenant=<id>  --webhook-url=<url>  --client-state=<secret>',
+		'      outlook:       --resources=inboxMessages,sentMessages,newEvents,eventChanges,newContacts',
+		'      sharepoint:    --site-id=<id>  --list-id=<id>',
+		'      teams:         --resources=channelMessage,chatMessage,channelCreated,membershipChanged',
+		'                     --team-id=<id>  --channel-id=<id>  --chat-id=<id>',
+		'      onedrive:      --resources=personalDrive,specificDrive,specificFolder',
+		'                     --drive-id=<id>  --item-id=<id>',
+		'      gmail:         --topic=projects/<proj>/topics/<topic>',
+		'      googledrive / googlecalendar / googlesheets:  --webhook-url=<url>',
+		'      googlecalendar: --calendar-id=<id>  (default: primary)',
 		'  pnpm corsair list [--plugin=<id>] [--type=api|webhooks|db]  List endpoint paths (tip: pipe to grep to filter)',
 		'  pnpm corsair schema <path>                      Show schema for an endpoint/webhook/DB entity',
 		'  pnpm corsair script --code "<js>" [--tenant=<id>]',
@@ -686,27 +731,28 @@ async function main() {
 				console.error('[#corsair]: --webhook requires --plugin=<id>.');
 				process.exit(1);
 			}
+			const {
+				tenantId, webhookUrl, clientState, resources,
+				topic, calendarId, siteId, listId,
+				teamId, channelId, chatId, driveId, itemId,
+			} = authArgs;
 			if (pluginId === 'outlook') {
 				const { runOutlookSubscribe } = await import('./subscribe-microsoft');
-				await runOutlookSubscribe({ cwd });
+				await runOutlookSubscribe({ cwd, tenantId, webhookUrl, clientState, resources });
 			} else if (pluginId === 'sharepoint') {
-				const { runSharepointSubscribe } = await import(
-					'./subscribe-microsoft'
-				);
-				await runSharepointSubscribe({ cwd });
+				const { runSharepointSubscribe } = await import('./subscribe-microsoft');
+				await runSharepointSubscribe({ cwd, tenantId, webhookUrl, clientState, siteId, listId });
 			} else if (pluginId === 'teams') {
 				const { runTeamsSubscribe } = await import('./subscribe-microsoft');
-				await runTeamsSubscribe({ cwd });
+				await runTeamsSubscribe({ cwd, tenantId, webhookUrl, clientState, resources, teamId, channelId, chatId });
 			} else if (pluginId === 'onedrive') {
 				const { runOnedriveSubscribe } = await import('./subscribe-microsoft');
-				await runOnedriveSubscribe({ cwd });
+				await runOnedriveSubscribe({ cwd, tenantId, webhookUrl, clientState, resources, driveId, itemId });
 			} else if (
-				['gmail', 'googledrive', 'googlecalendar', 'googlesheets'].includes(
-					pluginId,
-				)
+				['gmail', 'googledrive', 'googlecalendar', 'googlesheets'].includes(pluginId)
 			) {
 				const { runGoogleSubscribe } = await import('./subscribe-google');
-				await runGoogleSubscribe({ cwd, pluginId });
+				await runGoogleSubscribe({ cwd, pluginId, tenantId, webhookUrl, topicName: topic, calendarId });
 			} else {
 				console.error(
 					`[#corsair]: Webhook subscription not supported for plugin '${pluginId}'.`,

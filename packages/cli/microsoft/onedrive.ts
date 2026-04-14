@@ -1,6 +1,6 @@
 import * as p from '@clack/prompts';
 import { loadInternalConfig } from '../utils/load-config';
-import { promptClientState, promptTenantId, promptWebhookUrl } from '../utils/prompts';
+import { promptClientState, promptTenantId, promptWebhookUrl, requireNonInteractive } from '../utils/prompts';
 import { resolveAccessToken, saveWebhookSignature } from './credentials';
 import { createGraphSubscription } from './graph';
 
@@ -45,7 +45,23 @@ function buildOnedriveResource(
 	}
 }
 
-export async function runOnedriveSubscribe({ cwd }: { cwd: string }): Promise<void> {
+export async function runOnedriveSubscribe({
+	cwd,
+	tenantId: presetTenant,
+	webhookUrl: presetWebhookUrl,
+	clientState: presetClientState,
+	resources: presetResources,
+	driveId: presetDriveId,
+	itemId: presetItemId,
+}: {
+	cwd: string;
+	tenantId?: string;
+	webhookUrl?: string;
+	clientState?: string;
+	resources?: string[];
+	driveId?: string;
+	itemId?: string;
+}): Promise<void> {
 	const { internal } = await loadInternalConfig(
 		cwd,
 		'Corsair — OneDrive Webhook Subscribe',
@@ -53,22 +69,52 @@ export async function runOnedriveSubscribe({ cwd }: { cwd: string }): Promise<vo
 		'OneDrive',
 	);
 
-	const tenantId = await promptTenantId();
+	if (!process.stdin.isTTY) {
+		const missing: { flag: string; description: string }[] = [];
+		if (!presetWebhookUrl)
+			missing.push({ flag: '--webhook-url=<url>', description: 'Public HTTPS webhook URL' });
+		if (!presetResources?.length)
+			missing.push({
+				flag: '--resources=<comma-list>',
+				description: 'personalDrive, specificDrive, specificFolder',
+			});
+		if (presetResources?.length) {
+			if (presetResources.includes('specificDrive') && !presetDriveId)
+				missing.push({
+					flag: '--drive-id=<id>',
+					description: 'Drive ID (required for specificDrive)',
+				});
+			if (presetResources.includes('specificFolder') && !presetItemId)
+				missing.push({
+					flag: '--item-id=<id>',
+					description: 'Item/folder ID (required for specificFolder)',
+				});
+		}
+		requireNonInteractive(missing);
+	}
+
+	const tenantId = await promptTenantId(presetTenant);
 	const { accessToken, accountKm } = await resolveAccessToken(
 		'onedrive',
 		tenantId,
 		internal,
 	);
-	const webhookUrl = await promptWebhookUrl();
+	const webhookUrl = await promptWebhookUrl(presetWebhookUrl);
 
-	const selectedResourceTypes = await p.multiselect<OnedriveResourceType>({
-		message: 'Select resources to subscribe to:',
-		options: ONEDRIVE_RESOURCE_OPTIONS,
-		required: true,
-	});
-	if (p.isCancel(selectedResourceTypes)) {
-		p.cancel('Operation cancelled.');
-		process.exit(0);
+	let selectedResourceTypes: OnedriveResourceType[];
+	if (presetResources?.length) {
+		selectedResourceTypes = presetResources as OnedriveResourceType[];
+	} else {
+		const picked = await p.multiselect<OnedriveResourceType>({
+			message: 'Select resources to subscribe to:',
+			options: ONEDRIVE_RESOURCE_OPTIONS,
+			required: true,
+		});
+		if (p.isCancel(picked)) {
+			p.cancel('Operation cancelled.');
+			process.exit(0);
+		}
+		selectedResourceTypes = picked as OnedriveResourceType[];
 	}
 
 	const resourceConfigs: Array<{
@@ -76,41 +122,49 @@ export async function runOnedriveSubscribe({ cwd }: { cwd: string }): Promise<vo
 		ids: { driveId?: string; itemId?: string };
 	}> = [];
 
-	for (const resourceType of selectedResourceTypes as OnedriveResourceType[]) {
+	for (const resourceType of selectedResourceTypes) {
 		const ids: { driveId?: string; itemId?: string } = {};
 
 		if (resourceType === 'specificDrive') {
-			const driveId = await p.text({
-				message: `[${resourceType}] Enter drive ID:`,
-				placeholder: 'b!abc123...',
-				validate: (v) => {
-					if (!v || !v.trim()) return 'Drive ID is required';
-				},
-			});
-			if (p.isCancel(driveId)) {
-				p.cancel('Operation cancelled.');
-				process.exit(0);
+			if (presetDriveId) {
+				ids.driveId = presetDriveId;
+			} else {
+				const driveId = await p.text({
+					message: `[${resourceType}] Enter drive ID:`,
+					placeholder: 'b!abc123...',
+					validate: (v) => {
+						if (!v || !v.trim()) return 'Drive ID is required';
+					},
+				});
+				if (p.isCancel(driveId)) {
+					p.cancel('Operation cancelled.');
+					process.exit(0);
+				}
+				ids.driveId = driveId as string;
 			}
-			ids.driveId = driveId as string;
 		} else if (resourceType === 'specificFolder') {
-			const itemId = await p.text({
-				message: `[${resourceType}] Enter item/folder ID:`,
-				placeholder: '01ABC123...',
-				validate: (v) => {
-					if (!v || !v.trim()) return 'Item ID is required';
-				},
-			});
-			if (p.isCancel(itemId)) {
-				p.cancel('Operation cancelled.');
-				process.exit(0);
+			if (presetItemId) {
+				ids.itemId = presetItemId;
+			} else {
+				const itemId = await p.text({
+					message: `[${resourceType}] Enter item/folder ID:`,
+					placeholder: '01ABC123...',
+					validate: (v) => {
+						if (!v || !v.trim()) return 'Item ID is required';
+					},
+				});
+				if (p.isCancel(itemId)) {
+					p.cancel('Operation cancelled.');
+					process.exit(0);
+				}
+				ids.itemId = itemId as string;
 			}
-			ids.itemId = itemId as string;
 		}
 
 		resourceConfigs.push({ resourceType, ids });
 	}
 
-	const clientState = await promptClientState();
+	const clientState = await promptClientState(presetClientState);
 
 	const results: string[] = [];
 	let hasError = false;

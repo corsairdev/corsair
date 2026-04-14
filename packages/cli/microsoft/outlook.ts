@@ -1,6 +1,6 @@
 import * as p from '@clack/prompts';
 import { loadInternalConfig } from '../utils/load-config';
-import { promptClientState, promptTenantId, promptWebhookUrl } from '../utils/prompts';
+import { promptClientState, promptTenantId, promptWebhookUrl, requireNonInteractive } from '../utils/prompts';
 import { resolveAccessToken, saveWebhookSignature } from './credentials';
 import { createGraphSubscription } from './graph';
 
@@ -47,7 +47,19 @@ const OUTLOOK_RESOURCES: Record<
 	},
 };
 
-export async function runOutlookSubscribe({ cwd }: { cwd: string }): Promise<void> {
+export async function runOutlookSubscribe({
+	cwd,
+	tenantId: presetTenant,
+	webhookUrl: presetWebhookUrl,
+	clientState: presetClientState,
+	resources: presetResources,
+}: {
+	cwd: string;
+	tenantId?: string;
+	webhookUrl?: string;
+	clientState?: string;
+	resources?: string[];
+}): Promise<void> {
 	const { internal } = await loadInternalConfig(
 		cwd,
 		'Corsair — Outlook Webhook Subscribe',
@@ -55,39 +67,57 @@ export async function runOutlookSubscribe({ cwd }: { cwd: string }): Promise<voi
 		'Outlook',
 	);
 
-	const tenantId = await promptTenantId();
+	if (!process.stdin.isTTY) {
+		const missing: { flag: string; description: string }[] = [];
+		if (!presetWebhookUrl)
+			missing.push({ flag: '--webhook-url=<url>', description: 'Public HTTPS webhook URL' });
+		if (!presetResources?.length)
+			missing.push({
+				flag: '--resources=<comma-list>',
+				description: `Outlook resources: ${Object.keys(OUTLOOK_RESOURCES).join(', ')}`,
+			});
+		requireNonInteractive(missing);
+	}
+
+	const tenantId = await promptTenantId(presetTenant);
 	const { accessToken, accountKm } = await resolveAccessToken(
 		'outlook',
 		tenantId,
 		internal,
 	);
-	const webhookUrl = await promptWebhookUrl();
+	const webhookUrl = await promptWebhookUrl(presetWebhookUrl);
 
-	const selected = await p.multiselect<OutlookResourceType>({
-		message: 'Select resources to subscribe to:',
-		options: (
-			Object.entries(OUTLOOK_RESOURCES) as [
-				OutlookResourceType,
-				(typeof OUTLOOK_RESOURCES)[OutlookResourceType],
-			][]
-		).map(([value, cfg]) => ({
-			value,
-			label: cfg.label,
-			hint: `${cfg.resource} [${cfg.changeType}]`,
-		})),
-		required: true,
-	});
-	if (p.isCancel(selected)) {
-		p.cancel('Operation cancelled.');
-		process.exit(0);
+	let selected: OutlookResourceType[];
+	if (presetResources?.length) {
+		selected = presetResources as OutlookResourceType[];
+	} else {
+		const picked = await p.multiselect<OutlookResourceType>({
+			message: 'Select resources to subscribe to:',
+			options: (
+				Object.entries(OUTLOOK_RESOURCES) as [
+					OutlookResourceType,
+					(typeof OUTLOOK_RESOURCES)[OutlookResourceType],
+				][]
+			).map(([value, cfg]) => ({
+				value,
+				label: cfg.label,
+				hint: `${cfg.resource} [${cfg.changeType}]`,
+			})),
+			required: true,
+		});
+		if (p.isCancel(picked)) {
+			p.cancel('Operation cancelled.');
+			process.exit(0);
+		}
+		selected = picked as OutlookResourceType[];
 	}
 
-	const clientState = await promptClientState();
+	const clientState = await promptClientState(presetClientState);
 
 	const results: string[] = [];
 	let hasError = false;
 
-	for (const value of selected as OutlookResourceType[]) {
+	for (const value of selected) {
 		const cfg = OUTLOOK_RESOURCES[value];
 		const subSpin = p.spinner();
 		subSpin.start(`Creating subscription: ${cfg.label}...`);

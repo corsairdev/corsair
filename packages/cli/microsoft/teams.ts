@@ -1,6 +1,6 @@
 import * as p from '@clack/prompts';
 import { loadInternalConfig } from '../utils/load-config';
-import { promptClientState, promptTenantId, promptWebhookUrl } from '../utils/prompts';
+import { promptClientState, promptTenantId, promptWebhookUrl, requireNonInteractive } from '../utils/prompts';
 import { resolveAccessToken, saveWebhookSignature } from './credentials';
 import { createGraphSubscription, GRAPH_API_BASE } from './graph';
 
@@ -54,7 +54,8 @@ async function fetchUserChats(
 	return data.value ?? [];
 }
 
-async function pickTeamId(accessToken: string, label: string): Promise<string> {
+async function pickTeamId(accessToken: string, label: string, preset?: string): Promise<string> {
+	if (preset) return preset;
 	const teamsSpin = p.spinner();
 	teamsSpin.start('Fetching your teams...');
 	let teams: Array<{ id: string; displayName: string }> = [];
@@ -96,7 +97,9 @@ async function pickChannelId(
 	accessToken: string,
 	teamId: string,
 	label: string,
+	preset?: string,
 ): Promise<string> {
+	if (preset) return preset;
 	const chanSpin = p.spinner();
 	chanSpin.start('Fetching channels...');
 	let channels: Array<{ id: string; displayName: string }> = [];
@@ -134,7 +137,8 @@ async function pickChannelId(
 	return manual as string;
 }
 
-async function pickChatId(accessToken: string, label: string): Promise<string> {
+async function pickChatId(accessToken: string, label: string, preset?: string): Promise<string> {
+	if (preset) return preset;
 	const chatSpin = p.spinner();
 	chatSpin.start('Fetching your chats...');
 	let chats: Array<{ id: string; topic?: string | null; chatType: string }> = [];
@@ -205,7 +209,25 @@ const TEAMS_MAX_EXPIRY_MINUTES: Record<TeamsResourceType, number> = {
 	membershipChanged: 60,
 };
 
-export async function runTeamsSubscribe({ cwd }: { cwd: string }): Promise<void> {
+export async function runTeamsSubscribe({
+	cwd,
+	tenantId: presetTenant,
+	webhookUrl: presetWebhookUrl,
+	clientState: presetClientState,
+	resources: presetResources,
+	teamId: presetTeamId,
+	channelId: presetChannelId,
+	chatId: presetChatId,
+}: {
+	cwd: string;
+	tenantId?: string;
+	webhookUrl?: string;
+	clientState?: string;
+	resources?: string[];
+	teamId?: string;
+	channelId?: string;
+	chatId?: string;
+}): Promise<void> {
 	const { internal } = await loadInternalConfig(
 		cwd,
 		'Corsair — Microsoft Teams Webhook Subscribe',
@@ -213,39 +235,80 @@ export async function runTeamsSubscribe({ cwd }: { cwd: string }): Promise<void>
 		'Teams',
 	);
 
-	const tenantId = await promptTenantId();
+	if (!process.stdin.isTTY) {
+		const missing: { flag: string; description: string }[] = [];
+		if (!presetWebhookUrl)
+			missing.push({ flag: '--webhook-url=<url>', description: 'Public HTTPS webhook URL' });
+		if (!presetResources?.length)
+			missing.push({
+				flag: '--resources=<comma-list>',
+				description: 'channelMessage, chatMessage, channelCreated, membershipChanged',
+			});
+		// Check resource-specific ID flags upfront when resources are known
+		if (presetResources?.length) {
+			const needsTeam = presetResources.some((r) =>
+				['channelMessage', 'channelCreated', 'membershipChanged'].includes(r),
+			);
+			const needsChannel = presetResources.includes('channelMessage');
+			const needsChat = presetResources.includes('chatMessage');
+			if (needsTeam && !presetTeamId)
+				missing.push({
+					flag: '--team-id=<id>',
+					description: 'Team ID (required for channelMessage, channelCreated, membershipChanged)',
+				});
+			if (needsChannel && !presetChannelId)
+				missing.push({
+					flag: '--channel-id=<id>',
+					description: 'Channel ID (required for channelMessage)',
+				});
+			if (needsChat && !presetChatId)
+				missing.push({
+					flag: '--chat-id=<id>',
+					description: 'Chat ID (required for chatMessage)',
+				});
+		}
+		requireNonInteractive(missing);
+	}
+
+	const tenantId = await promptTenantId(presetTenant);
 	const { accessToken, accountKm } = await resolveAccessToken(
 		'teams',
 		tenantId,
 		internal,
 	);
-	const webhookUrl = await promptWebhookUrl();
+	const webhookUrl = await promptWebhookUrl(presetWebhookUrl);
 
-	const selectedResourceTypes = await p.multiselect<TeamsResourceType>({
-		message: 'Select resources to subscribe to:',
-		options: [
-			{
-				value: 'channelMessage',
-				label: 'Channel Messages  (teams/{id}/channels/{id}/messages)',
-			},
-			{
-				value: 'chatMessage',
-				label: 'Chat Messages     (chats/{id}/messages)',
-			},
-			{
-				value: 'channelCreated',
-				label: 'Channel Created   (teams/{id}/channels)',
-			},
-			{
-				value: 'membershipChanged',
-				label: 'Membership Changed (teams/{id}/members)',
-			},
-		],
-		required: true,
-	});
-	if (p.isCancel(selectedResourceTypes)) {
-		p.cancel('Operation cancelled.');
-		process.exit(0);
+	let selectedResourceTypes: TeamsResourceType[];
+	if (presetResources?.length) {
+		selectedResourceTypes = presetResources as TeamsResourceType[];
+	} else {
+		const picked = await p.multiselect<TeamsResourceType>({
+			message: 'Select resources to subscribe to:',
+			options: [
+				{
+					value: 'channelMessage',
+					label: 'Channel Messages  (teams/{id}/channels/{id}/messages)',
+				},
+				{
+					value: 'chatMessage',
+					label: 'Chat Messages     (chats/{id}/messages)',
+				},
+				{
+					value: 'channelCreated',
+					label: 'Channel Created   (teams/{id}/channels)',
+				},
+				{
+					value: 'membershipChanged',
+					label: 'Membership Changed (teams/{id}/members)',
+				},
+			],
+			required: true,
+		});
+		if (p.isCancel(picked)) {
+			p.cancel('Operation cancelled.');
+			process.exit(0);
+		}
+		selectedResourceTypes = picked as TeamsResourceType[];
 	}
 
 	const resourceConfigs: Array<{
@@ -253,22 +316,22 @@ export async function runTeamsSubscribe({ cwd }: { cwd: string }): Promise<void>
 		ids: Record<string, string>;
 	}> = [];
 
-	for (const resourceType of selectedResourceTypes as TeamsResourceType[]) {
+	for (const resourceType of selectedResourceTypes) {
 		const ids: Record<string, string> = {};
 
 		if (resourceType === 'chatMessage') {
-			ids.chatId = await pickChatId(accessToken, resourceType);
+			ids.chatId = await pickChatId(accessToken, resourceType, presetChatId);
 		} else {
-			ids.teamId = await pickTeamId(accessToken, resourceType);
+			ids.teamId = await pickTeamId(accessToken, resourceType, presetTeamId);
 			if (resourceType === 'channelMessage') {
-				ids.channelId = await pickChannelId(accessToken, ids.teamId!, resourceType);
+				ids.channelId = await pickChannelId(accessToken, ids.teamId!, resourceType, presetChannelId);
 			}
 		}
 
 		resourceConfigs.push({ resourceType, ids });
 	}
 
-	const clientState = await promptClientState();
+	const clientState = await promptClientState(presetClientState);
 
 	const results: string[] = [];
 	let hasError = false;

@@ -2,7 +2,7 @@ import * as p from '@clack/prompts';
 import type { CorsairInternalConfig } from 'corsair/core';
 import { CORSAIR_INTERNAL, createAccountKeyManager, createIntegrationKeyManager } from 'corsair/core';
 import { getCorsairInstance } from '../index';
-import { promptTenantId } from '../utils/prompts';
+import { promptTenantId, requireNonInteractive } from '../utils/prompts';
 import { setupCalendarWatch } from './calendar';
 import { setupDriveWatch } from './drive';
 import { setupGmailWatch } from './gmail';
@@ -33,11 +33,30 @@ async function extractInternalConfig(cwd: string): Promise<CorsairInternalConfig
 export async function runGoogleSubscribe({
 	cwd,
 	pluginId: preselectedPluginId,
+	tenantId: presetTenant,
+	webhookUrl: presetWebhookUrl,
+	topicName: presetTopicName,
+	calendarId: presetCalendarId,
 }: {
 	cwd: string;
 	pluginId?: string;
+	tenantId?: string;
+	webhookUrl?: string;
+	topicName?: string;
+	calendarId?: string;
 }): Promise<void> {
 	p.intro('Corsair — Google Webhook Subscribe');
+
+	// In non-interactive mode, pluginId must be provided upfront (it is always
+	// set when called from `corsair auth --plugin=<id> --webhook`)
+	if (!process.stdin.isTTY && !preselectedPluginId) {
+		requireNonInteractive([
+			{
+				flag: '--plugin=<id>',
+				description: 'Google plugin: gmail, googledrive, googlecalendar, googlesheets',
+			},
+		]);
+	}
 
 	const spin = p.spinner();
 	spin.start('Loading corsair instance...');
@@ -98,26 +117,50 @@ export async function runGoogleSubscribe({
 		pluginType = selected as GooglePlugin;
 	}
 
-	if (pluginType === 'googlesheets') {
-		const webhookUrl = await p.text({
-			message: 'Enter webhook URL:',
-			placeholder: 'https://example.com/api/webhook',
-			validate: (v) => {
-				if (!v || v.trim().length === 0) return 'Webhook URL is required';
-				if (!v.startsWith('http://') && !v.startsWith('https://'))
-					return 'Webhook URL must start with http:// or https://';
-			},
-		});
-		if (p.isCancel(webhookUrl)) {
-			p.cancel('Operation cancelled.');
-			process.exit(0);
+	// Non-interactive check: validate plugin-specific required flags now that
+	// we know the pluginType
+	if (!process.stdin.isTTY) {
+		const missing: { flag: string; description: string }[] = [];
+		if (pluginType === 'gmail') {
+			if (!presetTopicName)
+				missing.push({
+					flag: '--topic=<pubsub-topic>',
+					description: 'Pub/Sub topic name (e.g. projects/my-project/topics/my-topic)',
+				});
+		} else {
+			// googledrive, googlecalendar, googlesheets all need a webhook URL
+			if (!presetWebhookUrl)
+				missing.push({ flag: '--webhook-url=<url>', description: 'Public webhook URL' });
 		}
-		await setupSheetsWatch(webhookUrl as string);
+		requireNonInteractive(missing);
+	}
+
+	if (pluginType === 'googlesheets') {
+		let webhookUrl: string;
+		if (presetWebhookUrl) {
+			webhookUrl = presetWebhookUrl;
+		} else {
+			const input = await p.text({
+				message: 'Enter webhook URL:',
+				placeholder: 'https://example.com/api/webhook',
+				validate: (v) => {
+					if (!v || v.trim().length === 0) return 'Webhook URL is required';
+					if (!v.startsWith('http://') && !v.startsWith('https://'))
+						return 'Webhook URL must start with http:// or https://';
+				},
+			});
+			if (p.isCancel(input)) {
+				p.cancel('Operation cancelled.');
+				process.exit(0);
+			}
+			webhookUrl = input as string;
+		}
+		await setupSheetsWatch(webhookUrl);
 		p.outro('Done!');
 		return;
 	}
 
-	const tenantId = await promptTenantId();
+	const tenantId = await promptTenantId(presetTenant);
 
 	const credSpin = p.spinner();
 	credSpin.start('Fetching credentials...');
@@ -156,53 +199,83 @@ export async function runGoogleSubscribe({
 		credSpin.stop('Credentials loaded.');
 
 		if (pluginType === 'gmail') {
-			const topicName = await p.text({
-				message: 'Enter Pub/Sub topic name:',
-				placeholder: 'projects/my-project/topics/my-topic',
-				validate: (v) => {
-					if (!v || v.trim().length === 0) return 'Topic name is required';
-				},
-			});
-			if (p.isCancel(topicName)) {
-				p.cancel('Operation cancelled.');
-				process.exit(0);
+			let topicName: string;
+			if (presetTopicName) {
+				topicName = presetTopicName;
+			} else {
+				const input = await p.text({
+					message: 'Enter Pub/Sub topic name:',
+					placeholder: 'projects/my-project/topics/my-topic',
+					validate: (v) => {
+						if (!v || v.trim().length === 0) return 'Topic name is required';
+					},
+				});
+				if (p.isCancel(input)) {
+					p.cancel('Operation cancelled.');
+					process.exit(0);
+				}
+				topicName = input as string;
 			}
-			await setupGmailWatch(accessToken, topicName as string);
+			await setupGmailWatch(accessToken, topicName);
 		} else if (pluginType === 'googledrive') {
-			const webhookUrl = await p.text({
-				message: 'Enter webhook URL:',
-				placeholder: 'https://example.com/api/webhook',
-				validate: (v) => {
-					if (!v || v.trim().length === 0) return 'Webhook URL is required';
-				},
-			});
-			if (p.isCancel(webhookUrl)) {
-				p.cancel('Operation cancelled.');
-				process.exit(0);
+			let webhookUrl: string;
+			if (presetWebhookUrl) {
+				webhookUrl = presetWebhookUrl;
+			} else {
+				const input = await p.text({
+					message: 'Enter webhook URL:',
+					placeholder: 'https://example.com/api/webhook',
+					validate: (v) => {
+						if (!v || v.trim().length === 0) return 'Webhook URL is required';
+					},
+				});
+				if (p.isCancel(input)) {
+					p.cancel('Operation cancelled.');
+					process.exit(0);
+				}
+				webhookUrl = input as string;
 			}
-			await setupDriveWatch(accessToken, webhookUrl as string);
+			await setupDriveWatch(accessToken, webhookUrl);
 		} else if (pluginType === 'googlecalendar') {
-			const webhookUrl = await p.text({
-				message: 'Enter webhook URL:',
-				placeholder: 'https://example.com/api/webhook',
-				validate: (v) => {
-					if (!v || v.trim().length === 0) return 'Webhook URL is required';
-				},
-			});
-			if (p.isCancel(webhookUrl)) {
-				p.cancel('Operation cancelled.');
-				process.exit(0);
+			let webhookUrl: string;
+			if (presetWebhookUrl) {
+				webhookUrl = presetWebhookUrl;
+			} else {
+				const input = await p.text({
+					message: 'Enter webhook URL:',
+					placeholder: 'https://example.com/api/webhook',
+					validate: (v) => {
+						if (!v || v.trim().length === 0) return 'Webhook URL is required';
+					},
+				});
+				if (p.isCancel(input)) {
+					p.cancel('Operation cancelled.');
+					process.exit(0);
+				}
+				webhookUrl = input as string;
 			}
-			const calendarId = await p.text({
-				message: 'Enter calendar ID:',
-				defaultValue: 'primary',
-				placeholder: 'primary',
-			});
-			if (p.isCancel(calendarId)) {
-				p.cancel('Operation cancelled.');
-				process.exit(0);
+			let calendarId: string;
+			if (presetCalendarId) {
+				calendarId = presetCalendarId;
+			} else {
+				// In non-interactive mode this is unreachable (check above requires webhookUrl,
+				// and calendarId has a sensible default), but guard anyway
+				if (!process.stdin.isTTY) {
+					calendarId = 'primary';
+				} else {
+					const input = await p.text({
+						message: 'Enter calendar ID:',
+						defaultValue: 'primary',
+						placeholder: 'primary',
+					});
+					if (p.isCancel(input)) {
+						p.cancel('Operation cancelled.');
+						process.exit(0);
+					}
+					calendarId = input as string;
+				}
 			}
-			await setupCalendarWatch(accessToken, webhookUrl as string, calendarId as string);
+			await setupCalendarWatch(accessToken, webhookUrl, calendarId);
 		} else {
 			p.log.error(`Unsupported Google plugin: ${pluginType}`);
 			process.exit(1);
