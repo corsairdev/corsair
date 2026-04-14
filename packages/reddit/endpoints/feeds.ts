@@ -1,37 +1,18 @@
 import { logEventFromContext } from 'corsair/core';
 import type { RedditEndpoints } from '..';
-import { makeRedditGlobalRequest } from '../client';
+import { makeRedditRequest } from '../client';
 import { PostDataSchema, SubredditDataSchema } from './types';
-
-type RedditListingResponse = {
-	kind: 'Listing';
-	data: {
-		modhash: string | null;
-		dist: number | null;
-		after: string | null;
-		before: string | null;
-		children: Array<{
-			kind: string;
-			data: Record<string, any>;
-		}>;
-	};
-};
+import type { RedditListingRaw } from './types';
 
 export const getAllFeed: RedditEndpoints['feedsGetAll'] = async (
 	ctx,
 	input,
 ) => {
-	const raw = await makeRedditGlobalRequest<RedditListingResponse>(
-		'/r/all.json',
-		{
-			query: {
-				limit: input.limit,
-				after: input.after,
-				before: input.before,
-				count: input.count,
-			},
-		},
-	);
+	const raw = await makeRedditRequest<RedditListingRaw>('/r/all.json', {
+		query: {
+			...input,
+		} as Record<string, string | number | boolean | undefined>,
+	});
 
 	const posts = raw.data.children
 		.filter((child) => child.kind === 't3')
@@ -56,17 +37,11 @@ export const getPopularFeed: RedditEndpoints['feedsGetPopular'] = async (
 	ctx,
 	input,
 ) => {
-	const raw = await makeRedditGlobalRequest<RedditListingResponse>(
-		'/r/popular.json',
-		{
-			query: {
-				limit: input.limit,
-				after: input.after,
-				before: input.before,
-				count: input.count,
-			},
-		},
-	);
+	const raw = await makeRedditRequest<RedditListingRaw>('/r/popular.json', {
+		query: {
+			...input,
+		} as Record<string, string | number | boolean | undefined>,
+	});
 
 	const posts = raw.data.children
 		.filter((child) => child.kind === 't3')
@@ -89,15 +64,12 @@ export const getPopularFeed: RedditEndpoints['feedsGetPopular'] = async (
 
 export const getSubredditsPopular: RedditEndpoints['listingsSubredditsPopular'] =
 	async (ctx, input) => {
-		const raw = await makeRedditGlobalRequest<RedditListingResponse>(
+		const raw = await makeRedditRequest<RedditListingRaw>(
 			'/subreddits/popular.json',
 			{
 				query: {
-					limit: input.limit,
-					after: input.after,
-					before: input.before,
-					count: input.count,
-				},
+					...input,
+				} as Record<string, string | number | boolean | undefined>,
 			},
 		);
 
@@ -122,15 +94,12 @@ export const getSubredditsPopular: RedditEndpoints['listingsSubredditsPopular'] 
 
 export const getSubredditsNew: RedditEndpoints['listingsSubredditsNew'] =
 	async (ctx, input) => {
-		const raw = await makeRedditGlobalRequest<RedditListingResponse>(
+		const raw = await makeRedditRequest<RedditListingRaw>(
 			'/subreddits/new.json',
 			{
 				query: {
-					limit: input.limit,
-					after: input.after,
-					before: input.before,
-					count: input.count,
-				},
+					...input,
+				} as Record<string, string | number | boolean | undefined>,
 			},
 		);
 

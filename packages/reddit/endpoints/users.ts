@@ -1,34 +1,15 @@
 import { logEventFromContext } from 'corsair/core';
 import type { RedditEndpoints } from '..';
-import { makeRedditUserRequest } from '../client';
+import { makeRedditRequest } from '../client';
 import { CommentDataSchema, PostDataSchema, UserDataSchema } from './types';
-
-type RedditListingResponse = {
-	kind: 'Listing';
-	data: {
-		modhash: string | null;
-		dist: number | null;
-		after: string | null;
-		before: string | null;
-		children: Array<{
-			kind: string;
-			data: Record<string, any>;
-		}>;
-	};
-};
-
-type UserAboutResponse = {
-	kind: string;
-	data: Record<string, any>;
-};
+import type { RedditEntityEnvelopeRaw, RedditListingRaw } from './types';
 
 export const getAbout: RedditEndpoints['usersGetAbout'] = async (
 	ctx,
 	input,
 ) => {
-	const raw = await makeRedditUserRequest<UserAboutResponse>(
-		input.username,
-		'about',
+	const raw = await makeRedditRequest<RedditEntityEnvelopeRaw>(
+		`/user/${input.username}/about.json`,
 	);
 
 	const user = UserDataSchema.parse(raw.data);
@@ -36,13 +17,7 @@ export const getAbout: RedditEndpoints['usersGetAbout'] = async (
 	if (ctx.db.users) {
 		try {
 			await ctx.db.users.upsertByEntityId(String(user.id), {
-				id: user.id,
-				name: user.name,
-				link_karma: user.link_karma,
-				comment_karma: user.comment_karma,
-				total_karma: user.total_karma,
-				is_suspended: user.is_suspended,
-				created_utc: user.created_utc,
+				...user,
 			});
 		} catch (error) {
 			console.warn('Failed to save user to database:', error);
@@ -63,19 +38,10 @@ export const getSubmitted: RedditEndpoints['usersGetSubmitted'] = async (
 	ctx,
 	input,
 ) => {
-	const raw = await makeRedditUserRequest<RedditListingResponse>(
-		input.username,
-		'submitted',
-		{
-			query: {
-				limit: input.limit,
-				after: input.after,
-				before: input.before,
-				count: input.count,
-				sort: input.sort,
-				t: input.t,
-			},
-		},
+	const { username, ...query } = input;
+	const raw = await makeRedditRequest<RedditListingRaw>(
+		`/user/${username}/submitted.json`,
+		{ query: query as Record<string, string | number | boolean | undefined> },
 	);
 
 	const posts = raw.data.children
@@ -101,19 +67,10 @@ export const getComments: RedditEndpoints['usersGetComments'] = async (
 	ctx,
 	input,
 ) => {
-	const raw = await makeRedditUserRequest<RedditListingResponse>(
-		input.username,
-		'comments',
-		{
-			query: {
-				limit: input.limit,
-				after: input.after,
-				before: input.before,
-				count: input.count,
-				sort: input.sort,
-				t: input.t,
-			},
-		},
+	const { username, ...query } = input;
+	const raw = await makeRedditRequest<RedditListingRaw>(
+		`/user/${username}/comments.json`,
+		{ query: query as Record<string, string | number | boolean | undefined> },
 	);
 
 	const comments = raw.data.children
@@ -139,19 +96,10 @@ export const getOverview: RedditEndpoints['usersGetOverview'] = async (
 	ctx,
 	input,
 ) => {
-	const raw = await makeRedditUserRequest<RedditListingResponse>(
-		input.username,
-		'overview',
-		{
-			query: {
-				limit: input.limit,
-				after: input.after,
-				before: input.before,
-				count: input.count,
-				sort: input.sort,
-				t: input.t,
-			},
-		},
+	const { username, ...query } = input;
+	const raw = await makeRedditRequest<RedditListingRaw>(
+		`/user/${username}/overview.json`,
+		{ query: query as Record<string, string | number | boolean | undefined> },
 	);
 
 	const items = raw.data.children.map((child) => {

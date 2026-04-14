@@ -216,7 +216,6 @@ const GetPostCommentsInputSchema = z.object({
 		.enum(['confidence', 'top', 'new', 'controversial', 'old', 'random', 'qa'])
 		.optional(),
 });
-
 const GetPostCommentsResponseSchema = z
 	.object({
 		post: PostDataSchema,
@@ -430,3 +429,9 @@ export type GetHotPostsResponse = z.infer<typeof GetHotPostsResponseSchema>;
 export type GetPostCommentsResponse = z.infer<
 	typeof GetPostCommentsResponseSchema
 >;
+
+export type RedditListingRaw = z.infer<typeof ListingResponseSchema>;
+export type RedditEntityEnvelopeRaw = {
+	kind: string;
+	data: Record<string, any>;
+};

@@ -12,23 +12,10 @@ export class RedditAPIError extends Error {
 }
 
 const REDDIT_BASE = 'https://www.reddit.com';
-const USER_AGENT = `corsair-reddit`;
+const PACKAGE_VERSION = '0.1.0';
+const USER_AGENT = `corsair-reddit/${PACKAGE_VERSION}`;
 
-function buildConfig(): OpenAPIConfig {
-	return {
-		BASE: REDDIT_BASE,
-		VERSION: '1.0.0',
-		WITH_CREDENTIALS: false,
-		CREDENTIALS: 'omit',
-		TOKEN: undefined,
-		HEADERS: {
-			'User-Agent': USER_AGENT,
-			Accept: 'application/json',
-		},
-	};
-}
-
-async function makeRequest<T>(
+export async function makeRedditRequest<T>(
 	endpoint: string,
 	options: {
 		method?: 'GET';
@@ -36,6 +23,17 @@ async function makeRequest<T>(
 	} = {},
 ): Promise<T> {
 	const { method = 'GET', query } = options;
+
+	const config: OpenAPIConfig = {
+		BASE: REDDIT_BASE,
+		VERSION: '1.0.0',
+		WITH_CREDENTIALS: false,
+		CREDENTIALS: 'omit',
+		HEADERS: {
+			'User-Agent': USER_AGENT,
+			Accept: 'application/json',
+		},
+	};
 
 	const requestOptions: ApiRequestOptions = {
 		method,
@@ -45,7 +43,7 @@ async function makeRequest<T>(
 	};
 
 	try {
-		const response = await request<T>(buildConfig(), requestOptions);
+		const response = await request<T>(config, requestOptions);
 		return response;
 	} catch (error) {
 		if (error instanceof Error) {
@@ -53,58 +51,4 @@ async function makeRequest<T>(
 		}
 		throw new RedditAPIError('Unknown error');
 	}
-}
-
-/**
- * Makes a request to a subreddit endpoint.
- */
-export async function makeRedditSubredditRequest<T>(
-	subreddit: string,
-	path: string,
-	options: {
-		method?: 'GET';
-		query?: Record<string, string | number | boolean | undefined>;
-	} = {},
-): Promise<T> {
-	return makeRequest<T>(`/r/${subreddit}/${path}.json`, options);
-}
-
-/**
- * Makes a request to a user endpoint.
- */
-export async function makeRedditUserRequest<T>(
-	username: string,
-	path: string,
-	options: {
-		method?: 'GET';
-		query?: Record<string, string | number | boolean | undefined>;
-	} = {},
-): Promise<T> {
-	return makeRequest<T>(`/user/${username}/${path}.json`, options);
-}
-
-/**
- * Makes a request to a post/comment endpoint.
- */
-export async function makeRedditPostRequest<T>(
-	postId: string,
-	options: {
-		method?: 'GET';
-		query?: Record<string, string | number | boolean | undefined>;
-	} = {},
-): Promise<T> {
-	return makeRequest<T>(`/comments/${postId}.json`, options);
-}
-
-/**
- * Makes a request to a global Reddit endpoint (search, feeds, subreddit listings, by_id, etc.).
- */
-export async function makeRedditGlobalRequest<T>(
-	endpoint: string,
-	options: {
-		method?: 'GET';
-		query?: Record<string, string | number | boolean | undefined>;
-	} = {},
-): Promise<T> {
-	return makeRequest<T>(endpoint, options);
 }

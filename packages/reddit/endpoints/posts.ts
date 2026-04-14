@@ -1,39 +1,20 @@
 import { logEventFromContext } from 'corsair/core';
 import type { RedditEndpoints } from '..';
-import {
-	makeRedditGlobalRequest,
-	makeRedditPostRequest,
-} from '../client';
+import { makeRedditRequest } from '../client';
 import { CommentDataSchema, PostDataSchema } from './types';
-
-type RedditListingResponse = {
-	kind: 'Listing';
-	data: {
-		modhash: string | null;
-		dist: number | null;
-		after: string | null;
-		before: string | null;
-		children: Array<{
-			kind: string;
-			data: Record<string, any>;
-		}>;
-	};
-};
+import type { RedditListingRaw } from './types';
 
 export const getComments: RedditEndpoints['postsGetComments'] = async (
 	ctx,
 	input,
 ) => {
-	const raw = await makeRedditPostRequest<
-		[RedditListingResponse, RedditListingResponse]
-	>(input.post_id, {
-		query: {
-			limit: input.limit,
-			depth: input.depth,
-			context: input.context,
-			sort: input.sort,
+	const { post_id, ...query } = input;
+	const raw = await makeRedditRequest<[RedditListingRaw, RedditListingRaw]>(
+		`/comments/${post_id}.json`,
+		{
+			query: query as Record<string, string | number | boolean | undefined>,
 		},
-	});
+	);
 
 	const postRaw = raw[0].data.children.find((c) => c.kind === 't3');
 	const post = PostDataSchema.parse(postRaw?.data ?? {});
@@ -46,15 +27,7 @@ export const getComments: RedditEndpoints['postsGetComments'] = async (
 		try {
 			for (const comment of comments) {
 				await ctx.db.comments.upsertByEntityId(String(comment.id), {
-					id: comment.id,
-					name: comment.name,
-					body: comment.body,
-					author: comment.author,
-					score: comment.score,
-					depth: comment.depth,
-					parent_id: comment.parent_id,
-					link_id: comment.link_id,
-					created_utc: comment.created_utc,
+					...comment,
 				});
 			}
 		} catch (error) {
@@ -77,11 +50,8 @@ export const getComments: RedditEndpoints['postsGetComments'] = async (
 	};
 };
 
-export const getById: RedditEndpoints['postsGetById'] = async (
-	ctx,
-	input,
-) => {
-	const raw = await makeRedditGlobalRequest<RedditListingResponse>(
+export const getById: RedditEndpoints['postsGetById'] = async (ctx, input) => {
+	const raw = await makeRedditRequest<RedditListingRaw>(
 		`/by_id/${input.names}.json`,
 	);
 

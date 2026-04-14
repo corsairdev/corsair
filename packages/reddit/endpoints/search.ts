@@ -1,46 +1,18 @@
 import { logEventFromContext } from 'corsair/core';
 import type { RedditEndpoints } from '..';
-import {
-	makeRedditGlobalRequest,
-	makeRedditSubredditRequest,
-} from '../client';
+import { makeRedditRequest } from '../client';
 import { PostDataSchema, SubredditDataSchema } from './types';
-
-type RedditListingResponse = {
-	kind: 'Listing';
-	data: {
-		modhash: string | null;
-		dist: number | null;
-		after: string | null;
-		before: string | null;
-		children: Array<{
-			kind: string;
-			data: Record<string, any>;
-		}>;
-	};
-};
+import type { RedditListingRaw } from './types';
 
 export const searchGlobal: RedditEndpoints['searchGlobal'] = async (
 	ctx,
 	input,
 ) => {
-	const raw = await makeRedditGlobalRequest<RedditListingResponse>(
-		'/search.json',
-		{
-			query: {
-				q: input.q,
-				sort: input.sort,
-				t: input.t,
-				limit: input.limit,
-				after: input.after,
-				before: input.before,
-				count: input.count,
-				restrict_sr: input.restrict_sr,
-				sr_name: input.sr_name,
-				type: input.type,
-			},
-		},
-	);
+	const raw = await makeRedditRequest<RedditListingRaw>('/search.json', {
+		query: {
+			...input,
+		} as Record<string, string | number | boolean | undefined>,
+	});
 
 	const posts = raw.data.children
 		.filter((child) => child.kind === 't3')
@@ -65,20 +37,14 @@ export const searchSubreddit: RedditEndpoints['searchSubreddit'] = async (
 	ctx,
 	input,
 ) => {
-	const raw = await makeRedditSubredditRequest<RedditListingResponse>(
-		input.subreddit,
-		'search',
+	const { subreddit, ...query } = input;
+	const raw = await makeRedditRequest<RedditListingRaw>(
+		`/r/${subreddit}/search.json`,
 		{
-			query: {
-				q: input.q,
-				sort: input.sort,
-				t: input.t,
-				limit: input.limit,
-				after: input.after,
-				before: input.before,
-				count: input.count,
-				restrict_sr: true,
-			},
+			query: { ...query, restrict_sr: true } as Record<
+				string,
+				string | number | boolean | undefined
+			>,
 		},
 	);
 
@@ -89,7 +55,7 @@ export const searchSubreddit: RedditEndpoints['searchSubreddit'] = async (
 	await logEventFromContext(
 		ctx,
 		'reddit.search.subreddit',
-		{ subreddit: input.subreddit, q: input.q },
+		{ subreddit, q: input.q },
 		'completed',
 	);
 
@@ -105,16 +71,12 @@ export const searchSubreddits: RedditEndpoints['searchSubreddits'] = async (
 	ctx,
 	input,
 ) => {
-	const raw = await makeRedditGlobalRequest<RedditListingResponse>(
+	const raw = await makeRedditRequest<RedditListingRaw>(
 		'/subreddits/search.json',
 		{
 			query: {
-				q: input.q,
-				limit: input.limit,
-				after: input.after,
-				before: input.before,
-				count: input.count,
-			},
+				...input,
+			} as Record<string, string | number | boolean | undefined>,
 		},
 	);
 

@@ -378,9 +378,6 @@ export function reddit<const T extends RedditPluginOptions>(
 			...options.errorHandlers,
 		},
 		keyBuilder: async (_ctx: RedditKeyBuilderContext, _source) => {
-			if (options.key) {
-				return options.key;
-			}
 			return '';
 		},
 	} satisfies InternalRedditPlugin;
@@ -401,4 +398,3 @@ export type {
 	UserAboutData,
 } from './endpoints/types';
 
-export type { RedditWebhookOutputs } from './webhooks/types';
