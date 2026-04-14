@@ -1,0 +1,305 @@
+---
+title: Temporal
+description: Start Temporal workflows from Corsair webhook events.
+---
+
+Use Corsair's `webhookHooks` to start Temporal workflows the moment an event fires. Temporal handles durability, retries, and long-running execution — Corsair handles the webhook plumbing and integration auth.
+
+## Install
+
+```bash
+npm install @temporalio/client @temporalio/workflow @temporalio/activity @temporalio/worker
+```
+
+---
+
+## Event trigger
+
+When a Stripe payment fails, start a Temporal workflow that notifies the customer via Resend. One activity, one action — the minimal trigger pattern.
+
+```ts title="corsair.ts"
+import { temporalClient } from '@/temporal/client';
+import { handleFailedPayment } from '@/temporal/workflows';
+
+stripe({
+    webhookHooks: {
+        charge: {
+            chargeFailed: {
+                after: async (ctx, result) => {
+                    const charge = result.data;
+                    await temporalClient.workflow.start(handleFailedPayment, {
+                        taskQueue: 'payments',
+                        workflowId: `failed-payment-${charge.id}`,
+                        args: [{
+                            chargeId: charge.id,
+                            customerId: charge.customer as string,
+                            amount: charge.amount,
+                            currency: charge.currency,
+                            tenantId: ctx.tenantId,
+                        }],
+                    });
+                },
+            },
+        },
+    },
+})
+```
+
+```ts title="temporal/workflows.ts"
+import { proxyActivities } from '@temporalio/workflow';
+import type * as activities from './activities';
+
+const acts = proxyActivities<typeof activities>({
+    startToCloseTimeout: '30 seconds',
+    retry: { maximumAttempts: 3 },
+});
+
+export interface FailedPaymentInput {
+    chargeId: string;
+    customerId: string;
+    amount: number;
+    currency: string;
+    tenantId?: string;
+}
+
+export async function handleFailedPayment(input: FailedPaymentInput): Promise<void> {
+    await acts.sendFailureEmail(input);
+}
+```
+
+```ts title="temporal/activities.ts"
+import { corsair } from '@/server/corsair';
+import type { FailedPaymentInput } from './workflows';
+
+export async function sendFailureEmail({ customerId, amount, currency, tenantId }: FailedPaymentInput) {
+    const client = tenantId ? corsair.withTenant(tenantId) : corsair;
+
+    const customer = await client.stripe.api.customers.retrieve({ id: customerId });
+
+    await client.resend.api.emails.send({
+        from: 'billing@yourapp.com',
+        to: customer.data.email!,
+        subject: 'Your payment failed',
+        html: `<p>We couldn't process your payment of ${amount / 100} ${currency.toUpperCase()}. Please update your payment method.</p>`,
+    });
+}
+```
+
+---
+
+## Workflow
+
+When a new trial contact is created in HubSpot, send a welcome email immediately, wait 3 days, then check if they upgraded — if not, send a follow-up. This is the kind of time-delayed sequence that makes Temporal worth reaching for: the `sleep` is durable across restarts, no cron or external scheduler needed.
+
+```ts title="corsair.ts"
+hubspot({
+    webhookHooks: {
+        contacts: {
+            contactCreated: {
+                before: async (ctx, payload) => {
+                    if (payload.properties?.hs_lead_status !== 'trial') {
+                        throw new Error('Not a trial contact, skipping');
+                    }
+                    return { ctx, payload };
+                },
+                after: async (ctx, result) => {
+                    const contact = result.data;
+                    await temporalClient.workflow.start(trialOnboarding, {
+                        taskQueue: 'onboarding',
+                        workflowId: `trial-${contact.id}`,
+                        args: [{
+                            contactId: contact.id,
+                            email: contact.properties.email,
+                            firstName: contact.properties.firstname ?? '',
+                            tenantId: ctx.tenantId,
+                        }],
+                    });
+                },
+            },
+        },
+    },
+})
+```
+
+```ts title="temporal/workflows.ts"
+import { proxyActivities, sleep } from '@temporalio/workflow';
+import type * as activities from './activities';
+
+const acts = proxyActivities<typeof activities>({
+    startToCloseTimeout: '30 seconds',
+    retry: { maximumAttempts: 3 },
+});
+
+export interface TrialOnboardingInput {
+    contactId: string;
+    email: string;
+    firstName: string;
+    tenantId?: string;
+}
+
+export async function trialOnboarding(input: TrialOnboardingInput): Promise<void> {
+    // Day 0: welcome email
+    await acts.sendWelcomeEmail(input);
+
+    // Durably wait 3 days — survives worker restarts
+    await sleep('3 days');
+
+    // Day 3: check if they upgraded
+    const upgraded = await acts.checkUpgradeStatus(input);
+    if (upgraded) return;
+
+    // Still on trial — send follow-up
+    await acts.sendFollowUpEmail(input);
+
+    // Wait another 4 days
+    await sleep('4 days');
+
+    // Day 7: final nudge if still on trial
+    const upgradedLate = await acts.checkUpgradeStatus(input);
+    if (!upgradedLate) {
+        await acts.sendTrialEndingEmail(input);
+    }
+}
+```
+
+```ts title="temporal/activities.ts"
+import { corsair } from '@/server/corsair';
+import type { TrialOnboardingInput } from './workflows';
+
+export async function sendWelcomeEmail({ email, firstName, tenantId }: TrialOnboardingInput) {
+    const client = tenantId ? corsair.withTenant(tenantId) : corsair;
+    await client.resend.api.emails.send({
+        from: 'hello@yourapp.com',
+        to: email,
+        subject: 'Welcome to your trial!',
+        html: `<p>Hi ${firstName || 'there'}, your 7-day trial has started. Here's how to get the most out of it...</p>`,
+    });
+}
+
+export async function checkUpgradeStatus({ contactId, tenantId }: TrialOnboardingInput) {
+    const client = tenantId ? corsair.withTenant(tenantId) : corsair;
+    const contact = await client.hubspot.api.contacts.get({ contactId });
+    return contact.data.properties.hs_lead_status === 'customer';
+}
+
+export async function sendFollowUpEmail({ email, firstName, tenantId }: TrialOnboardingInput) {
+    const client = tenantId ? corsair.withTenant(tenantId) : corsair;
+    await client.resend.api.emails.send({
+        from: 'hello@yourapp.com',
+        to: email,
+        subject: 'How\'s your trial going?',
+        html: `<p>Hi ${firstName || 'there'}, you're halfway through your trial. Any questions?</p>`,
+    });
+}
+
+export async function sendTrialEndingEmail({ email, firstName, tenantId }: TrialOnboardingInput) {
+    const client = tenantId ? corsair.withTenant(tenantId) : corsair;
+    await client.resend.api.emails.send({
+        from: 'hello@yourapp.com',
+        to: email,
+        subject: 'Your trial ends tomorrow',
+        html: `<p>Hi ${firstName || 'there'}, your trial ends tomorrow. Upgrade now to keep access.</p>`,
+    });
+}
+```
+
+---
+
+## Cron job
+
+Create a Temporal schedule that runs every morning and posts a standup digest to Slack — all open Linear issues, pulled from Corsair's local database.
+
+```ts title="temporal/schedules.ts"
+import { Client } from '@temporalio/client';
+import { morningStandupWorkflow } from './workflows';
+
+const client = new Client();
+
+// Run once at startup to register the schedule
+await client.schedule.create({
+    scheduleId: 'morning-standup-digest',
+    spec: {
+        cronExpressions: ['0 9 * * 1-5'], // Weekdays at 9am UTC
+    },
+    action: {
+        type: 'startWorkflow',
+        workflowType: morningStandupWorkflow,
+        taskQueue: 'corsair-queue',
+    },
+});
+```
+
+```ts title="temporal/workflows.ts"
+import { proxyActivities } from '@temporalio/workflow';
+import type * as activities from './activities';
+
+const acts = proxyActivities<typeof activities>({
+    startToCloseTimeout: '60 seconds',
+});
+
+export async function morningStandupWorkflow(): Promise<void> {
+    await acts.postStandupDigest();
+}
+```
+
+```ts title="temporal/activities.ts"
+import { corsair } from '@/server/corsair';
+
+export async function postStandupDigest() {
+    // Query Corsair's synced Linear database
+    const inProgress = await corsair.linear.db.issues.list({
+        where: { state: { type: 'started' } },
+        orderBy: { updatedAt: 'desc' },
+    });
+
+    const blocked = await corsair.linear.db.issues.list({
+        where: { state: { name: 'Blocked' } },
+    });
+
+    const lines = [
+        `*Morning Standup — ${new Date().toDateString()}*`,
+        '',
+        `*In Progress (${inProgress.length})*`,
+        ...inProgress.map((i) => `• ${i.title} — ${i.assignee?.name ?? 'Unassigned'}`),
+        '',
+        `*Blocked (${blocked.length})*`,
+        ...blocked.map((i) => `• ${i.title} — ${i.assignee?.name ?? 'Unassigned'}`),
+    ];
+
+    await corsair.slack.api.messages.post({
+        channel: 'C_ENG_STANDUP',
+        text: lines.join('\n'),
+    });
+}
+```
+
+<Callout type="info">
+Use `client.schedule.create()` once at server startup or in a migration script. Subsequent restarts won't duplicate the schedule — Temporal deduplicates by `scheduleId`.
+</Callout>
+
+---
+
+## What's next
+
+<Cards>
+  <Card
+    title="Inngest"
+    description="Durable step functions triggered from Corsair webhooks."
+    href="/guides/inngest"
+  />
+  <Card
+    title="Trigger.dev"
+    description="Background tasks and scheduled jobs with Trigger.dev."
+    href="/guides/trigger-dev"
+  />
+  <Card
+    title="Hatchet"
+    description="Event-driven workflows with Hatchet."
+    href="/guides/hatchet"
+  />
+  <Card
+    title="Workflows guide"
+    description="Chain webhook events without a job queue."
+    href="/guides/workflows"
+  />
+</Cards>

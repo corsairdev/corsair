@@ -1,0 +1,231 @@
+---
+title: Inngest
+description: Trigger durable Inngest functions from Corsair webhook events.
+---
+
+Use Corsair's `webhookHooks` to fire Inngest events the moment something happens in a connected service. Inngest handles retries, step execution, and scheduling — Corsair handles the webhook plumbing.
+
+## Install
+
+```bash
+npm install inngest
+```
+
+---
+
+## Event trigger
+
+Fire an Inngest function whenever a Linear issue is created. Use `before` to skip issues without an assignee, and `after` to dispatch the event. The Inngest function then sends a Slack DM to whoever was assigned.
+
+```ts title="corsair.ts"
+import { inngest } from '@/inngest/client';
+
+linear({
+    webhookHooks: {
+        issues: {
+            issueCreated: {
+                before: async (ctx, payload) => {
+                    // Skip issues with no assignee — nothing to notify
+                    if (!payload.data.assigneeId) {
+                        throw new Error('No assignee, skipping');
+                    }
+                    return { ctx, payload };
+                },
+                after: async (ctx, result) => {
+                    await inngest.send({
+                        name: 'linear/issue.created',
+                        data: {
+                            issueId: result.data.id,
+                            title: result.data.title,
+                            url: result.data.url,
+                            assigneeEmail: result.data.assignee?.email,
+                            tenantId: ctx.tenantId,
+                        },
+                    });
+                },
+            },
+        },
+    },
+})
+```
+
+```ts title="inngest/functions.ts"
+import { inngest } from './client';
+import { corsair } from '@/server/corsair';
+
+export const notifyAssignee = inngest.createFunction(
+    { id: 'notify-linear-assignee' },
+    { event: 'linear/issue.created' },
+    async ({ event }) => {
+        const { title, url, assigneeEmail, tenantId } = event.data;
+
+        // Use withTenant if you have multi-tenancy enabled
+        const client = tenantId ? corsair.withTenant(tenantId) : corsair;
+
+        // Look up the Slack user by email
+        const user = await client.slack.api.users.lookupByEmail({
+            email: assigneeEmail,
+        });
+
+        await client.slack.api.messages.post({
+            channel: user.data.user.id,
+            text: `You've been assigned a new issue: *${title}*\n${url}`,
+        });
+    },
+);
+```
+
+---
+
+## Workflow
+
+When a GitHub PR is opened, kick off a multi-step Inngest workflow that generates an AI code review, posts it as a comment, then notifies Slack. Each step is retried independently on failure.
+
+import { inngest } from '@/inngest/client';
+
+github({
+    webhookHooks: {
+        pullRequestOpened: {
+            before: async (ctx, payload) => {
+                // Ignore draft PRs
+                if (payload.pull_request.draft) {
+                    throw new Error('Skipping draft PR');
+                }
+                return { ctx, payload };
+            },
+            after: async (ctx, result) => {
+                const pr = result.data.pull_request;
+                await inngest.send({
+                    name: 'github/pr.opened',
+                    data: {
+                        owner: pr.base.repo.owner.login,
+                        repo: pr.base.repo.name,
+                        number: pr.number,
+                        title: pr.title,
+                        diff_url: pr.diff_url,
+                        tenantId: ctx.tenantId,
+                    },
+                });
+            },
+        },
+    },
+})
+```
+
+```ts title="inngest/functions.ts"
+import { inngest } from './client';
+import { corsair } from '@/server/corsair';
+
+export const reviewPR = inngest.createFunction(
+    { id: 'ai-pr-review' },
+    { event: 'github/pr.opened' },
+    async ({ event, step }) => {
+        const { owner, repo, number, title, diff_url, tenantId } = event.data;
+        const client = tenantId ? corsair.withTenant(tenantId) : corsair;
+
+        // Step 1: Fetch the diff
+        const diff = await step.run('fetch-diff', async () => {
+            const res = await fetch(diff_url);
+            return res.text();
+        });
+
+        // Step 2: Generate an AI review (slow — runs in its own retryable step)
+        const review = await step.run('generate-review', async () => {
+            return generateCodeReview({ title, diff }); // your LLM call
+        });
+
+        // Step 3: Post the review as a GitHub comment
+        await step.run('post-comment', async () => {
+            await client.github.api.issues.createComment({
+                owner,
+                repo,
+                issue_number: number,
+                body: review,
+            });
+        });
+
+        // Step 4: Notify the engineering channel
+        await step.run('notify-slack', async () => {
+            await client.slack.api.messages.post({
+                channel: 'C_ENG_CHANNEL',
+                text: `AI review posted on PR #${number}: *${title}*`,
+            });
+        });
+    },
+);
+```
+
+---
+
+## Cron job
+
+Every Monday at 9 AM, pull open Linear issues from Corsair's local database and post a sprint digest to Slack. No webhook needed — this runs on a schedule.
+
+```ts title="inngest/functions.ts"
+import { inngest } from './client';
+import { corsair } from '@/server/corsair';
+
+export const weeklySprintDigest = inngest.createFunction(
+    { id: 'weekly-sprint-digest' },
+    { cron: '0 9 * * 1' }, // Every Monday at 9am UTC
+    async () => {
+        // Query Corsair's synced database — no API call needed
+        const issues = await corsair.linear.db.issues.list({
+            where: { state: { type: { in: ['started', 'unstarted'] } } },
+            orderBy: { priority: 'asc' },
+        });
+
+        if (issues.length === 0) {
+            await corsair.slack.api.messages.post({
+                channel: 'C_ENG_CHANNEL',
+                text: '✅ No open issues — clean slate this week!',
+            });
+            return;
+        }
+
+        const lines = [
+            `*Sprint Digest — ${issues.length} open issue${issues.length === 1 ? '' : 's'}*`,
+            '',
+            ...issues.map(
+                (i) => `• *${i.title}* — ${i.assignee?.name ?? 'Unassigned'} (${i.state?.name})`,
+            ),
+        ];
+
+        await corsair.slack.api.messages.post({
+            channel: 'C_ENG_CHANNEL',
+            text: lines.join('\n'),
+        });
+    },
+);
+```
+
+<Callout type="info">
+`corsair.linear.db.issues.list()` queries your local synced database — it's fast and doesn't count against Linear's API rate limits.
+</Callout>
+
+---
+
+## What's next
+
+<Cards>
+  <Card
+    title="Workflows guide"
+    description="Chain webhook events into multi-step automations with plain TypeScript."
+    href="/guides/workflows"
+  />
+  <Card
+    title="Temporal"
+    description="Use Temporal workflows and activities with Corsair."
+    href="/guides/temporal"
+  />
+  <Card
+    title="Trigger.dev"
+    description="Background tasks and scheduled jobs with Trigger.dev."
+    href="/guides/trigger-dev"
+  />
+  <Card
+    title="Hatchet"
+    description="Durable workflows with Hatchet and Corsair webhooks."
+    href="/guides/hatchet"
+  />
+</Cards>

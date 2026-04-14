@@ -62,6 +62,15 @@
               "content/mcp-adapters/claude-code",
               "content/mcp-adapters/cursor"
             ]
+          },
+          {
+            "group": "Workflow Engines",
+            "pages": [
+              "content/guides/inngest",
+              "content/guides/temporal",
+              "content/guides/trigger-dev",
+              "content/guides/hatchet"
+            ]
           }
         ]
       },

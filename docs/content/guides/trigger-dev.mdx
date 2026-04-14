@@ -1,0 +1,240 @@
+---
+title: Trigger.dev
+description: Run Trigger.dev background tasks from Corsair webhook events.
+---
+
+Use Corsair's `webhookHooks` to dispatch Trigger.dev tasks the moment an event fires. Trigger.dev handles retries, logging, and scheduling — Corsair handles webhook verification and integration auth.
+
+## Install
+
+```bash
+npm install @trigger.dev/sdk
+```
+
+---
+
+## Event trigger
+
+When a PagerDuty incident is created, use `before` to skip low-severity alerts, and `after` to trigger a background task that creates a GitHub issue and pages the on-call team in Slack.
+
+```ts title="corsair.ts"
+import { notifyOnCall } from '@/trigger/functions';
+
+pagerduty({
+    webhookHooks: {
+        incident: {
+            incidentTriggered: {
+                before: async (ctx, payload) => {
+                    // Only react to high-severity incidents
+                    if (payload.incident.urgency !== 'high') {
+                        throw new Error('Low severity, skipping');
+                    }
+                    return { ctx, payload };
+                },
+                after: async (ctx, result) => {
+                    const incident = result.data.incident;
+                    await notifyOnCall.trigger({
+                        incidentId: incident.id,
+                        title: incident.title,
+                        htmlUrl: incident.html_url,
+                        serviceId: incident.service.id,
+                        tenantId: ctx.tenantId,
+                    });
+                },
+            },
+        },
+    },
+})
+```
+
+```ts title="trigger/functions.ts"
+import { task } from '@trigger.dev/sdk/v3';
+import { corsair } from '@/server/corsair';
+
+export const notifyOnCall = task({
+    id: 'notify-on-call',
+    run: async (payload: {
+        incidentId: string;
+        title: string;
+        htmlUrl: string;
+        serviceId: string;
+        tenantId?: string;
+    }) => {
+        const client = payload.tenantId ? corsair.withTenant(payload.tenantId) : corsair;
+
+        // Create a GitHub issue to track the incident
+        const issue = await client.github.api.issues.create({
+            owner: process.env.GITHUB_ORG!,
+            repo: process.env.GITHUB_OPS_REPO!,
+            title: `[Incident] ${payload.title}`,
+            body: `PagerDuty incident: ${payload.htmlUrl}\n\nService ID: ${payload.serviceId}`,
+            labels: ['incident', 'high-severity'],
+        });
+
+        // Page the on-call channel in Slack
+        await client.slack.api.messages.post({
+            channel: 'C_ONCALL_CHANNEL',
+            text: `🚨 *High severity incident*: ${payload.title}\nPagerDuty: ${payload.htmlUrl}\nGitHub: ${issue.data.html_url}`,
+        });
+    },
+});
+```
+
+---
+
+## Workflow
+
+When a new HubSpot contact is created, run a multi-step task that enriches the contact, sends a personalized welcome email, and notifies the sales team in Slack.
+
+```ts title="corsair.ts"
+import { onboardNewContact } from '@/trigger/functions';
+
+hubspot({
+    webhookHooks: {
+        contacts: {
+            contactCreated: {
+                before: async (ctx, payload) => {
+                    // Only process contacts with an email address
+                    if (!payload.properties?.email) {
+                        throw new Error('No email address, skipping');
+                    }
+                    return { ctx, payload };
+                },
+                after: async (ctx, result) => {
+                    await onboardNewContact.trigger({
+                        contactId: result.data.id,
+                        email: result.data.properties.email,
+                        firstName: result.data.properties.firstname ?? '',
+                        company: result.data.properties.company ?? '',
+                        tenantId: ctx.tenantId,
+                    });
+                },
+            },
+        },
+    },
+})
+```
+
+```ts title="trigger/functions.ts"
+import { task, wait } from '@trigger.dev/sdk/v3';
+import { corsair } from '@/server/corsair';
+
+export const onboardNewContact = task({
+    id: 'onboard-new-contact',
+    run: async (payload: {
+        contactId: string;
+        email: string;
+        firstName: string;
+        company: string;
+        tenantId?: string;
+    }) => {
+        const client = payload.tenantId ? corsair.withTenant(payload.tenantId) : corsair;
+
+        // Step 1: Enrich the contact with company data
+        const companyData = await enrichCompany(payload.company); // your enrichment logic
+
+        await client.hubspot.api.contacts.update({
+            contactId: payload.contactId,
+            properties: {
+                industry: companyData.industry,
+                numberofemployees: companyData.headcount?.toString(),
+            },
+        });
+
+        // Step 2: Send a personalized welcome email
+        await client.resend.api.emails.send({
+            from: 'hello@yourapp.com',
+            to: payload.email,
+            subject: `Welcome${payload.firstName ? `, ${payload.firstName}` : ''}!`,
+            html: `<p>Thanks for signing up${payload.company ? ` from ${payload.company}` : ''}. Here's how to get started...</p>`,
+        });
+
+        // Step 3: Wait 5 minutes, then notify sales in Slack
+        await wait.for({ minutes: 5 });
+
+        await client.slack.api.messages.post({
+            channel: 'C_SALES_CHANNEL',
+            text: `New contact: *${payload.firstName || payload.email}*${payload.company ? ` from ${payload.company}` : ''}\nIndustry: ${companyData.industry ?? 'Unknown'}`,
+        });
+    },
+});
+```
+
+---
+
+## Cron job
+
+Every Friday at 5 PM, pull unresolved Sentry issues from Corsair's database and post a weekly error report to Slack so the team can triage before the weekend.
+
+```ts title="trigger/functions.ts"
+import { schedules } from '@trigger.dev/sdk/v3';
+import { corsair } from '@/server/corsair';
+
+export const weeklyErrorReport = schedules.task({
+    id: 'weekly-error-report',
+    cron: '0 17 * * 5', // Every Friday at 5pm UTC
+    run: async () => {
+        // Query Corsair's synced Sentry database
+        const issues = await corsair.sentry.db.issues.list({
+            where: { status: 'unresolved' },
+            orderBy: { lastSeen: 'desc' },
+            limit: 10,
+        });
+
+        if (issues.length === 0) {
+            await corsair.slack.api.messages.post({
+                channel: 'C_ENG_CHANNEL',
+                text: '✅ No unresolved Sentry issues — great week!',
+            });
+            return;
+        }
+
+        const lines = [
+            `*Weekly Error Report — Top ${issues.length} unresolved issues*`,
+            '',
+            ...issues.map(
+                (i, idx) =>
+                    `${idx + 1}. *${i.title}* — ${i.count} events, last seen ${new Date(i.lastSeen).toLocaleDateString()}`,
+            ),
+            '',
+            `_Triage before Monday_ 👆`,
+        ];
+
+        await corsair.slack.api.messages.post({
+            channel: 'C_ENG_CHANNEL',
+            text: lines.join('\n'),
+        });
+    },
+});
+```
+
+<Callout type="info">
+Register scheduled tasks in your Trigger.dev worker entry point. They're automatically deployed and managed — no separate cron infrastructure needed.
+</Callout>
+
+---
+
+## What's next
+
+<Cards>
+  <Card
+    title="Inngest"
+    description="Durable step functions triggered from Corsair webhooks."
+    href="/guides/inngest"
+  />
+  <Card
+    title="Temporal"
+    description="Start Temporal workflows from Corsair webhook events."
+    href="/guides/temporal"
+  />
+  <Card
+    title="Hatchet"
+    description="Event-driven workflows with Hatchet."
+    href="/guides/hatchet"
+  />
+  <Card
+    title="Workflows guide"
+    description="Chain webhook events without a job queue."
+    href="/guides/workflows"
+  />
+</Cards>
