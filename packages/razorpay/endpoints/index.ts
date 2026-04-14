@@ -1,9 +1,34 @@
-import { create as customersCreate, get as customersGet, list as customersList, update as customersUpdate } from './customers';
-import { create as ordersCreate, get as ordersGet, list as ordersList } from './orders';
-import { get as paymentsGet, list as paymentsList, capture as paymentsCapture } from './payments';
-import { create as refundsCreate, get as refundsGet, list as refundsList } from './refunds';
+import {
+	create as customersCreate,
+	get as customersGet,
+	list as customersList,
+	update as customersUpdate,
+} from './customers';
+import {
+	create as ordersCreate,
+	get as ordersGet,
+	list as ordersList,
+} from './orders';
+import {
+	capture as paymentsCapture,
+	get as paymentsGet,
+	list as paymentsList,
+} from './payments';
+import {
+	create as refundsCreate,
+	get as refundsGet,
+	list as refundsList,
+} from './refunds';
 import { get as settlementsGet, list as settlementsList } from './settlements';
-import { get as subscriptionsGet, list as subscriptionsList, create as subscriptionsCreate, update as subscriptionsUpdate, cancel as subscriptionsCancel, pause as subscriptionsPause, resume as subscriptionsResume } from './subscriptions';
+import {
+	cancel as subscriptionsCancel,
+	create as subscriptionsCreate,
+	get as subscriptionsGet,
+	list as subscriptionsList,
+	pause as subscriptionsPause,
+	resume as subscriptionsResume,
+	update as subscriptionsUpdate,
+} from './subscriptions';
 
 export const Customers = {
 	create: customersCreate,

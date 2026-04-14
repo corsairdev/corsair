@@ -3,12 +3,13 @@ import type { RazorpayEndpoints } from '..';
 import { makeRazorpayRequest } from '../client';
 import type { RazorpayEndpointOutputs } from './types';
 
-export const create: RazorpayEndpoints['customersCreate'] = async (ctx, input) => {
-	const result = await makeRazorpayRequest<RazorpayEndpointOutputs['customersCreate']>(
-		'customers',
-		ctx.key,
-		{ method: 'POST', body: input },
-	);
+export const create: RazorpayEndpoints['customersCreate'] = async (
+	ctx,
+	input,
+) => {
+	const result = await makeRazorpayRequest<
+		RazorpayEndpointOutputs['customersCreate']
+	>('customers', ctx.key, { method: 'POST', body: input });
 
 	if (result.id && ctx.db.customers) {
 		try {
@@ -23,16 +24,19 @@ export const create: RazorpayEndpoints['customersCreate'] = async (ctx, input) =
 		}
 	}
 
-	await logEventFromContext(ctx, 'razorpay.customers.create', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'razorpay.customers.create',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
 export const get: RazorpayEndpoints['customersGet'] = async (ctx, input) => {
-	const result = await makeRazorpayRequest<RazorpayEndpointOutputs['customersGet']>(
-		`customers/${input.id}`,
-		ctx.key,
-		{ method: 'GET' },
-	);
+	const result = await makeRazorpayRequest<
+		RazorpayEndpointOutputs['customersGet']
+	>(`customers/${input.id}`, ctx.key, { method: 'GET' });
 
 	if (result.id && ctx.db.customers) {
 		try {
@@ -47,19 +51,22 @@ export const get: RazorpayEndpoints['customersGet'] = async (ctx, input) => {
 		}
 	}
 
-	await logEventFromContext(ctx, 'razorpay.customers.get', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'razorpay.customers.get',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
 export const list: RazorpayEndpoints['customersList'] = async (ctx, input) => {
-	const result = await makeRazorpayRequest<RazorpayEndpointOutputs['customersList']>(
-		'customers',
-		ctx.key,
-		{
-			method: 'GET',
-			query: input,
-		},
-	);
+	const result = await makeRazorpayRequest<
+		RazorpayEndpointOutputs['customersList']
+	>('customers', ctx.key, {
+		method: 'GET',
+		query: input,
+	});
 
 	if (ctx.db.customers) {
 		for (const customer of result.items) {
@@ -76,20 +83,26 @@ export const list: RazorpayEndpoints['customersList'] = async (ctx, input) => {
 		}
 	}
 
-	await logEventFromContext(ctx, 'razorpay.customers.list', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'razorpay.customers.list',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
-export const update: RazorpayEndpoints['customersUpdate'] = async (ctx, input) => {
+export const update: RazorpayEndpoints['customersUpdate'] = async (
+	ctx,
+	input,
+) => {
 	const { id, ...body } = input;
-	const result = await makeRazorpayRequest<RazorpayEndpointOutputs['customersUpdate']>(
-		`customers/${id}`,
-		ctx.key,
-		{
-			method: 'PUT',
-			body,
-		},
-	);
+	const result = await makeRazorpayRequest<
+		RazorpayEndpointOutputs['customersUpdate']
+	>(`customers/${id}`, ctx.key, {
+		method: 'PUT',
+		body,
+	});
 
 	if (result.id && ctx.db.customers) {
 		try {
@@ -104,6 +117,11 @@ export const update: RazorpayEndpoints['customersUpdate'] = async (ctx, input) =
 		}
 	}
 
-	await logEventFromContext(ctx, 'razorpay.customers.update', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'razorpay.customers.update',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };

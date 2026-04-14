@@ -3,16 +3,17 @@ import type { RazorpayEndpoints } from '..';
 import { makeRazorpayRequest } from '../client';
 import type { RazorpayEndpointOutputs } from './types';
 
-export const create: RazorpayEndpoints['refundsCreate'] = async (ctx, input) => {
+export const create: RazorpayEndpoints['refundsCreate'] = async (
+	ctx,
+	input,
+) => {
 	const { paymentId, ...body } = input;
-	const result = await makeRazorpayRequest<RazorpayEndpointOutputs['refundsCreate']>(
-		`payments/${paymentId}/refund`,
-		ctx.key,
-		{
-			method: 'POST',
-			body,
-		},
-	);
+	const result = await makeRazorpayRequest<
+		RazorpayEndpointOutputs['refundsCreate']
+	>(`payments/${paymentId}/refund`, ctx.key, {
+		method: 'POST',
+		body,
+	});
 
 	if (result.id && ctx.db.refunds) {
 		try {
@@ -37,11 +38,11 @@ export const create: RazorpayEndpoints['refundsCreate'] = async (ctx, input) => 
 };
 
 export const get: RazorpayEndpoints['refundsGet'] = async (ctx, input) => {
-	const result = await makeRazorpayRequest<RazorpayEndpointOutputs['refundsGet']>(
-		`payments/${input.paymentId}/refunds/${input.refundId}`,
-		ctx.key,
-		{ method: 'GET' },
-	);
+	const result = await makeRazorpayRequest<
+		RazorpayEndpointOutputs['refundsGet']
+	>(`payments/${input.paymentId}/refunds/${input.refundId}`, ctx.key, {
+		method: 'GET',
+	});
 
 	if (result.id && ctx.db.refunds) {
 		try {
@@ -67,14 +68,12 @@ export const get: RazorpayEndpoints['refundsGet'] = async (ctx, input) => {
 
 export const list: RazorpayEndpoints['refundsList'] = async (ctx, input) => {
 	const { paymentId, ...query } = input;
-	const result = await makeRazorpayRequest<RazorpayEndpointOutputs['refundsList']>(
-		`payments/${paymentId}/refunds`,
-		ctx.key,
-		{
-			method: 'GET',
-			query,
-		},
-	);
+	const result = await makeRazorpayRequest<
+		RazorpayEndpointOutputs['refundsList']
+	>(`payments/${paymentId}/refunds`, ctx.key, {
+		method: 'GET',
+		query,
+	});
 
 	if (ctx.db.refunds) {
 		for (const refund of result.items) {

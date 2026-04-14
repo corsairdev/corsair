@@ -4,11 +4,9 @@ import { makeRazorpayRequest } from '../client';
 import type { RazorpayEndpointOutputs } from './types';
 
 export const get: RazorpayEndpoints['paymentsGet'] = async (ctx, input) => {
-	const result = await makeRazorpayRequest<RazorpayEndpointOutputs['paymentsGet']>(
-		`payments/${input.id}`,
-		ctx.key,
-		{ method: 'GET' },
-	);
+	const result = await makeRazorpayRequest<
+		RazorpayEndpointOutputs['paymentsGet']
+	>(`payments/${input.id}`, ctx.key, { method: 'GET' });
 
 	if (result.id && ctx.db.payments) {
 		try {
@@ -23,19 +21,22 @@ export const get: RazorpayEndpoints['paymentsGet'] = async (ctx, input) => {
 		}
 	}
 
-	await logEventFromContext(ctx, 'razorpay.payments.get', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'razorpay.payments.get',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
 export const list: RazorpayEndpoints['paymentsList'] = async (ctx, input) => {
-	const result = await makeRazorpayRequest<RazorpayEndpointOutputs['paymentsList']>(
-		'payments',
-		ctx.key,
-		{
-			method: 'GET',
-			query: input,
-		},
-	);
+	const result = await makeRazorpayRequest<
+		RazorpayEndpointOutputs['paymentsList']
+	>('payments', ctx.key, {
+		method: 'GET',
+		query: input,
+	});
 
 	if (ctx.db.payments) {
 		for (const payment of result.items) {
@@ -61,16 +62,17 @@ export const list: RazorpayEndpoints['paymentsList'] = async (ctx, input) => {
 	return result;
 };
 
-export const capture: RazorpayEndpoints['paymentsCapture'] = async (ctx, input) => {
+export const capture: RazorpayEndpoints['paymentsCapture'] = async (
+	ctx,
+	input,
+) => {
 	const { id, ...body } = input;
-	const result = await makeRazorpayRequest<RazorpayEndpointOutputs['paymentsCapture']>(
-		`payments/${id}/capture`,
-		ctx.key,
-		{
-			method: 'POST',
-			body,
-		},
-	);
+	const result = await makeRazorpayRequest<
+		RazorpayEndpointOutputs['paymentsCapture']
+	>(`payments/${id}/capture`, ctx.key, {
+		method: 'POST',
+		body,
+	});
 
 	if (result.id && ctx.db.payments) {
 		try {
@@ -85,6 +87,11 @@ export const capture: RazorpayEndpoints['paymentsCapture'] = async (ctx, input) 
 		}
 	}
 
-	await logEventFromContext(ctx, 'razorpay.payments.capture', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'razorpay.payments.capture',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };

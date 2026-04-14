@@ -243,13 +243,25 @@ export type CustomersListInput = z.infer<typeof CustomersListInputSchema>;
 export type CustomersUpdateInput = z.infer<typeof CustomersUpdateInputSchema>;
 export type SettlementsListInput = z.infer<typeof SettlementsListInputSchema>;
 export type SettlementGetInput = z.infer<typeof SettlementGetInputSchema>;
-export type SubscriptionsListInput = z.infer<typeof SubscriptionsListInputSchema>;
+export type SubscriptionsListInput = z.infer<
+	typeof SubscriptionsListInputSchema
+>;
 export type SubscriptionsGetInput = z.infer<typeof SubscriptionsGetInputSchema>;
-export type SubscriptionsCreateInput = z.infer<typeof SubscriptionsCreateInputSchema>;
-export type SubscriptionsUpdateInput = z.infer<typeof SubscriptionsUpdateInputSchema>;
-export type SubscriptionsCancelInput = z.infer<typeof SubscriptionsCancelInputSchema>;
-export type SubscriptionsPauseInput = z.infer<typeof SubscriptionsPauseInputSchema>;
-export type SubscriptionsResumeInput = z.infer<typeof SubscriptionsResumeInputSchema>;
+export type SubscriptionsCreateInput = z.infer<
+	typeof SubscriptionsCreateInputSchema
+>;
+export type SubscriptionsUpdateInput = z.infer<
+	typeof SubscriptionsUpdateInputSchema
+>;
+export type SubscriptionsCancelInput = z.infer<
+	typeof SubscriptionsCancelInputSchema
+>;
+export type SubscriptionsPauseInput = z.infer<
+	typeof SubscriptionsPauseInputSchema
+>;
+export type SubscriptionsResumeInput = z.infer<
+	typeof SubscriptionsResumeInputSchema
+>;
 
 // ── Output types ────────────────────────────────────────────────────────
 
@@ -258,23 +270,47 @@ export type OrdersGetResponse = z.infer<typeof OrdersGetResponseSchema>;
 export type OrdersListResponse = z.infer<typeof OrdersListResponseSchema>;
 export type PaymentsGetResponse = z.infer<typeof PaymentsGetResponseSchema>;
 export type PaymentsListResponse = z.infer<typeof PaymentsListResponseSchema>;
-export type PaymentsCaptureResponse = z.infer<typeof PaymentsCaptureResponseSchema>;
+export type PaymentsCaptureResponse = z.infer<
+	typeof PaymentsCaptureResponseSchema
+>;
 export type RefundsCreateResponse = z.infer<typeof RefundsCreateResponseSchema>;
 export type RefundsGetResponse = z.infer<typeof RefundsGetResponseSchema>;
 export type RefundsListResponse = z.infer<typeof RefundsListResponseSchema>;
-export type CustomersCreateResponse = z.infer<typeof CustomersCreateResponseSchema>;
+export type CustomersCreateResponse = z.infer<
+	typeof CustomersCreateResponseSchema
+>;
 export type CustomersGetResponse = z.infer<typeof CustomersGetResponseSchema>;
 export type CustomersListResponse = z.infer<typeof CustomersListResponseSchema>;
-export type CustomersUpdateResponse = z.infer<typeof CustomersUpdateResponseSchema>;
-export type SettlementsListResponse = z.infer<typeof SettlementsListResponseSchema>;
-export type SettlementsGetResponse = z.infer<typeof SettlementsGetResponseSchema>;
-export type SubscriptionsListResponse = z.infer<typeof SubscriptionsListResponseSchema>;
-export type SubscriptionsGetResponse = z.infer<typeof SubscriptionsGetResponseSchema>;
-export type SubscriptionsCreateResponse = z.infer<typeof SubscriptionsCreateResponseSchema>;
-export type SubscriptionsUpdateResponse = z.infer<typeof SubscriptionsUpdateResponseSchema>;
-export type SubscriptionsCancelResponse = z.infer<typeof SubscriptionsCancelResponseSchema>;
-export type SubscriptionsPauseResponse = z.infer<typeof SubscriptionsPauseResponseSchema>;
-export type SubscriptionsResumeResponse = z.infer<typeof SubscriptionsResumeResponseSchema>;
+export type CustomersUpdateResponse = z.infer<
+	typeof CustomersUpdateResponseSchema
+>;
+export type SettlementsListResponse = z.infer<
+	typeof SettlementsListResponseSchema
+>;
+export type SettlementsGetResponse = z.infer<
+	typeof SettlementsGetResponseSchema
+>;
+export type SubscriptionsListResponse = z.infer<
+	typeof SubscriptionsListResponseSchema
+>;
+export type SubscriptionsGetResponse = z.infer<
+	typeof SubscriptionsGetResponseSchema
+>;
+export type SubscriptionsCreateResponse = z.infer<
+	typeof SubscriptionsCreateResponseSchema
+>;
+export type SubscriptionsUpdateResponse = z.infer<
+	typeof SubscriptionsUpdateResponseSchema
+>;
+export type SubscriptionsCancelResponse = z.infer<
+	typeof SubscriptionsCancelResponseSchema
+>;
+export type SubscriptionsPauseResponse = z.infer<
+	typeof SubscriptionsPauseResponseSchema
+>;
+export type SubscriptionsResumeResponse = z.infer<
+	typeof SubscriptionsResumeResponseSchema
+>;
 
 // ── Aggregate maps ──────────────────────────────────────────────────────
 
