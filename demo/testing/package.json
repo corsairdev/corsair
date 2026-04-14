@@ -24,7 +24,6 @@
   "dependencies": {
     "@anthropic-ai/claude-agent-sdk": "^0.2.0",
     "@corsair-dev/cursor": "workspace:^",
-    "@corsair-dev/dodopayments": "workspace:*",
     "@corsair-dev/github": "workspace:*",
     "@corsair-dev/gmail": "workspace:*",
     "@corsair-dev/googlecalendar": "workspace:*",

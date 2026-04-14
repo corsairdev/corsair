@@ -1,6 +1,12 @@
 import 'dotenv/config';
 
-import { dodopayments } from '@corsair-dev/dodopayments';
+import { github } from '@corsair-dev/github';
+import { gmail } from '@corsair-dev/gmail';
+import { googlecalendar } from '@corsair-dev/googlecalendar';
+import { googlesheets } from '@corsair-dev/googlesheets';
+import { linear } from '@corsair-dev/linear';
+import { sharepoint } from '@corsair-dev/sharepoint';
+import { slack } from '@corsair-dev/slack';
 import { createCorsair } from 'corsair';
 import { sqlite } from '../db';
 
@@ -13,6 +19,12 @@ export const corsair = createCorsair({
 		onTimeout: 'deny',
 	},
 	plugins: [
-		dodopayments({ key: process.env.DODO_PAYMENTS_API_KEY }),
+		github(),
+		slack(),
+		googlesheets(),
+		googlecalendar(),
+		gmail(),
+		linear(),
+		sharepoint(),
 	],
 });
