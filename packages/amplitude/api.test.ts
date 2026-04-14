@@ -1,4 +1,4 @@
-import 'dotenv/config'
+import 'dotenv/config';
 import { AMPLITUDE_HTTP_API_BASE, makeAmplitudeRequest } from './client';
 import type {
 	AnnotationsCreateResponse,

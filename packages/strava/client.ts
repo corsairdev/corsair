@@ -1,5 +1,9 @@
-import type { ApiRequestOptions, OpenAPIConfig, RateLimitConfig } from 'corsair/http';
-import { request } from 'corsair/http'
+import type {
+	ApiRequestOptions,
+	OpenAPIConfig,
+	RateLimitConfig,
+} from 'corsair/http';
+import { request } from 'corsair/http';
 
 export class StravaAPIError extends Error {
 	constructor(

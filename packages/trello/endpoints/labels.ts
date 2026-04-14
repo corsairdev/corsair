@@ -31,7 +31,12 @@ export const list: TrelloEndpoints['labelsList'] = async (ctx, input) => {
 		}
 	}
 
-	await logEventFromContext(ctx, 'trello.labels.list', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'trello.labels.list',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
@@ -56,7 +61,12 @@ export const create: TrelloEndpoints['labelsCreate'] = async (ctx, input) => {
 		}
 	}
 
-	await logEventFromContext(ctx, 'trello.labels.create', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'trello.labels.create',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
@@ -83,7 +93,12 @@ export const update: TrelloEndpoints['labelsUpdate'] = async (ctx, input) => {
 		}
 	}
 
-	await logEventFromContext(ctx, 'trello.labels.update', { labelId }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'trello.labels.update',
+		{ labelId },
+		'completed',
+	);
 	return result;
 };
 
@@ -97,6 +112,11 @@ export const del: TrelloEndpoints['labelsDelete'] = async (ctx, input) => {
 		ctx.options.trelloApiKey,
 	);
 
-	await logEventFromContext(ctx, 'trello.labels.delete', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'trello.labels.delete',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };

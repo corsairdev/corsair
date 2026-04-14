@@ -1,10 +1,10 @@
-import { z } from 'zod';
-import { verifyHmacSha256Signature } from 'corsair/http';
 import type {
 	CorsairWebhookMatcher,
 	RawWebhookRequest,
 	WebhookRequest,
 } from 'corsair/core';
+import { verifyHmacSha256Signature } from 'corsair/http';
+import { z } from 'zod';
 
 const ZoomMeetingObjectSchema = z
 	.object({
@@ -104,7 +104,9 @@ export const MeetingCancelledPayloadSchema = z.object({
 		object: ZoomMeetingObjectSchema,
 	}),
 });
-export type MeetingCancelledEvent = z.infer<typeof MeetingCancelledPayloadSchema>;
+export type MeetingCancelledEvent = z.infer<
+	typeof MeetingCancelledPayloadSchema
+>;
 
 export const MeetingStartedPayloadSchema = z.object({
 	event: z.literal('meeting.started'),
@@ -230,7 +232,13 @@ export function verifyZoomWebhookSignature(
 	}
 
 	// Zoom recommends a 30-second replay window; the utility default of 5 minutes is too wide
-	const isValid = verifyHmacSha256Signature(rawBody, signingSecret, timestamp, signature, 30);
+	const isValid = verifyHmacSha256Signature(
+		rawBody,
+		signingSecret,
+		timestamp,
+		signature,
+		30,
+	);
 	if (!isValid) {
 		return { valid: false, error: 'Invalid signature' };
 	}

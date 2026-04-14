@@ -233,14 +233,18 @@ const ContactsUpdateInputSchema = z.object({
 });
 export type ContactsUpdateInput = z.infer<typeof ContactsUpdateInputSchema>;
 const ContactsUpdateResponseSchema = ContactSchema;
-export type ContactsUpdateResponse = z.infer<typeof ContactsUpdateResponseSchema>;
+export type ContactsUpdateResponse = z.infer<
+	typeof ContactsUpdateResponseSchema
+>;
 
 const ContactsDeleteInputSchema = z.object({
 	id: z.string(),
 });
 export type ContactsDeleteInput = z.infer<typeof ContactsDeleteInputSchema>;
 const ContactsDeleteResponseSchema = DeletedResponseSchema;
-export type ContactsDeleteResponse = z.infer<typeof ContactsDeleteResponseSchema>;
+export type ContactsDeleteResponse = z.infer<
+	typeof ContactsDeleteResponseSchema
+>;
 
 const ContactsAddTagInputSchema = z.object({
 	contact_id: z.string(),
@@ -248,15 +252,21 @@ const ContactsAddTagInputSchema = z.object({
 });
 export type ContactsAddTagInput = z.infer<typeof ContactsAddTagInputSchema>;
 const ContactsAddTagResponseSchema = TagSchema;
-export type ContactsAddTagResponse = z.infer<typeof ContactsAddTagResponseSchema>;
+export type ContactsAddTagResponse = z.infer<
+	typeof ContactsAddTagResponseSchema
+>;
 
 const ContactsRemoveTagInputSchema = z.object({
 	contact_id: z.string(),
 	tag_id: z.string(),
 });
-export type ContactsRemoveTagInput = z.infer<typeof ContactsRemoveTagInputSchema>;
+export type ContactsRemoveTagInput = z.infer<
+	typeof ContactsRemoveTagInputSchema
+>;
 const ContactsRemoveTagResponseSchema = TagSchema;
-export type ContactsRemoveTagResponse = z.infer<typeof ContactsRemoveTagResponseSchema>;
+export type ContactsRemoveTagResponse = z.infer<
+	typeof ContactsRemoveTagResponseSchema
+>;
 
 const ContactsListTagsInputSchema = z.object({
 	contact_id: z.string(),
@@ -266,97 +276,135 @@ const ContactsListTagsResponseSchema = z.object({
 	type: z.string().optional(),
 	data: z.array(TagSchema),
 });
-export type ContactsListTagsResponse = z.infer<typeof ContactsListTagsResponseSchema>;
+export type ContactsListTagsResponse = z.infer<
+	typeof ContactsListTagsResponseSchema
+>;
 
 const ContactsAddSubscriptionInputSchema = z.object({
 	contact_id: z.string(),
 	id: z.string(),
 	consent_type: z.enum(['opt_in', 'opt_out']),
 });
-export type ContactsAddSubscriptionInput = z.infer<typeof ContactsAddSubscriptionInputSchema>;
+export type ContactsAddSubscriptionInput = z.infer<
+	typeof ContactsAddSubscriptionInputSchema
+>;
 const ContactsAddSubscriptionResponseSchema = SubscriptionTypeSchema;
-export type ContactsAddSubscriptionResponse = z.infer<typeof ContactsAddSubscriptionResponseSchema>;
+export type ContactsAddSubscriptionResponse = z.infer<
+	typeof ContactsAddSubscriptionResponseSchema
+>;
 
 const ContactsRemoveSubscriptionInputSchema = z.object({
 	contact_id: z.string(),
 	subscription_id: z.string(),
 });
-export type ContactsRemoveSubscriptionInput = z.infer<typeof ContactsRemoveSubscriptionInputSchema>;
+export type ContactsRemoveSubscriptionInput = z.infer<
+	typeof ContactsRemoveSubscriptionInputSchema
+>;
 const ContactsRemoveSubscriptionResponseSchema = SubscriptionTypeSchema;
-export type ContactsRemoveSubscriptionResponse = z.infer<typeof ContactsRemoveSubscriptionResponseSchema>;
+export type ContactsRemoveSubscriptionResponse = z.infer<
+	typeof ContactsRemoveSubscriptionResponseSchema
+>;
 
 const ContactsListSubscriptionsInputSchema = z.object({
 	contact_id: z.string(),
 });
-export type ContactsListSubscriptionsInput = z.infer<typeof ContactsListSubscriptionsInputSchema>;
+export type ContactsListSubscriptionsInput = z.infer<
+	typeof ContactsListSubscriptionsInputSchema
+>;
 const ContactsListSubscriptionsResponseSchema = z.object({
 	type: z.string().optional(),
 	data: z.array(SubscriptionTypeSchema),
 });
-export type ContactsListSubscriptionsResponse = z.infer<typeof ContactsListSubscriptionsResponseSchema>;
+export type ContactsListSubscriptionsResponse = z.infer<
+	typeof ContactsListSubscriptionsResponseSchema
+>;
 
 const ContactsAttachToCompanyInputSchema = z.object({
 	contact_id: z.string(),
 	company_id: z.string(),
 });
-export type ContactsAttachToCompanyInput = z.infer<typeof ContactsAttachToCompanyInputSchema>;
+export type ContactsAttachToCompanyInput = z.infer<
+	typeof ContactsAttachToCompanyInputSchema
+>;
 const ContactsAttachToCompanyResponseSchema = CompanySchema;
-export type ContactsAttachToCompanyResponse = z.infer<typeof ContactsAttachToCompanyResponseSchema>;
+export type ContactsAttachToCompanyResponse = z.infer<
+	typeof ContactsAttachToCompanyResponseSchema
+>;
 
 const ContactsDetachFromCompanyInputSchema = z.object({
 	contact_id: z.string(),
 	company_id: z.string(),
 });
-export type ContactsDetachFromCompanyInput = z.infer<typeof ContactsDetachFromCompanyInputSchema>;
+export type ContactsDetachFromCompanyInput = z.infer<
+	typeof ContactsDetachFromCompanyInputSchema
+>;
 const ContactsDetachFromCompanyResponseSchema = CompanySchema;
-export type ContactsDetachFromCompanyResponse = z.infer<typeof ContactsDetachFromCompanyResponseSchema>;
+export type ContactsDetachFromCompanyResponse = z.infer<
+	typeof ContactsDetachFromCompanyResponseSchema
+>;
 
 const ContactsListAttachedCompaniesInputSchema = z.object({
 	contact_id: z.string(),
 	page: z.number().optional(),
 	per_page: z.number().optional(),
 });
-export type ContactsListAttachedCompaniesInput = z.infer<typeof ContactsListAttachedCompaniesInputSchema>;
+export type ContactsListAttachedCompaniesInput = z.infer<
+	typeof ContactsListAttachedCompaniesInputSchema
+>;
 const ContactsListAttachedCompaniesResponseSchema = z.object({
 	type: z.string().optional(),
 	data: z.array(CompanySchema),
 	pages: PaginationSchema.optional(),
 	total_count: z.number().optional(),
 });
-export type ContactsListAttachedCompaniesResponse = z.infer<typeof ContactsListAttachedCompaniesResponseSchema>;
+export type ContactsListAttachedCompaniesResponse = z.infer<
+	typeof ContactsListAttachedCompaniesResponseSchema
+>;
 
 const ContactsListAttachedSegmentsInputSchema = z.object({
 	contact_id: z.string(),
 });
-export type ContactsListAttachedSegmentsInput = z.infer<typeof ContactsListAttachedSegmentsInputSchema>;
+export type ContactsListAttachedSegmentsInput = z.infer<
+	typeof ContactsListAttachedSegmentsInputSchema
+>;
 const ContactsListAttachedSegmentsResponseSchema = z.object({
 	type: z.string().optional(),
 	data: z.array(SegmentSchema),
 });
-export type ContactsListAttachedSegmentsResponse = z.infer<typeof ContactsListAttachedSegmentsResponseSchema>;
+export type ContactsListAttachedSegmentsResponse = z.infer<
+	typeof ContactsListAttachedSegmentsResponseSchema
+>;
 
 const ContactsCreateNoteInputSchema = z.object({
 	contact_id: z.string(),
 	body: z.string(),
 	admin_id: z.string().optional(),
 });
-export type ContactsCreateNoteInput = z.infer<typeof ContactsCreateNoteInputSchema>;
+export type ContactsCreateNoteInput = z.infer<
+	typeof ContactsCreateNoteInputSchema
+>;
 const ContactsCreateNoteResponseSchema = NoteSchema;
-export type ContactsCreateNoteResponse = z.infer<typeof ContactsCreateNoteResponseSchema>;
+export type ContactsCreateNoteResponse = z.infer<
+	typeof ContactsCreateNoteResponseSchema
+>;
 
 const ContactsListNotesInputSchema = z.object({
 	contact_id: z.string(),
 	page: z.number().optional(),
 	per_page: z.number().optional(),
 });
-export type ContactsListNotesInput = z.infer<typeof ContactsListNotesInputSchema>;
+export type ContactsListNotesInput = z.infer<
+	typeof ContactsListNotesInputSchema
+>;
 const ContactsListNotesResponseSchema = z.object({
 	type: z.string().optional(),
 	data: z.array(NoteSchema),
 	pages: PaginationSchema.optional(),
 	total_count: z.number().optional(),
 });
-export type ContactsListNotesResponse = z.infer<typeof ContactsListNotesResponseSchema>;
+export type ContactsListNotesResponse = z.infer<
+	typeof ContactsListNotesResponseSchema
+>;
 
 const ContactsMergeInputSchema = z.object({
 	lead_id: z.string(),
@@ -374,7 +422,9 @@ const ConversationsGetInputSchema = z.object({
 });
 export type ConversationsGetInput = z.infer<typeof ConversationsGetInputSchema>;
 const ConversationsGetResponseSchema = ConversationSchema;
-export type ConversationsGetResponse = z.infer<typeof ConversationsGetResponseSchema>;
+export type ConversationsGetResponse = z.infer<
+	typeof ConversationsGetResponseSchema
+>;
 
 const ConversationsListInputSchema = z.object({
 	page: z.number().optional(),
@@ -383,14 +433,18 @@ const ConversationsListInputSchema = z.object({
 	order: z.enum(['asc', 'desc']).optional(),
 	starting_after: z.string().optional(),
 });
-export type ConversationsListInput = z.infer<typeof ConversationsListInputSchema>;
+export type ConversationsListInput = z.infer<
+	typeof ConversationsListInputSchema
+>;
 const ConversationsListResponseSchema = z.object({
 	type: z.string().optional(),
 	pages: PaginationSchema.optional(),
 	total_count: z.number().optional(),
 	conversations: z.array(ConversationSchema),
 });
-export type ConversationsListResponse = z.infer<typeof ConversationsListResponseSchema>;
+export type ConversationsListResponse = z.infer<
+	typeof ConversationsListResponseSchema
+>;
 
 const ConversationsCreateInputSchema = z.object({
 	from: z.object({
@@ -399,33 +453,47 @@ const ConversationsCreateInputSchema = z.object({
 	}),
 	body: z.string(),
 });
-export type ConversationsCreateInput = z.infer<typeof ConversationsCreateInputSchema>;
+export type ConversationsCreateInput = z.infer<
+	typeof ConversationsCreateInputSchema
+>;
 const ConversationsCreateResponseSchema = ConversationSchema;
-export type ConversationsCreateResponse = z.infer<typeof ConversationsCreateResponseSchema>;
+export type ConversationsCreateResponse = z.infer<
+	typeof ConversationsCreateResponseSchema
+>;
 
 const ConversationsSearchInputSchema = z.object({
-	query: z.object({
-		field: z.string().optional(),
-		operator: z.string().optional(),
-		value: z.string().optional(),
-	}).optional(),
-	sort: z.object({
-		field: z.string().optional(),
-		order: z.enum(['ascending', 'descending']).optional(),
-	}).optional(),
-	pagination: z.object({
-		per_page: z.number().optional(),
-		starting_after: z.string().optional(),
-	}).optional(),
+	query: z
+		.object({
+			field: z.string().optional(),
+			operator: z.string().optional(),
+			value: z.string().optional(),
+		})
+		.optional(),
+	sort: z
+		.object({
+			field: z.string().optional(),
+			order: z.enum(['ascending', 'descending']).optional(),
+		})
+		.optional(),
+	pagination: z
+		.object({
+			per_page: z.number().optional(),
+			starting_after: z.string().optional(),
+		})
+		.optional(),
 });
-export type ConversationsSearchInput = z.infer<typeof ConversationsSearchInputSchema>;
+export type ConversationsSearchInput = z.infer<
+	typeof ConversationsSearchInputSchema
+>;
 const ConversationsSearchResponseSchema = z.object({
 	type: z.string().optional(),
 	pages: PaginationSchema.optional(),
 	total_count: z.number().optional(),
 	conversations: z.array(ConversationSchema),
 });
-export type ConversationsSearchResponse = z.infer<typeof ConversationsSearchResponseSchema>;
+export type ConversationsSearchResponse = z.infer<
+	typeof ConversationsSearchResponseSchema
+>;
 
 const ConversationsAssignInputSchema = z.object({
 	id: z.string(),
@@ -435,9 +503,13 @@ const ConversationsAssignInputSchema = z.object({
 	message_type: z.literal('assignment').optional(),
 	body: z.string().optional(),
 });
-export type ConversationsAssignInput = z.infer<typeof ConversationsAssignInputSchema>;
+export type ConversationsAssignInput = z.infer<
+	typeof ConversationsAssignInputSchema
+>;
 const ConversationsAssignResponseSchema = ConversationSchema;
-export type ConversationsAssignResponse = z.infer<typeof ConversationsAssignResponseSchema>;
+export type ConversationsAssignResponse = z.infer<
+	typeof ConversationsAssignResponseSchema
+>;
 
 const ConversationsCloseInputSchema = z.object({
 	id: z.string(),
@@ -445,9 +517,13 @@ const ConversationsCloseInputSchema = z.object({
 	message_type: z.literal('close').optional(),
 	body: z.string().optional(),
 });
-export type ConversationsCloseInput = z.infer<typeof ConversationsCloseInputSchema>;
+export type ConversationsCloseInput = z.infer<
+	typeof ConversationsCloseInputSchema
+>;
 const ConversationsCloseResponseSchema = ConversationSchema;
-export type ConversationsCloseResponse = z.infer<typeof ConversationsCloseResponseSchema>;
+export type ConversationsCloseResponse = z.infer<
+	typeof ConversationsCloseResponseSchema
+>;
 
 const ConversationsReopenInputSchema = z.object({
 	id: z.string(),
@@ -455,9 +531,13 @@ const ConversationsReopenInputSchema = z.object({
 	message_type: z.literal('open').optional(),
 	body: z.string().optional(),
 });
-export type ConversationsReopenInput = z.infer<typeof ConversationsReopenInputSchema>;
+export type ConversationsReopenInput = z.infer<
+	typeof ConversationsReopenInputSchema
+>;
 const ConversationsReopenResponseSchema = ConversationSchema;
-export type ConversationsReopenResponse = z.infer<typeof ConversationsReopenResponseSchema>;
+export type ConversationsReopenResponse = z.infer<
+	typeof ConversationsReopenResponseSchema
+>;
 
 const ConversationsReplyInputSchema = z.object({
 	id: z.string(),
@@ -468,9 +548,13 @@ const ConversationsReplyInputSchema = z.object({
 	body: z.string(),
 	attachment_urls: z.array(z.string()).optional(),
 });
-export type ConversationsReplyInput = z.infer<typeof ConversationsReplyInputSchema>;
+export type ConversationsReplyInput = z.infer<
+	typeof ConversationsReplyInputSchema
+>;
 const ConversationsReplyResponseSchema = ConversationSchema;
-export type ConversationsReplyResponse = z.infer<typeof ConversationsReplyResponseSchema>;
+export type ConversationsReplyResponse = z.infer<
+	typeof ConversationsReplyResponseSchema
+>;
 
 // ── Companies ─────────────────────────────────────────────────────────────────
 
@@ -485,9 +569,13 @@ const CompaniesCreateOrUpdateInputSchema = z.object({
 	monthly_spend: z.number().optional(),
 	custom_attributes: z.record(z.unknown()).optional(),
 });
-export type CompaniesCreateOrUpdateInput = z.infer<typeof CompaniesCreateOrUpdateInputSchema>;
+export type CompaniesCreateOrUpdateInput = z.infer<
+	typeof CompaniesCreateOrUpdateInputSchema
+>;
 const CompaniesCreateOrUpdateResponseSchema = CompanySchema;
-export type CompaniesCreateOrUpdateResponse = z.infer<typeof CompaniesCreateOrUpdateResponseSchema>;
+export type CompaniesCreateOrUpdateResponse = z.infer<
+	typeof CompaniesCreateOrUpdateResponseSchema
+>;
 
 const CompaniesGetInputSchema = z.object({
 	id: z.string(),
@@ -522,46 +610,62 @@ const CompaniesScrollResponseSchema = z.object({
 	scroll_param: z.string().optional(),
 	pages: PaginationSchema.optional(),
 });
-export type CompaniesScrollResponse = z.infer<typeof CompaniesScrollResponseSchema>;
+export type CompaniesScrollResponse = z.infer<
+	typeof CompaniesScrollResponseSchema
+>;
 
 const CompaniesDeleteInputSchema = z.object({
 	id: z.string(),
 });
 export type CompaniesDeleteInput = z.infer<typeof CompaniesDeleteInputSchema>;
 const CompaniesDeleteResponseSchema = DeletedResponseSchema;
-export type CompaniesDeleteResponse = z.infer<typeof CompaniesDeleteResponseSchema>;
+export type CompaniesDeleteResponse = z.infer<
+	typeof CompaniesDeleteResponseSchema
+>;
 
 const CompaniesRetrieveInputSchema = z.object({
 	company_id: z.string().optional(),
 	name: z.string().optional(),
 });
-export type CompaniesRetrieveInput = z.infer<typeof CompaniesRetrieveInputSchema>;
+export type CompaniesRetrieveInput = z.infer<
+	typeof CompaniesRetrieveInputSchema
+>;
 const CompaniesRetrieveResponseSchema = CompanySchema;
-export type CompaniesRetrieveResponse = z.infer<typeof CompaniesRetrieveResponseSchema>;
+export type CompaniesRetrieveResponse = z.infer<
+	typeof CompaniesRetrieveResponseSchema
+>;
 
 const CompaniesListAttachedContactsInputSchema = z.object({
 	id: z.string(),
 	page: z.number().optional(),
 	per_page: z.number().optional(),
 });
-export type CompaniesListAttachedContactsInput = z.infer<typeof CompaniesListAttachedContactsInputSchema>;
+export type CompaniesListAttachedContactsInput = z.infer<
+	typeof CompaniesListAttachedContactsInputSchema
+>;
 const CompaniesListAttachedContactsResponseSchema = z.object({
 	type: z.string().optional(),
 	data: z.array(ContactSchema),
 	pages: PaginationSchema.optional(),
 	total_count: z.number().optional(),
 });
-export type CompaniesListAttachedContactsResponse = z.infer<typeof CompaniesListAttachedContactsResponseSchema>;
+export type CompaniesListAttachedContactsResponse = z.infer<
+	typeof CompaniesListAttachedContactsResponseSchema
+>;
 
 const CompaniesListAttachedSegmentsInputSchema = z.object({
 	id: z.string(),
 });
-export type CompaniesListAttachedSegmentsInput = z.infer<typeof CompaniesListAttachedSegmentsInputSchema>;
+export type CompaniesListAttachedSegmentsInput = z.infer<
+	typeof CompaniesListAttachedSegmentsInputSchema
+>;
 const CompaniesListAttachedSegmentsResponseSchema = z.object({
 	type: z.string().optional(),
 	data: z.array(SegmentSchema),
 });
-export type CompaniesListAttachedSegmentsResponse = z.infer<typeof CompaniesListAttachedSegmentsResponseSchema>;
+export type CompaniesListAttachedSegmentsResponse = z.infer<
+	typeof CompaniesListAttachedSegmentsResponseSchema
+>;
 
 // ── Articles ──────────────────────────────────────────────────────────────────
 
@@ -597,7 +701,9 @@ const ArticlesCreateInputSchema = z.object({
 });
 export type ArticlesCreateInput = z.infer<typeof ArticlesCreateInputSchema>;
 const ArticlesCreateResponseSchema = ArticleSchema;
-export type ArticlesCreateResponse = z.infer<typeof ArticlesCreateResponseSchema>;
+export type ArticlesCreateResponse = z.infer<
+	typeof ArticlesCreateResponseSchema
+>;
 
 const ArticlesUpdateInputSchema = z.object({
 	id: z.string(),
@@ -611,14 +717,18 @@ const ArticlesUpdateInputSchema = z.object({
 });
 export type ArticlesUpdateInput = z.infer<typeof ArticlesUpdateInputSchema>;
 const ArticlesUpdateResponseSchema = ArticleSchema;
-export type ArticlesUpdateResponse = z.infer<typeof ArticlesUpdateResponseSchema>;
+export type ArticlesUpdateResponse = z.infer<
+	typeof ArticlesUpdateResponseSchema
+>;
 
 const ArticlesDeleteInputSchema = z.object({
 	id: z.string(),
 });
 export type ArticlesDeleteInput = z.infer<typeof ArticlesDeleteInputSchema>;
 const ArticlesDeleteResponseSchema = DeletedResponseSchema;
-export type ArticlesDeleteResponse = z.infer<typeof ArticlesDeleteResponseSchema>;
+export type ArticlesDeleteResponse = z.infer<
+	typeof ArticlesDeleteResponseSchema
+>;
 
 const ArticlesSearchInputSchema = z.object({
 	phrase: z.string(),
@@ -632,7 +742,9 @@ const ArticlesSearchResponseSchema = z.object({
 	pages: PaginationSchema.optional(),
 	total_count: z.number().optional(),
 });
-export type ArticlesSearchResponse = z.infer<typeof ArticlesSearchResponseSchema>;
+export type ArticlesSearchResponse = z.infer<
+	typeof ArticlesSearchResponseSchema
+>;
 
 // ── Collections ───────────────────────────────────────────────────────────────
 
@@ -641,7 +753,9 @@ const CollectionsGetInputSchema = z.object({
 });
 export type CollectionsGetInput = z.infer<typeof CollectionsGetInputSchema>;
 const CollectionsGetResponseSchema = CollectionSchema;
-export type CollectionsGetResponse = z.infer<typeof CollectionsGetResponseSchema>;
+export type CollectionsGetResponse = z.infer<
+	typeof CollectionsGetResponseSchema
+>;
 
 const CollectionsListInputSchema = z.object({
 	page: z.number().optional(),
@@ -655,7 +769,9 @@ const CollectionsListResponseSchema = z.object({
 	pages: PaginationSchema.optional(),
 	total_count: z.number().optional(),
 });
-export type CollectionsListResponse = z.infer<typeof CollectionsListResponseSchema>;
+export type CollectionsListResponse = z.infer<
+	typeof CollectionsListResponseSchema
+>;
 
 const CollectionsCreateInputSchema = z.object({
 	name: z.string(),
@@ -663,9 +779,13 @@ const CollectionsCreateInputSchema = z.object({
 	help_center_id: z.number().optional(),
 	parent_id: z.string().nullable().optional(),
 });
-export type CollectionsCreateInput = z.infer<typeof CollectionsCreateInputSchema>;
+export type CollectionsCreateInput = z.infer<
+	typeof CollectionsCreateInputSchema
+>;
 const CollectionsCreateResponseSchema = CollectionSchema;
-export type CollectionsCreateResponse = z.infer<typeof CollectionsCreateResponseSchema>;
+export type CollectionsCreateResponse = z.infer<
+	typeof CollectionsCreateResponseSchema
+>;
 
 const CollectionsUpdateInputSchema = z.object({
 	id: z.string(),
@@ -673,23 +793,33 @@ const CollectionsUpdateInputSchema = z.object({
 	description: z.string().optional(),
 	order: z.number().optional(),
 });
-export type CollectionsUpdateInput = z.infer<typeof CollectionsUpdateInputSchema>;
+export type CollectionsUpdateInput = z.infer<
+	typeof CollectionsUpdateInputSchema
+>;
 const CollectionsUpdateResponseSchema = CollectionSchema;
-export type CollectionsUpdateResponse = z.infer<typeof CollectionsUpdateResponseSchema>;
+export type CollectionsUpdateResponse = z.infer<
+	typeof CollectionsUpdateResponseSchema
+>;
 
 const CollectionsDeleteInputSchema = z.object({
 	id: z.string(),
 });
-export type CollectionsDeleteInput = z.infer<typeof CollectionsDeleteInputSchema>;
+export type CollectionsDeleteInput = z.infer<
+	typeof CollectionsDeleteInputSchema
+>;
 const CollectionsDeleteResponseSchema = DeletedResponseSchema;
-export type CollectionsDeleteResponse = z.infer<typeof CollectionsDeleteResponseSchema>;
+export type CollectionsDeleteResponse = z.infer<
+	typeof CollectionsDeleteResponseSchema
+>;
 
 // ── Admins ────────────────────────────────────────────────────────────────────
 
 const AdminsIdentifyInputSchema = z.object({});
 export type AdminsIdentifyInput = z.infer<typeof AdminsIdentifyInputSchema>;
 const AdminsIdentifyResponseSchema = AdminSchema;
-export type AdminsIdentifyResponse = z.infer<typeof AdminsIdentifyResponseSchema>;
+export type AdminsIdentifyResponse = z.infer<
+	typeof AdminsIdentifyResponseSchema
+>;
 
 const AdminsListInputSchema = z.object({});
 export type AdminsListInput = z.infer<typeof AdminsListInputSchema>;
@@ -712,7 +842,9 @@ const AdminsListActivityLogsInputSchema = z.object({
 	page: z.number().optional(),
 	per_page: z.number().optional(),
 });
-export type AdminsListActivityLogsInput = z.infer<typeof AdminsListActivityLogsInputSchema>;
+export type AdminsListActivityLogsInput = z.infer<
+	typeof AdminsListActivityLogsInputSchema
+>;
 const AdminsListActivityLogsResponseSchema = z.object({
 	type: z.string().optional(),
 	pages: PaginationSchema.optional(),
@@ -734,7 +866,9 @@ const AdminsListActivityLogsResponseSchema = z.object({
 		}),
 	),
 });
-export type AdminsListActivityLogsResponse = z.infer<typeof AdminsListActivityLogsResponseSchema>;
+export type AdminsListActivityLogsResponse = z.infer<
+	typeof AdminsListActivityLogsResponseSchema
+>;
 
 const AdminsSetAwayInputSchema = z.object({
 	id: z.string(),
@@ -753,14 +887,18 @@ const HelpCentersListResponseSchema = z.object({
 	type: z.string().optional(),
 	data: z.array(HelpCenterSchema),
 });
-export type HelpCentersListResponse = z.infer<typeof HelpCentersListResponseSchema>;
+export type HelpCentersListResponse = z.infer<
+	typeof HelpCentersListResponseSchema
+>;
 
 const HelpCentersGetInputSchema = z.object({
 	id: z.number(),
 });
 export type HelpCentersGetInput = z.infer<typeof HelpCentersGetInputSchema>;
 const HelpCentersGetResponseSchema = HelpCenterSchema;
-export type HelpCentersGetResponse = z.infer<typeof HelpCentersGetResponseSchema>;
+export type HelpCentersGetResponse = z.infer<
+	typeof HelpCentersGetResponseSchema
+>;
 
 // ── Endpoint I/O Maps ────────────────────────────────────────────────────────
 

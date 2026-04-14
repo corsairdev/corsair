@@ -43,9 +43,12 @@ export const taskEvent: AsanaWebhooks['taskEvent'] = {
 					try {
 						// Fetch full task data via bound endpoint (handles auth automatically)
 						await endpoints.tasks.get({ task_gid: event.resource.gid });
-						
 					} catch (error) {
-						console.warn('asana webhook: failed to fetch/upsert task', event.resource.gid, error);
+						console.warn(
+							'asana webhook: failed to fetch/upsert task',
+							event.resource.gid,
+							error,
+						);
 					}
 				}
 			}

@@ -16,11 +16,16 @@ export const postAcs: GrafanaEndpoints['samlPostAcs'] = async (ctx, input) => {
 			params.append('RelayState', input.relay_state);
 		}
 
-		const raw = await makeGrafanaRawRequest('/login/saml/acs', ctx.key, grafanaUrl, {
-			method: 'POST',
-			body: params.toString(),
-			contentType: 'application/x-www-form-urlencoded',
-		});
+		const raw = await makeGrafanaRawRequest(
+			'/login/saml/acs',
+			ctx.key,
+			grafanaUrl,
+			{
+				method: 'POST',
+				body: params.toString(),
+				contentType: 'application/x-www-form-urlencoded',
+			},
+		);
 
 		const isRedirect = raw.status_code === 302;
 		const message = isRedirect
@@ -70,16 +75,27 @@ export const postAcs: GrafanaEndpoints['samlPostAcs'] = async (ctx, input) => {
 	return result;
 };
 
-export const retrieveJwks: GrafanaEndpoints['jwksRetrieve'] = async (ctx, _input) => {
+export const retrieveJwks: GrafanaEndpoints['jwksRetrieve'] = async (
+	ctx,
+	_input,
+) => {
 	const grafanaUrl = (await ctx.keys.get_grafana_url()) ?? '';
 
 	let result: GrafanaEndpointOutputs['jwksRetrieve'];
 
 	// Try known Grafana JWKS paths in order; use raw request to avoid throwing on 404
-	const jwksPaths = ['/api/signing-keys/jwks', '/.well-known/jwks.json', '/api/jwks'];
+	const jwksPaths = [
+		'/api/signing-keys/jwks',
+		'/.well-known/jwks.json',
+		'/api/jwks',
+	];
 
 	try {
-		let raw: { content: string; content_type: string; status_code: number } | null = null;
+		let raw: {
+			content: string;
+			content_type: string;
+			status_code: number;
+		} | null = null;
 
 		for (const path of jwksPaths) {
 			const candidate = await makeGrafanaRawRequest(path, ctx.key, grafanaUrl);
@@ -96,7 +112,7 @@ export const retrieveJwks: GrafanaEndpoints['jwksRetrieve'] = async (ctx, _input
 			let parsed: { keys?: unknown[] } = {};
 			try {
 				// JSON.parse returns any; cast to extract the keys array from the JWKS response object
-				parsed = JSON.parse(raw.content)
+				parsed = JSON.parse(raw.content);
 			} catch {
 				// Not valid JSON — return empty keys
 			}
@@ -119,7 +135,7 @@ export const retrieveJwks: GrafanaEndpoints['jwksRetrieve'] = async (ctx, _input
 	if (result.successful && ctx.db.jwksKeys && result.data.keys?.length) {
 		try {
 			for (const key of result.data.keys) {
-				const keyId = crypto.randomUUID()
+				const keyId = crypto.randomUUID();
 				await ctx.db.jwksKeys.upsertByEntityId(String(keyId), {
 					...key,
 					id: String(keyId),

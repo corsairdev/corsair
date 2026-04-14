@@ -325,7 +325,10 @@ export async function getCorsairInstance({
 					// c12 returns empty config (no throw) when a file doesn't exist,
 					// so any exception here means the file was found but failed to load.
 					const msg =
-						typeof e === 'object' && e && 'message' in e && typeof e.message === 'string'
+						typeof e === 'object' &&
+						e &&
+						'message' in e &&
+						typeof e.message === 'string'
 							? e.message
 							: String(e);
 					if (
@@ -338,9 +341,13 @@ export async function getCorsairInstance({
 								`Native module error in ${possiblePath}: ${msg}\n\nThis is likely because a native Node.js addon (e.g. better-sqlite3) needs to be rebuilt for your current Node.js version. Try running:\n  npm rebuild\nor reinstall your dependencies:\n  rm -rf node_modules && npm install`,
 							);
 						}
-						console.error(`[#corsair]: Error loading ${possiblePath}: Native module binding not found.`);
+						console.error(
+							`[#corsair]: Error loading ${possiblePath}: Native module binding not found.`,
+						);
 						console.log('');
-						console.log('[#corsair]: A native Node.js addon (e.g. better-sqlite3) needs to be rebuilt for your current Node.js version.');
+						console.log(
+							'[#corsair]: A native Node.js addon (e.g. better-sqlite3) needs to be rebuilt for your current Node.js version.',
+						);
 						console.log('[#corsair]: Try running:');
 						console.log('  npm rebuild');
 						console.log('[#corsair]: Or reinstall your dependencies:');
@@ -421,7 +428,9 @@ function resolveClient(
 	const obj = instance as Record<string, unknown>;
 	if ('withTenant' in obj && typeof obj.withTenant === 'function') {
 		if (!tenant) {
-			console.error('[#corsair]: This is a multi-tenant instance. Pass --tenant=<id>.');
+			console.error(
+				'[#corsair]: This is a multi-tenant instance. Pass --tenant=<id>.',
+			);
 			process.exit(1);
 		}
 		return obj.withTenant(tenant) as Record<string, unknown>;
@@ -471,8 +480,14 @@ function parseListArgs(args: string[]): {
 		if (arg.startsWith('--') && eqIdx !== -1) {
 			const key = arg.slice(2, eqIdx);
 			const value = arg.slice(eqIdx + 1);
-			if (key === 'plugin') { plugin = value; continue; }
-			if (key === 'type' && (value === 'api' || value === 'webhooks' || value === 'db')) {
+			if (key === 'plugin') {
+				plugin = value;
+				continue;
+			}
+			if (
+				key === 'type' &&
+				(value === 'api' || value === 'webhooks' || value === 'db')
+			) {
 				type = value;
 				continue;
 			}
@@ -487,26 +502,44 @@ function parseAuthArgs(args: string[]): {
 	tenantId?: string;
 	code?: string;
 	credentials?: boolean;
+	webhook?: boolean;
 } {
 	let pluginId: string | undefined;
 	let tenantId: string | undefined;
 	let code: string | undefined;
 	let credentials = false;
+	let webhook = false;
 
 	for (const arg of args) {
-		if (arg === '--credentials') { credentials = true; continue; }
+		if (arg === '--credentials') {
+			credentials = true;
+			continue;
+		}
+		if (arg === '--webhook') {
+			webhook = true;
+			continue;
+		}
 
 		const eqIdx = arg.indexOf('=');
 		if (arg.startsWith('--') && eqIdx !== -1) {
 			const key = arg.slice(2, eqIdx);
 			const value = arg.slice(eqIdx + 1);
-			if (key === 'plugin') { pluginId = value; continue; }
-			if (key === 'tenant') { tenantId = value; continue; }
-			if (key === 'code') { code = value; continue; }
+			if (key === 'plugin') {
+				pluginId = value;
+				continue;
+			}
+			if (key === 'tenant') {
+				tenantId = value;
+				continue;
+			}
+			if (key === 'code') {
+				code = value;
+				continue;
+			}
 		}
 	}
 
-	return { pluginId, tenantId, code, credentials };
+	return { pluginId, tenantId, code, credentials, webhook };
 }
 
 function parseSetupArgs(args: string[]): {
@@ -607,16 +640,18 @@ function printHelp() {
 		'  pnpm corsair auth --plugin=<id>                 Start OAuth flow',
 		'  pnpm corsair auth --plugin=<id> --code=<code>   Exchange OAuth code for tokens',
 		'  pnpm corsair auth --plugin=<id> --credentials   Show credential status',
+		'  pnpm corsair auth --plugin=<id> --webhook       Set up webhook subscription',
+		'    Supported plugins: outlook, sharepoint, teams, onedrive, gmail, googledrive, googlecalendar, googlesheets',
 		'  pnpm corsair list [--plugin=<id>] [--type=api|webhooks|db]  List endpoint paths (tip: pipe to grep to filter)',
 		'  pnpm corsair schema <path>                      Show schema for an endpoint/webhook/DB entity',
 		'  pnpm corsair script --code "<js>" [--tenant=<id>]',
 		'    corsair is injected; use return to output a value.',
 		'    IMPORTANT: Always filter results inline — you are the consumer of the return value, so returning full list responses wastes tokens.',
 		'    Bad:  return await corsair.slack.api.users.list({})',
-		'    Good: return (await corsair.slack.api.users.list({})).members.find(u => u.name === \'bob\')?.id',
-		...(SHOW_RUN ? [
-			'  run <path> [input-json] [--tenant=<id>]  Call an endpoint directly',
-		] : []),
+		"    Good: return (await corsair.slack.api.users.list({})).members.find(u => u.name === 'bob')?.id",
+		...(SHOW_RUN
+			? ['  run <path> [input-json] [--tenant=<id>]  Call an endpoint directly']
+			: []),
 	];
 	console.log(lines.join('\n'));
 }
@@ -643,32 +678,82 @@ async function main() {
 	}
 
 	if (command === 'auth') {
-		const { runAuth } = await import('./auth');
 		const authArgs = parseAuthArgs(args.slice(1));
+
+		if (authArgs.webhook) {
+			const pluginId = authArgs.pluginId;
+			if (!pluginId) {
+				console.error('[#corsair]: --webhook requires --plugin=<id>.');
+				process.exit(1);
+			}
+			if (pluginId === 'outlook') {
+				const { runOutlookSubscribe } = await import('./subscribe-microsoft');
+				await runOutlookSubscribe({ cwd });
+			} else if (pluginId === 'sharepoint') {
+				const { runSharepointSubscribe } = await import(
+					'./subscribe-microsoft'
+				);
+				await runSharepointSubscribe({ cwd });
+			} else if (pluginId === 'teams') {
+				const { runTeamsSubscribe } = await import('./subscribe-microsoft');
+				await runTeamsSubscribe({ cwd });
+			} else if (pluginId === 'onedrive') {
+				const { runOnedriveSubscribe } = await import('./subscribe-microsoft');
+				await runOnedriveSubscribe({ cwd });
+			} else if (
+				['gmail', 'googledrive', 'googlecalendar', 'googlesheets'].includes(
+					pluginId,
+				)
+			) {
+				const { runGoogleSubscribe } = await import('./subscribe-google');
+				await runGoogleSubscribe({ cwd, pluginId });
+			} else {
+				console.error(
+					`[#corsair]: Webhook subscription not supported for plugin '${pluginId}'.`,
+				);
+				console.error(
+					'[#corsair]: Supported: outlook, sharepoint, teams, onedrive, gmail, googledrive, googlecalendar, googlesheets',
+				);
+				process.exit(1);
+			}
+			return;
+		}
+
+		const { runAuth } = await import('./auth');
 		await runAuth({ cwd, ...authArgs });
 		return;
 	}
 
 	if (command === 'watch-renew') {
-		const { runWatchRenew } = await import('./watch-renew');
-		await runWatchRenew({ cwd });
+		const { runGoogleSubscribe } = await import('./subscribe-google');
+		await runGoogleSubscribe({ cwd });
+		return;
+	}
+
+	if (command === 'sharepoint-subscribe') {
+		const { runSharepointSubscribe } = await import('./subscribe-microsoft');
+		await runSharepointSubscribe({ cwd });
 		return;
 	}
 
 	if (command === 'subscribe') {
 		const pluginArg = args.slice(1).find((a) => a.startsWith('--plugin='));
-		const pluginId = pluginArg ? pluginArg.slice('--plugin='.length) : undefined;
+		const pluginId = pluginArg
+			? pluginArg.slice('--plugin='.length)
+			: undefined;
 		if (pluginId === 'outlook') {
-			const { runOutlookSubscribe } = await import('./subscribe-outlook');
+			const { runOutlookSubscribe } = await import('./subscribe-microsoft');
 			await runOutlookSubscribe({ cwd });
 			return;
 		}
-		console.error(`[#corsair]: Unknown plugin for subscribe: '${pluginId ?? '(none)'}'. Supported: outlook`);
+		console.error(
+			`[#corsair]: Unknown plugin for subscribe: '${pluginId ?? '(none)'}'. Supported: outlook`,
+		);
 		process.exit(1);
 	}
-	
+
 	if (command === 'teams-subscribe') {
-		const { runTeamsSubscribe } = await import('./watch-renew');
+		const { runTeamsSubscribe } = await import('./subscribe-microsoft');
 		await runTeamsSubscribe({ cwd });
 		return;
 	}
@@ -678,7 +763,9 @@ async function main() {
 		const instance = await getCorsairInstance({ cwd });
 		const corsair = instance as Record<string, unknown>;
 		if (typeof corsair.list_operations !== 'function') {
-			console.error('[#corsair]: list_operations not available on this Corsair instance.');
+			console.error(
+				'[#corsair]: list_operations not available on this Corsair instance.',
+			);
 			process.exit(1);
 		}
 		const result = corsair.list_operations({ plugin, type }) as unknown;
@@ -698,7 +785,9 @@ async function main() {
 		const { path: endpointPath, input, tenant } = parseRunArgs(args.slice(1));
 		if (!endpointPath) {
 			console.error('[#corsair]: Usage: corsair run <path> [input-json]');
-			console.error('[#corsair]: Example: corsair run slack.api.messages.post \'{"channel":"C123","text":"hi"}\'');
+			console.error(
+				'[#corsair]: Example: corsair run slack.api.messages.post \'{"channel":"C123","text":"hi"}\'',
+			);
 			process.exit(1);
 		}
 		const instance = await getCorsairInstance({ cwd });
@@ -706,7 +795,9 @@ async function main() {
 		const fn = navigateToEndpoint(client, endpointPath);
 		if (!fn) {
 			console.error(`[#corsair]: Could not find endpoint "${endpointPath}".`);
-			console.error('[#corsair]: Run `pnpm corsair list` to see available paths.');
+			console.error(
+				'[#corsair]: Run `pnpm corsair list` to see available paths.',
+			);
 			process.exit(1);
 		}
 		let parsedInput: unknown = {};
@@ -714,7 +805,9 @@ async function main() {
 			try {
 				parsedInput = JSON.parse(input);
 			} catch {
-				console.error('[#corsair]: Invalid JSON input. Make sure to quote the JSON string.');
+				console.error(
+					'[#corsair]: Invalid JSON input. Make sure to quote the JSON string.',
+				);
 				process.exit(1);
 			}
 		}
@@ -733,14 +826,17 @@ async function main() {
 		const { code, tenant } = parseScriptArgs(args.slice(1));
 		if (!code) {
 			console.error('[#corsair]: Usage: corsair script --code "<js>"');
-			console.error('[#corsair]: Example: corsair script --code "const r = await corsair.slack.channels.list(); return r.channels.find(c => c.name === \'general\')?.id"');
+			console.error(
+				'[#corsair]: Example: corsair script --code "const r = await corsair.slack.channels.list(); return r.channels.find(c => c.name === \'general\')?.id"',
+			);
 			process.exit(1);
 		}
 		const instance = await getCorsairInstance({ cwd });
 		const client = resolveClient(instance, tenant);
 		// Run the script body as an async function with `corsair` injected
 		// eslint-disable-next-line @typescript-eslint/no-implied-eval
-		const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor as new (
+		const AsyncFunction = Object.getPrototypeOf(async function () {})
+			.constructor as new (
 			...args: string[]
 		) => (...fnArgs: unknown[]) => Promise<unknown>;
 		const fn = new AsyncFunction('corsair', code);
@@ -761,13 +857,17 @@ async function main() {
 		const schemaPath = args[1];
 		if (!schemaPath) {
 			console.error('[#corsair]: Usage: corsair schema <path>');
-			console.error('[#corsair]: Example: corsair schema slack.api.messages.post');
+			console.error(
+				'[#corsair]: Example: corsair schema slack.api.messages.post',
+			);
 			process.exit(1);
 		}
 		const instance = await getCorsairInstance({ cwd });
 		const corsair = instance as Record<string, unknown>;
 		if (typeof corsair.get_schema !== 'function') {
-			console.error('[#corsair]: get_schema not available on this Corsair instance.');
+			console.error(
+				'[#corsair]: get_schema not available on this Corsair instance.',
+			);
 			process.exit(1);
 		}
 		const result = corsair.get_schema(schemaPath) as string;

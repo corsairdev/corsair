@@ -12,11 +12,6 @@ export const getMe: TelegramEndpoints['getMe'] = async (ctx) => {
 		},
 	);
 
-	await logEventFromContext(
-		ctx,
-		'telegram.me.getMe',
-		{},
-		'completed',
-	);
+	await logEventFromContext(ctx, 'telegram.me.getMe', {}, 'completed');
 	return result;
 };

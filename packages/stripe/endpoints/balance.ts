@@ -1,5 +1,5 @@
-import type { StripeEndpoints } from '..';
 import { logEventFromContext } from 'corsair/core';
+import type { StripeEndpoints } from '..';
 import { makeStripeRequest } from '../client';
 import type { StripeEndpointOutputs } from './types';
 

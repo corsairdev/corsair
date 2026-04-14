@@ -100,5 +100,11 @@ export function verifySlackSignature(
 	signature: string,
 	maxAgeSeconds: number = 60 * 5,
 ): boolean {
-	return verifyHmacSha256Signature(payload, secret, timestamp, signature, maxAgeSeconds);
+	return verifyHmacSha256Signature(
+		payload,
+		secret,
+		timestamp,
+		signature,
+		maxAgeSeconds,
+	);
 }

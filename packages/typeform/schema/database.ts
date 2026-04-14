@@ -20,10 +20,7 @@ export const TypeformForm = z.object({
 		})
 		.passthrough()
 		.optional(),
-	workspace: z
-		.object({ href: z.string().optional() })
-		.passthrough()
-		.optional(),
+	workspace: z.object({ href: z.string().optional() }).passthrough().optional(),
 	// _links varies by context
 	_links: z.record(z.unknown()).optional(),
 });

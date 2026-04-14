@@ -1,20 +1,20 @@
-import 'dotenv/config'
+import 'dotenv/config';
 import { makeYoutubeRequest } from './client';
-import { YoutubeEndpointOutputSchemas } from './endpoints/types';
 import type {
-	PlaylistsListResponse,
-	VideosGetResponse,
+	CaptionsListResponse,
 	ChannelsGetStatisticsResponse,
-	SearchYouTubeResponse,
-	SubscriptionsListResponse,
 	I18nListLanguagesResponse,
 	I18nListRegionsResponse,
-	VideoCategoriesListResponse,
-	VideoActionsListAbuseReasonsResponse,
-	VideosListMostPopularResponse,
-	CaptionsListResponse,
 	PlaylistItemsListResponse,
+	PlaylistsListResponse,
+	SearchYouTubeResponse,
+	SubscriptionsListResponse,
+	VideoActionsListAbuseReasonsResponse,
+	VideoCategoriesListResponse,
+	VideosGetResponse,
+	VideosListMostPopularResponse,
 } from './endpoints/types';
+import { YoutubeEndpointOutputSchemas } from './endpoints/types';
 
 const ACCESS_TOKEN = process.env.YOUTUBE_ACCESS_TOKEN ?? '';
 const TEST_VIDEO_ID = process.env.YOUTUBE_VIDEO_ID;
@@ -32,12 +32,18 @@ describe('YouTube API Type Tests', () => {
 				ACCESS_TOKEN,
 				{
 					method: 'GET',
-					query: { mine: 'true', part: 'snippet,status,contentDetails', maxResults: 5 },
+					query: {
+						mine: 'true',
+						part: 'snippet,status,contentDetails',
+						maxResults: 5,
+					},
 				},
 			);
 			const parsed = YoutubeEndpointOutputSchemas.playlistsList.parse(result);
 			expect(parsed).toBeDefined();
-			expect(Array.isArray(parsed.items) || parsed.items === undefined).toBe(true);
+			expect(Array.isArray(parsed.items) || parsed.items === undefined).toBe(
+				true,
+			);
 		});
 
 		it('playlistsList schema handles empty result', () => {
@@ -65,7 +71,16 @@ describe('YouTube API Type Tests', () => {
 			const mock: PlaylistsListResponse = {
 				kind: 'youtube#playlistListResponse',
 				etag: 'abc',
-				items: [{ id: 'PL123', kind: 'youtube#playlist', etag: 'xyz', snippet, status, contentDetails }],
+				items: [
+					{
+						id: 'PL123',
+						kind: 'youtube#playlist',
+						etag: 'xyz',
+						snippet,
+						status,
+						contentDetails,
+					},
+				],
 				pageInfo: { totalResults: 1, resultsPerPage: 5 },
 			};
 			const parsed = YoutubeEndpointOutputSchemas.playlistsList.parse(mock);
@@ -90,9 +105,12 @@ describe('YouTube API Type Tests', () => {
 					},
 				},
 			);
-			const parsed = YoutubeEndpointOutputSchemas.playlistItemsList.parse(result);
+			const parsed =
+				YoutubeEndpointOutputSchemas.playlistItemsList.parse(result);
 			expect(parsed).toBeDefined();
-			expect(Array.isArray(parsed.items) || parsed.items === undefined).toBe(true);
+			expect(Array.isArray(parsed.items) || parsed.items === undefined).toBe(
+				true,
+			);
 		});
 	});
 
@@ -126,7 +144,10 @@ describe('YouTube API Type Tests', () => {
 				ACCESS_TOKEN,
 				{
 					method: 'GET',
-					query: { id: resolvedVideoId, part: 'snippet,status,statistics,contentDetails' },
+					query: {
+						id: resolvedVideoId,
+						part: 'snippet,status,statistics,contentDetails',
+					},
 				},
 			);
 			const parsed = YoutubeEndpointOutputSchemas.videosGet.parse(result);
@@ -138,14 +159,12 @@ describe('YouTube API Type Tests', () => {
 
 		it('videosGetBatch returns correct type', async () => {
 			if (!hasToken || !resolvedVideoId) return;
-			const result = await makeYoutubeRequest<{ items: Array<{ id?: string }> }>(
-				'/videos',
-				ACCESS_TOKEN,
-				{
-					method: 'GET',
-					query: { id: resolvedVideoId, part: 'snippet,statistics' },
-				},
-			);
+			const result = await makeYoutubeRequest<{
+				items: Array<{ id?: string }>;
+			}>('/videos', ACCESS_TOKEN, {
+				method: 'GET',
+				query: { id: resolvedVideoId, part: 'snippet,statistics' },
+			});
 			const parsed = YoutubeEndpointOutputSchemas.videosGetBatch.parse({
 				...result,
 				found_count: result.items?.length ?? 0,
@@ -162,12 +181,19 @@ describe('YouTube API Type Tests', () => {
 				ACCESS_TOKEN,
 				{
 					method: 'GET',
-					query: { chart: 'mostPopular', part: 'snippet,statistics', maxResults: 5 },
+					query: {
+						chart: 'mostPopular',
+						part: 'snippet,statistics',
+						maxResults: 5,
+					},
 				},
 			);
-			const parsed = YoutubeEndpointOutputSchemas.videosListMostPopular.parse(result);
+			const parsed =
+				YoutubeEndpointOutputSchemas.videosListMostPopular.parse(result);
 			expect(parsed).toBeDefined();
-			expect(Array.isArray(parsed.items) || parsed.items === undefined).toBe(true);
+			expect(Array.isArray(parsed.items) || parsed.items === undefined).toBe(
+				true,
+			);
 		});
 
 		it('videosGet schema validates spread snippet and statistics fields', () => {
@@ -180,21 +206,31 @@ describe('YouTube API Type Tests', () => {
 				categoryId: '28',
 				defaultLanguage: 'en',
 			};
-			const statistics = { viewCount: '1000', likeCount: '50', commentCount: '10' };
+			const statistics = {
+				viewCount: '1000',
+				likeCount: '50',
+				commentCount: '10',
+			};
 			const status = { privacyStatus: 'public', uploadStatus: 'processed' };
-			const contentDetails = { duration: 'PT10M30S', dimension: '2d', definition: 'hd' };
+			const contentDetails = {
+				duration: 'PT10M30S',
+				dimension: '2d',
+				definition: 'hd',
+			};
 			const mockResponse: VideosGetResponse = {
 				kind: 'youtube#videoListResponse',
 				etag: 'abc123',
-				items: [{
-					id: 'dQw4w9WgXcQ',
-					kind: 'youtube#video',
-					etag: 'xyz',
-					snippet,
-					statistics,
-					status,
-					contentDetails,
-				}],
+				items: [
+					{
+						id: 'dQw4w9WgXcQ',
+						kind: 'youtube#video',
+						etag: 'xyz',
+						snippet,
+						statistics,
+						status,
+						contentDetails,
+					},
+				],
 				pageInfo: { totalResults: 1, resultsPerPage: 5 },
 			};
 			const parsed = YoutubeEndpointOutputSchemas.videosGet.parse(mockResponse);
@@ -236,7 +272,8 @@ describe('YouTube API Type Tests', () => {
 					query: { mine: 'true', part: 'snippet,statistics,contentDetails' },
 				},
 			);
-			const parsed = YoutubeEndpointOutputSchemas.channelsGetStatistics.parse(result);
+			const parsed =
+				YoutubeEndpointOutputSchemas.channelsGetStatistics.parse(result);
 			expect(parsed).toBeDefined();
 		});
 
@@ -251,7 +288,8 @@ describe('YouTube API Type Tests', () => {
 					query: { forHandle: '@YouTube', part: 'snippet,statistics' },
 				},
 			);
-			const parsed = YoutubeEndpointOutputSchemas.channelsGetIdByHandle.parse(result);
+			const parsed =
+				YoutubeEndpointOutputSchemas.channelsGetIdByHandle.parse(result);
 			expect(parsed).toBeDefined();
 			if (parsed.items && parsed.items.length > 0) {
 				expect(parsed.items[0]?.id).toBeDefined();
@@ -265,10 +303,15 @@ describe('YouTube API Type Tests', () => {
 				ACCESS_TOKEN,
 				{
 					method: 'GET',
-					query: { channelId: resolvedChannelId, part: 'snippet', maxResults: 5 },
+					query: {
+						channelId: resolvedChannelId,
+						part: 'snippet',
+						maxResults: 5,
+					},
 				},
 			);
-			const parsed = YoutubeEndpointOutputSchemas.channelsGetActivities.parse(result);
+			const parsed =
+				YoutubeEndpointOutputSchemas.channelsGetActivities.parse(result);
 			expect(parsed).toBeDefined();
 		});
 
@@ -289,10 +332,19 @@ describe('YouTube API Type Tests', () => {
 			const mock: ChannelsGetStatisticsResponse = {
 				kind: 'youtube#channelListResponse',
 				etag: 'abc',
-				items: [{ id: 'UC123', kind: 'youtube#channel', etag: 'xyz', snippet, statistics }],
+				items: [
+					{
+						id: 'UC123',
+						kind: 'youtube#channel',
+						etag: 'xyz',
+						snippet,
+						statistics,
+					},
+				],
 				pageInfo: { totalResults: 1, resultsPerPage: 5 },
 			};
-			const parsed = YoutubeEndpointOutputSchemas.channelsGetStatistics.parse(mock);
+			const parsed =
+				YoutubeEndpointOutputSchemas.channelsGetStatistics.parse(mock);
 			expect(parsed.items![0]?.snippet?.title).toBe('Test Channel');
 			expect(parsed.items![0]?.statistics?.subscriberCount).toBe('5000');
 		});
@@ -306,12 +358,19 @@ describe('YouTube API Type Tests', () => {
 				ACCESS_TOKEN,
 				{
 					method: 'GET',
-					query: { q: 'typescript tutorial', part: 'snippet', type: 'video', maxResults: 5 },
+					query: {
+						q: 'typescript tutorial',
+						part: 'snippet',
+						type: 'video',
+						maxResults: 5,
+					},
 				},
 			);
 			const parsed = YoutubeEndpointOutputSchemas.searchYouTube.parse(result);
 			expect(parsed).toBeDefined();
-			expect(Array.isArray(parsed.items) || parsed.items === undefined).toBe(true);
+			expect(Array.isArray(parsed.items) || parsed.items === undefined).toBe(
+				true,
+			);
 		});
 
 		it('searchYouTube schema validates result structure with all snippet fields', () => {
@@ -328,14 +387,17 @@ describe('YouTube API Type Tests', () => {
 				etag: 'abc',
 				regionCode: 'US',
 				pageInfo: { totalResults: 1000000, resultsPerPage: 5 },
-				items: [{
-					kind: 'youtube#searchResult',
-					etag: 'xyz',
-					id: { kind: 'youtube#video', videoId: 'abc123' },
-					snippet,
-				}],
+				items: [
+					{
+						kind: 'youtube#searchResult',
+						etag: 'xyz',
+						id: { kind: 'youtube#video', videoId: 'abc123' },
+						snippet,
+					},
+				],
 			};
-			const parsed = YoutubeEndpointOutputSchemas.searchYouTube.parse(mockResponse);
+			const parsed =
+				YoutubeEndpointOutputSchemas.searchYouTube.parse(mockResponse);
 			expect(parsed.items![0]?.id?.videoId).toBe('abc123');
 			expect(parsed.items![0]?.snippet?.channelTitle).toBe('Test Channel');
 		});
@@ -346,13 +408,28 @@ describe('YouTube API Type Tests', () => {
 				etag: 'abc',
 				pageInfo: { totalResults: 2, resultsPerPage: 5 },
 				items: [
-					{ kind: 'youtube#searchResult', etag: 'e1', id: { kind: 'youtube#video', videoId: 'vid1' }, snippet: { title: 'Video 1', channelId: 'UC1' } },
-					{ kind: 'youtube#searchResult', etag: 'e2', id: { kind: 'youtube#channel', channelId: 'ch1' }, snippet: { title: 'Channel 1' } },
+					{
+						kind: 'youtube#searchResult',
+						etag: 'e1',
+						id: { kind: 'youtube#video', videoId: 'vid1' },
+						snippet: { title: 'Video 1', channelId: 'UC1' },
+					},
+					{
+						kind: 'youtube#searchResult',
+						etag: 'e2',
+						id: { kind: 'youtube#channel', channelId: 'ch1' },
+						snippet: { title: 'Channel 1' },
+					},
 				],
 			};
 			const parsed = YoutubeEndpointOutputSchemas.searchYouTube.parse(mock);
-			const videoItems = (parsed.items ?? []).filter((i: { id?: { videoId?: string } }) => i.id?.videoId);
-			const channelItems = (parsed.items ?? []).filter((i: { id?: { channelId?: string; videoId?: string } }) => i.id?.channelId && !i.id?.videoId);
+			const videoItems = (parsed.items ?? []).filter(
+				(i: { id?: { videoId?: string } }) => i.id?.videoId,
+			);
+			const channelItems = (parsed.items ?? []).filter(
+				(i: { id?: { channelId?: string; videoId?: string } }) =>
+					i.id?.channelId && !i.id?.videoId,
+			);
 			expect(videoItems).toHaveLength(1);
 			expect(channelItems).toHaveLength(1);
 			expect(videoItems[0]?.id?.videoId).toBe('vid1');
@@ -367,12 +444,19 @@ describe('YouTube API Type Tests', () => {
 				ACCESS_TOKEN,
 				{
 					method: 'GET',
-					query: { mine: 'true', part: 'snippet,contentDetails', maxResults: 5 },
+					query: {
+						mine: 'true',
+						part: 'snippet,contentDetails',
+						maxResults: 5,
+					},
 				},
 			);
-			const parsed = YoutubeEndpointOutputSchemas.subscriptionsList.parse(result);
+			const parsed =
+				YoutubeEndpointOutputSchemas.subscriptionsList.parse(result);
 			expect(parsed).toBeDefined();
-			expect(Array.isArray(parsed.items) || parsed.items === undefined).toBe(true);
+			expect(Array.isArray(parsed.items) || parsed.items === undefined).toBe(
+				true,
+			);
 		});
 
 		it('subscriptionsList schema captures channelId from resourceId', () => {
@@ -386,39 +470,49 @@ describe('YouTube API Type Tests', () => {
 			const mock: SubscriptionsListResponse = {
 				kind: 'youtube#subscriptionListResponse',
 				etag: 'abc',
-				items: [{ id: 'sub123', kind: 'youtube#subscription', etag: 'xyz', snippet }],
+				items: [
+					{ id: 'sub123', kind: 'youtube#subscription', etag: 'xyz', snippet },
+				],
 				pageInfo: { totalResults: 1, resultsPerPage: 5 },
 			};
 			const parsed = YoutubeEndpointOutputSchemas.subscriptionsList.parse(mock);
 			// snippet.channelId is the subscriber's channel; resourceId.channelId is the subscribed channel
-			expect(parsed.items![0]?.snippet?.resourceId?.channelId).toBe('UC_subscribed');
+			expect(parsed.items![0]?.snippet?.resourceId?.channelId).toBe(
+				'UC_subscribed',
+			);
 		});
 	});
 
 	describe('videoActions', () => {
 		it('videoActionsListAbuseReasons returns correct type', async () => {
 			if (!hasToken) return;
-			const result = await makeYoutubeRequest<VideoActionsListAbuseReasonsResponse>(
-				'/videoAbuseReportReasons',
-				ACCESS_TOKEN,
-				{
-					method: 'GET',
-					query: { part: 'snippet' },
-				},
-			);
-			const parsed = YoutubeEndpointOutputSchemas.videoActionsListAbuseReasons.parse(result);
+			const result =
+				await makeYoutubeRequest<VideoActionsListAbuseReasonsResponse>(
+					'/videoAbuseReportReasons',
+					ACCESS_TOKEN,
+					{
+						method: 'GET',
+						query: { part: 'snippet' },
+					},
+				);
+			const parsed =
+				YoutubeEndpointOutputSchemas.videoActionsListAbuseReasons.parse(result);
 			expect(parsed).toBeDefined();
-			expect(Array.isArray(parsed.items) || parsed.items === undefined).toBe(true);
+			expect(Array.isArray(parsed.items) || parsed.items === undefined).toBe(
+				true,
+			);
 		});
 
 		it('videoActionsGetRating returns correct type', async () => {
 			if (!hasToken || !TEST_VIDEO_ID) return;
-			const result = await makeYoutubeRequest<{ items: Array<{ videoId?: string; rating?: string }> }>(
-				'/videos/getRating',
-				ACCESS_TOKEN,
-				{ method: 'GET', query: { id: TEST_VIDEO_ID } },
-			);
-			const parsed = YoutubeEndpointOutputSchemas.videoActionsGetRating.parse(result);
+			const result = await makeYoutubeRequest<{
+				items: Array<{ videoId?: string; rating?: string }>;
+			}>('/videos/getRating', ACCESS_TOKEN, {
+				method: 'GET',
+				query: { id: TEST_VIDEO_ID },
+			});
+			const parsed =
+				YoutubeEndpointOutputSchemas.videoActionsGetRating.parse(result);
 			expect(parsed).toBeDefined();
 		});
 	});
@@ -453,7 +547,9 @@ describe('YouTube API Type Tests', () => {
 			const mock: CaptionsListResponse = {
 				kind: 'youtube#captionListResponse',
 				etag: 'abc',
-				items: [{ id: 'cap123', kind: 'youtube#caption', etag: 'xyz', snippet }],
+				items: [
+					{ id: 'cap123', kind: 'youtube#caption', etag: 'xyz', snippet },
+				],
 			};
 			const parsed = YoutubeEndpointOutputSchemas.captionsList.parse(mock);
 			expect(parsed.items![0]?.id).toBe('cap123');
@@ -470,9 +566,12 @@ describe('YouTube API Type Tests', () => {
 				ACCESS_TOKEN,
 				{ method: 'GET', query: { part: 'snippet' } },
 			);
-			const parsed = YoutubeEndpointOutputSchemas.i18nListLanguages.parse(result);
+			const parsed =
+				YoutubeEndpointOutputSchemas.i18nListLanguages.parse(result);
 			expect(parsed).toBeDefined();
-			expect(Array.isArray(parsed.items) || parsed.items === undefined).toBe(true);
+			expect(Array.isArray(parsed.items) || parsed.items === undefined).toBe(
+				true,
+			);
 			if (parsed.items && parsed.items.length > 0) {
 				expect(parsed.items[0]?.id).toBeDefined();
 			}
@@ -487,7 +586,9 @@ describe('YouTube API Type Tests', () => {
 			);
 			const parsed = YoutubeEndpointOutputSchemas.i18nListRegions.parse(result);
 			expect(parsed).toBeDefined();
-			expect(Array.isArray(parsed.items) || parsed.items === undefined).toBe(true);
+			expect(Array.isArray(parsed.items) || parsed.items === undefined).toBe(
+				true,
+			);
 		});
 
 		it('videoCategoriesList returns correct type', async () => {
@@ -497,9 +598,12 @@ describe('YouTube API Type Tests', () => {
 				ACCESS_TOKEN,
 				{ method: 'GET', query: { part: 'snippet', regionCode: 'US' } },
 			);
-			const parsed = YoutubeEndpointOutputSchemas.videoCategoriesList.parse(result);
+			const parsed =
+				YoutubeEndpointOutputSchemas.videoCategoriesList.parse(result);
 			expect(parsed).toBeDefined();
-			expect(Array.isArray(parsed.items) || parsed.items === undefined).toBe(true);
+			expect(Array.isArray(parsed.items) || parsed.items === undefined).toBe(
+				true,
+			);
 		});
 	});
 
@@ -512,9 +616,12 @@ describe('YouTube API Type Tests', () => {
 				pageInfo: { totalResults: 1, resultsPerPage: 5 },
 				unknown_top_level_field: true,
 			};
-			const parsed = YoutubeEndpointOutputSchemas.videosGet.parse(videoWithExtra);
+			const parsed =
+				YoutubeEndpointOutputSchemas.videosGet.parse(videoWithExtra);
 			// passthrough() ensures unknown fields survive schema parsing
-			expect((parsed as Record<string, unknown>).unknown_top_level_field).toBe(true);
+			expect((parsed as Record<string, unknown>).unknown_top_level_field).toBe(
+				true,
+			);
 		});
 
 		it('preserves extra fields on search responses', () => {
@@ -525,9 +632,12 @@ describe('YouTube API Type Tests', () => {
 				pageInfo: { totalResults: 0, resultsPerPage: 5 },
 				custom_field: 'preserved',
 			};
-			const parsed = YoutubeEndpointOutputSchemas.searchYouTube.parse(searchWithExtra);
+			const parsed =
+				YoutubeEndpointOutputSchemas.searchYouTube.parse(searchWithExtra);
 			// passthrough() ensures unknown fields survive schema parsing
-			expect((parsed as Record<string, unknown>).custom_field).toBe('preserved');
+			expect((parsed as Record<string, unknown>).custom_field).toBe(
+				'preserved',
+			);
 		});
 
 		it('preserves extra snippet fields spread into DB upsert payload', () => {
@@ -535,18 +645,20 @@ describe('YouTube API Type Tests', () => {
 			const mockVideo = {
 				kind: 'youtube#videoListResponse',
 				etag: 'abc',
-				items: [{
-					id: 'vid123',
-					snippet: {
-						title: 'Test',
-						channelId: 'UC123',
-						defaultLanguage: 'en',
-						liveBroadcastContent: 'none',
+				items: [
+					{
+						id: 'vid123',
+						snippet: {
+							title: 'Test',
+							channelId: 'UC123',
+							defaultLanguage: 'en',
+							liveBroadcastContent: 'none',
+						},
+						statistics: { viewCount: '100', likeCount: '5' },
+						status: { privacyStatus: 'public', uploadStatus: 'processed' },
+						contentDetails: { duration: 'PT5M', definition: 'hd' },
 					},
-					statistics: { viewCount: '100', likeCount: '5' },
-					status: { privacyStatus: 'public', uploadStatus: 'processed' },
-					contentDetails: { duration: 'PT5M', definition: 'hd' },
-				}],
+				],
 				pageInfo: { totalResults: 1, resultsPerPage: 5 },
 			};
 			const parsed = YoutubeEndpointOutputSchemas.videosGet.parse(mockVideo);
@@ -561,30 +673,49 @@ describe('YouTube API Type Tests', () => {
 
 	describe('delete response schemas', () => {
 		it('playlistsDelete schema is valid', () => {
-			const response = { deleted: true, playlist_id: 'PLtest123', http_status: 204 };
-			const parsed = YoutubeEndpointOutputSchemas.playlistsDelete.parse(response);
+			const response = {
+				deleted: true,
+				playlist_id: 'PLtest123',
+				http_status: 204,
+			};
+			const parsed =
+				YoutubeEndpointOutputSchemas.playlistsDelete.parse(response);
 			expect(parsed.deleted).toBe(true);
 			expect(parsed.playlist_id).toBe('PLtest123');
 			expect(parsed.http_status).toBe(204);
 		});
 
 		it('videosDelete schema is valid', () => {
-			const response = { deleted: true, video_id: 'dQw4w9WgXcQ', http_status: 204 };
+			const response = {
+				deleted: true,
+				video_id: 'dQw4w9WgXcQ',
+				http_status: 204,
+			};
 			const parsed = YoutubeEndpointOutputSchemas.videosDelete.parse(response);
 			expect(parsed.deleted).toBe(true);
 			expect(parsed.video_id).toBe('dQw4w9WgXcQ');
 		});
 
 		it('commentsDelete schema is valid', () => {
-			const response = { deleted: true, comment_id: 'comment123', http_status: 204 };
-			const parsed = YoutubeEndpointOutputSchemas.commentsDelete.parse(response);
+			const response = {
+				deleted: true,
+				comment_id: 'comment123',
+				http_status: 204,
+			};
+			const parsed =
+				YoutubeEndpointOutputSchemas.commentsDelete.parse(response);
 			expect(parsed.deleted).toBe(true);
 			expect(parsed.comment_id).toBe('comment123');
 		});
 
 		it('subscriptionsUnsubscribe schema is valid', () => {
-			const response = { unsubscribed: true, subscription_id: 'sub123', http_status: 204 };
-			const parsed = YoutubeEndpointOutputSchemas.subscriptionsUnsubscribe.parse(response);
+			const response = {
+				unsubscribed: true,
+				subscription_id: 'sub123',
+				http_status: 204,
+			};
+			const parsed =
+				YoutubeEndpointOutputSchemas.subscriptionsUnsubscribe.parse(response);
 			expect(parsed.unsubscribed).toBe(true);
 		});
 	});

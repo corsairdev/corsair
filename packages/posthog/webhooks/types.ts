@@ -1,13 +1,13 @@
-import { z } from 'zod';
-import {
-	verifyHmacSignature,
-	verifyHmacSignatureWithPrefix,
-} from 'corsair/http';
 import type {
 	CorsairWebhookMatcher,
 	RawWebhookRequest,
 	WebhookRequest,
 } from 'corsair/core';
+import {
+	verifyHmacSignature,
+	verifyHmacSignatureWithPrefix,
+} from 'corsair/http';
+import { z } from 'zod';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Schemas

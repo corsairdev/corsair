@@ -17,19 +17,30 @@ export const get: AsanaEndpoints['sectionsGet'] = async (ctx, input) => {
 
 	if (result.data?.gid && ctx.db.sections) {
 		try {
-			await ctx.db.sections.upsertByEntityId(result.data.gid, { ...result.data });
+			await ctx.db.sections.upsertByEntityId(result.data.gid, {
+				...result.data,
+			});
 		} catch (error) {
 			console.warn('Failed to save section to database:', error);
 		}
 	}
 
-	await logEventFromContext(ctx, 'asana.sections.get', { section_gid }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'asana.sections.get',
+		{ section_gid },
+		'completed',
+	);
 	return result;
 };
 
 export const list: AsanaEndpoints['sectionsList'] = async (ctx, input) => {
 	const { project_gid, limit, offset, opt_fields, opt_pretty } = input;
-	const query: Record<string, string | number | boolean | undefined> = { limit, offset, opt_pretty };
+	const query: Record<string, string | number | boolean | undefined> = {
+		limit,
+		offset,
+		opt_pretty,
+	};
 	if (opt_fields?.length) {
 		query.opt_fields = opt_fields.join(',');
 	}
@@ -51,7 +62,12 @@ export const list: AsanaEndpoints['sectionsList'] = async (ctx, input) => {
 		}
 	}
 
-	await logEventFromContext(ctx, 'asana.sections.list', { project_gid }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'asana.sections.list',
+		{ project_gid },
+		'completed',
+	);
 	return result;
 };
 
@@ -69,13 +85,20 @@ export const create: AsanaEndpoints['sectionsCreate'] = async (ctx, input) => {
 
 	if (result.data?.gid && ctx.db.sections) {
 		try {
-			await ctx.db.sections.upsertByEntityId(result.data.gid, { ...result.data });
+			await ctx.db.sections.upsertByEntityId(result.data.gid, {
+				...result.data,
+			});
 		} catch (error) {
 			console.warn('Failed to save section to database:', error);
 		}
 	}
 
-	await logEventFromContext(ctx, 'asana.sections.create', { project_gid, name: data.name }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'asana.sections.create',
+		{ project_gid, name: data.name },
+		'completed',
+	);
 	return result;
 };
 
@@ -93,17 +116,27 @@ export const update: AsanaEndpoints['sectionsUpdate'] = async (ctx, input) => {
 
 	if (result.data?.gid && ctx.db.sections) {
 		try {
-			await ctx.db.sections.upsertByEntityId(result.data.gid, { ...result.data });
+			await ctx.db.sections.upsertByEntityId(result.data.gid, {
+				...result.data,
+			});
 		} catch (error) {
 			console.warn('Failed to update section in database:', error);
 		}
 	}
 
-	await logEventFromContext(ctx, 'asana.sections.update', { section_gid }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'asana.sections.update',
+		{ section_gid },
+		'completed',
+	);
 	return result;
 };
 
-export const deleteSection: AsanaEndpoints['sectionsDelete'] = async (ctx, input) => {
+export const deleteSection: AsanaEndpoints['sectionsDelete'] = async (
+	ctx,
+	input,
+) => {
 	const { section_gid, opt_pretty } = input;
 	const result = await makeAsanaRequest<AsanaEndpointOutputs['sectionsDelete']>(
 		`sections/${section_gid}`,
@@ -111,7 +144,12 @@ export const deleteSection: AsanaEndpoints['sectionsDelete'] = async (ctx, input
 		{ method: 'DELETE', query: { opt_pretty } },
 	);
 
-	await logEventFromContext(ctx, 'asana.sections.delete', { section_gid }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'asana.sections.delete',
+		{ section_gid },
+		'completed',
+	);
 	return result;
 };
 
@@ -123,6 +161,11 @@ export const insert: AsanaEndpoints['sectionsInsert'] = async (ctx, input) => {
 		{ method: 'POST', body: { data }, query: { opt_pretty } },
 	);
 
-	await logEventFromContext(ctx, 'asana.sections.insert', { project_gid }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'asana.sections.insert',
+		{ project_gid },
+		'completed',
+	);
 	return result;
 };

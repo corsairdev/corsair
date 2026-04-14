@@ -10,8 +10,6 @@ import type {
 	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
-	RequiredPluginEndpointSchemas,
-	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
 import type { SlackEndpointInputs, SlackEndpointOutputs } from './endpoints';
 import {
@@ -76,7 +74,6 @@ import type { PickAuth } from 'corsair/core';
 import { errorHandlers } from './error-handlers';
 
 export type SlackEndpoints = {
-	channelsRandom: SlackEndpoint<'channelsRandom'>;
 	channelsArchive: SlackEndpoint<'channelsArchive'>;
 	channelsClose: SlackEndpoint<'channelsClose'>;
 	channelsCreate: SlackEndpoint<'channelsCreate'>;
@@ -122,7 +119,6 @@ export type SlackEndpoints = {
 
 const slackEndpointsNested = {
 	channels: {
-		random: Channels.random,
 		archive: Channels.archive,
 		close: Channels.close,
 		create: Channels.create,
@@ -180,10 +176,6 @@ const slackEndpointsNested = {
 } as const;
 
 export const slackEndpointSchemas = {
-	'channels.random': {
-		input: SlackEndpointInputSchemas.channelsRandom,
-		output: SlackEndpointOutputSchemas.channelsRandom,
-	},
 	'channels.archive': {
 		input: SlackEndpointInputSchemas.channelsArchive,
 		output: SlackEndpointOutputSchemas.channelsArchive,
@@ -393,7 +385,6 @@ const defaultAuthType = 'api_key' as const;
  * Used by the MCP server permission system to decide allow / deny / require_approval.
  */
 const slackEndpointMeta = {
-	'channels.random': { riskLevel: 'read', description: 'Get a random channel' },
 	'channels.archive': {
 		riskLevel: 'destructive',
 		description: 'Archive a Slack channel [DESTRUCTIVE]',
@@ -776,7 +767,6 @@ export { createSlackEventMatch } from './webhooks/types';
 // ─────────────────────────────────────────────────────────────────────────────
 
 export type {
-	ChannelsRandomResponse,
 	ChatDeleteResponse,
 	ChatGetPermalinkResponse,
 	ChatPostMessageResponse,

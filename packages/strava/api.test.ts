@@ -1,6 +1,9 @@
-import 'dotenv/config'
+import 'dotenv/config';
 import { makeStravaRequest } from './client';
 import type {
+	ActivitiesListCommentsResponse,
+	ActivitiesListKudoersResponse,
+	ActivitiesListLapsResponse,
 	ActivitiesListResponse,
 	ActivityResponse,
 	AthleteResponse,
@@ -10,12 +13,12 @@ import type {
 	SegmentResponse,
 	SegmentsListResponse,
 	StreamSetResponse,
-	ActivitiesListLapsResponse,
-	ActivitiesListCommentsResponse,
-	ActivitiesListKudoersResponse,
 	UploadResponse,
 } from './endpoints/types';
-import { StravaEndpointInputSchemas, StravaEndpointOutputSchemas } from './endpoints/types';
+import {
+	StravaEndpointInputSchemas,
+	StravaEndpointOutputSchemas,
+} from './endpoints/types';
 
 const ACCESS_TOKEN = process.env.STRAVA_ACCESS_TOKEN!;
 const ATHLETE_ID = parseInt(process.env.STRAVA_ATHLETE_ID || '0');
@@ -247,7 +250,7 @@ describe('Strava API Type Tests', () => {
 				'athlete',
 				ACCESS_TOKEN,
 			);
-			
+
 			const gearId = athlete.bikes?.[0]?.id ?? athlete.shoes?.[0]?.id;
 
 			if (!gearId) {
@@ -255,10 +258,7 @@ describe('Strava API Type Tests', () => {
 				return;
 			}
 
-			const response = await makeStravaRequest(
-				`gear/${gearId}`,
-				ACCESS_TOKEN,
-			);
+			const response = await makeStravaRequest(`gear/${gearId}`, ACCESS_TOKEN);
 			StravaEndpointOutputSchemas.gearGet.parse(response);
 		});
 	});
@@ -308,8 +308,12 @@ describe('Strava API Type Tests', () => {
 				nested_new: { key: 'value' },
 			};
 			const parsed = StravaEndpointOutputSchemas.activitiesGet.parse(raw);
-			expect((parsed as Record<string, unknown>).future_strava_field).toBe('some_value');
-			expect((parsed as Record<string, unknown>).nested_new).toEqual({ key: 'value' });
+			expect((parsed as Record<string, unknown>).future_strava_field).toBe(
+				'some_value',
+			);
+			expect((parsed as Record<string, unknown>).nested_new).toEqual({
+				key: 'value',
+			});
 		});
 
 		it('athlete response preserves unknown fields after parse', () => {
@@ -340,7 +344,9 @@ describe('Strava API Type Tests', () => {
 				client_custom_field: 'tracking_id_123',
 			};
 			const parsed = StravaEndpointInputSchemas.activitiesGet.parse(raw);
-			expect((parsed as Record<string, unknown>).client_custom_field).toBe('tracking_id_123');
+			expect((parsed as Record<string, unknown>).client_custom_field).toBe(
+				'tracking_id_123',
+			);
 		});
 	});
 });

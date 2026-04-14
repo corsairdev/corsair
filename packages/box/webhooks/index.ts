@@ -1,9 +1,9 @@
 import {
 	accepted,
 	created as collaborationCreated,
+	updated as collaborationUpdated,
 	rejected,
 	removed,
-	updated as collaborationUpdated,
 } from './collaborations';
 import {
 	created as commentCreated,

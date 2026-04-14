@@ -1,4 +1,1 @@
-
-export type YoutubeWebhookOutputs = {
-	
-};
+export type YoutubeWebhookOutputs = {};

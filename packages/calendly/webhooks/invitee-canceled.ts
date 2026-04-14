@@ -31,7 +31,7 @@ export const inviteeCanceled: CalendlyWebhooks['inviteeCanceled'] = {
 			try {
 				const uriParts = invitee.uri.split('/');
 				// URI always has at least one segment; last segment is the UUID
-			const id = uriParts[uriParts.length - 1]!;
+				const id = uriParts[uriParts.length - 1]!;
 				await ctx.db.invitees.upsertByEntityId(id, {
 					id,
 					...invitee,
@@ -40,10 +40,7 @@ export const inviteeCanceled: CalendlyWebhooks['inviteeCanceled'] = {
 					updated_at: invitee.updated_at ? new Date(invitee.updated_at) : null,
 				});
 			} catch (error) {
-				console.warn(
-					'Failed to update canceled invitee in database:',
-					error,
-				);
+				console.warn('Failed to update canceled invitee in database:', error);
 			}
 		}
 
@@ -53,7 +50,7 @@ export const inviteeCanceled: CalendlyWebhooks['inviteeCanceled'] = {
 			try {
 				const uriParts = event.uri.split('/');
 				// URI always has at least one segment; last segment is the UUID
-			const id = uriParts[uriParts.length - 1]!;
+				const id = uriParts[uriParts.length - 1]!;
 				const existing = await ctx.db.scheduledEvents.findByEntityId(id);
 				await ctx.db.scheduledEvents.upsertByEntityId(id, {
 					...(existing?.data ?? {}),

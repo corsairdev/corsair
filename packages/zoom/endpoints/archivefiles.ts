@@ -9,7 +9,7 @@ export const list: ZoomEndpoints['archiveFilesList'] = async (ctx, input) => {
 		ctx.key,
 		{
 			method: 'GET',
-			query: input
+			query: input,
 		},
 	);
 

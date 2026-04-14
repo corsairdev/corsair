@@ -7,14 +7,10 @@ export const get: CalendlyEndpoints['inviteesGet'] = async (ctx, input) => {
 	const { event_uuid, invitee_uuid, ...query } = input;
 	const result = await makeCalendlyRequest<
 		CalendlyEndpointOutputs['inviteesGet']
-	>(
-		`scheduled_events/${event_uuid}/invitees/${invitee_uuid}`,
-		ctx.key,
-		{
-			method: 'GET',
-			query,
-		},
-	);
+	>(`scheduled_events/${event_uuid}/invitees/${invitee_uuid}`, ctx.key, {
+		method: 'GET',
+		query,
+	});
 
 	if (result.resource && ctx.db.invitees) {
 		try {
@@ -59,7 +55,7 @@ export const list: CalendlyEndpoints['inviteesList'] = async (ctx, input) => {
 			for (const invitee of result.collection) {
 				const uriParts = invitee.uri.split('/');
 				// URI always has at least one segment; last segment is the UUID
-			const id = uriParts[uriParts.length - 1]!;
+				const id = uriParts[uriParts.length - 1]!;
 				await ctx.db.invitees.upsertByEntityId(id, {
 					id,
 					...invitee,
@@ -88,14 +84,10 @@ export const create: CalendlyEndpoints['inviteesCreate'] = async (
 	const { event_type_uuid, ...body } = input;
 	const result = await makeCalendlyRequest<
 		CalendlyEndpointOutputs['inviteesCreate']
-	>(
-		`one_off_event_types/${event_type_uuid}/invitees`,
-		ctx.key,
-		{
-			method: 'POST',
-			body,
-		},
-	);
+	>(`one_off_event_types/${event_type_uuid}/invitees`, ctx.key, {
+		method: 'POST',
+		body,
+	});
 
 	if (result.resource && ctx.db.invitees) {
 		try {
@@ -134,7 +126,7 @@ export const deleteData: CalendlyEndpoints['inviteesDeleteData'] = async (
 		CalendlyEndpointOutputs['inviteesDeleteData']
 	>('data_compliance/deletion/invitees', ctx.key, {
 		method: 'POST',
-		body: input
+		body: input,
 	});
 
 	await logEventFromContext(
@@ -172,7 +164,10 @@ export const getNoShow: CalendlyEndpoints['inviteesGetNoShow'] = async (
 				});
 			}
 		} catch (error) {
-			console.warn('Failed to update invitee from no-show record in database:', error);
+			console.warn(
+				'Failed to update invitee from no-show record in database:',
+				error,
+			);
 		}
 	}
 
@@ -193,7 +188,7 @@ export const markNoShow: CalendlyEndpoints['inviteesMarkNoShow'] = async (
 		CalendlyEndpointOutputs['inviteesMarkNoShow']
 	>('invitee_no_shows', ctx.key, {
 		method: 'POST',
-		body: input
+		body: input,
 	});
 
 	if (result.resource?.invitee && ctx.db.invitees) {

@@ -26,7 +26,7 @@ export const challenge: AsanaWebhooks['challenge'] = {
 			};
 		}
 
-        _ctx.keys.set_webhook_signature(hookSecret);
+		_ctx.keys.set_webhook_signature(hookSecret);
 
 		return {
 			success: true,

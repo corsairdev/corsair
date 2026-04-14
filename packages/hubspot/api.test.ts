@@ -1,4 +1,4 @@
-import 'dotenv/config'
+import 'dotenv/config';
 import { makeHubSpotRequest } from './client';
 import type {
 	CreateCompanyResponse,
@@ -20,7 +20,8 @@ import type {
 	UpdateDealResponse,
 	UpdateTicketResponse,
 } from './endpoints/types';
-import { HubSpotEndpointOutputSchemas } from './endpoints/types';import 'dotenv/config'
+import { HubSpotEndpointOutputSchemas } from './endpoints/types';
+import 'dotenv/config';
 
 type AssertExactType<T, U> = T extends U ? (U extends T ? true : never) : never;
 

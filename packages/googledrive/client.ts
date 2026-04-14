@@ -1,5 +1,4 @@
-import type { ApiRequestOptions } from 'corsair/http';
-import type { OpenAPIConfig } from 'corsair/http';
+import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
 import { request } from 'corsair/http';
 
 export class GoogleDriveAPIError extends Error {
@@ -40,9 +39,12 @@ async function refreshAccessToken(
 		);
 	}
 
-	const json = await response.json() as { access_token: string; expires_in: number }
+	const json = (await response.json()) as {
+		access_token: string;
+		expires_in: number;
+	};
 
-	return json
+	return json;
 }
 
 export async function getValidAccessToken({
@@ -63,7 +65,12 @@ export async function getValidAccessToken({
 	const now = Math.floor(Date.now() / 1000);
 	const bufferSeconds = 5 * 60;
 
-	if (!forceRefresh && accessToken && expiresAt && Number(expiresAt) > now + bufferSeconds) {
+	if (
+		!forceRefresh &&
+		accessToken &&
+		expiresAt &&
+		Number(expiresAt) > now + bufferSeconds
+	) {
 		return { accessToken, expiresAt: Number(expiresAt), refreshed: false };
 	}
 

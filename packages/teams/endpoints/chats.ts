@@ -1,5 +1,5 @@
-import type { TeamsEndpoints } from '..';
 import { logEventFromContext } from 'corsair/core';
+import type { TeamsEndpoints } from '..';
 import { makeTeamsRequest } from '../client';
 import type { TeamsEndpointOutputs } from './types';
 
@@ -7,7 +7,9 @@ function toChatRecord(chat: TeamsEndpointOutputs['chatsGet']) {
 	return {
 		...chat,
 		id: chat.id,
-		createdAt: chat.createdDateTime ? new Date(chat.createdDateTime) : undefined,
+		createdAt: chat.createdDateTime
+			? new Date(chat.createdDateTime)
+			: undefined,
 	};
 }
 
@@ -32,8 +34,8 @@ function toChatMessageRecord(
 export const list: TeamsEndpoints['chatsList'] = async (ctx, input) => {
 	const { filter, top } = input;
 	const query = {
-		...(filter && { '$filter': filter }),
-		...(top && { '$top': top }),
+		...(filter && { $filter: filter }),
+		...(top && { $top: top }),
 	};
 
 	const result = await makeTeamsRequest<TeamsEndpointOutputs['chatsList']>(
@@ -103,58 +105,81 @@ export const create: TeamsEndpoints['chatsCreate'] = async (ctx, input) => {
 		}
 	}
 
-	await logEventFromContext(ctx, 'teams.chats.create', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'teams.chats.create',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
-export const listMessages: TeamsEndpoints['chatsListMessages'] = async (ctx, input) => {
+export const listMessages: TeamsEndpoints['chatsListMessages'] = async (
+	ctx,
+	input,
+) => {
 	const { chatId, top, skipToken } = input;
 	const query = {
-		...(top && { '$top': top }),
-		...(skipToken && { '$skiptoken': skipToken }),
+		...(top && { $top: top }),
+		...(skipToken && { $skiptoken: skipToken }),
 	};
 
-	const result = await makeTeamsRequest<TeamsEndpointOutputs['chatsListMessages']>(
-		`chats/${chatId}/messages`,
-		ctx.key,
-		{ method: 'GET', query },
-	);
+	const result = await makeTeamsRequest<
+		TeamsEndpointOutputs['chatsListMessages']
+	>(`chats/${chatId}/messages`, ctx.key, { method: 'GET', query });
 
 	if (result.value && ctx.db.messages) {
 		try {
 			for (const msg of result.value) {
-				await ctx.db.messages.upsertByEntityId(msg.id, toChatMessageRecord(msg, chatId));
+				await ctx.db.messages.upsertByEntityId(
+					msg.id,
+					toChatMessageRecord(msg, chatId),
+				);
 			}
 		} catch (error) {
 			console.warn('Failed to save chat messages to database:', error);
 		}
 	}
 
-	await logEventFromContext(ctx, 'teams.chats.listMessages', { chatId }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'teams.chats.listMessages',
+		{ chatId },
+		'completed',
+	);
 	return result;
 };
 
-export const sendMessage: TeamsEndpoints['chatsSendMessage'] = async (ctx, input) => {
+export const sendMessage: TeamsEndpoints['chatsSendMessage'] = async (
+	ctx,
+	input,
+) => {
 	const { chatId, ...body } = input;
 
-	const result = await makeTeamsRequest<TeamsEndpointOutputs['chatsSendMessage']>(
-		`chats/${chatId}/messages`,
-		ctx.key,
-		{
-			method: 'POST',
-			// Zod-inferred body type (input minus chatId) isn't assignable to Record<string, unknown> without a cast
-			body: { ...body } as Record<string, unknown>,
-		},
-	);
+	const result = await makeTeamsRequest<
+		TeamsEndpointOutputs['chatsSendMessage']
+	>(`chats/${chatId}/messages`, ctx.key, {
+		method: 'POST',
+		// Zod-inferred body type (input minus chatId) isn't assignable to Record<string, unknown> without a cast
+		body: { ...body } as Record<string, unknown>,
+	});
 
 	if (result.id && ctx.db.messages) {
 		try {
-			await ctx.db.messages.upsertByEntityId(result.id, toChatMessageRecord(result, chatId));
+			await ctx.db.messages.upsertByEntityId(
+				result.id,
+				toChatMessageRecord(result, chatId),
+			);
 		} catch (error) {
 			console.warn('Failed to save chat message to database:', error);
 		}
 	}
 
-	await logEventFromContext(ctx, 'teams.chats.sendMessage', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'teams.chats.sendMessage',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };

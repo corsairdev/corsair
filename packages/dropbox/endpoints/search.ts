@@ -27,8 +27,12 @@ export const query: DropboxEndpoints['searchQuery'] = async (ctx, input) => {
 				if (meta['.tag'] === 'file') {
 					await ctx.db.files.upsertByEntityId(meta.id, {
 						...meta,
-						client_modified: meta.client_modified ? new Date(meta.client_modified) : null,
-						server_modified: meta.server_modified ? new Date(meta.server_modified) : null,
+						client_modified: meta.client_modified
+							? new Date(meta.client_modified)
+							: null,
+						server_modified: meta.server_modified
+							? new Date(meta.server_modified)
+							: null,
 					});
 				} else if (meta['.tag'] === 'folder' && ctx.db.folders) {
 					await ctx.db.folders.upsertByEntityId(meta.id, {

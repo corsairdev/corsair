@@ -1,12 +1,12 @@
 import {
-	YoutubeVideo,
-	YoutubePlaylist,
-	YoutubePlaylistItem,
+	YoutubeActivity,
+	YoutubeCaption,
 	YoutubeChannel,
 	YoutubeComment,
+	YoutubePlaylist,
+	YoutubePlaylistItem,
 	YoutubeSubscription,
-	YoutubeCaption,
-	YoutubeActivity,
+	YoutubeVideo,
 } from './database';
 
 export const YoutubeSchema = {
@@ -28,12 +28,12 @@ export type YoutubeCredentials = {
 };
 
 export type {
-	YoutubeVideo,
-	YoutubePlaylist,
-	YoutubePlaylistItem,
+	YoutubeActivity,
+	YoutubeCaption,
 	YoutubeChannel,
 	YoutubeComment,
+	YoutubePlaylist,
+	YoutubePlaylistItem,
 	YoutubeSubscription,
-	YoutubeCaption,
-	YoutubeActivity,
+	YoutubeVideo,
 } from './database';

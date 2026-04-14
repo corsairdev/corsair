@@ -290,9 +290,7 @@ describe('Stripe API Type Tests', () => {
 				);
 				const firstId = listResult.data?.[0]?.id;
 				if (!firstId) {
-					throw new Error(
-						'No payment intents found to test paymentIntentsGet',
-					);
+					throw new Error('No payment intents found to test paymentIntentsGet');
 				}
 				testPaymentIntentId = firstId;
 			}
@@ -403,5 +401,4 @@ describe('Stripe API Type Tests', () => {
 			StripeEndpointOutputSchemas.sourcesGet.parse(result);
 		});
 	});
-
 });

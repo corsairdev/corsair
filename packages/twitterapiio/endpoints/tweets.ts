@@ -2,10 +2,8 @@ import { logEventFromContext } from 'corsair/core';
 import type { TwitterApiIOEndpoints } from '..';
 import { makeTwitterApiIORequest } from '../client';
 import { persistTweetWithAuthor } from '../utils';
-import {
-	buildAdvancedSearchQuery,
-	type TwitterApiIOEndpointOutputs,
-} from './types';
+import type { TwitterApiIOEndpointOutputs } from './types';
+import { buildAdvancedSearchQuery } from './types';
 
 export const getByIds: TwitterApiIOEndpoints['tweetsGetByIds'] = async (
 	ctx,

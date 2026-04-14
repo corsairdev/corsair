@@ -1,17 +1,18 @@
-import type { StripeEndpoints } from '..';
 import { logEventFromContext } from 'corsair/core';
+import type { StripeEndpoints } from '..';
 import { makeStripeRequest } from '../client';
 import type { StripeEndpointOutputs } from './types';
 
-export const create: StripeEndpoints['customersCreate'] = async (ctx, input) => {
-	const result = await makeStripeRequest<StripeEndpointOutputs['customersCreate']>(
-		'customers',
-		ctx.key,
-		{
-			method: 'POST',
-			body: { ...input },
-		},
-	);
+export const create: StripeEndpoints['customersCreate'] = async (
+	ctx,
+	input,
+) => {
+	const result = await makeStripeRequest<
+		StripeEndpointOutputs['customersCreate']
+	>('customers', ctx.key, {
+		method: 'POST',
+		body: { ...input },
+	});
 
 	if (result.id && ctx.db.customers) {
 		try {
@@ -33,13 +34,14 @@ export const create: StripeEndpoints['customersCreate'] = async (ctx, input) => 
 	return result;
 };
 
-export const deleteCustomer: StripeEndpoints['customersDelete'] = async (ctx, input) => {
+export const deleteCustomer: StripeEndpoints['customersDelete'] = async (
+	ctx,
+	input,
+) => {
 	const { id } = input;
-	const result = await makeStripeRequest<StripeEndpointOutputs['customersDelete']>(
-		`customers/${id}`,
-		ctx.key,
-		{ method: 'DELETE' },
-	);
+	const result = await makeStripeRequest<
+		StripeEndpointOutputs['customersDelete']
+	>(`customers/${id}`, ctx.key, { method: 'DELETE' });
 
 	if (ctx.db.customers) {
 		try {
@@ -87,21 +89,21 @@ export const get: StripeEndpoints['customersGet'] = async (ctx, input) => {
 };
 
 export const list: StripeEndpoints['customersList'] = async (ctx, input) => {
-	const result = await makeStripeRequest<StripeEndpointOutputs['customersList']>(
-		'customers',
-		ctx.key,
-		{
-			method: 'GET',
-			query: { ...input },
-		},
-	);
+	const result = await makeStripeRequest<
+		StripeEndpointOutputs['customersList']
+	>('customers', ctx.key, {
+		method: 'GET',
+		query: { ...input },
+	});
 
 	if (result.data && ctx.db.customers) {
 		try {
 			for (const customer of result.data) {
 				await ctx.db.customers.upsertByEntityId(customer.id, {
 					...customer,
-					createdAt: customer.created ? new Date(customer.created * 1000) : undefined,
+					createdAt: customer.created
+						? new Date(customer.created * 1000)
+						: undefined,
 				});
 			}
 		} catch (error) {

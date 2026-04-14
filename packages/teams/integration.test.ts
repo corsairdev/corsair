@@ -41,7 +41,9 @@ describe('Teams plugin integration', () => {
 			expect(Array.isArray(result.value)).toBe(true);
 
 			const orm = createCorsairOrm(testDb.database);
-			const events = await orm.events.findMany({ where: { event_type: 'teams.teams.list' } });
+			const events = await orm.events.findMany({
+				where: { event_type: 'teams.teams.list' },
+			});
 			expect(events.length).toBeGreaterThan(0);
 
 			if (result.value.length > 0) {
@@ -70,7 +72,9 @@ describe('Teams plugin integration', () => {
 			expect(result.id).toBe(teamId);
 
 			const orm = createCorsairOrm(testDb.database);
-			const events = await orm.events.findMany({ where: { event_type: 'teams.teams.get' } });
+			const events = await orm.events.findMany({
+				where: { event_type: 'teams.teams.get' },
+			});
 			expect(events.length).toBeGreaterThan(0);
 			const lastEvent = events[events.length - 1]!;
 			expect(parsePayload(lastEvent.payload)).toMatchObject(input);
@@ -101,9 +105,13 @@ describe('Teams plugin integration', () => {
 			expect(result).toBeDefined();
 
 			const orm = createCorsairOrm(testDb.database);
-			const events = await orm.events.findMany({ where: { event_type: 'teams.teams.create' } });
+			const events = await orm.events.findMany({
+				where: { event_type: 'teams.teams.create' },
+			});
 			expect(events.length).toBeGreaterThan(0);
-			expect(parsePayload(events[events.length - 1]!.payload)).toMatchObject(input);
+			expect(parsePayload(events[events.length - 1]!.payload)).toMatchObject(
+				input,
+			);
 
 			testDb.cleanup();
 		});
@@ -117,7 +125,10 @@ describe('Teams plugin integration', () => {
 			const teamId = listed.value?.[0]?.id;
 			if (!teamId) return;
 
-			const input = { teamId, description: `Updated by corsair test ${Date.now()}` };
+			const input = {
+				teamId,
+				description: `Updated by corsair test ${Date.now()}`,
+			};
 			let result: Awaited<ReturnType<typeof corsair.teams.api.teams.update>>;
 			try {
 				result = await corsair.teams.api.teams.update(input);
@@ -130,9 +141,13 @@ describe('Teams plugin integration', () => {
 			expect(result).toBeDefined();
 
 			const orm = createCorsairOrm(testDb.database);
-			const events = await orm.events.findMany({ where: { event_type: 'teams.teams.update' } });
+			const events = await orm.events.findMany({
+				where: { event_type: 'teams.teams.update' },
+			});
 			expect(events.length).toBeGreaterThan(0);
-			expect(parsePayload(events[events.length - 1]!.payload)).toMatchObject(input);
+			expect(parsePayload(events[events.length - 1]!.payload)).toMatchObject(
+				input,
+			);
 
 			testDb.cleanup();
 		});
@@ -163,9 +178,13 @@ describe('Teams plugin integration', () => {
 			expect(Array.isArray(result.value)).toBe(true);
 
 			const orm = createCorsairOrm(testDb.database);
-			const events = await orm.events.findMany({ where: { event_type: 'teams.channels.list' } });
+			const events = await orm.events.findMany({
+				where: { event_type: 'teams.channels.list' },
+			});
 			expect(events.length).toBeGreaterThan(0);
-			expect(parsePayload(events[events.length - 1]!.payload)).toMatchObject(input);
+			expect(parsePayload(events[events.length - 1]!.payload)).toMatchObject(
+				input,
+			);
 
 			if (result.value.length > 0) {
 				const first = result.value[0]!;
@@ -194,9 +213,13 @@ describe('Teams plugin integration', () => {
 			expect(result.id).toBe(channelId);
 
 			const orm = createCorsairOrm(testDb.database);
-			const events = await orm.events.findMany({ where: { event_type: 'teams.channels.get' } });
+			const events = await orm.events.findMany({
+				where: { event_type: 'teams.channels.get' },
+			});
 			expect(events.length).toBeGreaterThan(0);
-			expect(parsePayload(events[events.length - 1]!.payload)).toMatchObject(input);
+			expect(parsePayload(events[events.length - 1]!.payload)).toMatchObject(
+				input,
+			);
 
 			testDb.cleanup();
 		});
@@ -220,32 +243,48 @@ describe('Teams plugin integration', () => {
 			expect(created.id).toBeDefined();
 
 			const orm = createCorsairOrm(testDb.database);
-			const createEvents = await orm.events.findMany({ where: { event_type: 'teams.channels.create' } });
+			const createEvents = await orm.events.findMany({
+				where: { event_type: 'teams.channels.create' },
+			});
 			expect(createEvents.length).toBeGreaterThan(0);
-			expect(parsePayload(createEvents[createEvents.length - 1]!.payload)).toMatchObject(createInput);
+			expect(
+				parsePayload(createEvents[createEvents.length - 1]!.payload),
+			).toMatchObject(createInput);
 
 			const fromDb = await corsair.teams.db.channels.findByEntityId(created.id);
 			expect(fromDb).not.toBeNull();
 			expect(fromDb?.data.id).toBe(created.id);
 
 			if (created.id) {
-				const updateInput = { teamId, channelId: created.id, description: 'Updated by corsair test' };
+				const updateInput = {
+					teamId,
+					channelId: created.id,
+					description: 'Updated by corsair test',
+				};
 				const updated = await corsair.teams.api.channels.update(updateInput);
 
 				expect(updated).toBeDefined();
 
-				const updateEvents = await orm.events.findMany({ where: { event_type: 'teams.channels.update' } });
+				const updateEvents = await orm.events.findMany({
+					where: { event_type: 'teams.channels.update' },
+				});
 				expect(updateEvents.length).toBeGreaterThan(0);
-				expect(parsePayload(updateEvents[updateEvents.length - 1]!.payload)).toMatchObject(updateInput);
+				expect(
+					parsePayload(updateEvents[updateEvents.length - 1]!.payload),
+				).toMatchObject(updateInput);
 
 				const deleteInput = { teamId, channelId: created.id };
 				const deleted = await corsair.teams.api.channels.delete(deleteInput);
 
 				expect(deleted).toBeDefined();
 
-				const deleteEvents = await orm.events.findMany({ where: { event_type: 'teams.channels.delete' } });
+				const deleteEvents = await orm.events.findMany({
+					where: { event_type: 'teams.channels.delete' },
+				});
 				expect(deleteEvents.length).toBeGreaterThan(0);
-				expect(parsePayload(deleteEvents[deleteEvents.length - 1]!.payload)).toMatchObject(deleteInput);
+				expect(
+					parsePayload(deleteEvents[deleteEvents.length - 1]!.payload),
+				).toMatchObject(deleteInput);
 			}
 
 			testDb.cleanup();
@@ -283,16 +322,23 @@ describe('Teams plugin integration', () => {
 			const sendInput = {
 				teamId,
 				channelId,
-				body: { content: `corsair integration test ${Date.now()}`, contentType: 'text' as const },
+				body: {
+					content: `corsair integration test ${Date.now()}`,
+					contentType: 'text' as const,
+				},
 			};
 			const sent = await corsair.teams.api.messages.send(sendInput);
 
 			expect(sent).toBeDefined();
 			expect(sent.id).toBeDefined();
 
-			const sendEvents = await orm.events.findMany({ where: { event_type: 'teams.messages.send' } });
+			const sendEvents = await orm.events.findMany({
+				where: { event_type: 'teams.messages.send' },
+			});
 			expect(sendEvents.length).toBeGreaterThan(0);
-			expect(parsePayload(sendEvents[sendEvents.length - 1]!.payload)).toMatchObject(sendInput);
+			expect(
+				parsePayload(sendEvents[sendEvents.length - 1]!.payload),
+			).toMatchObject(sendInput);
 
 			const fromDb = await corsair.teams.db.messages.findByEntityId(sent.id);
 			expect(fromDb).not.toBeNull();
@@ -305,7 +351,9 @@ describe('Teams plugin integration', () => {
 			expect(list).toBeDefined();
 			expect(Array.isArray(list.value)).toBe(true);
 
-			const listEvents = await orm.events.findMany({ where: { event_type: 'teams.messages.list' } });
+			const listEvents = await orm.events.findMany({
+				where: { event_type: 'teams.messages.list' },
+			});
 			expect(listEvents.length).toBeGreaterThan(0);
 
 			// get
@@ -315,35 +363,49 @@ describe('Teams plugin integration', () => {
 			expect(got).toBeDefined();
 			expect(got.id).toBe(sent.id);
 
-			const getEvents = await orm.events.findMany({ where: { event_type: 'teams.messages.get' } });
+			const getEvents = await orm.events.findMany({
+				where: { event_type: 'teams.messages.get' },
+			});
 			expect(getEvents.length).toBeGreaterThan(0);
-			expect(parsePayload(getEvents[getEvents.length - 1]!.payload)).toMatchObject(getInput);
+			expect(
+				parsePayload(getEvents[getEvents.length - 1]!.payload),
+			).toMatchObject(getInput);
 
 			// reply
 			const replyInput = {
 				teamId,
 				channelId,
 				messageId: sent.id,
-				body: { content: 'corsair integration test reply', contentType: 'text' as const },
+				body: {
+					content: 'corsair integration test reply',
+					contentType: 'text' as const,
+				},
 			};
 			const replied = await corsair.teams.api.messages.reply(replyInput);
 
 			expect(replied).toBeDefined();
 			expect(replied.id).toBeDefined();
 
-			const replyEvents = await orm.events.findMany({ where: { event_type: 'teams.messages.reply' } });
+			const replyEvents = await orm.events.findMany({
+				where: { event_type: 'teams.messages.reply' },
+			});
 			expect(replyEvents.length).toBeGreaterThan(0);
-			expect(parsePayload(replyEvents[replyEvents.length - 1]!.payload)).toMatchObject(replyInput);
+			expect(
+				parsePayload(replyEvents[replyEvents.length - 1]!.payload),
+			).toMatchObject(replyInput);
 
 			// listReplies
 			const listRepliesInput = { teamId, channelId, messageId: sent.id };
-			const replies = await corsair.teams.api.messages.listReplies(listRepliesInput);
+			const replies =
+				await corsair.teams.api.messages.listReplies(listRepliesInput);
 
 			expect(replies).toBeDefined();
 			expect(Array.isArray(replies.value)).toBe(true);
 			expect(replies.value.length).toBeGreaterThan(0);
 
-			const listRepliesEvents = await orm.events.findMany({ where: { event_type: 'teams.messages.listReplies' } });
+			const listRepliesEvents = await orm.events.findMany({
+				where: { event_type: 'teams.messages.listReplies' },
+			});
 			expect(listRepliesEvents.length).toBeGreaterThan(0);
 
 			// delete
@@ -352,9 +414,13 @@ describe('Teams plugin integration', () => {
 
 			expect(deleted).toBeDefined();
 
-			const deleteEvents = await orm.events.findMany({ where: { event_type: 'teams.messages.delete' } });
+			const deleteEvents = await orm.events.findMany({
+				where: { event_type: 'teams.messages.delete' },
+			});
 			expect(deleteEvents.length).toBeGreaterThan(0);
-			expect(parsePayload(deleteEvents[deleteEvents.length - 1]!.payload)).toMatchObject(deleteInput);
+			expect(
+				parsePayload(deleteEvents[deleteEvents.length - 1]!.payload),
+			).toMatchObject(deleteInput);
 
 			testDb.cleanup();
 		});
@@ -385,9 +451,13 @@ describe('Teams plugin integration', () => {
 			expect(Array.isArray(list.value)).toBe(true);
 
 			const orm = createCorsairOrm(testDb.database);
-			const listEvents = await orm.events.findMany({ where: { event_type: 'teams.members.list' } });
+			const listEvents = await orm.events.findMany({
+				where: { event_type: 'teams.members.list' },
+			});
 			expect(listEvents.length).toBeGreaterThan(0);
-			expect(parsePayload(listEvents[listEvents.length - 1]!.payload)).toMatchObject(listInput);
+			expect(
+				parsePayload(listEvents[listEvents.length - 1]!.payload),
+			).toMatchObject(listInput);
 
 			if (list.value.length > 0) {
 				const first = list.value[0]!;
@@ -402,9 +472,13 @@ describe('Teams plugin integration', () => {
 				expect(got).toBeDefined();
 				expect(got.id).toBe(first.id);
 
-				const getEvents = await orm.events.findMany({ where: { event_type: 'teams.members.get' } });
+				const getEvents = await orm.events.findMany({
+					where: { event_type: 'teams.members.get' },
+				});
 				expect(getEvents.length).toBeGreaterThan(0);
-				expect(parsePayload(getEvents[getEvents.length - 1]!.payload)).toMatchObject(getInput);
+				expect(
+					parsePayload(getEvents[getEvents.length - 1]!.payload),
+				).toMatchObject(getInput);
 			}
 
 			testDb.cleanup();
@@ -419,29 +493,43 @@ describe('Teams plugin integration', () => {
 			const orm = createCorsairOrm(testDb.database);
 
 			const existingMembers = await corsair.teams.api.members.list({ teamId });
-			const memberUserIds = new Set(existingMembers.value.map(m => m.userId).filter(Boolean));
+			const memberUserIds = new Set(
+				existingMembers.value.map((m) => m.userId).filter(Boolean),
+			);
 
 			// fetch org users to find a non-member to add
-			const orgUsers = await fetch(
+			const orgUsers = (await fetch(
 				`https://graph.microsoft.com/v1.0/users?$top=999&$select=id`,
-				{ headers: { Authorization: `Bearer ${process.env.TEAMS_ACCESS_TOKEN}` } },
-			).then(r => r.json()) as { value: Array<{ id: string }> };
+				{
+					headers: {
+						Authorization: `Bearer ${process.env.TEAMS_ACCESS_TOKEN}`,
+					},
+				},
+			).then((r) => r.json())) as { value: Array<{ id: string }> };
 
-			const candidate = orgUsers.value.find(u => !memberUserIds.has(u.id));
+			const candidate = orgUsers.value.find((u) => !memberUserIds.has(u.id));
 			if (!candidate) {
 				testDb.cleanup();
 				return;
 			}
 
-			const addInput = { teamId, userId: candidate.id, roles: ['member' as const] };
+			const addInput = {
+				teamId,
+				userId: candidate.id,
+				roles: ['member' as const],
+			};
 			const added = await corsair.teams.api.members.add(addInput);
 
 			expect(added).toBeDefined();
 			expect(added.id).toBeDefined();
 
-			const addEvents = await orm.events.findMany({ where: { event_type: 'teams.members.add' } });
+			const addEvents = await orm.events.findMany({
+				where: { event_type: 'teams.members.add' },
+			});
 			expect(addEvents.length).toBeGreaterThan(0);
-			expect(parsePayload(addEvents[addEvents.length - 1]!.payload)).toMatchObject(addInput);
+			expect(
+				parsePayload(addEvents[addEvents.length - 1]!.payload),
+			).toMatchObject(addInput);
 
 			const fromDb = await corsair.teams.db.members.findByEntityId(added.id);
 			expect(fromDb).not.toBeNull();
@@ -451,9 +539,13 @@ describe('Teams plugin integration', () => {
 
 			expect(removed).toBeDefined();
 
-			const removeEvents = await orm.events.findMany({ where: { event_type: 'teams.members.remove' } });
+			const removeEvents = await orm.events.findMany({
+				where: { event_type: 'teams.members.remove' },
+			});
 			expect(removeEvents.length).toBeGreaterThan(0);
-			expect(parsePayload(removeEvents[removeEvents.length - 1]!.payload)).toMatchObject(removeInput);
+			expect(
+				parsePayload(removeEvents[removeEvents.length - 1]!.payload),
+			).toMatchObject(removeInput);
 
 			testDb.cleanup();
 		});
@@ -472,7 +564,9 @@ describe('Teams plugin integration', () => {
 			expect(Array.isArray(list.value)).toBe(true);
 
 			const orm = createCorsairOrm(testDb.database);
-			const listEvents = await orm.events.findMany({ where: { event_type: 'teams.chats.list' } });
+			const listEvents = await orm.events.findMany({
+				where: { event_type: 'teams.chats.list' },
+			});
 			expect(listEvents.length).toBeGreaterThan(0);
 
 			if (list.value.length > 0) {
@@ -488,9 +582,13 @@ describe('Teams plugin integration', () => {
 				expect(got).toBeDefined();
 				expect(got.id).toBe(first.id);
 
-				const getEvents = await orm.events.findMany({ where: { event_type: 'teams.chats.get' } });
+				const getEvents = await orm.events.findMany({
+					where: { event_type: 'teams.chats.get' },
+				});
 				expect(getEvents.length).toBeGreaterThan(0);
-				expect(parsePayload(getEvents[getEvents.length - 1]!.payload)).toMatchObject(getInput);
+				expect(
+					parsePayload(getEvents[getEvents.length - 1]!.payload),
+				).toMatchObject(getInput);
 			}
 
 			testDb.cleanup();
@@ -501,16 +599,20 @@ describe('Teams plugin integration', () => {
 			if (!setup) return;
 			const { corsair, testDb } = setup;
 
-			const me = await fetch('https://graph.microsoft.com/v1.0/me', {
+			const me = (await fetch('https://graph.microsoft.com/v1.0/me', {
 				headers: { Authorization: `Bearer ${process.env.TEAMS_ACCESS_TOKEN}` },
-			}).then(r => r.json()) as { id: string };
+			}).then((r) => r.json())) as { id: string };
 
-			const orgUsers = await fetch(
+			const orgUsers = (await fetch(
 				`https://graph.microsoft.com/v1.0/users?$top=5&$select=id`,
-				{ headers: { Authorization: `Bearer ${process.env.TEAMS_ACCESS_TOKEN}` } },
-			).then(r => r.json()) as { value: Array<{ id: string }> };
+				{
+					headers: {
+						Authorization: `Bearer ${process.env.TEAMS_ACCESS_TOKEN}`,
+					},
+				},
+			).then((r) => r.json())) as { value: Array<{ id: string }> };
 
-			const other = orgUsers.value.find(u => u.id !== me.id);
+			const other = orgUsers.value.find((u) => u.id !== me.id);
 			if (!other) {
 				testDb.cleanup();
 				return;
@@ -530,9 +632,13 @@ describe('Teams plugin integration', () => {
 			expect(created.id).toBeDefined();
 
 			const orm = createCorsairOrm(testDb.database);
-			const createEvents = await orm.events.findMany({ where: { event_type: 'teams.chats.create' } });
+			const createEvents = await orm.events.findMany({
+				where: { event_type: 'teams.chats.create' },
+			});
 			expect(createEvents.length).toBeGreaterThan(0);
-			expect(parsePayload(createEvents[createEvents.length - 1]!.payload)).toMatchObject(createInput);
+			expect(
+				parsePayload(createEvents[createEvents.length - 1]!.payload),
+			).toMatchObject(createInput);
 
 			const fromDb = await corsair.teams.db.chats.findByEntityId(created.id);
 			expect(fromDb).not.toBeNull();
@@ -557,16 +663,23 @@ describe('Teams plugin integration', () => {
 
 			const sendInput = {
 				chatId,
-				body: { content: `corsair chat integration test ${Date.now()}`, contentType: 'text' as const },
+				body: {
+					content: `corsair chat integration test ${Date.now()}`,
+					contentType: 'text' as const,
+				},
 			};
 			const sent = await corsair.teams.api.chats.sendMessage(sendInput);
 
 			expect(sent).toBeDefined();
 			expect(sent.id).toBeDefined();
 
-			const sendEvents = await orm.events.findMany({ where: { event_type: 'teams.chats.sendMessage' } });
+			const sendEvents = await orm.events.findMany({
+				where: { event_type: 'teams.chats.sendMessage' },
+			});
 			expect(sendEvents.length).toBeGreaterThan(0);
-			expect(parsePayload(sendEvents[sendEvents.length - 1]!.payload)).toMatchObject(sendInput);
+			expect(
+				parsePayload(sendEvents[sendEvents.length - 1]!.payload),
+			).toMatchObject(sendInput);
 
 			const fromDb = await corsair.teams.db.messages.findByEntityId(sent.id);
 			expect(fromDb).not.toBeNull();
@@ -579,7 +692,9 @@ describe('Teams plugin integration', () => {
 			expect(Array.isArray(messages.value)).toBe(true);
 			expect(messages.value.length).toBeGreaterThan(0);
 
-			const listEvents = await orm.events.findMany({ where: { event_type: 'teams.chats.listMessages' } });
+			const listEvents = await orm.events.findMany({
+				where: { event_type: 'teams.chats.listMessages' },
+			});
 			expect(listEvents.length).toBeGreaterThan(0);
 
 			testDb.cleanup();

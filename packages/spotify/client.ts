@@ -1,8 +1,9 @@
-import { ApiError } from 'corsair/http';
-import type { ApiRequestOptions } from 'corsair/http';
-import type { OpenAPIConfig } from 'corsair/http';
-import type { RateLimitConfig } from 'corsair/http';
-import { request } from 'corsair/http';
+import type {
+	ApiRequestOptions,
+	OpenAPIConfig,
+	RateLimitConfig,
+} from 'corsair/http';
+import { ApiError, request } from 'corsair/http';
 
 export class SpotifyAPIError extends Error {
 	constructor(
@@ -57,9 +58,12 @@ async function refreshAccessToken(
 		);
 	}
 
-	const json = await response.json() as { access_token: string; expires_in: number }
+	const json = (await response.json()) as {
+		access_token: string;
+		expires_in: number;
+	};
 
-	return json
+	return json;
 }
 
 export async function getValidAccessToken({

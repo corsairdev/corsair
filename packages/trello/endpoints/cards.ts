@@ -59,7 +59,12 @@ export const list: TrelloEndpoints['cardsList'] = async (ctx, input) => {
 		}
 	}
 
-	await logEventFromContext(ctx, 'trello.cards.list', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'trello.cards.list',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
@@ -84,7 +89,12 @@ export const create: TrelloEndpoints['cardsCreate'] = async (ctx, input) => {
 		}
 	}
 
-	await logEventFromContext(ctx, 'trello.cards.create', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'trello.cards.create',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
@@ -111,7 +121,12 @@ export const update: TrelloEndpoints['cardsUpdate'] = async (ctx, input) => {
 		}
 	}
 
-	await logEventFromContext(ctx, 'trello.cards.update', { cardId }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'trello.cards.update',
+		{ cardId },
+		'completed',
+	);
 	return result;
 };
 
@@ -139,7 +154,12 @@ export const del: TrelloEndpoints['cardsDelete'] = async (ctx, input) => {
 		}
 	}
 
-	await logEventFromContext(ctx, 'trello.cards.delete', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'trello.cards.delete',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
@@ -166,6 +186,11 @@ export const move: TrelloEndpoints['cardsMove'] = async (ctx, input) => {
 		}
 	}
 
-	await logEventFromContext(ctx, 'trello.cards.move', { cardId, idList: input.idList }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'trello.cards.move',
+		{ cardId, idList: input.idList },
+		'completed',
+	);
 	return result;
 };

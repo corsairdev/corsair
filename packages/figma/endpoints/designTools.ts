@@ -1,142 +1,160 @@
 import { logEventFromContext } from 'corsair/core';
 import type { FigmaEndpoints } from '..';
 import { makeFigmaRequest } from '../client';
-import type { FigmaEndpointOutputs, FigmaEndpointInputs } from './types';
+import type { FigmaEndpointOutputs } from './types';
 
-export const discoverResources: FigmaEndpoints['designToolsDiscoverResources'] = async (
-	ctx,
-	input,
-) => {
-	// any: discovered resource structure depends on resource type
-	const files: unknown[] = [];
-	// any: discovered resource structure depends on resource type
-	const projects: unknown[] = [];
-	// any: discovered resource structure depends on resource type
-	const teams: unknown[] = [];
+export const discoverResources: FigmaEndpoints['designToolsDiscoverResources'] =
+	async (ctx, input) => {
+		// any: discovered resource structure depends on resource type
+		const files: unknown[] = [];
+		// any: discovered resource structure depends on resource type
+		const projects: unknown[] = [];
+		// any: discovered resource structure depends on resource type
+		const teams: unknown[] = [];
 
-	if (input.file_key) {
-		try {
-			const fileResult = await makeFigmaRequest<{ name?: string; role?: string }>(
-				`v1/files/${input.file_key}`,
-				ctx.key,
-				{ method: 'GET', query: { depth: input.max_depth } },
-			);
-			files.push({ key: input.file_key, ...fileResult });
-		} catch (error) {
-			console.warn('Failed to fetch file during discoverResources:', error);
-		}
-	}
-
-	if (input.project_id) {
-		try {
-			const projectResult = await makeFigmaRequest<{
-				name?: string;
-				// unknown: project file list items have dynamic structure per Figma API response
-				files?: unknown[];
-			}>(`v1/projects/${input.project_id}/files`, ctx.key, { method: 'GET' });
-			projects.push({ id: input.project_id, ...projectResult });
-			if (projectResult.files) {
-				files.push(...projectResult.files);
+		if (input.file_key) {
+			try {
+				const fileResult = await makeFigmaRequest<{
+					name?: string;
+					role?: string;
+				}>(`v1/files/${input.file_key}`, ctx.key, {
+					method: 'GET',
+					query: { depth: input.max_depth },
+				});
+				files.push({ key: input.file_key, ...fileResult });
+			} catch (error) {
+				console.warn('Failed to fetch file during discoverResources:', error);
 			}
-		} catch (error) {
-			console.warn('Failed to fetch project during discoverResources:', error);
 		}
-	}
 
-	if (input.team_id) {
-		try {
-			const teamResult = await makeFigmaRequest<{
-				name?: string;
-				// unknown: team project list items have dynamic structure per Figma API response
-				projects?: unknown[];
-			}>(`v1/teams/${input.team_id}/projects`, ctx.key, { method: 'GET' });
-			teams.push({ id: input.team_id, ...teamResult });
-			if (teamResult.projects) {
-				projects.push(...teamResult.projects);
+		if (input.project_id) {
+			try {
+				const projectResult = await makeFigmaRequest<{
+					name?: string;
+					// unknown: project file list items have dynamic structure per Figma API response
+					files?: unknown[];
+				}>(`v1/projects/${input.project_id}/files`, ctx.key, { method: 'GET' });
+				projects.push({ id: input.project_id, ...projectResult });
+				if (projectResult.files) {
+					files.push(...projectResult.files);
+				}
+			} catch (error) {
+				console.warn(
+					'Failed to fetch project during discoverResources:',
+					error,
+				);
 			}
-		} catch (error) {
-			console.warn('Failed to fetch team during discoverResources:', error);
 		}
-	}
 
-	const result: FigmaEndpointOutputs['designToolsDiscoverResources'] = {
-		files,
-		projects,
-		teams,
+		if (input.team_id) {
+			try {
+				const teamResult = await makeFigmaRequest<{
+					name?: string;
+					// unknown: team project list items have dynamic structure per Figma API response
+					projects?: unknown[];
+				}>(`v1/teams/${input.team_id}/projects`, ctx.key, { method: 'GET' });
+				teams.push({ id: input.team_id, ...teamResult });
+				if (teamResult.projects) {
+					projects.push(...teamResult.projects);
+				}
+			} catch (error) {
+				console.warn('Failed to fetch team during discoverResources:', error);
+			}
+		}
+
+		const result: FigmaEndpointOutputs['designToolsDiscoverResources'] = {
+			files,
+			projects,
+			teams,
+		};
+
+		await logEventFromContext(
+			ctx,
+			'figma.designTools.discoverResources',
+			{ ...input },
+			'completed',
+		);
+		return result;
 	};
 
-	await logEventFromContext(
-		ctx,
-		'figma.designTools.discoverResources',
-		{ ...input },
-		'completed',
-	);
-	return result;
-};
+export const extractDesignTokens: FigmaEndpoints['designToolsExtractDesignTokens'] =
+	async (ctx, input) => {
+		// any: design token structure varies by token type (color, typography, spacing, etc.)
+		const tokens: Record<string, unknown> = {};
 
-export const extractDesignTokens: FigmaEndpoints['designToolsExtractDesignTokens'] = async (
-	ctx,
-	input,
-) => {
-	// any: design token structure varies by token type (color, typography, spacing, etc.)
-	const tokens: Record<string, unknown> = {};
-
-	if (input.include_variables) {
-		try {
-			const variablesResult = await makeFigmaRequest<{
-				meta?: { variables?: Record<string, unknown>; variableCollections?: Record<string, unknown> };
-			}>(`v1/files/${input.file_key}/variables/local`, ctx.key, { method: 'GET' });
-			if (variablesResult.meta?.variables) {
-				tokens['variables'] = variablesResult.meta.variables;
+		if (input.include_variables) {
+			try {
+				const variablesResult = await makeFigmaRequest<{
+					meta?: {
+						variables?: Record<string, unknown>;
+						variableCollections?: Record<string, unknown>;
+					};
+				}>(`v1/files/${input.file_key}/variables/local`, ctx.key, {
+					method: 'GET',
+				});
+				if (variablesResult.meta?.variables) {
+					tokens['variables'] = variablesResult.meta.variables;
+				}
+				if (variablesResult.meta?.variableCollections) {
+					tokens['variableCollections'] =
+						variablesResult.meta.variableCollections;
+				}
+			} catch (error) {
+				console.warn(
+					'Failed to fetch variables during extractDesignTokens:',
+					error,
+				);
 			}
-			if (variablesResult.meta?.variableCollections) {
-				tokens['variableCollections'] = variablesResult.meta.variableCollections;
-			}
-		} catch (error) {
-			console.warn('Failed to fetch variables during extractDesignTokens:', error);
 		}
-	}
 
-	if (input.include_local_styles) {
-		try {
-			const stylesResult = await makeFigmaRequest<{
-				// unknown: style items within meta have dynamic properties not fully typed by Figma API
-			meta?: { styles?: unknown[] };
-			}>(`v1/files/${input.file_key}/styles`, ctx.key, { method: 'GET' });
-			if (stylesResult.meta?.styles) {
-				tokens['styles'] = stylesResult.meta.styles;
+		if (input.include_local_styles) {
+			try {
+				const stylesResult = await makeFigmaRequest<{
+					// unknown: style items within meta have dynamic properties not fully typed by Figma API
+					meta?: { styles?: unknown[] };
+				}>(`v1/files/${input.file_key}/styles`, ctx.key, { method: 'GET' });
+				if (stylesResult.meta?.styles) {
+					tokens['styles'] = stylesResult.meta.styles;
+				}
+			} catch (error) {
+				console.warn(
+					'Failed to fetch styles during extractDesignTokens:',
+					error,
+				);
 			}
-		} catch (error) {
-			console.warn('Failed to fetch styles during extractDesignTokens:', error);
 		}
-	}
 
-	if (input.extract_from_nodes) {
-		try {
-			const nodesResult = await makeFigmaRequest<{
-				nodes?: Record<string, unknown>;
-			}>(`v1/files/${input.file_key}/nodes`, ctx.key, {
-				method: 'GET',
-				query: { ids: input.extract_from_nodes },
-			});
-			if (nodesResult.nodes) {
-				tokens['nodes'] = nodesResult.nodes;
+		if (input.extract_from_nodes) {
+			try {
+				const nodesResult = await makeFigmaRequest<{
+					nodes?: Record<string, unknown>;
+				}>(`v1/files/${input.file_key}/nodes`, ctx.key, {
+					method: 'GET',
+					query: { ids: input.extract_from_nodes },
+				});
+				if (nodesResult.nodes) {
+					tokens['nodes'] = nodesResult.nodes;
+				}
+			} catch (error) {
+				console.warn(
+					'Failed to fetch nodes during extractDesignTokens:',
+					error,
+				);
 			}
-		} catch (error) {
-			console.warn('Failed to fetch nodes during extractDesignTokens:', error);
 		}
-	}
 
-	const result: FigmaEndpointOutputs['designToolsExtractDesignTokens'] = { tokens };
+		const result: FigmaEndpointOutputs['designToolsExtractDesignTokens'] = {
+			tokens,
+		};
 
-	await logEventFromContext(
-		ctx,
-		'figma.designTools.extractDesignTokens',
-		{ ...input },
-		'completed',
-	);
-	return result;
-};
+		await logEventFromContext(
+			ctx,
+			'figma.designTools.extractDesignTokens',
+			{ ...input },
+			'completed',
+		);
+		return result;
+	};
 
 export const extractPrototypeInteractions: FigmaEndpoints['designToolsExtractPrototypeInteractions'] =
 	async (ctx, input) => {
@@ -178,10 +196,11 @@ export const extractPrototypeInteractions: FigmaEndpoints['designToolsExtractPro
 			);
 		}
 
-		const result: FigmaEndpointOutputs['designToolsExtractPrototypeInteractions'] = {
-			interactions,
-			flows,
-		};
+		const result: FigmaEndpointOutputs['designToolsExtractPrototypeInteractions'] =
+			{
+				interactions,
+				flows,
+			};
 
 		await logEventFromContext(
 			ctx,
@@ -192,13 +211,13 @@ export const extractPrototypeInteractions: FigmaEndpoints['designToolsExtractPro
 		return result;
 	};
 
-export const downloadImages: FigmaEndpoints['designToolsDownloadImages'] = async (ctx, input) => {
-	const nodeIds = input.images.map((img) => img.node_id).join(',');
+export const downloadImages: FigmaEndpoints['designToolsDownloadImages'] =
+	async (ctx, input) => {
+		const nodeIds = input.images.map((img) => img.node_id).join(',');
 
-	const renderResult = await makeFigmaRequest<{ images?: Record<string, string | null> }>(
-		`v1/images/${input.file_key}`,
-		ctx.key,
-		{
+		const renderResult = await makeFigmaRequest<{
+			images?: Record<string, string | null>;
+		}>(`v1/images/${input.file_key}`, ctx.key, {
 			method: 'GET',
 			query: {
 				ids: nodeIds,
@@ -207,21 +226,20 @@ export const downloadImages: FigmaEndpoints['designToolsDownloadImages'] = async
 				svg_outline_text: input.svg_outline_text,
 				svg_simplify_stroke: input.svg_simplify_stroke,
 			},
-		},
-	);
+		});
 
-	const result: FigmaEndpointOutputs['designToolsDownloadImages'] = {
-		images: renderResult.images,
+		const result: FigmaEndpointOutputs['designToolsDownloadImages'] = {
+			images: renderResult.images,
+		};
+
+		await logEventFromContext(
+			ctx,
+			'figma.designTools.downloadImages',
+			{ ...input },
+			'completed',
+		);
+		return result;
 	};
-
-	await logEventFromContext(
-		ctx,
-		'figma.designTools.downloadImages',
-		{ ...input },
-		'completed',
-	);
-	return result;
-};
 
 export const designTokensToTailwind: FigmaEndpoints['designToolsDesignTokensToTailwind'] =
 	async (ctx, input) => {
@@ -250,7 +268,10 @@ export const designTokensToTailwind: FigmaEndpoints['designToolsDesignTokensToTa
 					fontSizeTokens[tokenKey] = tokenVal;
 				} else if (tokenType === 'fontFamily' && typeof tokenVal === 'string') {
 					fontFamilyTokens[tokenKey] = tokenVal;
-				} else if (tokenType === 'borderRadius' && typeof tokenVal === 'string') {
+				} else if (
+					tokenType === 'borderRadius' &&
+					typeof tokenVal === 'string'
+				) {
 					borderRadiusTokens[tokenKey] = tokenVal;
 				}
 			}

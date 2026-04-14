@@ -3,9 +3,7 @@ import { z } from 'zod';
 // ── Input Schemas ─────────────────────────────────────────────────────────────
 
 const TweetsCreateInputSchema = z.object({
-	text: z
-		.string()
-		.describe('Tweet text content (max 280 weighted characters)'),
+	text: z.string().describe('Tweet text content (max 280 weighted characters)'),
 	quoteTweetId: z.string().optional().describe('ID of the tweet to quote'),
 	mediaIds: z
 		.array(z.string())
@@ -18,9 +16,7 @@ const TweetsCreateInputSchema = z.object({
 });
 
 const TweetsCreateReplyInputSchema = z.object({
-	text: z
-		.string()
-		.describe('Reply text content (max 280 weighted characters)'),
+	text: z.string().describe('Reply text content (max 280 weighted characters)'),
 	inReplyToTweetId: z.string().describe('ID of the tweet to reply to'),
 	excludeReplyUserIds: z
 		.array(z.string())
