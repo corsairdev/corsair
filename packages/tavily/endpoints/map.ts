@@ -1,33 +1,32 @@
 import { logEventFromContext } from 'corsair/core';
 import type { TavilyEndpoints } from '..';
 import { makeTavilyRequest } from '../client';
-import { readCachedRun, writeCachedRun } from './cache';
-import type { TavilyEndpointOutputs, TavilyMapRequest } from './types';
+import type { TavilyMapResponse } from './types';
 
 export const map: TavilyEndpoints['map'] = async (ctx, input) => {
-	const body: TavilyMapRequest = input;
+	const response = await makeTavilyRequest<TavilyMapResponse>('map', ctx.key, {
+		method: 'POST',
+		body: input,
+	});
 
-	const cached = await readCachedRun(ctx, 'map', body);
-	if (cached) {
-		await logEventFromContext(
-			ctx,
-			'tavily.map',
-			{ url: body.url, cached: true },
-			'completed',
-		);
-		return cached;
+	for (const url of response.results) {
+		try {
+			await ctx.db.mapResults.upsertByEntityId(url, {
+				url,
+				baseUrl: response.base_url,
+				mappedAt: new Date(),
+			});
+		} catch (error) {
+			console.warn(`[tavily] Failed to save map result ${url}:`, error);
+		}
 	}
 
-	const response = await makeTavilyRequest<TavilyEndpointOutputs['map']>(
-		'map',
-		ctx.key,
-		{
-			method: 'POST',
-			body,
-		},
+	await logEventFromContext(
+		ctx,
+		'tavily.map',
+		{ baseUrl: input.url, resultCount: response.results.length },
+		'completed',
 	);
 
-	await writeCachedRun(ctx, 'map', body, response);
-	await logEventFromContext(ctx, 'tavily.map', { url: body.url }, 'completed');
 	return response;
 };

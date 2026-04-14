@@ -1,11 +1,11 @@
-import { TavilyRun } from './database';
+import { TavilyCrawlResult, TavilyExtractResult, TavilyMapResult, TavilySearchResult } from './database';
 
 export const TavilySchema = {
 	version: '1.0.0',
 	entities: {
-		runs: TavilyRun,
+		searchResults: TavilySearchResult,
+		extractResults: TavilyExtractResult,
+		crawlResults: TavilyCrawlResult,
+		mapResults: TavilyMapResult,
 	},
 } as const;
-
-export type { TavilyRun } from './database';
-export { TAVILY_RUN_ENDPOINTS } from './database';

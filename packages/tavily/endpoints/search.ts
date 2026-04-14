@@ -1,38 +1,32 @@
 import { logEventFromContext } from 'corsair/core';
 import type { TavilyEndpoints } from '..';
 import { makeTavilyRequest } from '../client';
-import { readCachedRun, writeCachedRun } from './cache';
-import type { TavilyEndpointOutputs, TavilySearchRequest } from './types';
+import type { TavilySearchResponse } from './types';
 
 export const search: TavilyEndpoints['search'] = async (ctx, input) => {
-	const body: TavilySearchRequest = input;
+	const response = await makeTavilyRequest<TavilySearchResponse>('search', ctx.key, {
+		method: 'POST',
+		body: input,
+	});
 
-	const cached = await readCachedRun(ctx, 'search', body);
-	if (cached) {
-		await logEventFromContext(
-			ctx,
-			'tavily.search',
-			{ query: body.query, cached: true },
-			'completed',
-		);
-		return cached;
+	for (const result of response.results) {
+		try {
+			await ctx.db.searchResults.upsertByEntityId(result.url, {
+				...result,
+				query: input.query,
+				searchedAt: new Date(),
+			});
+		} catch (error) {
+			console.warn(`[tavily] Failed to save search result ${result.url}:`, error);
+		}
 	}
 
-	const response = await makeTavilyRequest<TavilyEndpointOutputs['search']>(
-		'search',
-		ctx.key,
-		{
-			method: 'POST',
-			body,
-		},
-	);
-
-	await writeCachedRun(ctx, 'search', body, response);
 	await logEventFromContext(
 		ctx,
 		'tavily.search',
-		{ query: body.query },
+		{ query: input.query, resultCount: response.results.length },
 		'completed',
 	);
+
 	return response;
 };

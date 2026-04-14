@@ -1,22 +1,11 @@
-import { crawl as crawlEndpoint } from './crawl';
-import { extract as extractEndpoint } from './extract';
-import { map as mapEndpoint } from './map';
-import { search as searchEndpoint } from './search';
+import { search } from './search';
+import { extract } from './extract';
+import { crawl } from './crawl';
+import { map } from './map';
 
-export const Search = {
-	search: searchEndpoint,
-};
-
-export const Extract = {
-	extract: extractEndpoint,
-};
-
-export const Crawl = {
-	crawl: crawlEndpoint,
-};
-
-export const Map = {
-	map: mapEndpoint,
-};
+export const Search = { search };
+export const Extract = { extract };
+export const Crawl = { crawl };
+export const Map = { map };
 
 export * from './types';

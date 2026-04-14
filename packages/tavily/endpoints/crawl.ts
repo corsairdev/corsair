@@ -1,38 +1,32 @@
 import { logEventFromContext } from 'corsair/core';
 import type { TavilyEndpoints } from '..';
 import { makeTavilyRequest } from '../client';
-import { readCachedRun, writeCachedRun } from './cache';
-import type { TavilyCrawlRequest, TavilyEndpointOutputs } from './types';
+import type { TavilyCrawlResponse } from './types';
 
 export const crawl: TavilyEndpoints['crawl'] = async (ctx, input) => {
-	const body: TavilyCrawlRequest = input;
+	const response = await makeTavilyRequest<TavilyCrawlResponse>('crawl', ctx.key, {
+		method: 'POST',
+		body: input,
+	});
 
-	const cached = await readCachedRun(ctx, 'crawl', body);
-	if (cached) {
-		await logEventFromContext(
-			ctx,
-			'tavily.crawl',
-			{ url: body.url, cached: true },
-			'completed',
-		);
-		return cached;
+	for (const result of response.results) {
+		try {
+			await ctx.db.crawlResults.upsertByEntityId(result.url, {
+				...result,
+				baseUrl: response.base_url,
+				crawledAt: new Date(),
+			});
+		} catch (error) {
+			console.warn(`[tavily] Failed to save crawl result ${result.url}:`, error);
+		}
 	}
 
-	const response = await makeTavilyRequest<TavilyEndpointOutputs['crawl']>(
-		'crawl',
-		ctx.key,
-		{
-			method: 'POST',
-			body,
-		},
-	);
-
-	await writeCachedRun(ctx, 'crawl', body, response);
 	await logEventFromContext(
 		ctx,
 		'tavily.crawl',
-		{ url: body.url },
+		{ baseUrl: input.url, resultCount: response.results.length },
 		'completed',
 	);
+
 	return response;
 };

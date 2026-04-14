@@ -88,9 +88,6 @@ export const TavilySearchRequestSchema = z.object({
 
 export type TavilySearchRequest = z.infer<typeof TavilySearchRequestSchema>;
 
-/** Body sent to POST /search (only required + optional fields we send). */
-export type TavilySearchRequestBody = TavilySearchRequest;
-
 // ─────────────────────────────────────────────────────────────────────────────
 // Search response
 // ─────────────────────────────────────────────────────────────────────────────
@@ -127,7 +124,6 @@ export const TavilySearchResponseSchema = z.object({
 	response_time: z.number(),
 	usage: TavilySearchUsageSchema.optional(),
 	request_id: z.string().optional(),
-	/** Present when request had auto_parameters: true. */
 	auto_parameters: z.record(z.unknown()).optional(),
 });
 
@@ -174,9 +170,7 @@ export const TavilyExtractFailedResultSchema = z.object({
 	error: z.string(),
 });
 
-export type TavilyExtractFailedResult = z.infer<
-	typeof TavilyExtractFailedResultSchema
->;
+export type TavilyExtractFailedResult = z.infer<typeof TavilyExtractFailedResultSchema>;
 
 export const TavilyExtractResponseSchema = z.object({
 	results: z.array(TavilyExtractResultSchema),
@@ -254,9 +248,7 @@ export const TavilyCrawlFailedResultSchema = z.object({
 	error: z.string(),
 });
 
-export type TavilyCrawlFailedResult = z.infer<
-	typeof TavilyCrawlFailedResultSchema
->;
+export type TavilyCrawlFailedResult = z.infer<typeof TavilyCrawlFailedResultSchema>;
 
 export const TavilyCrawlResponseSchema = z.object({
 	base_url: z.string(),
@@ -309,8 +301,15 @@ export const TavilyMapResponseSchema = z.object({
 export type TavilyMapResponse = z.infer<typeof TavilyMapResponseSchema>;
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Plugin endpoint output map
+// Plugin endpoint input/output maps
 // ─────────────────────────────────────────────────────────────────────────────
+
+export type TavilyEndpointInputs = {
+	search: TavilySearchRequest;
+	extract: TavilyExtractRequest;
+	crawl: TavilyCrawlRequest;
+	map: TavilyMapRequest;
+};
 
 export type TavilyEndpointOutputs = {
 	search: TavilySearchResponse;
@@ -319,10 +318,13 @@ export type TavilyEndpointOutputs = {
 	map: TavilyMapResponse;
 };
 
-/**
- * Maps each endpoint key to its response Zod schema.
- * Used by tests to validate live API responses against declared types.
- */
+export const TavilyEndpointInputSchemas = {
+	search: TavilySearchRequestSchema,
+	extract: TavilyExtractRequestSchema,
+	crawl: TavilyCrawlRequestSchema,
+	map: TavilyMapRequestSchema,
+} as const;
+
 export const TavilyEndpointOutputSchemas = {
 	search: TavilySearchResponseSchema,
 	extract: TavilyExtractResponseSchema,

@@ -15,20 +15,19 @@
   },
   "scripts": {
     "build": "rm -rf dist && tsc --build --force && tsup",
-    "typecheck": "tsc --noEmit",
-    "test": "jest"
+    "typecheck": "tsc --noEmit"
   },
   "peerDependencies": {
     "corsair": ">=0.1.0",
     "zod": "^3.0.0"
   },
   "devDependencies": {
-    "@types/jest": "^29.5.14",
-    "corsair": "workspace:*",
     "ts-jest": "^29.4.6",
+    "corsair": "workspace:*",
     "tsup": "^8.0.1",
     "typescript": "catalog:",
-    "zod": "^3.25.76"
+    "zod": "^3.25.76",
+    "@types/jest": "^29.5.14"
   },
   "keywords": [
     "corsair",
