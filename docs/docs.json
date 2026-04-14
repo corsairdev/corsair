@@ -58,7 +58,9 @@
               "content/mcp-adapters/openai-agents",
               "content/mcp-adapters/vercel-ai",
               "content/mcp-adapters/mastra",
-              "content/mcp-adapters/openai"
+              "content/mcp-adapters/openai",
+              "content/mcp-adapters/claude-code",
+              "content/mcp-adapters/cursor"
             ]
           }
         ]

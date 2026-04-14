@@ -28,6 +28,8 @@ import McpMastraDoc from '@/content/mcp-adapters/mastra.mdx';
 import McpOpenAIDoc from '@/content/mcp-adapters/openai.mdx';
 import McpOpenAIAgentsDoc from '@/content/mcp-adapters/openai-agents.mdx';
 import McpVercelAiDoc from '@/content/mcp-adapters/vercel-ai.mdx';
+import McpClaudeCodeDoc from '@/content/mcp-adapters/claude-code.mdx';
+import McpCursorDoc from '@/content/mcp-adapters/cursor.mdx';
 import AhrefsDatabaseDoc from '@/content/plugins/ahrefs/database.mdx';
 import AhrefsGetCredentialsDoc from '@/content/plugins/ahrefs/get-credentials.mdx';
 import AhrefsDoc from '@/content/plugins/ahrefs/main.mdx';
@@ -273,6 +275,16 @@ const pages = {
 		Component: McpMastraDoc,
 		title: 'Mastra',
 		description: 'Connect Corsair to the Mastra agent framework',
+	},
+	'mcp-adapters/claude-code': {
+		Component: McpClaudeCodeDoc,
+		title: 'Claude Code',
+		description: 'Connect Corsair to Claude Code as a stdio MCP server',
+	},
+	'mcp-adapters/cursor': {
+		Component: McpCursorDoc,
+		title: 'Cursor',
+		description: 'Connect Corsair to Cursor as a stdio MCP server',
 	},
 	api: {
 		Component: ApiDoc,

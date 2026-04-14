@@ -1,0 +1,68 @@
+---
+title: Cursor
+description: Connect Corsair to Cursor as a stdio MCP server.
+---
+
+Use `runStdioMcpServer` to expose Corsair as a local MCP server that Cursor spawns on demand.
+
+## Install
+
+```bash
+npm install @corsair-dev/mcp
+```
+
+## Create the server script
+
+```ts title="mcp-server.ts"
+import 'dotenv/config';
+import { runStdioMcpServer } from '@corsair-dev/mcp';
+import { corsair } from './corsair';
+
+runStdioMcpServer({ corsair }).catch((err) => {
+    console.error('[corsair-mcp] Fatal:', err);
+    process.exit(1);
+});
+```
+
+## Configure Cursor
+
+Add a `.cursor/mcp.json` file at your project root. Cursor reads this automatically when you open the project.
+
+```json title=".cursor/mcp.json"
+{
+  "mcpServers": {
+    "corsair": {
+      "command": "npx",
+      "args": ["tsx", "mcp-server.ts"]
+    }
+  }
+}
+```
+
+If your credentials aren't loaded from a `.env` file, pass them via `env`:
+
+```json title=".cursor/mcp.json"
+{
+  "mcpServers": {
+    "corsair": {
+      "command": "npx",
+      "args": ["tsx", "mcp-server.ts"],
+      "env": {
+        "CORSAIR_KEK": "your-key-here"
+      }
+    }
+  }
+}
+```
+
+Restart Cursor after adding the config. You can verify the server is connected in **Settings → Cursor Settings → MCP** — `corsair` should appear with a green indicator.
+
+## Usage
+
+Once connected, use Corsair tools in Cursor's agent (Cmd+I or the chat panel):
+
+```
+Setup corsair, then list all GitHub issues assigned to me.
+```
+
+The agent calls `corsair_setup` first to check credentials, then `list_operations` to discover available endpoints, then `run_script` to execute.

@@ -127,6 +127,18 @@ const tree = {
 					url: '/mcp-adapters/mastra',
 					icon: <Code2 className="size-4" />,
 				},
+				{
+					type: 'page' as const,
+					name: 'Claude Code',
+					url: '/mcp-adapters/claude-code',
+					icon: <Code2 className="size-4" />,
+				},
+				{
+					type: 'page' as const,
+					name: 'Cursor',
+					url: '/mcp-adapters/cursor',
+					icon: <Code2 className="size-4" />,
+				},
 			],
 		},
 		{
