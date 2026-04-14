@@ -1,0 +1,68 @@
+---
+title: Claude Code
+description: Connect Corsair to Claude Code as a stdio MCP server.
+---
+
+Use `runStdioMcpServer` to expose Corsair as a local MCP server that Claude Code spawns on demand.
+
+## Install
+
+```bash
+npm install @corsair-dev/mcp
+```
+
+## Create the server script
+
+```ts title="mcp-server.ts"
+import 'dotenv/config';
+import { runStdioMcpServer } from '@corsair-dev/mcp';
+import { corsair } from './corsair';
+
+runStdioMcpServer({ corsair }).catch((err) => {
+    console.error('[corsair-mcp] Fatal:', err);
+    process.exit(1);
+});
+```
+
+## Configure Claude Code
+
+Add a `.mcp.json` file at your project root. Claude Code reads this automatically when you open the project.
+
+```json title=".mcp.json"
+{
+  "mcpServers": {
+    "corsair": {
+      "command": "npx",
+      "args": ["tsx", "mcp-server.ts"]
+    }
+  }
+}
+```
+
+If your credentials aren't loaded from a `.env` file, pass them via `env`:
+
+```json title=".mcp.json"
+{
+  "mcpServers": {
+    "corsair": {
+      "command": "npx",
+      "args": ["tsx", "mcp-server.ts"],
+      "env": {
+        "CORSAIR_KEK": "your-key-here"
+      }
+    }
+  }
+}
+```
+
+Restart Claude Code after adding the config. You can verify the server is connected by running `/mcp` in the Claude Code prompt — `corsair` should appear in the list.
+
+## Usage
+
+Once connected, Claude Code can call Corsair tools directly. Start a conversation:
+
+```
+Setup corsair, then list all Slack channels.
+```
+
+Claude calls `corsair_setup` first to check credentials, then `list_operations` to discover available endpoints, then `run_script` to execute.
