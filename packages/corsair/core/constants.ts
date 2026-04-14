@@ -38,6 +38,7 @@ export const BaseProviders = [
 	'monday',
 	'notion',
 	'onedrive',
+	'openweathermap',
 	'oura',
 	'outlook',
 	'pagerduty',
@@ -57,8 +58,8 @@ export const BaseProviders = [
 	'trello',
 	'twitter',
 	'twitterapiio',
-	'youtube',
 	'typeform',
+	'youtube',
 	'zoom',
 ] as const;
 
@@ -88,6 +89,7 @@ export type AllProviders =
 	| 'monday'
 	| 'notion'
 	| 'onedrive'
+	| 'openweathermap'
 	| 'oura'
 	| 'outlook'
 	| 'pagerduty'
@@ -107,8 +109,8 @@ export type AllProviders =
 	| 'trello'
 	| 'twitter'
 	| 'twitterapiio'
-	| 'youtube'
 	| 'typeform'
+	| 'youtube'
 	| 'zoom'
 	| (string & {});
 
