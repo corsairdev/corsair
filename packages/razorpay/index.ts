@@ -20,10 +20,18 @@ import type {
 	CustomersCreateResponse,
 	CustomersGetInput,
 	CustomersGetResponse,
+	CustomersListInput,
+	CustomersListResponse,
+	CustomersUpdateInput,
+	CustomersUpdateResponse,
 	OrdersCreateInput,
 	OrdersCreateResponse,
 	OrdersGetInput,
 	OrdersGetResponse,
+	OrdersListInput,
+	OrdersListResponse,
+	PaymentsCaptureInput,
+	PaymentsCaptureResponse,
 	PaymentsGetInput,
 	PaymentsGetResponse,
 	PaymentsListInput,
@@ -32,14 +40,28 @@ import type {
 	RazorpayEndpointOutputs,
 	RefundsCreateInput,
 	RefundsCreateResponse,
+	RefundsGetInput,
+	RefundsGetResponse,
+	RefundsListInput,
+	RefundsListResponse,
 	SettlementsListInput,
 	SettlementsListResponse,
 	SettlementGetInput,
 	SettlementsGetResponse,
-	SubscriptionsListInput,
-	SubscriptionsListResponse,
+	SubscriptionsCancelInput,
+	SubscriptionsCancelResponse,
+	SubscriptionsCreateInput,
+	SubscriptionsCreateResponse,
 	SubscriptionsGetInput,
 	SubscriptionsGetResponse,
+	SubscriptionsListInput,
+	SubscriptionsListResponse,
+	SubscriptionsPauseInput,
+	SubscriptionsPauseResponse,
+	SubscriptionsResumeInput,
+	SubscriptionsResumeResponse,
+	SubscriptionsUpdateInput,
+	SubscriptionsUpdateResponse,
 } from './endpoints/types';
 import {
 	RazorpayEndpointInputSchemas,
@@ -88,15 +110,26 @@ type RazorpayEndpoint<K extends keyof RazorpayEndpointOutputs, Input> =
 export type RazorpayEndpoints = {
 	ordersCreate: RazorpayEndpoint<'ordersCreate', OrdersCreateInput>;
 	ordersGet: RazorpayEndpoint<'ordersGet', OrdersGetInput>;
+	ordersList: RazorpayEndpoint<'ordersList', OrdersListInput>;
 	paymentsGet: RazorpayEndpoint<'paymentsGet', PaymentsGetInput>;
 	paymentsList: RazorpayEndpoint<'paymentsList', PaymentsListInput>;
+	paymentsCapture: RazorpayEndpoint<'paymentsCapture', PaymentsCaptureInput>;
 	refundsCreate: RazorpayEndpoint<'refundsCreate', RefundsCreateInput>;
+	refundsGet: RazorpayEndpoint<'refundsGet', RefundsGetInput>;
+	refundsList: RazorpayEndpoint<'refundsList', RefundsListInput>;
 	customersCreate: RazorpayEndpoint<'customersCreate', CustomersCreateInput>;
 	customersGet: RazorpayEndpoint<'customersGet', CustomersGetInput>;
+	customersList: RazorpayEndpoint<'customersList', CustomersListInput>;
+	customersUpdate: RazorpayEndpoint<'customersUpdate', CustomersUpdateInput>;
 	settlementsList: RazorpayEndpoint<'settlementsList', SettlementsListInput>;
 	settlementsGet: RazorpayEndpoint<'settlementsGet', SettlementGetInput>;
 	subscriptionsList: RazorpayEndpoint<'subscriptionsList', SubscriptionsListInput>;
 	subscriptionsGet: RazorpayEndpoint<'subscriptionsGet', SubscriptionsGetInput>;
+	subscriptionsCreate: RazorpayEndpoint<'subscriptionsCreate', SubscriptionsCreateInput>;
+	subscriptionsUpdate: RazorpayEndpoint<'subscriptionsUpdate', SubscriptionsUpdateInput>;
+	subscriptionsCancel: RazorpayEndpoint<'subscriptionsCancel', SubscriptionsCancelInput>;
+	subscriptionsPause: RazorpayEndpoint<'subscriptionsPause', SubscriptionsPauseInput>;
+	subscriptionsResume: RazorpayEndpoint<'subscriptionsResume', SubscriptionsResumeInput>;
 };
 
 type RazorpayWebhook<
@@ -123,17 +156,23 @@ const razorpayEndpointsNested = {
 	orders: {
 		create: Orders.create,
 		get: Orders.get,
+		list: Orders.list,
 	},
 	payments: {
 		get: Payments.get,
 		list: Payments.list,
+		capture: Payments.capture,
 	},
 	refunds: {
 		create: Refunds.create,
+		get: Refunds.get,
+		list: Refunds.list,
 	},
 	customers: {
 		create: Customers.create,
 		get: Customers.get,
+		list: Customers.list,
+		update: Customers.update,
 	},
 	settlements: {
 		list: Settlements.list,
@@ -142,6 +181,11 @@ const razorpayEndpointsNested = {
 	subscriptions: {
 		list: Subscriptions.list,
 		get: Subscriptions.get,
+		create: Subscriptions.create,
+		update: Subscriptions.update,
+		cancel: Subscriptions.cancel,
+		pause: Subscriptions.pause,
+		resume: Subscriptions.resume,
 	},
 } as const;
 
@@ -167,6 +211,10 @@ export const razorpayEndpointSchemas = {
 		input: RazorpayEndpointInputSchemas.ordersGet,
 		output: RazorpayEndpointOutputSchemas.ordersGet,
 	},
+	'orders.list': {
+		input: RazorpayEndpointInputSchemas.ordersList,
+		output: RazorpayEndpointOutputSchemas.ordersList,
+	},
 	'payments.get': {
 		input: RazorpayEndpointInputSchemas.paymentsGet,
 		output: RazorpayEndpointOutputSchemas.paymentsGet,
@@ -175,9 +223,21 @@ export const razorpayEndpointSchemas = {
 		input: RazorpayEndpointInputSchemas.paymentsList,
 		output: RazorpayEndpointOutputSchemas.paymentsList,
 	},
+	'payments.capture': {
+		input: RazorpayEndpointInputSchemas.paymentsCapture,
+		output: RazorpayEndpointOutputSchemas.paymentsCapture,
+	},
 	'refunds.create': {
 		input: RazorpayEndpointInputSchemas.refundsCreate,
 		output: RazorpayEndpointOutputSchemas.refundsCreate,
+	},
+	'refunds.get': {
+		input: RazorpayEndpointInputSchemas.refundsGet,
+		output: RazorpayEndpointOutputSchemas.refundsGet,
+	},
+	'refunds.list': {
+		input: RazorpayEndpointInputSchemas.refundsList,
+		output: RazorpayEndpointOutputSchemas.refundsList,
 	},
 	'customers.create': {
 		input: RazorpayEndpointInputSchemas.customersCreate,
@@ -186,6 +246,14 @@ export const razorpayEndpointSchemas = {
 	'customers.get': {
 		input: RazorpayEndpointInputSchemas.customersGet,
 		output: RazorpayEndpointOutputSchemas.customersGet,
+	},
+	'customers.list': {
+		input: RazorpayEndpointInputSchemas.customersList,
+		output: RazorpayEndpointOutputSchemas.customersList,
+	},
+	'customers.update': {
+		input: RazorpayEndpointInputSchemas.customersUpdate,
+		output: RazorpayEndpointOutputSchemas.customersUpdate,
 	},
 	'settlements.list': {
 		input: RazorpayEndpointInputSchemas.settlementsList,
@@ -202,6 +270,26 @@ export const razorpayEndpointSchemas = {
 	'subscriptions.get': {
 		input: RazorpayEndpointInputSchemas.subscriptionsGet,
 		output: RazorpayEndpointOutputSchemas.subscriptionsGet,
+	},
+	'subscriptions.create': {
+		input: RazorpayEndpointInputSchemas.subscriptionsCreate,
+		output: RazorpayEndpointOutputSchemas.subscriptionsCreate,
+	},
+	'subscriptions.update': {
+		input: RazorpayEndpointInputSchemas.subscriptionsUpdate,
+		output: RazorpayEndpointOutputSchemas.subscriptionsUpdate,
+	},
+	'subscriptions.cancel': {
+		input: RazorpayEndpointInputSchemas.subscriptionsCancel,
+		output: RazorpayEndpointOutputSchemas.subscriptionsCancel,
+	},
+	'subscriptions.pause': {
+		input: RazorpayEndpointInputSchemas.subscriptionsPause,
+		output: RazorpayEndpointOutputSchemas.subscriptionsPause,
+	},
+	'subscriptions.resume': {
+		input: RazorpayEndpointInputSchemas.subscriptionsResume,
+		output: RazorpayEndpointOutputSchemas.subscriptionsResume,
 	},
 } as const satisfies RequiredPluginEndpointSchemas<typeof razorpayEndpointsNested>;
 
@@ -239,6 +327,10 @@ const razorpayEndpointMeta = {
 		riskLevel: 'read',
 		description: 'Fetch a Razorpay order by ID',
 	},
+	'orders.list': {
+		riskLevel: 'read',
+		description: 'List Razorpay orders',
+	},
 	'payments.get': {
 		riskLevel: 'read',
 		description: 'Fetch a Razorpay payment by ID',
@@ -247,9 +339,21 @@ const razorpayEndpointMeta = {
 		riskLevel: 'read',
 		description: 'List Razorpay payments',
 	},
+	'payments.capture': {
+		riskLevel: 'write',
+		description: 'Capture an authorized Razorpay payment',
+	},
 	'refunds.create': {
 		riskLevel: 'write',
 		description: 'Create a refund for a Razorpay payment',
+	},
+	'refunds.get': {
+		riskLevel: 'read',
+		description: 'Fetch a specific refund for a Razorpay payment',
+	},
+	'refunds.list': {
+		riskLevel: 'read',
+		description: 'List refunds for a Razorpay payment',
 	},
 	'customers.create': {
 		riskLevel: 'write',
@@ -258,6 +362,14 @@ const razorpayEndpointMeta = {
 	'customers.get': {
 		riskLevel: 'read',
 		description: 'Fetch a Razorpay customer by ID',
+	},
+	'customers.list': {
+		riskLevel: 'read',
+		description: 'List Razorpay customers',
+	},
+	'customers.update': {
+		riskLevel: 'write',
+		description: 'Update a Razorpay customer',
 	},
 	'settlements.list': {
 		riskLevel: 'read',
@@ -274,6 +386,27 @@ const razorpayEndpointMeta = {
 	'subscriptions.get': {
 		riskLevel: 'read',
 		description: 'Fetch a Razorpay subscription by ID',
+	},
+	'subscriptions.create': {
+		riskLevel: 'write',
+		description: 'Create a Razorpay subscription',
+	},
+	'subscriptions.update': {
+		riskLevel: 'write',
+		description: 'Update a Razorpay subscription',
+	},
+	'subscriptions.cancel': {
+		riskLevel: 'destructive',
+		description: 'Cancel a Razorpay subscription [DESTRUCTIVE]',
+		irreversible: true,
+	},
+	'subscriptions.pause': {
+		riskLevel: 'write',
+		description: 'Pause a Razorpay subscription',
+	},
+	'subscriptions.resume': {
+		riskLevel: 'write',
+		description: 'Resume a paused Razorpay subscription',
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof razorpayEndpointsNested>;
 
@@ -355,10 +488,18 @@ export type {
 	CustomersCreateResponse,
 	CustomersGetInput,
 	CustomersGetResponse,
+	CustomersListInput,
+	CustomersListResponse,
+	CustomersUpdateInput,
+	CustomersUpdateResponse,
 	OrdersCreateInput,
 	OrdersCreateResponse,
 	OrdersGetInput,
 	OrdersGetResponse,
+	OrdersListInput,
+	OrdersListResponse,
+	PaymentsCaptureInput,
+	PaymentsCaptureResponse,
 	PaymentsGetInput,
 	PaymentsGetResponse,
 	PaymentsListInput,
@@ -367,12 +508,26 @@ export type {
 	RazorpayEndpointOutputs,
 	RefundsCreateInput,
 	RefundsCreateResponse,
+	RefundsGetInput,
+	RefundsGetResponse,
+	RefundsListInput,
+	RefundsListResponse,
 	SettlementsListInput,
 	SettlementsListResponse,
 	SettlementGetInput,
 	SettlementsGetResponse,
-	SubscriptionsListInput,
-	SubscriptionsListResponse,
+	SubscriptionsCancelInput,
+	SubscriptionsCancelResponse,
+	SubscriptionsCreateInput,
+	SubscriptionsCreateResponse,
 	SubscriptionsGetInput,
 	SubscriptionsGetResponse,
+	SubscriptionsListInput,
+	SubscriptionsListResponse,
+	SubscriptionsPauseInput,
+	SubscriptionsPauseResponse,
+	SubscriptionsResumeInput,
+	SubscriptionsResumeResponse,
+	SubscriptionsUpdateInput,
+	SubscriptionsUpdateResponse,
 } from './endpoints/types';
