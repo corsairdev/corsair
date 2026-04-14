@@ -9,13 +9,11 @@ export const getAllFeed: RedditEndpoints['feedsGetAll'] = async (
 	input,
 ) => {
 	const raw = await makeRedditRequest<RedditListingRaw>('/r/all.json', {
-		query: {
-			...input,
-		} as Record<string, string | number | boolean | undefined>,
+		query: input,
 	});
 
 	const posts = raw.data.children
-		.filter((child) => child.kind === 't3')
+		.filter((child) => child.kind === 't3') // t3 = link/post
 		.map((child) => PostDataSchema.parse(child.data));
 
 	await logEventFromContext(
@@ -38,13 +36,11 @@ export const getPopularFeed: RedditEndpoints['feedsGetPopular'] = async (
 	input,
 ) => {
 	const raw = await makeRedditRequest<RedditListingRaw>('/r/popular.json', {
-		query: {
-			...input,
-		} as Record<string, string | number | boolean | undefined>,
+		query: input,
 	});
 
 	const posts = raw.data.children
-		.filter((child) => child.kind === 't3')
+		.filter((child) => child.kind === 't3') // t3 = link/post
 		.map((child) => PostDataSchema.parse(child.data));
 
 	await logEventFromContext(
@@ -67,14 +63,12 @@ export const getSubredditsPopular: RedditEndpoints['listingsSubredditsPopular'] 
 		const raw = await makeRedditRequest<RedditListingRaw>(
 			'/subreddits/popular.json',
 			{
-				query: {
-					...input,
-				} as Record<string, string | number | boolean | undefined>,
+				query: input,
 			},
 		);
 
 		const subreddits = raw.data.children
-			.filter((child) => child.kind === 't5')
+			.filter((child) => child.kind === 't5') // t5 = subreddit
 			.map((child) => SubredditDataSchema.parse(child.data));
 
 		await logEventFromContext(
@@ -97,14 +91,12 @@ export const getSubredditsNew: RedditEndpoints['listingsSubredditsNew'] =
 		const raw = await makeRedditRequest<RedditListingRaw>(
 			'/subreddits/new.json',
 			{
-				query: {
-					...input,
-				} as Record<string, string | number | boolean | undefined>,
+				query: input,
 			},
 		);
 
 		const subreddits = raw.data.children
-			.filter((child) => child.kind === 't5')
+			.filter((child) => child.kind === 't5') // t5 = subreddit
 			.map((child) => SubredditDataSchema.parse(child.data));
 
 		await logEventFromContext(

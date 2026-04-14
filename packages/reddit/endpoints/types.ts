@@ -133,6 +133,8 @@ export const UserDataSchema = z
 	})
 	.passthrough();
 
+// Reddit "thing" type prefixes used in listing children:
+// t1 = comment, t2 = account, t3 = link/post, t4 = message, t5 = subreddit, t6 = award
 export const ListingChildSchema = z.object({
 	kind: z.string(),
 	data: z.any(),
