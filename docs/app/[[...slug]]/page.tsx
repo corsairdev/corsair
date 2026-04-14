@@ -18,7 +18,11 @@ import QuickStartDoc from '@/content/getting-started/quick-start.mdx';
 // Guides
 import CreateYourOwnPlugin from '@/content/guides/create-your-own-plugin.mdx';
 import DashboardGuide from '@/content/guides/dashboard.mdx';
+import HatchetGuide from '@/content/guides/hatchet.mdx';
+import InngestGuide from '@/content/guides/inngest.mdx';
 import PluginCredentialsGuide from '@/content/guides/plugin-credentials.mdx';
+import TemporalGuide from '@/content/guides/temporal.mdx';
+import TriggerDevGuide from '@/content/guides/trigger-dev.mdx';
 import WebhooksGuide from '@/content/guides/webhooks.mdx';
 import WorkflowsGuide from '@/content/guides/workflows.mdx';
 // MCP Adapters
@@ -1289,6 +1293,26 @@ const pages = {
 		Component: WebhooksGuide,
 		title: 'Webhooks',
 		description: 'Handling webhooks in Corsair',
+	},
+	'guides/inngest': {
+		Component: InngestGuide,
+		title: 'Inngest',
+		description: 'Trigger durable Inngest functions from Corsair webhook events.',
+	},
+	'guides/temporal': {
+		Component: TemporalGuide,
+		title: 'Temporal',
+		description: 'Start Temporal workflows from Corsair webhook events.',
+	},
+	'guides/trigger-dev': {
+		Component: TriggerDevGuide,
+		title: 'Trigger.dev',
+		description: 'Run Trigger.dev background tasks from Corsair webhook events.',
+	},
+	'guides/hatchet': {
+		Component: HatchetGuide,
+		title: 'Hatchet',
+		description: 'Push Hatchet workflow events from Corsair webhook hooks.',
 	},
 } as const;
 

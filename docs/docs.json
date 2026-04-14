@@ -60,6 +60,15 @@
               "content/mcp-adapters/mastra",
               "content/mcp-adapters/openai"
             ]
+          },
+          {
+            "group": "Workflow Engines",
+            "pages": [
+              "content/guides/inngest",
+              "content/guides/temporal",
+              "content/guides/trigger-dev",
+              "content/guides/hatchet"
+            ]
           }
         ]
       },

@@ -1,0 +1,273 @@
+---
+title: Hatchet
+description: Push Hatchet workflow events from Corsair webhook hooks.
+---
+
+Use Corsair's `webhookHooks` to push events into Hatchet whenever something happens in a connected service. Hatchet handles durable execution and retries — Corsair handles webhook routing and integration auth.
+
+## Install
+
+```bash
+npm install @hatchet-dev/typescript-sdk
+```
+
+---
+
+## Event trigger
+
+When a message arrives in Slack's #support channel, push a Hatchet event. The workflow creates a Linear issue to track the request and replies in-thread to confirm it was received.
+
+```ts title="corsair.ts"
+import { hatchet } from '@/hatchet/client';
+
+slack({
+    webhookHooks: {
+        messages: {
+            message: {
+                before: async (ctx, payload) => {
+                    // Only handle messages in the #support channel
+                    if (payload.channel !== process.env.SLACK_SUPPORT_CHANNEL) {
+                        throw new Error('Not the support channel, skipping');
+                    }
+                    // Skip bot messages
+                    if (payload.bot_id) throw new Error('Bot message, skipping');
+                    return { ctx, payload };
+                },
+                after: async (ctx, result) => {
+                    await hatchet.client.event.push('slack:support.message', {
+                        channel: result.data.channel,
+                        threadTs: result.data.ts,
+                        text: result.data.text,
+                        userId: result.data.user,
+                        tenantId: ctx.tenantId,
+                    });
+                },
+            },
+        },
+    },
+})
+```
+
+```ts title="hatchet/client.ts"
+import Hatchet from '@hatchet-dev/typescript-sdk';
+
+export const hatchet = await Hatchet.init();
+```
+
+```ts title="hatchet/workflows.ts"
+import { hatchet } from './client';
+import { corsair } from '@/server/corsair';
+
+export const supportWorkflow = hatchet.workflow({
+    name: 'slack-support-ticket',
+    on: { event: 'slack:support.message' },
+});
+
+supportWorkflow.task('create-linear-issue', async (ctx) => {
+    const { text, userId, channel, threadTs, tenantId } = ctx.workflowInput<{
+        text: string;
+        userId: string;
+        channel: string;
+        threadTs: string;
+        tenantId?: string;
+    }>();
+
+    const client = tenantId ? corsair.withTenant(tenantId) : corsair;
+
+    // Create a Linear issue from the Slack message
+    const issue = await client.linear.api.issues.create({
+        title: text.slice(0, 80),
+        description: `Reported via Slack by <@${userId}>:\n\n${text}`,
+        teamId: process.env.LINEAR_SUPPORT_TEAM_ID!,
+        labelIds: [process.env.LINEAR_SUPPORT_LABEL!],
+    });
+
+    // Reply in the same Slack thread to confirm
+    await client.slack.api.messages.post({
+        channel,
+        thread_ts: threadTs,
+        text: `✅ Ticket created: <${issue.data.url}|${issue.data.identifier}>`,
+    });
+
+    return { issueId: issue.data.id };
+});
+```
+
+---
+
+## Workflow
+
+When commits are pushed to the main branch, run a multi-step Hatchet workflow: notify the team in Discord, update the Linear project status to reflect the deployment, then log the release in a tracking channel.
+
+```ts title="corsair.ts"
+import { hatchet } from '@/hatchet/client';
+
+github({
+    webhookHooks: {
+        push: {
+            after: async (ctx, result) => {
+                const branch = result.data.ref.replace('refs/heads/', '');
+                if (branch !== 'main') return; // only track main
+
+                await hatchet.client.event.push('github:push.main', {
+                    headCommit: result.data.head_commit?.message ?? '',
+                    pusher: result.data.pusher.name,
+                    compareUrl: result.data.compare,
+                    commitCount: result.data.commits?.length ?? 0,
+                    tenantId: ctx.tenantId,
+                });
+            },
+        },
+    },
+})
+```
+
+```ts title="hatchet/workflows.ts"
+import { hatchet } from './client';
+import { corsair } from '@/server/corsair';
+
+export const deployWorkflow = hatchet.workflow({
+    name: 'main-branch-push',
+    on: { event: 'github:push.main' },
+});
+
+type PushInput = {
+    headCommit: string;
+    pusher: string;
+    compareUrl: string;
+    commitCount: number;
+    tenantId?: string;
+};
+
+deployWorkflow.task('notify-discord', async (ctx) => {
+    const input = ctx.workflowInput<PushInput>();
+    const client = input.tenantId ? corsair.withTenant(input.tenantId) : corsair;
+
+    await client.discord.api.messages.create({
+        channelId: process.env.DISCORD_DEPLOYS_CHANNEL!,
+        content: `🚀 **${input.commitCount} commit(s)** pushed to \`main\` by **${input.pusher}**\n${input.headCommit}\n[View diff](${input.compareUrl})`,
+    });
+});
+
+deployWorkflow.task('update-linear-project', async (ctx) => {
+    const input = ctx.workflowInput<PushInput>();
+    const client = input.tenantId ? corsair.withTenant(input.tenantId) : corsair;
+
+    // Move any Linear issues marked "In Review" to "Done"
+    const inReview = await client.linear.db.issues.list({
+        where: { state: { name: 'In Review' }, team: { id: process.env.LINEAR_TEAM_ID } },
+    });
+
+    for (const issue of inReview) {
+        await client.linear.api.issues.update({
+            issueId: issue.id,
+            stateId: process.env.LINEAR_DONE_STATE_ID!,
+        });
+    }
+});
+
+deployWorkflow.task('log-release', async (ctx) => {
+    const input = ctx.workflowInput<PushInput>();
+    const client = input.tenantId ? corsair.withTenant(input.tenantId) : corsair;
+
+    await client.slack.api.messages.post({
+        channel: 'C_RELEASES_CHANNEL',
+        text: `🔖 Deployed to main: _${input.headCommit}_ by ${input.pusher}\n${input.compareUrl}`,
+    });
+});
+```
+
+---
+
+## Cron job
+
+Every Monday at 9 AM, run a Hatchet cron workflow that pulls the current sprint's Linear issues from Corsair's database and posts a structured report to Slack.
+
+```ts title="hatchet/workflows.ts"
+import { hatchet } from './client';
+import { corsair } from '@/server/corsair';
+
+export const sprintReportWorkflow = hatchet.workflow({
+    name: 'weekly-sprint-report',
+    on: { cron: '0 9 * * 1' }, // Every Monday at 9am UTC
+});
+
+sprintReportWorkflow.task('post-sprint-report', async () => {
+    const [inProgress, blocked, unstarted] = await Promise.all([
+        corsair.linear.db.issues.list({
+            where: { state: { type: 'started' } },
+            orderBy: { priority: 'asc' },
+        }),
+        corsair.linear.db.issues.list({
+            where: { state: { name: 'Blocked' } },
+        }),
+        corsair.linear.db.issues.list({
+            where: { state: { type: 'unstarted' } },
+            orderBy: { priority: 'asc' },
+            limit: 5,
+        }),
+    ]);
+
+    const lines = [
+        `*Sprint Report — ${new Date().toDateString()}*`,
+        '',
+        `*🔄 In Progress (${inProgress.length})*`,
+        ...inProgress.map((i) => `• *${i.title}* — ${i.assignee?.name ?? 'Unassigned'}`),
+        '',
+        `*🚧 Blocked (${blocked.length})*`,
+        ...blocked.map((i) => `• *${i.title}* — ${i.assignee?.name ?? 'Unassigned'}`),
+        '',
+        `*📋 Up Next (${unstarted.length})*`,
+        ...unstarted.map((i) => `• ${i.title}`),
+    ];
+
+    await corsair.slack.api.messages.post({
+        channel: 'C_ENG_CHANNEL',
+        text: lines.join('\n'),
+    });
+});
+```
+
+```ts title="hatchet/worker.ts"
+import { hatchet } from './client';
+import { supportWorkflow, deployWorkflow, sprintReportWorkflow } from './workflows';
+
+const worker = await hatchet.worker('corsair-worker');
+
+worker.registerWorkflow(supportWorkflow);
+worker.registerWorkflow(deployWorkflow);
+worker.registerWorkflow(sprintReportWorkflow);
+
+await worker.start();
+```
+
+<Callout type="info">
+Register all workflows in a single worker. The cron schedule is part of the workflow definition — Hatchet picks it up automatically when the worker connects.
+</Callout>
+
+---
+
+## What's next
+
+<Cards>
+  <Card
+    title="Inngest"
+    description="Durable step functions triggered from Corsair webhooks."
+    href="/guides/inngest"
+  />
+  <Card
+    title="Temporal"
+    description="Start Temporal workflows from Corsair webhook events."
+    href="/guides/temporal"
+  />
+  <Card
+    title="Trigger.dev"
+    description="Background tasks and scheduled jobs with Trigger.dev."
+    href="/guides/trigger-dev"
+  />
+  <Card
+    title="Workflows guide"
+    description="Chain webhook events without a job queue."
+    href="/guides/workflows"
+  />
+</Cards>
