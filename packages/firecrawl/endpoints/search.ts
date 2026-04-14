@@ -1,19 +1,30 @@
 import { logEventFromContext } from 'corsair/core';
 import type { FirecrawlEndpoints } from '..';
 import { makeFirecrawlRequest } from '../client';
-import { persistSearch } from './persist';
-import type { FirecrawlEndpointOutputs } from './types';
+import type { SearchRunResponse } from './types';
 
 export const run: FirecrawlEndpoints['searchRun'] = async (ctx, input) => {
-	const body = input as Record<string, unknown>;
-	const response = await makeFirecrawlRequest<
-		FirecrawlEndpointOutputs['searchRun']
-	>('v2/search', ctx.key, {
-		method: 'POST',
-		body,
-	});
+	const response = await makeFirecrawlRequest<SearchRunResponse>(
+		'v2/search',
+		ctx.key,
+		{
+			method: 'POST',
+			body: input,
+		},
+	);
 
-	await persistSearch(ctx, body, response);
+	if (ctx.db.searches) {
+		try {
+			await ctx.db.searches.upsertByEntityId(input.query, {
+				id: input.query,
+				success: response.success,
+				payload: response,
+				fetchedAt: new Date(),
+			});
+		} catch (error) {
+			console.warn('Failed to save search result to database:', error);
+		}
+	}
 
 	await logEventFromContext(
 		ctx,
