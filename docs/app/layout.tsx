@@ -143,6 +143,38 @@ const tree = {
 		},
 		{
 			type: 'folder' as const,
+			name: 'Workflow Engines',
+			icon: <Activity className="size-4" />,
+			defaultOpen: false,
+			children: [
+				{
+					type: 'page' as const,
+					name: 'Inngest',
+					url: '/guides/inngest',
+					icon: <Zap className="size-4" />,
+				},
+				{
+					type: 'page' as const,
+					name: 'Temporal',
+					url: '/guides/temporal',
+					icon: <RefreshCcwDot className="size-4" />,
+				},
+				{
+					type: 'page' as const,
+					name: 'Trigger.dev',
+					url: '/guides/trigger-dev',
+					icon: <Bell className="size-4" />,
+				},
+				{
+					type: 'page' as const,
+					name: 'Hatchet',
+					url: '/guides/hatchet',
+					icon: <Code2 className="size-4" />,
+				},
+			],
+		},
+		{
+			type: 'folder' as const,
 			name: 'Concepts',
 			icon: <Layers className="size-4" />,
 			defaultOpen: false,

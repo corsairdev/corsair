@@ -233,6 +233,10 @@ const slugToFilePath: Record<string, string> = {
 	'guides/dashboard': 'guides/dashboard.mdx',
 	'guides/workflows': 'guides/workflows.mdx',
 	'guides/webhooks': 'guides/webhooks.mdx',
+	'guides/inngest': 'guides/inngest.mdx',
+	'guides/temporal': 'guides/temporal.mdx',
+	'guides/trigger-dev': 'guides/trigger-dev.mdx',
+	'guides/hatchet': 'guides/hatchet.mdx',
 	// getting-started (additional)
 	'quick-start': 'getting-started/quick-start.mdx',
 };
