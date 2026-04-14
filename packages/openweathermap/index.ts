@@ -190,6 +190,9 @@ export function openweathermap<const T extends OpenWeatherMapPluginOptions>(
 		// Safe: T extends OpenWeatherMapPluginOptions, so an empty object is a valid no-op default
 		// when no options are passed. TypeScript requires the cast because it cannot verify T = {}.
 		T = {} as OpenWeatherMapPluginOptions & T,
+	// Safe: T extends OpenWeatherMapPluginOptions, so an empty object is a valid no-op default
+	// when no options are passed. TypeScript requires the cast because it cannot verify T = {}.
+): ExternalOpenWeatherMapPlugin<T> {
 	const options = {
 		...incomingOptions,
 		authType: incomingOptions.authType ?? defaultAuthType,

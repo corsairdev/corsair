@@ -1,5 +1,21 @@
 import type { CorsairErrorHandler } from 'corsair/core';
-import { ApiError } from 'corsair/http';
+import type { OpenWeatherMapAPIError } from './client';
+
+/**
+ * Helper to extract the HTTP status from an error.
+ * Works with OpenWeatherMapAPIError (which copies status from ApiError)
+ * and any error that exposes a numeric `status` property.
+ */
+function getStatus(error: Error): number | undefined {
+	return (error as Partial<OpenWeatherMapAPIError>).status;
+}
+
+/**
+ * Helper to extract the Retry-After value (in ms) from an error.
+ */
+function getRetryAfter(error: Error): number | undefined {
+	return (error as Partial<OpenWeatherMapAPIError>).retryAfter;
+}
 
 /**
  * Error handlers for the OpenWeatherMap plugin.
@@ -13,25 +29,21 @@ import { ApiError } from 'corsair/http';
 export const errorHandlers = {
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) => {
-			if (error instanceof ApiError && error.status === 429) return true;
+			if (getStatus(error) === 429) return true;
 			const msg = error.message.toLowerCase();
 			return msg.includes('429') || msg.includes('rate limit');
 		},
 		handler: async (error: Error) => {
-			let retryAfterMs: number | undefined;
-			if (error instanceof ApiError && error.retryAfter !== undefined) {
-				retryAfterMs = error.retryAfter;
-			}
 			return {
 				maxRetries: 3,
 				retryStrategy: 'exponential_backoff' as const,
-				headersRetryAfterMs: retryAfterMs,
+				headersRetryAfterMs: getRetryAfter(error),
 			};
 		},
 	},
 	AUTH_ERROR: {
 		match: (error: Error) => {
-			if (error instanceof ApiError && error.status === 401) return true;
+			if (getStatus(error) === 401) return true;
 			const msg = error.message.toLowerCase();
 			return (
 				msg.includes('invalid api key') ||
@@ -49,7 +61,7 @@ export const errorHandlers = {
 	},
 	NOT_FOUND_ERROR: {
 		match: (error: Error) => {
-			if (error instanceof ApiError && error.status === 404) return true;
+			if (getStatus(error) === 404) return true;
 			const msg = error.message.toLowerCase();
 			return msg.includes('404') || msg.includes('not found');
 		},
@@ -62,7 +74,8 @@ export const errorHandlers = {
 	},
 	SERVER_ERROR: {
 		match: (error: Error) => {
-			if (error instanceof ApiError && error.status >= 500) return true;
+			const status = getStatus(error);
+			if (status !== undefined && status >= 500) return true;
 			const msg = error.message.toLowerCase();
 			return msg.includes('500') || msg.includes('internal server error');
 		},
