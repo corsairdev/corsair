@@ -17,7 +17,7 @@ export const start: FirecrawlEndpoints['agentStart'] = async (ctx, input) => {
 		},
 	);
 
-	if (typeof response.id === 'string' && ctx.db.jobs) {
+	if (!!response.id && ctx.db.jobs) {
 		try {
 			await ctx.db.jobs.upsertByEntityId(response.id, {
 				id: response.id,
