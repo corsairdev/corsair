@@ -282,7 +282,11 @@ export function dodopayments<const T extends DodoPaymentsPluginOptions>(
         endpointSchemas: dodoPaymentsEndpointSchemas,
         webhookSchemas: dodoPaymentsWebhookSchemas,
         pluginWebhookMatcher: ({ headers, body }) => {
-            if (!('webhook-signature' in headers)) {
+            if (
+                !('webhook-signature' in headers) ||
+                !('webhook-id' in headers) ||
+                !('webhook-timestamp' in headers)
+            ) {
                 return false;
             }
 
