@@ -6,18 +6,18 @@ export function ScrollToTop() {
     const [isVisible, setVisibility] = useState(false)
     const scrollTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
-    function handleScroll() {
-        setVisibility(false)
-        if (scrollTimeoutRef.current) {
-            clearTimeout(scrollTimeoutRef.current)
-        }
-        scrollTimeoutRef.current = setTimeout(() => {
-            const shouldBeVisible = window.scrollY > 200
-            setVisibility(shouldBeVisible)
-        }, 300)
-    }
-    
     useEffect(() => {
+        function handleScroll() {
+            setVisibility(false)
+            if (scrollTimeoutRef.current) {
+                clearTimeout(scrollTimeoutRef.current)
+            }
+            scrollTimeoutRef.current = setTimeout(() => {
+                const shouldBeVisible = window.scrollY > 200
+                setVisibility(shouldBeVisible)
+            }, 300)
+        }
+
         window.addEventListener('scroll', handleScroll)
 
         return () => {
