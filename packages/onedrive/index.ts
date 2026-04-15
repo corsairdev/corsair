@@ -839,12 +839,15 @@ export function onedrive<const PluginOptions extends OnedrivePluginOptions>(
 					);
 				}
 
+				// Use a mutable variable so _refreshAuth always uses the latest token
+				let currentRefreshToken = refreshToken;
+
 				let result: Awaited<ReturnType<typeof getValidAccessToken>>;
 				try {
 					result = await getValidAccessToken({
 						accessToken,
 						expiresAt,
-						refreshToken,
+						refreshToken: currentRefreshToken,
 						clientId: creds.client_id,
 						clientSecret: creds.client_secret,
 					});
@@ -860,7 +863,8 @@ export function onedrive<const PluginOptions extends OnedrivePluginOptions>(
 						await ctx.keys.set_expires_at(String(result.expiresAt));
 						// Microsoft issues a new refresh token on each refresh — persist it
 						if (result.newRefreshToken) {
-							await ctx.keys.set_refresh_token(result.newRefreshToken);
+							currentRefreshToken = result.newRefreshToken;
+							await ctx.keys.set_refresh_token(currentRefreshToken);
 						}
 					} catch (error) {
 						throw new Error(
@@ -875,7 +879,7 @@ export function onedrive<const PluginOptions extends OnedrivePluginOptions>(
 					const freshResult = await getValidAccessToken({
 						accessToken: null,
 						expiresAt: null,
-						refreshToken,
+						refreshToken: currentRefreshToken,
 						clientId: creds.client_id!,
 						clientSecret: creds.client_secret!,
 						forceRefresh: true,
@@ -883,7 +887,8 @@ export function onedrive<const PluginOptions extends OnedrivePluginOptions>(
 					await ctx.keys.set_access_token(freshResult.accessToken);
 					await ctx.keys.set_expires_at(String(freshResult.expiresAt));
 					if (freshResult.newRefreshToken) {
-						await ctx.keys.set_refresh_token(freshResult.newRefreshToken);
+						currentRefreshToken = freshResult.newRefreshToken;
+						await ctx.keys.set_refresh_token(currentRefreshToken);
 					}
 					return freshResult.accessToken;
 				};
