@@ -620,6 +620,7 @@ export async function runAuth({
 	tenantId: tenantIdArg,
 	code: codeArg,
 	credentials: showCredentials = false,
+	agent: agentMode = false,
 }: {
 	cwd: string;
 	pluginId?: string;
@@ -628,6 +629,8 @@ export async function runAuth({
 	code?: string;
 	/** Output current credential status instead of starting OAuth flow. */
 	credentials?: boolean;
+	/** When true, output instructions for an AI agent to guide the user through auth. */
+	agent?: boolean;
 }): Promise<void> {
 	let internal: CorsairInternalConfig;
 	try {
@@ -678,6 +681,20 @@ export async function runAuth({
 	if (authType !== 'oauth_2') {
 		out({
 			error: `'corsair auth' is for OAuth flows. Plugin '${plugin.id}' uses '${authType}'. Set credentials via: corsair setup --${plugin.id} <field>=<value>`,
+		});
+		return;
+	}
+
+	if (agentMode) {
+		const baseCmd = `pnpm corsair auth --plugin=${plugin.id}`;
+		const tenantFlag = tenantIdArg && tenantIdArg !== 'default' ? ` --tenant=${tenantIdArg}` : '';
+		const cmd = `${baseCmd}${tenantFlag}`;
+		out({
+			status: 'agent_instructions',
+			plugin: plugin.id,
+			tenant: tenantId,
+			command: cmd,
+			message: `To authenticate the '${plugin.id}' plugin, ask the user to run the following command in a separate terminal:\n\n  ${cmd}\n\nDo NOT run this command directly — it starts a local HTTP server and waits for an OAuth callback, which will cause a deadlock if executed by the agent. The user must run it themselves in a separate terminal or background process.`,
 		});
 		return;
 	}

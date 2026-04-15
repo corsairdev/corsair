@@ -503,16 +503,22 @@ function parseAuthArgs(args: string[]): {
 	code?: string;
 	credentials?: boolean;
 	webhook?: boolean;
+	agent?: boolean;
 } {
 	let pluginId: string | undefined;
 	let tenantId: string | undefined;
 	let code: string | undefined;
 	let credentials = false;
 	let webhook = false;
+	let agent = false;
 
 	for (const arg of args) {
 		if (arg === '--credentials') {
 			credentials = true;
+			continue;
+		}
+		if (arg === '--agent') {
+			agent = true;
 			continue;
 		}
 		if (arg === '--webhook') {
@@ -539,7 +545,7 @@ function parseAuthArgs(args: string[]): {
 		}
 	}
 
-	return { pluginId, tenantId, code, credentials, webhook };
+	return { pluginId, tenantId, code, credentials, webhook, agent };
 }
 
 function parseSetupArgs(args: string[]): {
@@ -640,6 +646,7 @@ function printHelp() {
 		'  pnpm corsair auth --plugin=<id>                 Start OAuth flow',
 		'  pnpm corsair auth --plugin=<id> --code=<code>   Exchange OAuth code for tokens',
 		'  pnpm corsair auth --plugin=<id> --credentials   Show credential status',
+		'  pnpm corsair auth --plugin=<id> --agent          Get auth instructions for AI agents (avoids deadlock)',
 		'  pnpm corsair auth --plugin=<id> --webhook       Set up webhook subscription',
 		'    Supported plugins: outlook, sharepoint, teams, onedrive, gmail, googledrive, googlecalendar, googlesheets',
 		'  pnpm corsair list [--plugin=<id>] [--type=api|webhooks|db]  List endpoint paths (tip: pipe to grep to filter)',
