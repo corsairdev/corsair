@@ -976,6 +976,9 @@ importers:
       express:
         specifier: ^4.21.0
         version: 4.22.1
+      openai:
+        specifier: '>=4.0.0'
+        version: 6.27.0(ws@8.19.0)(zod@3.25.76)
       zod:
         specifier: ^3.25.0
         version: 3.25.76
