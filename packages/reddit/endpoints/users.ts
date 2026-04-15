@@ -2,6 +2,7 @@ import { logEventFromContext } from 'corsair/core';
 import type { RedditEndpoints } from '..';
 import { makeRedditRequest } from '../client';
 import { CommentDataSchema, PostDataSchema, UserDataSchema } from './types';
+import { extractComments, extractPosts } from './utils';
 import type { RedditEntityEnvelopeRaw, RedditListingRaw } from './types';
 
 export const getAbout: RedditEndpoints['usersGetAbout'] = async (
@@ -44,9 +45,7 @@ export const getSubmitted: RedditEndpoints['usersGetSubmitted'] = async (
 		{ query },
 	);
 
-	const posts = raw.data.children
-		.filter((child) => child.kind === 't3') // t3 = link/post
-		.map((child) => PostDataSchema.parse(child.data));
+	const posts = extractPosts(raw);
 
 	await logEventFromContext(
 		ctx,
@@ -73,9 +72,7 @@ export const getComments: RedditEndpoints['usersGetComments'] = async (
 		{ query },
 	);
 
-	const comments = raw.data.children
-		.filter((child) => child.kind === 't1') // t1 = comment
-		.map((child) => CommentDataSchema.parse(child.data));
+	const comments = extractComments(raw);
 
 	await logEventFromContext(
 		ctx,

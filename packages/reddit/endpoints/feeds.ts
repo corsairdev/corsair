@@ -1,7 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import type { RedditEndpoints } from '..';
 import { makeRedditRequest } from '../client';
-import { PostDataSchema, SubredditDataSchema } from './types';
+import { extractPosts, extractSubreddits } from './utils';
 import type { RedditListingRaw } from './types';
 
 export const getAllFeed: RedditEndpoints['feedsGetAll'] = async (
@@ -12,9 +12,7 @@ export const getAllFeed: RedditEndpoints['feedsGetAll'] = async (
 		query: input,
 	});
 
-	const posts = raw.data.children
-		.filter((child) => child.kind === 't3') // t3 = link/post
-		.map((child) => PostDataSchema.parse(child.data));
+	const posts = extractPosts(raw);
 
 	await logEventFromContext(
 		ctx,
@@ -39,9 +37,7 @@ export const getPopularFeed: RedditEndpoints['feedsGetPopular'] = async (
 		query: input,
 	});
 
-	const posts = raw.data.children
-		.filter((child) => child.kind === 't3') // t3 = link/post
-		.map((child) => PostDataSchema.parse(child.data));
+	const posts = extractPosts(raw);
 
 	await logEventFromContext(
 		ctx,
@@ -67,9 +63,7 @@ export const getSubredditsPopular: RedditEndpoints['listingsSubredditsPopular'] 
 			},
 		);
 
-		const subreddits = raw.data.children
-			.filter((child) => child.kind === 't5') // t5 = subreddit
-			.map((child) => SubredditDataSchema.parse(child.data));
+		const subreddits = extractSubreddits(raw);
 
 		await logEventFromContext(
 			ctx,
@@ -95,9 +89,7 @@ export const getSubredditsNew: RedditEndpoints['listingsSubredditsNew'] =
 			},
 		);
 
-		const subreddits = raw.data.children
-			.filter((child) => child.kind === 't5') // t5 = subreddit
-			.map((child) => SubredditDataSchema.parse(child.data));
+		const subreddits = extractSubreddits(raw);
 
 		await logEventFromContext(
 			ctx,

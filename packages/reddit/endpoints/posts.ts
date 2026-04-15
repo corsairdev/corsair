@@ -1,7 +1,8 @@
 import { logEventFromContext } from 'corsair/core';
 import type { RedditEndpoints } from '..';
 import { makeRedditRequest } from '../client';
-import { CommentDataSchema, PostDataSchema } from './types';
+import { PostDataSchema } from './types';
+import { extractComments, extractPosts } from './utils';
 import type { RedditListingRaw } from './types';
 
 export const getComments: RedditEndpoints['postsGetComments'] = async (
@@ -17,9 +18,7 @@ export const getComments: RedditEndpoints['postsGetComments'] = async (
 	const postRaw = raw[0].data.children.find((c) => c.kind === 't3'); // t3 = link/post
 	const post = PostDataSchema.parse(postRaw?.data ?? {});
 
-	const comments = raw[1].data.children
-		.filter((child) => child.kind === 't1') // t1 = comment
-		.map((child) => CommentDataSchema.parse(child.data));
+	const comments = extractComments(raw[1]);
 
 	try {
 		for (const comment of comments) {
@@ -51,9 +50,7 @@ export const getById: RedditEndpoints['postsGetById'] = async (ctx, input) => {
 		`/by_id/${input.names}.json`,
 	);
 
-	const posts = raw.data.children
-		.filter((child) => child.kind === 't3') // t3 = link/post
-		.map((child) => PostDataSchema.parse(child.data));
+	const posts = extractPosts(raw);
 
 	return {
 		posts,

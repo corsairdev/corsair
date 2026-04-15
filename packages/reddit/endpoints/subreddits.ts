@@ -1,14 +1,9 @@
 import { logEventFromContext } from 'corsair/core';
 import type { RedditEndpoints } from '..';
 import { makeRedditRequest } from '../client';
-import { PostDataSchema, SubredditDataSchema } from './types';
+import { SubredditDataSchema } from './types';
 import type { RedditEntityEnvelopeRaw, RedditListingRaw } from './types';
-
-function parsePosts(raw: RedditListingRaw) {
-	return raw.data.children
-		.filter((child) => child.kind === 't3') // t3 = link/post
-		.map((child) => PostDataSchema.parse(child.data));
-}
+import { extractPosts } from './utils';
 
 export const getHot: RedditEndpoints['subredditsGetHot'] = async (
 	ctx,
@@ -20,7 +15,7 @@ export const getHot: RedditEndpoints['subredditsGetHot'] = async (
 		{ query },
 	);
 
-	const posts = parsePosts(raw);
+	const posts = extractPosts(raw);
 
 	if (ctx.db.posts) {
 		try {
@@ -59,7 +54,7 @@ export const getNew: RedditEndpoints['subredditsGetNew'] = async (
 		{ query },
 	);
 
-	const posts = parsePosts(raw);
+	const posts = extractPosts(raw);
 
 	await logEventFromContext(
 		ctx,
@@ -86,7 +81,7 @@ export const getTop: RedditEndpoints['subredditsGetTop'] = async (
 		{ query },
 	);
 
-	const posts = parsePosts(raw);
+	const posts = extractPosts(raw);
 
 	await logEventFromContext(
 		ctx,
@@ -113,7 +108,7 @@ export const getRising: RedditEndpoints['subredditsGetRising'] = async (
 		{ query },
 	);
 
-	const posts = parsePosts(raw);
+	const posts = extractPosts(raw);
 
 	await logEventFromContext(
 		ctx,
@@ -140,7 +135,7 @@ export const getControversial: RedditEndpoints['subredditsGetControversial'] =
 		},
 		);
 
-		const posts = parsePosts(raw);
+		const posts = extractPosts(raw);
 
 		await logEventFromContext(
 			ctx,

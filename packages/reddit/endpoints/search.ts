@@ -1,7 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import type { RedditEndpoints } from '..';
 import { makeRedditRequest } from '../client';
-import { PostDataSchema, SubredditDataSchema } from './types';
+import { extractPosts, extractSubreddits } from './utils';
 import type { RedditListingRaw } from './types';
 
 export const searchGlobal: RedditEndpoints['searchGlobal'] = async (
@@ -12,9 +12,7 @@ export const searchGlobal: RedditEndpoints['searchGlobal'] = async (
 		query: input,
 	});
 
-	const posts = raw.data.children
-		.filter((child) => child.kind === 't3') // t3 = link/post
-		.map((child) => PostDataSchema.parse(child.data));
+	const posts = extractPosts(raw);
 
 	await logEventFromContext(
 		ctx,
@@ -43,9 +41,7 @@ export const searchSubreddit: RedditEndpoints['searchSubreddit'] = async (
 		},
 	);
 
-	const posts = raw.data.children
-		.filter((child) => child.kind === 't3') // t3 = link/post
-		.map((child) => PostDataSchema.parse(child.data));
+	const posts = extractPosts(raw);
 
 	await logEventFromContext(
 		ctx,
@@ -73,9 +69,7 @@ export const searchSubreddits: RedditEndpoints['searchSubreddits'] = async (
 		},
 	);
 
-	const subreddits = raw.data.children
-		.filter((child) => child.kind === 't5') // t5 = subreddit
-		.map((child) => SubredditDataSchema.parse(child.data));
+	const subreddits = extractSubreddits(raw);
 
 	await logEventFromContext(
 		ctx,
