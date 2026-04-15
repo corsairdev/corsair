@@ -29,6 +29,18 @@ export class OllamaProvider extends BaseProvider<CorsairOllamaTool> {
             type: 'function',
             function: {
                 name: def.name,
+                description: def.description,
+                parameters: schema as Record<string, unknown>,
+            },
+            /**
+             * The `execute` helper provides a simplified execution interface for runners.
+             * It handles:
+             * 1. Parsing arguments (handles both object and JSON string inputs).
+             * 2. Validation against the tool's Zod schema.
+             * 3. Execution of the underlying Corsair tool handler.
+             * 4. Extraction and concatenation of text results into a single string.
+             * 5. Graceful error handling for robust integration.
+             */
             execute: async (args) => {
                 try {
                     const raw = (
@@ -42,9 +54,6 @@ export class OllamaProvider extends BaseProvider<CorsairOllamaTool> {
                         .join('\n');
                 } catch (err) {
                     const message = err instanceof Error ? err.message : String(err);
-                    return `Error: ${message}`;
-                }
-            },
                     return `Error: ${message}`;
                 }
             },
