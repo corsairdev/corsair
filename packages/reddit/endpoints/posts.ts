@@ -19,15 +19,16 @@ export const getComments: RedditEndpoints['postsGetComments'] = async (
 
 	const comments = raw[1].data.children
 		.filter((child) => child.kind === 't1') // t1 = comment
-		try {
-			for (const comment of comments) {
-				await ctx.db.comments.upsertByEntityId(String(comment.id), {
-					...comment,
-				});
-			}
-		} catch (error) {
-			console.warn('Failed to save comments to database:', error);
+		.map((child) => CommentDataSchema.parse(child.data));
+
+	try {
+		for (const comment of comments) {
+			await ctx.db.comments?.upsertByEntityId(String(comment.id), {
+				...comment,
+			});
 		}
+	} catch (error) {
+		console.warn('Failed to save comments to database:', error);
 	}
 
 	await logEventFromContext(
@@ -52,9 +53,7 @@ export const getById: RedditEndpoints['postsGetById'] = async (ctx, input) => {
 
 	const posts = raw.data.children
 		.filter((child) => child.kind === 't3') // t3 = link/post
-		{ ...input },
-		'completed',
-	);
+		.map((child) => PostDataSchema.parse(child.data));
 
 	return {
 		posts,
