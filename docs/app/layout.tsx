@@ -3,6 +3,7 @@ import './globals.css';
 import { NextProvider } from 'fumadocs-core/framework/next';
 import { DocsLayout } from 'fumadocs-ui/layouts/docs';
 import { RootProvider } from 'fumadocs-ui/provider';
+import { ScrollToTop } from '@/components/scroll-to-top';
 import {
 	Activity,
 	AlertTriangle,
@@ -1676,7 +1677,8 @@ export default function RootLayout({ children }) {
 							sidebar={{
 								defaultOpenLevel: 0,
 							}}
-						>
+						>	
+							<ScrollToTop/>
 							{children}
 						</DocsLayout>
 					</RootProvider>
