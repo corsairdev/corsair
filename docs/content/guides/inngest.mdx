@@ -81,6 +81,7 @@ export const notifyAssignee = inngest.createFunction(
 
 When a GitHub PR is opened, kick off a multi-step Inngest workflow that generates an AI code review, posts it as a comment, then notifies Slack. Each step is retried independently on failure.
 
+```ts title="corsair.ts"
 import { inngest } from '@/inngest/client';
 
 github({
