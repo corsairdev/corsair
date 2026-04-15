@@ -79,10 +79,24 @@ export const listBranches: GithubEndpoints['repositoriesListBranches'] = async (
 	);
 
 	const endpoints = ctx.endpoints as GithubBoundEndpoints;
-	await endpoints.repositories.get({
-		owner,
-		repo,
-	});
+	const repoData = await endpoints.repositories.get({ owner, repo });
+
+	if (result && ctx.db.branches && repoData?.id) {
+		try {
+			for (const branch of result) {
+				const entityId = `${repoData.id}:${branch.name}`;
+				await ctx.db.branches.upsertByEntityId(entityId, {
+					repositoryId: repoData.id,
+					repositoryFullName: repoData.fullName ?? `${owner}/${repo}`,
+					name: branch.name,
+					sha: branch.commit.sha,
+					protected: branch.protected,
+				});
+			}
+		} catch (error) {
+			console.warn('Failed to save branches to database:', error);
+		}
+	}
 
 	await logEventFromContext(
 		ctx,

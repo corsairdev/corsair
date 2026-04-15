@@ -37,6 +37,7 @@ export const GithubRepository = z.object({
 	openIssuesCount: z.number().optional(),
 	archived: z.boolean().optional(),
 	disabled: z.boolean().optional(),
+	deletedAt: z.coerce.date().nullable().optional(),
 });
 
 export const GithubIssue = z.object({
@@ -65,6 +66,7 @@ export const GithubIssue = z.object({
 	createdAt: z.coerce.date().nullable().optional(),
 	updatedAt: z.coerce.date().nullable().optional(),
 	closedAt: z.coerce.date().nullable().optional(),
+	deletedAt: z.coerce.date().nullable().optional(),
 });
 
 export const GithubPullRequest = z.object({
@@ -117,6 +119,7 @@ export const GithubRelease = z.object({
 	createdAt: z.coerce.date().nullable().optional(),
 	publishedAt: z.coerce.date().nullable().optional(),
 	author: GithubUser.optional(),
+	deletedAt: z.coerce.date().nullable().optional(),
 });
 
 export const GithubWorkflow = z.object({
@@ -139,9 +142,75 @@ export const GithubWorkflow = z.object({
 	deletedAt: z.coerce.date().nullable().optional(),
 });
 
+export const GithubDiscussion = z.object({
+	id: z.number(),
+	nodeId: z.string().optional(),
+	htmlUrl: z.string().optional(),
+	repositoryUrl: z.string().optional(),
+	number: z.number(),
+	title: z.string(),
+	body: z.string().nullable().optional(),
+	state: z.string().optional(),
+	locked: z.boolean().optional(),
+	comments: z.number().optional(),
+	authorAssociation: z.string().optional(),
+	categoryId: z.number().optional(),
+	categoryName: z.string().optional(),
+	createdAt: z.coerce.date().nullable().optional(),
+	updatedAt: z.coerce.date().nullable().optional(),
+	answerChosenAt: z.coerce.date().nullable().optional(),
+	deletedAt: z.coerce.date().nullable().optional(),
+});
+
+export const GithubComment = z.object({
+	id: z.number(),
+	nodeId: z.string().optional(),
+	url: z.string().optional(),
+	htmlUrl: z.string().optional(),
+	issueUrl: z.string().optional(),
+	body: z.string().optional(),
+	authorAssociation: z.string().optional(),
+	user: GithubUser.nullable().optional(),
+	createdAt: z.coerce.date().nullable().optional(),
+	updatedAt: z.coerce.date().nullable().optional(),
+	deletedAt: z.coerce.date().nullable().optional(),
+});
+
+// Branches use a composite entity ID: `{repositoryId}:{branchName}`
+export const GithubBranch = z.object({
+	repositoryId: z.number(),
+	repositoryFullName: z.string().optional(),
+	name: z.string(),
+	sha: z.string().optional(),
+	protected: z.boolean().optional(),
+	deletedAt: z.coerce.date().nullable().optional(),
+});
+
+// Forks use the forked repo's ID as the entity ID
+export const GithubFork = z.object({
+	id: z.number(),
+	nodeId: z.string().optional(),
+	fullName: z.string(),
+	htmlUrl: z.string().optional(),
+	description: z.string().nullable().optional(),
+	private: z.boolean().optional(),
+	fork: z.boolean().optional(),
+	url: z.string().optional(),
+	sourceRepoId: z.number(),
+	sourceRepoFullName: z.string(),
+	defaultBranch: z.string().optional(),
+	createdAt: z.coerce.date().nullable().optional(),
+	updatedAt: z.coerce.date().nullable().optional(),
+	pushedAt: z.coerce.date().nullable().optional(),
+});
+
 export type GithubUser = z.infer<typeof GithubUser>;
 export type GithubRepository = z.infer<typeof GithubRepository>;
 export type GithubIssue = z.infer<typeof GithubIssue>;
 export type GithubPullRequest = z.infer<typeof GithubPullRequest>;
 export type GithubRelease = z.infer<typeof GithubRelease>;
 export type GithubWorkflow = z.infer<typeof GithubWorkflow>;
+export type GithubDiscussion = z.infer<typeof GithubDiscussion>;
+export type GithubBranch = z.infer<typeof GithubBranch>;
+export type GithubFork = z.infer<typeof GithubFork>;
+export type GithubComment = z.infer<typeof GithubComment>;

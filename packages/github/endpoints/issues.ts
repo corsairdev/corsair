@@ -2,7 +2,7 @@ import { logEventFromContext } from 'corsair/core';
 import type { GithubBoundEndpoints, GithubEndpoints } from '..';
 import { makeGithubRequest } from '../client';
 import type {
-	IssueCommentCreateResponse,
+	CommentCreateResponse,
 	IssueCreateResponse,
 	IssueGetResponse,
 	IssuesListResponse,
@@ -127,21 +127,33 @@ export const createComment: GithubEndpoints['issuesCreateComment'] = async (
 ) => {
 	const { owner, repo, issueNumber, body } = input;
 	const endpoint = `/repos/${owner}/${repo}/issues/${issueNumber}/comments`;
-	const result = await makeGithubRequest<IssueCommentCreateResponse>(
+	const result = await makeGithubRequest<CommentCreateResponse>(
 		endpoint,
 		ctx.key,
 		{ method: 'POST', body: { body } },
 	);
 
-	if (result && ctx.db.issues) {
+	if (result) {
 		try {
-			const endpoints = ctx.endpoints as GithubBoundEndpoints;
+			// Save the comment itself
+			if (ctx.db.comments) {
+				await ctx.db.comments.upsertByEntityId(result.id.toString(), {
+					id: result.id,
+					nodeId: result.nodeId,
+					url: result.url,
+					htmlUrl: result.htmlUrl,
+					issueUrl: result.issueUrl,
+					body: result.body,
+					createdAt: result.createdAt ? new Date(result.createdAt) : null,
+					updatedAt: result.updatedAt ? new Date(result.updatedAt) : null,
+				});
+			}
 
-			await endpoints.issues.get({
-				owner,
-				repo,
-				issueNumber,
-			});
+			// Refresh the parent issue comment count
+			if (ctx.db.issues) {
+				const endpoints = ctx.endpoints as GithubBoundEndpoints;
+				await endpoints.issues.get({ owner, repo, issueNumber });
+			}
 		} catch (error) {
 			console.warn('Failed to save issue comment to database:', error);
 		}
