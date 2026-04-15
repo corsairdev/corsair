@@ -115,6 +115,12 @@ export function verifyDodoWebhookSignature(
 		return { valid: false, error: 'Missing required webhook headers' };
 	}
 
+	const WEBHOOK_TOLERANCE_MS = 5 * 60 * 1000; // 5 minutes
+	const timestampMs = parseInt(webhookTimestamp ?? '', 10) * 1000;
+	if (isNaN(timestampMs) || Math.abs(Date.now() - timestampMs) > WEBHOOK_TOLERANCE_MS) {
+		return { valid: false, error: 'Webhook timestamp out of tolerance window' };
+	}
+
 	// Dodo signed content format per docs: {webhook-id}.{webhook-timestamp}.{raw_body}
 	const signedContent = `${webhookId}.${webhookTimestamp}.${rawBody}`;
 
