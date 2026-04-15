@@ -117,7 +117,10 @@ export function verifyDodoWebhookSignature(
 
 	const WEBHOOK_TOLERANCE_MS = 5 * 60 * 1000; // 5 minutes
 	const timestampMs = parseInt(webhookTimestamp ?? '', 10) * 1000;
-	if (isNaN(timestampMs) || Math.abs(Date.now() - timestampMs) > WEBHOOK_TOLERANCE_MS) {
+	if (
+		isNaN(timestampMs) ||
+		Math.abs(Date.now() - timestampMs) > WEBHOOK_TOLERANCE_MS
+	) {
 		return { valid: false, error: 'Webhook timestamp out of tolerance window' };
 	}
 

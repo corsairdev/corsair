@@ -33,7 +33,11 @@ async function refreshAccessToken(
 	clientId: string,
 	clientSecret: string,
 	refreshToken: string,
-): Promise<{ access_token: string; expires_in: number; refresh_token?: string }> {
+): Promise<{
+	access_token: string;
+	expires_in: number;
+	refresh_token?: string;
+}> {
 	const response = await fetch(MICROSOFT_TOKEN_URL, {
 		method: 'POST',
 		headers: {

@@ -3,7 +3,10 @@ import type { DodoPaymentsEndpoints } from '..';
 import { makeDodoPaymentsRequest } from '../client';
 import type { DodoPaymentsEndpointOutputs } from './types';
 
-export const create: DodoPaymentsEndpoints['subscriptionsCreate'] = async (ctx, input) => {
+export const create: DodoPaymentsEndpoints['subscriptionsCreate'] = async (
+	ctx,
+	input,
+) => {
 	const result = await makeDodoPaymentsRequest<
 		DodoPaymentsEndpointOutputs['subscriptionsCreate']
 	>('subscriptions', ctx.key, {
@@ -31,7 +34,10 @@ export const create: DodoPaymentsEndpoints['subscriptionsCreate'] = async (ctx, 
 	return result;
 };
 
-export const get: DodoPaymentsEndpoints['subscriptionsGet'] = async (ctx, input) => {
+export const get: DodoPaymentsEndpoints['subscriptionsGet'] = async (
+	ctx,
+	input,
+) => {
 	const result = await makeDodoPaymentsRequest<
 		DodoPaymentsEndpointOutputs['subscriptionsGet']
 	>(`subscriptions/${input.id}`, ctx.key, { method: 'GET' });
@@ -56,7 +62,10 @@ export const get: DodoPaymentsEndpoints['subscriptionsGet'] = async (ctx, input)
 	return result;
 };
 
-export const cancel: DodoPaymentsEndpoints['subscriptionsCancel'] = async (ctx, input) => {
+export const cancel: DodoPaymentsEndpoints['subscriptionsCancel'] = async (
+	ctx,
+	input,
+) => {
 	const result = await makeDodoPaymentsRequest<
 		DodoPaymentsEndpointOutputs['subscriptionsCancel']
 	>(`subscriptions/${input.id}/cancel`, ctx.key, { method: 'POST' });

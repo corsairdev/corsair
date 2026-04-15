@@ -22,7 +22,9 @@ export const succeeded: DodoPaymentsWebhooks['paymentSucceeded'] = {
 			try {
 				await ctx.db.payments.upsertByEntityId(payment.id, {
 					...payment,
-					createdAt: payment.created_at ? new Date(payment.created_at) : undefined,
+					createdAt: payment.created_at
+						? new Date(payment.created_at)
+						: undefined,
 				});
 			} catch (error) {
 				console.warn(
@@ -67,7 +69,9 @@ export const failed: DodoPaymentsWebhooks['paymentFailed'] = {
 			try {
 				await ctx.db.payments.upsertByEntityId(payment.id, {
 					...payment,
-					createdAt: payment.created_at ? new Date(payment.created_at) : undefined,
+					createdAt: payment.created_at
+						? new Date(payment.created_at)
+						: undefined,
 				});
 			} catch (error) {
 				console.warn(

@@ -22,7 +22,9 @@ export const active: DodoPaymentsWebhooks['subscriptionActive'] = {
 			try {
 				await ctx.db.subscriptions.upsertByEntityId(subscription.id, {
 					...subscription,
-					createdAt: subscription.created_at ? new Date(subscription.created_at) : undefined,
+					createdAt: subscription.created_at
+						? new Date(subscription.created_at)
+						: undefined,
 				});
 			} catch (error) {
 				console.warn(
@@ -67,7 +69,9 @@ export const cancelled: DodoPaymentsWebhooks['subscriptionCancelled'] = {
 			try {
 				await ctx.db.subscriptions.upsertByEntityId(subscription.id, {
 					...subscription,
-					createdAt: subscription.created_at ? new Date(subscription.created_at) : undefined,
+					createdAt: subscription.created_at
+						? new Date(subscription.created_at)
+						: undefined,
 				});
 			} catch (error) {
 				console.warn(
