@@ -41,11 +41,11 @@ export const getSubmitted: RedditEndpoints['usersGetSubmitted'] = async (
 	const { username, ...query } = input;
 	const raw = await makeRedditRequest<RedditListingRaw>(
 		`/user/${username}/submitted.json`,
-		{ query: query as Record<string, string | number | boolean | undefined> },
+		{ query },
 	);
 
 	const posts = raw.data.children
-		.filter((child) => child.kind === 't3')
+		.filter((child) => child.kind === 't3') // t3 = link/post
 		.map((child) => PostDataSchema.parse(child.data));
 
 	await logEventFromContext(
@@ -70,11 +70,11 @@ export const getComments: RedditEndpoints['usersGetComments'] = async (
 	const { username, ...query } = input;
 	const raw = await makeRedditRequest<RedditListingRaw>(
 		`/user/${username}/comments.json`,
-		{ query: query as Record<string, string | number | boolean | undefined> },
+		{ query },
 	);
 
 	const comments = raw.data.children
-		.filter((child) => child.kind === 't1')
+		.filter((child) => child.kind === 't1') // t1 = comment
 		.map((child) => CommentDataSchema.parse(child.data));
 
 	await logEventFromContext(
@@ -99,11 +99,11 @@ export const getOverview: RedditEndpoints['usersGetOverview'] = async (
 	const { username, ...query } = input;
 	const raw = await makeRedditRequest<RedditListingRaw>(
 		`/user/${username}/overview.json`,
-		{ query: query as Record<string, string | number | boolean | undefined> },
+		{ query },
 	);
 
 	const items = raw.data.children.map((child) => {
-		if (child.kind === 't3') return PostDataSchema.parse(child.data);
+		if (child.kind === 't3') return PostDataSchema.parse(child.data); // t3 = link/post, else t1 = comment
 		return CommentDataSchema.parse(child.data);
 	});
 

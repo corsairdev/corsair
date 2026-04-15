@@ -6,7 +6,7 @@ import type { RedditEntityEnvelopeRaw, RedditListingRaw } from './types';
 
 function parsePosts(raw: RedditListingRaw) {
 	return raw.data.children
-		.filter((child) => child.kind === 't3')
+		.filter((child) => child.kind === 't3') // t3 = link/post
 		.map((child) => PostDataSchema.parse(child.data));
 }
 
@@ -17,7 +17,7 @@ export const getHot: RedditEndpoints['subredditsGetHot'] = async (
 	const { subreddit, ...query } = input;
 	const raw = await makeRedditRequest<RedditListingRaw>(
 		`/r/${subreddit}/hot.json`,
-		{ query: query as Record<string, string | number | boolean | undefined> },
+		{ query },
 	);
 
 	const posts = parsePosts(raw);
@@ -56,7 +56,7 @@ export const getNew: RedditEndpoints['subredditsGetNew'] = async (
 	const { subreddit, ...query } = input;
 	const raw = await makeRedditRequest<RedditListingRaw>(
 		`/r/${subreddit}/new.json`,
-		{ query: query as Record<string, string | number | boolean | undefined> },
+		{ query },
 	);
 
 	const posts = parsePosts(raw);
@@ -83,7 +83,7 @@ export const getTop: RedditEndpoints['subredditsGetTop'] = async (
 	const { subreddit, ...query } = input;
 	const raw = await makeRedditRequest<RedditListingRaw>(
 		`/r/${subreddit}/top.json`,
-		{ query: query as Record<string, string | number | boolean | undefined> },
+		{ query },
 	);
 
 	const posts = parsePosts(raw);
@@ -110,7 +110,7 @@ export const getRising: RedditEndpoints['subredditsGetRising'] = async (
 	const { subreddit, ...query } = input;
 	const raw = await makeRedditRequest<RedditListingRaw>(
 		`/r/${subreddit}/rising.json`,
-		{ query: query as Record<string, string | number | boolean | undefined> },
+		{ query },
 	);
 
 	const posts = parsePosts(raw);
@@ -135,9 +135,9 @@ export const getControversial: RedditEndpoints['subredditsGetControversial'] =
 		const { subreddit, ...query } = input;
 		const raw = await makeRedditRequest<RedditListingRaw>(
 			`/r/${subreddit}/controversial.json`,
-			{
-				query: query as Record<string, string | number | boolean | undefined>,
-			},
+		{
+			query,
+		},
 		);
 
 		const posts = parsePosts(raw);

@@ -378,6 +378,7 @@ export function reddit<const T extends RedditPluginOptions>(
 			...options.errorHandlers,
 		},
 		keyBuilder: async (_ctx: RedditKeyBuilderContext, _source) => {
+			// not necessary since this is a public api
 			return '';
 		},
 	} satisfies InternalRedditPlugin;

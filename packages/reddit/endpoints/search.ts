@@ -9,13 +9,11 @@ export const searchGlobal: RedditEndpoints['searchGlobal'] = async (
 	input,
 ) => {
 	const raw = await makeRedditRequest<RedditListingRaw>('/search.json', {
-		query: {
-			...input,
-		} as Record<string, string | number | boolean | undefined>,
+		query: input,
 	});
 
 	const posts = raw.data.children
-		.filter((child) => child.kind === 't3')
+		.filter((child) => child.kind === 't3') // t3 = link/post
 		.map((child) => PostDataSchema.parse(child.data));
 
 	await logEventFromContext(
@@ -41,15 +39,12 @@ export const searchSubreddit: RedditEndpoints['searchSubreddit'] = async (
 	const raw = await makeRedditRequest<RedditListingRaw>(
 		`/r/${subreddit}/search.json`,
 		{
-			query: { ...query, restrict_sr: true } as Record<
-				string,
-				string | number | boolean | undefined
-			>,
+			query: { ...query, restrict_sr: true },
 		},
 	);
 
 	const posts = raw.data.children
-		.filter((child) => child.kind === 't3')
+		.filter((child) => child.kind === 't3') // t3 = link/post
 		.map((child) => PostDataSchema.parse(child.data));
 
 	await logEventFromContext(
@@ -74,14 +69,12 @@ export const searchSubreddits: RedditEndpoints['searchSubreddits'] = async (
 	const raw = await makeRedditRequest<RedditListingRaw>(
 		'/subreddits/search.json',
 		{
-			query: {
-				...input,
-			} as Record<string, string | number | boolean | undefined>,
+			query: input,
 		},
 	);
 
 	const subreddits = raw.data.children
-		.filter((child) => child.kind === 't5')
+		.filter((child) => child.kind === 't5') // t5 = subreddit
 		.map((child) => SubredditDataSchema.parse(child.data));
 
 	await logEventFromContext(

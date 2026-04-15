@@ -11,19 +11,14 @@ export const getComments: RedditEndpoints['postsGetComments'] = async (
 	const { post_id, ...query } = input;
 	const raw = await makeRedditRequest<[RedditListingRaw, RedditListingRaw]>(
 		`/comments/${post_id}.json`,
-		{
-			query: query as Record<string, string | number | boolean | undefined>,
-		},
+		{ query },
 	);
 
-	const postRaw = raw[0].data.children.find((c) => c.kind === 't3');
+	const postRaw = raw[0].data.children.find((c) => c.kind === 't3'); // t3 = link/post
 	const post = PostDataSchema.parse(postRaw?.data ?? {});
 
 	const comments = raw[1].data.children
-		.filter((child) => child.kind === 't1')
-		.map((child) => CommentDataSchema.parse(child.data));
-
-	if (ctx.db.comments) {
+		.filter((child) => child.kind === 't1') // t1 = comment
 		try {
 			for (const comment of comments) {
 				await ctx.db.comments.upsertByEntityId(String(comment.id), {
@@ -56,12 +51,7 @@ export const getById: RedditEndpoints['postsGetById'] = async (ctx, input) => {
 	);
 
 	const posts = raw.data.children
-		.filter((child) => child.kind === 't3')
-		.map((child) => PostDataSchema.parse(child.data));
-
-	await logEventFromContext(
-		ctx,
-		'reddit.posts.getById',
+		.filter((child) => child.kind === 't3') // t3 = link/post
 		{ ...input },
 		'completed',
 	);
