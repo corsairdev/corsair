@@ -61,3 +61,36 @@ export const get: RazorpayEndpoints['ordersGet'] = async (ctx, input) => {
 	);
 	return result;
 };
+
+export const list: RazorpayEndpoints['ordersList'] = async (ctx, input) => {
+	const result = await makeRazorpayRequest<
+		RazorpayEndpointOutputs['ordersList']
+	>('orders', ctx.key, {
+		method: 'GET',
+		query: input,
+	});
+
+	if (ctx.db.orders) {
+		for (const order of result.items) {
+			try {
+				await ctx.db.orders.upsertByEntityId(order.id, {
+					...order,
+					// created_at is a Unix timestamp in seconds; multiply by 1000 for ms
+					createdAt: order.created_at
+						? new Date(order.created_at * 1000)
+						: undefined,
+				});
+			} catch (error) {
+				console.warn('Failed to save Razorpay order to database:', error);
+			}
+		}
+	}
+
+	await logEventFromContext(
+		ctx,
+		'razorpay.orders.list',
+		{ ...input },
+		'completed',
+	);
+	return result;
+};
