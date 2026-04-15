@@ -98,7 +98,6 @@ export const list: OnedriveEndpoints['driveList'] = async (ctx, input) => {
 	} else {
 		url = 'me/drives';
 	}
-
 	const result = await makeOnedriveRequest<
 		OnedriveEndpointOutputs['driveList']
 	>(url, ctx.key, { method: 'GET', query });
@@ -106,12 +105,10 @@ export const list: OnedriveEndpoints['driveList'] = async (ctx, input) => {
 	if (result.value?.length && ctx.db.drives) {
 		try {
 			for (const drive of result.value) {
-				// any/unknown for drive since drive list items are untyped array elements
-				const driveObj = drive as Record<string, unknown>;
-				if (driveObj.id && typeof driveObj.id === 'string') {
+				if (drive.id && typeof drive.id === 'string') {
 					// DB schema requires several fields that are optional in the API response; cast after spread to satisfy types while capturing passthrough fields
-					await ctx.db.drives.upsertByEntityId(driveObj.id, {
-						...driveObj,
+					await ctx.db.drives.upsertByEntityId(drive.id, {
+						...drive,
 					} as Parameters<typeof ctx.db.drives.upsertByEntityId>[1]);
 				}
 			}
@@ -232,12 +229,10 @@ export const getRecentItems: OnedriveEndpoints['driveGetRecentItems'] = async (
 	if (result.value?.length && ctx.db.driveItems) {
 		try {
 			for (const item of result.value) {
-				// any/unknown for item since recent items are untyped array elements
-				const driveItem = item as Record<string, unknown>;
-				if (driveItem.id && typeof driveItem.id === 'string') {
+				if (item.id && typeof item.id === 'string') {
 					// DB schema requires name:string but API returns name as optional; cast after spread to satisfy types while capturing passthrough fields
-					await ctx.db.driveItems.upsertByEntityId(driveItem.id, {
-						...driveItem,
+					await ctx.db.driveItems.upsertByEntityId(item.id, {
+						...item,
 					} as Parameters<typeof ctx.db.driveItems.upsertByEntityId>[1]);
 				}
 			}
@@ -271,12 +266,10 @@ export const getSharedItems: OnedriveEndpoints['driveGetSharedItems'] = async (
 	if (result.value?.length && ctx.db.driveItems) {
 		try {
 			for (const item of result.value) {
-				// any/unknown for item since shared items are untyped array elements
-				const driveItem = item as Record<string, unknown>;
-				if (driveItem.id && typeof driveItem.id === 'string') {
+				if (item.id && typeof item.id === 'string') {
 					// DB schema requires name:string but API returns name as optional; cast after spread to satisfy types while capturing passthrough fields
-					await ctx.db.driveItems.upsertByEntityId(driveItem.id, {
-						...driveItem,
+					await ctx.db.driveItems.upsertByEntityId(item.id, {
+						...item,
 					} as Parameters<typeof ctx.db.driveItems.upsertByEntityId>[1]);
 				}
 			}
@@ -335,16 +328,10 @@ export const listChanges: OnedriveEndpoints['driveListChanges'] = async (
 	if (result.value?.length && ctx.db.driveItems) {
 		try {
 			for (const item of result.value) {
-				// any/unknown for item since delta items are untyped array elements
-				const driveItem = item as Record<string, unknown>;
-				if (
-					driveItem.id &&
-					typeof driveItem.id === 'string' &&
-					!driveItem.deleted
-				) {
+				if (item.id && typeof item.id === 'string' && !item.deleted) {
 					// DB schema requires name:string but API returns name as optional; cast after spread to satisfy types while capturing passthrough fields
-					await ctx.db.driveItems.upsertByEntityId(driveItem.id, {
-						...driveItem,
+					await ctx.db.driveItems.upsertByEntityId(item.id, {
+						...item,
 					} as Parameters<typeof ctx.db.driveItems.upsertByEntityId>[1]);
 				}
 			}
@@ -378,12 +365,10 @@ export const listBundles: OnedriveEndpoints['driveListBundles'] = async (
 	if (result.value?.length && ctx.db.driveItems) {
 		try {
 			for (const item of result.value) {
-				// any/unknown for item since bundle items are untyped array elements
-				const driveItem = item as Record<string, unknown>;
-				if (driveItem.id && typeof driveItem.id === 'string') {
+				if (item.id && typeof item.id === 'string') {
 					// DB schema requires name:string but API returns name as optional; cast after spread to satisfy types while capturing passthrough fields
-					await ctx.db.driveItems.upsertByEntityId(driveItem.id, {
-						...driveItem,
+					await ctx.db.driveItems.upsertByEntityId(item.id, {
+						...item,
 					} as Parameters<typeof ctx.db.driveItems.upsertByEntityId>[1]);
 				}
 			}

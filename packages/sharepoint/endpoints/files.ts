@@ -136,7 +136,7 @@ export const recycle: SharepointEndpoints['filesRecycle'] = async (
 		{ method: 'GET', query: { $select: 'id' } },
 	);
 
-	await makeGraphRequest<Record<string, unknown>>(
+	await makeGraphRequest(
 		`/sites/${siteId}/drive/root:/${drivePath}`,
 		ctx.key,
 		{ method: 'DELETE' },
@@ -175,7 +175,7 @@ export const checkIn: SharepointEndpoints['filesCheckIn'] = async (
 		{ method: 'GET', query: { $select: 'id' } },
 	);
 
-	await makeGraphRequest<Record<string, unknown>>(
+	await makeGraphRequest(
 		`/sites/${siteId}/drive/items/${item.id}/checkin`,
 		ctx.key,
 		{
@@ -230,7 +230,7 @@ export const checkOut: SharepointEndpoints['filesCheckOut'] = async (
 		{ method: 'GET', query: { $select: 'id' } },
 	);
 
-	await makeGraphRequest<Record<string, unknown>>(
+	await makeGraphRequest(
 		`/sites/${siteId}/drive/items/${item.id}/checkout`,
 		ctx.key,
 		{ method: 'POST' },
@@ -281,7 +281,7 @@ export const undoCheckout: SharepointEndpoints['filesUndoCheckout'] = async (
 		{ method: 'GET', query: { $select: 'id' } },
 	);
 
-	await makeGraphRequest<Record<string, unknown>>(
+	await makeGraphRequest(
 		`/sites/${siteId}/drive/items/${item.id}/discardCheckout`,
 		ctx.key,
 		{ method: 'POST' },

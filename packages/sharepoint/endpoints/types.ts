@@ -259,7 +259,8 @@ const ItemsRecycleResponseSchema = z.object({
 const ItemsGetVersionInputSchema = z.object({
 	list_title: z.string(),
 	item_id: z.number(),
-	version_id: z.number(),
+	// Graph API list item versions use string format like "1.0", "2.0"
+	version_id: z.string(),
 });
 
 const ItemsGetVersionResponseSchema = z

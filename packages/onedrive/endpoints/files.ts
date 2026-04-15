@@ -1,7 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import type { OnedriveEndpoints } from '..';
 import { makeOnedriveRequest } from '../client';
-import type { OnedriveEndpointOutputs } from './types';
+import type { ItemsSearchResponse, OnedriveEndpointOutputs } from './types';
 
 export const createFolder: OnedriveEndpoints['filesCreateFolder'] = async (
 	ctx,
@@ -72,12 +72,11 @@ export const createTextFile: OnedriveEndpoints['filesCreateTextFile'] = async (
 	if (conflict_behavior)
 		query['@microsoft.graph.conflictBehavior'] = conflict_behavior;
 
-	// Content is sent as raw string body for text files
 	const result = await makeOnedriveRequest<
 		OnedriveEndpointOutputs['filesCreateTextFile']
 	>(url, ctx.key, {
 		method: 'PUT',
-		body: content as unknown as Record<string, unknown>,
+		body: { content },
 		query,
 	});
 
@@ -115,10 +114,9 @@ export const findFile: OnedriveEndpoints['filesFindFile'] = async (
 		? `users/${user_id}/drive/root/search(q='${encodeURIComponent(name)}')`
 		: `me/drive/root/search(q='${encodeURIComponent(name)}')`;
 
-	const result = await makeOnedriveRequest<{
-		value: Array<Record<string, unknown>>;
-		'@odata.context'?: string;
-	}>(searchUrl, ctx.key, { method: 'GET', query });
+	const result = await makeOnedriveRequest<
+		ItemsSearchResponse & { '@odata.context'?: string }
+	>(searchUrl, ctx.key, { method: 'GET', query });
 
 	if (result.value?.length && ctx.db.driveItems) {
 		try {
@@ -142,7 +140,7 @@ export const findFile: OnedriveEndpoints['filesFindFile'] = async (
 		'completed',
 	);
 	return {
-		value: result.value ?? [],
+		value: result.value,
 		odata_context: result['@odata.context'],
 	};
 };
@@ -185,12 +183,10 @@ export const findFolder: OnedriveEndpoints['filesFindFolder'] = async (
 	if (result.value?.length && ctx.db.driveItems) {
 		try {
 			for (const item of result.value) {
-				// any/unknown for item since folder search results are untyped array elements
-				const driveItem = item as Record<string, unknown>;
-				if (driveItem.id && typeof driveItem.id === 'string') {
+				if (item.id && typeof item.id === 'string') {
 					// DB schema requires name:string but API returns name as optional; cast after spread to satisfy types while capturing passthrough fields
-					await ctx.db.driveItems.upsertByEntityId(driveItem.id, {
-						...driveItem,
+					await ctx.db.driveItems.upsertByEntityId(item.id, {
+						...item,
 					} as Parameters<typeof ctx.db.driveItems.upsertByEntityId>[1]);
 				}
 			}
@@ -226,12 +222,10 @@ export const list: OnedriveEndpoints['filesList'] = async (ctx, input) => {
 	if (result.value?.length && ctx.db.driveItems) {
 		try {
 			for (const item of result.value) {
-				// any/unknown for item since file list results are untyped array elements
-				const driveItem = item as Record<string, unknown>;
-				if (driveItem.id && typeof driveItem.id === 'string') {
+				if (item.id && typeof item.id === 'string') {
 					// DB schema requires name:string but API returns name as optional; cast after spread to satisfy types while capturing passthrough fields
-					await ctx.db.driveItems.upsertByEntityId(driveItem.id, {
-						...driveItem,
+					await ctx.db.driveItems.upsertByEntityId(item.id, {
+						...item,
 					} as Parameters<typeof ctx.db.driveItems.upsertByEntityId>[1]);
 				}
 			}

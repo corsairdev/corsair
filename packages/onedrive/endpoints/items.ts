@@ -206,12 +206,10 @@ export const copy: OnedriveEndpoints['itemsCopy'] = async (ctx, input) => {
 	);
 
 	// Copy returns 202 Accepted with a monitor URL in the Location header
-	// any/unknown for response since copy returns async response object
-	const responseObj = response as Record<string, unknown>;
 	return {
 		message: 'Copy operation initiated',
 		status_code: 202,
-		monitor_url: responseObj.location as string | undefined,
+		monitor_url: response.location,
 	};
 };
 
@@ -311,12 +309,10 @@ export const search: OnedriveEndpoints['itemsSearch'] = async (ctx, input) => {
 	if (result.value?.length && ctx.db.driveItems) {
 		try {
 			for (const item of result.value) {
-				// any/unknown for item since search results are untyped array elements
-				const driveItem = item as Record<string, unknown>;
-				if (driveItem.id && typeof driveItem.id === 'string') {
+				if (item.id && typeof item.id === 'string') {
 					// DB schema requires name:string but API returns name as optional; cast after spread to satisfy types while capturing passthrough fields
-					await ctx.db.driveItems.upsertByEntityId(driveItem.id, {
-						...driveItem,
+					await ctx.db.driveItems.upsertByEntityId(item.id, {
+						...item,
 					} as Parameters<typeof ctx.db.driveItems.upsertByEntityId>[1]);
 				}
 			}
@@ -761,12 +757,10 @@ export const listFolderChildren: OnedriveEndpoints['itemsListFolderChildren'] =
 		if (result.value?.length && ctx.db.driveItems) {
 			try {
 				for (const item of result.value) {
-					// any/unknown for item since folder children are untyped array elements
-					const driveItem = item as Record<string, unknown>;
-					if (driveItem.id && typeof driveItem.id === 'string') {
+					if (item.id && typeof item.id === 'string') {
 						// DB schema requires name:string but API returns name as optional; cast after spread to satisfy types while capturing passthrough fields
-						await ctx.db.driveItems.upsertByEntityId(driveItem.id, {
-							...driveItem,
+						await ctx.db.driveItems.upsertByEntityId(item.id, {
+							...item,
 						} as Parameters<typeof ctx.db.driveItems.upsertByEntityId>[1]);
 					}
 				}
