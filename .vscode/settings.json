@@ -24,5 +24,8 @@
   "files.autoSave": "off",
   "[typescriptreact]": {
     "editor.defaultFormatter": "biomejs.biome"
+  },
+  "[jsonc]": {
+    "editor.defaultFormatter": "vscode.json-language-features"
   }
 }
