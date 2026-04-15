@@ -13,3 +13,4 @@ export { createMcpRouter } from './core/http.js';
 export { BaseProvider } from './core/provider.js';
 export { runStdioMcpServer } from './core/stdio.js';
 export type { CorsairToolDef } from './core/tools.js';
+export { OllamaProvider } from './adapters/ollama.js'
