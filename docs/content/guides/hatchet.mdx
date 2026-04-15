@@ -17,7 +17,7 @@ npm install @hatchet-dev/typescript-sdk
 
 When a message arrives in Slack's #support channel, push a Hatchet event. The workflow creates a Linear issue to track the request and replies in-thread to confirm it was received.
 
-```ts title="corsair.ts"
+```ts corsair.ts
 import { hatchet } from '@/hatchet/client';
 
 slack({
@@ -48,13 +48,13 @@ slack({
 })
 ```
 
-```ts title="hatchet/client.ts"
+```ts hatchet/client.ts
 import Hatchet from '@hatchet-dev/typescript-sdk';
 
 export const hatchet = await Hatchet.init();
 ```
 
-```ts title="hatchet/workflows.ts"
+```ts hatchet/workflows.ts
 import { hatchet } from './client';
 import { corsair } from '@/server/corsair';
 
@@ -99,7 +99,7 @@ supportWorkflow.task('create-linear-issue', async (ctx) => {
 
 When commits are pushed to the main branch, run a multi-step Hatchet workflow: notify the team in Discord, update the Linear project status to reflect the deployment, then log the release in a tracking channel.
 
-```ts title="corsair.ts"
+```ts corsair.ts
 import { hatchet } from '@/hatchet/client';
 
 github({
@@ -122,7 +122,7 @@ github({
 })
 ```
 
-```ts title="hatchet/workflows.ts"
+```ts hatchet/workflows.ts
 import { hatchet } from './client';
 import { corsair } from '@/server/corsair';
 
@@ -183,7 +183,7 @@ deployWorkflow.task('log-release', async (ctx) => {
 
 Every Monday at 9 AM, run a Hatchet cron workflow that pulls the current sprint's Linear issues from Corsair's database and posts a structured report to Slack.
 
-```ts title="hatchet/workflows.ts"
+```ts hatchet/workflows.ts
 import { hatchet } from './client';
 import { corsair } from '@/server/corsair';
 
@@ -228,7 +228,7 @@ sprintReportWorkflow.task('post-sprint-report', async () => {
 });
 ```
 
-```ts title="hatchet/worker.ts"
+```ts hatchet/worker.ts
 import { hatchet } from './client';
 import { supportWorkflow, deployWorkflow, sprintReportWorkflow } from './workflows';
 
@@ -241,33 +241,25 @@ worker.registerWorkflow(sprintReportWorkflow);
 await worker.start();
 ```
 
-<Callout type="info">
+<Info>
 Register all workflows in a single worker. The cron schedule is part of the workflow definition — Hatchet picks it up automatically when the worker connects.
-</Callout>
+</Info>
 
 ---
 
 ## What's next
 
-<Cards>
-  <Card
-    title="Inngest"
-    description="Durable step functions triggered from Corsair webhooks."
-    href="/guides/inngest"
-  />
-  <Card
-    title="Temporal"
-    description="Start Temporal workflows from Corsair webhook events."
-    href="/guides/temporal"
-  />
-  <Card
-    title="Trigger.dev"
-    description="Background tasks and scheduled jobs with Trigger.dev."
-    href="/guides/trigger-dev"
-  />
-  <Card
-    title="Workflows guide"
-    description="Chain webhook events without a job queue."
-    href="/guides/workflows"
-  />
-</Cards>
+<CardGroup cols={2}>
+  <Card title="Inngest" href="/guides/inngest">
+    Durable step functions triggered from Corsair webhooks.
+  </Card>
+  <Card title="Temporal" href="/guides/temporal">
+    Start Temporal workflows from Corsair webhook events.
+  </Card>
+  <Card title="Trigger.dev" href="/guides/trigger-dev">
+    Background tasks and scheduled jobs with Trigger.dev.
+  </Card>
+  <Card title="Workflows guide" href="/guides/workflows">
+    Chain webhook events without a job queue.
+  </Card>
+</CardGroup>

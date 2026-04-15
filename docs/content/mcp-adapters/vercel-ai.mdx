@@ -17,7 +17,7 @@ npm install ai @ai-sdk/mcp
 
 Expose Corsair as an MCP HTTP endpoint using `createBaseMcpServer` and `createMcpRouter`.
 
-```ts title="server.ts"
+```ts server.ts
 import express from 'express';
 import { createBaseMcpServer, createMcpRouter } from '@corsair-dev/mcp';
 import { corsair } from './corsair';
@@ -34,7 +34,7 @@ app.listen(3000, () => console.log('MCP server running on :3000'));
 
 Connect from your Vercel AI application using `createVercelAiMcpClient`.
 
-```ts title="agent.ts"
+```ts agent.ts
 import { generateText } from 'ai';
 import { anthropic } from '@ai-sdk/anthropic';
 import { createVercelAiMcpClient } from '@corsair-dev/mcp';

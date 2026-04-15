@@ -11,7 +11,7 @@ Enable it with one flag. Then scope every operation to a user with `withTenant()
 
 ## Enable it
 
-```ts title="corsair.ts"
+```ts corsair.ts
 export const corsair = createCorsair({
     multiTenancy: true,   // ← this is all it takes
     plugins: [github(), slack()],
@@ -62,7 +62,7 @@ No middleware, no manual filtering. Corsair handles it inside the database adapt
 
 Each user connects their own accounts. Store credentials when they authenticate:
 
-```ts title="auth-callback.ts"
+```ts auth-callback.ts
 // Called after GitHub OAuth or when user pastes their token
 export async function saveUserCredentials(userId: string, githubToken: string) {
     const tenant = corsair.withTenant(userId);
@@ -88,15 +88,11 @@ Corsair reads `tenantId` from the query string and automatically scopes the data
 
 ## What's next
 
-<Cards>
-  <Card
-    title="Webhooks"
-    description="How to scope incoming events per tenant using the ?tenantId= param."
-    href="/webhooks"
-  />
-  <Card
-    title="Vibe Code Your Dashboard"
-    description="Scaffold a Next.js app that uses Corsair with multi-tenancy."
-    href="/guides/dashboard"
-  />
-</Cards>
+<CardGroup cols={2}>
+  <Card title="Webhooks" href="/webhooks">
+    How to scope incoming events per tenant using the ?tenantId= param.
+  </Card>
+  <Card title="Vibe Code Your Dashboard" href="/guides/dashboard">
+    Scaffold a Next.js app that uses Corsair with multi-tenancy.
+  </Card>
+</CardGroup>

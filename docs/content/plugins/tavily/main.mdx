@@ -13,7 +13,7 @@ pnpm install @corsair-dev/tavily
 
 Add the Tavily plugin to your Corsair instance:
 
-```ts title="corsair.ts"
+```ts corsair.ts
 import { createCorsair } from "corsair";
 import { tavily } from "@corsair-dev/tavily";
 
@@ -54,7 +54,7 @@ pnpm corsair setup --tavily api_key=your-api-key
 
 Alternatively, provide credentials directly in the config:
 
-```ts title="corsair.ts"
+```ts corsair.ts
 tavily({
     key: process.env.TAVILY_API_KEY,
 })
@@ -128,7 +128,7 @@ const results = await tenant.tavily.api.search({
 
 ### Example 1: AI Research Assistant
 
-```ts title="inngest/functions.ts"
+```ts inngest/functions.ts
 export const researchTopic = inngest.createFunction(
     { id: "research-topic" },
     { event: "app/research-requested" },
@@ -152,7 +152,7 @@ export const researchTopic = inngest.createFunction(
 
 ### Example 2: Real-time News Aggregation
 
-```ts title="inngest/functions.ts"
+```ts inngest/functions.ts
 export const fetchNewsDigest = inngest.createFunction(
     { id: "fetch-news-digest" },
     { cron: "0 9 * * *" },

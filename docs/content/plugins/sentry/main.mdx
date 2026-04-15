@@ -13,7 +13,7 @@ pnpm install @corsair-dev/sentry
 
 Add the Sentry plugin to your Corsair instance:
 
-```ts title="corsair.ts"
+```ts corsair.ts
 import { createCorsair } from "corsair";
 import { sentry } from "@corsair-dev/sentry";
 
@@ -61,7 +61,7 @@ pnpm corsair setup --sentry webhook_signature=your-webhook-secret
 
 Alternatively, provide credentials directly in the config:
 
-```ts title="corsair.ts"
+```ts corsair.ts
 sentry({
     key: process.env.SENTRY_AUTH_TOKEN,
     webhookSecret: process.env.SENTRY_WEBHOOK_SECRET,
@@ -142,7 +142,7 @@ See [API Endpoints](/plugins/sentry/api-endpoints) for the complete reference.
 
 Sentry sends issue and alert events (identified by `sentry-hook-signature` + `sentry-hook-resource` headers):
 
-```ts title="app/api/webhook/route.ts"
+```ts app/api/webhook/route.ts
 import { processWebhook } from "corsair";
 import { corsair } from "@/server/corsair";
 
@@ -183,7 +183,7 @@ const issues = await tenant.sentry.api.issues.list({
 
 ### Example 1: Auto-create Linear Issue on Sentry Error
 
-```ts title="corsair.ts"
+```ts corsair.ts
 import { inngest } from "./inngest";
 
 export const corsair = createCorsair({
@@ -212,7 +212,7 @@ export const corsair = createCorsair({
 });
 ```
 
-```ts title="inngest/functions.ts"
+```ts inngest/functions.ts
 export const createLinearIssue = inngest.createFunction(
     { id: "create-linear-from-sentry" },
     { event: "sentry/issue-created" },
@@ -231,7 +231,7 @@ export const createLinearIssue = inngest.createFunction(
 
 ### Example 2: Notify on Metric Alert
 
-```ts title="corsair.ts"
+```ts corsair.ts
 export const corsair = createCorsair({
     plugins: [
         sentry({
@@ -257,7 +257,7 @@ export const corsair = createCorsair({
 });
 ```
 
-```ts title="inngest/functions.ts"
+```ts inngest/functions.ts
 export const notifyMetricAlert = inngest.createFunction(
     { id: "notify-sentry-metric-alert" },
     { event: "sentry/metric-alert" },

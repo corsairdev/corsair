@@ -5,19 +5,19 @@ description: All available Discord webhook events for handling interactions.
 
 The Discord plugin handles incoming interaction events from Discord. Discord sends interaction payloads (slash commands, buttons, modals) to your webhook URL and verifies them using Ed25519 signatures.
 
-<Callout type="info">
+<Info>
 **New to Corsair?** Learn about [webhooks](/concepts/webhooks), [hooks](/concepts/hooks), and [multi-tenancy](/concepts/multi-tenancy).
-</Callout>
+</Info>
 
-<Callout>
+<Note>
 **Full Implementation:** See the [Discord plugin source code](https://github.com/corsairdev/corsair/tree/main/packages/corsair/plugins/discord).
-</Callout>
+</Note>
 
 ## Setup
 
 Set your Discord app's **Interactions Endpoint URL** in the Developer Portal to your Corsair webhook endpoint:
 
-```ts title="app/api/webhook/route.ts"
+```ts app/api/webhook/route.ts
 import { processWebhook } from "corsair";
 import { corsair } from "@/server/corsair";
 
@@ -32,7 +32,7 @@ export async function POST(request: Request) {
 
 Configure your public key for webhook signature verification:
 
-```ts title="corsair.ts"
+```ts corsair.ts
 discord({
     publicKey: process.env.DISCORD_PUBLIC_KEY, // [!code highlight]
 })

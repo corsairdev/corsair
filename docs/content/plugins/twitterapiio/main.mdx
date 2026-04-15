@@ -13,7 +13,7 @@ pnpm install @corsair-dev/twitterapiio
 
 Add the Twitter API IO plugin to your Corsair instance:
 
-```ts title="corsair.ts"
+```ts corsair.ts
 import { createCorsair } from "corsair";
 import { twitterapiio } from "@corsair-dev/twitterapiio";
 
@@ -61,7 +61,7 @@ pnpm corsair setup --twitterapiio webhook_signature=your-webhook-secret
 
 Alternatively, provide credentials directly in the config:
 
-```ts title="corsair.ts"
+```ts corsair.ts
 twitterapiio({
     key: process.env.TWITTERAPIIO_API_KEY,
     webhookSecret: process.env.TWITTERAPIIO_WEBHOOK_SECRET,
@@ -138,7 +138,7 @@ See [API Endpoints](/plugins/twitterapiio/api-endpoints) for the complete refere
 
 Receive real-time tweet events:
 
-```ts title="app/api/webhook/route.ts"
+```ts app/api/webhook/route.ts
 import { processWebhook } from "corsair";
 import { corsair } from "@/server/corsair";
 
@@ -178,7 +178,7 @@ const mentions = await tenant.twitterapiio.api.tweets.search({
 
 ### Example 1: Monitor Brand Mentions
 
-```ts title="corsair.ts"
+```ts corsair.ts
 import { inngest } from "./inngest";
 
 export const corsair = createCorsair({
@@ -206,7 +206,7 @@ export const corsair = createCorsair({
 });
 ```
 
-```ts title="inngest/functions.ts"
+```ts inngest/functions.ts
 export const handleMention = inngest.createFunction(
     { id: "handle-twitter-mention" },
     { event: "twitter/mention-received" },
@@ -224,7 +224,7 @@ export const handleMention = inngest.createFunction(
 
 ### Example 2: Daily Trends Report
 
-```ts title="inngest/functions.ts"
+```ts inngest/functions.ts
 export const dailyTrendsReport = inngest.createFunction(
     { id: "daily-twitter-trends" },
     { cron: "0 9 * * *" },
@@ -243,7 +243,7 @@ export const dailyTrendsReport = inngest.createFunction(
 
 ### Example 3: Competitor Analysis
 
-```ts title="inngest/functions.ts"
+```ts inngest/functions.ts
 export const analyzeCompetitor = inngest.createFunction(
     { id: "analyze-competitor-tweets" },
     { event: "app/analyze-competitor" },

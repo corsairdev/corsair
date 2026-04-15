@@ -5,13 +5,13 @@ description: Built-in and custom error handling for the Discord plugin.
 
 The Discord plugin includes built-in error handlers for common Discord API error scenarios.
 
-<Callout type="info">
+<Info>
 **New to Corsair?** Learn about [error handling](/concepts/error-handling) before customizing error handlers.
-</Callout>
+</Info>
 
-<Callout>
+<Note>
 **Full Implementation:** See the [Discord plugin source code](https://github.com/corsairdev/corsair/tree/main/packages/corsair/plugins/discord).
-</Callout>
+</Note>
 
 ## Built-in Error Handlers
 
@@ -87,7 +87,7 @@ await corsair.discord.api.messages.send({
 
 ## Custom Error Handlers
 
-```ts title="corsair.ts"
+```ts corsair.ts
 discord({
     errorHandlers: {
         SLOW_MODE_COOLDOWN: {

@@ -5,17 +5,17 @@ description: Sentry webhook event handling in Corsair.
 
 The Sentry plugin includes webhook handlers for Sentry issue, error, alert, and comment events.
 
-<Callout type="info">
+<Info>
 **New to Corsair?** Learn about [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
-</Callout>
+</Info>
 
-<Callout>
+<Note>
 **Full Implementation:** See the [Sentry plugin source code](https://github.com/corsairdev/corsair/tree/main/packages/corsair/plugins/sentry).
-</Callout>
+</Note>
 
 ## Setup
 
-```ts title="app/api/webhook/route.ts"
+```ts app/api/webhook/route.ts
 import { processWebhook } from "corsair";
 import { corsair } from "@/server/corsair";
 
@@ -38,7 +38,7 @@ Fires when a new issue is created in Sentry.
 
 **Example:**
 
-```ts title="corsair.ts"
+```ts corsair.ts
 sentry({
     webhookHooks: {
         "issues.created": async (event) => {
@@ -59,7 +59,7 @@ Fires when an issue is resolved.
 
 **Example:**
 
-```ts title="corsair.ts"
+```ts corsair.ts
 sentry({
     webhookHooks: {
         "issues.resolved": async (event) => {
@@ -80,7 +80,7 @@ Fires when an issue is assigned to a user or team.
 
 **Example:**
 
-```ts title="corsair.ts"
+```ts corsair.ts
 sentry({
     webhookHooks: {
         "issues.assigned": async (event) => {
@@ -101,7 +101,7 @@ Fires when a new error event is captured in Sentry.
 
 **Example:**
 
-```ts title="corsair.ts"
+```ts corsair.ts
 sentry({
     webhookHooks: {
         "errors.created": async (event) => {
@@ -122,7 +122,7 @@ Fires when an issue alert rule is triggered.
 
 **Example:**
 
-```ts title="corsair.ts"
+```ts corsair.ts
 sentry({
     webhookHooks: {
         "alerts.eventAlert": async (event) => {
@@ -142,7 +142,7 @@ Fires when a metric alert threshold is crossed.
 
 **Example:**
 
-```ts title="corsair.ts"
+```ts corsair.ts
 sentry({
     webhookHooks: {
         "alerts.metricAlert": async (event) => {
@@ -163,7 +163,7 @@ Fires when a comment is added to an issue.
 
 **Example:**
 
-```ts title="corsair.ts"
+```ts corsair.ts
 sentry({
     webhookHooks: {
         "comments.created": async (event) => {
@@ -184,7 +184,7 @@ Fires when a comment is updated.
 
 **Example:**
 
-```ts title="corsair.ts"
+```ts corsair.ts
 sentry({
     webhookHooks: {
         "comments.updated": async (event) => {
@@ -202,7 +202,7 @@ Fires when a comment is deleted.
 
 **Example:**
 
-```ts title="corsair.ts"
+```ts corsair.ts
 sentry({
     webhookHooks: {
         "comments.deleted": async (event) => {
