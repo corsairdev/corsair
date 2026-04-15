@@ -870,6 +870,7 @@ export function onedrive<const PluginOptions extends OnedrivePluginOptions>(
 				}
 
 				// Expose a force-refresh function so endpoints can retry on 401
+				// without waiting for expires_at to lapse
 				(ctx as Record<string, unknown>)._refreshAuth = async () => {
 					const freshResult = await getValidAccessToken({
 						accessToken: null,

@@ -354,7 +354,6 @@ describe('files', () => {
 	});
 
 	it('listInFolder – returns files array', async () => {
-		console.log(testFolderPath, 'test')
 		const result = await makeGraphRequest<SharepointEndpointOutputs['filesListInFolder']>(
 			`/sites/${SITE_GUID}/drive/root:/${testFolderPath}:/children`,
 			ACCESS_TOKEN,
