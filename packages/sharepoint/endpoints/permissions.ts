@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import type { SharepointEndpoints } from '..';
-import { makeGraphRequest } from '../client';
+import { graphSiteUrl, makeGraphRequest } from '../client';
 import type { SharepointEndpointOutputs } from './types';
 
 export const addRoleToItem: SharepointEndpoints['permissionsAddRoleToItem'] =
@@ -83,8 +83,5 @@ export const getRoleDefinitions: SharepointEndpoints['permissionsGetRoleDefiniti
 			{ ...input },
 			'completed',
 		);
-		// Graph permissions map to a different shape than SP role definitions; cast to satisfy the expected output type
-		return {
-			value: roleDefinitions,
-		} as SharepointEndpointOutputs['permissionsGetRoleDefinitions'];
+		return { value: roleDefinitions };
 	};

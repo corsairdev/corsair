@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import type { SharepointEndpoints } from '..';
-import { makeGraphRequest } from '../client';
+import { graphSiteUrl, makeGraphRequest } from '../client';
 import type { SharepointEndpointOutputs } from './types';
 
 export const getCurrent: SharepointEndpoints['usersGetCurrent'] = async (

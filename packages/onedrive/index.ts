@@ -819,39 +819,79 @@ export function onedrive<const PluginOptions extends OnedrivePluginOptions>(
 			}
 
 			if (ctx.authType === 'oauth_2') {
-				const [accessToken, expiresAt, refreshToken, integrationCreds] =
-					await Promise.all([
-						ctx.keys.get_access_token(),
-						ctx.keys.get_expires_at?.(),
-						ctx.keys.get_refresh_token?.(),
-						ctx.keys.get_integration_credentials?.(),
-					]);
+				const [accessToken, expiresAt, refreshToken] = await Promise.all([
+					ctx.keys.get_access_token(),
+					ctx.keys.get_expires_at(),
+					ctx.keys.get_refresh_token(),
+				]);
 
-				if (
-					!refreshToken ||
-					!integrationCreds?.client_id ||
-					!integrationCreds?.client_secret
-				) {
-					if (!accessToken) {
-						return '';
-					}
-					return accessToken;
+				if (!refreshToken) {
+					throw new Error(
+						'[corsair:onedrive] No refresh token found. Run `corsair auth --plugin=onedrive` to re-authenticate.',
+					);
 				}
 
-				const result = await getValidAccessToken({
-					accessToken,
-					expiresAt: expiresAt ?? null,
-					refreshToken,
-					clientId: integrationCreds.client_id,
-					clientSecret: integrationCreds.client_secret,
-				});
+				const creds = await ctx.keys.get_integration_credentials();
+
+				if (!creds.client_id || !creds.client_secret) {
+					throw new Error(
+						'[corsair:onedrive] Missing client_id or client_secret. Run `corsair setup --onedrive` to configure credentials.',
+					);
+				}
+
+				// Use a mutable variable so _refreshAuth always uses the latest token
+				let currentRefreshToken = refreshToken;
+
+				let result: Awaited<ReturnType<typeof getValidAccessToken>>;
+				try {
+					result = await getValidAccessToken({
+						accessToken,
+						expiresAt,
+						refreshToken: currentRefreshToken,
+						clientId: creds.client_id,
+						clientSecret: creds.client_secret,
+					});
+				} catch (error) {
+					throw new Error(
+						`[corsair:onedrive] Failed to obtain valid access token: ${error instanceof Error ? error.message : String(error)}`,
+					);
+				}
 
 				if (result.refreshed) {
-					await Promise.all([
-						ctx.keys.set_access_token?.(result.accessToken),
-						ctx.keys.set_expires_at?.(String(result.expiresAt)),
-					]);
+					try {
+						await ctx.keys.set_access_token(result.accessToken);
+						await ctx.keys.set_expires_at(String(result.expiresAt));
+						// Microsoft issues a new refresh token on each refresh — persist it
+						if (result.newRefreshToken) {
+							currentRefreshToken = result.newRefreshToken;
+							await ctx.keys.set_refresh_token(currentRefreshToken);
+						}
+					} catch (error) {
+						throw new Error(
+							`[corsair:onedrive] Token was refreshed but failed to persist new credentials: ${error instanceof Error ? error.message : String(error)}`,
+						);
+					}
 				}
+
+				// Expose a force-refresh function so endpoints can retry on 401
+				// without waiting for expires_at to lapse
+				(ctx as Record<string, unknown>)._refreshAuth = async () => {
+					const freshResult = await getValidAccessToken({
+						accessToken: null,
+						expiresAt: null,
+						refreshToken: currentRefreshToken,
+						clientId: creds.client_id!,
+						clientSecret: creds.client_secret!,
+						forceRefresh: true,
+					});
+					await ctx.keys.set_access_token(freshResult.accessToken);
+					await ctx.keys.set_expires_at(String(freshResult.expiresAt));
+					if (freshResult.newRefreshToken) {
+						currentRefreshToken = freshResult.newRefreshToken;
+						await ctx.keys.set_refresh_token(currentRefreshToken);
+					}
+					return freshResult.accessToken;
+				};
 
 				return result.accessToken;
 			}

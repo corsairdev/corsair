@@ -57,8 +57,7 @@ export const getFollowed: SharepointEndpoints['socialGetFollowed'] = async (
 		{ ...input },
 		'completed',
 	);
-	// Mapped actor shape differs from Graph site shape; cast to satisfy the expected output type
-	return { value: actors } as SharepointEndpointOutputs['socialGetFollowed'];
+	return { value: actors };
 };
 
 export const getFollowers: SharepointEndpoints['socialGetFollowers'] = async (
