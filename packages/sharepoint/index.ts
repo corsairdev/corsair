@@ -1338,7 +1338,7 @@ export function sharepoint<const T extends SharepointPluginOptions>(
 				'Sites.Read.All',
 				'Sites.ReadWrite.All',
 				'Sites.Manage.All',
-				'Sites.FullControl.All'
+				'Sites.FullControl.All',
 			],
 		},
 		hooks: options.hooks,

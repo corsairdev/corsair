@@ -10,9 +10,12 @@ export async function setupDriveWatch(
 	const watchSpin = p.spinner();
 	watchSpin.start('Getting start page token...');
 
-	const startPageTokenRes = await fetch(`${DRIVE_API_BASE}/changes/startPageToken`, {
-		headers: { Authorization: `Bearer ${accessToken}` },
-	});
+	const startPageTokenRes = await fetch(
+		`${DRIVE_API_BASE}/changes/startPageToken`,
+		{
+			headers: { Authorization: `Bearer ${accessToken}` },
+		},
+	);
 
 	if (!startPageTokenRes.ok) {
 		const error = await startPageTokenRes.text();

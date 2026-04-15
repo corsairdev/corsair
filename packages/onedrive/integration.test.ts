@@ -40,11 +40,15 @@ describe('OneDrive plugin integration', () => {
 			expect(result.id).toBeDefined();
 
 			const orm = createCorsairOrm(testDb.database);
-			const events = await orm.events.findMany({ where: { event_type: 'onedrive.drive.getQuota' } });
+			const events = await orm.events.findMany({
+				where: { event_type: 'onedrive.drive.getQuota' },
+			});
 			expect(events.length).toBeGreaterThan(0);
 
 			if (result.id) {
-				const fromDb = await corsair.onedrive.db.drives.findByEntityId(result.id);
+				const fromDb = await corsair.onedrive.db.drives.findByEntityId(
+					result.id,
+				);
 				expect(fromDb).not.toBeNull();
 				expect(fromDb?.data.id).toBe(result.id);
 			}
@@ -63,11 +67,15 @@ describe('OneDrive plugin integration', () => {
 			expect(result.id).toBeDefined();
 
 			const orm = createCorsairOrm(testDb.database);
-			const events = await orm.events.findMany({ where: { event_type: 'onedrive.drive.getRoot' } });
+			const events = await orm.events.findMany({
+				where: { event_type: 'onedrive.drive.getRoot' },
+			});
 			expect(events.length).toBeGreaterThan(0);
 
 			if (result.id) {
-				const fromDb = await corsair.onedrive.db.driveItems.findByEntityId(result.id);
+				const fromDb = await corsair.onedrive.db.driveItems.findByEntityId(
+					result.id,
+				);
 				expect(fromDb).not.toBeNull();
 				expect(fromDb?.data.id).toBe(result.id);
 			}
@@ -87,7 +95,9 @@ describe('OneDrive plugin integration', () => {
 			expect(Array.isArray(result.value)).toBe(true);
 
 			const orm = createCorsairOrm(testDb.database);
-			const events = await orm.events.findMany({ where: { event_type: 'onedrive.drive.list' } });
+			const events = await orm.events.findMany({
+				where: { event_type: 'onedrive.drive.list' },
+			});
 			expect(events.length).toBeGreaterThan(0);
 
 			testDb.cleanup();
@@ -105,7 +115,9 @@ describe('OneDrive plugin integration', () => {
 			expect(Array.isArray(result.value)).toBe(true);
 
 			const orm = createCorsairOrm(testDb.database);
-			const events = await orm.events.findMany({ where: { event_type: 'onedrive.drive.getRecentItems' } });
+			const events = await orm.events.findMany({
+				where: { event_type: 'onedrive.drive.getRecentItems' },
+			});
 			expect(events.length).toBeGreaterThan(0);
 
 			testDb.cleanup();
@@ -123,7 +135,9 @@ describe('OneDrive plugin integration', () => {
 			expect(Array.isArray(result.value)).toBe(true);
 
 			const orm = createCorsairOrm(testDb.database);
-			const events = await orm.events.findMany({ where: { event_type: 'onedrive.drive.listChanges' } });
+			const events = await orm.events.findMany({
+				where: { event_type: 'onedrive.drive.listChanges' },
+			});
 			expect(events.length).toBeGreaterThan(0);
 
 			testDb.cleanup();
@@ -155,11 +169,16 @@ describe('OneDrive plugin integration', () => {
 			expect(result.id).toBe(rootItemId);
 
 			const orm = createCorsairOrm(testDb.database);
-			const events = await orm.events.findMany({ where: { event_type: 'onedrive.items.get' } });
+			const events = await orm.events.findMany({
+				where: { event_type: 'onedrive.items.get' },
+			});
 			expect(events.length).toBeGreaterThan(0);
-			expect(parsePayload(events[events.length - 1]!.payload)).toMatchObject(input);
+			expect(parsePayload(events[events.length - 1]!.payload)).toMatchObject(
+				input,
+			);
 
-			const fromDb = await corsair.onedrive.db.driveItems.findByEntityId(rootItemId);
+			const fromDb =
+				await corsair.onedrive.db.driveItems.findByEntityId(rootItemId);
 			expect(fromDb).not.toBeNull();
 			expect(fromDb?.data.id).toBe(rootItemId);
 
@@ -178,7 +197,9 @@ describe('OneDrive plugin integration', () => {
 			expect(Array.isArray(result.value)).toBe(true);
 
 			const orm = createCorsairOrm(testDb.database);
-			const events = await orm.events.findMany({ where: { event_type: 'onedrive.items.search' } });
+			const events = await orm.events.findMany({
+				where: { event_type: 'onedrive.items.search' },
+			});
 			expect(events.length).toBeGreaterThan(0);
 
 			testDb.cleanup();
@@ -197,7 +218,9 @@ describe('OneDrive plugin integration', () => {
 			expect(Array.isArray(result.value)).toBe(true);
 
 			const orm = createCorsairOrm(testDb.database);
-			const events = await orm.events.findMany({ where: { event_type: 'onedrive.items.listFolderChildren' } });
+			const events = await orm.events.findMany({
+				where: { event_type: 'onedrive.items.listFolderChildren' },
+			});
 			// endpoint logs {} as payload, not the input — just verify the event was recorded
 			expect(events.length).toBeGreaterThan(0);
 
@@ -217,7 +240,9 @@ describe('OneDrive plugin integration', () => {
 			expect(Array.isArray(result.value)).toBe(true);
 
 			const orm = createCorsairOrm(testDb.database);
-			const events = await orm.events.findMany({ where: { event_type: 'onedrive.items.getVersions' } });
+			const events = await orm.events.findMany({
+				where: { event_type: 'onedrive.items.getVersions' },
+			});
 			expect(events.length).toBeGreaterThan(0);
 
 			testDb.cleanup();
@@ -236,7 +261,9 @@ describe('OneDrive plugin integration', () => {
 			expect(Array.isArray(result.value)).toBe(true);
 
 			const orm = createCorsairOrm(testDb.database);
-			const events = await orm.events.findMany({ where: { event_type: 'onedrive.items.getThumbnails' } });
+			const events = await orm.events.findMany({
+				where: { event_type: 'onedrive.items.getThumbnails' },
+			});
 			expect(events.length).toBeGreaterThan(0);
 
 			testDb.cleanup();
@@ -251,7 +278,9 @@ describe('OneDrive plugin integration', () => {
 
 			// Create a temp text file to update and delete
 			const fileName = `corsair_test_${Date.now()}.txt`;
-			let created: Awaited<ReturnType<typeof corsair.onedrive.api.files.createTextFile>>;
+			let created: Awaited<
+				ReturnType<typeof corsair.onedrive.api.files.createTextFile>
+			>;
 			try {
 				created = await corsair.onedrive.api.files.createTextFile({
 					name: fileName,
@@ -265,26 +294,35 @@ describe('OneDrive plugin integration', () => {
 			expect(created).toBeDefined();
 			expect(created.id).toBeDefined();
 
-			const fromDb = await corsair.onedrive.db.driveItems.findByEntityId(created.id);
+			const fromDb = await corsair.onedrive.db.driveItems.findByEntityId(
+				created.id,
+			);
 			expect(fromDb).not.toBeNull();
 
 			const updateInput = {
 				item_id: created.id,
 				description: `Updated by corsair test ${Date.now()}`,
 			};
-			const updated = await corsair.onedrive.api.items.updateMetadata(updateInput);
+			const updated =
+				await corsair.onedrive.api.items.updateMetadata(updateInput);
 			expect(updated).toBeDefined();
 
-			const updateEvents = await orm.events.findMany({ where: { event_type: 'onedrive.items.updateMetadata' } });
+			const updateEvents = await orm.events.findMany({
+				where: { event_type: 'onedrive.items.updateMetadata' },
+			});
 			expect(updateEvents.length).toBeGreaterThan(0);
 
 			const deleteInput = { item_id: created.id };
 			const deleted = await corsair.onedrive.api.items.delete(deleteInput);
 			expect(deleted).toBeDefined();
 
-			const deleteEvents = await orm.events.findMany({ where: { event_type: 'onedrive.items.delete' } });
+			const deleteEvents = await orm.events.findMany({
+				where: { event_type: 'onedrive.items.delete' },
+			});
 			expect(deleteEvents.length).toBeGreaterThan(0);
-			expect(parsePayload(deleteEvents[deleteEvents.length - 1]!.payload)).toMatchObject(deleteInput);
+			expect(
+				parsePayload(deleteEvents[deleteEvents.length - 1]!.payload),
+			).toMatchObject(deleteInput);
 
 			testDb.cleanup();
 		});
@@ -303,7 +341,9 @@ describe('OneDrive plugin integration', () => {
 			expect(Array.isArray(result.value)).toBe(true);
 
 			const orm = createCorsairOrm(testDb.database);
-			const events = await orm.events.findMany({ where: { event_type: 'onedrive.files.list' } });
+			const events = await orm.events.findMany({
+				where: { event_type: 'onedrive.files.list' },
+			});
 			expect(events.length).toBeGreaterThan(0);
 
 			testDb.cleanup();
@@ -319,15 +359,21 @@ describe('OneDrive plugin integration', () => {
 
 			// create folder
 			const folderName = `CorsairTest_${suffix}`;
-			const folder = await corsair.onedrive.api.files.createFolder({ name: folderName });
+			const folder = await corsair.onedrive.api.files.createFolder({
+				name: folderName,
+			});
 
 			expect(folder).toBeDefined();
 			expect(folder.id).toBeDefined();
 
-			const folderEvents = await orm.events.findMany({ where: { event_type: 'onedrive.files.createFolder' } });
+			const folderEvents = await orm.events.findMany({
+				where: { event_type: 'onedrive.files.createFolder' },
+			});
 			expect(folderEvents.length).toBeGreaterThan(0);
 
-			const folderFromDb = await corsair.onedrive.db.driveItems.findByEntityId(folder.id);
+			const folderFromDb = await corsair.onedrive.db.driveItems.findByEntityId(
+				folder.id,
+			);
 			expect(folderFromDb).not.toBeNull();
 
 			// create text file inside that folder
@@ -341,10 +387,14 @@ describe('OneDrive plugin integration', () => {
 			expect(file).toBeDefined();
 			expect(file.id).toBeDefined();
 
-			const fileEvents = await orm.events.findMany({ where: { event_type: 'onedrive.files.createTextFile' } });
+			const fileEvents = await orm.events.findMany({
+				where: { event_type: 'onedrive.files.createTextFile' },
+			});
 			expect(fileEvents.length).toBeGreaterThan(0);
 
-			const fileFromDb = await corsair.onedrive.db.driveItems.findByEntityId(file.id);
+			const fileFromDb = await corsair.onedrive.db.driveItems.findByEntityId(
+				file.id,
+			);
 			expect(fileFromDb).not.toBeNull();
 
 			// cleanup: delete the folder (cascades to file)
@@ -367,23 +417,29 @@ describe('OneDrive plugin integration', () => {
 			// findFile uses search(q=...) with $filter which Graph search does not support — skip gracefully on error
 			const findFileInput = { name: 'corsair' };
 			try {
-				const foundFiles = await corsair.onedrive.api.files.findFile(findFileInput);
+				const foundFiles =
+					await corsair.onedrive.api.files.findFile(findFileInput);
 				expect(foundFiles).toBeDefined();
 				expect(Array.isArray(foundFiles.value)).toBe(true);
 
-				const findFileEvents = await orm.events.findMany({ where: { event_type: 'onedrive.files.findFile' } });
+				const findFileEvents = await orm.events.findMany({
+					where: { event_type: 'onedrive.files.findFile' },
+				});
 				expect(findFileEvents.length).toBeGreaterThan(0);
 			} catch {
 				// Graph search API does not support $filter on search endpoints — skip findFile
 			}
 
 			const findFolderInput = { top: 5 };
-			const foundFolders = await corsair.onedrive.api.files.findFolder(findFolderInput);
+			const foundFolders =
+				await corsair.onedrive.api.files.findFolder(findFolderInput);
 
 			expect(foundFolders).toBeDefined();
 			expect(Array.isArray(foundFolders.value)).toBe(true);
 
-			const findFolderEvents = await orm.events.findMany({ where: { event_type: 'onedrive.files.findFolder' } });
+			const findFolderEvents = await orm.events.findMany({
+				where: { event_type: 'onedrive.files.findFolder' },
+			});
 			expect(findFolderEvents.length).toBeGreaterThan(0);
 
 			testDb.cleanup();
@@ -415,9 +471,13 @@ describe('OneDrive plugin integration', () => {
 			expect(Array.isArray(result.value)).toBe(true);
 
 			const orm = createCorsairOrm(testDb.database);
-			const events = await orm.events.findMany({ where: { event_type: 'onedrive.permissions.getForItem' } });
+			const events = await orm.events.findMany({
+				where: { event_type: 'onedrive.permissions.getForItem' },
+			});
 			expect(events.length).toBeGreaterThan(0);
-			expect(parsePayload(events[events.length - 1]!.payload)).toMatchObject(input);
+			expect(parsePayload(events[events.length - 1]!.payload)).toMatchObject(
+				input,
+			);
 
 			testDb.cleanup();
 		});
@@ -441,13 +501,21 @@ describe('OneDrive plugin integration', () => {
 				return;
 			}
 
-			const input = { item_id: fileId, type: 'view' as const, scope: 'organization' as const };
-			let result: Awaited<ReturnType<typeof corsair.onedrive.api.permissions.createLink>>;
+			const input = {
+				item_id: fileId,
+				type: 'view' as const,
+				scope: 'organization' as const,
+			};
+			let result: Awaited<
+				ReturnType<typeof corsair.onedrive.api.permissions.createLink>
+			>;
 			try {
 				result = await corsair.onedrive.api.permissions.createLink(input);
 			} catch {
 				// createLink may be restricted by tenant sharing policy — skip
-				await corsair.onedrive.api.items.delete({ item_id: fileId }).catch(() => {});
+				await corsair.onedrive.api.items
+					.delete({ item_id: fileId })
+					.catch(() => {});
 				testDb.cleanup();
 				return;
 			}
@@ -455,14 +523,17 @@ describe('OneDrive plugin integration', () => {
 			expect(result).toBeDefined();
 
 			const orm = createCorsairOrm(testDb.database);
-			const events = await orm.events.findMany({ where: { event_type: 'onedrive.permissions.createLink' } });
+			const events = await orm.events.findMany({
+				where: { event_type: 'onedrive.permissions.createLink' },
+			});
 			expect(events.length).toBeGreaterThan(0);
 
 			// cleanup temp file
-			await corsair.onedrive.api.items.delete({ item_id: fileId }).catch(() => {});
+			await corsair.onedrive.api.items
+				.delete({ item_id: fileId })
+				.catch(() => {});
 
 			testDb.cleanup();
 		});
 	});
-
 });

@@ -27,13 +27,13 @@ import WebhooksGuide from '@/content/guides/webhooks.mdx';
 import WorkflowsGuide from '@/content/guides/workflows.mdx';
 // MCP Adapters
 import McpAnthropicSdkDoc from '@/content/mcp-adapters/anthropic-sdk.mdx';
+import McpClaudeCodeDoc from '@/content/mcp-adapters/claude-code.mdx';
 import McpClaudeSdkDoc from '@/content/mcp-adapters/claude-sdk.mdx';
+import McpCursorDoc from '@/content/mcp-adapters/cursor.mdx';
 import McpMastraDoc from '@/content/mcp-adapters/mastra.mdx';
 import McpOpenAIDoc from '@/content/mcp-adapters/openai.mdx';
 import McpOpenAIAgentsDoc from '@/content/mcp-adapters/openai-agents.mdx';
 import McpVercelAiDoc from '@/content/mcp-adapters/vercel-ai.mdx';
-import McpClaudeCodeDoc from '@/content/mcp-adapters/claude-code.mdx';
-import McpCursorDoc from '@/content/mcp-adapters/cursor.mdx';
 import AhrefsDatabaseDoc from '@/content/plugins/ahrefs/database.mdx';
 import AhrefsGetCredentialsDoc from '@/content/plugins/ahrefs/get-credentials.mdx';
 import AhrefsDoc from '@/content/plugins/ahrefs/main.mdx';
@@ -1309,7 +1309,8 @@ const pages = {
 	'guides/inngest': {
 		Component: InngestGuide,
 		title: 'Inngest',
-		description: 'Trigger durable Inngest functions from Corsair webhook events.',
+		description:
+			'Trigger durable Inngest functions from Corsair webhook events.',
 	},
 	'guides/temporal': {
 		Component: TemporalGuide,
@@ -1319,7 +1320,8 @@ const pages = {
 	'guides/trigger-dev': {
 		Component: TriggerDevGuide,
 		title: 'Trigger.dev',
-		description: 'Run Trigger.dev background tasks from Corsair webhook events.',
+		description:
+			'Run Trigger.dev background tasks from Corsair webhook events.',
 	},
 	'guides/hatchet': {
 		Component: HatchetGuide,

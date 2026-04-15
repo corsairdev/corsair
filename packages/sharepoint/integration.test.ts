@@ -2,8 +2,8 @@ import 'dotenv/config';
 import { createCorsair } from 'corsair/core';
 import { createCorsairOrm } from 'corsair/orm';
 import { createIntegrationAndAccount, createTestDatabase } from 'corsair/tests';
-import { sharepoint } from './index';
 import { resolveSiteGuid } from './client';
+import { sharepoint } from './index';
 
 // Using `unknown` for both parameter and return because DB payloads may arrive as a raw JSON
 function parsePayload(payload: unknown): unknown {
@@ -50,13 +50,17 @@ describe('SharePoint plugin integration', () => {
 			expect(Array.isArray(result.value)).toBe(true);
 
 			const orm = createCorsairOrm(testDb.database);
-			const events = await orm.events.findMany({ where: { event_type: 'sharepoint.lists.listAll' } });
+			const events = await orm.events.findMany({
+				where: { event_type: 'sharepoint.lists.listAll' },
+			});
 			expect(events.length).toBeGreaterThan(0);
 
 			if (result.value && result.value.length > 0) {
 				const first = result.value[0]!;
 				if (first.id) {
-					const fromDb = await corsair.sharepoint.db.lists.findByEntityId(first.id);
+					const fromDb = await corsair.sharepoint.db.lists.findByEntityId(
+						first.id,
+					);
 					expect(fromDb).not.toBeNull();
 					expect(fromDb?.data.id).toBe(first.id);
 				}
@@ -81,30 +85,45 @@ describe('SharePoint plugin integration', () => {
 
 			expect(created).toBeDefined();
 
-			const createEvents = await orm.events.findMany({ where: { event_type: 'sharepoint.lists.create' } });
+			const createEvents = await orm.events.findMany({
+				where: { event_type: 'sharepoint.lists.create' },
+			});
 			expect(createEvents.length).toBeGreaterThan(0);
-			expect(parsePayload(createEvents[createEvents.length - 1]!.payload)).toMatchObject(createInput);
+			expect(
+				parsePayload(createEvents[createEvents.length - 1]!.payload),
+			).toMatchObject(createInput);
 
 			const getInput = { list_title: createInput.title };
 			const fetched = await corsair.sharepoint.api.lists.getByTitle(getInput);
 
 			expect(fetched).toBeDefined();
 
-			const getEvents = await orm.events.findMany({ where: { event_type: 'sharepoint.lists.getByTitle' } });
+			const getEvents = await orm.events.findMany({
+				where: { event_type: 'sharepoint.lists.getByTitle' },
+			});
 			expect(getEvents.length).toBeGreaterThan(0);
-			expect(parsePayload(getEvents[getEvents.length - 1]!.payload)).toMatchObject(getInput);
+			expect(
+				parsePayload(getEvents[getEvents.length - 1]!.payload),
+			).toMatchObject(getInput);
 
-			const updateInput = { list_title: createInput.title, description: `Updated by corsair test ${Date.now()}` };
+			const updateInput = {
+				list_title: createInput.title,
+				description: `Updated by corsair test ${Date.now()}`,
+			};
 			const updated = await corsair.sharepoint.api.lists.update(updateInput);
 
 			expect(updated).toBeDefined();
 
-			const updateEvents = await orm.events.findMany({ where: { event_type: 'sharepoint.lists.update' } });
+			const updateEvents = await orm.events.findMany({
+				where: { event_type: 'sharepoint.lists.update' },
+			});
 			expect(updateEvents.length).toBeGreaterThan(0);
 
 			// cleanup: delete by title
 			try {
-				await corsair.sharepoint.api.lists.deleteByTitle({ list_title: createInput.title });
+				await corsair.sharepoint.api.lists.deleteByTitle({
+					list_title: createInput.title,
+				});
 			} catch {
 				// best-effort cleanup
 			}
@@ -131,9 +150,13 @@ describe('SharePoint plugin integration', () => {
 			expect(Array.isArray(result.value)).toBe(true);
 
 			const orm = createCorsairOrm(testDb.database);
-			const events = await orm.events.findMany({ where: { event_type: 'sharepoint.lists.listColumns' } });
+			const events = await orm.events.findMany({
+				where: { event_type: 'sharepoint.lists.listColumns' },
+			});
 			expect(events.length).toBeGreaterThan(0);
-			expect(parsePayload(events[events.length - 1]!.payload)).toMatchObject(input);
+			expect(parsePayload(events[events.length - 1]!.payload)).toMatchObject(
+				input,
+			);
 
 			testDb.cleanup();
 		});
@@ -147,7 +170,7 @@ describe('SharePoint plugin integration', () => {
 			if (!setup) return;
 			const { corsair, testDb } = setup;
 			const lists = await corsair.sharepoint.api.lists.listAll({});
-			listTitle = lists.value?.find(l => !l.list?.hidden)?.displayName ?? '';
+			listTitle = lists.value?.find((l) => !l.list?.hidden)?.displayName ?? '';
 			testDb.cleanup();
 		});
 
@@ -164,9 +187,13 @@ describe('SharePoint plugin integration', () => {
 			expect(Array.isArray(list.value)).toBe(true);
 
 			const orm = createCorsairOrm(testDb.database);
-			const listEvents = await orm.events.findMany({ where: { event_type: 'sharepoint.items.list' } });
+			const listEvents = await orm.events.findMany({
+				where: { event_type: 'sharepoint.items.list' },
+			});
 			expect(listEvents.length).toBeGreaterThan(0);
-			expect(parsePayload(listEvents[listEvents.length - 1]!.payload)).toMatchObject(listInput);
+			expect(
+				parsePayload(listEvents[listEvents.length - 1]!.payload),
+			).toMatchObject(listInput);
 
 			if (list.value && list.value.length > 0) {
 				const first = list.value[0]!;
@@ -178,12 +205,18 @@ describe('SharePoint plugin integration', () => {
 					expect(got).toBeDefined();
 					expect(got.id).toBe(first.id);
 
-					const getEvents = await orm.events.findMany({ where: { event_type: 'sharepoint.items.get' } });
+					const getEvents = await orm.events.findMany({
+						where: { event_type: 'sharepoint.items.get' },
+					});
 					expect(getEvents.length).toBeGreaterThan(0);
-					expect(parsePayload(getEvents[getEvents.length - 1]!.payload)).toMatchObject(getInput);
+					expect(
+						parsePayload(getEvents[getEvents.length - 1]!.payload),
+					).toMatchObject(getInput);
 
 					if (first.id) {
-						const fromDb = await corsair.sharepoint.db.items.findByEntityId(first.id);
+						const fromDb = await corsair.sharepoint.db.items.findByEntityId(
+							first.id,
+						);
 						expect(fromDb).not.toBeNull();
 						expect(fromDb?.data.id).toBe(first.id);
 					}
@@ -206,7 +239,9 @@ describe('SharePoint plugin integration', () => {
 				fields: { Title: `CorsairTest_${Date.now()}` },
 			};
 
-			let created: Awaited<ReturnType<typeof corsair.sharepoint.api.items.create>>;
+			let created: Awaited<
+				ReturnType<typeof corsair.sharepoint.api.items.create>
+			>;
 			try {
 				created = await corsair.sharepoint.api.items.create(createInput);
 			} catch {
@@ -217,12 +252,16 @@ describe('SharePoint plugin integration', () => {
 
 			expect(created).toBeDefined();
 
-			const createEvents = await orm.events.findMany({ where: { event_type: 'sharepoint.items.create' } });
+			const createEvents = await orm.events.findMany({
+				where: { event_type: 'sharepoint.items.create' },
+			});
 			expect(createEvents.length).toBeGreaterThan(0);
 
 			const createdId = Number(created.id);
 			if (createdId) {
-				const fromDb = await corsair.sharepoint.db.items.findByEntityId(created.id!);
+				const fromDb = await corsair.sharepoint.db.items.findByEntityId(
+					created.id!,
+				);
 				expect(fromDb).not.toBeNull();
 
 				const updateInput = {
@@ -233,16 +272,22 @@ describe('SharePoint plugin integration', () => {
 				const updated = await corsair.sharepoint.api.items.update(updateInput);
 				expect(updated).toBeDefined();
 
-				const updateEvents = await orm.events.findMany({ where: { event_type: 'sharepoint.items.update' } });
+				const updateEvents = await orm.events.findMany({
+					where: { event_type: 'sharepoint.items.update' },
+				});
 				expect(updateEvents.length).toBeGreaterThan(0);
 
 				const deleteInput = { list_title: listTitle, item_id: createdId };
 				const deleted = await corsair.sharepoint.api.items.delete(deleteInput);
 				expect(deleted).toBeDefined();
 
-				const deleteEvents = await orm.events.findMany({ where: { event_type: 'sharepoint.items.delete' } });
+				const deleteEvents = await orm.events.findMany({
+					where: { event_type: 'sharepoint.items.delete' },
+				});
 				expect(deleteEvents.length).toBeGreaterThan(0);
-				expect(parsePayload(deleteEvents[deleteEvents.length - 1]!.payload)).toMatchObject(deleteInput);
+				expect(
+					parsePayload(deleteEvents[deleteEvents.length - 1]!.payload),
+				).toMatchObject(deleteInput);
 			}
 
 			testDb.cleanup();
@@ -260,7 +305,9 @@ describe('SharePoint plugin integration', () => {
 			const folderName = `CorsairTest_${Date.now()}`;
 			const createInput = { server_relative_url: folderName };
 
-			let created: Awaited<ReturnType<typeof corsair.sharepoint.api.folders.create>>;
+			let created: Awaited<
+				ReturnType<typeof corsair.sharepoint.api.folders.create>
+			>;
 			try {
 				created = await corsair.sharepoint.api.folders.create(createInput);
 			} catch {
@@ -271,11 +318,15 @@ describe('SharePoint plugin integration', () => {
 
 			expect(created).toBeDefined();
 
-			const createEvents = await orm.events.findMany({ where: { event_type: 'sharepoint.folders.create' } });
+			const createEvents = await orm.events.findMany({
+				where: { event_type: 'sharepoint.folders.create' },
+			});
 			expect(createEvents.length).toBeGreaterThan(0);
 
 			if (created.id) {
-				const fromDb = await corsair.sharepoint.db.folders.findByEntityId(created.id);
+				const fromDb = await corsair.sharepoint.db.folders.findByEntityId(
+					created.id,
+				);
 				expect(fromDb).not.toBeNull();
 			}
 
@@ -283,18 +334,23 @@ describe('SharePoint plugin integration', () => {
 			const fetched = await corsair.sharepoint.api.folders.get(getInput);
 			expect(fetched).toBeDefined();
 
-			const getEvents = await orm.events.findMany({ where: { event_type: 'sharepoint.folders.get' } });
+			const getEvents = await orm.events.findMany({
+				where: { event_type: 'sharepoint.folders.get' },
+			});
 			expect(getEvents.length).toBeGreaterThan(0);
 
 			const listSubInput = { server_relative_url: folderName };
-			const subfolders = await corsair.sharepoint.api.folders.listSubfolders(listSubInput);
+			const subfolders =
+				await corsair.sharepoint.api.folders.listSubfolders(listSubInput);
 			expect(subfolders).toBeDefined();
 
 			const deleteInput = { server_relative_url: folderName };
 			const deleted = await corsair.sharepoint.api.folders.delete(deleteInput);
 			expect(deleted).toBeDefined();
 
-			const deleteEvents = await orm.events.findMany({ where: { event_type: 'sharepoint.folders.delete' } });
+			const deleteEvents = await orm.events.findMany({
+				where: { event_type: 'sharepoint.folders.delete' },
+			});
 			expect(deleteEvents.length).toBeGreaterThan(0);
 
 			testDb.cleanup();
@@ -310,7 +366,9 @@ describe('SharePoint plugin integration', () => {
 			expect(result).toBeDefined();
 
 			const orm = createCorsairOrm(testDb.database);
-			const events = await orm.events.findMany({ where: { event_type: 'sharepoint.folders.getAll' } });
+			const events = await orm.events.findMany({
+				where: { event_type: 'sharepoint.folders.getAll' },
+			});
 			expect(events.length).toBeGreaterThan(0);
 
 			testDb.cleanup();
@@ -338,24 +396,34 @@ describe('SharePoint plugin integration', () => {
 			expect(list).toBeDefined();
 
 			const orm = createCorsairOrm(testDb.database);
-			const listEvents = await orm.events.findMany({ where: { event_type: 'sharepoint.files.listInFolder' } });
+			const listEvents = await orm.events.findMany({
+				where: { event_type: 'sharepoint.files.listInFolder' },
+			});
 			expect(listEvents.length).toBeGreaterThan(0);
-			expect(parsePayload(listEvents[listEvents.length - 1]!.payload)).toMatchObject(listInput);
+			expect(
+				parsePayload(listEvents[listEvents.length - 1]!.payload),
+			).toMatchObject(listInput);
 
 			if (list.value && list.value.length > 0) {
 				const first = list.value[0]!;
 				if (first.name && first.webUrl) {
 					// files.get uses the server-relative URL path within the drive
-					const getInput = { server_relative_url: `${folderName}/${first.name}` };
+					const getInput = {
+						server_relative_url: `${folderName}/${first.name}`,
+					};
 					try {
 						const got = await corsair.sharepoint.api.files.get(getInput);
 						expect(got).toBeDefined();
 
-						const getEvents = await orm.events.findMany({ where: { event_type: 'sharepoint.files.get' } });
+						const getEvents = await orm.events.findMany({
+							where: { event_type: 'sharepoint.files.get' },
+						});
 						expect(getEvents.length).toBeGreaterThan(0);
 
 						if (first.id) {
-							const fromDb = await corsair.sharepoint.db.files.findByEntityId(first.id);
+							const fromDb = await corsair.sharepoint.db.files.findByEntityId(
+								first.id,
+							);
 							expect(fromDb).not.toBeNull();
 						}
 					} catch {
@@ -381,11 +449,15 @@ describe('SharePoint plugin integration', () => {
 				const current = await corsair.sharepoint.api.users.getCurrent({});
 				expect(current).toBeDefined();
 
-				const currentEvents = await orm.events.findMany({ where: { event_type: 'sharepoint.users.getCurrent' } });
+				const currentEvents = await orm.events.findMany({
+					where: { event_type: 'sharepoint.users.getCurrent' },
+				});
 				expect(currentEvents.length).toBeGreaterThan(0);
 
 				if (current.id) {
-					const fromDb = await corsair.sharepoint.db.users.findByEntityId(String(current.id));
+					const fromDb = await corsair.sharepoint.db.users.findByEntityId(
+						String(current.id),
+					);
 					expect(fromDb).not.toBeNull();
 				}
 			} catch {
@@ -397,7 +469,9 @@ describe('SharePoint plugin integration', () => {
 				const siteUsers = await corsair.sharepoint.api.users.listSite({});
 				expect(siteUsers).toBeDefined();
 
-				const listEvents = await orm.events.findMany({ where: { event_type: 'sharepoint.users.listSite' } });
+				const listEvents = await orm.events.findMany({
+					where: { event_type: 'sharepoint.users.listSite' },
+				});
 				expect(listEvents.length).toBeGreaterThan(0);
 			} catch {
 				// insufficient permissions for site user listing — skip usersListSite
@@ -419,7 +493,9 @@ describe('SharePoint plugin integration', () => {
 			expect(result).toBeDefined();
 
 			const orm = createCorsairOrm(testDb.database);
-			const events = await orm.events.findMany({ where: { event_type: 'sharepoint.search.query' } });
+			const events = await orm.events.findMany({
+				where: { event_type: 'sharepoint.search.query' },
+			});
 			expect(events.length).toBeGreaterThan(0);
 
 			testDb.cleanup();
@@ -437,14 +513,20 @@ describe('SharePoint plugin integration', () => {
 			expect(webInfo).toBeDefined();
 
 			const orm = createCorsairOrm(testDb.database);
-			const infoEvents = await orm.events.findMany({ where: { event_type: 'sharepoint.web.getInfo' } });
+			const infoEvents = await orm.events.findMany({
+				where: { event_type: 'sharepoint.web.getInfo' },
+			});
 			expect(infoEvents.length).toBeGreaterThan(0);
 
-			const siteInfo = await corsair.sharepoint.api.web.getSiteCollectionInfo({});
+			const siteInfo = await corsair.sharepoint.api.web.getSiteCollectionInfo(
+				{},
+			);
 
 			expect(siteInfo).toBeDefined();
 
-			const siteEvents = await orm.events.findMany({ where: { event_type: 'sharepoint.web.getSiteCollectionInfo' } });
+			const siteEvents = await orm.events.findMany({
+				where: { event_type: 'sharepoint.web.getSiteCollectionInfo' },
+			});
 			expect(siteEvents.length).toBeGreaterThan(0);
 
 			testDb.cleanup();
@@ -462,7 +544,9 @@ describe('SharePoint plugin integration', () => {
 			expect(result).toBeDefined();
 
 			const orm = createCorsairOrm(testDb.database);
-			const events = await orm.events.findMany({ where: { event_type: 'sharepoint.recycleBin.list' } });
+			const events = await orm.events.findMany({
+				where: { event_type: 'sharepoint.recycleBin.list' },
+			});
 			expect(events.length).toBeGreaterThan(0);
 
 			testDb.cleanup();
@@ -476,9 +560,13 @@ describe('SharePoint plugin integration', () => {
 			const { corsair, testDb } = setup;
 
 			// /sites/{id}/permissions requires Sites.FullControl.All or admin consent — skip if Forbidden
-			let result: Awaited<ReturnType<typeof corsair.sharepoint.api.permissions.getRoleDefinitions>>;
+			let result: Awaited<
+				ReturnType<typeof corsair.sharepoint.api.permissions.getRoleDefinitions>
+			>;
 			try {
-				result = await corsair.sharepoint.api.permissions.getRoleDefinitions({});
+				result = await corsair.sharepoint.api.permissions.getRoleDefinitions(
+					{},
+				);
 			} catch {
 				testDb.cleanup();
 				return;
@@ -487,7 +575,9 @@ describe('SharePoint plugin integration', () => {
 			expect(result).toBeDefined();
 
 			const orm = createCorsairOrm(testDb.database);
-			const events = await orm.events.findMany({ where: { event_type: 'sharepoint.permissions.getRoleDefinitions' } });
+			const events = await orm.events.findMany({
+				where: { event_type: 'sharepoint.permissions.getRoleDefinitions' },
+			});
 			expect(events.length).toBeGreaterThan(0);
 
 			testDb.cleanup();

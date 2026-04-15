@@ -1,6 +1,10 @@
 import * as p from '@clack/prompts';
 import type { CorsairInternalConfig } from 'corsair/core';
-import { CORSAIR_INTERNAL, createAccountKeyManager, createIntegrationKeyManager } from 'corsair/core';
+import {
+	CORSAIR_INTERNAL,
+	createAccountKeyManager,
+	createIntegrationKeyManager,
+} from 'corsair/core';
 import { getCorsairInstance } from '../index';
 import { promptTenantId } from '../utils/prompts';
 import { setupCalendarWatch } from './calendar';
@@ -17,7 +21,9 @@ const GOOGLE_PLUGINS = [
 ] as const;
 type GooglePlugin = (typeof GOOGLE_PLUGINS)[number];
 
-async function extractInternalConfig(cwd: string): Promise<CorsairInternalConfig> {
+async function extractInternalConfig(
+	cwd: string,
+): Promise<CorsairInternalConfig> {
 	const instance = await getCorsairInstance({ cwd, shouldThrowOnError: true });
 	const internal = (instance as Record<string | symbol, unknown>)[
 		CORSAIR_INTERNAL
@@ -151,7 +157,11 @@ export async function runGoogleSubscribe({
 			process.exit(1);
 		}
 
-		const accessToken = await refreshGoogleAccessToken(clientId, clientSecret, refreshToken);
+		const accessToken = await refreshGoogleAccessToken(
+			clientId,
+			clientSecret,
+			refreshToken,
+		);
 
 		credSpin.stop('Credentials loaded.');
 
@@ -202,14 +212,20 @@ export async function runGoogleSubscribe({
 				p.cancel('Operation cancelled.');
 				process.exit(0);
 			}
-			await setupCalendarWatch(accessToken, webhookUrl as string, calendarId as string);
+			await setupCalendarWatch(
+				accessToken,
+				webhookUrl as string,
+				calendarId as string,
+			);
 		} else {
 			p.log.error(`Unsupported Google plugin: ${pluginType}`);
 			process.exit(1);
 		}
 	} catch (error) {
 		credSpin.stop('Failed.');
-		p.log.error(`Error: ${error instanceof Error ? error.message : String(error)}`);
+		p.log.error(
+			`Error: ${error instanceof Error ? error.message : String(error)}`,
+		);
 		process.exit(1);
 	}
 
