@@ -4,18 +4,13 @@ import { ArrowUp } from "lucide-react"
 
 export function ScrollToTop() {
     const [isVisible, setVisibility] = useState(false)
-    const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+    const scrollTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
     function handleScroll() {
-        // Hide button immediately when scrolling starts
         setVisibility(false)
-
-        // Clear previous timeout
         if (scrollTimeoutRef.current) {
             clearTimeout(scrollTimeoutRef.current)
         }
-
-        // Show button after scrolling stops (300ms delay)
         scrollTimeoutRef.current = setTimeout(() => {
             const shouldBeVisible = window.scrollY > 200
             setVisibility(shouldBeVisible)
