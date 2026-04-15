@@ -1,7 +1,9 @@
 import * as p from '@clack/prompts';
 import { copyToClipboard } from './shared';
 
-const APPS_SCRIPT_TEMPLATE = (webhookUrl: string) => `var WEBHOOK_URL = "${webhookUrl}";
+const APPS_SCRIPT_TEMPLATE = (
+	webhookUrl: string,
+) => `var WEBHOOK_URL = "${webhookUrl}";
 
 function onEditTrigger(e) {
   if (!e || !e.range) return;
@@ -96,7 +98,9 @@ export async function setupSheetsWatch(webhookUrl: string): Promise<void> {
 	p.log.info('1. Open your Google Sheet');
 	p.log.info('2. Go to Extensions > Apps Script');
 	p.log.info('3. Paste the code into the script editor');
-	p.log.info('4. Run the "createTriggers" function once to install the triggers');
+	p.log.info(
+		'4. Run the "createTriggers" function once to install the triggers',
+	);
 	p.log.info('5. Authorize the script when prompted');
 	p.log.info('');
 

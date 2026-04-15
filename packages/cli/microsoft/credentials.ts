@@ -1,6 +1,9 @@
 import * as p from '@clack/prompts';
 import type { CorsairInternalConfig } from 'corsair/core';
-import { createAccountKeyManager, createIntegrationKeyManager } from 'corsair/core';
+import {
+	createAccountKeyManager,
+	createIntegrationKeyManager,
+} from 'corsair/core';
 
 const MICROSOFT_TOKEN_URL =
 	'https://login.microsoftonline.com/common/oauth2/v2.0/token';
@@ -18,7 +21,11 @@ async function refreshMicrosoftToken(
 	clientId: string,
 	clientSecret: string,
 	refreshToken: string,
-): Promise<{ access_token: string; refresh_token?: string; expires_in: number }> {
+): Promise<{
+	access_token: string;
+	refresh_token?: string;
+	expires_in: number;
+}> {
 	const response = await fetch(MICROSOFT_TOKEN_URL, {
 		method: 'POST',
 		headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -67,14 +74,19 @@ export async function resolveAccessToken(
 		database: database!,
 	});
 
-	const [clientId, clientSecret, storedAccessToken, expiresAt, storedRefreshToken] =
-		await Promise.all([
-			integrationKm.get_client_id(),
-			integrationKm.get_client_secret(),
-			accountKm.get_access_token(),
-			accountKm.get_expires_at(),
-			accountKm.get_refresh_token(),
-		]);
+	const [
+		clientId,
+		clientSecret,
+		storedAccessToken,
+		expiresAt,
+		storedRefreshToken,
+	] = await Promise.all([
+		integrationKm.get_client_id(),
+		integrationKm.get_client_secret(),
+		accountKm.get_access_token(),
+		accountKm.get_expires_at(),
+		accountKm.get_refresh_token(),
+	]);
 
 	if (!storedRefreshToken) {
 		credSpin.stop('Missing credentials.');
