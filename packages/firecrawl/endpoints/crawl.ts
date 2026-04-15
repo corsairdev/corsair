@@ -1,20 +1,34 @@
 import { logEventFromContext } from 'corsair/core';
 import type { FirecrawlEndpoints } from '..';
 import { makeFirecrawlRequest } from '../client';
-import { persistJob } from './persist';
-import type { FirecrawlEndpointOutputs } from './types';
+import type {
+	CrawlCancelResponse,
+	CrawlGetResponse,
+	CrawlStartResponse,
+} from './types';
 
 export const start: FirecrawlEndpoints['crawlStart'] = async (ctx, input) => {
-	const response = await makeFirecrawlRequest<
-		FirecrawlEndpointOutputs['crawlStart']
-	>('v2/crawl', ctx.key, {
-		method: 'POST',
-		body: input as Record<string, unknown>,
-	});
+	const response = await makeFirecrawlRequest<CrawlStartResponse>(
+		'v2/crawl',
+		ctx.key,
+		{
+			method: 'POST',
+			body: input,
+		},
+	);
 
-	const jobId = (response as { id?: string }).id;
-	if (typeof jobId === 'string') {
-		await persistJob(ctx, 'crawl', jobId, response);
+	if (typeof response.id === 'string' && ctx.db.jobs) {
+		try {
+			await ctx.db.jobs.upsertByEntityId(response.id, {
+				id: response.id,
+				kind: 'crawl',
+				success: response.success,
+				snapshot: response,
+				updatedAt: new Date(),
+			});
+		} catch (error) {
+			console.warn('Failed to save crawl job to database:', error);
+		}
 	}
 
 	await logEventFromContext(
@@ -27,13 +41,27 @@ export const start: FirecrawlEndpoints['crawlStart'] = async (ctx, input) => {
 };
 
 export const get: FirecrawlEndpoints['crawlGet'] = async (ctx, input) => {
-	const response = await makeFirecrawlRequest<
-		FirecrawlEndpointOutputs['crawlGet']
-	>(`v2/crawl/${input.id}`, ctx.key, {
-		method: 'GET',
-	});
+	const response = await makeFirecrawlRequest<CrawlGetResponse>(
+		`v2/crawl/${input.id}`,
+		ctx.key,
+		{
+			method: 'GET',
+		},
+	);
 
-	await persistJob(ctx, 'crawl', input.id, response);
+	if (ctx.db.jobs) {
+		try {
+			await ctx.db.jobs.upsertByEntityId(input.id, {
+				id: input.id,
+				kind: 'crawl',
+				success: response.success,
+				snapshot: response,
+				updatedAt: new Date(),
+			});
+		} catch (error) {
+			console.warn('Failed to save crawl job to database:', error);
+		}
+	}
 
 	await logEventFromContext(
 		ctx,
@@ -45,13 +73,27 @@ export const get: FirecrawlEndpoints['crawlGet'] = async (ctx, input) => {
 };
 
 export const cancel: FirecrawlEndpoints['crawlCancel'] = async (ctx, input) => {
-	const response = await makeFirecrawlRequest<
-		FirecrawlEndpointOutputs['crawlCancel']
-	>(`v2/crawl/${input.id}`, ctx.key, {
-		method: 'DELETE',
-	});
+	const response = await makeFirecrawlRequest<CrawlCancelResponse>(
+		`v2/crawl/${input.id}`,
+		ctx.key,
+		{
+			method: 'DELETE',
+		},
+	);
 
-	await persistJob(ctx, 'crawl', input.id, response);
+	if (ctx.db.jobs) {
+		try {
+			await ctx.db.jobs.upsertByEntityId(input.id, {
+				id: input.id,
+				kind: 'crawl',
+				success: response.success,
+				snapshot: response,
+				updatedAt: new Date(),
+			});
+		} catch (error) {
+			console.warn('Failed to save crawl job to database:', error);
+		}
+	}
 
 	await logEventFromContext(
 		ctx,

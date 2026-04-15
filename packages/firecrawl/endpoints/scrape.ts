@@ -1,18 +1,34 @@
 import { logEventFromContext } from 'corsair/core';
 import type { FirecrawlEndpoints } from '..';
 import { makeFirecrawlRequest } from '../client';
-import { persistScrape } from './persist';
-import type { FirecrawlEndpointOutputs } from './types';
+import type { ScrapeRunResponse } from './types';
 
 export const run: FirecrawlEndpoints['scrapeRun'] = async (ctx, input) => {
-	const response = await makeFirecrawlRequest<
-		FirecrawlEndpointOutputs['scrapeRun']
-	>('v2/scrape', ctx.key, {
-		method: 'POST',
-		body: input as Record<string, unknown>,
-	});
+	const response = await makeFirecrawlRequest<ScrapeRunResponse>(
+		'v2/scrape',
+		ctx.key,
+		{
+			method: 'POST',
+			body: input,
+		},
+	);
 
-	await persistScrape(ctx, response);
+	const scrapeId = response.data?.metadata?.scrapeId;
+	if (!!scrapeId && ctx.db.scrapes) {
+		try {
+			await ctx.db.scrapes.upsertByEntityId(scrapeId, {
+				id: scrapeId,
+				url: response.data?.metadata?.url,
+				sourceURL: response.data?.metadata?.sourceURL,
+				success: response.success,
+				markdown: response.data?.markdown,
+				metadata: response.data?.metadata,
+				fetchedAt: new Date(),
+			});
+		} catch (error) {
+			console.warn('Failed to save scrape to database:', error);
+		}
+	}
 
 	await logEventFromContext(
 		ctx,

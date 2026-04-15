@@ -1,20 +1,34 @@
 import { logEventFromContext } from 'corsair/core';
 import type { FirecrawlEndpoints } from '..';
 import { makeFirecrawlRequest } from '../client';
-import { persistJob } from './persist';
-import type { FirecrawlEndpointOutputs } from './types';
+import type {
+	AgentCancelResponse,
+	AgentGetResponse,
+	AgentStartResponse,
+} from './types';
 
 export const start: FirecrawlEndpoints['agentStart'] = async (ctx, input) => {
-	const response = await makeFirecrawlRequest<
-		FirecrawlEndpointOutputs['agentStart']
-	>('v2/agent', ctx.key, {
-		method: 'POST',
-		body: input as Record<string, unknown>,
-	});
+	const response = await makeFirecrawlRequest<AgentStartResponse>(
+		'v2/agent',
+		ctx.key,
+		{
+			method: 'POST',
+			body: input,
+		},
+	);
 
-	const jobId = (response as { id?: string }).id;
-	if (typeof jobId === 'string') {
-		await persistJob(ctx, 'agent', jobId, response);
+	if (!!response.id && ctx.db.jobs) {
+		try {
+			await ctx.db.jobs.upsertByEntityId(response.id, {
+				id: response.id,
+				kind: 'agent',
+				success: response.success,
+				snapshot: response,
+				updatedAt: new Date(),
+			});
+		} catch (error) {
+			console.warn('Failed to save agent job to database:', error);
+		}
 	}
 
 	await logEventFromContext(
@@ -27,13 +41,27 @@ export const start: FirecrawlEndpoints['agentStart'] = async (ctx, input) => {
 };
 
 export const get: FirecrawlEndpoints['agentGet'] = async (ctx, input) => {
-	const response = await makeFirecrawlRequest<
-		FirecrawlEndpointOutputs['agentGet']
-	>(`v2/agent/${input.id}`, ctx.key, {
-		method: 'GET',
-	});
+	const response = await makeFirecrawlRequest<AgentGetResponse>(
+		`v2/agent/${input.id}`,
+		ctx.key,
+		{
+			method: 'GET',
+		},
+	);
 
-	await persistJob(ctx, 'agent', input.id, response);
+	if (ctx.db.jobs) {
+		try {
+			await ctx.db.jobs.upsertByEntityId(input.id, {
+				id: input.id,
+				kind: 'agent',
+				success: response.success,
+				snapshot: response,
+				updatedAt: new Date(),
+			});
+		} catch (error) {
+			console.warn('Failed to save agent job to database:', error);
+		}
+	}
 
 	await logEventFromContext(
 		ctx,
@@ -45,13 +73,27 @@ export const get: FirecrawlEndpoints['agentGet'] = async (ctx, input) => {
 };
 
 export const cancel: FirecrawlEndpoints['agentCancel'] = async (ctx, input) => {
-	const response = await makeFirecrawlRequest<
-		FirecrawlEndpointOutputs['agentCancel']
-	>(`v2/agent/${input.id}`, ctx.key, {
-		method: 'DELETE',
-	});
+	const response = await makeFirecrawlRequest<AgentCancelResponse>(
+		`v2/agent/${input.id}`,
+		ctx.key,
+		{
+			method: 'DELETE',
+		},
+	);
 
-	await persistJob(ctx, 'agent', input.id, response);
+	if (ctx.db.jobs) {
+		try {
+			await ctx.db.jobs.upsertByEntityId(input.id, {
+				id: input.id,
+				kind: 'agent',
+				success: response.success,
+				snapshot: response,
+				updatedAt: new Date(),
+			});
+		} catch (error) {
+			console.warn('Failed to save agent job to database:', error);
+		}
+	}
 
 	await logEventFromContext(
 		ctx,
