@@ -19,6 +19,7 @@ export const list: RazorpayEndpoints['subscriptionsList'] = async (
 			try {
 				await ctx.db.subscriptions.upsertByEntityId(subscription.id, {
 					...subscription,
+					// created_at is a Unix timestamp in seconds; multiply by 1000 for ms
 					createdAt: subscription.created_at
 						? new Date(subscription.created_at * 1000)
 						: undefined,
@@ -53,6 +54,7 @@ export const get: RazorpayEndpoints['subscriptionsGet'] = async (
 		try {
 			await ctx.db.subscriptions.upsertByEntityId(result.id, {
 				...result,
+				// created_at is a Unix timestamp in seconds; multiply by 1000 for ms
 				createdAt: result.created_at
 					? new Date(result.created_at * 1000)
 					: undefined,
@@ -86,6 +88,7 @@ export const create: RazorpayEndpoints['subscriptionsCreate'] = async (
 		try {
 			await ctx.db.subscriptions.upsertByEntityId(result.id, {
 				...result,
+				// created_at is a Unix timestamp in seconds; multiply by 1000 for ms
 				createdAt: result.created_at
 					? new Date(result.created_at * 1000)
 					: undefined,
@@ -120,6 +123,7 @@ export const update: RazorpayEndpoints['subscriptionsUpdate'] = async (
 		try {
 			await ctx.db.subscriptions.upsertByEntityId(result.id, {
 				...result,
+				// created_at is a Unix timestamp in seconds; multiply by 1000 for ms
 				createdAt: result.created_at
 					? new Date(result.created_at * 1000)
 					: undefined,
@@ -154,6 +158,7 @@ export const cancel: RazorpayEndpoints['subscriptionsCancel'] = async (
 		try {
 			await ctx.db.subscriptions.upsertByEntityId(result.id, {
 				...result,
+				// created_at is a Unix timestamp in seconds; multiply by 1000 for ms
 				createdAt: result.created_at
 					? new Date(result.created_at * 1000)
 					: undefined,
@@ -188,6 +193,7 @@ export const pause: RazorpayEndpoints['subscriptionsPause'] = async (
 		try {
 			await ctx.db.subscriptions.upsertByEntityId(result.id, {
 				...result,
+				// created_at is a Unix timestamp in seconds; multiply by 1000 for ms
 				createdAt: result.created_at
 					? new Date(result.created_at * 1000)
 					: undefined,
@@ -222,6 +228,7 @@ export const resume: RazorpayEndpoints['subscriptionsResume'] = async (
 		try {
 			await ctx.db.subscriptions.upsertByEntityId(result.id, {
 				...result,
+				// created_at is a Unix timestamp in seconds; multiply by 1000 for ms
 				createdAt: result.created_at
 					? new Date(result.created_at * 1000)
 					: undefined,

@@ -15,6 +15,7 @@ export const create: RazorpayEndpoints['customersCreate'] = async (
 		try {
 			await ctx.db.customers.upsertByEntityId(result.id, {
 				...result,
+				// created_at is a Unix timestamp in seconds; multiply by 1000 for ms
 				createdAt: result.created_at
 					? new Date(result.created_at * 1000)
 					: undefined,
@@ -42,6 +43,7 @@ export const get: RazorpayEndpoints['customersGet'] = async (ctx, input) => {
 		try {
 			await ctx.db.customers.upsertByEntityId(result.id, {
 				...result,
+				// created_at is a Unix timestamp in seconds; multiply by 1000 for ms
 				createdAt: result.created_at
 					? new Date(result.created_at * 1000)
 					: undefined,
@@ -73,6 +75,7 @@ export const list: RazorpayEndpoints['customersList'] = async (ctx, input) => {
 			try {
 				await ctx.db.customers.upsertByEntityId(customer.id, {
 					...customer,
+					// created_at is a Unix timestamp in seconds; multiply by 1000 for ms
 					createdAt: customer.created_at
 						? new Date(customer.created_at * 1000)
 						: undefined,
@@ -108,6 +111,7 @@ export const update: RazorpayEndpoints['customersUpdate'] = async (
 		try {
 			await ctx.db.customers.upsertByEntityId(result.id, {
 				...result,
+				// created_at is a Unix timestamp in seconds; multiply by 1000 for ms
 				createdAt: result.created_at
 					? new Date(result.created_at * 1000)
 					: undefined,
