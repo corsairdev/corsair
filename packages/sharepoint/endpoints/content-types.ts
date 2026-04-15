@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import type { SharepointEndpoints } from '..';
-import { makeGraphRequest } from '../client';
+import { graphSiteUrl, makeGraphRequest } from '../client';
 import type { SharepointEndpointOutputs } from './types';
 
 export const get: SharepointEndpoints['contentTypesGet'] = async (
@@ -123,7 +123,7 @@ export const update: SharepointEndpoints['contentTypesUpdate'] = async (
 		...(input.group !== undefined && { group: input.group }),
 	};
 
-	await makeGraphRequest<Record<string, unknown>>(
+	await makeGraphRequest(
 		`/sites/${siteId}/contentTypes/${encodeURIComponent(input.content_type_id)}`,
 		ctx.key,
 		{ method: 'PATCH', body },

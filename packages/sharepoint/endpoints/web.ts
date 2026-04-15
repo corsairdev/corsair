@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import type { SharepointEndpoints } from '..';
-import { makeGraphRequest } from '../client';
+import { graphSiteUrl, makeGraphRequest } from '../client';
 import type { SharepointEndpointOutputs } from './types';
 
 export const getInfo: SharepointEndpoints['webGetInfo'] = async (
@@ -118,7 +118,7 @@ export const updateSite: SharepointEndpoints['webUpdateSite'] = async (
 		...(input.description !== undefined && { description: input.description }),
 	};
 
-	await makeGraphRequest<Record<string, unknown>>(`/sites/${siteId}`, ctx.key, {
+	await makeGraphRequest(`/sites/${siteId}`, ctx.key, {
 		method: 'PATCH',
 		body,
 	});

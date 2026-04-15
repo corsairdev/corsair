@@ -196,7 +196,7 @@ export const deleteFolder: SharepointEndpoints['foldersDelete'] = async (
 		{ method: 'GET', query: { $select: 'id' } },
 	);
 
-	await makeGraphRequest<Record<string, unknown>>(
+	await makeGraphRequest(
 		`/sites/${siteId}/drive/root:/${drivePath}`,
 		ctx.key,
 		{ method: 'DELETE' },

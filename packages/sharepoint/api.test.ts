@@ -1,4 +1,5 @@
 import { graphSiteUrl, makeGraphRequest } from './client';
+import type { SharepointEndpointOutputs } from './endpoints/types';
 import { SharepointEndpointOutputSchemas } from './endpoints/types';
 import 'dotenv/config';
 
@@ -71,7 +72,7 @@ afterAll(async () => {
 
 describe('web', () => {
 	it('getInfo – returns site title and Id', async () => {
-		const result = await makeGraphRequest<Record<string, unknown>>(
+		const result = await makeGraphRequest<SharepointEndpointOutputs['webGetInfo']>(
 			`/sites/${SITE_ID}`,
 			ACCESS_TOKEN,
 			{ method: 'GET' },
@@ -82,7 +83,7 @@ describe('web', () => {
 	});
 
 	it('getSiteCollectionInfo – returns site collection data', async () => {
-		const result = await makeGraphRequest<Record<string, unknown>>(
+		const result = await makeGraphRequest<SharepointEndpointOutputs['webGetSiteCollectionInfo']>(
 			`/sites/${SITE_ID}`,
 			ACCESS_TOKEN,
 			{
@@ -102,18 +103,18 @@ describe('web', () => {
 
 describe('lists', () => {
 	it('listAll – returns array of lists', async () => {
-		const result = await makeGraphRequest<Record<string, unknown>>(
+		const result = await makeGraphRequest<SharepointEndpointOutputs['listsListAll']>(
 			sg('lists'),
 			ACCESS_TOKEN,
 			{ method: 'GET' },
 		);
 
 		SharepointEndpointOutputSchemas.listsListAll.parse(result);
-		expect(Array.isArray((result as { value?: unknown[] }).value)).toBe(true);
+		expect(Array.isArray(result.value)).toBe(true);
 	});
 
 	it('create – creates a new list', async () => {
-		const result = await makeGraphRequest<Record<string, unknown>>(
+		const result = await makeGraphRequest<SharepointEndpointOutputs['listsCreate']>(
 			sg('lists'),
 			ACCESS_TOKEN,
 			{
@@ -128,11 +129,11 @@ describe('lists', () => {
 
 		SharepointEndpointOutputSchemas.listsCreate.parse(result);
 		expect(result.displayName).toBe(testListTitle);
-		testListId = result.id as string;
+		testListId = result.id ?? '';
 	});
 
 	it('getByTitle – retrieves the created list', async () => {
-		const result = await makeGraphRequest<Record<string, unknown>>(
+		const result = await makeGraphRequest<SharepointEndpointOutputs['listsGetByTitle']>(
 			sg(`lists/${encodeURIComponent(testListTitle)}`),
 			ACCESS_TOKEN,
 			{ method: 'GET' },
@@ -143,7 +144,7 @@ describe('lists', () => {
 	});
 
 	it('getByGuid – retrieves the created list by GUID', async () => {
-		const result = await makeGraphRequest<Record<string, unknown>>(
+		const result = await makeGraphRequest<SharepointEndpointOutputs['listsGetByGuid']>(
 			sg(`lists/${testListId}`),
 			ACCESS_TOKEN,
 			{ method: 'GET' },
@@ -161,18 +162,18 @@ describe('lists', () => {
 	});
 
 	it('listColumns – returns array of fields', async () => {
-		const result = await makeGraphRequest<Record<string, unknown>>(
+		const result = await makeGraphRequest<SharepointEndpointOutputs['listsListColumns']>(
 			sg(`lists/${testListId}/columns`),
 			ACCESS_TOKEN,
 			{ method: 'GET' },
 		);
 
 		SharepointEndpointOutputSchemas.listsListColumns.parse(result);
-		expect(Array.isArray((result as { value?: unknown[] }).value)).toBe(true);
+		expect(Array.isArray(result.value)).toBe(true);
 	});
 
 	it('getChanges – returns delta items', async () => {
-		const result = await makeGraphRequest<Record<string, unknown>>(
+		const result = await makeGraphRequest<SharepointEndpointOutputs['listsGetChanges']>(
 			sg(`lists/${testListId}/items/delta`),
 			ACCESS_TOKEN,
 			{ method: 'GET', query: { $expand: 'fields' } },
@@ -188,30 +189,30 @@ describe('lists', () => {
 
 describe('items', () => {
 	it('create – creates a new list item', async () => {
-		const result = await makeGraphRequest<Record<string, unknown>>(
+		const result = await makeGraphRequest<SharepointEndpointOutputs['itemsCreate']>(
 			sg(`lists/${testListId}/items`),
 			ACCESS_TOKEN,
 			{ method: 'POST', body: { fields: { Title: `${TEST_PREFIX}_Item` } } },
 		);
 
 		SharepointEndpointOutputSchemas.itemsCreate.parse(result);
-		testItemId = result.id as string;
+		testItemId = result.id ?? '';
 		expect(testItemId).toBeDefined();
 	});
 
 	it('list – returns items array', async () => {
-		const result = await makeGraphRequest<Record<string, unknown>>(
+		const result = await makeGraphRequest<SharepointEndpointOutputs['itemsList']>(
 			sg(`lists/${testListId}/items`),
 			ACCESS_TOKEN,
 			{ method: 'GET', query: { $expand: 'fields' } },
 		);
 
 		SharepointEndpointOutputSchemas.itemsList.parse(result);
-		expect(Array.isArray((result as { value?: unknown[] }).value)).toBe(true);
+		expect(Array.isArray(result.value)).toBe(true);
 	});
 
 	it('listByGuid – returns items by list GUID', async () => {
-		const result = await makeGraphRequest<Record<string, unknown>>(
+		const result = await makeGraphRequest<SharepointEndpointOutputs['itemsListByGuid']>(
 			sg(`lists/${testListId}/items`),
 			ACCESS_TOKEN,
 			{ method: 'GET', query: { $expand: 'fields' } },
@@ -221,7 +222,7 @@ describe('items', () => {
 	});
 
 	it('get – retrieves the created item', async () => {
-		const result = await makeGraphRequest<Record<string, unknown>>(
+		const result = await makeGraphRequest<SharepointEndpointOutputs['itemsGet']>(
 			sg(`lists/${testListId}/items/${testItemId}`),
 			ACCESS_TOKEN,
 			{ method: 'GET', query: { $expand: 'fields' } },
@@ -240,7 +241,7 @@ describe('items', () => {
 	});
 
 	it('getEtag – retrieves the item ETag', async () => {
-		const result = await makeGraphRequest<Record<string, unknown>>(
+		const result = await makeGraphRequest<SharepointEndpointOutputs['itemsGet']>(
 			sg(`lists/${testListId}/items/${testItemId}`),
 			ACCESS_TOKEN,
 			{ method: 'GET', query: { $select: 'id' } },
@@ -254,7 +255,7 @@ describe('items', () => {
 	});
 
 	it('getVersion – retrieves item version 1.0', async () => {
-		const result = await makeGraphRequest<Record<string, unknown>>(
+		const result = await makeGraphRequest<SharepointEndpointOutputs['itemsGetVersion']>(
 			sg(`lists/${testListId}/items/${testItemId}/versions/1.0`),
 			ACCESS_TOKEN,
 			{ method: 'GET' },
@@ -279,7 +280,7 @@ describe('items', () => {
 
 describe('folders', () => {
 	it('create – creates a new folder', async () => {
-		const result = await makeGraphRequest<Record<string, unknown>>(
+		const result = await makeGraphRequest<SharepointEndpointOutputs['foldersCreate']>(
 			`/sites/${SITE_GUID}/drive/root/children`,
 			ACCESS_TOKEN,
 			{
@@ -297,7 +298,7 @@ describe('folders', () => {
 	});
 
 	it('get – retrieves the created folder', async () => {
-		const result = await makeGraphRequest<Record<string, unknown>>(
+		const result = await makeGraphRequest<SharepointEndpointOutputs['foldersGet']>(
 			`/sites/${SITE_GUID}/drive/root:/${testFolderPath}`,
 			ACCESS_TOKEN,
 			{ method: 'GET' },
@@ -308,7 +309,7 @@ describe('folders', () => {
 	});
 
 	it('listSubfolders – returns subfolders array', async () => {
-		const result = await makeGraphRequest<Record<string, unknown>>(
+		const result = await makeGraphRequest<SharepointEndpointOutputs['foldersListSubfolders']>(
 			`/sites/${SITE_GUID}/drive/root:/${testFolderPath}:/children`,
 			ACCESS_TOKEN,
 			{ method: 'GET' },
@@ -325,29 +326,24 @@ describe('folders', () => {
 describe('files', () => {
 	it('upload – uploads a text file', async () => {
 		const fileName = `${TEST_PREFIX}_test.txt`;
-		// File content is a raw string; cast through unknown to satisfy the generic Record body type
-		const fileContent = 'Hello from Corsair test' as unknown as Record<
-			string,
-			unknown
-		>;
-		const result = await makeGraphRequest<Record<string, unknown>>(
+		const result = await makeGraphRequest<SharepointEndpointOutputs['filesUpload']>(
 			`/sites/${SITE_GUID}/drive/root:/${testFolderPath}/${fileName}:/content`,
 			ACCESS_TOKEN,
 			{
 				method: 'PUT',
-				body: fileContent,
+				body: 'Hello from Corsair test',
 				mediaType: 'text/plain',
 			},
 		);
 
 		SharepointEndpointOutputSchemas.filesUpload.parse(result);
 		testFilePath = `${testFolderPath}/${fileName}`;
-		testFileItemId = result.id as string;
+		testFileItemId = result.id ?? '';
 		expect(testFileItemId).toBeDefined();
 	});
 
 	it('get – retrieves file metadata', async () => {
-		const result = await makeGraphRequest<Record<string, unknown>>(
+		const result = await makeGraphRequest<SharepointEndpointOutputs['filesGet']>(
 			`/sites/${SITE_GUID}/drive/root:/${testFilePath}`,
 			ACCESS_TOKEN,
 			{ method: 'GET' },
@@ -358,14 +354,15 @@ describe('files', () => {
 	});
 
 	it('listInFolder – returns files array', async () => {
-		const result = await makeGraphRequest<Record<string, unknown>>(
+		console.log(testFolderPath, 'test')
+		const result = await makeGraphRequest<SharepointEndpointOutputs['filesListInFolder']>(
 			`/sites/${SITE_GUID}/drive/root:/${testFolderPath}:/children`,
 			ACCESS_TOKEN,
 			{ method: 'GET' },
 		);
 
 		SharepointEndpointOutputSchemas.filesListInFolder.parse(result);
-		expect(Array.isArray((result as { value?: unknown[] }).value)).toBe(true);
+		expect(Array.isArray(result.value)).toBe(true);
 	});
 
 	it('checkOut – checks out the file', async () => {
@@ -402,7 +399,7 @@ describe('files', () => {
 
 describe('users', () => {
 	it('getCurrent – returns current user', async () => {
-		const result = await makeGraphRequest<Record<string, unknown>>(
+		const result = await makeGraphRequest<SharepointEndpointOutputs['usersGetCurrent']>(
 			'/me',
 			ACCESS_TOKEN,
 			{ method: 'GET' },
@@ -432,7 +429,7 @@ describe('users', () => {
 
 describe('search', () => {
 	it('query – executes a search query via Graph Search API', async () => {
-		const result = await makeGraphRequest<Record<string, unknown>>(
+		const result = await makeGraphRequest<SharepointEndpointOutputs['searchQuery']>(
 			'/search/query',
 			ACCESS_TOKEN,
 			{
@@ -465,18 +462,18 @@ describe('search', () => {
 
 describe('contentTypes', () => {
 	it('getAll – returns array of site content types', async () => {
-		const result = await makeGraphRequest<Record<string, unknown>>(
+		const result = await makeGraphRequest<SharepointEndpointOutputs['contentTypesGetAll']>(
 			sg('contentTypes'),
 			ACCESS_TOKEN,
 			{ method: 'GET' },
 		);
 
 		SharepointEndpointOutputSchemas.contentTypesGetAll.parse(result);
-		expect(Array.isArray((result as { value?: unknown[] }).value)).toBe(true);
+		expect(Array.isArray(result.value)).toBe(true);
 	});
 
 	it('getForList – returns content types for the test list', async () => {
-		const result = await makeGraphRequest<Record<string, unknown>>(
+		const result = await makeGraphRequest<SharepointEndpointOutputs['contentTypesGetForList']>(
 			sg(`lists/${testListId}/contentTypes`),
 			ACCESS_TOKEN,
 			{ method: 'GET' },
@@ -515,27 +512,22 @@ describe('recycleBin', () => {
 
 describe('social', () => {
 	it('getFollowed – returns followed sites via Graph', async () => {
-		const result = await makeGraphRequest<Record<string, unknown>>(
+		type GraphFollowedSite = { id?: string; displayName?: string; webUrl?: string };
+		const result = await makeGraphRequest<{ value?: GraphFollowedSite[] }>(
 			'/me/followedSites',
 			ACCESS_TOKEN,
 			{ method: 'GET' },
 		);
 
 		const mapped = {
-			value: ((result as { value?: unknown[] }).value ?? []).map(
-				(site: unknown) => {
-					// Graph API site object is unknown at runtime; cast to a record for property access
-					const siteItem = site as Record<string, unknown>;
-					return {
-						// Spread siteItem first to forward any unknown fields, then override with explicit mappings
-						...siteItem,
-						Id: siteItem.id,
-						Name: siteItem.displayName,
-						Uri: siteItem.webUrl,
-						ActorType: 2,
-					};
-				},
-			),
+			value: (result.value ?? []).map((siteItem) => ({
+				// Spread siteItem first to forward any unknown fields, then override with explicit mappings
+				...siteItem,
+				Id: siteItem.id,
+				Name: siteItem.displayName,
+				Uri: siteItem.webUrl,
+				ActorType: 2,
+			})),
 		};
 		SharepointEndpointOutputSchemas.socialGetFollowed.parse(mapped);
 	});
@@ -552,7 +544,7 @@ describe('social', () => {
 
 describe('webhookSubscriptions', () => {
 	it('getAll – returns subscriptions array for the test list', async () => {
-		const result = await makeGraphRequest<Record<string, unknown>>(
+		const result = await makeGraphRequest<SharepointEndpointOutputs['webhookSubscriptionsGetAll']>(
 			sg(`lists/${testListId}/subscriptions`),
 			ACCESS_TOKEN,
 			{ method: 'GET' },
