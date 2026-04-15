@@ -51,6 +51,9 @@
     },
     "@openai/agents": {
       "optional": true
+    },
+    "openai": {
+      "optional": true
     }
   },
   "devDependencies": {
