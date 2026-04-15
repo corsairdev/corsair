@@ -235,26 +235,30 @@ export const githubEndpointSchemas = {
 } as const;
 
 const githubWebhooksNested = {
-	pullRequestOpened: PullRequestWebhooks.opened,
-	pullRequestClosed: PullRequestWebhooks.closed,
-	pullRequestSynchronize: PullRequestWebhooks.synchronize,
+	pullRequest: {
+		opened: PullRequestWebhooks.opened,
+		closed: PullRequestWebhooks.closed,
+		synchronize: PullRequestWebhooks.synchronize,
+	},
 	push: PushWebhooks.push,
-	starCreated: StarWebhooks.created,
-	starDeleted: StarWebhooks.deleted,
+	star: {
+		created: StarWebhooks.created,
+		deleted: StarWebhooks.deleted,
+	},
 } as const;
 
 const githubWebhookSchemas = {
-	pullRequestOpened: {
+	'pullRequest.opened': {
 		description: 'A pull request was opened',
 		payload: PullRequestOpenedEventSchema,
 		response: PullRequestOpenedEventSchema,
 	},
-	pullRequestClosed: {
+	'pullRequest.closed': {
 		description: 'A pull request was closed or merged',
 		payload: PullRequestClosedEventSchema,
 		response: PullRequestClosedEventSchema,
 	},
-	pullRequestSynchronize: {
+	'pullRequest.synchronize': {
 		description: 'New commits were pushed to a pull request',
 		payload: PullRequestSynchronizeEventSchema,
 		response: PullRequestSynchronizeEventSchema,
@@ -264,12 +268,12 @@ const githubWebhookSchemas = {
 		payload: PushEventSchema,
 		response: PushEventSchema,
 	},
-	starCreated: {
+	'star.created': {
 		description: 'A repository was starred',
 		payload: StarCreatedEventSchema,
 		response: StarCreatedEventSchema,
 	},
-	starDeleted: {
+	'star.deleted': {
 		description: 'A star was removed from a repository',
 		payload: StarDeletedEventSchema,
 		response: StarDeletedEventSchema,

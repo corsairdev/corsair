@@ -1732,7 +1732,10 @@ export type OnedriveEndpointOutputs = {
 	subscriptionsList: SubscriptionsListResponse;
 };
 
-export const OnedriveEndpointInputSchemas: Record<keyof OnedriveEndpointInputs, z.ZodTypeAny> = {
+export const OnedriveEndpointInputSchemas: Record<
+	keyof OnedriveEndpointInputs,
+	z.ZodTypeAny
+> = {
 	// Items
 	itemsGet: ItemsGetInputSchema,
 	itemsUpdateMetadata: ItemsUpdateMetadataInputSchema,
@@ -1802,7 +1805,10 @@ export const OnedriveEndpointInputSchemas: Record<keyof OnedriveEndpointInputs, 
 	subscriptionsList: SubscriptionsListInputSchema,
 } as const;
 
-export const OnedriveEndpointOutputSchemas: Record<keyof OnedriveEndpointOutputs, z.ZodTypeAny> = {
+export const OnedriveEndpointOutputSchemas: Record<
+	keyof OnedriveEndpointOutputs,
+	z.ZodTypeAny
+> = {
 	// Items
 	itemsGet: ItemsGetResponseSchema,
 	itemsUpdateMetadata: ItemsUpdateMetadataResponseSchema,

@@ -3,7 +3,10 @@ import type { DodoPaymentsEndpoints } from '..';
 import { makeDodoPaymentsRequest } from '../client';
 import type { DodoPaymentsEndpointOutputs } from './types';
 
-export const create: DodoPaymentsEndpoints['customersCreate'] = async (ctx, input) => {
+export const create: DodoPaymentsEndpoints['customersCreate'] = async (
+	ctx,
+	input,
+) => {
 	const result = await makeDodoPaymentsRequest<
 		DodoPaymentsEndpointOutputs['customersCreate']
 	>('customers', ctx.key, {
@@ -31,7 +34,10 @@ export const create: DodoPaymentsEndpoints['customersCreate'] = async (ctx, inpu
 	return result;
 };
 
-export const get: DodoPaymentsEndpoints['customersGet'] = async (ctx, input) => {
+export const get: DodoPaymentsEndpoints['customersGet'] = async (
+	ctx,
+	input,
+) => {
 	const result = await makeDodoPaymentsRequest<
 		DodoPaymentsEndpointOutputs['customersGet']
 	>(`customers/${input.id}`, ctx.key, { method: 'GET' });

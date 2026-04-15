@@ -136,11 +136,9 @@ export const recycle: SharepointEndpoints['filesRecycle'] = async (
 		{ method: 'GET', query: { $select: 'id' } },
 	);
 
-	await makeGraphRequest(
-		`/sites/${siteId}/drive/root:/${drivePath}`,
-		ctx.key,
-		{ method: 'DELETE' },
-	);
+	await makeGraphRequest(`/sites/${siteId}/drive/root:/${drivePath}`, ctx.key, {
+		method: 'DELETE',
+	});
 
 	if (ctx.db.files && file.id) {
 		try {

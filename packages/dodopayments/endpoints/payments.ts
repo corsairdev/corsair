@@ -3,7 +3,10 @@ import type { DodoPaymentsEndpoints } from '..';
 import { makeDodoPaymentsRequest } from '../client';
 import type { DodoPaymentsEndpointOutputs } from './types';
 
-export const create: DodoPaymentsEndpoints['paymentsCreate'] = async (ctx, input) => {
+export const create: DodoPaymentsEndpoints['paymentsCreate'] = async (
+	ctx,
+	input,
+) => {
 	const result = await makeDodoPaymentsRequest<
 		DodoPaymentsEndpointOutputs['paymentsCreate']
 	>('payments', ctx.key, {
@@ -56,7 +59,10 @@ export const get: DodoPaymentsEndpoints['paymentsGet'] = async (ctx, input) => {
 	return result;
 };
 
-export const list: DodoPaymentsEndpoints['paymentsList'] = async (ctx, input) => {
+export const list: DodoPaymentsEndpoints['paymentsList'] = async (
+	ctx,
+	input,
+) => {
 	const result = await makeDodoPaymentsRequest<
 		DodoPaymentsEndpointOutputs['paymentsList']
 	>('payments', ctx.key, {
@@ -69,7 +75,9 @@ export const list: DodoPaymentsEndpoints['paymentsList'] = async (ctx, input) =>
 			try {
 				await ctx.db.payments.upsertByEntityId(payment.id, {
 					...payment,
-					createdAt: payment.created_at ? new Date(payment.created_at) : undefined,
+					createdAt: payment.created_at
+						? new Date(payment.created_at)
+						: undefined,
 				});
 			} catch (error) {
 				console.warn('Failed to save Dodo payment to database:', error);

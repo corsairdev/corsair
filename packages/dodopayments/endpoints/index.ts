@@ -1,7 +1,15 @@
 import { create as customersCreate, get as customersGet } from './customers';
-import { create as paymentsCreate, get as paymentsGet, list as paymentsList } from './payments';
+import {
+	create as paymentsCreate,
+	get as paymentsGet,
+	list as paymentsList,
+} from './payments';
 import { create as refundsCreate } from './refunds';
-import { create as subscriptionsCreate, get as subscriptionsGet, cancel as subscriptionsCancel } from './subscriptions';
+import {
+	cancel as subscriptionsCancel,
+	create as subscriptionsCreate,
+	get as subscriptionsGet,
+} from './subscriptions';
 
 export const Customers = {
 	create: customersCreate,

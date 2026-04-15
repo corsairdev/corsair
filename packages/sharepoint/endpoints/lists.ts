@@ -175,11 +175,10 @@ export const update: SharepointEndpoints['listsUpdate'] = async (
 		{ method: 'GET', query: { $select: 'id' } },
 	);
 
-	await makeGraphRequest(
-		graphSiteUrl(siteId, `lists/${list.id}`),
-		ctx.key,
-		{ method: 'PATCH', body },
-	);
+	await makeGraphRequest(graphSiteUrl(siteId, `lists/${list.id}`), ctx.key, {
+		method: 'PATCH',
+		body,
+	});
 
 	if (ctx.db.lists && list.id) {
 		try {

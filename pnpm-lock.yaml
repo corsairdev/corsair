@@ -119,9 +119,6 @@ importers:
       '@corsair-dev/cursor':
         specifier: workspace:*
         version: link:../../packages/cursor
-      '@corsair-dev/dodopayments':
-        specifier: workspace:*
-        version: link:../../packages/dodopayments
       '@corsair-dev/github':
         specifier: workspace:*
         version: link:../../packages/github

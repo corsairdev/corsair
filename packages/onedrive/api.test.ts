@@ -1,31 +1,31 @@
 import 'dotenv/config';
 import { makeOnedriveRequest } from './client';
-import {
-	OnedriveEndpointOutputSchemas,
-	type DriveGetQuotaResponse,
-	type DriveGetResponse,
-	type DriveGetRootResponse,
-	type DriveGetRecentItemsResponse,
-	type DriveGetSharedItemsResponse,
-	type DriveListResponse,
-	type DriveListChangesResponse,
-	type FilesCreateFolderResponse,
-	type FilesCreateTextFileResponse,
-	type FilesFindFolderResponse,
-	type FilesListResponse,
-	type ItemsGetResponse,
-	type ItemsGetThumbnailsResponse,
-	type ItemsGetVersionsResponse,
-	type ItemsListFolderChildrenResponse,
-	type ItemsSearchResponse,
-	type ItemsUpdateMetadataResponse,
-	type PermissionsGetForItemResponse,
-	type SharepointGetSiteResponse,
-	type SharepointListSiteColumnsResponse,
-	type SharepointListSiteListsResponse,
-	type SharepointListSiteSubsitesResponse,
-	type SubscriptionsListResponse,
+import type {
+	DriveGetQuotaResponse,
+	DriveGetRecentItemsResponse,
+	DriveGetResponse,
+	DriveGetRootResponse,
+	DriveGetSharedItemsResponse,
+	DriveListChangesResponse,
+	DriveListResponse,
+	FilesCreateFolderResponse,
+	FilesCreateTextFileResponse,
+	FilesFindFolderResponse,
+	FilesListResponse,
+	ItemsGetResponse,
+	ItemsGetThumbnailsResponse,
+	ItemsGetVersionsResponse,
+	ItemsListFolderChildrenResponse,
+	ItemsSearchResponse,
+	ItemsUpdateMetadataResponse,
+	PermissionsGetForItemResponse,
+	SharepointGetSiteResponse,
+	SharepointListSiteColumnsResponse,
+	SharepointListSiteListsResponse,
+	SharepointListSiteSubsitesResponse,
+	SubscriptionsListResponse,
 } from './endpoints/types';
+import { OnedriveEndpointOutputSchemas } from './endpoints/types';
 
 const TEST_TOKEN = process.env.ONEDRIVE_ACCESS_TOKEN!;
 let TEST_DRIVE_ID: string | undefined;
@@ -325,12 +325,11 @@ describe('OneDrive API Type Tests', () => {
 			if (!TEST_ITEM_ID) {
 				return console.warn('Skipping permissionsGetForItem — no item ID');
 			}
-			const response =
-				await makeOnedriveRequest<PermissionsGetForItemResponse>(
-					`me/drive/items/${TEST_ITEM_ID}/permissions`,
-					TEST_TOKEN,
-					{ method: 'GET' },
-				);
+			const response = await makeOnedriveRequest<PermissionsGetForItemResponse>(
+				`me/drive/items/${TEST_ITEM_ID}/permissions`,
+				TEST_TOKEN,
+				{ method: 'GET' },
+			);
 			OnedriveEndpointOutputSchemas.permissionsGetForItem.parse(response);
 		});
 	});

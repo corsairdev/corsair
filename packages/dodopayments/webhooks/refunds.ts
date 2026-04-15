@@ -22,7 +22,9 @@ export const succeeded: DodoPaymentsWebhooks['refundSucceeded'] = {
 			try {
 				await ctx.db.refunds.upsertByEntityId(refund.id, {
 					...refund,
-					createdAt: refund.created_at ? new Date(refund.created_at) : undefined,
+					createdAt: refund.created_at
+						? new Date(refund.created_at)
+						: undefined,
 				});
 			} catch (error) {
 				console.warn(
