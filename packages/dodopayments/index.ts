@@ -281,29 +281,17 @@ export function dodopayments<const T extends DodoPaymentsPluginOptions>(
         endpointMeta: dodoPaymentsEndpointMeta,
         endpointSchemas: dodoPaymentsEndpointSchemas,
         webhookSchemas: dodoPaymentsWebhookSchemas,
-        pluginWebhookMatcher: ({ headers, body }) => {
+        pluginWebhookMatcher: (request) => {
             if (
-                !('webhook-signature' in headers) ||
-                !('webhook-id' in headers) ||
-                !('webhook-timestamp' in headers)
-            ) {
-                return false;
-            }
-
-            try {
-                const parsedBody =
-                    typeof body === 'string'
-                        ? (JSON.parse(body) as Record<string, unknown>)
-                        : (body as Record<string, unknown>);
-
-                return (
-                    typeof parsedBody === 'object' &&
-                    parsedBody !== null &&
-                    'business_id' in parsedBody
-                );
-            } catch {
-                return false;
-            }
+                !('webhook-id' in request.headers) ||
+                !('webhook-signature' in request.headers) ||
+                !('webhook-timestamp' in request.headers)
+            ) return false;
+            // business_id is required in ALL Dodo webhook payloads - use it as unique identifier
+            const body = typeof request.body === 'string'
+                ? (() => { try { return JSON.parse(request.body as string); } catch { return {}; } })()
+                : (request.body ?? {});
+            return typeof body === 'object' && body !== null && 'business_id' in body;
         },
         errorHandlers: {
             ...errorHandlers,

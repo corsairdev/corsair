@@ -96,30 +96,35 @@ export function verifyDodoWebhookSignature(
 	request: WebhookRequest<unknown>,
 	secret?: string,
 ): { valid: boolean; error?: string } {
-	if (!secret) {
-		return { valid: false, error: 'Missing webhook secret' };
-	}
+	if (!secret) return { valid: false, error: 'Missing webhook secret' };
 
 	const rawBody = request.rawBody;
-	if (!rawBody) {
-		return {
-			valid: false,
-			error: 'Missing raw body for signature verification',
-		};
-	}
+	if (!rawBody) return { valid: false, error: 'Missing raw body' };
 
+	const webhookId = Array.isArray(request.headers['webhook-id'])
+		? request.headers['webhook-id'][0]
+		: request.headers['webhook-id'];
+	const webhookTimestamp = Array.isArray(request.headers['webhook-timestamp'])
+		? request.headers['webhook-timestamp'][0]
+		: request.headers['webhook-timestamp'];
 	const sigHeader = Array.isArray(request.headers['webhook-signature'])
 		? request.headers['webhook-signature'][0]
 		: request.headers['webhook-signature'];
 
-	if (!sigHeader) {
-		return { valid: false, error: 'Missing webhook-signature header' };
+	if (!webhookId || !webhookTimestamp || !sigHeader) {
+		return { valid: false, error: 'Missing required webhook headers' };
 	}
 
-	const isValid = verifyHmacSignature(rawBody, secret, sigHeader);
-	if (!isValid) {
-		return { valid: false, error: 'Invalid signature' };
-	}
+	// Dodo signed content format per docs: {webhook-id}.{webhook-timestamp}.{raw_body}
+	const signedContent = `${webhookId}.${webhookTimestamp}.${rawBody}`;
 
+	// webhook-signature header format is "v1,<hex>" - strip version prefix
+	const signatures = sigHeader.split(' ');
+	const isValid = signatures.some((sig) => {
+		const hexSig = sig.startsWith('v1,') ? sig.slice(3) : sig;
+		return verifyHmacSignature(signedContent, secret, hexSig);
+	});
+
+	if (!isValid) return { valid: false, error: 'Invalid signature' };
 	return { valid: true };
 }
