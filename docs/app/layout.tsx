@@ -1677,7 +1677,7 @@ export default function RootLayout({ children }) {
 							sidebar={{
 								defaultOpenLevel: 0,
 							}}
-						>	
+						>
 							<ScrollToTop/>
 							{children}
 						</DocsLayout>
