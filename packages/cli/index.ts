@@ -641,7 +641,6 @@ function printHelp() {
 	const lines = [
 		'Corsair CLI',
 		'',
-
 		'pnpm corsair setup                              Init (add -backfill to seed data)',
 		'pnpm corsair setup --<plugin> <field>=VALUE     Set plugin credentials',
 		'pnpm corsair auth --plugin=<id>                 Start OAuth flow',
