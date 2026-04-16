@@ -50,7 +50,10 @@
               "content/concepts/database",
               "content/concepts/webhooks",
               "content/concepts/hooks",
-              "content/concepts/multi-tenancy"
+              "content/concepts/multi-tenancy",
+              "content/concepts/api",
+              "content/concepts/error-handling",
+              "content/concepts/typescript"
             ]
           }
         ]
