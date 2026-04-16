@@ -3,11 +3,40 @@ title: Vibe Code Your Dashboard
 description: Scaffold a T3 app, wire in Google Calendar with Corsair, then let an AI agent build the whole dashboard from a single prompt.
 ---
 
+import { GenerateKEK } from '/snippets/generate-kek.mdx';
+
 By the end of this guide you'll have a working Next.js app with a live Google Calendar dashboard — and you'll have written almost none of the UI yourself.
+
+## Corsair context prompt for your agent
+
+Paste this before your feature prompt so the agent knows how Corsair works:
+
+```
+This app uses Corsair. Every Corsair plugin has two namespaces:
+
+  corsair.<plugin>.db   — reads from the local database (no network, instant)
+  corsair.<plugin>.api  — calls the live external API
+
+Both follow the same shape: corsair.<plugin>.[db|api].<group>.<method>(args)
+
+When to use which:
+- Rendering UI / reading data → .db (always the default)
+- Creating, updating, or deleting → .api
+- User-triggered refresh / sync → .api, then re-read from .db
+- Every .api response is auto-saved to .db
+
+Entity data is on .data in camelCase. Use .search({}) or .list() on .db to query.
+
+To see what's available, run:
+  pnpm corsair list --<plugin>
+```
 
 <Steps>
 
-<Step title="Scaffold the T3 app">
+<Step>
+
+## Scaffold the T3 app
+
 <CodeGroup>
 ```bash npm
 npm create t3-app@latest my-cal-dashboard -- --CI --trpc --tailwind --appRouter
@@ -29,7 +58,10 @@ cd my-cal-dashboard
 
 </Step>
 
-<Step title="Install">
+<Step>
+
+## Install
+
 <CodeGroup>
 ```bash npm
 npm install corsair @corsair-dev/googlecalendar
@@ -47,16 +79,13 @@ bun add corsair @corsair-dev/googlecalendar
 
 </Step>
 
-<Step title="Generate your encryption key">
-Corsair encrypts stored credentials with a Key Encryption Key. Generate one and add it to `.env`:
+<Step>
 
-```bash
-openssl rand -base64 32
-```
+## Generate your encryption key
 
-```bash .env
-CORSAIR_KEK="your-generated-key-here"
-```
+Corsair encrypts stored credentials with a Key Encryption Key. Click **Regenerate** for a new one, or run the command yourself:
+
+<GenerateKEK />
 
 <Warning>
 **Keep this key safe**
@@ -65,7 +94,10 @@ If you lose it, you lose access to all stored credentials. Treat it like a root 
 
 </Step>
 
-<Step title="Migrate the database">
+<Step>
+
+## Migrate the database
+
 Corsair needs five tables. Install the driver, then run the migration:
 
 <CodeGroup>
@@ -143,20 +175,6 @@ CREATE TABLE IF NOT EXISTS corsair_events (
     status TEXT,
     FOREIGN KEY (account_id) REFERENCES corsair_accounts(id)
 );
-
-CREATE TABLE IF NOT EXISTS corsair_permissions (
-    id TEXT PRIMARY KEY,
-    created_at INTEGER NOT NULL,
-    updated_at INTEGER NOT NULL,
-    token TEXT NOT NULL,
-    plugin TEXT NOT NULL,
-    endpoint TEXT NOT NULL,
-    args TEXT NOT NULL,
-    tenant_id TEXT NOT NULL DEFAULT 'default',
-    status TEXT NOT NULL DEFAULT 'pending',
-    expires_at TEXT NOT NULL,
-    error TEXT NULL
-);
 ```
 
 </Accordion>
@@ -168,7 +186,10 @@ sqlite3 corsair.db < migration.sql
 
 </Step>
 
-<Step title="Create src/server/corsair.ts">
+<Step>
+
+## Create src/server/corsair.ts
+
 ```ts src/server/corsair.ts
 import 'dotenv/config';
 import Database from 'better-sqlite3';
@@ -186,7 +207,10 @@ export const corsair = createCorsair({
 
 </Step>
 
-<Step title="Connect Google Calendar (optional)">
+<Step>
+
+## Connect Google Calendar
+
 Google Calendar uses OAuth2. You'll need a GCP OAuth app first:
 
 1. Go to the [Google Cloud Console](https://console.cloud.google.com/), create a project, and enable the **Google Calendar API**.
@@ -264,7 +288,10 @@ Open the `authUrl` printed in the terminal. Once you authorize in the browser, t
 
 </Step>
 
-<Step title="Vibe code the dashboard (optional)">
+<Step>
+
+## Vibe code the dashboard
+
 Paste this prompt into Claude, Cursor, or any AI coding agent:
 
 ```

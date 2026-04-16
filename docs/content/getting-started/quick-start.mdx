@@ -3,9 +3,14 @@ title: Quick Start
 description: Get a working integration in a few steps.
 ---
 
+import { GenerateKEK } from '/snippets/generate-kek.mdx';
+
 <Steps>
 
-<Step title="Install">
+<Step>
+
+## Install
+
 <CodeGroup>
 ```bash npm
 npm install corsair
@@ -23,16 +28,13 @@ bun add corsair
 
 </Step>
 
-<Step title="Generate your encryption key">
-Corsair encrypts every stored credential with a Key Encryption Key (KEK). Generate a key and add it to your `.env`:
+<Step>
 
-```bash
-openssl rand -base64 32
-```
+## Generate your encryption key
 
-```bash .env
-CORSAIR_KEK="your-generated-key-here"
-```
+Corsair encrypts every stored credential with a Key Encryption Key (KEK). Click **Generate** to create one, or run the command yourself:
+
+<GenerateKEK />
 
 <Warning>
 **Keep this key safe**
@@ -41,7 +43,10 @@ If you lose it, you lose access to all stored credentials. Treat it like a root 
 
 </Step>
 
-<Step title="Migrate the database">
+<Step>
+
+## Migrate the database
+
 Corsair needs five tables. Run this once, then you're done.
 
 <Tabs>
@@ -164,20 +169,6 @@ CREATE TABLE IF NOT EXISTS corsair_events (
     status TEXT,
     FOREIGN KEY (account_id) REFERENCES corsair_accounts(id)
 );
-
-CREATE TABLE IF NOT EXISTS corsair_permissions (
-    id TEXT PRIMARY KEY,
-    created_at INTEGER NOT NULL,
-    updated_at INTEGER NOT NULL,
-    token TEXT NOT NULL,
-    plugin TEXT NOT NULL,
-    endpoint TEXT NOT NULL,
-    args TEXT NOT NULL,
-    tenant_id TEXT NOT NULL DEFAULT 'default',
-    status TEXT NOT NULL DEFAULT 'pending',
-    expires_at TEXT NOT NULL,
-    error TEXT NULL
-);
 ```
 
 </Accordion>
@@ -189,6 +180,9 @@ sqlite3 corsair.db < migration.sql
 
   </Tab>
   <Tab title="PostgreSQL">
+
+<Tabs>
+  <Tab title="SQL">
 
 <AccordionGroup>
 <Accordion title="View migration SQL">
@@ -233,20 +227,6 @@ CREATE TABLE IF NOT EXISTS corsair_events (
     payload JSONB NOT NULL DEFAULT '{}',
     status TEXT
 );
-
-CREATE TABLE IF NOT EXISTS corsair_permissions (
-    id TEXT PRIMARY KEY,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    token TEXT NOT NULL,
-    plugin TEXT NOT NULL,
-    endpoint TEXT NOT NULL,
-    args TEXT NOT NULL,
-    tenant_id TEXT NOT NULL DEFAULT 'default',
-    status TEXT NOT NULL DEFAULT 'pending',
-    expires_at TEXT NOT NULL,
-    error TEXT NULL
-);
 ```
 
 </Accordion>
@@ -257,11 +237,147 @@ psql $DATABASE_URL -f migration.sql
 ```
 
   </Tab>
+  <Tab title="Drizzle">
+
+<AccordionGroup>
+<Accordion title="View Drizzle schema">
+
+```ts src/server/db/schema.ts
+import { pgTable, text, jsonb, timestamp } from 'drizzle-orm/pg-core';
+
+export const corsairIntegrations = pgTable('corsair_integrations', {
+    id: text('id').primaryKey(),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+    name: text('name').notNull(),
+    config: jsonb('config').notNull().default({}),
+    dek: text('dek'),
+});
+
+export const corsairAccounts = pgTable('corsair_accounts', {
+    id: text('id').primaryKey(),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+    tenantId: text('tenant_id').notNull(),
+    integrationId: text('integration_id').notNull().references(() => corsairIntegrations.id),
+    config: jsonb('config').notNull().default({}),
+    dek: text('dek'),
+});
+
+export const corsairEntities = pgTable('corsair_entities', {
+    id: text('id').primaryKey(),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+    accountId: text('account_id').notNull().references(() => corsairAccounts.id),
+    entityId: text('entity_id').notNull(),
+    entityType: text('entity_type').notNull(),
+    version: text('version').notNull(),
+    data: jsonb('data').notNull().default({}),
+});
+
+export const corsairEvents = pgTable('corsair_events', {
+    id: text('id').primaryKey(),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+    accountId: text('account_id').notNull().references(() => corsairAccounts.id),
+    eventType: text('event_type').notNull(),
+    payload: jsonb('payload').notNull().default({}),
+    status: text('status'),
+});
+```
+
+</Accordion>
+</AccordionGroup>
+
+Then push the schema to your database:
+
+```bash
+npx drizzle-kit push
+```
+
+  </Tab>
+  <Tab title="Prisma">
+
+<AccordionGroup>
+<Accordion title="View Prisma schema">
+
+```prisma schema.prisma
+model CorsairIntegration {
+  id        String           @id
+  createdAt DateTime         @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt DateTime         @updatedAt @map("updated_at") @db.Timestamptz
+  name      String
+  config    Json             @default("{}")
+  dek       String?
+  accounts  CorsairAccount[]
+
+  @@map("corsair_integrations")
+}
+
+model CorsairAccount {
+  id            String             @id
+  createdAt     DateTime           @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt     DateTime           @updatedAt @map("updated_at") @db.Timestamptz
+  tenantId      String             @map("tenant_id")
+  integrationId String             @map("integration_id")
+  config        Json               @default("{}")
+  dek           String?
+  integration   CorsairIntegration @relation(fields: [integrationId], references: [id])
+  entities      CorsairEntity[]
+  events        CorsairEvent[]
+
+  @@map("corsair_accounts")
+}
+
+model CorsairEntity {
+  id         String         @id
+  createdAt  DateTime       @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt  DateTime       @updatedAt @map("updated_at") @db.Timestamptz
+  accountId  String         @map("account_id")
+  entityId   String         @map("entity_id")
+  entityType String         @map("entity_type")
+  version    String
+  data       Json           @default("{}")
+  account    CorsairAccount @relation(fields: [accountId], references: [id])
+
+  @@map("corsair_entities")
+}
+
+model CorsairEvent {
+  id        String         @id
+  createdAt DateTime       @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt DateTime       @updatedAt @map("updated_at") @db.Timestamptz
+  accountId String         @map("account_id")
+  eventType String         @map("event_type")
+  payload   Json           @default("{}")
+  status    String?
+  account   CorsairAccount @relation(fields: [accountId], references: [id])
+
+  @@map("corsair_events")
+}
+```
+
+</Accordion>
+</AccordionGroup>
+
+Then run the migration:
+
+```bash
+npx prisma migrate dev
+```
+
+  </Tab>
+</Tabs>
+
+  </Tab>
 </Tabs>
 
 </Step>
 
-<Step title="Install GitHub plugin and create corsair.ts">
+<Step>
+
+## Install GitHub plugin and create corsair.ts
+
 <CodeGroup>
 ```bash npm
 npm install @corsair-dev/github
@@ -300,6 +416,9 @@ export const corsair = createCorsair({
 </Tab>
 <Tab title="PostgreSQL">
 
+<Tabs>
+<Tab title="SQL">
+
 ```ts src/server/corsair.ts
 import 'dotenv/config';
 import { Pool } from 'pg';
@@ -314,6 +433,47 @@ export const corsair = createCorsair({
     kek: process.env.CORSAIR_KEK!,
 });
 ```
+
+</Tab>
+<Tab title="Drizzle">
+
+```ts src/server/corsair.ts
+import 'dotenv/config';
+import { Pool } from 'pg';
+import { drizzle } from 'drizzle-orm/node-postgres';
+import { createCorsair } from 'corsair';
+import { github } from '@corsair-dev/github';
+
+const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+const db = drizzle(pool);
+
+export const corsair = createCorsair({
+    plugins: [github()],
+    database: pool,
+    kek: process.env.CORSAIR_KEK!,
+});
+```
+
+</Tab>
+<Tab title="Prisma">
+
+```ts src/server/corsair.ts
+import 'dotenv/config';
+import { PrismaClient } from '@prisma/client';
+import { createCorsair } from 'corsair';
+import { github } from '@corsair-dev/github';
+
+const db = new PrismaClient();
+
+export const corsair = createCorsair({
+    plugins: [github()],
+    database: pool,
+    kek: process.env.CORSAIR_KEK!,
+});
+```
+
+</Tab>
+</Tabs>
 
 </Tab>
 </Tabs>
@@ -351,7 +511,9 @@ import Database from 'better-sqlite3';
 
 </Step>
 
-<Step title="Optional: Add your GitHub token and run setup">
+<Step>
+
+## Add your GitHub token and run setup
 
 Use Corsair with any integration. Here's an example of how to get started with Github.
 
@@ -420,8 +582,11 @@ Corsair stores your token, creates the database rows, and fetches your GitHub da
 
 </Step>
 
-<Step title="Interact with Corsair">
-There's multiple ways to use Corsair. Here's two easy ways:
+<Step>
+
+## Interact with Corsair
+
+There's multiple ways to use Corsair. Here's three easy ways:
 
 <Tabs>
 
@@ -583,6 +748,93 @@ Your agent gets four tools automatically — regardless of which framework you u
 | `run_script` | Execute a JS snippet with `corsair` in scope |
 
 See [MCP Adapters](/mcp-adapters/claude-sdk) for Vercel AI SDK, Mastra, and more.
+
+</Tab>
+
+<Tab title="CLI">
+
+<CodeGroup>
+```bash npm
+npm install @corsair-dev/cli
+```
+```bash yarn
+yarn add @corsair-dev/cli
+```
+```bash pnpm
+pnpm install @corsair-dev/cli
+```
+```bash bun
+bun add @corsair-dev/cli
+```
+</CodeGroup>
+
+Check credentials and initialize a plugin:
+
+<CodeGroup>
+```bash npm
+npx corsair setup --github api_key=$GITHUB_TOKEN
+```
+```bash yarn
+yarn corsair setup --github api_key=$GITHUB_TOKEN
+```
+```bash pnpm
+pnpm corsair setup --github api_key=$GITHUB_TOKEN
+```
+```bash bun
+bunx corsair setup --github api_key=$GITHUB_TOKEN
+```
+</CodeGroup>
+
+Authenticate a plugin that uses OAuth:
+
+<CodeGroup>
+```bash npm
+npx corsair auth --slack
+```
+```bash yarn
+yarn corsair auth --slack
+```
+```bash pnpm
+pnpm corsair auth --slack
+```
+```bash bun
+bunx corsair auth --slack
+```
+</CodeGroup>
+
+List available operations for a plugin:
+
+<CodeGroup>
+```bash npm
+npx corsair list --github
+```
+```bash yarn
+yarn corsair list --github
+```
+```bash pnpm
+pnpm corsair list --github
+```
+```bash bun
+bunx corsair list --github
+```
+</CodeGroup>
+
+Run a script with `corsair` injected — use `return` to output a value:
+
+<CodeGroup>
+```bash npm
+npx corsair script --code "return (await corsair.github.db.repositories.search({})).map(r => ({ name: r.data?.name, openIssues: r.data?.openIssuesCount }))"
+```
+```bash yarn
+yarn corsair script --code "return (await corsair.github.db.repositories.search({})).map(r => ({ name: r.data?.name, openIssues: r.data?.openIssuesCount }))"
+```
+```bash pnpm
+pnpm corsair script --code "return (await corsair.github.db.repositories.search({})).map(r => ({ name: r.data?.name, openIssues: r.data?.openIssuesCount }))"
+```
+```bash bun
+bunx corsair script --code "return (await corsair.github.db.repositories.search({})).map(r => ({ name: r.data?.name, openIssues: r.data?.openIssuesCount }))"
+```
+</CodeGroup>
 
 </Tab>
 
