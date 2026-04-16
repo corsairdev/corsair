@@ -1,0 +1,92 @@
+import React from 'react';
+
+export const GenerateKEK = () => {
+  const [key, setKey] = React.useState('');
+  const [copiedCmd, setCopiedCmd] = React.useState(false);
+  const [copiedEnv, setCopiedEnv] = React.useState(false);
+
+  const generate = () => {
+    const bytes = new Uint8Array(32);
+    crypto.getRandomValues(bytes);
+    setKey(btoa(String.fromCharCode(...bytes)));
+  };
+
+  React.useEffect(() => { generate(); }, []);
+
+  const copy = (text, setter) => {
+    navigator.clipboard.writeText(text);
+    setter(true);
+    setTimeout(() => setter(false), 2000);
+  };
+
+  const envValue = `CORSAIR_KEK="${key || 'loading...'}"`;
+
+  const blockStyle = {
+    borderRadius: '0.5rem',
+    overflow: 'hidden',
+    border: '1px solid var(--border, rgba(255,255,255,0.1))',
+    backgroundColor: 'var(--code-background, #0d1117)',
+    fontFamily: 'var(--font-mono, ui-monospace, monospace)',
+    fontSize: '0.8125rem',
+    lineHeight: '1.6',
+  };
+  const headerStyle = {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: '0.375rem 0.75rem',
+    borderBottom: '1px solid var(--border, rgba(255,255,255,0.1))',
+  };
+  const labelStyle = { fontSize: '0.75rem', color: 'var(--muted-foreground, rgba(255,255,255,0.4))' };
+  const btnGroupStyle = { display: 'flex', alignItems: 'center', gap: '0.375rem' };
+  const btnStyle = {
+    display: 'inline-flex', alignItems: 'center', gap: '0.3rem',
+    padding: '0.2rem 0.6rem', borderRadius: '0.375rem', fontSize: '0.7rem',
+    fontWeight: 500, cursor: 'pointer', transition: 'opacity 0.15s',
+    border: '1px solid var(--border, rgba(255,255,255,0.15))',
+    backgroundColor: 'var(--muted, rgba(255,255,255,0.06))',
+    color: 'var(--foreground, rgba(255,255,255,0.75))',
+    fontFamily: 'var(--font-sans, sans-serif)',
+  };
+  const generateBtnStyle = {
+    ...btnStyle,
+    backgroundColor: 'var(--primary, #2d7387)',
+    border: '1px solid transparent',
+    color: '#fff',
+  };
+  const codeStyle = {
+    display: 'block', padding: '0.75rem 1rem',
+    color: 'var(--code-foreground, rgba(255,255,255,0.85))',
+    whiteSpace: 'pre', overflowX: 'auto', margin: 0, background: 'none',
+  };
+
+  return (
+    <div className="not-prose" style={{ display: 'flex', flexDirection: 'column', gap: '0.625rem' }}>
+      <div style={blockStyle}>
+        <div style={headerStyle}>
+          <span style={labelStyle}>bash</span>
+          <div style={btnGroupStyle}>
+            <button style={generateBtnStyle} onClick={generate}>
+              Regenerate
+            </button>
+            <button style={btnStyle} onClick={() => copy('openssl rand -base64 32', setCopiedCmd)}>
+              {copiedCmd ? '✓ Copied' : 'Copy'}
+            </button>
+          </div>
+        </div>
+        <pre style={{ margin: 0 }}><code style={codeStyle}>openssl rand -base64 32</code></pre>
+      </div>
+      <div style={blockStyle}>
+        <div style={headerStyle}>
+          <span style={labelStyle}>.env</span>
+          <button style={btnStyle} onClick={() => copy(envValue, setCopiedEnv)}>
+            {copiedEnv ? '✓ Copied' : 'Copy'}
+          </button>
+        </div>
+        <pre style={{ margin: 0 }}>
+          <code style={codeStyle}>{envValue}</code>
+        </pre>
+      </div>
+    </div>
+  );
+};

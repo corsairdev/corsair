@@ -3,6 +3,8 @@ title: Vibe Code Your Dashboard
 description: Scaffold a T3 app, wire in Google Calendar with Corsair, then let an AI agent build the whole dashboard from a single prompt.
 ---
 
+import { GenerateKEK } from '/snippets/generate-kek.mdx';
+
 By the end of this guide you'll have a working Next.js app with a live Google Calendar dashboard — and you'll have written almost none of the UI yourself.
 
 <Steps>
@@ -48,15 +50,9 @@ bun add corsair @corsair-dev/googlecalendar
 </Step>
 
 <Step title="Generate your encryption key">
-Corsair encrypts stored credentials with a Key Encryption Key. Generate one and add it to `.env`:
+Corsair encrypts stored credentials with a Key Encryption Key. Click **Regenerate** for a new one, or run the command yourself:
 
-```bash
-openssl rand -base64 32
-```
-
-```bash .env
-CORSAIR_KEK="your-generated-key-here"
-```
+<GenerateKEK />
 
 <Warning>
 **Keep this key safe**

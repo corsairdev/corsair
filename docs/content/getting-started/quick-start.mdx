@@ -3,6 +3,8 @@ title: Quick Start
 description: Get a working integration in a few steps.
 ---
 
+import { GenerateKEK } from '/snippets/generate-kek.mdx';
+
 <Steps>
 
 <Step title="Install">
@@ -24,15 +26,9 @@ bun add corsair
 </Step>
 
 <Step title="Generate your encryption key">
-Corsair encrypts every stored credential with a Key Encryption Key (KEK). Generate a key and add it to your `.env`:
+Corsair encrypts every stored credential with a Key Encryption Key (KEK). Click **Generate** to create one, or run the command yourself:
 
-```bash
-openssl rand -base64 32
-```
-
-```bash .env
-CORSAIR_KEK="your-generated-key-here"
-```
+<GenerateKEK />
 
 <Warning>
 **Keep this key safe**
