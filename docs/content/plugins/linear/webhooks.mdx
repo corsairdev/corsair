@@ -5,19 +5,19 @@ description: All available Linear webhook events.
 
 Linear webhooks allow you to receive real-time notifications when issues, projects, or comments are created, updated, or deleted. The Corsair plugin provides a clean interface for handling these events.
 
-<Callout type="info">
+<Info>
 **New to Corsair?** Learn about [webhooks](/concepts/webhooks), [hooks](/concepts/hooks), and [multi-tenancy](/concepts/multi-tenancy).
-</Callout>
+</Info>
 
-<Callout>
+<Note>
 **Full Implementation:** See the [Linear plugin source code](https://github.com/corsairdev/corsair/tree/main/packages/corsair/plugins/linear).
-</Callout>
+</Note>
 
 ## Setup
 
 Configure webhook hooks when initializing the Linear plugin:
 
-```ts title="corsair.ts"
+```ts corsair.ts
 import { linear } from "corsair/plugins";
 
 export const corsair = createCorsair({

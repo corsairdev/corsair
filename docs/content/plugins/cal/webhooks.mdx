@@ -5,17 +5,17 @@ description: Cal.com webhook event handling in Corsair.
 
 The Cal plugin includes webhook handlers for Cal.com booking lifecycle events.
 
-<Callout type="info">
+<Info>
 **New to Corsair?** Learn about [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
-</Callout>
+</Info>
 
-<Callout>
+<Note>
 **Full Implementation:** See the [Cal plugin source code](https://github.com/corsairdev/corsair/tree/main/packages/corsair/plugins/cal).
-</Callout>
+</Note>
 
 ## Setup
 
-```ts title="app/api/webhook/route.ts"
+```ts app/api/webhook/route.ts
 import { processWebhook } from "corsair";
 import { corsair } from "@/server/corsair";
 
@@ -38,7 +38,7 @@ Fires when a new booking is created.
 
 **Example:**
 
-```ts title="corsair.ts"
+```ts corsair.ts
 cal({
     webhookHooks: {
         "bookings.bookingCreated": async (event) => {
@@ -59,7 +59,7 @@ Fires when a booking is cancelled.
 
 **Example:**
 
-```ts title="corsair.ts"
+```ts corsair.ts
 cal({
     webhookHooks: {
         "bookings.bookingCancelled": async (event) => {
@@ -80,7 +80,7 @@ Fires when a booking is rescheduled to a new time.
 
 **Example:**
 
-```ts title="corsair.ts"
+```ts corsair.ts
 cal({
     webhookHooks: {
         "bookings.bookingRescheduled": async (event) => {
@@ -101,7 +101,7 @@ Fires when a meeting ends.
 
 **Example:**
 
-```ts title="corsair.ts"
+```ts corsair.ts
 cal({
     webhookHooks: {
         "bookings.meetingEnded": async (event) => {
@@ -122,7 +122,7 @@ Fires as a test to verify your webhook endpoint is reachable.
 
 **Example:**
 
-```ts title="corsair.ts"
+```ts corsair.ts
 cal({
     webhookHooks: {
         "system.ping": async (event) => {

@@ -18,21 +18,15 @@ Connect Slack to your agent or app. Corsair handles auth, data syncing, and webh
 
 <Steps>
 
-<Step>
-
-### Install
-
+<Step title="Install">
 ```bash
 pnpm install @corsair-dev/slack
 ```
 
 </Step>
 
-<Step>
-
-### Add the plugin
-
-```ts title="corsair.ts"
+<Step title="Add the plugin">
+```ts corsair.ts
 import { createCorsair } from 'corsair';
 import { slack } from '@corsair-dev/slack';
 import Database from 'better-sqlite3';
@@ -46,20 +40,14 @@ export const corsair = createCorsair({
 
 </Step>
 
-<Step>
-
-### Get your credentials
-
+<Step title="Get your credentials">
 You need a Slack bot token (`xoxb-...`) to make API calls, and a signing secret to verify incoming webhooks.
 
 See [Get Credentials](/plugins/slack/get-credentials) for step-by-step instructions on creating a Slack app and copying both values.
 
 </Step>
 
-<Step>
-
-### Store credentials
-
+<Step title="Store credentials">
 ```bash
 pnpm corsair setup --slack bot_token=xoxb-your-bot-token webhook_signature=your-signing-secret
 ```
@@ -76,13 +64,13 @@ Run this once. Credentials are encrypted with your KEK and stored in your databa
 
 The Slack plugin supports two auth methods:
 
-<Tabs items={['API Key (Bot Token)', 'OAuth 2.0']}>
+<Tabs>
 
-<Tab value="API Key (Bot Token)">
+<Tab title="API Key (Bot Token)">
 
 The default. Create a Slack app, install it to your workspace, and copy the bot token.
 
-```ts title="corsair.ts"
+```ts corsair.ts
 slack({
     authType: 'api_key',  // default, can be omitted
 })
@@ -98,11 +86,11 @@ See [Get Credentials](/plugins/slack/get-credentials) for where to find this in 
 
 </Tab>
 
-<Tab value="OAuth 2.0">
+<Tab title="OAuth 2.0">
 
 Use OAuth when users connect their own Slack workspaces (multi-tenant apps).
 
-```ts title="corsair.ts"
+```ts corsair.ts
 slack({
     authType: 'oauth_2',
 })
@@ -132,9 +120,10 @@ await corsair.slack.api.messages.post({
 });
 ```
 
-<Callout type="info" title="Use channel IDs, not names">
+<Info>
+**Use channel IDs, not names**
 Slack's API requires channel IDs (e.g. `C1234567890`), not names like `#general`. Query `corsair.slack.api.channels.list()` once to get the IDs, then cache them locally.
-</Callout>
+</Info>
 
 ---
 
@@ -142,9 +131,9 @@ Slack's API requires channel IDs (e.g. `C1234567890`), not names like `#general`
 
 Corsair syncs Slack data to your local database. Query it instantly — no API call needed every time.
 
-<Tabs items={['Live (API)', 'Cached (DB)']}>
+<Tabs>
 
-<Tab value="Live (API)">
+<Tab title="Live (API)">
 
 Direct Slack API calls — always fresh, always counts against rate limits:
 
@@ -168,7 +157,7 @@ Every API call automatically saves the response to your local database.
 
 </Tab>
 
-<Tab value="Cached (DB)">
+<Tab title="Cached (DB)">
 
 Query your local database — instant, no rate limit, works offline:
 
@@ -204,7 +193,7 @@ See [Database Reference](/plugins/slack/database) for full query options.
 
 Set up a single webhook endpoint — Corsair routes and verifies everything:
 
-```ts title="app/api/webhook/route.ts"
+```ts app/api/webhook/route.ts
 import { processWebhook } from 'corsair';
 import { corsair } from '@/server/corsair';
 import type { NextRequest } from 'next/server';
@@ -231,7 +220,7 @@ export async function POST(request: NextRequest) {
 
 React to events with webhook hooks:
 
-```ts title="corsair.ts"
+```ts corsair.ts
 slack({
     webhookHooks: {
         messages: {
@@ -277,7 +266,7 @@ See [Slack Webhooks](/plugins/slack/webhooks) for full payload shapes.
 
 ## Plugin options
 
-```ts title="corsair.ts"
+```ts corsair.ts
 slack({
     authType: 'api_key',        // 'api_key' | 'oauth_2'
     key: process.env.SLACK_BOT_TOKEN,         // optional, uses DB otherwise
@@ -303,7 +292,7 @@ slack({
 
 If you're building a product where users connect their own Slack workspaces:
 
-```ts title="corsair.ts"
+```ts corsair.ts
 export const corsair = createCorsair({
     multiTenancy: true,
     plugins: [slack()],
@@ -311,7 +300,7 @@ export const corsair = createCorsair({
 });
 ```
 
-```ts title="usage.ts"
+```ts usage.ts
 const tenant = corsair.withTenant('user_abc123');
 
 // All calls scoped to this user
@@ -335,25 +324,17 @@ See [Multi-Tenancy](/multi-tenancy) for the full guide.
 
 ## What's next
 
-<Cards>
-  <Card
-    title="Get Credentials"
-    description="Create a Slack app and copy your bot token and signing secret."
-    href="/plugins/slack/get-credentials"
-  />
-  <Card
-    title="API Endpoints"
-    description="All available Slack API operations and their parameters."
-    href="/plugins/slack/api-endpoints"
-  />
-  <Card
-    title="Webhooks"
-    description="All Slack events, payload shapes, and verification details."
-    href="/plugins/slack/webhooks"
-  />
-  <Card
-    title="Database"
-    description="Query synced Slack data from your local database."
-    href="/plugins/slack/database"
-  />
-</Cards>
+<CardGroup cols={2}>
+  <Card title="Get Credentials" href="/plugins/slack/get-credentials">
+    Create a Slack app and copy your bot token and signing secret.
+  </Card>
+  <Card title="API Endpoints" href="/plugins/slack/api-endpoints">
+    All available Slack API operations and their parameters.
+  </Card>
+  <Card title="Webhooks" href="/plugins/slack/webhooks">
+    All Slack events, payload shapes, and verification details.
+  </Card>
+  <Card title="Database" href="/plugins/slack/database">
+    Query synced Slack data from your local database.
+  </Card>
+</CardGroup>

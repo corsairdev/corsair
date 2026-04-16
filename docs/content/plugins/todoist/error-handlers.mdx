@@ -5,13 +5,13 @@ description: Built-in and custom error handling for the Todoist plugin.
 
 The Todoist plugin includes built-in error handlers for common Todoist API error scenarios.
 
-<Callout type="info">
+<Info>
 **New to Corsair?** Learn about [error handling](/concepts/error-handling) before customizing error handlers.
-</Callout>
+</Info>
 
-<Callout>
+<Note>
 **Full Implementation:** See the [Todoist plugin source code](https://github.com/corsairdev/corsair/tree/main/packages/corsair/plugins/todoist).
-</Callout>
+</Note>
 
 ## Built-in Error Handlers
 
@@ -86,7 +86,7 @@ const tasks = await corsair.todoist.api.tasks.getMany({ // [!code highlight]
 
 ## Custom Error Handlers
 
-```ts title="corsair.ts"
+```ts corsair.ts
 todoist({
     errorHandlers: {
         TASK_ALREADY_COMPLETED: {

@@ -7,11 +7,21 @@ By the end of this guide you'll have a working Next.js app with a live Google Ca
 
 <Steps>
 
-<Step>
-
-### Scaffold the T3 app
-
-<PmTabs create="t3-app@latest my-cal-dashboard -- --CI --trpc --tailwind --appRouter" />
+<Step title="Scaffold the T3 app">
+<CodeGroup>
+```bash npm
+npm create t3-app@latest my-cal-dashboard -- --CI --trpc --tailwind --appRouter
+```
+```bash yarn
+yarn create t3-app@latest my-cal-dashboard -- --CI --trpc --tailwind --appRouter
+```
+```bash pnpm
+pnpm create t3-app@latest my-cal-dashboard -- --CI --trpc --tailwind --appRouter
+```
+```bash bun
+bun create t3-app@latest my-cal-dashboard -- --CI --trpc --tailwind --appRouter
+```
+</CodeGroup>
 
 ```bash
 cd my-cal-dashboard
@@ -19,41 +29,78 @@ cd my-cal-dashboard
 
 </Step>
 
-<Step>
-
-### Install
-
-<PmTabs install="corsair @corsair-dev/googlecalendar" />
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/googlecalendar
+```
+```bash yarn
+yarn add corsair @corsair-dev/googlecalendar
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/googlecalendar
+```
+```bash bun
+bun add corsair @corsair-dev/googlecalendar
+```
+</CodeGroup>
 
 </Step>
 
-<Step>
-
-### Generate your encryption key
-
+<Step title="Generate your encryption key">
 Corsair encrypts stored credentials with a Key Encryption Key. Generate one and add it to `.env`:
 
-<KekGenerator />
+```bash
+openssl rand -base64 32
+```
 
-<Callout type="warn" title="Keep this key safe">
+```bash .env
+CORSAIR_KEK="your-generated-key-here"
+```
+
+<Warning>
+**Keep this key safe**
 If you lose it, you lose access to all stored credentials. Treat it like a root password.
-</Callout>
+</Warning>
 
 </Step>
 
-<Step>
-
-### Migrate the database
-
+<Step title="Migrate the database">
 Corsair needs five tables. Install the driver, then run the migration:
 
-<PmTabs install="better-sqlite3" />
-<PmTabs install="@types/better-sqlite3" dev />
+<CodeGroup>
+```bash npm
+npm install better-sqlite3
+```
+```bash yarn
+yarn add better-sqlite3
+```
+```bash pnpm
+pnpm install better-sqlite3
+```
+```bash bun
+bun add better-sqlite3
+```
+</CodeGroup>
+<CodeGroup>
+```bash npm
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
 
-<Accordions>
+<AccordionGroup>
 <Accordion title="View migration SQL">
 
-```sql title="migration.sql"
+```sql migration.sql
 CREATE TABLE IF NOT EXISTS corsair_integrations (
     id TEXT PRIMARY KEY,
     created_at INTEGER NOT NULL,
@@ -113,7 +160,7 @@ CREATE TABLE IF NOT EXISTS corsair_permissions (
 ```
 
 </Accordion>
-</Accordions>
+</AccordionGroup>
 
 ```bash
 sqlite3 corsair.db < migration.sql
@@ -121,11 +168,8 @@ sqlite3 corsair.db < migration.sql
 
 </Step>
 
-<Step>
-
-### Create `src/server/corsair.ts`
-
-```ts title="src/server/corsair.ts"
+<Step title="Create src/server/corsair.ts">
+```ts src/server/corsair.ts
 import 'dotenv/config';
 import Database from 'better-sqlite3';
 import { createCorsair } from 'corsair';
@@ -142,26 +186,49 @@ export const corsair = createCorsair({
 
 </Step>
 
-<Step>
-
-### Connect Google Calendar (optional)
-
+<Step title="Connect Google Calendar (optional)">
 Google Calendar uses OAuth2. You'll need a GCP OAuth app first:
 
 1. Go to the [Google Cloud Console](https://console.cloud.google.com/), create a project, and enable the **Google Calendar API**.
 2. Under **APIs & Services → Credentials**, create an **OAuth 2.0 Client ID** (Application type: Web application). No redirect URI needed — Corsair handles it locally.
 3. Copy your Client ID and Client Secret, then store them:
 
-<PmTabs install="@corsair-dev/cli" /> 
+<CodeGroup>
+```bash npm
+npm install @corsair-dev/cli
+```
+```bash yarn
+yarn add @corsair-dev/cli
+```
+```bash pnpm
+pnpm install @corsair-dev/cli
+```
+```bash bun
+bun add @corsair-dev/cli
+```
+</CodeGroup> 
 
-<PmTabs run="corsair setup --googlecalendar client_id=YOUR_CLIENT_ID client_secret=YOUR_CLIENT_SECRET" />
+<CodeGroup>
+```bash npm
+npx corsair setup --googlecalendar client_id=YOUR_CLIENT_ID client_secret=YOUR_CLIENT_SECRET
+```
+```bash yarn
+yarn corsair setup --googlecalendar client_id=YOUR_CLIENT_ID client_secret=YOUR_CLIENT_SECRET
+```
+```bash pnpm
+pnpm corsair setup --googlecalendar client_id=YOUR_CLIENT_ID client_secret=YOUR_CLIENT_SECRET
+```
+```bash bun
+bunx corsair setup --googlecalendar client_id=YOUR_CLIENT_ID client_secret=YOUR_CLIENT_SECRET
+```
+</CodeGroup>
 
-<Accordions>
+<AccordionGroup>
 <Accordion title="pnpm: command not found or setup fails?">
 
 If `pnpm corsair` isn't found, add this to your `package.json` so pnpm builds the native dependency correctly:
 
-```json title="package.json"
+```json package.json
 {
   "pnpm": {
     "onlyBuiltDependencies": [
@@ -174,20 +241,30 @@ If `pnpm corsair` isn't found, add this to your `package.json` so pnpm builds th
 Then re-run `pnpm install` and retry the setup command.
 
 </Accordion>
-</Accordions>
+</AccordionGroup>
 
 4. Start the OAuth flow:
 
-<PmTabs run="corsair auth --plugin=googlecalendar" />
+<CodeGroup>
+```bash npm
+npx corsair auth --plugin=googlecalendar
+```
+```bash yarn
+yarn corsair auth --plugin=googlecalendar
+```
+```bash pnpm
+pnpm corsair auth --plugin=googlecalendar
+```
+```bash bun
+bunx corsair auth --plugin=googlecalendar
+```
+</CodeGroup>
 
 Open the `authUrl` printed in the terminal. Once you authorize in the browser, tokens are saved automatically and the command exits.
 
 </Step>
 
-<Step>
-
-### Vibe code the dashboard (optional)
-
+<Step title="Vibe code the dashboard (optional)">
 Paste this prompt into Claude, Cursor, or any AI coding agent:
 
 ```
@@ -220,25 +297,17 @@ Run `pnpm dev` when it's done.
 
 ## What's next
 
-<Cards>
-  <Card
-    title="Google Calendar Plugin"
-    description="Full API reference — create events, check availability, and handle webhook notifications."
-    href="/plugins/googlecalendar/api-endpoints"
-  />
-  <Card
-    title="Webhooks"
-    description="React to calendar changes in real time — new events, updates, and deletions pushed to your server."
-    href="/plugins/googlecalendar/webhooks"
-  />
-  <Card
-    title="Workflows"
-    description="Chain calendar events to other plugins — meeting created → Slack notification → Linear task."
-    href="/guides/workflows"
-  />
-  <Card
-    title="Multi-Tenancy"
-    description="Building a product? Each user gets their own calendar credentials and isolated data."
-    href="/multi-tenancy"
-  />
-</Cards>
+<CardGroup cols={2}>
+  <Card title="Google Calendar Plugin" href="/plugins/googlecalendar/api-endpoints">
+    Full API reference — create events, check availability, and handle webhook notifications.
+  </Card>
+  <Card title="Webhooks" href="/plugins/googlecalendar/webhooks">
+    React to calendar changes in real time — new events, updates, and deletions pushed to your server.
+  </Card>
+  <Card title="Workflows" href="/guides/workflows">
+    Chain calendar events to other plugins — meeting created → Slack notification → Linear task.
+  </Card>
+  <Card title="Multi-Tenancy" href="/multi-tenancy">
+    Building a product? Each user gets their own calendar credentials and isolated data.
+  </Card>
+</CardGroup>

@@ -17,7 +17,7 @@ npm install openai
 
 Expose Corsair as an MCP HTTP endpoint using `createBaseMcpServer` and `createMcpRouter`.
 
-```ts title="server.ts"
+```ts server.ts
 import express from 'express';
 import { createBaseMcpServer, createMcpRouter } from '@corsair-dev/mcp';
 import { corsair } from './corsair';
@@ -32,7 +32,7 @@ app.listen(3000, () => console.log('MCP server running on :3000'));
 
 ## Client
 
-```ts title="agent.ts"
+```ts agent.ts
 import OpenAI from 'openai';
 import { getOpenAIMcpConfig } from '@corsair-dev/mcp';
 

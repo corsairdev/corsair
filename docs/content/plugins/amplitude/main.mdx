@@ -13,7 +13,7 @@ pnpm install @corsair-dev/amplitude
 
 Add the Amplitude plugin to your Corsair instance:
 
-```ts title="corsair.ts"
+```ts corsair.ts
 import { createCorsair } from "corsair";
 import { amplitude } from "@corsair-dev/amplitude";
 
@@ -64,7 +64,7 @@ pnpm corsair setup --amplitude webhook_signature=your-webhook-secret
 
 Alternatively, provide credentials directly in the config:
 
-```ts title="corsair.ts"
+```ts corsair.ts
 amplitude({
     key: process.env.AMPLITUDE_API_KEY,
     webhookSecret: process.env.AMPLITUDE_WEBHOOK_SECRET,
@@ -141,7 +141,7 @@ See [API Endpoints](/plugins/amplitude/api-endpoints) for the complete reference
 
 ### Webhooks
 
-```ts title="app/api/webhook/route.ts"
+```ts app/api/webhook/route.ts
 import { processWebhook } from "corsair";
 import { corsair } from "@/server/corsair";
 
@@ -181,7 +181,7 @@ await tenant.amplitude.api.events.upload({
 
 ### Example 1: Track User Actions
 
-```ts title="inngest/functions.ts"
+```ts inngest/functions.ts
 export const trackUserAction = inngest.createFunction(
     { id: "track-amplitude-event" },
     { event: "app/user-action" },
@@ -203,7 +203,7 @@ export const trackUserAction = inngest.createFunction(
 
 ### Example 2: Build a Cohort from Recent Signups
 
-```ts title="inngest/functions.ts"
+```ts inngest/functions.ts
 export const buildSignupCohort = inngest.createFunction(
     { id: "build-signup-cohort" },
     { cron: "0 0 * * 1" },
@@ -225,7 +225,7 @@ export const buildSignupCohort = inngest.createFunction(
 
 ### Example 3: Monitor Alert Webhook
 
-```ts title="corsair.ts"
+```ts corsair.ts
 export const corsair = createCorsair({
     plugins: [
         amplitude({

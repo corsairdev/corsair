@@ -13,7 +13,7 @@ pnpm install @corsair-dev/oura
 
 Add the Oura plugin to your Corsair instance:
 
-```ts title="corsair.ts"
+```ts corsair.ts
 import { createCorsair } from "corsair";
 import { oura } from "@corsair-dev/oura";
 
@@ -61,7 +61,7 @@ pnpm corsair setup --oura webhook_signature=your-webhook-secret
 
 Alternatively, provide credentials directly in the config:
 
-```ts title="corsair.ts"
+```ts corsair.ts
 oura({
     key: process.env.OURA_ACCESS_TOKEN,
     webhookSecret: process.env.OURA_WEBHOOK_SECRET,
@@ -132,7 +132,7 @@ See [API Endpoints](/plugins/oura/api-endpoints) for the complete reference.
 
 Oura sends daily health summary events to your webhook endpoint:
 
-```ts title="app/api/webhook/route.ts"
+```ts app/api/webhook/route.ts
 import { processWebhook } from "corsair";
 import { corsair } from "@/server/corsair";
 
@@ -172,7 +172,7 @@ const sleep = await tenant.oura.api.summary.getSleep({
 
 ### Example 1: Daily Health Report
 
-```ts title="inngest/functions.ts"
+```ts inngest/functions.ts
 export const dailyHealthReport = inngest.createFunction(
     { id: "oura-daily-report" },
     { cron: "0 8 * * *" },
@@ -195,7 +195,7 @@ export const dailyHealthReport = inngest.createFunction(
 
 ### Example 2: Alert on Low Readiness
 
-```ts title="corsair.ts"
+```ts corsair.ts
 export const corsair = createCorsair({
     plugins: [
         oura({
@@ -220,7 +220,7 @@ export const corsair = createCorsair({
 });
 ```
 
-```ts title="inngest/functions.ts"
+```ts inngest/functions.ts
 export const alertOnLowReadiness = inngest.createFunction(
     { id: "alert-low-readiness" },
     { event: "oura/readiness-updated" },

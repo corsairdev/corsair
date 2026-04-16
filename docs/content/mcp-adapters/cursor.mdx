@@ -13,7 +13,7 @@ npm install @corsair-dev/mcp
 
 ## Create the server script
 
-```ts title="mcp-server.ts"
+```ts mcp-server.ts
 import 'dotenv/config';
 import { runStdioMcpServer } from '@corsair-dev/mcp';
 import { corsair } from './corsair';
@@ -28,7 +28,7 @@ runStdioMcpServer({ corsair }).catch((err) => {
 
 Add a `.cursor/mcp.json` file at your project root. Cursor reads this automatically when you open the project.
 
-```json title=".cursor/mcp.json"
+```json .cursor/mcp.json
 {
   "mcpServers": {
     "corsair": {
@@ -41,7 +41,7 @@ Add a `.cursor/mcp.json` file at your project root. Cursor reads this automatica
 
 If your credentials aren't loaded from a `.env` file, pass them via `env`:
 
-```json title=".cursor/mcp.json"
+```json .cursor/mcp.json
 {
   "mcpServers": {
     "corsair": {

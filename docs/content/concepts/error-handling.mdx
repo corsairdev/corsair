@@ -5,7 +5,7 @@ description: Graceful error handling with intelligent retry strategies.
 
 Corsair catches all API errors and routes them through a hierarchical error handling system. You can define handlers at multiple levels, and Corsair will use the most specific one available.
 
-```ts title="corsair.ts"
+```ts corsair.ts
 import { createCorsair } from "corsair";
 import { slack } from "corsair/plugins";
 
@@ -44,7 +44,7 @@ This means you only need to define handlers for the cases you care about.
 
 Handle errors specific to a single integration.
 
-```ts title="corsair.ts"
+```ts corsair.ts
 slack({
     authType: "api_key",
     credentials: { botToken: "xoxb-..." },
@@ -67,7 +67,7 @@ slack({
 
 Handle errors across all integrations.
 
-```ts title="corsair.ts"
+```ts corsair.ts
 export const corsair = createCorsair({
     plugins: [slack({ ... }), linear({ ... })],
     errorHandlers: {
@@ -89,7 +89,7 @@ export const corsair = createCorsair({
 
 Catch any error that doesn't match a specific handler.
 
-```ts title="corsair.ts"
+```ts corsair.ts
 slack({
     authType: "api_key",
     credentials: { botToken: "xoxb-..." },
@@ -109,7 +109,7 @@ slack({
 
 You don't have to define any error handlers. Corsair provides sensible defaults that ensure your application fails gracefully. Start simple and add handlers as needed.
 
-```ts title="corsair.ts"
+```ts corsair.ts
 // This works fine — Corsair handles errors gracefully by default
 export const corsair = createCorsair({
     plugins: [slack({ authType: "api_key", credentials: { botToken: "xoxb-..." } })],

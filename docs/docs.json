@@ -2,7 +2,7 @@
   "$schema": "https://mintlify.com/docs.json",
   "name": "Corsair",
   "theme": "luma",
-  "favicon": "https://media.brand.dev/8ed05e1e-f117-4b64-9e04-53df4f1c0aa9.png",
+  "favicon": "/favicon.ico",
   "colors": {
     "primary": "#2d7387",
     "light": "#95cbcf"
@@ -26,28 +26,7 @@
             "pages": [
               "content/getting-started/introduction",
               "content/getting-started/quick-start",
-              "content/installation"
-            ]
-          },
-          {
-            "group": "Core Concepts",
-            "pages": [
-              "content/concepts/integrations",
-              "content/concepts/auth",
-              "content/concepts/database",
-              "content/concepts/webhooks",
-              "content/concepts/hooks",
-              "content/concepts/multi-tenancy"
-            ]
-          },
-          {
-            "group": "Guides",
-            "pages": [
-              "content/guides/webhooks",
-              "content/guides/workflows",
-              "content/guides/dashboard",
-              "content/guides/plugin-credentials",
-              "content/guides/create-your-own-plugin"
+              "content/getting-started/installation"
             ]
           },
           {
@@ -64,12 +43,14 @@
             ]
           },
           {
-            "group": "Workflow Engines",
+            "group": "Core Concepts",
             "pages": [
-              "content/guides/inngest",
-              "content/guides/temporal",
-              "content/guides/trigger-dev",
-              "content/guides/hatchet"
+              "content/concepts/integrations",
+              "content/concepts/auth",
+              "content/concepts/database",
+              "content/concepts/webhooks",
+              "content/concepts/hooks",
+              "content/concepts/multi-tenancy"
             ]
           }
         ]
@@ -78,73 +59,72 @@
         "tab": "Plugins",
         "groups": [
           {
-            "group": "Communication",
-            "pages": [
-              "content/plugins/slack/main",
-              "content/plugins/discord/main",
-              "content/plugins/telegram/main",
-              "content/plugins/gmail/main",
-              "content/plugins/outlook/main"
-            ]
-          },
-          {
-            "group": "Project Management",
-            "pages": [
-              "content/plugins/linear/main",
-              "content/plugins/github/main",
-              "content/plugins/jira/main",
-              "content/plugins/asana/main",
-              "content/plugins/notion/main",
-              "content/plugins/trello/main",
-              "content/plugins/monday/main"
-            ]
-          },
-          {
-            "group": "Google Workspace",
-            "pages": [
-              "content/plugins/googlecalendar/main",
-              "content/plugins/googledrive/main",
-              "content/plugins/googlesheets/main"
-            ]
-          },
-          {
-            "group": "CRM & Marketing",
-            "pages": [
-              "content/plugins/hubspot/main",
-              "content/plugins/intercom/main",
-              "content/plugins/typeform/main",
-              "content/plugins/resend/main"
-            ]
-          },
-          {
-            "group": "Analytics & Monitoring",
-            "pages": [
-              "content/plugins/posthog/main",
-              "content/plugins/amplitude/main",
-              "content/plugins/sentry/main",
-              "content/plugins/pagerduty/main"
-            ]
-          },
-          {
-            "group": "Productivity & Files",
+            "group": "Plugins",
             "pages": [
               "content/plugins/airtable/main",
-              "content/plugins/dropbox/main",
-              "content/plugins/onedrive/main",
+              "content/plugins/amplitude/main",
+              "content/plugins/asana/main",
               "content/plugins/box/main",
-              "content/plugins/todoist/main",
-              "content/plugins/calendly/main",
               "content/plugins/cal/main",
+              "content/plugins/calendly/main",
+              "content/plugins/discord/main",
+              "content/plugins/dropbox/main",
+              "content/plugins/exa/main",
+              "content/plugins/github/main",
+              "content/plugins/gmail/main",
+              "content/plugins/googlecalendar/main",
+              "content/plugins/googledrive/main",
+              "content/plugins/googlesheets/main",
+              "content/plugins/hackernews/main",
+              "content/plugins/hubspot/main",
+              "content/plugins/intercom/main",
+              "content/plugins/jira/main",
+              "content/plugins/linear/main",
+              "content/plugins/monday/main",
+              "content/plugins/notion/main",
+              "content/plugins/onedrive/main",
+              "content/plugins/outlook/main",
+              "content/plugins/pagerduty/main",
+              "content/plugins/posthog/main",
+              "content/plugins/resend/main",
+              "content/plugins/sentry/main",
+              "content/plugins/slack/main",
+              "content/plugins/stripe/main",
+              "content/plugins/tavily/main",
+              "content/plugins/telegram/main",
+              "content/plugins/todoist/main",
+              "content/plugins/trello/main",
+              "content/plugins/typeform/main",
               "content/plugins/zoom/main"
             ]
           },
           {
-            "group": "Developer Tools",
+            "group": "Build Your Own",
             "pages": [
-              "content/plugins/stripe/main",
-              "content/plugins/tavily/main",
-              "content/plugins/exa/main",
-              "content/plugins/hackernews/main"
+              "content/guides/create-your-own-plugin",
+              "content/guides/plugin-credentials"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Guides",
+        "groups": [
+          {
+            "group": "Guides",
+            "pages": [
+              "content/guides/webhooks",
+              "content/guides/workflows",
+              "content/guides/dashboard"
+            ]
+          },
+          {
+            "group": "Workflow Engines",
+            "pages": [
+              "content/guides/inngest",
+              "content/guides/temporal",
+              "content/guides/trigger-dev",
+              "content/guides/hatchet"
             ]
           }
         ]

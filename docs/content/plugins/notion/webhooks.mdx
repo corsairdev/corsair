@@ -5,17 +5,17 @@ description: Notion webhook event handling in Corsair.
 
 The Notion plugin includes webhook handlers for Notion database page events.
 
-<Callout type="info">
+<Info>
 **New to Corsair?** Learn about [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
-</Callout>
+</Info>
 
-<Callout>
+<Note>
 **Full Implementation:** See the [Notion plugin source code](https://github.com/corsairdev/corsair/tree/main/packages/corsair/plugins/notion).
-</Callout>
+</Note>
 
 ## Setup
 
-```ts title="app/api/webhook/route.ts"
+```ts app/api/webhook/route.ts
 import { processWebhook } from "corsair";
 import { corsair } from "@/server/corsair";
 
@@ -38,7 +38,7 @@ Fires when a page is created in a database.
 
 **Example:**
 
-```ts title="corsair.ts"
+```ts corsair.ts
 notion({
     webhookHooks: {
         "databasePages.pageCreated": async (event) => {
@@ -59,7 +59,7 @@ Fires when a page is updated in a database.
 
 **Example:**
 
-```ts title="corsair.ts"
+```ts corsair.ts
 notion({
     webhookHooks: {
         "databasePages.pageUpdated": async (event) => {
@@ -82,7 +82,7 @@ Corsair handles this automatically — no additional configuration is needed.
 
 **Example:**
 
-```ts title="corsair.ts"
+```ts corsair.ts
 notion({
     webhookHooks: {
         "verification": async (event) => {

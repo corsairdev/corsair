@@ -26,9 +26,9 @@ npm install @corsair-dev/mcp
 
 ## Choose your framework
 
-<Tabs items={['Anthropic SDK', 'Claude Agent SDK', 'OpenAI Agents', 'Vercel AI SDK', 'Mastra', 'OpenAI']}>
+<Tabs>
 
-<Tab value="Anthropic SDK">
+<Tab title="Anthropic SDK">
 
 Uses native tool use via the Anthropic TypeScript SDK. `toolRunner` handles the tool-call loop automatically.
 
@@ -36,7 +36,7 @@ Uses native tool use via the Anthropic TypeScript SDK. `toolRunner` handles the 
 npm install @anthropic-ai/sdk
 ```
 
-```ts title="agent.ts"
+```ts agent.ts
 import Anthropic from '@anthropic-ai/sdk';
 import { AnthropicProvider } from '@corsair-dev/mcp';
 import { corsair } from './corsair';
@@ -64,7 +64,7 @@ for (const block of message.content) {
 
 </Tab>
 
-<Tab value="Claude Agent SDK">
+<Tab title="Claude Agent SDK">
 
 Uses the Claude Agent SDK with an in-process MCP server. No HTTP transport needed.
 
@@ -72,7 +72,7 @@ Uses the Claude Agent SDK with an in-process MCP server. No HTTP transport neede
 npm install @anthropic-ai/claude-agent-sdk
 ```
 
-```ts title="agent.ts"
+```ts agent.ts
 import { createSdkMcpServer, query } from '@anthropic-ai/claude-agent-sdk';
 import { ClaudeProvider } from '@corsair-dev/mcp';
 import { corsair } from './corsair';
@@ -98,7 +98,7 @@ for await (const event of stream) {
 
 </Tab>
 
-<Tab value="OpenAI Agents">
+<Tab title="OpenAI Agents">
 
 Uses the OpenAI Agents SDK. Pass the `tool` function from `@openai/agents` so the provider wraps each Corsair tool in the correct format.
 
@@ -106,7 +106,7 @@ Uses the OpenAI Agents SDK. Pass the `tool` function from `@openai/agents` so th
 npm install @openai/agents
 ```
 
-```ts title="agent.ts"
+```ts agent.ts
 import { OpenAIAgentsProvider } from '@corsair-dev/mcp';
 import { Agent, run, tool } from '@openai/agents';
 import { corsair } from './corsair';
@@ -130,7 +130,7 @@ console.log(result.finalOutput);
 
 </Tab>
 
-<Tab value="Vercel AI SDK">
+<Tab title="Vercel AI SDK">
 
 Vercel AI connects over HTTP — you run Corsair as an MCP server and the client connects to it.
 
@@ -140,7 +140,7 @@ npm install ai @ai-sdk/mcp @ai-sdk/anthropic
 
 **Server** — expose Corsair as an HTTP endpoint:
 
-```ts title="server.ts"
+```ts server.ts
 import express from 'express';
 import { createBaseMcpServer, createMcpRouter } from '@corsair-dev/mcp';
 import { corsair } from './corsair';
@@ -153,7 +153,7 @@ app.listen(3000, () => console.log('MCP server on :3000'));
 
 **Client** — connect from your Vercel AI app:
 
-```ts title="agent.ts"
+```ts agent.ts
 import { generateText } from 'ai';
 import { anthropic } from '@ai-sdk/anthropic';
 import { createVercelAiMcpClient } from '@corsair-dev/mcp';
@@ -177,7 +177,7 @@ await client.close();
 
 </Tab>
 
-<Tab value="Mastra">
+<Tab title="Mastra">
 
 Uses standard Mastra `createTool` instances.
 
@@ -185,7 +185,7 @@ Uses standard Mastra `createTool` instances.
 npm install @mastra/core @ai-sdk/anthropic
 ```
 
-```ts title="agent.ts"
+```ts agent.ts
 import { Agent } from '@mastra/core/agent';
 import { anthropic } from '@ai-sdk/anthropic';
 import { MastraProvider } from '@corsair-dev/mcp';
@@ -211,7 +211,7 @@ console.log(response.text);
 
 </Tab>
 
-<Tab value="OpenAI">
+<Tab title="OpenAI">
 
 OpenAI's MCP support also connects over HTTP. Run the same Express server as Vercel AI and pass the config to the OpenAI client.
 
@@ -221,7 +221,7 @@ npm install openai
 
 **Server** — same as Vercel AI:
 
-```ts title="server.ts"
+```ts server.ts
 import express from 'express';
 import { createBaseMcpServer, createMcpRouter } from '@corsair-dev/mcp';
 import { corsair } from './corsair';
@@ -234,7 +234,7 @@ app.listen(3000);
 
 **Client:**
 
-```ts title="agent.ts"
+```ts agent.ts
 import OpenAI from 'openai';
 import { getOpenAIMcpConfig } from '@corsair-dev/mcp';
 
@@ -275,25 +275,17 @@ No hard-coding required. As you add plugins, the agent discovers the new endpoin
 
 ## What's next
 
-<Cards>
-  <Card
-    title="Quick Start"
-    description="Full walkthrough — install, credentials, first agent prompt."
-    href="/quick-start"
-  />
-  <Card
-    title="More Plugins"
-    description="Slack, Linear, Gmail, HubSpot, and 30+ more. Same pattern, just add to plugins[]."
-    href="/plugins/slack"
-  />
-  <Card
-    title="Webhooks"
-    description="React to real-time events from GitHub, Slack, and more."
-    href="/webhooks"
-  />
-  <Card
-    title="Multi-Tenancy"
-    description="Building a SaaS product? Scope every call per user with withTenant()."
-    href="/multi-tenancy"
-  />
-</Cards>
+<CardGroup cols={2}>
+  <Card title="Quick Start" href="/quick-start">
+    Full walkthrough — install, credentials, first agent prompt.
+  </Card>
+  <Card title="More Plugins" href="/plugins/slack">
+    Slack, Linear, Gmail, HubSpot, and 30+ more. Same pattern, just add to plugins[].
+  </Card>
+  <Card title="Webhooks" href="/webhooks">
+    React to real-time events from GitHub, Slack, and more.
+  </Card>
+  <Card title="Multi-Tenancy" href="/multi-tenancy">
+    Building a SaaS product? Scope every call per user with withTenant().
+  </Card>
+</CardGroup>

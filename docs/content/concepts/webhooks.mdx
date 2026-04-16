@@ -5,7 +5,7 @@ description: One endpoint for all webhooks, automatically routed and verified.
 
 Corsair consolidates all incoming webhooks to a single URL. It identifies which integration and service each webhook belongs to, then processes and updates your data automatically.
 
-```ts title="webhook-handler.ts"
+```ts webhook-handler.ts
 import { processWebhook } from "corsair";
 import { corsair } from "./corsair";
 
@@ -24,9 +24,9 @@ export async function handleWebhook(req: Request) {
 }
 ```
 
-<Callout type="info">
+<Info>
 Note that webhooks are not guaranteed by most senders. If your project requires completely fresh data, add polling for that integration using an [api call](/docs/api).
-</Callout>
+</Info>
 
 ## Automatic Routing
 
@@ -69,7 +69,7 @@ Corsair automatically verifies webhook signatures using your stored webhook cred
 
 Hooks let you add custom logic that runs every time a webhook is processed. This guarantees your code executes — even when Corsair handles the database update automatically.
 
-```ts title="corsair.ts"
+```ts corsair.ts
 slack({
     authType: "api_key",
     credentials: { botToken: "xoxb-..." },
@@ -101,7 +101,7 @@ Before hooks run before the webhook is processed. Use them to:
 - Modify the payload before processing
 - Skip processing by throwing an error
 
-```ts title="corsair.ts"
+```ts corsair.ts
 webhookHooks: {
     messages: {
         message: {
@@ -126,7 +126,7 @@ After hooks run after the webhook is processed and the database is updated. Use 
 - Send data to external services
 - Log processed webhooks
 
-```ts title="corsair.ts"
+```ts corsair.ts
 webhookHooks: {
     channels: {
         created: {
@@ -157,7 +157,7 @@ webhookHooks: {
 
 The key benefit of webhook hooks is they **always run** when that webhook type is processed. Unlike manually handling webhooks where you might forget to add logging or notifications, hooks ensure your logic is centralized and guaranteed to execute.
 
-```ts title="corsair.ts"
+```ts corsair.ts
 webhookHooks: {
     issues: {
         update: {

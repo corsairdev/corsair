@@ -5,17 +5,17 @@ description: Twitter API IO webhook event handling in Corsair.
 
 The TwitterApiIO plugin includes webhook handlers for tweet creation and filter match events.
 
-<Callout type="info">
+<Info>
 **New to Corsair?** Learn about [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
-</Callout>
+</Info>
 
-<Callout>
+<Note>
 **Full Implementation:** See the [TwitterApiIO plugin source code](https://github.com/corsairdev/corsair/tree/main/packages/corsair/plugins/twitterapiio).
-</Callout>
+</Note>
 
 ## Setup
 
-```ts title="app/api/webhook/route.ts"
+```ts app/api/webhook/route.ts
 import { processWebhook } from "corsair";
 import { corsair } from "@/server/corsair";
 
@@ -38,7 +38,7 @@ Fires when a monitored user posts a new tweet.
 
 **Example:**
 
-```ts title="corsair.ts"
+```ts corsair.ts
 twitterapiio({
     webhookHooks: {
         "tweets.created": async (event) => {
@@ -59,7 +59,7 @@ Fires when a tweet matches a configured filter rule.
 
 **Example:**
 
-```ts title="corsair.ts"
+```ts corsair.ts
 twitterapiio({
     webhookHooks: {
         "tweets.filterMatch": async (event) => {

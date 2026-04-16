@@ -5,13 +5,13 @@ description: Built-in and custom error handling for the GitHub plugin.
 
 The GitHub plugin includes comprehensive error handling with built-in handlers for common error scenarios. You can also add custom error handlers to handle specific cases in your application.
 
-<Callout type="info">
+<Info>
 **New to Corsair?** Learn about core concepts like [error handling](/concepts/error-handling) and [retry strategies](/concepts/error-handling) before customizing error handlers.
-</Callout>
+</Info>
 
-<Callout>
+<Note>
 **Full Implementation:** For the complete, up-to-date error handler implementations, see the [GitHub plugin source code](https://github.com/corsairdev/corsair/tree/main/packages/corsair/plugins/github) on GitHub.
-</Callout>
+</Note>
 
 ## Built-in Error Handlers
 
@@ -166,7 +166,7 @@ You can add custom error handlers to handle specific scenarios in your applicati
 
 ### Basic Custom Handler
 
-```ts title="corsair.ts"
+```ts corsair.ts
 github({
     errorHandlers: {
         CUSTOM_ERROR: {
@@ -187,7 +187,7 @@ github({
 
 ### Error Handler with Retry-After
 
-```ts title="corsair.ts"
+```ts corsair.ts
 github({
     errorHandlers: {
         SECONDARY_RATE_LIMIT: {
@@ -207,7 +207,7 @@ github({
 
 ### Conditional Retry Logic
 
-```ts title="corsair.ts"
+```ts corsair.ts
 github({
     errorHandlers: {
         REPOSITORY_ARCHIVED_ERROR: {
@@ -236,7 +236,7 @@ github({
 
 ### Multiple Custom Handlers
 
-```ts title="corsair.ts"
+```ts corsair.ts
 github({
     errorHandlers: {
         QUOTA_EXCEEDED: {

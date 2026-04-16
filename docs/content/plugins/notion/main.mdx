@@ -13,7 +13,7 @@ pnpm install @corsair-dev/notion
 
 Add the Notion plugin to your Corsair instance:
 
-```ts title="corsair.ts"
+```ts corsair.ts
 import { createCorsair } from "corsair";
 import { notion } from "@corsair-dev/notion";
 
@@ -63,7 +63,7 @@ pnpm corsair setup --notion webhook_signature=your-webhook-secret
 
 Alternatively, provide credentials directly in the config:
 
-```ts title="corsair.ts"
+```ts corsair.ts
 notion({
     key: process.env.NOTION_TOKEN,
     webhookSecret: process.env.NOTION_WEBHOOK_SECRET,
@@ -147,7 +147,7 @@ See [API Endpoints](/plugins/notion/api-endpoints) for the complete reference.
 
 Notion sends page lifecycle events to your webhook endpoint:
 
-```ts title="app/api/webhook/route.ts"
+```ts app/api/webhook/route.ts
 import { processWebhook } from "corsair";
 import { corsair } from "@/server/corsair";
 
@@ -187,7 +187,7 @@ await tenant.notion.api.databasePages.createDatabasePage({
 
 ### Example 1: Create a Task on New GitHub Issue
 
-```ts title="corsair.ts"
+```ts corsair.ts
 import { inngest } from "./inngest";
 
 export const corsair = createCorsair({
@@ -216,7 +216,7 @@ export const corsair = createCorsair({
 });
 ```
 
-```ts title="inngest/functions.ts"
+```ts inngest/functions.ts
 export const createNotionTask = inngest.createFunction(
     { id: "create-notion-task-from-issue" },
     { event: "github/issue-opened" },
@@ -237,7 +237,7 @@ export const createNotionTask = inngest.createFunction(
 
 ### Example 2: Update Notion on Page Created Webhook
 
-```ts title="corsair.ts"
+```ts corsair.ts
 export const corsair = createCorsair({
     plugins: [
         notion({
@@ -262,7 +262,7 @@ export const corsair = createCorsair({
 });
 ```
 
-```ts title="inngest/functions.ts"
+```ts inngest/functions.ts
 export const processNewPage = inngest.createFunction(
     { id: "process-new-notion-page" },
     { event: "notion/page-created" },

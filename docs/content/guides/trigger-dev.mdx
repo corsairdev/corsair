@@ -17,7 +17,7 @@ npm install @trigger.dev/sdk
 
 When a PagerDuty incident is created, use `before` to skip low-severity alerts, and `after` to trigger a background task that creates a GitHub issue and pages the on-call team in Slack.
 
-```ts title="corsair.ts"
+```ts corsair.ts
 import { notifyOnCall } from '@/trigger/functions';
 
 pagerduty({
@@ -47,7 +47,7 @@ pagerduty({
 })
 ```
 
-```ts title="trigger/functions.ts"
+```ts trigger/functions.ts
 import { task } from '@trigger.dev/sdk/v3';
 import { corsair } from '@/server/corsair';
 
@@ -86,7 +86,7 @@ export const notifyOnCall = task({
 
 When a new HubSpot contact is created, run a multi-step task that enriches the contact, sends a personalized welcome email, and notifies the sales team in Slack.
 
-```ts title="corsair.ts"
+```ts corsair.ts
 import { onboardNewContact } from '@/trigger/functions';
 
 hubspot({
@@ -115,7 +115,7 @@ hubspot({
 })
 ```
 
-```ts title="trigger/functions.ts"
+```ts trigger/functions.ts
 import { task, wait } from '@trigger.dev/sdk/v3';
 import { corsair } from '@/server/corsair';
 
@@ -166,7 +166,7 @@ export const onboardNewContact = task({
 
 Every Friday at 5 PM, pull unresolved Sentry issues from Corsair's database and post a weekly error report to Slack so the team can triage before the weekend.
 
-```ts title="trigger/functions.ts"
+```ts trigger/functions.ts
 import { schedules } from '@trigger.dev/sdk/v3';
 import { corsair } from '@/server/corsair';
 
@@ -208,33 +208,25 @@ export const weeklyErrorReport = schedules.task({
 });
 ```
 
-<Callout type="info">
+<Info>
 Register scheduled tasks in your Trigger.dev worker entry point. They're automatically deployed and managed — no separate cron infrastructure needed.
-</Callout>
+</Info>
 
 ---
 
 ## What's next
 
-<Cards>
-  <Card
-    title="Inngest"
-    description="Durable step functions triggered from Corsair webhooks."
-    href="/guides/inngest"
-  />
-  <Card
-    title="Temporal"
-    description="Start Temporal workflows from Corsair webhook events."
-    href="/guides/temporal"
-  />
-  <Card
-    title="Hatchet"
-    description="Event-driven workflows with Hatchet."
-    href="/guides/hatchet"
-  />
-  <Card
-    title="Workflows guide"
-    description="Chain webhook events without a job queue."
-    href="/guides/workflows"
-  />
-</Cards>
+<CardGroup cols={2}>
+  <Card title="Inngest" href="/guides/inngest">
+    Durable step functions triggered from Corsair webhooks.
+  </Card>
+  <Card title="Temporal" href="/guides/temporal">
+    Start Temporal workflows from Corsair webhook events.
+  </Card>
+  <Card title="Hatchet" href="/guides/hatchet">
+    Event-driven workflows with Hatchet.
+  </Card>
+  <Card title="Workflows guide" href="/guides/workflows">
+    Chain webhook events without a job queue.
+  </Card>
+</CardGroup>

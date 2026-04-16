@@ -17,7 +17,7 @@ npm install @temporalio/client @temporalio/workflow @temporalio/activity @tempor
 
 When a Stripe payment fails, start a Temporal workflow that notifies the customer via Resend. One activity, one action — the minimal trigger pattern.
 
-```ts title="corsair.ts"
+```ts corsair.ts
 import { temporalClient } from '@/temporal/client';
 import { handleFailedPayment } from '@/temporal/workflows';
 
@@ -45,7 +45,7 @@ stripe({
 })
 ```
 
-```ts title="temporal/workflows.ts"
+```ts temporal/workflows.ts
 import { proxyActivities } from '@temporalio/workflow';
 import type * as activities from './activities';
 
@@ -67,7 +67,7 @@ export async function handleFailedPayment(input: FailedPaymentInput): Promise<vo
 }
 ```
 
-```ts title="temporal/activities.ts"
+```ts temporal/activities.ts
 import { corsair } from '@/server/corsair';
 import type { FailedPaymentInput } from './workflows';
 
@@ -91,7 +91,7 @@ export async function sendFailureEmail({ customerId, amount, currency, tenantId 
 
 When a new trial contact is created in HubSpot, send a welcome email immediately, wait 3 days, then check if they upgraded — if not, send a follow-up. This is the kind of time-delayed sequence that makes Temporal worth reaching for: the `sleep` is durable across restarts, no cron or external scheduler needed.
 
-```ts title="corsair.ts"
+```ts corsair.ts
 hubspot({
     webhookHooks: {
         contacts: {
@@ -121,7 +121,7 @@ hubspot({
 })
 ```
 
-```ts title="temporal/workflows.ts"
+```ts temporal/workflows.ts
 import { proxyActivities, sleep } from '@temporalio/workflow';
 import type * as activities from './activities';
 
@@ -162,7 +162,7 @@ export async function trialOnboarding(input: TrialOnboardingInput): Promise<void
 }
 ```
 
-```ts title="temporal/activities.ts"
+```ts temporal/activities.ts
 import { corsair } from '@/server/corsair';
 import type { TrialOnboardingInput } from './workflows';
 
@@ -209,7 +209,7 @@ export async function sendTrialEndingEmail({ email, firstName, tenantId }: Trial
 
 Create a Temporal schedule that runs every morning and posts a standup digest to Slack — all open Linear issues, pulled from Corsair's local database.
 
-```ts title="temporal/schedules.ts"
+```ts temporal/schedules.ts
 import { Client } from '@temporalio/client';
 import { morningStandupWorkflow } from './workflows';
 
@@ -229,7 +229,7 @@ await client.schedule.create({
 });
 ```
 
-```ts title="temporal/workflows.ts"
+```ts temporal/workflows.ts
 import { proxyActivities } from '@temporalio/workflow';
 import type * as activities from './activities';
 
@@ -242,7 +242,7 @@ export async function morningStandupWorkflow(): Promise<void> {
 }
 ```
 
-```ts title="temporal/activities.ts"
+```ts temporal/activities.ts
 import { corsair } from '@/server/corsair';
 
 export async function postStandupDigest() {
@@ -273,33 +273,25 @@ export async function postStandupDigest() {
 }
 ```
 
-<Callout type="info">
+<Info>
 Use `client.schedule.create()` once at server startup or in a migration script. Subsequent restarts won't duplicate the schedule — Temporal deduplicates by `scheduleId`.
-</Callout>
+</Info>
 
 ---
 
 ## What's next
 
-<Cards>
-  <Card
-    title="Inngest"
-    description="Durable step functions triggered from Corsair webhooks."
-    href="/guides/inngest"
-  />
-  <Card
-    title="Trigger.dev"
-    description="Background tasks and scheduled jobs with Trigger.dev."
-    href="/guides/trigger-dev"
-  />
-  <Card
-    title="Hatchet"
-    description="Event-driven workflows with Hatchet."
-    href="/guides/hatchet"
-  />
-  <Card
-    title="Workflows guide"
-    description="Chain webhook events without a job queue."
-    href="/guides/workflows"
-  />
-</Cards>
+<CardGroup cols={2}>
+  <Card title="Inngest" href="/guides/inngest">
+    Durable step functions triggered from Corsair webhooks.
+  </Card>
+  <Card title="Trigger.dev" href="/guides/trigger-dev">
+    Background tasks and scheduled jobs with Trigger.dev.
+  </Card>
+  <Card title="Hatchet" href="/guides/hatchet">
+    Event-driven workflows with Hatchet.
+  </Card>
+  <Card title="Workflows guide" href="/guides/workflows">
+    Chain webhook events without a job queue.
+  </Card>
+</CardGroup>

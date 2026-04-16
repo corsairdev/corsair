@@ -5,7 +5,7 @@ description: The integration layer for AI agents.
 
 Corsair gives your agent safe access to hundreds of integrations. It handles all of the plumbing — auth, data storage, webhooks, token refresh, rate limiting — so the only code you write is the part specific to your use case.
 
-```ts title="corsair.ts"
+```ts corsair.ts
 import { createCorsair, slack, github, gmail, linear, googlecalendar } from 'corsair';
 
 export const corsair = createCorsair({

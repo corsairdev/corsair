@@ -5,7 +5,7 @@ description: OAuth, API keys, and bot tokens — handled automatically.
 
 Corsair handles authentication for production-grade applications. Whether you need OAuth flows, API keys, or bot tokens, Corsair manages credentials across all your tenants.
 
-```ts title="corsair.ts"
+```ts corsair.ts
 import { createCorsair } from "corsair";
 import { slack, linear } from "corsair/plugins";
 
@@ -75,7 +75,7 @@ Corsair uses envelope encryption to protect credentials:
 3. All credentials are encrypted with the connection's DEK
 4. The DEK is encrypted with your KEK
 
-```bash title=".env"
+```bash .env
 CORSAIR_KEK=your-key-encryption-key
 ```
 
@@ -85,7 +85,7 @@ Each connection has a different DEK, so compromising one connection's key doesn'
 
 If you're using a Key Management Service (AWS KMS, Google Cloud KMS, etc.), you can opt out of Corsair's built-in encryption.
 
-```ts title="corsair.ts"
+```ts corsair.ts
 export const corsair = createCorsair({
     plugins: [
         slack({
@@ -103,7 +103,7 @@ export const corsair = createCorsair({
 
 With multi-tenancy, each tenant has their own credentials stored securely.
 
-```ts title="example.ts"
+```ts example.ts
 // Tenant A's Slack token
 const tenantA = corsair.withTenant("tenant_a");
 await tenantA.slack.api.messages.post({ ... });

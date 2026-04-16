@@ -5,17 +5,17 @@ description: Spotify webhook event handling in Corsair.
 
 The Spotify plugin includes webhook infrastructure for handling Spotify events.
 
-<Callout type="info">
+<Info>
 **New to Corsair?** Learn about [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
-</Callout>
+</Info>
 
-<Callout>
+<Note>
 **Full Implementation:** See the [Spotify plugin source code](https://github.com/corsairdev/corsair/tree/main/packages/corsair/plugins/spotify).
-</Callout>
+</Note>
 
 ## Setup
 
-```ts title="app/api/webhook/route.ts"
+```ts app/api/webhook/route.ts
 import { processWebhook } from "corsair";
 import { corsair } from "@/server/corsair";
 
@@ -36,7 +36,7 @@ Spotify's current webhook support is limited. The plugin provides webhook infras
 
 For most Spotify integration use cases, the recommended approach is to poll the API on a schedule using a background job system:
 
-```ts title="inngest/functions.ts"
+```ts inngest/functions.ts
 // Poll currently playing track every minute
 export const pollNowPlaying = inngest.createFunction(
     { id: "poll-spotify-now-playing" },

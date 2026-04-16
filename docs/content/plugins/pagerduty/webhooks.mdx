@@ -5,17 +5,17 @@ description: All available PagerDuty webhook events for handling incident lifecy
 
 The PagerDuty plugin handles incoming webhook events from PagerDuty. Webhooks are identified by the `x-pagerduty-signature` header.
 
-<Callout type="info">
+<Info>
 **New to Corsair?** Learn about [webhooks](/concepts/webhooks), [hooks](/concepts/hooks), and [multi-tenancy](/concepts/multi-tenancy).
-</Callout>
+</Info>
 
-<Callout>
+<Note>
 **Full Implementation:** See the [PagerDuty plugin source code](https://github.com/corsairdev/corsair/tree/main/packages/corsair/plugins/pagerduty).
-</Callout>
+</Note>
 
 ## Setup
 
-```ts title="app/api/webhook/route.ts"
+```ts app/api/webhook/route.ts
 import { processWebhook } from "corsair";
 import { corsair } from "@/server/corsair";
 
@@ -30,7 +30,7 @@ export async function POST(request: Request) {
 
 Configure your webhook secret:
 
-```ts title="corsair.ts"
+```ts corsair.ts
 pagerduty({
     webhookSecret: process.env.PAGERDUTY_WEBHOOK_SECRET, // [!code highlight]
 })
