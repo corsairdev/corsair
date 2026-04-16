@@ -77,6 +77,13 @@
         "tab": "Plugins",
         "groups": [
           {
+            "group": "Build Your Own",
+            "pages": [
+              "content/guides/create-your-own-plugin",
+              "content/guides/plugin-credentials"
+            ]
+          },
+          {
             "group": "Plugins",
             "pages": [
               "content/plugins/airtable/main",
@@ -114,13 +121,6 @@
               "content/plugins/trello/main",
               "content/plugins/typeform/main",
               "content/plugins/zoom/main"
-            ]
-          },
-          {
-            "group": "Build Your Own",
-            "pages": [
-              "content/guides/create-your-own-plugin",
-              "content/guides/plugin-credentials"
             ]
           }
         ]

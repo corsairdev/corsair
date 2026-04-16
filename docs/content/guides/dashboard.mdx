@@ -9,7 +9,10 @@ By the end of this guide you'll have a working Next.js app with a live Google Ca
 
 <Steps>
 
-<Step title="Scaffold the T3 app">
+<Step>
+
+## Scaffold the T3 app
+
 <CodeGroup>
 ```bash npm
 npm create t3-app@latest my-cal-dashboard -- --CI --trpc --tailwind --appRouter
@@ -31,7 +34,10 @@ cd my-cal-dashboard
 
 </Step>
 
-<Step title="Install">
+<Step>
+
+## Install
+
 <CodeGroup>
 ```bash npm
 npm install corsair @corsair-dev/googlecalendar
@@ -49,7 +55,10 @@ bun add corsair @corsair-dev/googlecalendar
 
 </Step>
 
-<Step title="Generate your encryption key">
+<Step>
+
+## Generate your encryption key
+
 Corsair encrypts stored credentials with a Key Encryption Key. Click **Regenerate** for a new one, or run the command yourself:
 
 <GenerateKEK />
@@ -61,7 +70,10 @@ If you lose it, you lose access to all stored credentials. Treat it like a root 
 
 </Step>
 
-<Step title="Migrate the database">
+<Step>
+
+## Migrate the database
+
 Corsair needs five tables. Install the driver, then run the migration:
 
 <CodeGroup>
@@ -164,7 +176,10 @@ sqlite3 corsair.db < migration.sql
 
 </Step>
 
-<Step title="Create src/server/corsair.ts">
+<Step>
+
+## Create src/server/corsair.ts
+
 ```ts src/server/corsair.ts
 import 'dotenv/config';
 import Database from 'better-sqlite3';
@@ -182,7 +197,10 @@ export const corsair = createCorsair({
 
 </Step>
 
-<Step title="Connect Google Calendar (optional)">
+<Step>
+
+## Connect Google Calendar
+
 Google Calendar uses OAuth2. You'll need a GCP OAuth app first:
 
 1. Go to the [Google Cloud Console](https://console.cloud.google.com/), create a project, and enable the **Google Calendar API**.
@@ -260,7 +278,10 @@ Open the `authUrl` printed in the terminal. Once you authorize in the browser, t
 
 </Step>
 
-<Step title="Vibe code the dashboard (optional)">
+<Step>
+
+## Vibe code the dashboard
+
 Paste this prompt into Claude, Cursor, or any AI coding agent:
 
 ```

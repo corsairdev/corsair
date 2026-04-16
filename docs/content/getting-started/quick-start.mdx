@@ -7,7 +7,10 @@ import { GenerateKEK } from '/snippets/generate-kek.mdx';
 
 <Steps>
 
-<Step title="Install">
+<Step>
+
+## Install
+
 <CodeGroup>
 ```bash npm
 npm install corsair
@@ -25,7 +28,10 @@ bun add corsair
 
 </Step>
 
-<Step title="Generate your encryption key">
+<Step>
+
+## Generate your encryption key
+
 Corsair encrypts every stored credential with a Key Encryption Key (KEK). Click **Generate** to create one, or run the command yourself:
 
 <GenerateKEK />
@@ -37,7 +43,10 @@ If you lose it, you lose access to all stored credentials. Treat it like a root 
 
 </Step>
 
-<Step title="Migrate the database">
+<Step>
+
+## Migrate the database
+
 Corsair needs five tables. Run this once, then you're done.
 
 <Tabs>
@@ -257,7 +266,10 @@ psql $DATABASE_URL -f migration.sql
 
 </Step>
 
-<Step title="Install GitHub plugin and create corsair.ts">
+<Step>
+
+## Install GitHub plugin and create corsair.ts
+
 <CodeGroup>
 ```bash npm
 npm install @corsair-dev/github
@@ -347,7 +359,9 @@ import Database from 'better-sqlite3';
 
 </Step>
 
-<Step title="Optional: Add your GitHub token and run setup">
+<Step>
+
+## Add your GitHub token and run setup
 
 Use Corsair with any integration. Here's an example of how to get started with Github.
 
@@ -416,7 +430,10 @@ Corsair stores your token, creates the database rows, and fetches your GitHub da
 
 </Step>
 
-<Step title="Interact with Corsair">
+<Step>
+
+## Interact with Corsair
+
 There's multiple ways to use Corsair. Here's three easy ways:
 
 <Tabs>
