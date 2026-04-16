@@ -769,6 +769,12 @@ async function main() {
 			process.exit(1);
 		}
 		const result = corsair.list_operations({ plugin, type }) as unknown;
+		if (type === 'db') {
+			console.log(
+				'[#corsair]: NOTE: Every DB query listed here has both .search() and .list() methods available.',
+			);
+			console.log('');
+		}
 		if (typeof result === 'string') {
 			console.log(result);
 		} else if (Array.isArray(result)) {
@@ -888,5 +894,8 @@ const isMainModule =
 	import.meta.url.endsWith('/index.js');
 
 if (isMainModule) {
-	main();
+	main().then(() => process.exit(0)).catch((e) => {
+		console.error(e);
+		process.exit(1);
+	});
 }
