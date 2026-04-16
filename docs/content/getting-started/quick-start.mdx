@@ -169,20 +169,6 @@ CREATE TABLE IF NOT EXISTS corsair_events (
     status TEXT,
     FOREIGN KEY (account_id) REFERENCES corsair_accounts(id)
 );
-
-CREATE TABLE IF NOT EXISTS corsair_permissions (
-    id TEXT PRIMARY KEY,
-    created_at INTEGER NOT NULL,
-    updated_at INTEGER NOT NULL,
-    token TEXT NOT NULL,
-    plugin TEXT NOT NULL,
-    endpoint TEXT NOT NULL,
-    args TEXT NOT NULL,
-    tenant_id TEXT NOT NULL DEFAULT 'default',
-    status TEXT NOT NULL DEFAULT 'pending',
-    expires_at TEXT NOT NULL,
-    error TEXT NULL
-);
 ```
 
 </Accordion>
@@ -194,6 +180,9 @@ sqlite3 corsair.db < migration.sql
 
   </Tab>
   <Tab title="PostgreSQL">
+
+<Tabs>
+  <Tab title="SQL">
 
 <AccordionGroup>
 <Accordion title="View migration SQL">
@@ -238,20 +227,6 @@ CREATE TABLE IF NOT EXISTS corsair_events (
     payload JSONB NOT NULL DEFAULT '{}',
     status TEXT
 );
-
-CREATE TABLE IF NOT EXISTS corsair_permissions (
-    id TEXT PRIMARY KEY,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    token TEXT NOT NULL,
-    plugin TEXT NOT NULL,
-    endpoint TEXT NOT NULL,
-    args TEXT NOT NULL,
-    tenant_id TEXT NOT NULL DEFAULT 'default',
-    status TEXT NOT NULL DEFAULT 'pending',
-    expires_at TEXT NOT NULL,
-    error TEXT NULL
-);
 ```
 
 </Accordion>
@@ -260,6 +235,189 @@ CREATE TABLE IF NOT EXISTS corsair_permissions (
 ```bash
 psql $DATABASE_URL -f migration.sql
 ```
+
+<AccordionGroup>
+<Accordion title="Add Zod schemas (recommended for agents)">
+
+```ts src/server/db/schema.ts
+import { z } from 'zod';
+
+export const corsairIntegrationSchema = z.object({
+    id: z.string(),
+    created_at: z.string(),
+    updated_at: z.string(),
+    name: z.string(),
+    config: z.record(z.unknown()),
+    dek: z.string().nullable(),
+});
+
+export const corsairAccountSchema = z.object({
+    id: z.string(),
+    created_at: z.string(),
+    updated_at: z.string(),
+    tenant_id: z.string(),
+    integration_id: z.string(),
+    config: z.record(z.unknown()),
+    dek: z.string().nullable(),
+});
+
+export const corsairEntitySchema = z.object({
+    id: z.string(),
+    created_at: z.string(),
+    updated_at: z.string(),
+    account_id: z.string(),
+    entity_id: z.string(),
+    entity_type: z.string(),
+    version: z.string(),
+    data: z.record(z.unknown()),
+});
+
+export const corsairEventSchema = z.object({
+    id: z.string(),
+    created_at: z.string(),
+    updated_at: z.string(),
+    account_id: z.string(),
+    event_type: z.string(),
+    payload: z.record(z.unknown()),
+    status: z.string().nullable(),
+});
+```
+
+</Accordion>
+</AccordionGroup>
+
+  </Tab>
+  <Tab title="Drizzle">
+
+<AccordionGroup>
+<Accordion title="View Drizzle schema">
+
+```ts src/server/db/schema.ts
+import { pgTable, text, jsonb, timestamp } from 'drizzle-orm/pg-core';
+
+export const corsairIntegrations = pgTable('corsair_integrations', {
+    id: text('id').primaryKey(),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+    name: text('name').notNull(),
+    config: jsonb('config').notNull().default({}),
+    dek: text('dek'),
+});
+
+export const corsairAccounts = pgTable('corsair_accounts', {
+    id: text('id').primaryKey(),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+    tenantId: text('tenant_id').notNull(),
+    integrationId: text('integration_id').notNull().references(() => corsairIntegrations.id),
+    config: jsonb('config').notNull().default({}),
+    dek: text('dek'),
+});
+
+export const corsairEntities = pgTable('corsair_entities', {
+    id: text('id').primaryKey(),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+    accountId: text('account_id').notNull().references(() => corsairAccounts.id),
+    entityId: text('entity_id').notNull(),
+    entityType: text('entity_type').notNull(),
+    version: text('version').notNull(),
+    data: jsonb('data').notNull().default({}),
+});
+
+export const corsairEvents = pgTable('corsair_events', {
+    id: text('id').primaryKey(),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+    accountId: text('account_id').notNull().references(() => corsairAccounts.id),
+    eventType: text('event_type').notNull(),
+    payload: jsonb('payload').notNull().default({}),
+    status: text('status'),
+});
+```
+
+</Accordion>
+</AccordionGroup>
+
+Then push the schema to your database:
+
+```bash
+npx drizzle-kit push
+```
+
+  </Tab>
+  <Tab title="Prisma">
+
+<AccordionGroup>
+<Accordion title="View Prisma schema">
+
+```prisma schema.prisma
+model CorsairIntegration {
+  id        String           @id
+  createdAt DateTime         @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt DateTime         @updatedAt @map("updated_at") @db.Timestamptz
+  name      String
+  config    Json             @default("{}")
+  dek       String?
+  accounts  CorsairAccount[]
+
+  @@map("corsair_integrations")
+}
+
+model CorsairAccount {
+  id            String             @id
+  createdAt     DateTime           @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt     DateTime           @updatedAt @map("updated_at") @db.Timestamptz
+  tenantId      String             @map("tenant_id")
+  integrationId String             @map("integration_id")
+  config        Json               @default("{}")
+  dek           String?
+  integration   CorsairIntegration @relation(fields: [integrationId], references: [id])
+  entities      CorsairEntity[]
+  events        CorsairEvent[]
+
+  @@map("corsair_accounts")
+}
+
+model CorsairEntity {
+  id         String         @id
+  createdAt  DateTime       @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt  DateTime       @updatedAt @map("updated_at") @db.Timestamptz
+  accountId  String         @map("account_id")
+  entityId   String         @map("entity_id")
+  entityType String         @map("entity_type")
+  version    String
+  data       Json           @default("{}")
+  account    CorsairAccount @relation(fields: [accountId], references: [id])
+
+  @@map("corsair_entities")
+}
+
+model CorsairEvent {
+  id        String         @id
+  createdAt DateTime       @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt DateTime       @updatedAt @map("updated_at") @db.Timestamptz
+  accountId String         @map("account_id")
+  eventType String         @map("event_type")
+  payload   Json           @default("{}")
+  status    String?
+  account   CorsairAccount @relation(fields: [accountId], references: [id])
+
+  @@map("corsair_events")
+}
+```
+
+</Accordion>
+</AccordionGroup>
+
+Then run the migration:
+
+```bash
+npx prisma migrate dev
+```
+
+  </Tab>
+</Tabs>
 
   </Tab>
 </Tabs>
@@ -308,6 +466,9 @@ export const corsair = createCorsair({
 </Tab>
 <Tab title="PostgreSQL">
 
+<Tabs>
+<Tab title="SQL">
+
 ```ts src/server/corsair.ts
 import 'dotenv/config';
 import { Pool } from 'pg';
@@ -322,6 +483,47 @@ export const corsair = createCorsair({
     kek: process.env.CORSAIR_KEK!,
 });
 ```
+
+</Tab>
+<Tab title="Drizzle">
+
+```ts src/server/corsair.ts
+import 'dotenv/config';
+import { Pool } from 'pg';
+import { drizzle } from 'drizzle-orm/node-postgres';
+import { createCorsair } from 'corsair';
+import { github } from '@corsair-dev/github';
+
+const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+const db = drizzle(pool);
+
+export const corsair = createCorsair({
+    plugins: [github()],
+    database: db,
+    kek: process.env.CORSAIR_KEK!,
+});
+```
+
+</Tab>
+<Tab title="Prisma">
+
+```ts src/server/corsair.ts
+import 'dotenv/config';
+import { PrismaClient } from '@prisma/client';
+import { createCorsair } from 'corsair';
+import { github } from '@corsair-dev/github';
+
+const db = new PrismaClient();
+
+export const corsair = createCorsair({
+    plugins: [github()],
+    database: db,
+    kek: process.env.CORSAIR_KEK!,
+});
+```
+
+</Tab>
+</Tabs>
 
 </Tab>
 </Tabs>

@@ -151,20 +151,6 @@ CREATE TABLE IF NOT EXISTS corsair_events (
     status TEXT,
     FOREIGN KEY (account_id) REFERENCES corsair_accounts(id)
 );
-
-CREATE TABLE IF NOT EXISTS corsair_permissions (
-    id TEXT PRIMARY KEY,
-    created_at INTEGER NOT NULL,
-    updated_at INTEGER NOT NULL,
-    token TEXT NOT NULL,
-    plugin TEXT NOT NULL,
-    endpoint TEXT NOT NULL,
-    args TEXT NOT NULL,
-    tenant_id TEXT NOT NULL DEFAULT 'default',
-    status TEXT NOT NULL DEFAULT 'pending',
-    expires_at TEXT NOT NULL,
-    error TEXT NULL
-);
 ```
 
 </Accordion>
