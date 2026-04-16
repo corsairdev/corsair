@@ -55,7 +55,7 @@ Want to see a message's history? Query this table to replay every change.
 
 Use the Corsair ORM to query data with full type safety.
 
-```ts title="example.ts"
+```ts example.ts
 // Find a specific resource
 const message = await corsair.slack.db.messages.findByResourceId("msg_123");
 
@@ -91,7 +91,7 @@ CREATE TABLE my_tickets (
 
 Corsair connects directly to PostgreSQL. Pass either a `pg` Pool or a Kysely instance.
 
-```ts title="corsair.ts"
+```ts corsair.ts
 import { Pool } from "pg";
 
 export const corsair = createCorsair({

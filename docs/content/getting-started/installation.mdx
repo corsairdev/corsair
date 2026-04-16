@@ -15,7 +15,7 @@ npm install corsair @corsair-dev/mcp better-sqlite3
 
 ## Environment Variables
 
-```bash title=".env"
+```bash .env
 CORSAIR_KEK=your-32-character-encryption-key
 ```
 
@@ -29,7 +29,7 @@ openssl rand -base64 32
 
 Corsair requires four tables. Run this migration once before starting:
 
-```sql title="migration.sql"
+```sql migration.sql
 CREATE TABLE IF NOT EXISTS corsair_integrations (
     id TEXT PRIMARY KEY,
     created_at INTEGER NOT NULL,
@@ -80,7 +80,7 @@ The full table schema types are defined in [`packages/corsair/db/index.ts`](http
 
 Create a `corsair.ts` file that configures your plugins and exports the instance.
 
-```ts title="corsair.ts"
+```ts corsair.ts
 import 'dotenv/config';
 import Database from 'better-sqlite3';
 import { createCorsair, slack, linear, gmail } from 'corsair';
@@ -109,7 +109,7 @@ Pass any plugins you want to use. Each plugin corresponds to one integration.
 npm install @anthropic-ai/sdk
 ```
 
-```ts title="agent.ts"
+```ts agent.ts
 import Anthropic from '@anthropic-ai/sdk';
 import { AnthropicProvider } from '@corsair-dev/mcp';
 import { corsair } from './corsair';

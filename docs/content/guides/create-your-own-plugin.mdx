@@ -3,16 +3,15 @@ title: Create Your Own Plugin
 description: Scaffold a new Corsair plugin with the generator, then let Claude Code fill in the implementation.
 ---
 
-<PluginPromptBanner />
+<Tip>
+**Use Claude Code to build your plugin.** Run the steps below in your terminal, then paste the prompt from the guide into Claude Code — it will fill in the real API calls for you.
+</Tip>
 
 The fastest way to build a custom plugin is to use the built-in generator. It scaffolds the full directory structure, wires up types, and registers your plugin — then you (or Claude Code) fill in the real API calls.
 
 <Steps>
 
-<Step>
-
-### Fork or clone the Corsair repo
-
+<Step title="Fork or clone the Corsair repo">
 Plugins live inside the monorepo alongside the core library.
 
 ```bash
@@ -23,10 +22,7 @@ pnpm install
 
 </Step>
 
-<Step>
-
-### Run the plugin generator
-
+<Step title="Run the plugin generator">
 Pass your plugin name in **PascalCase** — e.g. `Stripe`, `GoogleCalendar`, `HubSpot`.
 
 ```bash
@@ -66,10 +62,7 @@ It also automatically registers your plugin in `packages/corsair/core/constants.
 
 </Step>
 
-<Step>
-
-### Choose your auth type
-
+<Step title="Choose your auth type">
 Open `packages/<yourplugin>/index.ts` and update the auth type to match the API you're integrating with.
 
 **API key** (most REST APIs):
@@ -98,10 +91,7 @@ export const stripeAuthConfig = {
 
 </Step>
 
-<Step>
-
-### Let Claude Code implement it
-
+<Step title="Let Claude Code implement it">
 Point Claude Code at the API docs for your integration and let it do the heavy lifting.
 
 Open Claude Code in the repo root and give it a prompt like:
@@ -120,10 +110,7 @@ Claude Code can read the scaffold, understand the patterns from existing plugins
 
 </Step>
 
-<Step>
-
-### Typecheck and build
-
+<Step title="Typecheck and build">
 ```bash
 cd packages/<yourplugin>
 pnpm typecheck
@@ -132,7 +119,7 @@ pnpm build
 
 Fix any type errors, then register the plugin in your app the same way as any other Corsair plugin:
 
-```ts title="src/server/corsair.ts"
+```ts src/server/corsair.ts
 import { stripe } from '@corsair-dev/stripe';
 
 export const corsair = createCorsair({
@@ -144,15 +131,12 @@ export const corsair = createCorsair({
 
 </Step>
 
-<Step>
-
-### Test your plugin
-
+<Step title="Test your plugin">
 The repo includes a ready-made testing sandbox at `demo/testing/`. Add your plugin there and run scripts against it without setting up a new project.
 
 **1. Add your plugin as a workspace dependency in `demo/testing/package.json`:**
 
-```json title="demo/testing/package.json"
+```json demo/testing/package.json
 {
   "dependencies": {
     "@corsair-dev/stripe": "workspace:*"
@@ -164,7 +148,7 @@ Then run `pnpm install` from the repo root to link it.
 
 **3. Register your plugin in the test corsair instance:**
 
-```ts title="demo/testing/src/server/corsair.ts"
+```ts demo/testing/src/server/corsair.ts
 import { stripe } from '@corsair-dev/stripe';
 
 export const corsair = createCorsair({
@@ -179,7 +163,7 @@ export const corsair = createCorsair({
 
 **4. Write your test in `demo/testing/src/scripts/test-script.ts`:**
 
-```ts title="demo/testing/src/scripts/test-script.ts"
+```ts demo/testing/src/scripts/test-script.ts
 import { corsair } from '@/server/corsair';
 import 'dotenv/config';
 
@@ -198,7 +182,8 @@ cd demo/testing
 pnpm run test
 ```
 
-<Callout type="info" title="Build watch required">
+<Info>
+**Build watch required**
 In a separate terminal, run the build watcher in your plugin package so changes are picked up immediately:
 
 ```bash
@@ -207,7 +192,7 @@ pnpm run build --watch
 ```
 
 Without this, the test sandbox will be running stale compiled output.
-</Callout>
+</Info>
 
 </Step>
 

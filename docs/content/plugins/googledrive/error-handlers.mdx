@@ -5,13 +5,13 @@ description: Built-in and custom error handling for the Google Drive plugin.
 
 The Google Drive plugin includes comprehensive error handling with built-in handlers for common error scenarios. You can also add custom error handlers to handle specific cases in your application.
 
-<Callout type="info">
+<Info>
 **New to Corsair?** Learn about core concepts like [error handling](/concepts/error-handling) and [retry strategies](/concepts/error-handling) before customizing error handlers.
-</Callout>
+</Info>
 
-<Callout>
+<Note>
 **Full Implementation:** For the complete, up-to-date error handler implementations, see the [Google Drive plugin source code](https://github.com/corsairdev/corsair/tree/main/packages/corsair/plugins/googledrive) on GitHub.
-</Callout>
+</Note>
 
 ## Built-in Error Handlers
 
@@ -74,7 +74,7 @@ The Google Drive plugin automatically handles common error scenarios with sensib
 
 You can add custom error handlers to handle specific scenarios:
 
-```ts title="corsair.ts"
+```ts corsair.ts
 googledrive({
     errorHandlers: {
         CUSTOM_ERROR: {

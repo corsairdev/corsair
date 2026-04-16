@@ -5,13 +5,13 @@ description: Built-in and custom error handling for the Oura plugin.
 
 The Oura plugin includes built-in error handlers for common Oura API error scenarios.
 
-<Callout type="info">
+<Info>
 **New to Corsair?** Learn about [error handling](/concepts/error-handling) before customizing error handlers.
-</Callout>
+</Info>
 
-<Callout>
+<Note>
 **Full Implementation:** See the [Oura plugin source code](https://github.com/corsairdev/corsair/tree/main/packages/corsair/plugins/oura).
-</Callout>
+</Note>
 
 ## Built-in Error Handlers
 
@@ -74,7 +74,7 @@ await corsair.oura.api.summary.getSleep({
 
 ## Custom Error Handlers
 
-```ts title="corsair.ts"
+```ts corsair.ts
 oura({
     errorHandlers: {
         SYNC_IN_PROGRESS: {

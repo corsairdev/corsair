@@ -13,7 +13,7 @@ pnpm install @corsair-dev/spotify
 
 Add the Spotify plugin to your Corsair instance:
 
-```ts title="corsair.ts"
+```ts corsair.ts
 import { createCorsair } from "corsair";
 import { spotify } from "@corsair-dev/spotify";
 
@@ -58,7 +58,7 @@ The CLI will print an authorization URL — open it in a browser. Once you appro
 
 Alternatively, provide credentials directly in the config:
 
-```ts title="corsair.ts"
+```ts corsair.ts
 spotify({
     key: process.env.SPOTIFY_ACCESS_TOKEN,
 })
@@ -146,7 +146,7 @@ await tenant.spotify.api.player.resume({});
 
 ### Example 1: Build a Playlist from Search Results
 
-```ts title="inngest/functions.ts"
+```ts inngest/functions.ts
 export const buildPlaylist = inngest.createFunction(
     { id: "build-spotify-playlist" },
     { event: "app/playlist-requested" },
@@ -175,7 +175,7 @@ export const buildPlaylist = inngest.createFunction(
 
 ### Example 2: Morning Playlist Auto-Play
 
-```ts title="inngest/functions.ts"
+```ts inngest/functions.ts
 export const morningPlaylist = inngest.createFunction(
     { id: "morning-playlist" },
     { cron: "0 7 * * *" },
@@ -197,7 +197,7 @@ export const morningPlaylist = inngest.createFunction(
 
 ### Example 3: Get Liked Tracks for Recommendations
 
-```ts title="inngest/functions.ts"
+```ts inngest/functions.ts
 export const analyzeListeningHistory = inngest.createFunction(
     { id: "analyze-listening-history" },
     { event: "app/analyze-music" },

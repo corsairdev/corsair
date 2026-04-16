@@ -5,17 +5,17 @@ description: Amplitude webhook event handling in Corsair.
 
 The Amplitude plugin includes webhook handlers for Amplitude analytics events.
 
-<Callout type="info">
+<Info>
 **New to Corsair?** Learn about [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
-</Callout>
+</Info>
 
-<Callout>
+<Note>
 **Full Implementation:** See the [Amplitude plugin source code](https://github.com/corsairdev/corsair/tree/main/packages/corsair/plugins/amplitude).
-</Callout>
+</Note>
 
 ## Setup
 
-```ts title="app/api/webhook/route.ts"
+```ts app/api/webhook/route.ts
 import { processWebhook } from "corsair";
 import { corsair } from "@/server/corsair";
 
@@ -38,7 +38,7 @@ Fires when an event is tracked by Amplitude.
 
 **Example:**
 
-```ts title="corsair.ts"
+```ts corsair.ts
 amplitude({
     webhookHooks: {
         "events.track": async (event) => {
@@ -58,7 +58,7 @@ Fires when a user identify call is received by Amplitude.
 
 **Example:**
 
-```ts title="corsair.ts"
+```ts corsair.ts
 amplitude({
     webhookHooks: {
         "events.identify": async (event) => {
@@ -78,7 +78,7 @@ Fires when a new chart annotation is created.
 
 **Example:**
 
-```ts title="corsair.ts"
+```ts corsair.ts
 amplitude({
     webhookHooks: {
         "annotations.created": async (event) => {
@@ -98,7 +98,7 @@ Fires when a chart annotation is updated.
 
 **Example:**
 
-```ts title="corsair.ts"
+```ts corsair.ts
 amplitude({
     webhookHooks: {
         "annotations.updated": async (event) => {
@@ -116,7 +116,7 @@ Fires when an alert monitor threshold is triggered.
 
 **Example:**
 
-```ts title="corsair.ts"
+```ts corsair.ts
 amplitude({
     webhookHooks: {
         "monitors.alert": async (event) => {
@@ -136,7 +136,7 @@ Fires when a cohort finishes computing.
 
 **Example:**
 
-```ts title="corsair.ts"
+```ts corsair.ts
 amplitude({
     webhookHooks: {
         "cohorts.computed": async (event) => {
@@ -156,7 +156,7 @@ Fires when an experiment exposure is tracked for a user.
 
 **Example:**
 
-```ts title="corsair.ts"
+```ts corsair.ts
 amplitude({
     webhookHooks: {
         "experiments.exposure": async (event) => {

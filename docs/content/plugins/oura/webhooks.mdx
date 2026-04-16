@@ -5,17 +5,17 @@ description: All available Oura Ring webhook events for health data updates.
 
 The Oura plugin handles incoming webhook events from Oura. Webhooks are identified by the `x-oura-signature` header (HMAC-SHA256).
 
-<Callout type="info">
+<Info>
 **New to Corsair?** Learn about [webhooks](/concepts/webhooks), [hooks](/concepts/hooks), and [multi-tenancy](/concepts/multi-tenancy).
-</Callout>
+</Info>
 
-<Callout>
+<Note>
 **Full Implementation:** See the [Oura plugin source code](https://github.com/corsairdev/corsair/tree/main/packages/corsair/plugins/oura).
-</Callout>
+</Note>
 
 ## Setup
 
-```ts title="app/api/webhook/route.ts"
+```ts app/api/webhook/route.ts
 import { processWebhook } from "corsair";
 import { corsair } from "@/server/corsair";
 
@@ -30,7 +30,7 @@ export async function POST(request: Request) {
 
 Configure your webhook secret:
 
-```ts title="corsair.ts"
+```ts corsair.ts
 oura({
     webhookSecret: process.env.OURA_WEBHOOK_SECRET, // [!code highlight]
 })

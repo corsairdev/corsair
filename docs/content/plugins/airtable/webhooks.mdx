@@ -5,17 +5,17 @@ description: Airtable webhook event handling in Corsair.
 
 The Airtable plugin includes webhook handlers for Airtable change events.
 
-<Callout type="info">
+<Info>
 **New to Corsair?** Learn about [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
-</Callout>
+</Info>
 
-<Callout>
+<Note>
 **Full Implementation:** See the [Airtable plugin source code](https://github.com/corsairdev/corsair/tree/main/packages/corsair/plugins/airtable).
-</Callout>
+</Note>
 
 ## Setup
 
-```ts title="app/api/webhook/route.ts"
+```ts app/api/webhook/route.ts
 import { processWebhook } from "corsair";
 import { corsair } from "@/server/corsair";
 
@@ -38,7 +38,7 @@ Fires when records or tables change in Airtable. This is a general-purpose event
 
 **Example:**
 
-```ts title="corsair.ts"
+```ts corsair.ts
 airtable({
     webhookHooks: {
         "events.event": async (event) => {
@@ -66,7 +66,7 @@ airtable({
 
 Airtable's webhook system requires polling for payloads rather than real-time push. Use `webhooks.getPayloads` to retrieve pending events:
 
-```ts title="inngest/functions.ts"
+```ts inngest/functions.ts
 // Poll Airtable webhook payloads every minute
 export const pollAirtableWebhooks = inngest.createFunction(
     { id: "poll-airtable-webhooks" },

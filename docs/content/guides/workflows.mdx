@@ -15,7 +15,7 @@ No separate workflow engine needed. It's just TypeScript.
 
 Every webhook event in Corsair supports an `after` hook — a function that runs after the event is saved to your database. Inside it, you have full access to `corsair` and can call any plugin API.
 
-```ts title="corsair.ts"
+```ts corsair.ts
 github({
     webhookHooks: {
         pullRequestOpened: {
@@ -39,13 +39,13 @@ That's a workflow: GitHub PR opened → Slack message sent.
 
 ## Common patterns
 
-<Tabs items={['GitHub → Slack', 'Slack → GitHub', 'Multi-step']}>
+<Tabs>
 
-<Tab value="GitHub → Slack">
+<Tab title="GitHub → Slack">
 
 **Notify Slack when a PR is merged:**
 
-```ts title="corsair.ts"
+```ts corsair.ts
 github({
     webhookHooks: {
         pullRequestClosed: {
@@ -65,7 +65,7 @@ github({
 
 **Alert on new stars:**
 
-```ts title="corsair.ts"
+```ts corsair.ts
 github({
     webhookHooks: {
         starCreated: {
@@ -83,11 +83,11 @@ github({
 
 </Tab>
 
-<Tab value="Slack → GitHub">
+<Tab title="Slack → GitHub">
 
 **Create a GitHub issue when someone posts in #bugs:**
 
-```ts title="corsair.ts"
+```ts corsair.ts
 slack({
     webhookHooks: {
         messages: {
@@ -113,11 +113,11 @@ slack({
 
 </Tab>
 
-<Tab value="Multi-step">
+<Tab title="Multi-step">
 
 **PR merged → post Slack message → create Linear issue to track follow-up:**
 
-```ts title="corsair.ts"
+```ts corsair.ts
 github({
     webhookHooks: {
         pullRequestClosed: {
@@ -154,7 +154,7 @@ github({
 
 Use `before` to reject events before they hit your database or `after` handler:
 
-```ts title="corsair.ts"
+```ts corsair.ts
 github({
     webhookHooks: {
         pullRequestOpened: {
@@ -185,7 +185,7 @@ Throwing in `before` stops processing entirely — the event isn't saved to your
 
 For heavy processing (LLM calls, sending emails, generating reports), fire a background job instead of doing work inline:
 
-```ts title="corsair.ts"
+```ts corsair.ts
 github({
     webhookHooks: {
         pullRequestOpened: {
@@ -204,7 +204,7 @@ github({
 })
 ```
 
-```ts title="inngest/functions.ts"
+```ts inngest/functions.ts
 export const reviewPR = inngest.createFunction(
     { id: 'review-pr' },
     { event: 'github/pr-opened' },
@@ -230,25 +230,17 @@ Webhook response stays fast. The work happens in the background.
 
 ## What's next
 
-<Cards>
-  <Card
-    title="Webhooks Setup"
-    description="Get ngrok running and register your first webhook endpoint."
-    href="/webhooks"
-  />
-  <Card
-    title="GitHub Webhooks"
-    description="All available GitHub events you can react to."
-    href="/plugins/github/webhooks"
-  />
-  <Card
-    title="Slack Webhooks"
-    description="All available Slack events you can react to."
-    href="/plugins/slack/webhooks"
-  />
-  <Card
-    title="Hooks Reference"
-    description="Full before/after hook API and all available options."
-    href="/hooks"
-  />
-</Cards>
+<CardGroup cols={2}>
+  <Card title="Webhooks Setup" href="/webhooks">
+    Get ngrok running and register your first webhook endpoint.
+  </Card>
+  <Card title="GitHub Webhooks" href="/plugins/github/webhooks">
+    All available GitHub events you can react to.
+  </Card>
+  <Card title="Slack Webhooks" href="/plugins/slack/webhooks">
+    All available Slack events you can react to.
+  </Card>
+  <Card title="Hooks Reference" href="/hooks">
+    Full before/after hook API and all available options.
+  </Card>
+</CardGroup>
