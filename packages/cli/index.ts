@@ -641,21 +641,22 @@ function printHelp() {
 	const lines = [
 		'Corsair CLI',
 		'',
-		'  pnpm corsair setup                              Init (add -backfill to seed data)',
-		'  pnpm corsair setup --<plugin> <field>=VALUE     Set plugin credentials',
-		'  pnpm corsair auth --plugin=<id>                 Start OAuth flow',
-		'  pnpm corsair auth --plugin=<id> --code=<code>   Exchange OAuth code for tokens',
-		'  pnpm corsair auth --plugin=<id> --credentials   Show credential status',
-		'  pnpm corsair auth --plugin=<id> --agent         Get auth instructions for AI agents (opens browser, run in bg or ask user)',
-		'  pnpm corsair auth --plugin=<id> --webhook       Set up webhook subscription',
-		'    Supported plugins: outlook, sharepoint, teams, onedrive, gmail, googledrive, googlecalendar, googlesheets',
-		'  pnpm corsair list [--plugin=<id>] [--type=api|webhooks|db]  List endpoint paths (tip: pipe to grep to filter)',
-		'  pnpm corsair schema <path>                      Show schema for an endpoint/webhook/DB entity',
-		'  pnpm corsair script --code "<js>" [--tenant=<id>]',
-		'    corsair is injected; use return to output a value.',
-		'    IMPORTANT: Always filter results inline — you are the consumer of the return value, so returning full list responses wastes tokens.',
-		'    Bad:  return await corsair.slack.api.users.list({})',
-		"    Good: return (await corsair.slack.api.users.list({})).members.find(u => u.name === 'bob')?.id",
+
+		'pnpm corsair setup                              Init (add -backfill to seed data)',
+		'pnpm corsair setup --<plugin> <field>=VALUE     Set plugin credentials',
+		'pnpm corsair auth --plugin=<id>                 Start OAuth flow',
+		'pnpm corsair auth --plugin=<id> --code=<code>   Exchange OAuth code for tokens',
+		'pnpm corsair auth --plugin=<id> --agent         Run this if you are an agent (specific instructions to handle pending process)',
+		'pnpm corsair auth --plugin=<id> --credentials   Show credential status',
+		'pnpm corsair auth --plugin=<id> --webhook       Set up webhook subscription',
+		'  `pnpm corsair list --type=webhooks` to see webhook plugins',
+		'pnpm corsair list [--plugin=<id>] [--type=api|webhooks|db]  List endpoint paths (tip: pipe to grep to filter)',
+		'pnpm corsair schema <path>                      Show schema for an endpoint/webhook/DB entity',
+		'pnpm corsair script --code "<js>" [--tenant=<id>]',
+		'  corsair is injected; use return to output a value.',
+		'  IMPORTANT: Always filter results inline — you are the consumer of the return value, so returning full list responses wastes tokens.',
+		'  Bad:  return await corsair.slack.api.users.list({})',
+		"  Good: return (await corsair.slack.api.users.list({})).members.find(u => u.name === 'bob')?.id",
 		...(SHOW_RUN
 			? ['  run <path> [input-json] [--tenant=<id>]  Call an endpoint directly']
 			: []),
@@ -901,8 +902,10 @@ const isMainModule =
 	import.meta.url.endsWith('/index.js');
 
 if (isMainModule) {
-	main().then(() => process.exit(0)).catch((e) => {
-		console.error(e);
-		process.exit(1);
-	});
+	main()
+		.then(() => process.exit(0))
+		.catch((e) => {
+			console.error(e);
+			process.exit(1);
+		});
 }
