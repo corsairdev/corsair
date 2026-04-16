@@ -687,14 +687,18 @@ export async function runAuth({
 
 	if (agentMode) {
 		const baseCmd = `pnpm corsair auth --plugin=${plugin.id}`;
-		const tenantFlag = tenantIdArg && tenantIdArg !== 'default' ? ` --tenant=${tenantIdArg}` : '';
+		const needsQuoting = tenantIdArg && /[^a-zA-Z0-9_\-.]/.test(tenantIdArg);
+		const tenantFlag =
+			tenantIdArg && tenantIdArg !== 'default'
+				? ` --tenant=${needsQuoting ? `"${tenantIdArg}"` : tenantIdArg}`
+				: '';
 		const cmd = `${baseCmd}${tenantFlag}`;
 		out({
 			status: 'agent_instructions',
 			plugin: plugin.id,
 			tenant: tenantId,
 			command: cmd,
-			message: `To authenticate the '${plugin.id}' plugin, ask the user to run the following command in a separate terminal:\n\n  ${cmd}\n\nDo NOT run this command directly — it starts a local HTTP server and waits for an OAuth callback, which will cause a deadlock if executed by the agent. The user must run it themselves in a separate terminal or background process.`,
+			message: `To authenticate the '${plugin.id}' plugin, run the following command:\n\n  ${cmd}\n\nThis command opens a browser and waits for an OAuth callback — it is a long-running interactive task. Either ask the user to run it in a separate terminal, or run it as a background process. Do NOT run it inline in the current session.`,
 		});
 		return;
 	}

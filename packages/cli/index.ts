@@ -646,7 +646,7 @@ function printHelp() {
 		'  pnpm corsair auth --plugin=<id>                 Start OAuth flow',
 		'  pnpm corsair auth --plugin=<id> --code=<code>   Exchange OAuth code for tokens',
 		'  pnpm corsair auth --plugin=<id> --credentials   Show credential status',
-		'  pnpm corsair auth --plugin=<id> --agent          Get auth instructions for AI agents (avoids deadlock)',
+		'  pnpm corsair auth --plugin=<id> --agent         Get auth instructions for AI agents (opens browser, run in bg or ask user)',
 		'  pnpm corsair auth --plugin=<id> --webhook       Set up webhook subscription',
 		'    Supported plugins: outlook, sharepoint, teams, onedrive, gmail, googledrive, googlecalendar, googlesheets',
 		'  pnpm corsair list [--plugin=<id>] [--type=api|webhooks|db]  List endpoint paths (tip: pipe to grep to filter)',
