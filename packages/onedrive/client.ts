@@ -33,7 +33,11 @@ async function refreshAccessToken(
 	clientId: string,
 	clientSecret: string,
 	refreshToken: string,
-): Promise<{ access_token: string; expires_in: number }> {
+): Promise<{
+	access_token: string;
+	expires_in: number;
+	refresh_token?: string;
+}> {
 	const response = await fetch(MICROSOFT_TOKEN_URL, {
 		method: 'POST',
 		headers: {
@@ -58,6 +62,7 @@ async function refreshAccessToken(
 	return (await response.json()) as {
 		access_token: string;
 		expires_in: number;
+		refresh_token?: string;
 	};
 }
 
@@ -67,38 +72,30 @@ export async function getValidAccessToken({
 	clientId,
 	clientSecret,
 	refreshToken,
+	forceRefresh = false,
 }: {
 	clientId: string;
 	clientSecret: string;
 	accessToken?: string | null;
-	expiresAt?: string | number | null;
+	expiresAt?: string | null;
 	refreshToken: string;
-}): Promise<{ accessToken: string; expiresAt: number; refreshed: boolean }> {
+	forceRefresh?: boolean;
+}): Promise<{
+	accessToken: string;
+	newRefreshToken?: string;
+	expiresAt: number;
+	refreshed: boolean;
+}> {
 	const now = Math.floor(Date.now() / 1000);
 	const bufferSeconds = 5 * 60;
 
-	const rawExpiresAt = expiresAt ? Number(expiresAt) : null;
-	const normalizedExpiresAt =
-		typeof rawExpiresAt === 'number' && Number.isFinite(rawExpiresAt)
-			? rawExpiresAt > 1_000_000_000_000
-				? Math.floor(rawExpiresAt / 1000)
-				: Math.floor(rawExpiresAt)
-			: null;
-
-	const hasJwtShape =
-		typeof accessToken === 'string' && accessToken.split('.').length === 3;
-
 	if (
+		!forceRefresh &&
 		accessToken &&
-		hasJwtShape &&
-		normalizedExpiresAt &&
-		normalizedExpiresAt > now + bufferSeconds
+		expiresAt &&
+		Number(expiresAt) > now + bufferSeconds
 	) {
-		return {
-			accessToken,
-			expiresAt: normalizedExpiresAt,
-			refreshed: false,
-		};
+		return { accessToken, expiresAt: Number(expiresAt), refreshed: false };
 	}
 
 	const tokenData = await refreshAccessToken(
@@ -108,6 +105,8 @@ export async function getValidAccessToken({
 	);
 	return {
 		accessToken: tokenData.access_token,
+		// Microsoft issues a new refresh token on each refresh; propagate it if present
+		newRefreshToken: tokenData.refresh_token,
 		expiresAt: now + tokenData.expires_in,
 		refreshed: true,
 	};

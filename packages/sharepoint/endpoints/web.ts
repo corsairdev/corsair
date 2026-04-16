@@ -118,7 +118,7 @@ export const updateSite: SharepointEndpoints['webUpdateSite'] = async (
 		...(input.description !== undefined && { description: input.description }),
 	};
 
-	await makeGraphRequest<Record<string, unknown>>(`/sites/${siteId}`, ctx.key, {
+	await makeGraphRequest(`/sites/${siteId}`, ctx.key, {
 		method: 'PATCH',
 		body,
 	});

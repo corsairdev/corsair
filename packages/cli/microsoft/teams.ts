@@ -1,6 +1,10 @@
 import * as p from '@clack/prompts';
 import { loadInternalConfig } from '../utils/load-config';
-import { promptClientState, promptTenantId, promptWebhookUrl } from '../utils/prompts';
+import {
+	promptClientState,
+	promptTenantId,
+	promptWebhookUrl,
+} from '../utils/prompts';
 import { resolveAccessToken, saveWebhookSignature } from './credentials';
 import { createGraphSubscription, GRAPH_API_BASE } from './graph';
 
@@ -60,7 +64,9 @@ async function pickTeamId(accessToken: string, label: string): Promise<string> {
 	let teams: Array<{ id: string; displayName: string }> = [];
 	try {
 		teams = await fetchJoinedTeams(accessToken);
-		teamsSpin.stop(`Found ${teams.length} team${teams.length === 1 ? '' : 's'}.`);
+		teamsSpin.stop(
+			`Found ${teams.length} team${teams.length === 1 ? '' : 's'}.`,
+		);
 	} catch (error) {
 		teamsSpin.stop('Could not fetch teams.');
 		p.log.warn(error instanceof Error ? error.message : String(error));
@@ -69,7 +75,11 @@ async function pickTeamId(accessToken: string, label: string): Promise<string> {
 	if (teams.length > 0) {
 		const picked = await p.select({
 			message: `[${label}] Select a team:`,
-			options: teams.map((t) => ({ value: t.id, label: t.displayName, hint: t.id })),
+			options: teams.map((t) => ({
+				value: t.id,
+				label: t.displayName,
+				hint: t.id,
+			})),
 		});
 		if (p.isCancel(picked)) {
 			p.cancel('Operation cancelled.');
@@ -102,7 +112,9 @@ async function pickChannelId(
 	let channels: Array<{ id: string; displayName: string }> = [];
 	try {
 		channels = await fetchTeamChannels(accessToken, teamId);
-		chanSpin.stop(`Found ${channels.length} channel${channels.length === 1 ? '' : 's'}.`);
+		chanSpin.stop(
+			`Found ${channels.length} channel${channels.length === 1 ? '' : 's'}.`,
+		);
 	} catch (error) {
 		chanSpin.stop('Could not fetch channels.');
 		p.log.warn(error instanceof Error ? error.message : String(error));
@@ -111,7 +123,11 @@ async function pickChannelId(
 	if (channels.length > 0) {
 		const picked = await p.select({
 			message: `[${label}] Select a channel:`,
-			options: channels.map((c) => ({ value: c.id, label: c.displayName, hint: c.id })),
+			options: channels.map((c) => ({
+				value: c.id,
+				label: c.displayName,
+				hint: c.id,
+			})),
 		});
 		if (p.isCancel(picked)) {
 			p.cancel('Operation cancelled.');
@@ -137,10 +153,13 @@ async function pickChannelId(
 async function pickChatId(accessToken: string, label: string): Promise<string> {
 	const chatSpin = p.spinner();
 	chatSpin.start('Fetching your chats...');
-	let chats: Array<{ id: string; topic?: string | null; chatType: string }> = [];
+	let chats: Array<{ id: string; topic?: string | null; chatType: string }> =
+		[];
 	try {
 		chats = await fetchUserChats(accessToken);
-		chatSpin.stop(`Found ${chats.length} chat${chats.length === 1 ? '' : 's'}.`);
+		chatSpin.stop(
+			`Found ${chats.length} chat${chats.length === 1 ? '' : 's'}.`,
+		);
 	} catch (error) {
 		chatSpin.stop('Could not fetch chats.');
 		p.log.warn(error instanceof Error ? error.message : String(error));
@@ -205,7 +224,11 @@ const TEAMS_MAX_EXPIRY_MINUTES: Record<TeamsResourceType, number> = {
 	membershipChanged: 60,
 };
 
-export async function runTeamsSubscribe({ cwd }: { cwd: string }): Promise<void> {
+export async function runTeamsSubscribe({
+	cwd,
+}: {
+	cwd: string;
+}): Promise<void> {
 	const { internal } = await loadInternalConfig(
 		cwd,
 		'Corsair — Microsoft Teams Webhook Subscribe',
@@ -261,7 +284,11 @@ export async function runTeamsSubscribe({ cwd }: { cwd: string }): Promise<void>
 		} else {
 			ids.teamId = await pickTeamId(accessToken, resourceType);
 			if (resourceType === 'channelMessage') {
-				ids.channelId = await pickChannelId(accessToken, ids.teamId!, resourceType);
+				ids.channelId = await pickChannelId(
+					accessToken,
+					ids.teamId!,
+					resourceType,
+				);
 			}
 		}
 
