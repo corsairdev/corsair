@@ -14,22 +14,14 @@ export const timeMachine: OpenWeatherMapEndpoints['timeMachine'] = async (
 	ctx,
 	input,
 ) => {
-	const query: Record<string, string | number | boolean | undefined> = {
-		lat: input.lat,
-		lon: input.lon,
-		dt: input.dt,
-		units: input.units,
-		lang: input.lang,
-	};
-
 	const response = await makeOpenWeatherMapRequest<
 		OpenWeatherMapEndpointOutputs['timeMachine']
-	>('onecall/timemachine', ctx.key, { query });
+	>('onecall/timemachine', ctx.key, { query: { ...input } });
 
 	await logEventFromContext(
 		ctx,
 		'openweathermap.history.timeMachine',
-		{ lat: input.lat, lon: input.lon, dt: input.dt },
+		{ ...input },
 		'completed',
 	);
 
