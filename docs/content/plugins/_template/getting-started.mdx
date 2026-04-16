@@ -1,0 +1,253 @@
+---
+title: {{PLUGIN_DISPLAY_NAME}} Getting Started
+description: {{PLUGIN_ONE_LINE_DESCRIPTION}}
+---
+
+{{PLUGIN_DISPLAY_NAME}} lets you {{PLUGIN_WHAT_IT_DOES_SENTENCE}}. With Corsair, you can call the {{PLUGIN_DISPLAY_NAME}} API from any agent or script, cache results locally, and react to events in real time.
+
+**What you get:**
+
+- Access to {{PLUGIN_DISPLAY_NAME}}'s full API — issues, repos, messages, contacts, etc.
+- A local database cache so your agent doesn't need to hit the API every time
+- Webhook support to react to events in real time
+- Works with any MCP-compatible agent framework
+
+---
+
+## Setup
+
+<Steps>
+
+<Step title="Install the plugin">
+
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/{{PLUGIN_PACKAGE_NAME}}
+```
+```bash yarn
+yarn add corsair @corsair-dev/{{PLUGIN_PACKAGE_NAME}}
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/{{PLUGIN_PACKAGE_NAME}}
+```
+```bash bun
+bun add corsair @corsair-dev/{{PLUGIN_PACKAGE_NAME}}
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add to corsair.ts">
+
+<Tabs>
+<Tab title="SQLite">
+
+```ts src/server/corsair.ts
+import 'dotenv/config';
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { {{PLUGIN_IMPORT_NAME}} } from '@corsair-dev/{{PLUGIN_PACKAGE_NAME}}';
+
+const db = new Database('corsair.db');
+
+export const corsair = createCorsair({
+    plugins: [{{PLUGIN_IMPORT_NAME}}()],
+    database: db,
+    kek: process.env.CORSAIR_KEK!,
+});
+```
+
+</Tab>
+<Tab title="PostgreSQL">
+
+```ts src/server/corsair.ts
+import 'dotenv/config';
+import { Pool } from 'pg';
+import { createCorsair } from 'corsair';
+import { {{PLUGIN_IMPORT_NAME}} } from '@corsair-dev/{{PLUGIN_PACKAGE_NAME}}';
+
+const db = new Pool({ connectionString: process.env.DATABASE_URL });
+
+export const corsair = createCorsair({
+    plugins: [{{PLUGIN_IMPORT_NAME}}()],
+    database: db,
+    kek: process.env.CORSAIR_KEK!,
+});
+```
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Authenticate">
+
+<Tabs>
+
+<Tab title="API Key">
+
+**Get your API key:**
+
+{{API_KEY_STEPS}}
+<!-- Example:
+1. Go to **[{{PLUGIN_DISPLAY_NAME}} → Settings → API]({{PLUGIN_SETTINGS_URL}})**
+2. Click **Create new token**
+3. Copy the token
+-->
+
+```bash
+export {{PLUGIN_ENV_VAR_NAME}}=your-api-key-here
+```
+
+Run setup:
+
+<CodeGroup>
+```bash npm
+npx corsair setup --{{PLUGIN_CLI_NAME}} api_key=${{PLUGIN_ENV_VAR_NAME}} --backfill
+```
+```bash yarn
+yarn corsair setup --{{PLUGIN_CLI_NAME}} api_key=${{PLUGIN_ENV_VAR_NAME}} --backfill
+```
+```bash pnpm
+pnpm corsair setup --{{PLUGIN_CLI_NAME}} api_key=${{PLUGIN_ENV_VAR_NAME}} --backfill
+```
+```bash bun
+bunx corsair setup --{{PLUGIN_CLI_NAME}} api_key=${{PLUGIN_ENV_VAR_NAME}} --backfill
+```
+</CodeGroup>
+
+Corsair stores your token securely and runs an initial backfill — your data is ready to query immediately.
+
+</Tab>
+
+<Tab title="OAuth">
+
+**Create an OAuth app:**
+
+{{OAUTH_APP_STEPS}}
+<!-- Example:
+1. Go to **[{{PLUGIN_DISPLAY_NAME}} → Developer Console]({{PLUGIN_OAUTH_URL}})**
+2. Click **Create App**
+3. Set redirect URI to `http://localhost:3000/oauth/callback`
+4. Copy the **Client ID** and **Client Secret**
+-->
+
+```bash
+export {{PLUGIN_CLIENT_ID_VAR}}=your-client-id
+export {{PLUGIN_CLIENT_SECRET_VAR}}=your-client-secret
+```
+
+Run the OAuth flow:
+
+<CodeGroup>
+```bash npm
+npx corsair setup --{{PLUGIN_CLI_NAME}} client_id=${{PLUGIN_CLIENT_ID_VAR}} client_secret=${{PLUGIN_CLIENT_SECRET_VAR}} --backfill
+```
+```bash yarn
+yarn corsair setup --{{PLUGIN_CLI_NAME}} client_id=${{PLUGIN_CLIENT_ID_VAR}} client_secret=${{PLUGIN_CLIENT_SECRET_VAR}} --backfill
+```
+```bash pnpm
+pnpm corsair setup --{{PLUGIN_CLI_NAME}} client_id=${{PLUGIN_CLIENT_ID_VAR}} client_secret=${{PLUGIN_CLIENT_SECRET_VAR}} --backfill
+```
+```bash bun
+bunx corsair setup --{{PLUGIN_CLI_NAME}} client_id=${{PLUGIN_CLIENT_ID_VAR}} client_secret=${{PLUGIN_CLIENT_SECRET_VAR}} --backfill
+```
+</CodeGroup>
+
+Corsair opens a browser window for authorization. After you approve, it stores the tokens securely and runs an initial backfill.
+
+</Tab>
+
+</Tabs>
+
+</Step>
+
+</Steps>
+
+---
+
+## Use the API
+
+<Tabs>
+
+<Tab title="Live API">
+
+Call {{PLUGIN_DISPLAY_NAME}}'s API directly — Corsair handles auth and automatically caches the response:
+
+```ts
+{{LIVE_API_EXAMPLE}}
+// Example:
+// const {{PLUGIN_RESOURCE_PLURAL}} = await corsair.{{PLUGIN_CLI_NAME}}.api.{{PLUGIN_RESOURCE_GROUP}}.list({});
+// console.log({{PLUGIN_RESOURCE_PLURAL}});
+```
+
+</Tab>
+
+<Tab title="Cached DB">
+
+Query data that was already fetched — no API call, no rate limits:
+
+```ts
+{{DB_QUERY_EXAMPLE}}
+// Example:
+// const {{PLUGIN_RESOURCE_PLURAL}} = await corsair.{{PLUGIN_CLI_NAME}}.db.{{PLUGIN_RESOURCE_GROUP}}.search({});
+// const filtered = {{PLUGIN_RESOURCE_PLURAL}}.filter(item => item.data?.{{PLUGIN_FILTER_FIELD}});
+```
+
+Data is populated on first API call or during the `--backfill` run at setup.
+
+</Tab>
+
+</Tabs>
+
+---
+
+## Options
+
+Pass options when registering the plugin:
+
+```ts
+{{PLUGIN_IMPORT_NAME}}({
+    // Plugin-specific options
+    {{PLUGIN_OPTIONS_EXAMPLE}}
+})
+```
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+{{PLUGIN_OPTIONS_TABLE_ROWS}}
+<!-- Example row: | `webhookSecret` | `string` | — | Secret used to verify incoming webhooks | -->
+
+---
+
+## Multi-tenancy
+
+Building a product? Scope all calls to a tenant with a single line:
+
+```ts
+const tenant = corsair.withTenant('user-123');
+
+// API calls and DB queries are isolated to this tenant
+const {{PLUGIN_RESOURCE_PLURAL}} = await tenant.{{PLUGIN_CLI_NAME}}.api.{{PLUGIN_RESOURCE_GROUP}}.list({});
+```
+
+See [Multi-Tenancy](/concepts/multi-tenancy) for the full setup.
+
+---
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API Endpoints" href="/plugins/{{PLUGIN_PACKAGE_NAME}}/api-endpoints">
+    Full reference for every {{PLUGIN_DISPLAY_NAME}} API endpoint Corsair exposes.
+  </Card>
+  <Card title="Webhooks" href="/plugins/{{PLUGIN_PACKAGE_NAME}}/webhooks">
+    React to {{PLUGIN_DISPLAY_NAME}} events in real time.
+  </Card>
+  <Card title="Database" href="/plugins/{{PLUGIN_PACKAGE_NAME}}/database">
+    Query cached {{PLUGIN_DISPLAY_NAME}} data without hitting the API.
+  </Card>
+  <Card title="MCP / Agents" href="/mcp-adapters/anthropic-sdk">
+    Let your agent discover and call {{PLUGIN_DISPLAY_NAME}} endpoints automatically.
+  </Card>
+</CardGroup>
