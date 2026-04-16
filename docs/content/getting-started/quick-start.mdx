@@ -417,7 +417,7 @@ Corsair stores your token, creates the database rows, and fetches your GitHub da
 </Step>
 
 <Step title="Interact with Corsair">
-There's multiple ways to use Corsair. Here's two easy ways:
+There's multiple ways to use Corsair. Here's three easy ways:
 
 <Tabs>
 
@@ -615,6 +615,95 @@ for (const repo of withIssues) {
     console.log(`${repo.data?.name} — ${repo.data?.openIssuesCount} open issues`);
 }
 ```
+
+</Tab>
+
+<Tab title="CLI">
+
+Run Corsair operations directly from the terminal using the Corsair CLI — no code required.
+
+<CodeGroup>
+```bash npm
+npm install @corsair-dev/cli
+```
+```bash yarn
+yarn add @corsair-dev/cli
+```
+```bash pnpm
+pnpm install @corsair-dev/cli
+```
+```bash bun
+bun add @corsair-dev/cli
+```
+</CodeGroup>
+
+Check credentials and initialize a plugin:
+
+<CodeGroup>
+```bash npm
+npx corsair setup --github api_key=$GITHUB_TOKEN
+```
+```bash yarn
+yarn corsair setup --github api_key=$GITHUB_TOKEN
+```
+```bash pnpm
+pnpm corsair setup --github api_key=$GITHUB_TOKEN
+```
+```bash bun
+bunx corsair setup --github api_key=$GITHUB_TOKEN
+```
+</CodeGroup>
+
+Authenticate a plugin that uses OAuth:
+
+<CodeGroup>
+```bash npm
+npx corsair auth --slack
+```
+```bash yarn
+yarn corsair auth --slack
+```
+```bash pnpm
+pnpm corsair auth --slack
+```
+```bash bun
+bunx corsair auth --slack
+```
+</CodeGroup>
+
+List available operations for a plugin:
+
+<CodeGroup>
+```bash npm
+npx corsair list --github
+```
+```bash yarn
+yarn corsair list --github
+```
+```bash pnpm
+pnpm corsair list --github
+```
+```bash bun
+bunx corsair list --github
+```
+</CodeGroup>
+
+Run any operation directly:
+
+<CodeGroup>
+```bash npm
+npx corsair run github.api.repositories.list --owner octocat
+```
+```bash yarn
+yarn corsair run github.api.repositories.list --owner octocat
+```
+```bash pnpm
+pnpm corsair run github.api.repositories.list --owner octocat
+```
+```bash bun
+bunx corsair run github.api.repositories.list --owner octocat
+```
+</CodeGroup>
 
 </Tab>
 
