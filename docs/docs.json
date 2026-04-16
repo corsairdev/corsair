@@ -32,12 +32,18 @@
           {
             "group": "MCP Adapters",
             "pages": [
+              "content/mcp-adapters/mcp-adapters",
               "content/mcp-adapters/anthropic-sdk",
               "content/mcp-adapters/claude-sdk",
               "content/mcp-adapters/openai-agents",
               "content/mcp-adapters/vercel-ai",
               "content/mcp-adapters/mastra",
-              "content/mcp-adapters/openai",
+              "content/mcp-adapters/openai"
+            ]
+          },
+          {
+            "group": "Coding Agents",
+            "pages": [
               "content/mcp-adapters/claude-code",
               "content/mcp-adapters/cursor"
             ]
@@ -54,6 +60,15 @@
               "content/concepts/api",
               "content/concepts/error-handling",
               "content/concepts/typescript"
+            ]
+          },
+          {
+            "group": "Workflow Engines",
+            "pages": [
+              "content/guides/inngest",
+              "content/guides/temporal",
+              "content/guides/trigger-dev",
+              "content/guides/hatchet"
             ]
           }
         ]
@@ -119,15 +134,6 @@
               "content/guides/webhooks",
               "content/guides/workflows",
               "content/guides/dashboard"
-            ]
-          },
-          {
-            "group": "Workflow Engines",
-            "pages": [
-              "content/guides/inngest",
-              "content/guides/temporal",
-              "content/guides/trigger-dev",
-              "content/guides/hatchet"
             ]
           }
         ]
