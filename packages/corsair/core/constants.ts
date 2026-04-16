@@ -21,6 +21,7 @@ export const BaseProviders = [
 	'calendly',
 	'cursor',
 	'discord',
+	'dodopayments',
 	'dropbox',
 	'exa',
 	'figma',
@@ -72,6 +73,7 @@ export type AllProviders =
 	| 'calendly'
 	| 'cursor'
 	| 'discord'
+	| 'dodopayments'
 	| 'dropbox'
 	| 'exa'
 	| 'figma'

@@ -171,7 +171,8 @@ const slugToFilePath: Record<string, string> = {
 	'plugins/monday/get-credentials': 'plugins/monday/get-credentials.mdx',
 	'plugins/monday/database': 'plugins/monday/database.mdx',
 	'plugins/hackernews': 'plugins/hackernews/main.mdx',
-	'plugins/hackernews/get-credentials': 'plugins/hackernews/get-credentials.mdx',
+	'plugins/hackernews/get-credentials':
+		'plugins/hackernews/get-credentials.mdx',
 	'plugins/hackernews/database': 'plugins/hackernews/database.mdx',
 	'plugins/box': 'plugins/box/main.mdx',
 	'plugins/box/get-credentials': 'plugins/box/get-credentials.mdx',
@@ -233,6 +234,10 @@ const slugToFilePath: Record<string, string> = {
 	'guides/dashboard': 'guides/dashboard.mdx',
 	'guides/workflows': 'guides/workflows.mdx',
 	'guides/webhooks': 'guides/webhooks.mdx',
+	'guides/inngest': 'guides/inngest.mdx',
+	'guides/temporal': 'guides/temporal.mdx',
+	'guides/trigger-dev': 'guides/trigger-dev.mdx',
+	'guides/hatchet': 'guides/hatchet.mdx',
 	// getting-started (additional)
 	'quick-start': 'getting-started/quick-start.mdx',
 };

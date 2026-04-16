@@ -581,6 +581,21 @@ importers:
         specifier: ^3.25.76
         version: 3.25.76
 
+  packages/dodopayments:
+    devDependencies:
+      corsair:
+        specifier: workspace:*
+        version: link:../corsair
+      tsup:
+        specifier: ^8.0.1
+        version: 8.5.1(jiti@2.6.1)(postcss@8.5.6)(tsx@4.20.6)(typescript@5.9.3)(yaml@2.8.1)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+      zod:
+        specifier: ^3.25.76
+        version: 3.25.76
+
   packages/dropbox:
     dependencies:
       jest:
@@ -979,6 +994,9 @@ importers:
       express:
         specifier: ^4.21.0
         version: 4.22.1
+      openai:
+        specifier: '>=4.0.0'
+        version: 6.27.0(ws@8.19.0)(zod@3.25.76)
       zod:
         specifier: ^3.25.0
         version: 3.25.76

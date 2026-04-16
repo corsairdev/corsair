@@ -5,8 +5,8 @@ import { gmail } from '@corsair-dev/gmail';
 import { googlecalendar } from '@corsair-dev/googlecalendar';
 import { googlesheets } from '@corsair-dev/googlesheets';
 import { linear } from '@corsair-dev/linear';
+import { onedrive } from '@corsair-dev/onedrive';
 import { sharepoint } from '@corsair-dev/sharepoint';
-import { outlook } from '@corsair-dev/outlook';
 import { slack } from '@corsair-dev/slack';
 import { onedrive } from '@corsair-dev/onedrive'
 import { openweathermap } from '@corsair-dev/openweathermap'

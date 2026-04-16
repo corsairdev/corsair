@@ -1,7 +1,7 @@
 import 'dotenv/config';
 import { makeGithubRequest } from './client';
 import type {
-	IssueCommentCreateResponse,
+	CommentCreateResponse,
 	IssueCreateResponse,
 	IssueGetResponse,
 	IssuesListResponse,
@@ -169,7 +169,7 @@ describe('GitHub API Type Tests', () => {
 				throw new Error('No issues found');
 			}
 
-			const response = await makeGithubRequest<IssueCommentCreateResponse>(
+			const response = await makeGithubRequest<CommentCreateResponse>(
 				`/repos/${TEST_OWNER}/${TEST_REPO}/issues/${issueNumber}/comments`,
 				TEST_TOKEN,
 				{

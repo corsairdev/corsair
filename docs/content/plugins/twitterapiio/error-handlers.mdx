@@ -5,13 +5,13 @@ description: Built-in and custom error handling for the TwitterApiIO plugin.
 
 The TwitterApiIO plugin includes built-in error handlers for common Twitter API error scenarios.
 
-<Callout type="info">
+<Info>
 **New to Corsair?** Learn about [error handling](/concepts/error-handling) before customizing error handlers.
-</Callout>
+</Info>
 
-<Callout>
+<Note>
 **Full Implementation:** See the [TwitterApiIO plugin source code](https://github.com/corsairdev/corsair/tree/main/packages/corsair/plugins/twitterapiio).
-</Callout>
+</Note>
 
 ## Built-in Error Handlers
 
@@ -87,7 +87,7 @@ const tweets = await corsair.twitterapiio.api.tweets.search({
 
 ## Custom Error Handlers
 
-```ts title="corsair.ts"
+```ts corsair.ts
 twitterapiio({
     errorHandlers: {
         DUPLICATE_TWEET: {

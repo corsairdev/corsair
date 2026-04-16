@@ -1,6 +1,7 @@
 export { AnthropicProvider } from './adapters/anthropic-api.js';
 export { ClaudeProvider } from './adapters/claude.js';
 export { MastraProvider } from './adapters/mastra.js';
+export { OllamaProvider } from './adapters/ollama.js';
 export type { OpenAIMcpConfig } from './adapters/openai.js';
 export { getOpenAIMcpConfig } from './adapters/openai.js';
 export type { OpenAIAgentsProviderOptions } from './adapters/openai-agents.js';

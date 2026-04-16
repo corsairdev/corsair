@@ -1,6 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
 import type { SharepointEndpoints } from '..';
-import type { SharepointEndpointOutputs } from './types';
 
 export const list: SharepointEndpoints['recycleBinList'] = async (
 	ctx,
@@ -13,8 +12,7 @@ export const list: SharepointEndpoints['recycleBinList'] = async (
 		{ ...input },
 		'completed',
 	);
-	// Empty stub; cast to satisfy the output type since Graph API has no recycle bin endpoint
-	return { value: [] } as SharepointEndpointOutputs['recycleBinList'];
+	return { value: [] };
 };
 
 export const restore: SharepointEndpoints['recycleBinRestore'] = async (

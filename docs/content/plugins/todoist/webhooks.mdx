@@ -5,17 +5,17 @@ description: Todoist webhook event handling in Corsair.
 
 The Todoist plugin includes webhook handlers for Todoist task, note, and project lifecycle events.
 
-<Callout type="info">
+<Info>
 **New to Corsair?** Learn about [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
-</Callout>
+</Info>
 
-<Callout>
+<Note>
 **Full Implementation:** See the [Todoist plugin source code](https://github.com/corsairdev/corsair/tree/main/packages/corsair/plugins/todoist).
-</Callout>
+</Note>
 
 ## Setup
 
-```ts title="app/api/webhook/route.ts"
+```ts app/api/webhook/route.ts
 import { processWebhook } from "corsair";
 import { corsair } from "@/server/corsair";
 
@@ -38,7 +38,7 @@ Fires when a new task is added.
 
 **Example:**
 
-```ts title="corsair.ts"
+```ts corsair.ts
 todoist({
     webhookHooks: {
         "items.added": async (event) => {
@@ -58,7 +58,7 @@ Fires when a task is updated.
 
 **Example:**
 
-```ts title="corsair.ts"
+```ts corsair.ts
 todoist({
     webhookHooks: {
         "items.updated": async (event) => {
@@ -76,7 +76,7 @@ Fires when a task is completed.
 
 **Example:**
 
-```ts title="corsair.ts"
+```ts corsair.ts
 todoist({
     webhookHooks: {
         "items.completed": async (event) => {
@@ -94,7 +94,7 @@ Fires when a completed task is reopened.
 
 **Example:**
 
-```ts title="corsair.ts"
+```ts corsair.ts
 todoist({
     webhookHooks: {
         "items.uncompleted": async (event) => {
@@ -112,7 +112,7 @@ Fires when a task is deleted.
 
 **Example:**
 
-```ts title="corsair.ts"
+```ts corsair.ts
 todoist({
     webhookHooks: {
         "items.deleted": async (event) => {
@@ -130,7 +130,7 @@ Fires when a comment is added to a task or project.
 
 **Example:**
 
-```ts title="corsair.ts"
+```ts corsair.ts
 todoist({
     webhookHooks: {
         "notes.added": async (event) => {
@@ -160,7 +160,7 @@ Fires when a new project is created.
 
 **Example:**
 
-```ts title="corsair.ts"
+```ts corsair.ts
 todoist({
     webhookHooks: {
         "projects.added": async (event) => {
@@ -196,7 +196,7 @@ Fires when a project is deleted.
 
 **Example:**
 
-```ts title="corsair.ts"
+```ts corsair.ts
 todoist({
     webhookHooks: {
         "projects.deleted": async (event) => {

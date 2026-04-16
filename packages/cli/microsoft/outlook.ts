@@ -1,6 +1,10 @@
 import * as p from '@clack/prompts';
 import { loadInternalConfig } from '../utils/load-config';
-import { promptClientState, promptTenantId, promptWebhookUrl } from '../utils/prompts';
+import {
+	promptClientState,
+	promptTenantId,
+	promptWebhookUrl,
+} from '../utils/prompts';
 import { resolveAccessToken, saveWebhookSignature } from './credentials';
 import { createGraphSubscription } from './graph';
 
@@ -47,7 +51,11 @@ const OUTLOOK_RESOURCES: Record<
 	},
 };
 
-export async function runOutlookSubscribe({ cwd }: { cwd: string }): Promise<void> {
+export async function runOutlookSubscribe({
+	cwd,
+}: {
+	cwd: string;
+}): Promise<void> {
 	const { internal } = await loadInternalConfig(
 		cwd,
 		'Corsair — Outlook Webhook Subscribe',

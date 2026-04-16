@@ -13,7 +13,7 @@ pnpm install @corsair-dev/todoist
 
 Add the Todoist plugin to your Corsair instance:
 
-```ts title="corsair.ts"
+```ts corsair.ts
 import { createCorsair } from "corsair";
 import { todoist } from "@corsair-dev/todoist";
 
@@ -61,7 +61,7 @@ pnpm corsair setup --todoist webhook_signature=your-webhook-secret
 
 Alternatively, provide credentials directly in the config:
 
-```ts title="corsair.ts"
+```ts corsair.ts
 todoist({
     key: process.env.TODOIST_API_TOKEN,
     webhookSecret: process.env.TODOIST_WEBHOOK_SECRET,
@@ -139,7 +139,7 @@ See [API Endpoints](/plugins/todoist/api-endpoints) for the complete reference.
 
 Todoist sends task and project events to your webhook endpoint (identified by `x-todoist-delivery-id` header):
 
-```ts title="app/api/webhook/route.ts"
+```ts app/api/webhook/route.ts
 import { processWebhook } from "corsair";
 import { corsair } from "@/server/corsair";
 
@@ -179,7 +179,7 @@ await tenant.todoist.api.tasks.create({
 
 ### Example 1: Create Tasks from Incoming Emails
 
-```ts title="inngest/functions.ts"
+```ts inngest/functions.ts
 export const createTaskFromEmail = inngest.createFunction(
     { id: "email-to-todoist-task" },
     { event: "app/email-received" },
@@ -195,7 +195,7 @@ export const createTaskFromEmail = inngest.createFunction(
 
 ### Example 2: Notify on Task Completion
 
-```ts title="corsair.ts"
+```ts corsair.ts
 import { inngest } from "./inngest";
 
 export const corsair = createCorsair({
@@ -223,7 +223,7 @@ export const corsair = createCorsair({
 });
 ```
 
-```ts title="inngest/functions.ts"
+```ts inngest/functions.ts
 export const onTaskCompleted = inngest.createFunction(
     { id: "todoist-task-completed" },
     { event: "todoist/task-completed" },
@@ -241,7 +241,7 @@ export const onTaskCompleted = inngest.createFunction(
 
 ### Example 3: Sync GitHub Issues to Todoist
 
-```ts title="inngest/functions.ts"
+```ts inngest/functions.ts
 export const syncIssueToTodoist = inngest.createFunction(
     { id: "sync-github-issue-to-todoist" },
     { event: "github/issue-assigned" },
