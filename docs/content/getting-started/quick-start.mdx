@@ -236,56 +236,6 @@ CREATE TABLE IF NOT EXISTS corsair_events (
 psql $DATABASE_URL -f migration.sql
 ```
 
-<AccordionGroup>
-<Accordion title="Add Zod schemas (recommended for agents)">
-
-```ts src/server/db/schema.ts
-import { z } from 'zod';
-
-export const corsairIntegrationSchema = z.object({
-    id: z.string(),
-    created_at: z.string(),
-    updated_at: z.string(),
-    name: z.string(),
-    config: z.record(z.unknown()),
-    dek: z.string().nullable(),
-});
-
-export const corsairAccountSchema = z.object({
-    id: z.string(),
-    created_at: z.string(),
-    updated_at: z.string(),
-    tenant_id: z.string(),
-    integration_id: z.string(),
-    config: z.record(z.unknown()),
-    dek: z.string().nullable(),
-});
-
-export const corsairEntitySchema = z.object({
-    id: z.string(),
-    created_at: z.string(),
-    updated_at: z.string(),
-    account_id: z.string(),
-    entity_id: z.string(),
-    entity_type: z.string(),
-    version: z.string(),
-    data: z.record(z.unknown()),
-});
-
-export const corsairEventSchema = z.object({
-    id: z.string(),
-    created_at: z.string(),
-    updated_at: z.string(),
-    account_id: z.string(),
-    event_type: z.string(),
-    payload: z.record(z.unknown()),
-    status: z.string().nullable(),
-});
-```
-
-</Accordion>
-</AccordionGroup>
-
   </Tab>
   <Tab title="Drizzle">
 
@@ -499,7 +449,7 @@ const db = drizzle(pool);
 
 export const corsair = createCorsair({
     plugins: [github()],
-    database: db,
+    database: pool,
     kek: process.env.CORSAIR_KEK!,
 });
 ```
@@ -517,7 +467,7 @@ const db = new PrismaClient();
 
 export const corsair = createCorsair({
     plugins: [github()],
-    database: db,
+    database: pool,
     kek: process.env.CORSAIR_KEK!,
 });
 ```
@@ -803,8 +753,6 @@ See [MCP Adapters](/mcp-adapters/claude-sdk) for Vercel AI SDK, Mastra, and more
 
 <Tab title="CLI">
 
-Run Corsair operations directly from the terminal using the Corsair CLI — no code required.
-
 <CodeGroup>
 ```bash npm
 npm install @corsair-dev/cli
@@ -871,20 +819,20 @@ bunx corsair list --github
 ```
 </CodeGroup>
 
-Run any operation directly:
+Run a script with `corsair` injected — use `return` to output a value:
 
 <CodeGroup>
 ```bash npm
-npx corsair run github.api.repositories.list --owner octocat
+npx corsair script --code "return (await corsair.github.db.repositories.search({})).map(r => ({ name: r.data?.name, openIssues: r.data?.openIssuesCount }))"
 ```
 ```bash yarn
-yarn corsair run github.api.repositories.list --owner octocat
+yarn corsair script --code "return (await corsair.github.db.repositories.search({})).map(r => ({ name: r.data?.name, openIssues: r.data?.openIssuesCount }))"
 ```
 ```bash pnpm
-pnpm corsair run github.api.repositories.list --owner octocat
+pnpm corsair script --code "return (await corsair.github.db.repositories.search({})).map(r => ({ name: r.data?.name, openIssues: r.data?.openIssuesCount }))"
 ```
 ```bash bun
-bunx corsair run github.api.repositories.list --owner octocat
+bunx corsair script --code "return (await corsair.github.db.repositories.search({})).map(r => ({ name: r.data?.name, openIssues: r.data?.openIssuesCount }))"
 ```
 </CodeGroup>
 

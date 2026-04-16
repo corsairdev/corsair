@@ -65,23 +65,23 @@ export const GenerateKEK = () => {
       <div style={blockStyle}>
         <div style={headerStyle}>
           <span style={labelStyle}>bash</span>
-          <div style={btnGroupStyle}>
-            <button style={generateBtnStyle} onClick={generate}>
-              Regenerate
-            </button>
-            <button style={btnStyle} onClick={() => copy('openssl rand -base64 32', setCopiedCmd)}>
-              {copiedCmd ? '✓ Copied' : 'Copy'}
-            </button>
-          </div>
+          <button style={btnStyle} onClick={() => copy('openssl rand -base64 32', setCopiedCmd)}>
+            {copiedCmd ? '✓ Copied' : 'Copy'}
+          </button>
         </div>
         <pre style={{ margin: 0 }}><code style={codeStyle}>openssl rand -base64 32</code></pre>
       </div>
       <div style={blockStyle}>
         <div style={headerStyle}>
           <span style={labelStyle}>.env</span>
-          <button style={btnStyle} onClick={() => copy(envValue, setCopiedEnv)}>
-            {copiedEnv ? '✓ Copied' : 'Copy'}
-          </button>
+          <div style={btnGroupStyle}>
+            <button style={generateBtnStyle} onClick={generate}>
+              Regenerate
+            </button>
+            <button style={btnStyle} onClick={() => copy(envValue, setCopiedEnv)}>
+              {copiedEnv ? '✓ Copied' : 'Copy'}
+            </button>
+          </div>
         </div>
         <pre style={{ margin: 0 }}>
           <code style={codeStyle}>{envValue}</code>

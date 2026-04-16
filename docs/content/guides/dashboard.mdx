@@ -7,6 +7,30 @@ import { GenerateKEK } from '/snippets/generate-kek.mdx';
 
 By the end of this guide you'll have a working Next.js app with a live Google Calendar dashboard — and you'll have written almost none of the UI yourself.
 
+## Corsair context prompt for your agent
+
+Paste this before your feature prompt so the agent knows how Corsair works:
+
+```
+This app uses Corsair. Every Corsair plugin has two namespaces:
+
+  corsair.<plugin>.db   — reads from the local database (no network, instant)
+  corsair.<plugin>.api  — calls the live external API
+
+Both follow the same shape: corsair.<plugin>.[db|api].<group>.<method>(args)
+
+When to use which:
+- Rendering UI / reading data → .db (always the default)
+- Creating, updating, or deleting → .api
+- User-triggered refresh / sync → .api, then re-read from .db
+- Every .api response is auto-saved to .db
+
+Entity data is on .data in camelCase. Use .search({}) or .list() on .db to query.
+
+To see what's available, run:
+  pnpm corsair list --<plugin>
+```
+
 <Steps>
 
 <Step>
