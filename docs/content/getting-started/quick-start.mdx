@@ -801,42 +801,6 @@ See [MCP Adapters](/mcp-adapters/claude-sdk) for Vercel AI SDK, Mastra, and more
 
 </Tab>
 
-<Tab title="Direct (Hardcode)">
-
-Call any endpoint from plain TypeScript — no agent, no framework required.
-
-The pattern is always: **`corsair.[plugin].[api | db].[group].[method]()`**
-
-**API — live calls to GitHub:**
-
-```ts
-// Get a specific repo
-const repo = await corsair.github.api.repositories.get({
-    owner: 'octocat',
-    repo: 'hello-world',
-});
-
-console.log(repo.name); // "hello-world"
-```
-
-**DB — query what's already cached locally:**
-
-After backfill runs (or after any API call), data lives in your database. Query it without touching the GitHub API:
-
-```ts
-// Every repo you've fetched — instant, no network
-const repos = await corsair.github.db.repositories.search({});
-
-// Filter in JS using camelCase data fields
-const withIssues = repos.filter((r) => Number(r.data?.openIssuesCount ?? 0) > 0);
-
-for (const repo of withIssues) {
-    console.log(`${repo.data?.name} — ${repo.data?.openIssuesCount} open issues`);
-}
-```
-
-</Tab>
-
 <Tab title="CLI">
 
 Run Corsair operations directly from the terminal using the Corsair CLI — no code required.
@@ -923,6 +887,42 @@ pnpm corsair run github.api.repositories.list --owner octocat
 bunx corsair run github.api.repositories.list --owner octocat
 ```
 </CodeGroup>
+
+</Tab>
+
+<Tab title="Direct (Hardcode)">
+
+Call any endpoint from plain TypeScript — no agent, no framework required.
+
+The pattern is always: **`corsair.[plugin].[api | db].[group].[method]()`**
+
+**API — live calls to GitHub:**
+
+```ts
+// Get a specific repo
+const repo = await corsair.github.api.repositories.get({
+    owner: 'octocat',
+    repo: 'hello-world',
+});
+
+console.log(repo.name); // "hello-world"
+```
+
+**DB — query what's already cached locally:**
+
+After backfill runs (or after any API call), data lives in your database. Query it without touching the GitHub API:
+
+```ts
+// Every repo you've fetched — instant, no network
+const repos = await corsair.github.db.repositories.search({});
+
+// Filter in JS using camelCase data fields
+const withIssues = repos.filter((r) => Number(r.data?.openIssuesCount ?? 0) > 0);
+
+for (const repo of withIssues) {
+    console.log(`${repo.data?.name} — ${repo.data?.openIssuesCount} open issues`);
+}
+```
 
 </Tab>
 
