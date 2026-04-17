@@ -16,6 +16,7 @@ import {
 	encryptDEK,
 	generateDEK,
 } from 'corsair/core';
+import { encodeOAuthState } from 'corsair';
 import type { CorsairDatabase } from 'corsair/db';
 import { createCorsairOrm } from 'corsair/orm';
 import { getCorsairInstance } from './index';
@@ -341,25 +342,28 @@ async function oauthGetUrl(
 	}
 
 	let redirectUri: string;
-	if (oauthCfg.requiresRegisteredRedirect) {
-		const stored = await integrationKm.get_redirect_url();
-		if (!stored) {
-			out({
-				error: `redirect_url required for '${plugin.id}'. Run: corsair setup --${plugin.id} redirect_url=YOUR_REDIRECT_URI`,
-			});
-			return;
-		}
-		redirectUri = stored;
+	const storedRedirectUrl = await integrationKm.get_redirect_url();
+	console.log(storedRedirectUrl, 'storedRedirectUrl')
+	if (storedRedirectUrl) {
+		redirectUri = storedRedirectUrl;
+	} else if (oauthCfg.requiresRegisteredRedirect) {
+		out({
+			error: `redirect_url required for '${plugin.id}'. Run: corsair setup --${plugin.id} redirect_url=YOUR_REDIRECT_URI`,
+		});
+		return;
 	} else {
 		const port = await findFreePort();
 		redirectUri = `http://localhost:${port}`;
 	}
+
+	const state = encodeOAuthState(plugin.id, tenantId);
 
 	const authParams: Record<string, string | null> = {
 		client_id: clientId,
 		redirect_uri: redirectUri,
 		response_type: 'code',
 		scope: oauthCfg.scopes.join(' '),
+		state,
 		...oauthCfg.authParams,
 	};
 
