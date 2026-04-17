@@ -13,6 +13,8 @@ pnpm install @corsair-dev/discord
 
 Add the Discord plugin to your Corsair instance:
 
+<Tabs>
+<Tab title="Solo">
 ```ts corsair.ts
 import { createCorsair } from "corsair";
 import { discord } from "@corsair-dev/discord";
@@ -23,9 +25,25 @@ export const corsair = createCorsair({
     ],
 });
 ```
+</Tab>
+<Tab title="Multi-Tenant">
+```ts corsair.ts
+import { createCorsair } from "corsair";
+import { discord } from "@corsair-dev/discord";
+
+export const corsair = createCorsair({
+    multiTenancy: true,
+    plugins: [discord()],
+    kek: process.env.CORSAIR_KEK!,
+});
+```
+</Tab>
+</Tabs>
 
 Once configured, you can access the Discord API:
 
+<Tabs>
+<Tab title="Solo">
 ```ts
 // Send a message to a channel
 await corsair.discord.api.messages.send({
@@ -33,44 +51,61 @@ await corsair.discord.api.messages.send({
     content: "Hello from Corsair!",
 });
 ```
+</Tab>
+<Tab title="Multi-Tenant">
+```ts
+const tenant = corsair.withTenant("user_id");
+
+// Send a message to a channel
+await tenant.discord.api.messages.send({
+    channelId: "1234567890",
+    content: "Hello from Corsair!",
+});
+```
+</Tab>
+</Tabs>
 
 ## Authentication
 
 ### Supported Auth Types
 
 The Discord plugin supports:
-- **`api_key`** (default) - Use a Discord bot token
+- **[`api_key`](/content/concepts/api-key)** (default) - Use a Discord bot token
 
 ### Default Auth Type
 
-If no `authType` is specified, the plugin defaults to **`api_key`**.
+If no `authType` is specified, the plugin defaults to **[`api_key`](/content/concepts/api-key)**.
 
 ### Configuring API Key Authentication
 
-Store credentials with the CLI:
-
+<Tabs>
+<Tab title="Solo">
 ```bash
-pnpm corsair setup --discord api_key=your-bot-token
+pnpm corsair setup --plugin=discord api_key=your-bot-token
 ```
 
-For webhook signature verification, also store your app's Ed25519 public key:
+For interaction signature verification, also store your app's Ed25519 public key:
 
 ```bash
-pnpm corsair setup --discord public_key=your-public-key
+pnpm corsair setup --plugin=discord public_key=your-public-key
 ```
 
 The public key is found in the Discord Developer Portal under **Application > General Information**.
-
-Alternatively, provide credentials directly in the config:
-
-```ts corsair.ts
-discord({
-    key: process.env.DISCORD_BOT_TOKEN,
-    publicKey: process.env.DISCORD_PUBLIC_KEY,
-})
+</Tab>
+<Tab title="Multi-Tenant">
+```bash
+pnpm corsair setup --plugin=discord api_key=their-bot-token --tenant=user_abc123
 ```
 
-See [Authentication](/concepts/auth) for details on managing credentials.
+For interaction signature verification, also store your app's Ed25519 public key:
+
+```bash
+pnpm corsair setup --plugin=discord public_key=your-public-key
+```
+</Tab>
+</Tabs>
+
+See [API Key Authentication](/content/concepts/api-key) for full setup details.
 
 ## Options
 
@@ -113,6 +148,8 @@ The plugin includes built-in error handlers for common scenarios. For complete d
 
 ### Accessing the API
 
+<Tabs>
+<Tab title="Solo">
 ```ts
 // Send a message
 await corsair.discord.api.messages.send({
@@ -130,6 +167,29 @@ const members = await corsair.discord.api.members.list({
     guildId: "9876543210",
 });
 ```
+</Tab>
+<Tab title="Multi-Tenant">
+```ts
+const tenant = corsair.withTenant("user_id");
+
+// Send a message
+await tenant.discord.api.messages.send({
+    channelId: "1234567890",
+    content: "Hello!",
+});
+
+// List channels in a guild
+const channels = await tenant.discord.api.channels.list({
+    guildId: "9876543210",
+});
+
+// Get guild members
+const members = await tenant.discord.api.members.list({
+    guildId: "9876543210",
+});
+```
+</Tab>
+</Tabs>
 
 See [API Endpoints](/plugins/discord/api-endpoints) for the complete reference.
 
@@ -137,6 +197,8 @@ See [API Endpoints](/plugins/discord/api-endpoints) for the complete reference.
 
 Discord sends interaction events (slash commands, buttons, modals) to your webhook URL:
 
+<Tabs>
+<Tab title="Solo">
 ```ts app/api/webhook/route.ts
 import { processWebhook } from "corsair";
 import { corsair } from "@/server/corsair";
@@ -149,6 +211,23 @@ export async function POST(request: Request) {
     return result.response;
 }
 ```
+</Tab>
+<Tab title="Multi-Tenant">
+```ts app/api/webhook/route.ts
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    const body = await request.json();
+
+    const tenantId = new URL(request.url).searchParams.get("tenantId") ?? undefined;
+    const result = await processWebhook(corsair, headers, body, { tenantId });
+    return result.response;
+}
+```
+</Tab>
+</Tabs>
 
 Set your Discord app's Interactions Endpoint URL to `https://your-domain.com/api/webhook`.
 
@@ -156,25 +235,28 @@ See [Webhooks](/plugins/discord/webhooks) for all available events.
 
 ### Database Access
 
+<Tabs>
+<Tab title="Solo">
 ```ts
 // Search synced guild data
 const guilds = await corsair.discord.db.guilds.search({
     data: { name: "My Server" },
 });
 ```
-
-See [Database](/plugins/discord/database) for the complete schema.
-
-### Multi-Tenancy
-
+</Tab>
+<Tab title="Multi-Tenant">
 ```ts
 const tenant = corsair.withTenant("user-123");
 
-await tenant.discord.api.messages.send({
-    channelId: "1234567890",
-    content: "Hello from tenant user-123!",
+// Search synced guild data
+const guilds = await tenant.discord.db.guilds.search({
+    data: { name: "My Server" },
 });
 ```
+</Tab>
+</Tabs>
+
+See [Database](/plugins/discord/database) for the complete schema.
 
 ## Examples
 

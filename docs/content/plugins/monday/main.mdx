@@ -13,6 +13,8 @@ pnpm install @corsair-dev/monday
 
 Add the Monday.com plugin to your Corsair instance:
 
+<Tabs>
+<Tab title="Solo">
 ```ts corsair.ts
 import { createCorsair } from "corsair";
 import { monday } from "@corsair-dev/monday";
@@ -23,34 +25,58 @@ export const corsair = createCorsair({
     kek: process.env.CORSAIR_KEK!,
 });
 ```
+</Tab>
+<Tab title="Multi-Tenant">
+```ts corsair.ts
+import { createCorsair } from "corsair";
+import { monday } from "@corsair-dev/monday";
+
+export const corsair = createCorsair({
+    multiTenancy: true,
+    plugins: [monday()],
+    database: db,
+    kek: process.env.CORSAIR_KEK!,
+});
+```
+</Tab>
+</Tabs>
 
 ## Authentication
 
 ### Supported Auth Types
 
-- **`api_key`** (default) - Personal API token
+- **[`api_key`](/content/concepts/api-key)** (default) - Personal API token
 
 ### API Key Setup
 
-Store credentials with the CLI:
-
+<Tabs>
+<Tab title="Solo">
 ```bash
-pnpm corsair setup --monday api_key=your-api-token
+pnpm corsair setup --plugin=monday api_key=your-api-token
 ```
 
-Verify it was saved:
+For webhook signature verification:
 
 ```bash
-pnpm corsair auth --plugin=monday --credentials
+pnpm corsair setup --plugin=monday webhook_signature=your-webhook-secret
 ```
 
 See [Get Credentials](/plugins/monday/get-credentials) for step-by-step instructions.
+</Tab>
+<Tab title="Multi-Tenant">
+```bash
+pnpm corsair setup --plugin=monday api_key=their-api-token --tenant=user_abc123
+```
 
-### Webhook Secret
+For webhook signature verification:
 
 ```bash
-pnpm corsair setup --monday webhook_signature=your-webhook-secret
+pnpm corsair setup --plugin=monday webhook_signature=your-webhook-secret
 ```
+</Tab>
+</Tabs>
+
+See [API Key Authentication](/content/concepts/api-key) for full setup details.
 
 ## Options
 
@@ -65,6 +91,8 @@ pnpm corsair setup --monday webhook_signature=your-webhook-secret
 
 ## Usage
 
+<Tabs>
+<Tab title="Solo">
 ```ts
 // List boards
 const boards = await corsair.monday.api.boards.list({});
@@ -87,19 +115,52 @@ await corsair.monday.api.updates.create({
     body: "Status updated",
 });
 ```
+</Tab>
+<Tab title="Multi-Tenant">
+```ts
+const tenant = corsair.withTenant("org-123");
+
+// List boards
+const boards = await tenant.monday.api.boards.list({});
+
+// Get board items
+const items = await tenant.monday.api.items.list({
+    boardId: "board-id",
+});
+
+// Create an item
+await tenant.monday.api.items.create({
+    boardId: "board-id",
+    groupId: "group-id",
+    itemName: "New Task",
+});
+
+// Add an update (comment) to an item
+await tenant.monday.api.updates.create({
+    itemId: "item-id",
+    body: "Status updated",
+});
+```
+</Tab>
+</Tabs>
 
 ### Query cached data
 
+<Tabs>
+<Tab title="Solo">
 ```ts
 const items = await corsair.monday.db.items.search({
     data: { boardId: "board-id" },
 });
 ```
-
-### Multi-Tenancy
-
+</Tab>
+<Tab title="Multi-Tenant">
 ```ts
 const tenant = corsair.withTenant("org-123");
 
-const boards = await tenant.monday.api.boards.list({});
+const items = await tenant.monday.db.items.search({
+    data: { boardId: "board-id" },
+});
 ```
+</Tab>
+</Tabs>

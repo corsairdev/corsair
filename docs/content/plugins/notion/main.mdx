@@ -13,6 +13,8 @@ pnpm install @corsair-dev/notion
 
 Add the Notion plugin to your Corsair instance:
 
+<Tabs>
+<Tab title="Solo">
 ```ts corsair.ts
 import { createCorsair } from "corsair";
 import { notion } from "@corsair-dev/notion";
@@ -23,9 +25,25 @@ export const corsair = createCorsair({
     ],
 });
 ```
+</Tab>
+<Tab title="Multi-Tenant">
+```ts corsair.ts
+import { createCorsair } from "corsair";
+import { notion } from "@corsair-dev/notion";
+
+export const corsair = createCorsair({
+    multiTenancy: true,
+    plugins: [notion()],
+    kek: process.env.CORSAIR_KEK!,
+});
+```
+</Tab>
+</Tabs>
 
 Once configured, you can work with Notion content:
 
+<Tabs>
+<Tab title="Solo">
 ```ts
 // Create a page in a database
 await corsair.notion.api.databasePages.createDatabasePage({
@@ -35,42 +53,61 @@ await corsair.notion.api.databasePages.createDatabasePage({
     },
 });
 ```
+</Tab>
+<Tab title="Multi-Tenant">
+```ts
+const tenant = corsair.withTenant("user_id");
+
+// Create a page in a database
+await tenant.notion.api.databasePages.createDatabasePage({
+    parent: { database_id: "database-id-here" },
+    properties: {
+        Name: { title: [{ text: { content: "New Task" } }] },
+    },
+});
+```
+</Tab>
+</Tabs>
 
 ## Authentication
 
 ### Supported Auth Types
 
 The Notion plugin supports:
-- **`api_key`** (default) - Use a Notion integration token
+- **[`api_key`](/content/concepts/api-key)** (default) - Use a Notion integration token
 
 ### Default Auth Type
 
-If no `authType` is specified, the plugin defaults to **`api_key`**.
+If no `authType` is specified, the plugin defaults to **[`api_key`](/content/concepts/api-key)**.
 
 ### Configuring API Key Authentication
 
-Store credentials with the CLI:
-
+<Tabs>
+<Tab title="Solo">
 ```bash
-pnpm corsair setup --notion api_key=your-integration-token
+pnpm corsair setup --plugin=notion api_key=your-integration-token
 ```
 
 For webhook signature verification:
 
 ```bash
-pnpm corsair setup --notion webhook_signature=your-webhook-secret
+pnpm corsair setup --plugin=notion webhook_signature=your-webhook-secret
+```
+</Tab>
+<Tab title="Multi-Tenant">
+```bash
+pnpm corsair setup --plugin=notion api_key=their-integration-token --tenant=user_abc123
 ```
 
-Alternatively, provide credentials directly in the config:
+For webhook signature verification:
 
-```ts corsair.ts
-notion({
-    key: process.env.NOTION_TOKEN,
-    webhookSecret: process.env.NOTION_WEBHOOK_SECRET,
-})
+```bash
+pnpm corsair setup --plugin=notion webhook_signature=your-webhook-secret
 ```
+</Tab>
+</Tabs>
 
-See [Authentication](/concepts/auth) for details on managing credentials.
+See [API Key Authentication](/content/concepts/api-key) for full setup details.
 
 ## Options
 
@@ -111,6 +148,8 @@ The plugin includes built-in error handlers for common scenarios. For complete d
 
 ### Accessing the API
 
+<Tabs>
+<Tab title="Solo">
 ```ts
 // Search pages
 const pages = await corsair.notion.api.pages.searchPage({
@@ -140,6 +179,41 @@ await corsair.notion.api.blocks.appendBlock({
     }],
 });
 ```
+</Tab>
+<Tab title="Multi-Tenant">
+```ts
+const tenant = corsair.withTenant("user_id");
+
+// Search pages
+const pages = await tenant.notion.api.pages.searchPage({
+    query: "Meeting Notes",
+});
+
+// Get a database
+const database = await tenant.notion.api.databases.getDatabase({
+    database_id: "database-id",
+});
+
+// Query database pages
+const rows = await tenant.notion.api.databasePages.getManyDatabasePages({
+    database_id: "database-id",
+    filter: {
+        property: "Status",
+        select: { equals: "In Progress" },
+    },
+});
+
+// Append blocks to a page
+await tenant.notion.api.blocks.appendBlock({
+    block_id: "page-id",
+    children: [{
+        type: "paragraph",
+        paragraph: { rich_text: [{ text: { content: "Hello from Corsair!" } }] },
+    }],
+});
+```
+</Tab>
+</Tabs>
 
 See [API Endpoints](/plugins/notion/api-endpoints) for the complete reference.
 
@@ -147,6 +221,8 @@ See [API Endpoints](/plugins/notion/api-endpoints) for the complete reference.
 
 Notion sends page lifecycle events to your webhook endpoint:
 
+<Tabs>
+<Tab title="Solo">
 ```ts app/api/webhook/route.ts
 import { processWebhook } from "corsair";
 import { corsair } from "@/server/corsair";
@@ -159,29 +235,48 @@ export async function POST(request: Request) {
     return result.response;
 }
 ```
+</Tab>
+<Tab title="Multi-Tenant">
+```ts app/api/webhook/route.ts
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    const body = await request.json();
+
+    const tenantId = new URL(request.url).searchParams.get("tenantId") ?? undefined;
+    const result = await processWebhook(corsair, headers, body, { tenantId });
+    return result.response;
+}
+```
+</Tab>
+</Tabs>
 
 See [Webhooks](/plugins/notion/webhooks) for all available events.
 
 ### Database Access
 
+<Tabs>
+<Tab title="Solo">
 ```ts
 const pages = await corsair.notion.db.pages.search({
     data: { title: "Meeting Notes" },
 });
 ```
-
-See [Database](/plugins/notion/database) for the complete schema.
-
-### Multi-Tenancy
-
+</Tab>
+<Tab title="Multi-Tenant">
 ```ts
 const tenant = corsair.withTenant("workspace-123");
 
-await tenant.notion.api.databasePages.createDatabasePage({
-    parent: { database_id: "db-id" },
-    properties: { Name: { title: [{ text: { content: "New Item" } }] } },
+const pages = await tenant.notion.db.pages.search({
+    data: { title: "Meeting Notes" },
 });
 ```
+</Tab>
+</Tabs>
+
+See [Database](/plugins/notion/database) for the complete schema.
 
 ## Examples
 

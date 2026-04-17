@@ -63,6 +63,13 @@
             ]
           },
           {
+            "group": "Auth Types",
+            "pages": [
+              "content/concepts/api-key",
+              "content/concepts/oauth"
+            ]
+          },
+          {
             "group": "Workflow Engines",
             "pages": [
               "content/guides/inngest",

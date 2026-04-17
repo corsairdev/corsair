@@ -13,6 +13,8 @@ pnpm install @corsair-dev/intercom
 
 Add the Intercom plugin to your Corsair instance:
 
+<Tabs>
+<Tab title="Solo">
 ```ts corsair.ts
 import { createCorsair } from "corsair";
 import { intercom } from "@corsair-dev/intercom";
@@ -23,26 +25,68 @@ export const corsair = createCorsair({
     kek: process.env.CORSAIR_KEK!,
 });
 ```
+</Tab>
+<Tab title="Multi-Tenant">
+```ts corsair.ts
+import { createCorsair } from "corsair";
+import { intercom } from "@corsair-dev/intercom";
+
+export const corsair = createCorsair({
+    multiTenancy: true,
+    plugins: [intercom()],
+    database: db,
+    kek: process.env.CORSAIR_KEK!,
+});
+```
+</Tab>
+</Tabs>
 
 ## Authentication
 
 ### Supported Auth Types
 
-- **`api_key`** (default) - Access token
+- **[`api_key`](/content/concepts/api-key)** (default) - Access token
 
 ### API Key Setup
 
+<Tabs>
+<Tab title="Solo">
 ```bash
-pnpm corsair setup --intercom api_key=your-access-token
+pnpm corsair setup --plugin=intercom api_key=your-access-token
 ```
 
 For webhook signature verification:
 
 ```bash
-pnpm corsair setup --intercom webhook_signature=your-client-secret
+pnpm corsair setup --plugin=intercom webhook_signature=your-client-secret
 ```
 
 See [Get Credentials](/plugins/intercom/get-credentials) for step-by-step instructions.
+</Tab>
+<Tab title="Multi-Tenant">
+Enable `multiTenancy` in your Corsair config, then store each user's key separately:
+
+```ts corsair.ts
+export const corsair = createCorsair({
+    multiTenancy: true,
+    plugins: [intercom()],
+    kek: process.env.CORSAIR_KEK!,
+});
+```
+
+```bash
+pnpm corsair setup --plugin=intercom api_key=their-access-token --tenant=user_abc123
+```
+
+For webhook signature verification:
+
+```bash
+pnpm corsair setup --plugin=intercom webhook_signature=your-client-secret
+```
+</Tab>
+</Tabs>
+
+See [API Key Authentication](/content/concepts/api-key) for full setup details.
 
 ## Options
 
@@ -57,6 +101,8 @@ See [Get Credentials](/plugins/intercom/get-credentials) for step-by-step instru
 
 ## Usage
 
+<Tabs>
+<Tab title="Solo">
 ```ts
 // List contacts
 const contacts = await corsair.intercom.api.contacts.list({});
@@ -89,19 +135,55 @@ await corsair.intercom.api.articles.create({
     state: "published",
 });
 ```
+</Tab>
+<Tab title="Multi-Tenant">
+```ts
+const tenant = corsair.withTenant("workspace-123");
+
+// List contacts
+const contacts = await tenant.intercom.api.contacts.list({});
+
+// Search contacts
+const results = await tenant.intercom.api.contacts.search({
+    query: {
+        field: "email",
+        operator: "=",
+        value: "user@example.com",
+    },
+});
+
+// List open conversations
+const conversations = await tenant.intercom.api.conversations.list({
+    open: true,
+});
+
+// Reply to a conversation
+await tenant.intercom.api.conversations.reply({
+    conversationId: "conv-id",
+    body: "Thanks for reaching out!",
+    type: "admin",
+});
+```
+</Tab>
+</Tabs>
 
 ### Query cached data
 
+<Tabs>
+<Tab title="Solo">
 ```ts
 const contacts = await corsair.intercom.db.contacts.search({
     data: { email: "user@example.com" },
 });
 ```
-
-### Multi-Tenancy
-
+</Tab>
+<Tab title="Multi-Tenant">
 ```ts
 const tenant = corsair.withTenant("workspace-123");
 
-const conversations = await tenant.intercom.api.conversations.list({});
+const contacts = await tenant.intercom.db.contacts.search({
+    data: { email: "user@example.com" },
+});
 ```
+</Tab>
+</Tabs>

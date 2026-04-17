@@ -13,6 +13,8 @@ pnpm install @corsair-dev/googledrive
 
 Add the Google Drive plugin to your Corsair instance:
 
+<Tabs>
+<Tab title="Solo">
 ```ts corsair.ts
 import { createCorsair } from "corsair";
 import { googledrive } from "@corsair-dev/googledrive";
@@ -25,14 +27,45 @@ export const corsair = createCorsair({
     ],
 });
 ```
+</Tab>
+<Tab title="Multi-Tenant">
+```ts corsair.ts
+import { createCorsair } from "corsair";
+import { googledrive } from "@corsair-dev/googledrive";
+
+export const corsair = createCorsair({
+    multiTenancy: true,
+    plugins: [
+        googledrive({
+            authType: "oauth_2",
+        }),
+    ],
+    kek: process.env.CORSAIR_KEK!,
+});
+```
+</Tab>
+</Tabs>
 
 Once configured, you can access the Google Drive API through your Corsair instance:
 
+<Tabs>
+<Tab title="Solo">
 ```ts
 const files = await corsair.googledrive.api.files.list({
     pageSize: 10,
 });
 ```
+</Tab>
+<Tab title="Multi-Tenant">
+```ts
+const tenant = corsair.withTenant("user_id");
+
+const files = await tenant.googledrive.api.files.list({
+    pageSize: 10,
+});
+```
+</Tab>
+</Tabs>
 
 ## Authentication
 
@@ -40,22 +73,27 @@ const files = await corsair.googledrive.api.files.list({
 
 The Google Drive plugin uses OAuth 2.0 authentication exclusively.
 
-- **`oauth_2`** (default) - OAuth 2.0 authentication
+- **[`oauth_2`](/content/concepts/oauth)** (default) - OAuth 2.0 authentication
 
 ### OAuth 2.0 Setup
 
-Store your OAuth app credentials, then start the flow:
-
+<Tabs>
+<Tab title="Solo">
 ```bash
-pnpm corsair setup --googledrive client_id=your-client-id client_secret=your-client-secret
+pnpm corsair setup --plugin=googledrive client_id=your-client-id client_secret=your-client-secret
 pnpm corsair auth --plugin=googledrive
 ```
 
-The CLI will print an authorization URL — open it in a browser. Once you approve, tokens are saved automatically.
-
 See [Get Credentials](/plugins/googledrive/get-credentials) for step-by-step instructions on setting up OAuth 2.0.
+</Tab>
+<Tab title="Multi-Tenant">
+```bash
+pnpm corsair setup --plugin=googledrive client_id=your-client-id client_secret=your-client-secret
+```
+</Tab>
+</Tabs>
 
-See [Authentication](/concepts/auth) for details on managing credentials.
+See [OAuth 2.0 Authentication](/content/concepts/oauth) for full setup including callback handling.
 
 ## Options
 

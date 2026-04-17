@@ -13,6 +13,8 @@ pnpm install @corsair-dev/resend
 
 Add the Resend plugin to your Corsair instance:
 
+<Tabs>
+<Tab title="Solo">
 ```ts corsair.ts
 import { createCorsair } from "corsair";
 import { resend } from "@corsair-dev/resend";
@@ -23,9 +25,25 @@ export const corsair = createCorsair({
     ],
 });
 ```
+</Tab>
+<Tab title="Multi-Tenant">
+```ts corsair.ts
+import { createCorsair } from "corsair";
+import { resend } from "@corsair-dev/resend";
+
+export const corsair = createCorsair({
+    multiTenancy: true,
+    plugins: [resend()],
+    kek: process.env.CORSAIR_KEK!,
+});
+```
+</Tab>
+</Tabs>
 
 Once configured, you can access the Resend API through your Corsair instance:
 
+<Tabs>
+<Tab title="Solo">
 ```ts
 await corsair.resend.api.emails.send({
     from: "hello@example.com",
@@ -34,6 +52,20 @@ await corsair.resend.api.emails.send({
     html: "<p>Hello world!</p>",
 });
 ```
+</Tab>
+<Tab title="Multi-Tenant">
+```ts
+const tenant = corsair.withTenant("user_id");
+
+await tenant.resend.api.emails.send({
+    from: "hello@example.com",
+    to: "user@example.com",
+    subject: "Hello",
+    html: "<p>Hello world!</p>",
+});
+```
+</Tab>
+</Tabs>
 
 ## Authentication
 
@@ -41,29 +73,38 @@ await corsair.resend.api.emails.send({
 
 The Resend plugin uses API key authentication.
 
-- **`api_key`** (default) - API key authentication
+- **[`api_key`](/content/concepts/api-key)** (default) - API key authentication
 
 ### API Key Setup
 
-Store credentials with the CLI:
+<Tabs>
+<Tab title="Solo">
+```bash
+pnpm corsair setup --plugin=resend api_key=your-api-key
+```
+
+For webhook signature verification:
 
 ```bash
-pnpm corsair setup --resend api_key=your-api-key
+pnpm corsair setup --plugin=resend webhook_signature=your-webhook-secret
 ```
 
 See [Get Credentials](/plugins/resend/get-credentials) for step-by-step instructions on obtaining an API key.
-
-### Webhook Secret
-
-Store the webhook secret with the CLI:
-
+</Tab>
+<Tab title="Multi-Tenant">
 ```bash
-pnpm corsair setup --resend webhook_signature=your-webhook-secret
+pnpm corsair setup --plugin=resend api_key=their-api-key --tenant=user_abc123
 ```
 
-See [Get Credentials](/plugins/resend/get-credentials) for step-by-step instructions on setting up webhooks.
+For webhook signature verification:
 
-See [Authentication](/concepts/auth) for details on managing credentials.
+```bash
+pnpm corsair setup --plugin=resend webhook_signature=your-webhook-secret
+```
+</Tab>
+</Tabs>
+
+See [API Key Authentication](/content/concepts/api-key) for full setup details.
 
 ## Options
 

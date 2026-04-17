@@ -13,6 +13,8 @@ pnpm install @corsair-dev/hackernews
 
 Add the Hacker News plugin to your Corsair instance:
 
+<Tabs>
+<Tab title="Solo">
 ```ts corsair.ts
 import { createCorsair } from "corsair";
 import { hackernews } from "@corsair-dev/hackernews";
@@ -23,6 +25,21 @@ export const corsair = createCorsair({
     kek: process.env.CORSAIR_KEK!,
 });
 ```
+</Tab>
+<Tab title="Multi-Tenant">
+```ts corsair.ts
+import { createCorsair } from "corsair";
+import { hackernews } from "@corsair-dev/hackernews";
+
+export const corsair = createCorsair({
+    multiTenancy: true,
+    plugins: [hackernews()],
+    database: db,
+    kek: process.env.CORSAIR_KEK!,
+});
+```
+</Tab>
+</Tabs>
 
 ## Authentication
 
@@ -37,6 +54,8 @@ The Hacker News API is public — no credentials required for read access.
 
 ## Usage
 
+<Tabs>
+<Tab title="Solo">
 ```ts
 // Get top stories
 const topStories = await corsair.hackernews.api.stories.getTop({});
@@ -64,19 +83,42 @@ const results = await corsair.hackernews.api.search.search({
     query: "Corsair AI",
 });
 ```
+</Tab>
+<Tab title="Multi-Tenant">
+```ts
+const tenant = corsair.withTenant("user-123");
+
+// Get top stories
+const topStories = await tenant.hackernews.api.stories.getTop({});
+
+// Get a specific item
+const item = await tenant.hackernews.api.items.get({ id: 12345 });
+
+// Search stories
+const results = await tenant.hackernews.api.search.search({
+    query: "Corsair AI",
+});
+```
+</Tab>
+</Tabs>
 
 ### Query cached data
 
+<Tabs>
+<Tab title="Solo">
 ```ts
 const items = await corsair.hackernews.db.items.search({
     data: { type: "story" },
 });
 ```
-
-### Multi-Tenancy
-
+</Tab>
+<Tab title="Multi-Tenant">
 ```ts
 const tenant = corsair.withTenant("user-123");
 
-const stories = await tenant.hackernews.api.stories.getTop({});
+const items = await tenant.hackernews.db.items.search({
+    data: { type: "story" },
+});
 ```
+</Tab>
+</Tabs>

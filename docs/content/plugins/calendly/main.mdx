@@ -13,6 +13,8 @@ pnpm install @corsair-dev/calendly
 
 Add the Calendly plugin to your Corsair instance:
 
+<Tabs>
+<Tab title="Solo">
 ```ts corsair.ts
 import { createCorsair } from "corsair";
 import { calendly } from "@corsair-dev/calendly";
@@ -23,26 +25,58 @@ export const corsair = createCorsair({
     kek: process.env.CORSAIR_KEK!,
 });
 ```
+</Tab>
+<Tab title="Multi-Tenant">
+```ts corsair.ts
+import { createCorsair } from "corsair";
+import { calendly } from "@corsair-dev/calendly";
+
+export const corsair = createCorsair({
+    multiTenancy: true,
+    plugins: [calendly()],
+    database: db,
+    kek: process.env.CORSAIR_KEK!,
+});
+```
+</Tab>
+</Tabs>
 
 ## Authentication
 
 ### Supported Auth Types
 
-- **`api_key`** (default) - Personal access token
+- **[`api_key`](/content/concepts/api-key)** (default) - Personal access token
 
 ### API Key Setup
 
+<Tabs>
+<Tab title="Solo">
 ```bash
-pnpm corsair setup --calendly api_key=your-personal-access-token
+pnpm corsair setup --plugin=calendly api_key=your-personal-access-token
 ```
 
 For webhook signature verification:
 
 ```bash
-pnpm corsair setup --calendly webhook_signature=your-signing-key
+pnpm corsair setup --plugin=calendly webhook_signature=your-signing-key
 ```
 
 See [Get Credentials](/plugins/calendly/get-credentials) for step-by-step instructions.
+</Tab>
+<Tab title="Multi-Tenant">
+```bash
+pnpm corsair setup --plugin=calendly api_key=their-api-key --tenant=user_abc123
+```
+
+For webhook signature verification:
+
+```bash
+pnpm corsair setup --plugin=calendly webhook_signature=your-signing-key
+```
+</Tab>
+</Tabs>
+
+See [API Key Authentication](/content/concepts/api-key) for full setup details.
 
 ## Options
 
@@ -57,6 +91,8 @@ See [Get Credentials](/plugins/calendly/get-credentials) for step-by-step instru
 
 ## Usage
 
+<Tabs>
+<Tab title="Solo">
 ```ts
 // Get current user
 const me = await corsair.calendly.api.users.getCurrent({});
@@ -83,21 +119,44 @@ const link = await corsair.calendly.api.schedulingLinks.create({
     owner_type: "EventType",
 });
 ```
+</Tab>
+<Tab title="Multi-Tenant">
+```ts
+const tenant = corsair.withTenant("user-123");
+
+// Get current user
+const me = await tenant.calendly.api.users.getCurrent({});
+
+// List scheduled events
+const events = await tenant.calendly.api.scheduledEvents.list({
+    organization: "https://api.calendly.com/organizations/org-id",
+});
+
+// List event types
+const eventTypes = await tenant.calendly.api.eventTypes.list({
+    user: "https://api.calendly.com/users/user-id",
+});
+```
+</Tab>
+</Tabs>
 
 ### Query cached data
 
+<Tabs>
+<Tab title="Solo">
 ```ts
 const events = await corsair.calendly.db.scheduledEvents.search({
     data: { status: "active" },
 });
 ```
-
-### Multi-Tenancy
-
+</Tab>
+<Tab title="Multi-Tenant">
 ```ts
 const tenant = corsair.withTenant("user-123");
 
-const events = await tenant.calendly.api.scheduledEvents.list({
-    user: "https://api.calendly.com/users/user-id",
+const events = await tenant.calendly.db.scheduledEvents.search({
+    data: { status: "active" },
 });
 ```
+</Tab>
+</Tabs>
