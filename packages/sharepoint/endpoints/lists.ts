@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import type { SharepointEndpoints } from '..';
-import { makeGraphRequest } from '../client';
+import { graphSiteUrl, makeGraphRequest } from '../client';
 import type { SharepointEndpointOutputs } from './types';
 
 export const listAll: SharepointEndpoints['listsListAll'] = async (
@@ -10,7 +10,7 @@ export const listAll: SharepointEndpoints['listsListAll'] = async (
 	const siteId = (await ctx.keys.get_site_id()) ?? ctx.options?.siteId ?? '';
 	const result = await makeGraphRequest<
 		SharepointEndpointOutputs['listsListAll']
-	>(`/sites/${siteId}/lists`, ctx.key, {
+	>(graphSiteUrl(siteId, 'lists'), ctx.key, {
 		method: 'GET',
 		query: {
 			$select:
@@ -53,9 +53,11 @@ export const getByTitle: SharepointEndpoints['listsGetByTitle'] = async (
 	const siteId = (await ctx.keys.get_site_id()) ?? ctx.options?.siteId ?? '';
 	const result = await makeGraphRequest<
 		SharepointEndpointOutputs['listsGetByTitle']
-	>(`/sites/${siteId}/lists/${encodeURIComponent(input.list_title)}`, ctx.key, {
-		method: 'GET',
-	});
+	>(
+		graphSiteUrl(siteId, `lists/${encodeURIComponent(input.list_title)}`),
+		ctx.key,
+		{ method: 'GET' },
+	);
 
 	if (result.id && ctx.db.lists) {
 		try {
@@ -88,7 +90,9 @@ export const getByGuid: SharepointEndpoints['listsGetByGuid'] = async (
 	const siteId = (await ctx.keys.get_site_id()) ?? ctx.options?.siteId ?? '';
 	const result = await makeGraphRequest<
 		SharepointEndpointOutputs['listsGetByGuid']
-	>(`/sites/${siteId}/lists/${input.list_guid}`, ctx.key, { method: 'GET' });
+	>(graphSiteUrl(siteId, `lists/${input.list_guid}`), ctx.key, {
+		method: 'GET',
+	});
 
 	if (result.id && ctx.db.lists) {
 		try {
@@ -127,7 +131,7 @@ export const create: SharepointEndpoints['listsCreate'] = async (
 
 	const result = await makeGraphRequest<
 		SharepointEndpointOutputs['listsCreate']
-	>(`/sites/${siteId}/lists`, ctx.key, { method: 'POST', body });
+	>(graphSiteUrl(siteId, 'lists'), ctx.key, { method: 'POST', body });
 
 	if (result.id && ctx.db.lists) {
 		try {
@@ -166,16 +170,15 @@ export const update: SharepointEndpoints['listsUpdate'] = async (
 
 	// Look up list by title to get ID for the PATCH
 	const list = await makeGraphRequest<{ id?: string }>(
-		`/sites/${siteId}/lists/${encodeURIComponent(input.list_title)}`,
+		graphSiteUrl(siteId, `lists/${encodeURIComponent(input.list_title)}`),
 		ctx.key,
 		{ method: 'GET', query: { $select: 'id' } },
 	);
 
-	await makeGraphRequest<Record<string, unknown>>(
-		`/sites/${siteId}/lists/${list.id}`,
-		ctx.key,
-		{ method: 'PATCH', body },
-	);
+	await makeGraphRequest(graphSiteUrl(siteId, `lists/${list.id}`), ctx.key, {
+		method: 'PATCH',
+		body,
+	});
 
 	if (ctx.db.lists && list.id) {
 		try {
@@ -206,8 +209,8 @@ export const deleteList: SharepointEndpoints['listsDelete'] = async (
 	input,
 ) => {
 	const siteId = (await ctx.keys.get_site_id()) ?? ctx.options?.siteId ?? '';
-	await makeGraphRequest<Record<string, unknown>>(
-		`/sites/${siteId}/lists/${input.list_guid}`,
+	await makeGraphRequest(
+		graphSiteUrl(siteId, `lists/${input.list_guid}`),
 		ctx.key,
 		{ method: 'DELETE' },
 	);
@@ -234,19 +237,18 @@ export const deleteByTitle: SharepointEndpoints['listsDeleteByTitle'] = async (
 	input,
 ) => {
 	const siteId = (await ctx.keys.get_site_id()) ?? ctx.options?.siteId ?? '';
+	const listUrl = graphSiteUrl(
+		siteId,
+		`lists/${encodeURIComponent(input.list_title)}`,
+	);
 
 	// Resolve list GUID before deletion so we can remove the DB record by entity ID
-	const list = await makeGraphRequest<{ id?: string }>(
-		`/sites/${siteId}/lists/${encodeURIComponent(input.list_title)}`,
-		ctx.key,
-		{ method: 'GET', query: { $select: 'id' } },
-	);
+	const list = await makeGraphRequest<{ id?: string }>(listUrl, ctx.key, {
+		method: 'GET',
+		query: { $select: 'id' },
+	});
 
-	await makeGraphRequest<Record<string, unknown>>(
-		`/sites/${siteId}/lists/${encodeURIComponent(input.list_title)}`,
-		ctx.key,
-		{ method: 'DELETE' },
-	);
+	await makeGraphRequest(listUrl, ctx.key, { method: 'DELETE' });
 
 	if (ctx.db.lists && list.id) {
 		try {
@@ -273,7 +275,10 @@ export const listColumns: SharepointEndpoints['listsListColumns'] = async (
 	const result = await makeGraphRequest<
 		SharepointEndpointOutputs['listsListColumns']
 	>(
-		`/sites/${siteId}/lists/${encodeURIComponent(input.list_title)}/columns`,
+		graphSiteUrl(
+			siteId,
+			`lists/${encodeURIComponent(input.list_title)}/columns`,
+		),
 		ctx.key,
 		{ method: 'GET' },
 	);
@@ -305,7 +310,10 @@ export const getChanges: SharepointEndpoints['listsGetChanges'] = async (
 	const result = await makeGraphRequest<
 		SharepointEndpointOutputs['listsGetChanges']
 	>(
-		`/sites/${siteId}/lists/${encodeURIComponent(input.list_title)}/items/delta`,
+		graphSiteUrl(
+			siteId,
+			`lists/${encodeURIComponent(input.list_title)}/items/delta`,
+		),
 		ctx.key,
 		{ method: 'GET', query },
 	);
@@ -327,10 +335,17 @@ export const renderDataAsStream: SharepointEndpoints['listsRenderDataAsStream'] 
 		};
 		if (input.row_limit) query.$top = input.row_limit;
 
-		const result = await makeGraphRequest<
-			SharepointEndpointOutputs['listsRenderDataAsStream']
-		>(
-			`/sites/${siteId}/lists/${encodeURIComponent(input.list_title)}/items`,
+		// Graph items response shape — fields are nested under each item
+		type ItemsPage = {
+			value?: Array<{ id?: string; fields?: Record<string, unknown> }>;
+			'@odata.nextLink'?: string;
+		};
+
+		const result = await makeGraphRequest<ItemsPage>(
+			graphSiteUrl(
+				siteId,
+				`lists/${encodeURIComponent(input.list_title)}/items`,
+			),
 			ctx.key,
 			{ method: 'GET', query },
 		);
@@ -341,6 +356,15 @@ export const renderDataAsStream: SharepointEndpoints['listsRenderDataAsStream'] 
 			{ ...input },
 			'completed',
 		);
-		// Graph API items response is compatible but TypeScript cannot infer the exact shape; cast to expected output
-		return result as SharepointEndpointOutputs['listsRenderDataAsStream'];
+
+		// Map Graph items to the SP-style Row format expected by this schema
+		return {
+			Row: (result.value ?? []).map((item) => ({
+				ID: item.id,
+				...(item.fields ?? {}),
+			})),
+			NextHref: result['@odata.nextLink'],
+			FirstRow: 0,
+			LastRow: Math.max(0, (result.value?.length ?? 0) - 1),
+		};
 	};

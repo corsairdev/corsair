@@ -5,13 +5,13 @@ description: Built-in and custom error handling for the PagerDuty plugin.
 
 The PagerDuty plugin includes built-in error handlers for common PagerDuty API error scenarios.
 
-<Callout type="info">
+<Info>
 **New to Corsair?** Learn about [error handling](/concepts/error-handling) before customizing error handlers.
-</Callout>
+</Info>
 
-<Callout>
+<Note>
 **Full Implementation:** See the [PagerDuty plugin source code](https://github.com/corsairdev/corsair/tree/main/packages/corsair/plugins/pagerduty).
-</Callout>
+</Note>
 
 ## Built-in Error Handlers
 
@@ -85,7 +85,7 @@ await corsair.pagerduty.api.incidents.list({
 
 ## Custom Error Handlers
 
-```ts title="corsair.ts"
+```ts corsair.ts
 pagerduty({
     errorHandlers: {
         MAINTENANCE_WINDOW: {

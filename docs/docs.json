@@ -1,0 +1,143 @@
+{
+  "$schema": "https://mintlify.com/docs.json",
+  "name": "Corsair",
+  "theme": "luma",
+  "favicon": "/favicon.ico",
+  "colors": {
+    "primary": "#2d7387",
+    "light": "#95cbcf"
+  },
+  "appearance": {
+    "default": "dark"
+  },
+  "navbar": {
+    "primary": {
+      "type": "github",
+      "href": "https://github.com/corsairdev/corsair"
+    }
+  },
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Docs",
+        "groups": [
+          {
+            "group": "Get Started",
+            "pages": [
+              "content/getting-started/introduction",
+              "content/getting-started/quick-start",
+              "content/getting-started/installation"
+            ]
+          },
+          {
+            "group": "MCP Adapters",
+            "pages": [
+              "content/mcp-adapters/mcp-adapters",
+              "content/mcp-adapters/anthropic-sdk",
+              "content/mcp-adapters/claude-sdk",
+              "content/mcp-adapters/openai-agents",
+              "content/mcp-adapters/vercel-ai",
+              "content/mcp-adapters/mastra",
+              "content/mcp-adapters/openai"
+            ]
+          },
+          {
+            "group": "Coding Agents",
+            "pages": [
+              "content/mcp-adapters/claude-code",
+              "content/mcp-adapters/cursor"
+            ]
+          },
+          {
+            "group": "Core Concepts",
+            "pages": [
+              "content/concepts/integrations",
+              "content/concepts/auth",
+              "content/concepts/database",
+              "content/concepts/webhooks",
+              "content/concepts/hooks",
+              "content/concepts/multi-tenancy",
+              "content/concepts/api",
+              "content/concepts/error-handling",
+              "content/concepts/typescript"
+            ]
+          },
+          {
+            "group": "Workflow Engines",
+            "pages": [
+              "content/guides/inngest",
+              "content/guides/temporal",
+              "content/guides/trigger-dev",
+              "content/guides/hatchet"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Plugins",
+        "groups": [
+          {
+            "group": "Build Your Own",
+            "pages": [
+              "content/guides/create-your-own-plugin",
+              "content/guides/plugin-credentials"
+            ]
+          },
+          {
+            "group": "Plugins",
+            "pages": [
+              "content/plugins/airtable/main",
+              "content/plugins/amplitude/main",
+              "content/plugins/asana/main",
+              "content/plugins/box/main",
+              "content/plugins/cal/main",
+              "content/plugins/calendly/main",
+              "content/plugins/discord/main",
+              "content/plugins/dropbox/main",
+              "content/plugins/exa/main",
+              "content/plugins/github/main",
+              "content/plugins/gmail/main",
+              "content/plugins/googlecalendar/main",
+              "content/plugins/googledrive/main",
+              "content/plugins/googlesheets/main",
+              "content/plugins/hackernews/main",
+              "content/plugins/hubspot/main",
+              "content/plugins/intercom/main",
+              "content/plugins/jira/main",
+              "content/plugins/linear/main",
+              "content/plugins/monday/main",
+              "content/plugins/notion/main",
+              "content/plugins/onedrive/main",
+              "content/plugins/outlook/main",
+              "content/plugins/pagerduty/main",
+              "content/plugins/posthog/main",
+              "content/plugins/resend/main",
+              "content/plugins/sentry/main",
+              "content/plugins/slack/main",
+              "content/plugins/stripe/main",
+              "content/plugins/tavily/main",
+              "content/plugins/telegram/main",
+              "content/plugins/todoist/main",
+              "content/plugins/trello/main",
+              "content/plugins/typeform/main",
+              "content/plugins/zoom/main"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Guides",
+        "groups": [
+          {
+            "group": "Guides",
+            "pages": [
+              "content/guides/webhooks",
+              "content/guides/workflows",
+              "content/guides/dashboard"
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

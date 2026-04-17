@@ -18,12 +18,18 @@ import QuickStartDoc from '@/content/getting-started/quick-start.mdx';
 // Guides
 import CreateYourOwnPlugin from '@/content/guides/create-your-own-plugin.mdx';
 import DashboardGuide from '@/content/guides/dashboard.mdx';
+import HatchetGuide from '@/content/guides/hatchet.mdx';
+import InngestGuide from '@/content/guides/inngest.mdx';
 import PluginCredentialsGuide from '@/content/guides/plugin-credentials.mdx';
+import TemporalGuide from '@/content/guides/temporal.mdx';
+import TriggerDevGuide from '@/content/guides/trigger-dev.mdx';
 import WebhooksGuide from '@/content/guides/webhooks.mdx';
 import WorkflowsGuide from '@/content/guides/workflows.mdx';
 // MCP Adapters
 import McpAnthropicSdkDoc from '@/content/mcp-adapters/anthropic-sdk.mdx';
+import McpClaudeCodeDoc from '@/content/mcp-adapters/claude-code.mdx';
 import McpClaudeSdkDoc from '@/content/mcp-adapters/claude-sdk.mdx';
+import McpCursorDoc from '@/content/mcp-adapters/cursor.mdx';
 import McpMastraDoc from '@/content/mcp-adapters/mastra.mdx';
 import McpOpenAIDoc from '@/content/mcp-adapters/openai.mdx';
 import McpOpenAIAgentsDoc from '@/content/mcp-adapters/openai-agents.mdx';
@@ -273,6 +279,16 @@ const pages = {
 		Component: McpMastraDoc,
 		title: 'Mastra',
 		description: 'Connect Corsair to the Mastra agent framework',
+	},
+	'mcp-adapters/claude-code': {
+		Component: McpClaudeCodeDoc,
+		title: 'Claude Code',
+		description: 'Connect Corsair to Claude Code as a stdio MCP server',
+	},
+	'mcp-adapters/cursor': {
+		Component: McpCursorDoc,
+		title: 'Cursor',
+		description: 'Connect Corsair to Cursor as a stdio MCP server',
 	},
 	api: {
 		Component: ApiDoc,
@@ -1289,6 +1305,28 @@ const pages = {
 		Component: WebhooksGuide,
 		title: 'Webhooks',
 		description: 'Handling webhooks in Corsair',
+	},
+	'guides/inngest': {
+		Component: InngestGuide,
+		title: 'Inngest',
+		description:
+			'Trigger durable Inngest functions from Corsair webhook events.',
+	},
+	'guides/temporal': {
+		Component: TemporalGuide,
+		title: 'Temporal',
+		description: 'Start Temporal workflows from Corsair webhook events.',
+	},
+	'guides/trigger-dev': {
+		Component: TriggerDevGuide,
+		title: 'Trigger.dev',
+		description:
+			'Run Trigger.dev background tasks from Corsair webhook events.',
+	},
+	'guides/hatchet': {
+		Component: HatchetGuide,
+		title: 'Hatchet',
+		description: 'Push Hatchet workflow events from Corsair webhook hooks.',
 	},
 } as const;
 

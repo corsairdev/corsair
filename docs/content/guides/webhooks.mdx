@@ -20,9 +20,10 @@ ngrok http 3000
 
 You'll get a URL like `https://abc123.ngrok-free.app`. Copy it.
 
-<Callout type="info" title="Get a stable URL (recommended)">
+<Info>
+**Get a stable URL (recommended)**
 Free ngrok accounts get a random URL on every restart — meaning you'd have to re-register your webhook every time. Claim a **free static domain** at [dashboard.ngrok.com/domains](https://dashboard.ngrok.com/domains) and it'll never change.
-</Callout>
+</Info>
 
 ---
 
@@ -30,7 +31,7 @@ Free ngrok accounts get a random URL on every restart — meaning you'd have to 
 
 Add one route to your server. All plugins share this single URL:
 
-```ts title="app/api/webhook/route.ts"
+```ts app/api/webhook/route.ts
 import { processWebhook } from 'corsair';
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
@@ -63,9 +64,9 @@ export async function POST(request: NextRequest) {
 
 ## Step 3 — Register and react
 
-<Tabs items={['GitHub', 'Slack']}>
+<Tabs>
 
-<Tab value="GitHub">
+<Tab title="GitHub">
 
 **Register in GitHub:**
 
@@ -84,7 +85,7 @@ await corsair.github.keys.set_webhook_signature(process.env.GITHUB_WEBHOOK_SECRE
 
 **React to events:**
 
-```ts title="corsair.ts"
+```ts corsair.ts
 github({
     webhookHooks: {
         starCreated: {
@@ -110,7 +111,7 @@ github({
 
 </Tab>
 
-<Tab value="Slack">
+<Tab title="Slack">
 
 **Register in Slack:**
 
@@ -128,7 +129,7 @@ await corsair.slack.keys.setWebhookSignature(process.env.SLACK_SIGNING_SECRET!);
 
 **React to events:**
 
-```ts title="corsair.ts"
+```ts corsair.ts
 slack({
     webhookHooks: {
         messages: {
@@ -172,25 +173,17 @@ Every plugin shares the same endpoint. You never write routing logic.
 
 ## What's next
 
-<Cards>
-  <Card
-    title="Workflows"
-    description="Chain webhook events into multi-step automations."
-    href="/guides/workflows"
-  />
-  <Card
-    title="Multi-Tenancy"
-    description="Scope incoming webhooks per user with ?tenantId= param."
-    href="/multi-tenancy"
-  />
-  <Card
-    title="GitHub Webhooks"
-    description="All available GitHub events and payload shapes."
-    href="/plugins/github/webhooks"
-  />
-  <Card
-    title="Slack Webhooks"
-    description="All available Slack events and payload shapes."
-    href="/plugins/slack/webhooks"
-  />
-</Cards>
+<CardGroup cols={2}>
+  <Card title="Workflows" href="/guides/workflows">
+    Chain webhook events into multi-step automations.
+  </Card>
+  <Card title="Multi-Tenancy" href="/multi-tenancy">
+    Scope incoming webhooks per user with ?tenantId= param.
+  </Card>
+  <Card title="GitHub Webhooks" href="/plugins/github/webhooks">
+    All available GitHub events and payload shapes.
+  </Card>
+  <Card title="Slack Webhooks" href="/plugins/slack/webhooks">
+    All available Slack events and payload shapes.
+  </Card>
+</CardGroup>

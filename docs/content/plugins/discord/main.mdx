@@ -13,7 +13,7 @@ pnpm install @corsair-dev/discord
 
 Add the Discord plugin to your Corsair instance:
 
-```ts title="corsair.ts"
+```ts corsair.ts
 import { createCorsair } from "corsair";
 import { discord } from "@corsair-dev/discord";
 
@@ -63,7 +63,7 @@ The public key is found in the Discord Developer Portal under **Application > Ge
 
 Alternatively, provide credentials directly in the config:
 
-```ts title="corsair.ts"
+```ts corsair.ts
 discord({
     key: process.env.DISCORD_BOT_TOKEN,
     publicKey: process.env.DISCORD_PUBLIC_KEY,
@@ -137,7 +137,7 @@ See [API Endpoints](/plugins/discord/api-endpoints) for the complete reference.
 
 Discord sends interaction events (slash commands, buttons, modals) to your webhook URL:
 
-```ts title="app/api/webhook/route.ts"
+```ts app/api/webhook/route.ts
 import { processWebhook } from "corsair";
 import { corsair } from "@/server/corsair";
 
@@ -180,7 +180,7 @@ await tenant.discord.api.messages.send({
 
 ### Example 1: Respond to a Slash Command
 
-```ts title="corsair.ts"
+```ts corsair.ts
 import { inngest } from "./inngest";
 
 export const corsair = createCorsair({
@@ -207,7 +207,7 @@ export const corsair = createCorsair({
 });
 ```
 
-```ts title="inngest/functions.ts"
+```ts inngest/functions.ts
 export const handleDiscordCommand = inngest.createFunction(
     { id: "handle-discord-command" },
     { event: "discord/command-received" },
@@ -226,7 +226,7 @@ export const handleDiscordCommand = inngest.createFunction(
 
 ### Example 2: Create a Thread on Important Messages
 
-```ts title="corsair.ts"
+```ts corsair.ts
 export const corsair = createCorsair({
     plugins: [
         discord({
@@ -252,7 +252,7 @@ export const corsair = createCorsair({
 });
 ```
 
-```ts title="inngest/functions.ts"
+```ts inngest/functions.ts
 export const handleComponentInteraction = inngest.createFunction(
     { id: "handle-component-interaction" },
     { event: "discord/component-interaction" },
@@ -272,7 +272,7 @@ export const handleComponentInteraction = inngest.createFunction(
 
 ### Example 3: Post a Message with Reactions
 
-```ts title="inngest/functions.ts"
+```ts inngest/functions.ts
 export const postAnnouncement = inngest.createFunction(
     { id: "post-announcement" },
     { event: "app/announcement" },

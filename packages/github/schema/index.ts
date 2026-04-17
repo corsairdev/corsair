@@ -1,5 +1,9 @@
 import { z } from 'zod';
 import {
+	GithubBranch,
+	GithubComment,
+	GithubDiscussion,
+	GithubFork,
 	GithubIssue,
 	GithubPullRequest,
 	GithubRelease,
@@ -23,5 +27,9 @@ export const GithubSchema = {
 		pullRequests: GithubPullRequest,
 		releases: GithubRelease,
 		workflows: GithubWorkflow,
+		discussions: GithubDiscussion,
+		branches: GithubBranch,
+		forks: GithubFork,
+		comments: GithubComment,
 	},
 } as const;

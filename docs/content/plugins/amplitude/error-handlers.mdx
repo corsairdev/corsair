@@ -5,13 +5,13 @@ description: Built-in and custom error handling for the Amplitude plugin.
 
 The Amplitude plugin includes built-in error handlers for common Amplitude API error scenarios.
 
-<Callout type="info">
+<Info>
 **New to Corsair?** Learn about [error handling](/concepts/error-handling) before customizing error handlers.
-</Callout>
+</Info>
 
-<Callout>
+<Note>
 **Full Implementation:** See the [Amplitude plugin source code](https://github.com/corsairdev/corsair/tree/main/packages/corsair/plugins/amplitude).
-</Callout>
+</Note>
 
 ## Built-in Error Handlers
 
@@ -75,7 +75,7 @@ await corsair.amplitude.api.events.upload({
 
 ## Custom Error Handlers
 
-```ts title="corsair.ts"
+```ts corsair.ts
 amplitude({
     errorHandlers: {
         INVALID_EVENT_SCHEMA: {

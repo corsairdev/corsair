@@ -13,7 +13,7 @@ pnpm install @corsair-dev/airtable
 
 Add the Airtable plugin to your Corsair instance:
 
-```ts title="corsair.ts"
+```ts corsair.ts
 import { createCorsair } from "corsair";
 import { airtable } from "@corsair-dev/airtable";
 
@@ -62,7 +62,7 @@ pnpm corsair setup --airtable webhook_signature=your-webhook-secret
 
 Alternatively, provide credentials directly in the config:
 
-```ts title="corsair.ts"
+```ts corsair.ts
 airtable({
     key: process.env.AIRTABLE_API_KEY,
     webhookSecret: process.env.AIRTABLE_WEBHOOK_SECRET,
@@ -144,7 +144,7 @@ See [API Endpoints](/plugins/airtable/api-endpoints) for the complete reference.
 
 Airtable sends record change events to your webhook endpoint:
 
-```ts title="app/api/webhook/route.ts"
+```ts app/api/webhook/route.ts
 import { processWebhook } from "corsair";
 import { corsair } from "@/server/corsair";
 
@@ -185,7 +185,7 @@ await tenant.airtable.api.records.create({
 
 ### Example 1: Sync Form Submissions to Airtable
 
-```ts title="inngest/functions.ts"
+```ts inngest/functions.ts
 export const syncFormSubmission = inngest.createFunction(
     { id: "sync-form-to-airtable" },
     { event: "app/form-submitted" },
@@ -209,7 +209,7 @@ export const syncFormSubmission = inngest.createFunction(
 
 ### Example 2: React to Record Changes
 
-```ts title="corsair.ts"
+```ts corsair.ts
 export const corsair = createCorsair({
     plugins: [
         airtable({
@@ -235,7 +235,7 @@ export const corsair = createCorsair({
 });
 ```
 
-```ts title="inngest/functions.ts"
+```ts inngest/functions.ts
 export const processAirtableChange = inngest.createFunction(
     { id: "process-airtable-change" },
     { event: "airtable/record-changed" },
@@ -255,7 +255,7 @@ export const processAirtableChange = inngest.createFunction(
 
 ### Example 3: Upsert Records on External Events
 
-```ts title="inngest/functions.ts"
+```ts inngest/functions.ts
 export const upsertContact = inngest.createFunction(
     { id: "upsert-airtable-contact" },
     { event: "crm/contact-updated" },

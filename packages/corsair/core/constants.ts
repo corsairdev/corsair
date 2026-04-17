@@ -21,9 +21,11 @@ export const BaseProviders = [
 	'calendly',
 	'cursor',
 	'discord',
+	'dodopayments',
 	'dropbox',
 	'exa',
 	'figma',
+	'firecrawl',
 	'fireflies',
 	'github',
 	'gmail',
@@ -57,8 +59,8 @@ export const BaseProviders = [
 	'trello',
 	'twitter',
 	'twitterapiio',
-	'youtube',
 	'typeform',
+	'youtube',
 	'zoom',
 ] as const;
 
@@ -71,9 +73,11 @@ export type AllProviders =
 	| 'calendly'
 	| 'cursor'
 	| 'discord'
+	| 'dodopayments'
 	| 'dropbox'
 	| 'exa'
 	| 'figma'
+	| 'firecrawl'
 	| 'fireflies'
 	| 'github'
 	| 'gmail'
@@ -107,8 +111,8 @@ export type AllProviders =
 	| 'trello'
 	| 'twitter'
 	| 'twitterapiio'
-	| 'youtube'
 	| 'typeform'
+	| 'youtube'
 	| 'zoom'
 	| (string & {});
 

@@ -13,7 +13,7 @@ pnpm install @corsair-dev/cal
 
 Add the Cal.com plugin to your Corsair instance:
 
-```ts title="corsair.ts"
+```ts corsair.ts
 import { createCorsair } from "corsair";
 import { cal } from "@corsair-dev/cal";
 
@@ -58,7 +58,7 @@ pnpm corsair setup --cal webhook_signature=your-webhook-secret
 
 Alternatively, provide credentials directly in the config:
 
-```ts title="corsair.ts"
+```ts corsair.ts
 cal({
     key: process.env.CAL_API_KEY,
     webhookSecret: process.env.CAL_WEBHOOK_SECRET,
@@ -135,7 +135,7 @@ See [API Endpoints](/plugins/cal/api-endpoints) for the complete reference.
 
 Cal.com sends booking lifecycle events to your webhook endpoint:
 
-```ts title="app/api/webhook/route.ts"
+```ts app/api/webhook/route.ts
 import { processWebhook } from "corsair";
 import { corsair } from "@/server/corsair";
 
@@ -174,7 +174,7 @@ const bookings = await tenant.cal.api.bookings.list({
 
 ### Example 1: Send Confirmation Email on New Booking
 
-```ts title="corsair.ts"
+```ts corsair.ts
 import { inngest } from "./inngest";
 
 export const corsair = createCorsair({
@@ -203,7 +203,7 @@ export const corsair = createCorsair({
 });
 ```
 
-```ts title="inngest/functions.ts"
+```ts inngest/functions.ts
 export const sendBookingConfirmation = inngest.createFunction(
     { id: "send-booking-confirmation" },
     { event: "cal/booking-created" },
@@ -222,7 +222,7 @@ export const sendBookingConfirmation = inngest.createFunction(
 
 ### Example 2: Add to CRM on Meeting Ended
 
-```ts title="corsair.ts"
+```ts corsair.ts
 export const corsair = createCorsair({
     plugins: [
         cal({
@@ -248,7 +248,7 @@ export const corsair = createCorsair({
 });
 ```
 
-```ts title="inngest/functions.ts"
+```ts inngest/functions.ts
 export const updateCrmAfterMeeting = inngest.createFunction(
     { id: "update-crm-after-meeting" },
     { event: "cal/meeting-ended" },
