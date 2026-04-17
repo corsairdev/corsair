@@ -16,6 +16,7 @@ import {
 	encryptDEK,
 	generateDEK,
 } from 'corsair/core';
+import { encodeOAuthState } from 'corsair';
 import type { CorsairDatabase } from 'corsair/db';
 import { createCorsairOrm } from 'corsair/orm';
 import { getCorsairInstance } from './index';
@@ -341,25 +342,27 @@ async function oauthGetUrl(
 	}
 
 	let redirectUri: string;
-	if (oauthCfg.requiresRegisteredRedirect) {
-		const stored = await integrationKm.get_redirect_url();
-		if (!stored) {
-			out({
-				error: `redirect_url required for '${plugin.id}'. Run: corsair setup --${plugin.id} redirect_url=YOUR_REDIRECT_URI`,
-			});
-			return;
-		}
-		redirectUri = stored;
+	const storedRedirectUrl = await integrationKm.get_redirect_url();
+	if (storedRedirectUrl) {
+		redirectUri = storedRedirectUrl;
+	} else if (oauthCfg.requiresRegisteredRedirect) {
+		out({
+			error: `redirect_url required for '${plugin.id}'. Run: corsair setup --${plugin.id} redirect_url=YOUR_REDIRECT_URI`,
+		});
+		return;
 	} else {
 		const port = await findFreePort();
 		redirectUri = `http://localhost:${port}`;
 	}
+
+	const state = encodeOAuthState(plugin.id, tenantId);
 
 	const authParams: Record<string, string | null> = {
 		client_id: clientId,
 		redirect_uri: redirectUri,
 		response_type: 'code',
 		scope: oauthCfg.scopes.join(' '),
+		state,
 		...oauthCfg.authParams,
 	};
 
@@ -667,8 +670,43 @@ export async function runAuth({
 		process.exit(1);
 	}
 
+	const extraFields = getCustomIntegrationFields(plugin, 'oauth_2');
+	const integrationKmEarly = createIntegrationKeyManager({
+		authType: 'oauth_2',
+		integrationName: plugin.id,
+		kek,
+		database,
+		extraIntegrationFields: extraFields,
+	});
+
+	const storedRedirectUrl = await integrationKmEarly.get_redirect_url();
+	let redirectTenantId: string | undefined;
+	if (storedRedirectUrl) {
+		try {
+			const parsed = new URL(storedRedirectUrl);
+			const segments = parsed.pathname.split('/').filter(Boolean);
+			if (segments.length >= 3) {
+				redirectTenantId = segments[segments.length - 1];
+			}
+		} catch {
+			// not a valid URL, ignore
+		}
+	}
+
+	if (
+		tenantIdArg &&
+		redirectTenantId &&
+		tenantIdArg !== redirectTenantId
+	) {
+		out({
+			error: `Tenant ID mismatch: --tenant=${tenantIdArg} but redirect_url contains tenant '${redirectTenantId}' in path. They must match, or omit --tenant to use the redirect_url value.`,
+		});
+		process.exit(1);
+	}
+
+	const tenantId = tenantIdArg ?? redirectTenantId ?? 'default';
+
 	const integration = await ensureIntegration(database, plugin.id, kek);
-	const tenantId = tenantIdArg ?? 'default';
 	await ensureAccount(database, integration.id, tenantId, kek);
 
 	if (showCredentials) {
