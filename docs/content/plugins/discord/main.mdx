@@ -81,26 +81,26 @@ If no `authType` is specified, the plugin defaults to **[`api_key`](/content/con
 <Tabs>
 <Tab title="Solo">
 ```bash
-pnpm corsair setup --discord api_key=your-bot-token
+pnpm corsair setup --plugin=discord api_key=your-bot-token
 ```
 
 For interaction signature verification, also store your app's Ed25519 public key:
 
 ```bash
-pnpm corsair setup --discord public_key=your-public-key
+pnpm corsair setup --plugin=discord public_key=your-public-key
 ```
 
 The public key is found in the Discord Developer Portal under **Application > General Information**.
 </Tab>
 <Tab title="Multi-Tenant">
 ```bash
-pnpm corsair setup --discord api_key=their-bot-token --tenant=user_abc123
+pnpm corsair setup --plugin=discord api_key=their-bot-token --tenant=user_abc123
 ```
 
 For interaction signature verification, also store your app's Ed25519 public key:
 
 ```bash
-pnpm corsair setup --discord public_key=your-public-key
+pnpm corsair setup --plugin=discord public_key=your-public-key
 ```
 </Tab>
 </Tabs>

@@ -87,24 +87,24 @@ If no `authType` is specified, the plugin defaults to **[`api_key`](/content/con
 <Tabs>
 <Tab title="Solo">
 ```bash
-pnpm corsair setup --amplitude api_key=your-api-key
+pnpm corsair setup --plugin=amplitude api_key=your-api-key
 ```
 
 For webhook signature verification:
 
 ```bash
-pnpm corsair setup --amplitude webhook_signature=your-webhook-secret
+pnpm corsair setup --plugin=amplitude webhook_signature=your-webhook-secret
 ```
 </Tab>
 <Tab title="Multi-Tenant">
 ```bash
-pnpm corsair setup --amplitude api_key=their-api-key --tenant=user_abc123
+pnpm corsair setup --plugin=amplitude api_key=their-api-key --tenant=user_abc123
 ```
 
 For webhook signature verification:
 
 ```bash
-pnpm corsair setup --amplitude webhook_signature=your-webhook-secret
+pnpm corsair setup --plugin=amplitude webhook_signature=your-webhook-secret
 ```
 </Tab>
 </Tabs>

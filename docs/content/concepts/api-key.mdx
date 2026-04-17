@@ -22,7 +22,7 @@ export const corsair = createCorsair({
 Store your key once with the CLI:
 
 ```bash
-pnpm corsair setup --linear api_key=your-api-key
+pnpm corsair setup --plugin=linear api_key=your-api-key
 ```
 
 Every `corsair.linear.api.*` call will use the stored key automatically.
@@ -45,7 +45,7 @@ export const corsair = createCorsair({
 Store the key:
 
 ```bash
-pnpm corsair setup --linear api_key=lin_api_your-key-here
+pnpm corsair setup --plugin=linear api_key=lin_api_your-key-here
 ```
 
 All API calls use this key:
@@ -79,7 +79,7 @@ await corsair.storeCredential("user_abc123", "linear", {
 Or via the CLI during development:
 
 ```bash
-pnpm corsair setup --linear api_key=lin_api_tenant_key --tenant=user_abc123
+pnpm corsair setup --plugin=linear api_key=lin_api_tenant_key --tenant=user_abc123
 ```
 
 Use `withTenant` to scope all API calls to a specific user:

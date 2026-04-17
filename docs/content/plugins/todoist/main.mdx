@@ -81,24 +81,24 @@ If no `authType` is specified, the plugin defaults to **[`api_key`](/content/con
 <Tabs>
 <Tab title="Solo">
 ```bash
-pnpm corsair setup --todoist api_key=your-api-token
+pnpm corsair setup --plugin=todoist api_key=your-api-token
 ```
 
 For webhook signature verification:
 
 ```bash
-pnpm corsair setup --todoist webhook_signature=your-webhook-secret
+pnpm corsair setup --plugin=todoist webhook_signature=your-webhook-secret
 ```
 </Tab>
 <Tab title="Multi-Tenant">
 ```bash
-pnpm corsair setup --todoist api_key=their-api-token --tenant=user_abc123
+pnpm corsair setup --plugin=todoist api_key=their-api-token --tenant=user_abc123
 ```
 
 For webhook signature verification:
 
 ```bash
-pnpm corsair setup --todoist webhook_signature=your-webhook-secret
+pnpm corsair setup --plugin=todoist webhook_signature=your-webhook-secret
 ```
 </Tab>
 </Tabs>

@@ -52,7 +52,7 @@ export const corsair = createCorsair({
 <Tabs>
 <Tab title="Solo">
 ```bash
-pnpm corsair setup --dropbox client_id=your-app-key client_secret=your-app-secret
+pnpm corsair setup --plugin=dropbox client_id=your-app-key client_secret=your-app-secret
 pnpm corsair auth --plugin=dropbox
 ```
 
@@ -60,7 +60,7 @@ See [Get Credentials](/plugins/dropbox/get-credentials) for step-by-step instruc
 </Tab>
 <Tab title="Multi-Tenant">
 ```bash
-pnpm corsair setup --dropbox client_id=your-app-key client_secret=your-app-secret
+pnpm corsair setup --plugin=dropbox client_id=your-app-key client_secret=your-app-secret
 ```
 </Tab>
 </Tabs>

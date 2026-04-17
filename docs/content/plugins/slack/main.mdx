@@ -67,7 +67,7 @@ See [Get Credentials](/plugins/slack/get-credentials) for step-by-step instructi
 
 <Step title="Store credentials">
 ```bash
-pnpm corsair setup --slack bot_token=xoxb-your-bot-token webhook_signature=your-signing-secret
+pnpm corsair setup --plugin=slack bot_token=xoxb-your-bot-token webhook_signature=your-signing-secret
 ```
 
 Run this once. Credentials are encrypted with your KEK and stored in your database.
@@ -97,7 +97,7 @@ slack({
 Store the token:
 
 ```bash
-pnpm corsair setup --slack bot_token=xoxb-your-bot-token
+pnpm corsair setup --plugin=slack bot_token=xoxb-your-bot-token
 ```
 
 See [Get Credentials](/plugins/slack/get-credentials) for where to find this in the Slack dashboard.
@@ -117,7 +117,7 @@ slack({
 Store your OAuth app credentials, then start the flow:
 
 ```bash
-pnpm corsair setup --slack client_id=your-client-id client_secret=your-client-secret
+pnpm corsair setup --plugin=slack client_id=your-client-id client_secret=your-client-secret
 pnpm corsair auth --plugin=slack
 ```
 

@@ -52,13 +52,13 @@ export const corsair = createCorsair({
 <Tabs>
 <Tab title="Solo">
 ```bash
-pnpm corsair setup --jira api_key=your-api-token
+pnpm corsair setup --plugin=jira api_key=your-api-token
 ```
 
 For webhook signature verification:
 
 ```bash
-pnpm corsair setup --jira webhook_signature=your-webhook-secret
+pnpm corsair setup --plugin=jira webhook_signature=your-webhook-secret
 ```
 
 See [Get Credentials](/plugins/jira/get-credentials) for step-by-step instructions.
@@ -75,13 +75,13 @@ export const corsair = createCorsair({
 ```
 
 ```bash
-pnpm corsair setup --jira api_key=their-api-token --tenant=user_abc123
+pnpm corsair setup --plugin=jira api_key=their-api-token --tenant=user_abc123
 ```
 
 For webhook signature verification:
 
 ```bash
-pnpm corsair setup --jira webhook_signature=your-webhook-secret
+pnpm corsair setup --plugin=jira webhook_signature=your-webhook-secret
 ```
 </Tab>
 </Tabs>

@@ -39,7 +39,7 @@ export const corsair = createCorsair({
 Store your OAuth app credentials, then start the flow:
 
 ```bash
-pnpm corsair setup --gmail client_id=your-client-id client_secret=your-client-secret
+pnpm corsair setup --plugin=gmail client_id=your-client-id client_secret=your-client-secret
 pnpm corsair auth --plugin=gmail
 ```
 
@@ -72,7 +72,7 @@ export const corsair = createCorsair({
 Store your client credentials once — these are shared across all tenants:
 
 ```bash
-pnpm corsair setup --gmail client_id=your-client-id client_secret=your-client-secret
+pnpm corsair setup --plugin=gmail client_id=your-client-id client_secret=your-client-secret
 ```
 
 ### 2. Generate the authorization URL

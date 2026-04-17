@@ -52,13 +52,13 @@ export const corsair = createCorsair({
 <Tabs>
 <Tab title="Solo">
 ```bash
-pnpm corsair setup --stripe api_key=sk_live_your-secret-key
+pnpm corsair setup --plugin=stripe api_key=sk_live_your-secret-key
 ```
 
 For webhook signature verification:
 
 ```bash
-pnpm corsair setup --stripe webhook_signature=whsec_your-webhook-secret
+pnpm corsair setup --plugin=stripe webhook_signature=whsec_your-webhook-secret
 ```
 
 See [Get Credentials](/plugins/stripe/get-credentials) for step-by-step instructions.
@@ -75,13 +75,13 @@ export const corsair = createCorsair({
 ```
 
 ```bash
-pnpm corsair setup --stripe api_key=sk_live_their-key --tenant=user_abc123
+pnpm corsair setup --plugin=stripe api_key=sk_live_their-key --tenant=user_abc123
 ```
 
 For webhook signature verification:
 
 ```bash
-pnpm corsair setup --stripe webhook_signature=whsec_your-webhook-secret
+pnpm corsair setup --plugin=stripe webhook_signature=whsec_your-webhook-secret
 ```
 </Tab>
 </Tabs>

@@ -52,26 +52,26 @@ export const corsair = createCorsair({
 <Tabs>
 <Tab title="Solo">
 ```bash
-pnpm corsair setup --calendly api_key=your-personal-access-token
+pnpm corsair setup --plugin=calendly api_key=your-personal-access-token
 ```
 
 For webhook signature verification:
 
 ```bash
-pnpm corsair setup --calendly webhook_signature=your-signing-key
+pnpm corsair setup --plugin=calendly webhook_signature=your-signing-key
 ```
 
 See [Get Credentials](/plugins/calendly/get-credentials) for step-by-step instructions.
 </Tab>
 <Tab title="Multi-Tenant">
 ```bash
-pnpm corsair setup --calendly api_key=their-api-key --tenant=user_abc123
+pnpm corsair setup --plugin=calendly api_key=their-api-key --tenant=user_abc123
 ```
 
 For webhook signature verification:
 
 ```bash
-pnpm corsair setup --calendly webhook_signature=your-signing-key
+pnpm corsair setup --plugin=calendly webhook_signature=your-signing-key
 ```
 </Tab>
 </Tabs>

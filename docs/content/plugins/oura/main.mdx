@@ -81,24 +81,24 @@ If no `authType` is specified, the plugin defaults to **[`api_key`](/content/con
 <Tabs>
 <Tab title="Solo">
 ```bash
-pnpm corsair setup --oura api_key=your-access-token
+pnpm corsair setup --plugin=oura api_key=your-access-token
 ```
 
 For webhook signature verification:
 
 ```bash
-pnpm corsair setup --oura webhook_signature=your-webhook-secret
+pnpm corsair setup --plugin=oura webhook_signature=your-webhook-secret
 ```
 </Tab>
 <Tab title="Multi-Tenant">
 ```bash
-pnpm corsair setup --oura api_key=their-access-token --tenant=user_abc123
+pnpm corsair setup --plugin=oura api_key=their-access-token --tenant=user_abc123
 ```
 
 For webhook signature verification:
 
 ```bash
-pnpm corsair setup --oura webhook_signature=your-webhook-secret
+pnpm corsair setup --plugin=oura webhook_signature=your-webhook-secret
 ```
 </Tab>
 </Tabs>
