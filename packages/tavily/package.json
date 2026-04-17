@@ -22,6 +22,7 @@
     "zod": "^3.0.0"
   },
   "devDependencies": {
+    "jest": "^29.7.0",
     "ts-jest": "^29.4.6",
     "corsair": "workspace:*",
     "tsup": "^8.0.1",
@@ -38,8 +39,5 @@
   "license": "Apache-2.0",
   "files": [
     "dist"
-  ],
-  "dependencies": {
-    "jest": "^29.7.0"
-  }
+  ]
 }

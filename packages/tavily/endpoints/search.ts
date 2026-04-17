@@ -4,10 +4,14 @@ import { makeTavilyRequest } from '../client';
 import type { TavilySearchResponse } from './types';
 
 export const search: TavilyEndpoints['search'] = async (ctx, input) => {
-	const response = await makeTavilyRequest<TavilySearchResponse>('search', ctx.key, {
-		method: 'POST',
-		body: input,
-	});
+	const response = await makeTavilyRequest<TavilySearchResponse>(
+		'search',
+		ctx.key,
+		{
+			method: 'POST',
+			body: input,
+		},
+	);
 
 	for (const result of response.results) {
 		try {
@@ -17,13 +21,16 @@ export const search: TavilyEndpoints['search'] = async (ctx, input) => {
 				searchedAt: new Date(),
 			});
 		} catch (error) {
-			console.warn(`[tavily] Failed to save search result ${result.url}:`, error);
+			console.warn(
+				`[tavily] Failed to save search result ${result.url}:`,
+				error,
+			);
 		}
 	}
 
 	await logEventFromContext(
 		ctx,
-		'tavily.search',
+		'tavily.search.search',
 		{ query: input.query, resultCount: response.results.length },
 		'completed',
 	);

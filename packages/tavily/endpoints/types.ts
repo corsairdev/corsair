@@ -170,7 +170,9 @@ export const TavilyExtractFailedResultSchema = z.object({
 	error: z.string(),
 });
 
-export type TavilyExtractFailedResult = z.infer<typeof TavilyExtractFailedResultSchema>;
+export type TavilyExtractFailedResult = z.infer<
+	typeof TavilyExtractFailedResultSchema
+>;
 
 export const TavilyExtractResponseSchema = z.object({
 	results: z.array(TavilyExtractResultSchema),
@@ -248,7 +250,9 @@ export const TavilyCrawlFailedResultSchema = z.object({
 	error: z.string(),
 });
 
-export type TavilyCrawlFailedResult = z.infer<typeof TavilyCrawlFailedResultSchema>;
+export type TavilyCrawlFailedResult = z.infer<
+	typeof TavilyCrawlFailedResultSchema
+>;
 
 export const TavilyCrawlResponseSchema = z.object({
 	base_url: z.string(),

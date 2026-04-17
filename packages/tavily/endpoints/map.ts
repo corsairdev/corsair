@@ -23,7 +23,7 @@ export const map: TavilyEndpoints['map'] = async (ctx, input) => {
 
 	await logEventFromContext(
 		ctx,
-		'tavily.map',
+		'tavily.map.map',
 		{ baseUrl: input.url, resultCount: response.results.length },
 		'completed',
 	);

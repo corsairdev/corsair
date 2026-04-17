@@ -1,7 +1,7 @@
-import { search } from './search';
-import { extract } from './extract';
 import { crawl } from './crawl';
+import { extract } from './extract';
 import { map } from './map';
+import { search } from './search';
 
 export const Search = { search };
 export const Extract = { extract };

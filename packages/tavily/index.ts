@@ -1,4 +1,5 @@
 import type {
+	AuthTypes,
 	BindEndpoints,
 	CorsairEndpoint,
 	CorsairErrorHandler,
@@ -6,16 +7,21 @@ import type {
 	CorsairPluginContext,
 	KeyBuilderContext,
 	PickAuth,
-	PluginAuthConfig,
 	PluginPermissionsConfig,
+	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
-import type { AuthTypes } from 'corsair/core';
-import type { TavilyEndpointInputs, TavilyEndpointOutputs } from './endpoints/types';
-import { TavilyEndpointInputSchemas, TavilyEndpointOutputSchemas } from './endpoints/types';
-import { Search, Extract, Crawl, Map } from './endpoints';
-import { TavilySchema } from './schema';
+import { Crawl, Extract, Map, Search } from './endpoints';
+import type {
+	TavilyEndpointInputs,
+	TavilyEndpointOutputs,
+} from './endpoints/types';
+import {
+	TavilyEndpointInputSchemas,
+	TavilyEndpointOutputSchemas,
+} from './endpoints/types';
 import { errorHandlers } from './error-handlers';
+import { TavilySchema } from './schema';
 
 export type TavilyPluginOptions = {
 	authType?: PickAuth<'api_key'>;
@@ -78,7 +84,9 @@ export const tavilyEndpointSchemas = {
 		input: TavilyEndpointInputSchemas.map,
 		output: TavilyEndpointOutputSchemas.map,
 	},
-} as const satisfies RequiredPluginEndpointSchemas<typeof tavilyEndpointsNested>;
+} as const satisfies RequiredPluginEndpointSchemas<
+	typeof tavilyEndpointsNested
+>;
 
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
@@ -99,7 +107,7 @@ const tavilyEndpointMeta = {
 		riskLevel: 'read',
 		description: 'Map all URLs on a website starting from a root URL',
 	},
-} as const;
+} satisfies RequiredPluginEndpointMeta<typeof tavilyEndpointsNested>;
 
 export type BaseTavilyPlugin<T extends TavilyPluginOptions> = CorsairPlugin<
 	'tavily',
@@ -152,14 +160,14 @@ export function tavily<const T extends TavilyPluginOptions>(
 }
 
 export type {
-	TavilyEndpointInputs,
-	TavilyEndpointOutputs,
-	TavilySearchRequest,
-	TavilySearchResponse,
-	TavilyExtractRequest,
-	TavilyExtractResponse,
 	TavilyCrawlRequest,
 	TavilyCrawlResponse,
+	TavilyEndpointInputs,
+	TavilyEndpointOutputs,
+	TavilyExtractRequest,
+	TavilyExtractResponse,
 	TavilyMapRequest,
 	TavilyMapResponse,
+	TavilySearchRequest,
+	TavilySearchResponse,
 } from './endpoints/types';

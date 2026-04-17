@@ -4,10 +4,14 @@ import { makeTavilyRequest } from '../client';
 import type { TavilyCrawlResponse } from './types';
 
 export const crawl: TavilyEndpoints['crawl'] = async (ctx, input) => {
-	const response = await makeTavilyRequest<TavilyCrawlResponse>('crawl', ctx.key, {
-		method: 'POST',
-		body: input,
-	});
+	const response = await makeTavilyRequest<TavilyCrawlResponse>(
+		'crawl',
+		ctx.key,
+		{
+			method: 'POST',
+			body: input,
+		},
+	);
 
 	for (const result of response.results) {
 		try {
@@ -17,13 +21,16 @@ export const crawl: TavilyEndpoints['crawl'] = async (ctx, input) => {
 				crawledAt: new Date(),
 			});
 		} catch (error) {
-			console.warn(`[tavily] Failed to save crawl result ${result.url}:`, error);
+			console.warn(
+				`[tavily] Failed to save crawl result ${result.url}:`,
+				error,
+			);
 		}
 	}
 
 	await logEventFromContext(
 		ctx,
-		'tavily.crawl',
+		'tavily.crawl.crawl',
 		{ baseUrl: input.url, resultCount: response.results.length },
 		'completed',
 	);
