@@ -167,7 +167,7 @@ describe('savePostsToDb', () => {
 		const warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
 		await expect(savePostsToDb(ctx, [mockPost])).resolves.toBeUndefined();
 		expect(warnSpy).toHaveBeenCalledWith(
-			'Failed to save posts to database:',
+			'Failed to save post to database:',
 			expect.any(Error),
 		);
 		warnSpy.mockRestore();
@@ -249,7 +249,7 @@ describe('saveSubredditsToDb', () => {
 			saveSubredditsToDb(ctx, [mockSubreddit]),
 		).resolves.toBeUndefined();
 		expect(warnSpy).toHaveBeenCalledWith(
-			'Failed to save subreddits to database:',
+			'Failed to save subreddit to database:',
 			expect.any(Error),
 		);
 		warnSpy.mockRestore();

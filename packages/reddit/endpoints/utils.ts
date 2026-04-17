@@ -1,5 +1,15 @@
-import { CommentDataSchema, PostDataSchema, SubredditDataSchema } from './types';
-import type { RedditListingRaw, PostData, CommentData, SubredditAboutData as SubredditData, UserAboutData as UserData } from './types';
+import type {
+	CommentData,
+	PostData,
+	RedditListingRaw,
+	SubredditAboutData as SubredditData,
+	UserAboutData as UserData,
+} from './types';
+import {
+	CommentDataSchema,
+	PostDataSchema,
+	SubredditDataSchema,
+} from './types';
 
 /**
  * Reddit "thing" type prefixes (used in `kind` fields within listings):
@@ -35,25 +45,25 @@ export const TEST_USERNAME = process.env.TEST_REDDIT_USERNAME ?? 'spez';
 
 export async function savePostsToDb(ctx: any, posts: PostData[]) {
 	if (!ctx.db?.posts) return;
-	try {
-		for (const post of posts) {
+	for (const post of posts) {
+		try {
 			await ctx.db.posts.upsertByEntityId(String(post.id), { ...post });
+		} catch (error) {
+			console.warn('Failed to save post to database:', error);
 		}
-	} catch (error) {
-		console.warn('Failed to save posts to database:', error);
 	}
 }
 
 export async function saveCommentsToDb(ctx: any, comments: CommentData[]) {
 	if (!ctx.db?.comments) return;
-	try {
-		for (const comment of comments) {
+	for (const comment of comments) {
+		try {
 			await ctx.db.comments.upsertByEntityId(String(comment.id), {
 				...comment,
 			});
+		} catch (error) {
+			console.warn('Failed to save comments to database:', error);
 		}
-	} catch (error) {
-		console.warn('Failed to save comments to database:', error);
 	}
 }
 
@@ -62,14 +72,14 @@ export async function saveSubredditsToDb(
 	subreddits: SubredditData[],
 ) {
 	if (!ctx.db?.subreddits) return;
-	try {
-		for (const subreddit of subreddits) {
+	for (const subreddit of subreddits) {
+		try {
 			await ctx.db.subreddits.upsertByEntityId(String(subreddit.id), {
 				...subreddit,
 			});
+		} catch (error) {
+			console.warn('Failed to save subreddit to database:', error);
 		}
-	} catch (error) {
-		console.warn('Failed to save subreddits to database:', error);
 	}
 }
 
