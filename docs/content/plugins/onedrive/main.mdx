@@ -13,6 +13,8 @@ pnpm install @corsair-dev/onedrive
 
 Add the OneDrive plugin to your Corsair instance:
 
+<Tabs>
+<Tab title="Solo">
 ```ts corsair.ts
 import { createCorsair } from "corsair";
 import { onedrive } from "@corsair-dev/onedrive";
@@ -23,21 +25,47 @@ export const corsair = createCorsair({
     kek: process.env.CORSAIR_KEK!,
 });
 ```
+</Tab>
+<Tab title="Multi-Tenant">
+```ts corsair.ts
+import { createCorsair } from "corsair";
+import { onedrive } from "@corsair-dev/onedrive";
+
+export const corsair = createCorsair({
+    multiTenancy: true,
+    plugins: [onedrive()],
+    database: db,
+    kek: process.env.CORSAIR_KEK!,
+});
+```
+</Tab>
+</Tabs>
 
 ## Authentication
 
 ### Supported Auth Types
 
-- **`oauth_2`** (default) - OAuth 2.0 (Microsoft)
+- **[`oauth_2`](/content/concepts/oauth)** (default) - OAuth 2.0 (Microsoft)
 
 ### OAuth Setup
 
+<Tabs>
+<Tab title="Solo">
 ```bash
-pnpm corsair setup --onedrive client_id=your-client-id client_secret=your-client-secret
+pnpm corsair setup --plugin=onedrive client_id=your-client-id client_secret=your-client-secret
 pnpm corsair auth --plugin=onedrive
 ```
 
-See [Get Credentials](/plugins/onedrive/get-credentials) for step-by-step instructions.
+See [Get Credentials](/plugins/onedrive/get-credentials) for step-by-step instructions on setting up OAuth 2.0.
+</Tab>
+<Tab title="Multi-Tenant">
+```bash
+pnpm corsair setup --plugin=onedrive client_id=your-client-id client_secret=your-client-secret
+```
+</Tab>
+</Tabs>
+
+See [OAuth 2.0 Authentication](/content/concepts/oauth) for full setup including callback handling.
 
 ## Options
 
@@ -52,6 +80,8 @@ See [Get Credentials](/plugins/onedrive/get-credentials) for step-by-step instru
 
 ## Usage
 
+<Tabs>
+<Tab title="Solo">
 ```ts
 // List files
 const files = await corsair.onedrive.api.files.list({});
@@ -88,20 +118,50 @@ const site = await corsair.onedrive.api.sharepoint.getSite({
     site_id: "site-id",
 });
 ```
+</Tab>
+<Tab title="Multi-Tenant">
+```ts
+const tenant = corsair.withTenant("user-123");
+
+// List files
+const files = await tenant.onedrive.api.files.list({});
+
+// Find a file
+const file = await tenant.onedrive.api.files.findFile({
+    name: "report.docx",
+});
+
+// Upload a file
+await tenant.onedrive.api.files.upload({
+    path: "/Documents/report.txt",
+    content: "file content",
+});
+
+// Get drive info
+const drive = await tenant.onedrive.api.drive.get({});
+```
+</Tab>
+</Tabs>
 
 ### Query cached data
 
+<Tabs>
+<Tab title="Solo">
 ```ts
 const files = await corsair.onedrive.db.files.search({
     data: {},
     limit: 20,
 });
 ```
-
-### Multi-Tenancy
-
+</Tab>
+<Tab title="Multi-Tenant">
 ```ts
 const tenant = corsair.withTenant("user-123");
 
-const files = await tenant.onedrive.api.files.list({});
+const files = await tenant.onedrive.db.files.search({
+    data: {},
+    limit: 20,
+});
 ```
+</Tab>
+</Tabs>

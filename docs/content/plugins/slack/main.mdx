@@ -26,6 +26,8 @@ pnpm install @corsair-dev/slack
 </Step>
 
 <Step title="Add the plugin">
+<Tabs>
+<Tab title="Solo">
 ```ts corsair.ts
 import { createCorsair } from 'corsair';
 import { slack } from '@corsair-dev/slack';
@@ -37,6 +39,22 @@ export const corsair = createCorsair({
     kek: process.env.CORSAIR_KEK!,
 });
 ```
+</Tab>
+<Tab title="Multi-Tenant">
+```ts corsair.ts
+import { createCorsair } from 'corsair';
+import { slack } from '@corsair-dev/slack';
+import Database from 'better-sqlite3';
+
+export const corsair = createCorsair({
+    multiTenancy: true,
+    plugins: [slack()],
+    database: new Database('corsair.db'),
+    kek: process.env.CORSAIR_KEK!,
+});
+```
+</Tab>
+</Tabs>
 
 </Step>
 
@@ -49,7 +67,7 @@ See [Get Credentials](/plugins/slack/get-credentials) for step-by-step instructi
 
 <Step title="Store credentials">
 ```bash
-pnpm corsair setup --slack bot_token=xoxb-your-bot-token webhook_signature=your-signing-secret
+pnpm corsair setup --plugin=slack bot_token=xoxb-your-bot-token webhook_signature=your-signing-secret
 ```
 
 Run this once. Credentials are encrypted with your KEK and stored in your database.
@@ -79,7 +97,7 @@ slack({
 Store the token:
 
 ```bash
-pnpm corsair setup --slack bot_token=xoxb-your-bot-token
+pnpm corsair setup --plugin=slack bot_token=xoxb-your-bot-token
 ```
 
 See [Get Credentials](/plugins/slack/get-credentials) for where to find this in the Slack dashboard.
@@ -99,7 +117,7 @@ slack({
 Store your OAuth app credentials, then start the flow:
 
 ```bash
-pnpm corsair setup --slack client_id=your-client-id client_secret=your-client-secret
+pnpm corsair setup --plugin=slack client_id=your-client-id client_secret=your-client-secret
 pnpm corsair auth --plugin=slack
 ```
 
@@ -113,12 +131,26 @@ The CLI will print an authorization URL. Once the user approves, tokens are stor
 
 ## Send a message
 
+<Tabs>
+<Tab title="Solo">
 ```ts
 await corsair.slack.api.messages.post({
     channel: 'C1234567890',  // channel ID
     text: 'Hello from Corsair!',
 });
 ```
+</Tab>
+<Tab title="Multi-Tenant">
+```ts
+const tenant = corsair.withTenant("user_id");
+
+await tenant.slack.api.messages.post({
+    channel: 'C1234567890',  // channel ID
+    text: 'Hello from Corsair!',
+});
+```
+</Tab>
+</Tabs>
 
 <Info>
 **Use channel IDs, not names**

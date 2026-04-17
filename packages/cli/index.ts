@@ -563,11 +563,13 @@ function parseSetupArgs(args: string[]): {
 			continue;
 		}
 
+		if (arg.startsWith('--plugin=')) {
+			currentPlugin = arg.slice('--plugin='.length);
+			if (!credentials[currentPlugin]) credentials[currentPlugin] = {};
+			continue;
+		}
+
 		if (arg.startsWith('--')) {
-			const name = arg.slice(2);
-			if (RESERVED_FLAGS.has(name)) continue;
-			currentPlugin = name;
-			credentials[currentPlugin] = {};
 			continue;
 		}
 
@@ -642,7 +644,7 @@ function printHelp() {
 		'Corsair CLI',
 		'',
 		'pnpm corsair setup                              Init (add -backfill to seed data)',
-		'pnpm corsair setup --<plugin> <field>=VALUE     Set plugin credentials',
+		'pnpm corsair setup --plugin=<id> <field>=VALUE  Set plugin credentials',
 		'pnpm corsair auth --plugin=<id>                 Start OAuth flow',
 		'pnpm corsair auth --plugin=<id> --code=<code>   Exchange OAuth code for tokens',
 		'pnpm corsair auth --plugin=<id> --agent         Run this if you are an agent (specific instructions to handle pending process)',

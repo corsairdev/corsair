@@ -13,6 +13,8 @@ pnpm install @corsair-dev/ahrefs
 
 Add the Ahrefs plugin to your Corsair instance:
 
+<Tabs>
+<Tab title="Solo">
 ```ts corsair.ts
 import { createCorsair } from "corsair";
 import { ahrefs } from "@corsair-dev/ahrefs";
@@ -23,20 +25,46 @@ export const corsair = createCorsair({
     kek: process.env.CORSAIR_KEK!,
 });
 ```
+</Tab>
+<Tab title="Multi-Tenant">
+```ts corsair.ts
+import { createCorsair } from "corsair";
+import { ahrefs } from "@corsair-dev/ahrefs";
+
+export const corsair = createCorsair({
+    multiTenancy: true,
+    plugins: [ahrefs()],
+    database: db,
+    kek: process.env.CORSAIR_KEK!,
+});
+```
+</Tab>
+</Tabs>
 
 ## Authentication
 
 ### Supported Auth Types
 
-- **`api_key`** (default) - Ahrefs API key
+- **[`api_key`](/content/concepts/api-key)** (default) - Ahrefs API key
 
 ### API Key Setup
 
+<Tabs>
+<Tab title="Solo">
 ```bash
-pnpm corsair setup --ahrefs api_key=your-api-key
+pnpm corsair setup --plugin=ahrefs api_key=your-api-key
 ```
 
 See [Get Credentials](/plugins/ahrefs/get-credentials) for step-by-step instructions.
+</Tab>
+<Tab title="Multi-Tenant">
+```bash
+pnpm corsair setup --plugin=ahrefs api_key=their-api-key --tenant=user_abc123
+```
+</Tab>
+</Tabs>
+
+See [API Key Authentication](/content/concepts/api-key) for full setup details.
 
 ## Options
 
@@ -49,6 +77,8 @@ See [Get Credentials](/plugins/ahrefs/get-credentials) for step-by-step instruct
 
 ## Usage
 
+<Tabs>
+<Tab title="Solo">
 ```ts
 // Get domain rating
 const rating = await corsair.ahrefs.api.siteExplorer.getDomainRating({
@@ -88,14 +118,29 @@ const serp = await corsair.ahrefs.api.serp.overview({
     select: "url,domain_rating,traffic",
 });
 ```
-
-### Multi-Tenancy
-
+</Tab>
+<Tab title="Multi-Tenant">
 ```ts
 const tenant = corsair.withTenant("workspace-123");
 
-const stats = await tenant.ahrefs.api.siteExplorer.backlinksStats({
+// Get domain rating
+const rating = await tenant.ahrefs.api.siteExplorer.getDomainRating({
     target: "example.com",
     date: "2024-01-01",
 });
+
+// Get backlinks stats
+const stats = await tenant.ahrefs.api.siteExplorer.backlinksStats({
+    target: "example.com",
+    date: "2024-01-01",
+    mode: "domain",
+});
+
+// Get organic keywords
+const keywords = await tenant.ahrefs.api.siteExplorer.organicKeywords({
+    target: "example.com",
+    select: "keyword,volume,position",
+});
 ```
+</Tab>
+</Tabs>

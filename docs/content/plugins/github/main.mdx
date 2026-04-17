@@ -13,6 +13,8 @@ pnpm install @corsair-dev/github
 
 Add the GitHub plugin to your Corsair instance:
 
+<Tabs>
+<Tab title="Solo">
 ```ts corsair.ts
 import { createCorsair } from "corsair";
 import { github } from "@corsair-dev/github";
@@ -23,15 +25,45 @@ export const corsair = createCorsair({
     ],
 });
 ```
+</Tab>
+<Tab title="Multi-Tenant">
+```ts corsair.ts
+import { createCorsair } from "corsair";
+import { github } from "@corsair-dev/github";
+
+export const corsair = createCorsair({
+    multiTenancy: true,
+    plugins: [
+        github(),
+    ],
+    kek: process.env.CORSAIR_KEK!,
+});
+```
+</Tab>
+</Tabs>
 
 Once configured, you can access the GitHub API through your Corsair instance:
 
+<Tabs>
+<Tab title="Solo">
 ```ts
 const issues = await corsair.github.api.issues.list({
     owner: "octocat",
     repo: "Hello-World",
 });
 ```
+</Tab>
+<Tab title="Multi-Tenant">
+```ts
+const tenant = corsair.withTenant("user_id");
+
+const issues = await tenant.github.api.issues.list({
+    owner: "octocat",
+    repo: "Hello-World",
+});
+```
+</Tab>
+</Tabs>
 
 ## Authentication
 
@@ -39,49 +71,57 @@ const issues = await corsair.github.api.issues.list({
 
 The GitHub plugin supports two authentication methods:
 
-- **`api_key`** - Personal Access Token authentication
-- **`oauth_2`** - OAuth App authentication
+- **[`api_key`](/content/concepts/api-key)** - Personal Access Token authentication
+- **[`oauth_2`](/content/concepts/oauth)** - OAuth App authentication
 
 ### API Key Authentication (Personal Access Token)
 
-Store the token using the Corsair CLI:
-
+<Tabs>
+<Tab title="Solo">
 ```bash
-pnpm corsair setup --github api_key=your-personal-access-token
-```
-
-Check that it was stored correctly:
-
-```bash
-pnpm corsair auth --plugin=github --credentials
+pnpm corsair setup --plugin=github api_key=your-personal-access-token
 ```
 
 See [Get Credentials](/plugins/github/get-credentials) for step-by-step instructions on obtaining a Personal Access Token.
+</Tab>
+<Tab title="Multi-Tenant">
+```bash
+pnpm corsair setup --plugin=github api_key=their-personal-access-token --tenant=user_abc123
+```
+</Tab>
+</Tabs>
+
+See [API Key Authentication](/content/concepts/api-key) for full setup details.
 
 ### OAuth 2.0 Authentication
 
-Store your OAuth app credentials, then kick off the flow:
-
+<Tabs>
+<Tab title="Solo">
 ```bash
-pnpm corsair setup --github client_id=your-client-id client_secret=your-client-secret
+pnpm corsair setup --plugin=github client_id=your-client-id client_secret=your-client-secret
 pnpm corsair auth --plugin=github
 ```
 
-The CLI will print an authorization URL. Open it in a browser — once you approve, tokens are saved automatically.
-
 See [Get Credentials](/plugins/github/get-credentials) for step-by-step instructions on setting up OAuth 2.0.
+</Tab>
+<Tab title="Multi-Tenant">
+```bash
+pnpm corsair setup --plugin=github client_id=your-client-id client_secret=your-client-secret
+```
+</Tab>
+</Tabs>
+
+See [OAuth 2.0 Authentication](/content/concepts/oauth) for full setup including callback handling.
 
 ### Webhook Secret
 
 Store the webhook secret using the CLI:
 
 ```bash
-pnpm corsair setup --github webhook_signature=your-webhook-secret
+pnpm corsair setup --plugin=github webhook_signature=your-webhook-secret
 ```
 
 See [Get Credentials](/plugins/github/get-credentials) for step-by-step instructions on setting up webhooks.
-
-See [Authentication](/concepts/auth) for details on managing credentials.
 
 ## Options
 

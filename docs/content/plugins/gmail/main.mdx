@@ -13,6 +13,8 @@ pnpm install @corsair-dev/gmail
 
 Add the Gmail plugin to your Corsair instance:
 
+<Tabs>
+<Tab title="Solo">
 ```ts corsair.ts
 import { createCorsair } from "corsair";
 import { gmail } from "@corsair-dev/gmail";
@@ -25,14 +27,45 @@ export const corsair = createCorsair({
     ],
 });
 ```
+</Tab>
+<Tab title="Multi-Tenant">
+```ts corsair.ts
+import { createCorsair } from "corsair";
+import { gmail } from "@corsair-dev/gmail";
+
+export const corsair = createCorsair({
+    multiTenancy: true,
+    plugins: [
+        gmail({
+            authType: "oauth_2",
+        }),
+    ],
+    kek: process.env.CORSAIR_KEK!,
+});
+```
+</Tab>
+</Tabs>
 
 Once configured, you can access the Gmail API through your Corsair instance:
 
+<Tabs>
+<Tab title="Solo">
 ```ts
 const messages = await corsair.gmail.api.messages.list({
     maxResults: 10,
 });
 ```
+</Tab>
+<Tab title="Multi-Tenant">
+```ts
+const tenant = corsair.withTenant("user_id");
+
+const messages = await tenant.gmail.api.messages.list({
+    maxResults: 10,
+});
+```
+</Tab>
+</Tabs>
 
 ## Authentication
 
@@ -40,22 +73,27 @@ const messages = await corsair.gmail.api.messages.list({
 
 The Gmail plugin uses OAuth 2.0 authentication exclusively.
 
-- **`oauth_2`** (default) - OAuth 2.0 authentication
+- **[`oauth_2`](/content/concepts/oauth)** (default) - OAuth 2.0 authentication
 
 ### OAuth 2.0 Setup
 
-Store your OAuth app credentials, then start the flow:
-
+<Tabs>
+<Tab title="Solo">
 ```bash
-pnpm corsair setup --gmail client_id=your-client-id client_secret=your-client-secret
+pnpm corsair setup --plugin=gmail client_id=your-client-id client_secret=your-client-secret
 pnpm corsair auth --plugin=gmail
 ```
 
-The CLI will print an authorization URL — open it in a browser. Once you approve, tokens are saved automatically.
-
 See [Get Credentials](/plugins/gmail/get-credentials) for step-by-step instructions on setting up OAuth 2.0.
+</Tab>
+<Tab title="Multi-Tenant">
+```bash
+pnpm corsair setup --plugin=gmail client_id=your-client-id client_secret=your-client-secret
+```
+</Tab>
+</Tabs>
 
-See [Authentication](/concepts/auth) for details on managing credentials.
+See [OAuth 2.0 Authentication](/content/concepts/oauth) for full setup including callback handling.
 
 ## Options
 

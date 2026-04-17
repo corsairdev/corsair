@@ -13,6 +13,8 @@ pnpm install @corsair-dev/trello
 
 Add the Trello plugin to your Corsair instance:
 
+<Tabs>
+<Tab title="Solo">
 ```ts corsair.ts
 import { createCorsair } from "corsair";
 import { trello } from "@corsair-dev/trello";
@@ -23,26 +25,68 @@ export const corsair = createCorsair({
     kek: process.env.CORSAIR_KEK!,
 });
 ```
+</Tab>
+<Tab title="Multi-Tenant">
+```ts corsair.ts
+import { createCorsair } from "corsair";
+import { trello } from "@corsair-dev/trello";
+
+export const corsair = createCorsair({
+    multiTenancy: true,
+    plugins: [trello()],
+    database: db,
+    kek: process.env.CORSAIR_KEK!,
+});
+```
+</Tab>
+</Tabs>
 
 ## Authentication
 
 ### Supported Auth Types
 
-- **`api_key`** (default) - API key + token
+- **[`api_key`](/content/concepts/api-key)** (default) - API key + token
 
 ### API Key Setup
 
+<Tabs>
+<Tab title="Solo">
 ```bash
-pnpm corsair setup --trello api_key=your-api-key-and-token
+pnpm corsair setup --plugin=trello api_key=your-api-key-and-token
 ```
 
 For webhook verification:
 
 ```bash
-pnpm corsair setup --trello webhook_signature=your-webhook-secret
+pnpm corsair setup --plugin=trello webhook_signature=your-webhook-secret
 ```
 
 See [Get Credentials](/plugins/trello/get-credentials) for step-by-step instructions.
+</Tab>
+<Tab title="Multi-Tenant">
+Enable `multiTenancy` in your Corsair config, then store each user's key separately:
+
+```ts corsair.ts
+export const corsair = createCorsair({
+    multiTenancy: true,
+    plugins: [trello()],
+    kek: process.env.CORSAIR_KEK!,
+});
+```
+
+```bash
+pnpm corsair setup --plugin=trello api_key=their-api-key --tenant=user_abc123
+```
+
+For webhook verification:
+
+```bash
+pnpm corsair setup --plugin=trello webhook_signature=your-webhook-secret
+```
+</Tab>
+</Tabs>
+
+See [API Key Authentication](/content/concepts/api-key) for full setup details.
 
 ## Options
 
@@ -57,6 +101,8 @@ See [Get Credentials](/plugins/trello/get-credentials) for step-by-step instruct
 
 ## Usage
 
+<Tabs>
+<Tab title="Solo">
 ```ts
 // List boards
 const boards = await corsair.trello.api.boards.list({});
@@ -85,9 +131,33 @@ await corsair.trello.api.checklists.create({
     name: "Acceptance Criteria",
 });
 ```
+</Tab>
+<Tab title="Multi-Tenant">
+```ts
+const tenant = corsair.withTenant("user-123");
+
+// List boards
+const boards = await tenant.trello.api.boards.list({});
+
+// Create a card
+await tenant.trello.api.cards.create({
+    name: "Fix login bug",
+    idList: "list-id",
+    desc: "Users can't log in with SSO",
+});
+
+// List cards in a list
+const cards = await tenant.trello.api.cards.list({
+    id: "list-id",
+});
+```
+</Tab>
+</Tabs>
 
 ### Query cached data
 
+<Tabs>
+<Tab title="Solo">
 ```ts
 const boards = await corsair.trello.db.boards.search({ data: {} });
 
@@ -95,11 +165,16 @@ const cards = await corsair.trello.db.cards.search({
     data: { idBoard: "board-id" },
 });
 ```
-
-### Multi-Tenancy
-
+</Tab>
+<Tab title="Multi-Tenant">
 ```ts
 const tenant = corsair.withTenant("user-123");
 
-const boards = await tenant.trello.api.boards.list({});
+const boards = await tenant.trello.db.boards.search({ data: {} });
+
+const cards = await tenant.trello.db.cards.search({
+    data: { idBoard: "board-id" },
+});
 ```
+</Tab>
+</Tabs>

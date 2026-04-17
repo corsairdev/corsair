@@ -13,6 +13,8 @@ pnpm install @corsair-dev/amplitude
 
 Add the Amplitude plugin to your Corsair instance:
 
+<Tabs>
+<Tab title="Solo">
 ```ts corsair.ts
 import { createCorsair } from "corsair";
 import { amplitude } from "@corsair-dev/amplitude";
@@ -23,9 +25,25 @@ export const corsair = createCorsair({
     ],
 });
 ```
+</Tab>
+<Tab title="Multi-Tenant">
+```ts corsair.ts
+import { createCorsair } from "corsair";
+import { amplitude } from "@corsair-dev/amplitude";
+
+export const corsair = createCorsair({
+    multiTenancy: true,
+    plugins: [amplitude()],
+    kek: process.env.CORSAIR_KEK!,
+});
+```
+</Tab>
+</Tabs>
 
 Once configured, you can track events and manage analytics data:
 
+<Tabs>
+<Tab title="Solo">
 ```ts
 // Track an event
 await corsair.amplitude.api.events.upload({
@@ -36,42 +54,62 @@ await corsair.amplitude.api.events.upload({
     }],
 });
 ```
+</Tab>
+<Tab title="Multi-Tenant">
+```ts
+const tenant = corsair.withTenant("user_id");
+
+// Track an event
+await tenant.amplitude.api.events.upload({
+    api_key: "your-api-key",
+    events: [{
+        event_type: "page_view",
+        user_id: "user-123",
+    }],
+});
+```
+</Tab>
+</Tabs>
 
 ## Authentication
 
 ### Supported Auth Types
 
 The Amplitude plugin supports:
-- **`api_key`** (default) - Use an Amplitude API key
+- **[`api_key`](/content/concepts/api-key)** (default) - Use an Amplitude API key
 
 ### Default Auth Type
 
-If no `authType` is specified, the plugin defaults to **`api_key`**.
+If no `authType` is specified, the plugin defaults to **[`api_key`](/content/concepts/api-key)**.
 
 ### Configuring API Key Authentication
 
-Store credentials with the CLI:
-
+<Tabs>
+<Tab title="Solo">
 ```bash
-pnpm corsair setup --amplitude api_key=your-api-key
+pnpm corsair setup --plugin=amplitude api_key=your-api-key
 ```
 
 For webhook signature verification:
 
 ```bash
-pnpm corsair setup --amplitude webhook_signature=your-webhook-secret
+pnpm corsair setup --plugin=amplitude webhook_signature=your-webhook-secret
+```
+</Tab>
+<Tab title="Multi-Tenant">
+```bash
+pnpm corsair setup --plugin=amplitude api_key=their-api-key --tenant=user_abc123
 ```
 
-Alternatively, provide credentials directly in the config:
+For webhook signature verification:
 
-```ts corsair.ts
-amplitude({
-    key: process.env.AMPLITUDE_API_KEY,
-    webhookSecret: process.env.AMPLITUDE_WEBHOOK_SECRET,
-})
+```bash
+pnpm corsair setup --plugin=amplitude webhook_signature=your-webhook-secret
 ```
+</Tab>
+</Tabs>
 
-See [Authentication](/concepts/auth) for details on managing credentials.
+See [API Key Authentication](/content/concepts/api-key) for full setup details.
 
 ## Options
 
@@ -112,6 +150,8 @@ The plugin includes built-in error handlers for common scenarios. For complete d
 
 ### Accessing the API
 
+<Tabs>
+<Tab title="Solo">
 ```ts
 // Upload events
 await corsair.amplitude.api.events.upload({
@@ -136,11 +176,43 @@ await corsair.amplitude.api.cohorts.create({
     ids: ["user-1", "user-2", "user-3"],
 });
 ```
+</Tab>
+<Tab title="Multi-Tenant">
+```ts
+const tenant = corsair.withTenant("user_id");
+
+// Upload events
+await tenant.amplitude.api.events.upload({
+    api_key: "your-api-key",
+    events: [{
+        event_type: "purchase",
+        user_id: "user-123",
+        event_properties: { item: "Pro Plan", price: 99 },
+    }],
+});
+
+// Search for a user
+const user = await tenant.amplitude.api.users.search({
+    user_id: "user-123",
+});
+
+// Create a cohort
+await tenant.amplitude.api.cohorts.create({
+    name: "Power Users",
+    app_id: 12345,
+    id_type: "BY_USER_ID",
+    ids: ["user-1", "user-2", "user-3"],
+});
+```
+</Tab>
+</Tabs>
 
 See [API Endpoints](/plugins/amplitude/api-endpoints) for the complete reference.
 
 ### Webhooks
 
+<Tabs>
+<Tab title="Solo">
 ```ts app/api/webhook/route.ts
 import { processWebhook } from "corsair";
 import { corsair } from "@/server/corsair";
@@ -153,29 +225,48 @@ export async function POST(request: Request) {
     return result.response;
 }
 ```
+</Tab>
+<Tab title="Multi-Tenant">
+```ts app/api/webhook/route.ts
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    const body = await request.json();
+
+    const tenantId = new URL(request.url).searchParams.get("tenantId") ?? undefined;
+    const result = await processWebhook(corsair, headers, body, { tenantId });
+    return result.response;
+}
+```
+</Tab>
+</Tabs>
 
 See [Webhooks](/plugins/amplitude/webhooks) for all available events.
 
 ### Database Access
 
+<Tabs>
+<Tab title="Solo">
 ```ts
 const events = await corsair.amplitude.db.events.search({
     data: { event_type: "purchase" },
 });
 ```
-
-See [Database](/plugins/amplitude/database) for the complete schema.
-
-### Multi-Tenancy
-
+</Tab>
+<Tab title="Multi-Tenant">
 ```ts
 const tenant = corsair.withTenant("org-123");
 
-await tenant.amplitude.api.events.upload({
-    api_key: "tenant-api-key",
-    events: [{ event_type: "page_view", user_id: "u1" }],
+const events = await tenant.amplitude.db.events.search({
+    data: { event_type: "purchase" },
 });
 ```
+</Tab>
+</Tabs>
+
+See [Database](/plugins/amplitude/database) for the complete schema.
 
 ## Examples
 

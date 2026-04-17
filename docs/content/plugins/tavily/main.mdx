@@ -13,6 +13,8 @@ pnpm install @corsair-dev/tavily
 
 Add the Tavily plugin to your Corsair instance:
 
+<Tabs>
+<Tab title="Solo">
 ```ts corsair.ts
 import { createCorsair } from "corsair";
 import { tavily } from "@corsair-dev/tavily";
@@ -23,44 +25,71 @@ export const corsair = createCorsair({
     ],
 });
 ```
+</Tab>
+<Tab title="Multi-Tenant">
+```ts corsair.ts
+import { createCorsair } from "corsair";
+import { tavily } from "@corsair-dev/tavily";
+
+export const corsair = createCorsair({
+    multiTenancy: true,
+    plugins: [tavily()],
+    kek: process.env.CORSAIR_KEK!,
+});
+```
+</Tab>
+</Tabs>
 
 Once configured, you can search the web:
 
+<Tabs>
+<Tab title="Solo">
 ```ts
 // Search the web
 const results = await corsair.tavily.api.search({
     query: "latest AI research papers 2024",
 });
 ```
+</Tab>
+<Tab title="Multi-Tenant">
+```ts
+const tenant = corsair.withTenant("user_id");
+
+// Search the web
+const results = await tenant.tavily.api.search({
+    query: "latest AI research papers 2024",
+});
+```
+</Tab>
+</Tabs>
 
 ## Authentication
 
 ### Supported Auth Types
 
 The Tavily plugin supports:
-- **`api_key`** (default) - Use a Tavily API key
+- **[`api_key`](/content/concepts/api-key)** (default) - Use a Tavily API key
 
 ### Default Auth Type
 
-If no `authType` is specified, the plugin defaults to **`api_key`**.
+If no `authType` is specified, the plugin defaults to **[`api_key`](/content/concepts/api-key)**.
 
 ### Configuring API Key Authentication
 
-Store credentials with the CLI:
-
+<Tabs>
+<Tab title="Solo">
 ```bash
-pnpm corsair setup --tavily api_key=your-api-key
+pnpm corsair setup --plugin=tavily api_key=your-api-key
 ```
-
-Alternatively, provide credentials directly in the config:
-
-```ts corsair.ts
-tavily({
-    key: process.env.TAVILY_API_KEY,
-})
+</Tab>
+<Tab title="Multi-Tenant">
+```bash
+pnpm corsair setup --plugin=tavily api_key=their-api-key --tenant=user_abc123
 ```
+</Tab>
+</Tabs>
 
-See [Authentication](/concepts/auth) for details on managing credentials.
+See [API Key Authentication](/content/concepts/api-key) for full setup details.
 
 ## Options
 
@@ -97,6 +126,8 @@ The plugin includes built-in error handlers for common scenarios. For complete d
 
 ### Accessing the API
 
+<Tabs>
+<Tab title="Solo">
 ```ts
 // Basic search
 const results = await corsair.tavily.api.search({
@@ -111,18 +142,28 @@ const detailed = await corsair.tavily.api.search({
     include_answer: true,
 });
 ```
-
-See [API Endpoints](/plugins/tavily/api-endpoints) for the complete reference.
-
-### Multi-Tenancy
-
+</Tab>
+<Tab title="Multi-Tenant">
 ```ts
 const tenant = corsair.withTenant("user-123");
 
+// Basic search
 const results = await tenant.tavily.api.search({
-    query: "machine learning news",
+    query: "TypeScript best practices 2024",
+});
+
+// Advanced search with options
+const detailed = await tenant.tavily.api.search({
+    query: "React server components tutorial",
+    search_depth: "advanced", // [!code highlight]
+    max_results: 10,
+    include_answer: true,
 });
 ```
+</Tab>
+</Tabs>
+
+See [API Endpoints](/plugins/tavily/api-endpoints) for the complete reference.
 
 ## Examples
 
