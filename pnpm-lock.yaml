@@ -446,9 +446,6 @@ importers:
         specifier: ^3.25.76
         version: 3.25.76
     devDependencies:
-      '@corsair-dev/slack':
-        specifier: workspace:^
-        version: link:../slack
       '@types/jest':
         specifier: ^29.5.14
         version: 29.5.14
