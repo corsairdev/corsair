@@ -64,7 +64,7 @@ export const listRecentItems: SharepointEndpoints['driveListRecentItems'] =
 export const restoreVersion: SharepointEndpoints['driveRestoreVersion'] =
 	async (ctx, input) => {
 		// Uses Microsoft Graph API
-		await makeGraphRequest<Record<string, unknown>>(
+		await makeGraphRequest(
 			`/sites/${encodeURIComponent(input.site_id)}/drive/items/${encodeURIComponent(input.item_id)}/versions/${encodeURIComponent(input.version_id)}/restoreVersion`,
 			ctx.key,
 			{ method: 'POST' },
@@ -84,7 +84,7 @@ export const deleteVersion: SharepointEndpoints['driveDeleteVersion'] = async (
 	input,
 ) => {
 	// Uses Microsoft Graph API
-	await makeGraphRequest<Record<string, unknown>>(
+	await makeGraphRequest(
 		`/sites/${encodeURIComponent(input.site_id)}/drive/items/${encodeURIComponent(input.item_id)}/versions/${encodeURIComponent(input.version_id)}/content`,
 		ctx.key,
 		{ method: 'DELETE' },

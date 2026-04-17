@@ -5,13 +5,13 @@ description: Built-in and custom error handling for the Spotify plugin.
 
 The Spotify plugin includes built-in error handlers for common Spotify API error scenarios.
 
-<Callout type="info">
+<Info>
 **New to Corsair?** Learn about [error handling](/concepts/error-handling) before customizing error handlers.
-</Callout>
+</Info>
 
-<Callout>
+<Note>
 **Full Implementation:** See the [Spotify plugin source code](https://github.com/corsairdev/corsair/tree/main/packages/corsair/plugins/spotify).
-</Callout>
+</Note>
 
 ## Built-in Error Handlers
 
@@ -83,7 +83,7 @@ const tracks = await corsair.spotify.api.tracks.search({
 
 ## Custom Error Handlers
 
-```ts title="corsair.ts"
+```ts corsair.ts
 spotify({
     errorHandlers: {
         NO_ACTIVE_DEVICE: {

@@ -3,6 +3,8 @@ import {
 	RazorpayOrder,
 	RazorpayPayment,
 	RazorpayRefund,
+	RazorpaySettlement,
+	RazorpaySubscription,
 } from './database';
 
 export const RazorpaySchema = {
@@ -12,5 +14,7 @@ export const RazorpaySchema = {
 		payments: RazorpayPayment,
 		refunds: RazorpayRefund,
 		customers: RazorpayCustomer,
+		settlements: RazorpaySettlement,
+		subscriptions: RazorpaySubscription,
 	},
 } as const;

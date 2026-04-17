@@ -503,16 +503,22 @@ function parseAuthArgs(args: string[]): {
 	code?: string;
 	credentials?: boolean;
 	webhook?: boolean;
+	agent?: boolean;
 } {
 	let pluginId: string | undefined;
 	let tenantId: string | undefined;
 	let code: string | undefined;
 	let credentials = false;
 	let webhook = false;
+	let agent = false;
 
 	for (const arg of args) {
 		if (arg === '--credentials') {
 			credentials = true;
+			continue;
+		}
+		if (arg === '--agent') {
+			agent = true;
 			continue;
 		}
 		if (arg === '--webhook') {
@@ -539,7 +545,7 @@ function parseAuthArgs(args: string[]): {
 		}
 	}
 
-	return { pluginId, tenantId, code, credentials, webhook };
+	return { pluginId, tenantId, code, credentials, webhook, agent };
 }
 
 function parseSetupArgs(args: string[]): {
@@ -635,20 +641,21 @@ function printHelp() {
 	const lines = [
 		'Corsair CLI',
 		'',
-		'  pnpm corsair setup                              Init (add -backfill to seed data)',
-		'  pnpm corsair setup --<plugin> <field>=VALUE     Set plugin credentials',
-		'  pnpm corsair auth --plugin=<id>                 Start OAuth flow',
-		'  pnpm corsair auth --plugin=<id> --code=<code>   Exchange OAuth code for tokens',
-		'  pnpm corsair auth --plugin=<id> --credentials   Show credential status',
-		'  pnpm corsair auth --plugin=<id> --webhook       Set up webhook subscription',
-		'    Supported plugins: outlook, sharepoint, teams, onedrive, gmail, googledrive, googlecalendar, googlesheets',
-		'  pnpm corsair list [--plugin=<id>] [--type=api|webhooks|db]  List endpoint paths (tip: pipe to grep to filter)',
-		'  pnpm corsair schema <path>                      Show schema for an endpoint/webhook/DB entity',
-		'  pnpm corsair script --code "<js>" [--tenant=<id>]',
-		'    corsair is injected; use return to output a value.',
-		'    IMPORTANT: Always filter results inline — you are the consumer of the return value, so returning full list responses wastes tokens.',
-		'    Bad:  return await corsair.slack.api.users.list({})',
-		"    Good: return (await corsair.slack.api.users.list({})).members.find(u => u.name === 'bob')?.id",
+		'pnpm corsair setup                              Init (add -backfill to seed data)',
+		'pnpm corsair setup --<plugin> <field>=VALUE     Set plugin credentials',
+		'pnpm corsair auth --plugin=<id>                 Start OAuth flow',
+		'pnpm corsair auth --plugin=<id> --code=<code>   Exchange OAuth code for tokens',
+		'pnpm corsair auth --plugin=<id> --agent         Run this if you are an agent (specific instructions to handle pending process)',
+		'pnpm corsair auth --plugin=<id> --credentials   Show credential status',
+		'pnpm corsair auth --plugin=<id> --webhook       Set up webhook subscription',
+		'  `pnpm corsair list --type=webhooks` to see webhook plugins',
+		'pnpm corsair list [--plugin=<id>] [--type=api|webhooks|db]  List endpoint paths (tip: pipe to grep to filter)',
+		'pnpm corsair schema <path>                      Show schema for an endpoint/webhook/DB entity',
+		'pnpm corsair script --code "<js>" [--tenant=<id>]',
+		'  corsair is injected; use return to output a value.',
+		'  IMPORTANT: Always filter results inline — you are the consumer of the return value, so returning full list responses wastes tokens.',
+		'  Bad:  return await corsair.slack.api.users.list({})',
+		"  Good: return (await corsair.slack.api.users.list({})).members.find(u => u.name === 'bob')?.id",
 		...(SHOW_RUN
 			? ['  run <path> [input-json] [--tenant=<id>]  Call an endpoint directly']
 			: []),
@@ -769,6 +776,12 @@ async function main() {
 			process.exit(1);
 		}
 		const result = corsair.list_operations({ plugin, type }) as unknown;
+		if (type === 'db') {
+			console.log(
+				'[#corsair]: NOTE: Every DB query listed here has both .search() and .list() methods available.',
+			);
+			console.log('');
+		}
 		if (typeof result === 'string') {
 			console.log(result);
 		} else if (Array.isArray(result)) {
@@ -888,5 +901,10 @@ const isMainModule =
 	import.meta.url.endsWith('/index.js');
 
 if (isMainModule) {
-	main();
+	main()
+		.then(() => process.exit(0))
+		.catch((e) => {
+			console.error(e);
+			process.exit(1);
+		});
 }

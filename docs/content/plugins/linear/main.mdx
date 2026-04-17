@@ -15,7 +15,7 @@ pnpm install @corsair-dev/linear
 
 Add the Linear plugin to your Corsair instance:
 
-```ts title="corsair.ts"
+```ts corsair.ts
 import { createCorsair } from "corsair";
 import { linear } from "@corsair-dev/linear";
 
@@ -197,7 +197,7 @@ See [Multi-Tenancy](/concepts/multi-tenancy) for more details.
 
 ### Example 1: Create Issue from External Event
 
-```ts title="corsair.ts"
+```ts corsair.ts
 import { inngest } from "./inngest";
 import { createCorsair } from "corsair";
 import { slack } from "@corsair-dev/slack";
@@ -231,7 +231,7 @@ export const corsair = createCorsair({
 });
 ```
 
-```ts title="inngest/functions.ts"
+```ts inngest/functions.ts
 // Handle in background job - NOW you can call corsair
 export const handleSupportMessage = inngest.createFunction(
     { id: "handle-support-message" },
@@ -252,7 +252,7 @@ export const handleSupportMessage = inngest.createFunction(
 
 ### Example 2: Sync Issue Updates to Slack
 
-```ts title="corsair.ts"
+```ts corsair.ts
 import { inngest } from "./inngest";
 import { createCorsair } from "corsair";
 import { slack } from "@corsair-dev/slack";
@@ -285,7 +285,7 @@ export const corsair = createCorsair({
 });
 ```
 
-```ts title="inngest/functions.ts"
+```ts inngest/functions.ts
 export const notifyIssueCompleted = inngest.createFunction(
     { id: "notify-issue-completed" },
     { event: "linear/issue-completed" },
@@ -311,7 +311,7 @@ export const notifyIssueCompleted = inngest.createFunction(
 
 ### Example 3: Auto-Assign Issues by Priority
 
-```ts title="corsair.ts"
+```ts corsair.ts
 linear({
     hooks: {
         issues: {

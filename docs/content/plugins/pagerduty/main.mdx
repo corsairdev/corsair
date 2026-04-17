@@ -13,7 +13,7 @@ pnpm install @corsair-dev/pagerduty
 
 Add the PagerDuty plugin to your Corsair instance:
 
-```ts title="corsair.ts"
+```ts corsair.ts
 import { createCorsair } from "corsair";
 import { pagerduty } from "@corsair-dev/pagerduty";
 
@@ -62,7 +62,7 @@ pnpm corsair setup --pagerduty webhook_signature=your-webhook-secret
 
 Alternatively, provide credentials directly in the config:
 
-```ts title="corsair.ts"
+```ts corsair.ts
 pagerduty({
     key: process.env.PAGERDUTY_API_KEY,
     webhookSecret: process.env.PAGERDUTY_WEBHOOK_SECRET,
@@ -137,7 +137,7 @@ See [API Endpoints](/plugins/pagerduty/api-endpoints) for the complete reference
 
 PagerDuty sends incident events to your webhook endpoint:
 
-```ts title="app/api/webhook/route.ts"
+```ts app/api/webhook/route.ts
 import { processWebhook } from "corsair";
 import { corsair } from "@/server/corsair";
 
@@ -178,7 +178,7 @@ await tenant.pagerduty.api.incidents.create({
 
 ### Example 1: Auto-acknowledge Incidents from Known Alerts
 
-```ts title="corsair.ts"
+```ts corsair.ts
 import { inngest } from "./inngest";
 
 export const corsair = createCorsair({
@@ -205,7 +205,7 @@ export const corsair = createCorsair({
 });
 ```
 
-```ts title="inngest/functions.ts"
+```ts inngest/functions.ts
 export const handleIncident = inngest.createFunction(
     { id: "handle-pagerduty-incident" },
     { event: "pagerduty/incident-triggered" },
@@ -223,7 +223,7 @@ export const handleIncident = inngest.createFunction(
 
 ### Example 2: Notify Slack on Incident Resolution
 
-```ts title="corsair.ts"
+```ts corsair.ts
 export const corsair = createCorsair({
     plugins: [
         pagerduty({
@@ -249,7 +249,7 @@ export const corsair = createCorsair({
 });
 ```
 
-```ts title="inngest/functions.ts"
+```ts inngest/functions.ts
 export const notifyOnResolution = inngest.createFunction(
     { id: "notify-incident-resolved" },
     { event: "pagerduty/incident-resolved" },

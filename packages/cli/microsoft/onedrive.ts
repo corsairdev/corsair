@@ -1,13 +1,20 @@
 import * as p from '@clack/prompts';
 import { loadInternalConfig } from '../utils/load-config';
-import { promptClientState, promptTenantId, promptWebhookUrl } from '../utils/prompts';
+import {
+	promptClientState,
+	promptTenantId,
+	promptWebhookUrl,
+} from '../utils/prompts';
 import { resolveAccessToken, saveWebhookSignature } from './credentials';
 import { createGraphSubscription } from './graph';
 
 // Microsoft Graph max subscription lifetime for drive resources (minutes)
 const ONEDRIVE_MAX_EXPIRY_MINUTES = 4230;
 
-type OnedriveResourceType = 'personalDrive' | 'specificDrive' | 'specificFolder';
+type OnedriveResourceType =
+	| 'personalDrive'
+	| 'specificDrive'
+	| 'specificFolder';
 
 const ONEDRIVE_RESOURCE_OPTIONS: {
 	value: OnedriveResourceType;
@@ -45,7 +52,11 @@ function buildOnedriveResource(
 	}
 }
 
-export async function runOnedriveSubscribe({ cwd }: { cwd: string }): Promise<void> {
+export async function runOnedriveSubscribe({
+	cwd,
+}: {
+	cwd: string;
+}): Promise<void> {
 	const { internal } = await loadInternalConfig(
 		cwd,
 		'Corsair — OneDrive Webhook Subscribe',

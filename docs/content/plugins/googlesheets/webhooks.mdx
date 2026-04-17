@@ -5,19 +5,19 @@ description: All available Google Sheets webhook events and how to handle them.
 
 The Google Sheets plugin automatically handles incoming webhooks from Google Sheets. Configure Google Apps Script or use Google Drive webhooks to receive notifications when sheets are modified.
 
-<Callout type="info">
+<Info>
 **New to Corsair?** Learn about core concepts like [webhooks](/concepts/webhooks), [hooks](/concepts/hooks), and [multi-tenancy](/concepts/multi-tenancy) before setting up webhook handlers.
-</Callout>
+</Info>
 
-<Callout>
+<Note>
 **Full Implementation:** For the complete, up-to-date list of all webhook events and their implementations, see the [Google Sheets plugin source code](https://github.com/corsairdev/corsair/tree/main/packages/corsair/plugins/googlesheets) on GitHub.
-</Callout>
+</Note>
 
 ## Setup
 
 Configure your webhook endpoint to handle Google Sheets events:
 
-```ts title="app/api/webhook/route.ts"
+```ts app/api/webhook/route.ts
 import { processWebhook } from "corsair";
 import { corsair } from "@/server/corsair";
 
@@ -52,7 +52,7 @@ Fires when a row is added or updated.
 
 **Example Usage:**
 
-```ts title="corsair.ts"
+```ts corsair.ts
 googlesheets({
     webhookHooks: {
         rows: {

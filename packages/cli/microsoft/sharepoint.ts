@@ -1,6 +1,10 @@
 import * as p from '@clack/prompts';
 import { loadInternalConfig } from '../utils/load-config';
-import { promptClientState, promptTenantId, promptWebhookUrl } from '../utils/prompts';
+import {
+	promptClientState,
+	promptTenantId,
+	promptWebhookUrl,
+} from '../utils/prompts';
 import { resolveAccessToken, saveWebhookSignature } from './credentials';
 import { GRAPH_API_BASE } from './graph';
 
@@ -53,7 +57,11 @@ async function createSharepointSubscription(
 				Authorization: `Bearer ${accessToken}`,
 				'Content-Type': 'application/json',
 			},
-			body: JSON.stringify({ notificationUrl, expirationDateTime, clientState }),
+			body: JSON.stringify({
+				notificationUrl,
+				expirationDateTime,
+				clientState,
+			}),
 		},
 	);
 
@@ -65,7 +73,11 @@ async function createSharepointSubscription(
 	return response.json() as Promise<{ id: string; expirationDateTime: string }>;
 }
 
-export async function runSharepointSubscribe({ cwd }: { cwd: string }): Promise<void> {
+export async function runSharepointSubscribe({
+	cwd,
+}: {
+	cwd: string;
+}): Promise<void> {
 	const { internal, plugin: sharepointPlugin } = await loadInternalConfig(
 		cwd,
 		'Corsair — SharePoint Webhook Subscribe',
@@ -103,7 +115,8 @@ export async function runSharepointSubscribe({ cwd }: { cwd: string }): Promise<
 	const listSpin = p.spinner();
 	listSpin.start('Fetching lists from site...');
 
-	let siteLists: Array<{ id: string; displayName: string; webUrl?: string }> = [];
+	let siteLists: Array<{ id: string; displayName: string; webUrl?: string }> =
+		[];
 	try {
 		siteLists = await fetchSiteLists(accessToken, siteId as string);
 		listSpin.stop(
