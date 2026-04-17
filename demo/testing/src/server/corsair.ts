@@ -8,9 +8,7 @@ import { linear } from '@corsair-dev/linear';
 import { onedrive } from '@corsair-dev/onedrive';
 import { sharepoint } from '@corsair-dev/sharepoint';
 import { slack } from '@corsair-dev/slack';
-import { onedrive } from '@corsair-dev/onedrive'
-import { openweathermap } from '@corsair-dev/openweathermap'
-import { teams } from '@corsair-dev/teams'
+import { openweathermap } from '@corsair-dev/openweathermap';
 import { createCorsair } from 'corsair';
 import { sqlite } from '../db';
 
@@ -22,5 +20,15 @@ export const corsair = createCorsair({
 		timeout: '10m',
 		onTimeout: 'deny',
 	},
-	plugins: [github(), slack(), googlesheets(), googlecalendar(), gmail(), linear(), sharepoint(), onedrive(), openweathermap()],
+	plugins: [
+		github(),
+		slack(),
+		googlesheets(),
+		googlecalendar(),
+		gmail(),
+		linear(),
+		sharepoint(),
+		onedrive(),
+		openweathermap(),
+	],
 });
