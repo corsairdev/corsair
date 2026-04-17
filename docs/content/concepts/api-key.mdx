@@ -71,9 +71,9 @@ export const corsair = createCorsair({
 Store each tenant's key — for example, after collecting it during onboarding:
 
 ```ts onboarding.ts
-await corsair.storeCredential("user_abc123", "linear", {
-    api_key: "lin_api_their-key",
-});
+await corsair
+    .withTenant("user_abc123")
+    .linear.keys.set_api_key("lin_api_their-key");
 ```
 
 Or via the CLI during development:
