@@ -289,37 +289,32 @@ export async function generateOAuthUrl(
 /**
  * Processes an incoming OAuth callback request.
  *
- * Decodes the `state` parameter to identify the plugin and tenant,
+ * Decodes the `state` parameter to identify the plugin,
  * exchanges the authorization code for tokens, and stores them
  * in the Corsair database.
  *
+ * The tenant ID is resolved in order of priority:
+ * 1. `options.tenantId` (from the URL path, e.g. `/api/auth/123`)
+ * 2. The tenant ID encoded in the `state` parameter
+ *
  * @param corsair - The corsair instance (returned from createCorsair)
  * @param params - The query parameters from the OAuth callback (code, state, error)
- * @param redirectUrl - The redirect URL used in the original auth request (needed for token exchange)
+ * @param options - Optional overrides (tenantId from URL path)
  * @returns The result with plugin, success status, and optional error
  *
  * @example
  * ```ts
- * const corsair = createCorsair({
- *   plugins: [onedrive({ ... }), gmail({ ... })],
- * });
- *
- * // In your /api/auth route handler:
- * const result = await processOAuthCallback(corsair, {
- *   code: searchParams.get('code'),
- *   state: searchParams.get('state'),
- *   error: searchParams.get('error'),
- * }, 'https://your-app.ngrok.io/api/auth');
- *
- * if (result.success) {
- *   console.log(`Authenticated ${result.plugin} for tenant ${result.tenantId}`);
- * }
+ * // Route: /api/auth/[tenantId]/route.ts
+ * const result = await processOAuthCallback(corsair,
+ *   { code, state, error },
+ *   { tenantId: 'tenant-123' },
+ * );
  * ```
  */
 export async function processOAuthCallback(
 	corsair: unknown,
 	params: OAuthCallbackParams,
-	redirectUrl?: string,
+	options?: { tenantId?: string },
 ): Promise<OAuthCallbackResult> {
 	if (params.error) {
 		return {
@@ -354,7 +349,8 @@ export async function processOAuthCallback(
 		};
 	}
 
-	const { pluginId, tenantId } = oauthState;
+	const { pluginId } = oauthState;
+	let tenantId = options?.tenantId ?? oauthState.tenantId;
 
 	const internal = (corsair as CorsairInstance)[CORSAIR_INTERNAL];
 	if (!internal) {
@@ -402,7 +398,6 @@ export async function processOAuthCallback(
 	}
 
 	const integration = await ensureIntegration(database, pluginId, kek);
-	await ensureAccount(database, integration.id, tenantId, kek);
 
 	const extraIntegrationFields = getCustomIntegrationFields(plugin, 'oauth_2');
 	const integrationKm = createIntegrationKeyManager({
@@ -417,6 +412,20 @@ export async function processOAuthCallback(
 	const clientSecret = await integrationKm.get_client_secret();
 	const storedRedirectUrl = await integrationKm.get_redirect_url();
 
+	if (storedRedirectUrl && !options?.tenantId) {
+		try {
+			const parsed = new URL(storedRedirectUrl);
+			const segments = parsed.pathname.split('/').filter(Boolean);
+			if (segments.length >= 3) {
+				tenantId = segments[segments.length - 1]!;
+			}
+		} catch {
+			// not a valid URL, ignore
+		}
+	}
+
+	await ensureAccount(database, integration.id, tenantId, kek);
+
 	if (!clientId || !clientSecret) {
 		return {
 			plugin: pluginId,
@@ -425,8 +434,7 @@ export async function processOAuthCallback(
 		};
 	}
 
-	const effectiveRedirectUrl = storedRedirectUrl || redirectUrl;
-	if (!effectiveRedirectUrl) {
+	if (!storedRedirectUrl) {
 		return {
 			plugin: pluginId,
 			success: false,
@@ -445,7 +453,7 @@ export async function processOAuthCallback(
 			clientId,
 			clientSecret,
 			oauthCfg,
-			effectiveRedirectUrl,
+			storedRedirectUrl,
 		);
 	} catch (err) {
 		return {

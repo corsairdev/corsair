@@ -3,7 +3,12 @@ import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 import { corsair } from '@/server/corsair';
 
-export async function GET(request: NextRequest) {
+export async function GET(
+	request: NextRequest,
+	{ params }: { params: Promise<{ tenantId?: string[] }> },
+) {
+	const { tenantId: tenantIdSegments } = await params;
+	const tenantId = tenantIdSegments?.[0];
 	const url = new URL(request.url);
 
 	const code = url.searchParams.get('code');
@@ -14,6 +19,7 @@ export async function GET(request: NextRequest) {
 		return NextResponse.json({
 			status: 'ok',
 			message: 'OAuth callback endpoint is active',
+			...(tenantId && { tenantId }),
 			timestamp: new Date().toISOString(),
 		});
 	}
@@ -21,9 +27,10 @@ export async function GET(request: NextRequest) {
 	const result = await processOAuthCallback(
 		corsair,
 		{ code, state, error },
+		tenantId ? { tenantId } : undefined,
 	);
 
-	console.info('OAuth Callback:', result.plugin, result.success);
+	console.info('OAuth Callback:', result.plugin, result.success, 'tenant:', result.tenantId);
 
 	if (!result.success) {
 		return new NextResponse(

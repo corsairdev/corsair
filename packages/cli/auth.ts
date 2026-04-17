@@ -343,7 +343,6 @@ async function oauthGetUrl(
 
 	let redirectUri: string;
 	const storedRedirectUrl = await integrationKm.get_redirect_url();
-	console.log(storedRedirectUrl, 'storedRedirectUrl')
 	if (storedRedirectUrl) {
 		redirectUri = storedRedirectUrl;
 	} else if (oauthCfg.requiresRegisteredRedirect) {
@@ -671,8 +670,43 @@ export async function runAuth({
 		process.exit(1);
 	}
 
+	const extraFields = getCustomIntegrationFields(plugin, 'oauth_2');
+	const integrationKmEarly = createIntegrationKeyManager({
+		authType: 'oauth_2',
+		integrationName: plugin.id,
+		kek,
+		database,
+		extraIntegrationFields: extraFields,
+	});
+
+	const storedRedirectUrl = await integrationKmEarly.get_redirect_url();
+	let redirectTenantId: string | undefined;
+	if (storedRedirectUrl) {
+		try {
+			const parsed = new URL(storedRedirectUrl);
+			const segments = parsed.pathname.split('/').filter(Boolean);
+			if (segments.length >= 3) {
+				redirectTenantId = segments[segments.length - 1];
+			}
+		} catch {
+			// not a valid URL, ignore
+		}
+	}
+
+	if (
+		tenantIdArg &&
+		redirectTenantId &&
+		tenantIdArg !== redirectTenantId
+	) {
+		out({
+			error: `Tenant ID mismatch: --tenant=${tenantIdArg} but redirect_url contains tenant '${redirectTenantId}' in path. They must match, or omit --tenant to use the redirect_url value.`,
+		});
+		process.exit(1);
+	}
+
+	const tenantId = tenantIdArg ?? redirectTenantId ?? 'default';
+
 	const integration = await ensureIntegration(database, plugin.id, kek);
-	const tenantId = tenantIdArg ?? 'default';
 	await ensureAccount(database, integration.id, tenantId, kek);
 
 	if (showCredentials) {
