@@ -23,9 +23,9 @@
     "zod": "^3.0.0"
   },
   "devDependencies": {
-    "corsair": "workspace:*",
     "@types/jest": "^29.5.14",
-    "ts-jest": "^29.1.1",
+    "corsair": "workspace:*",
+    "ts-jest": "^29.4.9",
     "tsup": "^8.0.1",
     "typescript": "catalog:",
     "zod": "^3.25.76"
