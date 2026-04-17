@@ -71,8 +71,8 @@ const issues = await tenant.github.api.issues.list({
 
 The GitHub plugin supports two authentication methods:
 
-- **`api_key`** - Personal Access Token authentication
-- **`oauth_2`** - OAuth App authentication
+- **[`api_key`](/content/concepts/api-key)** - Personal Access Token authentication
+- **[`oauth_2`](/content/concepts/oauth)** - OAuth App authentication
 
 ### API Key Authentication (Personal Access Token)
 
@@ -91,7 +91,7 @@ pnpm corsair setup --github api_key=their-personal-access-token --tenant=user_ab
 </Tab>
 </Tabs>
 
-See [API Key Authentication](/concepts/api-key) for full setup details.
+See [API Key Authentication](/content/concepts/api-key) for full setup details.
 
 ### OAuth 2.0 Authentication
 
@@ -111,7 +111,7 @@ pnpm corsair setup --github client_id=your-client-id client_secret=your-client-s
 </Tab>
 </Tabs>
 
-See [OAuth 2.0 Authentication](/concepts/oauth) for full setup including callback handling.
+See [OAuth 2.0 Authentication](/content/concepts/oauth) for full setup including callback handling.
 
 ### Webhook Secret
 

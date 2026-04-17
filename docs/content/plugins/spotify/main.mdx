@@ -72,11 +72,11 @@ const results = await tenant.spotify.api.tracks.search({
 ### Supported Auth Types
 
 The Spotify plugin supports:
-- **`oauth_2`** (default) - Use OAuth 2.0 for user authentication
+- **[`oauth_2`](/content/concepts/oauth)** (default) - Use OAuth 2.0 for user authentication
 
 ### Default Auth Type
 
-If no `authType` is specified, the plugin defaults to **`oauth_2`**.
+If no `authType` is specified, the plugin defaults to **[`oauth_2`](/content/concepts/oauth)**.
 
 ### Configuring OAuth 2.0 Authentication
 
@@ -94,7 +94,7 @@ pnpm corsair setup --spotify client_id=your-client-id client_secret=your-client-
 </Tab>
 </Tabs>
 
-See [OAuth 2.0 Authentication](/concepts/oauth) for full setup including callback handling.
+See [OAuth 2.0 Authentication](/content/concepts/oauth) for full setup including callback handling.
 
 ## Options
 
