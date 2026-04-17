@@ -393,7 +393,7 @@ const CrawlGetOutputSchema = z
 
 const CrawlCancelOutputSchema = z
 	.object({
-		success: z.boolean(),
+		success: z.boolean().optional(),
 		status: z.literal('cancelled').optional(),
 	})
 	.passthrough();
