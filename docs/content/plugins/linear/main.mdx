@@ -15,6 +15,8 @@ pnpm install @corsair-dev/linear
 
 Add the Linear plugin to your Corsair instance:
 
+<Tabs>
+<Tab title="Solo">
 ```ts corsair.ts
 import { createCorsair } from "corsair";
 import { linear } from "@corsair-dev/linear";
@@ -25,9 +27,25 @@ export const corsair = createCorsair({
     ],
 });
 ```
+</Tab>
+<Tab title="Multi-Tenant">
+```ts corsair.ts
+import { createCorsair } from "corsair";
+import { linear } from "@corsair-dev/linear";
+
+export const corsair = createCorsair({
+    multiTenancy: true,
+    plugins: [linear()],
+    kek: process.env.CORSAIR_KEK!,
+});
+```
+</Tab>
+</Tabs>
 
 Once configured, you can access the API:
 
+<Tabs>
+<Tab title="Solo">
 ```ts
 await corsair.linear.api.issues.create({
     title: "Bug: Login form not working",
@@ -35,6 +53,19 @@ await corsair.linear.api.issues.create({
     priority: 1,
 });
 ```
+</Tab>
+<Tab title="Multi-Tenant">
+```ts
+const tenant = corsair.withTenant("user_id");
+
+await tenant.linear.api.issues.create({
+    title: "Bug: Login form not working",
+    teamId: "team-id",
+    priority: 1,
+});
+```
+</Tab>
+</Tabs>
 
 ## Authentication
 
@@ -49,13 +80,20 @@ If no `authType` is specified, the plugin defaults to **`api_key`**.
 
 ### Configuring API Key Authentication
 
-Store credentials with the CLI:
-
+<Tabs>
+<Tab title="Solo">
 ```bash
 pnpm corsair setup --linear api_key=your-api-key
 ```
 
 See [Get Credentials](/plugins/linear/get-credentials) for step-by-step instructions on obtaining an API key.
+</Tab>
+<Tab title="Multi-Tenant">
+```bash
+pnpm corsair setup --linear api_key=their-api-key --tenant=user_abc123
+```
+</Tab>
+</Tabs>
 
 ### Webhook Signature Verification
 
@@ -66,6 +104,8 @@ pnpm corsair setup --linear webhook_signature=your-webhook-secret
 ```
 
 See [Get Credentials](/plugins/linear/get-credentials) for step-by-step instructions on setting up webhooks.
+
+See [API Key Authentication](/concepts/api-key) for full setup details.
 
 ## Options
 
@@ -114,6 +154,8 @@ The plugin includes built-in error handlers for common scenarios like rate limit
 
 The Linear API is organized into resource-based endpoints:
 
+<Tabs>
+<Tab title="Solo">
 ```ts
 // Issues
 await corsair.linear.api.issues.list({ teamId: "team-id" });
@@ -132,6 +174,30 @@ await corsair.linear.api.comments.create({ issueId: "issue-id", body: "Great wor
 await corsair.linear.api.teams.list();
 await corsair.linear.api.teams.get({ id: "team-id" });
 ```
+</Tab>
+<Tab title="Multi-Tenant">
+```ts
+const tenant = corsair.withTenant("user_id");
+
+// Issues
+await tenant.linear.api.issues.list({ teamId: "team-id" });
+await tenant.linear.api.issues.get({ id: "issue-id" });
+await tenant.linear.api.issues.create({ title: "New issue", teamId: "team-id" });
+
+// Projects
+await tenant.linear.api.projects.list();
+await tenant.linear.api.projects.create({ name: "Q1 Roadmap", teamIds: ["team-id"] });
+
+// Comments
+await tenant.linear.api.comments.list({ issueId: "issue-id" });
+await tenant.linear.api.comments.create({ issueId: "issue-id", body: "Great work!" });
+
+// Teams
+await tenant.linear.api.teams.list();
+await tenant.linear.api.teams.get({ id: "team-id" });
+```
+</Tab>
+</Tabs>
 
 For detailed endpoint documentation, see [API Endpoints](/plugins/linear/api-endpoints).
 
@@ -164,6 +230,8 @@ For all available webhooks, see [Webhooks](/plugins/linear/webhooks).
 
 The plugin automatically syncs data to your database. Query synced data:
 
+<Tabs>
+<Tab title="Solo">
 ```ts
 // Find issues by team
 const issues = await corsair.linear.db.issues.search({
@@ -175,23 +243,25 @@ const activeProjects = await corsair.linear.db.projects.search({
     data: { state: "started" },
 });
 ```
-
-See [Database](/plugins/linear/database) for complete schema documentation.
-
-### Multi-Tenancy
-
-Use the plugin with multiple tenants:
-
+</Tab>
+<Tab title="Multi-Tenant">
 ```ts
 const tenant = corsair.withTenant("tenant-123");
 
-await tenant.linear.api.issues.create({
-    title: "Customer feedback",
-    teamId: "team-id",
+// Find issues by team
+const issues = await tenant.linear.db.issues.search({
+    data: { teamId: "team-id" },
+});
+
+// Find projects by state
+const activeProjects = await tenant.linear.db.projects.search({
+    data: { state: "started" },
 });
 ```
+</Tab>
+</Tabs>
 
-See [Multi-Tenancy](/concepts/multi-tenancy) for more details.
+See [Database](/plugins/linear/database) for complete schema documentation.
 
 ## Examples
 

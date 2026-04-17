@@ -13,6 +13,8 @@ pnpm install @corsair-dev/twitterapiio
 
 Add the Twitter API IO plugin to your Corsair instance:
 
+<Tabs>
+<Tab title="Solo">
 ```ts corsair.ts
 import { createCorsair } from "corsair";
 import { twitterapiio } from "@corsair-dev/twitterapiio";
@@ -23,9 +25,25 @@ export const corsair = createCorsair({
     ],
 });
 ```
+</Tab>
+<Tab title="Multi-Tenant">
+```ts corsair.ts
+import { createCorsair } from "corsair";
+import { twitterapiio } from "@corsair-dev/twitterapiio";
+
+export const corsair = createCorsair({
+    multiTenancy: true,
+    plugins: [twitterapiio()],
+    kek: process.env.CORSAIR_KEK!,
+});
+```
+</Tab>
+</Tabs>
 
 Once configured, you can access Twitter data:
 
+<Tabs>
+<Tab title="Solo">
 ```ts
 // Search tweets
 const tweets = await corsair.twitterapiio.api.tweets.search({
@@ -33,6 +51,19 @@ const tweets = await corsair.twitterapiio.api.tweets.search({
     max_results: 10,
 });
 ```
+</Tab>
+<Tab title="Multi-Tenant">
+```ts
+const tenant = corsair.withTenant("user_id");
+
+// Search tweets
+const tweets = await tenant.twitterapiio.api.tweets.search({
+    query: "Corsair AI",
+    max_results: 10,
+});
+```
+</Tab>
+</Tabs>
 
 ## Authentication
 
@@ -47,8 +78,8 @@ If no `authType` is specified, the plugin defaults to **`api_key`**.
 
 ### Configuring API Key Authentication
 
-Store credentials with the CLI:
-
+<Tabs>
+<Tab title="Solo">
 ```bash
 pnpm corsair setup --twitterapiio api_key=your-api-key
 ```
@@ -58,17 +89,21 @@ For webhook signature verification:
 ```bash
 pnpm corsair setup --twitterapiio webhook_signature=your-webhook-secret
 ```
-
-Alternatively, provide credentials directly in the config:
-
-```ts corsair.ts
-twitterapiio({
-    key: process.env.TWITTERAPIIO_API_KEY,
-    webhookSecret: process.env.TWITTERAPIIO_WEBHOOK_SECRET,
-})
+</Tab>
+<Tab title="Multi-Tenant">
+```bash
+pnpm corsair setup --twitterapiio api_key=their-api-key --tenant=user_abc123
 ```
 
-See [Authentication](/concepts/auth) for details on managing credentials.
+For webhook signature verification:
+
+```bash
+pnpm corsair setup --twitterapiio webhook_signature=your-webhook-secret
+```
+</Tab>
+</Tabs>
+
+See [API Key Authentication](/concepts/api-key) for full setup details.
 
 ## Options
 
@@ -109,6 +144,8 @@ The plugin includes built-in error handlers for common scenarios. For complete d
 
 ### Accessing the API
 
+<Tabs>
+<Tab title="Solo">
 ```ts
 // Get user by username
 const user = await corsair.twitterapiio.api.users.getByUsername({
@@ -131,6 +168,34 @@ const replies = await corsair.twitterapiio.api.tweets.getReplies({
     tweetId: "1234567890",
 });
 ```
+</Tab>
+<Tab title="Multi-Tenant">
+```ts
+const tenant = corsair.withTenant("user_id");
+
+// Get user by username
+const user = await tenant.twitterapiio.api.users.getByUsername({
+    userName: "corsairai",
+});
+
+// Get user's recent tweets
+const tweets = await tenant.twitterapiio.api.tweets.getUserLastTweets({
+    userName: "corsairai",
+    maxResults: 20,
+});
+
+// Get trending topics
+const trends = await tenant.twitterapiio.api.trends.get({
+    woeid: 1, // worldwide
+});
+
+// Get tweet replies
+const replies = await tenant.twitterapiio.api.tweets.getReplies({
+    tweetId: "1234567890",
+});
+```
+</Tab>
+</Tabs>
 
 See [API Endpoints](/plugins/twitterapiio/api-endpoints) for the complete reference.
 
@@ -138,6 +203,8 @@ See [API Endpoints](/plugins/twitterapiio/api-endpoints) for the complete refere
 
 Receive real-time tweet events:
 
+<Tabs>
+<Tab title="Solo">
 ```ts app/api/webhook/route.ts
 import { processWebhook } from "corsair";
 import { corsair } from "@/server/corsair";
@@ -150,29 +217,48 @@ export async function POST(request: Request) {
     return result.response;
 }
 ```
+</Tab>
+<Tab title="Multi-Tenant">
+```ts app/api/webhook/route.ts
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    const body = await request.json();
+
+    const tenantId = new URL(request.url).searchParams.get("tenantId") ?? undefined;
+    const result = await processWebhook(corsair, headers, body, { tenantId });
+    return result.response;
+}
+```
+</Tab>
+</Tabs>
 
 See [Webhooks](/plugins/twitterapiio/webhooks) for all available events.
 
 ### Database Access
 
+<Tabs>
+<Tab title="Solo">
 ```ts
 const tweets = await corsair.twitterapiio.db.tweets.search({
     data: { author_id: "user-id" },
 });
 ```
-
-See [Database](/plugins/twitterapiio/database) for the complete schema.
-
-### Multi-Tenancy
-
+</Tab>
+<Tab title="Multi-Tenant">
 ```ts
 const tenant = corsair.withTenant("brand-123");
 
-const mentions = await tenant.twitterapiio.api.tweets.search({
-    query: "@mybrand",
-    max_results: 50,
+const tweets = await tenant.twitterapiio.db.tweets.search({
+    data: { author_id: "user-id" },
 });
 ```
+</Tab>
+</Tabs>
+
+See [Database](/plugins/twitterapiio/database) for the complete schema.
 
 ## Examples
 

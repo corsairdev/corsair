@@ -26,6 +26,8 @@ pnpm install @corsair-dev/slack
 </Step>
 
 <Step title="Add the plugin">
+<Tabs>
+<Tab title="Solo">
 ```ts corsair.ts
 import { createCorsair } from 'corsair';
 import { slack } from '@corsair-dev/slack';
@@ -37,6 +39,22 @@ export const corsair = createCorsair({
     kek: process.env.CORSAIR_KEK!,
 });
 ```
+</Tab>
+<Tab title="Multi-Tenant">
+```ts corsair.ts
+import { createCorsair } from 'corsair';
+import { slack } from '@corsair-dev/slack';
+import Database from 'better-sqlite3';
+
+export const corsair = createCorsair({
+    multiTenancy: true,
+    plugins: [slack()],
+    database: new Database('corsair.db'),
+    kek: process.env.CORSAIR_KEK!,
+});
+```
+</Tab>
+</Tabs>
 
 </Step>
 
@@ -113,12 +131,26 @@ The CLI will print an authorization URL. Once the user approves, tokens are stor
 
 ## Send a message
 
+<Tabs>
+<Tab title="Solo">
 ```ts
 await corsair.slack.api.messages.post({
     channel: 'C1234567890',  // channel ID
     text: 'Hello from Corsair!',
 });
 ```
+</Tab>
+<Tab title="Multi-Tenant">
+```ts
+const tenant = corsair.withTenant("user_id");
+
+await tenant.slack.api.messages.post({
+    channel: 'C1234567890',  // channel ID
+    text: 'Hello from Corsair!',
+});
+```
+</Tab>
+</Tabs>
 
 <Info>
 **Use channel IDs, not names**

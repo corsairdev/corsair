@@ -13,6 +13,8 @@ pnpm install @corsair-dev/typeform
 
 Add the Typeform plugin to your Corsair instance:
 
+<Tabs>
+<Tab title="Solo">
 ```ts corsair.ts
 import { createCorsair } from "corsair";
 import { typeform } from "@corsair-dev/typeform";
@@ -23,6 +25,21 @@ export const corsair = createCorsair({
     kek: process.env.CORSAIR_KEK!,
 });
 ```
+</Tab>
+<Tab title="Multi-Tenant">
+```ts corsair.ts
+import { createCorsair } from "corsair";
+import { typeform } from "@corsair-dev/typeform";
+
+export const corsair = createCorsair({
+    multiTenancy: true,
+    plugins: [typeform()],
+    database: db,
+    kek: process.env.CORSAIR_KEK!,
+});
+```
+</Tab>
+</Tabs>
 
 ## Authentication
 
@@ -32,12 +49,23 @@ export const corsair = createCorsair({
 
 ### OAuth 2.0 Setup
 
+<Tabs>
+<Tab title="Solo">
 ```bash
 pnpm corsair setup --typeform client_id=your-client-id client_secret=your-client-secret
 pnpm corsair auth --plugin=typeform
 ```
 
-See [Get Credentials](/plugins/typeform/get-credentials) for step-by-step instructions.
+See [Get Credentials](/plugins/typeform/get-credentials) for step-by-step instructions on setting up OAuth 2.0.
+</Tab>
+<Tab title="Multi-Tenant">
+```bash
+pnpm corsair setup --typeform client_id=your-client-id client_secret=your-client-secret
+```
+</Tab>
+</Tabs>
+
+See [OAuth 2.0 Authentication](/concepts/oauth) for full setup including callback handling.
 
 ## Options
 
@@ -51,6 +79,8 @@ See [Get Credentials](/plugins/typeform/get-credentials) for step-by-step instru
 
 ## Usage
 
+<Tabs>
+<Tab title="Solo">
 ```ts
 // List all forms
 const forms = await corsair.typeform.api.forms.list({});
@@ -71,9 +101,29 @@ await corsair.typeform.api.forms.create({
 // Get current user
 const me = await corsair.typeform.api.me.get({});
 ```
+</Tab>
+<Tab title="Multi-Tenant">
+```ts
+const tenant = corsair.withTenant("user-123");
+
+// List all forms
+const forms = await tenant.typeform.api.forms.list({});
+
+// Get form responses
+const responses = await tenant.typeform.api.responses.list({
+    formId: "form-id",
+});
+
+// Get current user
+const me = await tenant.typeform.api.me.get({});
+```
+</Tab>
+</Tabs>
 
 ### Query cached data
 
+<Tabs>
+<Tab title="Solo">
 ```ts
 const forms = await corsair.typeform.db.forms.search({ data: {} });
 
@@ -81,11 +131,16 @@ const responses = await corsair.typeform.db.responses.search({
     data: { formId: "form-id" },
 });
 ```
-
-### Multi-Tenancy
-
+</Tab>
+<Tab title="Multi-Tenant">
 ```ts
 const tenant = corsair.withTenant("user-123");
 
-const forms = await tenant.typeform.api.forms.list({});
+const forms = await tenant.typeform.db.forms.search({ data: {} });
+
+const responses = await tenant.typeform.db.responses.search({
+    data: { formId: "form-id" },
+});
 ```
+</Tab>
+</Tabs>

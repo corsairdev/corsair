@@ -13,6 +13,8 @@ pnpm install @corsair-dev/todoist
 
 Add the Todoist plugin to your Corsair instance:
 
+<Tabs>
+<Tab title="Solo">
 ```ts corsair.ts
 import { createCorsair } from "corsair";
 import { todoist } from "@corsair-dev/todoist";
@@ -23,9 +25,25 @@ export const corsair = createCorsair({
     ],
 });
 ```
+</Tab>
+<Tab title="Multi-Tenant">
+```ts corsair.ts
+import { createCorsair } from "corsair";
+import { todoist } from "@corsair-dev/todoist";
+
+export const corsair = createCorsair({
+    multiTenancy: true,
+    plugins: [todoist()],
+    kek: process.env.CORSAIR_KEK!,
+});
+```
+</Tab>
+</Tabs>
 
 Once configured, you can manage tasks:
 
+<Tabs>
+<Tab title="Solo">
 ```ts
 // Create a task
 await corsair.todoist.api.tasks.create({
@@ -33,6 +51,19 @@ await corsair.todoist.api.tasks.create({
     due_string: "tomorrow",
 });
 ```
+</Tab>
+<Tab title="Multi-Tenant">
+```ts
+const tenant = corsair.withTenant("user_id");
+
+// Create a task
+await tenant.todoist.api.tasks.create({
+    content: "Buy groceries",
+    due_string: "tomorrow",
+});
+```
+</Tab>
+</Tabs>
 
 ## Authentication
 
@@ -47,8 +78,8 @@ If no `authType` is specified, the plugin defaults to **`api_key`**.
 
 ### Configuring API Key Authentication
 
-Store credentials with the CLI:
-
+<Tabs>
+<Tab title="Solo">
 ```bash
 pnpm corsair setup --todoist api_key=your-api-token
 ```
@@ -58,17 +89,21 @@ For webhook signature verification:
 ```bash
 pnpm corsair setup --todoist webhook_signature=your-webhook-secret
 ```
-
-Alternatively, provide credentials directly in the config:
-
-```ts corsair.ts
-todoist({
-    key: process.env.TODOIST_API_TOKEN,
-    webhookSecret: process.env.TODOIST_WEBHOOK_SECRET,
-})
+</Tab>
+<Tab title="Multi-Tenant">
+```bash
+pnpm corsair setup --todoist api_key=their-api-token --tenant=user_abc123
 ```
 
-See [Authentication](/concepts/auth) for details on managing credentials.
+For webhook signature verification:
+
+```bash
+pnpm corsair setup --todoist webhook_signature=your-webhook-secret
+```
+</Tab>
+</Tabs>
+
+See [API Key Authentication](/concepts/api-key) for full setup details.
 
 ## Options
 
@@ -109,6 +144,8 @@ The plugin includes built-in error handlers for common scenarios. For complete d
 
 ### Accessing the API
 
+<Tabs>
+<Tab title="Solo">
 ```ts
 // Get all active tasks
 const tasks = await corsair.todoist.api.tasks.getMany({
@@ -132,6 +169,35 @@ await corsair.todoist.api.projects.create({
     color: "blue",
 });
 ```
+</Tab>
+<Tab title="Multi-Tenant">
+```ts
+const tenant = corsair.withTenant("user_id");
+
+// Get all active tasks
+const tasks = await tenant.todoist.api.tasks.getMany({
+    filter: "today | overdue",
+});
+
+// Complete a task
+await tenant.todoist.api.tasks.close({
+    id: "task-id",
+});
+
+// Move a task to a project
+await tenant.todoist.api.tasks.move({
+    id: "task-id",
+    project_id: "project-id",
+});
+
+// Create a project
+await tenant.todoist.api.projects.create({
+    name: "New Project",
+    color: "blue",
+});
+```
+</Tab>
+</Tabs>
 
 See [API Endpoints](/plugins/todoist/api-endpoints) for the complete reference.
 
@@ -139,6 +205,8 @@ See [API Endpoints](/plugins/todoist/api-endpoints) for the complete reference.
 
 Todoist sends task and project events to your webhook endpoint (identified by `x-todoist-delivery-id` header):
 
+<Tabs>
+<Tab title="Solo">
 ```ts app/api/webhook/route.ts
 import { processWebhook } from "corsair";
 import { corsair } from "@/server/corsair";
@@ -151,29 +219,48 @@ export async function POST(request: Request) {
     return result.response;
 }
 ```
+</Tab>
+<Tab title="Multi-Tenant">
+```ts app/api/webhook/route.ts
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    const body = await request.json();
+
+    const tenantId = new URL(request.url).searchParams.get("tenantId") ?? undefined;
+    const result = await processWebhook(corsair, headers, body, { tenantId });
+    return result.response;
+}
+```
+</Tab>
+</Tabs>
 
 See [Webhooks](/plugins/todoist/webhooks) for all available events.
 
 ### Database Access
 
+<Tabs>
+<Tab title="Solo">
 ```ts
 const tasks = await corsair.todoist.db.tasks.search({
     data: { project_id: "project-id" },
 });
 ```
-
-See [Database](/plugins/todoist/database) for the complete schema.
-
-### Multi-Tenancy
-
+</Tab>
+<Tab title="Multi-Tenant">
 ```ts
 const tenant = corsair.withTenant("user-123");
 
-await tenant.todoist.api.tasks.create({
-    content: "Review pull request",
-    project_id: "work-project-id",
+const tasks = await tenant.todoist.db.tasks.search({
+    data: { project_id: "project-id" },
 });
 ```
+</Tab>
+</Tabs>
+
+See [Database](/plugins/todoist/database) for the complete schema.
 
 ## Examples
 

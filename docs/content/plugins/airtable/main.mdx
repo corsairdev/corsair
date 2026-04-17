@@ -13,6 +13,8 @@ pnpm install @corsair-dev/airtable
 
 Add the Airtable plugin to your Corsair instance:
 
+<Tabs>
+<Tab title="Solo">
 ```ts corsair.ts
 import { createCorsair } from "corsair";
 import { airtable } from "@corsair-dev/airtable";
@@ -23,9 +25,25 @@ export const corsair = createCorsair({
     ],
 });
 ```
+</Tab>
+<Tab title="Multi-Tenant">
+```ts corsair.ts
+import { createCorsair } from "corsair";
+import { airtable } from "@corsair-dev/airtable";
+
+export const corsair = createCorsair({
+    multiTenancy: true,
+    plugins: [airtable()],
+    kek: process.env.CORSAIR_KEK!,
+});
+```
+</Tab>
+</Tabs>
 
 Once configured, you can work with Airtable records:
 
+<Tabs>
+<Tab title="Solo">
 ```ts
 // Search records in a table
 const records = await corsair.airtable.api.records.search({
@@ -34,6 +52,20 @@ const records = await corsair.airtable.api.records.search({
     filterByFormula: "{Status} = 'In Progress'",
 });
 ```
+</Tab>
+<Tab title="Multi-Tenant">
+```ts
+const tenant = corsair.withTenant("user_id");
+
+// Search records in a table
+const records = await tenant.airtable.api.records.search({
+    baseId: "appXXXXXXXXXXXXXX",
+    tableIdOrName: "Tasks",
+    filterByFormula: "{Status} = 'In Progress'",
+});
+```
+</Tab>
+</Tabs>
 
 ## Authentication
 
@@ -48,8 +80,8 @@ If no `authType` is specified, the plugin defaults to **`api_key`**.
 
 ### Configuring API Key Authentication
 
-Store credentials with the CLI:
-
+<Tabs>
+<Tab title="Solo">
 ```bash
 pnpm corsair setup --airtable api_key=your-personal-access-token
 ```
@@ -59,17 +91,21 @@ For webhook signature verification:
 ```bash
 pnpm corsair setup --airtable webhook_signature=your-webhook-secret
 ```
-
-Alternatively, provide credentials directly in the config:
-
-```ts corsair.ts
-airtable({
-    key: process.env.AIRTABLE_API_KEY,
-    webhookSecret: process.env.AIRTABLE_WEBHOOK_SECRET,
-})
+</Tab>
+<Tab title="Multi-Tenant">
+```bash
+pnpm corsair setup --airtable api_key=their-api-key --tenant=user_abc123
 ```
 
-See [Authentication](/concepts/auth) for details on managing credentials.
+For webhook signature verification:
+
+```bash
+pnpm corsair setup --airtable webhook_signature=your-webhook-secret
+```
+</Tab>
+</Tabs>
+
+See [API Key Authentication](/concepts/api-key) for full setup details.
 
 ## Options
 
@@ -110,6 +146,8 @@ The plugin includes built-in error handlers for common scenarios. For complete d
 
 ### Accessing the API
 
+<Tabs>
+<Tab title="Solo">
 ```ts
 // Create a record
 await corsair.airtable.api.records.create({
@@ -137,6 +175,39 @@ await corsair.airtable.api.records.delete({
     recordId: "recXXXXXXXXXXXXXX",
 });
 ```
+</Tab>
+<Tab title="Multi-Tenant">
+```ts
+const tenant = corsair.withTenant("user_id");
+
+// Create a record
+await tenant.airtable.api.records.create({
+    baseId: "appXXXXXXXXXXXXXX",
+    tableIdOrName: "Tasks",
+    fields: {
+        Name: "New Task",
+        Status: "Todo",
+        Assignee: "user@example.com",
+    },
+});
+
+// Update a record
+await tenant.airtable.api.records.update({
+    baseId: "appXXXXXXXXXXXXXX",
+    tableIdOrName: "Tasks",
+    recordId: "recXXXXXXXXXXXXXX",
+    fields: { Status: "Done" },
+});
+
+// Delete a record
+await tenant.airtable.api.records.delete({
+    baseId: "appXXXXXXXXXXXXXX",
+    tableIdOrName: "Tasks",
+    recordId: "recXXXXXXXXXXXXXX",
+});
+```
+</Tab>
+</Tabs>
 
 See [API Endpoints](/plugins/airtable/api-endpoints) for the complete reference.
 
@@ -144,6 +215,8 @@ See [API Endpoints](/plugins/airtable/api-endpoints) for the complete reference.
 
 Airtable sends record change events to your webhook endpoint:
 
+<Tabs>
+<Tab title="Solo">
 ```ts app/api/webhook/route.ts
 import { processWebhook } from "corsair";
 import { corsair } from "@/server/corsair";
@@ -156,30 +229,48 @@ export async function POST(request: Request) {
     return result.response;
 }
 ```
+</Tab>
+<Tab title="Multi-Tenant">
+```ts app/api/webhook/route.ts
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    const body = await request.json();
+
+    const tenantId = new URL(request.url).searchParams.get("tenantId") ?? undefined;
+    const result = await processWebhook(corsair, headers, body, { tenantId });
+    return result.response;
+}
+```
+</Tab>
+</Tabs>
 
 See [Webhooks](/plugins/airtable/webhooks) for all available events.
 
 ### Database Access
 
+<Tabs>
+<Tab title="Solo">
 ```ts
 const records = await corsair.airtable.db.records.search({
     data: { tableId: "tblXXXXXXXXXXXXXX" },
 });
 ```
-
-See [Database](/plugins/airtable/database) for the complete schema.
-
-### Multi-Tenancy
-
+</Tab>
+<Tab title="Multi-Tenant">
 ```ts
 const tenant = corsair.withTenant("org-123");
 
-await tenant.airtable.api.records.create({
-    baseId: "appXXXXXXXXXXXXXX",
-    tableIdOrName: "CRM",
-    fields: { Name: "New Lead", Source: "Website" },
+const records = await tenant.airtable.db.records.search({
+    data: { tableId: "tblXXXXXXXXXXXXXX" },
 });
 ```
+</Tab>
+</Tabs>
+
+See [Database](/plugins/airtable/database) for the complete schema.
 
 ## Examples
 

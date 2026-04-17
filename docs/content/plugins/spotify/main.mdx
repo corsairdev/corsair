@@ -13,6 +13,8 @@ pnpm install @corsair-dev/spotify
 
 Add the Spotify plugin to your Corsair instance:
 
+<Tabs>
+<Tab title="Solo">
 ```ts corsair.ts
 import { createCorsair } from "corsair";
 import { spotify } from "@corsair-dev/spotify";
@@ -23,9 +25,27 @@ export const corsair = createCorsair({
     ],
 });
 ```
+</Tab>
+<Tab title="Multi-Tenant">
+```ts corsair.ts
+import { createCorsair } from "corsair";
+import { spotify } from "@corsair-dev/spotify";
+
+export const corsair = createCorsair({
+    multiTenancy: true,
+    plugins: [
+        spotify(),
+    ],
+    kek: process.env.CORSAIR_KEK!,
+});
+```
+</Tab>
+</Tabs>
 
 Once configured, you can access the Spotify API:
 
+<Tabs>
+<Tab title="Solo">
 ```ts
 // Search for tracks
 const results = await corsair.spotify.api.tracks.search({
@@ -33,6 +53,19 @@ const results = await corsair.spotify.api.tracks.search({
     limit: 5,
 });
 ```
+</Tab>
+<Tab title="Multi-Tenant">
+```ts
+const tenant = corsair.withTenant("user_id");
+
+// Search for tracks
+const results = await tenant.spotify.api.tracks.search({
+    q: "Bohemian Rhapsody",
+    limit: 5,
+});
+```
+</Tab>
+</Tabs>
 
 ## Authentication
 
@@ -47,24 +80,21 @@ If no `authType` is specified, the plugin defaults to **`oauth_2`**.
 
 ### Configuring OAuth 2.0 Authentication
 
-Store your Spotify app credentials, then start the OAuth flow:
-
+<Tabs>
+<Tab title="Solo">
 ```bash
 pnpm corsair setup --spotify client_id=your-client-id client_secret=your-client-secret
 pnpm corsair auth --plugin=spotify
 ```
-
-The CLI will print an authorization URL — open it in a browser. Once you approve, tokens are saved automatically.
-
-Alternatively, provide credentials directly in the config:
-
-```ts corsair.ts
-spotify({
-    key: process.env.SPOTIFY_ACCESS_TOKEN,
-})
+</Tab>
+<Tab title="Multi-Tenant">
+```bash
+pnpm corsair setup --spotify client_id=your-client-id client_secret=your-client-secret
 ```
+</Tab>
+</Tabs>
 
-See [Authentication](/concepts/auth) for details on setting up OAuth 2.0 credentials.
+See [OAuth 2.0 Authentication](/concepts/oauth) for full setup including callback handling.
 
 ## Options
 
@@ -104,6 +134,8 @@ The plugin includes built-in error handlers for common scenarios. For complete d
 
 ### Accessing the API
 
+<Tabs>
+<Tab title="Solo">
 ```ts
 // Get currently playing track
 const current = await corsair.spotify.api.player.getCurrentlyPlaying({});
@@ -121,26 +153,54 @@ await corsair.spotify.api.playlists.addItem({
     uris: ["spotify:track:4uLU6hMCjMI75M1A2tKUQC"],
 });
 ```
+</Tab>
+<Tab title="Multi-Tenant">
+```ts
+const tenant = corsair.withTenant("user-123");
+
+// Get currently playing track
+const current = await tenant.spotify.api.player.getCurrentlyPlaying({});
+
+// Create a playlist
+const playlist = await tenant.spotify.api.playlists.create({
+    name: "My Corsair Playlist",
+    description: "Created via Corsair",
+    public: false,
+});
+
+// Add tracks to playlist
+await tenant.spotify.api.playlists.addItem({
+    playlist_id: playlist.data.id,
+    uris: ["spotify:track:4uLU6hMCjMI75M1A2tKUQC"],
+});
+```
+</Tab>
+</Tabs>
 
 See [API Endpoints](/plugins/spotify/api-endpoints) for the complete reference.
 
 ### Database Access
 
+<Tabs>
+<Tab title="Solo">
 ```ts
 const tracks = await corsair.spotify.db.tracks.search({
     data: { name: "Bohemian Rhapsody" },
 });
 ```
-
-See [Database](/plugins/spotify/database) for the complete schema.
-
-### Multi-Tenancy
-
+</Tab>
+<Tab title="Multi-Tenant">
 ```ts
 const tenant = corsair.withTenant("user-123");
 
-await tenant.spotify.api.player.resume({});
+const tracks = await tenant.spotify.db.tracks.search({
+    data: { name: "Bohemian Rhapsody" },
+});
 ```
+</Tab>
+</Tabs>
+
+See [Database](/plugins/spotify/database) for the complete schema.
 
 ## Examples
 

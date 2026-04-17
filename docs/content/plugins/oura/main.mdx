@@ -13,6 +13,8 @@ pnpm install @corsair-dev/oura
 
 Add the Oura plugin to your Corsair instance:
 
+<Tabs>
+<Tab title="Solo">
 ```ts corsair.ts
 import { createCorsair } from "corsair";
 import { oura } from "@corsair-dev/oura";
@@ -23,9 +25,25 @@ export const corsair = createCorsair({
     ],
 });
 ```
+</Tab>
+<Tab title="Multi-Tenant">
+```ts corsair.ts
+import { createCorsair } from "corsair";
+import { oura } from "@corsair-dev/oura";
+
+export const corsair = createCorsair({
+    multiTenancy: true,
+    plugins: [oura()],
+    kek: process.env.CORSAIR_KEK!,
+});
+```
+</Tab>
+</Tabs>
 
 Once configured, you can access Oura health data:
 
+<Tabs>
+<Tab title="Solo">
 ```ts
 // Get sleep data for a date range
 const sleep = await corsair.oura.api.summary.getSleep({
@@ -33,6 +51,19 @@ const sleep = await corsair.oura.api.summary.getSleep({
     end_date: "2024-01-07",
 });
 ```
+</Tab>
+<Tab title="Multi-Tenant">
+```ts
+const tenant = corsair.withTenant("user_id");
+
+// Get sleep data for a date range
+const sleep = await tenant.oura.api.summary.getSleep({
+    start_date: "2024-01-01",
+    end_date: "2024-01-07",
+});
+```
+</Tab>
+</Tabs>
 
 ## Authentication
 
@@ -47,8 +78,8 @@ If no `authType` is specified, the plugin defaults to **`api_key`**.
 
 ### Configuring API Key Authentication
 
-Store credentials with the CLI:
-
+<Tabs>
+<Tab title="Solo">
 ```bash
 pnpm corsair setup --oura api_key=your-access-token
 ```
@@ -58,17 +89,21 @@ For webhook signature verification:
 ```bash
 pnpm corsair setup --oura webhook_signature=your-webhook-secret
 ```
-
-Alternatively, provide credentials directly in the config:
-
-```ts corsair.ts
-oura({
-    key: process.env.OURA_ACCESS_TOKEN,
-    webhookSecret: process.env.OURA_WEBHOOK_SECRET,
-})
+</Tab>
+<Tab title="Multi-Tenant">
+```bash
+pnpm corsair setup --oura api_key=their-access-token --tenant=user_abc123
 ```
 
-See [Authentication](/concepts/auth) for details on managing credentials.
+For webhook signature verification:
+
+```bash
+pnpm corsair setup --oura webhook_signature=your-webhook-secret
+```
+</Tab>
+</Tabs>
+
+See [API Key Authentication](/concepts/api-key) for full setup details.
 
 ## Options
 
@@ -109,6 +144,8 @@ The plugin includes built-in error handlers for common scenarios. For complete d
 
 ### Accessing the API
 
+<Tabs>
+<Tab title="Solo">
 ```ts
 // Get user profile
 const profile = await corsair.oura.api.profile.get({});
@@ -125,6 +162,28 @@ const readiness = await corsair.oura.api.summary.getReadiness({
     end_date: "2024-01-07",
 });
 ```
+</Tab>
+<Tab title="Multi-Tenant">
+```ts
+const tenant = corsair.withTenant("user_id");
+
+// Get user profile
+const profile = await tenant.oura.api.profile.get({});
+
+// Get activity data
+const activity = await tenant.oura.api.summary.getActivity({
+    start_date: "2024-01-01",
+    end_date: "2024-01-07",
+});
+
+// Get readiness scores
+const readiness = await tenant.oura.api.summary.getReadiness({
+    start_date: "2024-01-01",
+    end_date: "2024-01-07",
+});
+```
+</Tab>
+</Tabs>
 
 See [API Endpoints](/plugins/oura/api-endpoints) for the complete reference.
 
@@ -132,6 +191,8 @@ See [API Endpoints](/plugins/oura/api-endpoints) for the complete reference.
 
 Oura sends daily health summary events to your webhook endpoint:
 
+<Tabs>
+<Tab title="Solo">
 ```ts app/api/webhook/route.ts
 import { processWebhook } from "corsair";
 import { corsair } from "@/server/corsair";
@@ -144,29 +205,48 @@ export async function POST(request: Request) {
     return result.response;
 }
 ```
+</Tab>
+<Tab title="Multi-Tenant">
+```ts app/api/webhook/route.ts
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    const body = await request.json();
+
+    const tenantId = new URL(request.url).searchParams.get("tenantId") ?? undefined;
+    const result = await processWebhook(corsair, headers, body, { tenantId });
+    return result.response;
+}
+```
+</Tab>
+</Tabs>
 
 See [Webhooks](/plugins/oura/webhooks) for all available events.
 
 ### Database Access
 
+<Tabs>
+<Tab title="Solo">
 ```ts
 const sleepData = await corsair.oura.db.dailySleep.search({
     data: { score: { gte: 80 } },
 });
 ```
-
-See [Database](/plugins/oura/database) for the complete schema.
-
-### Multi-Tenancy
-
+</Tab>
+<Tab title="Multi-Tenant">
 ```ts
 const tenant = corsair.withTenant("user-123");
 
-const sleep = await tenant.oura.api.summary.getSleep({
-    start_date: "2024-01-01",
-    end_date: "2024-01-07",
+const sleepData = await tenant.oura.db.dailySleep.search({
+    data: { score: { gte: 80 } },
 });
 ```
+</Tab>
+</Tabs>
+
+See [Database](/plugins/oura/database) for the complete schema.
 
 ## Examples
 

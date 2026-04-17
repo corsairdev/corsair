@@ -13,6 +13,8 @@ pnpm install @corsair-dev/cal
 
 Add the Cal.com plugin to your Corsair instance:
 
+<Tabs>
+<Tab title="Solo">
 ```ts corsair.ts
 import { createCorsair } from "corsair";
 import { cal } from "@corsair-dev/cal";
@@ -23,13 +25,39 @@ export const corsair = createCorsair({
     ],
 });
 ```
+</Tab>
+<Tab title="Multi-Tenant">
+```ts corsair.ts
+import { createCorsair } from "corsair";
+import { cal } from "@corsair-dev/cal";
+
+export const corsair = createCorsair({
+    multiTenancy: true,
+    plugins: [cal()],
+    kek: process.env.CORSAIR_KEK!,
+});
+```
+</Tab>
+</Tabs>
 
 Once configured, you can manage bookings:
 
+<Tabs>
+<Tab title="Solo">
 ```ts
 // List all bookings
 const bookings = await corsair.cal.api.bookings.list({});
 ```
+</Tab>
+<Tab title="Multi-Tenant">
+```ts
+const tenant = corsair.withTenant("user_id");
+
+// List all bookings
+const bookings = await tenant.cal.api.bookings.list({});
+```
+</Tab>
+</Tabs>
 
 ## Authentication
 
@@ -44,8 +72,8 @@ If no `authType` is specified, the plugin defaults to **`api_key`**.
 
 ### Configuring API Key Authentication
 
-Store credentials with the CLI:
-
+<Tabs>
+<Tab title="Solo">
 ```bash
 pnpm corsair setup --cal api_key=your-api-key
 ```
@@ -55,17 +83,21 @@ For webhook signature verification:
 ```bash
 pnpm corsair setup --cal webhook_signature=your-webhook-secret
 ```
-
-Alternatively, provide credentials directly in the config:
-
-```ts corsair.ts
-cal({
-    key: process.env.CAL_API_KEY,
-    webhookSecret: process.env.CAL_WEBHOOK_SECRET,
-})
+</Tab>
+<Tab title="Multi-Tenant">
+```bash
+pnpm corsair setup --cal api_key=their-api-key --tenant=user_abc123
 ```
 
-See [Authentication](/concepts/auth) for details on managing credentials.
+For webhook signature verification:
+
+```bash
+pnpm corsair setup --cal webhook_signature=your-webhook-secret
+```
+</Tab>
+</Tabs>
+
+See [API Key Authentication](/concepts/api-key) for full setup details.
 
 ## Options
 
@@ -106,6 +138,8 @@ The plugin includes built-in error handlers for common scenarios. For complete d
 
 ### Accessing the API
 
+<Tabs>
+<Tab title="Solo">
 ```ts
 // Get a specific booking
 const booking = await corsair.cal.api.bookings.get({
@@ -128,6 +162,34 @@ await corsair.cal.api.bookings.cancel({
     reason: "Schedule conflict",
 });
 ```
+</Tab>
+<Tab title="Multi-Tenant">
+```ts
+const tenant = corsair.withTenant("user_id");
+
+// Get a specific booking
+const booking = await tenant.cal.api.bookings.get({
+    uid: "booking-uid-123",
+});
+
+// Create a booking
+await tenant.cal.api.bookings.create({
+    eventTypeId: 12345,
+    start: "2024-02-15T10:00:00Z",
+    responses: {
+        name: "John Doe",
+        email: "john@example.com",
+    },
+});
+
+// Cancel a booking
+await tenant.cal.api.bookings.cancel({
+    uid: "booking-uid-123",
+    reason: "Schedule conflict",
+});
+```
+</Tab>
+</Tabs>
 
 See [API Endpoints](/plugins/cal/api-endpoints) for the complete reference.
 
@@ -135,6 +197,8 @@ See [API Endpoints](/plugins/cal/api-endpoints) for the complete reference.
 
 Cal.com sends booking lifecycle events to your webhook endpoint:
 
+<Tabs>
+<Tab title="Solo">
 ```ts app/api/webhook/route.ts
 import { processWebhook } from "corsair";
 import { corsair } from "@/server/corsair";
@@ -147,28 +211,48 @@ export async function POST(request: Request) {
     return result.response;
 }
 ```
+</Tab>
+<Tab title="Multi-Tenant">
+```ts app/api/webhook/route.ts
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    const body = await request.json();
+
+    const tenantId = new URL(request.url).searchParams.get("tenantId") ?? undefined;
+    const result = await processWebhook(corsair, headers, body, { tenantId });
+    return result.response;
+}
+```
+</Tab>
+</Tabs>
 
 See [Webhooks](/plugins/cal/webhooks) for all available events.
 
 ### Database Access
 
+<Tabs>
+<Tab title="Solo">
 ```ts
 const upcomingBookings = await corsair.cal.db.bookings.search({
     data: { status: "ACCEPTED" },
 });
 ```
-
-See [Database](/plugins/cal/database) for the complete schema.
-
-### Multi-Tenancy
-
+</Tab>
+<Tab title="Multi-Tenant">
 ```ts
 const tenant = corsair.withTenant("user-123");
 
-const bookings = await tenant.cal.api.bookings.list({
-    status: "upcoming",
+const upcomingBookings = await tenant.cal.db.bookings.search({
+    data: { status: "ACCEPTED" },
 });
 ```
+</Tab>
+</Tabs>
+
+See [Database](/plugins/cal/database) for the complete schema.
 
 ## Examples
 

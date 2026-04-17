@@ -13,6 +13,8 @@ pnpm install @corsair-dev/asana
 
 Add the Asana plugin to your Corsair instance:
 
+<Tabs>
+<Tab title="Solo">
 ```ts corsair.ts
 import { createCorsair } from "corsair";
 import { asana } from "@corsair-dev/asana";
@@ -23,6 +25,21 @@ export const corsair = createCorsair({
     kek: process.env.CORSAIR_KEK!,
 });
 ```
+</Tab>
+<Tab title="Multi-Tenant">
+```ts corsair.ts
+import { createCorsair } from "corsair";
+import { asana } from "@corsair-dev/asana";
+
+export const corsair = createCorsair({
+    multiTenancy: true,
+    plugins: [asana()],
+    database: db,
+    kek: process.env.CORSAIR_KEK!,
+});
+```
+</Tab>
+</Tabs>
 
 ## Authentication
 
@@ -32,11 +49,22 @@ export const corsair = createCorsair({
 
 ### API Key Setup
 
+<Tabs>
+<Tab title="Solo">
 ```bash
 pnpm corsair setup --asana api_key=your-personal-access-token
 ```
 
 See [Get Credentials](/plugins/asana/get-credentials) for step-by-step instructions.
+</Tab>
+<Tab title="Multi-Tenant">
+```bash
+pnpm corsair setup --asana api_key=their-api-key --tenant=user_abc123
+```
+</Tab>
+</Tabs>
+
+See [API Key Authentication](/concepts/api-key) for full setup details.
 
 ## Options
 
@@ -51,6 +79,8 @@ See [Get Credentials](/plugins/asana/get-credentials) for step-by-step instructi
 
 ## Usage
 
+<Tabs>
+<Tab title="Solo">
 ```ts
 // List tasks in a project
 const tasks = await corsair.asana.api.projects.getTasks({
@@ -84,21 +114,50 @@ const members = await corsair.asana.api.teams.get({
     team_gid: "team-id",
 });
 ```
+</Tab>
+<Tab title="Multi-Tenant">
+```ts
+const tenant = corsair.withTenant("user-123");
+
+// List tasks in a project
+const tasks = await tenant.asana.api.projects.getTasks({
+    project_gid: "project-id",
+});
+
+// Create a task
+await tenant.asana.api.tasks.create({
+    name: "Fix login bug",
+    projects: ["project-id"],
+    notes: "Users can't log in with SSO",
+    due_on: "2024-01-15",
+});
+
+// Update a task
+await tenant.asana.api.tasks.update({
+    task_gid: "task-id",
+    completed: true,
+});
+```
+</Tab>
+</Tabs>
 
 ### Query cached data
 
+<Tabs>
+<Tab title="Solo">
 ```ts
 const tasks = await corsair.asana.db.tasks.search({
     data: { completed: false },
 });
 ```
-
-### Multi-Tenancy
-
+</Tab>
+<Tab title="Multi-Tenant">
 ```ts
 const tenant = corsair.withTenant("user-123");
 
-const tasks = await tenant.asana.api.tasks.list({
-    workspace: "workspace-id",
+const tasks = await tenant.asana.db.tasks.search({
+    data: { completed: false },
 });
 ```
+</Tab>
+</Tabs>

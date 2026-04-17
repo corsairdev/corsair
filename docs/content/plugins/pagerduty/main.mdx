@@ -13,6 +13,8 @@ pnpm install @corsair-dev/pagerduty
 
 Add the PagerDuty plugin to your Corsair instance:
 
+<Tabs>
+<Tab title="Solo">
 ```ts corsair.ts
 import { createCorsair } from "corsair";
 import { pagerduty } from "@corsair-dev/pagerduty";
@@ -23,9 +25,25 @@ export const corsair = createCorsair({
     ],
 });
 ```
+</Tab>
+<Tab title="Multi-Tenant">
+```ts corsair.ts
+import { createCorsair } from "corsair";
+import { pagerduty } from "@corsair-dev/pagerduty";
+
+export const corsair = createCorsair({
+    multiTenancy: true,
+    plugins: [pagerduty()],
+    kek: process.env.CORSAIR_KEK!,
+});
+```
+</Tab>
+</Tabs>
 
 Once configured, you can access the PagerDuty API:
 
+<Tabs>
+<Tab title="Solo">
 ```ts
 // Create an incident
 await corsair.pagerduty.api.incidents.create({
@@ -34,6 +52,20 @@ await corsair.pagerduty.api.incidents.create({
     urgency: "high",
 });
 ```
+</Tab>
+<Tab title="Multi-Tenant">
+```ts
+const tenant = corsair.withTenant("user_id");
+
+// Create an incident
+await tenant.pagerduty.api.incidents.create({
+    title: "Production database is down",
+    serviceId: "SERVICE123",
+    urgency: "high",
+});
+```
+</Tab>
+</Tabs>
 
 ## Authentication
 
@@ -48,8 +80,8 @@ If no `authType` is specified, the plugin defaults to **`api_key`**.
 
 ### Configuring API Key Authentication
 
-Store credentials with the CLI:
-
+<Tabs>
+<Tab title="Solo">
 ```bash
 pnpm corsair setup --pagerduty api_key=your-api-key
 ```
@@ -59,17 +91,21 @@ For webhook signature verification:
 ```bash
 pnpm corsair setup --pagerduty webhook_signature=your-webhook-secret
 ```
-
-Alternatively, provide credentials directly in the config:
-
-```ts corsair.ts
-pagerduty({
-    key: process.env.PAGERDUTY_API_KEY,
-    webhookSecret: process.env.PAGERDUTY_WEBHOOK_SECRET,
-})
+</Tab>
+<Tab title="Multi-Tenant">
+```bash
+pnpm corsair setup --pagerduty api_key=their-api-key --tenant=user_abc123
 ```
 
-See [Authentication](/concepts/auth) for details on managing credentials.
+For webhook signature verification:
+
+```bash
+pnpm corsair setup --pagerduty webhook_signature=your-webhook-secret
+```
+</Tab>
+</Tabs>
+
+See [API Key Authentication](/concepts/api-key) for full setup details.
 
 ## Options
 
@@ -110,6 +146,8 @@ The plugin includes built-in error handlers for common scenarios. For complete d
 
 ### Accessing the API
 
+<Tabs>
+<Tab title="Solo">
 ```ts
 // List open incidents
 const incidents = await corsair.pagerduty.api.incidents.list({
@@ -130,6 +168,32 @@ await corsair.pagerduty.api.incidentNotes.create({
     from: "engineer@example.com",
 });
 ```
+</Tab>
+<Tab title="Multi-Tenant">
+```ts
+const tenant = corsair.withTenant("user_id");
+
+// List open incidents
+const incidents = await tenant.pagerduty.api.incidents.list({
+    statuses: ["triggered", "acknowledged"],
+});
+
+// Acknowledge an incident
+await tenant.pagerduty.api.incidents.update({
+    id: "INC123",
+    status: "acknowledged",
+    from: "engineer@example.com",
+});
+
+// Add a note to an incident
+await tenant.pagerduty.api.incidentNotes.create({
+    incidentId: "INC123",
+    content: "Investigating the issue...",
+    from: "engineer@example.com",
+});
+```
+</Tab>
+</Tabs>
 
 See [API Endpoints](/plugins/pagerduty/api-endpoints) for the complete reference.
 
@@ -137,6 +201,8 @@ See [API Endpoints](/plugins/pagerduty/api-endpoints) for the complete reference
 
 PagerDuty sends incident events to your webhook endpoint:
 
+<Tabs>
+<Tab title="Solo">
 ```ts app/api/webhook/route.ts
 import { processWebhook } from "corsair";
 import { corsair } from "@/server/corsair";
@@ -149,30 +215,48 @@ export async function POST(request: Request) {
     return result.response;
 }
 ```
+</Tab>
+<Tab title="Multi-Tenant">
+```ts app/api/webhook/route.ts
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    const body = await request.json();
+
+    const tenantId = new URL(request.url).searchParams.get("tenantId") ?? undefined;
+    const result = await processWebhook(corsair, headers, body, { tenantId });
+    return result.response;
+}
+```
+</Tab>
+</Tabs>
 
 See [Webhooks](/plugins/pagerduty/webhooks) for all available events.
 
 ### Database Access
 
+<Tabs>
+<Tab title="Solo">
 ```ts
 const incidents = await corsair.pagerduty.db.incidents.search({
     data: { status: "triggered" },
 });
 ```
-
-See [Database](/plugins/pagerduty/database) for the complete schema.
-
-### Multi-Tenancy
-
+</Tab>
+<Tab title="Multi-Tenant">
 ```ts
 const tenant = corsair.withTenant("org-123");
 
-await tenant.pagerduty.api.incidents.create({
-    title: "Service outage",
-    serviceId: "SERVICE123",
-    urgency: "high",
+const incidents = await tenant.pagerduty.db.incidents.search({
+    data: { status: "triggered" },
 });
 ```
+</Tab>
+</Tabs>
+
+See [Database](/plugins/pagerduty/database) for the complete schema.
 
 ## Examples
 

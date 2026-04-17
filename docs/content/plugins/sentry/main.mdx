@@ -13,6 +13,8 @@ pnpm install @corsair-dev/sentry
 
 Add the Sentry plugin to your Corsair instance:
 
+<Tabs>
+<Tab title="Solo">
 ```ts corsair.ts
 import { createCorsair } from "corsair";
 import { sentry } from "@corsair-dev/sentry";
@@ -23,9 +25,25 @@ export const corsair = createCorsair({
     ],
 });
 ```
+</Tab>
+<Tab title="Multi-Tenant">
+```ts corsair.ts
+import { createCorsair } from "corsair";
+import { sentry } from "@corsair-dev/sentry";
+
+export const corsair = createCorsair({
+    multiTenancy: true,
+    plugins: [sentry()],
+    kek: process.env.CORSAIR_KEK!,
+});
+```
+</Tab>
+</Tabs>
 
 Once configured, you can manage Sentry issues and projects:
 
+<Tabs>
+<Tab title="Solo">
 ```ts
 // List issues for a project
 const issues = await corsair.sentry.api.issues.list({
@@ -33,6 +51,19 @@ const issues = await corsair.sentry.api.issues.list({
     projectSlug: "my-project",
 });
 ```
+</Tab>
+<Tab title="Multi-Tenant">
+```ts
+const tenant = corsair.withTenant("user_id");
+
+// List issues for a project
+const issues = await tenant.sentry.api.issues.list({
+    organizationSlug: "my-org",
+    projectSlug: "my-project",
+});
+```
+</Tab>
+</Tabs>
 
 ## Authentication
 
@@ -47,8 +78,8 @@ If no `authType` is specified, the plugin defaults to **`api_key`**.
 
 ### Configuring API Key Authentication
 
-Store credentials with the CLI:
-
+<Tabs>
+<Tab title="Solo">
 ```bash
 pnpm corsair setup --sentry api_key=your-auth-token
 ```
@@ -58,17 +89,21 @@ For webhook signature verification:
 ```bash
 pnpm corsair setup --sentry webhook_signature=your-webhook-secret
 ```
-
-Alternatively, provide credentials directly in the config:
-
-```ts corsair.ts
-sentry({
-    key: process.env.SENTRY_AUTH_TOKEN,
-    webhookSecret: process.env.SENTRY_WEBHOOK_SECRET,
-})
+</Tab>
+<Tab title="Multi-Tenant">
+```bash
+pnpm corsair setup --sentry api_key=their-auth-token --tenant=user_abc123
 ```
 
-See [Authentication](/concepts/auth) for details on managing credentials.
+For webhook signature verification:
+
+```bash
+pnpm corsair setup --sentry webhook_signature=your-webhook-secret
+```
+</Tab>
+</Tabs>
+
+See [API Key Authentication](/concepts/api-key) for full setup details.
 
 ## Options
 
@@ -109,6 +144,8 @@ The plugin includes built-in error handlers for common scenarios. For complete d
 
 ### Accessing the API
 
+<Tabs>
+<Tab title="Solo">
 ```ts
 // Get a specific issue
 const issue = await corsair.sentry.api.issues.get({
@@ -135,6 +172,38 @@ const teams = await corsair.sentry.api.teams.list({
     organizationSlug: "my-org",
 });
 ```
+</Tab>
+<Tab title="Multi-Tenant">
+```ts
+const tenant = corsair.withTenant("user_id");
+
+// Get a specific issue
+const issue = await tenant.sentry.api.issues.get({
+    organizationSlug: "my-org",
+    issueId: "ISSUE123",
+});
+
+// Resolve an issue
+await tenant.sentry.api.issues.update({
+    organizationSlug: "my-org",
+    issueId: "ISSUE123",
+    status: "resolved",
+});
+
+// Create a release
+await tenant.sentry.api.releases.create({
+    organizationSlug: "my-org",
+    version: "v1.2.3",
+    projects: ["my-project"],
+});
+
+// List teams
+const teams = await tenant.sentry.api.teams.list({
+    organizationSlug: "my-org",
+});
+```
+</Tab>
+</Tabs>
 
 See [API Endpoints](/plugins/sentry/api-endpoints) for the complete reference.
 
@@ -142,6 +211,8 @@ See [API Endpoints](/plugins/sentry/api-endpoints) for the complete reference.
 
 Sentry sends issue and alert events (identified by `sentry-hook-signature` + `sentry-hook-resource` headers):
 
+<Tabs>
+<Tab title="Solo">
 ```ts app/api/webhook/route.ts
 import { processWebhook } from "corsair";
 import { corsair } from "@/server/corsair";
@@ -154,30 +225,48 @@ export async function POST(request: Request) {
     return result.response;
 }
 ```
+</Tab>
+<Tab title="Multi-Tenant">
+```ts app/api/webhook/route.ts
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    const body = await request.json();
+
+    const tenantId = new URL(request.url).searchParams.get("tenantId") ?? undefined;
+    const result = await processWebhook(corsair, headers, body, { tenantId });
+    return result.response;
+}
+```
+</Tab>
+</Tabs>
 
 See [Webhooks](/plugins/sentry/webhooks) for all available events.
 
 ### Database Access
 
+<Tabs>
+<Tab title="Solo">
 ```ts
 const issues = await corsair.sentry.db.issues.search({
     data: { status: "unresolved" },
 });
 ```
-
-See [Database](/plugins/sentry/database) for the complete schema.
-
-### Multi-Tenancy
-
+</Tab>
+<Tab title="Multi-Tenant">
 ```ts
 const tenant = corsair.withTenant("org-123");
 
-const issues = await tenant.sentry.api.issues.list({
-    organizationSlug: "my-org",
-    projectSlug: "my-project",
-    query: "is:unresolved",
+const issues = await tenant.sentry.db.issues.search({
+    data: { status: "unresolved" },
 });
 ```
+</Tab>
+</Tabs>
+
+See [Database](/plugins/sentry/database) for the complete schema.
 
 ## Examples
 
