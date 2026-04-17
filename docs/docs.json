@@ -32,7 +32,6 @@
           {
             "group": "MCP Adapters",
             "pages": [
-              "content/mcp-adapters/mcp-adapters",
               "content/mcp-adapters/anthropic-sdk",
               "content/mcp-adapters/claude-sdk",
               "content/mcp-adapters/openai-agents",
