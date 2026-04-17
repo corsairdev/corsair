@@ -2,7 +2,7 @@ import { logEventFromContext } from 'corsair/core';
 import type { RedditEndpoints } from '..';
 import { makeRedditRequest } from '../client';
 import { PostDataSchema } from './types';
-import { extractComments, extractPosts } from './utils';
+import { extractComments, extractPosts, saveCommentsToDb, savePostsToDb } from './utils';
 import type { RedditListingRaw } from './types';
 
 export const getComments: RedditEndpoints['postsGetComments'] = async (
@@ -20,15 +20,8 @@ export const getComments: RedditEndpoints['postsGetComments'] = async (
 
 	const comments = extractComments(raw[1]);
 
-	try {
-		for (const comment of comments) {
-			await ctx.db.comments?.upsertByEntityId(String(comment.id), {
-				...comment,
-			});
-		}
-	} catch (error) {
-		console.warn('Failed to save comments to database:', error);
-	}
+	await savePostsToDb(ctx, post ? [post] : []);
+	await saveCommentsToDb(ctx, comments);
 
 	await logEventFromContext(
 		ctx,
@@ -51,6 +44,7 @@ export const getById: RedditEndpoints['postsGetById'] = async (ctx, input) => {
 	);
 
 	const posts = extractPosts(raw);
+	await savePostsToDb(ctx, posts);
 
 	return {
 		posts,

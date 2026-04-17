@@ -3,7 +3,7 @@ import type { RedditEndpoints } from '..';
 import { makeRedditRequest } from '../client';
 import { SubredditDataSchema } from './types';
 import type { RedditEntityEnvelopeRaw, RedditListingRaw } from './types';
-import { extractPosts } from './utils';
+import { extractPosts, savePostsToDb, saveSubredditsToDb } from './utils';
 
 export const getHot: RedditEndpoints['subredditsGetHot'] = async (
 	ctx,
@@ -16,18 +16,7 @@ export const getHot: RedditEndpoints['subredditsGetHot'] = async (
 	);
 
 	const posts = extractPosts(raw);
-
-	if (ctx.db.posts) {
-		try {
-			for (const post of posts) {
-				await ctx.db.posts.upsertByEntityId(String(post.id), {
-					...post,
-				});
-			}
-		} catch (error) {
-			console.warn('Failed to save hot posts to database:', error);
-		}
-	}
+	await savePostsToDb(ctx, posts);
 
 	await logEventFromContext(
 		ctx,
@@ -55,6 +44,7 @@ export const getNew: RedditEndpoints['subredditsGetNew'] = async (
 	);
 
 	const posts = extractPosts(raw);
+	await savePostsToDb(ctx, posts);
 
 	await logEventFromContext(
 		ctx,
@@ -82,6 +72,7 @@ export const getTop: RedditEndpoints['subredditsGetTop'] = async (
 	);
 
 	const posts = extractPosts(raw);
+	await savePostsToDb(ctx, posts);
 
 	await logEventFromContext(
 		ctx,
@@ -109,6 +100,7 @@ export const getRising: RedditEndpoints['subredditsGetRising'] = async (
 	);
 
 	const posts = extractPosts(raw);
+	await savePostsToDb(ctx, posts);
 
 	await logEventFromContext(
 		ctx,
@@ -136,6 +128,7 @@ export const getControversial: RedditEndpoints['subredditsGetControversial'] =
 		);
 
 		const posts = extractPosts(raw);
+		await savePostsToDb(ctx, posts);
 
 		await logEventFromContext(
 			ctx,
@@ -161,17 +154,7 @@ export const getAbout: RedditEndpoints['subredditsGetAbout'] = async (
 	);
 
 	const subreddit = SubredditDataSchema.parse(raw.data);
-
-	if (ctx.db.subreddits) {
-		try {
-			await ctx.db.subreddits.upsertByEntityId(String(subreddit.id), {
-				...subreddit,
-				active_user_count: subreddit.active_user_count ?? undefined,
-			});
-		} catch (error) {
-			console.warn('Failed to save subreddit to database:', error);
-		}
-	}
+	await saveSubredditsToDb(ctx, [subreddit]);
 
 	await logEventFromContext(
 		ctx,

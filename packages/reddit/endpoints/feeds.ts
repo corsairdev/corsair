@@ -1,7 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import type { RedditEndpoints } from '..';
 import { makeRedditRequest } from '../client';
-import { extractPosts, extractSubreddits } from './utils';
+import { extractPosts, extractSubreddits, savePostsToDb, saveSubredditsToDb } from './utils';
 import type { RedditListingRaw } from './types';
 
 export const getAllFeed: RedditEndpoints['feedsGetAll'] = async (
@@ -13,6 +13,7 @@ export const getAllFeed: RedditEndpoints['feedsGetAll'] = async (
 	});
 
 	const posts = extractPosts(raw);
+	await savePostsToDb(ctx, posts);
 
 	await logEventFromContext(
 		ctx,
@@ -38,6 +39,7 @@ export const getPopularFeed: RedditEndpoints['feedsGetPopular'] = async (
 	});
 
 	const posts = extractPosts(raw);
+	await savePostsToDb(ctx, posts);
 
 	await logEventFromContext(
 		ctx,
@@ -64,6 +66,7 @@ export const getSubredditsPopular: RedditEndpoints['listingsSubredditsPopular'] 
 		);
 
 		const subreddits = extractSubreddits(raw);
+		await saveSubredditsToDb(ctx, subreddits);
 
 		await logEventFromContext(
 			ctx,
@@ -90,6 +93,7 @@ export const getSubredditsNew: RedditEndpoints['listingsSubredditsNew'] =
 		);
 
 		const subreddits = extractSubreddits(raw);
+		await saveSubredditsToDb(ctx, subreddits);
 
 		await logEventFromContext(
 			ctx,

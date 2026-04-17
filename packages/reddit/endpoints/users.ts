@@ -2,7 +2,7 @@ import { logEventFromContext } from 'corsair/core';
 import type { RedditEndpoints } from '..';
 import { makeRedditRequest } from '../client';
 import { CommentDataSchema, PostDataSchema, UserDataSchema } from './types';
-import { extractComments, extractPosts } from './utils';
+import { extractComments, extractPosts, saveCommentsToDb, savePostsToDb, saveUserToDb } from './utils';
 import type { RedditEntityEnvelopeRaw, RedditListingRaw } from './types';
 
 export const getAbout: RedditEndpoints['usersGetAbout'] = async (
@@ -14,16 +14,7 @@ export const getAbout: RedditEndpoints['usersGetAbout'] = async (
 	);
 
 	const user = UserDataSchema.parse(raw.data);
-
-	if (ctx.db.users) {
-		try {
-			await ctx.db.users.upsertByEntityId(String(user.id), {
-				...user,
-			});
-		} catch (error) {
-			console.warn('Failed to save user to database:', error);
-		}
-	}
+	await saveUserToDb(ctx, user);
 
 	await logEventFromContext(
 		ctx,
@@ -46,6 +37,7 @@ export const getSubmitted: RedditEndpoints['usersGetSubmitted'] = async (
 	);
 
 	const posts = extractPosts(raw);
+	await savePostsToDb(ctx, posts);
 
 	await logEventFromContext(
 		ctx,
@@ -73,6 +65,7 @@ export const getComments: RedditEndpoints['usersGetComments'] = async (
 	);
 
 	const comments = extractComments(raw);
+	await saveCommentsToDb(ctx, comments);
 
 	await logEventFromContext(
 		ctx,
@@ -103,6 +96,12 @@ export const getOverview: RedditEndpoints['usersGetOverview'] = async (
 		if (child.kind === 't3') return PostDataSchema.parse(child.data); // t3 = link/post, else t1 = comment
 		return CommentDataSchema.parse(child.data);
 	});
+
+	const extractedPosts = extractPosts(raw);
+	await savePostsToDb(ctx, extractedPosts);
+
+	const extractedComments = extractComments(raw);
+	await saveCommentsToDb(ctx, extractedComments);
 
 	await logEventFromContext(
 		ctx,
