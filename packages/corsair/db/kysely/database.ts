@@ -65,23 +65,30 @@ function isPostgresJs(input: CorsairDatabaseInput): input is Sql {
 	);
 }
 
-/**
- * postgres.js unsafe() skips type inference and expects pre-serialized values.
- * This wraps the Sql instance so that Date and plain objects are serialized to
- * strings before they reach the wire protocol.
- */
-function serializeParam(value: unknown): string | number | boolean | null | undefined {
-	if (value === null || value === undefined) return value;
-	if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') return value;
-	if (value instanceof Date) return value.toISOString();
-	if (typeof value === 'object') return JSON.stringify(value);
-	return String(value);
-}
-
 function bindIfFunction(val: unknown, thisArg: object): unknown {
 	return typeof val === 'function'
 		? (val as (...args: unknown[]) => unknown).bind(thisArg)
 		: val;
+}
+
+/**
+ * postgres.js's `unsafe()` runs through Postgres' Bind step and applies
+ * type-aware serializers for inferred parameter types (Date → ISO,
+ * object/array → JSON for jsonb, etc.). For Kysely-compiled INSERT/UPDATE/SELECT
+ * the parameter types are inferred from the column types, so we pass values
+ * through without pre-serialization. Pre-stringifying objects here would cause
+ * postgres.js to JSON.stringify a second time, producing a JSON string instead
+ * of a JSONB object on the wire.
+ *
+ * The one place we must intervene is `Date` parameters in WHERE/INSERT slots
+ * whose Postgres type is reported as TEXT/UNKNOWN (e.g., `corsair_permissions.expires_at`
+ * is TEXT). For those, postgres.js's default "type not in serializers" path
+ * (`'' + x`) yields `Date.toString()` which Postgres rejects. We coerce Date
+ * to ISO string only — every other value passes through untouched.
+ */
+function serializeParam(value: unknown): unknown {
+	if (value instanceof Date) return value.toISOString();
+	return value;
 }
 
 function withParamSerialization(sql: Sql): Sql {
