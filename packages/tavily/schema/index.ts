@@ -1,15 +1,16 @@
-// TODO: Import your database entities and create the schema
-// Example:
-// import { TavilyExample } from './database';
-//
-// export const TavilySchema = {
-// 	version: '1.0.0',
-// 	entities: {
-// 		example: TavilyExample,
-// 	},
-// } as const;
+import {
+	TavilyCrawlResult,
+	TavilyExtractResult,
+	TavilyMapResult,
+	TavilySearchResult,
+} from './database';
 
 export const TavilySchema = {
 	version: '1.0.0',
-	entities: {},
+	entities: {
+		searchResults: TavilySearchResult,
+		extractResults: TavilyExtractResult,
+		crawlResults: TavilyCrawlResult,
+		mapResults: TavilyMapResult,
+	},
 } as const;

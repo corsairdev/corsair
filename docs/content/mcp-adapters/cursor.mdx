@@ -1,7 +1,11 @@
 ---
 title: Cursor
-description: Connect Corsair to Cursor as a stdio MCP server.
+description: Connect Corsair to Cursor via MCP or use the CLI directly.
 ---
+
+<Tabs>
+
+<Tab title="MCP">
 
 Use `runStdioMcpServer` to expose Corsair as a local MCP server that Cursor spawns on demand.
 
@@ -66,3 +70,33 @@ Setup corsair, then list all GitHub issues assigned to me.
 ```
 
 The agent calls `corsair_setup` first to check credentials, then `list_operations` to discover available endpoints, then `run_script` to execute.
+
+</Tab>
+
+<Tab title="CLI">
+
+<CodeGroup>
+```bash npm
+npm install @corsair-dev/cli
+```
+```bash yarn
+yarn add @corsair-dev/cli
+```
+```bash pnpm
+pnpm install @corsair-dev/cli
+```
+```bash bun
+bun add @corsair-dev/cli
+```
+</CodeGroup>
+
+Copy and paste this prompt into Cursor to give it everything it needs to work with Corsair:
+
+```
+Run `pnpm corsair` to learn how to use corsair.
+```
+
+
+</Tab>
+
+</Tabs>

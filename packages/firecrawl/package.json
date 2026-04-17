@@ -1,7 +1,7 @@
 {
-  "name": "@corsair-dev/tavily",
-  "version": "0.1.1",
-  "description": "Tavily plugin for Corsair",
+  "name": "@corsair-dev/firecrawl",
+  "version": "0.1.0",
+  "description": "Firecrawl plugin for Corsair",
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
@@ -22,17 +22,14 @@
     "zod": "^3.0.0"
   },
   "devDependencies": {
-    "jest": "^29.7.0",
-    "ts-jest": "^29.4.6",
     "corsair": "workspace:*",
     "tsup": "^8.0.1",
     "typescript": "catalog:",
-    "zod": "^3.25.76",
-    "@types/jest": "^29.5.14"
+    "zod": "^3.25.76"
   },
   "keywords": [
     "corsair",
-    "tavily",
+    "firecrawl",
     "plugin"
   ],
   "author": "",
