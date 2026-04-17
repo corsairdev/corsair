@@ -118,6 +118,93 @@ describe('Tavily API Type Tests', () => {
 			TavilyEndpointOutputSchemas.search.parse(response);
 			expect(response.usage?.credits).toBeGreaterThan(0);
 		});
+
+		it('search with finance topic returns correct type', async () => {
+			const response = await makeTavilyRequest<TavilySearchResponse>(
+				'search',
+				TEST_API_KEY,
+				{
+					method: 'POST',
+					body: {
+						query: 'S&P 500 performance',
+						topic: 'finance',
+						max_results: 5,
+					},
+				},
+			);
+
+			TavilyEndpointOutputSchemas.search.parse(response);
+		});
+
+		it('search with start_date and end_date returns correct type', async () => {
+			const response = await makeTavilyRequest<TavilySearchResponse>(
+				'search',
+				TEST_API_KEY,
+				{
+					method: 'POST',
+					body: {
+						query: 'OpenAI announcements',
+						start_date: '2024-01-01',
+						end_date: '2024-06-30',
+						max_results: 5,
+					},
+				},
+			);
+
+			TavilyEndpointOutputSchemas.search.parse(response);
+		});
+
+		it('search with include_favicon returns correct type', async () => {
+			const response = await makeTavilyRequest<TavilySearchResponse>(
+				'search',
+				TEST_API_KEY,
+				{
+					method: 'POST',
+					body: {
+						query: 'developer tools 2024',
+						max_results: 3,
+						include_favicon: true,
+					},
+				},
+			);
+
+			TavilyEndpointOutputSchemas.search.parse(response);
+		});
+
+		it('search with exclude_domains returns correct type', async () => {
+			const response = await makeTavilyRequest<TavilySearchResponse>(
+				'search',
+				TEST_API_KEY,
+				{
+					method: 'POST',
+					body: {
+						query: 'machine learning frameworks',
+						max_results: 5,
+						exclude_domains: ['medium.com', 'reddit.com'],
+					},
+				},
+			);
+
+			TavilyEndpointOutputSchemas.search.parse(response);
+		});
+
+		it('search with chunks_per_source returns correct type', async () => {
+			const response = await makeTavilyRequest<TavilySearchResponse>(
+				'search',
+				TEST_API_KEY,
+				{
+					method: 'POST',
+					body: {
+						query: 'transformer architecture explained',
+						search_depth: 'advanced',
+						chunks_per_source: 2,
+						max_results: 3,
+					},
+				},
+			);
+
+			TavilyEndpointOutputSchemas.search.parse(response);
+		});
 	});
 
 	describe('extract', () => {
@@ -166,6 +253,38 @@ describe('Tavily API Type Tests', () => {
 						extract_depth: 'advanced',
 						include_images: true,
 						format: 'markdown',
+					},
+				},
+			);
+
+			TavilyEndpointOutputSchemas.extract.parse(response);
+		});
+
+		it('extract with text format returns correct type', async () => {
+			const response = await makeTavilyRequest<TavilyExtractResponse>(
+				'extract',
+				TEST_API_KEY,
+				{
+					method: 'POST',
+					body: {
+						urls: ['https://en.wikipedia.org/wiki/TypeScript'],
+						format: 'text',
+					},
+				},
+			);
+
+			TavilyEndpointOutputSchemas.extract.parse(response);
+		});
+
+		it('extract with include_favicon returns correct type', async () => {
+			const response = await makeTavilyRequest<TavilyExtractResponse>(
+				'extract',
+				TEST_API_KEY,
+				{
+					method: 'POST',
+					body: {
+						urls: ['https://en.wikipedia.org/wiki/Python_(programming_language)'],
+						include_favicon: true,
 					},
 				},
 			);
@@ -268,6 +387,60 @@ describe('Tavily API Type Tests', () => {
 
 			TavilyEndpointOutputSchemas.crawl.parse(response);
 		});
+
+		it('crawl with advanced extract_depth returns correct type', async () => {
+			const response = await makeTavilyRequest<TavilyCrawlResponse>(
+				'crawl',
+				TEST_API_KEY,
+				{
+					method: 'POST',
+					body: {
+						url: 'https://docs.tavily.com',
+						extract_depth: 'advanced',
+						max_depth: 1,
+						limit: 3,
+					},
+				},
+			);
+
+			TavilyEndpointOutputSchemas.crawl.parse(response);
+		});
+
+		it('crawl with include_images returns correct type', async () => {
+			const response = await makeTavilyRequest<TavilyCrawlResponse>(
+				'crawl',
+				TEST_API_KEY,
+				{
+					method: 'POST',
+					body: {
+						url: 'https://docs.tavily.com',
+						include_images: true,
+						max_depth: 1,
+						limit: 3,
+					},
+				},
+			);
+
+			TavilyEndpointOutputSchemas.crawl.parse(response);
+		});
+
+		it('crawl with text format returns correct type', async () => {
+			const response = await makeTavilyRequest<TavilyCrawlResponse>(
+				'crawl',
+				TEST_API_KEY,
+				{
+					method: 'POST',
+					body: {
+						url: 'https://docs.tavily.com',
+						format: 'text',
+						max_depth: 1,
+						limit: 3,
+					},
+				},
+			);
+
+			TavilyEndpointOutputSchemas.crawl.parse(response);
+		});
 	});
 
 	describe('map', () => {
@@ -317,6 +490,60 @@ describe('Tavily API Type Tests', () => {
 						url: 'https://docs.tavily.com',
 						select_domains: ['docs.tavily.com'],
 						allow_external: false,
+						max_depth: 1,
+						limit: 10,
+					},
+				},
+			);
+
+			TavilyEndpointOutputSchemas.map.parse(response);
+		});
+
+		it('map with categories filter returns correct type', async () => {
+			const response = await makeTavilyRequest<TavilyMapResponse>(
+				'map',
+				TEST_API_KEY,
+				{
+					method: 'POST',
+					body: {
+						url: 'https://docs.tavily.com',
+						categories: ['Documentation'],
+						max_depth: 1,
+						limit: 10,
+					},
+				},
+			);
+
+			TavilyEndpointOutputSchemas.map.parse(response);
+		});
+
+		it('map with exclude_paths returns correct type', async () => {
+			const response = await makeTavilyRequest<TavilyMapResponse>(
+				'map',
+				TEST_API_KEY,
+				{
+					method: 'POST',
+					body: {
+						url: 'https://docs.tavily.com',
+						exclude_paths: ['/blog/.*'],
+						max_depth: 1,
+						limit: 10,
+					},
+				},
+			);
+
+			TavilyEndpointOutputSchemas.map.parse(response);
+		});
+
+		it('map with allow_external returns correct type', async () => {
+			const response = await makeTavilyRequest<TavilyMapResponse>(
+				'map',
+				TEST_API_KEY,
+				{
+					method: 'POST',
+					body: {
+						url: 'https://docs.tavily.com',
+						allow_external: true,
 						max_depth: 1,
 						limit: 10,
 					},

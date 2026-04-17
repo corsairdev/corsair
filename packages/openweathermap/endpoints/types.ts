@@ -244,7 +244,7 @@ const HistoricalWeatherDataSchema = z.object({
 	pressure: z.number(),
 	humidity: z.number(),
 	dew_point: z.number(),
-	uvi: z.number(),
+	uvi: z.number().optional(),
 	clouds: z.number(),
 	visibility: z.number().optional(),
 	wind_speed: z.number(),

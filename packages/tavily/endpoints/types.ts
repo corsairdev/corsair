@@ -105,7 +105,7 @@ export type TavilySearchResult = z.infer<typeof TavilySearchResultSchema>;
 
 export const TavilySearchImageSchema = z.object({
 	url: z.string(),
-	description: z.string().optional(),
+	description: z.string().nullable().optional(),
 });
 
 export type TavilySearchImage = z.infer<typeof TavilySearchImageSchema>;
