@@ -46,6 +46,13 @@ export const getById: RedditEndpoints['postsGetById'] = async (ctx, input) => {
 	const posts = extractPosts(raw);
 	await savePostsToDb(ctx, posts);
 
+	await logEventFromContext(
+		ctx,
+		'reddit.posts.getById',
+		{ ...input },
+		'completed',
+	);
+
 	return {
 		posts,
 		after: raw.data.after,

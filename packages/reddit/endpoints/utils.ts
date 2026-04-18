@@ -1,3 +1,4 @@
+import type { RedditContext } from '..';
 import type {
 	CommentData,
 	PostData,
@@ -10,6 +11,21 @@ import {
 	PostDataSchema,
 	SubredditDataSchema,
 } from './types';
+
+type RedditDb = NonNullable<RedditContext['db']>;
+
+/**
+ * Minimal context for DB persistence: only `upsertByEntityId` is used. Tests can pass
+ * jest mocks; full `RedditContext` remains assignable via structural typing.
+ */
+type RedditDbContext = {
+	db?: {
+		posts?: Pick<RedditDb['posts'], 'upsertByEntityId'>;
+		comments?: Pick<RedditDb['comments'], 'upsertByEntityId'>;
+		subreddits?: Pick<RedditDb['subreddits'], 'upsertByEntityId'>;
+		users?: Pick<RedditDb['users'], 'upsertByEntityId'>;
+	};
+};
 
 /**
  * Reddit "thing" type prefixes (used in `kind` fields within listings):
@@ -43,7 +59,7 @@ export function extractSubreddits(raw: RedditListingRaw) {
 export const TEST_SUBREDDIT = process.env.TEST_REDDIT_SUBREDDIT ?? 'javascript';
 export const TEST_USERNAME = process.env.TEST_REDDIT_USERNAME ?? 'spez';
 
-export async function savePostsToDb(ctx: any, posts: PostData[]) {
+export async function savePostsToDb(ctx: RedditDbContext, posts: PostData[]) {
 	if (!ctx.db?.posts) return;
 	for (const post of posts) {
 		try {
@@ -54,7 +70,7 @@ export async function savePostsToDb(ctx: any, posts: PostData[]) {
 	}
 }
 
-export async function saveCommentsToDb(ctx: any, comments: CommentData[]) {
+export async function saveCommentsToDb(ctx: RedditDbContext, comments: CommentData[]) {
 	if (!ctx.db?.comments) return;
 	for (const comment of comments) {
 		try {
@@ -68,7 +84,7 @@ export async function saveCommentsToDb(ctx: any, comments: CommentData[]) {
 }
 
 export async function saveSubredditsToDb(
-	ctx: any,
+	ctx: RedditDbContext,
 	subreddits: SubredditData[],
 ) {
 	if (!ctx.db?.subreddits) return;
@@ -83,7 +99,7 @@ export async function saveSubredditsToDb(
 	}
 }
 
-export async function saveUserToDb(ctx: any, user: UserData) {
+export async function saveUserToDb(ctx: RedditDbContext, user: UserData) {
 	if (!ctx.db?.users) return;
 	try {
 		await ctx.db.users.upsertByEntityId(String(user.id), { ...user });

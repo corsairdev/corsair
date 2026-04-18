@@ -42,7 +42,7 @@ export const RedditSubreddit = z.object({
 	title: z.string().optional(),
 	public_description: z.string().optional(),
 	subscribers: z.number().optional(),
-	active_user_count: z.number().optional(),
+	active_user_count: z.number().nullable().optional(),
 	over18: z.boolean().optional(),
 	created_utc: z.number().optional(),
 	createdAt: z.coerce.date().nullable().optional(),
