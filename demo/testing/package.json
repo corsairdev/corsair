@@ -32,6 +32,7 @@
     "@corsair-dev/linear": "workspace:*",
     "@corsair-dev/mcp": "workspace:*",
     "@corsair-dev/notion": "workspace:*",
+    "@corsair-dev/reddit": "workspace:*",
     "@corsair-dev/onedrive": "workspace:*",
     "@corsair-dev/openweathermap": "workspace:*",
     "@corsair-dev/outlook": "workspace:*",
