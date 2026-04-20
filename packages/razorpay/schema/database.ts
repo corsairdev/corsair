@@ -45,6 +45,39 @@ export const RazorpayPaymentSchema = z
 		notes: RazorpayNotesSchema.optional(),
 		created_at: z.number().optional(),
 	})
+    .passthrough();
+    
+// Base payout schema for API responses
+export const RazorpayPayoutStatusDetailsSchema = z
+	.object({
+		description: z.string(),
+		source: z.string(),
+		reason: z.string(),
+	})
+	.passthrough();
+
+export const RazorpayPayoutSchema = z
+	.object({
+		id: z.string(),
+		entity: z.literal('payout'),
+		fund_account_id: z.string(),
+		amount: z.number(), // in paise, min value is 100
+		currency: z.string(),
+		notes: RazorpayNotesSchema.optional(), // max 15 kv pairs, 256 chars max
+		fees: z.number().optional(),
+		tax: z.number().optional(),
+		status: z.string(),
+		utr: z.string().nullable().optional(),
+		mode: z.string().optional(),
+		purpose: z.string().optional(),
+        reference_id: z.string().nullable().optional(), // max 40 chars
+        debit_account_number: z.string().optional(),
+		narration: z.string().nullable().optional(), // max 30 chars a-z, A-Z, 0-9 & space.
+		batch_id: z.string().nullable().optional(),
+		status_details: RazorpayPayoutStatusDetailsSchema.nullable().optional(),
+        created_at: z.number().optional(),
+        fee_type: z.string().optional()
+	})
 	.passthrough();
 
 // Base refund schema for API responses

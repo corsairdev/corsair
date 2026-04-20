@@ -32,7 +32,10 @@ import type {
 	OrdersListInput,
 	PaymentsCaptureInput,
 	PaymentsGetInput,
-	PaymentsListInput,
+    PaymentsListInput,
+    PayoutsGetInput,
+    PayoutsListInput,
+    PayoutsCreateInput,
 	RazorpayEndpointOutputs,
 	RefundsCreateInput,
 	RefundsGetInput,
@@ -103,6 +106,9 @@ export type RazorpayEndpoints = {
 	paymentsGet: RazorpayEndpoint<'paymentsGet', PaymentsGetInput>;
 	paymentsList: RazorpayEndpoint<'paymentsList', PaymentsListInput>;
 	paymentsCapture: RazorpayEndpoint<'paymentsCapture', PaymentsCaptureInput>;
+	payoutsGet: RazorpayEndpoint<'payoutsGet', PayoutsGetInput>;
+	payoutsList: RazorpayEndpoint<'payoutsList', PayoutsListInput>;
+	payoutsCapture: RazorpayEndpoint<'payoutsCreate', PayoutsCreateInput>;
 	refundsCreate: RazorpayEndpoint<'refundsCreate', RefundsCreateInput>;
 	refundsGet: RazorpayEndpoint<'refundsGet', RefundsGetInput>;
 	refundsList: RazorpayEndpoint<'refundsList', RefundsListInput>;
